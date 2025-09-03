@@ -24,6 +24,7 @@ import DeviceAppStorage from "./DeviceAppStorage";
 import NanoS from "~/images/devices/NanoS";
 import Stax from "~/images/devices/Stax";
 import Europa from "~/images/devices/Europa";
+import Apex from "~/images/devices/Apex";
 import NanoX from "~/images/devices/NanoX";
 
 import DeviceName from "./DeviceName";
@@ -40,7 +41,7 @@ const illustrations = {
   blue: NanoS,
   stax: Stax,
   europa: Europa,
-  apex: Europa,
+  apex: Apex,
 };
 
 type Props = PropsWithChildren<{

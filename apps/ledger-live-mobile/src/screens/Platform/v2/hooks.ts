@@ -136,10 +136,13 @@ function useDisclaimer(appendRecentlyUsed: (manifest: AppManifest) => void): Dis
         return;
       }
 
-      navigation.navigate(ScreenName.PlatformApp, {
-        ...params,
-        platform: manifest.id,
-        name: manifest.name,
+      navigation.navigate(NavigatorName.Base, {
+        screen: ScreenName.PlatformApp,
+        params: {
+          ...params,
+          platform: manifest.id,
+          name: manifest.name,
+        },
       });
     },
     [hasOrderedNano, isReadOnly, navigateToRebornFlow, navigation, params],

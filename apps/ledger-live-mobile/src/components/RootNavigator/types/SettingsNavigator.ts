@@ -45,7 +45,7 @@ export type SettingsNavigatorStackParamList = {
         withNft?: boolean;
       }
     | undefined;
-  [ScreenName.DebugExport]: undefined;
+
   [ScreenName.DebugNetwork]: undefined;
   [ScreenName.DebugCommandSender]: {
     deviceId: string;

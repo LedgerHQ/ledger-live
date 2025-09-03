@@ -416,7 +416,7 @@ test.describe("Staking flow from different entry point", () => {
       tag: ["@NanoSP", "@LNS", "@NanoX"],
       annotation: {
         type: "TMS",
-        description: "B2CQA-2769",
+        description: "B2CQA-2769, B2CQA-3281, B2CQA-3289",
       },
     },
     async ({ app }) => {
@@ -425,8 +425,17 @@ test.describe("Staking flow from different entry point", () => {
       await app.layout.goToPortfolio();
       await app.portfolio.startStakeFlow();
 
-      await app.assetDrawer.selectAsset(delegateAccount.account.currency);
-      await app.assetDrawer.selectAccountByIndex(delegateAccount.account);
+      const isModularDrawer = await app.modularDrawer.isModularAssetsDrawerVisible();
+      if (isModularDrawer) {
+        await app.modularDrawer.validateAssetsDrawerItems();
+        await app.modularDrawer.selectAssetByTickerAndName(delegateAccount.account.currency);
+        await app.modularDrawer.selectNetwork(delegateAccount.account.currency);
+        await app.modularDrawer.selectAccountByName(delegateAccount.account);
+      } else {
+        await app.portfolio.expectChooseAssetToBeVisible();
+        await app.assetDrawer.selectAsset(delegateAccount.account.currency);
+        await app.assetDrawer.selectAccountByIndex(delegateAccount.account);
+      }
 
       await app.delegate.verifyFirstProviderName(delegateAccount.provider);
       await app.delegate.continue();
@@ -439,7 +448,7 @@ test.describe("Staking flow from different entry point", () => {
       tag: ["@NanoSP", "@LNS", "@NanoX"],
       annotation: {
         type: "TMS",
-        description: "B2CQA-2771",
+        description: "B2CQA-2771, B2CQA-3289",
       },
     },
     async ({ app }) => {
@@ -449,7 +458,12 @@ test.describe("Staking flow from different entry point", () => {
       await app.market.search(delegateAccount.account.currency.name);
       await app.market.stakeButtonClick(delegateAccount.account.currency.ticker);
 
-      await app.assetDrawer.selectAccountByIndex(delegateAccount.account);
+      const modularDrawerVisible = await app.modularDrawer.isModularAccountDrawerVisible();
+      if (modularDrawerVisible) {
+        await app.modularDrawer.selectAccountByName(delegateAccount.account);
+      } else {
+        await app.assetDrawer.selectAccountByIndex(delegateAccount.account);
+      }
 
       await app.delegate.verifyFirstProviderName(delegateAccount.provider);
       await app.delegate.continue();

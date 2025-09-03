@@ -42,6 +42,20 @@ jest.mock("@mysten/sui/client", () => {
         },
       }),
       getReferenceGasPrice: jest.fn().mockResolvedValue("1000"),
+      getTransactionBlock: jest.fn().mockResolvedValue({
+        transaction: {
+          data: {
+            transaction: {
+              kind: "ProgrammableTransaction",
+              inputs: [],
+              transactions: [],
+            },
+          },
+        },
+        effects: {
+          status: { status: "success" },
+        },
+      }),
     })),
     getFullnodeUrl: jest.fn().mockReturnValue("https://mockapi.sui.io"),
   };
@@ -62,7 +76,14 @@ jest.mock("@mysten/sui/transactions", () => {
         setSender: jest.fn(),
         splitCoins: jest.fn().mockReturnValue(["0xmock_coin"]),
         transferObjects: jest.fn(),
+        moveCall: jest.fn(),
+        object: jest.fn(),
+        pure: {
+          address: jest.fn(),
+          u64: jest.fn(),
+        },
         build: jest.fn().mockResolvedValue(mockTxb),
+        setGasBudgetIfNotSet: jest.fn(),
       };
     }),
   };
@@ -168,6 +189,9 @@ const mockTransaction = {
 
 const mockApi = new SuiClient({ url: "mock" }) as jest.Mocked<SuiClient>;
 
+// Add getTransactionBlock method to mockApi
+mockApi.getTransactionBlock = jest.fn();
+
 // Helper function to generate mock coins from an array of balances
 const createMockCoins = (balances: string[]): any[] => {
   return balances.map((balance, index) => ({
@@ -230,16 +254,16 @@ describe("SDK Functions", () => {
 
   test("getOperationType should return IN for incoming tx", () => {
     const address = "0x33444cf803c690db96527cec67e3c9ab512596f4ba2d4eace43f0b4f716e0164";
-    expect(
-      sdk.getOperationType(address, mockTransaction.transaction?.data as TransactionBlockData),
-    ).toBe("IN");
+    expect(sdk.getOperationType(address, mockTransaction as SuiTransactionBlockResponse)).toBe(
+      "IN",
+    );
   });
 
   test("getOperationType should return OUT for outgoing tx", () => {
     const address = "0x65449f57946938c84c512732f1d69405d1fce417d9c9894696ddf4522f479e24";
-    expect(
-      sdk.getOperationType(address, mockTransaction.transaction?.data as TransactionBlockData),
-    ).toBe("OUT");
+    expect(sdk.getOperationType(address, mockTransaction as SuiTransactionBlockResponse)).toBe(
+      "OUT",
+    );
   });
 
   test("getOperationSenders should return sender address", () => {
@@ -466,6 +490,7 @@ describe("SDK Functions", () => {
     expect(operation.asset).toEqual({ type: "token", assetReference: "0x123::test::TOKEN" });
     expect(operation.memo).toBeUndefined();
     expect(operation.details).toBeUndefined();
+    expect(operation.tx.block.hash).toBeUndefined();
     expect(operation.tx).toMatchObject({
       hash: "DhKLpX5kwuKuyRa71RGqpX5EY2M8Efw535ZVXYXsRiDt",
       block: {},
@@ -523,6 +548,514 @@ describe("SDK Functions", () => {
       expect(result.effects).toHaveProperty("status");
       expect(result.effects.status).toHaveProperty("status", "success");
     }
+  });
+});
+
+describe("Staking Operations", () => {
+  describe("Operation Type Detection", () => {
+    test("getOperationType should return DELEGATE for staking transaction", () => {
+      const address = "0x65449f57946938c84c512732f1d69405d1fce417d9c9894696ddf4522f479e24";
+
+      // Create a mock staking transaction
+      const mockStakingTx = {
+        digest: "delegate_tx_digest_123",
+        transaction: {
+          data: {
+            sender: address,
+            transaction: {
+              kind: "ProgrammableTransaction",
+              inputs: [],
+              transactions: [
+                {
+                  MoveCall: {
+                    function: "request_add_stake",
+                  },
+                },
+              ],
+            },
+          },
+        },
+        effects: {
+          status: { status: "success" },
+          gasUsed: {
+            computationCost: "1000000",
+            storageCost: "500000",
+            storageRebate: "450000",
+          },
+        },
+        balanceChanges: [
+          {
+            owner: { AddressOwner: address },
+            coinType: "0x2::sui::SUI",
+            amount: "-1000000000",
+          },
+        ],
+        timestampMs: "1742294454878",
+        checkpoint: "313024",
+      } as unknown as SuiTransactionBlockResponse;
+
+      expect(sdk.getOperationType(address, mockStakingTx)).toBe("DELEGATE");
+    });
+
+    test("getOperationType should return UNDELEGATE for unstaking transaction", () => {
+      const address = "0x65449f57946938c84c512732f1d69405d1fce417d9c9894696ddf4522f479e24";
+
+      // Create a mock unstaking transaction
+      const mockUnstakingTx = {
+        digest: "undelegate_tx_digest_456",
+        transaction: {
+          data: {
+            sender: address,
+            transaction: {
+              kind: "ProgrammableTransaction",
+              inputs: [],
+              transactions: [
+                {
+                  MoveCall: {
+                    function: "request_withdraw_stake",
+                  },
+                },
+              ],
+            },
+          },
+        },
+        effects: {
+          status: { status: "success" },
+          gasUsed: {
+            computationCost: "1000000",
+            storageCost: "500000",
+            storageRebate: "450000",
+          },
+        },
+        balanceChanges: [
+          {
+            owner: { AddressOwner: address },
+            coinType: "0x2::sui::SUI",
+            amount: "0",
+          },
+        ],
+        timestampMs: "1742294454878",
+        checkpoint: "313024",
+      } as unknown as SuiTransactionBlockResponse;
+
+      expect(sdk.getOperationType(address, mockUnstakingTx)).toBe("UNDELEGATE");
+    });
+  });
+
+  describe("Operation Amount Calculation", () => {
+    test("getOperationAmount should calculate staking amount correctly", () => {
+      const address = "0x65449f57946938c84c512732f1d69405d1fce417d9c9894696ddf4522f479e24";
+
+      const mockStakingTx = {
+        transaction: {
+          data: {
+            transaction: {
+              kind: "ProgrammableTransaction",
+              transactions: [
+                {
+                  MoveCall: {
+                    function: "request_add_stake",
+                  },
+                },
+              ],
+            },
+          },
+        },
+        balanceChanges: [
+          {
+            owner: { AddressOwner: address },
+            coinType: "0x2::sui::SUI",
+            amount: "-1000000000",
+          },
+        ],
+      } as unknown as SuiTransactionBlockResponse;
+
+      const amount = sdk.getOperationAmount(address, mockStakingTx, sdk.DEFAULT_COIN_TYPE);
+      expect(amount).toEqual(new BigNumber("1000000000")); // The function returns minus of the balance change
+    });
+
+    test("getOperationAmount should calculate unstaking amount correctly", () => {
+      const address = "0x65449f57946938c84c512732f1d69405d1fce417d9c9894696ddf4522f479e24";
+
+      const mockUnstakingTx = {
+        transaction: {
+          data: {
+            transaction: {
+              kind: "ProgrammableTransaction",
+              transactions: [
+                {
+                  MoveCall: {
+                    function: "request_withdraw_stake",
+                  },
+                },
+              ],
+            },
+          },
+        },
+        balanceChanges: [
+          {
+            owner: { AddressOwner: address },
+            coinType: "0x2::sui::SUI",
+            amount: "0",
+          },
+        ],
+      } as unknown as SuiTransactionBlockResponse;
+
+      const amount = sdk.getOperationAmount(address, mockUnstakingTx, sdk.DEFAULT_COIN_TYPE);
+      expect(amount).toEqual(new BigNumber("0"));
+    });
+  });
+
+  describe("Operation Recipients", () => {
+    test("getOperationRecipients should return empty array for staking transaction", () => {
+      const mockStakingTx = {
+        transaction: {
+          data: {
+            transaction: {
+              kind: "ProgrammableTransaction",
+              inputs: [],
+              transactions: [
+                {
+                  MoveCall: {
+                    function: "request_add_stake",
+                  },
+                },
+              ],
+            },
+          },
+        },
+      } as unknown as SuiTransactionBlockResponse;
+
+      const recipients = sdk.getOperationRecipients(mockStakingTx.transaction?.data);
+      expect(recipients).toEqual([]);
+    });
+
+    test("getOperationRecipients should return empty array for unstaking transaction", () => {
+      const mockUnstakingTx = {
+        transaction: {
+          data: {
+            transaction: {
+              kind: "ProgrammableTransaction",
+              inputs: [],
+              transactions: [
+                {
+                  MoveCall: {
+                    function: "request_withdraw_stake",
+                  },
+                },
+              ],
+            },
+          },
+        },
+      } as unknown as SuiTransactionBlockResponse;
+
+      const recipients = sdk.getOperationRecipients(mockUnstakingTx.transaction?.data);
+      expect(recipients).toEqual([]);
+    });
+  });
+
+  describe("Transaction Creation", () => {
+    test("createTransaction should build delegate transaction", async () => {
+      const address = "0x65449f57946938c84c512732f1d69405d1fce417d9c9894696ddf4522f479e24";
+      const transaction = {
+        mode: "delegate" as const,
+        coinType: sdk.DEFAULT_COIN_TYPE,
+        amount: new BigNumber(1000000000), // 1 SUI
+        recipient: "0xvalidator_address_123",
+      };
+
+      const tx = await sdk.createTransaction(address, transaction);
+      expect(tx).toBeDefined();
+    });
+
+    test("createTransaction should build undelegate transaction with specific amount", async () => {
+      const address = "0x65449f57946938c84c512732f1d69405d1fce417d9c9894696ddf4522f479e24";
+      const transaction = {
+        mode: "undelegate" as const,
+        coinType: sdk.DEFAULT_COIN_TYPE,
+        amount: new BigNumber(500000000), // 0.5 SUI
+        stakedSuiId: "0xstaked_sui_object_123",
+        useAllAmount: false,
+        recipient: "0xvalidator_address_123", // Required by type but not used for undelegate
+      };
+
+      const tx = await sdk.createTransaction(address, transaction);
+      expect(tx).toBeDefined();
+    });
+
+    test("createTransaction should build undelegate transaction with all amount", async () => {
+      const address = "0x65449f57946938c84c512732f1d69405d1fce417d9c9894696ddf4522f479e24";
+      const transaction = {
+        mode: "undelegate" as const,
+        coinType: sdk.DEFAULT_COIN_TYPE,
+        amount: new BigNumber(0),
+        stakedSuiId: "0xstaked_sui_object_123",
+        useAllAmount: true,
+        recipient: "0xvalidator_address_123", // Required by type but not used for undelegate
+      };
+
+      const tx = await sdk.createTransaction(address, transaction);
+      expect(tx).toBeDefined();
+    });
+  });
+
+  describe("Payment Info for Staking", () => {
+    test("paymentInfo should return gas budget and fees for delegate transaction", async () => {
+      const sender = "0x65449f57946938c84c512732f1d69405d1fce417d9c9894696ddf4522f479e24";
+      const fakeTransaction = {
+        mode: "delegate" as const,
+        coinType: sdk.DEFAULT_COIN_TYPE,
+        family: "sui" as const,
+        amount: new BigNumber(1000000000), // 1 SUI
+        recipient: "0xvalidator_address_123",
+        errors: {},
+      };
+      const info = await sdk.paymentInfo(sender, fakeTransaction);
+      expect(info).toHaveProperty("gasBudget");
+      expect(info).toHaveProperty("totalGasUsed");
+      expect(info).toHaveProperty("fees");
+    });
+
+    test("paymentInfo should return gas budget and fees for undelegate transaction", async () => {
+      const sender = "0x65449f57946938c84c512732f1d69405d1fce417d9c9894696ddf4522f479e24";
+      const fakeTransaction = {
+        mode: "undelegate" as const,
+        coinType: sdk.DEFAULT_COIN_TYPE,
+        family: "sui" as const,
+        amount: new BigNumber(500000000), // 0.5 SUI
+        stakedSuiId: "0xstaked_sui_object_123",
+        useAllAmount: false,
+        recipient: "0xvalidator_address_123", // Required by type but not used for undelegate
+        errors: {},
+      };
+      const info = await sdk.paymentInfo(sender, fakeTransaction);
+      expect(info).toHaveProperty("gasBudget");
+      expect(info).toHaveProperty("totalGasUsed");
+      expect(info).toHaveProperty("fees");
+    });
+  });
+
+  describe("Transaction to Operation Mapping", () => {
+    test("transactionToOperation should map staking transaction correctly", () => {
+      const accountId = "mockAccountId";
+      const address = "0x65449f57946938c84c512732f1d69405d1fce417d9c9894696ddf4522f479e24";
+
+      const mockStakingTx = {
+        digest: "delegate_tx_digest_123",
+        transaction: {
+          data: {
+            sender: address,
+            transaction: {
+              kind: "ProgrammableTransaction",
+              inputs: [],
+              transactions: [
+                {
+                  MoveCall: {
+                    function: "request_add_stake",
+                  },
+                },
+              ],
+            },
+          },
+        },
+        effects: {
+          status: { status: "success" },
+          gasUsed: {
+            computationCost: "1000000",
+            storageCost: "500000",
+            storageRebate: "450000",
+          },
+        },
+        balanceChanges: [
+          {
+            owner: { AddressOwner: address },
+            coinType: "0x2::sui::SUI",
+            amount: "-1000000000",
+          },
+        ],
+        timestampMs: "1742294454878",
+        checkpoint: "313024",
+      } as unknown as SuiTransactionBlockResponse;
+
+      const operation = sdk.transactionToOperation(accountId, address, mockStakingTx);
+
+      expect(operation).toHaveProperty("id");
+      expect(operation).toHaveProperty("accountId", accountId);
+      expect(operation).toHaveProperty("type", "DELEGATE");
+      expect(operation).toHaveProperty("hash", "delegate_tx_digest_123");
+      expect(operation).toHaveProperty("extra");
+      expect((operation.extra as { coinType: string }).coinType).toBe(sdk.DEFAULT_COIN_TYPE);
+      expect(operation.value).toEqual(new BigNumber("1000000000")); // The function returns minus of the balance change
+      expect(operation.recipients).toEqual([]);
+      expect(operation.senders).toEqual([address]);
+    });
+
+    test("transactionToOperation should map unstaking transaction correctly", () => {
+      const accountId = "mockAccountId";
+      const address = "0x65449f57946938c84c512732f1d69405d1fce417d9c9894696ddf4522f479e24";
+
+      const mockUnstakingTx = {
+        digest: "undelegate_tx_digest_456",
+        transaction: {
+          data: {
+            sender: address,
+            transaction: {
+              kind: "ProgrammableTransaction",
+              inputs: [],
+              transactions: [
+                {
+                  MoveCall: {
+                    function: "request_withdraw_stake",
+                  },
+                },
+              ],
+            },
+          },
+        },
+        effects: {
+          status: { status: "success" },
+          gasUsed: {
+            computationCost: "1000000",
+            storageCost: "500000",
+            storageRebate: "450000",
+          },
+        },
+        balanceChanges: [
+          {
+            owner: { AddressOwner: address },
+            coinType: "0x2::sui::SUI",
+            amount: "0",
+          },
+        ],
+        timestampMs: "1742294454878",
+        checkpoint: "313024",
+      } as unknown as SuiTransactionBlockResponse;
+
+      const operation = sdk.transactionToOperation(accountId, address, mockUnstakingTx);
+
+      expect(operation).toHaveProperty("id");
+      expect(operation).toHaveProperty("accountId", accountId);
+      expect(operation).toHaveProperty("type", "UNDELEGATE");
+      expect(operation).toHaveProperty("hash", "undelegate_tx_digest_456");
+      expect(operation).toHaveProperty("extra");
+      expect((operation.extra as { coinType: string }).coinType).toBe(sdk.DEFAULT_COIN_TYPE);
+      expect(operation.value).toEqual(new BigNumber("0"));
+      expect(operation.recipients).toEqual([]);
+      expect(operation.senders).toEqual([address]);
+    });
+
+    test("transactionToOp should map staking transaction correctly", () => {
+      const address = "0x65449f57946938c84c512732f1d69405d1fce417d9c9894696ddf4522f479e24";
+
+      const mockStakingTx = {
+        digest: "delegate_tx_digest_123",
+        transaction: {
+          data: {
+            sender: address,
+            transaction: {
+              kind: "ProgrammableTransaction",
+              inputs: [],
+              transactions: [
+                {
+                  MoveCall: {
+                    function: "request_add_stake",
+                  },
+                },
+              ],
+            },
+          },
+        },
+        effects: {
+          status: { status: "success" },
+          gasUsed: {
+            computationCost: "1000000",
+            storageCost: "500000",
+            storageRebate: "450000",
+          },
+        },
+        balanceChanges: [
+          {
+            owner: { AddressOwner: address },
+            coinType: "0x2::sui::SUI",
+            amount: "-1000000000",
+          },
+        ],
+        timestampMs: "1742294454878",
+        checkpoint: "313024",
+      } as unknown as SuiTransactionBlockResponse;
+
+      const operation = sdk.transactionToOp(address, mockStakingTx);
+
+      expect(operation.id).toEqual("delegate_tx_digest_123");
+      expect(operation.type).toEqual("DELEGATE");
+      expect(operation.senders).toEqual([address]);
+      expect(operation.recipients).toEqual([]);
+      expect(operation.value).toEqual(1000000000n); // The function returns minus of the balance change
+      expect(operation.asset).toEqual({ type: "native" });
+      expect(operation.tx.block.hash).toBeUndefined();
+    });
+
+    test("transactionToOp should map unstaking transaction correctly", () => {
+      const address = "0x65449f57946938c84c512732f1d69405d1fce417d9c9894696ddf4522f479e24";
+
+      const mockUnstakingTx = {
+        digest: "undelegate_tx_digest_456",
+        transaction: {
+          data: {
+            sender: address,
+            transaction: {
+              kind: "ProgrammableTransaction",
+              inputs: [],
+              transactions: [
+                {
+                  MoveCall: {
+                    function: "request_withdraw_stake",
+                  },
+                },
+              ],
+            },
+          },
+        },
+        effects: {
+          status: { status: "success" },
+          gasUsed: {
+            computationCost: "1000000",
+            storageCost: "500000",
+            storageRebate: "450000",
+          },
+        },
+        balanceChanges: [
+          {
+            owner: { AddressOwner: address },
+            coinType: "0x2::sui::SUI",
+            amount: "0",
+          },
+        ],
+        timestampMs: "1742294454878",
+        checkpoint: "313024",
+      } as unknown as SuiTransactionBlockResponse;
+
+      const operation = sdk.transactionToOp(address, mockUnstakingTx);
+
+      expect(operation.id).toEqual("undelegate_tx_digest_456");
+      expect(operation.type).toEqual("UNDELEGATE");
+      expect(operation.senders).toEqual([address]);
+      expect(operation.recipients).toEqual([]);
+      expect(operation.value).toEqual(0n);
+      expect(operation.asset).toEqual({ type: "native" });
+      expect(operation.tx.block.hash).toBeUndefined();
+    });
+  });
+
+  describe("Operation Extra Information", () => {
+    test("getOperationExtra should be a function", () => {
+      expect(typeof sdk.getOperationExtra).toBe("function");
+    });
+
+    test("getOperationExtra should return a Promise", () => {
+      const result = sdk.getOperationExtra("test_digest");
+      expect(result).toBeInstanceOf(Promise);
+    });
   });
 });
 
@@ -594,8 +1127,8 @@ describe("loadOperations", () => {
       operations: [],
     });
 
-    expect(result).toHaveLength(pageSize + 1);
-    expect(result.map(tx => tx.digest)).toEqual([
+    expect(result.operations).toHaveLength(pageSize + 1);
+    expect(result.operations.map(tx => tx.digest)).toEqual([
       ...firstPage.map(tx => tx.digest),
       `tx${pageSize + 1}`,
     ]);
@@ -621,7 +1154,7 @@ describe("loadOperations", () => {
       operations: [],
     });
 
-    expect(result).toHaveLength(sdk.TRANSACTIONS_LIMIT_PER_QUERY - 1);
+    expect(result.operations).toHaveLength(sdk.TRANSACTIONS_LIMIT_PER_QUERY - 1);
     expect(mockApi.queryTransactionBlocks).toHaveBeenCalledTimes(1);
   });
 
@@ -648,7 +1181,7 @@ describe("loadOperations", () => {
       operations: [],
     });
 
-    expect(result).toHaveLength(sdk.TRANSACTIONS_LIMIT);
+    expect(result.operations).toHaveLength(sdk.TRANSACTIONS_LIMIT);
     expect(mockApi.queryTransactionBlocks).toHaveBeenCalledTimes(expectedCalls);
   });
 
@@ -679,7 +1212,7 @@ describe("loadOperations", () => {
     );
 
     // Result should be empty array (no retry, just return operations)
-    expect(result).toHaveLength(0);
+    expect(result.operations).toHaveLength(0);
   });
 
   it("should should not retry after unexpected errors and return empty data", async () => {
@@ -693,7 +1226,7 @@ describe("loadOperations", () => {
       operations: [],
     });
 
-    expect(result).toEqual([]);
+    expect(result.operations).toEqual([]);
     expect(mockApi.queryTransactionBlocks).toHaveBeenCalledTimes(1);
   });
 });
@@ -776,17 +1309,23 @@ describe("getOperations filtering logic", () => {
     // Mock loadOperations to return different data based on operation type
     mockLoadOperations.mockImplementation(async ({ type, ..._params }) => {
       if (type === "OUT") {
-        return [
-          createMockTransaction("sent1", "1000", mockAddr, []),
-          createMockTransaction("sent2", "2000", mockAddr, []),
-        ];
+        return {
+          operations: [
+            createMockTransaction("sent1", "1000", mockAddr, []),
+            createMockTransaction("sent2", "2000", mockAddr, []),
+          ],
+          cursor: null,
+        };
       } else if (type === "IN") {
-        return [
-          createMockTransaction("received1", "1500", otherAddr, [mockAddr]),
-          createMockTransaction("received2", "2500", otherAddr, [mockAddr]),
-        ];
+        return {
+          operations: [
+            createMockTransaction("received1", "1500", otherAddr, [mockAddr]),
+            createMockTransaction("received2", "2500", otherAddr, [mockAddr]),
+          ],
+          cursor: null,
+        };
       }
-      return [];
+      return { operations: [], cursor: null };
     });
   });
 
@@ -816,16 +1355,22 @@ describe("getOperations filtering logic", () => {
     // Mock to return enough sent operations to reach limit
     mockLoadOperations.mockImplementation(async ({ type, ..._params }) => {
       if (type === "OUT") {
-        return Array.from({ length: sdk.TRANSACTIONS_LIMIT }, (_, i) =>
-          createMockTransaction(`sent${i + 1}`, String(1000 + i * 100), mockAddr, []),
-        );
+        return {
+          operations: Array.from({ length: sdk.TRANSACTIONS_LIMIT }, (_, i) =>
+            createMockTransaction(`sent${i + 1}`, String(1000 + i * 100), mockAddr, []),
+          ),
+          cursor: null,
+        };
       } else if (type === "IN") {
-        return [
-          createMockTransaction("received1", "500", otherAddr, [mockAddr]),
-          createMockTransaction("received2", "1500", otherAddr, [mockAddr]),
-        ];
+        return {
+          operations: [
+            createMockTransaction("received1", "500", otherAddr, [mockAddr]),
+            createMockTransaction("received2", "1500", otherAddr, [mockAddr]),
+          ],
+          cursor: null,
+        };
       }
-      return [];
+      return { operations: [], cursor: null };
     });
 
     const operations = await sdk.getOperations(mockAccountId, mockAddr);
@@ -843,16 +1388,24 @@ describe("getOperations filtering logic", () => {
     // Mock to return enough received operations to reach limit
     mockLoadOperations.mockImplementation(async ({ type, ..._params }) => {
       if (type === "OUT") {
-        return [
-          createMockTransaction("sent1", "500", mockAddr, []),
-          createMockTransaction("sent2", "1500", mockAddr, []),
-        ];
+        return {
+          operations: [
+            createMockTransaction("sent1", "500", mockAddr, []),
+            createMockTransaction("sent2", "1500", mockAddr, []),
+          ],
+          cursor: null,
+        };
       } else if (type === "IN") {
-        return Array.from({ length: sdk.TRANSACTIONS_LIMIT }, (_, i) =>
-          createMockTransaction(`received${i + 1}`, String(1000 + i * 100), otherAddr, [mockAddr]),
-        );
+        return {
+          operations: Array.from({ length: sdk.TRANSACTIONS_LIMIT }, (_, i) =>
+            createMockTransaction(`received${i + 1}`, String(1000 + i * 100), otherAddr, [
+              mockAddr,
+            ]),
+          ),
+          cursor: null,
+        };
       }
-      return [];
+      return { operations: [], cursor: null };
     });
 
     const operations = await sdk.getOperations(mockAccountId, mockAddr);
@@ -870,15 +1423,23 @@ describe("getOperations filtering logic", () => {
     // Mock to return enough operations to reach limit for both types
     mockLoadOperations.mockImplementation(async ({ type, ..._params }) => {
       if (type === "OUT") {
-        return Array.from({ length: sdk.TRANSACTIONS_LIMIT }, (_, i) =>
-          createMockTransaction(`sent${i + 1}`, String(1000 + i * 100), mockAddr, []),
-        );
+        return {
+          operations: Array.from({ length: sdk.TRANSACTIONS_LIMIT }, (_, i) =>
+            createMockTransaction(`sent${i + 1}`, String(1000 + i * 100), mockAddr, []),
+          ),
+          cursor: null,
+        };
       } else if (type === "IN") {
-        return Array.from({ length: sdk.TRANSACTIONS_LIMIT }, (_, i) =>
-          createMockTransaction(`received${i + 1}`, String(2000 + i * 100), otherAddr, [mockAddr]),
-        );
+        return {
+          operations: Array.from({ length: sdk.TRANSACTIONS_LIMIT }, (_, i) =>
+            createMockTransaction(`received${i + 1}`, String(2000 + i * 100), otherAddr, [
+              mockAddr,
+            ]),
+          ),
+          cursor: null,
+        };
       }
-      return [];
+      return { operations: [], cursor: null };
     });
 
     const operations = await sdk.getOperations(mockAccountId, mockAddr);
@@ -896,22 +1457,28 @@ describe("getOperations filtering logic", () => {
     // Mock to return operations with null timestamps and reach limit
     mockLoadOperations.mockImplementation(async ({ type, ..._params }) => {
       if (type === "OUT") {
-        return [
-          createMockTransaction("sent1", "1000", mockAddr, []),
-          createMockTransaction("sent2", null, mockAddr, []),
-          createMockTransaction("sent3", "3000", mockAddr, []),
-          ...Array.from({ length: sdk.TRANSACTIONS_LIMIT - 3 }, (_, i) =>
-            createMockTransaction(`sent${i + 4}`, String(4000 + i * 100), mockAddr, []),
-          ),
-        ];
+        return {
+          operations: [
+            createMockTransaction("sent1", "1000", mockAddr, []),
+            createMockTransaction("sent2", null, mockAddr, []),
+            createMockTransaction("sent3", "3000", mockAddr, []),
+            ...Array.from({ length: sdk.TRANSACTIONS_LIMIT - 3 }, (_, i) =>
+              createMockTransaction(`sent${i + 4}`, String(4000 + i * 100), mockAddr, []),
+            ),
+          ],
+          cursor: null,
+        };
       } else if (type === "IN") {
-        return [
-          createMockTransaction("received1", null, otherAddr, [mockAddr]),
-          createMockTransaction("received2", "2000", otherAddr, [mockAddr]),
-          createMockTransaction("received3", "4000", otherAddr, [mockAddr]),
-        ];
+        return {
+          operations: [
+            createMockTransaction("received1", null, otherAddr, [mockAddr]),
+            createMockTransaction("received2", "2000", otherAddr, [mockAddr]),
+            createMockTransaction("received3", "4000", otherAddr, [mockAddr]),
+          ],
+          cursor: null,
+        };
       }
-      return [];
+      return { operations: [], cursor: null };
     });
 
     const operations = await sdk.getOperations(mockAccountId, mockAddr);
@@ -926,15 +1493,21 @@ describe("getOperations filtering logic", () => {
     // Mock to return operations that reach limit
     mockLoadOperations.mockImplementation(async ({ type, ..._params }) => {
       if (type === "OUT") {
-        return Array.from({ length: sdk.TRANSACTIONS_LIMIT }, (_, i) =>
-          createMockTransaction(`sent${i + 1}`, String(1000 + i * 10), mockAddr, []),
-        );
+        return {
+          operations: Array.from({ length: sdk.TRANSACTIONS_LIMIT }, (_, i) =>
+            createMockTransaction(`sent${i + 1}`, String(1000 + i * 10), mockAddr, []),
+          ),
+          cursor: null,
+        };
       } else if (type === "IN") {
-        return Array.from({ length: sdk.TRANSACTIONS_LIMIT }, (_, i) =>
-          createMockTransaction(`received${i + 1}`, String(500 + i * 10), otherAddr, [mockAddr]),
-        );
+        return {
+          operations: Array.from({ length: sdk.TRANSACTIONS_LIMIT }, (_, i) =>
+            createMockTransaction(`received${i + 1}`, String(500 + i * 10), otherAddr, [mockAddr]),
+          ),
+          cursor: null,
+        };
       }
-      return [];
+      return { operations: [], cursor: null };
     });
 
     const operations = await sdk.getOperations(mockAccountId, mockAddr);
@@ -947,7 +1520,7 @@ describe("getOperations filtering logic", () => {
   test("should handle empty operations arrays", async () => {
     // Mock to return empty arrays
     mockLoadOperations.mockImplementation(async ({ type, ..._params }) => {
-      return [];
+      return { operations: [], cursor: null };
     });
 
     const operations = await sdk.getOperations(mockAccountId, mockAddr);
@@ -959,14 +1532,17 @@ describe("getOperations filtering logic", () => {
     // Mock to return only OUT operations
     mockLoadOperations.mockImplementation(async ({ type, ..._params }) => {
       if (type === "OUT") {
-        return [
-          createMockTransaction("sent1", "1000", mockAddr, []),
-          createMockTransaction("sent2", "2000", mockAddr, []),
-        ];
+        return {
+          operations: [
+            createMockTransaction("sent1", "1000", mockAddr, []),
+            createMockTransaction("sent2", "2000", mockAddr, []),
+          ],
+          cursor: null,
+        };
       } else if (type === "IN") {
-        return [];
+        return { operations: [], cursor: null };
       }
-      return [];
+      return { operations: [], cursor: null };
     });
 
     const operations = await sdk.getOperations(mockAccountId, mockAddr);
@@ -979,17 +1555,23 @@ describe("getOperations filtering logic", () => {
     // Mock to return operations with same timestamps and reach limit
     mockLoadOperations.mockImplementation(async ({ type, ..._params }) => {
       if (type === "OUT") {
-        return Array.from(
-          { length: sdk.TRANSACTIONS_LIMIT },
-          (_, i) => createMockTransaction(`sent${i + 1}`, "1000", mockAddr, []), // All same timestamp
-        );
+        return {
+          operations: Array.from(
+            { length: sdk.TRANSACTIONS_LIMIT },
+            (_, i) => createMockTransaction(`sent${i + 1}`, "1000", mockAddr, []), // All same timestamp
+          ),
+          cursor: null,
+        };
       } else if (type === "IN") {
-        return [
-          createMockTransaction("received1", "1000", otherAddr, [mockAddr]),
-          createMockTransaction("received2", "1000", otherAddr, [mockAddr]),
-        ];
+        return {
+          operations: [
+            createMockTransaction("received1", "1000", otherAddr, [mockAddr]),
+            createMockTransaction("received2", "1000", otherAddr, [mockAddr]),
+          ],
+          cursor: null,
+        };
       }
-      return [];
+      return { operations: [], cursor: null };
     });
 
     const operations = await sdk.getOperations(mockAccountId, mockAddr);
@@ -1052,117 +1634,127 @@ describe("filterOperations", () => {
 
   describe("when cursor is provided", () => {
     test("should not apply timestamp filtering", () => {
-      const operationList1 = [
-        createMockTransaction("tx1", "1000"),
-        createMockTransaction("tx2", "2000"),
-      ];
-      const operationList2 = [
-        createMockTransaction("tx3", "1500"),
-        createMockTransaction("tx4", "2500"),
-      ];
-      const cursor = "test-cursor";
-
-      const result = sdk.filterOperations(operationList1, operationList2, cursor);
+      const operationList1 = {
+        operations: [createMockTransaction("tx1", "1000"), createMockTransaction("tx2", "2000")],
+        cursor: null,
+      };
+      const operationList2 = {
+        operations: [createMockTransaction("tx3", "1500"), createMockTransaction("tx4", "2500")],
+        cursor: null,
+      };
+      const result = sdk.filterOperations(operationList1, operationList2, "ascending");
 
       // Should return all operations sorted by timestamp in descending order
-      expect(result).toHaveLength(4);
-      expect(result.map(tx => tx.digest)).toEqual(["tx4", "tx2", "tx3", "tx1"]);
+      expect(result.operations).toHaveLength(4);
+      expect(result.operations.map(tx => tx.digest)).toEqual(["tx4", "tx2", "tx3", "tx1"]);
     });
 
     test("should handle null cursor", () => {
-      const operationList1 = [
-        createMockTransaction("tx1", "1000"),
-        createMockTransaction("tx2", "2000"),
-      ];
-      const operationList2 = [
-        createMockTransaction("tx3", "1500"),
-        createMockTransaction("tx4", "2500"),
-      ];
+      const operationList1 = {
+        operations: [createMockTransaction("tx1", "1000"), createMockTransaction("tx2", "2000")],
+        cursor: null,
+      };
+      const operationList2 = {
+        operations: [createMockTransaction("tx3", "1500"), createMockTransaction("tx4", "2500")],
+        cursor: null,
+      };
 
-      const result = sdk.filterOperations(operationList1, operationList2, null);
+      const result = sdk.filterOperations(operationList1, operationList2, "ascending");
 
       // Should return all operations sorted by timestamp in descending order
-      expect(result).toHaveLength(4);
-      expect(result.map(tx => tx.digest)).toEqual(["tx4", "tx2", "tx3", "tx1"]);
+      expect(result.operations).toHaveLength(4);
+      expect(result.operations.map(tx => tx.digest)).toEqual(["tx4", "tx2", "tx3", "tx1"]);
     });
 
     test("should handle undefined cursor", () => {
-      const operationList1 = [
-        createMockTransaction("tx1", "1000"),
-        createMockTransaction("tx2", "2000"),
-      ];
-      const operationList2 = [
-        createMockTransaction("tx3", "1500"),
-        createMockTransaction("tx4", "2500"),
-      ];
+      const operationList1 = {
+        operations: [createMockTransaction("tx1", "1000"), createMockTransaction("tx2", "2000")],
+        cursor: null,
+      };
+      const operationList2 = {
+        operations: [createMockTransaction("tx3", "1500"), createMockTransaction("tx4", "2500")],
+        cursor: null,
+      };
 
-      const result = sdk.filterOperations(operationList1, operationList2, undefined);
+      const result = sdk.filterOperations(operationList1, operationList2, "ascending");
 
       // Should return all operations sorted by timestamp in descending order
-      expect(result).toHaveLength(4);
-      expect(result.map(tx => tx.digest)).toEqual(["tx4", "tx2", "tx3", "tx1"]);
+      expect(result.operations).toHaveLength(4);
+      expect(result.operations.map(tx => tx.digest)).toEqual(["tx4", "tx2", "tx3", "tx1"]);
     });
   });
 
   describe("when cursor is not provided and operations reach limits", () => {
     test("should apply timestamp filtering when both lists reach limit", () => {
-      const operationList1 = Array.from({ length: sdk.TRANSACTIONS_LIMIT }, (_, i) =>
-        createMockTransaction(`tx1_${i + 1}`, String(1000 + i * 100)),
-      );
-      const operationList2 = Array.from({ length: sdk.TRANSACTIONS_LIMIT }, (_, i) =>
-        createMockTransaction(`tx2_${i + 1}`, String(2000 + i * 100)),
-      );
+      const operationList1 = {
+        operations: Array.from({ length: sdk.TRANSACTIONS_LIMIT }, (_, i) =>
+          createMockTransaction(`tx1_${i + 1}`, String(1000 + i * 100)),
+        ),
+        cursor: null,
+      };
+      const operationList2 = {
+        operations: Array.from({ length: sdk.TRANSACTIONS_LIMIT }, (_, i) =>
+          createMockTransaction(`tx2_${i + 1}`, String(2000 + i * 100)),
+        ),
+        cursor: null,
+      };
 
-      const result = sdk.filterOperations(operationList1, operationList2, null);
+      const result = sdk.filterOperations(operationList1, operationList2, "ascending");
 
       // Filter timestamp should be max of last timestamps:
       // operationList1: 1000 + 299*100 = 30900
       // operationList2: 2000 + 299*100 = 31900
       // filter = max(30900, 31900) = 31900
       // Only operations with timestamp >= 31900 should remain
-      const filteredOperations = result.filter(tx => Number(tx.timestampMs) >= 31900);
+      const filteredOperations = result.operations.filter(tx => Number(tx.timestampMs) >= 31900);
       expect(filteredOperations).toHaveLength(1);
       expect(filteredOperations[0].digest).toBe("tx2_300");
     });
 
     test("should apply timestamp filtering when only first list reaches limit", () => {
-      const operationList1 = Array.from({ length: sdk.TRANSACTIONS_LIMIT }, (_, i) =>
-        createMockTransaction(`tx1_${i + 1}`, String(1000 + i * 100)),
-      );
-      const operationList2 = [
-        createMockTransaction("tx2_1", "500"),
-        createMockTransaction("tx2_2", "1500"),
-      ];
+      const operationList1 = {
+        operations: Array.from({ length: sdk.TRANSACTIONS_LIMIT }, (_, i) =>
+          createMockTransaction(`tx1_${i + 1}`, String(1000 + i * 100)),
+        ),
+        cursor: null,
+      };
+      const operationList2 = {
+        operations: [createMockTransaction("tx2_1", "500"), createMockTransaction("tx2_2", "1500")],
+        cursor: null,
+      };
 
-      const result = sdk.filterOperations(operationList1, operationList2, null);
+      const result = sdk.filterOperations(operationList1, operationList2, "ascending");
 
       // Filter timestamp should be max of last timestamps:
       // operationList1: 1000 + 299*100 = 30900
       // operationList2: 1500
       // filter = max(30900, 1500) = 30900
       // Only operations with timestamp >= 30900 should remain
-      const filteredOperations = result.filter(tx => Number(tx.timestampMs) >= 30900);
+      const filteredOperations = result.operations.filter(tx => Number(tx.timestampMs) >= 30900);
       expect(filteredOperations).toHaveLength(1);
       expect(filteredOperations[0].digest).toBe("tx1_300");
     });
 
     test("should apply timestamp filtering when only second list reaches limit", () => {
-      const operationList1 = [
-        createMockTransaction("tx1_1", "500"),
-        createMockTransaction("tx1_2", "1500"),
-      ];
-      const operationList2 = Array.from({ length: sdk.TRANSACTIONS_LIMIT }, (_, i) =>
-        createMockTransaction(`tx2_${i + 1}`, String(2000 + i * 100)),
-      );
+      const operationList1 = {
+        operations: [createMockTransaction("tx1_1", "500"), createMockTransaction("tx1_2", "1500")],
+        cursor: null,
+      };
+      const operationList2 = {
+        operations: Array.from({ length: sdk.TRANSACTIONS_LIMIT }, (_, i) =>
+          createMockTransaction(`tx2_${i + 1}`, String(2000 + i * 100)),
+        ),
+        cursor: null,
+      };
 
-      const result = sdk.filterOperations(operationList1, operationList2, null);
+      const result = sdk.filterOperations(operationList1, operationList2, "ascending");
 
       // Filter timestamp should be max of last timestamps:
       // operationList1: 1500
       // operationList2: 2000 + 299*100 = 31900
       // filter = max(1500, 31900) = 31900
       // Only operations with timestamp >= 31900 should remain
-      const filteredOperations = result.filter(tx => Number(tx.timestampMs) >= 31900);
+      const filteredOperations = result.operations.filter(tx => Number(tx.timestampMs) >= 31900);
       expect(filteredOperations).toHaveLength(1);
       expect(filteredOperations[0].digest).toBe("tx2_300");
     });
@@ -1170,34 +1762,46 @@ describe("filterOperations", () => {
 
   describe("when cursor is not provided and operations don't reach limits", () => {
     test("should not apply timestamp filtering when neither list reaches limit", () => {
-      const operationList1 = [
-        createMockTransaction("tx1_1", "1000"),
-        createMockTransaction("tx1_2", "2000"),
-      ];
-      const operationList2 = [
-        createMockTransaction("tx2_1", "1500"),
-        createMockTransaction("tx2_2", "2500"),
-      ];
+      const operationList1 = {
+        operations: [
+          createMockTransaction("tx1_1", "1000"),
+          createMockTransaction("tx1_2", "2000"),
+        ],
+        cursor: null,
+      };
+      const operationList2 = {
+        operations: [
+          createMockTransaction("tx2_1", "1500"),
+          createMockTransaction("tx2_2", "2500"),
+        ],
+        cursor: null,
+      };
 
-      const result = sdk.filterOperations(operationList1, operationList2, null);
+      const result = sdk.filterOperations(operationList1, operationList2, "ascending");
 
       // Should return all operations sorted by timestamp in descending order
-      expect(result).toHaveLength(4);
-      expect(result.map(tx => tx.digest)).toEqual(["tx2_2", "tx1_2", "tx2_1", "tx1_1"]);
+      expect(result.operations).toHaveLength(4);
+      expect(result.operations.map(tx => tx.digest)).toEqual(["tx2_2", "tx1_2", "tx2_1", "tx1_1"]);
     });
 
     test("should apply timestamp filtering when only one list reaches limit", () => {
-      const operationList1 = Array.from({ length: sdk.TRANSACTIONS_LIMIT }, (_, i) =>
-        createMockTransaction(`tx1_${i + 1}`, String(1000 + i * 100)),
-      );
-      const operationList2 = [createMockTransaction("tx2_1", "1500")];
+      const operationList1 = {
+        operations: Array.from({ length: sdk.TRANSACTIONS_LIMIT }, (_, i) =>
+          createMockTransaction(`tx1_${i + 1}`, String(1000 + i * 100)),
+        ),
+        cursor: null,
+      };
+      const operationList2 = {
+        operations: [createMockTransaction("tx2_1", "1500")],
+        cursor: null,
+      };
 
-      const result = sdk.filterOperations(operationList1, operationList2, null);
+      const result = sdk.filterOperations(operationList1, operationList2, "ascending");
 
       // Should apply timestamp filtering since one list reaches limit
       // Filter timestamp should be the timestamp of the last operation in list1 (1000 + 299*100 = 30900)
       // Only operations with timestamp >= 30900 should remain
-      const filteredOperations = result.filter(tx => Number(tx.timestampMs) >= 30900);
+      const filteredOperations = result.operations.filter(tx => Number(tx.timestampMs) >= 30900);
       expect(filteredOperations).toHaveLength(1);
       expect(filteredOperations[0].digest).toBe("tx1_300");
     });
@@ -1205,94 +1809,125 @@ describe("filterOperations", () => {
 
   describe("edge cases", () => {
     test("should handle null/undefined timestampMs values", () => {
-      const operationList1 = [
-        createMockTransaction("tx1_1", "1000"),
-        createMockTransaction("tx1_2", null),
-        createMockTransaction("tx1_3", "3000"),
-        ...Array.from({ length: sdk.TRANSACTIONS_LIMIT - 3 }, (_, i) =>
-          createMockTransaction(`tx1_${i + 4}`, String(4000 + i * 100)),
-        ),
-      ];
-      const operationList2 = [
-        createMockTransaction("tx2_1", null),
-        createMockTransaction("tx2_2", "2000"),
-        createMockTransaction("tx2_3", "4000"),
-      ];
+      const operationList1 = {
+        operations: [
+          createMockTransaction("tx1_1", "1000"),
+          createMockTransaction("tx1_2", null),
+          createMockTransaction("tx1_3", "3000"),
+          ...Array.from({ length: sdk.TRANSACTIONS_LIMIT - 3 }, (_, i) =>
+            createMockTransaction(`tx1_${i + 4}`, String(4000 + i * 100)),
+          ),
+        ],
+        cursor: null,
+      };
+      const operationList2 = {
+        operations: [
+          createMockTransaction("tx2_1", null),
+          createMockTransaction("tx2_2", "2000"),
+          createMockTransaction("tx2_3", "4000"),
+        ],
+        cursor: null,
+      };
 
-      const result = sdk.filterOperations(operationList1, operationList2, null);
+      const result = sdk.filterOperations(operationList1, operationList2, "ascending");
 
       // Filter timestamp should be the timestamp of the last operation in list1 (4000 + 296*100 = 33600)
       // Only operations with timestamp >= 33600 should remain
-      const filteredOperations = result.filter(tx => Number(tx.timestampMs) >= 33600);
+      const filteredOperations = result.operations.filter(tx => Number(tx.timestampMs) >= 33600);
       expect(filteredOperations).toHaveLength(1);
       expect(filteredOperations[0].digest).toBe("tx1_300");
     });
 
     test("should handle empty arrays", () => {
-      const result = sdk.filterOperations([], [], null);
-      expect(result).toHaveLength(0);
+      const result = sdk.filterOperations(
+        { operations: [], cursor: null },
+        { operations: [], cursor: null },
+        "ascending",
+      );
+      expect(result.operations).toHaveLength(0);
     });
 
     test("should handle one empty array", () => {
-      const operationList1 = [
-        createMockTransaction("tx1_1", "1000"),
-        createMockTransaction("tx1_2", "2000"),
-      ];
-      const operationList2: SuiTransactionBlockResponse[] = [];
+      const operationList1 = {
+        operations: [
+          createMockTransaction("tx1_1", "1000"),
+          createMockTransaction("tx1_2", "2000"),
+        ],
+        cursor: null,
+      };
+      const operationList2 = {
+        operations: [],
+        cursor: null,
+      };
 
-      const result = sdk.filterOperations(operationList1, operationList2, null);
+      const result = sdk.filterOperations(operationList1, operationList2, "ascending");
 
-      expect(result).toHaveLength(2);
-      expect(result.map(tx => tx.digest)).toEqual(["tx1_2", "tx1_1"]);
+      expect(result.operations).toHaveLength(2);
+      expect(result.operations.map(tx => tx.digest)).toEqual(["tx1_2", "tx1_1"]);
     });
 
     test("should remove duplicate transactions by digest", () => {
-      const operationList1 = [
-        createMockTransaction("tx1", "1000"),
-        createMockTransaction("tx2", "2000"),
-      ];
-      const operationList2 = [
-        createMockTransaction("tx2", "2000"), // Duplicate digest
-        createMockTransaction("tx3", "3000"),
-      ];
+      const operationList1 = {
+        operations: [createMockTransaction("tx1", "1000"), createMockTransaction("tx2", "2000")],
+        cursor: null,
+      };
+      const operationList2 = {
+        operations: [
+          createMockTransaction("tx2", "2000"), // Duplicate digest
+          createMockTransaction("tx3", "3000"),
+        ],
+        cursor: null,
+      };
 
-      const result = sdk.filterOperations(operationList1, operationList2, null);
+      const result = sdk.filterOperations(operationList1, operationList2, "ascending");
 
       // Should remove duplicate tx2
-      expect(result).toHaveLength(3);
-      expect(result.map(tx => tx.digest)).toEqual(["tx3", "tx2", "tx1"]);
+      expect(result.operations).toHaveLength(3);
+      expect(result.operations.map(tx => tx.digest)).toEqual(["tx3", "tx2", "tx1"]);
     });
 
     test("should maintain chronological order after filtering", () => {
-      const operationList1 = Array.from({ length: sdk.TRANSACTIONS_LIMIT }, (_, i) =>
-        createMockTransaction(`tx1_${i + 1}`, String(1000 + i * 10)),
-      );
-      const operationList2 = Array.from({ length: sdk.TRANSACTIONS_LIMIT }, (_, i) =>
-        createMockTransaction(`tx2_${i + 1}`, String(500 + i * 10)),
-      );
+      const operationList1 = {
+        operations: Array.from({ length: sdk.TRANSACTIONS_LIMIT }, (_, i) =>
+          createMockTransaction(`tx1_${i + 1}`, String(1000 + i * 10)),
+        ),
+        cursor: null,
+      };
+      const operationList2 = {
+        operations: Array.from({ length: sdk.TRANSACTIONS_LIMIT }, (_, i) =>
+          createMockTransaction(`tx2_${i + 1}`, String(500 + i * 10)),
+        ),
+        cursor: null,
+      };
 
-      const result = sdk.filterOperations(operationList1, operationList2, null);
+      const result = sdk.filterOperations(operationList1, operationList2, "ascending");
 
       // Should be sorted by timestamp in descending order
-      const timestamps = result.map(tx => Number(tx.timestampMs));
+      const timestamps = result.operations.map(tx => Number(tx.timestampMs));
       expect(timestamps).toEqual(timestamps.slice().sort((a, b) => b - a));
     });
 
     test("should handle operations with same timestamps", () => {
-      const operationList1 = Array.from(
-        { length: sdk.TRANSACTIONS_LIMIT },
-        (_, i) => createMockTransaction(`tx1_${i + 1}`, "1000"), // All same timestamp
-      );
-      const operationList2 = [
-        createMockTransaction("tx2_1", "1000"),
-        createMockTransaction("tx2_2", "1000"),
-      ];
+      const operationList1 = {
+        operations: Array.from(
+          { length: sdk.TRANSACTIONS_LIMIT },
+          (_, i) => createMockTransaction(`tx1_${i + 1}`, "1000"), // All same timestamp
+        ),
+        cursor: null,
+      };
+      const operationList2 = {
+        operations: [
+          createMockTransaction("tx2_1", "1000"),
+          createMockTransaction("tx2_2", "1000"),
+        ],
+        cursor: null,
+      };
 
-      const result = sdk.filterOperations(operationList1, operationList2, null);
+      const result = sdk.filterOperations(operationList1, operationList2, "ascending");
 
       // Filter timestamp should be 1000 (the common timestamp)
       // All operations have timestamp 1000, so all should pass the filter
-      expect(result).toHaveLength(sdk.TRANSACTIONS_LIMIT + 2);
+      expect(result.operations).toHaveLength(sdk.TRANSACTIONS_LIMIT + 2);
     });
   });
 
@@ -1356,10 +1991,8 @@ describe("filterOperations", () => {
       expect(
         sdk.toBlockOperation({
           owner: {
-            ConsensusV2: {
-              authenticator: {
-                SingleOwner: "test",
-              },
+            ConsensusAddressOwner: {
+              owner: "test",
               start_version: "1",
             },
           },

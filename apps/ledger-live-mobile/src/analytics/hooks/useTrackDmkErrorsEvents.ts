@@ -1,4 +1,4 @@
-import { useAnalytics } from "../segment";
+import { screen } from "../segment";
 import { isDmkError } from "@ledgerhq/live-dmk-mobile";
 
 const ErrorEvents = [
@@ -64,20 +64,18 @@ const ErrorEvents = [
 
 export const useTrackDmkErrorsEvents = ({
   error,
-  useAnalytics: useAnalyticsHook = useAnalytics,
+  trackScreen = screen,
 }: {
   error: unknown;
-  useAnalytics?: typeof useAnalytics;
+  trackScreen?: typeof screen;
 }) => {
-  const { track } = useAnalyticsHook();
-
   if (!isDmkError(error)) {
     return;
   }
   const properties = { subError: error._tag };
   const groupedError = ErrorEvents.find(({ tags }) => tags.includes(error._tag));
 
-  track("DeviceErrorTracking", {
+  trackScreen("Error:", groupedError ? groupedError.name : error._tag, {
     ...properties,
     error: groupedError ? groupedError.name : error._tag,
   });

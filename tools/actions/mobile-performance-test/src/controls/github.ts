@@ -119,6 +119,7 @@ export class GitHubClient {
       owner: this.owner,
       repo: this.repo,
       workflow_id: workflowId,
+      branch: "main",
       status: "completed",
       conclusion: "success",
       per_page: 10,

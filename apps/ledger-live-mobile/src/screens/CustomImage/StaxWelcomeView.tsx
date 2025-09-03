@@ -18,8 +18,8 @@ const StaxWelcomeView = () => {
       disableFocus
       source={
         theme.dark
-          ? videoSources.customLockScreenBannerDark
-          : videoSources.customLockScreenBannerLight
+          ? videoSources.customLockScreenBannerStaxDark
+          : videoSources.customLockScreenBannerStaxLight
       }
       style={{
         width: screen.width,

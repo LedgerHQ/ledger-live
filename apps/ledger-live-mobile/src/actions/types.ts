@@ -33,6 +33,7 @@ import type {
   NftState,
   MarketState,
   LargeMoverState,
+  InViewState,
 } from "../reducers/types";
 import type { Unpacked } from "../types/helpers";
 import { HandlersPayloads } from "@ledgerhq/live-wallet/store";
@@ -41,6 +42,7 @@ import { Steps } from "LLM/features/WalletSync/types/Activation";
 import { NftStatus } from "@ledgerhq/live-nft/types";
 import { SupportedBlockchain } from "@ledgerhq/live-nft/supported";
 import type { CounterValuesState } from "@ledgerhq/live-countervalues/types";
+import { AnyAction } from "redux";
 
 //  === ACCOUNTS ACTIONS ===
 
@@ -86,6 +88,7 @@ export enum AppStateActionTypes {
   DANGEROUSLY_OVERRIDE_STATE = "DANGEROUSLY_OVERRIDE_STATE",
   UPDATE_MAIN_NAVIGATOR_VISIBILITY = "UPDATE_MAIN_NAVIGATOR_VISIBILITY",
   SET_BLOCK_PASSWORD_LOCK = "SET_BLOCK_PASSWORD_LOCK",
+  INCREMENT_REBOOT_ID = "INCREMENT_REBOOT_ID",
 }
 
 export type AppStateSetHasConnectedDevicePayload = AppState["hasConnectedDevice"];
@@ -549,6 +552,14 @@ export type EarnPayload =
   | EarnSetMenuModalPayload
   | EarnSetProtocolInfoModalPayload;
 
+// === IN VIEW ACTIONS ===
+export enum InViewActionTypes {
+  IN_VIEW_SET_HAS_ITEMS = "IN_VIEW_SET_HAS_ITEMS",
+}
+
+export type InViewSetHasItemsPayload = InViewState["hasItems"];
+export type InViewPayload = InViewSetHasItemsPayload;
+
 // === PROTECT ACTIONS ===
 export enum ProtectActionTypes {
   UPDATE_DATA = "UPDATE_DATA",
@@ -619,11 +630,32 @@ export type WalletSyncPayload =
   | WalletSyncSetActivateDrawer
   | WalletSyncSetActivateStep;
 
+// === AUTH ACTIONS ===
+export enum AuthActionTypes {
+  INITIALIZE_AUTH_STATE = "AUTH_INITIALIZE_AUTH_STATE",
+  SET_LOCKED = "AUTH_SET_LOCKED",
+  SET_BIOMETRICS_ERROR = "AUTH_SET_BIOMETRICS_ERROR",
+  SET_AUTH_MODAL_OPEN = "AUTH_SET_AUTH_MODAL_OPEN",
+  LOCK = "AUTH_LOCK",
+  UNLOCK = "AUTH_UNLOCK",
+}
+
+export type AuthInitializeStatePayload = { privacy: Privacy | null | undefined };
+export type AuthSetLockedPayload = boolean;
+export type AuthSetBiometricsErrorPayload = Error | null;
+export type AuthSetAuthModalOpenPayload = boolean;
+export type AuthPayload =
+  | AuthInitializeStatePayload
+  | AuthSetLockedPayload
+  | AuthSetBiometricsErrorPayload
+  | AuthSetAuthModalOpenPayload;
+
 // === PAYLOADS ===
 
 export type ActionsPayload =
   | Action<AccountsPayload>
   | Action<AppStatePayload>
+  | Action<AuthPayload>
   | Action<BlePayload>
   | Action<NotificationsPayload>
   | Action<RatingsPayload>
@@ -634,4 +666,5 @@ export type ActionsPayload =
   | Action<ProtectPayload>
   | Action<EarnPayload>
   | Action<MarketPayload>
-  | Action<NftPayload>;
+  | Action<NftPayload>
+  | AnyAction;

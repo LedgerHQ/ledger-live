@@ -71,7 +71,7 @@ export const validateRecipient = (
     } else {
       // Check if address is respecting EIP-55
       try {
-        const recipientChecksumed = ethers.utils.getAddress(tx.recipient);
+        const recipientChecksumed = ethers.getAddress(tx.recipient);
         if (tx.recipient !== recipientChecksumed) {
           // this case can happen if the user is entering an ICAP address.
           throw new Error();

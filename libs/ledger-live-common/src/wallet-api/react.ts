@@ -130,6 +130,8 @@ export interface UiHook {
   "account.request": (params: {
     accounts$?: Observable<WalletAPIAccount[]>;
     currencies: CryptoOrTokenCurrency[];
+    areCurrenciesFiltered?: boolean;
+    useCase?: string;
     drawerConfiguration?: ModularDrawerConfiguration;
     onSuccess: (account: AccountLike, parentAccount: Account | undefined) => void;
     onCancel: () => void;
@@ -358,7 +360,7 @@ export function useWalletAPIServer({
 
     server.setHandler(
       "account.request",
-      async ({ accounts$, currencies$, drawerConfiguration }) => {
+      async ({ accounts$, currencies$, drawerConfiguration, areCurrenciesFiltered, useCase }) => {
         tracking.requestAccountRequested(manifest);
         const currencies = await firstValueFrom(currencies$);
 
@@ -377,6 +379,8 @@ export function useWalletAPIServer({
             accounts$,
             currencies: currencyList,
             drawerConfiguration,
+            areCurrenciesFiltered,
+            useCase,
             onSuccess: (account: AccountLike, parentAccount: Account | undefined) => {
               if (done) return;
               done = true;

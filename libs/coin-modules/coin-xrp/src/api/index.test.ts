@@ -106,7 +106,7 @@ describe("listOperations", () => {
     const txs = givenTxs(BigInt(10), BigInt(10), "src", "dest");
     // each time it's called it returns a marker, so in theory it would loop forever
     mockGetTransactions.mockResolvedValue(mockNetworkTxs(txs, defaultMarker));
-    const [results, _] = await api.listOperations("src", { minHeight: 0 });
+    const [results, _] = await api.listOperations("src", { minHeight: 0, order: "asc" });
 
     // called 10 times because there is a hard limit of 10 iterations in case something goes wrong
     // with interpretation of the token (bug / explorer api changed ...)
@@ -122,7 +122,7 @@ describe("listOperations", () => {
       .mockReturnValueOnce(mockNetworkTxs(txs, defaultMarker))
       .mockReturnValueOnce(mockNetworkTxs(txs, undefined));
 
-    const [results, _] = await api.listOperations("src", { minHeight: 0 });
+    const [results, _] = await api.listOperations("src", { minHeight: 0, order: "asc" });
 
     // called 2 times because the second time there is no marker
     expect(mockGetServerInfos).toHaveBeenCalledTimes(2);
@@ -171,15 +171,13 @@ describe("listOperations", () => {
       mockGetTransactions.mockResolvedValue(mockNetworkTxs([], undefined));
 
       // When
-      const [results, _] = await api.listOperations(address, { minHeight: 0 });
+      const [results, _] = await api.listOperations(address, { minHeight: 0, order: "asc" });
 
       // Then
       // called twice because the marker is set the first time
       expect(mockGetServerInfos).toHaveBeenCalledTimes(2);
       expect(mockGetTransactions).toHaveBeenCalledTimes(2);
 
-      // if expectedType is "OUT", compute value with fees (i.e. delivered_amount + Fee)
-      const expectedValue = expectedType === "IN" ? deliveredAmount : deliveredAmount + fee;
       // the order is reversed so that the result is always sorted by newest tx first element of the list
       expect(results).toEqual([
         {
@@ -196,7 +194,7 @@ describe("listOperations", () => {
             },
           },
           type: expectedType,
-          value: expectedValue,
+          value: deliveredAmount,
           senders: [opSender],
           recipients: [opDestination],
           details: {
@@ -224,7 +222,7 @@ describe("listOperations", () => {
             },
           },
           type: expectedType,
-          value: expectedValue,
+          value: deliveredAmount,
           senders: [opSender],
           recipients: [opDestination],
           details: {
@@ -247,7 +245,7 @@ describe("listOperations", () => {
             },
           },
           type: expectedType,
-          value: expectedValue,
+          value: deliveredAmount,
           senders: [opSender],
           recipients: [opDestination],
           details: {
@@ -291,7 +289,7 @@ describe("Testing craftTransaction function", () => {
     expect(logicCraftTransactionSpy).toHaveBeenCalledWith(
       expect.any(Object),
       expect.objectContaining({
-        fee: customFees,
+        fees: customFees,
       }),
       undefined,
     );
@@ -303,7 +301,7 @@ describe("Testing craftTransaction function", () => {
     expect(logicCraftTransactionSpy).toHaveBeenCalledWith(
       expect.any(Object),
       expect.objectContaining({
-        fee: DEFAULT_ESTIMATED_FEES,
+        fees: DEFAULT_ESTIMATED_FEES,
       }),
       undefined,
     );

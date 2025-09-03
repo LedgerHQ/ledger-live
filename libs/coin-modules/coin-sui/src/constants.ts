@@ -1,0 +1,4 @@
+export const STAKING_GAS_BASE = "25000000000000";
+export const FIGMENT_SUI_VALIDATOR_ADDRESS =
+  "0x3d9fb148e35ef4d74fcfc36995da14fc504b885d5f2bfeca37d6ea2cc044a32d";
+export const ONE_SUI = 1000000000;

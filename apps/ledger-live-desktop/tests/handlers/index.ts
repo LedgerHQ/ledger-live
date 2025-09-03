@@ -2,12 +2,14 @@ import NFTsHandlers from "./nfts";
 import MarketHandlers from "./market";
 import CryptoIconsHandlers from "./cryptoIcons";
 import CounterValuesHandlers from "./countervalues";
+import AssetsHandlers from "./assets";
 
 export default [
   ...NFTsHandlers,
   ...MarketHandlers,
   ...CryptoIconsHandlers,
   ...CounterValuesHandlers,
+  ...AssetsHandlers,
 ];
 
 export const ALLOWED_UNHANDLED_REQUESTS = [

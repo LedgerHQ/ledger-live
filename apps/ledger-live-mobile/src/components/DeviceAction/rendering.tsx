@@ -19,7 +19,7 @@ import { AppRequest } from "@ledgerhq/live-common/hw/actions/app";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import firmwareUpdateRepair from "@ledgerhq/live-common/hw/firmwareUpdate-repair";
 import isFirmwareUpdateVersionSupported from "@ledgerhq/live-common/hw/isFirmwareUpdateVersionSupported";
-import { WalletState, accountNameWithDefaultSelector } from "@ledgerhq/live-wallet/store";
+import { WalletState, accountNameSelector } from "@ledgerhq/live-wallet/store";
 import {
   BoxedIcon,
   Flex,
@@ -246,7 +246,7 @@ export function renderConfirmSwap({
 }: RawProps & {
   device: Device;
   transaction: Transaction;
-  provider: string;
+  provider: TermsProviders;
   exchangeRate: ExchangeRate;
   exchange: ExchangeSwap;
   amountExpectedTo?: string | null;
@@ -257,8 +257,24 @@ export function renderConfirmSwap({
   const providerName = getProviderName(provider);
   const noticeType = getNoticeType(provider);
   const alertProperties = noticeType.learnMore ? { learnMoreUrl: urls.swap.learnMore } : {};
-  const fromAccountName = accountNameWithDefaultSelector(walletState, exchange.fromAccount);
-  const toAccountName = accountNameWithDefaultSelector(walletState, exchange.toAccount);
+
+  const sourceAccountCurrency = exchange.fromCurrency;
+  const targetAccountCurrency = exchange.toCurrency;
+  const fromAccountName =
+    accountNameSelector(walletState, {
+      accountId:
+        "parentId" in exchange.fromAccount && exchange.fromAccount.parentId
+          ? exchange.fromAccount.parentId
+          : exchange.fromAccount.id,
+    }) ?? sourceAccountCurrency.name;
+
+  const toAccountName =
+    accountNameSelector(walletState, {
+      accountId:
+        "parentId" in exchange.toAccount && exchange.toAccount.parentId
+          ? exchange.toAccount.parentId
+          : exchange.toAccount.id,
+    }) ?? targetAccountCurrency.name;
 
   const unitFrom = currencySettingsForAccountSelector(settingsState, {
     account: exchange.fromAccount,
@@ -348,7 +364,7 @@ export function renderConfirmSwap({
           </FieldItem>
         </Flex>
 
-        <TermsFooter provider={provider as TermsProviders} />
+        <TermsFooter provider={provider} />
       </Wrapper>
     </ScrollView>
   );
@@ -679,11 +695,7 @@ export function renderError({
         hasExportLogButton={hasExportLogButton}
       >
         {showRetryIfAvailable && (onRetry || managerAppName) ? (
-          <Flex
-            alignSelf="stretch"
-            mb={0}
-            mt={(error as unknown as Error) instanceof BluetoothRequired ? 0 : 8}
-          >
+          <Flex alignSelf="stretch" mb={0} mt={error instanceof BluetoothRequired ? 0 : 8}>
             <StyledButton
               event="DeviceActionErrorRetry"
               type="main"
@@ -906,7 +918,7 @@ export function renderExchange({
   theme,
 }: RawProps & {
   swapRequest: {
-    provider: string;
+    provider: TermsProviders;
     selectedDevice: Device;
     transaction: Transaction;
     exchangeRate: ExchangeRate;
@@ -1013,7 +1025,9 @@ export function renderWarningOutdated({
   colors,
 }: WarningOutdatedProps) {
   function onOpenManager() {
-    navigation.navigate(NavigatorName.MyLedger);
+    navigation.navigate(NavigatorName.MyLedger, {
+      screen: ScreenName.MyLedgerChooseDevice,
+    });
   }
 
   return (

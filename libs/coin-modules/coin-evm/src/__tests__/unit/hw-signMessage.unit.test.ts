@@ -7,19 +7,19 @@ import { makeAccount } from "../fixtures/common.fixtures";
 const signPersonalMessage = jest.fn(() =>
   concat(
     of({ type: "signer.evm.signing" }),
-    of({ type: "signer.evm.signed", value: { r: "01", s: "02", v: 3 } }),
+    of({ type: "signer.evm.signed", value: { r: "01", s: "02", v: 27 } }),
   ),
 );
 const signEIP712Message = jest.fn(() =>
   concat(
     of({ type: "signer.evm.signing" }),
-    of({ type: "signer.evm.signed", value: { r: "03", s: "04", v: 6 } }),
+    of({ type: "signer.evm.signed", value: { r: "03", s: "04", v: 28 } }),
   ),
 );
 const signEIP712HashedMessage = jest.fn(() =>
   concat(
     of({ type: "signer.evm.signing" }),
-    of({ type: "signer.evm.signed", value: { r: "07", s: "08", v: 9 } }),
+    of({ type: "signer.evm.signed", value: { r: "07", s: "08", v: 27 } }),
   ),
 );
 
@@ -103,7 +103,7 @@ describe("EVM Family", () => {
           rsv: {
             r: "01",
             s: "02",
-            v: 3,
+            v: 27,
           },
           signature:
             "0x000000000000000000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000000000000000021b",
@@ -122,7 +122,7 @@ describe("EVM Family", () => {
           rsv: {
             r: "03",
             s: "04",
-            v: 6,
+            v: 28,
           },
           signature:
             "0x000000000000000000000000000000000000000000000000000000000000000300000000000000000000000000000000000000000000000000000000000000041c",
@@ -149,7 +149,7 @@ describe("EVM Family", () => {
           rsv: {
             r: "07",
             s: "08",
-            v: 9,
+            v: 27,
           },
           signature:
             "0x000000000000000000000000000000000000000000000000000000000000000700000000000000000000000000000000000000000000000000000000000000081b",

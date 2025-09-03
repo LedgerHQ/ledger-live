@@ -16,7 +16,7 @@
           "headers": {
             "accept": "application/json, text/plain, */*",
             "host": "trustchain-backend.api.aws.stg.ldg-tech.com",
-            "user-agent": "axios/1.7.7",
+            "user-agent": "axios/1.11.0",
             "accept-encoding": "gzip, compress, deflate, br"
           }
         },

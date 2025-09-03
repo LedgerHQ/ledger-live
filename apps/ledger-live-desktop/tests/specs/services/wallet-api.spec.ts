@@ -34,7 +34,22 @@ const methods = [
   "wallet.userId",
 ];
 
-test.use({ userdata: "1AccountBTC1AccountETH1AccountARB1AccountSOL" });
+test.use({
+  userdata: "1AccountBTC1AccountETH1AccountARB1AccountSOL",
+  featureFlags: {
+    lldModularDrawer: {
+      enabled: false,
+      params: {
+        add_account: false,
+        earn_flow: false,
+        live_app: false,
+        receive_flow: false,
+        send_flow: false,
+        enableModularization: false,
+      },
+    },
+  },
+});
 
 let testServerIsRunning = false;
 

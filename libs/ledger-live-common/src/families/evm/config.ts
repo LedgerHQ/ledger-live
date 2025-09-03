@@ -522,7 +522,7 @@ const evmConfig: CurrencyLiveConfigDefinition = {
       },
       explorer: {
         type: "blockscout",
-        uri: "https://api.routescan.io/v2/network/mainnet/evm/1088/etherscan/api",
+        uri: "https://andromeda-explorer.metis.io/api",
       },
       showNfts: false,
     },

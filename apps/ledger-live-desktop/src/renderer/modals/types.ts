@@ -61,7 +61,6 @@ export type GlobalModalData = {
   MODAL_CREATE_LOCAL_APP: {
     manifest?: LiveAppManifest;
   };
-  MODAL_EXPORT_ACCOUNTS: undefined;
   MODAL_EXPORT_OPERATIONS: undefined;
   MODAL_START_STAKE: ModalStartStakeProps;
   MODAL_SIGN_TRANSACTION: SignTransactionData;

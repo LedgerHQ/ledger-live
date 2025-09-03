@@ -8,8 +8,10 @@ import {
 } from "react-native-reanimated";
 import { ModularDrawerStep } from "../types";
 
+const isTestEnv = typeof jest !== "undefined" || process.env.JEST_WORKER_ID !== undefined;
+
 const TRANSITION_CONFIG = {
-  duration: 250,
+  duration: isTestEnv ? 0 : 250,
   easing: Easing.bezier(0.17, 0.84, 0.44, 1),
 };
 
@@ -143,7 +145,6 @@ const useScreenTransition = (currentStep: ModularDrawerStep) => {
         const newSteps = [...previousSteps, newStep];
 
         animateStepIn(newStep);
-
         previousSteps.forEach(oldStep => {
           if (oldStep !== newStep) {
             animateStepOut(oldStep);

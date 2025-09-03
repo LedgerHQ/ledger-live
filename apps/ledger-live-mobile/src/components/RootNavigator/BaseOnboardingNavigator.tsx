@@ -8,14 +8,13 @@ import PairDevices from "~/screens/PairDevices";
 import EditDeviceName from "~/screens/EditDeviceName";
 import OnboardingNavigator from "./OnboardingNavigator";
 import { SyncOnboardingNavigator } from "./SyncOnboardingNavigator";
-import ImportAccountsNavigator from "./ImportAccountsNavigator";
 import PasswordAddFlowNavigator from "./PasswordAddFlowNavigator";
 import PasswordModifyFlowNavigator from "./PasswordModifyFlowNavigator";
 import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
 import Question from "~/icons/Question";
 import BuyDeviceNavigator from "./BuyDeviceNavigator";
 import { BaseOnboardingNavigatorParamList } from "./types/BaseOnboardingNavigator";
-import { RootComposite, StackNavigatorProps } from "./types/helpers";
+import { StackNavigatorProps } from "./types/helpers";
 import { BaseNavigatorStackParamList } from "./types/BaseNavigator";
 import { NavigationHeaderBackButton } from "../NavigationHeaderBackButton";
 import WalletSyncNavigator from "LLM/features/WalletSync/WalletSyncNavigator";
@@ -28,9 +27,9 @@ const hitSlop = {
   top: 10,
 };
 
-type ErrorHeaderInfoNavigatorProps = RootComposite<
-  | StackNavigatorProps<BaseNavigatorStackParamList, ScreenName.PairDevices>
-  | StackNavigatorProps<BaseOnboardingNavigatorParamList, ScreenName.PairDevices>
+type ErrorHeaderInfoNavigatorProps = StackNavigatorProps<
+  BaseNavigatorStackParamList,
+  ScreenName.PairDevices
 >;
 
 export const ErrorHeaderInfo = ({ route, navigation }: ErrorHeaderInfoNavigatorProps) => {
@@ -69,7 +68,6 @@ export default function BaseOnboardingNavigator() {
     >
       <Stack.Screen name={NavigatorName.Onboarding} component={OnboardingNavigator} />
       <Stack.Screen name={NavigatorName.SyncOnboarding} component={SyncOnboardingNavigator} />
-      <Stack.Screen name={NavigatorName.ImportAccounts} component={ImportAccountsNavigator} />
       <Stack.Screen
         name={NavigatorName.BuyDevice}
         component={BuyDeviceNavigator}

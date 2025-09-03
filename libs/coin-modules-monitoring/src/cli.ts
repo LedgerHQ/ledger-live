@@ -18,4 +18,21 @@ const monitoredCurrencies = filteredCurrencies.filter(c => {
   return !currency.skip;
 });
 
-run(monitoredCurrencies).then(console.table).catch(console.error);
+if (!monitoredCurrencies.length) {
+  console.log("No currencies to monitor. Exit now.");
+  process.exit(0);
+}
+
+run(monitoredCurrencies)
+  .then(result => {
+    if (!result.entries.length) {
+      console.log("No resulted entries. Exit now.");
+    } else {
+      console.table(result.entries);
+    }
+    process.exit(result.failed ? 1 : 0);
+  })
+  .catch(error => {
+    console.error(error);
+    process.exit(1);
+  });

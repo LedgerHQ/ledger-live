@@ -1,4 +1,4 @@
-export type AppInfosType = AppInfos;
+export type SpeculosAppType = AppInfos;
 
 export class AppInfos {
   constructor(public readonly name: string) {}

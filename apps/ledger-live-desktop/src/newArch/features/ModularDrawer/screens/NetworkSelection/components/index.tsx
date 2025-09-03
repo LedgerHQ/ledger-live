@@ -10,6 +10,7 @@ import { CurrenciesByProviderId } from "@ledgerhq/live-common/deposit/type";
 import { Observable } from "rxjs";
 import { WalletAPIAccount } from "@ledgerhq/live-common/wallet-api/types";
 import orderBy from "lodash/orderBy";
+import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 
 type SelectNetworkProps = {
   networks?: CryptoOrTokenCurrency[];
@@ -33,6 +34,7 @@ export const SelectNetwork = ({
   accounts$,
 }: SelectNetworkProps) => {
   const { trackModularDrawerEvent } = useModularDrawerAnalytics();
+  const featureModularDrawerBackendData = useFeature("lldModularDrawerBackendData");
 
   if (!networks || networks.length === 0 || !selectedAssetId) {
     return null;
@@ -47,7 +49,9 @@ export const SelectNetwork = ({
 
   const orderedNetworks = orderBy(networks, ["name"]);
 
-  const formattedNetworks = transformNetworks(orderedNetworks);
+  const formattedNetworks = transformNetworks(
+    featureModularDrawerBackendData?.enabled ? networks : orderedNetworks,
+  );
 
   const onClick = (networkId: string) => {
     const network = networks.find(({ id }) => id === networkId);

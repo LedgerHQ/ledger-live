@@ -1,7 +1,7 @@
 import React, { useCallback, useMemo } from "react";
 import styled from "styled-components";
 import { Trans } from "react-i18next";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import InfoCircle from "~/renderer/icons/InfoCircle";
 import TriangleWarning from "~/renderer/icons/TriangleWarning";
 import LinkWithExternalIcon from "~/renderer/components/LinkWithExternalIcon";
@@ -17,6 +17,7 @@ import { urls } from "~/config/urls";
 import { useDateFormatted } from "~/renderer/hooks/useDateFormatter";
 import LogContentCardWrapper from "LLD/features/DynamicContent/components/LogContentCardWrapper";
 import { LNSUpsellBanner } from "LLD/features/LNSUpsell";
+import { languageSelector } from "~/renderer/reducers/settings";
 
 const DateRowContainer = styled.div`
   padding: 4px 16px;
@@ -86,7 +87,8 @@ const DateLabel = styled(Text).attrs({
 const dateFull: Intl.DateTimeFormatOptions = { dateStyle: "full" };
 
 function DateRow({ date }: DateRowProps) {
-  const txt = useDateFormatted(date, dateFull);
+  const language = useSelector(languageSelector);
+  const txt = useDateFormatted(date, dateFull, language);
   return (
     <DateRowContainer>
       <DateLabel>{txt}</DateLabel>

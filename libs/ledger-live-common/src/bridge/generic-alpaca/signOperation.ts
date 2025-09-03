@@ -13,6 +13,7 @@ import { FeeNotLoaded } from "@ledgerhq/errors";
 import { Result } from "@ledgerhq/coin-framework/derivation";
 import { MapMemo, TransactionIntent } from "@ledgerhq/coin-framework/api/types";
 import { StellarMemo } from "@ledgerhq/coin-stellar/types/bridge";
+import { log } from "@ledgerhq/logs";
 import BigNumber from "bignumber.js";
 
 /**
@@ -94,7 +95,6 @@ export const genericSignOperation =
           const draftTransaction = {
             recipient: transaction.recipient,
             amount: transaction.amount ?? 0,
-            fees: fees,
             useAllAmount: !!transaction.useAllAmount,
             assetReference: transaction?.["assetReference"] || "",
             assetOwner: transaction?.["assetOwner"] || "",
@@ -102,6 +102,7 @@ export const genericSignOperation =
           };
           const { amount } = await getAlpacaApi(network, kind).validateIntent(
             transactionToIntent(account, draftTransaction),
+            { value: fees },
           );
           transaction.amount = new BigNumber(amount.toString());
         }
@@ -109,7 +110,7 @@ export const genericSignOperation =
           const derivationPath = account.freshAddressPath;
           const { publicKey } = (await signer.getAddress(derivationPath)) as Result;
 
-          let transactionIntent = transactionToIntent(account, { ...transaction, fees });
+          let transactionIntent = transactionToIntent(account, { ...transaction });
           transactionIntent.senderPublicKey = publicKey;
 
           // Enrich with memo and asset information
@@ -124,6 +125,7 @@ export const genericSignOperation =
           /* Craft unsigned blob via Alpaca */
           const unsigned: string = await getAlpacaApi(network, kind).craftTransaction(
             transactionIntent,
+            { value: fees },
           );
 
           /* Notify UI that the device is now showing the tx */
@@ -144,7 +146,9 @@ export const genericSignOperation =
           signedInfo.publicKey,
         );
         const operation = buildOptimisticOperation(account, transaction, signedInfo.sequence);
-
+        if (!operation.id) {
+          log("Generic alpaca", "buildOptimisticOperation", operation);
+        }
         // NOTE: we set the transactionSequenceNumber before on the operation
         // now that we create it in craftTransaction, we might need to return it back from craftTransaction also
         o.next({

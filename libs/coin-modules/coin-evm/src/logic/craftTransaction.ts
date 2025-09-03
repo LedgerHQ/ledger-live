@@ -1,11 +1,11 @@
 import { FeeEstimation, TransactionIntent } from "@ledgerhq/coin-framework/api/types";
-import { ethers } from "ethers";
+import { Transaction, TransactionLike } from "ethers";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import BigNumber from "bignumber.js";
-import { TransactionTypes } from "ethers/lib/utils";
-import { isNative } from "../types";
+import { isNative, TransactionTypes } from "../types";
 import { getNodeApi } from "../network/node";
 import { getErc20Data, getTransactionType } from "./common";
+import { getSequence } from "./getSequence";
 
 export async function craftTransaction(
   currency: CryptoCurrency,
@@ -22,7 +22,7 @@ export async function craftTransaction(
   const transactionType = getTransactionType(type);
   const node = getNodeApi(currency);
   const to = isNative(asset) ? recipient : (asset?.assetReference as string);
-  const nonce = await node.getTransactionCount(currency, sender);
+  const nonce = await getSequence(currency, sender);
   const data = isNative(asset) ? Buffer.from([]) : getErc20Data(recipient, amount);
   const value = isNative(asset) ? amount : 0n;
   const chainId = currency.ethereumLikeInfo?.chainId ?? 0;
@@ -32,20 +32,18 @@ export async function craftTransaction(
   );
   const fee = await node.getFeeData(currency, { type: transactionType });
 
-  const unsignedTransaction: ethers.utils.UnsignedTransaction = {
+  const unsignedTransaction: TransactionLike = {
     type: transactionType,
     to,
     nonce,
-    gasLimit: ethers.BigNumber.from(gasLimit.toFixed(0)),
-    data,
+    gasLimit: BigInt(gasLimit.toFixed(0)),
+    data: "0x" + data.toString("hex"),
     value,
     chainId,
-    ...(fee.gasPrice ? { gasPrice: ethers.BigNumber.from(fee.gasPrice.toFixed(0)) } : {}),
-    ...(fee.maxFeePerGas
-      ? { maxFeePerGas: ethers.BigNumber.from(fee.maxFeePerGas.toFixed(0)) }
-      : {}),
+    ...(fee.gasPrice ? { gasPrice: BigInt(fee.gasPrice.toFixed(0)) } : {}),
+    ...(fee.maxFeePerGas ? { maxFeePerGas: BigInt(fee.maxFeePerGas.toFixed(0)) } : {}),
     ...(fee.maxPriorityFeePerGas
-      ? { maxPriorityFeePerGas: ethers.BigNumber.from(fee.maxPriorityFeePerGas.toFixed(0)) }
+      ? { maxPriorityFeePerGas: BigInt(fee.maxPriorityFeePerGas.toFixed(0)) }
       : {}),
   };
 
@@ -65,5 +63,5 @@ export async function craftTransaction(
     unsignedTransaction.maxPriorityFeePerGas = customFees.parameters.maxPriorityFeePerGas;
   }
 
-  return ethers.utils.serializeTransaction(unsignedTransaction);
+  return Transaction.from(unsignedTransaction).unsignedSerialized;
 }

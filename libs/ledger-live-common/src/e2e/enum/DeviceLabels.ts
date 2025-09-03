@@ -6,9 +6,9 @@ export enum DeviceLabels {
   SIGN = "Sign",
   APPROVE = "Approve",
   ACCEPT = "Accept",
+  ACCEPT_RISK = "Accept risk",
   TRANSFER = "Transfer",
   RECIPIENT = "Recipient",
-  PUBKEY = "Pubkey",
   DEST = "Dest",
   CAPS_APPROVE = "APPROVE",
   CAPS_REJECT = "REJECT",
@@ -53,4 +53,6 @@ export enum DeviceLabels {
   VERIFY_BSC = "Verify BSC",
   SIGN_TRANSACTION = "Sign transaction",
   VERIFY_POLYGON = "Verify Polygon",
+  VERIFY_SOLANA_ADDRESS = "Verify Solana address",
+  REVIEW_TRANSACTION = "Review transaction",
 }

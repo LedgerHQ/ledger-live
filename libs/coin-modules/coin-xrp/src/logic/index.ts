@@ -7,7 +7,7 @@ export { getBalance } from "./getBalance";
 export { getAccountInfo } from "./getAccountInfo";
 export { lastBlock } from "./lastBlock";
 export { listOperations } from "./listOperations";
-export { getTransactionStatus } from "./getTransactionStatus";
+export { validateIntent } from "./validateIntent";
 export { RIPPLE_EPOCH, cachedRecipientIsNew, getNextValidSequence } from "./utils";
 
 export { parseAPIValue } from "./common";

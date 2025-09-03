@@ -8,11 +8,13 @@ import {
   SuiClient,
   SuiHTTPTransport,
   SuiTransactionBlockResponse,
+  SuiTransaction,
+  SuiTransactionBlockKind,
+  TransactionEffects,
   SuiTransactionBlockResponseOptions,
   DelegatedStake,
   StakeObject,
   TransactionBlockData,
-  TransactionEffects,
 } from "@mysten/sui/client";
 import { Transaction } from "@mysten/sui/transactions";
 import { BigNumber } from "bignumber.js";
@@ -22,6 +24,7 @@ import type {
   BlockTransaction,
   BlockOperation,
   Operation as Op,
+  Page,
   Stake,
   StakeState,
   AssetInfo,
@@ -31,15 +34,16 @@ import uniqBy from "lodash/unionBy";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { log } from "@ledgerhq/logs";
 import { makeLRUCache, minutes } from "@ledgerhq/live-network/cache";
-import type { Transaction as TransactionType } from "../types";
-import type { CreateExtrinsicArg } from "../logic/craftTransaction";
+import type { Transaction as TransactionType, SuiValidator, CreateExtrinsicArg } from "../types";
 import { ensureAddressFormat } from "../utils";
 import coinConfig from "../config";
 import { getEnv } from "@ledgerhq/live-env";
-
-type AsyncApiFunction<T> = (api: SuiClient) => Promise<T>;
+import { SUI_SYSTEM_STATE_OBJECT_ID } from "@mysten/sui/utils";
+import { getCurrentSuiPreloadData } from "../bridge/preload";
+import { ONE_SUI } from "../constants";
 
 const apiMap: Record<string, SuiClient> = {};
+type AsyncApiFunction<T> = (api: SuiClient) => Promise<T>;
 
 export const TRANSACTIONS_LIMIT_PER_QUERY = 50;
 export const TRANSACTIONS_LIMIT = 300;
@@ -58,10 +62,12 @@ type GenericInput<T> = T extends (...args: infer K) => unknown ? K : never;
 type Inputs = GenericInput<typeof fetch>;
 
 const fetcher = (url: Inputs[0], options: Inputs[1], retry = 3): Promise<Response> => {
+  const version = getEnv("LEDGER_CLIENT_VERSION") || "";
+  const isCI = version.includes("ll-ci") || version === "";
   if (options) {
     options.headers = {
       ...options.headers,
-      "X-Ledger-Client-Version": getEnv("LEDGER_CLIENT_VERSION"),
+      "X-Ledger-Client-Version": isCI ? "lld/2.124.0-dev" : version, // for integration cli tests
     };
   }
   if (retry === 1) return fetch(url, options);
@@ -96,6 +102,33 @@ export const getAllBalancesCached = makeLRUCache(
   (owner: string) => owner,
   minutes(1),
 );
+function isStaking(block?: SuiTransactionBlockKind): block is {
+  inputs: SuiCallArg[];
+  kind: "ProgrammableTransaction";
+  transactions: SuiTransaction[];
+} {
+  if (!block) return false;
+  if (block.kind === "ProgrammableTransaction") {
+    const move = block.transactions.find(item => "MoveCall" in item) as any;
+    return move?.MoveCall.function === "request_add_stake";
+  }
+  return false;
+}
+
+function isUnstaking(block?: SuiTransactionBlockKind): block is {
+  inputs: SuiCallArg[];
+  kind: "ProgrammableTransaction";
+  transactions: SuiTransaction[];
+} {
+  if (!block) return false;
+  if (block.kind === "ProgrammableTransaction") {
+    const move = block.transactions.find(
+      item => "MoveCall" in item && item["MoveCall"].function === "request_withdraw_stake",
+    ) as any;
+    return Boolean(move);
+  }
+  return false;
+}
 
 /**
  * Get account balance (native and tokens)
@@ -119,8 +152,20 @@ export function isSender(addr: string, transaction?: TransactionBlockData): bool
 /**
  * Map transaction to an Operation Type
  */
-export function getOperationType(addr: string, transaction?: TransactionBlockData): OperationType {
-  return isSender(addr, transaction) ? "OUT" : "IN";
+export function getOperationType(
+  addr: string,
+  { transaction }: SuiTransactionBlockResponse,
+): OperationType {
+  if (!isSender(addr, transaction?.data)) {
+    return "IN";
+  }
+  if (isStaking(transaction?.data.transaction)) {
+    return "DELEGATE";
+  }
+  if (isUnstaking(transaction?.data.transaction)) {
+    return "UNDELEGATE";
+  }
+  return "OUT";
 }
 
 /**
@@ -134,14 +179,17 @@ export const getOperationSenders = (transaction?: TransactionBlockData): string[
  * Extract recipients from transaction
  */
 export const getOperationRecipients = (transaction?: TransactionBlockData): string[] => {
-  if (transaction?.transaction.kind === "ProgrammableTransaction") {
-    if (!transaction?.transaction?.inputs) return [];
+  if (!transaction) return [];
+
+  if (transaction.transaction.kind === "ProgrammableTransaction") {
+    if (!transaction.transaction.inputs) return [];
     const recipients: string[] = [];
     transaction.transaction.inputs.forEach((input: SuiCallArg) => {
       if ("valueType" in input && input.valueType === "address") {
         recipients.push(String(input.value));
       }
     });
+    if (isUnstaking(transaction.transaction) || isStaking(transaction.transaction)) return [];
     return recipients;
   }
   return [];
@@ -157,6 +205,14 @@ export const getOperationAmount = (
 ): BigNumber => {
   let amount = new BigNumber(0);
   if (!transaction?.balanceChanges) return amount;
+  if (
+    isStaking(transaction.transaction?.data.transaction) ||
+    isUnstaking(transaction.transaction?.data.transaction)
+  ) {
+    const balanceChange = transaction.balanceChanges[0];
+    return amount.minus(balanceChange?.amount || 0);
+  }
+
   for (const balanceChange of transaction.balanceChanges) {
     if (
       typeof balanceChange.owner !== "string" &&
@@ -186,12 +242,50 @@ export const getOperationFee = (transaction: SuiTransactionBlockResponse): BigNu
   return computationCost.plus(storageCost).minus(storageRebate);
 };
 
+export const getOperationExtra = (digest: string): Promise<Record<string, string>> =>
+  withApi(async api => {
+    const response = await api.getTransactionBlock({
+      digest,
+      options: {
+        showInput: true,
+        showBalanceChanges: true,
+        showEffects: true,
+        showEvents: true,
+      },
+    });
+    const tx = response.transaction?.data?.transaction;
+    if (isStaking(tx)) {
+      const inputs = tx.inputs;
+      const pure = inputs.filter(x => x.type === "pure") as { valueType: string; value: string }[];
+      const amount = pure.find(x => x.valueType === "u64")?.value as string;
+      const address = pure.find(x => x.valueType === "address")?.value as string;
+      const name = getCurrentSuiPreloadData().validators.find(x => x.suiAddress === address)?.name;
+      return { amount, address, name: name || "" };
+    }
+
+    if (isUnstaking(response.transaction?.data?.transaction)) {
+      const { principal_amount: amount, validator_address: address } = response.events?.find(
+        e => e.type === "0x3::validator::UnstakingRequestEvent",
+      )?.parsedJson as Record<string, string>;
+      const name = getCurrentSuiPreloadData().validators.find(x => x.suiAddress === address)?.name;
+
+      return { amount, address, name: name || "" };
+    }
+
+    return {};
+  });
+
 /**
  * Extract date from transaction
  */
 export const getOperationDate = (transaction: SuiTransactionBlockResponse): Date => {
   return new Date(parseInt(transaction.timestampMs!));
 };
+
+export const getStakesRaw = (owner: string) =>
+  withApi(async api => {
+    return api.getStakes({ owner });
+  });
 
 /**
  * Extract operation coin type from transaction
@@ -217,7 +311,7 @@ export function transactionToOperation(
   address: string,
   transaction: SuiTransactionBlockResponse,
 ): Operation {
-  const type = getOperationType(address, transaction.transaction?.data);
+  const type = getOperationType(address, transaction);
 
   const coinType = getOperationCoinType(transaction);
   const hash = transaction.digest;
@@ -225,6 +319,7 @@ export function transactionToOperation(
   return {
     id: encodeOperationId(accountId, hash, type),
     accountId,
+    // warning this is false:
     blockHash: hash,
     blockHeight: BLOCK_HEIGHT,
     date: getOperationDate(transaction),
@@ -232,7 +327,7 @@ export function transactionToOperation(
       coinType,
     },
     fee: getOperationFee(transaction),
-    hasFailed: transaction.effects?.status.status != "success",
+    hasFailed: transaction.effects?.status.status !== "success",
     hash,
     recipients: getOperationRecipients(transaction.transaction?.data),
     senders: getOperationSenders(transaction.transaction?.data),
@@ -242,7 +337,7 @@ export function transactionToOperation(
 }
 
 export function transactionToOp(address: string, transaction: SuiTransactionBlockResponse): Op {
-  const type = getOperationType(address, transaction.transaction?.data);
+  const type = getOperationType(address, transaction);
   const coinType = getOperationCoinType(transaction);
   const hash = transaction.digest;
   return {
@@ -254,7 +349,6 @@ export function transactionToOp(address: string, transaction: SuiTransactionBloc
       block: {
         // agreed to return bigint
         height: BigInt(transaction.checkpoint || "") as unknown as number,
-        hash,
         time: getOperationDate(transaction),
       },
     },
@@ -278,7 +372,7 @@ export function toBlockInfo(checkpoint: Checkpoint): BlockInfo {
     time: new Date(parseInt(checkpoint.timestampMs)),
   };
 
-  if (typeof checkpoint.previousDigest == "string")
+  if (typeof checkpoint.previousDigest === "string")
     return {
       ...info,
       parent: {
@@ -303,7 +397,7 @@ export function toBlockInfo(checkpoint: Checkpoint): BlockInfo {
 export function toBlockTransaction(transaction: SuiTransactionBlockResponse): BlockTransaction {
   return {
     hash: transaction.digest,
-    failed: transaction.effects?.status.status != "success",
+    failed: transaction.effects?.status.status !== "success",
     operations: transaction.balanceChanges?.flatMap(toBlockOperation) || [],
     fees: BigInt(getOperationFee(transaction).toString()),
     feesPayer: transaction.transaction?.data.sender || "",
@@ -316,7 +410,7 @@ export function toBlockTransaction(transaction: SuiTransactionBlockResponse): Bl
  * @param change balance change
  */
 export function toBlockOperation(change: BalanceChange): BlockOperation[] {
-  if (typeof change.owner == "string" || !("AddressOwner" in change.owner)) return [];
+  if (typeof change.owner === "string" || !("AddressOwner" in change.owner)) return [];
   return [
     {
       type: "transfer",
@@ -356,14 +450,22 @@ export const getOperations = async (
   accountId: string,
   addr: string,
   cursor?: QueryTransactionBlocksParams["cursor"],
+  order?: "asc" | "desc",
 ): Promise<Operation[]> =>
   withApi(async api => {
-    const sentOps = await loadOperations({
+    let rpcOrder: "ascending" | "descending";
+    if (order) {
+      rpcOrder = order === "asc" ? "ascending" : "descending";
+    } else {
+      rpcOrder = cursor ? "ascending" : "descending";
+    }
+
+    const sendOps = await loadOperations({
       api,
       addr,
       type: "OUT",
       cursor,
-      order: cursor ? "ascending" : "descending",
+      order: rpcOrder,
       operations: [],
     });
     const receivedOps = await loadOperations({
@@ -371,38 +473,51 @@ export const getOperations = async (
       addr,
       type: "IN",
       cursor,
-      order: cursor ? "ascending" : "descending",
+      order: rpcOrder,
       operations: [],
     });
-    const rawTransactions = filterOperations(sentOps, receivedOps, cursor);
+    // When restoring state (no cursor provided) we filter out extra operations to maintain correct chronological order
+    const rawTransactions = filterOperations(sendOps, receivedOps, rpcOrder, !cursor);
 
-    return rawTransactions.map(transaction => transactionToOperation(accountId, addr, transaction));
+    return rawTransactions.operations.map(transaction =>
+      transactionToOperation(accountId, addr, transaction),
+    );
   });
 
 export const filterOperations = (
-  operationList1: SuiTransactionBlockResponse[],
-  operationList2: SuiTransactionBlockResponse[],
-  cursor: string | null | undefined,
-) => {
-  let filterTimestamp = 0;
-
-  // When restoring state (no cursor provided) and we've reached the limit for either sent or received operations,
+  sendOps: LoadOperationResponse,
+  receiveOps: LoadOperationResponse,
+  order: "ascending" | "descending",
+  shouldFilter: boolean = true,
+): LoadOperationResponse => {
+  let filterTimestamp: number = 0;
+  let nextCursor: string | null | undefined = undefined;
+  // When we've reached the limit for either sent or received operations,
   // we filter out extra operations to maintain correct chronological order
   if (
-    !cursor &&
-    operationList1.length &&
-    operationList2.length &&
-    (operationList1.length === TRANSACTIONS_LIMIT || operationList2.length === TRANSACTIONS_LIMIT)
+    shouldFilter &&
+    sendOps.operations.length &&
+    receiveOps.operations.length &&
+    (sendOps.operations.length === TRANSACTIONS_LIMIT ||
+      receiveOps.operations.length === TRANSACTIONS_LIMIT)
   ) {
-    const aTime = operationList1[operationList1.length - 1].timestampMs ?? 0;
-    const bTime = operationList2[operationList2.length - 1].timestampMs ?? 0;
-    filterTimestamp = Math.max(Number(aTime), Number(bTime));
+    const sendTime = Number(sendOps.operations[sendOps.operations.length - 1].timestampMs ?? 0);
+    const receiveTime = Number(
+      receiveOps.operations[receiveOps.operations.length - 1].timestampMs ?? 0,
+    );
+    if (sendTime >= receiveTime) {
+      nextCursor = sendOps.cursor;
+      filterTimestamp = sendTime;
+    } else {
+      nextCursor = receiveOps.cursor;
+      filterTimestamp = receiveTime;
+    }
   }
-  const result = [...operationList1, ...operationList2]
+  const result = [...sendOps.operations, ...receiveOps.operations]
     .sort((a, b) => Number(b.timestampMs) - Number(a.timestampMs))
     .filter(op => Number(op.timestampMs) >= filterTimestamp);
 
-  return uniqBy(result, tx => tx.digest);
+  return { operations: uniqBy(result, tx => tx.digest), cursor: nextCursor };
 };
 
 /**
@@ -412,14 +527,22 @@ export const getListOperations = async (
   addr: string,
   cursor: QueryTransactionBlocksParams["cursor"] = null,
   withApiImpl: typeof withApi = withApi,
-): Promise<Op[]> =>
+  order?: "asc" | "desc",
+): Promise<Page<Op>> =>
   withApiImpl(async api => {
+    let rpcOrder: "ascending" | "descending";
+    if (order) {
+      rpcOrder = order === "asc" ? "ascending" : "descending";
+    } else {
+      rpcOrder = cursor ? "ascending" : "descending";
+    }
+
     const opsOut = await loadOperations({
       api,
       addr,
       type: "OUT",
       cursor,
-      order: cursor ? "ascending" : "descending",
+      order: rpcOrder,
       operations: [],
     });
     const opsIn = await loadOperations({
@@ -427,12 +550,15 @@ export const getListOperations = async (
       addr,
       type: "IN",
       cursor,
-      order: cursor ? "ascending" : "descending",
+      order: rpcOrder,
       operations: [],
     });
-    const list = filterOperations(opsIn, opsOut, cursor);
+    const list = filterOperations(opsIn, opsOut, rpcOrder, true);
 
-    return list.map(t => transactionToOp(addr, t));
+    return {
+      items: list.operations.map(t => transactionToOp(addr, t)),
+      next: list.cursor ?? undefined,
+    };
   });
 
 /**
@@ -537,27 +663,65 @@ export const createTransaction = async (address: string, transaction: CreateExtr
   withApi(async api => {
     const tx = new Transaction();
     tx.setSender(ensureAddressFormat(address));
+    const { mode, amount } = transaction;
+    switch (mode) {
+      case "delegate": {
+        const coins = tx.splitCoins(tx.gas, [amount.toNumber()]);
+        tx.moveCall({
+          target: "0x3::sui_system::request_add_stake",
+          arguments: [
+            tx.object(SUI_SYSTEM_STATE_OBJECT_ID),
+            coins,
+            tx.pure.address(transaction.recipient),
+          ],
+        });
 
-    if (transaction.coinType !== DEFAULT_COIN_TYPE) {
-      const requiredAmount = transaction.amount.toNumber();
-
-      const coins = await getCoinsForAmount(api, address, transaction.coinType, requiredAmount);
-
-      if (coins.length === 0) {
-        throw new Error(`No coins found for type ${transaction.coinType}`);
+        tx.setGasBudgetIfNotSet(ONE_SUI / 10);
+        break;
       }
+      case "undelegate": {
+        if (transaction.useAllAmount) {
+          tx.moveCall({
+            target: "0x3::sui_system::request_withdraw_stake",
+            arguments: [tx.object(SUI_SYSTEM_STATE_OBJECT_ID), tx.object(transaction.stakedSuiId!)],
+          });
+        } else {
+          const res = tx.moveCall({
+            target: "0x3::staking_pool::split",
+            arguments: [tx.object(transaction.stakedSuiId!), tx.pure.u64(amount.toString())],
+          });
+          tx.moveCall({
+            target: "0x3::sui_system::request_withdraw_stake",
+            arguments: [tx.object(SUI_SYSTEM_STATE_OBJECT_ID), res],
+          });
+        }
 
-      const coinObjects = coins.map(coin => tx.object(coin.coinObjectId));
-
-      if (coinObjects.length > 1) {
-        tx.mergeCoins(coinObjects[0], coinObjects.slice(1));
+        tx.setGasBudgetIfNotSet(ONE_SUI / 10);
+        break;
       }
+      default: {
+        if (transaction.coinType !== DEFAULT_COIN_TYPE) {
+          const requiredAmount = transaction.amount.toNumber();
 
-      const [coin] = tx.splitCoins(coinObjects[0], [transaction.amount.toNumber()]);
-      tx.transferObjects([coin], transaction.recipient);
-    } else {
-      const [coin] = tx.splitCoins(tx.gas, [transaction.amount.toNumber()]);
-      tx.transferObjects([coin], transaction.recipient);
+          const coins = await getCoinsForAmount(api, address, transaction.coinType, requiredAmount);
+
+          if (coins.length === 0) {
+            throw new Error(`No coins found for type ${transaction.coinType}`);
+          }
+
+          const coinObjects = coins.map(coin => tx.object(coin.coinObjectId));
+
+          if (coinObjects.length > 1) {
+            tx.mergeCoins(coinObjects[0], coinObjects.slice(1));
+          }
+
+          const [coin] = tx.splitCoins(coinObjects[0], [transaction.amount.toNumber()]);
+          tx.transferObjects([coin], transaction.recipient);
+        } else {
+          const [coin] = tx.splitCoins(tx.gas, [transaction.amount.toNumber()]);
+          tx.transferObjects([coin], transaction.recipient);
+        }
+      }
     }
 
     return tx.build({ client: api });
@@ -584,6 +748,11 @@ export const executeTransactionBlock = async (params: ExecuteTransactionBlockPar
     return api.executeTransactionBlock(params);
   });
 
+type LoadOperationResponse = {
+  operations: SuiTransactionBlockResponse[];
+  cursor?: QueryTransactionBlocksParams["cursor"];
+};
+
 /**
  * Fetch operations for a specific address and type until the limit is reached
  */
@@ -599,10 +768,10 @@ export const loadOperations = async ({
   operations: PaginatedTransactionResponse["data"];
   order: "ascending" | "descending";
   cursor?: QueryTransactionBlocksParams["cursor"];
-}): Promise<PaginatedTransactionResponse["data"]> => {
+}): Promise<LoadOperationResponse> => {
   try {
     if (order === "descending" && operations.length >= TRANSACTIONS_LIMIT) {
-      return operations;
+      return { operations, cursor };
     }
 
     const { data, nextCursor, hasNextPage } = await queryTransactions({
@@ -613,7 +782,7 @@ export const loadOperations = async ({
 
     operations.push(...data);
     if (!hasNextPage) {
-      return operations;
+      return { operations: operations, cursor: nextCursor };
     }
 
     await loadOperations({ ...params, cursor: nextCursor, operations, order });
@@ -628,7 +797,7 @@ export const loadOperations = async ({
     }
   }
 
-  return operations;
+  return { operations: operations, cursor: cursor };
 };
 
 /**
@@ -726,3 +895,20 @@ export const toStakeAmounts = (stake: StakeObject): { deposited: bigint; rewarde
       return { deposited: BigInt(stake.principal), rewarded: 0n }; // note: we lose reward information in unstaked state here
   }
 };
+
+export const getValidators = (): Promise<SuiValidator[]> =>
+  withApi(async api => {
+    const [{ activeValidators }, { apys }] = await Promise.all([
+      api.getLatestSuiSystemState(),
+      api.getValidatorsApy(),
+    ]);
+    const hash = apys.reduce(
+      (acc, item) => {
+        acc[item.address] = item.apy;
+        return acc;
+      },
+      {} as Record<string, number>,
+    );
+
+    return activeValidators.map(item => ({ ...item, apy: hash[item.suiAddress] }));
+  });
