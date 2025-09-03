@@ -559,6 +559,31 @@ jobs:
           allure-results-path: android-test-artifacts
           platform: android
 
+  test-pod-lockfile:
+    name: "Test Pod Lockfile"
+    runs-on: [ ubuntu-22.04 ]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.ref || github.sha }}
+          repository: LedgerHQ/ledger-live
+          persist-credentials: false
+          fetch-depth: 1
+
+      - name: Install CocoaPods
+        run: |
+          gem install cocoapods
+
+      - name: Test Pod Lockfile
+        working-directory: apps/ledger-live-mobile/ios
+        run: |
+          pod install --repo-update
+          if [[ -n $(git status --porcelain Podfile.lock) ]]; then
+            echo "::error::Podfile.lock is out of date. Please run 'pod install' and commit the changes."
+            git diff Podfile.lock
+            exit 1
+          fi
+
   report-bundle-sizes:
     name: "Build Mobile > Report Bundle Sizes"
     runs-on: [ ubuntu-22.04 ]
