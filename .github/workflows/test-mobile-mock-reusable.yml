@@ -158,7 +158,7 @@ jobs:
       macos-specificity-runner-label: ${{ inputs.macos-specificity-runner-label }}
       disable-turbo-cache: ${{ inputs.disable-turbo-cache || false }}
       build-ios-js: true
-      build-ios-native: ${{ needs.determine-builds.outputs.ios_native_exists == 'false' }}
+      build-ios-native: true
       ios-native-cache-key: ${{ needs.determine-builds.outputs.ios_native_key }}
       ios-js-cache-key: ${{ needs.determine-builds.outputs.ios_js_key }}
     secrets: inherit
