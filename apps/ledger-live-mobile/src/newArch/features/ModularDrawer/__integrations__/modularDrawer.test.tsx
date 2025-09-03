@@ -11,7 +11,34 @@ import {
 import { State } from "~/reducers/types";
 import { INITIAL_STATE } from "~/reducers/settings";
 
+import { http, HttpResponse } from "msw";
+import { server } from "@tests/server";
+import { NetInfoStateType, useNetInfo } from "@react-native-community/netinfo";
+
+jest.mock("@react-native-community/netinfo", () => {
+  const mockUseNetInfo = jest.fn(() => ({
+    isConnected: true,
+    isInternetReachable: true,
+    type: "unknown",
+    details: null,
+  }));
+
+  return {
+    NetInfoStateType: {
+      unknown: "unknown",
+    },
+    useNetInfo: mockUseNetInfo,
+  };
+});
+
 describe("ModularDrawer integration", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
   const advanceTimers = () => {
     act(() => {
       jest.advanceTimersByTime(500);
@@ -159,5 +186,31 @@ describe("ModularDrawer integration", () => {
     advanceTimers();
 
     expect(getByText(/Connect Device/i)).toBeVisible();
+  });
+
+  it("should display generic error when a Backend error occurs", async () => {
+    server.use(http.get("https://dada.api.ledger-test.com/v1/assets", () => HttpResponse.error()));
+    const { getByText, user } = render(<ModularDrawerSharedNavigator />);
+
+    await user.press(getByText(WITHOUT_ACCOUNT_SELECTION));
+
+    expect(getByText(/Something went wrong on our end. Please try again later/i)).toBeVisible();
+  });
+
+  it("should display generic error when an internet error occurs", async () => {
+    const { getByText, user } = render(<ModularDrawerSharedNavigator />);
+
+    await user.press(getByText(WITHOUT_ACCOUNT_SELECTION));
+
+    jest.mocked(useNetInfo).mockReturnValue({
+      isConnected: false,
+      isInternetReachable: false,
+      type: NetInfoStateType.none,
+      details: null,
+    });
+
+    advanceTimers();
+
+    expect(getByText(/No internet connection. Please try again/i)).toBeVisible();
   });
 });

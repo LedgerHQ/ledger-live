@@ -7950,7 +7950,13 @@
     "searchPlaceholder": "Search",
     "emptyAssetList": "No assets found",
     "accountCount": "{{count}} account",
-    "accountCount_plural": "{{count}} accounts"
+    "accountCount_plural": "{{count}} accounts",
+    "errors": {
+      "title": "Connection failed",
+      "backend": "Something went wrong on our end. Please try again later",
+      "internet": "No internet connection. Please try again",
+      "cta": "Try again"
+    }
   },
   "swapErrors": {
     "incorrectCommandData": {
