@@ -2,7 +2,7 @@ import BigNumber from "bignumber.js";
 import { SetupServerApi, setupServer } from "msw/node";
 import BlueBirdPromise from "bluebird";
 import { http, HttpResponse, bypass } from "msw";
-import { utils, providers, ethers } from "ethers";
+import { AbiCoder, ethers } from "ethers";
 import { ERC20_ABI, ERC721_ABI, ERC1155_ABI } from "@ledgerhq/coin-evm/abis/index";
 import { safeEncodeEIP55 } from "@ledgerhq/coin-evm/utils";
 import { EvmConfigInfo } from "@ledgerhq/coin-evm/config";
@@ -41,15 +41,17 @@ type TraceTransaction = {
 
 const MAX_BLOCK_RANGE = 1024;
 
-const ERC20Interface = new utils.Interface(ERC20_ABI);
-const ERC721Interface = new utils.Interface(ERC721_ABI);
-const ERC1155Interface = new utils.Interface(ERC1155_ABI);
+const ERC20Interface = new ethers.Interface(ERC20_ABI);
+const ERC721Interface = new ethers.Interface(ERC721_ABI);
+const ERC1155Interface = new ethers.Interface(ERC1155_ABI);
 
 const TRANSFER_EVENTS_TOPICS = {
-  ERC20: ERC20Interface.getEventTopic("Transfer"),
-  ERC721: ERC721Interface.getEventTopic("Transfer"),
-  ERC1155: ERC1155Interface.getEventTopic("TransferSingle"),
+  ERC20: ERC20Interface.getEvent("Transfer")?.topicHash || "",
+  ERC721: ERC721Interface.getEvent("Transfer")?.topicHash || "",
+  ERC1155: ERC1155Interface.getEvent("TransferSingle")?.topicHash || "",
 };
+
+const abiCoder = new AbiCoder();
 
 const explorerEtherscanOperationByAddress: Record<string, Map<string, EtherscanOperation> | null> =
   {};
@@ -98,13 +100,23 @@ export const resetIndexer = () => {
   }
 };
 
-const handleLog = async (log: providers.Log, provider: ethers.providers.StaticJsonRpcProvider) => {
-  const contractDecimals = await provider
-    .call({ to: log.address, data: ERC20Interface.encodeFunctionData("decimals") })
-    .then(res => (!res || res === "0x" ? false : true));
+const handleLog = async (log: ethers.Log, provider: ethers.JsonRpcProvider) => {
+  let hasDecimals = false;
 
-  const isERC20 = log.topics[0] === TRANSFER_EVENTS_TOPICS.ERC20 && contractDecimals;
-  const isERC721 = log.topics[0] === TRANSFER_EVENTS_TOPICS.ERC721 && !contractDecimals;
+  try {
+    const res = await provider.call({
+      to: log.address,
+      data: ERC20Interface.encodeFunctionData("decimals"),
+    });
+    // if call didn’t revert and returned something valid
+    hasDecimals = !!(res && res !== "0x");
+  } catch {
+    // execution reverted → no decimals()
+    hasDecimals = false;
+  }
+
+  const isERC20 = log.topics[0] === TRANSFER_EVENTS_TOPICS.ERC20 && hasDecimals;
+  const isERC721 = log.topics[0] === TRANSFER_EVENTS_TOPICS.ERC721 && !hasDecimals;
   const isERC1155 = log.topics[0] === TRANSFER_EVENTS_TOPICS.ERC1155;
 
   if (isERC20) {
@@ -116,17 +128,14 @@ const handleLog = async (log: providers.Log, provider: ethers.providers.StaticJs
   }
 };
 
-const handleERC20Log = async (
-  log: providers.Log,
-  provider: ethers.providers.StaticJsonRpcProvider,
-) => {
+const handleERC20Log = async (log: ethers.Log, provider: ethers.JsonRpcProvider) => {
   const [name, ticker, decimals, block, tx, receipt] = await Promise.all([
     provider
       .call({ to: log.address, data: ERC20Interface.encodeFunctionData("name") })
-      .then(res => ethers.utils.defaultAbiCoder.decode(["string"], res)[0]),
+      .then(res => abiCoder.decode(["string"], res)[0]),
     provider
       .call({ to: log.address, data: ERC20Interface.encodeFunctionData("symbol") })
-      .then(res => ethers.utils.defaultAbiCoder.decode(["string"], res)[0]),
+      .then(res => abiCoder.decode(["string"], res)[0]),
     provider
       .call({ to: log.address, data: ERC20Interface.encodeFunctionData("decimals") })
       .then(res => new BigNumber(res).toString()),
@@ -135,30 +144,30 @@ const handleERC20Log = async (
     provider.getTransactionReceipt(log.transactionHash),
   ]);
 
-  const from = safeEncodeEIP55(ethers.utils.defaultAbiCoder.decode(["address"], log.topics[1])[0]);
-  const to = safeEncodeEIP55(ethers.utils.defaultAbiCoder.decode(["address"], log.topics[2])[0]);
-  const amount = ethers.BigNumber.from(log.data === "0x" ? 0 : log.data).toString();
+  const from = safeEncodeEIP55(abiCoder.decode(["address"], log.topics[1])[0]);
+  const to = safeEncodeEIP55(abiCoder.decode(["address"], log.topics[2])[0]);
+  const amount = BigInt(log.data === "0x" ? 0 : log.data).toString();
 
   const etherscanErc20Event: EtherscanERC20Event = {
-    blockNumber: block.number.toString(),
-    timeStamp: block.timestamp.toString(),
+    blockNumber: block?.number.toString() || "0",
+    timeStamp: block?.timestamp.toString() || "0",
     hash: log.transactionHash,
-    nonce: tx.nonce.toString(),
-    blockHash: block.hash,
+    nonce: tx?.nonce.toString() || "0",
+    blockHash: block?.hash || "",
     from,
     to,
     value: amount,
     tokenName: name,
     tokenSymbol: ticker,
     tokenDecimal: decimals,
-    transactionIndex: block.transactions.indexOf(log.transactionHash).toString(),
-    gas: tx.gasLimit.toString(),
-    gasPrice: tx.gasPrice?.toString() || "",
-    cumulativeGasUsed: receipt.cumulativeGasUsed.toString(),
+    transactionIndex: block?.transactions.indexOf(log.transactionHash).toString() || "0",
+    gas: tx?.gasLimit.toString() || "0",
+    gasPrice: tx?.gasPrice?.toString() || "",
+    cumulativeGasUsed: receipt?.cumulativeGasUsed.toString() || "0",
     gasUsed: receipt?.gasUsed?.toString() || "0",
-    input: tx.data,
-    confirmations: tx.confirmations.toString(),
-    contractAddress: tx.to!.toLowerCase(),
+    input: tx?.data || "0x",
+    confirmations: tx?.confirmations.toString() || "0",
+    contractAddress: tx?.to!.toLowerCase() || "",
   };
 
   if (!explorerEtherscanERC20EventsByAddress[from]) {
@@ -176,9 +185,10 @@ const handleERC20Log = async (
   if (!explorerLedgerOperationByAddress[to]) {
     explorerLedgerOperationByAddress[to] = new Map<string, LedgerExplorerOperation>();
   }
+  const txHash = tx?.hash;
   const alreadyExistingOperation =
-    explorerLedgerOperationByAddress[from]!.get(tx.hash) ||
-    explorerLedgerOperationByAddress[to]!.get(tx.hash);
+    (txHash && explorerLedgerOperationByAddress[from]!.get(txHash)) ||
+    (txHash && explorerLedgerOperationByAddress[to]!.get(txHash));
   const ledgerOperation: LedgerExplorerOperation = alreadyExistingOperation
     ? {
         ...alreadyExistingOperation,
@@ -193,16 +203,16 @@ const handleERC20Log = async (
       }
     : {
         hash: log.transactionHash,
-        transaction_type: receipt.type,
+        transaction_type: receipt?.type ?? 0,
         nonce: "",
         nonce_value: -1,
-        value: tx.value.toString(),
-        gas: tx.gasLimit.toString(),
-        gas_price: receipt.effectiveGasPrice.toString(),
-        max_fee_per_gas: tx.type === 2 ? tx.maxFeePerGas!.toString() : null,
-        max_priority_fee_per_gas: tx.type === 2 ? tx.maxPriorityFeePerGas!.toString() : null,
-        from: tx.from,
-        to: tx.to!,
+        value: tx?.value.toString() ?? "0",
+        gas: tx?.gasLimit.toString() ?? "0",
+        gas_price: receipt?.gasPrice.toString() ?? "0",
+        max_fee_per_gas: tx?.type === 2 ? tx.maxFeePerGas!.toString() : null,
+        max_priority_fee_per_gas: tx?.type === 2 ? tx.maxPriorityFeePerGas!.toString() : null,
+        from: tx?.from ?? "0x",
+        to: tx?.to ?? "0x0000000000000000000000000000000000000000",
         transfer_events: [
           {
             contract: log.address,
@@ -215,52 +225,49 @@ const handleERC20Log = async (
         erc1155_transfer_events: [],
         approval_events: [],
         actions: [],
-        confirmations: tx.confirmations,
+        confirmations: tx?.confirmations ? await tx.confirmations() : 0,
         input: null,
-        gas_used: receipt.gasUsed.toString(),
-        cumulative_gas_used: receipt.cumulativeGasUsed.toString(),
-        status: receipt.status!,
-        received_at: new Date(block.timestamp * 1000).toISOString(),
+        gas_used: receipt?.gasUsed.toString() ?? "0",
+        cumulative_gas_used: receipt?.cumulativeGasUsed.toString() ?? "0",
+        status: receipt?.status ?? 0,
+        received_at: new Date((block?.timestamp ?? 0) * 1000).toISOString(),
         block: {
           hash: log.blockHash,
           height: log.blockNumber,
-          time: new Date(block.timestamp * 1000).toISOString(),
+          time: new Date((block?.timestamp ?? 0) * 1000).toISOString(),
         },
       };
   explorerLedgerOperationByAddress[from]!.set(ledgerOperation.hash, ledgerOperation);
   explorerLedgerOperationByAddress[to]!.set(ledgerOperation.hash, ledgerOperation);
 };
 
-const handleERC721Log = async (
-  log: providers.Log,
-  provider: ethers.providers.StaticJsonRpcProvider,
-) => {
+const handleERC721Log = async (log: ethers.Log, provider: ethers.JsonRpcProvider) => {
   const [block, tx, receipt] = await Promise.all([
     provider.getBlock(log.blockHash),
     provider.getTransaction(log.transactionHash),
     provider.getTransactionReceipt(log.transactionHash),
   ]);
 
-  const from = safeEncodeEIP55(ethers.utils.defaultAbiCoder.decode(["address"], log.topics[1])[0]);
-  const to = safeEncodeEIP55(ethers.utils.defaultAbiCoder.decode(["address"], log.topics[2])[0]);
-  const tokenID = ethers.utils.defaultAbiCoder.decode(["uint256"], log.topics[3])[0].toString();
+  const from = safeEncodeEIP55(abiCoder.decode(["address"], log.topics[1])[0]);
+  const to = safeEncodeEIP55(abiCoder.decode(["address"], log.topics[2])[0]);
+  const tokenID = abiCoder.decode(["uint256"], log.topics[3])[0].toString();
 
   const erc721Event: EtherscanERC721Event = {
-    blockNumber: block.number.toString(),
-    timeStamp: block.timestamp.toString(),
-    hash: tx.hash,
-    nonce: tx.nonce.toString(),
-    blockHash: block.hash,
+    blockNumber: block?.number.toString() || "0",
+    timeStamp: block?.timestamp.toString() || "0",
+    hash: tx?.hash || "",
+    nonce: tx?.nonce.toString() || "0",
+    blockHash: block?.hash || "",
     from,
     to,
-    transactionIndex: block.transactions.indexOf(log.transactionHash).toString(),
-    gas: tx.gasLimit.toString(),
-    gasPrice: tx.gasPrice?.toString() || "",
-    cumulativeGasUsed: receipt.cumulativeGasUsed.toString(),
+    transactionIndex: block?.transactions.indexOf(log.transactionHash).toString() || "0",
+    gas: tx?.gasLimit.toString() || "0",
+    gasPrice: tx?.gasPrice?.toString() || "",
+    cumulativeGasUsed: receipt?.cumulativeGasUsed.toString() || "0",
     gasUsed: receipt?.gasUsed?.toString() || "0",
-    input: tx.data,
-    confirmations: tx.confirmations.toString(),
-    contractAddress: tx.to!,
+    input: tx?.data || "0x",
+    confirmations: tx?.confirmations.toString() || "0",
+    contractAddress: tx?.to ?? "0x0000000000000000000000000000000000000000",
     tokenID,
     tokenName: "tokenName",
     tokenSymbol: "tokenSymbol",
@@ -282,9 +289,10 @@ const handleERC721Log = async (
   if (!explorerLedgerOperationByAddress[to]) {
     explorerLedgerOperationByAddress[to] = new Map<string, LedgerExplorerOperation>();
   }
+  const txHash = tx?.hash;
   const alreadyExistingOperation =
-    explorerLedgerOperationByAddress[from]!.get(tx.hash) ||
-    explorerLedgerOperationByAddress[to]!.get(tx.hash);
+    (txHash && explorerLedgerOperationByAddress[from]!.get(txHash)) ||
+    (txHash && explorerLedgerOperationByAddress[to]!.get(txHash));
   const ledgerOperation: LedgerExplorerOperation = alreadyExistingOperation
     ? {
         ...alreadyExistingOperation,
@@ -299,16 +307,16 @@ const handleERC721Log = async (
       }
     : {
         hash: log.transactionHash,
-        transaction_type: receipt.type,
+        transaction_type: receipt?.type ?? 0,
         nonce: "",
         nonce_value: -1,
-        value: tx.value.toString(),
-        gas: tx.gasLimit.toString(),
-        gas_price: receipt.effectiveGasPrice.toString(),
-        max_fee_per_gas: tx.type === 2 ? tx.maxFeePerGas!.toString() : null,
-        max_priority_fee_per_gas: tx.type === 2 ? tx.maxPriorityFeePerGas!.toString() : null,
-        from: tx.from,
-        to: tx.to!,
+        value: tx?.value.toString() ?? "0",
+        gas: tx?.gasLimit.toString() ?? "0",
+        gas_price: receipt?.gasPrice.toString() ?? "0",
+        max_fee_per_gas: tx?.type === 2 ? tx?.maxFeePerGas!.toString() : null,
+        max_priority_fee_per_gas: tx?.type === 2 ? tx?.maxPriorityFeePerGas!.toString() : null,
+        from: tx?.from ?? "0x",
+        to: tx?.to ?? "0x0000000000000000000000000000000000000000",
         transfer_events: [],
         erc721_transfer_events: [
           {
@@ -321,16 +329,16 @@ const handleERC721Log = async (
         erc1155_transfer_events: [],
         approval_events: [],
         actions: [],
-        confirmations: tx.confirmations,
+        confirmations: tx?.confirmations ? await tx.confirmations() : 0,
         input: null,
-        gas_used: receipt.gasUsed.toString(),
-        cumulative_gas_used: receipt.cumulativeGasUsed.toString(),
-        status: receipt.status!,
-        received_at: new Date(block.timestamp * 1000).toISOString(),
+        gas_used: receipt?.gasUsed.toString() ?? "0",
+        cumulative_gas_used: receipt?.cumulativeGasUsed.toString() ?? "0",
+        status: receipt?.status ?? 0,
+        received_at: new Date((block?.timestamp ?? 0) * 1000).toISOString(),
         block: {
           hash: log.blockHash,
           height: log.blockNumber,
-          time: new Date(block.timestamp * 1000).toISOString(),
+          time: new Date((block?.timestamp ?? 0) * 1000).toISOString(),
         },
       };
 
@@ -338,42 +346,37 @@ const handleERC721Log = async (
   explorerLedgerOperationByAddress[to]!.set(ledgerOperation.hash, ledgerOperation);
 };
 
-const handleERC1155Log = async (
-  log: providers.Log,
-  provider: ethers.providers.StaticJsonRpcProvider,
-) => {
+const handleERC1155Log = async (log: ethers.Log, provider: ethers.JsonRpcProvider) => {
   const [block, tx, receipt] = await Promise.all([
     provider.getBlock(log.blockHash),
     provider.getTransaction(log.transactionHash),
     provider.getTransactionReceipt(log.transactionHash),
   ]);
 
-  const from = safeEncodeEIP55(ethers.utils.defaultAbiCoder.decode(["address"], log.topics[2])[0]);
-  const to = safeEncodeEIP55(ethers.utils.defaultAbiCoder.decode(["address"], log.topics[3])[0]);
-  const operator = safeEncodeEIP55(
-    ethers.utils.defaultAbiCoder.decode(["address"], log.topics[1])[0],
-  );
+  const from = safeEncodeEIP55(abiCoder.decode(["address"], log.topics[2])[0]);
+  const to = safeEncodeEIP55(abiCoder.decode(["address"], log.topics[3])[0]);
+  const operator = safeEncodeEIP55(abiCoder.decode(["address"], log.topics[1])[0]);
 
-  const transfersMap: [string, string][] = ethers.utils.defaultAbiCoder
+  const transfersMap: [string, string][] = abiCoder
     .decode(["uint256", "uint256"], log.data)
     .map((value, index) => [index === 0 ? "id" : "value", value.toString()]);
 
   const etherscanERC1155Events: EtherscanERC1155Event[] = transfersMap.map(([id, value]) => ({
-    blockNumber: block.number.toString(),
-    timeStamp: block.timestamp.toString(),
-    hash: tx.hash,
-    nonce: tx.nonce.toString(),
-    blockHash: block.hash,
+    blockNumber: block?.number.toString() || "0",
+    timeStamp: block?.timestamp.toString() || "0",
+    hash: tx?.hash || "",
+    nonce: tx?.nonce.toString() || "0",
+    blockHash: block?.hash || "",
     from,
     to,
-    transactionIndex: block.transactions.indexOf(log.transactionHash).toString(),
-    gas: tx.gasLimit.toString(),
-    gasPrice: tx.gasPrice?.toString() || "",
-    cumulativeGasUsed: receipt.cumulativeGasUsed.toString(),
+    transactionIndex: block?.transactions.indexOf(log.transactionHash).toString() || "0",
+    gas: tx?.gasLimit.toString() || "0",
+    gasPrice: tx?.gasPrice?.toString() || "",
+    cumulativeGasUsed: receipt?.cumulativeGasUsed.toString() || "0",
     gasUsed: receipt?.gasUsed?.toString() || "0",
-    input: tx.data,
-    confirmations: tx.confirmations.toString(),
-    contractAddress: tx.to!,
+    input: tx?.data || "0x",
+    confirmations: tx?.confirmations.toString() || "0",
+    contractAddress: tx?.to ?? "0x0000000000000000000000000000000000000000",
     tokenID: id,
     tokenValue: value,
     tokenName: "tokenName",
@@ -398,9 +401,10 @@ const handleERC1155Log = async (
   if (!explorerLedgerOperationByAddress[to]) {
     explorerLedgerOperationByAddress[to] = new Map<string, LedgerExplorerOperation>();
   }
+  const txHash = tx?.hash;
   const alreadyExistingOperation =
-    explorerLedgerOperationByAddress[from]!.get(tx.hash) ||
-    explorerLedgerOperationByAddress[to]!.get(tx.hash);
+    (txHash && explorerLedgerOperationByAddress[from]!.get(txHash)) ||
+    (txHash && explorerLedgerOperationByAddress[to]!.get(txHash));
   const ledgerOperation: LedgerExplorerOperation = alreadyExistingOperation
     ? {
         ...alreadyExistingOperation,
@@ -415,17 +419,17 @@ const handleERC1155Log = async (
         ],
       }
     : {
-        hash: log.transactionHash,
-        transaction_type: receipt.type,
+        hash: log.transactionHash || "",
+        transaction_type: receipt?.type ?? 0,
         nonce: "",
         nonce_value: -1,
-        value: tx.value.toString(),
-        gas: tx.gasLimit.toString(),
-        gas_price: receipt.effectiveGasPrice.toString(),
-        max_fee_per_gas: tx.type === 2 ? tx.maxFeePerGas!.toString() : null,
-        max_priority_fee_per_gas: tx.type === 2 ? tx.maxPriorityFeePerGas!.toString() : null,
-        from: tx.from,
-        to: tx.to!,
+        value: tx?.value.toString() || "0",
+        gas: tx?.gasLimit.toString() || "0",
+        gas_price: receipt?.gasPrice.toString() || "0",
+        max_fee_per_gas: tx?.type === 2 ? tx?.maxFeePerGas!.toString() : null,
+        max_priority_fee_per_gas: tx?.type === 2 ? tx?.maxPriorityFeePerGas!.toString() : null,
+        from: tx?.from ?? "0x",
+        to: tx?.to ?? "0x0000000000000000000000000000000000000000",
         transfer_events: [],
         erc721_transfer_events: [],
         erc1155_transfer_events: [
@@ -439,16 +443,16 @@ const handleERC1155Log = async (
         ],
         approval_events: [],
         actions: [],
-        confirmations: tx.confirmations,
+        confirmations: tx?.confirmations ? await tx.confirmations() : 0,
         input: null,
-        gas_used: receipt.gasUsed.toString(),
-        cumulative_gas_used: receipt.cumulativeGasUsed.toString(),
-        status: receipt.status!,
-        received_at: new Date(block.timestamp * 1000).toISOString(),
+        gas_used: receipt?.gasUsed.toString() || "0",
+        cumulative_gas_used: receipt?.cumulativeGasUsed.toString() || "0",
+        status: receipt?.status ?? 0,
+        received_at: new Date((block?.timestamp ?? 0) * 1000).toISOString(),
         block: {
           hash: log.blockHash,
           height: log.blockNumber,
-          time: new Date(block.timestamp * 1000).toISOString(),
+          time: new Date((block?.timestamp ?? 0) * 1000).toISOString(),
         },
       };
 
@@ -456,44 +460,41 @@ const handleERC1155Log = async (
   explorerLedgerOperationByAddress[to]!.set(ledgerOperation.hash, ledgerOperation);
 };
 
-const handleBlock = async (
-  blockNumber: number,
-  provider: ethers.providers.StaticJsonRpcProvider,
-) => {
-  const block = await provider.getBlockWithTransactions(blockNumber);
+const handleBlock = async (blockNumber: number, provider: ethers.JsonRpcProvider) => {
+  const block = await provider.getBlock(blockNumber, true);
 
   for (const transaction of block?.transactions || []) {
     const [tx, receipt, traces] = await Promise.all([
-      provider.getTransaction(transaction.hash),
-      provider.getTransactionReceipt(transaction.hash),
-      provider.send("trace_transaction", [transaction.hash]).catch(() => []) as Promise<
+      provider.getTransaction(transaction),
+      provider.getTransactionReceipt(transaction),
+      provider.send("trace_transaction", [transaction]).catch(() => []) as Promise<
         TraceTransaction[]
       >,
     ]);
 
-    const code = transaction.to ? await provider.getCode(transaction.to) : false;
-    const from = safeEncodeEIP55(transaction.from);
-    const to = safeEncodeEIP55(transaction.to || "");
+    const code = tx?.to ? await provider.getCode(tx?.to) : false;
+    const from = safeEncodeEIP55(tx?.from || "");
+    const to = safeEncodeEIP55(tx?.to || "");
     const etherscanOperation: EtherscanOperation = {
-      blockNumber: block.number.toString(),
-      timeStamp: block.timestamp.toString(),
-      hash: transaction.hash,
-      nonce: transaction.nonce.toString(),
-      blockHash: block.hash,
-      transactionIndex: block.transactions.indexOf(transaction).toString(),
+      blockNumber: block?.number.toString() || "0",
+      timeStamp: block?.timestamp.toString() || "0",
+      hash: tx?.hash || "",
+      nonce: tx?.nonce.toString() || "0",
+      blockHash: block?.hash || "",
+      transactionIndex: block?.transactions.indexOf(transaction).toString() || "0",
       from,
       to,
-      value: transaction.value.toBigInt().toString(),
-      gas: transaction.gasLimit.toString(),
-      gasPrice: transaction.gasPrice?.toString() || "",
-      isError: receipt.status === 1 ? "0" : "1",
-      txreceipt_status: receipt.status!.toString(),
-      input: transaction.data,
-      contractAddress: code === "0x" ? "" : transaction.to!,
-      cumulativeGasUsed: receipt.cumulativeGasUsed.toString(),
+      value: tx?.value.toString() || "0",
+      gas: tx?.gasLimit.toString() || "0",
+      gasPrice: tx?.gasPrice?.toString() || "",
+      isError: receipt?.status === 1 ? "0" : "1",
+      txreceipt_status: receipt?.status!.toString() || "0",
+      input: tx?.data,
+      contractAddress: code === "0x" ? "" : tx?.to ?? "0x0000000000000000000000000000000000000000",
+      cumulativeGasUsed: receipt?.cumulativeGasUsed.toString() || "0",
       gasUsed: receipt?.gasUsed?.toString() || "0",
-      confirmations: transaction.confirmations.toString(),
-      methodId: transaction.data?.length > 10 ? transaction.data.slice(0, 10) : "",
+      confirmations: tx?.confirmations.toString() || "0",
+      methodId: tx?.data && tx.data.length > 10 ? tx.data.slice(0, 10) : "",
       functionName: "",
     };
 
@@ -513,32 +514,32 @@ const handleBlock = async (
       explorerLedgerOperationByAddress[to] = new Map<string, LedgerExplorerOperation>();
     }
     const ledgerOperation: LedgerExplorerOperation = {
-      hash: receipt.transactionHash,
-      transaction_type: receipt.type,
+      hash: receipt?.hash || "",
+      transaction_type: receipt?.type || 0,
       nonce: "",
       nonce_value: -1,
-      value: tx.value.toString(),
-      gas: tx.gasLimit.toString(),
-      gas_price: receipt.effectiveGasPrice.toString(),
-      max_fee_per_gas: tx.type === 2 ? tx.maxFeePerGas!.toString() : null,
-      max_priority_fee_per_gas: tx.type === 2 ? tx.maxPriorityFeePerGas!.toString() : null,
-      from: tx.from,
-      to: tx.to!,
+      value: tx?.value.toString() || "0",
+      gas: tx?.gasLimit.toString() || "0",
+      gas_price: receipt?.gasPrice.toString() || "",
+      max_fee_per_gas: tx?.type === 2 ? tx?.maxFeePerGas!.toString() : null,
+      max_priority_fee_per_gas: tx?.type === 2 ? tx?.maxPriorityFeePerGas!.toString() : null,
+      from: tx?.from || "",
+      to: tx?.to ?? "0x0000000000000000000000000000000000000000",
       transfer_events: [],
       erc721_transfer_events: [],
       erc1155_transfer_events: [],
       approval_events: [],
       actions: [],
-      confirmations: tx.confirmations,
+      confirmations: tx?.confirmations ? await tx.confirmations() : 0,
       input: null,
-      gas_used: receipt.gasUsed.toString(),
-      cumulative_gas_used: receipt.cumulativeGasUsed.toString(),
-      status: receipt.status!,
-      received_at: new Date(block.timestamp * 1000).toISOString(),
+      gas_used: receipt?.gasUsed.toString() || "0",
+      cumulative_gas_used: receipt?.cumulativeGasUsed.toString() || "0",
+      status: receipt?.status ?? 0,
+      received_at: new Date((block?.timestamp ?? 0) * 1000).toISOString(),
       block: {
-        hash: receipt.blockHash,
-        height: receipt.blockNumber,
-        time: new Date(block.timestamp * 1000).toISOString(),
+        hash: receipt?.blockHash || "",
+        height: receipt?.blockNumber || 0,
+        time: new Date((block?.timestamp ?? 0) * 1000).toISOString(),
       },
     };
     explorerLedgerOperationByAddress[from]!.set(ledgerOperation.hash, ledgerOperation);
@@ -553,20 +554,18 @@ const handleBlock = async (
       const to = safeEncodeEIP55(action.to || "");
       const etherscanInternalTransaction: EtherscanInternalTransaction = {
         blockNumber: blockNumber.toString(),
-        timeStamp: block.timestamp.toString(),
+        timeStamp: block?.timestamp.toString() || "0",
         hash: transactionHash,
         from,
         to,
-        value: ethers.BigNumber.from(action.value).toBigInt().toString(),
+        value: BigInt(action.value).toString() || "0",
         contractAddress: code === "0x" ? "" : action.to!,
         input: action.input || "0x",
         type,
-        gas: ethers.BigNumber.from(action.gas).toBigInt().toString(),
-        gasUsed: ethers.BigNumber.from(result?.gasUsed || "0")
-          .toBigInt()
-          .toString(),
+        gas: BigInt(action.gas).toString(),
+        gasUsed: BigInt(result?.gasUsed || "0").toString(),
         traceId: transactionPosition.toString(),
-        isError: receipt.status === 1 ? "0" : "1",
+        isError: receipt?.status === 1 ? "0" : "1",
         errCode: "",
       };
 
@@ -591,9 +590,10 @@ const handleBlock = async (
       if (!explorerLedgerOperationByAddress[to]) {
         explorerLedgerOperationByAddress[to] = new Map();
       }
+      const txHash = tx?.hash;
       const alreadyExistingOperation =
-        explorerLedgerOperationByAddress[from]!.get(tx.hash) ||
-        explorerLedgerOperationByAddress[to]!.get(tx.hash);
+        (txHash && explorerLedgerOperationByAddress[from]!.get(txHash)) ||
+        (txHash && explorerLedgerOperationByAddress[to]!.get(txHash));
       const ledgerOperation: LedgerExplorerOperation = alreadyExistingOperation
         ? {
             ...alreadyExistingOperation,
@@ -603,27 +603,25 @@ const handleBlock = async (
                 from,
                 to,
                 input: null,
-                value: ethers.BigNumber.from(action.value).toBigInt().toString(),
-                gas: ethers.BigNumber.from(action.gas).toBigInt().toString(),
-                gas_used: ethers.BigNumber.from(result?.gasUsed || "0")
-                  .toBigInt()
-                  .toString(),
+                value: BigInt(action.value).toString(),
+                gas: BigInt(action.gas).toString(),
+                gas_used: BigInt(result?.gasUsed || "0").toString(),
                 error: null,
               },
             ],
           }
         : {
-            hash: receipt.transactionHash,
-            transaction_type: receipt.type,
+            hash: receipt?.hash || "",
+            transaction_type: receipt?.type ?? 0,
             nonce: "",
             nonce_value: -1,
-            value: tx.value.toString(),
-            gas: tx.gasLimit.toString(),
-            gas_price: receipt.effectiveGasPrice.toString(),
-            max_fee_per_gas: tx.type === 2 ? tx.maxFeePerGas!.toString() : null,
-            max_priority_fee_per_gas: tx.type === 2 ? tx.maxPriorityFeePerGas!.toString() : null,
-            from: tx.from,
-            to: tx.to!,
+            value: tx?.value.toString() || "0",
+            gas: tx?.gasLimit.toString() || "0",
+            gas_price: receipt?.gasPrice.toString() || "0",
+            max_fee_per_gas: tx?.type === 2 ? tx?.maxFeePerGas!.toString() : null,
+            max_priority_fee_per_gas: tx?.type === 2 ? tx?.maxPriorityFeePerGas!.toString() : null,
+            from: tx?.from || "0x",
+            to: tx?.to ?? "0x0000000000000000000000000000000000000000",
             transfer_events: [],
             erc721_transfer_events: [],
             erc1155_transfer_events: [],
@@ -633,24 +631,22 @@ const handleBlock = async (
                 from,
                 to,
                 input: null,
-                value: ethers.BigNumber.from(action.value).toBigInt().toString(),
-                gas: ethers.BigNumber.from(action.gas).toBigInt().toString(),
-                gas_used: ethers.BigNumber.from(result?.gasUsed || "0")
-                  .toBigInt()
-                  .toString(),
+                value: BigInt(action.value).toString(),
+                gas: BigInt(action.gas).toString(),
+                gas_used: BigInt(result?.gasUsed || "0").toString(),
                 error: null,
               },
             ],
-            confirmations: tx.confirmations,
+            confirmations: tx?.confirmations ? await tx.confirmations() : 0,
             input: null,
-            gas_used: receipt.gasUsed.toString(),
-            cumulative_gas_used: receipt.cumulativeGasUsed.toString(),
-            status: receipt.status!,
-            received_at: new Date(block.timestamp * 1000).toISOString(),
+            gas_used: receipt?.gasUsed.toString() || "0",
+            cumulative_gas_used: receipt?.cumulativeGasUsed.toString() || "0",
+            status: receipt?.status ?? 0,
+            received_at: new Date((block?.timestamp ?? 0) * 1000).toISOString(),
             block: {
-              hash: receipt.blockHash,
-              height: receipt.blockNumber,
-              time: new Date(block.timestamp * 1000).toISOString(),
+              hash: receipt?.blockHash || "",
+              height: receipt?.blockNumber || 0,
+              time: new Date((block?.timestamp ?? 0) * 1000).toISOString(),
             },
           };
       explorerLedgerOperationByAddress[from]!.set(ledgerOperation.hash, ledgerOperation);
@@ -668,7 +664,7 @@ export const indexBlocks = async () => {
     throw new Error("fromBlock is not set");
   }
 
-  const provider = new providers.StaticJsonRpcProvider(process.env.RPC);
+  const provider = new ethers.JsonRpcProvider(process.env.RPC);
   let latestBlockNumber = await provider.getBlockNumber();
   const toBlock = Math.min(fromBlock + MAX_BLOCK_RANGE, latestBlockNumber);
   const rangeSize = toBlock - fromBlock + 1;
@@ -687,7 +683,6 @@ export const indexBlocks = async () => {
       [TRANSFER_EVENTS_TOPICS.ERC20, TRANSFER_EVENTS_TOPICS.ERC721, TRANSFER_EVENTS_TOPICS.ERC1155],
     ],
   });
-
   await BlueBirdPromise.map(
     blocks,
     async blockNumber =>

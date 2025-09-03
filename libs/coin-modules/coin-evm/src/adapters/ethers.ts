@@ -16,25 +16,24 @@ export const transactionToEthersTransaction = (tx: EvmTransaction): ethers.Trans
 
   const ethersTx = {
     to: tx.recipient,
-    value: ethers.BigNumber.from(tx.amount.toFixed(0)),
+    value: BigInt(tx.amount.toFixed(0)),
     data: tx.data ? `0x${tx.data.toString("hex")}` : undefined,
-    gasLimit: ethers.BigNumber.from(gasLimit.toFixed(0)),
+    gasLimit: BigInt(gasLimit.toFixed(0)),
     // When using DEFAULT_NONCE (-1) ethers might break on some methods,
     // therefore we replace this by an unrealisticly high nonce
     // to prevent any valid signature being crafted here
     nonce: tx.nonce === DEFAULT_NONCE ? Number.MAX_SAFE_INTEGER - 1 : tx.nonce,
-    chainId: tx.chainId,
+    chainId: BigInt(tx.chainId),
     type: tx.type,
   } as Partial<ethers.Transaction>;
 
   // is EIP-1559 transaction (type 2)
   if (tx.type === 2) {
-    ethersTx.maxFeePerGas = ethers.BigNumber.from(tx.maxFeePerGas.toFixed(0));
-    ethersTx.maxPriorityFeePerGas = ethers.BigNumber.from(tx.maxPriorityFeePerGas.toFixed(0));
+    ethersTx.maxFeePerGas = BigInt(tx.maxFeePerGas.toFixed(0));
+    ethersTx.maxPriorityFeePerGas = BigInt(tx.maxPriorityFeePerGas.toFixed(0));
   } else {
     // is Legacy transaction (type 0)
-    ethersTx.gasPrice = ethers.BigNumber.from(tx.gasPrice.toFixed(0));
+    ethersTx.gasPrice = BigInt(tx.gasPrice.toFixed(0));
   }
-
   return ethersTx as ethers.Transaction;
 };
