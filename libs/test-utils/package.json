@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/test-utils",
-  "version": "0.3.28",
+  "version": "0.3.29",
   "private": true,
   "description": "Dummy apps and utils for tests",
   "keywords": [
