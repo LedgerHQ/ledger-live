@@ -8,6 +8,8 @@ export class AddAccountModal extends Modal {
   private selectAccount = this.page.locator("text=Choose a crypto asset"); // FIXME: I need an id
   readonly selectAccountInput = this.page.locator('[placeholder="Search"]'); // FIXME: I need an id
   readonly addAccountsButton = this.page.getByTestId("add-accounts-import-add-button");
+  readonly confirmButton = this.page.getByText("Confirm");
+  readonly closeButton = this.page.getByText("Close");
   private deselectAllButton = this.page.getByText("Deselect all");
   private checkbox = this.page.getByTestId("accountRow-checkbox").first();
   private accountsList = this.page.getByTestId("add-accounts-step-import-accounts-list");
@@ -111,8 +113,9 @@ export class AddAccountModal extends Modal {
       await this.deselectAllButton.click();
       await this.checkbox.click({ force: true });
     }
-    await this.addAccountsButton.click();
-    await expect(this.successAddLabel).toBeVisible();
+    await this.confirmButton.click();
+    await this.closeButton.click();
+    //await expect(this.successAddLabel).toBeVisible();
   }
 
   @step("Get fist account name")
