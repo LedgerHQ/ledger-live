@@ -127,6 +127,7 @@ jobs:
       # DEBUG: "pw:browser*"
       # DEBUG_LOGS: 1
     strategy:
+      fail-fast: false
       matrix:
         shard: [1, 2, 3, 4]
         totalShards: [4]
