@@ -20,6 +20,7 @@ import { AssetsEmptyList } from "LLM/components/EmptyList/AssetsEmptyList";
 import createAssetConfigurationHook from "./modules/createAssetConfigurationHook";
 import { GenericError } from "../../components/GenericError";
 import { useNetInfo } from "@react-native-community/netinfo";
+import { InfiniteLoader } from "@ledgerhq/native-ui";
 
 export type AssetSelectionStepProps = {
   isOpen: boolean;
@@ -33,6 +34,7 @@ export type AssetSelectionStepProps = {
   isLoading?: boolean;
   hasError?: boolean;
   refetch?: () => void;
+  loadNext?: () => void;
 };
 
 const SAFE_MARGIN_BOTTOM = 48;
@@ -49,6 +51,7 @@ const AssetSelection = ({
   isLoading,
   hasError,
   refetch,
+  loadNext,
 }: Readonly<AssetSelectionStepProps>) => {
   const { isConnected } = useNetInfo();
 
@@ -132,6 +135,9 @@ const AssetSelection = ({
           paddingBottom: SAFE_MARGIN_BOTTOM,
           marginTop: 16,
         }}
+        onEndReached={loadNext}
+        onEndReachedThreshold={0.5}
+        ListFooterComponent={<InfiniteLoader size={20} />}
       />
     );
   };
