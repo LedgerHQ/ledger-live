@@ -194,4 +194,53 @@ describe("estimateFees", () => {
       },
     });
   });
+
+  it("should estimate fees for delegation", async () => {
+    const tokenIntent = {
+      ...mockIntent,
+      mode: "delegate",
+      recipient: "0x0000000000000000000000000000000000001005",
+      validator: "seivaloper1y82m5y3wevjneamzg0pmx87dzanyxzht0kepvn",
+    };
+    const result = await estimateFees(
+      { ...mockCurrency, id: "sei_network_evm", ethereumLikeInfo: { chainId: 1329 } },
+      tokenIntent,
+    );
+
+    // expect(mockNodeApi.getFeeData).toHaveBeenCalledWith(mockCurrency, {
+    //   feesStrategy: "fast",
+    //   type: 0,
+    // });
+    console.log(result);
+    // expect(result).toEqual({
+    //   value: 420000000000000n,
+    //   parameters: {
+    //     gasPrice: 20000000000n,
+    //     maxFeePerGas: 20000000000n,
+    //     maxPriorityFeePerGas: 2000000000n,
+    //     nextBaseFee: null,
+    //     gasLimit: 21000n,
+    //     gasOptions: {
+    //       fast: {
+    //         maxFeePerGas: 30000000000n,
+    //         maxPriorityFeePerGas: 3000000000n,
+    //         gasPrice: 30000000000n,
+    //         nextBaseFee: null,
+    //       },
+    //       medium: {
+    //         gasPrice: 20000000000n,
+    //         maxFeePerGas: 20000000000n,
+    //         maxPriorityFeePerGas: 2000000000n,
+    //         nextBaseFee: null,
+    //       },
+    //       slow: {
+    //         gasPrice: 10000000000n,
+    //         maxFeePerGas: 10000000000n,
+    //         maxPriorityFeePerGas: 1000000000n,
+    //         nextBaseFee: null,
+    //       },
+    //     },
+    //   },
+    // });
+  });
 });

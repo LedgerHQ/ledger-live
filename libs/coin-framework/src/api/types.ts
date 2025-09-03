@@ -295,6 +295,8 @@ export type FeesStrategy = "slow" | "medium" | "fast";
 export type TransactionIntent<MemoType extends Memo = MemoNotSupported> = {
   type: string;
   sender: string;
+  mode?: string | any;
+  validator?: string;
   senderPublicKey?: string;
   expiration?: number;
   recipient: string;

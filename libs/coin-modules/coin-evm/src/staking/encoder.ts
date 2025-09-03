@@ -21,6 +21,7 @@ export const encodeStakingData = (encodeParams: EncodeStakingDataParams): string
   if (!functionName) {
     throw new Error(`Operation '${operation}' not supported for currency: ${currencyId}`);
   }
+  console.log("functionName", functionName, params);
 
   const iface = new ethers.Interface(abi);
   return iface.encodeFunctionData(functionName, params);
