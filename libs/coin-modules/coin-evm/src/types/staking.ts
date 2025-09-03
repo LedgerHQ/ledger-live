@@ -15,6 +15,7 @@ export type StakingContractConfig = {
     undelegate: string;
     getStakedBalance: string;
   };
+  validators?: string[];
 };
 
 export type StakeCreate = {
