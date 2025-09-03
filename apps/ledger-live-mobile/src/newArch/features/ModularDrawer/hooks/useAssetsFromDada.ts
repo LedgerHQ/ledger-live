@@ -26,7 +26,7 @@ export type UseAssetsData =
   | undefined;
 
 export function useAssetsFromDada({ currencyIds, searchedValue }: UseAssetsProps) {
-  const { data, isLoading, isSuccess, error } = useAssetsData({
+  const { data, isLoading, isSuccess, error, refetch } = useAssetsData({
     search: searchedValue,
     currencyIds,
   });
@@ -70,5 +70,6 @@ export function useAssetsFromDada({ currencyIds, searchedValue }: UseAssetsProps
     loadingStatus,
     assetsSorted,
     sortedCryptoCurrencies,
+    refetch,
   };
 }

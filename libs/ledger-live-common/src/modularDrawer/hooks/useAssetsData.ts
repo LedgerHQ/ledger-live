@@ -23,10 +23,11 @@ export function useAssetsData({
   search?: string;
   currencyIds?: string[];
 }) {
-  const { data, isLoading, error, fetchNextPage, isSuccess } = useGetAssetsDataInfiniteQuery({
-    search,
-    currencyIds,
-  });
+  const { data, isLoading, error, fetchNextPage, isSuccess, refetch } =
+    useGetAssetsDataInfiniteQuery({
+      search,
+      currencyIds,
+    });
 
   const joinedPages = useMemo(() => {
     return data?.pages.reduce<AssetsDataWithPagination>((acc, page) => {
@@ -55,5 +56,6 @@ export function useAssetsData({
     error,
     loadNext: hasMore ? fetchNextPage : undefined,
     isSuccess,
+    refetch,
   };
 }
