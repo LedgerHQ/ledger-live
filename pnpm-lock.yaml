@@ -9459,8 +9459,8 @@ importers:
         specifier: 1.10.1
         version: 1.10.1
       '@actions/github':
-        specifier: 6.0.0
-        version: 6.0.0
+        specifier: 6.0.1
+        version: 6.0.1
       '@types/stream-json':
         specifier: 1.7.7
         version: 1.7.7
@@ -9483,8 +9483,8 @@ importers:
         specifier: 1.10.1
         version: 1.10.1
       '@actions/github':
-        specifier: 6.0.0
-        version: 6.0.0
+        specifier: 6.0.1
+        version: 6.0.1
       tsup:
         specifier: 7.3.0
         version: 7.3.0(typescript@5.4.3)
@@ -9495,8 +9495,8 @@ importers:
         specifier: 1.10.1
         version: 1.10.1
       '@actions/github':
-        specifier: 6.0.0
-        version: 6.0.0
+        specifier: 6.0.1
+        version: 6.0.1
       node-fetch:
         specifier: 3.3.2
         version: 3.3.2
@@ -9510,8 +9510,8 @@ importers:
         specifier: 1.10.1
         version: 1.10.1
       '@actions/github':
-        specifier: 6.0.0
-        version: 6.0.0
+        specifier: 6.0.1
+        version: 6.0.1
       '@types/node':
         specifier: 22.10.10
         version: 22.10.10
@@ -9540,8 +9540,8 @@ importers:
         specifier: 1.10.1
         version: 1.10.1
       '@actions/github':
-        specifier: 6.0.0
-        version: 6.0.0
+        specifier: 6.0.1
+        version: 6.0.1
       semver:
         specifier: 7.5.4
         version: 7.5.4
@@ -9555,8 +9555,8 @@ importers:
         specifier: 1.10.1
         version: 1.10.1
       '@actions/github':
-        specifier: 6.0.0
-        version: 6.0.0
+        specifier: 6.0.1
+        version: 6.0.1
       semver:
         specifier: 7.5.4
         version: 7.5.4
@@ -9570,8 +9570,8 @@ importers:
         specifier: 1.10.1
         version: 1.10.1
       '@actions/github':
-        specifier: 6.0.0
-        version: 6.0.0
+        specifier: 6.0.1
+        version: 6.0.1
       tsup:
         specifier: 7.3.0
         version: 7.3.0(typescript@5.4.3)
@@ -9582,8 +9582,8 @@ importers:
         specifier: 1.10.1
         version: 1.10.1
       '@actions/github':
-        specifier: 6.0.0
-        version: 6.0.0
+        specifier: 6.0.1
+        version: 6.0.1
       tsup:
         specifier: 7.3.0
         version: 7.3.0(typescript@5.4.3)
@@ -9625,8 +9625,8 @@ importers:
         specifier: 1.10.1
         version: 1.10.1
       '@actions/github':
-        specifier: 6.0.0
-        version: 6.0.0
+        specifier: 6.0.1
+        version: 6.0.1
       tsup:
         specifier: 7.3.0
         version: 7.3.0(typescript@5.4.3)
@@ -9637,8 +9637,8 @@ importers:
         specifier: 1.10.1
         version: 1.10.1
       '@actions/github':
-        specifier: 6.0.0
-        version: 6.0.0
+        specifier: 6.0.1
+        version: 6.0.1
       node-fetch:
         specifier: 3.3.2
         version: 3.3.2
@@ -9652,8 +9652,8 @@ importers:
         specifier: 1.10.1
         version: 1.10.1
       '@actions/github':
-        specifier: 6.0.0
-        version: 6.0.0
+        specifier: 6.0.1
+        version: 6.0.1
       tsup:
         specifier: 7.3.0
         version: 7.3.0(typescript@5.4.3)
@@ -9667,8 +9667,8 @@ importers:
         specifier: 1.10.1
         version: 1.10.1
       '@actions/github':
-        specifier: 6.0.0
-        version: 6.0.0
+        specifier: 6.0.1
+        version: 6.0.1
       '@types/fs-extra':
         specifier: 9.0.13
         version: 9.0.13
@@ -9691,8 +9691,8 @@ importers:
         specifier: 1.10.1
         version: 1.10.1
       '@actions/github':
-        specifier: 6.0.0
-        version: 6.0.0
+        specifier: 6.0.1
+        version: 6.0.1
       '@aws-sdk/client-s3':
         specifier: 3.651.1
         version: 3.651.1
@@ -9721,8 +9721,8 @@ importers:
         specifier: 1.10.1
         version: 1.10.1
       '@actions/github':
-        specifier: 6.0.0
-        version: 6.0.0
+        specifier: 6.0.1
+        version: 6.0.1
       '@aws-sdk/client-s3':
         specifier: 3.540.0
         version: 3.540.0
@@ -9821,9 +9821,6 @@ packages:
 
   '@actions/exec@1.1.1':
     resolution: {integrity: sha512-+sCcHHbVdk93a0XT19ECtO/gIXoxvdsgQLzb2fE2/5sIZmWQuluYyjPQtrtTHdU1YzTZ7bAPN4sITq2xi1679w==}
-
-  '@actions/github@6.0.0':
-    resolution: {integrity: sha512-alScpSVnYmjNEXboZjarjukQEzgCRmjMv6Xj47fsdnqGS73bjJNDpiiXmp8jr0UZLdUB6d9jW63IcmddUP+l0g==}
 
   '@actions/github@6.0.1':
     resolution: {integrity: sha512-xbZVcaqD4XnQAe35qSQqskb3SqIAfRyLBrHMd/8TuL7hJSz2QtbDwnNM8zWx4zO5l2fnGtseNE3MbEvD7BxVMw==}
@@ -14792,10 +14789,6 @@ packages:
   '@octokit/request-error@2.1.0':
     resolution: {integrity: sha512-1VIvgXxs9WHSjicsRwq8PlR2LR2x6DwsJAaFgzdi0JfJoGSO8mYI/cHJQ+9FbN21aa+DrgNLnwObmyeSC8Rmpg==}
 
-  '@octokit/request-error@5.1.0':
-    resolution: {integrity: sha512-GETXfE05J0+7H2STzekpKObFe765O5dlAKUTLNGeH+x47z7JjXHfsHKo5z21D/o/IOZTUEI6nyWyR+bZVP/n5Q==}
-    engines: {node: '>= 18'}
-
   '@octokit/request-error@5.1.1':
     resolution: {integrity: sha512-v9iyEQJH6ZntoENr9/yXxjuezh4My67CBSu9r6Ve/05Iu5gNgnisNWOsoJHTP6k0Rr0+HQIpnH+kyammu90q/g==}
     engines: {node: '>= 18'}
@@ -17987,7 +17980,7 @@ packages:
       metro-react-native-babel-preset: '*'
       react: ^16.8.0 || ^17.0.0 || ^18.0.0
       react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0
-      webpack: '*'
+      webpack: '5'
     peerDependenciesMeta:
       react:
         optional: true
@@ -18738,6 +18731,7 @@ packages:
     deprecated: |-
       DEPRECATED: This package is no longer maintained.
       Please use the built-in Jest matchers available in @testing-library/react-native v12.4+.
+
       See migration guide: https://callstack.github.io/react-native-testing-library/docs/migration/jest-matchers
     peerDependencies:
       react: '>=16.0.0'
@@ -20425,7 +20419,7 @@ packages:
     resolution: {integrity: sha512-/FQM1EDkTsf63Ub2C6O7GuYFDsSXUwsaZDurV0np41ocwq0jthUAYCmhBX9f+KwlaCgIuWyr/4WlUQUBfKfZog==}
     engines: {node: '>=6'}
     peerDependencies:
-      rxjs: '*'
+      rxjs: ^5.5.10
       zenObservable: '*'
     peerDependenciesMeta:
       rxjs:
@@ -23684,7 +23678,7 @@ packages:
     peerDependencies:
       '@typescript-eslint/eslint-plugin': ^4.0.0 || ^5.0.0
       eslint: ^6.0.0 || ^7.0.0 || ^8.0.0
-      jest: '*'
+      jest: ^27.0.0
     peerDependenciesMeta:
       '@typescript-eslint/eslint-plugin':
         optional: true
@@ -27957,6 +27951,7 @@ packages:
   metro-react-native-babel-preset@0.77.0:
     resolution: {integrity: sha512-HPPD+bTxADtoE4y/4t1txgTQ1LVR6imOBy7RMHUsqMVTbekoi8Ph5YI9vKX2VMPtVWeFt0w9YnCSLPa76GcXsA==}
     engines: {node: '>=18'}
+    deprecated: Use @react-native/babel-preset instead
     peerDependencies:
       '@babel/core': '*'
 
@@ -30160,6 +30155,7 @@ packages:
     engines: {node: '>=0.6.0', teleport: '>=0.2.0'}
     deprecated: |-
       You or someone you depend on is using Q, the JavaScript Promise library that gave JavaScript developers strong feelings about promises. They can almost certainly migrate to the native JavaScript promise now. Thank you literally everyone for joining me in this bet against the odds. Be excellent to each other.
+
       (For a CapTP with native promises, see @endo/eventual-send and @endo/captp)
 
   qrcode-terminal@0.11.0:
@@ -30388,7 +30384,7 @@ packages:
     resolution: {integrity: sha512-kBGxI+MIZGBf4wZhNCWwHkMcVP+kbpmrLWH/SkO0qCKc7D7eSPcxQbfpsmsCo8v2KCBYjuGSou+xTqK44D/jMg==}
     engines: {npm: ^3.0.0}
     peerDependencies:
-      prop-types: '*'
+      prop-types: ^15.6.1
       react: '>=15.0.0'
     peerDependenciesMeta:
       prop-types:
@@ -30412,8 +30408,8 @@ packages:
   react-native-animatable@1.4.0:
     resolution: {integrity: sha512-DZwaDVWm2NBvBxf7I0wXKXLKb/TxDnkV53sWhCvei1pRyTX3MVFpkvdYBknNBqPrxYuAIlPxEp7gJOidIauUkw==}
     peerDependencies:
-      react: '*'
-      react-native: '*'
+      react: 18.2.0
+      react-native: 0.72.6
     peerDependenciesMeta:
       react:
         optional: true
@@ -30626,6 +30622,7 @@ packages:
 
   react-native-randombytes@3.6.1:
     resolution: {integrity: sha512-qxkwMbOZ0Hff1V7VqpaWrR6ItkA+oF6bnI79Qp9F3Tk8WBsdKDi6m1mi3dEdFWePoRLrhJ2L03rU0yabst1tVw==}
+    deprecated: use react-native-get-random-values instead
 
   react-native-reanimated@3.16.7:
     resolution: {integrity: sha512-qoUUQOwE1pHlmQ9cXTJ2MX9FQ9eHllopCLiWOkDkp6CER95ZWeXhJCP4cSm6AD4jigL5jHcZf/SkWrg8ttZUsw==}
@@ -30698,6 +30695,7 @@ packages:
 
   react-native-vector-icons@10.2.0:
     resolution: {integrity: sha512-n5HGcxUuVaTf9QJPs/W22xQpC2Z9u0nb0KgLPnVltP8vdUvOp6+R26gF55kilP/fV4eL4vsAHUqUjewppJMBOQ==}
+    deprecated: react-native-vector-icons package has moved to a new model of per-icon-family packages. See the https://github.com/oblador/react-native-vector-icons/blob/master/MIGRATION.md on how to migrate
     hasBin: true
 
   react-native-version-number@0.3.6:
@@ -31941,6 +31939,7 @@ packages:
   source-map@0.8.0-beta.0:
     resolution: {integrity: sha512-2ymg6oRBpebeZi9UUNsgQ89bhx01TcTkmNTGnNO88imTmbSgy4nfujrgVEFKWpMTEGA11EDkTt7mqObTPdigIA==}
     engines: {node: '>= 8'}
+    deprecated: The work that was done in this beta branch won't be included in future versions
 
   sourcemap-codec@1.4.8:
     resolution: {integrity: sha512-9NykojV5Uih4lgo5So5dtw+f0JgJX30KCNI8gwhz2J9A15wD0Ml6tjHKwf6fTSa6fAdVBdZeNOs9eJ71qCk8vA==}
@@ -32440,12 +32439,12 @@ packages:
   superagent@6.1.0:
     resolution: {integrity: sha512-OUDHEssirmplo3F+1HWKUrUjvnQuA+nZI6i/JJBdXb5eq9IyEQwPyPpqND+SSsxf6TygpBEkUjISVRN4/VOpeg==}
     engines: {node: '>= 7.0.0'}
-    deprecated: Please upgrade to v9.0.0+ as we have fixed a public vulnerability with formidable dependency. Note that v9.0.0+ requires Node.js v14.18.0+. See https://github.com/ladjs/superagent/pull/1800 for insight. This project is supported and maintained by the team at Forward Email @ https://forwardemail.net
+    deprecated: Please upgrade to superagent v10.2.2+, see release notes at https://github.com/forwardemail/superagent/releases/tag/v10.2.2 - maintenance is supported by Forward Email @ https://forwardemail.net
 
   superagent@8.1.2:
     resolution: {integrity: sha512-6WTxW1EB6yCxV5VFOIPQruWGHqc3yI7hEmZK6h+pyk69Lk/Ut7rLUY6W/ONF2MjBuGjvmMiIpsrVJ2vjrHlslA==}
     engines: {node: '>=6.4.0 <13 || >=14'}
-    deprecated: Please upgrade to v9.0.0+ as we have fixed a public vulnerability with formidable dependency. Note that v9.0.0+ requires Node.js v14.18.0+. See https://github.com/ladjs/superagent/pull/1800 for insight. This project is supported and maintained by the team at Forward Email @ https://forwardemail.net
+    deprecated: Please upgrade to superagent v10.2.2+, see release notes at https://github.com/forwardemail/superagent/releases/tag/v10.2.2 - maintenance is supported by Forward Email @ https://forwardemail.net
 
   superstruct@0.16.7:
     resolution: {integrity: sha512-4ZZTrXlP4XzCrgh4vOfPDL6dL7zZm5aPl78eczwFSrwvxtsEnKRrSGID6Sbt0agycUoo4auRdWSNTX+oQ3KFyA==}
@@ -34973,14 +34972,6 @@ snapshots:
   '@actions/exec@1.1.1':
     dependencies:
       '@actions/io': 1.1.3
-
-  '@actions/github@6.0.0':
-    dependencies:
-      '@actions/http-client': 2.2.1
-      '@octokit/core': 5.1.0
-      '@octokit/plugin-paginate-rest': 9.2.1(@octokit/core@5.1.0)
-      '@octokit/plugin-rest-endpoint-methods': 10.4.1(@octokit/core@5.1.0)
-      undici: 6.19.2
 
   '@actions/github@6.0.1':
     dependencies:
@@ -38143,7 +38134,7 @@ snapshots:
       '@babel/parser': 7.28.3
       '@babel/template': 7.27.2
       '@babel/types': 7.28.2
-      debug: 4.4.1
+      debug: 4.3.4
     transitivePeerDependencies:
       - supports-color
 
@@ -42742,7 +42733,7 @@ snapshots:
 
   '@kwsites/file-exists@1.1.1':
     dependencies:
-      debug: 4.4.1
+      debug: 4.3.4
     transitivePeerDependencies:
       - supports-color
 
@@ -43454,8 +43445,8 @@ snapshots:
     dependencies:
       '@octokit/auth-oauth-app': 7.1.0
       '@octokit/auth-oauth-user': 4.1.0
-      '@octokit/request': 8.4.0
-      '@octokit/request-error': 5.1.0
+      '@octokit/request': 8.4.1
+      '@octokit/request-error': 5.1.1
       '@octokit/types': 13.5.0
       deprecation: 2.3.1
       lru-cache: 10.4.3
@@ -43466,7 +43457,7 @@ snapshots:
     dependencies:
       '@octokit/auth-oauth-device': 6.1.0
       '@octokit/auth-oauth-user': 4.1.0
-      '@octokit/request': 8.4.0
+      '@octokit/request': 8.4.1
       '@octokit/types': 13.5.0
       '@types/btoa-lite': 1.0.2
       btoa-lite: 1.0.0
@@ -43475,7 +43466,7 @@ snapshots:
   '@octokit/auth-oauth-device@6.1.0':
     dependencies:
       '@octokit/oauth-methods': 4.1.0
-      '@octokit/request': 8.4.0
+      '@octokit/request': 8.4.1
       '@octokit/types': 13.5.0
       universal-user-agent: 6.0.1
 
@@ -43483,7 +43474,7 @@ snapshots:
     dependencies:
       '@octokit/auth-oauth-device': 6.1.0
       '@octokit/oauth-methods': 4.1.0
-      '@octokit/request': 8.4.0
+      '@octokit/request': 8.4.1
       '@octokit/types': 13.5.0
       btoa-lite: 1.0.0
       universal-user-agent: 6.0.1
@@ -43496,7 +43487,7 @@ snapshots:
 
   '@octokit/auth-unauthenticated@5.0.1':
     dependencies:
-      '@octokit/request-error': 5.1.0
+      '@octokit/request-error': 5.1.1
       '@octokit/types': 12.6.0
 
   '@octokit/core@3.6.0':
@@ -43556,8 +43547,8 @@ snapshots:
   '@octokit/oauth-methods@4.1.0':
     dependencies:
       '@octokit/oauth-authorization-url': 6.0.2
-      '@octokit/request': 8.4.0
-      '@octokit/request-error': 5.1.0
+      '@octokit/request': 8.4.1
+      '@octokit/request-error': 5.1.1
       '@octokit/types': 13.5.0
       btoa-lite: 1.0.0
 
@@ -43569,7 +43560,7 @@ snapshots:
 
   '@octokit/plugin-enterprise-compatibility@4.1.0':
     dependencies:
-      '@octokit/request-error': 5.1.0
+      '@octokit/request-error': 5.1.1
       '@octokit/types': 12.6.0
 
   '@octokit/plugin-paginate-rest@2.21.3(@octokit/core@3.6.0)':
@@ -43605,7 +43596,7 @@ snapshots:
   '@octokit/plugin-retry@6.0.1(@octokit/core@5.1.0)':
     dependencies:
       '@octokit/core': 5.1.0
-      '@octokit/request-error': 5.1.0
+      '@octokit/request-error': 5.1.1
       '@octokit/types': 12.6.0
       bottleneck: 2.19.5
 
@@ -43618,12 +43609,6 @@ snapshots:
   '@octokit/request-error@2.1.0':
     dependencies:
       '@octokit/types': 6.41.0
-      deprecation: 2.3.1
-      once: 1.4.0
-
-  '@octokit/request-error@5.1.0':
-    dependencies:
-      '@octokit/types': 13.5.0
       deprecation: 2.3.1
       once: 1.4.0
 
@@ -43647,7 +43632,7 @@ snapshots:
   '@octokit/request@8.4.0':
     dependencies:
       '@octokit/endpoint': 9.0.4
-      '@octokit/request-error': 5.1.0
+      '@octokit/request-error': 5.1.1
       '@octokit/types': 13.5.0
       universal-user-agent: 6.0.1
 
@@ -43685,7 +43670,7 @@ snapshots:
 
   '@octokit/webhooks@12.2.0':
     dependencies:
-      '@octokit/request-error': 5.1.0
+      '@octokit/request-error': 5.1.1
       '@octokit/webhooks-methods': 4.1.0
       '@octokit/webhooks-types': 7.4.0
       aggregate-error: 3.1.0
@@ -48723,7 +48708,7 @@ snapshots:
     dependencies:
       '@babel/core': 7.27.1
       '@babel/preset-env': 7.27.1(@babel/core@7.27.1)
-      '@babel/types': 7.27.6
+      '@babel/types': 7.28.2
       '@storybook/csf': 0.1.3
       '@storybook/csf-tools': 7.6.20
       '@storybook/node-logger': 7.6.20
@@ -49159,7 +49144,7 @@ snapshots:
 
   '@storybook/react-docgen-typescript-plugin@1.0.6--canary.9.0c3f3b7.0(typescript@5.4.3)(webpack@5.94.0(esbuild@0.19.12))':
     dependencies:
-      debug: 4.4.1
+      debug: 4.3.4
       endent: 2.1.0
       find-cache-dir: 3.3.2
       flat-cache: 3.2.0
@@ -49173,7 +49158,7 @@ snapshots:
 
   '@storybook/react-docgen-typescript-plugin@1.0.6--canary.9.0c3f3b7.0(typescript@5.4.3)(webpack@5.94.0(metro@0.81.5))':
     dependencies:
-      debug: 4.4.1
+      debug: 4.3.4
       endent: 2.1.0
       find-cache-dir: 3.3.2
       flat-cache: 3.2.0
@@ -50844,7 +50829,7 @@ snapshots:
       '@typescript-eslint/scope-manager': 5.62.0
       '@typescript-eslint/type-utils': 5.62.0(eslint@8.57.0)(typescript@5.4.3)
       '@typescript-eslint/utils': 5.62.0(eslint@8.57.0)(typescript@5.4.3)
-      debug: 4.4.1
+      debug: 4.3.4
       eslint: 8.57.0
       graphemer: 1.4.0
       ignore: 5.3.1
@@ -50986,7 +50971,7 @@ snapshots:
     dependencies:
       '@typescript-eslint/typescript-estree': 5.62.0(typescript@5.4.3)
       '@typescript-eslint/utils': 5.62.0(eslint@8.57.0)(typescript@5.4.3)
-      debug: 4.4.1
+      debug: 4.3.4
       eslint: 8.57.0
       tsutils: 3.21.0(typescript@5.4.3)
     optionalDependencies:
@@ -55522,7 +55507,7 @@ snapshots:
   detect-port@1.5.1:
     dependencies:
       address: 1.2.2
-      debug: 4.4.1
+      debug: 4.3.4
     transitivePeerDependencies:
       - supports-color
 
@@ -58489,7 +58474,7 @@ snapshots:
     dependencies:
       basic-ftp: 5.0.5
       data-uri-to-buffer: 6.0.2
-      debug: 4.4.1
+      debug: 4.3.4
     transitivePeerDependencies:
       - supports-color
 
@@ -59258,7 +59243,7 @@ snapshots:
   https-proxy-agent@4.0.0:
     dependencies:
       agent-base: 5.1.1
-      debug: 4.4.1
+      debug: 4.3.4
     transitivePeerDependencies:
       - supports-color
 
@@ -61765,7 +61750,7 @@ snapshots:
   jest-snapshot@27.5.1:
     dependencies:
       '@babel/core': 7.27.1
-      '@babel/generator': 7.28.3
+      '@babel/generator': 7.27.1
       '@babel/plugin-syntax-typescript': 7.27.1(@babel/core@7.27.1)
       '@babel/traverse': 7.27.4
       '@babel/types': 7.28.2
@@ -64289,7 +64274,7 @@ snapshots:
   micromark@3.2.0:
     dependencies:
       '@types/debug': 4.1.12
-      debug: 4.4.1
+      debug: 4.3.4
       decode-named-character-reference: 1.0.2
       micromark-core-commonmark: 1.1.0
       micromark-factory-space: 1.1.0
@@ -65451,7 +65436,7 @@ snapshots:
     dependencies:
       '@tootallnate/quickjs-emscripten': 0.23.0
       agent-base: 7.1.3
-      debug: 4.4.1
+      debug: 4.3.4
       get-uri: 6.0.4
       http-proxy-agent: 7.0.2
       https-proxy-agent: 7.0.6
@@ -66872,7 +66857,7 @@ snapshots:
   puppeteer-core@2.1.1:
     dependencies:
       '@types/mime-types': 2.1.4
-      debug: 4.4.1
+      debug: 4.3.4
       extract-zip: 1.7.0
       https-proxy-agent: 4.0.0
       mime: 2.6.0
@@ -69314,7 +69299,7 @@ snapshots:
   socks-proxy-agent@8.0.5:
     dependencies:
       agent-base: 7.1.3
-      debug: 4.4.1
+      debug: 4.3.4
       socks: 2.8.5
     transitivePeerDependencies:
       - supports-color
