@@ -72,7 +72,10 @@ describe("Xrp Api (testnet)", () => {
     it("returns operations from latest, but in asc order", async () => {
       // When
       const SENDER_WITH_TRANSACTIONS = "rUxSkt6hQpWxXQwTNRUCYYRQ7BC2yRA3F8";
-      const [txDesc] = await api.listOperations(SENDER_WITH_TRANSACTIONS, { minHeight: 200, order: "desc" });
+      const [txDesc] = await api.listOperations(SENDER_WITH_TRANSACTIONS, {
+        minHeight: 200,
+        order: "desc",
+      });
       expect(txDesc.length).toBeGreaterThanOrEqual(200);
       // Then
       // Check if the result is sorted in ascending order
