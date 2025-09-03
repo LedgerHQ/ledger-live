@@ -126,7 +126,11 @@ jobs:
       LC_ALL: en_US.UTF-8
       # DEBUG: "pw:browser*"
       # DEBUG_LOGS: 1
-    runs-on: [ ledger-live-linux-8CPU-32RAM ]
+    strategy:
+      matrix:
+        shard: [1, 2, 3]
+        totalShards: [3]
+    runs-on: [ ubuntu-22.04 ]
     steps:
       - uses: actions/checkout@v4
         with:
@@ -157,7 +161,7 @@ jobs:
       - name: Run playwright tests [Linux => xvfb-run]
         id: tests
         run: |
-          xvfb-run --auto-servernum --server-args="-screen 0 1280x960x24" -- pnpm desktop test:playwright
+          xvfb-run --auto-servernum --server-args="-screen 0 1280x960x24" -- pnpm desktop test:playwright --shard=${{ matrix.shard }}/${{ matrix.totalShards }}
       - name: upload diffs to s3
         if: ${{ !cancelled() }}
         uses: LedgerHQ/ledger-live/tools/actions/upload-images@develop
