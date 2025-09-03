@@ -129,9 +129,9 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        shard: [1, 2, 3, 4]
-        totalShards: [4]
-    runs-on: [ ubuntu-22.04 ]
+        shard: [1, 2]
+        totalShards: [2]
+    runs-on: [ ledger-live-linux-8CPU-32RAM ]
     steps:
       - uses: actions/checkout@v4
         with:
