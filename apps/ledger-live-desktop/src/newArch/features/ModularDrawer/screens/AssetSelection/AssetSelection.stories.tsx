@@ -14,9 +14,7 @@ import AssetSelection from "../AssetSelection";
 import { LoadingStatus } from "@ledgerhq/live-common/deposit/type";
 
 const assetsToDisplay = [ethereumCurrency, arbitrumCurrency, bitcoinCurrency];
-const sortedCryptoCurrencies = [bitcoinCurrency, ethereumCurrency, arbitrumCurrency];
 const onAssetSelected = fn();
-const setAssetsToDisplay = fn();
 const setSearchedValue = fn();
 
 const defaultStore = {
@@ -55,11 +53,8 @@ const meta: Meta<typeof AssetSelection> = {
   component: AssetSelection,
   args: {
     assetsToDisplay,
-    originalAssetsToDisplay: assetsToDisplay,
-    sortedCryptoCurrencies,
     assetsConfiguration: {},
     currenciesByProvider: [],
-    setAssetsToDisplay: setAssetsToDisplay,
     onAssetSelected: onAssetSelected,
     setSearchedValue: setSearchedValue,
     flow: "test",
@@ -124,7 +119,5 @@ export const WithDiscreetModeEnabled: Story = {
 export const EmptyAssets: Story = {
   args: {
     assetsToDisplay: [],
-    originalAssetsToDisplay: [],
-    sortedCryptoCurrencies: [],
   },
 };

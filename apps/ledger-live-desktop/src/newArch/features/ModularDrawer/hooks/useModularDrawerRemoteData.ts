@@ -45,12 +45,10 @@ export function useModularDrawerRemoteData({
 
   const {
     assetsToDisplay,
-    filteredSortedCryptoCurrencies,
     currenciesIdsArray,
     setAssetsToDisplay,
     networksToDisplay,
     setNetworksToDisplay,
-    originalAssetsToDisplay,
     hasOneNetwork,
     hasOneCurrency,
     filteredCurrenciesByProvider,
@@ -103,8 +101,6 @@ export function useModularDrawerRemoteData({
     networkConfiguration,
     currenciesByProvider: filteredCurrenciesByProvider,
     assetsToDisplay,
-    filteredSortedCryptoCurrencies,
-    originalAssetsToDisplay,
     setAssetsToDisplay,
     searchedValue,
     setSearchedValue,

@@ -20,10 +20,6 @@ describe("useAssetSelection", () => {
       { id: "eth", name: "Ethereum" },
       { id: "btc", name: "Bitcoin" },
     ]);
-    expect(result.current.filteredSortedCryptoCurrencies).toEqual([
-      { id: "eth", name: "Ethereum" },
-      { id: "btc", name: "Bitcoin" },
-    ]);
     expect(result.current.currenciesIdsArray).toEqual(["btc", "eth"]);
   });
 
@@ -38,7 +34,6 @@ describe("useAssetSelection", () => {
   it("returns all the assets in assetsToDisplay if no matching currencies", () => {
     const { result } = renderHook(() => useAssetSelection([], mockSorted));
     expect(result.current.assetsToDisplay).toEqual(mockSorted);
-    expect(result.current.filteredSortedCryptoCurrencies).toEqual(mockSorted);
     expect(result.current.currenciesIdsArray).toEqual([]);
   });
 });

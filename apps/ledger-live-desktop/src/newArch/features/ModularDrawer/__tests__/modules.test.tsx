@@ -51,7 +51,6 @@ const mockedInitialState = {
             enableModularization: true,
           },
         },
-        lldModularDrawerBackendData: { enabled: true },
       },
     },
   },

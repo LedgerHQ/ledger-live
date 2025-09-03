@@ -19,7 +19,6 @@ export function useAssetSelection(
   return {
     assetsToDisplay: assetsToDisplay ?? filteredSortedCryptoCurrencies,
     setAssetsToDisplay,
-    filteredSortedCryptoCurrencies,
     currenciesIdsArray,
     currencyIdsSet,
   };

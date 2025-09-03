@@ -26,18 +26,10 @@ export function useModularDrawerFiltering({
 }: UseModularDrawerFilteringProps) {
   const devMode = useEnv("MANAGER_DEV_MODE");
 
-  const {
-    assetsToDisplay,
-    filteredSortedCryptoCurrencies,
-    currenciesIdsArray,
-    currencyIdsSet,
-    setAssetsToDisplay,
-  } = useAssetSelection(currencies, sortedCryptoCurrencies);
+  const { assetsToDisplay, currenciesIdsArray, currencyIdsSet, setAssetsToDisplay } =
+    useAssetSelection(currencies, sortedCryptoCurrencies);
 
   const [networksToDisplay, setNetworksToDisplay] = useState<CryptoOrTokenCurrency[]>();
-  const [originalAssetsToDisplay, setOriginalAssetsToDisplay] = useState<CryptoOrTokenCurrency[]>(
-    [],
-  );
 
   const hasOneNetwork = networksToDisplay?.length === 1;
   const hasOneCurrency = useMemo(() => {
@@ -64,20 +56,17 @@ export function useModularDrawerFiltering({
       : allProviderCurrencies;
 
     setAssetsToDisplay(currenciesEnhanced);
-    setOriginalAssetsToDisplay(currenciesEnhanced);
 
     return filtered;
   }, [currenciesByProvider, currencyIdsSet, setAssetsToDisplay, devMode]);
 
   return {
     assetsToDisplay,
-    filteredSortedCryptoCurrencies,
     currenciesIdsArray,
     currencyIdsSet,
     setAssetsToDisplay,
     networksToDisplay,
     setNetworksToDisplay,
-    originalAssetsToDisplay,
     hasOneNetwork,
     hasOneCurrency,
     filteredCurrenciesByProvider,
