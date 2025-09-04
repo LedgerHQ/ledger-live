@@ -108,8 +108,7 @@ describe("listOperations", () => {
     mockGetTransactions.mockResolvedValue(mockNetworkTxs(txs, defaultMarker));
     const [results, _] = await api.listOperations("src", { minHeight: 0, order: "asc" });
 
-    // called 10 times because there is a hard limit of 10 iterations in case something goes wrong
-    // with interpretation of the token (bug / explorer api changed ...)
+    // called 1 times because the client is expected to do the pagination itself
     expect(mockGetServerInfos).toHaveBeenCalledTimes(1);
     expect(mockGetTransactions).toHaveBeenCalledTimes(1);
 
@@ -124,7 +123,6 @@ describe("listOperations", () => {
 
     const [results, token] = await api.listOperations("src", { minHeight: 0, order: "asc" });
 
-    // called 2 times because the second time there is no marker
     expect(mockGetServerInfos).toHaveBeenCalledTimes(1);
     expect(mockGetTransactions).toHaveBeenCalledTimes(1);
 
@@ -175,7 +173,6 @@ describe("listOperations", () => {
       const [results, _] = await api.listOperations(address, { minHeight: 0, order: "asc" });
 
       // Then
-      // called twice because the marker is set the first time
       expect(mockGetServerInfos).toHaveBeenCalledTimes(1);
       expect(mockGetTransactions).toHaveBeenCalledTimes(1);
 
