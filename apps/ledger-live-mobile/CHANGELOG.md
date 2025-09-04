@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.92.0-next.1
+
+### Minor Changes
+
+- [#11532](https://github.com/LedgerHQ/ledger-live/pull/11532) [`698308d`](https://github.com/LedgerHQ/ledger-live/commit/698308d1ecb2ec6508d27337396c556da81256e8) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Bump version for build
+
 ## 3.92.0-next.0
 
 ### Minor Changes
@@ -92,7 +98,7 @@
   - @ledgerhq/react-native-hid@6.32.10-next.0
   - @ledgerhq/react-native-hw-transport-ble@6.35.3-next.0
   - @ledgerhq/live-dmk-mobile@0.11.2-next.0
-  
+
 ## 3.91.2
 
 ### Patch Changes
