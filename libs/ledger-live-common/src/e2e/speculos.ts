@@ -731,6 +731,7 @@ export async function signDelegationTransaction(delegatingAccount: Delegate) {
 }
 
 export async function verifyAmountsAndAcceptSwap(swap: Swap, amount: string) {
+  await waitFor(DeviceLabels.REVIEW_TRANSACTION);
   const events = await pressUntilTextFound(DeviceLabels.SIGN_TRANSACTION);
   await verifySwapData(swap, events, amount);
   await pressBoth();
@@ -745,6 +746,7 @@ export async function verifyAmountsAndAcceptSwapForDifferentSeed(swap: Swap, amo
 }
 
 export async function verifyAmountsAndRejectSwap(swap: Swap, amount: string) {
+  await waitFor(DeviceLabels.REVIEW_TRANSACTION);
   const events = await pressUntilTextFound(DeviceLabels.REJECT);
   await verifySwapData(swap, events, amount);
   await pressBoth();

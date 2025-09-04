@@ -10,7 +10,7 @@ export default class DiscoverPage {
     { name: "Kiln", url: " https://kiln.fi" },
     { name: "Lido", url: " https://lido.fi/" },
     { name: "1inch", url: " https://1inch.io/" },
-    { name: "", url: " https://btcdirect.eu/" },
+    { name: "BTCDirect", url: " https://btcdirect.eu/" },
     { name: "Banxa", url: " https://banxa.com/" },
     { name: "Bitrefill", url: " https://bitrefill.com" },
     { name: "Zerion", url: " https://zerion.io/" },
