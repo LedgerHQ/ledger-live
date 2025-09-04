@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/hw-app-exchange",
-  "version": "0.13.1-next.0",
+  "version": "0.13.2-next.0",
   "description": "Ledger Hardware Wallet Cosmos Application API",
   "keywords": [
     "Ledger",
@@ -25,7 +25,7 @@
   "types": "lib/index.d.ts",
   "license": "Apache-2.0",
   "dependencies": {
-    "@ledgerhq/device-management-kit": "0.0.0-apex-support-20250721132630",
+    "@ledgerhq/device-management-kit": "0.0.0-fix-lns-20250901094837",
     "@ledgerhq/errors": "workspace:^",
     "@ledgerhq/hw-transport": "workspace:^",
     "bignumber.js": "^9.1.2",

@@ -1,6 +1,6 @@
 # web-tools
 
-## 0.21.2-next.0
+## 0.22.0-next.0
 
 ### Patch Changes
 
@@ -23,6 +23,34 @@
   - @ledgerhq/hw-transport-web-ble@6.29.10-next.0
   - @ledgerhq/hw-transport-webhid@6.30.6-next.0
   - @ledgerhq/hw-transport-webusb@6.29.10-next.0
+
+## 0.21.3
+
+### Patch Changes
+
+- Updated dependencies [[`458f80d`](https://github.com/LedgerHQ/ledger-live/commit/458f80d2d8cf202bde2feb35239a35299e48fa7c)]:
+  - @ledgerhq/live-common@34.46.2
+
+## 0.21.3-hotfix.0
+
+### Patch Changes
+
+- Updated dependencies [[`458f80d`](https://github.com/LedgerHQ/ledger-live/commit/458f80d2d8cf202bde2feb35239a35299e48fa7c)]:
+  - @ledgerhq/live-common@34.46.2-hotfix.0
+
+## 0.21.2
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/live-common@34.46.1
+
+## 0.21.2-hotfix.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/live-common@34.46.1-hotfix.0
 
 ## 0.21.1
 

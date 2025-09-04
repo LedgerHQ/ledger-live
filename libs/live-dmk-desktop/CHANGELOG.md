@@ -1,6 +1,6 @@
 # @ledgerhq/live-dmk-desktop
 
-## 0.9.2-next.0
+## 0.9.4-next.0
 
 ### Patch Changes
 
@@ -8,6 +8,44 @@
   - @ledgerhq/live-common@34.47.0-next.0
   - @ledgerhq/hw-transport@6.31.10-next.0
   - @ledgerhq/live-dmk-shared@0.12.2-next.0
+  
+## 0.9.3
+
+### Patch Changes
+
+- [#11576](https://github.com/LedgerHQ/ledger-live/pull/11576) [`458f80d`](https://github.com/LedgerHQ/ledger-live/commit/458f80d2d8cf202bde2feb35239a35299e48fa7c) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Fix issue with eth clear signing from DMK
+
+- Updated dependencies [[`458f80d`](https://github.com/LedgerHQ/ledger-live/commit/458f80d2d8cf202bde2feb35239a35299e48fa7c)]:
+  - @ledgerhq/live-common@34.46.2
+  - @ledgerhq/live-dmk-shared@0.12.2
+
+## 0.9.3-hotfix.0
+
+### Patch Changes
+
+- [#11576](https://github.com/LedgerHQ/ledger-live/pull/11576) [`458f80d`](https://github.com/LedgerHQ/ledger-live/commit/458f80d2d8cf202bde2feb35239a35299e48fa7c) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Fix issue with eth clear signing from DMK
+
+- Updated dependencies [[`458f80d`](https://github.com/LedgerHQ/ledger-live/commit/458f80d2d8cf202bde2feb35239a35299e48fa7c)]:
+  - @ledgerhq/live-common@34.46.2-hotfix.0
+  - @ledgerhq/live-dmk-shared@0.12.2-hotfix.0
+
+## 0.9.2
+
+### Patch Changes
+
+- [#11563](https://github.com/LedgerHQ/ledger-live/pull/11563) [`9f9c22a`](https://github.com/LedgerHQ/ledger-live/commit/9f9c22a72e3cbdbcb641f9a2fd771a4e9ad3f87b) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Update DMK libraries for fixing swap on LNS
+
+- Updated dependencies []:
+  - @ledgerhq/live-common@34.46.1
+
+## 0.9.2-hotfix.0
+
+### Patch Changes
+
+- [#11563](https://github.com/LedgerHQ/ledger-live/pull/11563) [`9f9c22a`](https://github.com/LedgerHQ/ledger-live/commit/9f9c22a72e3cbdbcb641f9a2fd771a4e9ad3f87b) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Update DMK libraries for fixing swap on LNS
+
+- Updated dependencies []:
+  - @ledgerhq/live-common@34.46.1-hotfix.0
 
 ## 0.9.1
 

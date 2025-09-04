@@ -1,6 +1,6 @@
 # @ledgerhq/live-signer-evm
 
-## 0.7.2-next.0
+## 0.7.4-next.0
 
 ### Patch Changes
 
@@ -8,6 +8,30 @@
   - @ledgerhq/coin-evm@2.29.0-next.0
   - @ledgerhq/errors@6.25.0-next.0
   - @ledgerhq/hw-app-eth@6.45.17-next.0
+  
+## 0.7.3
+
+### Patch Changes
+
+- [#11576](https://github.com/LedgerHQ/ledger-live/pull/11576) [`458f80d`](https://github.com/LedgerHQ/ledger-live/commit/458f80d2d8cf202bde2feb35239a35299e48fa7c) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Fix issue with eth clear signing from DMK
+
+## 0.7.3-hotfix.0
+
+### Patch Changes
+
+- [#11576](https://github.com/LedgerHQ/ledger-live/pull/11576) [`458f80d`](https://github.com/LedgerHQ/ledger-live/commit/458f80d2d8cf202bde2feb35239a35299e48fa7c) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Fix issue with eth clear signing from DMK
+
+## 0.7.2
+
+### Patch Changes
+
+- [#11563](https://github.com/LedgerHQ/ledger-live/pull/11563) [`9f9c22a`](https://github.com/LedgerHQ/ledger-live/commit/9f9c22a72e3cbdbcb641f9a2fd771a4e9ad3f87b) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Update DMK libraries for fixing swap on LNS
+
+## 0.7.2-hotfix.0
+
+### Patch Changes
+
+- [#11563](https://github.com/LedgerHQ/ledger-live/pull/11563) [`9f9c22a`](https://github.com/LedgerHQ/ledger-live/commit/9f9c22a72e3cbdbcb641f9a2fd771a4e9ad3f87b) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Update DMK libraries for fixing swap on LNS
 
 ## 0.7.1
 

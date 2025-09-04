@@ -1,11 +1,23 @@
 # @ledgerhq/live-dmk
 
-## 0.12.2-next.0
+## 0.12.3-next.0
 
 ### Patch Changes
 
 - Updated dependencies []:
   - @ledgerhq/hw-transport@6.31.10-next.0
+  
+## 0.12.2
+
+### Patch Changes
+
+- [#11576](https://github.com/LedgerHQ/ledger-live/pull/11576) [`458f80d`](https://github.com/LedgerHQ/ledger-live/commit/458f80d2d8cf202bde2feb35239a35299e48fa7c) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Fix issue with eth clear signing from DMK
+
+## 0.12.2-hotfix.0
+
+### Patch Changes
+
+- [#11576](https://github.com/LedgerHQ/ledger-live/pull/11576) [`458f80d`](https://github.com/LedgerHQ/ledger-live/commit/458f80d2d8cf202bde2feb35239a35299e48fa7c) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Fix issue with eth clear signing from DMK
 
 ## 0.12.1
 

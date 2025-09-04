@@ -92,6 +92,38 @@
   - @ledgerhq/react-native-hid@6.32.10-next.0
   - @ledgerhq/react-native-hw-transport-ble@6.35.3-next.0
   - @ledgerhq/live-dmk-mobile@0.11.2-next.0
+  
+## 3.91.2
+
+### Patch Changes
+
+- [#11576](https://github.com/LedgerHQ/ledger-live/pull/11576) [`458f80d`](https://github.com/LedgerHQ/ledger-live/commit/458f80d2d8cf202bde2feb35239a35299e48fa7c) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Fix issue with eth clear signing from DMK
+
+- Updated dependencies [[`458f80d`](https://github.com/LedgerHQ/ledger-live/commit/458f80d2d8cf202bde2feb35239a35299e48fa7c)]:
+  - @ledgerhq/live-dmk-mobile@0.11.3
+
+## 3.91.2-hotfix.0
+
+### Patch Changes
+
+- [#11576](https://github.com/LedgerHQ/ledger-live/pull/11576) [`458f80d`](https://github.com/LedgerHQ/ledger-live/commit/458f80d2d8cf202bde2feb35239a35299e48fa7c) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Fix issue with eth clear signing from DMK
+
+- Updated dependencies [[`458f80d`](https://github.com/LedgerHQ/ledger-live/commit/458f80d2d8cf202bde2feb35239a35299e48fa7c)]:
+  - @ledgerhq/live-dmk-mobile@0.11.3-hotfix.0
+
+## 3.91.1
+
+### Patch Changes
+
+- Updated dependencies [[`9f9c22a`](https://github.com/LedgerHQ/ledger-live/commit/9f9c22a72e3cbdbcb641f9a2fd771a4e9ad3f87b)]:
+  - @ledgerhq/live-dmk-mobile@0.11.2
+
+## 3.91.1-hotfix.0
+
+### Patch Changes
+
+- Updated dependencies [[`9f9c22a`](https://github.com/LedgerHQ/ledger-live/commit/9f9c22a72e3cbdbcb641f9a2fd771a4e9ad3f87b)]:
+  - @ledgerhq/live-dmk-mobile@0.11.2-hotfix.0
 
 ## 3.91.0
 

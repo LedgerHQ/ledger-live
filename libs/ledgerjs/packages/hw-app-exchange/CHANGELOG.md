@@ -1,12 +1,24 @@
 # @ledgerhq/hw-app-exchange
 
-## 0.13.1-next.0
+## 0.13.2-next.0
 
 ### Patch Changes
 
 - Updated dependencies [[`8936f39`](https://github.com/LedgerHQ/ledger-live/commit/8936f390edbe9cbc36ac6590b01562daf5c580e1)]:
   - @ledgerhq/errors@6.25.0-next.0
   - @ledgerhq/hw-transport@6.31.10-next.0
+  
+## 0.13.1
+
+### Patch Changes
+
+- [#11576](https://github.com/LedgerHQ/ledger-live/pull/11576) [`458f80d`](https://github.com/LedgerHQ/ledger-live/commit/458f80d2d8cf202bde2feb35239a35299e48fa7c) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Fix issue with eth clear signing from DMK
+
+## 0.13.1-hotfix.0
+
+### Patch Changes
+
+- [#11576](https://github.com/LedgerHQ/ledger-live/pull/11576) [`458f80d`](https://github.com/LedgerHQ/ledger-live/commit/458f80d2d8cf202bde2feb35239a35299e48fa7c) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Fix issue with eth clear signing from DMK
 
 ## 0.13.0
 

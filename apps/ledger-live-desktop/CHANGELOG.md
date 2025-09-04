@@ -79,6 +79,42 @@
   - @ledgerhq/hw-transport-node-speculos-http@6.29.10-next.0
   - @ledgerhq/hw-transport-vault@1.3.10-next.0
 
+## 2.126.2
+
+### Patch Changes
+
+- [#11576](https://github.com/LedgerHQ/ledger-live/pull/11576) [`458f80d`](https://github.com/LedgerHQ/ledger-live/commit/458f80d2d8cf202bde2feb35239a35299e48fa7c) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Fix issue with eth clear signing from DMK
+
+- Updated dependencies [[`458f80d`](https://github.com/LedgerHQ/ledger-live/commit/458f80d2d8cf202bde2feb35239a35299e48fa7c)]:
+  - @ledgerhq/live-common@34.46.2
+  - @ledgerhq/live-dmk-desktop@0.9.3
+
+## 2.126.2-hotfix.0
+
+### Patch Changes
+
+- [#11576](https://github.com/LedgerHQ/ledger-live/pull/11576) [`458f80d`](https://github.com/LedgerHQ/ledger-live/commit/458f80d2d8cf202bde2feb35239a35299e48fa7c) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Fix issue with eth clear signing from DMK
+
+- Updated dependencies [[`458f80d`](https://github.com/LedgerHQ/ledger-live/commit/458f80d2d8cf202bde2feb35239a35299e48fa7c)]:
+  - @ledgerhq/live-common@34.46.2-hotfix.0
+  - @ledgerhq/live-dmk-desktop@0.9.3-hotfix.0
+
+## 2.126.1
+
+### Patch Changes
+
+- Updated dependencies [[`9f9c22a`](https://github.com/LedgerHQ/ledger-live/commit/9f9c22a72e3cbdbcb641f9a2fd771a4e9ad3f87b)]:
+  - @ledgerhq/live-dmk-desktop@0.9.2
+  - @ledgerhq/live-common@34.46.1
+
+## 2.126.1-hotfix.0
+
+### Patch Changes
+
+- Updated dependencies [[`9f9c22a`](https://github.com/LedgerHQ/ledger-live/commit/9f9c22a72e3cbdbcb641f9a2fd771a4e9ad3f87b)]:
+  - @ledgerhq/live-dmk-desktop@0.9.2-hotfix.0
+  - @ledgerhq/live-common@34.46.1-hotfix.0
+
 ## 2.126.0
 
 ### Minor Changes
