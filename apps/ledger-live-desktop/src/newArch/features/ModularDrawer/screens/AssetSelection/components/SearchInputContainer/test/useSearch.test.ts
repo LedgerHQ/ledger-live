@@ -5,9 +5,7 @@ import { track } from "~/renderer/analytics/segment";
 import { jest } from "@jest/globals";
 
 describe("useSearch", () => {
-  const mockSetSearchedValue = jest.fn();
   const defaultProps = {
-    setSearchedValue: mockSetSearchedValue,
     source: "test",
     flow: "testing",
   };
@@ -17,8 +15,14 @@ describe("useSearch", () => {
     jest.clearAllTimers();
   });
 
-  it("should initialize with default value if provided", () => {
-    const { result } = renderHook(() => useSearch({ ...defaultProps, searchedValue: "BTC" }));
+  it("should initialize with store value", () => {
+    const { result } = renderHook(() => useSearch(defaultProps), {
+      initialState: {
+        modularDrawer: {
+          searchedValue: "BTC",
+        },
+      },
+    });
 
     expect(result.current.displayedValue).toBe("BTC");
   });
@@ -49,14 +53,14 @@ describe("useSearch", () => {
     expect(result.current.displayedValue).toBe("Ethereum");
   });
 
-  it("should call setSearchedValue when handleDebouncedChange is called", () => {
-    const { result } = renderHook(() => useSearch(defaultProps));
+  it("should set redux value when handleDebouncedChange is called", () => {
+    const { result, store } = renderHook(() => useSearch(defaultProps));
 
     act(() => {
       result.current.handleDebouncedChange("Bitcoin", "");
     });
 
-    expect(mockSetSearchedValue).toHaveBeenCalledWith("Bitcoin");
+    expect(store.getState().modularDrawer.searchedValue).toBe("Bitcoin");
   });
 
   it("should track search query when manually calling handleDebouncedChange", () => {
@@ -94,7 +98,7 @@ describe("useSearch", () => {
   });
 
   it("should handle the workflow of typing and tracking", () => {
-    const { result } = renderHook(() => useSearch(defaultProps));
+    const { result, store } = renderHook(() => useSearch(defaultProps));
 
     act(() => {
       result.current.handleSearch("ET");
@@ -106,7 +110,7 @@ describe("useSearch", () => {
       result.current.handleDebouncedChange("ET", "");
     });
 
-    expect(mockSetSearchedValue).toHaveBeenCalledWith("ET");
+    expect(store.getState().modularDrawer.searchedValue).toBe("ET");
 
     expect(track).toHaveBeenCalledWith("asset_searched", {
       page: "Asset Selection",

@@ -1,10 +1,10 @@
 import { ChangeEvent, useCallback, useState } from "react";
 import { useModularDrawerAnalytics } from "LLD/features/ModularDrawer/analytics/useModularDrawerAnalytics";
 import { MODULAR_DRAWER_PAGE_NAME } from "LLD/features/ModularDrawer/analytics/modularDrawer.types";
+import { useDispatch, useSelector } from "react-redux";
+import { modularDrawerStateSelector, setSearchedValue } from "~/renderer/reducers/modularDrawer";
 
 export type SearchProps = {
-  setSearchedValue?: (value: string) => void;
-  searchedValue?: string;
   source: string;
   flow: string;
 };
@@ -15,12 +15,11 @@ export type SearchResult = {
   displayedValue: string | undefined;
 };
 
-export const useSearch = ({
-  setSearchedValue,
-  searchedValue,
-  source,
-  flow,
-}: SearchProps): SearchResult => {
+export const useSearch = ({ source, flow }: SearchProps): SearchResult => {
+  const dispatch = useDispatch();
+
+  const { searchedValue } = useSelector(modularDrawerStateSelector);
+
   const { trackModularDrawerEvent } = useModularDrawerAnalytics();
   const [displayedValue, setDisplayedValue] = useState(searchedValue);
 
@@ -28,7 +27,7 @@ export const useSearch = ({
     (current: string, previous: string) => {
       const query = current;
       const prevQuery = previous;
-      setSearchedValue?.(query);
+      dispatch(setSearchedValue(query));
 
       if (query === prevQuery) {
         return;
@@ -47,7 +46,7 @@ export const useSearch = ({
         },
       );
     },
-    [trackModularDrawerEvent, flow, source, setSearchedValue],
+    [dispatch, trackModularDrawerEvent, flow, source],
   );
 
   const handleSearch = useCallback((queryOrEvent: string | ChangeEvent<HTMLInputElement>) => {

@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { ModularDrawerFlowManagerProps, ModularDrawerStep } from "../types";
 import { useModularDrawerData } from "./useModularDrawerData";
 import { useModularDrawerFiltering } from "./useModularDrawerFiltering";
@@ -29,7 +28,6 @@ export function useModularDrawerRemoteData({
   onAccountSelected,
   flow,
 }: UseModularDrawerRemoteDataProps) {
-  const [searchedValue, setSearchedValue] = useState<string>();
   const { assetsConfiguration, networkConfiguration } =
     useModularDrawerConfiguration(drawerConfiguration);
 
@@ -41,7 +39,7 @@ export function useModularDrawerRemoteData({
     isSuccess,
     loadingStatus,
     loadNext,
-  } = useModularDrawerData({ currencyIds, searchedValue, useCase, areCurrenciesFiltered });
+  } = useModularDrawerData({ currencyIds, useCase, areCurrenciesFiltered });
 
   const {
     assetsToDisplay,
@@ -79,7 +77,6 @@ export function useModularDrawerRemoteData({
     onAccountSelected,
     flow,
     hasOneCurrency,
-    searchedValue,
   });
 
   const { handleBack } = useModularDrawerBackButton({
@@ -89,7 +86,6 @@ export function useModularDrawerRemoteData({
     hasOneCurrency,
     hasOneNetwork,
     networksToDisplay,
-    searchedValue,
   });
 
   return {
@@ -101,8 +97,6 @@ export function useModularDrawerRemoteData({
     currenciesByProvider: filteredCurrenciesByProvider,
     assetsToDisplay,
     setAssetsToDisplay,
-    searchedValue,
-    setSearchedValue,
     networksToDisplay,
     selectedAsset,
     selectedNetwork,
