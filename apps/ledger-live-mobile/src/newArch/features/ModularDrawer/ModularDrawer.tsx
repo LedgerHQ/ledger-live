@@ -76,7 +76,7 @@ export function ModularDrawer({
     });
 
   const {
-    assetForAccount,
+    accountCurrency,
     handleAsset,
     handleNetwork,
     handleBackButton,
@@ -93,6 +93,7 @@ export function ModularDrawer({
     flow,
     enableAccountSelection,
     onClose,
+    hasSearchedValue: searchValue.length > 0,
   });
 
   return (
@@ -132,7 +133,7 @@ export function ModularDrawer({
         accountsViewModel={{
           accounts$,
           onAddNewAccount,
-          asset: assetForAccount,
+          asset: accountCurrency,
           onAccountSelected,
           flow,
           source,

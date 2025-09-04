@@ -115,10 +115,11 @@ const AssetSelection = ({
   );
 
   const renderContent = () => {
+    if (isLoading) return <SkeletonList />;
+
     if (hasError || !isConnected) {
       return <GenericError onClick={refetch} type={!isConnected ? "internet" : "backend"} />;
     }
-    if (isLoading) return <SkeletonList />;
 
     return (
       <BottomSheetVirtualizedList
@@ -137,7 +138,7 @@ const AssetSelection = ({
         }}
         onEndReached={loadNext}
         onEndReachedThreshold={0.5}
-        ListFooterComponent={<InfiniteLoader size={20} />}
+        ListFooterComponent={loadNext ? <InfiniteLoader size={20} /> : null}
       />
     );
   };

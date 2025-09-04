@@ -12,7 +12,7 @@ interface UseAssetsProps {
   searchedValue?: string;
 }
 
-export type UseAssetsData =
+export type AssetsData =
   | {
       asset: {
         id: string;
@@ -34,7 +34,7 @@ export function useAssetsFromDada({ currencyIds, searchedValue }: UseAssetsProps
     version: VersionNumber.appVersion,
   });
 
-  const assetsSorted: UseAssetsData = useMemo(() => {
+  const assetsSorted: AssetsData = useMemo(() => {
     if (!data?.currenciesOrder.metaCurrencyIds) return undefined;
 
     return data.currenciesOrder.metaCurrencyIds
