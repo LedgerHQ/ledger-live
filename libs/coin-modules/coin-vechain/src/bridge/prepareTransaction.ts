@@ -1,12 +1,11 @@
 import { Account } from "@ledgerhq/types-live";
-import { Transaction as VeChainThorTransaction } from "thor-devkit";
 import {
   calculateTransactionInfo,
-  isValid,
   calculateClausesVet,
   calculateClausesVtho,
+  parseAddress,
 } from "../common-logic";
-import { Transaction } from "../types";
+import { Transaction, VechainSDKTransactionClause } from "../types";
 import { getBlockRef } from "../network";
 
 /**
@@ -19,15 +18,19 @@ export const prepareTransaction = async (
   account: Account,
   transaction: Transaction,
 ): Promise<Transaction> => {
-  const { amount, isTokenAccount, estimatedFees, estimatedGas } = await calculateTransactionInfo(
-    account,
-    transaction,
-  );
+  const {
+    amount,
+    isTokenAccount,
+    estimatedFees,
+    estimatedGas,
+    maxFeePerGas,
+    maxPriorityFeePerGas,
+  } = await calculateTransactionInfo(account, transaction);
 
   let blockRef = "";
 
-  let clauses: Array<VeChainThorTransaction.Clause> = [];
-  if (transaction.recipient && isValid(transaction.recipient)) {
+  let clauses: Array<VechainSDKTransactionClause> = [];
+  if (transaction.recipient && parseAddress(transaction.recipient)) {
     blockRef = await getBlockRef();
     if (isTokenAccount) {
       clauses = await calculateClausesVtho(transaction.recipient, amount);
@@ -36,6 +39,13 @@ export const prepareTransaction = async (
     }
   }
 
-  const body = { ...transaction.body, gas: estimatedGas, blockRef, clauses };
+  const body = {
+    ...transaction.body,
+    gas: estimatedGas,
+    blockRef,
+    clauses,
+    maxFeePerGas,
+    maxPriorityFeePerGas,
+  };
   return { ...transaction, body, amount, estimatedFees };
 };
