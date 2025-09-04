@@ -43,6 +43,46 @@ describe("Alpaca utils", () => {
       recipients: ["recipient1"],
     };
 
+    it("does not include fees in non native asset value", () => {
+      expect(
+        adaptCoreOperationToLiveOperation("account", {
+          id: "operation",
+          asset: { type: "token", assetOwner: "owner", assetReference: "reference" },
+          type: "OUT",
+          value: BigInt(100),
+          tx: {
+            hash: "hash",
+            fees: BigInt(10),
+            block: {
+              hash: "block_hash",
+              height: 123456,
+            },
+            date: new Date("2025-08-29T12:00:00Z"),
+          },
+          senders: ["sender"],
+          recipients: ["recipient"],
+        }),
+      ).toEqual({
+        id: "account-hash-OUT",
+        hash: "hash",
+        accountId: "account",
+        type: "OUT",
+        value: new BigNumber(100), // value only
+        fee: new BigNumber(10),
+        extra: {
+          assetOwner: "owner",
+          assetReference: "reference",
+        },
+        blockHash: "block_hash",
+        blockHeight: 123456,
+        senders: ["sender"],
+        recipients: ["recipient"],
+        date: new Date("2025-08-29T12:00:00Z"),
+        transactionSequenceNumber: undefined,
+        hasFailed: false,
+      });
+    });
+
     it("adapts a basic OUT operation", () => {
       const result = adaptCoreOperationToLiveOperation(accountId, baseOp);
 
