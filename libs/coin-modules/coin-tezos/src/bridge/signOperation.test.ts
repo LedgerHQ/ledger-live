@@ -1,5 +1,5 @@
 import BigNumber from "bignumber.js";
-import { DEFAULT_FEE, OpKind } from "@taquito/taquito";
+import { getRevealFee, OpKind } from "@taquito/taquito";
 import { SignOperationEvent } from "@ledgerhq/types-live";
 import buildSignOperation, { getOperationContents } from "./signOperation";
 import config, { type TezosCoinConfig } from "../config";
@@ -260,7 +260,7 @@ describe("getOperationContents - revealed account", () => {
       expect(contents).toStrictEqual([
         {
           kind: OpKind.REVEAL,
-          fee: DEFAULT_FEE.REVEAL.toString(),
+          fee: getRevealFee(account.freshAddress).toString(),
           gas_limit: "100",
           storage_limit: "200",
           source: "pkh",

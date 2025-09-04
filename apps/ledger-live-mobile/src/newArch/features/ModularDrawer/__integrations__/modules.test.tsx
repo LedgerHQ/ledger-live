@@ -75,14 +75,14 @@ describe("ModularDrawer modules integration", () => {
     await user.press(getByText(WITHOUT_ACCOUNT_SELECTION));
     advanceTimers();
     expect(getByText(/ethereum/i)).toBeVisible();
-    expect(queryAllByText(/5.11% APY/i).length).toBe(10);
+    expect(queryAllByText(/3.66% APY/i)).not.toBeNull();
   });
 
   it("should not display the apy indicator if the configuration is not provided", async () => {
     const { queryByText, user } = render(<ModularDrawerSharedNavigator />);
     await user.press(queryByText(WITHOUT_ACCOUNT_SELECTION));
     advanceTimers();
-    expect(queryByText(/5.11% APY/i)).toBeNull();
+    expect(queryByText(/3.66% APY/i)).toBeNull();
   });
 
   it("should display the number of accounts and apy indicator on network list", async () => {

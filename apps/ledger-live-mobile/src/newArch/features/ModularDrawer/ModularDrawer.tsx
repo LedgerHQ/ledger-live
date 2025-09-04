@@ -69,10 +69,11 @@ export function ModularDrawer({
     }
   }, [isOpen]);
 
-  const { sortedCryptoCurrencies, assetsSorted, isLoading } = useAssetsFromDada({
-    currencyIds: currencies,
-    searchedValue: searchValue,
-  });
+  const { sortedCryptoCurrencies, assetsSorted, isLoading, error, refetch, loadNext } =
+    useAssetsFromDada({
+      currencyIds: currencies,
+      searchedValue: searchValue,
+    });
 
   const {
     assetForAccount,
@@ -117,6 +118,9 @@ export function ModularDrawer({
           assetsConfiguration,
           isOpen,
           isLoading,
+          hasError: !!error,
+          refetch,
+          loadNext,
         }}
         networksViewModel={{
           onNetworkSelected: handleNetwork,

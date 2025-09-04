@@ -17,12 +17,11 @@ export const prepareMessageToSign = ({ message }: { message: string }): TypedEvm
     // With the ethers lib, EIP712Domain type should be removed otherwise
     // you'll end up with a "ambiguous primary types" error
     const { EIP712Domain, ...otherTypes } = parsedMessage.types;
-
     return {
       standard: "EIP712",
       message: parsedMessage,
-      domainHash: ethers.utils._TypedDataEncoder.hashDomain(parsedMessage.domain),
-      hashStruct: ethers.utils._TypedDataEncoder.hashStruct(
+      domainHash: ethers.TypedDataEncoder.hashDomain(parsedMessage.domain),
+      hashStruct: ethers.TypedDataEncoder.hashStruct(
         parsedMessage.primaryType,
         otherTypes,
         parsedMessage.message,
@@ -65,11 +64,11 @@ export const signMessage =
         });
       });
 
-      const signature = ethers.utils.joinSignature({
+      const signature = ethers.Signature.from({
         r: `0x${r}`,
         s: `0x${s}`,
         v: typeof v === "string" ? parseInt(v, 16) : v,
-      });
+      }).serialized;
 
       return { rsv: { r, s, v }, signature };
     }
@@ -113,11 +112,11 @@ export const signMessage =
       }
     });
 
-    const signature = ethers.utils.joinSignature({
+    const signature = ethers.Signature.from({
       r: `0x${r}`,
       s: `0x${s}`,
       v: typeof v === "string" ? parseInt(v, 16) : v,
-    });
+    }).serialized;
 
     return { rsv: { r, s, v }, signature };
   };

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import type { Account } from "@ledgerhq/types-live";
 import { ModularDrawerStep } from "../types";
@@ -43,6 +43,7 @@ export function useModularDrawerState({
   const [asset, setAsset] = useState<CryptoOrTokenCurrency>();
   const [network, setNetwork] = useState<CryptoOrTokenCurrency>();
   const [availableNetworks, setAvailableNetworks] = useState<CryptoOrTokenCurrency[]>([]);
+  const autoSelectRef = useRef(false);
 
   // Computed values
   const singleCurrency = useMemo(() => {
@@ -163,12 +164,24 @@ export function useModularDrawerState({
     resetSelection: reset,
   });
 
-  // Auto-handle single currency when drawer opens
+  // Auto-handle single currency when drawer opens (guarded per open)
   useEffect(() => {
-    if (isDrawerOpen && singleCurrency && !asset && !network) {
-      handleAsset(singleCurrency);
+    if (!isDrawerOpen) return;
+    if (!singleCurrency) return;
+    if (autoSelectRef.current) return;
+
+    autoSelectRef.current = true;
+    handleAsset(singleCurrency);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isDrawerOpen]);
+
+  // Reset guard and local selection when closing
+  useEffect(() => {
+    if (isDrawerOpen === false) {
+      autoSelectRef.current = false;
+      reset();
     }
-  }, [isDrawerOpen, singleCurrency, asset, network, handleAsset]);
+  }, [isDrawerOpen, reset]);
 
   const assetForAccount = useMemo(() => {
     if (!asset) return undefined;

@@ -49,7 +49,9 @@ export const SelectNetwork = ({
 
   const orderedNetworks = orderBy(networks, ["name"]);
 
-  const formattedNetworks = transformNetworks(orderedNetworks);
+  const formattedNetworks = transformNetworks(
+    featureModularDrawerBackendData?.enabled ? networks : orderedNetworks,
+  );
 
   const onClick = (networkId: string) => {
     const network = networks.find(({ id }) => id === networkId);
@@ -74,10 +76,7 @@ export const SelectNetwork = ({
 
   return (
     <ListWrapper>
-      <NetworkList
-        networks={featureModularDrawerBackendData?.enabled ? networks : formattedNetworks}
-        onClick={onClick}
-      />
+      <NetworkList networks={formattedNetworks} onClick={onClick} />
     </ListWrapper>
   );
 };

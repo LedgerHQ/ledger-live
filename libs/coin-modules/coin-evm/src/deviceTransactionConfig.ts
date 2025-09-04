@@ -20,6 +20,7 @@ const inferDeviceTransactionConfigWalletApi = (
   mainAccount: Account,
 ): Array<DeviceTransactionField> => {
   if (!transaction.data) throw new Error();
+  const abiCoder = ethers.AbiCoder.defaultAbiCoder();
   const fields: Array<DeviceTransactionField> = [];
 
   const hasValidDomain = validateDomain(transaction.recipientDomain?.domain);
@@ -36,10 +37,10 @@ const inferDeviceTransactionConfigWalletApi = (
   if (token && Object.values<string>(ERC20_CLEAR_SIGNED_SELECTORS).includes(selector)) {
     switch (selector) {
       case ERC20_CLEAR_SIGNED_SELECTORS.TRANSFER: {
-        const [recipient, value] = ethers.utils.defaultAbiCoder.decode(
+        const [recipient, value] = abiCoder.decode(
           ["address", "uint256"],
           argumentsBuffer,
-        ) as [string, ethers.BigNumber];
+        ) as unknown as [string, bigint];
 
         fields.push(
           {
@@ -65,10 +66,10 @@ const inferDeviceTransactionConfigWalletApi = (
         return fields;
       }
       case ERC20_CLEAR_SIGNED_SELECTORS.APPROVE: {
-        const [spender, value] = ethers.utils.defaultAbiCoder.decode(
+        const [spender, value] = abiCoder.decode(
           ["address", "uint256"],
           argumentsBuffer,
-        ) as [string, ethers.BigNumber];
+        ) as unknown as [string, bigint];
 
         const valueAsBN = new BigNumber(value.toString());
         fields.push(
@@ -121,10 +122,10 @@ const inferDeviceTransactionConfigWalletApi = (
       case ERC721_CLEAR_SIGNED_SELECTORS.SAFE_TRANSFER_FROM:
       case ERC721_CLEAR_SIGNED_SELECTORS.SAFE_TRANSFER_FROM_WITH_DATA:
       case ERC721_CLEAR_SIGNED_SELECTORS.TRANSFER_FROM: {
-        const [, recipient, tokenId] = ethers.utils.defaultAbiCoder.decode(
+        const [, recipient, tokenId] = abiCoder.decode(
           ERC721_METHODS_ARGUMENTS[selector],
           argumentsBuffer,
-        ) as [unknown, string, ethers.BigNumber];
+        ) as unknown as [unknown, string, bigint];
 
         fields.push(
           {
@@ -157,10 +158,10 @@ const inferDeviceTransactionConfigWalletApi = (
       }
 
       case ERC721_CLEAR_SIGNED_SELECTORS.APPROVE: {
-        const [spender, tokenId] = ethers.utils.defaultAbiCoder.decode(
+        const [spender, tokenId] = abiCoder.decode(
           ERC721_METHODS_ARGUMENTS[selector],
           argumentsBuffer,
-        ) as [string, ethers.BigNumber];
+        ) as unknown as [string, bigint];
 
         fields.push(
           {
@@ -193,10 +194,10 @@ const inferDeviceTransactionConfigWalletApi = (
       }
 
       case ERC721_CLEAR_SIGNED_SELECTORS.SET_APPROVAL_FOR_ALL: {
-        const [spender, canManageAll] = ethers.utils.defaultAbiCoder.decode(
+        const [spender, canManageAll] = abiCoder.decode(
           ERC721_METHODS_ARGUMENTS[selector],
           argumentsBuffer,
-        ) as [string, boolean];
+        ) as unknown as [string, boolean];
 
         fields.push(
           {
@@ -247,10 +248,10 @@ const inferDeviceTransactionConfigWalletApi = (
 
     switch (selector) {
       case ERC1155_CLEAR_SIGNED_SELECTORS.SAFE_TRANSFER_FROM: {
-        const [, recipient, tokenId, quantity] = ethers.utils.defaultAbiCoder.decode(
+        const [, recipient, tokenId, quantity] = abiCoder.decode(
           ERC1155_METHODS_ARGUMENTS[selector],
           argumentsBuffer,
-        ) as [unknown, string, ethers.BigNumber, ethers.BigNumber];
+        ) as unknown as [unknown, string, bigint, bigint];
 
         fields.push(
           {
@@ -288,10 +289,10 @@ const inferDeviceTransactionConfigWalletApi = (
       }
 
       case ERC1155_CLEAR_SIGNED_SELECTORS.SAFE_BATCH_TRANSFER_FROM: {
-        const [, recipient, tokenIds, quantities] = ethers.utils.defaultAbiCoder.decode(
+        const [, recipient, tokenIds, quantities] = abiCoder.decode(
           ERC1155_METHODS_ARGUMENTS[selector],
           argumentsBuffer,
-        ) as [unknown, string, ethers.BigNumber[], ethers.BigNumber[]];
+        ) as unknown as [unknown, string, bigint[], bigint[]];
 
         const totalQuantity = quantities.reduce(
           (acc, curr) => acc.plus(curr.toString()),
@@ -329,10 +330,10 @@ const inferDeviceTransactionConfigWalletApi = (
       }
 
       case ERC1155_CLEAR_SIGNED_SELECTORS.SET_APPROVAL_FOR_ALL: {
-        const [spender, canManageAll] = ethers.utils.defaultAbiCoder.decode(
+        const [spender, canManageAll] = abiCoder.decode(
           ERC1155_METHODS_ARGUMENTS[selector],
           argumentsBuffer,
-        ) as [string, boolean];
+        ) as unknown as [string, boolean];
 
         fields.push(
           {

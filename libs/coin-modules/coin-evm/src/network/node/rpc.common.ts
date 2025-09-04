@@ -1,5 +1,5 @@
 /** ⚠️ keep this order of import. @see https://docs.ethers.io/v5/cookbook/react-native/#cookbook-reactnative ⚠️ */
-import { ethers } from "ethers";
+import { ethers, JsonRpcProvider } from "ethers";
 import BigNumber from "bignumber.js";
 import { log } from "@ledgerhq/logs";
 import { getEnv } from "@ledgerhq/live-env";
@@ -30,7 +30,7 @@ export const DEFAULT_RETRIES_RPC_METHODS =
  * at instanciation which could result in rate limits being reached
  * on some specific nodes (E.g. the main Optimism RPC)
  */
-const PROVIDERS_BY_RPC: Record<string, ethers.providers.StaticJsonRpcProvider> = {};
+const PROVIDERS_BY_RPC: Record<string, JsonRpcProvider> = {};
 
 /**
  * Connects to RPC Node
@@ -42,7 +42,7 @@ const PROVIDERS_BY_RPC: Record<string, ethers.providers.StaticJsonRpcProvider> =
  */
 export async function withApi<T>(
   currency: CryptoCurrency,
-  execute: (api: ethers.providers.StaticJsonRpcProvider) => Promise<T>,
+  execute: (api: JsonRpcProvider) => Promise<T>,
   retries = DEFAULT_RETRIES_RPC_METHODS,
 ): Promise<T> {
   const config = getCoinConfig(currency).info;
@@ -51,13 +51,13 @@ export async function withApi<T>(
   if (!isExternalNodeConfig(node)) {
     throw new Error("Currency doesn't have an RPC node provided");
   }
-
   try {
-    if (!PROVIDERS_BY_RPC[node.uri]) {
-      PROVIDERS_BY_RPC[node.uri] = new ethers.providers.StaticJsonRpcProvider(node.uri);
+    if (!PROVIDERS_BY_RPC[currency.id]) {
+      const chainId = currency.ethereumLikeInfo?.chainId;
+      PROVIDERS_BY_RPC[currency.id] = new JsonRpcProvider(node.uri, chainId);
     }
 
-    const provider = PROVIDERS_BY_RPC[node.uri];
+    const provider = PROVIDERS_BY_RPC[currency.id];
     return await execute(provider);
   } catch (e) {
     if (retries) {
@@ -75,19 +75,23 @@ export async function withApi<T>(
  */
 export const getTransaction: NodeApi["getTransaction"] = (currency, txHash) =>
   withApi(currency, async api => {
-    const [
-      { hash, blockNumber: blockHeight, blockHash, nonce, value },
-      { gasUsed, effectiveGasPrice },
-    ] = await Promise.all([api.getTransaction(txHash), api.getTransactionReceipt(txHash)]);
+    const [tx, receipt] = await Promise.all([
+      api.getTransaction(txHash),
+      api.getTransactionReceipt(txHash),
+    ]);
+
+    if (!tx || !receipt) {
+      throw new Error("Transaction or receipt not found");
+    }
 
     return {
-      hash,
-      blockHeight,
-      blockHash,
-      nonce,
-      gasUsed: gasUsed.toString(),
-      gasPrice: effectiveGasPrice.toString(),
-      value: value.toString(),
+      hash: tx.hash,
+      blockHeight: tx.blockNumber ?? undefined,
+      blockHash: tx.blockHash ?? undefined,
+      nonce: tx.nonce,
+      gasUsed: receipt.gasUsed.toString(),
+      gasPrice: receipt.gasPrice.toString(),
+      value: tx.value.toString(),
     };
   });
 
@@ -126,7 +130,7 @@ export const getGasEstimation: NodeApi["getGasEstimation"] = (account, transacti
     account.currency,
     async api => {
       const to = transaction.recipient;
-      const value = ethers.BigNumber.from(transaction.amount.toFixed(0));
+      const value = BigInt(transaction.amount.toFixed(0));
       const data = transaction.data ? `0x${transaction.data.toString("hex")}` : "";
 
       try {
@@ -155,7 +159,7 @@ export const getFeeData: NodeApi["getFeeData"] = (currency, transaction) =>
     const block = await api.getBlock("latest");
     const currencySupports1559 = getEnv("EVM_FORCE_LEGACY_TRANSACTIONS")
       ? false
-      : transaction.type === 2 && Boolean(block.baseFeePerGas);
+      : transaction.type === 2 && Boolean(block?.baseFeePerGas);
 
     const feeData = await (async (): Promise<
       | {
@@ -168,7 +172,7 @@ export const getFeeData: NodeApi["getFeeData"] = (currency, transaction) =>
           maxPriorityFeePerGas?: undefined;
           maxFeePerGas?: undefined;
           nextBaseFee?: undefined;
-          gasPrice: ethers.BigNumber;
+          gasPrice: BigNumber;
         }
     > => {
       if (currencySupports1559) {
@@ -201,10 +205,10 @@ export const getFeeData: NodeApi["getFeeData"] = (currency, transaction) =>
           nextBaseFee,
         };
       } else {
-        const gasPrice = await api.getGasPrice();
+        const gasPrice = (await api.getFeeData()).gasPrice;
 
         return {
-          gasPrice,
+          gasPrice: new BigNumber(gasPrice?.toString() ?? "0"),
         };
       }
     })();
@@ -227,7 +231,7 @@ export const broadcastTransaction: NodeApi["broadcastTransaction"] = (currency, 
     currency,
     async api => {
       try {
-        const { hash } = await api.sendTransaction(signedTxHex);
+        const { hash } = await api.broadcastTransaction(signedTxHex);
         return hash;
       } catch (e) {
         if ((e as Error & { code: string }).code === "INSUFFICIENT_FUNDS") {
@@ -245,13 +249,13 @@ export const broadcastTransaction: NodeApi["broadcastTransaction"] = (currency, 
  */
 export const getBlockByHeight: NodeApi["getBlockByHeight"] = (currency, blockHeight = "latest") =>
   withApi(currency, async api => {
-    const { hash, number, timestamp } = await api.getBlock(blockHeight);
+    const block = await api.getBlock(blockHeight);
 
     return {
-      hash,
-      height: number,
+      hash: block?.hash || "",
+      height: block?.number ?? 0,
       // timestamp is returned in seconds by getBlock, we need milliseconds
-      timestamp: timestamp * 1000,
+      timestamp: (block?.timestamp ?? 0) * 1000,
     };
   });
 
@@ -277,7 +281,7 @@ export const getOptimismAdditionalFees: NodeApi["getOptimismAdditionalFees"] = m
           return getSerializedTransaction(transaction, {
             r: "0xffffffffffffffffffffffffffffffffffffffff",
             s: "0xffffffffffffffffffffffffffffffffffffffff",
-            v: 0,
+            v: 27,
           });
         } catch (error) /* istanbul ignore next: just logs */ {
           log("coin-evm", "getOptimismAdditionalFees: Transaction serializing failed", { error });
@@ -337,7 +341,7 @@ export const getScrollAdditionalFees: NodeApi["getScrollAdditionalFees"] = (
         return getSerializedTransaction(transaction, {
           r: "0xffffffffffffffffffffffffffffffffffffffff",
           s: "0xffffffffffffffffffffffffffffffffffffffff",
-          v: 0,
+          v: 27,
         });
       } catch (error) /* istanbul ignore next: just logs */ {
         log("coin-evm", "getScrollAdditionalFees: Transaction serializing failed", { error });

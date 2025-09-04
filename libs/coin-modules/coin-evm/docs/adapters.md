@@ -4,7 +4,7 @@ Set of functions in charge of converting a transaction format specific to a libr
 ## Files
 
 #### ethers.ts
-Functions used to convert transactions for the [ethers.js v5 library](https://docs.ethers.org/v5/)
+Functions used to convert transactions for the [ethers.js v6 library](https://docs.ethers.org/v6/)
 
 #### etherscan.ts
 Functions used to convert transactions coming from the [etherscan-like explorers](https://docs.etherscan.io/api-endpoints/accounts)

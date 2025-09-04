@@ -19,7 +19,7 @@ import { AppRequest } from "@ledgerhq/live-common/hw/actions/app";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import firmwareUpdateRepair from "@ledgerhq/live-common/hw/firmwareUpdate-repair";
 import isFirmwareUpdateVersionSupported from "@ledgerhq/live-common/hw/isFirmwareUpdateVersionSupported";
-import { WalletState, accountNameWithDefaultSelector } from "@ledgerhq/live-wallet/store";
+import { WalletState, accountNameSelector } from "@ledgerhq/live-wallet/store";
 import {
   BoxedIcon,
   Flex,
@@ -257,8 +257,24 @@ export function renderConfirmSwap({
   const providerName = getProviderName(provider);
   const noticeType = getNoticeType(provider);
   const alertProperties = noticeType.learnMore ? { learnMoreUrl: urls.swap.learnMore } : {};
-  const fromAccountName = accountNameWithDefaultSelector(walletState, exchange.fromAccount);
-  const toAccountName = accountNameWithDefaultSelector(walletState, exchange.toAccount);
+
+  const sourceAccountCurrency = exchange.fromCurrency;
+  const targetAccountCurrency = exchange.toCurrency;
+  const fromAccountName =
+    accountNameSelector(walletState, {
+      accountId:
+        "parentId" in exchange.fromAccount && exchange.fromAccount.parentId
+          ? exchange.fromAccount.parentId
+          : exchange.fromAccount.id,
+    }) ?? sourceAccountCurrency.name;
+
+  const toAccountName =
+    accountNameSelector(walletState, {
+      accountId:
+        "parentId" in exchange.toAccount && exchange.toAccount.parentId
+          ? exchange.toAccount.parentId
+          : exchange.toAccount.id,
+    }) ?? targetAccountCurrency.name;
 
   const unitFrom = currencySettingsForAccountSelector(settingsState, {
     account: exchange.fromAccount,

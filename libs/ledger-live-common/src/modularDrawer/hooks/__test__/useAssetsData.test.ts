@@ -38,7 +38,7 @@ describe("useAssetsData", () => {
       status: "pending",
     });
 
-    const { result } = renderHook(() => useAssetsData({}));
+    const { result } = renderHook(() => useAssetsData({ product: "lld", version: "1.0.0" }));
 
     expect(result.current.isLoading).toBe(true);
     expect(result.current.data).toBe(undefined);
@@ -81,7 +81,7 @@ describe("useAssetsData", () => {
       data: { pages: mockPages, pageParams: [{ cursor: "" }, { cursor: "cursor-2" }] },
     });
 
-    const { result } = renderHook(() => useAssetsData({}));
+    const { result } = renderHook(() => useAssetsData({ product: "lld", version: "1.0.0" }));
 
     expect(result.current.data).toEqual({
       cryptoAssets: {
@@ -120,7 +120,7 @@ describe("useAssetsData", () => {
       status: "error",
     });
 
-    const { result } = renderHook(() => useAssetsData({}));
+    const { result } = renderHook(() => useAssetsData({ product: "lld", version: "1.0.0" }));
 
     expect(result.current.error).toBe(mockError);
     expect(result.current.isLoading).toBe(false);
@@ -151,7 +151,7 @@ describe("useAssetsData", () => {
       fetchNextPage: mockFetchNextPage,
     });
 
-    const { result } = renderHook(() => useAssetsData({}));
+    const { result } = renderHook(() => useAssetsData({ product: "lld", version: "1.0.0" }));
 
     expect(result.current.loadNext).toBeDefined();
     result.current.loadNext?.();
@@ -182,7 +182,7 @@ describe("useAssetsData", () => {
       data: { pages: mockPages, pageParams: [{ cursor: "" }] },
     });
 
-    const { result } = renderHook(() => useAssetsData({}));
+    const { result } = renderHook(() => useAssetsData({ product: "lld", version: "1.0.0" }));
 
     expect(result.current.loadNext).toBeUndefined();
   });
@@ -192,7 +192,7 @@ describe("useAssetsData", () => {
       ...defaultMockValues,
     });
 
-    const { result } = renderHook(() => useAssetsData({}));
+    const { result } = renderHook(() => useAssetsData({ product: "lld", version: "1.0.0" }));
 
     expect(result.current.data).toBeUndefined();
     expect(result.current.loadNext).toBeUndefined();

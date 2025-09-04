@@ -74,7 +74,7 @@
     "axios": "1.11.0",
     "bignumber.js": "^9.1.2",
     "eip55": "^2.1.1",
-    "ethers": "5.7.2",
+    "ethers": "6.15.0",
     "expect": "^27.4.6",
     "imurmurhash": "^0.1.4",
     "invariant": "^2.2.2",

@@ -5,6 +5,7 @@ import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { useAssetsData } from "@ledgerhq/live-common/modularDrawer/hooks/useAssetsData";
 import { MarketItemResponse } from "@ledgerhq/live-common/market/utils/types";
 import { InterestRate } from "@ledgerhq/live-common/modularDrawer/data/entities/index";
+import VersionNumber from "react-native-version-number";
 
 interface UseAssetsProps {
   currencyIds?: string[];
@@ -26,9 +27,11 @@ export type UseAssetsData =
   | undefined;
 
 export function useAssetsFromDada({ currencyIds, searchedValue }: UseAssetsProps) {
-  const { data, isLoading, isSuccess, error } = useAssetsData({
+  const { data, isLoading, isSuccess, error, refetch, loadNext } = useAssetsData({
     search: searchedValue,
     currencyIds,
+    product: "llm",
+    version: VersionNumber.appVersion,
   });
 
   const assetsSorted: UseAssetsData = useMemo(() => {
@@ -70,5 +73,7 @@ export function useAssetsFromDada({ currencyIds, searchedValue }: UseAssetsProps
     loadingStatus,
     assetsSorted,
     sortedCryptoCurrencies,
+    refetch,
+    loadNext,
   };
 }

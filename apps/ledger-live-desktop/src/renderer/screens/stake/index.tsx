@@ -149,6 +149,7 @@ const useStakeFlow = () => {
       if (modularDrawerVisible) {
         openAssetAndAccountDrawer({
           currencies: cryptoCurrencies,
+          useCase: "earn",
           onSuccess,
           onCancel: handleRequestClose,
           flow: DRAWER_FLOW,

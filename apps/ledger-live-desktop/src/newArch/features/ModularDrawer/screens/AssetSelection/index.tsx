@@ -6,6 +6,7 @@ import { EnhancedModularDrawerConfiguration } from "@ledgerhq/live-common/wallet
 import { MODULAR_DRAWER_PAGE_NAME } from "../../analytics/modularDrawer.types";
 import TrackDrawerScreen from "../../analytics/TrackDrawerScreen";
 import { CurrenciesByProviderId, LoadingStatus } from "@ledgerhq/live-common/deposit/type";
+import { GenericError } from "../../components/GenericError";
 
 export type AssetSelectionStepProps = {
   assetsToDisplay: CryptoOrTokenCurrency[];
@@ -22,6 +23,8 @@ export type AssetSelectionStepProps = {
   setSearchedValue: (value: string | undefined) => void;
   hasOneCurrency?: boolean;
   loadNext?: () => void;
+  error?: boolean;
+  refetch?: () => void;
 };
 
 const AssetSelection = ({
@@ -39,6 +42,8 @@ const AssetSelection = ({
   setSearchedValue,
   hasOneCurrency,
   loadNext,
+  error,
+  refetch,
 }: Readonly<AssetSelectionStepProps>) => {
   const [shouldScrollToTop, setShouldScrollToTop] = useState(false);
 
@@ -75,18 +80,22 @@ const AssetSelection = ({
         assetsToDisplay={assetsToDisplay}
         originalAssets={originalAssetsToDisplay}
       />
-      <AssetsList
-        assetsToDisplay={assetsToDisplay}
-        providersLoadingStatus={providersLoadingStatus}
-        source={source}
-        flow={flow}
-        assetsConfiguration={assetsConfiguration}
-        currenciesByProvider={currenciesByProvider}
-        scrollToTop={shouldScrollToTop}
-        onAssetSelected={onAssetSelected}
-        onScrolledToTop={() => setShouldScrollToTop(false)}
-        loadNext={loadNext}
-      />
+      {error && refetch ? (
+        <GenericError onClick={refetch} />
+      ) : (
+        <AssetsList
+          assetsToDisplay={assetsToDisplay}
+          providersLoadingStatus={providersLoadingStatus}
+          source={source}
+          flow={flow}
+          assetsConfiguration={assetsConfiguration}
+          currenciesByProvider={currenciesByProvider}
+          scrollToTop={shouldScrollToTop}
+          onAssetSelected={onAssetSelected}
+          onScrolledToTop={() => setShouldScrollToTop(false)}
+          loadNext={loadNext}
+        />
+      )}
     </>
   );
 };

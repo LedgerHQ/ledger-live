@@ -18,6 +18,9 @@ import {
 } from "@gorhom/bottom-sheet";
 import { AssetsEmptyList } from "LLM/components/EmptyList/AssetsEmptyList";
 import createAssetConfigurationHook from "./modules/createAssetConfigurationHook";
+import { GenericError } from "../../components/GenericError";
+import { useNetInfo } from "@react-native-community/netinfo";
+import { InfiniteLoader } from "@ledgerhq/native-ui";
 
 export type AssetSelectionStepProps = {
   isOpen: boolean;
@@ -29,6 +32,9 @@ export type AssetSelectionStepProps = {
   source: string;
   assetsConfiguration?: EnhancedModularDrawerConfiguration["assets"];
   isLoading?: boolean;
+  hasError?: boolean;
+  refetch?: () => void;
+  loadNext?: () => void;
 };
 
 const SAFE_MARGIN_BOTTOM = 48;
@@ -43,7 +49,12 @@ const AssetSelection = ({
   assetsConfiguration,
   isOpen,
   isLoading,
+  hasError,
+  refetch,
+  loadNext,
 }: Readonly<AssetSelectionStepProps>) => {
+  const { isConnected } = useNetInfo();
+
   const { trackModularDrawerEvent } = useModularDrawerAnalytics();
   const { shouldHandleKeyboardEvents } = useBottomSheetInternal();
   const { collapse } = useBottomSheet();
@@ -103,6 +114,34 @@ const AssetSelection = ({
     [handleAssetClick],
   );
 
+  const renderContent = () => {
+    if (hasError || !isConnected) {
+      return <GenericError onClick={refetch} type={!isConnected ? "internet" : "backend"} />;
+    }
+    if (isLoading) return <SkeletonList />;
+
+    return (
+      <BottomSheetVirtualizedList
+        ref={listRef}
+        scrollToOverflowEnabled
+        data={formattedAssets}
+        keyExtractor={item => item.id}
+        getItemCount={items => items.length}
+        getItem={(items, index) => items[index]}
+        renderItem={renderItem}
+        showsVerticalScrollIndicator={false}
+        ListEmptyComponent={<AssetsEmptyList />}
+        contentContainerStyle={{
+          paddingBottom: SAFE_MARGIN_BOTTOM,
+          marginTop: 16,
+        }}
+        onEndReached={loadNext}
+        onEndReachedThreshold={0.5}
+        ListFooterComponent={<InfiniteLoader size={20} />}
+      />
+    );
+  };
+
   return (
     <>
       {isOpen && (
@@ -123,25 +162,7 @@ const AssetSelection = ({
         onBlur={handleSearchBlur}
         onPressIn={handleSearchPressIn}
       />
-      {isLoading ? (
-        <SkeletonList />
-      ) : (
-        <BottomSheetVirtualizedList
-          ref={listRef}
-          scrollToOverflowEnabled={true}
-          data={formattedAssets}
-          keyExtractor={item => item.id}
-          getItemCount={itemsToDisplay => itemsToDisplay.length}
-          getItem={(itemsToDisplay, index) => itemsToDisplay[index]}
-          renderItem={renderItem}
-          showsVerticalScrollIndicator={false}
-          ListEmptyComponent={<AssetsEmptyList />}
-          contentContainerStyle={{
-            paddingBottom: SAFE_MARGIN_BOTTOM,
-            marginTop: 16,
-          }}
-        />
-      )}
+      {renderContent()}
     </>
   );
 };
