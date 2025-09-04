@@ -133,7 +133,7 @@ export function runSwapWithDifferentSeedTest(
       const provider = await app.swapLiveApp.selectExchange();
       await app.swapLiveApp.checkExchangeButtonHasProviderName(provider.uiName);
       await app.swapLiveApp.tapExecuteSwap();
-      await app.common.selectKnownDevice();
+      await app.common.disableSynchronizationForiOS();
       if (errorMessage) {
         await app.swapLiveApp.checkErrorMessage(errorMessage);
       } else {
@@ -287,7 +287,7 @@ export function runUserRefusesTransactionTest(
       );
       const provider = await app.swapLiveApp.selectExchange();
       await app.swapLiveApp.tapExecuteSwap();
-      await app.common.selectKnownDevice();
+      await app.common.disableSynchronizationForiOS();
 
       await checkSwapInfosOnDeviceVerificationStep(rejectedSwap, provider.uiName, minAmount);
       await app.swap.verifyAmountsAndRejectSwap(rejectedSwap, minAmount);
@@ -394,7 +394,7 @@ export function runSwapWithSendMaxTest(
 
       const provider = await app.swapLiveApp.selectExchange();
       await app.swapLiveApp.tapExecuteSwap();
-      await app.common.selectKnownDevice();
+      await app.common.disableSynchronizationForiOS();
 
       const swap = new Swap(fromAccount, toAccount, amountToSend);
       await checkSwapInfosOnDeviceVerificationStep(swap, provider.uiName, amountToSend);

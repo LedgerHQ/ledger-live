@@ -460,7 +460,7 @@ async function retryAxiosRequest<T>(
   throw lastError!;
 }
 
-export async function waitFor(text: string, maxAttempts = 15): Promise<string[]> {
+export async function waitFor(text: string, maxAttempts = 60): Promise<string[]> {
   const port = getEnv("SPECULOS_API_PORT");
   const address = getSpeculosAddress();
   const url = `${address}:${port}/events?stream=false&currentscreenonly=true`;

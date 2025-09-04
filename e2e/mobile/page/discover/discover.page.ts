@@ -10,14 +10,11 @@ export default class DiscoverPage {
     { name: "Kiln", url: " https://kiln.fi" },
     { name: "Lido", url: " https://lido.fi/" },
     { name: "1inch", url: " https://1inch.io/" },
-    { name: "BTCDirect", url: " https://btcdirect.eu/" },
+    { name: "", url: " https://btcdirect.eu/" },
     { name: "Banxa", url: " https://banxa.com/" },
     { name: "Bitrefill", url: " https://bitrefill.com" },
     { name: "Zerion", url: " https://zerion.io/" },
-    { name: "Rainbow", url: " https://rainbow.me" },
-    { name: "POAP", url: " https://app.poap.xyz" },
     { name: "Yearn", url: " https://beta.yearn.fi" },
-    { name: "ChangeNOW", url: " https://changenow.io/" },
     { name: "Transak", url: " https://transak.com" },
   ];
   baseLink = "discover/";
