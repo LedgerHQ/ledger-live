@@ -8,13 +8,15 @@ import {
 import { ERC20Token } from "@ledgerhq/cryptoassets/types";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { fetchTokensFromCALService } from "@ledgerhq/cryptoassets/crypto-assets-importer/fetch/index";
+import {
+  resolveTokenAdder,
+  isCalLazyLoadingActive,
+} from "@ledgerhq/coin-framework/crypto-assets/utils";
 import { getCALHash, setCALHash } from "../logic";
 import { getCryptoAssetsStore } from "../cryptoAssetsStore";
 
-let shouldSkipTokenLoading = false;
-export function setShouldSkipTokenLoading(skip: boolean): void {
-  shouldSkipTokenLoading = skip;
-}
+const isLazyLoadingEnabled = (): boolean => isCalLazyLoadingActive(getCryptoAssetsStore);
+const isDefined = <T>(x: T | undefined): x is T => x !== undefined;
 
 export const fetchERC20Tokens: (
   currency: CryptoCurrency,
@@ -23,6 +25,11 @@ export const fetchERC20Tokens: (
   const { chainId } = ethereumLikeInfo || {};
 
   if (!chainId) return null;
+
+  if (!isLazyLoadingEnabled()) {
+    const embeddedTokens = tokensByChainId[chainId as keyof typeof tokensByChainId] || [];
+    return embeddedTokens;
+  }
 
   const embeddedHash = embeddedHashesByChainId[chainId as keyof typeof embeddedHashesByChainId];
   const latestCALHash = getCALHash(currency);
@@ -84,16 +91,14 @@ export const fetchERC20Tokens: (
 };
 
 export async function preload(currency: CryptoCurrency): Promise<ERC20Token[] | undefined> {
-  if (shouldSkipTokenLoading) return;
-
   const erc20 = await fetchERC20Tokens(currency);
   if (!erc20) return;
 
   log("evm/preload", "preload " + erc20.length + " tokens");
-  const store = getCryptoAssetsStore();
-  if ("addTokens" in store && typeof store.addTokens === "function") {
-    const convertedTokens = erc20.map(convertERC20).filter(Boolean);
-    store.addTokens(convertedTokens);
+  const addTokensToStore = resolveTokenAdder(getCryptoAssetsStore);
+  if (addTokensToStore) {
+    const convertedTokens = erc20.map(convertERC20).filter(isDefined);
+    addTokensToStore(convertedTokens);
   } else {
     addTokens(erc20.map(convertERC20));
   }
@@ -102,17 +107,16 @@ export async function preload(currency: CryptoCurrency): Promise<ERC20Token[] | 
 }
 
 export function hydrate(value: unknown, currency: CryptoCurrency): void {
-  if (shouldSkipTokenLoading) return;
-  const store = getCryptoAssetsStore();
-  const hasAddTokens = "addTokens" in store;
+  const addTokensToStore = resolveTokenAdder(getCryptoAssetsStore);
+  const hasAddTokens = !!addTokensToStore;
 
   if (!Array.isArray(value)) {
     const { chainId } = currency.ethereumLikeInfo || {};
     const tokens = tokensByChainId[chainId as keyof typeof tokensByChainId] || [];
 
-    if (hasAddTokens && typeof store.addTokens === "function") {
-      const convertedTokens = tokens.map(convertERC20).filter(Boolean);
-      store.addTokens(convertedTokens);
+    if (hasAddTokens && addTokensToStore) {
+      const convertedTokens = tokens.map(convertERC20).filter(isDefined);
+      addTokensToStore(convertedTokens);
     } else {
       addTokens(tokens.map(convertERC20));
     }
@@ -121,9 +125,9 @@ export function hydrate(value: unknown, currency: CryptoCurrency): void {
     return;
   }
 
-  if (hasAddTokens && typeof store.addTokens === "function") {
-    const convertedTokens = value.map(convertERC20).filter(Boolean);
-    store.addTokens(convertedTokens);
+  if (hasAddTokens && addTokensToStore) {
+    const convertedTokens = value.map(convertERC20).filter(isDefined);
+    addTokensToStore(convertedTokens);
   } else {
     addTokens(value.map(convertERC20));
   }
