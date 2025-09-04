@@ -492,7 +492,7 @@ export class Account {
   static readonly SUI_1 = new Account(
     Currency.SUI,
     "Sui 1",
-    "0x61f5ad966ff798e8e7e9c1241785a8ec8dbcde9ae61e3dacefdd692b600b2b58",
+    "0xc6169bcce8718609e43d179b087e6c1e2ac28e5325660af34d22fb5ce284031e",
     0,
   );
   static readonly SUI_2 = new Account(
