@@ -25,7 +25,7 @@ const subAccounts = [
   { account: Account.TRX_USDT, xrayTicket1: "B2CQA-2580", xrayTicket2: "B2CQA-2586" },
   { account: Account.BSC_BUSD_1, xrayTicket1: "B2CQA-2576", xrayTicket2: "B2CQA-2582" },
   { account: Account.POL_DAI_1, xrayTicket1: "B2CQA-2578", xrayTicket2: "B2CQA-2584" },
-  { account: TokenAccount.SUI_USDC_1, xrayTicket1: "B2CQA-2578", xrayTicket2: "B2CQA-2584" },
+  { account: TokenAccount.SUI_USDC_1, xrayTicket1: "B2CQA-3904", xrayTicket2: "B2CQA-3905" },
 ];
 
 const subAccountReceive = [
@@ -36,7 +36,7 @@ const subAccountReceive = [
   { account: Account.BSC_SHIBA, xrayTicket: "B2CQA-2490" },
   { account: Account.POL_DAI_1, xrayTicket: "B2CQA-2493" },
   { account: Account.POL_UNI, xrayTicket: "B2CQA-2494" },
-  { account: TokenAccount.SUI_USDC_1, xrayTicket: "B2CQA-2494" },
+  { account: TokenAccount.SUI_USDC_1, xrayTicket: "B2CQA-3906" },
 ];
 
 for (const token of subAccounts) {
