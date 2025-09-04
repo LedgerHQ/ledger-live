@@ -1,5 +1,4 @@
 // set and get environment & config variables
-import { Subject } from "rxjs";
 import { $ElementType } from "utility-types";
 // type ExtractEnvValue = <V>(arg0: EnvDef<V>) => V;
 type EnvDefs = typeof envDefinitions;
@@ -987,14 +986,52 @@ type ChangeValue<T extends EnvName> = {
   value: EnvValue<T>;
   oldValue: EnvValue<T>;
 };
-export const changes: Subject<ChangeValue<any>> = new Subject();
+
+// Simple subscription system to replace RxJS Subject
+type ChangeSubscriber = (change: ChangeValue<any>) => void;
+type ChangeUnsubscribe = () => void;
+
+interface ChangeObservable {
+  subscribe: (subscriber: ChangeSubscriber) => { unsubscribe: ChangeUnsubscribe };
+}
+
+class SimpleChangeEmitter implements ChangeObservable {
+  private subscribers: ChangeSubscriber[] = [];
+
+  subscribe(subscriber: ChangeSubscriber): { unsubscribe: ChangeUnsubscribe } {
+    this.subscribers.push(subscriber);
+
+    const unsubscribe = () => {
+      const index = this.subscribers.indexOf(subscriber);
+      if (index !== -1) {
+        // Use efficient removal pattern from @ledgerhq/logs
+        this.subscribers[index] = this.subscribers[this.subscribers.length - 1];
+        this.subscribers.pop();
+      }
+    };
+
+    return { unsubscribe };
+  }
+
+  next(change: ChangeValue<any>): void {
+    for (let i = 0; i < this.subscribers.length; i++) {
+      try {
+        this.subscribers[i](change);
+      } catch (e) {
+        console.error("Error in env change subscriber:", e);
+      }
+    }
+  }
+}
+
+export const changes: ChangeObservable = new SimpleChangeEmitter();
 // change one environment
 export const setEnv = <Name extends EnvName>(name: Name, value: EnvValue<Name>): void => {
   const oldValue = env[name];
 
   if (oldValue !== value) {
     env[name] = value;
-    changes.next({
+    (changes as SimpleChangeEmitter).next({
       name,
       value,
       oldValue,

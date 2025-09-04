@@ -2,7 +2,6 @@ import React from "react";
 import { changes, getAllEnvs } from "@ledgerhq/live-env";
 import type { EnvName } from "@ledgerhq/live-env";
 import hoistNonReactStatics from "hoist-non-react-statics";
-import { Subscription } from "rxjs";
 
 const withEnv =
   <Props,>(name: EnvName, propName = "env") =>
@@ -16,7 +15,7 @@ const withEnv =
       state = {
         env: getAllEnvs()[name],
       };
-      sub: Subscription | undefined;
+      sub: { unsubscribe: () => void } | undefined;
 
       componentDidMount() {
         this.subscribe();
