@@ -1,5 +1,12 @@
 # @ledgerhq/native-ui
 
+## 0.44.0-nightly.3
+
+### Patch Changes
+
+- Updated dependencies [[`5336021`](https://github.com/LedgerHQ/ledger-live/commit/53360213fe1545cfac761d872c0bd7a592697279), [`222bd7b`](https://github.com/LedgerHQ/ledger-live/commit/222bd7b69d32fd93562e9cb4bc1cf2840d0a0620)]:
+  - @ledgerhq/ui-shared@0.4.0-nightly.0
+
 ## 0.44.0-nightly.2
 
 ### Minor Changes

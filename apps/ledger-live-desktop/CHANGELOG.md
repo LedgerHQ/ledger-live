@@ -1,5 +1,20 @@
 # ledger-live-desktop
 
+## 2.127.0-nightly.6
+
+### Minor Changes
+
+- [#11553](https://github.com/LedgerHQ/ledger-live/pull/11553) [`222bd7b`](https://github.com/LedgerHQ/ledger-live/commit/222bd7b69d32fd93562e9cb4bc1cf2840d0a0620) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLD - Display generic error message on MAD
+
+### Patch Changes
+
+- Updated dependencies [[`776fae2`](https://github.com/LedgerHQ/ledger-live/commit/776fae24bf98f4695ea729885259e6b1b0a2fc14), [`5336021`](https://github.com/LedgerHQ/ledger-live/commit/53360213fe1545cfac761d872c0bd7a592697279), [`c852de4`](https://github.com/LedgerHQ/ledger-live/commit/c852de40f63948ded6fb0abe6fc8104408391c5b), [`222bd7b`](https://github.com/LedgerHQ/ledger-live/commit/222bd7b69d32fd93562e9cb4bc1cf2840d0a0620)]:
+  - @ledgerhq/coin-filecoin@1.11.0-nightly.2
+  - @ledgerhq/coin-evm@2.29.0-nightly.3
+  - @ledgerhq/live-common@34.47.0-nightly.6
+  - @ledgerhq/live-dmk-desktop@0.9.2-nightly.6
+  - @ledgerhq/react-ui@0.36.0-nightly.3
+
 ## 2.127.0-nightly.5
 
 ### Minor Changes

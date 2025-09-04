@@ -1,5 +1,11 @@
 # @ledgerhq/coin-tezos
 
+## 6.3.0-nightly.2
+
+### Patch Changes
+
+- [#11595](https://github.com/LedgerHQ/ledger-live/pull/11595) [`c852de4`](https://github.com/LedgerHQ/ledger-live/commit/c852de40f63948ded6fb0abe6fc8104408391c5b) Thanks [@qperrot](https://github.com/qperrot)! - upgraded Taquito to v23.0.0-beta.0 to support new tezos protocol seoul
+
 ## 6.3.0-nightly.1
 
 ### Minor Changes

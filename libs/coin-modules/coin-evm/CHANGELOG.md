@@ -1,5 +1,11 @@
 # @ledgerhq/coin-evm
 
+## 2.29.0-nightly.3
+
+### Minor Changes
+
+- [#11582](https://github.com/LedgerHQ/ledger-live/pull/11582) [`776fae2`](https://github.com/LedgerHQ/ledger-live/commit/776fae24bf98f4695ea729885259e6b1b0a2fc14) Thanks [@qperrot](https://github.com/qperrot)! - Update ethers library to v6.15.0
+
 ## 2.29.0-nightly.2
 
 ### Minor Changes

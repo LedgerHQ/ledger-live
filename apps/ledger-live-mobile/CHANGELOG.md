@@ -1,5 +1,22 @@
 # live-mobile
 
+## 3.92.0-nightly.5
+
+### Minor Changes
+
+- [#11616](https://github.com/LedgerHQ/ledger-live/pull/11616) [`5336021`](https://github.com/LedgerHQ/ledger-live/commit/53360213fe1545cfac761d872c0bd7a592697279) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add Generic errors for Backend & internet issue on MAD
+
+- [#11622](https://github.com/LedgerHQ/ledger-live/pull/11622) [`9866b50`](https://github.com/LedgerHQ/ledger-live/commit/9866b50ba457b266964c2bf6db73d6b3d72ec830) Thanks [@lpaquet-ledger](https://github.com/lpaquet-ledger)! - add skip select device for swap live app
+
+- [#11619](https://github.com/LedgerHQ/ledger-live/pull/11619) [`03d2311`](https://github.com/LedgerHQ/ledger-live/commit/03d2311ee9eec7f3891ca403bcdc15b7bac112a7) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add infinite scroll for MAD
+
+### Patch Changes
+
+- Updated dependencies [[`776fae2`](https://github.com/LedgerHQ/ledger-live/commit/776fae24bf98f4695ea729885259e6b1b0a2fc14)]:
+  - @ledgerhq/coin-filecoin@1.11.0-nightly.2
+  - @ledgerhq/coin-evm@2.29.0-nightly.3
+  - @ledgerhq/native-ui@0.44.0-nightly.3
+
 ## 3.92.0-nightly.4
 
 ### Minor Changes

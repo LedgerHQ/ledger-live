@@ -1,5 +1,18 @@
 # @ledgerhq/coin-tester-evm
 
+## 1.6.0-nightly.6
+
+### Minor Changes
+
+- [#11582](https://github.com/LedgerHQ/ledger-live/pull/11582) [`776fae2`](https://github.com/LedgerHQ/ledger-live/commit/776fae24bf98f4695ea729885259e6b1b0a2fc14) Thanks [@qperrot](https://github.com/qperrot)! - Update ethers library to v6.15.0
+
+### Patch Changes
+
+- Updated dependencies [[`776fae2`](https://github.com/LedgerHQ/ledger-live/commit/776fae24bf98f4695ea729885259e6b1b0a2fc14), [`5336021`](https://github.com/LedgerHQ/ledger-live/commit/53360213fe1545cfac761d872c0bd7a592697279), [`c852de4`](https://github.com/LedgerHQ/ledger-live/commit/c852de40f63948ded6fb0abe6fc8104408391c5b), [`222bd7b`](https://github.com/LedgerHQ/ledger-live/commit/222bd7b69d32fd93562e9cb4bc1cf2840d0a0620)]:
+  - @ledgerhq/coin-evm@2.29.0-nightly.3
+  - @ledgerhq/live-common@34.47.0-nightly.6
+  - @ledgerhq/live-signer-evm@0.7.2-nightly.3
+
 ## 1.5.2-nightly.5
 
 ### Patch Changes
