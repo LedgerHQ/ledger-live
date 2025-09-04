@@ -100,14 +100,14 @@ const Header = ({
       [1, scaleRatio],
       Extrapolate.CLAMP,
     );
-    /** translate verticaly to the middle of the top header section */
+    /** translate vertically to the middle of the top header section */
     const translateY = interpolate(
       currentPositionY.value,
       [0, SCROLL_BREAKPOINT],
       [0, -topSectionHeight + topSectionHeight / 2],
       Extrapolate.CLAMP,
     );
-    /** offset horizontaly given the scale transformation and potential top left header section */
+    /** offset horizontally given the scale transformation and potential top left header section */
     const translateX = interpolate(
       currentPositionY.value,
       [0, SCROLL_BREAKPOINT],
