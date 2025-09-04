@@ -100,7 +100,7 @@ jobs:
 
       - name: Generate shards matrix and test files
         id: generate-shards
-        uses: LedgerHQ/ledger-live/tools/actions/composites/generate-shards-matrix@refactoring/QAA-648-timing-based-sharding
+        uses: LedgerHQ/ledger-live/tools/actions/composites/generate-shards-matrix@develop
         with:
           test_directory: e2e/mobile
           test_filter: ${{ inputs.test_filter || '' }}
@@ -267,7 +267,7 @@ jobs:
 
       - name: Generate timing-based shards
         id: timing-shards
-        uses: LedgerHQ/ledger-live/tools/actions/composites/generate-timing-shards@refactoring/QAA-648-timing-based-sharding
+        uses: LedgerHQ/ledger-live/tools/actions/composites/generate-timing-shards@develop
         with:
           test_filter: ${{ needs.determine-builds.outputs.test_files_for_sharding || inputs.test_filter || '' }}
           test_directory: e2e/mobile
@@ -509,7 +509,7 @@ jobs:
 
       - name: Generate timing-based shards
         id: timing-shards
-        uses: LedgerHQ/ledger-live/tools/actions/composites/generate-timing-shards@refactoring/QAA-648-timing-based-sharding
+        uses: LedgerHQ/ledger-live/tools/actions/composites/generate-timing-shards@develop
         with:
           test_filter: ${{ needs.determine-builds.outputs.test_files_for_sharding || inputs.test_filter || '' }}
           test_directory: e2e/mobile
@@ -1048,7 +1048,7 @@ jobs:
         with:
           role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID_PROD }}:role/${{ secrets.AWS_CACHE_ROLE_NAME }}
           aws-region: ${{ secrets.AWS_CACHE_REGION }}
-      - uses: LedgerHQ/ledger-live/tools/actions/composites/merge-e2e-detox-timings@refactoring/QAA-648-timing-based-sharding
+      - uses: LedgerHQ/ledger-live/tools/actions/composites/merge-e2e-detox-timings@develop
         with:
           platform: ios
           artifacts_dir: e2e/mobile/artifacts
@@ -1075,7 +1075,7 @@ jobs:
         with:
           role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID_PROD }}:role/${{ secrets.AWS_CACHE_ROLE_NAME }}
           aws-region: ${{ secrets.AWS_CACHE_REGION }}
-      - uses: LedgerHQ/ledger-live/tools/actions/composites/merge-e2e-detox-timings@refactoring/QAA-648-timing-based-sharding
+      - uses: LedgerHQ/ledger-live/tools/actions/composites/merge-e2e-detox-timings@develop
         with:
           platform: android
           artifacts_dir: e2e/mobile/artifacts
