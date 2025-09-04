@@ -10,6 +10,7 @@ const hitSlop = {
   bottom: 0,
 };
 
+// @ts-expect-error TypeScript 5.9 styled-components type arguments issue
 const Container = styled(Touchable)<{ opacity: number }>`
   flex-direction: row;
   padding-vertical: 15px;

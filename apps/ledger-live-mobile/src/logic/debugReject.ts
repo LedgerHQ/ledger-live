@@ -31,7 +31,8 @@ export const hookRejections = <T>(
   // @ts-ignore
   !Config.MOCK
     ? p
-    : Promise.race([
+    : // @ts-expect-error TypeScript 5.9 Promise race type issue
+      Promise.race([
         p,
         new Promise((_, rej) => {
           const sub = rejections.subscribe(() => {

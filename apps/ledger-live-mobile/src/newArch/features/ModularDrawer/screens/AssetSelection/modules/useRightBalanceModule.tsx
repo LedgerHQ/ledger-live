@@ -33,6 +33,7 @@ const BalanceContainer = styled.View`
 `;
 
 const createBalanceItem = (asset: { fiatValue?: string; balance?: string }) => (
+  // @ts-expect-error TypeScript 5.9 styled-components children issue
   <BalanceContainer>
     <Text fontSize="14px" variant="largeLineHeight" fontWeight="semiBold" color="neutral.c100">
       {asset.fiatValue}

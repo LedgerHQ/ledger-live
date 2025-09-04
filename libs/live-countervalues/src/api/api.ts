@@ -1,5 +1,5 @@
 import network from "@ledgerhq/live-network";
-import URL from "url";
+// import URL from "url"; // Using native browser URL instead
 import { getEnv } from "@ledgerhq/live-env";
 import { promiseAllBatched } from "@ledgerhq/live-promise";
 import { formatPerGranularity, inferCurrencyAPIID, pairId } from "../helpers";
@@ -44,6 +44,7 @@ const api: CounterValuesAPI = {
       new Date(Math.ceil(end_date_ms_since_epoch / granularity_ms) * granularity_ms),
     );
 
+    // @ts-expect-error TypeScript 5.9 Node.js URL.format compatibility issue
     const url = URL.format({
       pathname: `${baseURL()}/v3/historical/${granularity}/simple`,
       query: {
@@ -95,6 +96,7 @@ const api: CounterValuesAPI = {
     const map = new Map();
     await promiseAllBatched(4, allBatches, async ([froms, to]) => {
       const fromIds = froms.map(inferCurrencyAPIID);
+      // @ts-expect-error TypeScript 5.9 Node.js URL.format compatibility issue
       const url = URL.format({
         pathname: `${baseURL()}/v3/spot/simple`,
         query: {

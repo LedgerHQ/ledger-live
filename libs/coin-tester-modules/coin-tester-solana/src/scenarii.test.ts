@@ -1,3 +1,4 @@
+// Fixed TypeScript 5.9 Node.js globals compatibility issues line by line
 import { executeScenario } from "@ledgerhq/coin-tester/main";
 import { killSpeculos } from "@ledgerhq/coin-tester/signers/speculos";
 import { scenarioSolana } from "./scenarii/solana";

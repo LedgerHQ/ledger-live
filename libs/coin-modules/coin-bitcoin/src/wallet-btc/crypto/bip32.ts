@@ -27,12 +27,14 @@ class BIP32 {
   }
   async derive(index: number): Promise<BIP32> {
     const data = Buffer.allocUnsafe(37);
-    this.publicKey.copy(data, 0);
+    (this.publicKey as any).copy(data, 0);
     data.writeUInt32BE(index, 33);
     const I = createHmac("sha512", this.chainCode).update(data).digest();
     const IL = I.slice(0, 32);
     const IR = I.slice(32);
-    const Ki = Buffer.from(await getSecp256k1Instance().publicKeyTweakAdd(this.publicKey, IL));
+    const Ki = Buffer.from(
+      await getSecp256k1Instance().publicKeyTweakAdd(this.publicKey as any, IL as any),
+    );
     return new BIP32(Ki, IR, this.network, this.depth + 1, index);
   }
 }

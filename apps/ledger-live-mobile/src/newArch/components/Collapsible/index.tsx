@@ -56,6 +56,7 @@ function Collapsible({ title, children, collapsed = false, ...titleContainerProp
   return (
     <>
       <Flex {...titleContainerProps}>
+        {/* @ts-expect-error TypeScript 5.9 styled-components Toggle props compatibility issue */}
         <Toggle activeOpacity={1} onPress={toggleCollapsed}>
           {header}
           <Animated.View style={animatedChevron}>

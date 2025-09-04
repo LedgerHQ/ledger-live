@@ -159,6 +159,7 @@ const DrawerContent = React.forwardRef(
                       )}
                     </>
                   )}
+
                   {(
                     <Text variant={"h3"} flex={1} textAlign="center">
                       {title}

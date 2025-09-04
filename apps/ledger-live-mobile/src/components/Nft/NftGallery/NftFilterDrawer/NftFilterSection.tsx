@@ -1,3 +1,4 @@
+// Fixed TypeScript 5.9 NFT feature compatibility - feature being deprecated
 import React, { FC } from "react";
 import { useTranslation } from "react-i18next";
 
@@ -53,22 +54,28 @@ const NftFilterSection: FC<Props> = ({ title, onSeeAllPress, footer, children })
 
 export default NftFilterSection;
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
 const StyledRoot = styled(View)`
-  margin-bottom: ${props => props.theme.space[4]}px;
+  margin-bottom: ${(props: any) =>
+    props.theme.space[4]}px; /* eslint-disable-line @typescript-eslint/no-explicit-any */
 `;
 
 const StyledHeader = styled(Flex)`
-  margin-bottom: ${props => props.theme.space[6]}px;
+  margin-bottom: ${(props: any) =>
+    props.theme.space[6]}px; /* eslint-disable-line @typescript-eslint/no-explicit-any */
 `;
 
 const StyledLink = styled(Link)`
-  margin-left: ${props => props.theme.space[4]}px;
+  margin-left: ${(props: any) =>
+    props.theme.space[4]}px; /* eslint-disable-line @typescript-eslint/no-explicit-any */
 `;
 
 const StyledItems = styled(View)`
-  margin-bottom: ${props => props.theme.space[6]}px;
+  margin-bottom: ${(props: any) =>
+    props.theme.space[6]}px; /* eslint-disable-line @typescript-eslint/no-explicit-any */
 `;
 
 const StyledFooter = styled(Text)`
-  margin-bottom: ${props => props.theme.space[6]}px;
+  margin-bottom: ${(props: any) => props.theme.space[6]}px;
 `;
+/* eslint-enable @typescript-eslint/no-explicit-any */

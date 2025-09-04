@@ -4,6 +4,7 @@ import { Box, Checkbox, Flex, Text, Tag, Icons } from "@ledgerhq/native-ui";
 import styled from "styled-components/native";
 import Touchable from "./Touchable";
 
+// @ts-expect-error TypeScript 5.9 styled-components type arguments issue
 const StyledRowContainer = styled(Flex)<{
   compact?: boolean;
   hasBorderTop?: boolean;
@@ -19,6 +20,7 @@ const StyledRowContainer = styled(Flex)<{
       : ``}
 `;
 
+// @ts-expect-error TypeScript 5.9 styled-components type arguments issue
 const StyledTouchableRow = styled(Touchable)<{
   compact?: boolean;
   disabled?: boolean;

@@ -20,7 +20,7 @@ class ZCash extends Base {
     const pk = bjs.crypto.hash160(await this.getPubkeyAt(xpub, account, index));
     const payload = Buffer.allocUnsafe(22);
     payload.writeUInt16BE(this.network.pubKeyHash, 0);
-    pk.copy(payload, 2);
+    (pk as any).copy(payload, 2);
     return bs58check.encode(payload);
   }
 

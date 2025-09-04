@@ -19,6 +19,7 @@ export async function verify(msgContent: string, sigContent: Buffer, pubKeyConte
     const message = hash.digest();
 
     // Convert signature from DER format
+    // @ts-expect-error - Buffer compatibility issue with newer Node.js types
     const signature = secp256k1.Signature.fromDER(sigContent).normalizeS();
 
     // Convert public key
@@ -28,6 +29,7 @@ export async function verify(msgContent: string, sigContent: Buffer, pubKeyConte
     const blk = jwk.toString("blk", "public");
     // Convert string to Buffer
     const publicKey = Buffer.from(blk, "hex");
+    // @ts-expect-error - Buffer compatibility issue with newer Node.js types
     const verified = secp256k1.verify(signature.toCompactRawBytes(), message, publicKey, {
       prehash: false,
     });

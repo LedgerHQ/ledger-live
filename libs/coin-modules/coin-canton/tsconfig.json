@@ -6,7 +6,8 @@
     "downlevelIteration": true,
     "lib": ["es2020", "dom"],
     "outDir": "lib",
-    "exactOptionalPropertyTypes": true
+    "exactOptionalPropertyTypes": true,
+    "types": ["node", "jest"]
   },
   "include": ["src/**/*"]
 }

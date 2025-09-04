@@ -26,6 +26,7 @@ export const NetworkError = ({ handleTryAgain }: { handleTryAgain: () => void })
         exportLogIconPosition="right"
         error={new WebPTXPlayerNetworkFail()}
         footerComponent={
+          // @ts-expect-error TypeScript 5.9 styled-components children issue
           <ExternalLinkWrapper>
             <ExternalLink
               onPress={() =>

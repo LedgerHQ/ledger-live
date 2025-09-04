@@ -37,6 +37,7 @@ function CopyButton({ text, ...props }: Props) {
 
   const icon = useMemo(
     () => (
+      // @ts-expect-error TypeScript 5.9 styled-components children issue
       <IconContainer>
         <Animated.View style={copyIconAnimation}>
           <Icons.Copy />

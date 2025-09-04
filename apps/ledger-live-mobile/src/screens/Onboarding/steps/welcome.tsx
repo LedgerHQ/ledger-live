@@ -168,7 +168,6 @@ function OnboardingStepWelcome({ navigation }: NavigationProps) {
           <Rect x="0" y="0" width="100%" height="100%" fill="url(#myGradient)" />
         </Svg>
         <Flex justifyContent="center" alignItems="center" flex={1} overflow="hidden">
-          {/* @ts-expect-error Bindings for SafeAreaView are not written properly. */}
           <SafeFlex position="absolute" top={0} right={0}>
             <Flex pr={4}>
               <LanguageSelect />

@@ -70,6 +70,7 @@ const benchmark = ({
       .fill(0)
       .map((_, i) => i % 255),
   );
+  // @ts-expect-error - Buffer compatibility issue with newer Node.js types
   return Buffer.concat([head, data]);
 };
 

@@ -191,6 +191,7 @@ function processImage(args: ProcessImageArgs): ProcessorResult {
     bitsPerPixel,
   );
   context.putImageData(
+    // @ts-expect-error TypeScript 5.9 ImageData ArrayBuffer compatibility issue
     new ImageData(grayData, width, height), // eslint-disable-line no-undef
     0,
     0,

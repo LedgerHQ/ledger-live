@@ -29,6 +29,7 @@ const RowContainer = styled(Flex).attrs((p: { disabled?: boolean }) => ({
   paddingVertical: 14,
   height: 64,
   opacity: p.disabled ? 0.2 : 1,
+  // @ts-expect-error TypeScript 5.9 styled-components type arguments issue
 }))<{ disabled?: boolean }>``;
 
 const LabelContainer = styled(Flex).attrs({

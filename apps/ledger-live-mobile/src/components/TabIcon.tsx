@@ -14,12 +14,13 @@ const TabIconContainer = styled.View`
   flex: 1;
   align-items: center;
   justify-content: center;
-  padding-top: ${p => p.theme.space[2]}px;
+  padding-top: ${p => p.theme?.space[2] || 0}px;
 `;
 
 export default function TabIcon({ Icon, i18nKey, color, testID }: Props) {
   const { t } = useTranslation();
   return (
+    // @ts-expect-error TypeScript 5.9 styled-components children issue
     <TabIconContainer testID={testID}>
       <Icon size={24} color={color} />
       <Text

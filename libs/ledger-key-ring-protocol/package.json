@@ -54,9 +54,9 @@
   "license": "Apache-2.0",
   "dependencies": {
     "@ledgerhq/errors": "workspace:*",
+    "@ledgerhq/hw-ledger-key-ring-protocol": "workspace:*",
     "@ledgerhq/hw-transport": "workspace:*",
     "@ledgerhq/hw-transport-mocker": "workspace:*",
-    "@ledgerhq/hw-ledger-key-ring-protocol": "workspace:*",
     "@ledgerhq/live-env": "workspace:*",
     "@ledgerhq/live-network": "workspace:*",
     "@ledgerhq/logs": "workspace:*",
@@ -69,6 +69,7 @@
   },
   "devDependencies": {
     "@types/jest": "^29.5.10",
+    "@types/node": "24.3.0",
     "bip39": "^3.0.4",
     "expect": "^27.5.1",
     "jest": "^29.7.0",

@@ -60,7 +60,7 @@ type Props = PropsWithChildren<{
 
 const BorderCard = styled.View`
   flex-direction: column;
-  border: 1px solid ${p => p.theme.colors.neutral.c40};
+  border: 1px solid ${p => p.theme?.colors.neutral.c40 || "#ccc"};
   border-radius: 8px;
 `;
 
@@ -122,6 +122,7 @@ const DeviceCard = ({
   const disableFlows = pendingInstalls;
 
   return (
+    // @ts-expect-error TypeScript 5.9 styled-components children issue
     <BorderCard>
       {children}
       <Flex flexDirection={"row"} mt={20} mx={4} mb={8} alignItems="center">

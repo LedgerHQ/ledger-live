@@ -194,6 +194,7 @@ function codeToInject() {
     );
 
     // 3. putting the result in canvas
+    // @ts-expect-error TypeScript 5.9 ImageData ArrayBuffer compatibility issue
     context.putImageData(new ImageData(grayData, image.width, image.height), 0, 0);
 
     const grayScaleBase64 = canvas.toDataURL();

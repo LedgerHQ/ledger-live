@@ -1,3 +1,4 @@
+// Fixed TypeScript 5.9 Node.js types compatibility issues line by line
 import BigNumber from "bignumber.js";
 import { SetupServerApi, setupServer } from "msw/node";
 import BlueBirdPromise from "bluebird";

@@ -190,8 +190,8 @@ function getBalanceHistoryWithChanges(
   }
 
   function calcChanges(start = 0) {
-    const from = history.at(start) ?? { value: 0, countervalue: 0 };
-    const to = history.at(-1) ?? { value: 0, countervalue: 0 };
+    const from = history[start] ?? { value: 0, countervalue: 0 };
+    const to = history[history.length - 1] ?? { value: 0, countervalue: 0 };
     return {
       countervalueReceiveSum: 0,
       // not available here
@@ -278,7 +278,7 @@ export function getPortfolio(
   }));
 
   const firstSignificantHistoryIndex = balanceHistory.findIndex(balance => balance.value !== 0);
-  const firstSignificantHistoryValue = balanceHistory.at(firstSignificantHistoryIndex)?.value ?? 0;
+  const firstSignificantHistoryValue = balanceHistory[firstSignificantHistoryIndex]?.value ?? 0;
 
   const [countervalueChangeValue, countervalueReceiveSum, countervalueSendSum] = availables.reduce(
     (sums, { changes }) => {

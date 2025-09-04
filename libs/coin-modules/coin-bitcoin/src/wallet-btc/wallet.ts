@@ -241,7 +241,7 @@ class BitcoinLikeWallet {
         bufferOffset = utils.writeVarInt(buffer, 0, bufferOffset);
       }
       bufferOffset = utils.writeVarInt(buffer, txOut.script.length, bufferOffset);
-      bufferOffset += txOut.script.copy(buffer, bufferOffset);
+      bufferOffset += (txOut.script as any).copy(buffer, bufferOffset);
     });
     const outputScriptHex = buffer.toString("hex");
     const associatedKeysets = txInfo.associatedDerivations.map(

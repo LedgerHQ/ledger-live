@@ -4,7 +4,7 @@ import styled from "styled-components/native";
 import { useTranslation } from "react-i18next";
 
 const CircleWrapper = styled.View`
-  background-color: ${p => p.theme.colors.opacityDefault.c05};
+  background-color: ${p => p.theme?.colors.opacityDefault.c05 || "#f5f5f5"};
   border-radius: 999px;
   padding: 16px;
   width: 72px;
@@ -25,6 +25,7 @@ export const AssetsEmptyList = () => {
       flex={1}
       rowGap={24}
     >
+      {/* @ts-expect-error TypeScript 5.9 styled-components CircleWrapper props compatibility issue */}
       <CircleWrapper>
         <Icons.Search size="L" />
       </CircleWrapper>

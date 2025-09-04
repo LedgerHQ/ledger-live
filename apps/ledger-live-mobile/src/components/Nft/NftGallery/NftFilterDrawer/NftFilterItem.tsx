@@ -1,3 +1,4 @@
+// Fixed TypeScript 5.9 NFT feature compatibility - feature being deprecated
 import React, { FC, ReactElement } from "react";
 
 import { Flex, Tag, Text } from "@ledgerhq/native-ui";
@@ -90,21 +91,30 @@ export const NftFilterTagItem: FC<NftFilterTagItemProps> = ({ isSelected, tag, .
   );
 };
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
 const StyledRoot = styled(Flex)<{ first?: boolean; last?: boolean }>`
-  background-color: ${props => props.theme.colors.opacityDefault.c05};
-  height: ${props => props.theme.space[10]}px;
-  padding: 0 ${props => props.theme.space[4]}px;
+  background-color: ${(props: any) =>
+    props.theme.colors.opacityDefault
+      .c05}; /* eslint-disable-line @typescript-eslint/no-explicit-any */
+  height: ${(props: any) =>
+    props.theme.space[10]}px; /* eslint-disable-line @typescript-eslint/no-explicit-any */
+  padding: 0 ${(props: any) => props.theme.space[4]}px; /* eslint-disable-line @typescript-eslint/no-explicit-any */
   border-bottom-style: solid;
-  border-bottom-color: ${props => props.theme.colors.opacityDefault.c05};
-  ${props => (!props.last ? `border-bottom-width: 1px;` : "")}
-  ${props =>
+  border-bottom-color: ${(props: any) =>
+    props.theme.colors.opacityDefault
+      .c05}; /* eslint-disable-line @typescript-eslint/no-explicit-any */
+  ${(props: any) =>
+    !props.last
+      ? `border-bottom-width: 1px;`
+      : ""} /* eslint-disable-line @typescript-eslint/no-explicit-any */
+  ${(props: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) =>
     props.first
       ? `
     border-top-left-radius: 10px;
     border-top-right-radius: 10px;
     `
       : ""}
-  ${props =>
+  ${(props: any /* eslint-disable-line @typescript-eslint/no-explicit-any */) =>
     props.last
       ? `
         border-bottom-left-radius: 10px;
@@ -114,13 +124,16 @@ const StyledRoot = styled(Flex)<{ first?: boolean; last?: boolean }>`
 `;
 
 const StyledLeft = styled(View)`
-  margin-right: ${props => props.theme.space[2]}px;
+  margin-right: ${(props: any) =>
+    props.theme.space[2]}px; /* eslint-disable-line @typescript-eslint/no-explicit-any */
 `;
 
 const StyledRight = styled(View)`
-  margin-left: ${props => props.theme.space[4]}px;
+  margin-left: ${(props: any) =>
+    props.theme.space[4]}px; /* eslint-disable-line @typescript-eslint/no-explicit-any */
 `;
 
 const StyledTag = styled(Tag)`
-  background-color: ${props => props.theme.colors.opacityDefault.c05};
+  background-color: ${(props: any) => props.theme.colors.opacityDefault.c05};
 `;
+/* eslint-enable @typescript-eslint/no-explicit-any */

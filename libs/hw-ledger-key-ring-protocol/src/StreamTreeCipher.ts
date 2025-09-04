@@ -172,10 +172,10 @@ export class StreamTreeCipher {
     const sharedKeyPair = await this.getGroupKeypair(tree, path);
     const secret = crypto.ecdh(sharedKeyPair, ephemeralKey);
 
-    let decrypted = new Uint8Array(0);
+    let decrypted: Uint8Array<ArrayBufferLike> = new Uint8Array(0);
     switch (this._mode) {
       case StreamTreeCipherMode.AES_256_CBC: {
-        decrypted = crypto.decrypt(secret, nonce, encryptedMessage);
+        decrypted = crypto.decrypt(secret, nonce, encryptedMessage) as Uint8Array;
         const computedChecksum = this.computeChecksum(decrypted);
         if (crypto.to_hex(computedChecksum) !== crypto.to_hex(checksum)) {
           throw new Error("Invalid checksum");
@@ -183,7 +183,7 @@ export class StreamTreeCipher {
         break;
       }
       case StreamTreeCipherMode.AES_256_GCM: {
-        decrypted = crypto.decrypt(secret, nonce, encryptedMessage);
+        decrypted = crypto.decrypt(secret, nonce, encryptedMessage) as Uint8Array;
         break;
       }
       default:
