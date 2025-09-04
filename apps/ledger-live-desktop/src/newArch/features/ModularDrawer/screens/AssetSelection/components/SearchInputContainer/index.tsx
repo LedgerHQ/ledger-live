@@ -6,12 +6,10 @@ import { Box } from "@ledgerhq/react-ui/index";
 
 type Props = SearchProps;
 
-const SearchInputContainer = ({ setSearchedValue, searchedValue, source, flow }: Props) => {
+const SearchInputContainer = ({ source, flow }: Props) => {
   const { t } = useTranslation();
 
   const { handleDebouncedChange, handleSearch, displayedValue } = useSearch({
-    searchedValue,
-    setSearchedValue,
     source,
     flow,
   });

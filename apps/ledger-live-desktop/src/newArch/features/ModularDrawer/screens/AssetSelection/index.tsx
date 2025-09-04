@@ -7,17 +7,17 @@ import { MODULAR_DRAWER_PAGE_NAME } from "../../analytics/modularDrawer.types";
 import TrackDrawerScreen from "../../analytics/TrackDrawerScreen";
 import { CurrenciesByProviderId, LoadingStatus } from "@ledgerhq/live-common/deposit/type";
 import { GenericError } from "../../components/GenericError";
+import { useSelector } from "react-redux";
+import { modularDrawerStateSelector } from "~/renderer/reducers/modularDrawer";
 
 export type AssetSelectionStepProps = {
   assetsToDisplay: CryptoOrTokenCurrency[];
   providersLoadingStatus: LoadingStatus;
-  defaultSearchValue?: string;
   assetsConfiguration: EnhancedModularDrawerConfiguration["assets"];
   flow: string;
   source: string;
   currenciesByProvider: CurrenciesByProviderId[];
   onAssetSelected: (asset: CryptoOrTokenCurrency) => void;
-  setSearchedValue: (value: string | undefined) => void;
   hasOneCurrency?: boolean;
   loadNext?: () => void;
   error?: boolean;
@@ -26,23 +26,23 @@ export type AssetSelectionStepProps = {
 
 const AssetSelection = ({
   assetsToDisplay,
-  defaultSearchValue,
   providersLoadingStatus,
   flow,
   source,
   assetsConfiguration,
   currenciesByProvider,
   onAssetSelected,
-  setSearchedValue,
   hasOneCurrency,
   loadNext,
   error,
   refetch,
 }: Readonly<AssetSelectionStepProps>) => {
+  const { searchedValue } = useSelector(modularDrawerStateSelector);
+
   const [shouldScrollToTop, setShouldScrollToTop] = useState(false);
 
   useEffect(() => {
-    if (defaultSearchValue === undefined) {
+    if (searchedValue === undefined) {
       return;
     }
 
@@ -51,7 +51,7 @@ const AssetSelection = ({
     }, 100);
 
     return () => clearTimeout(timeout);
-  }, [defaultSearchValue]);
+  }, [searchedValue]);
 
   return (
     <>
@@ -64,12 +64,7 @@ const AssetSelection = ({
           formatAssetConfig
         />
       )}
-      <SearchInputContainer
-        setSearchedValue={setSearchedValue}
-        searchedValue={defaultSearchValue}
-        source={source}
-        flow={flow}
-      />
+      <SearchInputContainer source={source} flow={flow} />
       {error && refetch ? (
         <GenericError onClick={refetch} />
       ) : (

@@ -3,20 +3,22 @@ import { CurrenciesByProviderId, LoadingStatus } from "@ledgerhq/live-common/dep
 import { getLoadingStatus } from "@ledgerhq/live-common/modularDrawer/utils/getLoadingStatus";
 import { findCryptoCurrencyById, findTokenById } from "@ledgerhq/cryptoassets";
 import { useAssetsData } from "@ledgerhq/live-common/modularDrawer/hooks/useAssetsData";
+import { modularDrawerStateSelector } from "~/renderer/reducers/modularDrawer";
+import { useSelector } from "react-redux";
 
 interface UseModularDrawerDataProps {
   currencyIds?: string[];
-  searchedValue?: string;
   useCase?: string;
   areCurrenciesFiltered?: boolean;
 }
 
 export function useModularDrawerData({
   currencyIds,
-  searchedValue,
   useCase,
   areCurrenciesFiltered,
 }: UseModularDrawerDataProps) {
+  const { searchedValue } = useSelector(modularDrawerStateSelector);
+
   const { data, isLoading, isSuccess, error, loadNext, refetch } = useAssetsData({
     search: searchedValue,
     currencyIds,

@@ -18,6 +18,7 @@ import { TrustchainStore } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { getEnv } from "@ledgerhq/live-env";
 import countervalues, { CountervaluesState } from "./countervalues";
 import { assetsDataApi } from "@ledgerhq/live-common/modularDrawer/data/state-manager/api";
+import modularDrawer, { ModularDrawerState } from "./modularDrawer";
 
 export type State = {
   accounts: AccountsState;
@@ -28,6 +29,7 @@ export type State = {
   dynamicContent: DynamicContentState;
   market: MarketState;
   modals: ModalsState;
+  modularDrawer: ModularDrawerState;
   postOnboarding: PostOnboardingState;
   settings: SettingsState;
   swap: SwapStateType;
@@ -45,6 +47,7 @@ export default combineReducers({
   devices,
   dynamicContent,
   modals,
+  modularDrawer,
   settings,
   UI,
   postOnboarding,
