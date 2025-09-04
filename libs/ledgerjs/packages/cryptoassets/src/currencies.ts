@@ -3826,14 +3826,13 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     explorerViews: [blockscoutExplorerView("https://cronos.org/explorer")],
   },
   core: {
-    // TODO: core_dao and replace everywhere
     type: "CryptoCurrency",
-    id: "core", // TODO: core_dao
+    id: "core",
     coinType: CoinType.ETH,
     name: "Core",
     managerAppName: "Ethereum",
     ticker: "CORE",
-    scheme: "core", // TODO: core_dao
+    scheme: "core", 
     color: "#FF962B",
     family: "evm",
     units: ethereumUnits("CORE", "CORE"),

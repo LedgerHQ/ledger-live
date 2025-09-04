@@ -76,12 +76,10 @@ export const getLastCoinOperations = async (
     throw new EtherscanLikeExplorerUsedIncorrectly();
   }
 
-  let url = `${explorer.uri}?module=account&action=txlist&address=${address}`;
-
-  // Corescan has different path
-  if (explorer.type === "corescan") {
-    url = `${explorer.uri}/accounts/list_of_txs_by_address/${address}`;
-  }
+  const url =
+    explorer.type === "corescan"
+      ? `${explorer.uri}/accounts/list_of_txs_by_address/${address}`
+      : `${explorer.uri}?module=account&action=txlist&address=${address}`;
 
   const ops = await fetchWithRetries<EtherscanOperation[]>({
     method: "GET",
@@ -114,11 +112,10 @@ export const getLastTokenOperations = async (
     throw new EtherscanLikeExplorerUsedIncorrectly();
   }
 
-  let url = `${explorer.uri}?module=account&action=tokentx&address=${address}`;
-
-  if (explorer.type === "corescan") {
-    url = `${explorer.uri}/accounts/list_of_erc20_transfer_events_by_address/${address}`;
-  }
+  const url =
+    explorer.type === "corescan"
+      ? `${explorer.uri}/accounts/list_of_erc20_transfer_events_by_address/${address}`
+      : `${explorer.uri}?module=account&action=tokentx&address=${address}`;
 
   const ops = await fetchWithRetries<EtherscanERC20Event[]>({
     method: "GET",
@@ -172,11 +169,10 @@ export const getLastERC721Operations = async (
     throw new EtherscanLikeExplorerUsedIncorrectly();
   }
 
-  let url = `${explorer.uri}?module=account&action=tokennfttx&address=${address}`;
-
-  if (explorer.type === "corescan") {
-    url = `${explorer.uri}/accounts/list_of_erc721_transfer_events_by_address/${address}`;
-  }
+  const url =
+    explorer.type === "corescan"
+      ? `${explorer.uri}/accounts/list_of_erc721_transfer_events_by_address/${address}`
+      : `${explorer.uri}?module=account&action=tokennfttx&address=${address}`;
 
   const ops = await fetchWithRetries<EtherscanERC721Event[]>({
     method: "GET",
@@ -319,9 +315,7 @@ export const getLastInternalOperations = async (
   }
 
   // Corescan has no support to get internal operations by address
-  if (explorer.type === "corescan") {
-    return [];
-  }
+  if (explorer.type === "corescan") return [];
 
   const ops = await fetchWithRetries<EtherscanInternalTransaction[]>({
     method: "GET",
