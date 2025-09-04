@@ -9,6 +9,7 @@ import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import { ChainAPI } from "../network";
 import { setCryptoAssetsStoreGetter } from "../cryptoAssetsStore";
+import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 
 jest.mock("axios");
 const mockedAxios = jest.mocked(axios);
@@ -37,6 +38,13 @@ describe("Solana Family", () => {
   let mockAddTokens: jest.Mock;
 
   beforeEach(() => {
+    // Ensure CAL lazy-loading flag is set for tests using CAL service
+    LiveConfig.setConfig({
+      feature_cal_lazy_loading: {
+        type: "boolean",
+        default: true,
+      },
+    });
     CALTokensAPI.__clearAllLists();
 
     mockAddTokens = jest.fn();

@@ -17,18 +17,32 @@ import { getCALHash, setCALHash } from "./logic";
 import { addTokens, convertSplTokens } from "@ledgerhq/cryptoassets/tokens";
 import { AxiosError } from "axios";
 import { getCryptoAssetsStore } from "./cryptoAssetsStore";
+import {
+  resolveTokenAdder,
+  isCalLazyLoadingActive,
+} from "@ledgerhq/coin-framework/crypto-assets/utils";
 
-let shouldSkipTokenLoading = false;
-
-export function setShouldSkipTokenLoading(skip: boolean): void {
-  shouldSkipTokenLoading = skip;
-}
+const storeTokens = (tokens: SPLToken[]) => {
+  const addTokensToStore = resolveTokenAdder(getCryptoAssetsStore);
+  if (addTokensToStore) {
+    const convertedTokens = tokens.map(convertSplTokens);
+    addTokensToStore(convertedTokens);
+  } else {
+    addTokens(tokens.map(convertSplTokens));
+  }
+};
 
 export const PRELOAD_MAX_AGE = 15 * 60 * 1000; // 15min
 
 export const fetchSPLTokens: (
   currency: CryptoCurrency,
 ) => Promise<SPLToken[] | null> = async currency => {
+  // If lazy loading is NOT enabled, stay in legacy and avoid CAL service.
+  if (!isCalLazyLoadingActive(getCryptoAssetsStore)) {
+    storeTokens(spltokensList);
+    return spltokensList;
+  }
+
   const latestCALHash = getCALHash(currency);
   const calHash = latestCALHash || embeddedHash;
 
@@ -50,16 +64,7 @@ export const fetchSPLTokens: (
 
     setCALHash(currency, hash || "");
     log("solana/preload", "preload " + splTokens.length + " tokens");
-
-    if (!shouldSkipTokenLoading) {
-      const store = getCryptoAssetsStore();
-      if ("addTokens" in store && typeof store.addTokens === "function") {
-        const convertedTokens = splTokens.map(convertSplTokens);
-        store.addTokens(convertedTokens);
-      } else {
-        addTokens(splTokens.map(convertSplTokens));
-      }
-    }
+    storeTokens(splTokens);
 
     return splTokens;
   } catch (e) {
@@ -70,15 +75,7 @@ export const fetchSPLTokens: (
       );
       if (!latestCALHash) {
         setCALHash(currency, embeddedHash);
-        if (!shouldSkipTokenLoading) {
-          const store = getCryptoAssetsStore();
-          if ("addTokens" in store && typeof store.addTokens === "function") {
-            const convertedTokens = spltokensList.map(convertSplTokens);
-            store.addTokens(convertedTokens);
-          } else {
-            addTokens(spltokensList.map(convertSplTokens));
-          }
-        }
+        storeTokens(spltokensList);
 
         return spltokensList;
       }
@@ -150,31 +147,13 @@ export function hydrate(data: SolanaPreloadData | undefined, currency: CryptoCur
 
 function hydrateV1(data: SolanaPreloadDataV1, currency: CryptoCurrency) {
   if (Array.isArray(data.splTokens)) {
-    if (!shouldSkipTokenLoading) {
-      const store = getCryptoAssetsStore();
-      if ("addTokens" in store && typeof store.addTokens === "function") {
-        const convertedTokens = data.splTokens.map(convertSplTokens);
-        store.addTokens(convertedTokens);
-      } else {
-        addTokens(data.splTokens.map(convertSplTokens));
-      }
-    }
-
+    storeTokens(data.splTokens);
     log("solana/preload", `hydrate ${data.splTokens.length} tokens`);
     setPreloadData(data, currency);
     return;
   }
 
-  if (!shouldSkipTokenLoading) {
-    const store = getCryptoAssetsStore();
-    if ("addTokens" in store && typeof store.addTokens === "function") {
-      const convertedTokens = spltokensList.map(convertSplTokens);
-      store.addTokens(convertedTokens);
-    } else {
-      addTokens(spltokensList.map(convertSplTokens));
-    }
-  }
-
+  storeTokens(spltokensList);
   log("solana/preload", `hydrate fallback ${spltokensList.length} embedded tokens`);
   setPreloadData(data, currency);
 }
