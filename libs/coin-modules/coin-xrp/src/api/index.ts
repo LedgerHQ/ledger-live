@@ -11,6 +11,7 @@ import {
   Stake,
   TransactionIntent,
 } from "@ledgerhq/coin-framework/api/index";
+import { log } from "@ledgerhq/logs";
 import coinConfig, { type XrpConfig } from "../config";
 import {
   broadcast,
@@ -112,6 +113,7 @@ async function operations(address: string, pagination: Pagination): Promise<[Ope
   if (lastPagingToken) {
     const token = lastPagingToken.split("-");
     options.token = JSON.stringify({ ledger: Number(token[0]), seq: Number(token[1]) });
+    log(options.token);
   }
   const [operations, apiNextCursor] = await listOperations(address, options);
   const next = apiNextCursor ? JSON.parse(apiNextCursor) : null;
