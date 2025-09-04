@@ -359,8 +359,7 @@ const evmConfig: CurrencyLiveConfigDefinition = {
         uri: "https://rpc.ankr.com/core",
       },
       explorer: {
-        type: "corescan",
-        uri: "https://openapi.coredao.org/api",
+        type: "none",
       },
       showNfts: false,
     },
