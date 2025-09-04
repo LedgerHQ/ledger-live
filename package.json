@@ -233,8 +233,35 @@
     "zx": "8.4.1"
   },
   "pnpm": {
-    "neverBuiltDependencies": [
+    "ignoredBuiltDependencies": [
       "blake2"
+    ],
+    "onlyBuiltDependencies": [
+      "protobufjs",
+      "bigint-buffer",
+      "cpu-features",
+      "esbuild",
+      "node-hid",
+      "usb",
+      "@sentry/cli",
+      "@swc/core",
+      "electron",
+      "msw",
+      "core-js",
+      "swiper",
+      "keccak",
+      "tiny-secp256k1",
+      "bufferutil",
+      "es5-ext",
+      "utf-8-validate",
+      "secp256k1",
+      "core-js-pure",
+      "@taquito/taquito",
+      "blake-hash",
+      "web3-bzz",
+      "web3-shh",
+      "web3",
+      "ssh2"
     ],
     "overrides": {
       "stellar-base>sodium-native": "^3.2.1",
@@ -286,5 +313,5 @@
       }
     }
   },
-  "packageManager": "pnpm@9.12.3"
+  "packageManager": "pnpm@10.15.1"
 }
