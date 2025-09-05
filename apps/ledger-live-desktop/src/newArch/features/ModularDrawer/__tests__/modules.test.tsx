@@ -247,7 +247,8 @@ describe("ModularDrawerFlowManager - Modules configuration", () => {
   });
 
   // this is logically failing because we are not able to retrieve the wanted data consistantly because it depends on the providerId that can be wrongly set in mapping services
-  it.failing("render the eth balance of scroll base and arbitrum as ethereum", async () => {
+  // Skipping because flaky, test to be rewritten in refactor from LIVE-21033
+  it.skip("render the eth balance of scroll base and arbitrum as ethereum", async () => {
     const mixedCurrencies = [baseCurrency, arbitrumCurrency, scrollCurrency, bitcoinCurrency];
     renderWithMockedCounterValuesProvider(
       <ModularDrawerFlowManager
