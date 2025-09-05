@@ -40,7 +40,7 @@ export function PendingOperation({ route, navigation }: PendingOperationParamLis
         category="Swap Form"
         name="Confirmation Success"
         providerName={provider}
-        targetCurrency={toCurrency}
+        targetCurrency={toCurrency?.id}
         sourceCurrency={fromCurrency?.id}
         avoidDuplicates={true}
       />

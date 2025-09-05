@@ -7,6 +7,7 @@ import {
   signSendNFTTransaction,
   signDelegationTransaction,
   verifyAmountsAndAcceptSwap,
+  verifyAmountsAndAcceptSwapForDifferentSeed,
   verifyAmountsAndRejectSwap,
   activateExpertMode,
   activateContractData,
@@ -51,6 +52,11 @@ export class SpeculosPage extends AppPage {
   @step("Verify amounts and accept swap")
   async verifyAmountsAndAcceptSwap(swap: Swap, amount: string) {
     await verifyAmountsAndAcceptSwap(swap, amount);
+  }
+
+  @step("Verify amounts and accept swap for different seed")
+  async verifyAmountsAndAcceptSwapForDifferentSeed(swap: Swap, amount: string) {
+    await verifyAmountsAndAcceptSwapForDifferentSeed(swap, amount);
   }
 
   @step("Verify amounts and reject swap")

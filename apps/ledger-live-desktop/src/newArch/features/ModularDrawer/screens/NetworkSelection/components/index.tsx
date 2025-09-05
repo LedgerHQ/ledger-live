@@ -5,12 +5,17 @@ import { ListWrapper } from "../../../components/ListWrapper";
 import { useModularDrawerAnalytics } from "../../../analytics/useModularDrawerAnalytics";
 import { MODULAR_DRAWER_PAGE_NAME } from "../../../analytics/modularDrawer.types";
 import { EnhancedModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/types";
-import createNetworkConfigurationHook from "../modules/createNetworkConfigurationHook";
+import { createNetworkConfigurationHook } from "@ledgerhq/live-common/modularDrawer/modules/createNetworkConfiguration";
 import { CurrenciesByProviderId } from "@ledgerhq/live-common/deposit/type";
 import { Observable } from "rxjs";
 import { WalletAPIAccount } from "@ledgerhq/live-common/wallet-api/types";
 import orderBy from "lodash/orderBy";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
+import { accountsCount } from "../../../components/AccountCount";
+import { accountsCountAndApy } from "../../../components/AccountCountApy";
+import { balanceItem } from "../../../components/Balance";
+import { useAccountData } from "../../../hooks/useAccountData";
+import { useBalanceDeps } from "../../../hooks/useBalanceDeps";
 
 type SelectNetworkProps = {
   networks?: CryptoOrTokenCurrency[];
@@ -40,11 +45,21 @@ export const SelectNetwork = ({
     return null;
   }
 
-  const transformNetworks = createNetworkConfigurationHook({
+  const networkConfigurationDeps = {
+    useAccountData,
+    accountsCount,
+    accountsCountAndApy,
+    useBalanceDeps,
+    balanceItem,
+  };
+
+  const makeNetworkConfigurationHook = createNetworkConfigurationHook(networkConfigurationDeps);
+
+  const transformNetworks = makeNetworkConfigurationHook({
     networksConfig,
-    currenciesByProvider,
-    selectedAssetId,
     accounts$,
+    selectedAssetId,
+    currenciesByProvider,
   });
 
   const orderedNetworks = orderBy(networks, ["name"]);

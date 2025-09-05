@@ -61,7 +61,6 @@ const test_ios = async () => {
       --retries 2 \
       --runInBand \
       --cleanup \
-      --shard ${shard} \
       ${filteredArgs}`;
 };
 
@@ -80,7 +79,6 @@ const test_android = async () => {
       --retries 2 \\
       --runInBand \\
       --cleanup \\
-      --shard ${shard} \\
       ${filteredArgs}`;
 };
 
@@ -155,13 +153,14 @@ const filteredArgs = extraArgs.filter(arg => {
     arg !== "./scripts/e2e-ci.mjs" &&
     arg !== "ios" &&
     arg !== "android" &&
-    !arg.match(/^\d+\/\d+$/) &&
-    arg !== filter
+    arg !== filter &&
+    arg !== shard
   );
 });
 
-if (filter) {
-  filteredArgs.push(...filter.split(" "));
+if (testType === "mock") {
+  filteredArgs.push("--shard");
+  filteredArgs.push(shard);
 }
 
 if (outputFile) {

@@ -28,7 +28,7 @@ module.exports = {
     jest: {
       setupTimeout: 500000,
     },
-    noRetryArgs: ["outputFile"],
+    noRetryArgs: ["json", "outputFile"],
     retries: 0,
   },
   logger: {

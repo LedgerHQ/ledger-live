@@ -1,8 +1,8 @@
 import { Observable } from "rxjs";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { getAccountTuplesForCurrency } from "../../../utils/getAccountTuplesForCurrency";
+import { getAccountTuplesForCurrency } from "../../utils/getAccountTuplesForCurrency";
 import type { Account } from "@ledgerhq/types-live";
-import { WalletAPIAccount } from "../../../wallet-api/types";
+import { WalletAPIAccount } from "../../wallet-api/types";
 
 type AccountModuleParams = {
   assets: CryptoOrTokenCurrency[];

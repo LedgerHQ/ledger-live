@@ -460,7 +460,7 @@ async function retryAxiosRequest<T>(
   throw lastError!;
 }
 
-export async function waitFor(text: string, maxAttempts = 15): Promise<string[]> {
+export async function waitFor(text: string, maxAttempts = 60): Promise<string[]> {
   const port = getEnv("SPECULOS_API_PORT");
   const address = getSpeculosAddress();
   const url = `${address}:${port}/events?stream=false&currentscreenonly=true`;
@@ -732,6 +732,14 @@ export async function signDelegationTransaction(delegatingAccount: Delegate) {
 
 export async function verifyAmountsAndAcceptSwap(swap: Swap, amount: string) {
   await waitFor(DeviceLabels.REVIEW_TRANSACTION);
+  const events = await pressUntilTextFound(DeviceLabels.SIGN_TRANSACTION);
+  await verifySwapData(swap, events, amount);
+  await pressBoth();
+}
+
+export async function verifyAmountsAndAcceptSwapForDifferentSeed(swap: Swap, amount: string) {
+  await pressUntilTextFound(DeviceLabels.I_UNDERSTAND);
+  await pressBoth();
   const events = await pressUntilTextFound(DeviceLabels.SIGN_TRANSACTION);
   await verifySwapData(swap, events, amount);
   await pressBoth();

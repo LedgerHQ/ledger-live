@@ -103,7 +103,6 @@ export default class CommonPage {
 
   @Step("Select a known device")
   async selectKnownDevice(index = 0) {
-    if (isIos()) await device.disableSynchronization();
     const proxyUrl = process.env.DEVICE_PROXY_URL;
     const elementId = proxyUrl ? this.deviceItem(`httpdebug|${proxyUrl}`) : this.deviceItemRegex;
     await waitForElementById(elementId);
@@ -113,5 +112,9 @@ export default class CommonPage {
   @Step("Tap proceed button")
   async tapProceedButton() {
     await tapById(this.proceedButtonId);
+  }
+
+  async disableSynchronizationForiOS() {
+    if (isIos()) await device.disableSynchronization();
   }
 }

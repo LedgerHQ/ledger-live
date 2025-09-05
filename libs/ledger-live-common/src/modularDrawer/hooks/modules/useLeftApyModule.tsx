@@ -1,8 +1,8 @@
 import React, { useMemo } from "react";
 import { useSelector } from "react-redux";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { ApyType } from "../../types";
 import { selectInterestRateByCurrency } from "../../data/entities/interestRateSelectors";
+import { ApyType } from "../../utils/type";
 
 const isValidApyType = (type: string): type is ApyType =>
   type === "NRR" || type === "APY" || type === "APR";
