@@ -7,7 +7,7 @@ import { NftMetadataProvider } from "@ledgerhq/live-nft-react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { InViewProvider } from "LLM/contexts/InViewContext";
 import { ModularDrawerProvider } from "LLM/features/ModularDrawer";
-import { WalletSyncProvider } from "LLM/features/WalletSync/components/WalletSyncContext";
+import { WalletSyncProvider } from "~/components/WalletSyncProvider";
 import React from "react";
 import { BridgeSyncProvider } from "~/bridge/BridgeSyncContext";
 import { CountervaluesMarketcapBridgedProvider } from "~/components/CountervaluesMarketcapProvider";

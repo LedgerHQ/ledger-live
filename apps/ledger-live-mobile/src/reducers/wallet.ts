@@ -1,19 +1,24 @@
 import {
+  memberCredentialsSelector,
+  trustchainSelector,
+} from "@ledgerhq/ledger-key-ring-protocol/store";
+import {
   HandlersPayloads,
   WalletHandlers,
-  initialState,
   WalletState,
-  handlers,
-  isStarredAccountSelector,
   accountNameWithDefaultSelector,
+  handlers,
+  initialState,
+  isStarredAccountSelector,
   walletSyncStateSelector,
+  walletSyncUserStateSelector,
 } from "@ledgerhq/live-wallet/store";
-import { handleActions } from "redux-actions";
-import { State } from "./types";
-import { createSelector } from "reselect";
-import { useSelector } from "react-redux";
-import { AccountLike } from "@ledgerhq/types-live";
 import { DistantState } from "@ledgerhq/live-wallet/walletsync/index";
+import { AccountLike } from "@ledgerhq/types-live";
+import { useSelector } from "react-redux";
+import { handleActions } from "redux-actions";
+import { createSelector } from "reselect";
+import type { State } from "./types";
 
 export const walletSelector = (state: State): WalletState => state.wallet;
 
@@ -37,6 +42,15 @@ const getAccountName = (
 ): string | undefined => {
   return !account ? undefined : accountNameWithDefaultSelector(state.wallet, account);
 };
+
+/// Hooks
+
+export const useWalletSyncState = () =>
+  useSelector((s: State) => walletSyncStateSelector(walletSelector(s)));
+export const useTrustchain = () => useSelector((s: State) => trustchainSelector(s));
+export const useMemberCredentials = () => useSelector((s: State) => memberCredentialsSelector(s));
+export const useWalletSyncUserState = () =>
+  useSelector((s: State) => walletSyncUserStateSelector(walletSelector(s)));
 
 export const useMaybeAccountName = (
   account: AccountLike | null | undefined,

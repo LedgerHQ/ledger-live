@@ -1,6 +1,6 @@
 import { renderHook } from "@tests/test-renderer";
 import { mockedSdk, simpleTrustChain } from "./shared";
-import { useWatchWalletSync } from "../hooks/useWatchWalletSync";
+import { useWalletSyncMobile } from "../hooks/useWalletSyncMobile";
 import { State } from "~/reducers/types";
 
 const INITIAL_STATE = (state: State) => ({
@@ -35,9 +35,9 @@ jest.mock("../hooks/useTrustchainSdk", () => ({
   }),
 }));
 
-describe("useWatchWalletSync", () => {
+describe("useWalletSyncMobile", () => {
   it("should not run ledger sync watch loop when ff is disabled", async () => {
-    const { result, store } = renderHook(() => useWatchWalletSync(), {});
+    const { result, store } = renderHook(() => useWalletSyncMobile(), {});
 
     expect(store.getState().settings.overriddenFeatureFlags.llmWalletSync).not.toBeDefined();
     expect(result.current.visualPending).toBe(false);
@@ -47,7 +47,7 @@ describe("useWatchWalletSync", () => {
   });
 
   it("should run ledger sync watch loop when ff is enabled", async () => {
-    const { result, store } = renderHook(() => useWatchWalletSync(), {
+    const { result, store } = renderHook(() => useWalletSyncMobile(), {
       overrideInitialState: INITIAL_STATE,
     });
 
