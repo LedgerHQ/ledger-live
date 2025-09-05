@@ -2425,8 +2425,8 @@ importers:
         specifier: ^7.8.1
         version: 7.8.1
       sha.js:
-        specifier: ^2.4.11
-        version: 2.4.11
+        specifier: ^2.4.12
+        version: 2.4.12
       utility-types:
         specifier: ^3.10.0
         version: 3.11.0
@@ -4749,8 +4749,8 @@ importers:
         specifier: ^7.3.5
         version: 7.5.4
       sha.js:
-        specifier: ^2.4.11
-        version: 2.4.11
+        specifier: ^2.4.12
+        version: 2.4.12
     devDependencies:
       '@testing-library/react':
         specifier: '14'
@@ -5475,8 +5475,8 @@ importers:
         specifier: ^7.3.5
         version: 7.5.4
       sha.js:
-        specifier: ^2.4.11
-        version: 2.4.11
+        specifier: ^2.4.12
+        version: 2.4.12
       triple-beam:
         specifier: ^1.3.0
         version: 1.4.1
@@ -6025,7 +6025,7 @@ importers:
         version: 7.5.4
       sha.js:
         specifier: '2'
-        version: 2.4.11
+        version: 2.4.12
       varuint-bitcoin:
         specifier: 1.1.2
         version: 1.1.2
@@ -17989,7 +17989,7 @@ packages:
       metro-react-native-babel-preset: '*'
       react: ^16.8.0 || ^17.0.0 || ^18.0.0
       react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0
-      webpack: '*'
+      webpack: '5'
     peerDependenciesMeta:
       react:
         optional: true
@@ -18740,6 +18740,7 @@ packages:
     deprecated: |-
       DEPRECATED: This package is no longer maintained.
       Please use the built-in Jest matchers available in @testing-library/react-native v12.4+.
+
       See migration guide: https://callstack.github.io/react-native-testing-library/docs/migration/jest-matchers
     peerDependencies:
       react: '>=16.0.0'
@@ -20427,7 +20428,7 @@ packages:
     resolution: {integrity: sha512-/FQM1EDkTsf63Ub2C6O7GuYFDsSXUwsaZDurV0np41ocwq0jthUAYCmhBX9f+KwlaCgIuWyr/4WlUQUBfKfZog==}
     engines: {node: '>=6'}
     peerDependencies:
-      rxjs: '*'
+      rxjs: ^5.5.10
       zenObservable: '*'
     peerDependenciesMeta:
       rxjs:
@@ -23683,7 +23684,7 @@ packages:
     peerDependencies:
       '@typescript-eslint/eslint-plugin': ^4.0.0 || ^5.0.0
       eslint: ^6.0.0 || ^7.0.0 || ^8.0.0
-      jest: '*'
+      jest: ^27.0.0
     peerDependenciesMeta:
       '@typescript-eslint/eslint-plugin':
         optional: true
@@ -27956,6 +27957,7 @@ packages:
   metro-react-native-babel-preset@0.77.0:
     resolution: {integrity: sha512-HPPD+bTxADtoE4y/4t1txgTQ1LVR6imOBy7RMHUsqMVTbekoi8Ph5YI9vKX2VMPtVWeFt0w9YnCSLPa76GcXsA==}
     engines: {node: '>=18'}
+    deprecated: Use @react-native/babel-preset instead
     peerDependencies:
       '@babel/core': '*'
 
@@ -30159,6 +30161,7 @@ packages:
     engines: {node: '>=0.6.0', teleport: '>=0.2.0'}
     deprecated: |-
       You or someone you depend on is using Q, the JavaScript Promise library that gave JavaScript developers strong feelings about promises. They can almost certainly migrate to the native JavaScript promise now. Thank you literally everyone for joining me in this bet against the odds. Be excellent to each other.
+
       (For a CapTP with native promises, see @endo/eventual-send and @endo/captp)
 
   qrcode-terminal@0.11.0:
@@ -30387,7 +30390,7 @@ packages:
     resolution: {integrity: sha512-kBGxI+MIZGBf4wZhNCWwHkMcVP+kbpmrLWH/SkO0qCKc7D7eSPcxQbfpsmsCo8v2KCBYjuGSou+xTqK44D/jMg==}
     engines: {npm: ^3.0.0}
     peerDependencies:
-      prop-types: '*'
+      prop-types: ^15.6.1
       react: '>=15.0.0'
     peerDependenciesMeta:
       prop-types:
@@ -30411,8 +30414,8 @@ packages:
   react-native-animatable@1.4.0:
     resolution: {integrity: sha512-DZwaDVWm2NBvBxf7I0wXKXLKb/TxDnkV53sWhCvei1pRyTX3MVFpkvdYBknNBqPrxYuAIlPxEp7gJOidIauUkw==}
     peerDependencies:
-      react: '*'
-      react-native: '*'
+      react: 18.2.0
+      react-native: 0.72.6
     peerDependenciesMeta:
       react:
         optional: true
@@ -30625,6 +30628,7 @@ packages:
 
   react-native-randombytes@3.6.1:
     resolution: {integrity: sha512-qxkwMbOZ0Hff1V7VqpaWrR6ItkA+oF6bnI79Qp9F3Tk8WBsdKDi6m1mi3dEdFWePoRLrhJ2L03rU0yabst1tVw==}
+    deprecated: use react-native-get-random-values instead
 
   react-native-reanimated@3.16.7:
     resolution: {integrity: sha512-qoUUQOwE1pHlmQ9cXTJ2MX9FQ9eHllopCLiWOkDkp6CER95ZWeXhJCP4cSm6AD4jigL5jHcZf/SkWrg8ttZUsw==}
@@ -30697,6 +30701,7 @@ packages:
 
   react-native-vector-icons@10.2.0:
     resolution: {integrity: sha512-n5HGcxUuVaTf9QJPs/W22xQpC2Z9u0nb0KgLPnVltP8vdUvOp6+R26gF55kilP/fV4eL4vsAHUqUjewppJMBOQ==}
+    deprecated: react-native-vector-icons package has moved to a new model of per-icon-family packages. See the https://github.com/oblador/react-native-vector-icons/blob/master/MIGRATION.md on how to migrate
     hasBin: true
 
   react-native-version-number@0.3.6:
@@ -31723,10 +31728,6 @@ packages:
   setprototypeof@1.2.0:
     resolution: {integrity: sha512-E5LDX7Wrp85Kil5bhZv46j8jOeboKq5JMmYM3gVGdGH8xFpPWXUMsNrlODCrkoxMEeNi/XZIwuRvY4XNwYMJpw==}
 
-  sha.js@2.4.11:
-    resolution: {integrity: sha512-QMEp5B7cftE7APOjk5Y6xgrbWu+WkLVQwk8JNjZ8nKRciZaByEW6MubieAiToS7+dwvrjGhH8jRXz3MVd0AYqQ==}
-    hasBin: true
-
   sha.js@2.4.12:
     resolution: {integrity: sha512-8LzC5+bvI45BjpfXU8V5fdU2mfeKiQe1D1gIMn7XUlF3OTUrpdJpPPH4EMAnF0DsHHdSZqCdSss5qCmJKuiO3w==}
     engines: {node: '>= 0.10'}
@@ -31945,6 +31946,7 @@ packages:
   source-map@0.8.0-beta.0:
     resolution: {integrity: sha512-2ymg6oRBpebeZi9UUNsgQ89bhx01TcTkmNTGnNO88imTmbSgy4nfujrgVEFKWpMTEGA11EDkTt7mqObTPdigIA==}
     engines: {node: '>= 8'}
+    deprecated: The work that was done in this beta branch won't be included in future versions
 
   sourcemap-codec@1.4.8:
     resolution: {integrity: sha512-9NykojV5Uih4lgo5So5dtw+f0JgJX30KCNI8gwhz2J9A15wD0Ml6tjHKwf6fTSa6fAdVBdZeNOs9eJ71qCk8vA==}
@@ -32444,12 +32446,12 @@ packages:
   superagent@6.1.0:
     resolution: {integrity: sha512-OUDHEssirmplo3F+1HWKUrUjvnQuA+nZI6i/JJBdXb5eq9IyEQwPyPpqND+SSsxf6TygpBEkUjISVRN4/VOpeg==}
     engines: {node: '>= 7.0.0'}
-    deprecated: Please upgrade to v9.0.0+ as we have fixed a public vulnerability with formidable dependency. Note that v9.0.0+ requires Node.js v14.18.0+. See https://github.com/ladjs/superagent/pull/1800 for insight. This project is supported and maintained by the team at Forward Email @ https://forwardemail.net
+    deprecated: Please upgrade to superagent v10.2.2+, see release notes at https://github.com/forwardemail/superagent/releases/tag/v10.2.2 - maintenance is supported by Forward Email @ https://forwardemail.net
 
   superagent@8.1.2:
     resolution: {integrity: sha512-6WTxW1EB6yCxV5VFOIPQruWGHqc3yI7hEmZK6h+pyk69Lk/Ut7rLUY6W/ONF2MjBuGjvmMiIpsrVJ2vjrHlslA==}
     engines: {node: '>=6.4.0 <13 || >=14'}
-    deprecated: Please upgrade to v9.0.0+ as we have fixed a public vulnerability with formidable dependency. Note that v9.0.0+ requires Node.js v14.18.0+. See https://github.com/ladjs/superagent/pull/1800 for insight. This project is supported and maintained by the team at Forward Email @ https://forwardemail.net
+    deprecated: Please upgrade to superagent v10.2.2+, see release notes at https://github.com/forwardemail/superagent/releases/tag/v10.2.2 - maintenance is supported by Forward Email @ https://forwardemail.net
 
   superstruct@0.16.7:
     resolution: {integrity: sha512-4ZZTrXlP4XzCrgh4vOfPDL6dL7zZm5aPl78eczwFSrwvxtsEnKRrSGID6Sbt0agycUoo4auRdWSNTX+oQ3KFyA==}
@@ -38179,7 +38181,7 @@ snapshots:
       invariant: 2.2.4
       ripemd160: 2.0.2
       semver: 7.5.4
-      sha.js: 2.4.11
+      sha.js: 2.4.12
       tiny-secp256k1: 1.1.6
       typescript: 5.8.3
       varuint-bitcoin: 1.1.2
@@ -38770,7 +38772,7 @@ snapshots:
       libsodium-wrappers: 0.7.13
       pbkdf2: 3.1.2
       ripemd160: 2.0.2
-      sha.js: 2.4.11
+      sha.js: 2.4.12
       unorm: 1.6.0
 
   '@cosmjs/crypto@0.26.8':
@@ -41704,7 +41706,7 @@ snapshots:
       libsodium-wrappers: 0.7.13
       pbkdf2: 3.1.2
       ripemd160: 2.0.2
-      sha.js: 2.4.11
+      sha.js: 2.4.12
       type-tagger: 1.0.0
       unorm: 1.6.0
 
@@ -42707,7 +42709,7 @@ snapshots:
       buffer: 6.0.3(patch_hash=2xnca52oxhztvr7iaoovwclcze)
       crypto-js: 4.2.0
       elliptic: 6.6.1
-      sha.js: 2.4.11
+      sha.js: 2.4.12
 
   '@keplr-wallet/proto-types@0.12.89':
     dependencies:
@@ -42734,7 +42736,7 @@ snapshots:
 
   '@kwsites/file-exists@1.1.1':
     dependencies:
-      debug: 4.4.1
+      debug: 4.3.4
     transitivePeerDependencies:
       - supports-color
 
@@ -47492,7 +47494,7 @@ snapshots:
       c32check: 1.1.3
       lodash.clonedeep: 4.5.0
       ripemd160-min: 0.0.6
-      sha.js: 2.4.11
+      sha.js: 2.4.12
       smart-buffer: 4.2.0
     transitivePeerDependencies:
       - encoding
@@ -54607,7 +54609,7 @@ snapshots:
       inherits: 2.0.4
       md5.js: 1.3.5
       ripemd160: 2.0.2
-      sha.js: 2.4.11
+      sha.js: 2.4.12
 
   create-hmac@1.1.7:
     dependencies:
@@ -54616,7 +54618,7 @@ snapshots:
       inherits: 2.0.4
       ripemd160: 2.0.2
       safe-buffer: 5.2.1
-      sha.js: 2.4.11
+      sha.js: 2.4.12
 
   create-jest@29.7.0:
     dependencies:
@@ -65630,7 +65632,7 @@ snapshots:
       create-hmac: 1.1.7
       ripemd160: 2.0.2
       safe-buffer: 5.2.1
-      sha.js: 2.4.11
+      sha.js: 2.4.12
 
   peek-stream@1.1.3:
     dependencies:
@@ -69125,11 +69127,6 @@ snapshots:
   setprototypeof@1.1.1: {}
 
   setprototypeof@1.2.0: {}
-
-  sha.js@2.4.11:
-    dependencies:
-      inherits: 2.0.4
-      safe-buffer: 5.2.1
 
   sha.js@2.4.12:
     dependencies:
