@@ -136,7 +136,7 @@ export function SwapForm({
         };
       }, partnerAndExchangeRateDefault) ?? partnerAndExchangeRateDefault
     );
-  }, [exchangeRatesState.value, swapTransaction.swap.to.currency]);
+  }, [exchangeRatesState, swapTransaction.swap.to.currency]);
 
   const swapError =
     swapTransaction.fromAmountError instanceof NotEnoughBalance

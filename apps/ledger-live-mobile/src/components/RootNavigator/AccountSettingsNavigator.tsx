@@ -1,5 +1,5 @@
 import React, { useMemo } from "react";
-import { createStackNavigator } from "@react-navigation/stack";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "styled-components/native";
 import { ScreenName } from "~/const";
@@ -14,7 +14,7 @@ import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
 import { AccountSettingsNavigatorParamList } from "./types/AccountSettingsNavigator";
 import EditCurrencyUnits from "~/screens/Settings/CryptoAssets/Currencies/EditCurrencyUnits";
 
-const Stack = createStackNavigator<AccountSettingsNavigatorParamList>();
+const Stack = createNativeStackNavigator<AccountSettingsNavigatorParamList>();
 
 export default function AccountSettingsNavigator() {
   const { colors } = useTheme();

@@ -10,7 +10,7 @@ import {
   hasActivatableVotes,
   hasRevokableVotes,
 } from "@ledgerhq/live-common/families/celo/logic";
-import { StackNavigationProp } from "@react-navigation/stack";
+import { NavigationProp, ParamListBase } from "@react-navigation/native";
 import { accountScreenSelector } from "~/reducers/accounts";
 import { ScreenName, NavigatorName } from "~/const";
 import Button from "~/components/Button";
@@ -43,7 +43,7 @@ function ManageAssetsNavigator() {
       params?: { [key: string]: unknown };
     }) => {
       // This is complicated (even impossible?) to type properly…
-      (navigation as StackNavigationProp<{ [key: string]: object }>).navigate(route, {
+      (navigation as NavigationProp<ParamListBase>).navigate(route as never, {
         screen,
         params: { ...params, accountId: account?.id },
       });
