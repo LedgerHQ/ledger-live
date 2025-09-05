@@ -1,13 +1,11 @@
 import { useMemo, useState } from "react";
-import { getCurrenciesIds } from "../utils/getCurrenciesIds";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 
 export function useAssetSelection(
-  currencies: CryptoOrTokenCurrency[],
+  currencyIds: string[],
   sortedCryptoCurrencies: CryptoOrTokenCurrency[],
 ) {
-  const currenciesIdsArray = useMemo(() => getCurrenciesIds(currencies), [currencies]);
-  const currencyIdsSet = useMemo(() => new Set(currenciesIdsArray), [currenciesIdsArray]);
+  const currencyIdsSet = useMemo(() => new Set(currencyIds), [currencyIds]);
 
   const filteredSortedCryptoCurrencies = useMemo(() => {
     if (currencyIdsSet.size === 0) return sortedCryptoCurrencies;
@@ -19,7 +17,6 @@ export function useAssetSelection(
   return {
     assetsToDisplay: assetsToDisplay ?? filteredSortedCryptoCurrencies,
     setAssetsToDisplay,
-    currenciesIdsArray,
     currencyIdsSet,
   };
 }

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { AnimatePresence } from "framer-motion";
 import AnimatedScreenWrapper from "./components/AnimatedScreenWrapper";
 import { MODULAR_DRAWER_STEP, ModularDrawerFlowManagerProps, ModularDrawerStep } from "./types";
@@ -21,6 +21,7 @@ const ModularDrawerFlowManager = ({
   onAssetSelected,
   onAccountSelected,
 }: ModularDrawerFlowManagerProps) => {
+  const currencyIds = useMemo(() => (currencies || []).map(currency => currency.id), [currencies]);
   const { currentStep, navigationDirection, goToStep } = useModularDrawerNavigation();
 
   const {
@@ -44,7 +45,7 @@ const ModularDrawerFlowManager = ({
     loadNext,
   } = useModularDrawerRemoteData({
     currentStep,
-    currencies,
+    currencyIds,
     drawerConfiguration,
     goToStep,
     onAssetSelected,
