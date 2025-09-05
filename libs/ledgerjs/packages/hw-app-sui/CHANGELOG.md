@@ -1,5 +1,11 @@
 # @ledgerhq/hw-app-sui
 
+## 1.4.0
+
+### Minor Changes
+
+- [#11178](https://github.com/LedgerHQ/ledger-live/pull/11178) [`b6af1d7`](https://github.com/LedgerHQ/ledger-live/commit/b6af1d7d4bc8aba35497242f6863620c7080162c) Thanks [@jccguimaraes](https://github.com/jccguimaraes)! - feat: added staking feature for sui
+
 ## 1.4.0-next.0
 
 ### Minor Changes
