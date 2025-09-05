@@ -1,6 +1,8 @@
 import { Api, FeeEstimation } from "@ledgerhq/coin-framework/api/types";
 import { ethers, BigNumber } from "ethers";
+import * as legacy from "@ledgerhq/cryptoassets/tokens";
 import { EvmConfig } from "../config";
+import { setCryptoAssetsStoreGetter } from "../cryptoAssetsStore";
 import { createApi } from "./index";
 
 describe.each([
@@ -28,6 +30,7 @@ describe.each([
   let module: Api;
 
   beforeAll(() => {
+    setCryptoAssetsStoreGetter(() => legacy);
     module = createApi(config as EvmConfig, "ethereum");
   });
 
@@ -155,7 +158,7 @@ describe.each([
       ).toEqual([[], ""]);
     });
 
-    it("list operations for an address", async () => {
+    it("lists operations for an address", async () => {
       const [result] = await module.listOperations("0xB69B37A4Fb4A18b3258f974ff6e9f529AD2647b1", {
         minHeight: 200,
       });
@@ -183,6 +186,7 @@ describe.each([
           value: expect.any(BigInt),
           parameters: {
             gasPrice: expect.any(BigInt),
+            gasLimit: expect.any(BigInt),
             maxFeePerGas: null,
             maxPriorityFeePerGas: null,
             nextBaseFee: null,
@@ -199,6 +203,7 @@ describe.each([
           value: expect.any(BigInt),
           parameters: {
             gasPrice: null,
+            gasLimit: expect.any(BigInt),
             maxFeePerGas: expect.any(BigInt),
             maxPriorityFeePerGas: expect.any(BigInt),
             nextBaseFee: expect.any(BigInt),

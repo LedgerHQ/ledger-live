@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title id="pageTitle">Ledger Live Mobile DeepLinks</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            color: #ffffff;
+            background: #000000;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: #000000;
+            border-radius: 12px;
+            box-shadow: 0 20px 40px rgba(255, 255, 255, 0.1);
+            overflow: hidden;
+            border: 1px solid #333333;
+        }
+
+        .header {
+            background: #000000;
+            color: white;
+            padding: 40px;
+            text-align: center;
+            border-bottom: 1px solid #333333;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .content {
+            padding: 40px;
+            background: #000000;
+        }
+
+        .section {
+            margin-bottom: 40px;
+            background: #111111;
+            border-radius: 12px;
+            padding: 30px;
+            border-left: 4px solid #ff6b35;
+            border: 1px solid #333333;
+        }
+
+        .section h2 {
+            color: #ffffff;
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section h2::before {
+            content: "🔗";
+            font-size: 1.2rem;
+        }
+
+        .deeplink-item {
+            background: #1a1a1a;
+            border: 1px solid #333333;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .deeplink-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(255, 107, 53, 0.2);
+            border-color: #ff6b35;
+        }
+
+        .deeplink-title {
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 12px;
+            font-size: 1.2rem;
+        }
+
+        .deeplink-url {
+            background: #222222;
+            padding: 12px;
+            border-radius: 8px;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 0.95rem;
+            color: #ff6b35;
+            margin-bottom: 12px;
+            word-break: break-all;
+            border: 1px solid #444444;
+        }
+
+        .deeplink-description {
+            color: #cccccc;
+            font-size: 0.95rem;
+            margin-bottom: 15px;
+            background: #1a1a1a;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #333333;
+            line-height: 1.5;
+        }
+
+        .deeplink-input {
+            background: #222222;
+            border: 1px solid #444444;
+            border-radius: 4px;
+            padding: 8px 12px;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 0.9rem;
+            color: #ffffff;
+            width: 100%;
+            margin-bottom: 10px;
+        }
+
+        .deeplink-input:focus {
+            outline: none;
+            border-color: #ff6b35;
+            box-shadow: 0 0 0 2px rgba(255, 107, 53, 0.2);
+        }
+
+        .deeplink-input::placeholder {
+            color: #666666;
+        }
+
+        .deeplink-examples {
+            margin-top: 10px;
+        }
+
+        .deeplink-examples h4 {
+            color: #ffffff;
+            font-size: 0.9rem;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .example-list {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .example-list li {
+            background: #333333;
+            padding: 8px 12px;
+            border-radius: 4px;
+            margin-bottom: 5px;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 0.85rem;
+            color: #ff6b35;
+            border: 1px solid #444444;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .example-list li:hover {
+            background: #444444;
+            border-color: #ff6b35;
+            transform: translateY(-1px);
+        }
+
+        .clickable-link {
+            display: inline-block;
+            background: #ff6b35;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            margin-top: 15px;
+        }
+
+        .clickable-link:hover {
+            background: #e55a2b;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(255, 107, 53, 0.4);
+        }
+
+        .parameters {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 4px;
+            padding: 10px;
+            margin-top: 10px;
+        }
+
+        .parameters h4 {
+            color: #856404;
+            font-size: 0.9rem;
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+
+        .parameter-list {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .parameter-list li {
+            color: #856404;
+            font-size: 0.85rem;
+            margin-bottom: 3px;
+        }
+
+        .warning {
+            background: #8b5cf6;
+            border: 1px solid #a78bfa;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 20px 0;
+            color: #ffffff;
+        }
+
+        .warning strong {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .platform-note {
+            background: #8b5cf6;
+            border: 1px solid #a78bfa;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 20px 0;
+            color: #ffffff;
+        }
+
+        .platform-note strong {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .platform-note a {
+            color: #ff6b35;
+            text-decoration: none;
+        }
+
+        .platform-note a:hover {
+            text-decoration: underline;
+        }
+
+        .footer {
+            background: #111111;
+            padding: 20px 40px;
+            text-align: center;
+            color: #cccccc;
+            border-top: 1px solid #333333;
+        }
+
+        .footer a {
+            color: #ff6b35;
+            text-decoration: none;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+            color: #e55a2b;
+        }
+
+        .footer code {
+            background: #222222;
+            color: #ff6b35;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            border: 1px solid #444444;
+            display: block;
+            margin: 8px 0;
+            white-space: pre-wrap;
+            word-break: break-all;
+            line-height: 1.4;
+        }
+
+        .footer .test-section {
+            margin: 20px 0;
+            text-align: left;
+        }
+
+        .footer .test-section h4 {
+            color: #ff6b35;
+            margin-bottom: 8px;
+            font-size: 1rem;
+        }
+
+        .footer .test-command {
+            background: #222222;
+            color: #ff6b35;
+            padding: 12px 16px;
+            border-radius: 6px;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            border: 1px solid #444444;
+            display: block;
+            margin: 8px 0;
+            white-space: pre-wrap;
+            word-break: break-all;
+            line-height: 1.5;
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                padding: 20px;
+            }
+
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .content {
+                padding: 20px;
+            }
+
+            .deeplink-url {
+                font-size: 0.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1 id="mainTitle">Ledger Live Mobile DeepLinks</h1>
+            <p id="mainDescription">Complete reference of all available deeplinks for Ledger Live Mobile</p>
+        </div>
+
+        <div class="content" id="content">
+            <!-- Content will be dynamically generated -->
+        </div>
+
+        <div class="footer">
+            <p id="footerText">Based on the <a href="https://github.com/LedgerHQ/ledger-live/wiki/LLM:DeepLinking" target="_blank">Ledger Live Mobile DeepLinking Documentation</a></p>
+
+            <div class="test-section">
+                <h4>For testing on Android:</h4>
+                <div class="test-command">adb shell am start -W -a android.intent.action.VIEW -d "ledgerlive://{{YOUR_URL}}" com.ledger.live.debug</div>
+            </div>
+
+            <div class="test-section">
+                <h4>For testing on iOS:</h4>
+                <div class="test-command">xcrun simctl openurl booted ledgerlive://{{YOUR_URL}}</div>
+            </div>
+        </div>
+    </div>
+
+        </div>
+    </div>
+
+    <script>
+        // Configuration for Mobile application
+        const appConfig = {
+            title: "Ledger Live Mobile DeepLinks",
+            description: "Complete reference of all available deeplinks for Ledger Live Mobile",
+            scheme: "ledgerlive://",
+            footerText: "Based on the <a href='https://github.com/LedgerHQ/ledger-live/wiki/LLM:DeepLinking' target='_blank'>Ledger Live Mobile DeepLinking Documentation</a>",
+            platformNote: {
+                title: "📱 Mobile Note:",
+                content: "Mobile deeplinks may behave differently on iOS and Android. Some features might be platform-specific."
+            },
+            deeplinks: [
+                {
+                    section: "Portfolio",
+                    title: "Portfolio Page (default landing)",
+                    url: "ledgerlive://",
+                    description: "Opens the portfolio page, which is the default landing page.",
+                    examples: ["ledgerlive://", "ledgerlive://portfolio"]
+                },
+                {
+                    section: "Accounts",
+                    title: "Accounts and Account Page",
+                    url: "ledgerlive://accounts",
+                    description: "Opens the accounts page or a specific account based on parameters.",
+                    parameters: [
+                        { name: "currency", required: false, description: "The ticker or name of the currency" },
+                        { name: "address", required: false, description: "Specific account address" }
+                    ],
+                    examples: [
+                        "ledgerlive://accounts",
+                        "ledgerlive://accounts?currency=btc",
+                        "ledgerlive://accounts?currency=ethereum&address=0x123..."
+                    ]
+                },
+                {
+                    section: "Add Account",
+                    title: "Add Account Modal",
+                    url: "ledgerlive://add-account",
+                    description: "Opens the Add Account Modal with optional currency pre-selection.",
+                    parameters: [
+                        { name: "currency", required: false, description: "The ticker or name of the currency to pre-fill" }
+                    ],
+                    examples: ["ledgerlive://add-account", "ledgerlive://add-account?currency=bitcoin"]
+                },
+                {
+                    section: "NFT Gallery",
+                    title: "NFT Gallery Tab",
+                    url: "ledgerlive://nftgallery",
+                    description: "Opens the NFT Gallery tab page.",
+                    examples: ["ledgerlive://nftgallery"]
+                },
+                {
+                    section: "Send",
+                    title: "Send Flow",
+                    url: "ledgerlive://send",
+                    description: "Opens the send page with optional currency pre-selection.",
+                    parameters: [
+                        { name: "currency", required: false, description: "The currency to pre-fill in account search" }
+                    ],
+                    examples: ["ledgerlive://send", "ledgerlive://send?currency=ethereum"]
+                },
+                {
+                    section: "Receive",
+                    title: "Receive Flow",
+                    url: "ledgerlive://receive",
+                    description: "Opens the receive page with optional currency pre-selection.",
+                    parameters: [
+                        { name: "currency", required: false, description: "The currency to pre-fill in account search" }
+                    ],
+                    examples: ["ledgerlive://receive", "ledgerlive://receive?currency=ethereum"]
+                },
+                {
+                    section: "Buy Crypto",
+                    title: "Buy Crypto Flow",
+                    url: "ledgerlive://buy",
+                    description: "Opens the buy crypto page with optional currency pre-selection.",
+                    examples: ["ledgerlive://buy", "ledgerlive://buy/bitcoin"]
+                },
+                {
+                    section: "Sell Crypto",
+                    title: "Sell Crypto Flow",
+                    url: "ledgerlive://sell",
+                    description: "Opens the sell crypto page with optional currency pre-selection.",
+                    examples: ["ledgerlive://sell", "ledgerlive://sell/bitcoin"]
+                },
+                {
+                    section: "MyLedger",
+                    title: "Device Management Flow",
+                    url: "ledgerlive://myledger",
+                    description: "Opens the MyLedger page for device management with optional app search.",
+                    parameters: [
+                        { name: "installApp", required: false, description: "Search query to pre-fill when MyLedger opens" }
+                    ],
+                    examples: ["ledgerlive://myledger", "ledgerlive://myledger?installApp=bitcoin"]
+                },
+                {
+                    section: "Swap",
+                    title: "Swap Crypto Flow",
+                    url: "ledgerlive://swap",
+                    description: "Opens the swap crypto page.",
+                    examples: ["ledgerlive://swap"]
+                },
+                {
+                    section: "Discover",
+                    title: "Live Discover Catalog",
+                    url: "ledgerlive://discover/:liveAppId/",
+                    description: "Opens the discover catalog or specific live app with optional parameters.",
+                    parameters: [
+                        { name: "liveAppId", required: false, description: "The liveApp id", type: "url" },
+                        { name: "&{params}", required: false, description: "URL query params transmitted to the liveApp", type: "query" }
+                    ],
+                    examples: [
+                        "ledgerlive://discover",
+                        "ledgerlive://discover/paraswap",
+                        "ledgerlive://discover/paraswap?accountId=1"
+                    ]
+                },
+                {
+                    section: "Wallet Connect",
+                    title: "Wallet Connect",
+                    url: "ledgerlive://wc",
+                    description: "Handles Wallet Connect URI connections.",
+                    parameters: [
+                        { name: "uri", required: true, description: "URI to be passed to Wallet Connect" }
+                    ],
+                    examples: ["ledgerlive://wc?uri=${encodeURIComponent(url)}"]
+                },
+                {
+                    section: "Settings",
+                    title: "Settings Pages",
+                    url: "ledgerlive://settings/",
+                    description: "Opens various settings pages.",
+                    examples: [
+                        "ledgerlive://settings/",
+                        "ledgerlive://settings/general",
+                        "ledgerlive://settings/accounts",
+                        "ledgerlive://settings/about",
+                        "ledgerlive://settings/help",
+                        "ledgerlive://settings/developer",
+                        "ledgerlive://settings/notifications",
+                        "ledgerlive://settings/experimental"
+                    ]
+                },
+                {
+                    section: "Ledger Sync",
+                    title: "Ledger Sync",
+                    url: "ledgerlive://ledgersync",
+                    description: "Opens the Ledger Sync functionality.",
+                    examples: ["ledgerlive://ledgersync"]
+                },
+                {
+                    section: "Sync Onboarding",
+                    title: "Onboarding",
+                    url: "ledgerlive://sync-onboarding",
+                    description: "Opens the sync onboarding flow.",
+                    examples: ["ledgerlive://sync-onboarding"]
+                },
+                {
+                    section: "Post Onboarding",
+                    title: "Post Onboarding",
+                    url: "ledgerlive://post-onboarding",
+                    description: "Opens the post onboarding flow with optional device parameter.",
+                    parameters: [
+                        { name: "device", required: false, description: "Type of device" }
+                    ],
+                    examples: ["ledgerlive://post-onboarding", "ledgerlive://post-onboarding?device=stax"]
+                },
+                {
+                    section: "Large Movers",
+                    title: "Large Movers Landing Page",
+                    url: "ledgerlive://landing-page-large-mover?currencyIds=BTC,ETH",
+                    description: "Opens the large movers landing page with specific currency tracking.",
+                    parameters: [
+                        { name: "currencyIds", required: true, description: "tickers (list of tickers = BTC, ETH, XRP, SOL, ADA, SUI, more to come)" }
+                    ],
+                    examples: [
+                        "ledgerlive://landing-page-large-mover?currencyIds=BTC,ETH",
+                        "ledgerlive://landing-page-large-mover?currencyIds=BTC,ETH,XRP",
+                        "ledgerlive://landing-page-large-mover?currencyIds=SOL,ADA,SUI",
+                        "ledgerlive://landing-page-large-mover?currencyIds=BTC"
+                    ]
+                },
+                {
+                    section: "Miscellaneous",
+                    title: "Other DeepLinks",
+                    url: "ledgerlive://landing-page?useCase=LP_Generic",
+                    description: "Various other deeplinks for specific functionality.",
+                    examples: [
+                        "ledgerlive://landing-page?useCase=LP_Generic",
+                        "ledgerlive://hw-purchase-success",
+                        "ledgerlive://custom-image",
+                        "ledgerlive://scan-accounts"
+                    ]
+                }
+            ]
+        };
+
+        // Initialize the page
+        document.addEventListener('DOMContentLoaded', function() {
+            generateContent(appConfig);
+            initializeEventListeners();
+        });
+
+        // Function to generate the content
+        function generateContent(config) {
+            const content = document.getElementById('content');
+            let html = '';
+
+            // Add usage instructions
+            html += `
+                <div class="warning">
+                    <strong>💡 How to use this page:</strong>
+                    <ul style="margin: 10px 0 0 20px; list-style-type: disc;">
+                        <li>You can modify any deeplink by editing the input field above each section</li>
+                        <li>Click on any example to automatically fill the input field with that deeplink</li>
+                        <li>Use the "Test" button at the bottom of each section to test your modified deeplink</li>
+                    </ul>
+                </div>
+            `;
+
+            // Add warning note
+            html += `
+                <div class="warning">
+                    <strong>⚠️ Important Note:</strong>
+                    You should not use anchor tags inside your deeplinks. This is especially true for discover related deeplinks. Everything after an anchor tag is client side and will not be forwarded to the liveApp.
+                </div>
+            `;
+
+            // Add platform-specific note
+            if (config.platformNote) {
+                html += `
+                    <div class="platform-note">
+                        <strong>${config.platformNote.title}</strong>
+                        ${config.platformNote.content}
+                    </div>
+                `;
+            }
+
+            // Generate sections
+            config.deeplinks.forEach(deeplink => {
+                html += `
+                    <div class="section">
+                        <h2>${deeplink.section}</h2>
+                        <div class="deeplink-item">
+                            <div class="deeplink-title">${deeplink.title}</div>
+                            <div class="deeplink-url">${deeplink.url}</div>
+                            <div class="deeplink-description">${deeplink.description}</div>
+                            <div class="deeplink-input-container">
+                                <input type="text" class="deeplink-input" value="${deeplink.url}" placeholder="Modify the deeplink here...">
+                            </div>
+                `;
+
+                if (deeplink.parameters) {
+                    html += `
+                        <div class="parameters">
+                            <h4>Query Parameters:</h4>
+                            <ul class="parameter-list">
+                    `;
+                    deeplink.parameters.forEach(param => {
+                        const required = param.required ? "(required)" : "(optional)";
+                        html += `<li><strong>${param.name}</strong> ${required}: ${param.description}</li>`;
+                    });
+                    html += `
+                            </ul>
+                        </div>
+                    `;
+                }
+
+                if (deeplink.examples) {
+                    html += `
+                        <div class="deeplink-examples">
+                            <h4>Examples:</h4>
+                            <ul class="example-list">
+                    `;
+                    deeplink.examples.forEach(example => {
+                        html += `<li>${example}</li>`;
+                    });
+                    html += `
+                            </ul>
+                        </div>
+                    `;
+                }
+
+                html += `
+                            <a href="${deeplink.url}" class="clickable-link" onclick="testDeeplink(this)">Test ${deeplink.section} Link</a>
+                        </div>
+                    </div>
+                `;
+            });
+
+            content.innerHTML = html;
+        }
+
+        // Function to initialize event listeners
+        function initializeEventListeners() {
+            // Handle deeplink input changes
+            const inputs = document.querySelectorAll('.deeplink-input');
+            inputs.forEach(input => {
+                input.addEventListener('input', function() {
+                    const link = this.parentElement.querySelector('.clickable-link');
+                    if (link) {
+                        link.href = this.value;
+                    }
+                });
+            });
+
+            // Handle example clicks
+            const examples = document.querySelectorAll('.example-list li');
+            examples.forEach(example => {
+                example.addEventListener('click', function() {
+                    setExample(this);
+                });
+            });
+        }
+
+        // Function to test deeplinks
+        function testDeeplink(linkElement) {
+            const input = linkElement.parentElement.querySelector('.deeplink-input');
+            if (input) {
+                linkElement.href = input.value;
+            }
+            console.log('Testing deeplink:', linkElement.href);
+        }
+
+        // Function to set example in input
+        function setExample(exampleElement) {
+            const deeplinkItem = exampleElement.closest('.deeplink-item');
+            const input = deeplinkItem.querySelector('.deeplink-input');
+            const link = deeplinkItem.querySelector('.clickable-link');
+
+            if (input && link) {
+                input.value = exampleElement.textContent;
+                link.href = exampleElement.textContent;
+
+                // Add visual feedback
+                input.style.borderColor = '#ff6b35';
+                input.style.boxShadow = '0 0 0 2px rgba(255, 107, 53, 0.3)';
+
+                setTimeout(() => {
+                    input.style.borderColor = '#444444';
+                    input.style.boxShadow = 'none';
+                }, 1000);
+            }
+        }
+    </script>
+</body>
+</html>

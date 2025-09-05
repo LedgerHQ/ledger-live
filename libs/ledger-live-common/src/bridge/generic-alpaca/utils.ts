@@ -94,7 +94,6 @@ export function transactionToIntent(
     assetOwner?: string;
     assetReference?: string;
     mode?: string;
-    fees?: bigint | null | undefined;
     memoType?: string;
     memoValue?: string;
     useAllAmount?: boolean;
@@ -114,7 +113,6 @@ export function transactionToIntent(
     }
   }
   const res: TransactionIntent & { memo?: { type: string; value?: string } } = {
-    fees: transaction?.fees ? transaction.fees : null,
     type: transactionType,
     sender: account.freshAddress,
     recipient: transaction.recipient,

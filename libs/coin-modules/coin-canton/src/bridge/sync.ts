@@ -3,7 +3,7 @@ import { Operation } from "@ledgerhq/types-live";
 import { encodeAccountId } from "@ledgerhq/coin-framework/account/index";
 import { GetAccountShape, mergeOps } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { getTransactions } from "../network/indexer";
-import { getAccountInfo, getBlockHeight } from "../network/node";
+import { getAccountInfo, getLedgerEnd } from "../network/node";
 
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { BoilerplateOperation } from "../network/types";
@@ -73,13 +73,15 @@ export const getAccountShape: GetAccountShape = async info => {
   });
 
   // blockheight retrieval
-  const blockHeight = await getBlockHeight();
+  const blockHeight = await getLedgerEnd();
 
   // Account info retrieval + spendable balance calculation
   const accountInfo = await getAccountInfo(address);
   const balance = new BigNumber(accountInfo.account_data.Balance);
-  const reserveMin = coinConfig.getCoinConfig().minReserve;
-  const spendableBalance = new BigNumber(accountInfo.account_data.Balance).minus(reserveMin);
+  const reserveMin = coinConfig.getCoinConfig().minReserve || 0;
+  const spendableBalance = new BigNumber(accountInfo.account_data.Balance).minus(
+    BigNumber(reserveMin),
+  );
 
   // Tx history fetching
   const oldOperations = initialAccount?.operations || [];

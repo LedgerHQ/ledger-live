@@ -200,10 +200,7 @@ export function useScanAccounts({
     if (!scanning && !hasImportedAccounts) {
       if (alreadyEmptyAccount && !importableAccounts.length) {
         navigateToWarningScreen(WARNING_REASON.ALREADY_EMPTY_ACCOUNT, alreadyEmptyAccount);
-      } else if (
-        (!creatableAccounts.length || !importableAccounts.length) &&
-        CustomNoAssociatedAccounts
-      ) {
+      } else if (!scannedAccounts.length && CustomNoAssociatedAccounts) {
         navigateToWarningScreen(WARNING_REASON.NO_ASSOCIATED_ACCOUNTS);
       }
     }
@@ -214,6 +211,7 @@ export function useScanAccounts({
     hasImportedAccounts,
     importableAccounts.length,
     navigateToWarningScreen,
+    scannedAccounts.length,
     scanning,
   ]);
 

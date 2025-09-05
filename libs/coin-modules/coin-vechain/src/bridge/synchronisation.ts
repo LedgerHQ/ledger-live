@@ -46,7 +46,7 @@ export const getAccountShape: GetAccountShape<Account> = async info => {
 
   //Account creation date set to now if there are no operation or at the first operation on the account
   let minDate = -1;
-  if (operations.length != 0) {
+  if (operations.length !== 0) {
     const operationsDates = operations.map(c => c.date.getTime());
     operationsDates.concat(vthoOperations.map(c => c.date.getTime()));
     minDate = Math.min(...operationsDates);
@@ -55,7 +55,7 @@ export const getAccountShape: GetAccountShape<Account> = async info => {
   const shape = {
     id: accountId,
     balance: new BigNumber(balance),
-    creationDate: minDate != -1 ? new Date(minDate) : new Date(),
+    creationDate: minDate !== -1 ? new Date(minDate) : new Date(),
     spendableBalance: new BigNumber(balance),
     operationsCount: operations.length,
     operations,
@@ -69,7 +69,7 @@ export const getAccountShape: GetAccountShape<Account> = async info => {
         token: getTokenById("vechain/vip180/vtho"),
         balance: new BigNumber(energy),
         spendableBalance: new BigNumber(energy),
-        creationDate: minDate != -1 ? new Date(minDate) : new Date(),
+        creationDate: minDate !== -1 ? new Date(minDate) : new Date(),
         operationsCount: vthoOperations.length,
         operations: vthoOperations,
         blockHeight,

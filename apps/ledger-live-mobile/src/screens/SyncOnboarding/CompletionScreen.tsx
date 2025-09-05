@@ -8,7 +8,8 @@ import { SyncOnboardingStackParamList } from "~/components/RootNavigator/types/S
 import { BaseComposite, RootNavigation } from "~/components/RootNavigator/types/helpers";
 import { DeviceModelId } from "@ledgerhq/devices";
 import EuropaCompletionView from "./EuropaCompletionView";
-import StaxCompletionView from "./StaxCompletionView";
+import StaxOnboardingSuccessView from "./StaxOnboardingSuccessView";
+import ApexOnboardingSuccessView from "./ApexOnboardingSuccessView";
 import { useDispatch, useSelector } from "react-redux";
 import {
   setHasBeenRedirectedToPostOnboarding,
@@ -59,14 +60,23 @@ const CompletionScreen = ({ route }: Props) => {
     });
   }, [isFocused, navigation]);
 
+  const onboardingSuccessView = () => {
+    switch (device.modelId) {
+      case DeviceModelId.europa:
+        return <EuropaCompletionView onAnimationFinish={redirectToMainScreen} />;
+      case DeviceModelId.stax:
+        return <StaxOnboardingSuccessView onAnimationFinish={redirectToMainScreen} />;
+      case DeviceModelId.apex:
+        return <ApexOnboardingSuccessView onAnimationFinish={redirectToMainScreen} />;
+      default:
+        return null;
+    }
+  };
+
   return (
     <TouchableWithoutFeedback onPress={redirectToMainScreen}>
       <Flex width="100%" height="100%" alignItems="center" justifyContent="center">
-        {device.modelId === DeviceModelId.europa ? (
-          <EuropaCompletionView device={device} onAnimationFinish={redirectToMainScreen} />
-        ) : (
-          <StaxCompletionView onAnimationFinish={redirectToMainScreen} />
-        )}
+        {onboardingSuccessView()}
       </Flex>
     </TouchableWithoutFeedback>
   );

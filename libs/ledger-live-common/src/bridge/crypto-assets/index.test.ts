@@ -1,7 +1,7 @@
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { getCryptoAssetsStore, setCryptoAssetsStore } from ".";
 import * as legacy from "@ledgerhq/cryptoassets/tokens";
-import { CryptoAssetsStore } from "@ledgerhq/coin-framework/crypto-assets/type";
+import type { CryptoAssetsStore } from "@ledgerhq/types-live";
 
 describe("Testing CryptoAssetStore", () => {
   it("should return the default methods from cryptoassets libs when feature flag does not exists", () => {

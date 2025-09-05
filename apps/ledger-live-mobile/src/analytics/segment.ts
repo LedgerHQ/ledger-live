@@ -186,8 +186,27 @@ const getMandatoryProperties = async (store: AppStore) => {
   };
 };
 
+const getMADAttributes = () => {
+  if (!analyticsFeatureFlagMethod) return false;
+  const madFeatureFlag = analyticsFeatureFlagMethod("llmModularDrawer");
+  const rollout_phase = "INC2";
+
+  const isEnabled = madFeatureFlag?.enabled ?? false;
+
+  return {
+    rollout_phase,
+    isEnabled,
+    add_account: madFeatureFlag?.params?.add_account ?? false,
+    live_app: madFeatureFlag?.params?.live_app ?? false,
+    receive_flow: madFeatureFlag?.params?.receive_flow ?? false,
+    send_flow: madFeatureFlag?.params?.send_flow ?? false,
+    isModularizationEnabled: madFeatureFlag?.params?.enableModularization ?? false,
+  };
+};
+
 const extraProperties = async (store: AppStore) => {
   const state: State = store.getState();
+  const madAttributes = getMADAttributes();
   const mandatoryProperties = await getMandatoryProperties(store);
   const sensitiveAnalytics = sensitiveAnalyticsSelector(state);
   const systemLanguage = sensitiveAnalytics ? null : RNLocalize.getLocales()[0]?.languageTag;
@@ -329,6 +348,7 @@ const extraProperties = async (store: AppStore) => {
     isLDMKConnectAppEnabled: ldmkConnectApp?.enabled,
     stakingCurrenciesEnabled,
     partnerStakingCurrenciesEnabled,
+    madAttributes,
   };
 };
 

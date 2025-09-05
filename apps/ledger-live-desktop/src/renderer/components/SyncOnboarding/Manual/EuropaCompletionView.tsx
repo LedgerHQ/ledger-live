@@ -3,12 +3,8 @@ import { getDeviceAnimation } from "~/renderer/components/DeviceAction/animation
 import React from "react";
 import styled, { useTheme } from "styled-components";
 import { Flex } from "@ledgerhq/react-ui";
-import { Device } from "@ledgerhq/types-devices";
+import { DeviceModelId } from "@ledgerhq/types-devices";
 import Europa from "./assets/europa-success.png";
-
-type Props = {
-  device: Device;
-};
 
 const Container = styled(Flex)`
   position: relative;
@@ -23,14 +19,14 @@ const StyledAnimation = styled(Animation)`
   bottom: 0;
 `;
 
-const EuropaCompletionView: React.FC<Props> = ({ device }) => {
+export default function EuropaCompletionView() {
   const { colors } = useTheme();
   const palette = colors.palette.type;
 
   return (
     <Container height="100vh" width="100vw">
       <StyledAnimation
-        animation={getDeviceAnimation(device.modelId, palette, "onboardingSuccess")}
+        animation={getDeviceAnimation(DeviceModelId.europa, palette, "onboardingSuccess")}
         height="100vh"
         width="100vw"
       />
@@ -39,6 +35,4 @@ const EuropaCompletionView: React.FC<Props> = ({ device }) => {
       </Flex>
     </Container>
   );
-};
-
-export default EuropaCompletionView;
+}

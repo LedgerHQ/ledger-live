@@ -11,7 +11,7 @@ import {
 } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { type Operation } from "@ledgerhq/types-live";
 import { listTokensForCryptoCurrency } from "@ledgerhq/cryptoassets/tokens";
-import { getAccountBalances, getOperations } from "../network";
+import { getAccountBalances, getOperations, getStakesRaw } from "../network";
 import { DEFAULT_COIN_TYPE } from "../network/sdk";
 import { SuiOperationExtra, SuiAccount } from "../types";
 import type { SyncConfig, TokenAccount } from "@ledgerhq/types-live";
@@ -41,6 +41,7 @@ export const getAccountShape: GetAccountShape<SuiAccount> = async (info, syncCon
   });
 
   let operations: Operation[] = [];
+  const stakes = await getStakesRaw(address);
 
   let syncHash = initialAccount?.syncHash ?? latestHash(oldOperations);
   const newOperations = await getOperations(accountId, address, syncHash);
@@ -84,7 +85,9 @@ export const getAccountShape: GetAccountShape<SuiAccount> = async (info, syncCon
     operationsCount: mainAccountOperations.length,
     blockHeight: 5,
     subAccounts,
-    suiResources: {},
+    suiResources: {
+      stakes,
+    },
     operations: mainAccountOperations,
   };
 };
@@ -118,7 +121,7 @@ async function buildSubAccounts({
   const existingAccountByTicker: { [ticker: string]: TokenAccount } = {}; // used for fast lookup
   const existingAccountTickers: string[] = []; // used to keep track of ordering
 
-  if (initialAccount && initialAccount.subAccounts) {
+  if (initialAccount?.subAccounts) {
     for (const existingSubAccount of initialAccount.subAccounts) {
       if (existingSubAccount.type === "TokenAccount") {
         const { ticker, id } = existingSubAccount.token;

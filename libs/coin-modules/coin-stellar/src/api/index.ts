@@ -77,8 +77,7 @@ async function craft(
   transactionIntent: TransactionIntent<StellarMemo>,
   customFees?: FeeEstimation,
 ): Promise<string> {
-  const fees =
-    customFees?.value || transactionIntent.fees || (await estimateFees(transactionIntent.sender));
+  const fees = customFees?.value || (await estimateFees());
 
   // NOTE: check how many memos, throw if more than one?
   // if (transactionIntent.memos && transactionIntent.memos.length > 1) {
@@ -116,10 +115,8 @@ function compose(tx: string, signature: string, pubkey?: string): string {
   return combine(envelopeFromAnyXDR(tx, "base64"), signature, pubkey);
 }
 
-async function estimate(transactionIntent: TransactionIntent): Promise<FeeEstimation> {
-  const value = transactionIntent?.fees
-    ? transactionIntent?.fees
-    : await estimateFees(transactionIntent.sender);
+async function estimate(_transactionIntent: TransactionIntent): Promise<FeeEstimation> {
+  const value = await estimateFees();
   return { value };
 }
 

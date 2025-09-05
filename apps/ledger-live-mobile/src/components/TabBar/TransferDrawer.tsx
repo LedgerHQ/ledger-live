@@ -192,7 +192,7 @@ export default function TransferDrawer({ onClose }: Omit<ModalProps, "isRequesti
         }
       },
       disabled: SWAP.disabled,
-      testID: "swap-transfer-button",
+      testID: "transfer-swap-button",
     },
     RECOVER && {
       eventProperties: {

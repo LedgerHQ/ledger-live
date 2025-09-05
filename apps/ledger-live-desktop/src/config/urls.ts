@@ -98,6 +98,8 @@ export const urls = {
   cardanoStakingRewards: "https://support.ledger.com/article/7880073204253-zd",
   algorandStakingRewards: "https://support.ledger.com/article/360015897740-zd",
   nearStakingRewards: "https://support.ledger.com/article/360020450619-zd",
+  // TODO: change to LL sui link
+  suiStakingRewards: "",
   polkadotFeesInfo: "https://support.ledger.com/article/360016289919-zd",
   multiversxStaking: "https://support.ledger.com/article/7228337345693-zd",
   xpubLearnMore: "https://support.ledger.com/article/360011069619-zd",
@@ -167,6 +169,8 @@ export const urls = {
   },
   hedera: {
     supportArticleLink: "https://support.ledger.com/article/4494505217565-zd",
+    tokenAssociation:
+      "https://support.ledger.com/article/How-to-manage-Hedera-tokens-with-Ledger-Live",
   },
   celo: {
     ledgerByFigmentTC:
