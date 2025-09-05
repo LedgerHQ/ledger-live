@@ -1316,8 +1316,8 @@ importers:
         specifier: 4.15.4
         version: 4.15.4(react-native@0.77.3(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1))(react@18.3.1)
       react-native-share:
-        specifier: 10.1.0
-        version: 10.1.0
+        specifier: 12.2.0
+        version: 12.2.0
       react-native-splash-screen:
         specifier: 3.2.0
         version: 3.2.0(react-native@0.77.3(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1))
@@ -30599,8 +30599,8 @@ packages:
       react: '*'
       react-native: '*'
 
-  react-native-share@10.1.0:
-    resolution: {integrity: sha512-fKKvwaZe5s3HW0tcRKyR5AWvAfXvkk0FgTw1nYWYjI4gNqntXbMjRqWZed8Hmd1MvIJS17K/ELPges0tsxbp3g==}
+  react-native-share@12.2.0:
+    resolution: {integrity: sha512-f6MB9BsKa9xVvu0DKbxq5jw4IyYHqQeqUlCNkD8eAFoJx6SD31ObPAn7SQ6NG9AOuhCy6aYuSJYJvx25DaoMZQ==}
     engines: {node: '>=16'}
 
   react-native-splash-screen@3.2.0:
@@ -36935,13 +36935,13 @@ snapshots:
   '@babel/helper-function-name@7.23.0':
     dependencies:
       '@babel/template': 7.27.2
-      '@babel/types': 7.27.0
+      '@babel/types': 7.28.2
 
   '@babel/helper-globals@7.28.0': {}
 
   '@babel/helper-hoist-variables@7.22.5':
     dependencies:
-      '@babel/types': 7.27.0
+      '@babel/types': 7.28.2
 
   '@babel/helper-member-expression-to-functions@7.27.1':
     dependencies:
@@ -36964,7 +36964,7 @@ snapshots:
   '@babel/helper-module-imports@7.27.1':
     dependencies:
       '@babel/traverse': 7.28.3
-      '@babel/types': 7.27.6
+      '@babel/types': 7.28.2
     transitivePeerDependencies:
       - supports-color
 
@@ -37056,7 +37056,7 @@ snapshots:
 
   '@babel/helper-split-export-declaration@7.22.6':
     dependencies:
-      '@babel/types': 7.27.0
+      '@babel/types': 7.28.2
 
   '@babel/helper-string-parser@7.27.1': {}
 
@@ -37076,9 +37076,9 @@ snapshots:
 
   '@babel/helpers@7.24.1':
     dependencies:
-      '@babel/template': 7.24.0
+      '@babel/template': 7.27.2
       '@babel/traverse': 7.27.4
-      '@babel/types': 7.24.0
+      '@babel/types': 7.28.2
     transitivePeerDependencies:
       - supports-color
 
@@ -38278,9 +38278,9 @@ snapshots:
 
   '@babel/template@7.24.0':
     dependencies:
-      '@babel/code-frame': 7.24.6
-      '@babel/parser': 7.24.1
-      '@babel/types': 7.24.0
+      '@babel/code-frame': 7.27.1
+      '@babel/parser': 7.28.3
+      '@babel/types': 7.28.2
 
   '@babel/template@7.27.0':
     dependencies:
@@ -38356,7 +38356,7 @@ snapshots:
       '@babel/parser': 7.28.3
       '@babel/template': 7.27.2
       '@babel/types': 7.28.2
-      debug: 4.4.1
+      debug: 4.3.4
     transitivePeerDependencies:
       - supports-color
 
@@ -49261,7 +49261,7 @@ snapshots:
 
   '@storybook/react-docgen-typescript-plugin@1.0.6--canary.9.0c3f3b7.0(typescript@5.4.3)(webpack@5.94.0(esbuild@0.19.12))':
     dependencies:
-      debug: 4.4.1
+      debug: 4.3.4
       endent: 2.1.0
       find-cache-dir: 3.3.2
       flat-cache: 3.2.0
@@ -49275,7 +49275,7 @@ snapshots:
 
   '@storybook/react-docgen-typescript-plugin@1.0.6--canary.9.0c3f3b7.0(typescript@5.4.3)(webpack@5.94.0(metro@0.81.5))':
     dependencies:
-      debug: 4.4.1
+      debug: 4.3.4
       endent: 2.1.0
       find-cache-dir: 3.3.2
       flat-cache: 3.2.0
@@ -50177,16 +50177,16 @@ snapshots:
 
   '@types/babel__generator@7.6.8':
     dependencies:
-      '@babel/types': 7.27.0
+      '@babel/types': 7.28.2
 
   '@types/babel__template@7.4.4':
     dependencies:
-      '@babel/parser': 7.27.5
-      '@babel/types': 7.27.0
+      '@babel/parser': 7.28.3
+      '@babel/types': 7.28.2
 
   '@types/babel__traverse@7.20.5':
     dependencies:
-      '@babel/types': 7.27.0
+      '@babel/types': 7.28.2
 
   '@types/bchaddrjs@0.4.3': {}
 
@@ -67610,7 +67610,7 @@ snapshots:
       react-native-is-edge-to-edge: 1.2.1(react-native@0.77.3(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1))(react@18.3.1)
       warn-once: 0.1.1
 
-  react-native-share@10.1.0: {}
+  react-native-share@12.2.0: {}
 
   react-native-splash-screen@3.2.0(react-native@0.77.3(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1)):
     dependencies:

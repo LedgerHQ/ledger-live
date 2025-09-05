@@ -283,7 +283,6 @@ PODS:
     - React-RCTText (= 0.77.3)
     - React-RCTVibration (= 0.77.3)
   - React-callinvoker (0.77.3)
-  - React-Codegen (0.1.0)
   - React-Core (0.77.3):
     - glog
     - hermes-engine
@@ -2404,14 +2403,27 @@ PODS:
     - ReactCommon/turbomodule/core
     - Sentry/HybridSDK (= 8.49.2)
     - Yoga
-  - RNShare (10.1.0):
-    - RCT-Folly
+  - RNShare (12.2.0):
+    - DoubleConversion
+    - glog
+    - hermes-engine
+    - RCT-Folly (= 2024.11.18.00)
     - RCTRequired
     - RCTTypeSafety
-    - React-Codegen
     - React-Core
+    - React-debug
+    - React-Fabric
+    - React-featureflags
+    - React-graphics
+    - React-ImageManager
+    - React-NativeModulesApple
     - React-RCTFabric
+    - React-rendererdebug
+    - React-utils
+    - ReactCodegen
+    - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
+    - Yoga
   - RNSVG (15.12.1):
     - DoubleConversion
     - glog
@@ -2667,7 +2679,6 @@ SPEC REPOS:
     - OpenTelemetrySwiftApi
     - PLCrashReporter
     - PromisesObjC
-    - React-Codegen
     - SDWebImage
     - SDWebImageWebPCoder
     - Sentry
@@ -2998,7 +3009,6 @@ SPEC CHECKSUMS:
   RCTTypeSafety: 870cb072be3d3f310ecec897c3d297a931f8f7e1
   React: 535fa5014fb1743f6654a980acb16dae339e1944
   React-callinvoker: dd1ecd51f8d3c76a551afdf6dab6d51c1ead5501
-  React-Codegen: 4b8b4817cea7a54b83851d4c1f91f79aa73de30a
   React-Core: a3e36c059a195bd213d005db36c9e68957b78632
   React-CoreModules: 46467a2b34b053eb7262104e07bf5d835a9afe77
   React-cxxreact: 500e7b011a14eeefdcf6c0eb982fe4db055c2670
@@ -3094,7 +3104,7 @@ SPEC CHECKSUMS:
   RNReanimated: 8270598e3b4fbffe01bb137124426bcdd095315e
   RNScreens: fb0814a1c33438d6be0df1326b5efd569d7c84ee
   RNSentry: 6092028c8588b03eccfbf84bbb9c1ca1be17b5af
-  RNShare: b26903e74023910246b202445e66df36da65e2bc
+  RNShare: e816de191f13f2d2a63e7ffdadbaa85a7539c1aa
   RNSVG: f79679fe33eb77562fe7d6e3fbb0c8855829e549
   RNVectorIcons: 1743deffb9c4b70f253704075dbac432cc802e74
   SDWebImage: a7f831e1a65eb5e285e3fb046a23fcfbf08e696d
