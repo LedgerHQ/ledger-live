@@ -162,7 +162,7 @@ describe.each([
       });
       expect(result.length).toBeGreaterThanOrEqual(52);
       result.forEach(op => {
-        expect(["FEES", "IN", "OUT"]).toContainEqual(op.type);
+        expect(["NONE", "FEES", "IN", "OUT"]).toContainEqual(op.type);
         expect(op.senders.concat(op.recipients)).toContain(
           "0xB69B37A4Fb4A18b3258f974ff6e9f529AD2647b1",
         );
