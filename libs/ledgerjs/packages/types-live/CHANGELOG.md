@@ -1,5 +1,11 @@
 # @ledgerhq/types-live
 
+## 6.83.0-nightly.1
+
+### Minor Changes
+
+- [#11661](https://github.com/LedgerHQ/ledger-live/pull/11661) [`80a109a`](https://github.com/LedgerHQ/ledger-live/commit/80a109a5f8ecdbb22cf6fb3ec084398a7e54dcfb) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLD - Remove lldModularDrawerBackendData FF and start cleaning legacy code
+
 ## 6.83.0-nightly.0
 
 ### Minor Changes

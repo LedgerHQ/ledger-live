@@ -1,5 +1,31 @@
 # ledger-live-desktop
 
+## 2.127.0-nightly.8
+
+### Minor Changes
+
+- [#11658](https://github.com/LedgerHQ/ledger-live/pull/11658) [`56ec7a4`](https://github.com/LedgerHQ/ledger-live/commit/56ec7a44c452eddf2daa26f80c7a00aa2237e441) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLD - Fix Modular Drawer tests when powered by DADA
+
+- [#11661](https://github.com/LedgerHQ/ledger-live/pull/11661) [`80a109a`](https://github.com/LedgerHQ/ledger-live/commit/80a109a5f8ecdbb22cf6fb3ec084398a7e54dcfb) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLD - Remove lldModularDrawerBackendData FF and start cleaning legacy code
+
+### Patch Changes
+
+- Updated dependencies [[`80a109a`](https://github.com/LedgerHQ/ledger-live/commit/80a109a5f8ecdbb22cf6fb3ec084398a7e54dcfb), [`3489203`](https://github.com/LedgerHQ/ledger-live/commit/34892030dcfbd1a19a0eb0a8fcae9f8f01d3d2a9)]:
+  - @ledgerhq/types-live@6.83.0-nightly.1
+  - @ledgerhq/live-common@34.47.0-nightly.8
+  - @ledgerhq/coin-evm@2.29.0-nightly.4
+  - @ledgerhq/coin-framework@6.3.0-nightly.2
+  - @ledgerhq/coin-bitcoin@0.21.0-nightly.2
+  - @ledgerhq/coin-cosmos@0.16.8-nightly.2
+  - @ledgerhq/coin-filecoin@1.11.0-nightly.3
+  - @ledgerhq/domain-service@1.2.42-nightly.1
+  - @ledgerhq/live-countervalues@0.6.3-nightly.2
+  - @ledgerhq/live-countervalues-react@0.6.0-nightly.2
+  - @ledgerhq/live-nft@0.8.19-nightly.2
+  - @ledgerhq/live-nft-react@0.9.19-nightly.2
+  - @ledgerhq/live-wallet@0.12.3-nightly.2
+  - @ledgerhq/live-dmk-desktop@0.9.2-nightly.8
+
 ## 2.127.0-nightly.7
 
 ### Minor Changes

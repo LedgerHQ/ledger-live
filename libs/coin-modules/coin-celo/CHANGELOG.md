@@ -1,5 +1,19 @@
 # @ledgerhq/coin-celo
 
+## 1.3.0-nightly.4
+
+### Minor Changes
+
+- [#10736](https://github.com/LedgerHQ/ledger-live/pull/10736) [`abd598c`](https://github.com/LedgerHQ/ledger-live/commit/abd598cb52bc4e5c275b5c49645d681b25721ea8) Thanks [@semeano](https://github.com/semeano)! - Add support to send Celo tokens
+
+### Patch Changes
+
+- Updated dependencies [[`80a109a`](https://github.com/LedgerHQ/ledger-live/commit/80a109a5f8ecdbb22cf6fb3ec084398a7e54dcfb), [`3489203`](https://github.com/LedgerHQ/ledger-live/commit/34892030dcfbd1a19a0eb0a8fcae9f8f01d3d2a9)]:
+  - @ledgerhq/types-live@6.83.0-nightly.1
+  - @ledgerhq/coin-evm@2.29.0-nightly.4
+  - @ledgerhq/coin-framework@6.3.0-nightly.2
+  - @ledgerhq/hw-app-eth@6.45.17-nightly.1
+
 ## 1.2.2-nightly.3
 
 ### Patch Changes

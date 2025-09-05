@@ -1,5 +1,17 @@
 # @ledgerhq/coin-sui
 
+## 0.12.0-nightly.4
+
+### Minor Changes
+
+- [#11603](https://github.com/LedgerHQ/ledger-live/pull/11603) [`103bcaa`](https://github.com/LedgerHQ/ledger-live/commit/103bcaa968ac5ff9fddc8c15fb755a9103b44772) Thanks [@estrauser-ledger](https://github.com/estrauser-ledger)! - paginate sui operations in asc order
+
+### Patch Changes
+
+- Updated dependencies [[`80a109a`](https://github.com/LedgerHQ/ledger-live/commit/80a109a5f8ecdbb22cf6fb3ec084398a7e54dcfb), [`3489203`](https://github.com/LedgerHQ/ledger-live/commit/34892030dcfbd1a19a0eb0a8fcae9f8f01d3d2a9)]:
+  - @ledgerhq/types-live@6.83.0-nightly.1
+  - @ledgerhq/coin-framework@6.3.0-nightly.2
+
 ## 0.12.0-nightly.3
 
 ### Patch Changes

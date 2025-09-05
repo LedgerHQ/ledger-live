@@ -1,5 +1,17 @@
 # @ledgerhq/coin-xrp
 
+## 7.3.0-nightly.3
+
+### Minor Changes
+
+- [#11635](https://github.com/LedgerHQ/ledger-live/pull/11635) [`8e79bfb`](https://github.com/LedgerHQ/ledger-live/commit/8e79bfb5ab1189f27c031f775d7378319774570c) Thanks [@estrauser-ledger](https://github.com/estrauser-ledger)! - fix xrp operations pagination
+
+### Patch Changes
+
+- Updated dependencies [[`80a109a`](https://github.com/LedgerHQ/ledger-live/commit/80a109a5f8ecdbb22cf6fb3ec084398a7e54dcfb), [`3489203`](https://github.com/LedgerHQ/ledger-live/commit/34892030dcfbd1a19a0eb0a8fcae9f8f01d3d2a9)]:
+  - @ledgerhq/types-live@6.83.0-nightly.1
+  - @ledgerhq/coin-framework@6.3.0-nightly.2
+
 ## 7.3.0-nightly.2
 
 ### Patch Changes

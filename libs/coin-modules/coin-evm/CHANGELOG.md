@@ -1,5 +1,18 @@
 # @ledgerhq/coin-evm
 
+## 2.29.0-nightly.4
+
+### Minor Changes
+
+- [#11625](https://github.com/LedgerHQ/ledger-live/pull/11625) [`3489203`](https://github.com/LedgerHQ/ledger-live/commit/34892030dcfbd1a19a0eb0a8fcae9f8f01d3d2a9) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - refactor(llc): use standard token account id encoding
+
+### Patch Changes
+
+- Updated dependencies [[`3489203`](https://github.com/LedgerHQ/ledger-live/commit/34892030dcfbd1a19a0eb0a8fcae9f8f01d3d2a9)]:
+  - @ledgerhq/coin-framework@6.3.0-nightly.2
+  - @ledgerhq/domain-service@1.2.42-nightly.1
+  - @ledgerhq/evm-tools@1.7.4
+
 ## 2.29.0-nightly.3
 
 ### Minor Changes
