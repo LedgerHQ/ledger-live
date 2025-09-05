@@ -1,5 +1,17 @@
 # @ledgerhq/icons-ui
 
+## 1.18.0
+
+### Minor Changes
+
+- [#11463](https://github.com/LedgerHQ/ledger-live/pull/11463) [`7e4ac62`](https://github.com/LedgerHQ/ledger-live/commit/7e4ac62bd383f96e5649b225e0ff824fe7663695) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Update World of Dypians (WoD) icon
+
+## 1.18.0-next.0
+
+### Minor Changes
+
+- [#11463](https://github.com/LedgerHQ/ledger-live/pull/11463) [`7e4ac62`](https://github.com/LedgerHQ/ledger-live/commit/7e4ac62bd383f96e5649b225e0ff824fe7663695) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Update World of Dypians (WoD) icon
+
 ## 1.17.0
 
 ### Minor Changes
