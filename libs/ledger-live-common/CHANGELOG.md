@@ -1,5 +1,13 @@
 # @ledgerhq/live-common
 
+## 34.47.0-nightly.7
+
+### Minor Changes
+
+- [#11641](https://github.com/LedgerHQ/ledger-live/pull/11641) [`2b6fe2f`](https://github.com/LedgerHQ/ledger-live/commit/2b6fe2f1d068940aab624da7c8454b98bffbca3b) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - fix(llc): do not include fees in non native operations values
+
+- [#11464](https://github.com/LedgerHQ/ledger-live/pull/11464) [`d21e94b`](https://github.com/LedgerHQ/ledger-live/commit/d21e94b26c6084cd8dec614c7059673784d8faad) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - feat: LLM MAD add balance in network step and assets sorted by balance in asset step
+
 ## 34.47.0-nightly.6
 
 ### Minor Changes

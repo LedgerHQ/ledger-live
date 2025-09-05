@@ -1,5 +1,21 @@
 # live-mobile
 
+## 3.92.0-nightly.6
+
+### Minor Changes
+
+- [#11630](https://github.com/LedgerHQ/ledger-live/pull/11630) [`41dfe9a`](https://github.com/LedgerHQ/ledger-live/commit/41dfe9a8213cd09d2098747f20abe410e80e090f) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Improve MAD UX
+
+- [#11636](https://github.com/LedgerHQ/ledger-live/pull/11636) [`801cdcc`](https://github.com/LedgerHQ/ledger-live/commit/801cdcc58fb0dbadc900a9ec9199ba13c7d14bc4) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLM - Hide tx alerts toggle when feature is disabled
+
+- [#11648](https://github.com/LedgerHQ/ledger-live/pull/11648) [`6570a0b`](https://github.com/LedgerHQ/ledger-live/commit/6570a0b8f2f3d75006b653eb943c82d767a5f1e0) Thanks [@CremaFR](https://github.com/CremaFR)! - fix: swap to currency id tracking
+
+- [#11464](https://github.com/LedgerHQ/ledger-live/pull/11464) [`d21e94b`](https://github.com/LedgerHQ/ledger-live/commit/d21e94b26c6084cd8dec614c7059673784d8faad) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - feat: LLM MAD add balance in network step and assets sorted by balance in asset step
+
+### Patch Changes
+
+- [#11602](https://github.com/LedgerHQ/ledger-live/pull/11602) [`2e2df58`](https://github.com/LedgerHQ/ledger-live/commit/2e2df58dd704250eab63e05f2124ab2fdf91e25b) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Upgrade Android NDK from r27 to r28+ to automatically compile all native libraries with 16KB alignment by default.
+
 ## 3.92.0-nightly.5
 
 ### Minor Changes
