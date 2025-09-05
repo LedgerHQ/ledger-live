@@ -1,7 +1,7 @@
 import { useState, useCallback, useEffect } from "react";
 import { findCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { getProvider } from "../utils/getProvider";
-import { CryptoOrTokenCurrency, CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { CurrenciesByProviderId } from "@ledgerhq/live-common/deposit/type";
 import { AccountLike, Account } from "@ledgerhq/types-live";
 import { ModularDrawerStep } from "../types";
@@ -14,6 +14,7 @@ import {
   getEffectiveCurrency,
   isCorrespondingCurrency,
 } from "@ledgerhq/live-common/modularDrawer/utils/index";
+import { findTokenById } from "@ledgerhq/cryptoassets/tokens";
 
 type Props = {
   currenciesByProvider: CurrenciesByProviderId[];
@@ -112,7 +113,7 @@ export function useModularDrawerFlowState({
     (provider: CurrenciesByProviderId) => {
       return provider.currenciesByNetwork
         .filter(currencyByNetwork => currencyIds.includes(currencyByNetwork.id))
-        .map(elem => (elem.type === "TokenCurrency" ? elem.parentCurrency?.id : elem.id));
+        .map(elem => elem.id);
     },
     [currencyIds],
   );
@@ -129,16 +130,12 @@ export function useModularDrawerFlowState({
   );
 
   const handleMultipleNetworks = useCallback(
-    (
-      currency: CryptoOrTokenCurrency,
-      provider: CurrenciesByProviderId,
-      networks: (string | undefined)[],
-    ) => {
+    (currency: CryptoOrTokenCurrency, provider: CurrenciesByProviderId, networks: string[]) => {
       const effectiveCurrency = getEffectiveCurrency(currency, provider, currencyIds);
       const filteredCryptoCurrencies = networks
         .filter((net): net is string => Boolean(net))
-        .map(net => findCryptoCurrencyById(net))
-        .filter((cur): cur is CryptoCurrency => Boolean(cur));
+        .map(net => findCryptoCurrencyById(net) || findTokenById(net))
+        .filter((c): c is CryptoOrTokenCurrency => Boolean(c));
 
       goToNetworkSelection(effectiveCurrency, filteredCryptoCurrencies);
     },
