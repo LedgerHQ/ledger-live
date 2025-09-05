@@ -489,6 +489,19 @@ export class Account {
     1,
   );
 
+  static readonly SUI_1 = new Account(
+    Currency.SUI,
+    "Sui 1",
+    "0xc6169bcce8718609e43d179b087e6c1e2ac28e5325660af34d22fb5ce284031e",
+    0,
+  );
+  static readonly SUI_2 = new Account(
+    Currency.SUI,
+    "Sui 2",
+    "0xe4af2c326d2e7cdbe1f14c8c0ab2f0185b7228bf94c975f54a59ee09c60def5d",
+    1,
+  );
+
   static readonly EMPTY = new Account(Currency.BTC, "Empty", "", 0);
 }
 
@@ -602,6 +615,24 @@ export class TokenAccount extends Account {
     0,
     TokenType.TRC20,
     Account.TRX_1,
+  );
+
+  static readonly SUI_USDC_1 = new TokenAccount(
+    Currency.SUI_USDC,
+    "SUI USDC 1",
+    Account.SUI_1.address,
+    0,
+    TokenType.SUI,
+    Account.SUI_1,
+  );
+
+  static readonly SUI_USDC_2 = new TokenAccount(
+    Currency.SUI_USDC,
+    "SUI USDC 2",
+    Account.SUI_2.address,
+    1,
+    TokenType.SUI,
+    Account.SUI_2,
   );
 }
 
