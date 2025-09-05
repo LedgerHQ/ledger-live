@@ -3832,7 +3832,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     name: "Core",
     managerAppName: "Ethereum",
     ticker: "CORE",
-    scheme: "core", 
+    scheme: "core",
     color: "#FF962B",
     family: "evm",
     units: ethereumUnits("CORE", "CORE"),
