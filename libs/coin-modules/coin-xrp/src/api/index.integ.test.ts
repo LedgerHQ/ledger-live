@@ -249,7 +249,7 @@ describe("Xrp Api (mainnet)", () => {
     });
 
     it("returns OUT operation", async () => {
-      // https://xrpscan.com/tx/F9B0E5CC0A303C6099AFCE3C1DD9D8D80034F8C33041BF1E792C8236D2DF3F79
+      // https://xrpscan.com/tx/8D13FD7EE0D28B615905903D033A3DC3839FBAA2F545417E3DE51A1A745C1688
       const outTx = {
         hash: "8D13FD7EE0D28B615905903D033A3DC3839FBAA2F545417E3DE51A1A745C1688",
         amount: 0.1,
