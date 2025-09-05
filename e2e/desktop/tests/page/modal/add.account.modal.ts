@@ -113,9 +113,10 @@ export class AddAccountModal extends Modal {
       await this.deselectAllButton.click();
       await this.checkbox.click({ force: true });
     }
-    await this.confirmButton.click();
-    await this.closeButton.click();
-    //await expect(this.successAddLabel).toBeVisible();
+    //await this.confirmButton.click();
+    //await this.closeButton.click();
+    await this.addAccountsButton.click();
+    await expect(this.successAddLabel).toBeVisible();
   }
 
   @step("Get fist account name")
