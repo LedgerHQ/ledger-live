@@ -44,7 +44,10 @@ if (getEnv("SPECULOS_API_PORT")) {
   registerTransportModule({
     id: "speculos-http",
     open: () =>
-      retry(() => DeviceManagementKitTransportSpeculos.open(req as SpeculosHttpTransportOpts)),
+      retry(
+        async () =>
+          await DeviceManagementKitTransportSpeculos.open(req as SpeculosHttpTransportOpts),
+      ),
     disconnect: () => Promise.resolve(),
   });
 } else if (getEnv("DEVICE_PROXY_URL")) {

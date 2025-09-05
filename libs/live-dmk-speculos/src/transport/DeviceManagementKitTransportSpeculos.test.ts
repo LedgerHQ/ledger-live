@@ -93,7 +93,7 @@ describe("DeviceManagementKitTransportSpeculos", () => {
 
   it("open() successfully opens a transport instance", async () => {
     // given
-    const openPromise = DeviceManagementKitTransportSpeculos.open({
+    const openPromise = await DeviceManagementKitTransportSpeculos.open({
       apiPort: "1234",
     });
     await flushPromises();

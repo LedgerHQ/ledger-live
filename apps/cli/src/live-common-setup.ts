@@ -138,7 +138,10 @@ export function registerSpeculosTransport(apiPort: number) {
   registerTransportModule({
     id: "speculos-http",
     open: () =>
-      retry(() => DeviceManagementKitTransportSpeculos.open(req as SpeculosHttpTransportOpts)),
+      retry(
+        async () =>
+          await DeviceManagementKitTransportSpeculos.open(req as SpeculosHttpTransportOpts),
+      ),
     disconnect: () => Promise.resolve(),
   });
 }

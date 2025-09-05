@@ -510,19 +510,29 @@ export async function pressBoth() {
 
 export async function pressUntilTextFound(
   targetText: string,
-  maxAttempts: number = 15,
+  maxAttempts: number = 30, // a bit more forgiving
 ): Promise<string[]> {
-  const speculosApiPort = getEnv("SPECULOS_API_PORT");
+  const normalize = (s: string) => s.normalize("NFKC").replace(/\s+/g, " ").trim().toLowerCase();
 
-  for (let attempts = 0; attempts < maxAttempts; attempts++) {
-    const texts = await fetchCurrentScreenTexts(speculosApiPort);
+  const wanted = normalize(targetText);
+  let lastScreen = "";
 
-    if (texts.includes(targetText)) {
-      return await fetchAllEvents(speculosApiPort);
+  for (let attempt = 0; attempt < maxAttempts; attempt++) {
+    const screen = await fetchCurrentScreenTexts(); // no env access here
+    const normScreen = normalize(screen);
+
+    if (normScreen.includes(wanted)) {
+      return await fetchAllEvents();
     }
 
+    // if the screen didn't change yet, give it a moment before pressing
+    if (screen === lastScreen) {
+      await waitForTimeOut(200);
+    }
+
+    lastScreen = screen;
     await pressRightButton();
-    await waitForTimeOut(200);
+    await waitForTimeOut(350); // allow render to catch up
   }
 
   throw new Error(
@@ -530,20 +540,21 @@ export async function pressUntilTextFound(
   );
 }
 
-async function fetchCurrentScreenTexts(_speculosApiPort: number): Promise<string> {
+async function fetchCurrentScreenTexts(): Promise<string> {
   const base = resolveSpeculosBase();
   const response = await retryAxiosRequest(() =>
     axios.get<ResponseData>(`${base}/events?stream=false&currentscreenonly=true`),
   );
-  return response.data.events.map(e => e.text).join("");
+  // join without separator so cross-line matches still work
+  return response.data.events.map(e => e.text ?? "").join("");
 }
 
-async function fetchAllEvents(_speculosApiPort: number): Promise<string[]> {
+async function fetchAllEvents(): Promise<string[]> {
   const base = resolveSpeculosBase();
   const response = await retryAxiosRequest(() =>
     axios.get<ResponseData>(`${base}/events?stream=false&currentscreenonly=false`),
   );
-  return response.data.events.map(e => e.text);
+  return response.data.events.map(e => e.text ?? "");
 }
 
 export async function pressRightButton(): Promise<void> {
