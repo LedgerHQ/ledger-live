@@ -65,14 +65,14 @@ for (const token of subAccounts) {
           await app.modularDrawer.validateAssetsDrawerItems();
           await app.modularDrawer.selectAssetByTickerAndName(token.account.currency);
           await app.modularDrawer.selectNetwork(token.account.currency);
-          //await app.addAccount.expectAccountModalToBeVisible();
+          await app.addAccount.expectAccountModalToBeVisible();
         } else {
           await app.addAccount.expectModalVisibility();
           await app.addAccount.selectToken(token.account);
         }
         await app.addAccount.addAccounts();
 
-        //await app.addAccount.done();
+        await app.addAccount.done();
         await app.layout.goToPortfolio();
         await app.portfolio.navigateToAsset(token.account.currency.name);
         await app.account.navigateToToken(token.account);
