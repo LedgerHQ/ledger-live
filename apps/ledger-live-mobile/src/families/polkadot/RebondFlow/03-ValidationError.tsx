@@ -10,7 +10,7 @@ import { PolkadotRebondFlowParamList } from "./type";
 import { ScreenName } from "~/const";
 
 type NavigationProps = BaseComposite<
-  StackScreenProps<PolkadotRebondFlowParamList, ScreenName.PolkadotRebondValidationError>
+  NativeStackScreenProps<PolkadotRebondFlowParamList, ScreenName.PolkadotRebondValidationError>
 >;
 
 export default function ValidationError({ navigation, route }: NavigationProps) {

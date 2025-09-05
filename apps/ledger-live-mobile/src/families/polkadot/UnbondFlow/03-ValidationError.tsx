@@ -9,7 +9,7 @@ import { ScreenName } from "~/const";
 import { PolkadotUnbondFlowParamList } from "./type";
 
 type NavigationProps = BaseComposite<
-  StackScreenProps<PolkadotUnbondFlowParamList, ScreenName.PolkadotUnbondValidationError>
+  NativeStackScreenProps<PolkadotUnbondFlowParamList, ScreenName.PolkadotUnbondValidationError>
 >;
 
 export default function ValidationError({ navigation, route }: NavigationProps) {

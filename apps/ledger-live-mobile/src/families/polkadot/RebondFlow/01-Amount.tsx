@@ -35,7 +35,7 @@ import { PolkadotRebondFlowParamList } from "./type";
 import { useMaybeAccountUnit } from "~/hooks/useAccountUnit";
 
 type NavigationProps = BaseComposite<
-  StackScreenProps<PolkadotRebondFlowParamList, ScreenName.PolkadotRebondAmount>
+  NativeStackScreenProps<PolkadotRebondFlowParamList, ScreenName.PolkadotRebondAmount>
 >;
 
 export default function PolkadotRebondAmount({ navigation, route }: NavigationProps) {

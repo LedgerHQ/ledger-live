@@ -41,12 +41,7 @@ function RedelegationFlow() {
             />
           ),
           headerLeft: () => null,
-          headerStyle: {
-            ...defaultNavigationOptions.headerStyle,
-            elevation: 0,
-            shadowOpacity: 0,
-            borderBottomWidth: 0,
-          },
+          headerStyle: defaultNavigationOptions.headerStyle,
           gestureEnabled: false,
         }}
       />

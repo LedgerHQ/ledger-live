@@ -14,7 +14,7 @@ import { PolkadotRebondFlowParamList } from "./type";
 import { BaseComposite, BaseNavigation } from "~/components/RootNavigator/types/helpers";
 
 type NavigationProps = BaseComposite<
-  StackScreenProps<PolkadotRebondFlowParamList, ScreenName.PolkadotRebondValidationSuccess>
+  NativeStackScreenProps<PolkadotRebondFlowParamList, ScreenName.PolkadotRebondValidationSuccess>
 >;
 
 export default function ValidationSuccess({ navigation, route }: NavigationProps) {

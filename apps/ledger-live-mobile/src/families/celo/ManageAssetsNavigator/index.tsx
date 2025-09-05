@@ -10,12 +10,12 @@ import {
   hasActivatableVotes,
   hasRevokableVotes,
 } from "@ledgerhq/live-common/families/celo/logic";
-import { NavigationProp, ParamListBase } from "@react-navigation/native";
 import { accountScreenSelector } from "~/reducers/accounts";
 import { ScreenName, NavigatorName } from "~/const";
 import Button from "~/components/Button";
 import { RootComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
 type NavigationProps = RootComposite<
   StackNavigatorProps<BaseNavigatorStackParamList, NavigatorName.CeloManageAssetsNavigator>
@@ -24,7 +24,7 @@ type NavigationProps = RootComposite<
 function ManageAssetsNavigator() {
   const { t } = useTranslation();
 
-  const navigation = useNavigation<NavigationProps["navigation"]>();
+  const navigation = useNavigation<NativeStackNavigationProp<Record<string, object | undefined>>>();
   navigation.setOptions({ title: t("celo.manage.title") });
 
   const route = useRoute<NavigationProps["route"]>();
@@ -43,7 +43,7 @@ function ManageAssetsNavigator() {
       params?: { [key: string]: unknown };
     }) => {
       // This is complicated (even impossible?) to type properly…
-      (navigation as NavigationProp<ParamListBase>).navigate(route as never, {
+      navigation.navigate(route, {
         screen,
         params: { ...params, accountId: account?.id },
       });

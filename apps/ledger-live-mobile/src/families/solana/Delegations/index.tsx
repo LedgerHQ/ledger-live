@@ -80,10 +80,13 @@ function Delegations({ account }: Props) {
       params?: { [key: string]: unknown };
     }) => {
       setSelectedStakeWithMeta(undefined);
-      (navigation as StackNavigationProp<{ [key: string]: object | undefined }>).navigate(route, {
-        screen,
-        params: { ...params, accountId: account.id },
-      });
+      (navigation as NativeStackNavigationProp<{ [key: string]: object | undefined }>).navigate(
+        route,
+        {
+          screen,
+          params: { ...params, accountId: account.id },
+        },
+      );
     },
     [account.id, navigation],
   );

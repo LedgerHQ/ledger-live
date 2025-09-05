@@ -14,7 +14,7 @@ import { BaseComposite, BaseNavigation } from "~/components/RootNavigator/types/
 import { PolkadotUnbondFlowParamList } from "./type";
 
 type NavigationProps = BaseComposite<
-  StackScreenProps<PolkadotUnbondFlowParamList, ScreenName.PolkadotUnbondValidationSuccess>
+  NativeStackScreenProps<PolkadotUnbondFlowParamList, ScreenName.PolkadotUnbondValidationSuccess>
 >;
 
 export default function ValidationSuccess({ navigation, route }: NavigationProps) {
