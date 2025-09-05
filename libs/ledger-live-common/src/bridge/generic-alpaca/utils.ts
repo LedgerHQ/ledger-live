@@ -46,9 +46,7 @@ export function adaptCoreOperationToLiveOperation(accountId: string, op: CoreOpe
   }
   const bnFees = new BigNumber(op.tx.fees.toString());
   const res = {
-    id: extra.ledgerOpType
-      ? encodeOperationId(accountId, op.tx.hash, extra.ledgerOpType)
-      : encodeOperationId(accountId, op.tx.hash, op.type),
+    id: encodeOperationId(accountId, op.tx.hash, op.type),
     hash: op.tx.hash,
     accountId,
     type: opType,

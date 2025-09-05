@@ -1,5 +1,4 @@
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
-import { useGroupedCurrenciesByProvider } from "@ledgerhq/live-common/modularDrawer/__mocks__/useGroupedCurrenciesByProvider.mock";
 import React from "react";
 import * as reactRedux from "react-redux";
 import { render, screen, waitFor } from "tests/testSetup";
@@ -28,18 +27,6 @@ import {
 } from "../../__tests__/shared";
 import ModularDrawerFlowManager from "../ModularDrawerFlowManager";
 
-jest.mock("@ledgerhq/live-common/deposit/useGroupedCurrenciesByProvider.hook", () => ({
-  useGroupedCurrenciesByProvider: () => useGroupedCurrenciesByProvider(),
-}));
-
-// Mock fetch to prevent actual network requests
-global.fetch = jest.fn().mockResolvedValue({
-  ok: true,
-  status: 200,
-  json: () => Promise.resolve({}),
-  text: () => Promise.resolve(""),
-});
-
 const MAD_BACK_BUTTON_TEST_ID = "mad-back-button";
 
 beforeEach(() => {
@@ -50,7 +37,7 @@ describe("ModularDrawerFlowManager - Select Account Flow", () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
-  it("should render AssetSelection step with correct props", () => {
+  it("should render AssetSelection step with correct props", async () => {
     render(
       <ModularDrawerFlowManager
         currencies={currencies}
@@ -61,7 +48,7 @@ describe("ModularDrawerFlowManager - Select Account Flow", () => {
     );
 
     expect(screen.getByText(/select asset/i)).toBeVisible();
-    expect(screen.getByText(/ethereum/i)).toBeVisible();
+    await waitFor(() => expect(screen.getByText(/ethereum/i)).toBeVisible());
     expect(screen.getByText(/bitcoin/i)).toBeVisible();
   });
 
@@ -75,11 +62,12 @@ describe("ModularDrawerFlowManager - Select Account Flow", () => {
       />,
     );
 
+    await waitFor(() => expect(screen.getByText(/ethereum/i)).toBeVisible());
     const ethereumAsset = screen.getByText(/ethereum/i);
     await user.click(ethereumAsset);
 
     expect(screen.getByText(/select network/i)).toBeVisible();
-    expect(screen.getByText(/ethereum/i)).toBeVisible();
+    await waitFor(() => expect(screen.getByText(/ethereum/i)).toBeVisible());
     expect(screen.queryByText(/arbitrum/i)).toBeVisible();
     expect(screen.queryByText(/bitcoin/i)).not.toBeInTheDocument();
   });
@@ -100,6 +88,7 @@ describe("ModularDrawerFlowManager - Select Account Flow", () => {
       },
     );
 
+    await waitFor(() => expect(screen.getByText(/ethereum/i)).toBeVisible());
     const ethereumAsset = screen.getByText(/ethereum/i);
     await user.click(ethereumAsset);
 
@@ -128,6 +117,7 @@ describe("ModularDrawerFlowManager - Select Account Flow", () => {
       },
     );
 
+    await waitFor(() => expect(screen.getByText(/ethereum/i)).toBeVisible());
     const ethereumAsset = screen.getByText(/ethereum/i);
     await user.click(ethereumAsset);
 
@@ -140,7 +130,7 @@ describe("ModularDrawerFlowManager - Select Account Flow", () => {
     expect(mockOnAccountSelected).toHaveBeenCalledWith(ETH_ACCOUNT, undefined);
   });
 
-  it("should navigate directly to accountSelection step", () => {
+  it("should navigate directly to accountSelection step", async () => {
     render(
       <ModularDrawerFlowManager
         currencies={[ethereumCurrency]}
@@ -156,10 +146,10 @@ describe("ModularDrawerFlowManager - Select Account Flow", () => {
       },
     );
 
-    expect(screen.getByText(/ethereum 2/i));
+    await waitFor(() => expect(screen.getByText(/ethereum 2/i)).toBeVisible());
   });
 
-  it("should navigate directly to networkSelection step", () => {
+  it("should navigate directly to networkSelection step", async () => {
     render(
       <ModularDrawerFlowManager
         currencies={[ethereumCurrency, arbitrumCurrency]}
@@ -169,12 +159,12 @@ describe("ModularDrawerFlowManager - Select Account Flow", () => {
       />,
     );
 
-    expect(screen.getByText(/select network/i)).toBeVisible();
+    await waitFor(() => expect(screen.getByText(/select network/i)).toBeVisible());
     expect(screen.getByText(/ethereum/i)).toBeVisible();
     expect(screen.getByText(/arbitrum/i)).toBeVisible();
   });
 
-  it("should display empty screen if there is no account", () => {
+  it("should display empty screen if there is no account", async () => {
     render(
       <ModularDrawerFlowManager
         currencies={[bitcoinCurrency]}
@@ -184,7 +174,7 @@ describe("ModularDrawerFlowManager - Select Account Flow", () => {
       />,
     );
 
-    expect(screen.getByText(/select account/i)).toBeVisible();
+    await waitFor(() => expect(screen.getByText(/select account/i)).toBeVisible());
     expect(screen.getByText(/add new or existing account/i)).toBeVisible();
     expect(screen.queryByText(/bitcoin/i)).not.toBeInTheDocument();
   });
@@ -201,7 +191,7 @@ describe("ModularDrawerFlowManager - Select Account Flow", () => {
       />,
     );
 
-    expect(screen.getByText(/select account/i)).toBeVisible();
+    await waitFor(() => expect(screen.getByText(/select account/i)).toBeVisible());
     expect(screen.getByText(/add new or existing account/i)).toBeVisible();
     await user.click(screen.getByText(/add new or existing account/i));
     expect(mockDispatch).toHaveBeenCalledWith({
@@ -227,6 +217,7 @@ describe("ModularDrawerFlowManager - Select Account Flow", () => {
       />,
     );
 
+    await waitFor(() => expect(screen.getByText(/ethereum/i)).toBeVisible());
     const ethereumAsset = screen.getByText(/ethereum/i);
     await user.click(ethereumAsset);
     expect(screen.getByText(/select network/i)).toBeVisible();
@@ -257,6 +248,7 @@ describe("ModularDrawerFlowManager - Select Account Flow", () => {
       },
     );
 
+    await waitFor(() => expect(screen.getByText(/ethereum/i)).toBeVisible());
     const ethereumAsset = screen.getByText(/ethereum/i);
     await user.click(ethereumAsset);
     const ethereumNetwork = screen.getByText(/ethereum/i);
@@ -281,7 +273,7 @@ describe("ModularDrawerFlowManager - Select Account Flow", () => {
       />,
     );
 
-    expect(screen.getByText(/select account/i)).toBeVisible();
+    await waitFor(() => expect(screen.getByText(/select account/i)).toBeVisible());
     expect(screen.queryByTestId(MAD_BACK_BUTTON_TEST_ID)).not.toBeInTheDocument();
   });
 
@@ -295,7 +287,7 @@ describe("ModularDrawerFlowManager - Select Account Flow", () => {
       />,
     );
 
-    expect(screen.getByText(/select network/i)).toBeVisible();
+    await waitFor(() => expect(screen.getByText(/select network/i)).toBeVisible());
     expect(screen.queryByTestId(MAD_BACK_BUTTON_TEST_ID)).not.toBeInTheDocument();
   });
 
@@ -309,12 +301,18 @@ describe("ModularDrawerFlowManager - Select Account Flow", () => {
       />,
     );
 
+    await waitFor(() => expect(screen.getByText(/ethereum/i)).toBeVisible());
     const input = screen.getByRole("textbox");
     await user.type(input, "bitcoin");
 
-    await waitFor(() => {
-      expect(screen.queryByText(/ethereum/i)).not.toBeInTheDocument();
-    });
+    await waitFor(
+      () => {
+        expect(screen.queryByText(/ethereum/i)).not.toBeInTheDocument();
+      },
+      {
+        timeout: 3000,
+      },
+    );
 
     expect(track).toHaveBeenLastCalledWith("asset_searched", {
       page: "Asset Selection",
@@ -329,8 +327,7 @@ describe("ModularDrawerFlowManager - Select Account Flow", () => {
       },
     });
 
-    expect(screen.getByText(/bitcoin/i)).toBeVisible();
-
+    await waitFor(() => expect(screen.getByText(/bitcoin/i)).toBeVisible());
     expect(trackPage).toHaveBeenNthCalledWith(
       1,
       "Asset Selection",
@@ -360,12 +357,14 @@ describe("ModularDrawerFlowManager - Select Account Flow", () => {
       />,
     );
 
+    await waitFor(() => expect(screen.getByText(/ethereum/i)).toBeVisible());
     await user.type(screen.getByRole("textbox"), "ethereum");
 
     await waitFor(() => {
       expect(screen.queryByText(/bitcoin/i)).not.toBeInTheDocument();
     });
 
+    await waitFor(() => expect(screen.getByText(/ethereum/i)).toBeVisible());
     await user.click(screen.getByText(/ethereum/i));
     expect(screen.getByText(/select network/i)).toBeVisible();
 
@@ -406,6 +405,7 @@ describe("ModularDrawerFlowManager - Select Account Flow", () => {
       },
     );
 
+    await waitFor(() => expect(screen.getByText(/usdc/i)).toBeVisible());
     await user.click(screen.getByText(/usdc/i));
     expect(screen.getByText(/select account/i)).toBeVisible();
   });
@@ -426,7 +426,8 @@ describe("ModularDrawerFlowManager - Select Account Flow", () => {
       },
     );
 
-    await user.click(screen.getByText(/ethereum/i));
+    await waitFor(() => expect(screen.getByText(/base/i)).toBeVisible());
+    await user.click(screen.getByText(/base/i));
     expect(screen.getByText(/select network/i)).toBeVisible();
 
     await user.click(screen.getByText(/base/i));
@@ -455,7 +456,8 @@ describe("ModularDrawerFlowManager - Select Account Flow", () => {
       },
     );
 
-    await user.click(screen.getByText(/ethereum/i));
+    await waitFor(() => expect(screen.getByText(/base/i)).toBeVisible());
+    await user.click(screen.getByText(/base/i));
     expect(screen.getByText(/select network/i)).toBeVisible();
 
     await user.click(screen.getByText(/base/i));

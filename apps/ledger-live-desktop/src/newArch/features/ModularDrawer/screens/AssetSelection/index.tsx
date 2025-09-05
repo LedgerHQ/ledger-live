@@ -10,15 +10,12 @@ import { GenericError } from "../../components/GenericError";
 
 export type AssetSelectionStepProps = {
   assetsToDisplay: CryptoOrTokenCurrency[];
-  originalAssetsToDisplay: CryptoOrTokenCurrency[];
-  sortedCryptoCurrencies: CryptoOrTokenCurrency[];
   providersLoadingStatus: LoadingStatus;
   defaultSearchValue?: string;
   assetsConfiguration: EnhancedModularDrawerConfiguration["assets"];
   flow: string;
   source: string;
   currenciesByProvider: CurrenciesByProviderId[];
-  setAssetsToDisplay: (assets: CryptoOrTokenCurrency[]) => void;
   onAssetSelected: (asset: CryptoOrTokenCurrency) => void;
   setSearchedValue: (value: string | undefined) => void;
   hasOneCurrency?: boolean;
@@ -29,15 +26,12 @@ export type AssetSelectionStepProps = {
 
 const AssetSelection = ({
   assetsToDisplay,
-  originalAssetsToDisplay,
-  sortedCryptoCurrencies,
   defaultSearchValue,
   providersLoadingStatus,
   flow,
   source,
   assetsConfiguration,
   currenciesByProvider,
-  setAssetsToDisplay,
   onAssetSelected,
   setSearchedValue,
   hasOneCurrency,
@@ -71,14 +65,10 @@ const AssetSelection = ({
         />
       )}
       <SearchInputContainer
-        setItemsToDisplay={setAssetsToDisplay}
         setSearchedValue={setSearchedValue}
-        defaultValue={defaultSearchValue}
+        searchedValue={defaultSearchValue}
         source={source}
         flow={flow}
-        items={sortedCryptoCurrencies}
-        assetsToDisplay={assetsToDisplay}
-        originalAssets={originalAssetsToDisplay}
       />
       {error && refetch ? (
         <GenericError onClick={refetch} />

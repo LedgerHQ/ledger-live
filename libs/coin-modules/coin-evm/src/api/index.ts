@@ -30,6 +30,7 @@ import {
   getSequence,
   validateIntent,
   getTokenFromAsset,
+  getAssetFromToken,
 } from "../logic/index";
 
 export function createApi(config: EvmConfig, currencyId: CryptoCurrencyId): Api {
@@ -71,5 +72,7 @@ export function createApi(config: EvmConfig, currencyId: CryptoCurrencyId): Api 
       validateIntent(currency, intent),
     getTokenFromAsset: (asset: AssetInfo): TokenCurrency | undefined =>
       getTokenFromAsset(currency, asset),
+    getAssetFromToken: (token: TokenCurrency, owner: string): AssetInfo =>
+      getAssetFromToken(currency, token, owner),
   };
 }

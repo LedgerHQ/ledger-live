@@ -1,5 +1,5 @@
 import BigNumber from "bignumber.js";
-import { emptyHistoryCache } from "@ledgerhq/coin-framework/account/index";
+import { emptyHistoryCache, encodeTokenAccountId } from "@ledgerhq/coin-framework/account/index";
 import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import type { Operation, SyncConfig, TokenAccount } from "@ledgerhq/types-live";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
@@ -23,8 +23,7 @@ function buildTokenAccount({
   token: TokenCurrency;
   operations: OperationCommon[];
 }): TokenAccount {
-  const assetId = getAssetIdFromTokenId(token.id);
-  const id = `${parentAccountId}+${assetId}`;
+  const id = encodeTokenAccountId(parentAccountId, token);
   const balance = new BigNumber(assetBalance.value.toString() || "0");
 
   // TODO: recheck this logic
