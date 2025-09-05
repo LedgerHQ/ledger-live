@@ -6,27 +6,14 @@ import { Box } from "@ledgerhq/react-ui/index";
 
 type Props = SearchProps;
 
-const SearchInputContainer = ({
-  setItemsToDisplay,
-  assetsToDisplay,
-  setSearchedValue,
-  originalAssets,
-  defaultValue = "",
-  source,
-  flow,
-  items,
-}: Props) => {
+const SearchInputContainer = ({ setSearchedValue, searchedValue, source, flow }: Props) => {
   const { t } = useTranslation();
 
   const { handleDebouncedChange, handleSearch, displayedValue } = useSearch({
-    setItemsToDisplay,
+    searchedValue,
     setSearchedValue,
-    defaultValue,
-    items,
     source,
     flow,
-    assetsToDisplay,
-    originalAssets,
   });
 
   return (

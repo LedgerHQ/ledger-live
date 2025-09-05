@@ -76,8 +76,8 @@ describe("useOpenAssetFlow", () => {
       {
         currencies: [],
         drawerConfiguration: {
-          assets: { leftElement: "undefined", rightElement: "undefined" },
-          networks: { leftElement: "undefined", rightElement: "undefined" },
+          assets: { leftElement: "undefined", rightElement: "balance" },
+          networks: { leftElement: "undefined", rightElement: "balance" },
         },
         flow: "add_account",
         onAssetSelected: expect.any(Function),

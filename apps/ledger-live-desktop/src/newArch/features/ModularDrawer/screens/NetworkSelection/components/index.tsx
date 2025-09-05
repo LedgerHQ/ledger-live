@@ -9,8 +9,6 @@ import { createNetworkConfigurationHook } from "@ledgerhq/live-common/modularDra
 import { CurrenciesByProviderId } from "@ledgerhq/live-common/deposit/type";
 import { Observable } from "rxjs";
 import { WalletAPIAccount } from "@ledgerhq/live-common/wallet-api/types";
-import orderBy from "lodash/orderBy";
-import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { accountsCount } from "../../../components/AccountCount";
 import { accountsCountAndApy } from "../../../components/AccountCountApy";
 import { balanceItem } from "../../../components/Balance";
@@ -39,7 +37,6 @@ export const SelectNetwork = ({
   accounts$,
 }: SelectNetworkProps) => {
   const { trackModularDrawerEvent } = useModularDrawerAnalytics();
-  const featureModularDrawerBackendData = useFeature("lldModularDrawerBackendData");
 
   if (!networks || networks.length === 0 || !selectedAssetId) {
     return null;
@@ -62,11 +59,7 @@ export const SelectNetwork = ({
     currenciesByProvider,
   });
 
-  const orderedNetworks = orderBy(networks, ["name"]);
-
-  const formattedNetworks = transformNetworks(
-    featureModularDrawerBackendData?.enabled ? networks : orderedNetworks,
-  );
+  const formattedNetworks = transformNetworks(networks);
 
   const onClick = (networkId: string) => {
     const network = networks.find(({ id }) => id === networkId);

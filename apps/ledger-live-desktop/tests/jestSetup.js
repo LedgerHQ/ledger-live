@@ -14,6 +14,7 @@ jest.mock("framer-motion", () => {
 });
 
 global.setImmediate = global.setImmediate || ((fn, ...args) => global.setTimeout(fn, 0, ...args));
+global.clearImmediate = global.clearImmediate || (id => global.clearTimeout(id));
 
 class ResizeObserver {
   constructor(callback) {
