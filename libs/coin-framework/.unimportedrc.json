@@ -21,7 +21,8 @@
     "src/transaction/common.ts",
     "src/utils.ts",
     "src/sanction/index.ts",
-    "src/sanction/errors.ts"
+    "src/sanction/errors.ts",
+    "src/crypto-assets/utils.ts"
   ],
   "ignoreUnimported": [
     "src/config.ts",
