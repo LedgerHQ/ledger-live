@@ -18,6 +18,8 @@ export function ModularDrawerProvider({ children }: ModularDrawerProviderProps) 
     source,
     assetsConfiguration,
     networksConfiguration,
+    useCase,
+    areCurrenciesFiltered,
   } = useModularDrawerController();
 
   return (
@@ -34,6 +36,8 @@ export function ModularDrawerProvider({ children }: ModularDrawerProviderProps) 
         accounts$={getAccountsObservable()}
         flow={flow ?? ""}
         source={source ?? ""}
+        useCase={useCase}
+        areCurrenciesFiltered={areCurrenciesFiltered}
       />
     </>
   );

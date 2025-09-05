@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from "react";
+import { useCallback } from "react";
 import { ModularDrawerStep } from "../types";
 import type { StepFlowManagerReturnType } from "./useModularDrawerFlowStepManager";
 import type { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
@@ -9,7 +9,7 @@ type UseStepNavigationParams = {
   hasOneCurrency: boolean;
   resetSelection: () => void;
   clearNetwork: () => void;
-  selectNetwork?: (a: CryptoOrTokenCurrency, n: CryptoOrTokenCurrency) => void;
+  selectNetwork?: (n: CryptoOrTokenCurrency) => void;
   navigateToDeviceWithCurrency: (selectedCurrency: CryptoOrTokenCurrency) => void;
   enableAccountSelection?: boolean;
 };
@@ -24,8 +24,8 @@ export function useStepNavigation({
   enableAccountSelection,
   navigateToDeviceWithCurrency,
 }: UseStepNavigationParams) {
-  const canGoBackToAsset = useMemo(() => !hasOneCurrency, [hasOneCurrency]);
-  const canGoBackToNetwork = useMemo(() => availableNetworksCount > 1, [availableNetworksCount]);
+  const canGoBackToAsset = !hasOneCurrency;
+  const canGoBackToNetwork = availableNetworksCount > 1;
 
   const backToAsset = useCallback(() => {
     resetSelection();
@@ -37,8 +37,8 @@ export function useStepNavigation({
     navigationStepManager.goToStep(ModularDrawerStep.Network);
   }, [navigationStepManager, clearNetwork]);
 
-  const shouldShowBackButton = useMemo(() => {
-    const currentStep = navigationStepManager.currentStep;
+  const currentStep = navigationStepManager.currentStep;
+  const shouldShowBackButton = (() => {
     switch (currentStep) {
       case ModularDrawerStep.Network:
         return canGoBackToAsset;
@@ -47,11 +47,11 @@ export function useStepNavigation({
       default:
         return false;
     }
-  }, [navigationStepManager.currentStep, canGoBackToAsset, canGoBackToNetwork]);
+  })();
 
   const proceedToNextStep = useCallback(
     (selectedAsset: CryptoOrTokenCurrency, selectedNetwork: CryptoOrTokenCurrency) => {
-      if (selectNetwork) selectNetwork(selectedAsset, selectedNetwork);
+      if (selectNetwork) selectNetwork(selectedNetwork);
       if (enableAccountSelection) {
         navigationStepManager.goToStep(ModularDrawerStep.Account);
       } else {

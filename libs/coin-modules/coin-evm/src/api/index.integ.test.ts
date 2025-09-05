@@ -1,5 +1,5 @@
 import { Api, FeeEstimation } from "@ledgerhq/coin-framework/api/types";
-import { ethers, BigNumber } from "ethers";
+import { ethers } from "ethers";
 import * as legacy from "@ledgerhq/cryptoassets/tokens";
 import { EvmConfig } from "../config";
 import { setCryptoAssetsStoreGetter } from "../cryptoAssetsStore";
@@ -60,24 +60,20 @@ describe.each([
     [
       "legacy",
       (transaction: ethers.Transaction): void => {
-        expect(transaction).toMatchObject({
-          type: null,
-          gasPrice: expect.any(ethers.BigNumber),
-        });
-        expect(transaction.gasPrice?.toBigInt()).toBeGreaterThan(0);
+        expect(transaction.type).toBe(0);
+        expect(typeof transaction.gasPrice).toBe("bigint");
+        expect(transaction.gasPrice).toBeGreaterThan(0);
       },
     ],
     [
       "eip1559",
       (transaction: ethers.Transaction): void => {
-        expect(transaction).toMatchObject({
-          type: 2,
-          gasPrice: null,
-          maxFeePerGas: expect.any(ethers.BigNumber),
-          maxPriorityFeePerGas: expect.any(ethers.BigNumber),
-        });
-        expect(transaction.maxFeePerGas?.toBigInt()).toBeGreaterThan(0);
-        expect(transaction.maxPriorityFeePerGas?.toBigInt()).toBeGreaterThan(0);
+        expect(transaction.type).toBe(2);
+        expect(transaction.gasPrice).toBeNull();
+        expect(typeof transaction.maxFeePerGas).toBe("bigint");
+        expect(typeof transaction.maxPriorityFeePerGas).toBe("bigint");
+        expect(transaction.maxFeePerGas).toBeGreaterThan(0n);
+        expect(transaction.maxPriorityFeePerGas).toBeGreaterThan(0n);
       },
     ],
   ])("craftTransaction", (mode, expectTransactionForMode) => {
@@ -93,11 +89,11 @@ describe.each([
       });
 
       expect(result).toMatch(/^0x[A-Fa-f0-9]+$/);
-      expect(ethers.utils.parseTransaction(result)).toMatchObject({
-        value: BigNumber.from(10),
+      expect(ethers.Transaction.from(result)).toMatchObject({
+        value: 10n,
         to: "0x7b2C7232f9E38F30E2868f0E5Bf311Cd83554b5A",
       });
-      expectTransactionForMode(ethers.utils.parseTransaction(result));
+      expectTransactionForMode(ethers.Transaction.from(result));
     });
 
     it("crafts a transaction with the USDC asset", async () => {
@@ -113,11 +109,11 @@ describe.each([
       });
 
       expect(result).toMatch(/^0x[A-Fa-f0-9]+$/);
-      expect(ethers.utils.parseTransaction(result)).toMatchObject({
-        value: BigNumber.from(0),
+      expect(ethers.Transaction.from(result)).toMatchObject({
+        value: 0n,
         to: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
       });
-      expectTransactionForMode(ethers.utils.parseTransaction(result));
+      expectTransactionForMode(ethers.Transaction.from(result));
     });
   });
 
@@ -154,6 +150,7 @@ describe.each([
       expect(
         await module.listOperations("0x6895Df5ed013c85B3D9D2446c227C9AfC3813551", {
           minHeight: 200,
+          order: "asc",
         }),
       ).toEqual([[], ""]);
     });
@@ -161,6 +158,7 @@ describe.each([
     it("lists operations for an address", async () => {
       const [result] = await module.listOperations("0xB69B37A4Fb4A18b3258f974ff6e9f529AD2647b1", {
         minHeight: 200,
+        order: "asc",
       });
       expect(result.length).toBeGreaterThanOrEqual(52);
       result.forEach(op => {

@@ -22,6 +22,8 @@ import {
   lastBlock,
   listOperations,
   STELLAR_BURN_ADDRESS,
+  getTokenFromAsset,
+  getAssetFromToken,
 } from "../logic";
 import { ListOperationsOptions } from "../logic/listOperations";
 import { StellarBurnAddressError, StellarMemo } from "../types";
@@ -59,6 +61,8 @@ export function createApi(config: StellarConfig): Api<StellarMemo> {
       // NOTE: might not do plus one here, or if we do, rename to getNextValidSequence
       return sequence.plus(1).toNumber();
     },
+    getTokenFromAsset,
+    getAssetFromToken,
     getChainSpecificRules: () => ({
       getAccountShape: (address: string) => {
         // NOTE: https://github.com/LedgerHQ/ledger-live/pull/2058

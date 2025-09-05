@@ -41,7 +41,7 @@ describe("listOperations", () => {
     // Given
     mockNetworkGetTransactions.mockResolvedValue(mockNetworkTxs([]));
     // When
-    const [results, token] = await listOperations("any address", { minHeight: 0 });
+    const [results, token] = await listOperations("any address", { minHeight: 0, order: "asc" });
     // Then
     expect(mockGetServerInfos).toHaveBeenCalledTimes(1);
     expect(mockNetworkGetTransactions).toHaveBeenCalledTimes(1);
@@ -215,9 +215,7 @@ describe("listOperations", () => {
       // Then
       expect(mockGetServerInfos).toHaveBeenCalledTimes(1);
       expect(mockNetworkGetTransactions).toHaveBeenCalledTimes(1);
-      // if expectedType is "OUT", compute value with fees (i.e. delivered_amount + Fee)
-      const expectedValue =
-        expectedType === "IN" ? BigInt(deliveredAmount) : BigInt(deliveredAmount + fees);
+      const expectedValue = BigInt(deliveredAmount);
       expect(results).toEqual([
         {
           id: "HASH_VALUE",

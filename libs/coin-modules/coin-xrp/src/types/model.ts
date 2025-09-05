@@ -21,7 +21,7 @@ export type XrpMemoValueMap = {
 };
 export type XrpMapMemo = TypedMapMemo<XrpMemoValueMap>;
 
-type Order = "asc" | "desc";
+export type Order = "asc" | "desc";
 
 export type ListOperationsOptions = {
   // pagination:

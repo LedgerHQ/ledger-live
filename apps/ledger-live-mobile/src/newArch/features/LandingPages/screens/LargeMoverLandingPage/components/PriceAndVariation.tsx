@@ -5,29 +5,36 @@ import { counterValueCurrencySelector } from "~/reducers/settings";
 import { useSelector } from "react-redux";
 import { Currency } from "@ledgerhq/types-cryptoassets";
 import Delta from "~/components/Delta";
-import { KeysPriceChange } from "@ledgerhq/live-common/market/utils/types";
+import { KeysPriceChange, MarketCoinDataChart } from "@ledgerhq/live-common/market/utils/types";
 import { useTranslation } from "react-i18next";
 import { useLocale } from "~/context/Locale";
 import { counterValueFormatter } from "LLM/features/Market/utils";
 import { getColors } from "../utils";
+import { BigNumber } from "bignumber.js";
 
 type PriceAndVariationProps = {
   price: number;
   priceChangePercentage: Record<KeysPriceChange, number>;
   range: KeysPriceChange;
+  chartData?: MarketCoinDataChart;
 };
 
 export const PriceAndVariation: React.FC<PriceAndVariationProps> = ({
   price,
   priceChangePercentage,
   range,
+  chartData,
 }) => {
   const counterValueCurrency: Currency = useSelector(counterValueCurrencySelector);
-  const totalPriceChange = price * priceChangePercentage[range];
   const { t } = useTranslation();
   const { locale } = useLocale();
-
   const { textColor, bgColor } = getColors(priceChangePercentage[range]);
+
+  const baseFromChart = chartData?.[range]?.[0]?.[1] ?? 0;
+  const absoluteChangeValue = price - baseFromChart;
+  const magnitude = counterValueCurrency.units[0].magnitude;
+
+  const absoluteChangeMinor = BigNumber(absoluteChangeValue).multipliedBy(10 ** magnitude);
 
   return (
     <Flex flexDirection="column" alignItems="center" justifyContent="center">
@@ -58,7 +65,7 @@ export const PriceAndVariation: React.FC<PriceAndVariationProps> = ({
         </Flex>
         <Flex bg={bgColor} borderRadius={6} padding={2} alignItems="center" justifyContent="center">
           <Text variant="large" color={textColor}>
-            <CurrencyUnitValue unit={counterValueCurrency.units[0]} value={totalPriceChange} />
+            <CurrencyUnitValue unit={counterValueCurrency.units[0]} value={absoluteChangeMinor} />
           </Text>
         </Flex>
       </Flex>

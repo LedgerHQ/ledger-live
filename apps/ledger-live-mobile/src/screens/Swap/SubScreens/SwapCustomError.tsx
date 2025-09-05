@@ -21,9 +21,18 @@ export default function SwapCustomError({ route }: SwapCustomErrorProps) {
 
   const { title, description } = useMemo(() => {
     if (titleKey || nameKey) {
+      const errorKey = titleKey || nameKey;
+      const titleTranslationKey = `swapErrors.${errorKey}.title`;
+      const descriptionTranslationKey = `swapErrors.${errorKey}.description`;
+
+      const titleExists = t(titleTranslationKey) !== titleTranslationKey;
+      const descriptionExists = t(descriptionTranslationKey) !== descriptionTranslationKey;
+
       return {
-        title: t(`swapErrors.${titleKey || nameKey}.title`),
-        description: t(`swapErrors.${titleKey || nameKey}.description`),
+        title: titleExists ? t(titleTranslationKey) : t("swapErrors.default.title"),
+        description: descriptionExists
+          ? t(descriptionTranslationKey)
+          : t("swapErrors.default.description"),
       };
     }
     if (error && "message" in error) {

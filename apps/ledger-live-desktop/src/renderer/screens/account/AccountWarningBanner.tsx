@@ -97,8 +97,8 @@ const AccountWarningBanner = ({ currency }: Props) => {
             }),
           }}
           link={{
-            text: t("account.willBeDeprecatedBanner.contactSupport"),
-            href: localizedContactSupportURL,
+            text: t("account.willBeDeprecatedBanner.learnMore"),
+            href: currencyConfig.status.link || localizedContactSupportURL,
           }}
         />
       )}

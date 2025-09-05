@@ -361,7 +361,7 @@ export const getOptimismAdditionalFees: NodeApi["getOptimismAdditionalFees"] = a
       return getSerializedTransaction(transaction, {
         r: "0xffffffffffffffffffffffffffffffffffffffff",
         s: "0xffffffffffffffffffffffffffffffffffffffff",
-        v: 0,
+        v: 27,
       });
     } catch (e) {
       return null;
@@ -371,7 +371,7 @@ export const getOptimismAdditionalFees: NodeApi["getOptimismAdditionalFees"] = a
     return new BigNumber(0);
   }
 
-  const optimismGasOracle = new ethers.utils.Interface(OptimismGasPriceOracleAbi);
+  const optimismGasOracle = new ethers.Interface(OptimismGasPriceOracleAbi);
   const data = optimismGasOracle.encodeFunctionData("getL1Fee(bytes)", [serializedTransaction]);
 
   const [result] = await fetchWithRetries<
@@ -427,7 +427,7 @@ export const getScrollAdditionalFees: NodeApi["getScrollAdditionalFees"] = async
       return getSerializedTransaction(transaction, {
         r: "0xffffffffffffffffffffffffffffffffffffffff",
         s: "0xffffffffffffffffffffffffffffffffffffffff",
-        v: 0,
+        v: 27,
       });
     } catch (e) {
       return null;
@@ -437,7 +437,7 @@ export const getScrollAdditionalFees: NodeApi["getScrollAdditionalFees"] = async
     return new BigNumber(0);
   }
 
-  const optimismGasOracle = new ethers.utils.Interface(OptimismGasPriceOracleAbi);
+  const optimismGasOracle = new ethers.Interface(OptimismGasPriceOracleAbi);
   const data = optimismGasOracle.encodeFunctionData("getL1Fee(bytes)", [serializedTransaction]);
 
   const [result] = await fetchWithRetries<

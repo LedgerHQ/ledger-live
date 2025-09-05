@@ -1,3 +1,4 @@
+import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { BroadcastConfig } from "@ledgerhq/types-live";
 
 export type BlockInfo = {
@@ -329,6 +330,7 @@ export type Pagination = {
   lastPagingToken?: string;
   pagingToken?: string;
   limit?: number;
+  order?: "asc" | "desc";
 };
 // NOTE: future proof export type Pagination = Record<string, unknown>;
 /** A pagination cursor. */
@@ -406,7 +408,7 @@ export type AlpacaApi<MemoType extends Memo = MemoNotSupported> = {
 };
 
 export type ChainSpecificRules = {
-  getAccountShape: (address: string) => any;
+  getAccountShape: (address: string) => void;
   getTransactionStatus: {
     throwIfPendingOperation?: boolean;
   };
@@ -419,6 +421,8 @@ export type BridgeApi<MemoType extends Memo = MemoNotSupported> = {
   ) => Promise<TransactionValidation>;
   getSequence: (address: string) => Promise<number>;
   getChainSpecificRules?: () => ChainSpecificRules;
+  getTokenFromAsset?: (asset: AssetInfo) => TokenCurrency | undefined;
+  getAssetFromToken?: (token: TokenCurrency, owner: string) => AssetInfo;
 };
 
 export type Api<MemoType extends Memo = MemoNotSupported> = AlpacaApi<MemoType> &

@@ -85,6 +85,8 @@ export type AppState = {
   isMainNavigatorVisible: boolean;
   /** For deep links that inadvertently trigger privacy lock. Reset to false on close. */
   isPasswordLockBlocked: boolean;
+  /** Reboot ID for triggering app remount */
+  rebootId: number;
 };
 
 // === AUTH STATE ===

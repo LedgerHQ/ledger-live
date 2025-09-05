@@ -133,20 +133,25 @@ export const NavigationHeaderCloseButtonAdvanced: React.FC<AdvancedProps> = Reac
       if (skipNavigation) {
         // onClose should always be called at the end of the close method,
         // so the callback will not interfere with the expected behavior of this component
-        onClose && onClose();
+        onClose?.();
         return;
       }
 
-      if ((navigation.getParent() as { pop?: unknown }).pop && preferDismiss) {
-        navigation.getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>().pop();
-
-        onClose && onClose();
-        return;
+      const parent = navigation.getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>();
+      if (parent && "pop" in parent && preferDismiss) {
+        const parentNavigation = parent;
+        if ("canGoBack" in parentNavigation && parentNavigation.canGoBack()) {
+          parentNavigation.pop();
+          onClose?.();
+          return;
+        }
       }
-
-      if ((navigation as { closeDrawer?: unknown }).closeDrawer)
-        (navigation as unknown as { closeDrawer: () => void }).closeDrawer();
-      navigation.goBack();
+      if ("closeDrawer" in navigation && typeof navigation.closeDrawer === "function") {
+        navigation.closeDrawer();
+      }
+      if (navigation.canGoBack()) {
+        navigation.goBack();
+      }
       onClose();
     }, [
       navigateToPostOnboardingHub,

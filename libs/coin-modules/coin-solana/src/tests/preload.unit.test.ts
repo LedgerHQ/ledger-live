@@ -8,6 +8,7 @@ import { __resetCALHash, getCALHash, setCALHash } from "../logic";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import { ChainAPI } from "../network";
+import { setCryptoAssetsStoreGetter } from "../cryptoAssetsStore";
 
 jest.mock("axios");
 const mockedAxios = jest.mocked(axios);
@@ -33,8 +34,20 @@ jest.mock("../network/validator-app", () => ({
 }));
 
 describe("Solana Family", () => {
+  let mockAddTokens: jest.Mock;
+
   beforeEach(() => {
     CALTokensAPI.__clearAllLists();
+
+    mockAddTokens = jest.fn();
+    setCryptoAssetsStoreGetter(() => ({
+      findTokenByAddress: jest.fn(),
+      getTokenById: jest.fn(),
+      findTokenById: jest.fn(),
+      findTokenByAddressInCurrency: jest.fn(),
+      findTokenByTicker: jest.fn(),
+      addTokens: mockAddTokens,
+    }));
     mockedAxios.get.mockImplementation(async (url, { params, headers } = {}) => {
       if (url !== "https://crypto-assets-service.api.ledger.com/v1/tokens")
         throw new Error("UNEXPECTED URL");
@@ -117,27 +130,19 @@ describe("Solana Family", () => {
   });
 
   describe("preloadWithAPI", () => {
-    beforeEach(() => {
-      jest.spyOn(CALTokensAPI, "addTokens").mockImplementation(() => null);
-    });
-
-    afterEach(() => {
-      jest.restoreAllMocks();
-    });
-
     it("should return void when fetch is hitting cache", async () => {
       setCALHash(mockCurrency, "newStateSolana");
       const data = await preloadWithAPI(mockCurrency, mockGetAPI);
       expect(data.splTokens).toEqual(null);
-      expect(CALTokensAPI.addTokens).not.toHaveBeenCalled();
+      expect(mockAddTokens).not.toHaveBeenCalled();
     });
 
     it("should return and register the new SPL tokens", async () => {
       setCALHash(mockCurrency, "initialStateSolana");
       const data = await preloadWithAPI(mockCurrency, mockGetAPI);
       expect(data.splTokens).toEqual([jlpDefinition, soEthDefinition]);
-      expect(CALTokensAPI.addTokens).toHaveBeenCalledTimes(1);
-      expect(CALTokensAPI.addTokens).toHaveBeenCalledWith([
+      expect(mockAddTokens).toHaveBeenCalledTimes(1);
+      expect(mockAddTokens).toHaveBeenCalledWith([
         CALTokensAPI.convertSplTokens(jlpDefinition),
         CALTokensAPI.convertSplTokens(soEthDefinition),
       ]);
@@ -145,17 +150,9 @@ describe("Solana Family", () => {
   });
 
   describe("hydrate", () => {
-    beforeEach(() => {
-      jest.spyOn(CALTokensAPI, "addTokens").mockImplementation(() => null);
-    });
-
-    afterEach(() => {
-      jest.restoreAllMocks();
-    });
-
     it("should not do anything", async () => {
       hydrate(undefined, mockCurrency);
-      expect(CALTokensAPI.addTokens).toHaveBeenCalledTimes(0);
+      expect(mockAddTokens).toHaveBeenCalledTimes(0);
     });
 
     it("should register SPL tokens from embedded with null", async () => {
@@ -164,7 +161,7 @@ describe("Solana Family", () => {
         mockCurrency,
       );
 
-      expect(CALTokensAPI.addTokens).toHaveBeenCalledWith([
+      expect(mockAddTokens).toHaveBeenCalledWith([
         CALTokensAPI.convertSplTokens(jlpDefinition),
         CALTokensAPI.convertSplTokens(soEthDefinition),
       ]);
@@ -176,7 +173,7 @@ describe("Solana Family", () => {
         mockCurrency,
       );
 
-      expect(CALTokensAPI.addTokens).toHaveBeenCalledWith([
+      expect(mockAddTokens).toHaveBeenCalledWith([
         CALTokensAPI.convertSplTokens(graphitDefinition),
       ]);
     });

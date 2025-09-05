@@ -1,9 +1,7 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import ModularDrawerFlowManager from "./ModularDrawerFlowManager";
 import { EnhancedModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/types";
-import { useInitModularDrawer } from "./hooks/useInitModularDrawer";
-import { useAssets } from "./hooks/useAssets";
-import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { useAssetsFromDada } from "./hooks/useAssetsFromDada";
 import { useModularDrawerState } from "./hooks/useModularDrawerState";
 
 import QueuedDrawerGorhom from "LLM/components/QueuedDrawer/temp/QueuedDrawerGorhom";
@@ -25,8 +23,8 @@ type ModularDrawerProps = {
   readonly onClose?: () => void;
 
   // Data and configuration
-  /** List of currencies to display in the drawer */
-  readonly currencies: CryptoOrTokenCurrency[];
+  /** List of preselected currencies to display in the drawer */
+  readonly currencies?: string[];
   /** The flow identifier for analytics */
   readonly flow: string;
   /** The source identifier for analytics */
@@ -43,6 +41,11 @@ type ModularDrawerProps = {
   readonly onAccountSelected?: (account: AccountLike, parentAccount?: AccountLike) => void;
   /** Observable of accounts */
   readonly accounts$?: Observable<WalletAPIAccount[]>;
+
+  /** The use case identifier for the drawer */
+  readonly useCase?: string;
+  /** Whether the currencies are filtered */
+  readonly areCurrenciesFiltered?: boolean;
 };
 
 /**
@@ -62,38 +65,45 @@ export function ModularDrawer({
   enableAccountSelection = false,
   onAccountSelected,
   accounts$,
+  useCase,
+  areCurrenciesFiltered,
 }: ModularDrawerProps) {
-  const [itemsToDisplay, setItemsToDisplay] = useState<CryptoOrTokenCurrency[]>([]);
+  const [searchValue, setSearchValue] = useState("");
 
-  const { sortedCryptoCurrencies, isReadyToBeDisplayed, currenciesByProvider } =
-    useInitModularDrawer();
+  useEffect(() => {
+    if (isOpen) {
+      setSearchValue("");
+    }
+  }, [isOpen]);
 
-  const { availableAssets, currencyIdsArray } = useAssets(
-    currencies,
-    currenciesByProvider,
-    sortedCryptoCurrencies,
-  );
+  const { sortedCryptoCurrencies, assetsSorted, isLoading, error, refetch, loadNext } =
+    useAssetsFromDada({
+      currencyIds: currencies,
+      searchedValue: searchValue,
+      useCase,
+      areCurrenciesFiltered,
+    });
 
   const {
-    setDefaultSearchValue,
-    asset,
+    accountCurrency,
     handleAsset,
     handleNetwork,
     handleBackButton,
     handleCloseButton,
-    hasOneCurrency,
     availableNetworks,
-    defaultSearchValue,
     shouldShowBackButton,
     navigationStepManager,
+    hasOneCurrency,
     onAddNewAccount,
+    asset,
   } = useModularDrawerState({
-    currenciesByProvider,
-    currencyIds: currencyIdsArray,
+    assetsSorted,
+    currencyIds: currencies ?? [],
     isDrawerOpen: isOpen,
     flow,
     enableAccountSelection,
     onClose,
+    hasSearchedValue: searchValue.length > 0,
   });
 
   return (
@@ -110,16 +120,18 @@ export function ModularDrawer({
       <ModularDrawerFlowManager
         navigationStepViewModel={navigationStepManager}
         assetsViewModel={{
-          availableAssets,
+          availableAssets: sortedCryptoCurrencies,
           onAssetSelected: handleAsset,
-          defaultSearchValue,
-          setDefaultSearchValue,
-          itemsToDisplay,
-          setItemsToDisplay,
+          defaultSearchValue: searchValue,
+          setDefaultSearchValue: setSearchValue,
           flow,
           source,
           assetsConfiguration,
           isOpen,
+          isLoading,
+          hasError: !!error,
+          refetch,
+          loadNext,
         }}
         networksViewModel={{
           onNetworkSelected: handleNetwork,
@@ -127,16 +139,16 @@ export function ModularDrawer({
           flow,
           source,
           networksConfiguration,
+          asset,
         }}
         accountsViewModel={{
           accounts$,
           onAddNewAccount,
-          asset,
+          asset: accountCurrency,
           onAccountSelected,
           flow,
           source,
         }}
-        isReadyToBeDisplayed={isReadyToBeDisplayed}
       />
     </QueuedDrawerGorhom>
   );

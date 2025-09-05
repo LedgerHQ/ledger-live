@@ -8,8 +8,10 @@ import { useModularDrawerConfiguration } from "./useModularDrawerConfiguration";
 
 interface UseModularDrawerRemoteDataProps {
   currentStep: ModularDrawerStep;
-  currencies: ModularDrawerFlowManagerProps["currencies"];
+  currencyIds: string[];
   drawerConfiguration: ModularDrawerFlowManagerProps["drawerConfiguration"];
+  useCase?: string;
+  areCurrenciesFiltered?: boolean;
   goToStep: (step: ModularDrawerStep) => void;
   onAssetSelected: ModularDrawerFlowManagerProps["onAssetSelected"];
   onAccountSelected: ModularDrawerFlowManagerProps["onAccountSelected"];
@@ -18,8 +20,10 @@ interface UseModularDrawerRemoteDataProps {
 
 export function useModularDrawerRemoteData({
   currentStep,
-  currencies,
+  currencyIds,
   drawerConfiguration,
+  useCase,
+  areCurrenciesFiltered,
   goToStep,
   onAssetSelected,
   onAccountSelected,
@@ -29,22 +33,26 @@ export function useModularDrawerRemoteData({
   const { assetsConfiguration, networkConfiguration } =
     useModularDrawerConfiguration(drawerConfiguration);
 
-  const { currenciesByProvider, sortedCryptoCurrencies, error, isSuccess, loadingStatus } =
-    useModularDrawerData({ currencies, searchedValue });
+  const {
+    currenciesByProvider,
+    sortedCryptoCurrencies,
+    error,
+    refetch,
+    isSuccess,
+    loadingStatus,
+    loadNext,
+  } = useModularDrawerData({ currencyIds, searchedValue, useCase, areCurrenciesFiltered });
 
   const {
     assetsToDisplay,
-    filteredSortedCryptoCurrencies,
-    currenciesIdsArray,
     setAssetsToDisplay,
     networksToDisplay,
     setNetworksToDisplay,
-    originalAssetsToDisplay,
     hasOneNetwork,
     hasOneCurrency,
     filteredCurrenciesByProvider,
   } = useModularDrawerFiltering({
-    currencies,
+    currencyIds,
     currenciesByProvider,
     sortedCryptoCurrencies,
     isSuccess,
@@ -63,7 +71,7 @@ export function useModularDrawerRemoteData({
   } = useModularDrawerFlowState({
     currenciesByProvider,
     sortedCryptoCurrencies,
-    currenciesIdsArray,
+    currencyIds,
     isSelectAccountFlow,
     setNetworksToDisplay,
     goToStep,
@@ -86,13 +94,12 @@ export function useModularDrawerRemoteData({
 
   return {
     error,
+    refetch,
     loadingStatus,
     assetsConfiguration,
     networkConfiguration,
     currenciesByProvider: filteredCurrenciesByProvider,
     assetsToDisplay,
-    filteredSortedCryptoCurrencies,
-    originalAssetsToDisplay,
     setAssetsToDisplay,
     searchedValue,
     setSearchedValue,
@@ -106,5 +113,6 @@ export function useModularDrawerRemoteData({
     handleBack,
     goBackToAssetSelection,
     goBackToNetworkSelection,
+    loadNext,
   };
 }

@@ -19,7 +19,7 @@ type Props = {
   currenciesByProvider: CurrenciesByProviderId[];
   sortedCryptoCurrencies: CryptoOrTokenCurrency[];
   setNetworksToDisplay: (networks?: CryptoOrTokenCurrency[]) => void;
-  currenciesIdsArray: string[];
+  currencyIds: string[];
   goToStep: (nextStep: ModularDrawerStep) => void;
   isSelectAccountFlow?: boolean;
   onAssetSelected?: (asset: CryptoOrTokenCurrency) => void;
@@ -33,7 +33,7 @@ export function useModularDrawerFlowState({
   currenciesByProvider,
   sortedCryptoCurrencies,
   setNetworksToDisplay,
-  currenciesIdsArray,
+  currencyIds,
   goToStep,
   isSelectAccountFlow,
   onAssetSelected,
@@ -111,10 +111,10 @@ export function useModularDrawerFlowState({
   const getNetworksFromProvider = useCallback(
     (provider: CurrenciesByProviderId) => {
       return provider.currenciesByNetwork
-        .filter(currencyByNetwork => currenciesIdsArray.includes(currencyByNetwork.id))
+        .filter(currencyByNetwork => currencyIds.includes(currencyByNetwork.id))
         .map(elem => (elem.type === "TokenCurrency" ? elem.parentCurrency?.id : elem.id));
     },
-    [currenciesIdsArray],
+    [currencyIds],
   );
 
   const handleNoProvider = useCallback(
@@ -134,7 +134,7 @@ export function useModularDrawerFlowState({
       provider: CurrenciesByProviderId,
       networks: (string | undefined)[],
     ) => {
-      const effectiveCurrency = getEffectiveCurrency(currency, provider, currenciesIdsArray);
+      const effectiveCurrency = getEffectiveCurrency(currency, provider, currencyIds);
       const filteredCryptoCurrencies = networks
         .filter((net): net is string => Boolean(net))
         .map(net => findCryptoCurrencyById(net))
@@ -142,19 +142,19 @@ export function useModularDrawerFlowState({
 
       goToNetworkSelection(effectiveCurrency, filteredCryptoCurrencies);
     },
-    [currenciesIdsArray, goToNetworkSelection],
+    [currencyIds, goToNetworkSelection],
   );
 
   const handleSingleNetwork = useCallback(
     (currency: CryptoOrTokenCurrency, provider: CurrenciesByProviderId) => {
       if (isSelectAccountFlow) {
-        const effectiveCurrency = getEffectiveCurrency(currency, provider, currenciesIdsArray);
+        const effectiveCurrency = getEffectiveCurrency(currency, provider, currencyIds);
         goToAccountSelection(effectiveCurrency, effectiveCurrency);
       } else {
         onAssetSelected?.(currency);
       }
     },
-    [isSelectAccountFlow, currenciesIdsArray, goToAccountSelection, onAssetSelected],
+    [isSelectAccountFlow, currencyIds, goToAccountSelection, onAssetSelected],
   );
 
   const handleAssetSelected = useCallback(
@@ -191,7 +191,7 @@ export function useModularDrawerFlowState({
 
   useEffect(() => {
     if (hasOneInitialCurrency && !selectedAsset) {
-      const currencyIdToFind = currenciesIdsArray[0];
+      const currencyIdToFind = currencyIds[0];
       const currency = getTokenOrCryptoCurrencyById(currencyIdToFind);
 
       if (currency) {
@@ -200,12 +200,12 @@ export function useModularDrawerFlowState({
     }
   }, [
     sortedCryptoCurrencies,
-    currenciesIdsArray.length,
+    currencyIds.length,
     goToStep,
     handleAssetSelected,
     hasOneCurrency,
     selectedAsset,
-    currenciesIdsArray,
+    currencyIds,
     searchedValue,
     hasOneInitialCurrency,
   ]);

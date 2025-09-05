@@ -201,8 +201,8 @@ describe("listOperations", () => {
   });
 
   it("should order the results in descending order even if the sort option is set to ascending", async () => {
-    const op1 = { ...undelegate, level: "1" };
-    const op2 = { ...undelegate, level: "2" };
+    const op1 = { ...undelegate, level: "1", timestamp: "2022-09-12T01:00:00Z" };
+    const op2 = { ...undelegate, level: "2", timestamp: "2022-09-12T01:01:00Z" };
     mockNetworkGetTransactions.mockResolvedValue([op1, op2]);
     const [results, _] = await listOperations("any address", options);
     expect(results.map(op => op.tx.block.height)).toEqual(["2", "1"]);

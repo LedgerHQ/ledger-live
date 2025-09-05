@@ -44,7 +44,7 @@ describe.skip("Stellar Api", () => {
     let txs: Operation[];
 
     beforeAll(async () => {
-      [txs] = await module.listOperations(ADDRESS, { minHeight: 0 });
+      [txs] = await module.listOperations(ADDRESS, { minHeight: 0, order: "asc" });
     });
 
     it("returns a list regarding address parameter", async () => {
@@ -60,6 +60,11 @@ describe.skip("Stellar Api", () => {
       expect(txs.length).toBeGreaterThanOrEqual(100);
       const checkSet = new Set(txs.map(elt => elt.tx.hash));
       expect(checkSet.size).toEqual(txs.length);
+    });
+
+    it("returns all operations from the latest, but in asc order", async () => {
+      const [txsDesc] = await module.listOperations(ADDRESS, { minHeight: 0, order: "desc" });
+      expect(txsDesc[0]).toBe(txs[0]);
     });
   });
 

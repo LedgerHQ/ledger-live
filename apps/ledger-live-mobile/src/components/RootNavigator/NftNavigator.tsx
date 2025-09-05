@@ -12,6 +12,7 @@ import { useTranslation } from "react-i18next";
 import { useNavigation } from "@react-navigation/native";
 import { useDispatch } from "react-redux";
 import { setGalleryFilterDrawerVisible } from "~/actions/nft";
+import TransparentHeaderNavigationOptions from "~/navigation/TransparentHeaderNavigationOptions";
 
 const NftNavigator = () => {
   const { colors } = useTheme();
@@ -25,9 +26,8 @@ const NftNavigator = () => {
         name={ScreenName.NftViewer}
         component={NftViewer}
         options={() => ({
-          title: "",
+          ...TransparentHeaderNavigationOptions,
           headerRight: undefined,
-          headerTransparent: true,
           headerLeft: () => <NavigationHeaderBackButton />,
         })}
       />
@@ -35,10 +35,9 @@ const NftNavigator = () => {
         name={ScreenName.NftImageViewer}
         component={NftImageViewer}
         options={() => ({
-          title: "",
+          ...TransparentHeaderNavigationOptions,
           headerRight: undefined,
           headerLeft: () => <NavigationHeaderBackButton />,
-          headerTransparent: true,
         })}
       />
       <Stack.Screen

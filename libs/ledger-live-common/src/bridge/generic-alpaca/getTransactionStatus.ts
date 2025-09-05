@@ -3,7 +3,6 @@ import { AccountAwaitingSendPendingOperations } from "@ledgerhq/errors";
 import BigNumber from "bignumber.js";
 import { getAlpacaApi } from "./alpaca";
 import { transactionToIntent } from "./utils";
-// import { FeeEstimation } from "@ledgerhq/coin-framework/api/types";
 
 // => alpaca validateIntent
 export function genericGetTransactionStatus(

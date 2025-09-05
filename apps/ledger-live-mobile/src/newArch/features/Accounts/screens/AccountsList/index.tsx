@@ -2,7 +2,7 @@ import React from "react";
 import AccountsListView from "LLM/features/Accounts/components/AccountsListView";
 import { LNSUpsellBanner } from "LLM/features/LNSUpsell";
 import { ScreenName } from "~/const";
-import { ReactNavigationPerformanceView } from "@shopify/react-native-performance-navigation";
+
 import SafeAreaView from "~/components/SafeAreaView";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import AddAccountButton from "LLM/features/Accounts/components/AddAccountButton";
@@ -43,48 +43,46 @@ function View({
   return (
     <>
       <TrackScreen name={pageTrackingEvent} source={sourceScreenName} currency={currencyToTrack} />
-      <ReactNavigationPerformanceView screenName={ScreenName.AccountsList} interactive>
-        <SafeAreaView edges={["left", "right", "bottom"]} isFlex style={{ marginHorizontal: 16 }}>
-          {showHeader && (
-            <Text variant="h1Inter" fontWeight="semiBold" fontSize={28} paddingY={2}>
-              {ticker
-                ? t("accounts.cryptoAccountsTitle", { currencyTicker: ticker })
-                : t("accounts.title")}
+      <SafeAreaView edges={["left", "right", "bottom"]} isFlex style={{ marginHorizontal: 16 }}>
+        {showHeader && (
+          <Text variant="h1Inter" fontWeight="semiBold" fontSize={28} paddingY={2}>
+            {ticker
+              ? t("accounts.cryptoAccountsTitle", { currencyTicker: ticker })
+              : t("accounts.title")}
+          </Text>
+        )}
+        {syncPending && (
+          <Flex flexDirection="row" alignItems="center" my={3}>
+            <Spinning clockwise>
+              <RefreshMedium size={20} color="neutral.c80" />
+            </Spinning>
+            <Text color="neutral.c80" ml={2}>
+              {t("portfolio.syncPending")}
             </Text>
-          )}
-          {syncPending && (
-            <Flex flexDirection="row" alignItems="center" my={3}>
-              <Spinning clockwise>
-                <RefreshMedium size={20} color="neutral.c80" />
-              </Spinning>
-              <Text color="neutral.c80" ml={2}>
-                {t("portfolio.syncPending")}
-              </Text>
-            </Flex>
-          )}
-          {canAddAccount && (
-            <AddAccountButton
-              disabled={isAddAccountCtaDisabled}
-              sourceScreenName={pageTrackingEvent}
-              currency={currency}
-              onClick={onClick}
-            />
-          )}
-          {hasNoAccount ? (
-            <>
-              <AccountsEmptyList sourceScreenName={sourceScreenName} />
-              <LNSUpsellBanner location="accounts" mt={2} mb={3} />
-            </>
-          ) : (
-            <AccountsListView
-              sourceScreenName={sourceScreenName}
-              isSyncEnabled={isSyncEnabled}
-              specificAccounts={specificAccounts}
-              ListFooterComponent={<LNSUpsellBanner location="accounts" mt={4} mb={7} />}
-            />
-          )}
-        </SafeAreaView>
-      </ReactNavigationPerformanceView>
+          </Flex>
+        )}
+        {canAddAccount && (
+          <AddAccountButton
+            disabled={isAddAccountCtaDisabled}
+            sourceScreenName={pageTrackingEvent}
+            currency={currency}
+            onClick={onClick}
+          />
+        )}
+        {hasNoAccount ? (
+          <>
+            <AccountsEmptyList sourceScreenName={sourceScreenName} />
+            <LNSUpsellBanner location="accounts" mt={2} mb={3} />
+          </>
+        ) : (
+          <AccountsListView
+            sourceScreenName={sourceScreenName}
+            isSyncEnabled={isSyncEnabled}
+            specificAccounts={specificAccounts}
+            ListFooterComponent={<LNSUpsellBanner location="accounts" mt={4} mb={7} />}
+          />
+        )}
+      </SafeAreaView>
     </>
   );
 }

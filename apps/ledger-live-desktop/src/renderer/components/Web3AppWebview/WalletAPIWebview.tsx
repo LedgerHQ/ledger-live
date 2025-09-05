@@ -75,18 +75,29 @@ function useUiHook(manifest: AppManifest, tracking: TrackingAPI): UiHook {
 
   return useMemo(
     () => ({
-      "account.request": ({ accounts$, currencies, drawerConfiguration, onSuccess, onCancel }) => {
+      "account.request": ({
+        accounts$,
+        currencies,
+        drawerConfiguration,
+        areCurrenciesFiltered,
+        useCase,
+        onSuccess,
+        onCancel,
+      }) => {
         ipcRenderer.send("show-app", {});
 
         modularDrawerVisible
           ? openAssetAndAccountDrawer({
               accounts$,
               drawerConfiguration,
-              currencies,
+              currencies: areCurrenciesFiltered && !useCase ? currencies : undefined,
+              areCurrenciesFiltered,
+              useCase,
               onSuccess,
               onCancel,
               flow,
               source,
+              includeTokens: true,
             })
           : setDrawer(
               SelectAccountAndCurrencyDrawer,

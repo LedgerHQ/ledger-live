@@ -36,8 +36,8 @@ function selectCurrency(
       source,
       flow,
       drawerConfiguration: drawerConfiguration ?? {
-        assets: { leftElement: "undefined", rightElement: "undefined" },
-        networks: { leftElement: "undefined", rightElement: "undefined" },
+        assets: { leftElement: "undefined", rightElement: "balance" },
+        networks: { leftElement: "undefined", rightElement: "balance" },
       },
     },
     {

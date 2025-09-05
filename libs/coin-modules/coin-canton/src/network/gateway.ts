@@ -26,8 +26,15 @@ type OnboardingSubmitResponse = {
   };
 };
 
-type InstrumentBalance = {
-  instrumentId: string;
+type TransactionSubmitRequest = {
+  serialized: string;
+  signature: string;
+};
+
+type TransactionSubmitResponse = { updateId: string };
+
+export type InstrumentBalance = {
+  instrument_id: string;
   amount: number;
   locked: boolean;
 };
@@ -44,46 +51,47 @@ type Timestamp = {
 
 type BaseEvent = {
   type: string;
-  contractId: string;
+  contract_id: string;
   details: string;
 };
 
-type CreatedEvent = BaseEvent & {
-  templateId: {
-    packageId: string;
-    moduleName: string;
-    entityName: string;
+export type CreatedEvent = BaseEvent & {
+  template_id: {
+    package_id: string;
+    module_name: string;
+    entity_name: string;
   };
   signatories: string[];
   observers: string[];
 };
 
 type ExercisedEvent = BaseEvent & {
-  templateId: {
+  template_id: {
     packageId: string;
     moduleName: string;
     entityName: string;
   };
   choice: string;
   consuming: boolean;
-  actingParties: string[];
+  acting_parties: string[];
 };
 
 type Event = BaseEvent | CreatedEvent | ExercisedEvent;
 
-type TxInfo = {
-  updateId: string;
-  commandId: string;
-  workflowId: string;
-  effectiveAt: Timestamp;
+export type TxInfo = {
+  update_id: string;
+  command_id: string;
+  workflow_id: string;
+  effective_at: Timestamp;
   offset: number;
-  synchronizerId: string;
-  recordTime: Timestamp;
-  events: Event[];
-  traceContext: string;
+  synchronizer_id: string;
+  record_time: Timestamp;
+  events: Record<string, Event>[];
+  trace_context: string;
 };
 
 const getGatewayUrl = () => coinConfig.getCoinConfig().gatewayUrl;
+const getNodeId = () => coinConfig.getCoinConfig().nodeId || "ledger-live-devnet-prd";
 
 export async function prepareOnboarding(
   pubKey: string,
@@ -91,7 +99,7 @@ export async function prepareOnboarding(
 ): Promise<OnboardingPrepareResponse> {
   const { data } = await network<OnboardingPrepareResponse>({
     method: "POST",
-    url: `${getGatewayUrl()}/v1/node/0/onboarding/prepare`,
+    url: `${getGatewayUrl()}/v1/node/${getNodeId()}/onboarding/prepare`,
     data: {
       public_key: pubKey,
       public_key_type: pubKeyType,
@@ -107,7 +115,7 @@ export async function submitOnboarding(
 ) {
   const { data } = await network<OnboardingSubmitResponse>({
     method: "POST",
-    url: `${getGatewayUrl()}/v1/node/0/onboarding/submit`,
+    url: `${getGatewayUrl()}/v1/node/${getNodeId()}/onboarding/submit`,
     data: {
       prepare_request: prepareRequest,
       prepare_response: prepareResponse,
@@ -117,23 +125,54 @@ export async function submitOnboarding(
   return data;
 }
 
+export async function submit(serializedTx: string, signature: string) {
+  const { data } = await network<TransactionSubmitResponse>({
+    method: "POST",
+    url: `${getGatewayUrl()}/v1/node/${getNodeId()}/transaction/submit`,
+    data: {
+      serialized: serializedTx,
+      signature,
+    } satisfies TransactionSubmitRequest,
+  });
+  return data;
+}
+
 export async function getBalance(partyId: string): Promise<InstrumentBalance[]> {
   const { data } = await network<InstrumentBalance[]>({
     method: "GET",
-    url: `${getGatewayUrl()}/v1/node/0/party/${partyId}/balance`,
+    url: `${getGatewayUrl()}/v1/node/${getNodeId()}/party/${partyId}/balance`,
   });
   return data;
 }
 
-export async function getParty(partyId: string): Promise<PartyInfo> {
+export async function getPartyById(partyId: string): Promise<PartyInfo> {
+  return await getParty(partyId, "ID");
+}
+
+export async function getPartyByPubKey(pubKey: string): Promise<PartyInfo> {
+  return await getParty(pubKey, "PK");
+}
+
+async function getParty(identifier: string, by: "ID" | "PK"): Promise<PartyInfo> {
   const { data } = await network<PartyInfo>({
     method: "GET",
-    url: `${getGatewayUrl()}/v1/node/0/party/${partyId}`,
+    url: `${getGatewayUrl()}/v1/node/${getNodeId()}/party/${identifier}`,
+    data: {
+      by,
+    },
   });
   return data;
 }
 
-export async function getTransactions(partyId: string): Promise<{
+export async function getTransactions(
+  partyId: string,
+  options?: {
+    cursor?: number | undefined;
+    minOffset?: number | undefined;
+    maxOffset?: number | undefined;
+    limit?: number | undefined;
+  },
+): Promise<{
   next: number;
   transactions: TxInfo[];
 }> {
@@ -142,7 +181,8 @@ export async function getTransactions(partyId: string): Promise<{
     transactions: TxInfo[];
   }>({
     method: "GET",
-    url: `${getGatewayUrl()}/v1/node/0/party/${partyId}/transactions`,
+    url: `${getGatewayUrl()}/v1/node/${getNodeId()}/party/${partyId}/transactions`,
+    data: options,
   });
   return data;
 }
@@ -150,7 +190,7 @@ export async function getTransactions(partyId: string): Promise<{
 export async function getLedgerEnd(): Promise<number> {
   const { data } = await network<number>({
     method: "GET",
-    url: `${getGatewayUrl()}/v1/node/0/ledger-end`,
+    url: `${getGatewayUrl()}/v1/node/${getNodeId()}/ledger-end`,
   });
   return data;
 }

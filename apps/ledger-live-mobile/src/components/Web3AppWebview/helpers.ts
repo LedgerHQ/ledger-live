@@ -43,7 +43,7 @@ import {
   useModularDrawerController,
   useModularDrawerVisibility,
 } from "LLM/features/ModularDrawer";
-import { OpenModularDrawerFunction } from "LLM/features/ModularDrawer/types";
+import { OpenDrawer } from "LLM/features/ModularDrawer/types";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 
 export function useWebView(
@@ -389,7 +389,7 @@ export function useWebviewState(
 
 export interface Props {
   isModularDrawerVisible: boolean;
-  openModularDrawer?: OpenModularDrawerFunction;
+  openModularDrawer?: OpenDrawer;
   manifest: LiveAppManifest;
 }
 
@@ -406,16 +406,25 @@ function useUiHook({ isModularDrawerVisible, openModularDrawer, manifest }: Prop
 
   return useMemo(
     () => ({
-      "account.request": ({ accounts$, currencies, onSuccess, onCancel }) => {
+      "account.request": ({
+        accounts$,
+        currencies,
+        onSuccess,
+        onCancel,
+        areCurrenciesFiltered,
+        useCase,
+      }) => {
         if (isModularDrawerVisible) {
           openModularDrawer?.({
             source: source,
             flow: flow,
-            currencies,
             enableAccountSelection: true,
             onAccountSelected: (account: AccountLike, parentAccount?: Account | undefined) =>
               onSuccess(account, parentAccount),
             accounts$,
+            currencies: areCurrenciesFiltered && !useCase ? currencies.map(c => c.id) : undefined,
+            areCurrenciesFiltered,
+            useCase,
           });
         } else {
           if (currencies.length === 1) {

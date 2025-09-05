@@ -42,31 +42,31 @@ describe("EVM Family", () => {
     describe("ethers", () => {
       describe("transactionToEthersTransaction", () => {
         it("should build convert an EIP1559 ledger live transaction to an ethers transaction", () => {
-          const ethers1559Tx: ethers.Transaction = {
+          const ethers1559Tx: ethers.TransactionLike = {
             to: "0xkvn",
             nonce: 0,
-            gasLimit: ethers.BigNumber.from(21000),
+            gasLimit: 21000n,
             data: "0x" + testData,
-            value: ethers.BigNumber.from(100),
-            chainId: 1,
+            value: 100n,
+            chainId: 1n,
             type: 2,
-            maxFeePerGas: ethers.BigNumber.from(10000),
-            maxPriorityFeePerGas: ethers.BigNumber.from(10000),
+            maxFeePerGas: 10000n,
+            maxPriorityFeePerGas: 10000n,
           };
 
           expect(transactionToEthersTransaction(eip1559Tx)).toEqual(ethers1559Tx);
         });
 
         it("should build convert an legacy ledger live transaction to an ethers transaction", () => {
-          const legacyEthersTx: ethers.Transaction = {
+          const legacyEthersTx: ethers.TransactionLike = {
             to: "0xkvn",
             nonce: 0,
-            gasLimit: ethers.BigNumber.from(21000),
+            gasLimit: 21000n,
             data: "0x" + testData,
-            value: ethers.BigNumber.from(100),
-            chainId: 1,
+            value: 100n,
+            chainId: 1n,
             type: 0,
-            gasPrice: ethers.BigNumber.from(10000),
+            gasPrice: 10000n,
           };
 
           expect(transactionToEthersTransaction(legacyTx)).toEqual(legacyEthersTx);
@@ -78,16 +78,16 @@ describe("EVM Family", () => {
             maxFeePerGas: new BigNumber("29625091714.5"),
           };
 
-          const ethers1559Tx: ethers.Transaction = {
+          const ethers1559Tx: ethers.TransactionLike = {
             to: "0xkvn",
             nonce: 0,
-            gasLimit: ethers.BigNumber.from(21000),
+            gasLimit: 21000n,
             data: "0x" + testData,
-            value: ethers.BigNumber.from(100),
-            chainId: 1,
+            value: 100n,
+            chainId: 1n,
             type: 2,
-            maxFeePerGas: ethers.BigNumber.from("29625091715"),
-            maxPriorityFeePerGas: ethers.BigNumber.from(10000),
+            maxFeePerGas: 29625091715n,
+            maxPriorityFeePerGas: 10000n,
           };
 
           expect(transactionToEthersTransaction(txWithFloatingPoint)).toEqual(ethers1559Tx);
@@ -110,15 +110,15 @@ describe("EVM Family", () => {
             type: 0,
           };
 
-          const ethersTxWithUnrealisticNonce: ethers.Transaction = {
+          const ethersTxWithUnrealisticNonce: ethers.TransactionLike = {
             to: "0xkvn",
             nonce: Number.MAX_SAFE_INTEGER - 1,
-            gasLimit: ethers.BigNumber.from(21000),
+            gasLimit: 21000n,
             data: "0x" + testData,
-            value: ethers.BigNumber.from(100),
-            chainId: 1,
+            value: 100n,
+            chainId: 1n,
             type: 0,
-            gasPrice: ethers.BigNumber.from(10000),
+            gasPrice: 10000n,
           };
 
           expect(transactionToEthersTransaction(createdTransactionWithDefaultNonce)).toEqual(

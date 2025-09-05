@@ -802,8 +802,8 @@
       "support": "support"
     },
     "willBeDeprecatedBanner": {
-      "title": "To optimize efficiencies, {{currencyName}} will not be supported on Ledger Live as of {{deprecatedDate}}. However, it will still be supported on Ledger hardware wallets. Please contact Ledger Customer Support if you would like assistance on this.",
-      "contactSupport": "Contact Support"
+      "title": "{{currencyName}} will not be supported on Ledger Live as of {{deprecatedDate}}. It will still be secured by your Ledger hardware wallet. To learn more, please read the full Help Center article linked below.",
+      "learnMore": "Learn more"
     },
     "lastOperations": "Latest operations",
     "contractAddress": "Contract:",
@@ -1940,7 +1940,8 @@
       "payoutNetworkFeesTooltip": "This amount will not be shown on your device",
       "acceptTerms": "By validating this transaction, I accept\n<0>{{provider}}'s terms of use</0>",
       "exodusAcceptTerms": "Exodus relies on third parties to conduct swaps.\nBy validating this transaction, I accept <0>Exodus's terms of use</0>",
-      "changellyAcceptTerms": "By clicking “Swap with Changelly” you accept Changelly’s <0>Terms of Use</0> and\nits <1>AML/KYC policy</1> Changelly may apply AML/KYC procedures which\ncan, in limited cases, impact the completion of your transaction. Should\nthat happen, you must contact Changelly’s <2>customer support.</2>"
+      "changellyAcceptTerms": "By clicking “Swap with Changelly” you accept Changelly’s <0>Terms of Use</0> and\nits <1>AML/KYC policy</1> Changelly may apply AML/KYC procedures which\ncan, in limited cases, impact the completion of your transaction. Should\nthat happen, you must contact Changelly’s <2>customer support.</2>",
+      "cicAcceptTerms": "“Swap with CIC” you accept CIC’s <0>Terms of Use</0> and its <1>AML/KYC policy</1> CIC may apply AML/KYC procedures which can, in limited cases, impact the completion of your transaction. Should that happen, you must contact CIC’s <2>customer support.</2>"
     },
     "swap2": {
       "amountSent": "Amount to send",
@@ -7696,6 +7697,11 @@
         "selectAccount": "Continue",
         "close": "Close"
       }
+    },
+    "genericError": {
+      "title": "A network error occurred",
+      "description": "Something went wrong, please try again or contact Ledger Support if in doubt.",
+      "cta": "Retry"
     }
   },
   "nftEntryPoint": {

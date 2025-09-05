@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
     inputs:
       currencies:
-        description: Currencies to monitor, separated with commas (,)
+        description: Currencies to monitor, separated with commas (,), or "all" (default)
         required: false
 
 jobs:

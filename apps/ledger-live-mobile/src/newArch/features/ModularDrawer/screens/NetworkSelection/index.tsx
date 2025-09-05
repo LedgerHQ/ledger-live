@@ -15,10 +15,16 @@ import {
 } from "../../analytics";
 import { BottomSheetFlatList } from "@gorhom/bottom-sheet";
 import orderBy from "lodash/orderBy";
-import createNetworkConfigurationHook from "./modules/createNetworkConfigurationHook";
+import { createNetworkConfigurationHook } from "@ledgerhq/live-common/modularDrawer/modules/createNetworkConfiguration";
+import { accountsCount } from "../../components/AccountCount";
+import { accountsCountAndApy } from "../../components/AccountCountAndApy";
+import { balanceItem } from "../../components/Balance";
+import { useAccountData } from "../../hooks/useAccountData";
+import { useBalanceDeps } from "../../hooks/useBalanceDeps";
 
 export type NetworkSelectionStepProps = {
   availableNetworks: CryptoOrTokenCurrency[];
+  asset?: CryptoOrTokenCurrency;
   onNetworkSelected: (asset: CryptoOrTokenCurrency) => void;
   flow: string;
   source: string;
@@ -33,12 +39,15 @@ const NetworkSelection = ({
   flow,
   source,
   networksConfiguration,
+  asset,
 }: Readonly<NetworkSelectionStepProps>) => {
   const { trackModularDrawerEvent } = useModularDrawerAnalytics();
 
+  const networks = availableNetworks.map(n => (n.type === "CryptoCurrency" ? n : n.parentCurrency));
+
   const handleNetworkClick = useCallback(
     (networkId: string) => {
-      const originalNetwork = availableNetworks.find(n => n.id === networkId);
+      const originalNetwork = networks.find(n => n.id === networkId);
       if (originalNetwork) {
         trackModularDrawerEvent(
           EVENTS_NAME.NETWORK_CLICKED,
@@ -57,22 +66,26 @@ const NetworkSelection = ({
         onNetworkSelected(originalNetwork);
       }
     },
-    [
-      availableNetworks,
-      flow,
-      source,
-      networksConfiguration,
-      trackModularDrawerEvent,
-      onNetworkSelected,
-    ],
+    [networks, trackModularDrawerEvent, flow, source, networksConfiguration, onNetworkSelected],
   );
 
-  const transformNetworks = createNetworkConfigurationHook({
+  const networkConfigurationDeps = {
+    useAccountData,
+    accountsCount,
+    accountsCountAndApy,
+    useBalanceDeps,
+    balanceItem,
+  };
+
+  const makeNetworkConfigurationHook = createNetworkConfigurationHook(networkConfigurationDeps);
+
+  const transformNetworks = makeNetworkConfigurationHook({
     networksConfig: networksConfiguration,
     accounts$: undefined,
+    selectedAssetId: asset ? asset.id : "",
   });
 
-  const orderedNetworks = orderBy(availableNetworks, ["name"]);
+  const orderedNetworks = orderBy(networks, ["name"]);
 
   const formattedNetworks = transformNetworks(orderedNetworks);
 

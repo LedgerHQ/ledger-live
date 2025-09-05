@@ -47,13 +47,16 @@ export function EvmStakingDrawerBody({
           page,
         });
         onClose(() => {
-          navigation.navigate(ScreenName.PlatformApp, {
-            platform: manifest.id,
-            name: manifest.name,
-            accountId: accountIdForManifestVersion,
-            walletAccountId: walletApiAccountId,
-            ledgerAccountId: accountId,
-            ...(customDappURL ? { customDappURL } : {}),
+          navigation.navigate(NavigatorName.Base, {
+            screen: ScreenName.PlatformApp,
+            params: {
+              platform: manifest.id,
+              name: manifest.name,
+              accountId: accountIdForManifestVersion,
+              walletAccountId: walletApiAccountId,
+              ledgerAccountId: accountId,
+              ...(customDappURL ? { customDappURL } : {}),
+            },
           });
         });
       }

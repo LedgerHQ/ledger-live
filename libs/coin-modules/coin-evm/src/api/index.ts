@@ -13,9 +13,10 @@ import {
   Stake,
   Reward,
   TransactionValidation,
+  AssetInfo,
 } from "@ledgerhq/coin-framework/api/index";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
-import { CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrencyId, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { BroadcastConfig } from "@ledgerhq/types-live";
 import { setCoinConfig, type EvmConfig } from "../config";
 import {
@@ -28,6 +29,8 @@ import {
   getBalance,
   getSequence,
   validateIntent,
+  getTokenFromAsset,
+  getAssetFromToken,
 } from "../logic/index";
 
 export function createApi(config: EvmConfig, currencyId: CryptoCurrencyId): Api {
@@ -51,7 +54,7 @@ export function createApi(config: EvmConfig, currencyId: CryptoCurrencyId): Api 
       address: string,
       pagination: Pagination,
     ): Promise<[Operation<MemoNotSupported>[], string]> =>
-      listOperations(currency, address, pagination),
+      listOperations(currency, address, pagination.minHeight),
     getBlock(_height): Promise<Block> {
       throw new Error("getBlock is not supported");
     },
@@ -67,5 +70,9 @@ export function createApi(config: EvmConfig, currencyId: CryptoCurrencyId): Api 
     getSequence: (address: string): Promise<number> => getSequence(currency, address),
     validateIntent: (intent: TransactionIntent): Promise<TransactionValidation> =>
       validateIntent(currency, intent),
+    getTokenFromAsset: (asset: AssetInfo): TokenCurrency | undefined =>
+      getTokenFromAsset(currency, asset),
+    getAssetFromToken: (token: TokenCurrency, owner: string): AssetInfo =>
+      getAssetFromToken(currency, token, owner),
   };
 }
