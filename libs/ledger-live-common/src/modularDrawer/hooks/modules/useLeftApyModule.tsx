@@ -1,11 +1,8 @@
 import React, { useMemo } from "react";
-import { useSelector } from "react-redux";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { selectInterestRateByCurrency } from "../../data/entities/interestRateSelectors";
 import { ApyType } from "../../utils/type";
-
-const isValidApyType = (type: string): type is ApyType =>
-  type === "NRR" || type === "APY" || type === "APR";
+import { useInterestRatesByCurrencies } from "../useInterestRatesByCurrencies";
+import { getInterestRateForAsset } from "../../utils/getInterestRateForAsset";
 
 const createApyItem = ({
   value,
@@ -21,26 +18,14 @@ export const useLeftApyModule = (
   currencies: CryptoOrTokenCurrency[],
   ApyIndicator: React.ComponentType<{ value: number; type: ApyType }>,
 ) => {
-  const interestRates = useSelector(state => {
-    const rates: Record<string, { value: number; type: ApyType } | undefined> = {};
-    currencies.forEach(currency => {
-      const apiRate = selectInterestRateByCurrency(state, currency.id);
-      if (apiRate && isValidApyType(apiRate.type)) {
-        rates[currency.id] = {
-          value: apiRate.rate,
-          type: apiRate.type,
-        };
-      }
-    });
-    return rates;
-  });
+  const interestRates = useInterestRatesByCurrencies(currencies);
 
   return useMemo(() => {
     return currencies.map(currency => {
-      const interestRate = interestRates[currency.id];
-      const interestRatePercentageRounded = interestRate
-        ? Math.round(interestRate.value * 100 * 100) / 100
-        : 0;
+      const { interestRate, interestRatePercentageRounded } = getInterestRateForAsset(
+        currency,
+        interestRates,
+      );
 
       if (!interestRate || interestRatePercentageRounded <= 0) {
         return currency;

@@ -2,7 +2,7 @@ import type { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { AssetType, CreateAssetConfigurationHook, AssetConfigurationDeps } from "../utils/type";
 import { CurrenciesByProviderId } from "../../deposit/type";
 import { composeHooks } from "../../utils/composeHooks";
-import { createUseLeftApyModule } from "../hooks/useLeftApy";
+import { useLeftApyModule } from "../hooks/modules/useLeftApyModule";
 import { createUseRightBalanceAsset } from "../hooks/useRightBalanceAsset";
 
 const getRightElement =
@@ -24,7 +24,8 @@ const getLeftElement =
   (AssetConfigurationDeps: AssetConfigurationDeps) => (leftElement: string) => {
     switch (leftElement) {
       case "apy":
-        return createUseLeftApyModule({ ApyIndicator: AssetConfigurationDeps.ApyIndicator });
+        return (assets: CryptoOrTokenCurrency[]) =>
+          useLeftApyModule(assets, AssetConfigurationDeps.ApyIndicator);
       case "priceVariation":
       case "undefined":
       default:
