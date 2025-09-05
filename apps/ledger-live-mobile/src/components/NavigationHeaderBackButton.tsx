@@ -31,7 +31,6 @@ export const NavigationHeaderBackButton: React.FC<Props> = React.memo(({ onPress
     if (onPress) {
       onPress(navigation);
     } else if (navigation.canGoBack()) {
-      console.log("goBack");
       navigation.goBack();
     }
   }
