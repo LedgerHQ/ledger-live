@@ -107,6 +107,11 @@ const envDefinitions = {
     parser: stringParser,
     desc: "Node endpoint for celo",
   },
+  ENABLE_CELO_TOKENS: {
+    def: false,
+    parser: boolParser,
+    desc: "Enable token send and receive for Celo",
+  },
   COSMOS_GAS_AMPLIFIER: {
     def: 1.3, // Same as Keplr
     parser: intParser,
