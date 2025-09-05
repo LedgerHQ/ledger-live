@@ -8,12 +8,12 @@ export const accountsCountAndApy = ({
   value,
   type,
 }: {
-  label: string;
-  value: number;
-  type: ApyType;
+  label?: string;
+  value?: number;
+  type?: ApyType;
 }) => (
   <>
-    {accountsCount({ label })}
-    <ApyIndicator value={value} type={type} />
+    {label && accountsCount({ label })}
+    {value && type ? <ApyIndicator value={value} type={type} /> : null}
   </>
 );

@@ -86,7 +86,7 @@ describe("ModularDrawer modules integration", () => {
   });
 
   it("should display the number of accounts and apy indicator on network list", async () => {
-    const { getByText, queryAllByText, getAllByText, user } = render(
+    const { getByText, getAllByText, user } = render(
       <ModularDrawerSharedNavigator
         networksConfiguration={{
           leftElement: "numberOfAccountsAndApy",
@@ -113,7 +113,7 @@ describe("ModularDrawer modules integration", () => {
     advanceTimers();
     expect(getByText(/2 accounts/i)).toBeVisible();
     expect(getAllByText(/1 account/i).length).toBe(3);
-    expect(queryAllByText(/5.11% APY/i).length).toBe(4);
+    expect(getAllByText(/3.66% APY/i).length).toBe(1);
   });
 
   it("should display balance on the right at assetSelection step", async () => {
