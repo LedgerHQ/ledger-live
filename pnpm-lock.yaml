@@ -8090,14 +8090,17 @@ importers:
         specifier: 0.0.0-connect-app-20250609094118
         version: 0.0.0-connect-app-20250609094118(rxjs@7.8.1)
       '@ledgerhq/device-transport-kit-speculos':
-        specifier: 0.0.0-legacy-speculos-datasource-20250821095840
-        version: 0.0.0-legacy-speculos-datasource-20250821095840(@ledgerhq/device-management-kit@0.0.0-connect-app-20250609094118(rxjs@7.8.1))(rxjs@7.8.1)
+        specifier: 0.0.0-e2e-speculos-20250905084020
+        version: 0.0.0-e2e-speculos-20250905084020(@ledgerhq/device-management-kit@0.0.0-connect-app-20250609094118(rxjs@7.8.1))(rxjs@7.8.1)
       '@ledgerhq/errors':
         specifier: 6.22.0
         version: 6.22.0
       '@ledgerhq/hw-transport':
         specifier: workspace:*
         version: link:../ledgerjs/packages/hw-transport
+      '@ledgerhq/live-env':
+        specifier: workspace:^
+        version: link:../env
       '@ledgerhq/logs':
         specifier: workspace:^
         version: link:../ledgerjs/packages/logs
@@ -14440,10 +14443,10 @@ packages:
       react-native-ble-plx: 3.4.0
       rxjs: ^7.8.2
 
-  '@ledgerhq/device-transport-kit-speculos@0.0.0-legacy-speculos-datasource-20250821095840':
-    resolution: {integrity: sha512-E0pOF9XjkmyHYWhMjytDby1TaRl3XHkq3tB6OUtpk9EX3Wfehl7jIpWs+oCu6jlBPRV0tcUMosU92iKgJf6UXA==}
+  '@ledgerhq/device-transport-kit-speculos@0.0.0-e2e-speculos-20250905084020':
+    resolution: {integrity: sha512-9DQ2TOFc5QdvvagH6sz4zJLd2bp5y0MljfU7LMPXc4sQ7SqgxQCqT6iLMhwiN2NWOtqEOA/moalLULxoV1Snjw==}
     peerDependencies:
-      '@ledgerhq/device-management-kit': 0.0.0-legacy-speculos-datasource-20250821095840
+      '@ledgerhq/device-management-kit': 0.0.0-e2e-speculos-20250905084020
       rxjs: ^7.8.2
 
   '@ledgerhq/device-transport-kit-web-hid@0.0.0-apex-support-20250721132630':
@@ -43257,7 +43260,7 @@ snapshots:
       rxjs: 7.8.1
       uuid: 11.0.3
 
-  '@ledgerhq/device-transport-kit-speculos@0.0.0-legacy-speculos-datasource-20250821095840(@ledgerhq/device-management-kit@0.0.0-connect-app-20250609094118(rxjs@7.8.1))(rxjs@7.8.1)':
+  '@ledgerhq/device-transport-kit-speculos@0.0.0-e2e-speculos-20250905084020(@ledgerhq/device-management-kit@0.0.0-connect-app-20250609094118(rxjs@7.8.1))(rxjs@7.8.1)':
     dependencies:
       '@ledgerhq/device-management-kit': 0.0.0-connect-app-20250609094118(rxjs@7.8.1)
       '@sentry/minimal': 6.19.7

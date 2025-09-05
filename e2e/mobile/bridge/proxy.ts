@@ -98,7 +98,7 @@ const job = ({ device, port, silent, verbose, speculosUrl, speculosApiPort }: Pr
       id: `speculos-http-${speculosApiPort}`,
       open: id =>
         id.includes(port.toString())
-          ? retry(() => DeviceManagementKitTransportSpeculos.open(req))
+          ? retry(async () => await DeviceManagementKitTransportSpeculos.open(req))
           : null,
       disconnect: () => Promise.resolve(),
     };

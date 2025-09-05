@@ -211,7 +211,7 @@ export const CLI = {
 
     registerTransportModule({
       id: "speculos-http",
-      open: () => retry(() => DeviceManagementKitTransportSpeculos.open(req)),
+      open: () => retry(async () => await DeviceManagementKitTransportSpeculos.open(req)),
       disconnect: () => Promise.resolve(),
     });
   },
