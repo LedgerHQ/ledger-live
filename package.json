@@ -86,6 +86,7 @@
     "coin:evm": "pnpm --filter coin-evm",
     "coin:filecoin": "pnpm --filter coin-filecoin",
     "coin:framework": "pnpm --filter coin-framework",
+    "coin:kaspa": "pnpm --filter coin-kaspa",
     "coin:tester": "pnpm --filter coin-tester",
     "coin:multiversx": "pnpm --filter coin-multiversx",
     "coin:near": "pnpm --filter coin-near",

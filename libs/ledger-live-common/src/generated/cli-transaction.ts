@@ -11,6 +11,7 @@ import { cliTools as hedera } from "../families/hedera/setup";
 import { cliTools as filecoin } from "../families/filecoin/setup";
 import { cliTools as internet_computer } from "../families/internet_computer/setup";
 import { cliTools as icon } from "../families/icon/setup";
+import { cliTools as kaspa } from "../families/kaspa/setup";
 import { cliTools as multiversx } from "../families/multiversx/setup";
 import { cliTools as near } from "../families/near/setup";
 import { cliTools as polkadot } from "../families/polkadot/setup";
@@ -39,6 +40,7 @@ export default {
   filecoin,
   internet_computer,
   icon,
+  kaspa,
   multiversx,
   near,
   polkadot,

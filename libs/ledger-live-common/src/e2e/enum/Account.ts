@@ -276,6 +276,20 @@ export class Account {
     0,
   );
 
+  static readonly KASPA_1 = new Account(
+    Currency.KAS,
+    "KASPA 1",
+    "kaspa:kaspa:qqpqtujclz2usyj7rgmhghfu8e5echrh8t2pkz69tq37uclfrpu3g0w6laqqk",
+    0,
+  );
+
+  static readonly KASPA_2 = new Account(
+    Currency.KAS,
+    "KASPA 2",
+    "kaspa:qrx2agwk93qyjvlcuzz5jy37knt298zupvw2ls05p4te55c29uwuyzzra5qkv",
+    1,
+  );
+
   static readonly LTC_1 = new Account(
     Currency.LTC,
     "Litecoin 1",
