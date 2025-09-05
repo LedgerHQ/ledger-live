@@ -1,8 +1,10 @@
-import React from "react";
+import React, { useEffect } from "react";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import ModularDrawerFlowManagerLocalData from "./ModularDrawerFlowManagerLocalData";
 import ModularDrawerFlowManagerRemoteData from "./ModularDrawerFlowManagerRemoteData";
 import { ModularDrawerFlowManagerProps } from "./types";
+import { useDispatch } from "react-redux";
+import { setSearchedValue } from "~/renderer/reducers/modularDrawer";
 
 const ModularDrawerFlowManager = ({
   currencies,
@@ -16,6 +18,14 @@ const ModularDrawerFlowManager = ({
   onAccountSelected,
 }: ModularDrawerFlowManagerProps) => {
   const featureModularDrawerBackendData = useFeature("lldModularDrawerBackendData");
+
+  const dispatch = useDispatch();
+  useEffect(() => {
+    return () => {
+      // Reset search value when the drawer closes/unmounts
+      dispatch(setSearchedValue(undefined));
+    };
+  }, [dispatch]);
 
   if (featureModularDrawerBackendData?.enabled) {
     return (

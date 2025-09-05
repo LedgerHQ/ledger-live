@@ -4,6 +4,8 @@ import { getEnv } from "@ledgerhq/live-env";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { useModularDrawerAnalytics } from "LLD/features/ModularDrawer/analytics/useModularDrawerAnalytics";
 import { MODULAR_DRAWER_PAGE_NAME } from "LLD/features/ModularDrawer/analytics/modularDrawer.types";
+import { useDispatch, useSelector } from "react-redux";
+import { modularDrawerStateSelector, setSearchedValue } from "~/renderer/reducers/modularDrawer";
 
 export type SearchProps = {
   setItemsToDisplay: (assets: CryptoOrTokenCurrency[]) => void;
@@ -31,16 +33,16 @@ const FUSE_OPTIONS = {
 
 export const useSearch = ({
   setItemsToDisplay,
-  setSearchedValue,
   assetsToDisplay: _assetsToDisplay,
   originalAssets,
-  defaultValue,
   items: _items,
   source,
   flow,
 }: SearchProps): SearchResult => {
+  const dispatch = useDispatch();
+  const { searchedValue } = useSelector(modularDrawerStateSelector);
   const { trackModularDrawerEvent } = useModularDrawerAnalytics();
-  const [displayedValue, setDisplayedValue] = useState(defaultValue);
+  const [displayedValue, setDisplayedValue] = useState(searchedValue);
 
   const fuse = useMemo(() => new Fuse(originalAssets, FUSE_OPTIONS), [originalAssets]);
 
@@ -48,7 +50,7 @@ export const useSearch = ({
     (current: string, previous: string) => {
       const query = current;
       const prevQuery = previous;
-      setSearchedValue?.(query);
+      dispatch(setSearchedValue(query));
 
       if (query === prevQuery) {
         return;
@@ -78,15 +80,7 @@ export const useSearch = ({
 
       setItemsToDisplay(results);
     },
-    [
-      trackModularDrawerEvent,
-      flow,
-      source,
-      originalAssets,
-      fuse,
-      setItemsToDisplay,
-      setSearchedValue,
-    ],
+    [dispatch, trackModularDrawerEvent, flow, source, fuse, setItemsToDisplay, originalAssets],
   );
 
   const handleSearch = useCallback((queryOrEvent: string | ChangeEvent<HTMLInputElement>) => {

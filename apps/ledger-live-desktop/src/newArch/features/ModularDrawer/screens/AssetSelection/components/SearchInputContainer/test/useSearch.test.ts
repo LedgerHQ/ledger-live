@@ -18,10 +18,8 @@ describe("useSearch", () => {
   ] as CryptoOrTokenCurrency[];
 
   const mockSetItemsToDisplay = jest.fn();
-  const mockSetSearchedValue = jest.fn();
   const defaultProps = {
     setItemsToDisplay: mockSetItemsToDisplay,
-    setSearchedValue: mockSetSearchedValue,
     assetsToDisplay: mockAssetsToDisplay,
     originalAssets: mockAssetsToDisplay,
     source: "test",
@@ -34,8 +32,14 @@ describe("useSearch", () => {
     jest.clearAllTimers();
   });
 
-  it("should initialize with default value if provided", () => {
-    const { result } = renderHook(() => useSearch({ ...defaultProps, defaultValue: "BTC" }));
+  it("should initialize with store value", () => {
+    const { result } = renderHook(() => useSearch(defaultProps), {
+      initialState: {
+        modularDrawer: {
+          searchedValue: "BTC",
+        },
+      },
+    });
 
     expect(result.current.displayedValue).toBe("BTC");
     expect(mockSetItemsToDisplay).not.toHaveBeenCalled();
@@ -54,7 +58,7 @@ describe("useSearch", () => {
   });
 
   it("should filter items based on search query from originalAssets", () => {
-    const { result } = renderHook(() => useSearch(defaultProps));
+    const { result, store } = renderHook(() => useSearch(defaultProps));
 
     act(() => {
       result.current.handleSearch("Bit");
@@ -68,7 +72,7 @@ describe("useSearch", () => {
     expect(mockSetItemsToDisplay).toHaveBeenCalledWith([
       { name: "Bitcoin", ticker: "BTC", id: "bitcoin", type: "CryptoCurrency" },
     ]);
-    expect(mockSetSearchedValue).toHaveBeenCalledWith("Bit");
+    expect(store.getState().modularDrawer.searchedValue).toBe("Bit");
   });
 
   it("should reset items to originalAssets when search query is cleared", () => {
