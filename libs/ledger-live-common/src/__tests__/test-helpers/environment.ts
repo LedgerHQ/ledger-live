@@ -119,6 +119,7 @@ setSupportedCurrencies([
   "canton_network",
   "canton_network_devnet",
   "canton_network_localnet",
+  "kaspa",
 ]);
 LiveConfig.setConfig(liveConfig);
 
