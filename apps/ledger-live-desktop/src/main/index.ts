@@ -6,7 +6,7 @@ import {
   session,
   webContents,
   shell,
-  BrowserWindow,
+  type BrowserWindow,
   dialog,
   protocol,
 } from "electron";
@@ -22,8 +22,13 @@ import { getSentryEnabled, setUserId } from "./internal-lifecycle";
 import db from "./db";
 import debounce from "lodash/debounce";
 import sentry from "~/sentry/main";
-import { SettingsState } from "~/renderer/reducers/settings";
-import { User } from "~/renderer/storage";
+import type { SettingsState } from "~/renderer/reducers/settings";
+import type { User } from "~/renderer/storage";
+import {
+  installExtension,
+  REDUX_DEVTOOLS,
+  REACT_DEVELOPER_TOOLS,
+} from "electron-devtools-installer";
 
 Store.initRenderer();
 
@@ -78,6 +83,7 @@ app.on("will-finish-launching", () => {
 });
 app.on("ready", async () => {
   app.dirname = __dirname;
+
   if (__DEV__) {
     await installExtensions();
   }
@@ -244,6 +250,7 @@ ipcMain.on("ready-to-show", () => {
       const { argv } = process;
       const uri = argv.filter(arg => arg.startsWith("ledgerlive://"));
       if (uri.length) {
+        show(w);
         if ("send" in w.webContents) {
           w.webContents.send("deep-linking", uri[0]);
         }
@@ -252,25 +259,13 @@ ipcMain.on("ready-to-show", () => {
   }
 });
 async function installExtensions() {
-  // eslint-disable-next-line @typescript-eslint/no-var-requires
-  const installer = require("electron-devtools-installer");
-  const forceDownload = true; // process.env.UPGRADE_EXTENSIONS
-  const extensions = ["REACT_DEVELOPER_TOOLS", "REDUX_DEVTOOLS"];
-  await Promise.all(
-    extensions.map(name =>
-      installer.default(installer[name], {
-        forceDownload,
-        loadExtensionOptions: {
-          allowFileAccess: true,
-        },
-      }),
-    ),
-  ).catch(console.error);
-  //Hack to load React devtools extension without a reload due to this issue: https://github.com/MarshallOfSound/electron-devtools-installer/issues/244
-  return session.defaultSession.getAllExtensions().map(e => {
-    if (e.name === "React Developer Tools") {
-      session.defaultSession.loadExtension(e.path);
-    }
+  // https://github.com/MarshallOfSound/electron-devtools-installer#usage
+  app.whenReady().then(() => {
+    installExtension([REDUX_DEVTOOLS, REACT_DEVELOPER_TOOLS], {
+      loadExtensionOptions: {
+        allowFileAccess: true,
+      },
+    }).catch(console.error);
   });
 }
 function clearSessionCache(session: Electron.Session): Promise<void> {
