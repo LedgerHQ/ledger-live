@@ -238,7 +238,6 @@ describe("Xrp Api (mainnet)", () => {
         type: "IN",
         fees: 0.00001,
       };
-      // expect(ops.map(o => o.tx.hash)).toBe("toto");
       const op = ops.find(o => o.tx.hash === inTx.hash) as Operation;
       expect(op.tx.hash).toEqual(inTx.hash);
       expect(op.value).toEqual(BigInt(inTx.amount * 1e6));
