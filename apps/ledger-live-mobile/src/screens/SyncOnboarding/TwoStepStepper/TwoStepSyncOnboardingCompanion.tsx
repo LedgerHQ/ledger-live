@@ -261,7 +261,6 @@ export const TwoStepSyncOnboardingCompanion: React.FC<TwoStepSyncOnboardingCompa
               notifyEarlySecurityCheckShouldReset={notifyEarlySecurityCheckShouldReset}
               handlePollingError={twoStepDesync.handlePollingError}
               handleFinishStep={(nextStep: SEED_STATE) => setCompanionStep(nextStep)}
-              isCollapsed={companionStep !== COMPANION_STATE.SETUP}
               isPollingOn={isPollingOn}
               setIsPollingOn={setIsPollingOn}
               parentRef={scrollViewRef}

@@ -14,4 +14,5 @@ export type Item = {
   progress?: number;
   renderBody?: (isDisplayed?: boolean) => ReactNode;
   background?: ReactNode;
+  isNeutral?: boolean;
 };

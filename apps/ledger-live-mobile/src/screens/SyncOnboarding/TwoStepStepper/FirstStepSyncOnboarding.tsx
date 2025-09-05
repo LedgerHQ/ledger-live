@@ -26,9 +26,8 @@ import { HOOKS_TRACKING_LOCATIONS } from "~/analytics/hooks/variables";
 import DeviceSeededSuccessPanel from "./DeviceSeededSuccessPanel";
 import BackgroundGreen from "../assets/BackgroundGreen";
 import Animated, {
-  Extrapolation,
-  interpolate,
   useAnimatedStyle,
+  useDerivedValue,
   useSharedValue,
   withTiming,
 } from "react-native-reanimated";
@@ -42,6 +41,7 @@ import { SEED_STATE } from "./TwoStepSyncOnboardingCompanion";
 
 const POLLING_PERIOD_MS = 1000;
 const READY_SHOW_SUCCESS_DELAY_MS = 2000;
+const OPACITY_DURATION = 400;
 
 const fromSeedPhraseTypeToAnalyticsPropertyString = new Map<SeedPhraseType, string>([
   [SeedPhraseType.TwentyFour, "TwentyFour"],
@@ -79,7 +79,6 @@ interface FirstStepSyncOnboardingProps {
    * set or clean timeout of desync based on device connection errors
    */
   handlePollingError: (error: Error | null) => void;
-  isCollapsed: boolean;
   // Polling state
   isPollingOn: boolean;
   setIsPollingOn: (isPolling: boolean) => void;
@@ -96,7 +95,6 @@ const FirstStepSyncOnboarding = ({
   handleSeedGenerationDelay,
   notifyEarlySecurityCheckShouldReset,
   handlePollingError,
-  isCollapsed,
   isPollingOn,
   setIsPollingOn,
   handleFinishStep,
@@ -112,6 +110,7 @@ const FirstStepSyncOnboarding = ({
 
   const [seedPathStatus, setSeedPathStatus] = useState<SeedPathStatus>("choice_new_or_restore");
   const [hasFinishedAnimation, setHasFinishedAnimation] = useState<boolean>(false);
+  const [hasFinishedExitAnimation, setHasFinishedExitAnimation] = useState<boolean>(false);
   const [isFinishedStep, setIsFinishedStep] = useState<boolean>(false);
 
   /*
@@ -152,6 +151,10 @@ const FirstStepSyncOnboarding = ({
    * Animation State
    */
   const sharedHeight = useSharedValue<number | null>(null);
+  const sharedOpacity = useSharedValue<number>(0);
+  const derivedOpacity = useDerivedValue(() => {
+    return sharedOpacity.value / 100;
+  });
   const animatedStyle = useAnimatedStyle(
     () => ({
       /**
@@ -159,9 +162,9 @@ const FirstStepSyncOnboarding = ({
        * without its height being derived from an animated value.
        */
       height: sharedHeight.value ?? undefined,
-      opacity: interpolate(sharedHeight.value || 0, [0, 100], [0, 1], Extrapolation.CLAMP),
+      opacity: derivedOpacity.value, // interpolate(sharedOpacity.value, [0, 100], [0, 1], Extrapolation.CLAMP),
     }),
-    [],
+    [sharedHeight.value, derivedOpacity.value],
   );
 
   /*
@@ -206,7 +209,7 @@ const FirstStepSyncOnboarding = ({
    */
   const handleLayout = useCallback(
     ({ nativeEvent: { layout } }: LayoutChangeEvent) => {
-      sharedHeight.value = withTiming(layout.height, { duration: 300 });
+      sharedHeight.value = layout.height;
     },
     [sharedHeight],
   );
@@ -234,18 +237,25 @@ const FirstStepSyncOnboarding = ({
   }, [device, dispatchRedux]);
 
   const handleNextStep = useCallback(() => {
-    sharedHeight.value = withTiming(20, { duration: 400 });
+    sharedHeight.value = withTiming(0, { duration: 400 });
+    handleFinishStep(
+      analyticsSeedConfiguration.current === SEED_STATE.NEW_SEED
+        ? SEED_STATE.NEW_SEED
+        : SEED_STATE.RESTORE,
+    );
     setIsFinishedStep(true);
     setTimeout(() => {
       companionSteps.setStep(FirstStepCompanionStepKey.Exit);
       setIsFinishedStep(false);
-      handleFinishStep(
-        analyticsSeedConfiguration.current === SEED_STATE.NEW_SEED
-          ? SEED_STATE.NEW_SEED
-          : SEED_STATE.RESTORE,
-      );
+      setHasFinishedExitAnimation(true);
     }, 400);
-  }, [handleFinishStep, companionSteps, sharedHeight, analyticsSeedConfiguration]);
+  }, [
+    handleFinishStep,
+    companionSteps,
+    sharedHeight,
+    analyticsSeedConfiguration,
+    setHasFinishedExitAnimation,
+  ]);
 
   /*
    * useEffects
@@ -438,10 +448,16 @@ const FirstStepSyncOnboarding = ({
   const showSuccess =
     companionSteps.activeStep === FirstStepCompanionStepKey.Ready && hasFinishedAnimation;
 
+  useEffect(() => {
+    if (showSuccess) {
+      sharedOpacity.value = withTiming(100, { duration: OPACITY_DURATION });
+    }
+  }, [showSuccess, sharedOpacity]);
+
   return (
     <CollapsibleStep
       isFirst
-      isCollapsed={isCollapsed}
+      isCollapsed={hasFinishedExitAnimation}
       title={
         companionSteps.activeStep <= FirstStepCompanionStepKey.Seed
           ? t("syncOnboarding.title", { productName })

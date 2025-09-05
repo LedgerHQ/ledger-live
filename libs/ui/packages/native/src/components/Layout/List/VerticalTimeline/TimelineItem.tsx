@@ -109,7 +109,7 @@ export default function TimelineItem({
         />
         <Container
           status={item.status}
-          isLastItem={isLastItem}
+          isLastItem={isLastItem && !item.isNeutral}
           mt={withExtraMarginOnActiveStep && !isFirstItem && item.status === "active" ? 4 : 0}
           mb={withExtraMarginOnActiveStep && !isLastItem && item.status === "active" ? 4 : 0}
         >

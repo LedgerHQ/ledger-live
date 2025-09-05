@@ -109,6 +109,7 @@ const useCompanionSteps = ({
           key: FirstStepCompanionStepKey.Seed,
           title: t("syncOnboarding.seedStep.title"),
           doneTitle: t("syncOnboarding.seedStep.doneTitle"),
+          isNeutral: true,
           background:
             seedPathStatus === "new_seed" ? (
               <BackgroundBlue />
