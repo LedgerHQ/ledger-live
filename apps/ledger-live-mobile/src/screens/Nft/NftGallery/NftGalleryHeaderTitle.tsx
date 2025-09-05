@@ -2,12 +2,12 @@ import React, { memo } from "react";
 import { TouchableWithoutFeedback } from "react-native";
 import { useRoute } from "@react-navigation/native";
 import { Text } from "@ledgerhq/native-ui";
-import { StackScreenProps } from "@react-navigation/stack";
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { scrollToTop } from "~/navigation/utils";
 import { AccountsNavigatorParamList } from "~/components/RootNavigator/types/AccountsNavigator";
 import { ScreenName } from "~/const";
 
-type NavigationProps = StackScreenProps<AccountsNavigatorParamList, ScreenName.NftGallery>;
+type NavigationProps = NativeStackScreenProps<AccountsNavigatorParamList, ScreenName.NftGallery>;
 
 const NftGalleryHeaderTitle = () => {
   const { params } = useRoute<NavigationProps["route"]>();

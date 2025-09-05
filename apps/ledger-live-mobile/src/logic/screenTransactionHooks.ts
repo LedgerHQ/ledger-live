@@ -30,7 +30,7 @@ import { execAndWaitAtLeast } from "@ledgerhq/live-common/promise";
 import { getEnv } from "@ledgerhq/live-env";
 import { useDispatch, useSelector } from "react-redux";
 import { TransactionRefusedOnDevice } from "@ledgerhq/live-common/errors";
-import { StackNavigationProp } from "@react-navigation/stack";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { updateAccountWithUpdater } from "../actions/accounts";
 import logger from "../logger";
 import { ScreenName } from "~/const";

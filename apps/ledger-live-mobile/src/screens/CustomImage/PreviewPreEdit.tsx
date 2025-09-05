@@ -13,7 +13,7 @@ import {
   StackNavigationState,
   useFocusEffect,
 } from "@react-navigation/native";
-import { StackNavigationEventMap } from "@react-navigation/stack";
+import { NativeStackNavigationEventMap } from "@react-navigation/native-stack";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useNftMetadata } from "@ledgerhq/live-nft-react";
 import { NFTResource } from "@ledgerhq/live-nft/types";
@@ -297,7 +297,8 @@ const PreviewPreEdit = ({ navigation, route }: NavigationProps) => {
     useCallback(() => {
       let dead = false;
       const listener: EventListenerCallback<
-        StackNavigationEventMap & EventMapCore<StackNavigationState<CustomImageNavigatorParamList>>,
+        NativeStackNavigationEventMap &
+          EventMapCore<StackNavigationState<CustomImageNavigatorParamList>>,
         "beforeRemove"
       > = e => {
         if (forceDefaultNavigationBehaviour.current || !isPictureFromGallery) {

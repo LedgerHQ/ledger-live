@@ -1,7 +1,7 @@
 import React, { useCallback } from "react";
 import { StyleSheet, SafeAreaView } from "react-native";
 import { useTheme } from "@react-navigation/native";
-import { StackScreenProps } from "@react-navigation/stack";
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { TrackScreen } from "~/analytics";
 import ValidateError from "~/components/ValidateError";
 import { BaseComposite, BaseNavigation } from "~/components/RootNavigator/types/helpers";
