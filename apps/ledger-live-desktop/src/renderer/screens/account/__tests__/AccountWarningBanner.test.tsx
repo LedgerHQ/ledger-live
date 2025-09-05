@@ -70,7 +70,11 @@ describe("AccountWarningBanner", () => {
 
   test("renders will be deprecated warning banner", () => {
     mockedGetCurrencyConfiguration.mockReturnValue({
-      status: { type: "will_be_deprecated", deprecated_date: "2025-12-31" },
+      status: {
+        type: "will_be_deprecated",
+        deprecated_date: "2025-12-31",
+        link: "https://deprecatedbanner.com",
+      },
     });
 
     render(<AccountWarningBanner currency={mockCurrency} />);
