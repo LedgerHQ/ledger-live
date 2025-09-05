@@ -2974,9 +2974,6 @@ importers:
       '@ledgerhq/hw-app-eth':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/hw-app-eth
-      '@ledgerhq/live-config':
-        specifier: workspace:^
-        version: link:../../live-config
       '@ledgerhq/types-cryptoassets':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/types-cryptoassets
@@ -3888,9 +3885,6 @@ importers:
       '@ledgerhq/disable-network-setup':
         specifier: workspace:^
         version: link:../../disable-network-setup
-      '@ledgerhq/live-config':
-        specifier: 3.1.0
-        version: 3.1.0
       '@swc/core':
         specifier: 1.4.11
         version: 1.4.11
@@ -14517,9 +14511,6 @@ packages:
 
   '@ledgerhq/live-app-sdk@0.8.2':
     resolution: {integrity: sha512-yD+L02pAwTfjeSyixWkfqlh6Xg3yAGFnFitrcHk2WWUtKg1TVmNpWNHLS22LKYYWJ7Lflj/pLLQ0nKm1OsJB9g==}
-
-  '@ledgerhq/live-config@3.1.0':
-    resolution: {integrity: sha512-a1UduyKTKV595/3q3RvpbMzjbvYb/mhKIvMXfhBOK4zwlLSSFfAzYZZOhFyCoThUXy85s28dyZrBz8Vd3OVdfg==}
 
   '@ledgerhq/live-env@2.4.1':
     resolution: {integrity: sha512-ZiVUfN1F5rnj6g3IUqOsHvitiKd7rtGy7FY7VBOXbG9qN7XLeLfmJhnzh/5yjX14dXhVOeAlPd1UzmmpxkRU6A==}
@@ -43326,10 +43317,6 @@ snapshots:
     dependencies:
       bignumber.js: 9.1.2
       json-rpc-2.0: 1.7.0
-
-  '@ledgerhq/live-config@3.1.0':
-    dependencies:
-      lodash: 4.17.21
 
   '@ledgerhq/live-env@2.4.1':
     dependencies:

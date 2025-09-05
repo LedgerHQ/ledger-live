@@ -36,13 +36,14 @@ export const SAFE_REORG_THRESHOLD = 80;
  */
 export const getAccountShape: GetAccountShape<Account> = async (infos, { blacklistedTokenIds }) => {
   const { initialAccount, address, derivationMode, currency } = infos;
+  const nodeApi = getNodeApi(currency);
+
+  // Preload tokens (CAL or legacy) after ensuring node config is valid
   try {
     await preload(currency);
   } catch (error) {
     log("EVM Sync", `Token preload failed for ${currency.id}:`, error);
   }
-
-  const nodeApi = getNodeApi(currency);
   const [latestBlock, balance] = await Promise.all([
     lastBlock(currency),
     nodeApi.getCoinBalance(currency, address),

@@ -8,15 +8,22 @@ import {
 import { ERC20Token } from "@ledgerhq/cryptoassets/types";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { fetchTokensFromCALService } from "@ledgerhq/cryptoassets/crypto-assets-importer/fetch/index";
-import {
-  resolveTokenAdder,
-  isCalLazyLoadingActive,
-} from "@ledgerhq/coin-framework/crypto-assets/utils";
+import { resolveTokenAdder } from "@ledgerhq/coin-framework/crypto-assets/utils";
 import { getCALHash, setCALHash } from "../logic";
 import { getCryptoAssetsStore } from "../cryptoAssetsStore";
+import { getCoinConfig } from "../config";
 
-const isLazyLoadingEnabled = (): boolean => isCalLazyLoadingActive(getCryptoAssetsStore);
 const isDefined = <T>(x: T | undefined): x is T => x !== undefined;
+
+const isCalEnabled = (currency: CryptoCurrency): boolean => {
+  try {
+    const override = getCoinConfig(currency)?.info?.calLazyLoading;
+    if (override !== undefined) return override;
+  } catch (_) {
+    // coin config not set default to legacy
+  }
+  return false;
+};
 
 export const fetchERC20Tokens: (
   currency: CryptoCurrency,
@@ -26,7 +33,7 @@ export const fetchERC20Tokens: (
 
   if (!chainId) return null;
 
-  if (!isLazyLoadingEnabled()) {
+  if (!isCalEnabled(currency)) {
     const embeddedTokens = tokensByChainId[chainId as keyof typeof tokensByChainId] || [];
     return embeddedTokens;
   }

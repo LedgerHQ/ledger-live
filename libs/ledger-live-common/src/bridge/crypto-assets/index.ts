@@ -1,4 +1,3 @@
-import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import * as legacy from "@ledgerhq/cryptoassets/tokens";
 import type { CryptoAssetsStore } from "@ledgerhq/types-live";
 import { isCALIntegrationEnabled, getCALStore } from "./cal-integration";
@@ -21,16 +20,9 @@ export function getCryptoAssetsStore(): CryptoAssetsStore {
   if (isCALIntegrationEnabled()) {
     return getCALStore();
   }
-
-  const featureEnabled =
-    LiveConfig.isConfigSet() && LiveConfig.getValueByKey("feature_cal_lazy_loading");
-  if (!featureEnabled) {
-    return legacyStore;
+  if (cryptoAssetsStore) {
+    return cryptoAssetsStore;
   }
-
-  if (!cryptoAssetsStore) {
-    throw new Error("CryptoAssetsStore is not set. Please call setCryptoAssetsStore first.");
-  }
-
-  return cryptoAssetsStore;
+  // Fallback to legacy static store
+  return legacyStore;
 }

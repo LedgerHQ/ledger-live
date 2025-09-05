@@ -53,6 +53,7 @@ describe("EVM Family", () => {
       mockGetConfig.mockImplementation((): any => {
         return {
           info: {
+            calLazyLoading: true,
             node: {
               type: "external",
               uri: "https://my-rpc.com",
