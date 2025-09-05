@@ -30,6 +30,7 @@ import {
   getSequence,
   validateIntent,
   getTokenFromAsset,
+  getStakes,
 } from "../logic/index";
 
 export function createApi(config: EvmConfig, currencyId: CryptoCurrencyId): Api {
@@ -60,9 +61,8 @@ export function createApi(config: EvmConfig, currencyId: CryptoCurrencyId): Api 
     getBlockInfo(_height: number): Promise<BlockInfo> {
       throw new Error("getBlockInfo is not supported");
     },
-    getStakes(_address: string, _cursor?: Cursor): Promise<Page<Stake>> {
-      throw new Error("getStakes is not supported");
-    },
+    getStakes: (address: string, cursor?: Cursor): Promise<Page<Stake>> =>
+      getStakes(currency, address, cursor),
     getRewards(_address: string, _cursor?: Cursor): Promise<Page<Reward>> {
       throw new Error("getRewards is not supported");
     },
