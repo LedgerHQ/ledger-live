@@ -41,6 +41,11 @@ export interface ValidatedEarnInfoModal {
   learnMoreLink: string;
 }
 
+export interface ValidatedEarnDepositScreen {
+  cryptoAssetId?: string;
+  accountId?: string;
+}
+
 export interface ValidatedEarnMenuModal {
   title: string;
   options: Array<{
@@ -271,6 +276,16 @@ export function validateEarnInfoModal(
     message: sanitizedMessage,
     messageTitle: sanitizedTitle,
     learnMoreLink: validatedUrl,
+  };
+}
+
+export function validateEarnDepositScreen(
+  cryptoAssetId?: string,
+  accountId?: string,
+): ValidatedEarnDepositScreen {
+  return {
+    cryptoAssetId: sanitizeString(cryptoAssetId || "", MAX_TITLE_LENGTH),
+    accountId: sanitizeString(accountId || "", MAX_TITLE_LENGTH),
   };
 }
 
