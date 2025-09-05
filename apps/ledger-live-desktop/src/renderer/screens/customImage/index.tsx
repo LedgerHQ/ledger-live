@@ -19,7 +19,7 @@ import { withV3StyleProvider } from "~/renderer/styles/StyleProviderV3";
 import { ImageBase64Data } from "~/renderer/components/CustomImage/types";
 import { CropParams } from "~/renderer/components/CustomImage/ImageCropper";
 import { urlContentToDataUri } from "~/renderer/components/CustomImage/shared";
-import { ProcessorResult } from "~/renderer/components/CustomImage/ImageGrayscalePreview";
+import { ProcessorResult } from "~/renderer/components/CustomImage/dithering/types";
 import ErrorDisplay from "~/renderer/components/ErrorDisplay";
 import { withV2StyleProvider } from "~/renderer/styles/StyleProvider";
 import StepChooseImage from "./Step1ChooseImage";
