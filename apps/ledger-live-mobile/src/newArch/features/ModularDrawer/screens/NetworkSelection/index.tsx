@@ -14,7 +14,6 @@ import {
   MODULAR_DRAWER_PAGE_NAME,
 } from "../../analytics";
 import { BottomSheetFlatList } from "@gorhom/bottom-sheet";
-import orderBy from "lodash/orderBy";
 import { createNetworkConfigurationHook } from "@ledgerhq/live-common/modularDrawer/modules/createNetworkConfiguration";
 import { accountsCount } from "../../components/AccountCount";
 import { accountsCountAndApy } from "../../components/AccountCountAndApy";
@@ -85,9 +84,7 @@ const NetworkSelection = ({
     selectedAssetId: asset ? asset.id : "",
   });
 
-  const orderedNetworks = orderBy(networks, ["name"]);
-
-  const formattedNetworks = transformNetworks(orderedNetworks);
+  const formattedNetworks = transformNetworks(networks, availableNetworks);
 
   const keyExtractor = useCallback((item: AssetType, index: number) => `${item.id}-${index}`, []);
 

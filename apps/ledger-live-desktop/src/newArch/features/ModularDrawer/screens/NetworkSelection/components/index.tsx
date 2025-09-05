@@ -59,7 +59,7 @@ export const SelectNetwork = ({
     currenciesByProvider,
   });
 
-  const formattedNetworks = transformNetworks(networks);
+  const formattedNetworks = transformNetworks(networks, networks);
 
   const onClick = (networkId: string) => {
     const network = networks.find(({ id }) => id === networkId);
