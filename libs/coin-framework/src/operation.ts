@@ -171,6 +171,7 @@ export const OPERATION_TYPE_OUT_FAMILY = [
   "SLASH",
   "LOCK",
   "BURN",
+  "ASSOCIATE_TOKEN",
 ];
 export const OPERATION_TYPE_STAKE_FAMILY = [
   "FREEZE",
