@@ -134,6 +134,7 @@ export type CryptoCurrencyId =
   | "filecoin"
   | "arbitrum"
   | "arbitrum_sepolia"
+  | "core"
   | "cronos"
   | "fantom"
   | "flare"
