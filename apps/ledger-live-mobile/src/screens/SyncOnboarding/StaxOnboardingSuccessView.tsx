@@ -18,7 +18,6 @@ const absoluteStyle: ViewStyle = {
 
 type StaxOnboardingSuccessViewProps = {
   onAnimationFinish?: () => void;
-  loop: boolean;
 };
 
 export default function StaxOnboardingSuccessView({

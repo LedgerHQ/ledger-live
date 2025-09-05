@@ -111,7 +111,7 @@ const CompletionScreen = ({ route }: Props) => {
       case DeviceModelId.europa:
         return <EuropaCompletionView onAnimationFinish={redirectToMainScreen} loop={loop} />;
       case DeviceModelId.stax:
-        return <StaxOnboardingSuccessView onAnimationFinish={redirectToMainScreen} loop={loop} />;
+        return <StaxOnboardingSuccessView onAnimationFinish={redirectToMainScreen} />;
       case DeviceModelId.apex:
         return <ApexOnboardingSuccessView onAnimationFinish={redirectToMainScreen} />;
       default:
