@@ -49,6 +49,7 @@
     "transactionDate" : "İşlem tarihi",
     "outdated" : "Eski",
     "satPerByte" : "sat/bayt",
+    "sompiPerByte" : "sompi/bayt",
     "notAvailable" : "Mevcut değil",
     "import" : "İçe aktar",
     "bluetooth" : "Bluetooth",
