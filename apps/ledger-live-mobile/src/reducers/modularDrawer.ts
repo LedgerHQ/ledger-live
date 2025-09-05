@@ -13,6 +13,8 @@ export interface ModularDrawerState {
   source?: string;
   assetsConfiguration?: EnhancedModularDrawerConfiguration["assets"];
   networksConfiguration?: EnhancedModularDrawerConfiguration["networks"];
+  useCase?: string;
+  areCurrenciesFiltered?: boolean;
 }
 
 export const INITIAL_STATE: ModularDrawerState = {
@@ -31,6 +33,8 @@ export const INITIAL_STATE: ModularDrawerState = {
     leftElement: "numberOfAccounts",
     rightElement: "undefined",
   },
+  useCase: undefined,
+  areCurrenciesFiltered: undefined,
 };
 
 // Selectors
@@ -51,6 +55,8 @@ const modularDrawerSlice = createSlice({
         source?: string;
         assetsConfiguration?: EnhancedModularDrawerConfiguration["assets"];
         networksConfiguration?: EnhancedModularDrawerConfiguration["networks"];
+        useCase?: string;
+        areCurrenciesFiltered?: boolean;
       }>,
     ) => {
       state.isOpen = true;
@@ -64,6 +70,8 @@ const modularDrawerSlice = createSlice({
         source,
         assetsConfiguration,
         networksConfiguration,
+        useCase,
+        areCurrenciesFiltered,
       } = action.payload;
 
       if (currencies !== undefined) {
@@ -90,6 +98,12 @@ const modularDrawerSlice = createSlice({
       if (networksConfiguration !== undefined) {
         state.networksConfiguration = networksConfiguration;
       }
+      if (useCase !== undefined) {
+        state.useCase = useCase;
+      }
+      if (areCurrenciesFiltered !== undefined) {
+        state.areCurrenciesFiltered = areCurrenciesFiltered;
+      }
     },
     closeModularDrawer: state => {
       state.isOpen = false;
@@ -101,6 +115,8 @@ const modularDrawerSlice = createSlice({
       state.source = undefined;
       state.assetsConfiguration = INITIAL_STATE.assetsConfiguration;
       state.networksConfiguration = INITIAL_STATE.networksConfiguration;
+      state.useCase = undefined;
+      state.areCurrenciesFiltered = undefined;
     },
     setPreselectedCurrencies: (state, action: PayloadAction<string[]>) => {
       state.preselectedCurrencies = action.payload;
@@ -125,6 +141,12 @@ const modularDrawerSlice = createSlice({
       action: PayloadAction<EnhancedModularDrawerConfiguration["networks"]>,
     ) => {
       state.networksConfiguration = action.payload;
+    },
+    setUseCase: (state, action: PayloadAction<string | undefined>) => {
+      state.useCase = action.payload;
+    },
+    setAreCurrenciesFiltered: (state, action: PayloadAction<boolean | undefined>) => {
+      state.areCurrenciesFiltered = action.payload;
     },
   },
 });
