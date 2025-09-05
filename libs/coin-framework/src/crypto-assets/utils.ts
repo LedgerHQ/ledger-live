@@ -1,6 +1,5 @@
 import type { CryptoAssetsStore } from "@ledgerhq/types-live";
 import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 
 export type AddTokens = (tokens: TokenCurrency[]) => void;
 
@@ -14,15 +13,4 @@ export function resolveTokenAdder(getStore: () => CryptoAssetsStore): AddTokens 
     // store not set yet
   }
   return null;
-}
-
-export function isCalLazyLoadingActive(getStore: () => CryptoAssetsStore): boolean {
-  try {
-    const value = LiveConfig.getValueByKey("feature_cal_lazy_loading");
-    const enabled = value === true || value === "true";
-    const hasDynamic = resolveTokenAdder(getStore) !== null;
-    return enabled && hasDynamic;
-  } catch (e) {
-    return false;
-  }
 }

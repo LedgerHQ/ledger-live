@@ -17,10 +17,8 @@ import { getCALHash, setCALHash } from "./logic";
 import { addTokens, convertSplTokens } from "@ledgerhq/cryptoassets/tokens";
 import { AxiosError } from "axios";
 import { getCryptoAssetsStore } from "./cryptoAssetsStore";
-import {
-  resolveTokenAdder,
-  isCalLazyLoadingActive,
-} from "@ledgerhq/coin-framework/crypto-assets/utils";
+import { resolveTokenAdder } from "@ledgerhq/coin-framework/crypto-assets/utils";
+import coinConfig from "./config";
 
 const storeTokens = (tokens: SPLToken[]) => {
   const addTokensToStore = resolveTokenAdder(getCryptoAssetsStore);
@@ -34,11 +32,22 @@ const storeTokens = (tokens: SPLToken[]) => {
 
 export const PRELOAD_MAX_AGE = 15 * 60 * 1000; // 15min
 
+const isLazyLoadingEnabled = (): boolean => {
+  try {
+    const override = coinConfig.getCoinConfig()?.calLazyLoading;
+    if (override !== undefined) return override;
+  } catch (_) {
+    // coin config not set; fall through to default
+  }
+  // Default to legacy (no CAL preload)
+  return false;
+};
+
 export const fetchSPLTokens: (
   currency: CryptoCurrency,
 ) => Promise<SPLToken[] | null> = async currency => {
   // If lazy loading is NOT enabled, stay in legacy and avoid CAL service.
-  if (!isCalLazyLoadingActive(getCryptoAssetsStore)) {
+  if (!isLazyLoadingEnabled()) {
     storeTokens(spltokensList);
     return spltokensList;
   }

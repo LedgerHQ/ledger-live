@@ -2,6 +2,10 @@
 jest.useFakeTimers();
 
 // eslint-disable-next-line import/order
+import axios, { AxiosResponse } from "axios";
+import * as CALTokensAPI from "@ledgerhq/cryptoassets/tokens";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
+import { setCoinConfig, type EvmCoinConfig } from "../../config";
 import {
   binanceDaiDefinition,
   brettDefinition,
@@ -11,13 +15,9 @@ import {
   wethDefinition,
 } from "../fixtures/preload.fixtures";
 // Maintain this order for the sake of jest mocks
-import axios, { AxiosResponse } from "axios";
-import * as CALTokensAPI from "@ledgerhq/cryptoassets/tokens";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import { fetchERC20Tokens, hydrate, preload } from "../../bridge/preload";
 import { __resetCALHash, getCALHash, setCALHash } from "../../logic";
 import { setCryptoAssetsStoreGetter } from "../../cryptoAssetsStore";
-import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 
 const currency1 = getCryptoCurrencyById("ethereum"); // chain id 1
 const currency2 = getCryptoCurrencyById("bsc"); // chain id 56
@@ -52,13 +52,15 @@ describe("EVM Family", () => {
   let mockAddTokens: jest.Mock;
 
   beforeEach(() => {
-    // Ensure CAL lazy-loading flag is set for tests using CAL service
-    LiveConfig.setConfig({
-      feature_cal_lazy_loading: {
-        type: "boolean",
-        default: true,
-      },
-    });
+    setCoinConfig(
+      () =>
+        ({
+          info: {
+            calLazyLoading: true,
+            status: { type: "active" },
+          },
+        }) as unknown as EvmCoinConfig,
+    );
     CALTokensAPI.__clearAllLists();
 
     mockAddTokens = jest.fn();
