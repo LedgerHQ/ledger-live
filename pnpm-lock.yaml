@@ -35,6 +35,9 @@ patchedDependencies:
   '@hashgraph/sdk@2.14.2':
     hash: hno7opkpqo3efbuenv6ysglr4m
     path: patches/@hashgraph__sdk@2.14.2.patch
+  '@taquito/http-utils':
+    hash: v4hkik3oiwaypgtnmqvg6j46di
+    path: patches/@taquito__http-utils.patch
   '@ton/core@0.60.1':
     hash: lboaji3braahojqczblp7nlo7m
     path: patches/@ton__core@0.60.1.patch
@@ -37064,13 +37067,13 @@ snapshots:
   '@babel/helper-function-name@7.23.0':
     dependencies:
       '@babel/template': 7.27.2
-      '@babel/types': 7.27.0
+      '@babel/types': 7.28.2
 
   '@babel/helper-globals@7.28.0': {}
 
   '@babel/helper-hoist-variables@7.22.5':
     dependencies:
-      '@babel/types': 7.27.0
+      '@babel/types': 7.28.2
 
   '@babel/helper-member-expression-to-functions@7.27.1':
     dependencies:
@@ -37093,7 +37096,7 @@ snapshots:
   '@babel/helper-module-imports@7.27.1':
     dependencies:
       '@babel/traverse': 7.27.4
-      '@babel/types': 7.27.6
+      '@babel/types': 7.28.2
     transitivePeerDependencies:
       - supports-color
 
@@ -37161,7 +37164,7 @@ snapshots:
 
   '@babel/helper-split-export-declaration@7.22.6':
     dependencies:
-      '@babel/types': 7.27.0
+      '@babel/types': 7.28.2
 
   '@babel/helper-string-parser@7.27.1': {}
 
@@ -37181,9 +37184,9 @@ snapshots:
 
   '@babel/helpers@7.24.1':
     dependencies:
-      '@babel/template': 7.24.0
+      '@babel/template': 7.27.2
       '@babel/traverse': 7.27.4
-      '@babel/types': 7.24.0
+      '@babel/types': 7.28.2
     transitivePeerDependencies:
       - supports-color
 
@@ -38156,9 +38159,9 @@ snapshots:
 
   '@babel/template@7.24.0':
     dependencies:
-      '@babel/code-frame': 7.24.6
-      '@babel/parser': 7.24.1
-      '@babel/types': 7.24.0
+      '@babel/code-frame': 7.27.1
+      '@babel/parser': 7.28.3
+      '@babel/types': 7.28.2
 
   '@babel/template@7.27.0':
     dependencies:
@@ -42833,7 +42836,7 @@ snapshots:
 
   '@kwsites/file-exists@1.1.1':
     dependencies:
-      debug: 4.4.1
+      debug: 4.3.4
     transitivePeerDependencies:
       - supports-color
 
@@ -49856,7 +49859,7 @@ snapshots:
     dependencies:
       json-stringify-safe: 5.0.1
 
-  '@taquito/http-utils@23.0.0-beta.1':
+  '@taquito/http-utils@23.0.0-beta.1(patch_hash=v4hkik3oiwaypgtnmqvg6j46di)':
     dependencies:
       '@taquito/core': 23.0.0-beta.1
       node-fetch: 2.7.0
@@ -49898,7 +49901,7 @@ snapshots:
   '@taquito/rpc@23.0.0-beta.1':
     dependencies:
       '@taquito/core': 23.0.0-beta.1
-      '@taquito/http-utils': 23.0.0-beta.1
+      '@taquito/http-utils': 23.0.0-beta.1(patch_hash=v4hkik3oiwaypgtnmqvg6j46di)
       '@taquito/utils': 23.0.0-beta.1
       bignumber.js: 9.1.2
     transitivePeerDependencies:
@@ -49907,7 +49910,7 @@ snapshots:
   '@taquito/taquito@23.0.0-beta.1':
     dependencies:
       '@taquito/core': 23.0.0-beta.1
-      '@taquito/http-utils': 23.0.0-beta.1
+      '@taquito/http-utils': 23.0.0-beta.1(patch_hash=v4hkik3oiwaypgtnmqvg6j46di)
       '@taquito/local-forging': 23.0.0-beta.1
       '@taquito/michel-codec': 23.0.0-beta.1
       '@taquito/michelson-encoder': 23.0.0-beta.1
@@ -50166,16 +50169,16 @@ snapshots:
 
   '@types/babel__generator@7.6.8':
     dependencies:
-      '@babel/types': 7.27.0
+      '@babel/types': 7.28.2
 
   '@types/babel__template@7.4.4':
     dependencies:
-      '@babel/parser': 7.27.5
-      '@babel/types': 7.27.0
+      '@babel/parser': 7.28.3
+      '@babel/types': 7.28.2
 
   '@types/babel__traverse@7.20.5':
     dependencies:
-      '@babel/types': 7.27.0
+      '@babel/types': 7.28.2
 
   '@types/bchaddrjs@0.4.3': {}
 
@@ -52227,7 +52230,7 @@ snapshots:
 
   agent-base@6.0.2:
     dependencies:
-      debug: 4.4.0
+      debug: 4.3.4
     transitivePeerDependencies:
       - supports-color
 
@@ -70180,7 +70183,7 @@ snapshots:
     dependencies:
       component-emitter: 1.3.1
       cookiejar: 2.1.4
-      debug: 4.4.1
+      debug: 4.3.4
       fast-safe-stringify: 2.1.1
       form-data: 4.0.2
       formidable: 2.1.2
