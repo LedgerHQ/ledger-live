@@ -22,6 +22,7 @@ import ModularDrawerNavigator from "LLM/features/ModularDrawer/ModularDrawerNavi
 import ReceiveFundsNavigator from "./ReceiveFundsNavigator";
 import DeviceSelectionNavigator from "LLM/features/DeviceSelection/Navigator";
 import AddAccountsV2Navigator from "LLM/features/Accounts/Navigator";
+import AccountSettingsNavigator from "./AccountSettingsNavigator";
 
 const hitSlop = {
   bottom: 10,
@@ -84,6 +85,11 @@ export default function BaseOnboardingNavigator() {
         options={{
           headerShown: false,
         }}
+      />
+      <Stack.Screen
+        name={NavigatorName.AccountSettings}
+        component={AccountSettingsNavigator}
+        options={{ headerShown: false }}
       />
       <Stack.Screen
         name={NavigatorName.AddAccounts}
