@@ -50,6 +50,8 @@ export function useACRECustomHandlers(manifest: WebviewProps["manifest"], accoun
         accounts,
         tracking,
         manifest,
+        actionDispatcher: dispatch,
+        platform: "desktop",
         uiHooks: {
           "custom.acre.messageSign": ({
             account,

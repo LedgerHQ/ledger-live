@@ -11,9 +11,11 @@ import { StackNavigatorNavigation } from "../RootNavigator/types/helpers";
 import { BaseNavigatorStackParamList } from "../RootNavigator/types/BaseNavigator";
 import { WebviewProps } from "../Web3AppWebview/types";
 import prepareSignTransaction from "../Web3AppWebview/liveSDKLogic";
+import { useDispatch } from "react-redux";
 
 export function useACRECustomHandlers(manifest: WebviewProps["manifest"], accounts: AccountLike[]) {
   const navigation = useNavigation<StackNavigatorNavigation<BaseNavigatorStackParamList>>();
+  const dispatch = useDispatch();
 
   const tracking = useMemo(
     () =>
@@ -35,6 +37,8 @@ export function useACRECustomHandlers(manifest: WebviewProps["manifest"], accoun
         accounts,
         tracking,
         manifest,
+        actionDispatcher: dispatch,
+        platform: "mobile",
         uiHooks: {
           "custom.acre.messageSign": ({
             account,
@@ -91,5 +95,5 @@ export function useACRECustomHandlers(manifest: WebviewProps["manifest"], accoun
         },
       }),
     };
-  }, [accounts, tracking, manifest, navigation]);
+  }, [accounts, tracking, manifest, dispatch, navigation]);
 }
