@@ -1,5 +1,18 @@
 # @ledgerhq/coin-framework
 
+## 6.3.0-nightly.3
+
+### Minor Changes
+
+- [#11652](https://github.com/LedgerHQ/ledger-live/pull/11652) [`ff22728`](https://github.com/LedgerHQ/ledger-live/commit/ff22728a61ab2cde6835991bf8ed115d4a39a1d0) Thanks [@Canestin](https://github.com/Canestin)! - update depracation banner wording
+
+### Patch Changes
+
+- Updated dependencies [[`e52268a`](https://github.com/LedgerHQ/ledger-live/commit/e52268a3bc7d97a7ed09ed082786a647e048a6e8)]:
+  - @ledgerhq/live-env@2.15.0-nightly.2
+  - @ledgerhq/cryptoassets@13.27.0-nightly.1
+  - @ledgerhq/live-network@2.0.16-nightly.2
+
 ## 6.3.0-nightly.2
 
 ### Minor Changes

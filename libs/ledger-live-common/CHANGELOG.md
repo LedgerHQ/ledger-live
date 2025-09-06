@@ -1,5 +1,54 @@
 # @ledgerhq/live-common
 
+## 34.47.0-nightly.9
+
+### Patch Changes
+
+- Updated dependencies [[`e52268a`](https://github.com/LedgerHQ/ledger-live/commit/e52268a3bc7d97a7ed09ed082786a647e048a6e8), [`ff22728`](https://github.com/LedgerHQ/ledger-live/commit/ff22728a61ab2cde6835991bf8ed115d4a39a1d0)]:
+  - @ledgerhq/live-env@2.15.0-nightly.2
+  - @ledgerhq/coin-framework@6.3.0-nightly.3
+  - @ledgerhq/coin-algorand@0.9.19-nightly.3
+  - @ledgerhq/coin-aptos@3.2.0-nightly.3
+  - @ledgerhq/coin-bitcoin@0.21.0-nightly.3
+  - @ledgerhq/coin-canton@0.4.0-nightly.4
+  - @ledgerhq/coin-cardano@0.11.3-nightly.3
+  - @ledgerhq/coin-celo@1.3.0-nightly.5
+  - @ledgerhq/coin-cosmos@0.16.8-nightly.3
+  - @ledgerhq/coin-evm@2.29.0-nightly.5
+  - @ledgerhq/coin-filecoin@1.11.0-nightly.4
+  - @ledgerhq/coin-hedera@1.10.2-nightly.3
+  - @ledgerhq/coin-icon@0.11.6-nightly.3
+  - @ledgerhq/coin-internet_computer@1.7.19-nightly.3
+  - @ledgerhq/coin-multiversx@0.4.19-nightly.3
+  - @ledgerhq/coin-polkadot@6.9.0-nightly.3
+  - @ledgerhq/coin-solana@0.32.0-nightly.5
+  - @ledgerhq/coin-stacks@0.8.19-nightly.3
+  - @ledgerhq/coin-stellar@6.3.0-nightly.3
+  - @ledgerhq/coin-sui@0.12.0-nightly.5
+  - @ledgerhq/coin-ton@0.13.8-nightly.4
+  - @ledgerhq/coin-vechain@2.8.3-nightly.3
+  - @ledgerhq/ledger-cal-service@1.4.0-nightly.3
+  - @ledgerhq/cryptoassets@13.27.0-nightly.1
+  - @ledgerhq/live-countervalues@0.6.3-nightly.3
+  - @ledgerhq/live-network@2.0.16-nightly.2
+  - @ledgerhq/live-nft@0.8.19-nightly.3
+  - @ledgerhq/live-wallet@0.12.3-nightly.3
+  - @ledgerhq/speculos-transport@0.2.9-nightly.3
+  - @ledgerhq/coin-casper@2.0.10-nightly.3
+  - @ledgerhq/coin-mina@1.1.18-nightly.3
+  - @ledgerhq/coin-near@0.12.2-nightly.3
+  - @ledgerhq/coin-tezos@6.3.0-nightly.4
+  - @ledgerhq/coin-tron@5.3.0-nightly.4
+  - @ledgerhq/coin-xrp@7.3.0-nightly.4
+  - @ledgerhq/live-countervalues-react@0.6.0-nightly.3
+  - @ledgerhq/live-signer-canton@0.2.3-nightly.5
+  - @ledgerhq/live-signer-evm@0.7.2-nightly.5
+  - @ledgerhq/live-signer-solana@0.5.4-nightly.5
+  - @ledgerhq/hw-app-eth@6.45.17-nightly.2
+  - @ledgerhq/hw-app-vet@0.5.15-nightly.1
+  - @ledgerhq/device-core@0.6.2-nightly.2
+  - @ledgerhq/hw-app-celo@6.34.2-nightly.2
+
 ## 34.47.0-nightly.8
 
 ### Minor Changes

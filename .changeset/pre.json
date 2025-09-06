@@ -154,7 +154,8 @@
     "@ledgerhq/coin-modules-monitoring": "1.0.0",
     "@ledgerhq/coin-canton": "0.1.0",
     "@ledgerhq/hw-app-canton": "0.1.0",
-    "@ledgerhq/live-signer-canton": "0.1.0"
+    "@ledgerhq/live-signer-canton": "0.1.0",
+    "@ledgerhq/coin-kaspa": "1.0.0"
   },
   "changesets": [
     "angry-bags-notice",
@@ -184,6 +185,7 @@
     "famous-kangaroos-act",
     "five-mirrors-allow",
     "flat-eagles-repair",
+    "funny-seals-listen",
     "fuzzy-bees-thank",
     "fuzzy-mayflies-develop",
     "gold-rocks-wait",
@@ -195,6 +197,7 @@
     "happy-rules-sneeze",
     "heavy-pants-flash",
     "itchy-doors-sort",
+    "large-keys-rhyme",
     "late-maps-push",
     "lazy-tigers-sleep",
     "little-peaches-clap",
@@ -206,6 +209,7 @@
     "modern-needles-cough",
     "moody-rocks-agree",
     "new-lizards-visit",
+    "new-rabbits-tie",
     "ninety-buttons-beg",
     "ninety-foxes-brush",
     "ninety-foxes-ring",
@@ -229,6 +233,7 @@
     "rare-boats-guess",
     "rare-camels-matter",
     "rare-camels-sneeze",
+    "red-pants-grow",
     "rude-icons-breathe",
     "selfish-rules-add",
     "shaggy-swans-dream",

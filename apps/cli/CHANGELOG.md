@@ -1,5 +1,22 @@
 # @ledgerhq/live-cli
 
+## 24.21.3-nightly.9
+
+### Patch Changes
+
+- Updated dependencies [[`e52268a`](https://github.com/LedgerHQ/ledger-live/commit/e52268a3bc7d97a7ed09ed082786a647e048a6e8), [`ff22728`](https://github.com/LedgerHQ/ledger-live/commit/ff22728a61ab2cde6835991bf8ed115d4a39a1d0)]:
+  - @ledgerhq/live-env@2.15.0-nightly.2
+  - @ledgerhq/coin-framework@6.3.0-nightly.3
+  - @ledgerhq/coin-bitcoin@0.21.0-nightly.3
+  - @ledgerhq/hw-ledger-key-ring-protocol@0.4.0-nightly.3
+  - @ledgerhq/ledger-key-ring-protocol@0.6.4-nightly.1
+  - @ledgerhq/live-common@34.47.0-nightly.9
+  - @ledgerhq/cryptoassets@13.27.0-nightly.1
+  - @ledgerhq/live-countervalues@0.6.3-nightly.3
+  - @ledgerhq/live-network@2.0.16-nightly.2
+  - @ledgerhq/live-wallet@0.12.3-nightly.3
+  - @ledgerhq/device-core@0.6.2-nightly.2
+
 ## 24.21.3-nightly.8
 
 ### Patch Changes

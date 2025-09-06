@@ -1,5 +1,34 @@
 # live-mobile
 
+## 3.92.0-nightly.8
+
+### Minor Changes
+
+- [#11647](https://github.com/LedgerHQ/ledger-live/pull/11647) [`b8da0e7`](https://github.com/LedgerHQ/ledger-live/commit/b8da0e7309aa541975bae4c4c18daf15d58b14f2) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - fix: loader in market
+
+- [#11652](https://github.com/LedgerHQ/ledger-live/pull/11652) [`ff22728`](https://github.com/LedgerHQ/ledger-live/commit/ff22728a61ab2cde6835991bf8ed115d4a39a1d0) Thanks [@Canestin](https://github.com/Canestin)! - update depracation banner wording
+
+- [#11638](https://github.com/LedgerHQ/ledger-live/pull/11638) [`0671523`](https://github.com/LedgerHQ/ledger-live/commit/0671523d49213bec3d0ee15b5cde70ba5b7d3ad1) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add useCase & areCurrencyFiltered params in MAD -LLM
+
+### Patch Changes
+
+- Updated dependencies [[`e52268a`](https://github.com/LedgerHQ/ledger-live/commit/e52268a3bc7d97a7ed09ed082786a647e048a6e8), [`ff22728`](https://github.com/LedgerHQ/ledger-live/commit/ff22728a61ab2cde6835991bf8ed115d4a39a1d0)]:
+  - @ledgerhq/live-env@2.15.0-nightly.2
+  - @ledgerhq/coin-framework@6.3.0-nightly.3
+  - @ledgerhq/coin-cosmos@0.16.8-nightly.3
+  - @ledgerhq/coin-evm@2.29.0-nightly.5
+  - @ledgerhq/coin-filecoin@1.11.0-nightly.4
+  - @ledgerhq/coin-multiversx@0.4.19-nightly.3
+  - @ledgerhq/coin-stacks@0.8.19-nightly.3
+  - @ledgerhq/hw-ledger-key-ring-protocol@0.4.0-nightly.3
+  - @ledgerhq/ledger-key-ring-protocol@0.6.4-nightly.1
+  - @ledgerhq/live-countervalues@0.6.3-nightly.3
+  - @ledgerhq/live-network@2.0.16-nightly.2
+  - @ledgerhq/live-nft@0.8.19-nightly.3
+  - @ledgerhq/live-wallet@0.12.3-nightly.3
+  - @ledgerhq/live-countervalues-react@0.6.0-nightly.3
+  - @ledgerhq/live-nft-react@0.9.19-nightly.3
+
 ## 3.92.0-nightly.7
 
 ### Patch Changes

@@ -1,5 +1,13 @@
 # @ledgerhq/evm-tools
 
+## 1.7.5-nightly.0
+
+### Patch Changes
+
+- Updated dependencies [[`e52268a`](https://github.com/LedgerHQ/ledger-live/commit/e52268a3bc7d97a7ed09ed082786a647e048a6e8)]:
+  - @ledgerhq/live-env@2.15.0-nightly.2
+  - @ledgerhq/cryptoassets-evm-signatures@13.6.1-nightly.0
+
 ## 1.7.4
 
 ### Patch Changes

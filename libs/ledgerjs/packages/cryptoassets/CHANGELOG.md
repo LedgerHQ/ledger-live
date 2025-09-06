@@ -1,5 +1,12 @@
 # @ledgerhq/cryptoassets
 
+## 13.27.0-nightly.1
+
+### Patch Changes
+
+- Updated dependencies [[`e52268a`](https://github.com/LedgerHQ/ledger-live/commit/e52268a3bc7d97a7ed09ed082786a647e048a6e8)]:
+  - @ledgerhq/live-env@2.15.0-nightly.2
+
 ## 13.27.0-nightly.0
 
 ### Minor Changes

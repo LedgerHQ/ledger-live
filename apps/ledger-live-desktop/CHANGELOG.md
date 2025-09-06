@@ -1,5 +1,32 @@
 # ledger-live-desktop
 
+## 2.127.0-nightly.9
+
+### Minor Changes
+
+- [#11652](https://github.com/LedgerHQ/ledger-live/pull/11652) [`ff22728`](https://github.com/LedgerHQ/ledger-live/commit/ff22728a61ab2cde6835991bf8ed115d4a39a1d0) Thanks [@Canestin](https://github.com/Canestin)! - update depracation banner wording
+
+### Patch Changes
+
+- Updated dependencies [[`e52268a`](https://github.com/LedgerHQ/ledger-live/commit/e52268a3bc7d97a7ed09ed082786a647e048a6e8), [`ff22728`](https://github.com/LedgerHQ/ledger-live/commit/ff22728a61ab2cde6835991bf8ed115d4a39a1d0)]:
+  - @ledgerhq/live-env@2.15.0-nightly.2
+  - @ledgerhq/coin-framework@6.3.0-nightly.3
+  - @ledgerhq/coin-bitcoin@0.21.0-nightly.3
+  - @ledgerhq/coin-cosmos@0.16.8-nightly.3
+  - @ledgerhq/coin-evm@2.29.0-nightly.5
+  - @ledgerhq/coin-filecoin@1.11.0-nightly.4
+  - @ledgerhq/hw-ledger-key-ring-protocol@0.4.0-nightly.3
+  - @ledgerhq/ledger-key-ring-protocol@0.6.4-nightly.1
+  - @ledgerhq/live-common@34.47.0-nightly.9
+  - @ledgerhq/cryptoassets@13.27.0-nightly.1
+  - @ledgerhq/live-countervalues@0.6.3-nightly.3
+  - @ledgerhq/live-network@2.0.16-nightly.2
+  - @ledgerhq/live-nft@0.8.19-nightly.3
+  - @ledgerhq/live-wallet@0.12.3-nightly.3
+  - @ledgerhq/live-countervalues-react@0.6.0-nightly.3
+  - @ledgerhq/live-nft-react@0.9.19-nightly.3
+  - @ledgerhq/live-dmk-desktop@0.9.2-nightly.9
+
 ## 2.127.0-nightly.8
 
 ### Minor Changes
