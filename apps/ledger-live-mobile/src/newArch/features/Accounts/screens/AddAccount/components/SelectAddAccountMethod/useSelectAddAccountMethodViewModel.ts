@@ -73,6 +73,7 @@ const useSelectAddAccountMethodViewModel = ({
     const currenciesToUse = currency ? [currency.id] : undefined;
     return openDrawer({
       currencies: currenciesToUse,
+      areCurrenciesFiltered: currenciesToUse?.length === 1 ? true : false,
       enableAccountSelection: false,
       flow: "add_account",
       source: "add_account_button",

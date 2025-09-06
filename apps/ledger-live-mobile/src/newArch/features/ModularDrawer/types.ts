@@ -11,24 +11,30 @@ export enum ModularDrawerStep {
 
 export const MODULAR_DRAWER_KEY = "modularDrawer";
 
-export type OpenModularDrawerParams = {
-  currencies?: string[];
-  enableAccountSelection?: boolean;
-  onAccountSelected?: (account: AccountLike, parentAccount?: Account) => void;
-  accounts$?: Observable<WalletAPIAccount[]>;
-  flow?: string;
-  source?: string;
+export type DrawerExtras = {
   assetsConfiguration?: EnhancedModularDrawerConfiguration["assets"];
   networksConfiguration?: EnhancedModularDrawerConfiguration["networks"];
 };
 
-export type OpenModularDrawerParamsWithCallbackId = {
+export type DrawerBaseParams = {
   currencies?: string[];
   enableAccountSelection?: boolean;
-  callbackId?: string;
-  accountsObservableId?: string;
   flow?: string;
   source?: string;
+  areCurrenciesFiltered?: boolean;
+  useCase?: string;
 };
 
-export type OpenModularDrawerFunction = (params?: OpenModularDrawerParams) => void;
+export type DrawerParams<TExtras extends object = DrawerExtras> = DrawerBaseParams & {
+  onAccountSelected?: (account: AccountLike, parentAccount?: Account) => void;
+  accounts$?: Observable<WalletAPIAccount[]>;
+} & TExtras;
+
+export type DrawerRemoteParams<TExtras extends object = DrawerExtras> = DrawerBaseParams & {
+  callbackId?: string;
+  accountsObservableId?: string;
+} & TExtras;
+
+export type OpenDrawer<TExtras extends object = DrawerExtras> = (
+  params?: DrawerParams<TExtras>,
+) => void;

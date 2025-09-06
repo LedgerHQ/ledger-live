@@ -45,6 +45,7 @@ export default function SelectAccountButton({
     if (canOpenModularDrawer) {
       openDrawer({
         currencies: currencies.map(c => c.id),
+        areCurrenciesFiltered: manifest.currencies !== "*",
         enableAccountSelection: true,
         onAccountSelected: onSelectAccountSuccess,
         flow: manifest.name,

@@ -7,9 +7,11 @@ import { MarketItemResponse } from "@ledgerhq/live-common/market/utils/types";
 import { InterestRate } from "@ledgerhq/live-common/modularDrawer/data/entities/index";
 import VersionNumber from "react-native-version-number";
 
-interface UseAssetsProps {
+interface AssetsProps {
   currencyIds?: string[];
   searchedValue?: string;
+  useCase?: string;
+  areCurrenciesFiltered?: boolean;
 }
 
 export type AssetsData =
@@ -26,12 +28,19 @@ export type AssetsData =
     }[]
   | undefined;
 
-export function useAssetsFromDada({ currencyIds, searchedValue }: UseAssetsProps) {
+export function useAssetsFromDada({
+  currencyIds,
+  searchedValue,
+  useCase,
+  areCurrenciesFiltered,
+}: AssetsProps) {
   const { data, isLoading, isSuccess, error, refetch, loadNext } = useAssetsData({
     search: searchedValue,
     currencyIds,
     product: "llm",
     version: VersionNumber.appVersion,
+    useCase,
+    areCurrenciesFiltered,
   });
 
   const assetsSorted: AssetsData = useMemo(() => {

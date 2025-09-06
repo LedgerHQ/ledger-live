@@ -41,6 +41,11 @@ type ModularDrawerProps = {
   readonly onAccountSelected?: (account: AccountLike, parentAccount?: AccountLike) => void;
   /** Observable of accounts */
   readonly accounts$?: Observable<WalletAPIAccount[]>;
+
+  /** The use case identifier for the drawer */
+  readonly useCase?: string;
+  /** Whether the currencies are filtered */
+  readonly areCurrenciesFiltered?: boolean;
 };
 
 /**
@@ -60,6 +65,8 @@ export function ModularDrawer({
   enableAccountSelection = false,
   onAccountSelected,
   accounts$,
+  useCase,
+  areCurrenciesFiltered,
 }: ModularDrawerProps) {
   const [searchValue, setSearchValue] = useState("");
 
@@ -73,6 +80,8 @@ export function ModularDrawer({
     useAssetsFromDada({
       currencyIds: currencies,
       searchedValue: searchValue,
+      useCase,
+      areCurrenciesFiltered,
     });
 
   const {
