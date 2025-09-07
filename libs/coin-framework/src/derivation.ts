@@ -1,4 +1,4 @@
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/index";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { TransportStatusError, UserRefusedAddress } from "@ledgerhq/errors";
 import { getEnv } from "@ledgerhq/live-env";
 import { log } from "@ledgerhq/logs";
