@@ -32,7 +32,6 @@ import {
   validateIntent,
   getTokenFromAsset,
   getAssetFromToken,
-  getStakes,
 } from "../logic/index";
 
 export function createApi(config: EvmConfig, currencyId: string): Api {
@@ -63,8 +62,9 @@ export function createApi(config: EvmConfig, currencyId: string): Api {
     getBlockInfo(_height: number): Promise<BlockInfo> {
       throw new Error("getBlockInfo is not supported");
     },
-    getStakes: (address: string, cursor?: Cursor): Promise<Page<Stake>> =>
-      getStakes(currency, address, cursor),
+    getStakes(_address: string): Promise<Page<Stake>> {
+      throw new Error("getStakes is not supported");
+    },
     getRewards(_address: string, _cursor?: Cursor): Promise<Page<Reward>> {
       throw new Error("getRewards is not supported");
     },

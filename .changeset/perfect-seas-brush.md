@@ -2,4 +2,4 @@
 "@ledgerhq/coin-evm": minor
 ---
 
-feat: add getStake method + contracts lists and methods
+feat: add getStakes method + contracts lists and methods
