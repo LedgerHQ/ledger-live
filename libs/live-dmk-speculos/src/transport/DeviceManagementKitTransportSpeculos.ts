@@ -9,8 +9,10 @@ import {
   ConsoleLogger,
   type DiscoveredDevice,
 } from "@ledgerhq/device-management-kit";
-import { quietSpeculosTransportFactory } from "@ledgerhq/device-transport-kit-speculos";
-import { HttpLegacySpeculosDatasource } from "@ledgerhq/device-transport-kit-speculos/src/internal/datasource/HttpLegacySpeculosDatasource.js";
+import {
+  e2eSpeculosTransportFactory,
+  E2eHttpSpeculosDatasource,
+} from "@ledgerhq/device-transport-kit-speculos";
 import { getEnv } from "@ledgerhq/live-env";
 
 export type SpeculosHttpTransportOpts = {
@@ -78,7 +80,7 @@ export default class SpeculosHttpTransport extends Transport {
     let entry = this.byBase.get(base);
     if (!entry) {
       const dmk = new DeviceManagementKitBuilder()
-        .addTransport(quietSpeculosTransportFactory(base))
+        .addTransport(e2eSpeculosTransportFactory(base))
         .addLogger(new ConsoleLogger())
         .build();
       entry = { dmk, sendChain: Promise.resolve(), timeout };
@@ -115,7 +117,7 @@ export default class SpeculosHttpTransport extends Transport {
 
   private readonly opts: SpeculosHttpTransportOpts;
   private readonly base: string;
-  private readonly ds: HttpLegacySpeculosDatasource;
+  private readonly ds: E2eHttpSpeculosDatasource;
 
   private sseStream: NodeJS.ReadableStream | null = null;
   automationEvents: Subject<Record<string, unknown>> = new Subject();
@@ -124,7 +126,7 @@ export default class SpeculosHttpTransport extends Transport {
     super();
     this.opts = opts;
     this.base = resolveBaseFromEnv(opts);
-    this.ds = new HttpLegacySpeculosDatasource(
+    this.ds = new E2eHttpSpeculosDatasource(
       this.base,
       opts.timeout ?? 10000,
       "ldmk-transport-speculos",

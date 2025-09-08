@@ -8193,8 +8193,8 @@ importers:
         specifier: 0.0.0-connect-app-20250609094118
         version: 0.0.0-connect-app-20250609094118(rxjs@7.8.1)
       '@ledgerhq/device-transport-kit-speculos':
-        specifier: 0.0.0-e2e-speculos-20250905084020
-        version: 0.0.0-e2e-speculos-20250905084020(@ledgerhq/device-management-kit@0.0.0-connect-app-20250609094118(rxjs@7.8.1))(rxjs@7.8.1)
+        specifier: 0.0.0-e2e-speculos-20250908084414
+        version: 0.0.0-e2e-speculos-20250908084414(@ledgerhq/device-management-kit@0.0.0-connect-app-20250609094118(rxjs@7.8.1))(rxjs@7.8.1)
       '@ledgerhq/errors':
         specifier: 6.22.0
         version: 6.22.0
@@ -14549,10 +14549,10 @@ packages:
       react-native-ble-plx: 3.4.0
       rxjs: ^7.8.2
 
-  '@ledgerhq/device-transport-kit-speculos@0.0.0-e2e-speculos-20250905084020':
-    resolution: {integrity: sha512-9DQ2TOFc5QdvvagH6sz4zJLd2bp5y0MljfU7LMPXc4sQ7SqgxQCqT6iLMhwiN2NWOtqEOA/moalLULxoV1Snjw==}
+  '@ledgerhq/device-transport-kit-speculos@0.0.0-e2e-speculos-20250908084414':
+    resolution: {integrity: sha512-qzF1Ka5ggDGbT4RTu63BhKX/h2ttaSDaL2g5Jzyi/ZLYviPcCs7v+zaOSStOILndwRx62vHdPD4PzsyFlAxNfQ==}
     peerDependencies:
-      '@ledgerhq/device-management-kit': 0.0.0-e2e-speculos-20250905084020
+      '@ledgerhq/device-management-kit': 0.0.0-e2e-speculos-20250908084414
       rxjs: ^7.8.2
 
   '@ledgerhq/device-transport-kit-web-hid@0.0.0-apex-support-20250721132630':
@@ -43366,7 +43366,7 @@ snapshots:
       rxjs: 7.8.1
       uuid: 11.0.3
 
-  '@ledgerhq/device-transport-kit-speculos@0.0.0-e2e-speculos-20250905084020(@ledgerhq/device-management-kit@0.0.0-connect-app-20250609094118(rxjs@7.8.1))(rxjs@7.8.1)':
+  '@ledgerhq/device-transport-kit-speculos@0.0.0-e2e-speculos-20250908084414(@ledgerhq/device-management-kit@0.0.0-connect-app-20250609094118(rxjs@7.8.1))(rxjs@7.8.1)':
     dependencies:
       '@ledgerhq/device-management-kit': 0.0.0-connect-app-20250609094118(rxjs@7.8.1)
       '@sentry/minimal': 6.19.7
