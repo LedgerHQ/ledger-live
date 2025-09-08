@@ -29,9 +29,13 @@ const Earn = () => {
   const fiatCurrency = useSelector(counterValueCurrencySelector);
   const earnFlag = useFeature("ptxEarnLiveApp");
   const earnManifestId = earnFlag?.enabled ? earnFlag.params?.manifest_id : DEFAULT_MANIFEST_ID;
+  
+  const mockManifest: any =
+    process.env.MOCK_REMOTE_LIVE_MANIFEST && JSON.parse(process.env.MOCK_REMOTE_LIVE_MANIFEST)[0];
+  
   const localManifest = useLocalLiveAppManifest(earnManifestId);
   const remoteManifest = useRemoteLiveAppManifest(earnManifestId);
-  const manifest = localManifest || remoteManifest;
+  const manifest = localManifest || mockManifest || remoteManifest;
   const themeType = useTheme().colors.palette.type;
   const discreetMode = useDiscreetMode();
   const countryLocale = getParsedSystemDeviceLocale().region;

@@ -41,6 +41,7 @@ test("Earn @smoke", async ({ page, electronApp }) => {
 
   await test.step("Navigate to Buy app from portfolio banner", async () => {
     await layout.goToEarn();
+    await liveAppWebview.waitForLoaded();
     await liveAppWebview.waitForText("theme: dark");
     await liveAppWebview.waitForText("lang: en");
     await liveAppWebview.waitForText("locale: en-US");
