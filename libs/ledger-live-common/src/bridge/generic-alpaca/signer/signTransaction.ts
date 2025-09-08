@@ -1,6 +1,8 @@
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import { StellarSigner } from "@ledgerhq/coin-stellar/types/signer";
 import { TezosSigner } from "@ledgerhq/coin-tezos/types/signer";
+import { HederaSigner } from "@ledgerhq/coin-hedera/types/signer";
+import { serializeSignature as serializeHederaSignature } from "@ledgerhq/coin-hedera/logic/utils";
 import { LegacySigner, SignTransactionOptions } from "./types";
 
 export const signTransaction = <Signer extends LegacySigner>(
@@ -31,5 +33,13 @@ export const tezosSignTransaction = (signerContext: SignerContext<TezosSigner>) 
       signer.signOperation(path, rawTxHex, {}),
     );
     return signed.signature;
+  };
+};
+
+export const hederaSignTransaction = (signerContext: SignerContext<HederaSigner>) => {
+  return async (deviceId: string, { transaction }: SignTransactionOptions) => {
+    const signedTx = await signerContext(deviceId, signer => signer.signTransaction(transaction));
+
+    return serializeHederaSignature(signedTx);
   };
 };

@@ -257,6 +257,11 @@ const envDefinitions = {
     parser: stringParser,
     desc: "mirror node API for Hedera",
   },
+  API_HEDERA_TESTNET_MIRROR: {
+    def: "https://testnet.mirrornode.hedera.com",
+    parser: stringParser,
+    desc: "testnet mirror node API for Hedera",
+  },
   API_VECHAIN_THOREST: {
     def: "https://vechain.coin.ledger.com",
     parser: stringParser,

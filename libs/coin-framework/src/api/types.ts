@@ -469,6 +469,7 @@ export type BridgeApi<
     customFees?: FeeEstimation,
   ) => Promise<TransactionValidation>;
   getSequence: (address: string) => Promise<number>;
+  getChainSpecificData?: (address: string) => Promise<Record<string, unknown>>;
   getChainSpecificRules?: () => ChainSpecificRules;
   getTokenFromAsset?: (asset: AssetInfo) => Promise<TokenCurrency | undefined>;
   getAssetFromToken?: (token: TokenCurrency, owner: string) => AssetInfo;

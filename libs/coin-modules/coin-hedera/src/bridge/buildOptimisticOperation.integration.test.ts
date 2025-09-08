@@ -26,6 +26,7 @@ describe("buildOptimisticOperation", () => {
       mode: HEDERA_TRANSACTION_MODES.TokenAssociate,
       amount: new BigNumber(0),
       recipient: "0.0.1234",
+      mode: "token-associate",
       properties: {
         token: mockedToken,
       },

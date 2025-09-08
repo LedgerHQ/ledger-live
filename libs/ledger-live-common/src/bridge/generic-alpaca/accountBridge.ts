@@ -15,6 +15,7 @@ import { createTransaction } from "./createTransaction";
 import { genericBroadcast } from "./broadcast";
 import { genericSignOperation } from "./signOperation";
 import type { AlpacaSigner } from "./signer/types";
+import hederaReceive from "@ledgerhq/coin-hedera/bridge/receive";
 
 export function getAlpacaAccountBridge(
   network: string,
@@ -22,9 +23,15 @@ export function getAlpacaAccountBridge(
   customSigner?: AlpacaSigner,
 ): AccountBridge<any> {
   const signer = customSigner ?? getSigner(network);
+  // FIXME:
+  const receive =
+    network === "hedera"
+      ? hederaReceive(getAddressWrapper(signer.getAddress))
+      : makeAccountBridgeReceive(getAddressWrapper(signer.getAddress));
+
   return {
     sync: makeSync({ getAccountShape: genericGetAccountShape(network, kind) }),
-    receive: makeAccountBridgeReceive(getAddressWrapper(signer.getAddress)),
+    receive: receive,
     createTransaction: createTransaction,
     updateTransaction: updateTransaction<any>,
     prepareTransaction: genericPrepareTransaction(network, kind),

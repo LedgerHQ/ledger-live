@@ -54,6 +54,7 @@ export function adaptCoreOperationToLiveOperation(accountId: string, op: CoreOpe
   if (op.details?.memo) {
     extra.memo = op.details.memo as string;
   }
+
   const bnFees = new BigNumber(op.tx.fees.toString());
   const res = {
     id: encodeOperationId(accountId, op.tx.hash, op.type),
@@ -72,7 +73,11 @@ export function adaptCoreOperationToLiveOperation(accountId: string, op: CoreOpe
     date: op.tx.date,
     transactionSequenceNumber: op.details?.sequence as number,
     hasFailed: (op.details as unknown as { status?: string })?.status === "failed",
-    extra,
+    extra: {
+      // FIXME: added for Hedera, should be handled in a better way
+      ...op.details,
+      ...extra,
+    },
   };
 
   return res;
@@ -190,6 +195,8 @@ export const buildOptimisticOperation = (
     case "unstake":
       type = "UNDELEGATE";
       break;
+    case "token-associate":
+      return "ASSOCIATE_TOKEN";
     default:
       type = "OUT";
       break;

@@ -90,7 +90,10 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
       };
     });
 
+    const chainSpecificData = await alpacaApi.getChainSpecificData?.(address);
+
     const res = {
+      ...chainSpecificData,
       id: accountId,
       xpub: address,
       blockHeight: operations.length === 0 ? 0 : blockInfo.height || initialAccount?.blockHeight,

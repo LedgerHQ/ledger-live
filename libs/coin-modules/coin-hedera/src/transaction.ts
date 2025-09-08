@@ -26,6 +26,7 @@ export function fromTransactionRaw(tr: TransactionRaw): Transaction {
   const commonHedera = {
     family: tr.family,
     memo: tr.memo,
+    mode: tr.mode,
     ...(tr.maxFee && { maxFee: new BigNumber(tr.maxFee) }),
   };
 
@@ -52,6 +53,7 @@ export function toTransactionRaw(t: Transaction): TransactionRaw {
   const commonHedera = {
     family: t.family,
     memo: t.memo,
+    mode: t.mode,
     ...(t.maxFee && { maxFee: t.maxFee.toString() }),
   };
 

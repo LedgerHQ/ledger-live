@@ -51,6 +51,15 @@ export function createTransaction(account: Account | TokenAccount): GenericTrans
         feesStrategy: "medium",
       };
     }
+    case "hedera": {
+      return {
+        family: currency.family,
+        amount: new BigNumber(0),
+        recipient: "",
+        mode: "send",
+        useAllAmount: false,
+      };
+    }
     default:
       throw new Error(`Unsupported currency family: ${currency.family}`);
   }

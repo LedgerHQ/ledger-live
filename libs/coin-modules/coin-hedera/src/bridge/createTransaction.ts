@@ -13,5 +13,6 @@ export const createTransaction: AccountBridge<Transaction>["createTransaction"] 
   family: "hedera",
   amount: new BigNumber(0),
   recipient: "",
+  mode: "send",
   useAllAmount: false,
 });

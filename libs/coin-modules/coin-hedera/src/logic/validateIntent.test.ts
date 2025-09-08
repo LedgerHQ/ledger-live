@@ -1,0 +1,3 @@
+describe("validateIntent", () => {
+  it("FIXME:", () => {});
+});

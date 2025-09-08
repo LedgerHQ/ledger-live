@@ -36,8 +36,6 @@ export default function Summary({ navigation, route }: Props) {
 
   const { tokenAddress } = route.params;
   const token = findTokenByAddress(tokenAddress);
-
-  invariant(account, "hedera: account is required");
   invariant(token, `hedera: token with address ${tokenAddress} is not available`);
   const mainAccount = getMainAccount(account, parentAccount);
 

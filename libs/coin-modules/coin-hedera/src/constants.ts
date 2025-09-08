@@ -1,6 +1,5 @@
 /**
  * Internal types used to distinguish custom Hedera transaction behaviors.
- * These can be stored in transaction.properties.name and used to route specific preparation logic.
  * These can be stored in transaction.mode and used to route specific preparation logic.
  */
 export enum HEDERA_TRANSACTION_MODES {

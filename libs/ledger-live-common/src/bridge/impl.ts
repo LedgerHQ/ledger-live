@@ -28,6 +28,7 @@ const alpacaized = {
   xrp: true,
   stellar: true,
   tezos: true,
+  // hedera: true,
 };
 
 // let accountBridgeInstance: AccountBridge<any> | null = null;
