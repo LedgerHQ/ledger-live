@@ -28,6 +28,9 @@ const STATUS = {
   USER_CANCEL: 0x6985,
 };
 
+const ED25519_SIGNATURE_HEX_LENGTH = 128; // hex characters (64 bytes)
+const CANTON_SIGNATURE_HEX_LENGTH = 130; // hex characters (65 bytes with framing)
+
 export type AppConfig = {
   version: string;
 };
@@ -63,7 +66,7 @@ export default class Canton {
    * @return the address and public key
    */
   async getAddress(path: string, display: boolean = false): Promise<CantonAddress> {
-    const bipPath = BIPPath.fromString("m/44'/6767'/0'/0'/0'").toPathArray();
+    const bipPath = BIPPath.fromString(path).toPathArray();
     const serializedPath = this.serializePath(bipPath);
 
     const p1 = display ? P1_CONFIRM : P1_NON_CONFIRM;
@@ -91,7 +94,7 @@ export default class Canton {
    */
   async signTransaction(path: string, txHash: string): Promise<CantonSignature> {
     // 1. Send the derivation path
-    const bipPath = BIPPath.fromString("m/44'/6767'/0'/0'/0'").toPathArray();
+    const bipPath = BIPPath.fromString(path).toPathArray();
     const serializedPath = this.serializePath(bipPath);
 
     const pathResponse = await this.transport.send(
@@ -114,8 +117,9 @@ export default class Canton {
     );
 
     const responseData = this.handleTransportResponse(response, "transaction");
-    const signature = responseData.toString("hex");
-    return signature;
+    const rawSignature = responseData.toString("hex");
+
+    return this.cleanSignatureFormat(rawSignature);
   }
 
   /**
@@ -137,6 +141,25 @@ export default class Canton {
     return {
       version: `${major}.${minor}.${patch}`,
     };
+  }
+
+  /**
+   * Converts 65-byte Canton format to 64-byte Ed25519:
+   * [40][64_bytes_signature][00] (130 hex chars)
+   * @private
+   */
+  private cleanSignatureFormat(signature: string): CantonSignature {
+    if (signature.length === ED25519_SIGNATURE_HEX_LENGTH) {
+      return signature;
+    }
+
+    if (signature.length === CANTON_SIGNATURE_HEX_LENGTH) {
+      const cleanedSignature = signature.slice(2, -2);
+      return cleanedSignature;
+    }
+
+    console.warn(`[Canton]: Unknown signature format (${signature.length} chars)`);
+    return signature;
   }
 
   /**
