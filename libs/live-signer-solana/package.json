@@ -29,7 +29,7 @@
   "dependencies": {
     "@ledgerhq/coin-solana": "workspace:^",
     "@ledgerhq/device-management-kit": "0.0.0-apex-support-20250721132630",
-    "@ledgerhq/device-signer-kit-solana": "0.0.0-context-module-fix-20250813175248",
+    "@ledgerhq/device-signer-kit-solana": "0.0.0-develop-at-48d73c6a17889a92db6291b7dd5aa9709738a9ac-20250908152646",
     "@ledgerhq/devices": "workspace:^",
     "@ledgerhq/errors": "workspace:^",
     "@ledgerhq/hw-app-solana": "workspace:^",
