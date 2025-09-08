@@ -10,7 +10,6 @@ import {
   prepareTapRequest,
   submitTapRequest,
 } from "../network/gateway";
-import { generateMockKeyPair, createMockSigner, verifySignature } from "../test/cantonTestUtils";
 import {
   OnboardStatus,
   PreApprovalStatus,
@@ -21,107 +20,16 @@ import {
   PrepareTransactionResponse,
 } from "../types/onboard";
 
-const isDevSignerMode = false;
-
-const keyPair = generateMockKeyPair();
-const signer = createMockSigner(keyPair);
-
 async function getKeypair(
   signerContext: SignerContext<CantonSigner>,
   deviceId: string,
   derivationPath: string,
 ) {
-  if (!isDevSignerMode) {
-    return signerContext(deviceId, async signer => {
-      const { publicKey, address } = await signer.getAddress(derivationPath);
-      return { signer, publicKey: publicKey.replace("0x", ""), address };
-    });
-  }
-
-  const { publicKey, address } = await signer.getAddress(derivationPath);
-  return { signer, publicKey, address };
+  return signerContext(deviceId, async signer => {
+    const { publicKey, address } = await signer.getAddress(derivationPath);
+    return { signer, publicKey: publicKey.replace("0x", ""), address };
+  });
 }
-
-async function createSignature(
-  keypair: any,
-  hash: string,
-  derivationPath: string,
-  signerContext: SignerContext<CantonSigner>,
-  deviceId: string,
-): Promise<string> {
-  // Extract raw hash from multihash format if needed
-  // Canton Gateway returns multihash format: <algorithm><length><hash>
-  // Device expects exactly 32 bytes of raw hash
-  let processedHash = hash;
-
-  // Remove '0x' prefix if present
-  if (processedHash.startsWith("0x")) {
-    processedHash = processedHash.substring(2);
-  }
-
-  // Check if this is a multihash format (starts with algorithm identifier)
-  if (processedHash.length > 64) {
-    log(`[createSignature] Detected multihash format ${processedHash}`);
-    // Skip first 4 characters (2 bytes): algorithm (1 byte) + length (1 byte)
-    // processedHash = processedHash.substring(4);
-  }
-
-  // Ensure hash is exactly 32 bytes (64 hex characters)
-  // if (processedHash.length !== 64) {
-  //   throw new Error(
-  //     `Invalid hash length: expected 64 hex chars (32 bytes), got ${processedHash.length}`,
-  //   );
-  // }
-
-  log(
-    `[createSignature] Using hash: ${processedHash.substring(0, 16)}...${processedHash.substring(48)}`,
-  );
-
-  const signature = !isDevSignerMode
-    ? await signerContext(deviceId, signer => signer.signTransaction(derivationPath, processedHash))
-    : await keypair.signer.signTransaction(derivationPath, processedHash);
-
-  return signature;
-}
-
-export const buildIsAccountOnboarded =
-  (signerContext: SignerContext<CantonSigner>) =>
-  (
-    deviceId: string,
-    derivationPath: string,
-    publicKey: string,
-  ): Observable<boolean | { party_id: string }> =>
-    new Observable(observer => {
-      async function main() {
-        try {
-          const keypair = await getKeypair(signerContext, deviceId, derivationPath);
-          const pk = isDevSignerMode ? keypair.publicKey : publicKey;
-
-          log(`[isAccountOnboarded] Checking if account is onboarded for public key: ${pk}`);
-          const { party_id } = await getPartyByPubKey(pk);
-
-          if (party_id) {
-            log("[isAccountOnboarded] Account is already onboarded", party_id);
-            observer.next({ party_id } as any); // Cast to match return type
-            observer.complete();
-          } else {
-            log("[isAccountOnboarded] Account is not onboarded");
-            observer.next(false);
-            observer.complete();
-          }
-        } catch (error) {
-          // Handle API errors (like 400 for non-existent party) as "not onboarded"
-          log(
-            "[isAccountOnboarded] Error checking party status (likely not onboarded):",
-            (error as Error).message,
-          );
-          observer.next(false);
-          observer.complete();
-        }
-      }
-
-      main();
-    });
 
 export const isAccountOnboarded = async (
   publicKey: string,
@@ -195,51 +103,26 @@ export const buildOnboardAccount =
           message: "Signing transactions...",
         });
 
-        log("[onboardAccount] Calling createSignature");
-        const signature = await createSignature(
-          keypair,
-          prepared.transactions.combined_hash,
-          derivationPath,
-          signerContext,
-          deviceId,
+        log("[onboardAccount] Signing transaction");
+        const signature = await signerContext(deviceId, signer =>
+          signer.signTransaction(derivationPath, prepared.transactions.combined_hash),
         ).catch(err => {
-          log(`[onboardAccount] createSignature failed: ${err}`);
+          log(`[onboardAccount] signTransaction failed: ${err}`);
           throw err;
         });
 
-        log("[onboardAccount] createSignature completed successfully");
+        log("[onboardAccount] signTransaction completed successfully");
         observer.next({
           status: OnboardStatus.SUBMIT,
           message: "Submitting to network...",
         });
 
-        console.log("======== 1 =======");
-        console.log(
-          verifySignature(keypair.publicKey, signature, prepared.transactions.combined_hash),
-        );
-
         log("[onboardAccount] Calling submitOnboarding");
-        // Strip 2 characters from start and 2 from end of signature before submitting
-        const strippedSignature = isDevSignerMode
-          ? signature
-          : signature.length > 4
-            ? signature.slice(2, -2)
-            : signature;
-        log(
-          `[onboardAccount] Original signature: ${signature.length} ${signature}, stripped length: ${strippedSignature.length} ${strippedSignature}`,
-        );
-        console.log("======== 2 =======");
-        console.log(
-          verifySignature(
-            keypair.publicKey,
-            strippedSignature,
-            prepared.transactions.combined_hash,
-          ),
-        );
+
         const result = await submitOnboarding(
           { public_key: keypair.publicKey, public_key_type: "ed25519" },
           prepared,
-          strippedSignature,
+          signature,
         ).catch(err => {
           log(`[onboardAccount] submitOnboarding error: ${err.message}`);
           if (err.message.includes("exists")) {
@@ -295,7 +178,6 @@ export const buildAuthorizePreapproval =
         const preparedTransaction: PrepareTransactionResponse = await preparePreApprovalTransaction(
           partyId,
         ).catch((err: any) => {
-          log(`[authorizePreapproval] Failed to prepare transaction: ${err}`);
           throw err;
         });
 
@@ -311,13 +193,8 @@ export const buildAuthorizePreapproval =
         log(
           `[authorizePreapproval] About to request device signature for hash: ${preparedTransaction.hash}`,
         );
-        const keypair = await getKeypair(signerContext, deviceId, derivationPath);
-        const signature = await createSignature(
-          keypair,
-          preparedTransaction.hash,
-          derivationPath,
-          signerContext,
-          deviceId,
+        const signature = await signerContext(deviceId, signer =>
+          signer.signTransaction(derivationPath, preparedTransaction.hash),
         ).catch((err: any) => {
           log(`[authorizePreapproval] Device signature failed: ${err}`);
           throw err;
@@ -331,15 +208,10 @@ export const buildAuthorizePreapproval =
         });
 
         log("[authorizePreapproval] Calling gateway API to submit transaction");
-        const strippedSignature = isDevSignerMode
-          ? signature
-          : signature.length > 4
-            ? signature.slice(2, -2)
-            : signature;
         const result = await submitPreApprovalTransaction(
           partyId,
           preparedTransaction,
-          strippedSignature,
+          signature,
         ).catch((err: any) => {
           log(`[authorizePreapproval] Gateway API failed: ${err}`);
           throw err;
@@ -373,28 +245,21 @@ export const buildAuthorizePreapproval =
           }).catch((err: any) => {
             log(`[authorizePreapproval] preparedTapRequest failed: ${err}`);
           });
-          const preparedTapRequestSignature = await createSignature(
-            keypair,
-            preparedTapRequest?.hash || "",
-            derivationPath,
-            signerContext,
-            deviceId,
+          const preparedTapRequestSignature = await signerContext(deviceId, signer =>
+            signer.signTransaction(derivationPath, preparedTapRequest?.hash || ""),
           ).catch((err: any) => {
             log(`[authorizePreapproval] Device signature failed: ${err}`);
           });
-          const strippedPreparedTapRequestSignature = isDevSignerMode
-            ? preparedTapRequestSignature
-            : preparedTapRequestSignature?.slice(2, -2);
           const submittedTapRequest = await submitTapRequest({
             partyId,
             serialized: preparedTapRequest?.serialized || "",
-            signature: strippedPreparedTapRequestSignature!,
+            signature: preparedTapRequestSignature!,
           }).catch((err: any) => {
             log(`[authorizePreapproval] submitTapRequest failed: ${err}`);
           });
           log("[authorizePreapproval] submittedTapRequest", submittedTapRequest);
         };
-        handleTapRequest();
+        await handleTapRequest();
 
         observer.complete();
       }

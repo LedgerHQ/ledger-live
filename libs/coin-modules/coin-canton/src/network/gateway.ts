@@ -256,14 +256,6 @@ export async function prepareOnboarding(
   const nodeId = getNodeId();
   const fullUrl = `${gatewayUrl}/v1/node/${nodeId}/onboarding/prepare`;
 
-  console.log("[Gateway prepareOnboarding] Making request:", {
-    gatewayUrl,
-    nodeId,
-    fullUrl,
-    pubKey: pubKey.substring(0, 10) + "...",
-    pubKeyType,
-  });
-
   const { data } = await network<OnboardingPrepareResponse>({
     method: "POST",
     url: fullUrl,
@@ -271,11 +263,6 @@ export async function prepareOnboarding(
       public_key: pubKey,
       public_key_type: pubKeyType,
     } satisfies OnboardingPrepareRequest,
-  });
-
-  console.log("[Gateway prepareOnboarding] Got response:", {
-    partyId: data.party_id,
-    partyName: data.party_name,
   });
 
   return data;
@@ -440,36 +427,20 @@ export async function submitPreApprovalTransaction(
   preparedTransaction: PrepareTransactionResponse,
   signature: string,
 ): Promise<PreApprovalResult> {
-  try {
-    const submitRequest: SubmitTransactionRequest = {
-      serialized: preparedTransaction.serialized,
-      signature,
-    };
+  const submitRequest: SubmitTransactionRequest = {
+    serialized: preparedTransaction.serialized,
+    signature,
+  };
 
-    console.log("[Gateway submitPreApprovalTransaction] Submit request:", submitRequest);
-    console.log(
-      "[Gateway submitPreApprovalTransaction] Submit request JSON:",
-      JSON.stringify(submitRequest, null, 2),
-    );
+  const { data } = await network<SubmitTransactionResponse>({
+    method: "POST",
+    url: `${getGatewayUrl()}/v1/node/${getNodeId()}/party/${partyId}/transaction/submit`,
+    data: submitRequest,
+  });
 
-    const { data } = await network<SubmitTransactionResponse>({
-      method: "POST",
-      url: `${getGatewayUrl()}/v1/node/${getNodeId()}/party/${partyId}/transaction/submit`,
-      data: submitRequest,
-    });
-
-    console.log("[Gateway submitPreApprovalTransaction] Submit response:", data);
-
-    return {
-      approved: true,
-      transactionId: data.submissionId || `preapproval-${Date.now()}`,
-      message: "Transaction pre-approval submitted successfully",
-    };
-  } catch (error) {
-    console.error("[Gateway submitPreApprovalTransaction] Error:", error);
-    return {
-      approved: false,
-      message: error instanceof Error ? error.message : "Failed to submit pre-approval transaction",
-    };
-  }
+  return {
+    approved: true,
+    transactionId: data.submissionId || "", // TODO: fix types
+    message: "Transaction pre-approval submitted successfully",
+  };
 }

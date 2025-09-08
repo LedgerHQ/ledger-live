@@ -11,7 +11,7 @@ export interface CantonTestKeyPair {
   publicKeyHex: string; // Ready for Canton Gateway API
   privateKeyHex: string; // ASN.1 DER encoded private key in hex format
   privateKeyPem: string; // PEM format for signing operations
-  fingerprint: string; // Canton public key fingerprint
+  fingerprint: string; // Canton public key fingerprint (multihash: 1220 + SHA256(publicKey))
   sign: (hashHex: string) => string; // Sign transaction hash
 }
 
@@ -25,31 +25,32 @@ export function generateMockKeyPair(): CantonTestKeyPair {
   const rawPublicKey = publicKeyBuffer.slice(-32);
   const publicKeyHex = rawPublicKey.toString("hex");
 
+  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
   const privateKeyPem = privateKey.export({ type: "pkcs8", format: "pem" }) as string;
   const privateKeyDer = privateKey.export({ type: "pkcs8", format: "der" });
   const privateKeyHex = privateKeyDer.toString("hex");
 
-  const multihashPrefix = "1220";
-  const fingerprint = `${multihashPrefix}${publicKeyHex}`;
+  // Generate fingerprint: Canton computes SHA256(purpose_bytes + public_key_bytes)
+  // where purpose_bytes is 4-byte big-endian representation of PURPOSE_PUBLIC_KEY_FINGERPRINT (12)
+  const PURPOSE_PUBLIC_KEY_FINGERPRINT = 12;
+  const purposeBytes = Buffer.allocUnsafe(4);
+  purposeBytes.writeInt32BE(PURPOSE_PUBLIC_KEY_FINGERPRINT, 0);
 
-  // eslint-disable-next-line no-console
-  console.log(
-    "[generateMockKeyPair] Generated Ed25519 keypair:",
-    "publicKeyHex",
-    publicKeyHex, // 64-char hex string (no 0x prefix)
-    "privateKeyHex",
-    privateKeyHex, // ASN.1 DER encoded private key in hex format
-    "privateKeyPem",
-    privateKeyPem, // PEM format string
-    "fingerprint",
-    fingerprint, // Canton format: multihash prefix + public key hex
-  );
+  const hash = crypto.createHash("sha256");
+  hash.update(purposeBytes);
+  hash.update(rawPublicKey);
+  const hashedContent = hash.digest();
+
+  // Multihash encoding: 0x12 (SHA256) + 0x20 (32 bytes) + hash
+  const multihashPrefix = Buffer.from([0x12, 0x20]);
+  const fingerprintBuffer = Buffer.concat([multihashPrefix, hashedContent]);
+  const fingerprint = fingerprintBuffer.toString("hex");
 
   return {
     publicKeyHex, // 64-char hex string (no 0x prefix)
     privateKeyHex, // ASN.1 DER encoded private key in hex format
     privateKeyPem, // PEM format string
-    fingerprint, // Canton format: multihash prefix + public key hex
+    fingerprint, // Canton format: multihash prefix + SHA256(public key)
 
     /**
      * Sign a transaction hash using proper Ed25519 signature
@@ -105,31 +106,7 @@ export function verifySignature(
     // Ed25519 signatures should be 64 bytes, but we might receive 65 bytes with recovery ID
     let processedSignature = cleanSignature;
     if (cleanSignature.length === 130) {
-      // 65 bytes - try different approaches to get 64-byte signature
-      console.log(
-        `[verifySignature] Signature is 65 bytes, trying to extract 64-byte Ed25519 signature`,
-      );
-
-      // Try removing last 2 hex chars (1 byte)
-      const sigNoLast = cleanSignature.slice(0, -2);
-      console.log(
-        `[verifySignature] Option 1 - Remove last byte: ${sigNoLast} (${sigNoLast.length / 2} bytes)`,
-      );
-
-      // Try removing first 2 hex chars (1 byte)
-      const sigNoFirst = cleanSignature.slice(2);
-      console.log(
-        `[verifySignature] Option 2 - Remove first byte: ${sigNoFirst} (${sigNoFirst.length / 2} bytes)`,
-      );
-
-      // Try removing first and last hex chars (as per user's request)
-      const sigStripBoth = cleanSignature.slice(2, -2);
-      console.log(
-        `[verifySignature] Option 3 - Remove first and last byte: ${sigStripBoth} (${sigStripBoth.length / 2} bytes)`,
-      );
-
-      // Default to removing last byte (most common for recovery ID)
-      processedSignature = sigNoLast;
+      processedSignature = cleanSignature.slice(2, -2);
       details.originalSignatureLength = cleanSignature.length;
       details.processedSignatureLength = processedSignature.length;
     } else if (cleanSignature.length !== 128) {
