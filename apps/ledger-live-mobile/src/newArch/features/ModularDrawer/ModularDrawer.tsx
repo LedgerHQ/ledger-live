@@ -12,6 +12,8 @@ import { Observable } from "rxjs";
 import { useSelector } from "react-redux";
 import { modularDrawerSearchValueSelector } from "~/reducers/modularDrawer";
 
+import { useModularDrawerConfiguration } from "@ledgerhq/live-common/modularDrawer/hooks/useModularDrawerConfiguration";
+
 const SNAP_POINTS = ["70%", "92%"];
 
 /**
@@ -64,6 +66,14 @@ export function ModularDrawer({
   useCase,
   areCurrenciesFiltered,
 }: ModularDrawerProps) {
+  const {
+    assetsConfiguration: assetsConfigurationSanitized,
+    networkConfiguration: networkConfigurationSanitized,
+  } = useModularDrawerConfiguration("llmModularDrawer", {
+    assets: assetsConfiguration,
+    networks: networksConfiguration,
+  });
+
   const searchValue = useSelector(modularDrawerSearchValueSelector);
   const { sortedCryptoCurrencies, assetsSorted, isLoading, error, refetch, loadNext } = useAssets({
     currencyIds: currencies,
@@ -109,7 +119,7 @@ export function ModularDrawer({
         assetsViewModel={{
           availableAssets: sortedCryptoCurrencies,
           onAssetSelected: handleAsset,
-          assetsConfiguration,
+          assetsConfiguration: assetsConfigurationSanitized,
           isOpen,
           isLoading,
           hasError: !!error,
@@ -119,7 +129,7 @@ export function ModularDrawer({
         networksViewModel={{
           onNetworkSelected: handleNetwork,
           availableNetworks,
-          networksConfiguration,
+          networksConfiguration: networkConfigurationSanitized,
           asset,
         }}
         accountsViewModel={{

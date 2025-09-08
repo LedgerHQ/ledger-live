@@ -1,5 +1,5 @@
-import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
-import { EnhancedModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/types";
+import { useFeature } from "../../featureFlags";
+import { EnhancedModularDrawerConfiguration } from "../../wallet-api/ModularDrawer/types";
 
 const assetConfigurationDisabled: EnhancedModularDrawerConfiguration["assets"] = {
   rightElement: "undefined",
@@ -13,9 +13,10 @@ const networkConfigurationDisabled: EnhancedModularDrawerConfiguration["networks
 };
 
 export const useModularDrawerConfiguration = (
+  featureFlagKey: "lldModularDrawer" | "llmModularDrawer",
   drawerConfiguration?: EnhancedModularDrawerConfiguration,
 ) => {
-  const featureModularDrawer = useFeature("lldModularDrawer");
+  const featureModularDrawer = useFeature(featureFlagKey);
 
   const modularizationEnabled = featureModularDrawer?.params?.enableModularization ?? false;
   const assetsConfiguration = modularizationEnabled

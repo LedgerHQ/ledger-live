@@ -11,7 +11,7 @@ import { useModularDrawerNavigation } from "./hooks/useModularDrawerNavigation";
 import { BackButtonArrow } from "./components/BackButton";
 import { useModularDrawerRemoteData } from "./hooks/useModularDrawerRemoteData";
 import { setSearchedValue } from "~/renderer/reducers/modularDrawer";
-import { useModularDrawerConfiguration } from "./hooks/useModularDrawerConfiguration";
+import { useModularDrawerConfiguration } from "@ledgerhq/live-common/modularDrawer/hooks/useModularDrawerConfiguration";
 
 const ModularDrawerFlowManager = ({
   currencies,
@@ -60,8 +60,10 @@ const ModularDrawerFlowManager = ({
     areCurrenciesFiltered,
   });
 
-  const { assetsConfiguration, networkConfiguration } =
-    useModularDrawerConfiguration(drawerConfiguration);
+  const { assetsConfiguration, networkConfiguration } = useModularDrawerConfiguration(
+    "lldModularDrawer",
+    drawerConfiguration,
+  );
 
   const renderStepContent = (step: ModularDrawerStep) => {
     switch (step) {
