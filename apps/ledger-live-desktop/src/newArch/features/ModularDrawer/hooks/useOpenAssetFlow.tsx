@@ -3,7 +3,7 @@ import { listAndFilterCurrencies } from "@ledgerhq/live-common/platform/helpers"
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { Account } from "@ledgerhq/types-live";
 import { ModularDrawerVisibleParams, useModularDrawerVisibility } from "LLD/features/ModularDrawer";
-import { useCallback } from "react";
+import { useCallback, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { openModal } from "~/renderer/actions/modals";
 import { currentRouteNameRef } from "~/renderer/analytics/screenRefs";
@@ -14,6 +14,7 @@ import ModularDrawerFlowManager from "../ModularDrawerFlowManager";
 import { useModularDrawerAnalytics } from "../analytics/useModularDrawerAnalytics";
 import { CloseButton } from "../components/CloseButton";
 import type { EnhancedModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/types";
+import { setFlowValue, setSourceValue } from "~/renderer/reducers/modularDrawer";
 
 function selectCurrency(
   onAssetSelected: (currency: CryptoOrTokenCurrency) => void,
@@ -47,10 +48,18 @@ function selectCurrency(
 
 export function useOpenAssetFlow(
   modularDrawerVisibleParams: ModularDrawerVisibleParams,
-  source: string,
+  source?: string,
   modalNameToReopen?: keyof GlobalModalData,
 ) {
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(setFlowValue(modularDrawerVisibleParams.location));
+    if (source) {
+      dispatch(setSourceValue(source));
+    }
+  }, [dispatch, modularDrawerVisibleParams.location, source]);
+
   const { isModularDrawerVisible } = useModularDrawerVisibility({
     modularDrawerFeatureFlagKey: "lldModularDrawer",
   });
@@ -61,10 +70,9 @@ export function useOpenAssetFlow(
     setDrawer();
     trackModularDrawerEvent("button_clicked", {
       button: "Close",
-      flow: modularDrawerVisibleParams.location,
       page: currentRouteNameRef.current ?? "Unknown",
     });
-  }, [modularDrawerVisibleParams.location, trackModularDrawerEvent]);
+  }, [trackModularDrawerEvent]);
 
   const openAddAccountFlow = useCallback(
     (
@@ -72,11 +80,12 @@ export function useOpenAssetFlow(
       autoCloseDrawer: boolean = true,
       onAccountSelected?: (account: Account) => void,
     ) => {
+      dispatch(setFlowValue("add account"));
+
       const onClose = () => {
         setDrawer();
         trackModularDrawerEvent("button_clicked", {
           button: "Close",
-          flow: "add account",
           page: currentRouteNameRef.current ?? "Unknown",
         });
       };
@@ -92,7 +101,7 @@ export function useOpenAssetFlow(
           ModularDrawerAddAccountFlowManager,
           {
             currency,
-            source,
+            source: source ?? "",
             onAccountSelected: modalNameToReopen
               ? onFlowFinishedWithModalReopen
               : onAccountSelected,
@@ -125,7 +134,7 @@ export function useOpenAssetFlow(
       if (isModularDrawerVisible(modularDrawerVisibleParams)) {
         selectCurrency(
           openAddAccountFlow,
-          source,
+          source ?? "",
           modularDrawerVisibleParams.location,
           includeTokens,
           undefined,

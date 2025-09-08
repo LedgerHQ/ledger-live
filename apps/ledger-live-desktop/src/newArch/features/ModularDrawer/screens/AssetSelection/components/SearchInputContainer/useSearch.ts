@@ -5,18 +5,13 @@ import { useDispatch, useSelector } from "react-redux";
 import { modularDrawerStateSelector, setSearchedValue } from "~/renderer/reducers/modularDrawer";
 import { useSearchCommon } from "@ledgerhq/live-common/modularDrawer/hooks/useSearch";
 
-export type SearchProps = {
-  source: string;
-  flow: string;
-};
-
 export type SearchResult = {
   handleSearch: (queryOrEvent: string | ChangeEvent<HTMLInputElement>) => void;
   handleDebouncedChange: (current: string, previous: string) => void;
   displayedValue: string | undefined;
 };
 
-export const useSearch = ({ source, flow }: SearchProps): SearchResult => {
+export const useSearch = (): SearchResult => {
   const dispatch = useDispatch();
   const { searchedValue } = useSelector(modularDrawerStateSelector);
   const { trackModularDrawerEvent } = useModularDrawerAnalytics();
@@ -26,8 +21,6 @@ export const useSearch = ({ source, flow }: SearchProps): SearchResult => {
       trackModularDrawerEvent(
         "asset_searched",
         {
-          flow,
-          source,
           page: MODULAR_DRAWER_PAGE_NAME.MODULAR_ASSET_SELECTION,
           searched_value: query,
         },
@@ -36,7 +29,7 @@ export const useSearch = ({ source, flow }: SearchProps): SearchResult => {
         },
       );
     },
-    [trackModularDrawerEvent, flow, source],
+    [dispatch, trackModularDrawerEvent],
   );
 
   const onPersistSearchValue = useCallback(

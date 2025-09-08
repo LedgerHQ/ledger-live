@@ -12,7 +12,6 @@ interface UseModularDrawerRemoteDataProps {
   goToStep: (step: ModularDrawerStep) => void;
   onAssetSelected: ModularDrawerFlowManagerProps["onAssetSelected"];
   isSelectAccountFlow: boolean;
-  flow: ModularDrawerFlowManagerProps["flow"];
 }
 
 export function useModularDrawerRemoteData({
@@ -23,7 +22,6 @@ export function useModularDrawerRemoteData({
   goToStep,
   onAssetSelected,
   isSelectAccountFlow,
-  flow,
 }: UseModularDrawerRemoteDataProps) {
   const {
     currenciesByProvider,
@@ -64,7 +62,6 @@ export function useModularDrawerRemoteData({
     setNetworksToDisplay,
     goToStep,
     onAssetSelected,
-    flow,
     hasOneCurrency,
   });
 
