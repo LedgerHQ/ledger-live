@@ -2,6 +2,7 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { MODULAR_DRAWER_KEY } from "LLM/features/ModularDrawer/types";
 import { State } from "~/reducers/types";
 import { EnhancedModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/types";
+import { ModularDrawerStep } from "~/newArch/features/ModularDrawer/types";
 
 export interface ModularDrawerState {
   isOpen: boolean;
@@ -16,6 +17,7 @@ export interface ModularDrawerState {
   useCase?: string;
   areCurrenciesFiltered?: boolean;
   searchValue: string;
+  step: ModularDrawerStep;
 }
 
 export const INITIAL_STATE: ModularDrawerState = {
@@ -37,6 +39,7 @@ export const INITIAL_STATE: ModularDrawerState = {
   useCase: undefined,
   areCurrenciesFiltered: undefined,
   searchValue: "",
+  step: ModularDrawerStep.Asset,
 };
 
 // Selectors
@@ -45,6 +48,9 @@ export const modularDrawerStateSelector = (state: State) => state.modularDrawer;
 export const modularDrawerSearchValueSelector = (state: State) => state.modularDrawer.searchValue;
 export const modularDrawerFlowSelector = (state: State) => state.modularDrawer.flow;
 export const modularDrawerSourceSelector = (state: State) => state.modularDrawer.source;
+export const modularDrawerEnableAccountSelectionSelector = (state: State) =>
+  state.modularDrawer.enableAccountSelection;
+export const modularDrawerStepSelector = (state: State) => state.modularDrawer.step;
 
 const modularDrawerSlice = createSlice({
   name: MODULAR_DRAWER_KEY,
@@ -63,6 +69,7 @@ const modularDrawerSlice = createSlice({
         networksConfiguration?: EnhancedModularDrawerConfiguration["networks"];
         useCase?: string;
         areCurrenciesFiltered?: boolean;
+        step?: ModularDrawerStep;
       }>,
     ) => {
       state.isOpen = true;
@@ -78,6 +85,7 @@ const modularDrawerSlice = createSlice({
         networksConfiguration,
         useCase,
         areCurrenciesFiltered,
+        step,
       } = action.payload;
 
       if (currencies !== undefined) {
@@ -110,6 +118,9 @@ const modularDrawerSlice = createSlice({
       if (areCurrenciesFiltered !== undefined) {
         state.areCurrenciesFiltered = areCurrenciesFiltered;
       }
+      if (step !== undefined) {
+        state.step = step;
+      }
     },
     closeModularDrawer: state => {
       state.isOpen = false;
@@ -124,15 +135,11 @@ const modularDrawerSlice = createSlice({
       state.useCase = undefined;
       state.areCurrenciesFiltered = undefined;
       state.searchValue = "";
+      state.step = ModularDrawerStep.Asset;
     },
-    setPreselectedCurrencies: (state, action: PayloadAction<string[]>) => {
-      state.preselectedCurrencies = action.payload;
-    },
+
     setCallbackId: (state, action: PayloadAction<string | undefined>) => {
       state.callbackId = action.payload;
-    },
-    setEnableAccountSelection: (state, action: PayloadAction<boolean>) => {
-      state.enableAccountSelection = action.payload;
     },
     setAccountsObservableId: (state, action: PayloadAction<string | undefined>) => {
       state.accountsObservableId = action.payload;
@@ -149,14 +156,11 @@ const modularDrawerSlice = createSlice({
     ) => {
       state.networksConfiguration = action.payload;
     },
-    setUseCase: (state, action: PayloadAction<string | undefined>) => {
-      state.useCase = action.payload;
-    },
-    setAreCurrenciesFiltered: (state, action: PayloadAction<boolean | undefined>) => {
-      state.areCurrenciesFiltered = action.payload;
-    },
     setSearchValue: (state, action: PayloadAction<string>) => {
       state.searchValue = action.payload;
+    },
+    setStep: (state, action: PayloadAction<ModularDrawerStep>) => {
+      state.step = action.payload;
     },
   },
 });
@@ -164,13 +168,12 @@ const modularDrawerSlice = createSlice({
 export const {
   openModularDrawer,
   closeModularDrawer,
-  setPreselectedCurrencies,
   setCallbackId,
-  setEnableAccountSelection,
   setAccountsObservableId,
   setAssetsConfiguration,
   setNetworksConfiguration,
   setSearchValue,
+  setStep,
 } = modularDrawerSlice.actions;
 
 export default modularDrawerSlice.reducer;
