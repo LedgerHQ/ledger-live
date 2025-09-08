@@ -54,6 +54,7 @@ export function adaptCoreOperationToLiveOperation(accountId: string, op: CoreOpe
   if (op.details?.memo) {
     extra.memo = op.details.memo as string;
   }
+
   const bnFees = new BigNumber(op.tx.fees.toString());
   const res = {
     id: encodeOperationId(accountId, op.tx.hash, op.type),
@@ -72,7 +73,11 @@ export function adaptCoreOperationToLiveOperation(accountId: string, op: CoreOpe
     date: op.tx.date,
     transactionSequenceNumber: op.details?.sequence as number,
     hasFailed: (op.details as unknown as { status?: string })?.status === "failed",
-    extra,
+    extra: {
+      // FIXME: added for Hedera, should be handled in a better way
+      ...op.details,
+      ...extra,
+    },
   };
 
   return res;
@@ -119,6 +124,9 @@ export function transactionToIntent(
       case "send-eip1559":
         transactionType = "send-eip1559";
         break;
+      case "token-associate":
+        transactionType = "token-associate";
+        break;
       default:
         throw new Error(`Unsupported transaction mode: ${transaction.mode}`);
     }
@@ -158,12 +166,23 @@ export function transactionToIntent(
   return res;
 }
 
+function getOperationTypeFromTransactionMode(mode: GenericTransaction["mode"]): OperationType {
+  switch (mode) {
+    case "changeTrust":
+      return "OPT_IN";
+    case "token-associate":
+      return "ASSOCIATE_TOKEN";
+    default:
+      return "OUT";
+  }
+}
+
 export const buildOptimisticOperation = (
   account: Account,
   transaction: TransactionCommon,
   sequenceNumber?: number,
 ): Operation => {
-  const type = transaction["mode"] === "changeTrust" ? "OPT_IN" : "OUT";
+  const type = getOperationTypeFromTransactionMode(transaction["mode"]);
   const fees = BigInt(transaction["fees"]?.toString() || "0");
   const { subAccountId } = transaction;
   const { subAccounts } = account;

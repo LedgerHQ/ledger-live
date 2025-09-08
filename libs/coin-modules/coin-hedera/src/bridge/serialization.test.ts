@@ -1,15 +1,15 @@
 import {
-  getMockedAccount,
-  getMockedAccountRaw,
-  mockHederaResources,
-  mockHederaResourcesRaw,
-} from "../test/fixtures/account.fixture";
-import {
   assignFromAccountRaw,
   assignToAccountRaw,
   fromHederaResourcesRaw,
   toHederaResourcesRaw,
 } from "./serialization";
+import {
+  getMockedAccount,
+  getMockedAccountRaw,
+  mockHederaResources,
+  mockHederaResourcesRaw,
+} from "../test/fixtures/account.fixture";
 
 const mockedAccount = getMockedAccount();
 const mockedAccountRaw = getMockedAccountRaw();

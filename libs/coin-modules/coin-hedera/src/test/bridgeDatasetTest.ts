@@ -45,6 +45,7 @@ export const hedera: CurrenciesData<Transaction> = {
             family: "hedera",
             recipient: "0.0.751515",
             amount: "100000000",
+            mode: "send",
           }),
           expectedStatus: {
             errors: {
@@ -59,6 +60,7 @@ export const hedera: CurrenciesData<Transaction> = {
             family: "hedera",
             recipient: "0.0.751515",
             amount: "0",
+            mode: "send",
           }),
           expectedStatus: {
             errors: {
@@ -73,6 +75,7 @@ export const hedera: CurrenciesData<Transaction> = {
             family: "hedera",
             recipient: "0.0.751515",
             amount: "1000000000000000",
+            mode: "send",
           }),
           expectedStatus: {
             errors: {
@@ -87,6 +90,7 @@ export const hedera: CurrenciesData<Transaction> = {
             family: "hedera",
             recipient: "0.0.751515",
             amount: "1000000000000000",
+            mode: "send",
             useAllAmount: true,
           }),
           expectedStatus: (account, _, status) => {

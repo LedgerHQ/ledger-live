@@ -22,6 +22,7 @@ export interface HederaMirrorTransaction {
   consensus_timestamp: string;
   result: string;
   name: string;
+  memo_base64?: string;
 }
 
 export interface HederaMirrorToken {
@@ -44,5 +45,26 @@ export interface HederaMirrorAccount {
       token_id: string;
       balance: number;
     }[];
+  };
+}
+
+export interface HederaMirrorAccountTokensResponse {
+  tokens: HederaMirrorToken[];
+  links: {
+    next: string | null;
+  };
+}
+
+export interface HederaMirrorAccountsResponse {
+  accounts: HederaMirrorAccount[];
+  links: {
+    next: string | null;
+  };
+}
+
+export interface HederaMirrorTransactionsResponse {
+  transactions: HederaMirrorTransaction[];
+  links: {
+    next: string | null;
   };
 }

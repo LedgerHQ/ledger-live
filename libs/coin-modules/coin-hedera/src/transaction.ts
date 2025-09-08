@@ -22,20 +22,46 @@ export function formatTransaction(transaction: Transaction, account: Account): s
 export function fromTransactionRaw(tr: TransactionRaw): Transaction {
   const common = fromTransactionCommonRaw(tr);
 
+  if (tr.mode === "token-associate") {
+    return {
+      ...common,
+      family: tr.family,
+      memo: tr.memo,
+      mode: tr.mode,
+      assetReference: tr.assetReference,
+      assetOwner: tr.assetOwner,
+      properties: tr.properties,
+    };
+  }
+
   return {
     ...common,
     family: tr.family,
     memo: tr.memo,
+    mode: tr.mode,
   };
 }
 
 export function toTransactionRaw(t: Transaction): TransactionRaw {
   const common = toTransactionCommonRaw(t);
 
+  if (t.mode === "token-associate") {
+    return {
+      ...common,
+      family: t.family,
+      memo: t.memo,
+      mode: t.mode,
+      assetReference: t.assetReference,
+      assetOwner: t.assetOwner,
+      properties: t.properties,
+    };
+  }
+
   return {
     ...common,
     family: t.family,
     memo: t.memo,
+    mode: t.mode,
   };
 }
 

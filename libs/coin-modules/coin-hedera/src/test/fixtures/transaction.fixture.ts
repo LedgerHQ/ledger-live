@@ -6,9 +6,10 @@ export const getMockedTransaction = (overrides?: Partial<Transaction>): Transact
     family: "hedera",
     amount: new BigNumber(0),
     recipient: "",
+    mode: "send",
     useAllAmount: false,
     ...overrides,
-  };
+  } as Transaction;
 };
 
 export const getMockedTransactionRaw = (overrides?: Partial<TransactionRaw>): TransactionRaw => {
@@ -16,7 +17,8 @@ export const getMockedTransactionRaw = (overrides?: Partial<TransactionRaw>): Tr
     family: "hedera",
     amount: "0",
     recipient: "",
+    mode: "send",
     useAllAmount: false,
     ...overrides,
-  };
+  } as TransactionRaw;
 };

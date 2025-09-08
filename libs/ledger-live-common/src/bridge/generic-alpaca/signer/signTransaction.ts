@@ -1,5 +1,7 @@
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import { StellarSigner } from "@ledgerhq/coin-stellar/types/signer";
+import { HederaSigner } from "@ledgerhq/coin-hedera/types/signer";
+import { serializeSignature as serializeHederaSignature } from "@ledgerhq/coin-hedera/logic/utils";
 import { LegacySigner, SignTransactionOptions } from "./types";
 
 export const signTransaction = <Signer extends LegacySigner>(
@@ -21,5 +23,13 @@ export const stellarSignTransaction = (signerContext: SignerContext<StellarSigne
     );
 
     return signedTx.signature.toString("base64"); // It should return a Buffer
+  };
+};
+
+export const hederaSignTransaction = (signerContext: SignerContext<HederaSigner>) => {
+  return async (deviceId: string, { transaction }: SignTransactionOptions) => {
+    const signedTx = await signerContext(deviceId, signer => signer.signTransaction(transaction));
+
+    return serializeHederaSignature(signedTx);
   };
 };

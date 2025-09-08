@@ -5,7 +5,7 @@ import { getAlpacaApi } from "./alpaca";
 import { buildOptimisticOperation, transactionToIntent } from "./utils";
 import { FeeNotLoaded } from "@ledgerhq/errors";
 import { Result } from "@ledgerhq/coin-framework/derivation";
-import { MapMemo, TransactionIntent } from "@ledgerhq/coin-framework/api/types";
+import { MapMemo, StringMemo, TransactionIntent } from "@ledgerhq/coin-framework/api/types";
 import { StellarMemo } from "@ledgerhq/coin-stellar/types/bridge";
 import { log } from "@ledgerhq/logs";
 import BigNumber from "bignumber.js";
@@ -13,7 +13,7 @@ import { GenericTransaction } from "./types";
 
 /**
  * Applies memo information to transaction intent
- * Handles both destination tags (XRP-like) and Stellar-style memos
+ * Handles destination tags (XRP-like), Stellar-style memos and string memos
  */
 function applyMemoToIntent(
   transactionIntent: TransactionIntent<any>,
@@ -42,6 +42,18 @@ function applyMemoToIntent(
     txWithMemo.memo = {
       type: txMemoType as "NO_MEMO" | "MEMO_TEXT" | "MEMO_ID" | "MEMO_HASH" | "MEMO_RETURN",
       value: txMemoValue,
+    };
+
+    return txWithMemo;
+  }
+
+  if (transaction.memo) {
+    const txWithMemo = transactionIntent as TransactionIntent<StringMemo>;
+
+    txWithMemo.memo = {
+      kind: "text",
+      type: "string",
+      value: transaction.memo,
     };
 
     return txWithMemo;
