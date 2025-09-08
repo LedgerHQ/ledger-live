@@ -32,7 +32,7 @@ export default function StaxOnboardingSuccessView({
   const delayRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
-    if (onAnimationFinish) {
+    if (onAnimationFinish && videoMounted && !isPaused) {
       delayRef.current = setTimeout(onAnimationFinish, REDIRECTION_DELAY);
     }
 
@@ -42,7 +42,7 @@ export default function StaxOnboardingSuccessView({
         delayRef.current = null;
       }
     };
-  }, [onAnimationFinish]);
+  }, [onAnimationFinish, videoMounted, isPaused]);
 
   useEffect(() => {
     if (isPaused && isFocused) {
