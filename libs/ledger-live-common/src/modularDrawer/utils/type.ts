@@ -44,9 +44,9 @@ export type BalanceUI = { balance?: string; fiatValue?: string };
 export type CreateBalanceItem = (x: BalanceUI) => React.ReactNode;
 
 export type CreateAccountsCountAndApy = (args: {
-  label: string;
-  value: number;
-  type: ApyType;
+  label?: string;
+  value?: number;
+  type?: ApyType;
 }) => ReactNode;
 
 export type NetworkWithCount = CryptoOrTokenCurrency & {
@@ -71,6 +71,7 @@ export type UseAccountData = (params: AccountModuleParams) => AccountDataItem[];
 
 export type NetworkHookParams = {
   assets: CryptoOrTokenCurrency[];
+  networks: CryptoOrTokenCurrency[];
   selectedAssetId: string;
   currenciesByProvider: CurrenciesByProviderId[];
   accounts$?: Observable<WalletAPIAccount[]>;

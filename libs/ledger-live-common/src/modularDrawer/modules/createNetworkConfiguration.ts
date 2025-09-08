@@ -1,6 +1,6 @@
 import type { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { createUseLeftAccountsModule } from "../hooks/useLeftAccounts";
-import { createUseLeftAccountsApyModule } from "../hooks/useLeftAccountsApy";
+import { useLeftAccountsApyModule } from "../hooks/useLeftAccountsApy";
 import { createUseRightBalanceNetwork } from "../hooks/useRightBalanceNetwork";
 import {
   CreateNetworkConfigurationHookProps,
@@ -9,6 +9,7 @@ import {
   Network,
   NetworkHook,
   RightElementKind,
+  AccountModuleParams,
 } from "../utils/type";
 import { composeHooks } from "../../utils/composeHooks";
 
@@ -22,10 +23,13 @@ export const getLeftElement =
           accountsCount: NetworkConfigurationDeps.accountsCount,
         });
       case "numberOfAccountsAndApy":
-        return createUseLeftAccountsApyModule({
-          useAccountData: NetworkConfigurationDeps.useAccountData,
-          accountsCountAndApy: NetworkConfigurationDeps.accountsCountAndApy,
-        });
+        return (params: AccountModuleParams & { networks: CryptoOrTokenCurrency[] }) =>
+          useLeftAccountsApyModule(
+            params,
+            NetworkConfigurationDeps.useAccountData,
+            NetworkConfigurationDeps.accountsCountAndApy,
+            params.networks,
+          );
       case "undefined":
       default:
         return undefined;
@@ -62,15 +66,19 @@ export const createNetworkConfigurationHook =
     // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
     const hooks = [rightHook, leftHook].filter(Boolean) as NetworkHook[];
 
-    return (assets: CryptoOrTokenCurrency[]): Array<CryptoOrTokenCurrency & Network> => {
+    return (
+      assets: CryptoOrTokenCurrency[],
+      networks: CryptoOrTokenCurrency[],
+    ): Array<CryptoOrTokenCurrency & Network> => {
       const composedHook = composeHooks<CryptoOrTokenCurrency, Network>(
         ...hooks.map(
-          hook => (assets: CryptoOrTokenCurrency[]) =>
+          hook => () =>
             hook({
               assets,
               selectedAssetId,
               currenciesByProvider: currenciesByProvider || [],
               accounts$,
+              networks,
             }),
         ),
       );
