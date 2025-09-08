@@ -2,7 +2,7 @@ import { BigNumber } from "bignumber.js";
 import { Observable, Subject } from "rxjs";
 import { log } from "@ledgerhq/logs";
 import type { NearPreloadedData } from "./types";
-import { getProtocolConfig, getValidators, getCommission, getGasPrice } from "./api";
+import { getProtocolConfig, getValidators, getGasPrice } from "./api";
 import { FALLBACK_STORAGE_AMOUNT_PER_BYTE } from "./constants";
 import { NearProtocolConfigNotLoaded } from "./errors";
 
@@ -96,9 +96,7 @@ export const preload = async (): Promise<NearPreloadedData> => {
   ]);
 
   const validators = await Promise.all(
-    rawValidators.map(async ({ account_id: validatorAddress, stake }) => {
-      const commission = await getCommission(validatorAddress);
-
+    rawValidators.map(async ({ account_id: validatorAddress, stake, commission }) => {
       return {
         validatorAddress,
         tokens: stake,

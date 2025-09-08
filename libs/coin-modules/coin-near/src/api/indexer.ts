@@ -1,28 +1,28 @@
-import network from "@ledgerhq/live-network/network";
 import { Operation, OperationType } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
+import liveNetwork from "@ledgerhq/live-network";
 import { NearTransaction } from "./sdk.types";
 import { getCoinConfig } from "../config";
 
 const DEFAULT_TRANSACTIONS_LIMIT = 100;
-const getIndexerUrl = (route: string): string => {
-  const currencyConfig = getCoinConfig();
-  return `${currencyConfig.infra.API_NEAR_INDEXER}${route || ""}`;
-};
+
+const API_NEAR_INDEXER = 'https://api.nearblocks.io'
 
 const fetchTransactions = async (
   address: string,
   limit: number = DEFAULT_TRANSACTIONS_LIMIT,
 ): Promise<NearTransaction[]> => {
-  const route = `/transactions?limit=${limit}&account=${address}&date=${new Date().getTime()}`;
+  //const route = `/transactions?limit=${limit}&account=${address}&date=${new Date().getTime()}`;
 
-  const { data } = await network({
-    method: "GET",
-    url: getIndexerUrl(route),
+  const currencyConfig = getCoinConfig();
+  //currencyConfig.infra.API_NEAR_INDEXER
+
+  const response = await liveNetwork<{txns:NearTransaction[]}>({
+    url: `${API_NEAR_INDEXER}/v1/account/${address}/txns-only`,
   });
 
-  return data?.records || [];
+  return response.data.txns || [];
 };
 
 function isSender(transaction: NearTransaction, address: string): boolean {
