@@ -161,6 +161,7 @@ export const scenarioEthereum: Scenario<EvmTransaction, Account> = {
           explorerId: "eth",
         },
         showNfts: true,
+        calLazyLoading: false,
       },
     }));
     LiveConfig.setConfig({
@@ -183,6 +184,7 @@ export const scenarioEthereum: Scenario<EvmTransaction, Account> = {
             explorerId: "eth",
           },
           showNfts: true,
+          calLazyLoading: false,
         },
       },
     });

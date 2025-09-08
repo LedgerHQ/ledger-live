@@ -10,6 +10,7 @@ coinConfig.setCoinConfig(() => ({
   queuedInterval: 1,
   token2022Enabled: false,
   status: { type: "active" },
+  calLazyLoading: false,
 }));
 
 describe("Testing call to hardware off-chain sign message on Solana", () => {

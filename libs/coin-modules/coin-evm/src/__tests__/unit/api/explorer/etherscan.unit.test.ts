@@ -66,6 +66,7 @@ describe("EVM Family", () => {
             uri: "mock",
           },
           showNfts: true,
+          calLazyLoading: false,
         },
       };
     });

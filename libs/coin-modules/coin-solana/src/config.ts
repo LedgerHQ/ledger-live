@@ -4,7 +4,7 @@ export type SolanaConfig = {
   token2022Enabled: boolean;
   queuedInterval: number;
   legacyOCMSMaxVersion: string;
-  calLazyLoading?: boolean;
+  calLazyLoading: boolean;
 };
 
 export type SolanaCoinConfig = CurrencyConfig & SolanaConfig;

@@ -34,13 +34,11 @@ export const PRELOAD_MAX_AGE = 15 * 60 * 1000; // 15min
 
 const isLazyLoadingEnabled = (): boolean => {
   try {
-    const override = coinConfig.getCoinConfig()?.calLazyLoading;
-    if (override !== undefined) return override;
-  } catch (_) {
-    // coin config not set; fall through to default
+    return coinConfig.getCoinConfig().calLazyLoading ?? false;
+  } catch (e) {
+    console.error("[SOLANA] Error getting coin config: ", e);
+    return false;
   }
-  // Default to legacy (no CAL preload)
-  return false;
 };
 
 export const fetchSPLTokens: (
@@ -78,21 +76,13 @@ export const fetchSPLTokens: (
     return splTokens;
   } catch (e) {
     if (e instanceof AxiosError && e.response?.status === 304) {
-      log(
-        "solana/preload",
-        `loading existing fallback tokens for solana with hash ${latestCALHash || embeddedHash}`,
-      );
       if (!latestCALHash) {
         setCALHash(currency, embeddedHash);
-        storeTokens(spltokensList);
-
-        return spltokensList;
       }
-      return null;
     }
 
-    log("solana/preload", `failure to retrieve tokens for solana`, e);
-    return null;
+    storeTokens(spltokensList);
+    return spltokensList;
   }
 };
 export async function preloadWithAPI(

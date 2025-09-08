@@ -13,16 +13,15 @@ import { getCALHash, setCALHash } from "../logic";
 import { getCryptoAssetsStore } from "../cryptoAssetsStore";
 import { getCoinConfig } from "../config";
 
-const isDefined = <T>(x: T | undefined): x is T => x !== undefined;
+const isDefined = <T>(x: T | undefined | null): x is T => x !== undefined && x !== null;
 
 const isCalEnabled = (currency: CryptoCurrency): boolean => {
   try {
-    const override = getCoinConfig(currency)?.info?.calLazyLoading;
-    if (override !== undefined) return override;
-  } catch (_) {
-    // coin config not set default to legacy
+    return getCoinConfig(currency).info.calLazyLoading ?? false;
+  } catch (e) {
+    console.error("[EVM] Error getting coin config: ", e);
+    return false;
   }
-  return false;
 };
 
 export const fetchERC20Tokens: (
@@ -79,21 +78,19 @@ export const fetchERC20Tokens: (
       ];
     });
   } catch (e) {
+    const embeddedTokens = tokensByChainId[chainId as keyof typeof tokensByChainId] || [];
     if (e instanceof AxiosError && e.response?.status === 304) {
       log(
         "evm/preload",
         `laoding existing fallback tokens for ${chainId} with hash ${latestCALHash || embeddedHash}`,
       );
       if (!latestCALHash) {
-        const embeddedTokens = tokensByChainId[chainId as keyof typeof tokensByChainId];
         setCALHash(currency, embeddedHash);
-        return embeddedTokens;
       }
-      return null;
     }
 
     log("evm/preload", `failure to retrieve tokens for ${chainId}`, e);
-    return null;
+    return embeddedTokens;
   }
 };
 

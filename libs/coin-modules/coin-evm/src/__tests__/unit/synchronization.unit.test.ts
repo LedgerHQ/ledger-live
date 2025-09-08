@@ -57,6 +57,7 @@ describe("EVM Family", () => {
             uri: "https://api.com",
           },
           showNfts: true,
+          calLazyLoading: false,
         },
       };
     });
@@ -116,6 +117,7 @@ describe("EVM Family", () => {
                 type: "unsupported" as any,
               },
               showNfts: true,
+              calLazyLoading: false,
             },
           };
         });
@@ -154,6 +156,7 @@ describe("EVM Family", () => {
                 type: "none",
               },
               showNfts: true,
+              calLazyLoading: false,
             },
           };
         });
@@ -637,6 +640,7 @@ describe("EVM Family", () => {
                   uri: "https://api.com",
                 },
                 showNfts: true,
+                calLazyLoading: false,
               },
             };
           });

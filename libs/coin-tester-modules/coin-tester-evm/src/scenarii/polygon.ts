@@ -154,6 +154,7 @@ export const scenarioPolygon: Scenario<EvmTransaction, Account> = {
           explorerId: "matic",
         },
         showNfts: true,
+        calLazyLoading: false,
       },
     }));
     LiveConfig.setConfig({
@@ -176,6 +177,7 @@ export const scenarioPolygon: Scenario<EvmTransaction, Account> = {
             explorerId: "matic",
           },
           showNfts: true,
+          calLazyLoading: false,
         },
       },
     });

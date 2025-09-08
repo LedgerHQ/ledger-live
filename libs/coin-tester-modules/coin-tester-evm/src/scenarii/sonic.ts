@@ -96,6 +96,7 @@ export const scenarioSonic: Scenario<EvmTransaction, Account> = {
           uri: "https://proxyetherscan.api.live.ledger.com/v2/api/146",
         },
         showNfts: true,
+        calLazyLoading: false,
       },
     }));
     LiveConfig.setConfig({
@@ -114,6 +115,7 @@ export const scenarioSonic: Scenario<EvmTransaction, Account> = {
             uri: "https://proxyetherscan.api.live.ledger.com/v2/api/146",
           },
           showNfts: true,
+          calLazyLoading: false,
         },
       },
     });

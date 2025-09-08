@@ -91,6 +91,7 @@ export const scenarioBlast: Scenario<EvmTransaction, Account> = {
           uri: "https://api.blastscan.io/api",
         },
         showNfts: true,
+        calLazyLoading: false,
       },
     }));
     initMswHandlers(getCoinConfig(blast).info);

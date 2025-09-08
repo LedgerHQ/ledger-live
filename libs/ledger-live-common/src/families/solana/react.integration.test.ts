@@ -1,6 +1,7 @@
 /**
  * @jest-environment jsdom
  */
+import "../../__tests__/test-helpers/setup";
 import "../../__tests__/test-helpers/dom-polyfill";
 import { renderHook } from "@testing-library/react";
 import { setEnv } from "@ledgerhq/live-env";

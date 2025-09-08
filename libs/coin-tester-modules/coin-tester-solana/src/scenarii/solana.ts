@@ -437,6 +437,7 @@ export const scenarioSolana: Scenario<SolanaTransaction, SolanaAccount> = {
       token2022Enabled: true,
       queuedInterval: 100,
       legacyOCMSMaxVersion: "1.8.0",
+      calLazyLoading: false,
     });
     solanaCoinConfig.setCoinConfig(coinConfig);
     // Make sure the cache is not used, otherwise data is not refreshed frequently
