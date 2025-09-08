@@ -27,10 +27,6 @@ type ModularDrawerProps = {
   // Data and configuration
   /** List of preselected currencies to display in the drawer */
   readonly currencies?: string[];
-  /** The flow identifier for analytics */
-  readonly flow: string;
-  /** The source identifier for analytics */
-  readonly source: string;
   /** Configuration for assets display */
   readonly assetsConfiguration?: EnhancedModularDrawerConfiguration["assets"];
   /** Configuration for networks display */
@@ -60,8 +56,6 @@ export function ModularDrawer({
   isOpen,
   onClose,
   currencies,
-  flow,
-  source,
   assetsConfiguration,
   networksConfiguration,
   enableAccountSelection = false,
@@ -94,7 +88,6 @@ export function ModularDrawer({
     assetsSorted,
     currencyIds: currencies ?? [],
     isDrawerOpen: isOpen,
-    flow,
     enableAccountSelection,
     onClose,
     hasSearchedValue: searchValue.length > 0,
@@ -116,8 +109,6 @@ export function ModularDrawer({
         assetsViewModel={{
           availableAssets: sortedCryptoCurrencies,
           onAssetSelected: handleAsset,
-          flow,
-          source,
           assetsConfiguration,
           isOpen,
           isLoading,
@@ -128,8 +119,6 @@ export function ModularDrawer({
         networksViewModel={{
           onNetworkSelected: handleNetwork,
           availableNetworks,
-          flow,
-          source,
           networksConfiguration,
           asset,
         }}
@@ -138,8 +127,6 @@ export function ModularDrawer({
           onAddNewAccount,
           asset: accountCurrency,
           onAccountSelected,
-          flow,
-          source,
         }}
       />
     </QueuedDrawerGorhom>

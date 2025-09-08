@@ -27,7 +27,6 @@ describe("useDrawerLifecycle", () => {
     const backToNetwork = jest.fn();
     const { result } = renderHook(() =>
       useDrawerLifecycle({
-        flow: "test",
         navigationStepManager,
         canGoBackToAsset: true,
         canGoBackToNetwork: true,
@@ -42,7 +41,6 @@ describe("useDrawerLifecycle", () => {
 
     const result2 = renderHook(() =>
       useDrawerLifecycle({
-        flow: "test",
         navigationStepManager,
         canGoBackToAsset: true,
         canGoBackToNetwork: false,
@@ -60,7 +58,6 @@ describe("useDrawerLifecycle", () => {
     const resetSelection = jest.fn();
     const { result } = renderHook(() =>
       useDrawerLifecycle({
-        flow: "test",
         navigationStepManager,
         canGoBackToAsset: false,
         canGoBackToNetwork: false,

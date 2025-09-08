@@ -9,8 +9,8 @@ export interface ModularDrawerState {
   callbackId?: string;
   enableAccountSelection?: boolean;
   accountsObservableId?: string;
-  flow?: string;
-  source?: string;
+  flow: string;
+  source: string;
   assetsConfiguration?: EnhancedModularDrawerConfiguration["assets"];
   networksConfiguration?: EnhancedModularDrawerConfiguration["networks"];
   useCase?: string;
@@ -24,8 +24,8 @@ export const INITIAL_STATE: ModularDrawerState = {
   callbackId: undefined,
   enableAccountSelection: false,
   accountsObservableId: undefined,
-  flow: undefined,
-  source: undefined,
+  flow: "",
+  source: "",
   assetsConfiguration: {
     leftElement: "undefined",
     rightElement: "undefined",
@@ -43,6 +43,8 @@ export const INITIAL_STATE: ModularDrawerState = {
 export const modularDrawerStateSelector = (state: State) => state.modularDrawer;
 
 export const modularDrawerSearchValueSelector = (state: State) => state.modularDrawer.searchValue;
+export const modularDrawerFlowSelector = (state: State) => state.modularDrawer.flow;
+export const modularDrawerSourceSelector = (state: State) => state.modularDrawer.source;
 
 const modularDrawerSlice = createSlice({
   name: MODULAR_DRAWER_KEY,
@@ -115,8 +117,8 @@ const modularDrawerSlice = createSlice({
       state.callbackId = undefined;
       state.enableAccountSelection = false;
       state.accountsObservableId = undefined;
-      state.flow = undefined;
-      state.source = undefined;
+      state.flow = "";
+      state.source = "";
       state.assetsConfiguration = INITIAL_STATE.assetsConfiguration;
       state.networksConfiguration = INITIAL_STATE.networksConfiguration;
       state.useCase = undefined;

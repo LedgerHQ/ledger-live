@@ -81,7 +81,6 @@ describe("useModularDrawerState", () => {
       useModularDrawerState({
         currencyIds: mockCurrencyIds,
         assetsSorted: [],
-        flow: "test",
       }),
     );
     expect(result.current.asset).toBeUndefined();
@@ -94,7 +93,6 @@ describe("useModularDrawerState", () => {
       useModularDrawerState({
         currencyIds: ["ethereum", "bitcoin"],
         assetsSorted,
-        flow: "test",
       }),
     );
 
@@ -111,7 +109,6 @@ describe("useModularDrawerState", () => {
       useModularDrawerState({
         currencyIds: mockCurrencyIds,
         assetsSorted,
-        flow: "test",
       }),
     );
     act(() => {
@@ -131,7 +128,6 @@ describe("useModularDrawerState", () => {
       useModularDrawerState({
         currencyIds: mockCurrencyIds,
         assetsSorted,
-        flow: "test",
       }),
     );
     expect(typeof result.current.handleBackButton).toBe("function");
@@ -143,7 +139,6 @@ describe("useModularDrawerState", () => {
       useModularDrawerState({
         currencyIds: ["bitcoin", "ethereum"],
         assetsSorted,
-        flow: "test",
       }),
     );
     expect(result.current.hasOneCurrency).toBe(false);
@@ -154,7 +149,6 @@ describe("useModularDrawerState", () => {
       useModularDrawerState({
         currencyIds: ["bitcoin"],
         assetsSorted,
-        flow: "test",
       }),
     );
     expect(result.current.hasOneCurrency).toBe(true);
@@ -180,7 +174,7 @@ describe("useModularDrawerState", () => {
         currencyIds: [mockEthCryptoCurrency.id],
         assetsSorted: singleAsset,
         enableAccountSelection: true,
-        flow: "test",
+
         isDrawerOpen: true,
       }),
     );
@@ -208,7 +202,7 @@ describe("useModularDrawerState", () => {
         currencyIds: [mockEthCryptoCurrency.id],
         assetsSorted: singleAsset,
         enableAccountSelection: false,
-        flow: "test",
+
         isDrawerOpen: true,
       }),
     );
@@ -221,7 +215,6 @@ describe("useModularDrawerState", () => {
       useModularDrawerState({
         currencyIds: ["bitcoin", "ethereum"],
         assetsSorted,
-        flow: "test",
       }),
     );
     expect(result.current.hasOneCurrency).toBe(false);

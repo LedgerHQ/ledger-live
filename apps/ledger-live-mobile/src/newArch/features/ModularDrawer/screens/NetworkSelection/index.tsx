@@ -20,13 +20,13 @@ import { accountsCountAndApy } from "../../components/AccountCountAndApy";
 import { balanceItem } from "../../components/Balance";
 import { useAccountData } from "../../hooks/useAccountData";
 import { useBalanceDeps } from "../../hooks/useBalanceDeps";
+import { useSelector } from "react-redux";
+import { modularDrawerFlowSelector, modularDrawerSourceSelector } from "~/reducers/modularDrawer";
 
 export type NetworkSelectionStepProps = {
   availableNetworks: CryptoOrTokenCurrency[];
   asset?: CryptoOrTokenCurrency;
   onNetworkSelected: (asset: CryptoOrTokenCurrency) => void;
-  flow: string;
-  source: string;
   networksConfiguration?: EnhancedModularDrawerConfiguration["networks"];
 };
 
@@ -35,11 +35,11 @@ const SAFE_MARGIN_BOTTOM = 48;
 const NetworkSelection = ({
   availableNetworks,
   onNetworkSelected,
-  flow,
-  source,
   networksConfiguration,
   asset,
 }: Readonly<NetworkSelectionStepProps>) => {
+  const flow = useSelector(modularDrawerFlowSelector);
+  const source = useSelector(modularDrawerSourceSelector);
   const { trackModularDrawerEvent } = useModularDrawerAnalytics();
 
   const networks = availableNetworks.map(n => (n.type === "CryptoCurrency" ? n : n.parentCurrency));
