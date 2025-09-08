@@ -13,7 +13,8 @@ import {
 import Store from "electron-store";
 import menu from "./menu";
 import {
-  createMainWindow,
+  createEarlyMainWindow,
+  applyWindowParams,
   getMainWindow,
   getMainWindowAsync,
   loadWindow,
@@ -84,10 +85,19 @@ app.on("will-finish-launching", () => {
 app.on("ready", async () => {
   app.dirname = __dirname;
 
-  if (__DEV__) {
-    await installExtensions();
-  }
+  // Create window early for faster startup (hidden)
+  const window = createEarlyMainWindow();
+
+  // Initialize database
   db.init(userDataDirectory);
+
+  // Defer extension installation to not block startup
+  if (__DEV__) {
+    setImmediate(() => {
+      installExtensions().catch(console.error);
+    });
+  }
+
   const settings = (await db.getKey("app", "settings")) as SettingsState;
   const user: User = (await db.getKey("app", "user")) as User;
   const userId = user?.id;
@@ -158,10 +168,14 @@ app.on("ready", async () => {
     });
   });
   Menu.setApplicationMenu(menu);
+
+  // Apply window parameters now that we have DB data
   const windowParams = (await db.getKey("windowParams", "MainWindow", {})) as Parameters<
-    typeof createMainWindow
+    typeof applyWindowParams
   >[0];
-  const window = await createMainWindow(windowParams, settings);
+  await applyWindowParams(windowParams, settings);
+
+  // Setup window event handlers
   window.on(
     "resize",
     debounce(() => {
@@ -260,13 +274,17 @@ ipcMain.on("ready-to-show", () => {
 });
 async function installExtensions() {
   // https://github.com/MarshallOfSound/electron-devtools-installer#usage
-  app.whenReady().then(() => {
-    installExtension([REDUX_DEVTOOLS, REACT_DEVELOPER_TOOLS], {
+  // Note: This is now called asynchronously to not block startup
+  try {
+    await installExtension([REDUX_DEVTOOLS, REACT_DEVELOPER_TOOLS], {
       loadExtensionOptions: {
         allowFileAccess: true,
       },
-    }).catch(console.error);
-  });
+    });
+    console.log("Dev extensions installed successfully");
+  } catch (error) {
+    console.error("Failed to install dev extensions:", error);
+  }
 }
 function clearSessionCache(session: Electron.Session): Promise<void> {
   return session.clearCache();
