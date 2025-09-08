@@ -1,4 +1,4 @@
-import { HederaMirrorToken } from "../../api/types";
+import { HederaMirrorToken } from "../../network/types";
 
 export const getMockedMirrorToken = (overrides?: Partial<HederaMirrorToken>): HederaMirrorToken => {
   return {

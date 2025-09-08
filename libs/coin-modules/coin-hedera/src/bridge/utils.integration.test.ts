@@ -22,7 +22,7 @@ import {
 } from "../test/fixtures/currency.fixture";
 import { getMockedOperation } from "../test/fixtures/operation.fixture";
 import { HederaOperationExtra } from "../types";
-import { getAccount } from "../api/mirror";
+import { mirrorNode } from "../network/mirror";
 import { isValidExtra } from "../logic";
 import { getMockedMirrorToken } from "../test/fixtures/mirror.fixture";
 import { HEDERA_OPERATION_TYPES, HEDERA_TRANSACTION_KINDS } from "../constants";
@@ -31,7 +31,7 @@ jest.mock("../api/mirror");
 jest.mock("@ledgerhq/live-countervalues/api/index");
 
 const mockedFetchLatest = cvsApi.fetchLatest as jest.MockedFunction<typeof cvsApi.fetchLatest>;
-const mockedGetAccount = getAccount as jest.MockedFunction<typeof getAccount>;
+const mockedGetAccount = mirrorNode.getAccount as jest.MockedFunction<typeof mirrorNode.getAccount>;
 
 describe("utils", () => {
   describe("calculateAmount", () => {

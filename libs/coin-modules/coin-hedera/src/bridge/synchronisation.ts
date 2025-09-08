@@ -8,7 +8,7 @@ import type {
 } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { mergeOps } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { encodeAccountId } from "@ledgerhq/coin-framework/account";
-import { getAccount, getAccountsForPublicKey, getAccountTokens } from "../api/mirror";
+import { mirrorNode } from "../network/mirror";
 import {
   getSubAccounts,
   prepareOperations,
@@ -17,7 +17,7 @@ import {
   getSyncHash,
 } from "./utils";
 import type { HederaAccount } from "../types";
-import { getOperationsForAccount } from "../api/utils";
+import { listOperations } from "../logic/listOperations";
 
 export const getAccountShape: GetAccountShape<HederaAccount> = async (
   info,
@@ -39,8 +39,8 @@ export const getAccountShape: GetAccountShape<HederaAccount> = async (
   // tokens are fetched with separate requests to get "created_timestamp" for each token
   // based on this, ASSOCIATE_TOKEN operations can be connected with tokens
   const [mirrorAccount, mirrorTokens] = await Promise.all([
-    getAccount(address),
-    getAccountTokens(address),
+    mirrorNode.getAccount(address),
+    mirrorNode.getAccountTokens(address),
   ]);
 
   // we should sync again when new tokens are added or blacklist changes
@@ -51,15 +51,19 @@ export const getAccountShape: GetAccountShape<HederaAccount> = async (
   const pendingOperations = initialAccount?.pendingOperations ?? [];
 
   // grab latest operation's consensus timestamp for incremental sync
+  const latestOperation = oldOperations[0];
   const latestOperationTimestamp =
-    !shouldSyncFromScratch && oldOperations[0]
-      ? new BigNumber(Math.floor(oldOperations[0].date.getTime() / 1000))
+    !shouldSyncFromScratch && latestOperation
+      ? new BigNumber(Math.floor(latestOperation.date.getTime() / 1000))
       : null;
-  const latestAccountOperations = await getOperationsForAccount(
-    liveAccountId,
+  const latestAccountOperations = await listOperations({
     address,
-    latestOperationTimestamp ? latestOperationTimestamp.toString() : null,
-  );
+    ledgerAccountId: liveAccountId,
+    pagination: {
+      minHeight: 0,
+      ...(latestOperationTimestamp && { lastPagingToken: latestOperationTimestamp.toString() }),
+    },
+  });
 
   const newSubAccounts = await getSubAccounts(
     liveAccountId,
@@ -98,7 +102,7 @@ export const getAccountShape: GetAccountShape<HederaAccount> = async (
 };
 
 export const buildIterateResult: IterateResultBuilder = async ({ result: rootResult }) => {
-  const mirrorAccounts = await getAccountsForPublicKey(rootResult.publicKey);
+  const mirrorAccounts = await mirrorNode.getAccountsForPublicKey(rootResult.publicKey);
   const addresses = mirrorAccounts.map(a => a.account);
 
   return async ({ currency, derivationMode, index }) => {

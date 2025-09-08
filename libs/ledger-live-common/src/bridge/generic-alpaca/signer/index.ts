@@ -1,12 +1,18 @@
 import { GetAddressFn } from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
 import xrpGetAddress from "@ledgerhq/coin-xrp/signer/getAddress";
 import stellarGetAddress from "@ledgerhq/coin-stellar/signer/getAddress";
+import hederaGetAddress from "@ledgerhq/coin-hedera/signer/getAddress";
 import { CreateSigner, executeWithSigner } from "../../setup";
 import Xrp from "@ledgerhq/hw-app-xrp";
 import Stellar from "@ledgerhq/hw-app-str";
+import Hedera from "@ledgerhq/hw-app-hedera";
 
 import Transport from "@ledgerhq/hw-transport";
-import { signTransaction, stellarSignTransaction } from "./signTransaction";
+import {
+  xrpSignTransaction,
+  stellarSignTransaction,
+  hederaSignTransaction,
+} from "./signTransaction";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import { SignTransactionOptions } from "./types";
 import { StrKey } from "@stellar/stellar-sdk";
@@ -47,13 +53,18 @@ const createSignerStellar: CreateSigner<Stellar> = (transport: Transport) => {
 
 const signerContextStellar = executeWithSigner(createSignerStellar);
 
+const createSignerHedera: CreateSigner<Hedera> = (transport: Transport) => {
+  return new Hedera(transport);
+};
+const signerContextHedera = executeWithSigner(createSignerHedera);
+
 export function getSigner(network): AlpacaSigner {
   switch (network) {
     case "ripple":
     case "xrp": {
       return {
         getAddress: xrpGetAddress(signerContextXrp),
-        signTransaction: signTransaction(signerContextXrp),
+        signTransaction: xrpSignTransaction(signerContextXrp),
         context: signerContextXrp,
       };
     }
@@ -62,6 +73,13 @@ export function getSigner(network): AlpacaSigner {
         getAddress: stellarGetAddress(signerContextStellar),
         signTransaction: stellarSignTransaction(signerContextStellar),
         context: signerContextStellar,
+      };
+    }
+    case "hedera": {
+      return {
+        getAddress: hederaGetAddress(signerContextHedera),
+        signTransaction: hederaSignTransaction(signerContextHedera),
+        context: signerContextHedera,
       };
     }
   }

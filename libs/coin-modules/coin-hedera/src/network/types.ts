@@ -46,3 +46,24 @@ export interface HederaMirrorAccount {
     }[];
   };
 }
+
+export interface HederaMirrorAccountTokensResponse {
+  tokens: HederaMirrorToken[];
+  links: {
+    next: string | null;
+  };
+}
+
+export interface HederaMirrorAccountsResponse {
+  accounts: HederaMirrorAccount[];
+  links: {
+    next: string | null;
+  };
+}
+
+export interface HederaMirrorTransactionsResponse {
+  transactions: HederaMirrorTransaction[];
+  links: {
+    next: string | null;
+  };
+}

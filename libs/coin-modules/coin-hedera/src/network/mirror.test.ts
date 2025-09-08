@@ -1,5 +1,5 @@
 import network from "@ledgerhq/live-network/network";
-import { getAccount, getAccountTokens, getAccountTransactions } from "./mirror";
+import { mirrorNode } from "./mirror";
 
 jest.mock("@ledgerhq/live-network/network");
 const mockedNetwork = jest.mocked(network);
@@ -24,7 +24,7 @@ describe("getAccountTransactions", () => {
       makeMockResponse({ transactions: [], links: { next: null } }),
     );
 
-    await getAccountTransactions("0.0.1234", null);
+    await mirrorNode.getAccountTransactions({ address: "0.0.1234", since: null });
 
     const requestUrl = mockedNetwork.mock.calls[0][0].url;
     expect(requestUrl).toContain("account.id=0.0.1234");
@@ -65,7 +65,7 @@ describe("getAccountTransactions", () => {
         }),
       );
 
-    const result = await getAccountTransactions("0.0.1234", null);
+    const result = await mirrorNode.getAccountTransactions({ address: "0.0.1234", since: null });
 
     expect(result).toHaveLength(2);
     expect(result.map(tx => tx.consensus_timestamp)).toEqual(["1", "3"]);
@@ -91,7 +91,7 @@ describe("getAccount", () => {
       }),
     );
 
-    const result = await getAccount("0.0.1234");
+    const result = await mirrorNode.getAccount("0.0.1234");
     const requestUrl = mockedNetwork.mock.calls[0][0].url;
 
     expect(result.account).toEqual("0.0.1234");
@@ -116,7 +116,7 @@ describe("getAccountTokens", () => {
       }),
     );
 
-    const result = await getAccountTokens("0.0.1234");
+    const result = await mirrorNode.getAccountTokens("0.0.1234");
     const requestUrl = mockedNetwork.mock.calls[0][0].url;
 
     expect(result.map(t => t.token_id)).toEqual(["0.0.1001", "0.0.1002"]);
@@ -140,7 +140,7 @@ describe("getAccountTokens", () => {
         }),
       );
 
-    const result = await getAccountTokens("0.0.1234");
+    const result = await mirrorNode.getAccountTokens("0.0.1234");
 
     expect(result.map(t => t.token_id)).toEqual(["0.0.1001", "0.0.1002"]);
     expect(mockedNetwork).toHaveBeenCalledTimes(2);

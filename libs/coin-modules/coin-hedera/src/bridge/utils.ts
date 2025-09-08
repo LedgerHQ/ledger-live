@@ -21,8 +21,8 @@ import { mergeOps } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { makeLRUCache, seconds } from "@ledgerhq/live-network/cache";
 import { estimateMaxSpendable } from "./estimateMaxSpendable";
 import type { HederaOperationExtra, Transaction } from "../types";
-import { getAccount } from "../api/mirror";
-import type { HederaMirrorToken } from "../api/types";
+import { mirrorNode } from "../network/mirror";
+import type { HederaMirrorToken } from "../network/types";
 import { isTokenAssociateTransaction, isValidExtra } from "../logic";
 import { BASE_USD_FEE_BY_OPERATION_TYPE, HEDERA_OPERATION_TYPES } from "../constants";
 
@@ -454,7 +454,7 @@ export function patchOperationWithExtra(
 
 export const checkAccountTokenAssociationStatus = makeLRUCache(
   async (accountId: string, tokenId: string) => {
-    const mirrorAccount = await getAccount(accountId);
+    const mirrorAccount = await mirrorNode.getAccount(accountId);
 
     // auto association is enabled
     if (mirrorAccount.max_automatic_token_associations === -1) {
