@@ -36,7 +36,7 @@ export async function handleHederaTrustedFlow({
   }
 
   const challenge = await exchange.getChallenge();
-  const hexChallenge = `${challenge.toString(16)}`;
+  const hexChallenge = challenge.toString(16);
 
   const trustServiceResult = await trustService.hedera.getPublicKey(
     hederaAccount.freshAddress,

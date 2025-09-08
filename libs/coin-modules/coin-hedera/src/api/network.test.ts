@@ -21,9 +21,9 @@ describe("buildUnsignedTransaction", () => {
     };
 
     const result = await buildUnsignedTransaction({ account: mockAccount, transaction });
-    invariant(result instanceof TransferTransaction, "hedera: expected a TransferTransaction");
 
     expect(result).toBeInstanceOf(TransferTransaction);
+    invariant(result instanceof TransferTransaction, "hedera: TransferTransaction type guard");
     expect(result.transactionMemo).toBe("test memo");
     expect(result.isFrozen()).toBe(true);
     expect(result.hbarTransfers.size).toBe(2);
