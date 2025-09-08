@@ -372,13 +372,19 @@ export async function getOperations(
   next: number;
   operations: OperationInfo[];
 }> {
-  const { data } = await gatewayNetwork<{
+  const params = new URLSearchParams();
+  Object.entries(options ?? {}).forEach(([k, v]) => {
+    if (v !== undefined) {
+      params.append(k, v.toString());
+    }
+  });
+  const { data } = await network<{
     next: number;
     operations: OperationInfo[];
   }>({
     method: "GET",
-    url: `${getGatewayUrl()}/v1/node/${getNodeId()}/party/${partyId.replace(/_/g, ":")}/operations`,
-    params: options,
+    url: `${getGatewayUrl()}/v1/node/${getNodeId()}/party/${partyId.replace(/_/g, ":")}/operations?${params.toString()}`,
+    data: options,
   });
   return data;
 }

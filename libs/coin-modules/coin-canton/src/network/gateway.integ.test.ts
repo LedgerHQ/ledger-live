@@ -125,11 +125,70 @@ describe("gateway (devnet)", () => {
   });
 
   describe("getOperations", () => {
+    const testPartyId =
+      "party-5f29bb32e9939939::12202becd8062a1d170209956cfd977fca76fcb4d2a892d08c77a7483f35a11d6440";
+
     it("should return user transactions", async () => {
-      const { operations } = await getOperations(
-        "party-5f29bb32e9939939::12202becd8062a1d170209956cfd977fca76fcb4d2a892d08c77a7483f35a11d6440",
-      );
+      const { operations } = await getOperations(testPartyId);
       expect(operations.length).toBeGreaterThanOrEqual(0);
+    });
+
+    it("should return user transactions with limit option", async () => {
+      const { operations, next } = await getOperations(testPartyId, { limit: 5 });
+      expect(operations.length).toBeLessThanOrEqual(5);
+      expect(typeof next).toBe("number");
+    });
+
+    it("should return user transactions with cursor option", async () => {
+      const { operations, next } = await getOperations(testPartyId, { cursor: 0 });
+      expect(operations.length).toBeGreaterThanOrEqual(0);
+      expect(typeof next).toBe("number");
+    });
+
+    it("should return user transactions with minOffset option", async () => {
+      const { operations } = await getOperations(testPartyId, { minOffset: 0 });
+      expect(operations.length).toBeGreaterThanOrEqual(0);
+    });
+
+    it("should return user transactions with maxOffset option", async () => {
+      const { operations } = await getOperations(testPartyId, { maxOffset: 1000 });
+      expect(operations.length).toBeGreaterThanOrEqual(0);
+    });
+
+    it("should return user transactions with multiple options", async () => {
+      const { operations, next } = await getOperations(testPartyId, {
+        cursor: 0,
+        limit: 10,
+        minOffset: 0,
+        maxOffset: 1000,
+      });
+      expect(operations.length).toBeLessThanOrEqual(10);
+      expect(typeof next).toBe("number");
+    });
+
+    it("should validate operation structure when operations exist", async () => {
+      const { operations } = await getOperations(testPartyId, { limit: 1 });
+      if (operations.length > 0) {
+        const operation = operations[0];
+        expect(operation).toHaveProperty("uid");
+        expect(operation).toHaveProperty("transaction_hash");
+        expect(operation).toHaveProperty("transaction_timestamp");
+        expect(operation).toHaveProperty("status");
+        expect(operation).toHaveProperty("type");
+        expect(operation).toHaveProperty("senders");
+        expect(operation).toHaveProperty("recipients");
+        expect(operation).toHaveProperty("transfers");
+        expect(operation).toHaveProperty("block");
+        expect(operation).toHaveProperty("fee");
+        expect(operation).toHaveProperty("asset");
+        expect(operation).toHaveProperty("details");
+
+        expect(Array.isArray(operation.senders)).toBe(true);
+        expect(Array.isArray(operation.recipients)).toBe(true);
+        expect(Array.isArray(operation.transfers)).toBe(true);
+        expect(typeof operation.block.height).toBe("number");
+        expect(typeof operation.fee.value).toBe("string");
+      }
     });
   });
 
