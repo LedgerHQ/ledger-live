@@ -34,7 +34,7 @@ export const DRAWER_CONFIG_OPTIONS = {
     left: [
       { value: "undefined", label: "Undefined" },
       { value: "apy", label: "Apy" },
-      { value: "priceVariation", label: "Price Variation" },
+      { value: "marketTrend", label: "Market Trend" },
     ],
     right: [
       { value: "undefined", label: "Undefined" },

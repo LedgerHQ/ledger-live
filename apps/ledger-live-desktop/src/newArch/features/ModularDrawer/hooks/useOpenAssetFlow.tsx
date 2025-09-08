@@ -35,7 +35,7 @@ function selectCurrency(
       flow,
       drawerConfiguration: drawerConfiguration ?? {
         assets: { leftElement: "undefined", rightElement: "balance" },
-        networks: { leftElement: "undefined", rightElement: "balance" },
+        networks: { leftElement: "numberOfAccounts", rightElement: "balance" },
       },
     },
     {
