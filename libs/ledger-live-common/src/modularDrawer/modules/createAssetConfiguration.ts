@@ -6,27 +6,27 @@ import { useLeftApyModule } from "../hooks/modules/useLeftApyModule";
 import { createUseRightBalanceAsset } from "../hooks/useRightBalanceAsset";
 
 const getRightElement =
-  (AssetConfigurationDeps: AssetConfigurationDeps) => (rightElement: string) => {
+  (AssetConfigurationDeps: AssetConfigurationDeps) => (rightElement?: string) => {
     switch (rightElement) {
+      case "undefined":
+        return undefined;
+      case "marketTrend":
       case "balance":
+      default:
         return createUseRightBalanceAsset({
           useBalanceDeps: AssetConfigurationDeps.useBalanceDeps,
           balanceItem: AssetConfigurationDeps.balanceItem,
         });
-      case "marketTrend":
-      case "undefined":
-      default:
-        return undefined;
     }
   };
 
 const getLeftElement =
-  (AssetConfigurationDeps: AssetConfigurationDeps) => (leftElement: string) => {
+  (AssetConfigurationDeps: AssetConfigurationDeps) => (leftElement?: string) => {
     switch (leftElement) {
       case "apy":
         return (assets: CryptoOrTokenCurrency[]) =>
           useLeftApyModule(assets, AssetConfigurationDeps.ApyIndicator);
-      case "priceVariation":
+      case "marketTrend":
       case "undefined":
       default:
         return undefined;
@@ -36,7 +36,7 @@ const getLeftElement =
 const createAssetConfigurationHook: CreateAssetConfigurationHook =
   deps =>
   ({ assetsConfiguration, currenciesByProvider }) => {
-    const { rightElement = "undefined", leftElement = "undefined" } = assetsConfiguration ?? {};
+    const { rightElement, leftElement } = assetsConfiguration ?? {};
 
     const rightHook = getRightElement(deps)(rightElement);
     const leftHook = getLeftElement(deps)(leftElement);
