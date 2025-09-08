@@ -29,7 +29,7 @@ const STATUS = {
 };
 
 const ED25519_SIGNATURE_HEX_LENGTH = 128; // hex characters (64 bytes)
-const CANTON_SIGNATURE_HEX_LENGTH = 130; // hex characters (65 bytes with framing)
+const CANTON_SIGNATURE_HEX_LENGTH = 132; // hex characters (66 bytes with framing)
 
 export type AppConfig = {
   version: string;
@@ -145,7 +145,7 @@ export default class Canton {
 
   /**
    * Converts 65-byte Canton format to 64-byte Ed25519:
-   * [40][64_bytes_signature][00] (130 hex chars)
+   * [40][64_bytes_signature][00] (132 hex chars)
    * @private
    */
   private cleanSignatureFormat(signature: string): CantonSignature {
