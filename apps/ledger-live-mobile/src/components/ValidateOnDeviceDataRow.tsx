@@ -31,7 +31,7 @@ const styles = StyleSheet.create({
   dataRowValue: {
     fontSize: 14,
     flexGrow: 1,
-    alignItems: "flex-end",
+    textAlign: "right",
   },
   valueText: {
     textAlign: "right",
