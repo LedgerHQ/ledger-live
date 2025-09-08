@@ -7,7 +7,7 @@ import { useModularDrawerFlowStepManager } from "./useModularDrawerFlowStepManag
 import { useStepNavigation } from "./useStepNavigation";
 import { useDeviceNavigation } from "./useDeviceNavigation";
 import { useDrawerLifecycle } from "./useDrawerLifecycle";
-import { AssetsData } from "./useAssetsFromDada";
+import { AssetsData } from "./useAssets";
 import { getNetworksForAsset, resolveCurrency } from "../utils/helpers";
 
 type ModularDrawerStateProps = {
@@ -18,7 +18,6 @@ type ModularDrawerStateProps = {
   enableAccountSelection?: boolean;
   onClose?: () => void;
   onAccountSelected?: (account: Account) => void;
-  readonly flow: string;
   hasSearchedValue?: boolean;
 };
 
@@ -28,7 +27,6 @@ export function useModularDrawerState({
   isDrawerOpen,
   enableAccountSelection,
   onClose,
-  flow,
   hasSearchedValue,
 }: ModularDrawerStateProps) {
   const navigationStepManager = useModularDrawerFlowStepManager();
@@ -117,7 +115,6 @@ export function useModularDrawerState({
   );
 
   const { handleBackButton, handleCloseButton } = useDrawerLifecycle({
-    flow,
     navigationStepManager,
     canGoBackToAsset,
     canGoBackToNetwork,

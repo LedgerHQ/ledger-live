@@ -1,5 +1,5 @@
 import { getNetworksForAsset, resolveCurrency } from "../helpers";
-import type { AssetsData } from "../../hooks/useAssetsFromDada";
+import type { AssetsData } from "../../hooks/useAssets";
 import {
   mockEthCryptoCurrency,
   mockBtcCryptoCurrency,

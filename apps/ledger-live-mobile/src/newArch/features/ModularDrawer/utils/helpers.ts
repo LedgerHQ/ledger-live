@@ -1,5 +1,5 @@
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { AssetsData } from "../hooks/useAssetsFromDada";
+import { AssetsData } from "../hooks/useAssets";
 
 function getNetworksForAsset(assetsSorted: AssetsData, assetId: string) {
   return assetsSorted?.find(elem => elem.asset.id === assetId)?.networks ?? [];
