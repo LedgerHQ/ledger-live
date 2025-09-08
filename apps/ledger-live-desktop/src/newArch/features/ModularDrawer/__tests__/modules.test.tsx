@@ -60,7 +60,7 @@ const mockCurrencies = [ethereumCurrency, bitcoinCurrency, arbitrumCurrency];
 
 describe("ModularDrawerFlowManager - Modules configuration", () => {
   // This is tempory as in the future balance will be displayed by default for all assets but right now it's not the case
-  it("shouldn't display balance on the right at assetSelection by default", async () => {
+  it("should display balance on the right at assetSelection by default", async () => {
     const mixedCurrencies = [
       baseCurrency,
       arbitrumCurrency,
@@ -82,8 +82,8 @@ describe("ModularDrawerFlowManager - Modules configuration", () => {
     expect(screen.queryByText(/base/i)).toBeNull();
     expect(screen.queryByText(/scroll/i)).toBeNull();
 
-    expect(screen.queryByText(/\$95,622,923.34/i)).toBeNull();
-    expect(screen.queryByText(/34,478.4 eth/i)).toBeNull();
+    expect(screen.queryByText(/\$95,622,923.34/i)).toBeVisible();
+    expect(screen.queryByText(/34,478.4 eth/i)).toBeVisible();
   });
 
   it("should display balance on the right at assetSelection step", async () => {

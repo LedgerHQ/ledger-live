@@ -15,13 +15,10 @@ import { composeHooks } from "../../utils/composeHooks";
 
 export const getLeftElement =
   (NetworkConfigurationDeps: NetworkConfigurationDeps) =>
-  (leftElement: LeftElementKind): NetworkHook | undefined => {
+  (leftElement?: LeftElementKind): NetworkHook | undefined => {
     switch (leftElement) {
-      case "numberOfAccounts":
-        return createUseLeftAccountsModule({
-          useAccountData: NetworkConfigurationDeps.useAccountData,
-          accountsCount: NetworkConfigurationDeps.accountsCount,
-        });
+      case "undefined":
+        return undefined;
       case "numberOfAccountsAndApy":
         return (params: AccountModuleParams & { networks: CryptoOrTokenCurrency[] }) =>
           useLeftAccountsApyModule(
@@ -30,24 +27,27 @@ export const getLeftElement =
             NetworkConfigurationDeps.accountsCountAndApy,
             params.networks,
           );
-      case "undefined":
+      case "numberOfAccounts":
       default:
-        return undefined;
+        return createUseLeftAccountsModule({
+          useAccountData: NetworkConfigurationDeps.useAccountData,
+          accountsCount: NetworkConfigurationDeps.accountsCount,
+        });
     }
   };
 
 export const getRightElement =
   (NetworkConfigurationDeps: NetworkConfigurationDeps) =>
-  (rightElement: RightElementKind): NetworkHook | undefined => {
+  (rightElement?: RightElementKind): NetworkHook | undefined => {
     switch (rightElement) {
+      case "undefined":
+        return undefined;
       case "balance":
+      default:
         return createUseRightBalanceNetwork({
           useBalanceDeps: NetworkConfigurationDeps.useBalanceDeps,
           balanceItem: NetworkConfigurationDeps.balanceItem,
         });
-      case "undefined":
-      default:
-        return undefined;
     }
   };
 
@@ -59,7 +59,7 @@ export const createNetworkConfigurationHook =
     currenciesByProvider,
     accounts$,
   }: CreateNetworkConfigurationHookProps) => {
-    const { leftElement = "undefined", rightElement = "undefined" } = networksConfig ?? {};
+    const { leftElement, rightElement } = networksConfig ?? {};
     const leftHook = getLeftElement(NetworkConfigurationDeps)(leftElement);
     const rightHook = getRightElement(NetworkConfigurationDeps)(rightElement);
 
