@@ -15,6 +15,8 @@ import {
   isCorrespondingCurrency,
 } from "@ledgerhq/live-common/modularDrawer/utils/index";
 import { findTokenById } from "@ledgerhq/cryptoassets/tokens";
+import { useSelector } from "react-redux";
+import { modularDrawerStateSelector } from "~/renderer/reducers/modularDrawer";
 
 type Props = {
   currenciesByProvider: CurrenciesByProviderId[];
@@ -27,7 +29,6 @@ type Props = {
   onAccountSelected?: (account: AccountLike, parentAccount?: Account) => void;
   hasOneCurrency: boolean;
   flow: string;
-  searchedValue?: string;
 };
 
 export function useModularDrawerFlowState({
@@ -41,9 +42,9 @@ export function useModularDrawerFlowState({
   onAccountSelected,
   hasOneCurrency,
   flow,
-  searchedValue,
 }: Props) {
   const { trackModularDrawerEvent } = useModularDrawerAnalytics();
+  const { searchedValue } = useSelector(modularDrawerStateSelector);
 
   const [selectedAsset, setSelectedAsset] = useState<CryptoOrTokenCurrency>();
   const [selectedNetwork, setSelectedNetwork] = useState<CryptoOrTokenCurrency>();

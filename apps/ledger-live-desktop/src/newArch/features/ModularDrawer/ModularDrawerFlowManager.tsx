@@ -1,4 +1,5 @@
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo } from "react";
+import { useDispatch } from "react-redux";
 import { AnimatePresence } from "framer-motion";
 import AnimatedScreenWrapper from "./components/AnimatedScreenWrapper";
 import { MODULAR_DRAWER_STEP, ModularDrawerFlowManagerProps, ModularDrawerStep } from "./types";
@@ -9,6 +10,7 @@ import { AccountSelection } from "./screens/AccountSelection";
 import { useModularDrawerNavigation } from "./hooks/useModularDrawerNavigation";
 import { BackButtonArrow } from "./components/BackButton";
 import { useModularDrawerRemoteData } from "./hooks/useModularDrawerRemoteData";
+import { setSearchedValue } from "~/renderer/reducers/modularDrawer";
 
 const ModularDrawerFlowManager = ({
   currencies,
@@ -22,7 +24,15 @@ const ModularDrawerFlowManager = ({
   onAccountSelected,
 }: ModularDrawerFlowManagerProps) => {
   const currencyIds = useMemo(() => (currencies || []).map(currency => currency.id), [currencies]);
+  const dispatch = useDispatch();
   const { currentStep, navigationDirection, goToStep } = useModularDrawerNavigation();
+
+  useEffect(() => {
+    return () => {
+      // Reset search value when the drawer closes/unmounts
+      dispatch(setSearchedValue(undefined));
+    };
+  }, [dispatch]);
 
   const {
     error,
@@ -32,8 +42,6 @@ const ModularDrawerFlowManager = ({
     networkConfiguration,
     currenciesByProvider,
     assetsToDisplay,
-    searchedValue,
-    setSearchedValue,
     networksToDisplay,
     selectedAsset,
     selectedNetwork,
@@ -62,10 +70,8 @@ const ModularDrawerFlowManager = ({
           <AssetSelection
             assetsToDisplay={assetsToDisplay}
             providersLoadingStatus={loadingStatus}
-            defaultSearchValue={searchedValue}
             assetsConfiguration={assetsConfiguration}
             currenciesByProvider={currenciesByProvider}
-            setSearchedValue={setSearchedValue}
             onAssetSelected={handleAssetSelected}
             flow={flow}
             source={source}
