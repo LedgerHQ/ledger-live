@@ -347,8 +347,7 @@ export async function getOperations(
 
 type PrepareTapRequestRequest = {
   partyId: string;
-  amount: number;
-  type: "tap-request";
+  amount?: number;
 };
 
 type PrepareTapRequestResponse = {
@@ -357,18 +356,22 @@ type PrepareTapRequestResponse = {
   hash: "string";
 };
 
+enum TransactionType {
+  TAP_REQUEST = "tap-request",
+  TRANSFER_PRE_APPROVAL_PROPOSAL = "transfer-pre-approval-proposal",
+}
+
 export async function prepareTapRequest({
   partyId,
-  amount,
-  type,
+  amount = 10000000,
 }: PrepareTapRequestRequest): Promise<PrepareTapRequestResponse> {
   const { data } = await network<PrepareTapRequestResponse>({
     method: "POST",
     url: `${getGatewayUrl()}/v1/node/${getNodeId()}/party/${partyId}/transaction/prepare`,
     data: {
       amount,
-      type,
-    } satisfies Omit<PrepareTapRequestRequest, "partyId">,
+      type: TransactionType.TAP_REQUEST,
+    },
   });
   return data;
 }
@@ -415,7 +418,7 @@ export async function preparePreApprovalTransaction(
     method: "POST",
     url: `${getGatewayUrl()}/v1/node/${getNodeId()}/party/${partyId}/transaction/prepare`,
     data: {
-      type: "transfer-pre-approval-proposal",
+      type: TransactionType.TRANSFER_PRE_APPROVAL_PROPOSAL,
       receiver: partyId,
     } satisfies PrepareTransactionRequest,
   });
@@ -439,8 +442,8 @@ export async function submitPreApprovalTransaction(
   });
 
   return {
-    approved: true,
-    transactionId: data.submissionId || "", // TODO: fix types
-    message: "Transaction pre-approval submitted successfully",
+    isApproved: true,
+    submissionId: data.submission_id,
+    updateId: data.update_id,
   };
 }

@@ -18,26 +18,18 @@ export enum PreApprovalStatus {
 
 export type CantonOnboardProgress = {
   status: OnboardStatus;
-  message?: string;
 };
 
 export type CantonOnboardResult = {
   partyId: string;
-  publicKey: string;
-  address: string;
-  transactionHash: string;
 };
 
 export type CantonPreApprovalProgress = {
   status: PreApprovalStatus;
-  message?: string;
 };
 
 export type CantonPreApprovalResult = {
-  approved: boolean;
-  signature: string;
-  transactionId?: string;
-  message?: string;
+  isApproved: boolean;
 };
 
 /**
@@ -62,12 +54,12 @@ export interface SubmitTransactionRequest {
 }
 
 export interface SubmitTransactionResponse {
-  submissionId?: string;
-  // Add other fields as they become available in the API
+  submission_id: string;
+  update_id: string;
 }
 
 export interface PreApprovalResult {
-  approved: boolean;
-  transactionId?: string;
-  message?: string;
+  isApproved: boolean;
+  submissionId: string;
+  updateId: string;
 }

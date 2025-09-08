@@ -137,9 +137,7 @@ describe("onboard integration tests", () => {
       expect(resultValues.length).toBeGreaterThan(0);
       const finalResult = resultValues[resultValues.length - 1];
       expect(finalResult.partyId).toBeDefined();
-      expect(finalResult.publicKey).toBe(keyPair.publicKeyHex);
-      expect(finalResult.address).toBeDefined();
-      expect(finalResult.transactionHash).toBeDefined();
+      expect(typeof finalResult.partyId).toBe("string");
 
       expect(mockSignerContext).toHaveBeenCalled();
     }, 30000);
@@ -160,8 +158,7 @@ describe("onboard integration tests", () => {
       // THEN
       expect(secondResult).toBeDefined();
       expect(secondResult!.partyId).toBe(firstResult.partyId);
-      expect(secondResult!.publicKey).toBe(keyPair.publicKeyHex);
-      expect(secondResult!.address).toBeDefined();
+      expect(typeof secondResult!.partyId).toBe("string");
     }, 30000);
   });
 
@@ -177,11 +174,13 @@ describe("onboard integration tests", () => {
           toArray(),
         ),
       );
+
       const progressValues = preapprovalValues.filter(
-        (value): value is CantonPreApprovalProgress => "status" in value && !("approved" in value),
+        (value): value is CantonPreApprovalProgress =>
+          "status" in value && !("isApproved" in value),
       );
       const resultValues = preapprovalValues.filter(
-        (value): value is CantonPreApprovalResult => "approved" in value,
+        (value): value is CantonPreApprovalResult => "isApproved" in value,
       );
 
       // THEN
@@ -193,9 +192,8 @@ describe("onboard integration tests", () => {
       // Check final result (should be approved)
       expect(resultValues.length).toBeGreaterThan(0);
       const finalResult = resultValues[resultValues.length - 1];
-      expect(finalResult.signature).toBeDefined();
-      expect(finalResult.approved).toBe(true);
-      expect(finalResult.transactionId).toBeDefined();
+      expect(finalResult.isApproved).toBe(true);
+      expect(typeof finalResult.isApproved).toBe("boolean");
     }, 30000);
 
     it("should handle invalid party ID gracefully", async () => {

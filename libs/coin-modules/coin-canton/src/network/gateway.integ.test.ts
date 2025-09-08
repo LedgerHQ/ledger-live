@@ -98,9 +98,8 @@ describe("gateway (devnet)", () => {
 
   describe("getBalance", () => {
     it("should return user balance", async () => {
-      const balance = await getBalance(
-        "party-4f2e1485107adf5f::122027c6dbbbdbffe0fa3122ae05175f3b9328e879e9ce96b670354deb64a45683c1",
-      );
+      const { partyId } = getOnboardedAccount();
+      const balance = await getBalance(partyId);
       expect(balance.length).toBeGreaterThanOrEqual(0);
       if (balance.length > 0) {
         expect(balance[0].amount).toBeGreaterThanOrEqual(0);
@@ -139,10 +138,9 @@ describe("gateway (devnet)", () => {
       // GIVEN
       const { partyId } = getOnboardedAccount();
       const amount = 1000;
-      const type = "tap-request" as const;
 
       // WHEN
-      const response = await prepareTapRequest({ partyId, amount, type });
+      const response = await prepareTapRequest({ partyId, amount });
 
       // THEN
       expect(response).toHaveProperty("serialized");
@@ -159,7 +157,6 @@ describe("gateway (devnet)", () => {
       const tapPrepareResponse = await prepareTapRequest({
         partyId,
         amount: 1000,
-        type: "tap-request",
       });
       const tapSignature = keyPair.sign(tapPrepareResponse.hash);
 
@@ -209,12 +206,12 @@ describe("gateway (devnet)", () => {
       );
 
       // THEN
-      expect(response).toHaveProperty("approved");
-      expect(response).toHaveProperty("transactionId");
-      expect(response).toHaveProperty("message");
-      expect(response.approved).toBe(true);
-      expect(typeof response.transactionId).toBe("string");
-      expect(typeof response.message).toBe("string");
+      expect(response).toHaveProperty("isApproved");
+      expect(response).toHaveProperty("submissionId");
+      expect(response).toHaveProperty("updateId");
+      expect(response.isApproved).toBe(true);
+      expect(typeof response.submissionId).toBe("string");
+      expect(typeof response.updateId).toBe("string");
     }, 30000);
   });
 });
