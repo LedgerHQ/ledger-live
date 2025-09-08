@@ -12,6 +12,35 @@ import { v4 as uuidv4 } from "uuid";
 import { developerModeSelector } from "~/renderer/reducers/settings";
 import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
 import { urls } from "~/config/urls";
+import styled, { keyframes } from "styled-components";
+
+const floatUp = keyframes`
+  0% {
+    transform: translateY(100vh) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-100px) rotate(360deg);
+    opacity: 0;
+  }
+`;
+
+const GooseContainer = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 9999;
+`;
+
+const GooseEmoji = styled.div<{ delay: number; left: number }>`
+  position: absolute;
+  font-size: 48px;
+  left: ${props => props.left}%;
+  animation: ${floatUp} 3s ease-out ${props => props.delay}s forwards;
+`;
 
 const SectionHelp = () => {
   const { t } = useTranslation();
@@ -22,6 +51,7 @@ const SectionHelp = () => {
   const { pushToast } = useToasts();
   const version = getEnv("PLAYWRIGHT_RUN") ? "0.0.0" : __APP_VERSION__;
   const [clickCounter, setClickCounter] = useState(0);
+  const [showGeese, setShowGeese] = useState(false);
   const onVersionClick = useCallback(() => {
     if (clickCounter < 10) {
       setClickCounter(counter => counter + 1);
@@ -38,9 +68,34 @@ const SectionHelp = () => {
         icon: "info",
       });
     }
+    if (clickCounter === 10 && devMode) {
+      setShowGeese(true);
+      setTimeout(() => setShowGeese(false), 5000); // Hide after 5 seconds
+    }
   }, [clickCounter, devMode, pushToast, t, dispatch]);
+
+  const renderGeese = () => {
+    if (!showGeese) return null;
+    
+    const geese = [];
+    for (let i = 0; i < 20; i++) {
+      geese.push(
+        <GooseEmoji
+          key={i}
+          delay={i * 0.1}
+          left={Math.random() * 90 + 5}
+        >
+          🪿
+        </GooseEmoji>
+      );
+    }
+    
+    return <GooseContainer>{geese}</GooseContainer>;
+  };
+
   return (
     <>
+      {renderGeese()}
       <TrackPage category="Settings" name="About" />
       <Body>
         <Row
