@@ -341,7 +341,11 @@ const FirstStepSyncOnboarding = ({
     onLostDevice();
   }, [fatalError, onLostDevice, setIsPollingOn]);
 
-  useEffect(() => handlePollingError(allowedError), [allowedError, handlePollingError]);
+  useEffect(() => {
+    const cleanupFunction = handlePollingError(allowedError);
+
+    return cleanupFunction;
+  }, [allowedError, handlePollingError]);
 
   useEffect(() => {
     if (seedPathStatus === "recover_seed" && servicesConfig?.enabled) {

@@ -68,6 +68,13 @@ const useTwoStepDesync = ({
         setIsDesyncOverlayOpen(false);
         onShouldHeaderBeOverlaid(false);
       }
+
+      return () => {
+        if (desyncTimerRef.current) {
+          clearTimeout(desyncTimerRef.current);
+          desyncTimerRef.current = null;
+        }
+      };
     },
     [handleDesyncTimedOut, desyncTimeoutMs, onShouldHeaderBeOverlaid],
   );
