@@ -136,7 +136,7 @@ const expectedMergedLogsJSON = `\
 ]`;
 
 describe("mergeAllLogs", () => {
-  it("should merge logs from the renderer process and logs recorded from the internal process", () => {
+  it("should merge logs from the renderer process and logs recorded from the main process", () => {
     const mergedLogs = mergeAllLogs(rendererLogsChronological, internalLogsChronological, 8);
 
     console.log("mergedLogs", mergedLogs);

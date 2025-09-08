@@ -261,18 +261,3 @@ export async function applyWindowParams(
   }
 }
 
-/**
- * Legacy function for backward compatibility
- * @deprecated Use createEarlyMainWindow() + applyWindowParams() instead
- */
-export async function createMainWindow(
-  {
-    dimensions,
-    positions,
-  }: { dimensions?: { width: number; height: number }; positions?: { x: number; y: number } },
-  settings: { theme: typeof theme },
-) {
-  const window = createEarlyMainWindow();
-  await applyWindowParams({ dimensions, positions }, settings);
-  return window;
-}

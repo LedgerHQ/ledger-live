@@ -4,12 +4,10 @@ import { Subscription, Observable } from "rxjs";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { useDeviceManagementKit, DeviceManagementKitTransport } from "@ledgerhq/live-dmk-desktop";
 import { DeviceModelId } from "@ledgerhq/types-devices";
-import { IPCTransport } from "~/renderer/IPCTransport";
 import { addDevice, removeDevice, resetDevices } from "~/renderer/actions/devices";
 
 export const useListenToHidDevices = () => {
   const dispatch = useDispatch();
-  const ldmkFeatureFlag = useFeature("ldmkTransport");
   const isLdmkConnectAppEnabled = useFeature("ldmkConnectApp")?.enabled ?? false;
 
   const deviceManagementKit = useDeviceManagementKit();
@@ -17,34 +15,6 @@ export const useListenToHidDevices = () => {
   useEffect(() => {
     let sub: Subscription;
 
-    function syncDevices() {
-      sub = new Observable(IPCTransport.listen).subscribe({
-        next: ({ device, deviceModel, type, descriptor }) => {
-          if (device) {
-            const deviceId = descriptor || "";
-            const stateDevice = {
-              deviceId,
-              modelId: deviceModel ? deviceModel.id : DeviceModelId.nanoS,
-              wired: true,
-            };
-
-            if (type === "add") {
-              dispatch(addDevice(stateDevice));
-            } else if (type === "remove") {
-              dispatch(removeDevice(stateDevice));
-            }
-          }
-        },
-        error: () => {
-          resetDevices();
-          syncDevices();
-        },
-        complete: () => {
-          resetDevices();
-          syncDevices();
-        },
-      });
-    }
 
     const dmkListen = isLdmkConnectAppEnabled
       ? DeviceManagementKitTransport.listen
@@ -80,7 +50,8 @@ export const useListenToHidDevices = () => {
       });
     }
 
-    const fn = ldmkFeatureFlag?.enabled ? syncDevicesWithDmk : syncDevices;
+    // Always use DeviceManagementKit for device listening (WebHID)
+    const fn = syncDevicesWithDmk;
 
     const timeoutSyncDevices = setTimeout(fn, 1000);
 
@@ -89,7 +60,7 @@ export const useListenToHidDevices = () => {
       clearTimeout?.(timeoutSyncDevices);
       sub?.unsubscribe?.();
     };
-  }, [dispatch, deviceManagementKit, ldmkFeatureFlag?.enabled, isLdmkConnectAppEnabled]);
+  }, [dispatch, deviceManagementKit, isLdmkConnectAppEnabled]);
 
   return null;
 };

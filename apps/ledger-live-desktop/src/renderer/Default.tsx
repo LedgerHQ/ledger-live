@@ -193,7 +193,6 @@ export default function Default() {
   const accounts = useSelector(accountsSelector);
   const analyticsConsoleActive = useEnv("ANALYTICS_CONSOLE");
   const providerNumber = useEnv("FORCE_PROVIDER");
-  const ldmkFeatureFlag = useFeature("ldmkTransport");
   const dmk = useDeviceManagementKit();
 
   useAccountsWithFundsListener(accounts, updateIdentify);
@@ -212,12 +211,13 @@ export default function Default() {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    if (providerNumber && ldmkFeatureFlag?.enabled) {
+    // WebHID is now always enabled, set provider if specified
+    if (providerNumber) {
       dmk?.setProvider(providerNumber);
     }
     // setting provider only at initialisation
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [ldmkFeatureFlag, dmk]);
+  }, [dmk]);
 
   useEffect(() => {
     if (

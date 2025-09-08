@@ -20,7 +20,6 @@ import {
   getMainWindowAsync,
   loadWindow,
 } from "./window-lifecycle";
-import { getSentryEnabled, setUserId } from "./internal-lifecycle";
 import db from "./db";
 import debounce from "lodash/debounce";
 import sentry from "~/sentry/main";
@@ -113,12 +112,7 @@ app.on("ready", async () => {
   console.timeEnd("T-db");
   const userId = user?.id;
   if (userId) {
-    setUserId(userId);
-    sentry(() => {
-      const value = getSentryEnabled();
-      if (value === undefined) return settings?.sentryLogs;
-      return value;
-    }, userId);
+    sentry(() => settings?.sentryLogs, userId);
   }
 
   /**
@@ -180,6 +174,7 @@ app.on("ready", async () => {
   });
   Menu.setApplicationMenu(menu);
 
+  // Apply window parameters now that we have DB data
   const windowParams = (await db.getKey("windowParams", "MainWindow", {})) as Parameters<
     typeof applyWindowParams
   >[0];
