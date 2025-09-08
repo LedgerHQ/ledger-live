@@ -185,8 +185,6 @@ function useProviderConnectRum({
         status: "completed",
       });
 
-      DdRum.addTiming(`provider_connect_${providerId}_done`);
-
       if (timeoutRef.current) clearTimeout(timeoutRef.current);
       loadIdRef.current = null;
       startRef.current = null;
