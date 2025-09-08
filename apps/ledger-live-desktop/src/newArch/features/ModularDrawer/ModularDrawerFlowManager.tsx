@@ -11,6 +11,7 @@ import { useModularDrawerNavigation } from "./hooks/useModularDrawerNavigation";
 import { BackButtonArrow } from "./components/BackButton";
 import { useModularDrawerRemoteData } from "./hooks/useModularDrawerRemoteData";
 import { setSearchedValue } from "~/renderer/reducers/modularDrawer";
+import { useModularDrawerConfiguration } from "./hooks/useModularDrawerConfiguration";
 
 const ModularDrawerFlowManager = ({
   currencies,
@@ -38,8 +39,6 @@ const ModularDrawerFlowManager = ({
     error,
     refetch,
     loadingStatus,
-    assetsConfiguration,
-    networkConfiguration,
     currenciesByProvider,
     assetsToDisplay,
     networksToDisplay,
@@ -48,20 +47,21 @@ const ModularDrawerFlowManager = ({
     hasOneCurrency,
     handleAssetSelected,
     handleNetworkSelected,
-    handleAccountSelected,
     handleBack,
     loadNext,
   } = useModularDrawerRemoteData({
     currentStep,
     currencyIds,
-    drawerConfiguration,
     goToStep,
     onAssetSelected,
-    onAccountSelected,
+    isSelectAccountFlow: Boolean(onAccountSelected),
     flow,
     useCase,
     areCurrenciesFiltered,
   });
+
+  const { assetsConfiguration, networkConfiguration } =
+    useModularDrawerConfiguration(drawerConfiguration);
 
   const renderStepContent = (step: ModularDrawerStep) => {
     switch (step) {
@@ -95,12 +95,12 @@ const ModularDrawerFlowManager = ({
           />
         );
       case MODULAR_DRAWER_STEP.ACCOUNT_SELECTION:
-        if (selectedAsset && selectedNetwork) {
+        if (selectedAsset && selectedNetwork && onAccountSelected) {
           return (
             <AccountSelection
               asset={selectedAsset}
               accounts$={accounts$}
-              onAccountSelected={handleAccountSelected}
+              onAccountSelected={onAccountSelected}
               flow={flow}
               source={source}
             />
