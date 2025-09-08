@@ -32,7 +32,7 @@ describe("prepareTransaction", () => {
 
   test("should set amount and maxFee from utils", async () => {
     const result = await prepareTransaction(mockAccount, mockTx);
-    expect(result.amount.isEqualTo(new BigNumber(100))).toBe(true);
-    expect(result.maxFee?.isEqualTo(new BigNumber(10))).toBe(true);
+    expect(result.amount).toStrictEqual(new BigNumber(100));
+    expect(result.maxFee).toStrictEqual(new BigNumber(10));
   });
 });
