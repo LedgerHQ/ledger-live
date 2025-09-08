@@ -28,7 +28,7 @@ export type AssetsData =
     }[]
   | undefined;
 
-export function useAssetsFromDada({
+export function useAssets({
   currencyIds,
   searchedValue,
   useCase,

@@ -7,7 +7,7 @@ import { useModularDrawerFlowStepManager } from "./useModularDrawerFlowStepManag
 import { useStepNavigation } from "./useStepNavigation";
 import { useDeviceNavigation } from "./useDeviceNavigation";
 import { useDrawerLifecycle } from "./useDrawerLifecycle";
-import { AssetsData } from "./useAssetsFromDada";
+import { AssetsData } from "./useAssets";
 import { getNetworksForAsset, resolveCurrency } from "../utils/helpers";
 
 type ModularDrawerStateProps = {

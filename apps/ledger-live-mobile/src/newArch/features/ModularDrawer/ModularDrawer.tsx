@@ -1,7 +1,7 @@
 import React from "react";
 import ModularDrawerFlowManager from "./ModularDrawerFlowManager";
 import { EnhancedModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/types";
-import { useAssetsFromDada } from "./hooks/useAssetsFromDada";
+import { useAssets } from "./hooks/useAssets";
 import { useModularDrawerState } from "./hooks/useModularDrawerState";
 
 import QueuedDrawerGorhom from "LLM/components/QueuedDrawer/temp/QueuedDrawerGorhom";
@@ -71,13 +71,12 @@ export function ModularDrawer({
   areCurrenciesFiltered,
 }: ModularDrawerProps) {
   const searchValue = useSelector(modularDrawerSearchValueSelector);
-  const { sortedCryptoCurrencies, assetsSorted, isLoading, error, refetch, loadNext } =
-    useAssetsFromDada({
-      currencyIds: currencies,
-      searchedValue: searchValue,
-      useCase,
-      areCurrenciesFiltered,
-    });
+  const { sortedCryptoCurrencies, assetsSorted, isLoading, error, refetch, loadNext } = useAssets({
+    currencyIds: currencies,
+    searchedValue: searchValue,
+    useCase,
+    areCurrenciesFiltered,
+  });
 
   const {
     accountCurrency,

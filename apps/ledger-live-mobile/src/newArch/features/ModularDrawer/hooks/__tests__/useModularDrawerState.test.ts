@@ -9,7 +9,7 @@ import {
   mockCurrencyIds,
 } from "@ledgerhq/live-common/modularDrawer/__mocks__/currencies.mock";
 import { NavigationProp } from "@react-navigation/native";
-import { AssetsData } from "../useAssetsFromDada";
+import { AssetsData } from "../useAssets";
 
 const assetsSorted: AssetsData = [
   {
