@@ -27,8 +27,6 @@ import { useBalanceDeps } from "../../hooks/useBalanceDeps";
 export type AssetSelectionStepProps = {
   isOpen: boolean;
   availableAssets: CryptoOrTokenCurrency[];
-  defaultSearchValue: string;
-  setDefaultSearchValue: (value: string) => void;
   onAssetSelected: (asset: CryptoOrTokenCurrency) => void;
   flow: string;
   source: string;
@@ -43,8 +41,6 @@ const SAFE_MARGIN_BOTTOM = 48;
 
 const AssetSelection = ({
   availableAssets,
-  defaultSearchValue,
-  setDefaultSearchValue,
   onAssetSelected,
   flow,
   source,
@@ -167,8 +163,6 @@ const AssetSelection = ({
       <SearchInputContainer
         source={source}
         flow={flow}
-        setSearchedValue={setDefaultSearchValue}
-        defaultValue={defaultSearchValue}
         onFocus={handleSearchFocus}
         onBlur={handleSearchBlur}
         onPressIn={handleSearchPressIn}

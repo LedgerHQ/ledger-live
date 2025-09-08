@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import ModularDrawerFlowManager from "./ModularDrawerFlowManager";
 import { EnhancedModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/types";
 import { useAssetsFromDada } from "./hooks/useAssetsFromDada";
@@ -9,6 +9,8 @@ import QueuedDrawerGorhom from "LLM/components/QueuedDrawer/temp/QueuedDrawerGor
 import { AccountLike } from "@ledgerhq/types-live";
 import { WalletAPIAccount } from "@ledgerhq/live-common/wallet-api/types";
 import { Observable } from "rxjs";
+import { useSelector } from "react-redux";
+import { modularDrawerSearchValueSelector } from "~/reducers/modularDrawer";
 
 const SNAP_POINTS = ["70%", "92%"];
 
@@ -68,14 +70,7 @@ export function ModularDrawer({
   useCase,
   areCurrenciesFiltered,
 }: ModularDrawerProps) {
-  const [searchValue, setSearchValue] = useState("");
-
-  useEffect(() => {
-    if (isOpen) {
-      setSearchValue("");
-    }
-  }, [isOpen]);
-
+  const searchValue = useSelector(modularDrawerSearchValueSelector);
   const { sortedCryptoCurrencies, assetsSorted, isLoading, error, refetch, loadNext } =
     useAssetsFromDada({
       currencyIds: currencies,
@@ -122,8 +117,6 @@ export function ModularDrawer({
         assetsViewModel={{
           availableAssets: sortedCryptoCurrencies,
           onAssetSelected: handleAsset,
-          defaultSearchValue: searchValue,
-          setDefaultSearchValue: setSearchValue,
           flow,
           source,
           assetsConfiguration,
