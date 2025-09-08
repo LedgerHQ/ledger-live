@@ -3,7 +3,6 @@ import { findCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { getProvider } from "../utils/getProvider";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { CurrenciesByProviderId } from "@ledgerhq/live-common/deposit/type";
-import { AccountLike, Account } from "@ledgerhq/types-live";
 import { ModularDrawerStep } from "../types";
 import { useModularDrawerAnalytics } from "../analytics/useModularDrawerAnalytics";
 import { MODULAR_DRAWER_PAGE_NAME } from "../analytics/modularDrawer.types";
@@ -26,7 +25,6 @@ type Props = {
   goToStep: (nextStep: ModularDrawerStep) => void;
   isSelectAccountFlow?: boolean;
   onAssetSelected?: (asset: CryptoOrTokenCurrency) => void;
-  onAccountSelected?: (account: AccountLike, parentAccount?: Account) => void;
   hasOneCurrency: boolean;
   flow: string;
 };
@@ -39,7 +37,6 @@ export function useModularDrawerFlowState({
   goToStep,
   isSelectAccountFlow,
   onAssetSelected,
-  onAccountSelected,
   hasOneCurrency,
   flow,
 }: Props) {
@@ -49,15 +46,6 @@ export function useModularDrawerFlowState({
   const [selectedAsset, setSelectedAsset] = useState<CryptoOrTokenCurrency>();
   const [selectedNetwork, setSelectedNetwork] = useState<CryptoOrTokenCurrency>();
   const [providers, setProviders] = useState<CurrenciesByProviderId>();
-  const [hasOneInitialCurrency, setHasOneInitialCurrency] = useState<boolean | undefined>(
-    undefined,
-  );
-
-  useEffect(() => {
-    if (hasOneInitialCurrency === undefined && hasOneCurrency && searchedValue === undefined) {
-      setHasOneInitialCurrency(true);
-    }
-  }, [hasOneInitialCurrency, hasOneCurrency, searchedValue]);
 
   const goBackToAssetSelection = useCallback(() => {
     setSelectedAsset(undefined);
@@ -183,12 +171,8 @@ export function useModularDrawerFlowState({
     ],
   );
 
-  const handleAccountSelected = (account: AccountLike, parentAccount?: Account) => {
-    onAccountSelected?.(account, parentAccount);
-  };
-
   useEffect(() => {
-    if (hasOneInitialCurrency && !selectedAsset) {
+    if (hasOneCurrency && searchedValue === undefined && !selectedAsset) {
       const currencyIdToFind = currencyIds[0];
       const currency = getTokenOrCryptoCurrencyById(currencyIdToFind);
 
@@ -201,11 +185,10 @@ export function useModularDrawerFlowState({
     currencyIds.length,
     goToStep,
     handleAssetSelected,
-    hasOneCurrency,
     selectedAsset,
     currencyIds,
+    hasOneCurrency,
     searchedValue,
-    hasOneInitialCurrency,
   ]);
 
   return {
@@ -221,6 +204,5 @@ export function useModularDrawerFlowState({
     goToAccountSelection,
     handleNetworkSelected,
     handleAssetSelected,
-    handleAccountSelected,
   };
 }

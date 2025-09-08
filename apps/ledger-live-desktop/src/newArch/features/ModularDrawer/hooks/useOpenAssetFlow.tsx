@@ -19,14 +19,12 @@ function selectCurrency(
   onAssetSelected: (currency: CryptoOrTokenCurrency) => void,
   source: string,
   flow: string,
-  assetIds?: string[],
   includeTokens?: boolean,
   currencies?: CryptoOrTokenCurrency[],
   onClose?: () => void,
   drawerConfiguration?: EnhancedModularDrawerConfiguration,
 ): void {
-  const filteredCurrencies =
-    currencies ?? listAndFilterCurrencies({ currencies: assetIds, includeTokens });
+  const filteredCurrencies = currencies ?? listAndFilterCurrencies({ includeTokens });
 
   setDrawer(
     ModularDrawerFlowManager,
@@ -129,7 +127,6 @@ export function useOpenAssetFlow(
           openAddAccountFlow,
           source,
           modularDrawerVisibleParams.location,
-          undefined,
           includeTokens,
           undefined,
           handleClose,

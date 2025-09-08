@@ -127,7 +127,7 @@ describe("ModularDrawerFlowManager - Select Account Flow", () => {
     const account = screen.getByText(/ethereum 2/i);
     await user.click(account);
 
-    expect(mockOnAccountSelected).toHaveBeenCalledWith(ETH_ACCOUNT, undefined);
+    expect(mockOnAccountSelected).toHaveBeenCalledWith(ETH_ACCOUNT);
   });
 
   it("should navigate directly to accountSelection step", async () => {
