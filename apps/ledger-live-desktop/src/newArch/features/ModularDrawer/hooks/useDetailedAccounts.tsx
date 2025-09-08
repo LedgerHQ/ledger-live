@@ -27,7 +27,6 @@ import keyBy from "lodash/keyBy";
 
 export const useDetailedAccounts = (
   asset: CryptoOrTokenCurrency,
-  flow: string,
   source: string,
   accounts$?: Observable<WalletAPIAccount[]>,
   onAccountSelected?: (account: Account) => void,
@@ -36,7 +35,9 @@ export const useDetailedAccounts = (
   const state = useCountervaluesState();
   const { trackModularDrawerEvent } = useModularDrawerAnalytics();
   const { openAddAccountFlow } = useOpenAssetFlow(
-    { location: ModularDrawerLocation.ADD_ACCOUNT },
+    {
+      location: ModularDrawerLocation.ADD_ACCOUNT,
+    },
     source,
   );
 
@@ -105,11 +106,9 @@ export const useDetailedAccounts = (
     trackModularDrawerEvent("button_clicked", {
       button: "Add a new account",
       page: MODULAR_DRAWER_PAGE_NAME.MODULAR_ACCOUNT_SELECTION,
-      flow,
-      source,
     });
     openAddAccountFlow(asset, false, onAccountSelected);
-  }, [asset, flow, openAddAccountFlow, source, trackModularDrawerEvent, onAccountSelected]);
+  }, [asset, openAddAccountFlow, trackModularDrawerEvent, onAccountSelected]);
 
   return { detailedAccounts, accounts, onAddAccountClick };
 };

@@ -3,6 +3,8 @@ import { track } from "~/renderer/analytics/segment";
 import { ModularDrawerEventName, ModularDrawerEventParams } from "./modularDrawer.types";
 import { EnhancedModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/types";
 import { formatAssetsConfig, formatNetworksConfig } from "./utils";
+import { useSelector } from "react-redux";
+import { modularDrawerStateSelector } from "~/renderer/reducers/modularDrawer";
 
 type DrawerConfig = {
   formatNetworkConfig?: boolean;
@@ -18,6 +20,8 @@ type TrackModularDrawerEvent = <T extends ModularDrawerEventName>(
 ) => void;
 
 export const useModularDrawerAnalytics = () => {
+  const { flow, source } = useSelector(modularDrawerStateSelector);
+
   const trackModularDrawerEvent = useCallback<TrackModularDrawerEvent>(
     (eventName, params, drawerConfig) => {
       const { formatNetworkConfig, formatAssetConfig, assetsConfig, networksConfig } =
@@ -28,10 +32,12 @@ export const useModularDrawerAnalytics = () => {
         ...(formatNetworkConfig && {
           network_component_features: formatNetworksConfig(networksConfig),
         }),
+        flow,
+        source,
       };
       track(eventName, analyticsParams);
     },
-    [],
+    [flow, source],
   );
 
   return { trackModularDrawerEvent };

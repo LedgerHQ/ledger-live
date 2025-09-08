@@ -4,11 +4,15 @@ import { State } from ".";
 export interface ModularDrawerState {
   searchedValue?: string;
   isDebuggingDuplicates: boolean;
+  flow: string;
+  source: string;
 }
 
 const initialState: ModularDrawerState = {
   searchedValue: undefined,
   isDebuggingDuplicates: false,
+  flow: "",
+  source: "",
 };
 
 const modularDrawerSlice = createSlice({
@@ -22,6 +26,12 @@ const modularDrawerSlice = createSlice({
       state.isDebuggingDuplicates = action.payload;
     },
     resetModularDrawerState: () => initialState,
+    setFlowValue: (state, action: PayloadAction<string>) => {
+      state.flow = action.payload;
+    },
+    setSourceValue: (state, action: PayloadAction<string>) => {
+      state.source = action.payload;
+    },
   },
 });
 
@@ -32,7 +42,12 @@ export const modularDrawerSearchedSelector = (state: State) => state.modularDraw
 export const modularDrawerIsDebuggingDuplicatesSelector = (state: State) =>
   state.modularDrawer.isDebuggingDuplicates;
 
-export const { setSearchedValue, setIsDebuggingDuplicates, resetModularDrawerState } =
-  modularDrawerSlice.actions;
+export const {
+  setSearchedValue,
+  setIsDebuggingDuplicates,
+  resetModularDrawerState,
+  setFlowValue,
+  setSourceValue,
+} = modularDrawerSlice.actions;
 
 export default modularDrawerSlice.reducer;

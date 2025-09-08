@@ -10,7 +10,6 @@ import { MODULAR_DRAWER_PAGE_NAME } from "../ModularDrawer/analytics/modularDraw
 import AnimatedScreenWrapper from "../ModularDrawer/components/AnimatedScreenWrapper";
 import { BackButtonArrow } from "../ModularDrawer/components/BackButton";
 import { AccountSelection } from "../ModularDrawer/screens/AccountSelection";
-import { ADD_ACCOUNT_FLOW_NAME } from "./analytics/addAccount.types";
 import HeaderGradient from "./components/HeaderGradient";
 import { MODULAR_DRAWER_ADD_ACCOUNT_STEP, ModularDrawerAddAccountStep } from "./domain";
 import AccountsAdded from "./screens/AccountsAdded";
@@ -178,8 +177,6 @@ const ModularDrawerAddAccountFlowManager = ({
             <AccountSelection
               asset={cryptoCurrency}
               overridePageName={MODULAR_DRAWER_PAGE_NAME.FUND_ACCOUNT_LIST}
-              source={source}
-              flow={ADD_ACCOUNT_FLOW_NAME}
               onAccountSelected={accountToFund => navigateToFundAccount(accountToFund as Account)}
               hideAddAccountButton
             />

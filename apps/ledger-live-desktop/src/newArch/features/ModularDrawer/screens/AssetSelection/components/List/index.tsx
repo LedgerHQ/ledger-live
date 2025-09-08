@@ -21,8 +21,6 @@ import { modularDrawerIsDebuggingDuplicatesSelector } from "~/renderer/reducers/
 
 export type SelectAssetProps = {
   assetsToDisplay: CryptoOrTokenCurrency[];
-  source: string;
-  flow: string;
   scrollToTop: boolean;
   assetsConfiguration: EnhancedModularDrawerConfiguration["assets"];
   currenciesByProvider: CurrenciesByProviderId[];
@@ -41,8 +39,6 @@ const LIST_HEIGHT = `calc(100% - ${MARGIN_BOTTOM}px)`;
 
 export const SelectAssetList = ({
   assetsToDisplay,
-  source,
-  flow,
   scrollToTop,
   assetsConfiguration,
   currenciesByProvider,
@@ -96,8 +92,6 @@ export const SelectAssetList = ({
         {
           asset: selectedAsset.name,
           page: CURRENT_PAGE,
-          flow,
-          source,
         },
         {
           formatAssetConfig: true,
@@ -107,7 +101,7 @@ export const SelectAssetList = ({
 
       onAssetSelected(selectedAsset);
     },
-    [assetsToDisplay, trackModularDrawerEvent, flow, source, assetsConfiguration, onAssetSelected],
+    [assetsToDisplay, trackModularDrawerEvent, assetsConfiguration, onAssetSelected],
   );
 
   useEffect(() => {
