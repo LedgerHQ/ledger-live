@@ -32,9 +32,28 @@ interface SigningData {
 interface OnboardingResult {
   partyId: string;
   address?: string;
-  publicKey: string;
+  publicKey?: string;
   transactionHash?: string;
 }
+
+const getStatusMessage = (status: OnboardStatus): string => {
+  switch (status) {
+    case OnboardStatus.INIT:
+      return "Initializing Canton onboarding...";
+    case OnboardStatus.PREPARE:
+      return "Preparing onboarding transaction...";
+    case OnboardStatus.SIGN:
+      return "Please confirm the transaction on your device";
+    case OnboardStatus.SUBMIT:
+      return "Submitting onboarding transaction...";
+    case OnboardStatus.SUCCESS:
+      return "Onboarding completed successfully";
+    case OnboardStatus.ERROR:
+      return "Onboarding failed";
+    default:
+      return "Processing...";
+  }
+};
 
 interface FooterProps {
   currency: any;
@@ -171,7 +190,8 @@ export default function StepOnboard({
 
         // Handle progress updates (CantonOnboardProgress has status)
         if ("status" in progressData) {
-          handleStateUpdate(progressData.status, progressData.message);
+          const statusMessage = getStatusMessage(progressData.status);
+          handleStateUpdate(progressData.status, statusMessage);
           setOnboardingStatus?.(progressData.status);
 
           if (progressData.status === OnboardStatus.SIGN) {
@@ -184,13 +204,18 @@ export default function StepOnboard({
                 (progressData as any).combinedHash || (progressData as any).combined_hash || "",
               derivationPath: (progressData as any).derivationPath,
             };
-            handleStateUpdate(progressData.status, progressData.message, signingData);
+            handleStateUpdate(progressData.status, statusMessage, signingData);
           }
         }
 
-        // Handle final result (CantonOnboardResult has partyId and publicKey)
-        if ("partyId" in progressData && "publicKey" in progressData) {
-          onboardingResult = progressData;
+        // Handle final result (CantonOnboardResult has partyId)
+        if ("partyId" in progressData && !("status" in progressData)) {
+          onboardingResult = {
+            partyId: progressData.partyId,
+            // The bridge implementation doesn't provide these fields, so we'll use placeholders
+            publicKey: "generated-public-key",
+            address: progressData.partyId,
+          };
         }
       },
       complete: () => {
@@ -211,7 +236,13 @@ export default function StepOnboard({
 
           logger.log("[StepOnboard] Storing onboarding data:", onboardingDataObject);
           setOnboardingData?.(onboardingDataObject);
+
+          logger.log("[StepOnboard] Setting onboarding completed to true");
           setOnboardingCompleted?.(true);
+
+          logger.log("[StepOnboard] Onboarding completion callbacks called");
+        } else {
+          logger.error("[StepOnboard] No partyId in onboarding result, not marking as completed");
         }
 
         setOnboardingStatus?.(OnboardStatus.SUCCESS);
@@ -418,9 +449,15 @@ export const StepOnboardFooter = ({
   status,
 }: FooterProps) => {
   const handleNext = useCallback(() => {
+    logger.log("[StepOnboardFooter] Continue button clicked:", {
+      onboardingCompleted,
+      isLoading,
+    });
     if (onboardingCompleted && !isLoading) {
       logger.log("StepOnboard: Transitioning to authorization");
       transitionTo(StepId.AUTHORIZE);
+    } else {
+      logger.warn("StepOnboard: Cannot transition - conditions not met");
     }
   }, [onboardingCompleted, isLoading, transitionTo]);
 
@@ -429,10 +466,12 @@ export const StepOnboardFooter = ({
     return null;
   }
 
+  const isButtonDisabled = !onboardingCompleted || isLoading;
+
   return (
     <Box horizontal alignItems="center" justifyContent="space-between" grow>
       {currency && <CurrencyBadge currency={currency} />}
-      <Button primary disabled={!onboardingCompleted || isLoading} onClick={handleNext}>
+      <Button primary disabled={isButtonDisabled} onClick={handleNext}>
         <Trans i18nKey="common.continue" />
       </Button>
     </Box>

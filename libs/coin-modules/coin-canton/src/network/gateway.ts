@@ -363,13 +363,13 @@ enum TransactionType {
 
 export async function prepareTapRequest({
   partyId,
-  amount = 10000000,
+  amount = 1000000,
 }: PrepareTapRequestRequest): Promise<PrepareTapRequestResponse> {
   const { data } = await network<PrepareTapRequestResponse>({
     method: "POST",
     url: `${getGatewayUrl()}/v1/node/${getNodeId()}/party/${partyId}/transaction/prepare`,
     data: {
-      amount,
+      amount: parseInt(amount.toString(), 10), // Convert to integer to avoid scientific notation
       type: TransactionType.TAP_REQUEST,
     },
   });

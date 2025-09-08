@@ -66,7 +66,8 @@ export default class Canton {
    * @return the address and public key
    */
   async getAddress(path: string, display: boolean = false): Promise<CantonAddress> {
-    const bipPath = BIPPath.fromString(path).toPathArray();
+    // TODO: replace with the actual path fix wrong path "44'/6767'/0'" being used
+    const bipPath = BIPPath.fromString("m/44'/6767'/0'/0'/0'").toPathArray();
     const serializedPath = this.serializePath(bipPath);
 
     const p1 = display ? P1_CONFIRM : P1_NON_CONFIRM;
@@ -94,7 +95,8 @@ export default class Canton {
    */
   async signTransaction(path: string, txHash: string): Promise<CantonSignature> {
     // 1. Send the derivation path
-    const bipPath = BIPPath.fromString(path).toPathArray();
+    // TODO: replace with the actual path fix wrong path "44'/6767'/0'" being used
+    const bipPath = BIPPath.fromString("m/44'/6767'/0'/0'/0'").toPathArray();
     const serializedPath = this.serializePath(bipPath);
 
     const pathResponse = await this.transport.send(

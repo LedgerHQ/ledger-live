@@ -164,18 +164,37 @@ export const buildAuthorizePreapproval =
           isApproved,
         });
 
+        // TODO: remove after demo
         const handleTapRequest = async () => {
           try {
+            observer.next({
+              status: PreApprovalStatus.PREPARE,
+            });
+
             const { serialized, hash } = await prepareTapRequest({
               partyId,
             });
+
+            observer.next({
+              status: PreApprovalStatus.SIGN,
+            });
+
             const signature = await signerContext(deviceId, signer =>
               signer.signTransaction(derivationPath, hash),
             );
+
+            observer.next({
+              status: PreApprovalStatus.SUBMIT,
+            });
+
             await submitTapRequest({
               partyId,
               serialized,
               signature,
+            });
+
+            observer.next({
+              status: PreApprovalStatus.SUCCESS,
             });
           } catch (err) {
             // Tap request failure should not break the pre-approval flow
@@ -189,7 +208,7 @@ export const buildAuthorizePreapproval =
       main().then(
         () => observer.complete(),
         error => {
-          log("[onboardAccount] Error:", error);
+          log("[buildAuthorizePreapproval] Error:", error);
           observer.error(error);
         },
       );

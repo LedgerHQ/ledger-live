@@ -224,27 +224,22 @@ class OnboardModal extends PureComponent<Props, State> {
       .authorizePreapproval(deviceId, derivationPath, partyId)
       .subscribe({
         next: (progressData: CantonPreApprovalProgress | CantonPreApprovalResult) => {
-          logger.log("Canton preapproval progress", progressData);
-
-          // Handle final result (CantonPreApprovalResult has approved property)
-          if ("approved" in progressData) {
-            preapprovalResult = progressData;
+          if ("isApproved" in progressData) {
+            preapprovalResult = {
+              isApproved: progressData.isApproved,
+            };
             this.setState({ showConfirmation: true });
           }
 
-          // Handle progress updates (CantonPreApprovalProgress has status)
           if ("status" in progressData) {
             this.setState({ authorizeStatus: progressData.status });
-          }
-          if ("message" in progressData) {
-            this.setState({ message: `Pre-approval: ${progressData.message}` });
           }
         },
         complete: () => {
           logger.log("Canton preapproval completed", preapprovalResult);
 
-          if (!preapprovalResult?.approved) {
-            const errorMessage = `Transaction pre-approval failed: ${preapprovalResult?.message || "Unknown error"}`;
+          if (!preapprovalResult || !preapprovalResult.isApproved) {
+            const errorMessage = `Transaction pre-approval failed: Unknown error`;
             logger.error(errorMessage);
             this.setState({
               error: new Error(errorMessage),
