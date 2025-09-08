@@ -149,52 +149,50 @@ export const TwoStepSyncOnboardingCompanion: React.FC<TwoStepSyncOnboardingCompa
 
   const handleSecondStepFinish = useCallback(
     (done: boolean) => {
-      if (companionStep === SEED_STATE.NEW_SEED) {
-        if (done) {
-          handleOnboardingDoneState();
-          dispatchRedux(setIsOnboardingFlow(true));
-          baseNavigation.reset({
-            index: 1,
-            routes: [
-              {
-                name: NavigatorName.BaseOnboarding,
-                state: {
-                  routes: [
-                    {
-                      name: NavigatorName.SyncOnboarding,
-                      state: {
-                        routes: [
-                          {
-                            name: ScreenName.SyncOnboardingCompletion,
-                            params: {
-                              device,
-                              seedConfiguration: analyticsSeedConfiguration.current,
-                            },
+      if (!done) {
+        handleOnboardingDone();
+      } else if (companionStep === SEED_STATE.NEW_SEED) {
+        handleOnboardingDoneState();
+        dispatchRedux(setIsOnboardingFlow(true));
+        baseNavigation.reset({
+          index: 1,
+          routes: [
+            {
+              name: NavigatorName.BaseOnboarding,
+              state: {
+                routes: [
+                  {
+                    name: NavigatorName.SyncOnboarding,
+                    state: {
+                      routes: [
+                        {
+                          name: ScreenName.SyncOnboardingCompletion,
+                          params: {
+                            device,
+                            seedConfiguration: analyticsSeedConfiguration.current,
                           },
-                        ],
-                      },
+                        },
+                      ],
                     },
-                    {
-                      name: NavigatorName.ReceiveFunds,
-                      state: {
-                        routes: [
-                          {
-                            name: ScreenName.ReceiveSelectCrypto,
-                            params: {
-                              device,
-                            },
+                  },
+                  {
+                    name: NavigatorName.ReceiveFunds,
+                    state: {
+                      routes: [
+                        {
+                          name: ScreenName.ReceiveSelectCrypto,
+                          params: {
+                            device,
                           },
-                        ],
-                      },
+                        },
+                      ],
                     },
-                  ],
-                },
+                  },
+                ],
               },
-            ],
-          });
-        } else {
-          handleOnboardingDone();
-        }
+            },
+          ],
+        });
       } else {
         setCompanionStep(COMPANION_STATE.EXIT);
       }

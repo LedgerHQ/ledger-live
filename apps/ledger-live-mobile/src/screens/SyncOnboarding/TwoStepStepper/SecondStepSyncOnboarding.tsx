@@ -76,13 +76,15 @@ const SecondStepSyncOnboarding = ({
 
   const handleExit = useCallback(
     (done: boolean) => {
+      if (!done || analyticsSeedConfiguration.current === "new_seed") return handleDone(done);
+
       setIsFinished(true);
       sharedHeight.value = withTiming(0, { duration: EXIT_TIMING });
       setTimeout(() => {
         handleDone(done);
       }, 800);
     },
-    [handleDone, sharedHeight, setIsFinished],
+    [handleDone, sharedHeight, setIsFinished, analyticsSeedConfiguration],
   );
 
   useEffect(() => {
