@@ -142,21 +142,21 @@ function restorePosition(
   return { x, y, width, height };
 }
 
-export async function createMainWindow(
-  {
-    dimensions,
-    positions,
-  }: { dimensions?: { width: number; height: number }; positions?: { x: number; y: number } },
-  settings: { theme: typeof theme },
-) {
-  theme =
-    settings && settings.theme && ["light", "dark"].includes(settings.theme)
-      ? settings.theme
-      : "null";
+/**
+ * Creates the main window early without position/dimension parameters
+ * This allows faster startup by deferring DB-dependent positioning
+ */
+export function createEarlyMainWindow() {
+  if (mainWindow) {
+    return mainWindow;
+  }
 
   const windowOptions = {
     ...defaultWindowOptions,
-    ...restorePosition(positions, dimensions),
+    // Use default position/dimensions for now
+    ...getWindowPosition(DEFAULT_WINDOW_WIDTH, DEFAULT_WINDOW_HEIGHT),
+    width: DEFAULT_WINDOW_WIDTH,
+    height: DEFAULT_WINDOW_HEIGHT,
     ...(process.platform === "darwin"
       ? {
           frame: false,
@@ -165,13 +165,28 @@ export async function createMainWindow(
       : {}),
     minWidth: MIN_WIDTH,
     minHeight: MIN_HEIGHT,
-    show: false,
+    show: false, // Keep hidden until fully configured
     webPreferences: {
       preload: path.join(__dirname, "preloader.bundle.js"),
       ...defaultWindowOptions.webPreferences,
     },
   };
   mainWindow = new BrowserWindow(windowOptions);
+
+  setupMainWindowHandlers();
+  mainWindow.name = "MainWindow";
+  mainWindow.on("closed", () => {
+    mainWindow = null;
+  });
+
+  return mainWindow;
+}
+
+/**
+ * Sets up the main window session handlers and device permissions
+ */
+function setupMainWindowHandlers() {
+  if (!mainWindow) return;
 
   mainWindow.webContents.session.on("select-hid-device", (event, details, callback) => {
     event.preventDefault();
@@ -196,22 +211,65 @@ export async function createMainWindow(
     }
     return false;
   });
+}
 
-  mainWindow.name = "MainWindow";
-  loadWindow();
+/**
+ * Applies window parameters (position, dimensions, theme) and loads the window content
+ */
+export async function applyWindowParams(
+  {
+    dimensions,
+    positions,
+  }: { dimensions?: { width: number; height: number }; positions?: { x: number; y: number } },
+  settings: { theme: typeof theme },
+) {
+  if (!mainWindow) {
+    throw new Error("Main window must be created first with createEarlyMainWindow()");
+  }
+
+  theme =
+    settings && settings.theme && ["light", "dark"].includes(settings.theme)
+      ? settings.theme
+      : "null";
+
+  // Apply saved position and dimensions
+  const { x, y, width, height } = restorePosition(positions, dimensions);
+  mainWindow.setBounds({ x, y, width, height });
+
+  // Load window content
+  await loadWindow();
+
+  // Setup dev tools if needed (non-blocking)
   if (DEV_TOOLS && !DISABLE_DEV_TOOLS) {
-    mainWindow.webContents.on("did-frame-finish-load", () => {
-      if (mainWindow) {
+    const openDevTools = () => {
+      if (mainWindow && !mainWindow.isDestroyed()) {
         mainWindow.webContents.once("devtools-opened", () => {
           mainWindow && mainWindow.focus();
         });
         mainWindow.webContents.openDevTools();
       }
-    });
-  }
-  mainWindow.on("closed", () => {
-    mainWindow = null;
-  });
+    };
 
-  return mainWindow;
+    // Try to open dev tools when the frame finishes loading
+    mainWindow.webContents.on("did-frame-finish-load", openDevTools);
+
+    // Also try to open dev tools when the window is shown
+    mainWindow.on("show", openDevTools);
+  }
+}
+
+/**
+ * Legacy function for backward compatibility
+ * @deprecated Use createEarlyMainWindow() + applyWindowParams() instead
+ */
+export async function createMainWindow(
+  {
+    dimensions,
+    positions,
+  }: { dimensions?: { width: number; height: number }; positions?: { x: number; y: number } },
+  settings: { theme: typeof theme },
+) {
+  const window = createEarlyMainWindow();
+  await applyWindowParams({ dimensions, positions }, settings);
+  return window;
 }
