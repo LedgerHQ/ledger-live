@@ -527,7 +527,7 @@ test.describe("Send USDC token (subAccount) - valid address & amount input", () 
       tag: ["@NanoSP", "@LNS", "@NanoX"],
       annotation: {
         type: "TMS",
-        description: "B2CQA-2703, B2CQA-475",
+        description: "B2CQA-3908",
       },
     },
     async ({ app }) => {
