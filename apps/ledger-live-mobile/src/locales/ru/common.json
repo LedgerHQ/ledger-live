@@ -2156,26 +2156,6 @@
         "learnHowToUpdate" : "Как обновить устройство"
       }
     },
-    "stepImportAccounts" : {
-      "title" : "Синхронизируйте криптовалюту с ПК",
-      "desc" : "Если вы уже настроили кошельки в настольном приложении Ledger, то можете синхронизировать их и управлять криптовалютой со смартфона.",
-      "cta" : "Начать сканировать",
-      "bullets" : {
-        "0" : {
-          "label" : "В настольном приложении выберите\n<1>Настройки > Счета > Экспорт счетов</1>."
-        },
-        "1" : {
-        },
-        "2" : {
-          "label" : "Выберите криптовалютные счета для импорта."
-        }
-      },
-      "warning" : {
-        "title" : "Настольное и мобильное приложения нужно синхронизировать вручную",
-        "desc" : "В целях конфиденциальности Ledger Live хранит данные локально. Если вы меняете счета на смартфоне, то должны сделать то же самое на ПК, и наоборот. Ваши транзакции остаются синхронизированными с блокчейном.",
-        "cta" : "Понятно!"
-      }
-    },
     "stepSetupPin" : {
       "step1" : "Включите {{fullDeviceName}} и следуйте инструкциям.",
       "step1-nanoS" : "Подключите {{fullDeviceName}} к смартфону с помощью кабеля OTG.",
@@ -2855,8 +2835,8 @@
       "contactSupport" : "Написать в Поддержку"
     },
     "willBedeprecatedBanner" : {
-      "title" : "{{currencyName}} не будет поддерживаться в Ledger Live с {{deprecatedDate}} для оптимизации работы. При этом устройства Ledger по-прежнему смогут взаимодействовать с этим криптоактивом. Обратитесь в Поддержку Ledger, если понадобится помощь по данному вопросу.",
-      "contactSupport" : "Написать в Поддержку"
+      "title" : "{{currencyName}} не будет поддерживаться в Ledger Live с {{deprecatedDate}}. При этом криптоактив по-прежнему можно хранить в аппаратном кошельке Ledger. Подробнее – в статье ниже.",
+      "learnMore" : "Подробнее..."
     },
     "tokens" : {
       "contractAddress" : "Адрес контракта",
@@ -3769,6 +3749,10 @@
       "twoStepApproval" : {
         "title" : "Выполните действия"
       },
+      "loader" : {
+        "title" : "Обработка обмена",
+        "description" : "Дождитесь обработки вашего запроса."
+      },
       "history" : {
         "title" : "История обменов"
       },
@@ -3789,6 +3773,8 @@
         "apt_description" : "Для обмена Aptos используйте любое другое устройство Ledger. Это может быть Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ или Ledger Stax™.",
         "cosmos_title" : "Ledger Nano S™ не поддерживает обмен Cosmos",
         "cosmos_description" : "Для обмена Cosmos используйте любое другое устройство Ledger. Это может быть Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ или Ledger Stax™.",
+        "hedera_title" : "Ledger Nano S™ не поддерживает обмен Hedera",
+        "hedera_description" : "Используйте другие совместимые устройства Ledger для обмена Hedera. Это Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ и Ledger Stax™.",
         "osmo_title" : "Ledger Nano S™ не поддерживает обмен Osmosis",
         "osmo_description" : "Используйте другие совместимые устройства Ledger для обмена Osmosis. Это Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ и Ledger Stax™.",
         "dydx_title" : "Ledger Nano S™ не поддерживает обмен dYdX",
@@ -4441,7 +4427,7 @@
     "confirmSwap" : {
       "title" : "Подтвердите обмен на устройстве",
       "alert" : {
-        "default" : "Перед отправкой проверьте сведения об обмене на устройстве. Обмен адресами осуществляется безопасно и не требует проверки.",
+        "default" : "Verify the swap details on your Ledger before sending it.",
         "provider" : "Перед отправкой проверьте детали обмена на устройстве. {{providerName}} может дополнительно проверять некоторые транзакции, что приведёт к задержкам."
       },
       "acceptTerms" : "Подтверждая эту транзакцию, я принимаю\n<0>условия использования <0>{{provider}}</0></0>",
@@ -7960,7 +7946,13 @@
     "searchPlaceholder" : "Поиск...",
     "emptyAssetList" : "Ничего не нашли :(",
     "accountCount" : "Счёт: {{count}}",
-    "accountCount_plural" : "Счета: {{count}}"
+    "accountCount_plural" : "Счета: {{count}}",
+    "errors" : {
+      "title" : "Сбой подключения",
+      "backend" : "Что-то пошло не так на нашей стороне. Повторите попытку позже",
+      "internet" : "Отсутствует интернет-подключение. Повторите попытку",
+      "cta" : "Попробовать ещё раз"
+    }
   },
   "swapErrors" : {
     "incorrectCommandData" : {
