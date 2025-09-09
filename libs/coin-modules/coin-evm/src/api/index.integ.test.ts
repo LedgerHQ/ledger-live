@@ -78,7 +78,7 @@ describe.each([
     ],
   ])("craftTransaction", (mode, expectTransactionForMode) => {
     it("crafts a transaction with the native asset", async () => {
-      const result = await module.craftTransaction({
+      const { transaction: result } = await module.craftTransaction({
         type: `send-${mode}`,
         amount: 10n,
         sender: "0x9bcd841436ef4f85dacefb1aec772af71619024e",
@@ -97,7 +97,7 @@ describe.each([
     });
 
     it("crafts a transaction with the USDC asset", async () => {
-      const result = await module.craftTransaction({
+      const { transaction: result } = await module.craftTransaction({
         type: `send-${mode}`,
         amount: 10n,
         sender: "0x9bcd841436ef4f85dacefb1aec772af71619024e",

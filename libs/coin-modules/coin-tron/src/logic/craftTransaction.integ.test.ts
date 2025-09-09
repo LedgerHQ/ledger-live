@@ -22,7 +22,7 @@ describe("Testing craftTransaction function", () => {
     const recipient = "TPswDDCAWhJAZGdHPidFg5nEf8TkNToDX1";
 
     // WHEN
-    const result = await craftTransaction({
+    const { transaction: result } = await craftTransaction({
       type: "send",
       asset: {
         type: "trc10",
@@ -63,7 +63,7 @@ describe("Testing craftTransaction function", () => {
     const recipient = "TPswDDCAWhJAZGdHPidFg5nEf8TkNToDX1";
 
     // WHEN
-    const result = await craftTransaction({
+    const { transaction: result } = await craftTransaction({
       type: "send",
       asset: {
         type: "trc20",
@@ -102,7 +102,7 @@ describe("Testing craftTransaction function", () => {
     const sender = "TRqkRnAj6ceJFYAn2p1eE7aWrgBBwtdhS9";
     const recipient = "TPswDDCAWhJAZGdHPidFg5nEf8TkNToDX1";
 
-    const result = await craftTransaction({
+    const { transaction: result } = await craftTransaction({
       type: "send",
       asset: {
         type: "trc20",
@@ -129,7 +129,7 @@ describe("Testing craftTransaction function", () => {
     const recipient = "TPswDDCAWhJAZGdHPidFg5nEf8TkNToDX1";
 
     const customFees = 99n;
-    const result = await craftTransaction(
+    const { transaction: result } = await craftTransaction(
       {
         type: "send",
         asset: {
@@ -159,7 +159,7 @@ describe("Testing craftTransaction function", () => {
     const recipient = "TPswDDCAWhJAZGdHPidFg5nEf8TkNToDX1";
 
     // WHEN
-    const result = await craftTransaction({
+    const { transaction: result } = await craftTransaction({
       asset: { type: "native" },
       type: "send",
       sender,
@@ -196,7 +196,7 @@ describe("Testing craftTransaction function", () => {
     const recipient = "TPswDDCAWhJAZGdHPidFg5nEf8TkNToDX1";
 
     // WHEN
-    const result = await craftTransaction({
+    const { transaction: result } = await craftTransaction({
       asset: { type: "native" },
       type: "send",
       sender,
@@ -252,7 +252,7 @@ describe("Testing craftTransaction function", () => {
     const before = Date.now();
 
     // WHEN
-    const result = await craftTransaction({
+    const { transaction: result } = await craftTransaction({
       asset: { type: "native" },
       type: "send",
       sender,
@@ -284,7 +284,7 @@ describe("Testing craftTransaction function", () => {
     const before = Date.now();
 
     // WHEN
-    const result = await craftTransaction({
+    const { transaction: result } = await craftTransaction({
       asset: { type: "native" },
       type: "send",
       sender,

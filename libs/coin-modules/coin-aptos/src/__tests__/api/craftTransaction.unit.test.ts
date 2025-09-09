@@ -53,7 +53,7 @@ describe("craftTransaction", () => {
       asset: { type: "coin", assetReference: "0x42::token::Token" },
     };
 
-    const tx = await api.craftTransaction(txArg);
+    const { transaction: tx } = await api.craftTransaction(txArg);
 
     expect(tx).not.toEqual("");
     expect(Hex.isValid(tx).valid).toBeTruthy();
@@ -94,7 +94,7 @@ describe("craftTransaction", () => {
       asset: { type: "native" },
     };
 
-    const tx = await api.craftTransaction(txArg);
+    const { transaction: tx } = await api.craftTransaction(txArg);
 
     expect(tx).not.toEqual("");
     expect(Hex.isValid(tx).valid).toBeTruthy();
@@ -135,7 +135,7 @@ describe("craftTransaction", () => {
       asset: { type: "coin", assetReference: "0x42::token::Token" },
     };
 
-    const tx = await api.craftTransaction(txArg);
+    const { transaction: tx } = await api.craftTransaction(txArg);
 
     expect(tx).not.toEqual("");
     expect(Hex.isValid(tx).valid).toBeTruthy();
@@ -176,7 +176,7 @@ describe("craftTransaction", () => {
       asset: { type: "fungible_asset", assetReference: "0x42" },
     };
 
-    const tx = await api.craftTransaction(txArg);
+    const { transaction: tx } = await api.craftTransaction(txArg);
 
     expect(tx).not.toEqual("");
     expect(Hex.isValid(tx).valid).toBeTruthy();
