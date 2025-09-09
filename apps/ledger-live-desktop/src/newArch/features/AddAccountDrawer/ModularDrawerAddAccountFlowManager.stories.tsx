@@ -111,9 +111,7 @@ export const testAddSingleAccountFlow: StoryObj = {
     const canvas = within(canvasElement);
 
     await userEvent.click(canvas.getByText("Trigger device connected and unlocked"));
-    expect(
-      canvas.getByText("Looking for any existing accounts on the Blockchain..."),
-    ).toBeInTheDocument();
+    expect(canvas.getByText("Checking the blockchain...")).toBeInTheDocument();
 
     await userEvent.click(canvas.getByText("Add Account #1"));
     await userEvent.click(canvas.getByText("Finish Scan"));
@@ -140,9 +138,7 @@ export const testAddMultipleAccountsFlow: StoryObj = {
       });
 
     await userEvent.click(canvas.getByText("Trigger device connected and unlocked"));
-    expect(
-      canvas.getByText("Looking for any existing accounts on the Blockchain..."),
-    ).toBeInTheDocument();
+    expect(canvas.getByText("Checking the blockchain...")).toBeInTheDocument();
 
     await userEvent.click(canvas.getByText("Add Account #1"));
     await userEvent.click(canvas.getByText("Add Account #2"));

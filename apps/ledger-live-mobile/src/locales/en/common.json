@@ -4358,7 +4358,7 @@
       "title": "Select the accounts you want to add",
       "ctaStopScan": "Stop scanning",
       "confirm": "Confirm",
-      "scanningTitle": "Looking for any existing accounts on the Blockchain...",
+      "scanningTitle": "Checking the blockchain...",
       "whichAddressType": "Learn how to choose an address type",
       "sections": {
         "importable": {
