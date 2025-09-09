@@ -1,12 +1,16 @@
 import { GetAddressFn } from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
 import xrpGetAddress from "@ledgerhq/coin-xrp/signer/getAddress";
 import stellarGetAddress from "@ledgerhq/coin-stellar/signer/getAddress";
+import tezosGetAddress from "@ledgerhq/coin-tezos/signer/getAddress";
+import type { TezosSigner } from "@ledgerhq/coin-tezos/types/signer";
 import { CreateSigner, executeWithSigner } from "../../setup";
 import Xrp from "@ledgerhq/hw-app-xrp";
 import Stellar from "@ledgerhq/hw-app-str";
+import Tezos from "@ledgerhq/hw-app-tezos";
+import { LedgerSigner as TaquitoLedgerSigner, DerivationType } from "@taquito/ledger-signer";
 
 import Transport from "@ledgerhq/hw-transport";
-import { signTransaction, stellarSignTransaction } from "./signTransaction";
+import { signTransaction, stellarSignTransaction, tezosSignTransaction } from "./signTransaction";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import { SignTransactionOptions } from "./types";
 import { StrKey } from "@stellar/stellar-sdk";
@@ -47,6 +51,41 @@ const createSignerStellar: CreateSigner<Stellar> = (transport: Transport) => {
 
 const signerContextStellar = executeWithSigner(createSignerStellar);
 
+const createSignerTezos: CreateSigner<
+  Tezos & { createLedgerSigner: (path: string, prompt: boolean, derivationType: number) => any }
+> = (transport: Transport) => {
+  const tezos = new Tezos(transport);
+  // align with genericSignOperation that calls signer.signTransaction
+  return Object.assign(tezos, {
+    async signTransaction(path: string, rawTxHex: string) {
+      const { signature } = await tezos.signOperation(path, rawTxHex, {});
+      return signature;
+    },
+    async getAddress(path: string, { verify }: { verify?: boolean } = {}) {
+      // Use Taquito LedgerSigner to retrieve base58 public key and matching pkh (like oldbridge)
+      const ledgerSigner = new TaquitoLedgerSigner(
+        transport as any,
+        path,
+        !!verify,
+        DerivationType.ED25519,
+      );
+      const address = await ledgerSigner.publicKeyHash();
+      const publicKey = await ledgerSigner.publicKey();
+      return { path, address, publicKey } as any;
+    },
+    createLedgerSigner(path: string, prompt: boolean, derivationType: number) {
+      // Map 0 -> ED25519, 1 -> SECP256K1, 2 -> P256 by convention
+      let dt: DerivationType = DerivationType.ED25519;
+      if (derivationType === 1) dt = DerivationType.SECP256K1;
+      else if (derivationType === 2) dt = DerivationType.P256;
+      return new TaquitoLedgerSigner(transport as any, path, prompt, dt);
+    },
+  });
+};
+const signerContextTezos = executeWithSigner(
+  createSignerTezos,
+) as unknown as SignerContext<TezosSigner>;
+
 export function getSigner(network): AlpacaSigner {
   switch (network) {
     case "ripple":
@@ -62,6 +101,13 @@ export function getSigner(network): AlpacaSigner {
         getAddress: stellarGetAddress(signerContextStellar),
         signTransaction: stellarSignTransaction(signerContextStellar),
         context: signerContextStellar,
+      };
+    }
+    case "tezos": {
+      return {
+        getAddress: tezosGetAddress(signerContextTezos),
+        signTransaction: tezosSignTransaction(executeWithSigner(createSignerTezos)),
+        context: signerContextTezos,
       };
     }
   }
