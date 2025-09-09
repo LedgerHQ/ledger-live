@@ -4,10 +4,13 @@ import {
   InvalidAddressBecauseDestinationIsAlsoSource,
   AmountRequired,
   NotEnoughBalance,
+} from "@ledgerhq/errors";
+import {
+  HederaRecipientInvalidChecksum,
   HederaInsufficientFundsForAssociation,
   HederaRecipientTokenAssociationRequired,
   HederaRecipientTokenAssociationUnverified,
-} from "@ledgerhq/errors";
+} from "../errors";
 import { getMockedAccount, getMockedTokenAccount } from "../test/fixtures/account.fixture";
 import { getMockedTokenCurrency } from "../test/fixtures/currency.fixture";
 import { getMockedTransaction } from "../test/fixtures/transaction.fixture";
@@ -19,7 +22,7 @@ describe("getTransactionStatus", () => {
   const mockedEstimatedFee = new BigNumber(1);
   const mockedUsdRate = new BigNumber(1);
   const validRecipientAddress = "0.0.1234567";
-  const invalidRecipientAddress = "invalid_address";
+  const validRecipientAddressWithChecksum = "0.0.1234567-ylkls";
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -81,13 +84,32 @@ describe("getTransactionStatus", () => {
     expect(result.estimatedFees).toEqual(mockedEstimatedFee);
   });
 
-  test("adds error for invalid recipient address", async () => {
-    const mockedAccount = getMockedAccount();
-    const mockedTransaction = getMockedTransaction({ recipient: invalidRecipientAddress });
+  test("recipient with checksum is supported", async () => {
+    const mockedAccount = getMockedAccount({ balance: new BigNumber(1000) });
+    const mockedTransaction = getMockedTransaction({
+      recipient: validRecipientAddressWithChecksum,
+      amount: new BigNumber(100),
+    });
 
     const result = await getTransactionStatus(mockedAccount, mockedTransaction);
 
-    expect(result.errors.recipient).toBeInstanceOf(InvalidAddress);
+    expect(result.errors).toEqual({});
+    expect(result.warnings).toEqual({});
+  });
+
+  test("adds error for invalid recipient address", async () => {
+    const mockedAccount = getMockedAccount();
+
+    const txWithInvalidAddress = getMockedTransaction({ recipient: "invalid_address" });
+    const txWithInvalidAddressChecksum = getMockedTransaction({ recipient: "0.0.9124531-invld" });
+
+    const [result1, result2] = await Promise.all([
+      getTransactionStatus(mockedAccount, txWithInvalidAddress),
+      getTransactionStatus(mockedAccount, txWithInvalidAddressChecksum),
+    ]);
+
+    expect(result1.errors.recipient).toBeInstanceOf(InvalidAddress);
+    expect(result2.errors.recipient).toBeInstanceOf(HederaRecipientInvalidChecksum);
   });
 
   test("adds error for self transfers", async () => {
