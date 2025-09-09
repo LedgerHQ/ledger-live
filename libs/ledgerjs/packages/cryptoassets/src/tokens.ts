@@ -14,7 +14,6 @@ import trc10tokens, { TRC10Token } from "./data/trc10";
 import trc20tokens, { TRC20Token } from "./data/trc20";
 import { tokens as mainnetTokens } from "./data/evm/1";
 import { tokens as bnbTokens } from "./data/evm/56";
-import { tokens as celoTokens } from "./data/evm/42220";
 import filecoinTokens from "./data/filecoin-erc20";
 import spltokens, { SPLToken } from "./data/spl";
 import aptCoinTokens, { AptosToken as AptosCoinToken } from "./data/apt_coin";
@@ -65,8 +64,6 @@ addTokens(filecoinTokens.map(convertERC20));
 addTokens(spltokens.map(convertSplTokens));
 // Sonic
 addTokens(sonicTokens.map(convertERC20));
-// Celo
-addTokens(celoTokens.map(convertERC20));
 
 if (getEnv("SUI_ENABLE_TOKENS")) {
   // Sui tokens

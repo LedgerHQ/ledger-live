@@ -12,7 +12,6 @@ import { CryptoCurrency, Currency } from "@ledgerhq/types-cryptoassets";
 import { Box, ColorPalette } from "@ledgerhq/native-ui";
 import { TFunction } from "react-i18next";
 import { AptosAccount } from "@ledgerhq/live-common/families/aptos/types";
-import { CeloAccount } from "@ledgerhq/live-common/families/celo/types";
 import { CosmosAccount } from "@ledgerhq/live-common/families/cosmos/types";
 import { PolkadotAccount } from "@ledgerhq/live-common/families/polkadot/types";
 import { MultiversXAccount } from "@ledgerhq/live-common/families/multiversx/types";
@@ -120,7 +119,6 @@ export function useListHeaderComponents({
     AccountBalanceSummaryFooter({
       account: account as Account &
         AptosAccount &
-        CeloAccount &
         CosmosAccount &
         PolkadotAccount &
         MultiversXAccount &

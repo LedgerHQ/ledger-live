@@ -3,6 +3,7 @@ import { ScrollView, StyleSheet } from "react-native";
 import { useTranslation } from "react-i18next";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import { getCryptoCurrencyIcon } from "@ledgerhq/live-common/reactNative";
+import type { Account } from "@ledgerhq/types-live";
 import invariant from "invariant";
 import { withdrawableBalance } from "@ledgerhq/live-common/families/celo/logic";
 import { CeloAccount } from "@ledgerhq/live-common/families/celo/types";
@@ -13,7 +14,7 @@ import InfoItem from "~/components/BalanceSummaryInfoItem";
 import { useAccountUnit } from "~/hooks/useAccountUnit";
 
 type Props = {
-  readonly account: CeloAccount;
+  account: Account;
 };
 
 type InfoName = "available" | "lockedBalance" | "nonvotingLockedBalance" | "withdrawableBalance";
@@ -79,7 +80,7 @@ function AccountBalanceSummaryFooter({ account }: Props) {
 }
 
 export default function AccountBalanceFooter({ account }: Props) {
-  if (!account.celoResources || account.balance.lte(0)) return null;
+  if (account.balance.lte(0)) return null;
   return <AccountBalanceSummaryFooter account={account} />;
 }
 const styles = StyleSheet.create({

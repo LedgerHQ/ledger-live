@@ -3,21 +3,12 @@ import { CeloTx } from "@celo/connect";
 import { celoKit } from "../network/sdk";
 import { BigNumber } from "bignumber.js";
 import { getPendingStakingOperationAmounts, getVote } from "../logic";
-import { findSubAccountById } from "@ledgerhq/coin-framework/account/index";
-import {
-  CELO_STABLE_TOKENS,
-  getStableTokenEnum,
-  MAX_FEES_THRESHOLD_MULTIPLIER,
-  MAX_PRIORITY_FEE_PER_GAS,
-} from "../constants";
 
 const buildTransaction = async (account: CeloAccount, transaction: Transaction) => {
   const kit = celoKit();
 
-  const tokenAccount = findSubAccountById(account, transaction.subAccountId || "");
-  const isTokenTransaction = tokenAccount?.type === "TokenAccount";
+  const value = transactionValue(account, transaction);
 
-  let value = transactionValue(account, transaction);
   let celoTransaction: CeloTx;
 
   if (transaction.mode === "lock") {
@@ -114,45 +105,23 @@ const buildTransaction = async (account: CeloAccount, transaction: Transaction) 
       data: accounts.createAccount().txo.encodeABI(),
       gas: await accounts.createAccount().txo.estimateGas({ from: account.freshAddress }),
     };
-  } else if (isTokenTransaction) {
-    value = transaction.useAllAmount ? tokenAccount.balance : transaction.amount;
-
-    const block = await kit.connection.web3.eth.getBlock("latest");
-    const baseFee = BigInt(block.baseFeePerGas || MAX_PRIORITY_FEE_PER_GAS);
-    const maxFeePerGas = baseFee + MAX_PRIORITY_FEE_PER_GAS;
-
-    let token;
-    if (CELO_STABLE_TOKENS.includes(tokenAccount.token.id)) {
-      token = await kit.contracts.getStableToken(getStableTokenEnum(tokenAccount.token.id));
-    } else {
-      token = await kit.contracts.getErc20(tokenAccount.token.contractAddress);
-    }
-
-    celoTransaction = {
-      from: account.freshAddress,
-      to: transaction.recipient,
-      data: token.transfer(transaction.recipient, value.toFixed()).txo.encodeABI(),
-      maxFeePerGas: maxFeePerGas.toString(),
-      maxPriorityFeePerGas: await kit.connection.getMaxPriorityFeePerGas(),
-      value: value.toFixed(),
-    };
   } else {
     // Send
+
     celoTransaction = {
       from: account.freshAddress,
       to: transaction.recipient,
       value: value.toFixed(),
     };
+    const gas = await kit.connection.estimateGasWithInflationFactor(celoTransaction);
+
+    celoTransaction = {
+      ...celoTransaction,
+      gas,
+    };
   }
-
-  const gas = (
-    (await kit.connection.estimateGasWithInflationFactor(celoTransaction)) *
-    MAX_FEES_THRESHOLD_MULTIPLIER
-  ).toFixed();
-
   const tx: CeloTx = {
     ...celoTransaction,
-    gas,
     chainId: await kit.connection.chainId(),
     nonce: await kit.connection.nonce(account.freshAddress),
   };

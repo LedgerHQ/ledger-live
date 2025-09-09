@@ -7,7 +7,7 @@ import {
   PendingStakingOperationAmounts,
 } from "./types/types";
 import { BigNumber } from "bignumber.js";
-import { Account, Operation, TokenAccount } from "@ledgerhq/types-live";
+import { Operation } from "@ledgerhq/types-live";
 
 export const PRELOAD_MAX_AGE = 10 * 60 * 1000; // 10 minutes, used for max age in preload strategy
 const LEDGER_BY_FIGMENT_VALIDATOR_GROUP_ADDRESS = "0x0861a61Bf679A30680510EcC238ee43B82C5e843";

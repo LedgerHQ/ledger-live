@@ -13,7 +13,6 @@ import { getPendingStakingOperationAmounts, getVote } from "../logic";
 import { CeloAccount, Transaction, TransactionStatus } from "../types";
 import { CeloAllFundsWarning } from "../errors";
 import { celoKit } from "../network/sdk";
-import { findSubAccountById } from "@ledgerhq/coin-framework/account/index";
 
 const kit = celoKit();
 
@@ -46,13 +45,9 @@ export const getTransactionStatus: AccountBridge<
   const totalNonVotingLockedBalance = nonvotingLockedGoldBalance.minus(
     pendingOperationAmounts.vote,
   );
-
   // Deduct pending lock operations from the spendable balance
   const totalSpendableBalance = account.spendableBalance.minus(pendingOperationAmounts.lock);
   const estimatedFees = transaction.fees || new BigNumber(0);
-
-  const tokenAccount = findSubAccountById(account, transaction.subAccountId || "");
-  const isTokenTransaction = tokenAccount?.type === "TokenAccount";
 
   let amount: BigNumber = new BigNumber(0);
   if (useAllAmount && (transaction.mode === "unlock" || transaction.mode === "vote")) {
@@ -61,9 +56,7 @@ export const getTransactionStatus: AccountBridge<
     const revoke = getVote(account, transaction.recipient, transaction.index);
     if (revoke?.amount) amount = revoke.amount;
   } else if (useAllAmount) {
-    amount = isTokenTransaction
-      ? tokenAccount.spendableBalance
-      : totalSpendableBalance.minus(estimatedFees);
+    amount = totalSpendableBalance.minus(estimatedFees);
   } else {
     amount = new BigNumber(transaction.amount);
   }
@@ -80,7 +73,7 @@ export const getTransactionStatus: AccountBridge<
   }
 
   if (!["register", "withdraw", "activate"].includes(transaction.mode)) {
-    if (amount.lte(0) && !useAllAmount) {
+    if (!errors.amount && amount.lte(0) && !useAllAmount) {
       errors.amount = new AmountRequired();
     }
   }
@@ -106,22 +99,12 @@ export const getTransactionStatus: AccountBridge<
   }
 
   if (transaction.mode === "send") {
-    if (!transaction.recipient && !errors.recipient) {
+    if (!transaction.recipient) {
       errors.recipient = new RecipientRequired();
-    } else if (!isValidAddress(transaction.recipient) && !errors.recipient) {
+    } else if (!isValidAddress(transaction.recipient)) {
       errors.recipient = new InvalidAddress("", {
         currencyName: account.currency.name,
       });
-    }
-
-    if (isTokenTransaction) {
-      return {
-        errors,
-        warnings,
-        estimatedFees,
-        amount,
-        totalSpent: amount,
-      };
     }
   }
 

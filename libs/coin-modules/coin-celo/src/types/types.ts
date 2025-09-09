@@ -60,7 +60,6 @@ export type Transaction = TransactionCommon & {
   fees: BigNumber | null | undefined;
   mode: CeloOperationMode;
   index: number | null | undefined;
-  data?: Buffer | null | undefined;
 };
 export type TransactionRaw = TransactionCommonRaw & {
   family: "celo";

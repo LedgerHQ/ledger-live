@@ -3,7 +3,7 @@ import { Observable } from "rxjs";
 import { FeeNotLoaded } from "@ledgerhq/errors";
 import type { Account, AccountBridge, DeviceId, SignOperationEvent } from "@ledgerhq/types-live";
 import { encodeTransaction, recoverTransaction } from "@celo/wallet-base";
-import { findSubAccountById } from "@ledgerhq/coin-framework/account/index";
+
 import { buildOptimisticOperation } from "./buildOptimisticOperation";
 import type { Transaction, CeloAccount } from "../types/types";
 import buildTransaction from "./buildTransaction";
@@ -11,7 +11,6 @@ import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import { EvmSignature } from "@ledgerhq/coin-evm/types/signer";
 import { determineFees } from "../network/sdk";
 import { CeloSigner } from "../signer";
-import { CeloTx } from "@celo/connect";
 
 /**
  * Sign Transaction with Ledger hardware
@@ -34,29 +33,15 @@ export const buildSignOperation =
         const { fees } = transaction;
         if (!fees) throw new FeeNotLoaded();
         const unsignedTransaction = await buildTransaction(account as CeloAccount, transaction);
-
         const { chainId, to } = unsignedTransaction;
 
-        const subAccount = findSubAccountById(account, transaction.subAccountId ?? "");
-        const isTokenTransaction = subAccount?.type === "TokenAccount";
-
         await signerContext(deviceId, signer => {
-          return signer.verifyTokenInfo(
-            isTokenTransaction ? subAccount.token.contractAddress : to!,
-            chainId!,
-          );
+          return signer.verifyTokenInfo(to!, chainId!);
         });
-
-        const finalTransaction: CeloTx = {
-          ...unsignedTransaction,
-          to: isTokenTransaction ? subAccount.token.contractAddress : to!,
-          value: isTokenTransaction ? 0 : unsignedTransaction.value!,
-        };
-
-        await determineFees(finalTransaction);
+        await determineFees(unsignedTransaction);
 
         const rlpEncodedTransaction = await signerContext(deviceId, signer => {
-          return signer.rlpEncodedTxForLedger(finalTransaction);
+          return signer.rlpEncodedTxForLedger(unsignedTransaction);
         });
         o.next({ type: "device-signature-requested" });
 

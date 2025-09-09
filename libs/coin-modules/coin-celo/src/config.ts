@@ -7,14 +7,6 @@ export const celoConfig: Record<string, ConfigInfo> = {
       status: {
         type: "active",
       },
-      node: {
-        type: "external",
-        uri: "https://celo.coin.ledger.com/archive",
-      },
-      explorer: {
-        type: "blockscout",
-        uri: "https://celo.blockscout.com/api",
-      },
     },
   },
 };

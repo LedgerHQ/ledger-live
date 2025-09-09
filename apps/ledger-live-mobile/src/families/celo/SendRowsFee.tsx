@@ -41,16 +41,15 @@ type Props = {
   StackNavigatorProps<BaseNavigatorStackParamList>
 >;
 
-export default function CeloFeeRow({ account, parentAccount, transaction }: Props) {
+export default function CeloFeeRow({ account, transaction }: Props) {
   const { colors } = useTheme();
   const extraInfoFees = useCallback(() => {
     Linking.openURL(urls.feesMoreInfo);
   }, []);
 
-  const mainAccount = parentAccount ?? account;
   const fees = (transaction as CeloTransaction).fees;
-  const unit = useAccountUnit(mainAccount);
-  const currency = getAccountCurrency(mainAccount);
+  const unit = useAccountUnit(account);
+  const currency = getAccountCurrency(account);
 
   return (
     <SummaryRow

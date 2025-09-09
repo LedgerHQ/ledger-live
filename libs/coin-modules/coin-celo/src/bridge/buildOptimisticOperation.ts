@@ -2,7 +2,6 @@ import BigNumber from "bignumber.js";
 import { OperationType } from "@ledgerhq/types-live";
 import { CeloAccount, CeloOperation, CeloOperationMode, Transaction } from "../types";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
-import { findSubAccountById } from "@ledgerhq/coin-framework/account/index";
 
 const MODE_TO_TYPE: { [key in CeloOperationMode | "default"]: OperationType } = {
   send: "OUT",
@@ -23,12 +22,9 @@ export const buildOptimisticOperation = (
 ): CeloOperation => {
   const type = MODE_TO_TYPE[transaction.mode] ?? MODE_TO_TYPE.default;
 
-  const tokenAccount = findSubAccountById(account, transaction.subAccountId || "");
-  const isTokenTransaction = tokenAccount?.type === "TokenAccount";
-
   const value =
     type === "OUT" || type === "LOCK"
-      ? new BigNumber(transaction.amount).plus(isTokenTransaction ? 0 : fee)
+      ? new BigNumber(transaction.amount).plus(fee)
       : new BigNumber(transaction.amount);
 
   const operation: CeloOperation = {
@@ -41,7 +37,7 @@ export const buildOptimisticOperation = (
     blockHeight: null,
     senders: [account.freshAddress],
     recipients: [transaction.recipient].filter(Boolean),
-    accountId: isTokenTransaction ? tokenAccount.id : account.id,
+    accountId: account.id,
     date: new Date(),
     extra: {
       celoOperationValue: new BigNumber(transaction.amount),

@@ -19,7 +19,7 @@ export const expectedCurrenciesByProvider = [
   },
   {
     providerId: "ethereum/erc20/usd_tether__erc20_",
-    nbCurrenciesByNetwork: 7,
+    nbCurrenciesByNetwork: 6,
   },
   {
     providerId: "bsc",
@@ -31,7 +31,7 @@ export const expectedCurrenciesByProvider = [
   },
   {
     providerId: "ethereum/erc20/usd__coin",
-    nbCurrenciesByNetwork: 10,
+    nbCurrenciesByNetwork: 9,
   },
   {
     providerId: "ethereum/erc20/steth",

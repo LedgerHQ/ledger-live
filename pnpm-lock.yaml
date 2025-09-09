@@ -2705,20 +2705,20 @@ importers:
   libs/coin-modules/coin-celo:
     dependencies:
       '@celo/connect':
+        specifier: ^6.0.2
+        version: 6.0.2
+      '@celo/contractkit':
+        specifier: ^8.3.1
+        version: 8.3.1
+      '@celo/utils':
         specifier: ^7.0.0
         version: 7.0.0
-      '@celo/contractkit':
-        specifier: ^10.0.0
-        version: 10.0.1
-      '@celo/utils':
-        specifier: ^8.0.3
-        version: 8.0.3
       '@celo/wallet-base':
-        specifier: ^8.0.0
-        version: 8.0.1
+        specifier: ^6.0.3
+        version: 6.0.3
       '@celo/wallet-ledger':
-        specifier: ^8.0.0
-        version: 8.0.1
+        specifier: ^6.0.3
+        version: 6.0.3
       '@ledgerhq/coin-evm':
         specifier: workspace:^
         version: link:../coin-evm
@@ -2768,9 +2768,6 @@ importers:
         specifier: ^7.8.1
         version: 7.8.1
     devDependencies:
-      '@faker-js/faker':
-        specifier: ^9.9.0
-        version: 9.9.0
       '@ledgerhq/disable-network-setup':
         specifier: workspace:^
         version: link:../../disable-network-setup
@@ -6213,20 +6210,20 @@ importers:
   libs/ledgerjs/packages/hw-app-celo:
     dependencies:
       '@celo/connect':
+        specifier: ^6.0.2
+        version: 6.0.2
+      '@celo/contractkit':
+        specifier: ^8.3.1
+        version: 8.3.1
+      '@celo/utils':
         specifier: ^7.0.0
         version: 7.0.0
-      '@celo/contractkit':
-        specifier: ^10.0.0
-        version: 10.0.1
-      '@celo/utils':
-        specifier: ^8.0.3
-        version: 8.0.3
       '@celo/wallet-base':
-        specifier: ^8.0.0
-        version: 8.0.1
+        specifier: ^6.0.3
+        version: 6.0.3
       '@celo/wallet-ledger':
-        specifier: ^8.0.0
-        version: 8.0.1
+        specifier: ^6.0.3
+        version: 6.0.3
       '@ledgerhq/errors':
         specifier: workspace:^
         version: link:../errors
@@ -11724,45 +11721,47 @@ packages:
   '@casperlabs/ts-results@3.3.5':
     resolution: {integrity: sha512-ymSQqqb4mOSet592li02u1Gd28LoOFJUm6R3jkdNQ+nqsnbHvN+izBigtP4aYmNwh6gFyCwDgjYporEJgDT4eA==}
 
-  '@celo/abis@13.0.0-post-audit.0':
-    resolution: {integrity: sha512-kng2Dnx2pRUlCF1Ri71wfaJ/PnRkbVpwhTVOaIAEMDUwZ/WIiEXqRHddJupynXgLA9Sj2LkA+NXL83hSjRzcqg==}
+  '@celo/abis@11.0.0':
+    resolution: {integrity: sha512-rPjHQxHbWaKQU3MX6hE3A3xRkBFBphjFvfCs4t+19dqPPys6Q+cneHmRWGBX4NLiBh5BLZcNZjQoMf2jxRLMpg==}
 
-  '@celo/base@7.0.3':
-    resolution: {integrity: sha512-6KZoRcoK4UPFtR29QCI0sKGfhEYJ/lStamFwh4yagxbWAMDpqScrYu+4sdLsLR1i2Wi3hu4uGahhkoJ98o5z8g==}
+  '@celo/abis@12.0.0-canary.60':
+    resolution: {integrity: sha512-LLyFbVNOzer4nk19q1g9Svxdnptcz7KVZB2yed3kELrhzRA8HqWVGIAFQV8/PR2ObyxdIHhGWpZTjWsWWo0nJw==}
 
-  '@celo/connect@7.0.0':
-    resolution: {integrity: sha512-c3Sd9algr28LnUmPE4EMMuuXz6WFKN7HtLuZ0gnXOcGqBI0FOJW06J+IHZTQUSMXNRIzmQDSgaD8+9iAFlMucQ==}
-    engines: {node: '>=20'}
+  '@celo/base@6.1.0':
+    resolution: {integrity: sha512-R6ko2QCfEU32akBsaSNsDYduktgwIKHcJ61SbR7EsXA1VE31/44Qh8kMzfgeahyk375DUCe3pJIKwx5zg1tFHg==}
 
-  '@celo/contractkit@10.0.1':
-    resolution: {integrity: sha512-m/KjsDOdrgwqmoeDf/Va1yN/vJiwTVhL6fGKOxwIMT2maNH6Z8NphB4qKfM0Fd6lUCWtfK6cZFAgFifLmVBmNQ==}
-    engines: {node: '>=20'}
+  '@celo/connect@6.0.2':
+    resolution: {integrity: sha512-l+7UpQlVBtdSonmMmRqJikdv7ygI/LfQEjaGoco5yNY0Bs7nD52TcBSiRqu8VV8lmI2UOZisWCjA/GzeQbRM1Q==}
+    engines: {node: '>=8.14.2'}
+
+  '@celo/contractkit@8.3.1':
+    resolution: {integrity: sha512-23rJHn2QVbX0LXYDDNR7jI1WgmP9EqroAhI+rFVTuPKQyjzV2wJT8cMAmcE84Xc6sAezkiBT6rt2viX2POUiVA==}
+    engines: {node: '>=8.14.2'}
 
   '@celo/hw-app-eth@1.0.1':
     resolution: {integrity: sha512-2vJ5aa4AVHKr7mnMpcDXs7N4YUwHpxNLxYEyLNhfD9SJSSnHYMzBq0NPMfcGFzg9ubtgh+JCd4IqwyRn8STKYw==}
 
-  '@celo/ledger-token-signer@0.8.0':
-    resolution: {integrity: sha512-kmXNbSi0OwZSJGmoH21xap1YR24LKmHZ4/eofTe4SW5yQYeySSfcr5g2tIoObwgxf8d+oVdgeEQjIPZWcUT4BQ==}
-    engines: {node: '>=20'}
+  '@celo/ledger-token-signer@0.4.0':
+    resolution: {integrity: sha512-8uedsklE2ygKnJiy/nbnNde3KHlhp0PaEyKTc2Eq/FFiIE6NfBosdvJbLQHemq15jJccPcJQohfSqbrfOpRyzg==}
 
-  '@celo/utils@8.0.3':
-    resolution: {integrity: sha512-eHXSqRGWzXLGnfqq4eq37JAUnalqX5EIhlXyqSmxtIxc0Shkzlq7hrMpxI4diUS/T2zCcs9OQtr2ihjGxzqtqA==}
+  '@celo/utils@7.0.0':
+    resolution: {integrity: sha512-oxAMm19lMs3myhHt2BpuWm01mxZ9ZD73uydQFdgeVj5cNVRKumzMGSEfb0qCQ2hiCHL15R/lCtBqqiRy0wD1LA==}
 
-  '@celo/wallet-base@8.0.1':
-    resolution: {integrity: sha512-H2c8OrC7wzjjf0SnIskAwpM9kIlDkDZ/2KIG2227SRilrjw+qMFq8KdlFzlc+VQHud1ptGbjrOmJmW/S7OHqAA==}
-    engines: {node: '>=20'}
+  '@celo/wallet-base@6.0.3':
+    resolution: {integrity: sha512-u1cpuQYQB8f2lnVh1IXKuX3jHk57kluXAe4HVIZXTHTuV1YqEGsC9pApJLYZY6TL1sjqoVVPIUcpwytzTwpkkA==}
+    engines: {node: '>=8.14.2'}
 
-  '@celo/wallet-ledger@8.0.1':
-    resolution: {integrity: sha512-22vhZUpFn1MGtzKnyBr97K9uAMdO7fmKCfLMVSPc9OaC8sjTA8vOmJ7bfGAof5rUTqG3aaCVeiay8eTbZu8EQw==}
-    engines: {node: '>=20'}
+  '@celo/wallet-ledger@6.0.3':
+    resolution: {integrity: sha512-unVSdqiZ63LvADn92+FtYvb4YHc1VWJsQUa7xClHQ+IrbxNa7rFu7RoGsfWSR2x5fb2nO2vhzk7CicyFNlG29Q==}
+    engines: {node: '>=8.14.2'}
 
-  '@celo/wallet-local@8.0.1':
-    resolution: {integrity: sha512-M9/Wpq4lsPZmSd+1QObyRIemoWnaGWbvWVd4s5yUU+PoO3q5C9tkvK0Q7stlsp3dWKP5Fxi6GsHN7aUnQgY7UA==}
-    engines: {node: '>=20'}
+  '@celo/wallet-local@6.0.3':
+    resolution: {integrity: sha512-Frg9gU/IbGwxKXyFcN9/0XPqE1VEBLFQ29jCr0rWuLvo6PT5NU06tO/07ZHoLM73aYFre+JiEaPRuodDSQYj+A==}
+    engines: {node: '>=8.14.2'}
 
-  '@celo/wallet-remote@8.0.1':
-    resolution: {integrity: sha512-cM0OjlyxWIxvc2LbrrcS8iNgsGq+ux7QzEQhClvvB+/ksMqvJy9DC5FQNyYg00/Sat9onZttEO6YmdPXOlOpow==}
-    engines: {node: '>=20'}
+  '@celo/wallet-remote@6.0.3':
+    resolution: {integrity: sha512-qukZ642GUkHfdO54rfeUF52OvPaW2bX3g6X/bA7Cp8X2epp2jpZoOR2BkO7tEayTNdg3bdVOtFUno6HAoTMhUA==}
+    engines: {node: '>=8.14.2'}
 
   '@chainsafe/as-sha256@0.3.1':
     resolution: {integrity: sha512-hldFFYuf49ed7DAakWVXSJODuq3pzJEguD8tQ7h+sGkM18vja+OFoJI9krnGmgzyuZC2ETX0NOIcCTy31v2Mtg==}
@@ -13433,10 +13432,6 @@ packages:
     resolution: {integrity: sha512-3vm4by+B5lvsFPSyep3ELWmZfE3kicDtmemVpuwl1yH7tqtnHdsA6hG8fbXedMVdkzgtvzWoRgjSB4Q+FHnZiw==}
     engines: {node: '>=18.0.0', npm: '>=9.0.0'}
 
-  '@faker-js/faker@9.9.0':
-    resolution: {integrity: sha512-OEl393iCOoo/z8bMezRlJu+GlRGlsKbUAN7jKB6LhnKoqKve5DXRpalbItIIcwnCjs1k/FOPjFzcA6Qn+H+YbA==}
-    engines: {node: '>=18.0.0', npm: '>=9.0.0'}
-
   '@fal-works/esbuild-plugin-global-externals@2.1.2':
     resolution: {integrity: sha512-cEee/Z+I12mZcFJshKcCqC8tuX5hG3s+d+9nZ3LabqKF1vKdF41B92pJVCBggjAGORAeOzyyDDKrZwIkLffeOQ==}
 
@@ -14836,9 +14831,8 @@ packages:
   '@nicolo-ribaudo/eslint-scope-5-internals@5.1.1-v1':
     resolution: {integrity: sha512-54/JRvkLIzzDWshCWfuhadfrfZVPiElY8Fcgmg1HroEly/EDSszzhBAsarCux+D/kOslTRquNzuyGSmUSTTHGg==}
 
-  '@noble/ciphers@1.1.3':
-    resolution: {integrity: sha512-Ygv6WnWJHLLiW4fnNDC1z+i13bud+enXOFRBlpxI+NJliPWx5wdR+oWlTjLuBPTqjUjtHXtjkU6w3kuuH6upZA==}
-    engines: {node: ^14.21.3 || >=16}
+  '@noble/ciphers@0.4.1':
+    resolution: {integrity: sha512-QCOA9cgf3Rc33owG0AYBB9wszz+Ul2kramWN8tXG44Gyciud/tbkEqvxRF/IpqQaBpRBNi9f4jdNxqB2CQCIXg==}
 
   '@noble/curves@1.2.0':
     resolution: {integrity: sha512-oYclrNgRaM9SsBUBVbb8M6DTV7ZHRTKugureoYEncY5c65HOmRzvSiTE3y5CYaPYJA/GVkrhXEoF0M3Ya9PMnw==}
@@ -22606,6 +22600,9 @@ packages:
     engines: {node: '>=10.14', npm: '>=6', yarn: '>=1'}
     hasBin: true
 
+  cross-fetch@3.1.5:
+    resolution: {integrity: sha512-lvb1SBsI0Z7GDwmuid+mU3kWVBwTVUbe7S0H52yaaAdQOXq2YktTCZdlAcNKFzE6QtRz0snpw9bNiPeOIkkQvw==}
+
   cross-fetch@3.1.8:
     resolution: {integrity: sha512-cvA+JwZoU0Xq+h6WkMvAUqPEYy92Obet6UdKLfW60qn99ftItKjB5T+BkyWOFWe2pUyfQ+IJHmpOTznqk1M6Kg==}
 
@@ -24962,8 +24959,8 @@ packages:
     resolution: {integrity: sha512-buRG0fpBtRHSTCOASe6hD258tEubFoRLb4ZNA6NxMVHNw2gOcwHo9wyablzMzOA5z9xA9L1KNjk/Nt6MT9aYow==}
     engines: {node: '>= 0.6'}
 
-  fp-ts@2.16.9:
-    resolution: {integrity: sha512-+I2+FnVB+tVaxcYyQkHUq7ZdKScaBlX53A41mxQtpIccsfyv8PzdzP7fzp2AY832T4aoK6UZ5WRX/ebGd8uZuQ==}
+  fp-ts@2.1.1:
+    resolution: {integrity: sha512-YcWhMdDCFCja0MmaDroTgNu+NWWrrnUEn92nvDgrtVy9Z71YFnhNVIghoHPt8gs82ijoMzFGeWKvArbyICiJgw==}
 
   fraction.js@4.3.7:
     resolution: {integrity: sha512-ZsDfxO51wGAXREY55a7la9LScWpwv9RxIrYABrlvOFBlH/ShPnrtsXeuUIfXKKOVicNxQ+o8JTbJvjS4M89yew==}
@@ -31866,11 +31863,6 @@ packages:
     engines: {node: '>=10'}
     hasBin: true
 
-  semver@7.7.2:
-    resolution: {integrity: sha512-RF0Fw+rO5AMf9MAyaRXI4AV0Ulj5lMHqVxxdSgiVbixSCXoEmmX/jk0CuJw4+3SqroYO9VoUh+HcuJivvtJemA==}
-    engines: {node: '>=10'}
-    hasBin: true
-
   send@0.18.0:
     resolution: {integrity: sha512-qqWzuOjSFOuqPjFe4NOsMLafToQQwBSOEpS+FwEt3A2V3vKubTquT3vmLTQpFgMXp8AlFWFuP1qKaJZOtPpVXg==}
     engines: {node: '>= 0.8.0'}
@@ -37124,11 +37116,19 @@ snapshots:
 
   '@babel/generator@7.27.5':
     dependencies:
+<<<<<<< HEAD
       '@babel/parser': 7.28.3
       '@babel/types': 7.27.6
       '@jridgewell/gen-mapping': 0.3.5
       '@jridgewell/trace-mapping': 0.3.25
       jsesc: 3.0.2
+=======
+      '@babel/parser': 7.27.5
+      '@babel/types': 7.27.6
+      '@jridgewell/gen-mapping': 0.3.13
+      '@jridgewell/trace-mapping': 0.3.30
+      jsesc: 3.1.0
+>>>>>>> parent of abd598cb52 (feat: send Celo tokens)
 
   '@babel/generator@7.28.3':
     dependencies:
@@ -37215,7 +37215,7 @@ snapshots:
       '@babel/core': 7.27.1
       '@babel/helper-compilation-targets': 7.27.2
       '@babel/helper-plugin-utils': 7.27.1
-      debug: 4.3.4
+      debug: 4.4.1
       lodash.debounce: 4.0.8
       resolve: 1.22.8
     transitivePeerDependencies:
@@ -38411,7 +38411,11 @@ snapshots:
     dependencies:
       '@babel/core': 7.27.1
       '@babel/helper-plugin-utils': 7.27.1
+<<<<<<< HEAD
       '@babel/types': 7.27.6
+=======
+      '@babel/types': 7.27.0
+>>>>>>> parent of abd598cb52 (feat: send Celo tokens)
       esutils: 2.0.3
 
   '@babel/preset-react@7.27.1(@babel/core@7.27.1)':
@@ -38466,14 +38470,18 @@ snapshots:
   '@babel/template@7.27.0':
     dependencies:
       '@babel/code-frame': 7.27.1
+<<<<<<< HEAD
       '@babel/parser': 7.28.3
+=======
+      '@babel/parser': 7.27.5
+>>>>>>> parent of abd598cb52 (feat: send Celo tokens)
       '@babel/types': 7.27.6
 
   '@babel/template@7.27.2':
     dependencies:
       '@babel/code-frame': 7.27.1
-      '@babel/parser': 7.28.3
-      '@babel/types': 7.28.2
+      '@babel/parser': 7.27.5
+      '@babel/types': 7.27.6
 
   '@babel/traverse@7.24.1':
     dependencies:
@@ -38509,7 +38517,7 @@ snapshots:
     dependencies:
       '@babel/code-frame': 7.27.1
       '@babel/generator': 7.27.1
-      '@babel/parser': 7.28.3
+      '@babel/parser': 7.27.5
       '@babel/template': 7.27.2
       '@babel/types': 7.27.6
       debug: 4.3.4
@@ -38521,7 +38529,11 @@ snapshots:
     dependencies:
       '@babel/code-frame': 7.27.1
       '@babel/generator': 7.27.5
+<<<<<<< HEAD
       '@babel/parser': 7.28.3
+=======
+      '@babel/parser': 7.27.5
+>>>>>>> parent of abd598cb52 (feat: send Celo tokens)
       '@babel/template': 7.27.2
       '@babel/types': 7.27.6
       debug: 4.3.4
@@ -38537,7 +38549,7 @@ snapshots:
       '@babel/parser': 7.28.3
       '@babel/template': 7.27.2
       '@babel/types': 7.28.2
-      debug: 4.3.4
+      debug: 4.4.1
     transitivePeerDependencies:
       - supports-color
 
@@ -38614,14 +38626,16 @@ snapshots:
     dependencies:
       tslib: 2.6.2
 
-  '@celo/abis@13.0.0-post-audit.0': {}
+  '@celo/abis@11.0.0': {}
 
-  '@celo/base@7.0.3': {}
+  '@celo/abis@12.0.0-canary.60': {}
 
-  '@celo/connect@7.0.0':
+  '@celo/base@6.1.0': {}
+
+  '@celo/connect@6.0.2':
     dependencies:
-      '@celo/base': 7.0.3
-      '@celo/utils': 8.0.3
+      '@celo/base': 6.1.0
+      '@celo/utils': 7.0.0
       '@ethereumjs/util': 8.0.5
       '@types/debug': 4.1.12
       '@types/utf8': 2.1.6
@@ -38638,19 +38652,22 @@ snapshots:
       - supports-color
       - utf-8-validate
 
-  '@celo/contractkit@10.0.1':
+  '@celo/contractkit@8.3.1':
     dependencies:
-      '@celo/abis': 13.0.0-post-audit.0
-      '@celo/base': 7.0.3
-      '@celo/connect': 7.0.0
-      '@celo/utils': 8.0.3
-      '@celo/wallet-local': 8.0.1
+      '@celo/abis': 11.0.0
+      '@celo/abis-12': '@celo/abis@12.0.0-canary.60'
+      '@celo/base': 6.1.0
+      '@celo/connect': 6.0.2
+      '@celo/utils': 7.0.0
+      '@celo/wallet-local': 6.0.3
       '@types/bn.js': 5.1.5
       '@types/debug': 4.1.12
       bignumber.js: 9.1.2
+      cross-fetch: 3.1.5
       debug: 4.3.4
-      fp-ts: 2.16.9
-      semver: 7.7.2
+      fp-ts: 2.1.1
+      io-ts: 2.0.1(fp-ts@2.1.1)
+      semver: 7.5.4
       web3: 1.10.4
       web3-core-helpers: 1.10.4
     transitivePeerDependencies:
@@ -38675,29 +38692,29 @@ snapshots:
       bignumber.js: 9.1.2
       semver: 7.7.1
 
-  '@celo/ledger-token-signer@0.8.0': {}
+  '@celo/ledger-token-signer@0.4.0': {}
 
-  '@celo/utils@8.0.3':
+  '@celo/utils@7.0.0':
     dependencies:
-      '@celo/base': 7.0.3
+      '@celo/base': 6.1.0
       '@ethereumjs/rlp': 5.0.2
       '@ethereumjs/util': 8.0.5
-      '@noble/ciphers': 1.1.3
+      '@noble/ciphers': 0.4.1
       '@noble/curves': 1.3.0
       '@noble/hashes': 1.3.3
       '@types/bn.js': 5.1.5
       '@types/node': 18.19.26
       bignumber.js: 9.1.2
-      fp-ts: 2.16.9
-      io-ts: 2.0.1(fp-ts@2.16.9)
+      fp-ts: 2.1.1
+      io-ts: 2.0.1(fp-ts@2.1.1)
       web3-eth-abi: 1.10.4
       web3-utils: 1.10.4
 
-  '@celo/wallet-base@8.0.1':
+  '@celo/wallet-base@6.0.3':
     dependencies:
-      '@celo/base': 7.0.3
-      '@celo/connect': 7.0.0
-      '@celo/utils': 8.0.3
+      '@celo/base': 6.1.0
+      '@celo/connect': 6.0.2
+      '@celo/utils': 7.0.0
       '@ethereumjs/rlp': 5.0.2
       '@ethereumjs/util': 8.0.5
       '@noble/curves': 1.9.7
@@ -38706,38 +38723,39 @@ snapshots:
       bignumber.js: 9.1.2
       debug: 4.3.4
       web3: 1.10.4
+      web3-eth-accounts: 1.10.4
     transitivePeerDependencies:
       - bufferutil
       - encoding
       - supports-color
       - utf-8-validate
 
-  '@celo/wallet-ledger@8.0.1':
+  '@celo/wallet-ledger@6.0.3':
     dependencies:
-      '@celo/base': 7.0.3
-      '@celo/connect': 7.0.0
+      '@celo/base': 6.1.0
+      '@celo/connect': 6.0.2
       '@celo/hw-app-eth': 1.0.1
-      '@celo/ledger-token-signer': 0.8.0
-      '@celo/utils': 8.0.3
-      '@celo/wallet-base': 8.0.1
-      '@celo/wallet-remote': 8.0.1
+      '@celo/ledger-token-signer': 0.4.0
+      '@celo/utils': 7.0.0
+      '@celo/wallet-base': 6.0.3
+      '@celo/wallet-remote': 6.0.3
       '@ethereumjs/util': 8.0.5
       '@ledgerhq/errors': 6.19.1
       '@ledgerhq/hw-transport': link:libs/ledgerjs/packages/hw-transport
       debug: 4.3.4
-      semver: 7.7.2
+      semver: 7.6.3
     transitivePeerDependencies:
       - bufferutil
       - encoding
       - supports-color
       - utf-8-validate
 
-  '@celo/wallet-local@8.0.1':
+  '@celo/wallet-local@6.0.3':
     dependencies:
-      '@celo/base': 7.0.3
-      '@celo/connect': 7.0.0
-      '@celo/utils': 8.0.3
-      '@celo/wallet-base': 8.0.1
+      '@celo/base': 6.1.0
+      '@celo/connect': 6.0.2
+      '@celo/utils': 7.0.0
+      '@celo/wallet-base': 6.0.3
       '@ethereumjs/util': 8.0.5
     transitivePeerDependencies:
       - bufferutil
@@ -38745,11 +38763,11 @@ snapshots:
       - supports-color
       - utf-8-validate
 
-  '@celo/wallet-remote@8.0.1':
+  '@celo/wallet-remote@6.0.3':
     dependencies:
-      '@celo/connect': 7.0.0
-      '@celo/utils': 8.0.3
-      '@celo/wallet-base': 8.0.1
+      '@celo/connect': 6.0.2
+      '@celo/utils': 7.0.0
+      '@celo/wallet-base': 6.0.3
       '@ethereumjs/util': 8.0.5
       '@types/debug': 4.1.12
     transitivePeerDependencies:
@@ -40671,7 +40689,7 @@ snapshots:
       '@expo/plist': 0.3.4
       '@expo/sdk-runtime-versions': 1.0.0
       chalk: 4.1.2
-      debug: 4.4.1
+      debug: 4.4.0
       getenv: 1.0.0
       glob: 10.4.5
       resolve-from: 5.0.0
@@ -40918,7 +40936,11 @@ snapshots:
     dependencies:
       '@babel/core': 7.27.1
       '@babel/generator': 7.27.1
+<<<<<<< HEAD
       '@babel/parser': 7.28.3
+=======
+      '@babel/parser': 7.27.5
+>>>>>>> parent of abd598cb52 (feat: send Celo tokens)
       '@babel/types': 7.27.6
       '@expo/config': 11.0.10
       '@expo/env': 1.0.5
@@ -41080,8 +41102,6 @@ snapshots:
   '@faker-js/faker@9.4.0': {}
 
   '@faker-js/faker@9.6.0': {}
-
-  '@faker-js/faker@9.9.0': {}
 
   '@fal-works/esbuild-plugin-global-externals@2.1.2': {}
 
@@ -43772,7 +43792,7 @@ snapshots:
     dependencies:
       eslint-scope: 5.1.1
 
-  '@noble/ciphers@1.1.3': {}
+  '@noble/ciphers@0.4.1': {}
 
   '@noble/curves@1.2.0':
     dependencies:
@@ -49114,7 +49134,7 @@ snapshots:
     dependencies:
       '@babel/core': 7.27.1
       '@babel/preset-env': 7.27.1(@babel/core@7.27.1)
-      '@babel/types': 7.28.2
+      '@babel/types': 7.27.6
       '@storybook/csf': 0.1.3
       '@storybook/csf-tools': 7.6.20
       '@storybook/node-logger': 7.6.20
@@ -49550,7 +49570,7 @@ snapshots:
 
   '@storybook/react-docgen-typescript-plugin@1.0.6--canary.9.0c3f3b7.0(typescript@5.4.3)(webpack@5.94.0(esbuild@0.19.12))':
     dependencies:
-      debug: 4.3.4
+      debug: 4.4.1
       endent: 2.1.0
       find-cache-dir: 3.3.2
       flat-cache: 3.2.0
@@ -49564,7 +49584,7 @@ snapshots:
 
   '@storybook/react-docgen-typescript-plugin@1.0.6--canary.9.0c3f3b7.0(typescript@5.4.3)(webpack@5.94.0(metro@0.81.5))':
     dependencies:
-      debug: 4.3.4
+      debug: 4.4.1
       endent: 2.1.0
       find-cache-dir: 3.3.2
       flat-cache: 3.2.0
@@ -51235,7 +51255,7 @@ snapshots:
       '@typescript-eslint/scope-manager': 5.62.0
       '@typescript-eslint/type-utils': 5.62.0(eslint@8.57.0)(typescript@5.4.3)
       '@typescript-eslint/utils': 5.62.0(eslint@8.57.0)(typescript@5.4.3)
-      debug: 4.3.4
+      debug: 4.4.1
       eslint: 8.57.0
       graphemer: 1.4.0
       ignore: 5.3.1
@@ -51377,7 +51397,7 @@ snapshots:
     dependencies:
       '@typescript-eslint/typescript-estree': 5.62.0(typescript@5.4.3)
       '@typescript-eslint/utils': 5.62.0(eslint@8.57.0)(typescript@5.4.3)
-      debug: 4.3.4
+      debug: 4.4.1
       eslint: 8.57.0
       tsutils: 3.21.0(typescript@5.4.3)
     optionalDependencies:
@@ -51506,7 +51526,7 @@ snapshots:
     dependencies:
       '@typescript-eslint/types': 8.30.1
       '@typescript-eslint/visitor-keys': 8.30.1
-      debug: 4.3.4
+      debug: 4.4.1
       fast-glob: 3.3.2
       is-glob: 4.0.3
       minimatch: 9.0.4
@@ -52013,7 +52033,7 @@ snapshots:
 
   '@vue/compiler-core@3.4.21':
     dependencies:
-      '@babel/parser': 7.28.3
+      '@babel/parser': 7.27.5
       '@vue/shared': 3.4.21
       entities: 4.5.0
       estree-walker: 2.0.2
@@ -52036,7 +52056,7 @@ snapshots:
 
   '@vue/compiler-sfc@3.4.21':
     dependencies:
-      '@babel/parser': 7.28.3
+      '@babel/parser': 7.27.5
       '@vue/compiler-core': 3.4.21
       '@vue/compiler-dom': 3.4.21
       '@vue/compiler-ssr': 3.4.21
@@ -53032,8 +53052,13 @@ snapshots:
 
   axios@1.7.7:
     dependencies:
+<<<<<<< HEAD
       follow-redirects: 1.15.11
       form-data: 4.0.4
+=======
+      follow-redirects: 1.15.6
+      form-data: 4.0.2
+>>>>>>> parent of abd598cb52 (feat: send Celo tokens)
       proxy-from-env: 1.1.0
 
   axios@1.8.2:
@@ -55219,6 +55244,12 @@ snapshots:
     dependencies:
       cross-spawn: 7.0.3
 
+  cross-fetch@3.1.5:
+    dependencies:
+      node-fetch: 2.6.7
+    transitivePeerDependencies:
+      - encoding
+
   cross-fetch@3.1.8:
     dependencies:
       node-fetch: 2.7.0
@@ -55907,7 +55938,7 @@ snapshots:
   detect-port@1.5.1:
     dependencies:
       address: 1.2.2
-      debug: 4.3.4
+      debug: 4.4.1
     transitivePeerDependencies:
       - supports-color
 
@@ -58663,7 +58694,7 @@ snapshots:
 
   forwarded@0.2.0: {}
 
-  fp-ts@2.16.9: {}
+  fp-ts@2.1.1: {}
 
   fraction.js@4.3.7: {}
 
@@ -58879,7 +58910,7 @@ snapshots:
     dependencies:
       basic-ftp: 5.0.5
       data-uri-to-buffer: 6.0.2
-      debug: 4.3.4
+      debug: 4.4.1
     transitivePeerDependencies:
       - supports-color
 
@@ -59648,7 +59679,7 @@ snapshots:
   https-proxy-agent@4.0.0:
     dependencies:
       agent-base: 5.1.1
-      debug: 4.3.4
+      debug: 4.4.1
     transitivePeerDependencies:
       - supports-color
 
@@ -59856,7 +59887,7 @@ snapshots:
       mute-stream: 0.0.8
       ora: 5.4.1
       run-async: 2.4.1
-      rxjs: 7.8.1
+      rxjs: 7.8.2
       string-width: 4.2.3
       strip-ansi: 6.0.1
       through: 2.3.8
@@ -59888,15 +59919,15 @@ snapshots:
       '@inversifyjs/core': 5.2.0(reflect-metadata@0.2.2)
       reflect-metadata: 0.2.2
 
-  io-ts@2.0.1(fp-ts@2.16.9):
+  io-ts@2.0.1(fp-ts@2.1.1):
     dependencies:
-      fp-ts: 2.16.9
+      fp-ts: 2.1.1
 
   ioredis@5.3.2:
     dependencies:
       '@ioredis/commands': 1.2.0
       cluster-key-slot: 1.1.2
-      debug: 4.3.4
+      debug: 4.4.1
       denque: 2.1.0
       lodash.defaults: 4.2.0
       lodash.isarguments: 3.1.0
@@ -60314,7 +60345,7 @@ snapshots:
   istanbul-lib-instrument@6.0.3:
     dependencies:
       '@babel/core': 7.27.1
-      '@babel/parser': 7.28.3
+      '@babel/parser': 7.27.5
       '@istanbuljs/schema': 0.1.3
       istanbul-lib-coverage: 3.2.2
       semver: 7.5.4
@@ -62155,7 +62186,7 @@ snapshots:
   jest-snapshot@27.5.1:
     dependencies:
       '@babel/core': 7.27.1
-      '@babel/generator': 7.27.1
+      '@babel/generator': 7.28.3
       '@babel/plugin-syntax-typescript': 7.27.1(@babel/core@7.27.1)
       '@babel/traverse': 7.28.3
       '@babel/types': 7.28.2
@@ -62183,7 +62214,7 @@ snapshots:
   jest-snapshot@28.1.3:
     dependencies:
       '@babel/core': 7.27.1
-      '@babel/generator': 7.27.1
+      '@babel/generator': 7.28.3
       '@babel/plugin-syntax-typescript': 7.27.1(@babel/core@7.27.1)
       '@babel/traverse': 7.28.3
       '@babel/types': 7.28.2
@@ -62215,7 +62246,11 @@ snapshots:
       '@babel/generator': 7.27.1
       '@babel/plugin-syntax-jsx': 7.25.9(@babel/core@7.27.1)
       '@babel/plugin-syntax-typescript': 7.25.9(@babel/core@7.27.1)
+<<<<<<< HEAD
       '@babel/types': 7.27.0
+=======
+      '@babel/types': 7.27.6
+>>>>>>> parent of abd598cb52 (feat: send Celo tokens)
       '@jest/expect-utils': 29.7.0
       '@jest/transform': 29.7.0
       '@jest/types': 29.6.3
@@ -62830,7 +62865,7 @@ snapshots:
       decimal.js: 10.4.3
       domexception: 2.0.1
       escodegen: 2.1.0
-      form-data: 4.0.4
+      form-data: 4.0.2
       html-encoding-sniffer: 2.0.1
       http-proxy-agent: 4.0.1
       https-proxy-agent: 5.0.1
@@ -62864,7 +62899,7 @@ snapshots:
       decimal.js: 10.4.3
       domexception: 4.0.0
       escodegen: 2.1.0
-      form-data: 4.0.4
+      form-data: 4.0.2
       html-encoding-sniffer: 3.0.0
       http-proxy-agent: 5.0.0
       https-proxy-agent: 5.0.1
@@ -63225,7 +63260,7 @@ snapshots:
 
   konan@2.1.1:
     dependencies:
-      '@babel/parser': 7.28.3
+      '@babel/parser': 7.27.5
       '@babel/traverse': 7.27.4
     transitivePeerDependencies:
       - supports-color
@@ -63857,8 +63892,13 @@ snapshots:
 
   magicast@0.3.5:
     dependencies:
+<<<<<<< HEAD
       '@babel/parser': 7.28.3
       '@babel/types': 7.27.0
+=======
+      '@babel/parser': 7.27.5
+      '@babel/types': 7.27.6
+>>>>>>> parent of abd598cb52 (feat: send Celo tokens)
       source-map-js: 1.2.1
 
   make-dir@2.1.0:
@@ -64677,7 +64717,7 @@ snapshots:
   micromark@3.2.0:
     dependencies:
       '@types/debug': 4.1.12
-      debug: 4.3.4
+      debug: 4.4.1
       decode-named-character-reference: 1.0.2
       micromark-core-commonmark: 1.1.0
       micromark-factory-space: 1.1.0
@@ -65839,7 +65879,7 @@ snapshots:
     dependencies:
       '@tootallnate/quickjs-emscripten': 0.23.0
       agent-base: 7.1.3
-      debug: 4.3.4
+      debug: 4.4.1
       get-uri: 6.0.4
       http-proxy-agent: 7.0.2
       https-proxy-agent: 7.0.6
@@ -67190,7 +67230,7 @@ snapshots:
   proxy-agent@6.5.0:
     dependencies:
       agent-base: 7.1.3
-      debug: 4.3.4
+      debug: 4.4.1
       http-proxy-agent: 7.0.2
       https-proxy-agent: 7.0.6
       lru-cache: 7.18.3
@@ -67258,7 +67298,7 @@ snapshots:
   puppeteer-core@2.1.1:
     dependencies:
       '@types/mime-types': 2.1.4
-      debug: 4.3.4
+      debug: 4.4.1
       extract-zip: 1.7.0
       https-proxy-agent: 4.0.0
       mime: 2.6.0
@@ -69353,8 +69393,6 @@ snapshots:
 
   semver@7.7.1: {}
 
-  semver@7.7.2: {}
-
   send@0.18.0:
     dependencies:
       debug: 2.6.9
@@ -69598,7 +69636,7 @@ snapshots:
     dependencies:
       '@kwsites/file-exists': 1.1.1
       '@kwsites/promise-deferred': 1.1.1
-      debug: 4.3.4
+      debug: 4.4.1
     transitivePeerDependencies:
       - supports-color
 
@@ -69700,7 +69738,7 @@ snapshots:
   socks-proxy-agent@8.0.5:
     dependencies:
       agent-base: 7.1.3
-      debug: 4.3.4
+      debug: 4.4.1
       socks: 2.8.5
     transitivePeerDependencies:
       - supports-color
@@ -70457,7 +70495,7 @@ snapshots:
 
   sumchecker@3.0.1:
     dependencies:
-      debug: 4.3.4
+      debug: 4.4.0
     transitivePeerDependencies:
       - supports-color
 
@@ -72568,7 +72606,7 @@ snapshots:
   vite-node@2.1.9(@types/node@22.10.10):
     dependencies:
       cac: 6.7.14
-      debug: 4.4.1
+      debug: 4.4.0
       es-module-lexer: 1.5.4
       pathe: 1.1.2
       vite: 5.4.14(@types/node@22.10.10)

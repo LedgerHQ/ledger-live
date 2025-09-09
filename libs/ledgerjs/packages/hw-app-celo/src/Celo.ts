@@ -2,6 +2,7 @@ import Eth from "@ledgerhq/hw-app-eth";
 import { tokenInfoByAddressAndChainId } from "@celo/wallet-ledger/lib/tokens";
 import { rlpEncodedTx, LegacyEncodedTx } from "@celo/wallet-base";
 import type { CeloTx, RLPEncodedTx } from "@celo/connect";
+import { LedgerEthTransactionResolution } from "@ledgerhq/hw-app-eth/lib/services/types";
 
 /**
  * Heavily inspiried by celo-web-wallet
@@ -11,14 +12,9 @@ export default class Celo extends Eth {
   async signTransaction(
     path: string,
     rawTxHex: string,
+    resolution?: LedgerEthTransactionResolution | null,
   ): Promise<{ s: string; v: string; r: string }> {
-    return super.signTransaction(path, rawTxHex, {
-      erc20Tokens: [],
-      nfts: [],
-      externalPlugin: [],
-      plugin: [],
-      domains: [],
-    });
+    return super.signTransaction(path, rawTxHex, resolution);
   }
 
   // celo-spender-app below version 1.2.3 used a different private key to validate erc20 token info.
@@ -30,7 +26,7 @@ export default class Celo extends Eth {
 
     if (tokenInfo) {
       // celo-spender-app below version 1.2.3 expected unprefixed hex strings only
-      const dataString = `${tokenInfo.data.toString("hex")}`;
+      const dataString = `0x${tokenInfo.data.toString("hex")}`;
       await this.provideERC20TokenInformation(dataString);
     }
   }
