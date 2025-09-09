@@ -104,7 +104,7 @@ const AddressCell = ({ operation }: AddressCellProps<HederaOperation>) => {
     : null;
 
   if (!token) {
-    return null;
+    return <Box flex="1" />;
   }
 
   return (
