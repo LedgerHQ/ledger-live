@@ -5309,7 +5309,7 @@ importers:
         version: link:../device-core
       '@ledgerhq/device-management-kit':
         specifier: 0.0.0-fix-lns-20250901094837
-        version: 0.0.0-fix-lns-20250901094837(rxjs@7.8.2)
+        version: 0.0.0-fix-lns-20250901094837(rxjs@7.8.1)
       '@ledgerhq/devices':
         specifier: workspace:*
         version: link:../ledgerjs/packages/devices
@@ -5441,7 +5441,7 @@ importers:
         version: link:../exchange-module
       '@ledgerhq/wallet-api-server':
         specifier: ^1.11.0
-        version: 1.11.0(@ton/crypto@3.3.0)(react@18.3.1)(rxjs@7.8.2)
+        version: 1.11.0(@ton/crypto@3.3.0)(react@18.3.1)(rxjs@7.8.1)
       '@noble/curves':
         specifier: ^1.9.7
         version: 1.9.7
@@ -5572,8 +5572,8 @@ importers:
         specifier: ^3.0.0
         version: 3.0.0
       rxjs:
-        specifier: ^7.8.1
-        version: 7.8.2
+        specifier: 7.8.1
+        version: 7.8.1
       semver:
         specifier: ^7.3.5
         version: 7.5.4
@@ -8433,10 +8433,10 @@ importers:
         version: link:../coin-modules/coin-solana
       '@ledgerhq/device-management-kit':
         specifier: 0.0.0-fix-lns-20250901094837
-        version: 0.0.0-fix-lns-20250901094837
+        version: 0.0.0-fix-lns-20250901094837(rxjs@7.8.1)
       '@ledgerhq/device-signer-kit-solana':
         specifier: 0.0.0-patch-transactionInspector-20250909141112
-        version: 0.0.0-patch-transactionInspector-20250909141112(@ledgerhq/device-management-kit@0.0.0-fix-lns-20250901094837)(typescript@5.4.3)
+        version: 0.0.0-patch-transactionInspector-20250909141112(@ledgerhq/device-management-kit@0.0.0-fix-lns-20250901094837(rxjs@7.8.1))(typescript@5.4.3)
       '@ledgerhq/devices':
         specifier: workspace:*
         version: link:../ledgerjs/packages/devices
@@ -8464,6 +8464,9 @@ importers:
       bs58:
         specifier: ^4.0.1
         version: 4.0.1
+      rxjs:
+        specifier: 7.8.1
+        version: 7.8.1
       semver:
         specifier: ^7
         version: 7.7.1
@@ -43188,9 +43191,9 @@ snapshots:
       - bufferutil
       - utf-8-validate
 
-  '@ledgerhq/context-module@0.0.0-patch-transactionInspector-20250909141112(@ledgerhq/device-management-kit@0.0.0-fix-lns-20250901094837)':
+  '@ledgerhq/context-module@0.0.0-patch-transactionInspector-20250909141112(@ledgerhq/device-management-kit@0.0.0-fix-lns-20250901094837(rxjs@7.8.1))':
     dependencies:
-      '@ledgerhq/device-management-kit': 0.0.0-fix-lns-20250901094837
+      '@ledgerhq/device-management-kit': 0.0.0-fix-lns-20250901094837(rxjs@7.8.1)
       axios: 1.8.2
       crypto-js: 4.2.0
       ethers: 6.14.1
@@ -43269,24 +43272,6 @@ snapshots:
       - bufferutil
       - utf-8-validate
 
-  '@ledgerhq/device-management-kit@0.0.0-fix-lns-20250901094837(rxjs@7.8.2)':
-    dependencies:
-      '@sentry/minimal': 6.19.7
-      axios: 1.8.2
-      inversify: 7.5.1(reflect-metadata@0.2.2)
-      isomorphic-ws: 5.0.0(ws@8.18.3)
-      purify-ts: 2.1.0
-      reflect-metadata: 0.2.2
-      rxjs: 7.8.2
-      semver: 7.7.2
-      url: 0.11.4
-      uuid: 11.0.3
-      ws: 8.18.3
-      xstate: 5.19.2
-    transitivePeerDependencies:
-      - bufferutil
-      - utf-8-validate
-
   '@ledgerhq/device-signer-kit-ethereum@0.0.0-fix-lns-20250901094837(@ledgerhq/context-module@0.0.0-fix-lns-20250901094837(@ledgerhq/device-management-kit@0.0.0-fix-lns-20250901094837(rxjs@7.8.1)))(@ledgerhq/device-management-kit@0.0.0-fix-lns-20250901094837(rxjs@7.8.1))':
     dependencies:
       '@ledgerhq/context-module': 0.0.0-fix-lns-20250901094837(@ledgerhq/device-management-kit@0.0.0-fix-lns-20250901094837(rxjs@7.8.1))
@@ -43302,11 +43287,11 @@ snapshots:
       - bufferutil
       - utf-8-validate
 
-  '@ledgerhq/device-signer-kit-solana@0.0.0-patch-transactionInspector-20250909141112(@ledgerhq/device-management-kit@0.0.0-fix-lns-20250901094837)(typescript@5.4.3)':
+  '@ledgerhq/device-signer-kit-solana@0.0.0-patch-transactionInspector-20250909141112(@ledgerhq/device-management-kit@0.0.0-fix-lns-20250901094837(rxjs@7.8.1))(typescript@5.4.3)':
     dependencies:
-      '@ledgerhq/context-module': 0.0.0-patch-transactionInspector-20250909141112(@ledgerhq/device-management-kit@0.0.0-fix-lns-20250901094837)
-      '@ledgerhq/device-management-kit': 0.0.0-fix-lns-20250901094837
-      '@ledgerhq/signer-utils': 0.0.0-patch-transactionInspector-20250909141112(@ledgerhq/device-management-kit@0.0.0-fix-lns-20250901094837)
+      '@ledgerhq/context-module': 0.0.0-patch-transactionInspector-20250909141112(@ledgerhq/device-management-kit@0.0.0-fix-lns-20250901094837(rxjs@7.8.1))
+      '@ledgerhq/device-management-kit': 0.0.0-fix-lns-20250901094837(rxjs@7.8.1)
+      '@ledgerhq/signer-utils': 0.0.0-patch-transactionInspector-20250909141112(@ledgerhq/device-management-kit@0.0.0-fix-lns-20250901094837(rxjs@7.8.1))
       '@solana/spl-token': 0.4.14(@solana/web3.js@1.98.4(typescript@5.4.3))(typescript@5.4.3)
       '@solana/web3.js': 1.98.4(typescript@5.4.3)
       bs58: 6.0.0
@@ -43416,9 +43401,9 @@ snapshots:
     dependencies:
       '@ledgerhq/device-management-kit': 0.0.0-fix-lns-20250901094837(rxjs@7.8.1)
 
-  '@ledgerhq/signer-utils@0.0.0-patch-transactionInspector-20250909141112(@ledgerhq/device-management-kit@0.0.0-fix-lns-20250901094837)':
+  '@ledgerhq/signer-utils@0.0.0-patch-transactionInspector-20250909141112(@ledgerhq/device-management-kit@0.0.0-fix-lns-20250901094837(rxjs@7.8.1))':
     dependencies:
-      '@ledgerhq/device-management-kit': 0.0.0-fix-lns-20250901094837
+      '@ledgerhq/device-management-kit': 0.0.0-fix-lns-20250901094837(rxjs@7.8.1)
 
   '@ledgerhq/types-live@6.53.1':
     dependencies:
@@ -43463,18 +43448,6 @@ snapshots:
       bignumber.js: 9.1.2
       picomatch: 4.0.2
       rxjs: 7.8.1
-    optionalDependencies:
-      react: 18.3.1
-    transitivePeerDependencies:
-      - '@ton/crypto'
-      - encoding
-
-  '@ledgerhq/wallet-api-server@1.11.0(@ton/crypto@3.3.0)(react@18.3.1)(rxjs@7.8.2)':
-    dependencies:
-      '@ledgerhq/wallet-api-core': 1.22.0(@ton/crypto@3.3.0)
-      bignumber.js: 9.1.2
-      picomatch: 4.0.2
-      rxjs: 7.8.2
     optionalDependencies:
       react: 18.3.1
     transitivePeerDependencies:
