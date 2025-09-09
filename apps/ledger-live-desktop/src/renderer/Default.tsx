@@ -60,6 +60,7 @@ import { useEnforceSupportedLanguage } from "./hooks/useEnforceSupportedLanguage
 import { useDeviceManagementKit } from "@ledgerhq/live-dmk-desktop";
 import { AppGeoBlocker } from "LLD/features/AppBlockers/components/AppGeoBlocker";
 import { AppVersionBlocker } from "LLD/features/AppBlockers/components/AppVersionBlocker";
+import { setSolanaLdmkEnabled } from "@ledgerhq/live-common/families/solana/setup";
 
 const PlatformCatalog = lazy(() => import("~/renderer/screens/platform"));
 const Dashboard = lazy(() => import("~/renderer/screens/dashboard"));
@@ -198,6 +199,8 @@ export default function Default() {
   const analyticsConsoleActive = useEnv("ANALYTICS_CONSOLE");
   const providerNumber = useEnv("FORCE_PROVIDER");
   const ldmkFeatureFlag = useFeature("ldmkTransport");
+  const ldmkSolanaSignerFeatureFlag = useFeature("ldmkSolanaSigner");
+
   const dmk = useDeviceManagementKit();
 
   useAccountsWithFundsListener(accounts, updateIdentify);
@@ -216,6 +219,12 @@ export default function Default() {
   const isLocked = useSelector(isLockedSelector);
   const dispatch = useDispatch();
   const isNftReworkedEnabled = nftReworked?.enabled;
+
+  useEffect(() => {
+    if (typeof ldmkSolanaSignerFeatureFlag?.enabled === "boolean") {
+      setSolanaLdmkEnabled(ldmkSolanaSignerFeatureFlag?.enabled);
+    }
+  }, [ldmkSolanaSignerFeatureFlag]);
 
   useEffect(() => {
     if (providerNumber && ldmkFeatureFlag?.enabled) {
