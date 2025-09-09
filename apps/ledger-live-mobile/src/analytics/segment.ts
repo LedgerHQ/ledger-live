@@ -219,6 +219,9 @@ const extraProperties = async (store: AppStore) => {
   const ldmkConnectApp = analyticsFeatureFlagMethod
     ? analyticsFeatureFlagMethod("ldmkConnectApp")
     : { enabled: false };
+  const ldmkSolanaSigner = analyticsFeatureFlagMethod
+    ? analyticsFeatureFlagMethod("ldmkSolanaSigner")
+    : { enabled: false };
   const deviceInfo = lastDevice
     ? {
         deviceVersion: lastDevice.deviceInfo?.version,
@@ -328,6 +331,7 @@ const extraProperties = async (store: AppStore) => {
     tokenWithFunds,
     isLDMKTransportEnabled: ldmkTransport?.enabled,
     isLDMKConnectAppEnabled: ldmkConnectApp?.enabled,
+    isLDMKSolanaSignerEnabled: ldmkSolanaSigner?.enabled,
     stakingCurrenciesEnabled,
     partnerStakingCurrenciesEnabled,
     madAttributes,
