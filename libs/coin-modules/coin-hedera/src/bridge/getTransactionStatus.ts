@@ -1,18 +1,18 @@
 import BigNumber from "bignumber.js";
-import { AccountId } from "@hashgraph/sdk";
 import {
   AmountRequired,
   NotEnoughBalance,
-  InvalidAddress,
   InvalidAddressBecauseDestinationIsAlsoSource,
   RecipientRequired,
-  HederaInsufficientFundsForAssociation,
-  HederaRecipientTokenAssociationRequired,
-  HederaRecipientTokenAssociationUnverified,
 } from "@ledgerhq/errors";
 import type { Account, AccountBridge, TokenAccount } from "@ledgerhq/types-live";
 import { findSubAccountById, isTokenAccount } from "@ledgerhq/coin-framework/account";
 import { getEnv } from "@ledgerhq/live-env";
+import {
+  HederaInsufficientFundsForAssociation,
+  HederaRecipientTokenAssociationRequired,
+  HederaRecipientTokenAssociationUnverified,
+} from "../errors";
 import { isTokenAssociateTransaction, isTokenAssociationRequired } from "../logic";
 import type { TokenAssociateProperties, Transaction, TransactionStatus } from "../types";
 import {
@@ -20,6 +20,7 @@ import {
   checkAccountTokenAssociationStatus,
   getCurrencyToUSDRate,
   getEstimatedFees,
+  safeParseAccountId,
 } from "./utils";
 import { HEDERA_OPERATION_TYPES } from "../constants";
 
@@ -31,16 +32,16 @@ function validateRecipient(account: Account, recipient: string): Error | null {
     return new RecipientRequired();
   }
 
-  if (account.freshAddress === recipient) {
-    return new InvalidAddressBecauseDestinationIsAlsoSource();
+  const [parsingError, parsingResult] = safeParseAccountId(recipient);
+
+  if (parsingError) {
+    return parsingError;
   }
 
-  try {
-    AccountId.fromString(recipient);
-  } catch (err) {
-    return new InvalidAddress("", {
-      currencyName: account.currency.name,
-    });
+  const recipientWithoutChecksum = parsingResult.accountId;
+
+  if (account.freshAddress === recipientWithoutChecksum) {
+    return new InvalidAddressBecauseDestinationIsAlsoSource();
   }
 
   return null;
