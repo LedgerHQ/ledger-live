@@ -63,6 +63,7 @@ export default function useAddFundsButtonViewModel({
     analyticsMetadata.AddFunds?.onOpenDrawer,
     navigation,
     currency,
+    isSyncIncr1Enabled,
   ]);
 
   const closeAccountListDrawer = useCallback(() => {
