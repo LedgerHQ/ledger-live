@@ -20,6 +20,18 @@ export default function SwapCustomError({ route }: SwapCustomErrorProps) {
   const headerHeight = useHeaderHeight();
 
   const { title, description } = useMemo(() => {
+    const errorMessage =
+      error && "message" in error && typeof error.message === "string"
+        ? error.message.toLowerCase()
+        : "";
+
+    if (errorMessage.includes("transaction cannot be created")) {
+      return {
+        title: t("swapErrors.TransactionCannotBeCreated.title"),
+        description: t("swapErrors.TransactionCannotBeCreated.description"),
+      };
+    }
+
     if (titleKey || nameKey) {
       const errorKey = titleKey || nameKey;
       const titleTranslationKey = `swapErrors.${errorKey}.title`;
