@@ -232,6 +232,9 @@ const extraProperties = async (store: AppStore) => {
   const llmSyncOnboardingIncr1 = analyticsFeatureFlagMethod
     ? analyticsFeatureFlagMethod("llmSyncOnboardingIncr1")
     : { enabled: false };
+  const ldmkSolanaSigner = analyticsFeatureFlagMethod
+    ? analyticsFeatureFlagMethod("ldmkSolanaSigner")
+    : { enabled: false };
   const deviceInfo = lastDevice
     ? {
         deviceVersion: lastDevice.deviceInfo?.version,
@@ -349,6 +352,7 @@ const extraProperties = async (store: AppStore) => {
     isLDMKTransportEnabled: ldmkTransport?.enabled,
     isLDMKConnectAppEnabled: ldmkConnectApp?.enabled,
     llmSyncOnboardingIncr1: llmSyncOnboardingIncr1?.enabled,
+    isLDMKSolanaSignerEnabled: ldmkSolanaSigner?.enabled,
     stakingCurrenciesEnabled,
     partnerStakingCurrenciesEnabled,
     madAttributes,

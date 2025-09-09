@@ -664,6 +664,7 @@ export const DEFAULT_FEATURES: Features = {
     },
   },
   ldmkConnectApp: DEFAULT_FEATURE,
+  ldmkSolanaSigner: DEFAULT_FEATURE,
   lldNetworkBasedAddAccount: DEFAULT_FEATURE,
   llmDatadog: {
     ...DEFAULT_FEATURE,

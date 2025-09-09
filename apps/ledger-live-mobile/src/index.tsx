@@ -103,6 +103,7 @@ import useNativeStartupInfo from "./hooks/useNativeStartupInfo";
 import { ConfigureDBSaveEffects } from "./components/DBSave";
 import { useRef } from "react";
 import HookDevTools from "./devTools/useDevTools";
+import { setSolanaLdmkEnabled } from "@ledgerhq/live-common/families/solana/setup";
 
 if (Config.DISABLE_YELLOW_BOX) {
   LogBox.ignoreAllLogs();
@@ -138,6 +139,7 @@ function App() {
   const dispatch = useDispatch();
   const isTrackingEnabled = useSelector(trackingEnabledSelector);
   const automaticBugReportingEnabled = useSelector(reportErrorsEnabledSelector);
+  const ldmkSolanaSignerFeatureFlag = useFeature("ldmkSolanaSigner");
   useNativeStartupInfo();
 
   const datadogAutoInstrumentation: AutoInstrumentationConfiguration = useMemo(
@@ -157,6 +159,12 @@ function App() {
     }),
     [datadogFF?.params, automaticBugReportingEnabled],
   );
+
+  useEffect(() => {
+    if (typeof ldmkSolanaSignerFeatureFlag?.enabled === "boolean") {
+      setSolanaLdmkEnabled(ldmkSolanaSignerFeatureFlag?.enabled);
+    }
+  }, [ldmkSolanaSignerFeatureFlag]);
 
   useEffect(() => {
     if (providerNumber && isLDMKEnabled) {

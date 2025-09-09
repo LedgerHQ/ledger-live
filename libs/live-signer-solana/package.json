@@ -29,12 +29,17 @@
   "dependencies": {
     "@ledgerhq/coin-solana": "workspace:^",
     "@ledgerhq/devices": "workspace:*",
+    "@ledgerhq/device-management-kit": "catalog:",
+    "@ledgerhq/device-signer-kit-solana": "catalog:",
     "@ledgerhq/errors": "workspace:^",
     "@ledgerhq/hw-app-solana": "workspace:^",
     "@ledgerhq/hw-bolos": "workspace:^",
     "@ledgerhq/hw-transport": "workspace:*",
     "@ledgerhq/ledger-cal-service": "workspace:^",
     "@ledgerhq/ledger-trust-service": "workspace:^",
+    "@types/bs58": "^4.0.1",
+    "bs58": "^4.0.1",
+    "rxjs": "7.8.1",
     "semver": "^7"
   },
   "scripts": {

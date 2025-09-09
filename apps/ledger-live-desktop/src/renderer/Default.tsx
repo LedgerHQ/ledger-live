@@ -62,6 +62,7 @@ import { useDeviceManagementKit } from "@ledgerhq/live-dmk-desktop";
 import { AppGeoBlocker } from "LLD/features/AppBlockers/components/AppGeoBlocker";
 import { AppVersionBlocker } from "LLD/features/AppBlockers/components/AppVersionBlocker";
 import { initMixpanel } from "./analytics/mixpanel";
+import { setSolanaLdmkEnabled } from "@ledgerhq/live-common/families/solana/setup";
 
 const PlatformCatalog = lazy(() => import("~/renderer/screens/platform"));
 const Dashboard = lazy(() => import("~/renderer/screens/dashboard"));
@@ -196,6 +197,8 @@ export default function Default() {
   const accounts = useSelector(accountsSelector);
   const analyticsConsoleActive = useEnv("ANALYTICS_CONSOLE");
   const providerNumber = useEnv("FORCE_PROVIDER");
+  const ldmkSolanaSignerFeatureFlag = useFeature("ldmkSolanaSigner");
+
   const dmk = useDeviceManagementKit();
 
   useAccountsWithFundsListener(accounts, updateIdentify);
@@ -220,6 +223,12 @@ export default function Default() {
       initMixpanel(mixpanelFF?.params?.sampling);
     }
   }, [mixpanelFF, shareAnalytics]);
+
+  useEffect(() => {
+    if (typeof ldmkSolanaSignerFeatureFlag?.enabled === "boolean") {
+      setSolanaLdmkEnabled(ldmkSolanaSignerFeatureFlag?.enabled);
+    }
+  }, [ldmkSolanaSignerFeatureFlag]);
 
   useEffect(() => {
     // WebHID is now always enabled, set provider if specified
