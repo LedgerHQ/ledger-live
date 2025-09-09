@@ -62,14 +62,14 @@ export const expectedData = (
   switch (type) {
     case "erc20":
       return Buffer.from(
-        new ethers.utils.Interface(ERC20ABI)
+        new ethers.Interface(ERC20ABI)
           .encodeFunctionData("transfer", [transaction.recipient, transaction.amount.toFixed()])
           .slice(2),
         "hex",
       );
     case "erc721":
       return Buffer.from(
-        new ethers.utils.Interface(ERC721ABI)
+        new ethers.Interface(ERC721ABI)
           .encodeFunctionData("safeTransferFrom(address,address,uint256,bytes)", [
             account.freshAddress,
             transaction.recipient,
@@ -81,7 +81,7 @@ export const expectedData = (
       );
     case "erc1155":
       return Buffer.from(
-        new ethers.utils.Interface(ERC1155ABI)
+        new ethers.Interface(ERC1155ABI)
           .encodeFunctionData("safeTransferFrom(address,address,uint256,uint256,bytes)", [
             account.freshAddress,
             transaction.recipient,

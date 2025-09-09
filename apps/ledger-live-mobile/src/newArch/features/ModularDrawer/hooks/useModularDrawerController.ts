@@ -6,7 +6,7 @@ import {
   closeModularDrawer,
   modularDrawerStateSelector,
 } from "~/reducers/modularDrawer";
-import { OpenModularDrawerParams, OpenModularDrawerParamsWithCallbackId } from "../types";
+import { DrawerParams, DrawerRemoteParams } from "../types";
 import { useCallbackRegistry } from "./useCallbackRegistry";
 import { generateCallbackId } from "../utils/callbackIdGenerator";
 
@@ -33,10 +33,10 @@ export const useModularDrawerController = () => {
     callbackId,
     enableAccountSelection,
     accountsObservableId,
-    flow,
-    source,
     assetsConfiguration,
     networksConfiguration,
+    useCase,
+    areCurrenciesFiltered,
   } = useSelector(modularDrawerStateSelector);
 
   const {
@@ -50,7 +50,7 @@ export const useModularDrawerController = () => {
   } = useCallbackRegistry();
 
   const openDrawer = useCallback(
-    (params?: OpenModularDrawerParams) => {
+    (params?: DrawerParams) => {
       const { onAccountSelected, accounts$, ...otherParams } = params || {};
 
       let callbackIdToUse: string | undefined;
@@ -72,7 +72,7 @@ export const useModularDrawerController = () => {
         observableIdToUse = id;
       }
 
-      const paramsWithIds: OpenModularDrawerParamsWithCallbackId = {
+      const paramsWithIds: DrawerRemoteParams = {
         ...otherParams,
         callbackId: callbackIdToUse,
         accountsObservableId: observableIdToUse,
@@ -123,10 +123,10 @@ export const useModularDrawerController = () => {
     isOpen,
     preselectedCurrencies,
     enableAccountSelection,
-    flow,
-    source,
     assetsConfiguration,
     networksConfiguration,
+    useCase,
+    areCurrenciesFiltered,
     openDrawer,
     closeDrawer,
     handleAccountSelected,

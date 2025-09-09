@@ -460,7 +460,7 @@ async function retryAxiosRequest<T>(
   throw lastError!;
 }
 
-export async function waitFor(text: string, maxAttempts = 15): Promise<string[]> {
+export async function waitFor(text: string, maxAttempts = 60): Promise<string[]> {
   const port = getEnv("SPECULOS_API_PORT");
   const address = getSpeculosAddress();
   const url = `${address}:${port}/events?stream=false&currentscreenonly=true`;
@@ -491,14 +491,14 @@ export async function pressBoth() {
 
 export async function pressUntilTextFound(
   targetText: string,
-  maxAttempts: number = 15,
+  strictMatch: boolean = false,
 ): Promise<string[]> {
+  const maxAttempts = 15;
   const speculosApiPort = getEnv("SPECULOS_API_PORT");
 
   for (let attempts = 0; attempts < maxAttempts; attempts++) {
     const texts = await fetchCurrentScreenTexts(speculosApiPort);
-
-    if (texts.includes(targetText)) {
+    if (strictMatch ? texts === targetText : texts.includes(targetText)) {
       return await fetchAllEvents(speculosApiPort);
     }
 
@@ -575,28 +575,25 @@ export async function waitForTimeOut(ms: number) {
 }
 
 export async function removeMemberLedgerSync() {
-  await waitFor(DeviceLabels.CONNECT_WITH);
-  await pressUntilTextFound(DeviceLabels.MAKE_SURE_TO_USE);
-  await pressUntilTextFound(DeviceLabels.CONNECT_WITH);
+  await waitFor(DeviceLabels.CONNECT_TO);
+  await pressUntilTextFound(DeviceLabels.CONNECT, true);
   await pressBoth();
-  await waitFor(DeviceLabels.REMOVE_PHONE_OR_COMPUTER);
-  await pressUntilTextFound(DeviceLabels.AFTER_REMOVING);
-  await pressUntilTextFound(DeviceLabels.REMOVE_PHONE_OR_COMPUTER);
+  await waitFor(DeviceLabels.REMOVE_FROM_LEDGER_SYNC);
+  await pressUntilTextFound(DeviceLabels.REMOVE, true);
   await pressBoth();
   await waitFor(DeviceLabels.TURN_ON_SYNC);
-  await pressUntilTextFound(DeviceLabels.YOUR_CRYPTO_ACCOUNTS);
-  await pressUntilTextFound(DeviceLabels.TURN_ON_SYNC);
+  await pressUntilTextFound(DeviceLabels.LEDGER_LIVE_WILL_BE);
+  await pressUntilTextFound(DeviceLabels.TURN_ON_SYNC2);
   await pressBoth();
 }
 
 export async function activateLedgerSync() {
-  await waitFor(DeviceLabels.CONNECT_WITH);
-  await pressUntilTextFound(DeviceLabels.MAKE_SURE_TO_USE);
-  await pressUntilTextFound(DeviceLabels.CONNECT_WITH);
+  await waitFor(DeviceLabels.CONNECT_TO);
+  await pressUntilTextFound(DeviceLabels.CONNECT, true);
   await pressBoth();
   await waitFor(DeviceLabels.TURN_ON_SYNC);
-  await pressUntilTextFound(DeviceLabels.YOUR_CRYPTO_ACCOUNTS);
-  await pressUntilTextFound(DeviceLabels.TURN_ON_SYNC);
+  await pressUntilTextFound(DeviceLabels.LEDGER_LIVE_WILL_BE);
+  await pressUntilTextFound(DeviceLabels.TURN_ON_SYNC2);
   await pressBoth();
 }
 
@@ -732,6 +729,14 @@ export async function signDelegationTransaction(delegatingAccount: Delegate) {
 
 export async function verifyAmountsAndAcceptSwap(swap: Swap, amount: string) {
   await waitFor(DeviceLabels.REVIEW_TRANSACTION);
+  const events = await pressUntilTextFound(DeviceLabels.SIGN_TRANSACTION);
+  await verifySwapData(swap, events, amount);
+  await pressBoth();
+}
+
+export async function verifyAmountsAndAcceptSwapForDifferentSeed(swap: Swap, amount: string) {
+  await pressUntilTextFound(DeviceLabels.I_UNDERSTAND);
+  await pressBoth();
   const events = await pressUntilTextFound(DeviceLabels.SIGN_TRANSACTION);
   await verifySwapData(swap, events, amount);
   await pressBoth();

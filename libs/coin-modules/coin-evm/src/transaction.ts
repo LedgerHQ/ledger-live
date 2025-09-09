@@ -1,4 +1,4 @@
-import { ethers } from "ethers";
+import { ethers, Transaction } from "ethers";
 import { BigNumber } from "bignumber.js";
 import type { Account } from "@ledgerhq/types-live";
 import { formatTransactionStatus } from "@ledgerhq/coin-framework/formatters";
@@ -205,7 +205,7 @@ export const getTransactionData = (
 ): Buffer | undefined => {
   switch (transaction.mode) {
     case "send": {
-      const contract = new ethers.utils.Interface(ERC20ABI);
+      const contract = new ethers.Interface(ERC20ABI);
       const data = contract.encodeFunctionData("transfer", [
         transaction.recipient,
         transaction.amount.toFixed(),
@@ -215,7 +215,7 @@ export const getTransactionData = (
       return Buffer.from(data.slice(2), "hex");
     }
     case "erc721": {
-      const contract = new ethers.utils.Interface(ERC721ABI);
+      const contract = new ethers.Interface(ERC721ABI);
       const data = contract.encodeFunctionData("safeTransferFrom(address,address,uint256,bytes)", [
         account.freshAddress,
         transaction.recipient,
@@ -227,7 +227,7 @@ export const getTransactionData = (
       return Buffer.from(data.slice(2), "hex");
     }
     case "erc1155": {
-      const contract = new ethers.utils.Interface(ERC1155ABI);
+      const contract = new ethers.Interface(ERC1155ABI);
       const data = contract.encodeFunctionData("safeTransferFrom", [
         account.freshAddress,
         transaction.recipient,
@@ -282,9 +282,31 @@ export const getSerializedTransaction = (
 ): string => {
   const unsignedEthersTransaction = transactionToEthersTransaction(tx);
 
-  return ethers.utils.serializeTransaction(
-    unsignedEthersTransaction,
-    signature as ethers.Signature,
+  if (!isValidSignatureStructure(signature)) {
+    return Transaction.from(unsignedEthersTransaction).unsignedSerialized;
+  }
+  const txInput = {
+    ...unsignedEthersTransaction,
+    signature: {
+      r: signature?.r ?? "0x0000000000000000000000000000000000000000000000000000000000000000", // Provide default if r is undefined
+      s: signature?.s ?? "0x0000000000000000000000000000000000000000000000000000000000000000", // Provide default if s is undefined
+      v: signature?.v ?? 0, // Provide default if v is undefined
+    } as ethers.Signature,
+  };
+
+  const txSigned = Transaction.from(txInput);
+
+  return txSigned.serialized;
+};
+
+const isValidSignatureStructure = (signature?: Partial<ethers.Signature>): boolean => {
+  return (
+    signature?.r !== null &&
+    signature?.r !== undefined &&
+    signature?.s !== null &&
+    signature?.s !== undefined &&
+    signature?.v !== null &&
+    signature?.v !== undefined
   );
 };
 

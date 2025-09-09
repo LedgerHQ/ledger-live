@@ -51,7 +51,7 @@ const MockModularDrawerComponent = ({
   networksConfiguration,
   assetsConfiguration,
 }: MockModularDrawerComponentProps) => {
-  const { openDrawer, closeDrawer, isOpen, enableAccountSelection } = useModularDrawerController();
+  const { openDrawer, closeDrawer, isOpen } = useModularDrawerController();
 
   const handleOpenDrawer = useCallback(
     (withAccountSelection: boolean) => {
@@ -93,9 +93,6 @@ const MockModularDrawerComponent = ({
         onClose={closeDrawer}
         networksConfiguration={networksConfiguration}
         assetsConfiguration={assetsConfiguration}
-        enableAccountSelection={enableAccountSelection}
-        flow="integration_test"
-        source="modular_drawer_shared"
       />
     </>
   );

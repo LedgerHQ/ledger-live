@@ -1,5 +1,6 @@
 import { useMemo } from "react";
-import { AssetsDataWithPagination, useGetAssetsDataInfiniteQuery } from "../data/state-manager/api";
+import { useGetAssetsDataInfiniteQuery } from "../data/state-manager/api";
+import { AssetsDataWithPagination } from "../data/state-manager/types";
 
 const emptyData = () => ({
   cryptoAssets: {},
@@ -19,14 +20,26 @@ const emptyData = () => ({
 export function useAssetsData({
   search,
   currencyIds,
+  useCase,
+  areCurrenciesFiltered,
+  product,
+  version,
 }: {
   search?: string;
   currencyIds?: string[];
+  useCase?: string;
+  areCurrenciesFiltered?: boolean;
+  product: "llm" | "lld";
+  version: string;
 }) {
-  const { data, isLoading, error, fetchNextPage, isSuccess } = useGetAssetsDataInfiniteQuery({
-    search,
-    currencyIds,
-  });
+  const { data, isLoading, error, fetchNextPage, isSuccess, refetch } =
+    useGetAssetsDataInfiniteQuery({
+      search,
+      useCase,
+      currencyIds: areCurrenciesFiltered ? currencyIds : undefined,
+      product,
+      version,
+    });
 
   const joinedPages = useMemo(() => {
     return data?.pages.reduce<AssetsDataWithPagination>((acc, page) => {
@@ -55,5 +68,6 @@ export function useAssetsData({
     error,
     loadNext: hasMore ? fetchNextPage : undefined,
     isSuccess,
+    refetch,
   };
 }

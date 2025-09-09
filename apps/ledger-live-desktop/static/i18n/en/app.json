@@ -802,8 +802,8 @@
       "support": "support"
     },
     "willBeDeprecatedBanner": {
-      "title": "To optimize efficiencies, {{currencyName}} will not be supported on Ledger Live as of {{deprecatedDate}}. However, it will still be supported on Ledger hardware wallets. Please contact Ledger Customer Support if you would like assistance on this.",
-      "contactSupport": "Contact Support"
+      "title": "{{currencyName}} will not be supported on Ledger Live as of {{deprecatedDate}}. It will still be secured by your Ledger hardware wallet. To learn more, please read the full Help Center article linked below.",
+      "learnMore": "Learn more"
     },
     "lastOperations": "Latest operations",
     "contractAddress": "Contract:",
@@ -7697,6 +7697,11 @@
         "selectAccount": "Continue",
         "close": "Close"
       }
+    },
+    "genericError": {
+      "title": "A network error occurred",
+      "description": "Something went wrong, please try again or contact Ledger Support if in doubt.",
+      "cta": "Retry"
     }
   },
   "nftEntryPoint": {

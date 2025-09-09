@@ -2852,8 +2852,8 @@
       "contactSupport": "Contact support"
     },
     "willBedeprecatedBanner": {
-      "title": "To optimize efficiencies, {{currencyName}} will not be supported on Ledger Live as of {{deprecatedDate}}. However, it will still be supported on Ledger hardware wallets. Please contact Ledger Customer Support if you would like assistance on this.",
-      "contactSupport": "Contact support"
+      "title": "{{currencyName}} will not be supported on Ledger Live as of {{deprecatedDate}}. It will still be secured by your Ledger hardware wallet. To learn more, please read the full Help Center article linked below.",
+      "learnMore": "Learn more"
     },
     "tokens": {
       "contractAddress": "Contract address",
@@ -4440,7 +4440,7 @@
     "confirmSwap": {
       "title": "Confirm swap operation on device",
       "alert": {
-        "default": "Verify the Swap details on your device before sending it. The addresses are exchanged securely so you don’t have to verify them.",
+        "default": "Verify the swap details on your Ledger before sending it.",
         "provider": "Verify the Swap details on your device before sending it. {{providerName}} may need to perform additional verification for some transactions, resulting in a delay."
       },
       "acceptTerms": "By validating this transaction, I accept\n<0><0>{{provider}}</0>'s terms of use</0>",
@@ -7967,7 +7967,13 @@
     "searchPlaceholder": "Search",
     "emptyAssetList": "No assets found",
     "accountCount": "{{count}} account",
-    "accountCount_plural": "{{count}} accounts"
+    "accountCount_plural": "{{count}} accounts",
+    "errors": {
+      "title": "Connection failed",
+      "backend": "Something went wrong on our end. Please try again later",
+      "internet": "No internet connection. Please try again",
+      "cta": "Try again"
+    }
   },
   "swapErrors": {
     "incorrectCommandData": {

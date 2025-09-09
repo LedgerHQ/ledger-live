@@ -9,9 +9,9 @@ export const sonic = getCryptoCurrencyById("sonic");
 export const polygon = getCryptoCurrencyById("polygon");
 export const scroll = getCryptoCurrencyById("scroll");
 export const blast = getCryptoCurrencyById("blast");
-export const ERC20Interface = new ethers.utils.Interface(ERC20_ABI);
-export const ERC721Interface = new ethers.utils.Interface(ERC721_ABI);
-export const ERC1155Interface = new ethers.utils.Interface(ERC1155_ABI);
+export const ERC20Interface = new ethers.Interface(ERC20_ABI);
+export const ERC721Interface = new ethers.Interface(ERC721_ABI);
+export const ERC1155Interface = new ethers.Interface(ERC1155_ABI);
 export const VITALIK = "0x6bfD74C0996F269Bcece59191EFf667b3dFD73b9";
 
 export const impersonnateAccount = async ({
@@ -20,24 +20,25 @@ export const impersonnateAccount = async ({
   to,
   data,
 }: {
-  provider: ethers.providers.JsonRpcProvider;
+  provider: ethers.JsonRpcProvider;
   addressToImpersonnate: string;
   to: string;
   data: string;
 }) => {
   await provider.send("anvil_setBalance", [
     addressToImpersonnate,
-    ethers.utils.parseEther("10").toHexString(),
+    ethers.toBeHex(ethers.parseEther("10")),
   ]);
   await provider.send("anvil_impersonateAccount", [addressToImpersonnate]);
+  const feeData = await provider.getFeeData();
   const impersonatedAccount = {
     from: addressToImpersonnate,
     to,
     data,
-    value: ethers.BigNumber.from(0).toHexString(),
-    gas: ethers.BigNumber.from(1_000_000).toHexString(),
+    value: ethers.toBeHex(0n),
+    gas: ethers.toBeHex(1_000_000n),
     type: "0x0",
-    gasPrice: (await provider.getGasPrice()).toHexString(),
+    gasPrice: feeData.gasPrice ? ethers.toBeHex(feeData.gasPrice) : "0x0",
     nonce: "0x" + (await provider.getTransactionCount(addressToImpersonnate)).toString(16),
     chainId: "0x" + (await provider.getNetwork()).chainId.toString(16),
   };
@@ -63,10 +64,10 @@ export const callMyDealer = async ({
   junkie,
   dose,
 }: {
-  provider: ethers.providers.JsonRpcProvider;
+  provider: ethers.JsonRpcProvider;
   drug: Drug;
   junkie: string;
-  dose: ethers.BigNumber;
+  dose: bigint;
 }) => {
   const { contractAddress } = drug;
 
@@ -78,8 +79,8 @@ export const callMyDealer = async ({
         : ERC1155Interface.encodeFunctionData("balanceOf", [DEALER, drug.tokenId]);
   const expectedSlotValue =
     drug.type === "Nft" && drug.standard === "ERC721"
-      ? ethers.utils.hexZeroPad(DEALER, 32)
-      : ethers.utils.hexZeroPad(stash, 32);
+      ? ethers.zeroPadValue(DEALER, 32)
+      : ethers.zeroPadValue(stash, 32);
 
   // Get a list of all storage slots accessed when requesting the balance of the dealer
   const { accessList }: { accessList: { address: string; storageKeys: string[] }[] } =
@@ -134,7 +135,7 @@ export const callMyDealer = async ({
     to: contractAddress,
     data:
       drug.type === "TokenCurrency"
-        ? ERC20Interface.encodeFunctionData("transfer", [junkie, dose.toHexString()])
+        ? ERC20Interface.encodeFunctionData("transfer", [junkie, ethers.toBeHex(dose)])
         : drug.standard === "ERC721"
           ? ERC721Interface.encodeFunctionData("safeTransferFrom(address,address,uint256)", [
               DEALER,
@@ -143,7 +144,7 @@ export const callMyDealer = async ({
             ])
           : ERC1155Interface.encodeFunctionData(
               "safeTransferFrom(address,address,uint256,uint256,bytes)",
-              [DEALER, junkie, drug.tokenId, dose.toHexString(), "0x"],
+              [DEALER, junkie, drug.tokenId, ethers.toBeHex(dose), "0x"],
             ),
   });
 };

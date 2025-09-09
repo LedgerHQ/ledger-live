@@ -34,6 +34,7 @@ type ConfigStatus =
   | {
       type: "will_be_deprecated";
       deprecated_date: string;
+      link: string;
     }
   | {
       type: "deprecated";

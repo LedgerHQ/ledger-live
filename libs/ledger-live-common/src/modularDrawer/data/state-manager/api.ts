@@ -1,26 +1,14 @@
 import { createApi, fetchBaseQuery, FetchBaseQueryMeta } from "@reduxjs/toolkit/query/react";
 import { convertApiAssets } from "@ledgerhq/cryptoassets";
-import { AssetsData, RawApiResponse } from "../entities";
+import { RawApiResponse } from "../entities";
 import { getEnv } from "@ledgerhq/live-env";
-
-export enum AssetsDataTags {
-  Assets = "Assets",
-}
-
-export interface GetAssetsDataParams {
-  search?: string;
-  currencyIds?: string[];
-}
-
-export interface PageParam {
-  cursor?: string;
-}
-
-export interface AssetsDataWithPagination extends AssetsData {
-  pagination: {
-    nextCursor?: string;
-  };
-}
+import {
+  AssetsAdditionalData,
+  AssetsDataTags,
+  AssetsDataWithPagination,
+  GetAssetsDataParams,
+  PageParam,
+} from "./types";
 
 function transformAssetsResponse(
   response: RawApiResponse,
@@ -51,8 +39,14 @@ export const assetsDataApi = createApi({
         const params = {
           pageSize: 100,
           ...(pageParam?.cursor && { cursor: pageParam.cursor }),
-          // ...(queryArg?.currencyIds && queryArg?.currencyIds.length > 0 && { currencyIds: queryArg.currencyIds }),
+          ...(queryArg?.useCase && { transaction: queryArg.useCase }),
+          ...(queryArg?.currencyIds &&
+            queryArg?.currencyIds.length > 0 &&
+            !queryArg?.useCase && { currencyIds: queryArg.currencyIds }),
           ...(queryArg?.search && { search: queryArg.search }),
+          product: queryArg.product,
+          minVersion: queryArg.version,
+          additionalData: [AssetsAdditionalData.Apy, AssetsAdditionalData.MarketTrend],
         };
 
         return {

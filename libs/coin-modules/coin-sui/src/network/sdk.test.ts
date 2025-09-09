@@ -490,6 +490,7 @@ describe("SDK Functions", () => {
     expect(operation.asset).toEqual({ type: "token", assetReference: "0x123::test::TOKEN" });
     expect(operation.memo).toBeUndefined();
     expect(operation.details).toBeUndefined();
+    expect(operation.tx.block.hash).toBeUndefined();
     expect(operation.tx).toMatchObject({
       hash: "DhKLpX5kwuKuyRa71RGqpX5EY2M8Efw535ZVXYXsRiDt",
       block: {},
@@ -991,6 +992,7 @@ describe("Staking Operations", () => {
       expect(operation.recipients).toEqual([]);
       expect(operation.value).toEqual(1000000000n); // The function returns minus of the balance change
       expect(operation.asset).toEqual({ type: "native" });
+      expect(operation.tx.block.hash).toBeUndefined();
     });
 
     test("transactionToOp should map unstaking transaction correctly", () => {
@@ -1041,6 +1043,7 @@ describe("Staking Operations", () => {
       expect(operation.recipients).toEqual([]);
       expect(operation.value).toEqual(0n);
       expect(operation.asset).toEqual({ type: "native" });
+      expect(operation.tx.block.hash).toBeUndefined();
     });
   });
 

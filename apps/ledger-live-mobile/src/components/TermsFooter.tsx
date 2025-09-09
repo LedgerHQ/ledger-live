@@ -8,9 +8,14 @@ import { urls } from "~/utils/urls";
 const CenteredText = styled(Text).attrs({
   fontWeight: "medium",
   textAlign: "center",
+  fontSize: "paragraph",
+  color: "neutral.c60",
 })``;
 
-const UnderlinedText = styled(Text)`
+const UnderlinedText = styled(Text).attrs({
+  fontSize: "paragraph",
+  color: "neutral.c60",
+})`
   text-decoration-line: underline;
 `;
 
@@ -31,13 +36,18 @@ const TermsFooter: React.FC<{
   }
 
   return (
-    <CenteredText>
+    <CenteredText marginTop={16}>
       <Trans
         i18nKey="DeviceAction.confirmSwap.acceptTerms"
         values={{ provider }}
         components={[
           <UnderlinedText onPress={onLinkClick} textAlign="center" key="ProviderText">
-            <Text textTransform="capitalize" textAlign="center">
+            <Text
+              textTransform="capitalize"
+              textAlign="center"
+              fontSize="paragraph"
+              color="neutral.c60"
+            >
               {provider}
             </Text>
           </UnderlinedText>,

@@ -34,7 +34,7 @@ type TransactionSubmitRequest = {
 type TransactionSubmitResponse = { updateId: string };
 
 export type InstrumentBalance = {
-  instrumentId: string;
+  instrument_id: string;
   amount: number;
   locked: boolean;
 };

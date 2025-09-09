@@ -59,9 +59,7 @@ describe("getAlpacaApi", () => {
     { network: "xrp", module: xrpModule, label: "XRP" },
     { network: "stellar", module: stellarModule, label: "Stellar" },
     { network: "tron", module: tronModule, label: "Tron" },
-    { network: "canton_network_devnet", module: cantonModule, label: "Canton devnet" },
-    { network: "canton_network_localnet", module: cantonModule, label: "Canton localnet" },
-    { network: "canton_network_mainnet", module: cantonModule, label: "Canton mainnet" },
+    { network: "canton", module: cantonModule, label: "Canton" },
   ];
 
   testCases.forEach(({ network, module, label }) => {
