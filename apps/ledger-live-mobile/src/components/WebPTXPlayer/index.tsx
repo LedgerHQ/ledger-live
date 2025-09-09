@@ -40,29 +40,14 @@ type BackToInternalDomainProps = {
   };
 };
 
-function BackToInternalDomain({
-  manifest,
-  webviewURL,
-  lastMatchingURL,
-  config,
-}: BackToInternalDomainProps) {
+function BackToInternalDomain({ config }: BackToInternalDomainProps) {
   const { t } = useTranslation();
   const { screen, navigator, btnText } = config;
   const navigation =
     useNavigation<RootNavigationComposite<StackNavigatorNavigation<BaseNavigatorStackParamList>>>();
 
-  const internalAppIds = useInternalAppIds() || INTERNAL_APP_IDS;
-  const isStateValid = webviewURL && webviewURL.includes(manifest.url.toString());
-
   const handleBackClick = async () => {
     const manifestId = (await storage.getString("manifest-id")) ?? "";
-
-    if (!isStateValid) {
-      navigation.getParent()?.navigate(NavigatorName.Base, {
-        screen: NavigatorName.Main,
-      });
-      return;
-    }
 
     if (manifestId) {
       const [lastScreen = "", flowName = ""] = await Promise.all([
@@ -82,27 +67,17 @@ function BackToInternalDomain({
           referrer: "isExternal",
         },
       });
-    } else if (internalAppIds.includes(manifest.id) && lastMatchingURL && webviewURL) {
-      const currentHostname = new URL(webviewURL).hostname;
-      const url = new URL(lastMatchingURL);
-      const urlParams = new URLSearchParams(url.searchParams);
-      const flowName = urlParams.get("liveAppFlow")!;
-
-      track("button_clicked", {
-        button: flowName === "compare_providers" ? "back to quote" : "back to liveapp",
-        provider: currentHostname,
-        flow: flowName,
+    } else {
+      // We've lost our persisted state so go all the back home
+      navigation.getParent()?.navigate(NavigatorName.Base, {
+        screen: NavigatorName.Main,
       });
-      navigation.goBack();
     }
   };
 
   const buttonLabel = useMemo(() => {
-    if (!isStateValid) {
-      return t("common.back");
-    }
     return t("common.backTo", { to: btnText });
-  }, [isStateValid, t, btnText]);
+  }, [t, btnText]);
 
   return (
     <View style={styles.headerLeft}>
@@ -281,15 +256,7 @@ export const WebPTXPlayer = ({
     if (!disableHeader) {
       navigation.setOptions({
         headerRight: () => (isInternalApp ? null : <HeaderRight softExit={softExit} />),
-        headerLeft: () =>
-          isInternalApp ? null : (
-            <BackToInternalDomain
-              manifest={manifest}
-              webviewURL={webviewState?.url}
-              lastMatchingURL={lastMatchingURL?.current}
-              config={config}
-            />
-          ),
+        headerLeft: () => (isInternalApp ? null : <BackToInternalDomain config={config} />),
         headerTitle: () => null,
         headerShown: !isInternalApp,
       });
