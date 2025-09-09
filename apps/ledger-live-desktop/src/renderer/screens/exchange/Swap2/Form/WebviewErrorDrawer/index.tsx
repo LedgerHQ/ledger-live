@@ -72,8 +72,8 @@ export default function WebviewErrorDrawer(error?: SwapLiveError) {
   const errorMessage = error?.cause?.response?.data?.error?.message?.toLowerCase();
 
   if (errorMessage?.includes("transaction cannot be created")) {
-    titleKey = "errors.swapPartnerUnavailableError.title";
-    descriptionKey = "errors.swapPartnerUnavailableError.description";
+    titleKey = "errors.TransactionCannotBeCreated.title";
+    descriptionKey = "errors.TransactionCannotBeCreated.description";
     errorCodeSection = null;
   }
 
