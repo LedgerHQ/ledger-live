@@ -9,15 +9,7 @@ import { resetStore } from "~/renderer/store";
 import { cleanAccountsCache } from "~/renderer/actions/accounts";
 import { disable as disableDBMiddleware } from "./middlewares/db";
 import { clearBridgeCache } from "./bridge/cache";
-let lastKill = 0;
-export function recentlyKilledInternalProcess() {
-  return Date.now() - lastKill < 5000;
-}
-export async function killInternalProcess() {
-  lastKill = Date.now();
-  ipcRenderer.send("clean-processes");
-  return delay(1000);
-}
+
 function reload() {
   ipcRenderer.send("app-reload");
 }
