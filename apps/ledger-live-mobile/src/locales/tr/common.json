@@ -2156,26 +2156,6 @@
         "learnHowToUpdate" : "Güncelleme yönergeleri"
       }
     },
-    "stepImportAccounts" : {
-      "title" : "Masaüstünden kripto senkronizasyonu",
-      "desc" : "Kriptolarınızı Ledger masaüstü uygulamasında zaten kurduysanız, telefonunuzdan da yönetmek için senkronize edebilirsiniz.",
-      "cta" : "Taramaya hazırım.",
-      "bullets" : {
-        "0" : {
-          "label" : "Masaüstü uygulamasında \n<1>Ayarlar > Hesaplar > Hesap Dışa Aktarma</1> seçeneğini seçin."
-        },
-        "1" : {
-        },
-        "2" : {
-          "label" : "İçe aktarılacak kripto hesaplarını seçin."
-        }
-      },
-      "warning" : {
-        "title" : "Masaüstü ve mobil uygulamalarınız manuel olarak senkronize edilmelidir.",
-        "desc" : "Ledger Live gizliliğinize saygı duyar ve verilerinizi yerel olarak saklar. Telefonunuzdaki hesapları ve ayarları değiştirirseniz, aynı şeyi bilgisayarınızda da yapmanız gerekir ve bunun aksi de geçerlidir. İşlemleriniz blok zinciri ile senkronize kalır.",
-        "cta" : "Anladım!"
-      }
-    },
     "stepSetupPin" : {
       "step1" : "{{fullDeviceName}} cihazınızı açın ve yönergeleri izleyin.",
       "step1-nanoS" : "{{fullDeviceName}} cihazınızı bir OTG kablosu kullanarak telefonunuza bağlayın.",
@@ -2855,8 +2835,8 @@
       "contactSupport" : "Destek al"
     },
     "willBedeprecatedBanner" : {
-      "title" : "Verimliliği iyileştirmek için {{deprecatedDate}} tarihinden itibaren {{currencyName}} artık Ledger Live'da desteklenmeyecektir. Ancak Ledger donanım cüzdanlarında desteklenmeye devam edecektir. Bu konuda yardım almak isterseniz Ledger Müşteri Destek ekibiyle lütfen iletişime geçin.",
-      "contactSupport" : "Destek al"
+      "title" : "{{currencyName}} will not be supported on Ledger Live as of {{deprecatedDate}}. It will still be secured by your Ledger hardware wallet. To learn more, please read the full Help Center article linked below.",
+      "learnMore" : "Learn more"
     },
     "tokens" : {
       "contractAddress" : "Sözleşme adresi",
@@ -3769,6 +3749,10 @@
       "twoStepApproval" : {
         "title" : "Adımları tamamlayın"
       },
+      "loader" : {
+        "title" : "Processing Swap",
+        "description" : "Please wait while we process your request."
+      },
       "history" : {
         "title" : "Takas geçmişi"
       },
@@ -3789,6 +3773,8 @@
         "apt_description" : "Aptos takas etmek için Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ veya Ledger Stax™ gibi başka bir uyumlu Ledger cihazı kullanın.",
         "cosmos_title" : "Ledger Nano S™, Cosmos takasını desteklemez",
         "cosmos_description" : "Cosmos takas etmek için Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ veya Ledger Stax™ gibi başka bir uyumlu Ledger cihazı kullanın.",
+        "hedera_title" : "Ledger Nano S™, Hedera takasını desteklemez",
+        "hedera_description" : "Hedera takas etmek için Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ veya Ledger Stax™ gibi başka bir uyumlu Ledger cihazını kullanın.",
         "osmo_title" : "Ledger Nano S™, Osmosis takasını desteklemez",
         "osmo_description" : "Osmosis takas etmek için Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ veya Ledger Stax™ gibi başka bir uyumlu Ledger cihazını kullanın.",
         "dydx_title" : "Ledger Nano S™, dYdX takasını desteklemez",
@@ -4441,7 +4427,7 @@
     "confirmSwap" : {
       "title" : "Takas işlemini cihazdan onaylayın",
       "alert" : {
-        "default" : "Göndermeden önce cihazınızdaki takas bilgilerini doğrulayın. Adresler güvenli bir şekilde aktarılır, böylece onları doğrulamak zorunda kalmazsınız.",
+        "default" : "Verify the swap details on your Ledger before sending it.",
         "provider" : "Göndermeden önce cihazınızdaki Takas bilgilerini doğrulayın. {{providerName}} bazı işlemler için ek doğrulama adımları gerçekleştirmek zorunda kalabilir ve bu, gecikmeye neden olabilir."
       },
       "acceptTerms" : "Bu işlemi onaylayarak,\n<0><0>{{provider}}</0> Kullanım Koşullarını</0> kabul ediyorum.",
@@ -7960,7 +7946,13 @@
     "searchPlaceholder" : "Ara",
     "emptyAssetList" : "Hiçbir varlık bulunamadı",
     "accountCount" : "{{count}} hesap",
-    "accountCount_plural" : "{{count}} hesap"
+    "accountCount_plural" : "{{count}} hesap",
+    "errors" : {
+      "title" : "Connection failed",
+      "backend" : "Something went wrong on our end. Please try again later",
+      "internet" : "No internet connection. Please try again",
+      "cta" : "Try again"
+    }
   },
   "swapErrors" : {
     "incorrectCommandData" : {
