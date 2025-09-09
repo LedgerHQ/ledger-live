@@ -2156,26 +2156,6 @@
         "learnHowToUpdate" : "了解如何更新"
       }
     },
-    "stepImportAccounts" : {
-      "title" : "通过桌面应用程序同步加密资产",
-      "desc" : "如果您已经在 Ledger 桌面应用程序设置好了您的加密资产，就可以通过您的手机完成同步并进行管理。",
-      "cta" : "我准备好扫描了",
-      "bullets" : {
-        "0" : {
-          "label" : "在桌面应用程序中，选择 <1>设置 > 账户 > 账户导出</1>。"
-        },
-        "1" : {
-        },
-        "2" : {
-          "label" : "选择需要导入的加密资产账户。"
-        }
-      },
-      "warning" : {
-        "title" : "必须手动完成桌面应用程序和手机应用程序的同步。",
-        "desc" : "Ledger Live 尊重您的隐私，只会本地存储您的数据。如果您在手机上更改了账户和设置，那么也需要在电脑上做出同样的操作，反之亦然。您的交易数据会和区块链保持同步。",
-        "cta" : "知道了！"
-      }
-    },
     "stepSetupPin" : {
       "step1" : "启动您的 {{fullDeviceName}} 并按照说明操作。",
       "step1-nanoS" : "使用 OTG 数据线来将您的 {{fullDeviceName}} 连接到您的手机上。",
@@ -2855,8 +2835,8 @@
       "contactSupport" : "联系客服"
     },
     "willBedeprecatedBanner" : {
-      "title" : "为了优化效率，自 {{deprecatedDate}} 起，Ledger Live 将不再支持 {{currencyName}}。但 Ledger 硬件钱包将继续支持该币种。如需这方面的帮助，请联系 Ledger 客服。",
-      "contactSupport" : "联系客服"
+      "title" : "自 {{deprecatedDate}} 起 Ledger Live 将不再支持 {{currencyName}}。但该币种仍会受到 Ledger 硬件钱包的保护。请访问下方链接，阅读完整的帮助中心文章，了解更多信息。",
+      "learnMore" : "了解更多"
     },
     "tokens" : {
       "contractAddress" : "合约地址",
@@ -3769,6 +3749,10 @@
       "twoStepApproval" : {
         "title" : "完成步骤"
       },
+      "loader" : {
+        "title" : "正在处理互换",
+        "description" : "我们正在处理您的请求，请稍候。"
+      },
       "history" : {
         "title" : "互换历史记录"
       },
@@ -3789,6 +3773,8 @@
         "apt_description" : "要互换 Aptos，请使用其他兼容的 Ledger 设备，例如 Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™ 或 Ledger Stax™。",
         "cosmos_title" : "Ledger Nano S™ 不支持互换 Cosmos",
         "cosmos_description" : "要互换 Cosmos，请使用其他兼容的 Ledger 设备，例如 Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™ 或 Ledger Stax™。",
+        "hedera_title" : "Ledger Nano S™ 不支持互换 Hedera",
+        "hedera_description" : "要互换 Hedera，请使用其他兼容的 Ledger 设备，例如 Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™ 或 Ledger Stax™。",
         "osmo_title" : "Ledger Nano S™ 不支持互换 Osmosis",
         "osmo_description" : "要互换 Osmosis，请使用其他兼容的 Ledger 设备，例如 Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™ 或 Ledger Stax™。",
         "dydx_title" : "Ledger Nano S™ 不支持互换 dYdX",
@@ -4441,7 +4427,7 @@
     "confirmSwap" : {
       "title" : "在设备上确认互换操作",
       "alert" : {
-        "default" : "发送之前请在您的设备上验证互换详情。地址会被安全地交换因此您不必对其进行验证。",
+        "default" : "Verify the swap details on your Ledger before sending it.",
         "provider" : "发送资金之前，请先在您的设备上核实互换详情。{{providerName}} 可能需要对某些交易进行额外验证，因此导致延迟。"
       },
       "acceptTerms" : "验证此交易，即表示我接受\n<0><0>{{provider}}</0>的使用条款</0>",
@@ -7960,7 +7946,13 @@
     "searchPlaceholder" : "搜索",
     "emptyAssetList" : "未找到资产",
     "accountCount" : "{{count}} 个账户",
-    "accountCount_plural" : "{{count}} 个账户"
+    "accountCount_plural" : "{{count}} 个账户",
+    "errors" : {
+      "title" : "连接失败",
+      "backend" : "我们这边出错了。请稍后重试",
+      "internet" : "无互联网连接。请重试",
+      "cta" : "请重试"
+    }
   },
   "swapErrors" : {
     "incorrectCommandData" : {
