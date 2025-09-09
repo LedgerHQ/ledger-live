@@ -13,6 +13,18 @@ export type Data = {
   editedNames: Record<string, string>;
 };
 
+export type OnboardingData = {
+  partyId: string;
+  address: string;
+  publicKey: string;
+  device: string;
+  accountIndex: number;
+  currency: string;
+  accountName: string;
+  transactionHash: string;
+  completedAccount: Account;
+};
+
 export enum StepId {
   AUTHORIZE,
   ONBOARD,
@@ -33,12 +45,12 @@ export type StepProps = {
   existingAccounts: Account[];
   onAccountCreated: (account: Account) => void;
   onboardingCompleted?: boolean;
-  onboardingData?: any | null;
+  onboardingData?: OnboardingData | null;
   onboardingStatus?: OnboardStatus;
   selectedAccounts: Account[];
   setError: (error: Error | null) => void;
   setOnboardingCompleted?: (completed: boolean) => void;
-  setOnboardingData?: (data: any) => void;
+  setOnboardingData?: (data: OnboardingData) => void;
   setOnboardingStatus?: (status: OnboardStatus) => void;
   transitionTo: (stepId: StepId) => void;
 };

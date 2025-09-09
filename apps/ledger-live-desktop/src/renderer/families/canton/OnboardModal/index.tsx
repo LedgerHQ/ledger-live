@@ -12,7 +12,7 @@ import { getCurrentDevice } from "~/renderer/reducers/devices";
 import { accountsSelector } from "~/renderer/reducers/accounts";
 import { closeModal } from "~/renderer/actions/modals";
 import Modal from "~/renderer/components/Modal";
-import Stepper from "~/renderer/components/Stepper";
+import Stepper, { Step } from "~/renderer/components/Stepper";
 import { getCurrencyBridge } from "@ledgerhq/live-common/bridge/index";
 import type { CantonCurrencyBridge } from "@ledgerhq/coin-canton/types";
 import { encodeAccountId } from "@ledgerhq/coin-framework/account/index";
@@ -30,7 +30,7 @@ import logger from "~/renderer/logger";
 import StepAuthorize, { StepAuthorizeFooter } from "./steps/StepAuthorize";
 import StepOnboard, { StepOnboardFooter } from "./steps/StepOnboard";
 import StepFinish, { StepFinishFooter } from "./steps/StepFinish";
-import { Data, StepId } from "./types";
+import { Data, StepId, OnboardingData } from "./types";
 
 export type Props = Data & {
   device: Device | null | undefined;
@@ -60,7 +60,7 @@ type State = {
   accountName: string;
   isCreating: boolean;
   error: Error | null;
-  onboardingData: any | null;
+  onboardingData: OnboardingData | null;
   onboardingCompleted: boolean;
   onboardingStatus: OnboardStatus;
   authorizeStatus: PreApprovalStatus;
@@ -68,7 +68,7 @@ type State = {
   showConfirmation: boolean;
   progress: number;
   message: string;
-  preapprovalSubscription: any | null;
+  preapprovalSubscription: { unsubscribe: () => void } | null;
 };
 
 const INITIAL_STATE: State = {
@@ -116,23 +116,29 @@ class OnboardModal extends PureComponent<Props, State> {
       component: StepFinish,
       footer: StepFinishFooter,
     },
-  ] as any;
+  ];
 
   handleReset = () => this.setState({ ...INITIAL_STATE });
 
-  handleStepChange = (step: any) =>
+  handleStepChange = (step: { id: StepId }) =>
     this.setState({
-      stepId: step.id as StepId,
+      stepId: step.id,
     });
 
-  handleBeforeOpen = ({ data }: { data: Data | undefined }) => {
+  handleBeforeOpen = ({ data: _data }: { data: Data | undefined }) => {
     // const primaryAccount = data.selectedAccounts[0];
     // const accountName = data.editedNames[primaryAccount.id];
     // this.setState({ accountName });
   };
 
-  handleAccountCreated = (account: Account) => {
-    const { addAccountsAction, existingAccounts, closeModal, editedNames, currency } = this.props;
+  handleAccountCreated = (_account: Account) => {
+    const {
+      addAccountsAction,
+      existingAccounts,
+      closeModal,
+      editedNames: _editedNames,
+      currency,
+    } = this.props;
     const { onboardingData, accountName } = this.state;
     const address = onboardingData?.partyId;
     // TODO: we need better solution ?
@@ -147,9 +153,9 @@ class OnboardModal extends PureComponent<Props, State> {
     const completedAccount = {
       ...onboardingData?.completedAccount,
       id: accountId,
-      address: xpubOrAddress,
       freshAddress: xpubOrAddress,
-    };
+      type: "Account" as const,
+    } as Account;
 
     addAccountsAction({
       scannedAccounts: [completedAccount],
@@ -165,7 +171,7 @@ class OnboardModal extends PureComponent<Props, State> {
     this.setState({ stepId });
   };
 
-  setOnboardingData = (data: any) => {
+  setOnboardingData = (data: OnboardingData) => {
     this.setState({ onboardingData: data });
   };
 
@@ -210,7 +216,7 @@ class OnboardModal extends PureComponent<Props, State> {
       return;
     }
 
-    const { partyId, address, device: deviceId, accountIndex } = onboardingData;
+    const { partyId, address: _address, device: deviceId, accountIndex } = onboardingData;
 
     const derivationScheme = getDerivationScheme({ derivationMode: "", currency });
     const derivationPath = runAccountDerivationScheme(derivationScheme, currency, {
@@ -274,8 +280,8 @@ class OnboardModal extends PureComponent<Props, State> {
     const { device, currency, t, selectedAccounts, editedNames } = this.props;
     const {
       stepId,
-      accountName,
-      isCreating,
+      accountName: _accountName,
+      isCreating: _isCreating,
       error,
       onboardingData,
       onboardingCompleted,
@@ -339,7 +345,7 @@ class OnboardModal extends PureComponent<Props, State> {
             stepId={stepId}
             onStepChange={this.handleStepChange}
             onClose={onClose}
-            steps={this.STEPS as any}
+            steps={this.STEPS as Step<StepId, unknown>[]}
             noScroll={true}
             {...stepperProps}
           />
@@ -349,9 +355,6 @@ class OnboardModal extends PureComponent<Props, State> {
   }
 }
 
-const m = compose(
-  connect(mapStateToProps, mapDispatchToProps),
-  withTranslation(),
-)(OnboardModal) as React.ComponentType<UserProps>;
+const m = compose(connect(mapStateToProps, mapDispatchToProps), withTranslation())(OnboardModal);
 
 export default m;

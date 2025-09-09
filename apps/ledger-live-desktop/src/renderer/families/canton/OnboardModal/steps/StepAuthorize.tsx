@@ -10,30 +10,33 @@ import Alert from "~/renderer/components/Alert";
 import Button from "~/renderer/components/Button";
 import CurrencyBadge from "~/renderer/components/CurrencyBadge";
 import Link from "~/renderer/components/Link";
-import Text from "~/renderer/components/Text";
 import { PreApprovalStatus } from "@ledgerhq/coin-canton/types";
 import Spinner from "~/renderer/components/Spinner";
 import AccountRow from "~/renderer/components/AccountsList/AccountRow";
 import TransactionConfirm from "~/renderer/components/TransactionConfirm";
 import { ValidatorRow } from "../fields/ValidatorRow";
-import { StepId } from "../types";
+import { StepId, OnboardingData } from "../types";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { Account } from "@ledgerhq/types-live";
+import { Device } from "@ledgerhq/live-common/hw/actions/types";
+import { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import BigNumber from "bignumber.js";
 
 export type StepAuthorizeProps = {
   accountName: string;
   clearError: () => void;
-  currency: any;
+  currency: CryptoCurrency;
   error: Error | null;
-  selectedAccounts: any[];
+  selectedAccounts: Account[];
   editedNames: Record<string, string>;
   cantonBridge: CantonCurrencyBridge;
-  device: any;
+  device: Device;
   isAuthorized?: boolean;
-  onboardingData?: any;
+  onboardingData?: OnboardingData;
   setError: (error: Error | null) => void;
   transitionTo: (step: StepId) => void;
-  onAccountCreated: (account: any) => void;
-  setOnboardingData?: (data: any) => void;
+  onAccountCreated: (account: Account) => void;
+  setOnboardingData?: (data: OnboardingData) => void;
   authorizeStatus: PreApprovalStatus;
   isProcessing: boolean;
   showConfirmation: boolean;
@@ -43,7 +46,7 @@ export type StepAuthorizeProps = {
 };
 
 export type StepAuthorizeFooterProps = {
-  currency: any;
+  currency: CryptoCurrency;
   isProcessing: boolean;
   authorizeStatus: PreApprovalStatus;
   error: Error | null;
@@ -56,22 +59,22 @@ const StepAuthorize = ({
   accountName,
   clearError,
   currency,
-  error,
+  error: _error,
   selectedAccounts,
-  editedNames,
-  cantonBridge,
+  editedNames: _editedNames,
+  cantonBridge: _cantonBridge,
   authorizeStatus,
   device,
   isAuthorized = true,
   onboardingData,
-  setError,
-  transitionTo,
-  onAccountCreated,
-  setOnboardingData,
-  isProcessing,
-  showConfirmation,
-  progress,
-  message,
+  setError: _setError,
+  transitionTo: _transitionTo,
+  onAccountCreated: _onAccountCreated,
+  setOnboardingData: _setOnboardingData,
+  isProcessing: _isProcessing,
+  showConfirmation: _showConfirmation,
+  progress: _progress,
+  message: _message,
   handlePreapproval,
 }: StepAuthorizeProps) => {
   const selectedAccount = selectedAccounts[0];
@@ -116,7 +119,7 @@ const StepAuthorize = ({
     setCurrentAccountName(name);
   }, [accountName, onboardingData]);
 
-  const handleStartPreapproval = () => {
+  const _handleStartPreapproval = () => {
     clearError();
     handlePreapproval();
   };
@@ -136,8 +139,9 @@ const StepAuthorize = ({
                   mode: "preapproval",
                   recipient: onboardingData?.partyId || "",
                   amount: new BigNumber(0),
+                  fee: new BigNumber(0),
                   onboardingData,
-                } as any
+                } as Transaction
               }
               status={
                 {
@@ -146,7 +150,7 @@ const StepAuthorize = ({
                   estimatedFees: new BigNumber(0),
                   errors: {},
                   warnings: {},
-                } as any
+                } as TransactionStatus
               }
             />
           </Box>
@@ -225,15 +229,15 @@ const StepAuthorize = ({
 
 export const StepAuthorizeFooter = ({
   currency,
-  isProcessing,
-  error,
+  isProcessing: _isProcessing,
+  error: _error,
   authorizeStatus,
-  onRetry,
-  onConfirm,
+  onRetry: _onRetry,
+  onConfirm: _onConfirm,
   handlePreapproval,
 }: StepAuthorizeFooterProps) => {
   if (authorizeStatus === PreApprovalStatus.SIGN) {
-    return null;
+    return <></>;
   }
 
   return (

@@ -19,7 +19,9 @@ import Spinner from "~/renderer/components/Spinner";
 import Text from "~/renderer/components/Text";
 import TransactionConfirm from "~/renderer/components/TransactionConfirm";
 import { CantonOnboardProgress, CantonOnboardResult } from "@ledgerhq/coin-canton/types";
-import { StepProps, StepId } from "../types";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
+import { StepProps, StepId, OnboardingData } from "../types";
 
 interface SigningData {
   partyId: string;
@@ -56,7 +58,7 @@ const getStatusMessage = (status: OnboardStatus): string => {
 };
 
 interface FooterProps {
-  currency: any;
+  currency: CryptoCurrency;
   transitionTo: (stepId: StepId) => void;
   onboardingCompleted: boolean;
   isLoading?: boolean;
@@ -69,8 +71,8 @@ export default function StepOnboard({
   selectedAccounts,
   accountName,
   cantonBridge,
-  transitionTo,
-  onAccountCreated,
+  transitionTo: _transitionTo,
+  onAccountCreated: _onAccountCreated,
   setOnboardingData,
   setOnboardingCompleted,
   setOnboardingStatus,
@@ -161,7 +163,7 @@ export default function StepOnboard({
   }, []);
 
   useEffect(() => {
-    setOnboardingData?.(null);
+    setOnboardingData?.(null as unknown as OnboardingData);
     setOnboardingCompleted?.(false);
 
     if (!device || !currency) {
@@ -169,7 +171,7 @@ export default function StepOnboard({
       return;
     }
 
-    let subscription: any = null;
+    let subscription: { unsubscribe: () => void } | null = null;
 
     if (!cantonBridge.onboardAccount) {
       throw new Error("Canton bridge does not support onboardAccount");
@@ -197,12 +199,18 @@ export default function StepOnboard({
           if (progressData.status === OnboardStatus.SIGN) {
             logger.log("Entering signing phase, storing transaction data");
             const signingData: SigningData = {
-              partyId: (progressData as any).partyId || "pending-party-id",
-              publicKey: (progressData as any).publicKey || "pending-public-key",
-              transactionData: (progressData as any).transactionData || progressData,
+              partyId:
+                ((progressData as Record<string, unknown>).partyId as string) || "pending-party-id",
+              publicKey:
+                ((progressData as Record<string, unknown>).publicKey as string) ||
+                "pending-public-key",
+              transactionData:
+                (progressData as Record<string, unknown>).transactionData || progressData,
               combinedHash:
-                (progressData as any).combinedHash || (progressData as any).combined_hash || "",
-              derivationPath: (progressData as any).derivationPath,
+                ((progressData as Record<string, unknown>).combinedHash as string) ||
+                ((progressData as Record<string, unknown>).combined_hash as string) ||
+                "",
+              derivationPath: (progressData as Record<string, unknown>).derivationPath as string,
             };
             handleStateUpdate(progressData.status, statusMessage, signingData);
           }
@@ -224,13 +232,13 @@ export default function StepOnboard({
         if (onboardingResult?.partyId) {
           const onboardingDataObject = {
             partyId: onboardingResult.partyId,
-            address: onboardingResult.address,
-            publicKey: onboardingResult.publicKey,
+            address: onboardingResult.address || "",
+            publicKey: onboardingResult.publicKey || "",
             device: device.deviceId,
             accountIndex,
             currency: currency.id,
             accountName: accountName,
-            transactionHash: onboardingResult.transactionHash,
+            transactionHash: onboardingResult.transactionHash || "",
             completedAccount: placeholderAccount,
           };
 
@@ -267,6 +275,7 @@ export default function StepOnboard({
     retryCount,
     cantonBridge,
     accountName,
+    placeholderAccount,
     handleStateUpdate,
     handleFinish,
     handleError,
@@ -336,8 +345,9 @@ export default function StepOnboard({
                 mode: "onboarding",
                 recipient: signingData?.partyId || "",
                 amount: new BigNumber(0),
+                fee: new BigNumber(0),
                 onboardingData: signingData,
-              } as any
+              } as Transaction
             }
             status={
               {
@@ -346,7 +356,7 @@ export default function StepOnboard({
                 estimatedFees: new BigNumber(0),
                 errors: {},
                 warnings: {},
-              } as any
+              } as TransactionStatus
             }
             manifestId="canton-onboarding"
             manifestName="Canton Onboarding"
@@ -434,7 +444,7 @@ export default function StepOnboard({
         );
 
       default:
-        return null;
+        return <></>;
     }
   };
 
@@ -463,7 +473,7 @@ export const StepOnboardFooter = ({
 
   // Hide footer during signing phase
   if (status === OnboardStatus.SIGN) {
-    return null;
+    return <></>;
   }
 
   const isButtonDisabled = !onboardingCompleted || isLoading;
