@@ -86,11 +86,12 @@ export const fetchERC20Tokens: (
       );
       if (!latestCALHash) {
         setCALHash(currency, embeddedHash);
+        return embeddedTokens;
       }
     }
 
     log("evm/preload", `failure to retrieve tokens for ${chainId}`, e);
-    return embeddedTokens;
+    return null;
   }
 };
 

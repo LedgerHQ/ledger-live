@@ -72,17 +72,23 @@ export const fetchSPLTokens: (
     setCALHash(currency, hash || "");
     log("solana/preload", "preload " + splTokens.length + " tokens");
     storeTokens(splTokens);
-
     return splTokens;
   } catch (e) {
     if (e instanceof AxiosError && e.response?.status === 304) {
+      log(
+        "solana/preload",
+        `loading existing fallback tokens for solana with hash ${latestCALHash || embeddedHash}`,
+      );
       if (!latestCALHash) {
         setCALHash(currency, embeddedHash);
+        // First load with no known CAL hash: hydrate embedded tokens into the store
+        storeTokens(spltokensList);
+        return spltokensList;
       }
     }
 
-    storeTokens(spltokensList);
-    return spltokensList;
+    log("solana/preload", `failure to retrieve tokens for solana`, e);
+    return null;
   }
 };
 export async function preloadWithAPI(
