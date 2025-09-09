@@ -10,7 +10,6 @@ import {
 } from "@hashgraph/sdk";
 import type { Account, TokenAccount } from "@ledgerhq/types-live";
 import { findSubAccountById, isTokenAccount } from "@ledgerhq/coin-framework/account/helpers";
-import { safeParseAccountId } from "../bridge/utils";
 import { Transaction } from "../types";
 import { isTokenAssociateTransaction } from "../logic";
 
@@ -30,15 +29,13 @@ async function buildUnsignedCoinTransaction({
 }): Promise<TransferTransaction> {
   const accountId = account.freshAddress;
   const hbarAmount = Hbar.fromTinybars(transaction.amount);
-  const [_, recipientAddress] = safeParseAccountId(transaction.recipient);
-  const recipientWithoutChecksum = recipientAddress?.accountId ?? transaction.recipient;
 
   return new TransferTransaction()
     .setNodeAccountIds(nodeAccountIds)
     .setTransactionId(TransactionId.generate(accountId))
     .setTransactionMemo(transaction.memo ?? "")
     .addHbarTransfer(accountId, hbarAmount.negated())
-    .addHbarTransfer(recipientWithoutChecksum, hbarAmount)
+    .addHbarTransfer(transaction.recipient, hbarAmount)
     .freeze();
 }
 
@@ -53,15 +50,13 @@ async function buildUnsignedTokenTransaction({
 }): Promise<TransferTransaction> {
   const accountId = account.freshAddress;
   const tokenId = tokenAccount.token.contractAddress;
-  const [_, recipientAddress] = safeParseAccountId(transaction.recipient);
-  const recipientWithoutChecksum = recipientAddress?.accountId ?? transaction.recipient;
 
   return new TransferTransaction()
     .setNodeAccountIds(nodeAccountIds)
     .setTransactionId(TransactionId.generate(accountId))
     .setTransactionMemo(transaction.memo ?? "")
     .addTokenTransfer(tokenId, accountId, transaction.amount.negated().toNumber())
-    .addTokenTransfer(tokenId, recipientWithoutChecksum, transaction.amount.toNumber())
+    .addTokenTransfer(tokenId, transaction.recipient, transaction.amount.toNumber())
     .freeze();
 }
 
