@@ -1,43 +1,46 @@
 import { useCallback } from "react";
 import { ModularDrawerStep } from "../types";
-import type { StepFlowManagerReturnType } from "./useModularDrawerFlowStepManager";
 import type { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  modularDrawerEnableAccountSelectionSelector,
+  modularDrawerStepSelector,
+  setStep,
+} from "~/reducers/modularDrawer";
 
 type UseStepNavigationParams = {
-  navigationStepManager: StepFlowManagerReturnType;
   availableNetworksCount: number;
   hasOneCurrency: boolean;
   resetSelection: () => void;
   clearNetwork: () => void;
   selectNetwork?: (n: CryptoOrTokenCurrency) => void;
   navigateToDeviceWithCurrency: (selectedCurrency: CryptoOrTokenCurrency) => void;
-  enableAccountSelection?: boolean;
 };
 
 export function useStepNavigation({
-  navigationStepManager,
   availableNetworksCount,
   hasOneCurrency,
   resetSelection,
   clearNetwork,
   selectNetwork,
-  enableAccountSelection,
   navigateToDeviceWithCurrency,
 }: UseStepNavigationParams) {
+  const enableAccountSelection = useSelector(modularDrawerEnableAccountSelectionSelector);
+  const dispatch = useDispatch();
   const canGoBackToAsset = !hasOneCurrency;
   const canGoBackToNetwork = availableNetworksCount > 1;
 
   const backToAsset = useCallback(() => {
     resetSelection();
-    navigationStepManager.goToStep(ModularDrawerStep.Asset);
-  }, [navigationStepManager, resetSelection]);
+    dispatch(setStep(ModularDrawerStep.Asset));
+  }, [resetSelection, dispatch]);
 
   const backToNetwork = useCallback(() => {
     clearNetwork();
-    navigationStepManager.goToStep(ModularDrawerStep.Network);
-  }, [navigationStepManager, clearNetwork]);
+    dispatch(setStep(ModularDrawerStep.Network));
+  }, [clearNetwork, dispatch]);
 
-  const currentStep = navigationStepManager.currentStep;
+  const currentStep = useSelector(modularDrawerStepSelector);
   const shouldShowBackButton = (() => {
     switch (currentStep) {
       case ModularDrawerStep.Network:
@@ -53,12 +56,12 @@ export function useStepNavigation({
     (selectedAsset: CryptoOrTokenCurrency, selectedNetwork: CryptoOrTokenCurrency) => {
       if (selectNetwork) selectNetwork(selectedNetwork);
       if (enableAccountSelection) {
-        navigationStepManager.goToStep(ModularDrawerStep.Account);
+        dispatch(setStep(ModularDrawerStep.Account));
       } else {
         navigateToDeviceWithCurrency(selectedAsset);
       }
     },
-    [navigationStepManager, selectNetwork, enableAccountSelection, navigateToDeviceWithCurrency],
+    [dispatch, selectNetwork, enableAccountSelection, navigateToDeviceWithCurrency],
   );
 
   return {

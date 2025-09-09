@@ -3,19 +3,19 @@ import type { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import type { Account } from "@ledgerhq/types-live";
 import { ModularDrawerStep } from "../types";
 
-import { useModularDrawerFlowStepManager } from "./useModularDrawerFlowStepManager";
 import { useStepNavigation } from "./useStepNavigation";
 import { useDeviceNavigation } from "./useDeviceNavigation";
 import { useDrawerLifecycle } from "./useDrawerLifecycle";
 import { AssetsData } from "./useAssets";
 import { getNetworksForAsset, resolveCurrency } from "../utils/helpers";
+import { useDispatch, useSelector } from "react-redux";
+import { modularDrawerEnableAccountSelectionSelector, setStep } from "~/reducers/modularDrawer";
 
 type ModularDrawerStateProps = {
   assetsSorted: AssetsData;
   selectedStep?: ModularDrawerStep;
   currencyIds: string[];
   isDrawerOpen?: boolean;
-  enableAccountSelection?: boolean;
   onClose?: () => void;
   onAccountSelected?: (account: Account) => void;
   hasSearchedValue?: boolean;
@@ -25,11 +25,11 @@ export function useModularDrawerState({
   assetsSorted,
   currencyIds,
   isDrawerOpen,
-  enableAccountSelection,
   onClose,
   hasSearchedValue,
 }: ModularDrawerStateProps) {
-  const navigationStepManager = useModularDrawerFlowStepManager();
+  const enableAccountSelection = useSelector(modularDrawerEnableAccountSelectionSelector);
+  const dispatch = useDispatch();
 
   const [asset, setAsset] = useState<CryptoOrTokenCurrency>();
   const [network, setNetwork] = useState<CryptoOrTokenCurrency>();
@@ -52,8 +52,6 @@ export function useModularDrawerState({
   }, []);
 
   const { navigateToDeviceWithCurrency } = useDeviceNavigation({
-    navigationStepManager,
-    enableAccountSelection,
     onClose,
     resetSelection: reset,
   });
@@ -66,13 +64,11 @@ export function useModularDrawerState({
     shouldShowBackButton,
     proceedToNextStep,
   } = useStepNavigation({
-    navigationStepManager,
     availableNetworksCount: availableNetworks.length,
     hasOneCurrency,
     resetSelection: reset,
     clearNetwork,
     selectNetwork: setNetwork,
-    enableAccountSelection,
     navigateToDeviceWithCurrency,
   });
 
@@ -84,13 +80,13 @@ export function useModularDrawerState({
 
       if (availableNetworksList.length > 1) {
         setAvailableNetworks(availableNetworksList);
-        navigationStepManager.goToStep(ModularDrawerStep.Network);
+        dispatch(setStep(ModularDrawerStep.Network));
       } else if (availableNetworksList.length === 1) {
         const singleNetwork = availableNetworksList[0];
         const resolvedCurrency = resolveCurrency(assetsSorted, selected, singleNetwork);
         proceedToNextStep(resolvedCurrency ?? selected, singleNetwork);
       } else if (enableAccountSelection) {
-        navigationStepManager.goToStep(ModularDrawerStep.Account);
+        dispatch(setStep(ModularDrawerStep.Account));
       } else {
         navigateToDeviceWithCurrency(selected);
       }
@@ -98,7 +94,7 @@ export function useModularDrawerState({
     [
       assetsSorted,
       enableAccountSelection,
-      navigationStepManager,
+      dispatch,
       navigateToDeviceWithCurrency,
       proceedToNextStep,
     ],
@@ -115,7 +111,6 @@ export function useModularDrawerState({
   );
 
   const { handleBackButton, handleCloseButton } = useDrawerLifecycle({
-    navigationStepManager,
     canGoBackToAsset,
     canGoBackToNetwork,
     backToAsset,
@@ -154,7 +149,6 @@ export function useModularDrawerState({
     accountCurrency,
     network,
     availableNetworks,
-    navigationStepManager,
     shouldShowBackButton,
     hasOneCurrency,
     onAddNewAccount,
