@@ -141,14 +141,14 @@ export type CeloOperation = Operation<CeloOperationExtra>;
 export type CeloOperationRaw = OperationRaw<CeloOperationExtraRaw>;
 
 export type CeloOperationExtra = {
-  celoOperationValue: BigNumber;
+  celoOperationValue?: BigNumber;
   celoSourceValidator?: string;
 };
 export function isCeloOperationExtra(op: OperationExtra): op is CeloOperationExtra {
   return op !== null && typeof op === "object" && "celoOperationValue" in op;
 }
 export type CeloOperationExtraRaw = {
-  celoOperationValue: string;
+  celoOperationValue?: string;
   celoSourceValidator?: string;
 };
 export function isCeloOperationExtraRaw(op: OperationExtraRaw): op is CeloOperationExtraRaw {

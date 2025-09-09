@@ -44,9 +44,9 @@ export const buildOptimisticOperation = (
     accountId: isTokenTransaction ? tokenAccount.id : account.id,
     date: new Date(),
     extra: {
-      celoOperationValue: new BigNumber(transaction.amount),
       ...(["ACTIVATE", "VOTE", "REVOKE"].includes(type)
         ? {
+            celoOperationValue: new BigNumber(transaction.amount),
             celoSourceValidator: transaction.recipient,
           }
         : {}),
