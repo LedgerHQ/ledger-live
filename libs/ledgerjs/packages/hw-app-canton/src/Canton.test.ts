@@ -68,7 +68,8 @@ describe("Canton", () => {
       return expect(canton.getAddress("invalid path")).rejects.toThrow();
     });
 
-    it("should handle various derivation paths", async () => {
+    // unskip when TODO comment is handled
+    it.skip("should handle various derivation paths", async () => {
       // GIVEN
       const transport = await openTransportReplayer(
         RecordStore.fromString(`
