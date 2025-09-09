@@ -9,6 +9,8 @@ import { useHeaderHeight } from "@react-navigation/elements";
 import { SwapCustomErrorProps } from "../types";
 import Button from "~/components/Button";
 import useExportLogs from "~/components/useExportLogs";
+import { sharedSwapTracking } from "../utils";
+import { track } from "~/analytics/segment";
 
 export default function SwapCustomError({ route }: SwapCustomErrorProps) {
   const { t } = useTranslation();
@@ -26,6 +28,10 @@ export default function SwapCustomError({ route }: SwapCustomErrorProps) {
         : "";
 
     if (errorMessage.includes("transaction cannot be created")) {
+      track("error_message", {
+        ...sharedSwapTracking,
+        message: "partner_unavailable",
+      });
       return {
         title: t("swapErrors.transactionCannotBeCreated.title"),
         description: t("swapErrors.transactionCannotBeCreated.description"),
