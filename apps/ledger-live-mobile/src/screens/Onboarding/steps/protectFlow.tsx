@@ -8,7 +8,6 @@ import { TrackScreen } from "~/analytics";
 
 import StepLottieAnimation from "./setupDevice/scenes/StepLottieAnimation";
 import { completeOnboarding } from "~/actions/settings";
-import { useNavigationInterceptor } from "../onboardingContext";
 import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { OnboardingNavigatorParamList } from "~/components/RootNavigator/types/OnboardingNavigator";
 import { Step } from "./setupDevice/scenes/BaseStepperView";
@@ -34,7 +33,6 @@ function OnboardingStepProtectFlow({ navigation, route }: NavigationProps) {
   const protectFeature = useFeature("protectServicesMobile");
 
   const dispatch = useDispatch();
-  const { resetCurrentStep } = useNavigationInterceptor();
 
   const { deviceModelId } = route.params;
 
@@ -63,7 +61,6 @@ function OnboardingStepProtectFlow({ navigation, route }: NavigationProps) {
 
   const onFinish = useCallback(() => {
     dispatch(completeOnboarding());
-    resetCurrentStep();
 
     if (protectFeature?.enabled && (lastConnectedDevice || !hasCompletedOnboarding)) {
       navigation.navigate(NavigatorName.Base, {
@@ -83,7 +80,6 @@ function OnboardingStepProtectFlow({ navigation, route }: NavigationProps) {
     navigation,
     protectFeature?.enabled,
     protectFeature?.params?.protectId,
-    resetCurrentStep,
   ]);
 
   const nextPage = useCallback(() => {

@@ -7,7 +7,6 @@ import { Pressable, StyleSheet } from "react-native";
 import { ModalHeaderCloseButton } from "@ledgerhq/native-ui/components/Layout/Modals/BaseModal/index";
 import Button from "~/components/wrappedUi/Button";
 import { NavigatorName, ScreenName } from "~/const";
-import { useNavigationInterceptor } from "./Onboarding/onboardingContext";
 import { TrackScreen } from "~/analytics";
 import {
   RootNavigationComposite,
@@ -22,18 +21,15 @@ type NavigationProp = RootNavigationComposite<
 export default function PostBuyDeviceSetupNanoWallScreen() {
   const { t } = useTranslation();
   const navigation = useNavigation<NavigationProp>();
-  const { setShowWelcome, setFirstTimeOnboarding } = useNavigationInterceptor();
 
   const setupDevice = useCallback(() => {
-    setShowWelcome(false);
-    setFirstTimeOnboarding(false);
     navigation.navigate(NavigatorName.BaseOnboarding, {
       screen: NavigatorName.Onboarding,
       params: {
         screen: ScreenName.OnboardingDeviceSelection,
       },
     });
-  }, [navigation, setFirstTimeOnboarding, setShowWelcome]);
+  }, [navigation]);
 
   return (
     <SafeAreaView
