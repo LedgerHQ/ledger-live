@@ -2156,26 +2156,6 @@
         "learnHowToUpdate" : "Erfahren Sie, wie Sie aktualisieren können"
       }
     },
-    "stepImportAccounts" : {
-      "title" : "Krypto vom Desktop synchronisieren",
-      "desc" : "Wenn Sie Ihre Kryptowährungen bereits in der Ledger-Desktop-App eingerichtet haben, können Sie diese synchronisieren, um sie von Ihrem Smartphone aus zu verwalten.",
-      "cta" : "Ich bin bereit zum Scannen",
-      "bullets" : {
-        "0" : {
-          "label" : "Wählen Sie in der Desktop-App <1>Einstellungen > Konten > Kontoexport</1>."
-        },
-        "1" : {
-        },
-        "2" : {
-          "label" : "Wählen Sie die zu importierenden Krypto-Konten aus."
-        }
-      },
-      "warning" : {
-        "title" : "Ihre Desktop- und Mobil-Apps müssen manuell synchronisiert werden.",
-        "desc" : "Ledger Live respektiert Ihre Privatsphäre und speichert Ihre Daten lokal. Wenn Sie Konten und Einstellungen auf Ihrem Telefon ändern, müssen Sie dies auch auf Ihrem Computer tun und umgekehrt. Ihre Transaktionen bleiben mit der Blockchain synchronisiert.",
-        "cta" : "Verstanden!"
-      }
-    },
     "stepSetupPin" : {
       "step1" : "Schalten Sie Ihren {{fullDeviceName}} ein und folgen Sie den Anweisungen.",
       "step1-nanoS" : "Verbinden Sie Ihren {{fullDeviceName}} über ein OTG-Kabel mit Ihrem Smartphone.",
@@ -2855,8 +2835,8 @@
       "contactSupport" : "Support kontaktieren"
     },
     "willBedeprecatedBanner" : {
-      "title" : "Um die Effizienz zu steigern, wird {{currencyName}} ab dem {{deprecatedDate}} nicht mehr in Ledger Live unterstützt. Auf den Hardware-Wallets von Ledger bleibt die Unterstützung jedoch bestehen. Wenn du Hilfe benötigst, wende dich bitte an den Ledger-Kundenservice.",
-      "contactSupport" : "Support kontaktieren"
+      "title" : "{{currencyName}} wird ab dem {{deprecatedDate}} nicht mehr in Ledger Live unterstützt. Auf Ledger-Hardware-Wallets bleibt die Unterstützung jedoch erhalten. Ausführliche Informationen findest du im nachstehend verlinkten Artikel im Hilfe-Center.",
+      "learnMore" : "Weitere Informationen"
     },
     "tokens" : {
       "contractAddress" : "Vertragsadresse",
@@ -3769,6 +3749,10 @@
       "twoStepApproval" : {
         "title" : "Schritte erledigen"
       },
+      "loader" : {
+        "title" : "Swap wird verarbeitet",
+        "description" : "Bitte warte, während wir deine Anfrage bearbeiten."
+      },
       "history" : {
         "title" : "Swap-Verlauf"
       },
@@ -3789,6 +3773,8 @@
         "apt_description" : "Zum Swappen von Aptos müsstest du ein anderes kompatibles Ledger-Gerät verwenden, z. B. eine Ledger Nano S Plus™, eine Ledger Nano X™, eine Ledger Flex™ oder eine Ledger Stax™.",
         "cosmos_title" : "Ledger Nano S™ unterstützt das Swappen von Cosmos nicht",
         "cosmos_description" : "Zum Swappen von Cosmos müsstest du ein anderes kompatibles Ledger-Gerät verwenden, z. B. eine Ledger Nano S Plus™, eine Ledger Nano X™, eine Ledger Flex™ oder eine Ledger Stax™.",
+        "hedera_title" : "Ledger Nano S™ unterstützt das Swappen von Hedera nicht",
+        "hedera_description" : "Zum Swappen von Hedera musst du ein anderes kompatibles Ledger-Gerät verwenden, z. B. eine Ledger Nano S Plus™, eine Ledger Nano X™, eine Ledger Flex™ oder eine Ledger Stax™.",
         "osmo_title" : "Ledger Nano S™ unterstützt das Swappen von Osmosis nicht",
         "osmo_description" : "Zum Swappen von Osmosis musst du ein anderes kompatibles Ledger-Gerät verwenden, z. B. eine Ledger Nano S Plus™, eine Ledger Nano X™, eine Ledger Flex™ oder eine Ledger Stax™.",
         "dydx_title" : "Ledger Nano S™ unterstützt das Swappen von dYdX nicht",
@@ -4441,7 +4427,7 @@
     "confirmSwap" : {
       "title" : "Swap-Vorgang auf dem Gerät bestätigen",
       "alert" : {
-        "default" : "Überprüfen Sie die Details des Tauschs auf Ihrem Gerät, bevor Sie sie senden. Die Adressen werden sicher ausgetauscht, sodass Sie diese nicht verifizieren müssen.",
+        "default" : "Verify the swap details on your Ledger before sending it.",
         "provider" : "Verifizieren Sie die Swap-Details auf Ihrem Gerät, bevor Sie diese senden. {{providerName}} muss möglicherweise eine zusätzliche Überprüfung für einige Transaktionen durchführen, was zu einer Verzögerung führen kann."
       },
       "acceptTerms" : "Durch Validieren dieser Transaktion stimme ich den\n<0>Nutzungsbedingungen von <0>{{provider}}</0> zu</0>",
@@ -7960,7 +7946,13 @@
     "searchPlaceholder" : "Suche",
     "emptyAssetList" : "Keine Assets gefunden",
     "accountCount" : "{{count}} Konto",
-    "accountCount_plural" : "{{count}} Konten"
+    "accountCount_plural" : "{{count}} Konten",
+    "errors" : {
+      "title" : "Verbindung fehlgeschlagen",
+      "backend" : "Bei uns ist ein Problem aufgetreten. Versuche es bitte später noch einmal.",
+      "internet" : "Keine Internetverbindung. Bitte versuche es noch einmal.",
+      "cta" : "Wiederholen"
+    }
   },
   "swapErrors" : {
     "incorrectCommandData" : {
