@@ -9,7 +9,6 @@ import { ERC20Token } from "@ledgerhq/cryptoassets/types";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { fetchTokensFromCALService } from "@ledgerhq/cryptoassets/crypto-assets-importer/fetch/index";
 import { getCALHash, setCALHash } from "../logic";
-import { getCryptoAssetsStore } from "../cryptoAssetsStore";
 
 let shouldSkipTokenLoading = false;
 export function setShouldSkipTokenLoading(skip: boolean): void {
@@ -90,44 +89,21 @@ export async function preload(currency: CryptoCurrency): Promise<ERC20Token[] | 
   if (!erc20) return;
 
   log("evm/preload", "preload " + erc20.length + " tokens");
-  const store = getCryptoAssetsStore();
-  if ("addTokens" in store && typeof store.addTokens === "function") {
-    const convertedTokens = erc20.map(convertERC20).filter(Boolean);
-    store.addTokens(convertedTokens);
-  } else {
-    addTokens(erc20.map(convertERC20));
-  }
-
+  addTokens(erc20.map(convertERC20));
   return erc20;
 }
 
 export function hydrate(value: unknown, currency: CryptoCurrency): void {
   if (shouldSkipTokenLoading) return;
-  const store = getCryptoAssetsStore();
-  const hasAddTokens = "addTokens" in store;
-
   if (!Array.isArray(value)) {
     const { chainId } = currency.ethereumLikeInfo || {};
     const tokens = tokensByChainId[chainId as keyof typeof tokensByChainId] || [];
-
-    if (hasAddTokens && typeof store.addTokens === "function") {
-      const convertedTokens = tokens.map(convertERC20).filter(Boolean);
-      store.addTokens(convertedTokens);
-    } else {
-      addTokens(tokens.map(convertERC20));
-    }
-
+    addTokens(tokens.map(convertERC20));
     log("evm/preload", `hydrate fallback ${tokens.length} embedded tokens`);
     return;
   }
 
-  if (hasAddTokens && typeof store.addTokens === "function") {
-    const convertedTokens = value.map(convertERC20).filter(Boolean);
-    store.addTokens(convertedTokens);
-  } else {
-    addTokens(value.map(convertERC20));
-  }
-
+  addTokens(value.map(convertERC20));
   log("evm/preload", `hydrate ${value.length} tokens`);
   return;
 }
