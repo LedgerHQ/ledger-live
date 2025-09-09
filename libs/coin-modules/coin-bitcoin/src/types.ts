@@ -1,5 +1,5 @@
 import type { BigNumber } from "bignumber.js";
-import type { Account as WalletAccount, SerializedAccount as WalletAccountRaw } from "./wallet-btc";
+import type { SerializedAccount as WalletAccountRaw } from "./wallet-btc";
 import {
   Account,
   AccountRaw,
@@ -46,7 +46,13 @@ export type BitcoinOutputRaw = [
 
 export type BitcoinResources = {
   utxos: BitcoinOutput[];
-  walletAccount?: WalletAccount | undefined;
+  // walletAccount?: WalletAccount | undefined;
+  /**
++   * Serialized wallet-btc account snapshot to persist.
++   * Never a live class instance. Instantiate it via wallet.importFromSerializedAccount()
++   * when you need to work with it.
++   */
+  walletAccount?: WalletAccountRaw | undefined;
 };
 
 export type BitcoinResourcesRaw = {
