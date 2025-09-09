@@ -31,6 +31,8 @@ const getDeviceNameMaxLength = (props: Props): number => {
     }
 
     case DeviceModelId.stax:
+    case DeviceModelId.europa:
+    case DeviceModelId.apex:
       maxLength = 20;
       break;
   }
