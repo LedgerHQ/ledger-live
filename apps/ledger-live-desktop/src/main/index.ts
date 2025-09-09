@@ -19,7 +19,6 @@ import {
   getMainWindowAsync,
   loadWindow,
 } from "./window-lifecycle";
-import { getSentryEnabled, setUserId } from "./internal-lifecycle";
 import db from "./db";
 import debounce from "lodash/debounce";
 import sentry from "~/sentry/main";
@@ -102,12 +101,7 @@ app.on("ready", async () => {
   const user: User = (await db.getKey("app", "user")) as User;
   const userId = user?.id;
   if (userId) {
-    setUserId(userId);
-    sentry(() => {
-      const value = getSentryEnabled();
-      if (value === undefined) return settings?.sentryLogs;
-      return value;
-    }, userId);
+    sentry(() => settings?.sentryLogs, userId);
   }
 
   /**

@@ -10,22 +10,18 @@ import { retry } from "@ledgerhq/live-common/promise";
 import { TraceContext, listen as listenLogs, trace } from "@ledgerhq/logs";
 import { getUserId } from "~/helpers/user";
 import { setEnvOnAllThreads } from "./../helpers/env";
-import { IPCTransport } from "./IPCTransport";
 import logger from "./logger";
 import { setDeviceMode } from "@ledgerhq/live-common/hw/actions/app";
-import { getFeature } from "@ledgerhq/live-common/featureFlags/index";
-import { overriddenFeatureFlagsSelector } from "~/renderer/reducers/settings";
 import { DeviceManagementKitTransport } from "@ledgerhq/live-dmk-desktop";
-
-const isDeviceManagementKitEnabled = (store: Store) => {
-  const state = store.getState();
-  const localOverrides = overriddenFeatureFlagsSelector(state);
-  return getFeature({ key: "ldmkTransport", localOverrides })?.enabled;
-};
+import TransportHttp from "@ledgerhq/hw-transport-http";
+import SpeculosHttpTransport, {
+  SpeculosHttpTransportOpts,
+} from "@ledgerhq/hw-transport-node-speculos-http";
 
 enum RendererTransportModule {
   DeviceManagementKit,
-  IPC,
+  Speculos,
+  HttpProxy,
   Vault,
 }
 
@@ -39,7 +35,7 @@ enum RendererTransportModule {
  * This logic allows all transports to be registered at initialization time,
  * and then depending on a set of conditions, the right transport will be used.
  */
-export function registerTransportModules(store: Store) {
+export function registerTransportModules(_store: Store) {
   setEnvOnAllThreads("USER_ID", getUserId());
   const vaultTransportPrefixID = "vault-transport:";
 
@@ -50,10 +46,10 @@ export function registerTransportModules(store: Store) {
 
   function whichTransportModuleToUse(deviceId: string): RendererTransportModule {
     if (deviceId.startsWith(vaultTransportPrefixID)) return RendererTransportModule.Vault;
-    if (getEnv("SPECULOS_API_PORT")) return RendererTransportModule.IPC;
-    if (getEnv("DEVICE_PROXY_URL")) return RendererTransportModule.IPC;
-    if (isDeviceManagementKitEnabled(store)) return RendererTransportModule.DeviceManagementKit;
-    return RendererTransportModule.IPC;
+    if (getEnv("SPECULOS_API_PORT")) return RendererTransportModule.Speculos;
+    if (getEnv("DEVICE_PROXY_URL")) return RendererTransportModule.HttpProxy;
+    // Always use DeviceManagementKit for regular USB devices (WebHID)
+    return RendererTransportModule.DeviceManagementKit;
   }
 
   /**
@@ -84,20 +80,19 @@ export function registerTransportModules(store: Store) {
   });
 
   /**
-   * IPC Transport Module.
-   * It acts as a bridge with transports registered in the internal process:
-   * Node HID as well as HTTP transports (Speculos & Proxy).
+   * Speculos HTTP Transport Module.
+   * Direct connection to Speculos simulator via HTTP API.
    */
   registerTransportModule({
-    id: "ipc",
+    id: "speculos-http",
     open: (id: string, timeoutMs?: number, context?: TraceContext) => {
-      if (whichTransportModuleToUse(id) !== RendererTransportModule.IPC) return;
+      if (whichTransportModuleToUse(id) !== RendererTransportModule.Speculos) return;
 
       trace({
         type: "renderer-setup",
         message: "Open called on registered module",
         data: {
-          transport: "IPCTransport",
+          transport: "SpeculosHttpTransport",
           timeoutMs,
         },
         context: {
@@ -105,8 +100,41 @@ export function registerTransportModules(store: Store) {
         },
       });
 
-      // Retries in the `renderer` process if the open failed. No retry is done in the `internal` process to avoid multiplying retries.
-      return retry(() => IPCTransport.open(id, timeoutMs, context), {
+      const req: SpeculosHttpTransportOpts = {
+        apiPort: String(getEnv("SPECULOS_API_PORT")),
+      };
+
+      return retry(() => SpeculosHttpTransport.open(req), {
+        interval: 500,
+        maxRetry: 4,
+      });
+    },
+    disconnect: () => Promise.resolve(),
+  });
+
+  /**
+   * HTTP Proxy Transport Module.
+   * Direct connection to HTTP proxy for testing.
+   */
+  registerTransportModule({
+    id: "http-proxy",
+    open: (id: string, timeoutMs?: number, context?: TraceContext) => {
+      if (whichTransportModuleToUse(id) !== RendererTransportModule.HttpProxy) return;
+
+      trace({
+        type: "renderer-setup",
+        message: "Open called on registered module",
+        data: {
+          transport: "TransportHttp",
+          timeoutMs,
+        },
+        context: {
+          openContext: context,
+        },
+      });
+
+      const Tr = TransportHttp(getEnv("DEVICE_PROXY_URL").split("|"));
+      return retry(() => Tr.create(3000, 5000), {
         interval: 500,
         maxRetry: 4,
       });

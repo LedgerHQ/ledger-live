@@ -1,5 +1,4 @@
 import { ipcRenderer } from "electron";
-import { killInternalProcess } from "./reset";
 import { lock } from "./actions/application";
 import { hasEncryptionKey } from "~/renderer/storage";
 import logger from "./logger";
@@ -12,8 +11,6 @@ export function sendEvent(channel: string, msgType: string, data?: unknown) {
   });
 }
 export default ({ store }: { store: Store }) => {
-  // Ensure all sub-processes are killed before creating new ones (dev mode...)
-  killInternalProcess();
   ipcRenderer.on("lock", async () => {
     if (await hasEncryptionKey("app", "accounts")) {
       store.dispatch(lock());
