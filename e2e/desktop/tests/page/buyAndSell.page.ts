@@ -3,7 +3,6 @@ import { WebViewAppPage } from "./webViewApp.page";
 import { AccountType, getParentAccountName } from "@ledgerhq/live-common/e2e/enum/Account";
 import { BuySell, Fiat } from "@ledgerhq/live-common/e2e/models/BuySell";
 import { expect } from "@playwright/test";
-import { ChooseAssetDrawer } from "./drawer/choose.asset.drawer";
 import { Provider } from "@ledgerhq/live-common/e2e/enum/Provider";
 import { OperationType } from "@ledgerhq/live-common/e2e/enum/OperationType";
 import { doubleDecodeGoToURL } from "../utils/urlUtils";
@@ -39,7 +38,6 @@ export class BuyAndSellPage extends WebViewAppPage {
   private saveRegionFiatOptionsSelector = "save-region-and-fiat-options";
   private showMoreQuotes = "SHOW MORE QUOTES";
 
-  private chooseAssetDrawer = new ChooseAssetDrawer(this.page);
   private modularDrawer = new ModularDrawer(this.page);
 
   private standardSellParams: Record<string, (buySell: BuySell) => string | number> = {
@@ -111,7 +109,7 @@ export class BuyAndSellPage extends WebViewAppPage {
     }
 
     await this.clickElement(this.cryptoCurrencySelector);
-    await this.selectAssetInDrawer(account);
+    await this.selectAssetInModularDrawer(account);
   }
 
   private async isCorrectAssetAlreadySelected(account: AccountType): Promise<boolean> {
@@ -124,25 +122,11 @@ export class BuyAndSellPage extends WebViewAppPage {
     );
   }
 
-  private async selectAssetInDrawer(account: AccountType) {
-    const isModularDrawer = await this.modularDrawer.isModularAssetsDrawerVisible();
-    if (isModularDrawer) {
-      await this.selectAssetInModularDrawer(account);
-    } else {
-      await this.selectAssetInLegacyDrawer(account);
-    }
-  }
-
   private async selectAssetInModularDrawer(account: AccountType) {
-    await this.modularDrawer.validateAssetsDrawerItems();
+    await this.modularDrawer.expectAssetsDrawerVisibility();
     await this.modularDrawer.selectAssetByTickerAndName(account.currency);
     await this.modularDrawer.selectNetwork(account.currency);
     await this.modularDrawer.selectAccountByName(account);
-  }
-
-  private async selectAssetInLegacyDrawer(account: AccountType) {
-    await this.chooseAssetDrawer.chooseFromAsset(account.currency.name);
-    await this.chooseAssetDrawer.selectAccountByName(account);
   }
 
   @step("Change region and currency")

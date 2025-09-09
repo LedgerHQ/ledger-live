@@ -100,21 +100,12 @@ test.describe("Inline Add Account", () => {
       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
       await app.earnDashboard.goAndWaitForEarnToBeReady(() => app.layout.goToEarn());
       await app.earnDashboard.clickLearnMoreButton(account.currency.id);
-      const modularDrawerVisible = await app.modularDrawer.isModularAccountDrawerVisible();
-      if (modularDrawerVisible) {
-        await app.modularDrawer.clickOnAddAndExistingAccountButton();
-      } else {
-        await app.delegateDrawer.clickOnAddAccountButton();
-      }
+      await app.modularDrawer.clickOnAddAndExistingAccountButton();
 
       await app.addAccount.addAccounts();
       await app.addAccount.done();
 
-      if (modularDrawerVisible) {
-        await app.modularDrawer.selectAccountByName(account);
-      } else {
-        await app.delegateDrawer.selectAccountByName(account);
-      }
+      await app.modularDrawer.selectAccountByName(account);
       await app.addAccount.close();
       await app.layout.goToAccounts();
       await app.accounts.expectAccountsCountToBeNotNull();
