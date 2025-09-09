@@ -11,7 +11,9 @@ export async function delegateSolana() {
 }
 
 export async function sendSolana(tx: Transaction) {
-  const events = await pressUntilTextFound(DeviceLabels.SIGN_TRANSACTION);
+  const events = process.env.SPECULOS_DEVICE !== Device.LNS ?
+    await pressUntilTextFound(DeviceLabels.SIGN_TRANSACTION) :
+   await pressUntilTextFound(DeviceLabels.APPROVE);
   const isAmountCorrect = containsSubstringInEvent(tx.amount, events);
   expect(isAmountCorrect).toBeTruthy();
   if (process.env.SPECULOS_DEVICE !== Device.LNS) {

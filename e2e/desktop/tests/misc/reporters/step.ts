@@ -29,9 +29,9 @@ export function step<This, Args extends unknown[], Return = unknown>(message?: s
 
       try {
         test.info();
-        return await test.step(name, () => target.call(this, ...args), { box: true });
-      } catch {
-        return await target.call(this, ...args);
+        return await test.step(name, async () => target.call(this, ...args), { box: true });
+      } catch (error: unknown) {
+        throw error;
       }
     }
 

@@ -19,7 +19,7 @@ import { Account } from "./enum/Account";
 import { Device as CryptoWallet } from "./enum/Device";
 import { Currency } from "./enum/Currency";
 import expect from "expect";
-import { sendBTCBasedCoin } from "./families/bitcoin";
+import { sendBTC, sendBTCBasedCoin } from "./families/bitcoin";
 import { sendEVM, sendEvmNFT } from "./families/evm";
 import { sendPolkadot } from "./families/polkadot";
 import { sendAlgorand } from "./families/algorand";
@@ -397,9 +397,9 @@ export async function startSpeculos(
     return isSpeculosRemote
       ? await createSpeculosDeviceCI(deviceParams)
       : await createSpeculosDevice(deviceParams).then(device => {
-          invariant(device.ports.apiPort, "[E2E] Speculos apiPort is not defined");
-          return { id: device.id, port: device.ports.apiPort };
-        });
+        invariant(device.ports.apiPort, "[E2E] Speculos apiPort is not defined");
+        return { id: device.id, port: device.ports.apiPort };
+      });
   } catch (e: unknown) {
     console.error(e);
     log("engine", `test ${testName} failed with ${String(e)}`);
@@ -479,6 +479,11 @@ export async function waitFor(text: string, maxAttempts = 60): Promise<string[]>
     const texts = data.events.map(event => event.text);
 
     if (texts?.some(t => t?.toLowerCase().includes(text.toLowerCase()))) {
+      return texts;
+    }
+
+    const joinedText = texts.join(" ").toLowerCase();
+    if (joinedText.includes(text.toLowerCase())) {
       return texts;
     }
 
@@ -652,6 +657,12 @@ export async function signSendTransaction(tx: Transaction) {
     case Currency.sepETH:
     case Currency.POL:
     case Currency.ETH:
+      await sendEVM(tx);
+      break;
+    case Currency.BTC:
+      await sendBTC(tx);
+      break;
+    case Currency.ETH_USDT:
       await sendEVM(tx);
       break;
     case Currency.DOGE:

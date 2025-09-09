@@ -192,6 +192,14 @@ const transactionE2E = [
     transaction: new Transaction(Account.APTOS_1, Account.APTOS_2, "0.0001"),
     xrayTicket: "B2CQA-2920",
   },
+  {
+    transaction: new Transaction(Account.BTC_NATIVE_SEGWIT_1, Account.BTC_NATIVE_SEGWIT_2, "0.00001", Fee.MEDIUM),
+    xrayTicket: "B2CQA-3925",
+  },
+  {
+    transaction: new Transaction(Account.ETH_1, Account.ETH_2, "0.0001", Fee.SLOW),
+    xrayTicket: "B2CQA-3924",
+  },
 ];
 
 test.describe("Send flows", () => {
@@ -450,7 +458,7 @@ test.describe("Send flows", () => {
   test.describe("User sends funds to ENS address", () => {
     const transactionEnsAddress = new Transaction(
       Account.ETH_1,
-      Account.ETH_2,
+      Account.ETH_2_WITH_ENS,
       "0.0001",
       Fee.MEDIUM,
     );

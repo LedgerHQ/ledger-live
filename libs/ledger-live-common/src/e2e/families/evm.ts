@@ -5,7 +5,9 @@ import { DeviceLabels } from "../enum/DeviceLabels";
 import { Device } from "../enum/Device";
 
 export async function sendEVM(tx: Transaction) {
-  const events = await pressUntilTextFound(DeviceLabels.SIGN_TRANSACTION);
+  const events = process.env.SPECULOS_DEVICE !== Device.LNS ?
+    await pressUntilTextFound(DeviceLabels.SIGN_TRANSACTION) :
+    await pressUntilTextFound(DeviceLabels.ACCEPT);
   const isAmountCorrect = containsSubstringInEvent(tx.amount, events);
   expect(isAmountCorrect).toBeTruthy();
   if (tx.accountToCredit.ensName && process.env.SPECULOS_DEVICE !== Device.LNS) {

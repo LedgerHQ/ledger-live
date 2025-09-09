@@ -16,7 +16,7 @@ test.describe.skip("send NFT to ENS address", () => {
   test.beforeAll(async () => {
     process.env.DISABLE_TRANSACTION_BROADCAST = "1";
   });
-  const transaction = new NFTTransaction(Account.ETH_1, Account.ETH_2, Nft.PODIUM, Fee.SLOW);
+  const transaction = new NFTTransaction(Account.ETH_1, Account.ETH_2_WITH_ENS, Nft.PODIUM, Fee.SLOW);
   test.use({
     userdata: "skip-onboarding",
     cliCommands: [

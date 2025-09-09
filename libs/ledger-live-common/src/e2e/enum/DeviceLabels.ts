@@ -4,6 +4,8 @@ export enum DeviceLabels {
   ADDRESS = "Address",
   REJECT = "Reject",
   SIGN = "Sign",
+  TRANSACTION_SIGNED = "Transaction Signed",
+  BITCOIN_IS_READY = "Bitcoin is ready",
   APPROVE = "Approve",
   ACCEPT = "Accept",
   ACCEPT_RISK = "Accept risk",
