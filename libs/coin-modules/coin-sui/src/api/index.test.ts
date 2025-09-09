@@ -60,7 +60,7 @@ describe("api/index", () => {
     const unsigned = Buffer.from("unsignedTx");
     jest.spyOn(logic, "craftTransaction").mockResolvedValue({ unsigned });
     const txIntent = { foo: "bar" } as any;
-    const result = await api.craftTransaction(txIntent);
+    const { transaction: result } = await api.craftTransaction(txIntent);
     expect(result).toBe(unsigned.toString("hex"));
     expect(logic.craftTransaction).toHaveBeenCalledWith(txIntent);
   });
