@@ -125,7 +125,7 @@ describe("Tezos Api", () => {
       const recipient = "tz1aWXP237BLwNHJcCD4b3DutCevhqq2T1Z9";
       const amount = BigInt(10);
       // When
-      const encodedTransaction = await module.craftTransaction({
+      const { transaction: encodedTransaction } = await module.craftTransaction({
         asset: { type: "native" },
         type,
         sender: address,
@@ -149,7 +149,7 @@ describe("Tezos Api", () => {
     });
 
     it("should use estimated fees when user does not provide them for crafting a transaction", async () => {
-      const encodedTransaction = await module.craftTransaction({
+      const { transaction: encodedTransaction } = await module.craftTransaction({
         asset: { type: "native" },
         type: "send",
         sender: address,
@@ -165,7 +165,7 @@ describe("Tezos Api", () => {
     it.each([1n, 50n, 99n])(
       "should use custom user fees when user provides it for crafting a transaction",
       async (customFees: bigint) => {
-        const encodedTransaction = await module.craftTransaction(
+        const { transaction: encodedTransaction } = await module.craftTransaction(
           {
             asset: { type: "native" },
             type: "send",

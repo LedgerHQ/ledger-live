@@ -108,7 +108,7 @@ describe("createApi", () => {
 
   describe("craftTransaction", () => {
     it("returns a native coin RawTransaction serialized into an hexadecimal string", async () => {
-      const hex = await api.craftTransaction(
+      const { transaction: hex } = await api.craftTransaction(
         {
           amount: 1n,
           sender: sender.freshAddress,
@@ -130,7 +130,7 @@ describe("createApi", () => {
     });
 
     it("returns a coin token RawTransaction serialized into an hexadecimal string", async () => {
-      const hex = await api.craftTransaction(
+      const { transaction: hex } = await api.craftTransaction(
         {
           amount: 1n,
           sender: sender.freshAddress,
@@ -156,7 +156,7 @@ describe("createApi", () => {
     });
 
     it("returns a use-all-amount coin token RawTransaction serialized into an hexadecimal string", async () => {
-      const hex = await api.craftTransaction(
+      const { transaction: hex } = await api.craftTransaction(
         {
           amount: 0n,
           sender: sender.freshAddress,
@@ -184,7 +184,7 @@ describe("createApi", () => {
     it("returns a use-all-amount fungible_asset token RawTransaction serialized into an hexadecimal string", async () => {
       const r = sender;
       const s = recipient; // recipient contains fungible_assets balances
-      const hex = await api.craftTransaction(
+      const { transaction: hex } = await api.craftTransaction(
         {
           amount: 0n,
           sender: s.freshAddress,

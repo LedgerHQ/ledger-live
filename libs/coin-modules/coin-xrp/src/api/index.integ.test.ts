@@ -124,7 +124,7 @@ describe("Xrp Api (testnet)", () => {
 
     it("returns a raw transaction", async () => {
       // When
-      const result = await api.craftTransaction({
+      const { transaction: result } = await api.craftTransaction({
         asset: { type: "native" },
         type: "send",
         sender: SENDER,
@@ -140,7 +140,7 @@ describe("Xrp Api (testnet)", () => {
     });
 
     it("should use default fees when user does not provide them for crafting a transaction", async () => {
-      const result = await api.craftTransaction({
+      const { transaction: result } = await api.craftTransaction({
         asset: { type: "native" },
         type: "send",
         sender: SENDER,
@@ -159,7 +159,7 @@ describe("Xrp Api (testnet)", () => {
 
     it("should use custom user fees when user provides it for crafting a transaction", async () => {
       const customFees = 99n;
-      const result = await api.craftTransaction(
+      const { transaction: result } = await api.craftTransaction(
         {
           asset: { type: "native" },
           type: "send",
@@ -288,7 +288,7 @@ describe("Xrp Api (mainnet)", () => {
     const RECIPIENT = "r9m6MwViR4GnUNqoGXGa8eroBrZ9FAPHFS";
 
     it("returns a raw transaction", async () => {
-      const result = await api.craftTransaction({
+      const { transaction: result } = await api.craftTransaction({
         asset: { type: "native" },
         type: "send",
         sender: SENDER,
@@ -303,7 +303,7 @@ describe("Xrp Api (mainnet)", () => {
     });
 
     it("should use default fees when user does not provide them for crafting a transaction", async () => {
-      const result = await api.craftTransaction({
+      const { transaction: result } = await api.craftTransaction({
         asset: { type: "native" },
         type: "send",
         sender: SENDER,
@@ -322,7 +322,7 @@ describe("Xrp Api (mainnet)", () => {
 
     it("should use custom user fees when user provides it for crafting a transaction", async () => {
       const customFees = 99n;
-      const result = await api.craftTransaction(
+      const { transaction: result } = await api.craftTransaction(
         {
           asset: { type: "native" },
           type: "send",
