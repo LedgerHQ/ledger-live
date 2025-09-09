@@ -13,15 +13,11 @@ import { getCurrencyConfiguration } from "../../config";
 import { SolanaCoinConfig } from "@ledgerhq/coin-solana/config";
 import { getCryptoCurrencyById } from "../../currencies";
 import { signMessage } from "@ledgerhq/coin-solana/hw-signMessage";
-<<<<<<< HEAD
-import { LegacySignerSolana } from "@ledgerhq/live-signer-solana";
 import { setShouldSkipTokenLoading } from "@ledgerhq/coin-solana/preload";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { getCryptoAssetsStore } from "../../bridge/crypto-assets";
-=======
 import { LegacySignerSolana, DMKSignerSolana } from "@ledgerhq/live-signer-solana";
 import { DeviceManagementKit } from "@ledgerhq/device-management-kit";
->>>>>>> fed98cc3e6 (feat(signer-solana): Add DMK signer to Solana signer)
 
 let _solanaLdmkFFEnabled: boolean = false;
 

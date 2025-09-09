@@ -5309,7 +5309,7 @@ importers:
         version: link:../device-core
       '@ledgerhq/device-management-kit':
         specifier: 0.0.0-apex-support-20250721132630
-        version: 0.0.0-apex-support-20250721132630(rxjs@7.8.1)
+        version: 0.0.0-apex-support-20250721132630(rxjs@7.8.2)
       '@ledgerhq/devices':
         specifier: workspace:*
         version: link:../ledgerjs/packages/devices
@@ -5441,7 +5441,7 @@ importers:
         version: link:../exchange-module
       '@ledgerhq/wallet-api-server':
         specifier: ^1.11.0
-        version: 1.11.0(@ton/crypto@3.3.0)(react@18.3.1)(rxjs@7.8.1)
+        version: 1.11.0(@ton/crypto@3.3.0)(react@18.3.1)(rxjs@7.8.2)
       '@noble/curves':
         specifier: ^1.9.7
         version: 1.9.7
@@ -5572,8 +5572,8 @@ importers:
         specifier: ^3.0.0
         version: 3.0.0
       rxjs:
-        specifier: ^7.8.1
-        version: 7.8.1
+        specifier: ^7.8.2
+        version: 7.8.2
       semver:
         specifier: ^7.3.5
         version: 7.5.4
@@ -8435,8 +8435,8 @@ importers:
         specifier: 0.0.0-apex-support-20250721132630
         version: 0.0.0-apex-support-20250721132630(rxjs@7.8.2)
       '@ledgerhq/device-signer-kit-solana':
-        specifier: 0.0.0-context-module-fix-20250813175248
-        version: 0.0.0-context-module-fix-20250813175248(@ledgerhq/device-management-kit@0.0.0-apex-support-20250721132630(rxjs@7.8.2))(typescript@5.4.3)
+        specifier: 0.0.0-patch-transactionInspector-20250909141112
+        version: 0.0.0-patch-transactionInspector-20250909141112(@ledgerhq/device-management-kit@0.0.0-apex-support-20250721132630(rxjs@7.8.2))(typescript@5.4.3)
       '@ledgerhq/devices':
         specifier: workspace:*
         version: link:../ledgerjs/packages/devices
@@ -14422,10 +14422,10 @@ packages:
     peerDependencies:
       '@ledgerhq/device-management-kit': 0.0.0-apex-support-20250721132630
 
-  '@ledgerhq/context-module@0.0.0-context-module-fix-20250813175248':
-    resolution: {integrity: sha512-oRTgKlXb8UjzXS8rI+SQJmDG2jvvmoQui3tBJhMOO/0M97tlJpHCb0MZGkcnpi5gIRhHdUhvrWJNgxJWWRsSBA==}
+  '@ledgerhq/context-module@0.0.0-patch-transactionInspector-20250909141112':
+    resolution: {integrity: sha512-JxVNlCGtYTNAcFRG+y0qtJGDZyiI4dUqhMgKvYeCNIuyIqkzvcQyICgQFQWYRVVr/JXUFcDA4Tlw2TWQX7ImHA==}
     peerDependencies:
-      '@ledgerhq/device-management-kit': 0.0.0-context-module-fix-20250813175248
+      '@ledgerhq/device-management-kit': 0.0.0-patch-transactionInspector-20250909141112
 
   '@ledgerhq/crypto-icons-ui@file:libs/ui/packages/crypto-icons':
     resolution: {directory: libs/ui/packages/crypto-icons, type: directory}
@@ -14478,10 +14478,10 @@ packages:
       '@ledgerhq/context-module': 0.0.0-apex-support-20250721132630
       '@ledgerhq/device-management-kit': 0.0.0-apex-support-20250721132630
 
-  '@ledgerhq/device-signer-kit-solana@0.0.0-context-module-fix-20250813175248':
-    resolution: {integrity: sha512-1PCEaJOY0Y7N/W+hDFWFebbGUEetj4OSjDq5JTkmsnEbXgH2ZDHAY+BvJ8LKmb4Pux+DLImTbAAzs5otkQzFmQ==}
+  '@ledgerhq/device-signer-kit-solana@0.0.0-patch-transactionInspector-20250909141112':
+    resolution: {integrity: sha512-tQyeQNi6BF0++vQJUNHDCoveJTD8MAlp2dtmnZFPWtkRoO0Myv/5/nyUmRxzrJpv8CWlmoScV16iq7W43gNOXQ==}
     peerDependencies:
-      '@ledgerhq/device-management-kit': 0.0.0-context-module-fix-20250813175248
+      '@ledgerhq/device-management-kit': 0.0.0-patch-transactionInspector-20250909141112
 
   '@ledgerhq/device-transport-kit-react-native-ble@0.0.0-apex-support-20250721132630':
     resolution: {integrity: sha512-TZLWtqo8CSqOzRfmyV1t79VncRsbzJzCF/jd+FRYPYCp7lJHysXRU8lc3fd4mlqZ5N7Q4am6HfeT8Lxzbmrq2w==}
@@ -14548,10 +14548,10 @@ packages:
     peerDependencies:
       '@ledgerhq/device-management-kit': 0.0.0-apex-support-20250721132630
 
-  '@ledgerhq/signer-utils@0.0.0-context-module-fix-20250813175248':
-    resolution: {integrity: sha512-dqftsowWhaldlo0lgYlHD90dPRDbynWG+DsaHy6IOysvq1JXdAfnrLDaEyQmkxP/udSdCL6Cq85W2P1qSAThuQ==}
+  '@ledgerhq/signer-utils@0.0.0-patch-transactionInspector-20250909141112':
+    resolution: {integrity: sha512-xUfO3L6dEP5a0MULGdWBoNiBjrFiWvASpWgMImr4M3ltdJpwouLE1bD7a2J3Z9W9liTj8JLzBiP8UjB57xjxsQ==}
     peerDependencies:
-      '@ledgerhq/device-management-kit': 0.0.0-context-module-fix-20250813175248
+      '@ledgerhq/device-management-kit': 0.0.0-patch-transactionInspector-20250909141112
 
   '@ledgerhq/types-live@6.53.1':
     resolution: {integrity: sha512-ukaDDyxg7quBQ0vdoQQjj3ICqiG13gO/rGIO0Jm2nRh/icbLWgxfsI2wX0u0ugJQJ+q/muiX+wJrMJn9EKhEaQ==}
@@ -43196,7 +43196,7 @@ snapshots:
       - bufferutil
       - utf-8-validate
 
-  '@ledgerhq/context-module@0.0.0-context-module-fix-20250813175248(@ledgerhq/device-management-kit@0.0.0-apex-support-20250721132630(rxjs@7.8.2))':
+  '@ledgerhq/context-module@0.0.0-patch-transactionInspector-20250909141112(@ledgerhq/device-management-kit@0.0.0-apex-support-20250721132630(rxjs@7.8.2))':
     dependencies:
       '@ledgerhq/device-management-kit': 0.0.0-apex-support-20250721132630(rxjs@7.8.2)
       axios: 1.8.2
@@ -43310,11 +43310,11 @@ snapshots:
       - bufferutil
       - utf-8-validate
 
-  '@ledgerhq/device-signer-kit-solana@0.0.0-context-module-fix-20250813175248(@ledgerhq/device-management-kit@0.0.0-apex-support-20250721132630(rxjs@7.8.2))(typescript@5.4.3)':
+  '@ledgerhq/device-signer-kit-solana@0.0.0-patch-transactionInspector-20250909141112(@ledgerhq/device-management-kit@0.0.0-apex-support-20250721132630(rxjs@7.8.2))(typescript@5.4.3)':
     dependencies:
-      '@ledgerhq/context-module': 0.0.0-context-module-fix-20250813175248(@ledgerhq/device-management-kit@0.0.0-apex-support-20250721132630(rxjs@7.8.2))
+      '@ledgerhq/context-module': 0.0.0-patch-transactionInspector-20250909141112(@ledgerhq/device-management-kit@0.0.0-apex-support-20250721132630(rxjs@7.8.2))
       '@ledgerhq/device-management-kit': 0.0.0-apex-support-20250721132630(rxjs@7.8.2)
-      '@ledgerhq/signer-utils': 0.0.0-context-module-fix-20250813175248(@ledgerhq/device-management-kit@0.0.0-apex-support-20250721132630(rxjs@7.8.2))
+      '@ledgerhq/signer-utils': 0.0.0-patch-transactionInspector-20250909141112(@ledgerhq/device-management-kit@0.0.0-apex-support-20250721132630(rxjs@7.8.2))
       '@solana/spl-token': 0.4.14(@solana/web3.js@1.98.4(typescript@5.4.3))(typescript@5.4.3)
       '@solana/web3.js': 1.98.4(typescript@5.4.3)
       bs58: 6.0.0
@@ -43322,7 +43322,7 @@ snapshots:
       inversify: 7.5.1(reflect-metadata@0.2.2)
       purify-ts: 2.1.0
       reflect-metadata: 0.2.2
-      semver: 7.7.0
+      semver: 7.7.2
       xstate: 5.19.2
     transitivePeerDependencies:
       - bufferutil
@@ -43424,7 +43424,7 @@ snapshots:
     dependencies:
       '@ledgerhq/device-management-kit': 0.0.0-apex-support-20250721132630(rxjs@7.8.1)
 
-  '@ledgerhq/signer-utils@0.0.0-context-module-fix-20250813175248(@ledgerhq/device-management-kit@0.0.0-apex-support-20250721132630(rxjs@7.8.2))':
+  '@ledgerhq/signer-utils@0.0.0-patch-transactionInspector-20250909141112(@ledgerhq/device-management-kit@0.0.0-apex-support-20250721132630(rxjs@7.8.2))':
     dependencies:
       '@ledgerhq/device-management-kit': 0.0.0-apex-support-20250721132630(rxjs@7.8.2)
 
@@ -43461,18 +43461,6 @@ snapshots:
       thor-devkit: 2.0.9
       uuid: 9.0.1
       zod: 3.24.2
-    transitivePeerDependencies:
-      - '@ton/crypto'
-      - encoding
-
-  '@ledgerhq/wallet-api-server@1.11.0(@ton/crypto@3.3.0)(react@18.3.1)(rxjs@7.8.1)':
-    dependencies:
-      '@ledgerhq/wallet-api-core': 1.22.0(@ton/crypto@3.3.0)
-      bignumber.js: 9.1.2
-      picomatch: 4.0.2
-      rxjs: 7.8.1
-    optionalDependencies:
-      react: 18.3.1
     transitivePeerDependencies:
       - '@ton/crypto'
       - encoding
