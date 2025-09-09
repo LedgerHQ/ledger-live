@@ -56,7 +56,7 @@ const getStatusMessage = (status: OnboardStatus): string => {
 };
 
 interface FooterProps {
-  currency: any;
+  currency: unknown;
   transitionTo: (stepId: StepId) => void;
   onboardingCompleted: boolean;
   isLoading?: boolean;
@@ -69,8 +69,8 @@ export default function StepOnboard({
   selectedAccounts,
   accountName,
   cantonBridge,
-  transitionTo,
-  onAccountCreated,
+  transitionTo: _transitionTo,
+  onAccountCreated: _onAccountCreated,
   setOnboardingData,
   setOnboardingCompleted,
   setOnboardingStatus,
@@ -169,7 +169,7 @@ export default function StepOnboard({
       return;
     }
 
-    let subscription: any = null;
+    let subscription: { unsubscribe: () => void } | null = null;
 
     if (!cantonBridge.onboardAccount) {
       throw new Error("Canton bridge does not support onboardAccount");
@@ -196,13 +196,16 @@ export default function StepOnboard({
 
           if (progressData.status === OnboardStatus.SIGN) {
             logger.log("Entering signing phase, storing transaction data");
+            const progressDataAny = progressData as Record<string, unknown>;
             const signingData: SigningData = {
-              partyId: (progressData as any).partyId || "pending-party-id",
-              publicKey: (progressData as any).publicKey || "pending-public-key",
-              transactionData: (progressData as any).transactionData || progressData,
+              partyId: (progressDataAny.partyId as string) || "pending-party-id",
+              publicKey: (progressDataAny.publicKey as string) || "pending-public-key",
+              transactionData: (progressDataAny.transactionData as unknown) || progressData,
               combinedHash:
-                (progressData as any).combinedHash || (progressData as any).combined_hash || "",
-              derivationPath: (progressData as any).derivationPath,
+                (progressDataAny.combinedHash as string) ||
+                (progressDataAny.combined_hash as string) ||
+                "",
+              derivationPath: progressDataAny.derivationPath as string | undefined,
             };
             handleStateUpdate(progressData.status, statusMessage, signingData);
           }
@@ -273,6 +276,7 @@ export default function StepOnboard({
     setOnboardingData,
     setOnboardingCompleted,
     setOnboardingStatus,
+    placeholderAccount,
   ]);
 
   const handleRetry = useCallback(() => {
@@ -337,7 +341,7 @@ export default function StepOnboard({
                 recipient: signingData?.partyId || "",
                 amount: new BigNumber(0),
                 onboardingData: signingData,
-              } as any
+              } as unknown
             }
             status={
               {
@@ -346,7 +350,7 @@ export default function StepOnboard({
                 estimatedFees: new BigNumber(0),
                 errors: {},
                 warnings: {},
-              } as any
+              } as unknown
             }
             manifestId="canton-onboarding"
             manifestName="Canton Onboarding"
@@ -470,7 +474,8 @@ export const StepOnboardFooter = ({
 
   return (
     <Box horizontal alignItems="center" justifyContent="space-between" grow>
-      {currency && <CurrencyBadge currency={currency} />}
+      {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+      {currency && <CurrencyBadge currency={currency as any} />}
       <Button primary disabled={isButtonDisabled} onClick={handleNext}>
         <Trans i18nKey="common.continue" />
       </Button>

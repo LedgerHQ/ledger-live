@@ -33,12 +33,12 @@ export type StepProps = {
   existingAccounts: Account[];
   onAccountCreated: (account: Account) => void;
   onboardingCompleted?: boolean;
-  onboardingData?: any | null;
+  onboardingData?: unknown | null;
   onboardingStatus?: OnboardStatus;
   selectedAccounts: Account[];
   setError: (error: Error | null) => void;
   setOnboardingCompleted?: (completed: boolean) => void;
-  setOnboardingData?: (data: any) => void;
+  setOnboardingData?: (data: unknown) => void;
   setOnboardingStatus?: (status: OnboardStatus) => void;
   transitionTo: (stepId: StepId) => void;
 };

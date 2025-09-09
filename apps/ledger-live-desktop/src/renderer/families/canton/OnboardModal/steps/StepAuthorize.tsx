@@ -10,7 +10,6 @@ import Alert from "~/renderer/components/Alert";
 import Button from "~/renderer/components/Button";
 import CurrencyBadge from "~/renderer/components/CurrencyBadge";
 import Link from "~/renderer/components/Link";
-import Text from "~/renderer/components/Text";
 import { PreApprovalStatus } from "@ledgerhq/coin-canton/types";
 import Spinner from "~/renderer/components/Spinner";
 import AccountRow from "~/renderer/components/AccountsList/AccountRow";
@@ -22,18 +21,18 @@ import BigNumber from "bignumber.js";
 export type StepAuthorizeProps = {
   accountName: string;
   clearError: () => void;
-  currency: any;
+  currency: unknown;
   error: Error | null;
-  selectedAccounts: any[];
+  selectedAccounts: unknown[];
   editedNames: Record<string, string>;
   cantonBridge: CantonCurrencyBridge;
-  device: any;
+  device: unknown;
   isAuthorized?: boolean;
-  onboardingData?: any;
+  onboardingData?: unknown;
   setError: (error: Error | null) => void;
   transitionTo: (step: StepId) => void;
-  onAccountCreated: (account: any) => void;
-  setOnboardingData?: (data: any) => void;
+  onAccountCreated: (account: unknown) => void;
+  setOnboardingData?: (data: unknown) => void;
   authorizeStatus: PreApprovalStatus;
   isProcessing: boolean;
   showConfirmation: boolean;
@@ -43,7 +42,7 @@ export type StepAuthorizeProps = {
 };
 
 export type StepAuthorizeFooterProps = {
-  currency: any;
+  currency: unknown;
   isProcessing: boolean;
   authorizeStatus: PreApprovalStatus;
   error: Error | null;
@@ -56,22 +55,22 @@ const StepAuthorize = ({
   accountName,
   clearError,
   currency,
-  error,
+  error: _error,
   selectedAccounts,
-  editedNames,
-  cantonBridge,
+  editedNames: _editedNames,
+  cantonBridge: _cantonBridge,
   authorizeStatus,
   device,
   isAuthorized = true,
   onboardingData,
-  setError,
-  transitionTo,
-  onAccountCreated,
-  setOnboardingData,
-  isProcessing,
-  showConfirmation,
-  progress,
-  message,
+  setError: _setError,
+  transitionTo: _transitionTo,
+  onAccountCreated: _onAccountCreated,
+  setOnboardingData: _setOnboardingData,
+  isProcessing: _isProcessing,
+  showConfirmation: _showConfirmation,
+  progress: _progress,
+  message: _message,
   handlePreapproval,
 }: StepAuthorizeProps) => {
   const selectedAccount = selectedAccounts[0];
@@ -116,7 +115,7 @@ const StepAuthorize = ({
     setCurrentAccountName(name);
   }, [accountName, onboardingData]);
 
-  const handleStartPreapproval = () => {
+  const _handleStartPreapproval = () => {
     clearError();
     handlePreapproval();
   };
@@ -137,7 +136,7 @@ const StepAuthorize = ({
                   recipient: onboardingData?.partyId || "",
                   amount: new BigNumber(0),
                   onboardingData,
-                } as any
+                } as unknown
               }
               status={
                 {
@@ -146,7 +145,7 @@ const StepAuthorize = ({
                   estimatedFees: new BigNumber(0),
                   errors: {},
                   warnings: {},
-                } as any
+                } as unknown
               }
             />
           </Box>
@@ -225,11 +224,11 @@ const StepAuthorize = ({
 
 export const StepAuthorizeFooter = ({
   currency,
-  isProcessing,
-  error,
+  isProcessing: _isProcessing,
+  error: _error,
   authorizeStatus,
-  onRetry,
-  onConfirm,
+  onRetry: _onRetry,
+  onConfirm: _onConfirm,
   handlePreapproval,
 }: StepAuthorizeFooterProps) => {
   if (authorizeStatus === PreApprovalStatus.SIGN) {
@@ -238,7 +237,8 @@ export const StepAuthorizeFooter = ({
 
   return (
     <Box horizontal alignItems="center" justifyContent="space-between" grow>
-      {currency && <CurrencyBadge currency={currency} />}
+      {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+      {currency && <CurrencyBadge currency={currency as any} />}
       <Button
         primary
         onClick={handlePreapproval}

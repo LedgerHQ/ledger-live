@@ -25,8 +25,8 @@ export default function StepFinish({ t, currency, selectedAccounts }: StepProps)
 
 export const StepFinishFooter = ({
   t,
-  currency,
-  closeModal,
+  currency: _currency,
+  closeModal: _closeModal,
   onAccountCreated,
   onboardingData,
 }: StepProps) => {
