@@ -15,7 +15,9 @@ export type ModalsData = {
 };
 
 const modals: MakeModalsType<ModalsData> = {
-  MODAL_CANTON_ONBOARD_ACCOUNT: OnboardModal,
+  MODAL_CANTON_ONBOARD_ACCOUNT: OnboardModal as React.ComponentType<
+    ModalsData["MODAL_CANTON_ONBOARD_ACCOUNT"]
+  >,
 };
 
 export default modals;
