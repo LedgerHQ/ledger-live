@@ -9,7 +9,7 @@ describe("useModularDrawerAnalytics", () => {
     const { result } = renderHook(() => useModularDrawerAnalytics());
 
     const eventName = EVENTS_NAME.ASSET_CLICKED;
-    const params = { flow: "flowtest", source: "sourcetest", asset: "assettest", page: "pagetest" };
+    const params = { flow: "", source: "", asset: "assettest", page: "pagetest" };
 
     result.current.trackModularDrawerEvent(eventName, params);
 
@@ -21,8 +21,8 @@ describe("useModularDrawerAnalytics", () => {
 
     const eventName = EVENTS_NAME.ASSET_CLICKED;
     const params = {
-      flow: "flowtest",
-      source: "sourcetest",
+      flow: "",
+      source: "",
       asset: "assettest",
       page: "pagetest",
     };
@@ -52,8 +52,8 @@ describe("useModularDrawerAnalytics", () => {
 
     const eventName = EVENTS_NAME.NETWORK_CLICKED;
     const params = {
-      flow: "flowtest",
-      source: "sourcetest",
+      flow: "",
+      source: "",
       network: "networktest",
       page: "pagetest",
     };

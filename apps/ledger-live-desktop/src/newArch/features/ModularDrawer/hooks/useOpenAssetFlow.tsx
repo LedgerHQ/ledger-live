@@ -48,16 +48,14 @@ function selectCurrency(
 
 export function useOpenAssetFlow(
   modularDrawerVisibleParams: ModularDrawerVisibleParams,
-  source?: string,
+  source: string,
   modalNameToReopen?: keyof GlobalModalData,
 ) {
   const dispatch = useDispatch();
 
   useEffect(() => {
     dispatch(setFlowValue(modularDrawerVisibleParams.location));
-    if (source) {
-      dispatch(setSourceValue(source));
-    }
+    dispatch(setSourceValue(source));
   }, [dispatch, modularDrawerVisibleParams.location, source]);
 
   const { isModularDrawerVisible } = useModularDrawerVisibility({
@@ -101,7 +99,7 @@ export function useOpenAssetFlow(
           ModularDrawerAddAccountFlowManager,
           {
             currency,
-            source: source ?? "",
+            source,
             onAccountSelected: modalNameToReopen
               ? onFlowFinishedWithModalReopen
               : onAccountSelected,
@@ -134,7 +132,7 @@ export function useOpenAssetFlow(
       if (isModularDrawerVisible(modularDrawerVisibleParams)) {
         selectCurrency(
           openAddAccountFlow,
-          source ?? "",
+          source,
           modularDrawerVisibleParams.location,
           includeTokens,
           undefined,

@@ -32,8 +32,10 @@ const ModularDrawerFlowManager = ({
   const dispatch = useDispatch();
   const { currentStep, navigationDirection, goToStep } = useModularDrawerNavigation();
 
-  dispatch(setFlowValue(flow));
-  dispatch(setSourceValue(source));
+  useEffect(() => {
+    dispatch(setFlowValue(flow));
+    dispatch(setSourceValue(source));
+  }, [dispatch, flow, source]);
 
   useEffect(() => {
     return () => {
