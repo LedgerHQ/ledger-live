@@ -74,10 +74,21 @@ export const getAccountShape: GetAccountShape = async info => {
 
   // Account info retrieval + spendable balance calculation
   // const accountInfo = await getAccountInfo(address);
-  const balanceData = await getBalance(address);
-  const balance = new BigNumber(balanceData[0]?.amount || "0");
+  const balances = await getBalance(address);
+
+  const balanceData = balances.find(balance => balance.instrument_id === "canton_network") || {
+    instrument_id: "canton_network",
+    amount: 0,
+    locked: false,
+  };
+
+  const balance = new BigNumber(balanceData.amount);
   const reserveMin = coinConfig.getCoinConfig().minReserve || 0;
-  const spendableBalance = balance.minus(BigNumber(reserveMin));
+  const lockedAmount = balanceData.locked ? balance : new BigNumber(0);
+  const spendableBalance = BigNumber.max(
+    0,
+    balance.minus(lockedAmount).minus(BigNumber(reserveMin)),
+  );
 
   // Tx history fetching
   const oldOperations = initialAccount?.operations || [];
