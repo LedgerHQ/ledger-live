@@ -27,8 +27,8 @@ export default function SwapCustomError({ route }: SwapCustomErrorProps) {
 
     if (errorMessage.includes("transaction cannot be created")) {
       return {
-        title: t("swapErrors.TransactionCannotBeCreated.title"),
-        description: t("swapErrors.TransactionCannotBeCreated.description"),
+        title: t("swapErrors.transactionCannotBeCreated.title"),
+        description: t("swapErrors.transactionCannotBeCreated.description"),
       };
     }
 
