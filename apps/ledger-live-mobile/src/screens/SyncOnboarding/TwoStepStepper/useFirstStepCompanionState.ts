@@ -1,7 +1,9 @@
-import { OnboardingState } from "@ledgerhq/live-common/hw/extractOnboardingState";
+import {
+  OnboardingState,
+  OnboardingStep as DeviceOnboardingStep,
+} from "@ledgerhq/live-common/hw/extractOnboardingState";
 import { useEffect, useRef } from "react";
 import { FirstStepCompanionStepKey } from "./useCompanionSteps";
-import { OnboardingStep as DeviceOnboardingStep } from "@ledgerhq/live-common/hw/extractOnboardingState";
 import { SeedPathStatus } from "./FirstStepSyncOnboarding";
 import { SeedOriginType } from "@ledgerhq/types-live";
 

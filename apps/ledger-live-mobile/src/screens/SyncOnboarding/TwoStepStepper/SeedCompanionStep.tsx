@@ -1,5 +1,5 @@
 import React, { useCallback } from "react";
-import { OnboardingState } from "@ledgerhq/live-common/hw/extractOnboardingState";
+import { OnboardingState, CharonStatus } from "@ledgerhq/live-common/hw/extractOnboardingState";
 import { Flex, Link, Text, VerticalTimeline } from "@ledgerhq/native-ui";
 import { TrackScreen, useTrack } from "~/analytics";
 import { Image, Linking } from "react-native";
@@ -15,7 +15,6 @@ import {
   Note,
   ShieldCheck,
 } from "@ledgerhq/native-ui/assets/icons";
-import { CharonStatus } from "@ledgerhq/live-common/hw/extractOnboardingState";
 import { ShadowedView } from "react-native-fast-shadow";
 import Animation from "~/components/Animation";
 import CHARON from "~/animations/device/charon/charon.json";

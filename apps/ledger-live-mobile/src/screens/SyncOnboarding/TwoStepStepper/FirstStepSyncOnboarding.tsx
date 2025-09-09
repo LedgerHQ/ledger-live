@@ -14,7 +14,7 @@ import { isAllowedOnboardingStatePollingErrorDmk } from "@ledgerhq/live-dmk-mobi
 import { SeedOriginType, SeedPhraseType } from "@ledgerhq/types-live";
 import { setIsReborn, setLastConnectedDevice, setOnboardingHasDevice } from "~/actions/settings";
 import { addKnownDevice } from "~/actions/ble";
-import { screen } from "~/analytics";
+import { screen, TrackScreen } from "~/analytics";
 import { hasCompletedOnboardingSelector } from "~/reducers/settings";
 import {
   OnboardingStep as DeviceOnboardingStep,
@@ -32,7 +32,6 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 import { LayoutChangeEvent, ScrollView } from "react-native";
-import { TrackScreen } from "~/analytics";
 import { SEED_STATE } from "./TwoStepSyncOnboardingCompanion";
 
 /*

@@ -1,6 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, ReactNode, useMemo } from "react";
 import { Flex, Text, VerticalTimeline } from "@ledgerhq/native-ui";
-import { ReactNode, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { TrackScreen } from "~/analytics";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";

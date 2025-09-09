@@ -6,7 +6,7 @@ import { SkipReason } from "@ledgerhq/live-common/apps/types";
 import withRemountableWrapper from "@ledgerhq/live-common/hoc/withRemountableWrapper";
 import { Alert, Flex, ProgressLoader, VerticalTimeline } from "@ledgerhq/native-ui";
 import { getDeviceModel } from "@ledgerhq/devices";
-import { DeviceModelInfo } from "@ledgerhq/types-live";
+import { DeviceModelInfo, SeedOriginType } from "@ledgerhq/types-live";
 
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { TrackScreen, track } from "~/analytics";
@@ -21,7 +21,6 @@ import { useAppDeviceAction } from "~/hooks/deviceActions";
 import { UserRefusedAllowManager } from "@ledgerhq/errors";
 import NewSeedConfirmation from "./NewSeedConfirmation";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
-import { SeedOriginType } from "@ledgerhq/types-live";
 
 type Props = {
   isNewSeed?: boolean;
