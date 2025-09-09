@@ -10,6 +10,7 @@ import {
   Reward,
   Stake,
   TransactionIntent,
+  CraftedTransaction,
 } from "@ledgerhq/coin-framework/api/index";
 import { log } from "@ledgerhq/logs";
 import coinConfig, { type XrpConfig } from "../config";
@@ -62,7 +63,7 @@ export function createApi(config: XrpConfig): Api<XrpMapMemo> {
 async function craft(
   transactionIntent: TransactionIntent<XrpMapMemo>,
   customFees?: FeeEstimation,
-): Promise<string> {
+): Promise<CraftedTransaction> {
   const nextSequenceNumber = await getNextValidSequence(transactionIntent.sender);
   const estimatedFees = customFees?.value ?? (await estimateFees()).fees;
 
@@ -94,7 +95,7 @@ async function craft(
     transactionIntent.senderPublicKey,
   );
 
-  return tx.serializedTransaction;
+  return { transaction: tx.serializedTransaction };
 }
 
 async function estimate(): Promise<FeeEstimation> {

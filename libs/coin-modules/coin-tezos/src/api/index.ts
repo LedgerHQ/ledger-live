@@ -9,6 +9,7 @@ import {
   type Pagination,
   Reward,
   Stake,
+  CraftedTransaction,
 } from "@ledgerhq/coin-framework/api/index";
 import coinConfig, { type TezosConfig } from "../config";
 import {
@@ -69,7 +70,7 @@ async function balance(address: string): Promise<Balance[]> {
 async function craft(
   transactionIntent: TransactionIntent,
   customFees?: FeeEstimation,
-): Promise<string> {
+): Promise<CraftedTransaction> {
   if (!isTezosTransactionType(transactionIntent.type)) {
     throw new IncorrectTypeError(transactionIntent.type);
   }
@@ -90,7 +91,10 @@ async function craft(
       fee,
     },
   );
-  return rawEncode(contents);
+
+  const tx = await rawEncode(contents);
+
+  return { transaction: tx };
 }
 
 async function estimate(transactionIntent: TransactionIntent): Promise<TezosFeeEstimation> {

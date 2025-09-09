@@ -1,4 +1,8 @@
-import { FeeEstimation, TransactionIntent } from "@ledgerhq/coin-framework/api/index";
+import {
+  CraftedTransaction,
+  FeeEstimation,
+  TransactionIntent,
+} from "@ledgerhq/coin-framework/api/index";
 import BigNumber from "bignumber.js";
 import { craftStandardTransaction, craftTrc20Transaction } from "../network";
 import { decode58Check } from "../network/format";
@@ -8,7 +12,7 @@ import { feesToNumber } from "./utils";
 export async function craftTransaction(
   transactionIntent: TransactionIntent<TronMemo>,
   customFees?: FeeEstimation,
-): Promise<string> {
+): Promise<CraftedTransaction> {
   const { asset, recipient, sender, amount, expiration } = transactionIntent;
   const rawMemo = "memo" in transactionIntent ? transactionIntent.memo : undefined;
 
@@ -36,7 +40,7 @@ export async function craftTransaction(
       feesToNumber(fees),
       expiration,
     );
-    return rawDataHex as string;
+    return { transaction: rawDataHex as string };
   } else {
     const isTransferAsset = asset.type === "trc10";
     const tokenId = asset.type === "trc10" ? asset.assetReference : undefined;
@@ -49,6 +53,6 @@ export async function craftTransaction(
       memo,
       expiration,
     );
-    return rawDataHex as string;
+    return { transaction: rawDataHex as string };
   }
 }

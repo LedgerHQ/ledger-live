@@ -1,4 +1,8 @@
-import { FeeEstimation, TransactionIntent } from "@ledgerhq/coin-framework/api/types";
+import {
+  CraftedTransaction,
+  FeeEstimation,
+  TransactionIntent,
+} from "@ledgerhq/coin-framework/api/types";
 import { Transaction, TransactionLike } from "ethers";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import BigNumber from "bignumber.js";
@@ -16,7 +20,7 @@ export async function craftTransaction(
     transactionIntent: TransactionIntent;
     customFees?: FeeEstimation | undefined;
   },
-): Promise<string> {
+): Promise<CraftedTransaction> {
   const { amount, asset, recipient, sender, type } = transactionIntent;
 
   const transactionType = getTransactionType(type);
@@ -63,5 +67,5 @@ export async function craftTransaction(
     unsignedTransaction.maxPriorityFeePerGas = customFees.parameters.maxPriorityFeePerGas;
   }
 
-  return Transaction.from(unsignedTransaction).unsignedSerialized;
+  return { transaction: Transaction.from(unsignedTransaction).unsignedSerialized };
 }

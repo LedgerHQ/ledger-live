@@ -10,6 +10,7 @@ import {
   Reward,
   Stake,
   TransactionIntent,
+  CraftedTransaction,
 } from "@ledgerhq/coin-framework/api/index";
 import coinConfig, { type PolkadotConfig } from "../config";
 import {
@@ -51,7 +52,7 @@ export function createApi(config: PolkadotConfig): AlpacaApi {
   };
 }
 
-async function craft(transactionIntent: TransactionIntent): Promise<string> {
+async function craft(transactionIntent: TransactionIntent): Promise<CraftedTransaction> {
   const extrinsicArg = defaultExtrinsicArg(transactionIntent.amount, transactionIntent.recipient);
   //TODO: Retrieve correctly the nonce via a call to the node `await api.rpc.system.accountNextIndex(address)`
   const nonce = 0;
@@ -59,7 +60,7 @@ async function craft(transactionIntent: TransactionIntent): Promise<string> {
   const extrinsic = tx.registry.createType("Extrinsic", tx.unsigned, {
     version: tx.unsigned.version,
   });
-  return extrinsic.toHex();
+  return { transaction: extrinsic.toHex() };
 }
 
 async function estimate(transactionIntent: TransactionIntent): Promise<FeeEstimation> {
