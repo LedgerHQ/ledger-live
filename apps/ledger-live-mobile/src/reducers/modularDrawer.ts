@@ -30,11 +30,11 @@ export const INITIAL_STATE: ModularDrawerState = {
   source: "",
   assetsConfiguration: {
     leftElement: "undefined",
-    rightElement: "undefined",
+    rightElement: "balance",
   },
   networksConfiguration: {
     leftElement: "numberOfAccounts",
-    rightElement: "undefined",
+    rightElement: "balance",
   },
   useCase: undefined,
   areCurrenciesFiltered: undefined,

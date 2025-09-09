@@ -1,9 +1,12 @@
-import { renderHook } from "tests/testSetup";
-import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
-import { EnhancedModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/types";
+/**
+ * @jest-environment jsdom
+ */
+import { renderHook } from "@testing-library/react";
+import { useFeature } from "../../../featureFlags";
+import { EnhancedModularDrawerConfiguration } from "../../../wallet-api/ModularDrawer/types";
 import { useModularDrawerConfiguration } from "../useModularDrawerConfiguration";
 
-jest.mock("@ledgerhq/live-common/featureFlags/useFeature", () => jest.fn());
+jest.mock("../../../featureFlags", () => ({ useFeature: jest.fn() }));
 
 const mockUseFeature = jest.mocked(useFeature);
 
@@ -23,7 +26,7 @@ describe("useModularDrawerConfiguration", () => {
     });
 
     it("should return disabled configurations when no drawer configuration is provided", () => {
-      const { result } = renderHook(() => useModularDrawerConfiguration());
+      const { result } = renderHook(() => useModularDrawerConfiguration("lldModularDrawer"));
 
       expect(result.current.assetsConfiguration).toEqual({
         rightElement: "undefined",
@@ -49,7 +52,9 @@ describe("useModularDrawerConfiguration", () => {
         },
       };
 
-      const { result } = renderHook(() => useModularDrawerConfiguration(drawerConfiguration));
+      const { result } = renderHook(() =>
+        useModularDrawerConfiguration("lldModularDrawer", drawerConfiguration),
+      );
 
       expect(result.current.assetsConfiguration).toEqual({
         rightElement: "undefined",
@@ -74,7 +79,7 @@ describe("useModularDrawerConfiguration", () => {
     });
 
     it("should return undefined configurations when no drawer configuration is provided", () => {
-      const { result } = renderHook(() => useModularDrawerConfiguration());
+      const { result } = renderHook(() => useModularDrawerConfiguration("lldModularDrawer"));
 
       expect(result.current.assetsConfiguration).toBeUndefined();
       expect(result.current.networkConfiguration).toBeUndefined();
@@ -93,7 +98,9 @@ describe("useModularDrawerConfiguration", () => {
         },
       };
 
-      const { result } = renderHook(() => useModularDrawerConfiguration(drawerConfiguration));
+      const { result } = renderHook(() =>
+        useModularDrawerConfiguration("lldModularDrawer", drawerConfiguration),
+      );
 
       expect(result.current.assetsConfiguration).toEqual(drawerConfiguration.assets);
       expect(result.current.networkConfiguration).toEqual(drawerConfiguration.networks);
@@ -108,7 +115,9 @@ describe("useModularDrawerConfiguration", () => {
         },
       };
 
-      const { result } = renderHook(() => useModularDrawerConfiguration(drawerConfiguration));
+      const { result } = renderHook(() =>
+        useModularDrawerConfiguration("lldModularDrawer", drawerConfiguration),
+      );
 
       expect(result.current.assetsConfiguration).toEqual(drawerConfiguration.assets);
       expect(result.current.networkConfiguration).toBeUndefined();
@@ -123,7 +132,9 @@ describe("useModularDrawerConfiguration", () => {
         },
       };
 
-      const { result } = renderHook(() => useModularDrawerConfiguration(drawerConfiguration));
+      const { result } = renderHook(() =>
+        useModularDrawerConfiguration("lldModularDrawer", drawerConfiguration),
+      );
 
       expect(result.current.assetsConfiguration).toBeUndefined();
       expect(result.current.networkConfiguration).toEqual(drawerConfiguration.networks);
@@ -148,7 +159,9 @@ describe("useModularDrawerConfiguration", () => {
         },
       };
 
-      const { result } = renderHook(() => useModularDrawerConfiguration(drawerConfiguration));
+      const { result } = renderHook(() =>
+        useModularDrawerConfiguration("lldModularDrawer", drawerConfiguration),
+      );
 
       expect(result.current.assetsConfiguration).toEqual({
         rightElement: "undefined",
@@ -183,7 +196,9 @@ describe("useModularDrawerConfiguration", () => {
         },
       };
 
-      const { result } = renderHook(() => useModularDrawerConfiguration(drawerConfiguration));
+      const { result } = renderHook(() =>
+        useModularDrawerConfiguration("lldModularDrawer", drawerConfiguration),
+      );
 
       expect(result.current.assetsConfiguration).toEqual({
         rightElement: "undefined",
@@ -218,7 +233,9 @@ describe("useModularDrawerConfiguration", () => {
         },
       };
 
-      const { result } = renderHook(() => useModularDrawerConfiguration(drawerConfiguration));
+      const { result } = renderHook(() =>
+        useModularDrawerConfiguration("lldModularDrawer", drawerConfiguration),
+      );
 
       expect(result.current.assetsConfiguration).toEqual({
         rightElement: "undefined",
