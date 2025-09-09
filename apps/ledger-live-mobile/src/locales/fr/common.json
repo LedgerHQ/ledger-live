@@ -2156,27 +2156,6 @@
         "learnHowToUpdate" : "Comment mettre à jour"
       }
     },
-    "stepImportAccounts" : {
-      "title" : "Synchroniser vos cryptos depuis un ordinateur",
-      "desc" : "Si vous gérez déjà vos cryptos dans l’app Ledger Live pour l’ordinateur, vous pouvez synchroniser pour les gérer depuis votre téléphone.",
-      "cta" : "Je suis prêt(e) à scanner",
-      "bullets" : {
-        "0" : {
-          "label" : "Sur Ledger Live pour l’ordinateur, allez dans\n<1>Paramètres > Comptes > Exporter les comptes</1>."
-        },
-        "1" : {
-          "label" : "Scannez le code QR avec votre téléphone."
-        },
-        "2" : {
-          "label" : "Sélectionnez les comptes de cryptos à importer."
-        }
-      },
-      "warning" : {
-        "title" : "Vos apps pour l’ordinateur et pour le mobile doivent être synchronisées manuellement.",
-        "desc" : "Ledger Live respecte votre vie privée et stocke vos données localement. Si vous modifiez vos comptes ou paramètres sur votre téléphone, vous devez le faire aussi sur votre ordinateur, et inversement. Vos transactions restent synchronisées avec la blockchain.",
-        "cta" : "Compris"
-      }
-    },
     "stepSetupPin" : {
       "step1" : "Allumez votre {{fullDeviceName}} et suivez les instructions.",
       "step1-nanoS" : "Connectez votre {{fullDeviceName}} à votre téléphone à l’aide d’un câble OTG.",
@@ -2856,8 +2835,8 @@
       "contactSupport" : "Contacter l’Assistance"
     },
     "willBedeprecatedBanner" : {
-      "title" : "Pour une meilleure performance, Ledger Live ne prendra plus en charge {{currencyName}} à partir du {{deprecatedDate}}. Cette monnaie restera prise en charge par les wallets physiques Ledger. Veuillez contacter l’Assistance Ledger pour toute question.",
-      "contactSupport" : "Contacter l’Assistance"
+      "title" : "{{currencyName}} ne sera plus pris en charge sur Ledger Live dès le {{deprecatedDate}}. Vos actifs resteront sécurisés par votre wallet physique Ledger. Pour en savoir plus, veuillez consulter l’article du Centre d’aide ci-dessous.",
+      "learnMore" : "En savoir plus"
     },
     "tokens" : {
       "contractAddress" : "Adresse du contrat",
@@ -3770,6 +3749,10 @@
       "twoStepApproval" : {
         "title" : "Suivez les étapes"
       },
+      "loader" : {
+        "title" : "Échange en cours de traitement",
+        "description" : "Veuillez patienter, nous traitons votre demande."
+      },
       "history" : {
         "title" : "Historique des échanges"
       },
@@ -3790,6 +3773,8 @@
         "apt_description" : "Pour échanger des Aptos, utilisez un autre appareil Ledger compatible, tel que le Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™.",
         "cosmos_title" : "Le Ledger Nano S™ ne prend pas en charge l’échange de Cosmos",
         "cosmos_description" : "Pour échanger des Cosmos, utilisez un autre appareil Ledger compatible, tel que le Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™.",
+        "hedera_title" : "Le Ledger Nano S™ ne prend pas en charge l’échange d’Hedera",
+        "hedera_description" : "Pour échanger des Hedera, utilisez un autre appareil Ledger compatible, tel que le Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™.",
         "osmo_title" : "Le Ledger Nano S™ ne prend pas en charge l’échange d’Osmosis",
         "osmo_description" : "Pour échanger des Osmosis, utilisez un autre appareil Ledger compatible, tel que le Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™.",
         "dydx_title" : "Le Ledger Nano S™ ne prend pas en charge l’échange de dYdX",
@@ -4442,7 +4427,7 @@
     "confirmSwap" : {
       "title" : "Confirmer l’opération de swap sur l’appareil",
       "alert" : {
-        "default" : "Vérifiez les détails de l’échange sur votre appareil avant de l’envoyer. Les adresses sont échangées de manière sécurisée afin que vous n’ayez pas à les vérifier.",
+        "default" : "Verify the swap details on your Ledger before sending it.",
         "provider" : "Vérifiez les détails de l’échange sur votre appareil avant de l’envoyer. Une vérification supplémentaire peut être effectuée par {{providerName}} pour certaines transactions, entraînant un temps d’attente."
       },
       "acceptTerms" : "En validant cette transaction, j’accepte\n<0>les Conditions d’utilisation de <0>{{provider}}</0></0>.",
@@ -7398,7 +7383,7 @@
     "signIn" : "Se connecter",
     "recover" : {
       "cta" : "Commencer votre essai gratuit",
-      "desc" : "Ne craignez plus de perdre l’accès à votre wallet.",
+      "desc" : "Ne craignez plus de perdre l’accès à vos actifs.",
       "tag" : "1 mois offert"
     },
     "protect" : {
@@ -7961,7 +7946,13 @@
     "searchPlaceholder" : "Rechercher",
     "emptyAssetList" : "Aucun actif trouvé",
     "accountCount" : "{{count}} compte",
-    "accountCount_plural" : "{{count}} comptes"
+    "accountCount_plural" : "{{count}} comptes",
+    "errors" : {
+      "title" : "Échec de la connexion",
+      "backend" : "Une erreur est survenue de notre côté. Veuillez réessayer plus tard.",
+      "internet" : "Aucune connexion Internet. Veuillez réessayer.",
+      "cta" : "Réessayer"
+    }
   },
   "swapErrors" : {
     "incorrectCommandData" : {
