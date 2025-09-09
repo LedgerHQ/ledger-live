@@ -1,17 +1,18 @@
 # @ledgerhq/hw-app-btc
 
-## 10.11.0-nightly.1
-
-### Minor Changes
-
-- [#11503](https://github.com/LedgerHQ/ledger-live/pull/11503) [`0051b62`](https://github.com/LedgerHQ/ledger-live/commit/0051b62ca8f7ddddc0bdc316a8734362aacfbb58) Thanks [@gre-ledger](https://github.com/gre-ledger)! - use @noble/curves instead of secp256k1
-
-## 10.10.2-nightly.0
+## 10.10.2
 
 ### Patch Changes
 
 - Updated dependencies []:
-  - @ledgerhq/hw-transport@6.31.10-nightly.0
+  - @ledgerhq/hw-transport@6.31.10
+
+## 10.10.2-next.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport@6.31.10-next.0
 
 ## 10.10.1
 

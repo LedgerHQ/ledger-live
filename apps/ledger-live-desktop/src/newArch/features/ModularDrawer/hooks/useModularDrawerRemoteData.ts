@@ -1,38 +1,30 @@
-import { useState } from "react";
 import { ModularDrawerFlowManagerProps, ModularDrawerStep } from "../types";
 import { useModularDrawerData } from "./useModularDrawerData";
 import { useModularDrawerFiltering } from "./useModularDrawerFiltering";
 import { useModularDrawerFlowState } from "./useModularDrawerFlowState";
 import { useModularDrawerBackButton } from "./useModularDrawerBackButton";
-import { useModularDrawerConfiguration } from "./useModularDrawerConfiguration";
 
 interface UseModularDrawerRemoteDataProps {
   currentStep: ModularDrawerStep;
   currencyIds: string[];
-  drawerConfiguration: ModularDrawerFlowManagerProps["drawerConfiguration"];
   useCase?: string;
   areCurrenciesFiltered?: boolean;
   goToStep: (step: ModularDrawerStep) => void;
   onAssetSelected: ModularDrawerFlowManagerProps["onAssetSelected"];
-  onAccountSelected: ModularDrawerFlowManagerProps["onAccountSelected"];
+  isSelectAccountFlow: boolean;
   flow: ModularDrawerFlowManagerProps["flow"];
 }
 
 export function useModularDrawerRemoteData({
   currentStep,
   currencyIds,
-  drawerConfiguration,
   useCase,
   areCurrenciesFiltered,
   goToStep,
   onAssetSelected,
-  onAccountSelected,
+  isSelectAccountFlow,
   flow,
 }: UseModularDrawerRemoteDataProps) {
-  const [searchedValue, setSearchedValue] = useState<string>();
-  const { assetsConfiguration, networkConfiguration } =
-    useModularDrawerConfiguration(drawerConfiguration);
-
   const {
     currenciesByProvider,
     sortedCryptoCurrencies,
@@ -41,14 +33,13 @@ export function useModularDrawerRemoteData({
     isSuccess,
     loadingStatus,
     loadNext,
-  } = useModularDrawerData({ currencyIds, searchedValue, useCase, areCurrenciesFiltered });
+  } = useModularDrawerData({ currencyIds, useCase, areCurrenciesFiltered });
 
   const {
     assetsToDisplay,
     setAssetsToDisplay,
     networksToDisplay,
     setNetworksToDisplay,
-    hasOneNetwork,
     hasOneCurrency,
     filteredCurrenciesByProvider,
   } = useModularDrawerFiltering({
@@ -58,14 +49,11 @@ export function useModularDrawerRemoteData({
     isSuccess,
   });
 
-  const isSelectAccountFlow = Boolean(onAccountSelected);
-
   const {
     selectedAsset,
     selectedNetwork,
     handleNetworkSelected,
     handleAssetSelected,
-    handleAccountSelected,
     goBackToAssetSelection,
     goBackToNetworkSelection,
   } = useModularDrawerFlowState({
@@ -76,10 +64,8 @@ export function useModularDrawerRemoteData({
     setNetworksToDisplay,
     goToStep,
     onAssetSelected,
-    onAccountSelected,
     flow,
     hasOneCurrency,
-    searchedValue,
   });
 
   const { handleBack } = useModularDrawerBackButton({
@@ -87,29 +73,22 @@ export function useModularDrawerRemoteData({
     goBackToAssetSelection,
     goBackToNetworkSelection,
     hasOneCurrency,
-    hasOneNetwork,
     networksToDisplay,
-    searchedValue,
   });
 
   return {
     error,
     refetch,
     loadingStatus,
-    assetsConfiguration,
-    networkConfiguration,
     currenciesByProvider: filteredCurrenciesByProvider,
     assetsToDisplay,
     setAssetsToDisplay,
-    searchedValue,
-    setSearchedValue,
     networksToDisplay,
     selectedAsset,
     selectedNetwork,
     hasOneCurrency,
     handleAssetSelected,
     handleNetworkSelected,
-    handleAccountSelected,
     handleBack,
     goBackToAssetSelection,
     goBackToNetworkSelection,

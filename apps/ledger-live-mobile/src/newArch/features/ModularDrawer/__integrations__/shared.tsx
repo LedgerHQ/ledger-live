@@ -94,8 +94,6 @@ const MockModularDrawerComponent = ({
         networksConfiguration={networksConfiguration}
         assetsConfiguration={assetsConfiguration}
         enableAccountSelection={enableAccountSelection}
-        flow="integration_test"
-        source="modular_drawer_shared"
       />
     </>
   );

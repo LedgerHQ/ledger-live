@@ -117,6 +117,7 @@ describe("AddAccount", () => {
           },
         },
         modularDrawer: {
+          ...state.modularDrawer,
           isOpen: false,
           preselectedCurrencies: [mockEthCryptoCurrency.id, mockBtcCryptoCurrency.id],
         },

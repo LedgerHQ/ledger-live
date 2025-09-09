@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import styled from "styled-components/native";
 import { useTranslation } from "react-i18next";
 import { Svg, Circle as SVGCircle, SvgUri } from "react-native-svg";
@@ -15,6 +15,7 @@ import { getProviderIconUrl } from "@ledgerhq/live-common/icons/providers/provid
 import { Icon, Text, Flex } from "@ledgerhq/native-ui";
 import { useShowProviderLoadingTransition } from "@ledgerhq/live-common/hooks/useShowProviderLoadingTransition";
 import { InterstitialType } from "~/components/WebPTXPlayer";
+import { DdRum, RumActionType } from "@datadog/mobile-react-native";
 
 export const Loader = styled(Flex)`
   gap: 28px;
@@ -89,6 +90,12 @@ export const ProviderInterstitial: InterstitialType = ({ manifest, isLoading }) 
   const { t } = useTranslation();
   const showProviderLoadingTransition = useShowProviderLoadingTransition({ manifest, isLoading });
 
+  useProviderConnectRum({
+    isLoading: Boolean(showProviderLoadingTransition),
+    providerId: manifest.id,
+    providerName: manifest.name,
+  });
+
   if (!showProviderLoadingTransition) {
     return null;
   }
@@ -118,3 +125,79 @@ export const ProviderInterstitial: InterstitialType = ({ manifest, isLoading }) 
     </Loader>
   );
 };
+
+/**
+ * Tracks provider connect loader metrics in Datadog RUM.
+ * - Sends "start" and "complete" actions (linked by loadId)
+ * - Adds a custom timing when completed
+ * - Logs "timeout" actions if the loader never finishes
+ */
+function useProviderConnectRum({
+  isLoading,
+  providerId,
+  providerName,
+  timeoutMs = 20000,
+}: {
+  isLoading: boolean;
+  providerId: string;
+  providerName: string;
+  timeoutMs?: number;
+}) {
+  const loadIdRef = useRef<string | null>(null);
+  const startRef = useRef<number | null>(null);
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    if (isLoading && loadIdRef.current === null) {
+      // loader starts
+      loadIdRef.current = uniqueId();
+      startRef.current = Date.now();
+
+      DdRum.addAction(RumActionType.CUSTOM, "provider_connect_start", {
+        providerId,
+        providerName,
+        loadId: loadIdRef.current,
+      });
+
+      // detect stuck loaders
+      timeoutRef.current = setTimeout(() => {
+        if (loadIdRef.current) {
+          const elapsed = Date.now() - (startRef.current ?? Date.now());
+          DdRum.addAction(RumActionType.CUSTOM, "provider_connect_timeout", {
+            providerId,
+            providerName,
+            loadId: loadIdRef.current,
+            elapsedMs: elapsed,
+            status: "stuck",
+          });
+        }
+      }, timeoutMs);
+    }
+
+    if (!isLoading && loadIdRef.current !== null) {
+      const duration = Date.now() - (startRef.current ?? Date.now());
+
+      DdRum.addAction(RumActionType.CUSTOM, "provider_connect_complete", {
+        providerId,
+        providerName,
+        loadId: loadIdRef.current,
+        durationMs: duration,
+        status: "completed",
+      });
+
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
+      loadIdRef.current = null;
+      startRef.current = null;
+    }
+
+    return () => {
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    };
+  }, [isLoading, providerId, providerName, timeoutMs]);
+}
+
+function uniqueId(): string {
+  const timestamp = Date.now().toString(36);
+  const randomString = Math.random().toString(36).slice(2, 7);
+  return timestamp + randomString;
+}

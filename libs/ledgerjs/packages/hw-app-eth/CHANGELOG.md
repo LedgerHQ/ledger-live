@@ -1,30 +1,30 @@
 # @ledgerhq/hw-app-eth
 
-## 6.45.17-nightly.2
+## 6.45.17
 
 ### Patch Changes
 
-- Updated dependencies []:
-  - @ledgerhq/evm-tools@1.7.5-nightly.0
-  - @ledgerhq/cryptoassets-evm-signatures@13.6.1-nightly.0
+- Updated dependencies [[`e9fa7aa`](https://github.com/LedgerHQ/ledger-live/commit/e9fa7aa8c8d0414416ec7c12acf30b7623b2eda3), [`d6a6a94`](https://github.com/LedgerHQ/ledger-live/commit/d6a6a949d45fdd2f97f15842c808bf6d1058403f), [`8936f39`](https://github.com/LedgerHQ/ledger-live/commit/8936f390edbe9cbc36ac6590b01562daf5c580e1)]:
+  - @ledgerhq/types-live@6.83.0
+  - @ledgerhq/errors@6.25.0
+  - @ledgerhq/domain-service@1.2.42
+  - @ledgerhq/cryptoassets-evm-signatures@13.6.1
+  - @ledgerhq/evm-tools@1.7.5
+  - @ledgerhq/hw-transport@6.31.10
+  - @ledgerhq/hw-transport-mocker@6.29.10
 
-## 6.45.17-nightly.1
-
-### Patch Changes
-
-- Updated dependencies [[`80a109a`](https://github.com/LedgerHQ/ledger-live/commit/80a109a5f8ecdbb22cf6fb3ec084398a7e54dcfb)]:
-  - @ledgerhq/types-live@6.83.0-nightly.1
-  - @ledgerhq/domain-service@1.2.42-nightly.1
-  - @ledgerhq/evm-tools@1.7.4
-
-## 6.45.17-nightly.0
+## 6.45.17-next.0
 
 ### Patch Changes
 
-- Updated dependencies [[`228ed30`](https://github.com/LedgerHQ/ledger-live/commit/228ed3030601644e807e85a1693276b788b5cd2a), [`544edf6`](https://github.com/LedgerHQ/ledger-live/commit/544edf6bb461d48e743dc410c6bc95dc35b5fa70)]:
-  - @ledgerhq/types-live@6.83.0-nightly.0
-  - @ledgerhq/domain-service@1.2.42-nightly.0
-  - @ledgerhq/evm-tools@1.7.4
+- Updated dependencies [[`e9fa7aa`](https://github.com/LedgerHQ/ledger-live/commit/e9fa7aa8c8d0414416ec7c12acf30b7623b2eda3), [`d6a6a94`](https://github.com/LedgerHQ/ledger-live/commit/d6a6a949d45fdd2f97f15842c808bf6d1058403f), [`8936f39`](https://github.com/LedgerHQ/ledger-live/commit/8936f390edbe9cbc36ac6590b01562daf5c580e1)]:
+  - @ledgerhq/types-live@6.83.0-next.0
+  - @ledgerhq/errors@6.25.0-next.0
+  - @ledgerhq/domain-service@1.2.42-next.0
+  - @ledgerhq/cryptoassets-evm-signatures@13.6.1-next.0
+  - @ledgerhq/evm-tools@1.7.5-next.0
+  - @ledgerhq/hw-transport@6.31.10-next.0
+  - @ledgerhq/hw-transport-mocker@6.29.10-next.0
 
 ## 6.45.16
 

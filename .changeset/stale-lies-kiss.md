@@ -4,4 +4,4 @@
 "@ledgerhq/live-common": minor
 ---
 
-Migrate createApi Assets from LLD to live-common and plugged it to LLM
+Fix APY on Asset & add APY for Networks in MAD

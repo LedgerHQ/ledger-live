@@ -7,9 +7,10 @@ import {
   useModularDrawerAnalytics,
 } from "../analytics/useModularDrawerAnalytics";
 import type { StepFlowManagerReturnType } from "./useModularDrawerFlowStepManager";
+import { useSelector } from "react-redux";
+import { modularDrawerFlowSelector } from "~/reducers/modularDrawer";
 
 type UseDrawerLifecycleParams = {
-  flow: string;
   navigationStepManager: StepFlowManagerReturnType;
   canGoBackToAsset: boolean;
   canGoBackToNetwork: boolean;
@@ -20,7 +21,6 @@ type UseDrawerLifecycleParams = {
 };
 
 export function useDrawerLifecycle({
-  flow,
   navigationStepManager,
   canGoBackToAsset,
   canGoBackToNetwork,
@@ -29,6 +29,7 @@ export function useDrawerLifecycle({
   onClose,
   resetSelection,
 }: UseDrawerLifecycleParams) {
+  const flow = useSelector(modularDrawerFlowSelector);
   const { trackModularDrawerEvent } = useModularDrawerAnalytics();
 
   const handleKeyboardDismiss = () => {

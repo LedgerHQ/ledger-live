@@ -5,10 +5,10 @@ import {
   EVENTS_NAME,
   MODULAR_DRAWER_PAGE_NAME,
 } from "LLM/features/ModularDrawer/analytics";
+import { useDispatch, useSelector } from "react-redux";
+import { modularDrawerSearchValueSelector, setSearchValue } from "~/reducers/modularDrawer";
 
 export type SearchProps = {
-  setSearchedValue?: (value: string) => void;
-  defaultValue?: string;
   source: string;
   flow: string;
   assetsConfiguration?: EnhancedModularDrawerConfiguration["assets"];
@@ -23,15 +23,21 @@ export type SearchResult = {
 };
 
 export const useSearch = ({
-  setSearchedValue,
-  defaultValue,
   source,
   flow,
   assetsConfiguration,
   formatAssetConfig,
 }: SearchProps): SearchResult => {
   const { trackModularDrawerEvent } = useModularDrawerAnalytics();
-  const [displayedValue, setDisplayedValue] = useState<string | undefined>(defaultValue);
+  const searchValue = useSelector(modularDrawerSearchValueSelector);
+  const dispatch = useDispatch();
+  const setSearchedValue = useCallback(
+    (value: string) => {
+      dispatch(setSearchValue(value));
+    },
+    [dispatch],
+  );
+  const [displayedValue, setDisplayedValue] = useState<string | undefined>(searchValue);
 
   const handleDebouncedChange = useCallback(
     (currentQuery: string, previousQuery: string) => {

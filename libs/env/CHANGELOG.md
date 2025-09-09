@@ -1,14 +1,10 @@
 # @ledgerhq/live-env
 
-## 2.15.0-nightly.2
+## 2.15.0
 
 ### Minor Changes
 
-- [#11562](https://github.com/LedgerHQ/ledger-live/pull/11562) [`e52268a`](https://github.com/LedgerHQ/ledger-live/commit/e52268a3bc7d97a7ed09ed082786a647e048a6e8) Thanks [@semeano](https://github.com/semeano)! - Kaspa coin integration (coin module)
-
-## 2.15.0-nightly.1
-
-### Minor Changes
+- [#11385](https://github.com/LedgerHQ/ledger-live/pull/11385) [`87617a9`](https://github.com/LedgerHQ/ledger-live/commit/87617a9930be43a6cdbc5cc5711cc24b00309184) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLD - Modular Drawer is now leveraging the DADA service instead of local data
 
 - [#10672](https://github.com/LedgerHQ/ledger-live/pull/10672) [`8936f39`](https://github.com/LedgerHQ/ledger-live/commit/8936f390edbe9cbc36ac6590b01562daf5c580e1) Thanks [@may01](https://github.com/may01)! - added Hedera tokens to CAL
   added send/receive support to Hedera in LLD & LLM
@@ -16,11 +12,17 @@
   added support for "Associate token" transaction type to Hedera
   added test fixtures to coin-hedera
 
-## 2.15.0-nightly.0
+## 2.15.0-next.0
 
 ### Minor Changes
 
 - [#11385](https://github.com/LedgerHQ/ledger-live/pull/11385) [`87617a9`](https://github.com/LedgerHQ/ledger-live/commit/87617a9930be43a6cdbc5cc5711cc24b00309184) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLD - Modular Drawer is now leveraging the DADA service instead of local data
+
+- [#10672](https://github.com/LedgerHQ/ledger-live/pull/10672) [`8936f39`](https://github.com/LedgerHQ/ledger-live/commit/8936f390edbe9cbc36ac6590b01562daf5c580e1) Thanks [@may01](https://github.com/may01)! - added Hedera tokens to CAL
+  added send/receive support to Hedera in LLD & LLM
+  added support for HTS token association flow to LLD & LLM
+  added support for "Associate token" transaction type to Hedera
+  added test fixtures to coin-hedera
 
 ## 2.14.0
 

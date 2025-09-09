@@ -103,7 +103,7 @@ describe("useModularDrawerConfiguration", () => {
       const drawerConfiguration: EnhancedModularDrawerConfiguration = {
         assets: {
           rightElement: "balance",
-          leftElement: "priceVariation",
+          leftElement: "marketTrend",
           filter: "topNetworks",
         },
       };

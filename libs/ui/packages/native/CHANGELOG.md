@@ -1,30 +1,26 @@
 # @ledgerhq/native-ui
 
-## 0.44.0-nightly.3
-
-### Patch Changes
-
-- Updated dependencies [[`5336021`](https://github.com/LedgerHQ/ledger-live/commit/53360213fe1545cfac761d872c0bd7a592697279), [`222bd7b`](https://github.com/LedgerHQ/ledger-live/commit/222bd7b69d32fd93562e9cb4bc1cf2840d0a0620)]:
-  - @ledgerhq/ui-shared@0.4.0-nightly.0
-
-## 0.44.0-nightly.2
-
-### Minor Changes
-
-- [#11556](https://github.com/LedgerHQ/ledger-live/pull/11556) [`5040e5c`](https://github.com/LedgerHQ/ledger-live/commit/5040e5c986517a958702639b577a9e6bc90d9dfc) Thanks [@LucasWerey](https://github.com/LucasWerey)! - LargeMover fix PriceVariation indicator and ProgressPoint
-
-## 0.44.0-nightly.1
+## 0.44.0
 
 ### Minor Changes
 
 - [#11493](https://github.com/LedgerHQ/ledger-live/pull/11493) [`d4c4029`](https://github.com/LedgerHQ/ledger-live/commit/d4c40293a4f5d70f2d6819532b51dff2a9d75809) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Add APYIndicator component for LLM to native-ui lib. Move from LLD to react-ui the APYIndicator to be iso
 
-## 0.43.1-nightly.0
+### Patch Changes
+
+- Updated dependencies [[`7e4ac62`](https://github.com/LedgerHQ/ledger-live/commit/7e4ac62bd383f96e5649b225e0ff824fe7663695)]:
+  - @ledgerhq/crypto-icons-ui@1.18.0
+
+## 0.44.0-next.0
+
+### Minor Changes
+
+- [#11493](https://github.com/LedgerHQ/ledger-live/pull/11493) [`d4c4029`](https://github.com/LedgerHQ/ledger-live/commit/d4c40293a4f5d70f2d6819532b51dff2a9d75809) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Add APYIndicator component for LLM to native-ui lib. Move from LLD to react-ui the APYIndicator to be iso
 
 ### Patch Changes
 
 - Updated dependencies [[`7e4ac62`](https://github.com/LedgerHQ/ledger-live/commit/7e4ac62bd383f96e5649b225e0ff824fe7663695)]:
-  - @ledgerhq/crypto-icons-ui@1.18.0-nightly.0
+  - @ledgerhq/crypto-icons-ui@1.18.0-next.0
 
 ## 0.43.0
 

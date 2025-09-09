@@ -1,32 +1,20 @@
 # @ledgerhq/live-wallet
 
-## 0.4.0-nightly.3
+## 0.3.13
 
 ### Patch Changes
 
-- Updated dependencies [[`e52268a`](https://github.com/LedgerHQ/ledger-live/commit/e52268a3bc7d97a7ed09ed082786a647e048a6e8)]:
-  - @ledgerhq/live-env@2.15.0-nightly.2
+- Updated dependencies [[`87617a9`](https://github.com/LedgerHQ/ledger-live/commit/87617a9930be43a6cdbc5cc5711cc24b00309184), [`8936f39`](https://github.com/LedgerHQ/ledger-live/commit/8936f390edbe9cbc36ac6590b01562daf5c580e1)]:
+  - @ledgerhq/live-env@2.15.0
+  - @ledgerhq/hw-transport@6.31.10
 
-## 0.4.0-nightly.2
-
-### Minor Changes
-
-- [#11503](https://github.com/LedgerHQ/ledger-live/pull/11503) [`0051b62`](https://github.com/LedgerHQ/ledger-live/commit/0051b62ca8f7ddddc0bdc316a8734362aacfbb58) Thanks [@gre-ledger](https://github.com/gre-ledger)! - use @noble/curves instead of secp256k1
-
-## 0.3.13-nightly.1
+## 0.3.13-next.0
 
 ### Patch Changes
 
-- Updated dependencies [[`8936f39`](https://github.com/LedgerHQ/ledger-live/commit/8936f390edbe9cbc36ac6590b01562daf5c580e1)]:
-  - @ledgerhq/live-env@2.15.0-nightly.1
-  - @ledgerhq/hw-transport@6.31.10-nightly.0
-
-## 0.3.13-nightly.0
-
-### Patch Changes
-
-- Updated dependencies [[`87617a9`](https://github.com/LedgerHQ/ledger-live/commit/87617a9930be43a6cdbc5cc5711cc24b00309184)]:
-  - @ledgerhq/live-env@2.15.0-nightly.0
+- Updated dependencies [[`87617a9`](https://github.com/LedgerHQ/ledger-live/commit/87617a9930be43a6cdbc5cc5711cc24b00309184), [`8936f39`](https://github.com/LedgerHQ/ledger-live/commit/8936f390edbe9cbc36ac6590b01562daf5c580e1)]:
+  - @ledgerhq/live-env@2.15.0-next.0
+  - @ledgerhq/hw-transport@6.31.10-next.0
 
 ## 0.3.12
 

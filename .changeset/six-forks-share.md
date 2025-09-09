@@ -1,7 +1,6 @@
 ---
 "ledger-live-desktop": minor
-"live-mobile": minor
 "@ledgerhq/live-common": minor
 ---
 
-APY on network selection screen
+LLD / LLM - Edit default modular configuration of the drawer

@@ -1,4 +1,5 @@
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo } from "react";
+import { useDispatch } from "react-redux";
 import { AnimatePresence } from "framer-motion";
 import AnimatedScreenWrapper from "./components/AnimatedScreenWrapper";
 import { MODULAR_DRAWER_STEP, ModularDrawerFlowManagerProps, ModularDrawerStep } from "./types";
@@ -9,6 +10,8 @@ import { AccountSelection } from "./screens/AccountSelection";
 import { useModularDrawerNavigation } from "./hooks/useModularDrawerNavigation";
 import { BackButtonArrow } from "./components/BackButton";
 import { useModularDrawerRemoteData } from "./hooks/useModularDrawerRemoteData";
+import { setSearchedValue } from "~/renderer/reducers/modularDrawer";
+import { useModularDrawerConfiguration } from "./hooks/useModularDrawerConfiguration";
 
 const ModularDrawerFlowManager = ({
   currencies,
@@ -22,38 +25,43 @@ const ModularDrawerFlowManager = ({
   onAccountSelected,
 }: ModularDrawerFlowManagerProps) => {
   const currencyIds = useMemo(() => (currencies || []).map(currency => currency.id), [currencies]);
+  const dispatch = useDispatch();
   const { currentStep, navigationDirection, goToStep } = useModularDrawerNavigation();
+
+  useEffect(() => {
+    return () => {
+      // Reset search value when the drawer closes/unmounts
+      dispatch(setSearchedValue(undefined));
+    };
+  }, [dispatch]);
 
   const {
     error,
     refetch,
     loadingStatus,
-    assetsConfiguration,
-    networkConfiguration,
     currenciesByProvider,
     assetsToDisplay,
-    searchedValue,
-    setSearchedValue,
     networksToDisplay,
     selectedAsset,
     selectedNetwork,
     hasOneCurrency,
     handleAssetSelected,
     handleNetworkSelected,
-    handleAccountSelected,
     handleBack,
     loadNext,
   } = useModularDrawerRemoteData({
     currentStep,
     currencyIds,
-    drawerConfiguration,
     goToStep,
     onAssetSelected,
-    onAccountSelected,
+    isSelectAccountFlow: Boolean(onAccountSelected),
     flow,
     useCase,
     areCurrenciesFiltered,
   });
+
+  const { assetsConfiguration, networkConfiguration } =
+    useModularDrawerConfiguration(drawerConfiguration);
 
   const renderStepContent = (step: ModularDrawerStep) => {
     switch (step) {
@@ -62,10 +70,8 @@ const ModularDrawerFlowManager = ({
           <AssetSelection
             assetsToDisplay={assetsToDisplay}
             providersLoadingStatus={loadingStatus}
-            defaultSearchValue={searchedValue}
             assetsConfiguration={assetsConfiguration}
             currenciesByProvider={currenciesByProvider}
-            setSearchedValue={setSearchedValue}
             onAssetSelected={handleAssetSelected}
             flow={flow}
             source={source}
@@ -89,12 +95,12 @@ const ModularDrawerFlowManager = ({
           />
         );
       case MODULAR_DRAWER_STEP.ACCOUNT_SELECTION:
-        if (selectedAsset && selectedNetwork) {
+        if (selectedAsset && selectedNetwork && onAccountSelected) {
           return (
             <AccountSelection
               asset={selectedAsset}
               accounts$={accounts$}
-              onAccountSelected={handleAccountSelected}
+              onAccountSelected={onAccountSelected}
               flow={flow}
               source={source}
             />

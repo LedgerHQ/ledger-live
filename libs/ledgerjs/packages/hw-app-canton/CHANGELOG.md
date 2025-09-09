@@ -1,23 +1,30 @@
 # @ledgerhq/hw-app-canton
 
-## 0.3.0-nightly.2
-
-### Minor Changes
-
-- [#11535](https://github.com/LedgerHQ/ledger-live/pull/11535) [`205458e`](https://github.com/LedgerHQ/ledger-live/commit/205458e2d3ca5ec1d7a50d30b63050a692a5e045) Thanks [@sprohaszka-ledger](https://github.com/sprohaszka-ledger)! - Canton add sign hash function
-
-## 0.3.0-nightly.1
-
-### Patch Changes
-
-- Updated dependencies [[`12277dc`](https://github.com/LedgerHQ/ledger-live/commit/12277dcb478f24152060e3e11e2eb37d650b5b60), [`c1209a7`](https://github.com/LedgerHQ/ledger-live/commit/c1209a70f6362fe8a52139ad5ad0b4705aac00fb), [`58ef394`](https://github.com/LedgerHQ/ledger-live/commit/58ef39468870e56745a3a4bc95a1292a1e1f64ca)]:
-  - @ledgerhq/coin-canton@0.4.0-nightly.0
-
-## 0.3.0-nightly.0
+## 0.3.0
 
 ### Minor Changes
 
 - [#11481](https://github.com/LedgerHQ/ledger-live/pull/11481) [`d571ef1`](https://github.com/LedgerHQ/ledger-live/commit/d571ef1104092e41de4dfb6dd9b26d27348b82cf) Thanks [@sprohaszka-ledger](https://github.com/sprohaszka-ledger)! - Add integration tests and communicate with a real transport implementation
+
+### Patch Changes
+
+- Updated dependencies [[`12277dc`](https://github.com/LedgerHQ/ledger-live/commit/12277dcb478f24152060e3e11e2eb37d650b5b60), [`212f772`](https://github.com/LedgerHQ/ledger-live/commit/212f772b17dc3db97009ebe62912f8f183c1ef2e), [`8936f39`](https://github.com/LedgerHQ/ledger-live/commit/8936f390edbe9cbc36ac6590b01562daf5c580e1)]:
+  - @ledgerhq/coin-canton@0.4.0
+  - @ledgerhq/errors@6.25.0
+  - @ledgerhq/hw-transport@6.31.10
+
+## 0.3.0-next.0
+
+### Minor Changes
+
+- [#11481](https://github.com/LedgerHQ/ledger-live/pull/11481) [`d571ef1`](https://github.com/LedgerHQ/ledger-live/commit/d571ef1104092e41de4dfb6dd9b26d27348b82cf) Thanks [@sprohaszka-ledger](https://github.com/sprohaszka-ledger)! - Add integration tests and communicate with a real transport implementation
+
+### Patch Changes
+
+- Updated dependencies [[`12277dc`](https://github.com/LedgerHQ/ledger-live/commit/12277dcb478f24152060e3e11e2eb37d650b5b60), [`212f772`](https://github.com/LedgerHQ/ledger-live/commit/212f772b17dc3db97009ebe62912f8f183c1ef2e), [`8936f39`](https://github.com/LedgerHQ/ledger-live/commit/8936f390edbe9cbc36ac6590b01562daf5c580e1)]:
+  - @ledgerhq/coin-canton@0.4.0-next.0
+  - @ledgerhq/errors@6.25.0-next.0
+  - @ledgerhq/hw-transport@6.31.10-next.0
 
 ## 0.2.2
 

@@ -9,12 +9,13 @@ export interface ModularDrawerState {
   callbackId?: string;
   enableAccountSelection?: boolean;
   accountsObservableId?: string;
-  flow?: string;
-  source?: string;
+  flow: string;
+  source: string;
   assetsConfiguration?: EnhancedModularDrawerConfiguration["assets"];
   networksConfiguration?: EnhancedModularDrawerConfiguration["networks"];
   useCase?: string;
   areCurrenciesFiltered?: boolean;
+  searchValue: string;
 }
 
 export const INITIAL_STATE: ModularDrawerState = {
@@ -23,8 +24,8 @@ export const INITIAL_STATE: ModularDrawerState = {
   callbackId: undefined,
   enableAccountSelection: false,
   accountsObservableId: undefined,
-  flow: undefined,
-  source: undefined,
+  flow: "",
+  source: "",
   assetsConfiguration: {
     leftElement: "undefined",
     rightElement: "undefined",
@@ -35,10 +36,15 @@ export const INITIAL_STATE: ModularDrawerState = {
   },
   useCase: undefined,
   areCurrenciesFiltered: undefined,
+  searchValue: "",
 };
 
 // Selectors
 export const modularDrawerStateSelector = (state: State) => state.modularDrawer;
+
+export const modularDrawerSearchValueSelector = (state: State) => state.modularDrawer.searchValue;
+export const modularDrawerFlowSelector = (state: State) => state.modularDrawer.flow;
+export const modularDrawerSourceSelector = (state: State) => state.modularDrawer.source;
 
 const modularDrawerSlice = createSlice({
   name: MODULAR_DRAWER_KEY,
@@ -60,7 +66,7 @@ const modularDrawerSlice = createSlice({
       }>,
     ) => {
       state.isOpen = true;
-
+      state.searchValue = "";
       const {
         currencies,
         callbackId,
@@ -111,12 +117,13 @@ const modularDrawerSlice = createSlice({
       state.callbackId = undefined;
       state.enableAccountSelection = false;
       state.accountsObservableId = undefined;
-      state.flow = undefined;
-      state.source = undefined;
+      state.flow = "";
+      state.source = "";
       state.assetsConfiguration = INITIAL_STATE.assetsConfiguration;
       state.networksConfiguration = INITIAL_STATE.networksConfiguration;
       state.useCase = undefined;
       state.areCurrenciesFiltered = undefined;
+      state.searchValue = "";
     },
     setPreselectedCurrencies: (state, action: PayloadAction<string[]>) => {
       state.preselectedCurrencies = action.payload;
@@ -148,6 +155,9 @@ const modularDrawerSlice = createSlice({
     setAreCurrenciesFiltered: (state, action: PayloadAction<boolean | undefined>) => {
       state.areCurrenciesFiltered = action.payload;
     },
+    setSearchValue: (state, action: PayloadAction<string>) => {
+      state.searchValue = action.payload;
+    },
   },
 });
 
@@ -160,6 +170,7 @@ export const {
   setAccountsObservableId,
   setAssetsConfiguration,
   setNetworksConfiguration,
+  setSearchValue,
 } = modularDrawerSlice.actions;
 
 export default modularDrawerSlice.reducer;

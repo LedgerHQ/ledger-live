@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import ModularDrawerFlowManager from "./ModularDrawerFlowManager";
 import { EnhancedModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/types";
-import { useAssetsFromDada } from "./hooks/useAssetsFromDada";
+import { useAssets } from "./hooks/useAssets";
 import { useModularDrawerState } from "./hooks/useModularDrawerState";
 
 import QueuedDrawerGorhom from "LLM/components/QueuedDrawer/temp/QueuedDrawerGorhom";
@@ -9,6 +9,8 @@ import QueuedDrawerGorhom from "LLM/components/QueuedDrawer/temp/QueuedDrawerGor
 import { AccountLike } from "@ledgerhq/types-live";
 import { WalletAPIAccount } from "@ledgerhq/live-common/wallet-api/types";
 import { Observable } from "rxjs";
+import { useSelector } from "react-redux";
+import { modularDrawerSearchValueSelector } from "~/reducers/modularDrawer";
 
 const SNAP_POINTS = ["70%", "92%"];
 
@@ -25,10 +27,6 @@ type ModularDrawerProps = {
   // Data and configuration
   /** List of preselected currencies to display in the drawer */
   readonly currencies?: string[];
-  /** The flow identifier for analytics */
-  readonly flow: string;
-  /** The source identifier for analytics */
-  readonly source: string;
   /** Configuration for assets display */
   readonly assetsConfiguration?: EnhancedModularDrawerConfiguration["assets"];
   /** Configuration for networks display */
@@ -58,8 +56,6 @@ export function ModularDrawer({
   isOpen,
   onClose,
   currencies,
-  flow,
-  source,
   assetsConfiguration,
   networksConfiguration,
   enableAccountSelection = false,
@@ -68,21 +64,13 @@ export function ModularDrawer({
   useCase,
   areCurrenciesFiltered,
 }: ModularDrawerProps) {
-  const [searchValue, setSearchValue] = useState("");
-
-  useEffect(() => {
-    if (isOpen) {
-      setSearchValue("");
-    }
-  }, [isOpen]);
-
-  const { sortedCryptoCurrencies, assetsSorted, isLoading, error, refetch, loadNext } =
-    useAssetsFromDada({
-      currencyIds: currencies,
-      searchedValue: searchValue,
-      useCase,
-      areCurrenciesFiltered,
-    });
+  const searchValue = useSelector(modularDrawerSearchValueSelector);
+  const { sortedCryptoCurrencies, assetsSorted, isLoading, error, refetch, loadNext } = useAssets({
+    currencyIds: currencies,
+    searchedValue: searchValue,
+    useCase,
+    areCurrenciesFiltered,
+  });
 
   const {
     accountCurrency,
@@ -100,7 +88,6 @@ export function ModularDrawer({
     assetsSorted,
     currencyIds: currencies ?? [],
     isDrawerOpen: isOpen,
-    flow,
     enableAccountSelection,
     onClose,
     hasSearchedValue: searchValue.length > 0,
@@ -122,10 +109,6 @@ export function ModularDrawer({
         assetsViewModel={{
           availableAssets: sortedCryptoCurrencies,
           onAssetSelected: handleAsset,
-          defaultSearchValue: searchValue,
-          setDefaultSearchValue: setSearchValue,
-          flow,
-          source,
           assetsConfiguration,
           isOpen,
           isLoading,
@@ -136,8 +119,6 @@ export function ModularDrawer({
         networksViewModel={{
           onNetworkSelected: handleNetwork,
           availableNetworks,
-          flow,
-          source,
           networksConfiguration,
           asset,
         }}
@@ -146,8 +127,6 @@ export function ModularDrawer({
           onAddNewAccount,
           asset: accountCurrency,
           onAccountSelected,
-          flow,
-          source,
         }}
       />
     </QueuedDrawerGorhom>

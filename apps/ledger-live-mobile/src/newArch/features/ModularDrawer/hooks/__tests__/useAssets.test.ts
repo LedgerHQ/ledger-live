@@ -1,15 +1,15 @@
 import { renderHook, waitFor } from "@tests/test-renderer";
-import { useAssetsFromDada } from "../useAssetsFromDada";
+import { useAssets } from "../useAssets";
 import { expectedAssetsSorted as expectedAssetsSortedFromMock } from "@ledgerhq/live-common/modularDrawer/__mocks__/dada.mock";
 import { LoadingStatus } from "@ledgerhq/live-common/deposit/type";
 
-describe("useAssetsFromDada", () => {
+describe("useAssets", () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
   it("transforms data into assetsSorted and sortedCryptoCurrencies", async () => {
-    const { result } = renderHook(() => useAssetsFromDada({}));
+    const { result } = renderHook(() => useAssets({}));
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
     expect(result.current.isLoading).toBe(false);

@@ -32,7 +32,6 @@ export function useModularDrawerFiltering({
 
   const [networksToDisplay, setNetworksToDisplay] = useState<CryptoOrTokenCurrency[]>();
 
-  const hasOneNetwork = networksToDisplay?.length === 1;
   const hasOneCurrency = useMemo(() => {
     if (!isSuccess) return false;
     return haveOneCommonProvider(currencyIds, currenciesByProvider);
@@ -67,7 +66,6 @@ export function useModularDrawerFiltering({
     setAssetsToDisplay,
     networksToDisplay,
     setNetworksToDisplay,
-    hasOneNetwork,
     hasOneCurrency,
     filteredCurrenciesByProvider,
   };

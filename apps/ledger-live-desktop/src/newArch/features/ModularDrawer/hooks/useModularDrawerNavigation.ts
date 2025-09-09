@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useState } from "react";
 import {
   MODULAR_DRAWER_STEP,
   ModularDrawerStep,
@@ -28,7 +28,6 @@ export function useGenericNavigation<T>({
   const [currentStep, setCurrentStep] = useState<T>(initialStep);
   const [navigationDirection, setNavigationDirection] =
     useState<NavigationDirection>(forwardDirection);
-  const prevStepRef = useRef<T>(initialStep);
 
   const goToStep = useCallback(
     (nextStep: T) => {
@@ -40,7 +39,6 @@ export function useGenericNavigation<T>({
         setNavigationDirection(backwardDirection);
       }
       setCurrentStep(nextStep);
-      prevStepRef.current = nextStep;
     },
     [currentStep, stepOrder, forwardDirection, backwardDirection],
   );
