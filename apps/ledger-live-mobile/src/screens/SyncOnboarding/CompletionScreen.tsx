@@ -173,12 +173,12 @@ const CompletionScreen = ({ route }: Props) => {
 
   return (
     <TouchableWithoutFeedback onPress={redirectToMainScreen}>
-      <TrackScreen
-        category="End of onboarding"
-        flow="onboarding"
-        seedConfiguration={seedConfiguration}
-      />
       <Flex width="100%" height="100%" alignItems="center" justifyContent="center">
+        <TrackScreen
+          category="End of onboarding"
+          flow="onboarding"
+          seedConfiguration={seedConfiguration}
+        />
         {onboardingSuccessView(false, redirectToMainScreen)}
       </Flex>
     </TouchableWithoutFeedback>
