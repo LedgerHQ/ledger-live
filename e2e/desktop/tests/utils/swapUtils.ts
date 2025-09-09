@@ -54,9 +54,7 @@ async function selectAssetToAndAccount(
   electronApp: ElectronApplication,
   swap: Swap,
 ) {
-  const networkName = swap.accountToCredit.parentAccount
-    ? swap.accountToCredit.parentAccount.currency.name
-    : undefined;
+  const networkName = swap.accountToCredit.parentAccount?.currency.name;
   await app.swap.chooseFromAsset(swap.accountToCredit.currency.name, networkName);
   await app.swapDrawer.selectAccountByName(swap.accountToCredit);
   await app.swap.checkAssetTo(electronApp, swap.accountToCredit.currency.ticker);
@@ -67,9 +65,7 @@ async function selectAssetFromAndAccount(
   electronApp: ElectronApplication,
   swap: Swap,
 ) {
-  const networkName = swap.accountToDebit.parentAccount
-    ? swap.accountToDebit.parentAccount.currency.name
-    : undefined;
+  const networkName = swap.accountToDebit.parentAccount?.currency.name;
   await app.swap.chooseFromAsset(swap.accountToDebit.currency.name, networkName);
   await app.swapDrawer.selectAccountByName(swap.accountToDebit);
   await app.swap.checkAssetFrom(electronApp, swap.accountToDebit.currency.ticker);

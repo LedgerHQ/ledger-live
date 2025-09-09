@@ -1008,9 +1008,7 @@ for (const { fromAccount, toAccount, xrayTicket } of swapMax) {
           await app.modularDrawer.selectNetwork(toAccount.currency);
           await app.modularDrawer.selectAccountByName(toAccount);
         } else {
-          const networkName = fromAccount.parentAccount
-            ? fromAccount.parentAccount.currency.name
-            : undefined;
+          const networkName = fromAccount.parentAccount?.currency.name;
           await app.swap.chooseFromAsset(fromAccount.currency.name, networkName);
           await app.swapDrawer.selectAccountByName(fromAccount);
           await app.swap.selectAssetTo(electronApp, toAccount.currency.name);

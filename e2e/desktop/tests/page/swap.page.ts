@@ -315,9 +315,7 @@ export class SwapPage extends AppPage {
   async selectAssetFrom(electronApp: ElectronApplication, accountToSwapFrom: Account) {
     const [, webview] = electronApp.windows();
     await webview.getByTestId(this.fromAccountCoinSelector).click();
-    const networkName = accountToSwapFrom.parentAccount
-      ? accountToSwapFrom.parentAccount.currency.name
-      : undefined;
+    const networkName = accountToSwapFrom.parentAccount?.currency.name;
     await this.chooseAssetDrawer.chooseFromAsset(accountToSwapFrom.currency.name, networkName);
   }
 
