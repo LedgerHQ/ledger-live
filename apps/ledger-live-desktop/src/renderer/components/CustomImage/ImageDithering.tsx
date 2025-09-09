@@ -5,7 +5,6 @@ import { CLSSupportedDeviceModelId } from "@ledgerhq/live-common/device/use-case
 import { ImageBase64Data } from "./types";
 import ContrastChoice from "./ContrastChoice";
 import FramedPicture from "./FramedPicture";
-import { useTheme } from "styled-components";
 import { getFramedPictureConfig } from "./framedPictureConfigs";
 import { getScreenSpecs } from "@ledgerhq/live-common/device/use-cases/screenSpecs";
 import {
@@ -53,14 +52,11 @@ const ImageDithering: React.FC<Props> = props => {
   const [previewResult, setPreviewResult] = useState<ProcessorPreviewResult | null>(null);
   const sourceImageRef = useRef<HTMLImageElement | null>(null);
 
-  const theme = useTheme();
-
   const availableDitheringConfigKeys = useMemo(
     () => getAvailableDitheringConfigKeys(bitsPerPixel),
     [bitsPerPixel],
   );
 
-  // TODO: adapt
   useEffect(() => {
     onDitheringConfigChanged({
       index: ditheringConfigKey,
@@ -116,7 +112,7 @@ const ImageDithering: React.FC<Props> = props => {
       />
       {previewResult ? (
         <FramedPicture
-          frameConfig={getFramedPictureConfig("transfer", deviceModelId, theme.colors.palette.type)}
+          frameConfig={getFramedPictureConfig("transfer", deviceModelId, "dark")}
           source={previewResult?.imageBase64DataUri}
         />
       ) : null}
@@ -125,7 +121,7 @@ const ImageDithering: React.FC<Props> = props => {
           <ContrastChoice
             key={key}
             onClick={() => setDitheringConfigKey(key)}
-            appearance={mapDitheringConfigKeyToAppearance(theme)[key]}
+            appearance={mapDitheringConfigKeyToAppearance[key]}
             selected={ditheringConfigKey === key}
             index={index}
           />

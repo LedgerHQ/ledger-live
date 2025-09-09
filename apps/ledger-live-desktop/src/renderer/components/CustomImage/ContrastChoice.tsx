@@ -25,8 +25,8 @@ const Container = styled(Flex).attrs(
     width: p.appearanceType === "two-colors" ? 48 : 56,
     borderWidth: p.appearanceType === "two-colors" ? 1 : 2,
     padding: p.appearanceType === "two-colors" ? 0 : 2,
-    borderColor: p.selected ? "constant.white" : "transparent",
-    borderRadius: p.appearanceType === "two-colors" ? "4px" : "8px", // 2 does not work
+    borderColor: p.selected ? "neutral.c100" : "transparent",
+    borderRadius: p.appearanceType === "two-colors" ? "5px" : "8px",
   }),
 )<{ selected: boolean }>``;
 

@@ -1,4 +1,4 @@
-import { Theme } from "@ledgerhq/react-ui";
+import { palettes } from "@ledgerhq/react-ui/styles/index";
 import { Appearance, DitheringConfig, DitheringConfigKey } from "./types";
 
 import ditheringFloydSteinberg from "../assets/ditheringFloydSteinberg.png";
@@ -15,28 +15,26 @@ export const mapDitheringConfigKeyToConfig: Record<DitheringConfigKey, Dithering
   [DitheringConfigKey.OneBPPThird]: { algorithm: "reduced-atkinson", contrastValue: 1 },
 };
 
-export const mapDitheringConfigKeyToAppearance: (
-  theme: Theme,
-) => Record<DitheringConfigKey, Appearance> = theme => ({
+export const mapDitheringConfigKeyToAppearance: Record<DitheringConfigKey, Appearance> = {
   [DitheringConfigKey.FourBPPFirst]: {
     type: "two-colors",
-    topLeftColor: theme.colors.neutral.c40,
-    bottomRightColor: theme.colors.neutral.c30,
+    topLeftColor: palettes.dark.neutral.c40,
+    bottomRightColor: palettes.dark.neutral.c30,
   },
   [DitheringConfigKey.FourBPPSecond]: {
     type: "two-colors",
-    topLeftColor: theme.colors.neutral.c50,
-    bottomRightColor: theme.colors.neutral.c30,
+    topLeftColor: palettes.dark.neutral.c50,
+    bottomRightColor: palettes.dark.neutral.c30,
   },
   [DitheringConfigKey.FourBPPThird]: {
     type: "two-colors",
-    topLeftColor: theme.colors.neutral.c60,
-    bottomRightColor: theme.colors.neutral.c30,
+    topLeftColor: palettes.dark.neutral.c60,
+    bottomRightColor: palettes.dark.neutral.c30,
   },
   [DitheringConfigKey.FourBPPFourth]: {
     type: "two-colors",
-    topLeftColor: theme.colors.neutral.c70,
-    bottomRightColor: theme.colors.neutral.c30,
+    topLeftColor: palettes.dark.neutral.c70,
+    bottomRightColor: palettes.dark.neutral.c30,
   },
   [DitheringConfigKey.OneBPPFirst]: {
     type: "background-picture",
@@ -50,7 +48,7 @@ export const mapDitheringConfigKeyToAppearance: (
     type: "background-picture",
     backgroundPicSrc: ditheringAtkinsonReduced,
   },
-});
+};
 
 export const getAvailableDitheringConfigKeys = (bitsPerPixel: 1 | 4): DitheringConfigKey[] => {
   return bitsPerPixel === 1
