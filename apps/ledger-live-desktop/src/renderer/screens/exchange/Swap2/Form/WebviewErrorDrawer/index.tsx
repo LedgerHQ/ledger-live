@@ -7,6 +7,7 @@ import { useGetSwapTrackingProperties } from "../../utils/index";
 import { BoxedIcon, Text } from "@ledgerhq/react-ui";
 import { SwapLiveError } from "@ledgerhq/live-common/exchange/swap/types";
 import ErrorIcon from "~/renderer/components/ErrorIcon";
+import { track } from "~/renderer/analytics/__mocks__/segment";
 
 const ContentBox = styled(Box)`
   display: flex;
@@ -72,6 +73,10 @@ export default function WebviewErrorDrawer(error?: SwapLiveError) {
   const errorMessage = error?.cause?.response?.data?.error?.message?.toLowerCase();
 
   if (errorMessage?.includes("transaction cannot be created")) {
+    track("error_message", {
+      ...swapDefaultTrack,
+      message: "partner_unavailable",
+    });
     titleKey = "errors.TransactionCannotBeCreated.title";
     descriptionKey = "errors.TransactionCannotBeCreated.description";
     errorCodeSection = null;
