@@ -46,7 +46,7 @@ import { getEnv } from "@ledgerhq/live-env";
 import { SUI_SYSTEM_STATE_OBJECT_ID } from "@mysten/sui/utils";
 import { getCurrentSuiPreloadData } from "../bridge/preload";
 import { ONE_SUI } from "../constants";
-import { SuiMoveObject } from "@mysten/signers/ledger/bcs";
+import { SuiMoveObject } from "../../node_modules/@mysten/signers/dist/cjs/ledger/bcs.js";
 import bs58 from "bs58";
 
 const apiMap: Record<string, SuiClient> = {};
