@@ -1,5 +1,32 @@
 # live-mobile
 
+## 3.93.0-nightly.0
+
+### Minor Changes
+
+- [#11688](https://github.com/LedgerHQ/ledger-live/pull/11688) [`6bb0cf8`](https://github.com/LedgerHQ/ledger-live/commit/6bb0cf8c888f6d1fc97c27ea4f64f837375b6927) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add Search/source/flow to MAD's slice
+
+- [#11664](https://github.com/LedgerHQ/ledger-live/pull/11664) [`dba6a2f`](https://github.com/LedgerHQ/ledger-live/commit/dba6a2f00ee5be60d893fd9b57cfa50d6b8ad477) Thanks [@hhumphrey-ledger](https://github.com/hhumphrey-ledger)! - Add Datadog tracking to Provider interstitial
+
+- [#11659](https://github.com/LedgerHQ/ledger-live/pull/11659) [`25d8fdd`](https://github.com/LedgerHQ/ledger-live/commit/25d8fdde989e1a1c0cc6f16052c322d4e9d46d1f) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Fix APY on Asset & add APY for Networks in MAD
+
+### Patch Changes
+
+- [#11663](https://github.com/LedgerHQ/ledger-live/pull/11663) [`52092f0`](https://github.com/LedgerHQ/ledger-live/commit/52092f00dcf9e044a41e0ce46baf1ea9b64a3246) Thanks [@Antoine-bls83](https://github.com/Antoine-bls83)! - fix the allignement of unit value in the ValidateOnDevice for LLM
+
+- Updated dependencies [[`c190e2b`](https://github.com/LedgerHQ/ledger-live/commit/c190e2b104a9dd0dd693c2d72433b98115f4089f)]:
+  - @ledgerhq/coin-framework@6.4.0-nightly.0
+  - @ledgerhq/coin-cosmos@0.17.1-nightly.0
+  - @ledgerhq/coin-evm@2.29.1-nightly.0
+  - @ledgerhq/coin-filecoin@1.11.1-nightly.0
+  - @ledgerhq/coin-multiversx@0.5.1-nightly.0
+  - @ledgerhq/coin-stacks@0.9.1-nightly.0
+  - @ledgerhq/live-countervalues@0.7.1-nightly.0
+  - @ledgerhq/live-countervalues-react@0.5.2-nightly.0
+  - @ledgerhq/live-nft@0.8.20-nightly.0
+  - @ledgerhq/live-nft-react@0.9.20-nightly.0
+  - @ledgerhq/live-wallet@0.13.1-nightly.0
+
 ## 3.92.0
 
 ### Minor Changes

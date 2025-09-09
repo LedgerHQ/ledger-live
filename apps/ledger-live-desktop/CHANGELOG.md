@@ -1,5 +1,33 @@
 # ledger-live-desktop
 
+## 2.128.0-nightly.0
+
+### Minor Changes
+
+- [#11690](https://github.com/LedgerHQ/ledger-live/pull/11690) [`c4fce42`](https://github.com/LedgerHQ/ledger-live/commit/c4fce421f130dc4d50b9f61f7031d1ef46d1fe98) Thanks [@ejaycoleman](https://github.com/ejaycoleman)! - Removing dead code from LLD MAD
+
+- [#11689](https://github.com/LedgerHQ/ledger-live/pull/11689) [`5e43b9f`](https://github.com/LedgerHQ/ledger-live/commit/5e43b9fab2c895e145bdddbf180fbf985e429f7b) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLD / LLM - Edit default modular configuration of the drawer
+
+- [#11659](https://github.com/LedgerHQ/ledger-live/pull/11659) [`25d8fdd`](https://github.com/LedgerHQ/ledger-live/commit/25d8fdde989e1a1c0cc6f16052c322d4e9d46d1f) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Fix APY on Asset & add APY for Networks in MAD
+
+- [#11669](https://github.com/LedgerHQ/ledger-live/pull/11669) [`3e3d9bd`](https://github.com/LedgerHQ/ledger-live/commit/3e3d9bdf4bebe21f107bf044a915f63ff504aa85) Thanks [@ejaycoleman](https://github.com/ejaycoleman)! - Move LLD MAD searchedValue to Redux to reduce prop drilling
+
+### Patch Changes
+
+- Updated dependencies [[`c190e2b`](https://github.com/LedgerHQ/ledger-live/commit/c190e2b104a9dd0dd693c2d72433b98115f4089f), [`5e43b9f`](https://github.com/LedgerHQ/ledger-live/commit/5e43b9fab2c895e145bdddbf180fbf985e429f7b), [`25d8fdd`](https://github.com/LedgerHQ/ledger-live/commit/25d8fdde989e1a1c0cc6f16052c322d4e9d46d1f)]:
+  - @ledgerhq/live-common@34.48.0-nightly.0
+  - @ledgerhq/coin-framework@6.4.0-nightly.0
+  - @ledgerhq/live-dmk-desktop@0.9.5-nightly.0
+  - @ledgerhq/coin-bitcoin@0.21.1-nightly.0
+  - @ledgerhq/coin-cosmos@0.17.1-nightly.0
+  - @ledgerhq/coin-evm@2.29.1-nightly.0
+  - @ledgerhq/coin-filecoin@1.11.1-nightly.0
+  - @ledgerhq/live-countervalues@0.7.1-nightly.0
+  - @ledgerhq/live-countervalues-react@0.5.2-nightly.0
+  - @ledgerhq/live-nft@0.8.20-nightly.0
+  - @ledgerhq/live-nft-react@0.9.20-nightly.0
+  - @ledgerhq/live-wallet@0.13.1-nightly.0
+
 ## 2.127.0
 
 ### Minor Changes

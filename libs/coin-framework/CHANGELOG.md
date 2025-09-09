@@ -1,5 +1,12 @@
 # @ledgerhq/coin-framework
 
+## 6.4.0-nightly.0
+
+### Minor Changes
+
+- [#11675](https://github.com/LedgerHQ/ledger-live/pull/11675) [`c190e2b`](https://github.com/LedgerHQ/ledger-live/commit/c190e2b104a9dd0dd693c2d72433b98115f4089f) Thanks [@semeano](https://github.com/semeano)! - fix: added missing ASSOCIATE_TOKEN operation type
+  test: snapshot update
+
 ## 6.3.0
 
 ### Minor Changes

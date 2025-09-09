@@ -1,5 +1,54 @@
 # @ledgerhq/live-common
 
+## 34.48.0-nightly.0
+
+### Minor Changes
+
+- [#11675](https://github.com/LedgerHQ/ledger-live/pull/11675) [`c190e2b`](https://github.com/LedgerHQ/ledger-live/commit/c190e2b104a9dd0dd693c2d72433b98115f4089f) Thanks [@semeano](https://github.com/semeano)! - fix: added missing ASSOCIATE_TOKEN operation type
+  test: snapshot update
+
+- [#11689](https://github.com/LedgerHQ/ledger-live/pull/11689) [`5e43b9f`](https://github.com/LedgerHQ/ledger-live/commit/5e43b9fab2c895e145bdddbf180fbf985e429f7b) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLD / LLM - Edit default modular configuration of the drawer
+
+- [#11659](https://github.com/LedgerHQ/ledger-live/pull/11659) [`25d8fdd`](https://github.com/LedgerHQ/ledger-live/commit/25d8fdde989e1a1c0cc6f16052c322d4e9d46d1f) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Fix APY on Asset & add APY for Networks in MAD
+
+### Patch Changes
+
+- Updated dependencies [[`c190e2b`](https://github.com/LedgerHQ/ledger-live/commit/c190e2b104a9dd0dd693c2d72433b98115f4089f)]:
+  - @ledgerhq/coin-framework@6.4.0-nightly.0
+  - @ledgerhq/coin-algorand@0.10.1-nightly.0
+  - @ledgerhq/coin-aptos@3.2.1-nightly.0
+  - @ledgerhq/coin-bitcoin@0.21.1-nightly.0
+  - @ledgerhq/coin-canton@0.4.1-nightly.0
+  - @ledgerhq/coin-cardano@0.12.1-nightly.0
+  - @ledgerhq/coin-casper@2.1.1-nightly.0
+  - @ledgerhq/coin-celo@1.3.1-nightly.0
+  - @ledgerhq/coin-cosmos@0.17.1-nightly.0
+  - @ledgerhq/coin-evm@2.29.1-nightly.0
+  - @ledgerhq/coin-filecoin@1.11.1-nightly.0
+  - @ledgerhq/coin-hedera@1.11.1-nightly.0
+  - @ledgerhq/coin-icon@0.12.1-nightly.0
+  - @ledgerhq/coin-internet_computer@1.8.1-nightly.0
+  - @ledgerhq/coin-mina@1.2.1-nightly.0
+  - @ledgerhq/coin-multiversx@0.5.1-nightly.0
+  - @ledgerhq/coin-near@0.13.1-nightly.0
+  - @ledgerhq/coin-polkadot@6.9.1-nightly.0
+  - @ledgerhq/coin-solana@0.32.1-nightly.0
+  - @ledgerhq/coin-stacks@0.9.1-nightly.0
+  - @ledgerhq/coin-stellar@6.3.1-nightly.0
+  - @ledgerhq/coin-sui@0.12.1-nightly.0
+  - @ledgerhq/coin-tezos@6.3.1-nightly.0
+  - @ledgerhq/coin-ton@0.14.1-nightly.0
+  - @ledgerhq/coin-tron@5.3.1-nightly.0
+  - @ledgerhq/coin-vechain@2.9.1-nightly.0
+  - @ledgerhq/coin-xrp@7.3.1-nightly.0
+  - @ledgerhq/live-countervalues@0.7.1-nightly.0
+  - @ledgerhq/live-countervalues-react@0.5.2-nightly.0
+  - @ledgerhq/live-nft@0.8.20-nightly.0
+  - @ledgerhq/live-wallet@0.13.1-nightly.0
+  - @ledgerhq/live-signer-canton@0.2.4-nightly.0
+  - @ledgerhq/live-signer-evm@0.7.5-nightly.0
+  - @ledgerhq/live-signer-solana@0.5.5-nightly.0
+
 ## 34.47.0
 
 ### Minor Changes
