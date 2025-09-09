@@ -464,6 +464,8 @@
       "apt_description" : "Для обмена Aptos используйте любое другое устройство Ledger. Это может быть Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ или Ledger Stax™.",
       "cosmos_title" : "Ledger Nano S™ не поддерживает обмен Cosmos",
       "cosmos_description" : "Для обмена Cosmos используйте любое другое устройство Ledger. Это может быть Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ или Ledger Stax™.",
+      "hedera_title" : "Ledger Nano S™ не поддерживает обмен Hedera",
+      "hedera_description" : "Используйте другие совместимые устройства Ledger для обмена Hedera. Это Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ и Ledger Stax™.",
       "osmo_title" : "Ledger Nano S™ не поддерживает обмен Osmosis",
       "osmo_description" : "Для обмена Osmosis используйте любое другое устройство Ledger. Это может быть Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ или Ledger Stax™.",
       "dydx_title" : "Ledger Nano S™ не поддерживает обмен dYdX",
@@ -802,8 +804,8 @@
       "support" : "Поддержку"
     },
     "willBeDeprecatedBanner" : {
-      "title" : "{{currencyName}} не будет поддерживаться в Ledger Live с {{deprecatedDate}} для оптимизации работы. При этом устройства Ledger по-прежнему смогут взаимодействовать с этим криптоактивом. Обратитесь в Поддержку Ledger, если понадобится помощь по данному вопросу.",
-      "contactSupport" : "Написать в Поддержку"
+      "title" : "{{currencyName}} не будет поддерживаться в Ledger Live с {{deprecatedDate}}. При этом криптоактив по-прежнему можно хранить в аппаратном кошельке Ledger. Подробнее – в статье ниже.",
+      "learnMore" : "Подробнее..."
     },
     "lastOperations" : "Последние операции",
     "contractAddress" : "Контракт:",
@@ -1940,7 +1942,8 @@
       "payoutNetworkFeesTooltip" : "Эта сумма не будет отражена на устройстве",
       "acceptTerms" : "Подтверждая эту транзакцию, я принимаю\n<0>Условия использования {{provider}}</0>",
       "exodusAcceptTerms" : "Exodus полагается на третьи стороны для проведения обменов.\nПодтверждая эту транзакцию, я принимаю <0>Условия использования Exodus</0>",
-      "changellyAcceptTerms" : "Нажимая «Обменять через Changelly», вы соглашаетесь с <0>Условиями использования</0> Changelly и\nеё <1>Политикой AML/KYC</1>. Changelly может применять процедуры в рамках борьбы с отмыванием денег (AML) и «Знай своего клиента» (KYC),\nкоторые в некоторых случаях способны влиять на проведение вашей транзакции. Если это произойдёт, свяжитесь с <2>Поддержкой Changelly</2>."
+      "changellyAcceptTerms" : "Нажимая «Обменять через Changelly», вы соглашаетесь с <0>Условиями использования</0> Changelly и\nеё <1>Политикой AML/KYC</1>. Changelly может применять процедуры в рамках борьбы с отмыванием денег (AML) и «Знай своего клиента» (KYC),\nкоторые в некоторых случаях способны влиять на проведение вашей транзакции. Если это произойдёт, свяжитесь с <2>Поддержкой Changelly</2>.",
+      "cicAcceptTerms" : "Нажимая «Обменять через CIC», вы соглашаетесь с <0>Условиями использования</0> CIC и её <1>Политикой AML/KYC</1>. CIC может применять процедуры в рамках борьбы с отмыванием денег (AML) и «Знай своего клиента» (KYC), которые в некоторых случаях способны влиять на проведение вашей транзакции. Если это произойдёт, свяжитесь с <2>Поддержкой CIC</2>."
     },
     "swap2" : {
       "amountSent" : "Сумма к отправке",
@@ -2282,8 +2285,8 @@
     }
   },
   "fund" : {
-    "title" : "Fund",
-    "titleCrypto" : "Fund {{currency}}",
+    "title" : "Пополнить",
+    "titleCrypto" : "Пополнить {{currency}}",
     "exchangeDrawer" : {
       "completed" : {
         "title" : "Транзакция успешно транслирована",
@@ -7671,6 +7674,11 @@
         "selectAccount" : "Продолжить",
         "close" : "Закрыть"
       }
+    },
+    "genericError" : {
+      "title" : "Ошибка сети",
+      "description" : "Что-то пошло не так. Повторите попытку или свяжитесь с Поддержкой.",
+      "cta" : "Повторить"
     }
   },
   "nftEntryPoint" : {
