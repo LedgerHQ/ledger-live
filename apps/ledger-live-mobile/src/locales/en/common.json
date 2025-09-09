@@ -889,6 +889,10 @@
       "title": "Something went wrong",
       "description": "The exchange transaction did not go through. Please try again or contact support."
     },
+    "SwapPartnerUnavailableError": {
+      "title": "Partner unavailable",
+      "description": "We cannot complete your swap with this partner. Please try with another one. Error code 8HBBZLP"
+    },
     "SwapTimeoutError": {
       "title": "Quotes could not be generated because of technical issues. Try swapping again in a few moments."
     },
