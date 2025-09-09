@@ -5582,7 +5582,7 @@ importers:
         specifier: ^3.0.0
         version: 3.0.0
       rxjs:
-        specifier: ^7.8.1
+        specifier: 7.8.1
         version: 7.8.1
       semver:
         specifier: ^7.3.5
@@ -8480,10 +8480,10 @@ importers:
         version: link:../coin-modules/coin-solana
       '@ledgerhq/device-management-kit':
         specifier: 0.0.0-fix-lns-20250901094837
-        version: 0.0.0-fix-lns-20250901094837
+        version: 0.0.0-fix-lns-20250901094837(rxjs@7.8.1)
       '@ledgerhq/device-signer-kit-solana':
         specifier: 0.0.0-patch-transactionInspector-20250909141112
-        version: 0.0.0-patch-transactionInspector-20250909141112(@ledgerhq/device-management-kit@0.0.0-fix-lns-20250901094837)(typescript@5.4.3)
+        version: 0.0.0-patch-transactionInspector-20250909141112(@ledgerhq/device-management-kit@0.0.0-fix-lns-20250901094837(rxjs@7.8.1))(typescript@5.4.3)
       '@ledgerhq/devices':
         specifier: workspace:*
         version: link:../ledgerjs/packages/devices
@@ -8511,6 +8511,9 @@ importers:
       bs58:
         specifier: ^4.0.1
         version: 4.0.1
+      rxjs:
+        specifier: 7.8.1
+        version: 7.8.1
       semver:
         specifier: ^7
         version: 7.7.1
@@ -43458,9 +43461,9 @@ snapshots:
 
   '@kwsites/promise-deferred@1.1.1': {}
 
-  '@ledgerhq/context-module@0.0.0-patch-transactionInspector-20250909141112(@ledgerhq/device-management-kit@0.0.0-fix-lns-20250901094837)':
+  '@ledgerhq/context-module@0.0.0-patch-transactionInspector-20250909141112(@ledgerhq/device-management-kit@0.0.0-fix-lns-20250901094837(rxjs@7.8.1))':
     dependencies:
-      '@ledgerhq/device-management-kit': 0.0.0-fix-lns-20250901094837
+      '@ledgerhq/device-management-kit': 0.0.0-fix-lns-20250901094837(rxjs@7.8.1)
       axios: 1.8.2
       crypto-js: 4.2.0
       ethers: 6.14.1
@@ -43517,7 +43520,7 @@ snapshots:
     dependencies:
       invariant: 2.2.4
 
-  '@ledgerhq/device-management-kit@0.0.0-fix-lns-20250901094837':
+  '@ledgerhq/device-management-kit@0.0.0-fix-lns-20250901094837(rxjs@7.8.1)':
     dependencies:
       '@sentry/minimal': 6.19.7
       axios: 1.8.2
@@ -43525,6 +43528,7 @@ snapshots:
       isomorphic-ws: 5.0.0(ws@8.18.3)
       purify-ts: 2.1.0
       reflect-metadata: 0.2.2
+      rxjs: 7.8.1
       semver: 7.7.2
       url: 0.11.4
       uuid: 11.0.3
@@ -43584,11 +43588,11 @@ snapshots:
       - bufferutil
       - utf-8-validate
 
-  '@ledgerhq/device-signer-kit-solana@0.0.0-patch-transactionInspector-20250909141112(@ledgerhq/device-management-kit@0.0.0-fix-lns-20250901094837)(typescript@5.4.3)':
+  '@ledgerhq/device-signer-kit-solana@0.0.0-patch-transactionInspector-20250909141112(@ledgerhq/device-management-kit@0.0.0-fix-lns-20250901094837(rxjs@7.8.1))(typescript@5.4.3)':
     dependencies:
-      '@ledgerhq/context-module': 0.0.0-patch-transactionInspector-20250909141112(@ledgerhq/device-management-kit@0.0.0-fix-lns-20250901094837)
-      '@ledgerhq/device-management-kit': 0.0.0-fix-lns-20250901094837
-      '@ledgerhq/signer-utils': 0.0.0-patch-transactionInspector-20250909141112(@ledgerhq/device-management-kit@0.0.0-fix-lns-20250901094837)
+      '@ledgerhq/context-module': 0.0.0-patch-transactionInspector-20250909141112(@ledgerhq/device-management-kit@0.0.0-fix-lns-20250901094837(rxjs@7.8.1))
+      '@ledgerhq/device-management-kit': 0.0.0-fix-lns-20250901094837(rxjs@7.8.1)
+      '@ledgerhq/signer-utils': 0.0.0-patch-transactionInspector-20250909141112(@ledgerhq/device-management-kit@0.0.0-fix-lns-20250901094837(rxjs@7.8.1))
       '@solana/spl-token': 0.4.14(@solana/web3.js@1.98.4(typescript@5.4.3))(typescript@5.4.3)
       '@solana/web3.js': 1.98.4(typescript@5.4.3)
       bs58: 6.0.0
@@ -43705,9 +43709,9 @@ snapshots:
 
   '@ledgerhq/logs@6.13.0': {}
 
-  '@ledgerhq/signer-utils@0.0.0-patch-transactionInspector-20250909141112(@ledgerhq/device-management-kit@0.0.0-fix-lns-20250901094837)':
+  '@ledgerhq/signer-utils@0.0.0-patch-transactionInspector-20250909141112(@ledgerhq/device-management-kit@0.0.0-fix-lns-20250901094837(rxjs@7.8.1))':
     dependencies:
-      '@ledgerhq/device-management-kit': 0.0.0-fix-lns-20250901094837
+      '@ledgerhq/device-management-kit': 0.0.0-fix-lns-20250901094837(rxjs@7.8.1)
 
   '@ledgerhq/signer-utils@1.1.0(@ledgerhq/device-management-kit@0.9.0(rxjs@7.8.1))':
     dependencies:
