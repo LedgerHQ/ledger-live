@@ -187,6 +187,7 @@ export const INITIAL_STATE: SettingsState = {
   fromLedgerSyncOnboarding: false,
   mevProtection: true,
   selectedTabPortfolioAssets: "Assets",
+  isOnboardingFlow: false,
 };
 
 const pairHash = (from: { ticker: string }, to: { ticker: string }) =>
