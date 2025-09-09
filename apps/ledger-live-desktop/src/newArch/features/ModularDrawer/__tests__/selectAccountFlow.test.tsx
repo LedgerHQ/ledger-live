@@ -328,8 +328,7 @@ describe("ModularDrawerFlowManager - Select Account Flow", () => {
     });
 
     await waitFor(() => expect(screen.getByText(/bitcoin/i)).toBeVisible());
-    expect(trackPage).toHaveBeenNthCalledWith(
-      1,
+    expect(trackPage).toHaveBeenLastCalledWith(
       "Asset Selection",
       undefined,
       {
