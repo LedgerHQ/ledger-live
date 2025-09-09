@@ -15,20 +15,6 @@ export const loadCurrenciesByProvider = async (
     getMappedAssets(),
   ]);
 
-  assets.push({
-    $type: "Coin",
-    ledgerId: "canton_network",
-    providerId: "canton_network",
-    ticker: "CC",
-    name: "Canton",
-    status: "Ok",
-    reason: null,
-    data: {
-      img: "",
-      marketCapRank: null,
-    },
-  });
-
   return groupCurrenciesByProvider(assets, sortedCurrenciesSupported);
 };
 export const groupCurrenciesByProvider = (
