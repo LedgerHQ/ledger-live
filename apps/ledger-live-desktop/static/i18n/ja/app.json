@@ -464,6 +464,8 @@
       "apt_description" : "Aptosをスワップするには、Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™、Ledger Stax™など、対応する他のLedgerデバイスをご使用ください。",
       "cosmos_title" : "Ledger Nano S™はCosmosのスワップに対応していません",
       "cosmos_description" : "Cosmosをスワップするには、Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™、Ledger Stax™など、対応する他のLedgerデバイスをご使用ください。",
+      "hedera_title" : "Ledger Nano S™は、Hederaのスワップに対応していません",
+      "hedera_description" : "Hederaをスワップするには、Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™、Ledger Stax™など、対応する他のLedgerデバイスをご使用ください。",
       "osmo_title" : "Ledger Nano S™は、Osmosisのスワップに対応していません",
       "osmo_description" : "Osmosisをスワップするには、Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™、Ledger Stax™など、対応する他のLedgerデバイスをご使用ください。",
       "dydx_title" : "Ledger Nano S™は、dYdXのスワップに対応していません",
@@ -802,8 +804,8 @@
       "support" : "サポート"
     },
     "willBeDeprecatedBanner" : {
-      "title" : "効率を最適化するため、{{deprecatedDate}}以降、{{currencyName}}はLedger Liveではサポートされなくなります。ただし、Ledgerハードウェアウォレットでは引き続きサポートされます。この件に関してご不明な点などがございましたら、Ledgerカスタマーサポートまでご連絡ください。",
-      "contactSupport" : "サポートへお問い合わせ"
+      "title" : "{{deprecatedDate}}以降、{{currencyName}}はLedger Liveではサポートされなくなります。しかし、Ledgerハードウェアウォレットで引き続き保護されます。詳細は、下記のリンク先のヘルプセンター記事を参照してください。",
+      "learnMore" : "詳細はこちら"
     },
     "lastOperations" : "最近の取引",
     "contractAddress" : "コントラクト：",
@@ -1940,7 +1942,8 @@
       "payoutNetworkFeesTooltip" : "これはデバイスには表示されません。",
       "acceptTerms" : "このトランザクションを検証することにより、私は\n<0>{{provider}}の利用規約</0>に同意します",
       "exodusAcceptTerms" : "Exodusは、スワップの実行をサードパーティに依存しています。\nこのトランザクションを承認することにより、私は<0>Exodusの利用規約</0>に同意します",
-      "changellyAcceptTerms" : "「Swap with Changelly（Changellyでスワップ）」をクリックすると、Changellyの<0>利用規約</0>およびその\n<1>AML/KYC</1>ポリシーに同意したことになります。ChangellyはAML/KYC（本人確認手続き）を適用する場合があり、\n稀にトランザクションの完了に影響する可能性があります。そのような場合は、\nChangellyの<2>カスタマーサポート</2>に連絡する必要があります。"
+      "changellyAcceptTerms" : "「Swap with Changelly（Changellyでスワップ）」をクリックすると、Changellyの<0>利用規約</0>およびその\n<1>AML/KYC</1>ポリシーに同意したことになります。ChangellyはAML/KYC（本人確認手続き）を適用する場合があり、\n稀にトランザクションの完了に影響する可能性があります。そのような場合は、\nChangellyの<2>カスタマーサポート</2>に連絡する必要があります。",
+      "cicAcceptTerms" : "「Swap with CIC（CICでスワップ）」を選択すると、CICの<0>利用規約</0>およびその<1>AML/KYC</1>ポリシーに同意したことになります。CICはAML/KYC（本人確認手続き）を適用する場合があり、特定の状況下で、トランザクションの完了に影響する可能性があります。万が一、当該事象が発生した際には、CICの<2>カスタマーサポート</2>までお問い合わせください。"
     },
     "swap2" : {
       "amountSent" : "送付額",
@@ -2282,12 +2285,12 @@
     }
   },
   "fund" : {
-    "title" : "Fund",
-    "titleCrypto" : "Fund {{currency}}",
+    "title" : "入金",
+    "titleCrypto" : "{{currency}}を入金",
     "exchangeDrawer" : {
       "completed" : {
-        "title" : "Transaction broadcast successfully",
-        "description" : "Your operation has been sent to the network for confirmation. Please wait for your transaction to be confirmed and for the provider to process it."
+        "title" : "トランザクションのブロードキャスト成功",
+        "description" : "操作は、承認のためにネットワークに送信されました。トランザクションが承認され、プロバイダーが処理するまでお待ちください。"
       }
     }
   },
@@ -7671,6 +7674,11 @@
         "selectAccount" : "続行",
         "close" : "閉じる"
       }
+    },
+    "genericError" : {
+      "title" : "ネットワークエラー発生",
+      "description" : "問題が発生しました。再試行するか、Ledgerサポートにご連絡ください。",
+      "cta" : "再試行"
     }
   },
   "nftEntryPoint" : {
