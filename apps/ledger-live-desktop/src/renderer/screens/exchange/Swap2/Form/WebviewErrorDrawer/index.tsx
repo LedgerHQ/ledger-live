@@ -68,6 +68,15 @@ export default function WebviewErrorDrawer(error?: SwapLiveError) {
         break;
     }
   }
+
+  const errorMessage = error?.cause?.response?.data?.error?.message?.toLowerCase();
+
+  if (errorMessage?.includes("transaction cannot be created")) {
+    titleKey = "errors.swapPartnerUnavailableError.title";
+    descriptionKey = "errors.swapPartnerUnavailableError.description";
+    errorCodeSection = null;
+  }
+
   switch (error?.cause?.response?.data?.error?.messageKey) {
     case "WRONG_OR_EXPIRED_RATE_ID":
       titleKey = "errors.SwapRateExpiredError.title";
