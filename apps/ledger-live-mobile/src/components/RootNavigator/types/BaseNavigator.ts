@@ -10,13 +10,13 @@ import type {
 } from "@ledgerhq/types-live";
 import type { NavigatorScreenParams, ParamListBase } from "@react-navigation/native";
 // eslint-disable-next-line no-restricted-imports
-import { MappedSwapOperation, SwapLiveError } from "@ledgerhq/live-common/exchange/swap/types";
+import type { MappedSwapOperation, SwapLiveError } from "@ledgerhq/live-common/exchange/swap/types";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
 import { AppResult } from "@ledgerhq/live-common/hw/actions/app";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
-import { AssetSelectionNavigatorParamsList } from "LLM/features/AssetSelection/types";
-import { AssetsNavigatorParamsList } from "LLM/features/Assets/types";
-import { DeviceSelectionNavigatorParamsList } from "LLM/features/DeviceSelection/types";
+import type { AssetSelectionNavigatorParamsList } from "LLM/features/AssetSelection/types";
+import type { AssetsNavigatorParamsList } from "LLM/features/Assets/types";
+import type { DeviceSelectionNavigatorParamsList } from "LLM/features/DeviceSelection/types";
 import type { Web3HubStackParamList } from "LLM/features/Web3Hub/types";
 // eslint-disable-next-line no-restricted-imports
 import type { PropertyPath } from "lodash";
@@ -49,17 +49,16 @@ import type { HederaAssociateTokenFlowParamList } from "../../../families/hedera
 import type { AccountSettingsNavigatorParamList } from "./AccountSettingsNavigator";
 import type { AccountsNavigatorParamList } from "./AccountsNavigator";
 import type { AddAccountsNavigatorParamList } from "./AddAccountsNavigator";
-import { AnalyticsOptInPromptNavigatorParamList } from "./AnalyticsOptInPromptNavigator";
+import type { AnalyticsOptInPromptNavigatorParamList } from "./AnalyticsOptInPromptNavigator";
 import type { BuyDeviceNavigatorParamList } from "./BuyDeviceNavigator";
 import type { ClaimRewardsNavigatorParamList } from "./ClaimRewardsNavigator";
-import { CustomErrorNavigatorParamList } from "./CustomErrorNavigator";
+import type { CustomErrorNavigatorParamList } from "./CustomErrorNavigator";
 import type { CustomImageNavigatorParamList } from "./CustomImageNavigator";
 import type { EarnLiveAppNavigatorParamList } from "./EarnLiveAppNavigator";
 import type { ExchangeStackNavigatorParamList } from "./ExchangeStackNavigator";
-import type { ExploreTabNavigatorStackParamList } from "./ExploreTabNavigator";
-import { FeesNavigatorParamsList } from "./FeesNavigator";
+import type { FeesNavigatorParamsList } from "./FeesNavigator";
 import type { FreezeNavigatorParamList } from "./FreezeNavigator";
-import { LandingPagesNavigatorParamList } from "./LandingPagesNavigator";
+import type { LandingPagesNavigatorParamList } from "./LandingPagesNavigator";
 import type { MainNavigatorParamList } from "./MainNavigator";
 import type { NftNavigatorParamList } from "./NftNavigator";
 import type { NoFundsNavigatorParamList } from "./NoFundsNavigator";
@@ -81,7 +80,7 @@ import type { UnfreezeNavigatorParamList } from "./UnfreezeNavigator";
 import type { WalletConnectLiveAppNavigatorParamList } from "./WalletConnectLiveAppNavigator";
 import type { ModularDrawerNavigatorStackParamList } from "./ModularDrawerNavigator";
 import type { WalletSyncNavigatorStackParamList } from "./WalletSyncNavigator";
-import { WalletTabNavigatorStackParamList } from "./WalletTabNavigator";
+import type { WalletTabNavigatorStackParamList } from "./WalletTabNavigator";
 
 export type NavigateInput<
   ParamList extends ParamListBase = ParamListBase,
@@ -303,8 +302,6 @@ export type BaseNavigatorStackParamList = {
 
   // Hedera
   [NavigatorName.HederaAssociateTokenFlow]: NavigatorScreenParams<HederaAssociateTokenFlowParamList>;
-
-  [NavigatorName.ExploreTab]: NavigatorScreenParams<ExploreTabNavigatorStackParamList>;
 
   [ScreenName.DeviceConnect]: {
     appName?: string;
