@@ -2280,6 +2280,16 @@
       }
     }
   },
+  "fund" : {
+    "title" : "资金",
+    "titleCrypto" : "资金 {{currency}}",
+    "exchangeDrawer" : {
+      "completed" : {
+        "title" : "交易播送成功",
+        "description" : "您的操作已经发送到网络上进行确认。请等待您的交易被确认，并等待提供商进行处理。"
+      }
+    }
+  },
   "receive" : {
     "title" : "接收",
     "successTitle" : "地址已安全共享",
