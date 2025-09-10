@@ -14,10 +14,10 @@ import {
   walletSyncUserStateSelector,
 } from "@ledgerhq/live-wallet/store";
 import { DistantState, LocalState } from "@ledgerhq/live-wallet/walletsync/index";
+import { useWalletSyncMobile } from "LLM/features/WalletSync/hooks/useWalletSyncMobile";
 import React, { useCallback, useMemo } from "react";
 import { useDispatch, useSelector, useStore } from "react-redux";
 import { replaceAccounts } from "~/actions/accounts";
-import { useWalletSyncMobile } from "~/newArch/features/WalletSync/hooks/useWalletSyncMobile";
 import { State } from "~/reducers/types";
 import { walletSelector } from "~/reducers/wallet";
 

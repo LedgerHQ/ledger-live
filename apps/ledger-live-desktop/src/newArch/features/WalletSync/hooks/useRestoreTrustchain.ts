@@ -16,7 +16,7 @@ export const useRestoreTrustchain = () => {
 
   const trustchain = useSelector(trustchainSelector);
 
-  // TODO: cache queryFn
+  // TODO: memoize for the following use as queryFn in useQuery
   async function restoreTrustchain() {
     const newTrustchain = await sdk.restoreTrustchain(
       trustchain as Trustchain,

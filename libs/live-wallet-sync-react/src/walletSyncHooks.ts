@@ -15,10 +15,10 @@ import {
   WalletSyncUserState,
 } from "@ledgerhq/live-wallet/store";
 import walletsync, {
-  Schema,
   liveSlug,
   makeLocalIncrementalUpdate,
   makeSaveNewUpdate,
+  Schema,
   walletSyncWatchLoop,
 } from "@ledgerhq/live-wallet/walletsync/index";
 import type {
@@ -26,8 +26,8 @@ import type {
   WalletSyncEnvironment,
   WalletSyncWatchConfig,
 } from "@ledgerhq/types-live";
-import { flow } from "lodash/fp";
-import noop from "lodash/noop";
+import flow from "lodash/fp/flow";
+import noop from "lodash/fp/noop";
 import { useCallback, useEffect, useMemo, useRef } from "react";
 import { useDispatch } from "react-redux";
 import { useWalletSyncBridgeContext } from "./index";
@@ -125,8 +125,6 @@ export function useWatchWalletSync(
   const userState = bridge.useStoredWalletSyncUserState();
   const onUserRefreshRef = useRef<() => void>(noop);
 
-  // TODO onUserRefresh function identity never changes, but onUserRefreshRef.current can be updated silently.
-  // This means consumers won't re-render when the actual refresh logic changes, potentially causing stale behavior.
   const onUserRefresh = useCallback(() => {
     onUserRefreshRef.current();
   }, []);
