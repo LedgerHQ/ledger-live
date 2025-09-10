@@ -294,6 +294,155 @@ export default class BtcNew {
   }
 
   /**
+   * Sign a PSBT V2 Buffer
+   */
+  async signPsbtV2Buffer(
+    psbtBuffer: Buffer,
+    options?: {
+      finalizePsbt?: boolean;
+      accountPath?: string;
+      addressFormat?: AddressFormat;
+    },
+  ) {
+    const psbt = new PsbtV2();
+    psbt.deserialize(psbtBuffer);
+
+    const inputCount = psbt.getGlobalInputCount();
+    if (inputCount === 0) {
+      throw new Error("No inputs in PSBT");
+    }
+
+    // Get master fingerprint from device
+    const masterFp = await this.client.getMasterFingerprint();
+
+    let accountPath: number[] = [];
+    let accountXpub = "";
+    let accountType: AccountType;
+
+    // Try to extract derivation information from BIP32 derivation in PSBT
+    const firstInputKeyDatas = psbt.getInputKeyDatas(0, psbtIn.BIP32_DERIVATION);
+
+    if (firstInputKeyDatas.length > 0) {
+      // We have BIP32 derivation info - use it
+      const firstPubkey = firstInputKeyDatas[0];
+      const derivationInfo = psbt.getInputBip32Derivation(0, firstPubkey);
+      if (derivationInfo) {
+        const fullPath = derivationInfo.path;
+        accountPath = fullPath.slice(0, -2);
+        accountXpub = await this.client.getExtendedPubkey(false, accountPath);
+      }
+    }
+
+    // If no BIP32 derivation or manual override provided, use options
+    if (accountPath.length === 0) {
+      if (!options?.accountPath) {
+        throw new Error(
+          "No BIP32 derivation found in PSBT and no account path provided in options. " +
+            "Please provide accountPath in options (e.g., \"m/84'/0'/0'\" for native segwit)",
+        );
+      }
+
+      accountPath = pathStringToArray(options.accountPath);
+      accountXpub = await this.client.getExtendedPubkey(false, accountPath);
+    }
+
+    // Determine account type from the spent output script or options
+    const witnessUtxo = psbt.getInputWitnessUtxo(0);
+
+    if (witnessUtxo) {
+      const scriptPubKey = witnessUtxo.scriptPubKey;
+
+      // Determine account type based on scriptPubKey format
+      if (scriptPubKey.length === 22 && scriptPubKey[0] === 0x00 && scriptPubKey[1] === 0x14) {
+        // P2WPKH (native segwit): OP_0 <20-byte-pubkey-hash>
+        accountType = new p2wpkh(psbt, masterFp);
+      } else if (
+        scriptPubKey.length === 34 &&
+        scriptPubKey[0] === 0x51 &&
+        scriptPubKey[1] === 0x20
+      ) {
+        // P2TR (taproot): OP_1 <32-byte-pubkey>
+        accountType = new p2tr(psbt, masterFp);
+      } else if (
+        scriptPubKey.length === 23 &&
+        scriptPubKey[0] === 0xa9 &&
+        scriptPubKey[22] === 0x87
+      ) {
+        // P2SH (wrapped segwit): OP_HASH160 <20-byte-script-hash> OP_EQUAL
+        accountType = new p2wpkhWrapped(psbt, masterFp);
+      } else if (
+        scriptPubKey.length === 25 &&
+        scriptPubKey[0] === 0x76 &&
+        scriptPubKey[1] === 0xa9
+      ) {
+        // P2PKH (legacy): OP_DUP OP_HASH160 <20-byte-pubkey-hash> OP_EQUALVERIFY OP_CHECKSIG
+        accountType = new p2pkh(psbt, masterFp);
+      } else {
+        throw new Error(`Unsupported script type: ${scriptPubKey.toString("hex")}`);
+      }
+    } else {
+      // No witness UTXO - try to determine from other sources
+      const redeemScript = psbt.getInputRedeemScript(0);
+
+      if (redeemScript) {
+        accountType = new p2wpkhWrapped(psbt, masterFp);
+      } else if (options?.addressFormat) {
+        // Use provided address format
+        const descrTemplate = descrTemplFrom(options.addressFormat);
+        if (descrTemplate === "pkh(@0)") {
+          accountType = new p2pkh(psbt, masterFp);
+        } else if (descrTemplate === "wpkh(@0)") {
+          accountType = new p2wpkh(psbt, masterFp);
+        } else if (descrTemplate === "sh(wpkh(@0))") {
+          accountType = new p2wpkhWrapped(psbt, masterFp);
+        } else if (descrTemplate === "tr(@0)") {
+          accountType = new p2tr(psbt, masterFp);
+        } else {
+          throw new Error(`Unsupported descriptor template: ${descrTemplate}`);
+        }
+      } else {
+        // Default based on account path purpose if available
+        if (accountPath.length >= 1) {
+          const purpose = accountPath[0] - 0x80000000; // Remove hardened bit
+          if (purpose === 44) {
+            accountType = new p2pkh(psbt, masterFp);
+          } else if (purpose === 49) {
+            accountType = new p2wpkhWrapped(psbt, masterFp);
+          } else if (purpose === 84) {
+            accountType = new p2wpkh(psbt, masterFp);
+          } else if (purpose === 86) {
+            accountType = new p2tr(psbt, masterFp);
+          } else {
+            // Default to native segwit
+            accountType = new p2wpkh(psbt, masterFp);
+          }
+        } else {
+          // Ultimate fallback to native segwit
+          accountType = new p2wpkh(psbt, masterFp);
+        }
+      }
+    }
+
+    // Create wallet policy
+    const key = createKey(masterFp, accountPath, accountXpub);
+    const walletPolicy = new WalletPolicy(accountType.getDescriptorTemplate(), key);
+
+    await this.signPsbt(psbt, walletPolicy, () => {});
+
+    const psbtNotFinalized = new PsbtV2();
+    psbt.copy(psbtNotFinalized);
+
+    // we finalize here in case we want to broadcast the tx later
+    finalize(psbt);
+    const serializedTx = extract(psbt);
+
+    return {
+      psbt: psbtNotFinalized.serialize(),
+      tx: serializedTx.toString("hex"),
+    };
+  }
+
+  /**
    * Signs an arbitrary hex-formatted message with the private key at
    * the provided derivation path according to the Bitcoin Signature format
    * and returns v, r, s.

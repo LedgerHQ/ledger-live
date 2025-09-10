@@ -678,6 +678,79 @@ export function useWalletAPIServer({
   }, [server, uiStorageSet]);
 
   useEffect(() => {
+    if (!uiTxSignRaw) return;
+
+    server.setHandler("bitcoin.signPsbt", async ({ accountId, psbt, broadcast }) => {
+      const signedOperation = await signRawTransactionLogic(
+        { manifest, accounts, tracking },
+        accountId,
+        psbt,
+        (account, parentAccount, tx) =>
+          new Promise((resolve, reject) => {
+            let done = false;
+            return uiTxSignRaw({
+              account,
+              parentAccount,
+              transaction: tx,
+              options: undefined,
+              onSuccess: signedOperation => {
+                if (done) return;
+                done = true;
+                tracking.signRawTransactionSuccess(manifest);
+                resolve(signedOperation);
+              },
+              onError: error => {
+                if (done) return;
+                done = true;
+                tracking.signRawTransactionFail(manifest);
+                reject(error);
+              },
+            });
+          }),
+      );
+
+      const psbtSigned = signedOperation.rawData!.psbtSigned as string;
+
+      if (broadcast) {
+        const txHash = await broadcastTransactionLogic(
+          { manifest, accounts, tracking },
+          accountId,
+          signedOperation,
+          async (account, parentAccount, signedOperation) => {
+            const bridge = getAccountBridge(account, parentAccount);
+            const mainAccount = getMainAccount(account, parentAccount);
+
+            let optimisticOperation: Operation = signedOperation.operation;
+
+            if (!getEnv("DISABLE_TRANSACTION_BROADCAST")) {
+              try {
+                optimisticOperation = await bridge.broadcast({
+                  account: mainAccount,
+                  signedOperation,
+                  broadcastConfig: { mevProtected: !!config.mevProtected },
+                });
+                tracking.broadcastSuccess(manifest);
+              } catch (error) {
+                tracking.broadcastFail(manifest);
+                throw error;
+              }
+            }
+
+            uiTxBroadcast &&
+              uiTxBroadcast(account, parentAccount, mainAccount, optimisticOperation);
+
+            return optimisticOperation.hash;
+          },
+        );
+
+        return { psbtSigned, txHash };
+      }
+
+      return { psbtSigned };
+    });
+  }, [accounts, config.mevProtected, manifest, server, tracking, uiTxBroadcast, uiTxSignRaw]);
+
+  useEffect(() => {
     if (!uiTxSign) return;
 
     server.setHandler(
