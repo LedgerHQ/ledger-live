@@ -11,7 +11,7 @@ import {
 } from "../types/onboard";
 import coinConfig from "../config";
 
-describe("onboard integration tests", () => {
+describe("onboard (devnet)", () => {
   const mockDeviceId = "test-device-id";
   const mockDerivationPath = "44'/6767'/0'/0'/0'";
 
