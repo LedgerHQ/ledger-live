@@ -36,7 +36,7 @@ patchedDependencies:
     hash: hno7opkpqo3efbuenv6ysglr4m
     path: patches/@hashgraph__sdk@2.14.2.patch
   '@taquito/http-utils':
-    hash: v4hkik3oiwaypgtnmqvg6j46di
+    hash: aiot5euhizbymrbw2f4jjw7j2i
     path: patches/@taquito__http-utils.patch
   '@ton/core@0.60.1':
     hash: lboaji3braahojqczblp7nlo7m
@@ -50159,7 +50159,7 @@ snapshots:
     dependencies:
       json-stringify-safe: 5.0.1
 
-  '@taquito/http-utils@23.0.0-beta.1(patch_hash=v4hkik3oiwaypgtnmqvg6j46di)':
+  '@taquito/http-utils@23.0.0-beta.1(patch_hash=aiot5euhizbymrbw2f4jjw7j2i)':
     dependencies:
       '@taquito/core': 23.0.0-beta.1
       node-fetch: 2.7.0
@@ -50201,7 +50201,7 @@ snapshots:
   '@taquito/rpc@23.0.0-beta.1':
     dependencies:
       '@taquito/core': 23.0.0-beta.1
-      '@taquito/http-utils': 23.0.0-beta.1(patch_hash=v4hkik3oiwaypgtnmqvg6j46di)
+      '@taquito/http-utils': 23.0.0-beta.1(patch_hash=aiot5euhizbymrbw2f4jjw7j2i)
       '@taquito/utils': 23.0.0-beta.1
       bignumber.js: 9.1.2
     transitivePeerDependencies:
@@ -50210,7 +50210,7 @@ snapshots:
   '@taquito/taquito@23.0.0-beta.1':
     dependencies:
       '@taquito/core': 23.0.0-beta.1
-      '@taquito/http-utils': 23.0.0-beta.1(patch_hash=v4hkik3oiwaypgtnmqvg6j46di)
+      '@taquito/http-utils': 23.0.0-beta.1(patch_hash=aiot5euhizbymrbw2f4jjw7j2i)
       '@taquito/local-forging': 23.0.0-beta.1
       '@taquito/michel-codec': 23.0.0-beta.1
       '@taquito/michelson-encoder': 23.0.0-beta.1
