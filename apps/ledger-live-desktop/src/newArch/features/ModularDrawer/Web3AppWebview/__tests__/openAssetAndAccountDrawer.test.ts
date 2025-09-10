@@ -39,7 +39,6 @@ describe("openAssetAndAccountDrawer", () => {
     const onSuccess = jest.fn();
     openAssetAndAccountDrawer({
       onSuccess,
-      source: "testSource",
       flow: "testFlow",
     });
 
@@ -56,7 +55,6 @@ describe("openAssetAndAccountDrawer", () => {
 
     openAssetAndAccountDrawer({
       onCancel,
-      source: "testSource",
       flow: "testFlow",
     });
 
@@ -86,7 +84,6 @@ describe("openAssetAndAccountDrawerPromise", () => {
 
   it("should resolve with account and parentAccount on success", async () => {
     const result = await openAssetAndAccountDrawerPromise({
-      source: "testSource",
       flow: "testFlow",
     });
 
@@ -104,7 +101,6 @@ describe("openAssetAndAccountDrawerPromise", () => {
 
     await expect(
       openAssetAndAccountDrawerPromise({
-        source: "testSource",
         flow: "testFlow",
       }),
     ).rejects.toThrow("Canceled by user");

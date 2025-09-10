@@ -11,6 +11,8 @@ import { DrawerConfiguration } from "./DrawerConfiguration";
 import { DevToolControls } from "./DevToolControls";
 import { useDrawerConfiguration, useDevToolState } from "./hooks";
 import { ModularDrawerDevToolContentProps } from "./types";
+import { useDispatch } from "react-redux";
+import { setFlowValue, setSourceValue } from "~/renderer/reducers/modularDrawer";
 
 export const ModularDrawerDevToolContent = (props: ModularDrawerDevToolContentProps) => {
   const { t } = useTranslation();
@@ -45,15 +47,19 @@ export const ModularDrawerDevToolContent = (props: ModularDrawerDevToolContentPr
     openModal ? "MODAL_RECEIVE" : undefined,
   );
 
+  const dispatch = useDispatch();
+
   const openDrawerFunctions: Record<ModularDrawerLocation, () => void> = {
     [ModularDrawerLocation.ADD_ACCOUNT]: () => openAssetFlow(includeTokens, drawerConfiguration),
-    [ModularDrawerLocation.LIVE_APP]: () =>
+    [ModularDrawerLocation.LIVE_APP]: () => {
+      dispatch(setFlowValue("Dev Tool"));
+      dispatch(setSourceValue("Dev Tool"));
       openAssetAndAccountDrawer({
         flow: "Dev Tool",
-        source: "Dev Tool",
         includeTokens,
         drawerConfiguration,
-      }),
+      });
+    },
     [ModularDrawerLocation.RECEIVE_FLOW]: () => {},
     [ModularDrawerLocation.SEND_FLOW]: () => {},
   };
