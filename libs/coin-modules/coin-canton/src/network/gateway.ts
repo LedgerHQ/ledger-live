@@ -1,4 +1,6 @@
 import network from "@ledgerhq/live-network";
+import type { LiveNetworkRequest } from "@ledgerhq/live-network/network";
+import { getEnv } from "@ledgerhq/live-env";
 import coinConfig from "../config";
 import {
   PrepareTransactionRequest,
@@ -248,6 +250,17 @@ export type OperationInfo =
 const getGatewayUrl = () => coinConfig.getCoinConfig().gatewayUrl;
 const getNodeId = () => coinConfig.getCoinConfig().nodeId || "ledger-devnet-stg";
 
+const gatewayNetwork = <T, U = unknown>(req: LiveNetworkRequest<U>) => {
+  const API_KEY = getEnv("CANTON_API_KEY");
+  return network<T, U>({
+    ...req,
+    headers: {
+      ...(req.headers || {}),
+      ...(API_KEY && { "X-Ledger-Canton-Api-Key": API_KEY }),
+    },
+  });
+};
+
 export async function prepareOnboarding(
   pubKey: string,
   pubKeyType: string,
@@ -256,13 +269,13 @@ export async function prepareOnboarding(
   const nodeId = getNodeId();
   const fullUrl = `${gatewayUrl}/v1/node/${nodeId}/onboarding/prepare`;
 
-  const { data } = await network<OnboardingPrepareResponse>({
+  const { data } = await gatewayNetwork<OnboardingPrepareResponse, OnboardingPrepareRequest>({
     method: "POST",
     url: fullUrl,
     data: {
       public_key: pubKey,
       public_key_type: pubKeyType,
-    } satisfies OnboardingPrepareRequest,
+    },
   });
 
   return data;
@@ -273,32 +286,32 @@ export async function submitOnboarding(
   prepareResponse: OnboardingPrepareResponse,
   signature: string,
 ) {
-  const { data } = await network<OnboardingSubmitResponse>({
+  const { data } = await gatewayNetwork<OnboardingSubmitResponse, OnboardingSubmitRequest>({
     method: "POST",
     url: `${getGatewayUrl()}/v1/node/${getNodeId()}/onboarding/submit`,
     data: {
       prepare_request: prepareRequest,
       prepare_response: prepareResponse,
       signature,
-    } satisfies OnboardingSubmitRequest,
+    },
   });
   return data;
 }
 
 export async function submit(serializedTx: string, signature: string) {
-  const { data } = await network<TransactionSubmitResponse>({
+  const { data } = await gatewayNetwork<TransactionSubmitResponse, TransactionSubmitRequest>({
     method: "POST",
     url: `${getGatewayUrl()}/v1/node/${getNodeId()}/transaction/submit`,
     data: {
       serialized: serializedTx,
       signature,
-    } satisfies TransactionSubmitRequest,
+    },
   });
   return data;
 }
 
 export async function getBalance(partyId: string): Promise<InstrumentBalance[]> {
-  const { data } = await network<InstrumentBalance[]>({
+  const { data } = await gatewayNetwork<InstrumentBalance[]>({
     method: "GET",
     // TODO: we need better solution ?
     url: `${getGatewayUrl()}/v1/node/${getNodeId()}/party/${partyId.replace(/_/g, ":")}/balance`,
@@ -315,7 +328,7 @@ export async function getPartyByPubKey(pubKey: string): Promise<PartyInfo> {
 }
 
 async function getParty(identifier: string, by: "party-id" | "public-key"): Promise<PartyInfo> {
-  const { data } = await network<PartyInfo>({
+  const { data } = await gatewayNetwork<PartyInfo>({
     method: "GET",
     url: `${getGatewayUrl()}/v1/node/${getNodeId()}/party/${identifier}?by=${by}`,
   });
@@ -334,13 +347,13 @@ export async function getOperations(
   next: number;
   operations: OperationInfo[];
 }> {
-  const { data } = await network<{
+  const { data } = await gatewayNetwork<{
     next: number;
     operations: OperationInfo[];
   }>({
     method: "GET",
     url: `${getGatewayUrl()}/v1/node/${getNodeId()}/party/${partyId.replace(/_/g, ":")}/operations`,
-    data: options,
+    params: options,
   });
   return data;
 }
@@ -365,7 +378,10 @@ export async function prepareTapRequest({
   partyId,
   amount = 1000000,
 }: PrepareTapRequestRequest): Promise<PrepareTapRequestResponse> {
-  const { data } = await network<PrepareTapRequestResponse>({
+  const { data } = await gatewayNetwork<
+    PrepareTapRequestResponse,
+    { amount: number; type: string }
+  >({
     method: "POST",
     url: `${getGatewayUrl()}/v1/node/${getNodeId()}/party/${partyId}/transaction/prepare`,
     data: {
@@ -392,19 +408,22 @@ export async function submitTapRequest({
   serialized,
   signature,
 }: SubmitTapRequestRequest): Promise<SubmitTapRequestResponse> {
-  const { data } = await network<SubmitTapRequestResponse>({
+  const { data } = await gatewayNetwork<
+    SubmitTapRequestResponse,
+    Omit<SubmitTapRequestRequest, "partyId">
+  >({
     method: "POST",
     url: `${getGatewayUrl()}/v1/node/${getNodeId()}/party/${partyId}/transaction/submit`,
     data: {
       serialized,
       signature,
-    } satisfies Omit<SubmitTapRequestRequest, "partyId">,
+    },
   });
   return data;
 }
 
 export async function getLedgerEnd(): Promise<number> {
-  const { data } = await network<number>({
+  const { data } = await gatewayNetwork<number>({
     method: "GET",
     url: `${getGatewayUrl()}/v1/node/${getNodeId()}/ledger-end`,
   });
@@ -414,31 +433,29 @@ export async function getLedgerEnd(): Promise<number> {
 export async function preparePreApprovalTransaction(
   partyId: string,
 ): Promise<PrepareTransactionResponse> {
-  const { data } = await network<PrepareTransactionResponse>({
+  const { data } = await gatewayNetwork<PrepareTransactionResponse, PrepareTransactionRequest>({
     method: "POST",
     url: `${getGatewayUrl()}/v1/node/${getNodeId()}/party/${partyId}/transaction/prepare`,
     data: {
       type: TransactionType.TRANSFER_PRE_APPROVAL_PROPOSAL,
       receiver: partyId,
-    } satisfies PrepareTransactionRequest,
+    },
   });
   return data;
 }
 
 export async function submitPreApprovalTransaction(
   partyId: string,
-  preparedTransaction: PrepareTransactionResponse,
+  { serialized }: PrepareTransactionResponse,
   signature: string,
 ): Promise<PreApprovalResult> {
-  const submitRequest: SubmitTransactionRequest = {
-    serialized: preparedTransaction.serialized,
-    signature,
-  };
-
-  const { data } = await network<SubmitTransactionResponse>({
+  const { data } = await gatewayNetwork<SubmitTransactionResponse, SubmitTransactionRequest>({
     method: "POST",
     url: `${getGatewayUrl()}/v1/node/${getNodeId()}/party/${partyId}/transaction/submit`,
-    data: submitRequest,
+    data: {
+      serialized,
+      signature,
+    },
   });
 
   return {
