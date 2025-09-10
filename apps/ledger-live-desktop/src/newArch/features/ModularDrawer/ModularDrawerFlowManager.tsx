@@ -10,11 +10,7 @@ import { AccountSelection } from "./screens/AccountSelection";
 import { useModularDrawerNavigation } from "./hooks/useModularDrawerNavigation";
 import { BackButtonArrow } from "./components/BackButton";
 import { useModularDrawerRemoteData } from "./hooks/useModularDrawerRemoteData";
-import {
-  setFlowValue,
-  setSourceValue,
-  resetModularDrawerState,
-} from "~/renderer/reducers/modularDrawer";
+import { resetModularDrawerState } from "~/renderer/reducers/modularDrawer";
 import { useModularDrawerConfiguration } from "@ledgerhq/live-common/modularDrawer/hooks/useModularDrawerConfiguration";
 
 const ModularDrawerFlowManager = ({
@@ -23,19 +19,12 @@ const ModularDrawerFlowManager = ({
   useCase,
   areCurrenciesFiltered,
   accounts$,
-  flow,
-  source,
   onAssetSelected,
   onAccountSelected,
 }: ModularDrawerFlowManagerProps) => {
   const currencyIds = useMemo(() => (currencies || []).map(currency => currency.id), [currencies]);
   const dispatch = useDispatch();
   const { currentStep, navigationDirection, goToStep } = useModularDrawerNavigation();
-
-  useEffect(() => {
-    dispatch(setFlowValue(flow));
-    dispatch(setSourceValue(source));
-  }, [dispatch, flow, source]);
 
   useEffect(() => {
     return () => {

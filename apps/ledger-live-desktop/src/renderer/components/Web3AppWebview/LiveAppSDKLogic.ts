@@ -64,7 +64,6 @@ export const requestAccountLogic = async (
         assetIds: safeCurrencies,
         includeTokens,
         flow,
-        source,
         areCurrenciesFiltered: manifest.currencies !== "*",
       })
     : await selectAccountAndCurrency(safeCurrencies, includeTokens, flow, source);

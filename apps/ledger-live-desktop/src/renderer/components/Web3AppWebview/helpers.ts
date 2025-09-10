@@ -27,6 +27,8 @@ import {
 } from "LLD/features/ModularDrawer";
 import { currentRouteNameRef } from "~/renderer/analytics/screenRefs";
 import { AccountLike } from "@ledgerhq/types-live";
+import { useDispatch } from "react-redux";
+import { setFlowValue, setSourceValue } from "~/renderer/reducers/modularDrawer";
 
 export const initialWebviewState: WebviewState = {
   url: "",
@@ -335,28 +337,34 @@ export function useSelectAccount({
 
   const flow = manifest.name;
 
+  const dispatch = useDispatch();
+
   const onSelectAccount = useCallback(() => {
-    modularDrawerVisible
-      ? openAssetAndAccountDrawer({
-          currencies,
-          onSuccess,
-          onCancel,
+    if (modularDrawerVisible) {
+      dispatch(setFlowValue(flow));
+      dispatch(setSourceValue(source));
+
+      openAssetAndAccountDrawer({
+        currencies,
+        onSuccess,
+        onCancel,
+        flow,
+        areCurrenciesFiltered: manifest.currencies !== "*",
+      });
+    } else {
+      setDrawer(
+        SelectAccountAndCurrencyDrawer,
+        {
           flow,
           source,
-          areCurrenciesFiltered: manifest.currencies !== "*",
-        })
-      : setDrawer(
-          SelectAccountAndCurrencyDrawer,
-          {
-            flow,
-            source,
-            currencies: currencies,
-            onAccountSelected: onSuccess,
-          },
-          {
-            onRequestClose: onCancel,
-          },
-        );
+          currencies: currencies,
+          onAccountSelected: onSuccess,
+        },
+        {
+          onRequestClose: onCancel,
+        },
+      );
+    }
   }, [currencies, flow, manifest.currencies, modularDrawerVisible, onCancel, onSuccess, source]);
 
   return { onSelectAccount, currentAccount };

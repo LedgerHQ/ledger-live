@@ -20,7 +20,6 @@ type Result = {
 };
 
 type DrawerParams = {
-  source: string;
   flow: string;
   assetIds?: string[];
   currencies?: CryptoOrTokenCurrency[];
@@ -44,6 +43,7 @@ function openAssetAndAccountDrawer(params: DrawerParams): void {
     areCurrenciesFiltered,
     onSuccess,
     onCancel,
+    flow,
   } = params;
 
   const modularDrawerConfiguration = createModularDrawerConfiguration(drawerConfiguration);
@@ -54,11 +54,7 @@ function openAssetAndAccountDrawer(params: DrawerParams): void {
   };
 
   const handleCancel = (): void => {
-    track("button_clicked", {
-      button: "Close",
-      flow: params.flow,
-      page: currentRouteNameRef.current,
-    });
+    track("button_clicked", { button: "Close", flow, page: currentRouteNameRef.current });
     setDrawer();
     onCancel?.();
   };
@@ -77,8 +73,6 @@ function openAssetAndAccountDrawer(params: DrawerParams): void {
       drawerConfiguration: modularDrawerConfiguration,
       useCase,
       areCurrenciesFiltered,
-      source: params.source,
-      flow: params.flow,
     },
     {
       closeButtonComponent: CloseButton,

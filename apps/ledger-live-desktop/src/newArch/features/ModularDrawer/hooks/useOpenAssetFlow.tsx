@@ -3,7 +3,7 @@ import { listAndFilterCurrencies } from "@ledgerhq/live-common/platform/helpers"
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { Account } from "@ledgerhq/types-live";
 import { ModularDrawerVisibleParams, useModularDrawerVisibility } from "LLD/features/ModularDrawer";
-import { useCallback, useEffect } from "react";
+import { useCallback } from "react";
 import { useDispatch } from "react-redux";
 import { openModal } from "~/renderer/actions/modals";
 import { currentRouteNameRef } from "~/renderer/analytics/screenRefs";
@@ -18,8 +18,6 @@ import { setFlowValue, setSourceValue } from "~/renderer/reducers/modularDrawer"
 
 function selectCurrency(
   onAssetSelected: (currency: CryptoOrTokenCurrency) => void,
-  source: string,
-  flow: string,
   includeTokens?: boolean,
   currencies?: CryptoOrTokenCurrency[],
   onClose?: () => void,
@@ -32,8 +30,6 @@ function selectCurrency(
     {
       currencies: filteredCurrencies,
       onAssetSelected,
-      source,
-      flow,
       drawerConfiguration: drawerConfiguration ?? {
         assets: { leftElement: "undefined", rightElement: "balance" },
         networks: { leftElement: "numberOfAccounts", rightElement: "balance" },
@@ -52,11 +48,6 @@ export function useOpenAssetFlow(
   modalNameToReopen?: keyof GlobalModalData,
 ) {
   const dispatch = useDispatch();
-
-  useEffect(() => {
-    dispatch(setFlowValue(modularDrawerVisibleParams.location));
-    dispatch(setSourceValue(source));
-  }, [dispatch, modularDrawerVisibleParams.location, source]);
 
   const { isModularDrawerVisible } = useModularDrawerVisibility({
     modularDrawerFeatureFlagKey: "lldModularDrawer",
@@ -79,6 +70,7 @@ export function useOpenAssetFlow(
       onAccountSelected?: (account: Account) => void,
     ) => {
       dispatch(setFlowValue("add account"));
+      dispatch(setSourceValue(source));
 
       const onClose = () => {
         setDrawer();
@@ -117,16 +109,22 @@ export function useOpenAssetFlow(
         );
       }
     },
-    [dispatch, featureNetworkBasedAddAccount?.enabled, modalNameToReopen, trackModularDrawerEvent],
+    [
+      dispatch,
+      featureNetworkBasedAddAccount?.enabled,
+      modalNameToReopen,
+      source,
+      trackModularDrawerEvent,
+    ],
   );
 
   const openAssetFlow = useCallback(
     (includeTokens: boolean, drawerConfiguration?: EnhancedModularDrawerConfiguration) => {
       if (isModularDrawerVisible(modularDrawerVisibleParams)) {
+        dispatch(setFlowValue(modularDrawerVisibleParams.location));
+        dispatch(setSourceValue(source));
         selectCurrency(
           openAddAccountFlow,
-          source,
-          modularDrawerVisibleParams.location,
           includeTokens,
           undefined,
           handleClose,
