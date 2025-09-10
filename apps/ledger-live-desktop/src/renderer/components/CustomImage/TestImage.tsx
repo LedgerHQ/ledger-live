@@ -3,7 +3,7 @@ import { Alert, Flex, Text } from "@ledgerhq/react-ui";
 import { ImageProcessingError } from "@ledgerhq/live-common/customImage/errors";
 import { CLSSupportedDeviceModelId } from "@ledgerhq/live-common/device/use-cases/isCustomLockScreenSupported";
 import { getScreenVisibleAreaDimensions } from "@ledgerhq/live-common/device/use-cases/screenSpecs";
-import { ProcessorResult } from "~/renderer/components/CustomImage/ImageGrayscalePreview";
+import { ProcessorResult } from "~/renderer/components/CustomImage/dithering/types";
 import { ImageBase64Data } from "~/renderer/components/CustomImage/types";
 import { createCanvas } from "~/renderer/components/CustomImage/imageUtils";
 
