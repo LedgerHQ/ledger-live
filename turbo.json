@@ -278,7 +278,9 @@
         "CI_OS"
       ],
       "outputs": [
-        "lint.json"
+        "lint.json",
+        "lint-desktop.json",
+        "lint-desktop-external.json"
       ]
     },
     "ledger-live-desktop#test": {
