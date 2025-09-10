@@ -10,10 +10,13 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { Trans, useTranslation } from "react-i18next";
 import {
   Animated,
+  Linking,
   ListRenderItemInfo,
   RefreshControl,
+  SafeAreaView,
   SectionList,
   StyleSheet,
+  Pressable,
   View,
 } from "react-native";
 import Share from "react-native-share";
@@ -32,6 +35,8 @@ import EmptyState from "./EmptyState";
 import OperationRow from "./OperationRow";
 import { getEnv } from "@ledgerhq/live-env";
 import { sendFile } from "../../../../e2e/bridge/client";
+import { Text } from "react-native";
+import ExternalLink from "@ledgerhq/icons-ui/native/ExternalLink";
 
 // const SList : SectionList<MappedSwapOperation, SwapHistorySection> = SectionList;
 const AnimatedSectionList: typeof SectionList = Animated.createAnimatedComponent(
@@ -162,7 +167,7 @@ const History = () => {
   };
 
   return (
-    <View style={[styles.root, { backgroundColor: colors.background }]}>
+    <SafeAreaView style={[styles.root, { backgroundColor: colors.background }]}>
       <TrackScreen category="Swap" name="Device History" />
       {sections.length ? (
         <View style={styles.alertWrapper}>
@@ -202,7 +207,22 @@ const History = () => {
         showsVerticalScrollIndicator={false}
         stickySectionHeadersEnabled={false}
       />
-    </View>
+      <View style={styles.feedbackContainer}>
+        <Pressable
+          onPress={() =>
+            Linking.openURL(
+              "https://form.typeform.com/to/FIHc3fk2?typeform-source=ledger.typeform.com#source=xxxxx",
+            )
+          }
+          style={styles.feedbackRow}
+        >
+          <Text style={[styles.feedbackLink, { color: colors.grey }]}>
+            <Trans i18nKey="transfer.swap.history.feedback" />
+          </Text>
+          <ExternalLink size="S" color={colors.grey} />
+        </Pressable>
+      </View>
+    </SafeAreaView>
   );
 };
 
@@ -231,6 +251,19 @@ const styles = StyleSheet.create({
   },
   alertWrapper: {
     padding: 20,
+  },
+  feedbackContainer: {
+    alignItems: "center",
+    paddingVertical: 20,
+  },
+  feedbackRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
+  },
+  feedbackLink: {
+    fontSize: 14,
+    textAlign: "center",
   },
 });
 
