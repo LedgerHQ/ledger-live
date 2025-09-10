@@ -7,7 +7,7 @@ import { useGetSwapTrackingProperties } from "../../utils/index";
 import { BoxedIcon, Text } from "@ledgerhq/react-ui";
 import { SwapLiveError } from "@ledgerhq/live-common/exchange/swap/types";
 import ErrorIcon from "~/renderer/components/ErrorIcon";
-import { track } from "~/renderer/analytics/__mocks__/segment";
+import { track } from "~/renderer/analytics/segment";
 
 const ContentBox = styled(Box)`
   display: flex;
