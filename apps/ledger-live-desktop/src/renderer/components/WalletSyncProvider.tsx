@@ -16,7 +16,7 @@ import {
 import { DistantState, LocalState } from "@ledgerhq/live-wallet/walletsync/index";
 import React, { useCallback, useMemo } from "react";
 import { useDispatch, useSelector, useStore } from "react-redux";
-import { useWalletSyncDesktop } from "~/newArch/features/WalletSync/hooks/useWalletSyncDesktop";
+import { useWalletSyncDesktop } from "LLD/features/WalletSync/hooks/useWalletSyncDesktop";
 import { replaceAccounts } from "../actions/accounts";
 import { State } from "../reducers";
 import { walletSelector } from "../reducers/wallet";
