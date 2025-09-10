@@ -1,8 +1,8 @@
-type SuiMoveObject = {
+export type SuiMoveObject = {
   serialize: () => SerializedBcs;
 };
 
-type SerializedBcs = {
+export type SerializedBcs = {
   toBytes: () => Uint8Array;
   toHex: () => string;
   toBase64: () => string;
