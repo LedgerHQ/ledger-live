@@ -427,7 +427,6 @@ export const DeeplinksProvider = ({
                               [NavigatorName.WalletTab]: {
                                 screens: {
                                   [ScreenName.Portfolio]: "portfolio",
-                                  [ScreenName.WalletNftGallery]: "nftgallery",
                                   [NavigatorName.Market]: {
                                     screens: {
                                       /**

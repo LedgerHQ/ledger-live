@@ -13,7 +13,6 @@ import inView from "./inView";
 import largeMover from "./largeMover";
 import market from "./market";
 import modularDrawer from "./modularDrawer";
-import nft from "./nft";
 import notifications from "./notifications";
 import protect from "./protect";
 import ratings from "./ratings";
@@ -41,7 +40,6 @@ const appReducer = combineReducers({
   largeMover,
   market,
   modularDrawer,
-  nft,
   notifications,
   postOnboarding,
   protect,
