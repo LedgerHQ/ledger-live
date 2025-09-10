@@ -1,16 +1,7 @@
 import { BigNumber } from "bignumber.js";
 
-import {
-  CosmosTransaction,
-  ElrondTransaction,
-  RippleTransaction,
-  SolanaTransaction,
-  StellarTransaction,
-  TonTransaction,
-  Transaction,
-  TransactionCommon,
-} from "@ledgerhq/wallet-api-client";
-
+import { Transaction } from "../../generated/types";
+import { TransactionCommon } from "@ledgerhq/types-live";
 export type { SwapLiveError } from "@ledgerhq/wallet-api-exchange-module";
 
 export function defaultTransaction({
@@ -18,35 +9,81 @@ export function defaultTransaction({
   amount,
   recipient,
   customFeeConfig,
-}: TransactionWithCustomFee): Transaction {
-  return <Transaction>{
+}: TransactionWithCustomFee): Partial<Transaction> {
+  // Type assertion needed because each Transaction family has different required properties
+  // This function provides base properties that are then extended by family-specific functions
+  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+  return {
     family,
     amount,
     recipient,
     ...customFeeConfig,
-  };
+  } as Partial<Transaction>;
 }
 
-export function modeSendTransaction({
-  family,
+export function cardanoTransaction({
   amount,
   recipient,
   customFeeConfig,
-}: TransactionWithCustomFee): Transaction {
+}: TransactionWithCustomFee): Partial<Extract<Transaction, { family: "cardano" }>> {
   return {
-    ...defaultTransaction({ family, amount, recipient, customFeeConfig }),
+    family: "cardano",
+    amount,
+    recipient,
     mode: "send",
+    ...customFeeConfig,
+  };
+}
+
+export function nearTransaction({
+  amount,
+  recipient,
+  customFeeConfig,
+}: TransactionWithCustomFee): Extract<Transaction, { family: "near" }> {
+  return {
+    family: "near",
+    amount,
+    recipient,
+    mode: "send",
+    ...customFeeConfig,
+  };
+}
+
+export function tezosTransaction({
+  amount,
+  recipient,
+  customFeeConfig,
+}: TransactionWithCustomFee): Partial<Extract<Transaction, { family: "tezos" }>> {
+  return {
+    family: "tezos",
+    amount,
+    recipient,
+    mode: "send",
+    ...customFeeConfig,
+  };
+}
+
+export function tronTransaction({
+  amount,
+  recipient,
+  customFeeConfig,
+}: TransactionWithCustomFee): Partial<Extract<Transaction, { family: "tron" }>> {
+  return {
+    family: "tron",
+    amount,
+    recipient,
+    mode: "send",
+    ...customFeeConfig,
   };
 }
 
 export function stellarTransaction({
-  family,
   amount,
   recipient,
   customFeeConfig,
   payinExtraId,
   customErrorType,
-}: TransactionWithCustomFee): StellarTransaction {
+}: TransactionWithCustomFee): Extract<Transaction, { family: "stellar" }> {
   if (!payinExtraId)
     throw {
       error: new Error("Missing payinExtraId"),
@@ -55,8 +92,11 @@ export function stellarTransaction({
     };
 
   return {
-    ...defaultTransaction({ family, amount, recipient, customFeeConfig }),
     family: "stellar",
+    mode: "send",
+    amount,
+    recipient,
+    ...customFeeConfig,
     memoValue: payinExtraId,
     memoType: "MEMO_TEXT",
   };
@@ -68,7 +108,7 @@ export function rippleTransaction({
   customFeeConfig,
   payinExtraId,
   customErrorType,
-}: TransactionWithCustomFee): RippleTransaction {
+}: TransactionWithCustomFee): Partial<Extract<Transaction, { family: "xrp" }>> {
   if (!payinExtraId)
     throw {
       error: new Error("Missing payinExtraId"),
@@ -76,38 +116,40 @@ export function rippleTransaction({
       customErrorType,
     };
 
-  const transaction: RippleTransaction = {
-    family: "ripple",
+  return {
+    family: "xrp",
     amount,
     recipient,
     ...customFeeConfig,
     tag: new BigNumber(payinExtraId).toNumber(),
   };
-  return transaction;
 }
 
-// Function to remove gasLimit from customFeeConfig for Ethereum or Bitcoin
-export function withoutGasLimitTransaction({
-  family,
+export function evmTransaction({
   amount,
   recipient,
   customFeeConfig,
   extraTransactionParameters,
-}: TransactionWithCustomFee): Transaction {
+}: TransactionWithCustomFee): Partial<Extract<Transaction, { family: "evm" }>> {
   if (customFeeConfig?.gasLimit) {
     delete customFeeConfig.gasLimit;
   }
 
   if (extraTransactionParameters) {
-    return <Transaction>{
-      family,
+    return {
+      family: "evm" as const,
       amount,
       recipient,
       ...customFeeConfig,
       data: Buffer.from(extraTransactionParameters, "hex"),
     };
   }
-  return defaultTransaction({ family, amount, recipient, customFeeConfig });
+  return {
+    family: "evm" as const,
+    amount,
+    recipient,
+    ...customFeeConfig,
+  };
 }
 
 export function bitcoinTransaction({
@@ -115,33 +157,33 @@ export function bitcoinTransaction({
   recipient,
   customFeeConfig,
   extraTransactionParameters,
-}: TransactionWithCustomFee): Transaction {
-  if (extraTransactionParameters) {
-    return {
-      family: "bitcoin",
-      amount,
-      recipient,
-      ...customFeeConfig,
-      opReturnData: Buffer.from(extraTransactionParameters, "utf-8"),
-    };
-  }
-  return {
-    family: "bitcoin",
+}: TransactionWithCustomFee): Partial<Extract<Transaction, { family: "bitcoin" }>> {
+  const baseTransaction = {
+    family: "bitcoin" as const,
     amount,
     recipient,
     ...customFeeConfig,
   };
+
+  if (extraTransactionParameters) {
+    return {
+      ...baseTransaction,
+      opReturnData: Buffer.from(extraTransactionParameters, "utf-8"),
+    };
+  }
+
+  return baseTransaction;
 }
 
 export function solanaTransaction({
-  family,
   amount,
   recipient,
-  customFeeConfig,
-}: TransactionWithCustomFee): SolanaTransaction {
+  customFeeConfig: _customFeeConfig,
+}: TransactionWithCustomFee): Extract<Transaction, { family: "solana" }> {
   return {
-    ...defaultTransaction({ family, amount, recipient, customFeeConfig }),
     family: "solana",
+    amount,
+    recipient,
     model: { kind: "transfer", uiState: {} },
   };
 }
@@ -150,43 +192,44 @@ export function elrondTransaction({
   amount,
   recipient,
   customFeeConfig,
-}: TransactionWithCustomFee): ElrondTransaction {
-  const transaction: ElrondTransaction = {
-    family: "elrond",
+}: TransactionWithCustomFee): Extract<Transaction, { family: "multiversx" }> {
+  return {
+    family: "multiversx",
     amount,
     recipient,
     mode: "send",
-    ...customFeeConfig,
-    gasLimit: 0, // FIXME: Placeholder, adjust as needed
+    fees: customFeeConfig.fees || null,
+    gasLimit: customFeeConfig.gasLimit ? Number(customFeeConfig.gasLimit) : 0,
   };
-  return transaction;
 }
 
 function tonTransaction({
-  family,
   amount,
   recipient,
-  customFeeConfig,
-}: TransactionWithCustomFee): TonTransaction {
+  customFeeConfig: _customFeeConfig,
+}: TransactionWithCustomFee): Extract<Transaction, { family: "ton" }> {
   return {
-    ...defaultTransaction({ family, amount, recipient, customFeeConfig }),
     family: "ton",
+    amount,
+    recipient,
     comment: { isEncrypted: false, text: "" },
     fees: new BigNumber(0), // Set default value as completeExchange call prepareTransaction, which set again fees.
   };
 }
 
 export function cosmosTransaction({
-  family,
   amount,
   recipient,
   customFeeConfig,
   payinExtraId,
-}: TransactionWithCustomFee): CosmosTransaction {
-  return <CosmosTransaction>{
-    ...defaultTransaction({ family, amount, recipient, customFeeConfig }),
+}: TransactionWithCustomFee): Partial<Extract<Transaction, { family: "cosmos" }>> {
+  return {
     family: "cosmos",
+    amount,
+    recipient,
     mode: "send",
+    networkInfo: null,
+    ...customFeeConfig,
     memo: payinExtraId ?? undefined,
   };
 }
@@ -198,10 +241,13 @@ export type TransactionWithCustomFee = TransactionCommon & {
   payinExtraId?: string;
   customErrorType?: "swap";
   extraTransactionParameters?: string;
+  family: string;
 };
 
 // Define a specific type for the strategy functions, assuming they might need parameters
-export type TransactionStrategyFunction = (params: TransactionWithCustomFee) => Transaction;
+export type TransactionStrategyFunction = (
+  params: TransactionWithCustomFee,
+) => Partial<Transaction>;
 
 export const transactionStrategy: {
   [K in Transaction["family"]]: TransactionStrategyFunction;
@@ -209,26 +255,27 @@ export const transactionStrategy: {
   algorand: defaultTransaction,
   aptos: defaultTransaction,
   bitcoin: bitcoinTransaction,
-  cardano: modeSendTransaction,
+  canton: defaultTransaction,
+  cardano: cardanoTransaction,
+  casper: defaultTransaction,
   celo: defaultTransaction,
   cosmos: cosmosTransaction,
-  crypto_org: defaultTransaction,
-  elrond: elrondTransaction,
-  ethereum: withoutGasLimitTransaction,
+  evm: evmTransaction,
   filecoin: defaultTransaction,
   hedera: defaultTransaction,
-  near: modeSendTransaction,
-  neo: defaultTransaction,
+  icon: defaultTransaction,
+  internet_computer: defaultTransaction,
+  mina: defaultTransaction,
+  multiversx: elrondTransaction,
+  near: nearTransaction,
   polkadot: defaultTransaction,
-  ripple: rippleTransaction,
   solana: solanaTransaction,
   stacks: defaultTransaction,
   stellar: stellarTransaction,
-  tezos: modeSendTransaction,
-  ton: tonTransaction,
-  tron: modeSendTransaction,
-  vechain: defaultTransaction,
-  casper: defaultTransaction,
   sui: defaultTransaction,
-  internet_computer: defaultTransaction,
+  tezos: tezosTransaction,
+  ton: tonTransaction,
+  tron: tronTransaction,
+  vechain: defaultTransaction,
+  xrp: rippleTransaction,
 };
