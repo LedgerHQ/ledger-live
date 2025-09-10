@@ -170,6 +170,7 @@ function SendSummary({ navigation, route }: Props) {
   const displayedError = mergeErrors();
 
   const isSolanaRawTransaction = "raw" in transaction && transaction.raw;
+  const isBitcoinPsbt = transaction.family === "bitcoin" && transaction.psbt;
 
   if (!account || !transaction || !currencyOrToken) {
     return null;
@@ -209,7 +210,7 @@ function SendSummary({ navigation, route }: Props) {
             },
           ]}
         />
-        {transaction.recipient ? (
+        {transaction.recipient && !isBitcoinPsbt ? (
           <SummaryToSection transaction={transaction} currency={mainAccount.currency} />
         ) : null}
         {status.warnings.recipient ? (
@@ -232,7 +233,7 @@ function SendSummary({ navigation, route }: Props) {
           route={route}
         />
         <SectionSeparator lineColor={colors.lightFog} />
-        {!isSolanaRawTransaction ? (
+        {!isSolanaRawTransaction && !isBitcoinPsbt ? (
           <SummaryAmountSection
             account={account}
             parentAccount={parentAccount}
@@ -264,7 +265,7 @@ function SendSummary({ navigation, route }: Props) {
           route={route}
         />
 
-        {!amount.eq(totalSpent) && !hideTotal && !isSolanaRawTransaction ? (
+        {!amount.eq(totalSpent) && !hideTotal && !isSolanaRawTransaction && !isBitcoinPsbt ? (
           <>
             <SectionSeparator lineColor={colors.lightFog} />
             <SummaryTotalSection

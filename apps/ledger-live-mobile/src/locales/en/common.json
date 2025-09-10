@@ -4087,6 +4087,10 @@
         "title": "Blind signing required",
         "description": "You cannot verify the transaction details on your Ledger device. If you sign it, you could lose all your assets. Only sign if you trust this website."
       },
+      "bitcoinPsbtTransaction": {
+        "title": "Verify on device",
+        "description": "You can verify the transaction amount and recipient on the device in the next step."
+      },
       "subaccountsWarning": "You will need to refill this account with {{ currency }} in order to send the tokens of this account",
       "tag": "Tag (Optional)",
       "validateTag": "Validate tag",
