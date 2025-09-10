@@ -8,7 +8,7 @@ import WebPlatformPlayer from "~/renderer/components/WebPlatformPlayer";
 import useTheme from "~/renderer/hooks/useTheme";
 import { languageSelector } from "~/renderer/reducers/settings";
 
-const PROVIDER_MANIFEST_ID = "cl-card";
+const PROVIDER_MANIFEST_ID = "noah";
 
 const Receive = () => {
   const location = useLocation();
