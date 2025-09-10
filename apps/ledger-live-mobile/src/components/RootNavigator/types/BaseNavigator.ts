@@ -61,7 +61,6 @@ import { FeesNavigatorParamsList } from "./FeesNavigator";
 import type { FreezeNavigatorParamList } from "./FreezeNavigator";
 import { LandingPagesNavigatorParamList } from "./LandingPagesNavigator";
 import type { MainNavigatorParamList } from "./MainNavigator";
-import type { NftNavigatorParamList } from "./NftNavigator";
 import type { NoFundsNavigatorParamList } from "./NoFundsNavigator";
 import type { NotificationCenterNavigatorParamList } from "./NotificationCenterNavigator";
 import type { PasswordAddFlowParamList } from "./PasswordAddFlowNavigator";
@@ -246,7 +245,6 @@ export type BaseNavigatorStackParamList = {
   [NavigatorName.PasswordAddFlow]?: NavigatorScreenParams<PasswordAddFlowParamList>;
   [NavigatorName.PasswordModifyFlow]?: NavigatorScreenParams<PasswordModifyFlowParamList>;
   [NavigatorName.NotificationCenter]: NavigatorScreenParams<NotificationCenterNavigatorParamList>;
-  [NavigatorName.NftNavigator]: NavigatorScreenParams<NftNavigatorParamList>;
   [NavigatorName.Accounts]: NavigatorScreenParams<AccountsNavigatorParamList>;
   [NavigatorName.WalletConnect]: NavigatorScreenParams<WalletConnectLiveAppNavigatorParamList>;
   [NavigatorName.CustomImage]: NavigatorScreenParams<CustomImageNavigatorParamList>;

@@ -119,7 +119,9 @@ export default function useScanDeviceAccountsViewModel({
   );
 
   const quitFlow = useCallback(() => {
-    navigation.navigate(NavigatorName.Accounts);
+    navigation.navigate(NavigatorName.Accounts, {
+      screen: ScreenName.Accounts,
+    });
   }, [navigation]);
   const onPressAccount = useCallback(
     (account: Account) => {

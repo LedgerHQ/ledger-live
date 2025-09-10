@@ -38,7 +38,6 @@ import SwapNavigator from "./SwapNavigator";
 import NotificationCenterNavigator from "./NotificationCenterNavigator";
 import AnalyticsAllocation from "~/screens/Analytics/Allocation";
 import AnalyticsOperations from "~/screens/Analytics/Operations";
-import NftNavigator from "./NftNavigator";
 import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
 import Account from "~/screens/Account";
 import ReadOnlyAccount from "~/screens/Account/ReadOnly/ReadOnlyAccount";
@@ -471,11 +470,6 @@ export default function BaseNavigator() {
         <Stack.Screen
           name={NavigatorName.NotificationCenter}
           component={NotificationCenterNavigator}
-          options={{ headerShown: false }}
-        />
-        <Stack.Screen
-          name={NavigatorName.NftNavigator}
-          component={NftNavigator}
           options={{ headerShown: false }}
         />
         <Stack.Screen

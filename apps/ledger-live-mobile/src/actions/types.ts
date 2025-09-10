@@ -30,7 +30,6 @@ import type {
   EarnState,
   DynamicContentState,
   ProtectState,
-  NftState,
   MarketState,
   LargeMoverState,
   InViewState,
@@ -39,8 +38,6 @@ import type { Unpacked } from "../types/helpers";
 import { HandlersPayloads } from "@ledgerhq/live-wallet/store";
 import { ImportAccountsReduceInput } from "@ledgerhq/live-wallet/liveqr/importAccounts";
 import { Steps } from "LLM/features/WalletSync/types/Activation";
-import { NftStatus } from "@ledgerhq/live-nft/types";
-import { SupportedBlockchain } from "@ledgerhq/live-nft/supported";
 import type { CounterValuesState } from "@ledgerhq/live-countervalues/types";
 import { AnyAction } from "redux";
 
@@ -282,8 +279,6 @@ export enum SettingsActionTypes {
   SETTINGS_FILTER_TOKEN_OPERATIONS_ZERO_AMOUNT = "SETTINGS_FILTER_TOKEN_OPERATIONS_ZERO_AMOUNT",
   SHOW_TOKEN = "SHOW_TOKEN",
   BLACKLIST_TOKEN = "BLACKLIST_TOKEN",
-  UPDATE_NFT_COLLECTION_STATUS = "UPDATE_NFT_COLLECTION_STATUS",
-  RESET_NFT_COLLECTION_STATUS = "RESET_NFT_COLLECTION_STATUS",
   SETTINGS_DISMISS_BANNER = "SETTINGS_DISMISS_BANNER",
   SETTINGS_SET_AVAILABLE_UPDATE = "SETTINGS_SET_AVAILABLE_UPDATE",
   DANGEROUSLY_OVERRIDE_STATE = "DANGEROUSLY_OVERRIDE_STATE",
@@ -364,11 +359,6 @@ export type SettingsFilterTokenOperationsZeroAmountPayload =
   SettingsState["filterTokenOperationsZeroAmount"];
 export type SettingsShowTokenPayload = string;
 export type SettingsBlacklistTokenPayload = string;
-export type SettingsUpdateNftCollectionStatus = {
-  blockchain: SupportedBlockchain;
-  collection: string;
-  status: NftStatus;
-};
 export type SettingsDismissBannerPayload = string;
 export type SettingsSetAvailableUpdatePayload = SettingsState["hasAvailableUpdate"];
 export type SettingsSetThemePayload = SettingsState["theme"];
@@ -469,7 +459,6 @@ export type SettingsPayload =
   | SettingsHideEmptyTokenAccountsPayload
   | SettingsShowTokenPayload
   | SettingsBlacklistTokenPayload
-  | SettingsUpdateNftCollectionStatus
   | SettingsDismissBannerPayload
   | SettingsSetAvailableUpdatePayload
   | SettingsSetThemePayload
@@ -571,19 +560,6 @@ export type ProtectDataPayload = ProtectState["data"];
 export type ProtectStatusPayload = ProtectState["protectStatus"];
 export type ProtectPayload = ProtectDataPayload | ProtectStatusPayload;
 
-// === NFT ACTIONS ===
-export enum NftStateActionTypes {
-  SET_GALLERY_CHAIN_FILTER = "SET_GALLERY_CHAIN_FILTER",
-  SET_GALLERY_FILTER_DRAWER_VISIBLE = "SET_GALLERY_FILTER_DRAWER_VISIBLE",
-}
-
-export type NftStateGalleryChainFiltersPayload = [keyof NftState["galleryChainFilters"], boolean];
-export type NftStateGalleryFilterDrawerVisiblePayload = NftState["filterDrawerVisible"];
-
-export type NftPayload =
-  | NftStateGalleryChainFiltersPayload
-  | NftStateGalleryFilterDrawerVisiblePayload;
-
 // === MARKET ACTIONS ===
 export enum MarketStateActionTypes {
   SET_MARKET_REQUEST_PARAMS = "SET_MARKET_REQUEST_PARAMS",
@@ -666,5 +642,4 @@ export type ActionsPayload =
   | Action<ProtectPayload>
   | Action<EarnPayload>
   | Action<MarketPayload>
-  | Action<NftPayload>
   | AnyAction;
