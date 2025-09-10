@@ -35,4 +35,5 @@ export type DerivationMode =
   | "ton"
   | "sui"
   | "aptos"
-  | "minabip44";
+  | "minabip44"
+  | "canton";
