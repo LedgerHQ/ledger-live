@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState, useMemo } from "react";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
 import BigNumber from "bignumber.js";
@@ -83,44 +83,47 @@ export default function StepOnboard({
   const selectedAccount = selectedAccounts[0];
 
   // Create a placeholder account for display purposes during onboarding
-  const placeholderAccount =
-    selectedAccount ||
-    (() => {
-      const derivationScheme = getDerivationScheme({ derivationMode: "", currency });
-      const freshAddressPath = runAccountDerivationScheme(derivationScheme, currency, {
-        account: 0,
-      });
+  const placeholderAccount = useMemo(() => {
+    return (
+      selectedAccount ||
+      (() => {
+        const derivationScheme = getDerivationScheme({ derivationMode: "", currency });
+        const freshAddressPath = runAccountDerivationScheme(derivationScheme, currency, {
+          account: 0,
+        });
 
-      const accountId = encodeAccountId({
-        type: "js",
-        version: "2",
-        currencyId: currency.id,
-        xpubOrAddress: "canton-placeholder-address",
-        derivationMode: "",
-      });
+        const accountId = encodeAccountId({
+          type: "js",
+          version: "2",
+          currencyId: currency.id,
+          xpubOrAddress: "canton-placeholder-address",
+          derivationMode: "",
+        });
 
-      return {
-        type: "Account" as const,
-        id: accountId,
-        seedIdentifier: "canton-onboard",
-        derivationMode: "",
-        index: 0,
-        freshAddress: "canton-placeholder-address",
-        freshAddressPath,
-        used: false,
-        balance: new BigNumber(0),
-        spendableBalance: new BigNumber(0),
-        blockHeight: 0,
-        currency,
-        operationsCount: 0,
-        operations: [],
-        pendingOperations: [],
-        lastSyncDate: new Date(),
-        creationDate: new Date(),
-        balanceHistoryCache: createEmptyHistoryCache(),
-        swapHistory: [],
-      };
-    })();
+        return {
+          type: "Account" as const,
+          id: accountId,
+          seedIdentifier: "canton-onboard",
+          derivationMode: "",
+          index: 0,
+          freshAddress: "canton-placeholder-address",
+          freshAddressPath,
+          used: false,
+          balance: new BigNumber(0),
+          spendableBalance: new BigNumber(0),
+          blockHeight: 0,
+          currency,
+          operationsCount: 0,
+          operations: [],
+          pendingOperations: [],
+          lastSyncDate: new Date(),
+          creationDate: new Date(),
+          balanceHistoryCache: createEmptyHistoryCache(),
+          swapHistory: [],
+        };
+      })()
+    );
+  }, [selectedAccount, currency]);
 
   const [status, setStatus] = useState<OnboardStatus>(OnboardStatus.INIT);
   const [statusMessage, setStatusMessage] = useState("");
