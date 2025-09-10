@@ -20,13 +20,12 @@ export default function SwapCustomError({ route }: SwapCustomErrorProps) {
     error && "name" in error && error.name !== "CompleteExchangeError" ? error.name : undefined;
   const onExport = useExportLogs();
   const headerHeight = useHeaderHeight();
+  const errorMessage =
+    error && "message" in error && typeof error.message === "string"
+      ? error.message.toLowerCase()
+      : "";
 
   const { title, description } = useMemo(() => {
-    const errorMessage =
-      error && "message" in error && typeof error.message === "string"
-        ? error.message.toLowerCase()
-        : "";
-
     if (errorMessage.includes("transaction cannot be created")) {
       track("error_message", {
         ...sharedSwapTracking,
@@ -63,7 +62,7 @@ export default function SwapCustomError({ route }: SwapCustomErrorProps) {
       title: t("swapErrors.default.title"),
       description: t("swapErrors.default.description"),
     };
-  }, [error, nameKey, t, titleKey]);
+  }, [error, errorMessage, nameKey, t, titleKey]);
 
   return (
     <SafeAreaView style={[styles.root, { bottom: headerHeight }]}>
