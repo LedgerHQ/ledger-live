@@ -100,6 +100,7 @@ export function ModularDrawer({
     isDrawerOpen: isOpen,
     onClose,
     hasSearchedValue: searchValue.length > 0,
+    onAccountSelected,
   });
 
   return (
