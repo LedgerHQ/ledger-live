@@ -125,7 +125,7 @@ describe("prepareTransaction", () => {
       gasLimit: faker.number.int(20),
       storageLimit: faker.number.int(20),
       opSize: faker.number.int(20),
-      burnFeeMutez: faker.number.int(20),
+      burnFeeMutez: faker.number.int({ min: 1, max: 20 }),
     };
     mockTezosEstimate.mockResolvedValue(tezosEstimate);
     const account = createFixtureAccount({ balance: BigNumber(1_000) });
