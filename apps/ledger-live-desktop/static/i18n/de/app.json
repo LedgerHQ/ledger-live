@@ -2280,6 +2280,16 @@
       }
     }
   },
+  "fund" : {
+    "title" : "Finanzieren",
+    "titleCrypto" : "{{currency}} finanzieren",
+    "exchangeDrawer" : {
+      "completed" : {
+        "title" : "Transaktion erfolgreich gesendet",
+        "description" : "Dein Vorgang wurde zur Bestätigung an das Netzwerk gesendet. Bitte warte, bis deine Transaktion bestätigt wurde und der Anbieter sie verarbeitet hat."
+      }
+    }
+  },
   "receive" : {
     "title" : "Empfangen",
     "successTitle" : "Adresse sicher freigegeben",
