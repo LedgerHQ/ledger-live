@@ -591,6 +591,15 @@ export const expectedCurrencyList = [
     decimals: 18,
   },
   {
+    color: "#FF962B",
+    decimals: 18,
+    family: "ethereum",
+    id: "core",
+    name: "Core",
+    ticker: "CORE",
+    type: "CryptoCurrency",
+  },
+  {
     type: "CryptoCurrency",
     id: "cronos",
     ticker: "CRO",
