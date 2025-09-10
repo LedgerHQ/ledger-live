@@ -6,6 +6,7 @@ import {
 } from "../../wallet-api/types";
 import createTransaction from "@ledgerhq/coin-bitcoin/createTransaction";
 import { Transaction } from "@ledgerhq/coin-bitcoin/types";
+import { PsbtV2 } from "@ledgerhq/hw-app-btc/newops/psbtv2";
 
 const CAN_EDIT_FEES = true;
 
@@ -35,8 +36,18 @@ const convertToLiveTransaction: ConvertToLiveTransaction<
     liveTx.opReturnData = walletApiTransaction.opReturnData;
   }
 
+  if (walletApiTransaction.psbt) {
+    liveTx.psbt = walletApiTransaction.psbt;
+  }
+
   if (hasFeesProvided) {
     liveTx.feesStrategy = null;
+  }
+
+  if (walletApiTransaction.psbt) {
+    const psbtBuffer = Buffer.from(walletApiTransaction.psbt, "base64");
+    const psbt = new PsbtV2();
+    psbt.deserialize(psbtBuffer);
   }
 
   return liveTx;

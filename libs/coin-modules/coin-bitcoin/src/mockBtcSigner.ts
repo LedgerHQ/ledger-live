@@ -47,6 +47,9 @@ class MockBtcSigner implements BitcoinSigner {
   signMessage(_path: string, _messageHex: string): Promise<BitcoinSignature> {
     return Promise.reject();
   }
+  signPsbtV2Buffer(_psbtBuffer: Buffer): Promise<{ psbt: Buffer; tx: string }> {
+    return Promise.reject();
+  }
   splitTransaction(
     _transactionHex: string,
     _isSegwitSupported: boolean | null | undefined,
