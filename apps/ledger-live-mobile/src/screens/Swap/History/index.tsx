@@ -254,12 +254,12 @@ const styles = StyleSheet.create({
   },
   feedbackContainer: {
     alignItems: "center",
-    paddingVertical: 20,
+    paddingVertical: 10,
   },
   feedbackRow: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 4,
+    gap: 8,
   },
   feedbackLink: {
     fontSize: 14,
