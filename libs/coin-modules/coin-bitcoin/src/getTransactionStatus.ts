@@ -35,11 +35,12 @@ export const getTransactionStatus: AccountBridge<
     transaction.recipient,
   );
 
-  if (recipientError) {
+  // For a PSBT tx we do not provide the recipient so we do not throw a RecipientRequired error
+  if (recipientError && !transaction.psbt) {
     errors.recipient = recipientError;
   }
 
-  if (recipientWarning) {
+  if (recipientWarning && !transaction.psbt) {
     warnings.recipient = recipientWarning;
   }
 
@@ -123,6 +124,11 @@ export const getTransactionStatus: AccountBridge<
 
   if (!errors.amount && !amount.gt(0)) {
     errors.amount = useAllAmount ? new NotEnoughBalance() : new AmountRequired();
+
+    // For a PSBT tx we do not provide the amount so we do not throw AmountRequired error
+    if (transaction.psbt && !useAllAmount) {
+      delete errors.amount;
+    }
   }
 
   if (amount.gt(0) && estimatedFees.times(10).gt(amount)) {
