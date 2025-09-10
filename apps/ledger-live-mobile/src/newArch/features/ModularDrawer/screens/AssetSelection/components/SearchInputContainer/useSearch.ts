@@ -41,11 +41,14 @@ export const useSearch = ({
 
   const handleDebouncedChange = useCallback(
     (currentQuery: string, previousQuery: string) => {
-      setSearchedValue?.(currentQuery);
+      const currentQueryTrimmed = currentQuery.trim();
+      const previousQueryTrimmed = previousQuery.trim();
 
-      if (currentQuery === previousQuery) return;
+      setSearchedValue?.(currentQueryTrimmed);
 
-      if (currentQuery.trim() === "" && previousQuery !== "") return;
+      if (currentQueryTrimmed === previousQueryTrimmed) return;
+
+      if (currentQueryTrimmed === "" && previousQueryTrimmed !== "") return;
 
       trackModularDrawerEvent(
         EVENTS_NAME.ASSET_SEARCHED,
@@ -53,7 +56,7 @@ export const useSearch = ({
           flow,
           source,
           page: MODULAR_DRAWER_PAGE_NAME.MODULAR_ASSET_SELECTION,
-          searched_value: currentQuery,
+          searched_value: currentQueryTrimmed,
         },
         {
           formatAssetConfig: Boolean(formatAssetConfig),
