@@ -1,5 +1,18 @@
 # @ledgerhq/coin-xrp
 
+## 7.4.0-nightly.1
+
+### Minor Changes
+
+- [#11699](https://github.com/LedgerHQ/ledger-live/pull/11699) [`2b896f9`](https://github.com/LedgerHQ/ledger-live/commit/2b896f94d6fc53ef965ed567489ad96d913466d4) Thanks [@jnicoulaud-ledger](https://github.com/jnicoulaud-ledger)! - feat(BACK-9645): add support for returning details in AlpacaApi.craftTransaction
+
+### Patch Changes
+
+- Updated dependencies [[`2b896f9`](https://github.com/LedgerHQ/ledger-live/commit/2b896f94d6fc53ef965ed567489ad96d913466d4), [`338d979`](https://github.com/LedgerHQ/ledger-live/commit/338d979bae349b185c52b1d8c9f6718a3d142526)]:
+  - @ledgerhq/coin-framework@6.4.0-nightly.1
+  - @ledgerhq/cryptoassets@13.28.0-nightly.0
+  - @ledgerhq/live-network@2.0.17-nightly.0
+
 ## 7.3.1-nightly.0
 
 ### Patch Changes

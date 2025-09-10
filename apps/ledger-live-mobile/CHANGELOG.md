@@ -1,5 +1,42 @@
 # live-mobile
 
+## 3.93.0-nightly.1
+
+### Minor Changes
+
+- [#11687](https://github.com/LedgerHQ/ledger-live/pull/11687) [`ed150c6`](https://github.com/LedgerHQ/ledger-live/commit/ed150c6bf556dec4ce9a9d41864c8108b5fa1935) Thanks [@lpaquet-ledger](https://github.com/lpaquet-ledger)! - remove swap details from screen
+
+- [#11678](https://github.com/LedgerHQ/ledger-live/pull/11678) [`a506724`](https://github.com/LedgerHQ/ledger-live/commit/a506724f93c2426fe64db8f48e8f76e492c44437) Thanks [@Valentin-Ledger](https://github.com/Valentin-Ledger)! - Add new deeplink for earn deposit screen on llm
+
+- [#11586](https://github.com/LedgerHQ/ledger-live/pull/11586) [`25964d0`](https://github.com/LedgerHQ/ledger-live/commit/25964d07a5803cfc4024a19d63f0881a9d0337f7) Thanks [@ejaycoleman](https://github.com/ejaycoleman)! - Removes redundant onboardingContext
+
+- [#11691](https://github.com/LedgerHQ/ledger-live/pull/11691) [`1497a27`](https://github.com/LedgerHQ/ledger-live/commit/1497a275c4c0abc06408f707e51a1f0e9ec60887) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - MAD- reduce props drillling for accounteSelection & Steps
+
+- [#11692](https://github.com/LedgerHQ/ledger-live/pull/11692) [`6a1e8fe`](https://github.com/LedgerHQ/ledger-live/commit/6a1e8febd56e291559308eaad3d6562efe4b3ff1) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Fix modularization in LiveApps and refacto usage of hook
+
+- [#11693](https://github.com/LedgerHQ/ledger-live/pull/11693) [`83cdf7a`](https://github.com/LedgerHQ/ledger-live/commit/83cdf7ad84449a028ae1edb49f1e76273d8093b2) Thanks [@jiyuzhuang](https://github.com/jiyuzhuang)! - Add missing config for Apex
+
+### Patch Changes
+
+- [#11703](https://github.com/LedgerHQ/ledger-live/pull/11703) [`5f77b65`](https://github.com/LedgerHQ/ledger-live/commit/5f77b65182f441b66bc3aeebe01655b211073701) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLM / LLD - Update wording on the add account scan screen
+
+- Updated dependencies [[`2b896f9`](https://github.com/LedgerHQ/ledger-live/commit/2b896f94d6fc53ef965ed567489ad96d913466d4), [`4835688`](https://github.com/LedgerHQ/ledger-live/commit/48356882efadc15ed59f608e01b44cdcbc6637fb), [`b27c96c`](https://github.com/LedgerHQ/ledger-live/commit/b27c96ccbcefb1982a40688a8385209eac99165a)]:
+  - @ledgerhq/coin-evm@2.30.0-nightly.1
+  - @ledgerhq/coin-framework@6.4.0-nightly.1
+  - @ledgerhq/live-env@2.16.0-nightly.0
+  - @ledgerhq/coin-cosmos@0.17.1-nightly.1
+  - @ledgerhq/coin-filecoin@1.11.1-nightly.1
+  - @ledgerhq/coin-multiversx@0.5.1-nightly.1
+  - @ledgerhq/coin-stacks@0.9.1-nightly.1
+  - @ledgerhq/live-countervalues@0.7.1-nightly.1
+  - @ledgerhq/live-countervalues-react@0.5.2-nightly.1
+  - @ledgerhq/live-nft@0.8.20-nightly.1
+  - @ledgerhq/live-nft-react@0.9.20-nightly.1
+  - @ledgerhq/live-wallet@0.13.1-nightly.1
+  - @ledgerhq/hw-ledger-key-ring-protocol@0.3.14-nightly.0
+  - @ledgerhq/ledger-key-ring-protocol@0.6.5-nightly.0
+  - @ledgerhq/live-network@2.0.17-nightly.0
+
 ## 3.93.0-nightly.0
 
 ### Minor Changes

@@ -1,5 +1,11 @@
 # @ledgerhq/live-env
 
+## 2.16.0-nightly.0
+
+### Minor Changes
+
+- [#11665](https://github.com/LedgerHQ/ledger-live/pull/11665) [`b27c96c`](https://github.com/LedgerHQ/ledger-live/commit/b27c96ccbcefb1982a40688a8385209eac99165a) Thanks [@semeano](https://github.com/semeano)! - Disable Celo tokens via env var
+
 ## 2.15.0
 
 ### Minor Changes

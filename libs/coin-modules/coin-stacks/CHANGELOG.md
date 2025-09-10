@@ -1,5 +1,15 @@
 # @ledgerhq/coin-stacks
 
+## 0.9.1-nightly.1
+
+### Patch Changes
+
+- Updated dependencies [[`2b896f9`](https://github.com/LedgerHQ/ledger-live/commit/2b896f94d6fc53ef965ed567489ad96d913466d4), [`338d979`](https://github.com/LedgerHQ/ledger-live/commit/338d979bae349b185c52b1d8c9f6718a3d142526), [`b27c96c`](https://github.com/LedgerHQ/ledger-live/commit/b27c96ccbcefb1982a40688a8385209eac99165a)]:
+  - @ledgerhq/coin-framework@6.4.0-nightly.1
+  - @ledgerhq/cryptoassets@13.28.0-nightly.0
+  - @ledgerhq/live-env@2.16.0-nightly.0
+  - @ledgerhq/live-network@2.0.17-nightly.0
+
 ## 0.9.1-nightly.0
 
 ### Patch Changes

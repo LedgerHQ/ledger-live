@@ -1,5 +1,36 @@
 # ledger-live-desktop
 
+## 2.128.0-nightly.1
+
+### Minor Changes
+
+- [#11692](https://github.com/LedgerHQ/ledger-live/pull/11692) [`6a1e8fe`](https://github.com/LedgerHQ/ledger-live/commit/6a1e8febd56e291559308eaad3d6562efe4b3ff1) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Fix modularization in LiveApps and refacto usage of hook
+
+### Patch Changes
+
+- [#11704](https://github.com/LedgerHQ/ledger-live/pull/11704) [`778c9ee`](https://github.com/LedgerHQ/ledger-live/commit/778c9eee8a00efde25a7b6337b93d448766c9095) Thanks [@semeano](https://github.com/semeano)! - fix: sui stake redirect on low funds, stake fee estimation
+
+- [#11703](https://github.com/LedgerHQ/ledger-live/pull/11703) [`5f77b65`](https://github.com/LedgerHQ/ledger-live/commit/5f77b65182f441b66bc3aeebe01655b211073701) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLM / LLD - Update wording on the add account scan screen
+
+- Updated dependencies [[`2b896f9`](https://github.com/LedgerHQ/ledger-live/commit/2b896f94d6fc53ef965ed567489ad96d913466d4), [`338d979`](https://github.com/LedgerHQ/ledger-live/commit/338d979bae349b185c52b1d8c9f6718a3d142526), [`6a1e8fe`](https://github.com/LedgerHQ/ledger-live/commit/6a1e8febd56e291559308eaad3d6562efe4b3ff1), [`4835688`](https://github.com/LedgerHQ/ledger-live/commit/48356882efadc15ed59f608e01b44cdcbc6637fb), [`b27c96c`](https://github.com/LedgerHQ/ledger-live/commit/b27c96ccbcefb1982a40688a8385209eac99165a)]:
+  - @ledgerhq/coin-evm@2.30.0-nightly.1
+  - @ledgerhq/coin-framework@6.4.0-nightly.1
+  - @ledgerhq/cryptoassets@13.28.0-nightly.0
+  - @ledgerhq/live-common@34.48.0-nightly.1
+  - @ledgerhq/live-env@2.16.0-nightly.0
+  - @ledgerhq/coin-bitcoin@0.21.1-nightly.1
+  - @ledgerhq/coin-cosmos@0.17.1-nightly.1
+  - @ledgerhq/coin-filecoin@1.11.1-nightly.1
+  - @ledgerhq/live-countervalues@0.7.1-nightly.1
+  - @ledgerhq/live-countervalues-react@0.5.2-nightly.1
+  - @ledgerhq/live-nft@0.8.20-nightly.1
+  - @ledgerhq/live-nft-react@0.9.20-nightly.1
+  - @ledgerhq/live-wallet@0.13.1-nightly.1
+  - @ledgerhq/live-dmk-desktop@0.9.5-nightly.1
+  - @ledgerhq/hw-ledger-key-ring-protocol@0.3.14-nightly.0
+  - @ledgerhq/ledger-key-ring-protocol@0.6.5-nightly.0
+  - @ledgerhq/live-network@2.0.17-nightly.0
+
 ## 2.128.0-nightly.0
 
 ### Minor Changes
