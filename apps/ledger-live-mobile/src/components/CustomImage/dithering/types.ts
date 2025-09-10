@@ -1,4 +1,3 @@
-import { ReactPropTypes } from "react";
 import { ImageSourcePropType } from "react-native";
 
 export type DitheringAlgorithm = "floyd-steinberg" | "atkinson" | "reduced-atkinson";

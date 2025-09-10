@@ -107,9 +107,6 @@ export default class ImageProcessor extends React.Component<Props> {
     this.injectJavaScript(
       `window.processImage("${imageBase64DataUri}", ${bitsPerPixel}, "${ditheringAlgorithm}");`,
     );
-    console.log(
-      `window.processImage("${imageBase64DataUri}", ${bitsPerPixel}, ${ditheringAlgorithm});`,
-    );
   };
 
   setContrastAndDitheringAlgorithm = () => {
@@ -117,18 +114,12 @@ export default class ImageProcessor extends React.Component<Props> {
     this.injectJavaScript(
       `window.setImageContrastAndDitheringAlgorithm(${contrast}, "${ditheringAlgorithm}");`,
     );
-    console.log(
-      `window.setImageContrastAndDitheringAlgorithm(${contrast}, ${ditheringAlgorithm});`,
-    );
   };
 
   setAndApplyContrastAndDitheringAlgorithm = () => {
     const { contrast, ditheringAlgorithm } = this.props;
     this.injectJavaScript(
       `window.setAndApplyImageContrastAndDitheringAlgorithm(${contrast}, "${ditheringAlgorithm}");`,
-    );
-    console.log(
-      `window.setAndApplyImageContrastAndDitheringAlgorithm(${contrast}, ${ditheringAlgorithm});`,
     );
   };
 
