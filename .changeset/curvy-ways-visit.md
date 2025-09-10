@@ -1,6 +1,6 @@
 ---
-"@ledgerhq/coin-canton": patch
-"@ledgerhq/live-common": patch
+"@ledgerhq/coin-canton": minor
+"@ledgerhq/live-common": minor
 ---
 
 Move lastblock canton to gateway

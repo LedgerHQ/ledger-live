@@ -1,6 +1,6 @@
 ---
-"@ledgerhq/coin-sui": patch
-"ledger-live-desktop": patch
+"@ledgerhq/coin-sui": minor
+"ledger-live-desktop": minor
 ---
 
 fix: sui stake redirect on low funds, stake fee estimation
