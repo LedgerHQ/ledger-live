@@ -28,8 +28,8 @@ export function createApi(config: CantonConfig): AlpacaApi {
   return {
     broadcast,
     combine,
-    craftTransaction: craft(config.nativeInstrumentId || ""),
-    estimateFees: estimate(config.nativeInstrumentId || ""),
+    craftTransaction: craft(config.nativeInstrumentId ?? ""),
+    estimateFees: estimate(config.nativeInstrumentId ?? ""),
     getBalance,
     lastBlock,
     listOperations,
