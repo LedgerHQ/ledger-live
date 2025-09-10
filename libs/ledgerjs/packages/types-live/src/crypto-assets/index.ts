@@ -6,6 +6,7 @@ export type CryptoAssetsStore = {
   findTokenById(id: string): TokenCurrency | undefined;
   findTokenByAddressInCurrency(address: string, currencyId: string): TokenCurrency | undefined;
   findTokenByTicker(ticker: string): TokenCurrency | undefined;
+  addTokens?: (tokens: TokenCurrency[]) => void;
 };
 
 export type CryptoAssetsStoreGetter = () => CryptoAssetsStore;

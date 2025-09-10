@@ -1,4 +1,3 @@
-import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { getCryptoAssetsStore, setCryptoAssetsStore } from ".";
 import * as legacy from "@ledgerhq/cryptoassets/tokens";
 import type { CryptoAssetsStore } from "@ledgerhq/types-live";
@@ -18,14 +17,7 @@ describe("Testing CryptoAssetStore", () => {
   afterEach(() => {
     jest.restoreAllMocks();
   });
-  it("should return the default methods from cryptoassets libs when feature flag does not exists", () => {
-    LiveConfig.setConfig({
-      some_other_feature: {
-        type: "boolean",
-        default: true,
-      },
-    });
-
+  it("returns legacy store by default when CAL integration disabled and no custom store set", () => {
     const store = getCryptoAssetsStore();
     expect(store).toEqual({
       findTokenByAddress: legacy.findTokenByAddress,
@@ -36,45 +28,7 @@ describe("Testing CryptoAssetStore", () => {
     });
   });
 
-  it("should return the default methods from cryptoassets libs when feature flag is disabled", () => {
-    LiveConfig.setConfig({
-      feature_cal_lazy_loading: {
-        type: "boolean",
-        default: false,
-      },
-    });
-
-    const store = getCryptoAssetsStore();
-    expect(store).toEqual({
-      findTokenByAddress: legacy.findTokenByAddress,
-      getTokenById: legacy.getTokenById,
-      findTokenById: legacy.findTokenById,
-      findTokenByAddressInCurrency: legacy.findTokenByAddressInCurrency,
-      findTokenByTicker: legacy.findTokenByTicker,
-    });
-  });
-
-  it("should throw an error when no store is set and feature flag is enabled", () => {
-    LiveConfig.setConfig({
-      feature_cal_lazy_loading: {
-        type: "boolean",
-        default: true,
-      },
-    });
-
-    expect(() => getCryptoAssetsStore()).toThrow(
-      "CryptoAssetsStore is not set. Please call setCryptoAssetsStore first.",
-    );
-  });
-
-  it("should throw return the new store when feature flag is enabled", () => {
-    LiveConfig.setConfig({
-      feature_cal_lazy_loading: {
-        type: "boolean",
-        default: true,
-      },
-    });
-
+  it("returns the custom store when one is set and CAL integration is disabled", () => {
     // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
     const newStore = {} as unknown as CryptoAssetsStore;
     setCryptoAssetsStore(newStore);
@@ -96,15 +50,8 @@ describe("Testing CryptoAssetStore", () => {
     expect(store).toBe(mockCALStore);
   });
 
-  it("should prioritize CAL integration over feature flags", () => {
+  it("prioritizes CAL integration over any custom store", () => {
     isCALIntegrationEnabledSpy.mockReturnValue(true);
-
-    LiveConfig.setConfig({
-      feature_cal_lazy_loading: {
-        type: "boolean",
-        default: true,
-      },
-    });
 
     const mockCALStore = {} as unknown as CryptoAssetsStore;
     getCALStoreSpy.mockReturnValue(mockCALStore);

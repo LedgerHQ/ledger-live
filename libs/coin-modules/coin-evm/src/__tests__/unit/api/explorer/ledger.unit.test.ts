@@ -218,6 +218,7 @@ describe("EVM Family", () => {
             node: { type: "ledger", explorerId: "matic" },
             explorer: { type: "ledger", explorerId: "matic", batchSize: configuredBatchSize },
             showNfts: true,
+            calLazyLoading: false,
           },
         }));
         const request = jest.spyOn(axios, "request").mockResolvedValue({ data: { data: [] } });

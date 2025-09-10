@@ -95,6 +95,7 @@ export const scenarioScroll: Scenario<EvmTransaction, Account> = {
           uri: "https://api.scrollscan.com/api",
         },
         showNfts: true,
+        calLazyLoading: false,
       },
     }));
     initMswHandlers(getCoinConfig(scroll).info);
