@@ -1,9 +1,9 @@
 import BigNumber from "bignumber.js";
-import axios, { AxiosResponse } from "axios";
 import { tokens as localTokensByChainId } from "@ledgerhq/cryptoassets/data/evm/index";
 import { fromAccountRaw, toAccountRaw } from "@ledgerhq/coin-framework/serialization/account";
 import { decodeTokenAccountId } from "@ledgerhq/coin-framework/account";
 import { __clearAllLists } from "@ledgerhq/cryptoassets/tokens";
+import network from "@ledgerhq/live-network";
 import * as etherscanAPI from "../../network/explorer/etherscan";
 import { __resetCALHash, getCALHash } from "../../logic";
 import { getAccountShape } from "../../bridge/synchronization";
@@ -18,9 +18,11 @@ import {
   TMUSDTTransaction,
 } from "../fixtures/accounts.fixtures";
 
-jest.mock("axios");
-const mockedAxios = jest.mocked(axios);
-mockedAxios.AxiosError = jest.requireActual("axios").AxiosError;
+jest.mock("@ledgerhq/live-network", () => ({
+  __esModule: true,
+  default: jest.fn(),
+}));
+const mockedNetwork = jest.mocked(network);
 
 jest.mock("../../network/node/rpc.common");
 jest.useFakeTimers().setSystemTime(new Date("2014-04-21"));
@@ -75,8 +77,8 @@ describe("EVM Family", () => {
     });
 
     it("should preload currency and add an account with 1 token account in it when there is nothing new in remote CAL", async () => {
-      mockedAxios.get.mockImplementationOnce(() => {
-        throw new axios.AxiosError("", "", undefined, undefined, { status: 304 } as AxiosResponse);
+      mockedNetwork.mockImplementationOnce(() => {
+        throw new Error("304");
       });
 
       await preload(currency);
@@ -91,11 +93,8 @@ describe("EVM Family", () => {
     });
 
     it("should preload currency and add an account with 2 token accounts in it when there is an updated remote CAL", async () => {
-      mockedAxios.get.mockImplementationOnce(async (url, { params } = {}) => {
-        if (
-          url === "https://crypto-assets-service.api.ledger.com/v1/tokens" &&
-          params.chain_id === currency.ethereumLikeInfo!.chainId
-        ) {
+      mockedNetwork.mockImplementationOnce(async ({ params }: any) => {
+        if (params.chain_id === currency.ethereumLikeInfo!.chainId) {
           return {
             data: [
               ...localTokensByChainId[
@@ -112,9 +111,10 @@ describe("EVM Family", () => {
               contract_address: tokenDef[6],
               delisted: tokenDef[8],
             })),
-            headers: { ["x-ledger-next"]: "", ["etag"]: "newHash" },
+            status: 200,
           };
         }
+        throw new Error("Unexpected params");
       });
       await preload(currency);
       const { subAccounts } = await getAccountShape(getAccountShapeParameters, {
@@ -131,11 +131,8 @@ describe("EVM Family", () => {
     });
 
     it("should preload again a currency and get the same account with 2 tokens accounts", async () => {
-      mockedAxios.get.mockImplementationOnce(async (url, { params } = {}) => {
-        if (
-          url === "https://crypto-assets-service.api.ledger.com/v1/tokens" &&
-          params.chain_id === currency.ethereumLikeInfo!.chainId
-        ) {
+      mockedNetwork.mockImplementationOnce(async ({ params }: any) => {
+        if (params.chain_id === currency.ethereumLikeInfo!.chainId) {
           return {
             data: [
               ...localTokensByChainId[
@@ -152,22 +149,21 @@ describe("EVM Family", () => {
               contract_address: tokenDef[6],
               delisted: tokenDef[8],
             })),
-            headers: { ["x-ledger-next"]: "", ["etag"]: "newHash" },
+            status: 200,
           };
         }
+        throw new Error("Unexpected params");
       });
       await preload(currency);
       const { subAccounts } = await getAccountShape(getAccountShapeParameters, {
         paginationConfig: {},
       });
 
-      expect(getCALHash(currency)).toBe("newHash");
+      expect(getCALHash(currency)).toBe(""); // Hash not available with network()
 
-      mockedAxios.get.mockImplementationOnce((url, params = {}) => {
+      mockedNetwork.mockImplementationOnce(({ params }: any) => {
         if (params.headers?.["If-None-Match"] === "newHash") {
-          throw new axios.AxiosError("", "", undefined, undefined, {
-            status: 304,
-          } as AxiosResponse);
+          throw new Error("304");
         } else {
           throw new Error("unexpected");
         }
@@ -178,7 +174,7 @@ describe("EVM Family", () => {
         paginationConfig: {},
       });
 
-      expect(getCALHash(currency)).toBe("newHash");
+      expect(getCALHash(currency)).toBe(""); // Hash not available with network()
       expect(subAccounts?.length).toBe(2);
       expect(decodeTokenAccountId(subAccounts![0]?.id).token?.id).toBe(
         "scroll_sepolia/erc20/mock_usdt",
@@ -190,11 +186,8 @@ describe("EVM Family", () => {
     });
 
     it("should preload again a currency and get the same account with 2 tokens accounts even with a failing CAL service", async () => {
-      mockedAxios.get.mockImplementationOnce(async (url, { params } = {}) => {
-        if (
-          url === "https://crypto-assets-service.api.ledger.com/v1/tokens" &&
-          params.chain_id === currency.ethereumLikeInfo!.chainId
-        ) {
+      mockedNetwork.mockImplementationOnce(async ({ params }: any) => {
+        if (params.chain_id === currency.ethereumLikeInfo!.chainId) {
           return {
             data: [
               ...localTokensByChainId[
@@ -210,18 +203,19 @@ describe("EVM Family", () => {
               contract_address: tokenDef[6],
               delisted: tokenDef[8],
             })),
-            headers: { ["x-ledger-next"]: "", ["etag"]: "newHash" },
+            status: 200,
           };
         }
+        throw new Error("Unexpected params");
       });
 
       await preload(currency);
       const { subAccounts } = await getAccountShape(getAccountShapeParameters, {
         paginationConfig: {},
       });
-      expect(getCALHash(currency)).toBe("newHash");
+      expect(getCALHash(currency)).toBe(""); // Hash not available with network()
 
-      mockedAxios.get.mockImplementationOnce(async () => {
+      mockedNetwork.mockImplementationOnce(async () => {
         throw new Error();
       });
 
@@ -230,7 +224,7 @@ describe("EVM Family", () => {
         paginationConfig: {},
       });
       // Should maintain the hash from the last tokens fetched
-      expect(getCALHash(currency)).toBe("newHash");
+      expect(getCALHash(currency)).toBe(""); // Hash not available with network()
 
       expect(subAccounts?.length).toBe(1);
       expect(decodeTokenAccountId(subAccounts![0]?.id).token?.id).toBe(
@@ -264,11 +258,8 @@ describe("EVM Family", () => {
     });
 
     it("should hydrate the tokens necessary to deserialize an account with 2 token accounts when there is an updated remote CAL", async () => {
-      mockedAxios.get.mockImplementationOnce(async (url, { params } = {}) => {
-        if (
-          url === "https://crypto-assets-service.api.ledger.com/v1/tokens" &&
-          params.chain_id === currency.ethereumLikeInfo!.chainId
-        ) {
+      mockedNetwork.mockImplementationOnce(async ({ params }: any) => {
+        if (params.chain_id === currency.ethereumLikeInfo!.chainId) {
           return {
             data: [
               ...localTokensByChainId[
@@ -285,9 +276,10 @@ describe("EVM Family", () => {
               contract_address: tokenDef[6],
               delisted: tokenDef[8],
             })),
-            headers: { ["x-ledger-next"]: "", etag: "anyHash" },
+            status: 200,
           };
         }
+        throw new Error("Unexpected params");
       });
       const preloaded = await preload(currency);
       await hydrate(preloaded, currency);

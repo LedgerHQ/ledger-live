@@ -42,6 +42,7 @@ type TokenDataResponse = {
     };
   };
   exchange_app_config_serialized: string;
+  live_signature: string;
   name: string;
   network: string;
   network_family: string;
@@ -49,6 +50,7 @@ type TokenDataResponse = {
   symbol: string;
   ticker: string;
   units: Unit[];
+  delisted?: boolean;
 };
 
 export class NoTokenFound extends Error {
@@ -137,4 +139,39 @@ export async function findToken(
       signature: data[0].descriptor.signatures[signatureKind],
     },
   };
+}
+
+export async function getTokens(
+  filter: { blockchain: string } | { chainId: number; standard?: string },
+  output: string[],
+  {
+    env = "prod",
+    ref = getEnv("CAL_REF") || undefined,
+    etag,
+  }: ServiceOption & { etag?: string } = DEFAULT_OPTION,
+): Promise<{ tokens: TokenDataResponse[]; hash?: string }> {
+  const params: Record<string, string | number> = {
+    output: output.join(","),
+  };
+
+  if (ref) {
+    params.ref = ref;
+  }
+
+  if ("blockchain" in filter) {
+    params.blockchain_name = filter.blockchain;
+  } else {
+    params.chain_id = filter.chainId;
+    if (filter.standard) {
+      params.standard = filter.standard;
+    }
+  }
+
+  const { data } = await network<TokenDataResponse[]>({
+    url: `${getCALDomain(env)}/v1/tokens`,
+    params,
+    headers: etag ? { "If-None-Match": etag } : undefined,
+  });
+
+  return { tokens: data, hash: undefined };
 }

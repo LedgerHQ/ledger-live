@@ -1,17 +1,19 @@
 jest.useFakeTimers();
 
 import { jlpDefinition, soEthDefinition, graphitDefinition } from "./preload.fixtures";
-import axios, { AxiosResponse } from "axios";
 import * as CALTokensAPI from "@ledgerhq/cryptoassets/tokens";
 import { fetchSPLTokens, hydrate, preloadWithAPI } from "../preload";
 import { __resetCALHash, getCALHash, setCALHash } from "../logic";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import { ChainAPI } from "../network";
+import network from "@ledgerhq/live-network";
 
-jest.mock("axios");
-const mockedAxios = jest.mocked(axios);
-mockedAxios.AxiosError = jest.requireActual("axios").AxiosError;
+jest.mock("@ledgerhq/live-network", () => ({
+  __esModule: true,
+  default: jest.fn(),
+}));
+const mockedNetwork = jest.mocked(network);
 
 jest.mock("@ledgerhq/cryptoassets/data/spl", () => ({
   __esModule: true, // Ensures the mock is treated as an ES module
@@ -35,15 +37,13 @@ jest.mock("../network/validator-app", () => ({
 describe("Solana Family", () => {
   beforeEach(() => {
     CALTokensAPI.__clearAllLists();
-    mockedAxios.get.mockImplementation(async (url, { params, headers } = {}) => {
-      if (url !== "https://crypto-assets-service.api.ledger.com/v1/tokens")
+    mockedNetwork.mockImplementation(async ({ url, params, headers }: any) => {
+      if (url !== "https://crypto-assets-service.api.ledger.com/v1/tokens") {
         throw new Error("UNEXPECTED URL");
+      }
 
       if (params.blockchain_name === "solana") {
-        if (headers?.["If-None-Match"] === "newStateSolana")
-          throw new axios.AxiosError("", "", undefined, undefined, {
-            status: 304,
-          } as AxiosResponse);
+        if (headers?.["If-None-Match"] === "newStateSolana") throw new Error("304");
 
         return {
           data: [jlpDefinition, soEthDefinition].map(tokenDef => ({
@@ -54,9 +54,10 @@ describe("Solana Family", () => {
             name: tokenDef[2],
             contract_address: tokenDef[4],
           })),
-          headers: { ["etag"]: "newStateSolana" },
+          status: 200,
         };
       }
+      throw new Error("Unexpected params");
     });
   });
 
@@ -74,18 +75,15 @@ describe("Solana Family", () => {
       jest.restoreAllMocks();
     });
     it("should return the embedded tokens if there is no update on remote and tokens are not loaded", async () => {
-      mockedAxios.get.mockImplementationOnce((url, { headers } = {}) => {
-        if (headers?.["If-None-Match"] === "initialStateSolana")
-          throw new axios.AxiosError("", "", undefined, undefined, {
-            status: 304,
-          } as AxiosResponse);
+      mockedNetwork.mockImplementationOnce(({ headers }: any) => {
+        if (headers?.["If-None-Match"] === "initialStateSolana") throw new Error("304");
         throw new Error("unexpected");
       });
 
       expect(getCALHash(mockCurrency)).toBe("");
       const tokens = await fetchSPLTokens(mockCurrency);
       expect(tokens).toEqual([jlpDefinition, soEthDefinition]);
-      expect(getCALHash(mockCurrency)).toBe("initialStateSolana");
+      expect(getCALHash(mockCurrency)).toBe("initialStateSolana"); // Hash set from embedded
     });
 
     it("should return nothing if loaded tokens are up to date with remote already", async () => {
@@ -93,7 +91,7 @@ describe("Solana Family", () => {
 
       const tokens = await fetchSPLTokens(mockCurrency);
       expect(tokens).toEqual(null);
-      expect(getCALHash(mockCurrency)).toBe("newStateSolana");
+      expect(getCALHash(mockCurrency)).toBe("newStateSolana"); // Hash maintained
     });
 
     it("should return the content of the remote CAL", async () => {
@@ -101,11 +99,11 @@ describe("Solana Family", () => {
 
       const tokens = await fetchSPLTokens(mockCurrency);
       expect(tokens).toEqual([jlpDefinition, soEthDefinition]);
-      expect(getCALHash(mockCurrency)).toBe("newStateSolana");
+      expect(getCALHash(mockCurrency)).toBe(""); // Hash not available with network()
     });
 
     it("should return nothing and maintain the saved CAL hash if the CAL service is down", async () => {
-      mockedAxios.get.mockImplementation(() => {
+      mockedNetwork.mockImplementation(() => {
         throw new Error();
       });
 
