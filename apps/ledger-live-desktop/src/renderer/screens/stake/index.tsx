@@ -156,7 +156,6 @@ const useStakeFlow = () => {
           useCase: "earn",
           onSuccess,
           onCancel: handleRequestClose,
-          flow: DRAWER_FLOW,
         });
       } else {
         setDrawer(

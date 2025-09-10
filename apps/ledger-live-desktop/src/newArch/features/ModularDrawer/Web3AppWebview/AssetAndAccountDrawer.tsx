@@ -1,3 +1,4 @@
+import React from "react";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { Observable } from "rxjs";
 import type {
@@ -10,8 +11,10 @@ import { setDrawer } from "~/renderer/drawers/Provider";
 import { listAndFilterCurrencies } from "@ledgerhq/live-common/platform/helpers";
 import { type WalletAPIAccount } from "@ledgerhq/live-common/wallet-api/types";
 import ModularDrawerFlowManager from "../ModularDrawerFlowManager";
+import { useSelector } from "react-redux";
 import { track } from "~/renderer/analytics/segment";
 import { currentRouteNameRef } from "~/renderer/analytics/screenRefs";
+import { modularDrawerStateSelector } from "~/renderer/reducers/modularDrawer";
 import { CloseButton } from "../components/CloseButton";
 
 type Result = {
@@ -20,7 +23,6 @@ type Result = {
 };
 
 type DrawerParams = {
-  flow: string;
   assetIds?: string[];
   currencies?: CryptoOrTokenCurrency[];
   accounts$?: Observable<WalletAPIAccount[]>;
@@ -43,7 +45,6 @@ function openAssetAndAccountDrawer(params: DrawerParams): void {
     areCurrenciesFiltered,
     onSuccess,
     onCancel,
-    flow,
   } = params;
 
   const modularDrawerConfiguration = createModularDrawerConfiguration(drawerConfiguration);
@@ -54,7 +55,6 @@ function openAssetAndAccountDrawer(params: DrawerParams): void {
   };
 
   const handleCancel = (): void => {
-    track("button_clicked", { button: "Close", flow, page: currentRouteNameRef.current });
     setDrawer();
     onCancel?.();
   };
@@ -75,11 +75,26 @@ function openAssetAndAccountDrawer(params: DrawerParams): void {
       areCurrenciesFiltered,
     },
     {
-      closeButtonComponent: CloseButton,
+      closeButtonComponent: CloseButtonWithTracking,
       onRequestClose: handleCancel,
     },
   );
 }
+
+const CloseButtonWithTracking = ({ onRequestClose }: React.ComponentProps<typeof CloseButton>) => {
+  const { flow } = useSelector(modularDrawerStateSelector);
+
+  const handleClose: React.ComponentProps<typeof CloseButton>["onRequestClose"] = mouseEvent => {
+    track("button_clicked", {
+      button: "Close",
+      flow,
+      page: currentRouteNameRef.current,
+    });
+    onRequestClose(mouseEvent);
+  };
+
+  return <CloseButton onRequestClose={handleClose} />;
+};
 
 function openAssetAndAccountDrawerPromise(
   drawerParams: Omit<DrawerParams, "onSuccess" | "onCancel">,

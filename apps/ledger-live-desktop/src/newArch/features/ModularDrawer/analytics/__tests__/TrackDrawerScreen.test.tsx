@@ -10,11 +10,7 @@ describe("TrackDrawerScreen", () => {
     const page = MODULAR_DRAWER_PAGE_NAME.MODULAR_ASSET_SELECTION;
     const params = { flow: "flowtest", source: "sourcetest" };
 
-    render(<TrackDrawerScreen page={page} />, {
-      initialState: {
-        modularDrawer: { flow: params.flow, source: params.source },
-      },
-    });
+    render(<TrackDrawerScreen page={page} />, { initialState: { modularDrawer: params } });
 
     expect(trackPage).toHaveBeenCalledWith(
       "Asset Selection",
@@ -33,7 +29,7 @@ describe("TrackDrawerScreen", () => {
     };
 
     render(<TrackDrawerScreen page={page} formatAssetConfig assetsConfig={assetsConfig} />, {
-      initialState: { modularDrawer: { flow: params.flow, source: params.source } },
+      initialState: { modularDrawer: params },
     });
 
     expect(trackPage).toHaveBeenCalledWith(
@@ -57,7 +53,7 @@ describe("TrackDrawerScreen", () => {
     };
 
     render(<TrackDrawerScreen page={page} formatNetworkConfig networksConfig={networksConfig} />, {
-      initialState: { modularDrawer: { flow: params.flow, source: params.source } },
+      initialState: { modularDrawer: params },
     });
 
     expect(trackPage).toHaveBeenCalledWith(

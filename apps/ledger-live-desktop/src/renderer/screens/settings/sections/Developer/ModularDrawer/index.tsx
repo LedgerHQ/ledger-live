@@ -55,7 +55,6 @@ export const ModularDrawerDevToolContent = (props: ModularDrawerDevToolContentPr
       dispatch(setFlowValue("Dev Tool"));
       dispatch(setSourceValue("Dev Tool"));
       openAssetAndAccountDrawer({
-        flow: "Dev Tool",
         includeTokens,
         drawerConfiguration,
       });
