@@ -155,6 +155,7 @@ jobs:
         with:
           skip_ruby: true
           turborepo-server-port: ${{ steps.caches.outputs.port }}
+          setup_playwright: true
       - name: Run playwright tests [Linux => xvfb-run]
         id: tests
         run: |
