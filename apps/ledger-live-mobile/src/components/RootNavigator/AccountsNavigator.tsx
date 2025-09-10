@@ -6,11 +6,6 @@ import { readOnlyModeEnabledSelector } from "~/reducers/settings";
 import { ScreenName } from "~/const";
 import Accounts from "~/screens/Accounts";
 import Account from "~/screens/Account";
-import NftCollection from "~/screens/Nft/NftCollection";
-import NftGallery from "~/screens/Nft/NftGallery";
-import NftViewer from "../Nft/NftViewer";
-import NftCollectionHeaderTitle from "~/screens/Nft/NftCollection/NftCollectionHeaderTitle";
-import NftGalleryHeaderTitle from "~/screens/Nft/NftGallery/NftGalleryHeaderTitle";
 import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
 import ReadOnlyAccounts from "~/screens/Accounts/ReadOnly/ReadOnlyAccounts";
 import ReadOnlyAssets from "~/screens/Portfolio/ReadOnlyAssets";
@@ -81,27 +76,6 @@ export default function AccountsNavigator() {
         name={ScreenName.Account}
         component={readOnlyModeEnabled ? ReadOnlyAccount : Account}
         options={{ headerShown: false }}
-      />
-      <Stack.Screen
-        name={ScreenName.NftCollection}
-        component={NftCollection}
-        options={{
-          headerTitle: () => <NftCollectionHeaderTitle />,
-        }}
-      />
-      <Stack.Screen
-        name={ScreenName.NftGallery}
-        component={NftGallery}
-        options={{
-          headerTitle: () => <NftGalleryHeaderTitle />,
-        }}
-      />
-      <Stack.Screen
-        name={ScreenName.NftViewer}
-        component={NftViewer}
-        options={{
-          headerTitle: "",
-        }}
       />
       <Stack.Screen
         name={ScreenName.Assets}

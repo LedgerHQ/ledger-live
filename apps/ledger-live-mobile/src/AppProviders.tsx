@@ -1,9 +1,7 @@
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
-import { getCurrencyBridge } from "@ledgerhq/live-common/bridge/index";
 import { useLdmkFeatureFlagInitiallyEnabled } from "@ledgerhq/live-common/hooks/useLdmkFeatureFlagInitiallyEnabled";
 import { CounterValuesStateRaw } from "@ledgerhq/live-countervalues/types";
 import { DeviceManagementKitProvider } from "@ledgerhq/live-dmk-mobile";
-import { NftMetadataProvider } from "@ledgerhq/live-nft-react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { InViewProvider } from "LLM/contexts/InViewContext";
 import { ModularDrawerProvider } from "LLM/features/ModularDrawer";
@@ -37,11 +35,9 @@ function AppProviders({ initialCountervalues, children }: AppProvidersProps) {
                   <PostOnboardingProviderWrapped>
                     <NotificationsProvider>
                       <SnackbarContainer />
-                      <NftMetadataProvider getCurrencyBridge={getCurrencyBridge}>
-                        <InViewProvider>
-                          <ModularDrawerProvider>{children}</ModularDrawerProvider>
-                        </InViewProvider>
-                      </NftMetadataProvider>
+                      <InViewProvider>
+                        <ModularDrawerProvider>{children}</ModularDrawerProvider>
+                      </InViewProvider>
                     </NotificationsProvider>
                   </PostOnboardingProviderWrapped>
                 </BottomSheetModalProvider>

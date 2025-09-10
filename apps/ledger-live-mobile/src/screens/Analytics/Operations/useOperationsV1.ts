@@ -3,11 +3,9 @@ import { isAddressPoisoningOperation } from "@ledgerhq/coin-framework/lib/operat
 import { Operation, AccountLike } from "@ledgerhq/types-live";
 import { useCallback } from "react";
 import { useSelector } from "react-redux";
-import { useNftCollectionsStatus } from "~/hooks/nfts/useNftCollectionsStatus";
 import { filterTokenOperationsZeroAmountEnabledSelector } from "~/reducers/settings";
 
 export function useOperationsV1(accounts: AccountLike[], opCount: number) {
-  const { hiddenNftCollections } = useNftCollectionsStatus(true);
   const shouldFilterTokenOpsZeroAmount = useSelector(
     filterTokenOperationsZeroAmountEnabledSelector,
   );
@@ -17,13 +15,10 @@ export function useOperationsV1(accounts: AccountLike[], opCount: number) {
       // Remove operations linked to address poisoning
       const removeZeroAmountTokenOp =
         shouldFilterTokenOpsZeroAmount && isAddressPoisoningOperation(operation, account);
-      // Remove operations coming from an NFT collection considered spam
-      const opFromBlacklistedNftCollection = operation?.nftOperations?.find(op =>
-        hiddenNftCollections.includes(`${account.id}|${op?.contract}`),
-      );
-      return !opFromBlacklistedNftCollection && !removeZeroAmountTokenOp;
+
+      return !removeZeroAmountTokenOp;
     },
-    [hiddenNftCollections, shouldFilterTokenOpsZeroAmount],
+    [shouldFilterTokenOpsZeroAmount],
   );
 
   const { sections, completed } = groupAccountsOperationsByDay(accounts, {
