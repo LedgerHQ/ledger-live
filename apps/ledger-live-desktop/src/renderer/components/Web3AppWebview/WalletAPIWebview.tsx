@@ -171,6 +171,24 @@ function useUiHook(manifest: AppManifest, tracking: TrackingAPI): UiHook {
       "storage.set": ({ key, value, storeId }) => {
         setStoreValue(key, value, storeId);
       },
+      "bitcoin.signPsbt": ({ account, liveTx, onSuccess, onError }) => {
+        ipcRenderer.send("show-app", {});
+
+        dispatch(
+          openModal("MODAL_SIGN_TRANSACTION", {
+            canEditFees: false,
+            stepId: "summary",
+            transactionData: liveTx,
+            account,
+            parentAccount: null,
+            onResult: onSuccess,
+            onCancel: onError,
+            manifestId: manifest.id,
+            manifestName: manifest.name,
+            location: HOOKS_TRACKING_LOCATIONS.genericDAppTransactionSend,
+          }),
+        );
+      },
       "transaction.sign": ({
         account,
         parentAccount,
