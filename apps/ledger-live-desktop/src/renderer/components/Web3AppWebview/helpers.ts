@@ -348,7 +348,6 @@ export function useSelectAccount({
         currencies,
         onSuccess,
         onCancel,
-        flow,
         areCurrenciesFiltered: manifest.currencies !== "*",
       });
     } else {
@@ -365,7 +364,16 @@ export function useSelectAccount({
         },
       );
     }
-  }, [currencies, flow, manifest.currencies, modularDrawerVisible, onCancel, onSuccess, source]);
+  }, [
+    currencies,
+    flow,
+    manifest.currencies,
+    modularDrawerVisible,
+    onCancel,
+    onSuccess,
+    source,
+    dispatch,
+  ]);
 
   return { onSelectAccount, currentAccount };
 }

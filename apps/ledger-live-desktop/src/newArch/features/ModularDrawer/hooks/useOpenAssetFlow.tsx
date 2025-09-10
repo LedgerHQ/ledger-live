@@ -48,7 +48,6 @@ export function useOpenAssetFlow(
   modalNameToReopen?: keyof GlobalModalData,
 ) {
   const dispatch = useDispatch();
-
   const { isModularDrawerVisible } = useModularDrawerVisibility({
     modularDrawerFeatureFlagKey: "lldModularDrawer",
   });

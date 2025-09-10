@@ -99,7 +99,6 @@ function useUiHook(manifest: AppManifest, tracking: TrackingAPI): UiHook {
             useCase,
             onSuccess,
             onCancel,
-            flow,
             includeTokens: true,
           });
         } else {
@@ -265,7 +264,7 @@ function useUiHook(manifest: AppManifest, tracking: TrackingAPI): UiHook {
         );
       },
     }),
-    [modularDrawerVisible, flow, dispatch, manifest, pushToast, t, tracking],
+    [modularDrawerVisible, flow, dispatch, manifest, pushToast, t, tracking, source],
   );
 }
 

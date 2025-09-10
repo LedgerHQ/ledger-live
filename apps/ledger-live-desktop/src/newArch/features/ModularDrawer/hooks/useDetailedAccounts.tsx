@@ -36,9 +36,7 @@ export const useDetailedAccounts = (
   const { trackModularDrawerEvent } = useModularDrawerAnalytics();
   const { source } = useSelector(modularDrawerStateSelector);
   const { openAddAccountFlow } = useOpenAssetFlow(
-    {
-      location: ModularDrawerLocation.ADD_ACCOUNT,
-    },
+    { location: ModularDrawerLocation.ADD_ACCOUNT },
     source,
   );
 

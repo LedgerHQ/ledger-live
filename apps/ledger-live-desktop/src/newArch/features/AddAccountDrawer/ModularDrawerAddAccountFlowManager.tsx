@@ -19,6 +19,9 @@ import EditAccountName from "./screens/EditAccountName";
 import FundAccount from "./screens/FundAccount";
 import ScanAccounts from "./screens/ScanAccounts";
 import { useAddAccountFlowNavigation } from "./useAddAccountFlowNavigation";
+import { useDispatch } from "react-redux";
+import { setFlowValue } from "~/renderer/reducers/modularDrawer";
+import { ADD_ACCOUNT_FLOW_NAME } from "./analytics/addAccount.types";
 
 const ANALYTICS_PROPERTY_FLOW = "Modular Add Account Flow";
 
@@ -82,6 +85,8 @@ const ModularDrawerAddAccountFlowManager = ({
     },
     [navigateToScanAccounts],
   );
+
+  const dispatch = useDispatch();
 
   const renderStepContent = (step: ModularDrawerAddAccountStep) => {
     switch (step) {
@@ -161,6 +166,7 @@ const ModularDrawerAddAccountFlowManager = ({
           </StepContainer>
         );
       case MODULAR_DRAWER_ADD_ACCOUNT_STEP.SELECT_ACCOUNT:
+        dispatch(setFlowValue(ADD_ACCOUNT_FLOW_NAME));
         return (
           <StepContainer data-test-id="content">
             <Title>

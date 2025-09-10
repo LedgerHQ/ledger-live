@@ -31,7 +31,7 @@ export const useSearch = (): SearchResult => {
         },
       );
     },
-    [dispatch, trackModularDrawerEvent],
+    [trackModularDrawerEvent],
   );
 
   const onPersistSearchValue = useCallback(

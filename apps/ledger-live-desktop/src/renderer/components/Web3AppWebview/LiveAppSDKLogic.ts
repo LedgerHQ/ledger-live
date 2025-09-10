@@ -63,7 +63,6 @@ export const requestAccountLogic = async (
     ? await openAssetAndAccountDrawerPromise({
         assetIds: safeCurrencies,
         includeTokens,
-        flow,
         areCurrenciesFiltered: manifest.currencies !== "*",
       })
     : await selectAccountAndCurrency(safeCurrencies, includeTokens, flow, source);
