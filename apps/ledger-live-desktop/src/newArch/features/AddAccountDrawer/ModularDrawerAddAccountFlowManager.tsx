@@ -24,7 +24,6 @@ const ANALYTICS_PROPERTY_FLOW = "Modular Add Account Flow";
 
 export type ModularDrawerAddAccountFlowManagerProps = {
   currency: CryptoOrTokenCurrency;
-  source: string;
   onAccountSelected?: (account: Account) => void;
 };
 
@@ -46,7 +45,6 @@ const StepContainer = styled(Flex)`
 
 const ModularDrawerAddAccountFlowManager = ({
   currency,
-  source,
   onAccountSelected,
 }: ModularDrawerAddAccountFlowManagerProps) => {
   const { t } = useTranslation();
@@ -94,7 +92,6 @@ const ModularDrawerAddAccountFlowManager = ({
               currency={cryptoCurrency}
               onConnect={handleConnect}
               analyticsPropertyFlow={ANALYTICS_PROPERTY_FLOW}
-              source={source}
             />
           </StepContainer>
         );
@@ -108,7 +105,6 @@ const ModularDrawerAddAccountFlowManager = ({
               currency={cryptoCurrency}
               deviceId={connectAppResult.device.deviceId}
               onRetry={navigateToConnectDevice}
-              source={source}
               onComplete={accounts => {
                 setSelectedAccounts(accounts);
                 navigateToAccountsAdded();
@@ -127,7 +123,6 @@ const ModularDrawerAddAccountFlowManager = ({
               navigateToFundAccount={navigateToFundAccount}
               navigateToSelectAccount={navigateToSelectAccount}
               isAccountSelectionFlow={isAccountSelectionFlow}
-              source={source}
             />
           </StepContainer>
         );
@@ -143,7 +138,6 @@ const ModularDrawerAddAccountFlowManager = ({
               emptyAccount={emptyAccount}
               navigateToEditAccountName={navigateToEditAccountName}
               navigateToFundAccount={navigateToFundAccount}
-              source={source}
               isAccountSelectionFlow={isAccountSelectionFlow}
             />
           </StepContainer>
@@ -154,7 +148,7 @@ const ModularDrawerAddAccountFlowManager = ({
         }
         return (
           <StepContainer paddingX="8px" data-test-id="content">
-            <EditAccountName account={accountToEdit} navigateBack={navigateBack} source={source} />
+            <EditAccountName account={accountToEdit} navigateBack={navigateBack} />
           </StepContainer>
         );
       case MODULAR_DRAWER_ADD_ACCOUNT_STEP.FUND_ACCOUNT:
@@ -163,7 +157,7 @@ const ModularDrawerAddAccountFlowManager = ({
         }
         return (
           <StepContainer paddingX="8px" data-test-id="content">
-            <FundAccount account={accountToFund} currency={cryptoCurrency} source={source} />
+            <FundAccount account={accountToFund} currency={cryptoCurrency} />
           </StepContainer>
         );
       case MODULAR_DRAWER_ADD_ACCOUNT_STEP.SELECT_ACCOUNT:

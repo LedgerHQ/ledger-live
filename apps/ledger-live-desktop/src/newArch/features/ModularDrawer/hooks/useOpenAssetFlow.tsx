@@ -99,7 +99,6 @@ export function useOpenAssetFlow(
           ModularDrawerAddAccountFlowManager,
           {
             currency,
-            source,
             onAccountSelected: modalNameToReopen
               ? onFlowFinishedWithModalReopen
               : onAccountSelected,
@@ -118,13 +117,7 @@ export function useOpenAssetFlow(
         );
       }
     },
-    [
-      dispatch,
-      featureNetworkBasedAddAccount?.enabled,
-      modalNameToReopen,
-      source,
-      trackModularDrawerEvent,
-    ],
+    [dispatch, featureNetworkBasedAddAccount?.enabled, modalNameToReopen, trackModularDrawerEvent],
   );
 
   const openAssetFlow = useCallback(
