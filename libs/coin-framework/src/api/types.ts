@@ -318,6 +318,14 @@ export type FeeEstimation = {
   parameters?: Record<string, unknown>;
 };
 
+/** Response of {@link AlpacaApi#craftTransaction}. */
+export type CraftedTransaction = {
+  /** The serialized transaction (encoding is blockchain dependent). */
+  transaction: string;
+  /** Blockchain specific details (eg: UTXOs referenced in the transaction). */
+  details?: Record<string, unknown>;
+};
+
 // TODO rename start to minHeight
 //       and add a `token: string` field to the pagination if we really need to support pagination
 //       (which is not the case for now)
@@ -357,7 +365,7 @@ export type AlpacaApi<MemoType extends Memo = MemoNotSupported> = {
   craftTransaction: (
     transactionIntent: TransactionIntent<MemoType>,
     customFees?: FeeEstimation,
-  ) => Promise<string>;
+  ) => Promise<CraftedTransaction>;
   getBalance: (address: string) => Promise<Balance[]>;
   lastBlock: () => Promise<BlockInfo>;
   getBlockInfo: (height: number) => Promise<BlockInfo>;

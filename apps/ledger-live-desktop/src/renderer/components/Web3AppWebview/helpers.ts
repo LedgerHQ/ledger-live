@@ -343,6 +343,7 @@ export function useSelectAccount({
           onCancel,
           flow,
           source,
+          areCurrenciesFiltered: manifest.currencies !== "*",
         })
       : setDrawer(
           SelectAccountAndCurrencyDrawer,
@@ -356,7 +357,7 @@ export function useSelectAccount({
             onRequestClose: onCancel,
           },
         );
-  }, [currencies, flow, modularDrawerVisible, onCancel, onSuccess, source]);
+  }, [currencies, flow, manifest.currencies, modularDrawerVisible, onCancel, onSuccess, source]);
 
   return { onSelectAccount, currentAccount };
 }

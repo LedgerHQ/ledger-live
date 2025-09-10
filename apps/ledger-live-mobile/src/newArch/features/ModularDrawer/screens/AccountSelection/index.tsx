@@ -16,13 +16,13 @@ import { Observable } from "rxjs";
 import { AccountUI } from "@ledgerhq/native-ui/pre-ldls/components/";
 import { AddAccountButton } from "@ledgerhq/native-ui/pre-ldls/components/index";
 import { useTranslation } from "react-i18next";
+import { useSelector } from "react-redux";
+import { modularDrawerFlowSelector, modularDrawerSourceSelector } from "~/reducers/modularDrawer";
 
 export type AccountSelectionStepProps = {
   accounts$?: Observable<WalletAPIAccount[]>;
   onAccountSelected?: (account: AccountLike, parentAccount?: AccountLike) => void;
   asset?: CryptoOrTokenCurrency | null;
-  flow: string;
-  source: string;
   onAddNewAccount: () => void;
 };
 
@@ -32,12 +32,12 @@ const MARGIN_BOTTOM = HEADER_HEIGHT + ROW_HEIGHT;
 
 const AccountSelectionContent = ({
   asset,
-  flow,
-  source,
   accounts$,
   onAddNewAccount,
   onAccountSelected,
 }: Readonly<AccountSelectionStepProps> & { asset: CryptoOrTokenCurrency }) => {
+  const flow = useSelector(modularDrawerFlowSelector);
+  const source = useSelector(modularDrawerSourceSelector);
   const { detailedAccounts, handleAccountSelected } = useDetailedAccounts(
     asset,
     flow,

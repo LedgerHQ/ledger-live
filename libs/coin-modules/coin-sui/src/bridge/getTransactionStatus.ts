@@ -21,7 +21,6 @@ import {
   SomeSuiForUnstake,
 } from "../errors";
 import { ONE_SUI } from "../constants";
-
 /**
  * Get the status of a transaction.
  * @function getTransactionStatus
@@ -37,7 +36,10 @@ export const getTransactionStatus: AccountBridge<
   const errors: Record<string, Error> = {};
   const warnings: Record<string, Error> = {};
   const amount = new BigNumber(transaction?.amount || 0);
-  const estimatedFees = new BigNumber(transaction?.fees || 0);
+  let estimatedFees = new BigNumber(transaction?.fees || 0);
+  if (estimatedFees.eq(0) && transaction.mode === "delegate") {
+    estimatedFees = BigNumber(ONE_SUI).div(10);
+  }
   const totalSpent = transaction.subAccountId ? amount : amount.plus(estimatedFees);
   let accountBalance = account.balance;
 

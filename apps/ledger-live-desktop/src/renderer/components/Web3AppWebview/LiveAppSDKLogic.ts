@@ -34,6 +34,7 @@ export type RequestAccountParams = {
   currencies?: string[];
   allowAddAccount?: boolean;
   includeTokens?: boolean;
+  areCurrenciesFiltered?: boolean;
 };
 export const requestAccountLogic = async (
   walletState: WalletState,
@@ -64,6 +65,7 @@ export const requestAccountLogic = async (
         includeTokens,
         flow,
         source,
+        areCurrenciesFiltered: manifest.currencies !== "*",
       })
     : await selectAccountAndCurrency(safeCurrencies, includeTokens, flow, source);
 

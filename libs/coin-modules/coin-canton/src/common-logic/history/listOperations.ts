@@ -1,11 +1,6 @@
 import type { Operation, Pagination } from "@ledgerhq/coin-framework/api/index";
-import { CreatedEvent, getTransactions, TxInfo } from "../../network/gateway";
+import { getOperations } from "../../network/gateway";
 import coinConfig from "../../config";
-
-const getNativeContractId = () =>
-  coinConfig.getCoinConfig().nativeInstrumentId !== undefined
-    ? coinConfig.getCoinConfig().nativeInstrumentId?.split(".")[0]
-    : "";
 
 /**
  * Returns list of operations associated to an account.
@@ -18,37 +13,31 @@ export async function listOperations(
   partyId: string,
   page: Pagination,
 ): Promise<[Operation[], string]> {
-  const { transactions, next } = await getTransactions(partyId, {
+  const { operations, next } = await getOperations(partyId, {
     cursor: page.pagingToken !== undefined ? parseInt(page.pagingToken) : undefined,
     minOffset: page.minHeight,
     limit: page.limit,
   });
   const ops: Operation[] = [];
-  for (const tx of transactions) {
-    for (let i = 0; i < tx.events.length; i++) {
-      const event: CreatedEvent = tx.events[i]["CantonCreatedEvent"] as CreatedEvent;
-      if (event && event.template_id.module_name === "Splice.Amulet") {
-        ops.push({
-          id: tx.update_id + "-" + i,
-          type: event.signatories.includes(partyId) ? "OUT" : "IN",
-          value: BigInt(0), // to be finalized when details are available on backend
-          senders: event.signatories.includes(partyId) ? [partyId] : [],
-          recipients: event.signatories.includes(partyId) ? [] : [partyId],
-          asset:
-            event.contract_id === getNativeContractId()
-              ? { type: "native" }
-              : { type: "token", assetReference: event.contract_id },
-          tx: {
-            hash: tx.update_id,
-            fees: BigInt(0), // to be finalized when details are available on backend
-            date: new Date(tx.record_time.seconds),
-            block: {
-              height: tx.offset,
-              time: new Date(tx.effective_at.seconds),
-            },
+  for (const tx of operations) {
+    if (tx.type === "Send") {
+      ops.push({
+        id: tx.uid,
+        type: tx.senders.includes(partyId) ? "OUT" : "IN",
+        value: BigInt(tx.transfers[0].value),
+        senders: tx.senders,
+        recipients: tx.recipients,
+        asset: tx.asset,
+        tx: {
+          hash: tx.block.hash,
+          fees: BigInt(tx.fee.value),
+          date: new Date(tx.transaction_timestamp),
+          block: {
+            height: tx.block.height,
+            time: new Date(tx.block.time),
           },
-        });
-      }
+        },
+      });
     }
   }
   return [ops, next + ""];

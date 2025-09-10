@@ -14,6 +14,7 @@ import {
   Reward,
   TransactionValidation,
   AssetInfo,
+  CraftedTransaction,
 } from "@ledgerhq/coin-framework/api/index";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { CryptoCurrencyId, TokenCurrency } from "@ledgerhq/types-cryptoassets";
@@ -44,7 +45,7 @@ export function createApi(config: EvmConfig, currencyId: CryptoCurrencyId): Api 
     craftTransaction: (
       transactionIntent: TransactionIntent<MemoNotSupported>,
       customFees?: FeeEstimation,
-    ): Promise<string> => craftTransaction(currency, { transactionIntent, customFees }),
+    ): Promise<CraftedTransaction> => craftTransaction(currency, { transactionIntent, customFees }),
     estimateFees: (
       transactionIntent: TransactionIntent<MemoNotSupported>,
     ): Promise<FeeEstimation> => estimateFees(currency, transactionIntent),

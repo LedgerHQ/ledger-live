@@ -13,7 +13,7 @@ const defaultProps = {
   assetsToDisplay: [ethereumCurrency, bitcoinCurrency],
   sortedCryptoCurrencies: [bitcoinCurrency, ethereumCurrency],
   setNetworksToDisplay: mockSetNetworksToDisplay,
-  currenciesIdsArray: ["bitcoin", "ethereum"],
+  currencyIds: ["bitcoin", "ethereum"],
   goToStep: mockGoToStep,
   isSelectAccountFlow: false,
   onAssetSelected: mockOnAssetSelected,

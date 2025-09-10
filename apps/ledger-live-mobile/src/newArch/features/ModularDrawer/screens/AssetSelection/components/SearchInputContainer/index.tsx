@@ -10,8 +10,6 @@ type Props = SearchProps & {
 };
 
 const SearchInputContainer = ({
-  setSearchedValue,
-  defaultValue = "",
   source,
   flow,
   assetsConfiguration,
@@ -23,8 +21,6 @@ const SearchInputContainer = ({
   const { t } = useTranslation();
 
   const { handleDebouncedChange, handleSearch, displayedValue } = useSearch({
-    setSearchedValue,
-    defaultValue,
     source,
     flow,
     assetsConfiguration,

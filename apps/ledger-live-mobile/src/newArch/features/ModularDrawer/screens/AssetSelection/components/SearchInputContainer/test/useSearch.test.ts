@@ -1,10 +1,9 @@
 import { renderHook, act } from "@tests/test-renderer";
 import { useSearch } from "../useSearch";
+import { State } from "~/reducers/types";
 
 describe("useSearch", () => {
-  const mockSetSearchedValue = jest.fn();
   const defaultProps = {
-    setSearchedValue: mockSetSearchedValue,
     source: "test",
     flow: "testing",
   };
@@ -15,25 +14,32 @@ describe("useSearch", () => {
   });
 
   it("should initialize with default value if provided", () => {
-    const { result } = renderHook(() => useSearch({ ...defaultProps, defaultValue: "BTC" }));
+    const { result } = renderHook(() => useSearch({ ...defaultProps }), {
+      overrideInitialState: (state: State) => ({
+        ...state,
+        modularDrawer: {
+          ...state.modularDrawer,
+          searchValue: "BTC",
+        },
+      }),
+    });
 
     expect(result.current.displayedValue).toBe("BTC");
-    expect(mockSetSearchedValue).not.toHaveBeenCalled();
   });
 
   it("should not filter list when search query is less than 2 characters", () => {
-    const { result } = renderHook(() => useSearch(defaultProps));
+    const { result, store } = renderHook(() => useSearch(defaultProps));
 
     act(() => {
       result.current.handleSearch("B");
     });
 
     expect(result.current.displayedValue).toBe("B");
-    expect(mockSetSearchedValue).not.toHaveBeenCalled();
+    expect(store.getState().modularDrawer.searchValue).toBe("");
   });
 
   it("should filter items based on search query from originalAssets", () => {
-    const { result } = renderHook(() => useSearch(defaultProps));
+    const { result, store } = renderHook(() => useSearch(defaultProps));
 
     act(() => {
       result.current.handleSearch("Bit");
@@ -44,7 +50,7 @@ describe("useSearch", () => {
     });
 
     expect(result.current.displayedValue).toBe("Bit");
-    expect(mockSetSearchedValue).toHaveBeenCalledWith("Bit");
+    expect(store.getState().modularDrawer.searchValue).toBe("Bit");
   });
 
   it("should reset items to originalAssets when search query is cleared", () => {
@@ -82,17 +88,30 @@ describe("useSearch", () => {
   });
 
   it("should handle the workflow of typing, filtering, and tracking", () => {
-    const { result } = renderHook(() => useSearch(defaultProps));
+    const { result, store } = renderHook(() => useSearch(defaultProps));
 
     act(() => {
       result.current.handleSearch("ET");
     });
 
     expect(result.current.displayedValue).toBe("ET");
-    expect(mockSetSearchedValue).not.toHaveBeenCalled();
+    expect(store.getState().modularDrawer.searchValue).toBe("");
 
     act(() => {
       result.current.handleDebouncedChange("ET", "");
     });
+
+    expect(store.getState().modularDrawer.searchValue).toBe("ET");
+  });
+
+  it("should ignore whitespace-only queries", () => {
+    const { result, store } = renderHook(() => useSearch(defaultProps));
+
+    act(() => {
+      result.current.handleSearch("   ");
+      result.current.handleDebouncedChange("   ", "");
+    });
+
+    expect(store.getState().modularDrawer.searchValue).toBe("");
   });
 });

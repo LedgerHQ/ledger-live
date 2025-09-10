@@ -629,8 +629,8 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     ],
     explorerViews: [
       {
-        tx: "https://explorer-to-define.io/transaction/$hash",
-        address: "https://explorer-to-define.io/address/$address",
+        tx: "https://www.cantonscan.com/update/$hash",
+        address: "https://www.cantonscan.com/party/$address",
       },
     ],
     keywords: ["canton_network"],
@@ -693,8 +693,8 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     ],
     explorerViews: [
       {
-        tx: "https://explorer-to-define.io/transaction/$hash",
-        address: "https://explorer-to-define.io/address/$address",
+        tx: "https://devnet.explorer.canton.nodefortress.io/transactions/$hash",
+        address: "https://devnet.explorer.canton.nodefortress.io/parties/$address",
       },
     ],
     keywords: ["canton_network_devnet"],

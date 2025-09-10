@@ -2,6 +2,7 @@ import { getAccountRegistrationStatus, getPendingWithdrawals, getVotes } from ".
 import { makeSync, mergeOps } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import type { GetAccountShape } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { encodeAccountId } from "@ledgerhq/coin-framework/account";
+import { getEnv } from "@ledgerhq/live-env";
 import { getAccountDetails } from "../network";
 import { CeloAccount } from "../types/types";
 import { celoKit } from "../network/sdk";
@@ -47,7 +48,7 @@ export const getAccountShape: GetAccountShape<CeloAccount> = async (info, config
     blockHeight,
     operationsCount: operations.length,
     spendableBalance,
-    subAccounts: fromEvm.subAccounts || [],
+    subAccounts: getEnv("ENABLE_CELO_TOKENS") === false ? [] : fromEvm.subAccounts || [],
     syncHash: fromEvm.syncHash,
     celoResources: {
       registrationStatus: accountRegistrationStatus,

@@ -23,15 +23,13 @@ import { InfiniteLoader } from "@ledgerhq/native-ui";
 import createAssetConfigurationHook from "@ledgerhq/live-common/modularDrawer/modules/createAssetConfiguration";
 import { balanceItem } from "../../components/Balance";
 import { useBalanceDeps } from "../../hooks/useBalanceDeps";
+import { useSelector } from "react-redux";
+import { modularDrawerFlowSelector, modularDrawerSourceSelector } from "~/reducers/modularDrawer";
 
 export type AssetSelectionStepProps = {
   isOpen: boolean;
   availableAssets: CryptoOrTokenCurrency[];
-  defaultSearchValue: string;
-  setDefaultSearchValue: (value: string) => void;
   onAssetSelected: (asset: CryptoOrTokenCurrency) => void;
-  flow: string;
-  source: string;
   assetsConfiguration?: EnhancedModularDrawerConfiguration["assets"];
   isLoading?: boolean;
   hasError?: boolean;
@@ -43,11 +41,7 @@ const SAFE_MARGIN_BOTTOM = 48;
 
 const AssetSelection = ({
   availableAssets,
-  defaultSearchValue,
-  setDefaultSearchValue,
   onAssetSelected,
-  flow,
-  source,
   assetsConfiguration,
   isOpen,
   isLoading,
@@ -56,6 +50,9 @@ const AssetSelection = ({
   loadNext,
 }: Readonly<AssetSelectionStepProps>) => {
   const { isConnected } = useNetInfo();
+
+  const flow = useSelector(modularDrawerFlowSelector);
+  const source = useSelector(modularDrawerSourceSelector);
 
   const { trackModularDrawerEvent } = useModularDrawerAnalytics();
   const { shouldHandleKeyboardEvents } = useBottomSheetInternal();
@@ -141,6 +138,7 @@ const AssetSelection = ({
         getItem={(items, index) => items[index]}
         renderItem={renderItem}
         showsVerticalScrollIndicator={false}
+        keyboardShouldPersistTaps="handled"
         ListEmptyComponent={<AssetsEmptyList />}
         contentContainerStyle={{
           paddingBottom: SAFE_MARGIN_BOTTOM,
@@ -167,8 +165,6 @@ const AssetSelection = ({
       <SearchInputContainer
         source={source}
         flow={flow}
-        setSearchedValue={setDefaultSearchValue}
-        defaultValue={defaultSearchValue}
         onFocus={handleSearchFocus}
         onBlur={handleSearchBlur}
         onPressIn={handleSearchPressIn}

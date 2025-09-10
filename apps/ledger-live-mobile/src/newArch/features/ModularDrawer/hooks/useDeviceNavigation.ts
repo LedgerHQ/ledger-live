@@ -4,27 +4,24 @@ import { NavigatorName, ScreenName } from "~/const";
 import { AddAccountContexts } from "../../Accounts/screens/AddAccount/enums";
 import type { CryptoCurrency, CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import type { AssetSelectionNavigationProps } from "../../AssetSelection/types";
-import type { StepFlowManagerReturnType } from "./useModularDrawerFlowStepManager";
+import { useDispatch } from "react-redux";
+import { setStep } from "~/reducers/modularDrawer";
+import { ModularDrawerStep } from "../types";
 
 type UseDeviceNavigationParams = {
-  navigationStepManager: StepFlowManagerReturnType;
-  enableAccountSelection?: boolean;
   onClose?: () => void;
   resetSelection: () => void;
 };
 
-export function useDeviceNavigation({
-  navigationStepManager,
-  onClose,
-  resetSelection,
-}: UseDeviceNavigationParams) {
+export function useDeviceNavigation({ onClose, resetSelection }: UseDeviceNavigationParams) {
   const navigation = useNavigation<AssetSelectionNavigationProps["navigation"]>();
+  const dispatch = useDispatch();
 
   const navigateToDevice = useCallback(
     (selectedAsset: CryptoCurrency, createTokenAccount?: boolean) => {
       onClose?.();
       resetSelection();
-      navigationStepManager.reset();
+      dispatch(setStep(ModularDrawerStep.Asset));
       navigation.navigate(NavigatorName.DeviceSelection, {
         screen: ScreenName.SelectDevice,
         params: {
@@ -34,7 +31,7 @@ export function useDeviceNavigation({
         },
       });
     },
-    [navigation, onClose, resetSelection, navigationStepManager],
+    [onClose, resetSelection, dispatch, navigation],
   );
 
   const navigateToDeviceWithCurrency = useCallback(

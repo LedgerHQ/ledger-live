@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import ModularDrawerFlowManager from "./ModularDrawerFlowManager";
 import { EnhancedModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/types";
-import { useAssetsFromDada } from "./hooks/useAssetsFromDada";
+import { useAssets } from "./hooks/useAssets";
 import { useModularDrawerState } from "./hooks/useModularDrawerState";
 
 import QueuedDrawerGorhom from "LLM/components/QueuedDrawer/temp/QueuedDrawerGorhom";
@@ -9,6 +9,13 @@ import QueuedDrawerGorhom from "LLM/components/QueuedDrawer/temp/QueuedDrawerGor
 import { AccountLike } from "@ledgerhq/types-live";
 import { WalletAPIAccount } from "@ledgerhq/live-common/wallet-api/types";
 import { Observable } from "rxjs";
+import { useSelector } from "react-redux";
+import {
+  modularDrawerEnableAccountSelectionSelector,
+  modularDrawerSearchValueSelector,
+} from "~/reducers/modularDrawer";
+
+import { useModularDrawerConfiguration } from "@ledgerhq/live-common/modularDrawer/hooks/useModularDrawerConfiguration";
 
 const SNAP_POINTS = ["70%", "92%"];
 
@@ -25,22 +32,21 @@ type ModularDrawerProps = {
   // Data and configuration
   /** List of preselected currencies to display in the drawer */
   readonly currencies?: string[];
-  /** The flow identifier for analytics */
-  readonly flow: string;
-  /** The source identifier for analytics */
-  readonly source: string;
   /** Configuration for assets display */
   readonly assetsConfiguration?: EnhancedModularDrawerConfiguration["assets"];
   /** Configuration for networks display */
   readonly networksConfiguration?: EnhancedModularDrawerConfiguration["networks"];
 
   // Account selection
-  /** Enables account selection in the drawer */
-  readonly enableAccountSelection?: boolean;
   /** Callback fired when an account is selected */
   readonly onAccountSelected?: (account: AccountLike, parentAccount?: AccountLike) => void;
   /** Observable of accounts */
   readonly accounts$?: Observable<WalletAPIAccount[]>;
+
+  /** The use case identifier for the drawer */
+  readonly useCase?: string;
+  /** Whether the currencies are filtered */
+  readonly areCurrenciesFiltered?: boolean;
 };
 
 /**
@@ -53,27 +59,29 @@ export function ModularDrawer({
   isOpen,
   onClose,
   currencies,
-  flow,
-  source,
   assetsConfiguration,
   networksConfiguration,
-  enableAccountSelection = false,
   onAccountSelected,
   accounts$,
+  useCase,
+  areCurrenciesFiltered,
 }: ModularDrawerProps) {
-  const [searchValue, setSearchValue] = useState("");
+  const {
+    assetsConfiguration: assetsConfigurationSanitized,
+    networkConfiguration: networkConfigurationSanitized,
+  } = useModularDrawerConfiguration("llmModularDrawer", {
+    assets: assetsConfiguration,
+    networks: networksConfiguration,
+  });
 
-  useEffect(() => {
-    if (isOpen) {
-      setSearchValue("");
-    }
-  }, [isOpen]);
-
-  const { sortedCryptoCurrencies, assetsSorted, isLoading, error, refetch, loadNext } =
-    useAssetsFromDada({
-      currencyIds: currencies,
-      searchedValue: searchValue,
-    });
+  const searchValue = useSelector(modularDrawerSearchValueSelector);
+  const enableAccountSelection = useSelector(modularDrawerEnableAccountSelectionSelector);
+  const { sortedCryptoCurrencies, assetsSorted, isLoading, error, refetch, loadNext } = useAssets({
+    currencyIds: currencies,
+    searchedValue: searchValue,
+    useCase,
+    areCurrenciesFiltered,
+  });
 
   const {
     accountCurrency,
@@ -83,7 +91,6 @@ export function ModularDrawer({
     handleCloseButton,
     availableNetworks,
     shouldShowBackButton,
-    navigationStepManager,
     hasOneCurrency,
     onAddNewAccount,
     asset,
@@ -91,8 +98,6 @@ export function ModularDrawer({
     assetsSorted,
     currencyIds: currencies ?? [],
     isDrawerOpen: isOpen,
-    flow,
-    enableAccountSelection,
     onClose,
     hasSearchedValue: searchValue.length > 0,
   });
@@ -109,15 +114,10 @@ export function ModularDrawer({
       keyboardBehavior="extend"
     >
       <ModularDrawerFlowManager
-        navigationStepViewModel={navigationStepManager}
         assetsViewModel={{
           availableAssets: sortedCryptoCurrencies,
           onAssetSelected: handleAsset,
-          defaultSearchValue: searchValue,
-          setDefaultSearchValue: setSearchValue,
-          flow,
-          source,
-          assetsConfiguration,
+          assetsConfiguration: assetsConfigurationSanitized,
           isOpen,
           isLoading,
           hasError: !!error,
@@ -127,9 +127,7 @@ export function ModularDrawer({
         networksViewModel={{
           onNetworkSelected: handleNetwork,
           availableNetworks,
-          flow,
-          source,
-          networksConfiguration,
+          networksConfiguration: networkConfigurationSanitized,
           asset,
         }}
         accountsViewModel={{
@@ -137,8 +135,6 @@ export function ModularDrawer({
           onAddNewAccount,
           asset: accountCurrency,
           onAccountSelected,
-          flow,
-          source,
         }}
       />
     </QueuedDrawerGorhom>

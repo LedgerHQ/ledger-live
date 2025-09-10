@@ -4,25 +4,41 @@ import {
   CreateAccountsCountAndApy,
   NetworkWithCount,
 } from "../utils/type";
+import { useInterestRatesByCurrencies } from "../hooks/useInterestRatesByCurrencies";
+import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { getInterestRateForAsset } from "../utils/getInterestRateForAsset";
 
-export const createUseLeftAccountsApyModule = ({
-  useAccountData,
-  accountsCountAndApy,
-}: {
-  useAccountData: (params: AccountModuleParams) => AccountDataItem[];
-  accountsCountAndApy: CreateAccountsCountAndApy;
-}) => {
-  return function useLeftAccountsApyModule(params: AccountModuleParams): NetworkWithCount[] {
-    const accountData = useAccountData(params);
+export function useLeftAccountsApyModule(
+  params: AccountModuleParams,
+  useAccountData: (params: AccountModuleParams) => AccountDataItem[],
+  accountsCountAndApy: CreateAccountsCountAndApy,
+  networks: CryptoOrTokenCurrency[],
+): NetworkWithCount[] {
+  const accountData = useAccountData(params);
+  const interestRates = useInterestRatesByCurrencies(networks);
 
-    return accountData.map(({ asset, label, count }) => {
-      const value = 5.11; // TODO to be retrieved from DADA
-      const type = "APY"; // TODO to be retrieved from DADA
+  // Map each account to its APY info using the shared utility
+  return accountData.map(({ asset, label, count }) => {
+    const { interestRate, interestRatePercentageRounded } = getInterestRateForAsset(
+      asset,
+      interestRates,
+      networks,
+    );
+
+    if ((!interestRate || interestRatePercentageRounded <= 0) && count <= 0) {
       return {
         ...asset,
-        leftElement: count > 0 ? accountsCountAndApy({ label, value, type }) : undefined,
         count,
       };
-    });
-  };
-};
+    }
+    return {
+      ...asset,
+      leftElement: accountsCountAndApy({
+        label: count > 0 ? label : undefined,
+        value: interestRatePercentageRounded,
+        type: interestRate?.type,
+      }),
+      count,
+    };
+  });
+}
