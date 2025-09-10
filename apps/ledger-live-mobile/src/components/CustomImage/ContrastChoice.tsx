@@ -12,7 +12,12 @@ type Props = {
   isLast?: boolean;
 };
 
-const Container = styled(Box).attrs(p => ({
+type ContainerProps = {
+  selected: boolean;
+  appearance: Appearance;
+};
+
+const Container = styled(Box).attrs((p: ContainerProps) => ({
   height: p.appearance.type === "two-colors" ? 50 : 56,
   width: p.appearance.type === "two-colors" ? 50 : 56,
   borderRadius: p.appearance.type === "two-colors" ? "5px" : "8px",
@@ -21,7 +26,7 @@ const Container = styled(Box).attrs(p => ({
   borderWidth: p.selected ? 2 : 0,
   padding: p.appearance.type === "two-colors" ? 0 : 2,
   borderColor: p.selected ? "neutral.c100" : "neutral.c40",
-}))<{ selected: boolean; appearance: Appearance }>``;
+}))<ContainerProps>``;
 
 const ContrastOption = styled(Box).attrs({
   borderRadius: "4px",

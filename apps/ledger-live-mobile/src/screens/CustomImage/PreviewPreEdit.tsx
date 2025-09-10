@@ -59,8 +59,6 @@ import {
   mapDitheringConfigKeyToConfig,
 } from "~/components/CustomImage/dithering/config";
 
-const DEFAULT_CONTRAST = 1;
-
 type NavigationProps = BaseComposite<
   StackNavigatorProps<CustomImageNavigatorParamList, ScreenName.CustomImagePreviewPreEdit>
 >;
