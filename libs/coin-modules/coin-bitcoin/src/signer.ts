@@ -31,6 +31,13 @@ export interface BitcoinSigner {
     additionals: Array<string> | null | undefined,
   ): SignerTransaction;
   createPaymentTransaction(arg: CreateTransaction): Promise<string>;
+  signPsbtV2Buffer?(
+    psbtBuffer: Buffer,
+    options?: {
+      accountPath?: string;
+      addressFormat?: AddressFormat;
+    },
+  ): Promise<{ psbt: Buffer; tx: string }>;
 }
 
 export type SignerResult = BitcoinXPub | BitcoinAddress | BitcoinSignature;

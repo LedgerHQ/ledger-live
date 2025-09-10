@@ -15,6 +15,7 @@ describe("signMessage", () => {
       }),
       splitTransaction: jest.fn(),
       createPaymentTransaction: jest.fn(),
+      signPsbtV2Buffer: jest.fn(),
     };
     const signerContext = <T>(
       _deviceId: string,
