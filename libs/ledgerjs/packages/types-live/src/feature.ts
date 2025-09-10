@@ -662,6 +662,8 @@ type Feature_ModularDrawer = Feature<{
   receive_flow: boolean;
   send_flow: boolean;
   enableModularization: boolean;
+  searchDebounceTime: number;
+  backendEnvironment: string;
 }>;
 
 export type Feature_CounterValue = DefaultFeature;

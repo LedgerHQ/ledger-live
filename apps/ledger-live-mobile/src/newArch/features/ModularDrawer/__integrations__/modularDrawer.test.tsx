@@ -189,7 +189,7 @@ describe("ModularDrawer integration", () => {
   });
 
   it("should display generic error when a Backend error occurs", async () => {
-    server.use(http.get("https://dada.api.ledger-test.com/v1/assets", () => HttpResponse.error()));
+    server.use(http.get("https://dada.api.ledger.com/v1/assets", () => HttpResponse.error()));
     const { getByText, user } = render(<ModularDrawerSharedNavigator />);
 
     await user.press(getByText(WITHOUT_ACCOUNT_SELECTION));
