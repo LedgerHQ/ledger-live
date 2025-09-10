@@ -2280,6 +2280,16 @@
       }
     }
   },
+  "fund" : {
+    "title" : "入金",
+    "titleCrypto" : "{{currency}}を入金",
+    "exchangeDrawer" : {
+      "completed" : {
+        "title" : "トランザクションのブロードキャスト成功",
+        "description" : "操作は、承認のためにネットワークに送信されました。トランザクションが承認され、プロバイダーが処理するまでお待ちください。"
+      }
+    }
+  },
   "receive" : {
     "title" : "受け取る",
     "successTitle" : "安全に共有されたアドレス",
