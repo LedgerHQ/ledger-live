@@ -2280,6 +2280,16 @@
       }
     }
   },
+  "fund" : {
+    "title" : "Agregar fondos",
+    "titleCrypto" : "Agregar fondos en {{currency}}",
+    "exchangeDrawer" : {
+      "completed" : {
+        "title" : "Transacción transmitida con éxito.",
+        "description" : "Tu operación se ha enviado a la red para su confirmación. Espera a que tu transacción se confirme y a que el proveedor la procese."
+      }
+    }
+  },
   "receive" : {
     "title" : "Recibir",
     "successTitle" : "Dirección compartida de forma segura",
