@@ -37,6 +37,31 @@ type OnboardingPrepareRequest = {
   public_key_type: string;
 };
 
+export type PrepareTransferResponse = {
+  hash: string;
+  json: any; // The actual structure is complex, using any for now
+  serialized: string;
+};
+
+export type PrepareTransferRequest = {
+  type: "token-transfer-request";
+  amount: number;
+  recipient: string;
+  execute_before_secs: number;
+  instrument_id: string;
+  reason?: string;
+};
+
+export type PrepareTapRequest = {
+  type: "tap-request";
+  amount: number;
+};
+
+export type PreparePreapprovalRequest = {
+  type: "transfer-pre-approval-proposal";
+  receiver: string;
+};
+
 type OnboardingSubmitRequest = {
   prepare_request: OnboardingPrepareRequest;
   prepare_response: OnboardingPrepareResponse;
@@ -399,6 +424,18 @@ export async function submitTapRequest({
       serialized,
       signature,
     } satisfies Omit<SubmitTapRequestRequest, "partyId">,
+  });
+  return data;
+}
+
+export async function prepareTransferRequest(
+  partyId: string,
+  params: PrepareTransferRequest,
+): Promise<PrepareTransferResponse> {
+  const { data } = await network<PrepareTransferResponse>({
+    method: "POST",
+    url: `${getGatewayUrl()}/v1/node/${getNodeId()}/party/${partyId}/transaction/prepare`,
+    data: params,
   });
   return data;
 }

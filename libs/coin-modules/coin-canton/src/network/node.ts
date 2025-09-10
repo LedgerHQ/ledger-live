@@ -3,7 +3,7 @@ import network from "@ledgerhq/live-network";
 import type { LiveNetworkRequest } from "@ledgerhq/live-network/network";
 import { getEnv } from "@ledgerhq/live-env";
 import coinConfig from "../config";
-import { AccountInfoResponse, SubmitReponse } from "./types";
+import { AccountInfoResponse, SubmitResponse } from "./types";
 import crypto from "crypto";
 
 const getNodeUrl = () => coinConfig.getCoinConfig().nodeUrl || "";
@@ -86,10 +86,10 @@ export const getLedgerEnd = async (): Promise<number> => {
   return data.offset;
 };
 
-export const submit = async (signedTx: string): Promise<SubmitReponse> => {
+export const submit = async (signedTx: string): Promise<SubmitResponse> => {
   // @ts-expect-error: add NODE_BOILERPLATE to libs/env/src/env.ts
   const url = `${getEnv("NODE_BOILERPLATE")}/submit`;
-  const { data } = await network<SubmitReponse>({
+  const { data } = await network<SubmitResponse>({
     url,
     method: "GET",
   });

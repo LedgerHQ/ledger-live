@@ -1,25 +1,16 @@
 import { AccountBridge } from "@ledgerhq/types-live";
 import { Transaction } from "../types";
-import { craftTransaction, estimateFees } from "../common-logic";
-import { getNextSequence } from "../network/node";
+import { estimateFees } from "../common-logic";
 import BigNumber from "bignumber.js";
+import { updateTransaction } from "./updateTransaction";
 
 export const prepareTransaction: AccountBridge<Transaction>["prepareTransaction"] = async (
   account,
   transaction,
 ) => {
-  const seq = await getNextSequence(account.freshAddress);
-
-  const craftedTransaction = await craftTransaction(
-    { address: account.freshAddress, nextSequenceNumber: seq },
-    { amount: transaction.amount, recipient: transaction.recipient },
-  );
-
-  const fee = await estimateFees(craftedTransaction.serializedTransaction);
-
-  if (transaction.fee !== new BigNumber(fee.toString())) {
-    return { ...transaction, fee: new BigNumber(fee.toString()) };
+  let fee = transaction.fee;
+  if (!fee || fee.eq(0)) {
+    fee = BigNumber((await estimateFees("")).toString());
   }
-
-  return transaction;
+  return updateTransaction(transaction, { fee });
 };
