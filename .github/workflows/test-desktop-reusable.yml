@@ -185,12 +185,6 @@ jobs:
             apps/ledger-live-desktop/tests/artifacts/videos
             apps/ledger-live-desktop/tests/artifacts/logs
             apps/ledger-live-desktop/tests/artifacts/*.log
-      - name: Upload Allure Report
-        if: ${{ !cancelled() }}
-        uses: actions/upload-artifact@v4
-        with:
-          name: allure-results-linux
-          path: apps/ledger-live-desktop/allure-results
 
   report:
     name: "Test Desktop > Report"
@@ -434,24 +428,3 @@ jobs:
         with:
           name: summary-test-desktop.json
           path: ${{ github.workspace }}/summary-test-desktop.json
-
-  allure-report:
-    name: "Ubuntu E2E > Allure Report"
-    needs: e2e-tests-linux
-    runs-on: [ledger-live-medium]
-    if: ${{ !cancelled() && github.ref_name == 'develop' }}
-    steps:
-      - name: Download Allure Report
-        uses: actions/download-artifact@v4
-        with:
-          path: allure-results-linux
-          pattern: allure-results-linux*
-          merge-multiple: true
-      - name: Send Results and Generate Allure Report - Linux
-        uses: LedgerHQ/ledger-live/tools/actions/composites/upload-allure-report@develop
-        if: ${{ !cancelled() }}
-        with:
-          platform: linux-mocked
-          login: ${{ vars.ALLURE_USERNAME }}
-          password: ${{ secrets.ALLURE_LEDGER_LIVE_PASSWORD }}
-          path: allure-results-linux
