@@ -10,20 +10,20 @@ import useConnectAppAction from "~/renderer/hooks/useConnectAppAction";
 import { counterValueCurrencySelector } from "~/renderer/reducers/settings";
 import { TrackAddAccountScreen } from "../../analytics/TrackAddAccountScreen";
 import { ADD_ACCOUNT_FLOW_NAME, ADD_ACCOUNT_PAGE_NAME } from "../../analytics/addAccount.types";
+import { modularDrawerStateSelector } from "~/renderer/reducers/modularDrawer";
 
 interface Props {
   analyticsPropertyFlow?: string;
   currency: CryptoCurrency;
-  source: string;
   onConnect: (_: AppResult) => void;
 }
 
 export const ConnectYourDevice = ({
   currency,
   onConnect,
-  source,
   analyticsPropertyFlow,
 }: Readonly<Props>) => {
+  const { source } = useSelector(modularDrawerStateSelector);
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
   useOnDemandCurrencyCountervalues(currency, counterValueCurrency);
 

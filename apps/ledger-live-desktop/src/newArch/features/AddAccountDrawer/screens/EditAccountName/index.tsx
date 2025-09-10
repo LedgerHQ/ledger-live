@@ -14,16 +14,17 @@ import {
 } from "../../analytics/addAccount.types";
 import useAddAccountAnalytics from "../../analytics/useAddAccountAnalytics";
 import { FOOTER_PADDING_BOTTOM_PX, FOOTER_PADDING_TOP_PX } from "../styles";
+import { modularDrawerStateSelector } from "~/renderer/reducers/modularDrawer";
 
 interface Props {
   account: Account;
   navigateBack?: (track?: boolean) => void;
-  source: string;
 }
 
 const MAX_ACCOUNT_NAME_LENGTH = 50;
 
-const EditAccountName = ({ account, navigateBack, source }: Props) => {
+const EditAccountName = ({ account, navigateBack }: Props) => {
+  const { source } = useSelector(modularDrawerStateSelector);
   const { t } = useTranslation();
   const dispatch = useDispatch();
 
