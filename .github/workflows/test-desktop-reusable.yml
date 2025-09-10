@@ -118,6 +118,11 @@ jobs:
     timeout-minutes: 20
     outputs:
       status: ${{ steps.tests.outcome }}
+    container:
+      image: ghcr.io/ledgerhq/ledger-live-ubuntu:latest
+      credentials:
+        username: ${{ github.actor }}
+        password: ${{ secrets.github_token }}
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
       INSTRUMENT_BUILD: true
