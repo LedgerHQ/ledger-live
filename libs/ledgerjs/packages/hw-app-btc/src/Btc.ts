@@ -210,6 +210,31 @@ export default class Btc {
   }
 
   /**
+   * Sign a PSBT V2 Buffer
+   *
+   * This method can handle PSBTs with or without BIP32 derivation information.
+   * It processes a PSBT buffer and signs the transaction inputs according to the
+   * wallet policy and derivation paths.
+   *
+   * @param {Buffer} psbtBuffer - The PSBT (Partially Signed Bitcoin Transaction) buffer to be signed
+   * @param {Object} [options] - Optional configuration for signing
+   * @param {string} [options.accountPath] - BIP32 derivation path for the account (e.g., "m/84'/0'/0'")
+   * @param {AddressFormat} [options.addressFormat] - Address format to use for signing (e.g., 'p2wpkh', 'p2sh-p2wpkh', 'p2pkh')
+   *
+   * @returns {Promise<{psbt: Buffer, tx: string}>} A promise that resolves to the signed PSBT buffer
+   *
+   * @example
+   * const signedPsbt = await wallet.signPsbtV2Buffer(psbtBuffer, {
+   *   accountPath: "m/84'/0'/0'",
+   *   addressFormat: 'p2wpkh'
+   * });
+   */
+  signPsbtV2Buffer(psbt, opts): Promise<any> {
+    const btcNew = new BtcNew(new AppClient(this._transport));
+    return btcNew.signPsbtV2Buffer(psbt, opts);
+  }
+
+  /**
    * To obtain the signature of multisignature (P2SH) inputs, call signP2SHTransaction_async with the folowing parameters
    * @param inputs is an array of [ transaction, output_index, redeem script, optional sequence ] where
    * * transaction is the previously computed transaction object for this UTXO

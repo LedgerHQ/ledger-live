@@ -112,6 +112,12 @@ export interface UiHook {
     onError: (error: Error) => void;
     onCancel: () => void;
   }) => void;
+  "bitcoin.signPsbt": (params: {
+    account: AccountLike;
+    liveTx: Partial<Transaction>;
+    onSuccess: (signedOperation: SignedOperation) => void;
+    onError: (error: Error) => void;
+  }) => void;
   "storage.get": WalletHandlers["storage.get"];
   "storage.set": WalletHandlers["storage.set"];
   "transaction.signRaw": (params: {
@@ -283,6 +289,7 @@ export function useWalletAPIServer({
   uiHook: {
     "account.request": uiAccountRequest,
     "account.receive": uiAccountReceive,
+    "bitcoin.signPsbt": uiSignPsbt,
     "message.sign": uiMessageSign,
     "storage.get": uiStorageGet,
     "storage.set": uiStorageSet,
@@ -676,6 +683,91 @@ export function useWalletAPIServer({
 
     server.setHandler("storage.set", uiStorageSet);
   }, [server, uiStorageSet]);
+
+  useEffect(() => {
+    if (!uiSignPsbt) return;
+
+    server.setHandler("bitcoin.signPsbt", async ({ account, psbt, broadcast }) => {
+      // For the PSBT we cannot provide the amount and recipient at the moment
+      const transaction = {
+        family: "bitcoin" as const,
+        amount: new BigNumber(0),
+        // Necessary to calculate fees and not throw invalid address error
+        recipient: "bc1qtthqrseeu4d2yw9yh0clw95066klvcyvqdk7fv",
+        psbt,
+      };
+
+      const signedOperation = await signTransactionLogic(
+        { manifest, accounts, tracking },
+        account.id,
+        transaction,
+        (account, _, { liveTx }) =>
+          new Promise((resolve, reject) => {
+            let done = false;
+            return uiSignPsbt({
+              account,
+              liveTx,
+              onSuccess: signedOperation => {
+                if (done) return;
+                done = true;
+                tracking.signTransactionSuccess(manifest);
+                resolve(signedOperation);
+              },
+              onError: error => {
+                if (done) return;
+                done = true;
+                tracking.signTransactionFail(manifest);
+                reject(error);
+              },
+            });
+          }),
+      );
+
+      if (!broadcast) {
+        return signedOperation.rawData!.psbtSigned as string;
+      }
+
+      return broadcastTransactionLogic(
+        { manifest, accounts, tracking },
+        account.id,
+        signedOperation,
+        async (account, parentAccount, signedOperation) => {
+          const bridge = getAccountBridge(account, parentAccount);
+          const mainAccount = getMainAccount(account, parentAccount);
+
+          let optimisticOperation: Operation = signedOperation.operation;
+
+          if (!getEnv("DISABLE_TRANSACTION_BROADCAST")) {
+            try {
+              optimisticOperation = await bridge.broadcast({
+                account: mainAccount,
+                signedOperation,
+                broadcastConfig: { mevProtected: !!config.mevProtected },
+              });
+              tracking.broadcastSuccess(manifest);
+            } catch (error) {
+              tracking.broadcastFail(manifest);
+              throw error;
+            }
+          }
+
+          uiTxBroadcast && uiTxBroadcast(account, parentAccount, mainAccount, optimisticOperation);
+
+          return optimisticOperation.hash;
+        },
+        undefined,
+      );
+    });
+  }, [
+    accounts,
+    config.mevProtected,
+    manifest,
+    server,
+    tracking,
+    uiSignPsbt,
+    uiTxBroadcast,
+    uiTxSign,
+  ]);
 
   useEffect(() => {
     if (!uiTxSign) return;
