@@ -63,6 +63,8 @@ export class DMKSignerSolana implements SolanaSigner {
       switch (error.originalError.errorCode) {
         case "6985":
           return new UserRefusedOnDevice();
+        case "6808":
+          return new Error("Please enable Blind signing in the Solana app Settings");
         default:
           return new Error(error._tag);
       }
@@ -131,7 +133,6 @@ export class DMKSignerSolana implements SolanaSigner {
    * @param txBuffer - transaction data as a uint8 array
    */
   async signTransaction(path: string, txBuffer: Uint8Array): Promise<SolanaSignature> {
-    console.log("Signing transaction via DMK");
     const { observable } = this.dmkSigner.signTransaction(path, txBuffer);
     return new Promise<SolanaSignature>((resolve, reject) => {
       observable.subscribe({
