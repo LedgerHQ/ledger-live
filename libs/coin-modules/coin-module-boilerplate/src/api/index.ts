@@ -8,6 +8,7 @@ import {
   Reward,
   Stake,
   TransactionIntent,
+  CraftedTransaction,
 } from "@ledgerhq/coin-framework/api/index";
 import coinConfig, { type BoilerplateConfig } from "../config";
 import {
@@ -48,7 +49,7 @@ export function createApi(config: BoilerplateConfig): AlpacaApi {
   };
 }
 
-async function craft(transactionIntent: TransactionIntent): Promise<string> {
+async function craft(transactionIntent: TransactionIntent): Promise<CraftedTransaction> {
   const nextSequenceNumber = await getNextValidSequence(transactionIntent.sender);
   const tx = await craftTransaction(
     { address: transactionIntent.sender, nextSequenceNumber },
@@ -57,7 +58,7 @@ async function craft(transactionIntent: TransactionIntent): Promise<string> {
       amount: new BigNumber(transactionIntent.amount.toString()),
     },
   );
-  return tx.serializedTransaction;
+  return { transaction: tx.serializedTransaction };
 }
 
 async function estimate(transactionIntent: TransactionIntent): Promise<FeeEstimation> {

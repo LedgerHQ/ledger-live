@@ -413,6 +413,7 @@ function useUiHook({ isModularDrawerVisible, openModularDrawer, manifest }: Prop
         onCancel,
         areCurrenciesFiltered,
         useCase,
+        drawerConfiguration,
       }) => {
         if (isModularDrawerVisible) {
           openModularDrawer?.({
@@ -425,6 +426,7 @@ function useUiHook({ isModularDrawerVisible, openModularDrawer, manifest }: Prop
             currencies: areCurrenciesFiltered && !useCase ? currencies.map(c => c.id) : undefined,
             areCurrenciesFiltered,
             useCase,
+            ...drawerConfiguration,
           });
         } else {
           if (currencies.length === 1) {

@@ -315,7 +315,8 @@ export class SwapPage extends AppPage {
   async selectAssetFrom(electronApp: ElectronApplication, accountToSwapFrom: Account) {
     const [, webview] = electronApp.windows();
     await webview.getByTestId(this.fromAccountCoinSelector).click();
-    await this.chooseAssetDrawer.chooseFromAsset(accountToSwapFrom.currency.name);
+    const networkName = accountToSwapFrom.parentAccount?.currency.name;
+    await this.chooseAssetDrawer.chooseFromAsset(accountToSwapFrom.currency.name, networkName);
   }
 
   @step("Check currency to swap from is $0")
@@ -370,8 +371,8 @@ export class SwapPage extends AppPage {
   }
 
   @step("Choose from asset $0")
-  async chooseFromAsset(currency: string) {
-    await this.chooseAssetDrawer.chooseFromAsset(currency);
+  async chooseFromAsset(currency: string, networkName?: string) {
+    await this.chooseAssetDrawer.chooseFromAsset(currency, networkName);
   }
 
   @step("Select to account coin selector")

@@ -10,7 +10,12 @@ import { AccountLike } from "@ledgerhq/types-live";
 import { WalletAPIAccount } from "@ledgerhq/live-common/wallet-api/types";
 import { Observable } from "rxjs";
 import { useSelector } from "react-redux";
-import { modularDrawerSearchValueSelector } from "~/reducers/modularDrawer";
+import {
+  modularDrawerEnableAccountSelectionSelector,
+  modularDrawerSearchValueSelector,
+} from "~/reducers/modularDrawer";
+
+import { useModularDrawerConfiguration } from "@ledgerhq/live-common/modularDrawer/hooks/useModularDrawerConfiguration";
 
 const SNAP_POINTS = ["70%", "92%"];
 
@@ -33,8 +38,6 @@ type ModularDrawerProps = {
   readonly networksConfiguration?: EnhancedModularDrawerConfiguration["networks"];
 
   // Account selection
-  /** Enables account selection in the drawer */
-  readonly enableAccountSelection?: boolean;
   /** Callback fired when an account is selected */
   readonly onAccountSelected?: (account: AccountLike, parentAccount?: AccountLike) => void;
   /** Observable of accounts */
@@ -58,13 +61,21 @@ export function ModularDrawer({
   currencies,
   assetsConfiguration,
   networksConfiguration,
-  enableAccountSelection = false,
   onAccountSelected,
   accounts$,
   useCase,
   areCurrenciesFiltered,
 }: ModularDrawerProps) {
+  const {
+    assetsConfiguration: assetsConfigurationSanitized,
+    networkConfiguration: networkConfigurationSanitized,
+  } = useModularDrawerConfiguration("llmModularDrawer", {
+    assets: assetsConfiguration,
+    networks: networksConfiguration,
+  });
+
   const searchValue = useSelector(modularDrawerSearchValueSelector);
+  const enableAccountSelection = useSelector(modularDrawerEnableAccountSelectionSelector);
   const { sortedCryptoCurrencies, assetsSorted, isLoading, error, refetch, loadNext } = useAssets({
     currencyIds: currencies,
     searchedValue: searchValue,
@@ -80,7 +91,6 @@ export function ModularDrawer({
     handleCloseButton,
     availableNetworks,
     shouldShowBackButton,
-    navigationStepManager,
     hasOneCurrency,
     onAddNewAccount,
     asset,
@@ -88,7 +98,6 @@ export function ModularDrawer({
     assetsSorted,
     currencyIds: currencies ?? [],
     isDrawerOpen: isOpen,
-    enableAccountSelection,
     onClose,
     hasSearchedValue: searchValue.length > 0,
   });
@@ -105,11 +114,10 @@ export function ModularDrawer({
       keyboardBehavior="extend"
     >
       <ModularDrawerFlowManager
-        navigationStepViewModel={navigationStepManager}
         assetsViewModel={{
           availableAssets: sortedCryptoCurrencies,
           onAssetSelected: handleAsset,
-          assetsConfiguration,
+          assetsConfiguration: assetsConfigurationSanitized,
           isOpen,
           isLoading,
           hasError: !!error,
@@ -119,7 +127,7 @@ export function ModularDrawer({
         networksViewModel={{
           onNetworkSelected: handleNetwork,
           availableNetworks,
-          networksConfiguration,
+          networksConfiguration: networkConfigurationSanitized,
           asset,
         }}
         accountsViewModel={{

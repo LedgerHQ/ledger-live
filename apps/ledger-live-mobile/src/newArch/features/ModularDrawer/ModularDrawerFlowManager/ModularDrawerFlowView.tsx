@@ -8,14 +8,15 @@ import NetworkSelection from "../screens/NetworkSelection";
 import AccountSelection from "../screens/AccountSelection";
 import { ModularDrawerFlowProps } from ".";
 import useScreenTransition from "./useScreenTransition";
+import { useSelector } from "react-redux";
+import { modularDrawerStepSelector } from "~/reducers/modularDrawer";
 
 export function ModularDrawerFlowView({
-  navigationStepViewModel,
   assetsViewModel,
   networksViewModel,
   accountsViewModel,
 }: ModularDrawerFlowProps) {
-  const { currentStep } = navigationStepViewModel;
+  const currentStep = useSelector(modularDrawerStepSelector);
 
   const { activeSteps, getStepAnimations } = useScreenTransition(currentStep);
 

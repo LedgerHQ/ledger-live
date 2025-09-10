@@ -417,6 +417,7 @@
     "src/modularDrawer/hooks/useRightBalanceAsset.tsx",
     "src/modularDrawer/hooks/useRightBalanceNetwork.tsx",
     "src/modularDrawer/hooks/useAssetAccountCounts.tsx",
+    "src/modularDrawer/hooks/useModularDrawerConfiguration.ts",
     "src/modularDrawer/modules/createAssetConfiguration.ts",
     "src/modularDrawer/modules/createNetworkConfiguration.ts",
     "src/modularDrawer/types.ts",

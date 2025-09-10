@@ -34,7 +34,7 @@ describe("craftTransaction", () => {
       raw_data_hex: "extendedRawDataHex",
     });
 
-    const result = await craftTransaction(transactionIntent);
+    const { transaction: result } = await craftTransaction(transactionIntent);
 
     expect(decode58Check).toHaveBeenCalledWith("recipient");
     expect(decode58Check).toHaveBeenCalledWith("sender");
@@ -67,7 +67,7 @@ describe("craftTransaction", () => {
       raw_data_hex: "extendedRawDataHex",
     });
 
-    const result = await craftTransaction(transactionIntent);
+    const { transaction: result } = await craftTransaction(transactionIntent);
 
     expect(decode58Check).toHaveBeenCalledWith("recipient");
     expect(decode58Check).toHaveBeenCalledWith("sender");

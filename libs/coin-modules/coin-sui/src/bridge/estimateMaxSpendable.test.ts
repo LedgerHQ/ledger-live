@@ -37,8 +37,8 @@ describe("estimateMaxSpendable", () => {
     const result = await estimateMaxSpendable({ account, transaction });
 
     // THEN
-    // Should deduct fees (0.1 SUI) + gas reserve (0.1 SUI) = 0.2 SUI from 5 SUI = 4.8 SUI
-    const expectedAmount = balance.minus(fees).minus(new BigNumber("100000000")); // 4.8 SUI
+    // Should deduct fees (0.1 SUI) = 0.1 SUI from 5 SUI = 4.9 SUI
+    const expectedAmount = balance.minus(fees); // 4.8 SUI
     expect(result).toEqual(expectedAmount);
   });
 

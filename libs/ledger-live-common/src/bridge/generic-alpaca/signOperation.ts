@@ -123,7 +123,7 @@ export const genericSignOperation =
           transactionIntent.sequence = sequenceNumber;
 
           /* Craft unsigned blob via Alpaca */
-          const unsigned: string = await getAlpacaApi(network, kind).craftTransaction(
+          const { transaction: unsigned } = await getAlpacaApi(network, kind).craftTransaction(
             transactionIntent,
             { value: fees },
           );

@@ -31,16 +31,17 @@ export const estimateMaxSpendable: AccountBridge<Transaction>["estimateMaxSpenda
 
     let spendableBalance = account.spendableBalance;
 
-    if (account.type === "Account") {
-      const fees = await getFeesForTransaction({
-        account: mainAccount,
-        transaction: estimatedTransaction,
-      });
-      if (fees) {
-        spendableBalance = spendableBalance.minus(fees);
+    if (transaction?.mode !== "delegate") {
+      if (account.type === "Account") {
+        const fees = await getFeesForTransaction({
+          account: mainAccount,
+          transaction: estimatedTransaction,
+        });
+        if (fees) {
+          spendableBalance = spendableBalance.minus(fees);
+        }
       }
     }
-
     // Apply delegation-specific constraints
     if (transaction?.mode === "delegate") {
       // Reserve 0.1 SUI for future gas fees as recommended

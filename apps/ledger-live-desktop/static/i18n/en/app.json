@@ -7679,7 +7679,7 @@
         "foundAccounts_other": "We found {{count}} accounts",
         "scanning": "Scanning accounts..."
       },
-      "title": "Looking for any existing accounts on the Blockchain..."
+      "title": "Checking the blockchain..."
     },
     "connectYourDevice": { "title": "Connect and unlock your device" },
     "searchPlaceholder": "Search",
