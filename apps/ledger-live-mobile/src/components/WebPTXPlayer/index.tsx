@@ -4,7 +4,6 @@ import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 
 import { Flex, Icon, Text } from "@ledgerhq/native-ui";
-import { AppManifest } from "@ledgerhq/live-common/wallet-api/types";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { safeGetRefValue } from "@ledgerhq/live-common/wallet-api/react";
 import { INTERNAL_APP_IDS } from "@ledgerhq/live-common/wallet-api/constants";
@@ -30,9 +29,6 @@ import { Loading } from "../Loading";
 import { usePTXCustomHandlers } from "./CustomHandlers";
 
 type BackToInternalDomainProps = {
-  manifest: AppManifest;
-  webviewURL?: string;
-  lastMatchingURL?: string | null;
   config: {
     screen: ScreenName.ExchangeBuy | ScreenName.ExchangeSell | ScreenName.Card;
     navigator: NavigatorName.Exchange | NavigatorName.Card;
@@ -176,13 +172,16 @@ export const WebPTXPlayer = ({
 
   useEffect(() => {
     (async () => {
+      console.log(">> NAVIGATE 1", isInternalApp, webviewState.url);
       if (isInternalApp && webviewState.url) {
         const url = safeUrl(webviewState.url);
 
+        console.log(">> NAVIGATE 2 ", url);
         if (url) {
           const goToURL = url.searchParams.get("goToURL") || "";
           const manifestId = url.searchParams.get("goToManifest");
 
+          console.log(">> NAVIGATE 3 ", manifestId, goToURL);
           if (manifestId && goToURL) {
             const searchParams = url.searchParams;
             const flowName = searchParams.get("flowName") || "";
