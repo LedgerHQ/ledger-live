@@ -2280,6 +2280,16 @@
       }
     }
   },
+  "fund" : {
+    "title" : "Fon ekleyin",
+    "titleCrypto" : "{{currency}} ekleyin",
+    "exchangeDrawer" : {
+      "completed" : {
+        "title" : "İşlem başarıyla yayımlandı",
+        "description" : "İşleminiz onaylanmak üzere ağa gönderildi. Lütfen işleminizin onaylanmasını ve sağlayıcı tarafından işleme alınmasını bekleyin."
+      }
+    }
+  },
   "receive" : {
     "title" : "Al",
     "successTitle" : "Adres güvenli şekilde paylaşıldı",
