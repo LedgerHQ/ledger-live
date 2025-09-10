@@ -76,12 +76,14 @@ export function ModularDrawer({
 
   const searchValue = useSelector(modularDrawerSearchValueSelector);
   const enableAccountSelection = useSelector(modularDrawerEnableAccountSelectionSelector);
-  const { sortedCryptoCurrencies, assetsSorted, isLoading, error, refetch, loadNext } = useAssets({
-    currencyIds: currencies,
-    searchedValue: searchValue,
-    useCase,
-    areCurrenciesFiltered,
-  });
+  const { sortedCryptoCurrencies, assetsSorted, isLoading, isError, refetch, loadNext } = useAssets(
+    {
+      currencyIds: currencies,
+      searchedValue: searchValue,
+      useCase,
+      areCurrenciesFiltered,
+    },
+  );
 
   const {
     accountCurrency,
@@ -120,7 +122,7 @@ export function ModularDrawer({
           assetsConfiguration: assetsConfigurationSanitized,
           isOpen,
           isLoading,
-          hasError: !!error,
+          hasError: isError,
           refetch,
           loadNext,
         }}
