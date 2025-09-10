@@ -172,16 +172,13 @@ export const WebPTXPlayer = ({
 
   useEffect(() => {
     (async () => {
-      console.log(">> NAVIGATE 1", isInternalApp, webviewState.url);
       if (isInternalApp && webviewState.url) {
         const url = safeUrl(webviewState.url);
 
-        console.log(">> NAVIGATE 2 ", url);
         if (url) {
           const goToURL = url.searchParams.get("goToURL") || "";
           const manifestId = url.searchParams.get("goToManifest");
 
-          console.log(">> NAVIGATE 3 ", manifestId, goToURL);
           if (manifestId && goToURL) {
             const searchParams = url.searchParams;
             const flowName = searchParams.get("flowName") || "";
