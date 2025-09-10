@@ -190,6 +190,7 @@ export default function useAssetActions({ currency, accounts }: useAssetActionsP
               navigationParams: [
                 NavigatorName.ReceiveFunds,
                 {
+                  // TODO: change entry point based on feature flag
                   screen: ScreenName.ReceiveSelectAccount,
                   params: {
                     currency,

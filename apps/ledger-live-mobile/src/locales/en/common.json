@@ -3441,6 +3441,16 @@
       "shareAddress": "Share address",
       "addressCopied": "Address copied in clipboard",
       "taprootWarning": "Make sure the sender supports taproot",
+      "menu": {
+        "crypto": {
+          "title": "Crypto",
+          "description": "From a crypto address"
+        },
+        "fiat": {
+          "title": "Fiat",
+          "description": "From a bank account"
+        }
+      },
       "memoTag": {
         "link": "Need a Tag/Memo?",
         "title": "Need a Tag/Memo?",

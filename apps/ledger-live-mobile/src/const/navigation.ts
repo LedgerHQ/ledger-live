@@ -129,6 +129,8 @@ export enum ScreenName {
   ReceiveSelectCrypto = "ReceiveSelectCrypto",
   DepositSelectNetwork = "DepositSelectNetwork",
   ReceiveVerifyAddress = "ReceiveVerifyAddress",
+  ReceiveTypeMenu = "ReceiveTypeMenu",
+  ReceiveProvider = "ReceiveProvider",
   Recover = "Recover",
   RegionSettings = "RegionSettings",
   RepairDevice = "RepairDevice",

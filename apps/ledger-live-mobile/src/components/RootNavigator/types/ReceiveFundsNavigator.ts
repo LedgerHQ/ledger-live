@@ -11,6 +11,15 @@ import type { NavigatorName, ScreenName } from "~/const";
 import { DeviceSelectionNavigatorParamsList } from "LLM/features/DeviceSelection/types";
 
 export type ReceiveFundsStackParamList = {
+  [ScreenName.ReceiveTypeMenu]: {
+    receiveCryptoEntryPoint?: {
+      screen: ScreenName;
+      params?: Record<string, unknown>;
+    };
+  };
+  [ScreenName.ReceiveProvider]: {
+    manifestId: string;
+  };
   [ScreenName.ReceiveSelectCrypto]:
     | {
         filterCurrencyIds?: string[];
