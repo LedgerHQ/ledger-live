@@ -145,7 +145,7 @@ jobs:
         id: caches
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
         with:
-          install-proto: "true"
+          install-proto: "false"
           skip-turbo-cache: "false"
           accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
@@ -155,7 +155,7 @@ jobs:
         id: setup-test-desktop
         with:
           skip_ruby: true
-          install_playwright: true
+          install_playwright: false
           turborepo-server-port: ${{ steps.caches.outputs.port }}
       - name: Run playwright tests [Linux => xvfb-run]
         id: tests
