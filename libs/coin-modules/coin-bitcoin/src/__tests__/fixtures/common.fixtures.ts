@@ -127,6 +127,9 @@ export const mockSigner: BitcoinSigner = {
   }),
   createPaymentTransaction: (_arg: CreateTransaction): Promise<string> =>
     Promise.resolve("createPaymentTransactionReturn"),
+  signPsbtV2Buffer(_psbtBuffer: Buffer): Promise<{ psbt: Buffer; tx: string }> {
+    return Promise.resolve({ psbt: Buffer.from(""), tx: "" });
+  },
 };
 
 export const mockSignerContext = <T>(
@@ -172,4 +175,7 @@ export const mockSignerContext = <T>(
       ],
     }),
     createPaymentTransaction: (_arg: CreateTransaction): Promise<string> => Promise.resolve(""),
+    signPsbtV2Buffer(_psbtBuffer: Buffer): Promise<{ psbt: Buffer; tx: string }> {
+      return Promise.resolve({ psbt: Buffer.from(""), tx: "" });
+    },
   });
