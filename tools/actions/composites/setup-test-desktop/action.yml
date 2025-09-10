@@ -46,7 +46,7 @@ runs:
     - name: Install dependencies
       env:
         LANG: en_US.UTF-8
-      run: pnpm i --filter="ledger-live-desktop..." --filter="ledger-live" --filter="@ledgerhq/dummy-*-app..." --unsafe-perm
+      run: pnpm i --filter="ledger-live-desktop..." --filter="ledger-live" --filter="@ledgerhq/dummy-*-app..." --filter="live-cli*..." --unsafe-perm
       shell: bash
     - name: Install playwright dependencies
       if: ${{ inputs.install_playwright }}
@@ -55,7 +55,7 @@ runs:
     - name: Build dependencies
       if: inputs.turborepo-server-port != ''
       run: |
-        pnpm build:lld:deps --api="http://127.0.0.1:${{ inputs.turborepo-server-port }}" --token="${{ inputs.turbo-server-token }}" --team="foo"
+        pnpm turbo build --filter="ledger-live-desktop^..." --filter=@ledgerhq/live-cli --api="http://127.0.0.1:${{ inputs.turborepo-server-port }}" --token="${{ inputs.turbo-server-token }}" --team="foo"
       shell: bash
     - name: Build dependencies
       if: inputs.turborepo-server-port == ''
