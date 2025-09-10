@@ -138,6 +138,9 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: ${{ inputs.ref || github.sha }}
+      - name: Temp change
+        run: |
+          git config --global --add safe.directory /__w/ledger-live/ledger-live
       - name: Setup caches
         id: caches
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
