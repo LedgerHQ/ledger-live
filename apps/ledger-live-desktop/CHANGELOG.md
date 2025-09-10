@@ -1,5 +1,11 @@
 # ledger-live-desktop
 
+## 2.128.0-next.1
+
+### Minor Changes
+
+- [#11739](https://github.com/LedgerHQ/ledger-live/pull/11739) [`31ccd57`](https://github.com/LedgerHQ/ledger-live/commit/31ccd57b756fa3f318a4867ba5c757587b0447e5) Thanks [@qperrot](https://github.com/qperrot)! - Fix Taquito patch for Tezos integration tests
+
 ## 2.128.0-next.0
 
 ### Minor Changes
