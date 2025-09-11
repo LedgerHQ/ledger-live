@@ -515,7 +515,7 @@ export const filterOperations = (
   }
   const result = [...sendOps.operations, ...receiveOps.operations]
     .sort((a, b) => Number(b.timestampMs) - Number(a.timestampMs))
-    .filter(op => Number(op.timestampMs) <= filterTimestamp);
+    .filter(op => Number(op.timestampMs) >= filterTimestamp);
 
   console.log("operationList1", sendOps.operations.length);
   console.log("operationList2", receiveOps.operations.length);
