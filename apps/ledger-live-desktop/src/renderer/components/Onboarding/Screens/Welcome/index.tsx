@@ -1,15 +1,13 @@
-import { Button, Flex, IconsLegacy, InvertThemeV3, Logos, Text } from "@ledgerhq/react-ui";
-import React, { useCallback, useEffect, useRef, useState } from "react";
-import { useTranslation } from "react-i18next";
+import { Button, Flex, Box, Logos, Text } from "@ledgerhq/react-ui";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { Trans, useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router-dom";
-import styled, { useTheme } from "styled-components";
+import styled, { useTheme, keyframes } from "styled-components";
 import { saveSettings } from "~/renderer/actions/settings";
-import LangSwitcher from "~/renderer/components/Onboarding/LangSwitcher";
 import { openURL } from "~/renderer/linking";
 import { hasCompletedOnboardingSelector } from "~/renderer/reducers/settings";
 import { acceptTerms } from "~/renderer/terms";
-import BuyNanoX from "./assets/buyNanoX.webm";
 import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
 import { urls } from "~/config/urls";
 import AnalyticsOptInPrompt from "LLD/features/AnalyticsOptInPrompt/screens";
@@ -22,133 +20,174 @@ import WalletSyncDrawer from "LLD/features/WalletSync/components/Drawer";
 import { AnalyticsPage } from "LLD/features/WalletSync/hooks/useLedgerSyncAnalytics";
 import { trustchainSelector } from "@ledgerhq/ledger-key-ring-protocol/store";
 
-const StyledLink = styled(Text)`
+import LedgerWalletBuySell from "./assets/ledgerWalletBuySell.webm";
+import LedgerWalletThousandsCrypto from "./assets/ledgerWalletThousandsCrypto.webm";
+import LedgerWalletSecureWallet from "./assets/ledgerWalletSecureWallet.webm";
+
+const fadeInOut = keyframes`
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+`;
+
+const StyledLink = styled(Text).attrs({ fontSize: "inherit" })`
   text-decoration: underline;
   cursor: pointer;
 `;
 
 const WelcomeContainer = styled(Flex).attrs({
-  flexDirection: "row",
+  flexDirection: "column",
+  height: "100vh",
+  width: "100vw",
+  position: "relative",
+})`
+  overflow: hidden;
+`;
+
+const VideoBackground = styled.video<{ isActive: boolean; isFull: boolean }>`
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 0;
+  opacity: ${props => (props.isActive ? "1" : "0")};
+  transition: opacity 0.2s ease-in-out ${props => (props.isFull ? "0.1s" : "0s")};
+`;
+
+const ContentOverlay = styled(Flex).attrs({
+  flexDirection: "column",
   height: "100%",
   width: "100%",
-})``;
+  position: "relative",
+})`
+  z-index: 1;
+  background: rgba(0, 0, 0, 0.3);
+`;
 
-const LeftContainer = styled(Flex).attrs({
+const TopSection = styled(Flex).attrs({
   flexDirection: "column",
-  justifyContent: "space-between",
-  width: "386px",
-  height: "100%",
-  padding: "40px",
-  zIndex: 49,
+  rowGap: "16px",
+  alignItems: "center",
+  p: "40px",
 })``;
 
-const Presentation = styled(Flex).attrs({ flexDirection: "column" })``;
+const ProgressBarsContainer = styled(Flex).attrs({
+  flexDirection: "row",
+  columnGap: "4px",
+  width: "300px",
+})``;
 
-const ProductHighlight = styled(Flex).attrs({
+const ProgressBar = styled.div<{
+  isActive: boolean;
+  isFull: boolean;
+  transitionDuration: number;
+}>`
+  height: 3px;
+  flex: 1;
+  background: ${props =>
+    props.isFull ? props.theme.colors.neutral.c100 : props.theme.colors.neutral.c30};
+  border-radius: 2px;
+  position: relative;
+  overflow: hidden;
+
+  &::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    background: ${props => props.theme.colors.neutral.c100};
+    border-radius: 2px;
+    opacity: ${props => (props.isFull || !props.isActive ? "0" : "1")};
+    width: ${props => (props.isActive ? "100%" : "0%")};
+    transition: width ${props => props.transitionDuration}s linear;
+  }
+`;
+
+const TitleText = styled(Text).attrs({
+  fontSize: "24px",
+  fontWeight: "600",
+  textAlign: "center",
+  maxWidth: "600px",
+  letterSpacing: "-0.05em",
+})`
+  animation: ${fadeInOut} 1s ease-in-out;
+`;
+
+const BottomSection = styled(Flex).attrs({
   flexDirection: "column",
-  mb: 2,
-})``;
-
-const TermsAndConditionsContainer = styled(Flex).attrs({
-  justifyContent: "center",
-  flexWrap: "wrap",
-  marginTop: "24px",
+  alignItems: "center",
+  p: "40px",
+  rowGap: "16px",
 })``;
 
 const TermsAndConditionsText = styled(Text).attrs({
-  flex: 1,
-  color: "neutral.c80",
   textAlign: "center",
   overflowWrap: "normal",
-  whiteSpace: "normal",
+  whiteSpace: "pre-line",
+  fontSize: "12px",
+  opacity: 0.8,
 })``;
-
-const RightContainer = styled(Flex).attrs({
-  flexDirection: "column",
-  justifyContent: "space-between",
-  height: "100%",
-  overflow: "hidden",
-  flexGrow: 1,
-  backgroundColor: "constant.purple",
-})``;
-
-const CarouselTopBar = styled(Flex).attrs({
-  justifyContent: "flex-end",
-  alignItems: "center",
-  padding: "40px",
-  width: "100%",
-  zIndex: 1,
-})``;
-
-const VideoWrapper = styled(Flex).attrs({
-  objectFit: "cover",
-  position: "fixed",
-})``;
-
-const Description = styled(Text)`
-  white-space: pre-line;
-`;
 
 export function Welcome() {
-  const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
-  const trustchain = useSelector(trustchainSelector);
   const { t } = useTranslation();
   const history = useHistory();
   const dispatch = useDispatch();
   const { colors } = useTheme();
 
+  const urlBuyNew = useLocalizedUrl(urls.buyNew);
+  const buyNew = () => openURL(urlBuyNew);
+  const urlTerms = useLocalizedUrl(urls.terms);
+  const openTermsAndConditions = () => openURL(urlTerms);
+  const urlPrivacyPolicy = useLocalizedUrl(urls.privacyPolicy);
+  const openPrivacyPolicy: () => void = () => openURL(urlPrivacyPolicy);
+
+  const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
+  const trustchain = useSelector(trustchainSelector);
   useEffect(() => {
     if (hasCompletedOnboarding && !trustchain) {
       history.push("/onboarding/select-device");
     }
   }, [hasCompletedOnboarding, history, trustchain]);
 
-  const urlBuyNew = useLocalizedUrl(urls.buyNew);
-  const buyNew = () => openURL(urlBuyNew);
-
-  const urlTerms = useLocalizedUrl(urls.terms);
-  const openTermsAndConditions = () => openURL(urlTerms);
-
-  const urlPrivacyPolicy = useLocalizedUrl(urls.privacyPolicy);
-  const openPrivacyPolicy = () => openURL(urlPrivacyPolicy);
-
-  const countTitle = useRef(0);
-  const countSubtitle = useRef(0);
+  const countLogo = useRef(0);
+  const countProgressBars = useRef(0);
   const [isFeatureFlagsSettingsButtonDisplayed, setIsFeatureFlagsSettingsButtonDisplayed] =
     useState<boolean>(false);
-
-  const timeout = useRef<ReturnType<typeof setTimeout>>();
 
   const skipOnboarding = useCallback(() => {
     dispatch(saveSettings({ hasCompletedOnboarding: true }));
     history.push("/settings");
   }, [dispatch, history]);
 
+  const timeout = useRef<ReturnType<typeof setTimeout>>();
+
   const handleOpenFeatureFlagsDrawer = useCallback((nb: string) => {
-    if (nb === "1") countTitle.current++;
-    else if (nb === "2") countSubtitle.current++;
-    if (countTitle.current > 3 && countSubtitle.current > 5) {
-      countTitle.current = 0;
-      countSubtitle.current = 0;
+    if (nb === "1") countLogo.current++;
+    else if (nb === "2") countProgressBars.current++;
+    if (countLogo.current > 3 && countProgressBars.current > 5) {
+      countLogo.current = 0;
+      countProgressBars.current = 0;
       setIsFeatureFlagsSettingsButtonDisplayed(true);
     }
     if (timeout.current) clearTimeout(timeout.current);
     timeout.current = setTimeout(() => {
-      countTitle.current = 0;
-      countSubtitle.current = 0;
+      countLogo.current = 0;
+      countProgressBars.current = 0;
     }, 1000);
   }, []);
-
-  const handleAcceptTermsAndGetStarted = useCallback(() => {
-    acceptTerms();
-    history.push("/onboarding/select-device");
-  }, [history]);
 
   useEffect(() => {
     return () => {
       if (timeout.current) clearTimeout(timeout.current);
     };
   }, []);
+
+  const handleAcceptTermsAndGetStarted = useCallback(() => {
+    acceptTerms();
+    history.push("/onboarding/select-device");
+  }, [history]);
 
   const {
     analyticsOptInPromptProps,
@@ -171,58 +210,154 @@ export function Welcome() {
     openDrawer();
   };
 
+  // VIDEO CAROUSEL HANDLING
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const [isVisible, setIsVisible] = useState(false);
+  const videoRefs = useRef<(HTMLVideoElement | null)[]>([null, null, null]);
+  const [videoDurations, setVideoDurations] = useState<number[]>([0, 0, 0]);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  const VIDEO_SLIDES = useMemo(
+    () => [
+      {
+        video: LedgerWalletBuySell,
+        title: t("onboarding.screens.welcome.videos.buySell"),
+      },
+      {
+        video: LedgerWalletThousandsCrypto,
+        title: t("onboarding.screens.welcome.videos.thousandsCrypto"),
+      },
+      {
+        video: LedgerWalletSecureWallet,
+        title: t("onboarding.screens.welcome.videos.secureWallet"),
+      },
+    ],
+    [t],
+  );
+
+  const handleVideoLoadedMetadata = useCallback((index: number) => {
+    if (videoRefs.current[index]) {
+      setVideoDurations(prev => {
+        const newDurations = [...prev];
+        newDurations[index] = videoRefs.current[index]?.duration ?? 0;
+        return newDurations;
+      });
+    }
+  }, []);
+
+  const handleVideoEnded = useCallback(() => {
+    setCurrentSlide(prev => (prev + 1) % VIDEO_SLIDES.length);
+  }, [VIDEO_SLIDES.length]);
+
+  useEffect(() => {
+    const fallbackTimeout = setTimeout(() => {
+      if (!isVisible) {
+        setIsVisible(true);
+      }
+    }, 6000);
+
+    if (!isVisible) {
+      const observer = new MutationObserver(() => {
+        if (!document.getElementById("loader-container")) {
+          setIsVisible(true);
+        }
+      });
+
+      observer.observe(document.body, {
+        childList: true,
+        subtree: true,
+      });
+
+      return () => {
+        observer.disconnect();
+        clearTimeout(fallbackTimeout);
+      };
+    }
+
+    return () => clearTimeout(fallbackTimeout);
+  }, [isVisible]);
+
+  useEffect(() => {
+    if (isVisible && videoRefs.current[currentSlide]) {
+      videoRefs.current[currentSlide]?.play();
+    }
+  }, [currentSlide, isVisible]);
+
   return (
-    <WelcomeContainer>
-      <LeftContainer>
-        <Presentation>
-          <Logos.LedgerLiveRegular color={colors.neutral.c100} />
-          <Text
-            data-testid="onbording-welcome-title"
-            variant="h1"
-            pt={10}
-            pb={7}
-            onClick={() => handleOpenFeatureFlagsDrawer("1")}
-          >
-            {t("onboarding.screens.welcome.title")}
-          </Text>
-          <Description variant="body" onClick={() => handleOpenFeatureFlagsDrawer("2")}>
-            {t("onboarding.screens.welcome.description")}
-          </Description>
-        </Presentation>
-        <ProductHighlight>
+    <WelcomeContainer ref={containerRef}>
+      {VIDEO_SLIDES.map(({ video }, index) => (
+        <VideoBackground
+          ref={el => (videoRefs.current[index] = el)}
+          autoPlay={index === currentSlide && isVisible}
+          muted
+          key={index}
+          onLoadedMetadata={() => handleVideoLoadedMetadata(index)}
+          onEnded={handleVideoEnded}
+          isActive={index === currentSlide}
+          isFull={index < currentSlide}
+        >
+          <source src={video} type="video/webm" />
+        </VideoBackground>
+      ))}
+
+      <ContentOverlay>
+        <TopSection>
+          <Box onClick={() => handleOpenFeatureFlagsDrawer("1")}>
+            <Logos.LedgerLiveRegular color={colors.neutral.c100} />
+          </Box>
+          <ProgressBarsContainer onClick={() => handleOpenFeatureFlagsDrawer("2")}>
+            {VIDEO_SLIDES.map((_, index) => (
+              <ProgressBar
+                key={index}
+                isActive={index === currentSlide && isVisible}
+                isFull={index < currentSlide}
+                transitionDuration={videoDurations[index]}
+              />
+            ))}
+          </ProgressBarsContainer>
+          <TitleText key={currentSlide}>{VIDEO_SLIDES[currentSlide].title}</TitleText>
+        </TopSection>
+
+        <Box flex={1} />
+
+        <BottomSection>
           {isFeatureFlagsSettingsButtonDisplayed && (
-            <Button variant="main" outline mb="24px" onClick={() => history.push("/settings")}>
+            <Button variant="main" outline onClick={() => history.push("/settings")}>
               {t("settings.title")}
             </Button>
           )}
-          <Button
-            data-testid="v3-onboarding-get-started-button"
-            iconPosition="right"
-            Icon={IconsLegacy.ArrowRightMedium}
-            variant="main"
-            onClick={_ => {
-              isFeatureFlagsAnalyticsPrefDisplayed
-                ? openAnalyticsOptInPrompt("Onboarding", handleAcceptTermsAndGetStarted)
-                : handleAcceptTermsAndGetStarted();
-            }}
-            mb="5"
-          >
-            {t("onboarding.screens.welcome.nextButton")}
-          </Button>
-          <Button
-            iconPosition="right"
-            variant="main"
-            onClick={_ => {
-              isFeatureFlagsAnalyticsPrefDisplayed
-                ? openAnalyticsOptInPrompt("Onboarding", buyNew)
-                : buyNew();
-            }}
-            outline={true}
-            flexDirection="column"
-            whiteSpace="normal"
-          >
-            {t("onboarding.screens.welcome.buyLink")}
-          </Button>
+
+          <Flex columnGap="16px">
+            <Button
+              data-testid="v3-onboarding-get-started-button"
+              variant="main"
+              onClick={_ => {
+                isFeatureFlagsAnalyticsPrefDisplayed
+                  ? openAnalyticsOptInPrompt("Onboarding", handleAcceptTermsAndGetStarted)
+                  : handleAcceptTermsAndGetStarted();
+              }}
+              minWidth="250px"
+            >
+              {t("onboarding.screens.welcome.ledgerDevice")}
+            </Button>
+
+            <Button
+              iconPosition="right"
+              variant="shade"
+              onClick={_ => {
+                isFeatureFlagsAnalyticsPrefDisplayed
+                  ? openAnalyticsOptInPrompt("Onboarding", buyNew)
+                  : buyNew();
+              }}
+              outline={true}
+              flexDirection="column"
+              whiteSpace="normal"
+              minWidth="250px"
+            >
+              {t("onboarding.screens.welcome.noDeviceYet")}
+            </Button>
+          </Flex>
+
           <LedgerSyncEntryPoint
             entryPoint={LSEntryPoint.onboarding}
             needEligibleDevice={false}
@@ -232,9 +367,9 @@ export function Welcome() {
                 : setupLedgerSync();
             }}
           />
+
           {__DEV__ ? (
             <Button
-              mt="24px"
               iconPosition="right"
               onClick={skipOnboarding}
               outline={true}
@@ -244,43 +379,23 @@ export function Welcome() {
               {"(DEV) skip onboarding"}
             </Button>
           ) : null}
-          <TermsAndConditionsContainer>
-            <TermsAndConditionsText>
-              {t("onboarding.screens.welcome.byTapping")}{" "}
-              <StyledLink
-                onClick={openTermsAndConditions}
-                marginRight={2}
-                color={colors.primary.c80}
-              >
-                {t("onboarding.screens.welcome.termsAndConditions")}
-              </StyledLink>
-              {t("onboarding.screens.welcome.and")}{" "}
-              <StyledLink onClick={openPrivacyPolicy} marginRight={2} color={colors.primary.c80}>
-                {t("onboarding.screens.welcome.privacyPolicy")}
-              </StyledLink>
-            </TermsAndConditionsText>
-          </TermsAndConditionsContainer>
-        </ProductHighlight>
-      </LeftContainer>
-      <RightContainer>
-        <CarouselTopBar>
-          {colors.palette.type === "dark" ? (
-            <InvertThemeV3>
-              <LangSwitcher />
-            </InvertThemeV3>
-          ) : (
-            <LangSwitcher />
-          )}
-        </CarouselTopBar>
-        <VideoWrapper>
-          <video autoPlay loop>
-            <source src={BuyNanoX} type="video/webm" />
-          </video>
-        </VideoWrapper>
-        {isFeatureFlagsAnalyticsPrefDisplayed && (
-          <AnalyticsOptInPrompt {...extendedAnalyticsOptInPromptProps} />
-        )}
-      </RightContainer>
+
+          <TermsAndConditionsText>
+            <Trans
+              i18nKey="onboarding.screens.welcome.notice"
+              components={{
+                Link1: <StyledLink onClick={openTermsAndConditions} />,
+                Link2: <StyledLink onClick={openPrivacyPolicy} />,
+              }}
+            />
+          </TermsAndConditionsText>
+        </BottomSection>
+      </ContentOverlay>
+
+      {isFeatureFlagsAnalyticsPrefDisplayed && (
+        <AnalyticsOptInPrompt {...extendedAnalyticsOptInPromptProps} />
+      )}
+
       <WalletSyncDrawer currentPage={AnalyticsPage.Onboarding} onClose={closeDrawer} />
     </WelcomeContainer>
   );
