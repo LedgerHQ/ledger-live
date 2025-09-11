@@ -3,25 +3,15 @@ import { combine } from "./combine";
 describe("combine", () => {
   it("responds with a Stringify version of the payload to broadcast", () => {
     // GIVEN
-    const transaction = {
-      transaction: {
-        serialized: "SERIALIZED",
-        json: "JSON",
-        hash: "HASH",
-      },
-    };
+    const transaction = "0x000000001";
     const signature = "SIGNATURE";
 
     // WHEN
-    const result = combine(JSON.stringify(transaction), signature);
+    const result = combine(transaction, signature);
 
     // THEN
     expect(JSON.parse(result)).toEqual({
-      transaction: {
-        serialized: "SERIALIZED",
-        json: "JSON",
-        hash: "HASH",
-      },
+      serialized: "0x000000001",
       signature: "SIGNATURE",
     });
   });

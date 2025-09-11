@@ -20,7 +20,6 @@ const txInfoToOperationAdapter =
       fee: { value: fee },
       transfers: [{ value: transferValue }],
     } = txInfo;
-
     const type = senders.includes(address) ? "OUT" : "IN";
     const value = new BigNumber(transferValue);
     const feeValue = new BigNumber(fee);
@@ -76,8 +75,9 @@ export const getAccountShape: GetAccountShape = async info => {
   // const accountInfo = await getAccountInfo(address);
   const balances = await getBalance(address);
 
-  const balanceData = balances.find(balance => balance.instrument_id === "canton_network") || {
-    instrument_id: "canton_network",
+  // TODO change to balance.instrument_id === "Amulet" after update on backend
+  const balanceData = balances.find(balance => balance.instrument_id.includes("Amulet")) || {
+    instrument_id: "Amulet",
     amount: 0,
     locked: false,
   };
@@ -94,11 +94,15 @@ export const getAccountShape: GetAccountShape = async info => {
   const oldOperations = initialAccount?.operations || [];
   const startAt = oldOperations.length ? (oldOperations[0].blockHeight || 0) + 1 : 0;
   const transactionData = await getOperations(address, {
-    cursor: 0,
+    cursor: startAt,
     limit: 100,
   });
 
-  const newOperations = filterOperations(transactionData.operations, accountId, address);
+  const newOperations = filterOperations(
+    transactionData.operations,
+    accountId,
+    address.replace(/_/g, ":"),
+  );
   const operations = mergeOps(oldOperations, newOperations);
 
   // We return the new account shape
