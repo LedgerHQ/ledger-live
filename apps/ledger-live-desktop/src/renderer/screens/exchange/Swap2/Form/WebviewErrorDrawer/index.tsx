@@ -71,7 +71,7 @@ export default function WebviewErrorDrawer(error?: SwapLiveError) {
     }
   }
 
-  const errorMessage = error?.cause?.response?.data?.error?.message?.toLowerCase();
+  const errorMessage = (error as any)?.swap?.swap?.error?.toLowerCase();
   const errorCodeMatch = errorMessage && errorMessage.match(/Error code (\w+)/i);
   const dynamicErrorCode = errorCodeMatch && "-" + errorCodeMatch[1];
 
