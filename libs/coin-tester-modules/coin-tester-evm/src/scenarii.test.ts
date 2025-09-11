@@ -27,62 +27,65 @@ setCryptoAssetsStoreForCoinFramework({
 // https://github.com/LedgerHQ/ledger-live/blob/develop/libs/coin-tester/docker-compose.yml
 export const defaultNanoApp = { firmware: "2.4.2" as const, version: "1.17.0" as const };
 
-describe("EVM Deterministic Tester", () => {
-  it("scenario Ethereum", async () => {
-    try {
-      await executeScenario(scenarioEthereum);
-    } catch (e) {
-      if (e != "done") {
-        await Promise.all([killSpeculos(), killAnvil()]);
-        throw e;
+describe.each([["legacy"], ["generic-adapter"]] as const)(
+  "EVM Deterministic Tester (%s strategy)",
+  strategy => {
+    it("scenario Ethereum", async () => {
+      try {
+        await executeScenario(scenarioEthereum, strategy);
+      } catch (e) {
+        if (e != "done") {
+          await Promise.all([killSpeculos(), killAnvil()]);
+          throw e;
+        }
       }
-    }
-  });
+    });
 
-  it("scenario Sonic", async () => {
-    try {
-      await executeScenario(scenarioSonic);
-    } catch (e) {
-      if (e != "done") {
-        await Promise.all([killSpeculos(), killAnvil()]);
-        throw e;
+    it("scenario Sonic", async () => {
+      try {
+        await executeScenario(scenarioSonic, strategy);
+      } catch (e) {
+        if (e != "done") {
+          await Promise.all([killSpeculos(), killAnvil()]);
+          throw e;
+        }
       }
-    }
-  });
+    });
 
-  it("scenario polygon", async () => {
-    try {
-      await executeScenario(scenarioPolygon);
-    } catch (e) {
-      if (e != "done") {
-        await Promise.all([killSpeculos(), killAnvil()]);
-        throw e;
+    it("scenario polygon", async () => {
+      try {
+        await executeScenario(scenarioPolygon, strategy);
+      } catch (e) {
+        if (e != "done") {
+          await Promise.all([killSpeculos(), killAnvil()]);
+          throw e;
+        }
       }
-    }
-  });
+    });
 
-  it.skip("scenario scroll", async () => {
-    try {
-      await executeScenario(scenarioScroll);
-    } catch (e) {
-      if (e != "done") {
-        await Promise.all([killSpeculos(), killAnvil()]);
-        throw e;
+    it.skip("scenario scroll", async () => {
+      try {
+        await executeScenario(scenarioScroll);
+      } catch (e) {
+        if (e != "done") {
+          await Promise.all([killSpeculos(), killAnvil()]);
+          throw e;
+        }
       }
-    }
-  });
+    });
 
-  it.skip("scenario blast", async () => {
-    try {
-      await executeScenario(scenarioBlast);
-    } catch (e) {
-      if (e != "done") {
-        await Promise.all([killSpeculos(), killAnvil()]);
-        throw e;
+    it.skip("scenario blast", async () => {
+      try {
+        await executeScenario(scenarioBlast);
+      } catch (e) {
+        if (e != "done") {
+          await Promise.all([killSpeculos(), killAnvil()]);
+          throw e;
+        }
       }
-    }
-  });
-});
+    });
+  },
+);
 
 ["exit", "SIGINT", "SIGQUIT", "SIGTERM", "SIGUSR1", "SIGUSR2", "uncaughtException"].map(e =>
   process.on(e, async () => {

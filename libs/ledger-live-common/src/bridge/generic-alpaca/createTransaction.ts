@@ -19,7 +19,7 @@ export function createTransaction(account: Account | TokenAccount): TransactionC
   feeCustomUnit?: Unit | null | undefined;
   memoType?: string | null;
   memoValue?: string | null;
-  mode?: "send" | "changeTrust";
+  mode?: "send" | "changeTrust" | "send-legacy" | "send-eip1559";
   assetReference?: string;
   assetOwner?: string;
   networkInfo?: NetworkInfo | null;
@@ -51,6 +51,14 @@ export function createTransaction(account: Account | TokenAccount): TransactionC
         assetOwner: "",
         networkInfo: null,
       };
+    case "evm": {
+      return {
+        mode: "send-eip1559",
+        family: currency.family,
+        amount: new BigNumber(0),
+        recipient: "",
+      };
+    }
     default:
       throw new Error(`Unsupported currency family: ${currency.family}`);
   }

@@ -309,7 +309,12 @@
     "src/walletConnect/index.ts",
     "src/wallet-api/ModularDrawer/utils.ts"
   ],
-  "extensions": [".ts", ".js", ".jsx", ".tsx"],
+  "extensions": [
+    ".ts",
+    ".js",
+    ".jsx",
+    ".tsx"
+  ],
   "ignorePatterns": [
     "**/node_modules/**",
     "**/__tests__/**",
@@ -322,6 +327,7 @@
     "**/fixtures/**"
   ],
   "ignoreUnimported": [
+    "src/bridge/generic-alpaca/signer/Eth.ts",
     "src/account/typeGuards.ts",
     "src/bot/specs.ts",
     "src/braze/anonymousUsers.ts",
@@ -445,6 +451,7 @@
     "src/walletSync/getEnvironmentParams.ts"
   ],
   "ignoreUnused": [
+    "ethers",
     "@dfinity/agent",
     "@ledgerhq/hw-app-eth",
     "@ledgerhq/hw-transport-mocker",

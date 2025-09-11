@@ -15,6 +15,8 @@ import { callMyDealer, scroll, VITALIK } from "../helpers";
 import { defaultNanoApp } from "../scenarii.test";
 import { killAnvil, spawnAnvil } from "../anvil";
 import resolver from "@ledgerhq/coin-evm/hw-getAddress";
+import { SignerContext } from "@ledgerhq/coin-framework/signer";
+import { EvmSigner } from "@ledgerhq/coin-evm/types/signer";
 
 type ScrollScenarioTransaction = ScenarioTransaction<EvmTransaction, Account>;
 
@@ -74,12 +76,11 @@ export const scenarioScroll: Scenario<EvmTransaction, Account> = {
     ]);
 
     const provider = new ethers.JsonRpcProvider("http://127.0.0.1:8545");
-    const signerContext: Parameters<typeof resolver>[0] = (deviceId, fn) =>
-      fn(new LegacySignerEth(transport));
+    const signerContext: SignerContext<EvmSigner> = (_, fn) => fn(new LegacySignerEth(transport));
 
     const lastBlockNumber = await provider.getBlockNumber();
     // start indexing at next block
-    await setBlock(lastBlockNumber + 1);
+    setBlock(lastBlockNumber + 1);
 
     setCoinConfig(() => ({
       info: {
