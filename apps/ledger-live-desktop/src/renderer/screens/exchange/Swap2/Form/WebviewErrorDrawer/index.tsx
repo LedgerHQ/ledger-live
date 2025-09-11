@@ -71,6 +71,7 @@ export default function WebviewErrorDrawer(error?: SwapLiveError) {
     }
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const errorMessage = (error as any)?.swap?.swap?.error?.toLowerCase();
   const errorCodeMatch = errorMessage && errorMessage.match(/Error code (\w+)/i);
   const dynamicErrorCode = errorCodeMatch && "-" + errorCodeMatch[1];
