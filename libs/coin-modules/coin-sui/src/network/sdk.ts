@@ -45,8 +45,7 @@ import { ONE_SUI } from "../constants";
 const apiMap: Record<string, SuiClient> = {};
 type AsyncApiFunction<T> = (api: SuiClient) => Promise<T>;
 
-export const TRANSACTIONS_LIMIT_PER_QUERY = 50;
-export const TRANSACTIONS_LIMIT = 300;
+export const TRANSACTIONS_LIMIT_PER_QUERY = 50; // anything above 50 is ceiled to 50 by RPC
 const BLOCK_HEIGHT = 5; // sui has no block height metainfo, we use it simulate proper icon statuses in apps
 
 export const DEFAULT_COIN_TYPE = "0x2::sui::SUI";
@@ -476,6 +475,7 @@ export const getOperations = async (
       order: rpcOrder,
       operations: [],
     });
+
     // When restoring state (no cursor provided) we filter out extra operations to maintain correct chronological order
     const rawTransactions = filterOperations(sendOps, receivedOps, rpcOrder, !cursor);
 
@@ -498,8 +498,7 @@ export const filterOperations = (
     shouldFilter &&
     sendOps.operations.length &&
     receiveOps.operations.length &&
-    (sendOps.operations.length === TRANSACTIONS_LIMIT ||
-      receiveOps.operations.length === TRANSACTIONS_LIMIT)
+    (sendOps.cursor || receiveOps.cursor)
   ) {
     const sendTime = Number(sendOps.operations[sendOps.operations.length - 1].timestampMs ?? 0);
     const receiveTime = Number(
@@ -515,13 +514,13 @@ export const filterOperations = (
   }
   const result = [...sendOps.operations, ...receiveOps.operations]
     .sort((a, b) => Number(b.timestampMs) - Number(a.timestampMs))
-    .filter(op => Number(op.timestampMs) >= filterTimestamp);
-
-  console.log("operationList1", sendOps.operations.length);
-  console.log("operationList2", receiveOps.operations.length);
-  console.log("result", result.length);
-  console.log("filterTimestamp", filterTimestamp);
-  console.log("cursor", nextCursor);
+    .filter(op => {
+      if (order === "ascending") {
+        return Number(op.timestampMs) <= filterTimestamp;
+      } else {
+        return Number(op.timestampMs) >= filterTimestamp;
+      }
+    });
 
   return { operations: uniqBy(result, tx => tx.digest), cursor: nextCursor };
 };
@@ -540,25 +539,27 @@ export const getListOperations = async (
     if (order) {
       rpcOrder = order === "asc" ? "ascending" : "descending";
     } else {
-      rpcOrder = cursor ? "ascending" : "descending";
+      rpcOrder = "ascending";
     }
 
-    const opsOut = await loadOperations({
-      api,
-      addr,
-      type: "OUT",
-      cursor,
-      order: rpcOrder,
-      operations: [],
-    });
-    const opsIn = await loadOperations({
-      api,
-      addr,
-      type: "IN",
-      cursor,
-      order: rpcOrder,
-      operations: [],
-    });
+    const [opsOut, opsIn] = await Promise.all([
+      loadOperations({
+        api,
+        addr,
+        type: "OUT",
+        cursor,
+        order: rpcOrder,
+        operations: [],
+      }),
+      loadOperations({
+        api,
+        addr,
+        type: "IN",
+        cursor,
+        order: rpcOrder,
+        operations: [],
+      }),
+    ]);
     const list = filterOperations(opsIn, opsOut, rpcOrder, true);
 
     return {
@@ -778,35 +779,12 @@ export const loadOperations = async ({
   order: "ascending" | "descending";
   cursor?: QueryTransactionBlocksParams["cursor"];
 }): Promise<LoadOperationResponse> => {
-  try {
-    if (operations.length >= TRANSACTIONS_LIMIT) {
-      return { operations, cursor };
-    }
-
-    const { data, nextCursor, hasNextPage } = await queryTransactions({
-      ...params,
-      order,
-      cursor,
-    });
-
-    operations.push(...data);
-    if (!hasNextPage) {
-      return { operations: operations, cursor: nextCursor };
-    }
-
-    await loadOperations({ ...params, cursor: nextCursor, operations, order });
-  } catch (error: any) {
-    if (error.type === "InvalidParams") {
-      log("coin:sui", "(network/sdk): loadOperations failed with cursor, retrying without it", {
-        error,
-        params,
-      });
-    } else {
-      log("coin:sui", "(network/sdk): loadOperations error", { error, params });
-    }
-  }
-
-  return { operations: operations, cursor: cursor };
+  const { data, nextCursor, hasNextPage } = await queryTransactions({
+    ...params,
+    order,
+    cursor,
+  });
+  return { operations: data, cursor: hasNextPage ? nextCursor : undefined };
 };
 
 /**
