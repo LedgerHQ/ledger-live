@@ -16,7 +16,6 @@ jobs:
 
   determine-affected:
     name: "Turbo Affected"
-    needs: pre_job
     if: ${{!github.event.pull_request.head.repo.fork && needs.pre_job.outputs.should_skip != 'true'}}
     uses: LedgerHQ/ledger-live/.github/workflows/turbo-affected-reusable.yml@develop
     with:
