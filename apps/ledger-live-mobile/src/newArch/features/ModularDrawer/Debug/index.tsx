@@ -26,7 +26,7 @@ function ModularDrawerScreenDebug() {
   const { colors } = useTheme();
 
   const [enableAccountSelection, setEnableAccountSelection] = useState(true);
-  const [enableOnAccountSelected, setEnableOnAccountSelected] = useState(false);
+  const [enableOnAccountSelected, setEnableOnAccountSelected] = useState(true);
   const [isFocused, setIsFocused] = useState(false);
   const [selectedAssetLeftElement, setSelectedAssetLeftElement] =
     useState<AssetConfiguration["leftElement"]>("undefined");
