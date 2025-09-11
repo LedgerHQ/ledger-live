@@ -8033,7 +8033,7 @@
     },
     "transactionCannotBeCreated": {
       "title": "Partner unavailable",
-      "description": "We cannot complete your swap with this partner. Please try with another one. Error code 8HBBZLP"
+      "description": "We cannot complete your swap with this partner. Please try with another one. Error code 8HBB{{errorCode}}"
     },
     "default": {
       "title": "Something went wrong",
