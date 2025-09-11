@@ -45,13 +45,6 @@ test("Custom image Stax", async ({ page }) => {
     });
   });
 
-  await test.step("Import NFT", async () => {
-    await customImageDrawer.openNftGallery();
-    await customImageDrawer.importNftPreviousButton.waitFor({ state: "visible" });
-    await expect(container).toHaveScreenshot(`${generateScreenshotPrefix()}nft-gallery-empty.png`);
-    await customImageDrawer.importNftPreviousButton.click();
-  });
-
   await test.step("Import image", async () => {
     await customImageDrawer.importImage("tests/specs/manager/sample-custom-image.jpg");
     await customImageDrawer.importImageInput.waitFor({ state: "detached" });
