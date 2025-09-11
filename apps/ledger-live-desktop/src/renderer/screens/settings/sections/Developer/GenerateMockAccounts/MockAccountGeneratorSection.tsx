@@ -5,9 +5,6 @@ import { SettingsSectionRow as Row } from "../../../SettingsSection";
 import ButtonV2 from "~/renderer/components/Button";
 import MockAccountGenerator from "./MockAccountGenerator";
 import CustomMockAccountGenerator from "./CustomMockAccountGenerator";
-import FeatureToggle from "@ledgerhq/live-common/featureFlags/FeatureToggle";
-import GenerateMockAccountsWithNfts from "../NftsTools/screens/GeneratorsAndDestructors/GenerateMockAccountsWithNfts";
-
 type MockAccountGeneratorSectionContentProps = {
   expanded: boolean;
 };
@@ -31,9 +28,6 @@ export const MockAccountGeneratorSectionContent = ({
             title={t("settings.developer.debugSimpleHash.mockAccounts.quickGenerate.title")}
             desc={t("settings.developer.debugSimpleHash.mockAccounts.quickGenerate.desc")}
           />
-          <FeatureToggle featureId="llNftSupport">
-            <GenerateMockAccountsWithNfts />
-          </FeatureToggle>
         </Flex>
       )}
     </Flex>
