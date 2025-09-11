@@ -6,7 +6,6 @@ import dynamicContent, { DynamicContentState } from "./dynamicContent";
 import modals, { ModalsState } from "./modals";
 import UI, { UIState } from "./UI";
 import settings, { SettingsState } from "./settings";
-import swap, { SwapStateType } from "./swap";
 import { PostOnboardingState } from "@ledgerhq/types-live";
 import postOnboarding from "@ledgerhq/live-common/postOnboarding/reducer";
 import market, { MarketState } from "./market";
@@ -32,7 +31,6 @@ export type State = {
   modularDrawer: ModularDrawerState;
   postOnboarding: PostOnboardingState;
   settings: SettingsState;
-  swap: SwapStateType;
   trustchain: TrustchainStore;
   UI: UIState;
   wallet: WalletState;
@@ -51,7 +49,6 @@ export default combineReducers({
   settings,
   UI,
   postOnboarding,
-  swap,
   market,
   wallet,
   walletSync,

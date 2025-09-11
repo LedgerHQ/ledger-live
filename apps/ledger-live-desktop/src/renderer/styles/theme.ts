@@ -1,6 +1,9 @@
 import { keyframes, css } from "styled-components";
 
+export const space = [0, 5, 10, 15, 20, 30, 40, 50, 70];
+export const fontSizes = [8, 9, 10, 12, 13, 16, 18, 22, 32];
 export const radii = [0, 4, 8];
+export const shadows = ["0 4px 8px 0 rgba(0, 0, 0, 0.03)"];
 
 // Those fonts are now defined in global.css, this is just a mapping for styled-system
 export const fontFamilies = {
@@ -193,6 +196,9 @@ export type Theme = {
       [x: string]: Font;
     };
   };
+  fontSizes: number[];
+  space: number[];
+  shadows: string[];
   colors: {
     [x: string]: string;
   };
@@ -231,6 +237,9 @@ const theme: Theme = {
   },
   radii,
   fontFamilies,
+  fontSizes,
+  space,
+  shadows,
   colors,
   animations,
   overflow,

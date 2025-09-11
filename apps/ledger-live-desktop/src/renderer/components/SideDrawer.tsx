@@ -146,10 +146,7 @@ export function SideDrawer({
   const focusTrapElem = useRef<typeof DrawerContainer>(null);
   const focusTrap = useRef<FocusTrap | null>(null);
   const modalsState = useSelector(modalsStateSelector);
-  const shouldDisableFocusTrap = Object.values(modalsState).reduce(
-    (previous, current) => previous || current.isOpened,
-    false,
-  );
+  const shouldDisableFocusTrap = Object.values(modalsState).some(state => state?.isOpened);
   useEffect(() => {
     if (forceDisableFocusTrap) {
       return;
