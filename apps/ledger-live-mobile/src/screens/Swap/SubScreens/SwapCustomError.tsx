@@ -20,11 +20,8 @@ export default function SwapCustomError({ route }: SwapCustomErrorProps) {
     error && "name" in error && error.name !== "CompleteExchangeError" ? error.name : undefined;
   const onExport = useExportLogs();
   const headerHeight = useHeaderHeight();
-  const errorMessage =
-    error && "message" in error && typeof error.message === "string"
-      ? error.message.toLowerCase()
-      : "";
-  const errorCodeMatch = errorMessage && errorMessage.match(/error code (\w+)/i);
+  const errorMessage = (error as any)?.swap?.swap?.error?.toLowerCase() || "";
+  const errorCodeMatch = errorMessage.match(/Error code (\w+)/i);
   const dynamicErrorCode = errorCodeMatch && "-" + errorCodeMatch[1];
 
   const { title, description } = useMemo(() => {
