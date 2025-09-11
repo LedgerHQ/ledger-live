@@ -806,19 +806,28 @@ async function getStrategy(
     throw new Error(`No transaction strategy found for family: ${family}`);
   }
 
+  // Convert customFeeConfig values to BigNumber
+  const convertedCustomFeeConfig: { [key: string]: BigNumber } = {};
+  if (customFeeConfig) {
+    for (const [key, value] of Object.entries(customFeeConfig)) {
+      convertedCustomFeeConfig[key] = new BigNumber(value?.toString() || 0);
+    }
+  }
+
   try {
     return await strategy({
       family,
-      amount,
+      amount: new BigNumber(amount),
       recipient,
-      customFeeConfig: customFeeConfig || {},
+      customFeeConfig: convertedCustomFeeConfig,
       payinExtraId,
       extraTransactionParameters,
       customErrorType,
     });
   } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : String(error);
     throw new Error(
-      `Failed to execute transaction strategy for family: ${family}. Reason: ${(error as Error).message}`,
+      `Failed to execute transaction strategy for family: ${family}. Reason: ${errorMessage}`,
     );
   }
 }

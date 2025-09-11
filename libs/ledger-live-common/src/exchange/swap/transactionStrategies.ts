@@ -277,5 +277,6 @@ export const transactionStrategy: {
   ton: tonTransaction,
   tron: tronTransaction,
   vechain: defaultTransaction,
+  kaspa: defaultTransaction,
   xrp: rippleTransaction,
 };
