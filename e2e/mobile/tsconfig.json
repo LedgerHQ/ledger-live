@@ -23,10 +23,10 @@
         "../../apps/ledger-live-mobile/src/*"
       ],
       "@ledgerhq/live-common/hw/index": [
-        "../../libs/ledger-live-common/src/hw/index"
+        "../../libs/ledger-live-common/lib/hw/index"
       ],
       "@ledgerhq/live-common/hw/deviceAccess": [
-        "../../libs/ledger-live-common/src/hw/deviceAccess"
+        "../../libs/ledger-live-common/lib/hw/deviceAccess"
       ]
     }
   },
