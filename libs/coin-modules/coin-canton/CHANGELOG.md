@@ -1,5 +1,26 @@
 # @ledgerhq/coin-canton
 
+## 0.5.0-nightly.2
+
+### Minor Changes
+
+- [#11722](https://github.com/LedgerHQ/ledger-live/pull/11722) [`a87922d`](https://github.com/LedgerHQ/ledger-live/commit/a87922dc99e4f2e4b40a46fd52ad08a71012fe94) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Add canton onboard ui flow
+
+### Patch Changes
+
+- [#11717](https://github.com/LedgerHQ/ledger-live/pull/11717) [`aaa16b7`](https://github.com/LedgerHQ/ledger-live/commit/aaa16b718454dca51d59bb138ab1a638dc4b8243) Thanks [@ishaba](https://github.com/ishaba)! - add canton api key
+
+- [#11596](https://github.com/LedgerHQ/ledger-live/pull/11596) [`075cdb4`](https://github.com/LedgerHQ/ledger-live/commit/075cdb4975a584e2b6f715fc6db4d364c0997848) Thanks [@jonezque](https://github.com/jonezque)! - feat: craft transaction for canton alpaca
+
+- [#11729](https://github.com/LedgerHQ/ledger-live/pull/11729) [`4a0b0c6`](https://github.com/LedgerHQ/ledger-live/commit/4a0b0c629e147f680cac0d0f3854834dd3dbb0bd) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - add locked balance calculation and update sync integration tests
+
+- Updated dependencies [[`aaa16b7`](https://github.com/LedgerHQ/ledger-live/commit/aaa16b718454dca51d59bb138ab1a638dc4b8243), [`0108eaf`](https://github.com/LedgerHQ/ledger-live/commit/0108eafb64e36ce68f44e03cc3f66ccdb5ee5a92), [`a87922d`](https://github.com/LedgerHQ/ledger-live/commit/a87922dc99e4f2e4b40a46fd52ad08a71012fe94)]:
+  - @ledgerhq/live-env@2.16.0-nightly.1
+  - @ledgerhq/cryptoassets@13.28.0-nightly.1
+  - @ledgerhq/types-live@6.83.1-nightly.0
+  - @ledgerhq/coin-framework@6.4.0-nightly.2
+  - @ledgerhq/live-network@2.0.17-nightly.1
+
 ## 0.5.0-nightly.1
 
 ### Minor Changes

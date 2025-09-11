@@ -1,5 +1,64 @@
 # @ledgerhq/live-common
 
+## 34.48.0-nightly.2
+
+### Minor Changes
+
+- [#11731](https://github.com/LedgerHQ/ledger-live/pull/11731) [`289f623`](https://github.com/LedgerHQ/ledger-live/commit/289f623c2b9055a596647676499cd3c8b34117fa) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add useSearch in common
+
+- [#11639](https://github.com/LedgerHQ/ledger-live/pull/11639) [`e3464bb`](https://github.com/LedgerHQ/ledger-live/commit/e3464bbaa0868537d8bd817152d4aaea4d99e4b2) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Fix incidents display in Notification center
+
+### Patch Changes
+
+- [#11722](https://github.com/LedgerHQ/ledger-live/pull/11722) [`a87922d`](https://github.com/LedgerHQ/ledger-live/commit/a87922dc99e4f2e4b40a46fd52ad08a71012fe94) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Add canton onboard ui flow
+
+- Updated dependencies [[`aaa16b7`](https://github.com/LedgerHQ/ledger-live/commit/aaa16b718454dca51d59bb138ab1a638dc4b8243), [`9ed8f42`](https://github.com/LedgerHQ/ledger-live/commit/9ed8f42b179e6c18811a613e5fe9d8ff899b5b94), [`12909c4`](https://github.com/LedgerHQ/ledger-live/commit/12909c464d22e72d741262df106d0b3ce7f9130a), [`0108eaf`](https://github.com/LedgerHQ/ledger-live/commit/0108eafb64e36ce68f44e03cc3f66ccdb5ee5a92), [`075cdb4`](https://github.com/LedgerHQ/ledger-live/commit/075cdb4975a584e2b6f715fc6db4d364c0997848), [`b13ad45`](https://github.com/LedgerHQ/ledger-live/commit/b13ad454195aac4603665f1f7791d8bd16be90be), [`a6f5a4a`](https://github.com/LedgerHQ/ledger-live/commit/a6f5a4a22a17121b8812538645276ecb2efa1920), [`a87922d`](https://github.com/LedgerHQ/ledger-live/commit/a87922dc99e4f2e4b40a46fd52ad08a71012fe94), [`4a0b0c6`](https://github.com/LedgerHQ/ledger-live/commit/4a0b0c629e147f680cac0d0f3854834dd3dbb0bd)]:
+  - @ledgerhq/coin-canton@0.5.0-nightly.2
+  - @ledgerhq/live-env@2.16.0-nightly.1
+  - @ledgerhq/wallet-api-acre-module@0.7.0-nightly.0
+  - @ledgerhq/crypto-icons-ui@1.18.1-nightly.0
+  - @ledgerhq/cryptoassets@13.28.0-nightly.1
+  - @ledgerhq/hw-app-vet@0.6.0-nightly.1
+  - @ledgerhq/coin-vechain@2.10.0-nightly.2
+  - @ledgerhq/coin-sui@0.13.0-nightly.2
+  - @ledgerhq/live-signer-canton@0.2.4-nightly.2
+  - @ledgerhq/coin-framework@6.4.0-nightly.2
+  - @ledgerhq/coin-algorand@0.10.1-nightly.2
+  - @ledgerhq/coin-aptos@3.3.0-nightly.2
+  - @ledgerhq/coin-bitcoin@0.21.1-nightly.2
+  - @ledgerhq/coin-cardano@0.12.1-nightly.2
+  - @ledgerhq/coin-celo@1.4.0-nightly.2
+  - @ledgerhq/coin-cosmos@0.17.1-nightly.2
+  - @ledgerhq/coin-evm@2.30.0-nightly.2
+  - @ledgerhq/coin-filecoin@1.11.1-nightly.2
+  - @ledgerhq/coin-hedera@1.11.1-nightly.2
+  - @ledgerhq/coin-icon@0.12.1-nightly.2
+  - @ledgerhq/coin-internet_computer@1.8.1-nightly.2
+  - @ledgerhq/coin-multiversx@0.5.1-nightly.2
+  - @ledgerhq/coin-polkadot@6.10.0-nightly.2
+  - @ledgerhq/coin-solana@0.32.1-nightly.2
+  - @ledgerhq/coin-stacks@0.9.1-nightly.2
+  - @ledgerhq/coin-stellar@6.4.0-nightly.2
+  - @ledgerhq/coin-ton@0.14.1-nightly.2
+  - @ledgerhq/ledger-cal-service@1.3.2-nightly.1
+  - @ledgerhq/live-countervalues@0.7.1-nightly.2
+  - @ledgerhq/live-network@2.0.17-nightly.1
+  - @ledgerhq/live-nft@0.8.20-nightly.2
+  - @ledgerhq/live-wallet@0.13.1-nightly.2
+  - @ledgerhq/speculos-transport@0.2.10-nightly.1
+  - @ledgerhq/coin-casper@2.1.1-nightly.2
+  - @ledgerhq/coin-mina@1.2.1-nightly.2
+  - @ledgerhq/coin-near@0.13.1-nightly.2
+  - @ledgerhq/coin-tezos@6.4.0-nightly.2
+  - @ledgerhq/coin-tron@5.4.0-nightly.2
+  - @ledgerhq/coin-xrp@7.4.0-nightly.2
+  - @ledgerhq/live-countervalues-react@0.5.2-nightly.2
+  - @ledgerhq/device-core@0.6.3-nightly.1
+  - @ledgerhq/hw-app-eth@6.45.18-nightly.1
+  - @ledgerhq/live-signer-evm@0.7.5-nightly.2
+  - @ledgerhq/live-signer-solana@0.5.5-nightly.2
+  - @ledgerhq/hw-app-celo@6.34.3-nightly.1
+
 ## 34.48.0-nightly.1
 
 ### Minor Changes

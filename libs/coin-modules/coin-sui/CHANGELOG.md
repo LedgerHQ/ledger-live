@@ -1,5 +1,20 @@
 # @ledgerhq/coin-sui
 
+## 0.13.0-nightly.2
+
+### Minor Changes
+
+- [#11732](https://github.com/LedgerHQ/ledger-live/pull/11732) [`a6f5a4a`](https://github.com/LedgerHQ/ledger-live/commit/a6f5a4a22a17121b8812538645276ecb2efa1920) Thanks [@semeano](https://github.com/semeano)! - [SUI] Fix validator hydration
+
+### Patch Changes
+
+- Updated dependencies [[`aaa16b7`](https://github.com/LedgerHQ/ledger-live/commit/aaa16b718454dca51d59bb138ab1a638dc4b8243), [`0108eaf`](https://github.com/LedgerHQ/ledger-live/commit/0108eafb64e36ce68f44e03cc3f66ccdb5ee5a92), [`a87922d`](https://github.com/LedgerHQ/ledger-live/commit/a87922dc99e4f2e4b40a46fd52ad08a71012fe94)]:
+  - @ledgerhq/live-env@2.16.0-nightly.1
+  - @ledgerhq/cryptoassets@13.28.0-nightly.1
+  - @ledgerhq/types-live@6.83.1-nightly.0
+  - @ledgerhq/coin-framework@6.4.0-nightly.2
+  - @ledgerhq/live-network@2.0.17-nightly.1
+
 ## 0.13.0-nightly.1
 
 ### Minor Changes

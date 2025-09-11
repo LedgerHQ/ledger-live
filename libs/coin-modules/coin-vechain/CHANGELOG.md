@@ -1,5 +1,19 @@
 # @ledgerhq/coin-evm
 
+## 2.10.0-nightly.2
+
+### Minor Changes
+
+- [#11634](https://github.com/LedgerHQ/ledger-live/pull/11634) [`b13ad45`](https://github.com/LedgerHQ/ledger-live/commit/b13ad454195aac4603665f1f7791d8bd16be90be) Thanks [@semeano](https://github.com/semeano)! - Vechain: galactica fee system
+
+### Patch Changes
+
+- Updated dependencies [[`aaa16b7`](https://github.com/LedgerHQ/ledger-live/commit/aaa16b718454dca51d59bb138ab1a638dc4b8243), [`0108eaf`](https://github.com/LedgerHQ/ledger-live/commit/0108eafb64e36ce68f44e03cc3f66ccdb5ee5a92), [`a87922d`](https://github.com/LedgerHQ/ledger-live/commit/a87922dc99e4f2e4b40a46fd52ad08a71012fe94)]:
+  - @ledgerhq/live-env@2.16.0-nightly.1
+  - @ledgerhq/cryptoassets@13.28.0-nightly.1
+  - @ledgerhq/coin-framework@6.4.0-nightly.2
+  - @ledgerhq/live-network@2.0.17-nightly.1
+
 ## 2.9.1-nightly.1
 
 ### Patch Changes

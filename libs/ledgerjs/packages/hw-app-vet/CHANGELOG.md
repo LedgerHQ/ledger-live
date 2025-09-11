@@ -1,5 +1,16 @@
 # @ledgerhq/hw-app-vet
 
+## 0.6.0-nightly.1
+
+### Minor Changes
+
+- [#11634](https://github.com/LedgerHQ/ledger-live/pull/11634) [`b13ad45`](https://github.com/LedgerHQ/ledger-live/commit/b13ad454195aac4603665f1f7791d8bd16be90be) Thanks [@semeano](https://github.com/semeano)! - Vechain: galactica fee system
+
+### Patch Changes
+
+- Updated dependencies [[`0108eaf`](https://github.com/LedgerHQ/ledger-live/commit/0108eafb64e36ce68f44e03cc3f66ccdb5ee5a92)]:
+  - @ledgerhq/cryptoassets@13.28.0-nightly.1
+
 ## 0.5.16-nightly.0
 
 ### Patch Changes

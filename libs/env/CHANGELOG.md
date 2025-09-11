@@ -1,5 +1,11 @@
 # @ledgerhq/live-env
 
+## 2.16.0-nightly.1
+
+### Patch Changes
+
+- [#11717](https://github.com/LedgerHQ/ledger-live/pull/11717) [`aaa16b7`](https://github.com/LedgerHQ/ledger-live/commit/aaa16b718454dca51d59bb138ab1a638dc4b8243) Thanks [@ishaba](https://github.com/ishaba)! - add canton api key
+
 ## 2.16.0-nightly.0
 
 ### Minor Changes

@@ -1,5 +1,50 @@
 # ledger-live-desktop
 
+## 3.0.0-nightly.2
+
+### Major Changes
+
+- [#11741](https://github.com/LedgerHQ/ledger-live/pull/11741) [`aa90ace`](https://github.com/LedgerHQ/ledger-live/commit/aa90ace88b2171f1f0796829ae45fe0fda2d24d2) Thanks [@ooke-ledger](https://github.com/ooke-ledger)! - Fix Tab indicator out of sync bug
+
+### Minor Changes
+
+- [#11731](https://github.com/LedgerHQ/ledger-live/pull/11731) [`289f623`](https://github.com/LedgerHQ/ledger-live/commit/289f623c2b9055a596647676499cd3c8b34117fa) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add useSearch in common
+
+- [#11639](https://github.com/LedgerHQ/ledger-live/pull/11639) [`e3464bb`](https://github.com/LedgerHQ/ledger-live/commit/e3464bbaa0868537d8bd817152d4aaea4d99e4b2) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Fix incidents display in Notification center
+
+- [#11737](https://github.com/LedgerHQ/ledger-live/pull/11737) [`4a901dd`](https://github.com/LedgerHQ/ledger-live/commit/4a901ddb29141513ebecf1b05becaca0c735ad7e) Thanks [@qperrot](https://github.com/qperrot)! - Fix Taquito patch for Tezos integration tests
+
+### Patch Changes
+
+- [#11719](https://github.com/LedgerHQ/ledger-live/pull/11719) [`c2b2ef7`](https://github.com/LedgerHQ/ledger-live/commit/c2b2ef7b0af782c34ee67ea6e743abee12cbd89c) Thanks [@ishaba](https://github.com/ishaba)! - fix canton onboarding modal rerender issue
+
+- [#11722](https://github.com/LedgerHQ/ledger-live/pull/11722) [`a87922d`](https://github.com/LedgerHQ/ledger-live/commit/a87922dc99e4f2e4b40a46fd52ad08a71012fe94) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Add canton onboard ui flow
+
+- [#11605](https://github.com/LedgerHQ/ledger-live/pull/11605) [`60babec`](https://github.com/LedgerHQ/ledger-live/commit/60babec5770c2c784f113d79dc53b2d26872ab9b) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Custom lock screen: use specific dithering algos for Apex
+
+- Updated dependencies [[`289f623`](https://github.com/LedgerHQ/ledger-live/commit/289f623c2b9055a596647676499cd3c8b34117fa), [`aaa16b7`](https://github.com/LedgerHQ/ledger-live/commit/aaa16b718454dca51d59bb138ab1a638dc4b8243), [`e3464bb`](https://github.com/LedgerHQ/ledger-live/commit/e3464bbaa0868537d8bd817152d4aaea4d99e4b2), [`0108eaf`](https://github.com/LedgerHQ/ledger-live/commit/0108eafb64e36ce68f44e03cc3f66ccdb5ee5a92), [`075cdb4`](https://github.com/LedgerHQ/ledger-live/commit/075cdb4975a584e2b6f715fc6db4d364c0997848), [`a87922d`](https://github.com/LedgerHQ/ledger-live/commit/a87922dc99e4f2e4b40a46fd52ad08a71012fe94), [`4a0b0c6`](https://github.com/LedgerHQ/ledger-live/commit/4a0b0c629e147f680cac0d0f3854834dd3dbb0bd)]:
+  - @ledgerhq/live-common@34.48.0-nightly.2
+  - @ledgerhq/coin-canton@0.5.0-nightly.2
+  - @ledgerhq/live-env@2.16.0-nightly.1
+  - @ledgerhq/cryptoassets@13.28.0-nightly.1
+  - @ledgerhq/types-live@6.83.1-nightly.0
+  - @ledgerhq/coin-framework@6.4.0-nightly.2
+  - @ledgerhq/live-dmk-desktop@0.9.5-nightly.2
+  - @ledgerhq/coin-bitcoin@0.21.1-nightly.2
+  - @ledgerhq/coin-cosmos@0.17.1-nightly.2
+  - @ledgerhq/coin-evm@2.30.0-nightly.2
+  - @ledgerhq/coin-filecoin@1.11.1-nightly.2
+  - @ledgerhq/hw-ledger-key-ring-protocol@0.3.14-nightly.1
+  - @ledgerhq/ledger-key-ring-protocol@0.6.5-nightly.1
+  - @ledgerhq/live-countervalues@0.7.1-nightly.2
+  - @ledgerhq/live-network@2.0.17-nightly.1
+  - @ledgerhq/live-nft@0.8.20-nightly.2
+  - @ledgerhq/live-wallet@0.13.1-nightly.2
+  - @ledgerhq/react-ui@0.36.1-nightly.0
+  - @ledgerhq/live-countervalues-react@0.5.2-nightly.2
+  - @ledgerhq/live-nft-react@0.9.20-nightly.2
+  - @ledgerhq/domain-service@1.2.43-nightly.0
+
 ## 2.128.0-nightly.1
 
 ### Minor Changes

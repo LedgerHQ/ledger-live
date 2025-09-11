@@ -1,5 +1,14 @@
 # @ledgerhq/cryptoassets
 
+## 13.28.0-nightly.1
+
+### Patch Changes
+
+- [#11747](https://github.com/LedgerHQ/ledger-live/pull/11747) [`0108eaf`](https://github.com/LedgerHQ/ledger-live/commit/0108eafb64e36ce68f44e03cc3f66ccdb5ee5a92) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Update IOTA ticker
+
+- Updated dependencies [[`aaa16b7`](https://github.com/LedgerHQ/ledger-live/commit/aaa16b718454dca51d59bb138ab1a638dc4b8243)]:
+  - @ledgerhq/live-env@2.16.0-nightly.1
+
 ## 13.28.0-nightly.0
 
 ### Minor Changes

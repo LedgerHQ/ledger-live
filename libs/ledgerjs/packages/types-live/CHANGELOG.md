@@ -1,5 +1,11 @@
 # @ledgerhq/types-live
 
+## 6.83.1-nightly.0
+
+### Patch Changes
+
+- [#11722](https://github.com/LedgerHQ/ledger-live/pull/11722) [`a87922d`](https://github.com/LedgerHQ/ledger-live/commit/a87922dc99e4f2e4b40a46fd52ad08a71012fe94) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Add canton onboard ui flow
+
 ## 6.83.0
 
 ### Minor Changes

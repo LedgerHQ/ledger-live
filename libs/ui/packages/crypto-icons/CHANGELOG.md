@@ -1,5 +1,13 @@
 # @ledgerhq/icons-ui
 
+## 1.18.1-nightly.0
+
+### Patch Changes
+
+- [#11727](https://github.com/LedgerHQ/ledger-live/pull/11727) [`12909c4`](https://github.com/LedgerHQ/ledger-live/commit/12909c464d22e72d741262df106d0b3ce7f9130a) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Add canton devnet icon
+
+- [#11747](https://github.com/LedgerHQ/ledger-live/pull/11747) [`0108eaf`](https://github.com/LedgerHQ/ledger-live/commit/0108eafb64e36ce68f44e03cc3f66ccdb5ee5a92) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Update IOTA ticker
+
 ## 1.18.0
 
 ### Minor Changes

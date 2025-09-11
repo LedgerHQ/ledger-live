@@ -1,5 +1,37 @@
 # live-mobile
 
+## 3.93.0-nightly.2
+
+### Minor Changes
+
+- [#11731](https://github.com/LedgerHQ/ledger-live/pull/11731) [`289f623`](https://github.com/LedgerHQ/ledger-live/commit/289f623c2b9055a596647676499cd3c8b34117fa) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add useSearch in common
+
+- [#11705](https://github.com/LedgerHQ/ledger-live/pull/11705) [`ca78a0a`](https://github.com/LedgerHQ/ledger-live/commit/ca78a0a86e46a946af94a556ab924487de5392b5) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Fix Asset Selection with keyboard and trim search"
+
+- [#11711](https://github.com/LedgerHQ/ledger-live/pull/11711) [`3f545bd`](https://github.com/LedgerHQ/ledger-live/commit/3f545bd9974ffaa451ed26c112b6c7d26112acf3) Thanks [@hhumphrey-ledger](https://github.com/hhumphrey-ledger)! - Fix back to internal domain logic
+
+### Patch Changes
+
+- Updated dependencies [[`aaa16b7`](https://github.com/LedgerHQ/ledger-live/commit/aaa16b718454dca51d59bb138ab1a638dc4b8243), [`a87922d`](https://github.com/LedgerHQ/ledger-live/commit/a87922dc99e4f2e4b40a46fd52ad08a71012fe94)]:
+  - @ledgerhq/live-env@2.16.0-nightly.1
+  - @ledgerhq/types-live@6.83.1-nightly.0
+  - @ledgerhq/coin-framework@6.4.0-nightly.2
+  - @ledgerhq/coin-cosmos@0.17.1-nightly.2
+  - @ledgerhq/coin-evm@2.30.0-nightly.2
+  - @ledgerhq/coin-filecoin@1.11.1-nightly.2
+  - @ledgerhq/coin-multiversx@0.5.1-nightly.2
+  - @ledgerhq/coin-stacks@0.9.1-nightly.2
+  - @ledgerhq/hw-ledger-key-ring-protocol@0.3.14-nightly.1
+  - @ledgerhq/ledger-key-ring-protocol@0.6.5-nightly.1
+  - @ledgerhq/live-countervalues@0.7.1-nightly.2
+  - @ledgerhq/live-network@2.0.17-nightly.1
+  - @ledgerhq/live-nft@0.8.20-nightly.2
+  - @ledgerhq/live-wallet@0.13.1-nightly.2
+  - @ledgerhq/native-ui@0.44.1-nightly.0
+  - @ledgerhq/live-countervalues-react@0.5.2-nightly.2
+  - @ledgerhq/live-nft-react@0.9.20-nightly.2
+  - @ledgerhq/domain-service@1.2.43-nightly.0
+
 ## 3.93.0-nightly.1
 
 ### Minor Changes
