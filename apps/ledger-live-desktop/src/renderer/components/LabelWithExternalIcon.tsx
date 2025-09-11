@@ -29,7 +29,7 @@ type Props = {
   ff?: string;
   iconFirst?: boolean;
 }; // can add more dynamic options if needed
-export function LabelWithExternalIcon({
+function LabelWithExternalIcon({
   onClick,
   label,
   color,

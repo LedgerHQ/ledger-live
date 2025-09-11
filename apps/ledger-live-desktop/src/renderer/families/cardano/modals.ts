@@ -1,14 +1,6 @@
-import MODAL_CARDANO_DELEGATE, { DelegationModalProps } from "./DelegationFlowModal";
-import MODAL_CARDANO_UNDELEGATE, { UnDelegationModalProps } from "./UndelegateFlowModal";
-import MODAL_CARDANO_REWARDS_INFO, {
-  CardanoEarnRewardsInfoModalProps,
-} from "./DelegationFlowModal/Info";
-
-export type ModalsData = {
-  MODAL_CARDANO_DELEGATE: DelegationModalProps;
-  MODAL_CARDANO_UNDELEGATE: UnDelegationModalProps;
-  MODAL_CARDANO_REWARDS_INFO: CardanoEarnRewardsInfoModalProps;
-};
+import MODAL_CARDANO_DELEGATE from "./DelegationFlowModal";
+import MODAL_CARDANO_UNDELEGATE from "./UndelegateFlowModal";
+import MODAL_CARDANO_REWARDS_INFO from "./DelegationFlowModal/Info";
 
 export default {
   MODAL_CARDANO_DELEGATE,
