@@ -83,7 +83,6 @@ const CustomImage: React.FC<Props> = props => {
   const [stepError, setStepError] = useState<{ [key in Step]?: Error }>({});
 
   const [sourceLoading, setSourceLoading] = useState<boolean>(false);
-  const [isShowingNftGallery, setIsShowingNftGallery] = useState<boolean>(false);
 
   const [loadedImage, setLoadedImage] = useState<ImageBase64Data>();
   const [croppedImage, setCroppedImage] = useState<ImageBase64Data>();
@@ -286,8 +285,6 @@ const CustomImage: React.FC<Props> = props => {
               setStep={setStepWrapper}
               loading={sourceLoading}
               setLoading={setSourceLoading}
-              isShowingNftGallery={isShowingNftGallery}
-              setIsShowingNftGallery={setIsShowingNftGallery}
               hasCustomLockScreen={hasCustomLockScreen}
               onClickRemoveCustomImage={onClickRemoveCustomImage}
             />

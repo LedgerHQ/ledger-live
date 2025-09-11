@@ -9,12 +9,10 @@ import CurrencyDownStatusAlert from "~/renderer/components/CurrencyDownStatusAle
 import ErrorBanner from "~/renderer/components/ErrorBanner";
 import Label from "~/renderer/components/Label";
 import SelectAccount from "~/renderer/components/SelectAccount";
-import SelectNFT from "~/renderer/screens/nft/Send/SelectNFT";
 import SendRecipientFields, { getFields } from "../SendRecipientFields";
 import RecipientField from "../fields/RecipientField";
 import { StepProps } from "../types";
 import StepRecipientSeparator from "~/renderer/components/StepRecipientSeparator";
-import { Account } from "@ledgerhq/types-live";
 import EditOperationPanel from "~/renderer/components/OperationsList/EditOperationPanel";
 import { MEMO_TAG_COINS } from "LLD/features/MemoTag/constants";
 import { useDispatch, useSelector } from "react-redux";
@@ -53,11 +51,7 @@ const StepRecipient = ({
   status,
   maybeRecipient,
   onResetMaybeRecipient,
-  maybeNFTId,
   currencyName,
-  isNFTSend,
-  onChangeNFT,
-  maybeNFTCollection,
 }: StepProps) => {
   const isMemoTagBoxVisibile = useSelector(memoTagBoxVisibilitySelector);
   const forceAutoFocusOnMemoField = useSelector(forceAutoFocusOnMemoFieldSelector);
@@ -73,12 +67,7 @@ const StepRecipient = ({
 
   return (
     <Box flow={4}>
-      <TrackPage
-        category="Send Flow"
-        name="Step Recipient"
-        currencyName={currencyName}
-        isNFTSend={isNFTSend}
-      />
+      <TrackPage category="Send Flow" name="Step Recipient" currencyName={currencyName} />
       {isMemoTagBoxVisibile && lldMemoTag?.enabled ? (
         <MemoTagSendInfo />
       ) : (
@@ -90,31 +79,19 @@ const StepRecipient = ({
               <ErrorBanner dataTestId="sender-error" error={status.errors.sender} />
             </div>
           ) : null}
-          {isNFTSend ? (
-            <Box flow={1}>
-              <Label>{t("send.steps.recipient.nftRecipient")}</Label>
-              {account && (
-                <SelectNFT
-                  onSelect={onChangeNFT}
-                  maybeNFTId={maybeNFTId}
-                  maybeNFTCollection={maybeNFTCollection}
-                  account={account as Account}
-                />
-              )}
-            </Box>
-          ) : (
-            <Box flow={1}>
-              <Label>{t("send.steps.details.selectAccountDebit")}</Label>
-              <SelectAccount
-                id="account-debit-placeholder"
-                withSubAccounts
-                enforceHideEmptySubAccounts
-                autoFocus={!openedFromAccount && !forceAutoFocusOnMemoField}
-                onChange={onChangeAccount}
-                value={account}
-              />
-            </Box>
-          )}
+
+          <Box flow={1}>
+            <Label>{t("send.steps.details.selectAccountDebit")}</Label>
+            <SelectAccount
+              id="account-debit-placeholder"
+              withSubAccounts
+              enforceHideEmptySubAccounts
+              autoFocus={!openedFromAccount && !forceAutoFocusOnMemoField}
+              onChange={onChangeAccount}
+              value={account}
+            />
+          </Box>
+
           {extensions && hasProblematicExtension(extensions) ? (
             <Alert data-testid="spl-2022-problematic-extension" type="warning" small={true}>
               <Trans i18nKey="send.steps.details.splExtensionsWarning">
