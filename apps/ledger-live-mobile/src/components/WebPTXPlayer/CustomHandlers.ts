@@ -31,7 +31,7 @@ type CustomExchangeHandlersHookType = {
   sendAppReady: () => void;
   onCompleteResult?: (exchangeParams: CompleteExchangeUiRequest, operationHash: string) => void;
   onCompleteError?: (error: Error) => void;
-  onShowLoadingDrawer?: () => void;
+  handleLoaderDrawer?: () => void;
 };
 
 export function useCustomExchangeHandlers({
@@ -40,7 +40,7 @@ export function useCustomExchangeHandlers({
   onCompleteResult,
   sendAppReady,
   onCompleteError,
-  onShowLoadingDrawer,
+  handleLoaderDrawer,
 }: CustomExchangeHandlersHookType) {
   const navigation = useNavigation<StackNavigatorNavigation<BaseNavigatorStackParamList>>();
   const [device, setDevice] = useState<Device>();
@@ -168,7 +168,7 @@ export function useCustomExchangeHandlers({
                     );
                   }
                   navigation.pop();
-                  onShowLoadingDrawer?.();
+                  handleLoaderDrawer?.();
                 },
                 onClose: () => onCancel(drawerClosedError),
               },
@@ -180,6 +180,9 @@ export function useCustomExchangeHandlers({
             });
           },
           "custom.exchange.complete": ({ exchangeParams, onSuccess, onCancel }) => {
+            if (handleLoaderDrawer) {
+              navigation.pop();
+            }
             navigation.navigate(NavigatorName.PlatformExchange, {
               screen: ScreenName.PlatformCompleteExchange,
               params: {
@@ -232,6 +235,9 @@ export function useCustomExchangeHandlers({
             }
           },
           "custom.exchange.swap": ({ exchangeParams, onSuccess, onCancel }) => {
+            if (handleLoaderDrawer) {
+              navigation.pop();
+            }
             let cancelCalled = false;
 
             const safeOnCancel = (error: Error) => {
@@ -290,7 +296,7 @@ export function useCustomExchangeHandlers({
     navigation,
     onCompleteError,
     onCompleteResult,
-    onShowLoadingDrawer,
+    handleLoaderDrawer,
     sendAppReady,
     syncAccountById,
     tracking,
