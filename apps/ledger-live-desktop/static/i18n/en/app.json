@@ -6341,8 +6341,8 @@
       "description": "Transaction failed. Please try again."
     },
     "TransactionCannotBeCreated": {
-      "title": "Partner unavailable",
-      "description": "We cannot complete your swap with this partner. Please try with another one. Error code 8HBBZLP"
+      "title": "Processing Error",
+      "description": "Changelly cannot process this transaction. Error code 8HBB-{{errorCode}}"
     },
     "TimeoutError": {
       "title": "Sorry, server took too long to respond",
