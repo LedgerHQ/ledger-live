@@ -40,6 +40,7 @@ import { Delegate } from "./models/Delegate";
 import { Swap } from "./models/Swap";
 import { delegateOsmosis } from "./families/osmosis";
 import { AppInfos } from "./enum/AppInfos";
+import { sendSui } from "./families/sui";
 
 const isSpeculosRemote = process.env.REMOTE_SPECULOS === "true";
 
@@ -218,6 +219,14 @@ export const specs: Specs = {
     appQuery: {
       model: getSpeculosModel(),
       appName: "Stellar",
+    },
+    dependency: "",
+  },
+  Sui: {
+    currency: getCryptoCurrencyById("sui"),
+    appQuery: {
+      model: getSpeculosModel(),
+      appName: "Sui",
     },
     dependency: "",
   },
@@ -688,6 +697,9 @@ export async function signSendTransaction(tx: Transaction) {
       break;
     case Currency.KAS:
       await sendKaspa();
+      break;
+    case Currency.SUI:
+      await sendSui();
       break;
     default:
       throw new Error(`Unsupported currency: ${currencyName.ticker}`);
