@@ -24,6 +24,8 @@ export default function SwapCustomError({ route }: SwapCustomErrorProps) {
     error && "message" in error && typeof error.message === "string"
       ? error.message.toLowerCase()
       : "";
+  const errorCodeMatch = errorMessage && errorMessage.match(/error code (\w+)/i);
+  const dynamicErrorCode = errorCodeMatch && "-" + errorCodeMatch[1];
 
   const { title, description } = useMemo(() => {
     if (errorMessage.includes("transaction cannot be created")) {
@@ -33,7 +35,9 @@ export default function SwapCustomError({ route }: SwapCustomErrorProps) {
       });
       return {
         title: t("swapErrors.transactionCannotBeCreated.title"),
-        description: t("swapErrors.transactionCannotBeCreated.description"),
+        description: t("swapErrors.transactionCannotBeCreated.description", {
+          errorCode: dynamicErrorCode,
+        }),
       };
     }
 
@@ -62,7 +66,7 @@ export default function SwapCustomError({ route }: SwapCustomErrorProps) {
       title: t("swapErrors.default.title"),
       description: t("swapErrors.default.description"),
     };
-  }, [error, errorMessage, nameKey, t, titleKey]);
+  }, [error, errorMessage, nameKey, t, titleKey, dynamicErrorCode]);
 
   return (
     <SafeAreaView style={[styles.root, { bottom: headerHeight }]}>
