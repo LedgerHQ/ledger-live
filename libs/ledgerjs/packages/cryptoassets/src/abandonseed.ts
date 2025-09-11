@@ -35,6 +35,7 @@ const abandonSeedAddresses: Partial<Record<CryptoCurrency["id"], string>> = {
   digibyte: "DG1KhhBKpsyWXTakHNezaDQ34focsXjN1i",
   dogecoin: "DBus3bamQjgJULBJtYXpEzDWQRwF5iwxgC",
   game_credits: "GJgbzWpGhrZmSvc2V5Npqf57Kg9xfB79tj",
+  kaspa: "kaspa:qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqkx9awp4e",
   komodo: "RW8gfgpCUdgZbkPAs1uJQF2S9681JVkGRi",
   litecoin: "LUWPbpM43E2p7ZSh8cyTBEkvpHmr3cB8Ez",
   nix: "GRpn2DPiQxAczMrQFt2sK1CS8EYdnvSHxo",
