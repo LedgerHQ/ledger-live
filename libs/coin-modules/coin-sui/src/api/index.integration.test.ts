@@ -34,6 +34,30 @@ describe("Sui Api", () => {
     });
   });
 
+  describe.only("listOperations for big account", () => {
+    it("should fetch operations successfully", async () => {
+      const binance = "0x935029ca5219502a47ac9b69f556ccf6e2198b5e7815cf50f68846f723739cbd";
+      const [operations1, token1] = await module.listOperations(binance, { minHeight: 0 });
+      expect(operations1.length).toBeGreaterThan(2);
+      expect(token1).toBeDefined();
+      expect(token1).not.toBe("");
+
+      const [operations2, _] = await module.listOperations(binance, {
+        minHeight: 0,
+        lastPagingToken: token1,
+      });
+      expect(operations2.length).toBeGreaterThan(2);
+      expect(operations2[0].tx.hash).not.toBe(operations1[0].tx.hash);
+      // expect none of operations1 is in operations2
+      const operations2TxHashes = operations2.map(op => op.tx.hash);
+      const operations1TxHashes = operations1.map(op => op.tx.hash);
+      const duplicatedHashes = operations2TxHashes.filter(hash =>
+        operations1TxHashes.includes(hash),
+      );
+      expect(duplicatedHashes.length).toBe(0);
+    });
+  });
+
   describe("listOperations", () => {
     let txs: Operation[];
 

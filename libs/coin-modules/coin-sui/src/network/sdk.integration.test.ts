@@ -26,6 +26,15 @@ describe("SUI SDK Integration tests", () => {
     }));
   });
 
+  describe.only("getOperations for big account", () => {
+    it("should fetch operations successfully", async () => {
+      const binance = "0x935029ca5219502a47ac9b69f556ccf6e2198b5e7815cf50f68846f723739cbd";
+      const operations = await getOperations("mockAccoundId", binance);
+      console.log(operations.length);
+      expect(operations.length).toBeGreaterThan(1);
+    });
+  });
+
   describe("getOperations", () => {
     describe("Account 0x33444cf803c690db96527cec67e3c9ab512596f4ba2d4eace43f0b4f716e0164", () => {
       // https://suiscan.xyz/mainnet/account/0x33444cf803c690db96527cec67e3c9ab512596f4ba2d4eace43f0b4f716e0164/activity

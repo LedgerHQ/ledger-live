@@ -515,7 +515,13 @@ export const filterOperations = (
   }
   const result = [...sendOps.operations, ...receiveOps.operations]
     .sort((a, b) => Number(b.timestampMs) - Number(a.timestampMs))
-    .filter(op => Number(op.timestampMs) >= filterTimestamp);
+    .filter(op => Number(op.timestampMs) <= filterTimestamp);
+
+  console.log("operationList1", sendOps.operations.length);
+  console.log("operationList2", receiveOps.operations.length);
+  console.log("result", result.length);
+  console.log("filterTimestamp", filterTimestamp);
+  console.log("cursor", nextCursor);
 
   return { operations: uniqBy(result, tx => tx.digest), cursor: nextCursor };
 };
@@ -756,6 +762,9 @@ type LoadOperationResponse = {
 /**
  * Fetch operations for a specific address and type until the limit is reached
  */
+
+// TODO concurrent calls
+// TODO remove the `operations` parameter
 export const loadOperations = async ({
   cursor,
   operations,
