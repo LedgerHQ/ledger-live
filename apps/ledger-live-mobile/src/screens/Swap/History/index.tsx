@@ -211,7 +211,7 @@ const History = () => {
         <Pressable
           onPress={() =>
             Linking.openURL(
-              "https://form.typeform.com/to/FIHc3fk2?typeform-source=ledger.typeform.com#source=xxxxx",
+              "https://form.typeform.com/to/FIHc3fk2?typeform-source=ledger.typeform.com#source=mobile",
             )
           }
           style={styles.feedbackRow}
