@@ -9,10 +9,70 @@ import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { liveConfig } from "@ledgerhq/live-common/config/sharedConfig";
 import currencies, { AccountInfo, AccountType } from "./currencies";
 import { LogEntry, submitLogs } from "./datadog";
+import { Dist, measureCalls } from "./msw/measure";
+import "./msw/server";
 
 interface RunResult {
   entries: LogEntry[];
   failed: boolean;
+}
+
+function formatDist(dist: Dist, unit = "", decimals = 2) {
+  const round = (v: number) => Math.round(v * Math.pow(10, decimals)) / Math.pow(10, decimals);
+  return `min=${round(dist.min)}${unit}, median=${round(dist.median)}${unit}, max=${round(dist.max)}${unit}, p90=${round(dist.p90)}${unit}, p99=${round(dist.p99)}${unit}`;
+}
+
+function formatDuration(ms: number): string {
+  if (ms < 1000) return `${ms.toFixed(0)} ms`;
+
+  const totalSeconds = Math.floor(ms / 1000);
+  const remainingMs = ms % 1000;
+  const seconds = totalSeconds % 60;
+  const minutes = Math.floor(totalSeconds / 60) % 60;
+  const hours = Math.floor(totalSeconds / 3600);
+
+  const parts: string[] = [];
+
+  if (hours) parts.push(`${hours}h`);
+  if (minutes) parts.push(`${minutes}m`);
+  if (seconds || (!hours && !minutes)) {
+    if (remainingMs > 0 && ms < 60_000) {
+      parts.push(`${seconds}.${remainingMs.toString().padStart(3, "0")}s`);
+    } else {
+      parts.push(`${seconds}s`);
+    }
+  }
+
+  return parts.join(" ");
+}
+
+function prettyLog(
+  i: number,
+  nbOfAccounts: number,
+  scanDuration: number,
+  syncDuration: number,
+  scanCalls: number,
+  scanRoutes: Record<string, number>,
+  scanCpu: Dist,
+  scanMem: Dist,
+  syncCalls: number,
+  syncRoutes: Record<string, number>,
+  syncCpu: Dist,
+  syncMem: Dist,
+) {
+  const totalDuration = scanDuration + syncDuration;
+
+  console.log(`\n[${i} / ${nbOfAccounts}] ✅ Completed in ${formatDuration(totalDuration)}`);
+
+  console.log(` ┌─ 🔎 Scan`);
+  console.log(` │  • Calls: ${scanCalls}`, scanRoutes);
+  console.log(` │  • CPU  : ${formatDist(scanCpu, "%")}`);
+  console.log(` │  • MEM  : ${formatDist(scanMem, " MB")}`);
+
+  console.log(` └─ 🔄 Sync`);
+  console.log(`    • Calls: ${syncCalls}`, syncRoutes);
+  console.log(`    • CPU  : ${formatDist(syncCpu, "%")}`);
+  console.log(`    • MEM  : ${formatDist(syncMem, " MB")}\n`);
 }
 
 function toEmptyAccount(currency: CryptoCurrency, info: AccountInfo): Account {
@@ -73,11 +133,23 @@ export default async function (currencyIds: string[]) {
 
       try {
         const startScan = Date.now();
-        const initialAccount = await sync(toEmptyAccount(currency, info));
+        const {
+          result: initialAccount,
+          total: scanCalls,
+          callsByDomain: scanRoutes,
+          cpu: scanCpu,
+          memory: scanMem,
+        } = await measureCalls(() => sync(toEmptyAccount(currency, info)));
         const endScan = Date.now();
 
         const startSync = Date.now();
-        await sync(initialAccount);
+        const {
+          total: syncCalls,
+          callsByDomain: syncRoutes,
+          cpu: syncCpu,
+          memory: syncMem,
+        } = await measureCalls(() => sync(initialAccount));
+
         const endSync = Date.now();
 
         const scanDuration = endScan - startScan;
@@ -85,7 +157,20 @@ export default async function (currencyIds: string[]) {
 
         const { xpubOrAddress } = decodeAccountId(initialAccount.id);
 
-        console.log(`[${i} / ${nbOfAccounts}] Completed in ${scanDuration + syncDuration} ms`);
+        prettyLog(
+          i,
+          nbOfAccounts,
+          scanDuration,
+          syncDuration,
+          scanCalls,
+          scanRoutes,
+          scanCpu,
+          scanMem,
+          syncCalls,
+          syncRoutes,
+          syncCpu,
+          syncMem,
+        );
 
         result.entries.push(
           {
@@ -96,6 +181,10 @@ export default async function (currencyIds: string[]) {
             accountType: accountType as AccountType,
             transactions: initialAccount.operationsCount,
             accountAddressOrXpub: xpubOrAddress,
+            totalNetworkCalls: scanCalls,
+            networkCallsByDomain: scanRoutes,
+            cpu: scanCpu,
+            memory: scanMem,
           },
           {
             duration: syncDuration,
@@ -105,6 +194,10 @@ export default async function (currencyIds: string[]) {
             accountType: accountType as AccountType,
             transactions: initialAccount.operationsCount,
             accountAddressOrXpub: xpubOrAddress,
+            totalNetworkCalls: syncCalls,
+            networkCallsByDomain: syncRoutes,
+            cpu: syncCpu,
+            memory: syncMem,
           },
         );
       } catch (err) {
