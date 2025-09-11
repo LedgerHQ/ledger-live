@@ -5050,6 +5050,14 @@
     },
     "screens": {
       "welcome": {
+        "videos": {
+          "buySell": "Buy, sell, swap, stake, and manage your portfolio",
+          "thousandsCrypto": "Access thousands of crypto in one ecosystem",
+          "secureWallet": "Step into the most secure wallet, wherever you go"
+        },
+        "ledgerDevice": "I have a Ledger device",
+        "noDeviceYet": "I don't, yet",
+        "notice": "By continuing, you agree to Ledger's <Link1>Terms and Conditions</Link1> and <Link2>Privacy Policy</Link2>. Ledger provides no financial advice.\nTransaction services are provided by third parties.",
         "title": "The most secure cryptocurrency & NFT wallet",
         "description": "Securely manage, buy and grow your crypto and NFTs on Ledger Live.",
         "nextButton": "Get started",
@@ -7230,7 +7238,7 @@
         "cta": "Turn on Ledger Sync"
       },
       "onboarding": {
-        "title": "Sync with another Ledger Live app"
+        "title": "I have Ledger Sync"
       }
     },
     "manage": {
