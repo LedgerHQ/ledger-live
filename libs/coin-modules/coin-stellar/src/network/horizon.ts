@@ -140,7 +140,11 @@ export async function fetchBaseFee(): Promise<{
       networkCongestionLevel = NetworkCongestionLevel.LOW;
     }
   } catch (e) {
-    // do nothing, will use defaults
+    return {
+      baseFee: 1000,
+      recommendedFee: 1000,
+      networkCongestionLevel: NetworkCongestionLevel.HIGH,
+    };
   }
 
   return {
