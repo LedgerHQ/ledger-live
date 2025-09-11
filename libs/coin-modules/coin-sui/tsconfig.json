@@ -9,7 +9,7 @@
     "exactOptionalPropertyTypes": true,
     "module": "ESNext",
     "moduleResolution": "bundler",
-    "typeRoots": ["./types/@mysten/signers/ledger", "./node_modules/@types"],
+    "typeRoots": ["./types", "./types/bcs", "./node_modules/@types"],
     "paths": {
       "@mysten/signers/dist/ledger/bcs": [
         "./node_modules/@mysten/signers/dist/esm/ledger/bcs.d.ts",
@@ -17,5 +17,5 @@
       ],
     }
   },
-  "include": ["src/**/*"],
+  "include": ["src/**/*", "types/**/*"],
 }

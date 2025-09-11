@@ -1,3 +1,3 @@
-declare module "@mysten/signers/ledger/bcs" {
+declare module "bcs" {
   export * from "@mysten/signers/dist/ledger/bcs";
 }
