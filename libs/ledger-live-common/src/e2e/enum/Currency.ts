@@ -77,6 +77,7 @@ export class Currency {
   static readonly XLM = new Currency("Stellar", "XLM", "stellar", AppInfos.STELLAR, [
     Network.STELLAR,
   ]);
+  static readonly SUI = new Currency("Sui", "SUI", "sui", AppInfos.SUI, [Network.SUI]);
   static readonly BCH = new Currency("Bitcoin Cash", "BCH", "bitcoin_cash", AppInfos.BITCOIN_CASH, [
     Network.BITCOIN_CASH,
   ]);
