@@ -1,5 +1,5 @@
 import React from "react";
-import { Trans } from "react-i18next";
+import { Trans, useTranslation } from "react-i18next";
 import styled from "styled-components";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import Box from "~/renderer/components/Box";
@@ -50,6 +50,7 @@ export default function WebviewErrorDrawer(error?: SwapLiveError) {
   let titleKey = "swap2.webviewErrorDrawer.title";
   let descriptionKey = "swap2.webviewErrorDrawer.description";
   let errorCodeSection = null;
+  const { t } = useTranslation();
 
   if (error?.cause?.swapCode) {
     switch (error.cause.swapCode) {
@@ -71,14 +72,19 @@ export default function WebviewErrorDrawer(error?: SwapLiveError) {
   }
 
   const errorMessage = error?.cause?.response?.data?.error?.message?.toLowerCase();
+  const errorCodeMatch = errorMessage && errorMessage.match(/Error code (\w+)/i);
+  const dynamicErrorCode = errorCodeMatch && "-" + errorCodeMatch[1];
 
   if (errorMessage?.includes("transaction cannot be created")) {
     track("error_message", {
       ...swapDefaultTrack,
       message: "partner_unavailable",
+      error_code: dynamicErrorCode,
     });
     titleKey = "errors.TransactionCannotBeCreated.title";
-    descriptionKey = "errors.TransactionCannotBeCreated.description";
+    descriptionKey = t("errors.TransactionCannotBeCreated.description", {
+      errorCode: dynamicErrorCode,
+    });
     errorCodeSection = null;
   }
 
