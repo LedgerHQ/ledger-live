@@ -82,7 +82,7 @@ type TransactionSubmitRequest = {
   signature: string;
 };
 
-type TransactionSubmitResponse = { updateId: string };
+type TransactionSubmitResponse = { update_id: string };
 
 export type InstrumentBalance = {
   instrument_id: string;
@@ -323,12 +323,12 @@ export async function submitOnboarding(
   return data;
 }
 
-export async function submit(serializedTx: string, signature: string) {
+export async function submit(partyId: string, serialized: string, signature: string) {
   const { data } = await gatewayNetwork<TransactionSubmitResponse, TransactionSubmitRequest>({
     method: "POST",
-    url: `${getGatewayUrl()}/v1/node/${getNodeId()}/transaction/submit`,
+    url: `${getGatewayUrl()}/v1/node/${getNodeId()}/party/${partyId}/transaction/submit`,
     data: {
-      serialized: serializedTx,
+      serialized,
       signature,
     },
   });

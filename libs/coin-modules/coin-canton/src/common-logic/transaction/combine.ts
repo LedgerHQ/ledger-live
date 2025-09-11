@@ -1,9 +1,7 @@
 // Combines signature with raw transaction
-export function combine(transaction: string, signature: string): string {
-  const tx = JSON.parse(transaction);
-
+export function combine(serialized: string, signature: string): string {
   return JSON.stringify({
-    ...tx,
+    serialized,
     signature,
   });
 }
