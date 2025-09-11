@@ -8,8 +8,8 @@ const PRELOAD_MAX_AGE = 30 * 60 * 1000; // 30 minutes
 
 let currentPreloadedData: SuiPreloadData = { validators: [] };
 
-function fromHydratePreloadData(_data: SuiPreloadData): SuiPreloadData {
-  return { validators: _data.validators };
+function fromHydratePreloadData(data: SuiPreloadData): SuiPreloadData {
+  return { validators: data?.validators ?? [] };
 }
 
 const updates = new Subject<SuiPreloadData>();

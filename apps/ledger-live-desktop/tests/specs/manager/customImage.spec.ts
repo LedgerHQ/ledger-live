@@ -9,7 +9,7 @@ import padStart from "lodash/padStart";
 
 test.use({ userdata: "skip-onboarding" });
 
-test("Custom image", async ({ page }) => {
+test("Custom image Stax", async ({ page }) => {
   const managerPage = new ManagerPage(page);
   const deviceAction = new DeviceAction(page);
   const customImageDrawer = new CustomImageDrawer(page);
@@ -26,7 +26,7 @@ test("Custom image", async ({ page }) => {
    * screenshots are correct by examining them in order.
    * */
   function generateScreenshotPrefix() {
-    const prefix = `custom-image-${padStart(screenshotIndex.toString(), 3, "0")}-`;
+    const prefix = `custom-image-stax-${padStart(screenshotIndex.toString(), 3, "0")}-`;
     screenshotIndex += 1;
     return prefix;
   }
@@ -189,5 +189,68 @@ test("Custom image", async ({ page }) => {
     await expect(container).toHaveScreenshot(`${generateScreenshotPrefix()}transfer-loaded.png`);
 
     await customImageDrawer.clickFinish();
+  });
+});
+
+test("Custom image Apex", async ({ page }) => {
+  // run all the same steps but with Apex instead of Stax, then just take a screenshot for preview contrast 1-2-3
+  const managerPage = new ManagerPage(page);
+  const deviceAction = new DeviceAction(page);
+  const customImageDrawer = new CustomImageDrawer(page);
+  const layout = new Layout(page);
+
+  const container = customImageDrawer.container;
+
+  let screenshotIndex = 0;
+
+  /**
+   * Allows to easily navigate between screenshots in their order of execution.
+   * Yes if we remove/add screenshots it will shift everything but that should
+   * happened rarely, and even then it will be more convenient to check that the
+   * screenshots are correct by examining them in order.
+   * */
+  function generateScreenshotPrefix() {
+    const prefix = `custom-image-apex-${padStart(screenshotIndex.toString(), 3, "0")}-`;
+    screenshotIndex += 1;
+    return prefix;
+  }
+
+  await test.step("Access manager", async () => {
+    await layout.goToManager();
+    await deviceAction.accessManager("", "", DeviceModelId.apex);
+    await managerPage.customImageButton.waitFor({ state: "visible" });
+  });
+
+  await test.step("Open custom image drawer", async () => {
+    await managerPage.openCustomImage();
+    await container.waitFor({ state: "attached" });
+  });
+
+  await test.step("Import image", async () => {
+    await customImageDrawer.importImage("tests/specs/manager/sample-custom-image.jpg");
+    await customImageDrawer.importImageInput.waitFor({ state: "detached" });
+    await customImageDrawer.waitForCropConfirmable();
+  });
+
+  await test.step("Adjust image", async () => {
+    await customImageDrawer.waitForCropConfirmable();
+    await customImageDrawer.confirmCrop();
+  });
+
+  await test.step("Transfer image", async () => {
+    await customImageDrawer.contrastContinueButton.waitFor({ state: "attached" });
+  });
+
+  await test.step("Choose contrast", async () => {
+    await customImageDrawer.contrastContinueButton.waitFor({ state: "attached" });
+    await expect(container).toHaveScreenshot(
+      `${generateScreenshotPrefix()}preview-contrast-initial.png`,
+    );
+    await customImageDrawer.chooseContrast(1);
+    await expect(container).toHaveScreenshot(`${generateScreenshotPrefix()}preview-contrast-1.png`);
+    await customImageDrawer.chooseContrast(2);
+    await expect(container).toHaveScreenshot(`${generateScreenshotPrefix()}preview-contrast-2.png`);
+    await customImageDrawer.chooseContrast(0);
+    await expect(container).toHaveScreenshot(`${generateScreenshotPrefix()}preview-contrast-0.png`);
   });
 });

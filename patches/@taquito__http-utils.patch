@@ -1,43 +1,43 @@
 diff --git a/dist/taquito-http-utils.es6.js b/dist/taquito-http-utils.es6.js
-index 2750d3bce03a6413a83cec1f7bbd5311e30b44f4..afe3c0577b9c478165537bf512a20af73c2ca2e2 100644
+index 2750d3bce03a6413a83cec1f7bbd5311e30b44f4..f9d28bb23b816ae7e6c73173c54f9372c9841558 100644
 --- a/dist/taquito-http-utils.es6.js
 +++ b/dist/taquito-http-utils.es6.js
-@@ -415,13 +415,11 @@ if (isNode) {
+@@ -415,13 +415,13 @@ if (isNode) {
      fetch = require('node-fetch');
      if (Number(process.versions.node.split('.')[0]) >= 19) {
          // we need agent with keepalive false for node 19 and above
 -        createAgent = (url) => __awaiter(void 0, void 0, void 0, function* () {
 -            const { Agent: HttpsAgent } = yield import('https');
 -            const { Agent: HttpAgent } = yield import('http');
++        const HttpsAgent = require('https').Agent;
++        const HttpAgent = require('http').Agent;
 +        createAgent = (url) => {
              return url.startsWith('https')
--                ? new HttpsAgent({ keepAlive: false })
--                : new HttpAgent({ keepAlive: false });
+                 ? new HttpsAgent({ keepAlive: false })
+                 : new HttpAgent({ keepAlive: false });
 -        });
-+                ? new require('https').Agent({ keepAlive: false })
-+                : new require('http').Agent({ keepAlive: false });
 +        };
      }
  }
  class HttpBackend {
 diff --git a/dist/taquito-http-utils.umd.js b/dist/taquito-http-utils.umd.js
-index fa74f64f45c61839ffdcd01169e01a6956a535e3..111c657e76c41bf36eb02403c8b8515c9927671a 100644
+index fa74f64f45c61839ffdcd01169e01a6956a535e3..29b7cb19cd3394f5ae63022c0c2220a76922ec09 100644
 --- a/dist/taquito-http-utils.umd.js
 +++ b/dist/taquito-http-utils.umd.js
-@@ -419,13 +419,11 @@
+@@ -419,13 +419,13 @@
          fetch = require('node-fetch');
          if (Number(process.versions.node.split('.')[0]) >= 19) {
              // we need agent with keepalive false for node 19 and above
 -            createAgent = (url) => __awaiter(void 0, void 0, void 0, function* () {
 -                const { Agent: HttpsAgent } = yield import('https');
 -                const { Agent: HttpAgent } = yield import('http');
++            const HttpsAgent = require('https').Agent;
++            const HttpAgent = require('http').Agent;
 +            createAgent = (url) => {
                  return url.startsWith('https')
--                    ? new HttpsAgent({ keepAlive: false })
--                    : new HttpAgent({ keepAlive: false });
+                     ? new HttpsAgent({ keepAlive: false })
+                     : new HttpAgent({ keepAlive: false });
 -            });
-+                    ? new require('https').Agent({ keepAlive: false })
-+                    : new require('http').Agent({ keepAlive: false });
 +            };
          }
      }

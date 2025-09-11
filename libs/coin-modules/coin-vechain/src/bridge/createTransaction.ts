@@ -1,7 +1,7 @@
 import BigNumber from "bignumber.js";
 import { AccountBridge } from "@ledgerhq/types-live";
 import { generateNonce } from "../common-logic";
-import { Transaction, DEFAULT_GAS_COEFFICIENT, MAINNET_CHAIN_TAG } from "../types";
+import { Transaction, MAINNET_CHAIN_TAG } from "../types";
 
 /**
  * Create an empty VET or VTHO transaction
@@ -18,7 +18,8 @@ export const createTransaction: AccountBridge<Transaction>["createTransaction"] 
       blockRef: "0x0000000000000000",
       expiration: 18,
       clauses: [],
-      gasPriceCoef: DEFAULT_GAS_COEFFICIENT,
+      maxFeePerGas: 0,
+      maxPriorityFeePerGas: 0,
       gas: "0",
       dependsOn: null,
       nonce: generateNonce(),

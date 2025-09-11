@@ -16,7 +16,6 @@ import * as CALTokensAPI from "@ledgerhq/cryptoassets/tokens";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import { fetchERC20Tokens, hydrate, preload } from "../../bridge/preload";
 import { __resetCALHash, getCALHash, setCALHash } from "../../logic";
-import { setCryptoAssetsStoreGetter } from "../../cryptoAssetsStore";
 
 const currency1 = getCryptoCurrencyById("ethereum"); // chain id 1
 const currency2 = getCryptoCurrencyById("bsc"); // chain id 56
@@ -48,20 +47,8 @@ jest.mock("@ledgerhq/cryptoassets/data/evm/index", () => ({
 }));
 
 describe("EVM Family", () => {
-  let mockAddTokens: jest.Mock;
-
   beforeEach(() => {
     CALTokensAPI.__clearAllLists();
-
-    mockAddTokens = jest.fn();
-    setCryptoAssetsStoreGetter(() => ({
-      findTokenByAddress: jest.fn(),
-      getTokenById: jest.fn(),
-      findTokenById: jest.fn(),
-      findTokenByAddressInCurrency: jest.fn(),
-      findTokenByTicker: jest.fn(),
-      addTokens: mockAddTokens,
-    }));
     mockedAxios.get.mockImplementation(async (url, { params, headers } = {}) => {
       if (url !== "https://crypto-assets-service.api.ledger.com/v1/tokens")
         throw new Error("UNEXPECTED URL");
@@ -208,7 +195,7 @@ describe("EVM Family", () => {
         setCALHash(currency1, "initialState1");
         const tokens = await preload(currency1);
         expect(tokens).toEqual([usdcDefinition, usdtDefinition]);
-        expect(mockAddTokens).toHaveBeenCalledWith([
+        expect(CALTokensAPI.addTokens).toHaveBeenCalledWith([
           CALTokensAPI.convertERC20(usdcDefinition),
           CALTokensAPI.convertERC20(usdtDefinition),
         ]);
@@ -227,19 +214,23 @@ describe("EVM Family", () => {
       it("should register ERC20 tokens from embedded", async () => {
         hydrate(undefined, currency1);
 
-        expect(mockAddTokens).toHaveBeenCalledWith([CALTokensAPI.convertERC20(usdcDefinition)]);
+        expect(CALTokensAPI.addTokens).toHaveBeenCalledWith([
+          CALTokensAPI.convertERC20(usdcDefinition),
+        ]);
       });
 
       it("should register ERC20 tokens from embedded with anything other than an array", async () => {
         hydrate({}, currency1);
 
-        expect(mockAddTokens).toHaveBeenCalledWith([CALTokensAPI.convertERC20(usdcDefinition)]);
+        expect(CALTokensAPI.addTokens).toHaveBeenCalledWith([
+          CALTokensAPI.convertERC20(usdcDefinition),
+        ]);
       });
 
       it("should register ERC20 tokens", async () => {
         hydrate([usdcDefinition, usdtDefinition], currency1);
 
-        expect(mockAddTokens).toHaveBeenCalledWith([
+        expect(CALTokensAPI.addTokens).toHaveBeenCalledWith([
           CALTokensAPI.convertERC20(usdcDefinition),
           CALTokensAPI.convertERC20(usdtDefinition),
         ]);
@@ -248,7 +239,7 @@ describe("EVM Family", () => {
       it("should register BEP20 tokens", async () => {
         hydrate([binanceDaiDefinition], currency2);
 
-        expect(mockAddTokens).toHaveBeenCalledWith([
+        expect(CALTokensAPI.addTokens).toHaveBeenCalledWith([
           CALTokensAPI.convertERC20(binanceDaiDefinition),
         ]);
       });

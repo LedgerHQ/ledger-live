@@ -24,6 +24,7 @@ import { tronConfig } from "../families/tron/config";
 import { vechainConfig } from "../families/vechain/config";
 import { iconConfig } from "../families/icon/config";
 import { suiConfig } from "../families/sui/config";
+import { cantonConfig } from "../families/canton/config";
 
 const countervaluesConfig: ConfigSchema = {
   config_countervalues_refreshRate: {
@@ -67,4 +68,5 @@ export const liveConfig: ConfigSchema = {
   ...iconConfig,
   ...tonConfig,
   ...suiConfig,
+  ...cantonConfig,
 };

@@ -327,6 +327,11 @@ const envDefinitions = {
     def: "https://tracker.berlin.icon.community/api/v1",
     desc: "ICON Berlin Testnet API url",
   },
+  CANTON_API_KEY: {
+    def: "",
+    parser: stringParser,
+    desc: "API key for Canton network gateway authentication",
+  },
   COINAPPS: {
     def: "",
     parser: stringParser,

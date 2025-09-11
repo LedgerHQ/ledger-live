@@ -55,7 +55,11 @@ const Navbar = () => {
 
   return (
     <Nav>
-      <Chip onTabChange={onWrappedTabChange} initialActiveIndex={currentIndex}>
+      <Chip
+        onTabChange={onWrappedTabChange}
+        initialActiveIndex={currentIndex}
+        key={`chip-${currentIndex}-${pathname}`}
+      >
         {tabs.map((tab, idx) => (
           <Text key={tab} data-testid={`${tab}-tab-button`} data-active={currentIndex === idx}>
             {tab}

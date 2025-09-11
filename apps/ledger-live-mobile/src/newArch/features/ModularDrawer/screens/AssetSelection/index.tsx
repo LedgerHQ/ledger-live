@@ -138,6 +138,7 @@ const AssetSelection = ({
         getItem={(items, index) => items[index]}
         renderItem={renderItem}
         showsVerticalScrollIndicator={false}
+        keyboardShouldPersistTaps="handled"
         ListEmptyComponent={<AssetsEmptyList />}
         contentContainerStyle={{
           paddingBottom: SAFE_MARGIN_BOTTOM,

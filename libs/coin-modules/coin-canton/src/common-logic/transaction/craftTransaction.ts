@@ -1,7 +1,5 @@
 import BigNumber from "bignumber.js";
-import { BoilerplateNativeTransaction } from "../../types";
-
-const encodeNativeTx = (nativeTx: BoilerplateNativeTransaction) => JSON.stringify(nativeTx);
+import { prepareTransferRequest, PrepareTransferResponse } from "../../network/gateway";
 
 export async function craftTransaction(
   account: {
@@ -12,25 +10,23 @@ export async function craftTransaction(
   transaction: {
     recipient?: string;
     amount: BigNumber;
-    fee?: BigNumber;
+    tokenId: string;
+    expireInSeconds: number;
   },
 ): Promise<{
-  nativeTransaction: BoilerplateNativeTransaction;
+  nativeTransaction: PrepareTransferResponse;
   serializedTransaction: string;
 }> {
-  const nativeTransaction: BoilerplateNativeTransaction = {
-    TransactionType: "Payment",
-    Account: account.address,
-    Amount: transaction.amount.toString(),
-    Destination: transaction.recipient || "",
-    Fee: transaction.fee?.toString() || "0",
-    Sequence: account.nextSequenceNumber || 0,
-  };
-
-  const serializedTransaction = encodeNativeTx(nativeTransaction);
+  const { serialized, json } = await prepareTransferRequest(account.address, {
+    recipient: transaction.recipient || "",
+    amount: transaction.amount.toNumber(),
+    type: "token-transfer-request",
+    execute_before_secs: transaction.expireInSeconds,
+    instrument_id: transaction.tokenId,
+  });
 
   return {
-    nativeTransaction,
-    serializedTransaction,
+    nativeTransaction: json,
+    serializedTransaction: serialized,
   };
 }

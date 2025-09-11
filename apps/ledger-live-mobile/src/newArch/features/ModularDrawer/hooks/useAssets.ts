@@ -34,7 +34,7 @@ export function useAssets({
   useCase,
   areCurrenciesFiltered,
 }: AssetsProps) {
-  const { data, isLoading, isSuccess, error, refetch, loadNext } = useAssetsData({
+  const { data, isLoading, isSuccess, isError, error, refetch, loadNext } = useAssetsData({
     search: searchedValue,
     currencyIds,
     product: "llm",
@@ -78,6 +78,7 @@ export function useAssets({
     data,
     isLoading,
     isSuccess,
+    isError,
     error,
     loadingStatus,
     assetsSorted,

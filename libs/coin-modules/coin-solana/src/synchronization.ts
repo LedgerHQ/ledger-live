@@ -51,7 +51,6 @@ import { tryParseAsMintAccount } from "./network/chain/account";
 import ky from "ky";
 import { isSignaturesForAddressResponse } from "./utils";
 import { getCryptoAssetsStore } from "./cryptoAssetsStore";
-import { fetchSPLTokens } from "./preload";
 
 export async function getAccount(
   address: string,
@@ -192,12 +191,6 @@ export const getAccountShapeWithAPI = async (
     currency,
     derivationMode,
   } = info;
-
-  try {
-    await fetchSPLTokens(currency);
-  } catch (error) {
-    console.warn(`Solana token preload failed for ${currency.id}:`, error);
-  }
 
   const {
     blockHeight,

@@ -103,4 +103,15 @@ describe("useSearch", () => {
 
     expect(store.getState().modularDrawer.searchValue).toBe("ET");
   });
+
+  it("should ignore whitespace-only queries", () => {
+    const { result, store } = renderHook(() => useSearch(defaultProps));
+
+    act(() => {
+      result.current.handleSearch("   ");
+      result.current.handleDebouncedChange("   ", "");
+    });
+
+    expect(store.getState().modularDrawer.searchValue).toBe("");
+  });
 });

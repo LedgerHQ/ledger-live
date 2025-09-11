@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from "react";
-import { ProcessorResult } from "~/renderer/components/CustomImage/ImageGrayscalePreview";
+import { ProcessorResult } from "~/renderer/components/CustomImage/dithering/types";
 import { Step, StepProps } from "./types";
 import { useTranslation } from "react-i18next";
 import { Flex } from "@ledgerhq/react-ui";

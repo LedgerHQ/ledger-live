@@ -1645,7 +1645,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     coinType: CoinType.IOTA,
     name: "IOTA",
     managerAppName: "IOTA",
-    ticker: "MIOTA",
+    ticker: "IOTA",
     scheme: "iota",
     color: "#000000",
     family: "iota",

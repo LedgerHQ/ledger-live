@@ -32,7 +32,7 @@ export function useAssetsData({
   product: "llm" | "lld";
   version: string;
 }) {
-  const { data, isLoading, error, fetchNextPage, isSuccess, refetch } =
+  const { data, isLoading, error, fetchNextPage, isSuccess, refetch, isFetching, isError } =
     useGetAssetsDataInfiniteQuery({
       search,
       useCase,
@@ -64,10 +64,11 @@ export function useAssetsData({
 
   return {
     data: joinedPages,
-    isLoading,
+    isLoading: isLoading || isFetching,
     error,
     loadNext: hasMore ? fetchNextPage : undefined,
     isSuccess,
+    isError,
     refetch,
   };
 }

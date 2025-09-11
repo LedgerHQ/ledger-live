@@ -23,7 +23,7 @@ import { getExplorerApi } from "../network/explorer";
 import { getNodeApi } from "../network/node/index";
 import { attachOperations, getSyncHash, mergeSubAccounts, createSwapHistoryMap } from "../logic";
 import { lastBlock } from "../logic/lastBlock";
-import { preload } from "./preload";
+
 /**
  * Number of blocks that are considered "unsafe" due to a potential reorg.
  * Everything older than this number, should be considered immutable.
@@ -36,12 +36,6 @@ export const SAFE_REORG_THRESHOLD = 80;
  */
 export const getAccountShape: GetAccountShape<Account> = async (infos, { blacklistedTokenIds }) => {
   const { initialAccount, address, derivationMode, currency } = infos;
-  try {
-    await preload(currency);
-  } catch (error) {
-    log("EVM Sync", `Token preload failed for ${currency.id}:`, error);
-  }
-
   const nodeApi = getNodeApi(currency);
   const [latestBlock, balance] = await Promise.all([
     lastBlock(currency),
