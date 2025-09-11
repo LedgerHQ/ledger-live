@@ -88,13 +88,10 @@ type Props = {
 };
 const showSender = (o: Operation) => o.senders[0];
 const showRecipient = (o: Operation) => o.recipients[0];
-const showNothing = () => null;
 const perOperationType = {
   IN: showSender,
   REVEAL: showSender,
   REWARD_PAYOUT: showSender,
-  NFT_IN: showNothing,
-  NFT_OUT: showNothing,
   _: showRecipient,
 };
 class AddressCell extends PureComponent<Props> {
