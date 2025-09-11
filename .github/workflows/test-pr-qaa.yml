@@ -1,0 +1,45 @@
+name: "[E2E] - Test - PR"
+on:
+  pull_request: ~
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref_name != 'develop' && github.ref || github.run_id }}
+  cancel-in-progress: true
+
+permissions:
+  id-token: write
+  contents: read
+  pull-requests: write
+  actions: write
+
+jobs:
+
+  determine-affected:
+    name: "Turbo Affected"
+    needs: pre_job
+    if: ${{!github.event.pull_request.head.repo.fork && needs.pre_job.outputs.should_skip != 'true'}}
+    uses: LedgerHQ/ledger-live/.github/workflows/turbo-affected-reusable.yml@develop
+    with:
+      head_branch: ${{ github.event.pull_request.head.ref || github.event.merge_group.head_ref }}
+      base_branch: ${{ github.event.pull_request.base.ref || github.event.merge_group.base_ref }}
+
+  lint-e2e:
+    name: "Lint E2E tests"
+    needs: determine-affected
+    if: ${{contains(needs.determine-affected.outputs.paths, 'e2e/mobile') && !github.event.pull_request.head.repo.fork}}
+    runs-on: ubuntu-22.04
+    steps:
+      - run: echo "E2E Linting not set up yet"
+
+  # Final Check required
+  ok:
+    name: "QAA Scripts OK"
+    needs:
+      - lint-e2e
+      - determine-affected
+    runs-on: ubuntu-22.04
+    if: always() && !cancelled() && needs.determine-affected.result == 'success'
+    steps:
+      - name: Check result
+        if: contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled')
+        run: exit 1
