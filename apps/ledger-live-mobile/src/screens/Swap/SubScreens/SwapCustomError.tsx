@@ -32,6 +32,7 @@ export default function SwapCustomError({ route }: SwapCustomErrorProps) {
       track("error_message", {
         ...sharedSwapTracking,
         message: "partner_unavailable",
+        error_code: dynamicErrorCode,
       });
       return {
         title: t("swapErrors.transactionCannotBeCreated.title"),
