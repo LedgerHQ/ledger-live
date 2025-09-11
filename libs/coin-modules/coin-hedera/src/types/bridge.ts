@@ -1,4 +1,5 @@
-import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import BigNumber from "bignumber.js";
+import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import type {
   Account,
   AccountRaw,
@@ -26,12 +27,14 @@ export type TokenAssociateProperties = {
 export type Transaction = TransactionCommon & {
   family: "hedera";
   memo?: string | undefined;
+  maxFee?: BigNumber;
   properties?: TokenAssociateProperties;
 };
 
 export type TransactionRaw = TransactionCommonRaw & {
   family: "hedera";
   memo?: string | undefined;
+  maxFee?: string;
   properties?: TokenAssociateProperties;
 };
 
