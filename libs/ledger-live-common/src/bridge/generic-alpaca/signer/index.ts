@@ -7,6 +7,7 @@ import { CreateSigner, executeWithSigner } from "../../setup";
 import Xrp from "@ledgerhq/hw-app-xrp";
 import Transport from "@ledgerhq/hw-transport";
 import { AlpacaSigner } from "./types";
+import { context as evmContext, getAddress as evmGetAddress } from "./Eth";
 
 const createSignerXrp: CreateSigner<Xrp> = (transport: Transport) => {
   return new Xrp(transport);
@@ -52,6 +53,12 @@ export function getSigner(network: string): AlpacaSigner {
         getAddress: stellarGetAddress(signerContextStellar),
         signTransaction: stellarSignTransaction(signerContextStellar),
         context: signerContextStellar,
+      };
+    }
+    case "evm": {
+      return {
+        getAddress: evmGetAddress,
+        context: evmContext,
       };
     }
   }

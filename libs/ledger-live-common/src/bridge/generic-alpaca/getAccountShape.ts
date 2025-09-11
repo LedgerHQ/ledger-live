@@ -8,8 +8,9 @@ import { buildSubAccounts, OperationCommon } from "./buildSubAccounts";
 
 export function genericGetAccountShape(network: string, kind: string): GetAccountShape {
   return async (info, syncConfig) => {
+    console.log("GENERIC GET ACCOUNT SHAPE");
     const { address, initialAccount, currency, derivationMode } = info;
-    const alpacaApi = getAlpacaApi(network, kind);
+    const alpacaApi = getAlpacaApi(currency.id, kind);
 
     if (alpacaApi.getChainSpecificRules) {
       const chainSpecificValidation = alpacaApi.getChainSpecificRules();

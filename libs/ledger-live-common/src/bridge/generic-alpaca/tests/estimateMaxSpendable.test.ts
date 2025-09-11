@@ -35,9 +35,51 @@ const dummyAccounts = [
     freshAddress: "s123",
     pendingOperations: [],
   },
+  {
+    id: "js:2:ethereum:e123:",
+    type: "Account",
+    spendableBalance: new BigNumber(50000000),
+    balance: new BigNumber(60000000),
+    currency: {
+      id: "ethereum",
+      family: "evm",
+      name: "Ethereum",
+      units: [{ name: "ethereum", magnitude: 18 }],
+    },
+    freshAddress: "e123",
+    pendingOperations: [],
+  },
+  {
+    id: "js:2:sonic:so123:",
+    type: "Account",
+    spendableBalance: new BigNumber(50000000),
+    balance: new BigNumber(60000000),
+    currency: {
+      id: "sonic",
+      family: "evm",
+      name: "Sonic",
+      units: [{ name: "S", magnitude: 18 }],
+    },
+    freshAddress: "so123",
+    pendingOperations: [],
+  },
+  {
+    id: "js:2:polygon:p123:",
+    type: "Account",
+    spendableBalance: new BigNumber(50000000),
+    balance: new BigNumber(60000000),
+    currency: {
+      id: "polygon",
+      family: "evm",
+      name: "Polygon",
+      units: [{ name: "POL", magnitude: 18 }],
+    },
+    freshAddress: "p123",
+    pendingOperations: [],
+  },
 ] as unknown as Account[];
 
-["xrp", "stellar"].forEach((currencyName, idx) => {
+["xrp", "stellar", "ethereum", "sonic", "polygn"].forEach((currencyName, idx) => {
   describe(`genericEstimateMaxSpendable for ${currencyName}`, () => {
     const dummyAccount = dummyAccounts[idx];
 

@@ -14,7 +14,7 @@ jest.mock("../utils", () => ({
   transactionToIntent: jest.fn(),
 }));
 describe("genericSignOperation", () => {
-  const networks = ["xrp", "stellar"];
+  const networks = ["xrp", "stellar", "ethereum", "polygon", "sonic"];
   const kind = "local";
 
   const mockSignerContext = jest.fn();
@@ -22,11 +22,6 @@ describe("genericSignOperation", () => {
     getAddress: jest.fn(),
     signTransaction: jest.fn(),
   };
-
-  const account = {
-    freshAddressPath: "44'/144'/0'/0/0",
-    address: "rTestAddress",
-  } as any;
 
   const transaction = {
     amount: 100_000n,
@@ -66,6 +61,12 @@ describe("genericSignOperation", () => {
   });
 
   networks.forEach(network => {
+    const account = {
+      freshAddressPath: "44'/144'/0'/0/0",
+      address: "rTestAddress",
+      currency: { id: network },
+    } as any;
+
     it(`emits full sign operation flow for ${network}`, async () => {
       const signOperation = genericSignOperation(network, kind)(mockSignerContext);
       const observable = signOperation({ account, transaction, deviceId });
