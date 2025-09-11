@@ -8482,8 +8482,8 @@ importers:
         specifier: 0.0.0-fix-lns-20250901094837
         version: 0.0.0-fix-lns-20250901094837(rxjs@7.8.1)
       '@ledgerhq/device-signer-kit-solana':
-        specifier: 0.0.0-patch-transactionInspector-20250910142959
-        version: 0.0.0-patch-transactionInspector-20250910142959(@ledgerhq/device-management-kit@0.0.0-fix-lns-20250901094837(rxjs@7.8.1))(typescript@5.4.3)
+        specifier: 0.0.0-patch-transactionInspector-20250911081347
+        version: 0.0.0-patch-transactionInspector-20250911081347(@ledgerhq/device-management-kit@0.0.0-fix-lns-20250901094837(rxjs@7.8.1))(typescript@5.4.3)
       '@ledgerhq/devices':
         specifier: workspace:*
         version: link:../ledgerjs/packages/devices
@@ -14485,10 +14485,10 @@ packages:
   '@kwsites/promise-deferred@1.1.1':
     resolution: {integrity: sha512-GaHYm+c0O9MjZRu0ongGBRbinu8gVAMd2UZjji6jVmqKtZluZnptXGWhz1E8j8D2HJ3f/yMxKAUC0b+57wncIw==}
 
-  '@ledgerhq/context-module@0.0.0-patch-transactionInspector-20250910142959':
-    resolution: {integrity: sha512-e0JC4Z8lbI0ypmWdbArv7G5uNTeAYHz1rQm+8fY2HhgPvk8GqQsrhMSLFBM0azUuVP5XAgzA83N3BOrQ48XG6w==}
+  '@ledgerhq/context-module@0.0.0-patch-transactionInspector-20250911081347':
+    resolution: {integrity: sha512-PS7MpbY7fO+OeBBxRRsepkMkdqyPfbtFK4xCHrh345eHtJ1pa91HU9/N2VfXuu91uDIpvA4eMeTo+JlaGyKT9A==}
     peerDependencies:
-      '@ledgerhq/device-management-kit': 0.0.0-patch-transactionInspector-20250910142959
+      '@ledgerhq/device-management-kit': 0.0.0-patch-transactionInspector-20250911081347
 
   '@ledgerhq/context-module@1.7.0':
     resolution: {integrity: sha512-dXODmbGhXsLvyDUlIerAX7hchrs5Kp14itl3SfSNeeDTyEh+iH7lQeigeeVi8ciCmUUn1QQ40yuJqJpX6bFd8g==}
@@ -14551,10 +14551,10 @@ packages:
       '@ledgerhq/context-module': 1.7.0
       '@ledgerhq/device-management-kit': 0.9.0
 
-  '@ledgerhq/device-signer-kit-solana@0.0.0-patch-transactionInspector-20250910142959':
-    resolution: {integrity: sha512-eAEMxudrOZGNp/rSPrSk2fBH8iSarBjP4Db6el2HrGoz7ApQuz/GREw/sXkFlcrWt5cBl0VC5cLB/3y1M9REmw==}
+  '@ledgerhq/device-signer-kit-solana@0.0.0-patch-transactionInspector-20250911081347':
+    resolution: {integrity: sha512-DzqkbtwCB5nVDnyZFGMg9oq7J1LQGlOPcV8G62W/UMUe+lC1GD8mHYhgMlWR11s/FyrqKogedEMb+4X9CL5mRw==}
     peerDependencies:
-      '@ledgerhq/device-management-kit': 0.0.0-patch-transactionInspector-20250910142959
+      '@ledgerhq/device-management-kit': 0.0.0-patch-transactionInspector-20250911081347
 
   '@ledgerhq/device-transport-kit-react-native-ble@1.1.0':
     resolution: {integrity: sha512-+d+WBya6Habwm5JF8GMSBcSDuuiXc+Ow+B7PZHHkow3IL+mx1B5RI9Vew3MvB7QgWkcslUCETCOahujDOyQnaA==}
@@ -14625,10 +14625,10 @@ packages:
   '@ledgerhq/logs@6.13.0':
     resolution: {integrity: sha512-4+qRW2Pc8V+btL0QEmdB2X+uyx0kOWMWE1/LWsq5sZy3Q5tpi4eItJS6mB0XL3wGW59RQ+8bchNQQ1OW/va8Og==}
 
-  '@ledgerhq/signer-utils@0.0.0-patch-transactionInspector-20250910142959':
-    resolution: {integrity: sha512-M/nNmjrWA6aXYWICpIj/Cvm+QtA3zpOqe6ok/z0xAaZ5GGzxocBGa2V19dZfcok1x3yuAyRDgW7L1D5NfsaJ+Q==}
+  '@ledgerhq/signer-utils@0.0.0-patch-transactionInspector-20250911081347':
+    resolution: {integrity: sha512-OUBe3OnTqiCcwm5RVtDP6qbLxXxR6RhvgSWPdsUJD6vIwf8gJRP2cJr3MvB78oQs3kGoN9coL4itDTBRlB0nWQ==}
     peerDependencies:
-      '@ledgerhq/device-management-kit': 0.0.0-patch-transactionInspector-20250910142959
+      '@ledgerhq/device-management-kit': 0.0.0-patch-transactionInspector-20250911081347
 
   '@ledgerhq/signer-utils@1.1.0':
     resolution: {integrity: sha512-zp8kyNF0sNMUG2VkgOL7rDu8W6U1P8yvTA3wIDjjlqoIOPanvodfezeub69fOuHJ2QG/JmnS8YZCGIoSWpQYkA==}
@@ -43461,7 +43461,7 @@ snapshots:
 
   '@kwsites/promise-deferred@1.1.1': {}
 
-  '@ledgerhq/context-module@0.0.0-patch-transactionInspector-20250910142959(@ledgerhq/device-management-kit@0.0.0-fix-lns-20250901094837(rxjs@7.8.1))':
+  '@ledgerhq/context-module@0.0.0-patch-transactionInspector-20250911081347(@ledgerhq/device-management-kit@0.0.0-fix-lns-20250901094837(rxjs@7.8.1))':
     dependencies:
       '@ledgerhq/device-management-kit': 0.0.0-fix-lns-20250901094837(rxjs@7.8.1)
       axios: 1.8.2
@@ -43588,11 +43588,11 @@ snapshots:
       - bufferutil
       - utf-8-validate
 
-  '@ledgerhq/device-signer-kit-solana@0.0.0-patch-transactionInspector-20250910142959(@ledgerhq/device-management-kit@0.0.0-fix-lns-20250901094837(rxjs@7.8.1))(typescript@5.4.3)':
+  '@ledgerhq/device-signer-kit-solana@0.0.0-patch-transactionInspector-20250911081347(@ledgerhq/device-management-kit@0.0.0-fix-lns-20250901094837(rxjs@7.8.1))(typescript@5.4.3)':
     dependencies:
-      '@ledgerhq/context-module': 0.0.0-patch-transactionInspector-20250910142959(@ledgerhq/device-management-kit@0.0.0-fix-lns-20250901094837(rxjs@7.8.1))
+      '@ledgerhq/context-module': 0.0.0-patch-transactionInspector-20250911081347(@ledgerhq/device-management-kit@0.0.0-fix-lns-20250901094837(rxjs@7.8.1))
       '@ledgerhq/device-management-kit': 0.0.0-fix-lns-20250901094837(rxjs@7.8.1)
-      '@ledgerhq/signer-utils': 0.0.0-patch-transactionInspector-20250910142959(@ledgerhq/device-management-kit@0.0.0-fix-lns-20250901094837(rxjs@7.8.1))
+      '@ledgerhq/signer-utils': 0.0.0-patch-transactionInspector-20250911081347(@ledgerhq/device-management-kit@0.0.0-fix-lns-20250901094837(rxjs@7.8.1))
       '@solana/spl-token': 0.4.14(@solana/web3.js@1.98.4(typescript@5.4.3))(typescript@5.4.3)
       '@solana/web3.js': 1.98.4(typescript@5.4.3)
       bs58: 6.0.0
@@ -43709,7 +43709,7 @@ snapshots:
 
   '@ledgerhq/logs@6.13.0': {}
 
-  '@ledgerhq/signer-utils@0.0.0-patch-transactionInspector-20250910142959(@ledgerhq/device-management-kit@0.0.0-fix-lns-20250901094837(rxjs@7.8.1))':
+  '@ledgerhq/signer-utils@0.0.0-patch-transactionInspector-20250911081347(@ledgerhq/device-management-kit@0.0.0-fix-lns-20250901094837(rxjs@7.8.1))':
     dependencies:
       '@ledgerhq/device-management-kit': 0.0.0-fix-lns-20250901094837(rxjs@7.8.1)
 
