@@ -15,6 +15,7 @@ const mockedNavigation = {
   replace: jest.fn(),
   push: jest.fn(),
   pop: jest.fn(),
+  popTo: jest.fn(),
   popToTop: jest.fn(),
   goBack: jest.fn(),
   navigate: jest.fn(),
@@ -29,6 +30,9 @@ const mockedNavigation = {
   addListener: jest.fn(),
   removeListener: jest.fn(),
   setOptions: jest.fn(),
+  preload: jest.fn(),
+  navigateDeprecated: jest.fn(),
+  replaceParams: jest.fn(),
 };
 
 const genAcc = {

@@ -1,43 +1,27 @@
-import { renderHook, act } from "@tests/test-renderer";
+import { renderHook, waitFor } from "@tests/test-renderer";
 import { useAssets } from "../useAssets";
-import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
-import {
-  mockArbitrumCryptoCurrency,
-  mockBtcCryptoCurrency,
-  mockEthCryptoCurrency,
-  mockCurrenciesByProvider,
-} from "@ledgerhq/live-common/modularDrawer/__mocks__/currencies.mock";
-
-const mockCurrencies: CryptoOrTokenCurrency[] = [mockBtcCryptoCurrency, mockEthCryptoCurrency];
-
-const mockSortedCryptoCurrencies: CryptoOrTokenCurrency[] = [
-  mockBtcCryptoCurrency,
-  mockEthCryptoCurrency,
-  mockArbitrumCryptoCurrency,
-];
+import { expectedAssetsSorted as expectedAssetsSortedFromMock } from "@ledgerhq/live-common/modularDrawer/__mocks__/dada.mock";
+import { LoadingStatus } from "@ledgerhq/live-common/deposit/type";
 
 describe("useAssets", () => {
-  it("returns filtered sorted crypto currencies by default", () => {
-    const { result } = renderHook(() =>
-      useAssets(mockCurrencies, mockCurrenciesByProvider, mockSortedCryptoCurrencies),
-    );
-    expect(result.current.availableAssets).toEqual([mockEthCryptoCurrency]);
+  beforeEach(() => {
+    jest.clearAllMocks();
   });
 
-  it("returns all sorted crypto currencies if currencies is empty", () => {
-    const { result } = renderHook(() =>
-      useAssets([], mockCurrenciesByProvider, mockSortedCryptoCurrencies),
-    );
-    expect(result.current.availableAssets).toEqual(mockSortedCryptoCurrencies);
-  });
+  it("transforms data into assetsSorted and sortedCryptoCurrencies", async () => {
+    const { result } = renderHook(() => useAssets({}));
 
-  it("allows overriding assetsToDisplay", () => {
-    const { result } = renderHook(() =>
-      useAssets(mockCurrencies, mockCurrenciesByProvider, mockSortedCryptoCurrencies),
-    );
-    act(() => {
-      result.current.setAvailableAssets([mockSortedCryptoCurrencies[2]]);
-    });
-    expect(result.current.availableAssets).toEqual([mockSortedCryptoCurrencies[2]]);
+    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+    expect(result.current.isLoading).toBe(false);
+    expect(result.current.error).toBeUndefined();
+    expect(result.current.loadingStatus).toBe(LoadingStatus.Success);
+
+    // assetsSorted shape and order should match expected mock
+    const assets = result.current.assetsSorted?.map(a => a.asset);
+
+    expect(assets).toEqual(expectedAssetsSortedFromMock);
+
+    expect(result.current.sortedCryptoCurrencies.length).toBeGreaterThan(0);
+    expect(result.current.sortedCryptoCurrencies[0].id).toBe("bitcoin");
   });
 });

@@ -1,5 +1,11 @@
 # @ledgerhq/hw-app-btc
 
+## 10.11.0-next.0
+
+### Minor Changes
+
+- [#11503](https://github.com/LedgerHQ/ledger-live/pull/11503) [`0051b62`](https://github.com/LedgerHQ/ledger-live/commit/0051b62ca8f7ddddc0bdc316a8734362aacfbb58) Thanks [@gre-ledger](https://github.com/gre-ledger)! - use @noble/curves instead of secp256k1
+
 ## 10.10.2
 
 ### Patch Changes

@@ -60,7 +60,7 @@ describe("api/index", () => {
     const unsigned = Buffer.from("unsignedTx");
     jest.spyOn(logic, "craftTransaction").mockResolvedValue({ unsigned });
     const txIntent = { foo: "bar" } as any;
-    const result = await api.craftTransaction(txIntent);
+    const { transaction: result } = await api.craftTransaction(txIntent);
     expect(result).toBe(unsigned.toString("hex"));
     expect(logic.craftTransaction).toHaveBeenCalledWith(txIntent);
   });
@@ -111,8 +111,8 @@ describe("api/index", () => {
     const mockListOperations = jest
       .spyOn(logic, "listOperations")
       .mockResolvedValue([[minimalOperation], ""]); // Return empty string for cursor
-    const result = await api.listOperations("address", { minHeight: 0 });
-    expect(mockListOperations).toHaveBeenCalledWith("address", { minHeight: 0 });
+    const result = await api.listOperations("address", { minHeight: 0, order: "asc" });
+    expect(mockListOperations).toHaveBeenCalledWith("address", { minHeight: 0, order: "asc" });
     expect(result).toEqual([[minimalOperation], ""]);
   });
 

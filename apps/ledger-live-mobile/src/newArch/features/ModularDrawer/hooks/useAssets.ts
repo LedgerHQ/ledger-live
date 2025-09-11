@@ -1,51 +1,88 @@
-import { useMemo, useState, useEffect } from "react";
+import { useMemo } from "react";
+import { LoadingStatus } from "@ledgerhq/live-common/deposit/type";
+import { getLoadingStatus } from "@ledgerhq/live-common/modularDrawer/utils/getLoadingStatus";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
-import {
-  buildProviderCoverageMap,
-  extractProviderCurrencies,
-  filterProvidersByIds,
-} from "@ledgerhq/live-common/modularDrawer/utils/currencyUtils";
-import { CurrenciesByProviderId } from "@ledgerhq/live-common/deposit/type";
+import { useAssetsData } from "@ledgerhq/live-common/modularDrawer/hooks/useAssetsData";
+import { MarketItemResponse } from "@ledgerhq/live-common/market/utils/types";
+import { InterestRate } from "@ledgerhq/live-common/modularDrawer/data/entities/index";
+import VersionNumber from "react-native-version-number";
 
-export function useAssets(
-  currencies: CryptoOrTokenCurrency[],
-  currenciesByProvider: CurrenciesByProviderId[],
-  sortedCryptoCurrencies: CryptoOrTokenCurrency[],
-) {
-  const currencyIdsArray = useMemo(() => currencies.map(currency => currency.id), [currencies]);
-  const currencyIdsSet = useMemo(() => new Set(currencyIdsArray), [currencyIdsArray]);
+interface AssetsProps {
+  currencyIds?: string[];
+  searchedValue?: string;
+  useCase?: string;
+  areCurrenciesFiltered?: boolean;
+}
 
-  const filteredSortedCryptoCurrencies = useMemo(() => {
-    if (currencyIdsSet.size === 0) return sortedCryptoCurrencies;
-    return sortedCryptoCurrencies.filter(currency => currencyIdsSet.has(currency.id));
-  }, [sortedCryptoCurrencies, currencyIdsSet]);
+export type AssetsData =
+  | {
+      asset: {
+        id: string;
+        ticker: string;
+        name: string;
+        assetsIds: Record<string, string>;
+      };
+      networks: CryptoOrTokenCurrency[];
+      interestRates?: InterestRate;
+      market?: Partial<MarketItemResponse>;
+    }[]
+  | undefined;
 
-  const [availableAssets, setAvailableAssets] = useState<CryptoOrTokenCurrency[] | null>(null);
+export function useAssets({
+  currencyIds,
+  searchedValue,
+  useCase,
+  areCurrenciesFiltered,
+}: AssetsProps) {
+  const { data, isLoading, isSuccess, error, refetch, loadNext } = useAssetsData({
+    search: searchedValue,
+    currencyIds,
+    product: "llm",
+    version: VersionNumber.appVersion,
+    useCase,
+    areCurrenciesFiltered,
+  });
 
-  const computedAssets = useMemo(() => {
-    if (currencyIdsSet.size === 0) {
-      return filteredSortedCryptoCurrencies;
-    }
+  const assetsSorted: AssetsData = useMemo(() => {
+    if (!data?.currenciesOrder.metaCurrencyIds) return undefined;
 
-    const providerCoverageMap = buildProviderCoverageMap(currenciesByProvider);
-    const filtered = filterProvidersByIds(
-      currenciesByProvider,
-      currencyIdsSet,
-      providerCoverageMap,
-    );
+    return data.currenciesOrder.metaCurrencyIds
+      .filter(currencyId => data.cryptoAssets[currencyId])
+      .map(currencyId => {
+        const firstNetworkId = Object.values(data.cryptoAssets[currencyId].assetsIds)[0];
+        return {
+          asset: {
+            ...data.cryptoAssets[currencyId],
+            id: firstNetworkId,
+          },
+          networks: Object.values(data.cryptoAssets[currencyId].assetsIds)
+            .map(assetId => data.cryptoOrTokenCurrencies[assetId])
+            .filter(network => network !== undefined),
+          interestRates: data.interestRates?.[firstNetworkId],
+          market: data.markets?.[firstNetworkId],
+        };
+      });
+  }, [data]);
 
-    return extractProviderCurrencies(filtered);
-  }, [currenciesByProvider, currencyIdsSet, filteredSortedCryptoCurrencies]);
+  const loadingStatus: LoadingStatus = getLoadingStatus({ isLoading, isSuccess, error });
 
-  useEffect(() => {
-    setAvailableAssets(computedAssets);
-  }, [computedAssets]);
+  const sortedCryptoCurrencies = useMemo(() => {
+    if (!assetsSorted || !data) return [];
+
+    return assetsSorted
+      .map(assetData => data.cryptoOrTokenCurrencies[assetData.asset.id])
+      .filter(currency => currency !== undefined);
+  }, [assetsSorted, data]);
 
   return {
-    availableAssets: availableAssets ?? filteredSortedCryptoCurrencies,
-    setAvailableAssets,
-    filteredSortedCryptoCurrencies,
-    currencyIdsArray,
-    currencyIdsSet,
+    data,
+    isLoading,
+    isSuccess,
+    error,
+    loadingStatus,
+    assetsSorted,
+    sortedCryptoCurrencies,
+    refetch,
+    loadNext,
   };
 }

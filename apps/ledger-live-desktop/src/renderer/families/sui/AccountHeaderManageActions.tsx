@@ -1,17 +1,17 @@
 import IconCoins from "~/renderer/icons/Coins";
-import { isAccountEmpty } from "@ledgerhq/live-common/account/index";
 import { openModal } from "~/renderer/actions/modals";
 import { useGetStakeLabelLocaleBased } from "~/renderer/hooks/useGetStakeLabelLocaleBased";
 import { useCallback } from "react";
 import { useDispatch } from "react-redux";
 import { SuiAccount } from "@ledgerhq/live-common/families/sui/types";
+import { canStake } from "@ledgerhq/live-common/families/sui/logic";
 
 const AccountHeaderActions = ({ account }: { account: SuiAccount }) => {
   const label = useGetStakeLabelLocaleBased();
   const dispatch = useDispatch();
 
   const onClick = useCallback(() => {
-    if (isAccountEmpty(account)) {
+    if (!canStake(account)) {
       dispatch(
         openModal("MODAL_NO_FUNDS_STAKE", {
           account,

@@ -4,7 +4,7 @@ import { CantonCoinConfig } from "../config";
 
 let api: AlpacaApi;
 
-describe("localnet", () => {
+describe.skip("localnet", () => {
   beforeAll(() => {
     api = createApi({
       nodeUrl: "http://localhost:2975/v2",
@@ -25,6 +25,8 @@ describe("devnet", () => {
     api = createApi({
       nodeUrl: "https://wallet-validator-devnet-canton.ledger-test.com/v2",
       networkType: "devnet",
+      gatewayUrl: "https://canton-gateway.api.live.ledger-test.com",
+      useGateway: true,
     });
   });
 

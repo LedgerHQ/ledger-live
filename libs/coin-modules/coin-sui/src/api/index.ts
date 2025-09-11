@@ -12,8 +12,9 @@ import {
   getStakes,
   getRewards,
 } from "../logic";
-import type {
+import {
   AlpacaApi,
+  CraftedTransaction,
   FeeEstimation,
   Operation,
   Pagination,
@@ -38,10 +39,10 @@ export function createApi(config: SuiConfig): AlpacaApi {
   };
 }
 
-async function craft(transactionIntent: TransactionIntent): Promise<string> {
+async function craft(transactionIntent: TransactionIntent): Promise<CraftedTransaction> {
   const { unsigned } = await craftTransaction(transactionIntent);
 
-  return Buffer.from(unsigned).toString("hex");
+  return { transaction: Buffer.from(unsigned).toString("hex") };
 }
 
 async function estimate(transactionIntent: TransactionIntent): Promise<FeeEstimation> {

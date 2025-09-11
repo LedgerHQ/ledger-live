@@ -1,12 +1,12 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { shallowEqual, useSelector } from "react-redux";
-import { ListRenderItemInfo, Platform } from "react-native";
+import { Platform } from "react-native";
 import { useTranslation } from "react-i18next";
 import { useFocusEffect } from "@react-navigation/native";
 import { Box, Flex } from "@ledgerhq/native-ui";
 import { useTheme } from "styled-components/native";
 import useEnv from "@ledgerhq/live-common/hooks/useEnv";
-import { ReactNavigationPerformanceView } from "@shopify/react-native-performance-navigation";
+
 import WalletTabSafeAreaView from "~/components/WalletTab/WalletTabSafeAreaView";
 import { useRefreshAccountsOrdering } from "~/actions/general";
 import Carousel from "~/components/Carousel";
@@ -51,6 +51,7 @@ import { DdRum } from "@datadog/mobile-react-native";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { PORTFOLIO_VIEW_ID, TOP_CHAINS } from "~/utils/constants";
 import { buildFeatureFlagTags } from "~/utils/datadogUtils";
+import { renderItem } from "LLM/utils/renderItem";
 
 type NavigationProps = BaseComposite<
   StackNavigatorProps<WalletTabNavigatorStackParamList, ScreenName.Portfolio>
@@ -75,6 +76,7 @@ function PortfolioScreen({ navigation }: NavigationProps) {
 
   useEffect(() => {
     async function handleMigration() {
+      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
       await storage.handleMigration(mmkvMigrationFF as Feature_LlmMmkvMigration);
     }
     handleMigration();
@@ -233,15 +235,13 @@ function PortfolioScreen({ navigation }: NavigationProps) {
   );
 
   return (
-    <ReactNavigationPerformanceView screenName={ScreenName.Portfolio} interactive>
+    <>
       <CheckLanguageAvailability />
       <CheckTermOfUseUpdate />
       <Animated.View style={{ flex: 1 }}>
         <RefreshableCollapsibleHeaderFlatList
           data={data}
-          renderItem={({ item }: ListRenderItemInfo<unknown>) => {
-            return item as JSX.Element;
-          }}
+          renderItem={renderItem<JSX.Element>}
           keyExtractor={(_: unknown, index: number) => String(index)}
           showsVerticalScrollIndicator={false}
           testID={showAssets ? "PortfolioAccountsList" : "PortfolioEmptyList"}
@@ -252,7 +252,7 @@ function PortfolioScreen({ navigation }: NavigationProps) {
           doesNotHaveAccount={!showAssets}
         />
       </Animated.View>
-    </ReactNavigationPerformanceView>
+    </>
   );
 }
 

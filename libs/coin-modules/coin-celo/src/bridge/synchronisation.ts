@@ -2,13 +2,15 @@ import { getAccountRegistrationStatus, getPendingWithdrawals, getVotes } from ".
 import { makeSync, mergeOps } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import type { GetAccountShape } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { encodeAccountId } from "@ledgerhq/coin-framework/account";
+import { getEnv } from "@ledgerhq/live-env";
 import { getAccountDetails } from "../network";
 import { CeloAccount } from "../types/types";
 import { celoKit } from "../network/sdk";
+import { getAccountShape as evmGetAccountShape } from "@ledgerhq/coin-evm/bridge/synchronization";
 
 const kit = celoKit();
 
-export const getAccountShape: GetAccountShape<CeloAccount> = async info => {
+export const getAccountShape: GetAccountShape<CeloAccount> = async (info, config) => {
   const { address, currency, initialAccount, derivationMode } = info;
   const oldOperations = initialAccount?.operations || [];
   const election = await kit.contracts.getElection();
@@ -36,13 +38,18 @@ export const getAccountShape: GetAccountShape<CeloAccount> = async info => {
 
   const votes = accountRegistrationStatus ? await getVotes(address) : [];
 
+  const fromEvm = await evmGetAccountShape(info, config);
+
   const operations = mergeOps(oldOperations, newOperations);
-  const shape = {
+
+  const shape: Partial<CeloAccount> = {
     id: accountId,
     balance,
-    spendableBalance,
-    operationsCount: operations.length,
     blockHeight,
+    operationsCount: operations.length,
+    spendableBalance,
+    subAccounts: getEnv("ENABLE_CELO_TOKENS") === false ? [] : fromEvm.subAccounts || [],
+    syncHash: fromEvm.syncHash,
     celoResources: {
       registrationStatus: accountRegistrationStatus,
       lockedBalance,

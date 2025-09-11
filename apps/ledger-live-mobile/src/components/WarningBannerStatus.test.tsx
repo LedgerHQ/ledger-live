@@ -50,6 +50,7 @@ describe("WarningBannerStatus", () => {
       status: {
         type: "will_be_deprecated",
         deprecated_date: "2025-01-01",
+        link: "https://deprecatedbanner.com",
       },
     };
 

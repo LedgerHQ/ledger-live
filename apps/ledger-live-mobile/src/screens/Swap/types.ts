@@ -1,13 +1,13 @@
-import { ExchangeRate, MappedSwapOperation } from "@ledgerhq/live-common/exchange/swap/types";
-import { Transaction } from "@ledgerhq/live-common/generated/types";
-import { CryptoCurrency, Currency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { Account, SwapOperation } from "@ledgerhq/types-live";
-import { MaterialTopTabScreenProps } from "@react-navigation/material-top-tabs";
-import { StackScreenProps } from "@react-navigation/stack";
-import { BaseComposite } from "~/components/RootNavigator/types/helpers";
-import { SwapNavigatorParamList } from "~/components/RootNavigator/types/SwapNavigator";
-import { SwapWebviewAllowedPageNames } from "~/components/Web3AppWebview/types";
-import { ScreenName } from "~/const";
+import type { ExchangeRate, MappedSwapOperation } from "@ledgerhq/live-common/exchange/swap/types";
+import type { Transaction } from "@ledgerhq/live-common/generated/types";
+import type { CryptoCurrency, Currency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { Account, SwapOperation } from "@ledgerhq/types-live";
+import type { MaterialTopTabScreenProps } from "@react-navigation/material-top-tabs";
+import type { StackScreenProps } from "@react-navigation/stack";
+import type { BaseComposite } from "~/components/RootNavigator/types/helpers";
+import type { SwapNavigatorParamList } from "~/components/RootNavigator/types/SwapNavigator";
+import type { SwapWebviewAllowedPageNames } from "~/components/Web3AppWebview/types";
+import type { ScreenName } from "~/const";
 
 export type SwapFormParamList = MaterialTopTabScreenProps<
   SwapFormNavParamList,

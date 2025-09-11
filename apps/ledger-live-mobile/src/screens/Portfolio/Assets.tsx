@@ -5,16 +5,13 @@ import isEqual from "lodash/isEqual";
 import AssetRow, { NavigationProp } from "../WalletCentricAsset/AssetRow";
 import { withDiscreetMode } from "~/context/DiscreetModeContext";
 import { Asset } from "~/types/asset";
-import { ScreenName } from "~/const";
 
 type ListProps = { assets: Asset[] };
 
 const AssetsList = ({ assets }: ListProps) => {
   const navigation = useNavigation<NavigationProp>();
   const renderItem = useCallback(
-    ({ item }: { item: Asset }) => (
-      <AssetRow asset={item} navigation={navigation} sourceScreenName={ScreenName.Portfolio} />
-    ),
+    ({ item }: { item: Asset }) => <AssetRow asset={item} navigation={navigation} />,
     [navigation],
   );
 

@@ -7,6 +7,7 @@ import {
   signDelegationTransaction,
   signSendTransaction,
   verifyAmountsAndAcceptSwap,
+  verifyAmountsAndAcceptSwapForDifferentSeed,
   verifyAmountsAndRejectSwap,
 } from "@ledgerhq/live-common/e2e/speculos";
 import { TransactionType } from "@ledgerhq/live-common/e2e/models/Transaction";
@@ -49,6 +50,11 @@ export default class SpeculosPage {
   @Step("Verify amounts and accept swap")
   async verifyAmountsAndAcceptSwap(swap: SwapType, amount: string) {
     await verifyAmountsAndAcceptSwap(swap, amount);
+  }
+
+  @Step("Verify amounts and accept swap for different seed")
+  async verifyAmountsAndAcceptSwapForDifferentSeed(swap: SwapType, amount: string) {
+    await verifyAmountsAndAcceptSwapForDifferentSeed(swap, amount);
   }
 
   @Step("Verify amounts and reject swap")

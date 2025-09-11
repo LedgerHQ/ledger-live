@@ -14,6 +14,7 @@ module.exports = {
     "@babel/plugin-transform-class-static-block",
     "@babel/plugin-transform-flow-strip-types",
     ["@babel/plugin-transform-private-methods", { loose: true }],
+    "babel-plugin-transform-inline-environment-variables",
     "react-native-reanimated/plugin", // react-native-reanimated/plugin has to be listed last.
   ],
 };

@@ -106,14 +106,13 @@ describe("listOperations", () => {
     const txs = givenTxs(BigInt(10), BigInt(10), "src", "dest");
     // each time it's called it returns a marker, so in theory it would loop forever
     mockGetTransactions.mockResolvedValue(mockNetworkTxs(txs, defaultMarker));
-    const [results, _] = await api.listOperations("src", { minHeight: 0 });
+    const [results, _] = await api.listOperations("src", { minHeight: 0, order: "asc" });
 
-    // called 10 times because there is a hard limit of 10 iterations in case something goes wrong
-    // with interpretation of the token (bug / explorer api changed ...)
-    expect(mockGetServerInfos).toHaveBeenCalledTimes(10);
-    expect(mockGetTransactions).toHaveBeenCalledTimes(10);
+    // called 1 times because the client is expected to do the pagination itself
+    expect(mockGetServerInfos).toHaveBeenCalledTimes(1);
+    expect(mockGetTransactions).toHaveBeenCalledTimes(1);
 
-    expect(results.length).toBe(txs.length * 10);
+    expect(results.length).toBe(txs.length);
   });
 
   it("should pass the token returned by previous calls", async () => {
@@ -122,11 +121,10 @@ describe("listOperations", () => {
       .mockReturnValueOnce(mockNetworkTxs(txs, defaultMarker))
       .mockReturnValueOnce(mockNetworkTxs(txs, undefined));
 
-    const [results, _] = await api.listOperations("src", { minHeight: 0 });
+    const [results, token] = await api.listOperations("src", { minHeight: 0, order: "asc" });
 
-    // called 2 times because the second time there is no marker
-    expect(mockGetServerInfos).toHaveBeenCalledTimes(2);
-    expect(mockGetTransactions).toHaveBeenCalledTimes(2);
+    expect(mockGetServerInfos).toHaveBeenCalledTimes(1);
+    expect(mockGetTransactions).toHaveBeenCalledTimes(1);
 
     // check tokens are passed
     const baseOptions = {
@@ -135,13 +133,14 @@ describe("listOperations", () => {
       forward: true,
     };
     expect(mockGetTransactions).toHaveBeenNthCalledWith(1, "src", baseOptions);
+    await api.listOperations("src", { minHeight: 0, order: "asc", lastPagingToken: token });
     const optionsWithToken = {
       ...baseOptions,
       marker: defaultMarker,
     };
     expect(mockGetTransactions).toHaveBeenNthCalledWith(2, "src", optionsWithToken);
 
-    expect(results.length).toBe(txs.length * 2);
+    expect(results.length).toBe(txs.length);
   });
 
   it.each([
@@ -171,15 +170,12 @@ describe("listOperations", () => {
       mockGetTransactions.mockResolvedValue(mockNetworkTxs([], undefined));
 
       // When
-      const [results, _] = await api.listOperations(address, { minHeight: 0 });
+      const [results, _] = await api.listOperations(address, { minHeight: 0, order: "asc" });
 
       // Then
-      // called twice because the marker is set the first time
-      expect(mockGetServerInfos).toHaveBeenCalledTimes(2);
-      expect(mockGetTransactions).toHaveBeenCalledTimes(2);
+      expect(mockGetServerInfos).toHaveBeenCalledTimes(1);
+      expect(mockGetTransactions).toHaveBeenCalledTimes(1);
 
-      // if expectedType is "OUT", compute value with fees (i.e. delivered_amount + Fee)
-      const expectedValue = expectedType === "IN" ? deliveredAmount : deliveredAmount + fee;
       // the order is reversed so that the result is always sorted by newest tx first element of the list
       expect(results).toEqual([
         {
@@ -196,7 +192,7 @@ describe("listOperations", () => {
             },
           },
           type: expectedType,
-          value: expectedValue,
+          value: deliveredAmount,
           senders: [opSender],
           recipients: [opDestination],
           details: {
@@ -224,7 +220,7 @@ describe("listOperations", () => {
             },
           },
           type: expectedType,
-          value: expectedValue,
+          value: deliveredAmount,
           senders: [opSender],
           recipients: [opDestination],
           details: {
@@ -247,7 +243,7 @@ describe("listOperations", () => {
             },
           },
           type: expectedType,
-          value: expectedValue,
+          value: deliveredAmount,
           senders: [opSender],
           recipients: [opDestination],
           details: {

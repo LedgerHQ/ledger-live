@@ -25,8 +25,12 @@ if (!monitoredCurrencies.length) {
 
 run(monitoredCurrencies)
   .then(result => {
-    console.table(result);
-    process.exit(0);
+    if (!result.entries.length) {
+      console.log("No resulted entries. Exit now.");
+    } else {
+      console.table(result.entries);
+    }
+    process.exit(result.failed ? 1 : 0);
   })
   .catch(error => {
     console.error(error);

@@ -82,13 +82,15 @@ export function assignFromAccountRaw(accountRaw: AccountRaw, account: Account) {
 }
 
 export function fromOperationExtraRaw(extraRaw: OperationExtraRaw): OperationExtra {
+  const extra: CeloOperationExtra = {};
+
   if (!isCeloOperationExtraRaw(extraRaw)) {
-    throw new Error("Unsupported OperationExtra");
+    return extra;
   }
 
-  const extra: CeloOperationExtra = {
-    celoOperationValue: new BigNumber(extraRaw.celoOperationValue),
-  };
+  if (extraRaw.celoOperationValue) {
+    extra.celoOperationValue = BigNumber(extraRaw.celoOperationValue);
+  }
 
   if (extraRaw.celoSourceValidator) {
     extra.celoSourceValidator = extraRaw.celoSourceValidator;
@@ -98,13 +100,15 @@ export function fromOperationExtraRaw(extraRaw: OperationExtraRaw): OperationExt
 }
 
 export function toOperationExtraRaw(extra: OperationExtra): OperationExtraRaw {
+  const extraRaw: CeloOperationExtraRaw = {};
+
   if (!isCeloOperationExtra(extra)) {
-    throw new Error("Unsupported OperationExtra");
+    return extraRaw;
   }
 
-  const extraRaw: CeloOperationExtraRaw = {
-    celoOperationValue: extra.celoOperationValue.toString(),
-  };
+  if (extra.celoOperationValue) {
+    extraRaw.celoOperationValue = extra.celoOperationValue.toString();
+  }
 
   if (extra.celoSourceValidator) {
     extraRaw.celoSourceValidator = extra.celoSourceValidator;

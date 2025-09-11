@@ -1,5 +1,5 @@
 import { AssertionError, fail } from "assert";
-import { ethers } from "ethers";
+import { JsonRpcProvider, TransactionReceipt, TransactionResponse, ethers } from "ethers";
 import BigNumber from "bignumber.js";
 import { delay } from "@ledgerhq/live-promise";
 import { CryptoCurrency, CryptoCurrencyId, EthereumLikeInfo } from "@ledgerhq/types-cryptoassets";
@@ -38,11 +38,6 @@ const account = makeAccount(
   fakeCurrency as CryptoCurrency,
 );
 
-const mockedNetwork = {
-  name: "mockedEthereum",
-  chainId: 24,
-};
-
 jest.mock("@ledgerhq/live-promise");
 (delay as jest.Mock).mockImplementation(
   () => new Promise(resolve => setTimeout(resolve, 1)), // mocking the delay supposed to happen after each try
@@ -63,103 +58,88 @@ describe("EVM Family", () => {
       };
     });
 
-    jest
-      .spyOn(ethers.providers.StaticJsonRpcProvider.prototype, "_ready")
-      .mockResolvedValue(mockedNetwork);
-    jest
-      .spyOn(ethers.providers.StaticJsonRpcProvider.prototype, "getNetwork")
-      .mockResolvedValue(mockedNetwork);
-    jest
-      .spyOn(ethers.providers.StaticJsonRpcProvider.prototype, "detectNetwork")
-      .mockResolvedValue(mockedNetwork);
-    jest
-      .spyOn(ethers.providers.StaticJsonRpcProvider.prototype, "getResolver")
-      .mockResolvedValue(null);
-    jest
-      .spyOn(ethers.providers.StaticJsonRpcProvider.prototype, "resolveName")
-      .mockImplementation(async address => address);
-    jest
-      .spyOn(ethers.providers.StaticJsonRpcProvider.prototype, "perform")
-      .mockImplementation(async (method, params) => {
-        switch (method) {
-          case "getBalance":
-            return ethers.BigNumber.from(420);
-          case "getBlockNumber":
-            return ethers.BigNumber.from(69);
-          case "getTransaction":
-            return {
-              hash: "0x435b00d28a10febbcfefbdea080134d08ef843df122d5bc9174b09de7fce6a59",
-              blockHash: "0x474dee0136108e9412e9d84197b468bb057a8dad0f2024fc55adebc4a28fa8c5",
-              blockNumber: 69,
-              confirmations: 100,
-              from: "0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d",
-              to: "0xC2907EFccE4011C491BbedA8A0fA63BA7aab596C",
-              nonce: 123,
-              gasLimit: ethers.BigNumber.from(123),
-              data: "0x",
-              value: ethers.BigNumber.from(456),
-              chainId: mockedNetwork.chainId,
-            };
-          case "getTransactionReceipt":
-            return {
-              blockHash: "0x8a179bc6cb299f936c4fd614995e62d597ec6108b579c23034fb220967ceaa94",
-              blockNumber: 69,
-              byzantium: true,
-              confirmations: 100,
-              contractAddress: null,
-              cumulativeGasUsed: ethers.BigNumber.from(121),
-              effectiveGasPrice: ethers.BigNumber.from(789),
-              from: "0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d",
-              gasUsed: ethers.BigNumber.from(122),
-              logs: [],
-              logsBloom: "0x",
-              status: 1,
-              to: "0xC2907EFccE4011C491BbedA8A0fA63BA7aab596C",
-              transactionHash: "0x435b00d28a10febbcfefbdea080134d08ef843df122d5bc9174b09de7fce6a59",
-              transactionIndex: 123,
-              type: 0,
-            };
-          case "call":
-            0x01a5;
-            return "0x000000000000000000000000000000000000000000000000000000000000A455"; // 42069 as uint256 hex
-          case "getTransactionCount":
-            return ethers.BigNumber.from(5);
-          case "estimateGas":
-            return ethers.BigNumber.from(5);
-          case "getBlock":
-            return {
-              hash: "0x474dee0136108e9412e9d84197b468bb057a8dad0f2024fc55adebc4a28fa8c5",
-              parentHash: "0xfc900c22725f9c0843c9cf7d2c47f4b61b246bd21e18e99f709aebaefc8aff14",
-              number: 1,
-              difficulty: null,
-              gasLimit: ethers.BigNumber.from(1),
-              gasUsed: ethers.BigNumber.from(2),
-              extraData: "0x",
-              baseFeePerGas: ethers.BigNumber.from(123),
-              timestamp: Math.floor(Date.now() / 1000),
-            };
-          case "getGasPrice":
-            return ethers.BigNumber.from(666);
-          case "sendTransaction":
-            if (
-              params.signedTransaction ===
-              "0x02f873012d85010c388d0085077715912682520894c2907efcce4011c491bbeda8a0fa63ba7aab596c87038d7ea4c6800080c001a0bbffe7ba303ab03f697d64672c4a288ae863df8a62ffc67ba72872ce8c227f6fa01261e7c9f06af13631f03fad9b88d3c48931d353b6b41b4072fddcca5ec41628"
-            ) {
-              const err = new Error();
-              // @ts-expect-error adding code prop
-              err.code = "INSUFFICIENT_FUNDS";
+    jest.spyOn(JsonRpcProvider.prototype, "getFeeData").mockResolvedValue({
+      gasPrice: BigInt(666),
+      maxFeePerGas: 0n,
+      maxPriorityFeePerGas: 0n,
+    } as ethers.FeeData);
 
-              throw err;
-            } else if (
-              params.signedTransaction ===
-              "0x02f873012d85010c388d0085077715912682520894c2907efcce4011c491bbeda8a0fa63ba7aab596c87038d7ea4c6800080c001a0bbffe7ba303ab03f697d64672c4a288ae863df8a62ffc67ba72872ce8c227f6fa01261e7c9f06af13631f03fad9b88d3c48931d353b6b41b4072fddcca5ec41625"
-            ) {
-              throw new Error("any error");
-            }
-            return "0x435b00d28a10febbcfefbdea080134d08ef843df122d5bc9174b09de7fce6a59";
-          default:
-            throw Error(`Please mock this method: ${method}`);
+    jest.spyOn(JsonRpcProvider.prototype, "getBalance").mockResolvedValue(BigInt(420));
+    jest
+      .spyOn(JsonRpcProvider.prototype, "call")
+      .mockResolvedValue("0x000000000000000000000000000000000000000000000000000000000000A455");
+    jest.spyOn(JsonRpcProvider.prototype, "getBlock").mockResolvedValue({
+      hash: "0x474dee0136108e9412e9d84197b468bb057a8dad0f2024fc55adebc4a28fa8c5",
+      parentHash: "0xfc900c22725f9c0843c9cf7d2c47f4b61b246bd21e18e99f709aebaefc8aff14",
+      number: 1,
+      difficulty: 0n,
+      gasLimit: BigInt(1),
+      gasUsed: BigInt(2),
+      extraData: "0x",
+      baseFeePerGas: BigInt(123),
+      timestamp: Math.floor(Date.now() / 1000),
+    } as Partial<ethers.Block> as ethers.Block);
+
+    jest.spyOn(JsonRpcProvider.prototype, "getTransactionCount").mockResolvedValue(5);
+
+    jest.spyOn(JsonRpcProvider.prototype, "getTransaction").mockResolvedValue({
+      hash: "0x435b00d28a10febbcfefbdea080134d08ef843df122d5bc9174b09de7fce6a59",
+      blockNumber: 69,
+      blockHash: "0x474dee0136108e9412e9d84197b468bb057a8dad0f2024fc55adebc4a28fa8c5",
+      nonce: 123,
+      value: BigInt(456),
+      gasLimit: BigInt(123),
+      gasPrice: BigInt(789),
+      data: "0x",
+      to: "0xC2907EFccE4011C491BbedA8A0fA63BA7aab596C",
+      from: "0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d",
+      type: 0,
+      confirmations: jest.fn().mockResolvedValue(1),
+      provider: {} as any,
+    } as Partial<TransactionResponse> as TransactionResponse);
+
+    jest.spyOn(JsonRpcProvider.prototype, "getTransactionReceipt").mockResolvedValue({
+      blockHash: "0x8a179bc6cb299f936c4fd614995e62d597ec6108b579c23034fb220967ceaa94",
+      blockNumber: 69,
+      byzantium: true,
+      confirmations: jest.fn().mockResolvedValue(100),
+      contractAddress: null,
+      cumulativeGasUsed: BigInt(121),
+      effectiveGasPrice: BigInt(789),
+      from: "0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d",
+      gasUsed: BigInt(122),
+      gasLimit: BigInt(21000),
+      gasPrice: BigInt(789),
+      logs: [],
+      logsBloom: "0x",
+      status: 1,
+      to: "0xC2907EFccE4011C491BbedA8A0fA63BA7aab596C",
+      transactionHash: "0x435b00d28a10febbcfefbdea080134d08ef843df122d5bc9174b09de7fce6a59",
+      transactionIndex: 123,
+      type: 0,
+    } as Partial<TransactionReceipt> as TransactionReceipt);
+
+    jest
+      .spyOn(JsonRpcProvider.prototype, "broadcastTransaction")
+      .mockImplementation(async (signedTx: string): Promise<any> => {
+        if (
+          signedTx ===
+          "0x02f873012d85010c388d0085077715912682520894c2907efcce4011c491bbeda8a0fa63ba7aab596c87038d7ea4c6800080c001a0bbffe7ba303ab03f697d64672c4a288ae863df8a62ffc67ba72872ce8c227f6fa01261e7c9f06af13631f03fad9b88d3c48931d353b6b41b4072fddcca5ec41628"
+        ) {
+          const err = new Error("Insufficient funds");
+          // @ts-expect-error for test mocking
+          err.code = "INSUFFICIENT_FUNDS";
+          throw err;
+        } else if (
+          signedTx ===
+          "0x02f873012d85010c388d0085077715912682520894c2907efcce4011c491bbeda8a0fa63ba7aab596c87038d7ea4c6800080c001a0bbffe7ba303ab03f697d64672c4a288ae863df8a62ffc67ba72872ce8c227f6fa01261e7c9f06af13631f03fad9b88d3c48931d353b6b41b4072fddcca5ec41625"
+        ) {
+          throw new Error("any error");
         }
+
+        return {
+          hash: "0x435b00d28a10febbcfefbdea080134d08ef843df122d5bc9174b09de7fce6a59",
+        };
       });
   });
 
@@ -280,6 +260,14 @@ describe("EVM Family", () => {
 
   describe("getGasEstimation", () => {
     it("should return the expected payload", async () => {
+      jest
+        .spyOn(JsonRpcProvider.prototype as any, "_perform")
+        .mockImplementation(async (req: any) => {
+          if (req.method === "estimateGas") {
+            return 5n;
+          }
+          return null;
+        });
       expect(
         await RPC_API.getGasEstimation(account, {
           recipient: "0x0000000000000000000000000000000000000000",
@@ -293,22 +281,22 @@ describe("EVM Family", () => {
     });
 
     it("should throw a GasEstimationError in case of error", async () => {
-      try {
-        await RPC_API.getGasEstimation(account, {
+      jest
+        .spyOn(JsonRpcProvider.prototype as any, "_perform")
+        .mockImplementation(async (req: any) => {
+          if (req.method === "estimateGas") {
+            throw new Error("fail");
+          }
+          return null;
+        });
+
+      await expect(
+        RPC_API.getGasEstimation(account, {
           recipient: "wrongAddress",
-          amount: new BigNumber(2),
-          gasLimit: new BigNumber(0),
-          gasPrice: new BigNumber(0),
+          amount: new BigNumber(1),
           data: Buffer.from(""),
-          type: 0,
-        } as EvmTransactionLegacy);
-        fail("Promise should have been rejected");
-      } catch (e) {
-        if (e instanceof AssertionError) {
-          throw e;
-        }
-        expect(e).toBeInstanceOf(GasEstimationError);
-      }
+        }),
+      ).rejects.toThrow(GasEstimationError);
     });
   });
 
@@ -328,22 +316,20 @@ describe("EVM Family", () => {
     };
 
     it("should return the expected payload for an EIP1559 tx", async () => {
-      jest
-        .spyOn(ethers.providers.StaticJsonRpcProvider.prototype, "send")
-        .mockImplementationOnce(async method => {
-          if (method === "eth_feeHistory") {
-            return {
-              reward: [
-                ["0x4a817c7ee", "0x4a817c7ee"],
-                ["0x773593f0", "0x773593f5"],
-                ["0x0", "0x0"],
-                ["0x773593f5", "0x773bae75"],
-              ],
-              baseFeePerGas: ["0x12", "0x10", "0x10", "0xe", "0xd"],
-              gasUsedRatio: [0.026089875, 0.406803, 0, 0.0866665],
-            };
-          }
-        });
+      jest.spyOn(JsonRpcProvider.prototype, "send").mockImplementationOnce(async method => {
+        if (method === "eth_feeHistory") {
+          return {
+            reward: [
+              ["0x4a817c7ee", "0x4a817c7ee"],
+              ["0x773593f0", "0x773593f5"],
+              ["0x0", "0x0"],
+              ["0x773593f5", "0x773bae75"],
+            ],
+            baseFeePerGas: ["0x12", "0x10", "0x10", "0xe", "0xd"],
+            gasUsedRatio: [0.026089875, 0.406803, 0, 0.0866665],
+          };
+        }
+      });
 
       expect(await RPC_API.getFeeData(fakeCurrency as CryptoCurrency, eip1559Tx)).toEqual({
         maxFeePerGas: new BigNumber("6000000014"),
@@ -354,22 +340,20 @@ describe("EVM Family", () => {
     });
 
     it("should return the expected payload for an EIP1559 tx when network returns 0 priority fee", async () => {
-      jest
-        .spyOn(ethers.providers.StaticJsonRpcProvider.prototype, "send")
-        .mockImplementationOnce(async method => {
-          if (method === "eth_feeHistory") {
-            return {
-              reward: [
-                ["0x0", "0x0"],
-                ["0x0", "0x0"],
-                ["0x0", "0x0"],
-                ["0x0", "0x0"],
-              ],
-              baseFeePerGas: ["0x12", "0x10", "0x10", "0xe", "0xd"],
-              gasUsedRatio: [0.026089875, 0.406803, 0, 0.0866665],
-            };
-          }
-        });
+      jest.spyOn(JsonRpcProvider.prototype, "send").mockImplementationOnce(async method => {
+        if (method === "eth_feeHistory") {
+          return {
+            reward: [
+              ["0x0", "0x0"],
+              ["0x0", "0x0"],
+              ["0x0", "0x0"],
+              ["0x0", "0x0"],
+            ],
+            baseFeePerGas: ["0x12", "0x10", "0x10", "0xe", "0xd"],
+            gasUsedRatio: [0.026089875, 0.406803, 0, 0.0866665],
+          };
+        }
+      });
 
       expect(await RPC_API.getFeeData(fakeCurrency as CryptoCurrency, eip1559Tx)).toEqual({
         maxFeePerGas: new BigNumber("1000000026"),
@@ -393,24 +377,22 @@ describe("EVM Family", () => {
     };
 
     it("should return the expected payload for a legacy tx", async () => {
-      jest
-        .spyOn(ethers.providers.StaticJsonRpcProvider.prototype, "perform")
-        .mockImplementationOnce(async method => {
-          switch (method) {
-            case "getBlock":
-              return {
-                parentHash: "0x474dee0136108e9412e9d84197b468bb057a8dad0f2024fc55adebc4a28fa8c5",
-                number: 1,
-                timestamp: 123,
-                difficulty: null,
-                gasLimit: ethers.BigNumber.from(1),
-                gasUsed: ethers.BigNumber.from(2),
-                extraData: "0x",
-              };
-            default:
-              throw new Error(`Method not mocked: ${method}`);
-          }
-        });
+      jest.spyOn(JsonRpcProvider.prototype as any, "send").mockImplementationOnce(async method => {
+        switch (method) {
+          case "eth_getBlockByNumber":
+            return {
+              parentHash: "0x474dee0136108e9412e9d84197b468bb057a8dad0f2024fc55adebc4a28fa8c5",
+              number: 1,
+              timestamp: 123,
+              difficulty: 0n,
+              gasLimit: 1n,
+              gasUsed: 2n,
+              extraData: "0x",
+            };
+          default:
+            throw new Error(`Method not mocked: ${method}`);
+        }
+      });
 
       expect(
         await RPC_API.getFeeData(

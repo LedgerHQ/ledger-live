@@ -198,7 +198,20 @@ export function useDeepLinkHandler() {
           navigate("/exchange", undefined, search);
           break;
         case "earn": {
-          navigate("/earn", undefined, search);
+          if (path === "deposit") {
+            const { cryptoAssetId, accountId } = query;
+            navigate(
+              "/earn",
+              {
+                intent: "deposit",
+                cryptoAssetId: cryptoAssetId ?? "",
+                accountId: accountId ?? "",
+              },
+              search,
+            );
+          } else {
+            navigate("/earn", undefined, search);
+          }
           break;
         }
         case "myledger": {

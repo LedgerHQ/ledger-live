@@ -1,21 +1,31 @@
 import { useMemo } from "react";
 import { CurrenciesByProviderId, LoadingStatus } from "@ledgerhq/live-common/deposit/type";
-import { getLoadingStatus } from "../utils/getLoadingStatus";
+import { getLoadingStatus } from "@ledgerhq/live-common/modularDrawer/utils/getLoadingStatus";
 import { findCryptoCurrencyById, findTokenById } from "@ledgerhq/cryptoassets";
-import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { useAssetsData } from "@ledgerhq/live-common/modularDrawer/hooks/useAssetsData";
+import { modularDrawerStateSelector } from "~/renderer/reducers/modularDrawer";
+import { useSelector } from "react-redux";
 
 interface UseModularDrawerDataProps {
-  currencies?: CryptoOrTokenCurrency[];
-  searchedValue?: string;
+  currencyIds?: string[];
+  useCase?: string;
+  areCurrenciesFiltered?: boolean;
 }
 
-export function useModularDrawerData({ currencies, searchedValue }: UseModularDrawerDataProps) {
-  const currencyIds = useMemo(() => (currencies || []).map(currency => currency.id), [currencies]);
+export function useModularDrawerData({
+  currencyIds,
+  useCase,
+  areCurrenciesFiltered,
+}: UseModularDrawerDataProps) {
+  const { searchedValue } = useSelector(modularDrawerStateSelector);
 
-  const { data, isLoading, isSuccess, error } = useAssetsData({
+  const { data, isLoading, isSuccess, error, loadNext, refetch } = useAssetsData({
     search: searchedValue,
     currencyIds,
+    product: "lld",
+    version: __APP_VERSION__,
+    useCase,
+    areCurrenciesFiltered,
   });
 
   const assetsSorted = useMemo(() => {
@@ -33,8 +43,8 @@ export function useModularDrawerData({ currencies, searchedValue }: UseModularDr
           networks: Object.values(data.cryptoAssets[currencyId].assetsIds)
             .map(assetId => data.cryptoOrTokenCurrencies[assetId])
             .filter(network => network !== undefined),
-          interestRates: data.interestRates[firstNetworkId],
-          market: data.markets[firstNetworkId],
+          interestRates: data.interestRates?.[firstNetworkId],
+          market: data.markets?.[firstNetworkId],
         };
       });
   }, [data]);
@@ -65,9 +75,11 @@ export function useModularDrawerData({ currencies, searchedValue }: UseModularDr
     isLoading,
     isSuccess,
     error,
+    refetch,
     loadingStatus,
     assetsSorted,
     currenciesByProvider,
     sortedCryptoCurrencies,
+    loadNext,
   };
 }

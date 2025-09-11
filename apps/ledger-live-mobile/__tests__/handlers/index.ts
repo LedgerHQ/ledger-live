@@ -2,6 +2,7 @@ import marketHandlers from "./market";
 import ledgerSyncHandlers from "./ledgerSync";
 import cryptoIconsHandlers from "./crypto-icons";
 import supportedCvsHandlers from "./supportedCvs";
+import dadaHandlers from "../../src/mocks/dada/handler";
 
 export const ALLOWED_UNHANDLED_REQUESTS = [
   "ledger.statuspage.io",
@@ -16,4 +17,5 @@ export default [
   ...ledgerSyncHandlers,
   ...cryptoIconsHandlers,
   ...supportedCvsHandlers,
+  ...dadaHandlers,
 ];

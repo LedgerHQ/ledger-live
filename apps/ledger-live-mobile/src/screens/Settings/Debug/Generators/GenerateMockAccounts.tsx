@@ -5,27 +5,18 @@ import { IconsLegacy } from "@ledgerhq/native-ui";
 import { genAccount } from "@ledgerhq/live-common/mock/account";
 import { listSupportedCurrencies } from "@ledgerhq/live-common/currencies/index";
 import SettingsRow from "~/components/SettingsRow";
-import accountModel from "~/logic/accountModel";
-import { saveAccounts } from "../../../../db";
-import { useReboot } from "~/context/Reboot";
-import {
-  initialState as liveWalletInitialState,
-  accountUserDataExportSelector,
-} from "@ledgerhq/live-wallet/store";
+import { reboot } from "~/actions/appstate";
+import { useDispatch } from "react-redux";
+import { replaceAccounts } from "~/actions/accounts";
 
-async function injectMockAccountsInDB(count: number) {
-  await saveAccounts({
-    active: Array(count)
-      .fill(null)
-      .map(() => {
-        const account = genAccount(String(Math.random()), {
-          currency: sample(listSupportedCurrencies()),
-        });
-        const userData = accountUserDataExportSelector(liveWalletInitialState, { account });
-        return accountModel.encode([account, userData]);
-      }),
-  });
-}
+const generateMockAccounts = (count: number) =>
+  Array(count)
+    .fill(null)
+    .map(() => {
+      return genAccount(String(Math.random()), {
+        currency: sample(listSupportedCurrencies()),
+      });
+    });
 
 export default function GenerateMockAccountsButton({
   count,
@@ -36,7 +27,8 @@ export default function GenerateMockAccountsButton({
   desc: string;
   count: number;
 }) {
-  const reboot = useReboot();
+  const dispatch = useDispatch();
+
   return (
     <SettingsRow
       title={title}
@@ -49,14 +41,15 @@ export default function GenerateMockAccountsButton({
           [
             {
               text: "Cancel",
-              // eslint-disable-next-line @typescript-eslint/no-empty-function
               onPress: () => {},
             },
             {
               text: "Ok",
-              onPress: async () => {
-                await injectMockAccountsInDB(count);
-                reboot();
+              onPress: () => {
+                const mockAccounts = generateMockAccounts(count);
+
+                dispatch(replaceAccounts(mockAccounts));
+                dispatch(reboot());
               },
             },
           ],

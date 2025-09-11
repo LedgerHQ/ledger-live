@@ -13,7 +13,6 @@ import {
   setIsReborn,
   setOnboardingHasDevice,
 } from "~/actions/settings";
-import { useNavigationInterceptor } from "../onboardingContext";
 import useNotifications from "~/logic/notifications";
 import {
   RootComposite,
@@ -73,7 +72,6 @@ export default memo(function () {
 
   const dispatch = useDispatch();
   const { triggerJustFinishedOnboardingNewDevicePushNotificationModal } = useNotifications();
-  const { resetCurrentStep } = useNavigationInterceptor();
 
   const { deviceModelId, showSeedWarning, isProtectFlow, fromAccessExistingWallet } = route.params;
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
@@ -91,7 +89,6 @@ export default memo(function () {
       dispatch(setOnboardingHasDevice(true));
     }
     dispatch(completeOnboarding());
-    resetCurrentStep();
 
     const parentNav =
       navigation.getParent<
@@ -116,7 +113,6 @@ export default memo(function () {
     deviceModelId,
     dispatch,
     hasCompletedOnboarding,
-    resetCurrentStep,
     navigation,
     fromAccessExistingWallet,
     triggerJustFinishedOnboardingNewDevicePushNotificationModal,

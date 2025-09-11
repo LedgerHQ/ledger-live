@@ -10,14 +10,13 @@ export function ModularDrawerProvider({ children }: ModularDrawerProviderProps) 
   const {
     isOpen,
     preselectedCurrencies,
-    enableAccountSelection,
     closeDrawer,
     handleAccountSelected,
     getAccountsObservable,
-    flow,
-    source,
     assetsConfiguration,
     networksConfiguration,
+    useCase,
+    areCurrenciesFiltered,
   } = useModularDrawerController();
 
   return (
@@ -27,13 +26,12 @@ export function ModularDrawerProvider({ children }: ModularDrawerProviderProps) 
         isOpen={isOpen}
         currencies={preselectedCurrencies}
         onClose={closeDrawer}
-        enableAccountSelection={enableAccountSelection}
         assetsConfiguration={assetsConfiguration}
         networksConfiguration={networksConfiguration}
         onAccountSelected={handleAccountSelected}
         accounts$={getAccountsObservable()}
-        flow={flow ?? ""}
-        source={source ?? ""}
+        useCase={useCase}
+        areCurrenciesFiltered={areCurrenciesFiltered}
       />
     </>
   );

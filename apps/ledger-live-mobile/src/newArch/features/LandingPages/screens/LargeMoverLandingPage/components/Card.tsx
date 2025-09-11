@@ -111,6 +111,7 @@ export const Card: React.FC<CardProps> = ({
             price={price}
             priceChangePercentage={priceChangePercentage}
             range={range}
+            chartData={chartData}
           />
           <Flex alignItems="center">
             <LargeMoverGraph

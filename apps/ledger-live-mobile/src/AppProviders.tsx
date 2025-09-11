@@ -16,7 +16,6 @@ import { AppDataStorageProvider } from "~/hooks/storageProvider/useAppDataStorag
 import PostOnboardingProviderWrapped from "~/logic/postOnboarding/PostOnboardingProviderWrapped";
 import NotificationsProvider from "~/screens/NotificationCenter/NotificationsProvider";
 import SnackbarContainer from "~/screens/NotificationCenter/Snackbar/SnackbarContainer";
-import { OnboardingContextProvider } from "~/screens/Onboarding/onboardingContext";
 
 type AppProvidersProps = {
   initialCountervalues?: CounterValuesStateRaw;
@@ -37,18 +36,16 @@ function AppProviders({ initialCountervalues, children }: AppProvidersProps) {
               <CountervaluesBridgedProvider initialState={initialCountervalues}>
                 <BottomSheetModalProvider>
                   <AppDataStorageProvider>
-                    <OnboardingContextProvider>
-                      <PostOnboardingProviderWrapped>
-                        <NotificationsProvider>
-                          <SnackbarContainer />
-                          <NftMetadataProvider getCurrencyBridge={getCurrencyBridge}>
-                            <InViewProvider>
-                              <ModularDrawerProvider>{children}</ModularDrawerProvider>
-                            </InViewProvider>
-                          </NftMetadataProvider>
-                        </NotificationsProvider>
-                      </PostOnboardingProviderWrapped>
-                    </OnboardingContextProvider>
+                    <PostOnboardingProviderWrapped>
+                      <NotificationsProvider>
+                        <SnackbarContainer />
+                        <NftMetadataProvider getCurrencyBridge={getCurrencyBridge}>
+                          <InViewProvider>
+                            <ModularDrawerProvider>{children}</ModularDrawerProvider>
+                          </InViewProvider>
+                        </NftMetadataProvider>
+                      </NotificationsProvider>
+                    </PostOnboardingProviderWrapped>
                   </AppDataStorageProvider>
                 </BottomSheetModalProvider>
               </CountervaluesBridgedProvider>

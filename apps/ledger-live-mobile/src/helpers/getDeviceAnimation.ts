@@ -406,12 +406,16 @@ export function getDeviceAnimation<M extends DeviceModelId>({
   return animation;
 }
 
-export const getDeviceAnimationStyles = (modelId: DeviceModelId, override: ViewStyle = {}) => {
-  switch (modelId) {
+export const getDeviceAnimationStyles = (
+  deviceModelId: DeviceModelId,
+  override: ViewStyle = {},
+) => {
+  switch (deviceModelId) {
     case DeviceModelId.nanoSP:
     case DeviceModelId.nanoX:
     case DeviceModelId.stax:
     case DeviceModelId.europa:
+    case DeviceModelId.apex:
       return { height: 165, ...override };
     default:
       return {};

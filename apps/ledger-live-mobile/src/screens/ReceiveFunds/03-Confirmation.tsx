@@ -371,6 +371,7 @@ function ReceiveConfirmationInner({ navigation, route, account, parentAccount }:
                 borderColor="neutral.c40"
                 alignItems="center"
                 justifyContent="center"
+                testID={"receive-qr-code-container-" + mainAccountName}
               >
                 <QRCode size={QRSize} value={mainAccount.freshAddress} ecl="H" />
                 <Flex

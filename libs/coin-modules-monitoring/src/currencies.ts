@@ -44,7 +44,6 @@ const info: Record<string, { accounts: Partial<Record<AccountType, AccountInfo>>
         average: { address: "0x085f6362077282f861abe75151ba3ec6df1dbb82291369f9a06da135ac156c15" },
         big: { address: "0x15610fa7ee546b96cb580be4060fae1c4bb15eca87f9a0aa931512bad445fc76" },
       },
-      skip: "403 issue",
     },
     polkadot: {
       accounts: {
@@ -132,7 +131,6 @@ const info: Record<string, { accounts: Partial<Record<AccountType, AccountInfo>>
         average: { address: "hx2124c477a48c589f377aebfd8028bd4a8d7c0d2d" },
         big: { address: "hxd75467e3e4ce64e3424c747dfb71503017440433" },
       },
-      skip: "indexer issue (404)",
     },
     stellar: {
       accounts: {

@@ -14,7 +14,7 @@ import { log } from "@ledgerhq/logs";
 import { BigNumber } from "bignumber.js";
 import invariant from "invariant";
 import { firstValueFrom, from, Observable } from "rxjs";
-import secp256k1 from "secp256k1";
+import { secp256k1 } from "@noble/curves/secp256k1";
 import { getCurrencyExchangeConfig } from "../";
 import { getAccountCurrency, getMainAccount } from "../../account";
 import { getAccountBridge } from "../../bridge";
@@ -184,9 +184,10 @@ const initSwap = (input: InitSwapInput): Observable<SwapRequestEvent> => {
 
         await swap.processTransaction(Buffer.from(swapResult.binaryPayload, "hex"), estimatedFees);
         if (unsubscribed) return;
-        const goodSign = <Buffer>(
-          secp256k1.signatureExport(Buffer.from(swapResult.signature, "hex"))
-        );
+        const goodSign = <Buffer>(() => {
+          const sig = secp256k1.Signature.fromCompact(Buffer.from(swapResult.signature, "hex"));
+          return Buffer.from(sig.toDERRawBytes());
+        })();
         await swap.checkTransactionSignature(goodSign);
         if (unsubscribed) return;
         const mainPayoutCurrency = getAccountCurrency(payoutAccount);

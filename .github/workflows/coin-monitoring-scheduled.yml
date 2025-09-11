@@ -47,7 +47,12 @@ jobs:
               - type: "section"
                 text:
                   type: "mrkdwn"
-                  text: "<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Workflow run>"
+                  text: ":github: <${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Workflow run>"
+              - type: "section"
+                text:
+                  type: "mrkdwn"
+                  text: ":datadog_logo: <https://app.datadoghq.eu/dashboard/5wd-rjr-fzh/coin-integration-general-dashboard|Monitoring dashboard>"
+
   monitoring-success:
     name: Success report
     needs: run-monitoring
@@ -70,4 +75,8 @@ jobs:
               - type: "section"
                 text:
                   type: "mrkdwn"
-                  text: "<${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Workflow run>"
+                  text: ":github: <${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Workflow run>"
+              - type: "section"
+                text:
+                  type: "mrkdwn"
+                  text: ":datadog_logo: <https://app.datadoghq.eu/dashboard/5wd-rjr-fzh/coin-integration-general-dashboard|Monitoring dashboard>"

@@ -13,6 +13,7 @@ import type {
   Page,
   Stake,
   Reward,
+  CraftedTransaction,
 } from "@ledgerhq/coin-framework/api/index";
 import network from "@ledgerhq/live-network";
 
@@ -134,7 +135,7 @@ const buildGetSequence = (networkFamily: string) =>
 const buildListOperations = networkFamily =>
   async function listOperations(
     address: string,
-    pagination: Pagination = { minHeight: 0 },
+    pagination: Pagination = { minHeight: 0, order: "asc" },
   ): Promise<[Operation<any>[], string]> {
     const { data } = await network<{ operations: Operation<any>[] }, unknown>({
       method: "GET",
@@ -160,8 +161,8 @@ const buildLastBlock = networkFamily =>
   };
 
 const buildCraftTransaction = networkFamily =>
-  async function craftTransaction(intent: TransactionIntent<any>): Promise<string> {
-    const { data } = await network<any, unknown>({
+  async function craftTransaction(intent: TransactionIntent<any>): Promise<CraftedTransaction> {
+    const { data } = await network<CraftedTransaction, unknown>({
       method: "POST",
       url: `${ALPACA_URL}/${networkFamily}/transaction/encode`,
       data: {
@@ -171,7 +172,7 @@ const buildCraftTransaction = networkFamily =>
         },
       },
     });
-    return data.rawTransaction;
+    return data;
   };
 
 export const getNetworkAlpacaApi = (networkFamily: string) =>

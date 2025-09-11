@@ -1,18 +1,12 @@
 import { useModularDrawerData } from "../useModularDrawerData";
 import { LoadingStatus } from "@ledgerhq/live-common/deposit/type";
 import { renderHook, waitFor } from "tests/testSetup";
-import {
-  expectedAssetsSorted,
-  expectedCurrenciesByProvider,
-} from "../../__mocks__/useModularDrawerData.mock";
+import { expectedCurrenciesByProvider } from "../../__mocks__/useModularDrawerData.mock";
+import { expectedAssetsSorted } from "@ledgerhq/live-common/modularDrawer/__mocks__/dada.mock";
 
 describe("useModularDrawerData", () => {
   it("should return the correct data structure", async () => {
-    const { result } = renderHook(() =>
-      useModularDrawerData({
-        searchedValue: undefined,
-      }),
-    );
+    const { result } = renderHook(() => useModularDrawerData({}));
 
     expect(result.current.isLoading).toBe(true);
     expect(result.current.data).toBeUndefined();
@@ -34,11 +28,7 @@ describe("useModularDrawerData", () => {
   });
 
   it("should process assets data correctly", async () => {
-    const { result } = renderHook(() =>
-      useModularDrawerData({
-        searchedValue: undefined,
-      }),
-    );
+    const { result } = renderHook(() => useModularDrawerData({}));
 
     expect(result.current.isLoading).toBe(true);
 

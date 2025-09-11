@@ -181,3 +181,8 @@ type EvmTransactionNftParamRaw = {
   quantity: ProtoNFTRaw["amount"];
   collectionName: string;
 };
+
+export enum TransactionTypes {
+  legacy = 0,
+  eip1559 = 2,
+}

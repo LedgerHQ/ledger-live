@@ -59,7 +59,6 @@ import type { ExchangeStackNavigatorParamList } from "./ExchangeStackNavigator";
 import type { ExploreTabNavigatorStackParamList } from "./ExploreTabNavigator";
 import { FeesNavigatorParamsList } from "./FeesNavigator";
 import type { FreezeNavigatorParamList } from "./FreezeNavigator";
-import type { ImportAccountsNavigatorParamList } from "./ImportAccountsNavigator";
 import { LandingPagesNavigatorParamList } from "./LandingPagesNavigator";
 import type { MainNavigatorParamList } from "./MainNavigator";
 import type { NftNavigatorParamList } from "./NftNavigator";
@@ -244,7 +243,6 @@ export type BaseNavigatorStackParamList = {
   };
   [NavigatorName.PlatformExchange]: NavigatorScreenParams<PlatformExchangeNavigatorParamList>;
   [NavigatorName.AccountSettings]: NavigatorScreenParams<AccountSettingsNavigatorParamList>;
-  [NavigatorName.ImportAccounts]?: NavigatorScreenParams<ImportAccountsNavigatorParamList>;
   [NavigatorName.PasswordAddFlow]?: NavigatorScreenParams<PasswordAddFlowParamList>;
   [NavigatorName.PasswordModifyFlow]?: NavigatorScreenParams<PasswordModifyFlowParamList>;
   [NavigatorName.NotificationCenter]: NavigatorScreenParams<NotificationCenterNavigatorParamList>;
@@ -352,7 +350,9 @@ export type BaseNavigatorStackParamList = {
   >;
   [NavigatorName.Assets]?: Partial<NavigatorScreenParams<AssetsNavigatorParamsList>>;
   [ScreenName.SwapHistory]: undefined;
+  [ScreenName.SwapLoading]: undefined;
   [ScreenName.SwapPendingOperation]: { swapOperation: SwapOperation };
+  [ScreenName.LedgerSyncDeepLinkHandler]: undefined;
 };
 
 declare global {

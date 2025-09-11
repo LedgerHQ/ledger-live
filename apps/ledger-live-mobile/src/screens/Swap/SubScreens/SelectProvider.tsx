@@ -35,10 +35,13 @@ export function SelectProvider({ navigation, route }: SelectProviderParamList) {
         defaultPartner: selectedRate?.provider ?? "missing",
         totalPartners: rates.value?.length ?? "missing",
       });
-      // @ts-expect-error navigation type is only partially declared
-      navigation.navigate(ScreenName.SwapForm, {
-        rate,
+      // Navigate to the nested SwapForm screen within SwapTab
+      navigation.popTo(ScreenName.SwapTab, {
+        screen: ScreenName.SwapForm,
         merge: true,
+        params: {
+          rate,
+        },
       });
     },
     [track, selectedRate?.provider, rates.value?.length, navigation],

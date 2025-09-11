@@ -33,8 +33,8 @@ const mockGetConfig = jest.mocked(getCoinConfig);
 jest.mock("ethers");
 const mockEthers = jest.mocked(ethers);
 jest
-  .spyOn(mockEthers.providers.StaticJsonRpcProvider.prototype, "sendTransaction")
-  .mockResolvedValue(Promise.resolve({ hash: "0xH4sH" }));
+  .spyOn(mockEthers.JsonRpcProvider.prototype as any, "broadcastTransaction")
+  .mockResolvedValue({ hash: "0xH4sH" } as any);
 
 jest.mock("axios");
 const mockAxios = jest.mocked(axios);
@@ -180,7 +180,7 @@ describe("EVM Family", () => {
             },
           }));
 
-          const providerSpy = jest.spyOn(mockEthers.providers, "StaticJsonRpcProvider");
+          const providerSpy = jest.spyOn(mockEthers, "JsonRpcProvider");
 
           // MEV OFF
           await broadcast({
@@ -195,7 +195,7 @@ describe("EVM Family", () => {
           });
 
           expect(providerSpy).toHaveBeenCalledTimes(1);
-          expect(providerSpy).toHaveBeenNthCalledWith(1, "https://my-rpc.com");
+          expect(providerSpy).toHaveBeenNthCalledWith(1, "https://my-rpc.com", 1);
         });
       });
 

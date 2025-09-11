@@ -1,5 +1,4 @@
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
-import { useIsFocused } from "@react-navigation/native";
 import { Flex } from "@ledgerhq/native-ui";
 import React, { useCallback, useMemo, useRef, useState } from "react";
 import { StyleSheet } from "react-native";
@@ -14,6 +13,7 @@ import SelectDevice2 from "~/components/SelectDevice2";
 import { ScreenName } from "~/const";
 import { useStartExchangeDeviceAction } from "~/hooks/deviceActions";
 import { HOOKS_TRACKING_LOCATIONS } from "~/analytics/hooks/variables";
+import SkipSelectDevice from "~/screens/SkipSelectDevice";
 
 type Props = StackNavigatorProps<
   PlatformExchangeNavigatorParamList,
@@ -23,7 +23,6 @@ type Props = StackNavigatorProps<
 export default function PlatformStartExchange({ navigation, route }: Props) {
   const action = useStartExchangeDeviceAction();
   const [device, setDevice] = useState<Device>();
-  const isFocused = useIsFocused();
   const hasPopped = useRef(false);
 
   const onClose = useCallback(() => {
@@ -46,10 +45,11 @@ export default function PlatformStartExchange({ navigation, route }: Props) {
   const request = useMemo(() => route.params.request, [route.params.request]);
   return (
     <SafeAreaView style={styles.root} edges={["bottom"]}>
+      <SkipSelectDevice onResult={setDevice} />
       <Flex px={16} flex={1} mt={8}>
         <SelectDevice2
           onSelect={setDevice}
-          stopBleScanning={!!device || !isFocused}
+          stopBleScanning={!!device}
           requestToSetHeaderOptions={requestToSetHeaderOptions}
         />
       </Flex>

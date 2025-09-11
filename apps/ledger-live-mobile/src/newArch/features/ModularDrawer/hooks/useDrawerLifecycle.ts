@@ -6,11 +6,15 @@ import {
   getCurrentPageName,
   useModularDrawerAnalytics,
 } from "../analytics/useModularDrawerAnalytics";
-import type { StepFlowManagerReturnType } from "./useModularDrawerFlowStepManager";
+
+import { useDispatch, useSelector } from "react-redux";
+import {
+  modularDrawerFlowSelector,
+  modularDrawerStepSelector,
+  setStep,
+} from "~/reducers/modularDrawer";
 
 type UseDrawerLifecycleParams = {
-  flow: string;
-  navigationStepManager: StepFlowManagerReturnType;
   canGoBackToAsset: boolean;
   canGoBackToNetwork: boolean;
   backToAsset: () => void;
@@ -20,8 +24,6 @@ type UseDrawerLifecycleParams = {
 };
 
 export function useDrawerLifecycle({
-  flow,
-  navigationStepManager,
   canGoBackToAsset,
   canGoBackToNetwork,
   backToAsset,
@@ -29,6 +31,9 @@ export function useDrawerLifecycle({
   onClose,
   resetSelection,
 }: UseDrawerLifecycleParams) {
+  const dispatch = useDispatch();
+  const flow = useSelector(modularDrawerFlowSelector);
+  const currentStep = useSelector(modularDrawerStepSelector);
   const { trackModularDrawerEvent } = useModularDrawerAnalytics();
 
   const handleKeyboardDismiss = () => {
@@ -36,12 +41,10 @@ export function useDrawerLifecycle({
   };
 
   const handleBackButton = useCallback(() => {
-    const currentStep = navigationStepManager.currentStep;
-
     trackModularDrawerEvent(EVENTS_NAME.BUTTON_CLICKED, {
       button: "modularDrawer_backButton",
       flow,
-      page: getCurrentPageName(navigationStepManager.currentStep),
+      page: getCurrentPageName(currentStep),
     });
 
     switch (currentStep) {
@@ -56,7 +59,7 @@ export function useDrawerLifecycle({
         return undefined;
     }
   }, [
-    navigationStepManager.currentStep,
+    currentStep,
     trackModularDrawerEvent,
     flow,
     canGoBackToAsset,
@@ -67,15 +70,15 @@ export function useDrawerLifecycle({
 
   const handleCloseButton = useCallback(() => {
     resetSelection();
-    navigationStepManager.reset();
+    dispatch(setStep(ModularDrawerStep.Asset));
     handleKeyboardDismiss();
     onClose?.();
     trackModularDrawerEvent(EVENTS_NAME.BUTTON_CLICKED, {
       button: "Close",
       flow,
-      page: getCurrentPageName(navigationStepManager.currentStep),
+      page: getCurrentPageName(currentStep),
     });
-  }, [trackModularDrawerEvent, flow, navigationStepManager, onClose, resetSelection]);
+  }, [trackModularDrawerEvent, flow, currentStep, onClose, resetSelection, dispatch]);
 
   return { handleBackButton, handleCloseButton } as const;
 }

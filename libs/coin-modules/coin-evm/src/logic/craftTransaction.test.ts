@@ -35,13 +35,13 @@ describe("craftTransaction", () => {
       2,
       {
         gasPrice: null,
-        maxFeePerGas: new BigNumber(4),
-        maxPriorityFeePerGas: new BigNumber(7),
+        maxFeePerGas: new BigNumber(7),
+        maxPriorityFeePerGas: new BigNumber(4),
         nextBaseFee: null,
       },
       {
-        maxFeePerGas: 4,
-        maxPriorityFeePerGas: 7,
+        maxFeePerGas: 7,
+        maxPriorityFeePerGas: 4,
       },
     ],
   ])("%s transaction type", (transactionType, transactionTypeNumber, feeData, expectedFee) => {
@@ -54,8 +54,9 @@ describe("craftTransaction", () => {
       jest.spyOn(node, "getGasEstimation").mockResolvedValue(new BigNumber(2300));
       jest.spyOn(node, "getFeeData").mockResolvedValue(feeData);
 
-      expect(
-        await craftTransaction({ ethereumLikeInfo: { chainId: 42 } } as CryptoCurrency, {
+      const { transaction } = await craftTransaction(
+        { ethereumLikeInfo: { chainId: 42 } } as CryptoCurrency,
+        {
           transactionIntent: {
             type: `send-${transactionType}`,
             recipient: "0x7b2c7232f9e38f30e2868f0e5bf311cd83554b5a",
@@ -68,18 +69,20 @@ describe("craftTransaction", () => {
               gasPrice: 8n,
             },
           },
-        }),
-      ).toEqual(
-        ethers.utils.serializeTransaction({
+        },
+      );
+
+      expect(transaction).toEqual(
+        ethers.Transaction.from({
           type: transactionTypeNumber,
           to: "0x7b2c7232f9e38f30e2868f0e5bf311cd83554b5a",
           nonce: 18,
           gasLimit: 2300,
-          data: Buffer.from([]),
+          data: "0x",
           value: 10,
           chainId: 42,
           ...expectedFee,
-        }),
+        }).unsignedSerialized,
       );
     });
 
@@ -92,8 +95,9 @@ describe("craftTransaction", () => {
       jest.spyOn(node, "getGasEstimation").mockResolvedValue(new BigNumber(2300));
       jest.spyOn(node, "getFeeData").mockResolvedValue(feeData);
 
-      expect(
-        await craftTransaction({ ethereumLikeInfo: { chainId: 42 } } as CryptoCurrency, {
+      const { transaction } = await craftTransaction(
+        { ethereumLikeInfo: { chainId: 42 } } as CryptoCurrency,
+        {
           transactionIntent: {
             type: `send-${transactionType}`,
             recipient: "0x7b2c7232f9e38f30e2868f0e5bf311cd83554b5a",
@@ -106,22 +110,29 @@ describe("craftTransaction", () => {
               gasPrice: 8n,
             },
           },
-        }),
-      ).toEqual(
-        ethers.utils.serializeTransaction({
+        },
+      );
+
+      expect(transaction).toEqual(
+        ethers.Transaction.from({
           type: transactionTypeNumber,
           to: "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
           nonce: 18,
           gasLimit: 2300,
-          data: Buffer.concat([
-            Buffer.from("a9059cbb000000000000000000000000", "hex"), // transfer selector
-            Buffer.from("7b2c7232f9e38f30e2868f0e5bf311cd83554b5a", "hex"), // recipient
-            Buffer.from("000000000000000000000000000000000000000000000000000000000000000a", "hex"), // amount
-          ]),
+          data:
+            "0x" +
+            Buffer.concat([
+              Buffer.from("a9059cbb000000000000000000000000", "hex"), // transfer selector
+              Buffer.from("7b2c7232f9e38f30e2868f0e5bf311cd83554b5a", "hex"), // recipient
+              Buffer.from(
+                "000000000000000000000000000000000000000000000000000000000000000a",
+                "hex",
+              ), // amount
+            ]).toString("hex"),
           value: 0,
           chainId: 42,
           ...expectedFee,
-        }),
+        }).unsignedSerialized,
       );
     });
   });

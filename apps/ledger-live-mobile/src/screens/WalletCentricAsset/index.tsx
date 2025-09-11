@@ -1,5 +1,5 @@
 import React, { useMemo, useState, useCallback, useRef } from "react";
-import { FlatList, LayoutChangeEvent, ListRenderItemInfo } from "react-native";
+import { FlatList, LayoutChangeEvent } from "react-native";
 import Animated, { useAnimatedScrollHandler, useSharedValue } from "react-native-reanimated";
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
@@ -11,7 +11,7 @@ import { useNavigation } from "@react-navigation/native";
 import { Account, TokenAccount } from "@ledgerhq/types-live";
 import isEqual from "lodash/isEqual";
 import BigNumber from "bignumber.js";
-import { ReactNavigationPerformanceView } from "@shopify/react-native-performance-navigation";
+
 import accountSyncRefreshControl from "~/components/accountSyncRefreshControl";
 import { withDiscreetMode } from "~/context/DiscreetModeContext";
 import SafeAreaView from "~/components/SafeAreaView";
@@ -34,10 +34,10 @@ import AssetGraph from "./AssetGraph";
 import { getCurrencyConfiguration } from "@ledgerhq/live-common/config/index";
 import { CurrencyConfig } from "@ledgerhq/coin-framework/config";
 import { useGroupedCurrenciesByProvider } from "@ledgerhq/live-common/deposit/index";
-import { LoadingBasedGroupedCurrencies, LoadingStatus } from "@ledgerhq/live-common/deposit/type";
-import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { LoadingStatus } from "@ledgerhq/live-common/deposit/type";
 import { AddAccountContexts } from "LLM/features/Accounts/screens/AddAccount/enums";
 import WarningBannerStatus from "~/components/WarningBannerStatus";
+import { renderItem } from "LLM/utils/renderItem";
 
 const AnimatedFlatListWithRefreshControl = Animated.createAnimatedComponent(
   accountSyncRefreshControl(FlatList),
@@ -82,25 +82,21 @@ const AssetScreen = ({ route }: NavigationProps) => {
     () => cryptoAccounts.reduce((acc, val) => acc.plus(val.balance), BigNumber(0)),
     [cryptoAccounts],
   );
-
-  const { result, loadingStatus: providersLoadingStatus } = useGroupedCurrenciesByProvider(
-    true,
-  ) as LoadingBasedGroupedCurrencies;
-
+  const groupedCurrencies = useGroupedCurrenciesByProvider(true);
+  const { result, loadingStatus: providersLoadingStatus } =
+    "loadingStatus" in groupedCurrencies
+      ? groupedCurrencies
+      : { result: groupedCurrencies, loadingStatus: LoadingStatus.Success };
   const isAddAccountCtaDisabled = [LoadingStatus.Pending, LoadingStatus.Error].includes(
     providersLoadingStatus,
   );
 
   const { currenciesByProvider } = result;
-
   const provider = useMemo(
     () =>
       currency &&
       currenciesByProvider.find(elem =>
-        elem.currenciesByNetwork.some(
-          currencyByNetwork =>
-            (currencyByNetwork as CryptoCurrency | TokenCurrency).id === currency.id,
-        ),
+        elem.currenciesByNetwork.some(currencyByNetwork => currencyByNetwork.id === currency.id),
       ),
     [currenciesByProvider, currency],
   );
@@ -119,10 +115,7 @@ const AssetScreen = ({ route }: NavigationProps) => {
       navigation.navigate(NavigatorName.DeviceSelection, {
         screen: ScreenName.SelectDevice,
         params: {
-          currency:
-            currency.type === "TokenCurrency"
-              ? currency.parentCurrency
-              : (currency as CryptoCurrency),
+          currency: currency.type === "TokenCurrency" ? currency.parentCurrency : currency,
           context: AddAccountContexts.AddAccounts,
         },
       });
@@ -138,8 +131,10 @@ const AssetScreen = ({ route }: NavigationProps) => {
     }
   }
 
-  const data = useMemo(
-    () => [
+  const data = useMemo(() => {
+    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+    const accounts = cryptoAccounts as Account[] | TokenAccount[];
+    return [
       <Box
         mt={6}
         onLayout={onGraphCardLayout}
@@ -183,7 +178,7 @@ const AssetScreen = ({ route }: NavigationProps) => {
           onSeeAllPress={onAddAccount}
         />
         <AccountsSection
-          accounts={cryptoAccounts as Account[] | TokenAccount[]}
+          accounts={accounts}
           currencyId={currency.id}
           currencyTicker={currency.ticker}
           onAddAccount={onAddAccount}
@@ -197,48 +192,45 @@ const AssetScreen = ({ route }: NavigationProps) => {
           <OperationsHistorySection accounts={cryptoAccounts} />
         </SectionContainer>
       ),
-    ],
-    [
-      onGraphCardLayout,
-      currentPositionY,
-      graphCardEndPosition,
-      isAddAccountCtaDisabled,
-      currency,
-      currencyBalance,
-      cryptoAccountsEmpty,
-      t,
-      cryptoAccounts,
-      defaultAccount,
-      onAddAccount,
-      currencyConfig,
-    ],
-  );
+    ];
+  }, [
+    onGraphCardLayout,
+    currentPositionY,
+    graphCardEndPosition,
+    isAddAccountCtaDisabled,
+    currency,
+    currencyBalance,
+    cryptoAccountsEmpty,
+    t,
+    cryptoAccounts,
+    defaultAccount,
+    onAddAccount,
+    currencyConfig,
+  ]);
 
   return (
-    <ReactNavigationPerformanceView screenName={ScreenName.Asset} interactive>
-      <SafeAreaView edges={["bottom", "left", "right"]} isFlex>
-        <TrackScreen category="Asset" currency={currency.name} />
-        <CurrencyBackgroundGradient
-          currentPositionY={currentPositionY}
-          graphCardEndPosition={graphCardEndPosition}
-          gradientColor={getCurrencyColor(currency) || colors.primary.c80}
-        />
-        <AnimatedFlatListWithRefreshControl
-          style={{ flex: 1 }}
-          data={data}
-          renderItem={({ item }: ListRenderItemInfo<unknown>) => item as JSX.Element}
-          keyExtractor={(_: unknown, index: number) => String(index)}
-          showsVerticalScrollIndicator={false}
-          onScroll={handleScroll}
-        />
-        <Header
-          currentPositionY={currentPositionY}
-          graphCardEndPosition={graphCardEndPosition}
-          currency={currency}
-          currencyBalance={currencyBalance}
-        />
-      </SafeAreaView>
-    </ReactNavigationPerformanceView>
+    <SafeAreaView edges={["bottom", "left", "right"]} isFlex>
+      <TrackScreen category="Asset" currency={currency.name} />
+      <CurrencyBackgroundGradient
+        currentPositionY={currentPositionY}
+        graphCardEndPosition={graphCardEndPosition}
+        gradientColor={getCurrencyColor(currency) || colors.primary.c80}
+      />
+      <AnimatedFlatListWithRefreshControl
+        style={{ flex: 1 }}
+        data={data}
+        renderItem={renderItem<JSX.Element>}
+        keyExtractor={(_: unknown, index: number) => String(index)}
+        showsVerticalScrollIndicator={false}
+        onScroll={handleScroll}
+      />
+      <Header
+        currentPositionY={currentPositionY}
+        graphCardEndPosition={graphCardEndPosition}
+        currency={currency}
+        currencyBalance={currencyBalance}
+      />
+    </SafeAreaView>
   );
 };
 

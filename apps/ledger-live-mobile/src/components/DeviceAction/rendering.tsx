@@ -5,12 +5,6 @@ import {
   PeerRemovedPairing,
   WrongDeviceForAccount,
 } from "@ledgerhq/errors";
-import {
-  getAccountCurrency,
-  getFeesCurrency,
-  getFeesUnit,
-  getMainAccount,
-} from "@ledgerhq/live-common/account/index";
 import { isSyncOnboardingSupported } from "@ledgerhq/live-common/device/use-cases/screenSpecs";
 import { ExchangeRate, ExchangeSwap } from "@ledgerhq/live-common/exchange/swap/types";
 import { getNoticeType, getProviderName } from "@ledgerhq/live-common/exchange/swap/utils/index";
@@ -19,7 +13,7 @@ import { AppRequest } from "@ledgerhq/live-common/hw/actions/app";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import firmwareUpdateRepair from "@ledgerhq/live-common/hw/firmwareUpdate-repair";
 import isFirmwareUpdateVersionSupported from "@ledgerhq/live-common/hw/isFirmwareUpdateVersionSupported";
-import { WalletState, accountNameWithDefaultSelector } from "@ledgerhq/live-wallet/store";
+import { WalletState } from "@ledgerhq/live-wallet/store";
 import {
   BoxedIcon,
   Flex,
@@ -36,7 +30,6 @@ import { DeviceModelId } from "@ledgerhq/types-devices";
 import type { DeviceModelInfo } from "@ledgerhq/types-live";
 import { ParamListBase, T } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
-import BigNumber from "bignumber.js";
 import React, { useEffect, useState } from "react";
 import { TFunction } from "react-i18next";
 import { Image, Linking, Platform, ScrollView } from "react-native";
@@ -47,7 +40,7 @@ import { TrackScreen, track } from "~/analytics";
 import { NavigatorName, ScreenName } from "~/const";
 import { MANAGER_TABS } from "~/const/manager";
 import { getDeviceAnimation, getDeviceAnimationStyles } from "~/helpers/getDeviceAnimation";
-import { currencySettingsForAccountSelector, lastSeenDeviceSelector } from "~/reducers/settings";
+import { lastSeenDeviceSelector } from "~/reducers/settings";
 import { SettingsState } from "~/reducers/types";
 import { urls } from "~/utils/urls";
 import { Theme, lighten } from "../../colors";
@@ -55,13 +48,10 @@ import Alert from "../Alert";
 import Animation from "../Animation";
 import Button from "../Button";
 import Circle from "../Circle";
-import CurrencyIcon from "../CurrencyIcon";
-import CurrencyUnitValue from "../CurrencyUnitValue";
 import DeviceActionProgress from "../DeviceActionProgress";
 import ExternalLink from "../ExternalLink";
 import GenericErrorView from "../GenericErrorView";
 import ModalLock from "../ModalLock";
-import ProviderIcon from "../ProviderIcon";
 import { RootStackParamList } from "../RootNavigator/types/RootNavigator";
 import TermsFooter, { TermsProviders } from "../TermsFooter";
 
@@ -237,16 +227,10 @@ export function renderConfirmSwap({
   device,
   theme,
   provider,
-  transaction,
-  exchange,
-  amountExpectedTo,
-  estimatedFees,
-  walletState,
-  settingsState,
 }: RawProps & {
   device: Device;
   transaction: Transaction;
-  provider: string;
+  provider: TermsProviders;
   exchangeRate: ExchangeRate;
   exchange: ExchangeSwap;
   amountExpectedTo?: string | null;
@@ -257,15 +241,6 @@ export function renderConfirmSwap({
   const providerName = getProviderName(provider);
   const noticeType = getNoticeType(provider);
   const alertProperties = noticeType.learnMore ? { learnMoreUrl: urls.swap.learnMore } : {};
-  const fromAccountName = accountNameWithDefaultSelector(walletState, exchange.fromAccount);
-  const toAccountName = accountNameWithDefaultSelector(walletState, exchange.toAccount);
-
-  const unitFrom = currencySettingsForAccountSelector(settingsState, {
-    account: exchange.fromAccount,
-  }).unit;
-  const unitTo = currencySettingsForAccountSelector(settingsState, {
-    account: exchange.toAccount,
-  }).unit;
 
   return (
     <ScrollView testID="confirm-swap-on-device">
@@ -275,94 +250,21 @@ export function renderConfirmSwap({
             providerName,
           })}
         </Alert>
-        <AnimationContainer marginTop="16px">
-          <Animation
-            source={getDeviceAnimation({ modelId: device.modelId, key: "sign", theme })}
-            style={getDeviceAnimationStyles(device.modelId)}
-          />
-        </AnimationContainer>
-        <TitleText>{t("DeviceAction.confirmSwap.title")}</TitleText>
-
-        <Flex justifyContent={"space-between"} width="100%">
-          <FieldItem title={t("DeviceAction.swap2.amountSent")}>
-            <Text testID="amountSent">
-              <CurrencyUnitValue
-                value={transaction.amount}
-                unit={unitFrom}
-                disableRounding
-                showCode
-              />
-            </Text>
-          </FieldItem>
-
-          <FieldItem title={t("DeviceAction.swap2.amountReceived")}>
-            <Text testID="amountReceived">
-              <CurrencyUnitValue
-                unit={unitTo}
-                value={amountExpectedTo ? new BigNumber(amountExpectedTo) : null}
-                disableRounding
-                showCode
-              />
-            </Text>
-          </FieldItem>
-
-          <FieldItem title={t("DeviceAction.swap2.provider")}>
-            <Flex flexDirection="row" alignItems="center">
-              <Flex paddingRight={2}>
-                <ProviderIcon size="XXS" name={provider} />
-              </Flex>
-
-              <Text testID="provider">{providerName}</Text>
-            </Flex>
-          </FieldItem>
-
-          <FieldItem title={t("DeviceAction.swap2.fees")}>
-            <Text testID="fees">
-              <CurrencyUnitValue
-                unit={getFeesUnit(
-                  getFeesCurrency(getMainAccount(exchange.fromAccount, exchange.fromParentAccount)),
-                )}
-                value={new BigNumber(estimatedFees || 0)}
-                disableRounding
-                showCode
-              />
-            </Text>
-          </FieldItem>
-
-          <FieldItem title={t("DeviceAction.swap2.sourceAccount")}>
-            <Flex flexDirection="row" alignItems="center">
-              <CurrencyIcon size={20} currency={getAccountCurrency(exchange.fromAccount)} />
-              <Text marginLeft={2} testID="sourceAccount">
-                {fromAccountName}
-              </Text>
-            </Flex>
-          </FieldItem>
-
-          <FieldItem title={t("DeviceAction.swap2.targetAccount")}>
-            <Flex flexDirection="row" alignItems="center">
-              <CurrencyIcon size={20} currency={getAccountCurrency(exchange.toAccount)} />
-              <Text marginLeft={2} testID="targetAccount">
-                {toAccountName}
-              </Text>
-            </Flex>
-          </FieldItem>
-        </Flex>
-
-        <TermsFooter provider={provider as TermsProviders} />
+        <Wrapper rowGap={16}>
+          <AnimationContainer marginTop="16px">
+            <Animation
+              source={getDeviceAnimation({ modelId: device.modelId, key: "sign", theme })}
+              style={getDeviceAnimationStyles(device.modelId)}
+            />
+          </AnimationContainer>
+          <TitleText>{t("DeviceAction.confirmSwap.title")}</TitleText>
+          <Text textAlign="center" color={"neutral.c70"} fontSize={14} fontWeight="medium">
+            {t(`DeviceAction.confirmSwap.alert.default`)}
+          </Text>
+          <TermsFooter provider={provider} />
+        </Wrapper>
       </Wrapper>
     </ScrollView>
-  );
-}
-
-function FieldItem({ title, children }: { title: string; children: React.ReactNode }) {
-  return (
-    <Flex flexDirection="row" justifyContent="space-between" paddingY={4}>
-      <Text color="neutral.c70">{title}</Text>
-
-      <Flex flexDirection="row" alignItems="center">
-        {children}
-      </Flex>
-    </Flex>
   );
 }
 
@@ -679,11 +581,7 @@ export function renderError({
         hasExportLogButton={hasExportLogButton}
       >
         {showRetryIfAvailable && (onRetry || managerAppName) ? (
-          <Flex
-            alignSelf="stretch"
-            mb={0}
-            mt={(error as unknown as Error) instanceof BluetoothRequired ? 0 : 8}
-          >
+          <Flex alignSelf="stretch" mb={0} mt={error instanceof BluetoothRequired ? 0 : 8}>
             <StyledButton
               event="DeviceActionErrorRetry"
               type="main"
@@ -906,7 +804,7 @@ export function renderExchange({
   theme,
 }: RawProps & {
   swapRequest: {
-    provider: string;
+    provider: TermsProviders;
     selectedDevice: Device;
     transaction: Transaction;
     exchangeRate: ExchangeRate;
@@ -1013,7 +911,9 @@ export function renderWarningOutdated({
   colors,
 }: WarningOutdatedProps) {
   function onOpenManager() {
-    navigation.navigate(NavigatorName.MyLedger);
+    navigation.navigate(NavigatorName.MyLedger, {
+      screen: ScreenName.MyLedgerChooseDevice,
+    });
   }
 
   return (

@@ -12,7 +12,7 @@ import { openURL } from "~/renderer/linking";
 import { urls } from "~/config/urls";
 import { useErrorLinks } from "./hooks/useErrorLinks";
 import { isDmkError } from "@ledgerhq/live-dmk-desktop";
-
+import { renderWithLinks } from "./ErrorWithAnchor";
 type Props = {
   error: Error | undefined | null;
   field?: "title" | "description" | "list";
@@ -104,11 +104,18 @@ export function TranslatedError({
     return <ErrorList translation={translation} />;
   }
 
+  // Specific to Ledger Status API
+  const hasAnchorsInTranslation = translation.includes("<a");
+
   return (
     <>
-      <span data-testid={dataTestId}>
-        <Trans i18nKey={translationKey} components={{ ...links }} values={args} />
-      </span>
+      {hasAnchorsInTranslation ? (
+        <span data-testid={dataTestId}>{renderWithLinks(translation)}</span>
+      ) : (
+        <span data-testid={dataTestId}>
+          <Trans i18nKey={translationKey} components={{ ...links }} values={args} />
+        </span>
+      )}
 
       {urls.errors[error.name] && !noLink && (
         <>

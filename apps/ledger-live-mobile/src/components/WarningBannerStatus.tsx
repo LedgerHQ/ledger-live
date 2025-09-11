@@ -61,8 +61,8 @@ const WarningBannerStatus = ({ currencyConfig, currency }: Props) => {
         <Alert
           key="deprecated_banner"
           type="warning"
-          learnMoreKey="account.willBedeprecatedBanner.contactSupport"
-          learnMoreUrl={urls.contactSupportWebview.en}
+          learnMoreKey="account.willBedeprecatedBanner.learnMore"
+          learnMoreUrl={currencyConfig.status.link || urls.contactSupportWebview.en}
         >
           <Trans
             i18nKey="account.willBedeprecatedBanner.title"

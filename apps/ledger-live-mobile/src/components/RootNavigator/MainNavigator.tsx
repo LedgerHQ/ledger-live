@@ -1,7 +1,6 @@
 import React, { useCallback, useMemo } from "react";
 import { useTheme } from "styled-components/native";
 import { IconsLegacy } from "@ledgerhq/native-ui";
-
 import { BottomTabBarProps, createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { useSelector } from "react-redux";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -22,6 +21,7 @@ import { isMainNavigatorVisibleSelector } from "~/reducers/appstate";
 import EarnLiveAppNavigator from "./EarnLiveAppNavigator";
 import { getStakeLabelLocaleBased } from "~/helpers/getStakeLabelLocaleBased";
 import { useRebornFlow } from "LLM/features/Reborn/hooks/useRebornFlow";
+import { UnmountOnBlur } from "./utils/UnmountOnBlur";
 
 const Tab = createBottomTabNavigator<MainNavigatorParamList>();
 
@@ -62,10 +62,15 @@ export default function MainNavigator() {
     [managerNavLockCallback],
   );
 
+  const unmountOnBlur = ({ children }: { children: React.ReactNode }) => (
+    <UnmountOnBlur>{children}</UnmountOnBlur>
+  );
+
   return (
     <Tab.Navigator
       tabBar={tabBar}
       screenOptions={{
+        sceneStyle: { backgroundColor: colors.background.main },
         tabBarStyle: [
           {
             height: 300,
@@ -76,20 +81,22 @@ export default function MainNavigator() {
             backgroundColor: colors.opacityDefault.c10,
           },
         ],
-        unmountOnBlur: true, // Nb prevents ghost device interactions
         tabBarShowLabel: false,
         tabBarActiveTintColor: colors.palette.primary.c80,
         tabBarInactiveTintColor: colors.palette.neutral.c70,
         headerShown: false,
       }}
-      sceneContainerStyle={[{ backgroundColor: colors.background.main }]}
+      screenLayout={unmountOnBlur}
     >
       <Tab.Screen
         name={NavigatorName.Portfolio}
         component={PortfolioNavigator}
+        layout={({ children }) => (
+          // never unmount Portfolio on navigation
+          <>{children}</>
+        )}
         options={{
           headerShown: false,
-          unmountOnBlur: true,
           tabBarIcon: props => <PortfolioTabIcon {...props} />,
         }}
         listeners={({ navigation }) => ({
@@ -97,7 +104,7 @@ export default function MainNavigator() {
             e.preventDefault();
             managerLockAwareCallback(() => {
               navigation.navigate(NavigatorName.Portfolio, {
-                screen: ScreenName.Portfolio,
+                screen: NavigatorName.WalletTab,
               });
             });
           },
@@ -106,9 +113,9 @@ export default function MainNavigator() {
       <Tab.Screen
         name={NavigatorName.Earn}
         component={EarnLiveAppNavigator}
+        layout={unmountOnBlur}
         options={{
           headerShown: false,
-          unmountOnBlur: true,
           tabBarIcon: props => (
             <TabIcon
               Icon={IconsLegacy.LendMedium}
@@ -123,12 +130,16 @@ export default function MainNavigator() {
             e.preventDefault();
             managerLockAwareCallback(() => {
               if (readOnlyModeEnabled && hasOrderedNano) {
-                navigation.navigate(ScreenName.PostBuyDeviceSetupNanoWallScreen);
+                const parent = navigation.getParent();
+                if (parent) {
+                  parent.navigate(ScreenName.PostBuyDeviceSetupNanoWallScreen);
+                }
               } else if (readOnlyModeEnabled) {
                 navigateToRebornFlow();
               } else
                 navigation.navigate(NavigatorName.Earn, {
                   screen: ScreenName.Earn,
+                  params: {},
                 });
             });
           },
@@ -189,18 +200,24 @@ export default function MainNavigator() {
         component={MyLedgerNavigator}
         options={{
           tabBarIcon: props => <ManagerTabIcon {...props} />,
-          tabBarTestID: "TabBarManager",
+          tabBarButtonTestID: "TabBarManager",
+        }}
+        layout={({ children }) => {
+          return <>{children}</>;
         }}
         listeners={({ navigation }) => ({
           tabPress: e => {
             e.preventDefault();
             managerLockAwareCallback(() => {
               if (readOnlyModeEnabled && hasOrderedNano) {
-                navigation.navigate(ScreenName.PostBuyDeviceSetupNanoWallScreen);
+                const parent = navigation.getParent();
+                if (parent) {
+                  parent.navigate(ScreenName.PostBuyDeviceSetupNanoWallScreen);
+                }
               } else if (readOnlyModeEnabled) {
                 navigateToRebornFlow();
               } else {
-                navigation.navigate(NavigatorName.MyLedger, {
+                navigation.jumpTo(NavigatorName.MyLedger, {
                   screen: ScreenName.MyLedgerChooseDevice,
                   params: {
                     tab: undefined,

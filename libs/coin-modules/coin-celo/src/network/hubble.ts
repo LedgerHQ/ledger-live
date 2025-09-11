@@ -99,9 +99,9 @@ const transactionToOperation = (
     hasFailed,
     blockHash: null,
     extra: {
-      celoOperationValue: new BigNumber(transaction.amount),
       ...(["ACTIVATE", "VOTE", "REVOKE"].includes(type)
         ? {
+            celoOperationValue: new BigNumber(transaction.amount),
             celoSourceValidator: recipient ? recipient : "",
           }
         : {}),

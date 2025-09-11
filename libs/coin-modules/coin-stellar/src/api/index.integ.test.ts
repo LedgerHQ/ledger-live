@@ -44,7 +44,7 @@ describe.skip("Stellar Api", () => {
     let txs: Operation[];
 
     beforeAll(async () => {
-      [txs] = await module.listOperations(ADDRESS, { minHeight: 0 });
+      [txs] = await module.listOperations(ADDRESS, { minHeight: 0, order: "asc" });
     });
 
     it("returns a list regarding address parameter", async () => {
@@ -60,6 +60,11 @@ describe.skip("Stellar Api", () => {
       expect(txs.length).toBeGreaterThanOrEqual(100);
       const checkSet = new Set(txs.map(elt => elt.tx.hash));
       expect(checkSet.size).toEqual(txs.length);
+    });
+
+    it("returns all operations from the latest, but in asc order", async () => {
+      const [txsDesc] = await module.listOperations(ADDRESS, { minHeight: 0, order: "desc" });
+      expect(txsDesc[0]).toBe(txs[0]);
     });
   });
 
@@ -101,7 +106,7 @@ describe.skip("Stellar Api", () => {
     }
 
     it("returns a raw transaction", async () => {
-      const result = await module.craftTransaction({
+      const { transaction: result } = await module.craftTransaction({
         asset: { type: "native" },
         type: TYPE,
         sender: ADDRESS,
@@ -116,7 +121,7 @@ describe.skip("Stellar Api", () => {
     });
 
     it("should use estimated fees when user does not provide them for crafting a transaction", async () => {
-      const transactionXdr = await module.craftTransaction({
+      const { transaction: transactionXdr } = await module.craftTransaction({
         asset: { type: "native" },
         type: TYPE,
         sender: ADDRESS,
@@ -131,7 +136,7 @@ describe.skip("Stellar Api", () => {
 
     it("should use custom user fees when user provides it for crafting a transaction", async () => {
       const customFees = 99n;
-      const transactionXdr = await module.craftTransaction(
+      const { transaction: transactionXdr } = await module.craftTransaction(
         {
           asset: { type: "native" },
           type: TYPE,
@@ -148,7 +153,7 @@ describe.skip("Stellar Api", () => {
     });
 
     it("should have no memo when not provided by user", async () => {
-      const transactionXdr = await module.craftTransaction({
+      const { transaction: transactionXdr } = await module.craftTransaction({
         asset: { type: "native" },
         type: TYPE,
         sender: ADDRESS,
@@ -160,7 +165,7 @@ describe.skip("Stellar Api", () => {
     });
 
     it("should have a memo when provided by user", async () => {
-      const transactionXdr = await module.craftTransaction({
+      const { transaction: transactionXdr } = await module.craftTransaction({
         asset: { type: "native" },
         type: TYPE,
         sender: ADDRESS,

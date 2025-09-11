@@ -1,5 +1,12 @@
 # @ledgerhq/coin-tester
 
+## 0.9.3-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`205458e`](https://github.com/LedgerHQ/ledger-live/commit/205458e2d3ca5ec1d7a50d30b63050a692a5e045)]:
+  - @ledgerhq/hw-transport-node-speculos-http@6.30.0-next.0
+
 ## 0.9.2
 
 ### Patch Changes

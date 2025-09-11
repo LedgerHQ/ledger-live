@@ -41,8 +41,11 @@ const DebugHttpTransport = () => {
       }),
     );
 
-    navigation.navigate(NavigatorName.MyLedger, {
-      screen: ScreenName.MyLedgerChooseDevice,
+    navigation.navigate(NavigatorName.Main, {
+      screen: NavigatorName.MyLedger,
+      params: {
+        screen: ScreenName.MyLedgerChooseDevice,
+      },
     });
   }, [address, dispatch, model, name, navigation]);
 
@@ -61,9 +64,7 @@ const DebugHttpTransport = () => {
               type="main"
               outline={modelId === model}
               title={modelId}
-              onPress={() => {
-                setModelId(modelId as DeviceModelId);
-              }}
+              onPress={() => setModelId(modelId)}
             />
           ))}
         </View>

@@ -5,9 +5,15 @@ import type {
   MemoNotSupported,
   TransactionIntent,
 } from "@ledgerhq/coin-framework/api/index";
-import { TransactionTypes } from "ethers/lib/utils";
 import { getNodeApi } from "../network/node";
-import { ApiFeeData, ApiGasOptions, FeeData, GasOptions, isNative } from "../types";
+import {
+  ApiFeeData,
+  ApiGasOptions,
+  FeeData,
+  GasOptions,
+  isNative,
+  TransactionTypes,
+} from "../types";
 import { getGasTracker } from "../network/gasTracker";
 import { getErc20Data, getTransactionType } from "./common";
 

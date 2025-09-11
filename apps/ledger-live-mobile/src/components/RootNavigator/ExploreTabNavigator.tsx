@@ -38,7 +38,7 @@ export default function ExploreTabNavigator() {
       backBehavior={"history"}
       tabBar={isNewsfeedAvailable && isLearnAvailable ? tabBarOptions : tabBarDisabledOptions}
       style={{ backgroundColor: "transparent" }}
-      sceneContainerStyle={{ backgroundColor: "transparent" }}
+      screenOptions={{ sceneStyle: { backgroundColor: "transparent" } }}
     >
       {isNewsfeedAvailable && (
         <ExploreTab.Screen
@@ -56,7 +56,7 @@ export default function ExploreTabNavigator() {
           options={() => ({
             title: t("discover.sections.learn.title"),
             headerShown: true,
-            animationEnabled: false,
+            animation: "none",
             headerLeft: () => <NavigationHeaderBackButton />,
             headerRight: () => null,
           })}

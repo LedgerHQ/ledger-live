@@ -89,7 +89,6 @@ const createSteps = (): Array<St> => [
     id: "account",
     label: <Trans i18nKey="receive.steps.chooseAccount.title" />,
     component: StepAccount,
-    noScroll: true,
     footer: StepAccountFooter,
   },
   {

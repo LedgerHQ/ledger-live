@@ -25,6 +25,7 @@ export const INITIAL_STATE: AppState = {
   debugMenuVisible: false,
   isMainNavigatorVisible: true,
   isPasswordLockBlocked: false,
+  rebootId: 0,
 };
 
 const handlers: ReducerMap<AppState, AppStatePayload> = {
@@ -81,6 +82,11 @@ const handlers: ReducerMap<AppState, AppStatePayload> = {
     isPasswordLockBlocked: (action as Action<AppStateBlockPasswordLockPayload>)?.payload || false,
   }),
 
+  [AppStateActionTypes.INCREMENT_REBOOT_ID]: state => ({
+    ...state,
+    rebootId: state.rebootId + 1,
+  }),
+
   [EarnActionTypes.EARN_INFO_MODAL]: state => ({
     ...state,
     isPasswordLockBlocked: true,
@@ -101,5 +107,7 @@ export const isMainNavigatorVisibleSelector = (state: State) =>
   state.appstate.isMainNavigatorVisible;
 
 export const isPasswordLockBlocked = (state: State) => state.appstate.isPasswordLockBlocked;
+
+export const rebootIdSelector = (state: State) => state.appstate.rebootId;
 
 export default handleActions<AppState, AppStatePayload>(handlers, INITIAL_STATE);

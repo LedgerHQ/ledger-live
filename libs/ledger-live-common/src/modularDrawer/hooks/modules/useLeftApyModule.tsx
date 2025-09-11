@@ -1,6 +1,8 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { ApyType } from "../../types";
+import { ApyType } from "../../utils/type";
+import { useInterestRatesByCurrencies } from "../useInterestRatesByCurrencies";
+import { getInterestRateForAsset } from "../../utils/getInterestRateForAsset";
 
 const createApyItem = ({
   value,
@@ -13,14 +15,30 @@ const createApyItem = ({
 }) => <ApyIndicator value={value} type={type} />;
 
 export const useLeftApyModule = (
-  assets: CryptoOrTokenCurrency[],
+  currencies: CryptoOrTokenCurrency[],
   ApyIndicator: React.ComponentType<{ value: number; type: ApyType }>,
 ) => {
-  const value = 5.11; // TODO to be retrieved from DADA
-  const type = "APY"; // TODO to be retrieved from DADA
+  const interestRates = useInterestRatesByCurrencies(currencies);
 
-  return assets.map(asset => ({
-    ...asset,
-    leftElement: createApyItem({ value, type, ApyIndicator }),
-  }));
+  return useMemo(() => {
+    return currencies.map(currency => {
+      const { interestRate, interestRatePercentageRounded } = getInterestRateForAsset(
+        currency,
+        interestRates,
+      );
+
+      if (!interestRate || interestRatePercentageRounded <= 0) {
+        return currency;
+      }
+
+      return {
+        ...currency,
+        leftElement: createApyItem({
+          value: interestRatePercentageRounded,
+          type: interestRate.type,
+          ApyIndicator,
+        }),
+      };
+    });
+  }, [currencies, interestRates, ApyIndicator]);
 };
