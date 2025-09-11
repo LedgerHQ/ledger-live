@@ -218,16 +218,9 @@ export class LiveAppWebview {
     if (all.length > 1) {
       webview = all[1];
     } else {
-      // Try waiting for new window with shorter timeout
-      try {
-        webview = await this.electronApp.waitForEvent("window", {
-          timeout: 5000, // Only wait 5s for new window
-        });
-      } catch (error) {
-        console.log("No separate webview window detected, using main page fallback");
-        this.webviewPage = this.page;
-        return this.page;
-      }
+      webview = await this.electronApp.waitForEvent("window", {
+        timeout: this.defaultWebViewTimeout,
+      });
     }
 
     await webview.waitForLoadState("domcontentloaded", {
