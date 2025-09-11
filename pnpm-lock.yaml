@@ -436,12 +436,6 @@ importers:
       '@ledgerhq/live-network':
         specifier: workspace:^
         version: link:../../libs/live-network
-      '@ledgerhq/live-nft':
-        specifier: workspace:^
-        version: link:../../libs/live-nft
-      '@ledgerhq/live-nft-react':
-        specifier: workspace:^
-        version: link:../../libs/live-nft-react
       '@ledgerhq/live-wallet':
         specifier: workspace:^
         version: link:../../libs/live-wallet

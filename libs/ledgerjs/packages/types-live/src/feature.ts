@@ -195,7 +195,6 @@ export type Features = CurrencyFeatures & {
   lldChatbotSupport: Feature_LldChatbotSupport;
   llmChatbotSupport: Feature_LlmChatbotSupport;
   myLedgerDisplayAppDeveloperName: Feature_MyLedgerDisplayAppDeveloperName;
-  nftsFromSimplehash: Feature_NftsFromSimpleHash;
   lldActionCarousel: Feature_lldActionCarousel;
   marketperformanceWidgetDesktop: Feature_MarketperformanceWidgetDesktop;
   lldRefreshMarketData: Feature_LldRefreshMarketData;
@@ -203,13 +202,9 @@ export type Features = CurrencyFeatures & {
   spamReportNfts: Feature_SpamReportNfts;
   lldWalletSync: Feature_LldWalletSync;
   llmWalletSync: Feature_LlmWalletSync;
-  lldNftsGalleryNewArch: DefaultFeature;
-  lldnewArchOrdinals: DefaultFeature;
   enableAppsBackup: Feature_EnableAppsBackup;
   web3hub: Feature_web3hub;
   llmMarketQuickActions: DefaultFeature;
-  spamFilteringTx: Feature_SpamFilteringTx;
-  lldSpamFilteringTx: DefaultFeature;
   llmMemoTag: Feature_MemoTag;
   lldMemoTag: Feature_MemoTag;
   ldmkTransport: Feature_LdmkTransport;
@@ -590,11 +585,6 @@ export type Feature_MarketperformanceWidgetDesktop = Feature<{
   enableNewFeature: boolean;
 }>;
 
-export type Feature_NftsFromSimpleHash = Feature<{
-  threshold: number;
-  staleTime: number;
-}>;
-
 export type Feature_LldRefreshMarketData = Feature<{
   refreshTime: number;
 }>;
@@ -682,8 +672,6 @@ export type Feature_SpamReportNfts = DefaultFeature;
 export type Feature_EnableAppsBackup = DefaultFeature;
 export type Feature_web3hub = DefaultFeature;
 export type Feature_lldNftsGalleryNewArch = DefaultFeature;
-export type Feature_lldnewArchOrdinals = DefaultFeature;
-export type Feature_SpamFilteringTx = DefaultFeature;
 export type Feature_MemoTag = DefaultFeature;
 export type Feature_PtxSwapMoonpayProvider = DefaultFeature;
 export type Feature_PtxSwapExodusProvider = DefaultFeature;

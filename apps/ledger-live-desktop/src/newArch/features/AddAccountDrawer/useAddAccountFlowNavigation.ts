@@ -1,6 +1,5 @@
 import { Account } from "@ledgerhq/types-live";
 import { useCallback, useMemo, useState } from "react";
-import { account } from "../Collectibles/__integration__/mocks/mockedAccount";
 import {
   ADD_ACCOUNT_EVENTS_NAME,
   ADD_ACCOUNT_FLOW_NAME,
@@ -25,7 +24,7 @@ export const useAddAccountFlowNavigation = ({
   const [warningReason, setWarningReason] = useState<WarningReason>();
   const [emptyAccount, setEmptyAccount] = useState<Account>();
   const [accountToFund, setAccountToFund] = useState<Account>();
-  const [accountToEdit, setAccountToEdit] = useState<Account>(account);
+  const [accountToEdit, setAccountToEdit] = useState<Account>();
 
   const navigateToWarningScreen = useCallback(
     (reason?: WarningReason, account?: Account) => {

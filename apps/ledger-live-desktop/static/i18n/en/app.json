@@ -165,8 +165,6 @@
     "type": {
       "IN": "Received",
       "OUT": "Sent",
-      "NFT_IN": "NFT Received",
-      "NFT_OUT": "NFT Sent",
       "CREATE": "Created",
       "REVEAL": "Revealed",
       "DELEGATE": "Delegated",
@@ -1437,11 +1435,6 @@
       }
     }
   },
-  "hideNftCollection": {
-    "title": "Hide NFT Collection",
-    "desc": "This action will hide all NFTs from the <1><0>{{collectionName}}</0></1> collection, you can show them again using <3>Settings</3>",
-    "hideCTA": "Hide NFT Collection"
-  },
   "banners": {
     "cleanCache": {
       "title": "Modification of experimental settings require a clear cache",
@@ -1708,50 +1701,6 @@
       "browseAssets": "Browse assets"
     }
   },
-  "NFT": {
-    "viewer": {
-      "actions": {
-        "send": "Send",
-        "open": "Open in {{viewer}}"
-      },
-      "attributes": {
-        "properties": "Properties",
-        "description": "Description",
-        "tokenAddress": "Token Address",
-        "tokenId": "Token ID",
-        "quantity": "Quantity",
-        "floorPrice": "Floor Price"
-      }
-    },
-    "collections": {
-      "title": "NFT (Non Fungible Tokens) Collections",
-      "receiveCTA": "Receive NFT",
-      "galleryCTA": "See Gallery",
-      "seeMore": "See more collections",
-      "seeAll": "See all collections",
-      "seeLess": "See less",
-      "placeholder": "To add NFTs, simply send them to your {{currency}} address."
-    },
-    "gallery": {
-      "title": "All NFT",
-      "collection": {
-        "header": {
-          "sendCTA": "Send",
-          "contract": "Contract: {{contract}}"
-        },
-        "operationList": {
-          "header": "Latest Operations",
-          "OUT": "Sent",
-          "IN": "Received"
-        }
-      },
-      "tokensList": {
-        "item": {
-          "tokenId": "ID: {{tokenId}}"
-        }
-      }
-    }
-  },
   "tokensList": {
     "title": "Tokens",
     "cta": "Add token",
@@ -1863,12 +1812,6 @@
     "internalOpTooltip": "This operation has internal operations",
     "details": "{{ currency }} details",
     "multipleAddresses": "Why multiple addresses?",
-    "nft": {
-      "name": "Token Name",
-      "contract": "Token Contract",
-      "id": "Token (NFT) ID",
-      "quantity": "Quantity"
-    },
     "extra": {
       "frozenAmount": "Frozen amount",
       "unfreezeAmount": "Unfreeze amount",
@@ -2350,12 +2293,10 @@
   },
   "send": {
     "title": "Send",
-    "titleNft": "Send NFT",
     "totalSpent": "Total to debit",
     "steps": {
       "recipient": {
         "title": "Recipient",
-        "nftRecipient": "NFT to send",
         "verifyAddress": "Please verify the address matches the one shared by the recipient.",
         "domainService": {
           "resolve": "This is a valid ENS linked to the following address :",
@@ -2380,8 +2321,7 @@
         "banner": "Maximum spendable amount is",
         "fees": "Learn more about fees",
         "standard": "Standard",
-        "advanced": "Advanced",
-        "nftQuantity": "Quantity"
+        "advanced": "Advanced"
       },
       "summary": {
         "title": "Summary"
@@ -2425,8 +2365,6 @@
         "nextBlock": "Next block",
         "suggested": "Suggested",
         "unitVByte": "{{unit}}/vbyte",
-        "nft": "NFT",
-        "nftQuantity": "Quantity",
         "splExtensionsWarning": "You are interacting with a token that is part of the Token-2022 program, also known as Token Extensions. This token comes with specific risks. <0>Click here</0> to learn more."
       },
       "verification": {
@@ -4555,11 +4493,7 @@
       "debugAppsDesc": "Display and allow opening debug tagged platform apps.",
       "debugReactQuery": "Allow debug ReactQuery",
       "debugReactQueryDesc": "Display and allow opening debug ReactQuery console.",
-      "nfts": {
-        "title": "NFTs HiddenCollections",
-        "description": "Reset the hidden collections list",
-        "reset": "Reset ({{count}})"
-      },
+
       "exchangeDeveloperMode": {
         "title": "Exchange Dev Mode",
         "desc": "Add exchange provider's info",
@@ -4598,136 +4532,6 @@
             "path": "Path"
           }
         }
-      },
-      "debugSimpleHash": {
-        "testSimpleHash": {
-          "title": "SimpleHash Tools",
-          "description": "Provides some useful tools using SimpleHash",
-          "cta": "Open",
-          "tabs": {
-            "spam": "Spam Report",
-            "refresh": "Refresh Metadata",
-            "check": "Spam Score"
-          }
-        },
-        "mockAccounts": {
-          "title": "Generate Mock Accounts",
-          "description": "Generate mock accounts for testing purposes. These tools allow you to create test accounts with various currencies and configurations.",
-          "customGenerate": {
-            "title": "Custom Generate",
-            "desc": "Select specific currencies and add tokens"
-          },
-          "quickGenerate": {
-            "title": "Quick Generate",
-            "desc": "Generate 10 random accounts with random currencies"
-          },
-          "currencySelector": {
-            "placeholder": "Choose currencies...",
-            "searchPlaceholder": "Search currencies...",
-            "noCurrenciesFound": "No currencies found",
-            "noCurrenciesAvailable": "No currencies available",
-            "selectedCount": "{{count}} currency selected",
-            "selectedCount_other": "{{count}} currencies selected"
-          },
-          "tokenIds": {
-            "label": "Token IDs (optional)",
-            "placeholder": "token1, token2, token3"
-          },
-          "buttons": {
-            "generateAccounts": "Generate {{count}} Account",
-            "generateAccounts_other": "Generate {{count}} Accounts",
-            "generateAccountsQuick": "Generate {{count}} Accounts"
-          },
-          "alerts": {
-            "selectCurrency": "Please select at least one currency",
-            "confirmErase": "This will erase existing accounts. Continue?",
-            "generateError": "Failed to generate mock accounts. Please try again."
-          }
-        },
-        "debugSpamNft": {
-          "report": "Report",
-          "contractAddress": "Contract Address",
-          "contractAddressDesc": "contract_address of the NFT reported, or the contract itself",
-          "chainId": "Chain ID",
-          "chainIdDesc": "chain_id (e.g., ethereum) of the NFT or contract reported",
-          "collectionId": "Collection ID",
-          "collectionIdDesc": "SimpleHash collection id of the NFT reported",
-          "tokenId": "Token ID",
-          "tokenIdDesc": "token_id of the NFT reported",
-          "eventType": "Event Type",
-          "eventTypeDesc": "Type of report you want to make",
-          "success": "The report was sent successfully. It may take between 5 and 10 minutes for it to take effect.",
-          "error": "An error occurred while sending the report. Please try again later.",
-          "reportType": {
-            "title": "What would you like to report?",
-            "desc": "Select the type of report you want to make",
-            "individual": "Spam report for an individual NFT",
-            "contract": "Spam report for a contract",
-            "collection": "Spam report for a collection"
-          }
-        },
-        "debugRefreshMetadata": {
-          "refresh": "Refresh",
-          "contractAddress": "Contract Address",
-          "contractAddressDesc": "contract_address of the NFT refreshed, or the contract itself",
-          "chainId": "Chain ID",
-          "chainIdDesc": "chain_id (e.g., ethereum) of the NFT or contract refreshed",
-          "tokenId": "Token ID",
-          "tokenIdDesc": "token_id of the NFT refreshed",
-          "success": "The refresh was sent successfully. It may take between 5 and 10 minutes for it to take effect.",
-          "error": "An error occurred while sending the refresh. Please try again later.",
-          "refreshType": {
-            "desc": "What would you like to refresh?",
-            "nft": "Refresh metadata for an individual NFT",
-            "contract": "Refresh metadata for a contract"
-          }
-        },
-        "debugCheckSpamScore": {
-          "check": "Check",
-          "contractAddress": "Contract Address",
-          "contractAddressDesc": "contract_address of the NFT checked, or the contract itself",
-          "chainId": "Chain ID",
-          "chainIdDesc": "chain_id (e.g., ethereum) of the NFT or contract checked",
-          "tokenId": "Token ID",
-          "tokenIdDesc": "token_id of the NFT checked",
-          "result": {
-            "title": "This contract has a spam score of {{score}}.",
-            "desc": "The score is a numeric value from 0 to 100, with 0 being deemed not spam, and 100 being deemed likely spam.\n If the response is null, the collection does not have sufficient information to be scored, or has not yet been assessed"
-          },
-          "error": "An error occurred while sending the request. Please try again later.",
-          "refreshType": {
-            "desc": "What would you like to check?",
-            "nft": "An individual NFT",
-            "contract": "A contract"
-          }
-        },
-        "back": "Go back"
-      },
-      "debugNfts": {
-        "title": "NFTs Tools",
-        "description": "Provides some useful tools to handle NFTs in Ledger Live",
-        "cta": "Open",
-        "tabs": {
-          "config": "Configuration",
-          "generatorAndDestructor": "Generators & Destructors"
-        },
-        "configuration": {
-          "supported": "Supported NFT Chain",
-          "supported_other": "Supported NFT Chains",
-          "nms": {
-            "title": "NFT Metadata Service (NMS)",
-            "env": "Environment : {{env}}"
-          }
-        },
-        "generatorAndDestructor": {
-          "genAcc": "Generate Accounts",
-          "genAccDesc": "Generate an accounts with NFTs",
-          "cta": "Generate",
-          "deleteAcc": "Delete Accounts",
-          "deleteAccDesc": "Delete all accounts from store",
-          "delete": "Delete"
-        },
-        "back": "Go back"
       },
       "debugWalletSync": {
         "title": "Ledger Sync Debugger",
@@ -4810,8 +4614,6 @@
       "runLocalAppOpenButton": "Open",
       "enableLearnStagingUrl": "Learn page staging URL",
       "enableLearnStagingUrlDesc": "Enable the staging URL for the learn page.",
-      "enableStagingNftMetadataService": "Staging NFT metadata service",
-      "enableStagingNftMetadataServiceDesc": "Enable the staging NFT metadata service and reset the NFT cache",
       "openOnboardingAppInstallDebug": "Open onboarding app install debug screen",
       "openOnboardingAppInstallDebugDesc": "Open a screen with the components from the sync onboarding app installation step"
     },
@@ -4992,18 +4794,6 @@
         "desc": "You can hide tokens by going to the parent account then right-clicking on the token and selecting 'Hide token'.",
         "count": "1 token",
         "count_other": "{{count}} tokens"
-      },
-      "hiddenNftCollections": {
-        "title": "Hidden NFT Collections",
-        "desc": "You can hide NFT Collections by right-clicking on the collection name and selecting 'Hide NFT Collection'.",
-        "count": "1 collection",
-        "count_other": "{{count}} collections"
-      },
-      "hiddenOrdinalsAsset": {
-        "title": "Hidden Inscriptions",
-        "desc": "You can hide Inscription by right-clicking on the inscription and selecting 'Hide Inscription'.",
-        "count": "1 inscription",
-        "count_other": "{{count}} inscriptions"
       },
       "fullNode": {
         "title": "Connect Bitcoin full node",
@@ -6474,10 +6264,6 @@
       "title": "Auto-verification not available: carefully verify the address",
       "description": null
     },
-    "EthAppNftNotSupported": {
-      "title": "Operation not available for this device",
-      "description": "Send NFT feature is only available for Nano X and Nano S+. Please visit our customer support platform to know how to send a NFT with a Nano S."
-    },
     "TransactionHasBeenValidatedError": {
       "title": "Can't be sped up or canceled",
       "description": "This transaction has already been validated"
@@ -6763,9 +6549,6 @@
       "title": "Token is non-transferable",
       "description": "Such tokens are \"soul-bound\" and cannot be transferred"
     },
-    "NotEnoughNftOwned": {
-      "title": "You have exceeded the number of available tokens"
-    },
     "CardanoMinAmountError": {
       "title": "Minimum sendable amount is {{amount}} ADA"
     },
@@ -6850,10 +6633,6 @@
     "ImageLoadFromFileError": {
       "title": "Image loading from file failed",
       "description": "Please try again with another image"
-    },
-    "ImageLoadFromNftError": {
-      "title": "Image loading from NFT failed",
-      "description": "Please try again with another NFT"
     },
     "ImageDownloadError": {
       "title": "Image download failed",
@@ -7210,14 +6989,8 @@
       "choose": {
         "stepLabel": "Choose picture",
         "description": "Choose an image to set as (...)",
-        "pickFromNftGallery": "Select from my NFT gallery",
-        "myNfts": "My NFTs",
         "upload": "Upload from computer",
-        "chooseNft": "Choose an NFT",
-        "remove": "Remove current picture",
-        "selectNft": "Choose NFT",
-        "nftEmptyStateTitle": "No NFT's to show yet",
-        "nftEmptyStateDescription": "Get started by adding NFTs to your wallet."
+        "remove": "Remove current picture"
       },
       "adjust": {
         "stepLabel": "Crop",

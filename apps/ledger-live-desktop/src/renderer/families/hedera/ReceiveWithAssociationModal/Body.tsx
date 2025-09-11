@@ -333,8 +333,6 @@ const Body = ({
     errorSteps,
     disabledSteps,
     receiveTokenMode,
-    receiveNFTMode: !!params.receiveNFTMode,
-    receiveOrdinalMode: !!params.receiveOrdinalMode,
     hideBreadcrumb,
     token,
     isAddressVerified,

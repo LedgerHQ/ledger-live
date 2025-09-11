@@ -7,8 +7,6 @@ import {
   OFAC_CURRENCIES,
 } from "@ledgerhq/live-common/currencies/index";
 import { getEnv } from "@ledgerhq/live-env";
-import { SupportedBlockchain } from "@ledgerhq/live-nft/supported";
-import { NftStatus } from "@ledgerhq/live-nft/types";
 import { CryptoCurrency, Currency, Unit } from "@ledgerhq/types-cryptoassets";
 import {
   AccountLike,
@@ -18,7 +16,6 @@ import {
   FirmwareUpdateContext,
   PortfolioRange,
 } from "@ledgerhq/types-live";
-import { Layout, LayoutKey } from "LLD/features/Collectibles/types/Layouts";
 import { handleActions } from "redux-actions";
 import { createSelector } from "reselect";
 import {
@@ -35,12 +32,10 @@ import regionsByKey from "~/renderer/screens/settings/sections/General/regions.j
 import { State } from ".";
 import {
   PURGE_EXPIRED_ANONYMOUS_USER_NOTIFICATIONS,
-  RESET_HIDDEN_NFT_COLLECTIONS,
   TOGGLE_MARKET_WIDGET,
   TOGGLE_MEMOTAG_INFO,
   TOGGLE_MEV,
   UPDATE_ANONYMOUS_USER_NOTIFICATIONS,
-  UPDATE_NFT_COLLECTION_STATUS,
 } from "../actions/constants";
 import { OnboardingUseCase } from "../components/Onboarding/OnboardingUseCase";
 import { Handlers } from "./types";
@@ -87,8 +82,6 @@ export type SettingsState = {
   lastUsedVersion: string;
   dismissedBanners: string[];
   accountsViewMode: "card" | "list";
-  nftsViewMode: "grid" | "list";
-  collectiblesViewMode: LayoutKey;
   showAccountsHelperBanner: boolean;
   mevProtection: boolean;
   marketPerformanceWidget: boolean;
@@ -98,8 +91,6 @@ export type SettingsState = {
   discreetMode: boolean;
   starredAccountIds?: string[];
   blacklistedTokenIds: string[];
-  nftCollectionsStatusByNetwork: Record<SupportedBlockchain, Record<string, NftStatus>>;
-  hiddenOrdinalsAsset: string[];
   deepLinkUrl: string | undefined | null;
   lastSeenCustomImage: {
     size: number;
@@ -185,8 +176,6 @@ export const INITIAL_STATE: SettingsState = {
   lastUsedVersion: __APP_VERSION__,
   dismissedBanners: [],
   accountsViewMode: "list",
-  nftsViewMode: "list",
-  collectiblesViewMode: Layout.LIST,
   showAccountsHelperBanner: true,
   hideEmptyTokenAccounts: getEnv("HIDE_EMPTY_TOKEN_ACCOUNTS"),
   filterTokenOperationsZeroAmount: getEnv("FILTER_ZERO_AMOUNT_ERC20_EVENTS"),
@@ -206,9 +195,6 @@ export const INITIAL_STATE: SettingsState = {
   },
   latestFirmware: null,
   blacklistedTokenIds: [],
-  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-  nftCollectionsStatusByNetwork: {} as Record<SupportedBlockchain, Record<string, NftStatus>>,
-  hiddenOrdinalsAsset: [],
   deepLinkUrl: null,
   firstTimeLend: false,
   showClearCacheBanner: false,
@@ -256,14 +242,6 @@ type HandlersPayloads = {
   SETTINGS_DISMISS_BANNER: string;
   SHOW_TOKEN: string;
   BLACKLIST_TOKEN: string;
-  [UPDATE_NFT_COLLECTION_STATUS]: {
-    blockchain: SupportedBlockchain;
-    collectionId: string;
-    status: NftStatus;
-  };
-  [RESET_HIDDEN_NFT_COLLECTIONS]: void;
-  UNHIDE_ORDINALS_ASSET: string;
-  HIDE_ORDINALS_ASSET: string;
   LAST_SEEN_DEVICE_INFO: {
     lastSeenDevice: DeviceModelInfo;
     latestFirmware: FirmwareUpdateContext;
@@ -353,39 +331,6 @@ const handlers: SettingsHandlers = {
     return {
       ...state,
       blacklistedTokenIds: [...new Set([...ids, tokenId])],
-    };
-  },
-  [UPDATE_NFT_COLLECTION_STATUS]: (state, { payload: { blockchain, collectionId, status } }) => {
-    return {
-      ...state,
-      nftCollectionsStatusByNetwork: {
-        ...state.nftCollectionsStatusByNetwork,
-        [blockchain]: {
-          ...state.nftCollectionsStatusByNetwork[blockchain],
-          [collectionId]: status,
-        },
-      },
-    };
-  },
-
-  [RESET_HIDDEN_NFT_COLLECTIONS]: state => ({
-    ...state,
-    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-    nftCollectionsStatusByNetwork: {} as Record<SupportedBlockchain, Record<string, NftStatus>>,
-  }),
-
-  UNHIDE_ORDINALS_ASSET: (state, { payload: inscriptionId }) => {
-    const ids = state.hiddenOrdinalsAsset;
-    return {
-      ...state,
-      hiddenOrdinalsAsset: ids.filter(id => id !== inscriptionId),
-    };
-  },
-  HIDE_ORDINALS_ASSET: (state, { payload: inscriptionId }) => {
-    const collections = state.hiddenOrdinalsAsset;
-    return {
-      ...state,
-      hiddenOrdinalsAsset: [...collections, inscriptionId],
     };
   },
   LAST_SEEN_DEVICE_INFO: (state, { payload }) => ({
@@ -782,8 +727,6 @@ export const accountUnitSelector = (state: State, account: AccountLike): Unit =>
 export const preferredDeviceModelSelector = (state: State) => state.settings.preferredDeviceModel;
 export const sidebarCollapsedSelector = (state: State) => state.settings.sidebarCollapsed;
 export const accountsViewModeSelector = (state: State) => state.settings.accountsViewMode;
-export const nftsViewModeSelector = (state: State) => state.settings.nftsViewMode;
-export const collectiblesViewModeSelector = (state: State) => state.settings.collectiblesViewMode;
 export const sentryLogsSelector = (state: State) => state.settings.sentryLogs;
 export const autoLockTimeoutSelector = (state: State) => state.settings.autoLockTimeout;
 export const shareAnalyticsSelector = (state: State) => state.settings.shareAnalytics;
@@ -806,7 +749,6 @@ export const catalogProviderSelector = (state: State) => state.settings.catalogP
 export const enableLearnPageStagingUrlSelector = (state: State) =>
   state.settings.enableLearnPageStagingUrl;
 export const blacklistedTokenIdsSelector = (state: State) => state.settings.blacklistedTokenIds;
-export const hiddenOrdinalsAssetSelector = (state: State) => state.settings.hiddenOrdinalsAsset;
 export const hasCompletedOnboardingSelector = (state: State) =>
   state.settings.hasCompletedOnboarding || getEnv("SKIP_ONBOARDING");
 export const dismissedBannersSelector = (state: State) => state.settings.dismissedBanners || [];
@@ -853,7 +795,5 @@ export const mevProtectionSelector = (state: State) => state.settings.mevProtect
 export const marketPerformanceWidgetSelector = (state: State) =>
   state.settings.marketPerformanceWidget;
 export const alwaysShowMemoTagInfoSelector = (state: State) => state.settings.alwaysShowMemoTagInfo;
-export const nftCollectionsStatusByNetworkSelector = (state: State) =>
-  state.settings.nftCollectionsStatusByNetwork;
 export const anonymousUserNotificationsSelector = (state: State) =>
   state.settings.anonymousUserNotifications;
