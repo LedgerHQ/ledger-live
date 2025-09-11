@@ -13,7 +13,7 @@ import {
 // Maintain this order for the sake of jest mocks
 import axios, { AxiosResponse } from "axios";
 import * as CALTokensAPI from "@ledgerhq/cryptoassets/tokens";
-import { convertERC20 } from "@ledgerhq/cryptoassets/legacy";
+import { convertERC20 } from "@ledgerhq/cryptoassets/legacy/legacy-utils";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import { fetchERC20Tokens, hydrate, preload } from "../../bridge/preload";
 import { __resetCALHash, getCALHash, setCALHash } from "../../logic";

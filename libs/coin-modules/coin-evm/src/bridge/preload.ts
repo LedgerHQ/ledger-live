@@ -1,11 +1,16 @@
 import { AxiosError } from "axios";
 import { log } from "@ledgerhq/logs";
 import { addTokens } from "@ledgerhq/cryptoassets/tokens";
-import { convertERC20 } from "@ledgerhq/cryptoassets/legacy";
-import {
-  tokens as tokensByChainId,
-  hashes as embeddedHashesByChainId,
-} from "@ledgerhq/cryptoassets/data/evm/index";
+import { convertERC20 } from "@ledgerhq/cryptoassets/legacy/legacy-utils";
+// POC: Commented out direct data import to avoid bundling
+// import {
+//   tokens as tokensByChainId,
+//   hashes as embeddedHashesByChainId,
+// } from "@ledgerhq/cryptoassets/data/evm/index";
+
+// POC: Provide empty defaults to avoid bundling legacy data
+const tokensByChainId: Record<number, any[]> = {};
+const embeddedHashesByChainId: Record<number, string> = {};
 import { ERC20Token } from "@ledgerhq/cryptoassets/types";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { fetchTokensFromCALService } from "@ledgerhq/cryptoassets/crypto-assets-importer/fetch/index";
@@ -86,25 +91,36 @@ export const fetchERC20Tokens: (
 export async function preload(currency: CryptoCurrency): Promise<ERC20Token[] | undefined> {
   if (shouldSkipTokenLoading) return;
 
-  const erc20 = await fetchERC20Tokens(currency);
-  if (!erc20) return;
+  // POC: Skip preload mechanism since CachedCryptoAssetsStore handles on-demand token fetching
+  // The preload mechanism uses addTokens() which is now a no-op in the new architecture
+  log("evm/preload", `Skipping preload for ${currency.id} - using on-demand token fetching instead`);
+  return [];
 
-  log("evm/preload", "preload " + erc20.length + " tokens");
-  addTokens(erc20.map(convertERC20));
-  return erc20;
+  // Legacy preload logic (commented out for POC):
+  // const erc20 = await fetchERC20Tokens(currency);
+  // if (!erc20) return;
+  // log("evm/preload", "preload " + erc20.length + " tokens");
+  // addTokens(erc20.map(convertERC20));
+  // return erc20;
 }
 
 export function hydrate(value: unknown, currency: CryptoCurrency): void {
   if (shouldSkipTokenLoading) return;
-  if (!Array.isArray(value)) {
-    const { chainId } = currency.ethereumLikeInfo || {};
-    const tokens = tokensByChainId[chainId as keyof typeof tokensByChainId] || [];
-    addTokens(tokens.map(convertERC20));
-    log("evm/preload", `hydrate fallback ${tokens.length} embedded tokens`);
-    return;
-  }
 
-  addTokens(value.map(convertERC20));
-  log("evm/preload", `hydrate ${value.length} tokens`);
+  // POC: Skip hydrate mechanism since CachedCryptoAssetsStore handles on-demand token fetching
+  // The hydrate mechanism uses addTokens() which is now a no-op in the new architecture
+  log("evm/preload", `Skipping hydrate for ${currency.id} - using on-demand token fetching instead`);
   return;
+
+  // Legacy hydrate logic (commented out for POC):
+  // if (!Array.isArray(value)) {
+  //   const { chainId } = currency.ethereumLikeInfo || {};
+  //   const tokens = tokensByChainId[chainId as keyof typeof tokensByChainId] || [];
+  //   addTokens(tokens.map(convertERC20));
+  //   log("evm/preload", `hydrate fallback ${tokens.length} embedded tokens`);
+  //   return;
+  // }
+  // addTokens(value.map(convertERC20));
+  // log("evm/preload", `hydrate ${value.length} tokens`);
+  // return;
 }

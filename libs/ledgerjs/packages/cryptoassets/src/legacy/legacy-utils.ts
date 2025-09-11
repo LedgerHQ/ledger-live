@@ -1,4 +1,5 @@
 import type { TokenCurrency, CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { findCryptoCurrencyById, getCryptoCurrencyById } from "../currencies";
 import {
   tokensArray,
   tokensArrayWithDelisted,
@@ -10,31 +11,29 @@ import {
   tokensByCurrencyAddress,
   tokenListHashes,
 } from "./legacy-state";
-import cardanoNativeTokens, { CardanoNativeToken } from "./data/cardanoNative";
-import { findCryptoCurrencyById, getCryptoCurrencyById } from "./currencies";
-import jettonTokens, { TonJettonToken } from "./data/ton-jetton";
-import { tokens as sepoliaTokens } from "./data/evm/11155111";
-import stellarTokens, { StellarToken } from "./data/stellar";
-import hederaTokens, { HederaToken } from "./data/hedera";
-import vechainTokens, { Vip180Token } from "./data/vip180";
-import esdttokens, { MultiversXESDTToken } from "./data/esdt";
-import asatokens, { AlgorandASAToken } from "./data/asa";
-import { tokens as polygonTokens } from "./data/evm/137";
-import { tokens as sonicTokens } from "./data/evm/146";
-import trc10tokens, { TRC10Token } from "./data/trc10";
-import trc20tokens, { TRC20Token } from "./data/trc20";
-import { tokens as mainnetTokens } from "./data/evm/1";
-import { tokens as bnbTokens } from "./data/evm/56";
-import { tokens as celoTokens } from "./data/evm/42220";
-import filecoinTokens from "./data/filecoin-erc20";
-import spltokens, { SPLToken } from "./data/spl";
-import aptCoinTokens, { AptosToken as AptosCoinToken } from "./data/apt_coin";
-import aptFATokens, { AptosToken as AptosFAToken } from "./data/apt_fungible_asset";
-import suitokens, { SuiToken } from "./data/sui";
-import { ERC20Token } from "./types";
-import { getEnv } from "@ledgerhq/live-env";
+import {
+  ERC20Token,
+  AlgorandASAToken,
+  MultiversXESDTToken,
+  TRC10Token,
+  TRC20Token,
+} from "../types";
+import type { CardanoNativeToken } from "../data/cardanoNative";
+import type { TonJettonToken } from "../data/ton-jetton";
+import type { StellarToken } from "../data/stellar";
+import type { HederaToken } from "../data/hedera";
+import type { Vip180Token } from "../data/vip180";
+import type { SPLToken } from "../data/spl";
+import type { AptosToken as AptosCoinToken } from "../data/apt_coin";
+import type { AptosToken as AptosFAToken } from "../data/apt_fungible_asset";
+import type { SuiToken } from "../data/sui";
 
-// Convert functions - moved from tokens.ts
+// Export types for compatibility
+export interface TokensListOptions {
+  withDelisted: boolean;
+}
+
+// Convert functions moved from legacy.ts
 
 /**
  * @deprecated
@@ -298,7 +297,10 @@ export function convertSuiTokens([id, name, ticker, address, decimals]: SuiToken
   };
 }
 
-function convertHederaTokens([
+/**
+ * @deprecated
+ */
+export function convertHederaTokens([
   id,
   tokenId,
   name,
@@ -433,59 +435,6 @@ export function convertJettonToken([address, name, ticker, magnitude, delisted]:
   };
 }
 
-// Legacy token initialization
-export function initializeLegacyTokens(
-  addTokens: (tokens: (TokenCurrency | undefined)[]) => void,
-): void {
-  // Ethereum mainnet tokens
-  addTokens(mainnetTokens.map(convertERC20));
-  // Ethereum Sepolia testnet tokens
-  addTokens(sepoliaTokens.map(convertERC20));
-  // Polygon tokens
-  addTokens(polygonTokens.map(convertERC20));
-  // Hedera tokens
-  addTokens(hederaTokens.map(convertHederaTokens));
-  // Binance Smart Chain tokens
-  addTokens(bnbTokens.map(convertERC20));
-  // Tron tokens
-  addTokens(trc10tokens.map(convertTRONTokens("trc10")));
-  addTokens(trc20tokens.map(convertTRONTokens("trc20")));
-  // Algoland tokens
-  addTokens(asatokens.map(convertAlgorandASATokens));
-  // MultiversX tokens
-  addTokens(esdttokens.map(convertMultiversXESDTTokens));
-  // Cardano tokens
-  addTokens(cardanoNativeTokens.map(convertCardanoNativeTokens));
-  // Stellar tokens
-  addTokens(stellarTokens.map(convertStellarTokens));
-  // VeChain tokens
-  addTokens(vechainTokens.map(convertVechainToken));
-  // Ton tokens
-  addTokens(jettonTokens.map(convertJettonToken));
-  // Filecoin tokens
-  addTokens(filecoinTokens.map(convertERC20));
-  // Solana tokens
-  addTokens(spltokens.map(convertSplTokens));
-  // Sonic
-  addTokens(sonicTokens.map(convertERC20));
-  // Celo
-  addTokens(celoTokens.map(convertERC20));
-
-  if (getEnv("SUI_ENABLE_TOKENS")) {
-    // Sui tokens
-    addTokens(suitokens.map(convertSuiTokens));
-  }
-
-  if (getEnv("APTOS_ENABLE_TOKENS")) {
-    // Aptos Legacy Coin tokens
-    addTokens(aptCoinTokens.map(convertAptCoinTokens));
-    // Aptos fungible assets tokens
-    addTokens(aptFATokens.map(convertAptFaTokens));
-  }
-}
-
-// Token management functions moved from tokens.ts
-
 /**
  * @deprecated
  */
@@ -600,10 +549,6 @@ export function addTokens(list: (TokenCurrency | undefined)[]): void {
 const defaultTokenListOptions: TokensListOptions = {
   withDelisted: false,
 };
-
-export interface TokensListOptions {
-  withDelisted: boolean;
-}
 
 /**
  * @deprecated This function is deprecated since tokens will no longer be listable as we moved to DaDa API everywhere

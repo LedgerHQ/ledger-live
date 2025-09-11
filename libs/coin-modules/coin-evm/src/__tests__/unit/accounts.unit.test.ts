@@ -3,7 +3,7 @@ import axios, { AxiosResponse } from "axios";
 import { tokens as localTokensByChainId } from "@ledgerhq/cryptoassets/data/evm/index";
 import { fromAccountRaw, toAccountRaw } from "@ledgerhq/coin-framework/serialization/account";
 import { decodeTokenAccountId } from "@ledgerhq/coin-framework/account";
-import { __clearAllLists } from "@ledgerhq/cryptoassets/legacy";
+import { __clearAllLists } from "@ledgerhq/cryptoassets/legacy/legacy-utils";
 import * as etherscanAPI from "../../network/explorer/etherscan";
 import { __resetCALHash, getCALHash } from "../../logic";
 import { getAccountShape } from "../../bridge/synchronization";

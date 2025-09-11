@@ -655,6 +655,9 @@ importers:
       xstate:
         specifier: ^5.19.2
         version: 5.19.2
+      zod:
+        specifier: ^3.22.4
+        version: 3.24.2
     devDependencies:
       '@electron/notarize':
         specifier: 3.0.1
@@ -5834,6 +5837,9 @@ importers:
       '@ledgerhq/live-env':
         specifier: workspace:^
         version: link:../../../env
+      '@ledgerhq/types-live':
+        specifier: workspace:^
+        version: link:../types-live
       axios:
         specifier: 1.11.0
         version: 1.11.0
