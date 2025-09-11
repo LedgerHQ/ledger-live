@@ -3,9 +3,19 @@ declare global {
     ReactNativeWebView: {
       postMessage(message: string): void;
     };
-    processImage: (imgBase64: string, bitsPerPixel: 1 | 4) => void;
-    setImageContrast: (val: number) => void;
-    setAndApplyImageContrast: (val: number) => void;
+    processImage: (
+      imgBase64: string,
+      bitsPerPixel: 1 | 4,
+      ditheringAlgorithm: "floyd-steinberg" | "atkinson" | "reduced-atkinson",
+    ) => void;
+    setImageContrastAndDitheringAlgorithm: (
+      val: number,
+      ditheringAlgorithm: "floyd-steinberg" | "atkinson" | "reduced-atkinson",
+    ) => void;
+    setAndApplyImageContrastAndDitheringAlgorithm: (
+      val: number,
+      ditheringAlgorithm: "floyd-steinberg" | "atkinson" | "reduced-atkinson",
+    ) => void;
     requestRawResult: () => void;
   }
 }
@@ -42,11 +52,100 @@ function codeToInject() {
     return (rgbVal - 128) * contrastVal + 128;
   }
 
+  // Helper function to safely apply error to a pixel
+  function applyErrorToPixel(
+    x: number,
+    y: number,
+    width: number,
+    height: number,
+    quantError: number,
+    errorFraction: number,
+    pixels256Colors: number[][],
+  ) {
+    if (x >= 0 && x < width && y >= 0 && y < height) {
+      pixels256Colors[y][x] = Math.floor(pixels256Colors[y][x] + quantError * errorFraction);
+    }
+  }
+
+  function applyFloydSteinbergDithering(
+    x: number,
+    y: number,
+    width: number,
+    height: number,
+    quantError: number,
+    pixels256Colors: number[][],
+  ) {
+    /*
+     * Floyd-Steinberg dithering
+     * https://en.wikipedia.org/wiki/Floyd%E2%80%93Steinberg_dithering
+     *         x - 1  |   x    |  x + 1
+     *   y            |   *    | 7 / 16
+     * y + 1  3 / 16  | 5 / 16 | 1 / 16
+     */
+    applyErrorToPixel(x + 1, y, width, height, quantError, 7 / 16, pixels256Colors);
+    applyErrorToPixel(x - 1, y + 1, width, height, quantError, 3 / 16, pixels256Colors);
+    applyErrorToPixel(x, y + 1, width, height, quantError, 5 / 16, pixels256Colors);
+    applyErrorToPixel(x + 1, y + 1, width, height, quantError, 1 / 16, pixels256Colors);
+  }
+
+  function applyAtkinsonDithering(
+    x: number,
+    y: number,
+    width: number,
+    height: number,
+    quantError: number,
+    pixels256Colors: number[][],
+  ) {
+    /*
+     * Atkinson dithering
+     * https://en.wikipedia.org/wiki/Atkinson_dithering
+     *         x - 1  |   x    |  x + 1 |  x + 2
+     *   y            |   *    |  1 / 8 |  1 / 8
+     * y + 1   1 / 8  | 1 / 8  |  1 / 8
+     * y + 2          | 1 / 8  |
+     */
+    const errorFraction = 1 / 8;
+    applyErrorToPixel(x + 1, y, width, height, quantError, errorFraction, pixels256Colors);
+    applyErrorToPixel(x + 2, y, width, height, quantError, errorFraction, pixels256Colors);
+    applyErrorToPixel(x - 1, y + 1, width, height, quantError, errorFraction, pixels256Colors);
+    applyErrorToPixel(x, y + 1, width, height, quantError, errorFraction, pixels256Colors);
+    applyErrorToPixel(x + 1, y + 1, width, height, quantError, errorFraction, pixels256Colors);
+    applyErrorToPixel(x, y + 2, width, height, quantError, errorFraction, pixels256Colors);
+  }
+
+  // Reduced Atkinson dithering implementation
+  function applyReducedAtkinsonDithering(
+    x: number,
+    y: number,
+    width: number,
+    height: number,
+    quantError: number,
+    pixels256Colors: number[][],
+  ) {
+    /*
+     *    x    |  x + 1
+     *    *    | 2 / 16 | 1 / 16
+     *  2 / 16 | 1 / 16 |
+     */
+    applyErrorToPixel(x + 1, y, width, height, quantError, 2 / 16, pixels256Colors);
+    applyErrorToPixel(x + 2, y, width, height, quantError, 1 / 16, pixels256Colors);
+    applyErrorToPixel(x, y + 1, width, height, quantError, 2 / 16, pixels256Colors);
+    applyErrorToPixel(x + 1, y + 1, width, height, quantError, 1 / 16, pixels256Colors);
+  }
+
+  function calculatePixelLightness(pixel: number[]): number {
+    // Use HSL lightness calculation for more accurate perceptual lightness
+    // This provides better contrast preservation compared to simple RGB averaging
+    const max = Math.max(pixel[0], pixel[1], pixel[2]);
+    const min = Math.min(pixel[0], pixel[1], pixel[2]);
+    return Math.floor((max + min) / 2.0);
+  }
+
   // simutaneously apply grayscale and contrast to the image
   function applyFilter(
     imageData: ImageData,
     contrastAmount: number,
-    dither = true,
+    ditheringAlgorithm: "floyd-steinberg" | "atkinson" | "reduced-atkinson",
     bitsPerPixel: 1 | 4,
   ): { imageDataResult: Uint8ClampedArray; hexRawResult: string } {
     let hexRawResult = "";
@@ -60,6 +159,7 @@ function codeToInject() {
 
     const { width, height } = imageData;
 
+    const pixelsLightness: number[][] = Array.from(Array(height), () => Array(width));
     const pixels256Colors: number[][] = Array.from(Array(height), () => Array(width));
     const pixelsNColors: number[][] = Array.from(Array(height), () => Array(width));
 
@@ -68,48 +168,44 @@ function codeToInject() {
       const y = (pxIndex - x) / width;
 
       const [redIndex, greenIndex, blueIndex] = [4 * pxIndex, 4 * pxIndex + 1, 4 * pxIndex + 2];
-      const gray256 = 0.299 * data[redIndex] + 0.587 * data[greenIndex] + 0.114 * data[blueIndex];
+      const pixelLightness = calculatePixelLightness([
+        data[redIndex],
+        data[greenIndex],
+        data[blueIndex],
+      ]);
+      pixelsLightness[y][x] = pixelLightness;
 
-      /** gray rgb value after applying the contrast */
-      pixels256Colors[y][x] = clamp(contrastRGB(gray256, contrastAmount), 0, 255);
+      /** lightness value after applying the contrast */
+      pixels256Colors[y][x] = clamp(contrastRGB(pixelLightness, contrastAmount), 0, 255);
     }
 
     for (let y = 0; y < height; y++) {
       for (let x = 0; x < width; x++) {
         const oldpixel = pixels256Colors[y][x];
-        const posterizedGrayNColors = Math.floor(oldpixel / rgbStep);
-        const posterizedGray256 = posterizedGrayNColors * rgbStep;
-        /**
-         * Floyd-Steinberg dithering
-         * https://en.wikipedia.org/wiki/Floyd%E2%80%93Steinberg_dithering
-         *         x - 1  |   x    |  x + 1
-         *   y            |   *    | 7 / 16
-         * y + 1  3 / 16  | 5 / 16 | 1 / 16
-         */
+
+        let posterizedGray256: number;
+        if (bitsPerPixel === 1) {
+          posterizedGray256 = oldpixel >= 127 ? 255 : 0;
+        } else {
+          const posterizedGrayNColors = Math.floor(oldpixel / rgbStep);
+          posterizedGray256 = posterizedGrayNColors * rgbStep;
+        }
+
         const newpixel = posterizedGray256;
         pixels256Colors[y][x] = newpixel;
-        if (dither) {
-          const quantError = oldpixel - newpixel;
-          if (x < width - 1) {
-            pixels256Colors[y][x + 1] = Math.floor(
-              pixels256Colors[y][x + 1] + quantError * (7 / 16),
-            );
-          }
-          if (x > 0 && y < height - 1) {
-            pixels256Colors[y + 1][x - 1] = Math.floor(
-              pixels256Colors[y + 1][x - 1] + quantError * (3 / 16),
-            );
-          }
-          if (y < height - 1) {
-            pixels256Colors[y + 1][x] = Math.floor(
-              pixels256Colors[y + 1][x] + quantError * (5 / 16),
-            );
-          }
-          if (x < width - 1 && y < height - 1) {
-            pixels256Colors[y + 1][x + 1] = Math.floor(
-              pixels256Colors[y + 1][x + 1] + quantError * (1 / 16),
-            );
-          }
+        const quantError = oldpixel - newpixel;
+
+        // Apply dithering based on algorithm
+        switch (ditheringAlgorithm) {
+          case "floyd-steinberg":
+            applyFloydSteinbergDithering(x, y, width, height, quantError, pixels256Colors);
+            break;
+          case "atkinson":
+            applyAtkinsonDithering(x, y, width, height, quantError, pixels256Colors);
+            break;
+          case "reduced-atkinson":
+            applyReducedAtkinsonDithering(x, y, width, height, quantError, pixels256Colors);
+            break;
         }
 
         const valNColors = clamp(
@@ -142,7 +238,7 @@ function codeToInject() {
       let buffer = 0,
         bitsCount = 0;
       for (const pixel of orderedPixelsNColors) {
-        // 1 BPP ─ pack 4 pixels (bits) per 1-hex-digit
+        //       1 BPP ─ pack 4 pixels (bits) per 1-hex-digit
         buffer = (buffer << 1) | (1 - (pixel & 1)); // invert colour bit
         if (++bitsCount === 4) {
           // flush every 4 pixels (= 4 bits = 1 hex digit)
@@ -178,6 +274,7 @@ function codeToInject() {
     image: HTMLImageElement,
     contrastAmount: number,
     bitsPerPixel: 1 | 4,
+    ditheringAlgorithm: "floyd-steinberg" | "atkinson" | "reduced-atkinson",
   ): ComputationResult | null {
     // 1. drawing image in a canvas & getting its data
     const { canvas, context } = createCanvas(image);
@@ -189,7 +286,7 @@ function codeToInject() {
     const { imageDataResult: grayData, hexRawResult } = applyFilter(
       imageData,
       contrastAmount,
-      true,
+      ditheringAlgorithm,
       bitsPerPixel,
     );
 
@@ -236,6 +333,7 @@ function codeToInject() {
     rawResult: string;
     contrast: number;
     bitsPerPixel: 1 | 4;
+    ditheringAlgorithm: "floyd-steinberg" | "atkinson" | "reduced-atkinson";
   };
 
   let tmpStore: Store;
@@ -245,13 +343,20 @@ function codeToInject() {
       rawResult: "",
       contrast: 1,
       bitsPerPixel: 4,
+
+      ditheringAlgorithm: "floyd-steinberg",
     };
   };
   initTmpStore();
 
   const computeResultAndPostData = () => {
     try {
-      const res = computeResult(tmpStore.image, tmpStore.contrast, tmpStore.bitsPerPixel);
+      const res = computeResult(
+        tmpStore.image,
+        tmpStore.contrast,
+        tmpStore.bitsPerPixel,
+        tmpStore.ditheringAlgorithm,
+      );
       if (res === null) return;
       const { base64Data, width, height, hexRawResult } = res;
       tmpStore.rawResult = hexRawResult;
@@ -272,21 +377,23 @@ function codeToInject() {
     }
   };
 
-  window.processImage = (imgBase64, bitsPerPixel) => {
+  window.processImage = (imgBase64, bitsPerPixel, ditheringAlgorithm) => {
     initTmpStore();
     tmpStore.image.onload = () => {
       computeResultAndPostData();
     };
     tmpStore.image.src = imgBase64;
     tmpStore.bitsPerPixel = bitsPerPixel;
+    tmpStore.ditheringAlgorithm = ditheringAlgorithm;
   };
 
-  window.setImageContrast = val => {
+  window.setImageContrastAndDitheringAlgorithm = (val, ditheringAlgorithm) => {
     tmpStore.contrast = val;
+    tmpStore.ditheringAlgorithm = ditheringAlgorithm;
   };
 
-  window.setAndApplyImageContrast = val => {
-    window.setImageContrast(val);
+  window.setAndApplyImageContrastAndDitheringAlgorithm = (val, ditheringAlgorithm) => {
+    window.setImageContrastAndDitheringAlgorithm(val, ditheringAlgorithm);
     if (tmpStore.image) computeResultAndPostData();
   };
 

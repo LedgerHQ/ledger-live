@@ -2,13 +2,10 @@ import { Flex } from "@ledgerhq/native-ui";
 import React from "react";
 import { WebView, type WebViewMessageEvent } from "react-native-webview";
 import { ImageProcessingError } from "@ledgerhq/live-common/customImage/errors";
-import { injectedCode, htmlPage } from "./injectedCode/imageToDeviceProcessing";
-import { InjectedCodeDebugger } from "./InjectedCodeDebugger";
-import { ImageBase64Data, ImageDimensions } from "./types";
-
-export type ProcessorPreviewResult = ImageBase64Data & ImageDimensions;
-
-export type ProcessorRawResult = { hexData: string } & ImageDimensions;
+import { injectedCode, htmlPage } from "./imageToDeviceProcessing";
+import { InjectedCodeDebugger } from "../InjectedCodeDebugger";
+import { ImageBase64Data } from "../types";
+import { DitheringAlgorithm, ProcessorPreviewResult, ProcessorRawResult } from "./types";
 
 export type Props = ImageBase64Data & {
   onError: (_: Error) => void;
@@ -23,6 +20,7 @@ export type Props = ImageBase64Data & {
   contrast: number;
   debug?: boolean;
   bitsPerPixel: 1 | 4;
+  ditheringAlgorithm: DitheringAlgorithm;
 };
 
 /**
@@ -54,7 +52,11 @@ export default class ImageProcessor extends React.Component<Props> {
   webViewRef: WebView | null = null;
 
   componentDidUpdate(prevProps: Props) {
-    if (prevProps.contrast !== this.props.contrast) this.setAndApplyContrast();
+    if (
+      prevProps.contrast !== this.props.contrast ||
+      prevProps.ditheringAlgorithm !== this.props.ditheringAlgorithm
+    )
+      this.setAndApplyContrastAndDitheringAlgorithm();
     if (prevProps.imageBase64DataUri !== this.props.imageBase64DataUri) this.computeResult();
   }
 
@@ -101,18 +103,24 @@ export default class ImageProcessor extends React.Component<Props> {
   };
 
   processImage = () => {
-    const { imageBase64DataUri, bitsPerPixel } = this.props;
-    this.injectJavaScript(`window.processImage("${imageBase64DataUri}", ${bitsPerPixel});`);
+    const { imageBase64DataUri, bitsPerPixel, ditheringAlgorithm } = this.props;
+    this.injectJavaScript(
+      `window.processImage("${imageBase64DataUri}", ${bitsPerPixel}, "${ditheringAlgorithm}");`,
+    );
   };
 
-  setContrast = () => {
-    const { contrast } = this.props;
-    this.injectJavaScript(`window.setImageContrast(${contrast});`);
+  setContrastAndDitheringAlgorithm = () => {
+    const { contrast, ditheringAlgorithm } = this.props;
+    this.injectJavaScript(
+      `window.setImageContrastAndDitheringAlgorithm(${contrast}, "${ditheringAlgorithm}");`,
+    );
   };
 
-  setAndApplyContrast = () => {
-    const { contrast } = this.props;
-    this.injectJavaScript(`window.setAndApplyImageContrast(${contrast})`);
+  setAndApplyContrastAndDitheringAlgorithm = () => {
+    const { contrast, ditheringAlgorithm } = this.props;
+    this.injectJavaScript(
+      `window.setAndApplyImageContrastAndDitheringAlgorithm(${contrast}, "${ditheringAlgorithm}");`,
+    );
   };
 
   requestRawResult = () => {
@@ -120,7 +128,7 @@ export default class ImageProcessor extends React.Component<Props> {
   };
 
   computeResult = () => {
-    this.setContrast();
+    this.setContrastAndDitheringAlgorithm();
     this.processImage();
   };
 
