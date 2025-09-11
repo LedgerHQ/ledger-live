@@ -208,6 +208,10 @@ const transactionE2E = [
     transaction: new Transaction(Account.KASPA_1, Account.KASPA_2, "1"),
     xrayTicket: "B2CQA-3840",
   },
+  {
+    transaction: new Transaction(Account.SUI_1, Account.SUI_2, "0.0001", undefined, "noTag"),
+    xrayTicket: "B2CQA-3802",
+  },
 ];
 
 test.describe("Send flows", () => {
