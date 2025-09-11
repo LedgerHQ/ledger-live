@@ -632,6 +632,10 @@ export async function goToSettings() {
   await pressBoth();
 }
 
+export async function providePublickKey() {
+  await pressRightButton();
+}
+
 const APP_LABEL_MAP = new Map<AppInfos, [string, string]>([
   [AppInfos.ETHEREUM, [DeviceLabels.VERIFY_ETHEREUM, DeviceLabels.CONFIRM]],
   [AppInfos.BNB_CHAIN, [DeviceLabels.VERIFY_BSC, DeviceLabels.CONFIRM]],

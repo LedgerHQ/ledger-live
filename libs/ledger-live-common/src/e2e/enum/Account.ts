@@ -630,6 +630,24 @@ export class TokenAccount extends Account {
     TokenType.TRC20,
     Account.TRX_1,
   );
+
+  static readonly SUI_USDC_1 = new TokenAccount(
+    Currency.SUI_USDC,
+    "SUI USDC 1",
+    Account.SUI_1.address,
+    0,
+    TokenType.SUI,
+    Account.SUI_1,
+  );
+
+  static readonly SUI_USDC_2 = new TokenAccount(
+    Currency.SUI_USDC,
+    "SUI USDC 2",
+    Account.SUI_2.address,
+    1,
+    TokenType.SUI,
+    Account.SUI_2,
+  );
 }
 
 export type AccountType = Account | TokenAccount;
