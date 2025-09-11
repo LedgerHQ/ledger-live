@@ -21,7 +21,6 @@ import IconWallet from "~/renderer/icons/Wallet";
 import { rgba } from "~/renderer/styles/helpers";
 import CounterValue from "~/renderer/components/CounterValue";
 import Alert from "~/renderer/components/Alert";
-import NFTSummary from "~/renderer/screens/nft/Send/Summary";
 import { StepProps } from "../types";
 import AccountTagDerivationMode from "~/renderer/components/AccountTagDerivationMode";
 import { getLLDCoinFamily } from "~/renderer/families";
@@ -60,8 +59,7 @@ const Separator = styled.div`
 const WARN_FROM_UTXO_COUNT = 50;
 
 const StepSummary = (props: StepProps) => {
-  const { account, parentAccount, transaction, status, currencyName, isNFTSend, transitionTo } =
-    props;
+  const { account, parentAccount, transaction, status, currencyName, transitionTo } = props;
   const mainAccount = account && getMainAccount(account, parentAccount);
   const unit = useMaybeAccountUnit(account);
   const accountName = useMaybeAccountName(account);
@@ -99,12 +97,7 @@ const StepSummary = (props: StepProps) => {
 
   return (
     <Box flow={4} mx={40}>
-      <TrackPage
-        category="Send Flow"
-        name="Step Summary"
-        currencyName={currencyName}
-        isNFTSend={isNFTSend}
-      />
+      <TrackPage category="Send Flow" name="Step Summary" currencyName={currencyName} />
       {utxoLag ? (
         <Alert type="warning">
           <Trans i18nKey="send.steps.details.utxoLag" />
@@ -240,36 +233,33 @@ const StepSummary = (props: StepProps) => {
               )}
         </Box>
         <Separator />
-        {!isNFTSend ? (
-          <Box horizontal justifyContent="space-between" mb={2}>
-            <Text ff="Inter|Medium" color="palette.text.shade40" fontSize={4}>
-              <Trans i18nKey="send.steps.details.amount" />
-            </Text>
-            <Box>
-              <FormattedVal
-                color={"palette.text.shade80"}
-                disableRounding
-                unit={unit}
-                val={amount}
-                fontSize={4}
-                inline
-                showCode
-                data-testid="transaction-amount"
+        <Box horizontal justifyContent="space-between" mb={2}>
+          <Text ff="Inter|Medium" color="palette.text.shade40" fontSize={4}>
+            <Trans i18nKey="send.steps.details.amount" />
+          </Text>
+          <Box>
+            <FormattedVal
+              color={"palette.text.shade80"}
+              disableRounding
+              unit={unit}
+              val={amount}
+              fontSize={4}
+              inline
+              showCode
+              data-testid="transaction-amount"
+            />
+            <Box textAlign="right">
+              <CounterValue
+                color="palette.text.shade60"
+                fontSize={3}
+                currency={currency}
+                value={amount}
+                alwaysShowSign={false}
               />
-              <Box textAlign="right">
-                <CounterValue
-                  color="palette.text.shade60"
-                  fontSize={3}
-                  currency={currency}
-                  value={amount}
-                  alwaysShowSign={false}
-                />
-              </Box>
             </Box>
           </Box>
-        ) : (
-          <NFTSummary transaction={transaction} currency={mainAccount.currency} />
-        )}
+        </Box>
+
         {SpecificSummaryNetworkFeesRow ? (
           <SpecificSummaryNetworkFeesRow
             feeTooHigh={feeTooHigh}
