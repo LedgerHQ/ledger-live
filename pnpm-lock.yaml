@@ -969,8 +969,11 @@ importers:
         specifier: workspace:^
         version: link:../../libs/coin-modules/coin-stacks
       '@ledgerhq/device-management-kit':
-        specifier: 0.0.0-fix-lns-20250901094837
-        version: 0.0.0-fix-lns-20250901094837(rxjs@7.8.1)
+        specifier: 0.9.0
+        version: 0.9.0(rxjs@7.8.1)
+      '@ledgerhq/device-transport-kit-react-native-hid':
+        specifier: 1.0.0
+        version: 1.0.0(@ledgerhq/device-management-kit@0.9.0(rxjs@7.8.1))(react-native@0.77.3(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1))(rxjs@7.8.1)
       '@ledgerhq/devices':
         specifier: workspace:*
         version: link:../../libs/ledgerjs/packages/devices
@@ -5312,8 +5315,8 @@ importers:
         specifier: workspace:^
         version: link:../device-core
       '@ledgerhq/device-management-kit':
-        specifier: 0.0.0-fix-lns-20250901094837
-        version: 0.0.0-fix-lns-20250901094837(rxjs@7.8.1)
+        specifier: 0.9.0
+        version: 0.9.0(rxjs@7.8.1)
       '@ledgerhq/devices':
         specifier: workspace:*
         version: link:../ledgerjs/packages/devices
@@ -6409,8 +6412,8 @@ importers:
   libs/ledgerjs/packages/hw-app-exchange:
     dependencies:
       '@ledgerhq/device-management-kit':
-        specifier: 0.0.0-fix-lns-20250901094837
-        version: 0.0.0-fix-lns-20250901094837
+        specifier: 0.9.0
+        version: 0.9.0
       '@ledgerhq/errors':
         specifier: workspace:^
         version: link:../errors
@@ -8033,11 +8036,11 @@ importers:
   libs/live-dmk-desktop:
     dependencies:
       '@ledgerhq/device-management-kit':
-        specifier: 0.0.0-fix-lns-20250901094837
-        version: 0.0.0-fix-lns-20250901094837(rxjs@7.8.1)
+        specifier: 0.9.0
+        version: 0.9.0(rxjs@7.8.1)
       '@ledgerhq/device-transport-kit-web-hid':
-        specifier: 0.0.0-fix-lns-20250901094837
-        version: 0.0.0-fix-lns-20250901094837(@ledgerhq/device-management-kit@0.0.0-fix-lns-20250901094837(rxjs@7.8.1))(rxjs@7.8.1)
+        specifier: 1.2.0
+        version: 1.2.0(@ledgerhq/device-management-kit@0.9.0(rxjs@7.8.1))(rxjs@7.8.1)
       '@ledgerhq/hw-transport':
         specifier: workspace:*
         version: link:../ledgerjs/packages/hw-transport
@@ -8097,11 +8100,14 @@ importers:
   libs/live-dmk-mobile:
     dependencies:
       '@ledgerhq/device-management-kit':
-        specifier: 0.0.0-fix-lns-20250901094837
-        version: 0.0.0-fix-lns-20250901094837(rxjs@7.8.1)
+        specifier: 0.9.0
+        version: 0.9.0(rxjs@7.8.1)
       '@ledgerhq/device-transport-kit-react-native-ble':
-        specifier: 0.0.0-fix-lns-20250901094837
-        version: 0.0.0-fix-lns-20250901094837(@ledgerhq/device-management-kit@0.0.0-fix-lns-20250901094837(rxjs@7.8.1))(react-native-ble-plx@3.4.0(react-native@0.77.2(@react-native-community/cli@15.1.0(typescript@5.4.3))(react@18.3.1))(react@18.3.1))(react-native@0.77.2(@react-native-community/cli@15.1.0(typescript@5.4.3))(react@18.3.1))(rxjs@7.8.1)
+        specifier: 1.1.0
+        version: 1.1.0(@ledgerhq/device-management-kit@0.9.0(rxjs@7.8.1))(react-native-ble-plx@3.4.0(react-native@0.77.2(@react-native-community/cli@15.1.0(typescript@5.4.3))(react@18.3.1))(react@18.3.1))(react-native@0.77.2(@react-native-community/cli@15.1.0(typescript@5.4.3))(react@18.3.1))(rxjs@7.8.1)
+      '@ledgerhq/device-transport-kit-react-native-hid':
+        specifier: 1.0.0
+        version: 1.0.0(@ledgerhq/device-management-kit@0.9.0(rxjs@7.8.1))(react-native@0.77.2(@react-native-community/cli@15.1.0(typescript@5.4.3))(react@18.3.1))(rxjs@7.8.1)
       '@ledgerhq/devices':
         specifier: workspace:*
         version: link:../ledgerjs/packages/devices
@@ -8192,8 +8198,8 @@ importers:
         version: 5.19.2
     devDependencies:
       '@ledgerhq/device-management-kit':
-        specifier: 0.0.0-fix-lns-20250901094837
-        version: 0.0.0-fix-lns-20250901094837(rxjs@7.8.1)
+        specifier: 0.9.0
+        version: 0.9.0(rxjs@7.8.1)
       '@testing-library/dom':
         specifier: ^9.3.4
         version: 9.3.4
@@ -8430,14 +8436,14 @@ importers:
         specifier: workspace:^
         version: link:../coin-modules/coin-evm
       '@ledgerhq/context-module':
-        specifier: 0.0.0-fix-lns-20250901094837
-        version: 0.0.0-fix-lns-20250901094837(@ledgerhq/device-management-kit@0.0.0-fix-lns-20250901094837(rxjs@7.8.1))
+        specifier: 1.7.0
+        version: 1.7.0(@ledgerhq/device-management-kit@0.9.0(rxjs@7.8.1))
       '@ledgerhq/device-management-kit':
-        specifier: 0.0.0-fix-lns-20250901094837
-        version: 0.0.0-fix-lns-20250901094837(rxjs@7.8.1)
+        specifier: 0.9.0
+        version: 0.9.0(rxjs@7.8.1)
       '@ledgerhq/device-signer-kit-ethereum':
-        specifier: 0.0.0-fix-lns-20250901094837
-        version: 0.0.0-fix-lns-20250901094837(@ledgerhq/context-module@0.0.0-fix-lns-20250901094837(@ledgerhq/device-management-kit@0.0.0-fix-lns-20250901094837(rxjs@7.8.1)))(@ledgerhq/device-management-kit@0.0.0-fix-lns-20250901094837(rxjs@7.8.1))
+        specifier: 1.7.0
+        version: 1.7.0(@ledgerhq/context-module@1.7.0(@ledgerhq/device-management-kit@0.9.0(rxjs@7.8.1)))(@ledgerhq/device-management-kit@0.9.0(rxjs@7.8.1))
       '@ledgerhq/errors':
         specifier: workspace:^
         version: link:../ledgerjs/packages/errors
@@ -14473,10 +14479,10 @@ packages:
   '@kwsites/promise-deferred@1.1.1':
     resolution: {integrity: sha512-GaHYm+c0O9MjZRu0ongGBRbinu8gVAMd2UZjji6jVmqKtZluZnptXGWhz1E8j8D2HJ3f/yMxKAUC0b+57wncIw==}
 
-  '@ledgerhq/context-module@0.0.0-fix-lns-20250901094837':
-    resolution: {integrity: sha512-n8V1bpNDwz8SQ7hzqvmsEDrFbLZSQ2uKV5uiokmVTbWG3BktOeMKg2fHeBwJRJVai0F9yD/+jX0wZ6DJzQHL9g==}
+  '@ledgerhq/context-module@1.7.0':
+    resolution: {integrity: sha512-dXODmbGhXsLvyDUlIerAX7hchrs5Kp14itl3SfSNeeDTyEh+iH7lQeigeeVi8ciCmUUn1QQ40yuJqJpX6bFd8g==}
     peerDependencies:
-      '@ledgerhq/device-management-kit': 0.0.0-fix-lns-20250901094837
+      '@ledgerhq/device-management-kit': 0.9.0
 
   '@ledgerhq/crypto-icons-ui@file:libs/ui/packages/crypto-icons':
     resolution: {directory: libs/ui/packages/crypto-icons, type: directory}
@@ -14518,30 +14524,37 @@ packages:
   '@ledgerhq/cryptoassets@6.37.0':
     resolution: {integrity: sha512-xwrDKTS9koQBNNzc7CqgV6zfGHvNFWJjlIL0Kc4O4DVWYR2vUdztUHcvwHD1KPjxNYhVnsgIopmtq47fHt3nMg==}
 
-  '@ledgerhq/device-management-kit@0.0.0-fix-lns-20250901094837':
-    resolution: {integrity: sha512-Ma+gqkgunX0Vcmww4ultxJfIx0GwmSYXrD7FOCS86l991UBye8tXd5Ny/vbOqT5IQgAeJLxmrbO+K7zFp6/yXw==}
+  '@ledgerhq/device-management-kit@0.9.0':
+    resolution: {integrity: sha512-zWcQ0TOerZU4tvBdHd7RWpmYB+nVN3aTZ/hHz5IVnESEmQa2m4YsmOb2vm55k3tvyc5yRW/sOqX83Bnr+y+G+w==}
     peerDependencies:
       rxjs: 7.8.2
 
-  '@ledgerhq/device-signer-kit-ethereum@0.0.0-fix-lns-20250901094837':
-    resolution: {integrity: sha512-J5zx+ZeEt5Edun7+n8Z/0iKKzBoU6h/HAZA+9zmf5j5XsVXNLJyX0YzgDyHoWbthqIisdz2Uy4xhOYoIBPQCpQ==}
+  '@ledgerhq/device-signer-kit-ethereum@1.7.0':
+    resolution: {integrity: sha512-6d6LHd3IbAC99ijSJJfsVFOEw+P68RxkMC5FLJMKsFGHgGGUj5cMNmSIGqNjlLXBiHGDmOlOLFQKKFnS0MLDMQ==}
     peerDependencies:
-      '@ledgerhq/context-module': 0.0.0-fix-lns-20250901094837
-      '@ledgerhq/device-management-kit': 0.0.0-fix-lns-20250901094837
+      '@ledgerhq/context-module': 1.7.0
+      '@ledgerhq/device-management-kit': 0.9.0
 
-  '@ledgerhq/device-transport-kit-react-native-ble@0.0.0-fix-lns-20250901094837':
-    resolution: {integrity: sha512-O2R21/y8LzhdcdCQdmKP+nkoix3Mb4GA2SuHuvosP09s7Q6kyGnoGgugWd3h317nFn1tUrMok5HwmPBHeqiNMw==}
+  '@ledgerhq/device-transport-kit-react-native-ble@1.1.0':
+    resolution: {integrity: sha512-+d+WBya6Habwm5JF8GMSBcSDuuiXc+Ow+B7PZHHkow3IL+mx1B5RI9Vew3MvB7QgWkcslUCETCOahujDOyQnaA==}
     peerDependencies:
-      '@ledgerhq/device-management-kit': 0.0.0-fix-lns-20250901094837
+      '@ledgerhq/device-management-kit': 0.8.0
       react-native: '>0.74.1'
       react-native-ble-plx: 3.4.0
+      rxjs: ^7.8.2
+
+  '@ledgerhq/device-transport-kit-react-native-hid@1.0.0':
+    resolution: {integrity: sha512-tGIC7yqqWTVepsOE61oqIkbUkGxAHdN7PSHXeDtSb78Yccc15+Jjb86S9XF6+mf8ynBKwKbWr6szJU5efJ1A7A==}
+    peerDependencies:
+      '@ledgerhq/device-management-kit': 0.9.0
+      react-native: '>0.74.1'
       rxjs: 7.8.2
 
-  '@ledgerhq/device-transport-kit-web-hid@0.0.0-fix-lns-20250901094837':
-    resolution: {integrity: sha512-DgSa0iZ71QzCiN1y1beGPA571gyVexG0dkgP8CZ1LmDH+Jxe66WdCshhRpI7vFySo1xn4m6nMr6ix25UwFfyTQ==}
+  '@ledgerhq/device-transport-kit-web-hid@1.2.0':
+    resolution: {integrity: sha512-51kLHqrn1dP+0ZQLRyUBHIPSBNvx74hiIAMHrBkiCAedpmND/W522nslpX42bVf3tU3+I0Y51qn3WFvd8ZtIow==}
     peerDependencies:
-      '@ledgerhq/device-management-kit': 0.0.0-fix-lns-20250901094837
-      rxjs: 7.8.2
+      '@ledgerhq/device-management-kit': 0.8.0
+      rxjs: ^7.8.2
 
   '@ledgerhq/domain-service@1.2.12':
     resolution: {integrity: sha512-w33g7EqBtquzNPnvD2tmQq049eL4d8qYZH5vCwJ9Rfe6Vc/bYQvwlHFZ4N/cQPLmWQdsIMWDu+4fYo61p+Ub5A==}
@@ -14598,10 +14611,10 @@ packages:
   '@ledgerhq/logs@6.13.0':
     resolution: {integrity: sha512-4+qRW2Pc8V+btL0QEmdB2X+uyx0kOWMWE1/LWsq5sZy3Q5tpi4eItJS6mB0XL3wGW59RQ+8bchNQQ1OW/va8Og==}
 
-  '@ledgerhq/signer-utils@0.0.0-fix-lns-20250901094837':
-    resolution: {integrity: sha512-J7XZuq8rqKPNAZ5bAjTb2Yi7dn0yXrZGBlIC8GkW4+FTduO0Z3zzSGoJipk3aX6o515XRY6N7jR2JsbiGSwdbQ==}
+  '@ledgerhq/signer-utils@1.1.0':
+    resolution: {integrity: sha512-zp8kyNF0sNMUG2VkgOL7rDu8W6U1P8yvTA3wIDjjlqoIOPanvodfezeub69fOuHJ2QG/JmnS8YZCGIoSWpQYkA==}
     peerDependencies:
-      '@ledgerhq/device-management-kit': 0.0.0-fix-lns-20250901094837
+      '@ledgerhq/device-management-kit': 0.9.0
 
   '@ledgerhq/types-live@6.53.1':
     resolution: {integrity: sha512-ukaDDyxg7quBQ0vdoQQjj3ICqiG13gO/rGIO0Jm2nRh/icbLWgxfsI2wX0u0ugJQJ+q/muiX+wJrMJn9EKhEaQ==}
@@ -43458,9 +43471,9 @@ snapshots:
 
   '@kwsites/promise-deferred@1.1.1': {}
 
-  '@ledgerhq/context-module@0.0.0-fix-lns-20250901094837(@ledgerhq/device-management-kit@0.0.0-fix-lns-20250901094837(rxjs@7.8.1))':
+  '@ledgerhq/context-module@1.7.0(@ledgerhq/device-management-kit@0.9.0(rxjs@7.8.1))':
     dependencies:
-      '@ledgerhq/device-management-kit': 0.0.0-fix-lns-20250901094837(rxjs@7.8.1)
+      '@ledgerhq/device-management-kit': 0.9.0(rxjs@7.8.1)
       axios: 1.8.2
       crypto-js: 4.2.0
       ethers: 6.14.1
@@ -43504,7 +43517,7 @@ snapshots:
     dependencies:
       invariant: 2.2.4
 
-  '@ledgerhq/device-management-kit@0.0.0-fix-lns-20250901094837':
+  '@ledgerhq/device-management-kit@0.9.0':
     dependencies:
       '@sentry/minimal': 6.19.7
       axios: 1.8.2
@@ -43521,7 +43534,7 @@ snapshots:
       - bufferutil
       - utf-8-validate
 
-  '@ledgerhq/device-management-kit@0.0.0-fix-lns-20250901094837(rxjs@7.8.1)':
+  '@ledgerhq/device-management-kit@0.9.0(rxjs@7.8.1)':
     dependencies:
       '@sentry/minimal': 6.19.7
       axios: 1.8.2
@@ -43539,11 +43552,11 @@ snapshots:
       - bufferutil
       - utf-8-validate
 
-  '@ledgerhq/device-signer-kit-ethereum@0.0.0-fix-lns-20250901094837(@ledgerhq/context-module@0.0.0-fix-lns-20250901094837(@ledgerhq/device-management-kit@0.0.0-fix-lns-20250901094837(rxjs@7.8.1)))(@ledgerhq/device-management-kit@0.0.0-fix-lns-20250901094837(rxjs@7.8.1))':
+  '@ledgerhq/device-signer-kit-ethereum@1.7.0(@ledgerhq/context-module@1.7.0(@ledgerhq/device-management-kit@0.9.0(rxjs@7.8.1)))(@ledgerhq/device-management-kit@0.9.0(rxjs@7.8.1))':
     dependencies:
-      '@ledgerhq/context-module': 0.0.0-fix-lns-20250901094837(@ledgerhq/device-management-kit@0.0.0-fix-lns-20250901094837(rxjs@7.8.1))
-      '@ledgerhq/device-management-kit': 0.0.0-fix-lns-20250901094837(rxjs@7.8.1)
-      '@ledgerhq/signer-utils': 0.0.0-fix-lns-20250901094837(@ledgerhq/device-management-kit@0.0.0-fix-lns-20250901094837(rxjs@7.8.1))
+      '@ledgerhq/context-module': 1.7.0(@ledgerhq/device-management-kit@0.9.0(rxjs@7.8.1))
+      '@ledgerhq/device-management-kit': 0.9.0(rxjs@7.8.1)
+      '@ledgerhq/signer-utils': 1.1.0(@ledgerhq/device-management-kit@0.9.0(rxjs@7.8.1))
       ethers: 6.14.1
       inversify: 7.5.1(reflect-metadata@0.2.2)
       purify-ts: 2.1.0
@@ -43554,9 +43567,9 @@ snapshots:
       - bufferutil
       - utf-8-validate
 
-  '@ledgerhq/device-transport-kit-react-native-ble@0.0.0-fix-lns-20250901094837(@ledgerhq/device-management-kit@0.0.0-fix-lns-20250901094837(rxjs@7.8.1))(react-native-ble-plx@3.4.0(react-native@0.77.2(@react-native-community/cli@15.1.0(typescript@5.4.3))(react@18.3.1))(react@18.3.1))(react-native@0.77.2(@react-native-community/cli@15.1.0(typescript@5.4.3))(react@18.3.1))(rxjs@7.8.1)':
+  '@ledgerhq/device-transport-kit-react-native-ble@1.1.0(@ledgerhq/device-management-kit@0.9.0(rxjs@7.8.1))(react-native-ble-plx@3.4.0(react-native@0.77.2(@react-native-community/cli@15.1.0(typescript@5.4.3))(react@18.3.1))(react@18.3.1))(react-native@0.77.2(@react-native-community/cli@15.1.0(typescript@5.4.3))(react@18.3.1))(rxjs@7.8.1)':
     dependencies:
-      '@ledgerhq/device-management-kit': 0.0.0-fix-lns-20250901094837(rxjs@7.8.1)
+      '@ledgerhq/device-management-kit': 0.9.0(rxjs@7.8.1)
       '@sentry/minimal': 6.19.7
       js-base64: 3.7.7
       purify-ts: 2.1.0
@@ -43565,9 +43578,27 @@ snapshots:
       rxjs: 7.8.1
       uuid: 11.0.3
 
-  '@ledgerhq/device-transport-kit-web-hid@0.0.0-fix-lns-20250901094837(@ledgerhq/device-management-kit@0.0.0-fix-lns-20250901094837(rxjs@7.8.1))(rxjs@7.8.1)':
+  '@ledgerhq/device-transport-kit-react-native-hid@1.0.0(@ledgerhq/device-management-kit@0.9.0(rxjs@7.8.1))(react-native@0.77.2(@react-native-community/cli@15.1.0(typescript@5.4.3))(react@18.3.1))(rxjs@7.8.1)':
     dependencies:
-      '@ledgerhq/device-management-kit': 0.0.0-fix-lns-20250901094837(rxjs@7.8.1)
+      '@ledgerhq/device-management-kit': 0.9.0(rxjs@7.8.1)
+      '@sentry/minimal': 6.19.7
+      purify-ts: 2.1.0
+      react-native: 0.77.2(@react-native-community/cli@15.1.0(typescript@5.4.3))(react@18.3.1)
+      rxjs: 7.8.1
+      uuid: 11.0.3
+
+  '@ledgerhq/device-transport-kit-react-native-hid@1.0.0(@ledgerhq/device-management-kit@0.9.0(rxjs@7.8.1))(react-native@0.77.3(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1))(rxjs@7.8.1)':
+    dependencies:
+      '@ledgerhq/device-management-kit': 0.9.0(rxjs@7.8.1)
+      '@sentry/minimal': 6.19.7
+      purify-ts: 2.1.0
+      react-native: 0.77.3(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1)
+      rxjs: 7.8.1
+      uuid: 11.0.3
+
+  '@ledgerhq/device-transport-kit-web-hid@1.2.0(@ledgerhq/device-management-kit@0.9.0(rxjs@7.8.1))(rxjs@7.8.1)':
+    dependencies:
+      '@ledgerhq/device-management-kit': 0.9.0(rxjs@7.8.1)
       '@sentry/minimal': 6.19.7
       purify-ts: 2.1.0
       rxjs: 7.8.1
@@ -43654,9 +43685,9 @@ snapshots:
 
   '@ledgerhq/logs@6.13.0': {}
 
-  '@ledgerhq/signer-utils@0.0.0-fix-lns-20250901094837(@ledgerhq/device-management-kit@0.0.0-fix-lns-20250901094837(rxjs@7.8.1))':
+  '@ledgerhq/signer-utils@1.1.0(@ledgerhq/device-management-kit@0.9.0(rxjs@7.8.1))':
     dependencies:
-      '@ledgerhq/device-management-kit': 0.0.0-fix-lns-20250901094837(rxjs@7.8.1)
+      '@ledgerhq/device-management-kit': 0.9.0(rxjs@7.8.1)
 
   '@ledgerhq/types-live@6.53.1':
     dependencies:
@@ -60778,7 +60809,7 @@ snapshots:
       '@babel/parser': 7.28.3
       '@istanbuljs/schema': 0.1.3
       istanbul-lib-coverage: 3.2.2
-      semver: 7.5.4
+      semver: 7.7.1
     transitivePeerDependencies:
       - supports-color
 
