@@ -180,6 +180,9 @@ export function useCustomExchangeHandlers({
             });
           },
           "custom.exchange.complete": ({ exchangeParams, onSuccess, onCancel }) => {
+            if (onShowLoadingDrawer) {
+              navigation.pop();
+            }
             navigation.navigate(NavigatorName.PlatformExchange, {
               screen: ScreenName.PlatformCompleteExchange,
               params: {
@@ -232,6 +235,9 @@ export function useCustomExchangeHandlers({
             }
           },
           "custom.exchange.swap": ({ exchangeParams, onSuccess, onCancel }) => {
+            if (onShowLoadingDrawer) {
+              navigation.pop();
+            }
             let cancelCalled = false;
 
             const safeOnCancel = (error: Error) => {
