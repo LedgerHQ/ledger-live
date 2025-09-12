@@ -40,6 +40,7 @@ import { Delegate } from "./models/Delegate";
 import { Swap } from "./models/Swap";
 import { delegateOsmosis } from "./families/osmosis";
 import { AppInfos } from "./enum/AppInfos";
+import { sendSui } from "./families/sui";
 
 const isSpeculosRemote = process.env.REMOTE_SPECULOS === "true";
 
@@ -218,6 +219,14 @@ export const specs: Specs = {
     appQuery: {
       model: getSpeculosModel(),
       appName: "Stellar",
+    },
+    dependency: "",
+  },
+  Sui: {
+    currency: getCryptoCurrencyById("sui"),
+    appQuery: {
+      model: getSpeculosModel(),
+      appName: "Sui",
     },
     dependency: "",
   },
@@ -623,6 +632,10 @@ export async function goToSettings() {
   await pressBoth();
 }
 
+export async function providePublicKey() {
+  await pressRightButton();
+}
+
 const APP_LABEL_MAP = new Map<AppInfos, [string, string]>([
   [AppInfos.ETHEREUM, [DeviceLabels.VERIFY_ETHEREUM, DeviceLabels.CONFIRM]],
   [AppInfos.BNB_CHAIN, [DeviceLabels.VERIFY_BSC, DeviceLabels.CONFIRM]],
@@ -636,6 +649,9 @@ const APP_LABEL_MAP = new Map<AppInfos, [string, string]>([
 const DEFAULT_LABELS: [string, string] = [DeviceLabels.ADDRESS, DeviceLabels.APPROVE];
 
 export async function expectValidAddressDevice(account: Account, addressDisplayed: string) {
+  if (account.currency === Currency.SUI_USDC) {
+    providePublicKey();
+  }
   const labels = APP_LABEL_MAP.get(account.currency.speculosApp) ?? DEFAULT_LABELS;
   const [firstLabel, confirmLabel] = labels;
 
@@ -688,6 +704,9 @@ export async function signSendTransaction(tx: Transaction) {
       break;
     case Currency.KAS:
       await sendKaspa();
+      break;
+    case Currency.SUI:
+      await sendSui();
       break;
     default:
       throw new Error(`Unsupported currency: ${currencyName.ticker}`);
