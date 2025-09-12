@@ -5,7 +5,6 @@ import logger from "~/renderer/logger";
 import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
 import { accountsSelector } from "~/renderer/reducers/accounts";
 import { recentlyChangedExperimental } from "~/renderer/experimental";
-import { recentlyKilledInternalProcess } from "~/renderer/reset";
 import { track } from "~/renderer/analytics/segment";
 import { prepareCurrency, hydrateCurrency } from "./cache";
 import { blacklistedTokenIdsSelector } from "~/renderer/reducers/settings";
@@ -20,12 +19,8 @@ export const BridgeSyncProvider = ({ children }: { children: React.ReactNode }) 
     [dispatch],
   );
   const recoverError = useCallback((error: Error) => {
-    const isInternalProcessError = error && error.message.includes("Internal process error");
-    if (
-      isInternalProcessError &&
-      (recentlyKilledInternalProcess() || recentlyChangedExperimental())
-    ) {
-      // This error is normal because the thread was recently killed. we silent it for the user.
+    if (recentlyChangedExperimental()) {
+      // This error is normal because experimental settings changed. we silent it for the user.
       return;
     }
     logger.critical(error);
