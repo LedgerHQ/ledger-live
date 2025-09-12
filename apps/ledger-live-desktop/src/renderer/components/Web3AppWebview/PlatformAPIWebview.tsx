@@ -122,7 +122,7 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
                     tracking.platformReceiveSuccess(manifest);
                     resolve(accountAddress);
                   },
-                  onCancel: error => {
+                  onCancel: (error: Error) => {
                     tracking.platformReceiveFail(manifest);
                     reject(error);
                   },
@@ -213,11 +213,11 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
           dispatch(
             openModal("MODAL_PLATFORM_EXCHANGE_START", {
               exchangeType,
-              onResult: result => {
+              onResult: (result: { nonce: string }) => {
                 tracking.platformStartExchangeSuccess(manifest);
                 resolve(result.nonce);
               },
-              onCancel: cancelResult => {
+              onCancel: (cancelResult: { error: Error }) => {
                 tracking.platformStartExchangeFail(manifest);
                 reject(cancelResult.error);
               },

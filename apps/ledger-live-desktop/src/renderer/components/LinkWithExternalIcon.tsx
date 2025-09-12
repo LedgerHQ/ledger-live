@@ -42,7 +42,7 @@ type Props = {
   color?: string;
   id?: string;
 }; // can add more dynamic options if needed
-export function LinkWithExternalIcon({
+function LinkWithExternalIcon({
   onClick,
   label,
   children,

@@ -1,7 +1,6 @@
 import logger from "~/renderer/logger";
 
 const currentTermsRequired = "2022-05-10";
-const currentLendingTermsRequired = "2020-11-10";
 
 function isAcceptedVersionUpToDate(acceptedVersion: string | null, currentVersion: string) {
   if (!acceptedVersion) {
@@ -24,17 +23,6 @@ export function isAcceptedTerms() {
   );
 }
 
-export function isAcceptedLendingTerms() {
-  return isAcceptedVersionUpToDate(
-    global.localStorage.getItem("acceptedLendingTermsVersion"),
-    currentLendingTermsRequired,
-  );
-}
-
 export function acceptTerms() {
   return global.localStorage.setItem("acceptedTermsVersion", currentTermsRequired);
-}
-
-export function acceptLendingTerms() {
-  return global.localStorage.setItem("acceptedLendingTermsVersion", currentLendingTermsRequired);
 }

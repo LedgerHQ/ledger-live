@@ -13,7 +13,7 @@ import { AccountList, ActionButtons, SuccessIcon, Title } from "./components";
 import { useAccountFormatter } from "./hooks";
 import { AccountsAddedProps } from "./types";
 
-export const AccountsAdded = ({
+const AccountsAdded = ({
   accounts,
   navigateToEditAccountName,
   navigateToFundAccount,
