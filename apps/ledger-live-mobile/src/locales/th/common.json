@@ -419,10 +419,6 @@
       "title" : "ไม่มีการยืนยันอัตโนมัติ: ตรวจสอบ Address อย่างรอบคอบ",
       "description" : null
     },
-    "EthAppNftNotSupported" : {
-      "title" : "อุปกรณ์นี้ไม่สามารถดำเนินการได้",
-      "description" : "คุณสมบัติการส่ง NFT ใช้ได้กับ Nano X และ Nano S+ เท่านั้น โปรดไปที่แพลตฟอร์มการสนับสนุนลูกค้าของเราเพื่อดูวิธีส่ง NFT ด้วย Nano S"
-    },
     "Touch ID Error" : {
       "title" : "การยืนยันตัวตนด้วยไบโอเมทริกซ์ล้มเหลว",
       "description" : "โปรดใช้รหัสผ่านของคุณหรือรีเซ็ตแอป"
@@ -925,9 +921,6 @@
     "TaprootNotActivated" : {
       "title" : "Taproot Mainnet ยังไม่เปิดใช้งาน"
     },
-    "NotEnoughNftOwned" : {
-      "title" : "คุณใช้มีจำนวนโทเคนเกินกว่าที่สามารถจัดเก็บได้"
-    },
     "generic" : {
       "title" : "{{message}}",
       "description" : "มีบางอย่างผิดปกติ โปรดลองอีกครั้ง หากปัญหายังคงอยู่ โปรดบันทึก Log ของคุณโดยใช้ปุ่มด้านล่าง และส่งให้ Ledger Support",
@@ -1051,10 +1044,6 @@
     "ImageDownloadError" : {
       "title" : "ไม่สามารถดาวน์โหลดภาพได้",
       "description" : "ลองอีกครั้งโดยใช้ภาพอื่น"
-    },
-    "NFTMetadataLoadingError" : {
-      "title" : "ปัญหาในการโหลด NFT Metadata",
-      "description" : "ลองอีกครั้งโดยใช้ NFT อื่น"
     },
     "ImageSizeLoadingError" : {
       "title" : "เรียกดูขนาดภาพไม่สำเร็จ",
@@ -2156,26 +2145,6 @@
         "learnHowToUpdate" : "ศึกษาวิธีอัปเดต"
       }
     },
-    "stepImportAccounts" : {
-      "title" : "ซิงค์คริปโตจากเดสก์ท็อป",
-      "desc" : "หากคุณมีการตั้งค่าคริปโตในแอป Ledger บนเดสก์ท็อปอยู่แล้ว คุณสามารถซิงค์เพื่อจัดการได้จากโทรศัพท์ของคุณ",
-      "cta" : "ฉันพร้อมสแกนแล้ว",
-      "bullets" : {
-        "0" : {
-          "label" : "บนแอปเดสก์ท็อป เลือก\n<1>การตั้งค่า > บัญชี > ส่งออกบัญชี</1>"
-        },
-        "1" : {
-        },
-        "2" : {
-          "label" : "เลือกบัญชีคริปโตเพื่อนำเข้า"
-        }
-      },
-      "warning" : {
-        "title" : "จะต้องซิงค์เดสก์ท็อปของคุณและแอปมือถือด้วยตัวเอง",
-        "desc" : "Ledger Live เคารพความเป็นส่วนตัวของคุณและจัดเก็บข้อมูลของคุณไว้ในเครื่อง หากคุณเปลี่ยนบัญชีและการตั้งค่าในโทรศัพท์ของคุณ คุณจะต้องทำเช่นเดียวกันในคอมพิวเตอร์ของคุณด้วย และในทางกลับกันด้วย ธุรกรรมของคุณจะซิงโครไนซ์กับบล็อกเชนเสมอ",
-        "cta" : "เข้าใจแล้ว!"
-      }
-    },
     "stepSetupPin" : {
       "step1" : "เปิด {{fullDeviceName}} ของคุณและทำตามคำแนะนำ",
       "step1-nanoS" : "เชื่อมต่อ {{fullDeviceName}} ของคุณกับโทรศัพท์โดยใช้สาย OTG",
@@ -2712,9 +2681,7 @@
   "operations" : {
     "types" : {
       "IN" : "ได้รับแล้ว",
-      "NFT_IN" : "NFT ที่ได้รับ",
       "OUT" : "ส่งแล้ว",
-      "NFT_OUT" : "NFT ที่ส่งแล้ว",
       "CREATE" : "สร้างแล้ว",
       "REVEAL" : "เปิดเผยแล้ว",
       "DELEGATE" : "Delegate เรียบร้อยแล้ว",
@@ -2819,11 +2786,7 @@
       "stakedAmount" : "จำนวนที่ Stake แล้ว",
       "accountCreationFee" : "ค่าธรรมเนียมการสร้างบัญชี"
     },
-    "multipleAddresses" : "ทำไมต้องหลาย Address?",
-    "tokenName" : "ชื่อโทเคน",
-    "collectionContract" : "สัญญาโทเคน",
-    "tokenId" : "ID ของโทเคน (NFT)",
-    "quantity" : "ปริมาณ"
+    "multipleAddresses" : "ทำไมต้องหลาย Address?"
   },
   "operationList" : {
     "noOperations" : "ไม่มีการดำเนินการ",
@@ -2855,8 +2818,8 @@
       "contactSupport" : "ติดต่อฝ่ายสนับสนุน"
     },
     "willBedeprecatedBanner" : {
-      "title" : "เพื่อปรับปรุงประสิทธิภาพ จะไม่มีการรองรับ {{currencyName}} ใน Ledger Live ตั้งแต่วันที่ {{deprecatedDate}} อย่างไรก็ตาม สกุลเงินจะยังคงได้รับการสนับสนุนบน Hardware Wallet ของ Ledger โปรดติดต่อฝ่ายสนับสนุนลูกค้าของ Ledger หากคุณต้องการความช่วยเหลือในเรื่องนี้",
-      "contactSupport" : "ติดต่อฝ่ายสนับสนุน"
+      "title" : "{{currencyName}} จะไม่ได้รับการรองรับบนแอป Ledger Live ตั้งแต่วันที่ {{deprecatedDate}} เป็นต้นไป อย่างไรก็ตาม สินทรัพย์ของคุณจะยังคงได้รับการปกป้องโดยฮาร์ดแวร์วอลเล็ตของ Ledger หากต้องการเรียนรู้เพิ่มเติม โปรดอ่านบทความฉบับเต็มจากศูนย์ช่วยเหลือได้ที่ลิงก์ด้านล่างนี้",
+      "learnMore" : "เรียนรู้เพิ่มเติม"
     },
     "tokens" : {
       "contractAddress" : "Address ของสัญญา",
@@ -2992,10 +2955,6 @@
     },
     "undelegation" : {
       "sectionLabel" : "การ Undelegate"
-    },
-    "nft" : {
-      "receiveNft" : "รับ NFT",
-      "howTo" : "เพื่อเพิ่ม NFT คุณต้อง<0>รับ</0>โดยใช้ <1>{{currency}} Address</1> ของคุณ"
     },
     "readOnly" : {
       "noTransaction" : {
@@ -3206,11 +3165,6 @@
         "title" : "ซ่อนโทเคน",
         "desc" : "การดำเนินการนี้จะซ่อนบัญชี <1><0>{tokenName}</0></1> ทั้งหมด โดยคุณสามารถแสดงบัญชีอีกครั้งได้โดยใช้ <3>การตั้งค่า > บัญชี</3>",
         "confirm" : "ซ่อนโทเคน"
-      },
-      "hideNFTCollectionCTA" : "ซ่อนคอลเลกชัน",
-      "hideNFTCollectionModal" : {
-        "title" : "ซ่อนคอลเลกชัน?",
-        "desc" : "คุณสามารถยกเลิกการซ่อนคอลเลกชันนี้ได้ในตัวเลือกการตั้งค่า"
       },
       "cryptoAssets" : {
         "header" : "สินทรัพย์คริปโต",
@@ -3769,6 +3723,10 @@
       "twoStepApproval" : {
         "title" : "ดำเนินการตามขั้นตอน"
       },
+      "loader" : {
+        "title" : "กำลังประมวลผลการสวอป (Swap)",
+        "description" : "กรุณารอสักครู่ ระบบกำลังดำเนินการคำขอของคุณ"
+      },
       "history" : {
         "title" : "ประวัติการสวอป"
       },
@@ -4036,10 +3994,7 @@
       "summary" : "สรุป",
       "selectDevice" : "เลือกอุปกรณ์",
       "connectDevice" : "เชื่อมต่ออุปกรณ์",
-      "stepRange" : "ขั้นตอนที่ {{currentStep}} จาก {{totalSteps}}",
-      "quantity" : "ปริมาณ",
-      "selectCollection" : "คอลเลกชัน",
-      "selectNft" : "NFT"
+      "stepRange" : "ขั้นตอนที่ {{currentStep}} จาก {{totalSteps}}"
     },
     "recipient" : {
       "scan" : "สแกน QR Code",
@@ -4376,7 +4331,7 @@
       "title" : "เลือกบัญชีที่คุณต้องการเพิ่ม",
       "ctaStopScan" : "หยุดการสแกน",
       "confirm" : "ยืนยัน",
-      "scanningTitle" : "กำลังมองหาบัญชีที่มีอยู่บนบล็อกเชน...",
+      "scanningTitle" : "Checking the blockchain...",
       "whichAddressType" : "เรียนรู้วิธีการเลือกประเภท Address",
       "sections" : {
         "importable" : {
@@ -4441,7 +4396,7 @@
     "confirmSwap" : {
       "title" : "ยืนยันการดำเนินการ Swap บนอุปกรณ์",
       "alert" : {
-        "default" : "ตรวจสอบรายละเอียดการ Swap บนอุปกรณ์ของคุณก่อนส่ง มีการแลกเปลี่ยน Address อย่างปลอดภัย ดังนั้นคุณไม่จำเป็นต้องตรวจสอบรายการเหล่านั้น",
+        "default" : "Verify the swap details on your Ledger before sending it.",
         "provider" : "ตรวจสอบรายละเอียดการ Swap บนอุปกรณ์ของคุณก่อนส่ง {{providerName}} อาจต้องดำเนินการตรวจสอบเพิ่มเติมสำหรับบางธุรกรรม ส่งผลให้เกิดความล่าช้า"
       },
       "acceptTerms" : "ในการตรวจสอบธุรกรรมนี้ ฉันยอมรับ\n<0><0>เงื่อนไขการใช้งานของ </0>{{provider}}</0>",
@@ -7142,47 +7097,6 @@
       }
     }
   },
-  "nft" : {
-    "account" : {
-      "seeAllNfts" : "ดู NFT ทั้งหมด",
-      "seeFewerNfts" : "ดู NFT น้อยลง"
-    },
-    "gallery" : {
-      "allNft" : "NFT ทั้งหมด",
-      "addNew" : "เพิ่มใหม่"
-    },
-    "designedForStax" : {
-      "title" : "<0>ออกแบบมาสำหรับ</0><1>Ledger</1><2>Stax</2>",
-      "drawer" : {
-        "description" : "NFT นี้มีภาพเพิ่มเติมของ NFT ซึ่งออกแบบมาโดยเฉพาะสำหรับหน้าจอ E Ink  ของ Ledger Stax\n\nภาพนี้จะถูกใช้เมื่อคุณตั้งค่า NFT นี้เป็นหน้าจอล็อคของคุณ",
-        "cta" : "เข้าใจแล้ว"
-      }
-    },
-    "viewer" : {
-      "properties" : "คุณสมบัติ",
-      "description" : "คำอธิบาย",
-      "tokenContract" : "Address โทเคน",
-      "tokenContractCopied" : "คัดลอก Address โทเคนแล้ว!",
-      "tokenId" : "ID โทเคน",
-      "tokenIdCopied" : "คัดลอก ID โทเคนแล้ว!",
-      "quantity" : "ปริมาณ",
-      "attributes" : {
-        "floorPrice" : "ราคาฟลอร์"
-      }
-    },
-    "viewerModal" : {
-      "viewOn" : "ดูบน",
-      "viewInExplorer" : "ดูใน Explorer",
-      "hide" : "ซ่อน NFT Collection",
-      "txDetails" : "รายละเอียดธุรกรรม"
-    },
-    "modalDisabled" : {
-      "title" : "ฟังก์ชั่นการส่งไม่พร้อมใช้งานบน iOS",
-      "body" : "เพื่อให้สอดคล้องกับการอัปเดตล่าสุดของ Apple ใน App Store การส่ง NFT จะไม่สามารถใช้งานได้ชั่วคราว คุณยังสามารถใช้ Ledger Live บนเดสก์ท็อปเพื่อส่ง NFT ได้",
-      "learnMore" : "เรียนรู้เพิ่มเติม",
-      "continue" : "เข้าใจแล้ว!"
-    }
-  },
   "ApplicationVersion" : "v{{version}}",
   "analytics" : {
     "title" : "การวิเคราะห์",
@@ -7266,7 +7180,6 @@
     "drawer" : {
       "options" : {
         "uploadFromPhone" : "เลือกจากแกลเลอรีรูปภาพของฉัน",
-        "selectFromNFTGallery" : "เลือกจากแกลเลอรี NFT",
         "remove" : "นำภาพปัจจุบันออก"
       }
     },
@@ -7297,9 +7210,6 @@
       "setPicture" : "ตั้งเป็นหน้าจอล็อค",
       "editPicture" : "แก้ไขภาพ",
       "pickDeviceModel" : "เลือกอุปกรณ์"
-    },
-    "nftGallery" : {
-      "title" : "NFT ของฉัน"
     }
   },
   "postOnboarding" : {
@@ -7344,50 +7254,7 @@
   "wallet" : {
     "tabs" : {
       "crypto" : "คริปโต",
-      "nft" : "NFT",
       "market" : "ตลาด"
-    },
-    "nftGallery" : {
-      "filters" : {
-        "select" : "เลือก",
-        "filter" : "ตัวกรอง",
-        "blockchain" : "บล็อกเชน",
-        "seeAll" : "ดูทั้งหมด",
-        "selectAndHide" : "เลือกและซ่อน",
-        "hide" : "ซ่อน {{count}} คอลเลกชัน",
-        "hiddenCollections" : "คอลเลกชันที่ซ่อนอยู่",
-        "hide_plural" : "ซ่อน {{count}} คอลเลกชัน",
-        "empty" : "ไม่มีคอลเลกชันที่ซ่อนอยู่ให้แสดง",
-        "alertHide" : "ซ่อนคอลเลกชัน 1 รายการ คุณสามารถยกเลิกการซ่อนได้ตลอดเวลาในตัวกรองแกลเลอรี",
-        "alertHide_plural" : "ซ่อนคอลเลกชัน {{count}} รายการ คุณสามารถยกเลิกการซ่อนได้ตลอดเวลาในตัวกรองแกลเลอรี"
-      },
-      "emptyFiltered" : {
-        "title" : "ไม่มี NFT ที่ตรงตามเกณฑ์ของคุณ",
-        "button" : "รีเซ็ตตัวกรอง"
-      },
-      "empty" : {
-        "title" : "ยังไม่มี NFT ที่จะแสดง",
-        "subtitle" : "เริ่มต้นด้วยการเพิ่ม NFT ลงใน Wallet ของคุณ",
-        "receive" : "รับ NFT",
-        "supportLink" : "จะรับ NFT จาก Wallet อื่นได้อย่างไร?"
-      },
-      "receiveModal" : {
-        "title" : "รับ NFT ในลักษณะเดียวกับคริปโตอื่น ๆ",
-        "bullets" : {
-          "0" : "• เลือกบล็อกเชนคริปโตของ NFT",
-          "1" : "• เลือกบัญชีเพื่อรับ NFT"
-        },
-        "cta" : "โอเค เข้าใจแล้ว",
-        "info" : "ฉันต้องการเรียนรู้เพิ่มเติม"
-      },
-      "hideNftModal" : {
-        "title" : "ซ่อน NFT Collection",
-        "desc" : "การกระทำนี้จะซ่อน NFT ทั้งหมดจากคอลเลกชัน {{collectionName}} คุณสามารถยกเลิกการซ่อนได้จากตัวกรองแกลเลอรี",
-        "cta" : "ซ่อน NFT นี้"
-      },
-      "media" : {
-        "tag" : "{{count}} NFT"
-      }
     },
     "referralProgram" : "$20"
   },
@@ -7960,7 +7827,13 @@
     "searchPlaceholder" : "ค้นหา",
     "emptyAssetList" : "ไม่พบสินทรัพย์",
     "accountCount" : "{{count}} บัญชี",
-    "accountCount_plural" : "{{count}} บัญชี"
+    "accountCount_plural" : "{{count}} บัญชี",
+    "errors" : {
+      "title" : "การเชื่อมต่อล้มเหลว",
+      "backend" : "เกิดข้อผิดพลาดในระบบของเรา โปรดลองอีกครั้งในภายหลัง",
+      "internet" : "ไม่มีการเชื่อมต่ออินเทอร์เน็ต โปรดลองอีกครั้ง",
+      "cta" : "ลองอีกครั้ง"
+    }
   },
   "swapErrors" : {
     "incorrectCommandData" : {
