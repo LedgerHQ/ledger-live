@@ -58,8 +58,6 @@ const filterOperations = (
 export const getAccountShape: GetAccountShape<CantonAccount> = async info => {
   const { address, initialAccount, currency, derivationMode, derivationPath, rest } = info;
 
-  console.log("info", info);
-
   const xpubOrAddress = (
     (initialAccount && initialAccount.id && decodeAccountId(initialAccount.id).xpubOrAddress) ||
     ""
