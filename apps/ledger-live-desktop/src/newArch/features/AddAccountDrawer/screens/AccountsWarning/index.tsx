@@ -7,7 +7,7 @@ import { ActionButtons, IconContainer } from "./components";
 import { AccountsWarningProps } from "./types";
 import { useWarningConfig } from "./useWarningConfig";
 import { useSelector } from "react-redux";
-import { modularDrawerStateSelector } from "~/renderer/reducers/modularDrawer";
+import { modularDrawerSourceSelector } from "~/renderer/reducers/modularDrawer";
 
 const AccountsWarning = ({
   warningReason,
@@ -16,7 +16,7 @@ const AccountsWarning = ({
   navigateToEditAccountName,
   navigateToFundAccount,
 }: AccountsWarningProps) => {
-  const { source } = useSelector(modularDrawerStateSelector);
+  const source = useSelector(modularDrawerSourceSelector);
   const { emptyAccountWarning, noAssociatedAccountsWarning } = useWarningConfig(
     currency,
     navigateToEditAccountName,

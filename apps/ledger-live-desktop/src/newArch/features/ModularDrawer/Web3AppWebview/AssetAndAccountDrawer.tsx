@@ -14,7 +14,7 @@ import ModularDrawerFlowManager from "../ModularDrawerFlowManager";
 import { useSelector } from "react-redux";
 import { track } from "~/renderer/analytics/segment";
 import { currentRouteNameRef } from "~/renderer/analytics/screenRefs";
-import { modularDrawerStateSelector } from "~/renderer/reducers/modularDrawer";
+import { modularDrawerFlowSelector } from "~/renderer/reducers/modularDrawer";
 import { CloseButton } from "../components/CloseButton";
 
 type Result = {
@@ -82,7 +82,7 @@ function openAssetAndAccountDrawer(params: DrawerParams): void {
 }
 
 const CloseButtonWithTracking = ({ onRequestClose }: React.ComponentProps<typeof CloseButton>) => {
-  const { flow } = useSelector(modularDrawerStateSelector);
+  const flow = useSelector(modularDrawerFlowSelector);
 
   const handleClose: React.ComponentProps<typeof CloseButton>["onRequestClose"] = mouseEvent => {
     track("button_clicked", {

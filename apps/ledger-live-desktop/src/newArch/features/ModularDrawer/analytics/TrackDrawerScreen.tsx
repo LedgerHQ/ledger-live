@@ -4,7 +4,10 @@ import { ModularDrawerEventName } from "./modularDrawer.types";
 import { EnhancedModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/types";
 import { formatAssetsConfig, formatNetworksConfig } from "./utils";
 import { useSelector } from "react-redux";
-import { modularDrawerStateSelector } from "~/renderer/reducers/modularDrawer";
+import {
+  modularDrawerFlowSelector,
+  modularDrawerSourceSelector,
+} from "~/renderer/reducers/modularDrawer";
 
 interface TrackDrawerScreenProps<T extends ModularDrawerEventName> {
   page: T;
@@ -21,7 +24,8 @@ const TrackDrawerScreen = <T extends ModularDrawerEventName>({
   assetsConfig,
   networksConfig,
 }: TrackDrawerScreenProps<T>) => {
-  const { flow, source } = useSelector(modularDrawerStateSelector);
+  const source = useSelector(modularDrawerSourceSelector);
+  const flow = useSelector(modularDrawerFlowSelector);
 
   const analyticsParams = useMemo(() => {
     return {
