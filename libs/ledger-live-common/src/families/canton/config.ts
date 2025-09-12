@@ -9,8 +9,7 @@ export const cantonConfig: Record<string, ConfigInfo> = {
       },
       // TBC
       nodeUrl: "https://wallet-validator-canton.ledger.com",
-      nodeId: "figment",
-      // TBC
+      nodeId: "ledger-live-mainnet-prd",
       gatewayUrl: "https://canton-gateway.api.live.ledger.com",
       minReserve: 0,
       useGateway: true,

@@ -22,7 +22,7 @@ const createSigner: CreateSigner<CantonSigner> = (transport: Transport) => {
 
 const getCurrencyConfig = () => {
   // Use devnet for development/testing
-  const currencyId = getEnv("MOCK") ? "canton_network_devnet" : "canton_network_devnet";
+  const currencyId = getEnv("MOCK") ? "canton_network" : "canton_network";
   return getCurrencyConfiguration<CantonCoinConfig>(getCryptoCurrencyById(currencyId));
 };
 
