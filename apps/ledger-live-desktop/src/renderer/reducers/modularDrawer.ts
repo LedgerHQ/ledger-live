@@ -21,6 +21,8 @@ const modularDrawerSlice = createSlice({
 
 export const modularDrawerStateSelector = (state: State) => state.modularDrawer;
 
+export const modularDrawerSearchedSelector = (state: State) => state.modularDrawer.searchedValue;
+
 export const { setSearchedValue } = modularDrawerSlice.actions;
 
 export default modularDrawerSlice.reducer;

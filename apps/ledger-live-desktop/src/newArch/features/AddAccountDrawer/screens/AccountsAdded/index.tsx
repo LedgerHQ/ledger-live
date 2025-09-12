@@ -66,6 +66,7 @@ const AccountsAdded = ({
           accounts={accounts}
           formatAccount={formatAccount}
           navigateToEditAccountName={navigateToEditAccountName}
+          isAccountSelectionFlow={isAccountSelectionFlow}
         />
       </ScrollContainer>
       <ActionButtons
