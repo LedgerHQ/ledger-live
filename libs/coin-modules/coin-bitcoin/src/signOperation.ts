@@ -4,6 +4,7 @@ import { log } from "@ledgerhq/logs";
 import { isSegwitDerivationMode } from "@ledgerhq/coin-framework/derivation";
 import type { AccountBridge, DerivationMode, Operation } from "@ledgerhq/types-live";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
+import { getAddressFormatDerivationMode } from "@ledgerhq/coin-framework/derivation";
 import type { Transaction } from "./types";
 import { getNetworkParameters } from "./networks";
 import { buildTransaction } from "./buildTransaction";
@@ -81,56 +82,100 @@ export const buildSignOperation =
 
         const hasExtraData = perCoin?.hasExtraData || false;
 
-        const signature: string = await signerContext(deviceId, currency, signer =>
-          wallet.signAccountTx({
-            btc: signer,
-            fromAccount: walletAccount,
-            txInfo,
-            lockTime,
-            sigHashType,
-            segwit,
-            additionals,
-            expiryHeight,
-            hasExtraData,
-            onDeviceSignatureGranted: () =>
-              o.next({
-                type: "device-signature-granted",
-              }),
-            onDeviceSignatureRequested: () =>
-              o.next({
-                type: "device-signature-requested",
-              }),
-            onDeviceStreaming: ({ progress, index, total }) =>
-              o.next({
-                type: "device-streaming",
-                progress,
-                index,
-                total,
-              }),
-          }),
-        );
-        // Build the optimistic operation
-        const operation: Operation = {
-          id: encodeOperationId(account.id, "", "OUT"),
-          hash: "", // Will be resolved in broadcast()
-          type: "OUT",
-          value: new BigNumber(transaction.amount).plus(fee),
-          fee,
-          blockHash: null,
-          blockHeight: null,
-          senders: Array.from(senders),
-          recipients,
-          accountId: account.id,
-          date: new Date(),
-          extra: {},
-        };
-        o.next({
-          type: "signed",
-          signedOperation: {
-            operation,
-            signature,
-          },
-        });
+        if (transaction.psbt) {
+          const psbtBuffer = Buffer.from(transaction.psbt, "base64");
+
+          const psbtResult = await signerContext(deviceId, currency, signer =>
+            signer.signPsbtV2Buffer
+              ? signer.signPsbtV2Buffer(psbtBuffer, {
+                  // @ts-expect-error: x
+                  finalizePsbt: transaction.finalizePsbt,
+                  accountPath: `${walletAccount.params.path}/${walletAccount.params.index}'`,
+                  addressFormat: getAddressFormatDerivationMode(account.derivationMode),
+                })
+              : Promise.reject(new Error("signPsbtV2Buffer not available")),
+          );
+
+          o.next({ type: "device-signature-granted" });
+
+          // Build the optimistic operation pour PSBT
+          const operation: Operation = {
+            id: encodeOperationId(account.id, "", "OUT"),
+            hash: "",
+            type: "OUT",
+            value: new BigNumber(transaction.amount).plus(fee),
+            fee,
+            blockHash: null,
+            blockHeight: null,
+            senders: [],
+            recipients: [],
+            accountId: account.id,
+            date: new Date(),
+            extra: {},
+          };
+
+          o.next({
+            type: "signed",
+            signedOperation: {
+              operation,
+              signature: psbtResult.tx,
+              rawData: { psbtSigned: psbtResult.psbt.toString("base64") },
+            },
+          });
+        } else {
+          // Normal signature for regular transactions
+          const signature: string = await signerContext(deviceId, currency, signer =>
+            wallet.signAccountTx({
+              btc: signer,
+              fromAccount: walletAccount,
+              txInfo,
+              lockTime,
+              sigHashType,
+              segwit,
+              additionals,
+              expiryHeight,
+              hasExtraData,
+              onDeviceSignatureGranted: () =>
+                o.next({
+                  type: "device-signature-granted",
+                }),
+              onDeviceSignatureRequested: () =>
+                o.next({
+                  type: "device-signature-requested",
+                }),
+              onDeviceStreaming: ({ progress, index, total }) =>
+                o.next({
+                  type: "device-streaming",
+                  progress,
+                  index,
+                  total,
+                }),
+            }),
+          );
+
+          // Build the optimistic operation for the normal transaction
+          const operation: Operation = {
+            id: encodeOperationId(account.id, "", "OUT"),
+            hash: "", // Will be resolved in broadcast()
+            type: "OUT",
+            value: new BigNumber(transaction.amount).plus(fee),
+            fee,
+            blockHash: null,
+            blockHeight: null,
+            senders: Array.from(senders),
+            recipients,
+            accountId: account.id,
+            date: new Date(),
+            extra: {},
+          };
+          o.next({
+            type: "signed",
+            signedOperation: {
+              operation,
+              signature,
+            },
+          });
+        }
       }
 
       main().then(
