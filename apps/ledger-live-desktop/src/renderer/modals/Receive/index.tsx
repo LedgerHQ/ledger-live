@@ -18,13 +18,18 @@ type State = {
   verifyAddressError: Error | undefined | null;
 };
 
-const INITIAL_STATE = {
-  stepId: "account" as StepId,
-  isAddressVerified: null,
-  verifyAddressError: null,
-};
+function getInitialState(isNoahActive: boolean): State {
+  return {
+    stepId: isNoahActive ? "receiveOptions" : "account",
+    isAddressVerified: null,
+    verifyAddressError: null,
+  };
+}
+
 const ReceiveModal = () => {
-  const [state, setState] = useState<State>(INITIAL_STATE);
+  // TODO: properly
+  const initialState = getInitialState(true);
+  const [state, setState] = useState<State>(initialState);
 
   const { stepId, isAddressVerified, verifyAddressError } = state;
 
@@ -50,9 +55,9 @@ const ReceiveModal = () => {
   };
 
   const handleReset = () => {
-    setStepId(INITIAL_STATE.stepId);
-    setIsAddressVerified(INITIAL_STATE.isAddressVerified);
-    setVerifyAddressError(INITIAL_STATE.verifyAddressError);
+    setStepId(initialState.stepId);
+    setIsAddressVerified(initialState.isAddressVerified);
+    setVerifyAddressError(initialState.verifyAddressError);
   };
 
   const handleChangeAddressVerified = (isAddressVerified?: boolean | null, err?: Error | null) => {
@@ -90,6 +95,8 @@ const ReceiveModal = () => {
   if (!hasAccounts) return null;
 
   const isModalLocked = stepId === "receive" && isAddressVerified === null;
+
+  console.log({ stepId });
   return (
     <Modal
       name="MODAL_RECEIVE"
