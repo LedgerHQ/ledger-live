@@ -1,5 +1,33 @@
 # ledger-live-desktop
 
+## 3.0.0-nightly.3
+
+### Minor Changes
+
+- [#11623](https://github.com/LedgerHQ/ledger-live/pull/11623) [`3c19e0d`](https://github.com/LedgerHQ/ledger-live/commit/3c19e0d23812b99ec709603493691c10170d1b42) Thanks [@ejaycoleman](https://github.com/ejaycoleman)! - Removes duplicated storage param from useApps, removes storage provider from LLM
+
+### Patch Changes
+
+- Updated dependencies [[`1d06127`](https://github.com/LedgerHQ/ledger-live/commit/1d06127d433c5e61482c1b49cca3c15aa6662499), [`d56bebe`](https://github.com/LedgerHQ/ledger-live/commit/d56bebe672a1ed825697b371662dbff19dcc63d8), [`2d747cf`](https://github.com/LedgerHQ/ledger-live/commit/2d747cf63f120a6634c2e2adbe60c4e94d37fc71), [`3c19e0d`](https://github.com/LedgerHQ/ledger-live/commit/3c19e0d23812b99ec709603493691c10170d1b42), [`f8092e3`](https://github.com/LedgerHQ/ledger-live/commit/f8092e3b3b5df2e4a7b8ba9f83d393701854d7f7), [`6847918`](https://github.com/LedgerHQ/ledger-live/commit/6847918323d59e7ec089b8c70bef7f2d768a41c9)]:
+  - @ledgerhq/live-common@34.48.0-nightly.3
+  - @ledgerhq/types-cryptoassets@7.27.0-nightly.0
+  - @ledgerhq/cryptoassets@13.28.0-nightly.2
+  - @ledgerhq/coin-canton@0.5.0-nightly.3
+  - @ledgerhq/coin-evm@2.30.0-nightly.3
+  - @ledgerhq/live-dmk-desktop@0.9.5-nightly.3
+  - @ledgerhq/coin-framework@6.4.0-nightly.3
+  - @ledgerhq/coin-bitcoin@0.21.1-nightly.3
+  - @ledgerhq/coin-cosmos@0.17.1-nightly.3
+  - @ledgerhq/coin-filecoin@1.11.1-nightly.3
+  - @ledgerhq/domain-service@1.2.43-nightly.0
+  - @ledgerhq/types-live@6.83.1-nightly.0
+  - @ledgerhq/live-countervalues@0.7.1-nightly.3
+  - @ledgerhq/live-countervalues-react@0.5.2-nightly.3
+  - @ledgerhq/live-nft@0.8.20-nightly.3
+  - @ledgerhq/live-nft-react@0.9.20-nightly.3
+  - @ledgerhq/live-wallet@0.13.1-nightly.3
+  - @ledgerhq/react-ui@0.36.1-nightly.1
+
 ## 3.0.0-nightly.2
 
 ### Major Changes

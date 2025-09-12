@@ -1,5 +1,11 @@
 # @ledgerhq/cryptoassets
 
+## 13.28.0-nightly.2
+
+### Minor Changes
+
+- [#11672](https://github.com/LedgerHQ/ledger-live/pull/11672) [`d56bebe`](https://github.com/LedgerHQ/ledger-live/commit/d56bebe672a1ed825697b371662dbff19dcc63d8) Thanks [@semeano](https://github.com/semeano)! - Kaspa commons libs
+
 ## 13.28.0-nightly.1
 
 ### Patch Changes

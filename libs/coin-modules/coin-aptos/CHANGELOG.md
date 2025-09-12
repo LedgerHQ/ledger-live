@@ -1,5 +1,15 @@
 # @ledgerhq/coin-aptos
 
+## 3.3.0-nightly.3
+
+### Patch Changes
+
+- Updated dependencies [[`d56bebe`](https://github.com/LedgerHQ/ledger-live/commit/d56bebe672a1ed825697b371662dbff19dcc63d8)]:
+  - @ledgerhq/types-cryptoassets@7.27.0-nightly.0
+  - @ledgerhq/cryptoassets@13.28.0-nightly.2
+  - @ledgerhq/coin-framework@6.4.0-nightly.3
+  - @ledgerhq/types-live@6.83.1-nightly.0
+
 ## 3.3.0-nightly.2
 
 ### Patch Changes

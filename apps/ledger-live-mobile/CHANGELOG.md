@@ -1,5 +1,40 @@
 # live-mobile
 
+## 3.93.0-nightly.3
+
+### Minor Changes
+
+- [#11723](https://github.com/LedgerHQ/ledger-live/pull/11723) [`16e267b`](https://github.com/LedgerHQ/ledger-live/commit/16e267bf76cc345cd0d736900266ef3d0d2f88c8) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Fix redirection when adding account from liveApps
+
+- [#11623](https://github.com/LedgerHQ/ledger-live/pull/11623) [`3c19e0d`](https://github.com/LedgerHQ/ledger-live/commit/3c19e0d23812b99ec709603493691c10170d1b42) Thanks [@ejaycoleman](https://github.com/ejaycoleman)! - Removes duplicated storage param from useApps, removes storage provider from LLM
+
+- [#11760](https://github.com/LedgerHQ/ledger-live/pull/11760) [`22570f6`](https://github.com/LedgerHQ/ledger-live/commit/22570f6f71255debd49f39ef4ba4267282033520) Thanks [@CremaFR](https://github.com/CremaFR)! - feat: update to loader screen
+
+- [#11740](https://github.com/LedgerHQ/ledger-live/pull/11740) [`e9991a6`](https://github.com/LedgerHQ/ledger-live/commit/e9991a647b11122006b93833461bb2065b58b8d3) Thanks [@ysitbon](https://github.com/ysitbon)! - drop explore and all its related screen and dependencies
+
+- [#11743](https://github.com/LedgerHQ/ledger-live/pull/11743) [`5e3b2e9`](https://github.com/LedgerHQ/ledger-live/commit/5e3b2e983be7c739521ef84cf1b8b4b8e02404a5) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - fix: large mover price variation
+
+### Patch Changes
+
+- [#11632](https://github.com/LedgerHQ/ledger-live/pull/11632) [`8adec85`](https://github.com/LedgerHQ/ledger-live/commit/8adec85c7121f4a7e34e6bfc2b5a23e92cfb1d0f) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - CLS: use new dithering algorithms for Apex
+
+- Updated dependencies [[`d56bebe`](https://github.com/LedgerHQ/ledger-live/commit/d56bebe672a1ed825697b371662dbff19dcc63d8), [`f8092e3`](https://github.com/LedgerHQ/ledger-live/commit/f8092e3b3b5df2e4a7b8ba9f83d393701854d7f7)]:
+  - @ledgerhq/types-cryptoassets@7.27.0-nightly.0
+  - @ledgerhq/coin-evm@2.30.0-nightly.3
+  - @ledgerhq/coin-framework@6.4.0-nightly.3
+  - @ledgerhq/coin-cosmos@0.17.1-nightly.3
+  - @ledgerhq/coin-filecoin@1.11.1-nightly.3
+  - @ledgerhq/coin-multiversx@0.5.1-nightly.3
+  - @ledgerhq/coin-stacks@0.9.1-nightly.3
+  - @ledgerhq/domain-service@1.2.43-nightly.0
+  - @ledgerhq/types-live@6.83.1-nightly.0
+  - @ledgerhq/live-countervalues@0.7.1-nightly.3
+  - @ledgerhq/live-countervalues-react@0.5.2-nightly.3
+  - @ledgerhq/live-nft@0.8.20-nightly.3
+  - @ledgerhq/live-nft-react@0.9.20-nightly.3
+  - @ledgerhq/live-wallet@0.13.1-nightly.3
+  - @ledgerhq/native-ui@0.44.1-nightly.1
+
 ## 3.93.0-nightly.2
 
 ### Minor Changes

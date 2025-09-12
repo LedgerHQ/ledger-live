@@ -1,5 +1,23 @@
 # @ledgerhq/coin-tester-evm
 
+## 1.7.0-nightly.3
+
+### Minor Changes
+
+- [#11677](https://github.com/LedgerHQ/ledger-live/pull/11677) [`f8092e3`](https://github.com/LedgerHQ/ledger-live/commit/f8092e3b3b5df2e4a7b8ba9f83d393701854d7f7) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - feat(coin-tester-evm): support the generic adapter
+
+### Patch Changes
+
+- Updated dependencies [[`1d06127`](https://github.com/LedgerHQ/ledger-live/commit/1d06127d433c5e61482c1b49cca3c15aa6662499), [`d56bebe`](https://github.com/LedgerHQ/ledger-live/commit/d56bebe672a1ed825697b371662dbff19dcc63d8), [`2d747cf`](https://github.com/LedgerHQ/ledger-live/commit/2d747cf63f120a6634c2e2adbe60c4e94d37fc71), [`3c19e0d`](https://github.com/LedgerHQ/ledger-live/commit/3c19e0d23812b99ec709603493691c10170d1b42), [`f8092e3`](https://github.com/LedgerHQ/ledger-live/commit/f8092e3b3b5df2e4a7b8ba9f83d393701854d7f7), [`6847918`](https://github.com/LedgerHQ/ledger-live/commit/6847918323d59e7ec089b8c70bef7f2d768a41c9)]:
+  - @ledgerhq/live-common@34.48.0-nightly.3
+  - @ledgerhq/types-cryptoassets@7.27.0-nightly.0
+  - @ledgerhq/cryptoassets@13.28.0-nightly.2
+  - @ledgerhq/coin-evm@2.30.0-nightly.3
+  - @ledgerhq/coin-tester@0.10.0-nightly.0
+  - @ledgerhq/coin-framework@6.4.0-nightly.3
+  - @ledgerhq/types-live@6.83.1-nightly.0
+  - @ledgerhq/live-signer-evm@0.7.5-nightly.3
+
 ## 1.6.1-nightly.2
 
 ### Patch Changes

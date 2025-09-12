@@ -1,5 +1,11 @@
 # @ledgerhq/coin-tester
 
+## 0.10.0-nightly.0
+
+### Minor Changes
+
+- [#11677](https://github.com/LedgerHQ/ledger-live/pull/11677) [`f8092e3`](https://github.com/LedgerHQ/ledger-live/commit/f8092e3b3b5df2e4a7b8ba9f83d393701854d7f7) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - feat(coin-tester-evm): support the generic adapter
+
 ## 0.9.2
 
 ### Patch Changes

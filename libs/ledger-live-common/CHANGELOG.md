@@ -1,5 +1,64 @@
 # @ledgerhq/live-common
 
+## 34.48.0-nightly.3
+
+### Minor Changes
+
+- [#11672](https://github.com/LedgerHQ/ledger-live/pull/11672) [`d56bebe`](https://github.com/LedgerHQ/ledger-live/commit/d56bebe672a1ed825697b371662dbff19dcc63d8) Thanks [@semeano](https://github.com/semeano)! - Kaspa commons libs
+
+- [#11623](https://github.com/LedgerHQ/ledger-live/pull/11623) [`3c19e0d`](https://github.com/LedgerHQ/ledger-live/commit/3c19e0d23812b99ec709603493691c10170d1b42) Thanks [@ejaycoleman](https://github.com/ejaycoleman)! - Removes duplicated storage param from useApps, removes storage provider from LLM
+
+- [#11677](https://github.com/LedgerHQ/ledger-live/pull/11677) [`f8092e3`](https://github.com/LedgerHQ/ledger-live/commit/f8092e3b3b5df2e4a7b8ba9f83d393701854d7f7) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - feat(coin-tester-evm): support the generic adapter
+
+### Patch Changes
+
+- [#11712](https://github.com/LedgerHQ/ledger-live/pull/11712) [`1d06127`](https://github.com/LedgerHQ/ledger-live/commit/1d06127d433c5e61482c1b49cca3c15aa6662499) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Max device name length is 20 for recent devices
+
+- [#11756](https://github.com/LedgerHQ/ledger-live/pull/11756) [`2d747cf`](https://github.com/LedgerHQ/ledger-live/commit/2d747cf63f120a6634c2e2adbe60c4e94d37fc71) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Canton send support
+
+- [#11766](https://github.com/LedgerHQ/ledger-live/pull/11766) [`6847918`](https://github.com/LedgerHQ/ledger-live/commit/6847918323d59e7ec089b8c70bef7f2d768a41c9) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Update polygon zk evm conf
+
+- Updated dependencies [[`d56bebe`](https://github.com/LedgerHQ/ledger-live/commit/d56bebe672a1ed825697b371662dbff19dcc63d8), [`2d747cf`](https://github.com/LedgerHQ/ledger-live/commit/2d747cf63f120a6634c2e2adbe60c4e94d37fc71), [`f8092e3`](https://github.com/LedgerHQ/ledger-live/commit/f8092e3b3b5df2e4a7b8ba9f83d393701854d7f7)]:
+  - @ledgerhq/cryptoassets@13.28.0-nightly.2
+  - @ledgerhq/hw-app-kaspa@1.3.0-nightly.0
+  - @ledgerhq/crypto-icons-ui@1.19.0-nightly.1
+  - @ledgerhq/coin-canton@0.5.0-nightly.3
+  - @ledgerhq/coin-evm@2.30.0-nightly.3
+  - @ledgerhq/coin-framework@6.4.0-nightly.3
+  - @ledgerhq/coin-algorand@0.10.1-nightly.3
+  - @ledgerhq/coin-aptos@3.3.0-nightly.3
+  - @ledgerhq/coin-bitcoin@0.21.1-nightly.3
+  - @ledgerhq/coin-cardano@0.12.1-nightly.3
+  - @ledgerhq/coin-casper@2.1.1-nightly.3
+  - @ledgerhq/coin-celo@1.4.0-nightly.3
+  - @ledgerhq/coin-cosmos@0.17.1-nightly.3
+  - @ledgerhq/coin-filecoin@1.11.1-nightly.3
+  - @ledgerhq/coin-hedera@1.11.1-nightly.3
+  - @ledgerhq/coin-icon@0.12.1-nightly.3
+  - @ledgerhq/coin-kaspa@1.1.0-nightly.4
+  - @ledgerhq/coin-mina@1.2.1-nightly.3
+  - @ledgerhq/coin-multiversx@0.5.1-nightly.3
+  - @ledgerhq/coin-near@0.13.1-nightly.3
+  - @ledgerhq/coin-polkadot@6.10.0-nightly.3
+  - @ledgerhq/coin-solana@0.32.1-nightly.3
+  - @ledgerhq/coin-stacks@0.9.1-nightly.3
+  - @ledgerhq/coin-stellar@6.4.0-nightly.3
+  - @ledgerhq/coin-sui@0.13.0-nightly.3
+  - @ledgerhq/coin-tezos@6.4.0-nightly.3
+  - @ledgerhq/coin-ton@0.14.1-nightly.3
+  - @ledgerhq/coin-tron@5.4.0-nightly.3
+  - @ledgerhq/coin-vechain@2.10.0-nightly.3
+  - @ledgerhq/coin-xrp@7.4.0-nightly.3
+  - @ledgerhq/live-countervalues@0.7.1-nightly.3
+  - @ledgerhq/live-countervalues-react@0.5.2-nightly.3
+  - @ledgerhq/live-nft@0.8.20-nightly.3
+  - @ledgerhq/live-wallet@0.13.1-nightly.3
+  - @ledgerhq/coin-internet_computer@1.8.1-nightly.3
+  - @ledgerhq/hw-app-vet@0.6.0-nightly.2
+  - @ledgerhq/live-signer-canton@0.2.4-nightly.3
+  - @ledgerhq/live-signer-evm@0.7.5-nightly.3
+  - @ledgerhq/live-signer-solana@0.5.5-nightly.3
+
 ## 34.48.0-nightly.2
 
 ### Minor Changes

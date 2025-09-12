@@ -1,5 +1,18 @@
 # @ledgerhq/coin-evm
 
+## 2.30.0-nightly.3
+
+### Minor Changes
+
+- [#11677](https://github.com/LedgerHQ/ledger-live/pull/11677) [`f8092e3`](https://github.com/LedgerHQ/ledger-live/commit/f8092e3b3b5df2e4a7b8ba9f83d393701854d7f7) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - feat(coin-tester-evm): support the generic adapter
+
+### Patch Changes
+
+- Updated dependencies [[`d56bebe`](https://github.com/LedgerHQ/ledger-live/commit/d56bebe672a1ed825697b371662dbff19dcc63d8)]:
+  - @ledgerhq/cryptoassets@13.28.0-nightly.2
+  - @ledgerhq/coin-framework@6.4.0-nightly.3
+  - @ledgerhq/domain-service@1.2.43-nightly.0
+
 ## 2.30.0-nightly.2
 
 ### Patch Changes
