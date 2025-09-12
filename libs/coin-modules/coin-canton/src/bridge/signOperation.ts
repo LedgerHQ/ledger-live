@@ -31,6 +31,7 @@ export const buildSignOperation =
               {
                 recipient: transaction.recipient,
                 amount: transaction.amount,
+                memo: transaction.memo,
                 expireInSeconds: 60 * 60,
                 tokenId: "Amulet",
               },
