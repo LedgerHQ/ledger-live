@@ -13,10 +13,7 @@ describe("Testing CryptoAssetStore", () => {
     });
 
     const store = getCryptoAssetsStore();
-    expect(store.findTokenById).toBe(legacyCryptoAssetsStore.findTokenById);
-    expect(store.findTokenByAddressInCurrency).toBe(
-      legacyCryptoAssetsStore.findTokenByAddressInCurrency,
-    );
+    expect(store).toBe(legacyCryptoAssetsStore);
   });
 
   it("should return the default methods from cryptoassets libs when feature flag is disabled", () => {
@@ -28,10 +25,7 @@ describe("Testing CryptoAssetStore", () => {
     });
 
     const store = getCryptoAssetsStore();
-    expect(store.findTokenById).toBe(legacyCryptoAssetsStore.findTokenById);
-    expect(store.findTokenByAddressInCurrency).toBe(
-      legacyCryptoAssetsStore.findTokenByAddressInCurrency,
-    );
+    expect(store).toBe(legacyCryptoAssetsStore);
   });
 
   it("should throw an error when no store is set and feature flag is enabled", () => {

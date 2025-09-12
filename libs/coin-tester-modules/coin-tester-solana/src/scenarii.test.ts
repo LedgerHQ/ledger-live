@@ -2,7 +2,7 @@ import { executeScenario } from "@ledgerhq/coin-tester/main";
 import { killSpeculos } from "@ledgerhq/coin-tester/signers/speculos";
 import { scenarioSolana } from "./scenarii/solana";
 import { killAgave } from "./agave";
-import { legacyCryptoAssetsStore } from "@ledgerhq/cryptoassets/tokens";
+import { legacyCryptoAssetsStore } from "@ledgerhq/cryptoassets/legacy/legacy-store";
 import { setCryptoAssetsStoreGetter } from "@ledgerhq/coin-solana/cryptoAssetsStore";
 
 ["exit", "SIGINT", "SIGQUIT", "SIGTERM", "SIGUSR1", "SIGUSR2", "uncaughtException"].map(e =>

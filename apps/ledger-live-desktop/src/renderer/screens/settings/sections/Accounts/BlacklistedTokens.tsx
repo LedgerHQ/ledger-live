@@ -2,7 +2,7 @@ import { SettingsSection as Section, SettingsSectionRow as Row } from "../../Set
 import Text from "~/renderer/components/Text";
 import React, { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { findTokenById } from "@ledgerhq/live-common/currencies/index";
+import { getCryptoAssetsStore } from "@ledgerhq/live-common/bridge/crypto-assets/index";
 import CryptoCurrencyIcon from "~/renderer/components/CryptoCurrencyIcon";
 import Box from "~/renderer/components/Box";
 import styled from "styled-components";
@@ -13,6 +13,12 @@ import { blacklistedTokenIdsSelector } from "~/renderer/reducers/settings";
 import { useBridgeSync } from "@ledgerhq/live-common/bridge/react/index";
 import Track from "~/renderer/analytics/Track";
 import IconAngleDown from "~/renderer/icons/AngleDown";
+import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+
+type BlacklistedTokenSection = {
+  parentCurrency: CryptoCurrency;
+  tokens: TokenCurrency[];
+};
 export default function BlacklistedTokens() {
   const { t } = useTranslation();
   const dispatch = useDispatch();
@@ -36,22 +42,35 @@ export default function BlacklistedTokens() {
     [dispatch],
   );
   const blacklistedTokenIds = useSelector(blacklistedTokenIdsSelector);
-  const sections = [];
-  for (const tokenId of blacklistedTokenIds) {
-    const token = findTokenById(tokenId);
-    if (token) {
-      const parentCurrency = token.parentCurrency;
-      const index = sections.findIndex(s => s.parentCurrency === parentCurrency);
-      if (index < 0) {
-        sections.push({
-          parentCurrency,
-          tokens: [token],
-        });
-      } else {
-        sections[index].tokens.push(token);
+  const [sections, setSections] = useState<BlacklistedTokenSection[]>([]);
+
+  useEffect(() => {
+    async function loadSections() {
+      try {
+        const tempSections: BlacklistedTokenSection[] = [];
+        for (const tokenId of blacklistedTokenIds) {
+          const token = await getCryptoAssetsStore().findTokenById(tokenId);
+          if (token) {
+            const parentCurrency = token.parentCurrency;
+            const index = tempSections.findIndex(s => s.parentCurrency === parentCurrency);
+            if (index < 0) {
+              tempSections.push({
+                parentCurrency,
+                tokens: [token],
+              });
+            } else {
+              tempSections[index].tokens.push(token);
+            }
+          }
+        }
+        setSections(tempSections);
+      } catch (error) {
+        console.error("Failed to load blacklisted tokens:", error);
+        setSections([]);
       }
     }
-  }
+    loadSections();
+  }, [blacklistedTokenIds]);
   const toggleCurrencySection = useCallback(() => {
     setSectionVisible(prevState => !prevState);
   }, [setSectionVisible]);
@@ -98,7 +117,7 @@ export default function BlacklistedTokens() {
                 </Text>
               </BlacklistedTokensSectionHeader>
               <Body>
-                {tokens.map(token => (
+                {tokens.map((token: TokenCurrency) => (
                   <BlacklistedTokenRow key={token.id}>
                     <CryptoCurrencyIcon currency={token} size={20} />
                     <Text

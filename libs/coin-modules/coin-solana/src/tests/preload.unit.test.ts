@@ -3,6 +3,7 @@ jest.useFakeTimers();
 import { jlpDefinition, soEthDefinition, graphitDefinition } from "./preload.fixtures";
 import axios, { AxiosResponse } from "axios";
 import * as CALTokensAPI from "@ledgerhq/cryptoassets/tokens";
+import { convertSplTokens, __clearAllLists } from "@ledgerhq/cryptoassets/legacy/legacy-utils";
 import { fetchSPLTokens, hydrate, preloadWithAPI } from "../preload";
 import { __resetCALHash, getCALHash, setCALHash } from "../logic";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
@@ -34,7 +35,7 @@ jest.mock("../network/validator-app", () => ({
 
 describe("Solana Family", () => {
   beforeEach(() => {
-    CALTokensAPI.__clearAllLists();
+    __clearAllLists();
     mockedAxios.get.mockImplementation(async (url, { params, headers } = {}) => {
       if (url !== "https://crypto-assets-service.api.ledger.com/v1/tokens")
         throw new Error("UNEXPECTED URL");
@@ -138,8 +139,8 @@ describe("Solana Family", () => {
       expect(data.splTokens).toEqual([jlpDefinition, soEthDefinition]);
       expect(CALTokensAPI.addTokens).toHaveBeenCalledTimes(1);
       expect(CALTokensAPI.addTokens).toHaveBeenCalledWith([
-        CALTokensAPI.convertSplTokens(jlpDefinition),
-        CALTokensAPI.convertSplTokens(soEthDefinition),
+        convertSplTokens(jlpDefinition),
+        convertSplTokens(soEthDefinition),
       ]);
     });
   });
@@ -165,8 +166,8 @@ describe("Solana Family", () => {
       );
 
       expect(CALTokensAPI.addTokens).toHaveBeenCalledWith([
-        CALTokensAPI.convertSplTokens(jlpDefinition),
-        CALTokensAPI.convertSplTokens(soEthDefinition),
+        convertSplTokens(jlpDefinition),
+        convertSplTokens(soEthDefinition),
       ]);
     });
 
@@ -176,9 +177,7 @@ describe("Solana Family", () => {
         mockCurrency,
       );
 
-      expect(CALTokensAPI.addTokens).toHaveBeenCalledWith([
-        CALTokensAPI.convertSplTokens(graphitDefinition),
-      ]);
+      expect(CALTokensAPI.addTokens).toHaveBeenCalledWith([convertSplTokens(graphitDefinition)]);
     });
   });
 });

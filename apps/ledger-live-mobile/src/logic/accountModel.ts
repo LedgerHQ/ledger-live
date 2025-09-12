@@ -16,7 +16,7 @@ const opRetentionFilter = opRetentionStategy(366, 500);
 
 const accountModel: DataModel<AccountRaw, [Account, AccountUserData]> = createDataModel({
   migrations: [],
-  decode: (raw: AccountRaw) => [fromAccountRaw(raw), accountRawToAccountUserData(raw)],
+  decode: async (raw: AccountRaw) => [await fromAccountRaw(raw), accountRawToAccountUserData(raw)],
   encode: ([account, userData]: [Account, AccountUserData]): AccountRaw =>
     toAccountRaw(
       {

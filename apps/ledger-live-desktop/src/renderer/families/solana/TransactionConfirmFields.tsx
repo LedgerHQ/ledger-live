@@ -1,6 +1,9 @@
 import invariant from "invariant";
-import React, { useMemo } from "react";
-import { getDeviceTransactionConfig } from "@ledgerhq/live-common/transaction/index";
+import React, { useMemo, useState, useEffect } from "react";
+import {
+  getDeviceTransactionConfig,
+  DeviceTransactionField,
+} from "@ledgerhq/live-common/transaction/index";
 import Alert from "~/renderer/components/Alert";
 import { Trans } from "react-i18next";
 import ConfirmTitle from "~/renderer/components/TransactionConfirm/ConfirmTitle";
@@ -22,12 +25,18 @@ const Title: TitleComponent = props => {
   const { transaction, account, parentAccount, status, device } = props;
   const transferTokenHelpUrl = useLocalizedUrl(urls.solana.splTokenInfo);
 
-  const fields = getDeviceTransactionConfig({
-    account,
-    parentAccount,
-    transaction,
-    status,
-  });
+  const [fields, setFields] = useState<DeviceTransactionField[]>([]);
+
+  useEffect(() => {
+    if (account && transaction && status) {
+      getDeviceTransactionConfig({
+        account,
+        parentAccount,
+        transaction,
+        status,
+      }).then(setFields);
+    }
+  }, [account, parentAccount, transaction, status]);
 
   const typeTransaction: string | undefined = useMemo(() => {
     const typeField = fields.find(field => field.label && field.label === "Type");

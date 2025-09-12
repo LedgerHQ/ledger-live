@@ -5,12 +5,13 @@ import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { Transaction } from "@ledgerhq/live-common/families/hedera/types";
 import { View, SafeAreaView, StyleSheet } from "react-native";
-import { findTokenByAddressInCurrency } from "@ledgerhq/live-common/currencies/index";
 import { HEDERA_TRANSACTION_KINDS } from "@ledgerhq/live-common/families/hedera/constants";
 import { getMainAccount } from "@ledgerhq/coin-framework/account/helpers";
 import { useTheme } from "@react-navigation/native";
+import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import invariant from "invariant";
 
+import { useTokenByAddress } from "@ledgerhq/live-common/hooks";
 import SummaryToSection from "./SummaryToSection";
 import SummaryFromSection from "./SummaryFromSection";
 import type { HederaAssociateTokenFlowParamList } from "./types";
@@ -30,15 +31,15 @@ type Props = BaseComposite<
   StackNavigatorProps<HederaAssociateTokenFlowParamList, ScreenName.HederaAssociateTokenSummary>
 >;
 
-export default function Summary({ navigation, route }: Props) {
+interface SummaryWithTokenProps extends Props {
+  token: TokenCurrency;
+}
+
+function SummaryWithToken({ navigation, route, token }: SummaryWithTokenProps) {
   const { colors } = useTheme();
   const { account, parentAccount } = useSelector(accountScreenSelector(route));
 
-  const { tokenAddress } = route.params;
-  const token = findTokenByAddressInCurrency(tokenAddress, "hedera");
-
   invariant(account, "hedera: account is required");
-  invariant(token, `hedera: token with address ${tokenAddress} is not available`);
 
   const { transaction, status, bridgeError, bridgePending } = useBridgeTransaction(() => {
     const bridge = getAccountBridge(account, parentAccount);
@@ -107,6 +108,18 @@ export default function Summary({ navigation, route }: Props) {
       </View>
     </SafeAreaView>
   );
+}
+
+export default function Summary({ navigation, route }: Props) {
+  const { tokenAddress } = route.params;
+  const token = useTokenByAddress(tokenAddress, "hedera");
+
+  if (!token) {
+    // Token is still loading, return loading state or null
+    return null;
+  }
+
+  return <SummaryWithToken navigation={navigation} route={route} token={token} />;
 }
 
 const styles = StyleSheet.create({

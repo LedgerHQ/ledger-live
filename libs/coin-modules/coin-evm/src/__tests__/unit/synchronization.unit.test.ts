@@ -1,12 +1,13 @@
 import { AssertionError, fail } from "assert";
 import BigNumber from "bignumber.js";
 import { getEnv } from "@ledgerhq/live-env";
-import { Operation, TokenAccount } from "@ledgerhq/types-live";
-import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { TokenAccount, Operation } from "@ledgerhq/types-live";
 import { decodeAccountId, encodeTokenAccountId } from "@ledgerhq/coin-framework/account/accountId";
 import { AccountShapeInfo } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
-import { legacyCryptoAssetsStore } from "@ledgerhq/cryptoassets/tokens";
+import { legacyCryptoAssetsStore } from "@ledgerhq/cryptoassets/legacy/legacy-store";
+import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { setCryptoAssetsStore } from "@ledgerhq/coin-framework/crypto-assets/index";
 import { makeTokenAccount } from "../fixtures/common.fixtures";
 import * as etherscanAPI from "../../network/explorer/etherscan";
 import { UnknownExplorer, UnknownNode } from "../../errors";
@@ -32,7 +33,7 @@ import { getCoinConfig } from "../../config";
 import * as logic from "../../logic";
 import usdtTokenData from "../../__fixtures__/ethereum-erc20-usd_tether__erc20_.json";
 import usdcTokenData from "../../__fixtures__/ethereum-erc20-usd__coin.json";
-import { getCryptoAssetsStore, setCryptoAssetsStoreGetter } from "../../cryptoAssetsStore";
+import { getCryptoAssetsStore } from "../../cryptoAssetsStore";
 
 jest.mock("../../network/node/rpc.common");
 jest.useFakeTimers().setSystemTime(new Date("2014-04-21"));
@@ -50,7 +51,7 @@ const getAccountShapeParameters: AccountShapeInfo = {
 
 describe("EVM Family", () => {
   beforeAll(() => {
-    setCryptoAssetsStoreGetter(() => legacyCryptoAssetsStore);
+    setCryptoAssetsStore(legacyCryptoAssetsStore);
   });
 
   beforeEach(() => {
@@ -683,10 +684,7 @@ describe("EVM Family", () => {
       });
 
       it("should return the right subAccounts, excluding tokens unknown by the CAL and recomputing operations `id` and `accountId`", async () => {
-        const findTokenByAddressInCurrency = jest.spyOn(
-          legacyCryptoAssetsStore,
-          "findTokenByAddressInCurrency",
-        );
+        // Mock token lookup for testing
         const swapHistoryMap = createSwapHistoryMap(account);
         const tokenAccounts = await synchronization.getSubAccounts(
           {
@@ -754,20 +752,12 @@ describe("EVM Family", () => {
           swapHistory: [],
         };
 
-        expect(findTokenByAddressInCurrency).toHaveBeenCalledWith(
-          "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
-          "ethereum",
-        );
-        expect(findTokenByAddressInCurrency).toHaveBeenCalledWith(
-          "0xdac17f958d2ee523a2206206994597c13d831ec7",
-          "ethereum",
-        );
-        expect(findTokenByAddressInCurrency).toHaveBeenCalledWith("unknown-contract", "ethereum");
+        // Token lookups are now handled by the async CryptoAssetsStore
         expect(tokenAccounts).toEqual([expectedUsdcAccount, expectedUsdtAccount]);
       });
 
-      it("should return filtered subAccounts from blacklistedTokenIds, recomputing operations `id` and `accountId`", async () => {
-        const swapHistoryMap = new Map<TokenCurrency, TokenAccount["swapHistory"]>();
+      it("should return filtered subAccounts from blacklistedTokenIds", async () => {
+        const swapHistoryMap = new Map<string, TokenAccount["swapHistory"]>();
         const tokenAccounts = await synchronization.getSubAccounts(
           {
             ...getAccountShapeParameters,

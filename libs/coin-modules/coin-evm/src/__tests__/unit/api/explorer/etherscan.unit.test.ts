@@ -28,9 +28,8 @@ setCryptoAssetsStoreGetter(
   () =>
     // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
     ({
-      findTokenByAddressInCurrency: (_address: string, _currencyId: string) => {
-        return undefined;
-      },
+      findTokenById: async (_id: string) => undefined,
+      findTokenByAddressInCurrency: async (_address: string, _currencyId: string) => undefined,
     }) as CryptoAssetsStore,
 );
 
@@ -333,13 +332,13 @@ describe("EVM Family", () => {
           0,
         );
 
-        expect(response).toEqual(
-          [
-            etherscanERC20EventToOperations(account.id, etherscanTokenOperations[0], 0),
-            etherscanERC20EventToOperations(account.id, etherscanTokenOperations[1], 0),
-            etherscanERC20EventToOperations(account.id, etherscanTokenOperations[2], 1),
-          ].flat(),
-        );
+        const expectedOperations = await Promise.all([
+          etherscanERC20EventToOperations(account.id, etherscanTokenOperations[0], 0),
+          etherscanERC20EventToOperations(account.id, etherscanTokenOperations[1], 0),
+          etherscanERC20EventToOperations(account.id, etherscanTokenOperations[2], 1),
+        ]).then(results => results.flat());
+
+        expect(response).toEqual(expectedOperations);
         expect(spy).toBeCalledWith({
           method: "GET",
           url: `mock?module=account&action=tokentx&address=${account.freshAddress}`,
@@ -366,13 +365,13 @@ describe("EVM Family", () => {
           50,
         );
 
-        expect(response).toEqual(
-          [
-            etherscanERC20EventToOperations(account.id, etherscanTokenOperations[0], 0),
-            etherscanERC20EventToOperations(account.id, etherscanTokenOperations[1], 0),
-            etherscanERC20EventToOperations(account.id, etherscanTokenOperations[2], 1),
-          ].flat(),
-        );
+        const expectedOperations2 = await Promise.all([
+          etherscanERC20EventToOperations(account.id, etherscanTokenOperations[0], 0),
+          etherscanERC20EventToOperations(account.id, etherscanTokenOperations[1], 0),
+          etherscanERC20EventToOperations(account.id, etherscanTokenOperations[2], 1),
+        ]).then(results => results.flat());
+
+        expect(response).toEqual(expectedOperations2);
         expect(spy).toBeCalledWith({
           method: "GET",
           url: `mock?module=account&action=tokentx&address=${account.freshAddress}`,
@@ -400,13 +399,13 @@ describe("EVM Family", () => {
           100,
         );
 
-        expect(response).toEqual(
-          [
-            etherscanERC20EventToOperations(account.id, etherscanTokenOperations[0], 0),
-            etherscanERC20EventToOperations(account.id, etherscanTokenOperations[1], 0),
-            etherscanERC20EventToOperations(account.id, etherscanTokenOperations[2], 1),
-          ].flat(),
-        );
+        const expectedOperations3 = await Promise.all([
+          etherscanERC20EventToOperations(account.id, etherscanTokenOperations[0], 0),
+          etherscanERC20EventToOperations(account.id, etherscanTokenOperations[1], 0),
+          etherscanERC20EventToOperations(account.id, etherscanTokenOperations[2], 1),
+        ]).then(results => results.flat());
+
+        expect(response).toEqual(expectedOperations3);
         expect(spy).toBeCalledWith({
           method: "GET",
           url: `mock?module=account&action=tokentx&address=${account.freshAddress}`,

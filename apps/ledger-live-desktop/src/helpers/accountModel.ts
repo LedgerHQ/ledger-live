@@ -79,7 +79,7 @@ const accountModel: DataModel<AccountRaw, [Account, AccountUserData]> = createDa
     // ^- Each time a modification is brought to the model, add here a migration function here
   ],
 
-  decode: (raw: AccountRaw) => [fromAccountRaw(raw), accountRawToAccountUserData(raw)],
+  decode: async (raw: AccountRaw) => [await fromAccountRaw(raw), accountRawToAccountUserData(raw)],
   encode: ([account, userData]: [Account, AccountUserData]): AccountRaw =>
     toAccountRaw(
       {

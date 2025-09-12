@@ -8,7 +8,7 @@ import {
   isTokenAccount,
 } from "@ledgerhq/coin-framework/account/index";
 import { Account, AccountLike, AnyMessage, Operation, SignedOperation } from "@ledgerhq/types-live";
-import { findTokenById, findTokenByAddressInCurrency } from "@ledgerhq/cryptoassets";
+import { getCryptoAssetsStore } from "../../bridge/crypto-assets/index";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import {
   MessageSignParams,
@@ -115,16 +115,19 @@ function validateInputs(params: RegisterYieldBearingEthereumAddressParams): {
 }
 
 // Helper function to find acreToken by address or token id
-function findAcreToken(
+async function findAcreToken(
   tokenContractAddress?: string,
   tokenTicker?: string,
-): { token: TokenCurrency; contractAddress: string } {
+): Promise<{ token: TokenCurrency; contractAddress: string }> {
   let foundToken: TokenCurrency | undefined;
   // Try to find token by contract address first (if provided)
   if (tokenContractAddress) {
-    foundToken = findTokenByAddressInCurrency(tokenContractAddress, "ethereum");
+    foundToken = await getCryptoAssetsStore().findTokenByAddressInCurrency(
+      tokenContractAddress,
+      "ethereum",
+    );
   } else if (tokenTicker) {
-    foundToken = findTokenById(tokenTicker.toLowerCase());
+    foundToken = await getCryptoAssetsStore().findTokenById(tokenTicker.toLowerCase());
   }
   if (!foundToken) {
     throw new Error(
@@ -202,7 +205,7 @@ export const handlers = ({
   manifest: AppManifest;
   uiHooks: ACREUiHooks;
 }) => {
-  function signTransaction({
+  async function signTransaction({
     accountId: walletAccountId,
     rawTransaction,
     options,
@@ -233,7 +236,9 @@ export const handlers = ({
       : account.currency.family;
 
     const mainAccount = getMainAccount(account, parentAccount);
-    const currency = tokenCurrency ? findTokenById(tokenCurrency) : null;
+    const currency = tokenCurrency
+      ? await getCryptoAssetsStore().findTokenById(tokenCurrency)
+      : null;
     const signerAccount = currency ? makeEmptyTokenAccount(mainAccount, currency) : account;
     const { canEditFees, liveTx, hasFeesProvided } = getWalletAPITransactionSignFlowInfos({
       walletApiTransaction: transaction,
@@ -379,7 +384,9 @@ export const handlers = ({
         return Promise.reject(new Error("Account required"));
       }
 
-      const currency = tokenCurrency ? findTokenById(tokenCurrency) : null;
+      const currency = tokenCurrency
+        ? await getCryptoAssetsStore().findTokenById(tokenCurrency)
+        : null;
       const parentAccount = getParentAccount(account, accounts);
       const mainAccount = getMainAccount(account, parentAccount);
       const signerAccount = currency ? makeEmptyTokenAccount(mainAccount, currency) : account;
@@ -415,10 +422,8 @@ export const handlers = ({
       }
       const validatedInputs = validateInputs(params);
       const ethereumCurrency = getCryptoCurrencyById("ethereum");
-      const { token: existingToken, contractAddress: finalTokenContractAddress } = findAcreToken(
-        validatedInputs.tokenContractAddress,
-        validatedInputs.tokenTicker,
-      );
+      const { token: existingToken, contractAddress: finalTokenContractAddress } =
+        await findAcreToken(validatedInputs.tokenContractAddress, validatedInputs.tokenTicker);
       const existingBearingAccount = accounts.find(
         account =>
           "freshAddress" in account &&

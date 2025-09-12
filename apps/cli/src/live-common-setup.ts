@@ -17,7 +17,7 @@ import { liveConfig } from "@ledgerhq/live-common/config/sharedConfig";
 import SpeculosHttpTransport, {
   SpeculosHttpTransportOpts,
 } from "@ledgerhq/hw-transport-node-speculos-http";
-import { legacyCryptoAssetsStore } from "@ledgerhq/cryptoassets/tokens";
+import { legacyCryptoAssetsStore } from "@ledgerhq/cryptoassets/legacy/legacy-store";
 import { setCryptoAssetsStore } from "@ledgerhq/coin-framework/crypto-assets/index";
 
 let idCounter = 0;

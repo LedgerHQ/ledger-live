@@ -1,6 +1,9 @@
 import BigNumber from "bignumber.js";
 import { encodeAccountId } from "@ledgerhq/coin-framework/account/index";
 import { Operation } from "@ledgerhq/types-live";
+import { CryptoAssetsStore } from "@ledgerhq/types-live";
+import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { setCryptoAssetsStoreGetter } from "../../../cryptoAssetsStore";
 import {
   etherscanERC1155EventToOperations,
   etherscanERC20EventToOperations,
@@ -20,6 +23,26 @@ describe("EVM Family", () => {
   describe("adapters", () => {
     describe("etherscan", () => {
       describe("etherscanOperationToOperations", () => {
+        beforeEach(() => {
+          const mockToken = { id: "ethereum/erc20/usdc", ticker: "USDC" } as TokenCurrency;
+          setCryptoAssetsStoreGetter(
+            () =>
+              ({
+                findTokenById: jest.fn().mockResolvedValue(undefined),
+                findTokenByAddressInCurrency: jest
+                  .fn()
+                  .mockImplementation(async (address: string) => {
+                    if (address === "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48") {
+                      return mockToken;
+                    } else if (address === "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb41") {
+                      return mockToken;
+                    }
+                    return undefined;
+                  }),
+              }) as CryptoAssetsStore,
+          );
+        });
+
         it("should convert an etherscan-like smart contract creation operation (from their API) to a Ledger Live Operation", () => {
           const etherscanOp: EtherscanOperation = {
             blockNumber: "14923692",
@@ -499,7 +522,49 @@ describe("EVM Family", () => {
       });
 
       describe("etherscanERC20EventToOperations", () => {
-        it("should convert an etherscan-like usdc out event (from their API) to a Ledger Live Operation", () => {
+        it("should return an empty array for an unknown token", async () => {
+          setCryptoAssetsStoreGetter(
+            () =>
+              ({
+                findTokenById: jest.fn().mockResolvedValue(undefined),
+                findTokenByAddressInCurrency: jest.fn().mockResolvedValue(undefined),
+              }) as CryptoAssetsStore,
+          );
+
+          const etherscanOp: EtherscanERC20Event = {
+            blockNumber: "16240731",
+            timeStamp: "1671717983",
+            hash: "0x02b972f304dc24c9bc362e6435c4ad654241f9af916689a4790145c9bcbdf4cf",
+            nonce: "53",
+            blockHash: "0x58ee7556044cd139e569c87c173a6dedbfbeb9ada6693ee6090fd510acee9c21",
+            from: "0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d",
+            contractAddress: "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb41",
+            to: "0xc2907efcce4011c491bbeda8a0fa63ba7aab596c",
+            value: "2000000",
+            tokenName: "USD Coin",
+            tokenSymbol: "USDC",
+            tokenDecimal: "6",
+            transactionIndex: "65",
+            gas: "79381",
+            gasPrice: "24314367325",
+            gasUsed: "65613",
+            cumulativeGasUsed: "4557746",
+            input: "deprecated",
+            confirmations: "150032",
+          };
+
+          const accountId = encodeAccountId({
+            type: "js",
+            version: "2",
+            currencyId: "ethereum",
+            xpubOrAddress: "0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d",
+            derivationMode: "",
+          });
+
+          expect(await etherscanERC20EventToOperations(accountId, etherscanOp)).toEqual([]);
+        });
+
+        it("should convert an etherscan-like usdc out event (from their API) to a Ledger Live Operation", async () => {
           const etherscanOp: EtherscanERC20Event = {
             blockNumber: "16240731",
             timeStamp: "1671717983",
@@ -547,12 +612,21 @@ describe("EVM Family", () => {
             extra: {},
           };
 
-          expect(etherscanERC20EventToOperations(accountId, etherscanOp)).toEqual([
+          const mockToken = { id: "ethereum/erc20/usdc", ticker: "USDC" } as TokenCurrency;
+          setCryptoAssetsStoreGetter(
+            () =>
+              ({
+                findTokenById: jest.fn().mockResolvedValue(undefined),
+                findTokenByAddressInCurrency: jest.fn().mockResolvedValue(mockToken),
+              }) as CryptoAssetsStore,
+          );
+
+          expect(await etherscanERC20EventToOperations(accountId, etherscanOp)).toEqual([
             expectedOperation,
           ]);
         });
 
-        it("should convert an etherscan-like usdc in event (from their API) to a Ledger Live Operation", () => {
+        it("should convert an etherscan-like usdc in event (from their API) to a Ledger Live Operation", async () => {
           const etherscanOp: EtherscanERC20Event = {
             blockNumber: "16240731",
             timeStamp: "1671717983",
@@ -600,12 +674,12 @@ describe("EVM Family", () => {
             extra: {},
           };
 
-          expect(etherscanERC20EventToOperations(accountId, etherscanOp)).toEqual([
+          expect(await etherscanERC20EventToOperations(accountId, etherscanOp)).toEqual([
             expectedOperation,
           ]);
         });
 
-        it("should ignore an etherscan-like usdc none event (from their API) and return empty array", () => {
+        it("should ignore an etherscan-like usdc none event (from their API) and return empty array", async () => {
           const etherscanOp: EtherscanERC20Event = {
             blockNumber: "16240731",
             timeStamp: "1671717983",
@@ -636,10 +710,10 @@ describe("EVM Family", () => {
             derivationMode: "",
           });
 
-          expect(etherscanERC20EventToOperations(accountId, etherscanOp)).toEqual([]);
+          expect(await etherscanERC20EventToOperations(accountId, etherscanOp)).toEqual([]);
         });
 
-        it("should convert an etherscan-like self usdc event (from their API) into 2 Ledger Live Operations", () => {
+        it("should convert an etherscan-like self usdc event (from their API) into 2 Ledger Live Operations", async () => {
           const etherscanOp: EtherscanERC20Event = {
             blockNumber: "16240731",
             timeStamp: "1671717983",
@@ -705,7 +779,7 @@ describe("EVM Family", () => {
             },
           ];
 
-          expect(etherscanERC20EventToOperations(accountId, etherscanOp)).toEqual(
+          expect(await etherscanERC20EventToOperations(accountId, etherscanOp)).toEqual(
             expectedOperations,
           );
         });

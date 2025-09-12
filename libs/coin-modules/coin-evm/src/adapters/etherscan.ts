@@ -19,6 +19,7 @@ import {
 } from "../types";
 import { safeEncodeEIP55 } from "../utils";
 import { detectEvmStakingOperationType } from "../staking/detectOperationType";
+import { getCryptoAssetsStore } from "../cryptoAssetsStore";
 
 /**
  * Adapter to convert an Etherscan operation into Ledger Live Operations.
@@ -88,12 +89,17 @@ export const etherscanOperationToOperations = (
  * It can return up to 2 operations
  * in case of self-send or airdrop
  */
-export const etherscanERC20EventToOperations = (
+export const etherscanERC20EventToOperations = async (
   accountId: string,
   event: EtherscanERC20Event,
   index = 0,
-): Operation[] => {
-  const { xpubOrAddress: address } = decodeAccountId(accountId);
+): Promise<Operation[]> => {
+  const { currencyId, xpubOrAddress: address } = decodeAccountId(accountId);
+  const tokenCurrency = await getCryptoAssetsStore().findTokenByAddressInCurrency(
+    event.contractAddress,
+    currencyId,
+  );
+  if (!tokenCurrency) return [];
 
   const checksummedAddress = eip55.encode(address);
   const from = safeEncodeEIP55(event.from);

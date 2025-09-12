@@ -2,9 +2,9 @@ import React from "react";
 import { StyleSheet } from "react-native";
 import { Trans, useTranslation } from "react-i18next";
 import { useNavigation } from "@react-navigation/native";
-import { findTokenByAddressInCurrency } from "@ledgerhq/live-common/currencies/index";
 import { getTransactionExplorer, isValidExtra } from "@ledgerhq/live-common/families/hedera/logic";
 import type { HederaAccount, HederaOperation } from "@ledgerhq/live-common/families/hedera/types";
+import { useTokenByAddress } from "@ledgerhq/live-common/hooks";
 import { Text } from "@ledgerhq/native-ui";
 import Alert from "~/components/Alert";
 import { NavigatorName, ScreenName } from "~/const";
@@ -19,16 +19,13 @@ function OperationDetailsPostAccountSection({
   operation,
 }: Readonly<OperationDetailsPostAccountSectionProps>) {
   const { t } = useTranslation();
+  const associatedTokenId = operation.extra.associatedTokenId;
+  const token = useTokenByAddress(
+    operation.type === "ASSOCIATE_TOKEN" ? associatedTokenId : undefined,
+    "hedera",
+  );
 
-  if (operation.type !== "ASSOCIATE_TOKEN") {
-    return null;
-  }
-
-  const token = operation.extra.associatedTokenId
-    ? findTokenByAddressInCurrency(operation.extra.associatedTokenId, "hedera")
-    : null;
-
-  if (!token) {
+  if (operation.type !== "ASSOCIATE_TOKEN" || !token) {
     return null;
   }
 
@@ -47,18 +44,11 @@ interface OperationDetailsExtraProps {
 
 function OperationDetailsPostAlert({ account, operation }: Readonly<OperationDetailsExtraProps>) {
   const navigation = useNavigation();
+  const extra =
+    operation.type === "ASSOCIATE_TOKEN" && isValidExtra(operation.extra) ? operation.extra : null;
+  const token = useTokenByAddress(extra?.associatedTokenId, "hedera");
 
-  if (operation.type !== "ASSOCIATE_TOKEN") {
-    return null;
-  }
-
-  const extra = isValidExtra(operation.extra) ? operation.extra : null;
-  const associatedTokenId = extra?.associatedTokenId;
-  const token = associatedTokenId
-    ? findTokenByAddressInCurrency(associatedTokenId, "hedera")
-    : null;
-
-  if (!token) {
+  if (operation.type !== "ASSOCIATE_TOKEN" || !token) {
     return null;
   }
 

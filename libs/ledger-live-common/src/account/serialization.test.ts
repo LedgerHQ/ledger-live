@@ -18,18 +18,18 @@ const USDC = solanaSplTokenData as TokenCurrency;
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
 setCryptoAssetsStoreForCoinFramework({
-  findTokenById: (id: string) => {
+  findTokenById: async (id: string) => {
     if (id === "solana/spl/epjfwdd5aufqssqem2qn1xzybapc8g4weggkzwytdt1v") {
       return USDC;
     }
 
     return undefined;
   },
-  findTokenByAddressInCurrency: (_: string, __: string) => undefined,
+  findTokenByAddressInCurrency: async (_: string, __: string) => undefined,
 } as CryptoAssetsStore);
 
 describe("serialization", () => {
-  test("TokenAccount extra fields should be serialized/deserialized", () => {
+  test("TokenAccount extra fields should be serialized/deserialized", async () => {
     const acc: any = genAccount("mocked-account-1", { currency: Solana });
     const tokenAcc: any = genTokenAccount(1, acc, USDC);
     tokenAcc.state = "initialized";
@@ -38,7 +38,7 @@ describe("serialization", () => {
     const accRaw: any = toAccountRaw(acc);
     expect(accRaw.subAccounts?.[0]?.state).toBe("initialized");
 
-    const deserializedAcc: any = fromAccountRaw(accRaw);
+    const deserializedAcc: any = await fromAccountRaw(accRaw);
     expect(deserializedAcc.subAccounts?.[0]?.state).toBe("initialized");
   });
 });

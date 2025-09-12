@@ -5,7 +5,7 @@ import { State } from "~/reducers/types";
 
 import { accountRawToAccountUserData, WalletState } from "@ledgerhq/live-wallet/store";
 
-import { AccountRaw, TokenAccount } from "@ledgerhq/types-live";
+import { AccountRaw, TokenAccount, Account } from "@ledgerhq/types-live";
 
 import { fromAccountRaw } from "@ledgerhq/coin-framework/serialization/account";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
@@ -45,8 +45,13 @@ const rawTron: AccountRaw = {
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
 setCryptoAssetsStore({} as CryptoAssetsStore);
-const mockEthereumAccount = fromAccountRaw(raw);
-const mockTronAccount = fromAccountRaw(rawTron);
+let mockEthereumAccount: Account;
+let mockTronAccount: Account;
+
+beforeAll(async () => {
+  mockEthereumAccount = await fromAccountRaw(raw);
+  mockTronAccount = await fromAccountRaw(rawTron);
+});
 
 const mockUSDTTokenAccount: TokenAccount = {
   type: "TokenAccount",

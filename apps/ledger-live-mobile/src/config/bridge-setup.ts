@@ -1,4 +1,6 @@
-import { setCryptoAssetsStore as setCryptoAssetsStoreForCoinFramework } from "@ledgerhq/coin-framework/crypto-assets/index";
-import { getCryptoAssetsStore } from "@ledgerhq/live-common/bridge/crypto-assets/index";
+import "@ledgerhq/cryptoassets/tokens"; // EFFECTIVELY LOAD THE TOKENS INTO legacy-store !
 
-setCryptoAssetsStoreForCoinFramework(getCryptoAssetsStore());
+import { setup } from "@ledgerhq/live-common/bridge/impl";
+import { legacyCryptoAssetsStore } from "@ledgerhq/cryptoassets/legacy/legacy-store";
+
+setup(legacyCryptoAssetsStore);

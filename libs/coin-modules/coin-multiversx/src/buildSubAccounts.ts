@@ -1,4 +1,5 @@
-import { findTokenById, listTokensForCryptoCurrency } from "@ledgerhq/cryptoassets";
+import { listTokensForCryptoCurrency } from "@ledgerhq/cryptoassets";
+import { getCryptoAssetsStore } from "@ledgerhq/coin-framework/crypto-assets/index";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { Account, SyncConfig, TokenAccount } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
@@ -104,7 +105,7 @@ async function MultiversXBuildESDTTokenAccounts({
   const accountESDTs = await getAccountESDTTokens(accountAddress);
   for (const esdt of accountESDTs) {
     const esdtIdentifierHex = Buffer.from(esdt.identifier).toString("hex");
-    const token = findTokenById(addPrefixToken(esdtIdentifierHex));
+    const token = await getCryptoAssetsStore().findTokenById(addPrefixToken(esdtIdentifierHex));
 
     if (token && !blacklistedTokenIds.includes(token.id)) {
       let tokenAccount = existingAccountByTicker[token.ticker];

@@ -3,7 +3,7 @@ import { AccountId } from "@hashgraph/sdk";
 import type { Operation, OperationType } from "@ledgerhq/types-live";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { encodeTokenAccountId } from "@ledgerhq/coin-framework/account";
-import { findTokenByAddressInCurrency } from "@ledgerhq/cryptoassets";
+import { getCryptoAssetsStore } from "@ledgerhq/coin-framework/crypto-assets/index";
 import type { HederaMirrorTokenTransfer, HederaMirrorCoinTransfer } from "./types";
 import { getAccountTransactions } from "./mirror";
 import { base64ToUrlSafeBase64 } from "../bridge/utils";
@@ -84,7 +84,7 @@ export async function getOperationsForAccount(
 
     if (tokenTransfers.length > 0) {
       const tokenId = rawTx.token_transfers[0].token_id;
-      const token = findTokenByAddressInCurrency(tokenId, "hedera");
+      const token = await getCryptoAssetsStore().findTokenByAddressInCurrency(tokenId, "hedera");
       if (!token) continue;
 
       const encodedTokenId = encodeTokenAccountId(ledgerAccountId, token);

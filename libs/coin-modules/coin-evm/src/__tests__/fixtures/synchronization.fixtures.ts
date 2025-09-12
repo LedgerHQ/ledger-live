@@ -6,7 +6,8 @@ import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { encodeSubOperationId } from "@ledgerhq/coin-framework/operation";
 import * as logic from "../../logic";
 import { getCoinConfig } from "../../config";
-import { getCryptoAssetsStore } from "../../cryptoAssetsStore";
+import usdCoinTokenData from "../../__fixtures__/ethereum-erc20-usd__coin.json";
+import usdtTokenData from "../../__fixtures__/ethereum-erc20-usd_tether__erc20_.json";
 import {
   makeAccount,
   makeNft,
@@ -56,9 +57,9 @@ export const swapHistory = [
 
 export const tokenCurrencies = [
   // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-  getCryptoAssetsStore().findTokenById("ethereum/erc20/usd__coin") as TokenCurrency,
+  usdCoinTokenData as unknown as TokenCurrency,
   // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-  getCryptoAssetsStore().findTokenById("ethereum/erc20/usd_tether__erc20_") as TokenCurrency,
+  usdtTokenData as unknown as TokenCurrency,
 ];
 
 export const tokenAccount = {

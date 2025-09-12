@@ -2,7 +2,8 @@ import { emptyHistoryCache, encodeAccountId } from "@ledgerhq/coin-framework/acc
 import { inferSubOperations } from "@ledgerhq/coin-framework/serialization";
 import type { GetAccountShape } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { makeSync, mergeOps } from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import { findTokenById, listTokensForCryptoCurrency } from "@ledgerhq/cryptoassets/index";
+import { listTokensForCryptoCurrency } from "@ledgerhq/cryptoassets/index";
+import { getCryptoAssetsStore } from "@ledgerhq/coin-framework/crypto-assets/index";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { promiseAllBatched } from "@ledgerhq/live-promise";
 import { BigNumber } from "bignumber.js";
@@ -364,7 +365,7 @@ async function buildSubAccounts({
 
   // filter by token existence
   await promiseAllBatched(3, assets, async asset => {
-    const token = findTokenById(addPrefixToken(asset.assetId));
+    const token = await getCryptoAssetsStore().findTokenById(addPrefixToken(asset.assetId));
 
     if (token && !blacklistedTokenIds.includes(token.id)) {
       const initialTokenAccount = existingAccountByTicker[token.ticker];

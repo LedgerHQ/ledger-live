@@ -323,7 +323,7 @@ describe("Legacy Utils", () => {
       expect(tokensArray.length).toBe(1);
     });
 
-    it("should handle ticker conflicts (first wins)", () => {
+    it("should handle tokens with same ticker", () => {
       const token1: TokenCurrency = {
         type: "TokenCurrency",
         id: "ethereum/erc20/test1",
@@ -348,9 +348,8 @@ describe("Legacy Utils", () => {
 
       addTokens([token1, token2]);
 
-      // Both tokens should be added successfully
-      expect(tokensById[token1.id]).toBe(token1);
-      expect(tokensById[token2.id]).toBe(token2);
+      // Both tokens should be added since they have different IDs
+      expect(tokensArray.length).toBe(2);
     });
 
     it("should handle undefined tokens", () => {

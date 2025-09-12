@@ -105,7 +105,7 @@ async function init() {
       const timemachine = require("timemachine");
       timemachine.config({
         // eslint-disable-next-line @typescript-eslint/no-var-requires
-        dateString: require("../../tests/time").default,
+        dateString: require("../../tests/time.js").default,
       });
     }
   }

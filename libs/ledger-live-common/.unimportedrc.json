@@ -179,6 +179,8 @@
     "src/hooks/useTimer.ts",
     "src/hooks/useOFACGeoBlockCheck.ts",
     "src/hooks/useShowProviderLoadingTransition.ts",
+    "src/hooks/index.ts",
+    "src/hooks/useTokenByAddress.ts",
     "src/hw/actions/app.ts",
     "src/hw/actions/completeExchange.ts",
     "src/hw/actions/customLockScreenFetch.ts",

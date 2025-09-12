@@ -27,7 +27,7 @@ describe("genericPrepareTransaction", () => {
         };
       }),
     });
-    jest.spyOn(accountModule, "decodeTokenAccountId").mockImplementation(accountId => {
+    jest.spyOn(accountModule, "decodeTokenAccountId").mockImplementation(async accountId => {
       const token =
         accountId === "ethereum_usdc_sub_account"
           ? ({ contractAddress: "usdc_contract" } as TokenCurrency)
@@ -109,7 +109,7 @@ describe("genericPrepareTransaction", () => {
         };
       }),
     });
-    jest.spyOn(accountModule, "decodeTokenAccountId").mockImplementation(accountId => {
+    jest.spyOn(accountModule, "decodeTokenAccountId").mockImplementation(async accountId => {
       const token =
         accountId === "ethereum_usdc_sub_account"
           ? ({ contractAddress: "usdc_contract" } as TokenCurrency)

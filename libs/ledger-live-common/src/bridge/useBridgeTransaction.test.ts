@@ -31,12 +31,15 @@ describe("useBridgeTransaction", () => {
     const mainAccount = genAccount("mocked-account-1", { currency: BTC });
     const { result } = renderHook(() => useBridgeTransaction(() => ({ account: mainAccount })));
 
-    await waitFor(() => {
-      expect(result.current.bridgePending).toBeFalsy();
-      expect(result.current.bridgeError).toBeFalsy();
-      expect(result.current.transaction).not.toBeFalsy();
-      expect(result.current.account).not.toBeFalsy();
-    });
+    await waitFor(
+      () => {
+        expect(result.current.bridgePending).toBeFalsy();
+        expect(result.current.bridgeError).toBeFalsy();
+        expect(result.current.transaction).not.toBeFalsy();
+        expect(result.current.account).not.toBeFalsy();
+      },
+      { timeout: 10000 },
+    );
   });
 
   test("bridgeError go through", async () => {

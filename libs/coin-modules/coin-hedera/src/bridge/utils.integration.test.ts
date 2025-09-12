@@ -314,7 +314,7 @@ describe("utils", () => {
   describe("prepareOperations", () => {
     const tokenCurrencyFromCAL = getTokenCurrencyFromCAL(0);
 
-    test("links token operation to existing coin operation with matching hash", () => {
+    test("links token operation to existing coin operation with matching hash", async () => {
       const mockedTokenAccount = getMockedTokenAccount(tokenCurrencyFromCAL);
       const mockedCoinOperation = getMockedOperation({ hash: "shared" });
       const mockedTokenOperation = getMockedOperation({
@@ -322,20 +322,20 @@ describe("utils", () => {
         accountId: encodeTokenAccountId(mockedTokenAccount.parentId, tokenCurrencyFromCAL),
       });
 
-      const result = prepareOperations([mockedCoinOperation], [mockedTokenOperation], []);
+      const result = await prepareOperations([mockedCoinOperation], [mockedTokenOperation], []);
 
       expect(result).toHaveLength(1);
       expect(result[0].subOperations).toEqual([mockedTokenOperation]);
     });
 
-    test("creates NONE coin operation as parent if no coin op with matching hash exists", () => {
+    test("creates NONE coin operation as parent if no coin op with matching hash exists", async () => {
       const mockedTokenAccount = getMockedTokenAccount(tokenCurrencyFromCAL);
       const mockedOrphanTokenOperation = getMockedOperation({
         hash: "unknown-hash",
         accountId: encodeTokenAccountId(mockedTokenAccount.parentId, tokenCurrencyFromCAL),
       });
 
-      const result = prepareOperations([], [mockedOrphanTokenOperation], []);
+      const result = await prepareOperations([], [mockedOrphanTokenOperation], []);
       const noneOp = result.find(op => op.type === "NONE");
 
       expect(typeof noneOp).toBe("object");
@@ -344,7 +344,7 @@ describe("utils", () => {
       expect(noneOp?.hash).toBe("unknown-hash");
     });
 
-    test("adds associatedTokenId to ASSOCIATE_TOKEN coin operation based on consensusTimestamp", () => {
+    test("adds associatedTokenId to ASSOCIATE_TOKEN coin operation based on consensusTimestamp", async () => {
       const mockedCoinOperation = getMockedOperation({
         type: "ASSOCIATE_TOKEN",
         extra: { consensusTimestamp: "123" },
@@ -354,7 +354,7 @@ describe("utils", () => {
         created_timestamp: "123",
       });
 
-      const result = prepareOperations([mockedCoinOperation], [], [mockedMirrorToken]);
+      const result = await prepareOperations([mockedCoinOperation], [], [mockedMirrorToken]);
       const extra = isValidExtra(result[0].extra) ? result[0].extra : null;
 
       expect(typeof extra).toBe("object");
@@ -362,7 +362,7 @@ describe("utils", () => {
       expect(extra?.associatedTokenId).toBe("0.0.1001");
     });
 
-    test("ignores enrichment of ASSOCIATE_TOKEN operation if consensusTimestamp mismatches", () => {
+    test("ignores enrichment of ASSOCIATE_TOKEN operation if consensusTimestamp mismatches", async () => {
       const mockedCoinOperation = getMockedOperation({
         type: "ASSOCIATE_TOKEN",
         extra: { consensusTimestamp: "123" },
@@ -372,7 +372,7 @@ describe("utils", () => {
         created_timestamp: "999",
       });
 
-      const result = prepareOperations([mockedCoinOperation], [], [mockedMirrorToken]);
+      const result = await prepareOperations([mockedCoinOperation], [], [mockedMirrorToken]);
       const extra = isValidExtra(result[0].extra) ? result[0].extra : null;
 
       expect(typeof extra).toBe("object");

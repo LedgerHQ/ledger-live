@@ -8,6 +8,7 @@ import {
   TokenCurrency,
   Unit,
 } from "@ledgerhq/types-cryptoassets";
+import { Operation } from "@ledgerhq/types-live";
 import type { CryptoAssetsStore } from "@ledgerhq/types-live";
 import * as RPC_API from "../../network/node/rpc.common";
 import { getCoinConfig } from "../../config";
@@ -38,7 +39,7 @@ import {
 import { getEstimatedFees, getGasLimit, padHexString, safeEncodeEIP55 } from "../../utils";
 import usdCoinTokenData from "../../__fixtures__/ethereum-erc20-usd__coin.json";
 import wethTokenData from "../../__fixtures__/ethereum-erc20-weth.json";
-import { getCryptoAssetsStore, setCryptoAssetsStoreGetter } from "../../cryptoAssetsStore";
+import { setCryptoAssetsStoreGetter } from "../../cryptoAssetsStore";
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
 const USD_COIN_TOKEN = usdCoinTokenData as unknown as TokenCurrency;
@@ -529,8 +530,8 @@ describe("EVM Family", () => {
         const swapHistory = createSwapHistoryMap(account);
 
         expect(swapHistory.size).toBe(2);
-        expect(swapHistory.get(tokenAccount1.token)).toEqual(tokenAccount1.swapHistory);
-        expect(swapHistory.get(tokenAccount2.token)).toEqual(tokenAccount2.swapHistory);
+        expect(swapHistory.get(tokenAccount1.token.id)).toEqual(tokenAccount1.swapHistory);
+        expect(swapHistory.get(tokenAccount2.token.id)).toEqual(tokenAccount2.swapHistory);
       });
       it("should include correct swapHistory for a token account", () => {
         const tokenAccount = {
@@ -551,7 +552,7 @@ describe("EVM Family", () => {
         const account = makeAccount("0xCrema", getCryptoCurrencyById("ethereum"), [tokenAccount]);
 
         const swapHistoryMap = createSwapHistoryMap(account);
-        expect(swapHistoryMap.get(tokenAccount.token)).toEqual(tokenAccount.swapHistory);
+        expect(swapHistoryMap.get(tokenAccount.token.id)).toEqual(tokenAccount.swapHistory);
       });
     });
     describe("getSyncHash", () => {
@@ -651,13 +652,13 @@ describe("EVM Family", () => {
           () =>
             // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
             ({
-              findTokenByAddressInCurrency: (address: string, currencyId: string) => {
-                if (address === "0xTokenContract" && currencyId === "ethereum")
-                  return { id: "ethereum/erc20/usd__coin" };
-                if (address === "0xOtherTokenContract" && currencyId === "ethereum")
-                  return { id: "ethereum/erc20/usd__coin" };
+              findTokenById: async (id: string) => {
+                if (id === "ethereum/erc20/usd__coin") {
+                  return USD_COIN_TOKEN;
+                }
                 return undefined;
               },
+              findTokenByAddressInCurrency: async (_: string, __: string) => undefined,
             }) as CryptoAssetsStore,
         );
         const coinOperation = makeOperation({
@@ -719,15 +720,13 @@ describe("EVM Family", () => {
 
         expect(
           await attachOperations(
-            "js:2:ethereum:0xkvn:",
             [coinOperation],
             tokenOperations,
             nftOperations,
             internalOperations,
             {
               blacklistedTokenIds: [],
-              findToken: async (contractAddress: string) =>
-                getCryptoAssetsStore().findTokenByAddressInCurrency(contractAddress, "ethereum"),
+              findToken: jest.fn().mockResolvedValue(USD_COIN_TOKEN),
             },
           ),
         ).toEqual([
@@ -768,7 +767,7 @@ describe("EVM Family", () => {
         ]);
       });
 
-      it("should not mutate the original operations", () => {
+      it("should not mutate the original operations", async () => {
         const coinOperations = deepFreeze([
           makeOperation({
             hash: "0xCoinOp3Hash",
@@ -795,21 +794,20 @@ describe("EVM Family", () => {
             hash: "0xCoinOpInternal",
           }),
         ]);
-        expect(() =>
+
+        // Should not throw even with frozen parameters
+        await expect(
           attachOperations(
-            "",
-            // @ts-expect-error purposely ignore readonly ts issue for this
-            coinOperations,
-            tokenOperations,
-            nftOperations,
-            internalOperations,
+            coinOperations as Operation[],
+            tokenOperations as Operation[],
+            nftOperations as Operation[],
+            internalOperations as Operation[],
             {
               blacklistedTokenIds: [],
-              findToken: (contractAddress: string) =>
-                getCryptoAssetsStore().findTokenByAddressInCurrency(contractAddress, "ethereum"),
+              findToken: jest.fn().mockResolvedValue(USD_COIN_TOKEN),
             },
           ),
-        ).not.toThrow(); // mutation prevented by deepFreeze method
+        ).resolves.toBeDefined(); // mutation prevented by deepFreeze method
       });
 
       it("should filter blacklisted tokens", async () => {
@@ -872,15 +870,13 @@ describe("EVM Family", () => {
 
         expect(
           await attachOperations(
-            "",
             [coinOperation],
             tokenOperations,
             nftOperations,
             internalOperations,
             {
               blacklistedTokenIds: [USD_COIN_TOKEN.id],
-              findToken: async (contractAddress: string) =>
-                getCryptoAssetsStore().findTokenByAddressInCurrency(contractAddress, "ethereum"),
+              findToken: jest.fn().mockResolvedValue(USD_COIN_TOKEN),
             },
           ),
         ).toEqual([

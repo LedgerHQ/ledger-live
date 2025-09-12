@@ -18,6 +18,7 @@ import {
   LedgerExplorerInternalTransaction,
 } from "../types";
 import { safeEncodeEIP55 } from "../utils";
+import { getCryptoAssetsStore } from "../cryptoAssetsStore";
 
 /**
  * Adapter to convert a Ledger Explorer operation
@@ -75,14 +76,19 @@ export const ledgerOperationToOperations = (
  * Adapter to convert an ERC20 transaction
  * on Ledger explorers into LL Operations
  */
-export const ledgerERC20EventToOperations = (
+export const ledgerERC20EventToOperations = async (
   coinOperation: Operation,
   event: LedgerExplorerERC20TransferEvent,
   index = 0,
-): Operation[] => {
+): Promise<Operation[]> => {
   const { accountId, hash, fee, blockHeight, blockHash, transactionSequenceNumber, date } =
     coinOperation;
-  const { xpubOrAddress: address } = decodeAccountId(accountId);
+  const { currencyId, xpubOrAddress: address } = decodeAccountId(accountId);
+  const tokenCurrency = await getCryptoAssetsStore().findTokenByAddressInCurrency(
+    event.contract,
+    currencyId,
+  );
+  if (!tokenCurrency) return [];
 
   const from = safeEncodeEIP55(event.from);
   const to = safeEncodeEIP55(event.to);

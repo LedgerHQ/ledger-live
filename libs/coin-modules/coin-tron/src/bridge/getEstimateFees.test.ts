@@ -6,15 +6,18 @@ import { ACTIVATION_FEES, STANDARD_FEES_NATIVE, STANDARD_FEES_TRC_20 } from "../
 import { Account, TokenAccount } from "@ledgerhq/types-live";
 import { Transaction } from "../types";
 
+// Mock typed functions
+const mockGetAccount = jest.mocked(getAccount);
+const mockEstimateFees = jest.mocked(estimateFees);
+const mockExtractBandwidthInfo = jest.mocked(extractBandwidthInfo);
+
 jest.mock("./utils", () => ({
   extractBandwidthInfo: jest.fn(),
   getEstimatedBlockSize: jest.fn().mockReturnValue(new BigNumber(200)),
 }));
 
-jest.mock("../logic", () => ({
-  estimateFees: jest.fn(),
-  getAccount: jest.fn(),
-}));
+jest.mock("../logic/estimateFees");
+jest.mock("../logic/getAccount");
 
 describe("getEstimatedFees", () => {
   const mockAccount = {
@@ -56,8 +59,8 @@ describe("getEstimatedFees", () => {
 
   describe("getFeesFromBandwidth", () => {
     it("should return STANDARD_FEES_NATIVE if bandwidth is insufficient", async () => {
-      (getAccount as jest.Mock).mockResolvedValue([{ address: "mock-contract-address" }]);
-      (extractBandwidthInfo as jest.Mock).mockReturnValue({
+      mockGetAccount.mockResolvedValue([{ address: "mock-contract-address", trc20: [] }]);
+      mockExtractBandwidthInfo.mockReturnValue({
         freeUsed: new BigNumber(0),
         freeLimit: new BigNumber(0),
         gainedUsed: new BigNumber(0),
@@ -69,8 +72,8 @@ describe("getEstimatedFees", () => {
     });
 
     it("should return 0 if bandwidth is sufficient", async () => {
-      (getAccount as jest.Mock).mockResolvedValue([{ address: "mock-contract-address" }]);
-      (extractBandwidthInfo as jest.Mock).mockReturnValue({
+      mockGetAccount.mockResolvedValue([{ address: "mock-contract-address", trc20: [] }]);
+      mockExtractBandwidthInfo.mockReturnValue({
         freeUsed: new BigNumber(0),
         freeLimit: new BigNumber(500),
         gainedUsed: new BigNumber(0),
@@ -84,8 +87,10 @@ describe("getEstimatedFees", () => {
 
   describe("getFeesFromAccountActivation", () => {
     it("should return ACTIVATION_FEES if recipient account is not active", async () => {
-      (getAccount as jest.Mock).mockResolvedValue([]);
-      (extractBandwidthInfo as jest.Mock).mockReturnValue({
+      mockGetAccount.mockResolvedValue([]);
+      mockExtractBandwidthInfo.mockReturnValue({
+        freeUsed: new BigNumber(0),
+        freeLimit: new BigNumber(0),
         gainedUsed: new BigNumber(0),
         gainedLimit: new BigNumber(0),
       });
@@ -95,8 +100,10 @@ describe("getEstimatedFees", () => {
     });
 
     it("should return STANDARD_FEES_TRC_20 if recipient has TRC20 balance", async () => {
-      (getAccount as jest.Mock).mockResolvedValue([{ address: "mock-contract-address" }]);
-      (extractBandwidthInfo as jest.Mock).mockReturnValue({
+      mockGetAccount.mockResolvedValue([{ address: "mock-contract-address", trc20: [] }]);
+      mockExtractBandwidthInfo.mockReturnValue({
+        freeUsed: new BigNumber(0),
+        freeLimit: new BigNumber(0),
         gainedUsed: new BigNumber(0),
         gainedLimit: new BigNumber(500),
       });
@@ -106,9 +113,11 @@ describe("getEstimatedFees", () => {
     });
 
     it("should return estimated fees for TRC20 token transfer", async () => {
-      (getAccount as jest.Mock).mockResolvedValue([]);
-      (estimateFees as jest.Mock).mockResolvedValue(new BigNumber(1000));
-      (extractBandwidthInfo as jest.Mock).mockReturnValue({
+      mockGetAccount.mockResolvedValue([]);
+      mockEstimateFees.mockResolvedValue(1000n);
+      mockExtractBandwidthInfo.mockReturnValue({
+        freeUsed: new BigNumber(0),
+        freeLimit: new BigNumber(0),
         gainedUsed: new BigNumber(0),
         gainedLimit: new BigNumber(0),
       });
@@ -120,8 +129,8 @@ describe("getEstimatedFees", () => {
 
   describe("getEstimatedFees", () => {
     it("should prioritize account activation fees over bandwidth fees", async () => {
-      (getAccount as jest.Mock).mockResolvedValue([]);
-      (extractBandwidthInfo as jest.Mock).mockReturnValue({
+      mockGetAccount.mockResolvedValue([]);
+      mockExtractBandwidthInfo.mockReturnValue({
         freeUsed: new BigNumber(0),
         freeLimit: new BigNumber(0),
         gainedUsed: new BigNumber(0),
@@ -133,8 +142,8 @@ describe("getEstimatedFees", () => {
     });
 
     it("should return bandwidth fees if no account activation is required", async () => {
-      (getAccount as jest.Mock).mockResolvedValue([{ trc20: [] }]);
-      (extractBandwidthInfo as jest.Mock).mockReturnValue({
+      mockGetAccount.mockResolvedValue([{ address: "mock-address", trc20: [] }]);
+      mockExtractBandwidthInfo.mockReturnValue({
         freeUsed: new BigNumber(0),
         freeLimit: new BigNumber(500),
         gainedUsed: new BigNumber(0),

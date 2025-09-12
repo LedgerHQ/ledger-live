@@ -4,7 +4,7 @@ import { getEnv } from "@ledgerhq/live-env";
 if (getEnv("PLAYWRIGHT_RUN") && getEnv("MOCK")) {
   const timemachine = require("timemachine");
   timemachine.config({
-    dateString: require("../tests/time").default,
+    dateString: require("../tests/time.js").default,
   });
 }
 

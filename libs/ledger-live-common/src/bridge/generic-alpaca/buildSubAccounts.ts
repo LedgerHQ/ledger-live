@@ -96,6 +96,5 @@ export async function buildSubAccounts({
       );
     }
   }
-
   return tokenAccounts;
 }

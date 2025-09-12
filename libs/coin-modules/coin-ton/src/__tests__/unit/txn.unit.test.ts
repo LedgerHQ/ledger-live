@@ -17,6 +17,9 @@ import {
   mockAddress,
   tonTransactionResponse,
 } from "../fixtures/common.fixtures";
+import { getCryptoAssetsStore } from "@ledgerhq/coin-framework/crypto-assets/index";
+
+jest.mock("@ledgerhq/coin-framework/crypto-assets/index");
 
 describe("Transaction functions", () => {
   describe("mapTxToOps", () => {
@@ -135,14 +138,40 @@ describe("Transaction functions", () => {
   });
 
   describe("mapJettonToOps", () => {
+    beforeEach(() => {
+      (getCryptoAssetsStore as jest.Mock).mockReturnValue({
+        findTokenByAddressInCurrency: jest.fn().mockResolvedValue({
+          id: "ton/jetton/eqavlwfdxgf2lxm67y4yzc17wykd9a0guwpkms1gosm__not",
+          type: "TokenCurrency",
+          contractAddress: "EQAVLwfDxGF2LXm67Y4yzC17WYkd9A0gUWPkMS1gOsM__NOT",
+          parentCurrency: {
+            id: "ton",
+            type: "CryptoCurrency",
+          },
+          ticker: "NOT",
+          units: [
+            {
+              name: "NOT",
+              code: "NOT",
+              magnitude: 9,
+            },
+          ],
+        }),
+      });
+    });
+
     it("should map an IN ton transaction without total_fees to a ledger operation", async () => {
       const { transaction_hash, amount, transaction_now, transaction_lt } =
         jettonTransferResponse.jetton_transfers[0];
 
-      const finalOperation = flatMap(
-        jettonTransferResponse.jetton_transfers,
-        mapJettonTxToOps(mockAccountId, mockAddress, tonTransactionResponse.address_book),
+      const jettonOpsMapper = mapJettonTxToOps(
+        mockAccountId,
+        mockAddress,
+        tonTransactionResponse.address_book,
       );
+      const finalOperation = (
+        await Promise.all(jettonTransferResponse.jetton_transfers.map(jettonOpsMapper))
+      ).flat();
 
       const tokenByCurrencyAddress = `${mockAccountId}+ton%2Fjetton%2Feqavlwfdxgf2lxm67y4yzc17wykd9a0guwpkms1gosm~!underscore!~~!underscore!~not`;
       expect(finalOperation).toEqual([
@@ -180,10 +209,12 @@ describe("Transaction functions", () => {
 
       const { transaction_hash, amount, transaction_now, transaction_lt } = jettonTransfers[0];
 
-      const finalOperation = flatMap(
-        jettonTransfers,
-        mapJettonTxToOps(mockAccountId, mockAddress, tonTransactionResponse.address_book),
+      const jettonOpsMapper = mapJettonTxToOps(
+        mockAccountId,
+        mockAddress,
+        tonTransactionResponse.address_book,
       );
+      const finalOperation = (await Promise.all(jettonTransfers.map(jettonOpsMapper))).flat();
 
       const tokenByCurrencyAddress = `${mockAccountId}+ton%2Fjetton%2Feqavlwfdxgf2lxm67y4yzc17wykd9a0guwpkms1gosm~!underscore!~~!underscore!~not`;
       expect(finalOperation).toEqual([

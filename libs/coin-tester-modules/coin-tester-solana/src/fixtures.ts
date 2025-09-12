@@ -5,18 +5,31 @@ import { TokenAccount } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { SolanaAccount } from "@ledgerhq/coin-solana/types";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
-import { findTokenById } from "@ledgerhq/cryptoassets/tokens";
 import { HttpResponse, http } from "msw";
 import { setupServer } from "msw/node";
 
 export const RECIPIENT = "Hj69wRzkrFuf1Nby4yzPEFHdsmQdMoVYjvDKZSLjZFEp";
 export const SOLANA = getCryptoCurrencyById("solana");
-const solanaUsdc = findTokenById("solana/spl/epjfwdd5aufqssqem2qn1xzybapc8g4weggkzwytdt1v");
-if (!solanaUsdc) throw new Error("Solana USDC token not found");
-export const SOLANA_USDC = solanaUsdc;
-const solanaCwif = findTokenById("solana/spl/7atgf8kqo4wjrd5atgx7t1v2zvvykpjbffnevf1icfv1");
-if (!solanaCwif) throw new Error("Solana CWIF token not found");
-export const SOLANA_CWIF = solanaCwif;
+export const SOLANA_USDC: TokenCurrency = {
+  type: "TokenCurrency",
+  id: "solana/spl/epjfwdd5aufqssqem2qn1xzybapc8g4weggkzwytdt1v",
+  name: "USD Coin",
+  ticker: "USDC",
+  units: [{ name: "USD Coin", code: "USDC", magnitude: 6 }],
+  contractAddress: "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+  parentCurrency: SOLANA,
+  tokenType: "spl",
+};
+export const SOLANA_CWIF: TokenCurrency = {
+  type: "TokenCurrency",
+  id: "solana/spl/7atgf8kqo4wjrd5atgx7t1v2zvvykpjbffnevf1icfv1",
+  name: "CWIF",
+  ticker: "CWIF",
+  units: [{ name: "CWIF", code: "CWIF", magnitude: 4 }],
+  contractAddress: "7atgF8KQo4wJrD5ATGX7t1V2zVvykPJbFfNeVf1icFv1",
+  parentCurrency: SOLANA,
+  tokenType: "spl",
+};
 export const SOLANA_VIRTUAL: TokenCurrency = {
   type: "TokenCurrency",
   id: "solana/spl/3iql8bfs2ve7mww4ehaqqhasbmrncrpxizwat2zfyr9y",

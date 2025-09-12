@@ -24,7 +24,7 @@ import { Transaction } from "../generated/types";
 import { prepareMessageToSign } from "../hw/signMessage/index";
 import { getAccountBridge } from "../bridge";
 import { Exchange } from "../exchange/types";
-import { findTokenById } from "@ledgerhq/cryptoassets";
+import { getCryptoAssetsStore } from "../bridge/crypto-assets/index";
 import { WalletState } from "@ledgerhq/live-wallet/store";
 import { getWalletAccount } from "@ledgerhq/coin-bitcoin/wallet-btc/index";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
@@ -40,7 +40,7 @@ export type WalletAPIContext = {
   tracking: TrackingAPI;
 };
 
-export function receiveOnAccountLogic(
+export async function receiveOnAccountLogic(
   walletState: WalletState,
   { manifest, accounts, tracking }: WalletAPIContext,
   walletAccountId: string,
@@ -68,13 +68,13 @@ export function receiveOnAccountLogic(
 
   const parentAccount = getParentAccount(account, accounts);
   const mainAccount = getMainAccount(account, parentAccount);
-  const currency = tokenCurrency ? findTokenById(tokenCurrency) : null;
+  const currency = tokenCurrency ? await getCryptoAssetsStore().findTokenById(tokenCurrency) : null;
   const receivingAccount = currency ? makeEmptyTokenAccount(mainAccount, currency) : account;
   const accountAddress = accountToWalletAPIAccount(walletState, account, parentAccount).address;
   return uiNavigation(receivingAccount, parentAccount, accountAddress);
 }
 
-export function signTransactionLogic(
+export async function signTransactionLogic(
   { manifest, accounts, tracking }: WalletAPIContext,
   walletAccountId: string,
   transaction: WalletAPITransaction,
@@ -116,7 +116,7 @@ export function signTransactionLogic(
     : account.currency.family;
 
   const mainAccount = getMainAccount(account, parentAccount);
-  const currency = tokenCurrency ? findTokenById(tokenCurrency) : null;
+  const currency = tokenCurrency ? await getCryptoAssetsStore().findTokenById(tokenCurrency) : null;
   const signerAccount = currency ? makeEmptyTokenAccount(mainAccount, currency) : account;
 
   const { canEditFees, liveTx, hasFeesProvided } = getWalletAPITransactionSignFlowInfos({
@@ -174,7 +174,7 @@ export function signRawTransactionLogic(
   return uiNavigation(account, parentAccount, transaction);
 }
 
-export function broadcastTransactionLogic(
+export async function broadcastTransactionLogic(
   { manifest, accounts, tracking }: WalletAPIContext,
   walletAccountId: string,
   signedOperation: SignedOperation,
@@ -202,7 +202,7 @@ export function broadcastTransactionLogic(
     return Promise.reject(new Error("Account required"));
   }
 
-  const currency = tokenCurrency ? findTokenById(tokenCurrency) : null;
+  const currency = tokenCurrency ? await getCryptoAssetsStore().findTokenById(tokenCurrency) : null;
   const parentAccount = getParentAccount(account, accounts);
   const mainAccount = getMainAccount(account, parentAccount);
   const signerAccount = currency ? makeEmptyTokenAccount(mainAccount, currency) : account;
@@ -414,7 +414,7 @@ export type CompleteExchangeUiRequest = {
   tokenCurrency?: string;
 };
 
-export function completeExchangeLogic(
+export async function completeExchangeLogic(
   { manifest, accounts, tracking }: WalletAPIContext,
   {
     provider,
@@ -462,7 +462,7 @@ export function completeExchangeLogic(
   }
 
   const fromParentAccount = getParentAccount(fromAccount, accounts);
-  const currency = tokenCurrency ? findTokenById(tokenCurrency) : null;
+  const currency = tokenCurrency ? await getCryptoAssetsStore().findTokenById(tokenCurrency) : null;
   const newTokenAccount = currency ? makeEmptyTokenAccount(toAccount, currency) : undefined;
   const toParentAccount = toAccount ? getParentAccount(toAccount, accounts) : undefined;
   const exchange = {

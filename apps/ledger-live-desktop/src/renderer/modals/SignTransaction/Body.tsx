@@ -190,12 +190,18 @@ export default function Body({ onChangeStepId, onClose, setError, stepId, params
   );
   const errorSteps = [];
 
-  const fields = getDeviceTransactionConfig({
-    account: params.account,
-    parentAccount,
-    transaction,
-    status,
-  });
+  const [fields, setFields] = useState<DeviceTransactionField[]>([]);
+
+  useEffect(() => {
+    if (params.account && transaction && status) {
+      getDeviceTransactionConfig({
+        account: params.account,
+        parentAccount,
+        transaction,
+        status,
+      }).then(setFields);
+    }
+  }, [params.account, parentAccount, transaction, status]);
 
   const typeTransaction: string = useMemo(
     () =>
