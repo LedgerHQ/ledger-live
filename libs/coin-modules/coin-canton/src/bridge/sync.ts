@@ -1,14 +1,14 @@
 import BigNumber from "bignumber.js";
 import { Operation } from "@ledgerhq/types-live";
-import { encodeAccountId } from "@ledgerhq/coin-framework/account/index";
+import { decodeAccountId, encodeAccountId } from "@ledgerhq/coin-framework/account/index";
 import { GetAccountShape, mergeOps } from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import { getBalance, getLedgerEnd, getOperations, type OperationInfo } from "../network/gateway";
-
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
+import { getBalance, getLedgerEnd, getOperations, type OperationInfo } from "../network/gateway";
+import { CantonAccount } from "../types";
 import coinConfig from "../config";
 
 const txInfoToOperationAdapter =
-  (accountId: string, address: string) =>
+  (accountId: string, partyId: string) =>
   (txInfo: OperationInfo): Operation => {
     const {
       transaction_hash,
@@ -20,7 +20,7 @@ const txInfoToOperationAdapter =
       fee: { value: fee },
       transfers: [{ value: transferValue }],
     } = txInfo;
-    const type = senders.includes(address) ? "OUT" : "IN";
+    const type = senders.includes(partyId) ? "OUT" : "IN";
     const value = new BigNumber(transferValue);
     const feeValue = new BigNumber(fee);
 
@@ -48,24 +48,31 @@ const txInfoToOperationAdapter =
 const filterOperations = (
   transactions: OperationInfo[],
   accountId: string,
-  address: string,
+  partyId: string,
 ): Operation[] => {
   return transactions
     .filter(tx => tx.type === "Receive" || tx.type === "Send")
-    .map(txInfoToOperationAdapter(accountId, address));
+    .map(txInfoToOperationAdapter(accountId, partyId));
 };
 
-export const getAccountShape: GetAccountShape = async info => {
-  const { address, initialAccount, currency, derivationMode } = info;
-  // TODO: we need better solution ?
-  const xpubOrAddress = address?.replace(/:/g, "_") || "";
+export const getAccountShape: GetAccountShape<CantonAccount> = async info => {
+  const { address, initialAccount, currency, derivationMode, derivationPath, rest } = info;
+
+  const xpubOrAddress = (
+    (initialAccount && initialAccount.id && decodeAccountId(initialAccount.id).xpubOrAddress) ||
+    ""
+  ).replace(/:/g, "_");
+  const partyId =
+    rest?.cantonResources?.partyId ||
+    initialAccount?.cantonResources?.partyId ||
+    xpubOrAddress.replace(/_/g, ":");
 
   const accountId = encodeAccountId({
     type: "js",
     version: "2",
     currencyId: currency.id,
     xpubOrAddress,
-    derivationMode: "",
+    derivationMode,
   });
 
   // blockheight retrieval
@@ -73,7 +80,7 @@ export const getAccountShape: GetAccountShape = async info => {
 
   // Account info retrieval + spendable balance calculation
   // const accountInfo = await getAccountInfo(address);
-  const balances = await getBalance(address);
+  const balances = await getBalance(partyId);
 
   // TODO change to balance.instrument_id === "Amulet" after update on backend
   const balanceData = balances.find(balance => balance.instrument_id.includes("Amulet")) || {
@@ -93,16 +100,12 @@ export const getAccountShape: GetAccountShape = async info => {
   // Tx history fetching
   const oldOperations = initialAccount?.operations || [];
   const startAt = oldOperations.length ? (oldOperations[0].blockHeight || 0) + 1 : 0;
-  const transactionData = await getOperations(address, {
+  const transactionData = await getOperations(partyId, {
     cursor: startAt,
     limit: 100,
   });
 
-  const newOperations = filterOperations(
-    transactionData.operations,
-    accountId,
-    address.replace(/_/g, ":"),
-  );
+  const newOperations = filterOperations(transactionData.operations, accountId, partyId);
   const operations = mergeOps(oldOperations, newOperations);
 
   // We return the new account shape
@@ -114,6 +117,11 @@ export const getAccountShape: GetAccountShape = async info => {
     spendableBalance,
     operations,
     operationsCount: operations.length,
+    freshAddress: address,
+    freshAddressPath: derivationPath,
+    cantonResources: {
+      partyId,
+    },
   };
 
   return shape;

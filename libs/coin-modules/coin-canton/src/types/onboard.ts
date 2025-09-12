@@ -1,3 +1,5 @@
+import { Account } from "@ledgerhq/types-live";
+
 export enum OnboardStatus {
   INIT,
   PREPARE,
@@ -22,6 +24,7 @@ export type CantonOnboardProgress = {
 
 export type CantonOnboardResult = {
   partyId: string;
+  account: Partial<Account>;
 };
 
 export type CantonPreApprovalProgress = {

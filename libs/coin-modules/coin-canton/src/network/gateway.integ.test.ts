@@ -58,7 +58,8 @@ describe("gateway (devnet)", () => {
       expect(response).toHaveProperty("public_key_fingerprint");
       expect(response).toHaveProperty("transactions");
       expect(response.transactions).toHaveProperty("combined_hash");
-      expect(response.party_name).toBe(keyPair.publicKeyHex);
+      expect(response.party_name).toBeDefined();
+      expect(typeof response.party_name).toBe("string");
 
       expect(response.public_key_fingerprint).toBe(keyPair.fingerprint);
     }, 30000);

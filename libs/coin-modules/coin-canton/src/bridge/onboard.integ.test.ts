@@ -90,7 +90,7 @@ describe("onboard (devnet)", () => {
       const result = await isAccountOnboarded(keyPair.publicKeyHex);
 
       // THEN
-      expect(result).toBe(false);
+      expect(result).toEqual({ isOnboarded: false });
     }, 15000);
 
     it("should handle errors gracefully when checking non-existent party", async () => {
@@ -101,7 +101,7 @@ describe("onboard (devnet)", () => {
       const result = await isAccountOnboarded(keyPair.publicKeyHex);
 
       // THEN
-      expect(result).toBe(false);
+      expect(result).toEqual({ isOnboarded: false });
     }, 15000);
   });
 
