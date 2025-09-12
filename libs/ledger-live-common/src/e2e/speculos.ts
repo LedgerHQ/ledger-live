@@ -641,7 +641,7 @@ export async function goToSettings() {
   await pressBoth();
 }
 
-export async function providePublickKey() {
+export async function providePublicKey() {
   await pressRightButton();
 }
 
@@ -673,6 +673,9 @@ export function getDeviceLabels(appInfo: AppInfos): DeviceLabelsReturn {
 }
 
 export async function expectValidAddressDevice(account: Account, addressDisplayed: string) {
+  if (account.currency === Currency.SUI_USDC) {
+    providePublicKey();
+  }
   const { receiveVerifyLabel, receiveConfirmLabel } = getDeviceLabels(account.currency.speculosApp);
 
   await waitFor(receiveVerifyLabel);
@@ -735,6 +738,9 @@ export async function signSendTransaction(tx: Transaction) {
       await sendHedera();
       break;
     case Currency.SUI:
+      await sendSui();
+      break;
+    case Currency.SUI_USDC:
       await sendSui();
       break;
     default:

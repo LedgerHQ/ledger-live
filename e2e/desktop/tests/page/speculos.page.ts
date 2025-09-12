@@ -12,7 +12,7 @@ import {
   activateExpertMode,
   activateContractData,
   removeMemberLedgerSync,
-  providePublickKey,
+  providePublicKey,
 } from "@ledgerhq/live-common/e2e/speculos";
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { NFTTransaction, Transaction } from "@ledgerhq/live-common/e2e/models/Transaction";
@@ -76,7 +76,7 @@ export class SpeculosPage extends AppPage {
   }
 
   @step("Provide Public Key")
-  async providePublickKey() {
-    await providePublickKey();
+  async providePublicKey() {
+    await providePublicKey();
   }
 }

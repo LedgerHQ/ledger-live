@@ -36,4 +36,12 @@ export class SendDrawer extends Drawer {
     const address = await this.addressValue(tx.accountToCredit.address).textContent();
     expect(address).toBe(tx.accountToCredit.address);
   }
+
+  @step("Verify that the information of the token transaction is visible")
+  async expectTokenReceiverInfos(tx: Transaction) {
+    await expect(this.amountValue).toBeVisible();
+    const displayedAmount = await this.amountValue.innerText();
+    expect(displayedAmount).toEqual(expect.stringContaining(tx.amount));
+    expect(displayedAmount).toEqual(expect.stringContaining(tx.accountToDebit.currency.ticker));
+  }
 }

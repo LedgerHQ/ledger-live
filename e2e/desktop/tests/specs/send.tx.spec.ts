@@ -209,7 +209,7 @@ const transactionE2E = [
     xrayTicket: "B2CQA-3840",
   },
   {
-    transaction: new Transaction(Account.SUI_1, Account.SUI_2, "0.0001", undefined, "noTag"),
+    transaction: new Transaction(Account.SUI_1, Account.SUI_2, "0.0001", undefined),
     xrayTicket: "B2CQA-3802",
   },
 ];
