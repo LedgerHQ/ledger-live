@@ -190,17 +190,26 @@ export class NobleCryptoSecp256k1 implements Crypto {
     };
   }
 
-  private derEncode(R: Uint8Array, S: Uint8Array): Uint8Array {
-    if (R[0] > 0x7f) {
-      R = this.concat(new Uint8Array([0x00]), R);
+  public derEncode(compactSig: Uint8Array): Uint8Array {
+    const R = this.derEncodeComponent(compactSig.slice(0, 32));
+    const S = this.derEncodeComponent(compactSig.slice(32, 64));
+    return Uint8Array.from([0x30, R.length + S.length, ...R, ...S]);
+  }
+
+  private derEncodeComponent(bytes: Uint8Array): Uint8Array {
+    const secondByteIndex = Array.from(bytes).findIndex(
+      (byte, i) => (i > 0 && bytes[i - 1] !== 0x00) || byte >= 0x80,
+    );
+    switch (secondByteIndex) {
+      case -1:
+        throw new Error(`Invalid DER component: ${this.to_hex(bytes)}`);
+      case 0:
+        return Uint8Array.from([0x02, bytes.length + 1, 0x00, ...bytes]);
+      default: {
+        const truncated = bytes.slice(secondByteIndex - 1);
+        return Uint8Array.from([0x02, truncated.length, ...truncated]);
+      }
     }
-    if (S[0] > 0x7f) {
-      S = this.concat(new Uint8Array([0x00]), S);
-    }
-    R = this.concat(new Uint8Array([0x02, R.length]), R);
-    S = this.concat(new Uint8Array([0x02, S.length]), S);
-    const prefix = new Uint8Array([0x30, R.length + S.length]);
-    return this.concat(prefix, this.concat(R, S));
   }
 
   private derDecode(signature: Uint8Array): { R: Uint8Array; S: Uint8Array } {
@@ -218,9 +227,8 @@ export class NobleCryptoSecp256k1 implements Crypto {
   sign(message: Uint8Array, keyPair: KeyPair): Uint8Array {
     // Note: Using prehash: false since we're passing already hashed message
     const signature = secp256k1.sign(message, keyPair.privateKey, { prehash: false });
-    const compactSig = signature.toCompactRawBytes();
     // DER encoding
-    return this.derEncode(compactSig.slice(0, 32), compactSig.slice(32, 64));
+    return this.derEncode(signature.toBytes("compact"));
   }
 
   verify(message: Uint8Array, signature: Uint8Array, publicKey: Uint8Array): boolean {
