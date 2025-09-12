@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useContext } from "react";
+import React, { useCallback, useContext, useState, useEffect } from "react";
 import { FlatList, ListRenderItemInfo } from "react-native";
 import { useSelector } from "react-redux";
 import { Trans, useTranslation } from "react-i18next";
@@ -18,7 +18,7 @@ import CurrencyUnitValue from "~/components/CurrencyUnitValue";
 import { TrackScreen } from "~/analytics";
 
 import { withDiscreetMode } from "~/context/DiscreetModeContext";
-import { counterValueCurrencySelector, hasOrderedNanoSelector } from "~/reducers/settings";
+import { hasOrderedNanoSelector, counterValueCurrencySelector } from "~/reducers/settings";
 import { AnalyticsContext } from "~/analytics/AnalyticsContext";
 import type { AccountsNavigatorParamList } from "~/components/RootNavigator/types/AccountsNavigator";
 import type { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
@@ -29,24 +29,37 @@ type Props = StackNavigatorProps<AccountsNavigatorParamList, ScreenName.Account>
 function ReadOnlyAccount({ route }: Props) {
   const { currencyId, currencyType } = route.params;
 
-  const currency: Currency | null = useMemo(
-    () =>
-      currencyId
-        ? currencyType === "CryptoCurrency"
-          ? getCryptoCurrencyById(currencyId)
-          : getTokenById(currencyId)
-        : null,
-    [currencyType, currencyId],
-  );
+  const [currency, setCurrency] = useState<Currency | null>(null);
+
+  useEffect(() => {
+    async function loadCurrency() {
+      if (currencyId) {
+        try {
+          if (currencyType === "CryptoCurrency") {
+            setCurrency(getCryptoCurrencyById(currencyId));
+          } else {
+            const token = await getTokenById(currencyId);
+            setCurrency(token || null);
+          }
+        } catch (error) {
+          console.error("Failed to load currency:", error);
+          setCurrency(null);
+        }
+      } else {
+        setCurrency(null);
+      }
+    }
+    loadCurrency();
+  }, [currencyType, currencyId]);
+
   const { t } = useTranslation();
 
-  const counterValueCurrency: Currency = useSelector(counterValueCurrencySelector);
-
+  const counterValueCurrency = useSelector(counterValueCurrencySelector);
   const hasOrderedNano = useSelector(hasOrderedNanoSelector);
 
+  // All hooks must be called before early returns
   const renderItem = useCallback(({ item }: ListRenderItemInfo<JSX.Element>) => item, []);
   const keyExtractor = useCallback((_: JSX.Element, index: number) => String(index), []);
-
   const { source, setSource, setScreen } = useContext(AnalyticsContext);
 
   useFocusEffect(

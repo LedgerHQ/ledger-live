@@ -1,10 +1,11 @@
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { getAssetFromToken, getTokenFromAsset } from "./getTokenFromAsset";
+import "../__tests__/fixtures/cryptoAssetsStore.fixtures";
 
 describe("getTokenFromAsset", () => {
-  it("computes the token of the USDC asset", () => {
+  it("computes the token of the USDC asset", async () => {
     expect(
-      getTokenFromAsset({ id: "ethereum" } as CryptoCurrency, {
+      await getTokenFromAsset({ id: "ethereum" } as CryptoCurrency, {
         type: "erc20",
         assetReference: "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
       }),
@@ -14,7 +15,7 @@ describe("getTokenFromAsset", () => {
       name: "USD Coin",
     });
     expect(
-      getTokenFromAsset({ id: "sonic" } as CryptoCurrency, {
+      await getTokenFromAsset({ id: "sonic" } as CryptoCurrency, {
         type: "erc20",
         assetReference: "0x29219dd400f2bf60e5a23d13be72b486d4038894",
       }),

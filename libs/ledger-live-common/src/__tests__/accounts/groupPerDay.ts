@@ -17,7 +17,7 @@ LiveConfig.setConfig({
 // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
 setup({} as CryptoAssetsStore);
 
-const account = fromAccountRaw({
+const accountRaw = {
   id: "libcore:1:tezos:A:tezbox",
   seedIdentifier: "B",
   name: "Tezos 3",
@@ -194,8 +194,10 @@ const account = fromAccountRaw({
     revealed: true,
     counter: 0,
   },
-} as TezosAccountRaw);
-test("pending operation are in order", () => {
+} as TezosAccountRaw;
+
+test("pending operation are in order", async () => {
+  const account = await fromAccountRaw(accountRaw);
   const byDay = groupAccountOperationsByDay(account, {
     count: 100,
   });

@@ -10,7 +10,7 @@ import * as networkModule from "../network";
 
 // Mock getTokenById and listTokensForCryptoCurrency
 jest.mock("@ledgerhq/cryptoassets/tokens", () => ({
-  getTokenById: (coinType: string) => ({
+  getTokenById: async (coinType: string) => ({
     id: coinType,
     ticker: "TEST",
     name: "Test Token",

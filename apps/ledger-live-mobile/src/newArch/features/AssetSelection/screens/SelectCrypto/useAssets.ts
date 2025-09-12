@@ -40,8 +40,17 @@ export function useAssets(
   }, [currenciesByProvider, currencyIdsSet, filteredSortedCryptoCurrencies]);
 
   useEffect(() => {
-    setAvailableAssets(computedAssets);
-  }, [computedAssets]);
+    async function loadAssets() {
+      try {
+        const assets = await Promise.resolve(computedAssets);
+        setAvailableAssets(assets);
+      } catch (error) {
+        console.error("Failed to load assets:", error);
+        setAvailableAssets(filteredSortedCryptoCurrencies);
+      }
+    }
+    loadAssets();
+  }, [computedAssets, filteredSortedCryptoCurrencies]);
 
   return {
     availableAssets: availableAssets ?? filteredSortedCryptoCurrencies,

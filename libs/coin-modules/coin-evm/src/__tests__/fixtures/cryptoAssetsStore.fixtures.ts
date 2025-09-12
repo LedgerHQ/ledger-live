@@ -9,16 +9,21 @@ import { setCryptoAssetsStoreGetter } from "../../cryptoAssetsStore";
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
 setCryptoAssetsStoreForCoinFramework({
+  findTokenByAddress: legacyTokens.findTokenByAddress,
+  getTokenById: legacyTokens.getTokenById,
   findTokenById: legacyTokens.findTokenById,
   findTokenByAddressInCurrency: legacyTokens.findTokenByAddressInCurrency,
+  findTokenByTicker: legacyTokens.findTokenByTicker,
 } as CryptoAssetsStore);
 
 setCryptoAssetsStoreGetter(
   () =>
     // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
     ({
+      findTokenByAddress: legacyTokens.findTokenByAddress,
+      getTokenById: legacyTokens.getTokenById,
       findTokenById: legacyTokens.findTokenById,
       findTokenByAddressInCurrency: legacyTokens.findTokenByAddressInCurrency,
-      findTokenByAddress: legacyTokens.findTokenByAddress,
+      findTokenByTicker: legacyTokens.findTokenByTicker,
     }) as CryptoAssetsStore,
 );

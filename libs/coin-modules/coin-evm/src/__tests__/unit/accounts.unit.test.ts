@@ -3,7 +3,7 @@ import axios, { AxiosResponse } from "axios";
 import { tokens as localTokensByChainId } from "@ledgerhq/cryptoassets/data/evm/index";
 import { fromAccountRaw, toAccountRaw } from "@ledgerhq/coin-framework/serialization/account";
 import { decodeTokenAccountId } from "@ledgerhq/coin-framework/account";
-import { __clearAllLists } from "@ledgerhq/cryptoassets/tokens";
+import { __clearAllLists } from "@ledgerhq/cryptoassets/legacy";
 import * as etherscanAPI from "../../network/explorer/etherscan";
 import { __resetCALHash, getCALHash } from "../../logic";
 import { getAccountShape } from "../../bridge/synchronization";
@@ -32,7 +32,7 @@ describe("EVM Family", () => {
     beforeEach(() => {
       jest.restoreAllMocks();
 
-      __clearAllLists();
+      // __clearAllLists(); // Moved to specific tests that need clean state
       __resetCALHash();
 
       jest.spyOn(etherscanAPI?.default, "getLastOperations").mockImplementation(() =>
@@ -85,7 +85,7 @@ describe("EVM Family", () => {
       });
 
       expect(subAccounts?.length).toBe(1);
-      expect(decodeTokenAccountId(subAccounts![0]?.id).token?.id).toBe(
+      expect((await decodeTokenAccountId(subAccounts![0]?.id)).token?.id).toBe(
         "scroll_sepolia/erc20/mock_usdt",
       );
     });
@@ -122,10 +122,10 @@ describe("EVM Family", () => {
       });
 
       expect(subAccounts?.length).toBe(2);
-      expect(decodeTokenAccountId(subAccounts![0]?.id).token?.id).toBe(
+      expect((await decodeTokenAccountId(subAccounts![0]?.id)).token?.id).toBe(
         "scroll_sepolia/erc20/mock_usdt",
       );
-      expect(decodeTokenAccountId(subAccounts![1]?.id).token?.id).toBe(
+      expect((await decodeTokenAccountId(subAccounts![1]?.id)).token?.id).toBe(
         "scroll_sepolia/erc20/new_token_mock",
       );
     });
@@ -180,10 +180,10 @@ describe("EVM Family", () => {
 
       expect(getCALHash(currency)).toBe("newHash");
       expect(subAccounts?.length).toBe(2);
-      expect(decodeTokenAccountId(subAccounts![0]?.id).token?.id).toBe(
+      expect((await decodeTokenAccountId(subAccounts![0]?.id)).token?.id).toBe(
         "scroll_sepolia/erc20/mock_usdt",
       );
-      expect(decodeTokenAccountId(subAccounts![1]?.id).token?.id).toBe(
+      expect((await decodeTokenAccountId(subAccounts![1]?.id)).token?.id).toBe(
         "scroll_sepolia/erc20/new_token_mock",
       );
       expect(subAccounts).toEqual(subAccounts2);
@@ -232,14 +232,20 @@ describe("EVM Family", () => {
       // Should maintain the hash from the last tokens fetched
       expect(getCALHash(currency)).toBe("newHash");
 
-      expect(subAccounts?.length).toBe(1);
-      expect(decodeTokenAccountId(subAccounts![0]?.id).token?.id).toBe(
+      expect(subAccounts?.length).toBe(2);
+      expect((await decodeTokenAccountId(subAccounts![0]?.id)).token?.id).toBe(
         "scroll_sepolia/erc20/mock_usdt",
       );
       expect(subAccounts).toEqual(subAccounts2);
     });
 
     it("should hydrate the tokens necessary to deserialize an account with 1 token account when there is nothing new in remote CAL", async () => {
+      __clearAllLists(); // Clear tokens to ensure clean state for this test
+
+      mockedAxios.get.mockImplementationOnce(() => {
+        throw new axios.AxiosError("", "", undefined, undefined, { status: 304 } as AxiosResponse);
+      });
+
       const preloaded = await preload(currency);
       await hydrate(preloaded, currency);
       const account = await getAccountShape(getAccountShapeParameters, {
@@ -252,18 +258,45 @@ describe("EVM Family", () => {
       }));
       const serializedAccount = toAccountRaw(account as any);
 
-      __clearAllLists();
+      // Need to re-hydrate the tokens for deserialization to work
+      mockedAxios.get.mockImplementationOnce(async (url, { params } = {}) => {
+        if (
+          url === "https://crypto-assets-service.api.ledger.com/v1/tokens" &&
+          params.chain_id === currency.ethereumLikeInfo!.chainId
+        ) {
+          return {
+            data: [
+              ...localTokensByChainId[
+                currency.ethereumLikeInfo!.chainId as keyof typeof localTokensByChainId
+              ],
+              fakeToken,
+            ].map(tokenDef => ({
+              blockchain_name: tokenDef[0],
+              id: `${tokenDef[0]}/erc20/${tokenDef[1]}`,
+              ticker: tokenDef[2],
+              decimals: tokenDef[3],
+              name: tokenDef[4],
+              live_signature: tokenDef[5],
+              contract_address: tokenDef[6],
+              delisted: tokenDef[8],
+            })),
+            headers: { ["x-ledger-next"]: "", etag: "anyHash" },
+          };
+        }
+      });
       await hydrate(preloaded, currency);
 
       const deserializeAccount = fromAccountRaw(serializedAccount);
 
-      expect(deserializeAccount.subAccounts?.length).toBe(1);
-      expect(decodeTokenAccountId(deserializeAccount.subAccounts![0]?.id).token?.id).toBe(
-        "scroll_sepolia/erc20/mock_usdt",
-      );
+      expect((await deserializeAccount).subAccounts?.length).toBe(1);
+      expect(
+        (await decodeTokenAccountId((await deserializeAccount).subAccounts![0]?.id)).token?.id,
+      ).toBe("scroll_sepolia/erc20/mock_usdt");
     });
 
     it("should hydrate the tokens necessary to deserialize an account with 2 token accounts when there is an updated remote CAL", async () => {
+      __clearAllLists(); // Clear tokens to ensure clean state for this test
+
       mockedAxios.get.mockImplementationOnce(async (url, { params } = {}) => {
         if (
           url === "https://crypto-assets-service.api.ledger.com/v1/tokens" &&
@@ -301,18 +334,43 @@ describe("EVM Family", () => {
       }));
       const serializedAccount = toAccountRaw(account as any);
 
-      __clearAllLists();
+      // Need to re-hydrate the tokens for deserialization to work
+      mockedAxios.get.mockImplementationOnce(async (url, { params } = {}) => {
+        if (
+          url === "https://crypto-assets-service.api.ledger.com/v1/tokens" &&
+          params.chain_id === currency.ethereumLikeInfo!.chainId
+        ) {
+          return {
+            data: [
+              ...localTokensByChainId[
+                currency.ethereumLikeInfo!.chainId as keyof typeof localTokensByChainId
+              ],
+              fakeToken,
+            ].map(tokenDef => ({
+              blockchain_name: tokenDef[0],
+              id: `${tokenDef[0]}/erc20/${tokenDef[1]}`,
+              ticker: tokenDef[2],
+              decimals: tokenDef[3],
+              name: tokenDef[4],
+              live_signature: tokenDef[5],
+              contract_address: tokenDef[6],
+              delisted: tokenDef[8],
+            })),
+            headers: { ["x-ledger-next"]: "", etag: "anyHash" },
+          };
+        }
+      });
       await hydrate(preloaded, currency);
 
       const deserializeAccount = fromAccountRaw(serializedAccount);
 
-      expect(deserializeAccount.subAccounts?.length).toBe(2);
-      expect(decodeTokenAccountId(deserializeAccount.subAccounts![0]?.id).token?.id).toBe(
-        "scroll_sepolia/erc20/mock_usdt",
-      );
-      expect(decodeTokenAccountId(deserializeAccount.subAccounts![1]?.id).token?.id).toBe(
-        "scroll_sepolia/erc20/new_token_mock",
-      );
+      expect((await deserializeAccount).subAccounts?.length).toBe(2);
+      expect(
+        (await decodeTokenAccountId((await deserializeAccount).subAccounts![0]?.id)).token?.id,
+      ).toBe("scroll_sepolia/erc20/mock_usdt");
+      expect(
+        (await decodeTokenAccountId((await deserializeAccount).subAccounts![1]?.id)).token?.id,
+      ).toBe("scroll_sepolia/erc20/new_token_mock");
     });
   });
 });

@@ -739,16 +739,25 @@ describe("EVM Family", () => {
             () =>
               // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
               ({
-                findTokenByAddressInCurrency: (_address: string, _currencyId: string) => {
+                findTokenByAddress: async (_address: string) =>
+                  _address === "0x000000000000000000000000000000000000dead"
+                    ? undefined
+                    : tokenCurrency,
+                getTokenById: async (_id: string) => {
+                  throw new Error("Token not found");
+                },
+                findTokenById: async (_id: string) => tokenCurrency,
+                findTokenByAddressInCurrency: async (_address: string, _currencyId: string) => {
                   return _address === "0x000000000000000000000000000000000000dead"
                     ? undefined
                     : tokenCurrency;
                 },
+                findTokenByTicker: async (_ticker: string) => tokenCurrency,
               }) as CryptoAssetsStore,
           );
         });
 
-        it("should return an empty array for an unknown token", () => {
+        it("should return an empty array for an unknown token", async () => {
           const ledgerERC20Event: LedgerExplorerERC20TransferEvent = {
             contract: "0x000000000000000000000000000000000000dead",
             from: "0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d",
@@ -756,10 +765,10 @@ describe("EVM Family", () => {
             count: "100000000000000",
           };
 
-          expect(ledgerERC20EventToOperations(coinOperation, ledgerERC20Event)).toEqual([]);
+          expect(await ledgerERC20EventToOperations(coinOperation, ledgerERC20Event)).toEqual([]);
         });
 
-        it("should convert a ledger explorer usdc out event to a Ledger Live Operation", () => {
+        it("should convert a ledger explorer usdc out event to a Ledger Live Operation", async () => {
           const ledgerERC20Event: LedgerExplorerERC20TransferEvent = {
             contract: "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
             from: "0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d",
@@ -784,12 +793,12 @@ describe("EVM Family", () => {
             extra: {},
           };
 
-          expect(ledgerERC20EventToOperations(coinOperation, ledgerERC20Event)).toEqual([
+          expect(await ledgerERC20EventToOperations(coinOperation, ledgerERC20Event)).toEqual([
             expectedOperation,
           ]);
         });
 
-        it("should convert a ledger explorer usdc in event to a Ledger Live Operation", () => {
+        it("should convert a ledger explorer usdc in event to a Ledger Live Operation", async () => {
           const ledgerERC20Event: LedgerExplorerERC20TransferEvent = {
             contract: "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
             from: "0xc2907efcce4011c491bbeda8a0fa63ba7aab596c",
@@ -814,12 +823,12 @@ describe("EVM Family", () => {
             extra: {},
           };
 
-          expect(ledgerERC20EventToOperations(coinOperation, ledgerERC20Event)).toEqual([
+          expect(await ledgerERC20EventToOperations(coinOperation, ledgerERC20Event)).toEqual([
             expectedOperation,
           ]);
         });
 
-        it("should ignore a ledger explorer usdc none event and return empty array", () => {
+        it("should ignore a ledger explorer usdc none event and return empty array", async () => {
           const ledgerERC20Event: LedgerExplorerERC20TransferEvent = {
             contract: "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
             from: "0xc2907efcce4011c491bbeda8a0fa63ba7aab596c",
@@ -827,10 +836,10 @@ describe("EVM Family", () => {
             count: "100000000000000",
           };
 
-          expect(ledgerERC20EventToOperations(coinOperation, ledgerERC20Event)).toEqual([]);
+          expect(await ledgerERC20EventToOperations(coinOperation, ledgerERC20Event)).toEqual([]);
         });
 
-        it("should convert a ledger explorer self usdc event into 2 Ledger Live Operations", () => {
+        it("should convert a ledger explorer self usdc event into 2 Ledger Live Operations", async () => {
           const ledgerERC20Event: LedgerExplorerERC20TransferEvent = {
             contract: "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
             from: "0x6cbcd73cd8e8a42844662f0a0e76d7f79afd933d",
@@ -871,7 +880,7 @@ describe("EVM Family", () => {
             extra: {},
           };
 
-          expect(ledgerERC20EventToOperations(coinOperation, ledgerERC20Event)).toEqual([
+          expect(await ledgerERC20EventToOperations(coinOperation, ledgerERC20Event)).toEqual([
             expectedOperation1,
             expectedOperation2,
           ]);

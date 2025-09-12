@@ -119,14 +119,33 @@ export function useModularDrawerFlowState({
   );
 
   const handleMultipleNetworks = useCallback(
-    (currency: CryptoOrTokenCurrency, provider: CurrenciesByProviderId, networks: string[]) => {
+    async (
+      currency: CryptoOrTokenCurrency,
+      provider: CurrenciesByProviderId,
+      networks: string[],
+    ) => {
       const effectiveCurrency = getEffectiveCurrency(currency, provider, currencyIds);
-      const filteredCryptoCurrencies = networks
-        .filter((net): net is string => Boolean(net))
-        .map(net => findCryptoCurrencyById(net) || findTokenById(net))
-        .filter((c): c is CryptoOrTokenCurrency => Boolean(c));
+      const filteredCryptoCurrencies = await Promise.all(
+        networks
+          .filter((net): net is string => Boolean(net))
+          .map(async net => {
+            const cryptoCurrency = findCryptoCurrencyById(net);
+            if (cryptoCurrency) return cryptoCurrency;
 
-      goToNetworkSelection(effectiveCurrency, filteredCryptoCurrencies);
+            try {
+              const tokenCurrency = await findTokenById(net);
+              return tokenCurrency;
+            } catch (error) {
+              console.warn("Failed to find token:", net, error);
+              return null;
+            }
+          }),
+      );
+
+      const validCurrencies = filteredCryptoCurrencies.filter((c): c is CryptoOrTokenCurrency =>
+        Boolean(c),
+      );
+      goToNetworkSelection(effectiveCurrency, validCurrencies);
     },
     [currencyIds, goToNetworkSelection],
   );
@@ -174,11 +193,19 @@ export function useModularDrawerFlowState({
   useEffect(() => {
     if (hasOneCurrency && searchedValue === undefined && !selectedAsset) {
       const currencyIdToFind = currencyIds[0];
-      const currency = getTokenOrCryptoCurrencyById(currencyIdToFind);
 
-      if (currency) {
-        handleAssetSelected(currency);
+      async function loadAndSelectCurrency() {
+        try {
+          const currency = await getTokenOrCryptoCurrencyById(currencyIdToFind);
+          if (currency) {
+            handleAssetSelected(currency);
+          }
+        } catch (error) {
+          console.error("Failed to load currency:", currencyIdToFind, error);
+        }
       }
+
+      loadAndSelectCurrency();
     }
   }, [
     sortedCryptoCurrencies,

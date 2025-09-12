@@ -42,7 +42,11 @@ test("mock load with nothing to track", async () => {
 test("mock fetchIdsSortedByMarketcap", async () => {
   // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
   jest.spyOn(cryptoAssets, "getCryptoAssetsStore").mockReturnValue({
-    findTokenByTicker: (_: string) => undefined,
+    findTokenByTicker: (_: string) => Promise.resolve(undefined),
+    findTokenByAddress: (_: string) => Promise.resolve(undefined),
+    getTokenById: (_: string) => Promise.reject(new Error("Token not found")),
+    findTokenById: (_: string) => Promise.resolve(undefined),
+    findTokenByAddressInCurrency: (_: string, __: string) => Promise.resolve(undefined),
   } as CryptoAssetsStore);
 
   expect(await CountervaluesAPI.fetchIdsSortedByMarketcap()).toBeDefined();
@@ -146,7 +150,7 @@ test("DAI EUR latest price", async () => {
   const state = await loadCountervalues(initialState, {
     trackingPairs: [
       {
-        from: getTokenById("ethereum/erc20/dai_stablecoin_v2_0"),
+        from: await getTokenById("ethereum/erc20/dai_stablecoin_v2_0"),
         to: getFiatCurrencyByTicker("EUR"),
         startDate: new Date(),
       },
@@ -159,7 +163,7 @@ test("DAI EUR latest price", async () => {
   expect(
     calculate(state, {
       value: 100000000,
-      from: getTokenById("ethereum/erc20/dai_stablecoin_v2_0"),
+      from: await getTokenById("ethereum/erc20/dai_stablecoin_v2_0"),
       to: getFiatCurrencyByTicker("EUR"),
     }),
   ).toBeUndefined();
@@ -168,7 +172,7 @@ test("calculate(now()) is calculate(null)", async () => {
   const state = await loadCountervalues(initialState, {
     trackingPairs: [
       {
-        from: getTokenById("ethereum/erc20/dai_stablecoin_v2_0"),
+        from: await getTokenById("ethereum/erc20/dai_stablecoin_v2_0"),
         to: getFiatCurrencyByTicker("EUR"),
         startDate: new Date(),
       },
@@ -181,13 +185,13 @@ test("calculate(now()) is calculate(null)", async () => {
   expect(
     calculate(state, {
       value: 100000000,
-      from: getTokenById("ethereum/erc20/dai_stablecoin_v2_0"),
+      from: await getTokenById("ethereum/erc20/dai_stablecoin_v2_0"),
       to: getFiatCurrencyByTicker("EUR"),
     }),
   ).toEqual(
     calculate(state, {
       value: 100000000,
-      from: getTokenById("ethereum/erc20/dai_stablecoin_v2_0"),
+      from: await getTokenById("ethereum/erc20/dai_stablecoin_v2_0"),
       to: getFiatCurrencyByTicker("EUR"),
       date: new Date(),
     }),

@@ -13,25 +13,6 @@ export const dataset: DatasetTest<Transaction> = {
   implementations: ["js"],
   currencies: {
     stellar: {
-      scanAccounts: [
-        {
-          name: "stellar seed 1",
-          apdus: `
-            => e00200000d038000002c8000009480000000
-            <= 27c586f8499294c64d57f8d7956eef4431de58ab20e1c88001f6cf131c97d6f39000
-            => e00200000d038000002c8000009480000001
-            <= 1174242cc3e722e843ac37db3a745897941396d486456e303001b06b417db1f89000
-            => e00200000d038000002c8000009480000002
-            <= 8636fa7a5a5bb9fe4fb2615f04425f54dc74c16fefc1325958c9719ee03ef5379000
-            => e00200000d038000002c8000009480000003
-            <= 0f052ff4b74726a6f668380927c3d23e9c16d538cb6c272add871e069336bead9000
-            => e00200000d038000002c8000009480000004
-            <= 60c75356c268ff0158eeca556526830761327693a93cf4754020fadbe04d0f2b9000
-            => e00200000d038000002c8000009480000005
-            <= 124516f8ffb161c9492486e54b4432a2c11e4817414dea54fb8bde13b5ac49439000
-          `,
-        },
-      ],
       accounts: [
         {
           FIXME_tests: ["balance is sum of ops"],

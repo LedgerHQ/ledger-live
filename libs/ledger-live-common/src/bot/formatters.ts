@@ -4,7 +4,7 @@ import { formatOperation, formatAccount } from "../account";
 import { toSignedOperationRaw, formatTransaction, formatTransactionStatus } from "../transaction";
 import { formatCurrencyUnit } from "../currencies";
 import type { MutationReport, AppCandidate } from "./types";
-import type { Transaction } from "../generated/types";
+import type { TransactionCommon } from "@ledgerhq/types-live";
 
 const formatTimeMinSec = (t: number) => {
   const totalsecs = Math.round(t / 1000);
@@ -31,7 +31,7 @@ export function formatAppCandidate(appCandidate: AppCandidate): string {
   return `${appCandidate.appName} ${appCandidate.appVersion} on ${appCandidate.model} ${appCandidate.firmware}`;
 }
 
-export function formatReportForConsole<T extends Transaction>({
+export function formatReportForConsole<T extends TransactionCommon>({
   resyncAccountsDuration,
   appCandidate,
   account,
@@ -100,12 +100,12 @@ export function formatReportForConsole<T extends Transaction>({
   }
 
   if (transaction && account) {
-    str += `✔️ transaction ${formatTransaction(transaction, account)}\n`;
+    str += `✔️ transaction ${formatTransaction(transaction as any, account)}\n`;
   }
 
   if (status && transaction && account) {
     str += `STATUS (${formatDt(mutationTime, statusTime)})${formatTransactionStatus(
-      transaction,
+      transaction as any,
       status,
       account,
     )}\n`;
@@ -113,10 +113,10 @@ export function formatReportForConsole<T extends Transaction>({
 
   if (recoveredFromTransactionStatus && account) {
     str += `\n⚠️ recovered from transaction ${formatTransaction(
-      recoveredFromTransactionStatus.transaction,
+      recoveredFromTransactionStatus.transaction as any,
       account,
     )}\nof status ${formatTransactionStatus(
-      recoveredFromTransactionStatus.transaction,
+      recoveredFromTransactionStatus.transaction as any,
       recoveredFromTransactionStatus.status,
       account,
     )}\n\n`.replace(/\n/g, "\n  ");

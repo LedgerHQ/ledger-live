@@ -8,6 +8,7 @@ import {
   TokenCurrency,
   Unit,
 } from "@ledgerhq/types-cryptoassets";
+import { Operation } from "@ledgerhq/types-live";
 import type { CryptoAssetsStore } from "@ledgerhq/types-live";
 import * as RPC_API from "../../network/node/rpc.common";
 import { getCoinConfig } from "../../config";
@@ -529,8 +530,8 @@ describe("EVM Family", () => {
         const swapHistory = createSwapHistoryMap(account);
 
         expect(swapHistory.size).toBe(2);
-        expect(swapHistory.get(tokenAccount1.token)).toEqual(tokenAccount1.swapHistory);
-        expect(swapHistory.get(tokenAccount2.token)).toEqual(tokenAccount2.swapHistory);
+        expect(swapHistory.get(tokenAccount1.token.id)).toEqual(tokenAccount1.swapHistory);
+        expect(swapHistory.get(tokenAccount2.token.id)).toEqual(tokenAccount2.swapHistory);
       });
       it("should include correct swapHistory for a token account", () => {
         const tokenAccount = {
@@ -551,7 +552,7 @@ describe("EVM Family", () => {
         const account = makeAccount("0xCrema", getCryptoCurrencyById("ethereum"), [tokenAccount]);
 
         const swapHistoryMap = createSwapHistoryMap(account);
-        expect(swapHistoryMap.get(tokenAccount.token)).toEqual(tokenAccount.swapHistory);
+        expect(swapHistoryMap.get(tokenAccount.token.id)).toEqual(tokenAccount.swapHistory);
       });
     });
     describe("getSyncHash", () => {
@@ -646,19 +647,23 @@ describe("EVM Family", () => {
     });
 
     describe("attachOperations", () => {
-      it("should attach token & nft operations to coin operations and create 'NONE' coin operations in case of orphans child operations", () => {
+      it("should attach token & nft operations to coin operations and create 'NONE' coin operations in case of orphans child operations", async () => {
         setCryptoAssetsStoreGetter(
           () =>
             // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
             ({
-              findTokenById: (id: string) => {
+              findTokenByAddress: async (_address: string) => undefined,
+              getTokenById: async (_id: string) => {
+                throw new Error("Token not found");
+              },
+              findTokenById: async (id: string) => {
                 if (id === "ethereum/erc20/usd__coin") {
                   return USD_COIN_TOKEN;
                 }
-
                 return undefined;
               },
-              findTokenByAddressInCurrency: (_: string, __: string) => undefined,
+              findTokenByAddressInCurrency: async (_: string, __: string) => undefined,
+              findTokenByTicker: async (_ticker: string) => undefined,
             }) as CryptoAssetsStore,
         );
         const coinOperation = makeOperation({
@@ -719,7 +724,12 @@ describe("EVM Family", () => {
         ];
 
         expect(
-          attachOperations([coinOperation], tokenOperations, nftOperations, internalOperations),
+          await attachOperations(
+            [coinOperation],
+            tokenOperations,
+            nftOperations,
+            internalOperations,
+          ),
         ).toEqual([
           {
             ...coinOperation,
@@ -758,7 +768,7 @@ describe("EVM Family", () => {
         ]);
       });
 
-      it("should not mutate the original operations", () => {
+      it("should not mutate the original operations", async () => {
         const coinOperations = deepFreeze([
           makeOperation({
             hash: "0xCoinOp3Hash",
@@ -785,13 +795,19 @@ describe("EVM Family", () => {
             hash: "0xCoinOpInternal",
           }),
         ]);
-        expect(() =>
-          // @ts-expect-error purposely ignore readonly ts issue for this
-          attachOperations(coinOperations, tokenOperations, nftOperations, internalOperations),
-        ).not.toThrow(); // mutation prevented by deepFreeze method
+
+        // Should not throw even with frozen parameters
+        await expect(
+          attachOperations(
+            coinOperations as Operation[],
+            tokenOperations as Operation[],
+            nftOperations as Operation[],
+            internalOperations as Operation[],
+          ),
+        ).resolves.toBeDefined(); // mutation prevented by deepFreeze method
       });
 
-      it("should filter blacklisted tokens", () => {
+      it("should filter blacklisted tokens", async () => {
         const coinOperation = makeOperation({
           hash: "0xCoinOp3Hash",
         });
@@ -850,9 +866,15 @@ describe("EVM Family", () => {
         ];
 
         expect(
-          attachOperations([coinOperation], tokenOperations, nftOperations, internalOperations, {
-            blacklistedTokenIds: [USD_COIN_TOKEN.id],
-          }),
+          await attachOperations(
+            [coinOperation],
+            tokenOperations,
+            nftOperations,
+            internalOperations,
+            {
+              blacklistedTokenIds: [USD_COIN_TOKEN.id],
+            },
+          ),
         ).toEqual([
           {
             ...coinOperation,

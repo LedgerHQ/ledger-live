@@ -1,13 +1,6 @@
 import { getCryptoCurrencyById } from "./currencies";
-import {
-  addTokens,
-  convertERC20,
-  listTokens,
-  __clearAllLists,
-  findTokenById,
-  listTokensForCryptoCurrency,
-  createTokenHash,
-} from "./tokens";
+import { listTokens, findTokenById, listTokensForCryptoCurrency } from "./tokens";
+import { addTokens, __clearAllLists, createTokenHash, convertERC20 } from "./legacy";
 import { ERC20Token } from "./types";
 
 const initMainToken: ERC20Token[] = [

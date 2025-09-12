@@ -20,8 +20,8 @@ export {
   hasTokenId,
   getAbandonSeedAddress,
   getTokenById,
-  addTokens,
 } from "@ledgerhq/cryptoassets";
+export { addTokens } from "@ledgerhq/cryptoassets/tokens";
 export {
   encodeURIScheme,
   decodeURIScheme,

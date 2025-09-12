@@ -54,6 +54,9 @@ describe("scanAccounts", () => {
     mockGetOperations.mockResolvedValueOnce([]);
     mockGetTokenOperations.mockResolvedValueOnce([]);
 
+    // Get the token asynchronously
+    const vthoToken = await getTokenById("vechain/vip180/vtho");
+
     // When
     const scanAccounts = makeScanAccounts({
       getAccountShape,
@@ -102,13 +105,13 @@ describe("scanAccounts", () => {
         swapHistory: [],
         type: "Account",
         used: false,
-        feesCurrency: getTokenById("vechain/vip180/vtho"),
+        feesCurrency: vthoToken,
         subAccounts: [
           {
             type: "TokenAccount",
             id: "js:2:vechain:0x5066118c66793ED86bd379b50b20E32B0FC1aBf5:vechain+vechain%2Fvip180%2Fvtho",
             parentId: "js:2:vechain:0x5066118c66793ED86bd379b50b20E32B0FC1aBf5:vechain",
-            token: getTokenById("vechain/vip180/vtho"),
+            token: vthoToken,
             balance: new BigNumber("0"),
             spendableBalance: new BigNumber("0"),
             creationDate: expect.any(Date),

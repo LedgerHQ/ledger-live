@@ -16,12 +16,25 @@ import {
 import {
   __NEXT_REWARD_DATE__,
   __LAST_VOTING_DATE__,
-  mockAccount,
-  mockAccountNoReward,
-  mockAccountNoVote,
-  mockAccountV2,
+  createMockAccount,
+  createMockAccountNoReward,
+  createMockAccountNoVote,
+  createMockAccountV2,
 } from "./data.mock";
 import superRepresentatives from "@ledgerhq/coin-tron/network/superRepresentativesData.mock";
+
+// Mock accounts will be initialized async
+let mockAccount: any;
+let mockAccountNoReward: any;
+let mockAccountNoVote: any;
+let mockAccountV2: any;
+
+beforeAll(async () => {
+  mockAccount = await createMockAccount();
+  mockAccountNoReward = await createMockAccountNoReward();
+  mockAccountNoVote = await createMockAccountNoVote();
+  mockAccountV2 = await createMockAccountV2();
+});
 
 jest.mock("@ledgerhq/coin-tron/network", () => {
   return {

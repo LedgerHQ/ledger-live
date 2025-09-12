@@ -2,7 +2,6 @@ import { AssertionError, fail } from "assert";
 import BigNumber from "bignumber.js";
 import { getEnv } from "@ledgerhq/live-env";
 import { TokenAccount } from "@ledgerhq/types-live";
-import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { decodeAccountId } from "@ledgerhq/coin-framework/account/accountId";
 import { AccountShapeInfo } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { makeTokenAccount } from "../fixtures/common.fixtures";
@@ -707,7 +706,7 @@ describe("EVM Family", () => {
       });
 
       it("should return filtered subAccounts from blacklistedTokenIds", async () => {
-        const swapHistoryMap = new Map<TokenCurrency, TokenAccount["swapHistory"]>();
+        const swapHistoryMap = new Map<string, TokenAccount["swapHistory"]>();
         const tokenAccounts = await synchronization.getSubAccounts(
           {
             ...getAccountShapeParameters,

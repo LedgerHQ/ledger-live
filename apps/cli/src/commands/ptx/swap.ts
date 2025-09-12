@@ -66,7 +66,7 @@ const exec = async (opts: SwapJobOpts) => {
 
   //Are we asking for a token account?
   if (tokenId) {
-    const token = findTokenById(tokenId);
+    const token = await findTokenById(tokenId);
     invariant(token, `✖ No token currency found with id ${tokenId}`);
     if (!token) throw new Error(`✖ No token currency found with id ${tokenId}`);
     const subAccounts = accountWithMandatoryTokens(fromAccount, [token]).subAccounts || [];
@@ -115,7 +115,7 @@ const exec = async (opts: SwapJobOpts) => {
 
   //Are we asking for a token account?
   if (tokenId2) {
-    const token = findTokenById(tokenId2);
+    const token = await findTokenById(tokenId2);
     if (!token) {
       throw new Error(`✖ No token currency found with id ${tokenId2}`);
     }

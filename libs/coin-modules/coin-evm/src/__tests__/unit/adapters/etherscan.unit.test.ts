@@ -38,7 +38,7 @@ describe("EVM Family", () => {
             () =>
               // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
               ({
-                findTokenByAddressInCurrency: (address: string, _currencyId: string) => {
+                findTokenByAddress: async (address: string) => {
                   if (address === "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48") {
                     return IN_USD_COIN_TOKEN;
                   } else if (address === "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb41") {
@@ -46,6 +46,19 @@ describe("EVM Family", () => {
                   }
                   return undefined;
                 },
+                getTokenById: async (_id: string) => {
+                  throw new Error("Token not found");
+                },
+                findTokenById: async (_id: string) => undefined,
+                findTokenByAddressInCurrency: async (address: string, _currencyId: string) => {
+                  if (address === "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48") {
+                    return IN_USD_COIN_TOKEN;
+                  } else if (address === "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb41") {
+                    return OUT_USD_COIN_TOKEN;
+                  }
+                  return undefined;
+                },
+                findTokenByTicker: async (_ticker: string) => undefined,
               }) as CryptoAssetsStore,
           );
         });
@@ -529,7 +542,7 @@ describe("EVM Family", () => {
       });
 
       describe("etherscanERC20EventToOperations", () => {
-        it("should return an empty array for an unknown token", () => {
+        it("should return an empty array for an unknown token", async () => {
           setCryptoAssetsStoreGetter(
             () =>
               // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
@@ -570,10 +583,10 @@ describe("EVM Family", () => {
             derivationMode: "",
           });
 
-          expect(etherscanERC20EventToOperations(accountId, etherscanOp)).toEqual([]);
+          expect(await etherscanERC20EventToOperations(accountId, etherscanOp)).toEqual([]);
         });
 
-        it("should convert an etherscan-like usdc out event (from their API) to a Ledger Live Operation", () => {
+        it("should convert an etherscan-like usdc out event (from their API) to a Ledger Live Operation", async () => {
           const etherscanOp: EtherscanERC20Event = {
             blockNumber: "16240731",
             timeStamp: "1671717983",
@@ -632,12 +645,12 @@ describe("EVM Family", () => {
               }) as unknown as CryptoAssetsStore,
           );
 
-          expect(etherscanERC20EventToOperations(accountId, etherscanOp)).toEqual([
+          expect(await etherscanERC20EventToOperations(accountId, etherscanOp)).toEqual([
             expectedOperation,
           ]);
         });
 
-        it("should convert an etherscan-like usdc in event (from their API) to a Ledger Live Operation", () => {
+        it("should convert an etherscan-like usdc in event (from their API) to a Ledger Live Operation", async () => {
           const etherscanOp: EtherscanERC20Event = {
             blockNumber: "16240731",
             timeStamp: "1671717983",
@@ -686,12 +699,12 @@ describe("EVM Family", () => {
             extra: {},
           };
 
-          expect(etherscanERC20EventToOperations(accountId, etherscanOp)).toEqual([
+          expect(await etherscanERC20EventToOperations(accountId, etherscanOp)).toEqual([
             expectedOperation,
           ]);
         });
 
-        it("should ignore an etherscan-like usdc none event (from their API) and return empty array", () => {
+        it("should ignore an etherscan-like usdc none event (from their API) and return empty array", async () => {
           const etherscanOp: EtherscanERC20Event = {
             blockNumber: "16240731",
             timeStamp: "1671717983",
@@ -722,10 +735,10 @@ describe("EVM Family", () => {
             derivationMode: "",
           });
 
-          expect(etherscanERC20EventToOperations(accountId, etherscanOp)).toEqual([]);
+          expect(await etherscanERC20EventToOperations(accountId, etherscanOp)).toEqual([]);
         });
 
-        it("should convert an etherscan-like self usdc event (from their API) into 2 Ledger Live Operations", () => {
+        it("should convert an etherscan-like self usdc event (from their API) into 2 Ledger Live Operations", async () => {
           const etherscanOp: EtherscanERC20Event = {
             blockNumber: "16240731",
             timeStamp: "1671717983",
@@ -792,7 +805,7 @@ describe("EVM Family", () => {
             },
           ];
 
-          expect(etherscanERC20EventToOperations(accountId, etherscanOp)).toEqual(
+          expect(await etherscanERC20EventToOperations(accountId, etherscanOp)).toEqual(
             expectedOperations,
           );
         });

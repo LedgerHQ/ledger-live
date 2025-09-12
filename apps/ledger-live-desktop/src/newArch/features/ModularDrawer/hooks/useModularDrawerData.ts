@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { CurrenciesByProviderId, LoadingStatus } from "@ledgerhq/live-common/deposit/type";
 import { getLoadingStatus } from "@ledgerhq/live-common/modularDrawer/utils/getLoadingStatus";
 import { findCryptoCurrencyById, findTokenById } from "@ledgerhq/cryptoassets";
@@ -20,7 +20,7 @@ export function useModularDrawerData({
 }: UseModularDrawerDataProps) {
   const modularDrawerFeature = useFeature("lldModularDrawer");
 
-  const isStaging = useMemo(
+  const _isStaging = useMemo(
     () => modularDrawerFeature?.params?.backendEnvironment === "STAGING",
     [modularDrawerFeature?.params?.backendEnvironment],
   );
@@ -33,7 +33,7 @@ export function useModularDrawerData({
     version: __APP_VERSION__,
     useCase,
     areCurrenciesFiltered,
-    isStaging,
+    isStaging: _isStaging,
   });
 
   const assetsSorted = useMemo(() => {
@@ -60,16 +60,51 @@ export function useModularDrawerData({
 
   const loadingStatus: LoadingStatus = getLoadingStatus({ isLoading, isSuccess, error });
 
-  const currenciesByProvider: CurrenciesByProviderId[] = useMemo(() => {
-    if (!assetsSorted || !data) return [];
+  const [currenciesByProvider, setCurrenciesByProvider] = useState<CurrenciesByProviderId[]>([]);
 
-    return assetsSorted.map(assetData => ({
-      currenciesByNetwork: assetData.networks
-        .map(network => findCryptoCurrencyById(network.id) ?? findTokenById(network.id))
-        .filter((currency): currency is NonNullable<typeof currency> => currency !== undefined),
-      providerId: assetData.asset.id,
-      metaCurrencyId: assetData.asset.metaCurrencyId,
-    }));
+  useEffect(() => {
+    if (!assetsSorted || !data) {
+      setCurrenciesByProvider([]);
+      return;
+    }
+
+    async function loadCurrenciesByProvider() {
+      try {
+        const results = await Promise.all(
+          assetsSorted!.map(async assetData => {
+            const currencies = await Promise.all(
+              assetData.networks.map(async network => {
+                const cryptoCurrency = findCryptoCurrencyById(network.id);
+                if (cryptoCurrency) return cryptoCurrency;
+
+                try {
+                  const tokenCurrency = await findTokenById(network.id);
+                  return tokenCurrency;
+                } catch (error) {
+                  console.warn("Failed to find token:", network.id, error);
+                  return null;
+                }
+              }),
+            );
+
+            return {
+              currenciesByNetwork: currencies.filter(
+                (currency): currency is NonNullable<typeof currency> =>
+                  currency !== null && currency !== undefined,
+              ),
+              providerId: assetData.asset.id,
+              metaCurrencyId: assetData.asset.metaCurrencyId,
+            };
+          }),
+        );
+        setCurrenciesByProvider(results);
+      } catch (error) {
+        console.error("Failed to load currencies by provider:", error);
+        setCurrenciesByProvider([]);
+      }
+    }
+
+    loadCurrenciesByProvider();
   }, [assetsSorted, data]);
 
   const sortedCryptoCurrencies = useMemo(() => {

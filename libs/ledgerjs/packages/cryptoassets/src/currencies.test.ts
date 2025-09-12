@@ -183,21 +183,21 @@ test("tokens are correct", () => {
   }
 });
 
-test("findTokenByAddressInCurrency", () => {
+test("findTokenByAddressInCurrency", async () => {
   expect(
-    findTokenByAddressInCurrency("0x111111111117dC0aa78b770fA6A738034120C302", "bsc"),
+    await findTokenByAddressInCurrency("0x111111111117dC0aa78b770fA6A738034120C302", "bsc"),
   ).toMatchObject({
     id: "bsc/bep20/1inch_token",
   });
   expect(
-    findTokenByAddressInCurrency("0x111111111117dC0aa78b770fA6A738034120C302", "ethereum"),
+    await findTokenByAddressInCurrency("0x111111111117dC0aa78b770fA6A738034120C302", "ethereum"),
   ).toMatchObject({
     id: "ethereum/erc20/1inch_token",
   });
-  expect(findTokenByAddressInCurrency("0x0", "bsc")).toBe(undefined);
-  expect(findTokenByAddressInCurrency("0x111111111117dC0aa78b770fA6A738034120C302", "tron")).toBe(
-    undefined,
-  );
+  expect(await findTokenByAddressInCurrency("0x0", "bsc")).toBe(undefined);
+  expect(
+    await findTokenByAddressInCurrency("0x111111111117dC0aa78b770fA6A738034120C302", "tron"),
+  ).toBe(undefined);
 });
 
 test("fiats list is sorted by ticker", () => {

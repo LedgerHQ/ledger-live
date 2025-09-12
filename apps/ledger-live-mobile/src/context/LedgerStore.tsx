@@ -127,7 +127,7 @@ const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store 
       }
 
       store.dispatch(importSettings(settingsData));
-      store.dispatch(importAccountsRaw(accountsData));
+      store.dispatch(await importAccountsRaw(accountsData));
 
       if (postOnboardingState) {
         store.dispatch(importPostOnboardingState({ newState: postOnboardingState }));

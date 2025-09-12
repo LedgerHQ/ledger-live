@@ -71,9 +71,9 @@ export const searchByNameOrTicker = (list: MappedAsset[], nameOrTicker: string) 
       elem.ticker.toLowerCase().includes(nameOrTicker.toLowerCase()),
   );
 
-export const getTokenOrCryptoCurrencyById = (id: string): CryptoOrTokenCurrency => {
+export const getTokenOrCryptoCurrencyById = async (id: string): Promise<CryptoOrTokenCurrency> => {
   if (hasCryptoCurrencyId(id)) {
     return getCryptoCurrencyById(id);
   }
-  return getTokenById(id);
+  return await getTokenById(id);
 };
