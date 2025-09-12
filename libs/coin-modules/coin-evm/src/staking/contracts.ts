@@ -1,4 +1,4 @@
-import type { StakingContractConfig } from "../types/staking";
+import type { StakingContractConfig } from "../types";
 
 export const STAKING_CONTRACTS: Record<string, StakingContractConfig> = {
   // Sei EVM staking
@@ -27,6 +27,11 @@ export const STAKING_CONTRACTS: Record<string, StakingContractConfig> = {
       undelegate: "revokeDelegatedGovernanceVotes",
       getStakedBalance: "getAccountTotalLockedGold",
       getUnstakedBalance: "getTotalPendingWithdrawals",
+      lock: "lock",
+      unlock: "unlock",
+      withdraw: "withdraw",
+      getPendingWithdrawals: "getPendingWithdrawals",
+      getVoter: "getVoter",
     },
   },
 

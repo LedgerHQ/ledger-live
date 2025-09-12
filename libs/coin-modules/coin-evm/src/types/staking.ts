@@ -6,7 +6,12 @@ export type StakingOperation =
   | "undelegate"
   | "redelegate"
   | "getStakedBalance"
-  | "getUnstakedBalance";
+  | "getUnstakedBalance"
+  | "lock"
+  | "unlock"
+  | "withdraw"
+  | "getPendingWithdrawals"
+  | "getVoter";
 
 export type StakingContractConfig = {
   contractAddress: string;
@@ -21,6 +26,46 @@ export type StakingContractConfig = {
     validatorsEndpoint: string;
   };
 };
+
+export interface StakeConditions {
+  activatable?: boolean;
+  revokable?: boolean;
+  withdrawable?: boolean;
+  status?: string;
+}
+
+export interface StakeData {
+  type: "active" | "pending";
+  hasPendingVote?: boolean;
+  canActivate?: boolean; // 24h cooldown complete
+  pendingWithdrawalsCount?: number;
+}
+
+export interface StakeActionCondition {
+  operation: StakingOperation;
+  enabled: boolean;
+  reason?: string;
+}
+
+export interface RpcProvider {
+  call: (params: { to: string; data: string }) => Promise<string>;
+}
+
+// Celo specific types for voter info
+export interface CeloVote {
+  group: string;
+  pending: string | bigint;
+  active: string | bigint;
+}
+
+export interface CeloVoterInfo {
+  votes: CeloVote[];
+}
+
+export interface CeloPendingWithdrawal {
+  value: string | bigint;
+  timestamp: string | bigint;
+}
 
 export type StakeCreate = {
   currency: CryptoCurrency;
@@ -53,16 +98,11 @@ export type StakingFetcher = (
   currency: CryptoCurrency,
 ) => Promise<Stake[]>;
 
-/**
- * Configuration for a staking strategy
- */
 export type StakingStrategy = {
   fetcher: StakingFetcher;
 };
 
-/**
- * Function signature for amount extractors
- */
+// Function signature for amount extractors
 export type StakingExtractor = (decoded: unknown) => bigint;
 
 export interface EncodeStakingDataParams {

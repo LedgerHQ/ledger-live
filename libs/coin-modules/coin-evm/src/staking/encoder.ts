@@ -1,9 +1,5 @@
 import { ethers } from "ethers";
-import type {
-  EncodeStakingDataParams,
-  StakingContractConfig,
-  StakingOperation,
-} from "../types/staking";
+import type { EncodeStakingDataParams, StakingContractConfig, StakingOperation } from "../types";
 import { getStakingABI } from "./abis";
 
 export const encodeStakingData = (encodeParams: EncodeStakingDataParams): string => {

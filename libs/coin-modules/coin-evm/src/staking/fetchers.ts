@@ -3,10 +3,10 @@ import { Stake } from "@ledgerhq/coin-framework/api/types";
 import { withApi } from "../network/node/rpc.common";
 import type {
   StakeCreate,
-  StakingContractConfig,
   StakingStrategy,
   StakingExtractor,
-} from "../types/staking";
+  StakingContractConfig,
+} from "../types";
 import { extractSeiDelegation, getSeiDelegationAmount, getCeloAmount } from "../utils";
 import { encodeStakingData, decodeStakingResult } from "./encoder";
 import { buildTransactionParams } from "./transactionData";
@@ -58,14 +58,11 @@ const createStakeFromContract = async (stakingContract: StakeCreate): Promise<St
 
   return withApi(currency, async rpcProvider => {
     try {
-      const params = buildTransactionParams(
-        currencyId,
-        "getStakedBalance",
-        address,
-        0n,
-        validatorAddress,
-        address,
-      );
+      const params = buildTransactionParams(currencyId, "getStakedBalance", {
+        recipient: address,
+        sourceValidator: validatorAddress,
+        delegator: address,
+      });
 
       const encodedData = encodeStakingData({
         currencyId,
