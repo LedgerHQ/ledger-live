@@ -35,7 +35,7 @@ export interface BitcoinSigner {
     psbtBuffer: Buffer,
     options?: {
       accountPath?: string;
-      addressFormat?: AddressFormat;
+      addressFormat?: string;
     },
   ): Promise<{ psbt: Buffer; tx: string }>;
 }

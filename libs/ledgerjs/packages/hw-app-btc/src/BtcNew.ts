@@ -299,6 +299,7 @@ export default class BtcNew {
   async signPsbtV2Buffer(
     psbtBuffer: Buffer,
     options?: {
+      finalizePsbt?: boolean;
       accountPath?: string;
       addressFormat?: AddressFormat;
     },
@@ -427,14 +428,15 @@ export default class BtcNew {
     const walletPolicy = new WalletPolicy(accountType.getDescriptorTemplate(), key);
 
     await this.signPsbt(psbt, walletPolicy, () => {});
-    finalize(psbt);
 
-    const serializedTx = extract(psbt);
+    if (options?.finalizePsbt) {
+      finalize(psbt);
+      const serializedTx = extract(psbt);
 
-    return {
-      psbt: psbt.serialize(),
-      tx: serializedTx.toString("hex"),
-    };
+      return { psbt: psbt.serialize(), tx: serializedTx.toString("hex") };
+    }
+
+    return { psbt: psbt.serialize() };
   }
 
   /**
