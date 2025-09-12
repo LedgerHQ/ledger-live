@@ -21,6 +21,9 @@ test.use({
         enableModularization: false,
       },
     },
+    lldWalletSync: {
+      enabled: false,
+    },
   },
 });
 

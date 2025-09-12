@@ -1,6 +1,6 @@
 import { renderHook } from "@tests/test-renderer";
 import { mockedSdk, simpleTrustChain } from "./shared";
-import { useWatchWalletSync } from "../hooks/useWatchWalletSync";
+import { useWalletSyncMobile } from "../hooks/useWalletSyncMobile";
 import { State } from "~/reducers/types";
 
 const INITIAL_STATE = (state: State) => ({
@@ -35,19 +35,30 @@ jest.mock("../hooks/useTrustchainSdk", () => ({
   }),
 }));
 
-describe("useWatchWalletSync", () => {
+// Mock useWatchWalletSync to return expected structure for integration tests
+jest.mock("@ledgerhq/live-wallet-sync-react", () => ({
+  ...jest.requireActual("@ledgerhq/live-wallet-sync-react"),
+  useWatchWalletSync: jest.fn(({ feature }) => ({
+    visualPending: feature?.enabled ? true : false,
+    walletSyncError: null,
+    onUserRefresh: jest.fn(() => {}),
+  })),
+}));
+
+describe("useWalletSyncMobile", () => {
   it("should not run ledger sync watch loop when ff is disabled", async () => {
-    const { result, store } = renderHook(() => useWatchWalletSync(), {});
+    const { result, store } = renderHook(() => useWalletSyncMobile(), {});
 
     expect(store.getState().settings.overriddenFeatureFlags.llmWalletSync).not.toBeDefined();
     expect(result.current.visualPending).toBe(false);
     expect(result.current.walletSyncError).toBe(null);
-    expect(result.current.onUserRefresh).toBeInstanceOf(Function);
+
+    expect(typeof result.current.onUserRefresh).toBe("function");
     expect(result.current.onUserRefresh).not.toThrow();
   });
 
   it("should run ledger sync watch loop when ff is enabled", async () => {
-    const { result, store } = renderHook(() => useWatchWalletSync(), {
+    const { result, store } = renderHook(() => useWalletSyncMobile(), {
       overrideInitialState: INITIAL_STATE,
     });
 

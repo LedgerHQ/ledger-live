@@ -99,6 +99,10 @@ const walletState: WalletState = {
     version: 0,
   },
   nonImportedAccountInfos: [],
+  walletSyncUserState: {
+    visualPending: false,
+    walletSyncError: null,
+  },
 };
 
 for (const raw of raws) {
