@@ -41,6 +41,7 @@ import { getEnv } from "@ledgerhq/live-env";
 import { SUI_SYSTEM_STATE_OBJECT_ID } from "@mysten/sui/utils";
 import { getCurrentSuiPreloadData } from "../bridge/preload";
 import { ONE_SUI } from "../constants";
+import bs58 from 'bs58'
 
 const apiMap: Record<string, SuiClient> = {};
 type AsyncApiFunction<T> = (api: SuiClient) => Promise<T>;
@@ -524,7 +525,6 @@ export const filterOperations = (
   return { operations: uniqBy(result, tx => tx.digest), cursor: nextCursor };
 };
 
-// TODO move to logic and create type Order
 function convertApiOrderToSdkOrder(order: "asc" | "desc"): "ascending" | "descending" {
   return order === "asc" ? "ascending" : "descending";
 }
@@ -535,11 +535,11 @@ type Cursor = {
 };
 
 function serializeCursor(cursor: Cursor): string {
-  return JSON.stringify(cursor);
+  return bs58.encode(Buffer.from(JSON.stringify(cursor)))
 }
 
-function deserializeCursor(s: string | undefined): Cursor {
-  return s ? (JSON.parse(s) as Cursor) : ({} as Cursor);
+function deserializeCursor(b58cursor: string | undefined): Cursor {
+  return b58cursor ? (JSON.parse(Buffer.from(bs58.decode(b58cursor)).toString()) as Cursor) : ({} as Cursor);
 }
 
 function toSdkCursor(cursor: string | undefined): QueryTransactionBlocksParams["cursor"] {
