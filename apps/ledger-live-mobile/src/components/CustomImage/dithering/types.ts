@@ -45,14 +45,3 @@ export type Appearance =
       type: "background-picture";
       backgroundPicSrc: ImageSourcePropType;
     };
-
-export type ProcessorResult = {
-  /**
-   * Image data that can be displayed in LL
-   */
-  previewResult: ProcessorPreviewResult;
-  /**
-   * Image data that can be transfered to the device
-   */
-  rawResult: ProcessorRawResult;
-};

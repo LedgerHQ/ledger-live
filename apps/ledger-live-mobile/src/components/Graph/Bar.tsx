@@ -1,13 +1,7 @@
 import React from "react";
-import { BigNumber } from "bignumber.js";
 import { Line, Circle } from "react-native-svg";
 import { rgba } from "../../colors";
 
-export type Item = {
-  date: Date;
-  value: BigNumber;
-  originalValue: BigNumber;
-};
 type Props = {
   height: number;
   color: string;

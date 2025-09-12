@@ -6,7 +6,6 @@ import type {
   RateMapRaw,
   CounterValuesStatus,
 } from "@ledgerhq/live-countervalues/types";
-import { Announcement } from "@ledgerhq/live-common/notifications/AnnouncementProvider/types";
 import { useDBRaw } from "@ledgerhq/live-common/hooks/useDBRaw";
 import { Dispatch, SetStateAction } from "react";
 import storage from "LLM/storage";
@@ -20,13 +19,6 @@ import type {
 } from "./reducers/types";
 import { TrustchainStore } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { ExportedWalletState } from "@ledgerhq/live-wallet/store";
-
-export type Notifications = {
-  announcements: Announcement[];
-  seenIds: string[];
-  lastUpdateTime: number;
-  initDate?: number;
-};
 
 const ACCOUNTS_KEY = "accounts";
 const ACCOUNTS_KEY_SORT = "accounts.sort";
