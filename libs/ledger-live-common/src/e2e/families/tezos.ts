@@ -1,10 +1,14 @@
-import { pressBoth, pressUntilTextFound, waitFor } from "../speculos";
+import { getDelegateEvents, getSpeculosModel, pressBoth, pressUntilTextFound } from "../speculos";
 import { DeviceLabels } from "../enum/DeviceLabels";
+import { Delegate } from "../models/Delegate";
+import { DeviceModelId } from "@ledgerhq/types-devices";
 
-export async function delegateTezos() {
-  await waitFor(DeviceLabels.REVIEW_OPERATION);
-  await pressUntilTextFound(DeviceLabels.ACCEPT_RISK);
+export async function delegateTezos(delegatingAccount: Delegate) {
+  await getDelegateEvents(delegatingAccount);
   await pressBoth();
-  await pressUntilTextFound(DeviceLabels.ACCEPT);
-  await pressBoth();
+
+  if (getSpeculosModel() !== DeviceModelId.nanoS) {
+    await pressUntilTextFound(DeviceLabels.ACCEPT);
+    await pressBoth();
+  }
 }
