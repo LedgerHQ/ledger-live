@@ -9,7 +9,7 @@ import {
   LandingPagesNavigatorParamList,
 } from "~/components/RootNavigator/types/LandingPagesNavigator";
 import { RouteProp } from "@react-navigation/core";
-import { StackNavigationProp } from "@react-navigation/stack";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { mockCurrencyData } from "../../fixtures/currency";
 import { INITIAL_STATE } from "~/reducers/settings";
 
@@ -82,7 +82,7 @@ const mockNavigation = {
   push: jest.fn(),
   pop: jest.fn(),
   popToTop: jest.fn(),
-} as unknown as StackNavigationProp<
+} as unknown as NativeStackNavigationProp<
   LandingPagesNavigatorParamList,
   ScreenName.LargeMoverLandingPage
 >;

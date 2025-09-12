@@ -6,7 +6,7 @@ import { useTranslation } from "react-i18next";
 import { BigNumber } from "bignumber.js";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { useTheme } from "@react-navigation/native";
-import { StackScreenProps } from "@react-navigation/stack";
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { i18n } from "~/context/Locale";
 import KeyboardView from "~/components/KeyboardView";
 import Button from "~/components/Button";
@@ -19,7 +19,7 @@ import { BaseComposite } from "~/components/RootNavigator/types/helpers";
 import { SendFundsNavigatorStackParamList } from "~/components/RootNavigator/types/SendFundsNavigator";
 
 type NavigationProps = BaseComposite<
-  StackScreenProps<SendFundsNavigatorStackParamList, ScreenName.XrpEditTag>
+  NativeStackScreenProps<SendFundsNavigatorStackParamList, ScreenName.XrpEditTag>
 >;
 
 const uint32maxPlus1 = BigNumber(2).pow(32);

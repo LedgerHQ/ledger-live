@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { Text, ScrollContainerHeader, Icon, ScrollContainer, Icons } from "@ledgerhq/native-ui";
 import { useNavigation } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
@@ -92,10 +92,14 @@ function View({
 
   const top100 = top100G || top100L;
 
-  const timeRanges = TIME_RANGES.map(timeRange => ({
-    ...timeRange,
-    label: t(`market.range.${rangeDataTable[timeRange.value].label}`),
-  })).reverse();
+  const timeRanges = useMemo(
+    () =>
+      TIME_RANGES.map(timeRange => ({
+        ...timeRange,
+        label: t(`market.range.${rangeDataTable[timeRange.value].label}`),
+      })).reverse(),
+    [t],
+  );
   const timeRangeValue = timeRanges.find(({ value }) => value === range);
 
   const overflowX = ScrollContainerHeader.Header.PADDING_HORIZONTAL;

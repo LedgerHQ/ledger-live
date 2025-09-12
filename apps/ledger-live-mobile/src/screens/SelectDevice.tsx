@@ -5,7 +5,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { useTheme } from "@react-navigation/native";
 import { Flex } from "@ledgerhq/native-ui";
-import { StackScreenProps } from "@react-navigation/stack";
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
 
 import { TrackScreen } from "~/analytics";
 import SelectDeviceComp2 from "~/components/SelectDevice2";
@@ -26,7 +26,7 @@ type SelectDeviceNav =
 export default function SelectDevice({
   navigation,
   route,
-}: StackScreenProps<{ [key: string]: object }>) {
+}: NativeStackScreenProps<{ [key: string]: object }>) {
   const { colors } = useTheme();
   const dispatchRedux = useReduxDispatch();
   const onNavigate = useCallback(

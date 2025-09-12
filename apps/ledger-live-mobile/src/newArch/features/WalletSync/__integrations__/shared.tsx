@@ -1,5 +1,5 @@
 import React from "react";
-import { createStackNavigator } from "@react-navigation/stack";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { NavigatorName, ScreenName } from "~/const";
 import GeneralSettings from "~/screens/Settings/General";
 import { SettingsNavigatorStackParamList } from "~/components/RootNavigator/types/SettingsNavigator";
@@ -12,7 +12,7 @@ import { State } from "~/reducers/types";
 import getWalletSyncEnvironmentParams from "@ledgerhq/live-common/walletSync/getEnvironmentParams";
 import { EMPTY } from "rxjs";
 
-const Stack = createStackNavigator<
+const Stack = createNativeStackNavigator<
   BaseNavigatorStackParamList & SettingsNavigatorStackParamList & WalletSyncNavigatorStackParamList
 >();
 

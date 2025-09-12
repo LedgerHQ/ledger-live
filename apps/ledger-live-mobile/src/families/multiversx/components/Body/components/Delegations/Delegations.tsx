@@ -5,7 +5,7 @@ import { View } from "react-native";
 import { hasMinimumDelegableBalance } from "@ledgerhq/live-common/families/multiversx/helpers";
 import { getAccountCurrency, getMainAccount } from "@ledgerhq/coin-framework/account";
 import BigNumber from "bignumber.js";
-import type { StackNavigationProp } from "@react-navigation/stack";
+import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
 import type { NavigationType } from "../../../../types";
 import type { DelegationsPropsType } from "./types";
@@ -30,7 +30,7 @@ const Delegations = (props: DelegationsPropsType) => {
   const { t } = useTranslation();
 
   const zeroBalance = account.spendableBalance.isZero();
-  const navigation: StackNavigationProp<NavigationType> = useNavigation();
+  const navigation: NativeStackNavigationProp<NavigationType> = useNavigation();
   const currency = useMemo(() => getAccountCurrency(getMainAccount(account, undefined)), [account]);
 
   /*

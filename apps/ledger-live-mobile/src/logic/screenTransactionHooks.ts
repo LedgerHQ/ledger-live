@@ -30,7 +30,7 @@ import { execAndWaitAtLeast } from "@ledgerhq/live-common/promise";
 import { getEnv } from "@ledgerhq/live-env";
 import { useDispatch, useSelector } from "react-redux";
 import { TransactionRefusedOnDevice } from "@ledgerhq/live-common/errors";
-import { StackNavigationProp } from "@react-navigation/stack";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { updateAccountWithUpdater } from "../actions/accounts";
 import logger from "../logger";
 import { ScreenName } from "~/const";
@@ -154,7 +154,7 @@ export const useSignWithDevice = ({
                   e.operation,
                 )}`,
               );
-              (navigation as StackNavigationProp<{ [key: string]: object }>).replace(
+              (navigation as NativeStackNavigationProp<{ [key: string]: object }>).replace(
                 context + "ValidationSuccess",
                 {
                   ...route.params,
@@ -178,7 +178,7 @@ export const useSignWithDevice = ({
             logger.critical(error);
           }
 
-          (navigation as StackNavigationProp<{ [key: string]: object }>).replace(
+          (navigation as NativeStackNavigationProp<{ [key: string]: object }>).replace(
             context + "ValidationError",
             {
               ...route.params,
@@ -300,7 +300,7 @@ export function useSignedTxHandler({
           "transaction-summary",
           `✔️ broadcasted! optimistic operation: ${formatOperation(mainAccount)(operation)}`,
         );
-        (navigation as StackNavigationProp<{ [key: string]: object }>).replace(
+        (navigation as NativeStackNavigationProp<{ [key: string]: object }>).replace(
           route.name.replace("ConnectDevice", "ValidationSuccess"),
           { ...route.params, result: operation },
         );
@@ -321,13 +321,13 @@ export function useSignedTxHandler({
           error instanceof TransactionBroadcastError &&
           route.name === ScreenName.SendConnectDevice
         ) {
-          return (navigation as StackNavigationProp<{ [key: string]: object }>).replace(
+          return (navigation as NativeStackNavigationProp<{ [key: string]: object }>).replace(
             ScreenName.SendBroadcastError,
             { ...route.params, error },
           );
         }
 
-        (navigation as StackNavigationProp<{ [key: string]: object }>).replace(
+        (navigation as NativeStackNavigationProp<{ [key: string]: object }>).replace(
           route.name.replace("ConnectDevice", "ValidationError"),
           { ...route.params, error },
         );

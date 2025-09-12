@@ -68,7 +68,6 @@ const WebPlatformPlayer = ({ manifest, inputs }: Props) => {
     navigation.setOptions({
       headerTitleAlign: "left",
       headerLeft: () => null,
-      headerTitleContainerStyle: { marginHorizontal: 0 },
       headerTitle: () => (
         <Flex justifyContent={"center"} flex={1}>
           <HeaderTitle color="neutral.c70"> {manifest.homepageUrl}</HeaderTitle>

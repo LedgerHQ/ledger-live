@@ -1,7 +1,7 @@
 import React, { useMemo } from "react";
 import { Platform } from "react-native";
 import { useTranslation } from "react-i18next";
-import { createStackNavigator } from "@react-navigation/stack";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useTheme } from "@react-navigation/native";
 
 import StepHeader from "~/components/StepHeader";
@@ -17,7 +17,7 @@ import MultiversXUndelegationConnectDevice from "~/screens/ConnectDevice";
 
 import type { MultiversXUndelegationFlowParamList } from "./types";
 
-const Stack = createStackNavigator<MultiversXUndelegationFlowParamList>();
+const Stack = createNativeStackNavigator<MultiversXUndelegationFlowParamList>();
 const totalSteps = "3";
 const options = {
   headerShown: false,
