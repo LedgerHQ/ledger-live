@@ -62,6 +62,7 @@ const App = () => {
       setTrustchainState(s => ({ jwt: null, trustchain: null, memberCredentials })),
     [],
   );
+  const lkrpApiBaseUrl = useEnv("TRUSTCHAIN_API_STAGING");
   const cloudSyncApiBaseUrl = useEnv("CLOUD_SYNC_API_STAGING");
   const setTrustchain = useCallback(
     (trustchain: Trustchain | null) => setTrustchainState(s => ({ ...s, trustchain })),
@@ -117,18 +118,22 @@ const App = () => {
     [cloudSyncApiBaseUrl],
   );
 
+  const lkrpContext = useMemo(
+    () => ({ ...context, apiBaseUrl: lkrpApiBaseUrl }),
+    [context, lkrpApiBaseUrl],
+  );
   const sdk = useMemo(
-    () => getSdk(!!mockEnv, context, withDevice, lifecycle),
+    () => getSdk(!!mockEnv, lkrpContext, withDevice, lifecycle),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [
       mockEnv,
-      context,
+      lkrpContext,
       // on identity change, we also reset the SDK
       memberCredentials,
     ],
   );
-  const envTrustchainApiIsStg = useEnv("TRUSTCHAIN_API_STAGING").includes("stg");
-  const envWalletSyncApiIsStg = useEnv("CLOUD_SYNC_API_STAGING").includes("stg");
+  const envTrustchainApiIsStg = lkrpApiBaseUrl.includes("stg");
+  const envWalletSyncApiIsStg = cloudSyncApiBaseUrl.includes("stg");
   const envSummary = mockEnv
     ? "MOCK"
     : envTrustchainApiIsStg && envWalletSyncApiIsStg
