@@ -13,7 +13,7 @@ import { AccountList, ActionButtons, SuccessIcon, Title } from "./components";
 import { useAccountFormatter } from "./hooks";
 import { AccountsAddedProps } from "./types";
 import { useSelector } from "react-redux";
-import { modularDrawerStateSelector } from "~/renderer/reducers/modularDrawer";
+import { modularDrawerSourceSelector } from "~/renderer/reducers/modularDrawer";
 
 const AccountsAdded = ({
   accounts,
@@ -22,7 +22,7 @@ const AccountsAdded = ({
   navigateToSelectAccount,
   isAccountSelectionFlow,
 }: Readonly<AccountsAddedProps>) => {
-  const { source } = useSelector(modularDrawerStateSelector);
+  const source = useSelector(modularDrawerSourceSelector);
   const formatAccount = useAccountFormatter();
   const { trackAddAccountEvent } = useAddAccountAnalytics();
 

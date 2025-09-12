@@ -137,8 +137,6 @@ describe("ModularDrawerFlowManager - Modules configuration", () => {
             leftElement: "marketTrend",
           },
         }}
-        source="sourceTest"
-        flow="flowTest"
       />,
       mockedInitialState,
     );
@@ -160,8 +158,6 @@ describe("ModularDrawerFlowManager - Modules configuration", () => {
             rightElement: "marketTrend",
           },
         }}
-        source="sourceTest"
-        flow="flowTest"
       />,
       mockedInitialState,
     );

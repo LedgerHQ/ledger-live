@@ -35,9 +35,9 @@ const modularDrawerSlice = createSlice({
   },
 });
 
-export const modularDrawerStateSelector = (state: State) => state.modularDrawer;
-
 export const modularDrawerSearchedSelector = (state: State) => state.modularDrawer.searchedValue;
+export const modularDrawerFlowSelector = (state: State) => state.modularDrawer.flow;
+export const modularDrawerSourceSelector = (state: State) => state.modularDrawer.source;
 
 export const modularDrawerIsDebuggingDuplicatesSelector = (state: State) =>
   state.modularDrawer.isDebuggingDuplicates;

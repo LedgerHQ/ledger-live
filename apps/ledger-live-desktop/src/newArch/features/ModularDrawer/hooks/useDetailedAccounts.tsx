@@ -24,7 +24,7 @@ import { Account } from "@ledgerhq/types-live";
 import { useBatchMaybeAccountName } from "~/renderer/reducers/wallet";
 import orderBy from "lodash/orderBy";
 import keyBy from "lodash/keyBy";
-import { modularDrawerStateSelector } from "~/renderer/reducers/modularDrawer";
+import { modularDrawerSourceSelector } from "~/renderer/reducers/modularDrawer";
 
 export const useDetailedAccounts = (
   asset: CryptoOrTokenCurrency,
@@ -34,7 +34,7 @@ export const useDetailedAccounts = (
   const discreet = useDiscreetMode();
   const state = useCountervaluesState();
   const { trackModularDrawerEvent } = useModularDrawerAnalytics();
-  const { source } = useSelector(modularDrawerStateSelector);
+  const source = useSelector(modularDrawerSourceSelector);
   const { openAddAccountFlow } = useOpenAssetFlow(
     { location: ModularDrawerLocation.ADD_ACCOUNT },
     source,

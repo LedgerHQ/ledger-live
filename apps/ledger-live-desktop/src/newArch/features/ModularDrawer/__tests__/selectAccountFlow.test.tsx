@@ -440,8 +440,6 @@ describe("ModularDrawerFlowManager - Select Account Flow", () => {
       <ModularDrawerFlowManager
         currencies={currencies}
         onAccountSelected={mockOnAccountSelected}
-        source="sourceTest"
-        flow="flowTest"
       />,
     );
 

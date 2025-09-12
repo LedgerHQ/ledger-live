@@ -4,7 +4,10 @@ import { ModularDrawerEventName, ModularDrawerEventParams } from "./modularDrawe
 import { EnhancedModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/types";
 import { formatAssetsConfig, formatNetworksConfig } from "./utils";
 import { useSelector } from "react-redux";
-import { modularDrawerStateSelector } from "~/renderer/reducers/modularDrawer";
+import {
+  modularDrawerFlowSelector,
+  modularDrawerSourceSelector,
+} from "~/renderer/reducers/modularDrawer";
 
 type DrawerConfig = {
   formatNetworkConfig?: boolean;
@@ -20,7 +23,8 @@ type TrackModularDrawerEvent = <T extends ModularDrawerEventName>(
 ) => void;
 
 export const useModularDrawerAnalytics = () => {
-  const { flow, source } = useSelector(modularDrawerStateSelector);
+  const flow = useSelector(modularDrawerFlowSelector);
+  const source = useSelector(modularDrawerSourceSelector);
 
   const trackModularDrawerEvent = useCallback<TrackModularDrawerEvent>(
     (eventName, params, drawerConfig) => {

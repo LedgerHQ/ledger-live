@@ -8,7 +8,7 @@ import { ADD_ACCOUNT_FLOW_NAME, ADD_ACCOUNT_PAGE_NAME } from "../../analytics/ad
 import { useAccountFormatter } from "../AccountsAdded/hooks";
 import { ActionsContainer } from "./components";
 import { useSelector } from "react-redux";
-import { modularDrawerStateSelector } from "~/renderer/reducers/modularDrawer";
+import { modularDrawerSourceSelector } from "~/renderer/reducers/modularDrawer";
 
 interface Props {
   account: Account;
@@ -16,7 +16,7 @@ interface Props {
 }
 
 const FundAccount = ({ account, currency }: Props) => {
-  const { source } = useSelector(modularDrawerStateSelector);
+  const source = useSelector(modularDrawerSourceSelector);
   const formattedAccount = useAccountFormatter()(account);
 
   return (
