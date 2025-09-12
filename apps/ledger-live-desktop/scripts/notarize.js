@@ -4,6 +4,7 @@ import { notarize } from "@electron/notarize";
 import chalk from "chalk";
 import dotenv from "dotenv";
 import debug from "debug";
+import signWindows from "./sign-windows.js";
 
 dotenv.config();
 debug.enable("@electron/notarize");
@@ -12,11 +13,23 @@ const info = str => {
   console.log(chalk.blue(str));
 };
 
-async function notarizeApp(context) {
-  if (platform !== "darwin") {
-    info("OS is not mac, skipping notarization.");
+async function handleSigning(context) {
+  // Skip signing in CI or when explicitly disabled
+  if (process.env.SKIP_SIGNING === "true") {
+    info("Signing skipped (SKIP_SIGNING=true)");
     return;
   }
+
+  if (platform() === "darwin") {
+    await notarizeApp(context);
+  } else if (platform() === "win32") {
+    await signWindows.default(context);
+  } else {
+    info(`Platform ${platform()} - no signing needed.`);
+  }
+}
+
+async function notarizeApp(context) {
 
   info(
     "Don't mind electron-builder error 'Cannot find module 'scripts/notarize.js', it definitively found me",
@@ -70,4 +83,4 @@ async function notarizeApp(context) {
   }
 }
 
-export default notarizeApp;
+export default handleSigning;

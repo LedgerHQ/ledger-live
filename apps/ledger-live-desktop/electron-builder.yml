@@ -38,9 +38,6 @@ linux:
 win:
   artifactName: ${name}-${version}-${os}-${arch}.${ext}
   icon: build/windows/app.ico
-  sign: scripts/sign-windows.js
-  signingHashAlgorithms:
-    - sha256
   target:
     - target: nsis
       arch:
