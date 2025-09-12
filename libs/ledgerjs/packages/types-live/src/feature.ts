@@ -210,7 +210,6 @@ export type Features = CurrencyFeatures & {
   llmMarketQuickActions: DefaultFeature;
   spamFilteringTx: Feature_SpamFilteringTx;
   lldSpamFilteringTx: DefaultFeature;
-  llmSpamFilteringTx: DefaultFeature;
   llmMemoTag: Feature_MemoTag;
   lldMemoTag: Feature_MemoTag;
   ldmkTransport: Feature_LdmkTransport;

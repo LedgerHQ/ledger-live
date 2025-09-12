@@ -17,11 +17,7 @@ import {
 import snakeCase from "lodash/snakeCase";
 import React, { MutableRefObject, useCallback } from "react";
 import { ABTestingVariants, FeatureId, Features, idsToLanguage } from "@ledgerhq/types-live";
-import {
-  hasNftInAccounts,
-  GENESIS_PASS_COLLECTION_CONTRACT,
-  INFINITY_PASS_COLLECTION_CONTRACT,
-} from "@ledgerhq/live-nft";
+
 import { runOnceWhen } from "@ledgerhq/live-common/utils/runOnceWhen";
 import { getStablecoinYieldSetting } from "@ledgerhq/live-common/featureFlags/stakePrograms/index";
 import { getTokensWithFunds } from "@ledgerhq/live-common/domain/getTokensWithFunds";
@@ -263,15 +259,6 @@ const extraProperties = async (store: AppStore) => {
       ]
     : [];
 
-  const blockchainsWithNftsOwned = accounts
-    ? [
-        ...new Set(
-          accounts.filter(account => account.nfts?.length).map(account => account.currency.ticker),
-        ),
-      ]
-    : [];
-  const hasGenesisPass = hasNftInAccounts(GENESIS_PASS_COLLECTION_CONTRACT, accounts);
-  const hasInfinityPass = hasNftInAccounts(INFINITY_PASS_COLLECTION_CONTRACT, accounts);
   const nps = userNpsSelector(state);
 
   const stakingProviders =
@@ -330,9 +317,6 @@ const extraProperties = async (store: AppStore) => {
     notificationsBlacklisted,
     ...notificationsOptedIn,
     accountsWithFunds,
-    blockchainsWithNftsOwned,
-    hasGenesisPass,
-    hasInfinityPass,
     appTimeToInteractiveMilliseconds: appStartupTime,
     staxDeviceUser: knownDeviceModelIds.stax,
     staxLockscreen: customImageType || "none",
