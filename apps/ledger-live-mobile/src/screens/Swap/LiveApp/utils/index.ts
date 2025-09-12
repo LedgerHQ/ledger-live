@@ -1,26 +1,7 @@
-import { NotEnoughBalanceSwap } from "@ledgerhq/errors";
-import { SwapExchangeRateAmountTooLow } from "@ledgerhq/live-common/errors";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
 
 import { AccountLike } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
-import { track } from "~/analytics/segment";
-
-export const trackSwapError = (error: Error, properties: Record<string, unknown> = {}) => {
-  if (!error) return;
-  if (error instanceof SwapExchangeRateAmountTooLow) {
-    track("error_message", {
-      ...properties,
-      message: "min_amount",
-    });
-  }
-  if (error instanceof NotEnoughBalanceSwap) {
-    track("error_message", {
-      ...properties,
-      message: "no_funds",
-    });
-  }
-};
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type TransformableObject = Record<string, any>;

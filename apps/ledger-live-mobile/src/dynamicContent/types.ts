@@ -112,13 +112,6 @@ type AssetContentCard = ContentCardCommonProperties & {
   assets?: string;
 };
 
-type LearnContentCard = ContentCardCommonProperties & {
-  tag?: string;
-  title?: string;
-  link?: string;
-  image?: string;
-};
-
 type NotificationContentCard = ContentCardCommonProperties & {
   tag?: string;
   title?: string;
@@ -171,7 +164,6 @@ type AnyContentCard =
   | CategoryContentCard
   | WalletContentCard
   | AssetContentCard
-  | LearnContentCard
   | NotificationContentCard
   | HeroContentCard
   | HorizontalContentCard
@@ -182,7 +174,6 @@ export type {
   AssetContentCard,
   WalletContentCard,
   NotificationContentCard,
-  LearnContentCard,
   CategoryContentCard,
   HorizontalContentCard,
   HeroContentCard,

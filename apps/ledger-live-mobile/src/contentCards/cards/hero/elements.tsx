@@ -1,8 +1,7 @@
-import { Flex, Icons, Text } from "@ledgerhq/native-ui";
+import { Flex, Text } from "@ledgerhq/native-ui";
 import React from "react";
-import { Image as NativeImage, Pressable } from "react-native";
+import { Image as NativeImage } from "react-native";
 import { useTheme } from "styled-components/native";
-import { ButtonAction } from "~/contentCards/cards/types";
 
 export const Image = ({ uri }: { uri: string }) => {
   return (
@@ -12,14 +11,6 @@ export const Image = ({ uri }: { uri: string }) => {
       borderRadius={12}
       style={{ width: "100%", height: 134 }}
     />
-  );
-};
-
-export const Close = ({ onPress }: { onPress: ButtonAction }) => {
-  return (
-    <Pressable onPress={onPress} hitSlop={11}>
-      <Icons.Close size="XS" />
-    </Pressable>
   );
 };
 

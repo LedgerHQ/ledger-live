@@ -31,7 +31,6 @@ const handlers: ReducerMap<WalletSyncState, WalletSyncPayload> = {
   }),
 };
 
-export const storeSelector = (state: State): WalletSyncState => state.walletSync;
 export const manageKeyDrawerSelector = (state: State): boolean =>
   state.walletSync.isManageKeyDrawerOpen;
 export const activateDrawerSelector = (state: State): boolean =>
