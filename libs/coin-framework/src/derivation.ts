@@ -193,6 +193,7 @@ const modes: Readonly<Record<DerivationMode, ModeSpec>> = Object.freeze({
   },
   canton: {
     overridesDerivation: "44'/6767'/<account>'/0'/0'",
+    mandatoryEmptyAccountSkip: 10,
     tag: "canton",
   },
 });
@@ -402,6 +403,10 @@ const seedIdentifierPath = (currencyId: string): SeedPathFn => {
     case "ton":
     case "sui":
       return ({ purpose, coinType }) => `${purpose}'/${coinType}'/0'/0'/0'/0'`;
+    case "canton_network":
+    case "canton_network_devnet":
+    case "canton_network_localnet":
+      return ({ purpose, coinType }) => `${purpose}'/${coinType}'/0'/0'/0'`;
     default:
       return ({ purpose, coinType }) => `${purpose}'/${coinType}'/0'`;
   }

@@ -54,16 +54,6 @@ export type PrepareTransferRequest = {
   reason?: string;
 };
 
-export type PrepareTapRequest = {
-  type: "tap-request";
-  amount: number;
-};
-
-export type PreparePreapprovalRequest = {
-  type: "transfer-pre-approval-proposal";
-  receiver: string;
-};
-
 type OnboardingSubmitRequest = {
   prepare_request: OnboardingPrepareRequest;
   prepare_response: OnboardingPrepareResponse;
@@ -274,6 +264,7 @@ export type OperationInfo =
 
 const getGatewayUrl = () => coinConfig.getCoinConfig().gatewayUrl;
 const getNodeId = () => coinConfig.getCoinConfig().nodeId || "ledger-devnet-stg";
+const getNetworkType = () => coinConfig.getCoinConfig().networkType;
 
 const gatewayNetwork = <T, U = unknown>(req: LiveNetworkRequest<U>) => {
   const API_KEY = getEnv("CANTON_API_KEY");
@@ -338,8 +329,7 @@ export async function submit(partyId: string, serialized: string, signature: str
 export async function getBalance(partyId: string): Promise<InstrumentBalance[]> {
   const { data } = await gatewayNetwork<InstrumentBalance[]>({
     method: "GET",
-    // TODO: we need better solution ?
-    url: `${getGatewayUrl()}/v1/node/${getNodeId()}/party/${partyId.replace(/_/g, ":")}/balance`,
+    url: `${getGatewayUrl()}/v1/node/${getNodeId()}/party/${partyId}/balance`,
   });
   return data;
 }
@@ -377,21 +367,21 @@ export async function getOperations(
     operations: OperationInfo[];
   }>({
     method: "GET",
-    url: `${getGatewayUrl()}/v1/node/${getNodeId()}/party/${partyId.replace(/_/g, ":")}/operations`,
+    url: `${getGatewayUrl()}/v1/node/${getNodeId()}/party/${partyId}/operations`,
     params: options,
   });
   return data;
 }
 
-type PrepareTapRequestRequest = {
+type PrepareTapRequest = {
   partyId: string;
   amount?: number;
 };
 
-type PrepareTapRequestResponse = {
-  serialized: "string";
+type PrepareTapResponse = {
+  serialized: string;
   json: null;
-  hash: "string";
+  hash: string;
 };
 
 enum TransactionType {
@@ -402,11 +392,15 @@ enum TransactionType {
 export async function prepareTapRequest({
   partyId,
   amount = 1000000,
-}: PrepareTapRequestRequest): Promise<PrepareTapRequestResponse> {
-  const { data } = await gatewayNetwork<
-    PrepareTapRequestResponse,
-    { amount: number; type: string }
-  >({
+}: PrepareTapRequest): Promise<PrepareTapResponse> {
+  if (getNetworkType() === "mainnet") {
+    return {
+      serialized: "",
+      json: null,
+      hash: "",
+    };
+  }
+  const { data } = await gatewayNetwork<PrepareTapResponse, { amount: number; type: string }>({
     method: "POST",
     url: `${getGatewayUrl()}/v1/node/${getNodeId()}/party/${partyId}/transaction/prepare`,
     data: {
@@ -451,7 +445,7 @@ export async function prepareTransferRequest(
   partyId: string,
   params: PrepareTransferRequest,
 ): Promise<PrepareTransferResponse> {
-  const { data } = await network<PrepareTransferResponse>({
+  const { data } = await gatewayNetwork<PrepareTransferResponse, PrepareTransferRequest>({
     method: "POST",
     url: `${getGatewayUrl()}/v1/node/${getNodeId()}/party/${partyId}/transaction/prepare`,
     data: params,
