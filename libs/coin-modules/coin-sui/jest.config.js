@@ -7,4 +7,7 @@ module.exports = {
   testEnvironment: "node",
   testPathIgnorePatterns: ["lib/", "lib-es/", ".*\\.integration\\.test\\.[tj]s"],
   setupFilesAfterEnv: ["@ledgerhq/disable-network-setup"],
+  moduleNameMapper: {
+    "@mysten/signers/ledger/bcs": "<rootDir>/node_modules/@mysten/signers/dist/cjs/ledger/bcs.js",
+  },
 };

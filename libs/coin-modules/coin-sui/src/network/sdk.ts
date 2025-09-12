@@ -34,13 +34,19 @@ import uniqBy from "lodash/unionBy";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { log } from "@ledgerhq/logs";
 import { makeLRUCache, minutes } from "@ledgerhq/live-network/cache";
-import type { Transaction as TransactionType, SuiValidator, CreateExtrinsicArg } from "../types";
+import type {
+  Transaction as TransactionType,
+  SuiValidator,
+  CreateExtrinsicArg,
+  CoreTransaction,
+} from "../types";
 import { ensureAddressFormat } from "../utils";
 import coinConfig from "../config";
 import { getEnv } from "@ledgerhq/live-env";
 import { SUI_SYSTEM_STATE_OBJECT_ID } from "@mysten/sui/utils";
 import { getCurrentSuiPreloadData } from "../bridge/preload";
 import { ONE_SUI } from "../constants";
+import { SuiMoveObject } from "@mysten/signers/ledger/bcs";
 
 const apiMap: Record<string, SuiClient> = {};
 type AsyncApiFunction<T> = (api: SuiClient) => Promise<T>;
@@ -656,10 +662,15 @@ export const getCoinsForAmount = async (
  *
  * @param address - The sender's address
  * @param transaction - The transaction details including recipient, amount, and coin type
+ * @param withObjects - Return serialized input objects used in the transaction
  * @returns Promise<TransactionBlock> - A built transaction block ready for execution
  *
  */
-export const createTransaction = async (address: string, transaction: CreateExtrinsicArg) =>
+export const createTransaction = async (
+  address: string,
+  transaction: CreateExtrinsicArg,
+  withObjects: boolean = false,
+): Promise<CoreTransaction & { objects?: Uint8Array[] }> =>
   withApi(async api => {
     const tx = new Transaction();
     tx.setSender(ensureAddressFormat(address));
@@ -724,15 +735,76 @@ export const createTransaction = async (address: string, transaction: CreateExtr
       }
     }
 
-    return tx.build({ client: api });
+    const serialized = await tx.build({ client: api });
+
+    if (withObjects) {
+      const objects = await getObjects(tx, api);
+      return { unsigned: serialized, objects };
+    }
+
+    return { unsigned: serialized };
   });
+
+/**
+ * Get all input objects for a transaction, in serialized form.
+ *
+ * @param transaction transaction being crafted
+ * @param api RPC client
+ */
+const getObjects = async (transaction: Transaction, api: SuiClient): Promise<Uint8Array[]> => {
+  // Note: this method duplicates MystenLabs clear signing implementation for Ledger:
+  // https://github.com/MystenLabs/ts-sdks/blob/main/packages/signers/src/ledger/index.ts#L138
+
+  const data = transaction.getData();
+
+  const gasObjectIds = data.gasData.payment?.map(object => object.objectId) ?? [];
+  const inputObjectIds = data.inputs
+    .map(input => {
+      return input.$kind === "Object" && input.Object.$kind === "ImmOrOwnedObject"
+        ? input.Object.ImmOrOwnedObject.objectId
+        : null;
+    })
+    .filter((objectId): objectId is string => !!objectId);
+
+  const objects = await api.multiGetObjects({
+    ids: [...gasObjectIds, ...inputObjectIds],
+    options: {
+      showBcs: true,
+      showPreviousTransaction: true,
+      showStorageRebate: true,
+      showOwner: true,
+    },
+  });
+
+  return objects
+    .map(object => {
+      if (object.error || !object.data || object.data.bcs?.dataType !== "moveObject") {
+        return null;
+      }
+
+      return SuiMoveObject.serialize({
+        data: {
+          MoveObject: {
+            type: object.data.bcs.type,
+            hasPublicTransfer: object.data.bcs.hasPublicTransfer,
+            version: object.data.bcs.version,
+            contents: object.data.bcs.bcsBytes,
+          },
+        },
+        owner: object.data.owner!,
+        previousTransaction: object.data.previousTransaction!,
+        storageRebate: object.data.storageRebate!,
+      }).toBytes();
+    })
+    .filter((bcsBytes): bcsBytes is Uint8Array => !!bcsBytes);
+};
 
 /**
  * Performs a dry run of a transaction to estimate gas costs and fees
  */
 export const paymentInfo = async (sender: string, fakeTransaction: TransactionType) =>
   withApi(async api => {
-    const txb = await createTransaction(sender, fakeTransaction);
+    const { unsigned: txb } = await createTransaction(sender, fakeTransaction);
     const dryRunTxResponse = await api.dryRunTransactionBlock({ transactionBlock: txb });
     const fees = getTotalGasUsed(dryRunTxResponse.effects);
 
