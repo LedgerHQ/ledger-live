@@ -1,12 +1,11 @@
 import React, { useState, useCallback, memo, useMemo } from "react";
 import { TouchableOpacity, StyleSheet, View } from "react-native";
 import { BigNumber } from "bignumber.js";
-import { useSelector } from "react-redux";
 import type { Currency } from "@ledgerhq/types-cryptoassets";
 import { useCalculate } from "@ledgerhq/live-countervalues-react";
 import { useTheme } from "@react-navigation/native";
 import { Trans } from "react-i18next";
-import { counterValueCurrencySelector } from "~/reducers/settings";
+import useCounterValueCurrency from "~/hooks/useCounterValueCurrency";
 import CurrencyUnitValue, { CurrencyUnitValueProps } from "./CurrencyUnitValue";
 import LText from "./LText";
 import InfoIcon from "~/icons/Info";
@@ -45,8 +44,9 @@ function DoubleCounterValue({
 }: Props) {
   const { colors } = useTheme();
   const [isOpened, setIsOpened] = useState(false);
-  const counterValueCurrency = useSelector(counterValueCurrencySelector);
+  const counterValueCurrency = useCounterValueCurrency();
   const { params, compareParams } = useMemo(() => {
+    if (!counterValueCurrency) return { params: null, compareParams: null };
     const val = value.toNumber();
     return {
       params: {
@@ -65,13 +65,19 @@ function DoubleCounterValue({
       },
     };
   }, [compareDate, counterValueCurrency, currency, date, value]);
-  const countervalue = useCalculate(params);
-  const compareCountervalue = useCalculate(compareParams);
+  const countervalue = useCalculate(params!);
+  const compareCountervalue = useCalculate(compareParams!);
+
+  // All hooks must be called before early returns
   const onClose = useCallback(() => setIsOpened(false), []);
   const onOpen = useCallback(() => setIsOpened(true), []);
   const [placeholderModalOpened, setPlaceholderModalOpened] = useState(false);
   const openModal = useCallback(() => setPlaceholderModalOpened(true), []);
   const closeModal = useCallback(() => setPlaceholderModalOpened(false), []);
+
+  if (!counterValueCurrency) {
+    return null; // or loading placeholder
+  }
 
   if (typeof countervalue !== "number") {
     return withPlaceholder ? (

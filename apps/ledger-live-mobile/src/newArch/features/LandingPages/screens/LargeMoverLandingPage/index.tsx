@@ -18,10 +18,10 @@ import { CardType } from "./types";
 import { track, TrackScreen } from "~/analytics";
 import { PAGE_NAME } from "./const";
 import { useLargeMoverChartData } from "@ledgerhq/live-common/market/hooks/useLargeMoverChartData";
-import { counterValueCurrencySelector } from "~/reducers/settings";
 import { KeysPriceChange } from "@ledgerhq/live-common/market/utils/types";
 import { OverlayTutorial } from "./components/OverlayTutorial";
 import { useSelector } from "react-redux";
+import { useCounterValueCurrency } from "~/hooks/useCounterValueCurrency";
 import { tutorialSelector } from "~/reducers/largeMover";
 
 type LargeMoverLandingPageProps = StackNavigatorProps<
@@ -31,7 +31,7 @@ type LargeMoverLandingPageProps = StackNavigatorProps<
 
 export const LargeMoverLandingPage = ({ route }: LargeMoverLandingPageProps) => {
   const { currencyIds, initialRange = "day" } = route.params;
-  const counterValueCurrency = useSelector(counterValueCurrencySelector);
+  const counterValueCurrency = useCounterValueCurrency();
   const currencyIdsArray = currencyIds.toUpperCase().split(",");
   const currenciesIds = getCurrencyIdsFromTickers(currencyIdsArray);
   const [range, setRange] = useState<KeysPriceChange>(rangeMap[initialRange]);
@@ -42,7 +42,7 @@ export const LargeMoverLandingPage = ({ route }: LargeMoverLandingPageProps) => 
 
   const { chartDataArray, loadingChart } = useLargeMoverChartData({
     ids: currenciesIds,
-    counterCurrency: counterValueCurrency.ticker,
+    counterCurrency: counterValueCurrency?.ticker || "USD",
     range,
   });
 

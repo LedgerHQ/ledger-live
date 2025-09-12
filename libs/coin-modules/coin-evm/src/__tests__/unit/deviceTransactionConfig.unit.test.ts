@@ -15,31 +15,38 @@ enum NFT_CONTRACTS {
 }
 
 const currency = getCryptoCurrencyById("ethereum");
-const tokenCurrency = getTokenById("ethereum/erc20/usd__coin");
-const tokenAccount = makeTokenAccount("0xkvn", tokenCurrency);
-const account = makeAccount("0xkvn", currency, [tokenAccount]);
-const accountWithNfts: Account = Object.freeze({
-  ...account,
-  nfts: [
-    {
-      amount: new BigNumber(1),
-      contract: NFT_CONTRACTS.ERC721,
-      currencyId: currency.id,
-      standard: "ERC721",
-      tokenId: "1",
-      id: encodeNftId(account.id, NFT_CONTRACTS.ERC721, "1", currency.id),
-      metadata: { tokenName: "Collection ERC721" } as any,
-    } as ProtoNFT,
-    {
-      amount: new BigNumber(10),
-      contract: NFT_CONTRACTS.ERC1155,
-      currencyId: currency.id,
-      standard: "ERC721",
-      tokenId: "1",
-      id: encodeNftId(account.id, NFT_CONTRACTS.ERC1155, "1", currency.id),
-      metadata: { tokenName: "Collection ERC1155" } as any,
-    } as ProtoNFT,
-  ],
+let tokenCurrency: any;
+let tokenAccount: any;
+let account: any;
+let accountWithNfts: Account;
+
+beforeAll(async () => {
+  tokenCurrency = await getTokenById("ethereum/erc20/usd__coin");
+  tokenAccount = makeTokenAccount("0xkvn", tokenCurrency);
+  account = makeAccount("0xkvn", currency, [tokenAccount]);
+  accountWithNfts = Object.freeze({
+    ...account,
+    nfts: [
+      {
+        amount: new BigNumber(1),
+        contract: NFT_CONTRACTS.ERC721,
+        currencyId: currency.id,
+        standard: "ERC721",
+        tokenId: "1",
+        id: encodeNftId(account.id, NFT_CONTRACTS.ERC721, "1", currency.id),
+        metadata: { tokenName: "Collection ERC721" } as any,
+      } as ProtoNFT,
+      {
+        amount: new BigNumber(10),
+        contract: NFT_CONTRACTS.ERC1155,
+        currencyId: currency.id,
+        standard: "ERC721",
+        tokenId: "1",
+        id: encodeNftId(account.id, NFT_CONTRACTS.ERC1155, "1", currency.id),
+        metadata: { tokenName: "Collection ERC1155" } as any,
+      } as ProtoNFT,
+    ],
+  });
 });
 
 const baseTransaction: EvmTransaction = {

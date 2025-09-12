@@ -149,7 +149,7 @@ describe("Aptos logic ", () => {
 
 describe("Aptos sync logic ", () => {
   describe("txsToOps", () => {
-    it("should convert Aptos transactions to operations correctly", () => {
+    it("should convert Aptos transactions to operations correctly", async () => {
       const address = "0x11";
       const id = "test_id";
       const txs: AptosTransaction[] = [
@@ -219,7 +219,7 @@ describe("Aptos sync logic ", () => {
         } as unknown as AptosTransaction,
       ];
 
-      const [result] = txsToOps({ address }, id, txs);
+      const [result] = await txsToOps({ address }, id, txs);
 
       expect(result).toHaveLength(1);
       expect(result[0]).toEqual({
@@ -240,7 +240,7 @@ describe("Aptos sync logic ", () => {
       });
     });
 
-    it("should skip transactions without functions in payload", () => {
+    it("should skip transactions without functions in payload", async () => {
       const address = "0x11";
       const id = "test_id";
       const txs: AptosTransaction[] = [
@@ -259,12 +259,12 @@ describe("Aptos sync logic ", () => {
         } as unknown as AptosTransaction,
       ];
 
-      const [result] = txsToOps({ address }, id, txs);
+      const [result] = await txsToOps({ address }, id, txs);
 
       expect(result).toHaveLength(0);
     });
 
-    it("should skip transactions that result in no Aptos change", () => {
+    it("should skip transactions that result in no Aptos change", async () => {
       const address = "0x11";
       const id = "test_id";
       const txs: AptosTransaction[] = [
@@ -288,12 +288,12 @@ describe("Aptos sync logic ", () => {
         } as unknown as AptosTransaction,
       ];
 
-      const [result] = txsToOps({ address }, id, txs);
+      const [result] = await txsToOps({ address }, id, txs);
 
       expect(result).toHaveLength(0);
     });
 
-    it("should handle failed transactions", () => {
+    it("should handle failed transactions", async () => {
       const address = "0xa0d8";
       const id = "test_id";
       const txs: AptosTransaction[] = [
@@ -418,7 +418,7 @@ describe("Aptos sync logic ", () => {
         } as unknown as AptosTransaction,
       ];
 
-      const [result] = txsToOps({ address }, id, txs);
+      const [result] = await txsToOps({ address }, id, txs);
 
       expect(result).toHaveLength(1);
       expect(result[0]).toEqual({
@@ -439,7 +439,7 @@ describe("Aptos sync logic ", () => {
       });
     });
 
-    it("should convert Aptos token transactions to operations correctly", () => {
+    it("should convert Aptos token transactions to operations correctly", async () => {
       (findTokenByAddressInCurrency as jest.Mock).mockReturnValue({
         type: "TokenCurrency",
         id: "aptos/coin/dstapt::staked_coin::stakedaptos",
@@ -698,7 +698,7 @@ describe("Aptos sync logic ", () => {
         } as unknown as AptosTransaction,
       ];
 
-      const [ops, tokenOps] = txsToOps({ address }, id, txs);
+      const [ops, tokenOps] = await txsToOps({ address }, id, txs);
 
       expect(ops).toHaveLength(1);
       expect(ops[0]).toEqual({
@@ -736,7 +736,7 @@ describe("Aptos sync logic ", () => {
       });
     });
 
-    it("should convert Aptos token transactions to operations correctly", () => {
+    it("should convert Aptos token transactions to operations correctly", async () => {
       (findTokenByAddressInCurrency as jest.Mock).mockReturnValue({
         type: "TokenCurrency",
         id: "aptos/fungible_asset/cellana_0x2ebb2ccac5e027a87fa0e2e5f656a3a4238d6a48d93ec9b610d570fc0aa0df12",
@@ -1009,7 +1009,7 @@ describe("Aptos sync logic ", () => {
         } as unknown as AptosTransaction,
       ];
 
-      const [ops, tokenOps] = txsToOps({ address: "0x6b8c" }, "test_id", txs);
+      const [ops, tokenOps] = await txsToOps({ address: "0x6b8c" }, "test_id", txs);
 
       expect(ops).toHaveLength(0);
 

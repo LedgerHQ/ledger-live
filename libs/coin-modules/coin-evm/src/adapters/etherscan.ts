@@ -76,13 +76,13 @@ export const etherscanOperationToOperations = (
  * It can return up to 2 operations
  * in case of self-send or airdrop
  */
-export const etherscanERC20EventToOperations = (
+export const etherscanERC20EventToOperations = async (
   accountId: string,
   event: EtherscanERC20Event,
   index = 0,
-): Operation[] => {
+): Promise<Operation[]> => {
   const { currencyId, xpubOrAddress: address } = decodeAccountId(accountId);
-  const tokenCurrency = getCryptoAssetsStore().findTokenByAddressInCurrency(
+  const tokenCurrency = await getCryptoAssetsStore().findTokenByAddressInCurrency(
     event.contractAddress,
     currencyId,
   );

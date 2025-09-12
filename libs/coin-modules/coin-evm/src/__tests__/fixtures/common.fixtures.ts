@@ -111,10 +111,10 @@ export const makeTokenAccount = (address: string, tokenCurrency: TokenCurrency):
   });
 };
 
-export const makeOperation = (partialOp?: Partial<Operation>): Operation => {
+export const makeOperation = async (partialOp?: Partial<Operation>): Promise<Operation> => {
   const accountId = partialOp?.accountId ?? "js:2:ethereum:0xkvn:";
   const { xpubOrAddress } = decodeAccountId(
-    accountId.includes("+") ? decodeTokenAccountId(accountId).accountId : accountId,
+    accountId.includes("+") ? (await decodeTokenAccountId(accountId)).accountId : accountId,
   );
   const hash = partialOp?.hash ?? "0xhash";
   const type = partialOp?.type ?? "OUT";
@@ -140,13 +140,13 @@ export const makeOperation = (partialOp?: Partial<Operation>): Operation => {
   });
 };
 
-export const makeNftOperation = (
+export const makeNftOperation = async (
   partialOp?: Partial<Operation>,
   operationIndex?: number,
-): Operation => {
+): Promise<Operation> => {
   const accountId = partialOp?.accountId ?? "js:2:ethereum:0xkvn:";
   const { xpubOrAddress, currencyId } = decodeAccountId(
-    accountId.includes("+") ? decodeTokenAccountId(accountId).accountId : accountId,
+    accountId.includes("+") ? (await decodeTokenAccountId(accountId)).accountId : accountId,
   );
   const hash = partialOp?.hash ?? "0xhash";
   const type = partialOp?.type ?? "NFT_OUT";

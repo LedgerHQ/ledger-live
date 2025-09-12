@@ -16,8 +16,7 @@ import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/Ba
 import { RootComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { NavigatorName, ScreenName } from "~/const";
 import { DeviceModelId } from "@ledgerhq/devices";
-import { counterValueCurrencySelector } from "~/reducers/settings";
-import { useSelector } from "react-redux";
+import { useCounterValueCurrency } from "~/hooks/useCounterValueCurrency";
 import useEnv from "@ledgerhq/live-common/hooks/useEnv";
 
 export type Props = RootComposite<
@@ -37,8 +36,8 @@ export function RecoverPlayer({ navigation, route }: Props) {
   const { locale } = useLocale();
   const devModeEnabled = useEnv("MANAGER_DEV_MODE").toString();
 
-  const currencySettings = useSelector(counterValueCurrencySelector);
-  const currency = currencySettings.ticker;
+  const counterValueCurrency = useCounterValueCurrency();
+  const currency = counterValueCurrency?.ticker || "USD";
   const manifest = localManifest || remoteManifest;
 
   const { onboardingState } = useOnboardingStatePolling({

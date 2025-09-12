@@ -1,12 +1,11 @@
 import React, { useCallback, useState } from "react";
 import { View, StyleSheet } from "react-native";
-import { useSelector } from "react-redux";
 import { BigNumber } from "bignumber.js";
 import type { AccountLike } from "@ledgerhq/types-live";
 import { useSendAmount } from "@ledgerhq/live-countervalues-react";
 import { Trans, useTranslation } from "react-i18next";
 import { track } from "~/analytics";
-import { counterValueCurrencySelector } from "~/reducers/settings";
+import { useCounterValueCurrency } from "~/hooks/useCounterValueCurrency";
 import LText from "~/components/LText/index";
 import CounterValuesSeparator from "./CounterValuesSeparator";
 import CurrencyInput from "~/components/CurrencyInput";
@@ -39,11 +38,29 @@ export default function AmountInput({
   transferFeeCalculated,
 }: Props) {
   const { t } = useTranslation();
-  const fiatCurrency = useSelector(counterValueCurrencySelector);
+  const fiatCurrency = useCounterValueCurrency();
   const cryptoUnit = useAccountUnit(account);
+
+  // Use fallback currency if not loaded yet
+  const fallbackCurrency = {
+    type: "FiatCurrency" as const,
+    ticker: "USD",
+    name: "USD",
+    symbol: "USD",
+    units: [
+      {
+        code: "USD",
+        name: "USD",
+        magnitude: 2,
+        showAllDigits: true,
+        prefixCode: true,
+      },
+    ],
+  };
+
   const { fiatAmount, fiatUnit, calculateCryptoAmount } = useSendAmount({
     account,
-    fiatCurrency,
+    fiatCurrency: fiatCurrency || fallbackCurrency,
     cryptoAmount,
   });
   const [active, setActive] = useState<"crypto" | "fiat" | "none">("none");

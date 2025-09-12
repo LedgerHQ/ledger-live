@@ -8,14 +8,20 @@ import { findCurrencyByTicker } from "@ledgerhq/live-countervalues/findCurrencyB
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
 setCryptoAssetsStoreForCoinFramework({
-  findTokenByTicker: (_: string) => undefined,
+  findTokenById: async (_: string) => undefined,
+  findTokenByAddressInCurrency: async (_: string, __: string) => undefined,
+  findTokenByAddress: async (_: string) => undefined,
+  getTokenById: async (_: string) => {
+    throw new Error("Token not found");
+  },
+  findTokenByTicker: async (_: string) => undefined,
 } as CryptoAssetsStore);
 
-test("sortCurrenciesByIds snapshot", () => {
+test("sortCurrenciesByIds snapshot", async () => {
   const list = [...listCryptoCurrencies(), ...listTokens()];
   const ids: string[] = [];
   for (const k in getBTCValues()) {
-    const c = findCurrencyByTicker(k);
+    const c = await findCurrencyByTicker(k);
     if (c && (c.type == "CryptoCurrency" || c.type == "TokenCurrency")) {
       ids.push(c.id);
     }

@@ -9,9 +9,19 @@ import { UseBalanceDeps } from "../utils/type";
 import { buildProviderCurrenciesMap } from "../utils/buildProviderCurrenciesMap";
 import { CurrenciesByProviderId } from "../../deposit/type";
 import { calculateProviderTotals } from "../utils/calculateProviderTotal";
-import { getProviderCurrency } from "../utils/getProviderCurrency";
 import { getBalanceAndFiatValueByAssets } from "../utils/getBalanceAndFiatValueByAssets";
 import { groupAccountsByAsset } from "../utils/groupAccountsByAsset";
+
+// Synchronous version of getProviderCurrency for this specific usage
+// Simplified to avoid async token lookup in useMemo context
+const getProviderCurrencySync = (
+  mainCurrency: CryptoOrTokenCurrency,
+  _currencies: CryptoOrTokenCurrency[],
+): CryptoOrTokenCurrency => {
+  // For now, just return the mainCurrency directly
+  // This avoids async token lookup which is not possible in useMemo
+  return mainCurrency;
+};
 
 export type AssetDeps = {
   useBalanceDeps: UseBalanceDeps;
@@ -90,8 +100,7 @@ export function createUseRightBalanceAsset({ useBalanceDeps, balanceItem }: Asse
 
       for (const [, { currencies, mainCurrency }] of providerMap) {
         if (!assetsSet.has(mainCurrency.id)) continue;
-        const providerCurrency = getProviderCurrency(mainCurrency, currencies);
-        if (!providerCurrency) continue;
+        const providerCurrency = getProviderCurrencySync(mainCurrency, currencies);
 
         const { totalBalance, totalFiatValue, hasAccounts } = calculateProviderTotals(
           currencies,

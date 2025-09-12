@@ -44,7 +44,6 @@ import {
 } from "../actions/constants";
 import { OnboardingUseCase } from "../components/Onboarding/OnboardingUseCase";
 import { Handlers } from "./types";
-import { findCurrencyByTicker } from "@ledgerhq/live-countervalues/findCurrencyByTicker";
 
 /* Initial state */
 
@@ -702,7 +701,12 @@ export const counterValueCurrencyLocalSelector = (state: SettingsState): Currenc
   if (OFAC_CURRENCIES.includes(state.counterValue)) {
     return getFiatCurrencyByTicker("USD");
   }
-  return findCurrencyByTicker(state.counterValue) || getFiatCurrencyByTicker("USD");
+  // Try to get fiat currency by ticker, fallback to USD if not found
+  try {
+    return getFiatCurrencyByTicker(state.counterValue);
+  } catch {
+    return getFiatCurrencyByTicker("USD");
+  }
 };
 
 export const counterValueCurrencySelector = createSelector(

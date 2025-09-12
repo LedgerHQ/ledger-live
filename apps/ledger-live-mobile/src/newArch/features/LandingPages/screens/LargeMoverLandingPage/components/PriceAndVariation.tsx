@@ -1,9 +1,7 @@
 import React from "react";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import CurrencyUnitValue from "~/components/CurrencyUnitValue";
-import { counterValueCurrencySelector } from "~/reducers/settings";
-import { useSelector } from "react-redux";
-import { Currency } from "@ledgerhq/types-cryptoassets";
+import { useCounterValueCurrency } from "~/hooks/useCounterValueCurrency";
 import Delta from "~/components/Delta";
 import { KeysPriceChange, MarketCoinDataChart } from "@ledgerhq/live-common/market/utils/types";
 import { useTranslation } from "react-i18next";
@@ -25,9 +23,14 @@ export const PriceAndVariation: React.FC<PriceAndVariationProps> = ({
   range,
   chartData,
 }) => {
-  const counterValueCurrency: Currency = useSelector(counterValueCurrencySelector);
+  const counterValueCurrency = useCounterValueCurrency();
   const { t } = useTranslation();
   const { locale } = useLocale();
+
+  if (!counterValueCurrency) {
+    return null;
+  }
+
   const { textColor, bgColor } = getColors(priceChangePercentage[range]);
 
   const baseFromChart = chartData?.[range]?.[0]?.[1] ?? 0;

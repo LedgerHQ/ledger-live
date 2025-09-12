@@ -36,6 +36,9 @@ export default function Home() {
         <li>
           <Link href="/trustchain">Trustchain</Link>
         </li>
+        <li>
+          <Link href="/crypto-assets-store">Crypto Assets Store POC</Link>
+        </li>
       </ul>
     </main>
   );

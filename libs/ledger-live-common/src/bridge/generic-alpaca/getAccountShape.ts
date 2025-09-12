@@ -64,14 +64,14 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
     });
 
     const subAccounts =
-      buildSubAccounts({
+      (await buildSubAccounts({
         currency,
         accountId,
         assetsBalance,
         syncConfig,
         operations: assetOperations,
         getTokenFromAsset: alpacaApi.getTokenFromAsset,
-      }) || [];
+      })) || [];
 
     const operations = mergedOps.map(op => {
       const subOperations = inferSubOperations(op.hash, subAccounts);

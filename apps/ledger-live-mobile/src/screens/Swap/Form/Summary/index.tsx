@@ -16,7 +16,7 @@ import { NavigatorName, ScreenName } from "~/const";
 import CurrencyIcon from "~/components/CurrencyIcon";
 import { rateExpirationSelector, rateSelector } from "~/actions/swap";
 import { CountdownTimer } from "./CountdownTimer";
-import { counterValueCurrencySelector } from "~/reducers/settings";
+import { useCounterValueCurrency } from "~/hooks/useCounterValueCurrency";
 import {
   BaseComposite,
   MaterialTopTabNavigatorProps,
@@ -49,7 +49,7 @@ export function Summary({ provider, swapTx: { swap, status, transaction } }: Pro
 
   const exchangeRate = useSelector(rateSelector);
   const ratesExpiration = useSelector(rateExpirationSelector);
-  const rawCounterValueCurrency = useSelector(counterValueCurrencySelector);
+  const rawCounterValueCurrency = useCounterValueCurrency();
 
   const name = useMemo(() => provider && getProviderName(provider), [provider]);
 
@@ -104,7 +104,24 @@ export function Summary({ provider, swapTx: { swap, status, transaction } }: Pro
     }
   }, [navigation, to, track]);
 
-  const counterValueCurrency = to.currency || rawCounterValueCurrency;
+  // Fallback currency if not loaded yet
+  const fallbackCurrency = {
+    type: "FiatCurrency" as const,
+    ticker: "USD",
+    name: "USD",
+    symbol: "USD",
+    units: [
+      {
+        code: "USD",
+        name: "USD",
+        magnitude: 2,
+        showAllDigits: true,
+        prefixCode: true,
+      },
+    ],
+  };
+
+  const counterValueCurrency = to.currency || rawCounterValueCurrency || fallbackCurrency;
   const effectiveUnit = from.currency?.units[0];
   const valueNum = effectiveUnit && 10 ** effectiveUnit.magnitude;
   const rawCounterValue = useCalculate({

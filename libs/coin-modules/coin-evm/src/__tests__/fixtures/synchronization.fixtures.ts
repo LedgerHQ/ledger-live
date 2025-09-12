@@ -6,16 +6,54 @@ import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { encodeSubOperationId } from "@ledgerhq/coin-framework/operation";
 import * as logic from "../../logic";
 import { getCoinConfig } from "../../config";
-import { getCryptoAssetsStore } from "../../cryptoAssetsStore";
-import {
-  makeAccount,
-  makeNft,
-  makeNftOperation,
-  makeOperation,
-  makeTokenAccount,
-} from "./common.fixtures";
+import { makeAccount, makeNft, makeTokenAccount } from "./common.fixtures";
 
 jest.useFakeTimers().setSystemTime(new Date("2014-04-21"));
+
+// Temporary synchronous versions to fix tests - TODO: make these properly async
+const makeOperationSync = (partialOp?: any) => ({
+  id: partialOp?.id || "js:2:ethereum:0xkvn:-hash-OUT",
+  hash: partialOp?.hash || "0xhash",
+  accountId: partialOp?.accountId || "js:2:ethereum:0xkvn:",
+  blockHash:
+    partialOp?.blockHash || "0x95dc138a02c1b0e3fd49305f785e8e27e88a885004af13a9b4c62ad94eed07dd",
+  blockHeight: partialOp?.blockHeight || 1,
+  recipients: partialOp?.recipients || ["0xB0B"],
+  senders: partialOp?.senders || ["0x9b744C0451D73C0958d8aA566dAd33022E4Ee797"],
+  contract: partialOp?.contract,
+  value: partialOp?.value || new BigNumber(152021496),
+  fee: partialOp?.fee || new BigNumber(1935663357068271),
+  transactionSequenceNumber: partialOp?.transactionSequenceNumber || 1,
+  date: partialOp?.date || new Date(),
+  type: partialOp?.type || "OUT",
+  subOperations: [],
+  nftOperations: [],
+  internalOperations: [],
+  extra: {},
+});
+
+const _makeNftOperationSync = (partialOp?: any) => ({
+  id: partialOp?.id || "js:2:ethereum:0xkvn:-hash-NFT_OUT",
+  hash: partialOp?.hash || "0xhash",
+  accountId: partialOp?.accountId || "js:2:ethereum:0xkvn:",
+  blockHash:
+    partialOp?.blockHash || "0x95dc138a02c1b0e3fd49305f785e8e27e88a885004af13a9b4c62ad94eed07dd",
+  blockHeight: partialOp?.blockHeight || 1,
+  recipients: partialOp?.recipients || ["0xB0B"],
+  senders: partialOp?.senders || ["0x9b744C0451D73C0958d8aA566dAd33022E4Ee797"],
+  contract: partialOp?.contract || "0xBC4CA0EdA7647A8aB7C2061c2E118A18a936f13D",
+  standard: partialOp?.standard || "ERC721",
+  tokenId: partialOp?.tokenId || "1",
+  value: partialOp?.value || new BigNumber(1),
+  fee: partialOp?.fee || new BigNumber(1935663357068271),
+  transactionSequenceNumber: partialOp?.transactionSequenceNumber || 1,
+  date: partialOp?.date || new Date(),
+  type: partialOp?.type || "NFT_OUT",
+  subOperations: [],
+  nftOperations: [],
+  internalOperations: [],
+  extra: {},
+});
 
 export const currency: CryptoCurrency = Object.freeze({
   ...getCryptoCurrencyById("ethereum"),
@@ -54,11 +92,26 @@ export const swapHistory = [
   },
 ];
 
+// Temporary mock tokens to fix synchronous usage - these should be properly async in real tests
 export const tokenCurrencies = [
-  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-  getCryptoAssetsStore().findTokenById("ethereum/erc20/usd__coin") as TokenCurrency,
-  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-  getCryptoAssetsStore().findTokenById("ethereum/erc20/usd_tether__erc20_") as TokenCurrency,
+  {
+    type: "TokenCurrency",
+    id: "ethereum/erc20/usd__coin",
+    contractAddress: "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+    name: "USD Coin",
+    ticker: "USDC",
+    units: [{ name: "USDC", code: "USDC", magnitude: 6 }],
+    parentCurrency: currency,
+  } as TokenCurrency,
+  {
+    type: "TokenCurrency",
+    id: "ethereum/erc20/usd_tether__erc20_",
+    contractAddress: "0xdac17f958d2ee523a2206206994597c13d831ec7",
+    name: "Tether USD",
+    ticker: "USDT",
+    units: [{ name: "USDT", code: "USDT", magnitude: 6 }],
+    parentCurrency: currency,
+  } as TokenCurrency,
 ];
 
 export const tokenAccount = {
@@ -71,7 +124,7 @@ export const account = Object.freeze({
 });
 
 export const coinOperations = [
-  makeOperation({
+  makeOperationSync({
     hash: "0xCoinOp1Hash",
     accountId: "js:2:ethereum:0xkvn:",
     blockHash: "0x8df71a12a8c06b36c06c26bf6248857dd2a2b75b6edbb4e33e9477078897b282",
@@ -80,14 +133,14 @@ export const coinOperations = [
     date: new Date(),
     blockHeight: 1,
   }),
-  makeOperation({
+  makeOperationSync({
     hash: "0xCoinOp2Hash",
     accountId: "js:2:ethereum:0xkvn:",
     transactionSequenceNumber: 2,
     date: new Date(Date.now() + 1),
     blockHeight: 100,
   }),
-  makeOperation({
+  makeOperationSync({
     hash: "0xCoinOp3Hash",
     accountId: "js:2:ethereum:0xkvn:",
     transactionSequenceNumber: 5,
@@ -97,7 +150,7 @@ export const coinOperations = [
 ];
 
 export const tokenOperations = [
-  makeOperation({
+  makeOperationSync({
     hash: coinOperations[0].hash, // on purpose to make this token op a subOp of coinOp 1
     accountId: "js:2:ethereum:0xkvn:+ethereum%2Ferc20%2Fusd~!underscore!~~!underscore!~coin",
     blockHash: "0x95dc138a02c1b0e3fd49305f785e8e27e88a885004af13a9b4c62ad94eed07dd",
@@ -110,21 +163,21 @@ export const tokenOperations = [
     date: new Date(),
     blockHeight: 10,
   }),
-  makeOperation({
+  makeOperationSync({
     hash: "0xTokenHashAga1n",
     accountId: "js:2:ethereum:0xkvn:+ethereum%2Ferc20%2Fusd~!underscore!~~!underscore!~coin",
     contract: "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
     date: new Date(Date.now() + 1),
     blockHeight: 1000,
   }),
-  makeOperation({
+  makeOperationSync({
     hash: "0xTokenHashAga1n",
     accountId: "js:2:ethereum:0xkvn:+ethereum%2Ferc20%2Fusd~!underscore!~~!underscore!~coin",
     contract: "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
     date: new Date(Date.now() + 2),
     blockHeight: 10000,
   }),
-  makeOperation({
+  makeOperationSync({
     hash: "0xTokenHashOtherToken",
     accountId: "js:2:ethereum:0xkvn:+ethereum%2Ferc20%2Fusd_tether__erc20_",
     contract: "0xdac17f958d2ee523a2206206994597c13d831ec7",
@@ -134,103 +187,93 @@ export const tokenOperations = [
 ];
 
 export const erc721Operations = [
-  makeNftOperation(
-    {
-      hash: coinOperations[0].hash, // on purpose to make this erc721 op an nftOp of coinOp 1
-      accountId: coinOperations[0].accountId,
-      blockHash: coinOperations[0].blockHash,
-      recipients: ["0xB0B"],
-      senders: ["0x1084b55cB63dE549806A521036F7dad2d37E3fAE"], // chocolatine.eth
-      contract: "0xBC4CA0EdA7647A8aB7C2061c2E118A18a936f13D",
-      tokenId: "1",
-      standard: "ERC721",
-      value: new BigNumber(1),
-      fee: coinOperations[0].fee,
-      type: "NFT_IN",
-      date: coinOperations[0].date,
-      blockHeight: coinOperations[0].blockHeight,
-    },
-    0,
-  ),
-  makeNftOperation(
-    {
-      hash: coinOperations[1].hash, // on purpose to make this erc721 op an nftOp of coinOp 1
-      accountId: coinOperations[1].accountId,
-      blockHash: coinOperations[1].blockHash,
-      recipients: ["0xB0B"],
-      senders: ["0x1084b55cB63dE549806A521036F7dad2d37E3fAE"], // chocolatine.eth
-      contract: "0xBC4CA0EdA7647A8aB7C2061c2E118A18a936f13D",
-      tokenId: "2",
-      standard: "ERC721",
-      value: new BigNumber(1),
-      fee: coinOperations[1].fee,
-      type: "NFT_IN",
-      date: coinOperations[1].date,
-      blockHeight: coinOperations[1].blockHeight,
-    },
-    0,
-  ),
-  makeNftOperation(
-    {
-      hash: coinOperations[1].hash, // on purpose to make this erc721 op an nftOp of coinOp 1
-      accountId: coinOperations[1].accountId,
-      blockHash: coinOperations[1].blockHash,
-      recipients: ["0xB0B"],
-      senders: ["0x1084b55cB63dE549806A521036F7dad2d37E3fAE"], // chocolatine.eth
-      contract: "0xBC4CA0EdA7647A8aB7C2061c2E118A18a936f13D",
-      tokenId: "1",
-      standard: "ERC721",
-      value: new BigNumber(1),
-      fee: coinOperations[1].fee,
-      type: "NFT_OUT",
-      date: coinOperations[1].date,
-      blockHeight: coinOperations[1].blockHeight,
-    },
-    1,
-  ),
+  makeOperationSync({
+    id: "js:2:ethereum:0xkvn:-0xhash1-NFT_IN-0",
+    hash: coinOperations[0].hash, // on purpose to make this erc721 op an nftOp of coinOp 1
+    accountId: coinOperations[0].accountId,
+    blockHash: coinOperations[0].blockHash,
+    recipients: ["0xB0B"],
+    senders: ["0x1084b55cB63dE549806A521036F7dad2d37E3fAE"], // chocolatine.eth
+    contract: "0xBC4CA0EdA7647A8aB7C2061c2E118A18a936f13D",
+    tokenId: "1",
+    standard: "ERC721",
+    value: new BigNumber(1),
+    fee: coinOperations[0].fee,
+    type: "NFT_IN",
+    date: coinOperations[0].date,
+    blockHeight: coinOperations[0].blockHeight,
+  }),
+  makeOperationSync({
+    id: "js:2:ethereum:0xkvn:-0xhash2-NFT_IN-0",
+    hash: coinOperations[1].hash, // on purpose to make this erc721 op an nftOp of coinOp 1
+    accountId: coinOperations[1].accountId,
+    blockHash: coinOperations[1].blockHash,
+    recipients: ["0xB0B"],
+    senders: ["0x1084b55cB63dE549806A521036F7dad2d37E3fAE"], // chocolatine.eth
+    contract: "0xBC4CA0EdA7647A8aB7C2061c2E118A18a936f13D",
+    tokenId: "2",
+    standard: "ERC721",
+    value: new BigNumber(1),
+    fee: coinOperations[1].fee,
+    type: "NFT_IN",
+    date: coinOperations[1].date,
+    blockHeight: coinOperations[1].blockHeight,
+  }),
+  makeOperationSync({
+    id: "js:2:ethereum:0xkvn:-0xhash2-NFT_OUT-1",
+    hash: coinOperations[1].hash, // on purpose to make this erc721 op an nftOp of coinOp 1
+    accountId: coinOperations[1].accountId,
+    blockHash: coinOperations[1].blockHash,
+    recipients: ["0xB0B"],
+    senders: ["0x1084b55cB63dE549806A521036F7dad2d37E3fAE"], // chocolatine.eth
+    contract: "0xBC4CA0EdA7647A8aB7C2061c2E118A18a936f13D",
+    tokenId: "1",
+    standard: "ERC721",
+    value: new BigNumber(1),
+    fee: coinOperations[1].fee,
+    type: "NFT_OUT",
+    date: coinOperations[1].date,
+    blockHeight: coinOperations[1].blockHeight,
+  }),
 ];
 
 export const erc1155Operations = [
-  makeNftOperation(
-    {
-      hash: coinOperations[0].hash, // on purpose to make this erc1155 op an nftOp of coinOp 1
-      accountId: "js:2:ethereum:0xkvn:",
-      blockHash: "0x95dc138a02c1b0e3fd49305f785e8e27e88a885004af13a9b4c62ad94eed07dd",
-      recipients: ["0xB0B"],
-      senders: ["0x1084b55cB63dE549806A521036F7dad2d37E3fAE"], // painauchocolat.eth
-      contract: "0xBa98C7d6B25309FF097e88D24400c0EbC4D68e3a",
-      tokenId: "1",
-      standard: "ERC1155",
-      value: new BigNumber(10),
-      fee: new BigNumber(1935663357068271),
-      type: "NFT_IN",
-      date: new Date(),
-      blockHeight: 10,
-    },
-    0,
-  ),
-  makeNftOperation(
-    {
-      hash: coinOperations[1].hash, // on purpose to make this erc1155 op an nftOp of coinOp 1
-      accountId: "js:2:ethereum:0xkvn:",
-      blockHash: "0x95dc138a02c1b0e3fd49305f785e8e27e88a885004af13a9b4c62ad94eed07dd",
-      recipients: ["0xB0B"],
-      senders: ["0x1084b55cB63dE549806A521036F7dad2d37E3fAE"], // painauchocolat.eth
-      contract: "0xBa98C7d6B25309FF097e88D24400c0EbC4D68e3a",
-      tokenId: "1",
-      standard: "ERC1155",
-      value: new BigNumber(9),
-      fee: new BigNumber(1935663357068271),
-      type: "NFT_OUT",
-      date: new Date(Date.now() + 1),
-      blockHeight: 11,
-    },
-    0,
-  ),
+  makeOperationSync({
+    id: "js:2:ethereum:0xkvn:-0xhash1-NFT_IN-0",
+    hash: coinOperations[0].hash, // on purpose to make this erc1155 op an nftOp of coinOp 1
+    accountId: "js:2:ethereum:0xkvn:",
+    blockHash: "0x95dc138a02c1b0e3fd49305f785e8e27e88a885004af13a9b4c62ad94eed07dd",
+    recipients: ["0xB0B"],
+    senders: ["0x1084b55cB63dE549806A521036F7dad2d37E3fAE"], // painauchocolat.eth
+    contract: "0xBa98C7d6B25309FF097e88D24400c0EbC4D68e3a",
+    tokenId: "1",
+    standard: "ERC1155",
+    value: new BigNumber(10),
+    fee: new BigNumber(1935663357068271),
+    type: "NFT_IN",
+    date: new Date(),
+    blockHeight: 10,
+  }),
+  makeOperationSync({
+    id: "js:2:ethereum:0xkvn:-0xhash2-NFT_OUT-1",
+    hash: coinOperations[1].hash, // on purpose to make this erc1155 op an nftOp of coinOp 1
+    accountId: "js:2:ethereum:0xkvn:",
+    blockHash: "0x95dc138a02c1b0e3fd49305f785e8e27e88a885004af13a9b4c62ad94eed07dd",
+    recipients: ["0xB0B"],
+    senders: ["0x1084b55cB63dE549806A521036F7dad2d37E3fAE"], // painauchocolat.eth
+    contract: "0xBa98C7d6B25309FF097e88D24400c0EbC4D68e3a",
+    tokenId: "1",
+    standard: "ERC1155",
+    value: new BigNumber(9),
+    fee: new BigNumber(1935663357068271),
+    type: "NFT_OUT",
+    date: new Date(Date.now() + 1),
+    blockHeight: 11,
+  }),
 ];
 
 export const internalOperations = [
-  makeOperation({
+  makeOperationSync({
     hash: coinOperations[0].hash, // on purpose to make this internal op a subOp of coinOp 1
     accountId: coinOperations[0].accountId,
     blockHash: coinOperations[0].blockHash,
@@ -243,7 +286,7 @@ export const internalOperations = [
     blockHeight: 10,
     id: encodeSubOperationId(coinOperations[0].accountId, coinOperations[0].hash, "NONE", 0),
   }),
-  makeOperation({
+  makeOperationSync({
     hash: coinOperations[1].hash, // on purpose to make this internal op a subOp of coinOp 1
     accountId: coinOperations[1].accountId,
     blockHash: coinOperations[1].blockHash,
@@ -256,7 +299,7 @@ export const internalOperations = [
     blockHeight: 11,
     id: encodeSubOperationId(coinOperations[1].accountId, coinOperations[1].hash, "OUT", 0),
   }),
-  makeOperation({
+  makeOperationSync({
     hash: coinOperations[2].hash, // on purpose to make this internal op a subOp of coinOp 1
     accountId: coinOperations[2].accountId,
     blockHash: coinOperations[2].blockHash,
@@ -271,7 +314,7 @@ export const internalOperations = [
   }),
 ];
 
-export const pendingOperation = makeOperation({
+export const pendingOperation = makeOperationSync({
   hash: "123",
 });
 

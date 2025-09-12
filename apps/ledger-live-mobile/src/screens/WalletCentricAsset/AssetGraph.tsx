@@ -1,11 +1,10 @@
 import React from "react";
 import Animated from "react-native-reanimated";
-import { useSelector } from "react-redux";
-import { CryptoOrTokenCurrency, Currency } from "@ledgerhq/types-cryptoassets";
+import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { AccountLike } from "@ledgerhq/types-live";
 import AssetCentricGraphCard from "~/components/AssetCentricGraphCard";
 import { usePortfolioForAccounts } from "~/hooks/portfolio";
-import { counterValueCurrencySelector } from "~/reducers/settings";
+import useCounterValueCurrency from "~/hooks/useCounterValueCurrency";
 
 type Props = {
   accounts: AccountLike[];
@@ -27,7 +26,11 @@ const AssetGraph = ({
   const assetPortfolio = usePortfolioForAccounts(accounts, {
     flattenSourceAccounts: false,
   });
-  const counterValueCurrency: Currency = useSelector(counterValueCurrencySelector);
+  const counterValueCurrency = useCounterValueCurrency();
+
+  if (!counterValueCurrency) {
+    return null; // or loading placeholder
+  }
   return (
     <AssetCentricGraphCard
       assetPortfolio={assetPortfolio}

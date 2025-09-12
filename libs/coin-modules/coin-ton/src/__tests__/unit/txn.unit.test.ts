@@ -139,10 +139,14 @@ describe("Transaction functions", () => {
       const { transaction_hash, amount, transaction_now, transaction_lt } =
         jettonTransferResponse.jetton_transfers[0];
 
-      const finalOperation = flatMap(
-        jettonTransferResponse.jetton_transfers,
-        mapJettonTxToOps(mockAccountId, mockAddress, tonTransactionResponse.address_book),
+      const jettonOpsMapper = mapJettonTxToOps(
+        mockAccountId,
+        mockAddress,
+        tonTransactionResponse.address_book,
       );
+      const finalOperation = (
+        await Promise.all(jettonTransferResponse.jetton_transfers.map(jettonOpsMapper))
+      ).flat();
 
       const tokenByCurrencyAddress = `${mockAccountId}+ton%2Fjetton%2Feqavlwfdxgf2lxm67y4yzc17wykd9a0guwpkms1gosm~!underscore!~~!underscore!~not`;
       expect(finalOperation).toEqual([

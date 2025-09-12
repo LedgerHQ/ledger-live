@@ -374,7 +374,7 @@ async function deriveCreateAssociatedTokenAccountCommandDescriptor(
 ): Promise<CommandDescriptor> {
   const errors: Record<string, Error> = {};
 
-  const token = getCryptoAssetsStore().getTokenById(model.uiState.tokenId);
+  const token = await getCryptoAssetsStore().getTokenById(model.uiState.tokenId);
   const mint = token.contractAddress;
   const tokenProgram = await getMaybeTokenMintProgram(mint, api);
 

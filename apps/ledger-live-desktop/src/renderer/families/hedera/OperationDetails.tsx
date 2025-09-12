@@ -1,6 +1,7 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Trans, useTranslation } from "react-i18next";
 import type { OperationType } from "@ledgerhq/types-live";
+import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { findTokenByAddressInCurrency } from "@ledgerhq/cryptoassets";
 import { isValidExtra } from "@ledgerhq/live-common/families/hedera/logic";
 import type { HederaAccount, HederaOperation } from "@ledgerhq/live-common/families/hedera/types";
@@ -27,16 +28,30 @@ const OperationDetailsPostAccountSection = ({
   operation,
 }: OperationDetailsPostAccountSectionProps<HederaAccount, HederaOperation>) => {
   const { t } = useTranslation();
+  const [token, setToken] = useState<TokenCurrency | null>(null);
 
-  if (operation.type !== "ASSOCIATE_TOKEN") {
-    return null;
-  }
+  useEffect(() => {
+    if (operation.type !== "ASSOCIATE_TOKEN" || !operation.extra.associatedTokenId) {
+      setToken(null);
+      return;
+    }
 
-  const token = operation.extra.associatedTokenId
-    ? findTokenByAddressInCurrency(operation.extra.associatedTokenId, "hedera")
-    : null;
+    async function loadToken() {
+      try {
+        const foundToken = await findTokenByAddressInCurrency(
+          operation.extra.associatedTokenId!,
+          "hedera",
+        );
+        setToken(foundToken || null);
+      } catch (error) {
+        console.error("Failed to load token:", error);
+        setToken(null);
+      }
+    }
+    loadToken();
+  }, [operation.type, operation.extra.associatedTokenId]);
 
-  if (!token) {
+  if (operation.type !== "ASSOCIATE_TOKEN" || !token) {
     return null;
   }
 
@@ -57,18 +72,35 @@ const OperationDetailsPostAlert = ({
   operation,
 }: OperationDetailsExtraProps<HederaAccount, HederaOperation>) => {
   const dispatch = useDispatch();
+  const [token, setToken] = useState<TokenCurrency | null>(null);
 
-  if (operation.type !== "ASSOCIATE_TOKEN") {
-    return null;
-  }
+  useEffect(() => {
+    if (operation.type !== "ASSOCIATE_TOKEN") {
+      setToken(null);
+      return;
+    }
 
-  const extra = isValidExtra(operation.extra) ? operation.extra : null;
-  const associatedTokenId = extra?.associatedTokenId;
-  const token = associatedTokenId
-    ? findTokenByAddressInCurrency(associatedTokenId, "hedera")
-    : null;
+    const extra = isValidExtra(operation.extra) ? operation.extra : null;
+    const associatedTokenId = extra?.associatedTokenId;
 
-  if (!token) {
+    if (!associatedTokenId) {
+      setToken(null);
+      return;
+    }
+
+    async function loadToken() {
+      try {
+        const foundToken = await findTokenByAddressInCurrency(associatedTokenId!, "hedera");
+        setToken(foundToken || null);
+      } catch (error) {
+        console.error("Failed to load token:", error);
+        setToken(null);
+      }
+    }
+    loadToken();
+  }, [operation.type, operation.extra]);
+
+  if (operation.type !== "ASSOCIATE_TOKEN" || !token) {
     return null;
   }
 
@@ -99,9 +131,28 @@ const OperationDetailsPostAlert = ({
 };
 
 const AddressCell = ({ operation }: AddressCellProps<HederaOperation>) => {
-  const token = operation.extra.associatedTokenId
-    ? findTokenByAddressInCurrency(operation.extra.associatedTokenId, "hedera")
-    : null;
+  const [token, setToken] = useState<TokenCurrency | null>(null);
+
+  useEffect(() => {
+    if (!operation.extra.associatedTokenId) {
+      setToken(null);
+      return;
+    }
+
+    async function loadToken() {
+      try {
+        const foundToken = await findTokenByAddressInCurrency(
+          operation.extra.associatedTokenId!,
+          "hedera",
+        );
+        setToken(foundToken || null);
+      } catch (error) {
+        console.error("Failed to load token:", error);
+        setToken(null);
+      }
+    }
+    loadToken();
+  }, [operation.extra.associatedTokenId]);
 
   if (!token) {
     return null;

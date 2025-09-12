@@ -35,7 +35,7 @@ export function genericPrepareTransaction(
   return async (account, transaction: TransactionParam) => {
     const { getAssetFromToken } = getAlpacaApi(network, kind);
     const { assetReference, assetOwner } = getAssetFromToken
-      ? getAssetInfos(transaction, account.freshAddress, getAssetFromToken)
+      ? await getAssetInfos(transaction, account.freshAddress, getAssetFromToken)
       : assetInfosFallback(transaction);
 
     let fees = transaction.customFees?.parameters?.fees || null;
@@ -67,16 +67,16 @@ export function genericPrepareTransaction(
   };
 }
 
-export function getAssetInfos(
+export async function getAssetInfos(
   tr: TransactionParam,
   owner: string,
   getAssetFromToken: (token: TokenCurrency, owner: string) => AssetInfo,
-): {
+): Promise<{
   assetReference: string;
   assetOwner: string;
-} {
+}> {
   if (tr.subAccountId) {
-    const { token } = decodeTokenAccountId(tr.subAccountId);
+    const { token } = await decodeTokenAccountId(tr.subAccountId);
 
     if (!token) return assetInfosFallback(tr);
 

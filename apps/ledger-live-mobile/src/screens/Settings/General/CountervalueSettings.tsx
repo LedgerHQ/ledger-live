@@ -5,7 +5,7 @@ import { State } from "~/reducers/types";
 import makeGenericSelectScreen from "../../makeGenericSelectScreen";
 
 const mapStateToProps = (state: State) => ({
-  selectedKey: counterValueCurrencySelector(state).ticker,
+  selectedKey: counterValueCurrencySelector(state), // counterValueCurrencySelector now returns the ticker string directly
   items: supportedCounterValuesSelector(state),
 });
 

@@ -364,7 +364,7 @@ async function buildSubAccounts({
 
   // filter by token existence
   await promiseAllBatched(3, assets, async asset => {
-    const token = findTokenById(addPrefixToken(asset.assetId));
+    const token = await findTokenById(addPrefixToken(asset.assetId));
 
     if (token && !blacklistedTokenIds.includes(token.id)) {
       const initialTokenAccount = existingAccountByTicker[token.ticker];

@@ -64,7 +64,7 @@ export function syncAccount<
   );
 }
 
-export function testBridge<T extends TransactionCommon>(data: DatasetTest<T>): void {
+export async function testBridge<T extends TransactionCommon>(data: DatasetTest<T>): Promise<void> {
   // covers all bridges through many different accounts
   // to test the common shared properties of bridges.
   const accountsRelated: Array<{
@@ -78,7 +78,8 @@ export function testBridge<T extends TransactionCommon>(data: DatasetTest<T>): v
     currency: CryptoCurrency;
   }> = [];
   const { implementations, currencies } = data;
-  Object.keys(currencies).forEach(currencyId => {
+
+  for (const currencyId of Object.keys(currencies)) {
     const currencyData = currencies[currencyId];
     const currency = getCryptoCurrencyById(currencyId);
     currenciesRelated.push({
@@ -87,13 +88,13 @@ export function testBridge<T extends TransactionCommon>(data: DatasetTest<T>): v
     });
 
     const accounts = currencyData.accounts || [];
-    accounts.forEach(accountData =>
-      implementations.forEach(impl => {
+    for (const accountData of accounts) {
+      for (const impl of implementations) {
         if (accountData.implementations && !accountData.implementations.includes(impl)) {
-          return;
+          continue;
         }
 
-        const account = fromAccountRaw({
+        const account = await fromAccountRaw({
           ...accountData.raw,
           id: encodeAccountId({
             ...decodeAccountId(accountData.raw.id),
@@ -106,9 +107,9 @@ export function testBridge<T extends TransactionCommon>(data: DatasetTest<T>): v
           account,
           impl,
         });
-      }),
-    );
-  });
+      }
+    }
+  }
   const accountsFoundInScanAccountsMap = {};
 
   currenciesRelated.map(({ currencyData, currency }) => {

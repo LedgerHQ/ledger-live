@@ -13,11 +13,11 @@ import { getCountryLocale } from "~/helpers/getStakeLabelLocaleBased";
 import { useSettings } from "~/hooks";
 import {
   analyticsEnabledSelector,
-  counterValueCurrencySelector,
   exportSettingsSelector,
   hasSeenAnalyticsOptInPromptSelector,
   lastSeenDeviceSelector,
 } from "~/reducers/settings";
+import { useCounterValueCurrency } from "~/hooks/useCounterValueCurrency";
 import { DefaultAccountSwapParamList } from "../types";
 import { useDispatch } from "react-redux";
 import { useTranslateToSwapAccount } from "./hooks/useTranslateToSwapAccount";
@@ -40,7 +40,8 @@ export const WebView = forwardRef<WebviewAPI, Props>(
     const customHandlers = useSwapCustomHandlers(manifest, accounts, dispatch);
     const { theme } = useTheme();
     const { language } = useSettings();
-    const { ticker: currencyTicker } = useSelector(counterValueCurrencySelector);
+    const counterValueCurrency = useCounterValueCurrency();
+    const currencyTicker = counterValueCurrency?.ticker || "USD";
     const countryLocale = getCountryLocale();
     const SWAP_API_BASE = useEnv("SWAP_API_BASE");
     const SWAP_USER_IP = useEnv("SWAP_USER_IP");

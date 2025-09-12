@@ -10,7 +10,7 @@ import orderBy from "lodash/orderBy";
 import keyBy from "lodash/keyBy";
 import BigNumber from "bignumber.js";
 import { accountsSelector } from "~/reducers/accounts";
-import { counterValueCurrencySelector } from "~/reducers/settings";
+import { useCounterValueCurrency } from "~/hooks/useCounterValueCurrency";
 import { useModularDrawerAnalytics, MODULAR_DRAWER_PAGE_NAME } from "../analytics";
 import { formatDetailedAccount } from "../utils/formatdetailedAccount";
 import { sortAccountsByFiatValue } from "../utils/sortAccountsByFiatValue";
@@ -44,8 +44,9 @@ export const useDetailedAccounts = (
   const { trackModularDrawerEvent } = useModularDrawerAnalytics();
   const accountIds = useGetAccountIds(accounts$);
   const nestedAccounts = useSelector(accountsSelector);
-  const counterValueCurrency = useSelector(counterValueCurrencySelector);
+  const counterValueCurrency = useCounterValueCurrency();
 
+  // All hooks must be called before early returns
   const isATokenCurrency = useMemo(() => isTokenCurrency(asset), [asset]);
 
   const accounts = useMemo(() => {
@@ -73,7 +74,7 @@ export const useDetailedAccounts = (
         account,
         account.freshAddress,
         state,
-        counterValueCurrency,
+        counterValueCurrency!,
       );
 
       if (isATokenCurrency && tuple.subAccount) {
@@ -81,7 +82,7 @@ export const useDetailedAccounts = (
           tuple.subAccount,
           account.freshAddress,
           state,
-          counterValueCurrency,
+          counterValueCurrency!,
         );
         const parentAccountName = accountNameMap[account.id]?.name;
         return {
@@ -127,5 +128,14 @@ export const useDetailedAccounts = (
     [accounts, trackModularDrawerEvent, flow, source, asset.ticker, onAccountSelected],
   );
 
-  return { detailedAccounts, accounts, handleAccountSelected };
+  if (!counterValueCurrency) {
+    return {
+      formattedAccounts: [],
+      sortedFormattedAccounts: [],
+      accounts: [],
+      onPressAccount: () => {},
+    };
+  }
+
+  return { detailedAccounts, accounts, onPressAccount: handleAccountSelected };
 };

@@ -216,13 +216,13 @@ export const getSyncHash = (
  * creating a duplicate that will cause issues.
  * (Incorrect NFT balance & React key dup)
  */
-export const attachOperations = (
+export const attachOperations = async (
   _coinOperations: Operation[],
   _tokenOperations: Operation[],
   _nftOperations: Operation[],
   _internalOperations: Operation[],
   filters: { blacklistedTokenIds: string[] | undefined } = { blacklistedTokenIds: [] },
-): Operation[] => {
+): Promise<Operation[]> => {
   const { blacklistedTokenIds } = filters;
 
   // Creating deep copies of each Operation[] to prevent mutating the originals
@@ -235,9 +235,11 @@ export const attachOperations = (
     Required<Pick<Operation, "nftOperations" | "subOperations" | "internalOperations">>;
 
   // Helper to create a coin operation with type NONE as a parent of an orphan child operation
-  const makeCoinOpForOrphanChildOp = (childOp: Operation): OperationWithRequiredChildren => {
+  const makeCoinOpForOrphanChildOp = async (
+    childOp: Operation,
+  ): Promise<OperationWithRequiredChildren> => {
     const type = "NONE";
-    const { accountId } = decodeTokenAccountId(childOp.accountId);
+    const { accountId } = await decodeTokenAccountId(childOp.accountId);
     const id = encodeOperationId(accountId, childOp.hash, type);
 
     return {
@@ -277,12 +279,12 @@ export const attachOperations = (
 
   // Looping through token operations to potentially copy them as a child operation of a coin operation
   for (const tokenOperation of tokenOperations) {
-    const { token } = decodeTokenAccountId(tokenOperation.accountId);
+    const { token } = await decodeTokenAccountId(tokenOperation.accountId);
     if (!token || blacklistedTokenIds?.includes(token.id)) continue;
 
     let mainOperations = coinOperationsByHash[tokenOperation.hash];
     if (!mainOperations?.length) {
-      const noneOperation = makeCoinOpForOrphanChildOp(tokenOperation);
+      const noneOperation = await makeCoinOpForOrphanChildOp(tokenOperation);
       mainOperations = [noneOperation];
       coinOperations.push(noneOperation);
     }
@@ -297,7 +299,7 @@ export const attachOperations = (
   for (const nftOperation of nftOperations) {
     let mainOperations = coinOperationsByHash[nftOperation.hash];
     if (!mainOperations?.length) {
-      const noneOperation = makeCoinOpForOrphanChildOp(nftOperation);
+      const noneOperation = await makeCoinOpForOrphanChildOp(nftOperation);
       mainOperations = [noneOperation];
       coinOperations.push(noneOperation);
     }
@@ -312,7 +314,7 @@ export const attachOperations = (
   for (const internalOperation of internalOperations) {
     let mainOperations = coinOperationsByHash[internalOperation.hash];
     if (!mainOperations?.length) {
-      const noneOperation = makeCoinOpForOrphanChildOp(internalOperation);
+      const noneOperation = await makeCoinOpForOrphanChildOp(internalOperation);
       mainOperations = [noneOperation];
       coinOperations.push(noneOperation);
     }

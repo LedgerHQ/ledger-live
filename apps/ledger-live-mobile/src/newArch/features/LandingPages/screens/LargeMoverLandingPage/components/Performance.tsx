@@ -1,8 +1,7 @@
 import { Flex, Text, ProgressPoint } from "@ledgerhq/native-ui";
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { counterValueCurrencySelector } from "~/reducers/settings";
-import { useSelector } from "react-redux";
+import { useCounterValueCurrency } from "~/hooks/useCounterValueCurrency";
 import { counterValueFormatter } from "LLM/features/Market/utils";
 import { useLocale } from "~/context/Locale";
 
@@ -15,7 +14,11 @@ type PerformanceProps = {
 export const Performance: React.FC<PerformanceProps> = ({ low, high, price }) => {
   const { t } = useTranslation();
   const { locale } = useLocale();
-  const counterValueCurrency = useSelector(counterValueCurrencySelector);
+  const counterValueCurrency = useCounterValueCurrency();
+
+  if (!counterValueCurrency) {
+    return null;
+  }
 
   return (
     <Flex width="100%">

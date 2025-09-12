@@ -12,7 +12,7 @@ import type { CryptoAssetsStore } from "@ledgerhq/types-live";
 
 setSupportedCurrencies(["ethereum"]);
 describe("importAccountsMakeItems", () => {
-  test("importing ethereum accounts", () => {
+  test("importing ethereum accounts", async () => {
     const resultAccounts: AccountData[] = [
       {
         id: "js:1:ethereum:0x01:",
@@ -80,7 +80,7 @@ describe("importAccountsMakeItems", () => {
     };
     // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
     setCryptoAssetsStore({} as CryptoAssetsStore);
-    const accounts = [
+    const _syncedAccounts = [
       <AccountRaw>{
         id: "js:1:ethereum:0x01:",
         seedIdentifier: "0x01",
@@ -129,7 +129,43 @@ describe("importAccountsMakeItems", () => {
         lastSyncDate: "2019-07-17T15:13:29.306Z",
         balance: "1081392000000000",
       },
-    ].map(a => fromAccountRaw(a));
+    ];
+    const rawAccounts: AccountRaw[] = [
+      <AccountRaw>{
+        id: "js:1:ethereum:0x01:",
+        seedIdentifier: "0x01",
+        name: "Account 1",
+        derivationMode: "",
+        freshAddresses: [],
+        index: 0,
+        freshAddress: "0x01",
+        freshAddressPath: "44'/60'/0'/0/0",
+        blockHeight: 8168983,
+        operations: [],
+        pendingOperations: [],
+        currencyId: "ethereum",
+        lastSyncDate: "2019-07-17T15:13:30.318Z",
+        balance: "51281813126095913",
+      },
+      <AccountRaw>{
+        id: "js:1:ethereum:0x04:",
+        seedIdentifier: "0x01",
+        name: "Account 4",
+        derivationMode: "",
+        freshAddresses: [],
+        index: 3,
+        freshAddress: "0x04",
+        freshAddressPath: "44'/60'/0'/0/3",
+        blockHeight: 8168983,
+        operations: [],
+        pendingOperations: [],
+        currencyId: "ethereum",
+        lastSyncDate: "2019-07-17T15:13:29.306Z",
+        balance: "1081392000000000",
+      },
+    ];
+
+    const accounts = await Promise.all(rawAccounts.map(a => fromAccountRaw(a)));
 
     const { items, accountNames } = importAccountsMakeItems({
       result,

@@ -172,7 +172,7 @@ export default {
       async function f() {
         const currencies = await getCurrencies(opts);
         invariant(currencies, "no currency found");
-        const countervalues = getCountervalues(opts);
+        const countervalues = await getCountervalues(opts);
         const format = histoFormatters[opts.format || "default"];
         const startDate = getStartDate(opts) || new Date();
         const dates = getDatesWithOpts(opts);
@@ -255,10 +255,13 @@ async function getCurrencies(opts: CountervaluesJobOpts): Promise<CryptoCurrency
   );
 }
 
-function getCountervalues(opts: CountervaluesJobOpts): Currency[] {
-  return opts.fiats
-    ? listFiatCurrencies().map(a => a)
-    : ((opts.countervalue || ["USD"]).map(findCurrencyByTicker).filter(Boolean) as Currency[]);
+async function getCountervalues(opts: CountervaluesJobOpts): Promise<Currency[]> {
+  if (opts.fiats) {
+    return listFiatCurrencies().map(a => a);
+  } else {
+    const currencies = await Promise.all((opts.countervalue || ["USD"]).map(findCurrencyByTicker));
+    return currencies.filter(Boolean) as Currency[];
+  }
 }
 
 function getStartDate(opts: CountervaluesJobOpts): Date | null {

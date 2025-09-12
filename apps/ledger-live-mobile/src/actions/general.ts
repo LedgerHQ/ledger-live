@@ -15,7 +15,8 @@ import { useDistribution as useDistributionCommon } from "@ledgerhq/live-counter
 import { BehaviorSubject } from "rxjs";
 import { cleanCache, reorderAccounts } from "./accounts";
 import { accountsSelector } from "../reducers/accounts";
-import { counterValueCurrencySelector, orderAccountsSelector } from "../reducers/settings";
+import { orderAccountsSelector } from "../reducers/settings";
+import useCounterValueCurrency from "~/hooks/useCounterValueCurrency";
 import { clearBridgeCache } from "../bridge/cache";
 import { flushAll } from "../components/DBSave";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
@@ -29,14 +30,28 @@ export function useDistribution(
   opts: Omit<Parameters<typeof useDistributionCommon>[0], "accounts" | "to">,
 ) {
   const accounts = useSelector(accountsSelector);
-  const to = useSelector(counterValueCurrencySelector);
-  return useDistributionCommon({ accounts, to, ...opts });
+  const to = useCounterValueCurrency();
+
+  // Call hooks unconditionally, but handle null case
+  const distributionResult = useDistributionCommon({
+    accounts,
+    to: to!, // Non-null assertion, but we handle null below
+    ...opts,
+  });
+
+  if (!to) return { isAvailable: false, list: [] };
+  return distributionResult;
 }
 export function useCalculateCountervalueCallback() {
-  const to = useSelector(counterValueCurrencySelector);
-  return useCalculateCountervalueCallbackCommon({
-    to,
+  const to = useCounterValueCurrency();
+
+  // Call hook unconditionally, but handle null case
+  const callbackResult = useCalculateCountervalueCallbackCommon({
+    to: to!, // Non-null assertion, but we handle null below
   });
+
+  if (!to) return () => null;
+  return callbackResult;
 }
 export function useSortAccountsComparator() {
   const accounts = useSelector(orderAccountsSelector);
@@ -147,8 +162,8 @@ export function useExtraSessionTrackingPair() {
 
 export function useTrackingPairs(): TrackingPair[] {
   const accounts = useSelector(accountsSelector);
-  const countervalue = useSelector(counterValueCurrencySelector);
-  const trPairs = useTrackingPairForAccounts(accounts, countervalue);
+  const countervalue = useCounterValueCurrency();
+  const trPairs = useTrackingPairForAccounts(accounts, countervalue!);
   const extraSessionTrackingPairs = useExtraSessionTrackingPair();
   return useMemo(
     () => extraSessionTrackingPairs.concat(trPairs),

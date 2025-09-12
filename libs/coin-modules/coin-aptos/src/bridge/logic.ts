@@ -58,17 +58,17 @@ export const getBlankOperation = (
   hasFailed: false,
 });
 
-export const txsToOps = (
+export const txsToOps = async (
   info: { address: string },
   id: string,
   txs: (AptosTransaction | null)[],
-): [Operation[], Operation[], Operation[]] => {
+): Promise<[Operation[], Operation[], Operation[]]> => {
   const { address } = info;
   const ops: Operation[] = [];
   const opsTokens: Operation[] = [];
   const opsStaking: Operation[] = [];
 
-  txs.forEach(tx => {
+  for (const tx of txs) {
     if (tx !== null) {
       const op: Operation = getBlankOperation(tx, id);
       op.fee = new BigNumber(tx.gas_used).multipliedBy(new BigNumber(tx.gas_unit_price));
@@ -80,7 +80,7 @@ export const txsToOps = (
       const function_address = getFunctionAddress(payload);
 
       if (!function_address) {
-        return; // skip transaction without functions in payload
+        continue; // skip transaction without functions in payload
       }
 
       const { coin_id, amount_in, amount_out, type } = getCoinAndAmounts(tx, address);
@@ -113,15 +113,16 @@ export const txsToOps = (
         if (coin_id === APTOS_ASSET_ID) {
           ops.push(op);
         } else {
-          const token = findTokenByAddressInCurrency(coin_id.toLowerCase(), "aptos");
+          const token = await findTokenByAddressInCurrency(coin_id.toLowerCase(), "aptos");
           if (token !== undefined) {
             op.accountId = encodeTokenAccountId(id, token);
             opsTokens.push(op);
 
             if (op.type === OP_TYPE.OUT) {
+              const { accountId } = await decodeTokenAccountId(op.accountId);
               ops.push({
                 ...op,
-                accountId: decodeTokenAccountId(op.accountId).accountId,
+                accountId,
                 value: op.fee,
                 type: "FEES",
               });
@@ -130,7 +131,7 @@ export const txsToOps = (
         }
       }
     }
-  });
+  }
 
   return [ops, opsTokens, opsStaking];
 };

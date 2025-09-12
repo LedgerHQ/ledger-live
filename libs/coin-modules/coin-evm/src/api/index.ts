@@ -71,7 +71,7 @@ export function createApi(config: EvmConfig, currencyId: string): Api {
     getSequence: (address: string): Promise<number> => getSequence(currency, address),
     validateIntent: (intent: TransactionIntent): Promise<TransactionValidation> =>
       validateIntent(currency, intent),
-    getTokenFromAsset: (asset: AssetInfo): TokenCurrency | undefined =>
+    getTokenFromAsset: (asset: AssetInfo): Promise<TokenCurrency | undefined> =>
       getTokenFromAsset(currency, asset),
     getAssetFromToken: (token: TokenCurrency, owner: string): AssetInfo =>
       getAssetFromToken(currency, token, owner),

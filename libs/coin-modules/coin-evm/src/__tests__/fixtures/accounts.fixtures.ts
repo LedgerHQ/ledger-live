@@ -26,6 +26,7 @@ export const getAccountShapeParameters: AccountShapeInfo = {
   index: 0,
 };
 
+// Async operations - must be awaited in tests
 export const TMUSDTTransaction = makeOperation({
   hash: "anyHash",
   accountId:
@@ -40,6 +41,7 @@ export const TMUSDTTransaction = makeOperation({
   date: new Date(),
   blockHeight: 10,
 });
+
 export const NTMTransaction = makeOperation({
   hash: "anyOtherHash",
   accountId:

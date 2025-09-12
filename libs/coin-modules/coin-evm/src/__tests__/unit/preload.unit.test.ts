@@ -13,6 +13,7 @@ import {
 // Maintain this order for the sake of jest mocks
 import axios, { AxiosResponse } from "axios";
 import * as CALTokensAPI from "@ledgerhq/cryptoassets/tokens";
+import { convertERC20 } from "@ledgerhq/cryptoassets/legacy";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import { fetchERC20Tokens, hydrate, preload } from "../../bridge/preload";
 import { __resetCALHash, getCALHash, setCALHash } from "../../logic";
@@ -196,8 +197,8 @@ describe("EVM Family", () => {
         const tokens = await preload(currency1);
         expect(tokens).toEqual([usdcDefinition, usdtDefinition]);
         expect(CALTokensAPI.addTokens).toHaveBeenCalledWith([
-          CALTokensAPI.convertERC20(usdcDefinition),
-          CALTokensAPI.convertERC20(usdtDefinition),
+          convertERC20(usdcDefinition),
+          convertERC20(usdtDefinition),
         ]);
       });
     });
@@ -214,34 +215,28 @@ describe("EVM Family", () => {
       it("should register ERC20 tokens from embedded", async () => {
         hydrate(undefined, currency1);
 
-        expect(CALTokensAPI.addTokens).toHaveBeenCalledWith([
-          CALTokensAPI.convertERC20(usdcDefinition),
-        ]);
+        expect(CALTokensAPI.addTokens).toHaveBeenCalledWith([convertERC20(usdcDefinition)]);
       });
 
       it("should register ERC20 tokens from embedded with anything other than an array", async () => {
         hydrate({}, currency1);
 
-        expect(CALTokensAPI.addTokens).toHaveBeenCalledWith([
-          CALTokensAPI.convertERC20(usdcDefinition),
-        ]);
+        expect(CALTokensAPI.addTokens).toHaveBeenCalledWith([convertERC20(usdcDefinition)]);
       });
 
       it("should register ERC20 tokens", async () => {
         hydrate([usdcDefinition, usdtDefinition], currency1);
 
         expect(CALTokensAPI.addTokens).toHaveBeenCalledWith([
-          CALTokensAPI.convertERC20(usdcDefinition),
-          CALTokensAPI.convertERC20(usdtDefinition),
+          convertERC20(usdcDefinition),
+          convertERC20(usdtDefinition),
         ]);
       });
 
       it("should register BEP20 tokens", async () => {
         hydrate([binanceDaiDefinition], currency2);
 
-        expect(CALTokensAPI.addTokens).toHaveBeenCalledWith([
-          CALTokensAPI.convertERC20(binanceDaiDefinition),
-        ]);
+        expect(CALTokensAPI.addTokens).toHaveBeenCalledWith([convertERC20(binanceDaiDefinition)]);
       });
     });
   });

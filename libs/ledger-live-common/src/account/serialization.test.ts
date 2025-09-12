@@ -18,14 +18,19 @@ const USDC = solanaSplTokenData as TokenCurrency;
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
 setCryptoAssetsStoreForCoinFramework({
-  findTokenById: (id: string) => {
+  findTokenById: async (id: string) => {
     if (id === "solana/spl/epjfwdd5aufqssqem2qn1xzybapc8g4weggkzwytdt1v") {
       return USDC;
     }
 
     return undefined;
   },
-  findTokenByAddressInCurrency: (_: string, __: string) => undefined,
+  findTokenByAddressInCurrency: async (_: string, __: string) => undefined,
+  findTokenByAddress: async (_: string) => undefined,
+  getTokenById: async (_: string) => {
+    throw new Error("Token not found");
+  },
+  findTokenByTicker: async (_: string) => undefined,
 } as CryptoAssetsStore);
 
 describe("serialization", () => {

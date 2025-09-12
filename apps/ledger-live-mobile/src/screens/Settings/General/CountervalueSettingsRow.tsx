@@ -32,7 +32,7 @@ export default function CountervalueSettingsRow() {
         color="primary.c80"
         testID="countervalue-ticker-settings-row"
       >
-        {counterValueCurrency.ticker}
+        {counterValueCurrency}
       </Text>
     </SettingsRow>
   );

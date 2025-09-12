@@ -1,8 +1,7 @@
 import { ValueChange } from "@ledgerhq/types-live";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { useSelector } from "react-redux";
-import { counterValueCurrencySelector } from "~/reducers/settings";
+import { useCounterValueCurrency } from "~/hooks/useCounterValueCurrency";
 import { InformationsProps } from "../types";
 import { useDateFormat } from "./useDateFormat";
 
@@ -20,7 +19,7 @@ export function useInformations(props: InformationsProps) {
 
   const { dateFormatter, locale } = useDateFormat();
   const { t } = useTranslation();
-  const counterValueCurrency = useSelector(counterValueCurrencySelector);
+  const counterValueCurrency = useCounterValueCurrency();
 
   const percentChangeATH: ValueChange = useMemo(
     () => ({

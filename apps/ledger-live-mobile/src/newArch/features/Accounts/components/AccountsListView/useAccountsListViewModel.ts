@@ -19,7 +19,8 @@ import { walletSelector } from "~/reducers/wallet";
 import isEqual from "lodash/isEqual";
 import { orderAccountsByFiatValue } from "@ledgerhq/live-countervalues/portfolio";
 import { useCountervaluesState } from "@ledgerhq/live-countervalues-react/index";
-import { blacklistedTokenIdsSelector, counterValueCurrencySelector } from "~/reducers/settings";
+import { blacklistedTokenIdsSelector } from "~/reducers/settings";
+import { useCounterValueCurrency } from "~/hooks/useCounterValueCurrency";
 import { TrackingEvent } from "../../enums";
 
 export interface Props {
@@ -45,11 +46,13 @@ const useAccountsListViewModel = ({
 }: Props) => {
   const navigation = useNavigation<NavigationProp>();
   const countervalueState = useCountervaluesState();
-  const toCurrency = useSelector(counterValueCurrencySelector);
+  const toCurrency = useCounterValueCurrency();
   const allAccounts = useSelector(flattenAccountsSelector, isEqual);
   const walletState = useSelector(walletSelector, isEqual);
   const accounts = specificAccounts || allAccounts;
-  const orderedAccountsByValue = orderAccountsByFiatValue(accounts, countervalueState, toCurrency);
+  const orderedAccountsByValue = toCurrency
+    ? orderAccountsByFiatValue(accounts, countervalueState, toCurrency)
+    : accounts;
 
   const excludedTokenIds = useSelector(blacklistedTokenIdsSelector);
   const filteredAccounts = useMemo(

@@ -28,9 +28,8 @@ import {
   inferTrackingPairForAccounts,
 } from "@ledgerhq/live-countervalues/logic";
 import { getPortfolio } from "@ledgerhq/live-countervalues/portfolio";
-import { Account } from "@ledgerhq/types-live";
+import { Account, TransactionCommon } from "@ledgerhq/types-live";
 import { getContext } from "@ledgerhq/coin-framework/bot/bot-test-context";
-import { Transaction } from "../generated/types";
 import { sha256 } from "../crypto";
 import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
 
@@ -45,7 +44,7 @@ type Arg = Partial<{
 }>;
 const usd = getFiatCurrencyByTicker("USD");
 
-function convertMutation<T extends Transaction>(
+function convertMutation<T extends TransactionCommon>(
   report: MutationReport<T>,
 ): MinimalSerializedMutationReport {
   const { appCandidate, mutation, account, destination, error, operation } = report;
@@ -59,7 +58,7 @@ function convertMutation<T extends Transaction>(
   };
 }
 
-function convertSpecReport<T extends Transaction>(
+function convertSpecReport<T extends TransactionCommon>(
   result: SpecReport<T>,
 ): MinimalSerializedSpecReport {
   const accounts = result.accountsAfter?.map(a => {

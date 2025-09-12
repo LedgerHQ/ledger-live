@@ -171,7 +171,7 @@ export const handlers = ({
 
         // Use `if else` instead of switch to leverage TS type narrowing and avoid `params` force cast.
         if (params.exchangeType == "SWAP") {
-          exchangeParams = extractSwapStartParam(params, accounts);
+          exchangeParams = await extractSwapStartParam(params, accounts);
         } else if (params.exchangeType == "SELL") {
           exchangeParams = extractSellStartParam(params, accounts);
         } else {
@@ -236,7 +236,7 @@ export const handlers = ({
           let toParentAccount = getParentAccount(toAccount, accounts);
           let newTokenAccount: TokenAccount | undefined;
           if (params.tokenCurrency) {
-            const currency = findTokenById(params.tokenCurrency);
+            const currency = await findTokenById(params.tokenCurrency);
             if (!currency) {
               throw new ServerError(createCurrencyNotFound(params.tokenCurrency));
             }
@@ -395,10 +395,10 @@ export const handlers = ({
 
       tracking.startExchangeRequested(trackingParams);
 
-      const exchangeStartParams: ExchangeStartParamsUiRequest = extractSwapStartParam(
+      const exchangeStartParams: ExchangeStartParamsUiRequest = (await extractSwapStartParam(
         params,
         accounts,
-      ) as SwapStartParamsUiRequest;
+      )) as SwapStartParamsUiRequest;
 
       const {
         fromCurrency,
@@ -615,10 +615,10 @@ export const handlers = ({
     }),
   }) as const satisfies Handlers;
 
-function extractSwapStartParam(
+async function extractSwapStartParam(
   params: ExchangeStartSwapParams,
   accounts: AccountLike[],
-): ExchangeStartParamsUiRequest {
+): Promise<ExchangeStartParamsUiRequest> {
   if (!("fromAccountId" in params && "toAccountId" in params)) {
     throw new ExchangeError(createWrongSwapParams(params));
   }
@@ -651,7 +651,7 @@ function extractSwapStartParam(
   const fromParentAccount = getParentAccount(fromAccount, accounts);
   const toParentAccount = toAccount ? getParentAccount(toAccount, accounts) : undefined;
 
-  const currency = params.tokenCurrency ? findTokenById(params.tokenCurrency) : null;
+  const currency = params.tokenCurrency ? await findTokenById(params.tokenCurrency) : null;
   const newTokenAccount = currency ? makeEmptyTokenAccount(toAccount, currency) : null;
 
   return {

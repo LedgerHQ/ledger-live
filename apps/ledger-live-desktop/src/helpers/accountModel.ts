@@ -2,7 +2,7 @@
  * @module models/account
  */
 import { createDataModel, DataModel } from "@ledgerhq/live-common/DataModel";
-import { fromAccountRaw, toAccountRaw } from "@ledgerhq/live-common/account/index";
+import { fromAccountRawForDataModel, toAccountRaw } from "@ledgerhq/live-common/account/index";
 import { Account, AccountRaw, Operation, AccountUserData } from "@ledgerhq/types-live";
 import { accountRawToAccountUserData } from "@ledgerhq/live-wallet/store";
 
@@ -79,7 +79,7 @@ const accountModel: DataModel<AccountRaw, [Account, AccountUserData]> = createDa
     // ^- Each time a modification is brought to the model, add here a migration function here
   ],
 
-  decode: (raw: AccountRaw) => [fromAccountRaw(raw), accountRawToAccountUserData(raw)],
+  decode: (raw: AccountRaw) => [fromAccountRawForDataModel(raw), accountRawToAccountUserData(raw)],
   encode: ([account, userData]: [Account, AccountUserData]): AccountRaw =>
     toAccountRaw(
       {

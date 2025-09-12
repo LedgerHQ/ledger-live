@@ -14,9 +14,10 @@ import {
   listSupportedCurrencies,
 } from "@ledgerhq/live-common/currencies/index";
 import { useCurrenciesByMarketcap } from "@ledgerhq/live-common/currencies/hooks";
-import { CryptoCurrency, Currency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { useRefreshAccountsOrdering } from "~/actions/general";
-import { counterValueCurrencySelector, hasOrderedNanoSelector } from "~/reducers/settings";
+import { hasOrderedNanoSelector } from "~/reducers/settings";
+import useCounterValueCurrency from "~/hooks/useCounterValueCurrency";
 import { usePortfolioAllAccounts } from "~/hooks/portfolio";
 
 import GraphCardContainer from "../GraphCardContainer";
@@ -46,18 +47,18 @@ type NavigationProps = BaseComposite<
 
 function ReadOnlyPortfolio({ navigation }: NavigationProps) {
   const { t } = useTranslation();
-  const counterValueCurrency: Currency = useSelector(counterValueCurrencySelector);
+  const counterValueCurrency = useCounterValueCurrency();
   const portfolio = usePortfolioAllAccounts();
+
+  // All hooks must be called before any conditional returns
   const { colors } = useTheme();
   const hasOrderedNano = useSelector(hasOrderedNanoSelector);
-
-  usePortfolioAnalyticsOptInPrompt();
-
   const refreshAccountsOrdering = useRefreshAccountsOrdering();
-  useFocusEffect(refreshAccountsOrdering);
-
   const [graphCardEndPosition, setGraphCardEndPosition] = useState(0);
   const currentPositionY = useSharedValue(0);
+
+  usePortfolioAnalyticsOptInPrompt();
+  useFocusEffect(refreshAccountsOrdering);
 
   const onPortfolioCardLayout = useCallback((event: LayoutChangeEvent) => {
     const { y, height } = event.nativeEvent.layout;
@@ -96,11 +97,31 @@ function ReadOnlyPortfolio({ navigation }: NavigationProps) {
     [topCryptoCurrencies],
   );
 
+  const { source, setSource, setScreen } = useContext(AnalyticsContext);
+
+  const onBackFromUpdate = useCallback(
+    (_updateState: UpdateStep) => {
+      navigation.goBack();
+    },
+    [navigation],
+  );
+
+  const focusEffectCallback = useCallback(() => {
+    setScreen && setScreen("Wallet");
+
+    return () => {
+      setSource("Wallet");
+    };
+  }, [setSource, setScreen]);
+
+  useFocusEffect(focusEffectCallback);
+
+  // All hooks must be called before early returns
   const data = useMemo(
     () => [
       <Box onLayout={onPortfolioCardLayout} key="GraphCardContainer">
         <GraphCardContainer
-          counterValueCurrency={counterValueCurrency}
+          counterValueCurrency={counterValueCurrency!}
           portfolio={portfolio}
           showGraphCard
           areAccountsEmpty={false}
@@ -153,24 +174,9 @@ function ReadOnlyPortfolio({ navigation }: NavigationProps) {
     ],
   );
 
-  const { source, setSource, setScreen } = useContext(AnalyticsContext);
-
-  const onBackFromUpdate = useCallback(
-    (_updateState: UpdateStep) => {
-      navigation.goBack();
-    },
-    [navigation],
-  );
-
-  useFocusEffect(
-    useCallback(() => {
-      setScreen && setScreen("Wallet");
-
-      return () => {
-        setSource("Wallet");
-      };
-    }, [setSource, setScreen]),
-  );
+  if (!counterValueCurrency) {
+    return null; // or loading placeholder
+  }
 
   return (
     <>

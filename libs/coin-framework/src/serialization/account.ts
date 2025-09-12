@@ -28,7 +28,10 @@ export type FromFamiliyRaw = {
   fromOperationExtraRaw?: AccountBridge<TransactionCommon>["fromOperationExtraRaw"];
 };
 
-export function fromAccountRaw(rawAccount: AccountRaw, fromRaw?: FromFamiliyRaw): Account {
+export async function fromAccountRaw(
+  rawAccount: AccountRaw,
+  fromRaw?: FromFamiliyRaw,
+): Promise<Account> {
   const {
     id,
     seedIdentifier,
@@ -59,20 +62,20 @@ export function fromAccountRaw(rawAccount: AccountRaw, fromRaw?: FromFamiliyRaw)
     fromOperationRaw(op, id, subAccounts as TokenAccount[], fromRaw?.fromOperationExtraRaw);
 
   const store = getCryptoAssetsStore();
-  const subAccounts =
-    subAccountsRaw &&
-    subAccountsRaw
-      .map(ta => {
-        if (ta.type === "TokenAccountRaw") {
-          if (store.findTokenById(ta.tokenId)) {
-            return fromTokenAccountRaw(ta);
+  const subAccounts = subAccountsRaw
+    ? await Promise.all(
+        subAccountsRaw.map(async ta => {
+          if (ta.type === "TokenAccountRaw") {
+            if (await store.findTokenById(ta.tokenId)) {
+              return await fromTokenAccountRaw(ta);
+            }
           }
-        }
-      })
-      .filter(Boolean);
+        }),
+      ).then(results => results.filter(Boolean))
+    : undefined;
   const currency = getCryptoCurrencyById(currencyId);
   const feesCurrency = feesCurrencyId
-    ? findCryptoCurrencyById(feesCurrencyId) || store.findTokenById(feesCurrencyId)
+    ? findCryptoCurrencyById(feesCurrencyId) || (await store.findTokenById(feesCurrencyId))
     : undefined;
 
   const res: Account = {
@@ -238,10 +241,10 @@ export function toAccountRaw(account: Account, toFamilyRaw?: ToFamiliyRaw): Acco
 
 //-- TokenAccount
 
-function fromTokenAccountRaw(
+async function fromTokenAccountRaw(
   raw: TokenAccountRaw,
   fromOperationExtraRaw?: AccountBridge<TransactionCommon>["fromOperationExtraRaw"],
-): TokenAccount {
+): Promise<TokenAccount> {
   const {
     id,
     parentId,
@@ -255,7 +258,7 @@ function fromTokenAccountRaw(
     swapHistory,
   } = raw;
   const store = getCryptoAssetsStore();
-  const token = store.findTokenById(tokenId);
+  const token = await store.findTokenById(tokenId);
   invariant(token, `Token with id ${tokenId} not found`);
 
   const convertOperation = (op: OperationRaw) =>
@@ -311,4 +314,107 @@ function toTokenAccountRaw(
     pendingOperations: pendingOperations.map(convertOperation),
     swapHistory: swapHistory?.map(toSwapOperationRaw),
   };
+}
+
+/**
+ * Synchronous version of fromAccountRaw for DataModel contexts where token lookup is not critical.
+ * This version skips asynchronous token resolution and only deserializes basic account data.
+ * Should only be used in persistence/serialization contexts.
+ */
+export function fromAccountRawForDataModel(
+  rawAccount: AccountRaw,
+  fromRaw?: FromFamiliyRaw,
+): Account {
+  const {
+    id,
+    seedIdentifier,
+    derivationMode,
+    index,
+    xpub,
+    used,
+    freshAddress,
+    freshAddressPath,
+    blockHeight,
+    currencyId,
+    feesCurrencyId,
+    operations,
+    operationsCount,
+    pendingOperations,
+    lastSyncDate,
+    creationDate,
+    balance,
+    balanceHistoryCache,
+    spendableBalance,
+    swapHistory,
+    syncHash,
+    nfts,
+    name: _name,
+    starred: _starred,
+  } = rawAccount;
+
+  const convertOperation = (op: OperationRaw) =>
+    fromOperationRaw(op, id || "temp-id", undefined, fromRaw?.fromOperationExtraRaw);
+
+  // For DataModel, we create empty sub-accounts that can be hydrated later
+  // This maintains the Account structure while keeping deserialization synchronous
+  const subAccounts: TokenAccount[] = [];
+
+  const currency = getCryptoCurrencyById(currencyId);
+  // For DataModel, we skip feesCurrency token lookup to keep it synchronous
+  const feesCurrency = feesCurrencyId ? findCryptoCurrencyById(feesCurrencyId) : undefined;
+
+  const res: Account = {
+    type: "Account",
+    id: id || `${currencyId}-temp-id`,
+    used: false, // filled again below
+    seedIdentifier,
+    derivationMode,
+    index,
+    freshAddress,
+    freshAddressPath,
+    blockHeight: blockHeight || 0,
+    creationDate: new Date(creationDate || Date.now()),
+    balance: new BigNumber(balance || "0"),
+    spendableBalance: new BigNumber(spendableBalance || balance || "0"),
+    operations: (operations || []).map(convertOperation),
+    operationsCount: operationsCount || (operations && operations.length) || 0,
+    pendingOperations: (pendingOperations || []).map(convertOperation),
+    currency,
+    feesCurrency,
+    lastSyncDate: new Date(lastSyncDate || 0),
+    swapHistory: [],
+    syncHash,
+    balanceHistoryCache: balanceHistoryCache || emptyHistoryCache,
+  };
+
+  // Post-processing like in the original function
+  res.balanceHistoryCache = generateHistoryFromOperations(res);
+
+  if (typeof used === "undefined") {
+    // old account data that didn't had the field yet
+    res.used = !isAccountEmpty(res);
+  } else {
+    res.used = used;
+  }
+
+  if (xpub) {
+    res.xpub = xpub;
+  }
+
+  // Assign the empty sub-accounts array to maintain structure
+  res.subAccounts = subAccounts;
+
+  if (swapHistory) {
+    res.swapHistory = swapHistory.map(fromSwapOperationRaw);
+  }
+
+  if (nfts) {
+    res.nfts = nfts.map(fromNFTRaw);
+  }
+
+  if (fromRaw?.assignFromAccountRaw) {
+    fromRaw.assignFromAccountRaw(rawAccount, res);
+  }
+
+  return res;
 }

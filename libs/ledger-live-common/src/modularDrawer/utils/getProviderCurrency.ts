@@ -1,13 +1,13 @@
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { getTokenOrCryptoCurrencyById } from "../../deposit/helper";
 
-export const getProviderCurrency = (
+export const getProviderCurrency = async (
   mainCurrency: CryptoOrTokenCurrency,
   currencies: CryptoOrTokenCurrency[],
-) => {
+): Promise<CryptoOrTokenCurrency> => {
   try {
-    return getTokenOrCryptoCurrencyById(mainCurrency.id);
+    return await getTokenOrCryptoCurrencyById(mainCurrency.id);
   } catch {
-    return getTokenOrCryptoCurrencyById(currencies[0].id);
+    return await getTokenOrCryptoCurrencyById(currencies[0].id);
   }
 };

@@ -16,6 +16,11 @@ expect.extend({
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
 setCryptoAssetsStoreForCoinFramework({
-  findTokenById: (_: string) => undefined,
-  findTokenByAddressInCurrency: (_: string, __: string) => undefined,
+  findTokenById: async (_: string) => undefined,
+  findTokenByAddressInCurrency: async (_: string, __: string) => undefined,
+  findTokenByAddress: async (_: string) => undefined,
+  getTokenById: async (_: string) => {
+    throw new Error("Token not found");
+  },
+  findTokenByTicker: async (_: string) => undefined,
 } as CryptoAssetsStore);

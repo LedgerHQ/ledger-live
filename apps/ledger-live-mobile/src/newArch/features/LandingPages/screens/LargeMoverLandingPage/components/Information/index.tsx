@@ -31,6 +31,10 @@ export const Informations: React.FC<InformationsProps> = props => {
     marketCapVolume24h,
   } = useInformations(props);
 
+  if (!counterValueCurrency) {
+    return null;
+  }
+
   return (
     <Flex flexDirection="column">
       <Text style={styles.title}>{t("largeMover.info")}</Text>

@@ -33,13 +33,13 @@ export const acceptTransaction: DeviceAction<AlgorandTransaction, any> = deviceA
     {
       title: "Asset ID",
       button: SpeculosButton.RIGHT,
-      expectedValue: ({ transaction }) => {
+      expectedValue: async ({ transaction }) => {
         const id = transaction.assetId
           ? extractTokenId(transaction.assetId)
           : transaction.subAccountId
             ? extractTokenId(transaction.subAccountId)
             : "";
-        const token = findTokenById(addPrefixToken(id));
+        const token = await findTokenById(addPrefixToken(id));
         // 34 is max character displayable by nano.
         return token ? displayTokenValue(token).substring(0, 34) : `#${id}`;
       },
@@ -67,19 +67,19 @@ export const acceptTransaction: DeviceAction<AlgorandTransaction, any> = deviceA
     {
       title: "Amount",
       button: SpeculosButton.RIGHT,
-      expectedValue: ({ account, status, transaction }) => {
+      expectedValue: async ({ account, status, transaction }) => {
         switch (transaction.mode) {
           case "claimReward":
             return "0";
 
           case "optIn": {
-            const token = findTokenById(transaction?.assetId || "");
+            const token = await findTokenById(transaction?.assetId || "");
             if (token) {
               return formatDeviceAmount(token, status.amount, {
                 forceFloating: token.units[0].magnitude > 0 ? true : false,
               });
             }
-            break;
+            return "0";
           }
         }
         return formatDeviceAmount(account.currency, status.amount);

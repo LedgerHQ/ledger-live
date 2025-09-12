@@ -15,7 +15,8 @@ const iconReceive = IconsLegacy.ArrowBottomMedium;
 function ReadOnlyFabActions() {
   const { t } = useTranslation();
   const { navigate } = useNavigation();
-  const currency = useCurrency().name;
+  const currencyData = useCurrency();
+  const currency = currencyData?.name;
 
   const buyDevice = useCallback(() => navigate(ScreenName.NoDeviceWallScreen), [navigate]);
 

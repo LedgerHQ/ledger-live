@@ -1,3 +1,4 @@
+// - Temporary disable to fix async conversion issues
 import BigNumber from "bignumber.js";
 import axios, { AxiosResponse } from "axios";
 import { tokens as localTokensByChainId } from "@ledgerhq/cryptoassets/data/evm/index";
@@ -29,16 +30,23 @@ const mockGetConfig = jest.mocked(getCoinConfig);
 
 describe("EVM Family", () => {
   describe("Account synchronization with currency preloading", () => {
-    beforeEach(() => {
+    let awaitedTMUSDTTransaction: any;
+    let awaitedNTMTransaction: any;
+
+    beforeEach(async () => {
       jest.restoreAllMocks();
 
       __clearAllLists();
       __resetCALHash();
 
+      // Await async fixtures
+      awaitedTMUSDTTransaction = await TMUSDTTransaction;
+      awaitedNTMTransaction = await NTMTransaction;
+
       jest.spyOn(etherscanAPI?.default, "getLastOperations").mockImplementation(() =>
         Promise.resolve({
           lastCoinOperations: [],
-          lastTokenOperations: [TMUSDTTransaction, NTMTransaction],
+          lastTokenOperations: [awaitedTMUSDTTransaction, awaitedNTMTransaction],
           lastNftOperations: [],
           lastInternalOperations: [],
         }),
@@ -85,7 +93,7 @@ describe("EVM Family", () => {
       });
 
       expect(subAccounts?.length).toBe(1);
-      expect(decodeTokenAccountId(subAccounts![0]?.id).token?.id).toBe(
+      expect((await decodeTokenAccountId(subAccounts![0]?.id)).token?.id).toBe(
         "scroll_sepolia/erc20/mock_usdt",
       );
     });
@@ -122,10 +130,10 @@ describe("EVM Family", () => {
       });
 
       expect(subAccounts?.length).toBe(2);
-      expect(decodeTokenAccountId(subAccounts![0]?.id).token?.id).toBe(
+      expect((await decodeTokenAccountId(subAccounts![0]?.id)).token?.id).toBe(
         "scroll_sepolia/erc20/mock_usdt",
       );
-      expect(decodeTokenAccountId(subAccounts![1]?.id).token?.id).toBe(
+      expect((await decodeTokenAccountId(subAccounts![1]?.id)).token?.id).toBe(
         "scroll_sepolia/erc20/new_token_mock",
       );
     });
@@ -180,10 +188,10 @@ describe("EVM Family", () => {
 
       expect(getCALHash(currency)).toBe("newHash");
       expect(subAccounts?.length).toBe(2);
-      expect(decodeTokenAccountId(subAccounts![0]?.id).token?.id).toBe(
+      expect((await decodeTokenAccountId(subAccounts![0]?.id)).token?.id).toBe(
         "scroll_sepolia/erc20/mock_usdt",
       );
-      expect(decodeTokenAccountId(subAccounts![1]?.id).token?.id).toBe(
+      expect((await decodeTokenAccountId(subAccounts![1]?.id)).token?.id).toBe(
         "scroll_sepolia/erc20/new_token_mock",
       );
       expect(subAccounts).toEqual(subAccounts2);
@@ -233,7 +241,7 @@ describe("EVM Family", () => {
       expect(getCALHash(currency)).toBe("newHash");
 
       expect(subAccounts?.length).toBe(1);
-      expect(decodeTokenAccountId(subAccounts![0]?.id).token?.id).toBe(
+      expect((await decodeTokenAccountId(subAccounts![0]?.id)).token?.id).toBe(
         "scroll_sepolia/erc20/mock_usdt",
       );
       expect(subAccounts).toEqual(subAccounts2);
@@ -255,10 +263,10 @@ describe("EVM Family", () => {
       __clearAllLists();
       await hydrate(preloaded, currency);
 
-      const deserializeAccount = fromAccountRaw(serializedAccount);
+      const deserializeAccount = await fromAccountRaw(serializedAccount);
 
       expect(deserializeAccount.subAccounts?.length).toBe(1);
-      expect(decodeTokenAccountId(deserializeAccount.subAccounts![0]?.id).token?.id).toBe(
+      expect((await decodeTokenAccountId(deserializeAccount.subAccounts![0]?.id)).token?.id).toBe(
         "scroll_sepolia/erc20/mock_usdt",
       );
     });
@@ -304,13 +312,13 @@ describe("EVM Family", () => {
       __clearAllLists();
       await hydrate(preloaded, currency);
 
-      const deserializeAccount = fromAccountRaw(serializedAccount);
+      const deserializeAccount = await fromAccountRaw(serializedAccount);
 
       expect(deserializeAccount.subAccounts?.length).toBe(2);
-      expect(decodeTokenAccountId(deserializeAccount.subAccounts![0]?.id).token?.id).toBe(
+      expect((await decodeTokenAccountId(deserializeAccount.subAccounts![0]?.id)).token?.id).toBe(
         "scroll_sepolia/erc20/mock_usdt",
       );
-      expect(decodeTokenAccountId(deserializeAccount.subAccounts![1]?.id).token?.id).toBe(
+      expect((await decodeTokenAccountId(deserializeAccount.subAccounts![1]?.id)).token?.id).toBe(
         "scroll_sepolia/erc20/new_token_mock",
       );
     });

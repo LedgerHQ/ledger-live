@@ -38,7 +38,7 @@ const AccountSelectionContent = ({
 }: Readonly<AccountSelectionStepProps> & { asset: CryptoOrTokenCurrency }) => {
   const flow = useSelector(modularDrawerFlowSelector);
   const source = useSelector(modularDrawerSourceSelector);
-  const { detailedAccounts, handleAccountSelected } = useDetailedAccounts(
+  const { detailedAccounts, onPressAccount } = useDetailedAccounts(
     asset,
     flow,
     source,
@@ -50,9 +50,9 @@ const AccountSelectionContent = ({
 
   const renderItem = useCallback(
     ({ item }: { item: AccountUI }) => {
-      return <AccountItem account={item} onClick={() => handleAccountSelected(item)} />;
+      return <AccountItem account={item} onClick={() => onPressAccount?.(item)} />;
     },
-    [handleAccountSelected],
+    [onPressAccount],
   );
   const { trackModularDrawerEvent } = useModularDrawerAnalytics();
   const onAddNewAccountOnClick = useCallback(() => {

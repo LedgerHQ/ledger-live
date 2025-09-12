@@ -18,23 +18,25 @@ export async function getBalance(addr: string): Promise<Balance[]> {
   if (!assets || assets.length === 0) {
     return nativeRes;
   }
-  const assetBalances: Balance[] = assets.map(asset => {
-    const token = findTokenById(`stellar/asset/${getAssetIdFromAsset(asset)}`);
-    let parsedBalance = new BigNumber(0);
-    if (token) {
-      parsedBalance = parseCurrencyUnit(token.units[0], asset.balance);
-    }
-    // NOTE: parse as-is (assumed decimal string), caller should decide how to render
-    const intBalance = BigInt(Math.floor(parseFloat(parsedBalance.toString()))); // 7 decimals, per Stellar convention
-    return {
-      value: intBalance,
-      asset: {
-        type: asset.asset_type,
-        assetReference: asset.asset_code,
-        assetOwner: asset.asset_issuer,
-      },
-    };
-  });
+  const assetBalances: Balance[] = await Promise.all(
+    assets.map(async asset => {
+      const token = await findTokenById(`stellar/asset/${getAssetIdFromAsset(asset)}`);
+      let parsedBalance = new BigNumber(0);
+      if (token) {
+        parsedBalance = parseCurrencyUnit(token.units[0], asset.balance);
+      }
+      // NOTE: parse as-is (assumed decimal string), caller should decide how to render
+      const intBalance = BigInt(Math.floor(parseFloat(parsedBalance.toString()))); // 7 decimals, per Stellar convention
+      return {
+        value: intBalance,
+        asset: {
+          type: asset.asset_type,
+          assetReference: asset.asset_code,
+          assetOwner: asset.asset_issuer,
+        },
+      };
+    }),
+  );
 
   return [...nativeRes, ...assetBalances];
 }

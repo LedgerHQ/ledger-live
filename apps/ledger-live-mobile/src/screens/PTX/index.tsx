@@ -23,7 +23,8 @@ import { useInternalAppIds } from "@ledgerhq/live-common/hooks/useInternalAppIds
 import { INTERNAL_APP_IDS, WALLET_API_VERSION } from "@ledgerhq/live-common/wallet-api/constants";
 import { walletSelector } from "~/reducers/wallet";
 import useEnv from "@ledgerhq/live-common/hooks/useEnv";
-import { counterValueCurrencySelector, discreetModeSelector } from "~/reducers/settings";
+import { discreetModeSelector } from "~/reducers/settings";
+import { useCounterValueCurrency } from "~/hooks/useCounterValueCurrency";
 import { useSettings } from "~/hooks";
 import { ProviderInterstitial } from "./BuySell/ProviderInterstitial";
 import { useProviderInterstitalEnabled } from "@ledgerhq/live-common/hooks/useShowProviderLoadingTransition";
@@ -59,7 +60,8 @@ export function PtxScreen({ route, config }: Props) {
   const remoteManifest = useRemoteLiveAppManifest(platform);
   const { state: remoteLiveAppState } = useRemoteLiveAppContext();
   const { language, locale } = useSettings();
-  const { ticker: currencyTicker } = useSelector(counterValueCurrencySelector);
+  const counterValueCurrency = useCounterValueCurrency();
+  const currencyTicker = counterValueCurrency?.ticker || "USD";
   const manifest = localManifest || remoteManifest;
   const internalAppIds = useInternalAppIds() || INTERNAL_APP_IDS;
   const walletState = useSelector(walletSelector);

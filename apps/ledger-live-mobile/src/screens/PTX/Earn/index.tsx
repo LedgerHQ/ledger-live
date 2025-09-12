@@ -20,7 +20,8 @@ import TabBarSafeAreaView from "~/components/TabBar/TabBarSafeAreaView";
 import { ScreenName } from "~/const";
 import { getCountryLocale } from "~/helpers/getStakeLabelLocaleBased";
 import { useSettings } from "~/hooks";
-import { counterValueCurrencySelector, discreetModeSelector } from "~/reducers/settings";
+import { discreetModeSelector } from "~/reducers/settings";
+import useCounterValueCurrency from "~/hooks/useCounterValueCurrency";
 import { EarnWebview } from "./EarnWebview";
 import { useVersionedStakePrograms } from "LLM/hooks/useStake/useVersionedStakePrograms";
 
@@ -36,7 +37,8 @@ export const EarnScreen = memo(Earn);
 function Earn({ route }: Props) {
   const { theme } = useTheme();
   const { language } = useSettings();
-  const { ticker: currencyTicker } = useSelector(counterValueCurrencySelector);
+  const counterValueCurrency = useCounterValueCurrency();
+  const currencyTicker = counterValueCurrency?.ticker || "USD";
   const discreet = useSelector(discreetModeSelector);
   const { platform: appId, ...params } = route.params || {};
   const searchParams = useMemo(

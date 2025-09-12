@@ -15,6 +15,7 @@ import type {
 import { decodeAccountId } from "@ledgerhq/coin-framework/account/index";
 import {
   fromAccountRaw as commonFromAccountRaw,
+  fromAccountRawForDataModel as commonFromAccountRawForDataModel,
   toAccountRaw as commonToAccountRaw,
   fromOperationRaw as commonFromOperationRaw,
   toOperationRaw as commonToOperationRaw,
@@ -62,11 +63,27 @@ export const fromOperationRaw = (
   return commonFromOperationRaw(operationRaw, accountId, subAccounts, fromOperationRaw);
 };
 
-export function fromAccountRaw(rawAccount: AccountRaw): Account {
+export async function fromAccountRaw(rawAccount: AccountRaw): Promise<Account> {
   const currency = getCryptoCurrencyById(rawAccount.currencyId);
   const bridge = getAccountBridgeByFamily(currency.family, rawAccount.id);
 
-  return commonFromAccountRaw(rawAccount, {
+  return await commonFromAccountRaw(rawAccount, {
+    assignFromAccountRaw: bridge.assignFromAccountRaw,
+    assignFromTokenAccountRaw: bridge.assignFromTokenAccountRaw,
+    fromOperationExtraRaw: bridge.fromOperationExtraRaw,
+  });
+}
+
+/**
+ * Synchronous version of fromAccountRaw specifically for DataModel serialization contexts.
+ * This version skips token resolution to remain synchronous, which is acceptable for
+ * persistence where tokens are not immediately needed.
+ */
+export function fromAccountRawForDataModel(rawAccount: AccountRaw): Account {
+  const currency = getCryptoCurrencyById(rawAccount.currencyId);
+  const bridge = getAccountBridgeByFamily(currency.family, rawAccount.id);
+
+  return commonFromAccountRawForDataModel(rawAccount, {
     assignFromAccountRaw: bridge.assignFromAccountRaw,
     assignFromTokenAccountRaw: bridge.assignFromTokenAccountRaw,
     fromOperationExtraRaw: bridge.fromOperationExtraRaw,

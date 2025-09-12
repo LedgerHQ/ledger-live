@@ -104,7 +104,7 @@ async function MultiversXBuildESDTTokenAccounts({
   const accountESDTs = await getAccountESDTTokens(accountAddress);
   for (const esdt of accountESDTs) {
     const esdtIdentifierHex = Buffer.from(esdt.identifier).toString("hex");
-    const token = findTokenById(addPrefixToken(esdtIdentifierHex));
+    const token = await findTokenById(addPrefixToken(esdtIdentifierHex));
 
     if (token && !blacklistedTokenIds.includes(token.id)) {
       let tokenAccount = existingAccountByTicker[token.ticker];

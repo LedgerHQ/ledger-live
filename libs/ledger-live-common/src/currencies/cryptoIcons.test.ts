@@ -22,9 +22,12 @@ describe("inferCryptoCurrencyIcon", () => {
     expect(inferCryptoCurrencyIcon(registryMock, getCryptoCurrencyById("arbitrum"))).toBe(3);
   });
 
-  test("USDT is inferred properly", () => {
+  test("USDT is inferred properly", async () => {
     expect(
-      inferCryptoCurrencyIcon(registryMock, getTokenById("ethereum/erc20/usd_tether__erc20_")),
+      inferCryptoCurrencyIcon(
+        registryMock,
+        await getTokenById("ethereum/erc20/usd_tether__erc20_"),
+      ),
     ).toBe(4);
   });
 });

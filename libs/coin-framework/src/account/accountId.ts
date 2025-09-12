@@ -48,17 +48,17 @@ export function encodeTokenAccountId(accountId: string, token: TokenCurrency): s
   return accountId + "+" + safeEncodeTokenId(token.id);
 }
 
-export function decodeTokenAccountId(id: string): {
+export async function decodeTokenAccountId(id: string): Promise<{
   accountId: string;
   token: TokenCurrency | undefined;
-} {
+}> {
   const store = getCryptoAssetsStore();
   const [accountId, tokenId] = id.split("+");
   const decodedTokenId = safeDecodeTokenId(tokenId);
-  let token = store.findTokenById(decodedTokenId);
+  let token = await store.findTokenById(decodedTokenId);
   if (!token) {
     const { currencyId } = decodeAccountId(accountId);
-    token = store.findTokenByAddressInCurrency(decodedTokenId, currencyId);
+    token = await store.findTokenByAddressInCurrency(decodedTokenId, currencyId);
   }
   return {
     accountId,

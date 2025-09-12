@@ -36,7 +36,7 @@ export const buildSignOperation =
         await signerContext(deviceId, signer => signer.setAddress(account.freshAddressPath));
 
         if (tokenAccount) {
-          const { token } = decodeTokenAccountId(tokenAccount.id);
+          const { token } = await decodeTokenAccountId(tokenAccount.id);
           if (!token) {
             throw new Error("Invalid token");
           }

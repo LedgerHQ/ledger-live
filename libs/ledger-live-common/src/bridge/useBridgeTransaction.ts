@@ -118,7 +118,7 @@ const reducer = <T extends Transaction = Transaction>(
 
       try {
         const mainAccount = getMainAccount(account, parentAccount);
-        const bridge = getAccountBridge(account, parentAccount) as AccountBridge<T>;
+        const bridge = getAccountBridge(account, parentAccount) as AccountBridge<any>;
         const subAccountId = account.type !== "Account" && account.id;
         let t = bridge.createTransaction(mainAccount);
         if (

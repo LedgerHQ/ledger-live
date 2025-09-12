@@ -103,7 +103,7 @@ export async function buildTokenAccounts(
 
     const subs: TokenAccount[] = [];
     for (const [cAddr, txns] of Object.entries(transfersUntangled)) {
-      const token = findTokenByAddressInCurrency(cAddr, "filecoin");
+      const token = await findTokenByAddressInCurrency(cAddr, "filecoin");
       if (!token) {
         log("error", `filecoin token not found, addr: ${cAddr}`);
         continue;

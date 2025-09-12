@@ -84,7 +84,7 @@ export async function getOperationsForAccount(
 
     if (tokenTransfers.length > 0) {
       const tokenId = rawTx.token_transfers[0].token_id;
-      const token = findTokenByAddressInCurrency(tokenId, "hedera");
+      const token = await findTokenByAddressInCurrency(tokenId, "hedera");
       if (!token) continue;
 
       const encodedTokenId = encodeTokenAccountId(ledgerAccountId, token);

@@ -420,12 +420,12 @@ describe("EVM Family", () => {
         expect(newSubAccounts[0]).not.toBe(account.subAccounts?.[0]); // changing the ref as a change happened in tokenAccount1
       });
 
-      it("should update subAccount ops", () => {
-        const op1 = makeOperation();
-        const op2 = makeOperation({
+      it("should update subAccount ops", async () => {
+        const op1 = await makeOperation();
+        const op2 = await makeOperation({
           hash: "0xdiffHash",
         });
-        const op3 = makeOperation({
+        const op3 = await makeOperation({
           hash: "0xAgAinAnotHeRH4sh",
         });
         const tokenAccount1 = {
@@ -646,42 +646,45 @@ describe("EVM Family", () => {
     });
 
     describe("attachOperations", () => {
-      it("should attach token & nft operations to coin operations and create 'NONE' coin operations in case of orphans child operations", () => {
+      it("should attach token & nft operations to coin operations and create 'NONE' coin operations in case of orphans child operations", async () => {
         setCryptoAssetsStoreGetter(
           () =>
             // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
             ({
-              findTokenById: (id: string) => {
+              findTokenById: async (id: string) => {
                 if (id === "ethereum/erc20/usd__coin") {
                   return USD_COIN_TOKEN;
                 }
 
                 return undefined;
               },
-              findTokenByAddressInCurrency: (_: string, __: string) => undefined,
+              findTokenByAddressInCurrency: async (_: string, __: string) => undefined,
+              findTokenByAddress: async () => undefined,
+              getTokenById: async () => undefined as any,
+              findTokenByTicker: async () => undefined,
             }) as CryptoAssetsStore,
         );
-        const coinOperation = makeOperation({
+        const coinOperation = await makeOperation({
           hash: "0xCoinOp3Hash",
         });
         const tokenAccountId =
           coinOperation.accountId + "+ethereum%2Ferc20%2Fusd~!underscore!~~!underscore!~coin";
         const tokenOperations = [
-          makeOperation({
+          await makeOperation({
             accountId: tokenAccountId,
             hash: coinOperation.hash,
             contract: "0xTokenContract",
             value: new BigNumber(1),
             type: "OUT",
           }),
-          makeOperation({
+          await makeOperation({
             accountId: tokenAccountId,
             hash: coinOperation.hash,
             contract: "0xTokenContract",
             value: new BigNumber(2),
             type: "IN",
           }),
-          makeOperation({
+          await makeOperation({
             accountId: tokenAccountId,
             hash: "0xUnknownHash",
             contract: "0xOtherTokenContract",
@@ -690,19 +693,19 @@ describe("EVM Family", () => {
           }),
         ];
         const nftOperations = [
-          makeNftOperation({
+          await makeNftOperation({
             hash: coinOperation.hash,
             contract: "0xTokenContract",
             value: new BigNumber(1),
             type: "NFT_OUT",
           }),
-          makeNftOperation({
+          await makeNftOperation({
             hash: coinOperation.hash,
             contract: "0xTokenContract",
             value: new BigNumber(2),
             type: "NFT_IN",
           }),
-          makeNftOperation({
+          await makeNftOperation({
             hash: "0xUnknownNftHash",
             contract: "0xOtherNftTokenContract",
             value: new BigNumber(2),
@@ -710,7 +713,7 @@ describe("EVM Family", () => {
           }),
         ];
         const internalOperations = [
-          makeOperation({
+          await makeOperation({
             accountId: coinOperation.accountId,
             value: new BigNumber(5),
             type: "OUT",
@@ -758,14 +761,14 @@ describe("EVM Family", () => {
         ]);
       });
 
-      it("should not mutate the original operations", () => {
+      it("should not mutate the original operations", async () => {
         const coinOperations = deepFreeze([
-          makeOperation({
+          await makeOperation({
             hash: "0xCoinOp3Hash",
           }),
         ]);
         const tokenOperations = deepFreeze([
-          makeOperation({
+          await makeOperation({
             hash: coinOperations[0].hash,
             contract: "0xTokenContract",
             value: new BigNumber(1),
@@ -773,7 +776,7 @@ describe("EVM Family", () => {
           }),
         ]);
         const nftOperations = deepFreeze([
-          makeNftOperation({
+          await makeNftOperation({
             hash: coinOperations[0].hash,
             contract: "0xTokenContract",
             value: new BigNumber(1),
@@ -781,7 +784,7 @@ describe("EVM Family", () => {
           }),
         ]);
         const internalOperations = deepFreeze([
-          makeOperation({
+          await makeOperation({
             hash: "0xCoinOpInternal",
           }),
         ]);
@@ -791,28 +794,28 @@ describe("EVM Family", () => {
         ).not.toThrow(); // mutation prevented by deepFreeze method
       });
 
-      it("should filter blacklisted tokens", () => {
-        const coinOperation = makeOperation({
+      it("should filter blacklisted tokens", async () => {
+        const coinOperation = await makeOperation({
           hash: "0xCoinOp3Hash",
         });
         const tokenAccountId =
           coinOperation.accountId + "+ethereum%2Ferc20%2Fusd~!underscore!~~!underscore!~coin";
         const tokenOperations = [
-          makeOperation({
+          await makeOperation({
             accountId: tokenAccountId,
             hash: coinOperation.hash,
             contract: "0xTokenContract",
             value: new BigNumber(1),
             type: "OUT",
           }),
-          makeOperation({
+          await makeOperation({
             accountId: tokenAccountId,
             hash: coinOperation.hash,
             contract: "0xTokenContract",
             value: new BigNumber(2),
             type: "IN",
           }),
-          makeOperation({
+          await makeOperation({
             accountId: tokenAccountId,
             hash: "0xUnknownHash",
             contract: "0xOtherTokenContract",
@@ -821,19 +824,19 @@ describe("EVM Family", () => {
           }),
         ];
         const nftOperations = [
-          makeNftOperation({
+          await makeNftOperation({
             hash: coinOperation.hash,
             contract: "0xTokenContract",
             value: new BigNumber(1),
             type: "NFT_OUT",
           }),
-          makeNftOperation({
+          await makeNftOperation({
             hash: coinOperation.hash,
             contract: "0xTokenContract",
             value: new BigNumber(2),
             type: "NFT_IN",
           }),
-          makeNftOperation({
+          await makeNftOperation({
             hash: "0xUnknownNftHash",
             contract: "0xOtherNftTokenContract",
             value: new BigNumber(2),
@@ -841,7 +844,7 @@ describe("EVM Family", () => {
           }),
         ];
         const internalOperations = [
-          makeOperation({
+          await makeOperation({
             accountId: coinOperation.accountId,
             value: new BigNumber(5),
             type: "OUT",

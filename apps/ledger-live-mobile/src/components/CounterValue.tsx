@@ -1,14 +1,13 @@
 import React, { useState, useCallback, useMemo, useEffect } from "react";
 import { BigNumber } from "bignumber.js";
-import { useSelector } from "react-redux";
 import type { Currency } from "@ledgerhq/types-cryptoassets";
 import { useCalculate, useCountervaluesPolling } from "@ledgerhq/live-countervalues-react";
 import { TouchableOpacity, StyleSheet } from "react-native";
 import { Trans } from "react-i18next";
 import { useTheme } from "@react-navigation/native";
 import { Flex } from "@ledgerhq/native-ui";
-import { counterValueCurrencySelector } from "~/reducers/settings";
 import { useTrackingPairs, addExtraSessionTrackingPair } from "~/actions/general";
+import useCounterValueCurrency from "~/hooks/useCounterValueCurrency";
 import CurrencyUnitValue from "./CurrencyUnitValue";
 import type { CurrencyUnitValueProps } from "./CurrencyUnitValue";
 import LText from "./LText";
@@ -67,17 +66,20 @@ export default function CounterValue({
   currency,
   ...props
 }: Props) {
-  const counterValueCurrency = useSelector(counterValueCurrencySelector);
+  const counterValueCurrency = useCounterValueCurrency();
   const trackingPairs = useTrackingPairs();
   const { poll } = useCountervaluesPolling();
   const hasTrackingPair = useMemo(
-    () => trackingPairs.some(tp => tp.from === currency && tp.to === counterValueCurrency),
+    () =>
+      counterValueCurrency
+        ? trackingPairs.some(tp => tp.from === currency && tp.to === counterValueCurrency)
+        : false,
     [counterValueCurrency, currency, trackingPairs],
   );
   useEffect(() => {
     let t: NodeJS.Timeout | undefined;
 
-    if (!hasTrackingPair) {
+    if (!hasTrackingPair && counterValueCurrency) {
       addExtraSessionTrackingPair({
         from: currency,
         to: counterValueCurrency,
@@ -91,18 +93,21 @@ export default function CounterValue({
     };
   }, [counterValueCurrency, currency, poll, hasTrackingPair, trackingPairs]);
   const param = useMemo(
-    () => ({
-      from: currency,
-      to: counterValueCurrency,
-      value: BigNumber.isBigNumber(valueProp) ? valueProp.toNumber() : valueProp,
-      disableRounding: true,
-      date,
-    }),
+    () =>
+      counterValueCurrency
+        ? {
+            from: currency,
+            to: counterValueCurrency,
+            value: BigNumber.isBigNumber(valueProp) ? valueProp.toNumber() : valueProp,
+            disableRounding: true,
+            date,
+          }
+        : null,
     [currency, counterValueCurrency, valueProp, date],
   );
-  const countervalue = useCalculate(param);
+  const countervalue = useCalculate(param!);
 
-  if (typeof countervalue !== "number") {
+  if (typeof countervalue !== "number" || !counterValueCurrency) {
     return withPlaceholder ? <NoCountervaluePlaceholder /> : null;
   }
 

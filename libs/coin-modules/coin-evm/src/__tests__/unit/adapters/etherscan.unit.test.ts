@@ -38,7 +38,7 @@ describe("EVM Family", () => {
             () =>
               // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
               ({
-                findTokenByAddressInCurrency: (address: string, _currencyId: string) => {
+                findTokenByAddressInCurrency: async (address: string, _currencyId: string) => {
                   if (address === "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48") {
                     return IN_USD_COIN_TOKEN;
                   } else if (address === "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb41") {
@@ -46,6 +46,10 @@ describe("EVM Family", () => {
                   }
                   return undefined;
                 },
+                findTokenByAddress: async () => undefined,
+                getTokenById: async () => undefined as any,
+                findTokenById: async () => undefined,
+                findTokenByTicker: async () => undefined,
               }) as CryptoAssetsStore,
           );
         });
@@ -534,7 +538,7 @@ describe("EVM Family", () => {
             () =>
               // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
               ({
-                findTokenByAddressInCurrency: (_address: string, _currencyId: string) => {
+                findTokenByAddressInCurrency: async (_address: string, _currencyId: string) => {
                   return undefined;
                 },
               }) as unknown as CryptoAssetsStore,
@@ -626,7 +630,7 @@ describe("EVM Family", () => {
             () =>
               // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
               ({
-                findTokenByAddressInCurrency: (_address: string, _currencyId: string) => {
+                findTokenByAddressInCurrency: async (_address: string, _currencyId: string) => {
                   return USD_COIN_TOKEN;
                 },
               }) as unknown as CryptoAssetsStore,

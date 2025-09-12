@@ -1,7 +1,6 @@
 import { handleActions, ReducerMap } from "redux-actions";
 import type { Action } from "redux-actions";
 import merge from "lodash/merge";
-import { getFiatCurrencyByTicker } from "@ledgerhq/live-common/currencies/index";
 import { getEnv, setEnvUnsafe } from "@ledgerhq/live-env";
 import { createSelector } from "reselect";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
@@ -85,7 +84,6 @@ import {
   SettingsSetWalletTabNavigatorLastVisitedTabPayload,
 } from "../actions/types";
 import { ScreenName } from "~/const";
-import { findCurrencyByTicker } from "@ledgerhq/live-countervalues/findCurrencyByTicker";
 
 export const timeRangeDaysByKey = {
   day: 1,
@@ -677,13 +675,15 @@ export const settingsStoreSelector = (state: State): SettingsState => state.sett
 
 export const exportSelector = settingsStoreSelector;
 
-const counterValueCurrencyLocalSelector = (state: SettingsState): Currency =>
-  findCurrencyByTicker(state.counterValue) || getFiatCurrencyByTicker("USD");
+const counterValueCurrencyLocalSelector = (state: SettingsState): string => state.counterValue;
 
-export const counterValueCurrencySelector = createSelector(
+export const counterValueCurrencyTickerSelector = createSelector(
   settingsStoreSelector,
   counterValueCurrencyLocalSelector,
 );
+
+// Deprecated: Use useCounterValueCurrency hook instead for async loading
+export const counterValueCurrencySelector = counterValueCurrencyTickerSelector;
 
 const counterValueExchangeLocalSelector = (s: SettingsState) => s.counterValueExchange;
 
@@ -810,7 +810,7 @@ export const exportSettingsSelector = createSelector(
   state => state.settings.currenciesSettings,
   state => state.settings.pairExchanges,
   (counterValueCurrency, developerModeEnabled, currenciesSettings, pairExchanges) => ({
-    counterValue: counterValueCurrency.ticker,
+    counterValue: counterValueCurrency, // counterValueCurrency is now the ticker string directly
     currenciesSettings,
     pairExchanges,
     developerModeEnabled,

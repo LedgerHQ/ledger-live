@@ -71,7 +71,7 @@ const getSendFields = (
   return fields;
 };
 
-function getDeviceTransactionConfig({
+async function getDeviceTransactionConfig({
   account,
   transaction,
   status,
@@ -79,7 +79,7 @@ function getDeviceTransactionConfig({
   account: AccountLike;
   transaction: AlgorandTransaction;
   status: TransactionStatus;
-}): Array<DeviceTransactionField> {
+}): Promise<Array<DeviceTransactionField>> {
   const { mode, assetId } = transaction;
   const { estimatedFees } = status;
   let fields: {
@@ -113,7 +113,7 @@ function getDeviceTransactionConfig({
       }
 
       if (assetId) {
-        const token = findTokenById(assetId);
+        const token = await findTokenById(assetId);
         fields.push({
           type: "text",
           label: "Asset ID",

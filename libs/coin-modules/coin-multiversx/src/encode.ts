@@ -4,8 +4,8 @@ import type { Transaction } from "./types";
 import { extractTokenId } from "./logic";
 
 export class MultiversXEncodeTransaction {
-  static ESDTTransfer(t: Transaction, ta: TokenAccount): string {
-    const { token } = decodeTokenAccountId(ta.id);
+  static async ESDTTransfer(t: Transaction, ta: TokenAccount): Promise<string> {
+    const { token } = await decodeTokenAccountId(ta.id);
     const tokenIdentifierHex = token && extractTokenId(token.id);
     let amountHex = t.useAllAmount ? ta.balance.toString(16) : t.amount.toString(16);
 

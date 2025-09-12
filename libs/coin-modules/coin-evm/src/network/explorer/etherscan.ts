@@ -136,11 +136,14 @@ export const getLastTokenOperations = async (
     opsByHash[op.hash].push(op);
   }
 
-  return Object.values(opsByHash)
-    .map(events =>
-      events.map((event, index) => etherscanERC20EventToOperations(accountId, event, index)),
-    )
-    .flat(2);
+  const nestedOps = await Promise.all(
+    Object.values(opsByHash).map(events =>
+      Promise.all(
+        events.map((event, index) => etherscanERC20EventToOperations(accountId, event, index)),
+      ),
+    ),
+  );
+  return nestedOps.flat(2);
 };
 
 /**

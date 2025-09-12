@@ -1,13 +1,12 @@
 import { useLargeMoverCurrencies } from "@ledgerhq/live-common/market/hooks/useLargeMoverCurrencies";
-import { useSelector } from "react-redux";
-import { counterValueCurrencySelector } from "~/reducers/settings";
+import { useCounterValueCurrency } from "~/hooks/useCounterValueCurrency";
 
 export const useLargeMover = ({ currenciesIds }: { currenciesIds: string[] }) => {
-  const counterValueCurrency = useSelector(counterValueCurrencySelector);
+  const counterValueCurrency = useCounterValueCurrency();
 
   const currencies = useLargeMoverCurrencies({
     ids: currenciesIds,
-    counterCurrency: counterValueCurrency.ticker,
+    counterCurrency: counterValueCurrency?.ticker || "USD",
   });
 
   const loading = currencies.some(currency => currency.isLoading);

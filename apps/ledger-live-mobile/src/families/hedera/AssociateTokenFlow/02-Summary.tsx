@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { Trans } from "react-i18next";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
@@ -9,6 +9,7 @@ import { findTokenByAddress } from "@ledgerhq/live-common/currencies/index";
 import { HEDERA_TRANSACTION_KINDS } from "@ledgerhq/live-common/families/hedera/constants";
 import { getMainAccount } from "@ledgerhq/coin-framework/account/helpers";
 import { useTheme } from "@react-navigation/native";
+import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import invariant from "invariant";
 
 import SummaryToSection from "./SummaryToSection";
@@ -35,12 +36,37 @@ export default function Summary({ navigation, route }: Props) {
   const { account, parentAccount } = useSelector(accountScreenSelector(route));
 
   const { tokenAddress } = route.params;
-  const token = findTokenByAddress(tokenAddress);
+  const [token, setToken] = useState<TokenCurrency | null>(null);
+
+  useEffect(() => {
+    async function loadToken() {
+      try {
+        const foundToken = await findTokenByAddress(tokenAddress);
+        if (foundToken) {
+          setToken(foundToken);
+        }
+      } catch (error) {
+        console.error("Failed to load token:", error);
+      }
+    }
+    loadToken();
+  }, [tokenAddress]);
 
   invariant(account, "hedera: account is required");
-  invariant(token, `hedera: token with address ${tokenAddress} is not available`);
 
+  // All hooks must be called before early returns
   const { transaction, status, bridgeError, bridgePending } = useBridgeTransaction(() => {
+    if (!token) {
+      // Return a minimal transaction when token is not loaded yet
+      const bridge = getAccountBridge(account, parentAccount);
+      const transaction = bridge.createTransaction(account);
+      return {
+        account,
+        parentAccount,
+        transaction,
+      };
+    }
+
     const bridge = getAccountBridge(account, parentAccount);
     const transaction = bridge.createTransaction(account);
     const updatedTransaction = bridge.updateTransaction(transaction, {
@@ -63,6 +89,11 @@ export default function Summary({ navigation, route }: Props) {
       transaction,
     });
   }, [navigation, transaction, route]);
+
+  if (!token) {
+    // Token is still loading, return loading state or null
+    return null;
+  }
 
   const mainAccount = getMainAccount(account, parentAccount);
   const transactionError = status.errors.transaction;

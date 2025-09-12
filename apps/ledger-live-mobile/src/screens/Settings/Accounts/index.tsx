@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from "react";
+import React, { useCallback, useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useSelector, useDispatch } from "react-redux";
 import { TouchableOpacity, View, StyleSheet, SectionList } from "react-native";
@@ -14,6 +14,12 @@ import CurrencyIcon from "~/components/CurrencyIcon";
 import { TrackScreen } from "~/analytics";
 import HideEmptyTokenAccountsRow from "./HideEmptyTokenAccountsRow";
 import FilterTokenOperationsZeroAmountRow from "./FilterTokenOperationsZeroAmountRow";
+
+type BlacklistedTokenSection = {
+  key: string;
+  parentCurrency: TokenCurrency["parentCurrency"];
+  data: TokenCurrency[];
+};
 import Close from "~/icons/Close";
 import { ScreenName } from "~/const";
 import { SettingsNavigatorStackParamList } from "~/components/RootNavigator/types/SettingsNavigator";
@@ -80,25 +86,35 @@ export default function AccountsSettings({
     [currencies.length, t, navigation],
   );
 
-  const sections = useMemo(() => {
-    const tmpSections = [];
-    for (const tokenId of blacklistedTokenIds) {
-      const token = findTokenById(tokenId);
-      if (token) {
-        const parentCurrency = token.parentCurrency;
-        const index = tmpSections.findIndex(s => s.key === parentCurrency.id);
-        if (index < 0) {
-          tmpSections.push({
-            key: parentCurrency.id,
-            parentCurrency,
-            data: [token],
-          });
-        } else {
-          tmpSections[index].data.push(token);
+  const [sections, setSections] = useState<BlacklistedTokenSection[]>([]);
+
+  useEffect(() => {
+    async function loadSections() {
+      try {
+        const tmpSections: BlacklistedTokenSection[] = [];
+        for (const tokenId of blacklistedTokenIds) {
+          const token = await findTokenById(tokenId);
+          if (token) {
+            const parentCurrency = token.parentCurrency;
+            const index = tmpSections.findIndex(s => s.key === parentCurrency.id);
+            if (index < 0) {
+              tmpSections.push({
+                key: parentCurrency.id,
+                parentCurrency,
+                data: [token],
+              });
+            } else {
+              tmpSections[index].data.push(token);
+            }
+          }
         }
+        setSections(tmpSections);
+      } catch (error) {
+        console.error("Failed to load blacklisted tokens:", error);
+        setSections([]);
       }
     }
-    return tmpSections;
+    loadSections();
   }, [blacklistedTokenIds]);
 
   return (

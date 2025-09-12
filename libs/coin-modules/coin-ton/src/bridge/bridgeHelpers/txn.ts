@@ -203,8 +203,8 @@ export function mapJettonTxToOps(
   addr: string,
   addressBook: TonAddressBook,
   jettonTxMessageHashesMap?: Map<string, string>,
-): (tx: TonJettonTransfer) => TonOperation[] {
-  return (tx: TonJettonTransfer): TonOperation[] => {
+): (tx: TonJettonTransfer) => Promise<TonOperation[]> {
+  return async (tx: TonJettonTransfer): Promise<TonOperation[]> => {
     const accountAddr = Address.parse(addr).toString({ urlSafe: true, bounceable: false });
     if (accountAddr !== addr) throw Error(`[ton] unexpected address ${accountAddr} ${addr}`);
 
@@ -212,7 +212,7 @@ export function mapJettonTxToOps(
       urlSafe: true,
       bounceable: true,
     });
-    const tokenCurrency = findTokenByAddressInCurrency(
+    const tokenCurrency = await findTokenByAddressInCurrency(
       jettonMasterAddr.toLowerCase(),
       decodeAccountId(accountId).currencyId,
     );

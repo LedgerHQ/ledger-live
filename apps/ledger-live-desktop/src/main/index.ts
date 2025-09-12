@@ -24,8 +24,7 @@ import debounce from "lodash/debounce";
 import sentry from "~/sentry/main";
 import type { SettingsState } from "~/renderer/reducers/settings";
 import type { User } from "~/renderer/storage";
-import {
-  installExtension,
+import installExtension, {
   REDUX_DEVTOOLS,
   REACT_DEVELOPER_TOOLS,
 } from "electron-devtools-installer";
