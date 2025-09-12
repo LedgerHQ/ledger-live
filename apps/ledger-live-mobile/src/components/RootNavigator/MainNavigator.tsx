@@ -114,7 +114,7 @@ export default function MainNavigator() {
         name={NavigatorName.Earn}
         component={EarnLiveAppNavigator}
         layout={({ children }) => (
-          // never unmount Portfolio on navigation
+          // dont unmount Earn on navigation
           <>{children}</>
         )}
         options={{
