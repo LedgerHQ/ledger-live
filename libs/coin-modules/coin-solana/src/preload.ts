@@ -12,10 +12,9 @@ import {
 } from "./utils";
 import { getValidators, ValidatorsAppValidator } from "./network/validator-app";
 import spltokensList, { hash as embeddedHash, SPLToken } from "@ledgerhq/cryptoassets/data/spl";
-import { fetchTokensFromCALService } from "@ledgerhq/cryptoassets/crypto-assets-importer/fetch/index";
+import { getTokens } from "@ledgerhq/ledger-cal-service";
 import { getCALHash, setCALHash } from "./logic";
 import { addTokens, convertSplTokens } from "@ledgerhq/cryptoassets/tokens";
-import { AxiosError } from "axios";
 
 let shouldSkipTokenLoading = false;
 
@@ -32,10 +31,12 @@ export const fetchSPLTokens: (
   const calHash = latestCALHash || embeddedHash;
 
   try {
-    const { tokens, hash } = await fetchTokensFromCALService(
-      { blockchain_name: "solana" },
+    const { tokens, hash } = await getTokens(
+      { blockchain: "solana" },
       ["id", "network", "name", "ticker", "contract_address", "decimals"],
-      calHash,
+      {
+        etag: calHash,
+      },
     );
 
     const splTokens: SPLToken[] = tokens.map(token => [
@@ -56,7 +57,7 @@ export const fetchSPLTokens: (
 
     return splTokens;
   } catch (e) {
-    if (e instanceof AxiosError && e.response?.status === 304) {
+    if (e instanceof Error && e.message === "304") {
       log(
         "solana/preload",
         `loading existing fallback tokens for solana with hash ${latestCALHash || embeddedHash}`,
