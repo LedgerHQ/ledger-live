@@ -2,8 +2,6 @@ import React, { useEffect, useState } from "react";
 import { Provider, useSelector } from "react-redux";
 import { Store } from "redux";
 import { HashRouter as Router } from "react-router-dom";
-import { NftMetadataProvider } from "@ledgerhq/live-nft-react";
-import { getCurrencyBridge } from "@ledgerhq/live-common/bridge/index";
 import { getFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { DeviceManagementKitProvider } from "@ledgerhq/live-dmk-desktop";
 import "./global.css";
@@ -89,14 +87,12 @@ const InnerApp = ({ initialCountervalues }: { initialCountervalues: CounterValue
                             <PostOnboardingProviderWrapped>
                               <PlatformAppProviderWrapper>
                                 <DrawerProvider>
-                                  <NftMetadataProvider getCurrencyBridge={getCurrencyBridge}>
-                                    <StorylyProvider>
-                                      <QueryClientProvider client={queryClient}>
-                                        <Default />
-                                        <ReactQueryDevtoolsProvider />
-                                      </QueryClientProvider>
-                                    </StorylyProvider>
-                                  </NftMetadataProvider>
+                                  <StorylyProvider>
+                                    <QueryClientProvider client={queryClient}>
+                                      <Default />
+                                      <ReactQueryDevtoolsProvider />
+                                    </QueryClientProvider>
+                                  </StorylyProvider>
                                 </DrawerProvider>
                               </PlatformAppProviderWrapper>
                             </PostOnboardingProviderWrapped>

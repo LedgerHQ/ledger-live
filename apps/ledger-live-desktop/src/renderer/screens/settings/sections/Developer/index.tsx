@@ -22,12 +22,10 @@ import PostOnboardingHubTester from "../Experimental/PostOnboardingHubTester";
 import AllowDebugReactQueryToggle from "./AllowDebugReactQueryToggle";
 import { FeatureToggle } from "@ledgerhq/live-common/featureFlags/index";
 import WalletSyncTester from "./WalletSync/WalletSyncTester";
-import SimpleHashTools from "./SimpleHashTools/SimpleHashTools";
 import MockAppUpdate from "./MockAppUpdate";
 import EnableAnalyticsConsole from "./EnableAnalyticsConsole";
 import BrazeTools from "./BrazeTools";
 import { RecoverUpsellRow } from "./RecoverUpsellRow";
-import NftsTools from "./NftsTools";
 import CustomCALRefInput from "./CustomCALRefInput";
 import ModularDrawerDevTool from "./ModularDrawer";
 import { MockAccountGeneratorSection } from "./GenerateMockAccounts";
@@ -115,13 +113,6 @@ const Default = () => {
       <ExchangeTestPartnerMode />
       <FeatureToggle featureId="lldWalletSync">
         <WalletSyncTester />
-      </FeatureToggle>
-
-      <FeatureToggle featureId="llNftSupport">
-        <FeatureToggle featureId="nftsFromSimplehash">
-          <SimpleHashTools />
-        </FeatureToggle>
-        <NftsTools />
       </FeatureToggle>
 
       <BrazeTools />

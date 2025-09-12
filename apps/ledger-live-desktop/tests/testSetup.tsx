@@ -1,8 +1,6 @@
-import { getCurrencyBridge } from "@ledgerhq/live-common/bridge/index";
 import { CountervaluesProvider } from "@ledgerhq/live-countervalues-react";
 import { CountervaluesMarketcapProvider } from "@ledgerhq/live-countervalues-react/CountervaluesMarketcapProvider";
 import { CounterValuesStateRaw } from "@ledgerhq/live-countervalues/lib-es/types";
-import { NftMetadataProvider } from "@ledgerhq/live-nft-react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import {
   RenderHookResult,
@@ -126,11 +124,9 @@ function EnhancedProviders({ children }: { children: React.ReactNode }): JSX.Ele
   return (
     <I18nextProvider i18n={i18n}>
       <DrawerProvider>
-        <NftMetadataProvider getCurrencyBridge={getCurrencyBridge}>
-          <StyleProvider selectedPalette="dark">
-            <ContextMenuWrapper>{children}</ContextMenuWrapper>
-          </StyleProvider>
-        </NftMetadataProvider>
+        <StyleProvider selectedPalette="dark">
+          <ContextMenuWrapper>{children}</ContextMenuWrapper>
+        </StyleProvider>
       </DrawerProvider>
     </I18nextProvider>
   );

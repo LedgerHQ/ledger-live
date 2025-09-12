@@ -3,7 +3,6 @@ export const supportLinkByTokenType = {
   trc10: "https://support.ledger.com/article/360013062159-zd",
   trc20: "https://support.ledger.com/article/360013062159-zd",
   asa: "https://support.ledger.com/article/360015896040-zd",
-  nfts: "https://support.ledger.com/article/4404389453841-zd",
   spl: "https://support.ledger.com/article/7723954701469-zd",
 };
 

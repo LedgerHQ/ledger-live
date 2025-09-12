@@ -464,13 +464,7 @@ export const DEFAULT_FEATURES: Features = {
   ptxSwapExodusProvider: DEFAULT_FEATURE,
 
   myLedgerDisplayAppDeveloperName: DEFAULT_FEATURE,
-  nftsFromSimplehash: {
-    ...DEFAULT_FEATURE,
-    params: {
-      threshold: 75,
-      staleTime: 1000 * 60 * 15,
-    },
-  },
+
   marketperformanceWidgetDesktop: {
     enabled: false,
     params: {
@@ -514,13 +508,9 @@ export const DEFAULT_FEATURES: Features = {
       learnMoreLink: "",
     },
   },
-  lldNftsGalleryNewArch: DEFAULT_FEATURE,
-  lldnewArchOrdinals: DEFAULT_FEATURE,
   enableAppsBackup: DEFAULT_FEATURE,
   web3hub: DEFAULT_FEATURE,
   llmMarketQuickActions: DEFAULT_FEATURE,
-  spamFilteringTx: DEFAULT_FEATURE,
-  lldSpamFilteringTx: DEFAULT_FEATURE,
   llmMemoTag: DEFAULT_FEATURE,
   lldMemoTag: DEFAULT_FEATURE,
   ldmkTransport: {
