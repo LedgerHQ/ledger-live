@@ -24,7 +24,7 @@ import { exportSelector as bleSelector } from "~/reducers/ble";
 import { useCountervaluesStateExport } from "~/reducers/countervalues";
 import { exportLargeMoverSelector } from "~/reducers/largeMover";
 import { exportMarketSelector } from "~/reducers/market";
-import { exportSelector as settingsExportSelector } from "~/reducers/settings";
+import { settingsStoreSelector } from "~/reducers/settings";
 import type { State } from "~/reducers/types";
 import { walletSelector } from "~/reducers/wallet";
 import { Maybe } from "../types/helpers";
@@ -155,7 +155,7 @@ export const ConfigureDBSaveEffects = () => {
     save: saveSettings,
     throttle: 400,
     getChangesStats: getSettingsChanged,
-    lense: settingsExportSelector,
+    lense: settingsStoreSelector,
   });
   useDBSaveEffect({
     save: saveAccounts,
