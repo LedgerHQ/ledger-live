@@ -632,7 +632,7 @@ export async function goToSettings() {
   await pressBoth();
 }
 
-export async function providePublickKey() {
+export async function providePublicKey() {
   await pressRightButton();
 }
 
@@ -649,6 +649,9 @@ const APP_LABEL_MAP = new Map<AppInfos, [string, string]>([
 const DEFAULT_LABELS: [string, string] = [DeviceLabels.ADDRESS, DeviceLabels.APPROVE];
 
 export async function expectValidAddressDevice(account: Account, addressDisplayed: string) {
+  if (account.currency === Currency.SUI_USDC) {
+    providePublicKey();
+  }
   const labels = APP_LABEL_MAP.get(account.currency.speculosApp) ?? DEFAULT_LABELS;
   const [firstLabel, confirmLabel] = labels;
 
