@@ -30,7 +30,7 @@ export const europaFrameConfig: Omit<FramedPictureConfig, "backgroundSource"> = 
   innerRight: 0,
   innerTop: 29,
   innerLeft: 64,
-  innerBottomHeight: 82,
+  innerBottomHeight: 81,
   borderRightRadius: 4,
   borderLeftRadius: 4,
 };

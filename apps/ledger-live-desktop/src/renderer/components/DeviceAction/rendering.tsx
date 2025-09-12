@@ -78,8 +78,9 @@ import { isDmkError } from "@ledgerhq/live-common/deviceSDK/tasks/core";
 import { isDisconnectedWhileSendingApduError } from "@ledgerhq/live-dmk-desktop";
 
 export const AnimationWrapper = styled.div`
-  width: 600px;
-  max-width: 100%;
+  max-width: 600px;
+  width: fit-content;
+  overflow: hidden;
   padding-bottom: 12px;
   align-self: center;
   display: flex;

@@ -12,19 +12,12 @@ import Animation from "~/components/Animation";
 
 const ImageLoadingGeneric: React.FC<{
   title: string;
-  fullScreen?: boolean;
+  fullscreen?: boolean;
   children?: React.ReactNode | undefined;
   progress?: number;
   isLottieAnimation?: boolean;
   deviceModelId: CLSSupportedDeviceModelId;
-}> = ({
-  title,
-  fullScreen = true,
-  children,
-  progress,
-  deviceModelId,
-  isLottieAnimation = false,
-}) => {
+}> = ({ title, fullscreen, children, progress, deviceModelId, isLottieAnimation = false }) => {
   const { colors } = useTheme();
 
   return (
@@ -33,7 +26,7 @@ const ImageLoadingGeneric: React.FC<{
       justifyContent="center"
       alignItems="center"
       alignSelf="stretch"
-      flex={fullScreen ? 1 : undefined}
+      flex={fullscreen ? 1 : undefined}
     >
       <Flex flexDirection={"column"} alignItems="center" alignSelf="stretch">
         {isLottieAnimation ? (
@@ -65,10 +58,12 @@ const ImageLoadingGeneric: React.FC<{
 export const RenderImageLoadRequested = ({
   device,
   deviceModelId,
+  fullscreen,
   wording,
 }: {
   device: Device;
   deviceModelId: CLSSupportedDeviceModelId;
+  fullscreen?: boolean;
   wording?: string;
 }) => {
   const { t } = useTranslation();
@@ -81,7 +76,14 @@ export const RenderImageLoadRequested = ({
     [device.deviceName, device.modelId, t, wording],
   );
 
-  return <ImageLoadingGeneric title={title} deviceModelId={deviceModelId} isLottieAnimation />;
+  return (
+    <ImageLoadingGeneric
+      fullscreen={fullscreen}
+      title={title}
+      deviceModelId={deviceModelId}
+      isLottieAnimation
+    />
+  );
 };
 
 export const RenderLoadingImage = ({
@@ -94,6 +96,7 @@ export const RenderLoadingImage = ({
   deviceModelId: CLSSupportedDeviceModelId;
 }) => {
   const { t } = useTranslation();
+
   return (
     <ImageLoadingGeneric
       title={t(
@@ -104,6 +107,11 @@ export const RenderLoadingImage = ({
       )}
       progress={progress}
       deviceModelId={deviceModelId}
+      /**
+       * This component is not being used when updating firmware, so it will always be in fullscreen
+       * mode when used in the Custom Lock Screen flow
+       */
+      fullscreen
     />
   );
 };
@@ -111,12 +119,12 @@ export const RenderLoadingImage = ({
 export const RenderImageCommitRequested = ({
   device,
   deviceModelId,
-  fullScreen = true,
+  fullscreen,
   wording,
 }: {
   device: Device;
   deviceModelId: CLSSupportedDeviceModelId;
-  fullScreen?: boolean;
+  fullscreen?: boolean;
   wording?: string;
 }) => {
   const { t } = useTranslation();
@@ -125,7 +133,7 @@ export const RenderImageCommitRequested = ({
 
   return (
     <ImageLoadingGeneric
-      fullScreen={fullScreen}
+      fullscreen={fullscreen}
       title={
         wording ??
         t("customImage.commitRequested", {

@@ -14,7 +14,7 @@ import CustomImageBottomModal from "../CustomImage/CustomImageBottomModal";
 import Button from "../wrappedUi/Button";
 import Link from "../wrappedUi/Link";
 import { screen, TrackScreen } from "~/analytics";
-import { useStaxLoadImageDeviceAction } from "~/hooks/deviceActions";
+import { useLoadImageDeviceAction } from "~/hooks/deviceActions";
 import { SettingsSetLastSeenCustomImagePayload } from "~/actions/types";
 import { CLSSupportedDeviceModelId } from "@ledgerhq/live-common/device/use-cases/isCustomLockScreenSupported";
 import {
@@ -58,7 +58,7 @@ const CustomImageDeviceAction: React.FC<Props & { remountMe: () => void }> = ({
   remountMe,
   referral,
 }) => {
-  const action = useStaxLoadImageDeviceAction();
+  const action = useLoadImageDeviceAction();
   const commandRequest = useMemo(() => ({ hexImage, deviceModelId }), [hexImage, deviceModelId]);
 
   const { t } = useTranslation();
@@ -185,11 +185,11 @@ const CustomImageDeviceAction: React.FC<Props & { remountMe: () => void }> = ({
             ) : null}
           </Flex>
         ) : imageLoadRequested && device ? (
-          <RenderImageLoadRequested device={device} deviceModelId={deviceModelId} />
+          <RenderImageLoadRequested device={device} deviceModelId={deviceModelId} fullscreen />
         ) : loadingImage && device && typeof progress === "number" ? (
           <RenderLoadingImage device={device} progress={progress} deviceModelId={deviceModelId} />
         ) : imageCommitRequested && device ? (
-          <RenderImageCommitRequested device={device} deviceModelId={deviceModelId} />
+          <RenderImageCommitRequested device={device} deviceModelId={deviceModelId} fullscreen />
         ) : (
           <DeviceActionDefaultRendering
             status={status}

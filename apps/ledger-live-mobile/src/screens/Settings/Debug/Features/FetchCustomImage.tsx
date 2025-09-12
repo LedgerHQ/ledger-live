@@ -17,7 +17,7 @@ import { ProcessorPreviewResult } from "~/components/CustomImage/dithering/types
 import FramedPicture from "~/components/CustomImage/FramedPicture";
 import { NavigationHeaderBackButton } from "~/components/NavigationHeaderBackButton";
 import { ReactNavigationHeaderOptions } from "~/components/RootNavigator/types/helpers";
-import { useStaxFetchImageDeviceAction } from "~/hooks/deviceActions";
+import { useFetchImageDeviceAction } from "~/hooks/deviceActions";
 
 // Defines here some of the header options for this screen to be able to reset back to them.
 export const debugFetchCustomImageHeaderOptions: ReactNavigationHeaderOptions = {
@@ -28,7 +28,7 @@ export const debugFetchCustomImageHeaderOptions: ReactNavigationHeaderOptions = 
 };
 
 export default React.memo(function DebugFetchCustomImage() {
-  const fetchDeviceAction = useStaxFetchImageDeviceAction();
+  const fetchDeviceAction = useFetchImageDeviceAction();
   const { colors } = useTheme();
   const navigation = useNavigation();
 

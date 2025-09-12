@@ -40,7 +40,9 @@ test("Custom image Stax", async ({ page }) => {
   await test.step("Open custom image drawer", async () => {
     await managerPage.openCustomImage();
     await container.waitFor({ state: "attached" });
-    await expect(container).toHaveScreenshot(`${generateScreenshotPrefix()}drawer.png`);
+    await expect(container).toHaveScreenshot(`${generateScreenshotPrefix()}drawer.png`, {
+      animations: "disabled",
+    });
   });
 
   await test.step("Import NFT", async () => {

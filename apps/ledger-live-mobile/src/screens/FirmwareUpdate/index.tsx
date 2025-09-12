@@ -205,8 +205,8 @@ export const FirmwareUpdate = ({
     updateActionState,
     updateStep,
     retryCurrentStep,
-    staxFetchImageState,
-    staxLoadImageState,
+    fetchImageState,
+    loadImageState,
     installLanguageState,
     restoreAppsState,
     noOfAppsToReinstall,
@@ -276,7 +276,7 @@ export const FirmwareUpdate = ({
       });
     }
 
-    if (staxFetchImageState.hexImage) {
+    if (fetchImageState.hexImage) {
       steps.push({
         status: {
           start: ItemStatus.inactive,
@@ -288,7 +288,7 @@ export const FirmwareUpdate = ({
           appsRestore: ItemStatus.completed,
           completed: ItemStatus.completed,
         }[updateStep],
-        progress: staxLoadImageState.progress,
+        progress: loadImageState.progress,
         title: t("FirmwareUpdate.steps.restoreSettings.restoreLockScreenPicture"),
       });
     }
@@ -327,8 +327,8 @@ export const FirmwareUpdate = ({
     updateStep,
     installLanguageState.progress,
     t,
-    staxFetchImageState.hexImage,
-    staxLoadImageState.progress,
+    fetchImageState.hexImage,
+    loadImageState.progress,
     restoreAppsState.listedApps,
     restoreAppsState.itemProgress,
     restoreAppsState.installQueue,
@@ -589,7 +589,6 @@ export const FirmwareUpdate = ({
     if (updateActionState.error?.name === "TimeoutError") {
       return (
         <DeviceActionError
-          t={t}
           device={device}
           errorName={updateActionState.error.name}
           translationContext="FirmwareUpdate.updateStatusErrors"
@@ -604,7 +603,6 @@ export const FirmwareUpdate = ({
     if (batteryStatusesState.error !== null) {
       return (
         <DeviceActionError
-          t={t}
           device={device}
           errorName={batteryStatusesState.error?.name ?? "BatteryStatusNotRetrieved"}
           translationContext="FirmwareUpdate.batteryStatusErrors"
@@ -612,7 +610,7 @@ export const FirmwareUpdate = ({
       );
     }
 
-    if (staxLoadImageState.imageLoadRequested) {
+    if (loadImageState.imageLoadRequested) {
       return (
         <RenderImageLoadRequested
           device={device}
@@ -624,12 +622,11 @@ export const FirmwareUpdate = ({
       );
     }
 
-    if (staxLoadImageState.imageCommitRequested) {
+    if (loadImageState.imageCommitRequested) {
       return (
         <RenderImageCommitRequested
           device={device}
           deviceModelId={device.modelId as CLSSupportedDeviceModelId}
-          fullScreen={false}
           wording={t("FirmwareUpdate.steps.restoreSettings.imageCommitRequested", {
             deviceName: productName,
           })}
@@ -680,7 +677,6 @@ export const FirmwareUpdate = ({
       return (
         <DeviceActionError
           device={device}
-          t={t}
           errorName={userSolvableError.name}
           translationContext="FirmwareUpdate"
         >
@@ -731,7 +727,6 @@ export const FirmwareUpdate = ({
             device={device}
             currentFirmwareVersion={deviceInfo.version}
             newFirmwareVersion={firmwareUpdateContext.final.name}
-            t={t}
           />
         );
       case "allowSecureChannelDenied":
@@ -742,19 +737,18 @@ export const FirmwareUpdate = ({
             newFirmwareVersion={firmwareUpdateContext.final.name}
             onPressRestart={retryCurrentStep}
             onPressQuit={quitUpdate}
-            t={t}
           />
         );
       case "installOsuDevicePermissionGranted":
         // If the device is not yet onboarded, there is no PIN code: no need to display this content
         if (!firmwareUpdateContext.shouldFlashMCU && !isBeforeOnboarding) {
-          return <FinishFirmwareUpdate device={device} t={t} />;
+          return <FinishFirmwareUpdate device={device} />;
         }
         break;
       case "flashingMcu":
         // If the device is not yet onboarded, there is no PIN code: no need to display this content
         if (updateActionState.progress === 1 && !isBeforeOnboarding) {
-          return <FinishFirmwareUpdate device={device} t={t} />;
+          return <FinishFirmwareUpdate device={device} />;
         }
         break;
       default:
@@ -767,8 +761,8 @@ export const FirmwareUpdate = ({
     batteryStatusesState.lockedDevice,
     deviceLockedOrUnresponsive,
     hasReconnectErrors,
-    staxLoadImageState.imageLoadRequested,
-    staxLoadImageState.imageCommitRequested,
+    loadImageState.imageLoadRequested,
+    loadImageState.imageCommitRequested,
     restoreAppsState.allowManagerRequested,
     connectManagerState.allowManagerRequested,
     installLanguageState.languageInstallationRequested,
@@ -879,9 +873,9 @@ export const FirmwareUpdate = ({
           category={"Update device - Step 3d: apps and settings successfully restored"}
         />
       ) : null}
-      {isCustomLockScreenSupported(device.modelId) && staxFetchImageState.hexImage ? (
+      {isCustomLockScreenSupported(device.modelId) && fetchImageState.hexImage ? (
         <ImageHexProcessor
-          hexData={staxFetchImageState.hexImage as string}
+          hexData={fetchImageState.hexImage as string}
           bitsPerPixel={getScreenSpecs(device.modelId).bitsPerPixel}
           {...getScreenDataDimensions(device.modelId)}
           onPreviewResult={handleStaxImageSourceLoaded}
