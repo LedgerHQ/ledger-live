@@ -13,7 +13,7 @@ import { checkLibs } from "@ledgerhq/live-common/sanityChecks";
 import "./config/configInit";
 import "./config/bridge-setup";
 import Config from "react-native-config";
-
+import { enableFreeze } from "react-native-screens";
 import useEnv from "@ledgerhq/live-common/hooks/useEnv";
 import { useDispatch, useSelector } from "react-redux";
 import { init } from "../e2e/bridge/client";
@@ -101,6 +101,8 @@ import { FIRST_PARTY_MAIN_HOST_DOMAIN } from "./utils/constants";
 import useNativeStartupInfo from "./hooks/useNativeStartupInfo";
 import { ConfigureDBSaveEffects } from "./components/DBSave";
 import { useRef } from "react";
+
+enableFreeze(true);
 
 if (Config.DISABLE_YELLOW_BOX) {
   LogBox.ignoreAllLogs();
