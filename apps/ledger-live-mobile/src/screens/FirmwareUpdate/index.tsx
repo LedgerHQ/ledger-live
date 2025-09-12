@@ -617,7 +617,6 @@ export const FirmwareUpdate = ({
         <RenderImageLoadRequested
           device={device}
           deviceModelId={device.modelId as CLSSupportedDeviceModelId}
-          fullScreen={false}
           wording={t("FirmwareUpdate.steps.restoreSettings.imageLoadRequested", {
             deviceName: productName,
           })}

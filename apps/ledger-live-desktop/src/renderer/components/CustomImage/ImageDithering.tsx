@@ -5,7 +5,6 @@ import { CLSSupportedDeviceModelId } from "@ledgerhq/live-common/device/use-case
 import { ImageBase64Data } from "./types";
 import ContrastChoice from "./ContrastChoice";
 import FramedPicture from "./FramedPicture";
-import { getFramedPictureConfig } from "./framedPictureConfigs";
 import { getScreenSpecs } from "@ledgerhq/live-common/device/use-cases/screenSpecs";
 import {
   DitheringConfigKey,
@@ -111,10 +110,7 @@ const ImageDithering: React.FC<Props> = props => {
         onLoad={handleSourceLoaded}
       />
       {previewResult ? (
-        <FramedPicture
-          frameConfig={getFramedPictureConfig("transfer", deviceModelId, "dark")}
-          source={previewResult?.imageBase64DataUri}
-        />
+        <FramedPicture deviceModelId={deviceModelId} source={previewResult?.imageBase64DataUri} />
       ) : null}
       <Flex alignSelf="center" flexDirection="row" mt={8} columnGap={2}>
         {availableDitheringConfigKeys.map((key, index) => (
