@@ -337,7 +337,7 @@ export function transactionToOperation(
 }
 
 /**
- * @returns the operation converted. Note that if param `transaction` was retrieved as an "IN" operations, the type may be converted to "OUT". 
+ * @returns the operation converted. Note that if param `transaction` was retrieved as an "IN" operations, the type may be converted to "OUT".
  *    It happens for most "OUT" operations because the sender receive a new version of the coin objects.
  */
 export function transactionToOp(address: string, transaction: SuiTransactionBlockResponse): Op {
@@ -551,23 +551,23 @@ function toSdkCursor(cursor: string | undefined): QueryTransactionBlocksParams["
  * Fetch operations for Alpaca
  * It fetches separately the "OUT" and "IN" operations and then merge them.
  * The cursor is composed of the last "OUT" and "IN" operation cursors.
- * 
+ *
  * Warning:
- * Some IN operations are also OUT operations because the sender receive a new version of the coin objects, 
+ * Some IN operations are also OUT operations because the sender receive a new version of the coin objects,
  * and the complexity of this function don't go that far to detect it.
  * IN calls and OUT calls are not disjoint
- * Consequence: 2 successive calls of this function when passing cursor may return an operation we already saw in previous calls, 
+ * Consequence: 2 successive calls of this function when passing cursor may return an operation we already saw in previous calls,
  * fetched as an OUT operation.
- * 
+ *
  * Note: I think it's possible to detect duplicated IN oprations:
  * - if the address is the sender of the tx
  * - and there is some transfer to other address
  * - and the address is the single only owner of mutated or deleted object
  * when all that conditions are met, the transaction will be fetched as an OUT operation,
  * and it can be filtered out from the IN operations results.
- * 
+ *
  * @returns the operations.
- * 
+ *
  */
 export const getListOperations = async (
   addr: string,

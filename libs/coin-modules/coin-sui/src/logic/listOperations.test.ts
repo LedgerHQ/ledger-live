@@ -46,7 +46,7 @@ const mockOperations: Page<Op> = {
   next: "0x1234567890abcdef",
 };
 
-const mockGetListOperations = getListOperations as jest.Mock;
+const mockGetListOperations = jest.mocked(getListOperations);
 mockGetListOperations.mockResolvedValue(mockOperations);
 
 describe("List Operations", () => {
