@@ -11,16 +11,21 @@ export const AccountList = ({
   accounts,
   formatAccount,
   navigateToEditAccountName,
+  isAccountSelectionFlow,
 }: AccountListProps) => {
   const { colors } = useTheme();
   const history = useHistory();
 
   const handleAccountClick = useCallback(
-    (accountId: string) => {
-      history.push({ pathname: `/account/${accountId}` });
-      setDrawer();
+    (account: Account) => {
+      if (isAccountSelectionFlow) {
+        navigateToEditAccountName(account);
+      } else {
+        history.push({ pathname: `/account/${account.id}` });
+        setDrawer();
+      }
     },
-    [history],
+    [history, isAccountSelectionFlow, navigateToEditAccountName],
   );
 
   const accountItems = useMemo(
@@ -34,9 +39,9 @@ export const AccountList = ({
               aria-label={`account item ${account.id}`}
               account={formattedAccount}
               backgroundColor={colors.opacityDefault.c05}
-              onClick={() => handleAccountClick(account.id)}
+              onClick={() => handleAccountClick(account)}
               rightElement={{
-                type: "edit",
+                type: isAccountSelectionFlow ? "arrow" : "edit",
                 onClick: () => navigateToEditAccountName(account),
               }}
             />
@@ -47,8 +52,9 @@ export const AccountList = ({
       accounts,
       formatAccount,
       colors.opacityDefault.c05,
-      handleAccountClick,
       navigateToEditAccountName,
+      isAccountSelectionFlow,
+      handleAccountClick,
     ],
   );
 
