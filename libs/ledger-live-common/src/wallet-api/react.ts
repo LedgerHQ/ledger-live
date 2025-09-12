@@ -1,7 +1,6 @@
 import { useMemo, useState, useEffect, useRef, useCallback, RefObject } from "react";
 import semver from "semver";
 import { intervalToDuration } from "date-fns";
-import { BigNumber } from "bignumber.js";
 
 import { Account, AccountLike, AnyMessage, Operation, SignedOperation } from "@ledgerhq/types-live";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
@@ -40,6 +39,7 @@ import {
   bitcoinFamilyAccountGetAddressLogic,
   bitcoinFamilyAccountGetPublicKeyLogic,
   signRawTransactionLogic,
+  craftPsbtTransactionLogic,
 } from "./logic";
 import { getAccountBridge } from "../bridge";
 import { getEnv } from "@ledgerhq/live-env";
@@ -517,21 +517,12 @@ export function useWalletAPIServer({
     if (!uiSignPsbt) return;
 
     server.setHandler("bitcoin.signPsbt", async ({ account, psbt, broadcast }) => {
-      // For the PSBT we cannot provide the amount and recipient at the moment
-      const transaction = {
-        family: "bitcoin" as const,
-        amount: new BigNumber(0),
-        // Necessary to calculate fees and not throw invalid address error
-        recipient: "bc1qtthqrseeu4d2yw9yh0clw95066klvcyvqdk7fv",
-        psbt,
-      };
-
-      const signedOperation = await signTransactionLogic(
+      const signedOperation = await craftPsbtTransactionLogic(
         { manifest, accounts, tracking },
         account.id,
-        transaction,
-        (account, _, { liveTx }) =>
-          new Promise((resolve, reject) => {
+        { psbt, finalizePsbt: broadcast },
+        (account, liveTx) => {
+          return new Promise((resolve, reject) => {
             let done = false;
             return uiSignPsbt({
               account,
@@ -549,14 +540,15 @@ export function useWalletAPIServer({
                 reject(error);
               },
             });
-          }),
+          });
+        },
       );
 
-      if (!broadcast) {
-        return signedOperation.rawData!.psbtSigned as string;
-      }
+      const psbtSigned = signedOperation.rawData!.psbtSigned as string;
 
-      return broadcastTransactionLogic(
+      if (!broadcast) return { psbtSigned };
+
+      const txHash = await broadcastTransactionLogic(
         { manifest, accounts, tracking },
         account.id,
         signedOperation,
@@ -586,6 +578,8 @@ export function useWalletAPIServer({
         },
         undefined,
       );
+
+      return { psbtSigned, txHash };
     });
   }, [
     accounts,

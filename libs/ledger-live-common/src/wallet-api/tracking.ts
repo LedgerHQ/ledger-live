@@ -85,6 +85,21 @@ export default function trackingWrapper(trackCall: TrackWalletAPI) {
       track("WalletAPI SignRawTransaction Success", getEventData(manifest));
     },
 
+    // Sign transaction modal open to sign PSBT
+    signPsbtRequested: (manifest: AppManifest) => {
+      track("WalletAPI SignPsbt", getEventData(manifest));
+    },
+
+    // Failed to sign PSBT (cancel or error)
+    signPsbtFail: (manifest: AppManifest) => {
+      track("WalletAPI SignPsbt Fail", getEventData(manifest));
+    },
+
+    // Successfully signed PSBT
+    signPsbtSuccess: (manifest: AppManifest) => {
+      track("WalletAPI SignPsbt Success", getEventData(manifest));
+    },
+
     // Select account modal open
     requestAccountRequested: (manifest: AppManifest) => {
       track("WalletAPI RequestAccount", getEventData(manifest));
