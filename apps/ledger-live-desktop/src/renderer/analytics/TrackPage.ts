@@ -29,16 +29,28 @@ type Props = {
    */
   refreshSource?: boolean;
   [key: string]: unknown;
+
+  /** Whether to update the current route ref to be accessed throughout the app.
+   * Defaults to true, but should be set to false for non full page components like
+   * modals or drawers.
+   */
+  updateRoutes?: boolean;
 };
 
 /**
  * On mount, this component will track an event which will have the name
  * `Page ${category}${name ? " " + name : ""}`.
  */
-const TrackPage: React.FC<Props> = ({ category, name, refreshSource = true, ...properties }) => {
+const TrackPage: React.FC<Props> = ({
+  category,
+  name,
+  refreshSource = true,
+  updateRoutes = true,
+  ...properties
+}) => {
   useEffect(() => {
-    trackPage(category, name, properties, true, refreshSource);
-  }, [category, name, properties, refreshSource]);
+    trackPage(category, name, properties, updateRoutes, refreshSource);
+  }, [category, name, properties, refreshSource, updateRoutes]);
   return null;
 };
 

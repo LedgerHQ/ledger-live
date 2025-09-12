@@ -342,7 +342,7 @@ describe("ModularDrawerFlowManager - Select Account Flow", () => {
         flow: "flowTest",
         source: "sourceTest",
       },
-      true,
+      false,
       true,
     );
   });

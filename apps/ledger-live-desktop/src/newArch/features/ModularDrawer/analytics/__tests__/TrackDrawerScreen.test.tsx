@@ -16,7 +16,7 @@ describe("TrackDrawerScreen", () => {
       "Asset Selection",
       undefined,
       { flow: "flowtest", source: "sourcetest" },
-      true,
+      false,
       true,
     );
   });
@@ -46,7 +46,7 @@ describe("TrackDrawerScreen", () => {
         flow: "flowtest",
         source: "sourcetest",
       },
-      true,
+      false,
       true,
     );
   });
@@ -80,7 +80,7 @@ describe("TrackDrawerScreen", () => {
         },
         source: "sourcetest",
       },
-      true,
+      false,
       true,
     );
   });

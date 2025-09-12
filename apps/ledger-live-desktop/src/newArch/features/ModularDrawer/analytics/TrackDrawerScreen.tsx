@@ -34,7 +34,7 @@ const TrackDrawerScreen = <T extends ModularDrawerEventName>({
     };
   }, [source, flow, formatAssetConfig, assetsConfig, formatNetworkConfig, networksConfig]);
 
-  return <TrackPage category={page} {...analyticsParams} />;
+  return <TrackPage category={page} {...analyticsParams} updateRoutes={false} />;
 };
 
 export default React.memo(TrackDrawerScreen);
