@@ -38,6 +38,7 @@ export type AppConfig = {
 export type CantonAddress = {
   publicKey: string;
   address: string;
+  path: string; // TODO: check if necessary
 };
 
 export type CantonSignature = string;
@@ -66,23 +67,21 @@ export default class Canton {
    * @return the address and public key
    */
   async getAddress(path: string, display: boolean = false): Promise<CantonAddress> {
-    // TODO: replace with the actual path fix wrong path "44'/6767'/0'" being used
-    const bipPath = BIPPath.fromString("m/44'/6767'/0'/0'/0'").toPathArray();
+    const bipPath = BIPPath.fromString(path).toPathArray();
     const serializedPath = this.serializePath(bipPath);
 
     const p1 = display ? P1_CONFIRM : P1_NON_CONFIRM;
     const response = await this.transport.send(CLA, INS.GET_ADDR, p1, P2_NONE, serializedPath);
 
     const responseData = this.handleTransportResponse(response, "address");
-    const { pubKey } = this.extractPubkeyAndChainCode(responseData);
+    const { publicKey } = this.extractPublicKeyAndChainCode(responseData);
 
-    const publicKey = "0x" + pubKey;
-    const addressHash = this.hashString(publicKey);
-    const address = "canton_" + addressHash.substring(0, 36);
+    const address = this.publicKeyToAddress(publicKey);
 
     return {
-      publicKey: pubKey,
+      publicKey,
       address,
+      path,
     };
   }
 
@@ -95,8 +94,7 @@ export default class Canton {
    */
   async signTransaction(path: string, txHash: string): Promise<CantonSignature> {
     // 1. Send the derivation path
-    // TODO: replace with the actual path fix wrong path "44'/6767'/0'" being used
-    const bipPath = BIPPath.fromString("m/44'/6767'/0'/0'/0'").toPathArray();
+    const bipPath = BIPPath.fromString(path).toPathArray();
     const serializedPath = this.serializePath(bipPath);
 
     const pathResponse = await this.transport.send(
@@ -205,15 +203,15 @@ export default class Canton {
   }
 
   /**
-   * Simple deterministic hash function for generating mock addresses
+   * Convert public key to address
    * @private
    */
-  private hashString(str: string): string {
+  private publicKeyToAddress(str: string): string {
     let hash = 0;
     for (let i = 0; i < str.length; i++) {
       const char = str.charCodeAt(i);
       hash = (hash << 5) - hash + char;
-      hash = hash & hash; // Convert to 32-bit integer
+      hash = hash & hash;
     }
     return Math.abs(hash).toString(16);
   }
@@ -221,8 +219,9 @@ export default class Canton {
   /**
    * Extract Pubkey info from APDU response
    * @private
+   * @returns Object with publicKey and chainCode as Buffer objects
    */
-  private extractPubkeyAndChainCode(data: Buffer): { pubKey: string; chainCode: string } {
+  private extractPublicKeyAndChainCode(data: Buffer) {
     // Parse the response according to the Python unpack_get_addr_response format:
     // response = pubkey_len (1) + pubkey (var) + chaincode_len (1) + chaincode (var)
 
@@ -243,7 +242,7 @@ export default class Canton {
     // Extract chain code
     const chainCode = data.subarray(offset, offset + chainCodeSize);
 
-    return { pubKey: pubKey.toString("hex"), chainCode: chainCode.toString("hex") };
+    return { publicKey: pubKey.toString("hex"), chainCode: chainCode.toString("hex") };
   }
 
   /**

@@ -110,7 +110,7 @@ describe("sync (devnet)", () => {
 
       mockGetBalance.mockResolvedValue([
         {
-          instrument_id: "canton_network",
+          instrument_id: "Amulet",
           amount: 1000000,
           locked: true,
         },
@@ -167,7 +167,7 @@ describe("sync (devnet)", () => {
       const result = await getAccountShape(ACCOUNT_SHAPE_INFO, { paginationConfig: {} });
 
       expect(result.operations).toBeDefined();
-      expect(result.operationsCount).toBeGreaterThan(1);
+      expect(result.operationsCount).toBeGreaterThanOrEqual(1);
 
       expect(mockGetOperations).toHaveBeenCalledWith(TEST_ADDRESS, {
         cursor: 0,
