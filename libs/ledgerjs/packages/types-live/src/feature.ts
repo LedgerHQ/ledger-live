@@ -150,6 +150,7 @@ export type CurrencyFeatures = {
  * @dev Add features here.
  */
 export type Features = CurrencyFeatures & {
+  welcomeScreenVideoCarousel: Feature_WelcomeScreenVideoCarousel;
   brazePushNotifications: Feature_BrazePushNotifications;
   ratingsPrompt: Feature_RatingsPrompt;
   npsRatingsPrompt: Feature_NpsRatingsPrompt;
@@ -656,6 +657,7 @@ type Feature_ModularDrawer = Feature<{
   backendEnvironment: string;
 }>;
 
+export type Feature_WelcomeScreenVideoCarousel = DefaultFeature;
 export type Feature_CounterValue = DefaultFeature;
 export type Feature_MockFeature = DefaultFeature;
 export type Feature_DisableNftSend = DefaultFeature;
