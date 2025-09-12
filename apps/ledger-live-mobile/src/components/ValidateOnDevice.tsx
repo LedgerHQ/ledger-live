@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import invariant from "invariant";
 import { ScrollView } from "react-native";
 import { useTranslation } from "react-i18next";
@@ -150,12 +150,18 @@ export default function ValidateOnDevice({
       }
     ).footer;
 
-  const fields = getDeviceTransactionConfig({
-    account,
-    parentAccount,
-    transaction,
-    status,
-  });
+  const [fields, setFields] = useState<DeviceTransactionField[]>([]);
+
+  useEffect(() => {
+    if (account && transaction && status) {
+      getDeviceTransactionConfig({
+        account,
+        parentAccount,
+        transaction,
+        status,
+      }).then(setFields);
+    }
+  }, [account, parentAccount, transaction, status]);
 
   const transRecipientWording = t(
     `ValidateOnDevice.recipientWording.${transaction.mode || "send"}`,

@@ -8,9 +8,9 @@ import coinConfig from "../config";
 import { getFullnodeUrl } from "@mysten/sui/client";
 import * as networkModule from "../network";
 
-// Mock getTokenById and listTokensForCryptoCurrency
+// Mock findTokenById and listTokensForCryptoCurrency
 jest.mock("@ledgerhq/cryptoassets/tokens", () => ({
-  getTokenById: (coinType: string) => ({
+  findTokenById: async (coinType: string) => ({
     id: coinType,
     ticker: "TEST",
     name: "Test Token",

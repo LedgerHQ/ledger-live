@@ -74,15 +74,15 @@ export const ledgerOperationToOperations = (
  * Adapter to convert an ERC20 transaction
  * on Ledger explorers into LL Operations
  */
-export const ledgerERC20EventToOperations = (
+export const ledgerERC20EventToOperations = async (
   coinOperation: Operation,
   event: LedgerExplorerERC20TransferEvent,
   index = 0,
-): Operation[] => {
+): Promise<Operation[]> => {
   const { accountId, hash, fee, blockHeight, blockHash, transactionSequenceNumber, date } =
     coinOperation;
   const { currencyId, xpubOrAddress: address } = decodeAccountId(accountId);
-  const tokenCurrency = getCryptoAssetsStore().findTokenByAddressInCurrency(
+  const tokenCurrency = await getCryptoAssetsStore().findTokenByAddressInCurrency(
     event.contract,
     currencyId,
   );

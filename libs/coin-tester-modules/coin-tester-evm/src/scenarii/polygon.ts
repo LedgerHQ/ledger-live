@@ -1,7 +1,7 @@
 import { BigNumber } from "bignumber.js";
 import { ethers } from "ethers";
 import { Account } from "@ledgerhq/types-live";
-import { getTokenById } from "@ledgerhq/cryptoassets/tokens";
+import { USDC_ON_POLYGON } from "../fixtures";
 import { Scenario, ScenarioTransaction } from "@ledgerhq/coin-tester/main";
 import { encodeTokenAccountId } from "@ledgerhq/coin-framework/account/index";
 import { killSpeculos, spawnSpeculos } from "@ledgerhq/coin-tester/signers/speculos";
@@ -17,7 +17,6 @@ import { BridgeStrategy } from "@ledgerhq/coin-tester/types";
 
 type PolygonScenarioTransaction = ScenarioTransaction<EvmTransaction, Account>;
 
-const USDC_ON_POLYGON = getTokenById("polygon/erc20/usd_coin_(pos)");
 const yootContract = "0x670fd103b1a08628e9557cD66B87DeD841115190";
 const yootTokenId = "1988";
 const emberContract = "0xa5511E9941E303101b50675926Fd4d9c1A8a8805";

@@ -1,5 +1,5 @@
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import * as store from "@ledgerhq/cryptoassets/tokens";
+import { legacyCryptoAssetsStore as store } from "@ledgerhq/cryptoassets/legacy/legacy-store";
 import type { Account } from "@ledgerhq/types-live";
 import { getAccountBridgeByFamily, setup } from "@ledgerhq/live-common/bridge/impl";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";

@@ -146,11 +146,14 @@ export const getLastTokenOperations = async (
     opsByHash[op.hash].push(op);
   }
 
-  return Object.values(opsByHash)
-    .map(events =>
+  const allOperationsPromises = Object.values(opsByHash).map(events =>
+    Promise.all(
       events.map((event, index) => etherscanERC20EventToOperations(accountId, event, index)),
-    )
-    .flat(2);
+    ),
+  );
+
+  const allOperationsArrays = await Promise.all(allOperationsPromises);
+  return allOperationsArrays.flat(2);
 };
 
 /**

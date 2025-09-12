@@ -438,7 +438,7 @@ async function newSubAcc({
   const creationDate = new Date((lastTx?.info.blockTime ?? Date.now() / 1000) * 1000);
 
   const mint = assocTokenAcc.info.mint.toBase58();
-  const tokenCurrency = getCryptoAssetsStore().findTokenByAddressInCurrency(mint, currencyId);
+  const tokenCurrency = await getCryptoAssetsStore().findTokenByAddressInCurrency(mint, currencyId);
 
   if (!tokenCurrency) {
     throw new Error(`token for mint "${mint}" not found`);

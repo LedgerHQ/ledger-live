@@ -2,7 +2,7 @@ import { BigNumber } from "bignumber.js";
 import invariant from "invariant";
 import expect from "expect";
 import type { Transaction } from "../types";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/index";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import { parseCurrencyUnit } from "@ledgerhq/coin-framework/currencies";
 import { botTest, pickSiblings } from "@ledgerhq/coin-framework/bot/specs";
 import type { AppSpec, TransactionDestinationTestInput } from "@ledgerhq/coin-framework/bot/types";

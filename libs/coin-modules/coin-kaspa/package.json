@@ -78,6 +78,38 @@
       "require": "./lib/transaction/*.js",
       "default": "./lib-es/transaction/*.js"
     },
+    "./transaction": {
+      "require": "./lib/transaction.js",
+      "default": "./lib-es/transaction.js"
+    },
+    "./deviceTransactionConfig": {
+      "require": "./lib/deviceTransactionConfig.js",
+      "default": "./lib-es/deviceTransactionConfig.js"
+    },
+    "./hw-getAddress": {
+      "require": "./lib/hw-getAddress.js",
+      "default": "./lib-es/hw-getAddress.js"
+    },
+    "./types/index": {
+      "require": "./lib/types/index.js",
+      "default": "./lib-es/types/index.js"
+    },
+    "./types/signer": {
+      "require": "./lib/types/signer.js",
+      "default": "./lib-es/types/signer.js"
+    },
+    "./types/bridge": {
+      "require": "./lib/types/bridge.js",
+      "default": "./lib-es/types/bridge.js"
+    },
+    "./test/index": {
+      "require": "./lib/test/index.js",
+      "default": "./lib-es/test/index.js"
+    },
+    "./test/cli": {
+      "require": "./lib/test/cli.js",
+      "default": "./lib-es/test/cli.js"
+    },
     "./*": {
       "require": "./lib/*.js",
       "default": "./lib-es/*.js"

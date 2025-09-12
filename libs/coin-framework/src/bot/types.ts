@@ -255,7 +255,7 @@ export type Step<T extends TransactionCommon> = {
       title: string;
       value: string;
     }>,
-  ) => string;
+  ) => string | Promise<string>;
   ignoreAssertionFailure?: boolean;
   trimValue?: boolean;
   button?: SpeculosButton;

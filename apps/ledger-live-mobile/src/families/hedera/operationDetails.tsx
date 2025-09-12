@@ -1,10 +1,11 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { StyleSheet } from "react-native";
 import { Trans, useTranslation } from "react-i18next";
 import { useNavigation } from "@react-navigation/native";
-import { findTokenByAddress } from "@ledgerhq/live-common/currencies/index";
+import { getCryptoAssetsStore } from "@ledgerhq/live-common/bridge/crypto-assets/index";
 import { getTransactionExplorer, isValidExtra } from "@ledgerhq/live-common/families/hedera/logic";
 import type { HederaAccount, HederaOperation } from "@ledgerhq/live-common/families/hedera/types";
+import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { Text } from "@ledgerhq/native-ui";
 import Alert from "~/components/Alert";
 import { NavigatorName, ScreenName } from "~/const";
@@ -19,16 +20,31 @@ function OperationDetailsPostAccountSection({
   operation,
 }: Readonly<OperationDetailsPostAccountSectionProps>) {
   const { t } = useTranslation();
+  const [token, setToken] = useState<TokenCurrency | null>(null);
 
-  if (operation.type !== "ASSOCIATE_TOKEN") {
-    return null;
-  }
+  const associatedTokenId = operation.extra.associatedTokenId;
 
-  const token = operation.extra.associatedTokenId
-    ? findTokenByAddress(operation.extra.associatedTokenId)
-    : null;
+  useEffect(() => {
+    async function load() {
+      if (operation.type !== "ASSOCIATE_TOKEN" || !associatedTokenId) {
+        return;
+      }
+      try {
+        const foundToken = await getCryptoAssetsStore().findTokenByAddressInCurrency(
+          associatedTokenId,
+          "hedera",
+        );
+        if (foundToken) {
+          setToken(foundToken);
+        }
+      } catch (error) {
+        console.error("Failed to load token:", error);
+      }
+    }
+    load();
+  }, [associatedTokenId, operation.type]);
 
-  if (!token) {
+  if (operation.type !== "ASSOCIATE_TOKEN" || !token) {
     return null;
   }
 
@@ -47,16 +63,36 @@ interface OperationDetailsExtraProps {
 
 function OperationDetailsPostAlert({ account, operation }: Readonly<OperationDetailsExtraProps>) {
   const navigation = useNavigation();
+  const [token, setToken] = useState<TokenCurrency | null>(null);
 
-  if (operation.type !== "ASSOCIATE_TOKEN") {
-    return null;
-  }
+  useEffect(() => {
+    if (operation.type !== "ASSOCIATE_TOKEN") {
+      return;
+    }
 
-  const extra = isValidExtra(operation.extra) ? operation.extra : null;
-  const associatedTokenId = extra?.associatedTokenId;
-  const token = associatedTokenId ? findTokenByAddress(associatedTokenId) : null;
+    const extra = isValidExtra(operation.extra) ? operation.extra : null;
+    const associatedTokenId = extra?.associatedTokenId;
 
-  if (!token) {
+    async function loadToken() {
+      if (!associatedTokenId) {
+        return;
+      }
+      try {
+        const foundToken = await getCryptoAssetsStore().findTokenByAddressInCurrency(
+          associatedTokenId,
+          "hedera",
+        );
+        if (foundToken) {
+          setToken(foundToken);
+        }
+      } catch (error) {
+        console.error("Failed to load token:", error);
+      }
+    }
+    loadToken();
+  }, [operation.extra, operation.type]);
+
+  if (operation.type !== "ASSOCIATE_TOKEN" || !token) {
     return null;
   }
 

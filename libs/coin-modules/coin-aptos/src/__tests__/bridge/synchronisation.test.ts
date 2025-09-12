@@ -66,7 +66,7 @@ describe("getAccountShape", () => {
     const mockGetAccountSpy = jest.spyOn({ getAccount: mockGetAccountInfo }, "getAccount");
 
     jest.mocked(mergeOps).mockReturnValue([]);
-    jest.mocked(txsToOps).mockReturnValue([[], [], []]);
+    jest.mocked(txsToOps).mockResolvedValue([[], [], []]);
 
     const account = await getAccountShape(
       {
@@ -120,7 +120,7 @@ describe("getAccountShape", () => {
     const mockGetAccountSpy = jest.spyOn({ getAccount: mockGetAccountInfo }, "getAccount");
 
     jest.mocked(mergeOps).mockReturnValue([]);
-    jest.mocked(txsToOps).mockReturnValue([[], [], []]);
+    jest.mocked(txsToOps).mockResolvedValue([[], [], []]);
 
     const account = await getAccountShape(
       {
@@ -173,7 +173,7 @@ describe("getAccountShape", () => {
     const mockGetAccountSpy = jest.spyOn({ getAccount: mockGetAccountInfo }, "getAccount");
 
     jest.mocked(mergeOps).mockReturnValue([]);
-    jest.mocked(txsToOps).mockReturnValue([[], [], []]);
+    jest.mocked(txsToOps).mockResolvedValue([[], [], []]);
 
     const account = await getAccountShape(
       {
@@ -206,7 +206,7 @@ describe("getAccountShape", () => {
     const mockGetAccountSpy = jest.spyOn({ getAccount: mockGetAccountInfo }, "getAccount");
 
     jest.mocked(mergeOps).mockReturnValue([]);
-    jest.mocked(txsToOps).mockReturnValue([[], [], []]);
+    jest.mocked(txsToOps).mockResolvedValue([[], [], []]);
 
     const account = await getAccountShape(
       {
@@ -259,7 +259,7 @@ describe("getAccountShape", () => {
     const mockGetAccountSpy = jest.spyOn({ getAccount: mockGetAccountInfo }, "getAccount");
 
     jest.mocked(mergeOps).mockReturnValue([]);
-    jest.mocked(txsToOps).mockReturnValue([[], [], []]);
+    jest.mocked(txsToOps).mockResolvedValue([[], [], []]);
 
     const account = await getAccountShape(
       {
@@ -312,7 +312,7 @@ describe("getAccountShape", () => {
     const mockGetAccountSpy = jest.spyOn({ getAccount: mockGetAccountInfo }, "getAccount");
 
     jest.mocked(mergeOps).mockReturnValue([]);
-    jest.mocked(txsToOps).mockReturnValue([[], [], []]);
+    jest.mocked(txsToOps).mockResolvedValue([[], [], []]);
 
     const account = await getAccountShape(
       {
@@ -813,7 +813,7 @@ describe("getAccountShape", () => {
 
     const mockGetAccountSpy = jest.spyOn({ getAccount: mockGetAccountInfo }, "getAccount");
 
-    mockedDecodeTokenAccountId.mockReturnValue({
+    mockedDecodeTokenAccountId.mockResolvedValue({
       token: {
         type: "TokenCurrency",
         id: "aptos/coin/dstapt_0xd111::staked_coin::stakedaptos",
@@ -941,7 +941,7 @@ describe("getAccountShape", () => {
     const stakingOperations = [] as Operation[];
 
     jest.mocked(mergeOps).mockReturnValue(operations);
-    jest.mocked(txsToOps).mockReturnValue([operations, tokenOperations, stakingOperations]);
+    jest.mocked(txsToOps).mockResolvedValue([operations, tokenOperations, stakingOperations]);
 
     const info = {
       currency: {
@@ -1447,7 +1447,7 @@ describe("getSubAccounts", () => {
       getBalances: mockGetBalances,
     }));
 
-    mockedDecodeTokenAccountId.mockReturnValue({
+    mockedDecodeTokenAccountId.mockResolvedValue({
       token: {
         type: "TokenCurrency",
         id: "aptos/coin/dstapt_0xd111::staked_coin::stakedaptos",
@@ -2069,7 +2069,7 @@ describe("getStake", () => {
 
     const mockGetBalance = jest.fn().mockImplementation(() => BigNumber(5000000));
 
-    mockedDecodeTokenAccountId.mockReturnValue({
+    mockedDecodeTokenAccountId.mockResolvedValue({
       token: {
         type: "TokenCurrency",
         id: "aptos/coin/dstapt_0xd111::staked_coin::stakedaptos",
@@ -2207,7 +2207,7 @@ describe("getStake", () => {
     }));
 
     jest.mocked(mergeOps).mockReturnValue(operations);
-    jest.mocked(txsToOps).mockReturnValue([operations, tokenOperations, stakingOperations]);
+    jest.mocked(txsToOps).mockResolvedValue([operations, tokenOperations, stakingOperations]);
 
     const info = {
       currency: {

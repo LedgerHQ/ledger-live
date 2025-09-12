@@ -3,7 +3,8 @@ import { getEnv } from "@ledgerhq/live-env";
 import { getBTCValues, BTCtoUSD, referenceSnapshotDate } from "../mock";
 import { formatPerGranularity } from "../helpers";
 import Prando from "prando";
-import { findCurrencyByTicker } from "../findCurrencyByTicker";
+import { findCryptoCurrencyByTicker, findFiatCurrencyByTicker } from "@ledgerhq/cryptoassets/index";
+import { getCryptoAssetsStore } from "@ledgerhq/coin-framework/crypto-assets/index";
 
 const DAY = 24 * 60 * 60 * 1000;
 
@@ -74,10 +75,13 @@ const increment = {
   hourly: 60 * 60 * 1000,
 };
 
-function getIds(): string[] {
+async function getIds(): Promise<string[]> {
   const ids: string[] = [];
   for (const k in getBTCValues()) {
-    const c = findCurrencyByTicker(k);
+    const c =
+      findCryptoCurrencyByTicker(k) ||
+      findFiatCurrencyByTicker(k) ||
+      (await getCryptoAssetsStore().findTokenById(k));
     if (c && (c.type == "CryptoCurrency" || c.type == "TokenCurrency")) {
       ids.push(c.id);
     }
@@ -112,6 +116,6 @@ const api: CounterValuesAPI = {
     return Promise.resolve(r);
   },
   fetchLatest: pairs => Promise.resolve(pairs.map(({ from, to }) => rate(from.ticker, to.ticker))),
-  fetchIdsSortedByMarketcap: () => Promise.resolve(getIds()),
+  fetchIdsSortedByMarketcap: () => getIds(),
 };
 export default api;

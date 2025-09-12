@@ -75,7 +75,7 @@ export type FullDatasetTest<T extends TransactionCommon, U extends TransactionCo
   toTransactionStatusRaw: (ts: TransactionStatusCommon) => TransactionStatusCommonRaw;
 };
 
-export function testBridge<T extends TransactionCommon, U extends TransactionCommonRaw>({
+export async function testBridge<T extends TransactionCommon, U extends TransactionCommonRaw>({
   implementations,
   currencies,
   signerValues,
@@ -84,7 +84,7 @@ export function testBridge<T extends TransactionCommon, U extends TransactionCom
   fromTransactionRaw,
   toTransactionRaw,
   toTransactionStatusRaw,
-}: FullDatasetTest<T, U>): void {
+}: FullDatasetTest<T, U>): Promise<void> {
   // covers all bridges through many different accounts
   // to test the common shared properties of bridges.
   const accountsRelated: Array<{
@@ -98,37 +98,43 @@ export function testBridge<T extends TransactionCommon, U extends TransactionCom
     currency: CryptoCurrency;
   }> = [];
 
-  Object.keys(currencies).forEach(currencyId => {
-    const currencyData = currencies[currencyId];
-    const currency = getCryptoCurrencyById(currencyId);
-    currenciesRelated.push({
-      currencyData,
-      currency,
-    });
+  await Promise.all(
+    Object.keys(currencies).map(async currencyId => {
+      const currencyData = currencies[currencyId];
+      const currency = getCryptoCurrencyById(currencyId);
+      currenciesRelated.push({
+        currencyData,
+        currency,
+      });
 
-    const accounts: Array<AccountTestData<T>> = currencyData.accounts || [];
-    accounts.forEach(accountData =>
-      implementations.forEach(impl => {
-        if (accountData.implementations && !accountData.implementations.includes(impl)) {
-          return;
-        }
+      const accounts: Array<AccountTestData<T>> = currencyData.accounts || [];
+      await Promise.all(
+        accounts.map(async accountData =>
+          Promise.all(
+            implementations.map(async impl => {
+              if (accountData.implementations && !accountData.implementations.includes(impl)) {
+                return;
+              }
 
-        const account = fromAccountRaw({
-          ...accountData.raw,
-          id: encodeAccountId({
-            ...decodeAccountId(accountData.raw.id),
-            type: impl,
-          }),
-        });
-        accountsRelated.push({
-          currencyData,
-          accountData,
-          account,
-          impl,
-        });
-      }),
-    );
-  });
+              const account = await fromAccountRaw({
+                ...accountData.raw,
+                id: encodeAccountId({
+                  ...decodeAccountId(accountData.raw.id),
+                  type: impl,
+                }),
+              });
+              accountsRelated.push({
+                currencyData,
+                accountData,
+                account,
+                impl,
+              });
+            }),
+          ),
+        ),
+      );
+    }),
+  );
   const accountsFoundInScanAccountsMap: Record<string, Account> = {};
 
   //-- CURRENCY BRIDGE TESTS
@@ -768,8 +774,8 @@ export function testBridge<T extends TransactionCommon, U extends TransactionCom
         });
 
         describe("assignToAccountRaw / assignFromAccountRaw", () => {
-          test("account serialization is consistent", () => {
-            const account = fromAccountRaw(accountData.raw);
+          test("account serialization is consistent", async () => {
+            const account = await fromAccountRaw(accountData.raw);
             accountBridge.assignFromAccountRaw?.(accountData.raw, account);
 
             const newAccountRaw = toAccountRaw(account);

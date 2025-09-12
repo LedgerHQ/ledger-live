@@ -5,7 +5,7 @@ import {
 } from "@ledgerhq/coin-framework/account";
 import { GetAccountShape, makeSync } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
-import { findTokenByAddressInCurrency, findTokenById } from "@ledgerhq/cryptoassets/index";
+import { getCryptoAssetsStore } from "@ledgerhq/coin-framework/crypto-assets/index";
 import { Account, TokenAccount } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import compact from "lodash/compact";
@@ -86,68 +86,63 @@ export const getAccountShape: GetAccountShape<TronAccount> = async (
     parentTxs.map(tx => txInfoToOperation(accountId, address, tx)),
   );
 
-  const trc10Tokens = get(acc, "assetV2", []).reduce(
-    (accumulator: TronToken[], { key, value }: { key: string; value: number }) => {
-      const tokenInfo = findTokenById(`tron/trc10/${key}`);
-      if (tokenInfo) {
-        accumulator.push({
-          key,
-          type: "trc10",
-          tokenId: tokenInfo.id,
-          balance: value.toString(),
-        });
-      }
-      return accumulator;
-    },
-    [],
-  );
+  const trc10Tokens: TronToken[] = [];
+  for (const { key, value } of get(acc, "assetV2", []) as { key: string; value: number }[]) {
+    const tokenInfo = await getCryptoAssetsStore().findTokenById(`tron/trc10/${key}`);
+    if (tokenInfo) {
+      trc10Tokens.push({
+        key,
+        type: "trc10",
+        tokenId: tokenInfo.id,
+        balance: value.toString(),
+      });
+    }
+  }
 
-  const trc20Tokens = get(acc, "trc20", []).reduce(
-    (accumulator: TronToken[], trc20: Record<string, string>) => {
-      const [[contractAddress, balance]] = Object.entries(trc20);
-      const tokenInfo = findTokenByAddressInCurrency(contractAddress, currency.id);
-      if (tokenInfo) {
-        accumulator.push({
-          key: contractAddress,
-          type: "trc20",
-          tokenId: tokenInfo.id,
-          balance,
-        });
-      }
-      return accumulator;
-    },
-    [],
-  );
+  const trc20Tokens: TronToken[] = [];
+  for (const trc20 of get(acc, "trc20", []) as Record<string, string>[]) {
+    const [[contractAddress, balance]] = Object.entries(trc20);
+    const tokenInfo = await getCryptoAssetsStore().findTokenByAddressInCurrency(
+      contractAddress,
+      currency.id,
+    );
+    if (tokenInfo) {
+      trc20Tokens.push({
+        key: contractAddress,
+        type: "trc20",
+        tokenId: tokenInfo.id,
+        balance,
+      });
+    }
+  }
 
   const { blacklistedTokenIds = [] } = syncConfig;
 
-  const subAccounts: TokenAccount[] = compact(
-    trc10Tokens.concat(trc20Tokens).map(({ key, tokenId, balance }: TronToken) => {
-      const { blacklistedTokenIds = [] } = syncConfig;
-      const token = findTokenById(tokenId);
-      if (!token || blacklistedTokenIds.includes(tokenId)) return;
-      const id = encodeTokenAccountId(accountId, token);
-      const tokenTxs = txs.filter(tx => tx.tokenId === key);
-      const operations = compact(tokenTxs.map(tx => txInfoToOperation(id, address, tx)));
-      const maybeExistingSubAccount = initialAccount?.subAccounts?.find(a => a.id === id);
-      const bnBalance = new BigNumber(balance);
-      const sub: TokenAccount = {
-        type: "TokenAccount",
-        id,
-        parentId: accountId,
-        token,
-        balance: bnBalance,
-        spendableBalance: bnBalance,
-        operationsCount: operations.length,
-        operations,
-        pendingOperations: maybeExistingSubAccount ? maybeExistingSubAccount.pendingOperations : [],
-        creationDate: operations.length > 0 ? operations[operations.length - 1].date : new Date(),
-        swapHistory: maybeExistingSubAccount ? maybeExistingSubAccount.swapHistory : [],
-        balanceHistoryCache: emptyHistoryCache, // calculated in the jsHelpers
-      };
-      return sub;
-    }),
-  );
+  const subAccounts: TokenAccount[] = [];
+  for (const { key, tokenId, balance } of trc10Tokens.concat(trc20Tokens)) {
+    const token = await getCryptoAssetsStore().findTokenById(tokenId);
+    if (!token || blacklistedTokenIds.includes(tokenId)) continue;
+    const id = encodeTokenAccountId(accountId, token);
+    const tokenTxs = txs.filter(tx => tx.tokenId === key);
+    const operations = compact(tokenTxs.map(tx => txInfoToOperation(id, address, tx)));
+    const maybeExistingSubAccount = initialAccount?.subAccounts?.find(a => a.id === id);
+    const bnBalance = new BigNumber(balance);
+    const sub: TokenAccount = {
+      type: "TokenAccount",
+      id,
+      parentId: accountId,
+      token,
+      balance: bnBalance,
+      spendableBalance: bnBalance,
+      operationsCount: operations.length,
+      operations,
+      pendingOperations: maybeExistingSubAccount ? maybeExistingSubAccount.pendingOperations : [],
+      creationDate: operations.length > 0 ? operations[operations.length - 1].date : new Date(),
+      swapHistory: maybeExistingSubAccount ? maybeExistingSubAccount.swapHistory : [],
+      balanceHistoryCache: emptyHistoryCache, // calculated in the jsHelpers
+    };
+    subAccounts.push(sub);
+  }
 
   // Filter blacklisted tokens from the initial account's subAccounts
   // Could be use to filter out tokens that got their CAL id changed

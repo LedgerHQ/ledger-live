@@ -1,11 +1,7 @@
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { MappedAsset, CurrenciesByProviderId, GroupedCurrencies } from "./type";
-import {
-  currenciesByMarketcap,
-  getCryptoCurrencyById,
-  getTokenById,
-  hasCryptoCurrencyId,
-} from "../currencies";
+import { currenciesByMarketcap, getCryptoCurrencyById, hasCryptoCurrencyId } from "../currencies";
+import { getCryptoAssetsStore } from "../bridge/crypto-assets/index";
 import { getMappedAssets } from "./api";
 export const loadCurrenciesByProvider = async (
   coinsAndTokensSupported: CryptoOrTokenCurrency[],
@@ -71,9 +67,13 @@ export const searchByNameOrTicker = (list: MappedAsset[], nameOrTicker: string) 
       elem.ticker.toLowerCase().includes(nameOrTicker.toLowerCase()),
   );
 
-export const getTokenOrCryptoCurrencyById = (id: string): CryptoOrTokenCurrency => {
+export const getTokenOrCryptoCurrencyById = async (id: string): Promise<CryptoOrTokenCurrency> => {
   if (hasCryptoCurrencyId(id)) {
     return getCryptoCurrencyById(id);
   }
-  return getTokenById(id);
+  const token = await getCryptoAssetsStore().findTokenById(id);
+  if (!token) {
+    throw new Error("Token " + id + " not found");
+  }
+  return token;
 };

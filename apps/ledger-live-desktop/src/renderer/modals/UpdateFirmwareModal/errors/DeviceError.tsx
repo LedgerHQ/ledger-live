@@ -43,8 +43,8 @@ const DeviceCancel = ({
   const isDeviceLockedError = error instanceof LockedDeviceError;
   const isRestoreStepRefusedOnDevice =
     error instanceof ImageLoadRefusedOnDevice ||
-    (error as unknown) instanceof ImageCommitRefusedOnDevice ||
-    (error as unknown) instanceof LanguageInstallRefusedOnDevice;
+    error instanceof ImageCommitRefusedOnDevice ||
+    error instanceof LanguageInstallRefusedOnDevice;
   const isRetryableError =
     isUserRefusedFirmwareUpdate || isDeviceLockedError || isRestoreStepRefusedOnDevice;
 
