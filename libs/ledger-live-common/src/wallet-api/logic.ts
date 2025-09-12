@@ -27,7 +27,9 @@ import { Exchange } from "../exchange/types";
 import { getCryptoAssetsStore } from "../bridge/crypto-assets/index";
 import { WalletState } from "@ledgerhq/live-wallet/store";
 import { getWalletAccount } from "@ledgerhq/coin-bitcoin/wallet-btc/index";
+import type { Transaction as BitcoinTransaction } from "@ledgerhq/coin-bitcoin/types";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import BigNumber from "bignumber.js";
 
 export function translateContent(content: string | TranslatableString, locale = "en"): string {
   if (!content || typeof content === "string") return content;
@@ -291,6 +293,59 @@ export const bitcoinFamilyAccountGetAddressLogic = (
   tracking.bitcoinFamilyAccountAddressSuccess(manifest);
   return Promise.resolve(account.freshAddress);
 };
+
+export function craftPsbtTransactionLogic(
+  { manifest, accounts, tracking }: WalletAPIContext,
+  walletAccountId: string,
+  { psbt, finalizePsbt }: { psbt: string; finalizePsbt?: boolean },
+  uiNavigation: (
+    account: AccountLike,
+    liveTx: Partial<BitcoinTransaction>,
+  ) => Promise<SignedOperation>,
+): Promise<SignedOperation> {
+  tracking.signPsbtRequested(manifest);
+
+  // For the PSBT we cannot provide the amount and recipient at the moment
+  const liveTx: Partial<BitcoinTransaction> = {
+    family: "bitcoin",
+    amount: new BigNumber(0),
+    utxoStrategy: {
+      strategy: 0,
+      excludeUTXOs: [],
+    },
+    recipient: "bc1qtthqrseeu4d2yw9yh0clw95066klvcyvqdk7fv",
+    rbf: false,
+    feePerByte: null,
+    networkInfo: null,
+    useAllAmount: false,
+    feesStrategy: "medium",
+    psbt,
+    finalizePsbt,
+  };
+
+  const accountId = getAccountIdFromWalletAccountId(walletAccountId);
+  if (!accountId) {
+    tracking.signPsbtFail(manifest);
+    return Promise.reject(new Error(`accountId ${walletAccountId} unknown`));
+  }
+
+  const account = accounts.find(account => account.id === accountId) as Account;
+
+  if (!account) {
+    tracking.signPsbtFail(manifest);
+    return Promise.reject(new Error("Account required"));
+  }
+
+  const accountFamily = account.currency.family;
+
+  if (accountFamily !== liveTx.family) {
+    return Promise.reject(
+      new Error(`Account must be from the bitcoin family. Account family: ${accountFamily}`),
+    );
+  }
+
+  return uiNavigation(account, liveTx);
+}
 
 function getRelativePath(path: string) {
   const splitPath = path.split("'/");
