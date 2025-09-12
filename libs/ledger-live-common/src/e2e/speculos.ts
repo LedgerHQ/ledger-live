@@ -469,23 +469,20 @@ async function retryAxiosRequest<T>(
   throw lastError!;
 }
 
-export async function waitFor(text: string, maxAttempts = 60): Promise<string[]> {
+export async function waitFor(text: string, maxAttempts = 60): Promise<string> {
   const port = getEnv("SPECULOS_API_PORT");
-  const address = getSpeculosAddress();
-  const url = `${address}:${port}/events?stream=false&currentscreenonly=true`;
-
+  let texts = "";
   for (let attempt = 0; attempt < maxAttempts; attempt++) {
-    const { data } = await retryAxiosRequest(() => axios.get<ResponseData>(url));
-    const texts = data.events.map(event => event.text);
+    texts = await fetchCurrentScreenTexts(port);
 
-    if (texts?.some(t => t?.toLowerCase().includes(text.toLowerCase()))) {
+    if (texts.toLowerCase().includes(text.toLowerCase())) {
       return texts;
     }
 
     await waitForTimeOut(500);
   }
 
-  throw new Error(`Text "${text}" not found on device screen after ${maxAttempts} attempts.`);
+  throw new Error(`Text "${text}" not found on device screen after ${maxAttempts} attempts. Last screen text: "${texts}"`);
 }
 
 export async function pressBoth() {
@@ -527,7 +524,7 @@ async function fetchCurrentScreenTexts(speculosApiPort: number): Promise<string>
       `${speculosAddress}:${speculosApiPort}/events?stream=false&currentscreenonly=true`,
     ),
   );
-  return response.data.events.map(event => event.text).join("");
+  return response.data.events.map(event => event.text).join(" ");
 }
 
 async function fetchAllEvents(speculosApiPort: number): Promise<string[]> {
@@ -623,21 +620,76 @@ export async function goToSettings() {
   await pressBoth();
 }
 
-const APP_LABEL_MAP = new Map<AppInfos, [string, string]>([
-  [AppInfos.ETHEREUM, [DeviceLabels.VERIFY_ETHEREUM, DeviceLabels.CONFIRM]],
-  [AppInfos.BNB_CHAIN, [DeviceLabels.VERIFY_BSC, DeviceLabels.CONFIRM]],
-  [AppInfos.POLYGON, [DeviceLabels.VERIFY_POLYGON, DeviceLabels.CONFIRM]],
-  [AppInfos.SOLANA, [DeviceLabels.VERIFY_SOLANA_ADDRESS, DeviceLabels.CONFIRM]],
-  [AppInfos.POLKADOT, [DeviceLabels.PLEASE_REVIEW, DeviceLabels.CAPS_APPROVE]],
-  [AppInfos.COSMOS, [DeviceLabels.PLEASE_REVIEW, DeviceLabels.CAPS_APPROVE]],
-  [AppInfos.BITCOIN, [DeviceLabels.ADDRESS, DeviceLabels.CONFIRM]],
-]);
+type LabelConfig = {
+  verify: {
+    [key: string]: string;
+    default: string;
+  };
+  confirm: {
+    [key: string]: string;
+    default: string;
+  };
+};
 
-const DEFAULT_LABELS: [string, string] = [DeviceLabels.ADDRESS, DeviceLabels.APPROVE];
+type DeviceLabelsConfig = {
+  default: LabelConfig;
+} & {
+  [key in DeviceModelId]?: LabelConfig;
+};
+
+const DEVICE_LABELS_CONFIG: DeviceLabelsConfig = {
+  [DeviceModelId.nanoS]: {
+    verify: {
+      [AppInfos.ETHEREUM.name]: DeviceLabels.VERIFY_ADDRESS,
+      [AppInfos.SOLANA.name]: DeviceLabels.PUBKEY,
+      default: DeviceLabels.ADDRESS,
+    },
+    confirm: {
+      [AppInfos.POLKADOT.name]: DeviceLabels.CAPS_APPROVE,
+      [AppInfos.COSMOS.name]: DeviceLabels.CAPS_APPROVE,
+      default: DeviceLabels.APPROVE,
+    },
+  },
+  default: {
+    verify: {
+      [AppInfos.ETHEREUM.name]: DeviceLabels.VERIFY_ETHEREUM,
+      [AppInfos.BNB_CHAIN.name]: DeviceLabels.VERIFY_BSC,
+      [AppInfos.POLYGON.name]: DeviceLabels.VERIFY_POLYGON,
+      [AppInfos.SOLANA.name]: DeviceLabels.VERIFY_SOLANA_ADDRESS,
+      [AppInfos.POLKADOT.name]: DeviceLabels.PLEASE_REVIEW,
+      [AppInfos.COSMOS.name]: DeviceLabels.PLEASE_REVIEW,
+      [AppInfos.BITCOIN.name]: DeviceLabels.ADDRESS,
+      default: DeviceLabels.ADDRESS,
+    },
+    confirm: {
+      [AppInfos.ETHEREUM.name]: DeviceLabels.CONFIRM,
+      [AppInfos.BNB_CHAIN.name]: DeviceLabels.CONFIRM,
+      [AppInfos.POLYGON.name]: DeviceLabels.CONFIRM,
+      [AppInfos.SOLANA.name]: DeviceLabels.CONFIRM,
+      [AppInfos.POLKADOT.name]: DeviceLabels.CAPS_APPROVE,
+      [AppInfos.COSMOS.name]: DeviceLabels.CAPS_APPROVE,
+      [AppInfos.BITCOIN.name]: DeviceLabels.CONFIRM,
+      default: DeviceLabels.APPROVE,
+    },
+  },
+};
+
+function getDeviceLabels(appInfo: AppInfos): [string, string] {
+  const deviceModel = getSpeculosModel();
+  const deviceConfig = DEVICE_LABELS_CONFIG[deviceModel] ?? DEVICE_LABELS_CONFIG.default;
+
+  if (!deviceConfig) {
+    throw new Error(`No device configuration found for ${deviceModel}`);
+  }
+
+  const verifyLabel = deviceConfig.verify[appInfo.name] ?? deviceConfig.verify.default;
+  const confirmLabel = deviceConfig.confirm[appInfo.name] ?? deviceConfig.confirm.default;
+
+  return [verifyLabel, confirmLabel];
+}
 
 export async function expectValidAddressDevice(account: Account, addressDisplayed: string) {
-  const labels = APP_LABEL_MAP.get(account.currency.speculosApp) ?? DEFAULT_LABELS;
-  const [firstLabel, confirmLabel] = labels;
+  let [firstLabel, confirmLabel] = getDeviceLabels(account.currency.speculosApp);
 
   await waitFor(firstLabel);
   const events = await pressUntilTextFound(confirmLabel);
@@ -741,7 +793,10 @@ export async function signDelegationTransaction(delegatingAccount: Delegate) {
 
 export async function verifyAmountsAndAcceptSwap(swap: Swap, amount: string) {
   await waitFor(DeviceLabels.REVIEW_TRANSACTION);
-  const events = await pressUntilTextFound(DeviceLabels.SIGN_TRANSACTION);
+  const events =
+    getSpeculosModel() === DeviceModelId.nanoS
+      ? await pressUntilTextFound(DeviceLabels.ACCEPT_AND_SEND)
+      : await pressUntilTextFound(DeviceLabels.SIGN_TRANSACTION);
   await verifySwapData(swap, events, amount);
   await pressBoth();
 }
