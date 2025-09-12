@@ -173,6 +173,27 @@ const DEFAULT_SWAP_PROVIDERS: Record<string, ProviderConfig & Partial<Additional
       "hex",
     ),
   },
+  nearintents: {
+    type: "CEX",
+    name: "Near Intents",
+    needsBearerToken: false,
+    termsOfUseUrl: "https://docs.thorswap.finance/thorswap/resources/terms-of-service",
+    supportUrl: "https://ledgerhelp.swapkit.dev/",
+    mainUrl: "https://www.thorswap.finance/",
+    needsKYC: false,
+    version: 2,
+    publicKey: {
+      curve: "secp256r1",
+      data: Buffer.from(
+        "0480a453a91e728c5f622d966b90d15de6fdb6c267bb8147dd0e0d4e1c730d631594e724aaf2b2f526600f3713ce6bc2adbfdbaafd2121bfee64fce93fd59a9050",
+        "hex",
+      ),
+    },
+    signature: Buffer.from(
+      "3045022100cd270f448b7194a936c1e117c2bda44776d23a252b2ed3ccc30c0295ece85cab02200ce1c4f9733cb825ada59f61a50aa3b3bebaa141871e18c8f58d59a5eb2d2852",
+      "hex",
+    ),
+  },
   lifi: {
     type: "CEX",
     name: "lifi",
