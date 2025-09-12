@@ -23,5 +23,4 @@ export interface AccountsAddedProps {
   navigateToEditAccountName: (account: Account) => void;
   navigateToFundAccount: (account: Account) => void;
   navigateToSelectAccount: () => void;
-  source: string;
 }

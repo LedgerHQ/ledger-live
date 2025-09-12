@@ -72,8 +72,6 @@ describe("ModularDrawerFlowManager - Modules configuration", () => {
       <ModularDrawerFlowManager
         currencies={mixedCurrencies}
         onAssetSelected={mockOnAssetSelected}
-        source="sourceTest"
-        flow="flowTest"
       />,
       mockedInitialState,
     );
@@ -96,8 +94,6 @@ describe("ModularDrawerFlowManager - Modules configuration", () => {
             rightElement: "balance",
           },
         }}
-        source="sourceTest"
-        flow="flowTest"
       />,
       mockedInitialState,
     );
@@ -122,8 +118,6 @@ describe("ModularDrawerFlowManager - Modules configuration", () => {
             leftElement: "apy",
           },
         }}
-        source="sourceTest"
-        flow="flowTest"
       />,
       mockedInitialState,
     );
@@ -143,8 +137,6 @@ describe("ModularDrawerFlowManager - Modules configuration", () => {
             rightElement: "balance",
           },
         }}
-        source="sourceTest"
-        flow="flowTest"
       />,
       {
         accounts: ETH_ACCOUNT,
@@ -174,8 +166,6 @@ describe("ModularDrawerFlowManager - Modules configuration", () => {
       <ModularDrawerFlowManager
         currencies={mockCurrencies}
         onAssetSelected={mockOnAssetSelected}
-        source="sourceTest"
-        flow="flowTest"
         drawerConfiguration={{ networks: { leftElement: "numberOfAccounts" } }}
       />,
       mockedInitialState,
@@ -202,8 +192,6 @@ describe("ModularDrawerFlowManager - Modules configuration", () => {
       <ModularDrawerFlowManager
         currencies={mockCurrencies}
         onAssetSelected={mockOnAssetSelected}
-        source="sourceTest"
-        flow="flowTest"
         drawerConfiguration={{ networks: { leftElement: "numberOfAccountsAndApy" } }}
       />,
       mockedInitialState,
@@ -225,8 +213,6 @@ describe("ModularDrawerFlowManager - Modules configuration", () => {
       <ModularDrawerFlowManager
         currencies={mockCurrencies}
         onAssetSelected={mockOnAssetSelected}
-        source="sourceTest"
-        flow="flowTest"
         drawerConfiguration={{ networks: { rightElement: "balance" } }}
       />,
       mockedInitialState,
@@ -255,8 +241,6 @@ describe("ModularDrawerFlowManager - Modules configuration", () => {
         currencies={mixedCurrencies}
         onAssetSelected={mockOnAssetSelected}
         drawerConfiguration={{ assets: { rightElement: "balance" } }}
-        source="sourceTest"
-        flow="flowTest"
       />,
       mockedInitialState,
     );
@@ -286,8 +270,6 @@ describe("ModularDrawerFlowManager - Modules configuration", () => {
         currencies={mixedCurrencies}
         onAssetSelected={mockOnAssetSelected}
         drawerConfiguration={{ assets: { rightElement: "balance" } }}
-        source="sourceTest"
-        flow="flowTest"
       />,
       mockedInitialState,
     );

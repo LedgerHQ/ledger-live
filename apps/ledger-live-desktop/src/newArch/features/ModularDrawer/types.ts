@@ -25,8 +25,6 @@ export type ModularDrawerFlowManagerProps = {
   useCase?: string;
   areCurrenciesFiltered?: boolean;
   accounts$?: Observable<WalletAPIAccount[]>;
-  source: string;
-  flow: string;
   onAssetSelected?: (currency: CryptoOrTokenCurrency) => void;
   onAccountSelected?: (account: AccountLike, parentAccount?: Account) => void;
 };

@@ -8,14 +8,12 @@ import TrackDrawerScreen from "../../analytics/TrackDrawerScreen";
 import { CurrenciesByProviderId, LoadingStatus } from "@ledgerhq/live-common/deposit/type";
 import { GenericError } from "../../components/GenericError";
 import { useSelector } from "react-redux";
-import { modularDrawerStateSelector } from "~/renderer/reducers/modularDrawer";
+import { modularDrawerSearchedSelector } from "~/renderer/reducers/modularDrawer";
 
 export type AssetSelectionStepProps = {
   assetsToDisplay: CryptoOrTokenCurrency[];
   providersLoadingStatus: LoadingStatus;
   assetsConfiguration: EnhancedModularDrawerConfiguration["assets"];
-  flow: string;
-  source: string;
   currenciesByProvider: CurrenciesByProviderId[];
   onAssetSelected: (asset: CryptoOrTokenCurrency) => void;
   hasOneCurrency?: boolean;
@@ -27,8 +25,6 @@ export type AssetSelectionStepProps = {
 const AssetSelection = ({
   assetsToDisplay,
   providersLoadingStatus,
-  flow,
-  source,
   assetsConfiguration,
   currenciesByProvider,
   onAssetSelected,
@@ -37,7 +33,7 @@ const AssetSelection = ({
   error,
   refetch,
 }: Readonly<AssetSelectionStepProps>) => {
-  const { searchedValue } = useSelector(modularDrawerStateSelector);
+  const searchedValue = useSelector(modularDrawerSearchedSelector);
 
   const [shouldScrollToTop, setShouldScrollToTop] = useState(false);
 
@@ -58,21 +54,17 @@ const AssetSelection = ({
       {!hasOneCurrency && (
         <TrackDrawerScreen
           page={MODULAR_DRAWER_PAGE_NAME.MODULAR_ASSET_SELECTION}
-          source={source}
-          flow={flow}
           assetsConfig={assetsConfiguration}
           formatAssetConfig
         />
       )}
-      <SearchInputContainer source={source} flow={flow} />
+      <SearchInputContainer />
       {error && refetch ? (
         <GenericError onClick={refetch} />
       ) : (
         <AssetsList
           assetsToDisplay={assetsToDisplay}
           providersLoadingStatus={providersLoadingStatus}
-          source={source}
-          flow={flow}
           assetsConfiguration={assetsConfiguration}
           currenciesByProvider={currenciesByProvider}
           scrollToTop={shouldScrollToTop}
