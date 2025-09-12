@@ -2432,8 +2432,8 @@ importers:
         specifier: ^7.8.1
         version: 7.8.1
       sha.js:
-        specifier: ^2.4.11
-        version: 2.4.11
+        specifier: ^2.4.12
+        version: 2.4.12
       utility-types:
         specifier: ^3.10.0
         version: 3.11.0
@@ -4862,8 +4862,8 @@ importers:
         specifier: ^7.3.5
         version: 7.5.4
       sha.js:
-        specifier: ^2.4.11
-        version: 2.4.11
+        specifier: ^2.4.12
+        version: 2.4.12
     devDependencies:
       '@testing-library/react':
         specifier: '14'
@@ -5597,8 +5597,8 @@ importers:
         specifier: ^7.3.5
         version: 7.5.4
       sha.js:
-        specifier: ^2.4.11
-        version: 2.4.11
+        specifier: ^2.4.12
+        version: 2.4.12
       triple-beam:
         specifier: ^1.3.0
         version: 1.4.1
@@ -6147,7 +6147,7 @@ importers:
         version: 7.5.4
       sha.js:
         specifier: '2'
-        version: 2.4.11
+        version: 2.4.12
       varuint-bitcoin:
         specifier: 1.1.2
         version: 1.1.2
@@ -18333,7 +18333,7 @@ packages:
       metro-react-native-babel-preset: '*'
       react: ^16.8.0 || ^17.0.0 || ^18.0.0
       react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0
-      webpack: '*'
+      webpack: '5'
     peerDependenciesMeta:
       react:
         optional: true
@@ -19084,6 +19084,7 @@ packages:
     deprecated: |-
       DEPRECATED: This package is no longer maintained.
       Please use the built-in Jest matchers available in @testing-library/react-native v12.4+.
+
       See migration guide: https://callstack.github.io/react-native-testing-library/docs/migration/jest-matchers
     peerDependencies:
       react: '>=16.0.0'
@@ -20809,7 +20810,7 @@ packages:
     resolution: {integrity: sha512-/FQM1EDkTsf63Ub2C6O7GuYFDsSXUwsaZDurV0np41ocwq0jthUAYCmhBX9f+KwlaCgIuWyr/4WlUQUBfKfZog==}
     engines: {node: '>=6'}
     peerDependencies:
-      rxjs: '*'
+      rxjs: ^5.5.10
       zenObservable: '*'
     peerDependenciesMeta:
       rxjs:
@@ -24061,7 +24062,7 @@ packages:
     peerDependencies:
       '@typescript-eslint/eslint-plugin': ^4.0.0 || ^5.0.0
       eslint: ^6.0.0 || ^7.0.0 || ^8.0.0
-      jest: '*'
+      jest: ^27.0.0
     peerDependenciesMeta:
       '@typescript-eslint/eslint-plugin':
         optional: true
@@ -30611,6 +30612,7 @@ packages:
     engines: {node: '>=0.6.0', teleport: '>=0.2.0'}
     deprecated: |-
       You or someone you depend on is using Q, the JavaScript Promise library that gave JavaScript developers strong feelings about promises. They can almost certainly migrate to the native JavaScript promise now. Thank you literally everyone for joining me in this bet against the odds. Be excellent to each other.
+
       (For a CapTP with native promises, see @endo/eventual-send and @endo/captp)
 
   qrcode-terminal@0.11.0:
@@ -30839,7 +30841,7 @@ packages:
     resolution: {integrity: sha512-kBGxI+MIZGBf4wZhNCWwHkMcVP+kbpmrLWH/SkO0qCKc7D7eSPcxQbfpsmsCo8v2KCBYjuGSou+xTqK44D/jMg==}
     engines: {npm: ^3.0.0}
     peerDependencies:
-      prop-types: '*'
+      prop-types: ^15.6.1
       react: '>=15.0.0'
     peerDependenciesMeta:
       prop-types:
@@ -30863,8 +30865,8 @@ packages:
   react-native-animatable@1.4.0:
     resolution: {integrity: sha512-DZwaDVWm2NBvBxf7I0wXKXLKb/TxDnkV53sWhCvei1pRyTX3MVFpkvdYBknNBqPrxYuAIlPxEp7gJOidIauUkw==}
     peerDependencies:
-      react: '*'
-      react-native: '*'
+      react: 18.2.0
+      react-native: 0.72.6
     peerDependenciesMeta:
       react:
         optional: true
@@ -32170,10 +32172,6 @@ packages:
 
   setprototypeof@1.2.0:
     resolution: {integrity: sha512-E5LDX7Wrp85Kil5bhZv46j8jOeboKq5JMmYM3gVGdGH8xFpPWXUMsNrlODCrkoxMEeNi/XZIwuRvY4XNwYMJpw==}
-
-  sha.js@2.4.11:
-    resolution: {integrity: sha512-QMEp5B7cftE7APOjk5Y6xgrbWu+WkLVQwk8JNjZ8nKRciZaByEW6MubieAiToS7+dwvrjGhH8jRXz3MVd0AYqQ==}
-    hasBin: true
 
   sha.js@2.4.12:
     resolution: {integrity: sha512-8LzC5+bvI45BjpfXU8V5fdU2mfeKiQe1D1gIMn7XUlF3OTUrpdJpPPH4EMAnF0DsHHdSZqCdSss5qCmJKuiO3w==}
@@ -38835,7 +38833,7 @@ snapshots:
       invariant: 2.2.4
       ripemd160: 2.0.2
       semver: 7.5.4
-      sha.js: 2.4.11
+      sha.js: 2.4.12
       tiny-secp256k1: 1.1.6
       typescript: 5.8.3
       varuint-bitcoin: 1.1.2
@@ -39426,7 +39424,7 @@ snapshots:
       libsodium-wrappers: 0.7.13
       pbkdf2: 3.1.2
       ripemd160: 2.0.2
-      sha.js: 2.4.11
+      sha.js: 2.4.12
       unorm: 1.6.0
 
   '@cosmjs/crypto@0.26.8':
@@ -42403,7 +42401,7 @@ snapshots:
       libsodium-wrappers: 0.7.13
       pbkdf2: 3.1.2
       ripemd160: 2.0.2
-      sha.js: 2.4.11
+      sha.js: 2.4.12
       type-tagger: 1.0.0
       unorm: 1.6.0
 
@@ -43442,7 +43440,7 @@ snapshots:
       buffer: 6.0.3(patch_hash=2xnca52oxhztvr7iaoovwclcze)
       crypto-js: 4.2.0
       elliptic: 6.6.1
-      sha.js: 2.4.11
+      sha.js: 2.4.12
 
   '@keplr-wallet/proto-types@0.12.89':
     dependencies:
@@ -48251,7 +48249,7 @@ snapshots:
       c32check: 1.1.3
       lodash.clonedeep: 4.5.0
       ripemd160-min: 0.0.6
-      sha.js: 2.4.11
+      sha.js: 2.4.12
       smart-buffer: 4.2.0
     transitivePeerDependencies:
       - encoding
@@ -55443,7 +55441,7 @@ snapshots:
       inherits: 2.0.4
       md5.js: 1.3.5
       ripemd160: 2.0.2
-      sha.js: 2.4.11
+      sha.js: 2.4.12
 
   create-hmac@1.1.7:
     dependencies:
@@ -55452,7 +55450,7 @@ snapshots:
       inherits: 2.0.4
       ripemd160: 2.0.2
       safe-buffer: 5.2.1
-      sha.js: 2.4.11
+      sha.js: 2.4.12
 
   create-jest@29.7.0:
     dependencies:
@@ -66768,7 +66766,7 @@ snapshots:
       create-hmac: 1.1.7
       ripemd160: 2.0.2
       safe-buffer: 5.2.1
-      sha.js: 2.4.11
+      sha.js: 2.4.12
 
   pe-library@0.4.1: {}
 
@@ -70275,11 +70273,6 @@ snapshots:
   setprototypeof@1.1.1: {}
 
   setprototypeof@1.2.0: {}
-
-  sha.js@2.4.11:
-    dependencies:
-      inherits: 2.0.4
-      safe-buffer: 5.2.1
 
   sha.js@2.4.12:
     dependencies:
