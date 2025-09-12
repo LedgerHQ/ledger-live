@@ -65,7 +65,7 @@ describe("List Operations", () => {
 
     expect(operations).toEqual(mockOperations.items);
     expect(lastHash).toBe(mockOperations.items[0].tx.hash);
-    expect(mockGetListOperations).toHaveBeenCalledWith(mockAddress, undefined, withApi, "asc");
+    expect(mockGetListOperations).toHaveBeenCalledWith(mockAddress, "asc", withApi, undefined);
   });
 
   it("should return empty array and empty string when no operations", async () => {
