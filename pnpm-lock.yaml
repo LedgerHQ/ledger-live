@@ -1853,8 +1853,8 @@ importers:
         specifier: ^3.2.1
         version: 3.2.1(@playwright/test@1.51.1)
       axios:
-        specifier: 1.11.0
-        version: 1.11.0
+        specifier: 1.12.0
+        version: 1.12.0
       dotenv:
         specifier: ^16.4.7
         version: 16.4.7
@@ -2065,8 +2065,8 @@ importers:
         specifier: workspace:^
         version: link:../ledgerjs/packages/types-live
       axios:
-        specifier: 1.11.0
-        version: 1.11.0
+        specifier: 1.12.0
+        version: 1.12.0
       bignumber.js:
         specifier: ^9.1.2
         version: 9.1.2
@@ -2845,8 +2845,8 @@ importers:
         specifier: workspace:^
         version: link:../../ledgerjs/packages/types-live
       axios:
-        specifier: 1.11.0
-        version: 1.11.0
+        specifier: 1.12.0
+        version: 1.12.0
       bech32:
         specifier: ^1.1.3
         version: 1.1.4
@@ -2933,8 +2933,8 @@ importers:
         specifier: workspace:^
         version: link:../../ledgerjs/packages/logs
       axios:
-        specifier: 1.11.0
-        version: 1.11.0
+        specifier: 1.12.0
+        version: 1.12.0
       bignumber.js:
         specifier: ^9.1.2
         version: 9.1.2
@@ -3589,8 +3589,8 @@ importers:
         specifier: ^13.7.0
         version: 13.17.1(bignumber.js@9.1.2)(protobufjs@7.3.2)
       axios:
-        specifier: 1.11.0
-        version: 1.11.0
+        specifier: 1.12.0
+        version: 1.12.0
       bech32:
         specifier: ^1.1.3
         version: 1.1.4
@@ -3962,8 +3962,8 @@ importers:
         specifier: ^1.0.2
         version: 1.0.4
       axios:
-        specifier: 1.11.0
-        version: 1.11.0
+        specifier: 1.12.0
+        version: 1.12.0
       bignumber.js:
         specifier: ^9.1.2
         version: 9.1.2
@@ -4582,8 +4582,8 @@ importers:
         specifier: workspace:^
         version: link:../ledgerjs/packages/types-devices
       axios:
-        specifier: 1.11.0
-        version: 1.11.0
+        specifier: 1.12.0
+        version: 1.12.0
       chalk:
         specifier: ^4.1.2
         version: 4.1.2
@@ -4948,8 +4948,8 @@ importers:
         specifier: workspace:^
         version: link:../ledgerjs/packages/types-live
       axios:
-        specifier: 1.11.0
-        version: 1.11.0
+        specifier: 1.12.0
+        version: 1.12.0
       eip55:
         specifier: ^2.1.1
         version: 2.1.1
@@ -5059,8 +5059,8 @@ importers:
         specifier: workspace:^
         version: link:../env
       axios:
-        specifier: 1.11.0
-        version: 1.11.0
+        specifier: 1.12.0
+        version: 1.12.0
       crypto-js:
         specifier: 4.2.0
         version: 4.2.0
@@ -5510,8 +5510,8 @@ importers:
         specifier: ^3.2.3
         version: 3.2.5
       axios:
-        specifier: 1.11.0
-        version: 1.11.0
+        specifier: 1.12.0
+        version: 1.12.0
       bech32:
         specifier: ^1.1.3
         version: 1.1.4
@@ -5834,8 +5834,8 @@ importers:
   libs/ledgerjs:
     dependencies:
       axios:
-        specifier: 1.11.0
-        version: 1.11.0
+        specifier: 1.12.0
+        version: 1.12.0
       invariant:
         specifier: ^2.2.4
         version: 2.2.4
@@ -5865,8 +5865,8 @@ importers:
         specifier: workspace:^
         version: link:../../../env
       axios:
-        specifier: 1.11.0
-        version: 1.11.0
+        specifier: 1.12.0
+        version: 1.12.0
       bs58check:
         specifier: ^2.1.2
         version: 2.1.2
@@ -5911,8 +5911,8 @@ importers:
         specifier: workspace:^
         version: link:../../../env
       axios:
-        specifier: 1.11.0
-        version: 1.11.0
+        specifier: 1.12.0
+        version: 1.12.0
     devDependencies:
       '@ledgerhq/types-cryptoassets':
         specifier: workspace:^
@@ -6360,8 +6360,8 @@ importers:
         specifier: workspace:^
         version: link:../types-live
       axios:
-        specifier: 1.11.0
-        version: 1.11.0
+        specifier: 1.12.0
+        version: 1.12.0
       bignumber.js:
         specifier: ^9.1.2
         version: 9.1.2
@@ -6651,8 +6651,8 @@ importers:
         specifier: ^13.7.0
         version: 13.17.1(bignumber.js@9.1.2)(protobufjs@7.3.2)
       axios:
-        specifier: 1.11.0
-        version: 1.11.0
+        specifier: 1.12.0
+        version: 1.12.0
       bignumber.js:
         specifier: ^9.0.1
         version: 9.1.2
@@ -7131,8 +7131,8 @@ importers:
         specifier: workspace:^
         version: link:../logs
       axios:
-        specifier: 1.11.0
-        version: 1.11.0
+        specifier: 1.12.0
+        version: 1.12.0
       ws:
         specifier: ^7.5.2
         version: 7.5.10
@@ -7398,8 +7398,8 @@ importers:
         specifier: workspace:^
         version: link:../logs
       axios:
-        specifier: 1.11.0
-        version: 1.11.0
+        specifier: 1.12.0
+        version: 1.12.0
       rxjs:
         specifier: ^7.8.1
         version: 7.8.1
@@ -8273,8 +8273,8 @@ importers:
         specifier: workspace:^
         version: link:../ledgerjs/packages/logs
       axios:
-        specifier: 1.11.0
-        version: 1.11.0
+        specifier: 1.12.0
+        version: 1.12.0
       lru-cache:
         specifier: ^7.14.1
         version: 7.18.3
@@ -18316,7 +18316,7 @@ packages:
       metro-react-native-babel-preset: '*'
       react: ^16.8.0 || ^17.0.0 || ^18.0.0
       react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0
-      webpack: '*'
+      webpack: '5'
     peerDependenciesMeta:
       react:
         optional: true
@@ -19067,6 +19067,7 @@ packages:
     deprecated: |-
       DEPRECATED: This package is no longer maintained.
       Please use the built-in Jest matchers available in @testing-library/react-native v12.4+.
+
       See migration guide: https://callstack.github.io/react-native-testing-library/docs/migration/jest-matchers
     peerDependencies:
       react: '>=16.0.0'
@@ -20792,7 +20793,7 @@ packages:
     resolution: {integrity: sha512-/FQM1EDkTsf63Ub2C6O7GuYFDsSXUwsaZDurV0np41ocwq0jthUAYCmhBX9f+KwlaCgIuWyr/4WlUQUBfKfZog==}
     engines: {node: '>=6'}
     peerDependencies:
-      rxjs: '*'
+      rxjs: ^5.5.10
       zenObservable: '*'
     peerDependenciesMeta:
       rxjs:
@@ -21092,6 +21093,9 @@ packages:
 
   axios@1.11.0:
     resolution: {integrity: sha512-1Lx3WLFQWm3ooKDYZD1eXmoGO9fxYQjrycfHFC8P0sCfQVXyROp0p9PFWBehewBOdCwHc+f/b8I0fMto5eSfwA==}
+
+  axios@1.12.0:
+    resolution: {integrity: sha512-oXTDccv8PcfjZmPGlWsPSwtOJCZ/b6W5jAMCNcfwJbCzDckwG0jrYJFaWH1yvivfCXjVzV/SPDEhMB3Q+DSurg==}
 
   axios@1.7.7:
     resolution: {integrity: sha512-S4kL7XrjgBmvdGut0sN3yJxqYzrDOnivkBiN0OFs6hLiUam3UPvswUo0kqGyhqUZGEOytHyumEdXsAkgCOUf3Q==}
@@ -24044,7 +24048,7 @@ packages:
     peerDependencies:
       '@typescript-eslint/eslint-plugin': ^4.0.0 || ^5.0.0
       eslint: ^6.0.0 || ^7.0.0 || ^8.0.0
-      jest: '*'
+      jest: ^27.0.0
     peerDependenciesMeta:
       '@typescript-eslint/eslint-plugin':
         optional: true
@@ -30594,6 +30598,7 @@ packages:
     engines: {node: '>=0.6.0', teleport: '>=0.2.0'}
     deprecated: |-
       You or someone you depend on is using Q, the JavaScript Promise library that gave JavaScript developers strong feelings about promises. They can almost certainly migrate to the native JavaScript promise now. Thank you literally everyone for joining me in this bet against the odds. Be excellent to each other.
+
       (For a CapTP with native promises, see @endo/eventual-send and @endo/captp)
 
   qrcode-terminal@0.11.0:
@@ -30822,7 +30827,7 @@ packages:
     resolution: {integrity: sha512-kBGxI+MIZGBf4wZhNCWwHkMcVP+kbpmrLWH/SkO0qCKc7D7eSPcxQbfpsmsCo8v2KCBYjuGSou+xTqK44D/jMg==}
     engines: {npm: ^3.0.0}
     peerDependencies:
-      prop-types: '*'
+      prop-types: ^15.6.1
       react: '>=15.0.0'
     peerDependenciesMeta:
       prop-types:
@@ -30846,8 +30851,8 @@ packages:
   react-native-animatable@1.4.0:
     resolution: {integrity: sha512-DZwaDVWm2NBvBxf7I0wXKXLKb/TxDnkV53sWhCvei1pRyTX3MVFpkvdYBknNBqPrxYuAIlPxEp7gJOidIauUkw==}
     peerDependencies:
-      react: '*'
-      react-native: '*'
+      react: 18.2.0
+      react-native: 0.72.6
     peerDependenciesMeta:
       react:
         optional: true
@@ -39804,7 +39809,7 @@ snapshots:
       ajv: 8.17.1
       ajv-formats: 2.1.1
       async-retry: 1.3.1
-      axios: 1.11.0
+      axios: 1.12.0
       chalk: 3.0.0
       clipanion: 3.2.1
       datadog-metrics: 0.9.3
@@ -43852,7 +43857,7 @@ snapshots:
       uuid: 8.3.2
     optionalDependencies:
       '@multiversx/sdk-bls-wasm': 0.3.5
-      axios: 1.11.0
+      axios: 1.12.0
       bip39: 3.1.0
 
   '@multiversx/sdk-transaction-decoder@1.0.2':
@@ -48890,7 +48895,7 @@ snapshots:
   '@stellar/stellar-sdk@14.0.0':
     dependencies:
       '@stellar/stellar-base': 14.0.0
-      axios: 1.11.0
+      axios: 1.12.0
       bignumber.js: 9.3.1
       eventsource: 2.0.2
       feaxios: 0.0.23
@@ -50750,7 +50755,7 @@ snapshots:
     dependencies:
       '@ton/core': 0.60.1(patch_hash=lboaji3braahojqczblp7nlo7m)(@ton/crypto@3.3.0)
       '@ton/crypto': 3.3.0
-      axios: 1.11.0
+      axios: 1.12.0
       dataloader: 2.2.2
       symbol.inspect: 1.0.1
       teslabot: 1.5.0
@@ -52819,7 +52824,7 @@ snapshots:
     dependencies:
       '@ledgerhq/hw-transport': link:libs/ledgerjs/packages/hw-transport
       '@zondax/ledger-js': 0.8.2
-      axios: 1.11.0
+      axios: 1.12.0
 
   JSONStream@1.3.5:
     dependencies:
@@ -53421,6 +53426,12 @@ snapshots:
       follow-redirects: 1.15.11
 
   axios@1.11.0:
+    dependencies:
+      follow-redirects: 1.15.11
+      form-data: 4.0.4
+      proxy-from-env: 1.1.0
+
+  axios@1.12.0:
     dependencies:
       follow-redirects: 1.15.11
       form-data: 4.0.4
@@ -54677,7 +54688,7 @@ snapshots:
       '@scure/bip39': 1.3.0
       '@types/ws': 8.5.10
       asn1.js: 5.4.1
-      axios: 1.11.0
+      axios: 1.12.0
       bn.js: 5.2.1
       elliptic: 6.6.1
       eventsource: 2.0.2
@@ -71856,7 +71867,7 @@ snapshots:
       '@noble/secp256k1': 1.7.1
       '@tronweb3/google-protobuf': 3.21.2
       aes-js: 3.1.2
-      axios: 1.11.0
+      axios: 1.12.0
       bignumber.js: 9.1.2
       ethereum-cryptography: 2.1.3
       ethers: 6.15.0
