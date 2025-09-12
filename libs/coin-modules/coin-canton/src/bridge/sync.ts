@@ -18,11 +18,12 @@ const txInfoToOperationAdapter =
       recipients,
       transaction_timestamp,
       fee: { value: fee },
-      transfers: [{ value: transferValue }],
+      transfers: [{ value: transferValue, details }],
     } = txInfo;
     const type = senders.includes(address) ? "OUT" : "IN";
     const value = new BigNumber(transferValue);
     const feeValue = new BigNumber(fee);
+    const memo = details.metadata.reason;
 
     const op: Operation = {
       id: encodeOperationId(accountId, transaction_hash, type),
@@ -39,6 +40,7 @@ const txInfoToOperationAdapter =
       transactionSequenceNumber: height,
       extra: {
         uid,
+        memo,
       },
     };
 
@@ -75,8 +77,7 @@ export const getAccountShape: GetAccountShape = async info => {
   // const accountInfo = await getAccountInfo(address);
   const balances = await getBalance(address);
 
-  // TODO change to balance.instrument_id === "Amulet" after update on backend
-  const balanceData = balances.find(balance => balance.instrument_id.includes("Amulet")) || {
+  const balanceData = balances.find(balance => balance.instrument_id === "Amulet") || {
     instrument_id: "Amulet",
     amount: 0,
     locked: false,
