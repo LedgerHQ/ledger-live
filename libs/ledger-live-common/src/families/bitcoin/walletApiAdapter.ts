@@ -35,10 +35,6 @@ const convertToLiveTransaction: ConvertToLiveTransaction<
     liveTx.opReturnData = walletApiTransaction.opReturnData;
   }
 
-  if (walletApiTransaction.psbt) {
-    liveTx.psbt = walletApiTransaction.psbt;
-  }
-
   if (hasFeesProvided) {
     liveTx.feesStrategy = null;
   }
