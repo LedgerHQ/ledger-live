@@ -2,8 +2,11 @@ import React, { useEffect, useState } from "react";
 import { Alert, Flex, Text } from "@ledgerhq/react-ui";
 import { ImageProcessingError } from "@ledgerhq/live-common/customImage/errors";
 import { CLSSupportedDeviceModelId } from "@ledgerhq/live-common/device/use-cases/isCustomLockScreenSupported";
-import { getScreenVisibleAreaDimensions } from "@ledgerhq/live-common/device/use-cases/screenSpecs";
 import { ProcessorResult } from "~/renderer/components/CustomImage/dithering/types";
+import {
+  getScreenSpecs,
+  getScreenVisibleAreaDimensions,
+} from "@ledgerhq/live-common/device/use-cases/screenSpecs";
 import { ImageBase64Data } from "~/renderer/components/CustomImage/types";
 import { createCanvas } from "~/renderer/components/CustomImage/imageUtils";
 
@@ -11,7 +14,8 @@ export function reconstructImage({
   hexData,
   width,
   height,
-}: ProcessorResult["rawResult"]): ImageBase64Data {
+  bitsPerPixel,
+}: ProcessorResult["rawResult"] & { bitsPerPixel: 1 | 4 }): ImageBase64Data {
   const { canvas, context } = createCanvas();
   canvas.height = height;
   canvas.width = width;
@@ -22,11 +26,31 @@ export function reconstructImage({
 
   const pixels = Array.from(Array(height), () => Array(width));
   hexData.split("").forEach((char, index) => {
-    const y = index % height;
-    const x = width - 1 - (index - y) / height;
-    const numericVal16 = Number.parseInt(char, 16);
-    const numericVal256 = numericVal16 * rgbStep;
-    pixels[y][x] = numericVal256;
+    /** running from top right to bottom left, column after column */
+    if (bitsPerPixel === 4) {
+      const y = index % height;
+      const x = width - 1 - (index - y) / height;
+      const numericVal16Colors = Number.parseInt(char, 16);
+      const numericVal256Colors = numericVal16Colors * rgbStep;
+      pixels[y][x] = numericVal256Colors;
+    } else {
+      // bitsPerPixel === 1
+      const numericalVal = Number.parseInt(char, 16);
+      // each hexadecimal character is 4 bits, so 4 pixels
+      for (let i = 0; i < 4; i++) {
+        const pixelIndex = index * 4 + i;
+        if (pixelIndex >= width * height) break;
+
+        const x = width - 1 - Math.floor(pixelIndex / height);
+        const y = pixelIndex % height;
+
+        // Extract bits from left to right (MSB first)
+        const mask = 1 << (3 - i);
+        const bit = numericalVal & mask ? 1 : 0;
+        const pixelVal = bit ? 0 : 255; // Colors are inverted in this mode
+        pixels[y][x] = pixelVal;
+      }
+    }
   });
 
   const imageData = [];
@@ -74,14 +98,16 @@ const TestImage: React.FC<Props> = props => {
 
   const { rawResult } = result || {};
 
+  const bitsPerPixel = getScreenSpecs(deviceModelId).bitsPerPixel;
+
   useEffect(() => {
     try {
-      if (result) setReconstructedImage(reconstructImage(result?.rawResult));
+      if (result) setReconstructedImage(reconstructImage({ ...result.rawResult, bitsPerPixel }));
     } catch (e) {
       console.error(e);
       onError(new ImageProcessingError());
     }
-  }, [result, setReconstructedImage, onError]);
+  }, [result, setReconstructedImage, onError, bitsPerPixel]);
 
   const isDataMatching =
     result?.previewResult.imageBase64DataUri === reconstructedImage?.imageBase64DataUri;
