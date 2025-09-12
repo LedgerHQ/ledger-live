@@ -636,7 +636,7 @@ export class TokenAccount extends Account {
     "SUI USDC 1",
     Account.SUI_1.address,
     0,
-    TokenType.SUI,
+    TokenType.ERC20,
     Account.SUI_1,
   );
 
