@@ -87,7 +87,7 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
       xpub: address,
       blockHeight: operations.length === 0 ? 0 : blockInfo.height || initialAccount?.blockHeight,
       balance: new BigNumber(nativeBalance.toString()),
-      spendableBalance: new BigNumber(spendableBalance.toString()),
+      spendableBalance: BigNumber.maximum(new BigNumber(spendableBalance.toString()), 0),
       operations,
       subAccounts,
       operationsCount: operations.length,
