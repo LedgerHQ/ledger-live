@@ -4,6 +4,7 @@ import { log } from "@ledgerhq/logs";
 import { isSegwitDerivationMode } from "@ledgerhq/coin-framework/derivation";
 import type { AccountBridge, DerivationMode, Operation } from "@ledgerhq/types-live";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
+import { getAddressFormatDerivationMode } from "@ledgerhq/coin-framework/derivation";
 import type { Transaction } from "./types";
 import { getNetworkParameters } from "./networks";
 import { buildTransaction } from "./buildTransaction";
@@ -87,15 +88,10 @@ export const buildSignOperation =
           const psbtResult = await signerContext(deviceId, currency, signer =>
             signer.signPsbtV2Buffer
               ? signer.signPsbtV2Buffer(psbtBuffer, {
+                  // @ts-expect-error: x
+                  finalizePsbt: transaction.finalizePsbt,
                   accountPath: `${walletAccount.params.path}/${walletAccount.params.index}'`,
-                  addressFormat:
-                    account.derivationMode === "native_segwit"
-                      ? "bech32"
-                      : account.derivationMode === "segwit"
-                        ? "p2sh"
-                        : account.derivationMode === "taproot"
-                          ? "bech32m"
-                          : "legacy",
+                  addressFormat: getAddressFormatDerivationMode(account.derivationMode),
                 })
               : Promise.reject(new Error("signPsbtV2Buffer not available")),
           );

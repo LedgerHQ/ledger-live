@@ -145,7 +145,8 @@ export type Transaction = TransactionCommon & {
   feePerByte: BigNumber | null | undefined;
   networkInfo: NetworkInfo | null | undefined;
   opReturnData?: Buffer | undefined;
-  psbt?: string | undefined;
+  psbt?: string;
+  finalizePsbt?: boolean;
 };
 
 export type TransactionRaw = TransactionCommonRaw & {
