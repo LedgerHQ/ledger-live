@@ -1,8 +1,7 @@
 import { handleActions, ReducerMap } from "redux-actions";
 import type { Action } from "redux-actions";
-import merge from "lodash/merge";
 import { getFiatCurrencyByTicker } from "@ledgerhq/live-common/currencies/index";
-import { getEnv, setEnvUnsafe } from "@ledgerhq/live-env";
+import { getEnv } from "@ledgerhq/live-env";
 import { createSelector } from "reselect";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
 import type { AccountLike } from "@ledgerhq/types-live";
@@ -17,22 +16,18 @@ import type {
   SettingsDismissBannerPayload,
   SettingsHideEmptyTokenAccountsPayload,
   SettingsFilterTokenOperationsZeroAmountPayload,
-  SettingsImportDesktopPayload,
   SettingsImportPayload,
   SettingsSetHasInstalledAnyAppPayload,
   SettingsLastSeenDeviceInfoPayload,
   SettingsPayload,
   SettingsSetAnalyticsPayload,
   SettingsSetPersonalizedRecommendationsPayload,
-  SettingsSetAvailableUpdatePayload,
   SettingsSetCountervaluePayload,
   SettingsSetDiscreetModePayload,
   SettingsSetHasOrderedNanoPayload,
   SettingsSetLanguagePayload,
   SettingsSetLastConnectedDevicePayload,
   SettingsSetLocalePayload,
-  SettingsSetMarketCounterCurrencyPayload,
-  SettingsSetCustomImageBackupPayload,
   SettingsSetLastSeenCustomImagePayload,
   SettingsSetNotificationsPayload,
   SettingsSetNeverClickedOnAllowNotificationsButton,
@@ -48,7 +43,6 @@ import type {
   SettingsSetThemePayload,
   SettingsShowTokenPayload,
   SettingsUpdateCurrencyPayload,
-  SettingsSetSwapSelectableCurrenciesPayload,
   SettingsSetDismissedDynamicCardsPayload,
   SettingsSetOverriddenFeatureFlagPlayload,
   SettingsSetOverriddenFeatureFlagsPlayload,
@@ -59,7 +53,6 @@ import type {
   SettingsSetDateFormatPayload,
   SettingsSetDebugAppLevelDrawerOpenedPayload,
   SettingsSetHasBeenUpsoldProtectPayload,
-  SettingsSetHasSeenStaxEnabledNftsPopupPayload,
   SettingsSetCustomImageTypePayload,
   SettingsSetGeneralTermsVersionAccepted,
   SettingsSetOnboardingHasDevicePayload,
@@ -86,14 +79,6 @@ import {
 } from "../actions/types";
 import { ScreenName } from "~/const";
 import { findCurrencyByTicker } from "@ledgerhq/live-countervalues/findCurrencyByTicker";
-
-export const timeRangeDaysByKey = {
-  day: 1,
-  week: 7,
-  month: 30,
-  year: 365,
-  all: -1,
-};
 
 export const INITIAL_STATE: SettingsState = {
   counterValue: "USD",
@@ -122,7 +107,6 @@ export const INITIAL_STATE: SettingsState = {
   theme: "system",
   osTheme: undefined,
   customLockScreenType: null,
-  customLockScreenBackup: null,
   lastSeenCustomImage: {
     size: 0,
     hash: "",
@@ -147,9 +131,7 @@ export const INITIAL_STATE: SettingsState = {
     europa: false,
     apex: false,
   },
-  hasSeenStaxEnabledNftsPopup: false,
   lastConnectedDevice: null,
-  marketCounterCurrency: null,
   sensitiveAnalytics: false,
   onboardingHasDevice: null,
   isReborn: null,
@@ -190,18 +172,6 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
     ...state,
     ...(action as Action<SettingsImportPayload>).payload,
   }),
-
-  [SettingsActionTypes.SETTINGS_IMPORT_DESKTOP]: (state, action) => {
-    const {
-      payload: { developerModeEnabled, ...rest },
-    } = action as Action<SettingsImportDesktopPayload>;
-    if (developerModeEnabled !== undefined) setEnvUnsafe("MANAGER_DEV_MODE", developerModeEnabled);
-    return {
-      ...state,
-      ...rest,
-      currenciesSettings: merge(state.currenciesSettings, rest.currenciesSettings),
-    };
-  },
 
   [SettingsActionTypes.UPDATE_CURRENCY_SETTINGS]: (
     { currenciesSettings, ...state }: SettingsState,
@@ -365,11 +335,6 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
     ],
   }),
 
-  [SettingsActionTypes.SETTINGS_SET_AVAILABLE_UPDATE]: (state, action) => ({
-    ...state,
-    hasAvailableUpdate: (action as Action<SettingsSetAvailableUpdatePayload>).payload,
-  }),
-
   [SettingsActionTypes.DANGEROUSLY_OVERRIDE_STATE]: (state, action): SettingsState => ({
     ...state,
     ...(action as Action<DangerouslyOverrideStatePayload>).payload.settings,
@@ -404,14 +369,6 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
   [SettingsActionTypes.SETTINGS_SET_LOCALE]: (state, action) => ({
     ...state,
     locale: (action as Action<SettingsSetLocalePayload>).payload,
-  }),
-
-  [SettingsActionTypes.SET_SWAP_SELECTABLE_CURRENCIES]: (state, action) => ({
-    ...state,
-    swap: {
-      ...state.swap,
-      selectableCurrencies: (action as Action<SettingsSetSwapSelectableCurrenciesPayload>).payload,
-    },
   }),
 
   [SettingsActionTypes.ACCEPT_SWAP_PROVIDER]: (state, action) => ({
@@ -455,12 +412,6 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
       .customLockScreenType,
   }),
 
-  [SettingsActionTypes.SET_HAS_SEEN_STAX_ENABLED_NFTS_POPUP]: (state, action) => ({
-    ...state,
-    hasSeenStaxEnabledNftsPopup: (action as Action<SettingsSetHasSeenStaxEnabledNftsPopupPayload>)
-      .payload.hasSeenStaxEnabledNftsPopup,
-  }),
-
   [SettingsActionTypes.LAST_SEEN_DEVICE_LANGUAGE_ID]: (state, action) => {
     const lastSeenDevice = state.seenDevices.at(-1);
     if (!lastSeenDevice) return state;
@@ -474,11 +425,6 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
     };
   },
 
-  [SettingsActionTypes.SET_CUSTOM_IMAGE_BACKUP]: (state, action) => ({
-    ...state,
-    customLockScreenBackup: (action as Action<SettingsSetCustomImageBackupPayload>).payload,
-  }),
-
   [SettingsActionTypes.SET_LAST_CONNECTED_DEVICE]: (state, action) => ({
     ...state,
     lastConnectedDevice: (action as Action<SettingsSetLastConnectedDevicePayload>).payload,
@@ -491,11 +437,6 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
   [SettingsActionTypes.SET_HAS_ORDERED_NANO]: (state, action) => ({
     ...state,
     hasOrderedNano: (action as Action<SettingsSetHasOrderedNanoPayload>).payload,
-  }),
-
-  [SettingsActionTypes.SET_MARKET_COUNTER_CURRENCY]: (state, action) => ({
-    ...state,
-    marketCounterCurrency: (action as Action<SettingsSetMarketCounterCurrencyPayload>).payload,
   }),
 
   [SettingsActionTypes.SET_SENSITIVE_ANALYTICS]: (state, action) => ({
@@ -683,13 +624,6 @@ export const counterValueCurrencySelector = createSelector(
   counterValueCurrencyLocalSelector,
 );
 
-const counterValueExchangeLocalSelector = (s: SettingsState) => s.counterValueExchange;
-
-export const counterValueExchangeSelector = createSelector(
-  settingsStoreSelector,
-  counterValueExchangeLocalSelector,
-);
-
 const defaultCurrencySettingsForCurrency: (_: Currency) => CurrencySettings = crypto => {
   const defaults = currencySettingsDefaults(crypto);
   return {
@@ -769,16 +703,7 @@ export const currencySettingsForAccountSelector = (
   currencySettingsSelector(s, {
     currency: getAccountCurrency(account),
   });
-export const exchangeSettingsForPairSelector = (
-  state: State,
-  {
-    from,
-    to,
-  }: {
-    from: Currency;
-    to: Currency;
-  },
-): string | null | undefined => state.settings.pairExchanges[pairHash(from, to)];
+
 export const confirmationsNbForCurrencySelector = (
   state: State,
   {
@@ -832,15 +757,12 @@ export const languageSelector = (state: State) =>
   state.settings.language || getDefaultLanguageLocale();
 export const languageIsSetByUserSelector = (state: State) => state.settings.languageIsSetByUser;
 export const localeSelector = (state: State) => state.settings.locale || getDefaultLocale();
-export const swapHasAcceptedIPSharingSelector = (state: State) =>
-  state.settings.swap.hasAcceptedIPSharing;
+
 export const swapSelectableCurrenciesSelector = (state: State) =>
   state.settings.swap.selectableCurrencies;
 export const swapAcceptedProvidersSelector = (state: State) =>
   state.settings.swap.acceptedProviders;
 export const knownDeviceModelIdsSelector = (state: State) => state.settings.knownDeviceModelIds;
-export const hasSeenStaxEnabledNftsPopupSelector = (state: State) =>
-  state.settings.hasSeenStaxEnabledNftsPopup;
 export const customImageTypeSelector = (state: State) => state.settings.customLockScreenType;
 
 export const seenDevicesSelector = (state: State) => state.settings.seenDevices;
@@ -859,8 +781,6 @@ export const lastConnectedDeviceSelector = (state: State) => {
 };
 
 export const hasOrderedNanoSelector = (state: State) => state.settings.hasOrderedNano;
-export const marketCounterCurrencySelector = (state: State) => state.settings.marketCounterCurrency;
-export const customImageBackupSelector = (state: State) => state.settings.customLockScreenBackup;
 export const sensitiveAnalyticsSelector = (state: State) => state.settings.sensitiveAnalytics;
 export const onboardingHasDeviceSelector = (state: State) => state.settings.onboardingHasDevice;
 export const isRebornSelector = (state: State) => state.settings.isReborn;

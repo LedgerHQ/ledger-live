@@ -37,7 +37,7 @@ export type BleDevicesScanningProps = {
  * @param areKnownDevicesDisplayed Choose to display seen devices that are already known by LLM
  * @param areKnownDevicesPairable Display already known devices in the same way as unknown devices, allowing to connect to them.
  */
-const BleDevicesScanning: React.FC<BleDevicesScanningProps> = ({
+export const BleDevicesScanning: React.FC<BleDevicesScanningProps> = ({
   devices,
   onDeviceSelect,
   filterByDeviceModelId = null,
@@ -144,5 +144,3 @@ const BleDevicesScanning: React.FC<BleDevicesScanningProps> = ({
     </Flex>
   );
 };
-
-export default BleDevicesScanning;

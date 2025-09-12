@@ -74,28 +74,6 @@ export function downloadImageToFile({ imageUrl }: ImageUrl): CancellablePromise<
   };
 }
 
-export function downloadImageToFileWithDimensions(
-  source: ImageUrl,
-): CancellablePromise<ImageFileUri & Partial<ImageDimensions>> {
-  const { imageUrl } = source;
-  const { resultPromise, cancel } = downloadImageToFile({
-    imageUrl,
-  });
-  return {
-    resultPromise: Promise.all([loadImageSizeAsync(imageUrl), resultPromise])
-      .then(([dims, { imageFileUri }]) => ({
-        width: dims.width,
-        height: dims.height,
-        imageFileUri,
-      }))
-      .catch(e => {
-        cancel();
-        throw e;
-      }),
-    cancel,
-  };
-}
-
 export async function loadImageSizeAsync(url: string): Promise<ImageDimensions> {
   return new Promise((resolve, reject) => {
     Image.getSize(
@@ -158,12 +136,5 @@ export function fitImageContain(
   return {
     width: (imageWidth / imageHeight) * boxHeight,
     height: boxHeight,
-  };
-}
-
-export function scaleDimensions(dimensions: ImageDimensions, scale: number) {
-  return {
-    width: dimensions.width * scale,
-    height: dimensions.height * scale,
   };
 }

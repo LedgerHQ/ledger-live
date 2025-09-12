@@ -1,6 +1,6 @@
 import React from "react";
 import type { ColorValue } from "react-native";
-import { MissingIcon } from "~/icons/MissingIcon";
+import MissingIcon from "~/icons/MissingIcon";
 import { Acre } from "~/icons/providers/Acre";
 import { Babylon } from "~/icons/providers/Babylon";
 import { ChorusOne } from "~/icons/providers/ChorusOne";

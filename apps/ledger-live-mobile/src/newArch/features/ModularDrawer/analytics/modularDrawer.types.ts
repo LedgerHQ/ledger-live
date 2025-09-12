@@ -90,9 +90,3 @@ export const MODULAR_DRAWER_PAGE_NAME = {
   MODULAR_ACCOUNT_SELECTION: "Account Selection",
   FUND_ACCOUNT_LIST: "Fund Account Drawer List",
 } as const;
-
-export const MAD_SOURCE_PAGES = {
-  ACCOUNTS_PAGE: "Accounts",
-  PORTFOLIO_PAGE: "Portfolio",
-  WALLET_PAGE: "Wallet",
-} as const;

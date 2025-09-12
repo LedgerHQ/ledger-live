@@ -19,7 +19,6 @@ import { WalletTabNavigatorStackParamList } from "../components/RootNavigator/ty
 import {
   WalletContentCard,
   AssetContentCard,
-  LearnContentCard,
   NotificationContentCard,
   CategoryContentCard,
   BrazeContentCard,
@@ -27,7 +26,6 @@ import {
 } from "../dynamicContent/types";
 import { ProtectStateNumberEnum } from "../components/ServicesWidget/types";
 import { ImageType } from "../components/CustomImage/types";
-import { CLSSupportedDeviceModelId } from "@ledgerhq/live-common/device/use-cases/isCustomLockScreenSupported";
 import { WalletState } from "@ledgerhq/live-wallet/store";
 import { TrustchainStore } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { Steps } from "LLM/features/WalletSync/types/Activation";
@@ -136,8 +134,6 @@ export type DynamicContentState = {
   walletCards: WalletContentCard[];
   /** Dynamic content cards displayed in an Asset Page */
   assetsCards: AssetContentCard[];
-  /** Dynamic content cards displayed in Learn Section */
-  learnCards: LearnContentCard[];
   /** Dynamic content cards displayed in Notification Center */
   notificationCards: NotificationContentCard[];
   /** Dynamic content cards handling flexible categories throughout the app */
@@ -254,19 +250,13 @@ export type SettingsState = {
   };
   seenDevices: DeviceModelInfo[];
   knownDeviceModelIds: Record<DeviceModelId, boolean>;
-  hasSeenStaxEnabledNftsPopup: boolean;
   lastConnectedDevice: Device | null;
-  marketCounterCurrency: string | null | undefined;
   sensitiveAnalytics: boolean;
   onboardingHasDevice: boolean | null;
   isReborn: boolean | null;
   onboardingType: OnboardingType | null;
   customLockScreenType: ImageType | null;
-  customLockScreenBackup: {
-    hex: string;
-    hash: string;
-    deviceModelId: CLSSupportedDeviceModelId;
-  } | null;
+
   lastSeenCustomImage: {
     size: number;
     hash: string;

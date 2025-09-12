@@ -12,7 +12,6 @@ import type { Payload as PostOnboardingPayload } from "@ledgerhq/live-common/pos
 import { Transaction } from "@ledgerhq/live-common/generated/types";
 import { ExchangeRate } from "@ledgerhq/live-common/exchange/swap/types";
 import { DeviceModelId } from "@ledgerhq/types-devices";
-import { CLSSupportedDeviceModelId } from "@ledgerhq/live-common/device/use-cases/isCustomLockScreenSupported";
 import type {
   AppState,
   FwUpdateBackgroundEvent,
@@ -26,13 +25,13 @@ import type {
   SettingsState,
   State,
   WalletConnectState,
-  SwapStateType,
   EarnState,
   DynamicContentState,
   ProtectState,
   MarketState,
   LargeMoverState,
   InViewState,
+  SwapStateType,
 } from "../reducers/types";
 import type { Unpacked } from "../types/helpers";
 import { HandlersPayloads } from "@ledgerhq/live-wallet/store";
@@ -197,7 +196,6 @@ export type NotificationsPayload =
 export enum DynamicContentActionTypes {
   DYNAMIC_CONTENT_SET_WALLET_CARDS = "DYNAMIC_CONTENT_SET_WALLET_CARDS",
   DYNAMIC_CONTENT_SET_ASSET_CARDS = "DYNAMIC_CONTENT_SET_ASSET_CARDS",
-  DYNAMIC_CONTENT_SET_LEARN_CARDS = "DYNAMIC_CONTENT_SET_LEARN_CARDS",
   DYNAMIC_CONTENT_SET_NOTIFICATION_CARDS = "DYNAMIC_CONTENT_SET_NOTIFICATION_CARDS",
   DYNAMIC_CONTENT_SET_CATEGORIES_CARDS = "DYNAMIC_CONTENT_SET_CATEGORIES_CARDS",
   DYNAMIC_CONTENT_SET_LANDING_STICKY_CTA_CARDS = "DYNAMIC_CONTENT_SET_LANDING_STICKY_CTA_CARDS",
@@ -208,8 +206,6 @@ export enum DynamicContentActionTypes {
 export type DynamicContentSetWalletCardsPayload = DynamicContentState["walletCards"];
 
 export type DynamicContentSetAssetCardsPayload = DynamicContentState["assetsCards"];
-
-export type DynamicContentSetLearnCardsPayload = DynamicContentState["learnCards"];
 
 export type DynamicContentSetNotificationCardsPayload = DynamicContentState["notificationCards"];
 
@@ -222,7 +218,6 @@ export type DynamicContentSetMobileCardsPayload = DynamicContentState["mobileCar
 export type DynamicContentPayload =
   | DynamicContentSetWalletCardsPayload
   | DynamicContentSetAssetCardsPayload
-  | DynamicContentSetLearnCardsPayload
   | DynamicContentSetNotificationCardsPayload
   | DynamicContentSetCategoriesCardsPayload
   | DynamicContentSetLandingStickyCtaCardsPayload
@@ -255,7 +250,6 @@ export type RatingsPayload =
 
 export enum SettingsActionTypes {
   SETTINGS_IMPORT = "SETTINGS_IMPORT",
-  SETTINGS_IMPORT_DESKTOP = "SETTINGS_IMPORT_DESKTOP",
   UPDATE_CURRENCY_SETTINGS = "UPDATE_CURRENCY_SETTINGS",
   SETTINGS_SET_PRIVACY = "SETTINGS_SET_PRIVACY",
   SETTINGS_SET_PRIVACY_BIOMETRICS = "SETTINGS_SET_PRIVACY_BIOMETRICS",
@@ -292,9 +286,7 @@ export enum SettingsActionTypes {
   SET_LAST_SEEN_CUSTOM_IMAGE = "SET_LAST_SEEN_CUSTOM_IMAGE",
   SET_LAST_CONNECTED_DEVICE = "SET_LAST_CONNECTED_DEVICE",
   SET_CUSTOM_IMAGE_TYPE = "SET_CUSTOM_IMAGE_TYPE",
-  SET_CUSTOM_IMAGE_BACKUP = "SET_CUSTOM_IMAGE_BACKUP",
   SET_HAS_ORDERED_NANO = "SET_HAS_ORDERED_NANO",
-  SET_MARKET_COUNTER_CURRENCY = "SET_MARKET_COUNTER_CURRENCY",
   SET_SENSITIVE_ANALYTICS = "SET_SENSITIVE_ANALYTICS",
   SET_ONBOARDING_HAS_DEVICE = "SET_ONBOARDING_HAS_DEVICE",
   SET_IS_REBORN = "SET_IS_REBORN",
@@ -326,10 +318,6 @@ export enum SettingsActionTypes {
 }
 
 export type SettingsImportPayload = Partial<SettingsState>;
-export type SettingsImportDesktopPayload = {
-  developerModeEnabled: boolean;
-  currenciesSettings: SettingsState["currenciesSettings"];
-} & Omit<Partial<SettingsState>, "currenciesSettings">;
 export type SettingsUpdateCurrencyPayload = {
   ticker: string;
   patch: Partial<CurrencySettings>;
@@ -372,14 +360,8 @@ export type SettingsLastSeenDeviceInfoPayload = DeviceModelInfo;
 export type SettingsLastSeenDeviceLanguagePayload = DeviceInfo["languageId"];
 export type SettingsSetKnownDeviceModelIdsPayload = { [key in DeviceModelId]?: boolean };
 export type SettingsSetLastConnectedDevicePayload = Device;
-export type SettingsSetCustomImageBackupPayload = {
-  hex: string;
-  hash: string;
-  deviceModelId: CLSSupportedDeviceModelId;
-} | null;
 export type SettingsSetCustomImageTypePayload = Pick<SettingsState, "customLockScreenType">;
 export type SettingsSetHasOrderedNanoPayload = SettingsState["hasOrderedNano"];
-export type SettingsSetMarketCounterCurrencyPayload = SettingsState["marketCounterCurrency"];
 export type SettingsSetSensitiveAnalyticsPayload = SettingsState["sensitiveAnalytics"];
 export type SettingsSetOnboardingHasDevicePayload = SettingsState["onboardingHasDevice"];
 export type SettingsSetIsRebornPayload = SettingsState["isReborn"];
@@ -428,7 +410,6 @@ export type SettingsSetSelectedTabPortfolioAssetsPayload =
 
 export type SettingsPayload =
   | SettingsImportPayload
-  | SettingsImportDesktopPayload
   | SettingsUpdateCurrencyPayload
   | SettingsSetPrivacyPayload
   | SettingsSetPrivacyBiometricsPayload
@@ -457,7 +438,6 @@ export type SettingsPayload =
   | SettingsSetLastSeenCustomImagePayload
   | SettingsSetLastConnectedDevicePayload
   | SettingsSetHasOrderedNanoPayload
-  | SettingsSetMarketCounterCurrencyPayload
   | SettingsSetSensitiveAnalyticsPayload
   | SettingsSetOnboardingHasDevicePayload
   | SettingsSetIsRebornPayload
@@ -504,7 +484,7 @@ export type UpdateProvidersPayload = SwapStateType["providers"];
 export type UpdateTransactionPayload = Transaction | undefined;
 export type UpdateRatePayload = ExchangeRate | undefined;
 
-export type SwapPayload = UpdateProvidersPayload | UpdateTransactionPayload | UpdateRatePayload;
+export type SwapPayload = UpdateTransactionPayload | UpdateRatePayload;
 
 // === EARN ACTIONS ==
 export enum EarnActionTypes {

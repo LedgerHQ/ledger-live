@@ -165,15 +165,7 @@ const modularDrawerSlice = createSlice({
   },
 });
 
-export const {
-  openModularDrawer,
-  closeModularDrawer,
-  setCallbackId,
-  setAccountsObservableId,
-  setAssetsConfiguration,
-  setNetworksConfiguration,
-  setSearchValue,
-  setStep,
-} = modularDrawerSlice.actions;
+export const { openModularDrawer, closeModularDrawer, setSearchValue, setStep } =
+  modularDrawerSlice.actions;
 
 export default modularDrawerSlice.reducer;
