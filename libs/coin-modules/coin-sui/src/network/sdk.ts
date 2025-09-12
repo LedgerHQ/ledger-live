@@ -579,7 +579,7 @@ export const getListOperations = async (
     const rpcOrder = convertApiOrderToSdkOrder(order);
     const { out: outCursor, in: inCursor } = deserializeCursor(cursor);
 
-    let [opsOut, opsIn] = await Promise.all([
+    const [opsOut, opsIn] = await Promise.all([
       await queryTransactions({
         api,
         addr,
@@ -596,11 +596,11 @@ export const getListOperations = async (
       }),
     ]);
 
-    let ops = [...opsOut.data, ...opsIn.data]
+    const ops = [...opsOut.data, ...opsIn.data]
       .sort((a, b) => Number(b.timestampMs) - Number(a.timestampMs))
       .map(t => transactionToOp(addr, t));
 
-    let nextCursor: Cursor = {};
+    const nextCursor: Cursor = {};
     if (opsOut.hasNextPage && opsOut.nextCursor) {
       nextCursor.out = opsOut.nextCursor;
     }
