@@ -13,7 +13,7 @@ export type EvmConfig = {
       };
   explorer:
     | {
-        type: "etherscan" | "blockscout" | "teloscan" | "klaytnfinder";
+        type: "etherscan" | "blockscout" | "teloscan" | "klaytnfinder" | "corescan";
         uri: string;
       }
     | {
