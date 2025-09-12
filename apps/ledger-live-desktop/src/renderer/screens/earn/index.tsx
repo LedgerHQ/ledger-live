@@ -1,7 +1,10 @@
 import { stakeProgramsToEarnParam } from "@ledgerhq/live-common/featureFlags/stakePrograms/index";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { DEFAULT_FEATURES } from "@ledgerhq/live-common/featureFlags/index";
-import { useRemoteLiveAppManifest } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
+import {
+  useRemoteLiveAppContext,
+  useRemoteLiveAppManifest,
+} from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
 import { useLocalLiveAppManifest } from "@ledgerhq/live-common/wallet-api/LocalLiveAppProvider/index";
 import React, { useMemo } from "react";
 import { useSelector } from "react-redux";
@@ -18,6 +21,7 @@ import {
 import { useDeepLinkListener } from "~/renderer/screens/earn/useDeepLinkListener";
 import { useHistory } from "react-router";
 import { useVersionedStakePrograms } from "LLD/hooks/useVersionedStakePrograms";
+import { NetworkErrorScreen } from "~/renderer/components/Web3AppWebview/NetworkError";
 
 const DEFAULT_MANIFEST_ID =
   process.env.DEFAULT_EARN_MANIFEST_ID || DEFAULT_FEATURES.ptxEarnLiveApp.params?.manifest_id;
@@ -43,35 +47,39 @@ const Earn = () => {
     [stakePrograms],
   );
 
+  const { updateManifests } = useRemoteLiveAppContext();
+
+  if (!manifest) {
+    return <NetworkErrorScreen refresh={updateManifests} type="warning" />;
+  }
+
   return (
     <Card grow style={{ overflow: "hidden" }} data-testid="earn-app-container">
-      {manifest ? (
-        <WebPlatformPlayer
-          config={{
-            topBarConfig: {
-              shouldDisplayName: false,
-              shouldDisplayInfo: false,
-              shouldDisplayClose: false,
-              shouldDisplayNavigation: false,
-            },
-          }}
-          manifest={manifest}
-          inputs={{
-            theme: themeType,
-            lang: language,
-            locale: locale,
-            countryLocale,
-            currencyTicker: fiatCurrency.ticker,
-            discreetMode: discreetMode ? "true" : "false",
-            OS: "web",
-            routerState: JSON.stringify(router.location.state ?? {}),
-            stakeProgramsParam: stakeProgramsParam ? JSON.stringify(stakeProgramsParam) : undefined,
-            stakeCurrenciesParam: stakeCurrenciesParam
-              ? JSON.stringify(stakeCurrenciesParam)
-              : undefined,
-          }}
-        />
-      ) : null}
+      <WebPlatformPlayer
+        config={{
+          topBarConfig: {
+            shouldDisplayName: false,
+            shouldDisplayInfo: false,
+            shouldDisplayClose: false,
+            shouldDisplayNavigation: false,
+          },
+        }}
+        manifest={manifest}
+        inputs={{
+          theme: themeType,
+          lang: language,
+          locale: locale,
+          countryLocale,
+          currencyTicker: fiatCurrency.ticker,
+          discreetMode: discreetMode ? "true" : "false",
+          OS: "web",
+          routerState: JSON.stringify(router.location.state ?? {}),
+          stakeProgramsParam: stakeProgramsParam ? JSON.stringify(stakeProgramsParam) : undefined,
+          stakeCurrenciesParam: stakeCurrenciesParam
+            ? JSON.stringify(stakeCurrenciesParam)
+            : undefined,
+        }}
+      />
     </Card>
   );
 };
