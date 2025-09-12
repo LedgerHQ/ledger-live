@@ -1,5 +1,5 @@
 ---
-"live-mobile": major
+"live-mobile": minor
 ---
 
 Add feedback link
