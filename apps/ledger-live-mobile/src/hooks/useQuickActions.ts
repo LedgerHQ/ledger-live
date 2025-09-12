@@ -73,6 +73,9 @@ function useQuickActions({ currency, accounts }: QuickActionProps = {}) {
 
   const canBeRecovered = recoverEntryPoint?.enabled;
 
+  const ibanActive = true;
+  const receiveCryptoEntryPoint = getReceiveCryptoPoint(currency, hasCurrencyAccounts);
+
   const quickActionsList = useMemo(() => {
     const list: Partial<Record<Actions, QuickAction>> = {
       SEND: {
@@ -90,16 +93,9 @@ function useQuickActions({ currency, accounts }: QuickActionProps = {}) {
         disabled: readOnlyModeEnabled,
         route: [
           NavigatorName.ReceiveFunds,
-          !currency
-            ? { screen: ScreenName.ReceiveSelectCrypto }
-            : {
-                screen: hasCurrencyAccounts
-                  ? ScreenName.ReceiveSelectAccount
-                  : ScreenName.ReceiveAddAccountSelectDevice,
-                params: {
-                  currency: currency.type === "TokenCurrency" ? currency.parentCurrency : currency,
-                },
-              },
+          ibanActive
+            ? { screen: ScreenName.ReceiveTypeMenu, params: { receiveCryptoEntryPoint } }
+            : receiveCryptoEntryPoint,
         ],
         icon: IconsLegacy.ArrowBottomMedium,
       },
@@ -201,7 +197,6 @@ function useQuickActions({ currency, accounts }: QuickActionProps = {}) {
     return list;
   }, [
     currency,
-    hasCurrencyAccounts,
     hasCurrency,
     hasFunds,
     isPtxServiceCtaExchangeDrawerDisabled,
@@ -212,9 +207,23 @@ function useQuickActions({ currency, accounts }: QuickActionProps = {}) {
     partnerStakeRoute,
     canStakeCurrencyUsingLedgerLive,
     canBeRecovered,
+    ibanActive,
+    receiveCryptoEntryPoint,
   ]);
 
   return { quickActionsList };
+}
+
+function getReceiveCryptoPoint(currency?: CryptoOrTokenCurrency, hasCurrencyAccounts?: boolean) {
+  if (!currency) return { screen: ScreenName.ReceiveSelectCrypto };
+
+  const params = {
+    currency: currency.type === "TokenCurrency" ? currency.parentCurrency : currency,
+  };
+
+  if (hasCurrencyAccounts) return { screen: ScreenName.ReceiveSelectAccount, params };
+
+  return { screen: ScreenName.ReceiveAddAccountSelectDevice, params };
 }
 
 export default useQuickActions;

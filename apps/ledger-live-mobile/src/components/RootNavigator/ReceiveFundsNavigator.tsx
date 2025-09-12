@@ -32,6 +32,8 @@ import {
   hasClosedWithdrawBannerSelector,
 } from "~/reducers/settings";
 import { urls } from "~/utils/urls";
+import ReceiveTypeMenu from "~/screens/ReceiveFunds/00-ReceiveTypeMenu";
+import ReceiveProvider from "~/screens/ReceiveFunds/01b-ReceiveProvider";
 
 export default function ReceiveFundsNavigator() {
   const { colors } = useTheme();
@@ -84,6 +86,25 @@ export default function ReceiveFundsNavigator() {
         gestureEnabled: Platform.OS === "ios",
       }}
     >
+      <Stack.Screen
+        name={ScreenName.ReceiveTypeMenu}
+        component={ReceiveTypeMenu}
+        options={{
+          headerTitle: "",
+          headerRight: () => <NavigationHeaderCloseButtonAdvanced onClose={onClose} />,
+        }}
+      />
+
+      <Stack.Screen
+        name={ScreenName.ReceiveProvider}
+        component={ReceiveProvider}
+        options={{
+          headerLeft: () => <NavigationHeaderBackButton />,
+          headerTitle: "",
+          headerRight: () => <NavigationHeaderCloseButtonAdvanced onClose={onClose} />,
+        }}
+      />
+
       {/* Select Crypto (see : apps/ledger-live-mobile/src/screens/AddAccounts/01-SelectCrypto.js) */}
       <Stack.Screen
         name={ScreenName.ReceiveSelectCrypto}
