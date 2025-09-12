@@ -16,8 +16,9 @@ export async function craftTransaction(
 ): Promise<{
   nativeTransaction: PrepareTransferResponse;
   serializedTransaction: string;
+  hash: string;
 }> {
-  const { serialized, json } = await prepareTransferRequest(account.address, {
+  const { serialized, json, hash } = await prepareTransferRequest(account.address, {
     recipient: transaction.recipient || "",
     amount: transaction.amount.toNumber(),
     type: "token-transfer-request",
@@ -28,5 +29,6 @@ export async function craftTransaction(
   return {
     nativeTransaction: json,
     serializedTransaction: serialized,
+    hash,
   };
 }

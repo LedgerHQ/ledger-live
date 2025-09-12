@@ -525,3 +525,33 @@ jobs:
           name: mobile.metafile.json
           path: mobile.metafile.json
           overwrite: true
+
+  test-pod-lockfile:
+    name: "Test Pod Lockfile"
+    runs-on: [ general-pool, macOS, ARM64 ]
+    needs: [ determine-builds ]
+    if: needs.determine-builds.outputs.ios_native_exists == 'true'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.ref || github.sha }}
+          repository: LedgerHQ/ledger-live
+          persist-credentials: false
+          fetch-depth: 1
+
+      - name: setup caches
+        id: setup-caches
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        with:
+          skip-pod-cache: "true"
+          skip-pnpm-cache: "true"
+          install-proto: "true"
+          skip-turbo-cache: "true"
+
+      - name: Install dependencies
+        run: |
+          pnpm i --filter="live-mobile..." --no-frozen-lockfile --unsafe-perm --ignore-scripts
+
+      - name: Test Pod Lockfile
+        run: |
+          pnpm mobile postinstall

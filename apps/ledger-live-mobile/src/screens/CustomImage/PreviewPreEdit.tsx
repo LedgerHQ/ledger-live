@@ -41,9 +41,11 @@ import { ImageFileUri } from "~/components/CustomImage/types";
 import FramedPicture from "~/components/CustomImage/FramedPicture";
 import ImageProcessor, {
   Props as ImageProcessorProps,
+} from "~/components/CustomImage/dithering/ImageToDeviceProcessor";
+import {
   ProcessorPreviewResult,
   ProcessorRawResult,
-} from "~/components/CustomImage/ImageToDeviceProcessor";
+} from "~/components/CustomImage/dithering/types";
 import useCenteredImage, {
   Params as ImageCentererParams,
   CenteredResult,
@@ -52,8 +54,10 @@ import Button from "~/components/wrappedUi/Button";
 import { TrackScreen } from "~/analytics";
 import Link from "~/components/wrappedUi/Link";
 import { getFramedPictureConfig } from "~/components/CustomImage/framedPictureConfigs";
-
-const DEFAULT_CONTRAST = 1;
+import {
+  getAvailableDitheringConfigKeys,
+  mapDitheringConfigKeyToConfig,
+} from "~/components/CustomImage/dithering/config";
 
 type NavigationProps = BaseComposite<
   StackNavigatorProps<CustomImageNavigatorParamList, ScreenName.CustomImagePreviewPreEdit>
@@ -365,6 +369,10 @@ const PreviewPreEdit = ({ navigation, route }: NavigationProps) => {
     [resetPreview],
   );
 
+  const ditheringConfig = useMemo(() => {
+    return getAvailableDitheringConfigKeys(getScreenSpecs(deviceModelId).bitsPerPixel)[0];
+  }, [deviceModelId]);
+
   if (!loadedImage || !loadedImage.imageFileUri) {
     return (
       <Flex flex={1} justifyContent="center" alignItems="center">
@@ -396,7 +404,8 @@ const PreviewPreEdit = ({ navigation, route }: NavigationProps) => {
           onPreviewResult={handlePreviewResult}
           onError={handleError}
           onRawResult={handleRawResult}
-          contrast={DEFAULT_CONTRAST}
+          contrast={mapDitheringConfigKeyToConfig[ditheringConfig].contrastValue}
+          ditheringAlgorithm={mapDitheringConfigKeyToConfig[ditheringConfig].algorithm}
           bitsPerPixel={getScreenSpecs(deviceModelId).bitsPerPixel}
         />
       )}

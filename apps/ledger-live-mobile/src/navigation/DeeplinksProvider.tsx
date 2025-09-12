@@ -246,15 +246,6 @@ const linkingOptions = () => ({
               [ScreenName.CustomImageStep0Welcome]: "custom-image",
             },
           },
-          [NavigatorName.ExploreTab]: {
-            initialRouteName: "explore",
-            screens: {
-              /**
-               * ie: "ledgerlive://learn"
-               */
-              [ScreenName.Newsfeed]: "newsfeed",
-            },
-          },
           [NavigatorName.LandingPages]: {
             screens: {
               /**

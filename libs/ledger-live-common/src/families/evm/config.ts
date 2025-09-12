@@ -674,8 +674,8 @@ const evmConfig: CurrencyLiveConfigDefinition = {
         uri: "https://zkevm-rpc.com",
       },
       explorer: {
-        type: "blockscout",
-        uri: "https://explorer-ui.cardona.zkevm-rpc.com/api",
+        type: "etherscan",
+        uri: "https://proxyetherscan.api.live.ledger.com/v2/api/1101",
       },
       showNfts: false,
     },

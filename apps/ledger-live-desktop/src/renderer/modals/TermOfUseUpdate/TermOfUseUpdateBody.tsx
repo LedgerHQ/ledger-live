@@ -53,7 +53,7 @@ const TermOfUseUpdateBody = ({ onClose }: Props) => {
           >
             <IconsLegacy.ClipboardListCheckMedium size={24} />
           </Flex>
-          <Log>{t("updatedTerms.title")}</Log>
+          <Log extraTextProps={{ maxWidth: "120px" }}>{t("updatedTerms.title")}</Log>
           <Flex flexDirection="column">
             <BodyText mt="24px" mb="12px">
               {t("updatedTerms.body.intro")}

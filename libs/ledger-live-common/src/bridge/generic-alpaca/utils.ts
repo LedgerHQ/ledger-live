@@ -7,6 +7,15 @@ import {
   Operation as CoreOperation,
   TransactionIntent,
 } from "@ledgerhq/coin-framework/api/types";
+import { findCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+
+export function findCryptoCurrencyByNetwork(network: string): CryptoCurrency | undefined {
+  const networksRemap = {
+    xrp: "ripple",
+  };
+  return findCryptoCurrencyById(networksRemap[network] ?? network);
+}
 
 export function extractBalance(balances: Balance[], type: string): Balance {
   return (
@@ -109,6 +118,12 @@ export function transactionToIntent(
         break;
       case "send":
         transactionType = "send";
+        break;
+      case "send-legacy":
+        transactionType = "send-legacy";
+        break;
+      case "send-eip1559":
+        transactionType = "send-eip1559";
         break;
       default:
         throw new Error(`Unsupported transaction mode: ${transaction.mode}`);

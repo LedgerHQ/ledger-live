@@ -61,6 +61,7 @@ export type CryptoCurrencyId =
   | "icon_berlin_testnet"
   | "iota"
   | "iov"
+  | "kaspa"
   | "kin"
   | "komodo"
   | "kusama"

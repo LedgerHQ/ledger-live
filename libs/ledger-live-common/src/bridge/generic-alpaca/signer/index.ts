@@ -1,22 +1,12 @@
-import { GetAddressFn } from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
 import xrpGetAddress from "@ledgerhq/coin-xrp/signer/getAddress";
 import stellarGetAddress from "@ledgerhq/coin-stellar/signer/getAddress";
+import Stellar from "@ledgerhq/hw-app-str";
+import { signTransaction, stellarSignTransaction } from "./signTransaction";
+import { StrKey } from "@stellar/stellar-sdk";
 import { CreateSigner, executeWithSigner } from "../../setup";
 import Xrp from "@ledgerhq/hw-app-xrp";
-import Stellar from "@ledgerhq/hw-app-str";
-
 import Transport from "@ledgerhq/hw-transport";
-import { signTransaction, stellarSignTransaction } from "./signTransaction";
-import { SignerContext } from "@ledgerhq/coin-framework/signer";
-import { SignTransactionOptions } from "./types";
-import { StrKey } from "@stellar/stellar-sdk";
-
-export type AlpacaSigner = {
-  getAddress: GetAddressFn;
-  signTransaction?: (deviceId: string, opts: SignTransactionOptions) => Promise<string>;
-  signMessage?: (message: string) => Promise<string>;
-  context: SignerContext<any>;
-};
+import { AlpacaSigner } from "./types";
 
 const createSignerXrp: CreateSigner<Xrp> = (transport: Transport) => {
   return new Xrp(transport);
@@ -47,7 +37,7 @@ const createSignerStellar: CreateSigner<Stellar> = (transport: Transport) => {
 
 const signerContextStellar = executeWithSigner(createSignerStellar);
 
-export function getSigner(network): AlpacaSigner {
+export function getSigner(network: string): AlpacaSigner {
   switch (network) {
     case "ripple":
     case "xrp": {

@@ -547,8 +547,6 @@ export enum ScreenName {
   SuiWithdrawingValidationError = "SuiWithdrawingValidationError",
   SuiWithdrawingValidationSuccess = "SuiWithdrawingValidationSuccess",
 
-  Newsfeed = "Newsfeed",
-
   CustomImageStep0Welcome = "CustomImageStep0Welcome",
   CustomImageStep1Crop = "CustomImageStep1Crop",
   CustomImageStep2ChooseContrast = "CustomImageStep2ChooseContrast",

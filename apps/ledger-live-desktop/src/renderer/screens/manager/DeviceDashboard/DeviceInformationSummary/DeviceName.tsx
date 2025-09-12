@@ -2,7 +2,7 @@ import React, { useState, useCallback } from "react";
 import { Flex, IconsLegacy, Text } from "@ledgerhq/react-ui";
 import EditDeviceName from "./EditDeviceName";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
-import { identifyTargetId } from "@ledgerhq/devices";
+import { getDeviceModel } from "@ledgerhq/devices";
 import { DeviceInfo } from "@ledgerhq/types-live";
 import { isEditDeviceNameSupported } from "@ledgerhq/live-common/device/use-cases/isEditDeviceNameSupported";
 import { track } from "~/renderer/analytics/segment";
@@ -36,12 +36,12 @@ const DeviceName: React.FC<Props> = ({
   onRefreshDeviceInfo,
   setPreventResetOnDeviceChange,
 }: Props) => {
-  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-  const model = identifyTargetId(deviceInfo.targetId as number);
-  const editSupported = model?.id && isEditDeviceNameSupported(model.id);
+  const editSupported = isEditDeviceNameSupported(device.modelId);
   const editEnabled = !disabled && editSupported;
 
-  const [name, setName] = useState(editSupported ? deviceName : model?.productName);
+  const [name, setName] = useState(
+    editSupported && deviceName ? deviceName : getDeviceModel(device.modelId).productName,
+  );
 
   const onSuccess = useCallback(
     (deviceName: string) => {
@@ -56,22 +56,21 @@ const DeviceName: React.FC<Props> = ({
     // Prevents manager from reacting to device changes
     setPreventResetOnDeviceChange(true);
 
-    name &&
-      setDrawer(
-        EditDeviceName,
-        {
-          device,
-          onSetName: onSuccess,
-          deviceName: name,
-          deviceInfo,
+    setDrawer(
+      EditDeviceName,
+      {
+        device,
+        onSetName: onSuccess,
+        deviceName: name ?? "",
+        deviceInfo,
+      },
+      {
+        onRequestClose: () => {
+          setPreventResetOnDeviceChange(false);
+          setDrawer();
         },
-        {
-          onRequestClose: () => {
-            setPreventResetOnDeviceChange(false);
-            setDrawer();
-          },
-        },
-      );
+      },
+    );
     track("Page Manager RenameDeviceEntered");
   }, [device, deviceInfo, name, onSuccess, setPreventResetOnDeviceChange]);
 

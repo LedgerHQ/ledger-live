@@ -73,7 +73,7 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
         getTokenFromAsset: alpacaApi.getTokenFromAsset,
       }) || [];
 
-    const operationsWithSubs = mergedOps.map(op => {
+    const operations = mergedOps.map(op => {
       const subOperations = inferSubOperations(op.hash, subAccounts);
 
       return {
@@ -85,13 +85,12 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
     const res = {
       id: accountId,
       xpub: address,
-      blockHeight:
-        operationsWithSubs.length === 0 ? 0 : blockInfo.height || initialAccount?.blockHeight,
+      blockHeight: operations.length === 0 ? 0 : blockInfo.height || initialAccount?.blockHeight,
       balance: new BigNumber(nativeBalance.toString()),
       spendableBalance: new BigNumber(spendableBalance.toString()),
-      operations: operationsWithSubs,
+      operations,
       subAccounts,
-      operationsCount: operationsWithSubs.length,
+      operationsCount: operations.length,
     };
     return res;
   };

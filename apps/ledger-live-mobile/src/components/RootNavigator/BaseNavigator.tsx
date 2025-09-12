@@ -66,7 +66,6 @@ import { readOnlyModeEnabledSelector } from "~/reducers/settings";
 import { hasNoAccountsSelector } from "~/reducers/accounts";
 import { BaseNavigatorStackParamList } from "./types/BaseNavigator";
 import DeviceConnect, { deviceConnectHeaderOptions } from "~/screens/DeviceConnect";
-import ExploreTabNavigator from "./ExploreTabNavigator";
 import NoFundsFlowNavigator from "./NoFundsFlowNavigator";
 import StakeFlowNavigator from "./StakeFlowNavigator";
 import { RecoverPlayer } from "~/screens/Protect/Player";
@@ -215,17 +214,6 @@ export default function BaseNavigator() {
             headerStyle: styles.headerNoShadow,
           }}
           {...noNanoBuyNanoWallScreenOptions}
-        />
-        <Stack.Screen
-          name={NavigatorName.ExploreTab}
-          component={ExploreTabNavigator}
-          options={{
-            headerShown: true,
-            animation: "none",
-            headerTitle: t("discover.sections.news.title"),
-            headerLeft: () => <NavigationHeaderBackButton />,
-            headerRight: () => null,
-          }}
         />
         <Stack.Screen
           name={NavigatorName.SignMessage}

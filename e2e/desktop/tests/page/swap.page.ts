@@ -70,10 +70,10 @@ export class SwapPage extends AppPage {
     const [, webview] = electronApp.windows();
     await expect(webview.getByTestId("number-of-quotes")).toBeVisible();
     await expect(webview.getByTestId("quotes-countdown")).toBeVisible();
-    const providers = await webview
+
+    return await webview
       .locator(`[data-testid^='${this.quoteCardProviderName}']`)
       .allTextContents();
-    return providers;
   }
 
   @step("Check quotes container infos")

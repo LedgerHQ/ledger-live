@@ -75,6 +75,7 @@
     "msw": "^2.2.1"
   },
   "devDependencies": {
+    "@ledgerhq/hw-transport": "workspace:^",
     "@swc/core": "1.4.11",
     "@swc/jest": "0.2.36",
     "@types/bluebird": "^3.5.42",

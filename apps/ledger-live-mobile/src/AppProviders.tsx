@@ -12,7 +12,6 @@ import React from "react";
 import { BridgeSyncProvider } from "~/bridge/BridgeSyncContext";
 import { CountervaluesMarketcapBridgedProvider } from "~/components/CountervaluesMarketcapProvider";
 import { CountervaluesBridgedProvider } from "~/components/CountervaluesProvider";
-import { AppDataStorageProvider } from "~/hooks/storageProvider/useAppDataStorage";
 import PostOnboardingProviderWrapped from "~/logic/postOnboarding/PostOnboardingProviderWrapped";
 import NotificationsProvider from "~/screens/NotificationCenter/NotificationsProvider";
 import SnackbarContainer from "~/screens/NotificationCenter/Snackbar/SnackbarContainer";
@@ -35,18 +34,16 @@ function AppProviders({ initialCountervalues, children }: AppProvidersProps) {
             <CountervaluesMarketcapBridgedProvider>
               <CountervaluesBridgedProvider initialState={initialCountervalues}>
                 <BottomSheetModalProvider>
-                  <AppDataStorageProvider>
-                    <PostOnboardingProviderWrapped>
-                      <NotificationsProvider>
-                        <SnackbarContainer />
-                        <NftMetadataProvider getCurrencyBridge={getCurrencyBridge}>
-                          <InViewProvider>
-                            <ModularDrawerProvider>{children}</ModularDrawerProvider>
-                          </InViewProvider>
-                        </NftMetadataProvider>
-                      </NotificationsProvider>
-                    </PostOnboardingProviderWrapped>
-                  </AppDataStorageProvider>
+                  <PostOnboardingProviderWrapped>
+                    <NotificationsProvider>
+                      <SnackbarContainer />
+                      <NftMetadataProvider getCurrencyBridge={getCurrencyBridge}>
+                        <InViewProvider>
+                          <ModularDrawerProvider>{children}</ModularDrawerProvider>
+                        </InViewProvider>
+                      </NftMetadataProvider>
+                    </NotificationsProvider>
+                  </PostOnboardingProviderWrapped>
                 </BottomSheetModalProvider>
               </CountervaluesBridgedProvider>
             </CountervaluesMarketcapBridgedProvider>

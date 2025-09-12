@@ -14,8 +14,6 @@ import { TrackScreen, track } from "~/analytics";
 import { AnalyticsContext } from "~/analytics/AnalyticsContext";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import { MainNavigatorParamList } from "~/components/RootNavigator/types/MainNavigator";
-import useDynamicContent from "~/dynamicContent/useDynamicContent";
-import { useIsNewsfeedAvailable } from "~/hooks/newsfeed/useIsNewsfeedAvailable";
 
 const images = {
   light: {
@@ -39,8 +37,6 @@ function Discover() {
   const navigation =
     useNavigation<StackNavigationProp<BaseNavigatorStackParamList & MainNavigatorParamList>>();
 
-  const learn = useFeature("brazeLearn");
-  const isNewsfeedAvailable = useIsNewsfeedAvailable();
   const isNFTDisabled = useFeature("disableNftLedgerMarket")?.enabled && Platform.OS === "ios";
 
   const readOnlyTrack = useCallback((bannerName: string) => {
@@ -54,7 +50,6 @@ function Discover() {
     });
   }, []);
 
-  const { learnCards } = useDynamicContent();
   const config = useFeature("discover");
 
   const featuresList: {
@@ -103,53 +98,6 @@ function Discover() {
                       size={110}
                       darkSource={images.dark.appsImg}
                       lightSource={images.light.appsImg}
-                    />
-                  ),
-                },
-              ]
-            : []),
-        ...(!learn?.enabled && !isNewsfeedAvailable
-          ? [
-              {
-                title: t("discover.sections.learn.title"),
-                subTitle: t("discover.sections.learn.desc"),
-                onPress: () => {
-                  readOnlyTrack("Learn");
-                  track("Discover - Learn - OpenUrl", {
-                    url: urls.discover.academy,
-                  });
-                  Linking.openURL(urls.discover.academy);
-                },
-                disabled: false,
-                Image: (
-                  <Illustration
-                    size={110}
-                    darkSource={images.dark.learnImg}
-                    lightSource={images.light.learnImg}
-                  />
-                ),
-              },
-            ]
-          : learnCards.length > 0 || isNewsfeedAvailable
-            ? [
-                {
-                  title: t("discover.sections.news.title"),
-                  subTitle: t("discover.sections.news.desc"),
-                  onPress: () => {
-                    // Fixme: Can't find a way to make TS happy ...
-                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                    // @ts-ignore
-                    navigation.navigate(NavigatorName.ExploreTab);
-                    track("banner_clicked", {
-                      banner: "News",
-                    });
-                  },
-                  disabled: false,
-                  Image: (
-                    <Illustration
-                      size={110}
-                      darkSource={images.dark.learnImg}
-                      lightSource={images.light.learnImg}
                     />
                   ),
                 },
@@ -215,16 +163,7 @@ function Discover() {
           ),
         },
       ].sort((a, b) => (b.disabled ? -1 : 0)),
-    [
-      t,
-      learn?.enabled,
-      learnCards,
-      isNFTDisabled,
-      navigation,
-      readOnlyTrack,
-      isNewsfeedAvailable,
-      config,
-    ],
+    [t, isNFTDisabled, navigation, readOnlyTrack, config],
   );
 
   const { setSource, setScreen } = useContext(AnalyticsContext);

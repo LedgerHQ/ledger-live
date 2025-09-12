@@ -1,8 +1,36 @@
-import { adaptCoreOperationToLiveOperation, extractBalance } from "./utils";
+import {
+  adaptCoreOperationToLiveOperation,
+  extractBalance,
+  findCryptoCurrencyByNetwork,
+} from "./utils";
 import BigNumber from "bignumber.js";
 import { Operation as CoreOperation } from "@ledgerhq/coin-framework/api/types";
 
 describe("Alpaca utils", () => {
+  describe("findCryptoCurrencyByNetwork", () => {
+    it("finds a crypto currency by id", () => {
+      expect(findCryptoCurrencyByNetwork("ethereum")).toMatchObject({
+        id: "ethereum",
+        family: "evm",
+      });
+    });
+
+    it("takes currency remapping into account", () => {
+      expect(findCryptoCurrencyByNetwork("ripple")).toMatchObject({
+        id: "ripple",
+        family: "xrp",
+      });
+      expect(findCryptoCurrencyByNetwork("xrp")).toMatchObject({
+        id: "ripple",
+        family: "xrp",
+      });
+    });
+
+    it("does not find non existing currencies", () => {
+      expect(findCryptoCurrencyByNetwork("non_existing_currency")).toBeUndefined();
+    });
+  });
+
   describe("extractBalance", () => {
     it("extracts an existing balance", () => {
       expect(extractBalance([{ value: 4n, asset: { type: "type1" } }], "type1")).toEqual({

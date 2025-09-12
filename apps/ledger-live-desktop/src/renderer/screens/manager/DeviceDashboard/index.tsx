@@ -30,7 +30,6 @@ import {
   hasInstalledAppsSelector,
   lastSeenCustomImageSelector,
 } from "~/renderer/reducers/settings";
-import { useAppDataStorageProvider } from "~/renderer/hooks/storage-provider/useAppDataStorage";
 import LedgerSyncEntryPoint from "LLD/features/LedgerSyncEntryPoints";
 import { LNSUpsellBanner } from "LLD/features/LNSUpsell";
 import { EntryPoint } from "LLD/features/LedgerSyncEntryPoints/types";
@@ -90,8 +89,7 @@ const DeviceDashboard = ({
 }: Props) => {
   const { t } = useTranslation();
   const { deviceName } = result;
-  const storage = useAppDataStorageProvider();
-  const [state, dispatch] = useAppsRunner(result, exec, storage, appsToRestore);
+  const [state, dispatch] = useAppsRunner(result, exec, appsToRestore);
   const optimisticState = useMemo(() => predictOptimisticState(state), [state]);
   const [appInstallDep, setAppInstallDep] = useState<{ app: App; dependencies: App[] } | undefined>(
     undefined,

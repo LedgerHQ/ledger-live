@@ -17,7 +17,7 @@ import {
   CraftedTransaction,
 } from "@ledgerhq/coin-framework/api/index";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
-import { CryptoCurrencyId, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { BroadcastConfig } from "@ledgerhq/types-live";
 import { setCoinConfig, type EvmConfig } from "../config";
 import {
@@ -34,7 +34,7 @@ import {
   getAssetFromToken,
 } from "../logic/index";
 
-export function createApi(config: EvmConfig, currencyId: CryptoCurrencyId): Api {
+export function createApi(config: EvmConfig, currencyId: string): Api {
   setCoinConfig(() => ({ info: { ...config, status: { type: "active" } } }));
   const currency = getCryptoCurrencyById(currencyId);
 

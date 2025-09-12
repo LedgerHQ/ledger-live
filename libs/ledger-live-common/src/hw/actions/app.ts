@@ -540,18 +540,20 @@ export const createAction = (
         displayUpgradeWarning: false,
       }));
     }, []);
-
+    // TODO remove after fix
+    const isCanton = appRequest.account?.currency.id.includes("canton");
+    const wrongDevice =
+      state.derivation && appRequest.account
+        ? state.derivation.address !== appRequest.account.freshAddress &&
+          state.derivation.address !== appRequest.account.seedIdentifier // Use-case added for Hedera
+          ? {
+              accountName: getDefaultAccountName(appRequest.account),
+            }
+          : null
+        : null;
     return {
       ...state,
-      inWrongDeviceForAccount:
-        state.derivation && appRequest.account
-          ? state.derivation.address !== appRequest.account.freshAddress &&
-            state.derivation.address !== appRequest.account.seedIdentifier // Use-case added for Hedera
-            ? {
-                accountName: getDefaultAccountName(appRequest.account),
-              }
-            : null
-          : null,
+      inWrongDeviceForAccount: isCanton ? null : wrongDevice,
       onRetry,
       passWarning,
     };

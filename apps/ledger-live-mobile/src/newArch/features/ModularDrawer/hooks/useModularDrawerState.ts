@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
-import type { Account } from "@ledgerhq/types-live";
+import type { AccountLike } from "@ledgerhq/types-live";
 import { ModularDrawerStep } from "../types";
 
 import { useStepNavigation } from "./useStepNavigation";
@@ -17,7 +17,7 @@ type ModularDrawerStateProps = {
   currencyIds: string[];
   isDrawerOpen?: boolean;
   onClose?: () => void;
-  onAccountSelected?: (account: Account) => void;
+  onAccountSelected?: (account: AccountLike) => void;
   hasSearchedValue?: boolean;
 };
 
@@ -27,6 +27,7 @@ export function useModularDrawerState({
   isDrawerOpen,
   onClose,
   hasSearchedValue,
+  onAccountSelected,
 }: ModularDrawerStateProps) {
   const enableAccountSelection = useSelector(modularDrawerEnableAccountSelectionSelector);
   const dispatch = useDispatch();
@@ -54,6 +55,7 @@ export function useModularDrawerState({
   const { navigateToDeviceWithCurrency } = useDeviceNavigation({
     onClose,
     resetSelection: reset,
+    onAccountSelected,
   });
 
   const {

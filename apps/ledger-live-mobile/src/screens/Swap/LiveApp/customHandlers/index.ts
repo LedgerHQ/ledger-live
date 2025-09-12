@@ -65,7 +65,7 @@ export function useSwapCustomHandlers(
     onCompleteResult: navigateToSwapPendingOperation,
     onCompleteError: navigateToSwapCustomError,
     sendAppReady: sendSwapLiveAppReady,
-    onShowLoadingDrawer: handleShowLoadingDrawer,
+    handleLoaderDrawer: handleShowLoadingDrawer,
   });
 
   const swapCustomHandlers = {

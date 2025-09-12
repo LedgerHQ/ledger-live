@@ -3,7 +3,7 @@ import { FeeNotLoaded } from "@ledgerhq/errors";
 import { AccountBridge, Operation } from "@ledgerhq/types-live";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
-import { combine, craftTransaction, getNextValidSequence } from "../common-logic";
+import { combine, craftTransaction } from "../common-logic";
 import { Transaction, CantonSigner } from "../types";
 
 export const buildSignOperation =
@@ -20,31 +20,24 @@ export const buildSignOperation =
             type: "device-signature-requested",
           });
 
-          const nextSequenceNumber = await getNextValidSequence(account.freshAddress);
-
           const signature = await signerContext(deviceId, async signer => {
             const { freshAddressPath: derivationPath } = account;
-            const { publicKey } = await signer.getAddress(derivationPath);
+            const partyId = account.freshAddress.replace("__", "::");
 
-            const { nativeTransaction, serializedTransaction } = await craftTransaction(
+            const { hash, serializedTransaction } = await craftTransaction(
               {
-                address: account.freshAddress,
-                publicKey,
+                address: partyId,
               },
               {
                 recipient: transaction.recipient,
                 amount: transaction.amount,
-                expireInSeconds: 60 * 60 * 24,
+                expireInSeconds: 60 * 60,
                 tokenId: "Amulet",
               },
             );
+            const transactionSignature = await signer.signTransaction(derivationPath, hash);
 
-            const transactionSignature = await signer.signTransaction(
-              derivationPath,
-              serializedTransaction,
-            );
-
-            return combine(serializedTransaction, transactionSignature);
+            return combine(serializedTransaction, `${transactionSignature}__PARTY__${partyId}`);
           });
 
           o.next({
@@ -65,7 +58,6 @@ export const buildSignOperation =
             senders: [account.freshAddress],
             recipients: [transaction.recipient],
             date: new Date(),
-            transactionSequenceNumber: nextSequenceNumber,
             extra: {},
           };
 

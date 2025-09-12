@@ -30,4 +30,5 @@ export enum Network {
   OSMOSIS = "Osmosis",
   MULTIVERS_X = "MultiversX",
   LITECOIN = "Litecoin",
+  KASPA = "Kaspa",
 }

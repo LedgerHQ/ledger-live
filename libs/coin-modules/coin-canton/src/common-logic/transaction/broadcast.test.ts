@@ -8,7 +8,7 @@ jest.mock("../../network/gateway", () => ({
 
 const mockSerialized = JSON.stringify({
   serialized: "serialized-tx",
-  signature: "signature",
+  signature: "signature__PARTY__alice:123",
 });
 
 describe("broadcast", () => {
@@ -23,11 +23,11 @@ describe("broadcast", () => {
       useGateway: true,
     } as any);
 
-    (submit as jest.Mock).mockResolvedValue({ updateId: "my-update-id" });
+    (submit as jest.Mock).mockResolvedValue({ update_id: "my-update-id" });
 
     const result = await broadcast(mockSerialized);
 
-    expect(submit).toHaveBeenCalledWith("serialized-tx", "signature");
+    expect(submit).toHaveBeenCalledWith("alice:123", "serialized-tx", "signature");
     expect(result).toEqual("my-update-id");
   });
 

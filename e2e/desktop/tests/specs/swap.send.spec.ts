@@ -143,12 +143,13 @@ const swaps = [
     xrayTicket: "B2CQA-3078, B2CQA-3450, B2CQA-3282",
     tag: ["@NanoSP", "@LNS", "@NanoX"],
   },
-  {
-    fromAccount: Account.APTOS_1,
-    toAccount: Account.SOL_1,
-    xrayTicket: "B2CQA-3081, B2CQA-3450, B2CQA-3281",
-    tag: ["@NanoSP", "@NanoX"],
-  },
+  //ToDo: enable once it's back in prod
+  // {
+  //   fromAccount: Account.APTOS_1,
+  //   toAccount: Account.SOL_1,
+  //   xrayTicket: "B2CQA-3081, B2CQA-3450, B2CQA-3281",
+  //   tag: ["@NanoSP", "@NanoX"],
+  // },
 ];
 
 for (const { fromAccount, toAccount, xrayTicket, tag } of swaps) {
