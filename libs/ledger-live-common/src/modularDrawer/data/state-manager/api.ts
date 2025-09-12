@@ -30,7 +30,7 @@ function transformAssetsResponse(
 export const assetsDataApi = createApi({
   reducerPath: "assetsDataApi",
   baseQuery: fetchBaseQuery({
-    baseUrl: __DEV__ ? getEnv("DADA_API_STAGING") : getEnv("DADA_API_PROD"),
+    baseUrl: "", // Will be overridden in query
   }),
   tagTypes: [AssetsDataTags.Assets],
   endpoints: build => ({
@@ -49,8 +49,10 @@ export const assetsDataApi = createApi({
           additionalData: [AssetsAdditionalData.Apy, AssetsAdditionalData.MarketTrend],
         };
 
+        const baseUrl = queryArg.isStaging ? getEnv("DADA_API_STAGING") : getEnv("DADA_API_PROD");
+
         return {
-          url: "assets",
+          url: `${baseUrl}assets`,
           params,
         };
       },

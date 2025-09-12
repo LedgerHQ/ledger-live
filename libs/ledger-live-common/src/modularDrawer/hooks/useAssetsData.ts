@@ -24,6 +24,7 @@ export function useAssetsData({
   areCurrenciesFiltered,
   product,
   version,
+  isStaging,
 }: {
   search?: string;
   currencyIds?: string[];
@@ -31,6 +32,7 @@ export function useAssetsData({
   areCurrenciesFiltered?: boolean;
   product: "llm" | "lld";
   version: string;
+  isStaging?: boolean;
 }) {
   const { data, isLoading, error, fetchNextPage, isSuccess, refetch, isFetching, isError } =
     useGetAssetsDataInfiniteQuery({
@@ -39,6 +41,7 @@ export function useAssetsData({
       currencyIds: areCurrenciesFiltered ? currencyIds : undefined,
       product,
       version,
+      isStaging,
     });
 
   const joinedPages = useMemo(() => {

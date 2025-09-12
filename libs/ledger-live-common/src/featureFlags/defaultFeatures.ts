@@ -621,6 +621,8 @@ export const DEFAULT_FEATURES: Features = {
       receive_flow: true,
       send_flow: true,
       enableModularization: false,
+      searchDebounceTime: 500,
+      backendEnvironment: "PROD",
     },
   },
   llmModularDrawer: {
@@ -633,6 +635,8 @@ export const DEFAULT_FEATURES: Features = {
       receive_flow: true,
       send_flow: true,
       enableModularization: false,
+      searchDebounceTime: 500,
+      backendEnvironment: "PROD",
     },
   },
   llNftSupport: DEFAULT_FEATURE,
