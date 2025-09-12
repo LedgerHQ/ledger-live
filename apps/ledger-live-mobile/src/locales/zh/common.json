@@ -49,6 +49,7 @@
     "transactionDate" : "交易日期",
     "outdated" : "已过期",
     "satPerByte" : "聪/字节",
+    "sompiPerByte" : "聪米/字节",
     "notAvailable" : "缺货",
     "import" : "导入",
     "bluetooth" : "蓝牙",
