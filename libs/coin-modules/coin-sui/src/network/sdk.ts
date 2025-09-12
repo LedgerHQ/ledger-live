@@ -520,44 +520,80 @@ export const filterOperations = (
   return { operations: uniqBy(result, tx => tx.digest), cursor: nextCursor };
 };
 
+// TODO move to logic and create type Order
+function convertApiOrderToSdkOrder(order: "asc" | "desc"): "ascending" | "descending" {
+  return order === "asc" ? "ascending" : "descending";
+}
+
+type Cursor = {
+  out?: string;
+  in?: string;
+};
+
+function serializeCursor(cursor: Cursor): string {
+  return JSON.stringify(cursor);
+}
+
+function deserializeCursor(s: string | undefined): Cursor {
+  return s ?JSON.parse(s) as Cursor : {} as Cursor;
+}
+
+function toSdkCursor(cursor: string | undefined): QueryTransactionBlocksParams["cursor"] {
+  const ret: QueryTransactionBlocksParams["cursor"] = cursor;
+  return ret;
+}
+
 /**
  * Fetch operations for Alpaca
  */
 export const getListOperations = async (
   addr: string,
-  cursor: QueryTransactionBlocksParams["cursor"] = null,
+  order: "asc" | "desc",
   withApiImpl: typeof withApi = withApi,
-  order?: "asc" | "desc",
+  cursor?: string,
 ): Promise<Page<Op>> =>
   withApiImpl(async api => {
-    let rpcOrder: "ascending" | "descending";
-    if (order) {
-      rpcOrder = order === "asc" ? "ascending" : "descending";
-    } else {
-      rpcOrder = cursor ? "ascending" : "descending";
+    const rpcOrder = convertApiOrderToSdkOrder(order);
+    const { out: outCursor, in: inCursor } = deserializeCursor(cursor);
+
+    let [opsOut, opsIn] = await Promise.all([
+      await queryTransactions({
+        api,
+        addr,
+        type: "OUT",
+        cursor: toSdkCursor(outCursor),
+        order: rpcOrder,
+      }),
+      await queryTransactions({
+        api,
+        addr,
+        type: "IN",
+        cursor: toSdkCursor(inCursor),
+        order: rpcOrder,
+      }),
+    ]);
+
+    let ops = [...opsOut.data, ...opsIn.data]
+      .sort((a, b) => Number(b.timestampMs) - Number(a.timestampMs))
+      .map(t => transactionToOp(addr, t));
+
+    console.log("ops out items", opsOut.data.length);
+    console.log("ops out hasNextPage", opsOut.hasNextPage);
+    console.log("ops out nextCursor", opsOut.nextCursor);
+    console.log("ops in items", opsIn.data.length);
+    console.log("ops in hasNextPage", opsIn.hasNextPage);
+    console.log("ops in nextCursor", opsIn.nextCursor);
+    let nextCursor: Cursor = {};
+    if (opsOut.hasNextPage && opsOut.nextCursor) {
+      nextCursor.out = opsOut.nextCursor;
+    }
+    if (opsIn.hasNextPage && opsIn.nextCursor) {
+      nextCursor.in = opsIn.nextCursor;
     }
 
-    const opsOut = await loadOperations({
-      api,
-      addr,
-      type: "OUT",
-      cursor,
-      order: rpcOrder,
-      operations: [],
-    });
-    const opsIn = await loadOperations({
-      api,
-      addr,
-      type: "IN",
-      cursor,
-      order: rpcOrder,
-      operations: [],
-    });
-    const list = filterOperations(opsIn, opsOut, rpcOrder, true);
-
     return {
-      items: list.operations.map(t => transactionToOp(addr, t)),
-      next: list.cursor ?? undefined,
+      items: ops,
+      next: serializeCursor(nextCursor),
     };
   });
 
