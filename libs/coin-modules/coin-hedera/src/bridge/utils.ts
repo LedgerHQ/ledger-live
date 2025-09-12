@@ -1,9 +1,12 @@
 import BigNumber from "bignumber.js";
 import murmurhash from "imurmurhash";
 import invariant from "invariant";
+import { AccountId } from "@hashgraph/sdk";
+import { InvalidAddress } from "@ledgerhq/errors";
 import type { Account, Operation, TokenAccount } from "@ledgerhq/types-live";
 import cvsApi from "@ledgerhq/live-countervalues/api/index";
 import {
+  findCryptoCurrencyById,
   findTokenByAddressInCurrency,
   getFiatCurrencyByTicker,
   listTokensForCryptoCurrency,
@@ -22,7 +25,9 @@ import { makeLRUCache, seconds } from "@ledgerhq/live-network/cache";
 import { estimateMaxSpendable } from "./estimateMaxSpendable";
 import type { HederaOperationExtra, Transaction } from "../types";
 import { getAccount } from "../api/mirror";
+import { getHederaClient } from "../api/network";
 import type { HederaMirrorToken } from "../api/types";
+import { HederaRecipientInvalidChecksum } from "../errors";
 import { isTokenAssociateTransaction, isValidExtra } from "../logic";
 import { BASE_USD_FEE_BY_OPERATION_TYPE, HEDERA_OPERATION_TYPES } from "../constants";
 
@@ -453,8 +458,15 @@ export function patchOperationWithExtra(
 }
 
 export const checkAccountTokenAssociationStatus = makeLRUCache(
-  async (accountId: string, tokenId: string) => {
-    const mirrorAccount = await getAccount(accountId);
+  async (address: string, tokenId: string) => {
+    const [parsingError, parsingResult] = safeParseAccountId(address);
+
+    if (parsingError) {
+      throw parsingError;
+    }
+
+    const addressWithoutChecksum = parsingResult.accountId;
+    const mirrorAccount = await getAccount(addressWithoutChecksum);
 
     // auto association is enabled
     if (mirrorAccount.max_automatic_token_associations === -1) {
@@ -470,3 +482,38 @@ export const checkAccountTokenAssociationStatus = makeLRUCache(
   (accountId, tokenId) => `${accountId}-${tokenId}`,
   seconds(30),
 );
+
+export const safeParseAccountId = (
+  address: string,
+): [Error, null] | [null, { accountId: string; checksum: string | null }] => {
+  const currency = findCryptoCurrencyById("hedera");
+  const currencyName = currency?.name ?? "Hedera";
+
+  try {
+    const accountId = AccountId.fromString(address);
+
+    // verify checksum if present
+    // FIXME: migrate to EntityIdHelper methods once SDK is upgraded:
+    // https://github.com/hiero-ledger/hiero-sdk-js/blob/main/src/EntityIdHelper.js#L197
+    // https://github.com/hiero-ledger/hiero-sdk-js/blob/main/src/EntityIdHelper.js#L446
+    const checksum: string | null = address.split("-")[1] ?? null;
+    if (checksum) {
+      const client = getHederaClient();
+      const recipientWithChecksum = accountId.toStringWithChecksum(client);
+      const expectedChecksum = recipientWithChecksum.split("-")[1];
+
+      if (checksum !== expectedChecksum) {
+        return [new HederaRecipientInvalidChecksum(), null];
+      }
+    }
+
+    const result = {
+      accountId: accountId.toString(),
+      checksum,
+    };
+
+    return [null, result];
+  } catch (err) {
+    return [new InvalidAddress("", { currencyName }), null];
+  }
+};
