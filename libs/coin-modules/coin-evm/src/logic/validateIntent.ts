@@ -1,4 +1,3 @@
-import { ethers } from "ethers";
 import BigNumber from "bignumber.js";
 import type {
   AssetInfo,
@@ -25,7 +24,7 @@ import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/formatCurrencyUnit";
 import { getFeesUnit } from "@ledgerhq/coin-framework/account/helpers";
 import { isNative, TransactionTypes } from "../types";
-import { DEFAULT_GAS_LIMIT } from "../utils";
+import { DEFAULT_GAS_LIMIT, isEthAddress } from "../utils";
 import { getGasTracker } from "../network/gasTracker";
 import estimateFees from "./estimateFees";
 import getBalance from "./getBalance";
@@ -33,6 +32,7 @@ import {
   getTransactionType,
   isApiGasOptions,
   isEip1559FeeEstimation,
+  isEip55Address,
   isLegacyFeeEstimation,
 } from "./common";
 
@@ -50,20 +50,15 @@ function findBalance(asset: AssetInfo, balances: Balance[]): Balance {
   return balances.find(b => assetsAreEqual(b.asset, asset)) ?? { asset, value: 0n };
 }
 
-// This regex will not work with Starknet since addresses are 65 caracters long after the 0x
-const ethAddressRegEx = /^(0x)?[0-9a-fA-F]{40}$/;
-
 /**
  * Validate the amount of a transaction for an account
  */
 async function validateAmount(
-  balances: Balance[],
-  intent: TransactionIntent,
+  balance: Balance,
+  amount: bigint,
   totalSpent: bigint,
 ): Promise<Pick<TransactionValidation, "errors" | "warnings">> {
-  const balance = findBalance(intent.asset, balances);
-
-  if (!intent.amount) {
+  if (!amount) {
     return { errors: { amount: new AmountRequired() }, warnings: {} };
   }
 
@@ -85,7 +80,7 @@ function validateRecipient(
     return { errors: { recipient: new RecipientRequired() }, warnings: {} };
   }
 
-  if (!intent.recipient.match(ethAddressRegEx)) {
+  if (!isEthAddress(intent.recipient)) {
     return {
       errors: {
         recipient: new InvalidAddress("", {
@@ -97,14 +92,7 @@ function validateRecipient(
   }
 
   // Check if address is respecting EIP-55
-  try {
-    const recipientChecksumed = ethers.getAddress(intent.recipient);
-    if (intent.recipient !== recipientChecksumed) {
-      // this case can happen if the user is entering an ICAP address.
-      throw new Error();
-    }
-  } catch (e) {
-    // either getAddress throws for a bad checksum or we throw manually if the recipient isn't the same.
+  if (!isEip55Address(intent.recipient)) {
     return { errors: {}, warnings: { recipient: new ETHAddressNonEIP() } }; // "Auto-verification not available: carefully verify the address"
   }
 
@@ -230,6 +218,16 @@ async function validateGas(
   return { errors, warnings };
 }
 
+function computeAmount(
+  intent: TransactionIntent,
+  estimatedFees: FeeEstimation,
+  balance: Balance,
+): bigint {
+  if (!intent.useAllAmount) return intent.amount;
+
+  return isNative(intent.asset) ? balance.value - estimatedFees.value : balance.value;
+}
+
 export async function validateIntent(
   currency: CryptoCurrency,
   intent: TransactionIntent,
@@ -237,12 +235,14 @@ export async function validateIntent(
 ): Promise<TransactionValidation> {
   const estimatedFees = customFees ?? (await estimateFees(currency, intent));
   const balances = await getBalance(currency, intent.sender);
-  const totalSpent = isNative(intent.asset) ? intent.amount + estimatedFees.value : intent.amount;
+  const balance = findBalance(intent.asset, balances);
+  const amount = computeAmount(intent, estimatedFees, balance);
+  const totalSpent = isNative(intent.asset) ? amount + estimatedFees.value : amount;
 
   const { errors: recipientErr, warnings: recipientWarn } = validateRecipient(currency, intent);
   const { errors: amountErr, warnings: amountWarn } = await validateAmount(
-    balances,
-    intent,
+    balance,
+    amount,
     totalSpent,
   );
   const { errors: gasErr, warnings: gasWarn } = await validateGas(
@@ -268,6 +268,6 @@ export async function validateIntent(
     warnings,
     estimatedFees: estimatedFees.value,
     totalSpent,
-    amount: intent.amount,
+    amount,
   };
 }

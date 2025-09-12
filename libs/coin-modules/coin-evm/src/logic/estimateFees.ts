@@ -15,7 +15,8 @@ import {
   TransactionTypes,
 } from "../types";
 import { getGasTracker } from "../network/gasTracker";
-import { getErc20Data, getTransactionType } from "./common";
+import { isEthAddress } from "../utils";
+import { getErc20Data, getTransactionType, isEip55Address } from "./common";
 
 function toApiFeeData(feeData: FeeData): ApiFeeData {
   return {
@@ -42,6 +43,11 @@ export async function estimateFees(
   const { amount, asset, recipient, sender, type } = transactionIntent;
 
   const transactionType = getTransactionType(type);
+
+  if (!isEthAddress(recipient) || !isEip55Address(recipient)) {
+    return { value: 0n };
+  }
+
   const node = getNodeApi(currency);
   const gasTracker = getGasTracker(currency);
   const to = isNative(asset) ? recipient : (asset.assetReference as string);

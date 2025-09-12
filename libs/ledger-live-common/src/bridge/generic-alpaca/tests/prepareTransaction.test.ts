@@ -2,7 +2,6 @@ import { genericPrepareTransaction } from "../prepareTransaction";
 import { getAlpacaApi } from "../alpaca";
 import { transactionToIntent } from "../utils";
 import BigNumber from "bignumber.js";
-import type { TransactionCommon } from "@ledgerhq/types-live";
 
 jest.mock("../alpaca", () => ({
   getAlpacaApi: jest.fn(),
@@ -19,12 +18,14 @@ describe("genericPrepareTransaction", () => {
   const account = {
     id: "test-account",
     address: "0xabc",
+    currency: { id: "ethereum" },
   } as any;
 
-  const baseTransaction: TransactionCommon & { fees: BigNumber } = {
+  const baseTransaction = {
     amount: new BigNumber(100_000),
     fees: new BigNumber(500),
     recipient: "0xrecipient",
+    family: "family",
   };
 
   const txIntent = { mock: "intent" };

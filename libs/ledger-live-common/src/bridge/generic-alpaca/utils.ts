@@ -9,6 +9,7 @@ import {
 } from "@ledgerhq/coin-framework/api/types";
 import { findCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { GenericTransaction } from "./types";
 
 export function findCryptoCurrencyByNetwork(network: string): CryptoCurrency | undefined {
   const networksRemap = {
@@ -101,14 +102,7 @@ export function adaptCoreOperationToLiveOperation(accountId: string, op: CoreOpe
  */
 export function transactionToIntent(
   account: Account,
-  transaction: TransactionCommon & {
-    assetOwner?: string;
-    assetReference?: string;
-    mode?: string;
-    memoType?: string;
-    memoValue?: string;
-    useAllAmount?: boolean;
-  },
+  transaction: GenericTransaction,
 ): TransactionIntent<any> & { memo?: { type: string; value?: string } } {
   let transactionType = "Payment"; // NOTE: assuming payment by default here, can be changed based on transaction.mode
   if (transaction.mode) {
