@@ -675,8 +675,6 @@ export default handleActions<SettingsState, SettingsPayload>(handlers, INITIAL_S
 
 export const settingsStoreSelector = (state: State): SettingsState => state.settings;
 
-export const exportSelector = settingsStoreSelector;
-
 const counterValueCurrencyLocalSelector = (state: SettingsState): Currency =>
   findCurrencyByTicker(state.counterValue) || getFiatCurrencyByTicker("USD");
 
