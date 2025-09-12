@@ -286,6 +286,15 @@ export const expectedCurrencyList = [
   },
   {
     type: "CryptoCurrency",
+    id: "westend",
+    ticker: "WND",
+    name: "Westend",
+    family: "polkadot",
+    color: "#00ff00",
+    decimals: 12,
+  },
+  {
+    type: "CryptoCurrency",
     id: "solana",
     ticker: "SOL",
     name: "Solana",

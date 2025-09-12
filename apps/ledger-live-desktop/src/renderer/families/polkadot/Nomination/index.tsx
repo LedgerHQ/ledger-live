@@ -118,15 +118,23 @@ const Nomination = ({ account }: { account: PolkadotAccount }) => {
     };
   }, [unlockings, unlockedBalance]);
   const onEarnRewards = useCallback(() => {
-    history.push({
-      pathname: "/platform/stakekit",
-      state: {
-        yieldId: "polkadot-dot-validator-staking",
-        accountId: account.id,
-        returnTo: `/account/${account.id}`,
-      },
-    });
-  }, [account, history]);
+    if (account.currency.id === "westend") {
+      dispatch(
+        openModal("MODAL_POLKADOT_REWARDS_INFO", {
+          account,
+        }),
+      );
+    } else {
+      history.push({
+        pathname: "/platform/stakekit",
+        state: {
+          yieldId: "polkadot-dot-validator-staking",
+          accountId: account.id,
+          returnTo: `/account/${account.id}`,
+        },
+      });
+    }
+  }, [account, dispatch, history]);
   const onNominate = useCallback(() => {
     dispatch(
       openModal("MODAL_POLKADOT_NOMINATE", {

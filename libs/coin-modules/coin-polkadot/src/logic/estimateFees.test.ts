@@ -43,10 +43,14 @@ describe("estimatedFees", () => {
       sidecar: {
         url: "https://polkadot-sidecar.coin.ledger.com",
       },
+      indexer: {
+        url: "https://polkadot.coin.ledger.com",
+      },
       staking: {
         electionStatusThreshold: 25,
       },
       metadataShortener: {
+        id: "dot",
         url: "https://polkadot-metadata-shortener.api.live.ledger.com/transaction/metadata",
       },
       metadataHash: {
