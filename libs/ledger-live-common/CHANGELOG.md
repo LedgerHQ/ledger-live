@@ -1,5 +1,57 @@
 # @ledgerhq/live-common
 
+## 34.48.0-nightly.4
+
+### Minor Changes
+
+- [#11748](https://github.com/LedgerHQ/ledger-live/pull/11748) [`aee931f`](https://github.com/LedgerHQ/ledger-live/commit/aee931fdc9d6028ddfcaea014b033822e178d7a0) Thanks [@liviuciulinaru](https://github.com/liviuciulinaru)! - [swap] Rework wallet api types for CombinedSwap and use the Transaction from LL
+
+- [#11738](https://github.com/LedgerHQ/ledger-live/pull/11738) [`9b8689a`](https://github.com/LedgerHQ/ledger-live/commit/9b8689ae2c44bdeccae26378e05cbf6899b83aec) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLM / LLD - Added searchDebounceTime and backendEnvironment parameters to modular drawer feature flags
+
+### Patch Changes
+
+- [#11769](https://github.com/LedgerHQ/ledger-live/pull/11769) [`6941aac`](https://github.com/LedgerHQ/ledger-live/commit/6941aac638dcc8d4fb03aa92f42d2a71d4089202) Thanks [@ishaba](https://github.com/ishaba)! - fix canton receive flow
+
+- Updated dependencies [[`6941aac`](https://github.com/LedgerHQ/ledger-live/commit/6941aac638dcc8d4fb03aa92f42d2a71d4089202), [`fcb6dd3`](https://github.com/LedgerHQ/ledger-live/commit/fcb6dd3701373df22fba0e94bdbe04a3e730dffd)]:
+  - @ledgerhq/coin-canton@0.5.0-nightly.4
+  - @ledgerhq/live-signer-canton@0.2.4-nightly.4
+  - @ledgerhq/coin-framework@6.4.0-nightly.4
+  - @ledgerhq/coin-algorand@0.10.1-nightly.4
+  - @ledgerhq/coin-aptos@3.3.0-nightly.4
+  - @ledgerhq/coin-bitcoin@0.21.1-nightly.4
+  - @ledgerhq/coin-cardano@0.12.1-nightly.4
+  - @ledgerhq/coin-casper@2.1.1-nightly.4
+  - @ledgerhq/coin-celo@1.4.0-nightly.4
+  - @ledgerhq/coin-cosmos@0.17.1-nightly.4
+  - @ledgerhq/coin-evm@2.30.0-nightly.4
+  - @ledgerhq/coin-filecoin@1.11.1-nightly.4
+  - @ledgerhq/coin-hedera@1.11.1-nightly.4
+  - @ledgerhq/coin-icon@0.12.1-nightly.4
+  - @ledgerhq/coin-internet_computer@1.8.1-nightly.4
+  - @ledgerhq/coin-kaspa@1.1.0-nightly.5
+  - @ledgerhq/coin-mina@1.2.1-nightly.4
+  - @ledgerhq/coin-multiversx@0.5.1-nightly.4
+  - @ledgerhq/coin-near@0.13.1-nightly.4
+  - @ledgerhq/coin-polkadot@6.10.0-nightly.4
+  - @ledgerhq/coin-solana@0.32.1-nightly.4
+  - @ledgerhq/coin-stacks@0.9.1-nightly.4
+  - @ledgerhq/coin-stellar@6.4.0-nightly.4
+  - @ledgerhq/coin-sui@0.13.0-nightly.4
+  - @ledgerhq/coin-tezos@6.4.0-nightly.4
+  - @ledgerhq/coin-ton@0.14.1-nightly.4
+  - @ledgerhq/coin-tron@5.4.0-nightly.4
+  - @ledgerhq/coin-vechain@2.10.0-nightly.4
+  - @ledgerhq/coin-xrp@7.4.0-nightly.4
+  - @ledgerhq/device-core@0.6.3-nightly.2
+  - @ledgerhq/hw-app-eth@6.45.18-nightly.2
+  - @ledgerhq/live-countervalues@0.7.1-nightly.4
+  - @ledgerhq/live-countervalues-react@0.5.2-nightly.4
+  - @ledgerhq/live-nft@0.8.20-nightly.4
+  - @ledgerhq/live-signer-evm@0.7.5-nightly.4
+  - @ledgerhq/live-signer-solana@0.5.5-nightly.4
+  - @ledgerhq/live-wallet@0.13.1-nightly.4
+  - @ledgerhq/hw-app-celo@6.34.3-nightly.2
+
 ## 34.48.0-nightly.3
 
 ### Minor Changes

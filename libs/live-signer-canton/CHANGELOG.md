@@ -1,5 +1,15 @@
 # @ledgerhq/live-signer-canton
 
+## 0.2.4-nightly.4
+
+### Patch Changes
+
+- [#11769](https://github.com/LedgerHQ/ledger-live/pull/11769) [`6941aac`](https://github.com/LedgerHQ/ledger-live/commit/6941aac638dcc8d4fb03aa92f42d2a71d4089202) Thanks [@ishaba](https://github.com/ishaba)! - fix canton receive flow
+
+- Updated dependencies [[`6941aac`](https://github.com/LedgerHQ/ledger-live/commit/6941aac638dcc8d4fb03aa92f42d2a71d4089202), [`fcb6dd3`](https://github.com/LedgerHQ/ledger-live/commit/fcb6dd3701373df22fba0e94bdbe04a3e730dffd)]:
+  - @ledgerhq/hw-app-canton@0.3.1-nightly.1
+  - @ledgerhq/coin-canton@0.5.0-nightly.4
+
 ## 0.2.4-nightly.3
 
 ### Patch Changes

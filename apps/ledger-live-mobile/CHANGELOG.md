@@ -1,5 +1,28 @@
 # live-mobile
 
+## 3.93.0-nightly.4
+
+### Minor Changes
+
+- [#11738](https://github.com/LedgerHQ/ledger-live/pull/11738) [`9b8689a`](https://github.com/LedgerHQ/ledger-live/commit/9b8689ae2c44bdeccae26378e05cbf6899b83aec) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLM / LLD - Added searchDebounceTime and backendEnvironment parameters to modular drawer feature flags
+
+- [#11746](https://github.com/LedgerHQ/ledger-live/pull/11746) [`625be36`](https://github.com/LedgerHQ/ledger-live/commit/625be36b32fb5f8d2ff513eca89f1859aaa6ef98) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Remove NFTs code
+
+### Patch Changes
+
+- Updated dependencies [[`9b8689a`](https://github.com/LedgerHQ/ledger-live/commit/9b8689ae2c44bdeccae26378e05cbf6899b83aec), [`6941aac`](https://github.com/LedgerHQ/ledger-live/commit/6941aac638dcc8d4fb03aa92f42d2a71d4089202)]:
+  - @ledgerhq/types-live@6.84.0-nightly.1
+  - @ledgerhq/coin-framework@6.4.0-nightly.4
+  - @ledgerhq/coin-cosmos@0.17.1-nightly.4
+  - @ledgerhq/coin-evm@2.30.0-nightly.4
+  - @ledgerhq/coin-filecoin@1.11.1-nightly.4
+  - @ledgerhq/coin-multiversx@0.5.1-nightly.4
+  - @ledgerhq/coin-stacks@0.9.1-nightly.4
+  - @ledgerhq/domain-service@1.2.43-nightly.1
+  - @ledgerhq/live-countervalues@0.7.1-nightly.4
+  - @ledgerhq/live-countervalues-react@0.5.2-nightly.4
+  - @ledgerhq/live-wallet@0.13.1-nightly.4
+
 ## 3.93.0-nightly.3
 
 ### Minor Changes

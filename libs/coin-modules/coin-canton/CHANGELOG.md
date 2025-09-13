@@ -1,5 +1,17 @@
 # @ledgerhq/coin-canton
 
+## 0.5.0-nightly.4
+
+### Patch Changes
+
+- [#11769](https://github.com/LedgerHQ/ledger-live/pull/11769) [`6941aac`](https://github.com/LedgerHQ/ledger-live/commit/6941aac638dcc8d4fb03aa92f42d2a71d4089202) Thanks [@ishaba](https://github.com/ishaba)! - fix canton receive flow
+
+- [#11783](https://github.com/LedgerHQ/ledger-live/pull/11783) [`fcb6dd3`](https://github.com/LedgerHQ/ledger-live/commit/fcb6dd3701373df22fba0e94bdbe04a3e730dffd) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - fee on firebase canton
+
+- Updated dependencies [[`9b8689a`](https://github.com/LedgerHQ/ledger-live/commit/9b8689ae2c44bdeccae26378e05cbf6899b83aec), [`6941aac`](https://github.com/LedgerHQ/ledger-live/commit/6941aac638dcc8d4fb03aa92f42d2a71d4089202)]:
+  - @ledgerhq/types-live@6.84.0-nightly.1
+  - @ledgerhq/coin-framework@6.4.0-nightly.4
+
 ## 0.5.0-nightly.3
 
 ### Patch Changes

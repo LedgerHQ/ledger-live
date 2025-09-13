@@ -1,5 +1,11 @@
 # @ledgerhq/hw-app-canton
 
+## 0.3.1-nightly.1
+
+### Patch Changes
+
+- [#11769](https://github.com/LedgerHQ/ledger-live/pull/11769) [`6941aac`](https://github.com/LedgerHQ/ledger-live/commit/6941aac638dcc8d4fb03aa92f42d2a71d4089202) Thanks [@ishaba](https://github.com/ishaba)! - fix canton receive flow
+
 ## 0.3.1-nightly.0
 
 ### Patch Changes

@@ -1,5 +1,40 @@
 # ledger-live-desktop
 
+## 3.0.0-nightly.4
+
+### Minor Changes
+
+- [#11738](https://github.com/LedgerHQ/ledger-live/pull/11738) [`9b8689a`](https://github.com/LedgerHQ/ledger-live/commit/9b8689ae2c44bdeccae26378e05cbf6899b83aec) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLM / LLD - Added searchDebounceTime and backendEnvironment parameters to modular drawer feature flags
+
+- [#11771](https://github.com/LedgerHQ/ledger-live/pull/11771) [`35655fc`](https://github.com/LedgerHQ/ledger-live/commit/35655fc2175134e0eef1d7cdc13565e855e879f6) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Fix Receive/addAccount scroll when we have a big Alert on the flow
+
+- [#11793](https://github.com/LedgerHQ/ledger-live/pull/11793) [`4d48763`](https://github.com/LedgerHQ/ledger-live/commit/4d487631d27661ee02f694c09f839f17bbd39871) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLD - Fix the accounts added screen on live app flows
+
+- [#11758](https://github.com/LedgerHQ/ledger-live/pull/11758) [`3aaa8c6`](https://github.com/LedgerHQ/ledger-live/commit/3aaa8c6a82acdc6f2551f4a7e71114f596bf5eaa) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Remove unsed types/vars/selector/export from codebase (Knip)
+
+### Patch Changes
+
+- [#11752](https://github.com/LedgerHQ/ledger-live/pull/11752) [`8e7ab11`](https://github.com/LedgerHQ/ledger-live/commit/8e7ab11687aa60e45c9ad8af3b22cb8ee1db2916) Thanks [@marcotoniut-ledger](https://github.com/marcotoniut-ledger)! - Fix broken select ids on Add Account modal for creatable accounts
+
+- [#11769](https://github.com/LedgerHQ/ledger-live/pull/11769) [`6941aac`](https://github.com/LedgerHQ/ledger-live/commit/6941aac638dcc8d4fb03aa92f42d2a71d4089202) Thanks [@ishaba](https://github.com/ishaba)! - fix canton receive flow
+
+- Updated dependencies [[`aee931f`](https://github.com/LedgerHQ/ledger-live/commit/aee931fdc9d6028ddfcaea014b033822e178d7a0), [`9b8689a`](https://github.com/LedgerHQ/ledger-live/commit/9b8689ae2c44bdeccae26378e05cbf6899b83aec), [`6941aac`](https://github.com/LedgerHQ/ledger-live/commit/6941aac638dcc8d4fb03aa92f42d2a71d4089202), [`fcb6dd3`](https://github.com/LedgerHQ/ledger-live/commit/fcb6dd3701373df22fba0e94bdbe04a3e730dffd)]:
+  - @ledgerhq/live-common@34.48.0-nightly.4
+  - @ledgerhq/types-live@6.84.0-nightly.1
+  - @ledgerhq/coin-canton@0.5.0-nightly.4
+  - @ledgerhq/coin-framework@6.4.0-nightly.4
+  - @ledgerhq/live-dmk-desktop@0.9.5-nightly.4
+  - @ledgerhq/coin-bitcoin@0.21.1-nightly.4
+  - @ledgerhq/coin-cosmos@0.17.1-nightly.4
+  - @ledgerhq/coin-evm@2.30.0-nightly.4
+  - @ledgerhq/coin-filecoin@1.11.1-nightly.4
+  - @ledgerhq/domain-service@1.2.43-nightly.1
+  - @ledgerhq/live-countervalues@0.7.1-nightly.4
+  - @ledgerhq/live-countervalues-react@0.5.2-nightly.4
+  - @ledgerhq/live-nft@0.8.20-nightly.4
+  - @ledgerhq/live-nft-react@0.9.20-nightly.4
+  - @ledgerhq/live-wallet@0.13.1-nightly.4
+
 ## 3.0.0-nightly.3
 
 ### Minor Changes

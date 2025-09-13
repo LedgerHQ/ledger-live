@@ -1,5 +1,11 @@
 # @ledgerhq/types-live
 
+## 6.84.0-nightly.1
+
+### Minor Changes
+
+- [#11738](https://github.com/LedgerHQ/ledger-live/pull/11738) [`9b8689a`](https://github.com/LedgerHQ/ledger-live/commit/9b8689ae2c44bdeccae26378e05cbf6899b83aec) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLM / LLD - Added searchDebounceTime and backendEnvironment parameters to modular drawer feature flags
+
 ## 6.83.1-nightly.0
 
 ### Patch Changes
