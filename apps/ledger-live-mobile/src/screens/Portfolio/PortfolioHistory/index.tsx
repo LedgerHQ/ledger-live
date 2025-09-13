@@ -7,16 +7,12 @@ import { accountsSelector, flattenAccountsSelector } from "~/reducers/accounts";
 
 import { ScreenName } from "~/const";
 import { track } from "~/analytics";
-import { useHideSpamCollection } from "~/hooks/nfts/useHideSpamCollection";
-import PortfolioHistoryListWithoutSpams from "./PortfolioHistoryV2";
 import { PortfolioHistoryList } from "./PortfolioHistoryV1";
 import { Props } from "./types";
 
 function PortfolioHistory({ navigation }: Props) {
-  const { enabled: spamFilteringTxEnabled } = useHideSpamCollection();
-
   const [opCount, setOpCount] = useState(50);
-  const [skipOp, setSkipOp] = useState(0);
+  const [_skipOp, setSkipOp] = useState(0);
 
   function onEndReached() {
     setOpCount(opCount + 50);
@@ -36,16 +32,7 @@ function PortfolioHistory({ navigation }: Props) {
     navigation.navigate(ScreenName.PortfolioOperationHistory);
   }, [navigation]);
 
-  return spamFilteringTxEnabled ? (
-    <PortfolioHistoryListWithoutSpams
-      accounts={accounts}
-      allAccounts={allAccounts}
-      onTransactionButtonPress={onTransactionButtonPress}
-      onEndReached={onEndReached}
-      opCount={opCount}
-      skipOp={skipOp}
-    />
-  ) : (
+  return (
     <PortfolioHistoryList
       accounts={accounts}
       allAccounts={allAccounts}

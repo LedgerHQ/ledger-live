@@ -8,10 +8,6 @@ import {
   walletSyncStepSelector,
 } from "~/renderer/reducers/walletSync";
 
-export type HookProps = {
-  flow?: Flow;
-};
-
 export const FlowOptions: Record<
   Flow,
   {

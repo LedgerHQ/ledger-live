@@ -4,7 +4,7 @@ import uniq from "lodash/uniq";
 import { useSelector } from "react-redux";
 import { Trans, useTranslation } from "react-i18next";
 import { useNavigation, useTheme } from "@react-navigation/native";
-import type { Account, Operation, AccountLike, NFTMetadataResponse } from "@ledgerhq/types-live";
+import type { Account, Operation, AccountLike } from "@ledgerhq/types-live";
 import { getFeesCurrency, getFeesUnit } from "@ledgerhq/live-common/account/index";
 import {
   getOperationAmountNumber,
@@ -13,8 +13,6 @@ import {
   isEditableOperation,
   isStuckOperation,
 } from "@ledgerhq/live-common/operation";
-import { useNftCollectionMetadata, useNftMetadata } from "@ledgerhq/live-nft-react";
-import { NFTResource } from "@ledgerhq/live-nft/types";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { NavigatorName, ScreenName } from "~/const";
 import LText from "~/components/LText";
@@ -33,7 +31,6 @@ import Section, { styles as sectionStyles } from "./Section";
 import byFamiliesOperationDetails from "../../generated/operationDetails";
 import byFamiliesEditOperationPanel from "../../generated/EditOperationPanel";
 import DefaultOperationDetailsExtra from "./Extra";
-import Skeleton from "~/components/Skeleton";
 import type { State } from "~/reducers/types";
 import Title from "./Title";
 import FormatDate from "~/components/DateFormat/FormatDate";
@@ -185,20 +182,6 @@ export default function Content({
         ).OperationDetailsExtra
       : DefaultOperationDetailsExtra;
 
-  const isNftOperation =
-    ["NFT_IN", "NFT_OUT"].includes(type) && operation.contract && operation.tokenId;
-  const { status: collectionStatus, metadata: collectionMetadata } = useNftCollectionMetadata(
-    operation.contract,
-    mainAccount.currency.id,
-  );
-  const { status: nftStatus, metadata: nftMetadata } = useNftMetadata(
-    operation.contract,
-    operation.tokenId,
-    mainAccount.currency.id,
-  ) as NFTResource & {
-    metadata: NFTMetadataResponse["result"];
-  };
-
   return (
     <>
       <View style={styles.header}>
@@ -218,9 +201,6 @@ export default function Content({
           operation={operation}
           currency={currency}
           unit={unit}
-          isNftOperation={!!isNftOperation}
-          status={nftStatus}
-          metadata={nftMetadata}
           styles={styles}
         />
         <View style={styles.confirmationContainer}>
@@ -364,21 +344,6 @@ export default function Content({
       {PostAccountSection && (
         <PostAccountSection operation={operation} type={type} account={account} />
       )}
-
-      {isNftOperation ? (
-        <>
-          <Section title={t("operationDetails.tokenName")}>
-            <Skeleton style={styles.tokenNameSkeleton} loading={collectionStatus === "loading"}>
-              <LText semiBold>{collectionMetadata?.tokenName || "-"}</LText>
-            </Skeleton>
-          </Section>
-          <Section title={t("operationDetails.collectionContract")} value={operation.contract} />
-          <Section title={t("operationDetails.tokenId")} value={operation.tokenId} />
-          {operation.standard === "ERC1155" && (
-            <Section title={t("operationDetails.quantity")} value={operation.value.toFixed()} />
-          )}
-        </>
-      ) : null}
 
       <Section
         title={t("operationDetails.date")}

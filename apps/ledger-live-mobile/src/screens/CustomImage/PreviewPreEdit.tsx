@@ -1,10 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import styled, { useTheme } from "styled-components/native";
 import { Flex, InfiniteLoader, Text } from "@ledgerhq/native-ui";
-import {
-  NFTMetadataLoadingError,
-  ImagePreviewError,
-} from "@ledgerhq/live-common/customImage/errors";
+import { ImagePreviewError } from "@ledgerhq/live-common/customImage/errors";
 import { NativeSyntheticEvent, ImageErrorEventData, Pressable } from "react-native";
 import { useTranslation } from "react-i18next";
 import {
@@ -15,9 +12,6 @@ import {
 } from "@react-navigation/native";
 import { StackNavigationEventMap } from "@react-navigation/stack";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useNftMetadata } from "@ledgerhq/live-nft-react";
-import { NFTResource } from "@ledgerhq/live-nft/types";
-import { NFTMetadata } from "@ledgerhq/types-live";
 import { Device, DeviceModelId } from "@ledgerhq/types-devices";
 import { getDeviceModel } from "@ledgerhq/devices";
 import {
@@ -34,7 +28,6 @@ import { CustomImageNavigatorParamList } from "~/components/RootNavigator/types/
 import { NavigatorName, ScreenName } from "~/const";
 import {
   downloadImageToFile,
-  extractImageUrlFromNftMetadata,
   importImageFromPhoneGallery,
 } from "~/components/CustomImage/imageUtils";
 import { ImageFileUri } from "~/components/CustomImage/types";
@@ -124,11 +117,8 @@ const PreviewPreEdit = ({ navigation, route }: NavigationProps) => {
   const { colors } = useTheme();
   const theme = colors.type as "light" | "dark";
 
-  const isNftMetadata = "nftMetadataParams" in params;
   const isImageUrl = "imageUrl" in params;
   const isImageFileUri = "imageFileUri" in params;
-
-  const nftMetadataParams = isNftMetadata ? params.nftMetadataParams : [];
 
   const forceDefaultNavigationBehaviour = useRef(false);
   const navigateToErrorScreen = useCallback(
@@ -147,31 +137,11 @@ const PreviewPreEdit = ({ navigation, route }: NavigationProps) => {
     [navigateToErrorScreen, device],
   );
 
-  const [contract, tokenId, currencyId] = nftMetadataParams;
-  const nftMetadata = useNftMetadata(contract, tokenId, currencyId);
-
-  const { status, metadata } = nftMetadata as NFTResource & {
-    metadata: NFTMetadata;
-  };
-
-  const isStaxEnabledImage = !!isStaxEnabled || !!metadata?.staxImage;
-  const imageType = isStaxEnabledImage
-    ? "staxEnabledImage"
-    : isNftMetadata
-      ? "originalNFTImage"
-      : "customImage";
-
-  const nftImageUri = extractImageUrlFromNftMetadata(metadata);
+  const isStaxEnabledImage = !!isStaxEnabled;
+  const imageType = isStaxEnabledImage ? "staxEnabledImage" : "customImage";
 
   const imageFileUri = isImageFileUri ? params.imageFileUri : undefined;
-  const imageUrl = nftImageUri || (isImageUrl ? params.imageUrl : undefined);
-
-  useEffect(() => {
-    if (isNftMetadata && ["nodata", "error"].includes(status)) {
-      console.error("Nft metadata loading status", status);
-      navigateToErrorScreen(new NFTMetadataLoadingError(status), device);
-    }
-  }, [device, isNftMetadata, navigateToErrorScreen, navigation, status]);
+  const imageUrl = isImageUrl ? params.imageUrl : undefined;
 
   /** LOAD SOURCE IMAGE FROM PARAMS */
   useEffect(() => {
@@ -181,11 +151,6 @@ const PreviewPreEdit = ({ navigation, route }: NavigationProps) => {
         imageFileUri,
       });
     } else if (imageUrl) {
-      if (isNftMetadata && ["loading", "queued"].includes(status)) {
-        return () => {
-          dead = true;
-        };
-      }
       const { resultPromise, cancel } = downloadImageToFile({ imageUrl });
       resultPromise
         .then(res => {
@@ -202,7 +167,7 @@ const PreviewPreEdit = ({ navigation, route }: NavigationProps) => {
     return () => {
       dead = true;
     };
-  }, [handleError, imageFileUri, imageUrl, status, isNftMetadata]);
+  }, [handleError, imageFileUri, imageUrl]);
 
   /** IMAGE RESIZING */
 

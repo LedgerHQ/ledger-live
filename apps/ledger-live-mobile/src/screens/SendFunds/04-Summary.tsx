@@ -5,9 +5,7 @@ import SafeAreaView from "~/components/SafeAreaView";
 import { useSelector } from "react-redux";
 import { Trans } from "react-i18next";
 import { getMainAccount, getAccountCurrency } from "@ledgerhq/live-common/account/index";
-import type { Account } from "@ledgerhq/types-live";
 import type { TransactionStatus as BitcoinTransactionStatus } from "@ledgerhq/live-common/families/bitcoin/types";
-import { isNftTransaction } from "@ledgerhq/live-nft";
 import { NotEnoughGas } from "@ledgerhq/errors";
 import { useTheme } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
@@ -27,7 +25,6 @@ import SendRowsFee from "~/components/SendRowsFee";
 import SummaryFromSection from "./SummaryFromSection";
 import SummaryToSection from "./SummaryToSection";
 import SummaryAmountSection from "./SummaryAmountSection";
-import SummaryNft from "./SummaryNft";
 import SummaryTotalSection from "./SummaryTotalSection";
 import SectionSeparator from "~/components/SectionSeparator";
 import AlertTriangle from "~/icons/AlertTriangle";
@@ -67,7 +64,6 @@ function SendSummary({ navigation, route }: Props) {
   }));
   invariant(transaction, "transaction is missing");
 
-  const isNFTSend = isNftTransaction(transaction);
   // handle any edit screen changes like fees changes
   useTransactionChangeFromNavigation(setTransaction);
   const [continuing, setContinuing] = useState(false);
@@ -235,9 +231,7 @@ function SendSummary({ navigation, route }: Props) {
           route={route}
         />
         <SectionSeparator lineColor={colors.lightFog} />
-        {isNFTSend ? (
-          <SummaryNft transaction={transaction} currencyId={(account as Account).currency.id} />
-        ) : !isSolanaRawTransaction ? (
+        {!isSolanaRawTransaction ? (
           <SummaryAmountSection
             account={account}
             parentAccount={parentAccount}

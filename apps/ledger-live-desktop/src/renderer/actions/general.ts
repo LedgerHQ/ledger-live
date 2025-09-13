@@ -18,7 +18,7 @@ import {
   sortAccountsComparatorFromOrder,
 } from "@ledgerhq/live-wallet/ordering";
 import { reorderAccounts } from "~/renderer/actions/accounts";
-import { accountsSelector, activeAccountsSelector } from "~/renderer/reducers/accounts";
+import { accountsSelector } from "~/renderer/reducers/accounts";
 import { osDarkModeSelector } from "~/renderer/reducers/application";
 import {
   counterValueCurrencySelector,
@@ -61,7 +61,7 @@ export function useFlattenSortAccounts(options?: FlattenAccountsOptions) {
     [accounts, comparator, options],
   );
 }
-export const delegatableAccountsSelector = createSelector(activeAccountsSelector, accounts =>
+export const delegatableAccountsSelector = createSelector(accountsSelector, accounts =>
   accounts.filter(acc => acc.currency.family === "tezos" && !isAccountDelegating(acc)),
 );
 export function useRefreshAccountsOrdering() {

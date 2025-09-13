@@ -9,8 +9,6 @@ import DummyWalletApp from "./liveApps/dummyWalletApp.webView";
 import WalletAPIReceivePage from "./liveApps/walletAPIReceive";
 import ManagerPage from "./manager/manager.page";
 import MarketPage from "./market/market.page";
-import NftGalleryPage from "./wallet/nftGallery.page";
-import NftViewerPage from "./nft/nftViewer.page";
 import OnboardingStepsPage from "./onboarding/onboardingSteps.page";
 import OperationDetailsPage from "./trade/operationDetails.page";
 import PasswordEntryPage from "./passwordEntry.page";
@@ -59,8 +57,6 @@ export class Application {
   private walletAPIReceivePageInstance = lazyInit(WalletAPIReceivePage);
   private managerPageInstance = lazyInit(ManagerPage);
   private marketPageInstance = lazyInit(MarketPage);
-  private nftGalleryPageInstance = lazyInit(NftGalleryPage);
-  private nftViewerPageInstance = lazyInit(NftViewerPage);
   private onboardingPageInstance = lazyInit(OnboardingStepsPage);
   private operationDetailsPageInstance = lazyInit(OperationDetailsPage);
   private passwordEntryPageInstance = lazyInit(PasswordEntryPage);
@@ -126,14 +122,6 @@ export class Application {
 
   public get market() {
     return this.marketPageInstance();
-  }
-
-  public get nftGallery() {
-    return this.nftGalleryPageInstance();
-  }
-
-  public get nftViewer() {
-    return this.nftViewerPageInstance();
   }
 
   public get onboarding() {

@@ -77,7 +77,6 @@ import type {
   SettingsSetFromLedgerSyncOnboardingPayload,
   SettingsSetHasBeenRedirectedToPostOnboardingPayload,
   SettingsSetMevProtectionPayload,
-  SettingsUpdateNftCollectionStatus,
   SettingsSetSelectedTabPortfolioAssetsPayload,
   SettingsSetIsRebornPayload,
 } from "../actions/types";
@@ -86,8 +85,6 @@ import {
   SettingsSetWalletTabNavigatorLastVisitedTabPayload,
 } from "../actions/types";
 import { ScreenName } from "~/const";
-import { SupportedBlockchain } from "@ledgerhq/live-nft/supported";
-import { NftStatus } from "@ledgerhq/live-nft/types";
 import { findCurrencyByTicker } from "@ledgerhq/live-countervalues/findCurrencyByTicker";
 
 export const timeRangeDaysByKey = {
@@ -120,9 +117,6 @@ export const INITIAL_STATE: SettingsState = {
   hideEmptyTokenAccounts: false,
   filterTokenOperationsZeroAmount: true,
   blacklistedTokenIds: [],
-  hiddenNftCollections: [],
-  whitelistedNftCollections: [],
-  nftCollectionsStatusByNetwork: {} as Record<SupportedBlockchain, Record<string, NftStatus>>,
   dismissedBanners: [],
   hasAvailableUpdate: false,
   theme: "system",
@@ -360,28 +354,6 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
     return {
       ...state,
       blacklistedTokenIds: [...ids, (action as Action<SettingsBlacklistTokenPayload>).payload],
-    };
-  },
-
-  [SettingsActionTypes.UPDATE_NFT_COLLECTION_STATUS]: (state, action) => {
-    const { blockchain, collection, status } = (action as Action<SettingsUpdateNftCollectionStatus>)
-      .payload;
-    return {
-      ...state,
-      nftCollectionsStatusByNetwork: {
-        ...state.nftCollectionsStatusByNetwork,
-        [blockchain]: {
-          ...state.nftCollectionsStatusByNetwork[blockchain],
-          [collection]: status,
-        },
-      },
-    };
-  },
-
-  [SettingsActionTypes.RESET_NFT_COLLECTION_STATUS]: state => {
-    return {
-      ...state,
-      nftCollectionsStatusByNetwork: {} as Record<SupportedBlockchain, Record<string, NftStatus>>,
     };
   },
 
@@ -931,6 +903,3 @@ export const starredMarketCoinsSelector = (state: State) => state.settings.starr
 export const mevProtectionSelector = (state: State) => state.settings.mevProtection;
 export const selectedTabPortfolioAssetsSelector = (state: State) =>
   state.settings.selectedTabPortfolioAssets;
-
-export const nftCollectionsStatusByNetworkSelector = (state: State) =>
-  state.settings.nftCollectionsStatusByNetwork;

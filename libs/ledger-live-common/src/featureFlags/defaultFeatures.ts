@@ -521,7 +521,6 @@ export const DEFAULT_FEATURES: Features = {
   llmMarketQuickActions: DEFAULT_FEATURE,
   spamFilteringTx: DEFAULT_FEATURE,
   lldSpamFilteringTx: DEFAULT_FEATURE,
-  llmSpamFilteringTx: DEFAULT_FEATURE,
   llmMemoTag: DEFAULT_FEATURE,
   lldMemoTag: DEFAULT_FEATURE,
   ldmkTransport: {
@@ -621,6 +620,8 @@ export const DEFAULT_FEATURES: Features = {
       receive_flow: true,
       send_flow: true,
       enableModularization: false,
+      searchDebounceTime: 500,
+      backendEnvironment: "PROD",
     },
   },
   llmModularDrawer: {
@@ -633,6 +634,8 @@ export const DEFAULT_FEATURES: Features = {
       receive_flow: true,
       send_flow: true,
       enableModularization: false,
+      searchDebounceTime: 500,
+      backendEnvironment: "PROD",
     },
   },
   llNftSupport: DEFAULT_FEATURE,

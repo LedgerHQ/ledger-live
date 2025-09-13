@@ -21,6 +21,7 @@ import { buildSignOperation } from "./signOperation";
 import { getAccountShape } from "./sync";
 import { updateTransaction } from "./updateTransaction";
 import { buildOnboardAccount, buildAuthorizePreapproval } from "./onboard";
+import { assignFromAccountRaw, assignToAccountRaw } from "./serialization";
 
 export function createBridges(
   signerContext: SignerContext<CantonSigner>,
@@ -62,6 +63,8 @@ export function createBridges(
     sync,
     receive,
     signOperation,
+    assignToAccountRaw,
+    assignFromAccountRaw,
     getSerializedAddressParameters,
   };
 

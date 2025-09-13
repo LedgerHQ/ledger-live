@@ -1,5 +1,5 @@
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { Account, AccountLike, ProtoNFT, TokenAccount } from "@ledgerhq/types-live";
+import { Account, AccountLike, TokenAccount } from "@ledgerhq/types-live";
 import { ScreenName } from "~/const";
 
 export type AccountsNavigatorParamList = {
@@ -18,17 +18,6 @@ export type AccountsNavigatorParamList = {
     parentId?: string;
     currencyId?: string;
     currencyType?: "CryptoCurrency" | "TokenCurrency";
-  };
-  [ScreenName.NftCollection]: {
-    accountId: string;
-    collection: ProtoNFT[];
-  };
-  [ScreenName.NftGallery]?: {
-    title?: string;
-    accountId: string;
-  };
-  [ScreenName.NftViewer]: {
-    nft: ProtoNFT;
   };
   [ScreenName.Assets]: undefined;
   [ScreenName.Asset]: {

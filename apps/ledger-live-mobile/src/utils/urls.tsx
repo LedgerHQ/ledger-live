@@ -203,10 +203,6 @@ export const urls = {
     tokenAssociation:
       "https://support.ledger.com/article/How-to-manage-Hedera-tokens-with-Ledger-Live",
   },
-  nft: {
-    supportDisableIos: "https://support.ledger.com/article/7572912170653-zd",
-    howToSecure: "https://www.ledger.com/academy/how-to-secure-your-nfts",
-  },
   fwUpdateReleaseNotes: {
     nanoS: "https://support.ledger.com/article/360010446000-zd",
     nanoSP: "https://support.ledger.com/article/4494540771997-zd",

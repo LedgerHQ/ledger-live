@@ -85,7 +85,6 @@ const createSteps = (skipChooseCurrencyStep?: boolean | null): St[] => {
       footer: StepChooseCurrencyFooter,
       onBack: null,
       hideFooter: false,
-      noScroll: true,
     },
     {
       id: "connectDevice",

@@ -2,8 +2,8 @@ import { ChangeEvent, useCallback } from "react";
 import { useModularDrawerAnalytics } from "LLD/features/ModularDrawer/analytics/useModularDrawerAnalytics";
 import { MODULAR_DRAWER_PAGE_NAME } from "LLD/features/ModularDrawer/analytics/modularDrawer.types";
 import { useDispatch, useSelector } from "react-redux";
-import { modularDrawerStateSelector, setSearchedValue } from "~/renderer/reducers/modularDrawer";
 import { useSearchCommon } from "@ledgerhq/live-common/modularDrawer/hooks/useSearch";
+import { modularDrawerSearchedSelector, setSearchedValue } from "~/renderer/reducers/modularDrawer";
 
 export type SearchProps = {
   source: string;
@@ -18,7 +18,9 @@ export type SearchResult = {
 
 export const useSearch = ({ source, flow }: SearchProps): SearchResult => {
   const dispatch = useDispatch();
-  const { searchedValue } = useSelector(modularDrawerStateSelector);
+
+  const searchedValue = useSelector(modularDrawerSearchedSelector);
+
   const { trackModularDrawerEvent } = useModularDrawerAnalytics();
 
   const onTrackSearch = useCallback(

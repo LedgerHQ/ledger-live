@@ -9,7 +9,6 @@ import {
 } from "@ledgerhq/live-common/bridge/react/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
-import { isNftTransaction } from "@ledgerhq/live-nft";
 import { useDebounce } from "@ledgerhq/live-common/hooks/useDebounce";
 import { getStuckAccountAndOperation } from "@ledgerhq/live-common/operation";
 import { Operation } from "@ledgerhq/types-live";
@@ -97,8 +96,6 @@ export default function SendSelectRecipient({ route }: Props) {
 
     return false;
   }, [transaction]);
-
-  const isNftSend = isNftTransaction(transaction);
 
   // handle changes from camera qr code
   const initialTransaction = useRef(transaction);
@@ -194,7 +191,6 @@ export default function SendSelectRecipient({ route }: Props) {
 
     track("SendRecipientContinue");
 
-    // ERC721 transactions are always sending 1 NFT, so amount step is unnecessary
     if (shouldSkipAmount) {
       return navigation.navigate(ScreenName.SendSummary, {
         ...route.params,
@@ -203,14 +199,6 @@ export default function SendSelectRecipient({ route }: Props) {
         transaction,
         currentNavigation: ScreenName.SendSummary,
         nextNavigation: ScreenName.SendSelectDevice,
-      });
-    }
-
-    if (isNftSend) {
-      return navigation.navigate(ScreenName.SendAmountNft, {
-        accountId: account.id,
-        parentId: parentAccount?.id,
-        transaction,
       });
     }
 
@@ -223,7 +211,6 @@ export default function SendSelectRecipient({ route }: Props) {
     account,
     transaction,
     shouldSkipAmount,
-    isNftSend,
     navigation,
     parentAccount?.id,
     route.params,
@@ -238,8 +225,7 @@ export default function SendSelectRecipient({ route }: Props) {
   const warning = status.warnings.recipient;
   const isSomeIncomingTxPending = account.operations?.some(
     (op: Operation) =>
-      (op.type === "IN" || op.type === "NFT_IN") &&
-      !isConfirmedOperation(op, mainAccount, currencySettings.confirmationsNb),
+      op.type === "IN" && !isConfirmedOperation(op, mainAccount, currencySettings.confirmationsNb),
   );
 
   const specific =

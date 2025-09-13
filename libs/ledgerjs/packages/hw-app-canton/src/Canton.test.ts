@@ -34,7 +34,8 @@ describe("Canton", () => {
 
       // THEN
       expect(result).toEqual({
-        address: "canton_1a7a97e0",
+        address: "402f2e68",
+        path: "44'/6767'/0'/0'/0'",
         publicKey: "c59f7f29374d24506dd6490a5db472cf00958e195e146f3dc9c97f96d5c51097",
       });
     });
@@ -54,7 +55,8 @@ describe("Canton", () => {
 
       // THEN
       expect(result).toEqual({
-        address: "canton_1a7a97e0",
+        address: "402f2e68",
+        path: "44'/6767'/0'/0'/0'",
         publicKey: "c59f7f29374d24506dd6490a5db472cf00958e195e146f3dc9c97f96d5c51097",
       });
     });
@@ -68,8 +70,7 @@ describe("Canton", () => {
       return expect(canton.getAddress("invalid path")).rejects.toThrow();
     });
 
-    // unskip when TODO comment is handled
-    it.skip("should handle various derivation paths", async () => {
+    it("should handle various derivation paths", async () => {
       // GIVEN
       const transport = await openTransportReplayer(
         RecordStore.fromString(`

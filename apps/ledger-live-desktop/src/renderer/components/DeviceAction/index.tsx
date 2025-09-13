@@ -19,7 +19,7 @@ import {
 } from "~/renderer/actions/settings";
 import {
   preferredDeviceModelSelector,
-  storeSelector as settingsSelector,
+  settingsStoreSelector as settingsSelector,
   trackingEnabledSelector,
 } from "~/renderer/reducers/settings";
 import { DeviceModelId } from "@ledgerhq/devices";

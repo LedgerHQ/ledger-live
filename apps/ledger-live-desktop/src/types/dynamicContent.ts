@@ -5,7 +5,6 @@ export enum LocationContentCard {
 }
 
 export enum Platform {
-  Mobile = "mobile",
   Desktop = "desktop",
 }
 

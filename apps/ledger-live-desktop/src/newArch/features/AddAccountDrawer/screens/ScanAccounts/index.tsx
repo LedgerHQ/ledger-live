@@ -36,7 +36,6 @@ const ScanAccounts = ({
   const { t } = useTranslation();
 
   const {
-    allImportableAccountsSelected,
     creatableAccounts,
     error,
     handleConfirm,
@@ -114,11 +113,11 @@ const ScanAccounts = ({
       <ScrollContainer>
         {importableAccounts.length > 0 ? (
           <ImportableAccountsList
-            allImportableAccountsSelected={allImportableAccountsSelected}
             handleDeselectAll={handleDeselectAll}
             handleSelectAll={handleSelectAll}
             importableAccounts={importableAccounts}
             renderAccount={renderAccount}
+            selectedIds={selectedIds}
             scanning={scanning}
           />
         ) : null}

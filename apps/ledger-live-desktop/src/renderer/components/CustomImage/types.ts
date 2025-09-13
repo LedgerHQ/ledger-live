@@ -13,19 +13,3 @@ export type ImageBase64Data = {
    */
   imageBase64DataUri: string;
 };
-
-// export type ImageFileUri = {
-//   /**
-//    * Image file URI locating an image file on the device.
-//    * e.g "file://the_image_path
-//    */
-//   imageFileUri: string;
-// };
-
-export type ImageUrl = {
-  /**
-   * Image URL locating an image on the internet.
-   * e.g: "https://example.com/an_image.png"
-   */
-  imageUrl: string;
-};

@@ -12,10 +12,6 @@ import { getCurrentDevice } from "~/renderer/reducers/devices";
 import { LedgerError } from "../DeviceAction";
 import { HOOKS_TRACKING_LOCATIONS } from "~/renderer/analytics/hooks/variables";
 
-export type BasicStepProps = {
-  t: TFunction;
-  transitionTo: (a: string) => void;
-};
 export type Step<T, StepProps> = {
   id: T;
   label?: React.ReactNode;

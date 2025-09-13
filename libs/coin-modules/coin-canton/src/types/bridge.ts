@@ -1,6 +1,8 @@
 import type { BigNumber } from "bignumber.js";
 import type { Observable } from "rxjs";
 import type {
+  Account,
+  AccountRaw,
   CurrencyBridge,
   TransactionCommon,
   TransactionCommonRaw,
@@ -50,3 +52,17 @@ export type TransactionRaw = TransactionCommonRaw & {
 
 export type TransactionStatus = TransactionStatusCommon;
 export type TransactionStatusRaw = TransactionStatusCommonRaw;
+
+export type CantonResources = {
+  partyId: string;
+};
+export type CantonResourcesRaw = {
+  partyId: string;
+};
+
+export type CantonAccount = Account & {
+  cantonResources?: CantonResources;
+};
+export type CantonAccountRaw = AccountRaw & {
+  cantonResources: CantonResourcesRaw;
+};

@@ -67,7 +67,7 @@ const InfoText = styled(Text).attrs(p => ({
   line-height: 18px;
   white-space: pre-wrap;
 `;
-export const LiveAppDisclaimer = ({ manifest }: Props) => {
+const LiveAppDisclaimer = ({ manifest }: Props) => {
   const { colors } = useTheme();
   const { t } = useTranslation();
   return (

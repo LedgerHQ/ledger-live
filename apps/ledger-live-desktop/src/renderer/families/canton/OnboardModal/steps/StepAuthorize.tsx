@@ -3,6 +3,7 @@ import { Trans } from "react-i18next";
 import type { CantonCurrencyBridge } from "@ledgerhq/coin-canton/types";
 import {
   getDerivationScheme,
+  getDerivationModesForCurrency,
   runAccountDerivationScheme,
 } from "@ledgerhq/coin-framework/derivation";
 import Box from "~/renderer/components/Box";
@@ -87,7 +88,8 @@ const StepAuthorize = ({
         return null;
       }
 
-      const derivationScheme = getDerivationScheme({ derivationMode: "", currency });
+      const derivationMode = getDerivationModesForCurrency(currency)[0];
+      const derivationScheme = getDerivationScheme({ derivationMode, currency });
       const freshAddressPath = runAccountDerivationScheme(derivationScheme, currency, {
         account: 0,
       });
@@ -100,7 +102,7 @@ const StepAuthorize = ({
         freshAddressPath,
         balance: new BigNumber(0),
         spendableBalance: new BigNumber(0),
-        derivationMode: "",
+        derivationMode,
         index: 0,
         seedIdentifier: "canton-placeholder",
         used: false,

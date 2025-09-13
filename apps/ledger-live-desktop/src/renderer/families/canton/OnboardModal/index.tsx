@@ -24,6 +24,7 @@ import {
 } from "@ledgerhq/coin-canton/types";
 import {
   getDerivationScheme,
+  getDerivationModesForCurrency,
   runAccountDerivationScheme,
 } from "@ledgerhq/coin-framework/derivation";
 import logger from "~/renderer/logger";
@@ -136,32 +137,38 @@ class OnboardModal extends PureComponent<Props, State> {
       addAccountsAction,
       existingAccounts,
       closeModal,
-      editedNames: _editedNames,
+      editedNames,
+      selectedAccounts,
       currency,
     } = this.props;
-    const { onboardingData, accountName } = this.state;
-    const address = onboardingData?.partyId;
-    // TODO: we need better solution ?
-    const xpubOrAddress = address?.replace(/:/g, "_") || "";
+    const { onboardingData } = this.state;
+    const address = onboardingData?.completedAccount?.freshAddress || "";
+    const derivationMode = onboardingData?.completedAccount?.derivationMode || "";
+    const xpubOrAddress = onboardingData?.completedAccount?.xpub || "";
     const accountId = encodeAccountId({
       type: "js",
       version: "2",
       currencyId: currency.id,
       xpubOrAddress,
-      derivationMode: "",
+      derivationMode,
     });
     const completedAccount = {
       ...onboardingData?.completedAccount,
       id: accountId,
-      freshAddress: xpubOrAddress,
+      freshAddress: address,
       type: "Account" as const,
     } as Account;
+    const selectedAccount = selectedAccounts[0];
 
     addAccountsAction({
       scannedAccounts: [completedAccount],
       existingAccounts,
       selectedIds: [completedAccount.id],
-      renamings: { [completedAccount.id]: accountName },
+      renamings: {
+        [completedAccount.id]: selectedAccount
+          ? editedNames[selectedAccount.id] || getDefaultAccountName(selectedAccount)
+          : `${currency.name} 1`,
+      },
     });
 
     closeModal("MODAL_CANTON_ONBOARD_ACCOUNT");
@@ -218,7 +225,8 @@ class OnboardModal extends PureComponent<Props, State> {
 
     const { partyId, address: _address, device: deviceId, accountIndex } = onboardingData;
 
-    const derivationScheme = getDerivationScheme({ derivationMode: "", currency });
+    const derivationMode = getDerivationModesForCurrency(currency)[0];
+    const derivationScheme = getDerivationScheme({ derivationMode, currency });
     const derivationPath = runAccountDerivationScheme(derivationScheme, currency, {
       account: accountIndex,
     });

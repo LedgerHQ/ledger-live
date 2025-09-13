@@ -16,12 +16,12 @@ import {
   ADD_ACCOUNT_PAGE_NAME,
 } from "../../analytics/addAccount.types";
 import useAddAccountAnalytics from "../../analytics/useAddAccountAnalytics";
+import { WARNING_REASON, WarningReason } from "../../domain";
 import {
   determineSelectedIds,
   getGroupedAccounts,
   getUnimportedAccounts,
 } from "./utils/processAccounts";
-import { WARNING_REASON, WarningReason } from "../../domain";
 
 const selectImportable = (importable: Account[]) => (selected: string[]) => {
   const importableIds = importable.map(a => a.id);
@@ -106,11 +106,10 @@ export function useScanAccounts({
   }, [blacklistedTokenIds, currency, deviceId, stopSubscription]);
 
   useEffect(() => {
-    const processedAccountIds = new Set<string>();
-
     const unimportedAccounts = getUnimportedAccounts(scannedAccounts, existingAccounts);
     const onlyNewAccounts = unimportedAccounts.every(isAccountEmpty);
 
+    const processedAccountIds = new Set<string>();
     const freshAccounts = unimportedAccounts.filter(acc => {
       if (processedAccountIds.has(acc.id)) {
         return false;
@@ -122,13 +121,47 @@ export function useScanAccounts({
     setSelectedIds(current => determineSelectedIds(freshAccounts, onlyNewAccounts, current));
   }, [existingAccounts, scannedAccounts]);
 
+  const {
+    importableAccounts,
+    filteredSelectedIds,
+    creatableAccounts,
+    alreadyEmptyAccount,
+    accountsToImport,
+  } = useMemo(() => {
+    const { importableAccounts, creatableAccounts, alreadyEmptyAccount } = getGroupedAccounts(
+      existingAccounts,
+      scannedAccounts,
+      scanning,
+      newAccountSchemes,
+      showAllCreatedAccounts,
+    );
+    const availableAccounts = [...importableAccounts, ...creatableAccounts];
+    const availableAccountIds = new Set(availableAccounts.map(a => a.id));
+    const filteredSelectedIds = selectedIds.filter(id => availableAccountIds.has(id));
+    const accountsToImport = availableAccounts.filter(a => filteredSelectedIds.includes(a.id));
+    return {
+      importableAccounts,
+      filteredSelectedIds,
+      creatableAccounts,
+      alreadyEmptyAccount,
+      accountsToImport,
+    };
+  }, [
+    existingAccounts,
+    scannedAccounts,
+    scanning,
+    newAccountSchemes,
+    showAllCreatedAccounts,
+    selectedIds,
+  ]);
+
   const handleConfirm = useCallback(() => {
     trackAddAccountEvent(ADD_ACCOUNT_EVENTS_NAME.ADD_ACCOUNT_BUTTON_CLICKED, {
       button: "Confirm",
       page: ADD_ACCOUNT_PAGE_NAME.LOOKING_FOR_ACCOUNTS,
       flow: ADD_ACCOUNT_FLOW_NAME,
     });
-    const accountsToImport = scannedAccounts.filter(a => selectedIds.includes(a.id));
+
     if (accountsToImport.length > 0) {
       setHasImportedAccounts(true);
     }
@@ -136,36 +169,22 @@ export function useScanAccounts({
       addAccountsAction({
         existingAccounts,
         scannedAccounts,
-        selectedIds,
+        selectedIds: filteredSelectedIds,
         renamings: {},
       }),
     );
-    onComplete(scannedAccounts.filter(a => selectedIds.includes(a.id)));
-  }, [dispatch, existingAccounts, scannedAccounts, selectedIds, onComplete, trackAddAccountEvent]);
+    onComplete(accountsToImport);
+  }, [
+    trackAddAccountEvent,
+    accountsToImport,
+    dispatch,
+    existingAccounts,
+    scannedAccounts,
+    filteredSelectedIds,
+    onComplete,
+  ]);
 
-  const toggleShowAllCreatedAccounts = useCallback(
-    () => setShowAllCreatedAccounts(prevState => !prevState),
-    [],
-  );
-
-  const { importableAccounts, creatableAccounts, alreadyEmptyAccount } = useMemo(
-    () =>
-      getGroupedAccounts(
-        existingAccounts,
-        scannedAccounts,
-        scanning,
-        newAccountSchemes,
-        showAllCreatedAccounts,
-      ),
-    [newAccountSchemes, existingAccounts, scannedAccounts, scanning, showAllCreatedAccounts],
-  );
-
-  const allImportableAccountsSelected = useMemo(
-    () =>
-      importableAccounts.length > 0 &&
-      importableAccounts.every(account => selectedIds.includes(account.id)),
-    [importableAccounts, selectedIds],
-  );
+  const toggleShowAllCreatedAccounts = useCallback(() => setShowAllCreatedAccounts(p => !p), []);
 
   const handleToggle = useCallback((accountId: string) => {
     setSelectedIds(prev =>
@@ -197,6 +216,7 @@ export function useScanAccounts({
         ? getLLDCoinFamily(currency.family).NoAssociatedAccounts
         : null;
 
+    // TODO: by moving this logic to handleConfirm, we can remove the trigger state and calculate it via memoization to avoid this useEffect
     if (!scanning && !hasImportedAccounts) {
       if (alreadyEmptyAccount && !importableAccounts.length) {
         navigateToWarningScreen(WARNING_REASON.ALREADY_EMPTY_ACCOUNT, alreadyEmptyAccount);
@@ -216,7 +236,6 @@ export function useScanAccounts({
   ]);
 
   return {
-    allImportableAccountsSelected,
     creatableAccounts,
     error,
     handleConfirm,
@@ -226,7 +245,7 @@ export function useScanAccounts({
     importableAccounts,
     newAccountSchemes,
     scanning,
-    selectedIds,
+    selectedIds: filteredSelectedIds,
     showAllCreatedAccounts,
     stopSubscription,
     toggleShowAllCreatedAccounts,

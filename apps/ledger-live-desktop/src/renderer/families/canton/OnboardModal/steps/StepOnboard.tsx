@@ -2,7 +2,9 @@ import React, { useCallback, useEffect, useState, useMemo } from "react";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
 import BigNumber from "bignumber.js";
+import { Account } from "@ledgerhq/types-live";
 import {
+  getDerivationModesForCurrency,
   getDerivationScheme,
   runAccountDerivationScheme,
 } from "@ledgerhq/coin-framework/derivation";
@@ -33,6 +35,7 @@ interface SigningData {
 
 interface OnboardingResult {
   partyId: string;
+  account: Partial<Account>;
   address?: string;
   publicKey?: string;
   transactionHash?: string;
@@ -87,7 +90,8 @@ export default function StepOnboard({
     return (
       selectedAccount ||
       (() => {
-        const derivationScheme = getDerivationScheme({ derivationMode: "", currency });
+        const derivationMode = getDerivationModesForCurrency(currency)[0];
+        const derivationScheme = getDerivationScheme({ derivationMode, currency });
         const freshAddressPath = runAccountDerivationScheme(derivationScheme, currency, {
           account: 0,
         });
@@ -97,14 +101,14 @@ export default function StepOnboard({
           version: "2",
           currencyId: currency.id,
           xpubOrAddress: "canton-placeholder-address",
-          derivationMode: "",
+          derivationMode,
         });
 
         return {
           type: "Account" as const,
           id: accountId,
           seedIdentifier: "canton-onboard",
-          derivationMode: "",
+          derivationMode,
           index: 0,
           freshAddress: "canton-placeholder-address",
           freshAddressPath,
@@ -182,7 +186,8 @@ export default function StepOnboard({
 
     const accountIndex = 0;
 
-    const derivationScheme = getDerivationScheme({ derivationMode: "", currency });
+    const derivationMode = getDerivationModesForCurrency(currency)[0];
+    const derivationScheme = getDerivationScheme({ derivationMode, currency });
     const derivationPath = runAccountDerivationScheme(derivationScheme, currency, {
       account: accountIndex,
     });
@@ -223,6 +228,7 @@ export default function StepOnboard({
         if ("partyId" in progressData && !("status" in progressData)) {
           onboardingResult = {
             partyId: progressData.partyId,
+            account: progressData.account,
             // The bridge implementation doesn't provide these fields, so we'll use placeholders
             publicKey: "generated-public-key",
             address: progressData.partyId,
@@ -232,7 +238,7 @@ export default function StepOnboard({
       complete: () => {
         logger.log("Canton onboarding completed successfully", onboardingResult);
 
-        if (onboardingResult?.partyId) {
+        if (onboardingResult?.partyId && onboardingResult?.account) {
           const onboardingDataObject = {
             partyId: onboardingResult.partyId,
             address: onboardingResult.address || "",
@@ -242,11 +248,11 @@ export default function StepOnboard({
             currency: currency.id,
             accountName: accountName,
             transactionHash: onboardingResult.transactionHash || "",
-            completedAccount: placeholderAccount,
+            completedAccount: onboardingResult.account || placeholderAccount,
           };
 
           logger.log("[StepOnboard] Storing onboarding data:", onboardingDataObject);
-          setOnboardingData?.(onboardingDataObject);
+          setOnboardingData?.(onboardingDataObject as OnboardingData);
 
           logger.log("[StepOnboard] Setting onboarding completed to true");
           setOnboardingCompleted?.(true);

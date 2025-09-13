@@ -31,8 +31,6 @@ import { CLSSupportedDeviceModelId } from "@ledgerhq/live-common/device/use-case
 import { WalletState } from "@ledgerhq/live-wallet/store";
 import { TrustchainStore } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { Steps } from "LLM/features/WalletSync/types/Activation";
-import { SupportedBlockchain } from "@ledgerhq/live-nft/supported";
-import { NftStatus } from "@ledgerhq/live-nft/types";
 import { type TabListType as TabPortfolioAssetsType } from "~/screens/Portfolio/useListsAnimation";
 import { CountervaluesState } from "./countervalues";
 import { ToastState } from "./toast";
@@ -239,9 +237,6 @@ export type SettingsState = {
   hideEmptyTokenAccounts: boolean;
   filterTokenOperationsZeroAmount: boolean;
   blacklistedTokenIds: string[];
-  hiddenNftCollections: string[];
-  whitelistedNftCollections: string[];
-  nftCollectionsStatusByNetwork: Record<SupportedBlockchain, Record<string, NftStatus>>;
   dismissedBanners: string[];
   hasAvailableUpdate: boolean;
   theme: Theme;
@@ -366,15 +361,6 @@ export type ProtectState = {
   protectStatus: ProtectStateNumberEnum;
 };
 
-// === NFT STATE ===
-
-export type NftState = {
-  filterDrawerVisible: boolean;
-  galleryChainFilters: NftGalleryChainFiltersState;
-};
-
-export type NftGalleryChainFiltersState = Record<SupportedBlockchain, boolean>;
-
 // === MARKET STATE ===
 
 export type MarketState = {
@@ -412,7 +398,6 @@ export type State = {
   largeMover: LargeMoverState;
   market: MarketState;
   modularDrawer: ModularDrawerState;
-  nft: NftState;
   notifications: NotificationsState;
   postOnboarding: PostOnboardingState;
   protect: ProtectState;

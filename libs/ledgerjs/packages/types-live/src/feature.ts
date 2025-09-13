@@ -210,7 +210,6 @@ export type Features = CurrencyFeatures & {
   llmMarketQuickActions: DefaultFeature;
   spamFilteringTx: Feature_SpamFilteringTx;
   lldSpamFilteringTx: DefaultFeature;
-  llmSpamFilteringTx: DefaultFeature;
   llmMemoTag: Feature_MemoTag;
   lldMemoTag: Feature_MemoTag;
   ldmkTransport: Feature_LdmkTransport;
@@ -661,6 +660,8 @@ type Feature_ModularDrawer = Feature<{
   receive_flow: boolean;
   send_flow: boolean;
   enableModularization: boolean;
+  searchDebounceTime: number;
+  backendEnvironment: string;
 }>;
 
 export type Feature_CounterValue = DefaultFeature;

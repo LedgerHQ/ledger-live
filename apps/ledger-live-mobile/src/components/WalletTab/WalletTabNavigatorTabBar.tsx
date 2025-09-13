@@ -28,8 +28,6 @@ const StyledAnimatedView = styled(Animated.View)<BaseStyledProps>`
 
 function getAnalyticsEvent(route: string) {
   switch (route) {
-    case ScreenName.WalletNftGallery:
-      return "NFTs";
     case NavigatorName.Market:
       return "Market";
     case ScreenName.Portfolio:

@@ -1,6 +1,11 @@
 import { Observable } from "rxjs";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
-import { CantonSigner } from "../types/signer";
+import { emptyHistoryCache } from "@ledgerhq/coin-framework/account/index";
+import { getDerivationModesForCurrency } from "@ledgerhq/coin-framework/derivation";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
+import { getAccountShape } from "./sync";
+import { CantonAccount, CantonSigner } from "../types";
+import type { Account } from "@ledgerhq/types-live";
 import {
   prepareOnboarding,
   submitOnboarding,
@@ -19,8 +24,9 @@ import {
   CantonPreApprovalResult,
   PrepareTransactionResponse,
 } from "../types/onboard";
+import resolver from "../signer";
 
-async function getKeypair(
+async function _getKeypair(
   signerContext: SignerContext<CantonSigner>,
   deviceId: string,
   derivationPath: string,
@@ -31,20 +37,23 @@ async function getKeypair(
   });
 }
 
+const currency = getCryptoCurrencyById("canton_network");
+const derivationMode = getDerivationModesForCurrency(currency)[0];
+
 export const isAccountOnboarded = async (
   publicKey: string,
-): Promise<false | { party_id: string }> => {
+): Promise<{ isOnboarded: boolean; party_id?: string }> => {
   try {
     const { party_id } = await getPartyByPubKey(publicKey);
 
     if (party_id) {
-      return { party_id };
+      return { isOnboarded: true, party_id };
     } else {
-      return false;
+      return { isOnboarded: false };
     }
   } catch (err) {
     log("[isAccountOnboarded] Error checking party status (likely not onboarded):", err);
-    return false;
+    return { isOnboarded: false };
   }
 };
 
@@ -59,22 +68,29 @@ export const buildOnboardAccount =
         observer.next({
           status: OnboardStatus.INIT,
         });
-        const keypair = await getKeypair(signerContext, deviceId, derivationPath);
+        const getAddress = resolver(signerContext);
+        const { address, publicKey } = await getAddress(deviceId, {
+          path: derivationPath,
+          currency,
+          derivationMode: derivationMode || "",
+        });
 
         observer.next({
           status: OnboardStatus.PREPARE,
         });
 
-        const isOnboardedResult = await isAccountOnboarded(keypair.publicKey);
-        if (isOnboardedResult && isOnboardedResult.party_id) {
+        const { party_id: partyId } = await isAccountOnboarded(publicKey);
+        if (partyId) {
+          const account = await createAccount({ address, derivationPath, partyId });
           observer.next({
-            partyId: isOnboardedResult.party_id,
+            partyId,
+            account,
           });
           observer.complete();
           return;
         }
 
-        const preparedTransaction = await prepareOnboarding(keypair.publicKey, "ed25519");
+        const preparedTransaction = await prepareOnboarding(publicKey, "ed25519");
 
         observer.next({
           status: OnboardStatus.SIGN,
@@ -89,26 +105,39 @@ export const buildOnboardAccount =
         });
 
         const result = await submitOnboarding(
-          { public_key: keypair.publicKey, public_key_type: "ed25519" },
+          { public_key: publicKey, public_key_type: "ed25519" },
           preparedTransaction,
           signature,
-        ).catch(err => {
+        ).catch(async err => {
           if (err.type === "PARTY_ALREADY_EXISTS") {
+            const account = await createAccount({
+              address,
+              derivationPath,
+              partyId: preparedTransaction.party_id,
+            });
             observer.next({
               partyId: preparedTransaction.party_id,
+              account,
             });
             return observer.complete();
           }
           throw err;
         });
 
-        observer.next({
-          status: OnboardStatus.SUCCESS,
-        });
-
-        observer.next({
-          partyId: result?.party?.party_id || "unknown",
-        });
+        if (result) {
+          observer.next({
+            status: OnboardStatus.SUCCESS,
+          });
+          const account = await createAccount({
+            address,
+            derivationPath,
+            partyId: result.party.party_id,
+          });
+          observer.next({
+            partyId: result.party.party_id,
+            account,
+          });
+        }
 
         observer.complete();
       }
@@ -164,38 +193,35 @@ export const buildAuthorizePreapproval =
           isApproved,
         });
 
-        // TODO: remove after demo
         const handleTapRequest = async () => {
           try {
-            observer.next({
-              status: PreApprovalStatus.PREPARE,
-            });
-
             const { serialized, hash } = await prepareTapRequest({
               partyId,
             });
 
-            observer.next({
-              status: PreApprovalStatus.SIGN,
-            });
+            if (serialized && hash) {
+              observer.next({
+                status: PreApprovalStatus.SIGN,
+              });
 
-            const signature = await signerContext(deviceId, signer =>
-              signer.signTransaction(derivationPath, hash),
-            );
+              const signature = await signerContext(deviceId, signer =>
+                signer.signTransaction(derivationPath, hash),
+              );
 
-            observer.next({
-              status: PreApprovalStatus.SUBMIT,
-            });
+              observer.next({
+                status: PreApprovalStatus.SUBMIT,
+              });
 
-            await submitTapRequest({
-              partyId,
-              serialized,
-              signature,
-            });
+              await submitTapRequest({
+                partyId,
+                serialized,
+                signature,
+              });
 
-            observer.next({
-              status: PreApprovalStatus.SUCCESS,
-            });
+              observer.next({
+                status: PreApprovalStatus.SUCCESS,
+              });
+            }
           } catch (err) {
             // Tap request failure should not break the pre-approval flow
           }
@@ -214,7 +240,54 @@ export const buildAuthorizePreapproval =
       );
     });
 
-const log = (message: string, ...rest: any[]) => {
+const createAccount = async ({
+  address,
+  partyId,
+  derivationPath,
+  index = 0,
+}: {
+  address: string;
+  derivationPath: string;
+  partyId: string;
+  index?: number;
+}): Promise<Partial<Account>> => {
+  const accountShape = await getAccountShape(
+    {
+      address,
+      currency,
+      derivationMode,
+      derivationPath,
+      index,
+      rest: {
+        cantonResources: {
+          partyId,
+        },
+      },
+    },
+    { paginationConfig: {} },
+  );
+
+  const account: Partial<CantonAccount> = {
+    ...accountShape,
+    type: "Account",
+    xpub: partyId.replace(/:/g, "_"),
+    index,
+    // operations: [],
+    currency,
+    derivationMode,
+    lastSyncDate: new Date(),
+    pendingOperations: [],
+    seedIdentifier: address,
+    balanceHistoryCache: emptyHistoryCache,
+    cantonResources: {
+      partyId,
+    },
+  };
+
+  return account;
+};
+
+const log = (message: string, ...rest: unknown[]) => {
   // eslint-disable-next-line no-console
   console.log(message, ...rest);
 };

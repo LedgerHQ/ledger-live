@@ -13,7 +13,6 @@ import {
 import { accountsSelector } from "~/renderer/reducers/accounts";
 import { counterValueCurrencySelector } from "~/renderer/reducers/settings";
 import { sortAccountsByFiatValue } from "../utils/sortAccountsByFiatValue";
-import BigNumber from "bignumber.js";
 import { formatDetailedAccount } from "../utils/formatDetailedAccount";
 import { isTokenCurrency } from "@ledgerhq/live-common/currencies/helpers";
 import { useDiscreetMode } from "~/renderer/components/Discreet";
@@ -25,16 +24,6 @@ import { Account } from "@ledgerhq/types-live";
 import { useBatchMaybeAccountName } from "~/renderer/reducers/wallet";
 import orderBy from "lodash/orderBy";
 import keyBy from "lodash/keyBy";
-
-export const sortAccountsByBalance = (
-  a: { balance: BigNumber } | undefined,
-  b: { balance: BigNumber } | undefined,
-) => {
-  if (a && b) return b.balance.comparedTo(a.balance);
-  if (a) return -1;
-  if (b) return 1;
-  return 0;
-};
 
 export const useDetailedAccounts = (
   asset: CryptoOrTokenCurrency,

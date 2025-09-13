@@ -53,7 +53,6 @@ import { getSwapStepFromError } from "../../exchange/error";
 import { postSwapCancelled } from "../../exchange/swap";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { setBroadcastTransaction } from "../../exchange/swap/setBroadcastTransaction";
-import { FAMILIES_MAPPING_LL_TO_WAPI } from "../constants";
 
 export { ExchangeType };
 
@@ -486,14 +485,11 @@ export const handlers = ({
       });
 
       const mainFromAccount = getMainAccount(fromAccount, fromParentAccount);
-      const mainFromAccountFamily =
-        FAMILIES_MAPPING_LL_TO_WAPI[mainFromAccount.currency.family] ||
-        mainFromAccount.currency.family;
 
-      if (transaction.family !== mainFromAccountFamily) {
+      if (transaction.family !== mainFromAccount.currency.family) {
         return Promise.reject(
           new Error(
-            `Account and transaction must be from the same family. Account family: ${mainFromAccountFamily}, Transaction family: ${transaction.family}`,
+            `Account and transaction must be from the same family. Account family: ${mainFromAccount.currency.family}, Transaction family: ${transaction.family}`,
           ),
         );
       }
@@ -804,27 +800,34 @@ async function getStrategy(
     delete customFeeConfig.utxoStrategy;
   }
 
-  // Normalize family key for strategy lookup
-  const familyKey = FAMILIES_MAPPING_LL_TO_WAPI[family] || family;
-  const strategy = transactionStrategy?.[familyKey];
+  const strategy = transactionStrategy?.[family];
 
   if (!strategy) {
-    throw new Error(`No transaction strategy found for family: ${familyKey}`);
+    throw new Error(`No transaction strategy found for family: ${family}`);
+  }
+
+  // Convert customFeeConfig values to BigNumber
+  const convertedCustomFeeConfig: { [key: string]: BigNumber } = {};
+  if (customFeeConfig) {
+    for (const [key, value] of Object.entries(customFeeConfig)) {
+      convertedCustomFeeConfig[key] = new BigNumber(value?.toString() || 0);
+    }
   }
 
   try {
     return await strategy({
-      family: familyKey,
-      amount,
+      family,
+      amount: new BigNumber(amount),
       recipient,
-      customFeeConfig: customFeeConfig || {},
+      customFeeConfig: convertedCustomFeeConfig,
       payinExtraId,
       extraTransactionParameters,
       customErrorType,
     });
   } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : String(error);
     throw new Error(
-      `Failed to execute transaction strategy for family: ${familyKey}. Reason: ${(error as Error).message}`,
+      `Failed to execute transaction strategy for family: ${family}. Reason: ${errorMessage}`,
     );
   }
 }

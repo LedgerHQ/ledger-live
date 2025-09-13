@@ -8,7 +8,7 @@ import TrackDrawerScreen from "../../analytics/TrackDrawerScreen";
 import { CurrenciesByProviderId, LoadingStatus } from "@ledgerhq/live-common/deposit/type";
 import { GenericError } from "../../components/GenericError";
 import { useSelector } from "react-redux";
-import { modularDrawerStateSelector } from "~/renderer/reducers/modularDrawer";
+import { modularDrawerSearchedSelector } from "~/renderer/reducers/modularDrawer";
 
 export type AssetSelectionStepProps = {
   assetsToDisplay: CryptoOrTokenCurrency[];
@@ -37,7 +37,7 @@ const AssetSelection = ({
   error,
   refetch,
 }: Readonly<AssetSelectionStepProps>) => {
-  const { searchedValue } = useSelector(modularDrawerStateSelector);
+  const searchedValue = useSelector(modularDrawerSearchedSelector);
 
   const [shouldScrollToTop, setShouldScrollToTop] = useState(false);
 

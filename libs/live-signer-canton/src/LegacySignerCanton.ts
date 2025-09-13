@@ -44,12 +44,12 @@ export class LegacySignerCanton implements CantonSigner {
     return !outdated;
   }
 
-  async getAddress(path: string): Promise<CantonAddress> {
+  async getAddress(path: string, display: boolean = false): Promise<CantonAddress> {
     if (this.transport.deviceModel?.id !== DeviceModelId.nanoS) {
       await this.checkAppVersion(MIN_VERSION, { throwOnOutdated: true });
     }
 
-    return this.signer.getAddress(path);
+    return this.signer.getAddress(path, display);
   }
 
   async signTransaction(path: string, rawTx: string): Promise<CantonSignature> {

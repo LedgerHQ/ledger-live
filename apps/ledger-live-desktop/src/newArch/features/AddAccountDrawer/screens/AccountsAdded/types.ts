@@ -15,6 +15,7 @@ export interface AccountListProps {
   accounts: Account[];
   formatAccount: (account: Account) => FormattedAccount;
   navigateToEditAccountName: (account: Account) => void;
+  isAccountSelectionFlow: boolean;
 }
 
 export interface AccountsAddedProps {

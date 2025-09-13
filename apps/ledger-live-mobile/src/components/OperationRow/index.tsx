@@ -21,7 +21,6 @@ import CounterValue from "../CounterValue";
 import OperationIcon from "../OperationIcon";
 import { ScreenName } from "~/const";
 import OperationRowDate from "../OperationRowDate";
-import OperationRowNftName from "../OperationRowNftName";
 import perFamilyOperationDetails from "../../generated/operationDetails";
 import { track } from "~/analytics";
 import { UnionToIntersection } from "~/types/helpers";
@@ -119,9 +118,6 @@ function OperationRow({
     if (isSubOperation) navigation.push(...params);
     else navigation.navigate(...params);
   }, 300);
-
-  const isNftOperation =
-    ["NFT_IN", "NFT_OUT"].includes(operation.type) && operation.contract && operation.tokenId;
 
   const unit = useAccountUnit(account);
 
@@ -233,15 +229,7 @@ function OperationRow({
 
         <BodyRightContainer>{renderAmountCellExtra()}</BodyRightContainer>
 
-        {isNftOperation ? (
-          <BodyRightContainer flexShrink={1} maxWidth="70%">
-            <OperationRowNftName
-              operation={operation}
-              account={account}
-              parentAccount={parentAccount}
-            />
-          </BodyRightContainer>
-        ) : amount.isZero() ? null : (
+        {amount.isZero() ? null : (
           <BodyRightContainer>
             <Text
               numberOfLines={1}

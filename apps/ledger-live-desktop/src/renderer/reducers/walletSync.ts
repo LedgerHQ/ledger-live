@@ -84,8 +84,6 @@ type HandlersPayloads = {
   WALLET_SYNC_CHANGE_DRAWER_VISIBILITY: boolean;
   WALLET_SYNC_CHANGE_FLOW: ChangeFlowPayload;
   WALLET_SYNC_CHANGE_ADD_INSTANCE: TrustchainMember;
-  WALLET_SYNC_CHANGE_REMOVE_INSTANCE: TrustchainMember;
-  WALLET_SYNC_CHANGE_CLEAN_INSTANCES: undefined;
   WALLET_SYNC_RESET: undefined;
   WALLET_SYNC_FAKED: boolean;
   WALLET_SYNC_CHANGE_QRCODE_URL: string | null;
@@ -125,17 +123,6 @@ const handlers: WalletSyncHandlers = {
     ...state,
     instances: [...state.instances, payload],
   }),
-  WALLET_SYNC_CHANGE_REMOVE_INSTANCE: (
-    state: WalletSyncState,
-    { payload }: { payload: TrustchainMember },
-  ) => ({
-    ...state,
-    instances: state.instances.filter(instance => instance !== payload),
-  }),
-  WALLET_SYNC_CHANGE_CLEAN_INSTANCES: (state: WalletSyncState) => ({
-    ...state,
-    instances: [],
-  }),
   WALLET_SYNC_RESET: () => initialStateWalletSync,
   WALLET_SYNC_FAKED: (state: WalletSyncState, { payload }: { payload: boolean }) => ({
     ...state,
@@ -158,7 +145,6 @@ const handlers: WalletSyncHandlers = {
 };
 
 // Selectors
-export const walletSyncSelector = (state: { walletSync: WalletSyncState }) => state.walletSync;
 
 export const walletSyncDrawerVisibilitySelector = (state: { walletSync: WalletSyncState }) =>
   state.walletSync.isDrawerOpen;
@@ -169,17 +155,11 @@ export const walletSyncStepSelector = (state: { walletSync: WalletSyncState }) =
   state.walletSync.step;
 export const walletSyncNextStepSelector = (state: { walletSync: WalletSyncState }) =>
   state.walletSync.nextStep;
-export const walletSyncHasTrustchainBeenCreatedSelector = (state: {
-  walletSync: WalletSyncState;
-}) => state.walletSync.hasTrustchainBeenCreated;
 export const walletSyncInstancesSelector = (state: { walletSync: WalletSyncState }) =>
   state.walletSync.instances;
 
 export const walletSyncFakedSelector = (state: { walletSync: WalletSyncState }) =>
   state.walletSync.hasBeenfaked;
-
-export const walletSyncQrCodeUrlSelector = (state: { walletSync: WalletSyncState }) =>
-  state.walletSync.qrCodeUrl;
 
 export const walletSyncQrCodePinCodeSelector = (state: { walletSync: WalletSyncState }) =>
   state.walletSync.qrCodePinCode;

@@ -1,8 +1,5 @@
 import { useCallback } from "react";
 import { useHistory } from "react-router-dom";
-import { SwapExchangeRateAmountTooLow } from "@ledgerhq/live-common/errors";
-import { NotEnoughBalanceSwap } from "@ledgerhq/errors";
-import { track } from "~/renderer/analytics/segment";
 import BigNumber from "bignumber.js";
 
 export const SWAP_VERSION = "2.35";
@@ -34,22 +31,6 @@ export const useRedirectToSwapHistory = () => {
     },
     [history],
   );
-};
-
-export const trackSwapError = (error: Error, properties: Record<string, unknown> = {}) => {
-  if (!error) return;
-  if (error instanceof SwapExchangeRateAmountTooLow) {
-    track("error_message", {
-      ...properties,
-      message: "min_amount",
-    });
-  }
-  if (error instanceof NotEnoughBalanceSwap) {
-    track("error_message", {
-      ...properties,
-      message: "no_funds",
-    });
-  }
 };
 
 type TransformableObject = {

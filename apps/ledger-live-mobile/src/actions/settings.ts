@@ -70,7 +70,6 @@ import {
   SettingsSetFromLedgerSyncOnboardingPayload,
   SettingsSetHasBeenRedirectedToPostOnboardingPayload,
   SettingsSetMevProtectionPayload,
-  SettingsUpdateNftCollectionStatus,
   SettingsSetSelectedTabPortfolioAssetsPayload,
   SettingsSetIsRebornPayload,
 } from "./types";
@@ -143,10 +142,6 @@ export const blacklistToken = createAction<SettingsBlacklistTokenPayload>(
   SettingsActionTypes.BLACKLIST_TOKEN,
 );
 export const showToken = createAction<SettingsShowTokenPayload>(SettingsActionTypes.SHOW_TOKEN);
-export const updateNftStatus = createAction<SettingsUpdateNftCollectionStatus>(
-  SettingsActionTypes.UPDATE_NFT_COLLECTION_STATUS,
-);
-export const resetNftStatus = createAction(SettingsActionTypes.RESET_NFT_COLLECTION_STATUS);
 
 export const dismissBanner = createAction<SettingsDismissBannerPayload>(
   SettingsActionTypes.SETTINGS_DISMISS_BANNER,
