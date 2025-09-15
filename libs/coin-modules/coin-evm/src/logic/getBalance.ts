@@ -1,4 +1,4 @@
-import type { Balance, Stake } from "@ledgerhq/coin-framework/lib/api/types";
+import type { Balance } from "@ledgerhq/coin-framework/lib/api/types";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 
 import { getNodeApi } from "../network/node";
@@ -22,12 +22,20 @@ export async function getBalance(currency: CryptoCurrency, address: string): Pro
 
   // Get staking positions
   const stakingPositions = await getStakes(currency, address);
-  const stake: Stake | undefined = stakingPositions[0];
+  const [firstStake, ...additionalStakes] = stakingPositions.items;
 
   balance.push({
     value: BigInt(nativeBalance.toFixed(0)),
     asset: { type: "native" },
-    ...(stake && { stake }),
+    ...(firstStake && { stake: firstStake }),
+  });
+
+  additionalStakes.forEach(stake => {
+    balance.push({
+      value: stake.amount,
+      asset: stake.asset,
+      stake,
+    });
   });
 
   // Get user's token operations to get all his contract address for the next balance elements

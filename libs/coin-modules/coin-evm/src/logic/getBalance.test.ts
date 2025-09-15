@@ -2,6 +2,7 @@ import BigNumber from "bignumber.js";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import * as nodeModule from "../network/node";
 import * as explorerModule from "../network/explorer";
+import * as getStakesModule from "./getStakes";
 import { getBalance } from ".";
 
 describe("getBalance", () => {
@@ -68,6 +69,19 @@ describe("getBalance", () => {
       getLastOperations: jest.fn().mockResolvedValue(operations),
     } as any);
 
+    // Mock getStakes to return the expected stake data
+    jest.spyOn(getStakesModule, "getStakes").mockResolvedValue({
+      items: [
+        {
+          uid: "address",
+          address: "address",
+          state: "active",
+          asset: { type: "native" },
+          amount: BigInt("10000000000000000000000"),
+        },
+      ],
+    });
+
     expect(await getBalance({} as CryptoCurrency, "address")).toEqual(expected);
   });
 
@@ -79,6 +93,11 @@ describe("getBalance", () => {
     jest.spyOn(explorerModule, "getExplorerApi").mockReturnValue({
       getLastOperations: jest.fn().mockResolvedValue({ lastTokenOperations: [] }),
     } as any);
+
+    // Mock getStakes to return empty stakes
+    jest.spyOn(getStakesModule, "getStakes").mockResolvedValue({
+      items: [],
+    });
 
     const result = await getBalance({} as CryptoCurrency, "address");
     expect(result[0]).toEqual({
