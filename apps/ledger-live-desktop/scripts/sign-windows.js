@@ -1,6 +1,7 @@
-const chalk = require("chalk");
+import chalk from "chalk";
+import dotenv from "dotenv";
 
-require("dotenv").config();
+dotenv.config();
 
 let execa;
 
@@ -9,17 +10,16 @@ const info = str => {
 };
 
 async function azureSign(filePath) {
-  const { AZURE_APP_ID, AZURE_SECRET, AZURE_KEY_NAME } = process.env;
+  const { AZURE_APP_ID, AZURE_SECRET, AZURE_KEY_NAME, AZURE_TENANT_ID } = process.env;
 
-  if (!AZURE_APP_ID || !AZURE_SECRET || !AZURE_KEY_NAME) {
+  if (!AZURE_APP_ID || !AZURE_SECRET || !AZURE_KEY_NAME || !AZURE_TENANT_ID) {
     throw new Error(
-      "AZURE_APP_ID, AZURE_SECRET and AZURE_KEY_NAME env variables are required for signing Windows builds.",
+      "AZURE_APP_ID, AZURE_TENANT_ID, AZURE_SECRET and AZURE_KEY_NAME env variables are required for signing Windows builds.",
     );
   }
 
-  await import("execa").then(mod => {
-    execa = mod.execa;
-  });
+  const { execa: execaFn } = await import("execa");
+  execa = execaFn;
 
   info(`Signing ${filePath}`);
 
@@ -29,12 +29,16 @@ async function azureSign(filePath) {
     "Ledger SAS",
     "-kvu",
     "https://ledgerlivevault.vault.azure.net",
+    "-kvt",
+    AZURE_TENANT_ID,
     "-kvi",
     AZURE_APP_ID,
     "-kvs",
     AZURE_SECRET,
     "-kvc",
     AZURE_KEY_NAME,
+    "-fd",
+    "sha256",
     "-v",
     "-tr",
     "http://timestamp.digicert.com",
@@ -45,9 +49,14 @@ async function azureSign(filePath) {
 }
 
 async function signWindows(context) {
-  const filePath = context.path;
+  // Skip signing in CI or when explicitly disabled
+  if (process.env.SKIP_SIGNING === "true") {
+    info("Windows signing skipped (SKIP_SIGNING=true)");
+    return;
+  }
 
+  const filePath = context.path;
   await azureSign(filePath);
 }
 
-exports.default = signWindows;
+export default signWindows;
