@@ -175,7 +175,7 @@ const DEFAULT_SWAP_PROVIDERS: Record<string, ProviderConfig & Partial<Additional
   },
   nearintents: {
     type: "CEX",
-    name: "Near Intents",
+    name: "NEAR Intents",
     needsBearerToken: false,
     termsOfUseUrl: "https://docs.thorswap.finance/thorswap/resources/terms-of-service",
     supportUrl: "https://ledgerhelp.swapkit.dev/",
@@ -190,7 +190,7 @@ const DEFAULT_SWAP_PROVIDERS: Record<string, ProviderConfig & Partial<Additional
       ),
     },
     signature: Buffer.from(
-      "3045022100cd270f448b7194a936c1e117c2bda44776d23a252b2ed3ccc30c0295ece85cab02200ce1c4f9733cb825ada59f61a50aa3b3bebaa141871e18c8f58d59a5eb2d2852",
+      "30440220331fca95bc6b8cf2264d72a0da9d791888c4ead9ed02bee4f6525f7e512911ca02204a78d416baa7b3fc8d6a82abbadda2e096abcbfa9a57769a8a20260d3e553b7d",
       "hex",
     ),
   },
@@ -297,6 +297,7 @@ export const fetchAndMergeProviderData = async env => {
       calService.getProvidersCDNData(),
     ]);
     const finalProvidersData = mergeProviderData(providersData, providersExtraData);
+    console.log('%clibs/ledger-live-common/src/exchange/providers/swap.ts:300 finalProvidersData', 'color: #007acc;', finalProvidersData);
     providerDataCache = finalProvidersData;
 
     return finalProvidersData;
