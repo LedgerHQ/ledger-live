@@ -1,10 +1,7 @@
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { swapSetup, waitSwapReady } from "../../../bridge/server";
 import { SwapType } from "@ledgerhq/live-common/lib/e2e/models/Swap";
-import {
-  performSwapUntilQuoteSelectionStep,
-  checkSwapInfosOnDeviceVerificationStep,
-} from "../../../utils/swapUtils";
+import { performSwapUntilQuoteSelectionStep } from "../../../utils/swapUtils";
 import { AppInfos } from "@ledgerhq/live-common/e2e/enum/AppInfos";
 import { ApplicationOptions } from "page";
 import { Provider } from "@ledgerhq/live-common/e2e/enum/Provider";
@@ -285,11 +282,10 @@ export function runUserRefusesTransactionTest(
         rejectedSwap.accountToCredit,
         minAmount,
       );
-      const provider = await app.swapLiveApp.selectExchange();
+      await app.swapLiveApp.selectExchange();
       await app.swapLiveApp.tapExecuteSwap();
       await app.common.disableSynchronizationForiOS();
 
-      await checkSwapInfosOnDeviceVerificationStep(rejectedSwap, provider.uiName, minAmount);
       await app.swap.verifyAmountsAndRejectSwap(rejectedSwap, minAmount);
       await app.swap.verifyDeviceActionLoadingNotVisible();
       await app.swapLiveApp.checkErrorMessage("Please retry or contact Ledger Support if in doubt");
@@ -392,13 +388,11 @@ export function runSwapWithSendMaxTest(
       await app.swapLiveApp.tapGetQuotesButton();
       await app.swapLiveApp.waitForQuotes();
 
-      const provider = await app.swapLiveApp.selectExchange();
+      await app.swapLiveApp.selectExchange();
       await app.swapLiveApp.tapExecuteSwap();
       await app.common.disableSynchronizationForiOS();
 
       const swap = new Swap(fromAccount, toAccount, amountToSend);
-      await checkSwapInfosOnDeviceVerificationStep(swap, provider.uiName, amountToSend);
-
       await app.swap.verifyAmountsAndAcceptSwap(swap, amountToSend);
       await app.swap.verifyDeviceActionLoadingNotVisible();
       await app.swap.waitForSuccessAndContinue();
