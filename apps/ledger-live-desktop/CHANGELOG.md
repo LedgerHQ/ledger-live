@@ -1,5 +1,21 @@
 # ledger-live-desktop
 
+## 3.0.0-nightly.5
+
+### Minor Changes
+
+- [#11805](https://github.com/LedgerHQ/ledger-live/pull/11805) [`cf7ed28`](https://github.com/LedgerHQ/ledger-live/commit/cf7ed28ffe6a415df537e9a492f8acc8fbd3a197) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Fix support url used for errors
+
+### Patch Changes
+
+- Updated dependencies [[`370e573`](https://github.com/LedgerHQ/ledger-live/commit/370e573eaf988ec9590e1991bf8b51d03cce40f1), [`3c11d8e`](https://github.com/LedgerHQ/ledger-live/commit/3c11d8e0ad901a25dfd63e93e332ad73707a58a1)]:
+  - @ledgerhq/hw-ledger-key-ring-protocol@0.4.0-nightly.2
+  - @ledgerhq/react-ui@0.37.0-nightly.2
+  - @ledgerhq/ledger-key-ring-protocol@0.6.5-nightly.2
+  - @ledgerhq/live-wallet@0.13.1-nightly.5
+  - @ledgerhq/live-common@34.48.0-nightly.5
+  - @ledgerhq/live-dmk-desktop@0.9.5-nightly.5
+
 ## 3.0.0-nightly.4
 
 ### Minor Changes

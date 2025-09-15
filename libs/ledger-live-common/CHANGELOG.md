@@ -1,5 +1,12 @@
 # @ledgerhq/live-common
 
+## 34.48.0-nightly.5
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/live-wallet@0.13.1-nightly.5
+
 ## 34.48.0-nightly.4
 
 ### Minor Changes

@@ -1,5 +1,11 @@
 # @ledgerhq/live-wallet
 
+## 0.4.0-nightly.2
+
+### Minor Changes
+
+- [#11790](https://github.com/LedgerHQ/ledger-live/pull/11790) [`370e573`](https://github.com/LedgerHQ/ledger-live/commit/370e573eaf988ec9590e1991bf8b51d03cce40f1) Thanks [@thesan](https://github.com/thesan)! - Fix the LKRP Software device block the signature
+
 ## 0.3.14-nightly.1
 
 ### Patch Changes

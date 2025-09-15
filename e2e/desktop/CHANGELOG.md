@@ -1,5 +1,15 @@
 # ledger-live-desktop-e2e-tests
 
+## 0.6.5-nightly.5
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/live-cli@24.22.1-nightly.5
+  - @ledgerhq/ledger-key-ring-protocol@0.6.5-nightly.2
+  - @ledgerhq/live-wallet@0.13.1-nightly.5
+  - @ledgerhq/live-common@34.48.0-nightly.5
+
 ## 0.6.5-nightly.4
 
 ### Patch Changes

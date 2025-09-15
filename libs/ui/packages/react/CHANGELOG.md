@@ -1,5 +1,11 @@
 # @ledgerhq/react-ui
 
+## 0.37.0-nightly.2
+
+### Minor Changes
+
+- [#11777](https://github.com/LedgerHQ/ledger-live/pull/11777) [`3c11d8e`](https://github.com/LedgerHQ/ledger-live/commit/3c11d8e0ad901a25dfd63e93e332ad73707a58a1) Thanks [@ooke-ledger](https://github.com/ooke-ledger)! - Fix Tab Indicator Sync
+
 ## 0.36.1-nightly.1
 
 ### Patch Changes

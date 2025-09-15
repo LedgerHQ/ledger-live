@@ -1,5 +1,18 @@
 # live-mobile
 
+## 3.93.0-nightly.5
+
+### Minor Changes
+
+- [#11791](https://github.com/LedgerHQ/ledger-live/pull/11791) [`32935f7`](https://github.com/LedgerHQ/ledger-live/commit/32935f7537b4e7f5e3dd9fd7491eccf58a2373f5) Thanks [@Valentin-Ledger](https://github.com/Valentin-Ledger)! - Change rendering strategy for earn on tab bar navigation
+
+### Patch Changes
+
+- Updated dependencies [[`370e573`](https://github.com/LedgerHQ/ledger-live/commit/370e573eaf988ec9590e1991bf8b51d03cce40f1)]:
+  - @ledgerhq/hw-ledger-key-ring-protocol@0.4.0-nightly.2
+  - @ledgerhq/ledger-key-ring-protocol@0.6.5-nightly.2
+  - @ledgerhq/live-wallet@0.13.1-nightly.5
+
 ## 3.93.0-nightly.4
 
 ### Minor Changes
