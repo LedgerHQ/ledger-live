@@ -58,6 +58,8 @@ type DeepPartial<T> = T extends Function
 
 config.disabled = true;
 
+/// SKELETON PROVIDERS
+
 function CountervaluesProviders({
   children,
   savedState,
@@ -81,6 +83,8 @@ function WalletSyncTestProvider({ children }: { children: React.ReactNode }) {
   const bridge = useDesktopWalletSyncBridge();
   return <BaseWalletSyncProvider bridge={bridge}>{children}</BaseWalletSyncProvider>;
 }
+
+/// SETUP
 
 /**
  * A component that wraps the application with necessary context providers.
@@ -117,9 +121,11 @@ function Providers({
       <Provider store={store}>
         <FirebaseFeatureFlagsProvider getFeature={getFeature}>
           <MemoryRouter>
-            <CountervaluesProviders savedState={initialCountervalues}>
-              {withLiveApp ? <CustomLiveAppProvider>{content}</CustomLiveAppProvider> : content}
-            </CountervaluesProviders>
+            <WalletSyncTestProvider>
+              <CountervaluesProviders savedState={initialCountervalues}>
+                {withLiveApp ? <CustomLiveAppProvider>{content}</CustomLiveAppProvider> : content}
+              </CountervaluesProviders>
+            </WalletSyncTestProvider>
           </MemoryRouter>
         </FirebaseFeatureFlagsProvider>
       </Provider>
@@ -131,11 +137,19 @@ function EnhancedProviders({ children }: { children: React.ReactNode }): JSX.Ele
   return (
     <I18nextProvider i18n={i18n}>
       <DrawerProvider>
+<<<<<<< HEAD
         <StyleProvider selectedPalette="dark">
           <WalletSyncTestProvider>
             <ContextMenuWrapper>{children}</ContextMenuWrapper>
           </WalletSyncTestProvider>
         </StyleProvider>
+=======
+        <NftMetadataProvider getCurrencyBridge={getCurrencyBridge}>
+          <StyleProvider selectedPalette="dark">
+            <ContextMenuWrapper>{children}</ContextMenuWrapper>
+          </StyleProvider>
+        </NftMetadataProvider>
+>>>>>>> 42e3ad29e4 (fix tests)
       </DrawerProvider>
     </I18nextProvider>
   );

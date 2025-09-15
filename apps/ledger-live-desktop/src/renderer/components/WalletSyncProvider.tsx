@@ -2,6 +2,7 @@ import {
   memberCredentialsSelector,
   trustchainSelector,
 } from "@ledgerhq/ledger-key-ring-protocol/store";
+import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import {
   WalletSyncProvider as BaseWalletSyncProvider,
   WalletSyncBridge,
@@ -14,9 +15,9 @@ import {
   walletSyncUserStateSelector,
 } from "@ledgerhq/live-wallet/store";
 import { DistantState, LocalState } from "@ledgerhq/live-wallet/walletsync/index";
+import { useWalletSyncDesktop } from "LLD/features/WalletSync/hooks/useWalletSyncDesktop";
 import React, { useCallback, useMemo } from "react";
 import { useDispatch, useSelector, useStore } from "react-redux";
-import { useWalletSyncDesktop } from "LLD/features/WalletSync/hooks/useWalletSyncDesktop";
 import { replaceAccounts } from "../actions/accounts";
 import { State } from "../reducers";
 import { walletSelector } from "../reducers/wallet";
