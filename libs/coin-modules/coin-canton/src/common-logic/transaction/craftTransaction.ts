@@ -23,7 +23,7 @@ export async function craftTransaction(
 }> {
   const { serialized, json, hash } = await prepareTransferRequest(currency, account.address, {
     recipient: transaction.recipient || "",
-    amount: transaction.amount.toNumber(),
+    amount: transaction.amount.toString(),
     type: "token-transfer-request",
     execute_before_secs: transaction.expireInSeconds,
     instrument_id: transaction.tokenId,

@@ -48,7 +48,7 @@ export type PrepareTransferResponse = {
 
 export type PrepareTransferRequest = {
   type: "token-transfer-request";
-  amount: number;
+  amount: string;
   recipient: string;
   execute_before_secs: number;
   instrument_id: string;
