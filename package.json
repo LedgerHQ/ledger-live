@@ -238,7 +238,8 @@
   },
   "pnpm": {
     "neverBuiltDependencies": [
-      "blake2"
+      "blake2",
+      "blake-hash"
     ],
     "overrides": {
       "stellar-base>sodium-native": "^3.2.1",
