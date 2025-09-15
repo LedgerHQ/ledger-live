@@ -1,4 +1,5 @@
 import { Observable } from "rxjs";
+import BigNumber from "bignumber.js";
 import { FeeNotLoaded } from "@ledgerhq/errors";
 import { AccountBridge, Operation } from "@ledgerhq/types-live";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
@@ -24,19 +25,28 @@ export const buildSignOperation =
             const { freshAddressPath: derivationPath } = account;
             const partyId = (account as unknown as { cantonResources: { partyId: string } })
               .cantonResources.partyId;
+            const params: {
+              recipient?: string;
+              amount: BigNumber;
+              tokenId: string;
+              expireInSeconds: number;
+              memo?: string;
+            } = {
+              recipient: transaction.recipient,
+              amount: transaction.amount,
+              expireInSeconds: 60 * 60,
+              tokenId: "Amulet",
+            };
+            if (transaction.memo) {
+              params.memo = transaction.memo;
+            }
 
             const { hash, serializedTransaction } = await craftTransaction(
               account.currency,
               {
                 address: partyId,
               },
-              {
-                recipient: transaction.recipient,
-                amount: transaction.amount,
-                memo: transaction.memo,
-                expireInSeconds: 60 * 60,
-                tokenId: "Amulet",
-              },
+              params,
             );
             const transactionSignature = await signer.signTransaction(derivationPath, hash);
 

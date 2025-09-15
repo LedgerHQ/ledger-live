@@ -1,5 +1,9 @@
 import BigNumber from "bignumber.js";
-import { prepareTransferRequest, PrepareTransferResponse } from "../../network/gateway";
+import {
+  PrepareTransferRequest,
+  prepareTransferRequest,
+  PrepareTransferResponse,
+} from "../../network/gateway";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 
 export async function craftTransaction(
@@ -14,21 +18,30 @@ export async function craftTransaction(
     amount: BigNumber;
     tokenId: string;
     expireInSeconds: number;
-    memo?: string | undefined;
+    memo?: string;
   },
 ): Promise<{
   nativeTransaction: PrepareTransferResponse;
   serializedTransaction: string;
   hash: string;
 }> {
-  const { serialized, json, hash } = await prepareTransferRequest(currency, account.address, {
+  const params: PrepareTransferRequest = {
     recipient: transaction.recipient || "",
     amount: transaction.amount.toString(),
-    type: "token-transfer-request",
+    type: "token-transfer-request" as const,
     execute_before_secs: transaction.expireInSeconds,
     instrument_id: transaction.tokenId,
-    reason: transaction.memo,
-  });
+  };
+
+  if (transaction.memo) {
+    params.reason = transaction.memo;
+  }
+
+  const { serialized, json, hash } = await prepareTransferRequest(
+    currency,
+    account.address,
+    params,
+  );
 
   return {
     nativeTransaction: json,

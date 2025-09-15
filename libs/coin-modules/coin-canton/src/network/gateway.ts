@@ -52,7 +52,7 @@ export type PrepareTransferRequest = {
   recipient: string;
   execute_before_secs: number;
   instrument_id: string;
-  reason?: string | undefined;
+  reason?: string;
 };
 
 type OnboardingSubmitRequest = {

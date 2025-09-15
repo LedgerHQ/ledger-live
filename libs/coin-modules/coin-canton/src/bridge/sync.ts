@@ -100,7 +100,7 @@ export const getAccountShape: GetAccountShape<CantonAccount> = async info => {
 
   // Tx history fetching
   const oldOperations = initialAccount?.operations || [];
-  let startAt = oldOperations.length ? (oldOperations[0].blockHeight || 0) + 1 : 0;
+  const startAt = oldOperations.length ? (oldOperations[0].blockHeight || 0) + 1 : 0;
   const transactionData = await getOperations(currency, partyId, {
     cursor: startAt,
     limit: 100,
@@ -110,7 +110,6 @@ export const getAccountShape: GetAccountShape<CantonAccount> = async info => {
 
   const newOperations = filterOperations(transactionData.operations, accountId, partyId);
   const operations = mergeOps(oldOperations, newOperations);
-  startAt = operations.length ? operations[0].blockHeight || 0 : 0;
 
   // We return the new account shape
   const shape = {
