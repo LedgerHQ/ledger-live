@@ -13,6 +13,11 @@ import {
   preparePreApprovalTransaction,
   submitPreApprovalTransaction,
 } from "./gateway";
+import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+
+const mockCurrency = {
+  id: "canton_network",
+} as unknown as CryptoCurrency;
 
 describe("gateway (devnet)", () => {
   let onboardedAccount: {
@@ -50,7 +55,7 @@ describe("gateway (devnet)", () => {
       };
 
       // WHEN
-      const response = await prepareOnboarding(keyPair.publicKeyHex, "ed25519");
+      const response = await prepareOnboarding(mockCurrency, keyPair.publicKeyHex, "ed25519");
 
       // THEN
       expect(response).toHaveProperty("party_id");
@@ -70,11 +75,20 @@ describe("gateway (devnet)", () => {
       // GIVEN
       const { keyPair } = getOnboardedAccount();
       const prepareRequest = { public_key: keyPair.publicKeyHex, public_key_type: "ed25519" };
-      const prepareResponse = await prepareOnboarding(keyPair.publicKeyHex, "ed25519");
+      const prepareResponse = await prepareOnboarding(
+        mockCurrency,
+        keyPair.publicKeyHex,
+        "ed25519",
+      );
       const signature = keyPair.sign(prepareResponse.transactions.combined_hash);
 
       // WHEN
-      const response = await submitOnboarding(prepareRequest, prepareResponse, signature);
+      const response = await submitOnboarding(
+        mockCurrency,
+        prepareRequest,
+        prepareResponse,
+        signature,
+      );
 
       // Save onboarded account for all tests that need a valid party ID
       onboardedAccount = {
@@ -92,7 +106,7 @@ describe("gateway (devnet)", () => {
 
   describe("getLedgerEnd", () => {
     it("should return ledger end", async () => {
-      const end = await getLedgerEnd();
+      const end = await getLedgerEnd(mockCurrency);
       expect(end).toBeGreaterThanOrEqual(0);
     });
   });
@@ -100,7 +114,7 @@ describe("gateway (devnet)", () => {
   describe("getBalance", () => {
     it("should return user balance", async () => {
       const { partyId } = getOnboardedAccount();
-      const balance = await getBalance(partyId);
+      const balance = await getBalance(mockCurrency, partyId);
       expect(balance.length).toBeGreaterThanOrEqual(0);
       if (balance.length > 0) {
         expect(balance[0].amount).toBeGreaterThanOrEqual(0);
@@ -111,7 +125,7 @@ describe("gateway (devnet)", () => {
 
   describe("getPartyById", () => {
     it.skip("should return party info", async () => {
-      const party = await getPartyById("4f2e1485107adf5f");
+      const party = await getPartyById(mockCurrency, "4f2e1485107adf5f");
       expect(party).toBeDefined();
     });
   });
@@ -119,6 +133,7 @@ describe("gateway (devnet)", () => {
   describe("getPartyByPubKey", () => {
     it.skip("should return party info", async () => {
       const party = await getPartyByPubKey(
+        mockCurrency,
         "122027c6dbbbdbffe0fa3122ae05175f3b9328e879e9ce96b670354deb64a45683c1",
       );
       expect(party).toBeDefined();
@@ -128,7 +143,9 @@ describe("gateway (devnet)", () => {
   describe("getOperations", () => {
     it("should return user transactions", async () => {
       const { operations } = await getOperations(
+        mockCurrency,
         "party-5f29bb32e9939939::12202becd8062a1d170209956cfd977fca76fcb4d2a892d08c77a7483f35a11d6440",
+        {},
       );
       expect(operations.length).toBeGreaterThanOrEqual(0);
     });
@@ -141,7 +158,7 @@ describe("gateway (devnet)", () => {
       const amount = 1000;
 
       // WHEN
-      const response = await prepareTapRequest({ partyId, amount });
+      const response = await prepareTapRequest(mockCurrency, { partyId, amount });
 
       // THEN
       expect(response).toHaveProperty("serialized");
@@ -155,14 +172,14 @@ describe("gateway (devnet)", () => {
     it("should submit tap request with proper signature", async () => {
       // GIVEN
       const { keyPair, partyId } = getOnboardedAccount();
-      const tapPrepareResponse = await prepareTapRequest({
+      const tapPrepareResponse = await prepareTapRequest(mockCurrency, {
         partyId,
         amount: 1000,
       });
       const tapSignature = keyPair.sign(tapPrepareResponse.hash);
 
       // WHEN
-      const response = await submitTapRequest({
+      const response = await submitTapRequest(mockCurrency, {
         partyId,
         serialized: tapPrepareResponse.serialized,
         signature: tapSignature,
@@ -182,7 +199,7 @@ describe("gateway (devnet)", () => {
       const { partyId } = getOnboardedAccount();
 
       // WHEN
-      const response = await preparePreApprovalTransaction(partyId);
+      const response = await preparePreApprovalTransaction(mockCurrency, partyId);
 
       // THEN
       expect(response).toHaveProperty("serialized");
@@ -196,11 +213,12 @@ describe("gateway (devnet)", () => {
     it("should submit pre-approval transaction with proper signature", async () => {
       // GIVEN
       const { keyPair, partyId } = getOnboardedAccount();
-      const preparedTransaction = await preparePreApprovalTransaction(partyId);
+      const preparedTransaction = await preparePreApprovalTransaction(mockCurrency, partyId);
       const preApprovalSignature = keyPair.sign(preparedTransaction.hash);
 
       // WHEN
       const response = await submitPreApprovalTransaction(
+        mockCurrency,
         partyId,
         preparedTransaction,
         preApprovalSignature,

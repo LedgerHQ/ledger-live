@@ -2,10 +2,9 @@ import { Observable } from "rxjs";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import { emptyHistoryCache } from "@ledgerhq/coin-framework/account/index";
 import { getDerivationModesForCurrency } from "@ledgerhq/coin-framework/derivation";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { getAccountShape } from "./sync";
 import { CantonAccount, CantonSigner } from "../types";
-import type { Account } from "@ledgerhq/types-live";
+import type { Account, DerivationMode } from "@ledgerhq/types-live";
 import {
   prepareOnboarding,
   submitOnboarding,
@@ -25,6 +24,7 @@ import {
   PrepareTransactionResponse,
 } from "../types/onboard";
 import resolver from "../signer";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 
 async function _getKeypair(
   signerContext: SignerContext<CantonSigner>,
@@ -37,14 +37,12 @@ async function _getKeypair(
   });
 }
 
-const currency = getCryptoCurrencyById("canton_network");
-const derivationMode = getDerivationModesForCurrency(currency)[0];
-
 export const isAccountOnboarded = async (
+  currency: CryptoCurrency,
   publicKey: string,
 ): Promise<{ isOnboarded: boolean; party_id?: string }> => {
   try {
-    const { party_id } = await getPartyByPubKey(publicKey);
+    const { party_id } = await getPartyByPubKey(currency, publicKey);
 
     if (party_id) {
       return { isOnboarded: true, party_id };
@@ -60,6 +58,7 @@ export const isAccountOnboarded = async (
 export const buildOnboardAccount =
   (signerContext: SignerContext<CantonSigner>) =>
   (
+    currency: CryptoCurrency,
     deviceId: string,
     derivationPath: string,
   ): Observable<CantonOnboardProgress | CantonOnboardResult> =>
@@ -68,6 +67,7 @@ export const buildOnboardAccount =
         observer.next({
           status: OnboardStatus.INIT,
         });
+        const derivationMode = getDerivationModesForCurrency(currency)[0];
         const getAddress = resolver(signerContext);
         const { address, publicKey } = await getAddress(deviceId, {
           path: derivationPath,
@@ -79,9 +79,15 @@ export const buildOnboardAccount =
           status: OnboardStatus.PREPARE,
         });
 
-        const { party_id: partyId } = await isAccountOnboarded(publicKey);
+        const { party_id: partyId } = await isAccountOnboarded(currency, publicKey);
         if (partyId) {
-          const account = await createAccount({ address, derivationPath, partyId });
+          const account = await createAccount({
+            address,
+            derivationPath,
+            partyId,
+            currency,
+            derivationMode,
+          });
           observer.next({
             partyId,
             account,
@@ -90,7 +96,7 @@ export const buildOnboardAccount =
           return;
         }
 
-        const preparedTransaction = await prepareOnboarding(publicKey, "ed25519");
+        const preparedTransaction = await prepareOnboarding(currency, publicKey, "ed25519");
 
         observer.next({
           status: OnboardStatus.SIGN,
@@ -105,6 +111,7 @@ export const buildOnboardAccount =
         });
 
         const result = await submitOnboarding(
+          currency,
           { public_key: publicKey, public_key_type: "ed25519" },
           preparedTransaction,
           signature,
@@ -114,6 +121,8 @@ export const buildOnboardAccount =
               address,
               derivationPath,
               partyId: preparedTransaction.party_id,
+              currency,
+              derivationMode,
             });
             observer.next({
               partyId: preparedTransaction.party_id,
@@ -132,6 +141,8 @@ export const buildOnboardAccount =
             address,
             derivationPath,
             partyId: result.party.party_id,
+            currency,
+            derivationMode,
           });
           observer.next({
             partyId: result.party.party_id,
@@ -154,6 +165,7 @@ export const buildOnboardAccount =
 export const buildAuthorizePreapproval =
   (signerContext: SignerContext<CantonSigner>) =>
   (
+    currency: CryptoCurrency,
     deviceId: string,
     derivationPath: string,
     partyId: string,
@@ -164,8 +176,10 @@ export const buildAuthorizePreapproval =
           status: PreApprovalStatus.PREPARE,
         });
 
-        const preparedTransaction: PrepareTransactionResponse =
-          await preparePreApprovalTransaction(partyId);
+        const preparedTransaction: PrepareTransactionResponse = await preparePreApprovalTransaction(
+          currency,
+          partyId,
+        );
 
         observer.next({
           status: PreApprovalStatus.SIGN,
@@ -180,6 +194,7 @@ export const buildAuthorizePreapproval =
         });
 
         const { isApproved } = await submitPreApprovalTransaction(
+          currency,
           partyId,
           preparedTransaction,
           signature,
@@ -195,7 +210,7 @@ export const buildAuthorizePreapproval =
 
         const handleTapRequest = async () => {
           try {
-            const { serialized, hash } = await prepareTapRequest({
+            const { serialized, hash } = await prepareTapRequest(currency, {
               partyId,
             });
 
@@ -212,7 +227,7 @@ export const buildAuthorizePreapproval =
                 status: PreApprovalStatus.SUBMIT,
               });
 
-              await submitTapRequest({
+              await submitTapRequest(currency, {
                 partyId,
                 serialized,
                 signature,
@@ -244,11 +259,15 @@ const createAccount = async ({
   address,
   partyId,
   derivationPath,
+  currency,
+  derivationMode,
   index = 0,
 }: {
   address: string;
   derivationPath: string;
   partyId: string;
+  currency: CryptoCurrency;
+  derivationMode: DerivationMode;
   index?: number;
 }): Promise<Partial<Account>> => {
   const accountShape = await getAccountShape(
