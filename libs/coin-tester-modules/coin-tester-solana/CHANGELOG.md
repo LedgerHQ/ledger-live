@@ -1,5 +1,12 @@
 # @ledgerhq/coin-tester-solana
 
+## 1.5.1-nightly.5
+
+### Patch Changes
+
+- Updated dependencies [[`2a3a861`](https://github.com/LedgerHQ/ledger-live/commit/2a3a861cbd6530f863824d0bab8ba8a170211e34)]:
+  - @ledgerhq/coin-tester@0.10.0-nightly.1
+
 ## 1.5.1-nightly.4
 
 ### Patch Changes

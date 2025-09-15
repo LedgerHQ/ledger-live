@@ -1,5 +1,14 @@
 # ledger-live-desktop
 
+## 2.128.0-nightly.6
+
+### Patch Changes
+
+- [#11633](https://github.com/LedgerHQ/ledger-live/pull/11633) [`07eb54d`](https://github.com/LedgerHQ/ledger-live/commit/07eb54d9bfc58e151a6bd6a24866ae25241f0caa) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - implement reconstruction of picture from device for Apex
+
+- Updated dependencies [[`94d91da`](https://github.com/LedgerHQ/ledger-live/commit/94d91da4e1b19dc5132e11b4c63b0d2cda87c71b)]:
+  - @ledgerhq/react-ui@0.37.0-nightly.3
+
 ## 2.128.0-nightly.5
 
 ### Minor Changes

@@ -1,5 +1,11 @@
 # @ledgerhq/coin-tester
 
+## 0.10.0-nightly.1
+
+### Minor Changes
+
+- [#11809](https://github.com/LedgerHQ/ledger-live/pull/11809) [`2a3a861`](https://github.com/LedgerHQ/ledger-live/commit/2a3a861cbd6530f863824d0bab8ba8a170211e34) Thanks [@Antoine-bls83](https://github.com/Antoine-bls83)! - fix speculos waiting logs
+
 ## 0.10.0-nightly.0
 
 ### Minor Changes

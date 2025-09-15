@@ -1,5 +1,11 @@
 # @ledgerhq/react-ui
 
+## 0.37.0-nightly.3
+
+### Minor Changes
+
+- [#11803](https://github.com/LedgerHQ/ledger-live/pull/11803) [`94d91da`](https://github.com/LedgerHQ/ledger-live/commit/94d91da4e1b19dc5132e11b4c63b0d2cda87c71b) Thanks [@ooke-ledger](https://github.com/ooke-ledger)! - Add auto focus to asset search input
+
 ## 0.37.0-nightly.2
 
 ### Minor Changes

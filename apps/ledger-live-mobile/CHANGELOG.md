@@ -1,5 +1,16 @@
 # live-mobile
 
+## 3.93.0-nightly.6
+
+### Minor Changes
+
+- [#11807](https://github.com/LedgerHQ/ledger-live/pull/11807) [`cd77268`](https://github.com/LedgerHQ/ledger-live/commit/cd77268985adab566c797ac854ad993cbb43972f) Thanks [@LucasWerey](https://github.com/LucasWerey)! - MAD - LLM - CryptoIcons add param to be have responsive background behind network icon
+
+### Patch Changes
+
+- Updated dependencies [[`cd77268`](https://github.com/LedgerHQ/ledger-live/commit/cd77268985adab566c797ac854ad993cbb43972f)]:
+  - @ledgerhq/native-ui@0.45.0-nightly.2
+
 ## 3.93.0-nightly.5
 
 ### Minor Changes
