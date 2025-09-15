@@ -1,4 +1,4 @@
-import React, { ChangeEvent, useMemo, useRef } from "react";
+import React, { ChangeEvent, useEffect, useMemo, useRef } from "react";
 import { Icons } from "../../../assets";
 import { useDebouncedCallback } from "../../hooks";
 import { Input } from "..";
@@ -8,12 +8,26 @@ type Props = Readonly<
   InputProps & {
     onDebouncedChange?: (current: string, prev: string) => void;
     debounceTime?: number;
+    autoFocus?: boolean;
   }
 >;
 
-export function Search({ onDebouncedChange, debounceTime = 500, onChange, ...props }: Props) {
+export function Search({
+  onDebouncedChange,
+  debounceTime = 500,
+  onChange,
+  autoFocus = true,
+  ...props
+}: Props) {
   const initialValue = props.value ?? props.defaultValue ?? "";
   const prevValue = useRef(String(initialValue));
+  const searchInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (autoFocus && searchInputRef.current) {
+      searchInputRef.current.focus();
+    }
+  }, [autoFocus]);
 
   const handleDebouncedChange = useDebouncedCallback(
     useMemo(() => {
@@ -35,5 +49,12 @@ export function Search({ onDebouncedChange, debounceTime = 500, onChange, ...pro
     };
   }, [handleDebouncedChange, onChange]);
 
-  return <Input {...props} icon={<Icons.Search size="S" />} onChange={handleChange} />;
+  return (
+    <Input
+      {...props}
+      ref={searchInputRef}
+      icon={<Icons.Search size="S" />}
+      onChange={handleChange}
+    />
+  );
 }

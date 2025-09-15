@@ -1,5 +1,8 @@
 import React, { useEffect } from "react";
-import { getScreenDataDimensions } from "@ledgerhq/live-common/device/use-cases/screenSpecs";
+import {
+  getScreenDataDimensions,
+  getScreenSpecs,
+} from "@ledgerhq/live-common/device/use-cases/screenSpecs";
 import { CLSSupportedDeviceModelId } from "@ledgerhq/live-common/device/use-cases/isCustomLockScreenSupported";
 import { StepProps } from "../../types";
 import CustomLockScreenDeviceAction from "~/renderer/components/CustomImage/CustomLockScreenDeviceAction";
@@ -33,8 +36,11 @@ const CustomLockScreen = ({ onDone, setError, CLSBackup, deviceModelId }: Props)
         hexImage={CLSBackup}
         inlineRetry={false}
         source={
-          reconstructImage({ hexData: CLSBackup, ...getScreenDataDimensions(deviceModelId) })
-            .imageBase64DataUri
+          reconstructImage({
+            hexData: CLSBackup,
+            ...getScreenDataDimensions(deviceModelId),
+            bitsPerPixel: getScreenSpecs(deviceModelId).bitsPerPixel,
+          }).imageBase64DataUri
         }
         padImage={false}
         onResult={onDone}

@@ -467,4 +467,18 @@ describe("ModularDrawerFlowManager - Select Account Flow", () => {
     expect(screen.getByText(/base 2/i)).toBeVisible();
     expect(screen.getByText(/add accounts/i)).toBeVisible();
   });
+
+  it("should auto focus on search input when autoFocus is true", async () => {
+    render(
+      <ModularDrawerFlowManager
+        currencies={currencies}
+        onAccountSelected={mockOnAccountSelected}
+        source="sourceTest"
+        flow="flowTest"
+      />,
+    );
+
+    await waitFor(() => expect(screen.getByRole("textbox")).toBeVisible());
+    expect(screen.getByRole("textbox")).toHaveFocus();
+  });
 });

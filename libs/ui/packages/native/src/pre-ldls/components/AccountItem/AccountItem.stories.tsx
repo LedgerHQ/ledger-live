@@ -17,6 +17,7 @@ const meta: Meta<typeof AccountItem> = {
       id: "12345",
       name: "Main BTC",
       ticker: "btc",
+      cryptoIconBackgroundColor: "red",
     },
   },
   parameters: {
@@ -46,6 +47,7 @@ export const TestAccount: Story = {
       name: "Main BTC",
       protocol: "Native Segwit",
       ticker: "btc",
+      cryptoIconBackgroundColor: "red",
     },
   },
 };
@@ -61,6 +63,7 @@ export const TestWithoutProtocol: Story = {
       id: "21345",
       name: "Main BTC",
       ticker: "btc",
+      cryptoIconBackgroundColor: "red",
     },
   },
 };
@@ -74,6 +77,7 @@ export const TestWithoutAddressIcon: Story = {
       fiatValue: "$5,969.83",
       id: "bitcoin",
       name: "Main BTC",
+      cryptoIconBackgroundColor: "red",
     },
     showIcon: false,
   },
@@ -89,6 +93,7 @@ export const TestWithCheckbox: Story = {
       id: "12345",
       name: "Main BTC",
       ticker: "btc",
+      cryptoIconBackgroundColor: "red",
     },
     onClick: onClick,
     rightElement: {
@@ -110,6 +115,7 @@ export const TestWithArrow: Story = {
       id: "12345",
       name: "Main BTC",
       ticker: "btc",
+      cryptoIconBackgroundColor: "red",
     },
     rightElement: {
       type: "arrow",
@@ -126,6 +132,7 @@ export const TestWithEdit: Story = {
       id: "12345",
       name: "Main BTC",
       ticker: "btc",
+      cryptoIconBackgroundColor: "red",
     },
     onClick: undefined,
     rightElement: {

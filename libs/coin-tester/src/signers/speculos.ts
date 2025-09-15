@@ -92,7 +92,7 @@ export async function spawnSpeculos(
   async function checkSpeculosLogs(): Promise<SpeculosTransportHttp> {
     const { out } = await compose.logs("speculos", { cwd, env: process.env });
 
-    if (out.includes("Serving Flask app")) {
+    if (out.includes("Server started")) {
       console.log(chalk.bgYellowBright.black(" -  SPECULOS READY ✅  - "));
       return SpeculosTransportHttp.open({
         apiPort: SPECULOS_API_PORT,
