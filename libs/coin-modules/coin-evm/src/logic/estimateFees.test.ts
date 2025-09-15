@@ -206,12 +206,6 @@ describe("estimateFees", () => {
       { ...mockCurrency, id: "sei_network_evm", ethereumLikeInfo: { chainId: 1329 } },
       tokenIntent,
     );
-
-    // expect(mockNodeApi.getFeeData).toHaveBeenCalledWith(mockCurrency, {
-    //   feesStrategy: "fast",
-    //   type: 0,
-    // });
-    // console.log(result);
     expect(result).toEqual({
       value: 420000000000000n,
       parameters: {
@@ -258,12 +252,6 @@ describe("estimateFees", () => {
       { ...mockCurrency, id: "sei_network_evm", ethereumLikeInfo: { chainId: 1329 } },
       tokenIntent,
     );
-
-    // expect(mockNodeApi.getFeeData).toHaveBeenCalledWith(mockCurrency, {
-    //   feesStrategy: "fast",
-    //   type: 0,
-    // });
-    // console.log(result);
     expect(result).toEqual({
       value: 420000000000000n,
       parameters: {
