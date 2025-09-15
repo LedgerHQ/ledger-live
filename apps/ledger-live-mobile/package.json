@@ -89,7 +89,6 @@
     "@ledgerhq/coin-multiversx": "workspace:^",
     "@ledgerhq/coin-stacks": "workspace:^",
     "@ledgerhq/device-management-kit": "0.9.0",
-    "@ledgerhq/device-transport-kit-react-native-hid": "1.0.0",
     "@ledgerhq/devices": "workspace:*",
     "@ledgerhq/domain-service": "workspace:^",
     "@ledgerhq/errors": "workspace:^",

@@ -971,9 +971,6 @@ importers:
       '@ledgerhq/device-management-kit':
         specifier: 0.9.0
         version: 0.9.0(rxjs@7.8.1)
-      '@ledgerhq/device-transport-kit-react-native-hid':
-        specifier: 1.0.0
-        version: 1.0.0(@ledgerhq/device-management-kit@0.9.0(rxjs@7.8.1))(react-native@0.77.3(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1))(rxjs@7.8.1)
       '@ledgerhq/devices':
         specifier: workspace:*
         version: link:../../libs/ledgerjs/packages/devices
@@ -8105,9 +8102,6 @@ importers:
       '@ledgerhq/device-transport-kit-react-native-ble':
         specifier: 1.1.0
         version: 1.1.0(@ledgerhq/device-management-kit@0.9.0(rxjs@7.8.1))(react-native-ble-plx@3.4.0(react-native@0.77.2(@react-native-community/cli@15.1.0(typescript@5.4.3))(react@18.3.1))(react@18.3.1))(react-native@0.77.2(@react-native-community/cli@15.1.0(typescript@5.4.3))(react@18.3.1))(rxjs@7.8.1)
-      '@ledgerhq/device-transport-kit-react-native-hid':
-        specifier: 1.0.0
-        version: 1.0.0(@ledgerhq/device-management-kit@0.9.0(rxjs@7.8.1))(react-native@0.77.2(@react-native-community/cli@15.1.0(typescript@5.4.3))(react@18.3.1))(rxjs@7.8.1)
       '@ledgerhq/devices':
         specifier: workspace:*
         version: link:../ledgerjs/packages/devices
@@ -14542,13 +14536,6 @@ packages:
       react-native: '>0.74.1'
       react-native-ble-plx: 3.4.0
       rxjs: ^7.8.2
-
-  '@ledgerhq/device-transport-kit-react-native-hid@1.0.0':
-    resolution: {integrity: sha512-tGIC7yqqWTVepsOE61oqIkbUkGxAHdN7PSHXeDtSb78Yccc15+Jjb86S9XF6+mf8ynBKwKbWr6szJU5efJ1A7A==}
-    peerDependencies:
-      '@ledgerhq/device-management-kit': 0.9.0
-      react-native: '>0.74.1'
-      rxjs: 7.8.2
 
   '@ledgerhq/device-transport-kit-web-hid@1.2.0':
     resolution: {integrity: sha512-51kLHqrn1dP+0ZQLRyUBHIPSBNvx74hiIAMHrBkiCAedpmND/W522nslpX42bVf3tU3+I0Y51qn3WFvd8ZtIow==}
@@ -43575,24 +43562,6 @@ snapshots:
       purify-ts: 2.1.0
       react-native: 0.77.2(@react-native-community/cli@15.1.0(typescript@5.4.3))(react@18.3.1)
       react-native-ble-plx: 3.4.0(react-native@0.77.2(@react-native-community/cli@15.1.0(typescript@5.4.3))(react@18.3.1))(react@18.3.1)
-      rxjs: 7.8.1
-      uuid: 11.0.3
-
-  '@ledgerhq/device-transport-kit-react-native-hid@1.0.0(@ledgerhq/device-management-kit@0.9.0(rxjs@7.8.1))(react-native@0.77.2(@react-native-community/cli@15.1.0(typescript@5.4.3))(react@18.3.1))(rxjs@7.8.1)':
-    dependencies:
-      '@ledgerhq/device-management-kit': 0.9.0(rxjs@7.8.1)
-      '@sentry/minimal': 6.19.7
-      purify-ts: 2.1.0
-      react-native: 0.77.2(@react-native-community/cli@15.1.0(typescript@5.4.3))(react@18.3.1)
-      rxjs: 7.8.1
-      uuid: 11.0.3
-
-  '@ledgerhq/device-transport-kit-react-native-hid@1.0.0(@ledgerhq/device-management-kit@0.9.0(rxjs@7.8.1))(react-native@0.77.3(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1))(rxjs@7.8.1)':
-    dependencies:
-      '@ledgerhq/device-management-kit': 0.9.0(rxjs@7.8.1)
-      '@sentry/minimal': 6.19.7
-      purify-ts: 2.1.0
-      react-native: 0.77.3(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1)
       rxjs: 7.8.1
       uuid: 11.0.3
 
