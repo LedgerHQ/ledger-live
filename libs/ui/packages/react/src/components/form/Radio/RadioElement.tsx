@@ -179,7 +179,8 @@ const Element = ({
   const context = useContext(RadioContext);
   if (context === undefined) throw new Error("RadioElement must be used within a RadioProvider");
 
-  const isChecked = useMemo(() => context.currentValue == value, [context.currentValue, value]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const isChecked = useMemo(() => context.currentValue === value, [context.currentValue]);
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     context.onChange(event.target.value);

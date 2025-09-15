@@ -73,8 +73,7 @@ export function useDeepLinkHandler() {
 
   const handler = useCallback(
     (_: unknown, deeplink: string) => {
-      const urlObj = new URL(deeplink);
-      const { pathname, searchParams, search } = urlObj;
+      const { pathname, searchParams, search } = new URL(deeplink);
       /**
        * TODO: handle duplicated query params
        * Today, it only keeps one (the last) key / value pair encountered in search params
@@ -101,11 +100,8 @@ export function useDeepLinkHandler() {
        * what we have now
        */
       const query = Object.fromEntries(searchParams);
-
-      // With new Chrome behavior: host contains the main URL part, pathname contains the path
-      // ledgerlive://settings/about -> host: "settings", pathname: "/about"
-      const url = urlObj.host;
-      const path = pathname.replace(/(^\/+|\/+$)/g, "");
+      const fullUrl = pathname.replace(/(^\/+|\/+$)/g, "");
+      const [url, path] = fullUrl.split("/");
 
       const {
         ajs_prop_source: ajsPropSource,

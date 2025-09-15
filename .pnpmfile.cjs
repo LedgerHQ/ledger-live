@@ -189,7 +189,6 @@ function readPackage(pkg, context) {
       // Mildly related (error is not the same): https://github.com/pnpm/pnpm/issues/3640
       addPeerDependencies("app-builder-lib", {
         "dmg-builder": "*",
-        "node-abi": "4.9.0",
         lodash: "*",
       }),
 

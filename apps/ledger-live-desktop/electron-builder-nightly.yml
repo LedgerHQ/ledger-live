@@ -60,6 +60,7 @@ nsis:
   uninstallerIcon: build-nightly/windows/uninstaller.ico
   uninstallerSidebar: build-nightly/windows/uninstallerSidebar.bmp
 
+includeSubNodeModules: true
 files:
   # Include files
   - .webpack/**/*

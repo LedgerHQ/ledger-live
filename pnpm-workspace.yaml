@@ -12,8 +12,3 @@ packages:
   - "libs/ledger-live-common/tools"
   - "tools/**"
   - "docs"
-
-catalog:
-
-overrides:
-  node-abi: ^4.9.0

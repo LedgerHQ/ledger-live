@@ -45,6 +45,7 @@ nsis:
   uninstallerIcon: build/windows/uninstaller.ico
   uninstallerSidebar: build/windows/uninstallerSidebar.bmp
 
+includeSubNodeModules: true
 files:
   # Include files
   - .webpack/**/*
