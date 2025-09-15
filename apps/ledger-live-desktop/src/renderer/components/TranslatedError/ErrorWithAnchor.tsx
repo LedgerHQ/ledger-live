@@ -9,11 +9,8 @@ function validateLedgerUrl(href: string): { isHttp: boolean; isAllowedLedgerDoma
     if (!isHttp) return { isHttp: false, isAllowedLedgerDomain: false };
 
     const hostname = url.hostname.toLowerCase();
-    const isLedger = hostname === "ledger.com" || hostname.endsWith(".ledger.com");
-    const isLedgerSupport =
-      hostname === "ledger-support.com" || hostname.endsWith(".ledger-support.com");
-
-    return { isHttp: true, isAllowedLedgerDomain: isLedger || isLedgerSupport };
+    const isAllowedLedgerDomain = hostname === "ledger.com" || hostname.endsWith(".ledger.com");
+    return { isHttp: true, isAllowedLedgerDomain };
   } catch (_) {
     return { isHttp: false, isAllowedLedgerDomain: false };
   }
