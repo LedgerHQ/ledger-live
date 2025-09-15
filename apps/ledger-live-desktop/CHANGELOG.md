@@ -1,6 +1,6 @@
 # ledger-live-desktop
 
-## 3.0.0-nightly.5
+## 2.128.0-nightly.5
 
 ### Minor Changes
 
@@ -16,7 +16,7 @@
   - @ledgerhq/live-common@34.48.0-nightly.5
   - @ledgerhq/live-dmk-desktop@0.9.5-nightly.5
 
-## 3.0.0-nightly.4
+## 2.128.0-nightly.4
 
 ### Minor Changes
 
@@ -51,7 +51,7 @@
   - @ledgerhq/live-nft-react@0.9.20-nightly.4
   - @ledgerhq/live-wallet@0.13.1-nightly.4
 
-## 3.0.0-nightly.3
+## 2.128.0-nightly.3
 
 ### Minor Changes
 
@@ -79,13 +79,11 @@
   - @ledgerhq/live-wallet@0.13.1-nightly.3
   - @ledgerhq/react-ui@0.36.1-nightly.1
 
-## 3.0.0-nightly.2
-
-### Major Changes
-
-- [#11741](https://github.com/LedgerHQ/ledger-live/pull/11741) [`aa90ace`](https://github.com/LedgerHQ/ledger-live/commit/aa90ace88b2171f1f0796829ae45fe0fda2d24d2) Thanks [@ooke-ledger](https://github.com/ooke-ledger)! - Fix Tab indicator out of sync bug
+## 2.128.0-nightly.2
 
 ### Minor Changes
+
+- [#11741](https://github.com/LedgerHQ/ledger-live/pull/11741) [`aa90ace`](https://github.com/LedgerHQ/ledger-live/commit/aa90ace88b2171f1f0796829ae45fe0fda2d24d2) Thanks [@ooke-ledger](https://github.com/ooke-ledger)! - Fix Tab indicator out of sync bug
 
 - [#11731](https://github.com/LedgerHQ/ledger-live/pull/11731) [`289f623`](https://github.com/LedgerHQ/ledger-live/commit/289f623c2b9055a596647676499cd3c8b34117fa) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add useSearch in common
 
