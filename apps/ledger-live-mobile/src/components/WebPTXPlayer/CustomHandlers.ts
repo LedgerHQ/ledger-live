@@ -168,7 +168,6 @@ export function useCustomExchangeHandlers({
                     );
                   }
                   navigation.pop();
-                  handleLoaderDrawer?.();
                 },
                 onClose: () => onCancel(drawerClosedError),
               },
@@ -180,9 +179,6 @@ export function useCustomExchangeHandlers({
             });
           },
           "custom.exchange.complete": ({ exchangeParams, onSuccess, onCancel }) => {
-            if (handleLoaderDrawer) {
-              navigation.pop();
-            }
             navigation.navigate(NavigatorName.PlatformExchange, {
               screen: ScreenName.PlatformCompleteExchange,
               params: {
@@ -235,9 +231,6 @@ export function useCustomExchangeHandlers({
             }
           },
           "custom.exchange.swap": ({ exchangeParams, onSuccess, onCancel }) => {
-            if (handleLoaderDrawer) {
-              navigation.pop();
-            }
             let cancelCalled = false;
 
             const safeOnCancel = (error: Error) => {
