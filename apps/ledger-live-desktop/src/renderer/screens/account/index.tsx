@@ -28,7 +28,7 @@ import NftCollections from "LLD/features/Collectibles/Nfts/Collections";
 import OrdinalsAccount from "LLD/features/Collectibles/Ordinals/screens/Account";
 import BalanceSummary from "./BalanceSummary";
 import AccountHeader from "./AccountHeader";
-import AccountWarningBanner from "./AccountWarningBanner";
+import { AccountWarningBanner, AccountWarningCustomBanner } from "./AccountWarningBanner";
 import AccountHeaderActions, { AccountHeaderSettingsButton } from "./AccountHeaderActions";
 import EmptyStateAccount from "./EmptyStateAccount";
 import TokensList from "./TokensList";
@@ -171,6 +171,7 @@ const AccountPage = ({
         <AccountHeaderActions account={account} parentAccount={parentAccount} />
       </Box>
       <AccountWarningBanner currency={currency} />
+      <AccountWarningCustomBanner currency={currency} />
       {AccountSubHeader ? (
         <AccountSubHeader account={account} parentAccount={parentAccount} />
       ) : null}

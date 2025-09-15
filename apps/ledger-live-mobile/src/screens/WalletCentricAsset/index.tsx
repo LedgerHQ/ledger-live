@@ -37,6 +37,7 @@ import { useGroupedCurrenciesByProvider } from "@ledgerhq/live-common/deposit/in
 import { LoadingStatus } from "@ledgerhq/live-common/deposit/type";
 import { AddAccountContexts } from "LLM/features/Accounts/screens/AddAccount/enums";
 import WarningBannerStatus from "~/components/WarningBannerStatus";
+import WarningCustomBanner from "~/components/WarningCustomBanner";
 import { renderItem } from "LLM/utils/renderItem";
 
 const AnimatedFlatListWithRefreshControl = Animated.createAnimatedComponent(
@@ -155,6 +156,7 @@ const AssetScreen = ({ route }: NavigationProps) => {
         currency={currency}
         key="WarningBanner"
       />,
+      <WarningCustomBanner currencyConfig={currencyConfig} key="WarningCustomBanner" />,
       <SectionContainer px={6} isFirst key="AssetDynamicContent">
         <SectionTitle title={t("account.quickActions")} containerProps={{ mb: 6 }} />
         <FabAssetActions
