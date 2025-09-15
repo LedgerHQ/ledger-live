@@ -1,11 +1,11 @@
-import test from "../../fixtures/common";
 import { expect } from "@playwright/test";
-import { PortfolioPage } from "../../page/portfolio.page";
-import { AddAccountModal } from "../../page/modal/add.account.modal";
-import { DeviceAction } from "../../models/DeviceAction";
 import { Layout } from "../../component/layout.component";
+import test from "../../fixtures/common";
+import { DeviceAction } from "../../models/DeviceAction";
 import { AccountPage } from "../../page/account.page";
 import { AccountsPage } from "../../page/accounts.page";
+import { AddAccountModal } from "../../page/modal/add.account.modal";
+import { PortfolioPage } from "../../page/portfolio.page";
 
 test.use({
   userdata: "skip-onboarding",
