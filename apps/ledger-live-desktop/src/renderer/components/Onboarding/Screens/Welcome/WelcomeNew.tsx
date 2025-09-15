@@ -345,7 +345,7 @@ export function WelcomeNew() {
 
             <Button
               iconPosition="right"
-              variant="shade"
+              variant="neutral"
               onClick={_ => {
                 isFeatureFlagsAnalyticsPrefDisplayed
                   ? openAnalyticsOptInPrompt("Onboarding", buyNew)
