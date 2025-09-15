@@ -26,6 +26,7 @@ export const buildSignOperation =
               .cantonResources.partyId;
 
             const { hash, serializedTransaction } = await craftTransaction(
+              account.currency,
               {
                 address: partyId,
               },

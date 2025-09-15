@@ -10,7 +10,7 @@ export const prepareTransaction: AccountBridge<Transaction>["prepareTransaction"
 ) => {
   let fee = transaction.fee;
   if (!fee || fee.eq(0)) {
-    fee = BigNumber((await estimateFees("")).toString());
+    fee = BigNumber((await estimateFees(account.currency)).toString());
   }
   return updateTransaction(transaction, { fee });
 };
