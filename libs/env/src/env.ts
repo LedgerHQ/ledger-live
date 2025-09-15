@@ -621,16 +621,6 @@ const envDefinitions = {
     parser: boolParser,
     desc: "if defined, avoids bypass of the currentDevice in the store.",
   },
-  NFT_CURRENCIES: {
-    def: ["avalanche_c_chain", "bsc", "ethereum", "polygon", "solana"],
-    parser: stringArrayParser,
-    desc: "set the currencies where NFT is active",
-  },
-  NFT_METADATA_SERVICE: {
-    def: "https://nft.api.live.ledger.com",
-    parser: stringParser,
-    desc: "service uri used to get the metadata of an nft",
-  },
   OPERATION_ADDRESSES_LIMIT: {
     def: 100,
     parser: intParser,

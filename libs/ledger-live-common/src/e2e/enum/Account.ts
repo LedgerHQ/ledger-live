@@ -1,7 +1,5 @@
 import { Currency } from "./Currency";
 import { TokenType } from "./TokenType";
-import { Nft } from "./Nft";
-
 export class Account {
   constructor(
     public readonly currency: Currency,
@@ -11,7 +9,6 @@ export class Account {
     public readonly tokenType?: TokenType,
     public readonly ensName?: string,
     public readonly derivationMode?: string,
-    public readonly nft?: Nft[],
     public readonly parentAccount?: Account,
   ) {}
 
@@ -240,7 +237,6 @@ export class Account {
     undefined,
     undefined,
     undefined,
-    [Nft.ANTITUS, Nft.PODIUM, Nft.NY_LA_MUSE],
   );
   static readonly ETH_2 = new Account(
     Currency.ETH,
@@ -344,7 +340,7 @@ export class Account {
     undefined,
     undefined,
     undefined,
-    [Nft.ANIME_SHIPS_494, Nft.BISHOP_OF_STORMS, Nft.COMMON_TOWER_MAP],
+    undefined,
   );
   static readonly POL_2 = new Account(
     Currency.POL,
@@ -516,19 +512,8 @@ export class TokenAccount extends Account {
     parentAccount: Account,
     ensName?: string,
     derivationMode?: string,
-    nft?: Nft[],
   ) {
-    super(
-      currency,
-      accountName,
-      address,
-      index,
-      tokenType,
-      ensName,
-      derivationMode,
-      nft,
-      parentAccount,
-    );
+    super(currency, accountName, address, index, tokenType, ensName, derivationMode, parentAccount);
   }
 
   static readonly ETH_LIDO = new TokenAccount(

@@ -28,7 +28,6 @@
       "lastUsedVersion": "99.99.99",
       "dismissedBanners": [],
       "accountsViewMode": "list",
-      "nftsViewMode": "list",
       "showAccountsHelperBanner": true,
       "hideEmptyTokenAccounts": false,
       "filterTokenOperationsZeroAmount": true,
@@ -171,7 +170,6 @@
         "shouldFlashMCU": false
       },
       "blacklistedTokenIds": [],
-      "hiddenNftCollections": [],
       "deepLinkUrl": null,
       "firstTimeLend": false,
       "showClearCacheBanner": false,

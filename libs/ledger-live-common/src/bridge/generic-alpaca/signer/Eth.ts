@@ -47,7 +47,6 @@ export const createSigner: CreateSigner<Signer> = (transport: Transport) => {
       };
       const loadConfig: LoadConfig = {
         cryptoassetsBaseURL: getEnv("DYNAMIC_CAL_BASE_URL"),
-        nftExplorerBaseURL: getEnv("NFT_METADATA_SERVICE") + "/v1/ethereum",
       };
 
       signer.setLoadConfig(loadConfig);

@@ -240,11 +240,6 @@
     "src/mock/account.ts",
     "src/mock/helpers.ts",
     "src/network-troubleshooting/index.ts",
-    "src/nft/helpers.ts",
-    "src/nft/index.ts",
-    "src/nft/NftMetadataProvider/index.ts",
-    "src/nft/NftMetadataProvider/types.ts",
-    "src/nft/support.ts",
     "src/notifications/AnnouncementProvider/index.tsx",
     "src/notifications/AnnouncementProvider/types.ts",
     "src/notifications/ServiceStatusProvider/index.tsx",
@@ -309,12 +304,7 @@
     "src/walletConnect/index.ts",
     "src/wallet-api/ModularDrawer/utils.ts"
   ],
-  "extensions": [
-    ".ts",
-    ".js",
-    ".jsx",
-    ".tsx"
-  ],
+  "extensions": [".ts", ".js", ".jsx", ".tsx"],
   "ignorePatterns": [
     "**/node_modules/**",
     "**/__tests__/**",
@@ -354,7 +344,6 @@
     "src/e2e/enum/Device.ts",
     "src/e2e/enum/DeviceLabels.ts",
     "src/e2e/enum/Fee.ts",
-    "src/e2e/enum/Nft.ts",
     "src/e2e/enum/OperationType.ts",
     "src/e2e/enum/Provider.ts",
     "src/e2e/enum/TokenType.ts",

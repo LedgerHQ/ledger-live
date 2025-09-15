@@ -1,4 +1,3 @@
-import { getEnv } from "@ledgerhq/live-env";
 import network from "@ledgerhq/live-network/network";
 import { NFTCollectionMetadataResponse, NFTMetadataResponse } from "@ledgerhq/types-live";
 import { CollectionMetadataInput, NftMetadataInput } from "@ledgerhq/coin-framework/nft/types";
@@ -19,7 +18,7 @@ export const getNftMetadata = async (
 ): Promise<NFTMetadataResponse[]> => {
   const { data }: { data: NFTMetadataResponse[] } = await network({
     method: "POST",
-    url: `${getEnv("NFT_METADATA_SERVICE")}/v2/ethereum/${params.chainId}/contracts/tokens/infos`,
+    url: `https://nft.api.live.ledger.com/v2/ethereum/${params.chainId}/contracts/tokens/infos`,
     data: input,
   });
 
@@ -39,7 +38,7 @@ export const getNftCollectionMetadata = async (
 ): Promise<NFTCollectionMetadataResponse[]> => {
   const { data }: { data: NFTCollectionMetadataResponse[] } = await network({
     method: "POST",
-    url: `${getEnv("NFT_METADATA_SERVICE")}/v2/ethereum/${params.chainId}/contracts/infos`,
+    url: `https://nft.api.live.ledger.com/v2/ethereum/${params.chainId}/contracts/infos`,
     data: input,
   });
 

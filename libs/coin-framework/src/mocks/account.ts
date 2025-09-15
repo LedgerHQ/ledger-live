@@ -8,7 +8,6 @@ import { generateHistoryFromOperations } from "../account/balanceHistoryCache";
 import { getDerivationScheme, runDerivationScheme } from "../derivation";
 import { genHex, genAddress } from "./helpers";
 import type { Account, AccountLike, Operation, TokenAccount } from "@ledgerhq/types-live";
-import { createFixtureNFT, genNFTOperation } from "./fixtures/nfts";
 import { inferSubOperations } from "../serialization";
 
 export function ensureNoNegative(operations: Operation[]) {
@@ -246,7 +245,6 @@ export type GenAccountOptions = {
   currency?: CryptoCurrency;
   subAccountsCount?: number;
   swapHistorySize?: number;
-  withNft?: boolean;
   tokenIds?: string[];
   bandwidth?: boolean;
 };
@@ -304,7 +302,6 @@ export function genAccount(
   const currency = opts.currency || rng.nextArrayItem(currencies);
   const operationsSize = opts.operationsSize ?? rng.nextInt(1, 200);
   const swapHistorySize = opts.swapHistorySize || 0;
-  const withNft = opts.withNft ?? false;
   const address = genAddress(currency, rng);
   const derivationPath = runDerivationScheme(
     getDerivationScheme({
@@ -352,12 +349,6 @@ export function genAccount(
         toAmount: new BigNumber("2000"),
       })),
     balanceHistoryCache: emptyHistoryCache,
-    ...(withNft && {
-      nfts: Array(10)
-        .fill(null)
-        // The index === 0 ensure at least one NFT is a Stax NFT if the currency is Ethereum
-        .map((_, index) => createFixtureNFT(accountId, currency, index === 0)),
-    }),
   };
 
   if (
@@ -388,22 +379,6 @@ export function genAccount(
       const op = genOperation(account, account, ops, rng);
       return ops.concat(op);
     }, []);
-
-  if (withNft) {
-    const nftOperations = Array(5)
-      .fill(null)
-      .reduce((ops: Operation[]) => {
-        const index = Math.floor(Math.random() * (5 - 0 + 1) + 0);
-
-        if (account.nfts && account.nfts[index]) {
-          const { tokenId, contract, standard } = account.nfts[index];
-          const op = genNFTOperation(account, account, ops, rng, contract, standard, tokenId);
-          return ops.concat(op);
-        }
-      }, []);
-
-    account.operations = account.operations.concat(nftOperations);
-  }
 
   account.creationDate =
     account.operations.length > 0

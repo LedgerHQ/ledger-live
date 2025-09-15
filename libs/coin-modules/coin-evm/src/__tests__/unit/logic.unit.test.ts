@@ -1,5 +1,4 @@
 import BigNumber from "bignumber.js";
-import { getEnv, setEnv } from "@ledgerhq/live-env";
 import * as EVM_TOOLS from "@ledgerhq/evm-tools/message/EIP712/index";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import {
@@ -557,14 +556,8 @@ describe("EVM Family", () => {
     describe("getSyncHash", () => {
       const currency = getCryptoCurrencyById("ethereum");
 
-      let oldEnv: string[];
-      beforeAll(() => {
-        oldEnv = getEnv("NFT_CURRENCIES");
-      });
-
       afterEach(() => {
         jest.restoreAllMocks();
-        setEnv("NFT_CURRENCIES", oldEnv);
         setCALHash(currency, "");
       });
 
@@ -577,15 +570,6 @@ describe("EVM Family", () => {
         const initialSyncHash = getSyncHash(currency);
         setCALHash(currency, "anything");
         expect(initialSyncHash).not.toEqual(getSyncHash(currency));
-      });
-
-      it("should provide a new hash if nft support is activated or not", () => {
-        setEnv("NFT_CURRENCIES", []);
-        const hash1 = getSyncHash(currency);
-        setEnv("NFT_CURRENCIES", [currency.id]);
-        const hash2 = getSyncHash(currency);
-
-        expect(hash1).not.toEqual(hash2);
       });
 
       it("should provide a new hash if currency is using a new node config", () => {

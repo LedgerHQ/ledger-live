@@ -1,6 +1,6 @@
 import expect from "expect";
-import { NFTTransaction, Transaction } from "../models/Transaction";
-import { pressBoth, pressUntilTextFound, containsSubstringInEvent, waitFor } from "../speculos";
+import { Transaction } from "../models/Transaction";
+import { pressBoth, pressUntilTextFound, containsSubstringInEvent } from "../speculos";
 import { DeviceLabels } from "../enum/DeviceLabels";
 import { Device } from "../enum/Device";
 
@@ -16,13 +16,5 @@ export async function sendEVM(tx: Transaction) {
     expect(isAddressCorrect).toBeTruthy();
   }
 
-  await pressBoth();
-}
-
-export async function sendEvmNFT(tx: NFTTransaction) {
-  await waitFor(DeviceLabels.REVIEW_OPERATION);
-  const events = await pressUntilTextFound(DeviceLabels.ACCEPT);
-  const isAddressCorrect = containsSubstringInEvent(tx.accountToCredit.address, events);
-  expect(isAddressCorrect).toBeTruthy();
   await pressBoth();
 }

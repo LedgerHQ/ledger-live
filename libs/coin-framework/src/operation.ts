@@ -149,11 +149,6 @@ export function flattenOperationWithInternalsAndNfts(op: Operation): Operation[]
     ops = ops.concat(op.internalOperations);
   }
 
-  // all nfts operations are expanded after the main op
-  if (op.nftOperations) {
-    ops = ops.concat(op.nftOperations);
-  }
-
   return ops;
 }
 

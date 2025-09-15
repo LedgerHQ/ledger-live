@@ -21,7 +21,6 @@ import { prepareTransaction } from "./prepareTransaction";
 import { createTransaction } from "./createTransaction";
 import { buildSignOperation } from "./signOperation";
 import { hydrate, preload } from "./preload";
-import nftResolvers from "./nftResolvers";
 import { broadcast } from "./broadcast";
 
 export function buildCurrencyBridge(signerContext: SignerContext<EvmSigner>): CurrencyBridge {
@@ -36,7 +35,6 @@ export function buildCurrencyBridge(signerContext: SignerContext<EvmSigner>): Cu
     preload,
     hydrate,
     scanAccounts,
-    nftResolvers,
     getPreloadStrategy: () => ({
       preloadMaxAge: 24 * 60 * 60 * 1000, // 1 day cache
     }),

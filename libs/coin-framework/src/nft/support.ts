@@ -4,13 +4,12 @@ import type {
   NFTStandard,
   ProtoNFT,
 } from "@ledgerhq/types-live";
-import { getEnv } from "@ledgerhq/live-env";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { CollectionMetadataInput, NftMetadataInput, NftRequestsBatcher } from "./types";
 import { makeBatcher } from "@ledgerhq/live-network/batcher";
 
-export function isNFTActive(currency: CryptoCurrency | undefined | null): boolean {
-  return !!currency && getEnv("NFT_CURRENCIES").includes(currency?.id);
+export function isNFTActive(_currency: CryptoCurrency | undefined | null): boolean {
+  return false;
 }
 
 const nftCapabilities: Record<string, NFTStandard[]> = {

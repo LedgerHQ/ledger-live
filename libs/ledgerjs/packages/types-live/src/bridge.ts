@@ -17,7 +17,7 @@ import type {
 import type { Operation, OperationExtra, OperationExtraRaw } from "./operation";
 import type { DerivationMode } from "./derivation";
 import type { SyncConfig } from "./pagination";
-import { CryptoCurrencyIds, NFTCollectionMetadataResponse, NFTMetadataResponse } from "./nft";
+import { CryptoCurrencyIds } from "./nft";
 
 export type ScanAccountEvent = {
   type: "discovered";
@@ -112,17 +112,6 @@ export interface CurrencyBridge {
   // Scan all available accounts with a device
   scanAccounts(info: ScanInfo): Observable<ScanAccountEvent>;
   getPreloadStrategy?: (currency: CryptoCurrency) => PreloadStrategy;
-  nftResolvers?: {
-    nftMetadata: (arg: {
-      contract: string;
-      tokenId: string;
-      currencyId: string;
-    }) => Promise<NFTMetadataResponse>;
-    collectionMetadata: (arg: {
-      contract: string;
-      currencyId: string;
-    }) => Promise<NFTCollectionMetadataResponse>;
-  };
 }
 
 /**

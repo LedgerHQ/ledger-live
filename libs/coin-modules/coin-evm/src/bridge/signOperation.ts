@@ -32,7 +32,7 @@ export const buildSignOperation =
             };
             const loadConfig: LoadConfig = {
               cryptoassetsBaseURL: getEnv("DYNAMIC_CAL_BASE_URL"),
-              nftExplorerBaseURL: getEnv("NFT_METADATA_SERVICE") + "/v1/ethereum",
+              nftExplorerBaseURL: "https://nft.api.live.ledger.com/v1/ethereum",
             };
 
             return signerContext(deviceId, async signer => {

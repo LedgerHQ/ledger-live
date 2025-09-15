@@ -20,7 +20,7 @@ import { Device as CryptoWallet } from "./enum/Device";
 import { Currency } from "./enum/Currency";
 import expect from "expect";
 import { sendBTCBasedCoin } from "./families/bitcoin";
-import { sendEVM, sendEvmNFT } from "./families/evm";
+import { sendEVM } from "./families/evm";
 import { sendPolkadot } from "./families/polkadot";
 import { sendAlgorand } from "./families/algorand";
 import { sendTron } from "./families/tron";
@@ -35,7 +35,7 @@ import { delegateSolana, sendSolana } from "./families/solana";
 import { delegateTezos } from "./families/tezos";
 import { delegateCelo } from "./families/celo";
 import { delegateMultiversX } from "./families/multiversX";
-import { NFTTransaction, Transaction } from "./models/Transaction";
+import { Transaction } from "./models/Transaction";
 import { Delegate } from "./models/Delegate";
 import { Swap } from "./models/Swap";
 import { delegateOsmosis } from "./families/osmosis";
@@ -691,15 +691,6 @@ export async function signSendTransaction(tx: Transaction) {
       break;
     default:
       throw new Error(`Unsupported currency: ${currencyName.ticker}`);
-  }
-}
-
-export async function signSendNFTTransaction(tx: NFTTransaction) {
-  const currencyName = tx.accountToDebit.currency;
-  if (currencyName === Currency.ETH) {
-    await sendEvmNFT(tx);
-  } else {
-    throw new Error(`Unsupported currency: ${currencyName.ticker}`);
   }
 }
 

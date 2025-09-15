@@ -4,15 +4,11 @@ export const ImageLoadFromGalleryError = createCustomErrorClass("ImageLoadFromGa
 
 export const ImageLoadFromFileError = createCustomErrorClass("ImageLoadFromFileError");
 
-export const ImageLoadFromNftError = createCustomErrorClass("ImageLoadFromNftError");
-
 export const ImageIncorrectFileTypeError = createCustomErrorClass("ImageIncorrectFileTypeError");
 
 export const ImageDownloadError = createCustomErrorClass("ImageDownloadError");
 
 export const ImageTooLargeError = createCustomErrorClass("ImageTooLargeError");
-
-export const NFTMetadataLoadingError = createCustomErrorClass("NFTMetadataLoadingError");
 
 export const ImageSizeLoadingError = createCustomErrorClass("ImageSizeLoadingError");
 
