@@ -8,4 +8,4 @@ export * from "./craftTransaction";
 export * from "./getSequence";
 export * from "./validateIntent";
 export * from "./getTokenFromAsset";
-export * from "./getStakes";
+// export * from "./getStakes";

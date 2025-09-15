@@ -46,26 +46,27 @@ export async function estimateFees(
   transactionIntent: TransactionIntent<MemoNotSupported>,
 ): Promise<FeeEstimation> {
   const { type, gasLimit, feeData, mode, validator } = await prepareUnsignedTxParams(currency, transactionIntent);
+  const { amount, asset, recipient, sender, type, mode, parameters } = transactionIntent;
 
   const gasTracker = getGasTracker(currency);
   const to = isNative(asset) ? recipient : (asset.assetReference as string);
   let data: Buffer;
   const config = getStakingContractConfig(currency.id);
-  console.log("config", config, mode, isStakingOperation(mode));
+  // console.log("config", config, mode, isStakingOperation(mode));
   if (config && mode && isStakingOperation(mode)) {
     data = Buffer.from(
       encodeStakingData({
         currencyId: currency.id,
         operation: mode,
         config,
-        params: [validator],
+        params: parameters || [],
       }).slice(2),
       "hex",
     );
-  console.log("data", data);
+    // console.log("data", data);
   } else {
     data = isNative(asset) ? Buffer.from([]) : getErc20Data(recipient, amount);
-    console.log("data2", data);
+    // console.log("data2", data);
   }
   const value = isNative(asset) ? amount : 0n;
   const gasLimit = await node.getGasEstimation(

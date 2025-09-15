@@ -296,7 +296,6 @@ export type TransactionIntent<MemoType extends Memo = MemoNotSupported> = {
   type: string;
   sender: string;
   mode?: string | any;
-  validator?: string;
   senderPublicKey?: string;
   expiration?: number;
   recipient: string;
@@ -305,6 +304,7 @@ export type TransactionIntent<MemoType extends Memo = MemoNotSupported> = {
   asset: AssetInfo;
   sequence?: number;
   feesStrategy?: FeesStrategy;
+  parameters?: any[];
 } & MaybeMemo<MemoType>;
 
 export type TransactionValidation = {

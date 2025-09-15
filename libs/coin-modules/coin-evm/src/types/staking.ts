@@ -5,7 +5,12 @@ export type StakingOperation =
   | "undelegate"
   | "redelegate"
   | "getStakedBalance"
-  | "getUnstakedBalance";
+  | "getUnstakedBalance"
+  | "lock"
+  | "unlock"
+  | "withdraw"
+  | "getPendingWithdrawals"
+  | "getVoter";
 
 export type StakingContractConfig = {
   contractAddress: string;
@@ -15,7 +20,10 @@ export type StakingContractConfig = {
     undelegate: string;
     getStakedBalance: string;
   };
-  validators?: string[];
+  apiConfig?: {
+    baseUrl: string;
+    validatorsEndpoint: string;
+  };
 };
 
 export type StakeCreate = {
