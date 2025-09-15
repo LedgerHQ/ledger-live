@@ -16,7 +16,7 @@ type Props = {
   value: string;
 };
 
-export const ShareLink = ({ children, value }: Props) => {
+const ShareLink = ({ children, value }: Props) => {
   const onPress = async () => {
     await Share.share({
       message: value,

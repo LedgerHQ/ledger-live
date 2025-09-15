@@ -167,13 +167,7 @@ const shallowAccountsSelectorCreator = createSelectorCreator(defaultMemoize, (a,
 export const shallowAccountsSelector = shallowAccountsSelectorCreator(accountsSelector, a => a);
 
 export const flattenAccountsSelector = createSelector(accountsSelector, flattenAccounts);
-export const flattenAccountsEnforceHideEmptyTokenSelector = createSelector(
-  accountsSelector,
-  accounts =>
-    flattenAccounts(accounts, {
-      enforceHideEmptySubAccounts: true,
-    }),
-);
+
 export const accountsCountSelector = createSelector(accountsSelector, acc => acc.length);
 /** Returns a boolean that is true if and only if there is no account */
 export const hasNoAccountsSelector = createSelector(accountsSelector, acc => acc.length <= 0);
@@ -318,39 +312,6 @@ export const accountScreenSelector =
 export const isUpToDateSelector = createSelector(accountsSelector, accounts =>
   accounts.every(isUpToDateAccount),
 );
-export const subAccountByCurrencyOrderedSelector = createSelector(
-  accountsSelector,
-  (_: State, currency: CryptoCurrency | TokenCurrency) => currency,
-  (accounts, currency) => {
-    const flatAccounts = flattenAccounts(accounts);
-    return flatAccounts
-      .filter(
-        (account: AccountLike) =>
-          (account.type === "TokenAccount" ? account.token.id : account.currency.id) ===
-          currency.id,
-      )
-      .map((account: AccountLike) => ({
-        account,
-        parentAccount:
-          account.type === "TokenAccount" && account.parentId
-            ? accounts.find(fa => fa.type === "Account" && fa.id === account.parentId)
-            : {},
-      }))
-      .sort((a: { account: AccountLike }, b: { account: AccountLike }) =>
-        a.account.balance.gt(b.account.balance)
-          ? -1
-          : a.account.balance.eq(b.account.balance)
-            ? 0
-            : 1,
-      );
-  },
-);
-export const subAccountByCurrencyOrderedScreenSelector =
-  (route: { params?: { currency?: CryptoOrTokenCurrency } }) => (state: State) => {
-    const currency = route?.params?.currency;
-    if (!currency) return [];
-    return subAccountByCurrencyOrderedSelector(state, currency);
-  };
 
 function accountHasPositiveBalance(account: AccountLike) {
   return Boolean(account.balance?.gt(0));
@@ -371,19 +332,8 @@ type AccountsLikeSelector = OutputSelector<
   (res: Account[], res2: string[]) => AccountLike[]
 >;
 
-function makeAccountsCountSelectors(accountsSelector: AccountsLikeSelector) {
-  return createSelector(accountsSelector, accounts => accounts.length);
-}
-
 function makeHasAccountsSelectors(accountsSelector: AccountsLikeSelector) {
   return createSelector(accountsSelector, accounts => accounts.length > 0);
-}
-
-function makeAccountsWithPositiveBalanceCountSelector(accountsSelector: AccountsLikeSelector) {
-  return createSelector(
-    accountsSelector,
-    accounts => accounts.filter(accountHasPositiveBalance).length,
-  );
 }
 
 function makeHasAccountsWithPositiveBalanceSelector(accountsSelector: AccountsLikeSelector) {
@@ -408,26 +358,9 @@ export const tokenAccountsNotBlacklistedSelector = createSelector(
     accounts.filter(acc => !blacklistedIds.includes(getAccountCurrency(acc).id)),
 );
 
-export const tokenAccountsCountSelector = makeAccountsCountSelectors(tokenAccountsSelector);
-
-export const tokenAccountsNotBlacklistedCountSelector = makeAccountsCountSelectors(
-  tokenAccountsNotBlacklistedSelector,
-);
-
-export const hasTokenAccountsSelector = makeHasAccountsSelectors(tokenAccountsSelector);
-
 export const hasTokenAccountsNotBlacklistedSelector = makeHasAccountsSelectors(
   tokenAccountsNotBlacklistedSelector,
 );
-
-export const tokenAccountsWithPositiveBalanceCountSelector =
-  makeAccountsWithPositiveBalanceCountSelector(tokenAccountsSelector);
-
-export const tokenAccountsNotBlackListedWithPositiveBalanceCountSelector =
-  makeAccountsWithPositiveBalanceCountSelector(tokenAccountsNotBlacklistedSelector);
-
-export const hasTokenAccountsWithPositiveBalanceSelector =
-  makeHasAccountsWithPositiveBalanceSelector(tokenAccountsSelector);
 
 export const hasTokenAccountsNotBlackListedWithPositiveBalanceSelector =
   makeHasAccountsWithPositiveBalanceSelector(tokenAccountsNotBlacklistedSelector);
@@ -440,15 +373,7 @@ export const nonTokenAccountsSelector = createSelector(accountsSelector, account
   flattenAccounts(accounts).filter(acc => acc.type !== "TokenAccount"),
 );
 
-export const nonTokenAccountsCountSelector = makeAccountsCountSelectors(nonTokenAccountsSelector);
-
 export const hasNonTokenAccountsSelector = makeHasAccountsSelectors(nonTokenAccountsSelector);
-
-export const nonTokenAccountsWithPositiveBalanceCountSelector =
-  makeAccountsWithPositiveBalanceCountSelector(nonTokenAccountsSelector);
-
-export const hasNonTokenAccountsWithPositiveBalanceSelector =
-  makeHasAccountsWithPositiveBalanceSelector(nonTokenAccountsSelector);
 
 /**
  * Returns a boolean that is true if and only if some of the accounts have an

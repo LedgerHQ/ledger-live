@@ -1,6 +1,7 @@
 import { Balance } from "@ledgerhq/coin-framework/api/types";
 import { getAccountInfo, getServerInfos } from "../network";
 import { parseAPIValue } from "./common";
+import BigNumber from "bignumber.js";
 
 export async function getBalance(address: string): Promise<Balance[]> {
   const accountInfo = await getAccountInfo(address);
@@ -12,7 +13,10 @@ export async function getBalance(address: string): Promise<Balance[]> {
   );
   const trustlines = accountInfo.ownerCount;
 
-  const locked = reserveMinXRP.plus(reservePerTrustline.times(trustlines));
+  const locked =
+    accountInfo.balance === "0"
+      ? new BigNumber(0)
+      : reserveMinXRP.plus(reservePerTrustline.times(trustlines));
   return [
     {
       value: BigInt(accountInfo.balance),

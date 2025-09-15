@@ -59,7 +59,7 @@ import { getMigrationUserProps } from "LLM/storage/utils/migrations/analytics";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { getVersionedRedirects } from "LLM/hooks/useStake/useVersionedStakePrograms";
 
-let sessionId = uuid();
+const sessionId = uuid();
 const appVersion = `${VersionNumber.appVersion || ""} (${VersionNumber.buildVersion || ""})`;
 const { ANALYTICS_LOGS, ANALYTICS_TOKEN } = Config;
 
@@ -129,8 +129,6 @@ const getFeatureFlagProperties = () => {
 };
 
 runOnceWhen(() => !!analyticsFeatureFlagMethod && !!segmentClient, getFeatureFlagProperties);
-
-export const updateSessionId = () => (sessionId = uuid());
 
 const getLedgerSyncAttributes = (state: State) => {
   if (!analyticsFeatureFlagMethod) return false;
@@ -389,11 +387,6 @@ export const updateIdentify = async (additionalProperties?: UserTraits, mandator
   if (ANALYTICS_LOGS) console.log("analytics:identify", allProperties);
   if (!token) return;
   await segmentClient?.identify(userExtraProperties.userId, allProperties);
-};
-
-export const stop = () => {
-  if (ANALYTICS_LOGS) console.log("analytics:stop");
-  storeInstance = null;
 };
 
 type Properties = Error | Record<string, unknown> | null;

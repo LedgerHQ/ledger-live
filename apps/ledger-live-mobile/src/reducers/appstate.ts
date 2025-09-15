@@ -13,10 +13,6 @@ import type {
 } from "../actions/types";
 import { AppStateActionTypes, EarnActionTypes } from "../actions/types";
 
-export type AsyncState = {
-  isConnected: boolean | null;
-};
-
 export const INITIAL_STATE: AppState = {
   isConnected: true,
   hasConnectedDevice: false, // NB for this current session, have we done a device action with a device.

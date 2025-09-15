@@ -2,7 +2,7 @@ import "./setup";
 import { BrowserWindow, screen, app, WebPreferences } from "electron";
 import path from "path";
 import { delay } from "@ledgerhq/live-common/promise";
-import { URL } from "url";
+import { URL, pathToFileURL } from "url";
 import { ledgerUSBVendorId } from "@ledgerhq/devices";
 
 const intFromEnv = (key: string, def: number): number => {
@@ -68,7 +68,7 @@ const defaultWindowOptions = {
 };
 
 export const loadWindow = async () => {
-  const url = __DEV__ ? INDEX_URL : path.join("file://", __dirname, "index.html");
+  const url = __DEV__ ? INDEX_URL : pathToFileURL(path.join(__dirname, "index.html")).href;
   if (mainWindow) {
     /** Making the following variables easily accessible to the renderer thread:
      * - theme

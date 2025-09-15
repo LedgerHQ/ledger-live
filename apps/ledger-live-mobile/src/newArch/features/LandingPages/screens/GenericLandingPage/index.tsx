@@ -42,7 +42,7 @@ export const GenericView = (props: HookResult) => {
   );
 };
 
-export function GenericLandingPage(props: NavigationProps) {
+function GenericLandingPage(props: NavigationProps) {
   return <GenericView {...useGeneralLandingPage(props)} />;
 }
 

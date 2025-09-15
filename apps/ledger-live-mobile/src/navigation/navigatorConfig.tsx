@@ -42,4 +42,3 @@ export const getStackNavigatorConfig = (
     ? () => <NavigationHeaderCloseButtonAdvanced onClose={onClose} />
     : undefined,
 });
-export type StackNavigatorConfig = ReturnType<typeof getStackNavigatorConfig>;

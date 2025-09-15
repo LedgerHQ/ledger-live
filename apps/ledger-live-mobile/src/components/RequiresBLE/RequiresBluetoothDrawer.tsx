@@ -6,8 +6,6 @@ import LocationDisabled from "../RequiresLocation/LocationDisabled";
 import BluetoothPermissionsDenied from "./BluetoothPermissionsDenied";
 import LocationPermissionDenied from "../RequiresLocation/LocationPermissionDenied";
 
-export type BleRequirementsState = "unknown" | "respected" | "not_respected";
-
 export type RequiresBluetoothBottomModalProps = {
   isOpenedOnIssue: boolean;
   onUserClose: () => void;
