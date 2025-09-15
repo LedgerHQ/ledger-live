@@ -13,8 +13,14 @@ const info = str => {
 };
 
 async function notarizeApp(context) {
-  if (platform !== "darwin") {
+  if (platform() !== "darwin") {
     info("OS is not mac, skipping notarization.");
+    return;
+  }
+
+  // Skip notarization in CI or when explicitly disabled
+  if (process.env.SKIP_SIGNING === "true") {
+    info("Notarization skipped (SKIP_SIGNING=true)");
     return;
   }
 

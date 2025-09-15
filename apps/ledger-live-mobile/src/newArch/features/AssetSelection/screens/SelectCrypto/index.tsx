@@ -61,6 +61,7 @@ export default function SelectCrypto({
   const renderList = useCallback(
     (items: CryptoOrTokenCurrency[]) => (
       <FlatList
+        testID="select-crypto-scrollView"
         data={items}
         renderItem={({ item }) => (
           <BigCurrencyRow currency={item} onPress={onPressItem} subTitle={item.ticker} />

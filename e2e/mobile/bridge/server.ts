@@ -128,7 +128,7 @@ export async function waitSwapReady() {
 }
 
 export async function waitEarnReady() {
-  return fetchData({ type: "waitEarnReady", id: uniqueId() }, RESPONSE_TIMEOUT * 6);
+  return fetchData({ type: "waitEarnReady", id: uniqueId() }, RESPONSE_TIMEOUT * 3);
 }
 
 export async function getLogs() {

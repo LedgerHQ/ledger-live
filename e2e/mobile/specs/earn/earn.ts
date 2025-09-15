@@ -6,6 +6,8 @@ import { ApplicationOptions } from "page";
 
 setEnv("DISABLE_TRANSACTION_BROADCAST", true);
 
+let earnReady: Promise<string>;
+
 const liveDataCommand = (currencyApp: { name: string }, index: number) => (userdataPath?: string) =>
   CLI.liveData({
     currency: currencyApp.name,
@@ -22,7 +24,7 @@ async function beforeAllFunction(options: ApplicationOptions) {
   });
 
   await app.portfolio.waitForPortfolioPageToLoad();
-  await waitEarnReady();
+  earnReady = waitEarnReady();
 }
 
 export async function runInlineAddAccountTest(
@@ -59,26 +61,38 @@ export async function runStartETHStakingFromEarnDashboardTest(
   tmsLinks: string[],
   tags: string[],
 ) {
-  describe("Start ETH staking flow from Earn Dashboard", () => {
-    beforeAll(async () => {
-      await beforeAllFunction({
-        userdata: "skip-onboarding",
-        speculosApp: account.currency.speculosApp,
-        cliCommands: [liveDataCommand(account.currency.speculosApp, account.index)],
+  // Kiln disabled as not available
+  (provider === Provider.KILN ? describe.skip : describe)(
+    "Start ETH staking flow from Earn Dashboard",
+    () => {
+      beforeAll(async () => {
+        await beforeAllFunction({
+          userdata: "skip-onboarding",
+          speculosApp: account.currency.speculosApp,
+          featureFlags: {
+            ptxEarnLiveApp: {
+              enabled: true,
+              params: { manifest_id: "earn" },
+              overridesRemote: true,
+            },
+          },
+          cliCommands: [liveDataCommand(account.currency.speculosApp, account.index)],
+        });
       });
-    });
 
-    tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
-    tags.forEach(tag => $Tag(tag));
-    it(`ETH staking flow - Earn Dashboard - Provider : ${provider.uiName}`, async () => {
-      await app.portfolio.openEarnTab();
-      await app.earnDashboard.goToEarnMoreTab();
-      await app.earnDashboard.clickEarnCurrencyButton(earnButtonId);
-      await app.earnDashboard.expectStakingProviderModalTitle("Select staking provider");
-      await app.earnDashboard.goToProviderLiveApp(provider);
-      await app.earnDashboard.verifyProviderURL(provider, account);
-    });
-  });
+      tmsLinks.forEach(tmsLink => $TmsLink(tmsLink));
+      tags.forEach(tag => $Tag(tag));
+      it(`ETH staking flow - Earn Dashboard - Provider : ${provider.uiName}`, async () => {
+        await app.portfolio.openEarnTab();
+        await earnReady;
+        await app.earnDashboard.goToEarnMoreTab();
+        await app.earnDashboard.clickEarnCurrencyButton(earnButtonId);
+        await app.earnDashboard.expectStakingProviderModalTitle("Select staking provider");
+        await app.earnDashboard.goToProviderLiveApp(provider);
+        await app.earnDashboard.verifyProviderURL(provider, account);
+      });
+    },
+  );
 }
 
 export async function runCorrectEarnPageIsLoadedDependingOnUserStakingSituationTest(
@@ -101,6 +115,7 @@ export async function runCorrectEarnPageIsLoadedDependingOnUserStakingSituationT
     tags.forEach(tag => $Tag(tag));
     it(`Correct Earn page - ${account.currency.ticker} - staking situation: ${staking}`, async () => {
       await app.portfolio.openEarnTab();
+      await earnReady;
       if (staking) {
         await app.earnDashboard.verifyTotalDeposited();
         await app.earnDashboard.verifyTotalRewardsEarned();
