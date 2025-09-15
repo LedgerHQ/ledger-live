@@ -78,10 +78,6 @@ const useBuyDeviceBannerModel = ({
         },
       },
     });
-
-    // Close the modal after navigation starts to avoid closing
-    // the selection modal before the navigation starts
-    setTimeout(() => navigation.goBack(), 100);
   }, [navigation]);
 
   const onPress = useCallback(() => {
