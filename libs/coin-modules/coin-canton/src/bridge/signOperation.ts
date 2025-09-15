@@ -22,7 +22,8 @@ export const buildSignOperation =
 
           const signature = await signerContext(deviceId, async signer => {
             const { freshAddressPath: derivationPath } = account;
-            const partyId = account.freshAddress.replace("__", "::");
+            const partyId = (account as unknown as { cantonResources: { partyId: string } })
+              .cantonResources.partyId;
 
             const { hash, serializedTransaction } = await craftTransaction(
               {
@@ -31,6 +32,7 @@ export const buildSignOperation =
               {
                 recipient: transaction.recipient,
                 amount: transaction.amount,
+                memo: transaction.memo,
                 expireInSeconds: 60 * 60,
                 tokenId: "Amulet",
               },

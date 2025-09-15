@@ -51,7 +51,7 @@ export type PrepareTransferRequest = {
   recipient: string;
   execute_before_secs: number;
   instrument_id: string;
-  reason?: string;
+  reason?: string | undefined;
 };
 
 type OnboardingSubmitRequest = {
@@ -151,6 +151,9 @@ export type OperationInfo =
           asset: string;
           details: {
             type: "pre-approval";
+            metadata: {
+              reason?: string;
+            };
           };
         },
       ];
@@ -193,6 +196,9 @@ export type OperationInfo =
           asset: string;
           details: {
             type: "tap";
+            metadata: {
+              reason?: string;
+            };
           };
         },
       ];
@@ -235,6 +241,9 @@ export type OperationInfo =
           asset: string;
           details: {
             type: "transfer";
+            metadata: {
+              reason?: string;
+            };
           };
         },
       ];
