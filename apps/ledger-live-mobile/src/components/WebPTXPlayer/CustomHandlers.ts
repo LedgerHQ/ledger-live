@@ -40,7 +40,6 @@ export function useCustomExchangeHandlers({
   onCompleteResult,
   sendAppReady,
   onCompleteError,
-  handleLoaderDrawer,
 }: CustomExchangeHandlersHookType) {
   const navigation = useNavigation<StackNavigatorNavigation<BaseNavigatorStackParamList>>();
   const [device, setDevice] = useState<Device>();
@@ -289,7 +288,6 @@ export function useCustomExchangeHandlers({
     navigation,
     onCompleteError,
     onCompleteResult,
-    handleLoaderDrawer,
     sendAppReady,
     syncAccountById,
     tracking,
