@@ -82,7 +82,7 @@ export const getAccountShape: GetAccountShape<CantonAccount> = async info => {
 
   // Account info retrieval + spendable balance calculation
   // const accountInfo = await getAccountInfo(address);
-  const balances = await getBalance(partyId);
+  const balances = await getBalance(currency, partyId);
 
   const balanceData = balances.find(balance => balance.instrument_id === "Amulet") || {
     instrument_id: "Amulet",
@@ -91,7 +91,7 @@ export const getAccountShape: GetAccountShape<CantonAccount> = async info => {
   };
 
   const balance = new BigNumber(balanceData.amount);
-  const reserveMin = coinConfig.getCoinConfig().minReserve || 0;
+  const reserveMin = coinConfig.getCoinConfig(currency).minReserve || 0;
   const lockedAmount = balanceData.locked ? balance : new BigNumber(0);
   const spendableBalance = BigNumber.max(
     0,
@@ -101,12 +101,12 @@ export const getAccountShape: GetAccountShape<CantonAccount> = async info => {
   // Tx history fetching
   const oldOperations = initialAccount?.operations || [];
   let startAt = oldOperations.length ? (oldOperations[0].blockHeight || 0) + 1 : 0;
-  const transactionData = await getOperations(partyId, {
+  const transactionData = await getOperations(currency, partyId, {
     cursor: startAt,
     limit: 100,
   });
   // blockheight retrieval
-  const blockHeight = await getLedgerEnd();
+  const blockHeight = await getLedgerEnd(currency);
 
   const newOperations = filterOperations(transactionData.operations, accountId, partyId);
   const operations = mergeOps(oldOperations, newOperations);

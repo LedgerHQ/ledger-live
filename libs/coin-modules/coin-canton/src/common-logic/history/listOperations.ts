@@ -1,6 +1,6 @@
 import type { Operation, Pagination } from "@ledgerhq/coin-framework/api/index";
 import { getOperations } from "../../network/gateway";
-import coinConfig from "../../config";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 
 /**
  * Returns list of operations associated to an account.
@@ -10,10 +10,11 @@ import coinConfig from "../../config";
  * Impl to finalize when backend is ready
  */
 export async function listOperations(
+  currency: CryptoCurrency,
   partyId: string,
   page: Pagination,
 ): Promise<[Operation[], string]> {
-  const { operations, next } = await getOperations(partyId, {
+  const { operations, next } = await getOperations(currency, partyId, {
     cursor: page.pagingToken !== undefined ? parseInt(page.pagingToken) : undefined,
     minOffset: page.minHeight,
     limit: page.limit,
