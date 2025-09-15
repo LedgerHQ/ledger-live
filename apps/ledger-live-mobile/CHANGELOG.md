@@ -1,5 +1,17 @@
 # live-mobile
 
+## 3.93.0-nightly.7
+
+### Minor Changes
+
+- [#11812](https://github.com/LedgerHQ/ledger-live/pull/11812) [`5c7efab`](https://github.com/LedgerHQ/ledger-live/commit/5c7efab08cc5ba8c94390e8f59ab3200b8405b12) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - remove unused code on LLM
+
+- [#11811](https://github.com/LedgerHQ/ledger-live/pull/11811) [`b214da1`](https://github.com/LedgerHQ/ledger-live/commit/b214da10cb2de5050e262aa106e7014038c0d887) Thanks [@CremaFR](https://github.com/CremaFR)! - fix: remove swap loader has it can't work with old flow.
+
+### Patch Changes
+
+- [#11815](https://github.com/LedgerHQ/ledger-live/pull/11815) [`d617e44`](https://github.com/LedgerHQ/ledger-live/commit/d617e44fb05ad3204f29c568202ae686e33c7001) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Fix OS update closing automatically in sync onboarding
+
 ## 3.93.0-nightly.6
 
 ### Minor Changes

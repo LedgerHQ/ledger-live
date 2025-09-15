@@ -1,5 +1,16 @@
 # @ledgerhq/live-common
 
+## 34.48.0-nightly.6
+
+### Minor Changes
+
+- [#11813](https://github.com/LedgerHQ/ledger-live/pull/11813) [`e70a351`](https://github.com/LedgerHQ/ledger-live/commit/e70a351dc3298c59301cfff1939c7e3d16efa880) Thanks [@ejaycoleman](https://github.com/ejaycoleman)! - mad hook isLoading should exclude next page loads
+
+### Patch Changes
+
+- Updated dependencies [[`81a2bc9`](https://github.com/LedgerHQ/ledger-live/commit/81a2bc980d25aec3b2445aa2004aa8a72a60cea1)]:
+  - @ledgerhq/coin-xrp@7.4.0-nightly.5
+
 ## 34.48.0-nightly.5
 
 ### Patch Changes

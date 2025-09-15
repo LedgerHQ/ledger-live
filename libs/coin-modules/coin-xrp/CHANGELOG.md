@@ -1,5 +1,11 @@
 # @ledgerhq/coin-xrp
 
+## 7.4.0-nightly.5
+
+### Minor Changes
+
+- [#11770](https://github.com/LedgerHQ/ledger-live/pull/11770) [`81a2bc9`](https://github.com/LedgerHQ/ledger-live/commit/81a2bc980d25aec3b2445aa2004aa8a72a60cea1) Thanks [@qperrot](https://github.com/qperrot)! - Prevent negative XRP spendable balance
+
 ## 7.4.0-nightly.4
 
 ### Patch Changes
