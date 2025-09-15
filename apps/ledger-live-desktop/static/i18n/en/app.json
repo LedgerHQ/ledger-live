@@ -168,6 +168,7 @@
       "NFT_IN": "NFT Received",
       "NFT_OUT": "NFT Sent",
       "CREATE": "Created",
+      "UNKNOWN": "Unknown",
       "REVEAL": "Revealed",
       "DELEGATE": "Delegated",
       "REDELEGATE": "Redelegated",
@@ -5893,6 +5894,10 @@
       "commentPlaceholder": "Optional",
       "comment": "Comment"
     },
+    "canton": {
+      "commentPlaceholder": "Optional",
+      "comment": "Comment"
+    },
     "stellar": {
       "memo": "Memo",
       "memoType": {
@@ -6487,6 +6492,9 @@
       "description": "Please close the window and try again later"
     },
     "TonCommentInvalid": {
+      "title": "Comment must not exceed 120 characters without special characters"
+    },
+    "CantonCommentInvalid": {
       "title": "Comment must not exceed 120 characters without special characters"
     },
     "CantScanQRCode": {

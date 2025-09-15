@@ -12,6 +12,7 @@ export async function craftTransaction(
     amount: BigNumber;
     tokenId: string;
     expireInSeconds: number;
+    memo?: string | undefined;
   },
 ): Promise<{
   nativeTransaction: PrepareTransferResponse;
@@ -24,6 +25,7 @@ export async function craftTransaction(
     type: "token-transfer-request",
     execute_before_secs: transaction.expireInSeconds,
     instrument_id: transaction.tokenId,
+    reason: transaction.memo,
   });
 
   return {

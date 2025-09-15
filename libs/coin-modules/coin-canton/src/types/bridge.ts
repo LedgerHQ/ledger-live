@@ -43,11 +43,13 @@ export type NetworkInfoRaw = {
 export type Transaction = TransactionCommon & {
   family: "canton";
   fee: BigNumber | null | undefined;
+  memo?: string;
 };
 
 export type TransactionRaw = TransactionCommonRaw & {
   family: "canton";
   fee: string | null | undefined;
+  memo?: string;
 };
 
 export type TransactionStatus = TransactionStatusCommon;
