@@ -3,6 +3,7 @@ import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 
 import { getNodeApi } from "../network/node";
 import { getExplorerApi } from "../network/explorer";
+import { getStakes } from "./getStakes";
 
 /**
  * Get all assets linked to the user (native, tokens, ...)
@@ -19,9 +20,22 @@ export async function getBalance(currency: CryptoCurrency, address: string): Pro
   // Get native balance for the first element array
   const nativeBalance = await nodeApi.getCoinBalance(currency, address);
 
+  // Get staking positions
+  const stakingPositions = await getStakes(currency, address);
+  const [firstStake, ...additionalStakes] = stakingPositions.items;
+
   balance.push({
     value: BigInt(nativeBalance.toFixed(0)),
     asset: { type: "native" },
+    ...(firstStake && { stake: firstStake }),
+  });
+
+  additionalStakes.forEach(stake => {
+    balance.push({
+      value: stake.amount,
+      asset: stake.asset,
+      stake,
+    });
   });
 
   // Get user's token operations to get all his contract address for the next balance elements
