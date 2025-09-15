@@ -10,11 +10,11 @@ const info = str => {
 };
 
 async function azureSign(filePath) {
-  const { AZURE_APP_ID, AZURE_SECRET, AZURE_KEY_NAME } = process.env;
+  const { AZURE_APP_ID, AZURE_SECRET, AZURE_KEY_NAME, AZURE_TENANT_ID } = process.env;
 
-  if (!AZURE_APP_ID || !AZURE_SECRET || !AZURE_KEY_NAME) {
+  if (!AZURE_APP_ID || !AZURE_SECRET || !AZURE_KEY_NAME || !AZURE_TENANT_ID) {
     throw new Error(
-      "AZURE_APP_ID, AZURE_SECRET and AZURE_KEY_NAME env variables are required for signing Windows builds.",
+      "AZURE_APP_ID, AZURE_TENANT_ID, AZURE_SECRET and AZURE_KEY_NAME env variables are required for signing Windows builds.",
     );
   }
 
@@ -29,6 +29,8 @@ async function azureSign(filePath) {
     "Ledger SAS",
     "-kvu",
     "https://ledgerlivevault.vault.azure.net",
+    "-kvt",
+    AZURE_TENANT_ID,
     "-kvi",
     AZURE_APP_ID,
     "-kvs",
