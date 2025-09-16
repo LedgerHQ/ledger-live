@@ -55,7 +55,7 @@ export default function PlatformStartExchange({ navigation, route }: Props) {
           ...route,
           params: {
             ...route.params,
-            forceSelectDevice: !lastConnectedDevice?.available || true,
+            forceSelectDevice: !lastConnectedDevice?.available,
           },
         }}
         onResult={setDevice}
