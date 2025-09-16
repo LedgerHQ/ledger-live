@@ -4,6 +4,8 @@ import { CurrenciesByProviderId } from "../../deposit/type";
 import { composeHooks } from "../../utils/composeHooks";
 import { useLeftApyModule } from "../hooks/modules/useLeftApyModule";
 import { createUseRightBalanceAsset } from "../hooks/useRightBalanceAsset";
+import { useLeftMarketTrendModule } from "../hooks/modules/useLeftMarketTrendModule";
+import { useRightMarketTrendModule } from "../hooks/modules/useRightMarketTrendModule";
 
 const getRightElement =
   (AssetConfigurationDeps: AssetConfigurationDeps) => (rightElement?: string) => {
@@ -11,6 +13,12 @@ const getRightElement =
       case "undefined":
         return undefined;
       case "marketTrend":
+        return (currencies: CryptoOrTokenCurrency[]) =>
+          useRightMarketTrendModule({
+            currencies,
+            useBalanceDeps: AssetConfigurationDeps.useBalanceDeps,
+            MarketPriceIndicator: AssetConfigurationDeps.MarketPriceIndicator,
+          });
       case "balance":
       default:
         return createUseRightBalanceAsset({
@@ -27,6 +35,8 @@ const getLeftElement =
         return (assets: CryptoOrTokenCurrency[]) =>
           useLeftApyModule(assets, AssetConfigurationDeps.ApyIndicator);
       case "marketTrend":
+        return (assets: CryptoOrTokenCurrency[]) =>
+          useLeftMarketTrendModule(assets, AssetConfigurationDeps.MarketPercentIndicator);
       case "undefined":
       default:
         return undefined;
