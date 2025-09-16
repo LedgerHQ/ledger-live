@@ -108,7 +108,9 @@ export default async function (currencyIds: string[]) {
           },
         );
       } catch (err) {
-        console.error(`Skipping failing run. Error: ${err instanceof Error ? err.message : err}`);
+        console.error(
+          `Skipping failing run. Error: ${err instanceof Error ? err.stack ?? err.message : err}`,
+        );
         result.failed = true;
       }
     }

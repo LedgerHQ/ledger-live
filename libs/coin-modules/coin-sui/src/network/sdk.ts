@@ -41,6 +41,7 @@ import { getEnv } from "@ledgerhq/live-env";
 import { SUI_SYSTEM_STATE_OBJECT_ID } from "@mysten/sui/utils";
 import { getCurrentSuiPreloadData } from "../bridge/preload";
 import { ONE_SUI } from "../constants";
+import bs58 from "bs58";
 
 const apiMap: Record<string, SuiClient> = {};
 type AsyncApiFunction<T> = (api: SuiClient) => Promise<T>;
@@ -336,6 +337,10 @@ export function transactionToOperation(
   };
 }
 
+/**
+ * @returns the operation converted. Note that if param `transaction` was retrieved as an "IN" operations, the type may be converted to "OUT".
+ *    It happens for most "OUT" operations because the sender receive a new version of the coin objects.
+ */
 export function transactionToOp(address: string, transaction: SuiTransactionBlockResponse): Op {
   const type = getOperationType(address, transaction);
   const coinType = getOperationCoinType(transaction);
@@ -520,44 +525,94 @@ export const filterOperations = (
   return { operations: uniqBy(result, tx => tx.digest), cursor: nextCursor };
 };
 
+function convertApiOrderToSdkOrder(order: "asc" | "desc"): "ascending" | "descending" {
+  return order === "asc" ? "ascending" : "descending";
+}
+
+type Cursor = {
+  out?: string;
+  in?: string;
+};
+
+function serializeCursor(cursor: Cursor): string {
+  return bs58.encode(Buffer.from(JSON.stringify(cursor)));
+}
+
+function deserializeCursor(b58cursor: string | undefined): Cursor {
+  return b58cursor
+    ? (JSON.parse(Buffer.from(bs58.decode(b58cursor)).toString()) as Cursor)
+    : ({} as Cursor);
+}
+
+function toSdkCursor(cursor: string | undefined): QueryTransactionBlocksParams["cursor"] {
+  const ret: QueryTransactionBlocksParams["cursor"] = cursor;
+  return ret;
+}
+
 /**
  * Fetch operations for Alpaca
+ * It fetches separately the "OUT" and "IN" operations and then merge them.
+ * The cursor is composed of the last "OUT" and "IN" operation cursors.
+ *
+ * Warning:
+ * Some IN operations are also OUT operations because the sender receive a new version of the coin objects,
+ * and the complexity of this function don't go that far to detect it.
+ * IN calls and OUT calls are not disjoint
+ * Consequence: 2 successive calls of this function when passing cursor may return an operation we already saw in previous calls,
+ * fetched as an OUT operation.
+ *
+ * Note: I think it's possible to detect duplicated IN oprations:
+ * - if the address is the sender of the tx
+ * - and there is some transfer to other address
+ * - and the address is the single only owner of mutated or deleted object
+ * when all that conditions are met, the transaction will be fetched as an OUT operation,
+ * and it can be filtered out from the IN operations results.
+ *
+ * @returns the operations.
+ *
  */
 export const getListOperations = async (
   addr: string,
-  cursor: QueryTransactionBlocksParams["cursor"] = null,
+  order: "asc" | "desc",
   withApiImpl: typeof withApi = withApi,
-  order?: "asc" | "desc",
+  cursor?: string,
 ): Promise<Page<Op>> =>
   withApiImpl(async api => {
-    let rpcOrder: "ascending" | "descending";
-    if (order) {
-      rpcOrder = order === "asc" ? "ascending" : "descending";
-    } else {
-      rpcOrder = cursor ? "ascending" : "descending";
+    const rpcOrder = convertApiOrderToSdkOrder(order);
+    const { out: outCursor, in: inCursor } = deserializeCursor(cursor);
+
+    const [opsOut, opsIn] = await Promise.all([
+      queryTransactions({
+        api,
+        addr,
+        type: "OUT",
+        cursor: toSdkCursor(outCursor),
+        order: rpcOrder,
+      }),
+      queryTransactions({
+        api,
+        addr,
+        type: "IN",
+        cursor: toSdkCursor(inCursor),
+        order: rpcOrder,
+      }),
+    ]);
+
+    const ops = [...opsOut.data, ...opsIn.data]
+      .sort((a, b) => Number(b.timestampMs) - Number(a.timestampMs))
+      .map(t => transactionToOp(addr, t));
+
+    const nextCursor: Cursor = {};
+    if (opsOut.hasNextPage && opsOut.nextCursor) {
+      nextCursor.out = opsOut.nextCursor;
+    }
+    if (opsIn.hasNextPage && opsIn.nextCursor) {
+      nextCursor.in = opsIn.nextCursor;
     }
 
-    const opsOut = await loadOperations({
-      api,
-      addr,
-      type: "OUT",
-      cursor,
-      order: rpcOrder,
-      operations: [],
-    });
-    const opsIn = await loadOperations({
-      api,
-      addr,
-      type: "IN",
-      cursor,
-      order: rpcOrder,
-      operations: [],
-    });
-    const list = filterOperations(opsIn, opsOut, rpcOrder, true);
-
     return {
-      items: list.operations.map(t => transactionToOp(addr, t)),
-      next: list.cursor ?? undefined,
+      items: ops,
+      next: serializeCursor(nextCursor),
     };
   });
 

@@ -7300,9 +7300,9 @@
   "webview": {
     "networkError": {
       "title": "Network Error",
-      "subtitle": "Something went wrong. Please try again. If the problem persists, save your log and contact Ledger support.",
+      "subtitle": "Something went wrong. Please try again. If the problem persists, save your logs and contact Ledger support.",
       "contactSupport": "Contact Ledger support",
-      "saveLog": "Save log"
+      "saveLog": "Save logs"
     },
     "noAccounts": {
       "title": "You need an account to access this app.",

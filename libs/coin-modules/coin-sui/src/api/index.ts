@@ -4,7 +4,7 @@ import {
   combine,
   broadcast,
   getBalance,
-  listOperations,
+  listOperations as logicListOperations,
   lastBlock,
   getBlock,
   getBlockInfo,
@@ -16,8 +16,6 @@ import {
   AlpacaApi,
   CraftedTransaction,
   FeeEstimation,
-  Operation,
-  Pagination,
   TransactionIntent,
 } from "@ledgerhq/coin-framework/api/index";
 
@@ -33,7 +31,7 @@ export function createApi(config: SuiConfig): AlpacaApi {
     lastBlock,
     getBlock,
     getBlockInfo,
-    listOperations: list,
+    listOperations: logicListOperations,
     getStakes,
     getRewards,
   };
@@ -48,8 +46,4 @@ async function craft(transactionIntent: TransactionIntent): Promise<CraftedTrans
 async function estimate(transactionIntent: TransactionIntent): Promise<FeeEstimation> {
   const fees = await estimateFees(transactionIntent);
   return { value: fees };
-}
-
-async function list(address: string, pagination: Pagination): Promise<[Operation[], string]> {
-  return listOperations(address, pagination);
 }

@@ -145,6 +145,7 @@ const ModularDrawerAddAccountFlowManager = ({
               navigateToEditAccountName={navigateToEditAccountName}
               navigateToFundAccount={navigateToFundAccount}
               source={source}
+              isAccountSelectionFlow={isAccountSelectionFlow}
             />
           </StepContainer>
         );
