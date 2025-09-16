@@ -130,6 +130,8 @@ describe("WalletSync React Library", () => {
         getAccounts: mockGetAccounts,
         getWalletSyncState: mockGetWalletSyncState,
         getLocalState: mockGetLocalState,
+        setWalletSyncPending: jest.fn(),
+        setWalletSyncError: jest.fn(),
       };
     });
 
@@ -409,6 +411,8 @@ describe("WalletSync React Library", () => {
         getAccounts: () => [mockAccount],
         getWalletSyncState: () => currentWSState,
         getLocalState: () => mockLocalState,
+        setWalletSyncPending: jest.fn(),
+        setWalletSyncError: jest.fn(),
       };
 
       const TestWorkflowComponent = () => {

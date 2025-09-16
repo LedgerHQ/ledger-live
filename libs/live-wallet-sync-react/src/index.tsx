@@ -43,6 +43,12 @@ export interface WalletSyncBridge {
 
   /** Hook: subscribes to wallet sync state updates. */
   useWalletSyncState: () => WSState;
+
+  /** Action: dispatches wallet sync pending state update */
+  setWalletSyncPending: (pending: boolean) => void;
+
+  /** Action: dispatches wallet sync error state update */
+  setWalletSyncError: (error: Error | null) => void;
 }
 
 export type Props = {
@@ -104,8 +110,15 @@ export function useWalletSyncLocalState(): () => LocalState {
 
 /** Returns the wallet sync user state */
 export function useWalletSyncUserState(): WalletSyncUserState {
-  const storedState = useWalletSyncBridgeContext().useStoredWalletSyncUserState();
+  const bridge = useWalletSyncBridgeContext();
   const onUserRefresh = useOnUserRefresh();
+
+  // Provide fallback when WalletSync is disabled/not available
+  const storedState = bridge?.useStoredWalletSyncUserState() || {
+    visualPending: false,
+    walletSyncError: null,
+  };
+
   return useMemo(
     () => ({
       ...storedState,

@@ -58,10 +58,10 @@ const initialMockState = createMockState();
 const store = configureStore({
   reducer: {
     accounts: (state = initialMockState.accounts) => state,
-    wallet: (state = initialMockState.wallet) => state,
-    currency: (state = initialMockState.currency) => state,
     application: (state = initialMockState.application) => state,
     assetsDataApi: assetsDataApi.reducer,
+    currency: (state = initialMockState.currency) => state,
+    wallet: (state = initialMockState.wallet) => state,
   },
   middleware: getDefaultMiddleware =>
     getDefaultMiddleware({

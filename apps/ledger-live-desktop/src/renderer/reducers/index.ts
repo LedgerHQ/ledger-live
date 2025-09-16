@@ -12,6 +12,7 @@ import market, { MarketState } from "./market";
 import wallet from "./wallet";
 import { WalletState } from "@ledgerhq/live-wallet/store";
 import walletSync, { WalletSyncState } from "./walletSync";
+import walletSyncUserState, { WalletSyncUserStateState } from "./walletSyncUserState";
 import trustchain from "./trustchain";
 import { TrustchainStore } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { getEnv } from "@ledgerhq/live-env";
@@ -35,6 +36,7 @@ export type State = {
   UI: UIState;
   wallet: WalletState;
   walletSync: WalletSyncState;
+  walletSyncUserState: WalletSyncUserStateState;
 };
 
 export default combineReducers({
@@ -44,14 +46,15 @@ export default combineReducers({
   countervalues,
   devices,
   dynamicContent,
+  market,
   modals,
   modularDrawer,
-  settings,
-  UI,
   postOnboarding,
-  market,
+  settings,
+  trustchain,
+  UI,
   wallet,
   walletSync,
-  trustchain,
+  walletSyncUserState,
   ...(getEnv("PLAYWRIGHT_RUN") && { lastAction: (_, action) => action }),
 });

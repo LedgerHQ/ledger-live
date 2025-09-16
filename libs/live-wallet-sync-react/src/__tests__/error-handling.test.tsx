@@ -106,6 +106,8 @@ describe("WalletSync Error Handling and Edge Cases", () => {
         getAccounts: mockGetAccounts,
         getWalletSyncState: mockGetWalletSyncState,
         getLocalState: mockGetLocalState,
+        setWalletSyncPending: jest.fn(),
+        setWalletSyncError: jest.fn(),
       };
     });
 
@@ -176,6 +178,8 @@ describe("WalletSync Error Handling and Edge Cases", () => {
           accounts: { list: [], nonImportedAccountInfos: [] },
           accountNames: new Map(),
         }),
+        setWalletSyncPending: jest.fn(),
+        setWalletSyncError: jest.fn(),
       };
 
       const TestComponent = () => {
@@ -214,6 +218,8 @@ describe("WalletSync Error Handling and Edge Cases", () => {
         getLocalState: jest.fn().mockImplementation(() => {
           throw new Error("Mock getLocalState error");
         }),
+        setWalletSyncPending: jest.fn(),
+        setWalletSyncError: jest.fn(),
       };
 
       const TestComponent = () => {
@@ -268,6 +274,8 @@ describe("WalletSync Error Handling and Edge Cases", () => {
           accounts: { list: [], nonImportedAccountInfos: [] },
           accountNames: new Map(),
         }),
+        setWalletSyncPending: jest.fn(),
+        setWalletSyncError: jest.fn(),
       };
 
       const wrapper = ({ children }: { children: React.ReactNode }) => (
@@ -309,6 +317,8 @@ describe("WalletSync Error Handling and Edge Cases", () => {
           accounts: { list: [], nonImportedAccountInfos: [] },
           accountNames: new Map(),
         }),
+        setWalletSyncPending: jest.fn(),
+        setWalletSyncError: jest.fn(),
       };
 
       const TestComponent = (_: { bridge: WalletSyncBridge }) => {
@@ -363,6 +373,8 @@ describe("WalletSync Error Handling and Edge Cases", () => {
           accounts: { list: [], nonImportedAccountInfos: [] },
           accountNames: new Map(),
         }),
+        setWalletSyncPending: jest.fn(),
+        setWalletSyncError: jest.fn(),
       };
 
       const TestComponent = () => {
@@ -442,6 +454,8 @@ describe("WalletSync Error Handling and Edge Cases", () => {
           },
           accountNames: new Map(),
         }),
+        setWalletSyncPending: jest.fn(),
+        setWalletSyncError: jest.fn(),
       };
 
       const TestComponent = () => {

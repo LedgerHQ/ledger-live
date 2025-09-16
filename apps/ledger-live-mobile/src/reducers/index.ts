@@ -24,6 +24,7 @@ import { State } from "./types";
 import wallet from "./wallet";
 import walletconnect from "./walletconnect";
 import walletSync from "./walletSync";
+import walletSyncUserState from "./walletSyncUserState";
 
 export type AppStore = Store<State>;
 
@@ -51,6 +52,7 @@ const appReducer = combineReducers({
   wallet,
   walletconnect,
   walletSync,
+  walletSyncUserState,
 });
 
 // TODO: EXPORT ALL POSSIBLE ACTION TYPES AND USE ACTION<TYPES>
