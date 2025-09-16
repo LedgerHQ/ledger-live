@@ -165,9 +165,8 @@
     "type" : {
       "IN" : "已接收",
       "OUT" : "已发送",
-      "NFT_IN" : "已收到的 NFT",
-      "NFT_OUT" : "已发送的 NFT",
       "CREATE" : "已创建",
+      "UNKNOWN" : "未知",
       "REVEAL" : "已显示",
       "DELEGATE" : "已委托",
       "REDELEGATE" : "已重新委托",
@@ -802,8 +801,8 @@
       "support" : "客服"
     },
     "willBeDeprecatedBanner" : {
-      "title" : "为了优化效率，自 {{deprecatedDate}} 起，Ledger Live 将不再支持 {{currencyName}}。但 Ledger 硬件钱包将继续支持该币种。如需这方面的帮助，请联系 Ledger 客服。",
-      "contactSupport" : "联系客服"
+      "title" : "自 {{deprecatedDate}} 起 Ledger Live 将不再支持 {{currencyName}}。但该币种仍会受到 Ledger 硬件钱包的保护。请访问下方链接，阅读完整的帮助中心文章，了解更多信息。",
+      "learnMore" : "了解更多"
     },
     "lastOperations" : "近期操作",
     "contractAddress" : "合约：",
@@ -1437,11 +1436,6 @@
       }
     }
   },
-  "hideNftCollection" : {
-    "title" : "隐藏 NFT 藏品",
-    "desc" : "此操作将隐藏 <1><0>{{collectionName}}</0></1> 中的全部藏品，您可以使用 <3>设置</3> 再次显示这些藏品。",
-    "hideCTA" : "隐藏 NFT 藏品"
-  },
   "banners" : {
     "cleanCache" : {
       "title" : "修改实验性设置需要清除缓存",
@@ -1708,50 +1702,6 @@
       "browseAssets" : "浏览资产"
     }
   },
-  "NFT" : {
-    "viewer" : {
-      "actions" : {
-        "send" : "发送",
-        "open" : "在 {{viewer}} 中打开"
-      },
-      "attributes" : {
-        "properties" : "属性",
-        "description" : "描述",
-        "tokenAddress" : "代币地址",
-        "tokenId" : "代币 ID",
-        "quantity" : "数量",
-        "floorPrice" : "底价"
-      }
-    },
-    "collections" : {
-      "title" : "NFT（非同质化代币）藏品集",
-      "receiveCTA" : "接收 NFT",
-      "galleryCTA" : "查看馆藏",
-      "seeMore" : "查看更多藏品",
-      "seeAll" : "查看所有藏品",
-      "seeLess" : "显示更少",
-      "placeholder" : "要添加 NFT，只需将其发送到您的 {{currency}} 地址。"
-    },
-    "gallery" : {
-      "title" : "所有 NFT",
-      "collection" : {
-        "header" : {
-          "sendCTA" : "发送",
-          "contract" : "合约：{{contract}}"
-        },
-        "operationList" : {
-          "header" : "近期操作",
-          "OUT" : "已发送",
-          "IN" : "已接收"
-        }
-      },
-      "tokensList" : {
-        "item" : {
-          "tokenId" : "ID: {{tokenId}}"
-        }
-      }
-    }
-  },
   "tokensList" : {
     "title" : "代币",
     "cta" : "添加代币",
@@ -1863,12 +1813,6 @@
     "internalOpTooltip" : "此操作存在内部操作",
     "details" : "{{ currency }} 详情",
     "multipleAddresses" : "为什么有多个地址？",
-    "nft" : {
-      "name" : "代币名称",
-      "contract" : "代币合约",
-      "id" : "代币（NFT）ID",
-      "quantity" : "数量"
-    },
     "extra" : {
       "frozenAmount" : "已冻结数额",
       "unfreezeAmount" : "解冻数额",
@@ -1940,7 +1884,8 @@
       "payoutNetworkFeesTooltip" : "该数额不会在您的设备上显示",
       "acceptTerms" : "验证此交易，即表示我接受\n<0>{{provider}} 的使用条款</0>",
       "exodusAcceptTerms" : "Exodus 依赖第三方来进行互换。\n验证此交易，即表示我接受 <0>Exodus 的使用条款</0>",
-      "changellyAcceptTerms" : "点击“使用 Changelly 互换”即表示您接受 Changelly 的<0>使用条款</0>及其\n<1>反洗钱 (AML)/客户身份核实 (KYC) 政策</1>。Changelly 可能会采用 AML/KYC 程序，\n这可能在少数情况下影响您完成交易。如果发生这种情况，\n您需要联系 Changelly <2>客服</2>。"
+      "changellyAcceptTerms" : "点击“使用 Changelly 互换”即表示您接受 Changelly 的<0>使用条款</0>及其\n<1>反洗钱 (AML)/客户身份核实 (KYC) 政策</1>。Changelly 可能会采用 AML/KYC 程序，\n这可能在少数情况下影响您完成交易。如果发生这种情况，\n您需要联系 Changelly <2>客服</2>。",
+      "cicAcceptTerms" : "“使用 CIC 互换”即表示您接受 CIC 的<0>使用条款</0>及其<1>反洗钱 (AML)/客户身份核实 (KYC) 政策</1>。CIC 可能会采用 AML/KYC 程序，这可能在少数情况下影响您完成交易。如果发生这种情况，您需要联系 CIC <2>客服</2>。"
     },
     "swap2" : {
       "amountSent" : "发送数额",
@@ -2282,8 +2227,8 @@
     }
   },
   "fund" : {
-    "title" : "Fund",
-    "titleCrypto" : "Fund {{currency}}",
+    "title" : "资金",
+    "titleCrypto" : "资金 {{currency}}",
     "exchangeDrawer" : {
       "completed" : {
         "title" : "交易播送成功",
@@ -2349,12 +2294,10 @@
   },
   "send" : {
     "title" : "发送",
-    "titleNft" : "发送 NFT",
     "totalSpent" : "总借额",
     "steps" : {
       "recipient" : {
         "title" : "接收方",
-        "nftRecipient" : "待发送的 NFT",
         "verifyAddress" : "请验证该地址与接收方所提供的一致。",
         "domainService" : {
           "resolve" : "这是与以下地址关联的有效 ENS：",
@@ -2379,8 +2322,7 @@
         "banner" : "最大可支出数额为",
         "fees" : "详细了解费用",
         "standard" : "标准",
-        "advanced" : "高级",
-        "nftQuantity" : "数量"
+        "advanced" : "高级"
       },
       "summary" : {
         "title" : "概要"
@@ -2424,8 +2366,6 @@
         "nextBlock" : "下一个区块",
         "suggested" : "建议",
         "unitVByte" : "{{unit}}/vbyte",
-        "nft" : "NFT",
-        "nftQuantity" : "数量",
         "splExtensionsWarning" : "您正在交互的代币属于 Token-2022 程序（亦称代币扩展程序）。该代币具有特定风险。<0>点击此处</0>了解详情。"
       },
       "verification" : {
@@ -4530,11 +4470,6 @@
       "debugAppsDesc" : "显示并允许打开调试标记的平台应用程序。",
       "debugReactQuery" : "允许调试 ReactQuery",
       "debugReactQueryDesc" : "显示并允许打开调试 ReactQuery 控制台。",
-      "nfts" : {
-        "title" : "NFTs HiddenCollections",
-        "description" : "重置隐藏藏品列表",
-        "reset" : "重置 ({{count}})"
-      },
       "exchangeDeveloperMode" : {
         "title" : "兑换开发模式",
         "desc" : "添加兑换提供商的信息",
@@ -4573,136 +4508,6 @@
             "path" : "路径"
           }
         }
-      },
-      "debugSimpleHash" : {
-        "testSimpleHash" : {
-          "title" : "SimpleHash 工具",
-          "description" : "提供一些使用 SimpleHash 的实用工具",
-          "cta" : "打开",
-          "tabs" : {
-            "spam" : "垃圾邮件报告",
-            "refresh" : "刷新元数据",
-            "check" : "垃圾邮件评分"
-          }
-        },
-        "mockAccounts" : {
-          "title" : "生成 Mock（模拟）账户",
-          "description" : "生成模拟账户用于测试目的。这些工具支持您创建各种货币和配置的测试账户。",
-          "customGenerate" : {
-            "title" : "自定义生成",
-            "desc" : "选择特定货币，并添加代币"
-          },
-          "quickGenerate" : {
-            "title" : "快速生成",
-            "desc" : "生成 10 个随机账户，币种随机"
-          },
-          "currencySelector" : {
-            "placeholder" : "选择货币...",
-            "searchPlaceholder" : "搜索货币...",
-            "noCurrenciesFound" : "未找到货币",
-            "noCurrenciesAvailable" : "无可用货币",
-            "selectedCount" : "已选择 {{count}} 种货币",
-            "selectedCount_other" : "已选择 {{count}} 种货币"
-          },
-          "tokenIds" : {
-            "label" : "代币 ID（可选）",
-            "placeholder" : "token1, token2, token3"
-          },
-          "buttons" : {
-            "generateAccounts" : "生成 {{count}} 个账户",
-            "generateAccounts_other" : "生成 {{count}} 个账户",
-            "generateAccountsQuick" : "生成 {{count}} 个账户"
-          },
-          "alerts" : {
-            "selectCurrency" : "请至少选择一种货币",
-            "confirmErase" : "这将删除现有账户。继续？",
-            "generateError" : "未能生成模拟账户。请重试。"
-          }
-        },
-        "debugSpamNft" : {
-          "report" : "报告",
-          "contractAddress" : "合约地址",
-          "contractAddressDesc" : "被报告的 NFT 合约地址或合约本身",
-          "chainId" : "链 ID",
-          "chainIdDesc" : "被报告的 NFT 或合约的链 ID（例如：以太坊）",
-          "collectionId" : "藏品 ID",
-          "collectionIdDesc" : "被报告的 NFT 的 SimpleHash 藏品 ID",
-          "tokenId" : "代币 ID",
-          "tokenIdDesc" : "被报告的 NFT 的代币 ID",
-          "eventType" : "事件类型",
-          "eventTypeDesc" : "您想发送的报告类型",
-          "success" : "报告发送成功。可能需要 5 至 10 分钟才能生效。",
-          "error" : "发送报告时出错。请稍后重试。",
-          "reportType" : {
-            "title" : "您想报告什么问题？",
-            "desc" : "选择您想发送的报告类型",
-            "individual" : "将单个 NFT 报告为垃圾",
-            "contract" : "将合约报告为垃圾",
-            "collection" : "将藏品报告为垃圾"
-          }
-        },
-        "debugRefreshMetadata" : {
-          "refresh" : "刷新",
-          "contractAddress" : "合约地址",
-          "contractAddressDesc" : "已刷新的 NFT 合约地址或合约本身",
-          "chainId" : "链 ID",
-          "chainIdDesc" : "已刷新的 NFT 或合约的链 ID（例如：以太坊）",
-          "tokenId" : "代币 ID",
-          "tokenIdDesc" : "已刷新的 NFT 的代币 ID",
-          "success" : "刷新发送成功。可能需要 5 至 10 分钟才能生效。",
-          "error" : "发送刷新时出错。请稍后重试。",
-          "refreshType" : {
-            "desc" : "您想刷新什么？",
-            "nft" : "刷新单个 NFT 的元数据",
-            "contract" : "刷新合约的元数据"
-          }
-        },
-        "debugCheckSpamScore" : {
-          "check" : "检查",
-          "contractAddress" : "合约地址",
-          "contractAddressDesc" : "已检查的 NFT 合约地址或合约本身",
-          "chainId" : "链 ID",
-          "chainIdDesc" : "已检查的 NFT 或合约的链 ID（例如：以太坊）",
-          "tokenId" : "代币 ID",
-          "tokenIdDesc" : "已检查的 NFT 的代币 ID",
-          "result" : {
-            "title" : "此合约的垃圾邮件评分为 {{score}}。",
-            "desc" : "评分为从 0 到 100 的数值，其中 0 表示不是垃圾邮件，100 表示可能是垃圾邮件。\n如果响应为空，则表示该收藏没有足够信息进行评分，或者尚未经过评估"
-          },
-          "error" : "发送请求时出错。请稍后重试。",
-          "refreshType" : {
-            "desc" : "您想检查什么？",
-            "nft" : "单个 NFT",
-            "contract" : "合约"
-          }
-        },
-        "back" : "返回"
-      },
-      "debugNfts" : {
-        "title" : "NFT 工具",
-        "description" : "提供一些在 Ledger Live 中处理 NFT 的实用工具",
-        "cta" : "打开",
-        "tabs" : {
-          "config" : "配置",
-          "generatorAndDestructor" : "生成器与销毁器"
-        },
-        "configuration" : {
-          "supported" : "支持的 NFT 链",
-          "supported_other" : "支持的 NFT 链",
-          "nms" : {
-            "title" : "NFT 元数据服务 (NMS)",
-            "env" : "环境：{{env}}"
-          }
-        },
-        "generatorAndDestructor" : {
-          "genAcc" : "生成账户",
-          "genAccDesc" : "使用 NFT 生成账户",
-          "cta" : "生成",
-          "deleteAcc" : "删除账户",
-          "deleteAccDesc" : "从商店中删除所有账户",
-          "delete" : "删除"
-        },
-        "back" : "返回"
       },
       "debugWalletSync" : {
         "title" : "Ledger Sync 调试器",
@@ -4785,8 +4590,6 @@
       "runLocalAppOpenButton" : "打开",
       "enableLearnStagingUrl" : "学习页面的模拟环境 URL 网页地址",
       "enableLearnStagingUrlDesc" : "启用学习页面的模拟环境 URL 网址。",
-      "enableStagingNftMetadataService" : "登台/预发布环境下的 NFT 元数据服务",
-      "enableStagingNftMetadataServiceDesc" : "启用登台/预发布环境下的 NFT 元数据服务并重置 NFT 缓存",
       "openOnboardingAppInstallDebug" : "打开入门应用程序安装调试界面",
       "openOnboardingAppInstallDebugDesc" : "打开一个界面，其中包含同步入门应用程序安装步骤中的组件"
     },
@@ -4967,18 +4770,6 @@
         "desc" : "您可以通过前往主账户，以右键点击相关代币并选择“隐藏代币”的方式来隐藏代币。",
         "count" : "1 枚代币",
         "count_other" : "{{count}} 枚代币"
-      },
-      "hiddenNftCollections" : {
-        "title" : "隐藏的 NFT 藏品",
-        "desc" : "您可以通过右键单击藏品集名称并选择 \"隐藏 NFT 藏品集\" 来隐藏 NFT 收藏品。",
-        "count" : "1 个收藏",
-        "count_other" : "{{count}} 个藏品集"
-      },
-      "hiddenOrdinalsAsset" : {
-        "title" : "隐藏的铭文",
-        "desc" : "右键点击该铭文并选择“隐藏铭文”，即可隐藏铭文。",
-        "count" : "1 个铭文",
-        "count_other" : "{{count}} 个铭文"
       },
       "fullNode" : {
         "title" : "连接比特币完整节点",
@@ -5865,6 +5656,10 @@
       "commentPlaceholder" : "可选",
       "comment" : "备注"
     },
+    "canton" : {
+      "commentPlaceholder" : "可选",
+      "comment" : "备注"
+    },
     "stellar" : {
       "memo" : "Memo",
       "memoType" : {
@@ -6446,10 +6241,6 @@
       "title" : "无法自动验证：请仔细核对该地址。",
       "description" : null
     },
-    "EthAppNftNotSupported" : {
-      "title" : "操作不可用于此设备",
-      "description" : "仅 Nano X 和 Nano S Plus 提供发送 NFT 功能。请访问我们的客服平台，了解如何使用 Nano S 发送 NFT。"
-    },
     "TransactionHasBeenValidatedError" : {
       "title" : "无法加速或取消",
       "description" : "此交易已经过验证"
@@ -6459,6 +6250,9 @@
       "description" : "请关闭窗口，稍后再重试"
     },
     "TonCommentInvalid" : {
+      "title" : "备注不得超过 120 个字符，不包含特殊字符"
+    },
+    "CantonCommentInvalid" : {
       "title" : "备注不得超过 120 个字符，不包含特殊字符"
     },
     "CantScanQRCode" : {
@@ -6735,9 +6529,6 @@
       "title" : "代币不可转让",
       "description" : "此类代币为“灵魂绑定”代币，不可转让"
     },
-    "NotEnoughNftOwned" : {
-      "title" : "您已超过可用代币的数量"
-    },
     "CardanoMinAmountError" : {
       "title" : "最小可发送数额为 {{amount}} ADA"
     },
@@ -6822,10 +6613,6 @@
     "ImageLoadFromFileError" : {
       "title" : "从文件加载图片失败",
       "description" : "请使用另一张图片重试"
-    },
-    "ImageLoadFromNftError" : {
-      "title" : "从 NFT 加载图片失败",
-      "description" : "请使用另一个 NFT 重试"
     },
     "ImageDownloadError" : {
       "title" : "图片下载失败",
@@ -7182,14 +6969,8 @@
       "choose" : {
         "stepLabel" : "选择图片",
         "description" : "选择要设为 (...) 的图片",
-        "pickFromNftGallery" : "从我的 NFT 画廊中选择",
-        "myNfts" : "我的 NFT",
         "upload" : "从计算机上传",
-        "chooseNft" : "选择 NFT",
-        "remove" : "移除当前图片",
-        "selectNft" : "选择 NFT",
-        "nftEmptyStateTitle" : "暂时没有 NFT 可显示",
-        "nftEmptyStateDescription" : "首先将 NFT 添加到您的钱包"
+        "remove" : "移除当前图片"
       },
       "adjust" : {
         "stepLabel" : "裁剪",
@@ -7501,95 +7282,6 @@
       "description" : "按照 Ledger 设备可信任显示屏上的指示进行操作。"
     }
   },
-  "ordinals" : {
-    "inscriptions" : {
-      "seeMore" : "查看更多铭文",
-      "empty" : "要添加铭文，只需将其发送到您的比特币地址。",
-      "receive" : "接收铭文",
-      "hide" : "隐藏铭文",
-      "modal" : {
-        "title" : "隐藏铭文",
-        "desc" : "此操作将在您的账户中隐藏以下铭文 <0>{{inscriptionName}}</0>。您可以随时在设置中取消隐藏。"
-      },
-      "discoveryDrawer" : {
-        "title" : "了解序数铭文",
-        "description" : "您知道吗，您可能拥有宝贵的稀有聪和铭文？",
-        "learnMore" : "了解更多",
-        "protectTitle" : "保护您的序数铭文资产",
-        "protectDescription" : "从您的交易中排除序数铭文资产。"
-      },
-      "detailsDrawer" : {
-        "description" : "描述",
-        "collectionName" : "藏品名称",
-        "inscriptionId" : "铭文 ID",
-        "inscriptionNumber" : "铭文编号",
-        "mintedTo" : "已铸造至",
-        "genesisTx" : "创世交易",
-        "blockNumber" : "区块编号",
-        "contentType" : "内容类型",
-        "createdDate" : "创建日期",
-        "satribute" : "聪的稀有度",
-        "satNumber" : "聪的编号",
-        "satName" : "聪的名称",
-        "location" : "位置",
-        "outputValue" : "输出值",
-        "storedOnChain" : "已存储在链上",
-        "hide" : "隐藏"
-      }
-    },
-    "rareSats" : {
-      "empty" : "要添加稀有聪，只需将其发送到您的比特币地址。",
-      "receive" : "接收稀有聪",
-      "title" : "稀有聪",
-      "table" : {
-        "type" : "聪的类型/数量",
-        "year" : "年"
-      },
-      "rareSat" : {
-        "description" : {
-          "alpha" : "通过第一个聪 Alpha 了解每一个比特币的诞生。Alpha 标记标志着一个比特币单位的开始。",
-          "black_epic" : "每次奖励减半事件（即比特币挖矿奖励减半，大约每四年发生一次）的最后一个聪。",
-          "black_legendary" : "暂无关于 Black Legendary（黑色传奇）的描述",
-          "black_mythic" : "暂无关于 Black Mythic（黑色神话）的描述",
-          "black_rare" : "表示每个挖矿难度调整周期结束时的最后一个聪。",
-          "black_uncommon" : "每次奖励减半事件（即比特币挖矿奖励减半，大约每四年发生一次）的最后一个聪。",
-          "block_9" : "第 9 个区块在比特币历史上具有独特意义。作为最早开采的区块之一，该区块中的聪是最古老的还在流通的聪。这些聪与比特币的起源（就在比特币诞生后）有着实实在在的联系。",
-          "block_9_450x" : "通过 Block 9（第 9 个区块）的 450x 聪穿越历史，其中突出显示了第 9 个区块中第一个比特币中的聪。这个标记揭开了比特币历史上引人入胜的一章。",
-          "block_78" : "第 78 个区块在比特币历史上占有重要地位。这个区块是哈尔·芬尼 (Hal Finney) 开采出来的，这是除神秘的中本聪 (Satoshi Nakamoto) 以外，其他人首次为区块链的发展做出贡献。",
-          "block_286" : "Block 286（第 286 个区块）表示中本聪开采的第二笔比特币交易中的聪，通过这个标记探索第 286 个区块的重要意义。这些聪携带着比特币神秘创始人的气息，诉说着比特币的神秘起源。",
-          "block_666" : "暂无关于 Block 666（第 666 个区块）的描述",
-          "common" : "暂无关于 Common（普通）的描述",
-          "epic" : "每四年，比特币网络都会经历一次“奖励减半”事件，即挖矿奖励减少一半。每次奖励减半事件后的第一个聪都标记了 “Epic”（史诗），表示比特币经济模型中的一个重要时刻。",
-          "first_tx" : "2009 年 1 月 12 日，中本聪向计算机科学家哈尔·芬尼发送了 10 枚比特币，写下历史性的一页。这是史上第一笔比特币交易。源自这笔标志性交易的聪标记了 “First Transaction”（第一笔交易），象征着比特币点对点交易的起源。",
-          "hitman" : "暂无关于 Hitman（杀手）的描述",
-          "jpeg" : "通过 JPEG 回顾历史，因为这些聪可能与 2010 年 2 月 24 日第一次用比特币交易图像有关。这个标记讲述了一个关于创新的故事，展示了比特币早期在非常规交易和兑换方面的尝试。",
-          "legacy" : "暂无关于 Legacy（遗留）的描述",
-          "legendary" : "暂无关于 Legendary（传奇）的描述",
-          "mythic" : "暂无关于 Mythic（神话）的描述",
-          "nakamoto" : "比特币的匿名创始人中本聪给大家的神秘感依然不减。中本聪亲自开采的聪都有此标记，备受收藏家追捧。",
-          "omega" : "通过最后一个聪 Omega 探索每个比特币诗一般的结束。Omega 是一个比特币单位的最后一个聪。",
-          "paliblock" : "暂无关于 PaliBlock Palindrome（回文区块中的回文聪）的描述",
-          "palindrome" : "有趣的是，如果一个聪的序号正着读和反着读相同，那就会标记为 “Palindrome”（回文）。例如，序号为 12321 或 45654 的聪。这些独特的数字属性为所标记的聪增添了一层稀有性和奇特性。",
-          "palinception" : "深入迷人的相同回文世界，其中每个聪的序号都是回文套回文。这种序号结构精致的聪就像一幅迷人的镜像数字挂毯。",
-          "pizza" : "2010 年 5 月 22 日，一名程序员用 10,000 枚比特币购买了两个 Papa John's 披萨，这是比特币社区最具代表性的故事之一。人们经常引用这件事情来表明比特币价值的飞速上涨。这笔传奇交易中的聪标记为 “Pizza”（披萨）。",
-          "rare" : "比特币网络定期调整挖矿难度，以确保大约每十分钟添加一个区块。每个调整周期的第一个聪均标记为 “Rare”（稀有）。这反映了网络安全性和共识机制不断发展的本质。 ",
-          "uncommon" : "此标记指定给每个区块的第一个聪。由于大约每 10 分钟就会有一个新区块添加到比特币区块链，因此这些聪就是这个时间范围内的第一个聪。",
-          "vintage" : "比特币发展初期是指前 1,000 个区块。这一时期开采的聪均标记为 “Vintage”（古董）。"
-        }
-      }
-    },
-    "coinControl" : {
-      "amountToSend" : "发送数额：",
-      "of" : "/",
-      "excludeAssets" : "排除序数铭文资产",
-      "selectDesc" : "选择您在进行交易时想要使用的 UTXO。未选中的 UTXO 不会被使用。",
-      "utxos" : "UTXO",
-      "learnMore" : "详细了解此设置",
-      "confirm" : "确认",
-      "address" : "地址",
-      "transactionId" : "交易 ID"
-    }
-  },
   "lnsUpsell" : {
     "opted_in" : {
       "title" : "内存有限，体验受限",
@@ -7651,7 +7343,7 @@
         "foundAccounts_other" : "我们找到了 {{count}} 个账户",
         "scanning" : "正在扫描账户..."
       },
-      "title" : "正在查找区块链上的现有账户……"
+      "title" : "正在检查区块链……"
     },
     "connectYourDevice" : {
       "title" : "连接并解锁您的设备"
@@ -7671,6 +7363,11 @@
         "selectAccount" : "继续",
         "close" : "关闭"
       }
+    },
+    "genericError" : {
+      "title" : "发生网络错误",
+      "description" : "出错了，请重试；如有疑问，请联系 Ledger 客服。",
+      "cta" : "重试"
     }
   },
   "nftEntryPoint" : {
