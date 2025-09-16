@@ -297,7 +297,6 @@ export const fetchAndMergeProviderData = async env => {
       calService.getProvidersCDNData(),
     ]);
     const finalProvidersData = mergeProviderData(providersData, providersExtraData);
-    console.log('%clibs/ledger-live-common/src/exchange/providers/swap.ts:300 finalProvidersData', 'color: #007acc;', finalProvidersData);
     providerDataCache = finalProvidersData;
 
     return finalProvidersData;
