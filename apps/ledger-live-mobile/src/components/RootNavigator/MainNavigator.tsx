@@ -85,16 +85,12 @@ export default function MainNavigator() {
         tabBarActiveTintColor: colors.palette.primary.c80,
         tabBarInactiveTintColor: colors.palette.neutral.c70,
         headerShown: false,
+        popToTopOnBlur: true,
       }}
-      screenLayout={unmountOnBlur}
     >
       <Tab.Screen
         name={NavigatorName.Portfolio}
         component={PortfolioNavigator}
-        layout={({ children }) => (
-          // never unmount Portfolio on navigation
-          <>{children}</>
-        )}
         options={{
           headerShown: false,
           tabBarIcon: props => <PortfolioTabIcon {...props} />,
@@ -113,10 +109,6 @@ export default function MainNavigator() {
       <Tab.Screen
         name={NavigatorName.Earn}
         component={EarnLiveAppNavigator}
-        layout={({ children }) => (
-          // dont unmount Earn on navigation
-          <>{children}</>
-        )}
         options={{
           freezeOnBlur: true,
           headerShown: false,
@@ -205,9 +197,6 @@ export default function MainNavigator() {
         options={{
           tabBarIcon: props => <ManagerTabIcon {...props} />,
           tabBarButtonTestID: "TabBarManager",
-        }}
-        layout={({ children }) => {
-          return <>{children}</>;
         }}
         listeners={({ navigation }) => ({
           tabPress: e => {
