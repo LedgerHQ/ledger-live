@@ -671,6 +671,11 @@ const envDefinitions = {
     parser: stringParser,
     desc: "Device model id for speculos",
   },
+  SPECULOS_FIRMWARE_VERSION: {
+    def: "",
+    parser: stringParser,
+    desc: "Firmware version for speculos",
+  },
   SPECULOS_PID_OFFSET: {
     def: 0,
     parser: intParser,
