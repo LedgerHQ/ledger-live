@@ -1,23 +1,23 @@
-import { LegacySignerEth } from "@ledgerhq/live-signer-evm";
-import { BigNumber } from "bignumber.js";
-import { ethers } from "ethers";
-import { Account } from "@ledgerhq/types-live";
-import { getTokenById } from "@ledgerhq/cryptoassets/tokens";
-import { encodeTokenAccountId } from "@ledgerhq/coin-framework/account/index";
-import { Scenario, ScenarioTransaction } from "@ledgerhq/coin-tester/main";
-import { killSpeculos, spawnSpeculos } from "@ledgerhq/coin-tester/signers/speculos";
-import { resetIndexer, indexBlocks, initMswHandlers, setBlock } from "../indexer";
-import { Transaction as EvmTransaction } from "@ledgerhq/coin-evm/types/transaction";
+import { makeAccount } from "@ledgerhq/coin-evm/__tests__/fixtures/common.fixtures";
 import { buildAccountBridge, buildCurrencyBridge } from "@ledgerhq/coin-evm/bridge/js";
 import { getCoinConfig, setCoinConfig } from "@ledgerhq/coin-evm/config";
-import { makeAccount } from "@ledgerhq/coin-evm/__tests__/fixtures/common.fixtures";
-import { VITALIK, core } from "../helpers";
-import { defaultNanoApp } from "../scenarii.test";
-import { killAnvil, spawnAnvil } from "../anvil";
 import resolver from "@ledgerhq/coin-evm/hw-getAddress";
-import { getAlpacaCurrencyBridge } from "@ledgerhq/live-common/bridge/generic-alpaca/currencyBridge";
-import { getAlpacaAccountBridge } from "@ledgerhq/live-common/bridge/generic-alpaca/accountBridge";
+import { EvmSigner } from "@ledgerhq/coin-evm/types/signer";
+import { Transaction as EvmTransaction } from "@ledgerhq/coin-evm/types/transaction";
+import { encodeTokenAccountId } from "@ledgerhq/coin-framework/account/index";
+import { SignerContext } from "@ledgerhq/coin-framework/signer";
+import { Scenario, ScenarioTransaction } from "@ledgerhq/coin-tester/main";
+import { killSpeculos, spawnSpeculos } from "@ledgerhq/coin-tester/signers/speculos";
+import { getTokenById } from "@ledgerhq/cryptoassets/tokens";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
+import { LegacySignerEth } from "@ledgerhq/live-signer-evm";
+import { Account } from "@ledgerhq/types-live";
+import { BigNumber } from "bignumber.js";
+import { ethers } from "ethers";
+import { killAnvil, spawnAnvil } from "../anvil";
+import { VITALIK, core } from "../helpers";
+import { indexBlocks, initMswHandlers, resetIndexer, setBlock } from "../indexer";
+import { defaultNanoApp } from "../scenarii.test";
 
 type CoreScenarioTransaction = ScenarioTransaction<EvmTransaction, Account>;
 
@@ -67,14 +67,13 @@ const makeScenarioTransactions = ({ address }: { address: string }): CoreScenari
 
 export const scenarioCore: Scenario<EvmTransaction, Account> = {
   name: "Ledger Live Basic CORE Transactions",
-  setup: async strategy => {
+  setup: async () => {
     const [{ transport, getOnSpeculosConfirmation }] = await Promise.all([
       spawnSpeculos(`/${defaultNanoApp.firmware}/Ethereum/app_${defaultNanoApp.version}.elf`),
       spawnAnvil("https://rpc.ankr.com/core"),
     ]);
-
-    const signerContext: Parameters<typeof resolver>[0] = (_, fn) =>
-      fn(new LegacySignerEth(transport));
+    const provider = new ethers.JsonRpcProvider("http://127.0.0.1:8545");
+    const signerContext: SignerContext<EvmSigner> = (_, fn) => fn(new LegacySignerEth(transport));
 
     setCoinConfig(() => ({
       info: {
@@ -113,14 +112,9 @@ export const scenarioCore: Scenario<EvmTransaction, Account> = {
     initMswHandlers(getCoinConfig(core).info);
 
     const onSignerConfirmation = getOnSpeculosConfirmation();
-    const currencyBridge =
-      strategy === "legacy"
-        ? buildCurrencyBridge(signerContext)
-        : getAlpacaCurrencyBridge("ethereum", "local");
-    const accountBridge =
-      strategy === "legacy"
-        ? buildAccountBridge(signerContext)
-        : getAlpacaAccountBridge("ethereum", "local");
+    const currencyBridge = buildCurrencyBridge(signerContext);
+    await currencyBridge.preload(core);
+    const accountBridge = buildAccountBridge(signerContext);
     const getAddress = resolver(signerContext);
     const { address } = await getAddress("", {
       path: "44'/60'/0'/0/0",
@@ -129,8 +123,6 @@ export const scenarioCore: Scenario<EvmTransaction, Account> = {
     });
 
     const scenarioAccount = makeAccount(address, core);
-
-    const provider = new ethers.JsonRpcProvider("http://127.0.0.1:8545");
 
     const lastBlockNumber = await provider.getBlockNumber();
     // start indexing at next block
