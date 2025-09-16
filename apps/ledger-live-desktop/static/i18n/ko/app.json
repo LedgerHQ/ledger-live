@@ -168,6 +168,7 @@
       "NFT_IN" : "NFT 수령됨",
       "NFT_OUT" : "NFT 전송됨",
       "CREATE" : "생성됨",
+      "UNKNOWN" : "알려지지 않음",
       "REVEAL" : "숨김 해제",
       "DELEGATE" : "위임됨",
       "REDELEGATE" : "재위임됨",
@@ -802,8 +803,8 @@
       "support" : "지원"
     },
     "willBeDeprecatedBanner" : {
-      "title" : "효율성을 최적화하기 위해 {{currencyName}}은 {{deprecatedDate}}부터 Ledger Live에서 지원되지 않습니다. 그러나 Ledger 하드웨어 지갑에서는 계속 지원됩니다. 이와 관련하여 도움이 필요하다면 Ledger 고객 지원팀에 문의하세요.",
-      "contactSupport" : "지원 부서 문의"
+      "title" : "{{deprecatedDate}}부터 Ledger Live에서 {{currencyName}} 지원이 중단됩니다. 단, 해당 암호화폐는 Ledger 하드웨어 지갑에서 여전히 안전하게 보호됩니다. 더 자세한 내용은 아래 링크를 통해 지원 센터 관련 안내를 읽어 주세요.",
+      "learnMore" : "자세히 알아보기"
     },
     "lastOperations" : "최신 운영",
     "contractAddress" : "계약:",
@@ -1940,7 +1941,8 @@
       "payoutNetworkFeesTooltip" : "이 금액은 장치에 표시되지 않습니다",
       "acceptTerms" : "본인은 이 트랜잭션을 확인함으로써 \n<0>{{provider}}의 이용약관</0>을 수락합니다.",
       "exodusAcceptTerms" : "Exodus는 제 3자를 통해 스왑 서비스를 제공합니다.\n본인은 이 트랜잭션을 확인함으로써 <0>Exodus 이용 약관</0>을 수락합니다.",
-      "changellyAcceptTerms" : "\"Changelly로 스왑\"을 클릭하면 Changelly의<0>이용 약관</0> 및\n<1>AML/KYC 정책</1>에 동의하는 것으로 간주됩니다. Changelly는 AML/KYC 절차를 적용할 수 있으며,\n이는 제한적으로 트랜잭션 완료에 영향을 미칠 수 있습니다. 이 경우\n, Changelly <2>고객 지원</2>으로 문의해 주세요."
+      "changellyAcceptTerms" : "\"Changelly로 스왑\"을 클릭하면 Changelly의<0>이용 약관</0> 및\n<1>AML/KYC 정책</1>에 동의하는 것으로 간주됩니다. Changelly는 AML/KYC 절차를 적용할 수 있으며,\n이는 제한적으로 트랜잭션 완료에 영향을 미칠 수 있습니다. 이 경우\n, Changelly <2>고객 지원</2>으로 문의해 주세요.",
+      "cicAcceptTerms" : "\"CIC를 통해 스왑 서비스 이용 시\" CIC의 <0>이용 약관</0> 및 <1>AML/KYC 정책</1>에 동의하는 것으로 간주됩니다. CIC는 AML/KYC 절차를 적용할 수 있으며, 드물게 트랜잭션 완료에 영향을 미칠 수 있습니다. 이 경우, CIC <2>고객 지원</2>으로 문의해 주세요."
     },
     "swap2" : {
       "amountSent" : "전송 금액",
@@ -2282,8 +2284,8 @@
     }
   },
   "fund" : {
-    "title" : "Fund",
-    "titleCrypto" : "Fund {{currency}}",
+    "title" : "충전",
+    "titleCrypto" : "{{currency}} 충전",
     "exchangeDrawer" : {
       "completed" : {
         "title" : "트랜잭션 브로드캐스트 성공",
@@ -5865,6 +5867,10 @@
       "commentPlaceholder" : "선택 사항",
       "comment" : "코멘트"
     },
+    "canton" : {
+      "commentPlaceholder" : "선택 사항",
+      "comment" : "코멘트"
+    },
     "stellar" : {
       "memo" : "메모",
       "memoType" : {
@@ -6312,6 +6318,10 @@
       "title" : "문제가 발생했습니다",
       "description" : "트랜잭션을 수행하지 못했습니다. 다시 시도해 주세요."
     },
+    "TransactionCannotBeCreated" : {
+      "title" : "처리 오류",
+      "description" : "Changelly에서 처리할 수 없는 트랜잭션입니다. 오류 코드 8HBB{{errorCode}}"
+    },
     "TimeoutError" : {
       "title" : "죄송하지만 서버 응답에 너무 많은 시간이 소요되었습니다",
       "description" : "다시 시도해 주세요."
@@ -6460,6 +6470,9 @@
     },
     "TonCommentInvalid" : {
       "title" : "코멘트는 120자를 초과할 수 없으며, 특수문자를 사용해서는 안 됩니다."
+    },
+    "CantonCommentInvalid" : {
+      "title" : "코멘트는 120자를 초과할 수 없으며, 특수문자를 사용할 수 없습니다."
     },
     "CantScanQRCode" : {
       "title" : "이 QR 코드를 스캔할 수 없습니다: 이 주소는 자동 확인을 지원하지 않습니다"
@@ -6852,11 +6865,11 @@
       "description" : "다른 이미지로 다시 시도하세요"
     },
     "ImageCommitRefusedOnDevice" : {
-      "title" : "{{productName}}에서 잠금 화면 사진 복구가\n취소되었습니다",
+      "title" : "{{productName}}에서 잠금 화면 이미지가 삭제되었습니다",
       "description" : "실수였다면 지금 바로 다시 시도하세요."
     },
     "ImageLoadRefusedOnDevice" : {
-      "title" : "{{productName}}에서 잠금 화면 사진 복구가\n취소되었습니다",
+      "title" : "{{productName}}에서 잠금 화면 이미지가 취소되었습니다\n",
       "description" : "실수였다면 지금 바로 다시 시도하세요."
     },
     "ImageDoesNotExistOnDevice" : {
@@ -7181,7 +7194,7 @@
     "steps" : {
       "choose" : {
         "stepLabel" : "사진 선택",
-        "description" : "(...)로 설정할 이미지 선택",
+        "description" : "디지털 아트나 사진으로\n나만의 {{productName}} 장치를\n만들어 보세요.",
         "pickFromNftGallery" : "내 NFT 갤러리에서 선택",
         "myNfts" : "내 NFT",
         "upload" : "컴퓨터에서 업로드",
@@ -7194,7 +7207,7 @@
       "adjust" : {
         "stepLabel" : "잘라내기",
         "rotate" : "회전",
-        "confirmCrop" : "크롭한 이미지를 확인하세요"
+        "confirmCrop" : "크롭 적용"
       },
       "contrast" : {
         "stepLabel" : "대비 설정",
@@ -7205,7 +7218,7 @@
         "useAnotherPicture" : "다른 사진을 업로드하세요",
         "allowPreview" : "잠금 화면 사진을 사용자 정의하려면\n\"사진 로드\"를 탭하세요",
         "allowConfirmPreview" : "잠금 화면 사진을 복구하려면\n\"사진 로드\"를 탭하세요",
-        "loadingPicture" : "설치 중...",
+        "loadingPicture" : "로딩 중...",
         "voila" : "짜잔!",
         "imageLoaded" : "{{productName}}에서 로드한 이미지",
         "confirmPicture" : "마음에 드시나요?\n그러면 저장하세요!",
@@ -7264,9 +7277,9 @@
   "webview" : {
     "networkError" : {
       "title" : "네트워크 오류",
-      "subtitle" : "문제가 발생했습니다. 다시 시도해주세요. 문제가 지속될 경우, 로그를 저장하고 Ledger 지원 부서에 연락하세요.",
+      "subtitle" : "문제가 발생했습니다. 다시 시도해주세요. 문제가 지속될 경우, 로그를 저장하고 Ledger 지원팀으로 문의하세요.",
       "contactSupport" : "Ledger 지원 부서에 문의해주세요",
-      "saveLog" : "로그 저장"
+      "saveLog" : "로그 저장하기"
     },
     "noAccounts" : {
       "title" : "이 앱에 액세스하려면 계정이 필요합니다.",
@@ -7651,7 +7664,7 @@
         "foundAccounts_other" : "{{count}}개의 계정을 찾았습니다",
         "scanning" : "계정 검색 중…"
       },
-      "title" : "블록체인상의 기존 계정을 찾고 있습니다..."
+      "title" : "블록체인 확인 중..."
     },
     "connectYourDevice" : {
       "title" : "장치를 연결하고 잠금을 해제하세요"
@@ -7671,6 +7684,11 @@
         "selectAccount" : "계속",
         "close" : "닫기"
       }
+    },
+    "genericError" : {
+      "title" : "네트워크 오류가 발생했습니다",
+      "description" : "문제가 발생했습니다. 확실하지 않을 경우 다시 시도하거나 Ledger 지원 부서로 문의하세요.",
+      "cta" : "다시 시도"
     }
   },
   "nftEntryPoint" : {
