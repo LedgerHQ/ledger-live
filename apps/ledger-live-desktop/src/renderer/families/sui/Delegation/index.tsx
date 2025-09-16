@@ -134,20 +134,6 @@ const Staking = ({ account }: { account: SuiAccount }) => {
               )}
             </Box>
           </Box>
-          <Box>
-            <ToolTip
-              content={!stakingEnabled ? <Trans i18nKey="sui.stake.minSafeWarning" /> : null}
-            >
-              <Button primary small disabled={!stakingEnabled} onClick={onStake}>
-                <Box horizontal flow={1} alignItems="center">
-                  <IconChartLine size={12} />
-                  <Box>
-                    <Trans i18nKey="sui.stake.emptyState.earnRewards" />
-                  </Box>
-                </Box>
-              </Button>
-            </ToolTip>
-          </Box>
         </Wrapper>
       )}
     </TableContainer>
