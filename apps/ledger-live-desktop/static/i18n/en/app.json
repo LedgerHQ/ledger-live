@@ -6345,6 +6345,10 @@
       "title": "Something went wrong",
       "description": "Transaction failed. Please try again."
     },
+    "TransactionCannotBeCreated": {
+      "title": "Processing Error",
+      "description": "Changelly cannot process this transaction. Error code 8HBB{{errorCode}}"
+    },
     "TimeoutError": {
       "title": "Sorry, server took too long to respond",
       "description": "Please try again."

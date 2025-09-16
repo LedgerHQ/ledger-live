@@ -7915,6 +7915,10 @@
       "title": "Signature verification failed",
       "description": "Please retry or contact Ledger Support if in doubt"
     },
+    "transactionCannotBeCreated": {
+      "title": "Partner unavailable",
+      "description": "We cannot complete your swap with this partner. Please try with another one. Error code 8HBB{{errorCode}}"
+    },
     "default": {
       "title": "Something went wrong",
       "description": "Please retry or contact Ledger Support if in doubt"
