@@ -1,31 +1,31 @@
-import React, { PureComponent } from "react";
-import { connect } from "react-redux";
-import { Trans, withTranslation } from "react-i18next";
 import { TFunction } from "i18next";
+import React, { PureComponent } from "react";
+import { Trans, withTranslation } from "react-i18next";
+import { connect } from "react-redux";
 import { compose } from "redux";
 import { createStructuredSelector } from "reselect";
-import { Account } from "@ledgerhq/types-live";
+import type { CantonCurrencyBridge } from "@ledgerhq/coin-canton/types";
+import {
+  CantonPreApprovalProgress,
+  CantonPreApprovalResult,
+  OnboardStatus,
+  PreApprovalStatus,
+} from "@ledgerhq/coin-canton/types";
+import { getCurrencyBridge } from "@ledgerhq/live-common/bridge/index";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
-import { addAccountsAction } from "@ledgerhq/live-wallet/addAccounts";
 import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
-import { getCurrentDevice } from "~/renderer/reducers/devices";
-import { accountsSelector } from "~/renderer/reducers/accounts";
+import { addAccountsAction } from "@ledgerhq/live-wallet/addAccounts";
+import { Account } from "@ledgerhq/types-live";
 import { closeModal } from "~/renderer/actions/modals";
 import Modal from "~/renderer/components/Modal";
 import Stepper, { Step } from "~/renderer/components/Stepper";
-import { getCurrencyBridge } from "@ledgerhq/live-common/bridge/index";
-import type { CantonCurrencyBridge } from "@ledgerhq/coin-canton/types";
-import {
-  OnboardStatus,
-  PreApprovalStatus,
-  CantonPreApprovalProgress,
-  CantonPreApprovalResult,
-} from "@ledgerhq/coin-canton/types";
 import logger from "~/renderer/logger";
+import { accountsSelector } from "~/renderer/reducers/accounts";
+import { getCurrentDevice } from "~/renderer/reducers/devices";
 import StepAuthorize, { StepAuthorizeFooter } from "./steps/StepAuthorize";
-import StepOnboard, { StepOnboardFooter } from "./steps/StepOnboard";
 import StepFinish, { StepFinishFooter } from "./steps/StepFinish";
-import { Data, StepId, OnboardingData, SigningData } from "./types";
+import StepOnboard, { StepOnboardFooter } from "./steps/StepOnboard";
+import { Data, OnboardingData, SigningData, StepId } from "./types";
 
 export type Props = Data & {
   device: Device | null | undefined;
@@ -36,7 +36,6 @@ export type Props = Data & {
 } & UserProps;
 
 export type UserProps = {
-  // props from user
   onClose?: () => void;
 } & Data;
 
@@ -123,9 +122,7 @@ class OnboardModal extends PureComponent<Props, State> {
     });
 
   handleBeforeOpen = ({ data: _data }: { data: Data | undefined }) => {
-    // const primaryAccount = data.selectedAccounts[0];
-    // const accountName = data.editedNames[primaryAccount.id];
-    // this.setState({ accountName });
+    // No-op
   };
 
   handleAddAccounts = (accounts: Account[] = []) => {
@@ -192,8 +189,6 @@ class OnboardModal extends PureComponent<Props, State> {
     const { device, currency, existingAccounts } = this.props;
     const { accountName } = this.state;
 
-    // Get creatableAccount from stepper props
-    // const importableAccounts = this.props.selectedAccounts.filter(account => account.used);
     const creatableAccount = this.props.selectedAccounts.find(account => !account.used);
 
     if (!device || !currency) {
@@ -223,15 +218,12 @@ class OnboardModal extends PureComponent<Props, State> {
     } | null = null;
 
     cantonBridge
-      .onboardAccount(device.deviceId, currency, creatableAccount!, existingAccounts)
+      .onboardAccount(currency, device.deviceId, creatableAccount!, existingAccounts)
       .subscribe({
         next: (progressData: Record<string, unknown>) => {
           logger.log("Canton onboarding progress", progressData);
 
-          // Handle progress updates (CantonOnboardProgress has status)
           if ("status" in progressData) {
-            // const statusMessage = getStatusMessage(progressData.status as OnboardStatus);
-            // this.setSigningData(progressData.status, statusMessage);
             this.setOnboardingStatus?.(progressData.status as OnboardStatus);
 
             if (progressData.status === OnboardStatus.SIGN) {
@@ -255,7 +247,6 @@ class OnboardModal extends PureComponent<Props, State> {
             }
           }
 
-          // Handle final result
           if ("partyId" in progressData && !("status" in progressData)) {
             onboardingResult = {
               partyId: progressData.partyId as string,
@@ -275,7 +266,7 @@ class OnboardModal extends PureComponent<Props, State> {
               publicKey: onboardingResult.publicKey || "",
               device: device.deviceId,
               accountIndex,
-              currency: currency.id,
+              currency: currency,
               accountName: accountName,
               transactionHash: onboardingResult.transactionHash || "",
               completedAccount: onboardingResult.account || creatableAccount,
@@ -449,14 +440,11 @@ class OnboardModal extends PureComponent<Props, State> {
       startOnboarding: this.handleStartOnboarding,
     };
 
-    console.log("[OnboardModal] this.props", this.props, this.state);
-
     return (
       <Modal
         centered
         name="MODAL_CANTON_ONBOARD_ACCOUNT"
         onHide={this.handleReset}
-        // onBeforeOpen={this.handleBeforeOpen}
         preventBackdropClick={stepId === StepId.ONBOARD}
         render={({ onClose }) => (
           <Stepper

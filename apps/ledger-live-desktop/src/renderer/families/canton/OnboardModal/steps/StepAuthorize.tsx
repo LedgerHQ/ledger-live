@@ -1,58 +1,38 @@
-import React, { useState, useEffect } from "react";
+import BigNumber from "bignumber.js";
+import React, { useEffect, useState } from "react";
 import { Trans } from "react-i18next";
-import type { CantonCurrencyBridge } from "@ledgerhq/coin-canton/types";
-import {
-  getDerivationScheme,
-  getDerivationModesForCurrency,
-  runAccountDerivationScheme,
-} from "@ledgerhq/coin-framework/derivation";
-import Box from "~/renderer/components/Box";
+import { PreApprovalStatus } from "@ledgerhq/coin-canton/types";
+import { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
+import { Device } from "@ledgerhq/live-common/hw/actions/types";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { Account } from "@ledgerhq/types-live";
+import AccountRow from "~/renderer/components/AccountsList/AccountRow";
 import Alert from "~/renderer/components/Alert";
+import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
 import CurrencyBadge from "~/renderer/components/CurrencyBadge";
 import Link from "~/renderer/components/Link";
-import { PreApprovalStatus } from "@ledgerhq/coin-canton/types";
 import Spinner from "~/renderer/components/Spinner";
-import AccountRow from "~/renderer/components/AccountsList/AccountRow";
 import TransactionConfirm from "~/renderer/components/TransactionConfirm";
 import { ValidatorRow } from "../fields/ValidatorRow";
-import { StepId, OnboardingData } from "../types";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { Account } from "@ledgerhq/types-live";
-import { Device } from "@ledgerhq/live-common/hw/actions/types";
-import { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
-import BigNumber from "bignumber.js";
+import { OnboardingData } from "../types";
+import { createPlaceholderAccount } from "../utils/accountUtils";
 
 export type StepAuthorizeProps = {
   accountName: string;
   clearError: () => void;
   currency: CryptoCurrency;
-  error: Error | null;
   selectedAccounts: Account[];
-  editedNames: Record<string, string>;
-  cantonBridge: CantonCurrencyBridge;
   device: Device;
   isAuthorized?: boolean;
   onboardingData?: OnboardingData;
-  setError: (error: Error | null) => void;
-  transitionTo: (step: StepId) => void;
-  onAddAccounts: (account: Account[]) => void;
-  setOnboardingData?: (data: OnboardingData) => void;
   authorizeStatus: PreApprovalStatus;
-  isProcessing: boolean;
-  showConfirmation: boolean;
-  progress: number;
-  message: string;
   handlePreapproval: () => void;
 };
 
 export type StepAuthorizeFooterProps = {
   currency: CryptoCurrency;
-  isProcessing: boolean;
   authorizeStatus: PreApprovalStatus;
-  error: Error | null;
-  onRetry: () => void;
-  onConfirm: () => void;
   handlePreapproval?: () => void;
 };
 
@@ -60,60 +40,16 @@ const StepAuthorize = ({
   accountName,
   clearError,
   currency,
-  error: _error,
   selectedAccounts,
-  editedNames: _editedNames,
-  cantonBridge: _cantonBridge,
   authorizeStatus,
   device,
   isAuthorized = true,
   onboardingData,
-  setError: _setError,
-  transitionTo: _transitionTo,
-  onAddAccounts: _onAddAccounts,
-  setOnboardingData: _setOnboardingData,
-  isProcessing: _isProcessing,
-  showConfirmation: _showConfirmation,
-  progress: _progress,
-  message: _message,
   handlePreapproval,
 }: StepAuthorizeProps) => {
   const selectedAccount = selectedAccounts[0];
 
-  // Create placeholder account like in StepOnboard
-  const placeholderAccount =
-    selectedAccount ||
-    (() => {
-      if (!currency || !currency.id) {
-        return null;
-      }
-
-      const derivationMode = getDerivationModesForCurrency(currency)[0];
-      const derivationScheme = getDerivationScheme({ derivationMode, currency });
-      const freshAddressPath = runAccountDerivationScheme(derivationScheme, currency, {
-        account: 0,
-      });
-
-      return {
-        type: "Account" as const,
-        id: `canton-placeholder-${currency.id}`,
-        currency,
-        freshAddress: "canton-placeholder-address",
-        freshAddressPath,
-        balance: new BigNumber(0),
-        spendableBalance: new BigNumber(0),
-        derivationMode,
-        index: 0,
-        seedIdentifier: "canton-placeholder",
-        used: false,
-        blockHeight: 0,
-        operationsCount: 0,
-        operations: [],
-        pendingOperations: [],
-        lastSyncDate: new Date(),
-        creationDate: new Date(),
-      };
-    })();
+  const placeholderAccount = createPlaceholderAccount(currency, selectedAccount);
   const [currentAccountName, setCurrentAccountName] = useState(accountName);
 
   useEffect(() => {
@@ -133,7 +69,7 @@ const StepAuthorize = ({
           <Box>
             <TransactionConfirm
               device={device}
-              account={placeholderAccount}
+              account={placeholderAccount!}
               parentAccount={null}
               transaction={
                 {
@@ -190,7 +126,7 @@ const StepAuthorize = ({
                 <Trans i18nKey="operationDetails.account" />
               </Box>
               <AccountRow
-                account={placeholderAccount}
+                account={placeholderAccount!}
                 accountName={currentAccountName}
                 isDisabled={true}
                 hideAmount={true}
@@ -231,11 +167,7 @@ const StepAuthorize = ({
 
 export const StepAuthorizeFooter = ({
   currency,
-  isProcessing: _isProcessing,
-  error: _error,
   authorizeStatus,
-  onRetry: _onRetry,
-  onConfirm: _onConfirm,
   handlePreapproval,
 }: StepAuthorizeFooterProps) => {
   if (authorizeStatus === PreApprovalStatus.SIGN) {

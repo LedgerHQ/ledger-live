@@ -39,31 +39,15 @@ export const StepFinishFooter = ({
 }: StepProps) => {
   const onGoStep1 = () => {
     const completedAccount = onboardingData?.completedAccount;
-    console.log("[StepFinish] Add Account clicked, calling onAddAccounts", [
-      ...importableAccounts,
-      completedAccount,
-      "onboardingData",
-      onboardingData,
-    ]);
     if (completedAccount) {
       onAddAccounts([...importableAccounts, completedAccount]);
-    } else {
-      console.error("[StepFinish] No completed account found in modal state");
     }
   };
 
   const onDone = () => {
     const completedAccount = onboardingData?.completedAccount;
-    console.log("[StepFinish] Done button clicked, calling onAddAccounts", [
-      ...importableAccounts,
-      completedAccount,
-      "onboardingData",
-      onboardingData,
-    ]);
     if (completedAccount) {
       onAddAccounts([...importableAccounts, completedAccount]);
-    } else {
-      console.error("[StepFinish] No completed account found in modal state");
     }
   };
 
@@ -78,7 +62,7 @@ export const StepFinishFooter = ({
         {t("addAccounts.cta.addMore")}
       </Button>
       <Button
-        event="Page AddAccounts Step 4 AddMore" // should be Close instead of AddMore? same here: apps/ledger-live-desktop/src/renderer/modals/AddAccounts/steps/StepFinish.tsx:55
+        event="Page AddAccounts Step 4 Close"
         data-testid={"add-accounts-finish-close-button"}
         primary
         onClick={onDone}

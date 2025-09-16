@@ -1,8 +1,7 @@
-import type { MakeModalsType } from "~/renderer/modals/types";
-import { Account } from "@ledgerhq/types-live";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-
+import { Account } from "@ledgerhq/types-live";
+import type { MakeModalsType } from "~/renderer/modals/types";
 import OnboardModal from "./OnboardModal";
 
 export type ModalsData = {

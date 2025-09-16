@@ -1,21 +1,21 @@
+import BigNumber from "bignumber.js";
 import React, { useCallback, useEffect, useState } from "react";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
-import BigNumber from "bignumber.js";
-import { getDefaultAccountNameForCurrencyIndex } from "@ledgerhq/live-wallet/accountName";
 import { OnboardStatus } from "@ledgerhq/coin-canton/types";
+import { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
+import { getDefaultAccountNameForCurrencyIndex } from "@ledgerhq/live-wallet/accountName";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import AccountRow from "~/renderer/components/AccountsList/AccountRow";
 import Alert from "~/renderer/components/Alert";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
 import CurrencyBadge from "~/renderer/components/CurrencyBadge";
-import logger from "~/renderer/logger";
 import Spinner from "~/renderer/components/Spinner";
 import Text from "~/renderer/components/Text";
 import TransactionConfirm from "~/renderer/components/TransactionConfirm";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
-import { StepProps, StepId, OnboardingData } from "../types";
+import logger from "~/renderer/logger";
+import { OnboardingData, StepId, StepProps } from "../types";
 
 interface FooterProps {
   currency: CryptoCurrency;
@@ -133,28 +133,20 @@ export default function StepOnboard({
   device,
   onboardingStatus,
   currency,
-  existingAccounts: _existingAccounts,
   accountName,
   editedNames,
   importableAccounts,
   creatableAccount,
-  cantonBridge: _cantonBridge,
-  transitionTo: _transitionTo,
-  onAddAccounts: _onAddAccounts,
   signingData,
   setOnboardingData,
   setOnboardingCompleted,
-  setOnboardingStatus: _setOnboardingStatus,
-  setIsProcessing: _setIsProcessing,
   error,
   clearError,
-  startOnboarding: _externalStartOnboarding,
 }: StepProps) {
   const [statusMessage, setStatusMessage] = useState("");
   const [_retryCount, setRetryCount] = useState(0);
 
   const resetState = useCallback(() => {
-    // setStatus(OnboardStatus.PREPARE);
     setStatusMessage("Starting Canton onboarding...");
   }, []);
 
@@ -163,18 +155,14 @@ export default function StepOnboard({
   }, []);
 
   useEffect(() => {
-    // Only reset state on mount, don't start onboarding
     setOnboardingData?.(null as unknown as OnboardingData);
     setOnboardingCompleted?.(false);
-    // setStatus(OnboardStatus.INIT);
     setStatusMessage("Ready to start Canton onboarding");
   }, [setOnboardingData, setOnboardingCompleted]);
 
   useEffect(() => {
     setStatusMessage(getStatusMessage(onboardingStatus as OnboardStatus));
   }, [onboardingStatus]);
-
-  // Onboarding is now handled by parent component
 
   const handleRetry = useCallback(() => {
     clearError();
@@ -357,7 +345,6 @@ export const StepOnboardFooter = ({
     }
   }, [onboardingCompleted, isProcessing, status, startOnboarding, transitionTo]);
 
-  // Hide footer during signing phase
   if (status === OnboardStatus.SIGN) {
     return <></>;
   }
