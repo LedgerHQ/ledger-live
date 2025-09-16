@@ -44,7 +44,10 @@ export function getSolanaSignerInstance(
 ): SolanaSigner {
   if (canDMKSignerBeUsed(transport)) {
     if (!_dmkSignerInstance) {
-      _dmkSignerInstance = new DMKSignerSolana(transport.dmk, transport.sessionId);
+      _dmkSignerInstance = new DMKSignerSolana(
+        transport.dmk as DeviceManagementKit,
+        transport.sessionId,
+      );
     }
     return _dmkSignerInstance;
   } else {

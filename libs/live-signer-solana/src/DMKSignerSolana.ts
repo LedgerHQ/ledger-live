@@ -1,6 +1,7 @@
 import {
   AppConfig,
   PubKeyDisplayMode,
+  Resolution,
   SolanaAddress,
   SolanaSignature,
   SolanaSigner,
@@ -132,8 +133,12 @@ export class DMKSignerSolana implements SolanaSigner {
    * @param path - BIP32 derivation path
    * @param txBuffer - transaction data as a uint8 array
    */
-  async signTransaction(path: string, txBuffer: Uint8Array): Promise<SolanaSignature> {
-    const { observable } = this.dmkSigner.signTransaction(path, txBuffer);
+  async signTransaction(
+    path: string,
+    txBuffer: Uint8Array,
+    resolution?: Resolution | undefined,
+  ): Promise<SolanaSignature> {
+    const { observable } = this.dmkSigner.signTransaction(path, txBuffer, resolution);
     return new Promise<SolanaSignature>((resolve, reject) => {
       observable.subscribe({
         next: state => {
