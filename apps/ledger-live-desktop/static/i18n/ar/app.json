@@ -168,6 +168,7 @@
       "NFT_IN" : "تم تلقي NFT",
       "NFT_OUT" : "تم إرسال NFT",
       "CREATE" : "تم إنشاؤه",
+      "UNKNOWN" : "غير معروف",
       "REVEAL" : "تم الإظهار",
       "DELEGATE" : "تم التفويض",
       "REDELEGATE" : "تمت إعادة التفويض",
@@ -802,8 +803,8 @@
       "support" : "الدعم"
     },
     "willBeDeprecatedBanner" : {
-      "title" : "لتحسين الكفاءة، {{currencyName}} لن تكون مدعومةً على Ledger Live بدءاً من {{deprecatedDate}}. مع ذلك، ستظل مدعومةً على محافظ أجهزة Ledger. يُرجى التواصل مع دعم عملاء Ledger إذا كنت ترغب في الحصول على مساعدة حول ذلك.",
-      "contactSupport" : "تواصل مع الدعم"
+      "title" : "{{currencyName}} لن تكون مدعومةً على Ledger Live بدءاً من {{deprecatedDate}}. ستظل مؤمّنةً بواسطة محفظة أجهزة Ledger الخاصة بك. لمعرفة المزيد، يُرجى قراءة مقالة مركز المساعدة الكاملة على الرابط أدناه.",
+      "learnMore" : "تعرّف على المزيد"
     },
     "lastOperations" : "أحدث العمليات",
     "contractAddress" : "عقد:",
@@ -1940,7 +1941,8 @@
       "payoutNetworkFeesTooltip" : "هذا المبلغ لن يظهر على جهازك",
       "acceptTerms" : "بتأكيد صحة هذه المعاملة، أنا أقبل\n<0>شروط استخدام {{provider}}</0>",
       "exodusAcceptTerms" : "Exodus تعتمد على أطراف ثالثة لإجراء المبادلات.\nبتأكيد صحة هذه المعاملة، أنا أقبل <0>شروط استخدام Exodus</0>",
-      "changellyAcceptTerms" : "بالنقر على ”Swap with Changelly (المبادلة بواسطة Changelly)“ أنت تقبل <0>شروط استخدام</0> Changelly و\n<1>سياسة مكافحة غسل الأموال/KYC (اعرف عميلك)</1> الخاصة بها. Changelly قد تطبق إجراءات مكافحة غسل الأموال/KYC (اعرف عميلك) والتي\nيمكن، في حالات محدودة، أن تؤثر على إتمام معاملتك. إذا\nحدث هذا، يجب عليك التواصل مع <2>دعم عملاء</2> Changelly."
+      "changellyAcceptTerms" : "بالنقر على ”Swap with Changelly (المبادلة بواسطة Changelly)“ أنت تقبل <0>شروط استخدام</0> Changelly و\n<1>سياسة مكافحة غسل الأموال/KYC (اعرف عميلك)</1> الخاصة بها. Changelly قد تطبق إجراءات مكافحة غسل الأموال/KYC (اعرف عميلك) والتي\nيمكن، في حالات محدودة، أن تؤثر على إتمام معاملتك. إذا\nحدث هذا، يجب عليك التواصل مع <2>دعم عملاء</2> Changelly.",
+      "cicAcceptTerms" : "”Swap with CIC (المبادلة بواسطة CIC)“ أنت تقبل <0>شروط استخدام</0> CIC و<1>سياسة مكافحة غسل الأموال/KYC (اعرف عميلك)</1> الخاصة بها. CIC قد تطبق إجراءات مكافحة غسل الأموال/KYC (اعرف عميلك) والتي يمكن، في حالات محدودة، أن تؤثر على إتمام معاملتك. إذا حدث هذا، يجب عليك التواصل مع <2>دعم عملاء</2> CIC."
     },
     "swap2" : {
       "amountSent" : "المبلغ المطلوب إرساله",
@@ -2282,8 +2284,8 @@
     }
   },
   "fund" : {
-    "title" : "Fund",
-    "titleCrypto" : "Fund {{currency}}",
+    "title" : "تمويل",
+    "titleCrypto" : "تمويل {{currency}}",
     "exchangeDrawer" : {
       "completed" : {
         "title" : "تم بث المعاملة بنجاح",
@@ -5865,6 +5867,10 @@
       "commentPlaceholder" : "اختياري",
       "comment" : "التعليق"
     },
+    "canton" : {
+      "commentPlaceholder" : "اختياري",
+      "comment" : "تعليق"
+    },
     "stellar" : {
       "memo" : "ملاحظة (تسمية الوجهة)",
       "memoType" : {
@@ -6312,6 +6318,10 @@
       "title" : "حدث خطأ ما",
       "description" : "فشلت المعاملة. يُرجى إعادة المحاولة."
     },
+    "TransactionCannotBeCreated" : {
+      "title" : "خطأ في المعالجة",
+      "description" : "Changelly لا يمكنها معالجة هذه المعاملة. كود الخطأ 8HBB{{errorCode}}"
+    },
     "TimeoutError" : {
       "title" : "عفواً، استغرق خادم البيانات وقتاً أطول من اللازم ليستجيب",
       "description" : "يرجى إعادة المحاولة."
@@ -6459,6 +6469,9 @@
       "description" : "يُرجى إغلاق النافذة وإعادة المحاولة لاحقاً"
     },
     "TonCommentInvalid" : {
+      "title" : "التعليق يجب ألا يتعدى 120 حرفاً بدون حروف خاصة"
+    },
+    "CantonCommentInvalid" : {
       "title" : "التعليق يجب ألا يتعدى 120 حرفاً بدون حروف خاصة"
     },
     "CantScanQRCode" : {
@@ -6852,11 +6865,11 @@
       "description" : "يُرجى المحاولة مرة أخرى بصورة أخرى"
     },
     "ImageCommitRefusedOnDevice" : {
-      "title" : "تم إلغاء تثبيت صورة شاشة القفل\nعلى {{productName}}",
+      "title" : "تم تجاهل صورة شاشة القفل على\n{{productName}}",
       "description" : "إذا كان هذا خطأً، أعد المحاولة الآن."
     },
     "ImageLoadRefusedOnDevice" : {
-      "title" : "تم إلغاء تثبيت صورة شاشة القفل\nعلى {{productName}}",
+      "title" : "تم إلغاء صورة شاشة القفل على\n{{productName}}",
       "description" : "إذا كان هذا خطأً، أعد المحاولة الآن."
     },
     "ImageDoesNotExistOnDevice" : {
@@ -7181,7 +7194,7 @@
     "steps" : {
       "choose" : {
         "stepLabel" : "اختر الصورة",
-        "description" : "اختر صورة لتعيينها على أنها (...)",
+        "description" : "اختر أي فن رقمي أو صورة.\nقم بتخصيص جهازك {{productName}}.\nاجعله يعبّر عنك.",
         "pickFromNftGallery" : "اختر من معرض NFT",
         "myNfts" : "رموزي غير القابلة للاستبدال",
         "upload" : "تحميل من الكمبيوتر",
@@ -7205,7 +7218,7 @@
         "useAnotherPicture" : "تحميل صورة أخرى",
         "allowPreview" : "انقر على ”Load picture [تحميل صورة]“\nلتخصيص صورة شاشة القفل",
         "allowConfirmPreview" : "انقر على ”Load picture [تحميل صورة]“\nلاستعادة صورة شاشة القفل",
-        "loadingPicture" : "جاري التثبيت...",
+        "loadingPicture" : "جاري التحميل ...",
         "voila" : "ها هي!",
         "imageLoaded" : "تم تحميل الصورة على {{productName}}",
         "confirmPicture" : "يُعجبك ما تراه؟\nاحتفظ بها!",
@@ -7264,9 +7277,9 @@
   "webview" : {
     "networkError" : {
       "title" : "خطأ في الشبكة",
-      "subtitle" : "حدث خطأ ما. يُرجى إعادة المحاولة. إذا استمرت المشكلة، احفظ السجل وتواصل مع دعم Ledger.",
+      "subtitle" : "حدث خطأ ما. يُرجى إعادة المحاولة. إذا استمرت المشكلة، احفظ السجلات وتواصل مع دعم Ledger.",
       "contactSupport" : "تواصل مع دعم Ledger",
-      "saveLog" : "حفظ السجل"
+      "saveLog" : "حفظ السجلات"
     },
     "noAccounts" : {
       "title" : "أنت بحاجة إلى حساب للوصول إلى هذا التطبيق.",
@@ -7651,7 +7664,7 @@
         "foundAccounts_other" : "وجدنا {{count}} حساب",
         "scanning" : "جارٍ فحص الحسابات..."
       },
-      "title" : "جارٍ البحث عن أي حسابات قائمة على سلسلة الكتل (blockchain)..."
+      "title" : "جارٍ التحقق من سلسلة الكتل (بلوكتشين)..."
     },
     "connectYourDevice" : {
       "title" : "قم بتوصيل جهازك وإلغاء قفله"
@@ -7671,6 +7684,11 @@
         "selectAccount" : "متابعة",
         "close" : "إغلاق"
       }
+    },
+    "genericError" : {
+      "title" : "حدث خطأ في الشبكة",
+      "description" : "حدث خطأ ما، يرجى المحاولة مرة أخرى أو التواصل مع دعم Ledger إذا كان لديك شك.",
+      "cta" : "إعادة المحاولة"
     }
   },
   "nftEntryPoint" : {
