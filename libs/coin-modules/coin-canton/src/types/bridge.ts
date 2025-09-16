@@ -16,13 +16,11 @@ import type {
   CantonPreApprovalProgress,
   CantonPreApprovalResult,
 } from "./onboard";
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 
 export interface CantonCurrencyBridge extends CurrencyBridge {
   onboardAccount: (
     currency: CryptoCurrency,
     deviceId: string,
-    currency: CryptoCurrency,
     creatableAccount: Account,
     existingAccounts: Account[],
   ) => Observable<CantonOnboardProgress | CantonOnboardResult>;

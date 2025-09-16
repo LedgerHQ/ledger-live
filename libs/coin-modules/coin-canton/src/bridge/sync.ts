@@ -89,15 +89,12 @@ export function makeGetAccountShape(
         derivationMode: derivationMode,
         verify: false,
       });
-      console.log("partyId", partyId);
       try {
         const { party_id } = await getPartyByPubKey(currency, publicKey);
         partyId = party_id;
         xpubOrAddress = partyId.replace(/:/g, "_");
-        console.log("partyId", partyId);
       } catch (e) {
-        console.log("partyId does not exist", e);
-        // throw e; // Re-throw other errors
+        // do nothing
       }
     }
 
@@ -116,12 +113,12 @@ export function makeGetAccountShape(
     // TODO change to balance.instrument_id === "Amulet" after update on backend
     const balanceData = balances.find(balance => balance.instrument_id.includes("Amulet")) || {
       instrument_id: "Amulet",
-      amount: 0,
+      amount: 1,
       locked: false,
     };
 
     const balance = new BigNumber(balanceData.amount);
-    const reserveMin = coinConfig.getCoinConfig().minReserve || 0;
+    const reserveMin = coinConfig.getCoinConfig(currency).minReserve || 0;
     const lockedAmount = balanceData.locked ? balance : new BigNumber(0);
     const spendableBalance = BigNumber.max(
       0,
@@ -145,15 +142,12 @@ export function makeGetAccountShape(
     const blockHeight = await getLedgerEnd(currency);
     // We return the new account shape
     const shape = {
-      id: accountId,
       xpub: xpubOrAddress,
       blockHeight,
       balance,
       spendableBalance,
       operations,
       operationsCount: operations.length,
-      freshAddress: address,
-      freshAddressPath: derivationPath,
       used: balance.gt(0),
       cantonResources: {
         partyId,

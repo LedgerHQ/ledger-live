@@ -2,15 +2,8 @@ import { Observable } from "rxjs";
 import { filter, map, tap } from "rxjs/operators";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import { emptyHistoryCache } from "@ledgerhq/coin-framework/account/index";
-import { getDerivationModesForCurrency } from "@ledgerhq/coin-framework/derivation";
-import {
-  getDerivationScheme,
-  runAccountDerivationScheme,
-} from "@ledgerhq/coin-framework/derivation";
-import type { Account, CurrencyBridge, DerivationMode } from "@ledgerhq/types-live";
+import type { Account, CurrencyBridge } from "@ledgerhq/types-live";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { makeGetAccountShape } from "./sync";
-
 import {
   prepareOnboarding,
   submitOnboarding,
@@ -31,17 +24,6 @@ import {
 } from "../types/onboard";
 import resolver from "../signer";
 import type { CantonAccount, CantonSigner } from "../types";
-
-async function _getKeypair(
-  signerContext: SignerContext<CantonSigner>,
-  deviceId: string,
-  derivationPath: string,
-) {
-  return signerContext(deviceId, async signer => {
-    const { publicKey, address } = await signer.getAddress(derivationPath);
-    return { signer, publicKey: publicKey.replace("0x", ""), address };
-  });
-}
 
 export const isAccountOnboarded = async (
   currency: CryptoCurrency,
@@ -74,7 +56,7 @@ export const buildOnboardAccount =
         observer.next({
           status: OnboardStatus.INIT,
         });
-        const derivationMode = getDerivationModesForCurrency(currency)[0];
+
         console.log(
           "buildOnboardAccount",
           "creatableAccount",
@@ -95,9 +77,7 @@ export const buildOnboardAccount =
         let onboardableAccount = creatableAccount;
 
         if (scanAccounts && !creatableAccount.used) {
-          console.log("DEBUG - scanAccounts is defined, calling it...");
-          console.log("DEBUG - Currency:", currency.id);
-          console.log("DEBUG - creatableAccount:", creatableAccount);
+          console.log("DEBUG - scanAccounts creatableAccount", creatableAccount);
           scanAccounts({
             currency,
             deviceId: deviceId,
@@ -116,9 +96,6 @@ export const buildOnboardAccount =
             .subscribe({
               next: async scannedAccount => {
                 console.log("DEBUG - Found scanned account:", scannedAccount);
-                console.log("DEBUG - Account used:", scannedAccount.used);
-                console.log("DEBUG - Account operations count:", scannedAccount.operationsCount);
-                console.log("DEBUG - Account balance:", scannedAccount.balance.toString());
 
                 // Check if this account is already onboarded to Canton
                 try {
@@ -132,25 +109,19 @@ export const buildOnboardAccount =
                   const onboardedStatus = await isAccountOnboarded(currency, publicKey);
                   console.log("DEBUG - Account onboarded status:", onboardedStatus);
 
-                  // If this account is already onboarded, continue scanning
                   if (onboardedStatus.isOnboarded) {
                     console.log("DEBUG - Account is already onboarded, continuing scan...");
+                    // If this account is already onboarded, continue scanning
                     return;
                   }
 
                   // Found an account that's not onboarded, use it for onboarding
-                  console.log("DEBUG - Found non-onboarded account, proceeding with onboarding");
-                  const accountIndex = scannedAccount.index;
-                  const derivationMode = scannedAccount.derivationMode;
-                  const derivationScheme = getDerivationScheme({ derivationMode, currency });
-                  const derivationPath = runAccountDerivationScheme(derivationScheme, currency, {
-                    account: accountIndex,
-                  });
+                  console.log(
+                    "DEBUG - Found non-onboarded account, proceeding with onboarding scannedAccount",
+                    scannedAccount,
+                  );
 
                   onboardableAccount = scannedAccount;
-
-                  console.log("DEBUG - Using account index from scanning:", accountIndex);
-                  console.log("DEBUG - derivationPath:", derivationPath);
                 } catch (error) {
                   console.error("DEBUG - Error checking onboarded status:", error);
 
@@ -178,16 +149,9 @@ export const buildOnboardAccount =
             status: OnboardStatus.PREPARE,
           });
 
-          const { party_id: partyId } = await isAccountOnboarded(publicKey);
+          const { party_id: partyId } = await isAccountOnboarded(currency, publicKey);
           if (partyId) {
-            const account = await createAccount({
-              address,
-              currency,
-              derivationMode: creatableAccount.derivationMode,
-              derivationPath: creatableAccount.freshAddressPath,
-              partyId,
-              signerContext,
-            });
+            const account = await createAccount(creatableAccount);
             observer.next({
               partyId,
               account,
@@ -220,14 +184,7 @@ export const buildOnboardAccount =
             signature,
           ).catch(async err => {
             if (err.type === "PARTY_ALREADY_EXISTS") {
-              const account = await createAccount({
-                address,
-                currency,
-                derivationMode: creatableAccount.derivationMode,
-                derivationPath: creatableAccount.freshAddressPath,
-                partyId: preparedTransaction.party_id,
-                signerContext,
-              });
+              const account = await createAccount(creatableAccount);
               observer.next({
                 partyId: preparedTransaction.party_id,
                 account,
@@ -241,14 +198,7 @@ export const buildOnboardAccount =
             observer.next({
               status: OnboardStatus.SUCCESS,
             });
-            const account = await createAccount({
-              address,
-              currency,
-              derivationMode: creatableAccount.derivationMode,
-              derivationPath: creatableAccount.freshAddressPath,
-              partyId: preparedTransaction.party_id,
-              signerContext,
-            });
+            const account = await createAccount(creatableAccount);
             observer.next({
               partyId: result.party.party_id,
               account,
@@ -361,71 +311,20 @@ export const buildAuthorizePreapproval =
       );
     });
 
-// Extract account index from derivation path
-const extractAccountIndexFromPath = (derivationPath: string): number => {
-  // For Canton: 44'/6767'/<account>'/0'/0'
-  // We need to extract the <account> part
-  const parts = derivationPath.split("/");
-  if (parts.length >= 3) {
-    const accountPart = parts[2]; // This should be something like "0'"
-    const accountIndex = parseInt(accountPart.replace("'", ""), 10);
-    return isNaN(accountIndex) ? 0 : accountIndex;
-  }
-  return 0;
-};
-
-const createAccount = async ({
-  address,
-  currency,
-  derivationMode,
-  partyId,
-  derivationPath,
-  index = 0,
-  signerContext,
-}: {
-  address: string;
-  currency: CryptoCurrency;
-  derivationMode: DerivationMode;
-  derivationPath: string;
-  partyId: string;
-  index?: number;
-  signerContext?: any;
-}): Promise<Partial<Account>> => {
-  // Use provided index or extract from derivation path
-  const accountIndex = index !== undefined ? index : extractAccountIndexFromPath(derivationPath);
-  const getAccountShape = makeGetAccountShape(signerContext);
-  const accountShape = await getAccountShape(
-    {
-      address,
-      currency,
-      derivationMode,
-      derivationPath,
-      index: accountIndex,
-      rest: {
-        cantonResources: {
-          partyId,
-        },
-      },
-    },
-    { paginationConfig: {} },
-  );
-
+const createAccount = async (creatableAccount: Account): Promise<Partial<Account>> => {
+  console.log("createAccount", creatableAccount);
   const account: Partial<CantonAccount> = {
-    ...accountShape,
-    type: "Account",
-    xpub: partyId.replace(/:/g, "_"),
-    index: accountIndex,
-    // operations: [],
-    currency,
-    derivationMode,
+    ...creatableAccount,
     lastSyncDate: new Date(),
     pendingOperations: [],
-    seedIdentifier: address,
+    // seedIdentifier: address,
     balanceHistoryCache: emptyHistoryCache,
-    cantonResources: {
-      partyId,
-    },
+    // cantonResources: {
+    //   partyId,
+    // },
   };
+
+  console.log("account", account);
 
   return account;
 };
