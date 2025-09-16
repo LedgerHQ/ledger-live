@@ -582,14 +582,14 @@ export const getListOperations = async (
     const { out: outCursor, in: inCursor } = deserializeCursor(cursor);
 
     const [opsOut, opsIn] = await Promise.all([
-      await queryTransactions({
+      queryTransactions({
         api,
         addr,
         type: "OUT",
         cursor: toSdkCursor(outCursor),
         order: rpcOrder,
       }),
-      await queryTransactions({
+      queryTransactions({
         api,
         addr,
         type: "IN",
