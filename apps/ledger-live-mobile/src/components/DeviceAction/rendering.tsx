@@ -36,7 +36,7 @@ import { Image, Linking, Platform, ScrollView } from "react-native";
 import Config from "react-native-config";
 import { useSelector } from "react-redux";
 import styled from "styled-components/native";
-import { TrackScreen, track } from "~/analytics";
+import { TrackScreen, track, useTrack } from "~/analytics";
 import { NavigatorName, ScreenName } from "~/const";
 import { MANAGER_TABS } from "~/const/manager";
 import { getDeviceAnimation, getDeviceAnimationStyles } from "~/helpers/getDeviceAnimation";
@@ -616,12 +616,21 @@ export function RequiredFirmwareUpdate({
 
   const isDeviceConnectedViaUSB = device.wired;
 
+  const track = useTrack();
+
   // Goes to the manager if a firmware update is available, but only automatically
   // displays the firmware update drawer if the device is already connected via USB
   const onPress = () => {
-    navigation.navigate(NavigatorName.MyLedger, {
-      screen: ScreenName.MyLedgerChooseDevice,
-      params: { device, firmwareUpdate: isDeviceConnectedViaUSB },
+    track("button_clicked", {
+      button: "OpenMyLedger",
+      page: "Update_OS_To_Continue",
+    });
+    navigation.navigate(NavigatorName.Main, {
+      screen: NavigatorName.MyLedger,
+      params: {
+        screen: ScreenName.MyLedgerChooseDevice,
+        params: { device, firmwareUpdate: isDeviceConnectedViaUSB },
+      },
     });
   };
 
