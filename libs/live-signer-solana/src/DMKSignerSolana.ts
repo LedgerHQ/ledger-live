@@ -107,7 +107,6 @@ export class DMKSignerSolana implements SolanaSigner {
    * @param display - whether to prompt user confirmation on device
    */
   async getAddress(path: string, display?: boolean): Promise<SolanaAddress> {
-    console.log("Fetching address for path via DMK");
     const { observable } = this.dmkSigner.getAddress(path, { checkOnDevice: !!display });
     return new Promise<SolanaAddress>((resolve, reject) => {
       observable.subscribe({
