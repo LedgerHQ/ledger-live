@@ -1,5 +1,11 @@
 # @ledgerhq/hw-app-exchange
 
+## 0.13.3-nightly.0
+
+### Patch Changes
+
+- [#11779](https://github.com/LedgerHQ/ledger-live/pull/11779) [`d93c0aa`](https://github.com/LedgerHQ/ledger-live/commit/d93c0aab902bfba5b36ebdf707e88b5d3453dacb) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Update Device Management Kit to 0.9.0 (and associated libs)
+
 ## 0.13.2
 
 ### Patch Changes

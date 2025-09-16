@@ -1,5 +1,16 @@
 # @ledgerhq/coin-modules-monitoring
 
+## 2.3.0-nightly.8
+
+### Minor Changes
+
+- [#11820](https://github.com/LedgerHQ/ledger-live/pull/11820) [`653c99d`](https://github.com/LedgerHQ/ledger-live/commit/653c99d97ea53f941ea9b788ee6a32f73b068186) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - chore(coin-modules-monitoring): log error stack
+
+### Patch Changes
+
+- Updated dependencies [[`d93c0aa`](https://github.com/LedgerHQ/ledger-live/commit/d93c0aab902bfba5b36ebdf707e88b5d3453dacb)]:
+  - @ledgerhq/live-common@34.48.0-nightly.8
+
 ## 2.2.1-nightly.7
 
 ### Patch Changes

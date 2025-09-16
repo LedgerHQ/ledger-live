@@ -1,5 +1,11 @@
 # @ledgerhq/coin-sui
 
+## 0.13.0-nightly.6
+
+### Minor Changes
+
+- [#11788](https://github.com/LedgerHQ/ledger-live/pull/11788) [`a266ef5`](https://github.com/LedgerHQ/ledger-live/commit/a266ef57824a6e22f153182228f393a3daf9d96a) Thanks [@jprudent](https://github.com/jprudent)! - fix(coin:sui): large accounts are missing some operations
+
 ## 0.13.0-nightly.5
 
 ### Patch Changes

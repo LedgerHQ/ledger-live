@@ -1,5 +1,17 @@
 # @ledgerhq/live-common
 
+## 34.48.0-nightly.8
+
+### Patch Changes
+
+- [#11779](https://github.com/LedgerHQ/ledger-live/pull/11779) [`d93c0aa`](https://github.com/LedgerHQ/ledger-live/commit/d93c0aab902bfba5b36ebdf707e88b5d3453dacb) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Update Device Management Kit to 0.9.0 (and associated libs)
+
+- Updated dependencies [[`d93c0aa`](https://github.com/LedgerHQ/ledger-live/commit/d93c0aab902bfba5b36ebdf707e88b5d3453dacb), [`a266ef5`](https://github.com/LedgerHQ/ledger-live/commit/a266ef57824a6e22f153182228f393a3daf9d96a)]:
+  - @ledgerhq/hw-app-exchange@0.13.3-nightly.0
+  - @ledgerhq/live-dmk-shared@0.12.4-nightly.0
+  - @ledgerhq/live-signer-evm@0.7.5-nightly.6
+  - @ledgerhq/coin-sui@0.13.0-nightly.6
+
 ## 34.48.0-nightly.7
 
 ### Minor Changes

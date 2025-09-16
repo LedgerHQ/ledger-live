@@ -1,5 +1,14 @@
 # live-mobile
 
+## 3.93.0-nightly.9
+
+### Patch Changes
+
+- [#11779](https://github.com/LedgerHQ/ledger-live/pull/11779) [`d93c0aa`](https://github.com/LedgerHQ/ledger-live/commit/d93c0aab902bfba5b36ebdf707e88b5d3453dacb) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Update Device Management Kit to 0.9.0 (and associated libs)
+
+- Updated dependencies [[`d93c0aa`](https://github.com/LedgerHQ/ledger-live/commit/d93c0aab902bfba5b36ebdf707e88b5d3453dacb)]:
+  - @ledgerhq/live-dmk-mobile@0.11.5-nightly.0
+
 ## 3.93.0-nightly.8
 
 ### Patch Changes

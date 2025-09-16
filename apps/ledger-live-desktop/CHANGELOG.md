@@ -1,5 +1,21 @@
 # ledger-live-desktop
 
+## 2.128.0-nightly.9
+
+### Minor Changes
+
+- [#11817](https://github.com/LedgerHQ/ledger-live/pull/11817) [`b4836f0`](https://github.com/LedgerHQ/ledger-live/commit/b4836f0bb11e02e34e69f9fdb1e99c6b18339d59) Thanks [@ejaycoleman](https://github.com/ejaycoleman)! - LLD MAD change receive assets error icon
+
+### Patch Changes
+
+- [#11779](https://github.com/LedgerHQ/ledger-live/pull/11779) [`d93c0aa`](https://github.com/LedgerHQ/ledger-live/commit/d93c0aab902bfba5b36ebdf707e88b5d3453dacb) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Update Device Management Kit to 0.9.0 (and associated libs)
+
+- [#11707](https://github.com/LedgerHQ/ledger-live/pull/11707) [`b1efb9a`](https://github.com/LedgerHQ/ledger-live/commit/b1efb9a2a3e8a011abbd43ae08b2c0cd8a301501) Thanks [@philipptpunkt](https://github.com/philipptpunkt)! - add network problem warning screen in case manifests are missing
+
+- Updated dependencies [[`d93c0aa`](https://github.com/LedgerHQ/ledger-live/commit/d93c0aab902bfba5b36ebdf707e88b5d3453dacb)]:
+  - @ledgerhq/live-common@34.48.0-nightly.8
+  - @ledgerhq/live-dmk-desktop@0.9.5-nightly.8
+
 ## 2.128.0-nightly.8
 
 ### Minor Changes
