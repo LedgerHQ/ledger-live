@@ -1,3 +1,4 @@
+import "./starts-console";
 import "./setup"; // Needs to be imported first
 import {
   app,
@@ -30,6 +31,9 @@ import {
   REDUX_DEVTOOLS,
   REACT_DEVELOPER_TOOLS,
 } from "electron-devtools-installer";
+// End import timing, start initialization
+console.timeEnd("T-imports");
+console.time("T-init");
 
 Store.initRenderer();
 
@@ -82,11 +86,15 @@ app.on("will-finish-launching", () => {
       .catch((err: unknown) => console.log(err));
   });
 });
+
 app.on("ready", async () => {
+  console.timeEnd("T-init");
   app.dirname = __dirname;
 
-  // Create window early for faster startup (hidden)
+  // Measure window creation time
+  console.time("T-window");
   const window = createEarlyMainWindow();
+  console.timeEnd("T-window");
 
   // Initialize database
   db.init(userDataDirectory);
@@ -98,8 +106,11 @@ app.on("ready", async () => {
     });
   }
 
+  // Measure database initialization and first reads
+  console.time("T-db");
   const settings = (await db.getKey("app", "settings")) as SettingsState;
   const user: User = (await db.getKey("app", "user")) as User;
+  console.timeEnd("T-db");
   const userId = user?.id;
   if (userId) {
     setUserId(userId);
@@ -169,7 +180,6 @@ app.on("ready", async () => {
   });
   Menu.setApplicationMenu(menu);
 
-  // Apply window parameters now that we have DB data
   const windowParams = (await db.getKey("windowParams", "MainWindow", {})) as Parameters<
     typeof applyWindowParams
   >[0];
@@ -255,6 +265,9 @@ ipcMain.on("show-app", () => {
 });
 
 ipcMain.on("ready-to-show", () => {
+  console.timeEnd("T-ready");
+  const totalTime = process.uptime() * 1000;
+  console.log(`TOTAL BOOT TIME: ${totalTime.toFixed(0)}ms`);
   const w = getMainWindow();
   if (w) {
     show(w);

@@ -1,4 +1,3 @@
-import "./setup";
 import { BrowserWindow, screen, app, WebPreferences } from "electron";
 import path from "path";
 import { delay } from "@ledgerhq/live-common/promise";
@@ -236,8 +235,12 @@ export async function applyWindowParams(
   const { x, y, width, height } = restorePosition(positions, dimensions);
   mainWindow.setBounds({ x, y, width, height });
 
-  // Load window content
+  console.time("T-load");
   await loadWindow();
+  console.timeEnd("T-load");
+
+  // Start timing the portion after loadWindow until ready-to-show
+  console.time("T-ready");
 
   // Setup dev tools if needed (non-blocking)
   if (DEV_TOOLS && !DISABLE_DEV_TOOLS) {
