@@ -39,6 +39,7 @@ import {
   validateEarnMenuModal,
   logSecurityEvent,
   EarnDeeplinkAction,
+  validateEarnDepositScreen,
 } from "./deeplinks/validation";
 import { viewNamePredicate } from "~/datadog";
 
@@ -245,15 +246,6 @@ const linkingOptions = () => ({
               [ScreenName.CustomImageStep0Welcome]: "custom-image",
             },
           },
-          [NavigatorName.ExploreTab]: {
-            initialRouteName: "explore",
-            screens: {
-              /**
-               * ie: "ledgerlive://learn"
-               */
-              [ScreenName.Newsfeed]: "newsfeed",
-            },
-          },
           [NavigatorName.LandingPages]: {
             screens: {
               /**
@@ -435,7 +427,6 @@ export const DeeplinksProvider = ({
                               [NavigatorName.WalletTab]: {
                                 screens: {
                                   [ScreenName.Portfolio]: "portfolio",
-                                  [ScreenName.WalletNftGallery]: "nftgallery",
                                   [NavigatorName.Market]: {
                                     screens: {
                                       /**
@@ -669,6 +660,19 @@ export const DeeplinksProvider = ({
                 dispatch(makeSetEarnProtocolInfoModalAction(true));
                 return;
               }
+            }
+            if (pathname === "/deposit") {
+              const validatedModal = validateEarnDepositScreen(
+                searchParams.get("cryptoAssetId") || undefined,
+                searchParams.get("accountId") || undefined,
+              );
+              // Handle deposit deeplink on earnLiveAppNavigator
+              // Creating own search params for deposit deeplink
+              url.pathname = "";
+              url.searchParams.set("action", "deposit");
+              url.searchParams.set("cryptoAssetId", validatedModal.cryptoAssetId ?? "");
+              url.searchParams.set("accountId", validatedModal.accountId ?? "");
+              return getStateFromPath(url.href?.split("://")[1], config);
             }
           }
           if ((hostname === "discover" || hostname === "recover") && platform) {

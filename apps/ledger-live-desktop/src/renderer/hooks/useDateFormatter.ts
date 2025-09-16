@@ -50,14 +50,6 @@ export const getDatesAround = () => {
 };
 
 /**
- *
- * @dev default options for useDateFormatter.
- */
-export type useDateFormatterOptions = {
-  calendar?: boolean;
-};
-
-/**
  * @param intlOpts - Intl.DateTimeFormatOptions
  * @param forcedLanguage - language to force, if not provided, the locale will be used. This should be only used for notifications panel.
  * @returns a function that format a date into a string based on the current
@@ -179,6 +171,3 @@ export function fromNow(date: Date): string {
 
 export const useDateFromNow = (date?: Date | null | undefined): string =>
   useMemo(() => (date ? fromNow(date) : ""), [date]);
-
-export const useDateFromNowFn = (): ((date?: Date) => string) =>
-  useCallback(date => (date ? fromNow(date) : ""), []);

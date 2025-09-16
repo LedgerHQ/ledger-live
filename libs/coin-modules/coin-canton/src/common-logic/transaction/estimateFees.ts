@@ -1,4 +1,9 @@
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-export async function estimateFees(serializedTransaction: string): Promise<bigint> {
-  return Promise.resolve(BigInt(10_000)); // TODO replace with real implementation
+import coinConfig from "../../config";
+import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+
+const feeValue = (currency: CryptoCurrency) =>
+  coinConfig.getCoinConfig(currency).fee ?? 2n * 10n ** 38n;
+
+export async function estimateFees(currency: CryptoCurrency): Promise<bigint> {
+  return Promise.resolve(BigInt(feeValue(currency)));
 }

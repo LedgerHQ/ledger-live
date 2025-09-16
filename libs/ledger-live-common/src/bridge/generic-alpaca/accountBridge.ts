@@ -14,9 +14,14 @@ import { genericEstimateMaxSpendable } from "./estimateMaxSpendable";
 import { createTransaction } from "./createTransaction";
 import { genericBroadcast } from "./broadcast";
 import { genericSignOperation } from "./signOperation";
+import type { AlpacaSigner } from "./signer/types";
 
-export function getAlpacaAccountBridge(network: string, kind: string): AccountBridge<any> {
-  const signer = getSigner(network);
+export function getAlpacaAccountBridge(
+  network: string,
+  kind: string,
+  customSigner?: AlpacaSigner,
+): AccountBridge<any> {
+  const signer = customSigner ?? getSigner(network);
   return {
     sync: makeSync({ getAccountShape: genericGetAccountShape(network, kind) }),
     receive: makeAccountBridgeReceive(getAddressWrapper(signer.getAddress)),
@@ -28,5 +33,5 @@ export function getAlpacaAccountBridge(network: string, kind: string): AccountBr
     broadcast: genericBroadcast(network, kind),
     signOperation: genericSignOperation(network, kind)(signer.context),
     getSerializedAddressParameters, // NOTE: check wether it should be exposed by coin-module's api instead?
-  } satisfies Partial<AccountBridge<any>> as AccountBridge<any>;
+  } satisfies Partial<AccountBridge<any>>;
 }

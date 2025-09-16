@@ -2,6 +2,7 @@ import { BigNumber } from "bignumber.js";
 import { AccountLike } from "@ledgerhq/types-live";
 import { findSubAccountById } from "@ledgerhq/coin-framework/account/index";
 import type { SuiAccount, Transaction } from "../types";
+import { ONE_SUI } from "../constants";
 
 // eslint-disable-next-line @typescript-eslint/no-loss-of-precision
 export const MAX_AMOUNT_INPUT = 0xffffffffffffffff;
@@ -44,8 +45,7 @@ const calculateMaxSend = (account: SuiAccount, transaction: Transaction): BigNum
  */
 const calculateMaxDelegate = (account: SuiAccount, transaction: Transaction): BigNumber => {
   // Reserve 0.1 SUI for future gas fees as recommended for delegation
-  const ONE_SUI = new BigNumber("1000000000"); // 1 SUI in MIST
-  const gasReserve = ONE_SUI.div(10); // 0.1 SUI
+  const gasReserve = BigNumber(ONE_SUI).div(10); // 0.1 SUI
 
   const amount = account.spendableBalance.minus(transaction.fees || 0).minus(gasReserve);
   return amount.lt(0) ? new BigNumber(0) : amount;

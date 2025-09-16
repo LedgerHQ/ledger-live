@@ -1,5 +1,6 @@
 import { renderHook, act } from "@tests/test-renderer";
 import { useModularDrawerState } from "../useModularDrawerState";
+import { ModularDrawerStep } from "../../types";
 import {
   mockBtcCryptoCurrency,
   mockEthCryptoCurrency,
@@ -8,9 +9,10 @@ import {
   mockCurrencyIds,
 } from "@ledgerhq/live-common/modularDrawer/__mocks__/currencies.mock";
 import { NavigationProp } from "@react-navigation/native";
-import { UseAssetsData } from "../useAssetsFromDada";
+import { AssetsData } from "../useAssets";
+import { State } from "~/reducers/types";
 
-const assetsSorted: UseAssetsData = [
+const assetsSorted: AssetsData = [
   {
     asset: {
       id: mockEthCryptoCurrency.id,
@@ -51,17 +53,6 @@ jest.mock("@react-navigation/native", () => ({
   NavigationContainer: ({ children }: { children: React.ReactNode }) => children,
 }));
 
-// Mock the useModularDrawerFlowStepManager to prevent infinite loops
-const mockGoToStep = jest.fn();
-const mockResetStepManager = jest.fn();
-jest.mock("../useModularDrawerFlowStepManager", () => ({
-  useModularDrawerFlowStepManager: () => ({
-    currentStep: "asset",
-    goToStep: mockGoToStep,
-    reset: mockResetStepManager,
-  }),
-}));
-
 // Mock the useModularDrawerAnalytics to prevent side effects
 jest.mock("../../analytics/useModularDrawerAnalytics", () => ({
   useModularDrawerAnalytics: () => ({
@@ -80,7 +71,6 @@ describe("useModularDrawerState", () => {
       useModularDrawerState({
         currencyIds: mockCurrencyIds,
         assetsSorted: [],
-        flow: "test",
       }),
     );
     expect(result.current.asset).toBeUndefined();
@@ -93,7 +83,6 @@ describe("useModularDrawerState", () => {
       useModularDrawerState({
         currencyIds: ["ethereum", "bitcoin"],
         assetsSorted,
-        flow: "test",
       }),
     );
 
@@ -110,7 +99,6 @@ describe("useModularDrawerState", () => {
       useModularDrawerState({
         currencyIds: mockCurrencyIds,
         assetsSorted,
-        flow: "test",
       }),
     );
     act(() => {
@@ -130,7 +118,6 @@ describe("useModularDrawerState", () => {
       useModularDrawerState({
         currencyIds: mockCurrencyIds,
         assetsSorted,
-        flow: "test",
       }),
     );
     expect(typeof result.current.handleBackButton).toBe("function");
@@ -142,32 +129,91 @@ describe("useModularDrawerState", () => {
       useModularDrawerState({
         currencyIds: ["bitcoin", "ethereum"],
         assetsSorted,
-        flow: "test",
       }),
     );
     expect(result.current.hasOneCurrency).toBe(false);
   });
 
-  it("should handle single currency flow", () => {
+  it("should set hasOneCurrency to true when a single currency id is provided", () => {
     const { result } = renderHook(() =>
       useModularDrawerState({
         currencyIds: ["bitcoin"],
         assetsSorted,
-        flow: "test",
       }),
     );
-    expect(result.current.hasOneCurrency).toBe(false);
+    expect(result.current.hasOneCurrency).toBe(true);
   });
 
-  it("should handle single currency flow", () => {
-    const { result } = renderHook(() =>
-      useModularDrawerState({
-        currencyIds: ["bitcoin"],
-        assetsSorted,
-        flow: "test",
-      }),
+  it("should go to Account when there is exactly one network (enableAccountSelection)", () => {
+    const singleAsset: AssetsData = [
+      {
+        asset: {
+          id: mockEthCryptoCurrency.id,
+          ticker: mockEthCryptoCurrency.ticker,
+          name: mockEthCryptoCurrency.name,
+          assetsIds: { [mockEthCryptoCurrency.id]: mockEthCryptoCurrency.id },
+        },
+        networks: [mockEthCryptoCurrency],
+        interestRates: undefined,
+        market: undefined,
+      },
+    ];
+
+    const { store } = renderHook(
+      () =>
+        useModularDrawerState({
+          currencyIds: [mockEthCryptoCurrency.id],
+          assetsSorted: singleAsset,
+          isDrawerOpen: true,
+        }),
+      {
+        overrideInitialState: (state: State) => ({
+          ...state,
+          modularDrawer: {
+            ...state.modularDrawer,
+            enableAccountSelection: true,
+          },
+        }),
+      },
     );
-    expect(result.current.hasOneCurrency).toBe(false);
+
+    expect(store.getState().modularDrawer.step).toBe(ModularDrawerStep.Account);
+  });
+
+  it("should navigate to device when there is exactly one network (no account selection)", () => {
+    const singleAsset: AssetsData = [
+      {
+        asset: {
+          id: mockEthCryptoCurrency.id,
+          ticker: mockEthCryptoCurrency.ticker,
+          name: mockEthCryptoCurrency.name,
+          assetsIds: { [mockEthCryptoCurrency.id]: mockEthCryptoCurrency.id },
+        },
+        networks: [mockEthCryptoCurrency],
+        interestRates: undefined,
+        market: undefined,
+      },
+    ];
+
+    const { store } = renderHook(
+      () =>
+        useModularDrawerState({
+          currencyIds: [mockEthCryptoCurrency.id],
+          assetsSorted: singleAsset,
+          isDrawerOpen: true,
+        }),
+      {
+        overrideInitialState: (state: State) => ({
+          ...state,
+          modularDrawer: {
+            ...state.modularDrawer,
+            enableAccountSelection: false,
+          },
+        }),
+      },
+    );
+
+    expect(store.getState().modularDrawer.step).not.toBe(ModularDrawerStep.Account);
   });
 
   it("should handle multiple currencies", () => {
@@ -175,7 +221,6 @@ describe("useModularDrawerState", () => {
       useModularDrawerState({
         currencyIds: ["bitcoin", "ethereum"],
         assetsSorted,
-        flow: "test",
       }),
     );
     expect(result.current.hasOneCurrency).toBe(false);

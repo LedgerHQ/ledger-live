@@ -113,8 +113,12 @@ export default function MainNavigator() {
       <Tab.Screen
         name={NavigatorName.Earn}
         component={EarnLiveAppNavigator}
-        layout={unmountOnBlur}
+        layout={({ children }) => (
+          // dont unmount Earn on navigation
+          <>{children}</>
+        )}
         options={{
+          freezeOnBlur: true,
           headerShown: false,
           tabBarIcon: props => (
             <TabIcon

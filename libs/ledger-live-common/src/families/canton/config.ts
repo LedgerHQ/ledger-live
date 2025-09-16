@@ -7,13 +7,12 @@ export const cantonConfig: Record<string, ConfigInfo> = {
       status: {
         type: "active",
       },
-      // TBC
-      nodeUrl: "https://wallet-validator-canton.ledger.com",
-      nodeId: "figment",
-      // TBC
+      nodeUrl: "https://canton-gateway.api.live.ledger.com/v1/node/ledger-mainnet-prd",
+      nodeId: "ledger-live-mainnet-prd",
       gatewayUrl: "https://canton-gateway.api.live.ledger.com",
       minReserve: 0,
       useGateway: true,
+      networkType: "mainnet",
     },
   },
   config_currency_canton_network_devnet: {
@@ -23,12 +22,12 @@ export const cantonConfig: Record<string, ConfigInfo> = {
         type: "active",
       },
       nodeUrl: "https://wallet-validator-devnet-canton.ledger-test.com",
-      nodeId: "ledger-live-devnet-prd",
+      nodeId: "ledger-devnet-stg",
       gatewayUrl: "https://canton-gateway.api.live.ledger-test.com",
       minReserve: 0,
       useGateway: true,
-      nativeInstrumentId:
-        "6e9fc50fb94e56751b49f09ba2dc84da53a9d7cff08115ebb4f6b7a12d0c990c:Splice.Amulet:Amulet",
+      networkType: "devnet",
+      nativeInstrumentId: "Amulet",
     },
   },
   config_currency_canton_network_localnet: {
@@ -42,6 +41,7 @@ export const cantonConfig: Record<string, ConfigInfo> = {
       gatewayUrl: undefined,
       minReserve: 0,
       useGateway: false,
+      networkType: "localnet",
     },
   },
 };

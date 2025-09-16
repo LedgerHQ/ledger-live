@@ -215,8 +215,7 @@ export default function SwapNavigator(
         name={ScreenName.SwapLoading}
         component={SwapLoading}
         options={{
-          headerShown: true,
-          headerTitle: t("transfer.swap2.loader.title"),
+          headerShown: false,
           headerLeft: () => null, // Prevent going back while loading
         }}
       />

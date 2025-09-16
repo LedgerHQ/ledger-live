@@ -1,6 +1,7 @@
 import { submit } from "../../network/gateway";
 import * as coinConfigModule from "../../config";
 import { broadcast } from "./broadcast";
+import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 
 jest.mock("../../network/gateway", () => ({
   submit: jest.fn(),
@@ -8,8 +9,12 @@ jest.mock("../../network/gateway", () => ({
 
 const mockSerialized = JSON.stringify({
   serialized: "serialized-tx",
-  signature: "signature",
+  signature: "signature__PARTY__alice:123",
 });
+
+const mockCurrency = {
+  id: "canton_network",
+} as unknown as CryptoCurrency;
 
 describe("broadcast", () => {
   const mockGetCoinConfig = jest.spyOn(coinConfigModule.default, "getCoinConfig");
@@ -23,11 +28,11 @@ describe("broadcast", () => {
       useGateway: true,
     } as any);
 
-    (submit as jest.Mock).mockResolvedValue({ updateId: "my-update-id" });
+    (submit as jest.Mock).mockResolvedValue({ update_id: "my-update-id" });
 
-    const result = await broadcast(mockSerialized);
+    const result = await broadcast(mockCurrency, mockSerialized);
 
-    expect(submit).toHaveBeenCalledWith("serialized-tx", "signature");
+    expect(submit).toHaveBeenCalledWith(mockCurrency, "alice:123", "serialized-tx", "signature");
     expect(result).toEqual("my-update-id");
   });
 
@@ -36,7 +41,7 @@ describe("broadcast", () => {
       useGateway: false,
     } as any);
 
-    await expect(broadcast(mockSerialized)).rejects.toThrow("Not implemented");
+    await expect(broadcast(mockCurrency, mockSerialized)).rejects.toThrow("Not implemented");
     expect(submit).not.toHaveBeenCalled();
   });
 });

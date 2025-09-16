@@ -3,7 +3,7 @@ import { BigNumber } from "bignumber.js";
 import { getEnv } from "@ledgerhq/live-env";
 import type { Account, AccountLike, NFTStandard, Operation } from "@ledgerhq/types-live";
 import { encodeERC1155OperationId, encodeERC721OperationId } from "./nft/nftOperationId";
-import { decodeAccountId } from "./account";
+import { decodeAccountId } from "./account/accountId";
 import { encodeNftId } from "./nft/nftId";
 
 const nftOperationIdEncoderPerStandard: Record<NFTStandard, (...args: any[]) => string> = {
@@ -171,6 +171,7 @@ export const OPERATION_TYPE_OUT_FAMILY = [
   "SLASH",
   "LOCK",
   "BURN",
+  "ASSOCIATE_TOKEN",
 ];
 export const OPERATION_TYPE_STAKE_FAMILY = [
   "FREEZE",

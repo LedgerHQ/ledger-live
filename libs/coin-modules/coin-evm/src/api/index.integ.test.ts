@@ -78,7 +78,7 @@ describe.each([
     ],
   ])("craftTransaction", (mode, expectTransactionForMode) => {
     it("crafts a transaction with the native asset", async () => {
-      const result = await module.craftTransaction({
+      const { transaction: result } = await module.craftTransaction({
         type: `send-${mode}`,
         amount: 10n,
         sender: "0x9bcd841436ef4f85dacefb1aec772af71619024e",
@@ -97,7 +97,7 @@ describe.each([
     });
 
     it("crafts a transaction with the USDC asset", async () => {
-      const result = await module.craftTransaction({
+      const { transaction: result } = await module.craftTransaction({
         type: `send-${mode}`,
         amount: 10n,
         sender: "0x9bcd841436ef4f85dacefb1aec772af71619024e",
@@ -162,7 +162,7 @@ describe.each([
       });
       expect(result.length).toBeGreaterThanOrEqual(52);
       result.forEach(op => {
-        expect(["FEES", "IN", "OUT"]).toContainEqual(op.type);
+        expect(["NONE", "FEES", "IN", "OUT"]).toContainEqual(op.type);
         expect(op.senders.concat(op.recipients)).toContain(
           "0xB69B37A4Fb4A18b3258f974ff6e9f529AD2647b1",
         );

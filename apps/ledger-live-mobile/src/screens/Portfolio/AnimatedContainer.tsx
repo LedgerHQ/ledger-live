@@ -17,7 +17,7 @@ const ANIMATION_TIMING_CONFIG = {
   easing: Easing.bezier(0.3, 0, 0, 1),
 } as const;
 
-export const AnimatedContainer = ({ children, onHeightChange }: AnimatedContainerProps) => {
+const AnimatedContainer = ({ children, onHeightChange }: AnimatedContainerProps) => {
   const animatedHeight = useSharedValue(1);
 
   const style = useAnimatedStyle(

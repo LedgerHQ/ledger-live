@@ -24,11 +24,11 @@ describe("ErrorWithAnchor renderWithLinks", () => {
 
   it("renders http(s) anchors as clickable Links and calls openURL", async () => {
     const { user } = render(
-      <Wrapper text={'please read <a href="https://ledger-support.com">this</a> doc'} />,
+      <Wrapper text={'please read <a href="https://support.ledger.com/">this</a> doc'} />,
     );
     const link = screen.getByText("this");
     await user.click(link);
-    expect(openURL).toHaveBeenCalledWith("https://ledger-support.com");
+    expect(openURL).toHaveBeenCalledWith("https://support.ledger.com/");
   });
 
   it("does not open non-ledger http(s) anchors", async () => {

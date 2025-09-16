@@ -13,6 +13,8 @@ const P2_NONE = 0x00;
 const P2_FIRST = 0x01;
 // P2 indicating that this is not the last APDU in a large request.
 const P2_MORE = 0x02;
+// P2 indicating that this is the last APDU of a message in a multi message request.
+const P2_MSG_END = 0x04;
 
 const INS = {
   GET_VERSION: 0x03,
@@ -26,6 +28,9 @@ const STATUS = {
   USER_CANCEL: 0x6985,
 };
 
+const ED25519_SIGNATURE_HEX_LENGTH = 128; // hex characters (64 bytes)
+const CANTON_SIGNATURE_HEX_LENGTH = 132; // hex characters (66 bytes with framing)
+
 export type AppConfig = {
   version: string;
 };
@@ -33,6 +38,7 @@ export type AppConfig = {
 export type CantonAddress = {
   publicKey: string;
   address: string;
+  path: string; // TODO: check if necessary
 };
 
 export type CantonSignature = string;
@@ -68,15 +74,14 @@ export default class Canton {
     const response = await this.transport.send(CLA, INS.GET_ADDR, p1, P2_NONE, serializedPath);
 
     const responseData = this.handleTransportResponse(response, "address");
-    const { pubKey } = this.extractPubkeyAndChainCode(responseData);
+    const { publicKey } = this.extractPublicKeyAndChainCode(responseData);
 
-    const publicKey = "0x" + pubKey;
-    const addressHash = this.hashString(publicKey);
-    const address = "canton_" + addressHash.substring(0, 36);
+    const address = this.publicKeyToAddress(publicKey);
 
     return {
-      publicKey: pubKey,
+      publicKey,
       address,
+      path,
     };
   }
 
@@ -107,13 +112,14 @@ export default class Canton {
       CLA,
       INS.SIGN,
       P1_NON_CONFIRM,
-      P2_NONE,
+      P2_MSG_END,
       Buffer.from(txHash, "hex"),
     );
 
     const responseData = this.handleTransportResponse(response, "transaction");
-    const signature = responseData.toString("hex");
-    return signature;
+    const rawSignature = responseData.toString("hex");
+
+    return this.cleanSignatureFormat(rawSignature);
   }
 
   /**
@@ -135,6 +141,25 @@ export default class Canton {
     return {
       version: `${major}.${minor}.${patch}`,
     };
+  }
+
+  /**
+   * Converts 65-byte Canton format to 64-byte Ed25519:
+   * [40][64_bytes_signature][00] (132 hex chars)
+   * @private
+   */
+  private cleanSignatureFormat(signature: string): CantonSignature {
+    if (signature.length === ED25519_SIGNATURE_HEX_LENGTH) {
+      return signature;
+    }
+
+    if (signature.length === CANTON_SIGNATURE_HEX_LENGTH) {
+      const cleanedSignature = signature.slice(2, -2);
+      return cleanedSignature;
+    }
+
+    console.warn(`[Canton]: Unknown signature format (${signature.length} chars)`);
+    return signature;
   }
 
   /**
@@ -178,15 +203,15 @@ export default class Canton {
   }
 
   /**
-   * Simple deterministic hash function for generating mock addresses
+   * Convert public key to address
    * @private
    */
-  private hashString(str: string): string {
+  private publicKeyToAddress(str: string): string {
     let hash = 0;
     for (let i = 0; i < str.length; i++) {
       const char = str.charCodeAt(i);
       hash = (hash << 5) - hash + char;
-      hash = hash & hash; // Convert to 32-bit integer
+      hash = hash & hash;
     }
     return Math.abs(hash).toString(16);
   }
@@ -194,17 +219,30 @@ export default class Canton {
   /**
    * Extract Pubkey info from APDU response
    * @private
+   * @returns Object with publicKey and chainCode as Buffer objects
    */
-  private extractPubkeyAndChainCode(data: Buffer): { pubKey: string; chainCode: string } {
-    const pubkeySize = parseInt(data.subarray(0, 1).toString("hex"), 16);
-    const pubKey = data.subarray(1, pubkeySize + 1);
+  private extractPublicKeyAndChainCode(data: Buffer) {
+    // Parse the response according to the Python unpack_get_addr_response format:
+    // response = pubkey_len (1) + pubkey (var) + chaincode_len (1) + chaincode (var)
 
-    const chainCodeSize = parseInt(
-      data.subarray(pubkeySize + 1, pubkeySize + 2).toString("hex"),
-      16,
-    );
-    const chainCode = data.subarray(pubkeySize + 2, pubkeySize + chainCodeSize + 2);
-    return { pubKey: pubKey.toString("hex"), chainCode: chainCode.toString("hex") };
+    let offset = 0;
+
+    // Extract public key length (1 byte)
+    const pubkeySize = data.readUInt8(offset);
+    offset += 1;
+
+    // Extract public key
+    const pubKey = data.subarray(offset, offset + pubkeySize);
+    offset += pubkeySize;
+
+    // Extract chain code length (1 byte)
+    const chainCodeSize = data.readUInt8(offset);
+    offset += 1;
+
+    // Extract chain code
+    const chainCode = data.subarray(offset, offset + chainCodeSize);
+
+    return { publicKey: pubKey.toString("hex"), chainCode: chainCode.toString("hex") };
   }
 
   /**

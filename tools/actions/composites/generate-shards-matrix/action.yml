@@ -19,7 +19,7 @@ runs:
       id: test-files
       shell: bash
       run: |
-        TEST_FILES=$(node apps/ledger-live-mobile/scripts/shard-tests.js "${{ inputs.test_filter }}" "${{ inputs.test_directory }}")
+        TEST_FILES=$(node apps/ledger-live-mobile/scripts/shard-tests.mjs "${{ inputs.test_filter }}" "${{ inputs.test_directory }}")
         echo "test_files_for_sharding<<EOF" >> $GITHUB_OUTPUT
         echo "$TEST_FILES"                 >> $GITHUB_OUTPUT
         echo "EOF"                         >> $GITHUB_OUTPUT

@@ -1,7 +1,7 @@
 {
   "name": "@ledgerhq/live-common",
   "description": "Common ground for the Ledger Live apps",
-  "version": "34.46.0",
+  "version": "34.47.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/LedgerHQ/ledger-live.git"
@@ -142,6 +142,7 @@
     "@ledgerhq/coin-hedera": "workspace:^",
     "@ledgerhq/coin-icon": "workspace:^",
     "@ledgerhq/coin-internet_computer": "workspace:^",
+    "@ledgerhq/coin-kaspa": "workspace:^",
     "@ledgerhq/coin-mina": "workspace:^",
     "@ledgerhq/coin-multiversx": "workspace:^",
     "@ledgerhq/coin-near": "workspace:^",
@@ -158,7 +159,7 @@
     "@ledgerhq/crypto-icons-ui": "workspace:^",
     "@ledgerhq/cryptoassets": "workspace:^",
     "@ledgerhq/device-core": "workspace:^",
-    "@ledgerhq/device-management-kit": "0.0.0-apex-support-20250721132630",
+    "@ledgerhq/device-management-kit": "0.9.0",
     "@ledgerhq/devices": "workspace:*",
     "@ledgerhq/errors": "workspace:^",
     "@ledgerhq/hw-app-algorand": "workspace:^",
@@ -170,6 +171,7 @@
     "@ledgerhq/hw-app-exchange": "workspace:^",
     "@ledgerhq/hw-app-hedera": "workspace:^",
     "@ledgerhq/hw-app-icon": "workspace:^",
+    "@ledgerhq/hw-app-kaspa": "workspace:^",
     "@ledgerhq/hw-app-multiversx": "workspace:^",
     "@ledgerhq/hw-app-near": "workspace:^",
     "@ledgerhq/hw-app-polkadot": "workspace:^",
@@ -230,6 +232,7 @@
     "bip39": "^3.0.4",
     "bs58": "^4.0.1",
     "date-fns": "^2.23.0",
+    "ethers": "6.15.0",
     "expect": "^27.4.6",
     "fuse.js": "^6.6.2",
     "i18next": "20.6.1",

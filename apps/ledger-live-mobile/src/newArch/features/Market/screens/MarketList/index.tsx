@@ -144,6 +144,7 @@ function View({
         hasEmptyStarredCoins={filterByStarredCurrencies && starredMarketCoins.length <= 0}
         search={search}
         resetSearch={resetSearch}
+        isLoading={loading}
       />
     ),
     refreshControl: (

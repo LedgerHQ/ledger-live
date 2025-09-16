@@ -10,6 +10,7 @@ import {
   Stake,
   Reward,
   TransactionIntent,
+  CraftedTransaction,
 } from "@ledgerhq/coin-framework/api/index";
 import coinConfig, { type StellarConfig } from "../config";
 import {
@@ -23,6 +24,7 @@ import {
   listOperations,
   STELLAR_BURN_ADDRESS,
   getTokenFromAsset,
+  getAssetFromToken,
 } from "../logic";
 import { ListOperationsOptions } from "../logic/listOperations";
 import { StellarBurnAddressError, StellarMemo } from "../types";
@@ -61,6 +63,7 @@ export function createApi(config: StellarConfig): Api<StellarMemo> {
       return sequence.plus(1).toNumber();
     },
     getTokenFromAsset,
+    getAssetFromToken,
     getChainSpecificRules: () => ({
       getAccountShape: (address: string) => {
         // NOTE: https://github.com/LedgerHQ/ledger-live/pull/2058
@@ -78,7 +81,7 @@ export function createApi(config: StellarConfig): Api<StellarMemo> {
 async function craft(
   transactionIntent: TransactionIntent<StellarMemo>,
   customFees?: FeeEstimation,
-): Promise<string> {
+): Promise<CraftedTransaction> {
   const fees = customFees?.value || (await estimateFees());
 
   // NOTE: check how many memos, throw if more than one?
@@ -106,7 +109,7 @@ async function craft(
   );
 
   // Note: the API returns the signature base, not the full XDR, see BACK-8727 for more context
-  return tx.signatureBase;
+  return { transaction: tx.signatureBase };
 }
 
 function compose(tx: string, signature: string, pubkey?: string): string {

@@ -31,7 +31,7 @@ export const PriceAndVariation: React.FC<PriceAndVariationProps> = ({
   const { textColor, bgColor } = getColors(priceChangePercentage[range]);
 
   const baseFromChart = chartData?.[range]?.[0]?.[1] ?? 0;
-  const absoluteChangeValue = price - baseFromChart;
+  const absoluteChangeValue = Math.abs(price - baseFromChart);
   const magnitude = counterValueCurrency.units[0].magnitude;
 
   const absoluteChangeMinor = BigNumber(absoluteChangeValue).multipliedBy(10 ** magnitude);

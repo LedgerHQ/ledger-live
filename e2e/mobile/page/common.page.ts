@@ -91,9 +91,9 @@ export default class CommonPage {
   @Step("Go to the account with the name")
   async goToAccountByName(name: string) {
     const accountTitle = getElementByText(name);
-    const id = await getIdOfElement(accountTitle);
-    jestExpect(id).toContain(this.accountItemId);
-    await tapByElement(accountTitle);
+    const rowId = (await getIdOfElement(accountTitle)).replace("-name", ""); // Workaround on iOS (name on top of the return arrow clickable layout)
+    jestExpect(rowId).toContain(this.accountItemId);
+    await tapById(rowId);
   }
 
   @Step("Remove Speculos")
@@ -103,7 +103,6 @@ export default class CommonPage {
 
   @Step("Select a known device")
   async selectKnownDevice(index = 0) {
-    if (isIos()) await device.disableSynchronization();
     const proxyUrl = process.env.DEVICE_PROXY_URL;
     const elementId = proxyUrl ? this.deviceItem(`httpdebug|${proxyUrl}`) : this.deviceItemRegex;
     await waitForElementById(elementId);
@@ -113,5 +112,9 @@ export default class CommonPage {
   @Step("Tap proceed button")
   async tapProceedButton() {
     await tapById(this.proceedButtonId);
+  }
+
+  async disableSynchronizationForiOS() {
+    if (isIos()) await device.disableSynchronization();
   }
 }

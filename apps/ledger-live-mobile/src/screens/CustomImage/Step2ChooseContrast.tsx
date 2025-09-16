@@ -16,16 +16,22 @@ import useResizedImage, {
 } from "~/components/CustomImage/useResizedImage";
 import ImageProcessor, {
   Props as ImageProcessorProps,
+} from "~/components/CustomImage/dithering/ImageToDeviceProcessor";
+import {
   ProcessorPreviewResult,
   ProcessorRawResult,
-} from "~/components/CustomImage/ImageToDeviceProcessor";
+} from "~/components/CustomImage/dithering/types";
+import {
+  mapDitheringConfigKeyToConfig,
+  mapDitheringConfigKeyToAppearance,
+  getAvailableDitheringConfigKeys,
+} from "~/components/CustomImage/dithering/config";
 import Button from "~/components/wrappedUi/Button";
 import BottomButtonsContainer from "~/components/CustomImage/BottomButtonsContainer";
 import ContrastChoice from "~/components/CustomImage/ContrastChoice";
 import { ScreenName } from "~/const";
 import { CustomImageNavigatorParamList } from "~/components/RootNavigator/types/CustomImageNavigator";
 import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
-import ForceTheme from "~/components/theme/ForceTheme";
 import { TrackScreen } from "~/analytics";
 
 export const PreviewImage = styled.Image.attrs({
@@ -35,25 +41,6 @@ export const PreviewImage = styled.Image.attrs({
   width: 200px;
   height: 200px;
 `;
-
-const contrasts = [
-  {
-    val: 1,
-    color: { topLeft: "neutral.c40", bottomRight: "neutral.c30" },
-  },
-  {
-    val: 1.5,
-    color: { topLeft: "neutral.c50", bottomRight: "neutral.c30" },
-  },
-  {
-    val: 2,
-    color: { topLeft: "neutral.c60", bottomRight: "neutral.c30" },
-  },
-  {
-    val: 3,
-    color: { topLeft: "neutral.c70", bottomRight: "neutral.c30" },
-  },
-];
 
 const previewDimensions = {
   height: 406,
@@ -77,6 +64,17 @@ const Step2ChooseContrast = ({ navigation, route }: NavigationProps) => {
   const imageProcessorRef = useRef<ImageProcessor>(null);
   const [loading, setLoading] = useState(true);
   const [resizedImage, setResizedImage] = useState<ResizeResult | null>(null);
+
+  const { t } = useTranslation();
+  const { params } = route;
+  const { cropResult: croppedImage, device, deviceModelId, baseImageFile, imageType } = params;
+
+  const bitsPerPixel = getScreenSpecs(deviceModelId).bitsPerPixel;
+  const availableDitheringConfigKeys = useMemo(
+    () => getAvailableDitheringConfigKeys(bitsPerPixel),
+    [bitsPerPixel],
+  );
+
   const initialIndex = 0;
   const [selectedIndex, setSelectedIndex] = useState(initialIndex);
   const animSelectedIndex = useSharedValue(initialIndex);
@@ -84,12 +82,6 @@ const Step2ChooseContrast = ({ navigation, route }: NavigationProps) => {
     null,
   );
   const [rawResultLoading, setRawResultLoading] = useState(false);
-
-  const { t } = useTranslation();
-
-  const { params } = route;
-
-  const { cropResult: croppedImage, device, deviceModelId, baseImageFile, imageType } = params;
 
   const handleError = useCallback(
     (error: Error) => {
@@ -187,9 +179,12 @@ const Step2ChooseContrast = ({ navigation, route }: NavigationProps) => {
   const confirmEventProperties = useMemo(
     () => ({
       button: "Confirm contrast",
-      contrast: contrasts[selectedIndex].val,
+      contrast:
+        mapDitheringConfigKeyToConfig[availableDitheringConfigKeys[selectedIndex]].contrastValue,
+      ditheringAlgorithm:
+        mapDitheringConfigKeyToConfig[availableDitheringConfigKeys[selectedIndex]].algorithm,
     }),
-    [selectedIndex],
+    [selectedIndex, availableDitheringConfigKeys],
   );
 
   return (
@@ -202,8 +197,13 @@ const Step2ChooseContrast = ({ navigation, route }: NavigationProps) => {
           onPreviewResult={handlePreviewResult}
           onError={handleError}
           onRawResult={handleRawResult}
-          contrast={contrasts[selectedIndex].val}
-          bitsPerPixel={getScreenSpecs(deviceModelId).bitsPerPixel}
+          contrast={
+            mapDitheringConfigKeyToConfig[availableDitheringConfigKeys[selectedIndex]].contrastValue
+          }
+          ditheringAlgorithm={
+            mapDitheringConfigKeyToConfig[availableDitheringConfigKeys[selectedIndex]].algorithm
+          }
+          bitsPerPixel={bitsPerPixel}
         />
       )}
       <Flex
@@ -230,13 +230,14 @@ const Step2ChooseContrast = ({ navigation, route }: NavigationProps) => {
         )}
       </Flex>
       {resizedImage?.imageBase64DataUri && (
-        <ForceTheme selectedPalette="dark">
-          <Flex flexDirection="row" my={6}>
-            <Animated.View style={leftBoxAnimatedStyle} />
-            {contrasts.map(({ val, color }, index, arr) => (
+        <Flex flexDirection="row" my={6}>
+          <Animated.View style={leftBoxAnimatedStyle} />
+          {availableDitheringConfigKeys.map((configKey, index, arr) => {
+            const appearance = mapDitheringConfigKeyToAppearance[configKey];
+            return (
               <Pressable
                 disabled={loading}
-                key={val}
+                key={configKey}
                 onPress={() => {
                   if (selectedIndex !== index) {
                     setLoading(true);
@@ -247,15 +248,15 @@ const Step2ChooseContrast = ({ navigation, route }: NavigationProps) => {
                 <ContrastChoice
                   selected={selectedIndex === index}
                   loading={loading}
-                  color={color}
+                  appearance={appearance}
                   isFirst={index === 0}
                   isLast={index === arr.length - 1}
                 />
               </Pressable>
-            ))}
-            <Animated.View style={rightBoxAnimatedStyle} />
-          </Flex>
-        </ForceTheme>
+            );
+          })}
+          <Animated.View style={rightBoxAnimatedStyle} />
+        </Flex>
       )}
       <BottomButtonsContainer style={{ paddingTop: 0 }}>
         <Flex width="100%">

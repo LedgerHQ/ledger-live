@@ -53,9 +53,5 @@ const handlers: ReducerMap<BleState, BlePayload> = {
 // Selectors
 export const exportSelector = (s: State) => s.ble;
 export const bleDevicesSelector = (s: State) => s.ble.knownDevices;
-export const deviceNameByDeviceIdSelectorCreator = (deviceId: string) => (s: State) => {
-  const d = s.ble.knownDevices.find(d => d.id === deviceId);
-  return d ? d.name : "";
-};
 
 export default handleActions<BleState, BlePayload>(handlers, INITIAL_STATE);

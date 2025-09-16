@@ -1,14 +1,15 @@
-import { useCallback, useState } from "react";
 import { EnhancedModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/types";
 import {
   useModularDrawerAnalytics,
   EVENTS_NAME,
   MODULAR_DRAWER_PAGE_NAME,
 } from "LLM/features/ModularDrawer/analytics";
+import { useDispatch, useSelector } from "react-redux";
+import { modularDrawerSearchValueSelector, setSearchValue } from "~/reducers/modularDrawer";
+import { useSearchCommon } from "@ledgerhq/live-common/modularDrawer/hooks/useSearch";
+import { useCallback } from "react";
 
 export type SearchProps = {
-  setSearchedValue?: (value: string) => void;
-  defaultValue?: string;
   source: string;
   flow: string;
   assetsConfiguration?: EnhancedModularDrawerConfiguration["assets"];
@@ -23,31 +24,31 @@ export type SearchResult = {
 };
 
 export const useSearch = ({
-  setSearchedValue,
-  defaultValue,
   source,
   flow,
   assetsConfiguration,
   formatAssetConfig,
 }: SearchProps): SearchResult => {
   const { trackModularDrawerEvent } = useModularDrawerAnalytics();
-  const [displayedValue, setDisplayedValue] = useState<string | undefined>(defaultValue);
+  const searchValue = useSelector(modularDrawerSearchValueSelector);
+  const dispatch = useDispatch();
 
-  const handleDebouncedChange = useCallback(
-    (currentQuery: string, previousQuery: string) => {
-      setSearchedValue?.(currentQuery);
+  const onPersistSearchValue = useCallback(
+    (value: string) => {
+      dispatch(setSearchValue(value));
+    },
+    [dispatch],
+  );
 
-      if (currentQuery === previousQuery) return;
-
-      if (currentQuery.trim() === "" && previousQuery !== "") return;
-
+  const onTrackSearch = useCallback(
+    (query: string) => {
       trackModularDrawerEvent(
         EVENTS_NAME.ASSET_SEARCHED,
         {
           flow,
           source,
           page: MODULAR_DRAWER_PAGE_NAME.MODULAR_ASSET_SELECTION,
-          searched_value: currentQuery,
+          searched_value: query,
         },
         {
           formatAssetConfig: Boolean(formatAssetConfig),
@@ -55,19 +56,14 @@ export const useSearch = ({
         },
       );
     },
-    [
-      trackModularDrawerEvent,
-      flow,
-      source,
-      setSearchedValue,
-      assetsConfiguration,
-      formatAssetConfig,
-    ],
+    [trackModularDrawerEvent, flow, source, assetsConfiguration, formatAssetConfig],
   );
 
-  const handleSearch = useCallback((query: string) => {
-    setDisplayedValue(query);
-  }, []);
+  const { handleSearch, handleDebouncedChange, displayedValue } = useSearchCommon({
+    initialValue: searchValue,
+    onPersistSearchValue,
+    onTrackSearch,
+  });
 
   return { handleDebouncedChange, handleSearch, displayedValue };
 };

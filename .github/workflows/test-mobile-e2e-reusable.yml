@@ -252,6 +252,35 @@ jobs:
           role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID_PROD }}:role/${{ secrets.AWS_CACHE_ROLE_NAME }}
           aws-region: ${{ secrets.AWS_CACHE_REGION }}
 
+      - name: Setup iOS timing cache
+        timeout-minutes: 5
+        uses: tespkg/actions-cache/restore@v1
+        with:
+          path: e2e/mobile/artifacts/e2e-test-results-ios.json
+          key: "${{ needs.determine-builds.outputs.ios_timing_cache_key }}"
+          accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
+          secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
+          sessionToken: ${{ env.AWS_SESSION_TOKEN }}
+          bucket: ${{ env.cache-bucket }}
+          region: ${{ secrets.AWS_CACHE_REGION }}
+          use-fallback: false
+
+      - name: Generate timing-based shards
+        id: timing-shards
+        uses: LedgerHQ/ledger-live/tools/actions/composites/generate-timing-shards@develop
+        with:
+          test_filter: ${{ needs.determine-builds.outputs.test_files_for_sharding || inputs.test_filter || '' }}
+          test_directory: e2e/mobile
+          platform: ios
+          shard_index: ${{ matrix.shard }}
+          shard_total: ${{ matrix.total }}
+
+      - name: Set shard test files environment variable
+        run: |
+          echo "SHARD_TEST_FILES<<EOF" >> $GITHUB_ENV
+          echo "${{ steps.timing-shards.outputs.shard_test_files }}" >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
+
       - name: Boot iOS Simulator in Background
         run: |
           (
@@ -380,8 +409,7 @@ jobs:
           pnpm mobile e2e:ci -p ios -t \
             --e2e \
             $([[ "$PRODUCTION" == "true" ]] && printf %s '--production') \
-            --shard ${{ matrix.shard }}/${{ matrix.total }} \
-            ${INPUTS_TEST_FILTER:+--filter} "${{ inputs.test_filter }}" \
+            $SHARD_TEST_FILES \
             --outputFile=artifacts/e2e-test-results-ios-shard-${{ matrix.shard }}.json
         env:
           SEED: ${{ secrets.SEED_QAA_B2C }}
@@ -401,6 +429,13 @@ jobs:
         with:
           name: ios-test-artifacts-${{ matrix.shard }}
           path: e2e/mobile/artifacts
+
+      - name: Setup iOS Shard timing artifacts
+        if: (!cancelled() || steps.run-ios.outcome == 'cancelled')
+        uses: actions/upload-artifact@v4
+        with:
+          path: e2e/mobile/artifacts/e2e-test-results-ios-shard-${{ matrix.shard }}.json
+          name: "${{ needs.determine-builds.outputs.ios_timing_cache_key }}-${{ matrix.shard }}"
 
       - name: Set job output based on detox result
         id: set-output
@@ -458,6 +493,35 @@ jobs:
         with:
           role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID_PROD }}:role/${{ secrets.AWS_CACHE_ROLE_NAME }}
           aws-region: ${{ secrets.AWS_CACHE_REGION }}
+
+      - name: Setup Android timing cache
+        timeout-minutes: 5
+        uses: tespkg/actions-cache/restore@v1
+        with:
+          path: e2e/mobile/artifacts/e2e-test-results-android.json
+          key: "${{ needs.determine-builds.outputs.android_timing_cache_key }}"
+          accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
+          secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
+          sessionToken: ${{ env.AWS_SESSION_TOKEN }}
+          bucket: ${{ env.cache-bucket }}
+          region: ${{ secrets.AWS_CACHE_REGION }}
+          use-fallback: false
+
+      - name: Generate timing-based shards
+        id: timing-shards
+        uses: LedgerHQ/ledger-live/tools/actions/composites/generate-timing-shards@develop
+        with:
+          test_filter: ${{ needs.determine-builds.outputs.test_files_for_sharding || inputs.test_filter || '' }}
+          test_directory: e2e/mobile
+          platform: android
+          shard_index: ${{ matrix.shard }}
+          shard_total: ${{ matrix.total }}
+
+      - name: Set shard test files environment variable
+        run: |
+          echo "SHARD_TEST_FILES<<EOF" >> $GITHUB_ENV
+          echo "${{ steps.timing-shards.outputs.shard_test_files }}" >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
 
       - name: setup JDK 17
         uses: actions/setup-java@v3
@@ -638,8 +702,7 @@ jobs:
           pnpm mobile e2e:ci -p android -t \
             --e2e \
             $([[ "$PRODUCTION" == "true" ]] && printf %s '--production') \
-            --shard ${{ matrix.shard }}/${{ matrix.total }} \
-            ${INPUTS_TEST_FILTER:+--filter} "${{ inputs.test_filter }}" \
+            $SHARD_TEST_FILES \
             --outputFile=artifacts/e2e-test-results-android-shard-${{ matrix.shard }}.json
 
         env:
@@ -657,6 +720,13 @@ jobs:
         with:
           name: android-test-artifacts-${{ matrix.shard }}
           path: e2e/mobile/artifacts
+
+      - name: Setup Android Shard timing artifacts
+        if: (!cancelled() || steps.run-android.outcome == 'cancelled')
+        uses: actions/upload-artifact@v4
+        with:
+          path: e2e/mobile/artifacts/e2e-test-results-android-shard-${{ matrix.shard }}.json
+          name: "${{ needs.determine-builds.outputs.android_timing_cache_key }}-${{ matrix.shard }}"
 
       - name: Set job output based on detox result
         id: set-output
@@ -965,3 +1035,57 @@ jobs:
           payload-file-path: "./payload-slack-content.json"
         env:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_USER_OAUTH_ACCESS_TOKEN }}
+
+  merge-ios-timings:
+    name: Merge iOS Timing Files
+    needs: [ determine-builds, detox-tests-ios ]
+    runs-on: ubuntu-24.04
+    if: ${{ !cancelled() && (needs.detox-tests-ios.result == 'success' || needs.detox-tests-ios.result == 'failure') }}
+    steps:
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        id: aws
+        with:
+          role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID_PROD }}:role/${{ secrets.AWS_CACHE_ROLE_NAME }}
+          aws-region: ${{ secrets.AWS_CACHE_REGION }}
+      - uses: LedgerHQ/ledger-live/tools/actions/composites/merge-e2e-detox-timings@develop
+        with:
+          platform: ios
+          artifacts_dir: e2e/mobile/artifacts
+          key: ${{ needs.determine-builds.outputs.ios_timing_cache_key }}
+          aws_access_key_id: ${{ env.AWS_ACCESS_KEY_ID }}
+          aws_secret_access_key: ${{ env.AWS_SECRET_ACCESS_KEY }}
+          aws_session_token: ${{ env.AWS_SESSION_TOKEN }}
+          aws_region: ${{ secrets.AWS_CACHE_REGION }}
+          cache_bucket: ${{ env.cache-bucket }}
+          github_ref: ${{ github.ref }}
+          github_run_id: ${{ github.run_id }}
+          roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
+          accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
+
+  merge-android-timings:
+    name: Merge Android Timing Files
+    needs: [ determine-builds, detox-tests-android ]
+    runs-on: ubuntu-24.04
+    if: ${{ !cancelled() && (needs.detox-tests-android.result == 'success' || needs.detox-tests-android.result == 'failure') }}
+    steps:
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        id: aws
+        with:
+          role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID_PROD }}:role/${{ secrets.AWS_CACHE_ROLE_NAME }}
+          aws-region: ${{ secrets.AWS_CACHE_REGION }}
+      - uses: LedgerHQ/ledger-live/tools/actions/composites/merge-e2e-detox-timings@develop
+        with:
+          platform: android
+          artifacts_dir: e2e/mobile/artifacts
+          key: ${{ needs.determine-builds.outputs.android_timing_cache_key }}
+          aws_access_key_id: ${{ env.AWS_ACCESS_KEY_ID }}
+          aws_secret_access_key: ${{ env.AWS_SECRET_ACCESS_KEY }}
+          aws_session_token: ${{ env.AWS_SESSION_TOKEN }}
+          aws_region: ${{ secrets.AWS_CACHE_REGION }}
+          cache_bucket: ${{ env.cache-bucket }}
+          github_ref: ${{ github.ref }}
+          github_run_id: ${{ github.run_id }}
+          roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
+          accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}

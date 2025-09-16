@@ -24,7 +24,6 @@
       "lastUsedVersion": "2.40.0",
       "dismissedBanners": [],
       "accountsViewMode": "list",
-      "nftsViewMode": "list",
       "showAccountsHelperBanner": true,
       "hideEmptyTokenAccounts": false,
       "sidebarCollapsed": false,
@@ -85,17 +84,6 @@
       "announcements": [
         {
           "content": {
-            "title": "NFTs are now in Ledger!",
-            "text": "You can now manage, view, store, and enjoy your NFTs from your Ethereum accounts on Ledger Live. If you are already a Ledger Nano X user, you can even send your NFTs securely, without any blind signing. All you have to do is to make sure to update your Ledger Live app."
-          },
-          "published_at": "2022-02-25T12:00:00.000Z",
-          "expired_at": "2022-03-16T23:00:00.000Z",
-          "icon": "info",
-          "level": "info",
-          "uuid": "f3772990-e45f-4b08-baa2-a09905df629a"
-        },
-        {
-          "content": {
             "title": "Manage your SOL in Ledger Live!",
             "text": "You can now create a Solana account, buy, send, and receive SOL in your Ledger Live app. All this while enjoying the security of your Ledger device.",
             "link": {
@@ -145,27 +133,7 @@
               "fee": "475217600000000",
               "transactionSequenceNumber": 79,
               "internalOperations": [],
-              "nftOperations": [
-                {
-                  "id": "js:2:ethereum:0x520253647a671300f4Fd0DBD1d49Ed6899De3C23:+0x495f947276749Ce646f68AC8c248420045cb7b5e+77770246133050101334277152821957558007745772239357041338818208158214799753316+ethereum-0xa359c9e2e781ede475789e6574a94b0585c29a983ed6a28af91bb7ef275475ec-NFT_IN-i0_0",
-                  "hash": "0xa359c9e2e781ede475789e6574a94b0585c29a983ed6a28af91bb7ef275475ec",
-                  "type": "NFT_IN",
-                  "senders": ["0xCe0dd2748f024172351Ecf83c6D8471440DcdbBC"],
-                  "recipients": ["0x520253647a671300f4Fd0DBD1d49Ed6899De3C23"],
-                  "accountId": "js:2:ethereum:0x520253647a671300f4Fd0DBD1d49Ed6899De3C23:",
-                  "blockHash": "0x3c7b5fb085d9939325f4a5e98493244d2ce3d7b7efe7f20d718921da2e9318db",
-                  "blockHeight": 16119281,
-                  "extra": {},
-                  "date": "2022-12-05T14:44:23.000Z",
-                  "value": "3",
-                  "fee": "475217600000000",
-                  "contract": "0x495f947276749Ce646f68AC8c248420045cb7b5e",
-                  "operator": "0xCe0dd2748f024172351Ecf83c6D8471440DcdbBC",
-                  "standard": "ERC1155",
-                  "tokenId": "77770246133050101334277152821957558007745772239357041338818208158214799753316",
-                  "transactionSequenceNumber": 79
-                }
-              ]
+              "nftOperations": []
             }
           ],
           "pendingOperations": [],

@@ -15,6 +15,7 @@ export interface GetAssetsDataParams {
   useCase?: string;
   product: "llm" | "lld";
   version: string;
+  isStaging?: boolean;
 }
 
 export interface PageParam {

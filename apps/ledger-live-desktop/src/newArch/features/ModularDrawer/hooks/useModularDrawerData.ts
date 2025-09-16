@@ -2,23 +2,29 @@ import { useMemo } from "react";
 import { CurrenciesByProviderId, LoadingStatus } from "@ledgerhq/live-common/deposit/type";
 import { getLoadingStatus } from "@ledgerhq/live-common/modularDrawer/utils/getLoadingStatus";
 import { findCryptoCurrencyById, findTokenById } from "@ledgerhq/cryptoassets";
-import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { useAssetsData } from "@ledgerhq/live-common/modularDrawer/hooks/useAssetsData";
+import { modularDrawerSearchedSelector } from "~/renderer/reducers/modularDrawer";
+import { useSelector } from "react-redux";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 
 interface UseModularDrawerDataProps {
-  currencies?: CryptoOrTokenCurrency[];
-  searchedValue?: string;
+  currencyIds?: string[];
   useCase?: string;
   areCurrenciesFiltered?: boolean;
 }
 
 export function useModularDrawerData({
-  currencies,
-  searchedValue,
+  currencyIds,
   useCase,
   areCurrenciesFiltered,
 }: UseModularDrawerDataProps) {
-  const currencyIds = useMemo(() => (currencies || []).map(currency => currency.id), [currencies]);
+  const modularDrawerFeature = useFeature("lldModularDrawer");
+
+  const isStaging = useMemo(
+    () => modularDrawerFeature?.params?.backendEnvironment === "STAGING",
+    [modularDrawerFeature?.params?.backendEnvironment],
+  );
+  const searchedValue = useSelector(modularDrawerSearchedSelector);
 
   const { data, isLoading, isSuccess, error, loadNext, refetch } = useAssetsData({
     search: searchedValue,
@@ -27,6 +33,7 @@ export function useModularDrawerData({
     version: __APP_VERSION__,
     useCase,
     areCurrenciesFiltered,
+    isStaging,
   });
 
   const assetsSorted = useMemo(() => {

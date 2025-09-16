@@ -12,16 +12,6 @@ type NavigateFunctionsType = {
   currency: TokenCurrency | CryptoCurrency | null | undefined;
 };
 
-export function navigateToAssetSelection({
-  navigation,
-  currency,
-}: Readonly<NavigateFunctionsType>) {
-  navigation.navigate(NavigatorName.AddAccounts, {
-    screen: undefined,
-    currency,
-  });
-}
-
 export function navigateToDeviceSelection({
   navigation,
   currency,

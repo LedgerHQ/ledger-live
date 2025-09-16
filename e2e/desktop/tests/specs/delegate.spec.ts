@@ -27,7 +27,7 @@ const e2eDelegationAccounts = [
     xrayTicket: "B2CQA-2740, B2CQA-2770",
   },
   {
-    delegate: new Delegate(Account.SOL_1, "0.001", "Ledger by Figment"),
+    delegate: new Delegate(Account.SOL_2, "0.001", "Ledger by Figment"),
     xrayTicket: "B2CQA-2742",
   },
   {
@@ -61,7 +61,7 @@ const validators = [
     xrayTicket: "B2CQA-2731, B2CQA-2763",
   },
   {
-    delegate: new Delegate(Account.SOL_2, "0.001", "Ledger by Figment"),
+    delegate: new Delegate(Account.SOL_3, "0.001", "Ledger by Figment"),
     xrayTicket: "B2CQA-2730, B2CQA-2764",
   },
   {
@@ -325,7 +325,6 @@ test.describe("e2e delegation - Celo", () => {
       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
       await app.layout.goToAccounts();
       await app.accounts.navigateToAccountByName(account.account.accountName);
-      await app.speculos.activateContractData();
       await app.account.startStakingFlowFromMainStakeButton();
       await app.delegate.checkCeloManageAssetModal();
       await app.delegate.clickCeloLockButton();

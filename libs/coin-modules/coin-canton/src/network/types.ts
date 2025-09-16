@@ -40,7 +40,7 @@ export type AccountInfoResponse = {
   validated: boolean;
 } & ResponseStatus;
 
-export type SubmitReponse = {
+export type SubmitResponse = {
   accepted: boolean;
   tx_hash: string;
 };

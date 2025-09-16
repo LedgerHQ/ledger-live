@@ -1,8 +1,36 @@
-import { adaptCoreOperationToLiveOperation, extractBalance } from "./utils";
+import {
+  adaptCoreOperationToLiveOperation,
+  extractBalance,
+  findCryptoCurrencyByNetwork,
+} from "./utils";
 import BigNumber from "bignumber.js";
 import { Operation as CoreOperation } from "@ledgerhq/coin-framework/api/types";
 
 describe("Alpaca utils", () => {
+  describe("findCryptoCurrencyByNetwork", () => {
+    it("finds a crypto currency by id", () => {
+      expect(findCryptoCurrencyByNetwork("ethereum")).toMatchObject({
+        id: "ethereum",
+        family: "evm",
+      });
+    });
+
+    it("takes currency remapping into account", () => {
+      expect(findCryptoCurrencyByNetwork("ripple")).toMatchObject({
+        id: "ripple",
+        family: "xrp",
+      });
+      expect(findCryptoCurrencyByNetwork("xrp")).toMatchObject({
+        id: "ripple",
+        family: "xrp",
+      });
+    });
+
+    it("does not find non existing currencies", () => {
+      expect(findCryptoCurrencyByNetwork("non_existing_currency")).toBeUndefined();
+    });
+  });
+
   describe("extractBalance", () => {
     it("extracts an existing balance", () => {
       expect(extractBalance([{ value: 4n, asset: { type: "type1" } }], "type1")).toEqual({
@@ -42,6 +70,46 @@ describe("Alpaca utils", () => {
       senders: ["sender1"],
       recipients: ["recipient1"],
     };
+
+    it("does not include fees in non native asset value", () => {
+      expect(
+        adaptCoreOperationToLiveOperation("account", {
+          id: "operation",
+          asset: { type: "token", assetOwner: "owner", assetReference: "reference" },
+          type: "OUT",
+          value: BigInt(100),
+          tx: {
+            hash: "hash",
+            fees: BigInt(10),
+            block: {
+              hash: "block_hash",
+              height: 123456,
+            },
+            date: new Date("2025-08-29T12:00:00Z"),
+          },
+          senders: ["sender"],
+          recipients: ["recipient"],
+        }),
+      ).toEqual({
+        id: "account-hash-OUT",
+        hash: "hash",
+        accountId: "account",
+        type: "OUT",
+        value: new BigNumber(100), // value only
+        fee: new BigNumber(10),
+        extra: {
+          assetOwner: "owner",
+          assetReference: "reference",
+        },
+        blockHash: "block_hash",
+        blockHeight: 123456,
+        senders: ["sender"],
+        recipients: ["recipient"],
+        date: new Date("2025-08-29T12:00:00Z"),
+        transactionSequenceNumber: undefined,
+        hasFailed: false,
+      });
+    });
 
     it("adapts a basic OUT operation", () => {
       const result = adaptCoreOperationToLiveOperation(accountId, baseOp);

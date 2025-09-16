@@ -9,4 +9,5 @@ export const MEMO_TAG_COINS: string[] = [
   "stellar",
   "ton",
   "xrp",
+  "canton",
 ];

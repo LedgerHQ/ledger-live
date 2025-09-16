@@ -14,9 +14,10 @@ import {
   Reward,
   TransactionValidation,
   AssetInfo,
+  CraftedTransaction,
 } from "@ledgerhq/coin-framework/api/index";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
-import { CryptoCurrencyId, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { BroadcastConfig } from "@ledgerhq/types-live";
 import { setCoinConfig, type EvmConfig } from "../config";
 import {
@@ -30,9 +31,10 @@ import {
   getSequence,
   validateIntent,
   getTokenFromAsset,
+  getAssetFromToken,
 } from "../logic/index";
 
-export function createApi(config: EvmConfig, currencyId: CryptoCurrencyId): Api {
+export function createApi(config: EvmConfig, currencyId: string): Api {
   setCoinConfig(() => ({ info: { ...config, status: { type: "active" } } }));
   const currency = getCryptoCurrencyById(currencyId);
 
@@ -43,7 +45,7 @@ export function createApi(config: EvmConfig, currencyId: CryptoCurrencyId): Api 
     craftTransaction: (
       transactionIntent: TransactionIntent<MemoNotSupported>,
       customFees?: FeeEstimation,
-    ): Promise<string> => craftTransaction(currency, { transactionIntent, customFees }),
+    ): Promise<CraftedTransaction> => craftTransaction(currency, { transactionIntent, customFees }),
     estimateFees: (
       transactionIntent: TransactionIntent<MemoNotSupported>,
     ): Promise<FeeEstimation> => estimateFees(currency, transactionIntent),
@@ -71,5 +73,7 @@ export function createApi(config: EvmConfig, currencyId: CryptoCurrencyId): Api 
       validateIntent(currency, intent),
     getTokenFromAsset: (asset: AssetInfo): TokenCurrency | undefined =>
       getTokenFromAsset(currency, asset),
+    getAssetFromToken: (token: TokenCurrency, owner: string): AssetInfo =>
+      getAssetFromToken(currency, token, owner),
   };
 }

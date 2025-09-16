@@ -7,7 +7,7 @@ export default function SwapLoading() {
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <Flex flex={1} justifyContent="center" alignItems="center" px={6}>
-        <Loading size={60} />
+        <Loading size={40} />
       </Flex>
     </SafeAreaView>
   );

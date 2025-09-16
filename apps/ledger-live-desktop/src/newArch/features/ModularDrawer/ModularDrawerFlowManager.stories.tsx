@@ -89,7 +89,6 @@ type ExtraStoryArgs = {
   networksLeftElement?: (typeof networksLeftElementOptions)[number] | "default";
   networksRightElement?: (typeof networksRightElementOptions)[number] | "default";
   assetsFilter?: (typeof filterOptions)[number] | "default";
-  lldModularDrawerBackendDataEnabled?: boolean;
 };
 
 type StoryArgs = ModularDrawerFlowManagerProps & ExtraStoryArgs;
@@ -103,7 +102,6 @@ const meta: Meta<StoryArgs> = {
     onAccountSelected: () => null,
     source: "sourceTest",
     flow: "Modular Asset Flow",
-    lldModularDrawerBackendDataEnabled: false,
   },
   argTypes: {
     assetsFilter: {
@@ -126,29 +124,21 @@ const meta: Meta<StoryArgs> = {
       options: [...networksRightElementOptions, "default"],
       control: { type: "select" },
     },
-    lldModularDrawerBackendDataEnabled: {
-      control: { type: "boolean" },
-      description: "Enable/disable the lldModularDrawerBackendData feature flag",
-    },
   },
   decorators: [
-    (Story, context) => {
-      const { lldModularDrawerBackendDataEnabled = false } = context.args;
-      return (
-        <div style={{ minHeight: "400px", position: "relative", margin: "50px" }}>
-          <FeatureFlagsProvider
-            value={makeMockedContextValue({
-              lldModularDrawer: { enabled: true, params: { enableModularization: true } },
-              lldModularDrawerBackendData: { enabled: lldModularDrawerBackendDataEnabled },
-            })}
-          >
-            <Provider store={store}>
-              <Story />
-            </Provider>
-          </FeatureFlagsProvider>
-        </div>
-      );
-    },
+    Story => (
+      <div style={{ minHeight: "400px", position: "relative", margin: "50px" }}>
+        <FeatureFlagsProvider
+          value={makeMockedContextValue({
+            lldModularDrawer: { enabled: true, params: { enableModularization: true } },
+          })}
+        >
+          <Provider store={store}>
+            <Story />
+          </Provider>
+        </FeatureFlagsProvider>
+      </div>
+    ),
   ],
 };
 
@@ -201,10 +191,6 @@ export const CustomDrawerConfig: StoryObj<StoryArgs> = {
             default element if the parameter is not provided in the drawerConfiguration object.
           </p>
           <ul style={{ paddingLeft: "20px", fontSize: "14px", marginBottom: "16px" }}>
-            <li>
-              <span style={{ fontWeight: 600 }}>lldModularDrawerBackendDataEnabled:</span> Toggle
-              the lldModularDrawerBackendData feature flag to enable/disable backend data fetching.
-            </li>
             <li>
               <span style={{ fontWeight: 600 }}>assetsFilter:</span> Element to display at the top
               of the drawer to filter assets.

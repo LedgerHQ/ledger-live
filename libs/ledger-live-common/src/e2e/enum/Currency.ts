@@ -25,6 +25,8 @@ export class Currency {
 
   static readonly APT = new Currency("Aptos", "APT", "aptos", AppInfos.APTOS, [Network.APTOS]);
 
+  static readonly KAS = new Currency("Kaspa", "KAS", "kaspa", AppInfos.KASPA, [Network.KASPA]);
+
   static readonly tBTC = new Currency(
     "Bitcoin Testnet",
     "𝚝BTC",

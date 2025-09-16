@@ -12,6 +12,7 @@ import { CryptoCurrency, Currency } from "@ledgerhq/types-cryptoassets";
 import { Box, ColorPalette } from "@ledgerhq/native-ui";
 import { TFunction } from "react-i18next";
 import { AptosAccount } from "@ledgerhq/live-common/families/aptos/types";
+import { CeloAccount } from "@ledgerhq/live-common/families/celo/types";
 import { CosmosAccount } from "@ledgerhq/live-common/families/cosmos/types";
 import { PolkadotAccount } from "@ledgerhq/live-common/families/polkadot/types";
 import { MultiversXAccount } from "@ledgerhq/live-common/families/multiversx/types";
@@ -19,7 +20,6 @@ import { NearAccount } from "@ledgerhq/live-common/families/near/types";
 import { isEditableOperation, isStuckOperation } from "@ledgerhq/live-common/operation";
 import AccountGraphCard from "~/components/AccountGraphCard";
 import SubAccountsList from "./SubAccountsList";
-import NftCollectionsList from "./NftCollectionsList";
 import perFamilyAccountHeader from "../../generated/AccountHeader";
 import perFamilyAccountSubHeader from "../../generated/AccountSubHeader";
 import perFamilyAccountBodyHeader from "../../generated/AccountBodyHeader";
@@ -35,8 +35,6 @@ import { EditOperationCard } from "~/components/EditOperationCard";
 import { CurrencyConfig } from "@ledgerhq/coin-framework/config";
 import WarningBannerStatus from "~/components/WarningBannerStatus";
 import ErrorWarning from "./ErrorWarning";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
-import { isNFTCollectionsDisplayable } from "./nftHelper";
 import NftEntryPoint from "LLM/features/NftEntryPoint";
 
 type Props = {
@@ -90,8 +88,6 @@ export function useListHeaderComponents({
   listHeaderComponents: ReactNode[];
   stickyHeaderIndices?: number[];
 } {
-  const llmNftSupport = useFeature("llNftSupport");
-  const llmSolanaNfts = useFeature("llmSolanaNfts");
   if (!account) return { listHeaderComponents: [], stickyHeaderIndices: undefined };
 
   const mainAccount = getMainAccount(account, parentAccount);
@@ -119,6 +115,7 @@ export function useListHeaderComponents({
     AccountBalanceSummaryFooter({
       account: account as Account &
         AptosAccount &
+        CeloAccount &
         CosmosAccount &
         PolkadotAccount &
         MultiversXAccount &
@@ -136,11 +133,6 @@ export function useListHeaderComponents({
   const isOperationStuck =
     oldestEditableOperation &&
     isStuckOperation({ family: mainAccount.currency.family, operation: oldestEditableOperation });
-
-  const displayNftCollections = isNFTCollectionsDisplayable(account, empty, {
-    llmNftSupportEnabled: !!llmNftSupport?.enabled,
-    llmSolanaNftsEnabled: !!llmSolanaNfts?.enabled,
-  });
 
   const disableDelegation =
     currencyConfig &&
@@ -218,13 +210,6 @@ export function useListHeaderComponents({
                 parentAccount={account}
                 useCounterValue={shouldUseCounterValue}
               />
-            </SectionContainer>,
-          ]
-        : []),
-      ...(displayNftCollections && account.type === "Account"
-        ? [
-            <SectionContainer px={6} key="NftCollectionsList">
-              <NftCollectionsList account={account} />
             </SectionContainer>,
           ]
         : []),

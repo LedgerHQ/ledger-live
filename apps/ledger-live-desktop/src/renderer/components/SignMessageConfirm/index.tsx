@@ -34,8 +34,6 @@ export type FieldComponentProps = {
   tokenUnit: Unit | undefined;
 };
 
-export type FieldComponent = React.ComponentType<FieldComponentProps>;
-
 const TextField = ({ field, tokenUnit }: FieldComponentProps) => {
   return field.type === "text" ? (
     <SignMessageConfirmField label={field.label}>

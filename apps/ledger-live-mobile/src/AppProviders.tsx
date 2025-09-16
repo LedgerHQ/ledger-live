@@ -1,9 +1,7 @@
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
-import { getCurrencyBridge } from "@ledgerhq/live-common/bridge/index";
 import { useLdmkFeatureFlagInitiallyEnabled } from "@ledgerhq/live-common/hooks/useLdmkFeatureFlagInitiallyEnabled";
 import { CounterValuesStateRaw } from "@ledgerhq/live-countervalues/types";
 import { DeviceManagementKitProvider } from "@ledgerhq/live-dmk-mobile";
-import { NftMetadataProvider } from "@ledgerhq/live-nft-react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { InViewProvider } from "LLM/contexts/InViewContext";
 import { ModularDrawerProvider } from "LLM/features/ModularDrawer";
@@ -12,11 +10,9 @@ import React from "react";
 import { BridgeSyncProvider } from "~/bridge/BridgeSyncContext";
 import { CountervaluesMarketcapBridgedProvider } from "~/components/CountervaluesMarketcapProvider";
 import { CountervaluesBridgedProvider } from "~/components/CountervaluesProvider";
-import { AppDataStorageProvider } from "~/hooks/storageProvider/useAppDataStorage";
 import PostOnboardingProviderWrapped from "~/logic/postOnboarding/PostOnboardingProviderWrapped";
 import NotificationsProvider from "~/screens/NotificationCenter/NotificationsProvider";
 import SnackbarContainer from "~/screens/NotificationCenter/Snackbar/SnackbarContainer";
-import { OnboardingContextProvider } from "~/screens/Onboarding/onboardingContext";
 
 type AppProvidersProps = {
   initialCountervalues?: CounterValuesStateRaw;
@@ -36,20 +32,14 @@ function AppProviders({ initialCountervalues, children }: AppProvidersProps) {
             <CountervaluesMarketcapBridgedProvider>
               <CountervaluesBridgedProvider initialState={initialCountervalues}>
                 <BottomSheetModalProvider>
-                  <AppDataStorageProvider>
-                    <OnboardingContextProvider>
-                      <PostOnboardingProviderWrapped>
-                        <NotificationsProvider>
-                          <SnackbarContainer />
-                          <NftMetadataProvider getCurrencyBridge={getCurrencyBridge}>
-                            <InViewProvider>
-                              <ModularDrawerProvider>{children}</ModularDrawerProvider>
-                            </InViewProvider>
-                          </NftMetadataProvider>
-                        </NotificationsProvider>
-                      </PostOnboardingProviderWrapped>
-                    </OnboardingContextProvider>
-                  </AppDataStorageProvider>
+                  <PostOnboardingProviderWrapped>
+                    <NotificationsProvider>
+                      <SnackbarContainer />
+                      <InViewProvider>
+                        <ModularDrawerProvider>{children}</ModularDrawerProvider>
+                      </InViewProvider>
+                    </NotificationsProvider>
+                  </PostOnboardingProviderWrapped>
                 </BottomSheetModalProvider>
               </CountervaluesBridgedProvider>
             </CountervaluesMarketcapBridgedProvider>

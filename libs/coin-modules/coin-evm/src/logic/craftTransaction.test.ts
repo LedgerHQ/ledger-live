@@ -54,8 +54,9 @@ describe("craftTransaction", () => {
       jest.spyOn(node, "getGasEstimation").mockResolvedValue(new BigNumber(2300));
       jest.spyOn(node, "getFeeData").mockResolvedValue(feeData);
 
-      expect(
-        await craftTransaction({ ethereumLikeInfo: { chainId: 42 } } as CryptoCurrency, {
+      const { transaction } = await craftTransaction(
+        { ethereumLikeInfo: { chainId: 42 } } as CryptoCurrency,
+        {
           transactionIntent: {
             type: `send-${transactionType}`,
             recipient: "0x7b2c7232f9e38f30e2868f0e5bf311cd83554b5a",
@@ -68,8 +69,10 @@ describe("craftTransaction", () => {
               gasPrice: 8n,
             },
           },
-        }),
-      ).toEqual(
+        },
+      );
+
+      expect(transaction).toEqual(
         ethers.Transaction.from({
           type: transactionTypeNumber,
           to: "0x7b2c7232f9e38f30e2868f0e5bf311cd83554b5a",
@@ -92,8 +95,9 @@ describe("craftTransaction", () => {
       jest.spyOn(node, "getGasEstimation").mockResolvedValue(new BigNumber(2300));
       jest.spyOn(node, "getFeeData").mockResolvedValue(feeData);
 
-      expect(
-        await craftTransaction({ ethereumLikeInfo: { chainId: 42 } } as CryptoCurrency, {
+      const { transaction } = await craftTransaction(
+        { ethereumLikeInfo: { chainId: 42 } } as CryptoCurrency,
+        {
           transactionIntent: {
             type: `send-${transactionType}`,
             recipient: "0x7b2c7232f9e38f30e2868f0e5bf311cd83554b5a",
@@ -106,8 +110,10 @@ describe("craftTransaction", () => {
               gasPrice: 8n,
             },
           },
-        }),
-      ).toEqual(
+        },
+      );
+
+      expect(transaction).toEqual(
         ethers.Transaction.from({
           type: transactionTypeNumber,
           to: "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",

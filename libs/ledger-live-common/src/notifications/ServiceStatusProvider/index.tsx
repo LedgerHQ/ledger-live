@@ -4,6 +4,7 @@ import defaultNetworkApi from "./api";
 import { fromPromise } from "xstate";
 import { useMachine } from "@xstate/react";
 import { serviceStatusMachine } from "./machine";
+import { LEDGER_COMPONENTS } from "./ledger-components";
 type Props = {
   children: React.ReactNode;
   autoUpdateDelay: number;
@@ -33,27 +34,51 @@ function escapeRegExp(string) {
   return string.replace(/[.*+?^${}()[\]\\]/g, "\\$&"); // $& means the whole matched string
 }
 
+function sanitizeName(name: string): string {
+  return name.toLowerCase().trim().replace(/\s+/g, " "); // collapse multiple spaces
+}
+
+/**
+ * Filters service status incidents based on related tickers or Ledger components.
+ *
+ * ## Behavior:
+ * - If there are no `tickers` or no `incidents`, returns an empty list.
+ * - For each incident:
+ *   1. ✅ If the incident has no components → keep it (always relevant).
+ *   2. ✅ If at least one component name matches a known **Ledger component** → keep it.
+ *   3. ✅ If at least one component name contains a **currency ticker** → keep it.
+ *   4. ❌ Otherwise, the incident is discarded.
+ *
+ * @param {Incident[]} [incidents=[]] - List of incidents to filter.
+ * @param {string[]} [tickers=[]] - List of currency tickers to match against incident components.
+ * @returns {Incident[]} The list of incidents relevant to the provided tickers or Ledger components.
+ */
+
 export function filterServiceStatusIncidents(
-  incidents: Incident[],
+  incidents: Incident[] = [],
   tickers: string[] = [],
 ): Incident[] {
-  if (!tickers || tickers.length === 0 || !incidents || incidents.length === 0) {
-    return [];
-  }
+  if (!tickers.length || !incidents.length) return [];
 
-  const tickersRegex = new RegExp(escapeRegExp(tickers.join("|")), "i");
-  return incidents.filter(
-    ({ components }) =>
-      !components || // dont filter out if no components
-      components.length === 0 ||
-      components.some(({ name }) => tickersRegex.test(name)), // component name should hold currency ticker
-  );
+  const tickerRegex = new RegExp(`\\b(${tickers.map(escapeRegExp).join("|")})\\b`, "i");
+
+  const ledgerComponentsSet = new Set(LEDGER_COMPONENTS.map(component => sanitizeName(component)));
+
+  return incidents.filter(({ components }) => {
+    if (!components?.length) return true;
+
+    return components.some(({ name }) => {
+      const sanitizedName = sanitizeName(name);
+      return ledgerComponentsSet.has(sanitizedName) || tickerRegex.test(sanitizedName);
+    });
+  });
 }
 
 // filter out service status incidents by given currencies or fallback on context currencies
 export function useFilteredServiceStatus(filters?: ServiceStatusUserSettings): StatusContextType {
   const stateData = useContext(ServiceStatusContext);
   const { incidents, context } = stateData;
+
   const filteredIncidents = useMemo(() => {
     return filterServiceStatusIncidents(incidents, filters?.tickers || context?.tickers);
   }, [incidents, context, filters?.tickers]);

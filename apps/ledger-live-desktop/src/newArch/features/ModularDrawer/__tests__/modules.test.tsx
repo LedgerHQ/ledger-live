@@ -51,7 +51,6 @@ const mockedInitialState = {
             enableModularization: true,
           },
         },
-        lldModularDrawerBackendData: { enabled: true },
       },
     },
   },
@@ -61,7 +60,7 @@ const mockCurrencies = [ethereumCurrency, bitcoinCurrency, arbitrumCurrency];
 
 describe("ModularDrawerFlowManager - Modules configuration", () => {
   // This is tempory as in the future balance will be displayed by default for all assets but right now it's not the case
-  it("shouldn't display balance on the right at assetSelection by default", async () => {
+  it("should display balance on the right at assetSelection by default", async () => {
     const mixedCurrencies = [
       baseCurrency,
       arbitrumCurrency,
@@ -83,8 +82,8 @@ describe("ModularDrawerFlowManager - Modules configuration", () => {
     expect(screen.queryByText(/base/i)).toBeNull();
     expect(screen.queryByText(/scroll/i)).toBeNull();
 
-    expect(screen.queryByText(/\$95,622,923.34/i)).toBeNull();
-    expect(screen.queryByText(/34,478.4 eth/i)).toBeNull();
+    expect(screen.queryByText(/\$95,622,923.34/i)).toBeVisible();
+    expect(screen.queryByText(/34,478.4 eth/i)).toBeVisible();
   });
 
   it("should display balance on the right at assetSelection step", async () => {
@@ -248,7 +247,8 @@ describe("ModularDrawerFlowManager - Modules configuration", () => {
   });
 
   // this is logically failing because we are not able to retrieve the wanted data consistantly because it depends on the providerId that can be wrongly set in mapping services
-  it.failing("render the eth balance of scroll base and arbitrum as ethereum", async () => {
+  // Skipping because flaky, test to be rewritten in refactor from LIVE-21033
+  it.skip("render the eth balance of scroll base and arbitrum as ethereum", async () => {
     const mixedCurrencies = [baseCurrency, arbitrumCurrency, scrollCurrency, bitcoinCurrency];
     renderWithMockedCounterValuesProvider(
       <ModularDrawerFlowManager

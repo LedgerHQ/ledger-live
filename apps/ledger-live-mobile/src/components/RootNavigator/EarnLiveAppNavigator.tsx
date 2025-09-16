@@ -50,6 +50,20 @@ const Earn = (props: NavigationProps) => {
 
     function deeplinkRouting() {
       switch (paramAction) {
+        case "deposit": {
+          navigation.navigate(NavigatorName.Base, {
+            screen: NavigatorName.Earn,
+            params: {
+              screen: ScreenName.Earn,
+              params: {
+                intent: "deposit",
+                cryptoAssetId: props.route.params?.cryptoAssetId,
+                accountId: props.route.params?.accountId,
+              },
+            },
+          });
+          break;
+        }
         case "stake":
           navigation.navigate(NavigatorName.StakeFlow, {
             screen: ScreenName.Stake,
