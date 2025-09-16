@@ -340,7 +340,7 @@ export function WelcomeNew() {
               }}
               minWidth="250px"
             >
-              {t("onboarding.screens.welcome.ledgerDevice")}
+              {t("onboarding.screens.welcome.nextButton")}
             </Button>
 
             <Button
@@ -356,7 +356,7 @@ export function WelcomeNew() {
               whiteSpace="normal"
               minWidth="250px"
             >
-              {t("onboarding.screens.welcome.noDeviceYet")}
+              {t("onboarding.screens.welcome.buyLink")}
             </Button>
           </Flex>
 
