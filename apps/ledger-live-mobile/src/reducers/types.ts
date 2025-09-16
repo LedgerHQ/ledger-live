@@ -29,6 +29,7 @@ import { ImageType } from "../components/CustomImage/types";
 import { WalletState } from "@ledgerhq/live-wallet/store";
 import { TrustchainStore } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { Steps } from "LLM/features/WalletSync/types/Activation";
+import { WalletSyncUserStateState } from "./walletSyncUserState";
 import { type TabListType as TabPortfolioAssetsType } from "~/screens/Portfolio/useListsAnimation";
 import { CountervaluesState } from "./countervalues";
 import { ToastState } from "./toast";
@@ -402,4 +403,5 @@ export type State = {
   wallet: WalletState;
   walletconnect: WalletConnectState;
   walletSync: WalletSyncState;
+  walletSyncUserState: WalletSyncUserStateState;
 };

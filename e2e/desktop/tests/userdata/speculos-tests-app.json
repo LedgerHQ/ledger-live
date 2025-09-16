@@ -10,6 +10,10 @@
       "nonImportedAccountInfos": [],
       "accountsData": { "accountNames": [], "starredAccountIds": [] }
     },
+    "walletSyncUserState": {
+      "visualPending": false,
+      "walletSyncError": null
+    },
     "settings": {
       "hasCompletedOnboarding": true,
       "counterValue": "USD",

@@ -2,7 +2,6 @@ import {
   memberCredentialsSelector,
   trustchainSelector,
 } from "@ledgerhq/ledger-key-ring-protocol/store";
-import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import {
   WalletSyncProvider as BaseWalletSyncProvider,
   WalletSyncBridge,
@@ -12,20 +11,19 @@ import {
   setNonImportedAccounts,
   walletSyncStateSelector,
   walletSyncUpdate,
-  walletSyncUserStateSelector,
 } from "@ledgerhq/live-wallet/store";
 import { DistantState, LocalState } from "@ledgerhq/live-wallet/walletsync/index";
 import { useWalletSyncDesktop } from "LLD/features/WalletSync/hooks/useWalletSyncDesktop";
 import React, { useCallback, useMemo } from "react";
 import { useDispatch, useSelector, useStore } from "react-redux";
 import { replaceAccounts } from "../actions/accounts";
+import { setWalletSyncPending, setWalletSyncError } from "../actions/walletSyncUserState";
 import { State } from "../reducers";
 import { walletSelector } from "../reducers/wallet";
 
 const useTrustchain = () => useSelector((s: State) => trustchainSelector(s));
 const useMemberCredentials = () => useSelector((s: State) => memberCredentialsSelector(s));
-const useStoredWalletSyncUserState = () =>
-  useSelector((s: State) => walletSyncUserStateSelector(walletSelector(s)));
+const useStoredWalletSyncUserState = () => useSelector((s: State) => s.walletSyncUserState);
 const useWalletSyncState = () =>
   useSelector((s: State) => walletSyncStateSelector(walletSelector(s)));
 
@@ -71,6 +69,20 @@ export function useDesktopWalletSyncBridge(): WalletSyncBridge {
     [dispatch],
   );
 
+  const setWalletSyncPendingAction = useCallback(
+    (pending: boolean) => {
+      dispatch(setWalletSyncPending(pending));
+    },
+    [dispatch],
+  );
+
+  const setWalletSyncErrorAction = useCallback(
+    (error: Error | null) => {
+      dispatch(setWalletSyncError(error));
+    },
+    [dispatch],
+  );
+
   return useMemo(
     () => ({
       getAccounts,
@@ -81,8 +93,17 @@ export function useDesktopWalletSyncBridge(): WalletSyncBridge {
       useTrustchain,
       useWalletSyncState,
       useStoredWalletSyncUserState,
+      setWalletSyncPending: setWalletSyncPendingAction,
+      setWalletSyncError: setWalletSyncErrorAction,
     }),
-    [getAccounts, getWalletSyncState, getLocalState, saveUpdate],
+    [
+      getAccounts,
+      getWalletSyncState,
+      getLocalState,
+      saveUpdate,
+      setWalletSyncPendingAction,
+      setWalletSyncErrorAction,
+    ],
   );
 }
 

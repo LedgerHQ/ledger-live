@@ -11,7 +11,7 @@ import type { CryptoAssetsStore } from "@ledgerhq/types-live";
 setSupportedCurrencies(["ethereum"]);
 
 const raws: AccountRaw[] = [
-  <AccountRaw>{
+  {
     id: "ethereumjs:2:ethereum:0x01:",
     seedIdentifier: "0x01",
     name: "A",
@@ -26,7 +26,7 @@ const raws: AccountRaw[] = [
     lastSyncDate: "2019-07-17T15:13:30.318Z",
     balance: "1000000000000000000",
   },
-  <AccountRaw>{
+  {
     id: "ethereumjs:2:ethereum:0x02:",
     seedIdentifier: "0x02",
     name: "B",
@@ -41,7 +41,7 @@ const raws: AccountRaw[] = [
     lastSyncDate: "2019-07-17T15:13:29.306Z",
     balance: "2000000000000000000",
   },
-  <AccountRaw>{
+  {
     id: "libcore:1:ethereum:xpub3:",
     seedIdentifier: "seed",
     name: "C",
@@ -56,7 +56,7 @@ const raws: AccountRaw[] = [
     lastSyncDate: "2019-07-17T15:13:29.306Z",
     balance: "3000000000000000000",
   },
-  <AccountRaw>{
+  {
     id: "libcore:1:ethereum:xpub3B:",
     seedIdentifier: "seed",
     name: "CA",
@@ -71,7 +71,7 @@ const raws: AccountRaw[] = [
     lastSyncDate: "2019-07-17T15:13:29.306Z",
     balance: "3000000000000000000",
   },
-  <AccountRaw>{
+  {
     id: "libcore:1:ethereum:xpub1B:",
     seedIdentifier: "seed",
     name: "AA",
@@ -99,10 +99,6 @@ const walletState: WalletState = {
     version: 0,
   },
   nonImportedAccountInfos: [],
-  walletSyncUserState: {
-    visualPending: false,
-    walletSyncError: null,
-  },
 };
 
 for (const raw of raws) {

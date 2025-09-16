@@ -137,19 +137,11 @@ function EnhancedProviders({ children }: { children: React.ReactNode }): JSX.Ele
   return (
     <I18nextProvider i18n={i18n}>
       <DrawerProvider>
-<<<<<<< HEAD
         <StyleProvider selectedPalette="dark">
           <WalletSyncTestProvider>
             <ContextMenuWrapper>{children}</ContextMenuWrapper>
           </WalletSyncTestProvider>
         </StyleProvider>
-=======
-        <NftMetadataProvider getCurrencyBridge={getCurrencyBridge}>
-          <StyleProvider selectedPalette="dark">
-            <ContextMenuWrapper>{children}</ContextMenuWrapper>
-          </StyleProvider>
-        </NftMetadataProvider>
->>>>>>> 42e3ad29e4 (fix tests)
       </DrawerProvider>
     </I18nextProvider>
   );

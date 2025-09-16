@@ -126,10 +126,6 @@ const walletState: WalletState = {
     version: 0,
   },
   nonImportedAccountInfos: [],
-  walletSyncUserState: {
-    visualPending: false,
-    walletSyncError: null,
-  },
 };
 
 const userData = accountRawToAccountUserData(raw);

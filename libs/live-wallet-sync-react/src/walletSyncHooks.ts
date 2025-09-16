@@ -1,5 +1,4 @@
 import { TrustchainEjected, TrustchainNotAllowed } from "@ledgerhq/ledger-key-ring-protocol/errors";
-import { resetTrustchainStore } from "@ledgerhq/ledger-key-ring-protocol/store";
 import type {
   MemberCredentials,
   Trustchain,
@@ -8,12 +7,7 @@ import type {
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import getWalletSyncEnvironmentParams from "@ledgerhq/live-common/walletSync/getEnvironmentParams";
 import { CloudSyncSDK } from "@ledgerhq/live-wallet/cloudsync/index";
-import {
-  setWalletSyncError,
-  setWalletSyncPending,
-  walletSyncUpdate,
-  WalletSyncUserState,
-} from "@ledgerhq/live-wallet/store";
+import { WalletSyncUserState } from "@ledgerhq/live-wallet/store";
 import walletsync, {
   liveSlug,
   makeLocalIncrementalUpdate,
@@ -26,11 +20,9 @@ import type {
   WalletSyncEnvironment,
   WalletSyncWatchConfig,
 } from "@ledgerhq/types-live";
-import flow from "lodash/fp/flow";
 import noop from "lodash/fp/noop";
 import { useCallback, useEffect, useMemo, useRef } from "react";
-import { useDispatch } from "react-redux";
-import { useWalletSyncBridgeContext } from "./index";
+import { useWalletSyncBridgeContext } from ".";
 
 /** Type matching the feature flag interface from @ledgerhq/types-live */
 type FeatureData =
@@ -48,6 +40,7 @@ type CommonOpts = {
   feature: FeatureData;
   bridgeCache: BridgeCacheSystem;
   blacklistedTokenIds?: string[];
+  resetLedgerSync: () => void;
 
   useTrustchainSdk: () => TrustchainSDK;
   useOnTrustchainRefreshNeeded: (
@@ -107,7 +100,6 @@ export function useCloudSyncSDK(
 export function useWatchWalletSync(
   opts: CommonOpts,
 ): WalletSyncUserState & { onUserRefresh: () => void } {
-  const dispatch = useDispatch();
   const bridge = useWalletSyncBridgeContext();
 
   const memberCredentials = bridge.useMemberCredentials();
@@ -129,8 +121,20 @@ export function useWatchWalletSync(
     onUserRefreshRef.current();
   }, []);
 
-  const setVisualPending = useCallback(flow(setWalletSyncPending, dispatch), [dispatch]);
-  const setWalletSyncErrorState = useCallback(flow(setWalletSyncError, dispatch), [dispatch]);
+  // These are now provided by the bridge since they're platform-specific
+  const setVisualPending = useCallback(
+    (pending: boolean) => {
+      bridge.setWalletSyncPending(pending);
+    },
+    [bridge],
+  );
+
+  const setWalletSyncErrorState = useCallback(
+    (error: Error | null) => {
+      bridge.setWalletSyncError(error);
+    },
+    [bridge],
+  );
 
   const ctx = useMemo(
     () => ({
@@ -141,10 +145,7 @@ export function useWatchWalletSync(
     [opts.bridgeCache, opts.blacklistedTokenIds],
   );
 
-  const resetLedgerSync = useCallback(() => {
-    dispatch(resetTrustchainStore());
-    dispatch(walletSyncUpdate(null, 0));
-  }, [dispatch]);
+  const resetLedgerSync = opts.resetLedgerSync;
 
   useEffect(() => {
     if (userState.walletSyncError) {
