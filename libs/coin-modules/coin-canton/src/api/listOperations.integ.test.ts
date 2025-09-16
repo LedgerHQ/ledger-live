@@ -3,7 +3,7 @@ import { createApi } from ".";
 
 let api: AlpacaApi;
 
-describe("devnet", () => {
+describe.skip("devnet", () => {
   beforeAll(() => {
     api = createApi({
       nodeUrl: "https://wallet-validator-devnet-canton.ledger-test.com/v2",

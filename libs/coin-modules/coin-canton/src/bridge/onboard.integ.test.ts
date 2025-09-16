@@ -10,10 +10,14 @@ import {
   CantonPreApprovalResult,
 } from "../types/onboard";
 import coinConfig from "../config";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 
 describe("onboard (devnet)", () => {
   const mockDeviceId = "test-device-id";
   const mockDerivationPath = "44'/6767'/0'/0'/0'";
+  const mockCurrency = {
+    id: "canton_network",
+  } as unknown as CryptoCurrency;
 
   let onboardedAccount: {
     keyPair: ReturnType<typeof generateMockKeyPair>;
@@ -53,7 +57,7 @@ describe("onboard (devnet)", () => {
 
       const onboardObservable = buildOnboardAccount(mockSignerContext);
       const onboardValues = await firstValueFrom(
-        onboardObservable(mockDeviceId, mockDerivationPath).pipe(toArray()),
+        onboardObservable(mockCurrency, mockDeviceId, mockDerivationPath).pipe(toArray()),
       );
       const onboardResult = onboardValues.find(
         (value): value is CantonOnboardResult => "partyId" in value,
@@ -72,7 +76,7 @@ describe("onboard (devnet)", () => {
       };
 
       // WHEN
-      const result = await isAccountOnboarded(keyPair.publicKeyHex);
+      const result = await isAccountOnboarded(mockCurrency, keyPair.publicKeyHex);
 
       // THEN
       expect(result).not.toBe(false);
@@ -87,7 +91,7 @@ describe("onboard (devnet)", () => {
       const keyPair = generateMockKeyPair();
 
       // WHEN
-      const result = await isAccountOnboarded(keyPair.publicKeyHex);
+      const result = await isAccountOnboarded(mockCurrency, keyPair.publicKeyHex);
 
       // THEN
       expect(result).toEqual({ isOnboarded: false });
@@ -98,7 +102,7 @@ describe("onboard (devnet)", () => {
       const keyPair = generateMockKeyPair();
 
       // WHEN
-      const result = await isAccountOnboarded(keyPair.publicKeyHex);
+      const result = await isAccountOnboarded(mockCurrency, keyPair.publicKeyHex);
 
       // THEN
       expect(result).toEqual({ isOnboarded: false });
@@ -117,7 +121,7 @@ describe("onboard (devnet)", () => {
 
       // WHEN
       const allValues = await firstValueFrom(
-        onboardObservable(mockDeviceId, mockDerivationPath).pipe(toArray()),
+        onboardObservable(mockCurrency, mockDeviceId, mockDerivationPath).pipe(toArray()),
       );
       const progressValues = allValues.filter(
         (value): value is CantonOnboardProgress => "status" in value && !("partyId" in value),
@@ -149,7 +153,7 @@ describe("onboard (devnet)", () => {
 
       // WHEN
       const secondOnboardValues = await firstValueFrom(
-        secondOnboardObservable(mockDeviceId, mockDerivationPath).pipe(toArray()),
+        secondOnboardObservable(mockCurrency, mockDeviceId, mockDerivationPath).pipe(toArray()),
       );
       const secondResult = secondOnboardValues.find(
         (value): value is CantonOnboardResult => "partyId" in value,
@@ -170,9 +174,12 @@ describe("onboard (devnet)", () => {
 
       // WHEN
       const preapprovalValues = await firstValueFrom(
-        preapprovalObservable(mockDeviceId, mockDerivationPath, onboardResult.partyId).pipe(
-          toArray(),
-        ),
+        preapprovalObservable(
+          mockCurrency,
+          mockDeviceId,
+          mockDerivationPath,
+          onboardResult.partyId,
+        ).pipe(toArray()),
       );
 
       const progressValues = preapprovalValues.filter(
@@ -208,7 +215,12 @@ describe("onboard (devnet)", () => {
       // WHEN & THEN
       try {
         await firstValueFrom(
-          preapprovalObservable(mockDeviceId, mockDerivationPath, "invalid-party-id-123"),
+          preapprovalObservable(
+            mockCurrency,
+            mockDeviceId,
+            mockDerivationPath,
+            "invalid-party-id-123",
+          ),
         );
         expect(true).toBe(true);
       } catch (error) {

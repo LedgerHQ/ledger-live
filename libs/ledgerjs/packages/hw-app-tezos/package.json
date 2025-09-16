@@ -28,7 +28,7 @@
   "license": "Apache-2.0",
   "dependencies": {
     "@ledgerhq/hw-transport": "workspace:^",
-    "blake2b": "^2.1.4",
+    "@noble/hashes": "1.8.0",
     "bs58check": "^2.1.2",
     "invariant": "^2.2.4"
   },

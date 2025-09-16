@@ -4,6 +4,11 @@ jest.mock("@ledgerhq/coin-framework/operation");
 jest.mock("../common-logic");
 import { patchOperationWithHash } from "@ledgerhq/coin-framework/operation";
 import { broadcast as broadcastLogic } from "../common-logic";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+
+const mockCurrency = {
+  id: "canton_network",
+} as unknown as CryptoCurrency;
 
 describe("broadcast", () => {
   let patchOperationSpy: jest.SpyInstance;
@@ -16,6 +21,9 @@ describe("broadcast", () => {
 
   it("should broadcast", () => {
     broadcast({
+      account: {
+        currency: mockCurrency,
+      },
       signedOperation: {
         signature: undefined,
         operation: undefined,
@@ -26,6 +34,9 @@ describe("broadcast", () => {
 
   it("should patch operation with hash", () => {
     broadcast({
+      account: {
+        currency: mockCurrency,
+      },
       signedOperation: {
         signature: undefined,
         operation: undefined,
