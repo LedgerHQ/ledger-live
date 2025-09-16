@@ -1,5 +1,16 @@
 # @ledgerhq/react-ui
 
+## 0.37.0
+
+### Minor Changes
+
+- [#11537](https://github.com/LedgerHQ/ledger-live/pull/11537) [`b34a43c`](https://github.com/LedgerHQ/ledger-live/commit/b34a43c290929ccab9380c2c2853bd320d4630b9) Thanks [@ejaycoleman](https://github.com/ejaycoleman)! - MAD DADA pagination
+
+### Patch Changes
+
+- Updated dependencies [[`5336021`](https://github.com/LedgerHQ/ledger-live/commit/53360213fe1545cfac761d872c0bd7a592697279), [`222bd7b`](https://github.com/LedgerHQ/ledger-live/commit/222bd7b69d32fd93562e9cb4bc1cf2840d0a0620)]:
+  - @ledgerhq/ui-shared@0.4.0
+
 ## 0.37.0-next.0
 
 ### Minor Changes

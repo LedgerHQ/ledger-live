@@ -1,5 +1,13 @@
 # @ledgerhq/speculos-transport
 
+## 0.2.10
+
+### Patch Changes
+
+- Updated dependencies [[`205458e`](https://github.com/LedgerHQ/ledger-live/commit/205458e2d3ca5ec1d7a50d30b63050a692a5e045), [`e52268a`](https://github.com/LedgerHQ/ledger-live/commit/e52268a3bc7d97a7ed09ed082786a647e048a6e8), [`b27c96c`](https://github.com/LedgerHQ/ledger-live/commit/b27c96ccbcefb1982a40688a8385209eac99165a)]:
+  - @ledgerhq/hw-transport-node-speculos-http@6.30.0
+  - @ledgerhq/live-env@2.16.0
+
 ## 0.2.10-next.0
 
 ### Patch Changes

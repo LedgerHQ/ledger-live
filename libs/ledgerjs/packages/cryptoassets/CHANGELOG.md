@@ -1,5 +1,16 @@
 # @ledgerhq/cryptoassets
 
+## 13.28.0
+
+### Minor Changes
+
+- [#11682](https://github.com/LedgerHQ/ledger-live/pull/11682) [`338d979`](https://github.com/LedgerHQ/ledger-live/commit/338d979bae349b185c52b1d8c9f6718a3d142526) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Update canton explorer link
+
+### Patch Changes
+
+- Updated dependencies [[`e52268a`](https://github.com/LedgerHQ/ledger-live/commit/e52268a3bc7d97a7ed09ed082786a647e048a6e8), [`b27c96c`](https://github.com/LedgerHQ/ledger-live/commit/b27c96ccbcefb1982a40688a8385209eac99165a)]:
+  - @ledgerhq/live-env@2.16.0
+
 ## 13.28.0-next.0
 
 ### Minor Changes
