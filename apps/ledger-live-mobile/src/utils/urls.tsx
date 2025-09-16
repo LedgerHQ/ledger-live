@@ -72,6 +72,7 @@ export const urls = {
   erc20: "https://support.ledger.com/article/4404389645329-zd",
   errors: {
     EthAppPleaseEnableContractData: "https://support.ledger.com/article/4405481324433-zd",
+    CeloAppPleaseEnableContractData: "https://support.ledger.com/article/4405481324433-zd",
     NotEnoughGas: "https://support.ledger.com/article/9096370252573-zd",
     PeerRemovedPairing: "https://support.ledger.com/article/360025864773-zd",
     PairingFailed: "https://support.ledger.com/article/360025864773-zd",

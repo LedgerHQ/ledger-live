@@ -31,6 +31,5 @@ export interface CeloSigner {
     hashStructMessageHex: string,
   ) => Promise<EvmSignature>;
   // Celo specific
-  verifyTokenInfo(to: string, chainId: number): Promise<void>;
   rlpEncodedTxForLedger(txParams: CeloTx): Promise<RLPEncodedTx | LegacyEncodedTx>;
 }
