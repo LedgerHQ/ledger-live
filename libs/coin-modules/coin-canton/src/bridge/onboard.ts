@@ -228,6 +228,7 @@ export const buildAuthorizePreapproval =
   ): Observable<CantonPreApprovalProgress | CantonPreApprovalResult> =>
     new Observable(observer => {
       async function main() {
+        log("buildAuthorizePreapproval", "creatableAccount", creatableAccount, "partyId", partyId);
         observer.next({
           status: PreApprovalStatus.PREPARE,
         });

@@ -57,7 +57,7 @@ describe("sync (devnet)", () => {
 
       expect(result).toBeDefined();
       expect(result.id).toBeDefined();
-      expect(result.xpub).toBe(TEST_ADDRESS.replace(/:/g, "_"));
+      expect(result.xpub).toBe(TEST_ADDRESS);
       expect(result.blockHeight).toBeGreaterThan(0);
       expect(result.balance).toBeDefined();
       expect(result.spendableBalance).toBeDefined();
@@ -78,7 +78,7 @@ describe("sync (devnet)", () => {
       const getAccountShape = makeGetAccountShape(mockSignerContext);
       const result = await getAccountShape(ACCOUNT_SHAPE_INFO, { paginationConfig: {} });
 
-      expect(result.xpub).toBe(TEST_ADDRESS.replace(/:/g, "_"));
+      expect(result.xpub).toContain("::");
     });
 
     it("should merge operations correctly with initial account", async () => {
@@ -137,7 +137,7 @@ describe("sync (devnet)", () => {
       mockGetBalance.mockRestore();
     });
 
-    it("should call getOperations with correct cursor based with initial account", async () => {
+    it("should call getOperations with correct cursor based on initial account", async () => {
       const mockGetOperations = jest.spyOn(gateway, "getOperations");
       const operation: Operation = {
         id: "test-op-1",
@@ -167,7 +167,7 @@ describe("sync (devnet)", () => {
         { paginationConfig: {} },
       );
 
-      expect(mockGetOperations).toHaveBeenCalledWith(TEST_ADDRESS, {
+      expect(mockGetOperations).toHaveBeenCalledWith(currency, TEST_ADDRESS, {
         cursor: (operation.blockHeight || 0) + 1,
         limit: 100,
       });
@@ -184,7 +184,7 @@ describe("sync (devnet)", () => {
       expect(result.operations).toBeDefined();
       expect(result.operationsCount).toBeGreaterThanOrEqual(1);
 
-      expect(mockGetOperations).toHaveBeenCalledWith(TEST_ADDRESS, {
+      expect(mockGetOperations).toHaveBeenCalledWith(currency, TEST_ADDRESS, {
         cursor: 0,
         limit: 100,
       });
