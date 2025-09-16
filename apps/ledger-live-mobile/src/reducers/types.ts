@@ -19,7 +19,6 @@ import { WalletTabNavigatorStackParamList } from "../components/RootNavigator/ty
 import {
   WalletContentCard,
   AssetContentCard,
-  LearnContentCard,
   NotificationContentCard,
   CategoryContentCard,
   BrazeContentCard,
@@ -27,16 +26,14 @@ import {
 } from "../dynamicContent/types";
 import { ProtectStateNumberEnum } from "../components/ServicesWidget/types";
 import { ImageType } from "../components/CustomImage/types";
-import { CLSSupportedDeviceModelId } from "@ledgerhq/live-common/device/use-cases/isCustomLockScreenSupported";
 import { WalletState } from "@ledgerhq/live-wallet/store";
 import { TrustchainStore } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { Steps } from "LLM/features/WalletSync/types/Activation";
-import { SupportedBlockchain } from "@ledgerhq/live-nft/supported";
-import { NftStatus } from "@ledgerhq/live-nft/types";
 import { type TabListType as TabPortfolioAssetsType } from "~/screens/Portfolio/useListsAnimation";
 import { CountervaluesState } from "./countervalues";
 import { ToastState } from "./toast";
 import { ModularDrawerState } from "./modularDrawer";
+import { assetsDataApi } from "@ledgerhq/live-common/modularDrawer/data/state-manager/api";
 
 // === ACCOUNT STATE ===
 
@@ -84,6 +81,16 @@ export type AppState = {
   isMainNavigatorVisible: boolean;
   /** For deep links that inadvertently trigger privacy lock. Reset to false on close. */
   isPasswordLockBlocked: boolean;
+  /** Reboot ID for triggering app remount */
+  rebootId: number;
+};
+
+// === AUTH STATE ===
+
+export type AuthState = {
+  isLocked: boolean;
+  biometricsError: Error | null;
+  authModalOpen: boolean;
 };
 
 // === BLE STATE ===
@@ -127,8 +134,6 @@ export type DynamicContentState = {
   walletCards: WalletContentCard[];
   /** Dynamic content cards displayed in an Asset Page */
   assetsCards: AssetContentCard[];
-  /** Dynamic content cards displayed in Learn Section */
-  learnCards: LearnContentCard[];
   /** Dynamic content cards displayed in Notification Center */
   notificationCards: NotificationContentCard[];
   /** Dynamic content cards handling flexible categories throughout the app */
@@ -139,6 +144,12 @@ export type DynamicContentState = {
   mobileCards: BrazeContentCard[];
   /** Check if CC are loading */
   isLoading: boolean;
+};
+
+// === IN VIEW STATE ===
+
+export type InViewState = {
+  hasItems: boolean;
 };
 
 // === RATINGS STATE ===
@@ -222,9 +233,6 @@ export type SettingsState = {
   hideEmptyTokenAccounts: boolean;
   filterTokenOperationsZeroAmount: boolean;
   blacklistedTokenIds: string[];
-  hiddenNftCollections: string[];
-  whitelistedNftCollections: string[];
-  nftCollectionsStatusByNetwork: Record<SupportedBlockchain, Record<string, NftStatus>>;
   dismissedBanners: string[];
   hasAvailableUpdate: boolean;
   theme: Theme;
@@ -242,19 +250,13 @@ export type SettingsState = {
   };
   seenDevices: DeviceModelInfo[];
   knownDeviceModelIds: Record<DeviceModelId, boolean>;
-  hasSeenStaxEnabledNftsPopup: boolean;
   lastConnectedDevice: Device | null;
-  marketCounterCurrency: string | null | undefined;
   sensitiveAnalytics: boolean;
   onboardingHasDevice: boolean | null;
   isReborn: boolean | null;
   onboardingType: OnboardingType | null;
   customLockScreenType: ImageType | null;
-  customLockScreenBackup: {
-    hex: string;
-    hash: string;
-    deviceModelId: CLSSupportedDeviceModelId;
-  } | null;
+
   lastSeenCustomImage: {
     size: number;
     hash: string;
@@ -349,15 +351,6 @@ export type ProtectState = {
   protectStatus: ProtectStateNumberEnum;
 };
 
-// === NFT STATE ===
-
-export type NftState = {
-  filterDrawerVisible: boolean;
-  galleryChainFilters: NftGalleryChainFiltersState;
-};
-
-export type NftGalleryChainFiltersState = Record<SupportedBlockchain, boolean>;
-
 // === MARKET STATE ===
 
 export type MarketState = {
@@ -379,28 +372,31 @@ export type WalletSyncState = {
 export type LargeMoverState = {
   tutorial: boolean;
 };
+
 // === ROOT STATE ===
 
 export type State = {
   accounts: AccountsState;
-  countervalues: CountervaluesState;
-  settings: SettingsState;
   appstate: AppState;
+  assetsDataApi: ReturnType<typeof assetsDataApi.reducer>;
+  auth: AuthState;
   ble: BleState;
-  ratings: RatingsState;
+  countervalues: CountervaluesState;
   dynamicContent: DynamicContentState;
-  notifications: NotificationsState;
-  swap: SwapStateType;
   earn: EarnState;
-  walletconnect: WalletConnectState;
+  inView: InViewState;
+  largeMover: LargeMoverState;
+  market: MarketState;
+  modularDrawer: ModularDrawerState;
+  notifications: NotificationsState;
   postOnboarding: PostOnboardingState;
   protect: ProtectState;
-  nft: NftState;
-  market: MarketState;
-  wallet: WalletState;
-  trustchain: TrustchainStore;
-  walletSync: WalletSyncState;
-  modularDrawer: ModularDrawerState;
-  largeMover: LargeMoverState;
+  ratings: RatingsState;
+  settings: SettingsState;
+  swap: SwapStateType;
   toasts: ToastState;
+  trustchain: TrustchainStore;
+  wallet: WalletState;
+  walletconnect: WalletConnectState;
+  walletSync: WalletSyncState;
 };

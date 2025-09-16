@@ -178,8 +178,10 @@ export const NativeElementHelpers = {
 };
 
 export const WebElementHelpers = {
-  getWebElementByTestId(id: string, index = 0): WebElement {
-    const base = web.element(by.web.cssSelector(`[data-testid="${id}"]`)) as IndexedWebElement;
+  getWebElementByTestId(id: string, index = 0, testIdAttribute = "data-testid"): WebElement {
+    const base = web.element(
+      by.web.cssSelector(`[${testIdAttribute}="${id}"]`),
+    ) as IndexedWebElement;
     return index > 0 ? base.atIndex(index) : base;
   },
 
@@ -315,6 +317,16 @@ export const WebElementHelpers = {
     return String(url);
   },
 
+  async isWebElementEnabled(element: WebElement) {
+    const isEnabled = await element.runScript(
+      (el: HTMLButtonElement | HTMLInputElement, android: boolean) => {
+        return android ? el.ariaDisabled !== "true" : el.getAttributeNames().toString();
+      },
+      [isAndroid()],
+    );
+    return typeof isEnabled === "string" ? !isEnabled.includes("disabled") : isEnabled;
+  },
+
   async waitForWebElementToBeEnabled(
     id: string,
     timeout = DEFAULT_TIMEOUT,
@@ -326,18 +338,14 @@ export const WebElementHelpers = {
     while (Date.now() - start < timeout) {
       try {
         const element = WebElementHelpers.getWebElementByTestId(id, index);
-        const isEnabled = await element.runScript((el: HTMLButtonElement | HTMLInputElement) => {
-          return (
-            el.getAttribute("aria-disabled") !== "true"
-          );
-        });
-
+        const isEnabled = await WebElementHelpers.isWebElementEnabled(element);
         if (isEnabled) {
           return;
         }
       } catch (e) {
         lastErr = e instanceof Error ? e : new Error(String(e));
       }
+      await delay(100);
     }
 
     throw new Error(

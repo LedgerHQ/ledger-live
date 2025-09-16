@@ -1,5 +1,63 @@
 # @ledgerhq/cryptoassets
 
+## 13.27.0
+
+### Minor Changes
+
+- [#11509](https://github.com/LedgerHQ/ledger-live/pull/11509) [`12277dc`](https://github.com/LedgerHQ/ledger-live/commit/12277dcb478f24152060e3e11e2eb37d650b5b60) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Canton lastblock + onboarding init
+
+- [#10672](https://github.com/LedgerHQ/ledger-live/pull/10672) [`8936f39`](https://github.com/LedgerHQ/ledger-live/commit/8936f390edbe9cbc36ac6590b01562daf5c580e1) Thanks [@may01](https://github.com/may01)! - added Hedera tokens to CAL
+  added send/receive support to Hedera in LLD & LLM
+  added support for HTS token association flow to LLD & LLM
+  added support for "Associate token" transaction type to Hedera
+  added test fixtures to coin-hedera
+
+- [#11355](https://github.com/LedgerHQ/ledger-live/pull/11355) [`0356d19`](https://github.com/LedgerHQ/ledger-live/commit/0356d1904dbb5e856970fa7e7ebb206eed7b4c5d) Thanks [@Moustafa-Koterba](https://github.com/Moustafa-Koterba)! - EVM dont call preload and hydrate when cal lazy loading is enabled
+
+### Patch Changes
+
+- Updated dependencies [[`87617a9`](https://github.com/LedgerHQ/ledger-live/commit/87617a9930be43a6cdbc5cc5711cc24b00309184), [`8936f39`](https://github.com/LedgerHQ/ledger-live/commit/8936f390edbe9cbc36ac6590b01562daf5c580e1)]:
+  - @ledgerhq/live-env@2.15.0
+
+## 13.27.0-next.0
+
+### Minor Changes
+
+- [#11509](https://github.com/LedgerHQ/ledger-live/pull/11509) [`12277dc`](https://github.com/LedgerHQ/ledger-live/commit/12277dcb478f24152060e3e11e2eb37d650b5b60) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Canton lastblock + onboarding init
+
+- [#10672](https://github.com/LedgerHQ/ledger-live/pull/10672) [`8936f39`](https://github.com/LedgerHQ/ledger-live/commit/8936f390edbe9cbc36ac6590b01562daf5c580e1) Thanks [@may01](https://github.com/may01)! - added Hedera tokens to CAL
+  added send/receive support to Hedera in LLD & LLM
+  added support for HTS token association flow to LLD & LLM
+  added support for "Associate token" transaction type to Hedera
+  added test fixtures to coin-hedera
+
+- [#11355](https://github.com/LedgerHQ/ledger-live/pull/11355) [`0356d19`](https://github.com/LedgerHQ/ledger-live/commit/0356d1904dbb5e856970fa7e7ebb206eed7b4c5d) Thanks [@Moustafa-Koterba](https://github.com/Moustafa-Koterba)! - EVM dont call preload and hydrate when cal lazy loading is enabled
+
+### Patch Changes
+
+- Updated dependencies [[`87617a9`](https://github.com/LedgerHQ/ledger-live/commit/87617a9930be43a6cdbc5cc5711cc24b00309184), [`8936f39`](https://github.com/LedgerHQ/ledger-live/commit/8936f390edbe9cbc36ac6590b01562daf5c580e1)]:
+  - @ledgerhq/live-env@2.15.0-next.0
+
+## 13.26.0
+
+### Minor Changes
+
+- [#11291](https://github.com/LedgerHQ/ledger-live/pull/11291) [`1f1cbeb`](https://github.com/LedgerHQ/ledger-live/commit/1f1cbeb4485fb4b85b76ffe040c632d049f4e0c4) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - chore(ljs): rename BSC to BNB
+
+- [#10769](https://github.com/LedgerHQ/ledger-live/pull/10769) [`d41fc9c`](https://github.com/LedgerHQ/ledger-live/commit/d41fc9c458050ef1234c04af9642321c41cecda1) Thanks [@jccguimaraes](https://github.com/jccguimaraes)! - Add SUI tokens send and receive support
+
+- [#11334](https://github.com/LedgerHQ/ledger-live/pull/11334) [`67ec10b`](https://github.com/LedgerHQ/ledger-live/commit/67ec10b773b4a6b512a8a6485940fa0abd41c3ef) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLD - Leverage DADA to retrieve assets data for the MAD
+
+## 13.26.0-next.0
+
+### Minor Changes
+
+- [#11291](https://github.com/LedgerHQ/ledger-live/pull/11291) [`1f1cbeb`](https://github.com/LedgerHQ/ledger-live/commit/1f1cbeb4485fb4b85b76ffe040c632d049f4e0c4) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - chore(ljs): rename BSC to BNB
+
+- [#10769](https://github.com/LedgerHQ/ledger-live/pull/10769) [`d41fc9c`](https://github.com/LedgerHQ/ledger-live/commit/d41fc9c458050ef1234c04af9642321c41cecda1) Thanks [@jccguimaraes](https://github.com/jccguimaraes)! - Add SUI tokens send and receive support
+
+- [#11334](https://github.com/LedgerHQ/ledger-live/pull/11334) [`67ec10b`](https://github.com/LedgerHQ/ledger-live/commit/67ec10b773b4a6b512a8a6485940fa0abd41c3ef) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLD - Leverage DADA to retrieve assets data for the MAD
+
 ## 13.25.0
 
 ### Minor Changes

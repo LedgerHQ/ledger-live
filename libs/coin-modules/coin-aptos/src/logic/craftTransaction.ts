@@ -1,4 +1,4 @@
-import type { TransactionIntent } from "@ledgerhq/coin-framework/lib/api/types";
+import { CraftedTransaction, TransactionIntent } from "@ledgerhq/coin-framework/lib/api/types";
 import type { Account, TokenAccount } from "@ledgerhq/types-live";
 import type { AptosAPI } from "../network";
 import buildTransaction, { isTokenType } from "./buildTransaction";
@@ -10,7 +10,7 @@ import type { AptosBalance } from "../types";
 export async function craftTransaction(
   aptosClient: AptosAPI,
   transactionIntent: TransactionIntent,
-): Promise<string> {
+): Promise<CraftedTransaction> {
   const newTx = createTransaction();
   newTx.amount = BigNumber(transactionIntent.amount.toString());
   newTx.recipient = transactionIntent.recipient;
@@ -50,7 +50,7 @@ export async function craftTransaction(
     tokenType ?? undefined,
   );
 
-  return aptosTx.bcsToHex().toString();
+  return { transaction: aptosTx.bcsToHex().toString() };
 }
 
 function getContractAddress(txIntent: TransactionIntent): string {

@@ -24,8 +24,6 @@ export async function performSwapUntilQuoteSelectionStep(
   amount: string,
   continueToQuotes: boolean = true,
 ) {
-  await app.swapLiveApp.waitForSwapLiveApp();
-
   await selectCurrency(accountToDebit, true);
   await selectCurrency(accountToCredit, false);
   await app.swapLiveApp.inputAmount(amount);
@@ -34,22 +32,4 @@ export async function performSwapUntilQuoteSelectionStep(
     await app.swapLiveApp.tapGetQuotesButton();
     await app.swapLiveApp.waitForQuotes();
   }
-}
-
-export async function checkSwapInfosOnDeviceVerificationStep(
-  swap: SwapType,
-  selectedProvider: string,
-  amount: string,
-) {
-  const amountTo = await app.swap.getAmountToReceive();
-  const fees = await app.swap.getFees();
-
-  swap.setAmountToReceive(amountTo);
-  swap.setFeesAmount(fees);
-
-  await app.swap.verifyAmountToReceive(amountTo);
-  await app.swap.verifyAmountSent(amount.toString(), swap.accountToDebit.currency.ticker);
-  await app.swap.verifySourceAccount(swap.accountToDebit.currency.name);
-  await app.swap.verifyTargetCurrency(swap.accountToCredit.currency.name);
-  await app.swap.verifyProvider(selectedProvider);
 }

@@ -19,7 +19,7 @@ import { setEnv } from "@ledgerhq/live-env";
 import { fromAccountRaw } from "../../account";
 import { setSupportedCurrencies } from "../../currencies";
 import { setCryptoAssetsStore as setCryptoAssetsStoreForCoinFramework } from "@ledgerhq/coin-framework/crypto-assets/index";
-import { CryptoAssetsStore } from "@ledgerhq/coin-framework/crypto-assets/type";
+import type { CryptoAssetsStore } from "@ledgerhq/types-live";
 
 setSupportedCurrencies(["bitcoin"]);
 jest.setTimeout(10000);

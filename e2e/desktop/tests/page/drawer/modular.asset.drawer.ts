@@ -22,13 +22,12 @@ export class ModularAssetDrawer extends Drawer {
 
   @step("Validate modular asset drawer is visible")
   async isModularDrawerVisible(): Promise<boolean> {
-    await this.waitForDrawerToBeVisible();
     return await this.modularAssetSelectorContainer.isVisible();
   }
 
   @step("Validate asset drawer elements")
   async validateDrawerItems() {
-    await this.modularAssetSelectorContainer.waitFor();
+    await this.waitForDrawerToBeVisible();
     await this.searchInput.waitFor();
     await this.drawerCloseButton.waitFor();
     await this.assetListContainer.waitFor();

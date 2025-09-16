@@ -1,6 +1,5 @@
-import { LegacySignerEth } from "@ledgerhq/live-signer-evm";
 import { BigNumber } from "bignumber.js";
-import { ethers, providers } from "ethers";
+import { ethers } from "ethers";
 import { Account } from "@ledgerhq/types-live";
 import { getTokenById } from "@ledgerhq/cryptoassets/tokens";
 import { encodeTokenAccountId } from "@ledgerhq/coin-framework/account/index";
@@ -8,15 +7,11 @@ import { Scenario, ScenarioTransaction } from "@ledgerhq/coin-tester/main";
 import { killSpeculos, spawnSpeculos } from "@ledgerhq/coin-tester/signers/speculos";
 import { resetIndexer, indexBlocks, initMswHandlers, setBlock } from "../indexer";
 import { Transaction as EvmTransaction } from "@ledgerhq/coin-evm/types/transaction";
-import { buildAccountBridge, buildCurrencyBridge } from "@ledgerhq/coin-evm/bridge/js";
 import { getCoinConfig, setCoinConfig } from "@ledgerhq/coin-evm/config";
 import { makeAccount } from "@ledgerhq/coin-evm/__tests__/fixtures/common.fixtures";
-import { VITALIK, callMyDealer, sonic } from "../helpers";
+import { VITALIK, callMyDealer, getBridges, sonic } from "../helpers";
 import { defaultNanoApp } from "../scenarii.test";
 import { killAnvil, spawnAnvil } from "../anvil";
-import resolver from "@ledgerhq/coin-evm/hw-getAddress";
-import { getAlpacaCurrencyBridge } from "@ledgerhq/live-common/bridge/generic-alpaca/currencyBridge";
-import { getAlpacaAccountBridge } from "@ledgerhq/live-common/bridge/generic-alpaca/accountBridge";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 
 type SonicScenarioTransaction = ScenarioTransaction<EvmTransaction, Account>;
@@ -43,9 +38,7 @@ const makeScenarioTransactions = ({ address }: { address: string }): SonicScenar
 
   const scenarioSendUSDCTransaction: SonicScenarioTransaction = {
     name: "Send USDC",
-    amount: new BigNumber(
-      ethers.utils.parseUnits("80", USDC_ON_SONIC.units[0].magnitude).toString(),
-    ),
+    amount: new BigNumber(ethers.parseUnits("80", USDC_ON_SONIC.units[0].magnitude).toString()),
     recipient: VITALIK,
     subAccountId: encodeTokenAccountId(`js:2:sonic:${address}:`, USDC_ON_SONIC),
     expect: (previousAccount, currentAccount) => {
@@ -55,10 +48,10 @@ const makeScenarioTransactions = ({ address }: { address: string }): SonicScenar
       expect(latestOperation.value.toFixed()).toBe(latestOperation.fee.toFixed());
       expect(latestOperation.subOperations?.[0].type).toBe("OUT");
       expect(latestOperation.subOperations?.[0].value.toFixed()).toBe(
-        ethers.utils.parseUnits("80", USDC_ON_SONIC.units[0].magnitude).toString(),
+        ethers.parseUnits("80", USDC_ON_SONIC.units[0].magnitude).toString(),
       );
       expect(currentAccount.subAccounts?.[0].balance.toFixed()).toBe(
-        ethers.utils.parseUnits("20", USDC_ON_SONIC.units[0].magnitude).toString(),
+        ethers.parseUnits("20", USDC_ON_SONIC.units[0].magnitude).toString(),
       );
     },
   };
@@ -80,9 +73,6 @@ export const scenarioSonic: Scenario<EvmTransaction, Account> = {
       }),
       spawnAnvil("https://sonic-rpc.publicnode.com"),
     ]);
-
-    const signerContext: Parameters<typeof resolver>[0] = (_, fn) =>
-      fn(new LegacySignerEth(transport));
 
     setCoinConfig(() => ({
       info: {
@@ -123,15 +113,7 @@ export const scenarioSonic: Scenario<EvmTransaction, Account> = {
     initMswHandlers(getCoinConfig(sonic).info);
 
     const onSignerConfirmation = getOnSpeculosConfirmation();
-    const currencyBridge =
-      strategy === "legacy"
-        ? buildCurrencyBridge(signerContext)
-        : getAlpacaCurrencyBridge("sonic", "local");
-    const accountBridge =
-      strategy === "legacy"
-        ? buildAccountBridge(signerContext)
-        : getAlpacaAccountBridge("sonic", "local");
-    const getAddress = resolver(signerContext);
+    const { currencyBridge, accountBridge, getAddress } = getBridges(strategy, transport, "sonic");
     const { address } = await getAddress("", {
       path: "44'/60'/0'/0/0",
       currency: sonic,
@@ -140,7 +122,7 @@ export const scenarioSonic: Scenario<EvmTransaction, Account> = {
 
     const scenarioAccount = makeAccount(address, sonic);
 
-    const provider = new providers.StaticJsonRpcProvider("http://127.0.0.1:8545");
+    const provider = new ethers.JsonRpcProvider("http://127.0.0.1:8545");
 
     const lastBlockNumber = await provider.getBlockNumber();
     // start indexing at next block
@@ -151,7 +133,7 @@ export const scenarioSonic: Scenario<EvmTransaction, Account> = {
       provider,
       drug: USDC_ON_SONIC,
       junkie: address,
-      dose: ethers.utils.parseUnits("100", USDC_ON_SONIC.units[0].magnitude),
+      dose: ethers.parseUnits("100", USDC_ON_SONIC.units[0].magnitude),
     });
 
     return {
@@ -162,10 +144,10 @@ export const scenarioSonic: Scenario<EvmTransaction, Account> = {
     };
   },
   beforeAll: account => {
-    expect(account.balance.toFixed()).toBe(ethers.utils.parseEther("10000").toString());
+    expect(account.balance.toFixed()).toBe(ethers.parseEther("10000").toString());
     expect(account.subAccounts?.[0].type).toBe("TokenAccount");
     expect(account.subAccounts?.[0].balance.toFixed()).toBe(
-      ethers.utils.parseUnits("100", USDC_ON_SONIC.units[0].magnitude).toString(),
+      ethers.parseUnits("100", USDC_ON_SONIC.units[0].magnitude).toString(),
     );
   },
   getTransactions: address => makeScenarioTransactions({ address }),
@@ -175,7 +157,7 @@ export const scenarioSonic: Scenario<EvmTransaction, Account> = {
   afterAll: account => {
     expect(account.subAccounts?.length).toBe(1);
     expect(account.subAccounts?.[0].balance.toFixed()).toBe(
-      ethers.utils.parseUnits("20", USDC_ON_SONIC.units[0].magnitude).toString(),
+      ethers.parseUnits("20", USDC_ON_SONIC.units[0].magnitude).toString(),
     );
     // expect(account.operations.length).toBe(3);
   },

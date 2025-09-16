@@ -6,14 +6,18 @@ on:
   workflow_dispatch:
     inputs:
       currencies:
-        description: Currencies to monitor, separated with commas (,)
+        description: Currencies to monitor, separated with commas (,), or "all" (default)
         required: false
 
 jobs:
   run-monitoring:
-    runs-on: [ledger-live-medium]
+    runs-on: [ledger-live-4xlarge]
     steps:
       - uses: actions/checkout@v4
+      - name: Setup the toolchain
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        with:
+          install-proto: true
       - uses: LedgerHQ/ledger-live/tools/actions/composites/monitor@develop
         id: monitoring
         timeout-minutes: 120

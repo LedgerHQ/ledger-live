@@ -1,5 +1,45 @@
 # @ledgerhq/hw-app-canton
 
+## 0.3.0
+
+### Minor Changes
+
+- [#11481](https://github.com/LedgerHQ/ledger-live/pull/11481) [`d571ef1`](https://github.com/LedgerHQ/ledger-live/commit/d571ef1104092e41de4dfb6dd9b26d27348b82cf) Thanks [@sprohaszka-ledger](https://github.com/sprohaszka-ledger)! - Add integration tests and communicate with a real transport implementation
+
+### Patch Changes
+
+- Updated dependencies [[`12277dc`](https://github.com/LedgerHQ/ledger-live/commit/12277dcb478f24152060e3e11e2eb37d650b5b60), [`212f772`](https://github.com/LedgerHQ/ledger-live/commit/212f772b17dc3db97009ebe62912f8f183c1ef2e), [`8936f39`](https://github.com/LedgerHQ/ledger-live/commit/8936f390edbe9cbc36ac6590b01562daf5c580e1)]:
+  - @ledgerhq/coin-canton@0.4.0
+  - @ledgerhq/errors@6.25.0
+  - @ledgerhq/hw-transport@6.31.10
+
+## 0.3.0-next.0
+
+### Minor Changes
+
+- [#11481](https://github.com/LedgerHQ/ledger-live/pull/11481) [`d571ef1`](https://github.com/LedgerHQ/ledger-live/commit/d571ef1104092e41de4dfb6dd9b26d27348b82cf) Thanks [@sprohaszka-ledger](https://github.com/sprohaszka-ledger)! - Add integration tests and communicate with a real transport implementation
+
+### Patch Changes
+
+- Updated dependencies [[`12277dc`](https://github.com/LedgerHQ/ledger-live/commit/12277dcb478f24152060e3e11e2eb37d650b5b60), [`212f772`](https://github.com/LedgerHQ/ledger-live/commit/212f772b17dc3db97009ebe62912f8f183c1ef2e), [`8936f39`](https://github.com/LedgerHQ/ledger-live/commit/8936f390edbe9cbc36ac6590b01562daf5c580e1)]:
+  - @ledgerhq/coin-canton@0.4.0-next.0
+  - @ledgerhq/errors@6.25.0-next.0
+  - @ledgerhq/hw-transport@6.31.10-next.0
+
+## 0.2.2
+
+### Patch Changes
+
+- Updated dependencies [[`80f8f1e`](https://github.com/LedgerHQ/ledger-live/commit/80f8f1eaef8a7bc84ba5441790296dec6cbfa199)]:
+  - @ledgerhq/coin-canton@0.3.0
+
+## 0.2.2-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`80f8f1e`](https://github.com/LedgerHQ/ledger-live/commit/80f8f1eaef8a7bc84ba5441790296dec6cbfa199)]:
+  - @ledgerhq/coin-canton@0.3.0-next.0
+
 ## 0.2.1
 
 ### Patch Changes

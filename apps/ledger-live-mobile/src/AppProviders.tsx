@@ -1,22 +1,18 @@
+import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
+import { useLdmkFeatureFlagInitiallyEnabled } from "@ledgerhq/live-common/hooks/useLdmkFeatureFlagInitiallyEnabled";
+import { CounterValuesStateRaw } from "@ledgerhq/live-countervalues/types";
+import { DeviceManagementKitProvider } from "@ledgerhq/live-dmk-mobile";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { InViewProvider } from "LLM/contexts/InViewContext";
+import { ModularDrawerProvider } from "LLM/features/ModularDrawer";
+import { WalletSyncProvider } from "LLM/features/WalletSync/components/WalletSyncContext";
 import React from "react";
-import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
-import { NftMetadataProvider } from "@ledgerhq/live-nft-react";
-import { getCurrencyBridge } from "@ledgerhq/live-common/bridge/index";
 import { BridgeSyncProvider } from "~/bridge/BridgeSyncContext";
-import { OnboardingContextProvider } from "~/screens/Onboarding/onboardingContext";
 import { CountervaluesMarketcapBridgedProvider } from "~/components/CountervaluesMarketcapProvider";
 import { CountervaluesBridgedProvider } from "~/components/CountervaluesProvider";
+import PostOnboardingProviderWrapped from "~/logic/postOnboarding/PostOnboardingProviderWrapped";
 import NotificationsProvider from "~/screens/NotificationCenter/NotificationsProvider";
 import SnackbarContainer from "~/screens/NotificationCenter/Snackbar/SnackbarContainer";
-import PostOnboardingProviderWrapped from "~/logic/postOnboarding/PostOnboardingProviderWrapped";
-import { CounterValuesStateRaw } from "@ledgerhq/live-countervalues/types";
-import { InViewContextProvider } from "LLM/contexts/InViewContext";
-import { WalletSyncProvider } from "LLM/features/WalletSync/components/WalletSyncContext";
-import { ModularDrawerProvider } from "LLM/features/ModularDrawer";
-import { AppDataStorageProvider } from "~/hooks/storageProvider/useAppDataStorage";
-import { DeviceManagementKitProvider } from "@ledgerhq/live-dmk-mobile";
-import { useLdmkFeatureFlagInitiallyEnabled } from "@ledgerhq/live-common/hooks/useLdmkFeatureFlagInitiallyEnabled";
-import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 
 type AppProvidersProps = {
   initialCountervalues?: CounterValuesStateRaw;
@@ -36,20 +32,14 @@ function AppProviders({ initialCountervalues, children }: AppProvidersProps) {
             <CountervaluesMarketcapBridgedProvider>
               <CountervaluesBridgedProvider initialState={initialCountervalues}>
                 <BottomSheetModalProvider>
-                  <AppDataStorageProvider>
-                    <OnboardingContextProvider>
-                      <PostOnboardingProviderWrapped>
-                        <NotificationsProvider>
-                          <SnackbarContainer />
-                          <NftMetadataProvider getCurrencyBridge={getCurrencyBridge}>
-                            <InViewContextProvider>
-                              <ModularDrawerProvider>{children}</ModularDrawerProvider>
-                            </InViewContextProvider>
-                          </NftMetadataProvider>
-                        </NotificationsProvider>
-                      </PostOnboardingProviderWrapped>
-                    </OnboardingContextProvider>
-                  </AppDataStorageProvider>
+                  <PostOnboardingProviderWrapped>
+                    <NotificationsProvider>
+                      <SnackbarContainer />
+                      <InViewProvider>
+                        <ModularDrawerProvider>{children}</ModularDrawerProvider>
+                      </InViewProvider>
+                    </NotificationsProvider>
+                  </PostOnboardingProviderWrapped>
                 </BottomSheetModalProvider>
               </CountervaluesBridgedProvider>
             </CountervaluesMarketcapBridgedProvider>

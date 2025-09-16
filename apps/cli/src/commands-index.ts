@@ -53,7 +53,6 @@ import speculosList from "./commands/device/speculosList";
 import balanceHistory from "./commands/live/balanceHistory";
 import countervalues from "./commands/live/countervalues";
 import envs from "./commands/live/envs";
-import exportAccounts from "./commands/live/exportAccounts";
 import ledgerKeyRingProtocol from "./commands/live/ledgerKeyRingProtocol";
 import ledgerSync from "./commands/live/ledgerSync";
 import liveData from "./commands/live/liveData";
@@ -119,7 +118,6 @@ export default {
   balanceHistory,
   countervalues,
   envs,
-  exportAccounts,
   ledgerKeyRingProtocol,
   ledgerSync,
   liveData,

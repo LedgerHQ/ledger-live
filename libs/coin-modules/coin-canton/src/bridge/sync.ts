@@ -1,105 +1,132 @@
 import BigNumber from "bignumber.js";
-import { Operation } from "@ledgerhq/types-live";
-import { encodeAccountId } from "@ledgerhq/coin-framework/account/index";
+import { Operation, OperationType } from "@ledgerhq/types-live";
+import { decodeAccountId, encodeAccountId } from "@ledgerhq/coin-framework/account/index";
 import { GetAccountShape, mergeOps } from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import { getTransactions } from "../network/indexer";
-import { getAccountInfo, getBlockHeight } from "../network/node";
-
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
-import { BoilerplateOperation } from "../network/types";
+import { getBalance, getLedgerEnd, getOperations, type OperationInfo } from "../network/gateway";
+import { CantonAccount } from "../types";
 import coinConfig from "../config";
 
-const operationAdapter =
-  (accountId: string, address: string) =>
-  ({
-    meta: { delivered_amount },
-    tx: { Fee, hash, inLedger, date, Account, Destination, Sequence },
-  }: BoilerplateOperation) => {
-    const type = Account === address ? "OUT" : "IN";
-    let value =
-      delivered_amount && typeof delivered_amount === "string"
-        ? new BigNumber(delivered_amount)
-        : new BigNumber(0);
-    const feeValue = new BigNumber(Fee);
-
-    if (type === "OUT") {
-      if (!Number.isNaN(feeValue)) {
-        value = value.plus(feeValue);
-      }
+const txInfoToOperationAdapter =
+  (accountId: string, partyId: string) =>
+  (txInfo: OperationInfo): Operation => {
+    const {
+      transaction_hash,
+      uid,
+      block: { height, hash },
+      senders,
+      recipients,
+      transaction_timestamp,
+      fee: { value: fee },
+      transfers: [{ value: transferValue, details }],
+    } = txInfo;
+    let type: OperationType = "UNKNOWN";
+    if (txInfo.type === "Send") {
+      type = senders.includes(partyId) ? "OUT" : "IN";
+    } else if (txInfo.type === "Receive") {
+      type = "IN";
     }
+    const value = new BigNumber(transferValue);
+    const feeValue = new BigNumber(fee);
+    const memo = details.metadata.reason;
 
     const op: Operation = {
-      id: encodeOperationId(accountId, hash, type),
-      hash: hash,
+      id: encodeOperationId(accountId, transaction_hash, type),
+      hash: transaction_hash,
       accountId,
       type,
       value,
       fee: feeValue,
-      blockHash: null,
-      blockHeight: inLedger,
-      senders: [Account],
-      recipients: [Destination],
-      date: new Date(),
-      transactionSequenceNumber: Sequence,
-      extra: {},
+      blockHash: hash,
+      blockHeight: height,
+      senders,
+      recipients,
+      date: new Date(transaction_timestamp),
+      transactionSequenceNumber: height,
+      extra: {
+        uid,
+        memo,
+      },
     };
 
     return op;
   };
 
 const filterOperations = (
-  transactions: BoilerplateOperation[],
+  transactions: OperationInfo[],
   accountId: string,
-  address: string,
-) => {
-  return transactions
-    .filter(
-      ({ tx, meta }: BoilerplateOperation) =>
-        tx.TransactionType === "Payment" && typeof meta.delivered_amount === "string",
-    )
-    .map(operationAdapter(accountId, address))
-    .filter((op): op is Operation => Boolean(op));
+  partyId: string,
+): Operation[] => {
+  return transactions.map(txInfoToOperationAdapter(accountId, partyId));
 };
 
-export const getAccountShape: GetAccountShape = async info => {
-  const { address, initialAccount, currency, derivationMode } = info;
+export const getAccountShape: GetAccountShape<CantonAccount> = async info => {
+  const { address, initialAccount, currency, derivationMode, derivationPath, rest } = info;
+
+  const xpubOrAddress = (
+    (initialAccount && initialAccount.id && decodeAccountId(initialAccount.id).xpubOrAddress) ||
+    ""
+  ).replace(/:/g, "_");
+  const partyId =
+    rest?.cantonResources?.partyId ||
+    initialAccount?.cantonResources?.partyId ||
+    xpubOrAddress.replace(/_/g, ":");
 
   const accountId = encodeAccountId({
     type: "js",
     version: "2",
     currencyId: currency.id,
-    xpubOrAddress: address,
+    xpubOrAddress,
     derivationMode,
   });
 
-  // blockheight retrieval
-  const blockHeight = await getBlockHeight();
-
   // Account info retrieval + spendable balance calculation
-  const accountInfo = await getAccountInfo(address);
-  const balance = new BigNumber(accountInfo.account_data.Balance);
-  const reserveMin = coinConfig.getCoinConfig().minReserve;
-  const spendableBalance = new BigNumber(accountInfo.account_data.Balance).minus(reserveMin);
+  // const accountInfo = await getAccountInfo(address);
+  const balances = await getBalance(currency, partyId);
 
-  // Tx history fetching
-  const oldOperations = initialAccount?.operations || [];
-  const startAt = oldOperations.length ? (oldOperations[0].blockHeight || 0) + 1 : 0;
-  const newTransactions = await getTransactions(address, {
-    from: startAt,
-    size: 100,
-  });
-  const newOperations = filterOperations(newTransactions, accountId, address);
-  const operations = mergeOps(oldOperations, newOperations as Operation[]);
+  const balanceData = balances.find(balance => balance.instrument_id === "Amulet") || {
+    instrument_id: "Amulet",
+    amount: 0,
+    locked: false,
+  };
 
+  const balance = new BigNumber(balanceData.amount);
+  const reserveMin = coinConfig.getCoinConfig(currency).minReserve || 0;
+  const lockedAmount = balanceData.locked ? balance : new BigNumber(0);
+  const spendableBalance = BigNumber.max(
+    0,
+    balance.minus(lockedAmount).minus(BigNumber(reserveMin)),
+  );
+
+  let operations: Operation[] = [];
+  // Tx history fetching if xpubOrAddress is not empty
+  if (xpubOrAddress) {
+    const oldOperations = initialAccount?.operations || [];
+    const startAt = oldOperations.length ? (oldOperations[0].blockHeight || 0) + 1 : 0;
+    const transactionData = await getOperations(currency, partyId, {
+      cursor: startAt,
+      limit: 100,
+    });
+
+    const newOperations = filterOperations(transactionData.operations, accountId, partyId);
+    operations = mergeOps(oldOperations, newOperations);
+  }
+  // blockheight retrieval
+  const blockHeight = await getLedgerEnd(currency);
   // We return the new account shape
   const shape = {
     id: accountId,
-    xpub: address,
+    xpub: xpubOrAddress,
     blockHeight,
     balance,
     spendableBalance,
     operations,
     operationsCount: operations.length,
+    freshAddress: address,
+    freshAddressPath: derivationPath,
+    cantonResources: {
+      partyId,
+    },
   };
 
   return shape;

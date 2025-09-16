@@ -1,9 +1,10 @@
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
-import { XrpSigner } from "@ledgerhq/coin-xrp/index";
-import { SignTransactionOptions } from "./types";
 import { StellarSigner } from "@ledgerhq/coin-stellar/types/signer";
+import { LegacySigner, SignTransactionOptions } from "./types";
 
-export const signTransaction = (signerContext: SignerContext<XrpSigner>) => {
+export const signTransaction = <Signer extends LegacySigner>(
+  signerContext: SignerContext<Signer>,
+) => {
   return async (deviceId: string, { path, rawTxHex }: SignTransactionOptions) => {
     const signedTx = await signerContext(deviceId, signer =>
       signer.signTransaction(path, rawTxHex),

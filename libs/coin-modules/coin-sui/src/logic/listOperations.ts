@@ -1,10 +1,10 @@
 import { Operation, Pagination } from "@ledgerhq/coin-framework/lib/api/types";
-import { getListOperations } from "../network/sdk";
+import { getListOperations, withApi } from "../network/sdk";
 
 export const listOperations = async (
   address: string,
-  { cursor }: Pagination & { cursor?: string },
+  { lastPagingToken, order }: Pagination,
 ): Promise<[Operation[], string]> => {
-  const ops = await getListOperations(address, cursor);
-  return [ops, ops.length ? ops[0].tx.hash : ""];
+  const ops = await getListOperations(address, order ?? "asc", withApi, lastPagingToken);
+  return [ops.items, ops.next || ""];
 };

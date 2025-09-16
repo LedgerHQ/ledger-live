@@ -60,7 +60,7 @@ const TeamLink = ({ team, teamLink }: TeamLinkProps) => {
   );
 };
 
-export function AccountSubHeaderDrawer({ isOpen, closeDrawer, family, team, teamLink }: Props) {
+function AccountSubHeaderDrawer({ isOpen, closeDrawer, family, team, teamLink }: Props) {
   const { t } = useTranslation();
   return (
     <SideDrawer

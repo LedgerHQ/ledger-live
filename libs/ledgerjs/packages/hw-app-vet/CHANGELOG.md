@@ -1,5 +1,39 @@
 # @ledgerhq/hw-app-vet
 
+## 0.5.15
+
+### Patch Changes
+
+- Updated dependencies [[`12277dc`](https://github.com/LedgerHQ/ledger-live/commit/12277dcb478f24152060e3e11e2eb37d650b5b60), [`8936f39`](https://github.com/LedgerHQ/ledger-live/commit/8936f390edbe9cbc36ac6590b01562daf5c580e1), [`0356d19`](https://github.com/LedgerHQ/ledger-live/commit/0356d1904dbb5e856970fa7e7ebb206eed7b4c5d)]:
+  - @ledgerhq/cryptoassets@13.27.0
+  - @ledgerhq/errors@6.25.0
+  - @ledgerhq/hw-transport@6.31.10
+  - @ledgerhq/hw-transport-mocker@6.29.10
+
+## 0.5.15-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`12277dc`](https://github.com/LedgerHQ/ledger-live/commit/12277dcb478f24152060e3e11e2eb37d650b5b60), [`8936f39`](https://github.com/LedgerHQ/ledger-live/commit/8936f390edbe9cbc36ac6590b01562daf5c580e1), [`0356d19`](https://github.com/LedgerHQ/ledger-live/commit/0356d1904dbb5e856970fa7e7ebb206eed7b4c5d)]:
+  - @ledgerhq/cryptoassets@13.27.0-next.0
+  - @ledgerhq/errors@6.25.0-next.0
+  - @ledgerhq/hw-transport@6.31.10-next.0
+  - @ledgerhq/hw-transport-mocker@6.29.10-next.0
+
+## 0.5.14
+
+### Patch Changes
+
+- Updated dependencies [[`1f1cbeb`](https://github.com/LedgerHQ/ledger-live/commit/1f1cbeb4485fb4b85b76ffe040c632d049f4e0c4), [`d41fc9c`](https://github.com/LedgerHQ/ledger-live/commit/d41fc9c458050ef1234c04af9642321c41cecda1), [`67ec10b`](https://github.com/LedgerHQ/ledger-live/commit/67ec10b773b4a6b512a8a6485940fa0abd41c3ef)]:
+  - @ledgerhq/cryptoassets@13.26.0
+
+## 0.5.14-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`1f1cbeb`](https://github.com/LedgerHQ/ledger-live/commit/1f1cbeb4485fb4b85b76ffe040c632d049f4e0c4), [`d41fc9c`](https://github.com/LedgerHQ/ledger-live/commit/d41fc9c458050ef1234c04af9642321c41cecda1), [`67ec10b`](https://github.com/LedgerHQ/ledger-live/commit/67ec10b773b4a6b512a8a6485940fa0abd41c3ef)]:
+  - @ledgerhq/cryptoassets@13.26.0-next.0
+
 ## 0.5.13
 
 ### Patch Changes

@@ -43,7 +43,8 @@ import {
   useModularDrawerController,
   useModularDrawerVisibility,
 } from "LLM/features/ModularDrawer";
-import { OpenModularDrawerFunction } from "LLM/features/ModularDrawer/types";
+import { OpenDrawer } from "LLM/features/ModularDrawer/types";
+import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 
 export function useWebView(
   {
@@ -97,6 +98,7 @@ export function useWebView(
   const uiHook = useUiHook({
     isModularDrawerVisible: modularDrawerVisible,
     openModularDrawer,
+    manifest,
   });
   const trackingEnabled = useSelector(trackingEnabledSelector);
   const userId = useGetUserId();
@@ -387,23 +389,44 @@ export function useWebviewState(
 
 export interface Props {
   isModularDrawerVisible: boolean;
-  openModularDrawer?: OpenModularDrawerFunction;
+  openModularDrawer?: OpenDrawer;
+  manifest: LiveAppManifest;
 }
 
-function useUiHook({ isModularDrawerVisible, openModularDrawer }: Props): UiHook {
+function useUiHook({ isModularDrawerVisible, openModularDrawer, manifest }: Props): UiHook {
   const navigation = useNavigation();
   const [device, setDevice] = useState<Device>();
 
+  const source =
+    currentRouteNameRef.current === "Platform Catalog"
+      ? "Discover"
+      : currentRouteNameRef.current ?? "Unknown";
+
+  const flow = manifest.name;
+
   return useMemo(
     () => ({
-      "account.request": ({ accounts$, currencies, onSuccess, onCancel }) => {
+      "account.request": ({
+        accounts$,
+        currencies,
+        onSuccess,
+        onCancel,
+        areCurrenciesFiltered,
+        useCase,
+        drawerConfiguration,
+      }) => {
         if (isModularDrawerVisible) {
           openModularDrawer?.({
-            currencies,
+            source: source,
+            flow: flow,
             enableAccountSelection: true,
             onAccountSelected: (account: AccountLike, parentAccount?: Account | undefined) =>
               onSuccess(account, parentAccount),
             accounts$,
+            currencies: areCurrenciesFiltered && !useCase ? currencies.map(c => c.id) : undefined,
+            areCurrenciesFiltered,
+            useCase,
+            ...drawerConfiguration,
           });
         } else {
           if (currencies.length === 1) {
@@ -566,7 +589,7 @@ function useUiHook({ isModularDrawerVisible, openModularDrawer }: Props): UiHook
         });
       },
     }),
-    [isModularDrawerVisible, openModularDrawer, navigation, device],
+    [isModularDrawerVisible, openModularDrawer, source, flow, navigation, device],
   );
 }
 

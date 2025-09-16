@@ -25,7 +25,7 @@ export const getTransactionStatus: AccountBridge<
   const warnings: Record<string, Error> = {};
 
   // reserveAmount is the minimum amount of currency that an account must hold in order to stay activated
-  const reserveAmount = new BigNumber(coinConfig.getCoinConfig().minReserve);
+  const reserveAmount = new BigNumber(coinConfig.getCoinConfig(account.currency).minReserve || 0);
   const estimatedFees = new BigNumber(transaction.fee || 0);
   const totalSpent = new BigNumber(transaction.amount).plus(estimatedFees);
   const amount = new BigNumber(transaction.amount);

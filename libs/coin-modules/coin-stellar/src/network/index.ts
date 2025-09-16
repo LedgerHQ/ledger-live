@@ -10,7 +10,4 @@ export {
   getLastBlock,
   getRecipientAccount,
   loadAccount,
-  BASE_RESERVE,
-  BASE_RESERVE_MIN_COUNT,
-  MIN_BALANCE,
 } from "./horizon";

@@ -1,7 +1,6 @@
-import React, { useCallback, useState, useMemo } from "react";
+import React, { useCallback, useState } from "react";
 import { Flex, Text, Button } from "@ledgerhq/native-ui";
 import { useModularDrawerController } from "../hooks/useModularDrawerController";
-import { listAndFilterCurrencies } from "@ledgerhq/live-common/platform/helpers";
 import FeatureFlagDetails from "~/screens/FeatureFlagsSettings/FeatureFlagDetails";
 import { ScrollView } from "react-native-gesture-handler";
 import { Alert } from "react-native";
@@ -14,14 +13,20 @@ import {
   networkRightOptions,
 } from "./const/configurationOptions";
 import { AssetConfiguration, NetworkConfiguration } from "./types";
+import {
+  assetsLeftElementOptions,
+  assetsRightElementOptions,
+  networksLeftElementOptions,
+  networksRightElementOptions,
+} from "@ledgerhq/live-common/wallet-api/ModularDrawer/types";
+import { getElement, makeOnValueChange } from "./utils";
 
 function ModularDrawerScreenDebug() {
   const { openDrawer } = useModularDrawerController();
   const { colors } = useTheme();
 
-  const [includeTokens, setIncludeTokens] = useState(true);
   const [enableAccountSelection, setEnableAccountSelection] = useState(true);
-  const [enableOnAccountSelected, setEnableOnAccountSelected] = useState(false);
+  const [enableOnAccountSelected, setEnableOnAccountSelected] = useState(true);
   const [isFocused, setIsFocused] = useState(false);
   const [selectedAssetLeftElement, setSelectedAssetLeftElement] =
     useState<AssetConfiguration["leftElement"]>("undefined");
@@ -32,36 +37,28 @@ function ModularDrawerScreenDebug() {
   const [selectedNetworkRightElement, setSelectedNetworkRightElement] =
     useState<NetworkConfiguration["rightElement"]>("undefined");
 
-  const currencies = useMemo(() => listAndFilterCurrencies({ includeTokens }), [includeTokens]);
-
   const handleAccountSelected = useCallback(() => {
     Alert.alert("Account Selected", "An account has been selected via MAD flow");
   }, []);
 
   const handleToggleDrawer = useCallback(() => {
     openDrawer({
-      currencies,
       enableAccountSelection,
       onAccountSelected: enableOnAccountSelected ? handleAccountSelected : undefined,
       flow: "debug_flow",
       source: "debug_source",
       assetsConfiguration: {
-        leftElement:
-          selectedAssetLeftElement === "undefined" ? undefined : selectedAssetLeftElement,
-        rightElement:
-          selectedAssetRightElement === "undefined" ? undefined : selectedAssetRightElement,
+        leftElement: getElement(selectedAssetLeftElement),
+        rightElement: getElement(selectedAssetRightElement),
       },
       networksConfiguration: {
-        leftElement:
-          selectedNetworkLeftElement === "undefined" ? undefined : selectedNetworkLeftElement,
-        rightElement:
-          selectedNetworkRightElement === "undefined" ? undefined : selectedNetworkRightElement,
+        leftElement: getElement(selectedNetworkLeftElement),
+        rightElement: getElement(selectedNetworkRightElement),
       },
     });
   }, [
     openDrawer,
     handleAccountSelected,
-    currencies,
     enableAccountSelection,
     enableOnAccountSelected,
     selectedAssetLeftElement,
@@ -85,24 +82,17 @@ function ModularDrawerScreenDebug() {
         </SectionCard>
 
         <SectionCard title="Feature Flag">
-          <FeatureFlagDetails
-            key={"llmModularDrawer"}
-            focused={isFocused}
-            flagName={"llmModularDrawer"}
-            setFocusedName={v => setIsFocused(v === "llmModularDrawer")}
-          />
+          {(["llmModularDrawer"] as const).map(flag => (
+            <FeatureFlagDetails
+              key={flag}
+              focused={isFocused}
+              flagName={flag}
+              setFocusedName={v => setIsFocused(v === flag)}
+            />
+          ))}
         </SectionCard>
 
         <SectionCard title="Basic Configuration">
-          <ToggleRow
-            label="Include Tokens"
-            description="Show tokens alongside main currencies"
-            value={includeTokens}
-            onChange={setIncludeTokens}
-          />
-
-          <Divider />
-
           <ToggleRow
             label="Add Account / Account Selection"
             description="Allow users to add an account or select specific accounts"
@@ -125,11 +115,7 @@ function ModularDrawerScreenDebug() {
             label="Left Element"
             description="Choose what to display on the left side of asset rows"
             value={selectedAssetLeftElement || "undefined"}
-            onValueChange={(value: string) => {
-              if (value === "undefined" || value === "apy" || value === "priceVariation") {
-                setSelectedAssetLeftElement(value);
-              }
-            }}
+            onValueChange={makeOnValueChange(assetsLeftElementOptions, setSelectedAssetLeftElement)}
             options={assetLeftOptions}
           />
 
@@ -137,11 +123,10 @@ function ModularDrawerScreenDebug() {
             label="Right Element"
             description="Choose what to display on the right side of asset rows"
             value={selectedAssetRightElement || "undefined"}
-            onValueChange={(value: string) => {
-              if (value === "undefined" || value === "balance" || value === "marketTrend") {
-                setSelectedAssetRightElement(value);
-              }
-            }}
+            onValueChange={makeOnValueChange(
+              assetsRightElementOptions,
+              setSelectedAssetRightElement,
+            )}
             options={assetRightOptions}
           />
         </SectionCard>
@@ -151,15 +136,10 @@ function ModularDrawerScreenDebug() {
             label="Left Element"
             description="Choose what to display on the left side of network rows"
             value={selectedNetworkLeftElement || "undefined"}
-            onValueChange={(value: string) => {
-              if (
-                value === "undefined" ||
-                value === "numberOfAccounts" ||
-                value === "numberOfAccountsAndApy"
-              ) {
-                setSelectedNetworkLeftElement(value);
-              }
-            }}
+            onValueChange={makeOnValueChange(
+              networksLeftElementOptions,
+              setSelectedNetworkLeftElement,
+            )}
             options={networkLeftOptions}
           />
 
@@ -167,21 +147,16 @@ function ModularDrawerScreenDebug() {
             label="Right Element"
             description="Choose what to display on the right side of network rows"
             value={selectedNetworkRightElement || "undefined"}
-            onValueChange={(value: string) => {
-              if (value === "undefined" || value === "balance") {
-                setSelectedNetworkRightElement(value);
-              }
-            }}
+            onValueChange={makeOnValueChange(
+              networksRightElementOptions,
+              setSelectedNetworkRightElement,
+            )}
             options={networkRightOptions}
           />
         </SectionCard>
 
         <SectionCard title="Current Configuration">
           <Flex rowGap={2}>
-            <Text variant="body" color="neutral.c80">
-              <Text fontWeight="semiBold">{"Currencies:"}</Text> {currencies.length}
-              {includeTokens ? " (including tokens)" : " (excluding tokens)"}
-            </Text>
             <Text variant="body" color="neutral.c80">
               <Text fontWeight="semiBold">{"Account Selection:"}</Text>
               {enableAccountSelection ? " Enabled" : " Disabled"}
@@ -208,7 +183,7 @@ function ModularDrawerScreenDebug() {
         }}
       >
         <Button size="large" type="main" onPress={handleToggleDrawer}>
-          {"Open Modular Drawer "}({currencies.length} {"currencies"})
+          {"Open Modular Drawer"}
         </Button>
       </Flex>
     </Flex>

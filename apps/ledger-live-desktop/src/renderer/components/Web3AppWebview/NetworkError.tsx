@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, Flex, Icon, Link, Text } from "@ledgerhq/react-ui";
+import { Button, Flex, Icon, Icons, Link, Text } from "@ledgerhq/react-ui";
 import { useTranslation } from "react-i18next";
 import ErrorNoBorder from "~/renderer/icons/ErrorNoBorder";
 import { openURL } from "~/renderer/linking";
@@ -7,7 +7,29 @@ import ExportLogsButton from "~/renderer/components/ExportLogsButton";
 import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
 import { urls } from "~/config/urls";
 
-export const NetworkErrorScreen = ({ refresh }: { refresh: () => void }) => {
+function WarningIcon() {
+  return (
+    <Flex
+      alignItems="center"
+      justifyContent="center"
+      width={72}
+      height={72}
+      borderRadius={100}
+      mb={4}
+      backgroundColor="palette.opacityDefault.c05"
+    >
+      <Icons.Warning size="L" color="palette.warning.c70" />
+    </Flex>
+  );
+}
+
+export const NetworkErrorScreen = ({
+  refresh,
+  type = "error",
+}: {
+  refresh: () => void;
+  type?: "warning" | "error";
+}) => {
   const { t } = useTranslation();
 
   const urlContactSupportWebview = useLocalizedUrl(urls.contactSupportWebview);
@@ -16,7 +38,7 @@ export const NetworkErrorScreen = ({ refresh }: { refresh: () => void }) => {
 
   return (
     <Flex alignItems="center" justifyContent="center" flexGrow={1} flexDirection="column">
-      <ErrorNoBorder size={64} />
+      {type === "warning" ? <WarningIcon /> : <ErrorNoBorder size={64} />}
       <Text
         variant="h4Inter"
         marginTop="16px"

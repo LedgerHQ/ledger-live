@@ -6,6 +6,10 @@ import { encodeAccountId } from "@ledgerhq/coin-framework/account/accountId";
 import BigNumber from "bignumber.js";
 
 describe("Coin Modules Monitoring", () => {
+  beforeAll(() => {
+    global.console = require("console");
+  });
+
   afterAll(() => {
     jest.resetAllMocks();
   });
@@ -51,44 +55,47 @@ describe("Coin Modules Monitoring", () => {
 
       const logs = await run(["solana"]);
 
-      expect(logs).toEqual([
-        {
-          duration: 50,
-          currencyName: "solana",
-          coinModuleName: "solana",
-          operationType: "scan",
-          accountType: "average",
-          transactions: 500,
-          accountAddressOrXpub: "Hj69wRzkrFuf1Nby4yzPEFHdsmQdMoVYjvDKZSLjZFEp",
-        },
-        {
-          duration: 25,
-          currencyName: "solana",
-          coinModuleName: "solana",
-          operationType: "sync",
-          accountType: "average",
-          transactions: 500,
-          accountAddressOrXpub: "Hj69wRzkrFuf1Nby4yzPEFHdsmQdMoVYjvDKZSLjZFEp",
-        },
-        {
-          duration: 20,
-          currencyName: "solana",
-          coinModuleName: "solana",
-          operationType: "scan",
-          accountType: "pristine",
-          transactions: 0,
-          accountAddressOrXpub: "Hbac8tM3SMbua9ZBqPRbEJ2n3FtikRJc7wFmZzpqbtBv",
-        },
-        {
-          duration: 10,
-          currencyName: "solana",
-          coinModuleName: "solana",
-          operationType: "sync",
-          accountType: "pristine",
-          transactions: 0,
-          accountAddressOrXpub: "Hbac8tM3SMbua9ZBqPRbEJ2n3FtikRJc7wFmZzpqbtBv",
-        },
-      ]);
+      expect(logs).toEqual({
+        entries: [
+          {
+            duration: 50,
+            currencyName: "solana",
+            coinModuleName: "solana",
+            operationType: "scan",
+            accountType: "average",
+            transactions: 500,
+            accountAddressOrXpub: "Hj69wRzkrFuf1Nby4yzPEFHdsmQdMoVYjvDKZSLjZFEp",
+          },
+          {
+            duration: 25,
+            currencyName: "solana",
+            coinModuleName: "solana",
+            operationType: "sync",
+            accountType: "average",
+            transactions: 500,
+            accountAddressOrXpub: "Hj69wRzkrFuf1Nby4yzPEFHdsmQdMoVYjvDKZSLjZFEp",
+          },
+          {
+            duration: 20,
+            currencyName: "solana",
+            coinModuleName: "solana",
+            operationType: "scan",
+            accountType: "pristine",
+            transactions: 0,
+            accountAddressOrXpub: "Hbac8tM3SMbua9ZBqPRbEJ2n3FtikRJc7wFmZzpqbtBv",
+          },
+          {
+            duration: 10,
+            currencyName: "solana",
+            coinModuleName: "solana",
+            operationType: "sync",
+            accountType: "pristine",
+            transactions: 0,
+            accountAddressOrXpub: "Hbac8tM3SMbua9ZBqPRbEJ2n3FtikRJc7wFmZzpqbtBv",
+          },
+        ],
+        failed: true,
+      });
     });
   });
 });

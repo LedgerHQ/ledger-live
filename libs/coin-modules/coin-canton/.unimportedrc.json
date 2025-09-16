@@ -20,8 +20,11 @@
     "jest-message-util"
   ],
   "ignoreUnimported": [
+    "src/network/gateway.ts",
+    "src/network/indexer.ts",
     "src/network/mock-network.ts",
-    "src/test/bot-specs.ts"
+    "src/test/bot-specs.ts",
+    "src/test/cantonTestUtils.ts"
   ],
   "ignoreUnused": [
     "@ledgerhq/devices"

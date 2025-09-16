@@ -26,7 +26,6 @@ export function genericGetTransactionStatus(
       mode: transaction?.mode,
       recipient: transaction.recipient,
       amount: transaction.amount ?? new BigNumber(0),
-      fees: transaction.fees ? BigInt(transaction.fees.toString()) : 0n,
       useAllAmount: !!transaction.useAllAmount,
       assetReference: transaction.assetReference || "",
       assetOwner: transaction.assetOwner || "",
@@ -46,6 +45,7 @@ export function genericGetTransactionStatus(
 
     const { errors, warnings, estimatedFees, amount, totalSpent } = await alpacaApi.validateIntent(
       transactionToIntent(account, draftTransaction),
+      { value: transaction.fees ? BigInt(transaction.fees.toString()) : 0n },
     );
 
     return Promise.resolve({

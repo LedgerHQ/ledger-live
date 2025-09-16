@@ -175,9 +175,15 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
 
           if (modularDrawerVisible) {
             openModularDrawer({
-              currencies: allCurrencies,
+              currencies: cryptoCurrencyIds,
+              areCurrenciesFiltered: manifest.currencies !== "*",
               enableAccountSelection: true,
               onAccountSelected: onSuccess,
+              flow: manifest.name,
+              source:
+                currentRouteNameRef.current === "Platform Catalog"
+                  ? "Discover"
+                  : currentRouteNameRef.current ?? "Unknown",
             });
           } else {
             if (currenciesDiff.length === 1) {

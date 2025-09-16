@@ -4,6 +4,7 @@ import { findCryptoCurrencyById, getCryptoCurrencyById } from "./currencies";
 import jettonTokens, { TonJettonToken } from "./data/ton-jetton";
 import { tokens as sepoliaTokens } from "./data/evm/11155111";
 import stellarTokens, { StellarToken } from "./data/stellar";
+import hederaTokens, { HederaToken } from "./data/hedera";
 import vechainTokens, { Vip180Token } from "./data/vip180";
 import esdttokens, { MultiversXESDTToken } from "./data/esdt";
 import asatokens, { AlgorandASAToken } from "./data/asa";
@@ -13,6 +14,7 @@ import trc10tokens, { TRC10Token } from "./data/trc10";
 import trc20tokens, { TRC20Token } from "./data/trc20";
 import { tokens as mainnetTokens } from "./data/evm/1";
 import { tokens as bnbTokens } from "./data/evm/56";
+import { tokens as celoTokens } from "./data/evm/42220";
 import filecoinTokens from "./data/filecoin-erc20";
 import stacksSip010Tokens, { StacksSip010Token } from "./data/stacks-sip010";
 import spltokens, { SPLToken } from "./data/spl";
@@ -39,6 +41,8 @@ addTokens(mainnetTokens.map(convertERC20));
 addTokens(sepoliaTokens.map(convertERC20));
 // Polygon tokens
 addTokens(polygonTokens.map(convertERC20));
+// Hedera tokens
+addTokens(hederaTokens.map(convertHederaTokens));
 // Binance Smart Chain tokens
 addTokens(bnbTokens.map(convertERC20));
 // Tron tokens
@@ -64,6 +68,8 @@ addTokens(spltokens.map(convertSplTokens));
 addTokens(sonicTokens.map(convertERC20));
 // Stacks tokens
 addTokens(stacksSip010Tokens.map(convertStacksSip010Token));
+// Celo
+addTokens(celoTokens.map(convertERC20));
 
 if (getEnv("SUI_ENABLE_TOKENS")) {
   // Sui tokens
@@ -493,6 +499,35 @@ export function convertSuiTokens([id, name, ticker, address, decimals]: SuiToken
     name,
     tokenType: "sui",
     ticker,
+    disableCountervalue: false,
+    units: [
+      {
+        name,
+        code: ticker,
+        magnitude: decimals,
+      },
+    ],
+  };
+}
+
+function convertHederaTokens([
+  id,
+  tokenId,
+  name,
+  ticker,
+  network,
+  decimals,
+  delisted,
+]: HederaToken): TokenCurrency {
+  return {
+    type: "TokenCurrency",
+    id,
+    contractAddress: tokenId,
+    parentCurrency: getCryptoCurrencyById(network),
+    tokenType: "hts",
+    name,
+    ticker,
+    delisted,
     disableCountervalue: false,
     units: [
       {

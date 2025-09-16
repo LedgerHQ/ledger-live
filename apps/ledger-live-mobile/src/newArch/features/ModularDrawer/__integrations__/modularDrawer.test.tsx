@@ -8,15 +8,37 @@ import {
   mockedAccounts,
   ARB_ACCOUNT,
 } from "./shared";
-import { useGroupedCurrenciesByProvider } from "@ledgerhq/live-common/modularDrawer/__mocks__/useGroupedCurrenciesByProvider.mock";
 import { State } from "~/reducers/types";
 import { INITIAL_STATE } from "~/reducers/settings";
 
-jest.mock("@ledgerhq/live-common/deposit/useGroupedCurrenciesByProvider.hook", () => ({
-  useGroupedCurrenciesByProvider: () => useGroupedCurrenciesByProvider(),
-}));
+import { http, HttpResponse } from "msw";
+import { server } from "@tests/server";
+import { NetInfoStateType, useNetInfo } from "@react-native-community/netinfo";
+
+jest.mock("@react-native-community/netinfo", () => {
+  const mockUseNetInfo = jest.fn(() => ({
+    isConnected: true,
+    isInternetReachable: true,
+    type: "unknown",
+    details: null,
+  }));
+
+  return {
+    NetInfoStateType: {
+      unknown: "unknown",
+    },
+    useNetInfo: mockUseNetInfo,
+  };
+});
 
 describe("ModularDrawer integration", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
   const advanceTimers = () => {
     act(() => {
       jest.advanceTimersByTime(500);
@@ -28,8 +50,7 @@ describe("ModularDrawer integration", () => {
 
     await user.press(getByText(WITHOUT_ACCOUNT_SELECTION));
 
-    // Asset selection
-    expect(getByText(/select asset/i)).toBeVisible();
+    advanceTimers();
 
     // Select Ethereum (should go to network selection)
     await user.press(getByText(/ethereum/i));
@@ -65,9 +86,8 @@ describe("ModularDrawer integration", () => {
 
     await user.press(getByText(WITHOUT_ACCOUNT_SELECTION));
 
+    // Wait for the assets to be loaded (MSW mock))
     advanceTimers();
-
-    expect(getByText(/select asset/i)).toBeVisible();
 
     // Select Bitcoin (should go directly to Device Selection)
     await user.press(getByText(/bitcoin/i));
@@ -84,7 +104,7 @@ describe("ModularDrawer integration", () => {
 
     await user.press(getByText(WITHOUT_ACCOUNT_SELECTION));
 
-    expect(getByText(/select asset/i)).toBeVisible();
+    advanceTimers();
     expect(getByText(/bitcoin/i)).toBeVisible();
 
     const searchInput = getByPlaceholderText(/search/i);
@@ -96,7 +116,9 @@ describe("ModularDrawer integration", () => {
       expect(queryByText(/ethereum/i)).not.toBeVisible();
     });
 
-    expect(getByText(/bitcoin/i)).toBeVisible();
+    await waitFor(() => {
+      expect(getByText(/bitcoin/i)).toBeVisible();
+    });
   });
 
   it("should show the empty state when no assets are found", async () => {
@@ -105,7 +127,7 @@ describe("ModularDrawer integration", () => {
     );
 
     await user.press(getByText(WITHOUT_ACCOUNT_SELECTION));
-
+    advanceTimers();
     const searchInput = getByPlaceholderText(/search/i);
     expect(searchInput).toBeVisible();
 
@@ -136,9 +158,10 @@ describe("ModularDrawer integration", () => {
     });
 
     await user.press(getByText(WITH_ACCOUNT_SELECTION));
+    advanceTimers();
 
-    // Asset selection
-    expect(getByText(/select asset/i)).toBeVisible();
+    // Wait for the assets to be loaded (MSW mock))
+    await waitFor(() => expect(getByText(/select asset/i)).toBeVisible());
 
     // Select Ethereum (should go to network selection)
     await user.press(getByText(/ethereum/i));
@@ -163,5 +186,31 @@ describe("ModularDrawer integration", () => {
     advanceTimers();
 
     expect(getByText(/Connect Device/i)).toBeVisible();
+  });
+
+  it("should display generic error when a Backend error occurs", async () => {
+    server.use(http.get("https://dada.api.ledger.com/v1/assets", () => HttpResponse.error()));
+    const { getByText, user } = render(<ModularDrawerSharedNavigator />);
+
+    await user.press(getByText(WITHOUT_ACCOUNT_SELECTION));
+
+    expect(getByText(/Something went wrong on our end. Please try again later/i)).toBeVisible();
+  });
+
+  it("should display generic error when an internet error occurs", async () => {
+    const { getByText, user } = render(<ModularDrawerSharedNavigator />);
+
+    await user.press(getByText(WITHOUT_ACCOUNT_SELECTION));
+
+    jest.mocked(useNetInfo).mockReturnValue({
+      isConnected: false,
+      isInternetReachable: false,
+      type: NetInfoStateType.none,
+      details: null,
+    });
+
+    advanceTimers();
+
+    expect(getByText(/No internet connection. Please try again/i)).toBeVisible();
   });
 });

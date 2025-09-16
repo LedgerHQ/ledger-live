@@ -6,8 +6,17 @@ import { testIds, TestIdPrefix } from "../TestScreens";
 
 jest.useFakeTimers();
 
+// Helper: conditionally wait for an element (by testID) to be removed if it exists
+const maybeWaitForRemovalByTestId = async (testId: string) => {
+  const node = screen.queryByTestId(testId);
+  if (node) {
+    await waitForElementToBeRemoved(() => screen.getByTestId(testId));
+  }
+};
+
 describe("QueuedDrawer", () => {
   afterEach(cleanup);
+
   test("open one drawer, then close it with close button", async () => {
     const { user } = render(<TestPages />);
     // open drawer
@@ -191,8 +200,8 @@ describe("QueuedDrawer", () => {
   test("navigating out of a screen closes the drawers and cleanly clears the queue", async () => {
     const { user } = render(<TestPages />);
 
-    // expect to be on main screen
-    expect(screen.queryByText("Main screen")).toBeVisible();
+    // expect to be on main screen (check via a unique element on the screen, not header title)
+    expect(await screen.findByTestId(testIds(TestIdPrefix.Main).drawer1Button)).toBeVisible();
     // open first drawer
     expect(screen.getByTestId(testIds(TestIdPrefix.Main).drawer1Button)).toBeVisible();
     await user.press(screen.getByTestId(testIds(TestIdPrefix.Main).drawer1Button));
@@ -211,8 +220,8 @@ describe("QueuedDrawer", () => {
       screen.getByTestId(testIds(TestIdPrefix.InDrawer1).navigateToEmptyTestScreenButton),
     );
 
-    // wait for main screen to disappear
-    waitForElementToBeRemoved(() => screen.getByText("Main screen"));
+    // wait for main screen content to disappear (if still present)
+    await maybeWaitForRemovalByTestId(testIds(TestIdPrefix.Main).drawer1Button);
 
     // expect first drawer to not be visible
     expect(screen.queryByText("Drawer 1")).toBeNull();
@@ -224,9 +233,9 @@ describe("QueuedDrawer", () => {
 
     // navigate back
     await user.press(screen.getByTestId("navigate-back-button"));
-    // wait for main screen to appear
+    // wait for main screen to appear (content element)
     expect(screen.queryByText("Screen 1")).toBeNull();
-    expect(await screen.findByText("Main screen")).toBeVisible();
+    expect(await screen.findByTestId(testIds(TestIdPrefix.Main).drawer1Button)).toBeVisible();
 
     // check the queue is empty and ready to be used again
     // open first drawer
@@ -257,8 +266,8 @@ describe("QueuedDrawer", () => {
       ),
     );
 
-    // wait for main screen to disappear
-    waitForElementToBeRemoved(() => screen.getByText("Main screen"));
+    // wait for main screen content to disappear (if still present)
+    await maybeWaitForRemovalByTestId(testIds(TestIdPrefix.Main).drawer1Button);
 
     // expect other screen to be visible
     // RN-UPGRADE: Expectation not working for test env. But working on real device.
@@ -285,9 +294,9 @@ describe("QueuedDrawer", () => {
 
     // navigate back to main screen
     await user.press(screen.getByTestId("navigate-back-button"));
-    // wait for main screen to appear
+    // wait for main screen to appear (content element)
     expect(await screen.queryByText("Screen 1")).toBeNull();
-    expect(await screen.findByText("Main screen")).toBeVisible();
+    expect(await screen.findByTestId(testIds(TestIdPrefix.Main).drawer1Button)).toBeVisible();
 
     // check the queue is empty and ready to be used again
     // open first drawer
@@ -331,8 +340,8 @@ describe("QueuedDrawer", () => {
       ),
     );
 
-    // wait for main screen to disappear
-    waitForElementToBeRemoved(() => screen.getByText("Main screen"));
+    // wait for main screen content to disappear (if still present)
+    await maybeWaitForRemovalByTestId(testIds(TestIdPrefix.Main).drawer1Button);
 
     // expect other screen to be visible
     // RN-UPGRADE: Expectation not working for test env. But working on real device.
@@ -354,9 +363,9 @@ describe("QueuedDrawer", () => {
 
     // navigate back to main screen
     await user.press(screen.getByTestId("navigate-back-button"));
-    // wait for main screen to appear
+    // wait for main screen to appear (content element)
     expect(await screen.queryByText("Screen 1")).toBeNull();
-    expect(await screen.findByText("Main screen")).toBeVisible();
+    expect(await screen.findByTestId(testIds(TestIdPrefix.Main).drawer1Button)).toBeVisible();
 
     // check the queue is empty and ready to be used again
     // open first drawer
@@ -400,8 +409,8 @@ describe("QueuedDrawer", () => {
       ),
     );
 
-    // wait for main screen to disappear
-    waitForElementToBeRemoved(() => screen.getByText("Main screen"));
+    // wait for main screen content to disappear (if still present)
+    await maybeWaitForRemovalByTestId(testIds(TestIdPrefix.Main).drawer1Button);
 
     // expect other screen to be visible
     // RN-UPGRADE: Expectation not working for test env. But working on real device.
@@ -429,9 +438,9 @@ describe("QueuedDrawer", () => {
 
     // navigate back to main screen
     await user.press(screen.getByTestId("navigate-back-button"));
-    // wait for main screen to appear
+    // wait for main screen to appear (content element)
     expect(await screen.queryByText("Screen 1")).toBeNull();
-    expect(await screen.findByText("Main screen")).toBeVisible();
+    expect(await screen.findByTestId(testIds(TestIdPrefix.Main).drawer1Button)).toBeVisible();
 
     // check the queue is empty and ready to be used again
     // open first drawer
@@ -467,8 +476,8 @@ describe("QueuedDrawer", () => {
     await user.press(
       screen.getByTestId(testIds(TestIdPrefix.Main).navigateToEmptyTestScreenButton),
     );
-    // wait for main screen to disappear
-    waitForElementToBeRemoved(() => screen.getByText("Main screen"));
+    // wait for main screen content to disappear (if still present)
+    await maybeWaitForRemovalByTestId(testIds(TestIdPrefix.Main).drawer1Button);
     // expect other screen to be visible
     // RN-UPGRADE: Expectation not working for test env. But working on real device.
     // TODO: Restore this expectation when the test env is fixed.

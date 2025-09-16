@@ -14,13 +14,13 @@ import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import axios, { AxiosError, AxiosResponse } from "axios";
 import { getEnv } from "@ledgerhq/live-env";
 import { getCryptoCurrencyById } from "../currencies";
-import { DeviceLabels } from "../e2e/enum/DeviceLabels";
+import { DeviceLabels } from "./enum/DeviceLabels";
 import { Account } from "./enum/Account";
 import { Device as CryptoWallet } from "./enum/Device";
 import { Currency } from "./enum/Currency";
 import expect from "expect";
 import { sendBTCBasedCoin } from "./families/bitcoin";
-import { sendEVM, sendEvmNFT } from ".//families/evm";
+import { sendEVM, sendEvmNFT } from "./families/evm";
 import { sendPolkadot } from "./families/polkadot";
 import { sendAlgorand } from "./families/algorand";
 import { sendTron } from "./families/tron";
@@ -30,6 +30,7 @@ import { sendXRP } from "./families/xrp";
 import { delegateAptos, sendAptos } from "./families/aptos";
 import { delegateNear } from "./families/near";
 import { delegateCosmos, sendCosmos } from "./families/cosmos";
+import { sendKaspa } from "./families/kaspa";
 import { delegateSolana, sendSolana } from "./families/solana";
 import { delegateTezos } from "./families/tezos";
 import { delegateCelo } from "./families/celo";
@@ -325,6 +326,14 @@ export const specs: Specs = {
     },
     dependency: "",
   },
+  Kaspa: {
+    currency: getCryptoCurrencyById("kaspa"),
+    appQuery: {
+      model: getSpeculosModel(),
+      appName: "Kaspa",
+    },
+    dependency: "",
+  },
 };
 
 export async function startSpeculos(
@@ -385,13 +394,12 @@ export async function startSpeculos(
     onSpeculosDeviceCreated,
   };
   try {
-    const device = isSpeculosRemote
+    return isSpeculosRemote
       ? await createSpeculosDeviceCI(deviceParams)
       : await createSpeculosDevice(deviceParams).then(device => {
           invariant(device.ports.apiPort, "[E2E] Speculos apiPort is not defined");
           return { id: device.id, port: device.ports.apiPort };
         });
-    return device;
   } catch (e: unknown) {
     console.error(e);
     log("engine", `test ${testName} failed with ${String(e)}`);
@@ -461,7 +469,7 @@ async function retryAxiosRequest<T>(
   throw lastError!;
 }
 
-export async function waitFor(text: string, maxAttempts = 15): Promise<string[]> {
+export async function waitFor(text: string, maxAttempts = 60): Promise<string[]> {
   const port = getEnv("SPECULOS_API_PORT");
   const address = getSpeculosAddress();
   const url = `${address}:${port}/events?stream=false&currentscreenonly=true`;
@@ -492,14 +500,14 @@ export async function pressBoth() {
 
 export async function pressUntilTextFound(
   targetText: string,
-  maxAttempts: number = 15,
+  strictMatch: boolean = false,
 ): Promise<string[]> {
+  const maxAttempts = 15;
   const speculosApiPort = getEnv("SPECULOS_API_PORT");
 
   for (let attempts = 0; attempts < maxAttempts; attempts++) {
     const texts = await fetchCurrentScreenTexts(speculosApiPort);
-
-    if (texts.includes(targetText)) {
+    if (strictMatch ? texts === targetText : texts.includes(targetText)) {
       return await fetchAllEvents(speculosApiPort);
     }
 
@@ -576,28 +584,25 @@ export async function waitForTimeOut(ms: number) {
 }
 
 export async function removeMemberLedgerSync() {
-  await waitFor(DeviceLabels.CONNECT_WITH);
-  await pressUntilTextFound(DeviceLabels.MAKE_SURE_TO_USE);
-  await pressUntilTextFound(DeviceLabels.CONNECT_WITH);
+  await waitFor(DeviceLabels.CONNECT_TO);
+  await pressUntilTextFound(DeviceLabels.CONNECT, true);
   await pressBoth();
-  await waitFor(DeviceLabels.REMOVE_PHONE_OR_COMPUTER);
-  await pressUntilTextFound(DeviceLabels.AFTER_REMOVING);
-  await pressUntilTextFound(DeviceLabels.REMOVE_PHONE_OR_COMPUTER);
+  await waitFor(DeviceLabels.REMOVE_FROM_LEDGER_SYNC);
+  await pressUntilTextFound(DeviceLabels.REMOVE, true);
   await pressBoth();
   await waitFor(DeviceLabels.TURN_ON_SYNC);
-  await pressUntilTextFound(DeviceLabels.YOUR_CRYPTO_ACCOUNTS);
-  await pressUntilTextFound(DeviceLabels.TURN_ON_SYNC);
+  await pressUntilTextFound(DeviceLabels.LEDGER_LIVE_WILL_BE);
+  await pressUntilTextFound(DeviceLabels.TURN_ON_SYNC2);
   await pressBoth();
 }
 
 export async function activateLedgerSync() {
-  await waitFor(DeviceLabels.CONNECT_WITH);
-  await pressUntilTextFound(DeviceLabels.MAKE_SURE_TO_USE);
-  await pressUntilTextFound(DeviceLabels.CONNECT_WITH);
+  await waitFor(DeviceLabels.CONNECT_TO);
+  await pressUntilTextFound(DeviceLabels.CONNECT, true);
   await pressBoth();
   await waitFor(DeviceLabels.TURN_ON_SYNC);
-  await pressUntilTextFound(DeviceLabels.YOUR_CRYPTO_ACCOUNTS);
-  await pressUntilTextFound(DeviceLabels.TURN_ON_SYNC);
+  await pressUntilTextFound(DeviceLabels.LEDGER_LIVE_WILL_BE);
+  await pressUntilTextFound(DeviceLabels.TURN_ON_SYNC2);
   await pressBoth();
 }
 
@@ -622,7 +627,7 @@ const APP_LABEL_MAP = new Map<AppInfos, [string, string]>([
   [AppInfos.ETHEREUM, [DeviceLabels.VERIFY_ETHEREUM, DeviceLabels.CONFIRM]],
   [AppInfos.BNB_CHAIN, [DeviceLabels.VERIFY_BSC, DeviceLabels.CONFIRM]],
   [AppInfos.POLYGON, [DeviceLabels.VERIFY_POLYGON, DeviceLabels.CONFIRM]],
-  [AppInfos.SOLANA, [DeviceLabels.PUBKEY, DeviceLabels.APPROVE]],
+  [AppInfos.SOLANA, [DeviceLabels.VERIFY_SOLANA_ADDRESS, DeviceLabels.CONFIRM]],
   [AppInfos.POLKADOT, [DeviceLabels.PLEASE_REVIEW, DeviceLabels.CAPS_APPROVE]],
   [AppInfos.COSMOS, [DeviceLabels.PLEASE_REVIEW, DeviceLabels.CAPS_APPROVE]],
   [AppInfos.BITCOIN, [DeviceLabels.ADDRESS, DeviceLabels.CONFIRM]],
@@ -681,6 +686,9 @@ export async function signSendTransaction(tx: Transaction) {
     case Currency.APT:
       await sendAptos();
       break;
+    case Currency.KAS:
+      await sendKaspa();
+      break;
     default:
       throw new Error(`Unsupported currency: ${currencyName.ticker}`);
   }
@@ -732,14 +740,23 @@ export async function signDelegationTransaction(delegatingAccount: Delegate) {
 }
 
 export async function verifyAmountsAndAcceptSwap(swap: Swap, amount: string) {
-  await waitFor(DeviceLabels.REVIEW_OPERATION);
-  const events = await pressUntilTextFound(DeviceLabels.ACCEPT);
+  await waitFor(DeviceLabels.REVIEW_TRANSACTION);
+  const events = await pressUntilTextFound(DeviceLabels.SIGN_TRANSACTION);
+  await verifySwapData(swap, events, amount);
+  await pressBoth();
+}
+
+export async function verifyAmountsAndAcceptSwapForDifferentSeed(swap: Swap, amount: string) {
+  await waitFor(DeviceLabels.RECEIVE_ADDRESS_DOES_NOT_BELONG);
+  await pressUntilTextFound(DeviceLabels.I_UNDERSTAND);
+  await pressBoth();
+  const events = await pressUntilTextFound(DeviceLabels.SIGN_TRANSACTION);
   await verifySwapData(swap, events, amount);
   await pressBoth();
 }
 
 export async function verifyAmountsAndRejectSwap(swap: Swap, amount: string) {
-  await waitFor(DeviceLabels.REVIEW_OPERATION);
+  await waitFor(DeviceLabels.REVIEW_TRANSACTION);
   const events = await pressUntilTextFound(DeviceLabels.REJECT);
   await verifySwapData(swap, events, amount);
   await pressBoth();

@@ -114,7 +114,8 @@ jobs:
           path: ${{ github.workspace }}/apps/ledger-live-desktop/coverage
 
   e2e-tests-linux:
-    name: "Ubuntu E2E"
+    name: "Ubuntu Mock"
+    timeout-minutes: 20
     outputs:
       status: ${{ steps.tests.outcome }}
     env:
@@ -126,7 +127,7 @@ jobs:
       LC_ALL: en_US.UTF-8
       # DEBUG: "pw:browser*"
       # DEBUG_LOGS: 1
-    runs-on: [ledger-live-4xlarge]
+    runs-on: [ ledger-live-linux-16CPU-64RAM ]
     steps:
       - uses: actions/checkout@v4
         with:
@@ -135,6 +136,7 @@ jobs:
         id: caches
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
         with:
+          install-proto: "true"
           skip-turbo-cache: "false"
           accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
           roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
@@ -144,15 +146,8 @@ jobs:
         id: setup-test-desktop
         with:
           skip_ruby: true
-          install_playwright: true
           turborepo-server-port: ${{ steps.caches.outputs.port }}
-      - name: Install CLI dependencies
-        env:
-          LANG: en_US.UTF-8
-        run: pnpm i --filter="live-cli*..."
-        shell: bash
-      - name: Build CLI
-        run: pnpm build:cli --api="http://127.0.0.1:${{ steps.caches.outputs.port }}" --token="${{ secrets.TURBOREPO_SERVER_TOKEN }}" --team="foo"
+          install_playwright: true
       - name: Run playwright tests [Linux => xvfb-run]
         id: tests
         run: |
@@ -184,12 +179,6 @@ jobs:
             apps/ledger-live-desktop/tests/artifacts/videos
             apps/ledger-live-desktop/tests/artifacts/logs
             apps/ledger-live-desktop/tests/artifacts/*.log
-      - name: Upload Allure Report
-        if: ${{ !cancelled() }}
-        uses: actions/upload-artifact@v4
-        with:
-          name: allure-results-linux
-          path: apps/ledger-live-desktop/allure-results
 
   report:
     name: "Test Desktop > Report"
@@ -433,24 +422,3 @@ jobs:
         with:
           name: summary-test-desktop.json
           path: ${{ github.workspace }}/summary-test-desktop.json
-
-  allure-report:
-    name: "Ubuntu E2E > Allure Report"
-    needs: e2e-tests-linux
-    runs-on: [ledger-live-medium]
-    if: ${{ !cancelled() && github.ref_name == 'develop' }}
-    steps:
-      - name: Download Allure Report
-        uses: actions/download-artifact@v4
-        with:
-          path: allure-results-linux
-          pattern: allure-results-linux*
-          merge-multiple: true
-      - name: Send Results and Generate Allure Report - Linux
-        uses: LedgerHQ/ledger-live/tools/actions/composites/upload-allure-report@develop
-        if: ${{ !cancelled() }}
-        with:
-          platform: linux-mocked
-          login: ${{ vars.ALLURE_USERNAME }}
-          password: ${{ secrets.ALLURE_LEDGER_LIVE_PASSWORD }}
-          path: allure-results-linux

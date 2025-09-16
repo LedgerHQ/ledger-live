@@ -9,7 +9,7 @@ import { DEFAULT_COIN_TYPE, toSuiAsset } from "../network/sdk";
  */
 export const buildTransaction = async (
   account: SuiAccount,
-  { amount, mode, recipient, subAccountId }: Transaction,
+  { amount, mode, recipient, subAccountId, useAllAmount = false, stakedSuiId = "" }: Transaction,
 ) => {
   const { freshAddress } = account;
   const subAccount = findSubAccountById(account, subAccountId ?? "");
@@ -21,5 +21,7 @@ export const buildTransaction = async (
     recipient,
     sender: freshAddress,
     type: mode,
+    useAllAmount,
+    stakedSuiId,
   });
 };

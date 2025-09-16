@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/hw-app-tezos",
-  "version": "6.31.5",
+  "version": "6.31.6",
   "description": "Ledger Hardware Wallet Tezos Application API",
   "keywords": [
     "Ledger",
@@ -28,7 +28,7 @@
   "license": "Apache-2.0",
   "dependencies": {
     "@ledgerhq/hw-transport": "workspace:^",
-    "blake2b": "^2.1.4",
+    "@noble/hashes": "1.8.0",
     "bs58check": "^2.1.2",
     "invariant": "^2.2.4"
   },
@@ -46,7 +46,7 @@
   "scripts": {
     "clean": "rimraf lib lib-es",
     "build": "tsc && tsc -m esnext --moduleResolution bundler --outDir lib-es",
-    "coverage": "jest --coverage --passWithNoTests && mv coverage/coverage-final.json coverage/coverage-hw-app-tezos.json",
+    "coverage": "jest --coverage --passWithNoTests",
     "prewatch": "pnpm build",
     "watch": "tsc --watch",
     "watch:es": "tsc --watch -m esnext --moduleResolution bundler --outDir lib-es",

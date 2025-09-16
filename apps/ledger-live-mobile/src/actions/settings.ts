@@ -10,13 +10,11 @@ import {
   DangerouslyOverrideStatePayload,
   SettingsDismissBannerPayload,
   SettingsHideEmptyTokenAccountsPayload,
-  SettingsImportDesktopPayload,
   SettingsImportPayload,
   SettingsSetHasInstalledAnyAppPayload,
   SettingsLastSeenDeviceInfoPayload,
   SettingsSetAnalyticsPayload,
   SettingsSetPersonalizedRecommendationsPayload,
-  SettingsSetAvailableUpdatePayload,
   SettingsSetLastSeenCustomImagePayload,
   SettingsSetCountervaluePayload,
   SettingsSetDiscreetModePayload,
@@ -25,8 +23,6 @@ import {
   SettingsSetLanguagePayload,
   SettingsSetLastConnectedDevicePayload,
   SettingsSetLocalePayload,
-  SettingsSetCustomImageBackupPayload,
-  SettingsSetMarketCounterCurrencyPayload,
   SettingsSetNotificationsPayload,
   SettingsSetNeverClickedOnAllowNotificationsButton,
   SettingsSetOrderAccountsPayload,
@@ -37,7 +33,6 @@ import {
   SettingsSetReportErrorsPayload,
   SettingsSetSelectedTimeRangePayload,
   SettingsSetSensitiveAnalyticsPayload,
-  SettingsSetSwapSelectableCurrenciesPayload,
   SettingsSetThemePayload,
   SettingsShowTokenPayload,
   SettingsUpdateCurrencyPayload,
@@ -53,7 +48,6 @@ import {
   SettingsCompleteOnboardingPayload,
   SettingsSetDateFormatPayload,
   SettingsSetHasBeenUpsoldProtectPayload,
-  SettingsSetHasSeenStaxEnabledNftsPopupPayload,
   SettingsSetCustomImageTypePayload,
   SettingsSetGeneralTermsVersionAccepted,
   SettingsSetOnboardingTypePayload,
@@ -70,7 +64,6 @@ import {
   SettingsSetFromLedgerSyncOnboardingPayload,
   SettingsSetHasBeenRedirectedToPostOnboardingPayload,
   SettingsSetMevProtectionPayload,
-  SettingsUpdateNftCollectionStatus,
   SettingsSetSelectedTabPortfolioAssetsPayload,
   SettingsSetIsRebornPayload,
 } from "./types";
@@ -89,9 +82,7 @@ export const setCountervalue = createAction<SettingsSetCountervaluePayload>(
 export const importSettings = createAction<SettingsImportPayload>(
   SettingsActionTypes.SETTINGS_IMPORT,
 );
-export const importDesktopSettings = createAction<SettingsImportDesktopPayload>(
-  SettingsActionTypes.SETTINGS_IMPORT_DESKTOP,
-);
+
 export const setReportErrors = createAction<SettingsSetReportErrorsPayload>(
   SettingsActionTypes.SETTINGS_SET_REPORT_ERRORS,
 );
@@ -143,19 +134,12 @@ export const blacklistToken = createAction<SettingsBlacklistTokenPayload>(
   SettingsActionTypes.BLACKLIST_TOKEN,
 );
 export const showToken = createAction<SettingsShowTokenPayload>(SettingsActionTypes.SHOW_TOKEN);
-export const updateNftStatus = createAction<SettingsUpdateNftCollectionStatus>(
-  SettingsActionTypes.UPDATE_NFT_COLLECTION_STATUS,
-);
-export const resetNftStatus = createAction(SettingsActionTypes.RESET_NFT_COLLECTION_STATUS);
 
 export const dismissBanner = createAction<SettingsDismissBannerPayload>(
   SettingsActionTypes.SETTINGS_DISMISS_BANNER,
 );
 export const setDismissedDynamicCards = createAction<SettingsSetDismissedDynamicCardsPayload>(
   SettingsActionTypes.SETTINGS_SET_DISMISSED_DYNAMIC_CARDS,
-);
-export const setAvailableUpdate = createAction<SettingsSetAvailableUpdatePayload>(
-  SettingsActionTypes.SETTINGS_SET_AVAILABLE_UPDATE,
 );
 export const setTheme = createAction<SettingsSetThemePayload>(
   SettingsActionTypes.SETTINGS_SET_THEME,
@@ -172,9 +156,7 @@ export const setLanguage = createAction<SettingsSetLanguagePayload>(
 export const setLocale = createAction<SettingsSetLocalePayload>(
   SettingsActionTypes.SETTINGS_SET_LOCALE,
 );
-export const setSwapSelectableCurrencies = createAction<SettingsSetSwapSelectableCurrenciesPayload>(
-  SettingsActionTypes.SET_SWAP_SELECTABLE_CURRENCIES,
-);
+
 export const swapAcceptProvider = createAction<SettingsAcceptSwapProviderPayload>(
   SettingsActionTypes.ACCEPT_SWAP_PROVIDER,
 );
@@ -192,18 +174,10 @@ export const setLastSeenDeviceLanguageId = createAction<SettingsLastSeenDeviceLa
 export const unsafe_setKnownDeviceModelIds = createAction<SettingsSetKnownDeviceModelIdsPayload>(
   SettingsActionTypes.SET_KNOWN_DEVICE_MODEL_IDS,
 );
-const setHasSeenStaxEnabledNftsPopupAction =
-  createAction<SettingsSetHasSeenStaxEnabledNftsPopupPayload>(
-    SettingsActionTypes.SET_HAS_SEEN_STAX_ENABLED_NFTS_POPUP,
-  );
-export const setHasSeenStaxEnabledNftsPopup = (hasSeenStaxEnabledNftsPopup: boolean) =>
-  setHasSeenStaxEnabledNftsPopupAction({ hasSeenStaxEnabledNftsPopup });
 export const setLastConnectedDevice = createAction<SettingsSetLastConnectedDevicePayload>(
   SettingsActionTypes.SET_LAST_CONNECTED_DEVICE,
 );
-export const setCustomImageBackup = createAction<SettingsSetCustomImageBackupPayload>(
-  SettingsActionTypes.SET_CUSTOM_IMAGE_BACKUP,
-);
+
 const setCustomImageTypeAction = createAction<SettingsSetCustomImageTypePayload>(
   SettingsActionTypes.SET_CUSTOM_IMAGE_TYPE,
 );
@@ -211,9 +185,6 @@ export const setCustomImageType = (imageType: ImageType) =>
   setCustomImageTypeAction({ customLockScreenType: imageType });
 export const setHasOrderedNano = createAction<SettingsSetHasOrderedNanoPayload>(
   SettingsActionTypes.SET_HAS_ORDERED_NANO,
-);
-export const setMarketCounterCurrency = createAction<SettingsSetMarketCounterCurrencyPayload>(
-  SettingsActionTypes.SET_MARKET_COUNTER_CURRENCY,
 );
 export const setSensitiveAnalytics = createAction<SettingsSetSensitiveAnalyticsPayload>(
   SettingsActionTypes.SET_SENSITIVE_ANALYTICS,

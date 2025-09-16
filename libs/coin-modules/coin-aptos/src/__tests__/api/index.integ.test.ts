@@ -1,9 +1,12 @@
 import { Deserializer, Hex, Network, RawTransaction } from "@aptos-labs/ts-sdk";
 import { createApi } from "../../api";
-import { getEnv } from "@ledgerhq/live-env";
-import { DEFAULT_GAS, DEFAULT_GAS_PRICE } from "../../constants";
+import { getEnv, setEnvUnsafe } from "@ledgerhq/live-env";
+import { DEFAULT_GAS, DEFAULT_GAS_PRICE, TOKEN_TYPE } from "../../constants";
 
 describe("createApi", () => {
+  // NOTE: as our aptos nodes and indexer whitelist calls, we need to explicitely set the LEDGER_CLIENT_VERSION
+  // in turn it will be used in the headers of those api calls.
+  setEnvUnsafe("LEDGER_CLIENT_VERSION", "lld/2.124.0-dev");
   const api = createApi({
     aptosSettings: {
       network: Network.MAINNET,
@@ -12,7 +15,6 @@ describe("createApi", () => {
     },
   });
   const assetTypeNative = "native";
-  const assetTypeToken = "token";
 
   const sender = {
     xpub: "0x934887885b27a0407bf8a5e0bbc6b6371254bea94de5510e948bcc92dc0a519b",
@@ -106,7 +108,7 @@ describe("createApi", () => {
 
   describe("craftTransaction", () => {
     it("returns a native coin RawTransaction serialized into an hexadecimal string", async () => {
-      const hex = await api.craftTransaction(
+      const { transaction: hex } = await api.craftTransaction(
         {
           amount: 1n,
           sender: sender.freshAddress,
@@ -128,7 +130,7 @@ describe("createApi", () => {
     });
 
     it("returns a coin token RawTransaction serialized into an hexadecimal string", async () => {
-      const hex = await api.craftTransaction(
+      const { transaction: hex } = await api.craftTransaction(
         {
           amount: 1n,
           sender: sender.freshAddress,
@@ -154,7 +156,7 @@ describe("createApi", () => {
     });
 
     it("returns a use-all-amount coin token RawTransaction serialized into an hexadecimal string", async () => {
-      const hex = await api.craftTransaction(
+      const { transaction: hex } = await api.craftTransaction(
         {
           amount: 0n,
           sender: sender.freshAddress,
@@ -182,7 +184,7 @@ describe("createApi", () => {
     it("returns a use-all-amount fungible_asset token RawTransaction serialized into an hexadecimal string", async () => {
       const r = sender;
       const s = recipient; // recipient contains fungible_assets balances
-      const hex = await api.craftTransaction(
+      const { transaction: hex } = await api.craftTransaction(
         {
           amount: 0n,
           sender: s.freshAddress,
@@ -219,7 +221,7 @@ describe("createApi", () => {
       const balances = await api.getBalance(tokenAccount.freshAddress);
       const tokenBalances = balances.filter(
         b =>
-          b.asset.type === assetTypeToken &&
+          b.asset.type === TOKEN_TYPE.FUNGIBLE_ASSET &&
           b.asset.assetReference ===
             "0x2ebb2ccac5e027a87fa0e2e5f656a3a4238d6a48d93ec9b610d570fc0aa0df12",
       );
@@ -235,6 +237,7 @@ describe("createApi", () => {
 
       const [operations] = await api.listOperations(sender.freshAddress, {
         minHeight: block.height,
+        order: "asc",
       });
 
       expect(operations).toBeInstanceOf(Array);
@@ -282,6 +285,7 @@ describe("createApi", () => {
 
       const [operations] = await api.listOperations(tokenAccount.freshAddress, {
         minHeight: block.height,
+        order: "asc",
       });
 
       expect(operations).toBeInstanceOf(Array);

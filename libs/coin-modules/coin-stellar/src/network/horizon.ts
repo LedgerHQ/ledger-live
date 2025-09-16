@@ -26,11 +26,7 @@ import {
   NetworkCongestionLevel,
   StellarOperation,
 } from "../types";
-import {
-  getAccountSpendableBalance,
-  getReservedBalance,
-  rawOperationsToOperations,
-} from "./serialization";
+import { getReservedBalance, rawOperationsToOperations } from "./serialization";
 import { patchHermesTypedArraysIfNeeded, unpatchHermesTypedArrays } from "../polyfill";
 
 const FALLBACK_BASE_FEE = 100;
@@ -52,11 +48,6 @@ function getServer(): Horizon.Server {
   return server;
 }
 
-// Constants
-export const BASE_RESERVE = 0.5;
-export const BASE_RESERVE_MIN_COUNT = 2;
-export const MIN_BALANCE = 1;
-
 // Due to the inconsistency between the axios version (1.6.5) used by `stellar-sdk`
 // and the version (0.26.1) used by `@ledgerhq/live-network/network`, it is not possible to use the interceptors
 // provided by `@ledgerhq/live-network/network`.
@@ -76,6 +67,19 @@ function useConfigHost(url: string): string {
   const u = new URL(url);
   u.host = new URL(coinConfig.getCoinConfig().explorer.url).host;
   return u.toString();
+}
+
+const getMinimumBalance = (account: Horizon.ServerApi.AccountRecord): BigNumber => {
+  return parseCurrencyUnit(currency.units[0], getReservedBalance(account).toString());
+};
+
+export async function getAccountSpendableBalance(
+  balance: BigNumber,
+  account: Horizon.ServerApi.AccountRecord,
+): Promise<BigNumber> {
+  const minimumBalance = getMinimumBalance(account);
+  const { recommendedFee } = await fetchBaseFee();
+  return BigNumber.max(balance.minus(minimumBalance).minus(recommendedFee), 0);
 }
 
 Horizon.AxiosClient.interceptors.response.use(response => {
@@ -323,7 +327,7 @@ export async function fetchOperations({
 
     // in this context, if we have filtered out operations it means those operations were < minHeight, so we are done
     const nextCursor =
-      filteredOps.length == rawOps.length ? rawOps[rawOps.length - 1].paging_token : "";
+      filteredOps.length === rawOps.length ? rawOps[rawOps.length - 1].paging_token : "";
 
     return [filteredOps, nextCursor];
   } catch (e: unknown) {
@@ -396,14 +400,18 @@ export async function fetchSigners(account: string): Promise<Signer[]> {
 }
 
 export async function broadcastTransaction(signedTransaction: string): Promise<string> {
-  patchHermesTypedArraysIfNeeded();
-  const transaction = new StellarSdkTransaction(signedTransaction, Networks.PUBLIC);
-  // Immediately restore
-  unpatchHermesTypedArrays();
-  const res = await getServer().submitTransaction(transaction, {
-    skipMemoRequiredCheck: true,
-  });
-  return res.hash;
+  try {
+    patchHermesTypedArraysIfNeeded();
+    const transaction = new StellarSdkTransaction(signedTransaction, Networks.PUBLIC);
+
+    const res = await getServer().submitTransaction(transaction, {
+      skipMemoRequiredCheck: true,
+    });
+    return res.hash;
+  } finally {
+    // Restore
+    unpatchHermesTypedArrays();
+  }
 }
 
 export async function loadAccount(addr: string): Promise<AccountRecord | null> {

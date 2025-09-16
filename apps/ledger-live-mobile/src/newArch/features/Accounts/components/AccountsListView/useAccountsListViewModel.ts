@@ -1,10 +1,10 @@
 import type { FlashListProps } from "@shopify/flash-list";
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
 import { useSelector } from "react-redux";
 import { useFocusEffect, useNavigation } from "@react-navigation/core";
 import { useRefreshAccountsOrdering } from "~/actions/general";
 import { flattenAccountsSelector } from "~/reducers/accounts";
-import { GestureResponderEvent, useStartProfiler } from "@shopify/react-native-performance";
+import { GestureResponderEvent } from "react-native";
 import { track } from "~/analytics";
 import { NavigatorName, ScreenName } from "~/const";
 import {
@@ -19,7 +19,7 @@ import { walletSelector } from "~/reducers/wallet";
 import isEqual from "lodash/isEqual";
 import { orderAccountsByFiatValue } from "@ledgerhq/live-countervalues/portfolio";
 import { useCountervaluesState } from "@ledgerhq/live-countervalues-react/index";
-import { counterValueCurrencySelector } from "~/reducers/settings";
+import { blacklistedTokenIdsSelector, counterValueCurrencySelector } from "~/reducers/settings";
 import { TrackingEvent } from "../../enums";
 
 export interface Props {
@@ -37,14 +37,12 @@ export type NavigationProp = BaseNavigationComposite<
 >;
 
 const useAccountsListViewModel = ({
-  sourceScreenName,
   isSyncEnabled = false,
   limitNumberOfAccounts,
   ListFooterComponent,
   specificAccounts,
   onContentChange,
 }: Props) => {
-  const startNavigationTTITimer = useStartProfiler();
   const navigation = useNavigation<NavigationProp>();
   const countervalueState = useCountervaluesState();
   const toCurrency = useSelector(counterValueCurrencySelector);
@@ -53,7 +51,19 @@ const useAccountsListViewModel = ({
   const accounts = specificAccounts || allAccounts;
   const orderedAccountsByValue = orderAccountsByFiatValue(accounts, countervalueState, toCurrency);
 
-  const accountsToDisplay = orderedAccountsByValue.slice(0, limitNumberOfAccounts);
+  const excludedTokenIds = useSelector(blacklistedTokenIdsSelector);
+  const filteredAccounts = useMemo(
+    () =>
+      orderedAccountsByValue.filter(account => {
+        if (account.type === "TokenAccount") {
+          return !excludedTokenIds.includes(account.token.id);
+        }
+        return true;
+      }),
+    [orderedAccountsByValue, excludedTokenIds],
+  );
+
+  const accountsToDisplay = filteredAccounts.slice(0, limitNumberOfAccounts);
 
   const pageTrackingEvent = specificAccounts
     ? TrackingEvent.AccountListSummary
@@ -63,9 +73,7 @@ const useAccountsListViewModel = ({
   useFocusEffect(refreshAccountsOrdering);
 
   const onAccountPress = useCallback(
-    (account: Account | TokenAccount, uiEvent: GestureResponderEvent) => {
-      startNavigationTTITimer({ source: sourceScreenName, uiEvent });
-
+    (account: Account | TokenAccount, _uiEvent: GestureResponderEvent) => {
       const defaultAccountName = accountNameWithDefaultSelector(walletState, account);
 
       if (account.type === "Account") {
@@ -93,7 +101,7 @@ const useAccountsListViewModel = ({
         });
       }
     },
-    [navigation, sourceScreenName, startNavigationTTITimer, walletState, pageTrackingEvent],
+    [navigation, walletState, pageTrackingEvent],
   );
 
   return {

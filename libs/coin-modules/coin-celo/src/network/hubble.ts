@@ -99,9 +99,9 @@ const transactionToOperation = (
     hasFailed,
     blockHash: null,
     extra: {
-      celoOperationValue: new BigNumber(transaction.amount),
       ...(["ACTIVATE", "VOTE", "REVOKE"].includes(type)
         ? {
+            celoOperationValue: new BigNumber(transaction.amount),
             celoSourceValidator: recipient ? recipient : "",
           }
         : {}),
@@ -132,7 +132,7 @@ export const getAccountDetails = async (
   const allTransactions = accountDetails.internal_transfers
     .filter(
       (transfer: { data: { to: string; from: string } }) =>
-        transfer.data?.to != lockedGold.address && transfer.data?.from != lockedGold.address,
+        transfer.data?.to !== lockedGold.address && transfer.data?.from !== lockedGold.address,
     )
     .concat(accountDetails.transactions);
 

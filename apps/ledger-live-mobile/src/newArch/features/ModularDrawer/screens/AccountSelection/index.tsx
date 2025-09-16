@@ -16,13 +16,14 @@ import { Observable } from "rxjs";
 import { AccountUI } from "@ledgerhq/native-ui/pre-ldls/components/";
 import { AddAccountButton } from "@ledgerhq/native-ui/pre-ldls/components/index";
 import { useTranslation } from "react-i18next";
+import { useSelector } from "react-redux";
+import { modularDrawerFlowSelector, modularDrawerSourceSelector } from "~/reducers/modularDrawer";
+import { useTheme } from "styled-components/native";
 
 export type AccountSelectionStepProps = {
   accounts$?: Observable<WalletAPIAccount[]>;
   onAccountSelected?: (account: AccountLike, parentAccount?: AccountLike) => void;
   asset?: CryptoOrTokenCurrency | null;
-  flow: string;
-  source: string;
   onAddNewAccount: () => void;
 };
 
@@ -32,12 +33,12 @@ const MARGIN_BOTTOM = HEADER_HEIGHT + ROW_HEIGHT;
 
 const AccountSelectionContent = ({
   asset,
-  flow,
-  source,
   accounts$,
   onAddNewAccount,
   onAccountSelected,
 }: Readonly<AccountSelectionStepProps> & { asset: CryptoOrTokenCurrency }) => {
+  const flow = useSelector(modularDrawerFlowSelector);
+  const source = useSelector(modularDrawerSourceSelector);
   const { detailedAccounts, handleAccountSelected } = useDetailedAccounts(
     asset,
     flow,
@@ -47,12 +48,19 @@ const AccountSelectionContent = ({
   );
   const listRef = useRef<FlatList>(null);
   const { t } = useTranslation();
+  const { colors } = useTheme();
 
   const renderItem = useCallback(
     ({ item }: { item: AccountUI }) => {
-      return <AccountItem account={item} onClick={() => handleAccountSelected(item)} />;
+      return (
+        <AccountItem
+          account={item}
+          onClick={() => handleAccountSelected(item)}
+          cryptoIconBackgroundColor={colors.background.drawer}
+        />
+      );
     },
-    [handleAccountSelected],
+    [handleAccountSelected, colors.background.drawer],
   );
   const { trackModularDrawerEvent } = useModularDrawerAnalytics();
   const onAddNewAccountOnClick = useCallback(() => {

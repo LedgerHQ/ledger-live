@@ -1,11 +1,7 @@
-import { deleteSpeculos, launchProxy, launchSpeculos } from "../utils/speculosUtils";
-import { addKnownSpeculos, findFreePort, removeKnownSpeculos } from "../bridge/server";
-import { unregisterAllTransportModules } from "@ledgerhq/live-common/hw/index";
+import { removeSpeculosAndDeregisterKnownSpeculos } from "../utils/speculosUtils";
 import { Account, getParentAccountName } from "@ledgerhq/live-common/e2e/enum/Account";
 import { isIos } from "../helpers/commonHelpers";
 import { device } from "detox";
-
-const proxyAddress = "localhost";
 
 export default class CommonPage {
   searchBarId = "common-search-field";
@@ -14,7 +10,8 @@ export default class CommonPage {
   accountCardPrefix = "account-card-";
   accountItemId = "account-item-";
   accountItemNameRegExp = new RegExp(`${this.accountItemId}.*-name`);
-  deviceRowRegex = /device-item-.*/;
+  deviceItem = (deviceId: string): string => `device-item-${deviceId}`;
+  deviceItemRegex = /device-item-.*/;
 
   searchBar = () => getElementById(this.searchBarId);
   closeButton = () => getElementById("NavigationHeaderCloseButton");
@@ -94,31 +91,18 @@ export default class CommonPage {
   @Step("Go to the account with the name")
   async goToAccountByName(name: string) {
     const accountTitle = getElementByText(name);
-    const id = await getIdOfElement(accountTitle);
-    jestExpect(id).toContain(this.accountItemId);
-    await tapByElement(accountTitle);
+    const rowId = (await getIdOfElement(accountTitle)).replace("-name", ""); // Workaround on iOS (name on top of the return arrow clickable layout)
+    jestExpect(rowId).toContain(this.accountItemId);
+    await tapById(rowId);
   }
 
-  async addSpeculos(nanoApp: string) {
-    unregisterAllTransportModules();
-    const proxyPort = await findFreePort();
-    const speculosPort = await launchSpeculos(nanoApp);
-    const speculosAddress = process.env.SPECULOS_ADDRESS;
-    await launchProxy(proxyPort, speculosAddress, speculosPort);
-    await addKnownSpeculos(`${proxyAddress}:${proxyPort}`);
-    process.env.DEVICE_PROXY_URL = `ws://localhost:${proxyPort}`;
-    CLI.registerSpeculosTransport(speculosPort.toString(), speculosAddress);
-    return speculosPort;
-  }
-
-  async removeSpeculos(apiPort?: number) {
-    const proxyPort = await deleteSpeculos(apiPort);
-    proxyPort && (await removeKnownSpeculos(`${proxyAddress}:${proxyPort}`));
+  @Step("Remove Speculos")
+  async removeSpeculos(deviceId?: string) {
+    await removeSpeculosAndDeregisterKnownSpeculos(deviceId);
   }
 
   @Step("Select a known device")
   async selectKnownDevice(index = 0) {
-    if (isIos()) await device.disableSynchronization();
     const proxyUrl = process.env.DEVICE_PROXY_URL;
     const elementId = proxyUrl ? this.deviceItem(`httpdebug|${proxyUrl}`) : this.deviceItemRegex;
     await waitForElementById(elementId);
@@ -128,5 +112,9 @@ export default class CommonPage {
   @Step("Tap proceed button")
   async tapProceedButton() {
     await tapById(this.proceedButtonId);
+  }
+
+  async disableSynchronizationForiOS() {
+    if (isIos()) await device.disableSynchronization();
   }
 }

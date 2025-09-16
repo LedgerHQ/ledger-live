@@ -3,6 +3,7 @@ import {
   ExchangeStartParams,
   ExchangeStartSellParams,
   ExchangeStartSwapParams,
+  ExchangeStartFundParams,
 } from "@ledgerhq/wallet-api-exchange-module";
 import { WalletContext, WalletHandlers } from "@ledgerhq/wallet-api-server";
 import { of } from "rxjs";
@@ -153,8 +154,10 @@ describe("handlers", () => {
         uiHooks: mockUiHooks,
       });
 
-      const params: ExchangeStartParams = {
+      const params: ExchangeStartFundParams = {
         exchangeType: "FUND",
+        provider: "TestFundProvider",
+        fromAccountId: accounts[0].id,
       };
       const { request, context, walletHandlers } = prepareSellRequest(params);
 
@@ -170,6 +173,7 @@ describe("handlers", () => {
       expect(mockUiStartExchange).toHaveBeenCalledTimes(1);
       const receivedParams = mockUiStartExchange.mock.calls[0][0].exchangeParams;
       expect(receivedParams.exchangeType).toBe("FUND");
+      expect(receivedParams.provider).toBe("TestFundProvider");
       expect(mockUiCompleteExchange).not.toHaveBeenCalled();
     });
   });

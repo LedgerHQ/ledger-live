@@ -16,7 +16,6 @@ import { OnboardingNavigatorParamList } from "~/components/RootNavigator/types/O
 import useIsAppInBackground from "~/components/useIsAppInBackground";
 import { ScreenName, NavigatorName } from "~/const";
 import { readOnlyModeEnabledSelector } from "~/reducers/settings";
-import { useNavigationInterceptor } from "~/screens/Onboarding/onboardingContext";
 import { urls } from "~/utils/urls";
 
 type NavigationProp = BaseNavigationComposite<
@@ -28,7 +27,6 @@ const useUpsellFlexModel = () => {
   const { t } = useTranslation();
   const navigation = useNavigation<NavigationProp>();
   const { colors } = useTheme();
-  const { setShowWelcome, setFirstTimeOnboarding } = useNavigationInterceptor();
   const buyDeviceFromLive = useFeature("buyDeviceFromLive");
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
   const dispatch = useDispatch();
@@ -46,8 +44,6 @@ const useUpsellFlexModel = () => {
   }, [readOnlyModeEnabled, navigation]);
 
   const setupDevice = useCallback(() => {
-    setShowWelcome(false);
-    setFirstTimeOnboarding(false);
     if (isInOnboarding) dispatch(setOnboardingHasDevice(true));
     navigation.navigate(NavigatorName.BaseOnboarding, {
       screen: NavigatorName.Onboarding,
@@ -61,14 +57,7 @@ const useUpsellFlexModel = () => {
         page: "Upsell Flex",
       });
     }
-  }, [
-    setShowWelcome,
-    setFirstTimeOnboarding,
-    isInOnboarding,
-    dispatch,
-    navigation,
-    readOnlyModeEnabled,
-  ]);
+  }, [isInOnboarding, dispatch, navigation, readOnlyModeEnabled]);
 
   const buyLedger = useCallback(() => {
     if (buyDeviceFromLive?.enabled) {

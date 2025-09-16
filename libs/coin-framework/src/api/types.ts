@@ -1,3 +1,4 @@
+import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { BroadcastConfig } from "@ledgerhq/types-live";
 
 export type BlockInfo = {
@@ -71,9 +72,6 @@ export type Transaction = {
   recipient: string;
   amount: bigint;
   fee: bigint;
-  networkInfo?: {
-    fees?: bigint;
-  };
 } & Record<string, unknown>; // Field containing dedicated value for each blockchain
 
 /**
@@ -301,7 +299,6 @@ export type TransactionIntent<MemoType extends Memo = MemoNotSupported> = {
   expiration?: number;
   recipient: string;
   amount: bigint;
-  fees?: bigint | null | undefined; // Optional, depending on the API
   useAllAmount?: boolean;
   asset: AssetInfo;
   sequence?: number;
@@ -321,6 +318,14 @@ export type FeeEstimation = {
   parameters?: Record<string, unknown>;
 };
 
+/** Response of {@link AlpacaApi#craftTransaction}. */
+export type CraftedTransaction = {
+  /** The serialized transaction (encoding is blockchain dependent). */
+  transaction: string;
+  /** Blockchain specific details (eg: UTXOs referenced in the transaction). */
+  details?: Record<string, unknown>;
+};
+
 // TODO rename start to minHeight
 //       and add a `token: string` field to the pagination if we really need to support pagination
 //       (which is not the case for now)
@@ -333,6 +338,7 @@ export type Pagination = {
   lastPagingToken?: string;
   pagingToken?: string;
   limit?: number;
+  order?: "asc" | "desc";
 };
 // NOTE: future proof export type Pagination = Record<string, unknown>;
 /** A pagination cursor. */
@@ -359,7 +365,7 @@ export type AlpacaApi<MemoType extends Memo = MemoNotSupported> = {
   craftTransaction: (
     transactionIntent: TransactionIntent<MemoType>,
     customFees?: FeeEstimation,
-  ) => Promise<string>;
+  ) => Promise<CraftedTransaction>;
   getBalance: (address: string) => Promise<Balance[]>;
   lastBlock: () => Promise<BlockInfo>;
   getBlockInfo: (height: number) => Promise<BlockInfo>;
@@ -410,7 +416,7 @@ export type AlpacaApi<MemoType extends Memo = MemoNotSupported> = {
 };
 
 export type ChainSpecificRules = {
-  getAccountShape: (address: string) => any;
+  getAccountShape: (address: string) => void;
   getTransactionStatus: {
     throwIfPendingOperation?: boolean;
   };
@@ -419,9 +425,12 @@ export type ChainSpecificRules = {
 export type BridgeApi<MemoType extends Memo = MemoNotSupported> = {
   validateIntent: (
     transactionIntent: TransactionIntent<MemoType>,
+    customFees?: FeeEstimation,
   ) => Promise<TransactionValidation>;
   getSequence: (address: string) => Promise<number>;
   getChainSpecificRules?: () => ChainSpecificRules;
+  getTokenFromAsset?: (asset: AssetInfo) => TokenCurrency | undefined;
+  getAssetFromToken?: (token: TokenCurrency, owner: string) => AssetInfo;
 };
 
 export type Api<MemoType extends Memo = MemoNotSupported> = AlpacaApi<MemoType> &

@@ -1,7 +1,7 @@
 import { DerivationType } from "@taquito/ledger-signer";
 import { compressPublicKey } from "@taquito/ledger-signer/dist/lib/utils";
-import { COST_PER_BYTE, DEFAULT_FEE, DEFAULT_STORAGE_LIMIT, Estimate } from "@taquito/taquito";
-import { b58cencode, Prefix, prefix } from "@taquito/utils";
+import { COST_PER_BYTE, getRevealFee, ORIGINATION_SIZE, Estimate } from "@taquito/taquito";
+import { b58Encode, PrefixV2 } from "@taquito/utils";
 import { log } from "@ledgerhq/logs";
 import { getTezosToolkit } from "./tezosToolkit";
 import { TezosOperationMode } from "../types/model";
@@ -41,9 +41,9 @@ export async function estimateFees({
   account: CoreAccountInfo;
   transaction: CoreTransactionInfo;
 }): Promise<EstimatedFees> {
-  const encodedPubKey = b58cencode(
+  const encodedPubKey = b58Encode(
     compressPublicKey(Buffer.from(account.xpub || "", "hex"), DerivationType.ED25519),
-    prefix[Prefix.EDPK],
+    PrefixV2.Ed25519PublicKey,
   );
 
   const tezosToolkit = getTezosToolkit();
@@ -81,7 +81,7 @@ export async function estimateFees({
           mutez: true,
           to: transaction.recipient,
           amount: Number(amount),
-          storageLimit: DEFAULT_STORAGE_LIMIT.ORIGINATION, // https://github.com/TezTech/eztz/blob/master/PROTO_003_FEES.md for originating an account
+          storageLimit: ORIGINATION_SIZE, // https://github.com/TezTech/eztz/blob/master/PROTO_003_FEES.md for originating an account
         });
         break;
       case "delegate":
@@ -110,7 +110,7 @@ export async function estimateFees({
       }
       const maxAmount =
         parseInt(account.balance.toString()) -
-        (totalFees + (account.revealed ? 0 : DEFAULT_FEE.REVEAL));
+        (totalFees + (account.revealed ? 0 : getRevealFee(account.address)));
       // NOTE: from https://github.com/ecadlabs/taquito/blob/a70c64c4b105381bb9f1d04c9c70e8ef26e9241c/integration-tests/contract-empty-implicit-account-into-new-implicit-account.spec.ts#L33
       // Temporary fix, see https://gitlab.com/tezos/tezos/-/issues/1754
       // we need to increase the gasLimit and fee returned by the estimation
@@ -134,7 +134,7 @@ export async function estimateFees({
     estimation.storageLimit = BigInt(estimate.storageLimit);
     estimation.estimatedFees = estimation.fees;
     if (!account.revealed) {
-      estimation.estimatedFees = estimation.estimatedFees + BigInt(DEFAULT_FEE.REVEAL);
+      estimation.estimatedFees = estimation.estimatedFees + BigInt(getRevealFee(account.address));
     }
   } catch (e) {
     if (typeof e !== "object" || !e) throw e;

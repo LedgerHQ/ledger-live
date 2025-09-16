@@ -15,18 +15,12 @@ import DeviceAction from "../DeviceAction";
 import { useStaxRemoveImageDeviceAction } from "~/hooks/deviceActions";
 import { type CLSSupportedDeviceModelId } from "@ledgerhq/live-common/device/use-cases/isCustomLockScreenSupported";
 import { HOOKS_TRACKING_LOCATIONS } from "~/analytics/hooks/variables";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { useToastsActions } from "~/actions/toast";
 
 const analyticsDrawerName = "Choose an image to set as your device lockscreen";
 
 const analyticsButtonChoosePhoneGalleryEventProps = {
   button: "Choose from my picture gallery",
-  drawer: analyticsDrawerName,
-};
-
-const analyticsButtonChooseNFTGalleryEventProps = {
-  button: "Choose from NFT gallery",
   drawer: analyticsDrawerName,
 };
 
@@ -53,7 +47,6 @@ const CustomImageBottomModal: React.FC<Props> = props => {
     referral = undefined,
   } = props;
   const { t } = useTranslation();
-  const llNftSupportEnabled = useFeature("llNftSupport")?.enabled ?? false;
   const { pushToast } = useToastsActions();
 
   const navigation = useNavigation<StackNavigatorNavigation<BaseNavigatorStackParamList>>();
@@ -84,14 +77,6 @@ const CustomImageBottomModal: React.FC<Props> = props => {
     setIsLoading(false);
     onClose && onClose();
   }, [navigation, onClose, device, deviceModelId, referral]);
-
-  const handleSelectFromNFTGallery = useCallback(() => {
-    navigation.navigate(NavigatorName.CustomImage, {
-      screen: ScreenName.CustomImageNFTGallery,
-      params: { device, deviceModelId },
-    });
-    onClose && onClose();
-  }, [navigation, device, onClose, deviceModelId]);
 
   const request = useMemo(() => ({ deviceId: device?.deviceId || "", request: {} }), [device]);
 
@@ -171,15 +156,6 @@ const CustomImageBottomModal: React.FC<Props> = props => {
             eventProperties={analyticsButtonChoosePhoneGalleryEventProps}
           />
           <Flex mt={6} />
-          {llNftSupportEnabled ? (
-            <ModalChoice
-              onPress={handleSelectFromNFTGallery}
-              title={t("customImage.drawer.options.selectFromNFTGallery")}
-              iconName={"Ticket"}
-              event="button_clicked"
-              eventProperties={analyticsButtonChooseNFTGalleryEventProps}
-            />
-          ) : null}
           {deviceHasImage ? (
             <Button
               mt={6}

@@ -8,7 +8,6 @@ import { getTagDerivationMode } from "@ledgerhq/coin-framework/derivation";
 import { useCountervaluesState } from "@ledgerhq/live-countervalues-react";
 import orderBy from "lodash/orderBy";
 import keyBy from "lodash/keyBy";
-import BigNumber from "bignumber.js";
 import { accountsSelector } from "~/reducers/accounts";
 import { counterValueCurrencySelector } from "~/reducers/settings";
 import { useModularDrawerAnalytics, MODULAR_DRAWER_PAGE_NAME } from "../analytics";
@@ -16,24 +15,12 @@ import { formatDetailedAccount } from "../utils/formatdetailedAccount";
 import { sortAccountsByFiatValue } from "../utils/sortAccountsByFiatValue";
 import { isTokenCurrency } from "@ledgerhq/live-common/currencies/helpers";
 import { useBatchMaybeAccountName } from "~/reducers/wallet";
-import { NavigatorName, ScreenName } from "~/const";
-import { useNavigation } from "@react-navigation/core";
 import {
   getAccountTuplesForCurrency,
   AccountTuple,
 } from "@ledgerhq/live-common/utils/getAccountTuplesForCurrency";
 import { AccountUI } from "@ledgerhq/native-ui/lib/pre-ldls/index";
 import { AccountLike } from "@ledgerhq/types-live";
-
-export const sortAccountsByBalance = (
-  a: { balance: BigNumber } | undefined,
-  b: { balance: BigNumber } | undefined,
-) => {
-  if (a && b) return b.balance.comparedTo(a.balance);
-  if (a) return -1;
-  if (b) return 1;
-  return 0;
-};
 
 export const useDetailedAccounts = (
   asset: CryptoOrTokenCurrency,
@@ -44,7 +31,6 @@ export const useDetailedAccounts = (
 ) => {
   const state = useCountervaluesState();
   const { trackModularDrawerEvent } = useModularDrawerAnalytics();
-  const navigation = useNavigation();
   const accountIds = useGetAccountIds(accounts$);
   const nestedAccounts = useSelector(accountsSelector);
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
@@ -106,7 +92,14 @@ export const useDetailedAccounts = (
 
   const handleAccountSelected = useCallback(
     (account: AccountUI) => {
-      const specificAccount = accounts.find(tuple => tuple.account.id === account.id)?.account;
+      const isToken = Boolean(account.parentId);
+
+      const matchedTuple = accounts.find(
+        tuple => tuple.account.id === account.id || tuple.subAccount?.id === account.id,
+      );
+
+      const specificAccount = isToken ? matchedTuple?.subAccount : matchedTuple?.account;
+      const parentAccount = isToken ? matchedTuple?.account : undefined;
 
       trackModularDrawerEvent("account_clicked", {
         page: MODULAR_DRAWER_PAGE_NAME.MODULAR_ACCOUNT_SELECTION,
@@ -114,28 +107,13 @@ export const useDetailedAccounts = (
         source,
         currency: asset.ticker,
       });
-      if (onAccountSelected && specificAccount) {
-        onAccountSelected?.(specificAccount);
-      } else {
-        navigation.navigate(NavigatorName.Accounts, {
-          screen: ScreenName.Account,
-          params: {
-            currencyId: asset.id,
-            accountId: account.id,
-          },
-        });
+
+      if (specificAccount) {
+        onAccountSelected?.(specificAccount, parentAccount);
+        return;
       }
     },
-    [
-      accounts,
-      trackModularDrawerEvent,
-      flow,
-      source,
-      asset.ticker,
-      asset.id,
-      onAccountSelected,
-      navigation,
-    ],
+    [accounts, trackModularDrawerEvent, flow, source, asset.ticker, onAccountSelected],
   );
 
   return { detailedAccounts, accounts, handleAccountSelected };

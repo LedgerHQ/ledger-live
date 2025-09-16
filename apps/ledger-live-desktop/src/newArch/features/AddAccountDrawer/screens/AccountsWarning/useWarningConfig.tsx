@@ -17,6 +17,7 @@ export const useWarningConfig = (
   currency: CryptoCurrency,
   navigateToEditAccountName: (account: Account) => void,
   navigateToFundAccount: (account: Account) => void,
+  isAccountSelectionFlow: boolean,
   emptyAccount?: Account,
 ) => {
   const { t } = useTranslation();
@@ -58,7 +59,7 @@ export const useWarningConfig = (
           onClick={() => handleAccountClick(formattedAccount.id)}
           backgroundColor={colors.opacityDefault.c05}
           rightElement={{
-            type: "edit",
+            type: isAccountSelectionFlow ? "arrow" : "edit",
             onClick: () => navigateToEditAccountName(emptyAccount),
           }}
         />

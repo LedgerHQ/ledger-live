@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/hw-app-vet",
-  "version": "0.5.13",
+  "version": "0.5.15",
   "description": "Ledger Hardware Wallet VeChain Application API",
   "keywords": [
     "Ledger",
@@ -31,12 +31,12 @@
     "@ledgerhq/hw-transport": "workspace:^",
     "@ledgerhq/hw-transport-mocker": "workspace:^",
     "@ledgerhq/logs": "workspace:^",
-    "thor-devkit": "^2.0.6"
+    "@vechain/sdk-core": "2.0.0"
   },
   "scripts": {
     "clean": "rimraf lib lib-es",
     "build": "tsc && tsc -m esnext --moduleResolution bundler --outDir lib-es",
-    "coverage": "jest --coverage --passWithNoTests && mv coverage/coverage-final.json coverage/coverage-hw-app-vet.json",
+    "coverage": "jest --coverage --passWithNoTests",
     "prewatch": "pnpm build",
     "watch": "tsc --watch",
     "watch:es": "tsc --watch -m esnext --moduleResolution bundler --outDir lib-es",

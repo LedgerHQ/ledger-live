@@ -1,9 +1,8 @@
 import flatMap from "lodash/flatMap";
 import { Transaction, Transaction as VechainTransaction } from "../types";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
-import { VTHO_ADDRESS } from "../contracts/constants";
-import VIP180 from "../contracts/abis/VIP180";
 import { MustBeVechain } from "../errors";
+import { ABIContract, VIP180_ABI, VTHO_ADDRESS } from "@vechain/sdk-core";
 
 type CliTools = {
   options: Array<{
@@ -45,7 +44,7 @@ function inferTransactions(
 ): Transaction[] {
   return flatMap(transactions, ({ transaction, account }) => {
     let subAccountId =
-      account.type == "Account" && account.subAccounts ? account.subAccounts[0].id : "";
+      account.type === "Account" && account.subAccounts ? account.subAccounts[0].id : "";
 
     if (account.type === "TokenAccount") {
       subAccountId = account.id;
@@ -53,17 +52,19 @@ function inferTransactions(
 
     const clauses: Array<Clauses> = [];
 
-    if (opts.vechainCurrency == "VET") {
+    if (opts.vechainCurrency === "VET") {
       clauses.push({
         to: transaction.recipient,
         value: "0x" + transaction.amount.toString(16),
         data: "0x",
       });
-    } else if (opts.vechainCurrency == "VTHO") {
+    } else if (opts.vechainCurrency === "VTHO") {
       clauses.push({
         value: 0,
         to: VTHO_ADDRESS,
-        data: VIP180.transfer.encode(transaction.recipient, transaction.amount.toFixed()),
+        data: ABIContract.ofAbi(VIP180_ABI)
+          .encodeFunctionInput("transfer", [transaction.recipient, transaction.amount.toFixed()])
+          .toString(),
       });
     } else {
       throw new MustBeVechain();
@@ -72,7 +73,7 @@ function inferTransactions(
     return {
       ...transaction,
       family: "vechain",
-      subAccountId: opts.vechainCurrency == "VTHO" ? subAccountId : "",
+      subAccountId: opts.vechainCurrency === "VTHO" ? subAccountId : "",
       body: { ...(transaction as VechainTransaction).body, clauses },
     } as VechainTransaction;
   });

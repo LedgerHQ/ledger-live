@@ -1,10 +1,11 @@
 import { Observable } from "rxjs";
+import BigNumber from "bignumber.js";
 import { FeeNotLoaded } from "@ledgerhq/errors";
 import { AccountBridge, Operation } from "@ledgerhq/types-live";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
-import { combine, craftTransaction, getNextValidSequence } from "../common-logic";
-import { Transaction, CantonSigner, BoilerplateNativeTransaction } from "../types";
+import { combine, craftTransaction } from "../common-logic";
+import { Transaction, CantonSigner } from "../types";
 
 export const buildSignOperation =
   (signerContext: SignerContext<CantonSigner>): AccountBridge<Transaction>["signOperation"] =>
@@ -20,30 +21,36 @@ export const buildSignOperation =
             type: "device-signature-requested",
           });
 
-          const nextSequenceNumber = await getNextValidSequence(account.freshAddress);
-
           const signature = await signerContext(deviceId, async signer => {
             const { freshAddressPath: derivationPath } = account;
-            const { publicKey } = await signer.getAddress(derivationPath);
+            const partyId = (account as unknown as { cantonResources: { partyId: string } })
+              .cantonResources.partyId;
+            const params: {
+              recipient?: string;
+              amount: BigNumber;
+              tokenId: string;
+              expireInSeconds: number;
+              memo?: string;
+            } = {
+              recipient: transaction.recipient,
+              amount: transaction.amount,
+              expireInSeconds: 60 * 60,
+              tokenId: "Amulet",
+            };
+            if (transaction.memo) {
+              params.memo = transaction.memo;
+            }
 
-            const { nativeTransaction, serializedTransaction } = await craftTransaction(
+            const { hash, serializedTransaction } = await craftTransaction(
+              account.currency,
               {
-                address: account.freshAddress,
-                publicKey,
+                address: partyId,
               },
-              {
-                recipient: transaction.recipient,
-                amount: transaction.amount,
-                fee: fee,
-              },
+              params,
             );
+            const transactionSignature = await signer.signTransaction(derivationPath, hash);
 
-            const transactionSignature = await signer.signTransaction(
-              derivationPath,
-              serializedTransaction,
-            );
-
-            return combine(serializedTransaction, transactionSignature, publicKey);
+            return combine(serializedTransaction, `${transactionSignature}__PARTY__${partyId}`);
           });
 
           o.next({
@@ -64,7 +71,6 @@ export const buildSignOperation =
             senders: [account.freshAddress],
             recipients: [transaction.recipient],
             date: new Date(),
-            transactionSequenceNumber: nextSequenceNumber,
             extra: {},
           };
 

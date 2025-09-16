@@ -1,5 +1,5 @@
-import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { getCryptoCurrencyById } from "../../currencies";
 
 export const mockBtcCryptoCurrency = getCryptoCurrencyById("bitcoin");
 export const mockEthCryptoCurrency = getCryptoCurrencyById("ethereum");

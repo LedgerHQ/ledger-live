@@ -1,4 +1,9 @@
-import type { AlpacaApi, FeeEstimation, Operation } from "@ledgerhq/coin-framework/api/types";
+import type {
+  AlpacaApi,
+  FeeEstimation,
+  Operation,
+  Pagination,
+} from "@ledgerhq/coin-framework/api/types";
 import { createApi } from ".";
 import { getEnv } from "@ledgerhq/live-env";
 
@@ -34,11 +39,44 @@ describe("Sui Api", () => {
     });
   });
 
+  describe("listOperations for big account (testing cursor logic)", () => {
+    // this account has a lot of operations
+    const binance = "0x935029ca5219502a47ac9b69f556ccf6e2198b5e7815cf50f68846f723739cbd";
+
+    async function testListOperations(order: "asc" | "desc" | undefined) {
+      const baseOpts: Pagination = { minHeight: 0 };
+      if (order) {
+        baseOpts.order = order;
+      }
+
+      const [operations1, token1] = await module.listOperations(binance, baseOpts);
+
+      expect(operations1.length).toBeGreaterThan(2);
+      expect(token1).toBeTruthy();
+      const [operations2, _] = await module.listOperations(binance, {
+        ...baseOpts,
+        lastPagingToken: token1,
+      });
+      expect(operations2.length).toBeGreaterThan(2);
+      expect(operations2[0].tx.hash).not.toBe(operations1[0].tx.hash);
+    }
+
+    it("should fetch operations successfully in desc order", async () => {
+      await testListOperations("desc");
+    });
+    it("should fetch operations successfully in asc order", async () => {
+      await testListOperations("asc");
+    });
+    it("should fetch operations successfully in default order", async () => {
+      await testListOperations(undefined);
+    });
+  });
+
   describe("listOperations", () => {
     let txs: Operation[];
 
     beforeAll(async () => {
-      [txs] = await module.listOperations(SENDER, { minHeight: 0 });
+      [txs] = await module.listOperations(SENDER, { minHeight: 0, order: "asc" });
     });
 
     it("returns a list regarding address parameter", async () => {
@@ -67,7 +105,10 @@ describe("Sui Api", () => {
     });
 
     it("uses the minHeight to filter", async () => {
-      const minHeightTxs = await module.listOperations(SENDER, { minHeight: 154925948 });
+      const minHeightTxs = await module.listOperations(SENDER, {
+        minHeight: 154925948,
+        order: "asc",
+      });
       expect(txs.length).toBeGreaterThanOrEqual(minHeightTxs.length);
     });
   });

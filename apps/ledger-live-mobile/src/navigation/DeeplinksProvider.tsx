@@ -20,7 +20,6 @@ import { navigationRef, isReadyRef } from "../rootnavigation";
 import { ScreenName, NavigatorName } from "~/const";
 import { setWallectConnectUri } from "~/actions/walletconnect";
 import { useGeneralTermsAccepted } from "~/logic/terms";
-import { Writeable } from "~/types/helpers";
 import { lightTheme, darkTheme, Theme } from "../colors";
 import { track } from "~/analytics";
 import {
@@ -31,9 +30,17 @@ import {
 import { blockPasswordLock } from "../actions/appstate";
 import { useStorylyContext } from "~/components/StorylyStories/StorylyProvider";
 import { navigationIntegration } from "../sentry";
-import { OptionMetadata } from "~/reducers/types";
+
 const TRACKING_EVENT = "deeplink_clicked";
 import { DdRumReactNavigationTracking } from "@datadog/mobile-react-navigation";
+import {
+  validateEarnAction,
+  validateEarnInfoModal,
+  validateEarnMenuModal,
+  logSecurityEvent,
+  EarnDeeplinkAction,
+  validateEarnDepositScreen,
+} from "./deeplinks/validation";
 import { viewNamePredicate } from "~/datadog";
 
 const themes: {
@@ -215,7 +222,7 @@ const linkingOptions = () => ({
           },
 
           [NavigatorName.Settings]: {
-            initialRouteName: [ScreenName.SettingsScreen],
+            initialRouteName: ScreenName.SettingsScreen,
             screens: {
               /**
                * ie: "ledgerlive://settings/experimental" -> will redirect to the experimental settings panel
@@ -237,23 +244,6 @@ const linkingOptions = () => ({
                * ie: "ledgerlive://custom-image"
                */
               [ScreenName.CustomImageStep0Welcome]: "custom-image",
-            },
-          },
-          [NavigatorName.ExploreTab]: {
-            initialRouteName: "explore",
-            screens: {
-              /**
-               * ie: "ledgerlive://learn"
-               */
-              [ScreenName.Newsfeed]: "newsfeed",
-            },
-          },
-          [NavigatorName.ImportAccounts]: {
-            screens: {
-              /**
-               * ie: "ledgerlive://ScanAccounts"
-               */
-              [ScreenName.ScanAccounts]: "scan-accounts",
             },
           },
           [NavigatorName.LandingPages]: {
@@ -353,13 +343,15 @@ export const DeeplinksProvider = ({
   const modularDrawer = useFeature("llmModularDrawer");
   const buySellUiManifestId = buySellUiFlag?.params?.manifestId;
   const AddAccountNavigatorEntryPoint = NavigatorName.AssetSelection;
-
+  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+  const theme = themes[resolvedTheme] as ReactNavigation.Theme;
   const AccountsListScreenName = llmAccountListUI?.enabled
     ? ScreenName.AccountsList
     : ScreenName.Accounts;
 
   const linking = useMemo<LinkingOptions<ReactNavigation.RootParamList>>(
     () =>
+      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
       ({
         ...(hasCompletedOnboarding
           ? {
@@ -435,7 +427,6 @@ export const DeeplinksProvider = ({
                               [NavigatorName.WalletTab]: {
                                 screens: {
                                   [ScreenName.Portfolio]: "portfolio",
-                                  [ScreenName.WalletNftGallery]: "nftgallery",
                                   [NavigatorName.Market]: {
                                     screens: {
                                       /**
@@ -610,38 +601,78 @@ export const DeeplinksProvider = ({
           }
 
           if (hostname === "earn") {
-            switch (searchParams.get("action")) {
-              case "info-modal": {
-                const message = searchParams.get("message") ?? "";
-                const messageTitle = searchParams.get("messageTitle") ?? "";
-                const learnMoreLink = searchParams.get("learnMoreLink") ?? "";
-                dispatch(
-                  makeSetEarnInfoModalAction({
-                    message,
-                    messageTitle,
-                    learnMoreLink,
-                  }),
+            const earnParamAction = searchParams.get("action");
+            const validatedAction = validateEarnAction(earnParamAction);
+
+            if (!validatedAction && earnParamAction) {
+              logSecurityEvent("blocked_action", {
+                hostname,
+                action: earnParamAction,
+                reason: "Invalid action type",
+              });
+              return;
+            }
+
+            switch (validatedAction) {
+              case EarnDeeplinkAction.INFO_MODAL: {
+                const validatedModal = validateEarnInfoModal(
+                  searchParams.get("message"),
+                  searchParams.get("messageTitle"),
+                  searchParams.get("learnMoreLink"),
                 );
+
+                if (!validatedModal) {
+                  logSecurityEvent("validation_failed", {
+                    hostname,
+                    action: validatedAction,
+                    reason: "Invalid info modal parameters",
+                  });
+                  return;
+                }
+
+                dispatch(makeSetEarnInfoModalAction(validatedModal));
                 return;
               }
-              case "menu-modal": {
-                const title = searchParams.get("title") ?? "";
-                const options = searchParams.get("options") ?? "";
+              case EarnDeeplinkAction.MENU_MODAL: {
+                const validatedModal = validateEarnMenuModal(
+                  searchParams.get("title"),
+                  searchParams.get("options"),
+                );
+
+                if (!validatedModal) {
+                  logSecurityEvent("validation_failed", {
+                    hostname,
+                    action: validatedAction,
+                    reason: "Invalid menu modal parameters",
+                  });
+                  return;
+                }
+
                 dispatch(
                   makeSetEarnMenuModalAction({
-                    title,
-                    options: JSON.parse(options) as {
-                      label: string;
-                      metadata: OptionMetadata;
-                    }[],
+                    title: validatedModal.title,
+                    options: validatedModal.options,
                   }),
                 );
                 return;
               }
-              case "protocol-info-modal": {
+              case EarnDeeplinkAction.PROTOCOL_INFO_MODAL: {
                 dispatch(makeSetEarnProtocolInfoModalAction(true));
                 return;
               }
+            }
+            if (pathname === "/deposit") {
+              const validatedModal = validateEarnDepositScreen(
+                searchParams.get("cryptoAssetId") || undefined,
+                searchParams.get("accountId") || undefined,
+              );
+              // Handle deposit deeplink on earnLiveAppNavigator
+              // Creating own search params for deposit deeplink
+              url.pathname = "";
+              url.searchParams.set("action", "deposit");
+              url.searchParams.set("cryptoAssetId", validatedModal.cryptoAssetId ?? "");
+              url.searchParams.set("accountId", validatedModal.accountId ?? "");
+              return getStateFromPath(url.href?.split("://")[1], config);
             }
           }
           if ((hostname === "discover" || hostname === "recover") && platform) {
@@ -693,9 +724,11 @@ export const DeeplinksProvider = ({
     setIsReady(true);
   }, [userAcceptedTerms]);
 
-  React.useEffect(
+  useEffect(
     () => () => {
-      (isReadyRef as Writeable<typeof isReadyRef>).current = false;
+      if (isReadyRef.current) {
+        isReadyRef.current = false;
+      }
     },
     [],
   );
@@ -706,11 +739,11 @@ export const DeeplinksProvider = ({
 
   return (
     <NavigationContainer
-      theme={themes[resolvedTheme]}
+      theme={theme}
       linking={linking}
       ref={navigationRef}
       onReady={() => {
-        (isReadyRef as Writeable<typeof isReadyRef>).current = true;
+        isReadyRef.current = true;
         setTimeout(() => SplashScreen.hide(), 300);
         navigationIntegration.registerNavigationContainer(navigationRef);
         DdRumReactNavigationTracking.startTrackingViews(navigationRef.current, viewNamePredicate);

@@ -7,6 +7,15 @@ import {
   Operation as CoreOperation,
   TransactionIntent,
 } from "@ledgerhq/coin-framework/api/types";
+import { findCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+
+export function findCryptoCurrencyByNetwork(network: string): CryptoCurrency | undefined {
+  const networksRemap = {
+    xrp: "ripple",
+  };
+  return findCryptoCurrencyById(networksRemap[network] ?? network);
+}
 
 export function extractBalance(balances: Balance[], type: string): Balance {
   return (
@@ -44,15 +53,17 @@ export function adaptCoreOperationToLiveOperation(accountId: string, op: CoreOpe
   if (op.details?.memo) {
     extra.memo = op.details.memo as string;
   }
+  const bnFees = new BigNumber(op.tx.fees.toString());
   const res = {
-    id: extra.ledgerOpType
-      ? encodeOperationId(accountId, op.tx.hash, extra.ledgerOpType)
-      : encodeOperationId(accountId, op.tx.hash, op.type),
+    id: encodeOperationId(accountId, op.tx.hash, op.type),
     hash: op.tx.hash,
     accountId,
     type: opType,
-    value: new BigNumber(op.value.toString()),
-    fee: new BigNumber(op.tx.fees.toString()),
+    value:
+      op.asset.type === "native" && ["OUT", "FEES"].includes(opType)
+        ? new BigNumber(op.value.toString()).plus(bnFees)
+        : new BigNumber(op.value.toString()),
+    fee: bnFees,
     blockHash: op.tx.block.hash,
     blockHeight: op.tx.block.height,
     senders: op.senders,
@@ -94,7 +105,6 @@ export function transactionToIntent(
     assetOwner?: string;
     assetReference?: string;
     mode?: string;
-    fees?: bigint | null | undefined;
     memoType?: string;
     memoValue?: string;
     useAllAmount?: boolean;
@@ -109,12 +119,17 @@ export function transactionToIntent(
       case "send":
         transactionType = "send";
         break;
+      case "send-legacy":
+        transactionType = "send-legacy";
+        break;
+      case "send-eip1559":
+        transactionType = "send-eip1559";
+        break;
       default:
         throw new Error(`Unsupported transaction mode: ${transaction.mode}`);
     }
   }
   const res: TransactionIntent & { memo?: { type: string; value?: string } } = {
-    fees: transaction?.fees ? transaction.fees : null,
     type: transactionType,
     sender: account.freshAddress,
     recipient: transaction.recipient,

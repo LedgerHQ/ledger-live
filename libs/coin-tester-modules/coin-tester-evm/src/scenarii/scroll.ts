@@ -1,6 +1,6 @@
 import { LegacySignerEth } from "@ledgerhq/live-signer-evm";
 import { BigNumber } from "bignumber.js";
-import { ethers, providers } from "ethers";
+import { ethers } from "ethers";
 import { Account } from "@ledgerhq/types-live";
 import { getTokenById } from "@ledgerhq/cryptoassets/tokens";
 import { Scenario, ScenarioTransaction } from "@ledgerhq/coin-tester/main";
@@ -15,6 +15,8 @@ import { callMyDealer, scroll, VITALIK } from "../helpers";
 import { defaultNanoApp } from "../scenarii.test";
 import { killAnvil, spawnAnvil } from "../anvil";
 import resolver from "@ledgerhq/coin-evm/hw-getAddress";
+import { SignerContext } from "@ledgerhq/coin-framework/signer";
+import { EvmSigner } from "@ledgerhq/coin-evm/types/signer";
 
 type ScrollScenarioTransaction = ScenarioTransaction<EvmTransaction, Account>;
 
@@ -44,9 +46,7 @@ const makeScenarioTransactions = ({
   const USDC_ON_SCROLL = getTokenById("scroll/erc20/usd_coin");
   const scenarioSendUSDCTransaction: ScrollScenarioTransaction = {
     name: "Send USDC",
-    amount: new BigNumber(
-      ethers.utils.parseUnits("80", USDC_ON_SCROLL.units[0].magnitude).toString(),
-    ),
+    amount: new BigNumber(ethers.parseUnits("80", USDC_ON_SCROLL.units[0].magnitude).toString()),
     recipient: VITALIK,
     subAccountId: encodeTokenAccountId(`js:2:scroll:${address}:`, USDC_ON_SCROLL),
     expect: (previousAccount, currentAccount) => {
@@ -56,10 +56,10 @@ const makeScenarioTransactions = ({
       expect(latestOperation.value.toFixed()).toBe(latestOperation.fee.toFixed());
       expect(latestOperation.subOperations?.[0].type).toBe("OUT");
       expect(latestOperation.subOperations?.[0].value.toFixed()).toBe(
-        ethers.utils.parseUnits("80", USDC_ON_SCROLL.units[0].magnitude).toString(),
+        ethers.parseUnits("80", USDC_ON_SCROLL.units[0].magnitude).toString(),
       );
       expect(currentAccount.subAccounts?.[0].balance.toFixed()).toBe(
-        ethers.utils.parseUnits("20", USDC_ON_SCROLL.units[0].magnitude).toString(),
+        ethers.parseUnits("20", USDC_ON_SCROLL.units[0].magnitude).toString(),
       );
     },
   };
@@ -75,13 +75,12 @@ export const scenarioScroll: Scenario<EvmTransaction, Account> = {
       spawnAnvil("https://rpc.scroll.io"),
     ]);
 
-    const provider = new providers.StaticJsonRpcProvider("http://127.0.0.1:8545");
-    const signerContext: Parameters<typeof resolver>[0] = (deviceId, fn) =>
-      fn(new LegacySignerEth(transport));
+    const provider = new ethers.JsonRpcProvider("http://127.0.0.1:8545");
+    const signerContext: SignerContext<EvmSigner> = (_, fn) => fn(new LegacySignerEth(transport));
 
     const lastBlockNumber = await provider.getBlockNumber();
     // start indexing at next block
-    await setBlock(lastBlockNumber + 1);
+    setBlock(lastBlockNumber + 1);
 
     setCoinConfig(() => ({
       info: {
@@ -119,7 +118,7 @@ export const scenarioScroll: Scenario<EvmTransaction, Account> = {
       provider,
       drug: USDC_ON_SCROLL,
       junkie: address,
-      dose: ethers.utils.parseUnits("100", USDC_ON_SCROLL.units[0].magnitude),
+      dose: ethers.parseUnits("100", USDC_ON_SCROLL.units[0].magnitude),
     });
 
     return {
@@ -136,17 +135,17 @@ export const scenarioScroll: Scenario<EvmTransaction, Account> = {
   },
   beforeAll: account => {
     const USDC_ON_SCROLL = getTokenById(TOKEN_ID);
-    expect(account.balance.toFixed()).toBe(ethers.utils.parseEther("10000").toString());
+    expect(account.balance.toFixed()).toBe(ethers.parseEther("10000").toString());
     expect(account.subAccounts?.[0]?.type).toBe("TokenAccount");
     expect(account.subAccounts?.[0]?.balance?.toFixed()).toBe(
-      ethers.utils.parseUnits("100", USDC_ON_SCROLL.units[0].magnitude).toString(),
+      ethers.parseUnits("100", USDC_ON_SCROLL.units[0].magnitude).toString(),
     );
   },
   afterAll: account => {
     const USDC_ON_SCROLL = getTokenById(TOKEN_ID);
     expect(account.subAccounts?.length).toBe(1);
     expect(account.subAccounts?.[0].balance.toFixed()).toBe(
-      ethers.utils.parseUnits("20", USDC_ON_SCROLL.units[0].magnitude).toString(),
+      ethers.parseUnits("20", USDC_ON_SCROLL.units[0].magnitude).toString(),
     );
     expect(account.operations.length).toBe(3);
   },

@@ -12,6 +12,7 @@
 .github/workflows/test-mobile-e2e-reusable.yml          @ledgerhq/wallet-ci  @ledgerhq/qaa
 .github/workflows/test-design-system-reusable.yml       @ledgerhq/wallet-ci  @ledgerhq/live-hub
 tools                                                   @ledgerhq/wallet-ci
+apps/ledger-live-mobile/fastlane/Fastfile               @ledgerhq/wallet-ci
 
 # Hub team
 ## by default, hub manage apps and libs related to it & then we overrides many exceptions
@@ -82,10 +83,11 @@ libs/coin-modules/coin-stacks/                                           @ledger
 libs/coin-modules/coin-ton/                                              @ledgerhq/coin-integration @ledgerhq/blockchain-support @ledgerhq/ledger-partner-zondax
 
 ## Hoodies
- libs/coin-modules/coin-sui/                                              @ledgerhq/coin-integration @ledgerhq/blockchain-support
+libs/coin-modules/coin-sui/                                              @ledgerhq/coin-integration @ledgerhq/blockchain-support @ledgerhq/ledger-partner-hoodies
+libs/coin-modules/coin-canton/                                           @ledgerhq/coin-integration @ledgerhq/blockchain-support @ledgerhq/ledger-partner-hoodies
 
 ## Blockydevs
- libs/coin-modules/coin-hedera/                                           @ledgerhq/coin-integration @ledgerhq/blockchain-support
+libs/coin-modules/coin-hedera/                                           @ledgerhq/coin-integration @ledgerhq/blockchain-support @ledgerhq/ledger-partner-blockydevs
 
 # PTX team
 apps/cli/src/commands/ptx                                            					@ledgerhq/ptx
@@ -172,6 +174,10 @@ libs/device-core/                                                  @ledgerhq/liv
 libs/device-react/                                                 @ledgerhq/live-devices
 libs/live-dmk/                                                     @ledgerhq/live-devices
 libs/speculos-transport/                                           @ledgerhq/live-devices @ledgerhq/qaa
+libs/live-dmk-mobile/                                              @ledgerhq/live-devices
+libs/live-dmk-desktop/                                             @ledgerhq/live-devices
+libs/live-dmk-shared/                                              @ledgerhq/live-devices
+libs/live-signer-evm/                                              @ledgerhq/live-devices
 
 # Recover team
 apps/ledger-live-desktop/src/renderer/components/RecoverBanner/         @ledgerhq/recover-software

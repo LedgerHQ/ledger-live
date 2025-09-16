@@ -1,44 +1,47 @@
-import { useCallback, useMemo } from "react";
+import { useCallback } from "react";
 import { ModularDrawerStep } from "../types";
-import type { StepFlowManagerReturnType } from "./useModularDrawerFlowStepManager";
 import type { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  modularDrawerEnableAccountSelectionSelector,
+  modularDrawerStepSelector,
+  setStep,
+} from "~/reducers/modularDrawer";
 
 type UseStepNavigationParams = {
-  navigationStepManager: StepFlowManagerReturnType;
   availableNetworksCount: number;
   hasOneCurrency: boolean;
   resetSelection: () => void;
   clearNetwork: () => void;
-  selectNetwork?: (a: CryptoOrTokenCurrency, n: CryptoOrTokenCurrency) => void;
+  selectNetwork?: (n: CryptoOrTokenCurrency) => void;
   navigateToDeviceWithCurrency: (selectedCurrency: CryptoOrTokenCurrency) => void;
-  enableAccountSelection?: boolean;
 };
 
 export function useStepNavigation({
-  navigationStepManager,
   availableNetworksCount,
   hasOneCurrency,
   resetSelection,
   clearNetwork,
   selectNetwork,
-  enableAccountSelection,
   navigateToDeviceWithCurrency,
 }: UseStepNavigationParams) {
-  const canGoBackToAsset = useMemo(() => !hasOneCurrency, [hasOneCurrency]);
-  const canGoBackToNetwork = useMemo(() => availableNetworksCount > 1, [availableNetworksCount]);
+  const enableAccountSelection = useSelector(modularDrawerEnableAccountSelectionSelector);
+  const dispatch = useDispatch();
+  const canGoBackToAsset = !hasOneCurrency;
+  const canGoBackToNetwork = availableNetworksCount > 1;
 
   const backToAsset = useCallback(() => {
     resetSelection();
-    navigationStepManager.goToStep(ModularDrawerStep.Asset);
-  }, [navigationStepManager, resetSelection]);
+    dispatch(setStep(ModularDrawerStep.Asset));
+  }, [resetSelection, dispatch]);
 
   const backToNetwork = useCallback(() => {
     clearNetwork();
-    navigationStepManager.goToStep(ModularDrawerStep.Network);
-  }, [navigationStepManager, clearNetwork]);
+    dispatch(setStep(ModularDrawerStep.Network));
+  }, [clearNetwork, dispatch]);
 
-  const shouldShowBackButton = useMemo(() => {
-    const currentStep = navigationStepManager.currentStep;
+  const currentStep = useSelector(modularDrawerStepSelector);
+  const shouldShowBackButton = (() => {
     switch (currentStep) {
       case ModularDrawerStep.Network:
         return canGoBackToAsset;
@@ -47,18 +50,18 @@ export function useStepNavigation({
       default:
         return false;
     }
-  }, [navigationStepManager.currentStep, canGoBackToAsset, canGoBackToNetwork]);
+  })();
 
   const proceedToNextStep = useCallback(
     (selectedAsset: CryptoOrTokenCurrency, selectedNetwork: CryptoOrTokenCurrency) => {
-      if (selectNetwork) selectNetwork(selectedAsset, selectedNetwork);
+      if (selectNetwork) selectNetwork(selectedNetwork);
       if (enableAccountSelection) {
-        navigationStepManager.goToStep(ModularDrawerStep.Account);
+        dispatch(setStep(ModularDrawerStep.Account));
       } else {
         navigateToDeviceWithCurrency(selectedAsset);
       }
     },
-    [navigationStepManager, selectNetwork, enableAccountSelection, navigateToDeviceWithCurrency],
+    [dispatch, selectNetwork, enableAccountSelection, navigateToDeviceWithCurrency],
   );
 
   return {

@@ -24,7 +24,7 @@ export interface ApiCryptoCurrency {
   name: string;
   ticker: string;
   units: Array<{ code: string; name: string; magnitude: number }>;
-  chainId?: string;
+  chainId?: string | null;
   confirmationsNeeded?: number;
   symbol?: string;
   coinType?: number;

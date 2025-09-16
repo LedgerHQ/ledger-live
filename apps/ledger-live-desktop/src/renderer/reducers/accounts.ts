@@ -1,7 +1,6 @@
 import { createSelector, createSelectorCreator, defaultMemoize } from "reselect";
 import { handleActions } from "redux-actions";
 import { Account, AccountUserData, AccountLike } from "@ledgerhq/types-live";
-import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import {
   flattenAccounts,
   clearAccount,
@@ -79,46 +78,9 @@ const shallowAccountsSelectorCreator = createSelectorCreator(defaultMemoize, (a,
   isEqual(flattenAccounts(a).map(accountHash), flattenAccounts(b).map(accountHash)),
 );
 export const shallowAccountsSelector = shallowAccountsSelectorCreator(accountsSelector, a => a);
-export const subAccountByCurrencyOrderedSelector = createSelector(
-  accountsSelector,
-  (
-    _: State,
-    {
-      currency,
-    }: {
-      currency: CryptoCurrency | TokenCurrency;
-    },
-  ) => currency,
-  (accounts, currency) => {
-    const flatAccounts = flattenAccounts(accounts);
-    return currency
-      ? flatAccounts
-          .filter(
-            account =>
-              (account.type === "TokenAccount" ? account.token.id : account.currency.id) ===
-              currency.id,
-          )
-          .map(account => ({
-            account,
-            parentAccount:
-              account.type === "TokenAccount" && account.parentId
-                ? accounts.find(fa => fa.type === "Account" && fa.id === account.parentId)
-                : {},
-          }))
-          .sort((a, b) =>
-            a.account.balance.gt(b.account.balance)
-              ? -1
-              : a.account.balance.eq(b.account.balance)
-                ? 0
-                : 1,
-          )
-      : [];
-  },
-);
 
 // FIXME we might reboot this idea later!
-export const activeAccountsSelector = accountsSelector;
-export const isUpToDateSelector = createSelector(activeAccountsSelector, accounts =>
+export const isUpToDateSelector = createSelector(accountsSelector, accounts =>
   accounts.map(a => {
     const { lastSyncDate } = a;
     const { blockAvgTime } = a.currency;
@@ -148,10 +110,6 @@ export const currenciesSelector = createSelector(shallowAccountsSelector, accoun
 export const cryptoCurrenciesSelector = createSelector(shallowAccountsSelector, accounts =>
   [...new Set(accounts.map(a => a.currency))].sort((a, b) => a.name.localeCompare(b.name)),
 );
-export const currenciesIdSelector = createSelector(
-  cryptoCurrenciesSelector,
-  (currencies: CryptoCurrency[]) => currencies.map(currency => currency.id),
-);
 export const accountSelector = createSelector(
   accountsSelector,
   (
@@ -163,10 +121,6 @@ export const accountSelector = createSelector(
     },
   ) => accountId,
   (accounts, accountId) => accounts.find(a => a.id === accountId),
-);
-export const getAccountById = createSelector(
-  accountsSelector,
-  accounts => (accountId: string) => accounts.find(a => a.id === accountId),
 );
 
 export const starredAccountsSelector = createSelector(
@@ -241,25 +195,3 @@ export const orderedVisibleNftsSelector = createSelector(
     return groupByCurrency(visibleNfts);
   },
 );
-
-export const flattenAccountsByCryptoCurrencySelector = createSelector(
-  flattenAccountsSelector,
-  (_: State, currency: string) => currency,
-  (accounts, currency): AccountLike[] => {
-    const filterByCurrency = (a: AccountLike) => {
-      if (a.type === "TokenAccount") {
-        return a.token.id === currency;
-      }
-      return a.currency.id === currency;
-    };
-
-    return currency ? accounts.filter(filterByCurrency) : accounts;
-  },
-);
-
-const emptyArray: AccountLike[] = [];
-export const flattenAccountsByCryptoCurrencyScreenSelector =
-  (currency?: CryptoCurrency | TokenCurrency) => (state: State) => {
-    if (!currency) return emptyArray;
-    return flattenAccountsByCryptoCurrencySelector(state, currency.id);
-  };

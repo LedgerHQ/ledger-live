@@ -36,7 +36,7 @@ export type Data = {
   isFromPostOnboardingEntryPoint?: boolean;
 };
 
-type OwnProps = {
+export type OwnProps = {
   stepId: StepId;
   onClose?: () => void | undefined;
   onChangeStepId: (a: StepId) => void;
@@ -45,7 +45,7 @@ type OwnProps = {
   onChangeAddressVerified: (isAddressVerified?: boolean | null, err?: Error | null) => void;
   params: Data;
 };
-type StateProps = {
+export type StateProps = {
   t: TFunction;
   accounts: Account[];
   device: Device | undefined | null;
@@ -89,7 +89,6 @@ const createSteps = (): Array<St> => [
     id: "account",
     label: <Trans i18nKey="receive.steps.chooseAccount.title" />,
     component: StepAccount,
-    noScroll: true,
     footer: StepAccountFooter,
   },
   {

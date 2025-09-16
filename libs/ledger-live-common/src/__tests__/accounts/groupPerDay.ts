@@ -2,7 +2,7 @@ import flatMap from "lodash/flatMap";
 import { fromAccountRaw, groupAccountOperationsByDay } from "../../account";
 import { TezosAccountRaw } from "../../families/tezos/types";
 import { setSupportedCurrencies } from "../../currencies";
-import { CryptoAssetsStore } from "@ledgerhq/coin-framework/crypto-assets/type";
+import type { CryptoAssetsStore } from "@ledgerhq/types-live";
 import { setup } from "../../bridge/impl";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 setSupportedCurrencies(["tezos"]);

@@ -1,4 +1,4 @@
-export type AppInfosType = AppInfos;
+export type SpeculosAppType = AppInfos;
 
 export class AppInfos {
   constructor(public readonly name: string) {}
@@ -60,4 +60,6 @@ export class AppInfos {
   static readonly CELO = new AppInfos("Celo");
 
   static readonly LTC = new AppInfos("Litecoin");
+
+  static readonly KASPA = new AppInfos("Kaspa");
 }

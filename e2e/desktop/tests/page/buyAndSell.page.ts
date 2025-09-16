@@ -141,7 +141,9 @@ export class BuyAndSellPage extends WebViewAppPage {
   }
 
   private async selectAssetInLegacyDrawer(account: AccountType) {
-    await this.chooseAssetDrawer.chooseFromAsset(account.currency.name);
+    const networkName = account.parentAccount?.currency.name;
+
+    await this.chooseAssetDrawer.chooseFromAsset(account.currency.name, networkName);
     await this.chooseAssetDrawer.selectAccountByName(account);
   }
 

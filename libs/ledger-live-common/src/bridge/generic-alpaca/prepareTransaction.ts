@@ -2,45 +2,63 @@ import { Account, AccountBridge, TransactionCommon } from "@ledgerhq/types-live"
 import { getAlpacaApi } from "./alpaca";
 import { transactionToIntent } from "./utils";
 import BigNumber from "bignumber.js";
-import { NetworkInfo } from "./createTransaction";
+import { AssetInfo, FeeEstimation } from "@ledgerhq/coin-framework/api/types";
+import { decodeTokenAccountId } from "@ledgerhq/coin-framework/account/index";
+import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 
 function bnEq(a: BigNumber | null | undefined, b: BigNumber | null | undefined): boolean {
   return !a && !b ? true : !a || !b ? false : a.eq(b);
+}
+
+type TransactionParam = TransactionCommon & {
+  fees: BigNumber | null | undefined;
+  customFees?: FeeEstimation;
+  assetReference?: string;
+  assetOwner?: string;
+  subAccountId?: string;
+};
+
+function assetInfosFallback(transaction: TransactionParam): {
+  assetReference: string;
+  assetOwner: string;
+} {
+  return {
+    assetReference: transaction.assetReference ?? "",
+    assetOwner: transaction.assetOwner ?? "",
+  };
 }
 
 export function genericPrepareTransaction(
   network: string,
   kind,
 ): AccountBridge<TransactionCommon, Account, any, any>["prepareTransaction"] {
-  return async (
-    account,
-    transaction: TransactionCommon & {
-      fees: BigNumber | null | undefined;
-      assetReference?: string;
-      assetOwner?: string;
-      subAccountId?: string;
-      networkInfo?: NetworkInfo | null;
-    },
-  ) => {
-    const [assetReference, assetOwner] = getAssetInfos(transaction);
-    const fees = await getAlpacaApi(network, kind).estimateFees(
-      transactionToIntent(account, {
-        ...transaction,
-        fees: transaction.fees ? BigInt(transaction.fees.toString()) : 0n,
-      }),
-    );
-    // NOTE: this is problematic, we should maybe have a method / object that lists what field warrant an update per chain
-    // for reference, stellar checked this:
-    // transaction.networkInfo !== networkInfo ||
-    // transaction.baseReserve !== baseReserve
-    if (!bnEq(transaction.fees, new BigNumber(fees.value.toString()))) {
+  return async (account, transaction: TransactionParam) => {
+    const { getAssetFromToken } = getAlpacaApi(network, kind);
+    const { assetReference, assetOwner } = getAssetFromToken
+      ? getAssetInfos(transaction, account.freshAddress, getAssetFromToken)
+      : assetInfosFallback(transaction);
+
+    let fees = transaction.customFees?.parameters?.fees || null;
+    if (fees === null) {
+      fees = (
+        await getAlpacaApi(network, kind).estimateFees(
+          transactionToIntent(account, {
+            ...transaction,
+          }),
+        )
+      ).value;
+    }
+
+    if (!bnEq(transaction.fees, new BigNumber(fees.toString()))) {
       return {
         ...transaction,
-        fees: new BigNumber(fees.value.toString()),
+        fees: new BigNumber(fees.toString()),
         assetReference,
         assetOwner,
-        networkInfo: {
-          fees: new BigNumber(fees.value.toString()),
+        customFees: {
+          parameters: {
+            fees: new BigNumber(fees.toString()),
+          },
         },
       };
     }
@@ -50,11 +68,24 @@ export function genericPrepareTransaction(
 }
 
 export function getAssetInfos(
-  tr: TransactionCommon & { assetReference?: string; assetOwner?: string },
-): string[] {
+  tr: TransactionParam,
+  owner: string,
+  getAssetFromToken: (token: TokenCurrency, owner: string) => AssetInfo,
+): {
+  assetReference: string;
+  assetOwner: string;
+} {
   if (tr.subAccountId) {
-    const assetString = tr.subAccountId.split("+")[1];
-    return assetString.split(":");
+    const { token } = decodeTokenAccountId(tr.subAccountId);
+
+    if (!token) return assetInfosFallback(tr);
+
+    const asset = getAssetFromToken(token, owner);
+
+    return {
+      assetOwner: ("assetOwner" in asset && asset.assetOwner) || "",
+      assetReference: ("assetReference" in asset && asset.assetReference) || "",
+    };
   }
-  return [tr.assetReference || "", tr.assetOwner || ""];
+  return assetInfosFallback(tr);
 }

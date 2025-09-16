@@ -26,11 +26,17 @@ export const NavigationHeaderBackImage = () => (
  */
 export const NavigationHeaderBackButton: React.FC<Props> = React.memo(({ onPress }) => {
   const navigation = useNavigation();
+
+  function handlePress() {
+    if (onPress) {
+      onPress(navigation);
+    } else if (navigation.canGoBack()) {
+      navigation.goBack();
+    }
+  }
+
   return (
-    <Touchable
-      testID="navigation-header-back-button"
-      onPress={() => (onPress ? onPress(navigation) : navigation.goBack())}
-    >
+    <Touchable testID="navigation-header-back-button" onPress={handlePress}>
       <NavigationHeaderBackImage />
     </Touchable>
   );

@@ -1,5 +1,63 @@
 # @ledgerhq/live-signer-evm
 
+## 0.7.4
+
+### Patch Changes
+
+- Updated dependencies [[`212f772`](https://github.com/LedgerHQ/ledger-live/commit/212f772b17dc3db97009ebe62912f8f183c1ef2e), [`a9a0c18`](https://github.com/LedgerHQ/ledger-live/commit/a9a0c18d91cac8d4bb805d558d3d0bd50337d98a), [`d6a6a94`](https://github.com/LedgerHQ/ledger-live/commit/d6a6a949d45fdd2f97f15842c808bf6d1058403f), [`2834ca4`](https://github.com/LedgerHQ/ledger-live/commit/2834ca443fe9071979d3b506e4ca4fbc17aeca7b), [`e8899f0`](https://github.com/LedgerHQ/ledger-live/commit/e8899f0dac12c6ca9c655c121eeb907f6bbad844), [`8936f39`](https://github.com/LedgerHQ/ledger-live/commit/8936f390edbe9cbc36ac6590b01562daf5c580e1), [`2a4070b`](https://github.com/LedgerHQ/ledger-live/commit/2a4070b594271007fa47dc7451b612008a233006)]:
+  - @ledgerhq/coin-evm@2.29.0
+  - @ledgerhq/errors@6.25.0
+  - @ledgerhq/hw-app-eth@6.45.17
+
+## 0.7.4-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`212f772`](https://github.com/LedgerHQ/ledger-live/commit/212f772b17dc3db97009ebe62912f8f183c1ef2e), [`a9a0c18`](https://github.com/LedgerHQ/ledger-live/commit/a9a0c18d91cac8d4bb805d558d3d0bd50337d98a), [`d6a6a94`](https://github.com/LedgerHQ/ledger-live/commit/d6a6a949d45fdd2f97f15842c808bf6d1058403f), [`2834ca4`](https://github.com/LedgerHQ/ledger-live/commit/2834ca443fe9071979d3b506e4ca4fbc17aeca7b), [`e8899f0`](https://github.com/LedgerHQ/ledger-live/commit/e8899f0dac12c6ca9c655c121eeb907f6bbad844), [`8936f39`](https://github.com/LedgerHQ/ledger-live/commit/8936f390edbe9cbc36ac6590b01562daf5c580e1), [`2a4070b`](https://github.com/LedgerHQ/ledger-live/commit/2a4070b594271007fa47dc7451b612008a233006)]:
+  - @ledgerhq/coin-evm@2.29.0-next.0
+  - @ledgerhq/errors@6.25.0-next.0
+  - @ledgerhq/hw-app-eth@6.45.17-next.0
+
+## 0.7.3
+
+### Patch Changes
+
+- [#11576](https://github.com/LedgerHQ/ledger-live/pull/11576) [`458f80d`](https://github.com/LedgerHQ/ledger-live/commit/458f80d2d8cf202bde2feb35239a35299e48fa7c) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Fix issue with eth clear signing from DMK
+
+## 0.7.3-hotfix.0
+
+### Patch Changes
+
+- [#11576](https://github.com/LedgerHQ/ledger-live/pull/11576) [`458f80d`](https://github.com/LedgerHQ/ledger-live/commit/458f80d2d8cf202bde2feb35239a35299e48fa7c) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Fix issue with eth clear signing from DMK
+
+## 0.7.2
+
+### Patch Changes
+
+- [#11563](https://github.com/LedgerHQ/ledger-live/pull/11563) [`9f9c22a`](https://github.com/LedgerHQ/ledger-live/commit/9f9c22a72e3cbdbcb641f9a2fd771a4e9ad3f87b) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Update DMK libraries for fixing swap on LNS
+
+## 0.7.2-hotfix.0
+
+### Patch Changes
+
+- [#11563](https://github.com/LedgerHQ/ledger-live/pull/11563) [`9f9c22a`](https://github.com/LedgerHQ/ledger-live/commit/9f9c22a72e3cbdbcb641f9a2fd771a4e9ad3f87b) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Update DMK libraries for fixing swap on LNS
+
+## 0.7.1
+
+### Patch Changes
+
+- Updated dependencies [[`589e0e6`](https://github.com/LedgerHQ/ledger-live/commit/589e0e62092359f48b2a7d22d1d8ecf363ac04b1), [`80f8f1e`](https://github.com/LedgerHQ/ledger-live/commit/80f8f1eaef8a7bc84ba5441790296dec6cbfa199), [`a3fcd55`](https://github.com/LedgerHQ/ledger-live/commit/a3fcd55fdea8c6ffbbb818825382cc96637fe8f5)]:
+  - @ledgerhq/coin-evm@2.28.0
+  - @ledgerhq/hw-app-eth@6.45.16
+
+## 0.7.1-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`589e0e6`](https://github.com/LedgerHQ/ledger-live/commit/589e0e62092359f48b2a7d22d1d8ecf363ac04b1), [`80f8f1e`](https://github.com/LedgerHQ/ledger-live/commit/80f8f1eaef8a7bc84ba5441790296dec6cbfa199), [`a3fcd55`](https://github.com/LedgerHQ/ledger-live/commit/a3fcd55fdea8c6ffbbb818825382cc96637fe8f5)]:
+  - @ledgerhq/coin-evm@2.28.0-next.0
+  - @ledgerhq/hw-app-eth@6.45.16-next.0
+
 ## 0.7.0
 
 ### Minor Changes

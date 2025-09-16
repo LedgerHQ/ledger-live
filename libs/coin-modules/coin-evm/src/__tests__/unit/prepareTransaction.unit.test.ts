@@ -1,7 +1,7 @@
 import { ethers } from "ethers";
 import BigNumber from "bignumber.js";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
-import { addTokens, convertERC20, getTokenById } from "@ledgerhq/cryptoassets/tokens";
+import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { prepareForSignOperation, prepareTransaction } from "../../bridge/prepareTransaction";
 import { makeAccount, makeTokenAccount } from "../fixtures/common.fixtures";
 import { createTransaction } from "../../bridge/createTransaction";
@@ -18,6 +18,7 @@ import { GasOptions, Transaction as EvmTransaction, EvmNftTransaction } from "..
 import * as nftAPI from "../../network/nft";
 import { getCoinConfig } from "../../config";
 import { DEFAULT_NONCE, getEstimatedFees } from "../../utils";
+import usdCoinTokenData from "../../__fixtures__/optimism-erc20-usd_coin.json";
 
 jest.mock("../../config");
 const mockGetConfig = jest.mocked(getCoinConfig);
@@ -261,13 +262,13 @@ describe("EVM Family", () => {
           const opAccount = makeAccount("0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d", optimism);
           const opTransaction = {
             ...createTransaction(opAccount),
-            recipient: ethers.constants.AddressZero,
+            recipient: ethers.ZeroAddress,
           };
 
           jest.spyOn(ethers, "Contract").mockImplementationOnce(() => {
             return {
-              getL1Fee: (): ethers.BigNumber => {
-                return ethers.BigNumber.from(1234);
+              getL1Fee: (): BigNumber => {
+                return BigNumber(1234);
               },
             } as any;
           });
@@ -293,14 +294,14 @@ describe("EVM Family", () => {
 
           const opTransaction = {
             ...createTransaction(opAccount),
-            recipient: ethers.constants.AddressZero,
+            recipient: ethers.ZeroAddress,
             additionalFees: new BigNumber(4567),
           };
 
           jest.spyOn(ethers, "Contract").mockImplementationOnce(() => {
             return {
-              getL1Fee: (): ethers.BigNumber => {
-                return ethers.BigNumber.from(1234);
+              getL1Fee: (): BigNumber => {
+                return BigNumber(1234);
               },
             } as any;
           });
@@ -333,22 +334,6 @@ describe("EVM Family", () => {
       });
 
       describe("Tokens", () => {
-        beforeAll(() => {
-          addTokens([
-            convertERC20([
-              "optimism",
-              "usd_coin",
-              "USDC",
-              6,
-              "USD Coin",
-              "30440220597e4a9911df217d680aa240ca96f7e8fca24c24e7c673c43820c94b08ef69e402206e975e27e82b3370eca40041fca772bd6c4ca7dd087d2bfcc8aa146cb8e1de53",
-              "0x0b2C639c533813f4Aa9D7837CAf62653d097Ff85",
-              false,
-              false,
-            ]),
-          ]);
-        });
-
         it("should have a gasLimit = 0 and no data when recipient has an error", async () => {
           jest.spyOn(nodeApi, "getGasEstimation").mockImplementation(async () => {
             throw new Error();
@@ -518,8 +503,8 @@ describe("EVM Family", () => {
 
           jest.spyOn(ethers, "Contract").mockImplementationOnce(() => {
             return {
-              getL1Fee: (): ethers.BigNumber => {
-                return ethers.BigNumber.from(1234);
+              getL1Fee: (): BigNumber => {
+                return BigNumber(1234);
               },
             } as any;
           });
@@ -528,7 +513,8 @@ describe("EVM Family", () => {
           const tokenAccountWithBalance = {
             ...makeTokenAccount(
               "0x6cBCD73CD8e8a42844662f0A0e76D7F79Afd933d",
-              getTokenById("optimism/erc20/usd_coin"),
+              // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+              usdCoinTokenData as TokenCurrency,
             ),
             balance: new BigNumber(200),
           };
@@ -538,7 +524,7 @@ describe("EVM Family", () => {
 
           const opTokenTransaction = {
             ...createTransaction(opAccount),
-            recipient: ethers.constants.AddressZero,
+            recipient: ethers.ZeroAddress,
             additionalFees: new BigNumber(4567),
             amount: new BigNumber(50),
             subAccountId: tokenAccountWithBalance.id,
@@ -714,8 +700,8 @@ describe("EVM Family", () => {
         it("should keep the original transaction `additionalFees` as an addition to the 'on-chain' additionalFees", async () => {
           jest.spyOn(ethers, "Contract").mockImplementationOnce(() => {
             return {
-              getL1Fee: (): ethers.BigNumber => {
-                return ethers.BigNumber.from(1234);
+              getL1Fee: (): BigNumber => {
+                return BigNumber(1234);
               },
             } as any;
           });
@@ -726,7 +712,7 @@ describe("EVM Family", () => {
           const opNftTransaction: EvmTransaction & EvmNftTransaction = {
             ...createTransaction(opAccount),
             mode: "erc721",
-            recipient: ethers.constants.AddressZero,
+            recipient: ethers.ZeroAddress,
             additionalFees: new BigNumber(4567),
             amount: new BigNumber(0),
             nft: {

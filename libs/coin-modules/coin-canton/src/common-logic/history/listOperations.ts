@@ -1,64 +1,45 @@
 import type { Operation, Pagination } from "@ledgerhq/coin-framework/api/index";
-import { getTransactions } from "../../network/indexer";
-import { BoilerplateOperation } from "../../network/types";
+import { getOperations } from "../../network/gateway";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 
 /**
  * Returns list of operations associated to an account.
- * @param address Account address
+ * @param partyId Account partyId
  * @param pagination Pagination options
  * @returns Operations found and the next "id" or "index" to use for pagination (i.e. `start` property).\
- * If `0` is returns, no pagination needed.
- * This "id" or "index" value, thus it has functional meaning, is different for each blockchain.
+ * Impl to finalize when backend is ready
  */
 export async function listOperations(
-  address: string,
+  currency: CryptoCurrency,
+  partyId: string,
   page: Pagination,
 ): Promise<[Operation[], string]> {
-  const transactions = await getTransactions(address, { from: page.minHeight });
-  return [transactions.map(convertToCoreOperation(address)), ""];
-}
-
-const convertToCoreOperation =
-  (address: string) =>
-  (operation: BoilerplateOperation): Operation => {
-    const {
-      meta: { delivered_amount },
-      tx: { Fee, hash, inLedger, date, Account, Destination },
-    } = operation;
-
-    const type = Account === address ? "OUT" : "IN";
-    let value =
-      delivered_amount && typeof delivered_amount === "string"
-        ? BigInt(delivered_amount)
-        : BigInt(0);
-
-    const feeValue = BigInt(Fee);
-    if (type === "OUT") {
-      if (!Number.isNaN(feeValue)) {
-        value = value + feeValue;
-      }
-    }
-
-    return {
-      /**
-       * Note: The operation ID must be concatenated with another
-       * value if the transaction hash is not enough to identify it
-       */
-      id: hash,
-      asset: { type: "native" },
-      tx: {
-        hash,
-        fees: feeValue,
-        date: new Date(date),
-        block: {
-          height: inLedger,
-          hash,
-          time: new Date(date),
+  const { operations, next } = await getOperations(currency, partyId, {
+    cursor: page.pagingToken !== undefined ? parseInt(page.pagingToken) : undefined,
+    minOffset: page.minHeight,
+    limit: page.limit,
+  });
+  const ops: Operation[] = [];
+  for (const tx of operations) {
+    if (tx.type === "Send") {
+      ops.push({
+        id: tx.uid,
+        type: tx.senders.includes(partyId) ? "OUT" : "IN",
+        value: BigInt(tx.transfers[0].value),
+        senders: tx.senders,
+        recipients: tx.recipients,
+        asset: tx.asset,
+        tx: {
+          hash: tx.block.hash,
+          fees: BigInt(tx.fee.value),
+          date: new Date(tx.transaction_timestamp),
+          block: {
+            height: tx.block.height,
+            time: new Date(tx.block.time),
+          },
         },
-      },
-      type,
-      value,
-      senders: [Account],
-      recipients: [Destination],
-    };
-  };
+      });
+    }
+  }
+  return [ops, next + ""];
+}

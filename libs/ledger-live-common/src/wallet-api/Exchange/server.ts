@@ -22,6 +22,7 @@ import {
   ExchangeStartResult,
   ExchangeStartSellParams,
   ExchangeStartSwapParams,
+  ExchangeStartFundParams,
   ExchangeSwapParams,
   ExchangeType,
   SwapLiveError,
@@ -44,6 +45,7 @@ import {
   createAccounIdNotFound,
   createWrongSellParams,
   createWrongSwapParams,
+  createWrongFundParams,
   ExchangeError,
 } from "./error";
 import { TrackingAPI } from "./tracking";
@@ -51,7 +53,6 @@ import { getSwapStepFromError } from "../../exchange/error";
 import { postSwapCancelled } from "../../exchange/swap";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { setBroadcastTransaction } from "../../exchange/swap/setBroadcastTransaction";
-import { FAMILIES_MAPPING_LL_TO_WAPI } from "../constants";
 
 export { ExchangeType };
 
@@ -82,6 +83,8 @@ export type CompleteExchangeUiRequest = {
 };
 type FundStartParamsUiRequest = {
   exchangeType: "FUND";
+  provider: string;
+  exchange: Partial<Exchange> | undefined;
 };
 
 type SellStartParamsUiRequest = {
@@ -158,8 +161,6 @@ export const handlers = ({
         }
 
         const trackingParams = {
-          // @ts-expect-error ExchangeStartFundParams does not yet have the provider. Will be added in another iteration after a bugfix is confirmed
-          // TODO: expect-error to be deleted after
           provider: params.provider,
           exchangeType: params.exchangeType,
         };
@@ -174,9 +175,7 @@ export const handlers = ({
         } else if (params.exchangeType == "SELL") {
           exchangeParams = extractSellStartParam(params, accounts);
         } else {
-          exchangeParams = {
-            exchangeType: params.exchangeType,
-          };
+          exchangeParams = extractFundStartParam(params, accounts);
         }
 
         return new Promise((resolve, reject) =>
@@ -486,14 +485,11 @@ export const handlers = ({
       });
 
       const mainFromAccount = getMainAccount(fromAccount, fromParentAccount);
-      const mainFromAccountFamily =
-        FAMILIES_MAPPING_LL_TO_WAPI[mainFromAccount.currency.family] ||
-        mainFromAccount.currency.family;
 
-      if (transaction.family !== mainFromAccountFamily) {
+      if (transaction.family !== mainFromAccount.currency.family) {
         return Promise.reject(
           new Error(
-            `Account and transaction must be from the same family. Account family: ${mainFromAccountFamily}, Transaction family: ${transaction.family}`,
+            `Account and transaction must be from the same family. Account family: ${mainFromAccount.currency.family}, Transaction family: ${transaction.family}`,
           ),
         );
       }
@@ -666,8 +662,8 @@ function extractSwapStartParam(
       fromParentAccount,
       fromCurrency: getCurrencyForAccount(fromAccount),
       toAccount: newTokenAccount ? newTokenAccount : toAccount,
-      toParentAccount: newTokenAccount ? toAccount : toParentAccount,
-      toCurrency: getCurrencyForAccount(toAccount),
+      toParentAccount: toParentAccount,
+      toCurrency: getCurrencyForAccount(newTokenAccount ? newTokenAccount : toAccount),
     },
   };
 }
@@ -678,6 +674,45 @@ function extractSellStartParam(
 ): ExchangeStartParamsUiRequest {
   if (!("provider" in params)) {
     throw new ExchangeError(createWrongSellParams(params));
+  }
+
+  if (!params.fromAccountId) {
+    return {
+      exchangeType: params.exchangeType,
+      provider: params.provider,
+    } as ExchangeStartParamsUiRequest;
+  }
+
+  const realFromAccountId = getAccountIdFromWalletAccountId(params?.fromAccountId);
+
+  if (!realFromAccountId) {
+    throw new ExchangeError(createAccounIdNotFound(params.fromAccountId));
+  }
+
+  const fromAccount = accounts?.find(acc => acc.id === realFromAccountId);
+
+  if (!fromAccount) {
+    throw new ServerError(createAccountNotFound(params.fromAccountId));
+  }
+
+  const fromParentAccount = getParentAccount(fromAccount, accounts);
+
+  return {
+    exchangeType: params.exchangeType,
+    provider: params.provider,
+    exchange: {
+      fromAccount,
+      fromParentAccount,
+    },
+  };
+}
+
+function extractFundStartParam(
+  params: ExchangeStartFundParams,
+  accounts: AccountLike[],
+): ExchangeStartParamsUiRequest {
+  if (!("provider" in params)) {
+    throw new ExchangeError(createWrongFundParams(params));
   }
 
   if (!params.fromAccountId) {
@@ -765,27 +800,34 @@ async function getStrategy(
     delete customFeeConfig.utxoStrategy;
   }
 
-  // Normalize family key for strategy lookup
-  const familyKey = FAMILIES_MAPPING_LL_TO_WAPI[family] || family;
-  const strategy = transactionStrategy?.[familyKey];
+  const strategy = transactionStrategy?.[family];
 
   if (!strategy) {
-    throw new Error(`No transaction strategy found for family: ${familyKey}`);
+    throw new Error(`No transaction strategy found for family: ${family}`);
+  }
+
+  // Convert customFeeConfig values to BigNumber
+  const convertedCustomFeeConfig: { [key: string]: BigNumber } = {};
+  if (customFeeConfig) {
+    for (const [key, value] of Object.entries(customFeeConfig)) {
+      convertedCustomFeeConfig[key] = new BigNumber(value?.toString() || 0);
+    }
   }
 
   try {
     return await strategy({
-      family: familyKey,
-      amount,
+      family,
+      amount: new BigNumber(amount),
       recipient,
-      customFeeConfig: customFeeConfig || {},
+      customFeeConfig: convertedCustomFeeConfig,
       payinExtraId,
       extraTransactionParameters,
       customErrorType,
     });
   } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : String(error);
     throw new Error(
-      `Failed to execute transaction strategy for family: ${familyKey}. Reason: ${(error as Error).message}`,
+      `Failed to execute transaction strategy for family: ${family}. Reason: ${errorMessage}`,
     );
   }
 }

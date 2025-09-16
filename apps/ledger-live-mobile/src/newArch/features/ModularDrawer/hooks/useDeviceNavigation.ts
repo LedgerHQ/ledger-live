@@ -4,38 +4,52 @@ import { NavigatorName, ScreenName } from "~/const";
 import { AddAccountContexts } from "../../Accounts/screens/AddAccount/enums";
 import type { CryptoCurrency, CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import type { AssetSelectionNavigationProps } from "../../AssetSelection/types";
-import type { StepFlowManagerReturnType } from "./useModularDrawerFlowStepManager";
+import { useDispatch } from "react-redux";
+import { setStep } from "~/reducers/modularDrawer";
+import { ModularDrawerStep } from "../types";
+import { AccountLike, Account } from "@ledgerhq/types-live";
 
 type UseDeviceNavigationParams = {
-  navigationStepManager: StepFlowManagerReturnType;
-  enableAccountSelection?: boolean;
   onClose?: () => void;
   resetSelection: () => void;
-  selectNetwork?: (a: CryptoOrTokenCurrency, n: CryptoOrTokenCurrency) => void;
+  onAccountSelected?: (account: AccountLike) => void;
 };
 
 export function useDeviceNavigation({
-  navigationStepManager,
   onClose,
   resetSelection,
+  onAccountSelected,
 }: UseDeviceNavigationParams) {
   const navigation = useNavigation<AssetSelectionNavigationProps["navigation"]>();
+  const dispatch = useDispatch();
+
+  const onSuccess = useCallback(
+    (res?: { scannedAccounts: Account[]; selected: Account[] }) => {
+      const newAccount = res?.selected && res.selected.length > 0 ? res.selected[0] : undefined;
+      if (newAccount) {
+        onAccountSelected?.(newAccount);
+      }
+    },
+    [onAccountSelected],
+  );
 
   const navigateToDevice = useCallback(
     (selectedAsset: CryptoCurrency, createTokenAccount?: boolean) => {
       onClose?.();
       resetSelection();
-      navigationStepManager.reset();
       navigation.navigate(NavigatorName.DeviceSelection, {
         screen: ScreenName.SelectDevice,
         params: {
           currency: selectedAsset,
           createTokenAccount,
           context: AddAccountContexts.AddAccounts,
+          inline: Boolean(onAccountSelected),
+          onSuccess,
         },
       });
+      dispatch(setStep(ModularDrawerStep.Asset));
     },
-    [navigation, onClose, resetSelection, navigationStepManager],
+    [onClose, resetSelection, dispatch, navigation, onAccountSelected, onSuccess],
   );
 
   const navigateToDeviceWithCurrency = useCallback(

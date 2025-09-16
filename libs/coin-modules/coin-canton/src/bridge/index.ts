@@ -7,10 +7,10 @@ import {
 } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { CoinConfig } from "@ledgerhq/coin-framework/config";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
-import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
+import type { AccountBridge } from "@ledgerhq/types-live";
 import cantonCoinConfig, { type CantonCoinConfig } from "../config";
 import resolver from "../signer";
-import { CantonSigner } from "../types";
+import { CantonCurrencyBridge, CantonSigner } from "../types";
 import type { Transaction } from "../types";
 import { broadcast } from "./broadcast";
 import { createTransaction } from "./createTransaction";
@@ -20,6 +20,8 @@ import { prepareTransaction } from "./prepareTransaction";
 import { buildSignOperation } from "./signOperation";
 import { getAccountShape } from "./sync";
 import { updateTransaction } from "./updateTransaction";
+import { buildOnboardAccount, buildAuthorizePreapproval } from "./onboard";
+import { assignFromAccountRaw, assignToAccountRaw } from "./serialization";
 
 export function createBridges(
   signerContext: SignerContext<CantonSigner>,
@@ -30,11 +32,20 @@ export function createBridges(
   const getAddress = resolver(signerContext);
   const receive = makeAccountBridgeReceive(getAddressWrapper(getAddress));
 
-  const scanAccounts = makeScanAccounts({ getAccountShape, getAddressFn: getAddress });
-  const currencyBridge: CurrencyBridge = {
+  const scanAccounts = makeScanAccounts({
+    getAccountShape: getAccountShape,
+    getAddressFn: getAddress,
+  });
+
+  const onboardAccount = buildOnboardAccount(signerContext);
+  const authorizePreapproval = buildAuthorizePreapproval(signerContext);
+
+  const currencyBridge: CantonCurrencyBridge = {
     preload: () => Promise.resolve({}),
     hydrate: () => {},
     scanAccounts,
+    onboardAccount,
+    authorizePreapproval,
   };
 
   const signOperation = buildSignOperation(signerContext);
@@ -52,6 +63,8 @@ export function createBridges(
     sync,
     receive,
     signOperation,
+    assignToAccountRaw,
+    assignFromAccountRaw,
     getSerializedAddressParameters,
   };
 

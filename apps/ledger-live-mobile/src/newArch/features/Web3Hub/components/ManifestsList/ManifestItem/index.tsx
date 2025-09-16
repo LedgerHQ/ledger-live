@@ -4,12 +4,9 @@ import { useTranslation } from "react-i18next";
 import { TouchableOpacity } from "react-native";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import { AppBranch, AppManifest } from "@ledgerhq/live-common/wallet-api/types";
-import type { MainProps, SearchProps } from "LLM/features/Web3Hub/types";
 import AppIcon from "LLM/features/Web3Hub/components/AppIcon";
 import { Theme } from "~/colors";
 import Label from "./Label";
-
-export type NavigationProp = MainProps["navigation"] | SearchProps["navigation"];
 
 function getBranchStyle(branch: AppBranch, colors: Theme["colors"]) {
   switch (branch) {

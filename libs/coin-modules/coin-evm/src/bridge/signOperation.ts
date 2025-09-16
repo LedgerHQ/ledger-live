@@ -67,7 +67,7 @@ export const buildSignOperation =
                         const signature = getSerializedTransaction(preparedTransaction, {
                           r: "0x" + sig.r,
                           s: "0x" + sig.s,
-                          v: typeof sig.v === "number" ? sig.v : parseInt(sig.v, 16),
+                          v: (typeof sig.v === "number" ? sig.v : parseInt(sig.v, 16)) as 27 | 28,
                         });
 
                         const operation = buildOptimisticOperation(account, {

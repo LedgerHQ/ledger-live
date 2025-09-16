@@ -6,11 +6,12 @@ import { AppManifest } from "@ledgerhq/live-common/wallet-api/types";
 import { CurrentAccountHistDB } from "@ledgerhq/live-common/wallet-api/react";
 import Button from "../Button";
 import { useSelectAccount } from "./helpers";
-import { OpenModularDrawerFunction } from "LLM/features/ModularDrawer/types";
+import { OpenDrawer } from "LLM/features/ModularDrawer/types";
+import { currentRouteNameRef } from "~/analytics/screenRefs";
 type NoAccountScreenProps = {
   manifest: AppManifest;
   currentAccountHistDb?: CurrentAccountHistDB;
-  openModularDrawer?: OpenModularDrawerFunction;
+  openModularDrawer?: OpenDrawer;
 };
 
 export function NoAccountScreen({
@@ -26,9 +27,15 @@ export function NoAccountScreen({
   const handleAddAccountPress = () => {
     if (openModularDrawer) {
       openModularDrawer({
-        currencies,
+        currencies: currencies.map(c => c.id),
+        areCurrenciesFiltered: manifest.currencies !== "*",
         enableAccountSelection: true,
         onAccountSelected: onSelectAccountSuccess,
+        flow: manifest.name,
+        source:
+          currentRouteNameRef.current === "Platform Catalog"
+            ? "Discover"
+            : currentRouteNameRef.current ?? "Unknown",
       });
     } else {
       onSelectAccount();

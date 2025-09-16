@@ -4,7 +4,6 @@ import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 
 import { Flex, Icon, Text } from "@ledgerhq/native-ui";
-import { AppManifest } from "@ledgerhq/live-common/wallet-api/types";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { safeGetRefValue } from "@ledgerhq/live-common/wallet-api/react";
 import { INTERNAL_APP_IDS } from "@ledgerhq/live-common/wallet-api/constants";
@@ -30,9 +29,6 @@ import { Loading } from "../Loading";
 import { usePTXCustomHandlers } from "./CustomHandlers";
 
 type BackToInternalDomainProps = {
-  manifest: AppManifest;
-  webviewURL?: string;
-  lastMatchingURL?: string | null;
   config: {
     screen: ScreenName.ExchangeBuy | ScreenName.ExchangeSell | ScreenName.Card;
     navigator: NavigatorName.Exchange | NavigatorName.Card;
@@ -40,18 +36,11 @@ type BackToInternalDomainProps = {
   };
 };
 
-function BackToInternalDomain({
-  manifest,
-  webviewURL,
-  lastMatchingURL,
-  config,
-}: BackToInternalDomainProps) {
+function BackToInternalDomain({ config }: BackToInternalDomainProps) {
   const { t } = useTranslation();
   const { screen, navigator, btnText } = config;
   const navigation =
     useNavigation<RootNavigationComposite<StackNavigatorNavigation<BaseNavigatorStackParamList>>>();
-
-  const internalAppIds = useInternalAppIds() || INTERNAL_APP_IDS;
 
   const handleBackClick = async () => {
     const manifestId = (await storage.getString("manifest-id")) ?? "";
@@ -74,21 +63,17 @@ function BackToInternalDomain({
           referrer: "isExternal",
         },
       });
-    } else if (internalAppIds.includes(manifest.id) && lastMatchingURL && webviewURL) {
-      const currentHostname = new URL(webviewURL).hostname;
-      const url = new URL(lastMatchingURL);
-      const urlParams = new URLSearchParams(url.searchParams);
-      const flowName = urlParams.get("liveAppFlow")!;
-
-      track("button_clicked", {
-        button: flowName === "compare_providers" ? "back to quote" : "back to liveapp",
-        provider: currentHostname,
-        flow: flowName,
+    } else {
+      // We've lost our persisted state so go all the back home
+      navigation.getParent()?.navigate(NavigatorName.Base, {
+        screen: NavigatorName.Main,
       });
-
-      navigation.goBack();
     }
   };
+
+  const buttonLabel = useMemo(() => {
+    return t("common.backTo", { to: btnText });
+  }, [t, btnText]);
 
   return (
     <View style={styles.headerLeft}>
@@ -96,7 +81,7 @@ function BackToInternalDomain({
         <Flex alignItems="center" flexDirection="row" height={40}>
           <Icon name="ChevronLeft" color="neutral.c100" size={30} />
           <Text fontWeight="semiBold" fontSize={16} color="neutral.c100">
-            {t("common.backTo", { to: btnText })}
+            {buttonLabel}
           </Text>
         </Flex>
       </TouchableOpacity>
@@ -267,15 +252,7 @@ export const WebPTXPlayer = ({
     if (!disableHeader) {
       navigation.setOptions({
         headerRight: () => (isInternalApp ? null : <HeaderRight softExit={softExit} />),
-        headerLeft: () =>
-          isInternalApp ? null : (
-            <BackToInternalDomain
-              manifest={manifest}
-              webviewURL={webviewState?.url}
-              lastMatchingURL={lastMatchingURL?.current}
-              config={config}
-            />
-          ),
+        headerLeft: () => (isInternalApp ? null : <BackToInternalDomain config={config} />),
         headerTitle: () => null,
         headerShown: !isInternalApp,
       });

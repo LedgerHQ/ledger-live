@@ -1,5 +1,5 @@
 import BigNumber from "bignumber.js";
-import type { Account, OperationType } from "@ledgerhq/types-live";
+import type { OperationType } from "@ledgerhq/types-live";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import {
   CommandDescriptor,
@@ -55,7 +55,7 @@ export const buildOptimisticOperation = (
 };
 
 function buildOptimisticOperationForCommand(
-  account: Account,
+  account: SuiAccount,
   transaction: Transaction,
   commandDescriptor: CommandDescriptor,
 ): SuiOperation {
@@ -63,6 +63,10 @@ function buildOptimisticOperationForCommand(
   switch (command.kind) {
     case "send":
       return optimisticOpForTransfer(account, transaction, commandDescriptor);
+    case "delegate":
+      return optimisticOpForStake(account, transaction, commandDescriptor);
+    case "undelegate":
+      return optimisticOpForUnstake(account, transaction, commandDescriptor);
     case "token.send":
       return optimisticOpForTokenTransfer(account, transaction, command, commandDescriptor);
     default:
@@ -70,8 +74,47 @@ function buildOptimisticOperationForCommand(
   }
 }
 
+function optimisticOpForStake(
+  account: SuiAccount,
+  transaction: Transaction,
+  commandDescriptor: CommandDescriptor,
+): SuiOperation {
+  const commons = optimisticOpcommons(commandDescriptor);
+
+  return {
+    ...commons,
+    id: encodeOperationId(account.id, "", "DELEGATE"),
+    type: "DELEGATE",
+    value: new BigNumber(transaction.amount).plus(commandDescriptor.fee),
+    senders: [account.freshAddress],
+    recipients: [],
+    accountId: account.id,
+    date: new Date(),
+    extra: {},
+  };
+}
+
+function optimisticOpForUnstake(
+  account: SuiAccount,
+  transaction: Transaction,
+  commandDescriptor: CommandDescriptor,
+): SuiOperation {
+  const commons = optimisticOpcommons(commandDescriptor);
+
+  return {
+    ...commons,
+    id: encodeOperationId(account.id, "", "UNDELEGATE"),
+    type: "UNDELEGATE",
+    value: new BigNumber(transaction.amount),
+    senders: [account.freshAddress],
+    recipients: [transaction.recipient].filter(Boolean),
+    accountId: account.id,
+    date: new Date(),
+  };
+}
+
 function optimisticOpForTransfer(
-  account: Account,
+  account: SuiAccount,
   transaction: Transaction,
   commandDescriptor: CommandDescriptor,
 ): SuiOperation {
@@ -94,7 +137,7 @@ function optimisticOpForTransfer(
 }
 
 function optimisticOpForTokenTransfer(
-  account: Account,
+  account: SuiAccount,
   transaction: Transaction,
   _command: TokenTransferCommand,
   commandDescriptor: CommandDescriptor,

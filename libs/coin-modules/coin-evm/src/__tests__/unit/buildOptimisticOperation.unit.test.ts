@@ -4,8 +4,9 @@ import {
   encodeERC721OperationId,
 } from "@ledgerhq/coin-framework/nft/nftOperationId";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
-import { getCryptoCurrencyById, getTokenById } from "@ledgerhq/cryptoassets";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import BigNumber from "bignumber.js";
+import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import buildOptimisticOperation from "../../bridge/buildOptimisticOperation";
 import { Transaction as EvmTransaction } from "../../types";
 import { makeAccount, makeTokenAccount } from "../fixtures/common.fixtures";
@@ -15,9 +16,11 @@ import {
   erc721TokenTransactionRaw,
 } from "../fixtures/transaction.fixtures";
 import { getEstimatedFees } from "../../utils";
+import usdCoinTokenData from "../../__fixtures__/ethereum-erc20-usd__coin.json";
 
 const currency = getCryptoCurrencyById("ethereum");
-const tokenCurrency = getTokenById("ethereum/erc20/usd__coin");
+// eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+const tokenCurrency = usdCoinTokenData as TokenCurrency;
 const tokenAccount = {
   ...makeTokenAccount(
     "0x055C1e159E345cB4197e3844a86A61E0a801d856", // jacquie.eth

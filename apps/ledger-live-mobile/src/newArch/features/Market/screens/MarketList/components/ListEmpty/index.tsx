@@ -20,6 +20,7 @@ interface ListEmptyProps {
   hasNoSearchResult: boolean;
   search?: string;
   resetSearch: () => void;
+  isLoading?: boolean;
 }
 
 function ListEmpty({
@@ -27,9 +28,14 @@ function ListEmpty({
   hasNoSearchResult,
   search,
   resetSearch,
+  isLoading = false,
 }: ListEmptyProps) {
   const { t } = useTranslation();
   const { isConnected } = useNetInfo();
+
+  if (isLoading) {
+    return null;
+  }
 
   if (hasNoSearchResult) {
     // No search results

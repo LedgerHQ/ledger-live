@@ -13,6 +13,8 @@ export default class ReceivePage {
   step2HeaderTitleId = "receive-header-step2-title";
   networkBasedStep2HeaderTitleId = "addAccounts-header-step2-title";
   receivePageScrollViewId = "receive-screen-scrollView";
+  receiveConnectDeviceHeaderId = "receive-connect-device-header";
+  selectCryptoScrollViewId = "select-crypto-scrollView";
 
   currencyRowId = (t: string) => `big-currency-row-${t}`;
   currencyNameId = (t: string) => `big-currency-name-${t}`;
@@ -21,6 +23,7 @@ export default class ReceivePage {
   step2HeaderTitle = () => getElementById(this.step2HeaderTitleId);
   titleReceiveConfirmationPageId = (t: string) => `receive-confirmation-title-${t}`;
   accountNameReceiveId = (t: string) => `receive-account-name-${t}`;
+  receiveQrCodeContainerId = (t: string) => `receive-qr-code-container-${t}`;
   step2Accounts = () => getElementById("receive-header-step2-accounts");
 
   @Step("Open receive via deeplink")
@@ -52,7 +55,7 @@ export default class ReceivePage {
   async selectCurrency(currencyName: string): Promise<void> {
     const id = this.currencyNameId(currencyName.toLowerCase());
     if (!(await IsIdVisible(id))) {
-      await scrollToId(id);
+      await scrollToId(id, this.selectCryptoScrollViewId);
     }
     await tapById(id);
   }
@@ -150,10 +153,17 @@ export default class ReceivePage {
   async expectReceivePageIsDisplayed(tickerName: string, accountName: string): Promise<void> {
     const titleID = this.titleReceiveConfirmationPageId(tickerName);
     const accountNameID = this.accountNameReceiveId(accountName);
+    const qrCodeContainerID = this.receiveQrCodeContainerId(accountName);
     await waitForElementById(this.accountAddress);
     await waitForElementById(titleID);
     await detoxExpect(getElementById(titleID)).toBeVisible();
     await detoxExpect(getElementById(accountNameID)).toBeVisible();
+    await detoxExpect(getElementById(qrCodeContainerID)).toBeVisible();
+  }
+
+  @Step("Verify address")
+  async verifyAddress(address: string): Promise<void> {
+    await detoxExpect(getElementById(this.accountAddress)).toHaveText(address);
   }
 
   @Step("Expect given address is displayed on receive page")
@@ -178,5 +188,13 @@ export default class ReceivePage {
   async doNotVerifyAddress(): Promise<void> {
     await this.selectDontVerifyAddress();
     await this.selectReconfirmDontVerify();
+  }
+
+  @Step("Expect device connection screen")
+  async expectDeviceConnectionScreen(): Promise<void> {
+    await waitForElementById(this.receiveConnectDeviceHeaderId);
+    await detoxExpect(getElementById(this.receiveConnectDeviceHeaderId)).toHaveText(
+      "Connect Device",
+    );
   }
 }

@@ -1115,7 +1115,10 @@ export const renderSwapDeviceConfirmation = ({
   const targetAccountCurrency = exchange.toCurrency;
   const sourceAccountName =
     accountNameSelector(walletState, {
-      accountId: exchange.fromAccount.id,
+      accountId:
+        "parentId" in exchange.fromAccount && exchange.fromAccount.parentId
+          ? exchange.fromAccount.parentId
+          : exchange.fromAccount.id,
     }) ?? sourceAccountCurrency.name;
 
   // If account exists already then grab the name set.
@@ -1123,7 +1126,10 @@ export const renderSwapDeviceConfirmation = ({
   // crypto/token currency name as the target account.
   const targetAccountName =
     accountNameSelector(walletState, {
-      accountId: exchange.toAccount.id,
+      accountId:
+        "parentId" in exchange.toAccount && exchange.toAccount.parentId
+          ? exchange.toAccount.parentId
+          : exchange.toAccount.id,
     }) ?? targetAccountCurrency.name;
 
   const providerName = getProviderName(exchangeRate.provider);

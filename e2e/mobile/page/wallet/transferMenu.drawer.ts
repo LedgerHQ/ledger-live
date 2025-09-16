@@ -1,8 +1,9 @@
 export default class TransferMenuDrawer {
   swapMenuButtonId = "transfer-swap-button";
   buyMenuButtonId = "transfer-buy-button";
-  sellMenuButtonId = "transfer-sell-button";
   transferButtonId = "transfer-button";
+  stakeMenuButtonId = "transfer-stake-button";
+  receiveButtonId = "transfer-receive-button";
 
   async open() {
     await tapById(this.transferButtonId);
@@ -16,7 +17,11 @@ export default class TransferMenuDrawer {
     await tapById(this.buyMenuButtonId);
   }
 
-  async navigateToSell() {
-    await tapById(this.sellMenuButtonId);
+  async navigateToStake() {
+    await tapById(this.stakeMenuButtonId);
+  }
+
+  async navigateToReceive() {
+    await tapById(this.receiveButtonId);
   }
 }

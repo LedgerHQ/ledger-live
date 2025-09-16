@@ -1,3 +1,21 @@
+# 2.126.2
+
+We fixed an issue that prevented Nano S users to send or swap USDT/stETH ERC-20 tokens
+
+# 2.126.1
+
+We fixed an issue that prevented Nano S users to send or swap USDT/stETH ERC-20 tokens
+
+# 2.126.0
+
+### 🌷 Improvements
+
+We've improved some error labels about device connectivity issues. You will now get clearer, more useful messages if something goes wrong.
+
+### 🐛 Fix
+
+Resolved an issue that could cause significant slowdowns during app startup and overall responsiveness. Things should feel snappier now.
+
 # 2.124.0
 
 This release includes small security improvements, UI tweaks, and minor bug fixes.

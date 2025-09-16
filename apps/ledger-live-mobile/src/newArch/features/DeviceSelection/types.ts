@@ -1,4 +1,5 @@
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import type { Account } from "@ledgerhq/types-live";
 import { NavigatorScreenParams } from "@react-navigation/core";
 import { NavigatorName, ScreenName } from "~/const";
 import {
@@ -9,7 +10,7 @@ import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 
 type CommonParams = {
   context?: AddAccountContextType;
-  onSuccess?: () => void;
+  onSuccess?: (res?: { scannedAccounts: Account[]; selected: Account[] }) => void;
   onCloseNavigation?: () => void;
   sourceScreenName?: string;
 };
