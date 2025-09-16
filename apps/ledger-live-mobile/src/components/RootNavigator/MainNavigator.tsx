@@ -21,7 +21,6 @@ import { isMainNavigatorVisibleSelector } from "~/reducers/appstate";
 import EarnLiveAppNavigator from "./EarnLiveAppNavigator";
 import { getStakeLabelLocaleBased } from "~/helpers/getStakeLabelLocaleBased";
 import { useRebornFlow } from "LLM/features/Reborn/hooks/useRebornFlow";
-import { UnmountOnBlur } from "./utils/UnmountOnBlur";
 
 const Tab = createBottomTabNavigator<MainNavigatorParamList>();
 
@@ -60,10 +59,6 @@ export default function MainNavigator() {
       managerNavLockCallback ? managerNavLockCallback(() => callback) : callback();
     },
     [managerNavLockCallback],
-  );
-
-  const unmountOnBlur = ({ children }: { children: React.ReactNode }) => (
-    <UnmountOnBlur>{children}</UnmountOnBlur>
   );
 
   return (
