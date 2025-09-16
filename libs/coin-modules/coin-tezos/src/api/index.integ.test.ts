@@ -54,6 +54,24 @@ describe("Tezos Api", () => {
     });
   });
 
+  it("it does not fail when sending from a tz2 address (SECP256K1 derivation)", async () => {
+    // When
+    const result = await module.estimateFees({
+      asset: { type: "native" },
+      type: "send",
+      sender: "tz2DvEBHrtFkq9pTXqt6yavnf4sPe2jut2XH",
+      senderPublicKey: "032fede4de54cf92381832a053f0787125fdc0d065d231585eb34d5eae327c0222",
+      recipient: "tz2GbVqXfjhC3LXoPU6crzcYUYnuNk2jURqf",
+      amount: BigInt(100),
+    });
+
+    // Then
+    expect(result.value).toBeGreaterThanOrEqual(BigInt(0));
+    expect(result.parameters).toBeDefined();
+    expect(result.parameters?.gasLimit).toBeGreaterThanOrEqual(BigInt(0));
+    expect(result.parameters?.storageLimit).toBeGreaterThanOrEqual(BigInt(0));
+  });
+
   describe("listOperations", () => {
     it("returns a list regarding address parameter", async () => {
       // When
