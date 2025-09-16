@@ -12,6 +12,13 @@ type ExplorerParams = {
   order?: "ascending" | "descending";
 };
 
+type NetworkInfoResponse = {
+  relay_fee?: string; // BTC per kB, e.g. "0.00001000"
+  incremental_fee?: string; // BTC per kB
+  version?: string; // e.g. "290000"
+  subversion?: string; // e.g. "/Satoshi:29.0.0/"
+};
+
 class BitcoinLikeExplorer implements IExplorer {
   baseUrl: string;
   constructor({
@@ -67,6 +74,19 @@ class BitcoinLikeExplorer implements IExplorer {
       url: `${this.baseUrl}/fees`,
     });
     return data;
+  }
+
+  /**
+   * Fetch node-level policy info (min relay, incremental relay, node version).
+   * Endpoint example:
+   *   GET https://explorers.api.live.ledger.com/blockchain/v4/btc/network
+   */
+  async getNetwork(): Promise<NetworkInfoResponse> {
+    const { data } = await network({
+      method: "GET",
+      url: `${this.baseUrl}/network`,
+    });
+    return data as NetworkInfoResponse;
   }
 
   async getPendings(address: Address, nbMax = 1000): Promise<TX[]> {

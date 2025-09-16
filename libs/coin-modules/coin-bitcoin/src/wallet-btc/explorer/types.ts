@@ -6,6 +6,12 @@ export interface IExplorer {
   broadcast(tx: string): Promise<{ data: { result: string } }>;
   getTxHex(txId: string): Promise<string>;
   getFees(): Promise<{ [key: string]: number }>;
+  getNetwork?(): Promise<{
+    relay_fee?: string; // BTC per kB
+    incremental_fee?: string; // BTC per kB
+    version?: string;
+    subversion?: string;
+  }>;
   getCurrentBlock(): Promise<Block | null>;
   getBlockByHeight(height: number): Promise<Block | null>;
   getPendings(address: Address, nbMax?: number): Promise<TX[]>;
