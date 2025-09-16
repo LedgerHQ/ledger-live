@@ -1,5 +1,29 @@
 # ledger-live-desktop
 
+## 2.128.0-nightly.8
+
+### Minor Changes
+
+- [#11799](https://github.com/LedgerHQ/ledger-live/pull/11799) [`65c128a`](https://github.com/LedgerHQ/ledger-live/commit/65c128a93f07857b421bed3696bc9984f860ada9) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Canton memo
+
+### Patch Changes
+
+- Updated dependencies [[`65c128a`](https://github.com/LedgerHQ/ledger-live/commit/65c128a93f07857b421bed3696bc9984f860ada9)]:
+  - @ledgerhq/coin-canton@0.5.0-nightly.5
+  - @ledgerhq/live-common@34.48.0-nightly.7
+  - @ledgerhq/cryptoassets@13.28.0-nightly.3
+  - @ledgerhq/live-dmk-desktop@0.9.5-nightly.7
+  - @ledgerhq/coin-framework@6.4.0-nightly.5
+  - @ledgerhq/coin-bitcoin@0.21.1-nightly.5
+  - @ledgerhq/coin-cosmos@0.17.1-nightly.5
+  - @ledgerhq/coin-evm@2.30.0-nightly.5
+  - @ledgerhq/coin-filecoin@1.11.1-nightly.5
+  - @ledgerhq/live-countervalues@0.7.1-nightly.5
+  - @ledgerhq/live-countervalues-react@0.5.2-nightly.5
+  - @ledgerhq/live-nft@0.8.20-nightly.5
+  - @ledgerhq/live-nft-react@0.9.20-nightly.5
+  - @ledgerhq/live-wallet@0.13.1-nightly.6
+
 ## 2.128.0-nightly.7
 
 ### Patch Changes

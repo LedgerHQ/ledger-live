@@ -1,5 +1,13 @@
 # @ledgerhq/coin-elrond
 
+## 0.5.1-nightly.5
+
+### Patch Changes
+
+- Updated dependencies [[`65c128a`](https://github.com/LedgerHQ/ledger-live/commit/65c128a93f07857b421bed3696bc9984f860ada9)]:
+  - @ledgerhq/cryptoassets@13.28.0-nightly.3
+  - @ledgerhq/coin-framework@6.4.0-nightly.5
+
 ## 0.5.1-nightly.4
 
 ### Patch Changes

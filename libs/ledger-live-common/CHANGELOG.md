@@ -1,5 +1,52 @@
 # @ledgerhq/live-common
 
+## 34.48.0-nightly.7
+
+### Minor Changes
+
+- [#11799](https://github.com/LedgerHQ/ledger-live/pull/11799) [`65c128a`](https://github.com/LedgerHQ/ledger-live/commit/65c128a93f07857b421bed3696bc9984f860ada9) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Canton memo
+
+### Patch Changes
+
+- Updated dependencies [[`65c128a`](https://github.com/LedgerHQ/ledger-live/commit/65c128a93f07857b421bed3696bc9984f860ada9)]:
+  - @ledgerhq/coin-canton@0.5.0-nightly.5
+  - @ledgerhq/cryptoassets@13.28.0-nightly.3
+  - @ledgerhq/live-signer-canton@0.2.4-nightly.5
+  - @ledgerhq/coin-framework@6.4.0-nightly.5
+  - @ledgerhq/coin-algorand@0.10.1-nightly.5
+  - @ledgerhq/coin-aptos@3.3.0-nightly.5
+  - @ledgerhq/coin-bitcoin@0.21.1-nightly.5
+  - @ledgerhq/coin-cardano@0.12.1-nightly.5
+  - @ledgerhq/coin-casper@2.1.1-nightly.5
+  - @ledgerhq/coin-celo@1.4.0-nightly.5
+  - @ledgerhq/coin-cosmos@0.17.1-nightly.5
+  - @ledgerhq/coin-evm@2.30.0-nightly.5
+  - @ledgerhq/coin-filecoin@1.11.1-nightly.5
+  - @ledgerhq/coin-hedera@1.11.1-nightly.5
+  - @ledgerhq/coin-icon@0.12.1-nightly.5
+  - @ledgerhq/coin-internet_computer@1.8.1-nightly.5
+  - @ledgerhq/coin-kaspa@1.1.0-nightly.6
+  - @ledgerhq/coin-mina@1.2.1-nightly.5
+  - @ledgerhq/coin-multiversx@0.5.1-nightly.5
+  - @ledgerhq/coin-near@0.13.1-nightly.5
+  - @ledgerhq/coin-polkadot@6.10.0-nightly.5
+  - @ledgerhq/coin-solana@0.32.1-nightly.5
+  - @ledgerhq/coin-stacks@0.9.1-nightly.5
+  - @ledgerhq/coin-stellar@6.4.0-nightly.5
+  - @ledgerhq/coin-sui@0.13.0-nightly.5
+  - @ledgerhq/coin-tezos@6.4.0-nightly.5
+  - @ledgerhq/coin-ton@0.14.1-nightly.5
+  - @ledgerhq/coin-tron@5.4.0-nightly.5
+  - @ledgerhq/coin-vechain@2.10.0-nightly.5
+  - @ledgerhq/coin-xrp@7.4.0-nightly.6
+  - @ledgerhq/hw-app-vet@0.6.0-nightly.3
+  - @ledgerhq/live-countervalues@0.7.1-nightly.5
+  - @ledgerhq/live-countervalues-react@0.5.2-nightly.5
+  - @ledgerhq/live-nft@0.8.20-nightly.5
+  - @ledgerhq/live-wallet@0.13.1-nightly.6
+  - @ledgerhq/live-signer-evm@0.7.5-nightly.5
+  - @ledgerhq/live-signer-solana@0.5.5-nightly.5
+
 ## 34.48.0-nightly.6
 
 ### Minor Changes

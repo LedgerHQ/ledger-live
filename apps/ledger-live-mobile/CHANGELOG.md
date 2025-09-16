@@ -1,5 +1,20 @@
 # live-mobile
 
+## 3.93.0-nightly.8
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/coin-framework@6.4.0-nightly.5
+  - @ledgerhq/coin-cosmos@0.17.1-nightly.5
+  - @ledgerhq/coin-evm@2.30.0-nightly.5
+  - @ledgerhq/coin-filecoin@1.11.1-nightly.5
+  - @ledgerhq/coin-multiversx@0.5.1-nightly.5
+  - @ledgerhq/coin-stacks@0.9.1-nightly.5
+  - @ledgerhq/live-countervalues@0.7.1-nightly.5
+  - @ledgerhq/live-countervalues-react@0.5.2-nightly.5
+  - @ledgerhq/live-wallet@0.13.1-nightly.6
+
 ## 3.93.0-nightly.7
 
 ### Minor Changes

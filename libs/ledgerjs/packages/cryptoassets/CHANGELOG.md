@@ -1,5 +1,11 @@
 # @ledgerhq/cryptoassets
 
+## 13.28.0-nightly.3
+
+### Minor Changes
+
+- [#11799](https://github.com/LedgerHQ/ledger-live/pull/11799) [`65c128a`](https://github.com/LedgerHQ/ledger-live/commit/65c128a93f07857b421bed3696bc9984f860ada9) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Canton memo
+
 ## 13.28.0-nightly.2
 
 ### Minor Changes
