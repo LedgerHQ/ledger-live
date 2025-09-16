@@ -111,7 +111,9 @@ const PlatformCompleteExchange: React.FC<Props> = ({
           onResult={onCompleteExchange}
           request={request}
           location={HOOKS_TRACKING_LOCATIONS.swapFlow}
-        />
+          noCloseButton={true}
+          preventBackdropClick={true}
+        />  
       ) : (
         <DeviceActionModal
           key="sign"
@@ -121,6 +123,8 @@ const PlatformCompleteExchange: React.FC<Props> = ({
           onResult={onSign}
           request={signRequest}
           location={HOOKS_TRACKING_LOCATIONS.swapFlow}
+          noCloseButton={true}
+          preventBackdropClick={true}
         />
       )}
     </SafeAreaView>

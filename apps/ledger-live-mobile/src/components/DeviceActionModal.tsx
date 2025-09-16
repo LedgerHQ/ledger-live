@@ -26,6 +26,8 @@ type Props<Req, Stt, Res> = {
   onSelectDeviceLink?: () => void;
   analyticsPropertyFlow?: string;
   registerDeviceSelection?: (onDeviceUpdated: () => void) => void;
+  noCloseButton?: boolean;
+  preventBackdropClick?: boolean;
 };
 
 export default function DeviceActionModal<Req, Stt, Res>({
@@ -41,6 +43,8 @@ export default function DeviceActionModal<Req, Stt, Res>({
   onSelectDeviceLink,
   analyticsPropertyFlow,
   registerDeviceSelection,
+  noCloseButton,
+  preventBackdropClick
 }: Props<Req, Stt, Res>) {
   const { t } = useTranslation();
   const showAlert = !device?.wired;
@@ -68,6 +72,8 @@ export default function DeviceActionModal<Req, Stt, Res>({
       isRequestingToBeOpened={result ? false : !!device}
       onClose={handleClose}
       onModalHide={handleModalHide}
+      noCloseButton={noCloseButton}
+      preventBackdropClick={preventBackdropClick}
     >
       {onResult && result
         ? null
