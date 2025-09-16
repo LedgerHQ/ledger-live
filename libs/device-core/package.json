@@ -25,7 +25,7 @@
     "@ledgerhq/logs": "workspace:^",
     "@ledgerhq/types-live": "workspace:^",
     "semver": "^7.3.5",
-    "sha.js": "^2.4.11"
+    "@noble/hashes": "1.8.0"
   },
   "devDependencies": {
     "@testing-library/react": "14",
