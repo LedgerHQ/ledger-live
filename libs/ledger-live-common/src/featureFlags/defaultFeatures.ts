@@ -492,7 +492,6 @@ export const DEFAULT_FEATURES: Features = {
       refreshTime: 3, //nb minutes
     },
   },
-  spamReportNfts: DEFAULT_FEATURE,
   lldWalletSync: {
     ...DEFAULT_FEATURE,
     params: {
@@ -592,8 +591,6 @@ export const DEFAULT_FEATURES: Features = {
   },
   llmThai: DEFAULT_FEATURE,
   lldThai: DEFAULT_FEATURE,
-  lldSolanaNfts: DEFAULT_FEATURE,
-  llmSolanaNfts: DEFAULT_FEATURE,
   largemoverLandingpage: DEFAULT_FEATURE,
   llmMmkvMigration: {
     ...DEFAULT_FEATURE,
@@ -629,7 +626,6 @@ export const DEFAULT_FEATURES: Features = {
       backendEnvironment: "PROD",
     },
   },
-  llNftSupport: DEFAULT_FEATURE,
   llNftEntryPoint: {
     ...DEFAULT_FEATURE,
     params: {
