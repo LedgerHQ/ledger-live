@@ -269,7 +269,7 @@
       "@ton/core@0.60.1": "patches/@ton__core@0.60.1.patch",
       "storyly-react-native": "patches/storyly-react-native.patch",
       "react-native-webview": "patches/react-native-webview.patch",
-      "detox@20.39.0": "patches/detox@20.39.0.patch",
+      "detox@20.41.2": "patches/detox@20.41.2.patch",
       "@datadog/datadog-ci@3.11.0": "patches/@datadog__datadog-ci@3.11.0.patch",
       "@exodus/patch-broken-hermes-typed-arrays": "patches/@exodus__patch-broken-hermes-typed-arrays.patch",
       "@taquito/http-utils": "patches/@taquito__http-utils.patch"
