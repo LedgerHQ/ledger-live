@@ -36,7 +36,7 @@ export type StepAuthorizeProps = {
   onboardingData?: OnboardingData;
   setError: (error: Error | null) => void;
   transitionTo: (step: StepId) => void;
-  onAccountCreated: (account: Account) => void;
+  onAddAccounts: (account: Account[]) => void;
   setOnboardingData?: (data: OnboardingData) => void;
   authorizeStatus: PreApprovalStatus;
   isProcessing: boolean;
@@ -70,7 +70,7 @@ const StepAuthorize = ({
   onboardingData,
   setError: _setError,
   transitionTo: _transitionTo,
-  onAccountCreated: _onAccountCreated,
+  onAddAccounts: _onAddAccounts,
   setOnboardingData: _setOnboardingData,
   isProcessing: _isProcessing,
   showConfirmation: _showConfirmation,
@@ -242,14 +242,14 @@ export const StepAuthorizeFooter = ({
     return <></>;
   }
 
+  const handleClick = () => {
+    handlePreapproval?.();
+  };
+
   return (
     <Box horizontal alignItems="center" justifyContent="space-between" grow>
       {currency && <CurrencyBadge currency={currency} />}
-      <Button
-        primary
-        onClick={handlePreapproval}
-        disabled={authorizeStatus === PreApprovalStatus.SUBMIT}
-      >
+      <Button primary onClick={handleClick} disabled={authorizeStatus === PreApprovalStatus.SUBMIT}>
         {authorizeStatus === PreApprovalStatus.SUBMIT && (
           <Box mr={2}>
             <Spinner size={20} />

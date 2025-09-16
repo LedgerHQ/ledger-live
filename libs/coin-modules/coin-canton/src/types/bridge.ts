@@ -9,6 +9,7 @@ import type {
   TransactionStatusCommon,
   TransactionStatusCommonRaw,
 } from "@ledgerhq/types-live";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import type {
   CantonOnboardProgress,
   CantonOnboardResult,
@@ -21,12 +22,14 @@ export interface CantonCurrencyBridge extends CurrencyBridge {
   onboardAccount: (
     currency: CryptoCurrency,
     deviceId: string,
-    derivationPath: string,
+    currency: CryptoCurrency,
+    creatableAccount: Account,
+    existingAccounts: Account[],
   ) => Observable<CantonOnboardProgress | CantonOnboardResult>;
   authorizePreapproval: (
     currency: CryptoCurrency,
     deviceId: string,
-    derivationPath: string,
+    creatableAccount: Account,
     partyId: string,
   ) => Observable<CantonPreApprovalProgress | CantonPreApprovalResult>;
 }

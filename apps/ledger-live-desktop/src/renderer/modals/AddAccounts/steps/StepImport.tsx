@@ -389,6 +389,8 @@ export const StepImportFooter = ({
   currency,
   err,
   t,
+  editedNames,
+  device,
 }: StepProps) => {
   const dispatch = useDispatch();
   const willCreateAccount = checkedAccountsIds.some(id => {
@@ -402,6 +404,27 @@ export const StepImportFooter = ({
   const count = checkedAccountsIds.length;
   const willClose = !willCreateAccount && !willAddAccounts;
   const isHandledError = err && err.name === "SatStackDescriptorNotImported";
+
+  const hasCantonCreatableAccounts = checkedAccountsIds.some(id => {
+    const account = scannedAccounts.find(a => a.id === id);
+    return account && isAccountEmpty(account) && account.currency?.family === "canton";
+  });
+
+  const goCantonOnboard = () => {
+    onCloseModal();
+    const mainCurrency = currency?.type === "TokenCurrency" ? currency.parentCurrency : currency;
+    dispatch(
+      openModal("MODAL_CANTON_ONBOARD_ACCOUNT", {
+        currency: mainCurrency,
+        device: device ?? null,
+        selectedAccounts: checkedAccountsIds
+          .map(id => scannedAccounts.find(a => a.id === id))
+          .filter((account): account is Account => Boolean(account)),
+        editedNames,
+      }),
+    );
+  };
+
   const ctaWording =
     scanStatus === "scanning"
       ? t("common.sync.syncing")
@@ -413,8 +436,12 @@ export const StepImportFooter = ({
   const onClick = willClose
     ? onCloseModal
     : async () => {
-        await onClickAdd();
-        transitionTo("finish");
+        if (hasCantonCreatableAccounts) {
+          goCantonOnboard();
+        } else {
+          await onClickAdd();
+          transitionTo("finish");
+        }
       };
   const goFullNode = () => {
     onCloseModal();

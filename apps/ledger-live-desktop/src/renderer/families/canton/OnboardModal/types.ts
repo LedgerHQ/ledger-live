@@ -10,7 +10,9 @@ export type Data = {
   currency: CryptoCurrency;
   device: Device;
   selectedAccounts: Account[];
-  editedNames: Record<string, string>;
+  editedNames: {
+    [accountId: string]: string;
+  };
 };
 
 export type OnboardingData = {
@@ -31,26 +33,41 @@ export enum StepId {
   FINISH,
 }
 
+export interface SigningData {
+  partyId: string;
+  publicKey: string;
+  transactionData: unknown;
+  combinedHash: string;
+  derivationPath?: string;
+}
+
 export type StepProps = {
   t: TFunction;
   accountName: string;
+  importableAccounts: Account[];
+  creatableAccount: Account;
   addAccountsAction: typeof addAccountsAction;
   cantonBridge: CantonCurrencyBridge;
   clearError: () => void;
   closeModal: (modalName: string) => void;
   currency: CryptoCurrency;
   device: Device | null | undefined;
-  editedNames: Record<string, string>;
+  editedNames: {
+    [accountId: string]: string;
+  };
   error: Error | null;
   existingAccounts: Account[];
-  onAccountCreated: (account: Account) => void;
+  onAddAccounts: (accounts: Account[]) => void;
   onboardingCompleted?: boolean;
   onboardingData?: OnboardingData | null;
   onboardingStatus?: OnboardStatus;
   selectedAccounts: Account[];
+  signingData: SigningData | null;
   setError: (error: Error | null) => void;
   setOnboardingCompleted?: (completed: boolean) => void;
   setOnboardingData?: (data: OnboardingData) => void;
   setOnboardingStatus?: (status: OnboardStatus) => void;
+  setIsProcessing?: (isProcessing: boolean) => void;
   transitionTo: (stepId: StepId) => void;
+  startOnboarding?: (() => void) | undefined;
 };

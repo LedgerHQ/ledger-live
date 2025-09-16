@@ -18,7 +18,7 @@ import { estimateMaxSpendable } from "./estimateMaxSpendable";
 import { getTransactionStatus } from "./getTransactionStatus";
 import { prepareTransaction } from "./prepareTransaction";
 import { buildSignOperation } from "./signOperation";
-import { getAccountShape } from "./sync";
+import { makeGetAccountShape } from "./sync";
 import { updateTransaction } from "./updateTransaction";
 import { buildOnboardAccount, buildAuthorizePreapproval } from "./onboard";
 import { assignFromAccountRaw, assignToAccountRaw } from "./serialization";
@@ -33,11 +33,11 @@ export function createBridges(
   const receive = makeAccountBridgeReceive(getAddressWrapper(getAddress));
 
   const scanAccounts = makeScanAccounts({
-    getAccountShape: getAccountShape,
+    getAccountShape: makeGetAccountShape(signerContext),
     getAddressFn: getAddress,
   });
 
-  const onboardAccount = buildOnboardAccount(signerContext);
+  const onboardAccount = buildOnboardAccount(signerContext, scanAccounts);
   const authorizePreapproval = buildAuthorizePreapproval(signerContext);
 
   const currencyBridge: CantonCurrencyBridge = {
@@ -49,7 +49,7 @@ export function createBridges(
   };
 
   const signOperation = buildSignOperation(signerContext);
-  const sync = makeSync({ getAccountShape });
+  const sync = makeSync({ getAccountShape: makeGetAccountShape(signerContext) });
   // we want one method per file
   const accountBridge: AccountBridge<Transaction> = {
     broadcast,

@@ -15,23 +15,17 @@ import Modal from "~/renderer/components/Modal";
 import Stepper, { Step } from "~/renderer/components/Stepper";
 import { getCurrencyBridge } from "@ledgerhq/live-common/bridge/index";
 import type { CantonCurrencyBridge } from "@ledgerhq/coin-canton/types";
-import { encodeAccountId } from "@ledgerhq/coin-framework/account/index";
 import {
   OnboardStatus,
   PreApprovalStatus,
   CantonPreApprovalProgress,
   CantonPreApprovalResult,
 } from "@ledgerhq/coin-canton/types";
-import {
-  getDerivationScheme,
-  getDerivationModesForCurrency,
-  runAccountDerivationScheme,
-} from "@ledgerhq/coin-framework/derivation";
 import logger from "~/renderer/logger";
 import StepAuthorize, { StepAuthorizeFooter } from "./steps/StepAuthorize";
 import StepOnboard, { StepOnboardFooter } from "./steps/StepOnboard";
 import StepFinish, { StepFinishFooter } from "./steps/StepFinish";
-import { Data, StepId, OnboardingData } from "./types";
+import { Data, StepId, OnboardingData, SigningData } from "./types";
 
 export type Props = Data & {
   device: Device | null | undefined;
@@ -65,6 +59,7 @@ type State = {
   onboardingCompleted: boolean;
   onboardingStatus: OnboardStatus;
   authorizeStatus: PreApprovalStatus;
+  signingData: SigningData | null;
   isProcessing: boolean;
   showConfirmation: boolean;
   progress: number;
@@ -81,6 +76,7 @@ const INITIAL_STATE: State = {
   onboardingCompleted: false,
   onboardingStatus: OnboardStatus.INIT,
   authorizeStatus: PreApprovalStatus.INIT,
+  signingData: null,
   isProcessing: false,
   showConfirmation: false,
   progress: 0,
@@ -132,43 +128,21 @@ class OnboardModal extends PureComponent<Props, State> {
     // this.setState({ accountName });
   };
 
-  handleAccountCreated = (_account: Account) => {
-    const {
-      addAccountsAction,
-      existingAccounts,
-      closeModal,
-      editedNames,
-      selectedAccounts,
-      currency,
-    } = this.props;
-    const { onboardingData } = this.state;
-    const address = onboardingData?.completedAccount?.freshAddress || "";
-    const derivationMode = onboardingData?.completedAccount?.derivationMode || "";
-    const xpubOrAddress = onboardingData?.completedAccount?.xpub || "";
-    const accountId = encodeAccountId({
-      type: "js",
-      version: "2",
-      currencyId: currency.id,
-      xpubOrAddress,
-      derivationMode,
-    });
-    const completedAccount = {
-      ...onboardingData?.completedAccount,
-      id: accountId,
-      freshAddress: address,
-      type: "Account" as const,
-    } as Account;
-    const selectedAccount = selectedAccounts[0];
+  handleAddAccounts = (accounts: Account[] = []) => {
+    const { addAccountsAction, existingAccounts, closeModal, editedNames } = this.props;
+
+    const renamings = Object.fromEntries(
+      accounts.map(account => [
+        account.id,
+        editedNames[account.id] || getDefaultAccountName(account!),
+      ]),
+    );
 
     addAccountsAction({
-      scannedAccounts: [completedAccount],
+      scannedAccounts: accounts,
       existingAccounts,
-      selectedIds: [completedAccount.id],
-      renamings: {
-        [completedAccount.id]: selectedAccount
-          ? editedNames[selectedAccount.id] || getDefaultAccountName(selectedAccount)
-          : `${currency.name} 1`,
-      },
+      selectedIds: accounts.map(account => account.id),
+      renamings,
     });
 
     closeModal("MODAL_CANTON_ONBOARD_ACCOUNT");
@@ -194,6 +168,10 @@ class OnboardModal extends PureComponent<Props, State> {
     this.setState({ authorizeStatus: status });
   };
 
+  setSigningData = (signingData: SigningData) => {
+    this.setState({ signingData });
+  };
+
   setError = (error: Error | null) => {
     this.setState({ error });
   };
@@ -202,9 +180,140 @@ class OnboardModal extends PureComponent<Props, State> {
     this.setState({ error: null });
   };
 
-  handlePreapproval = () => {
-    console.log("[OnboardModal] Starting preapproval process");
+  handleStartOnboarding = () => {
+    logger.log("[OnboardModal] Starting onboarding process");
 
+    this.setState({
+      isProcessing: true,
+      onboardingStatus: OnboardStatus.PREPARE,
+      error: null,
+    });
+
+    const { device, currency, existingAccounts } = this.props;
+    const { accountName } = this.state;
+
+    // Get creatableAccount from stepper props
+    // const importableAccounts = this.props.selectedAccounts.filter(account => account.used);
+    const creatableAccount = this.props.selectedAccounts.find(account => !account.used);
+
+    if (!device || !currency) {
+      this.setState({
+        error: new Error("Device or currency missing"),
+        isProcessing: false,
+      });
+      return;
+    }
+
+    const cantonBridge = getCurrencyBridge(currency) as CantonCurrencyBridge;
+    if (!cantonBridge.onboardAccount) {
+      this.setState({
+        error: new Error("Canton bridge does not support onboardAccount"),
+        isProcessing: false,
+      });
+      return;
+    }
+
+    const accountIndex = 0;
+    let onboardingResult: {
+      partyId: string;
+      account: Partial<Account>;
+      publicKey?: string;
+      address?: string;
+      transactionHash?: string;
+    } | null = null;
+
+    cantonBridge
+      .onboardAccount(device.deviceId, currency, creatableAccount!, existingAccounts)
+      .subscribe({
+        next: (progressData: Record<string, unknown>) => {
+          logger.log("Canton onboarding progress", progressData);
+
+          // Handle progress updates (CantonOnboardProgress has status)
+          if ("status" in progressData) {
+            // const statusMessage = getStatusMessage(progressData.status as OnboardStatus);
+            // this.setSigningData(progressData.status, statusMessage);
+            this.setOnboardingStatus?.(progressData.status as OnboardStatus);
+
+            if (progressData.status === OnboardStatus.SIGN) {
+              logger.log("Entering signing phase, storing transaction data");
+              const signingData: SigningData = {
+                partyId:
+                  ((progressData as Record<string, unknown>).partyId as string) ||
+                  "pending-party-id",
+                publicKey:
+                  ((progressData as Record<string, unknown>).publicKey as string) ||
+                  "pending-public-key",
+                transactionData:
+                  (progressData as Record<string, unknown>).transactionData || progressData,
+                combinedHash:
+                  ((progressData as Record<string, unknown>).combinedHash as string) ||
+                  ((progressData as Record<string, unknown>).combined_hash as string) ||
+                  "",
+                derivationPath: (progressData as Record<string, unknown>).derivationPath as string,
+              };
+              this.setSigningData(signingData);
+            }
+          }
+
+          // Handle final result
+          if ("partyId" in progressData && !("status" in progressData)) {
+            onboardingResult = {
+              partyId: progressData.partyId as string,
+              account: progressData.account as Partial<Account>,
+              publicKey: "generated-public-key",
+              address: progressData.partyId as string,
+            };
+          }
+        },
+        complete: () => {
+          logger.log("Canton onboarding completed successfully", onboardingResult);
+
+          if (onboardingResult?.partyId && onboardingResult?.account) {
+            const onboardingDataObject = {
+              partyId: onboardingResult.partyId,
+              address: onboardingResult.address || "",
+              publicKey: onboardingResult.publicKey || "",
+              device: device.deviceId,
+              accountIndex,
+              currency: currency.id,
+              accountName: accountName,
+              transactionHash: onboardingResult.transactionHash || "",
+              completedAccount: onboardingResult.account || creatableAccount,
+            };
+
+            logger.log("[OnboardModal] Storing onboarding data:", onboardingDataObject);
+            this.setState({
+              onboardingData: onboardingDataObject as OnboardingData,
+              onboardingCompleted: true,
+              onboardingStatus: OnboardStatus.SUCCESS,
+              isProcessing: false,
+            });
+          } else {
+            logger.error(
+              "[OnboardModal] No partyId in onboarding result, not marking as completed",
+            );
+            this.setState({
+              error: new Error("Onboarding failed: No party ID received"),
+              isProcessing: false,
+            });
+          }
+        },
+        error: (error: Error) => {
+          logger.error("Canton account creation failed", error);
+          this.setState({
+            error,
+            onboardingStatus: OnboardStatus.ERROR,
+            isProcessing: false,
+          });
+        },
+      });
+  };
+
+  setIsProcessing = (isProcessing: boolean) => {
+    this.setState({ isProcessing });
+  };
+
+  handlePreapproval = () => {
     this.setState({
       isProcessing: true,
       progress: 0,
@@ -223,19 +332,13 @@ class OnboardModal extends PureComponent<Props, State> {
       return;
     }
 
-    const { partyId, address: _address, device: deviceId, accountIndex } = onboardingData;
-
-    const derivationMode = getDerivationModesForCurrency(currency)[0];
-    const derivationScheme = getDerivationScheme({ derivationMode, currency });
-    const derivationPath = runAccountDerivationScheme(derivationScheme, currency, {
-      account: accountIndex,
-    });
+    const { partyId, address: _address, device: deviceId, completedAccount } = onboardingData;
 
     const cantonBridge = getCurrencyBridge(currency) as CantonCurrencyBridge;
     let preapprovalResult: CantonPreApprovalResult | null = null;
 
     const subscription = cantonBridge
-      .authorizePreapproval(currency, deviceId, derivationPath, partyId)
+      .authorizePreapproval(currency, deviceId, completedAccount, partyId)
       .subscribe({
         next: (progressData: CantonPreApprovalProgress | CantonPreApprovalResult) => {
           if ("isApproved" in progressData) {
@@ -303,21 +406,25 @@ class OnboardModal extends PureComponent<Props, State> {
 
     const cantonBridge = getCurrencyBridge(currency) as CantonCurrencyBridge;
 
-    const selectedAccount = selectedAccounts[0];
-    const resolvedAccountName = selectedAccount
-      ? editedNames[selectedAccount.id] || getDefaultAccountName(selectedAccount)
-      : `${currency.name} 1`;
+    const importableAccounts = selectedAccounts.filter(account => account.used);
+    const creatableAccount = selectedAccounts.find(account => !account.used);
+
+    const accountName = creatableAccount
+      ? editedNames[creatableAccount.id] || getDefaultAccountName(creatableAccount!)
+      : `${currency.name} ${importableAccounts.length + 1}`;
 
     const stepperProps = {
       t,
-      accountName: resolvedAccountName,
+      accountName,
+      importableAccounts,
+      creatableAccount,
       currency,
       device,
       selectedAccounts,
       editedNames,
       cantonBridge,
       transitionTo: this.transitionTo,
-      onAccountCreated: this.handleAccountCreated,
+      onAddAccounts: this.handleAddAccounts,
       addAccountsAction: this.props.addAccountsAction,
       existingAccounts: this.props.existingAccounts,
       closeModal: this.props.closeModal,
@@ -328,6 +435,7 @@ class OnboardModal extends PureComponent<Props, State> {
       setOnboardingCompleted: this.setOnboardingCompleted,
       setOnboardingStatus: this.setOnboardingStatus,
       setAuthorizeStatus: this.setAuthorizeStatus,
+      setIsProcessing: this.setIsProcessing,
       authorizeStatus,
       error,
       setError: this.setError,
@@ -338,14 +446,17 @@ class OnboardModal extends PureComponent<Props, State> {
       progress,
       message,
       handlePreapproval: this.handlePreapproval,
+      startOnboarding: this.handleStartOnboarding,
     };
+
+    console.log("[OnboardModal] this.props", this.props, this.state);
 
     return (
       <Modal
         centered
         name="MODAL_CANTON_ONBOARD_ACCOUNT"
         onHide={this.handleReset}
-        onBeforeOpen={this.handleBeforeOpen}
+        // onBeforeOpen={this.handleBeforeOpen}
         preventBackdropClick={stepId === StepId.ONBOARD}
         render={({ onClose }) => (
           <Stepper

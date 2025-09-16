@@ -5,18 +5,24 @@ import Button from "~/renderer/components/Button";
 import { CurrencyCircleIcon } from "~/renderer/components/CurrencyBadge";
 import { StepProps } from "../types";
 
-export default function StepFinish({ t, currency, selectedAccounts }: StepProps) {
+export default function StepFinish({
+  t,
+  currency,
+  creatableAccount,
+  importableAccounts,
+}: StepProps) {
+  const accounts = [...importableAccounts, creatableAccount];
   return (
     <Box alignItems="center" py={6}>
       {currency ? <CurrencyCircleIcon currency={currency} size={50} showCheckmark /> : null}
       <Title>
         {t("addAccounts.success", {
-          count: selectedAccounts.length,
+          count: accounts.length,
         })}
       </Title>
       <Text>
         {t("addAccounts.successDescription", {
-          count: selectedAccounts.length,
+          count: accounts.length,
         })}
       </Text>
     </Box>
@@ -27,14 +33,35 @@ export const StepFinishFooter = ({
   t,
   currency: _currency,
   closeModal: _closeModal,
-  onAccountCreated,
+  onAddAccounts,
+  importableAccounts,
   onboardingData,
 }: StepProps) => {
   const onGoStep1 = () => {
-    console.log("[StepFinish] Add Account clicked, calling onAccountCreated");
     const completedAccount = onboardingData?.completedAccount;
+    console.log("[StepFinish] Add Account clicked, calling onAddAccounts", [
+      ...importableAccounts,
+      completedAccount,
+      "onboardingData",
+      onboardingData,
+    ]);
     if (completedAccount) {
-      onAccountCreated(completedAccount);
+      onAddAccounts([...importableAccounts, completedAccount]);
+    } else {
+      console.error("[StepFinish] No completed account found in modal state");
+    }
+  };
+
+  const onDone = () => {
+    const completedAccount = onboardingData?.completedAccount;
+    console.log("[StepFinish] Done button clicked, calling onAddAccounts", [
+      ...importableAccounts,
+      completedAccount,
+      "onboardingData",
+      onboardingData,
+    ]);
+    if (completedAccount) {
+      onAddAccounts([...importableAccounts, completedAccount]);
     } else {
       console.error("[StepFinish] No completed account found in modal state");
     }
@@ -51,10 +78,10 @@ export const StepFinishFooter = ({
         {t("addAccounts.cta.addMore")}
       </Button>
       <Button
-        event="Page AddAccounts Step 4 AddMore"
+        event="Page AddAccounts Step 4 AddMore" // should be Close instead of AddMore? same here: apps/ledger-live-desktop/src/renderer/modals/AddAccounts/steps/StepFinish.tsx:55
         data-testid={"add-accounts-finish-close-button"}
         primary
-        onClick={onAccountCreated}
+        onClick={onDone}
       >
         {t("common.done")}
       </Button>

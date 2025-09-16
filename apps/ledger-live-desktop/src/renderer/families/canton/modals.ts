@@ -7,10 +7,12 @@ import OnboardModal from "./OnboardModal";
 
 export type ModalsData = {
   MODAL_CANTON_ONBOARD_ACCOUNT: {
-    currency: CryptoCurrency;
-    device: Device;
+    currency: CryptoCurrency | null;
+    device: Device | null;
     selectedAccounts: Account[];
-    editedNames: Record<string, string>;
+    editedNames: {
+      [accountId: string]: string;
+    };
   };
 };
 
