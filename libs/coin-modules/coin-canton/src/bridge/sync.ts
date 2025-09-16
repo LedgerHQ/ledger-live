@@ -98,19 +98,21 @@ export const getAccountShape: GetAccountShape<CantonAccount> = async info => {
     balance.minus(lockedAmount).minus(BigNumber(reserveMin)),
   );
 
-  // Tx history fetching
-  const oldOperations = initialAccount?.operations || [];
-  const startAt = oldOperations.length ? (oldOperations[0].blockHeight || 0) + 1 : 0;
-  const transactionData = await getOperations(currency, partyId, {
-    cursor: startAt,
-    limit: 100,
-  });
+  let operations: Operation[] = [];
+  // Tx history fetching if xpubOrAddress is not empty
+  if (xpubOrAddress) {
+    const oldOperations = initialAccount?.operations || [];
+    const startAt = oldOperations.length ? (oldOperations[0].blockHeight || 0) + 1 : 0;
+    const transactionData = await getOperations(currency, partyId, {
+      cursor: startAt,
+      limit: 100,
+    });
+
+    const newOperations = filterOperations(transactionData.operations, accountId, partyId);
+    operations = mergeOps(oldOperations, newOperations);
+  }
   // blockheight retrieval
   const blockHeight = await getLedgerEnd(currency);
-
-  const newOperations = filterOperations(transactionData.operations, accountId, partyId);
-  const operations = mergeOps(oldOperations, newOperations);
-
   // We return the new account shape
   const shape = {
     id: accountId,
