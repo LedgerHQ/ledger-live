@@ -167,7 +167,7 @@ const StepChooseImage: React.FC<Props> = props => {
         </Flex>
       ) : !isShowingNftGallery ? (
         <Flex flexDirection="column">
-          <Flex py={"15px"}>
+          <Flex py={"15px"} data-testid="custom-image-step-1-choose-image">
             <Animation animation={animationSource} height="fit-content" />
           </Flex>
           <Text

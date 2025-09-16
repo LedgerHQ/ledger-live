@@ -41,7 +41,7 @@ test("Custom image Stax", async ({ page }) => {
     await managerPage.openCustomImage();
     await container.waitFor({ state: "attached" });
     await expect(container).toHaveScreenshot(`${generateScreenshotPrefix()}drawer.png`, {
-      animations: "disabled",
+      mask: [container.getByTestId("custom-image-step-1-choose-image")],
     });
   });
 
