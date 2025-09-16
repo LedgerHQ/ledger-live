@@ -168,6 +168,7 @@
       "NFT_IN" : "已收到的 NFT",
       "NFT_OUT" : "已发送的 NFT",
       "CREATE" : "已创建",
+      "UNKNOWN" : "未知",
       "REVEAL" : "已显示",
       "DELEGATE" : "已委托",
       "REDELEGATE" : "已重新委托",
@@ -802,8 +803,8 @@
       "support" : "客服"
     },
     "willBeDeprecatedBanner" : {
-      "title" : "为了优化效率，自 {{deprecatedDate}} 起，Ledger Live 将不再支持 {{currencyName}}。但 Ledger 硬件钱包将继续支持该币种。如需这方面的帮助，请联系 Ledger 客服。",
-      "contactSupport" : "联系客服"
+      "title" : "自 {{deprecatedDate}} 起 Ledger Live 将不再支持 {{currencyName}}。但该币种仍会受到 Ledger 硬件钱包的保护。请访问下方链接，阅读完整的帮助中心文章，了解更多信息。",
+      "learnMore" : "了解更多"
     },
     "lastOperations" : "近期操作",
     "contractAddress" : "合约：",
@@ -1940,7 +1941,8 @@
       "payoutNetworkFeesTooltip" : "该数额不会在您的设备上显示",
       "acceptTerms" : "验证此交易，即表示我接受\n<0>{{provider}} 的使用条款</0>",
       "exodusAcceptTerms" : "Exodus 依赖第三方来进行互换。\n验证此交易，即表示我接受 <0>Exodus 的使用条款</0>",
-      "changellyAcceptTerms" : "点击“使用 Changelly 互换”即表示您接受 Changelly 的<0>使用条款</0>及其\n<1>反洗钱 (AML)/客户身份核实 (KYC) 政策</1>。Changelly 可能会采用 AML/KYC 程序，\n这可能在少数情况下影响您完成交易。如果发生这种情况，\n您需要联系 Changelly <2>客服</2>。"
+      "changellyAcceptTerms" : "点击“使用 Changelly 互换”即表示您接受 Changelly 的<0>使用条款</0>及其\n<1>反洗钱 (AML)/客户身份核实 (KYC) 政策</1>。Changelly 可能会采用 AML/KYC 程序，\n这可能在少数情况下影响您完成交易。如果发生这种情况，\n您需要联系 Changelly <2>客服</2>。",
+      "cicAcceptTerms" : "“使用 CIC 互换”即表示您接受 CIC 的<0>使用条款</0>及其<1>反洗钱 (AML)/客户身份核实 (KYC) 政策</1>。CIC 可能会采用 AML/KYC 程序，这可能在少数情况下影响您完成交易。如果发生这种情况，您需要联系 CIC <2>客服</2>。"
     },
     "swap2" : {
       "amountSent" : "发送数额",
@@ -2282,8 +2284,8 @@
     }
   },
   "fund" : {
-    "title" : "Fund",
-    "titleCrypto" : "Fund {{currency}}",
+    "title" : "资金",
+    "titleCrypto" : "资金 {{currency}}",
     "exchangeDrawer" : {
       "completed" : {
         "title" : "交易播送成功",
@@ -5865,6 +5867,10 @@
       "commentPlaceholder" : "可选",
       "comment" : "备注"
     },
+    "canton" : {
+      "commentPlaceholder" : "可选",
+      "comment" : "备注"
+    },
     "stellar" : {
       "memo" : "Memo",
       "memoType" : {
@@ -6312,6 +6318,10 @@
       "title" : "出错了",
       "description" : "交易失败。请重试。"
     },
+    "TransactionCannotBeCreated" : {
+      "title" : "处理出错",
+      "description" : "Changelly 无法处理此交易。错误代码 8HBB{{errorCode}}"
+    },
     "TimeoutError" : {
       "title" : "抱歉，服务器响应超时",
       "description" : "请再次尝试。"
@@ -6459,6 +6469,9 @@
       "description" : "请关闭窗口，稍后再重试"
     },
     "TonCommentInvalid" : {
+      "title" : "备注不得超过 120 个字符，不包含特殊字符"
+    },
+    "CantonCommentInvalid" : {
       "title" : "备注不得超过 120 个字符，不包含特殊字符"
     },
     "CantScanQRCode" : {
@@ -6852,11 +6865,11 @@
       "description" : "请使用另一张图片重试"
     },
     "ImageCommitRefusedOnDevice" : {
-      "title" : "已取消在 {{productName}} 上安装锁屏图片",
+      "title" : "已在 {{productName}} 上\n弃用锁屏图片",
       "description" : "如果是误操作，请立即重试。"
     },
     "ImageLoadRefusedOnDevice" : {
-      "title" : "已取消在 {{productName}} 上安装锁屏图片",
+      "title" : "已在 {{productName}} 上\n取消锁屏图片",
       "description" : "如果是误操作，请立即重试。"
     },
     "ImageDoesNotExistOnDevice" : {
@@ -7181,7 +7194,7 @@
     "steps" : {
       "choose" : {
         "stepLabel" : "选择图片",
-        "description" : "选择要设为 (...) 的图片",
+        "description" : "选择任意数字艺术或照片。\n自定义您的 {{productName}}。\n打造您的个性风格。",
         "pickFromNftGallery" : "从我的 NFT 画廊中选择",
         "myNfts" : "我的 NFT",
         "upload" : "从计算机上传",
@@ -7205,7 +7218,7 @@
         "useAnotherPicture" : "上传另一张图片",
         "allowPreview" : "点按“Load picture”（加载图片）\n自定义锁屏图片",
         "allowConfirmPreview" : "点按“Load picture”（加载图片）\n恢复锁屏图片",
-        "loadingPicture" : "正在安装……",
+        "loadingPicture" : "正在加载……",
         "voila" : "好啦！",
         "imageLoaded" : "图片已加载到 {{productName}}",
         "confirmPicture" : "很合心意？\n用此设定！",
@@ -7264,7 +7277,7 @@
   "webview" : {
     "networkError" : {
       "title" : "网络错误",
-      "subtitle" : "出错了。请再次尝试。如果仍有问题，请保存日志并联系 Ledger 客服。",
+      "subtitle" : "出错了。请重试。如果仍有问题，请保存日志并联系 Ledger 客服。",
       "contactSupport" : "联系 Ledger 客服",
       "saveLog" : "保存日志"
     },
@@ -7651,7 +7664,7 @@
         "foundAccounts_other" : "我们找到了 {{count}} 个账户",
         "scanning" : "正在扫描账户..."
       },
-      "title" : "正在查找区块链上的现有账户……"
+      "title" : "正在检查区块链……"
     },
     "connectYourDevice" : {
       "title" : "连接并解锁您的设备"
@@ -7671,6 +7684,11 @@
         "selectAccount" : "继续",
         "close" : "关闭"
       }
+    },
+    "genericError" : {
+      "title" : "发生网络错误",
+      "description" : "出错了，请重试；如有疑问，请联系 Ledger 客服。",
+      "cta" : "重试"
     }
   },
   "nftEntryPoint" : {
