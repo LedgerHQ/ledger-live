@@ -37,6 +37,8 @@ import {
 import getBLETransport from "../../react-native-hw-transport-ble";
 import { useBleDevicesScanning as useLegacyBleDevicesScanning } from "@ledgerhq/live-common/ble/hooks/useBleDevicesScanning";
 import styled from "styled-components/native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { TAB_BAR_HEIGHT } from "../TabBar/shared";
 
 export type { SetHeaderOptionsRequest };
 
@@ -83,6 +85,7 @@ export default function SelectDevice({
 
   const dispatch = useDispatch();
   const isFocused = useIsFocused();
+  const { bottom } = useSafeAreaInsets();
 
   const [isAddNewDrawerOpen, setIsAddNewDrawerOpen] = useState<boolean>(false);
   const [isPairingDevices, setIsPairingDevices] = useState<boolean>(false);
@@ -458,7 +461,7 @@ export default function SelectDevice({
                 {children}
               </Flex>
             </Flex>
-            <Flex alignItems="center" my={8}>
+            <Flex alignItems="center" my={8} mb={bottom + TAB_BAR_HEIGHT + 8}>
               <BuyDeviceCTA />
             </Flex>
           </ScrollContainer>
