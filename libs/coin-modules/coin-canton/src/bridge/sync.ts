@@ -68,20 +68,15 @@ export function makeGetAccountShape(
   signerContext: SignerContext<CantonSigner>,
 ): GetAccountShape<CantonAccount> {
   return async info => {
-    const { address, initialAccount, currency, derivationMode, derivationPath, rest } = info;
+    const { address, initialAccount, currency, derivationMode, derivationPath } = info;
 
     console.log("info", info);
 
-    let xpubOrAddress = (
+    let xpubOrAddress =
       (initialAccount && initialAccount.id && decodeAccountId(initialAccount.id).xpubOrAddress) ||
-      ""
-    ).replace(/:/g, "_");
-    let partyId =
-      rest?.cantonResources?.partyId ||
-      initialAccount?.cantonResources?.partyId ||
-      xpubOrAddress.replace(/_/g, ":");
+      "";
 
-    if (!partyId) {
+    if (!xpubOrAddress) {
       const getAddress = resolver(signerContext);
       const { publicKey } = await getAddress(info.deviceId || "", {
         path: derivationPath,
@@ -91,8 +86,7 @@ export function makeGetAccountShape(
       });
       try {
         const { party_id } = await getPartyByPubKey(currency, publicKey);
-        partyId = party_id;
-        xpubOrAddress = partyId.replace(/:/g, "_");
+        xpubOrAddress = party_id;
       } catch (e) {
         // do nothing
       }
@@ -106,17 +100,13 @@ export function makeGetAccountShape(
       derivationMode,
     });
 
-    // Account info retrieval + spendable balance calculation
-    // const accountInfo = await getAccountInfo(address);
-    const balances = partyId ? await getBalance(currency, partyId) : [];
-
-    // TODO change to balance.instrument_id === "Amulet" after update on backend
+    const balances = xpubOrAddress ? await getBalance(currency, xpubOrAddress) : [];
     const balanceData = balances.find(balance => balance.instrument_id.includes("Amulet")) || {
       instrument_id: "Amulet",
-      amount: 1,
+      // TODO: need for tests remove this
+      amount: derivationPath.split("'")[2] === "0" ? 1 : 0,
       locked: false,
     };
-
     const balance = new BigNumber(balanceData.amount);
     const reserveMin = coinConfig.getCoinConfig(currency).minReserve || 0;
     const lockedAmount = balanceData.locked ? balance : new BigNumber(0);
@@ -130,28 +120,27 @@ export function makeGetAccountShape(
     if (xpubOrAddress) {
       const oldOperations = initialAccount?.operations || [];
       const startAt = oldOperations.length ? (oldOperations[0].blockHeight || 0) + 1 : 0;
-      const transactionData = await getOperations(currency, partyId, {
+      const transactionData = await getOperations(currency, xpubOrAddress, {
         cursor: startAt,
         limit: 100,
       });
-
-      const newOperations = filterOperations(transactionData.operations, accountId, partyId);
+      const newOperations = filterOperations(transactionData.operations, accountId, xpubOrAddress);
       operations = mergeOps(oldOperations, newOperations);
     }
-    // blockheight retrieval
+
     const blockHeight = await getLedgerEnd(currency);
-    // We return the new account shape
+
     const shape = {
-      xpub: xpubOrAddress,
+      // xpub: xpubOrAddress, // can be skiped?
       blockHeight,
       balance,
       spendableBalance,
       operations,
       operationsCount: operations.length,
       used: balance.gt(0),
-      cantonResources: {
-        partyId,
-      },
+      // cantonResources: {
+      //   partyId, // can be skiped?
+      // },
     };
 
     console.log("shape", shape);

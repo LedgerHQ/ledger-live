@@ -22,9 +22,7 @@ export const buildSignOperation =
           });
 
           const signature = await signerContext(deviceId, async signer => {
-            const { freshAddressPath: derivationPath } = account;
-            const partyId = (account as unknown as { cantonResources: { partyId: string } })
-              .cantonResources.partyId;
+            const { freshAddressPath: derivationPath, freshAddress: address } = account;
             const params: {
               recipient?: string;
               amount: BigNumber;
@@ -44,13 +42,13 @@ export const buildSignOperation =
             const { hash, serializedTransaction } = await craftTransaction(
               account.currency,
               {
-                address: partyId,
+                address,
               },
               params,
             );
             const transactionSignature = await signer.signTransaction(derivationPath, hash);
 
-            return combine(serializedTransaction, `${transactionSignature}__PARTY__${partyId}`);
+            return combine(serializedTransaction, `${transactionSignature}__PARTY__${address}`);
           });
 
           o.next({

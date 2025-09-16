@@ -7,16 +7,12 @@ import type {
 } from "../types";
 
 function toResourcesRaw(r: CantonResources): CantonResourcesRaw {
-  const { partyId } = r;
-  return {
-    partyId,
-  };
+  const {} = r;
+  return {};
 }
 function fromResourcesRaw(r: CantonResourcesRaw): CantonResources {
-  const { partyId } = r;
-  return {
-    partyId,
-  };
+  const {} = r;
+  return {};
 }
 
 export function assignToAccountRaw(account: Account, accountRaw: AccountRaw): void {

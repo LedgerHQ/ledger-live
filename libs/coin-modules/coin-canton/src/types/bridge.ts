@@ -60,10 +60,10 @@ export type TransactionStatus = TransactionStatusCommon;
 export type TransactionStatusRaw = TransactionStatusCommonRaw;
 
 export type CantonResources = {
-  partyId: string;
+  // empty
 };
 export type CantonResourcesRaw = {
-  partyId: string;
+  // empty
 };
 
 export type CantonAccount = Account & {
