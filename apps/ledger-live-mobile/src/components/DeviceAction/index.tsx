@@ -28,6 +28,7 @@ import { useTrackAddAccountFlow } from "~/analytics/hooks/useTrackAddAccountFlow
 import { useTrackLedgerSyncFlow } from "~/analytics/hooks/useTrackLedgerSyncFlow";
 import { useTrackMyLedgerSectionEvents } from "~/analytics/hooks/useTrackMyLedgerEvents";
 import { useTrackReceiveFlow } from "~/analytics/hooks/useTrackReceiveFlow";
+import { TermsProviders } from "~/components/TermsFooter";
 import { useTrackSendFlow } from "~/analytics/hooks/useTrackSendFlow";
 import { useTrackSwapFlow } from "~/analytics/hooks/useTrackSwapFlow";
 import { HOOKS_TRACKING_LOCATIONS } from "~/analytics/hooks/variables";
@@ -460,7 +461,7 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
       estimatedFees: status.estimatedFees,
     } as {
       selectedDevice: Device;
-      provider: string;
+      provider: TermsProviders;
       transaction: Transaction;
       exchangeRate: ExchangeRate;
       exchange: ExchangeSwap;

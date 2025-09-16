@@ -10,6 +10,11 @@ import { liveConfig } from "@ledgerhq/live-common/config/sharedConfig";
 import currencies, { AccountInfo, AccountType } from "./currencies";
 import { LogEntry, submitLogs } from "./datadog";
 
+interface RunResult {
+  entries: LogEntry[];
+  failed: boolean;
+}
+
 function toEmptyAccount(currency: CryptoCurrency, info: AccountInfo): Account {
   const id = encodeAccountId({
     type: "js",
@@ -44,7 +49,10 @@ function getSync(currency: CryptoCurrency) {
 export default async function (currencyIds: string[]) {
   LiveConfig.setConfig(liveConfig);
   setup(store);
-  const entries: LogEntry[] = [];
+  const result: RunResult = {
+    entries: [],
+    failed: false,
+  };
 
   const nbOfAccounts = currencyIds
     .map(currencyId => Object.keys(currencies[currencyId].accounts).length)
@@ -79,7 +87,7 @@ export default async function (currencyIds: string[]) {
 
         console.log(`[${i} / ${nbOfAccounts}] Completed in ${scanDuration + syncDuration} ms`);
 
-        entries.push(
+        result.entries.push(
           {
             duration: scanDuration,
             currencyName: currency.id,
@@ -101,11 +109,12 @@ export default async function (currencyIds: string[]) {
         );
       } catch (err) {
         console.error(`Skipping failing run. Error: ${err instanceof Error ? err.message : err}`);
+        result.failed = true;
       }
     }
   }
 
-  await submitLogs(entries);
+  await submitLogs(result.entries);
 
-  return entries;
+  return result;
 }

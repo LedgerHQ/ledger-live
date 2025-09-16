@@ -174,9 +174,7 @@ describe("ModularDrawerAddAccountFlowManager", () => {
   it("should find and add an account", async () => {
     setup();
 
-    expect(
-      screen.getByText(/looking for any existing accounts on the blockchain/i),
-    ).toBeInTheDocument();
+    expect(screen.getByText(/Checking the blockchain/i)).toBeInTheDocument();
     expectTrackPage(1, "device connection", { flow: "Add account" });
 
     await mockScanAccountsSubscription([ARB_ACCOUNT]);

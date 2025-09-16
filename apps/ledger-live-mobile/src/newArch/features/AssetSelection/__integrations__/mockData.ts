@@ -1,10 +1,12 @@
+import { GroupedCurrencies } from "@ledgerhq/live-common/deposit/type";
+
 const mockGroupedCurrenciesBySingleProviderData = {
   currenciesByProvider: [
     {
       providerId: "bitcoin",
       currenciesByNetwork: [
         {
-          type: "CryptoCurrency",
+          type: "CryptoCurrency" as const,
           id: "bitcoin",
           coinType: 0,
           name: "Bitcoin",
@@ -42,7 +44,7 @@ const mockGroupedCurrenciesBySingleProviderData = {
   ],
   sortedCryptoCurrencies: [
     {
-      type: "CryptoCurrency",
+      type: "CryptoCurrency" as const,
       id: "bitcoin",
       coinType: 0,
       name: "Bitcoin",
@@ -76,7 +78,7 @@ const mockGroupedCurrenciesBySingleProviderData = {
       explorerId: "btc",
     },
   ],
-};
+} as const satisfies GroupedCurrencies;
 
 const mockGroupedCurrenciesWithMultipleProviderData = {
   currenciesByProvider: [
@@ -84,7 +86,7 @@ const mockGroupedCurrenciesWithMultipleProviderData = {
       providerId: "ethereum",
       currenciesByNetwork: [
         {
-          type: "CryptoCurrency",
+          type: "CryptoCurrency" as const,
           id: "ethereum",
           coinType: 60,
           name: "Ethereum",
@@ -114,7 +116,7 @@ const mockGroupedCurrenciesWithMultipleProviderData = {
           explorerId: "eth",
         },
         {
-          type: "CryptoCurrency",
+          type: "CryptoCurrency" as const,
           id: "zksync",
           coinType: 60,
           name: "ZKsync",
@@ -140,7 +142,7 @@ const mockGroupedCurrenciesWithMultipleProviderData = {
           ],
         },
         {
-          type: "CryptoCurrency",
+          type: "CryptoCurrency" as const,
           id: "scroll",
           coinType: 60,
           name: "Scroll",
@@ -167,7 +169,7 @@ const mockGroupedCurrenciesWithMultipleProviderData = {
           ],
         },
         {
-          type: "CryptoCurrency",
+          type: "CryptoCurrency" as const,
           id: "optimism",
           coinType: 60,
           name: "OP Mainnet",
@@ -194,7 +196,7 @@ const mockGroupedCurrenciesWithMultipleProviderData = {
           keywords: ["optimism"],
         },
         {
-          type: "CryptoCurrency",
+          type: "CryptoCurrency" as const,
           id: "linea",
           coinType: 60,
           name: "Linea",
@@ -221,7 +223,7 @@ const mockGroupedCurrenciesWithMultipleProviderData = {
           ],
         },
         {
-          type: "CryptoCurrency",
+          type: "CryptoCurrency" as const,
           id: "base",
           coinType: 60,
           name: "Base",
@@ -247,7 +249,7 @@ const mockGroupedCurrenciesWithMultipleProviderData = {
           ],
         },
         {
-          type: "CryptoCurrency",
+          type: "CryptoCurrency" as const,
           id: "arbitrum",
           coinType: 60,
           name: "Arbitrum",
@@ -273,7 +275,7 @@ const mockGroupedCurrenciesWithMultipleProviderData = {
           ],
         },
         {
-          type: "CryptoCurrency",
+          type: "CryptoCurrency" as const,
           id: "blast",
           coinType: 60,
           name: "Blast",
@@ -330,7 +332,7 @@ const mockGroupedCurrenciesWithMultipleProviderData = {
   ],
   sortedCryptoCurrencies: [
     {
-      type: "CryptoCurrency",
+      type: "CryptoCurrency" as const,
       id: "ethereum",
       coinType: 60,
       name: "Ethereum",
@@ -360,6 +362,6 @@ const mockGroupedCurrenciesWithMultipleProviderData = {
       explorerId: "eth",
     },
   ],
-};
+} as const satisfies GroupedCurrencies;
 
 export { mockGroupedCurrenciesBySingleProviderData, mockGroupedCurrenciesWithMultipleProviderData };

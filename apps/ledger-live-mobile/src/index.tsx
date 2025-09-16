@@ -4,7 +4,6 @@ import "./iosWebsocketFix";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import React, { Component, useCallback, useMemo, useEffect } from "react";
 import { StyleSheet, LogBox, Appearance, AppState } from "react-native";
-import SplashScreen from "react-native-splash-screen";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { I18nextProvider } from "react-i18next";
 import Transport from "@ledgerhq/hw-transport";
@@ -14,7 +13,7 @@ import { checkLibs } from "@ledgerhq/live-common/sanityChecks";
 import "./config/configInit";
 import "./config/bridge-setup";
 import Config from "react-native-config";
-import { LogLevel, PerformanceProfiler, RenderPassReport } from "@shopify/react-native-performance";
+
 import useEnv from "@ledgerhq/live-common/hooks/useEnv";
 import { useDispatch, useSelector } from "react-redux";
 import { init } from "../e2e/bridge/client";
@@ -27,8 +26,8 @@ import {
   reportErrorsEnabledSelector,
 } from "~/reducers/settings";
 import { accountsSelector } from "~/reducers/accounts";
+import { rebootIdSelector } from "~/reducers/appstate";
 import LocaleProvider, { i18n } from "~/context/Locale";
-import RebootProvider from "~/context/Reboot";
 import AuthPass from "~/context/AuthPass";
 import LedgerStoreProvider from "~/context/LedgerStore";
 import { store } from "~/context/store";
@@ -50,11 +49,11 @@ import { FirebaseFeatureFlagsProvider } from "~/components/FirebaseFeatureFlags"
 import { TermsAndConditionMigrateLegacyData } from "~/logic/terms";
 import HookDynamicContentCards from "~/dynamicContent/useContentCards";
 import PlatformAppProviderWrapper from "./PlatformAppProviderWrapper";
-import PerformanceConsole from "~/components/PerformanceConsole";
+
 import { useListenToHidDevices } from "~/hooks/useListenToHidDevices";
 import { DeeplinksProvider } from "~/navigation/DeeplinksProvider";
 import StyleProvider from "./StyleProvider";
-import { performanceReportSubject } from "~/components/PerformanceConsole/usePerformanceReportsLog";
+
 import { setAnalytics, setOsTheme, setPersonalizedRecommendations } from "~/actions/settings";
 import TransactionsAlerts from "~/components/TransactionsAlerts";
 import {
@@ -188,7 +187,8 @@ function App() {
       });
     };
     initializeDatadogProvider(
-      datadogFF?.params as Partial<PartialInitializationConfiguration>,
+      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+      datadogFF?.params as PartialInitializationConfiguration,
       isTrackingEnabled ? TrackingConsent.GRANTED : TrackingConsent.NOT_GRANTED,
     )
       .then(setUserEquipmentId)
@@ -224,7 +224,7 @@ function App() {
       )}
 
       <AnalyticsConsole />
-      <PerformanceConsole />
+
       <DebugTheme />
       <Modals />
       <FeatureToggle featureId="llmMmkvMigration">
@@ -234,22 +234,10 @@ function App() {
   );
 }
 
-const PerformanceProvider = ({ children }: { children: React.ReactNode }) => {
-  const onReportPrepared = useCallback((report: RenderPassReport) => {
-    performanceReportSubject.next({ report, date: new Date() });
-  }, []);
-  const performanceConsoleEnabled = useEnv("PERFORMANCE_CONSOLE");
-
-  return (
-    <PerformanceProfiler
-      onReportPrepared={onReportPrepared}
-      logLevel={LogLevel.Info}
-      enabled={!!performanceConsoleEnabled}
-    >
-      {children}
-    </PerformanceProfiler>
-  );
-};
+function RebootProvider({ children }: { children: React.ReactNode }) {
+  const rebootId = useSelector(rebootIdSelector);
+  return <React.Fragment key={rebootId}>{children}</React.Fragment>;
+}
 
 const StylesProvider = ({ children }: { children: React.ReactNode }) => {
   const { theme } = useSettings();
@@ -286,12 +274,6 @@ const StylesProvider = ({ children }: { children: React.ReactNode }) => {
 };
 
 export default class Root extends Component {
-  initTimeout: ReturnType<typeof setTimeout> | undefined;
-
-  componentWillUnmount() {
-    clearTimeout(this.initTimeout);
-  }
-
   componentDidCatch(e: Error) {
     logger.critical(e);
     throw e;
@@ -303,65 +285,56 @@ export default class Root extends Component {
     }
   };
 
-  onRebootStart = () => {
-    clearTimeout(this.initTimeout);
-    if (SplashScreen.show) SplashScreen.show(); // on iOS it seems to not be exposed
-  };
-
   render() {
     return (
-      <RebootProvider onRebootStart={this.onRebootStart}>
-        <LedgerStoreProvider onInitFinished={this.onInitFinished} store={store}>
-          {(ready, initialCountervalues) =>
-            ready ? (
-              <>
-                <SetEnvsFromSettings />
-                {/* TODO: delete the following HookSentry when Sentry will be completelyy switched off */}
-                <HookSentry />
-                <SegmentSetup />
-                <HookNotifications />
-                <HookDynamicContentCards />
-                <TermsAndConditionMigrateLegacyData />
-                <QueuedDrawersContextProvider>
-                  <FirebaseRemoteConfigProvider>
-                    <FirebaseFeatureFlagsProvider getFeature={getFeature}>
-                      <I18nextProvider i18n={i18n}>
-                        <LocaleProvider>
-                          <PlatformAppProviderWrapper>
-                            <SafeAreaProvider>
-                              <PerformanceProvider>
-                                <StorylyProvider>
-                                  <StylesProvider>
-                                    <StyledStatusBar />
-                                    <NavBarColorHandler />
-                                    <AuthPass>
-                                      <GestureHandlerRootView style={styles.root}>
-                                        <AppProviders initialCountervalues={initialCountervalues}>
-                                          <AppGeoBlocker>
-                                            <AppVersionBlocker>
-                                              <App />
-                                            </AppVersionBlocker>
-                                          </AppGeoBlocker>
-                                        </AppProviders>
-                                      </GestureHandlerRootView>
-                                    </AuthPass>
-                                  </StylesProvider>
-                                </StorylyProvider>
-                              </PerformanceProvider>
-                            </SafeAreaProvider>
-                          </PlatformAppProviderWrapper>
-                        </LocaleProvider>
-                      </I18nextProvider>
-                    </FirebaseFeatureFlagsProvider>
-                  </FirebaseRemoteConfigProvider>
-                </QueuedDrawersContextProvider>
-              </>
-            ) : (
-              <LoadingApp />
-            )
-          }
-        </LedgerStoreProvider>
-      </RebootProvider>
+      <LedgerStoreProvider onInitFinished={this.onInitFinished} store={store}>
+        {(ready, initialCountervalues) =>
+          ready ? (
+            <RebootProvider>
+              <SetEnvsFromSettings />
+              {/* TODO: delete the following HookSentry when Sentry will be completelyy switched off */}
+              <HookSentry />
+              <SegmentSetup />
+              <HookNotifications />
+              <HookDynamicContentCards />
+              <TermsAndConditionMigrateLegacyData />
+              <QueuedDrawersContextProvider>
+                <FirebaseRemoteConfigProvider>
+                  <FirebaseFeatureFlagsProvider getFeature={getFeature}>
+                    <I18nextProvider i18n={i18n}>
+                      <LocaleProvider>
+                        <PlatformAppProviderWrapper>
+                          <SafeAreaProvider>
+                            <StorylyProvider>
+                              <StylesProvider>
+                                <StyledStatusBar />
+                                <NavBarColorHandler />
+                                <AuthPass>
+                                  <GestureHandlerRootView style={styles.root}>
+                                    <AppProviders initialCountervalues={initialCountervalues}>
+                                      <AppGeoBlocker>
+                                        <AppVersionBlocker>
+                                          <App />
+                                        </AppVersionBlocker>
+                                      </AppGeoBlocker>
+                                    </AppProviders>
+                                  </GestureHandlerRootView>
+                                </AuthPass>
+                              </StylesProvider>
+                            </StorylyProvider>
+                          </SafeAreaProvider>
+                        </PlatformAppProviderWrapper>
+                      </LocaleProvider>
+                    </I18nextProvider>
+                  </FirebaseFeatureFlagsProvider>
+                </FirebaseRemoteConfigProvider>
+              </QueuedDrawersContextProvider>
+            </RebootProvider>
+          ) : (
+            <LoadingApp />
+          )
+        }
+      </LedgerStoreProvider>
     );
   }
 }

@@ -28,6 +28,9 @@ module.exports = (path, options) => {
         "@solana/codecs-strings",
         "@solana/options",
         "@aptos-labs/aptos-client",
+        // Fix for "Dynamic require of 'crypto' is not supported" with @noble/curves
+        "@noble/hashes",
+        "@noble/curves",
       ]);
 
       if (pkgNamesToTarget.has(pkg.name)) {

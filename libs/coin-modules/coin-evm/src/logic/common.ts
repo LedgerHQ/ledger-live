@@ -1,8 +1,7 @@
 import { ethers } from "ethers";
-import { TransactionTypes } from "ethers/lib/utils";
 import { FeeEstimation } from "@ledgerhq/coin-framework/api/types";
 import ERC20ABI from "../abis/erc20.abi.json";
-import { ApiFeeData, ApiGasOptions } from "../types";
+import { ApiFeeData, ApiGasOptions, TransactionTypes } from "../types";
 
 export function isApiGasOptions(options: unknown): options is ApiGasOptions {
   if (!options || typeof options !== "object") return false;
@@ -65,7 +64,7 @@ export function getTransactionType(intentType: string): TransactionTypes {
 }
 
 export function getErc20Data(recipient: string, amount: bigint): Buffer {
-  const contract = new ethers.utils.Interface(ERC20ABI);
+  const contract = new ethers.Interface(ERC20ABI);
   const data = contract.encodeFunctionData("transfer", [recipient, amount]);
   return Buffer.from(data.slice(2), "hex");
 }

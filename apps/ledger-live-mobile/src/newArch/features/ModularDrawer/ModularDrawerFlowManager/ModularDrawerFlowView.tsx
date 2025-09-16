@@ -7,17 +7,16 @@ import AssetSelection from "../screens/AssetSelection";
 import NetworkSelection from "../screens/NetworkSelection";
 import AccountSelection from "../screens/AccountSelection";
 import { ModularDrawerFlowProps } from ".";
-import SkeletonList from "../components/Skeleton/SkeletonList";
 import useScreenTransition from "./useScreenTransition";
+import { useSelector } from "react-redux";
+import { modularDrawerStepSelector } from "~/reducers/modularDrawer";
 
 export function ModularDrawerFlowView({
-  navigationStepViewModel,
   assetsViewModel,
   networksViewModel,
   accountsViewModel,
-  isReadyToBeDisplayed,
 }: ModularDrawerFlowProps) {
-  const { currentStep } = navigationStepViewModel;
+  const currentStep = useSelector(modularDrawerStepSelector);
 
   const { activeSteps, getStepAnimations } = useScreenTransition(currentStep);
 
@@ -44,14 +43,8 @@ export function ModularDrawerFlowView({
         style={[{ flex: 1 }, stepAnimations.animatedStyle]}
         testID={`${step}-screen`}
       >
-        {isReadyToBeDisplayed ? (
-          <>
-            <Title step={step} />
-            {renderStepContent(step)}
-          </>
-        ) : (
-          <SkeletonList />
-        )}
+        <Title step={step} />
+        {renderStepContent(step)}
       </Animated.View>
     );
   };

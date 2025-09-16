@@ -2156,27 +2156,6 @@
         "learnHowToUpdate" : "Güncelleme yönergeleri"
       }
     },
-    "stepImportAccounts" : {
-      "title" : "Masaüstünden kripto senkronizasyonu",
-      "desc" : "Kriptolarınızı Ledger masaüstü uygulamasında zaten kurduysanız, telefonunuzdan da yönetmek için senkronize edebilirsiniz.",
-      "cta" : "Taramaya hazırım.",
-      "bullets" : {
-        "0" : {
-          "label" : "Masaüstü uygulamasında \n<1>Ayarlar > Hesaplar > Hesap Dışa Aktarma</1> seçeneğini seçin."
-        },
-        "1" : {
-          "label" : "LiveQR kodunu telefonunuzla tarayın."
-        },
-        "2" : {
-          "label" : "İçe aktarılacak kripto hesaplarını seçin."
-        }
-      },
-      "warning" : {
-        "title" : "Masaüstü ve mobil uygulamalarınız manuel olarak senkronize edilmelidir.",
-        "desc" : "Ledger Live gizliliğinize saygı duyar ve verilerinizi yerel olarak saklar. Telefonunuzdaki hesapları ve ayarları değiştirirseniz, aynı şeyi bilgisayarınızda da yapmanız gerekir ve bunun aksi de geçerlidir. İşlemleriniz blok zinciri ile senkronize kalır.",
-        "cta" : "Anladım!"
-      }
-    },
     "stepSetupPin" : {
       "step1" : "{{fullDeviceName}} cihazınızı açın ve yönergeleri izleyin.",
       "step1-nanoS" : "{{fullDeviceName}} cihazınızı bir OTG kablosu kullanarak telefonunuza bağlayın.",
@@ -2856,8 +2835,8 @@
       "contactSupport" : "Destek al"
     },
     "willBedeprecatedBanner" : {
-      "title" : "Verimliliği iyileştirmek için {{deprecatedDate}} tarihinden itibaren {{currencyName}} artık Ledger Live'da desteklenmeyecektir. Ancak Ledger donanım cüzdanlarında desteklenmeye devam edecektir. Bu konuda yardım almak isterseniz Ledger Müşteri Destek ekibiyle lütfen iletişime geçin.",
-      "contactSupport" : "Destek al"
+      "title" : "{{deprecatedDate}} tarihinden itibaren {{currencyName}} artık Ledger Live’da desteklenmeyecektir. Ancak Ledger donanım cüzdanınızda güvenle tutulmaya devam edecektir. Daha fazla bilgi edinmek için aşağıda bağlantısı verilen Yardım Merkezi makalesini lütfen baştan sona okuyun.",
+      "learnMore" : "Daha fazla bilgi"
     },
     "tokens" : {
       "contractAddress" : "Sözleşme adresi",
@@ -3770,6 +3749,10 @@
       "twoStepApproval" : {
         "title" : "Adımları tamamlayın"
       },
+      "loader" : {
+        "title" : "Takas İşleniyor",
+        "description" : "Talebiniz işlenirken lütfen bekleyin."
+      },
       "history" : {
         "title" : "Takas geçmişi"
       },
@@ -4377,7 +4360,7 @@
       "title" : "Eklemek istediğiniz hesapları seçin",
       "ctaStopScan" : "Taramayı durdur",
       "confirm" : "Onayla",
-      "scanningTitle" : "Blok Zincirindeki mevcut tüm hesaplar aranıyor...",
+      "scanningTitle" : "Blok zinciri kontrol ediliyor...",
       "whichAddressType" : "Adres türünün nasıl seçileceğini öğrenin",
       "sections" : {
         "importable" : {
@@ -4442,7 +4425,7 @@
     "confirmSwap" : {
       "title" : "Takas işlemini cihazdan onaylayın",
       "alert" : {
-        "default" : "Göndermeden önce cihazınızdaki takas bilgilerini doğrulayın. Adresler güvenli bir şekilde aktarılır, böylece onları doğrulamak zorunda kalmazsınız.",
+        "default" : "Göndermeden önce Ledger cihazınızdaki takas bilgilerini doğrulayın.",
         "provider" : "Göndermeden önce cihazınızdaki Takas bilgilerini doğrulayın. {{providerName}} bazı işlemler için ek doğrulama adımları gerçekleştirmek zorunda kalabilir ve bu, gecikmeye neden olabilir."
       },
       "acceptTerms" : "Bu işlemi onaylayarak,\n<0><0>{{provider}}</0> Kullanım Koşullarını</0> kabul ediyorum.",
@@ -7961,7 +7944,13 @@
     "searchPlaceholder" : "Ara",
     "emptyAssetList" : "Hiçbir varlık bulunamadı",
     "accountCount" : "{{count}} hesap",
-    "accountCount_plural" : "{{count}} hesap"
+    "accountCount_plural" : "{{count}} hesap",
+    "errors" : {
+      "title" : "Bağlantı başarısız oldu",
+      "backend" : "Bizim tarafımızda bir sorun oluştu. Lütfen daha sonra tekrar deneyin.",
+      "internet" : "İnternet bağlantısı yok. Lütfen tekrar deneyin.",
+      "cta" : "Tekrar dene"
+    }
   },
   "swapErrors" : {
     "incorrectCommandData" : {

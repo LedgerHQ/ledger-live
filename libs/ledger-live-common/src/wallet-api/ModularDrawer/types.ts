@@ -13,7 +13,7 @@ export type ModularDrawerConfiguration = {
 };
 
 export const filterOptions = ["topNetworks", "undefined"] as const;
-export const assetsLeftElementOptions = ["apy", "priceVariation", "undefined"] as const;
+export const assetsLeftElementOptions = ["apy", "marketTrend", "undefined"] as const;
 export const assetsRightElementOptions = ["balance", "marketTrend", "undefined"] as const;
 export const networksLeftElementOptions = [
   "numberOfAccounts",

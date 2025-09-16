@@ -1,5 +1,5 @@
 import crypto from "crypto";
-import secp256k1 from "secp256k1";
+import { secp256k1 } from "@noble/curves/secp256k1";
 import keyto from "@trust/keyto";
 import { UpdateIncorrectSig } from "@ledgerhq/errors";
 export async function getFingerprint(pubKey: string) {
@@ -18,8 +18,8 @@ export async function verify(msgContent: string, sigContent: Buffer, pubKeyConte
     hash.update(msgContent);
     const message = hash.digest();
 
-    // Convert signature for secp256k1 lib compat
-    const signature = secp256k1.signatureNormalize(secp256k1.signatureImport(sigContent));
+    // Convert signature from DER format
+    const signature = secp256k1.Signature.fromDER(sigContent).normalizeS();
 
     // Convert public key
     // Parse pem key to JWK
@@ -28,7 +28,9 @@ export async function verify(msgContent: string, sigContent: Buffer, pubKeyConte
     const blk = jwk.toString("blk", "public");
     // Convert string to Buffer
     const publicKey = Buffer.from(blk, "hex");
-    const verified = secp256k1.ecdsaVerify(signature, message, publicKey);
+    const verified = secp256k1.verify(signature.toCompactRawBytes(), message, publicKey, {
+      prehash: false,
+    });
     if (!verified) {
       throw new UpdateIncorrectSig();
     }

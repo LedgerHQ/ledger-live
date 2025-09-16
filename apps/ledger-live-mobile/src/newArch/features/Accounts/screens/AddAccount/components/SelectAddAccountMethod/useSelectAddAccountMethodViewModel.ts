@@ -13,20 +13,15 @@ import {
   useModularDrawerVisibility,
   ModularDrawerLocation,
 } from "LLM/features/ModularDrawer";
-import { listAndFilterCurrencies } from "@ledgerhq/live-common/platform/helpers";
-
-const currencies = listAndFilterCurrencies({ includeTokens: true });
 
 type AddAccountMethodViewModelProps = {
   currency?: CryptoCurrency | TokenCurrency | null;
-  onClose?: () => void;
   onShowWalletSyncDrawer?: () => void;
   onCloseAddAccountDrawer?: () => void;
 };
 
 const useSelectAddAccountMethodViewModel = ({
   currency,
-  onClose,
   onShowWalletSyncDrawer,
   onCloseAddAccountDrawer,
 }: AddAccountMethodViewModelProps) => {
@@ -67,12 +62,6 @@ const useSelectAddAccountMethodViewModel = ({
     });
   }, []);
 
-  const handleImportAccounts = useCallback(() => {
-    trackButtonClick("Import via another Ledger Live app");
-    onClose?.();
-    navigation.navigate(NavigatorName.ImportAccounts);
-  }, [navigation, trackButtonClick, onClose]);
-
   const handleWalletSync = useCallback(() => {
     trackButtonClick("Account Use Ledger Sync");
     onShowWalletSyncDrawer?.();
@@ -81,9 +70,10 @@ const useSelectAddAccountMethodViewModel = ({
   const { openDrawer } = useModularDrawerController();
 
   const handleOpenModularDrawer = useCallback(() => {
-    const currenciesToUse = currency ? [currency] : currencies;
+    const currenciesToUse = currency ? [currency.id] : undefined;
     return openDrawer({
       currencies: currenciesToUse,
+      areCurrenciesFiltered: currenciesToUse?.length === 1 ? true : false,
       enableAccountSelection: false,
       flow: "add_account",
       source: "add_account_button",
@@ -116,7 +106,6 @@ const useSelectAddAccountMethodViewModel = ({
     isWalletSyncEnabled,
     isReadOnlyModeEnabled,
     handleAddAccount,
-    handleImportAccounts,
     handleWalletSync,
   };
 };

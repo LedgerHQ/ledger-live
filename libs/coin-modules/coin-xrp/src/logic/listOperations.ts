@@ -120,17 +120,12 @@ const convertToCoreOperation =
     } = operation;
 
     const type = Account === address ? "OUT" : "IN";
-    let value =
+    const value =
       delivered_amount && typeof delivered_amount === "string"
         ? BigInt(delivered_amount)
         : BigInt(0);
 
     const fees = BigInt(Fee);
-    if (type === "OUT") {
-      if (!Number.isNaN(fees)) {
-        value = value + fees;
-      }
-    }
 
     const toEpochDate = (RIPPLE_EPOCH + date) * 1000;
 

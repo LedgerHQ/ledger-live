@@ -43,7 +43,7 @@ export const buildSignOperation =
               serializedTransaction,
             );
 
-            return combine(serializedTransaction, transactionSignature, publicKey);
+            return combine(serializedTransaction, transactionSignature);
           });
 
           o.next({

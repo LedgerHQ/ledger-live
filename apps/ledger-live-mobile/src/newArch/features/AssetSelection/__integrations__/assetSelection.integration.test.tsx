@@ -8,13 +8,27 @@ import {
   mockGroupedCurrenciesWithMultipleProviderData,
 } from "./mockData";
 import { AddAccountContexts } from "../../Accounts/screens/AddAccount/enums";
+import { LoadingStatus } from "@ledgerhq/live-common/deposit/type";
 
-const MockUseRoute = useRoute as jest.Mock;
-const MockUseGroupedCurrenciesByProvider = useGroupedCurrenciesByProvider as jest.Mock;
+const MockUseRoute = jest.mocked(useRoute);
+const MockUseGroupedCurrenciesByProvider = jest.mocked(useGroupedCurrenciesByProvider);
 const mockNavigate = jest.fn();
+const mockAddListener = jest.fn(() => jest.fn()); // Return unsubscribe function
+const mockRemoveListener = jest.fn();
+const mockGoBack = jest.fn();
+const mockDispatch = jest.fn();
 
-(useNavigation as jest.Mock).mockReturnValue({
+jest.mocked(useNavigation).mockReturnValue({
   navigate: mockNavigate,
+  addListener: mockAddListener,
+  removeListener: mockRemoveListener,
+  goBack: mockGoBack,
+  dispatch: mockDispatch,
+  isFocused: jest.fn(() => true),
+  canGoBack: jest.fn(() => false),
+  getId: jest.fn(() => "test-navigation-id"),
+  getParent: jest.fn(() => null),
+  getState: jest.fn(() => ({ type: "stack", routes: [], index: 0 })),
 });
 
 jest.mock("../components/NetworkBanner", () => {
@@ -42,11 +56,13 @@ describe("Asset Selection test suite", () => {
       params: {
         context: AddAccountContexts.AddAccounts,
       },
+      key: "",
+      name: "",
     });
 
     MockUseGroupedCurrenciesByProvider.mockReturnValue({
       result: { currenciesByProvider: [], sortedCryptoCurrencies: [] },
-      loadingStatus: "pending",
+      loadingStatus: LoadingStatus.Pending,
     });
 
     render(<AssetSelectionNavigator />);
@@ -65,11 +81,13 @@ describe("Asset Selection test suite", () => {
       params: {
         context: AddAccountContexts.AddAccounts,
       },
+      key: "",
+      name: "",
     });
 
     MockUseGroupedCurrenciesByProvider.mockReturnValue({
       result: { currenciesByProvider: [], sortedCryptoCurrencies: [] },
-      loadingStatus: "success",
+      loadingStatus: LoadingStatus.Success,
     });
 
     render(<AssetSelectionNavigator />);
@@ -82,11 +100,13 @@ describe("Asset Selection test suite", () => {
       params: {
         context: AddAccountContexts.AddAccounts,
       },
+      key: "",
+      name: "",
     });
 
     MockUseGroupedCurrenciesByProvider.mockReturnValue({
       result: mockGroupedCurrenciesBySingleProviderData,
-      loadingStatus: "success",
+      loadingStatus: LoadingStatus.Success,
     });
 
     render(<AssetSelectionNavigator />);
@@ -102,11 +122,13 @@ describe("Asset Selection test suite", () => {
         context: AddAccountContexts.AddAccounts,
         currency: "ethereum",
       },
+      key: "",
+      name: "",
     });
 
     MockUseGroupedCurrenciesByProvider.mockReturnValue({
       result: mockGroupedCurrenciesWithMultipleProviderData,
-      loadingStatus: "success",
+      loadingStatus: LoadingStatus.Success,
     });
 
     render(<AssetSelectionNavigator />);

@@ -1,8 +1,9 @@
-import React, { useCallback, useEffect, useRef } from "react";
+import React, { useCallback, useRef } from "react";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { AssetItem, AssetType } from "@ledgerhq/native-ui/pre-ldls/index";
+import { ApyIndicator, AssetItem, AssetType } from "@ledgerhq/native-ui/pre-ldls/index";
 import SearchInputContainer from "./components/SearchInputContainer";
 import { EnhancedModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/types";
+import SkeletonList from "../../components/Skeleton/SkeletonList";
 import {
   useModularDrawerAnalytics,
   TrackDrawerScreen,
@@ -16,44 +17,60 @@ import {
   useBottomSheet,
 } from "@gorhom/bottom-sheet";
 import { AssetsEmptyList } from "LLM/components/EmptyList/AssetsEmptyList";
-import createAssetConfigurationHook from "./modules/createAssetConfigurationHook";
+import { GenericError } from "../../components/GenericError";
+import { useNetInfo } from "@react-native-community/netinfo";
+import { InfiniteLoader } from "@ledgerhq/native-ui";
+import createAssetConfigurationHook from "@ledgerhq/live-common/modularDrawer/modules/createAssetConfiguration";
+import { balanceItem } from "../../components/Balance";
+import { useBalanceDeps } from "../../hooks/useBalanceDeps";
+import { useSelector } from "react-redux";
+import { modularDrawerFlowSelector, modularDrawerSourceSelector } from "~/reducers/modularDrawer";
 
 export type AssetSelectionStepProps = {
   isOpen: boolean;
   availableAssets: CryptoOrTokenCurrency[];
-  defaultSearchValue: string;
-  setDefaultSearchValue: (value: string) => void;
-  itemsToDisplay: CryptoOrTokenCurrency[];
-  setItemsToDisplay: (items: CryptoOrTokenCurrency[]) => void;
   onAssetSelected: (asset: CryptoOrTokenCurrency) => void;
-  flow: string;
-  source: string;
   assetsConfiguration?: EnhancedModularDrawerConfiguration["assets"];
+  isLoading?: boolean;
+  hasError?: boolean;
+  refetch?: () => void;
+  loadNext?: () => void;
 };
 
 const SAFE_MARGIN_BOTTOM = 48;
 
 const AssetSelection = ({
   availableAssets,
-  defaultSearchValue,
-  setDefaultSearchValue,
-  itemsToDisplay,
-  setItemsToDisplay,
   onAssetSelected,
-  flow,
-  source,
   assetsConfiguration,
   isOpen,
+  isLoading,
+  hasError,
+  refetch,
+  loadNext,
 }: Readonly<AssetSelectionStepProps>) => {
+  const { isConnected } = useNetInfo();
+
+  const flow = useSelector(modularDrawerFlowSelector);
+  const source = useSelector(modularDrawerSourceSelector);
+
   const { trackModularDrawerEvent } = useModularDrawerAnalytics();
   const { shouldHandleKeyboardEvents } = useBottomSheetInternal();
   const { collapse } = useBottomSheet();
   const listRef = useRef<FlatList>(null);
 
-  const transformAssets = createAssetConfigurationHook({
+  const assetConfigurationDeps = {
+    ApyIndicator,
+    useBalanceDeps,
+    balanceItem,
+  };
+
+  const makeAssetConfigurationHook = createAssetConfigurationHook(assetConfigurationDeps);
+
+  const transformAssets = makeAssetConfigurationHook({
     assetsConfiguration,
   });
-  const formattedAssets = transformAssets(itemsToDisplay);
+  const formattedAssets = transformAssets(availableAssets);
 
   const handleAssetClick = useCallback(
     (asset: AssetType) => {
@@ -87,19 +104,6 @@ const AssetSelection = ({
     ],
   );
 
-  useEffect(() => {
-    if (defaultSearchValue === undefined) {
-      return;
-    }
-
-    if (availableAssets.length > 0) {
-      const filteredAssets = availableAssets.filter(asset =>
-        asset.name.toLowerCase().includes(defaultSearchValue.toLowerCase()),
-      );
-      setItemsToDisplay(filteredAssets);
-    }
-  }, [defaultSearchValue, availableAssets, setItemsToDisplay]);
-
   const handleSearchPressIn = () => {
     listRef.current?.scrollToOffset({ offset: 0, animated: true });
   };
@@ -117,6 +121,36 @@ const AssetSelection = ({
     [handleAssetClick],
   );
 
+  const renderContent = () => {
+    if (isLoading) return <SkeletonList />;
+
+    if (hasError || !isConnected) {
+      return <GenericError onClick={refetch} type={!isConnected ? "internet" : "backend"} />;
+    }
+
+    return (
+      <BottomSheetVirtualizedList
+        ref={listRef}
+        scrollToOverflowEnabled
+        data={formattedAssets}
+        keyExtractor={item => item.id}
+        getItemCount={items => items.length}
+        getItem={(items, index) => items[index]}
+        renderItem={renderItem}
+        showsVerticalScrollIndicator={false}
+        keyboardShouldPersistTaps="handled"
+        ListEmptyComponent={<AssetsEmptyList />}
+        contentContainerStyle={{
+          paddingBottom: SAFE_MARGIN_BOTTOM,
+          marginTop: 16,
+        }}
+        onEndReached={loadNext}
+        onEndReachedThreshold={0.5}
+        ListFooterComponent={loadNext ? <InfiniteLoader size={20} /> : null}
+      />
+    );
+  };
+
   return (
     <>
       {isOpen && (
@@ -131,31 +165,11 @@ const AssetSelection = ({
       <SearchInputContainer
         source={source}
         flow={flow}
-        items={availableAssets}
-        setItemsToDisplay={setItemsToDisplay}
-        assetsToDisplay={itemsToDisplay}
-        originalAssets={availableAssets}
-        setSearchedValue={setDefaultSearchValue}
-        defaultValue={defaultSearchValue}
         onFocus={handleSearchFocus}
         onBlur={handleSearchBlur}
         onPressIn={handleSearchPressIn}
       />
-      <BottomSheetVirtualizedList
-        ref={listRef}
-        scrollToOverflowEnabled={true}
-        data={formattedAssets}
-        keyExtractor={item => item.id}
-        getItemCount={itemsToDisplay => itemsToDisplay.length}
-        getItem={(itemsToDisplay, index) => itemsToDisplay[index]}
-        renderItem={renderItem}
-        showsVerticalScrollIndicator={false}
-        ListEmptyComponent={<AssetsEmptyList />}
-        contentContainerStyle={{
-          paddingBottom: SAFE_MARGIN_BOTTOM,
-          marginTop: 16,
-        }}
-      />
+      {renderContent()}
     </>
   );
 };

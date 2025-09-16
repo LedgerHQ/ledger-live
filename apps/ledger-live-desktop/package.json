@@ -13,7 +13,7 @@
   "license": "MIT",
   "private": true,
   "main": "./.webpack/main.bundle.js",
-  "version": "2.127.0",
+  "version": "2.128.0",
   "scripts": {
     "start:prod": "electron ./.webpack/main.bundle.js",
     "start": "cross-env NODE_ENV=development node ./tools/main.js",
@@ -57,6 +57,7 @@
   "dependencies": {
     "@braze/web-sdk": "4.10.2",
     "@ledgerhq/coin-bitcoin": "workspace:^",
+    "@ledgerhq/coin-canton": "workspace:^",
     "@ledgerhq/coin-cosmos": "workspace:^",
     "@ledgerhq/coin-evm": "workspace:^",
     "@ledgerhq/coin-filecoin": "workspace:^",
@@ -119,7 +120,6 @@
     "prando": "5.1.2",
     "prop-types": "15.8.1",
     "qrcode": "1.5.3",
-    "qrloop": "1.4.1",
     "react": "18.3.1",
     "react-dom": "18.3.1",
     "react-easy-crop": "4.7.5",
@@ -144,7 +144,7 @@
     "reselect": "4.1.8",
     "rimraf": "4.4.1",
     "rxjs": "7.8.1",
-    "secp256k1": "4.0.3",
+    "@noble/curves": "1.9.7",
     "semver": "7.5.4",
     "storyly-web": "4.5.4",
     "styled-components": "5.3.11",

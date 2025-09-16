@@ -5,7 +5,7 @@ import { getTokenById } from "@ledgerhq/cryptoassets/tokens";
 import { LegacySignerEth } from "@ledgerhq/live-signer-evm";
 import { Account } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
-import { ethers, providers } from "ethers";
+import { ethers } from "ethers";
 import { makeAccount } from "@ledgerhq/coin-evm/__tests__/fixtures/common.fixtures";
 import { buildAccountBridge, buildCurrencyBridge } from "@ledgerhq/coin-evm/bridge/js";
 import { getCoinConfig, setCoinConfig } from "@ledgerhq/coin-evm/config";
@@ -52,9 +52,7 @@ const makeScenarioTransactions = ({
 
   const scenarioSendUSDCTransaction: EthereumScenarioTransaction = {
     name: "Send USDC",
-    amount: new BigNumber(
-      ethers.utils.parseUnits("80", USDC_ON_ETHEREUM.units[0].magnitude).toString(),
-    ),
+    amount: new BigNumber(ethers.parseUnits("80", USDC_ON_ETHEREUM.units[0].magnitude).toString()),
     recipient: VITALIK,
     subAccountId: encodeTokenAccountId(`js:2:ethereum:${address}:`, USDC_ON_ETHEREUM),
     expect: (previousAccount, currentAccount) => {
@@ -64,10 +62,10 @@ const makeScenarioTransactions = ({
       expect(latestOperation.value.toFixed()).toBe(latestOperation.fee.toFixed());
       expect(latestOperation.subOperations?.[0].type).toBe("OUT");
       expect(latestOperation.subOperations?.[0].value.toFixed()).toBe(
-        ethers.utils.parseUnits("80", USDC_ON_ETHEREUM.units[0].magnitude).toString(),
+        ethers.parseUnits("80", USDC_ON_ETHEREUM.units[0].magnitude).toString(),
       );
       expect(currentAccount.subAccounts?.[0].balance.toFixed()).toBe(
-        ethers.utils.parseUnits("20", USDC_ON_ETHEREUM.units[0].magnitude).toString(),
+        ethers.parseUnits("20", USDC_ON_ETHEREUM.units[0].magnitude).toString(),
       );
     },
   };
@@ -209,7 +207,7 @@ export const scenarioEthereum: Scenario<EvmTransaction, Account> = {
 
     const scenarioAccount = makeAccount(address, ethereum);
 
-    const provider = new providers.StaticJsonRpcProvider("http://127.0.0.1:8545");
+    const provider = new ethers.JsonRpcProvider("http://127.0.0.1:8545");
 
     const lastBlockNumber = await provider.getBlockNumber();
     // start indexing at next block
@@ -220,7 +218,7 @@ export const scenarioEthereum: Scenario<EvmTransaction, Account> = {
       provider,
       drug: USDC_ON_ETHEREUM,
       junkie: address,
-      dose: ethers.utils.parseUnits("100", USDC_ON_ETHEREUM.units[0].magnitude),
+      dose: ethers.parseUnits("100", USDC_ON_ETHEREUM.units[0].magnitude),
     });
 
     // Get a Bored Ape
@@ -233,7 +231,7 @@ export const scenarioEthereum: Scenario<EvmTransaction, Account> = {
         standard: "ERC721",
       },
       junkie: address,
-      dose: ethers.BigNumber.from(1),
+      dose: 1n,
     });
 
     // Get 2 CloneX
@@ -246,7 +244,7 @@ export const scenarioEthereum: Scenario<EvmTransaction, Account> = {
         standard: "ERC1155",
       },
       junkie: address,
-      dose: ethers.BigNumber.from(2),
+      dose: 2n,
     });
 
     return {
@@ -257,10 +255,10 @@ export const scenarioEthereum: Scenario<EvmTransaction, Account> = {
     };
   },
   beforeAll: account => {
-    expect(account.balance.toFixed()).toBe(ethers.utils.parseEther("10000").toString());
+    expect(account.balance.toFixed()).toBe(ethers.parseEther("10000").toString());
     expect(account.subAccounts?.[0].type).toBe("TokenAccount");
     expect(account.subAccounts?.[0].balance.toFixed()).toBe(
-      ethers.utils.parseUnits("100", USDC_ON_ETHEREUM.units[0].magnitude).toString(),
+      ethers.parseUnits("100", USDC_ON_ETHEREUM.units[0].magnitude).toString(),
     );
     expect(account.nfts?.length).toBe(2);
   },
@@ -271,7 +269,7 @@ export const scenarioEthereum: Scenario<EvmTransaction, Account> = {
   afterAll: account => {
     expect(account.subAccounts?.length).toBe(1);
     expect(account.subAccounts?.[0].balance.toFixed()).toBe(
-      ethers.utils.parseUnits("20", USDC_ON_ETHEREUM.units[0].magnitude).toString(),
+      ethers.parseUnits("20", USDC_ON_ETHEREUM.units[0].magnitude).toString(),
     );
     expect(account.nfts?.length).toBe(0);
     expect(account.operations.length).toBe(7);

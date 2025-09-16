@@ -53,6 +53,7 @@ export default function Navigator() {
                 totalSteps: 3,
               })}
               title={t("transfer.receive.stepperHeader.connectDevice")}
+              testID="receive-connect-device-header"
             />
           ),
         }}

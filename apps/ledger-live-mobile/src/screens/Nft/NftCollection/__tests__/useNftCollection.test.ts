@@ -30,11 +30,15 @@ const mockNavigation = {
   replace: jest.fn(),
   push: jest.fn(),
   pop: jest.fn(),
+  popTo: jest.fn(),
   popToTop: jest.fn(),
   reset: jest.fn(),
   getId: jest.fn(),
   getState: jest.fn(),
   setOptions: jest.fn(),
+  preload: jest.fn(),
+  navigateDeprecated: jest.fn(),
+  replaceParams: jest.fn(),
 };
 
 const mockRoute: RouteProp<AccountsNavigatorParamList, ScreenName.NftCollection> = {
