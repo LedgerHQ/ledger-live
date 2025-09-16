@@ -13,12 +13,16 @@ import { RequiredFirmwareUpdate } from "./DeviceAction/rendering";
 import { useSelector } from "react-redux";
 import { lastConnectedDeviceSelector } from "~/reducers/settings";
 import { LedgerError } from "~/types/error";
+import { UnsupportedFirmwareDAError } from "@ledgerhq/device-management-kit";
 
 type Props = {
   error: LedgerError;
   onClose: () => void;
   onRetry?: () => void;
 };
+
+const isFirmwareUnsupportedError = (error: unknown): boolean =>
+  error instanceof LatestFirmwareVersionRequired || error instanceof UnsupportedFirmwareDAError;
 
 function ValidateError({ error, onClose, onRetry }: Props) {
   const navigation = useNavigation<BaseNavigation>();
@@ -60,7 +64,7 @@ function ValidateError({ error, onClose, onRetry }: Props) {
       ]}
     >
       <View style={styles.container}>
-        {error instanceof LatestFirmwareVersionRequired && lastConnectedDevice ? (
+        {isFirmwareUnsupportedError(error) && lastConnectedDevice ? (
           <RequiredFirmwareUpdate t={t} navigation={navigation} device={lastConnectedDevice} />
         ) : (
           <>
