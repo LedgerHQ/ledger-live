@@ -57,4 +57,5 @@ export enum DeviceLabels {
   VERIFY_SOLANA_ADDRESS = "Verify Solana address",
   REVIEW_TRANSACTION = "Review transaction",
   I_UNDERSTAND = "I understand",
+  RECEIVE_ADDRESS_DOES_NOT_BELONG = "Receive address does",
 }
