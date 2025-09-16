@@ -168,6 +168,7 @@
       "NFT_IN" : "NFT Alındı",
       "NFT_OUT" : "NFT Gönderildi",
       "CREATE" : "Oluşturuldu",
+      "UNKNOWN" : "Bilinmiyor",
       "REVEAL" : "Adres gösterildi",
       "DELEGATE" : "Yetki devredildi",
       "REDELEGATE" : "Yetki yeniden devredildi",
@@ -802,8 +803,8 @@
       "support" : "destek bölümüne"
     },
     "willBeDeprecatedBanner" : {
-      "title" : "Verimliliği iyileştirmek için {{deprecatedDate}} tarihinden itibaren {{currencyName}} artık Ledger Live'da desteklenmeyecektir. Ancak Ledger donanım cüzdanlarında desteklenmeye devam edecektir. Bu konuda yardım almak isterseniz Ledger Müşteri Destek ekibiyle lütfen iletişime geçin.",
-      "contactSupport" : "Destek Al"
+      "title" : "{{deprecatedDate}} tarihinden itibaren {{currencyName}} artık Ledger Live’da desteklenmeyecektir. Ancak Ledger donanım cüzdanınızda güvenle tutulmaya devam edecektir. Daha fazla bilgi edinmek için aşağıda bağlantısı verilen Yardım Merkezi makalesini lütfen baştan sona okuyun.",
+      "learnMore" : "Daha fazla bilgi"
     },
     "lastOperations" : "Son işlemler",
     "contractAddress" : "Sözleşme:",
@@ -1940,7 +1941,8 @@
       "payoutNetworkFeesTooltip" : "Bu tutar cihazınızda gösterilmeyecektir",
       "acceptTerms" : "Bu işlemi onaylayarak,\n<0>{{provider}} kullanım koşullarını</0> kabul ediyorum.",
       "exodusAcceptTerms" : "Exodus, takas işlemlerini gerçekleştirmek için üçüncü tarafları kullanır.\nBu işlemi onaylayarak, <0>Exodus'un kullanım koşullarını</0> kabul ediyorum.",
-      "changellyAcceptTerms" : "“Changelly ile Takas Edin” seçeneğine tıkladığınızda Changelly'nin <0>Kullanım Koşulları</0>'nı\nve <1>Kara Paranın Aklanmasının Önlenmesi/KYC politikasını</1> kabul etmiş olursunuz. Changelly, işleminizin tamamlanmasını\nbazı durumlarda etkileyebilecek olan, Kara Paranın Aklanmasının Önlenmesi/KYC prosedürleri uygulayabilir. \nBöyle bir durumda Changelly'nin <2>müşteri destek</2> ekibi ile iletişime geçmeniz gerekir."
+      "changellyAcceptTerms" : "“Changelly ile Takas Edin” seçeneğine tıkladığınızda Changelly'nin <0>Kullanım Koşulları</0>'nı\nve <1>Kara Paranın Aklanmasının Önlenmesi/KYC politikasını</1> kabul etmiş olursunuz. Changelly, işleminizin tamamlanmasını\nbazı durumlarda etkileyebilecek olan, Kara Paranın Aklanmasının Önlenmesi/KYC prosedürleri uygulayabilir. \nBöyle bir durumda Changelly'nin <2>müşteri destek</2> ekibi ile iletişime geçmeniz gerekir.",
+      "cicAcceptTerms" : "“CIC ile Takas Edin” seçeneğine tıkladığınızda CIC’nin <0>Kullanım Koşulları</0>’nı ve <1>Kara Paranın Aklanmasının Önlenmesi/KYC politikasını</1> kabul etmiş olursunuz. CIC, bazı durumlarda işleminizin tamamlanmasını etkileyebilecek olan, Kara Paranın Aklanmasının Önlenmesi/KYC prosedürleri uygulayabilir. Böyle bir durumda CIC’nin <2>müşteri destek</2> ekibi ile iletişime geçmeniz gerekir."
     },
     "swap2" : {
       "amountSent" : "Gönderilecek tutar",
@@ -2282,8 +2284,8 @@
     }
   },
   "fund" : {
-    "title" : "Fund",
-    "titleCrypto" : "Fund {{currency}}",
+    "title" : "Fon ekleyin",
+    "titleCrypto" : "{{currency}} ekleyin",
     "exchangeDrawer" : {
       "completed" : {
         "title" : "İşlem başarıyla yayımlandı",
@@ -5865,6 +5867,10 @@
       "commentPlaceholder" : "Tercihe bağlı",
       "comment" : "Yorum"
     },
+    "canton" : {
+      "commentPlaceholder" : "Tercihe bağlı",
+      "comment" : "Yorum"
+    },
     "stellar" : {
       "memo" : "Memo",
       "memoType" : {
@@ -6312,6 +6318,10 @@
       "title" : "Bir hata oluştu",
       "description" : "İşlem başarısız. Lütfen tekrar deneyin."
     },
+    "TransactionCannotBeCreated" : {
+      "title" : "İşleme Hatası",
+      "description" : "Changelly bu işlemi gerçekleştiremiyor. Hata kodu 8HBB{{errorCode}}"
+    },
     "TimeoutError" : {
       "title" : "Üzgünüz, sunucunun yanıt vermesi çok uzun sürdü",
       "description" : "Lütfen tekrar deneyin."
@@ -6459,6 +6469,9 @@
       "description" : "Lütfen pencereyi kapatıp daha sonra tekrar deneyin"
     },
     "TonCommentInvalid" : {
+      "title" : "Yorum, özel karakterler içermemeli ve 120 karakteri aşmamalıdır"
+    },
+    "CantonCommentInvalid" : {
       "title" : "Yorum, özel karakterler içermemeli ve 120 karakteri aşmamalıdır"
     },
     "CantScanQRCode" : {
@@ -6852,11 +6865,11 @@
       "description" : "Lütfen başka bir görüntüyle tekrar deneyin"
     },
     "ImageCommitRefusedOnDevice" : {
-      "title" : "{{productName}} cihazında kilitli ekran resminin\nkurulumu iptal edildi",
+      "title" : "{{productName}} cihazında kilitli ekran resmi kaldırıldı",
       "description" : "Bunu yanlışlıkla yaptıysanız şimdi tekrar deneyin."
     },
     "ImageLoadRefusedOnDevice" : {
-      "title" : "{{productName}} cihazında kilitli ekran resminin\nkurulumu iptal edildi",
+      "title" : "Şu cihazdaki kilitli ekran resmi iptal edildi:\n{{productName}}",
       "description" : "Bunu yanlışlıkla yaptıysanız şimdi tekrar deneyin."
     },
     "ImageDoesNotExistOnDevice" : {
@@ -7181,7 +7194,7 @@
     "steps" : {
       "choose" : {
         "stepLabel" : "Resim seçin",
-        "description" : "Bir görüntü seçip ayarlayın (...)",
+        "description" : "İstediğiniz bir dijital sanat eserini veya fotoğrafı seçin.\n{{productName}} cihazınızı özelleştirin.\nCihazınız sizi yansıtsın.",
         "pickFromNftGallery" : "NFT galerimden seç",
         "myNfts" : "NFT'lerim",
         "upload" : "Bilgisayardan yükle",
@@ -7264,9 +7277,9 @@
   "webview" : {
     "networkError" : {
       "title" : "Ağ Hatası",
-      "subtitle" : "Bir hata oluştu. Lütfen tekrar deneyin. Sorun devam ederse log'unuzu kaydedin ve Ledger destek ekibiyle iletişime geçin.",
+      "subtitle" : "Bir hata oluştu. Lütfen tekrar deneyin. Sorun sürerse log’larınızı kaydedin ve Ledger destek ekibiyle iletişime geçin.",
       "contactSupport" : "Ledger Destek ile iletişime geçin",
-      "saveLog" : "Log'u kaydet"
+      "saveLog" : "Log'ları kaydedin"
     },
     "noAccounts" : {
       "title" : "Bu uygulamaya erişmek için bir hesabınızın olması gerekiyor.",
@@ -7651,7 +7664,7 @@
         "foundAccounts_other" : "{{count}} hesap bulundu",
         "scanning" : "Hesaplar taranıyor..."
       },
-      "title" : "Blok zincirindeki mevcut tüm hesaplar aranıyor..."
+      "title" : "Blok zinciri kontrol ediliyor..."
     },
     "connectYourDevice" : {
       "title" : "Cihazınızı bağlayın ve kilidini açın"
@@ -7671,6 +7684,11 @@
         "selectAccount" : "Devam",
         "close" : "Kapat"
       }
+    },
+    "genericError" : {
+      "title" : "Bir ağ hatası oluştu",
+      "description" : "Bir hata oluştu, lütfen tekrar deneyin veya şüpheniz varsa Ledger Destek ile iletişime geçin.",
+      "cta" : "Tekrar dene"
     }
   },
   "nftEntryPoint" : {
