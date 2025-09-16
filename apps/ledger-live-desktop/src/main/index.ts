@@ -1,3 +1,4 @@
+import "./starts-console";
 import "./setup"; // Needs to be imported first
 import {
   app,
@@ -13,7 +14,8 @@ import {
 import Store from "electron-store";
 import menu from "./menu";
 import {
-  createMainWindow,
+  createEarlyMainWindow,
+  applyWindowParams,
   getMainWindow,
   getMainWindowAsync,
   loadWindow,
@@ -29,6 +31,9 @@ import {
   REDUX_DEVTOOLS,
   REACT_DEVELOPER_TOOLS,
 } from "electron-devtools-installer";
+// End import timing, start initialization
+console.timeEnd("T-imports");
+console.time("T-init");
 
 Store.initRenderer();
 
@@ -81,15 +86,31 @@ app.on("will-finish-launching", () => {
       .catch((err: unknown) => console.log(err));
   });
 });
+
 app.on("ready", async () => {
+  console.timeEnd("T-init");
   app.dirname = __dirname;
 
-  if (__DEV__) {
-    await installExtensions();
-  }
+  // Measure window creation time
+  console.time("T-window");
+  const window = createEarlyMainWindow();
+  console.timeEnd("T-window");
+
+  // Initialize database
   db.init(userDataDirectory);
+
+  // Defer extension installation to not block startup
+  if (__DEV__) {
+    setImmediate(() => {
+      installExtensions().catch(console.error);
+    });
+  }
+
+  // Measure database initialization and first reads
+  console.time("T-db");
   const settings = (await db.getKey("app", "settings")) as SettingsState;
   const user: User = (await db.getKey("app", "user")) as User;
+  console.timeEnd("T-db");
   const userId = user?.id;
   if (userId) {
     setUserId(userId);
@@ -158,10 +179,13 @@ app.on("ready", async () => {
     });
   });
   Menu.setApplicationMenu(menu);
+
   const windowParams = (await db.getKey("windowParams", "MainWindow", {})) as Parameters<
-    typeof createMainWindow
+    typeof applyWindowParams
   >[0];
-  const window = await createMainWindow(windowParams, settings);
+  await applyWindowParams(windowParams, settings);
+
+  // Setup window event handlers
   window.on(
     "resize",
     debounce(() => {
@@ -241,6 +265,9 @@ ipcMain.on("show-app", () => {
 });
 
 ipcMain.on("ready-to-show", () => {
+  console.timeEnd("T-ready");
+  const totalTime = process.uptime() * 1000;
+  console.log(`TOTAL BOOT TIME: ${totalTime.toFixed(0)}ms`);
   const w = getMainWindow();
   if (w) {
     show(w);
@@ -268,6 +295,7 @@ async function installExtensions() {
     }).catch(console.error);
   });
 }
+
 function clearSessionCache(session: Electron.Session): Promise<void> {
   return session.clearCache();
 }
