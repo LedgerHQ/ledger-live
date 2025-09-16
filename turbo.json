@@ -188,7 +188,7 @@
       "persistent": true
     },
     "coverage": {
-      "cache": false,
+      "cache": true,
       "dependsOn": [
         "^build",
         "build"
