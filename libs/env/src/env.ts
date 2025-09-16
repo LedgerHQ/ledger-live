@@ -557,6 +557,11 @@ const envDefinitions = {
     parser: stringParser,
     desc: "",
   },
+  MIXPANEL_API_HOST: {
+    def: "https://api.mixpanel.com",
+    parser: stringParser,
+    desc: "Mixpanel API host URL",
+  },
   MAX_ACCOUNT_NAME_SIZE: {
     def: 50,
     parser: intParser,
