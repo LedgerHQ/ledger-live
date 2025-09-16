@@ -1,3 +1,7 @@
+# 2.128.0
+
+This release includes small security improvements, UI tweaks, and minor bug fixes.
+
 # 2.126.2
 
 We fixed an issue that prevented Nano S users to send or swap USDT/stETH ERC-20 tokens
