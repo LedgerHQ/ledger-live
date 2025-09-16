@@ -168,6 +168,7 @@
       "NFT_IN" : "NFT Recibido",
       "NFT_OUT" : "NFT Enviado",
       "CREATE" : "Creado",
+      "UNKNOWN" : "Desconocido",
       "REVEAL" : "Revelado",
       "DELEGATE" : "Delegado",
       "REDELEGATE" : "Redelegado",
@@ -802,8 +803,8 @@
       "support" : "el servicio de soporte"
     },
     "willBeDeprecatedBanner" : {
-      "title" : "Por razones de optimización de eficiencia, {{currencyName}} dejará de ser compatible con Ledger Live el {{deprecatedDate}}. No obstante, seguirá siendo compatible con las billeteras de hardware de Ledger. Ponte en contacto con el servicio de soporte al cliente de Ledger si necesitas ayuda con esto.",
-      "contactSupport" : "Ponte en contacto con Soporte"
+      "title" : "Ledger Live dejará de ser compatible con {{currencyName}} a partir del {{deprecatedDate}}. No obstante, tu hardware wallet Ledger lo seguirá protegiendo. Para obtener más información, lee el artículo completo del Centro de ayuda en el siguiente enlace.",
+      "learnMore" : "Más información"
     },
     "lastOperations" : "Operaciones recientes",
     "contractAddress" : "Contrato:",
@@ -1940,7 +1941,8 @@
       "payoutNetworkFeesTooltip" : "Este importe no se mostrará en el dispositivo",
       "acceptTerms" : "Al validar esta transacción, acepto\nlos <0>términos de uso de {{provider}}</0>",
       "exodusAcceptTerms" : "Exodus depende de terceros para realizar las permutas.\nAl validar esta transacción, acepto los <0>términos de uso de Exodus</0>",
-      "changellyAcceptTerms" : "Al hacer clic en “Permutar con Changelly”, aceptas los <0>Términos de uso</0> de Changelly y\nsu <1>política de AML/KYC</1>. Es posible que Changelly aplique procedimientos de AML/KYC que,\nen determinados casos, pueden afectar a la finalización de tu transacción. En caso\nde darse esta situación, debes contactar con el <2>soporte al cliente</2> de Changelly."
+      "changellyAcceptTerms" : "Al hacer clic en “Permutar con Changelly”, aceptas los <0>Términos de uso</0> de Changelly y\nsu <1>política de AML/KYC</1>. Es posible que Changelly aplique procedimientos de AML/KYC que,\nen determinados casos, pueden afectar a la finalización de tu transacción. En caso\nde darse esta situación, debes contactar con el <2>soporte al cliente</2> de Changelly.",
+      "cicAcceptTerms" : "Al hacer clic en \"Permutar con CIC\", aceptas los <0>Términos de uso</0> de CIC y su <1>política de AML/KYC</1>. Es posible que CIC aplique procedimientos de AML/KYC que, en determinados casos, pueden afectar a la finalización de tu transacción. En caso de darse esta situación, debes contactar al <2>servicio de soporte al cliente</2> de CIC."
     },
     "swap2" : {
       "amountSent" : "Importe a enviar",
@@ -2282,8 +2284,8 @@
     }
   },
   "fund" : {
-    "title" : "Fund",
-    "titleCrypto" : "Fund {{currency}}",
+    "title" : "Agregar fondos",
+    "titleCrypto" : "Agregar fondos en {{currency}}",
     "exchangeDrawer" : {
       "completed" : {
         "title" : "Transacción transmitida con éxito.",
@@ -5865,6 +5867,10 @@
       "commentPlaceholder" : "Opcional",
       "comment" : "Comentario"
     },
+    "canton" : {
+      "commentPlaceholder" : "Opcional",
+      "comment" : "Comentario"
+    },
     "stellar" : {
       "memo" : "Memo",
       "memoType" : {
@@ -6312,6 +6318,10 @@
       "title" : "Algo ha salido mal",
       "description" : "La transacción ha fallado. Inténtalo de nuevo."
     },
+    "TransactionCannotBeCreated" : {
+      "title" : "Error de procesamiento",
+      "description" : "Changelly no pudo procesar esta transacción. Código de error 8HBB{{errorCode}}"
+    },
     "TimeoutError" : {
       "title" : "El servidor ha tardado demasiado en responder",
       "description" : "Inténtalo de nuevo."
@@ -6459,6 +6469,9 @@
       "description" : "Cierra la ventana e inténtalo de nuevo más tarde"
     },
     "TonCommentInvalid" : {
+      "title" : "El comentario no debe superar los 120 caracteres y no debe incluir caracteres especiales"
+    },
+    "CantonCommentInvalid" : {
       "title" : "El comentario no debe superar los 120 caracteres y no debe incluir caracteres especiales"
     },
     "CantScanQRCode" : {
@@ -6852,11 +6865,11 @@
       "description" : "Vuelve a intentarlo con otra imagen"
     },
     "ImageCommitRefusedOnDevice" : {
-      "title" : "Instalación de imagen de pantalla de bloqueo\ncancelada en {{productName}}",
+      "title" : "Imagen de pantalla de bloqueo descartada en {{productName}}",
       "description" : "Si ha sido un error, inténtalo de nuevo."
     },
     "ImageLoadRefusedOnDevice" : {
-      "title" : "Instalación de imagen de pantalla de bloqueo\ncancelada en {{productName}}",
+      "title" : "Imagen de pantalla de bloqueo cancelada en\n{{productName}}",
       "description" : "Si ha sido un error, inténtalo de nuevo."
     },
     "ImageDoesNotExistOnDevice" : {
@@ -7181,7 +7194,7 @@
     "steps" : {
       "choose" : {
         "stepLabel" : "Elegir imagen",
-        "description" : "Elige una imagen para establecerla como (...)",
+        "description" : "Elige cualquier ejemplo de arte digital o foto.\nPersonaliza tu {{productName}}.\nHazlo tuyo.",
         "pickFromNftGallery" : "Elegir de la galería de NFTs",
         "myNfts" : "Mis NFTs",
         "upload" : "Cargar desde PC",
@@ -7205,7 +7218,7 @@
         "useAnotherPicture" : "Cargar otra imagen",
         "allowPreview" : "Toca “Cargar imagen” para\npersonalizar la imagen de pantalla de bloqueo",
         "allowConfirmPreview" : "Toca “Cargar imagen” para\nrestaurar la imagen de pantalla de bloqueo",
-        "loadingPicture" : "Instalando...",
+        "loadingPicture" : "Cargando...",
         "voila" : "¡Voilà!",
         "imageLoaded" : "Imagen cargada en {{productName}}",
         "confirmPicture" : "¿Te gusta lo que ves?\n¡Pues consérvalo!",
@@ -7264,9 +7277,9 @@
   "webview" : {
     "networkError" : {
       "title" : "Error de red",
-      "subtitle" : "Algo ha salido mal. Inténtalo de nuevo. Si el problema persiste, guarda el registro y ponte en contacto con el Soporte de Ledger.",
+      "subtitle" : "Se ha producido un error. Inténtalo de nuevo. Si el problema persiste, guarda los registros y ponte en contacto con el Soporte de Ledger.",
       "contactSupport" : "Ponte en contacto con el Soporte de Ledger",
-      "saveLog" : "Guardar registro"
+      "saveLog" : "Guardar registros"
     },
     "noAccounts" : {
       "title" : "Necesitas una cuenta para poder acceder a esta aplicación.",
@@ -7651,7 +7664,7 @@
         "foundAccounts_other" : "Hemos encontrado {{count}} cuentas",
         "scanning" : "Buscando cuentas..."
       },
-      "title" : "Buscando cuentas existentes en la cadena de bloques..."
+      "title" : "Comprobando la blockchain..."
     },
     "connectYourDevice" : {
       "title" : "Conecta y desbloquea tu dispositivo"
@@ -7671,6 +7684,11 @@
         "selectAccount" : "Continuar",
         "close" : "Cerrar"
       }
+    },
+    "genericError" : {
+      "title" : "Se ha producido un error de red",
+      "description" : "Algo ha salido mal. Inténtalo de nuevo o contacta al Soporte de Ledger en caso de duda.",
+      "cta" : "Reintentar"
     }
   },
   "nftEntryPoint" : {
