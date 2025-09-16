@@ -25,7 +25,10 @@ export function Search({
 
   useEffect(() => {
     if (autoFocus && searchInputRef.current) {
-      searchInputRef.current.focus();
+      // Delay focus to prevent layout shifts
+      setTimeout(() => {
+        searchInputRef.current?.focus({ preventScroll: true });
+      }, 0);
     }
   }, [autoFocus]);
 
