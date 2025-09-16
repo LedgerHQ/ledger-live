@@ -25,20 +25,20 @@ import {
 import resolver from "../signer";
 import type { CantonAccount, CantonSigner } from "../types";
 
-export const isAccountOnboarded = async (
-  currency: CryptoCurrency,
-  publicKey: string,
-): Promise<{ isOnboarded: boolean; party_id?: string }> => {
+export const getAccountStatus = async (currency: CryptoCurrency, publicKey: string) => {
   try {
     const { party_id } = await getPartyByPubKey(currency, publicKey);
 
     if (party_id) {
-      return { isOnboarded: true, party_id };
+      return { isOnboarded: true, partyId: party_id };
     } else {
       return { isOnboarded: false };
     }
   } catch (err) {
-    log("[isAccountOnboarded] Error checking party status (likely not onboarded):", err);
+    console.warn(
+      `[canton:getAccountStatus] Failed to getPartyByPubKey with ${currency.id} and ${publicKey}):`,
+      err,
+    );
     return { isOnboarded: false };
   }
 };
@@ -106,7 +106,7 @@ export const buildOnboardAccount =
                     derivationMode: scannedAccount.derivationMode,
                   });
                   console.log("DEBUG - Public key:", publicKey);
-                  const onboardedStatus = await isAccountOnboarded(currency, publicKey);
+                  const onboardedStatus = await getAccountStatus(currency, publicKey);
                   console.log("DEBUG - Account onboarded status:", onboardedStatus);
 
                   if (onboardedStatus.isOnboarded) {
@@ -149,7 +149,7 @@ export const buildOnboardAccount =
             status: OnboardStatus.PREPARE,
           });
 
-          const { party_id: partyId } = await isAccountOnboarded(currency, publicKey);
+          const { partyId } = await getAccountStatus(currency, publicKey);
           if (partyId) {
             const account = await createAccount(creatableAccount);
             observer.next({

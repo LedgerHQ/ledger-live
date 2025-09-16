@@ -1,12 +1,12 @@
 import BigNumber from "bignumber.js";
 import { Operation, OperationType } from "@ledgerhq/types-live";
-import { decodeAccountId, encodeAccountId } from "@ledgerhq/coin-framework/account/index";
+import { encodeAccountId } from "@ledgerhq/coin-framework/account/index";
 import { GetAccountShape, mergeOps } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { getBalance, getLedgerEnd, getOperations, type OperationInfo } from "../network/gateway";
 import { CantonAccount } from "../types";
 import coinConfig from "../config";
-import { getPartyByPubKey } from "../network/gateway";
+import { getAccountStatus } from "./onboard";
 import resolver from "../signer";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import { CantonSigner } from "../types";
@@ -30,8 +30,8 @@ const txInfoToOperationAdapter =
     } else if (txInfo.type === "Receive") {
       type = "IN";
     }
-    const value = new BigNumber(transferValue);
-    const feeValue = new BigNumber(fee);
+    const value = BigNumber(transferValue);
+    const feeValue = BigNumber(fee);
     const memo = details.metadata.reason;
 
     const op: Operation = {
@@ -70,25 +70,20 @@ export function makeGetAccountShape(
   return async info => {
     const { address, initialAccount, currency, derivationMode, derivationPath } = info;
 
-    console.log("info", info);
-
-    let xpubOrAddress =
-      (initialAccount && initialAccount.id && decodeAccountId(initialAccount.id).xpubOrAddress) ||
-      "";
+    let xpubOrAddress = initialAccount?.xpub || address;
 
     if (!xpubOrAddress) {
       const getAddress = resolver(signerContext);
       const { publicKey } = await getAddress(info.deviceId || "", {
-        path: derivationPath,
+        path: "44'/6767'/30'/0'/0'",
         currency: currency,
         derivationMode: derivationMode,
         verify: false,
       });
-      try {
-        const { party_id } = await getPartyByPubKey(currency, publicKey);
-        xpubOrAddress = party_id;
-      } catch (e) {
-        // do nothing
+
+      const { isOnboarded, partyId } = await getAccountStatus(currency, publicKey);
+      if (isOnboarded && partyId) {
+        xpubOrAddress = partyId;
       }
     }
 
@@ -96,27 +91,28 @@ export function makeGetAccountShape(
       type: "js",
       version: "2",
       currencyId: currency.id,
-      xpubOrAddress,
+      xpubOrAddress: xpubOrAddress,
       derivationMode,
     });
+
+    const accountsWithBalances = ["0", "1", "2"];
 
     const balances = xpubOrAddress ? await getBalance(currency, xpubOrAddress) : [];
     const balanceData = balances.find(balance => balance.instrument_id.includes("Amulet")) || {
       instrument_id: "Amulet",
       // TODO: need for tests remove this
-      amount: derivationPath.split("'")[2] === "0" ? 1 : 0,
+      amount: accountsWithBalances.includes(derivationPath.split("'/")[2]) ? 1 : 0,
       locked: false,
     };
-    const balance = new BigNumber(balanceData.amount);
+    const balance = BigNumber(balanceData.amount);
     const reserveMin = coinConfig.getCoinConfig(currency).minReserve || 0;
-    const lockedAmount = balanceData.locked ? balance : new BigNumber(0);
+    const lockedAmount = balanceData.locked ? balance : BigNumber(0);
     const spendableBalance = BigNumber.max(
       0,
       balance.minus(lockedAmount).minus(BigNumber(reserveMin)),
     );
 
     let operations: Operation[] = [];
-    // Tx history fetching if xpubOrAddress is not empty
     if (xpubOrAddress) {
       const oldOperations = initialAccount?.operations || [];
       const startAt = oldOperations.length ? (oldOperations[0].blockHeight || 0) + 1 : 0;
@@ -130,20 +126,29 @@ export function makeGetAccountShape(
 
     const blockHeight = await getLedgerEnd(currency);
 
+    const creationDate =
+      operations.length > 0
+        ? new Date(Math.min(...operations.map(op => op.date.getTime())))
+        : new Date();
+
     const shape = {
-      // xpub: xpubOrAddress, // can be skiped?
-      blockHeight,
+      id: accountId,
+      type: "Account" as const,
+      creationDate,
       balance,
-      spendableBalance,
+      blockHeight,
+      freshAddress: xpubOrAddress,
+      freshAddressPath: derivationPath,
       operations,
       operationsCount: operations.length,
+      seedIdentifier: xpubOrAddress,
+      spendableBalance,
+      xpub: xpubOrAddress,
       used: balance.gt(0),
-      // cantonResources: {
-      //   partyId, // can be skiped?
-      // },
     };
 
-    console.log("shape", shape);
+    console.log("Canton sync - shape:", shape);
+    console.log("Canton sync - xpubOrAddress:", xpubOrAddress);
 
     return shape;
   };
