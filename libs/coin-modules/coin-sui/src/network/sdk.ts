@@ -534,8 +534,8 @@ type Cursor = {
   in?: string;
 };
 
-function serializeCursor(cursor: Cursor): string {
-  return bs58.encode(Buffer.from(JSON.stringify(cursor)));
+function serializeCursor(cursor: Cursor): string | undefined {
+  return cursor.in || cursor.out ? bs58.encode(Buffer.from(JSON.stringify(cursor))) : undefined;
 }
 
 function deserializeCursor(b58cursor: string | undefined): Cursor {
