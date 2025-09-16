@@ -125,6 +125,10 @@ describe("Sui Api", () => {
       });
       expect(txs.length).toBeGreaterThanOrEqual(minHeightTxs.length);
     });
+
+    it("returns block height as a number", async () => {
+      expect(txs.every(t => typeof t.tx.block.height === "number")).toBeTruthy();
+    });
   });
 
   describe("getBalance", () => {

@@ -352,8 +352,7 @@ export function transactionToOp(address: string, transaction: SuiTransactionBloc
       hash,
       fees: BigInt(getOperationFee(transaction).toString()),
       block: {
-        // agreed to return bigint
-        height: BigInt(transaction.checkpoint || "") as unknown as number,
+        height: Number.parseInt(transaction.checkpoint || "0"),
         time: getOperationDate(transaction),
       },
     },
