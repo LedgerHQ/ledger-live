@@ -168,6 +168,7 @@
       "NFT_IN" : "ได้รับ NFT แล้ว",
       "NFT_OUT" : "ส่ง NFT แล้ว",
       "CREATE" : "สร้างแล้ว",
+      "UNKNOWN" : "Unknown",
       "REVEAL" : "เปิดเผยแล้ว",
       "DELEGATE" : "Delegate เรียบร้อยแล้ว",
       "REDELEGATE" : "Redelegate เรียบร้อยแล้ว",
@@ -802,8 +803,8 @@
       "support" : "การสนับสนุน"
     },
     "willBeDeprecatedBanner" : {
-      "title" : "เพื่อประสิทธิภาพสูงสุด Ledger Live จะไม่รองรับ {{currencyName}} ตั้งแต่วันที่ {{deprecatedDate}} อย่างไรก็ตาม คุณยังจัดการสกุลเงินนี้บน Hardware Wallet ของ Ledger ได้ตามปกติ โปรดติดต่อฝ่ายสนับสนุนลูกค้าของ Ledger หากคุณต้องการความช่วยเหลือในเรื่องนี้",
-      "contactSupport" : "ติดต่อฝ่ายสนับสนุน"
+      "title" : "{{currencyName}} จะไม่ได้รับการรองรับบนแอป Ledger Live ตั้งแต่วันที่ {{deprecatedDate}} เป็นต้นไป อย่างไรก็ตาม สินทรัพย์ของคุณจะยังคงได้รับการปกป้องโดยฮาร์ดแวร์วอลเล็ตของ Ledger หากต้องการเรียนรู้เพิ่มเติม โปรดอ่านบทความฉบับเต็มจากศูนย์ช่วยเหลือได้ที่ลิงก์ด้านล่างนี้",
+      "learnMore" : "เรียนรู้เพิ่มเติม"
     },
     "lastOperations" : "การดำเนินการล่าสุด",
     "contractAddress" : "สัญญา:",
@@ -1940,7 +1941,8 @@
       "payoutNetworkFeesTooltip" : "จำนวนนี้จะไม่ปรากฏบนอุปกรณ์ของคุณ",
       "acceptTerms" : "ในการตรวจสอบธุรกรรมนี้ ฉันยอมรับ\n<0>เงื่อนไขการใช้งานของ {{provider}}</0>",
       "exodusAcceptTerms" : "Exodus อาศัยบุคคลที่สามในการดำเนินการ Swap\nในการตรวจสอบธุรกรรมนี้ ฉันยอมรับ\n<0>เงื่อนไขการใช้งานของ Exodus</0>",
-      "changellyAcceptTerms" : "การคลิก “สวอปด้วย Changelly” จะถือว่าคุณยอมรับ<0>ข้อกำหนดการใช้งาน</0>ของ Changelly และ\n<1>นโยบาย AML/KYC</1> โดย Changelly อาจบังคับใช้มาตรการ AML/KYC ซึ่งสามารถ\nส่งผลกระทบต่อการทำธุรกรรมของคุณให้เสร็จสมบูรณ์ได้ในบางกรณี หาก\nเกิดเหตุการณ์ดังกล่าวขึ้น คุณต้องติดต่อ<2>ฝ่ายสนับสนุนลูกค้า</2>ของ Changelly"
+      "changellyAcceptTerms" : "การคลิก “สวอปด้วย Changelly” จะถือว่าคุณยอมรับ<0>ข้อกำหนดการใช้งาน</0>ของ Changelly และ\n<1>นโยบาย AML/KYC</1> โดย Changelly อาจบังคับใช้มาตรการ AML/KYC ซึ่งสามารถ\nส่งผลกระทบต่อการทำธุรกรรมของคุณให้เสร็จสมบูรณ์ได้ในบางกรณี หาก\nเกิดเหตุการณ์ดังกล่าวขึ้น คุณต้องติดต่อ<2>ฝ่ายสนับสนุนลูกค้า</2>ของ Changelly",
+      "cicAcceptTerms" : "เมื่อคุณทำการ “สวอปกับ CIC” จะถือว่าคุณยอมรับ<0>ข้อกำหนดการใช้งาน</0>และ<1>นโยบาย AML/KYC</1>  โดย CIC อาจดำเนินขั้นตอน AML/KYC ซึ่งในบางกรณีอาจส่งผลต่อการดำเนินธุรกรรมของคุณ หากเกิดเหตุการณ์ดังกล่าวขึ้น  กรุณาติดต่อ<2>ฝ่ายสนับสนุนลูกค้า</2>ของ CIC"
     },
     "swap2" : {
       "amountSent" : "จำนวนที่จะส่ง",
@@ -2282,12 +2284,12 @@
     }
   },
   "fund" : {
-    "title" : "Fund",
-    "titleCrypto" : "Fund {{currency}}",
+    "title" : "เงินทุน",
+    "titleCrypto" : "จำนวน {{currency}}",
     "exchangeDrawer" : {
       "completed" : {
-        "title" : "Transaction broadcast successfully",
-        "description" : "Your operation has been sent to the network for confirmation. Please wait for your transaction to be confirmed and for the provider to process it."
+        "title" : "ประกาศธุรกรรมเรียบร้อยแล้ว",
+        "description" : "การดำเนินการของคุณได้รับการส่งไปยังเครือข่ายเพื่อการยืนยัน กรุณารอการยืนยันธุรกรรม และการประมวลผลจากผู้ให้บริการ"
       }
     }
   },
@@ -5865,6 +5867,10 @@
       "commentPlaceholder" : "ไม่บังคับ",
       "comment" : "ความคิดเห็น"
     },
+    "canton" : {
+      "commentPlaceholder" : "Optional",
+      "comment" : "Comment"
+    },
     "stellar" : {
       "memo" : "Memo",
       "memoType" : {
@@ -6312,6 +6318,10 @@
       "title" : "มีบางอย่างผิดปกติ",
       "description" : "ธุรกรรมล้มเหลว โปรดลองอีกครั้ง"
     },
+    "TransactionCannotBeCreated" : {
+      "title" : "Processing Error",
+      "description" : "Changelly cannot process this transaction. Error code 8HBB{{errorCode}}"
+    },
     "TimeoutError" : {
       "title" : "ขออภัย เซิร์ฟเวอร์ใช้เวลาตอบกลับนานเกินไป",
       "description" : "โปรดลองอีกครั้ง"
@@ -6460,6 +6470,9 @@
     },
     "TonCommentInvalid" : {
       "title" : "ความคิดเห็นต้องมีความยาวไม่เกิน 120 ตัวอักษรโดยไม่มีตัวอักษรพิเศษ"
+    },
+    "CantonCommentInvalid" : {
+      "title" : "Comment must not exceed 120 characters without special characters"
     },
     "CantScanQRCode" : {
       "title" : "สแกน QR Code นี้ไม่ได้: Address นี้ไม่รองรับการยืนยันอัตโนมัติ"
@@ -6852,11 +6865,11 @@
       "description" : "โปรดลองอีกครั้งด้วยภาพอื่น"
     },
     "ImageCommitRefusedOnDevice" : {
-      "title" : "การติดตั้ง ภาพล็อกสกรีน\nถูกยกเลิกบน {{productName}}",
+      "title" : "ทิ้งภาพล็อกสกรีนบน {{productName}}",
       "description" : "หากเป็นข้อผิดพลาด ลองใหม่ตอนนี้"
     },
     "ImageLoadRefusedOnDevice" : {
-      "title" : "การติดตั้ง ภาพล็อกสกรีน\nถูกยกเลิกบน {{productName}}",
+      "title" : "ยกเลิกภาพล็อกสกรีนบน\n {{productName}}",
       "description" : "หากเป็นข้อผิดพลาด ลองใหม่ตอนนี้"
     },
     "ImageDoesNotExistOnDevice" : {
@@ -7181,7 +7194,7 @@
     "steps" : {
       "choose" : {
         "stepLabel" : "เลือกภาพ",
-        "description" : "เลือกภาพที่จะตั้งค่าเป็น (...)",
+        "description" : "เลือกงานศิลปะดิจิทัลหรือภาพที่คุณต้องการ\nปรับแต่ง {{productName}}\nให้สะท้อนตัวตนของคุณ",
         "pickFromNftGallery" : "เลือกจากแกลเลอรี NFT ของฉัน",
         "myNfts" : "NFT ของฉัน",
         "upload" : "อัปโหลดจากคอมพิวเตอร์",
@@ -7194,7 +7207,7 @@
       "adjust" : {
         "stepLabel" : "ครอบตัด",
         "rotate" : "หมุน",
-        "confirmCrop" : "ยืนยันการครอบตัด"
+        "confirmCrop" : "ยืนยันการครอบภาพ"
       },
       "contrast" : {
         "stepLabel" : "ตั้งค่าคอนทราสต์",
@@ -7205,7 +7218,7 @@
         "useAnotherPicture" : "อัปโหลดอีกภาพ",
         "allowPreview" : "แตะที่ “โหลดภาพ” เพื่อ\nปรับแต่งภาพ ภาพล็อกสกรีนของคุณ",
         "allowConfirmPreview" : "แตะที่ “โหลดภาพ“ เพื่อ\nกู้คืน ภาพล็อกสกรีนของคุณ",
-        "loadingPicture" : "กำลังติดตั้ง...",
+        "loadingPicture" : "กำลังโหลด...",
         "voila" : "ครบถ้วนแล้ว!",
         "imageLoaded" : "โหลดภาพบน {{productName}}",
         "confirmPicture" : "ชอบสิ่งที่เห็น?\nเก็บไว้เลยสิ!",
@@ -7264,7 +7277,7 @@
   "webview" : {
     "networkError" : {
       "title" : "ข้อผิดพลาดของเครือข่าย",
-      "subtitle" : "มีบางอย่างผิดปกติ โปรดลองอีกครั้ง หากยังคงพบปัญหาอยู่ ให้บันทึก Log และติดต่อ Ledger Support",
+      "subtitle" : "Something went wrong. Please try again. If the problem persists, save your logs and contact Ledger support.",
       "contactSupport" : "ติดต่อ Ledger Support",
       "saveLog" : "บันทึก Log"
     },
@@ -7651,7 +7664,7 @@
         "foundAccounts_other" : "เราพบ {{count}} บัญชี",
         "scanning" : "กำลังสแกนบัญชี..."
       },
-      "title" : "กำลังมองหาบัญชีที่มีอยู่บนบล็อกเชน..."
+      "title" : "Checking the blockchain..."
     },
     "connectYourDevice" : {
       "title" : "เชื่อมต่อและปลดล็อกอุปกรณ์ของคุณ"
@@ -7671,6 +7684,11 @@
         "selectAccount" : "ดำเนินการต่อ",
         "close" : "ปิด"
       }
+    },
+    "genericError" : {
+      "title" : "เกิดข้อผิดพลาดของเครือข่าย",
+      "description" : "มีบางอย่างผิดพลาด  โปรดลองอีกครั้งหรือติดต่อฝ่ายสนับสนุน Ledger หากมีข้อสงสัย",
+      "cta" : "ลองอีกครั้ง"
     }
   },
   "nftEntryPoint" : {
