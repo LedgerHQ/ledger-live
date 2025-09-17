@@ -1620,6 +1620,11 @@
       "progress": "Stay in Ledger Live while apps are installing.",
       "skippedInfo": "Some apps aren’t available. They are yet to be developed for {{ productName }}.",
       "skipped": "Not yet available for {{ productName }}"
+    },
+    "newSeed": {
+      "subtitle": "You can transfer crypto from any exchange or wallet to your Ledger Wallet for maximum security.",
+      "installCTA": "Secure my crypto",
+      "skipCTA": "Maybe later"
     }
   },
   "onboarding": {
