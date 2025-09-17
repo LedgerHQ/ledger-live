@@ -1,9 +1,9 @@
-import React, { useCallback, useMemo, useState } from "react";
-import { Device } from "@ledgerhq/live-common/hw/actions/types";
+import React, { useCallback, useState } from "react";
 import { Trans } from "react-i18next";
-import { Text, Flex, Box, IconsLegacy, Icons } from "@ledgerhq/native-ui";
+import { Text, Flex, IconsLegacy, Icons } from "@ledgerhq/native-ui";
+import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { DeviceModelId } from "@ledgerhq/devices";
-import Touchable from "../Touchable";
+import Touchable from "~/components/Touchable";
 import RemoveDeviceMenu from "./RemoveDeviceMenu";
 
 type Props = {
@@ -12,8 +12,24 @@ type Props = {
   onPress: (_: Device) => void;
 };
 
-// This item will also come from the pr from alexandre.
-const Item = ({ device, onPress }: Props) => {
+function DeviceIcon({ deviceModelId }: { deviceModelId: DeviceModelId }) {
+  switch (deviceModelId) {
+    case DeviceModelId.stax:
+      return <Icons.Stax size="M" />;
+    case DeviceModelId.europa:
+    case DeviceModelId.apex:
+      return <Icons.Flex size="M" />;
+    case DeviceModelId.nanoS:
+    case DeviceModelId.nanoSP:
+      return <IconsLegacy.NanoSFoldedMedium size={24} />;
+    case DeviceModelId.nanoX:
+      return <IconsLegacy.NanoXFoldedMedium size={24} />;
+    default:
+      return <Icons.LedgerDevices size="M" />;
+  }
+}
+
+export default function DeviceItem({ device, onPress }: Props) {
   const { wired, available } = device;
   const [isRemoveDeviceMenuOpen, setIsRemoveDeviceMenuOpen] = useState<boolean>(false);
 
@@ -24,25 +40,6 @@ const Item = ({ device, onPress }: Props) => {
   const onItemContextPress = useCallback(() => {
     setIsRemoveDeviceMenuOpen(true);
   }, []);
-
-  const deviceIcon = useMemo(() => {
-    switch (device.modelId) {
-      case DeviceModelId.nanoS:
-      case DeviceModelId.nanoSP:
-        return <IconsLegacy.NanoSFoldedMedium size={24} />;
-      case DeviceModelId.stax:
-        return <IconsLegacy.StaxMedium size={24} />;
-      case DeviceModelId.europa:
-        return (
-          <Box mx={1}>
-            <Icons.Flex size="S" />
-          </Box>
-        );
-      case DeviceModelId.nanoX:
-      default:
-        return <IconsLegacy.NanoXFoldedMedium size={24} />;
-    }
-  }, [device.modelId]);
 
   return (
     <Touchable
@@ -59,8 +56,9 @@ const Item = ({ device, onPress }: Props) => {
         mb={4}
         padding={4}
       >
-        {deviceIcon}
-
+        <Flex width={24}>
+          <DeviceIcon deviceModelId={device.modelId} />
+        </Flex>
         <Flex ml={5} flex={1}>
           <Text color="neutral.c100" fontWeight="semiBold" fontSize="16px">
             {device.deviceName}
@@ -69,7 +67,6 @@ const Item = ({ device, onPress }: Props) => {
             <Trans i18nKey={`manager.selectDevice.item.${wording}`} />
           </Text>
         </Flex>
-
         {!wired ? (
           <>
             <Touchable event="ItemForget" onPress={onItemContextPress}>
@@ -85,6 +82,4 @@ const Item = ({ device, onPress }: Props) => {
       </Flex>
     </Touchable>
   );
-};
-
-export default Item;
+}
