@@ -472,16 +472,6 @@ const envDefinitions = {
     parser: stringParser,
     desc: "Ledger generic explorer API",
   },
-  EXPLORER_STAGING: {
-    def: "https://explorers.api-01.live.ledger-stg.com",
-    parser: stringParser,
-    desc: "Ledger staging explorer API",
-  },
-  EXPLORER_BETA: {
-    def: "https://explorers.api.live.ledger.com",
-    parser: stringParser,
-    desc: "Ledger generic explorer beta API",
-  },
   EXPLORER_SATSTACK: {
     def: "http://localhost:20000",
     parser: stringParser,
