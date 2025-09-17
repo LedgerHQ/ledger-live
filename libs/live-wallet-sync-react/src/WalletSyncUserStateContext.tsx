@@ -13,9 +13,9 @@ type OnUserRefresh = () => void;
 
 interface OnUserRefreshContextValue {
   /** Stable function reference that calls the latest registered impl */
-  onUserRefresh: OnUserRefresh;
+  readonly onUserRefresh: OnUserRefresh;
   /** Stable setter to register/replace the impl (no re-render) */
-  setOnUserRefresh: (fn: OnUserRefresh) => void;
+  readonly setOnUserRefresh: (fn: OnUserRefresh) => void;
 }
 
 const OnUserRefreshContext = createContext<OnUserRefreshContextValue | null>(null);

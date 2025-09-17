@@ -113,7 +113,7 @@ function Effect() {
 }
 
 /** Desktop-specific WalletSync Provider component that uses a shared redux state interface */
-export function WalletSyncProvider({ children }: { children: React.ReactNode }) {
+export function WalletSyncProvider({ children }: Readonly<{ children: React.ReactNode }>) {
   const bridge = useDesktopWalletSyncBridge();
 
   return (

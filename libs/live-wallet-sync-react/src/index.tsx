@@ -53,8 +53,8 @@ export interface WalletSyncBridge {
 
 export type Props = {
   /** Bridge enabling platform-specific persistence of wallet sync state */
-  bridge: WalletSyncBridge;
-  children: React.ReactNode;
+  readonly bridge: WalletSyncBridge;
+  readonly children: React.ReactNode;
 };
 
 /** Base WalletSync Context for state management */
