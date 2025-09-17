@@ -1,5 +1,5 @@
 ---
-"@ledgerhq/coin-canton": patch
+"@ledgerhq/coin-canton": minor
 ---
 
 fee on firebase canton

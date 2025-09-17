@@ -1,5 +1,5 @@
 ---
-"@ledgerhq/crypto-icons-ui": patch
+"@ledgerhq/crypto-icons-ui": minor
 ---
 
 Add canton devnet icon

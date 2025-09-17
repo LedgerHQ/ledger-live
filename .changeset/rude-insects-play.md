@@ -1,5 +1,5 @@
 ---
-"live-mobile": patch
+"live-mobile": minor
 ---
 
 CLS: use new dithering algorithms for Apex
