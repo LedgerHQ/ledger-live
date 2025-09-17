@@ -151,34 +151,6 @@ export function ValidatorField({
     </DataRow>
   );
 }
-export function DataColumn({
-  label,
-  children,
-  numberOfLines,
-}: {
-  label?: React.ReactNode;
-  children: React.ReactNode;
-  numberOfLines?: number;
-}) {
-  const { colors } = useTheme();
-  return (
-    <View
-      style={[
-        styles.dataColumn,
-        {
-          backgroundColor: colors.background,
-        },
-      ]}
-    >
-      {label ? (
-        <LText numberOfLines={numberOfLines ?? 1} style={styles.dataRowLabel} color="grey">
-          {label}
-        </LText>
-      ) : null}
-      {children}
-    </View>
-  );
-}
 
 type Props = {
   label: React.ReactNode;

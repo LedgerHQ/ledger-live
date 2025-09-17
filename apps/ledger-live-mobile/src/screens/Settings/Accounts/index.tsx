@@ -7,11 +7,7 @@ import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { DefaultTheme, useTheme } from "styled-components/native";
 import SettingsRow from "~/components/SettingsRow";
 import { showToken } from "~/actions/settings";
-import {
-  blacklistedTokenIdsSelector,
-  // TODO: hiddenNftCollection is never used 😱 is it safe to remove
-  // hiddenNftCollectionsSelector,
-} from "~/reducers/settings";
+import { blacklistedTokenIdsSelector } from "~/reducers/settings";
 import { cryptoCurrenciesSelector } from "~/reducers/accounts";
 import LText from "~/components/LText";
 import CurrencyIcon from "~/components/CurrencyIcon";
@@ -31,8 +27,6 @@ export default function AccountsSettings({
   const { t } = useTranslation();
   const blacklistedTokenIds = useSelector(blacklistedTokenIdsSelector);
   const currencies = useSelector(cryptoCurrenciesSelector);
-  // TODO: hiddenNftCollection is never used 😱 is it safe to remove
-  // const hiddenNftCollections = useSelector(hiddenNftCollectionsSelector);
   const dispatch = useDispatch();
 
   const renderSectionHeader = useCallback(
@@ -83,8 +77,6 @@ export default function AccountsSettings({
         <FilterTokenOperationsZeroAmountRow />
       </>
     ),
-    // TODO: hiddenNftCollection is never used 😱 is it safe to remove
-    // [currencies.length, t, hiddenNftCollections.length, navigation],
     [currencies.length, t, navigation],
   );
 

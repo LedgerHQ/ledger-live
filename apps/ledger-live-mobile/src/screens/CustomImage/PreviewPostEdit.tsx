@@ -10,10 +10,8 @@ import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/t
 import { CustomImageNavigatorParamList } from "~/components/RootNavigator/types/CustomImageNavigator";
 import { NavigatorName, ScreenName } from "~/const";
 import FramedPicture from "~/components/CustomImage/FramedPicture";
-import { getFramedPictureConfig } from "~/components/CustomImage/framedPictureConfigs";
 import { TrackScreen } from "~/analytics";
 import Link from "~/components/wrappedUi/Link";
-import { useTheme } from "styled-components/native";
 
 type NavigationProps = BaseComposite<
   StackNavigatorProps<CustomImageNavigatorParamList, ScreenName.CustomImagePreviewPostEdit>
@@ -31,8 +29,6 @@ const PreviewPostEdit = ({ navigation, route }: NavigationProps) => {
   const { t } = useTranslation();
   const { params } = route;
   const { baseImageFile, imagePreview, imageData, device, imageType, deviceModelId } = params;
-  const { colors } = useTheme();
-  const theme = colors.type as "light" | "dark";
 
   const handleError = useCallback(
     (error: Error) => {
@@ -94,11 +90,11 @@ const PreviewPostEdit = ({ navigation, route }: NavigationProps) => {
               onError={handlePreviewImageError}
               fadeDuration={0}
               source={{ uri: imagePreview?.imageBase64DataUri }}
-              framedPictureConfig={getFramedPictureConfig("preview", deviceModelId, theme)}
+              deviceModelId={deviceModelId}
             />
           </Flex>
         </Flex>
-        <Flex pb={8} px={8}>
+        <Flex pb={8} px={6}>
           <Button
             type="main"
             size="large"

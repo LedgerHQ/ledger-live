@@ -40,11 +40,7 @@ export type SettingsNavigatorStackParamList = {
     | undefined;
   [ScreenName.DebugConnectivity]: undefined;
   [ScreenName.DebugGenerators]: undefined;
-  [ScreenName.DebugMockGenerateAccounts]:
-    | {
-        withNft?: boolean;
-      }
-    | undefined;
+  [ScreenName.DebugMockGenerateAccounts]: undefined;
 
   [ScreenName.DebugNetwork]: undefined;
   [ScreenName.DebugCommandSender]: {

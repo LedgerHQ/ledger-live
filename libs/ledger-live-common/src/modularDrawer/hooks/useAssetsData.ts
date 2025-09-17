@@ -24,6 +24,7 @@ export function useAssetsData({
   areCurrenciesFiltered,
   product,
   version,
+  isStaging,
 }: {
   search?: string;
   currencyIds?: string[];
@@ -31,15 +32,26 @@ export function useAssetsData({
   areCurrenciesFiltered?: boolean;
   product: "llm" | "lld";
   version: string;
+  isStaging?: boolean;
 }) {
-  const { data, isLoading, error, fetchNextPage, isSuccess, refetch } =
-    useGetAssetsDataInfiniteQuery({
-      search,
-      useCase,
-      currencyIds: areCurrenciesFiltered ? currencyIds : undefined,
-      product,
-      version,
-    });
+  const {
+    data,
+    isLoading,
+    error,
+    fetchNextPage,
+    isSuccess,
+    refetch,
+    isFetching,
+    isError,
+    isFetchingNextPage,
+  } = useGetAssetsDataInfiniteQuery({
+    search,
+    useCase,
+    currencyIds: areCurrenciesFiltered ? currencyIds : undefined,
+    product,
+    version,
+    isStaging,
+  });
 
   const joinedPages = useMemo(() => {
     return data?.pages.reduce<AssetsDataWithPagination>((acc, page) => {
@@ -62,12 +74,15 @@ export function useAssetsData({
 
   const hasMore = Boolean(joinedPages?.pagination.nextCursor);
 
+  const isInitialLoading = isLoading || (isFetching && !isFetchingNextPage);
+
   return {
     data: joinedPages,
-    isLoading,
+    isLoading: isInitialLoading,
     error,
     loadNext: hasMore ? fetchNextPage : undefined,
     isSuccess,
+    isError,
     refetch,
   };
 }

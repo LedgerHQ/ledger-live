@@ -6,7 +6,6 @@ import {
   assetsCardsSelector,
   categoriesCardsSelector,
   mobileCardsSelector,
-  learnCardsSelector,
   notificationsCardsSelector,
   walletCardsSelector,
   landingPageStickyCtaCardsSelector,
@@ -27,7 +26,6 @@ const useDynamicContent = () => {
   const notificationCards = useSelector(notificationsCardsSelector);
   const assetsCards = useSelector(assetsCardsSelector);
   const walletCards = useSelector(walletCardsSelector);
-  const learnCards = useSelector(learnCardsSelector);
   const categoriesCards = useSelector(categoriesCardsSelector);
   const landingPageStickyCtaCards = useSelector(landingPageStickyCtaCardsSelector);
   const mobileCards = useSelector(mobileCardsSelector);
@@ -104,7 +102,6 @@ const useDynamicContent = () => {
     walletCardsDisplayed,
     isAWalletCardDisplayed,
     assetsCards,
-    learnCards,
     categoriesCards,
     mobileCards,
     getAssetCardByIdOrTicker,

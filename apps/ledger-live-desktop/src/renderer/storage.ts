@@ -20,7 +20,7 @@ import { DataModel } from "@ledgerhq/live-common/DataModel";
 import { Announcement } from "@ledgerhq/live-common/notifications/AnnouncementProvider/types";
 import { CounterValuesStatus, RateMapRaw } from "@ledgerhq/live-countervalues/types";
 import { hubStateSelector } from "@ledgerhq/live-common/postOnboarding/reducer";
-import { settingsExportSelector } from "./reducers/settings";
+import { settingsStoreSelector } from "./reducers/settings";
 import logger from "./logger";
 import { trustchainStoreSelector } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { marketStoreSelector } from "./reducers/market";
@@ -41,7 +41,7 @@ export type Countervalues = Record<string, CounterValuesStatus | RateMapRaw> & {
 
 export type PostOnboarding = ReturnType<typeof hubStateSelector>;
 
-export type Settings = ReturnType<typeof settingsExportSelector>;
+export type Settings = ReturnType<typeof settingsStoreSelector>;
 export type Market = ReturnType<typeof marketStoreSelector>;
 
 export type TrustchainStore = ReturnType<typeof trustchainStoreSelector>;
@@ -190,8 +190,6 @@ export const resetAll = () => ipcRenderer.invoke("resetAll");
 export const reload = () => ipcRenderer.invoke("reload");
 
 export const cleanCache = () => ipcRenderer.invoke("cleanCache");
-
-export const clearStorageData = () => ipcRenderer.invoke("clearStorageData");
 
 export const saveLSS = async (lssConfig: SatStackConfig) => {
   const configStub = {

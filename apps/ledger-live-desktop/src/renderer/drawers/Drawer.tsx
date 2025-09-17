@@ -40,7 +40,7 @@ const Bar = styled.div.attrs<{ state: TransitionStatus; withPaddingTop: boolean 
   overflow-x: hidden;
   overflow-y: auto;
 `;
-export const Drawer = () => {
+const Drawer = () => {
   const { state, setDrawer } = useContext(context);
   const [queue, setQueue] = useState<State[]>([]);
   useEffect(() => {

@@ -162,11 +162,6 @@ const envDefinitions = {
     def: "https://kaspa.coin.ledger.com",
     desc: "Kaspa API url",
   },
-  API_KASPA_TESTNET_ENDPOINT: {
-    parser: stringParser,
-    def: "https://kaspa.coin.ledger-test.com",
-    desc: "Kaspa testnet API url",
-  },
   API_STELLAR_HORIZON: {
     parser: stringParser,
     def: "https://stellar.coin.ledger.com",
@@ -326,6 +321,11 @@ const envDefinitions = {
     parser: stringParser,
     def: "https://tracker.berlin.icon.community/api/v1",
     desc: "ICON Berlin Testnet API url",
+  },
+  CANTON_API_KEY: {
+    def: "",
+    parser: stringParser,
+    desc: "API key for Canton network gateway authentication",
   },
   COINAPPS: {
     def: "",

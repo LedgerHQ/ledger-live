@@ -7,31 +7,49 @@ import type { AssetSelectionNavigationProps } from "../../AssetSelection/types";
 import { useDispatch } from "react-redux";
 import { setStep } from "~/reducers/modularDrawer";
 import { ModularDrawerStep } from "../types";
+import { AccountLike, Account } from "@ledgerhq/types-live";
 
 type UseDeviceNavigationParams = {
   onClose?: () => void;
   resetSelection: () => void;
+  onAccountSelected?: (account: AccountLike) => void;
 };
 
-export function useDeviceNavigation({ onClose, resetSelection }: UseDeviceNavigationParams) {
+export function useDeviceNavigation({
+  onClose,
+  resetSelection,
+  onAccountSelected,
+}: UseDeviceNavigationParams) {
   const navigation = useNavigation<AssetSelectionNavigationProps["navigation"]>();
   const dispatch = useDispatch();
+
+  const onSuccess = useCallback(
+    (res?: { scannedAccounts: Account[]; selected: Account[] }) => {
+      const newAccount = res?.selected && res.selected.length > 0 ? res.selected[0] : undefined;
+      if (newAccount) {
+        onAccountSelected?.(newAccount);
+      }
+    },
+    [onAccountSelected],
+  );
 
   const navigateToDevice = useCallback(
     (selectedAsset: CryptoCurrency, createTokenAccount?: boolean) => {
       onClose?.();
       resetSelection();
-      dispatch(setStep(ModularDrawerStep.Asset));
       navigation.navigate(NavigatorName.DeviceSelection, {
         screen: ScreenName.SelectDevice,
         params: {
           currency: selectedAsset,
           createTokenAccount,
           context: AddAccountContexts.AddAccounts,
+          inline: Boolean(onAccountSelected),
+          onSuccess,
         },
       });
+      dispatch(setStep(ModularDrawerStep.Asset));
     },
-    [onClose, resetSelection, dispatch, navigation],
+    [onClose, resetSelection, dispatch, navigation, onAccountSelected, onSuccess],
   );
 
   const navigateToDeviceWithCurrency = useCallback(

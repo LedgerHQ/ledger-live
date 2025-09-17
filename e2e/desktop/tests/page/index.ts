@@ -15,8 +15,6 @@ import { LockscreenPage } from "./lockscreen.page";
 import { MarketPage } from "./market.page";
 import { Modal } from "../component/modal.component";
 import { ModularDrawer } from "./drawer/modular.drawer";
-import { NFTDrawer } from "./drawer/nft.drawer";
-import { NftGallery } from "./nftGallery.page";
 import { OnboardingPage } from "./onboarding.page";
 import { OperationDrawer } from "./drawer/operation.drawer";
 import { PageHolder } from "./abstractClasses";
@@ -50,8 +48,6 @@ export class Application extends PageHolder {
   public market = new MarketPage(this.page);
   public modal = new Modal(this.page);
   public modularDrawer = new ModularDrawer(this.page);
-  public nftDrawer = new NFTDrawer(this.page);
-  public nftGallery = new NftGallery(this.page);
   public onboarding = new OnboardingPage(this.page);
   public operationDrawer = new OperationDrawer(this.page);
   public password = new PasswordlockModal(this.page);

@@ -20,7 +20,6 @@
       "lastUsedVersion": "2.58.0",
       "dismissedBanners": [],
       "accountsViewMode": "list",
-      "nftsViewMode": "list",
       "showAccountsHelperBanner": true,
       "hideEmptyTokenAccounts": false,
       "filterTokenOperationsZeroAmount": true,
@@ -84,7 +83,6 @@
       },
       "latestFirmware": null,
       "blacklistedTokenIds": [],
-      "hiddenNftCollections": [],
       "deepLinkUrl": null,
       "firstTimeLend": false,
       "showClearCacheBanner": false,
@@ -320,27 +318,7 @@
               "fee": "1038500200135436",
               "transactionSequenceNumber": 50,
               "internalOperations": [],
-              "nftOperations": [
-                {
-                  "id": "js:2:ethereum:0xFF3180Dc9091FAb7De56c440f86eCdE1a76bfCfd:+0x495f947276749Ce646f68AC8c248420045cb7b5e+84515818763780569472559676924467268083364803154412842755684042359010886680577+ethereum-0xed191ef5e44355e94f7a2175079e09d24f028ab081b4e460ea4c72da55e60007-NFT_IN-i0_0",
-                  "hash": "0xed191ef5e44355e94f7a2175079e09d24f028ab081b4e460ea4c72da55e60007",
-                  "type": "NFT_IN",
-                  "senders": ["0xA31bE4B29bff3A8Ac81f9d368BFa8B00EBFfA06b"],
-                  "recipients": ["0xFF3180Dc9091FAb7De56c440f86eCdE1a76bfCfd"],
-                  "accountId": "js:2:ethereum:0xFF3180Dc9091FAb7De56c440f86eCdE1a76bfCfd:",
-                  "blockHash": "0xc09c649fd6b863832f693289b0af2437a6781cb0f77b2c6c215c8a3c3bed620b",
-                  "blockHeight": 15119760,
-                  "extra": {},
-                  "date": "2022-07-11T06:31:18.000Z",
-                  "value": "1",
-                  "fee": "1038500200135436",
-                  "contract": "0x495f947276749Ce646f68AC8c248420045cb7b5e",
-                  "operator": "0xA31bE4B29bff3A8Ac81f9d368BFa8B00EBFfA06b",
-                  "standard": "ERC1155",
-                  "tokenId": "84515818763780569472559676924467268083364803154412842755684042359010886680577",
-                  "transactionSequenceNumber": 50
-                }
-              ]
+              "nftOperations": []
             },
             {
               "id": "js:2:ethereum:0xFF3180Dc9091FAb7De56c440f86eCdE1a76bfCfd:-0x2d05d0cdbb954af4bd121592de0f768b1d2bb3526bcccf58baa92c5ba0848fd5-OUT",
@@ -375,26 +353,7 @@
               "fee": "3751646285849900",
               "transactionSequenceNumber": 3,
               "internalOperations": [],
-              "nftOperations": [
-                {
-                  "id": "js:2:ethereum:0xFF3180Dc9091FAb7De56c440f86eCdE1a76bfCfd:+0xc9154424b823b10579895ccbe442d41b9abd96ed+47857334576860951009254391845482212727974395370802630152667560842701427441665+ethereum-0xf12700c24d9480e07cd7c1e7f04fae21c3f08660700ca192f5892318b7fa00cb-NFT_IN",
-                  "hash": "0xf12700c24d9480e07cd7c1e7f04fae21c3f08660700ca192f5892318b7fa00cb",
-                  "type": "NFT_IN",
-                  "senders": ["0x69Ce4A9dae1375902F5362b241387EF4C9f5DeF8"],
-                  "recipients": ["0xFF3180Dc9091FAb7De56c440f86eCdE1a76bfCfd"],
-                  "accountId": "js:2:ethereum:0xFF3180Dc9091FAb7De56c440f86eCdE1a76bfCfd:",
-                  "blockHash": "0xca491e0fd74bada04829e02fcd104c6fdbc125fa9bf7cd59b260cc5b14d19c73",
-                  "blockHeight": 15056535,
-                  "extra": {},
-                  "date": "2022-07-01T12:10:19.000Z",
-                  "value": "1",
-                  "fee": "3751646285849900",
-                  "contract": "0xc9154424B823b10579895cCBE442d41b9Abd96Ed",
-                  "standard": "ERC721",
-                  "tokenId": "47857334576860951009254391845482212727974395370802630152667560842701427441665",
-                  "transactionSequenceNumber": 3
-                }
-              ]
+              "nftOperations": []
             },
             {
               "id": "js:2:ethereum:0xFF3180Dc9091FAb7De56c440f86eCdE1a76bfCfd:-0x7c08ad3d9e1cd907e2b6da43917eb35c14d5dfc74a19f7cd666e92c1b0be9efa-OUT",
@@ -429,27 +388,7 @@
               "fee": "2257276918647360",
               "transactionSequenceNumber": 14,
               "internalOperations": [],
-              "nftOperations": [
-                {
-                  "id": "js:2:ethereum:0xFF3180Dc9091FAb7De56c440f86eCdE1a76bfCfd:+0x495f947276749Ce646f68AC8c248420045cb7b5e+84515818763780569472559676924467268083364803154412842755684042364508444840456+ethereum-0x2a691faf5bbeccebdefb7b5859ed94e2eb0f791e3f8071be5309f61d7a3496e4-NFT_IN-i0_0",
-                  "hash": "0x2a691faf5bbeccebdefb7b5859ed94e2eb0f791e3f8071be5309f61d7a3496e4",
-                  "type": "NFT_IN",
-                  "senders": ["0xbAdA421bE3D5E77497D72B71E9336934eb3C571F"],
-                  "recipients": ["0xFF3180Dc9091FAb7De56c440f86eCdE1a76bfCfd"],
-                  "accountId": "js:2:ethereum:0xFF3180Dc9091FAb7De56c440f86eCdE1a76bfCfd:",
-                  "blockHash": "0x979072294dd693bc982c80164cfbcc527b9546448735cd96ba4817022a172630",
-                  "blockHeight": 15030235,
-                  "extra": {},
-                  "date": "2022-06-26T18:14:54.000Z",
-                  "value": "10",
-                  "fee": "2257276918647360",
-                  "contract": "0x495f947276749Ce646f68AC8c248420045cb7b5e",
-                  "operator": "0xbAdA421bE3D5E77497D72B71E9336934eb3C571F",
-                  "standard": "ERC1155",
-                  "tokenId": "84515818763780569472559676924467268083364803154412842755684042364508444840456",
-                  "transactionSequenceNumber": 14
-                }
-              ]
+              "nftOperations": []
             },
             {
               "id": "js:2:ethereum:0xFF3180Dc9091FAb7De56c440f86eCdE1a76bfCfd:-0x50e768f8d9f1a13b8cff6d484978bb5bfe43cdeb4ecaa33f1294e8b148efab51-NONE",
@@ -466,27 +405,7 @@
               "fee": "3681867641362992",
               "transactionSequenceNumber": 7,
               "internalOperations": [],
-              "nftOperations": [
-                {
-                  "id": "js:2:ethereum:0xFF3180Dc9091FAb7De56c440f86eCdE1a76bfCfd:+0x495f947276749Ce646f68AC8c248420045cb7b5e+84515818763780569472559676924467268083364803154412842755684042363408933191681+ethereum-0x50e768f8d9f1a13b8cff6d484978bb5bfe43cdeb4ecaa33f1294e8b148efab51-NFT_IN-i0_0",
-                  "hash": "0x50e768f8d9f1a13b8cff6d484978bb5bfe43cdeb4ecaa33f1294e8b148efab51",
-                  "type": "NFT_IN",
-                  "senders": ["0xbAdA421bE3D5E77497D72B71E9336934eb3C571F"],
-                  "recipients": ["0xFF3180Dc9091FAb7De56c440f86eCdE1a76bfCfd"],
-                  "accountId": "js:2:ethereum:0xFF3180Dc9091FAb7De56c440f86eCdE1a76bfCfd:",
-                  "blockHash": "0xc54d5c0be537d7e1c06584be708ea4a008cfb73ba62be35ee2ea8a574e511657",
-                  "blockHeight": 15028768,
-                  "extra": {},
-                  "date": "2022-06-26T11:30:41.000Z",
-                  "value": "1",
-                  "fee": "3681867641362992",
-                  "contract": "0x495f947276749Ce646f68AC8c248420045cb7b5e",
-                  "operator": "0xbAdA421bE3D5E77497D72B71E9336934eb3C571F",
-                  "standard": "ERC1155",
-                  "tokenId": "84515818763780569472559676924467268083364803154412842755684042363408933191681",
-                  "transactionSequenceNumber": 7
-                }
-              ]
+              "nftOperations": []
             },
             {
               "id": "js:2:ethereum:0xFF3180Dc9091FAb7De56c440f86eCdE1a76bfCfd:-0x66255800b9a7b1a2c5ca85166d537122ea6b1d10492be1e3b3ccce4f8611957f-OUT",
@@ -530,40 +449,7 @@
           "lastSyncDate": "2023-05-19T14:05:00.610Z",
           "balance": "578778775722000",
           "spendableBalance": "578778775722000",
-          "nfts": [
-            {
-              "id": "js:2:ethereum:0xFF3180Dc9091FAb7De56c440f86eCdE1a76bfCfd:+0x495f947276749Ce646f68AC8c248420045cb7b5e+84515818763780569472559676924467268083364803154412842755684042359010886680577+ethereum",
-              "tokenId": "84515818763780569472559676924467268083364803154412842755684042359010886680577",
-              "amount": "1",
-              "contract": "0x495f947276749Ce646f68AC8c248420045cb7b5e",
-              "standard": "ERC1155",
-              "currencyId": "ethereum"
-            },
-            {
-              "id": "js:2:ethereum:0xFF3180Dc9091FAb7De56c440f86eCdE1a76bfCfd:+0xc9154424B823b10579895cCBE442d41b9Abd96Ed+47857334576860951009254391845482212727974395370802630152667560842701427441665+ethereum",
-              "tokenId": "47857334576860951009254391845482212727974395370802630152667560842701427441665",
-              "amount": "1",
-              "contract": "0xc9154424B823b10579895cCBE442d41b9Abd96Ed",
-              "standard": "ERC721",
-              "currencyId": "ethereum"
-            },
-            {
-              "id": "js:2:ethereum:0xFF3180Dc9091FAb7De56c440f86eCdE1a76bfCfd:+0x495f947276749Ce646f68AC8c248420045cb7b5e+84515818763780569472559676924467268083364803154412842755684042364508444840456+ethereum",
-              "tokenId": "84515818763780569472559676924467268083364803154412842755684042364508444840456",
-              "amount": "10",
-              "contract": "0x495f947276749Ce646f68AC8c248420045cb7b5e",
-              "standard": "ERC1155",
-              "currencyId": "ethereum"
-            },
-            {
-              "id": "js:2:ethereum:0xFF3180Dc9091FAb7De56c440f86eCdE1a76bfCfd:+0x495f947276749Ce646f68AC8c248420045cb7b5e+84515818763780569472559676924467268083364803154412842755684042363408933191681+ethereum",
-              "tokenId": "84515818763780569472559676924467268083364803154412842755684042363408933191681",
-              "amount": "1",
-              "contract": "0x495f947276749Ce646f68AC8c248420045cb7b5e",
-              "standard": "ERC1155",
-              "currencyId": "ethereum"
-            }
-          ],
+          "nfts": [],
           "balanceHistoryCache": {
             "HOUR": {
               "balances": [

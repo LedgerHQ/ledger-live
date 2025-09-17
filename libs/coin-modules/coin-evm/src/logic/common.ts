@@ -1,7 +1,20 @@
+import BigNumber from "bignumber.js";
 import { ethers } from "ethers";
-import { FeeEstimation } from "@ledgerhq/coin-framework/api/types";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import type {
+  FeeEstimation,
+  MemoNotSupported,
+  TransactionIntent,
+} from "@ledgerhq/coin-framework/api/index";
 import ERC20ABI from "../abis/erc20.abi.json";
-import { ApiFeeData, ApiGasOptions, TransactionTypes } from "../types";
+import {
+  ApiFeeData,
+  ApiGasOptions,
+  isNative,
+  TransactionTypes,
+  TransactionLikeWithPreparedParams,
+} from "../types";
+import { getNodeApi } from "../network/node";
 
 export function isApiGasOptions(options: unknown): options is ApiGasOptions {
   if (!options || typeof options !== "object") return false;
@@ -63,8 +76,48 @@ export function getTransactionType(intentType: string): TransactionTypes {
   return intentType === "send-legacy" ? TransactionTypes.legacy : TransactionTypes.eip1559;
 }
 
+export function isEip55Address(address: string): boolean {
+  try {
+    return address === ethers.getAddress(address);
+  } catch {
+    return false;
+  }
+}
+
 export function getErc20Data(recipient: string, amount: bigint): Buffer {
   const contract = new ethers.Interface(ERC20ABI);
   const data = contract.encodeFunctionData("transfer", [recipient, amount]);
   return Buffer.from(data.slice(2), "hex");
+}
+
+export async function prepareUnsignedTxParams(
+  currency: CryptoCurrency,
+  transactionIntent: TransactionIntent<MemoNotSupported>,
+): Promise<TransactionLikeWithPreparedParams> {
+  const { amount, asset, recipient, sender, type } = transactionIntent;
+  const transactionType = getTransactionType(type);
+  const node = getNodeApi(currency);
+
+  const to = isNative(asset) ? recipient : (asset.assetReference as string);
+  const data = isNative(asset) ? Buffer.from([]) : getErc20Data(recipient, amount);
+  const value = isNative(asset) ? amount : 0n;
+
+  const gasLimit = await node.getGasEstimation(
+    { currency, freshAddress: sender },
+    { amount: BigNumber(value.toString()), recipient: to, data },
+  );
+
+  const feeData = await node.getFeeData(currency, {
+    type: transactionType,
+    feesStrategy: transactionIntent.feesStrategy,
+  });
+
+  return {
+    type: transactionType,
+    to,
+    data: "0x" + data.toString("hex"),
+    value,
+    gasLimit,
+    feeData,
+  };
 }

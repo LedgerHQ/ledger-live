@@ -23,7 +23,7 @@ export class SettingsPage extends AppPage {
     "[data-testid='setting-countervalue-dropDown'] .select__value-container",
   );
   private counterValueSearchBar = this.page.locator('[placeholder="Search"]');
-  private counterValueropdownChoiceEuro = this.page.locator(".select__option");
+  private counterValueDropdownChoiceEuro = this.page.locator(".select__option");
   readonly languageSelector = this.page.locator(
     "[data-testid='setting-language-dropDown'] .select__value-container",
   );
@@ -56,7 +56,7 @@ export class SettingsPage extends AppPage {
   async changeCounterValue(currency: string) {
     await this.counterValueSelector.click();
     await this.counterValueSearchBar.fill(currency);
-    await this.counterValueropdownChoiceEuro.click();
+    await this.counterValueDropdownChoiceEuro.click();
   }
 
   @step("Expect counter value to be $0")

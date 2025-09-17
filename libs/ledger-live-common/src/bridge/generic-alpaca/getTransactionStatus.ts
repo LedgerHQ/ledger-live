@@ -1,27 +1,17 @@
-import { AccountBridge, TransactionCommon } from "@ledgerhq/types-live";
+import { AccountBridge } from "@ledgerhq/types-live";
 import { AccountAwaitingSendPendingOperations } from "@ledgerhq/errors";
 import BigNumber from "bignumber.js";
 import { getAlpacaApi } from "./alpaca";
 import { transactionToIntent } from "./utils";
+import { GenericTransaction } from "./types";
 
 // => alpaca validateIntent
 export function genericGetTransactionStatus(
   network,
   kind,
 ): AccountBridge<any>["getTransactionStatus"] {
-  return async (
-    account,
-    transaction: TransactionCommon & {
-      fees: BigNumber | null | undefined;
-      assetReference?: string;
-      assetOwner?: string;
-      mode?: string;
-      subAccountId?: string;
-      memoType?: string;
-      memoValue?: string;
-    },
-  ) => {
-    const alpacaApi = getAlpacaApi(network, kind);
+  return async (account, transaction: GenericTransaction) => {
+    const alpacaApi = getAlpacaApi(account.currency.id, kind);
     const draftTransaction = {
       mode: transaction?.mode,
       recipient: transaction.recipient,
@@ -32,6 +22,7 @@ export function genericGetTransactionStatus(
       subAccountId: transaction.subAccountId || "",
       memoType: transaction.memoType || "",
       memoValue: transaction.memoValue || "",
+      family: transaction.family,
     };
 
     if (alpacaApi.getChainSpecificRules) {

@@ -14,6 +14,7 @@ export default class ReceivePage {
   networkBasedStep2HeaderTitleId = "addAccounts-header-step2-title";
   receivePageScrollViewId = "receive-screen-scrollView";
   receiveConnectDeviceHeaderId = "receive-connect-device-header";
+  selectCryptoScrollViewId = "select-crypto-scrollView";
 
   currencyRowId = (t: string) => `big-currency-row-${t}`;
   currencyNameId = (t: string) => `big-currency-name-${t}`;
@@ -54,7 +55,7 @@ export default class ReceivePage {
   async selectCurrency(currencyName: string): Promise<void> {
     const id = this.currencyNameId(currencyName.toLowerCase());
     if (!(await IsIdVisible(id))) {
-      await scrollToId(id);
+      await scrollToId(id, this.selectCryptoScrollViewId);
     }
     await tapById(id);
   }

@@ -1,6 +1,7 @@
-const chalk = require("chalk");
+import chalk from "chalk";
+import dotenv from "dotenv";
 
-require("dotenv").config();
+dotenv.config();
 
 let execa;
 
@@ -17,9 +18,8 @@ async function azureSign(filePath) {
     );
   }
 
-  await import("execa").then(mod => {
-    execa = mod.execa;
-  });
+  const { execa: execaFn } = await import("execa");
+  execa = execaFn;
 
   info(`Signing ${filePath}`);
 
@@ -37,6 +37,8 @@ async function azureSign(filePath) {
     AZURE_SECRET,
     "-kvc",
     AZURE_KEY_NAME,
+    "-fd",
+    "sha256",
     "-v",
     "-tr",
     "http://timestamp.digicert.com",
@@ -47,9 +49,14 @@ async function azureSign(filePath) {
 }
 
 async function signWindows(context) {
-  const filePath = context.path;
+  // Skip signing in CI or when explicitly disabled
+  if (process.env.SKIP_SIGNING === "true") {
+    info("Windows signing skipped (SKIP_SIGNING=true)");
+    return;
+  }
 
+  const filePath = context.path;
   await azureSign(filePath);
 }
 
-exports.default = signWindows;
+export default signWindows;

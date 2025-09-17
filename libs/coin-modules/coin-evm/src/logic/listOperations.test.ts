@@ -160,7 +160,7 @@ describe("listOperations", () => {
             fees: 20n,
             date: new Date("2025-02-20"),
           },
-          details: { ledgerOpType: "OUT", assetAmount: 1n },
+          details: { ledgerOpType: "OUT", assetAmount: "1" },
         },
         {
           id: "token-op-2",
@@ -183,7 +183,7 @@ describe("listOperations", () => {
             fees: 20n,
           },
           details: {
-            assetAmount: 2n,
+            assetAmount: "2",
             ledgerOpType: "IN",
           },
         },

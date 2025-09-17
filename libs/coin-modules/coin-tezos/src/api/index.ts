@@ -99,7 +99,6 @@ async function craft(
 
 async function estimate(transactionIntent: TransactionIntent): Promise<TezosFeeEstimation> {
   const senderAccountInfo = await api.getAccountByAddress(transactionIntent.sender);
-  if (senderAccountInfo.type !== "user") throw new Error("unexpected account type");
 
   const {
     estimatedFees: value,
@@ -109,10 +108,12 @@ async function estimate(transactionIntent: TransactionIntent): Promise<TezosFeeE
   } = await estimateFees({
     account: {
       address: transactionIntent.sender,
-      revealed: senderAccountInfo.revealed,
-      balance: BigInt(senderAccountInfo.balance),
+      revealed: senderAccountInfo.type === "user" && senderAccountInfo.revealed,
+      balance: BigInt(senderAccountInfo.type === "user" ? senderAccountInfo.balance : 0),
       // NOTE: previously we checked for .sender.xpub
-      xpub: transactionIntent.senderPublicKey ?? senderAccountInfo.publicKey,
+      xpub:
+        transactionIntent.senderPublicKey ??
+        (senderAccountInfo.type === "user" ? senderAccountInfo.publicKey : undefined),
     },
     transaction: {
       mode: transactionIntent.type as TezosOperationMode,

@@ -96,6 +96,7 @@ export const CURRENCY_DEFAULT_FEATURES = {
   currencyBerachain: DEFAULT_FEATURE,
   currencyHyperevm: DEFAULT_FEATURE,
   currencyCantonNetwork: DEFAULT_FEATURE,
+  currencyKaspa: DEFAULT_FEATURE,
 };
 
 /**
@@ -103,7 +104,6 @@ export const CURRENCY_DEFAULT_FEATURES = {
  */
 export const DEFAULT_FEATURES: Features = {
   ...CURRENCY_DEFAULT_FEATURES,
-  brazeLearn: DEFAULT_FEATURE,
   portfolioExchangeBanner: DEFAULT_FEATURE,
   postOnboardingAssetsTransfer: DEFAULT_FEATURE,
   counterValue: DEFAULT_FEATURE,
@@ -522,7 +522,6 @@ export const DEFAULT_FEATURES: Features = {
   llmMarketQuickActions: DEFAULT_FEATURE,
   spamFilteringTx: DEFAULT_FEATURE,
   lldSpamFilteringTx: DEFAULT_FEATURE,
-  llmSpamFilteringTx: DEFAULT_FEATURE,
   llmMemoTag: DEFAULT_FEATURE,
   lldMemoTag: DEFAULT_FEATURE,
   ldmkTransport: {
@@ -622,6 +621,8 @@ export const DEFAULT_FEATURES: Features = {
       receive_flow: true,
       send_flow: true,
       enableModularization: false,
+      searchDebounceTime: 500,
+      backendEnvironment: "PROD",
     },
   },
   llmModularDrawer: {
@@ -634,6 +635,8 @@ export const DEFAULT_FEATURES: Features = {
       receive_flow: true,
       send_flow: true,
       enableModularization: false,
+      searchDebounceTime: 500,
+      backendEnvironment: "PROD",
     },
   },
   llNftSupport: DEFAULT_FEATURE,

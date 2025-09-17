@@ -2,38 +2,42 @@ import {
   AlpacaApi,
   Block,
   BlockInfo,
-  CraftedTransaction,
   Cursor,
   FeeEstimation,
   Page,
   Reward,
   Stake,
   TransactionIntent,
+  Operation,
+  Balance,
+  Pagination,
 } from "@ledgerhq/coin-framework/api/index";
 import coinConfig, { type CantonConfig } from "../config";
-import {
-  broadcast,
-  combine,
-  craftTransaction,
-  estimateFees,
-  getBalance,
-  getNextValidSequence,
-  lastBlock,
-  listOperations,
-} from "../common-logic";
-import BigNumber from "bignumber.js";
+import { combine } from "../common-logic/transaction/combine";
 
 export function createApi(config: CantonConfig): AlpacaApi {
   coinConfig.setCoinConfig(() => ({ ...config, status: { type: "active" } }));
 
   return {
-    broadcast,
+    broadcast: (_tx: string): Promise<string> => {
+      throw new Error("broadcast is not supported");
+    },
     combine,
-    craftTransaction: craft,
-    estimateFees: estimate,
-    getBalance,
-    lastBlock,
-    listOperations,
+    craftTransaction(_transactionIntent: TransactionIntent, _customFees?: FeeEstimation) {
+      throw new Error("craftTransaction is not supported");
+    },
+    estimateFees(_transactionIntent: TransactionIntent): Promise<FeeEstimation> {
+      throw new Error("estimateFees is not supported");
+    },
+    getBalance(_address: string): Promise<Balance[]> {
+      throw new Error("getBalance is not supported");
+    },
+    lastBlock(): Promise<BlockInfo> {
+      throw new Error("listOperations is not supported");
+    },
+    listOperations(_address: string, _pagination: Pagination): Promise<[Operation[], string]> {
+      throw new Error("listOperations is not supported");
+    },
     getBlock(_height): Promise<Block> {
       throw new Error("getBlock is not supported");
     },
@@ -47,30 +51,4 @@ export function createApi(config: CantonConfig): AlpacaApi {
       throw new Error("getRewards is not supported");
     },
   };
-}
-
-async function craft(transactionIntent: TransactionIntent): Promise<CraftedTransaction> {
-  const nextSequenceNumber = await getNextValidSequence(transactionIntent.sender);
-  const tx = await craftTransaction(
-    { address: transactionIntent.sender, nextSequenceNumber },
-    {
-      recipient: transactionIntent.recipient,
-      amount: new BigNumber(transactionIntent.amount.toString()),
-    },
-  );
-  return { transaction: tx.serializedTransaction };
-}
-
-async function estimate(transactionIntent: TransactionIntent): Promise<FeeEstimation> {
-  const { serializedTransaction } = await craftTransaction(
-    { address: transactionIntent.sender },
-    {
-      recipient: transactionIntent.recipient,
-      amount: new BigNumber(transactionIntent.amount.toString()),
-    },
-  );
-
-  const value = await estimateFees(serializedTransaction);
-
-  return { value };
 }

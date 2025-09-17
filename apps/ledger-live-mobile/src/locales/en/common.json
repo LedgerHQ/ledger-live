@@ -49,6 +49,7 @@
     "transactionDate": "Transaction date",
     "outdated": "Outdated",
     "satPerByte": "sat/bytes",
+    "sompiPerByte": "sompi/bytes",
     "notAvailable": "Not available",
     "import": "Import",
     "bluetooth": "Bluetooth",
@@ -418,10 +419,6 @@
     "ETHAddressNonEIP": {
       "title": "Auto-verification not available: carefully verify the address.",
       "description": null
-    },
-    "EthAppNftNotSupported": {
-      "title": "Operation not available for this device",
-      "description": "Send NFT feature is only available for Nano X and Nano S+. Please visit our customer support platform to know how to send a NFT with a Nano S."
     },
     "Touch ID Error": {
       "title": "Biometric authentication failed",
@@ -925,9 +922,6 @@
     "TaprootNotActivated": {
       "title": "Taproot mainnet is not activated yet"
     },
-    "NotEnoughNftOwned": {
-      "title": "You have exceeded the number of available tokens"
-    },
     "generic": {
       "title": "{{message}}",
       "description": "Something went wrong. Please try again. If the problem persists, please save your logs using the button below and provide them to Ledger Support.",
@@ -1051,10 +1045,6 @@
     "ImageDownloadError": {
       "title": "Picture failed to download",
       "description": "Try again with a different picture."
-    },
-    "NFTMetadataLoadingError": {
-      "title": "NFT metadata loading issue",
-      "description": "Try again with a different NFT."
     },
     "ImageSizeLoadingError": {
       "title": "Failed to retrieve picture dimensions",
@@ -2692,9 +2682,7 @@
   "operations": {
     "types": {
       "IN": "Received",
-      "NFT_IN": "NFT Received",
       "OUT": "Sent",
-      "NFT_OUT": "NFT Sent",
       "CREATE": "Created",
       "REVEAL": "Revealed",
       "DELEGATE": "Delegated",
@@ -2799,11 +2787,7 @@
       "stakedAmount": "Staked amount",
       "accountCreationFee": "Account Creation Fee"
     },
-    "multipleAddresses": "Why multiple addresses?",
-    "tokenName": "Token Name",
-    "collectionContract": "Token Contract",
-    "tokenId": "Token (NFT) ID",
-    "quantity": "Quantity"
+    "multipleAddresses": "Why multiple addresses?"
   },
   "operationList": {
     "noOperations": "No Operations",
@@ -2972,10 +2956,6 @@
     },
     "undelegation": {
       "sectionLabel": "Undelegation(s)"
-    },
-    "nft": {
-      "receiveNft": "Receive NFT",
-      "howTo": "To add NFTs, you need to <0>receive them</0> using your <1>{{currency}} address</1>."
     },
     "readOnly": {
       "noTransaction": {
@@ -3186,11 +3166,6 @@
         "title": "Hide token",
         "desc": "This action will hide all <1><0>{tokenName}</0></1> accounts, you can show them again using <3>Settings > Accounts</3>.",
         "confirm": "Hide token"
-      },
-      "hideNFTCollectionCTA": "Hide collection",
-      "hideNFTCollectionModal": {
-        "title": "Hide Collection?",
-        "desc": "You can unhide this collection in the setting options."
       },
       "cryptoAssets": {
         "header": "Crypto assets",
@@ -3691,7 +3666,8 @@
         "empty": {
           "title": "Your previous swaps will appear here",
           "desc": "Either you have not made any swaps yet, or Ledger Live has been reset in the meantime."
-        }
+        },
+        "feedback": "Give your feedback"
       }
     },
     "swap2": {
@@ -4020,10 +3996,7 @@
       "summary": "Summary",
       "selectDevice": "Select device",
       "connectDevice": "Connect device",
-      "stepRange": "Step {{currentStep}} of {{totalSteps}}",
-      "quantity": "Quantity",
-      "selectCollection": "Collection",
-      "selectNft": "NFT"
+      "stepRange": "Step {{currentStep}} of {{totalSteps}}"
     },
     "recipient": {
       "scan": "Scan QR code",
@@ -7132,47 +7105,6 @@
       }
     }
   },
-  "nft": {
-    "account": {
-      "seeAllNfts": "See all NFT",
-      "seeFewerNfts": "See fewer NFT"
-    },
-    "gallery": {
-      "allNft": "All NFT",
-      "addNew": "Add new"
-    },
-    "designedForStax": {
-      "title": "<0>Designed for</0><1>Ledger</1><2>Stax</2>",
-      "drawer": {
-        "description": "This NFT contains an additional picture of the NFT, specifically designed for Ledger Stax's E\u00a0Ink\u00a0Screen.\n\nThis picture will be used when you set this NFT as your lock screen.",
-        "cta": "Got it"
-      }
-    },
-    "viewer": {
-      "properties": "Properties",
-      "description": "Description",
-      "tokenContract": "Token Address",
-      "tokenContractCopied": "Token Address copied !",
-      "tokenId": "Token ID",
-      "tokenIdCopied": "Token ID copied !",
-      "quantity": "Quantity",
-      "attributes": {
-        "floorPrice": "Floor Price"
-      }
-    },
-    "viewerModal": {
-      "viewOn": "View on",
-      "viewInExplorer": "View in explorer",
-      "hide": "Hide NFT collection",
-      "txDetails": "Transaction details"
-    },
-    "modalDisabled": {
-      "title": "Send function is not available on iOS",
-      "body": "In order to comply with Apple's recent updates on their App Store, sending NFTs is temporary unavailable. You can still use Ledger Live on Desktop to send NFTs.",
-      "learnMore": "Learn more",
-      "continue": "Got it!"
-    }
-  },
   "ApplicationVersion": "v{{version}}",
   "analytics": {
     "title": "Analytics",
@@ -7256,7 +7188,6 @@
     "drawer": {
       "options": {
         "uploadFromPhone": "Choose from my picture gallery",
-        "selectFromNFTGallery": "Choose from NFT gallery",
         "remove": "Remove current picture"
       }
     },
@@ -7287,9 +7218,6 @@
       "setPicture": "Set as lock screen",
       "editPicture": "Edit picture",
       "pickDeviceModel": "Choose a device"
-    },
-    "nftGallery": {
-      "title": "My NFTs"
     }
   },
   "postOnboarding": {
@@ -7334,50 +7262,7 @@
   "wallet": {
     "tabs": {
       "crypto": "Crypto",
-      "nft": "NFTs",
       "market": "Market"
-    },
-    "nftGallery": {
-      "filters": {
-        "select": "Select",
-        "filter": "Filter",
-        "blockchain": "Blockchain",
-        "seeAll": "See all",
-        "selectAndHide": "Select and hide",
-        "hide": "Hide {{count}} collection",
-        "hiddenCollections": "Hidden collections",
-        "hide_plural": "Hide {{count}} collections",
-        "empty": "No Hidden collections to show",
-        "alertHide": "1 collection hidden. You can unhide them at any time in the gallery filter.",
-        "alertHide_plural": "{{count}} collections hidden. You can unhide them at any time in the gallery filter."
-      },
-      "emptyFiltered": {
-        "title": "There are no NFTs that meet your criteria",
-        "button": "Reset Filters"
-      },
-      "empty": {
-        "title": "No NFT's to show yet",
-        "subtitle": "Get started by adding NFTs to your wallet.",
-        "receive": "Receive NFTs",
-        "supportLink": "How to get NFTs from other wallets?"
-      },
-      "receiveModal": {
-        "title": "Receive an NFT the same way as any other crypto",
-        "bullets": {
-          "0": "\u2022 Select the NFT’s crypto blockchain.",
-          "1": "\u2022 Choose the account to receive the NFT"
-        },
-        "cta": "OK, got it",
-        "info": "I’d like to learn more"
-      },
-      "hideNftModal": {
-        "title": "Hide NFT collection",
-        "desc": "This action will hide all NFTs from the {{collectionName}} collection, you can unhide them from the gallery filter",
-        "cta": "Hide this NFT"
-      },
-      "media": {
-        "tag": "{{count}} NFTs"
-      }
     },
     "referralProgram": "$20"
   },
@@ -8030,6 +7915,10 @@
     "signatureVerificationFail": {
       "title": "Signature verification failed",
       "description": "Please retry or contact Ledger Support if in doubt"
+    },
+    "transactionCannotBeCreated": {
+      "title": "Partner unavailable",
+      "description": "We cannot complete your swap with this partner. Please try with another one. Error code 8HBB{{errorCode}}"
     },
     "default": {
       "title": "Something went wrong",

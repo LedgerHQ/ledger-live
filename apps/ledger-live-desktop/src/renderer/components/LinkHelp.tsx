@@ -26,7 +26,7 @@ type Props = {
   Icon?: React.ComponentType<{ size?: number }>;
   style?: React.CSSProperties;
 }; // can add more dynamic options if needed
-export function LinkHelp({ onClick, label, children, iconSize = 12, Icon, style }: Props) {
+function LinkHelp({ onClick, label, children, iconSize = 12, Icon, style }: Props) {
   const I = Icon || IconHelp;
   return (
     <Wrapper onClick={onClick} style={style}>

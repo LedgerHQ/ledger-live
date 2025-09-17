@@ -322,6 +322,7 @@
     "**/fixtures/**"
   ],
   "ignoreUnimported": [
+    "src/bridge/generic-alpaca/signer/Eth.ts",
     "src/account/typeGuards.ts",
     "src/bot/specs.ts",
     "src/braze/anonymousUsers.ts",
@@ -403,6 +404,7 @@
     "src/families/canton/logic.ts",
     "src/families/canton/types.ts",
     "src/modularDrawer/data/entities/index.ts",
+    "src/modularDrawer/data/entities/selectorUtils.ts",
     "src/modularDrawer/data/entities/interestRateSelectors.ts",
     "src/modularDrawer/data/state-manager/api.ts",
     "src/modularDrawer/data/state-manager/types.ts",
@@ -418,7 +420,12 @@
     "src/modularDrawer/hooks/useRightBalanceAsset.tsx",
     "src/modularDrawer/hooks/useRightBalanceNetwork.tsx",
     "src/modularDrawer/hooks/useAssetAccountCounts.tsx",
+    "src/modularDrawer/hooks/useSearch.ts",
     "src/modularDrawer/hooks/useModularDrawerConfiguration.ts",
+    "src/modularDrawer/data/entities/marketSelectors.ts",
+    "src/modularDrawer/hooks/modules/useLeftMarketTrendModule.tsx",
+    "src/modularDrawer/hooks/modules/useRightMarketTrendModule.tsx",
+    "src/modularDrawer/hooks/useMarketByCurrencies.ts",
     "src/modularDrawer/modules/createAssetConfiguration.ts",
     "src/modularDrawer/modules/createNetworkConfiguration.ts",
     "src/modularDrawer/types.ts",
@@ -441,9 +448,12 @@
     "src/notifications/AnnouncementProvider/helpers.ts",
     "src/reactNativeSvg.d.ts",
     "src/rxjs/operators/throwIf.ts",
-    "src/walletSync/getEnvironmentParams.ts"
+    "src/walletSync/getEnvironmentParams.ts",
+    "src/families/kaspa/react.ts",
+    "src/families/kaspa/types.ts"
   ],
   "ignoreUnused": [
+    "ethers",
     "@dfinity/agent",
     "@ledgerhq/hw-app-eth",
     "@ledgerhq/hw-transport-mocker",

@@ -1,4 +1,3 @@
-import { LegacySignerEth } from "@ledgerhq/live-signer-evm";
 import { BigNumber } from "bignumber.js";
 import { ethers } from "ethers";
 import { Account } from "@ledgerhq/types-live";
@@ -8,15 +7,11 @@ import { Scenario, ScenarioTransaction } from "@ledgerhq/coin-tester/main";
 import { killSpeculos, spawnSpeculos } from "@ledgerhq/coin-tester/signers/speculos";
 import { resetIndexer, indexBlocks, initMswHandlers, setBlock } from "../indexer";
 import { Transaction as EvmTransaction } from "@ledgerhq/coin-evm/types/transaction";
-import { buildAccountBridge, buildCurrencyBridge } from "@ledgerhq/coin-evm/bridge/js";
 import { getCoinConfig, setCoinConfig } from "@ledgerhq/coin-evm/config";
 import { makeAccount } from "@ledgerhq/coin-evm/__tests__/fixtures/common.fixtures";
-import { VITALIK, callMyDealer, sonic } from "../helpers";
+import { VITALIK, callMyDealer, getBridges, sonic } from "../helpers";
 import { defaultNanoApp } from "../scenarii.test";
 import { killAnvil, spawnAnvil } from "../anvil";
-import resolver from "@ledgerhq/coin-evm/hw-getAddress";
-import { getAlpacaCurrencyBridge } from "@ledgerhq/live-common/bridge/generic-alpaca/currencyBridge";
-import { getAlpacaAccountBridge } from "@ledgerhq/live-common/bridge/generic-alpaca/accountBridge";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 
 type SonicScenarioTransaction = ScenarioTransaction<EvmTransaction, Account>;
@@ -79,9 +74,6 @@ export const scenarioSonic: Scenario<EvmTransaction, Account> = {
       spawnAnvil("https://sonic-rpc.publicnode.com"),
     ]);
 
-    const signerContext: Parameters<typeof resolver>[0] = (_, fn) =>
-      fn(new LegacySignerEth(transport));
-
     setCoinConfig(() => ({
       info: {
         status: {
@@ -121,15 +113,7 @@ export const scenarioSonic: Scenario<EvmTransaction, Account> = {
     initMswHandlers(getCoinConfig(sonic).info);
 
     const onSignerConfirmation = getOnSpeculosConfirmation();
-    const currencyBridge =
-      strategy === "legacy"
-        ? buildCurrencyBridge(signerContext)
-        : getAlpacaCurrencyBridge("sonic", "local");
-    const accountBridge =
-      strategy === "legacy"
-        ? buildAccountBridge(signerContext)
-        : getAlpacaAccountBridge("sonic", "local");
-    const getAddress = resolver(signerContext);
+    const { currencyBridge, accountBridge, getAddress } = getBridges(strategy, transport, "sonic");
     const { address } = await getAddress("", {
       path: "44'/60'/0'/0/0",
       currency: sonic,

@@ -1,0 +1,66 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`kaspa currency bridge scanAccounts kaspa seed 1 1`] = `
+[
+  {
+    "balance": "13370000",
+    "currencyId": "kaspa",
+    "derivationMode": "",
+    "freshAddress": "kaspa:qz49rpg0q6ywewxkwl76757ya79v6j556hcmrcy7mk9d36ewgp80cdrwlct2h",
+    "freshAddressPath": "44'/111111'/0'/0/1",
+    "id": "js:2:kaspa:41049d8002c08041d975ab58491c09cf8ced7b388a114ab2f5df73f2534d4d74d17ab8913b3cb3056bad63141cb63fb92e44401b691dee069dbdb2119861c18cc01b204340fcc305ab72e752cd347f4b6271ffe21da098d4f2a4749826857dda7a5576:",
+    "index": 0,
+    "operationsCount": 1,
+    "pendingOperations": [],
+    "seedIdentifier": "41049d8002c08041d975ab58491c09cf8ced7b388a114ab2f5df73f2534d4d74d17ab8913b3cb3056bad63141cb63fb92e44401b691dee069dbdb2119861c18cc01b204340fcc305ab72e752cd347f4b6271ffe21da098d4f2a4749826857dda7a5576",
+    "spendableBalance": "13370000",
+    "swapHistory": [],
+    "syncHash": undefined,
+    "used": true,
+    "xpub": "41049d8002c08041d975ab58491c09cf8ced7b388a114ab2f5df73f2534d4d74d17ab8913b3cb3056bad63141cb63fb92e44401b691dee069dbdb2119861c18cc01b204340fcc305ab72e752cd347f4b6271ffe21da098d4f2a4749826857dda7a5576",
+  },
+  {
+    "balance": "0",
+    "currencyId": "kaspa",
+    "derivationMode": "",
+    "freshAddress": "kaspa:qpncmme6ues25uk9umkqju4rtwtt33ud9lcrp7qn8jwv62m53m26jpjhar48j",
+    "freshAddressPath": "44'/111111'/1'/0/0",
+    "id": "js:2:kaspa:4104751b5ebd4a9d2a0a25d5c37cab4814a95335b8945cfcaa6a4138de418f581bb1d0d02f22081b3cda223a51e18a63ebdffd64803e0988b68a91802738a5a9f901206d4a2b989a82b5fb160f0151ea5d046451a291a0748f3038ecdc63d637cce00b:",
+    "index": 1,
+    "operationsCount": 0,
+    "pendingOperations": [],
+    "seedIdentifier": "41049d8002c08041d975ab58491c09cf8ced7b388a114ab2f5df73f2534d4d74d17ab8913b3cb3056bad63141cb63fb92e44401b691dee069dbdb2119861c18cc01b204340fcc305ab72e752cd347f4b6271ffe21da098d4f2a4749826857dda7a5576",
+    "spendableBalance": "0",
+    "swapHistory": [],
+    "syncHash": undefined,
+    "used": false,
+    "xpub": "4104751b5ebd4a9d2a0a25d5c37cab4814a95335b8945cfcaa6a4138de418f581bb1d0d02f22081b3cda223a51e18a63ebdffd64803e0988b68a91802738a5a9f901206d4a2b989a82b5fb160f0151ea5d046451a291a0748f3038ecdc63d637cce00b",
+  },
+]
+`;
+
+exports[`kaspa currency bridge scanAccounts kaspa seed 1 2`] = `
+[
+  [
+    {
+      "accountId": "js:2:kaspa:41049d8002c08041d975ab58491c09cf8ced7b388a114ab2f5df73f2534d4d74d17ab8913b3cb3056bad63141cb63fb92e44401b691dee069dbdb2119861c18cc01b204340fcc305ab72e752cd347f4b6271ffe21da098d4f2a4749826857dda7a5576:",
+      "blockHash": "12166d40313b71447d4dd837f2e91e749407b0a1c8844e9e9d010390a67d6b52",
+      "blockHeight": 194187672,
+      "extra": {},
+      "fee": "2069",
+      "hash": "ed6dc5422558c3480e6a7809bf166e6ba1f2931ef39f24fe9b3bcf48253e4752",
+      "id": "ed6dc5422558c3480e6a7809bf166e6ba1f2931ef39f24fe9b3bcf48253e4752",
+      "recipients": [
+        "kaspa:qzavrhr9eg0k7pgr8mysfej34alfy8uj6vc9r84kgqfkqd8rtgxm5t0jvah73",
+        "kaspa:qqt874j85r5ga5av0q6tthj2tu89dfpchjmvjuvx5tyn2vpjjrhk7tcpsx2vu",
+      ],
+      "senders": [
+        "kaspa:qqt874j85r5ga5av0q6tthj2tu89dfpchjmvjuvx5tyn2vpjjrhk7tcpsx2vu",
+      ],
+      "type": "IN",
+      "value": "13370000",
+    },
+  ],
+  [],
+]
+`;

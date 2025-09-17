@@ -10,6 +10,9 @@
   "bugs": {
     "url": "https://github.com/LedgerHQ/ledger-live/issues"
   },
+  "resolutions": {
+    "node-abi": "^4.9.0"
+  },
   "scripts": {
     "bump": "changeset version",
     "clean": "git clean -fdX",
@@ -86,6 +89,7 @@
     "coin:evm": "pnpm --filter coin-evm",
     "coin:filecoin": "pnpm --filter coin-filecoin",
     "coin:framework": "pnpm --filter coin-framework",
+    "coin:kaspa": "pnpm --filter coin-kaspa",
     "coin:tester": "pnpm --filter coin-tester",
     "coin:multiversx": "pnpm --filter coin-multiversx",
     "coin:near": "pnpm --filter coin-near",
@@ -125,8 +129,8 @@
     "config": "pnpm --filter live-config",
     "utils": "pnpm --filter live-utils",
     "hooks": "pnpm --filter live-hooks",
-    "trustchain": "pnpm --filter trustchain",
-    "hw-trustchain": "pnpm --filter hw-trustchain",
+    "lkrp": "pnpm --filter ledger-key-ring-protocol",
+    "hw-lkrp": "pnpm --filter hw-ledger-key-ring-protocol",
     "countervalues": "pnpm --filter live-countervalues",
     "countervalues-react": "pnpm --filter live-countervalues-react",
     "nft": "pnpm --filter live-nft",
@@ -149,6 +153,7 @@
     "ljs:hw-app-exchange": "pnpm --filter hw-app-exchange",
     "ljs:hw-app-hedera": "pnpm --filter hw-app-hedera",
     "ljs:hw-app-helium": "pnpm --filter hw-app-helium",
+    "ljs:hw-app-kaspa": "pnpm --filter hw-app-kaspa",
     "ljs:hw-app-multiversx": "pnpm --filter hw-app-multiversx",
     "ljs:hw-app-near": "pnpm --filter hw-app-near",
     "ljs:hw-app-polkadot": "pnpm --filter hw-app-polkadot",

@@ -16,12 +16,14 @@ export const Address = ({
   cryptoId,
   ticker,
   parentId,
+  backgroundColor,
 }: {
   address: string;
   showIcon: boolean;
   cryptoId?: string;
   ticker?: string;
   parentId?: string;
+  backgroundColor: string;
 }) => {
   const { theme } = useTheme();
   const colorType = theme;
@@ -36,7 +38,16 @@ export const Address = ({
       >
         {address}
       </Text>
-      {showIcon && <CryptoIcon ledgerId={cryptoId} network={parentId} ticker={ticker} size={20} />}
+      {showIcon && (
+        <CryptoIcon
+          ledgerId={cryptoId}
+          network={parentId}
+          ticker={ticker}
+          size={20}
+          theme={theme}
+          backgroundColor={backgroundColor}
+        />
+      )}
     </Wrapper>
   );
 };

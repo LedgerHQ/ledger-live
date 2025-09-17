@@ -17,7 +17,6 @@ export default function Wrapper({ size, Icon, failed, confirmed, type }: Props) 
     (type: OperationType) => {
       switch (type) {
         case "IN":
-        case "NFT_IN":
           return colors.success;
 
         case "FREEZE":

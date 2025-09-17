@@ -1,24 +1,17 @@
-import { Account, AccountBridge, TransactionCommon } from "@ledgerhq/types-live";
+import { Account, AccountBridge } from "@ledgerhq/types-live";
 import { getAlpacaApi } from "./alpaca";
 import { transactionToIntent } from "./utils";
 import BigNumber from "bignumber.js";
-import { AssetInfo, FeeEstimation } from "@ledgerhq/coin-framework/api/types";
+import { AssetInfo } from "@ledgerhq/coin-framework/api/types";
 import { decodeTokenAccountId } from "@ledgerhq/coin-framework/account/index";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { GenericTransaction } from "./types";
 
 function bnEq(a: BigNumber | null | undefined, b: BigNumber | null | undefined): boolean {
   return !a && !b ? true : !a || !b ? false : a.eq(b);
 }
 
-type TransactionParam = TransactionCommon & {
-  fees: BigNumber | null | undefined;
-  customFees?: FeeEstimation;
-  assetReference?: string;
-  assetOwner?: string;
-  subAccountId?: string;
-};
-
-function assetInfosFallback(transaction: TransactionParam): {
+function assetInfosFallback(transaction: GenericTransaction): {
   assetReference: string;
   assetOwner: string;
 } {
@@ -31,17 +24,17 @@ function assetInfosFallback(transaction: TransactionParam): {
 export function genericPrepareTransaction(
   network: string,
   kind,
-): AccountBridge<TransactionCommon, Account, any, any>["prepareTransaction"] {
-  return async (account, transaction: TransactionParam) => {
-    const { getAssetFromToken } = getAlpacaApi(network, kind);
+): AccountBridge<GenericTransaction, Account>["prepareTransaction"] {
+  return async (account, transaction: GenericTransaction) => {
+    const { getAssetFromToken } = getAlpacaApi(account.currency.id, kind);
     const { assetReference, assetOwner } = getAssetFromToken
       ? getAssetInfos(transaction, account.freshAddress, getAssetFromToken)
       : assetInfosFallback(transaction);
 
-    let fees = transaction.customFees?.parameters?.fees || null;
+    let fees: BigNumber | bigint | null = transaction.customFees?.parameters?.fees || null;
     if (fees === null) {
       fees = (
-        await getAlpacaApi(network, kind).estimateFees(
+        await getAlpacaApi(account.currency.id, kind).estimateFees(
           transactionToIntent(account, {
             ...transaction,
           }),
@@ -68,7 +61,7 @@ export function genericPrepareTransaction(
 }
 
 export function getAssetInfos(
-  tr: TransactionParam,
+  tr: GenericTransaction,
   owner: string,
   getAssetFromToken: (token: TokenCurrency, owner: string) => AssetInfo,
 ): {

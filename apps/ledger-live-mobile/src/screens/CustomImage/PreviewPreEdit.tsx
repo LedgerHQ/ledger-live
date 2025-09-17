@@ -1,10 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import styled, { useTheme } from "styled-components/native";
+import styled from "styled-components/native";
 import { Flex, InfiniteLoader, Text } from "@ledgerhq/native-ui";
-import {
-  NFTMetadataLoadingError,
-  ImagePreviewError,
-} from "@ledgerhq/live-common/customImage/errors";
+import { ImagePreviewError } from "@ledgerhq/live-common/customImage/errors";
 import { NativeSyntheticEvent, ImageErrorEventData, Pressable } from "react-native";
 import { useTranslation } from "react-i18next";
 import {
@@ -15,9 +12,6 @@ import {
 } from "@react-navigation/native";
 import { StackNavigationEventMap } from "@react-navigation/stack";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useNftMetadata } from "@ledgerhq/live-nft-react";
-import { NFTResource } from "@ledgerhq/live-nft/types";
-import { NFTMetadata } from "@ledgerhq/types-live";
 import { Device, DeviceModelId } from "@ledgerhq/types-devices";
 import { getDeviceModel } from "@ledgerhq/devices";
 import {
@@ -34,16 +28,17 @@ import { CustomImageNavigatorParamList } from "~/components/RootNavigator/types/
 import { NavigatorName, ScreenName } from "~/const";
 import {
   downloadImageToFile,
-  extractImageUrlFromNftMetadata,
   importImageFromPhoneGallery,
 } from "~/components/CustomImage/imageUtils";
 import { ImageFileUri } from "~/components/CustomImage/types";
 import FramedPicture from "~/components/CustomImage/FramedPicture";
 import ImageProcessor, {
   Props as ImageProcessorProps,
+} from "~/components/CustomImage/dithering/ImageToDeviceProcessor";
+import {
   ProcessorPreviewResult,
   ProcessorRawResult,
-} from "~/components/CustomImage/ImageToDeviceProcessor";
+} from "~/components/CustomImage/dithering/types";
 import useCenteredImage, {
   Params as ImageCentererParams,
   CenteredResult,
@@ -51,9 +46,10 @@ import useCenteredImage, {
 import Button from "~/components/wrappedUi/Button";
 import { TrackScreen } from "~/analytics";
 import Link from "~/components/wrappedUi/Link";
-import { getFramedPictureConfig } from "~/components/CustomImage/framedPictureConfigs";
-
-const DEFAULT_CONTRAST = 1;
+import {
+  getAvailableDitheringConfigKeys,
+  mapDitheringConfigKeyToConfig,
+} from "~/components/CustomImage/dithering/config";
 
 type NavigationProps = BaseComposite<
   StackNavigatorProps<CustomImageNavigatorParamList, ScreenName.CustomImagePreviewPreEdit>
@@ -117,14 +113,9 @@ const PreviewPreEdit = ({ navigation, route }: NavigationProps) => {
     () => getScreenVisibleAreaDimensions(deviceModelId),
     [deviceModelId],
   );
-  const { colors } = useTheme();
-  const theme = colors.type as "light" | "dark";
 
-  const isNftMetadata = "nftMetadataParams" in params;
   const isImageUrl = "imageUrl" in params;
   const isImageFileUri = "imageFileUri" in params;
-
-  const nftMetadataParams = isNftMetadata ? params.nftMetadataParams : [];
 
   const forceDefaultNavigationBehaviour = useRef(false);
   const navigateToErrorScreen = useCallback(
@@ -143,31 +134,11 @@ const PreviewPreEdit = ({ navigation, route }: NavigationProps) => {
     [navigateToErrorScreen, device],
   );
 
-  const [contract, tokenId, currencyId] = nftMetadataParams;
-  const nftMetadata = useNftMetadata(contract, tokenId, currencyId);
-
-  const { status, metadata } = nftMetadata as NFTResource & {
-    metadata: NFTMetadata;
-  };
-
-  const isStaxEnabledImage = !!isStaxEnabled || !!metadata?.staxImage;
-  const imageType = isStaxEnabledImage
-    ? "staxEnabledImage"
-    : isNftMetadata
-      ? "originalNFTImage"
-      : "customImage";
-
-  const nftImageUri = extractImageUrlFromNftMetadata(metadata);
+  const isStaxEnabledImage = !!isStaxEnabled;
+  const imageType = isStaxEnabledImage ? "staxEnabledImage" : "customImage";
 
   const imageFileUri = isImageFileUri ? params.imageFileUri : undefined;
-  const imageUrl = nftImageUri || (isImageUrl ? params.imageUrl : undefined);
-
-  useEffect(() => {
-    if (isNftMetadata && ["nodata", "error"].includes(status)) {
-      console.error("Nft metadata loading status", status);
-      navigateToErrorScreen(new NFTMetadataLoadingError(status), device);
-    }
-  }, [device, isNftMetadata, navigateToErrorScreen, navigation, status]);
+  const imageUrl = isImageUrl ? params.imageUrl : undefined;
 
   /** LOAD SOURCE IMAGE FROM PARAMS */
   useEffect(() => {
@@ -177,11 +148,6 @@ const PreviewPreEdit = ({ navigation, route }: NavigationProps) => {
         imageFileUri,
       });
     } else if (imageUrl) {
-      if (isNftMetadata && ["loading", "queued"].includes(status)) {
-        return () => {
-          dead = true;
-        };
-      }
       const { resultPromise, cancel } = downloadImageToFile({ imageUrl });
       resultPromise
         .then(res => {
@@ -198,7 +164,7 @@ const PreviewPreEdit = ({ navigation, route }: NavigationProps) => {
     return () => {
       dead = true;
     };
-  }, [handleError, imageFileUri, imageUrl, status, isNftMetadata]);
+  }, [handleError, imageFileUri, imageUrl]);
 
   /** IMAGE RESIZING */
 
@@ -365,6 +331,10 @@ const PreviewPreEdit = ({ navigation, route }: NavigationProps) => {
     [resetPreview],
   );
 
+  const ditheringConfig = useMemo(() => {
+    return getAvailableDitheringConfigKeys(getScreenSpecs(deviceModelId).bitsPerPixel)[0];
+  }, [deviceModelId]);
+
   if (!loadedImage || !loadedImage.imageFileUri) {
     return (
       <Flex flex={1} justifyContent="center" alignItems="center">
@@ -396,7 +366,8 @@ const PreviewPreEdit = ({ navigation, route }: NavigationProps) => {
           onPreviewResult={handlePreviewResult}
           onError={handleError}
           onRawResult={handleRawResult}
-          contrast={DEFAULT_CONTRAST}
+          contrast={mapDitheringConfigKeyToConfig[ditheringConfig].contrastValue}
+          ditheringAlgorithm={mapDitheringConfigKeyToConfig[ditheringConfig].algorithm}
           bitsPerPixel={getScreenSpecs(deviceModelId).bitsPerPixel}
         />
       )}
@@ -415,15 +386,14 @@ const PreviewPreEdit = ({ navigation, route }: NavigationProps) => {
                 onError={handlePreviewImageError}
                 fadeDuration={0}
                 source={{ uri: processorPreviewImage?.imageBase64DataUri }}
-                framedPictureConfig={getFramedPictureConfig("preview", deviceModelId, theme)}
+                deviceModelId={deviceModelId}
               />
             </Flex>
           </Flex>
-          <Flex pb={8} px={8}>
+          <Flex pb={8} px={6}>
             <Button
               type="main"
               size="large"
-              outline
               mb={7}
               disabled={previewLoading}
               pending={rawResultLoading}

@@ -30,6 +30,7 @@ import { sendXRP } from "./families/xrp";
 import { delegateAptos, sendAptos } from "./families/aptos";
 import { delegateNear } from "./families/near";
 import { delegateCosmos, sendCosmos } from "./families/cosmos";
+import { sendKaspa } from "./families/kaspa";
 import { delegateSolana, sendSolana } from "./families/solana";
 import { delegateTezos } from "./families/tezos";
 import { delegateCelo } from "./families/celo";
@@ -322,6 +323,14 @@ export const specs: Specs = {
     appQuery: {
       model: getSpeculosModel(),
       appName: "Litecoin",
+    },
+    dependency: "",
+  },
+  Kaspa: {
+    currency: getCryptoCurrencyById("kaspa"),
+    appQuery: {
+      model: getSpeculosModel(),
+      appName: "Kaspa",
     },
     dependency: "",
   },
@@ -677,6 +686,9 @@ export async function signSendTransaction(tx: Transaction) {
     case Currency.APT:
       await sendAptos();
       break;
+    case Currency.KAS:
+      await sendKaspa();
+      break;
     default:
       throw new Error(`Unsupported currency: ${currencyName.ticker}`);
   }
@@ -735,6 +747,7 @@ export async function verifyAmountsAndAcceptSwap(swap: Swap, amount: string) {
 }
 
 export async function verifyAmountsAndAcceptSwapForDifferentSeed(swap: Swap, amount: string) {
+  await waitFor(DeviceLabels.RECEIVE_ADDRESS_DOES_NOT_BELONG);
   await pressUntilTextFound(DeviceLabels.I_UNDERSTAND);
   await pressBoth();
   const events = await pressUntilTextFound(DeviceLabels.SIGN_TRANSACTION);

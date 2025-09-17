@@ -49,6 +49,7 @@
     "transactionDate" : "วันที่ของธุรกรรม",
     "outdated" : "ล้าสมัย",
     "satPerByte" : "sat/ไบต์",
+    "sompiPerByte" : "sompi/ไบต์",
     "notAvailable" : "ไม่สามารถใช้ได้",
     "import" : "นำเข้า",
     "bluetooth" : "Bluetooth",
