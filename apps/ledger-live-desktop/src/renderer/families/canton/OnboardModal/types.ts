@@ -2,7 +2,7 @@ import { TFunction } from "i18next";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { Account } from "@ledgerhq/types-live";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { OnboardStatus, PreApprovalStatus } from "@ledgerhq/coin-canton/types";
+import { OnboardStatus, AuthorizeStatus } from "@ledgerhq/coin-canton/types";
 
 export type OnboardingData = {
   completedAccount: Account;
@@ -22,9 +22,7 @@ export type StepProps = {
   accountName: string;
   importableAccounts: Account[];
   creatableAccount: Account;
-  editedNames: {
-    [accountId: string]: string;
-  };
+  editedNames: { [accountId: string]: string };
 
   // Currency and device
   currency: CryptoCurrency;
@@ -37,16 +35,15 @@ export type StepProps = {
   onAddAccounts: (accounts: Account[]) => void;
 
   // Onboarding state
-  onboardingCompleted?: boolean;
-  onboardingData?: OnboardingData | null;
-  onboardingStatus?: OnboardStatus;
+  onboardingCompleted: boolean;
+  onboardingData: OnboardingData | undefined;
+  onboardingStatus: OnboardStatus;
 
   isProcessing: boolean;
-  status?: OnboardStatus;
 
   // Actions
   onOnboardAccount: () => void;
 
-  authorizeStatus: PreApprovalStatus;
+  authorizeStatus: AuthorizeStatus;
   onAuthorizePreapproval: () => void;
 };

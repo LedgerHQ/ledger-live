@@ -7,12 +7,12 @@ import { compose } from "redux";
 import { createStructuredSelector } from "reselect";
 import type { CantonCurrencyBridge } from "@ledgerhq/coin-canton/types";
 import {
-  CantonPreApprovalProgress,
-  CantonPreApprovalResult,
+  AuthorizeStatus,
+  OnboardStatus,
+  CantonAuthorizeProgress,
+  CantonAuthorizeResult,
   CantonOnboardResult,
   CantonOnboardProgress,
-  OnboardStatus,
-  PreApprovalStatus,
 } from "@ledgerhq/coin-canton/types";
 import { getCurrencyBridge } from "@ledgerhq/live-common/bridge/index";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
@@ -58,35 +58,35 @@ const mapDispatchToProps = {
 
 type State = {
   stepId: StepId;
-  accountName: string;
   error: Error | null;
-  onboardingData: OnboardingData | null;
-  onboardingCompleted: boolean;
+  authorizeStatus: AuthorizeStatus;
   onboardingStatus: OnboardStatus;
-  authorizeStatus: PreApprovalStatus;
   isProcessing: boolean;
-  preapprovalSubscription: { unsubscribe: () => void } | null;
+  onboardingCompleted: boolean;
+  onboardingData: OnboardingData | undefined;
+  authorizeSubscription: { unsubscribe: () => void } | null;
+  onboardingSubscription: { unsubscribe: () => void } | null;
 };
 
 const INITIAL_STATE: State = {
   stepId: StepId.ONBOARD,
-  accountName: "",
   error: null,
-  onboardingData: null,
-  onboardingCompleted: false,
+  authorizeStatus: AuthorizeStatus.INIT,
   onboardingStatus: OnboardStatus.INIT,
-  authorizeStatus: PreApprovalStatus.INIT,
   isProcessing: false,
-  preapprovalSubscription: null,
+  onboardingCompleted: false,
+  onboardingData: undefined,
+  onboardingSubscription: null,
+  authorizeSubscription: null,
 };
 
 class OnboardModal extends PureComponent<Props, State> {
   state: State = INITIAL_STATE;
 
   componentWillUnmount() {
-    if (this.state.preapprovalSubscription) {
+    if (this.state.authorizeSubscription) {
       logger.log("Cleaning up preapproval subscription");
-      this.state.preapprovalSubscription.unsubscribe();
+      this.state.authorizeSubscription.unsubscribe();
     }
   }
 
@@ -194,17 +194,17 @@ class OnboardModal extends PureComponent<Props, State> {
 
     this.setState({
       isProcessing: true,
-      authorizeStatus: PreApprovalStatus.PREPARE,
+      authorizeStatus: AuthorizeStatus.PREPARE,
       error: null,
     });
 
     const { completedAccount } = onboardingData;
     console.log("completedAccount", completedAccount);
 
-    const preapprovalSubscription = this.cantonBridge
+    const authorizeSubscription = this.cantonBridge
       .authorizePreapproval(currency, device.deviceId, completedAccount, completedAccount.xpub!)
       .subscribe({
-        next: (data: CantonPreApprovalProgress | CantonPreApprovalResult) => {
+        next: (data: CantonAuthorizeProgress | CantonAuthorizeResult) => {
           logger.log("[authorizePreapproval] data", data);
 
           if ("status" in data) {
@@ -212,7 +212,7 @@ class OnboardModal extends PureComponent<Props, State> {
           }
         },
         complete: () => {
-          this.setState({ preapprovalSubscription: null });
+          this.setState({ authorizeSubscription: null });
           this.transitionTo(StepId.FINISH);
         },
         error: (error: Error) => {
@@ -220,7 +220,7 @@ class OnboardModal extends PureComponent<Props, State> {
         },
       });
 
-    this.setState({ preapprovalSubscription });
+    this.setState({ authorizeSubscription });
   };
 
   render() {

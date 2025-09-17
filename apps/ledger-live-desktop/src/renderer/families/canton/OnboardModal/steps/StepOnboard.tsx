@@ -212,21 +212,21 @@ export default function StepOnboard({
 
 export const StepOnboardFooter = ({
   currency,
-  transitionTo,
-  onboardingCompleted,
   isProcessing,
-  status,
+  onboardingCompleted,
+  onboardingStatus,
   onOnboardAccount,
+  transitionTo,
 }: StepProps) => {
   const handleNext = useCallback(() => {
     logger.log("[StepOnboardFooter] Continue button clicked:", {
       onboardingCompleted,
       isProcessing,
-      status,
+      onboardingStatus,
       onOnboardAccount: !!onOnboardAccount,
     });
 
-    if (status === OnboardStatus.INIT) {
+    if (onboardingStatus === OnboardStatus.INIT) {
       logger.log("StepOnboard: Starting onboarding process via parent");
       onOnboardAccount();
     } else if (onboardingCompleted && !isProcessing) {
@@ -234,18 +234,18 @@ export const StepOnboardFooter = ({
       transitionTo(StepId.AUTHORIZE);
     } else {
       logger.warn("StepOnboard: Cannot transition - conditions not met", {
-        status,
+        onboardingStatus,
         onOnboardAccount: !!onOnboardAccount,
         onboardingCompleted,
         isProcessing,
       });
     }
-  }, [onboardingCompleted, isProcessing, status, onOnboardAccount, transitionTo]);
+  }, [onboardingCompleted, isProcessing, onboardingStatus, onOnboardAccount, transitionTo]);
 
   const isButtonDisabled =
-    status === OnboardStatus.INIT ? false : isProcessing || !onboardingCompleted;
+    onboardingStatus === OnboardStatus.INIT ? false : isProcessing || !onboardingCompleted;
 
-  if (status === OnboardStatus.SIGN) {
+  if (onboardingStatus === OnboardStatus.SIGN) {
     return <></>;
   }
 

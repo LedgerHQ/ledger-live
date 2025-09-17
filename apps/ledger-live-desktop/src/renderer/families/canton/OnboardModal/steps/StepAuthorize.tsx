@@ -1,7 +1,7 @@
 import React from "react";
 import invariant from "invariant";
 import { Trans } from "react-i18next";
-import { PreApprovalStatus } from "@ledgerhq/coin-canton/types";
+import { AuthorizeStatus } from "@ledgerhq/coin-canton/types";
 import AccountRow from "~/renderer/components/AccountsList/AccountRow";
 import Alert from "~/renderer/components/Alert";
 import Box from "~/renderer/components/Box";
@@ -16,9 +16,9 @@ import { StepProps } from "../types";
 const StepAuthorize = ({ accountName, authorizeStatus, device, onboardingData }: StepProps) => {
   invariant(onboardingData?.completedAccount, "canton: completed account is required");
 
-  const renderContent = (status: PreApprovalStatus) => {
+  const renderContent = (status: AuthorizeStatus) => {
     switch (status) {
-      case PreApprovalStatus.SIGN:
+      case AuthorizeStatus.SIGN:
         return (
           <SignMessageConfirm
             device={device!}
@@ -87,7 +87,7 @@ export const StepAuthorizeFooter = ({
   authorizeStatus,
   onAuthorizePreapproval,
 }: StepProps) => {
-  if (authorizeStatus === PreApprovalStatus.SIGN) {
+  if (authorizeStatus === AuthorizeStatus.SIGN) {
     return <></>;
   }
 
@@ -97,9 +97,9 @@ export const StepAuthorizeFooter = ({
       <Button
         primary
         onClick={onAuthorizePreapproval}
-        disabled={authorizeStatus === PreApprovalStatus.SUBMIT}
+        disabled={authorizeStatus === AuthorizeStatus.SUBMIT}
       >
-        {authorizeStatus === PreApprovalStatus.SUBMIT && (
+        {authorizeStatus === AuthorizeStatus.SUBMIT && (
           <Box mr={2}>
             <Spinner size={20} />
           </Box>
