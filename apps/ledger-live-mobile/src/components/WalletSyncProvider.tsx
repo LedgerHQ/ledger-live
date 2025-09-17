@@ -17,7 +17,7 @@ import { useWalletSyncMobile } from "LLM/features/WalletSync/hooks/useWalletSync
 import React, { useCallback, useMemo } from "react";
 import { useDispatch, useSelector, useStore } from "react-redux";
 import { replaceAccounts } from "~/actions/accounts";
-import { setWalletSyncPending, setWalletSyncError } from "~/actions/walletSyncUserState";
+import { setWalletSyncError, setWalletSyncPending } from "~/actions/walletSyncUserState";
 import { State } from "~/reducers/types";
 import { walletSelector } from "~/reducers/wallet";
 
@@ -113,7 +113,7 @@ function Effect() {
 }
 
 /** Mobile-specific WalletSync Provider component that uses a shared redux state interface */
-export function WalletSyncProvider({ children }: { children: React.ReactNode }) {
+export function WalletSyncProvider({ children }: Readonly<{ children: React.ReactNode }>) {
   const bridge = useMobileWalletSyncBridge();
 
   return (
