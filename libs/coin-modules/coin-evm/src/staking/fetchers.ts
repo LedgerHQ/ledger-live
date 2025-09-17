@@ -36,7 +36,7 @@ export const STAKING_CONFIG: Record<string, StakingStrategy> = {
     ),
   },
   celo: {
-    fetcher: createStakingFetcher(async (config, _currency) => [config.contractAddress]),
+    fetcher: createStakingFetcher(async config => [config.contractAddress]),
   },
 };
 

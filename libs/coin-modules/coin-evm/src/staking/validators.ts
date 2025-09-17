@@ -1,33 +1,45 @@
 import network from "@ledgerhq/live-network";
 
+export type ValidatorApi = {
+  fetchValidators: (config: { baseUrl: string; validatorsEndpoint: string }) => Promise<string[]>;
+};
+
 type CosmosValidator = { operator_address: string };
 type CosmosValidatorsResponse = { validators: CosmosValidator[] };
 
-const fetchSeiValidators = async (apiConfig?: {
-  baseUrl: string;
-  validatorsEndpoint: string;
-}): Promise<string[]> => {
-  const base = apiConfig?.baseUrl;
-  if (!base) return [];
+const seiValidatorApi: ValidatorApi = {
+  fetchValidators: async config => {
+    const { baseUrl, validatorsEndpoint } = config;
+    if (!baseUrl) return [];
 
-  try {
-    const { data } = await network<CosmosValidatorsResponse>({
-      url: `${base}${apiConfig?.validatorsEndpoint}`,
-      method: "GET",
-    });
+    try {
+      const { data } = await network<CosmosValidatorsResponse>({
+        url: `${baseUrl}${validatorsEndpoint}`,
+        method: "GET",
+      });
 
-    return Array.isArray(data?.validators)
-      ? data.validators
-          .map(v => v?.operator_address)
-          .filter((addr): addr is string => typeof addr === "string" && addr.length > 0)
-      : [];
-  } catch (error) {
-    // Log error but don't crash - graceful degradation
-    console.error("Failed to fetch SEI validators", {
-      error: error instanceof Error ? error.message : String(error),
-      baseUrl: base,
-    });
-    return [];
+      return Array.isArray(data?.validators)
+        ? data.validators
+            .map(v => v?.operator_address)
+            .filter((addr): addr is string => typeof addr === "string")
+        : [];
+    } catch (error) {
+      // graceful
+      console.error("Failed to fetch SEI validators", {
+        error: error instanceof Error ? error.message : String(error),
+        baseUrl,
+      });
+      return [];
+    }
+  },
+};
+
+export const getValidatorApi = (currencyId: string): ValidatorApi | undefined => {
+  switch (currencyId) {
+    case "sei_network_evm":
+      return seiValidatorApi;
+    default:
+      return undefined;
   }
 };
 
@@ -35,5 +47,6 @@ export const getValidators = async (
   currencyId: string,
   apiConfig?: { baseUrl: string; validatorsEndpoint: string },
 ): Promise<string[]> => {
-  return currencyId === "sei_network_evm" ? fetchSeiValidators(apiConfig) : [];
+  const api = getValidatorApi(currencyId);
+  return api && apiConfig ? api.fetchValidators(apiConfig) : [];
 };
