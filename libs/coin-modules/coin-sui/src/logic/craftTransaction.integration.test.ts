@@ -21,6 +21,7 @@ describe("craftTransaction", () => {
 
   it("should craft a native SUI send transaction", async () => {
     const transactionIntent: TransactionIntent = {
+      intentType: "transaction",
       sender: SENDER,
       recipient: RECIPIENT,
       amount: BigInt(1000),
@@ -43,6 +44,7 @@ describe("craftTransaction", () => {
       "0x375f70cf2ae4c00bf37117d0c85a2c71545e6ee05c4a5c7d282cd66a4504b068::usdt::USDT";
 
     const transactionIntent: TransactionIntent = {
+      intentType: "transaction",
       sender: SENDER,
       recipient: RECIPIENT,
       amount: BigInt(1000),
@@ -65,6 +67,7 @@ describe("craftTransaction", () => {
 
   it("should craft a native SUI send transaction, returning serialized objects when requested", async () => {
     const transactionIntent: TransactionIntent = {
+      intentType: "transaction",
       sender: SENDER,
       recipient: RECIPIENT,
       amount: BigInt(1000),
@@ -88,6 +91,7 @@ describe("craftTransaction", () => {
       "0x375f70cf2ae4c00bf37117d0c85a2c71545e6ee05c4a5c7d282cd66a4504b068::usdt::USDT";
 
     const transactionIntent: TransactionIntent = {
+      intentType: "transaction",
       sender: SENDER,
       recipient: RECIPIENT,
       amount: BigInt(1000),

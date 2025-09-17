@@ -10,6 +10,20 @@ const OP_MAP: Partial<Record<StakingOperation, OperationType>> = {
 };
 
 /**
+ * Checks if a string is a valid staking operation
+ */
+export function isStakingOperation(value: string): value is StakingOperation {
+  const stakingOperations: ReadonlyArray<StakingOperation> = [
+    "delegate",
+    "undelegate",
+    "redelegate",
+    "getStakedBalance",
+    "getUnstakedBalance",
+  ];
+  return stakingOperations.includes(value as StakingOperation);
+}
+
+/**
  * Builds a map of 4-byte selectors to OperationType for a staking currency.
  */
 const getStakingMethodSelectors = (

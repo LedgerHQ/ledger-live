@@ -32,6 +32,7 @@ describe("Polkadot Api", () => {
 
       // When
       const { value } = await module.estimateFees({
+        intentType: "transaction",
         asset: { type: "native" },
         type: "send",
         sender: address,
@@ -94,6 +95,7 @@ describe("Polkadot Api", () => {
     it("returns a raw transaction", async () => {
       // When
       const result = await module.craftTransaction({
+        intentType: "transaction",
         asset: { type: "native" },
         type: "send",
         sender: address,
