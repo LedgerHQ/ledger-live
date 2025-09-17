@@ -39,7 +39,7 @@ describe("Sui Api", () => {
     });
   });
 
-  describe("listOperations for big account (testing cursor logic)", () => {
+  describe("listOperations, testing cursor logic", () => {
     // this account has a lot of operations
     const binance = "0x935029ca5219502a47ac9b69f556ccf6e2198b5e7815cf50f68846f723739cbd";
 
@@ -69,6 +69,20 @@ describe("Sui Api", () => {
     });
     it("should fetch operations successfully in default order", async () => {
       await testListOperations(undefined);
+    });
+
+    it("shouldn't return cursor on last page", async () => {
+      const [operations, cursor] = await module.listOperations(
+        "0xd8908c165dee785924e7421a0fd0418a19d5daeec395fd505a92a0fd3117e428",
+        { minHeight: 0, order: "asc" },
+      );
+
+      // assume it has not a lot of operations
+      // at time of writing, it has only 2 operations
+      expect(operations.length).toBeLessThan(10);
+      expect(operations.length).toBeGreaterThan(0);
+
+      expect(cursor).toBe("");
     });
   });
 
@@ -110,6 +124,10 @@ describe("Sui Api", () => {
         order: "asc",
       });
       expect(txs.length).toBeGreaterThanOrEqual(minHeightTxs.length);
+    });
+
+    it("returns block height as a number", async () => {
+      expect(txs.every(t => typeof t.tx.block.height === "number")).toBeTruthy();
     });
   });
 
