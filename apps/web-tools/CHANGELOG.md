@@ -1,5 +1,12 @@
 # web-tools
 
+## 0.22.2
+
+### Patch Changes
+
+- Updated dependencies [[`ef18dc8`](https://github.com/LedgerHQ/ledger-live/commit/ef18dc8dff93b13ab7879fbe9666f68ee66a8466)]:
+  - @ledgerhq/live-common@34.48.1
+
 ## 0.22.2-hotfix.0
 
 ### Patch Changes
