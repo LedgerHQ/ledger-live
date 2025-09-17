@@ -25,7 +25,7 @@ import {
 import getApi from "./api";
 import { KeyPair as CryptoKeyPair } from "@ledgerhq/hw-ledger-key-ring-protocol/Crypto";
 import { log } from "@ledgerhq/logs";
-import { LedgerAPI4xx } from "@ledgerhq/errors";
+import { LedgerAPI4xx, StatusCodes, TransportStatusError } from "@ledgerhq/errors";
 import {
   TrustchainAlreadyInitialized,
   TrustchainAlreadyInitializedWithOtherSeed,
@@ -173,11 +173,23 @@ export class SDK implements TrustchainSDK {
     }
     if (shouldShare) {
       if (type === TrustchainResultType.restored) type = TrustchainResultType.updated;
-      streamTree = await this.pushMember(streamTree, path, trustchainRootId, withJwt, withHw, {
-        id: memberCredentials.pubkey,
-        name: this.context.name,
-        permissions: Permissions.OWNER,
-      });
+      try {
+        streamTree = await this.pushMember(streamTree, path, trustchainRootId, withJwt, withHw, {
+          id: memberCredentials.pubkey,
+          name: this.context.name,
+          permissions: Permissions.OWNER,
+        });
+      } catch (error) {
+        if (
+          error instanceof TransportStatusError &&
+          error.statusCode === StatusCodes.SW_STREAM_PARSER_INVALID_FORMAT
+        ) {
+          return withJwt(jwt =>
+            this.repairTrustchain(trustchainRootId, jwt, deviceId, memberCredentials, callbacks),
+          );
+        }
+        throw error;
+      }
     }
 
     const walletSyncEncryptionKey = await extractEncryptionKey(streamTree, path, memberCredentials);
@@ -255,7 +267,7 @@ export class SDK implements TrustchainSDK {
     );
 
     const applicationId = this.context.applicationId;
-    const trustchainId = trustchain.rootId;
+    let trustchainId = trustchain.rootId;
     // eslint-disable-next-line prefer-const
     let { resolved, streamTree, applicationRootPath } = await withJwt(jwt =>
       this.fetchTrustchainAndResolve(jwt, trustchainId, applicationId),
@@ -269,13 +281,28 @@ export class SDK implements TrustchainSDK {
     const newPath = streamTree.getApplicationRootPath(applicationId, 1);
 
     // We close the current trustchain with the hardware wallet in order to get a user confirmation of the action
-    const sendCloseStreamToAPI = await this.closeStream(
-      streamTree,
-      applicationRootPath,
-      trustchainId,
-      withJwt,
-      withHw,
-    );
+    let sendCloseStreamToAPI: () => Promise<void> | undefined;
+    try {
+      sendCloseStreamToAPI = await this.closeStream(
+        streamTree,
+        applicationRootPath,
+        trustchainId,
+        withJwt,
+        withHw,
+      );
+    } catch (error) {
+      if (
+        error instanceof TransportStatusError &&
+        error.statusCode === StatusCodes.SW_STREAM_PARSER_INVALID_FORMAT
+      ) {
+        const res = await withJwt(jwt =>
+          this.repairTrustchain(trustchainId, jwt, deviceId, memberCredentials, callbacks),
+        );
+        trustchainId = res.trustchain.rootId;
+        streamTree = (await withJwt(jwt => this.fetchTrustchain(jwt, trustchainId))).streamTree;
+      }
+      throw error;
+    }
 
     // derive a new branch of the tree on the new path
     streamTree = await this.pushMember(streamTree, newPath, trustchainId, withJwt, withHw, {
@@ -296,7 +323,7 @@ export class SDK implements TrustchainSDK {
     );
 
     // we send the close stream to the API only after the new stream is created in case user cancelled the process in the middle.
-    await sendCloseStreamToAPI();
+    await sendCloseStreamToAPI?.();
 
     // deviceJwt have changed, proactively refresh it
     await this.hwDeviceProvider.refreshJwt(deviceId, callbacks);
@@ -366,6 +393,18 @@ export class SDK implements TrustchainSDK {
     const key = crypto.from_hex(trustchain.walletSyncEncryptionKey);
     const decrypted = await crypto.decryptUserData(key, data);
     return decrypted;
+  }
+
+  private async repairTrustchain(
+    trustchainId: string,
+    jwt: JWT,
+    deviceId: string,
+    memberCredentials: MemberCredentials,
+    callbacks?: TrustchainDeviceCallbacks,
+  ): Promise<TrustchainResult> {
+    await this.api.deleteTrustchain(jwt, trustchainId);
+    this.invalidateJwt();
+    return this.getOrCreateTrustchain(deviceId, memberCredentials, callbacks);
   }
 
   private async fetchTrustchain(jwt: JWT, trustchainId: string) {
