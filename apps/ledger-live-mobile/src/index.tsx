@@ -102,8 +102,6 @@ import useNativeStartupInfo from "./hooks/useNativeStartupInfo";
 import { ConfigureDBSaveEffects } from "./components/DBSave";
 import { useRef } from "react";
 
-enableFreeze(true);
-
 if (Config.DISABLE_YELLOW_BOX) {
   LogBox.ignoreAllLogs();
 }
