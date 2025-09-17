@@ -8,7 +8,6 @@ import { getTagDerivationMode } from "@ledgerhq/coin-framework/derivation";
 import { useCountervaluesState } from "@ledgerhq/live-countervalues-react";
 import orderBy from "lodash/orderBy";
 import keyBy from "lodash/keyBy";
-import BigNumber from "bignumber.js";
 import { accountsSelector } from "~/reducers/accounts";
 import { counterValueCurrencySelector } from "~/reducers/settings";
 import { useModularDrawerAnalytics, MODULAR_DRAWER_PAGE_NAME } from "../analytics";
@@ -22,16 +21,6 @@ import {
 } from "@ledgerhq/live-common/utils/getAccountTuplesForCurrency";
 import { AccountUI } from "@ledgerhq/native-ui/lib/pre-ldls/index";
 import { AccountLike } from "@ledgerhq/types-live";
-
-export const sortAccountsByBalance = (
-  a: { balance: BigNumber } | undefined,
-  b: { balance: BigNumber } | undefined,
-) => {
-  if (a && b) return b.balance.comparedTo(a.balance);
-  if (a) return -1;
-  if (b) return 1;
-  return 0;
-};
 
 export const useDetailedAccounts = (
   asset: CryptoOrTokenCurrency,

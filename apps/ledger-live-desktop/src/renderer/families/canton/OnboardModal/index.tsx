@@ -235,7 +235,7 @@ class OnboardModal extends PureComponent<Props, State> {
     let preapprovalResult: CantonPreApprovalResult | null = null;
 
     const subscription = cantonBridge
-      .authorizePreapproval(deviceId, derivationPath, partyId)
+      .authorizePreapproval(currency, deviceId, derivationPath, partyId)
       .subscribe({
         next: (progressData: CantonPreApprovalProgress | CantonPreApprovalResult) => {
           if ("isApproved" in progressData) {

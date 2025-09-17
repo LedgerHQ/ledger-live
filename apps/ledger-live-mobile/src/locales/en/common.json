@@ -49,6 +49,7 @@
     "transactionDate": "Transaction date",
     "outdated": "Outdated",
     "satPerByte": "sat/bytes",
+    "sompiPerByte": "sompi/bytes",
     "notAvailable": "Not available",
     "import": "Import",
     "bluetooth": "Bluetooth",
@@ -3665,7 +3666,8 @@
         "empty": {
           "title": "Your previous swaps will appear here",
           "desc": "Either you have not made any swaps yet, or Ledger Live has been reset in the meantime."
-        }
+        },
+        "feedback": "Give your feedback"
       }
     },
     "swap2": {
@@ -7913,6 +7915,10 @@
     "signatureVerificationFail": {
       "title": "Signature verification failed",
       "description": "Please retry or contact Ledger Support if in doubt"
+    },
+    "transactionCannotBeCreated": {
+      "title": "Partner unavailable",
+      "description": "We cannot complete your swap with this partner. Please try with another one. Error code 8HBB{{errorCode}}"
     },
     "default": {
       "title": "Something went wrong",

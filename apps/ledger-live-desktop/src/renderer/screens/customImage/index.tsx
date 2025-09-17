@@ -6,7 +6,7 @@ import React, {
   useMemo,
   useState,
 } from "react";
-import { BoxedIcon, Flex, FlowStepper, IconsLegacy, Text } from "@ledgerhq/react-ui";
+import { Flex, FlowStepper, Icons, Text } from "@ledgerhq/react-ui";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { ImageDownloadError } from "@ledgerhq/live-common/customImage/errors";
 import {
@@ -281,6 +281,7 @@ const CustomImage: React.FC<Props> = props => {
             label={t("customImage.steps.choose.stepLabel")}
           >
             <StepChooseImage
+              deviceModelId={deviceModelId}
               onError={errorHandlers[Step.chooseImage]}
               onResult={handleStepChooseImageResult}
               setStep={setStepWrapper}
@@ -352,12 +353,16 @@ const CustomImage: React.FC<Props> = props => {
             refreshSource={false}
           />
           <Flex flex={1} flexDirection="column" justifyContent="center" alignItems="center">
-            <BoxedIcon
-              Icon={IconsLegacy.CheckAloneMedium}
-              iconColor="success.c60"
-              size={64}
-              iconSize={24}
-            />
+            <Flex
+              width={72}
+              height={72}
+              borderRadius={100}
+              bg="opacityDefault.c05"
+              alignItems="center"
+              justifyContent="center"
+            >
+              <Icons.CheckmarkCircleFill color="success.c70" size="L" />
+            </Flex>
             <Text variant="h5Inter" alignSelf="stretch" mt={9} textAlign="center">
               {t("customImage.customImageSet")}
             </Text>

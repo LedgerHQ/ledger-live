@@ -186,3 +186,12 @@ export enum TransactionTypes {
   legacy = 0,
   eip1559 = 2,
 }
+
+export type TransactionLikeWithPreparedParams = {
+  type: TransactionTypes;
+  to: string | null;
+  data: string;
+  value: bigint | null;
+  gasLimit: BigNumber;
+  feeData: FeeData;
+};

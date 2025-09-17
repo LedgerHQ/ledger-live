@@ -8,7 +8,7 @@ import type {
   Operation,
   SwapOperation,
 } from "@ledgerhq/types-live";
-import type { NavigatorScreenParams, ParamListBase } from "@react-navigation/native";
+import type { NavigatorScreenParams } from "@react-navigation/native";
 // eslint-disable-next-line no-restricted-imports
 import type { MappedSwapOperation, SwapLiveError } from "@ledgerhq/live-common/exchange/swap/types";
 import type { Transaction } from "@ledgerhq/live-common/generated/types";
@@ -18,8 +18,6 @@ import type { AssetSelectionNavigatorParamsList } from "LLM/features/AssetSelect
 import type { AssetsNavigatorParamsList } from "LLM/features/Assets/types";
 import type { DeviceSelectionNavigatorParamsList } from "LLM/features/DeviceSelection/types";
 import type { Web3HubStackParamList } from "LLM/features/Web3Hub/types";
-// eslint-disable-next-line no-restricted-imports
-import type { PropertyPath } from "lodash";
 import { NavigatorName, ScreenName } from "~/const";
 import type { FirmwareUpdateProps } from "~/screens/FirmwareUpdate";
 import type { AlgorandOptInFlowParamList } from "../../../families/algorand/OptInFlow/types";
@@ -81,16 +79,6 @@ import type { ModularDrawerNavigatorStackParamList } from "./ModularDrawerNaviga
 import type { WalletSyncNavigatorStackParamList } from "./WalletSyncNavigator";
 import type { WalletTabNavigatorStackParamList } from "./WalletTabNavigator";
 
-export type NavigateInput<
-  ParamList extends ParamListBase = ParamListBase,
-  T extends keyof ParamList = keyof ParamList,
-> = {
-  name: T;
-  params: ParamList[T];
-};
-
-export type PathToDeviceParam = PropertyPath;
-export type NavigationType = "navigate" | "replace" | "push";
 type CommonAddAccountNavigatorParamsList = {
   currency?: CryptoCurrency | TokenCurrency | null;
   token?: TokenCurrency;

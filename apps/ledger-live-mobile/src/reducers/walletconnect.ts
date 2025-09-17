@@ -17,8 +17,6 @@ const handlers: ReducerMap<WalletConnectState, WalletConnectPayload> = {
 
 const storeSelector = (state: State): WalletConnectState => state.walletconnect;
 
-export const exportSelector = storeSelector;
-
 export default handleActions<WalletConnectState, WalletConnectPayload>(handlers, INITIAL_STATE);
 export const uriSelector = createSelector(storeSelector, (state: WalletConnectState) => {
   return state.uri;

@@ -1,4 +1,4 @@
-import blake2b from "blake2b";
+import { blake2b } from "@noble/hashes/blake2";
 import bs58check from "bs58check";
 import BigNumber from "bignumber.js";
 import { OperationType } from "@ledgerhq/types-live";
@@ -154,11 +154,7 @@ export function encodeAddress(publicKey: Buffer) {
   const publicKeyBuf = curveData.compressPublicKey(publicKey, curve);
   const key = publicKeyBuf.slice(1);
   const keyHashSize = 20;
-  // eslint-disable-next-line prefer-const
-  const hash = Buffer.alloc(keyHashSize);
-  const blakHash = blake2b(keyHashSize);
-  blakHash.update(key);
-  blakHash.digest(hash);
+  const hash = Buffer.from(blake2b(key, { dkLen: keyHashSize }));
   const address = bs58check.encode(Buffer.concat([curveData.pkhB58Prefix, hash]));
   return address;
 }

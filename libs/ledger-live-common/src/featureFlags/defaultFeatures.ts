@@ -96,6 +96,7 @@ export const CURRENCY_DEFAULT_FEATURES = {
   currencyBerachain: DEFAULT_FEATURE,
   currencyHyperevm: DEFAULT_FEATURE,
   currencyCantonNetwork: DEFAULT_FEATURE,
+  currencyKaspa: DEFAULT_FEATURE,
 };
 
 /**
@@ -681,6 +682,7 @@ export const DEFAULT_FEATURES: Features = {
     params: {},
   },
   supportDeviceApex: DEFAULT_FEATURE,
+  llmSyncOnboardingIncr1: DEFAULT_FEATURE,
 };
 
 // Firebase SDK treat JSON values as strings

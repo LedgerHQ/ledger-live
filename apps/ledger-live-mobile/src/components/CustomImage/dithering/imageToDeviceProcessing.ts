@@ -150,7 +150,6 @@ function codeToInject() {
   ): { imageDataResult: Uint8ClampedArray; hexRawResult: string } {
     let hexRawResult = "";
     const filteredImageData = [];
-
     const data = imageData.data;
 
     // Determine number of gray levels based on bitsPerPixel
@@ -158,7 +157,6 @@ function codeToInject() {
     const rgbStep = 255 / (numLevelsOfGray - 1);
 
     const { width, height } = imageData;
-
     const pixelsLightness: number[][] = Array.from(Array(height), () => Array(width));
     const pixels256Colors: number[][] = Array.from(Array(height), () => Array(width));
     const pixelsNColors: number[][] = Array.from(Array(height), () => Array(width));

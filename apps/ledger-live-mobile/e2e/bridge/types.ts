@@ -102,11 +102,11 @@ export const startExchangeExecMock = (): Observable<ExchangeRequestEvent> =>
   mockDeviceEventSubject as Observable<ExchangeRequestEvent>;
 export const connectManagerExecMock = (): Observable<ConnectManagerEvent> =>
   mockDeviceEventSubject as Observable<ConnectManagerEvent>;
-export const staxFetchImageExecMock = (): Observable<FetchImageEvent> =>
+export const fetchImageExecMock = (): Observable<FetchImageEvent> =>
   mockDeviceEventSubject as Observable<FetchImageEvent>;
-export const staxLoadImageExecMock = (): Observable<LoadImageEvent> =>
+export const loadImageExecMock = (): Observable<LoadImageEvent> =>
   mockDeviceEventSubject as Observable<LoadImageEvent>;
-export const staxRemoveImageExecMock = (): Observable<RemoveImageEvent> =>
+export const removeImageExecMock = (): Observable<RemoveImageEvent> =>
   mockDeviceEventSubject as Observable<RemoveImageEvent>;
 export const installLanguageExecMock = (): Observable<InstallLanguageEvent> =>
   mockDeviceEventSubject as Observable<InstallLanguageEvent>;

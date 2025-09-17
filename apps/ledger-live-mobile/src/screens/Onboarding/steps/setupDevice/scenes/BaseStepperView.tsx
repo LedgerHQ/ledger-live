@@ -103,7 +103,7 @@ export type Step = {
   contentContainerStyle?: StyleProp<ViewStyle>;
 };
 
-export function BaseStepperView({
+function BaseStepperView({
   onNext,
   steps,
   metadata,

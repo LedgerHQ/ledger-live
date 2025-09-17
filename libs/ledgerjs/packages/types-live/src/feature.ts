@@ -139,6 +139,7 @@ export type CurrencyFeatures = {
   currencyBerachain: DefaultFeature;
   currencyHyperevm: DefaultFeature;
   currencyCantonNetwork: DefaultFeature;
+  currencyKaspa: DefaultFeature;
 };
 
 /**
@@ -263,6 +264,7 @@ export type Features = CurrencyFeatures & {
   llmSentry: DefaultFeature;
   onboardingIgnoredOsUpdates: Feature_OnboardingIgnoredOSUpdates;
   supportDeviceApex: DefaultFeature;
+  llmSyncOnboardingIncr1: DefaultFeature;
 };
 
 /**

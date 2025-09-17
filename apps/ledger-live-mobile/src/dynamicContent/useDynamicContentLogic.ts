@@ -5,7 +5,6 @@ import {
   setDynamicContentWalletCards,
   setDynamicContentAssetsCards,
   setDynamicContentNotificationCards,
-  setDynamicContentLearnCards,
   setDynamicContentCategoriesCards,
   setDynamicContentMobileCards,
   setIsDynamicContentLoading,
@@ -18,7 +17,6 @@ import {
   mapAsWalletContentCard,
   mapAsAssetContentCard,
   mapAsNotificationContentCard,
-  mapAsLearnContentCard,
   mapAsCategoryContentCard,
   mapAsLandingPageStickyCtaContentCard,
   getMobileContentCards,
@@ -67,10 +65,6 @@ export const useDynamicContentLogic = () => {
       .map(card => mapAsNotificationContentCard(card))
       .sort(compareCards);
 
-    const learnCards = filterByPage(mobileContentCards, ContentCardLocation.Learn)
-      .map(card => mapAsLearnContentCard(card))
-      .sort(compareCards);
-
     const categoriesCards = filterByType(mobileContentCards, ContentCardsType.category)
       .map(card => mapAsCategoryContentCard(card))
       .sort(compareCards);
@@ -87,7 +81,6 @@ export const useDynamicContentLogic = () => {
     dispatch(setDynamicContentWalletCards(walletCards));
     dispatch(setDynamicContentAssetsCards(assetCards));
     dispatch(setDynamicContentNotificationCards(notificationCards));
-    dispatch(setDynamicContentLearnCards(learnCards));
     dispatch(setDynamicContentLandingPageStickyCtaCards(landingPageStickyCtaCards));
     dispatch(setIsDynamicContentLoading(false));
   }, [dismissedContentCardsIds, dispatch]);

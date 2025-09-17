@@ -144,5 +144,3 @@ export const BleDevicesScanning: React.FC<BleDevicesScanningProps> = ({
     </Flex>
   );
 };
-
-export default BleDevicesScanning;

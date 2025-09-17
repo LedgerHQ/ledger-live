@@ -1,5 +1,5 @@
 import BigNumber from "bignumber.js";
-import { Operation } from "@ledgerhq/types-live";
+import { Operation, OperationType } from "@ledgerhq/types-live";
 import { decodeAccountId, encodeAccountId } from "@ledgerhq/coin-framework/account/index";
 import { GetAccountShape, mergeOps } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
@@ -18,11 +18,17 @@ const txInfoToOperationAdapter =
       recipients,
       transaction_timestamp,
       fee: { value: fee },
-      transfers: [{ value: transferValue }],
+      transfers: [{ value: transferValue, details }],
     } = txInfo;
-    const type = senders.includes(partyId) ? "OUT" : "IN";
+    let type: OperationType = "UNKNOWN";
+    if (txInfo.type === "Send") {
+      type = senders.includes(partyId) ? "OUT" : "IN";
+    } else if (txInfo.type === "Receive") {
+      type = "IN";
+    }
     const value = new BigNumber(transferValue);
     const feeValue = new BigNumber(fee);
+    const memo = details.metadata.reason;
 
     const op: Operation = {
       id: encodeOperationId(accountId, transaction_hash, type),
@@ -39,6 +45,7 @@ const txInfoToOperationAdapter =
       transactionSequenceNumber: height,
       extra: {
         uid,
+        memo,
       },
     };
 
@@ -50,9 +57,7 @@ const filterOperations = (
   accountId: string,
   partyId: string,
 ): Operation[] => {
-  return transactions
-    .filter(tx => tx.type === "Receive" || tx.type === "Send")
-    .map(txInfoToOperationAdapter(accountId, partyId));
+  return transactions.map(txInfoToOperationAdapter(accountId, partyId));
 };
 
 export const getAccountShape: GetAccountShape<CantonAccount> = async info => {
@@ -75,39 +80,39 @@ export const getAccountShape: GetAccountShape<CantonAccount> = async info => {
     derivationMode,
   });
 
-  // blockheight retrieval
-  const blockHeight = await getLedgerEnd();
-
   // Account info retrieval + spendable balance calculation
   // const accountInfo = await getAccountInfo(address);
-  const balances = await getBalance(partyId);
+  const balances = await getBalance(currency, partyId);
 
-  // TODO change to balance.instrument_id === "Amulet" after update on backend
-  const balanceData = balances.find(balance => balance.instrument_id.includes("Amulet")) || {
+  const balanceData = balances.find(balance => balance.instrument_id === "Amulet") || {
     instrument_id: "Amulet",
     amount: 0,
     locked: false,
   };
 
   const balance = new BigNumber(balanceData.amount);
-  const reserveMin = coinConfig.getCoinConfig().minReserve || 0;
+  const reserveMin = coinConfig.getCoinConfig(currency).minReserve || 0;
   const lockedAmount = balanceData.locked ? balance : new BigNumber(0);
   const spendableBalance = BigNumber.max(
     0,
     balance.minus(lockedAmount).minus(BigNumber(reserveMin)),
   );
 
-  // Tx history fetching
-  const oldOperations = initialAccount?.operations || [];
-  const startAt = oldOperations.length ? (oldOperations[0].blockHeight || 0) + 1 : 0;
-  const transactionData = await getOperations(partyId, {
-    cursor: startAt,
-    limit: 100,
-  });
+  let operations: Operation[] = [];
+  // Tx history fetching if xpubOrAddress is not empty
+  if (xpubOrAddress) {
+    const oldOperations = initialAccount?.operations || [];
+    const startAt = oldOperations.length ? (oldOperations[0].blockHeight || 0) + 1 : 0;
+    const transactionData = await getOperations(currency, partyId, {
+      cursor: startAt,
+      limit: 100,
+    });
 
-  const newOperations = filterOperations(transactionData.operations, accountId, partyId);
-  const operations = mergeOps(oldOperations, newOperations);
-
+    const newOperations = filterOperations(transactionData.operations, accountId, partyId);
+    operations = mergeOps(oldOperations, newOperations);
+  }
+  // blockheight retrieval
+  const blockHeight = await getLedgerEnd(currency);
   // We return the new account shape
   const shape = {
     id: accountId,

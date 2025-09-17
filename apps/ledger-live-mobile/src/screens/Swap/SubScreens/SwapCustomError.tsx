@@ -9,6 +9,8 @@ import { useHeaderHeight } from "@react-navigation/elements";
 import { SwapCustomErrorProps } from "../types";
 import Button from "~/components/Button";
 import useExportLogs from "~/components/useExportLogs";
+import { sharedSwapTracking } from "../utils";
+import { track } from "~/analytics/segment";
 
 export default function SwapCustomError({ route }: SwapCustomErrorProps) {
   const { t } = useTranslation();
@@ -18,8 +20,26 @@ export default function SwapCustomError({ route }: SwapCustomErrorProps) {
     error && "name" in error && error.name !== "CompleteExchangeError" ? error.name : undefined;
   const onExport = useExportLogs();
   const headerHeight = useHeaderHeight();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const errorMessage = (error as any)?.swap?.swap?.error?.toLowerCase() || "";
+  const errorCodeMatch = errorMessage.match(/Error code (\w+)/i);
+  const dynamicErrorCode = errorCodeMatch && "-" + errorCodeMatch[1];
 
   const { title, description } = useMemo(() => {
+    if (errorMessage.includes("transaction cannot be created")) {
+      track("error_message", {
+        ...sharedSwapTracking,
+        message: "partner_unavailable",
+        error_code: dynamicErrorCode,
+      });
+      return {
+        title: t("swapErrors.transactionCannotBeCreated.title"),
+        description: t("swapErrors.transactionCannotBeCreated.description", {
+          errorCode: dynamicErrorCode,
+        }),
+      };
+    }
+
     if (titleKey || nameKey) {
       const errorKey = titleKey || nameKey;
       const titleTranslationKey = `swapErrors.${errorKey}.title`;
@@ -45,7 +65,7 @@ export default function SwapCustomError({ route }: SwapCustomErrorProps) {
       title: t("swapErrors.default.title"),
       description: t("swapErrors.default.description"),
     };
-  }, [error, nameKey, t, titleKey]);
+  }, [error, errorMessage, nameKey, t, titleKey, dynamicErrorCode]);
 
   return (
     <SafeAreaView style={[styles.root, { bottom: headerHeight }]}>

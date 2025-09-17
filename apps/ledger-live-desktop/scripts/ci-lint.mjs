@@ -40,7 +40,7 @@ for (const arg in argv) {
 const output = external ? "lint-desktop-external.json" : "lint-desktop.json";
 const lint = async () => {
   cd("../../");
-  if (typeof port === "string" && typeof token !== "string") {
+  if (port && token) {
     await $`pnpm lint \\
       --filter="ledger-live-desktop" \\
       --api="http://127.0.0.1:${port}" \\
