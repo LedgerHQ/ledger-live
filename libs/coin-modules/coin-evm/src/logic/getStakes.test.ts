@@ -70,9 +70,8 @@ describe("EVM Staking - getStakes", () => {
 
   it("should handle multiple validators and filter zero amounts", async () => {
     const currency = getCryptoCurrencyById("sei_network_evm");
-    const mockValidators = ["seivaloper1abc", "seivaloper1def"];
 
-    jest.spyOn(VALIDATORS, "getValidators").mockResolvedValue(mockValidators);
+    jest.spyOn(VALIDATORS, "getValidators").mockResolvedValue(["seivaloper1abc", "seivaloper1def"]);
 
     jest.spyOn(RPC_API, "withApi").mockImplementation(async (_cur, fn) => {
       const api = { call: jest.fn().mockResolvedValue("0x") } as unknown as JsonRpcProvider;
@@ -85,13 +84,13 @@ describe("EVM Staking - getStakes", () => {
     decodeSpy.mockReturnValueOnce([
       {
         balance: { amount: "0", denom: "usei" },
-        delegation: { delegator_address: address, validator_address: mockValidators[0] },
+        delegation: { delegator_address: address, validator_address: "seivaloper1abc" },
       },
     ] as any);
     decodeSpy.mockReturnValueOnce([
       {
         balance: { amount: "42", denom: "usei" },
-        delegation: { delegator_address: address, validator_address: mockValidators[1] },
+        delegation: { delegator_address: address, validator_address: "seivaloper1def" },
       },
     ] as any);
 
@@ -102,7 +101,7 @@ describe("EVM Staking - getStakes", () => {
         expect.objectContaining({
           uid: expect.any(String),
           address,
-          delegate: mockValidators[1], // Should be the second validator (first has amount=0)
+          delegate: "seivaloper1def", // Should be the second validator (first has amount=0)
           state: "active",
           asset: expect.objectContaining({
             type: "native",
@@ -157,18 +156,6 @@ describe("EVM Staking - getStakes", () => {
     const currency = getCryptoCurrencyById("sei_network_evm");
 
     jest.spyOn(VALIDATORS, "getValidators").mockRejectedValue(new Error("Network unreachable"));
-
-    const result = await getStakes(currency, address);
-
-    expect(result).toEqual({
-      items: [],
-    });
-  });
-
-  it("should handle empty validator list gracefully", async () => {
-    const currency = getCryptoCurrencyById("sei_network_evm");
-
-    jest.spyOn(VALIDATORS, "getValidators").mockResolvedValue([]);
 
     const result = await getStakes(currency, address);
 

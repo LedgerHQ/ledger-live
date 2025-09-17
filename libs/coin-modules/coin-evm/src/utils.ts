@@ -110,7 +110,7 @@ export const extractSeiDelegation = (decoded: unknown): SeiDelegation | undefine
     return decoded[0];
   }
   if (isSeiDelegation(decoded)) {
-    return decoded as SeiDelegation;
+    return decoded;
   }
   return undefined;
 };

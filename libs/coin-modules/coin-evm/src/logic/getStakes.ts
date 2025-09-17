@@ -16,7 +16,7 @@ export const getStakes = async (
     const stakingStrategy = STAKING_CONFIG[currency.id];
     const stakes = (await stakingStrategy?.fetcher(address, contractConfig, currency)) || [];
     return { items: stakes };
-  } catch (error) {
+  } catch {
     return { items: [] };
   }
 };
