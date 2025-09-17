@@ -15,35 +15,20 @@ export enum StepId {
 }
 
 export type StepProps = {
-  // Translation
   t: TFunction;
-
-  // Account data
-  accountName: string;
-  importableAccounts: Account[];
-  creatableAccount: Account;
-  editedNames: { [accountId: string]: string };
-
-  // Currency and device
+  device: Device;
   currency: CryptoCurrency;
-  device: Device | null | undefined;
-
-  // Modal control
-  transitionTo: (stepId: StepId) => void;
-
-  // Account management
-  onAddAccounts: (accounts: Account[]) => void;
-
-  // Onboarding state
+  accountName: string;
+  editedNames: { [accountId: string]: string };
+  creatableAccount: Account;
+  importableAccounts: Account[];
+  isProcessing: boolean;
   onboardingCompleted: boolean;
   onboardingData: OnboardingData | undefined;
   onboardingStatus: OnboardStatus;
-
-  isProcessing: boolean;
-
-  // Actions
-  onOnboardAccount: () => void;
-
   authorizeStatus: AuthorizeStatus;
+  onAddAccounts: (accounts: Account[]) => void;
   onAuthorizePreapproval: () => void;
+  onOnboardAccount: () => void;
+  transitionTo: (stepId: StepId) => void;
 };
