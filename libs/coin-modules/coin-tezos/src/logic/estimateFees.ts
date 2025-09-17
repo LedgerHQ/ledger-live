@@ -41,9 +41,24 @@ export async function estimateFees({
   account: CoreAccountInfo;
   transaction: CoreTransactionInfo;
 }): Promise<EstimatedFees> {
+  let derivationType: DerivationType;
+  let prefix: PrefixV2;
+  if (account.address?.startsWith("tz1")) {
+    derivationType = DerivationType.ED25519;
+    prefix = PrefixV2.Ed25519PublicKey;
+  } else if (account.address?.startsWith("tz2")) {
+    derivationType = DerivationType.SECP256K1;
+    prefix = PrefixV2.Secp256k1PublicKey;
+  } else if (account.address?.startsWith("tz3")) {
+    derivationType = DerivationType.P256;
+    prefix = PrefixV2.P256PublicKey;
+  } else {
+    throw Error(`Failed detecting key derivation type from address ${account.address}`);
+  }
+
   const encodedPubKey = b58Encode(
-    compressPublicKey(Buffer.from(account.xpub || "", "hex"), DerivationType.ED25519),
-    PrefixV2.Ed25519PublicKey,
+    compressPublicKey(Buffer.from(account.xpub || "", "hex"), derivationType),
+    prefix,
   );
 
   const tezosToolkit = getTezosToolkit();
