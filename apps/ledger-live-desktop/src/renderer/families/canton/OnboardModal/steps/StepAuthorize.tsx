@@ -45,7 +45,7 @@ const StepAuthorize = ({ accountName, authorizeStatus, device, onboardingData }:
               </Box>
               <AccountRow
                 account={onboardingData.completedAccount}
-                accountName={onboardingData.accountName || accountName}
+                accountName={accountName}
                 isDisabled={true}
                 hideAmount={true}
                 isReadonly={true}
