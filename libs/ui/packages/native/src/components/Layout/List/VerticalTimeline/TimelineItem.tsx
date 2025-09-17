@@ -10,8 +10,12 @@ import Text from "../../../Text";
 import Tag from "../../../tags/Tag";
 import TimelineIndicator from "./TimelineIndicator";
 
+export interface TimelineStep extends Item {
+  isNeutral?: boolean;
+}
+
 export type Props = {
-  item: Item;
+  item: TimelineStep;
   formatEstimatedTime?: (_: number) => string;
   isFirstItem?: boolean;
   isLastItem?: boolean;

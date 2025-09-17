@@ -8,14 +8,14 @@ import {
   ViewStyle,
 } from "react-native";
 
-import TimelineItem from "./TimelineItem";
+import TimelineItem, { TimelineStep } from "./TimelineItem";
 import Flex from "../../Flex";
 import Text, { BaseTextProps } from "../../../Text";
 import { BaseStyledProps } from "src/components/styled";
-import { Item, ItemStatus } from "../types";
+import { ItemStatus } from "../types";
 
 export type Props = BaseStyledProps & {
-  steps?: Item[];
+  steps?: TimelineStep[];
   formatEstimatedTime?: (_: number) => string;
   setActiveIndex?: (arg0: number) => void;
   header?: React.ReactNode;
