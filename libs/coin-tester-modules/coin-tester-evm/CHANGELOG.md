@@ -1,5 +1,12 @@
 # @ledgerhq/coin-tester-evm
 
+## 1.7.0-nightly.11
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/live-common@34.48.0-nightly.10
+
 ## 1.7.0-nightly.10
 
 ### Patch Changes

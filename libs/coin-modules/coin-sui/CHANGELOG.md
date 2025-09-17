@@ -1,5 +1,11 @@
 # @ledgerhq/coin-sui
 
+## 0.13.0-nightly.7
+
+### Patch Changes
+
+- [#11837](https://github.com/LedgerHQ/ledger-live/pull/11837) [`318e47e`](https://github.com/LedgerHQ/ledger-live/commit/318e47ea5113b33c58d58c85871d621c9be540eb) Thanks [@jprudent](https://github.com/jprudent)! - coin:sui fix last page cursor
+
 ## 0.13.0-nightly.6
 
 ### Minor Changes
