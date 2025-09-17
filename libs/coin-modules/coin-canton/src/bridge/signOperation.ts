@@ -22,7 +22,10 @@ export const buildSignOperation =
           });
 
           const signature = await signerContext(deviceId, async signer => {
-            const { freshAddressPath: derivationPath, freshAddress: address } = account;
+            const { id, freshAddressPath: derivationPath, xpub } = account;
+            // once isuue in sync.ts:140 will be resolved we can simple use freshAddress
+            console.log("signature account", account);
+            const address = xpub ?? "test";
             const params: {
               recipient?: string;
               amount: BigNumber;

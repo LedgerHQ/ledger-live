@@ -34,17 +34,17 @@ export const StepFinishFooter = ({
   t,
   onAddAccounts,
   importableAccounts,
-  onboardingData,
+  onboardingResult,
 }: StepProps) => {
   const handleAddMore = () => {
-    const completedAccount = onboardingData?.completedAccount;
+    const completedAccount = onboardingResult?.completedAccount;
     if (completedAccount) {
       onAddAccounts([...importableAccounts, completedAccount]);
     }
   };
 
   const handleDone = () => {
-    const completedAccount = onboardingData?.completedAccount;
+    const completedAccount = onboardingResult?.completedAccount;
     if (completedAccount) {
       onAddAccounts([...importableAccounts, completedAccount]);
     }

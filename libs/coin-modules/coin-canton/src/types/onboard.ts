@@ -24,7 +24,7 @@ export type CantonOnboardProgress = {
 
 export type CantonOnboardResult = {
   partyId: string;
-  account: Partial<Account>;
+  account: Account;
 };
 
 export type CantonAuthorizeProgress = {

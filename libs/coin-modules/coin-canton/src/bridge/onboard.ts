@@ -20,7 +20,6 @@ import {
   CantonOnboardResult,
   CantonAuthorizeProgress,
   CantonAuthorizeResult,
-  PrepareTransactionResponse,
 } from "../types/onboard";
 import resolver from "../signer";
 import type { CantonAccount, CantonSigner } from "../types";
@@ -66,7 +65,7 @@ export const buildOnboardAccount =
           "derivationPath",
         );
         const getAddress = resolver(signerContext);
-        const { address, publicKey } = await getAddress(deviceId, {
+        const { publicKey } = await getAddress(deviceId, {
           path: creatableAccount.freshAddressPath,
           currency,
           derivationMode: creatableAccount.derivationMode,
@@ -233,36 +232,34 @@ export const buildAuthorizePreapproval =
           status: AuthorizeStatus.PREPARE,
         });
 
-        const preparedTransaction: PrepareTransactionResponse = await preparePreApprovalTransaction(
-          currency,
-          partyId,
+        const preparedTransaction = await preparePreApprovalTransaction(currency, partyId);
+
+        const isAuthorized = creatableAccount.operations.some(operation =>
+          operation.senders.includes(partyId),
         );
 
-        observer.next({
-          status: AuthorizeStatus.SIGN,
-        });
+        if (!isAuthorized) {
+          observer.next({
+            status: AuthorizeStatus.SIGN,
+          });
 
-        const signature = await signerContext(deviceId, signer =>
-          signer.signTransaction(creatableAccount.freshAddressPath, preparedTransaction.hash),
-        );
+          const signature = await signerContext(deviceId, signer =>
+            signer.signTransaction(creatableAccount.freshAddressPath, preparedTransaction.hash),
+          );
 
-        observer.next({
-          status: AuthorizeStatus.SUBMIT,
-        });
+          observer.next({
+            status: AuthorizeStatus.SUBMIT,
+          });
 
-        const { isApproved } = await submitPreApprovalTransaction(
-          currency,
-          partyId,
-          preparedTransaction,
-          signature,
-        );
+          await submitPreApprovalTransaction(currency, partyId, preparedTransaction, signature);
+        }
 
         observer.next({
           status: AuthorizeStatus.SUCCESS,
         });
 
         observer.next({
-          isApproved,
+          isApproved: true,
         });
 
         const handleTapRequest = async () => {
@@ -312,9 +309,9 @@ export const buildAuthorizePreapproval =
       );
     });
 
-const createAccount = async (creatableAccount: Account): Promise<Partial<Account>> => {
+const createAccount = async (creatableAccount: Account): Promise<Account> => {
   console.log("createAccount", creatableAccount);
-  const account: Partial<CantonAccount> = {
+  const account = {
     ...creatableAccount,
     lastSyncDate: new Date(),
     pendingOperations: [],

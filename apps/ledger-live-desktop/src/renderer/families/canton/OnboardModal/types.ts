@@ -4,7 +4,8 @@ import { Account } from "@ledgerhq/types-live";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { OnboardStatus, AuthorizeStatus } from "@ledgerhq/coin-canton/types";
 
-export type OnboardingData = {
+export type OnboardingResult = {
+  partyId: string;
   completedAccount: Account;
 };
 
@@ -23,8 +24,7 @@ export type StepProps = {
   creatableAccount: Account;
   importableAccounts: Account[];
   isProcessing: boolean;
-  onboardingCompleted: boolean;
-  onboardingData: OnboardingData | undefined;
+  onboardingResult: OnboardingResult | undefined;
   onboardingStatus: OnboardStatus;
   authorizeStatus: AuthorizeStatus;
   onAddAccounts: (accounts: Account[]) => void;

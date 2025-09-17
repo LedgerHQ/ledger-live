@@ -29,7 +29,7 @@ import { getCurrentDevice } from "~/renderer/reducers/devices";
 import StepAuthorize, { StepAuthorizeFooter } from "./steps/StepAuthorize";
 import StepFinish, { StepFinishFooter } from "./steps/StepFinish";
 import StepOnboard, { StepOnboardFooter } from "./steps/StepOnboard";
-import { OnboardingData, StepId, StepProps } from "./types";
+import { OnboardingResult, StepId, StepProps } from "./types";
 
 export type Props = {
   currency: CryptoCurrency;
@@ -62,8 +62,7 @@ type State = {
   authorizeStatus: AuthorizeStatus;
   onboardingStatus: OnboardStatus;
   isProcessing: boolean;
-  onboardingCompleted: boolean;
-  onboardingData: OnboardingData | undefined;
+  onboardingResult: OnboardingResult | undefined;
   authorizeSubscription: { unsubscribe: () => void } | null;
   onboardingSubscription: { unsubscribe: () => void } | null;
 };
@@ -74,8 +73,7 @@ const INITIAL_STATE: State = {
   authorizeStatus: AuthorizeStatus.INIT,
   onboardingStatus: OnboardStatus.INIT,
   isProcessing: false,
-  onboardingCompleted: false,
-  onboardingData: undefined,
+  onboardingResult: undefined,
   onboardingSubscription: null,
   authorizeSubscription: null,
 };
@@ -168,12 +166,12 @@ class OnboardModal extends PureComponent<Props, State> {
             this.setState({ onboardingStatus: data.status });
           }
 
-          if ("account" in data) {
+          if ("account" in data && "partyId" in data) {
             this.setState({
-              onboardingData: {
-                completedAccount: data.account as Account,
+              onboardingResult: {
+                partyId: data.partyId,
+                completedAccount: data.account,
               },
-              onboardingCompleted: true,
               onboardingStatus: OnboardStatus.SUCCESS,
               isProcessing: false,
             });
@@ -187,10 +185,10 @@ class OnboardModal extends PureComponent<Props, State> {
   };
 
   handleAuthorizePreapproval = () => {
-    const { onboardingData } = this.state;
+    const { onboardingResult } = this.state;
     const { currency, device } = this.props;
 
-    invariant(onboardingData, "onboardingData is required");
+    invariant(onboardingResult, "onboardingResult is required");
 
     this.setState({
       isProcessing: true,
@@ -198,7 +196,7 @@ class OnboardModal extends PureComponent<Props, State> {
       error: null,
     });
 
-    const { completedAccount } = onboardingData;
+    const { completedAccount } = onboardingResult;
     console.log("completedAccount", completedAccount);
 
     const authorizeSubscription = this.cantonBridge
@@ -225,14 +223,8 @@ class OnboardModal extends PureComponent<Props, State> {
 
   render() {
     const { currency, device, editedNames, selectedAccounts, t } = this.props;
-    const {
-      authorizeStatus,
-      isProcessing,
-      onboardingCompleted,
-      onboardingData,
-      onboardingStatus,
-      stepId,
-    } = this.state;
+    const { authorizeStatus, isProcessing, onboardingResult, onboardingStatus, stepId } =
+      this.state;
 
     const importableAccounts = selectedAccounts.filter(account => account.used);
     const creatableAccount = selectedAccounts.find(account => !account.used);
@@ -252,8 +244,7 @@ class OnboardModal extends PureComponent<Props, State> {
       creatableAccount,
       importableAccounts,
       isProcessing,
-      onboardingCompleted,
-      onboardingData,
+      onboardingResult,
       onboardingStatus,
       authorizeStatus,
       onAddAccounts: this.handleAddAccounts,

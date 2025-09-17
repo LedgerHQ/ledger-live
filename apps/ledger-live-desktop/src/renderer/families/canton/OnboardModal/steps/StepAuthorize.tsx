@@ -14,8 +14,8 @@ import { TransactionConfirm } from "../components/TransactionConfirm";
 import { ValidatorRow } from "../components/ValidatorRow";
 import { StepProps } from "../types";
 
-const StepAuthorize = ({ accountName, authorizeStatus, device, onboardingData }: StepProps) => {
-  invariant(onboardingData?.completedAccount, "canton: completed account is required");
+const StepAuthorize = ({ accountName, authorizeStatus, device, onboardingResult }: StepProps) => {
+  invariant(onboardingResult?.completedAccount, "canton: completed account is required");
 
   const renderContent = (status: AuthorizeStatus) => {
     switch (status) {
@@ -23,7 +23,7 @@ const StepAuthorize = ({ accountName, authorizeStatus, device, onboardingData }:
         return (
           <TransactionConfirm
             device={device}
-            account={onboardingData.completedAccount}
+            account={onboardingResult.completedAccount}
             message="Canton Authorize"
           />
         );
@@ -42,7 +42,7 @@ const StepAuthorize = ({ accountName, authorizeStatus, device, onboardingData }:
                 <Trans i18nKey="operationDetails.account" />
               </Box>
               <AccountRow
-                account={onboardingData.completedAccount}
+                account={onboardingResult.completedAccount}
                 accountName={accountName}
                 isDisabled={false}
                 hideAmount={true}

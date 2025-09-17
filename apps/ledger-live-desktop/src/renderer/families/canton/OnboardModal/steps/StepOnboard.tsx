@@ -1,4 +1,4 @@
-import React, { memo, useCallback } from "react";
+import React, { memo } from "react";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
 import { OnboardStatus } from "@ledgerhq/coin-canton/types";
@@ -9,7 +9,6 @@ import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
 import CurrencyBadge from "~/renderer/components/CurrencyBadge";
 import Spinner from "~/renderer/components/Spinner";
-import logger from "~/renderer/logger";
 import { TransactionConfirm } from "../components/TransactionConfirm";
 import { StepId, StepProps } from "../types";
 
@@ -198,37 +197,18 @@ export default function StepOnboard({
 export const StepOnboardFooter = ({
   currency,
   isProcessing,
-  onboardingCompleted,
   onboardingStatus,
   onOnboardAccount,
   transitionTo,
 }: StepProps) => {
-  const handleNext = useCallback(() => {
-    logger.log("[StepOnboardFooter] Continue button clicked:", {
-      onboardingCompleted,
-      isProcessing,
-      onboardingStatus,
-      onOnboardAccount: !!onOnboardAccount,
-    });
-
-    if (onboardingStatus === OnboardStatus.INIT) {
-      logger.log("StepOnboard: Starting onboarding process via parent");
-      onOnboardAccount();
-    } else if (onboardingCompleted && !isProcessing) {
-      logger.log("StepOnboard: Transitioning to authorization");
+  const handleNext = () => {
+    if (onboardingStatus === OnboardStatus.SUCCESS) {
       transitionTo(StepId.AUTHORIZE);
-    } else {
-      logger.warn("StepOnboard: Cannot transition - conditions not met", {
-        onboardingStatus,
-        onOnboardAccount: !!onOnboardAccount,
-        onboardingCompleted,
-        isProcessing,
-      });
     }
-  }, [onboardingCompleted, isProcessing, onboardingStatus, onOnboardAccount, transitionTo]);
+    onOnboardAccount();
+  };
 
-  const isButtonDisabled =
-    onboardingStatus === OnboardStatus.INIT ? false : isProcessing || !onboardingCompleted;
+  const isNextDisabled = onboardingStatus !== OnboardStatus.SUCCESS || isProcessing;
 
   if (onboardingStatus === OnboardStatus.SIGN) {
     return <></>;
@@ -237,7 +217,7 @@ export const StepOnboardFooter = ({
   return (
     <Box horizontal alignItems="center" justifyContent="space-between" grow>
       <CurrencyBadge currency={currency} />
-      <Button primary disabled={isButtonDisabled} onClick={handleNext}>
+      <Button primary disabled={isNextDisabled} onClick={handleNext}>
         <Trans i18nKey="common.continue" />
       </Button>
     </Box>

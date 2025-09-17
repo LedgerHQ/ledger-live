@@ -137,11 +137,9 @@ export function makeGetAccountShape(
       blockHeight,
       creationDate,
       lastSyncDate: new Date(),
-      // freshAddress: xpubOrAddress,
-      // freshAddressPath: derivationPath,
+      // freshAddress: xpubOrAddress, // investigate why it leads to unexpected behavior
       operations,
       operationsCount: operations.length,
-      // seedIdentifier: xpubOrAddress,
       spendableBalance,
       xpub: xpubOrAddress,
       used: balance.gt(0),
