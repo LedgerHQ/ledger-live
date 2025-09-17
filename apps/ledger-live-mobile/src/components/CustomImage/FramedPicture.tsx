@@ -1,88 +1,16 @@
 import { Box, Flex } from "@ledgerhq/native-ui";
 import React, { ComponentProps, useContext, useMemo } from "react";
-import { Image, ImageProps, StyleSheet } from "react-native";
+import { Image, StyleSheet } from "react-native";
 import styled, { useTheme } from "styled-components/native";
+import { CLSSupportedDeviceModelId } from "@ledgerhq/live-common/device/use-cases/isCustomLockScreenSupported";
 import ForceTheme from "../theme/ForceTheme";
 import { getFramedPictureConfig } from "./framedPictureConfigs";
-import { CLSSupportedDeviceModelId } from "@ledgerhq/live-common/device/use-cases/isCustomLockScreenSupported";
 
 /**
  * Set this to true to have visual indicators of how the foreground image (the content)
  * and the background image (the frame) will be positioned.
  * */
 const DEBUG = false;
-
-/**
- * This is used to display a picture representing Ledger Stax and on top of it
- * a picture that is "framed" (as if it's displayed on the Ledger Stax screen).
- * The values must be taken from measurements on the Ledger Stax picture being
- * used.
- * Reminder of what Ledger Stax looks like to understand the purpose of this:
- * (I tried my best with this ASCII art)
- *  _____________
- * |____________ \ <- top edge
- * |            \ \
- * |            | |
- * |   screen   | |
- * |    of the  | |
- * | Ledger Stax| |
- * |            | |
- * |            | |
- * |____________/ /
- * |_____________/ <- bottom edge
- *
- *               ^
- *  right edge  _|
- */
-export type FramedPictureConfig = {
-  /**
-   * Height of the Ledger Stax picture
-   * */
-  frameHeight: number;
-  /**
-   * Width of the Ledger Stax picture
-   * */
-  frameWidth: number;
-  /**
-   * Height of the "screen" zone on the Ledger Stax picture
-   * */
-  innerHeight: number;
-  /**
-   * `innerHeight` * aspect ratio of custom lockscreen pictures (400px/670px)
-   * */
-  innerWidth: number;
-  /**
-   * Distance between
-   *  left border of the right edge of Ledger Stax in the picture
-   *  and
-   *  right border of the Ledger Stax picture
-   * */
-  innerRight: number;
-  /**
-   * Distance between
-   *  top border of the Ledger Stax picture
-   *  and
-   *  bottom border of the top edge of Ledger Stax in the picture
-   */
-  innerTop: number;
-  /**
-   * Border radius of the inner part of the screen of Ledger Stax in the picture
-   * (the screen border is curved on the top right and bottom right corner)
-   */
-  borderRightRadius: number;
-  borderLeftRadius?: number;
-  /**
-   * Source of the background picture representing a Ledger Stax
-   * */
-  backgroundSource?: ComponentProps<typeof Image>["source"];
-  resizeMode: ImageProps["resizeMode"];
-  /**
-   * Optional color to fill the space between the left edge of the Ledger Stax picture
-   * and the left edge of the "framed" picture.
-   */
-  leftPaddingColor?: string;
-  scaleCoefficient?: number;
-};
 
 const DEFAULT_SCALE_COEFFICIENT = 0.8;
 
