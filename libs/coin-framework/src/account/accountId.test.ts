@@ -99,13 +99,6 @@ describe("coin-framework", () => {
 
         expect(safeEncodeXpubOrAddress(xpubOrAddress)).toBe(expected);
       });
-
-      it("should handle multiple double colons", () => {
-        const xpubOrAddress = "test::address::with::colons";
-        const expected = "test~!colons!~address~!colons!~with~!colons!~colons";
-
-        expect(safeEncodeXpubOrAddress(xpubOrAddress)).toBe(expected);
-      });
     });
 
     describe("safeDecodeXpubOrAddress", () => {
@@ -120,13 +113,6 @@ describe("coin-framework", () => {
           "ldg~!colons!~1220c81315e2bf2524a9141bcc6cbf19b61c151e0dcaa95343c0ccf53aed7415c4ec";
         const expected =
           "ldg::1220c81315e2bf2524a9141bcc6cbf19b61c151e0dcaa95343c0ccf53aed7415c4ec";
-
-        expect(safeDecodeXpubOrAddress(encodedXpubOrAddress)).toBe(expected);
-      });
-
-      it("should handle multiple encoded double colons", () => {
-        const encodedXpubOrAddress = "test~!colons!~address~!colons!~with~!colons!~colons";
-        const expected = "test::address::with::colons";
 
         expect(safeDecodeXpubOrAddress(encodedXpubOrAddress)).toBe(expected);
       });

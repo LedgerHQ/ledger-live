@@ -143,7 +143,7 @@ export function makeGetAccountShape(
       operationsCount: operations.length,
       // seedIdentifier: xpubOrAddress,
       spendableBalance,
-      // xpub: xpubOrAddress,
+      xpub: xpubOrAddress,
       used: balance.gt(0),
     };
 
