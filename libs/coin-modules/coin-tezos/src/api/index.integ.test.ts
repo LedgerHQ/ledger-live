@@ -54,14 +54,30 @@ describe("Tezos Api", () => {
     });
   });
 
-  it("it does not fail when sending from a tz2 address (SECP256K1 derivation)", async () => {
+  it.each([
+    [
+      "ed25519 / tz1",
+      "tz1heMGVHQnx7ALDcDKqez8fan64Eyicw4DJ",
+      "6D9733FB7E27C56F032FAD41E4C0C90D58D0D5F1A253B2430B702071B57E47C1",
+    ],
+    [
+      "secp256k1 / tz2",
+      "tz2DvEBHrtFkq9pTXqt6yavnf4sPe2jut2XH",
+      "032fede4de54cf92381832a053f0787125fdc0d065d231585eb34d5eae327c0222",
+    ],
+    [
+      "P256 / tz3",
+      "tz3DvEBHrtFkq9pTXqt6yavnf4sPe2jut2XH",
+      "0466839a78481025e3613f65fcd4b492a492bedd1a3cba77ae48eaa1803611d8e5f4e23c0d0f3586e2095f4f83d09c841e1c17586b2356d5d3a3ed3f45bb3a857e",
+    ],
+  ])("it does not fail when providing a %s address with pub key", async (_, sender, pubKey) => {
     // When
     const result = await module.estimateFees({
       asset: { type: "native" },
       type: "send",
-      sender: "tz2DvEBHrtFkq9pTXqt6yavnf4sPe2jut2XH",
-      senderPublicKey: "032fede4de54cf92381832a053f0787125fdc0d065d231585eb34d5eae327c0222",
-      recipient: "tz2GbVqXfjhC3LXoPU6crzcYUYnuNk2jURqf",
+      sender: "tz3DvEBHrtFkq9pTXqt6yavnf4sPe2jut2XH",
+      senderPublicKey: pubKey,
+      recipient: sender,
       amount: BigInt(100),
     });
 
