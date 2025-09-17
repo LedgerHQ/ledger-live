@@ -31,18 +31,18 @@ export default function CustomMockAccountGenerator({ title, desc }: Props) {
     );
 
     if (selectedCurrencyIds.length === 0) {
-      alert(t("settings.developer.debugSimpleHash.mockAccounts.alerts.selectCurrency"));
+      alert(t("settings.developer.mockAccounts.alerts.selectCurrency"));
       return;
     }
 
-    if (window.confirm(t("settings.developer.debugSimpleHash.mockAccounts.alerts.confirmErase"))) {
+    if (window.confirm(t("settings.developer.mockAccounts.alerts.confirmErase"))) {
       try {
         const currencies = getSupportedCurrencies().filter(c => selectedCurrencyIds.includes(c.id));
         const accounts = generateAccountsForCurrencies(currencies, tokens);
         await injectMockAccounts(accounts, true);
       } catch (error) {
         console.error("Failed to generate mock accounts:", error);
-        alert(t("settings.developer.debugSimpleHash.mockAccounts.alerts.generateError"));
+        alert(t("settings.developer.mockAccounts.alerts.generateError"));
       }
     }
 
@@ -58,27 +58,25 @@ export default function CustomMockAccountGenerator({ title, desc }: Props) {
           <CurrencySelector
             selectedCurrencies={selectedCurrencies}
             onCurrencyToggle={handleCurrencyToggle}
-            placeholder={t(
-              "settings.developer.debugSimpleHash.mockAccounts.currencySelector.placeholder",
-            )}
+            placeholder={t("settings.developer.mockAccounts.currencySelector.placeholder")}
           />
         </Box>
 
         <Box flex={1}>
           <Text ff="Inter|Medium" fontSize={3} color="palette.text.shade100" mb={2}>
-            {t("settings.developer.debugSimpleHash.mockAccounts.tokenIds.label")}
+            {t("settings.developer.mockAccounts.tokenIds.label")}
           </Text>
           <Input
             value={tokens}
             onChange={setTokens}
-            placeholder={t("settings.developer.debugSimpleHash.mockAccounts.tokenIds.placeholder")}
+            placeholder={t("settings.developer.mockAccounts.tokenIds.placeholder")}
             maxLength={200}
           />
         </Box>
 
         <Box>
           <Button primary disabled={selectedCount === 0} onClick={handlePressContinue}>
-            {t("settings.developer.debugSimpleHash.mockAccounts.buttons.generateAccounts", {
+            {t("settings.developer.mockAccounts.buttons.generateAccounts", {
               count: selectedCount,
             })}
           </Button>
