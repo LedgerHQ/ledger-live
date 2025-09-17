@@ -1,5 +1,5 @@
 import BigNumber from "bignumber.js";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { memo, useCallback, useEffect, useState } from "react";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
 import { OnboardStatus } from "@ledgerhq/coin-canton/types";
@@ -38,19 +38,54 @@ export const SectionAccountsStyled = styled(Box)`
   }
 `;
 
-const SectionAccounts = ({
-  currency,
-  accountName,
-  editedNames,
-  creatableAccount,
-  importableAccounts,
-}: Pick<
-  StepProps,
-  "currency" | "accountName" | "editedNames" | "creatableAccount" | "importableAccounts"
->) => {
-  return (
-    <SectionAccountsStyled>
-      {importableAccounts?.length > 0 && (
+const SectionAccounts = memo(
+  ({
+    currency,
+    accountName,
+    editedNames,
+    creatableAccount,
+    importableAccounts,
+  }: Pick<
+    StepProps,
+    "currency" | "accountName" | "editedNames" | "creatableAccount" | "importableAccounts"
+  >) => {
+    return (
+      <SectionAccountsStyled>
+        {importableAccounts?.length > 0 && (
+          <Box mb={4}>
+            <Box
+              horizontal
+              ff="Inter|Bold"
+              color="palette.text.shade100"
+              fontSize={2}
+              textTransform="uppercase"
+              mb={3}
+            >
+              <Trans
+                i18nKey="addAccounts.sections.onboarded.title"
+                count={importableAccounts?.length}
+              >
+                Onboarded accounts
+              </Trans>
+            </Box>
+            <Box flow={2}>
+              {importableAccounts.map((account, index) => (
+                <AccountRow
+                  key={account.id}
+                  account={account}
+                  accountName={
+                    editedNames[account.id] ||
+                    getDefaultAccountNameForCurrencyIndex({ currency, index })
+                  }
+                  isDisabled={false}
+                  hideAmount={false}
+                  isReadonly={true}
+                />
+              ))}
+            </Box>
+          </Box>
+        )}
+
         <Box mb={4}>
           <Box
             horizontal
@@ -60,68 +95,42 @@ const SectionAccounts = ({
             textTransform="uppercase"
             mb={3}
           >
-            <Trans
-              i18nKey="addAccounts.sections.onboarded.title"
-              count={importableAccounts?.length}
-            >
-              Onboarded accounts
-            </Trans>
+            <Trans i18nKey="addAccounts.sections.onboardedable.title">New account</Trans>
           </Box>
-          <Box flow={2}>
-            {importableAccounts.map((account, index) => (
-              <AccountRow
-                key={account.id}
-                account={account}
-                accountName={
-                  editedNames[account.id] ||
-                  getDefaultAccountNameForCurrencyIndex({ currency, index })
-                }
-                isDisabled={false}
-                hideAmount={false}
-                isReadonly={true}
-              />
-            ))}
-          </Box>
+          {creatableAccount && (
+            <AccountRow
+              account={creatableAccount}
+              accountName={accountName}
+              isDisabled={false}
+              hideAmount={true}
+              isReadonly={true}
+            />
+          )}
         </Box>
-      )}
+      </SectionAccountsStyled>
+    );
+  },
+);
 
-      <Box mb={4}>
-        <Box
-          horizontal
-          ff="Inter|Bold"
-          color="palette.text.shade100"
-          fontSize={2}
-          textTransform="uppercase"
-          mb={3}
-        >
-          <Trans i18nKey="addAccounts.sections.onboardedable.title">New account</Trans>
-        </Box>
-        {creatableAccount && (
-          <AccountRow
-            account={creatableAccount}
-            accountName={accountName}
-            isDisabled={false}
-            hideAmount={true}
-            isReadonly={true}
-          />
-        )}
-      </Box>
-    </SectionAccountsStyled>
-  );
-};
+SectionAccounts.displayName = "SectionAccounts";
 
+/**
+ * Get user-friendly status message for onboarding status
+ * @param status - The current onboarding status
+ * @returns Human-readable status message
+ */
 const getStatusMessage = (status: OnboardStatus): string => {
   switch (status) {
     case OnboardStatus.INIT:
-      return "Initializing Canton onboarding...";
+      return "Ready to start Canton onboarding";
     case OnboardStatus.PREPARE:
-      return "Preparing onboarding transaction...";
+      return "Preparing your Canton account...";
     case OnboardStatus.SIGN:
-      return "Please confirm the transaction on your device";
+      return "Please confirm the transaction on your Ledger device";
     case OnboardStatus.SUBMIT:
-      return "Submitting onboarding transaction...";
+      return "Submitting to Canton network...";
     case OnboardStatus.SUCCESS:
-      return "Onboarding completed successfully";
+      return "Account created successfully!";
     case OnboardStatus.ERROR:
       return "Onboarding failed";
     default:

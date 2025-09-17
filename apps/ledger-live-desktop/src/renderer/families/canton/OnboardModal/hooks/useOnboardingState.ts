@@ -1,24 +1,51 @@
+// External dependencies
 import { useState, useCallback } from "react";
 import { OnboardStatus, PreApprovalStatus } from "@ledgerhq/coin-canton/types";
+
+// Local types
 import { OnboardingData, SigningData } from "../types";
 
+/**
+ * State interface for the onboarding process
+ */
 export interface OnboardingState {
+  // Step management
   stepId: string;
+
+  // Account information
   accountName: string;
   isCreating: boolean;
+
+  // Error handling
   error: Error | null;
+
+  // Onboarding process
   onboardingData: OnboardingData | null;
   onboardingCompleted: boolean;
   onboardingStatus: OnboardStatus;
+
+  // Authorization process
   authorizeStatus: PreApprovalStatus;
+
+  // Transaction data
   signingData: SigningData | null;
+
+  // UI state
   isProcessing: boolean;
   showConfirmation: boolean;
   progress: number;
   message: string;
+
+  // Subscriptions
   preapprovalSubscription: { unsubscribe: () => void } | null;
 }
 
+/**
+ * Custom hook for managing Canton onboarding state
+ * Provides state management and helper functions for the onboarding process
+ *
+ * @returns Object containing state and state management functions
+ */
 export const useOnboardingState = () => {
   const [state, setState] = useState<OnboardingState>({
     stepId: "ONBOARD",
@@ -37,6 +64,10 @@ export const useOnboardingState = () => {
     preapprovalSubscription: null,
   });
 
+  /**
+   * Updates the state with partial updates
+   * @param updates - Partial state updates to apply
+   */
   const updateState = useCallback((updates: Partial<OnboardingState>) => {
     setState(prev => ({ ...prev, ...updates }));
   }, []);

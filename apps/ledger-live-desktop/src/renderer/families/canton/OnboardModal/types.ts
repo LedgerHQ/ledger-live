@@ -1,9 +1,13 @@
+// External dependencies
 import { TFunction } from "i18next";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { Account } from "@ledgerhq/types-live";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { OnboardStatus } from "@ledgerhq/coin-canton/types";
 
+/**
+ * Base data structure for the onboarding modal
+ */
 export type Data = {
   currency: CryptoCurrency;
   device: Device;
@@ -13,6 +17,9 @@ export type Data = {
   };
 };
 
+/**
+ * Data structure containing the result of the onboarding process
+ */
 export type OnboardingData = {
   partyId: string;
   address: string;
@@ -25,12 +32,18 @@ export type OnboardingData = {
   completedAccount: Account;
 };
 
+/**
+ * Enum representing the different steps in the onboarding flow
+ */
 export enum StepId {
-  AUTHORIZE,
-  ONBOARD,
-  FINISH,
+  ONBOARD = "ONBOARD",
+  AUTHORIZE = "AUTHORIZE",
+  FINISH = "FINISH",
 }
 
+/**
+ * Data structure for transaction signing information
+ */
 export interface SigningData {
   partyId: string;
   publicKey: string;
@@ -39,27 +52,47 @@ export interface SigningData {
   derivationPath?: string;
 }
 
+/**
+ * Props interface for step components in the onboarding flow
+ */
 export type StepProps = {
+  // Translation
   t: TFunction;
+
+  // Account data
   accountName: string;
   importableAccounts: Account[];
   creatableAccount: Account;
-  clearError: () => void;
-  closeModal: (modalName: string) => void;
-  currency: CryptoCurrency;
-  device: Device | null | undefined;
+  selectedAccounts: Account[];
   editedNames: {
     [accountId: string]: string;
   };
+
+  // Currency and device
+  currency: CryptoCurrency;
+  device: Device | null | undefined;
+
+  // Error handling
   error: Error | null;
+  clearError: () => void;
+
+  // Modal control
+  closeModal: (modalName: string) => void;
+  transitionTo: (stepId: StepId) => void;
+
+  // Account management
   onAddAccounts: (accounts: Account[]) => void;
+
+  // Onboarding state
   onboardingCompleted?: boolean;
   onboardingData?: OnboardingData | null;
   onboardingStatus?: OnboardStatus;
-  selectedAccounts: Account[];
-  signingData: SigningData | null;
   setOnboardingCompleted?: (completed: boolean) => void;
   setOnboardingData?: (data: OnboardingData) => void;
-  transitionTo: (stepId: StepId) => void;
+
+  // Transaction data
+  signingData: SigningData | null;
+
+  // Actions
   startOnboarding?: (() => void) | undefined;
 };

@@ -197,12 +197,9 @@ describe("onboard (devnet)", () => {
 
       // WHEN
       const preapprovalValues = await firstValueFrom(
-        preapprovalObservable(
-          mockCurrency,
-          mockDeviceId,
-          mockDerivationPath,
-          onboardResult.partyId,
-        ).pipe(toArray()),
+        preapprovalObservable(mockCurrency, mockDeviceId, mockAccount, onboardResult.partyId).pipe(
+          toArray(),
+        ),
       );
 
       const progressValues = preapprovalValues.filter(

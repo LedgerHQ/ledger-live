@@ -5,6 +5,10 @@ import Button from "~/renderer/components/Button";
 import { CurrencyCircleIcon } from "~/renderer/components/CurrencyBadge";
 import { StepProps } from "../types";
 
+/**
+ * Final step component showing successful account creation
+ * Displays success message and account information
+ */
 export default function StepFinish({
   t,
   currency,
@@ -12,9 +16,17 @@ export default function StepFinish({
   importableAccounts,
 }: StepProps) {
   const accounts = [...importableAccounts, creatableAccount];
+
   return (
-    <Box alignItems="center" py={6}>
-      {currency ? <CurrencyCircleIcon currency={currency} size={50} showCheckmark /> : null}
+    <Box alignItems="center" py={6} role="status" aria-live="polite">
+      {currency ? (
+        <CurrencyCircleIcon
+          currency={currency}
+          size={50}
+          showCheckmark
+          aria-label={`${currency.name} account created successfully`}
+        />
+      ) : null}
       <Title>
         {t("addAccounts.success", {
           count: accounts.length,
@@ -29,6 +41,10 @@ export default function StepFinish({
   );
 }
 
+/**
+ * Footer component for the final step
+ * Provides actions to add more accounts or complete the process
+ */
 export const StepFinishFooter = ({
   t,
   currency: _currency,
@@ -37,14 +53,14 @@ export const StepFinishFooter = ({
   importableAccounts,
   onboardingData,
 }: StepProps) => {
-  const onGoStep1 = () => {
+  const handleAddMore = () => {
     const completedAccount = onboardingData?.completedAccount;
     if (completedAccount) {
       onAddAccounts([...importableAccounts, completedAccount]);
     }
   };
 
-  const onDone = () => {
+  const handleDone = () => {
     const completedAccount = onboardingData?.completedAccount;
     if (completedAccount) {
       onAddAccounts([...importableAccounts, completedAccount]);
@@ -55,17 +71,19 @@ export const StepFinishFooter = ({
     <Box horizontal alignItems="center" justifyContent="space-between" grow>
       <Button
         event="Page AddAccounts Step 4 AddMore"
-        data-testid={"add-accounts-finish-add-more-button"}
+        data-testid="add-accounts-finish-add-more-button"
         outlineGrey
-        onClick={onGoStep1}
+        onClick={handleAddMore}
+        aria-label="Add more Canton accounts"
       >
         {t("addAccounts.cta.addMore")}
       </Button>
       <Button
         event="Page AddAccounts Step 4 Close"
-        data-testid={"add-accounts-finish-close-button"}
+        data-testid="add-accounts-finish-close-button"
         primary
-        onClick={onDone}
+        onClick={handleDone}
+        aria-label="Complete Canton account setup"
       >
         {t("common.done")}
       </Button>

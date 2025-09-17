@@ -68,9 +68,9 @@ export function makeGetAccountShape(
   signerContext: SignerContext<CantonSigner>,
 ): GetAccountShape<CantonAccount> {
   return async info => {
-    const { address, initialAccount, currency, derivationMode, derivationPath } = info;
+    const { initialAccount, currency, derivationMode, derivationPath } = info;
 
-    let xpubOrAddress = initialAccount?.xpub || address;
+    let xpubOrAddress = initialAccount?.xpub || "";
 
     if (!xpubOrAddress) {
       const getAddress = resolver(signerContext);
