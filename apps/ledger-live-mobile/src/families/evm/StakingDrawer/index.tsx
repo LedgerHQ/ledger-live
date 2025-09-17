@@ -26,14 +26,10 @@ const descending = (a: ListProvider, b: ListProvider) => (b?.min || 0) - (a?.min
 export function EvmStakingDrawer() {
   const { openDrawer, drawer } = useRootDrawerContext();
   const ethStakingProviders = useFeature("ethStakingProviders");
-  const isStakingProvidersEnabled = ethStakingProviders?.enabled;
-  const providers: ListProvider[] | undefined = ethStakingProviders?.params?.listProvider;
 
   useEffect(() => {
-    if (isStakingProvidersEnabled || (providers ?? []).length > 0) {
-      openDrawer();
-    }
-  }, [isStakingProvidersEnabled, openDrawer, providers]);
+    openDrawer();
+  }, [drawer, openDrawer]);
 
   return !ethStakingProviders || drawer.id !== "EvmStakingDrawer" ? null : (
     <Content
