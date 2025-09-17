@@ -747,6 +747,7 @@ export async function verifyAmountsAndAcceptSwap(swap: Swap, amount: string) {
 }
 
 export async function verifyAmountsAndAcceptSwapForDifferentSeed(swap: Swap, amount: string) {
+  await waitFor(DeviceLabels.RECEIVE_ADDRESS_DOES_NOT_BELONG);
   await pressUntilTextFound(DeviceLabels.I_UNDERSTAND);
   await pressBoth();
   const events = await pressUntilTextFound(DeviceLabels.SIGN_TRANSACTION);

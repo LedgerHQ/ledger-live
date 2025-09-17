@@ -108,13 +108,6 @@ export class ConsoleLogger {
       this.everyLogs = false;
       this.filters = [];
     }
-
-    console.log(
-      `Logs console display setup (main process): ${JSON.stringify({
-        everyLogs: this.everyLogs,
-        filters: this.filters,
-      })}`,
-    );
   }
 
   /**

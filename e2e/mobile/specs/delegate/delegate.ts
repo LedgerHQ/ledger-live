@@ -91,8 +91,6 @@ export async function runDelegateCelo(delegation: DelegateType, tmsLinks: string
       const amountWithCode = delegation.amount + " " + delegation.account.currency.ticker;
       const currencyId = delegation.account.currency.id;
 
-      await app.speculos.activateContractData();
-
       await app.portfolio.goToAccounts(delegation.account.currency.name);
       await app.common.goToAccountByName(delegation.account.accountName);
       await app.account.tapEarn();

@@ -2,7 +2,7 @@ let updater: {
   quitAndInstall?: () => void;
 } = {};
 export default (type: string) => {
-  console.log(type);
+  console.log(`UPDATER: ${type}`);
   switch (type) {
     case "init":
       // eslint-disable-next-line @typescript-eslint/no-var-requires

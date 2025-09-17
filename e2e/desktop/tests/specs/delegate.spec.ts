@@ -325,7 +325,6 @@ test.describe("e2e delegation - Celo", () => {
       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
       await app.layout.goToAccounts();
       await app.accounts.navigateToAccountByName(account.account.accountName);
-      await app.speculos.activateContractData();
       await app.account.startStakingFlowFromMainStakeButton();
       await app.delegate.checkCeloManageAssetModal();
       await app.delegate.clickCeloLockButton();
