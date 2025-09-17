@@ -40,8 +40,8 @@ type Props = {
 
 export const WebViewWrapper = styled.div<WebViewWrapperProps>`
   flex: 1;
-  height: 100%;
   display: flex;
+  flex-direction: column;
   ${({ mobileView }) =>
     mobileView.display ? `width: ${mobileView.width ?? 355}px;` : "width: 100%;"}
 `;
