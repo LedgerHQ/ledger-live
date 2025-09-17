@@ -1,5 +1,15 @@
 # ledger-live-desktop
 
+## 2.128.1-hotfix.0
+
+### Patch Changes
+
+- [#11858](https://github.com/LedgerHQ/ledger-live/pull/11858) [`ef18dc8`](https://github.com/LedgerHQ/ledger-live/commit/ef18dc8dff93b13ab7879fbe9666f68ee66a8466) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Revert Incidents fix issue on LLD
+
+- Updated dependencies [[`ef18dc8`](https://github.com/LedgerHQ/ledger-live/commit/ef18dc8dff93b13ab7879fbe9666f68ee66a8466)]:
+  - @ledgerhq/live-common@34.48.1-hotfix.0
+  - @ledgerhq/live-dmk-desktop@0.9.6-hotfix.0
+
 ## 2.128.0
 
 ### Minor Changes
