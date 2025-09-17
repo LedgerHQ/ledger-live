@@ -50,6 +50,8 @@ export const etherscanOperationToOperations = (
 
   const valueIncludesFees = ["OUT", "FEES", "DELEGATE", "UNDELEGATE", "REDELEGATE"];
 
+  const valueIncludesFees = ["OUT", "FEES", "DELEGATE", "UNDELEGATE", "REDELEGATE"];
+
   return types.map(type => {
     let operationValue: BigNumber = value;
 
