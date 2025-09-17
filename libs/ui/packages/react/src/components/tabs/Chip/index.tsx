@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import Flex from "../../layout/Flex";
 
@@ -41,6 +41,11 @@ const Item = styled(Flex).attrs({
 
 export default function BarTabs({ children, onTabChange, initialActiveIndex }: Props): JSX.Element {
   const [activeIndex, setActiveIndex] = useState(initialActiveIndex);
+
+  useEffect(() => {
+    setActiveIndex(initialActiveIndex);
+  }, [initialActiveIndex]);
+
   return (
     <Container>
       {React.Children.toArray(children).map((child, index) => (

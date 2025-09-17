@@ -37,7 +37,7 @@ export interface Props {
 
 const MODAL_WIDTH = 500;
 
-export const StakeModal = ({ account, source }: Props) => {
+const StakeModal = ({ account, source }: Props) => {
   const { t } = useTranslation();
   const { colors } = useTheme();
 

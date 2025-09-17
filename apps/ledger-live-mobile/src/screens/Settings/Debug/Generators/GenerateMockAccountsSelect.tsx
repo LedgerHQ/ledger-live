@@ -14,68 +14,33 @@ import { replaceAccounts } from "~/actions/accounts";
 import { ScreenName } from "~/const";
 import CurrencyIcon from "~/components/CurrencyIcon";
 import { SettingsNavigatorStackParamList } from "~/components/RootNavigator/types/SettingsNavigator";
-import {
-  StackNavigatorNavigation,
-  StackNavigatorProps,
-} from "~/components/RootNavigator/types/helpers";
+import { StackNavigatorNavigation } from "~/components/RootNavigator/types/helpers";
 import TextInput from "~/components/TextInput";
-import { useFeatureFlags } from "@ledgerhq/live-common/featureFlags/index";
-import { getEnv } from "@ledgerhq/live-env";
 
 type ID = CryptoCurrencyId | "LBRY" | "groestcoin" | "osmo";
-type ScreenProps = StackNavigatorProps<
-  SettingsNavigatorStackParamList,
-  ScreenName.DebugMockGenerateAccounts
->;
 
 type Props = {
-  withNft?: boolean;
   title: string;
   desc: string;
   iconLeft: React.ReactNode;
 };
 
-const NUMBER_OF_ACCOUNTS_FOR_NFTS = 3;
-
-const CURRENCIES_FOR_NFT = getEnv("NFT_CURRENCIES");
-
-const generateMockAccounts = (
-  currencies: CryptoCurrency[],
-  tokens: string,
-  withNft = false,
-): Account[] => {
+const generateMockAccounts = (currencies: CryptoCurrency[], tokens: string): Account[] => {
   const tokenIds = tokens.split(",").map(t => t.toLowerCase().trim());
 
-  const localCurrencies: CryptoCurrency[] = withNft
-    ? currencies.flatMap(currency => Array(NUMBER_OF_ACCOUNTS_FOR_NFTS + 1).fill(currency))
-    : currencies;
-
-  return localCurrencies.map(currency =>
+  return currencies.map(currency =>
     genAccount(String(Math.random()), {
       currency,
       tokenIds,
-      withNft,
     }),
   );
 };
 
 const currencies = listSupportedCurrencies().sort((a, b) => a.name.localeCompare(b.name));
 
-export const GenerateMockAccountSelectScreen = ({ route }: ScreenProps) => {
+export const GenerateMockAccountSelectScreen = () => {
   const dispatch = useDispatch();
   const [tokens, setTokens] = useState<string>("");
-
-  const { withNft } = route.params ?? {};
-
-  const currenciesFiltered = withNft
-    ? currencies.filter(currency => CURRENCIES_FOR_NFT.includes(currency.id))
-    : currencies;
-
-  const featureFlagsProvider = useFeatureFlags();
-
-  const disableSimpleHash = useCallback(() => {
-    featureFlagsProvider.overrideFeature("nftsFromSimplehash", { enabled: false });
-  }, [featureFlagsProvider]);
 
   const [checkedCurrencies, setCheckedCurrencies] = useState<Record<string, boolean>>({});
 
@@ -90,13 +55,13 @@ export const GenerateMockAccountSelectScreen = ({ route }: ScreenProps) => {
   );
 
   const handlePressContinue = useCallback(() => {
-    const selectedCurrencies = currenciesFiltered.filter(({ id }) => checkedCurrencies[id]);
+    const selectedCurrencies = currencies.filter(({ id }) => checkedCurrencies[id]);
 
     const onPress = () => {
-      const mockAccounts = generateMockAccounts(selectedCurrencies, tokens, withNft);
+      const mockAccounts = generateMockAccounts(selectedCurrencies, tokens);
 
       dispatch(replaceAccounts(mockAccounts));
-      if (withNft) disableSimpleHash();
+
       dispatch(reboot());
     };
 
@@ -113,7 +78,7 @@ export const GenerateMockAccountSelectScreen = ({ route }: ScreenProps) => {
       ],
       { cancelable: true },
     );
-  }, [checkedCurrencies, currenciesFiltered, dispatch, disableSimpleHash, tokens, withNft]);
+  }, [checkedCurrencies, dispatch, tokens]);
 
   const insets = useSafeAreaInsets();
   return (
@@ -133,7 +98,7 @@ export const GenerateMockAccountSelectScreen = ({ route }: ScreenProps) => {
         />
       </Flex>
       <ScrollView>
-        {currenciesFiltered.map(currency => {
+        {currencies.map(currency => {
           const { id, name } = currency;
           return (
             <Flex p={2} key={id}>
@@ -163,7 +128,7 @@ export const GenerateMockAccountSelectScreen = ({ route }: ScreenProps) => {
   );
 };
 
-export default function GenerateMockAccount({ withNft = false, title, desc, iconLeft }: Props) {
+export default function GenerateMockAccount({ title, desc, iconLeft }: Props) {
   const navigation =
     useNavigation<
       StackNavigatorNavigation<
@@ -177,11 +142,7 @@ export default function GenerateMockAccount({ withNft = false, title, desc, icon
       title={title}
       desc={desc}
       iconLeft={iconLeft}
-      onPress={() =>
-        navigation.navigate(ScreenName.DebugMockGenerateAccounts, {
-          withNft,
-        })
-      }
+      onPress={() => navigation.navigate(ScreenName.DebugMockGenerateAccounts)}
     />
   );
 }

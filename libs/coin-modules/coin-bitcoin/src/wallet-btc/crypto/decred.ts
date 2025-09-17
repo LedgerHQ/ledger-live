@@ -3,7 +3,7 @@ import { InvalidAddress } from "@ledgerhq/errors";
 import * as bjs from "bitcoinjs-lib";
 import bs58checkBase from "bs58check/base";
 import bs58check from "bs58check";
-import createBlakeHash from "blake-hash";
+import { blake256 as nobleBlake256 } from "@noble/hashes/blake1";
 import RIPEMD160 from "ripemd160";
 import bs58 from "bs58";
 import BIP32 from "./bip32";
@@ -21,7 +21,7 @@ class Decred extends Base {
     if (buffer instanceof Uint8Array) {
       b = Buffer.from(buffer);
     }
-    return createBlakeHash("blake256").update(b).digest();
+    return Buffer.from(nobleBlake256(b));
   }
 
   // refer to decred spec https://devdocs.decred.org/developer-guides/addresses/

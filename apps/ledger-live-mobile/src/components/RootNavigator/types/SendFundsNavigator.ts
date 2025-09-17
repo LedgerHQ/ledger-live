@@ -1,5 +1,5 @@
 import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { Account, AccountLike, ProtoNFT } from "@ledgerhq/types-live";
+import { Account, AccountLike } from "@ledgerhq/types-live";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import type { Operation } from "@ledgerhq/types-live";
 import type { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
@@ -49,8 +49,6 @@ export type SendFundsNavigatorStackParamList = {
         minBalance?: number;
       }
     | undefined;
-  [ScreenName.SendCollection]: { account: Account };
-  [ScreenName.SendNft]: { account: Account; collection: ProtoNFT[] };
   [ScreenName.SendSelectRecipient]: {
     accountId?: string;
     parentId?: string;
@@ -58,11 +56,6 @@ export type SendFundsNavigatorStackParamList = {
     justScanned?: boolean;
   };
   [ScreenName.SendAmountCoin]: {
-    accountId: string;
-    parentId?: string;
-    transaction: Transaction;
-  };
-  [ScreenName.SendAmountNft]: {
     accountId: string;
     parentId?: string;
     transaction: Transaction;

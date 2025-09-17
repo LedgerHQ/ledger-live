@@ -1,7 +1,11 @@
 import React from "react";
-import { Flex, Box } from "@ledgerhq/react-ui";
-import styled from "styled-components";
+import { Flex, Box, Icons } from "@ledgerhq/react-ui";
+import styled, { useTheme } from "styled-components";
 import StyleProviderV3 from "~/renderer/styles/StyleProviderV3";
+import { getFramedPictureConfig } from "./framedPictureConfigs";
+import { CLSSupportedDeviceModelId } from "@ledgerhq/live-common/device/use-cases/isCustomLockScreenSupported";
+import { DeviceModelId } from "@ledgerhq/types-devices";
+import { FlexBoxProps } from "@ledgerhq/react-ui/components/layout/Flex/index";
 
 type Props = Partial<React.ComponentProps<"img">> & {
   /** source of the image inside */
@@ -10,9 +14,9 @@ type Props = Partial<React.ComponentProps<"img">> & {
   background?: React.ReactNode | undefined;
   /** float between 0 and 1 */
   loadingProgress?: number;
-  children?: React.ReactNode | undefined;
-  frameConfig: FramedPictureConfig;
-  scale?: number;
+  deviceModelId: CLSSupportedDeviceModelId;
+  scaleCoefficient?: number;
+  showConfirmationButton?: boolean;
 };
 
 const absoluteFillObject = {
@@ -67,17 +71,22 @@ function scaleFrameConfig(frameConfig: FramedPictureConfig, scale: number): Fram
   } as FramedPictureConfig;
 }
 
+const DEFAULT_SCALE_COEFFICIENT = 0.8;
+/* The height of the confirmation button, could vary per device model later */
+const BUTTON_HEIGHT = 40;
+
 const FramedPicture: React.FC<Props> = ({
   source,
   loadingProgress = 1,
-  children,
-  frameConfig,
-  scale = 0.8,
+  deviceModelId,
+  scaleCoefficient = DEFAULT_SCALE_COEFFICIENT,
+  showConfirmationButton = false,
   background,
   ...imageProps
 }) => {
+  const { colors } = useTheme();
   const isLottie = !!background;
-
+  const frameConfig = getFramedPictureConfig(deviceModelId);
   const {
     frameHeight,
     frameWidth,
@@ -90,7 +99,46 @@ const FramedPicture: React.FC<Props> = ({
     borderLeftRadius,
     innerBottomHeight,
     backgroundSource,
-  } = scaleFrameConfig(frameConfig, scale || 1);
+  } = scaleFrameConfig(frameConfig, scaleCoefficient || 1);
+
+  const ConfirmationButton = ({
+    deviceModelId,
+    ...props
+  }: {
+    deviceModelId: DeviceModelId;
+  } & FlexBoxProps) => {
+    const CheckButton = styled(Flex).attrs({
+      width: "50%",
+      height: "100%",
+      backgroundColor: "neutral.c90",
+      ml: "auto",
+    })``;
+    switch (deviceModelId) {
+      case DeviceModelId.stax:
+        return (
+          <Flex borderBottomRightRadius={borderRightRadius} {...props}>
+            <CheckButton>
+              <Icons.Check style={{ margin: "auto" }} />
+            </CheckButton>
+          </Flex>
+        );
+      case DeviceModelId.europa:
+      case DeviceModelId.apex:
+        return (
+          <Flex
+            borderBottomLeftRadius={borderLeftRadius}
+            borderBottomRightRadius={borderRightRadius}
+            {...props}
+          >
+            <CheckButton>
+              <Icons.Check style={{ margin: "auto" }} />
+            </CheckButton>
+          </Flex>
+        );
+      default:
+        return null;
+    }
+  };
 
   return (
     <>
@@ -111,6 +159,20 @@ const FramedPicture: React.FC<Props> = ({
           <Flex height={frameHeight} justifyContent="center" width={frameWidth}>
             {background || null}
           </Flex>
+          {/* This is a temporary solution while we wait for the new assets */}
+          <AbsoluteInnerImageContainer
+            style={{
+              top: innerTop,
+              left: innerLeft,
+              width: innerWidth,
+              height: innerHeight,
+              borderTopRightRadius: borderRightRadius,
+              borderBottomRightRadius: borderRightRadius,
+              borderTopLeftRadius: borderLeftRadius,
+              borderBottomLeftRadius: borderLeftRadius,
+            }}
+            backgroundColor={colors.neutral.c30}
+          ></AbsoluteInnerImageContainer>
           <AbsoluteInnerImageContainer
             style={{
               right: innerRight,
@@ -137,7 +199,18 @@ const FramedPicture: React.FC<Props> = ({
               />
             ) : null}
           </AbsoluteInnerImageContainer>
-          <Flex style={{ height: innerHeight, width: innerWidth }}>{children}</Flex>
+          {showConfirmationButton ? (
+            <ConfirmationButton
+              deviceModelId={deviceModelId}
+              width={`${innerWidth}px`}
+              height={`${BUTTON_HEIGHT}px`}
+              ml={`${innerLeft}px`}
+              mt={`-${innerBottomHeight + BUTTON_HEIGHT}px`}
+              backgroundColor={"neutral.c20"}
+              position={"relative"}
+              overflow={"hidden"}
+            />
+          ) : null}
         </StyleProviderV3>
       </Container>
     </>

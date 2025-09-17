@@ -6,6 +6,7 @@ import { useAssetsData } from "@ledgerhq/live-common/modularDrawer/hooks/useAsse
 import { MarketItemResponse } from "@ledgerhq/live-common/market/utils/types";
 import { InterestRate } from "@ledgerhq/live-common/modularDrawer/data/entities/index";
 import VersionNumber from "react-native-version-number";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 
 interface AssetsProps {
   currencyIds?: string[];
@@ -34,13 +35,21 @@ export function useAssets({
   useCase,
   areCurrenciesFiltered,
 }: AssetsProps) {
-  const { data, isLoading, isSuccess, error, refetch, loadNext } = useAssetsData({
+  const modularDrawerFeature = useFeature("llmModularDrawer");
+
+  const isStaging = useMemo(
+    () => modularDrawerFeature?.params?.backendEnvironment === "STAGING",
+    [modularDrawerFeature?.params?.backendEnvironment],
+  );
+
+  const { data, isLoading, isSuccess, isError, error, refetch, loadNext } = useAssetsData({
     search: searchedValue,
     currencyIds,
     product: "llm",
     version: VersionNumber.appVersion,
     useCase,
     areCurrenciesFiltered,
+    isStaging,
   });
 
   const assetsSorted: AssetsData = useMemo(() => {
@@ -78,6 +87,7 @@ export function useAssets({
     data,
     isLoading,
     isSuccess,
+    isError,
     error,
     loadingStatus,
     assetsSorted,

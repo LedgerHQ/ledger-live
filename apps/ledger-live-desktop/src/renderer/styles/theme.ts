@@ -1,5 +1,4 @@
 import { keyframes, css } from "styled-components";
-import { Theme as UITheme } from "@ledgerhq/react-ui/styles/theme";
 
 export const space = [0, 5, 10, 15, 20, 30, 40, 50, 70];
 export const fontSizes = [8, 9, 10, 12, 13, 16, 18, 22, 32];
@@ -210,8 +209,6 @@ export type Theme = {
     [x: string]: unknown;
   };
 };
-
-export type MergedThemes = UITheme & Theme;
 
 const theme: Theme = {
   sizes: {

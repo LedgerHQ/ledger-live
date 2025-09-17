@@ -5,10 +5,8 @@ import {
 } from "@ledgerhq/coin-framework/api/types";
 import { Transaction, TransactionLike } from "ethers";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import BigNumber from "bignumber.js";
-import { isNative, TransactionTypes } from "../types";
-import { getNodeApi } from "../network/node";
-import { getErc20Data, getTransactionType } from "./common";
+import { TransactionTypes } from "../types";
+import { prepareUnsignedTxParams } from "./common";
 import { getSequence } from "./getSequence";
 
 export async function craftTransaction(
@@ -21,45 +19,37 @@ export async function craftTransaction(
     customFees?: FeeEstimation | undefined;
   },
 ): Promise<CraftedTransaction> {
-  const { amount, asset, recipient, sender, type } = transactionIntent;
+  const { sender } = transactionIntent;
 
-  const transactionType = getTransactionType(type);
-  const node = getNodeApi(currency);
-  const to = isNative(asset) ? recipient : (asset?.assetReference as string);
-  const nonce = await getSequence(currency, sender);
-  const data = isNative(asset) ? Buffer.from([]) : getErc20Data(recipient, amount);
-  const value = isNative(asset) ? amount : 0n;
-  const chainId = currency.ethereumLikeInfo?.chainId ?? 0;
-  const gasLimit = await node.getGasEstimation(
-    { currency, freshAddress: sender },
-    { amount: BigNumber(value.toString()), recipient: to, data },
+  const { type, to, data, value, gasLimit, feeData } = await prepareUnsignedTxParams(
+    currency,
+    transactionIntent,
   );
-  const fee = await node.getFeeData(currency, { type: transactionType });
+
+  const nonce = await getSequence(currency, sender);
+  const chainId = currency.ethereumLikeInfo?.chainId ?? 0;
 
   const unsignedTransaction: TransactionLike = {
-    type: transactionType,
+    type,
     to,
     nonce,
     gasLimit: BigInt(gasLimit.toFixed(0)),
-    data: "0x" + data.toString("hex"),
+    data,
     value,
     chainId,
-    ...(fee.gasPrice ? { gasPrice: BigInt(fee.gasPrice.toFixed(0)) } : {}),
-    ...(fee.maxFeePerGas ? { maxFeePerGas: BigInt(fee.maxFeePerGas.toFixed(0)) } : {}),
-    ...(fee.maxPriorityFeePerGas
-      ? { maxPriorityFeePerGas: BigInt(fee.maxPriorityFeePerGas.toFixed(0)) }
+    ...(feeData.gasPrice ? { gasPrice: BigInt(feeData.gasPrice.toFixed(0)) } : {}),
+    ...(feeData.maxFeePerGas ? { maxFeePerGas: BigInt(feeData.maxFeePerGas.toFixed(0)) } : {}),
+    ...(feeData.maxPriorityFeePerGas
+      ? { maxPriorityFeePerGas: BigInt(feeData.maxPriorityFeePerGas.toFixed(0)) }
       : {}),
   };
 
-  if (
-    transactionType === TransactionTypes.legacy &&
-    typeof customFees?.parameters?.gasPrice === "bigint"
-  ) {
+  if (type === TransactionTypes.legacy && typeof customFees?.parameters?.gasPrice === "bigint") {
     unsignedTransaction.gasPrice = customFees.parameters.gasPrice;
   }
 
   if (
-    transactionType === TransactionTypes.eip1559 &&
+    type === TransactionTypes.eip1559 &&
     typeof customFees?.parameters?.maxFeePerGas === "bigint" &&
     typeof customFees?.parameters?.maxPriorityFeePerGas === "bigint"
   ) {

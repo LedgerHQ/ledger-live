@@ -4,20 +4,20 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 
 export type ImportableAccountsListProps = {
-  scanning: boolean;
   importableAccounts: Account[];
-  allImportableAccountsSelected: boolean;
-  handleSelectAll: () => void;
+  scanning: boolean;
+  selectedIds: string[];
   handleDeselectAll: () => void;
+  handleSelectAll: () => void;
   renderAccount: (account: Account) => React.ReactNode;
 };
 
 export const ImportableAccountsList = ({
-  scanning,
   importableAccounts,
-  allImportableAccountsSelected,
-  handleSelectAll,
+  scanning,
+  selectedIds,
   handleDeselectAll,
+  handleSelectAll,
   renderAccount,
 }: ImportableAccountsListProps) => {
   const { t } = useTranslation();
@@ -35,7 +35,7 @@ export const ImportableAccountsList = ({
             )}
           </Text>
           {importableAccounts.length > 0 ? (
-            allImportableAccountsSelected ? (
+            importableAccounts.every(a => selectedIds.includes(a.id)) ? (
               <Link size="small" onClick={handleDeselectAll}>
                 {t("modularAssetDrawer.addAccounts.controls.deselectAll")}
               </Link>

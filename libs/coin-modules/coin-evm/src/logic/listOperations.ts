@@ -59,7 +59,7 @@ function toOperation(asset: AssetConfig, op: LiveOperation): Operation<MemoNotSu
     },
     details: {
       ledgerOpType: op.type,
-      ...(asset.type === "token" ? { assetAmount: BigInt(op.value.toFixed(0)) } : {}),
+      ...(asset.type === "token" ? { assetAmount: op.value.toFixed(0) } : {}),
     },
   };
 }

@@ -38,7 +38,6 @@ import SwapNavigator from "./SwapNavigator";
 import NotificationCenterNavigator from "./NotificationCenterNavigator";
 import AnalyticsAllocation from "~/screens/Analytics/Allocation";
 import AnalyticsOperations from "~/screens/Analytics/Operations";
-import NftNavigator from "./NftNavigator";
 import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
 import Account from "~/screens/Account";
 import ReadOnlyAccount from "~/screens/Account/ReadOnly/ReadOnlyAccount";
@@ -66,7 +65,6 @@ import { readOnlyModeEnabledSelector } from "~/reducers/settings";
 import { hasNoAccountsSelector } from "~/reducers/accounts";
 import { BaseNavigatorStackParamList } from "./types/BaseNavigator";
 import DeviceConnect, { deviceConnectHeaderOptions } from "~/screens/DeviceConnect";
-import ExploreTabNavigator from "./ExploreTabNavigator";
 import NoFundsFlowNavigator from "./NoFundsFlowNavigator";
 import StakeFlowNavigator from "./StakeFlowNavigator";
 import { RecoverPlayer } from "~/screens/Protect/Player";
@@ -215,17 +213,6 @@ export default function BaseNavigator() {
             headerStyle: styles.headerNoShadow,
           }}
           {...noNanoBuyNanoWallScreenOptions}
-        />
-        <Stack.Screen
-          name={NavigatorName.ExploreTab}
-          component={ExploreTabNavigator}
-          options={{
-            headerShown: true,
-            animation: "none",
-            headerTitle: t("discover.sections.news.title"),
-            headerLeft: () => <NavigationHeaderBackButton />,
-            headerRight: () => null,
-          }}
         />
         <Stack.Screen
           name={NavigatorName.SignMessage}
@@ -471,11 +458,6 @@ export default function BaseNavigator() {
         <Stack.Screen
           name={NavigatorName.NotificationCenter}
           component={NotificationCenterNavigator}
-          options={{ headerShown: false }}
-        />
-        <Stack.Screen
-          name={NavigatorName.NftNavigator}
-          component={NftNavigator}
           options={{ headerShown: false }}
         />
         <Stack.Screen

@@ -2,11 +2,8 @@ import { Device } from "@ledgerhq/types-devices";
 import { type CLSSupportedDeviceModelId } from "@ledgerhq/live-common/device/use-cases/isCustomLockScreenSupported";
 import { ScreenName } from "~/const";
 import { CropResult } from "../../CustomImage/ImageCropper";
-import {
-  ProcessorPreviewResult,
-  ProcessorRawResult,
-} from "../../CustomImage/ImageToDeviceProcessor";
-import { GalleryNFT, ImageFileUri, ImageUrl, ImageType } from "../../CustomImage/types";
+import { ProcessorPreviewResult, ProcessorRawResult } from "../../CustomImage/dithering/types";
+import { ImageFileUri, ImageUrl, ImageType } from "../../CustomImage/types";
 
 type BaseParams = {
   device: Device | null;
@@ -22,13 +19,12 @@ type WithOptionalDeviceModelId = {
   referral?: string;
 };
 
-type PreviewPreEditAdditionalParams = (ImageUrl | ImageFileUri | GalleryNFT) & {
+type PreviewPreEditAdditionalParams = (ImageUrl | ImageFileUri) & {
   isPictureFromGallery?: boolean;
   isStaxEnabled?: boolean;
 };
 
 export type CustomImageNavigatorParamList = {
-  [ScreenName.CustomImageNFTGallery]: BaseParams & WithOptionalDeviceModelId;
   [ScreenName.CustomImageErrorScreen]: BaseParams & WithOptionalDeviceModelId & { error: Error };
   [ScreenName.CustomImageStep0Welcome]: undefined | (BaseParams & WithOptionalDeviceModelId); // undefined is because it can be called without params (deeplink)
   [ScreenName.CustomImagePreviewPreEdit]: BaseParams &

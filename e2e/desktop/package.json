@@ -27,7 +27,7 @@
   "devDependencies": {
     "@types/invariant": "2.2.37",
     "@types/lodash": "4.17.16",
-    "electron": "32.0.2",
+    "electron": "38.0.0",
     "playwright": "1.51.1"
   }
 }

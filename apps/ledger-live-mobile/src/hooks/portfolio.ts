@@ -1,9 +1,7 @@
 import { useSelector } from "react-redux";
 import type { AccountLike, PortfolioRange } from "@ledgerhq/types-live";
-import type { TokenCurrency, CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import {
   useBalanceHistoryWithCountervalue as useBalanceHistoryWithCountervalueCommon,
-  useCurrencyPortfolio as useCurrencyPortfolioCommon,
   usePortfolioThrottled,
 } from "@ledgerhq/live-countervalues-react/portfolio";
 import { GetPortfolioOptionsType } from "@ledgerhq/live-countervalues/portfolio";
@@ -48,22 +46,5 @@ export function usePortfolioForAccounts(
     range,
     to,
     options,
-  });
-}
-
-export function useCurrencyPortfolio({
-  currency,
-  range,
-}: {
-  currency: CryptoCurrency | TokenCurrency;
-  range: PortfolioRange;
-}) {
-  const accounts = useSelector(accountsSelector);
-  const to = useSelector(counterValueCurrencySelector);
-  return useCurrencyPortfolioCommon({
-    accounts,
-    range,
-    to,
-    currency,
   });
 }

@@ -39,11 +39,11 @@ export type Scenario<T extends TransactionCommon, A extends Account> = {
     retryLimit?: number;
     onSignerConfirmation?: (e?: SignOperationEvent) => Promise<void>;
   }>;
-  getTransactions: (address: string) => ScenarioTransaction<T, A>[];
+  getTransactions: (address: string, strategy: BridgeStrategy) => ScenarioTransaction<T, A>[];
   beforeSync?: () => Promise<void> | void;
   mockIndexer?: (account: Account, optimistic: Operation) => Promise<void>;
-  beforeAll?: (account: Account) => Promise<void> | void;
-  afterAll?: (account: Account) => Promise<void> | void;
+  beforeAll?: (account: Account, strategy: BridgeStrategy) => Promise<void> | void;
+  afterAll?: (account: Account, strategy: BridgeStrategy) => Promise<void> | void;
   beforeEach?: (account: Account) => Promise<void> | void;
   afterEach?: (account: Account) => Promise<void> | void;
   teardown?: () => Promise<void> | void;
@@ -86,7 +86,7 @@ export async function executeScenario<T extends TransactionCommon, A extends Acc
     );
     console.log("Synchronization completed ✓");
 
-    await scenario.beforeAll?.(scenarioAccount);
+    await scenario.beforeAll?.(scenarioAccount, strategy);
     console.log("BeforeAll completed ✓");
 
     console.log("\n\n");
@@ -101,7 +101,7 @@ export async function executeScenario<T extends TransactionCommon, A extends Acc
       chalk.bold.cyan(" Starting  ◌"),
     );
 
-    const scenarioTransactions = scenario.getTransactions(account.freshAddress);
+    const scenarioTransactions = scenario.getTransactions(account.freshAddress, strategy);
 
     for (const testTransaction of scenarioTransactions) {
       console.log("\n");
@@ -230,7 +230,7 @@ export async function executeScenario<T extends TransactionCommon, A extends Acc
 
     console.log("\n");
 
-    await scenario.afterAll?.(scenarioAccount);
+    await scenario.afterAll?.(scenarioAccount, strategy);
     console.log("afterAll completed ✓");
     await scenario.teardown?.();
 

@@ -2,9 +2,9 @@ import { Flex, InfiniteLoader, Text } from "@ledgerhq/native-ui";
 import React, { useCallback, useMemo, useState } from "react";
 import { Dimensions, Image, Pressable } from "react-native";
 import Alert from "../Alert";
-import { ProcessorPreviewResult, ProcessorRawResult } from "./ImageToDeviceProcessor";
+import { ProcessorPreviewResult, ProcessorRawResult } from "./dithering/types";
 import { fitImageContain } from "./imageUtils";
-import ImageHexProcessor from "./ImageFromDeviceProcessor";
+import ImageHexProcessor from "./dithering/ImageFromDeviceProcessor";
 import {
   CLSSupportedDeviceModelId,
   getScreenSpecs,

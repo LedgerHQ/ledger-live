@@ -42,7 +42,7 @@ const assets: Array<{ buySell: BuySell; xrayTicket: string; provider: Provider }
       amount: "900",
       operation: OperationType.Buy,
     },
-    xrayTicket: "B2CQA-3393, B2CQA-3414, B2CQA-3468, B2CQA-3518, B2CQA-3523 B2CQA-3449",
+    xrayTicket: "B2CQA-3393, B2CQA-3414, B2CQA-3468, B2CQA-3518, B2CQA-3523, B2CQA-3449",
     provider: Provider.TRANSAK,
   },
 ];

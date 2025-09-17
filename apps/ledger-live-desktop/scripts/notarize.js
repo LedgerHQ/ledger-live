@@ -1,18 +1,26 @@
-const platform = require("os").platform();
-const { notarize } = require("@electron/notarize");
-const chalk = require("chalk");
-const { spawnSync } = require("child_process");
+import { spawnSync } from "node:child_process";
+import { platform } from "node:os";
+import { notarize } from "@electron/notarize";
+import chalk from "chalk";
+import dotenv from "dotenv";
+import debug from "debug";
 
-require("dotenv").config();
-require("debug").enable("@electron/notarize");
+dotenv.config();
+debug.enable("@electron/notarize");
 
 const info = str => {
   console.log(chalk.blue(str));
 };
 
 async function notarizeApp(context) {
-  if (platform !== "darwin") {
+  if (platform() !== "darwin") {
     info("OS is not mac, skipping notarization.");
+    return;
+  }
+
+  // Skip notarization in CI or when explicitly disabled
+  if (process.env.SKIP_SIGNING === "true") {
+    info("Notarization skipped (SKIP_SIGNING=true)");
     return;
   }
 
@@ -68,4 +76,4 @@ async function notarizeApp(context) {
   }
 }
 
-exports.default = notarizeApp;
+export default notarizeApp;

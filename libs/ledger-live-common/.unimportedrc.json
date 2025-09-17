@@ -309,7 +309,12 @@
     "src/walletConnect/index.ts",
     "src/wallet-api/ModularDrawer/utils.ts"
   ],
-  "extensions": [".ts", ".js", ".jsx", ".tsx"],
+  "extensions": [
+    ".ts",
+    ".js",
+    ".jsx",
+    ".tsx"
+  ],
   "ignorePatterns": [
     "**/node_modules/**",
     "**/__tests__/**",
@@ -322,6 +327,7 @@
     "**/fixtures/**"
   ],
   "ignoreUnimported": [
+    "src/bridge/generic-alpaca/signer/Eth.ts",
     "src/account/typeGuards.ts",
     "src/bot/specs.ts",
     "src/braze/anonymousUsers.ts",
@@ -418,6 +424,7 @@
     "src/modularDrawer/hooks/useRightBalanceAsset.tsx",
     "src/modularDrawer/hooks/useRightBalanceNetwork.tsx",
     "src/modularDrawer/hooks/useAssetAccountCounts.tsx",
+    "src/modularDrawer/hooks/useSearch.ts",
     "src/modularDrawer/hooks/useModularDrawerConfiguration.ts",
     "src/modularDrawer/modules/createAssetConfiguration.ts",
     "src/modularDrawer/modules/createNetworkConfiguration.ts",
@@ -441,9 +448,12 @@
     "src/notifications/AnnouncementProvider/helpers.ts",
     "src/reactNativeSvg.d.ts",
     "src/rxjs/operators/throwIf.ts",
-    "src/walletSync/getEnvironmentParams.ts"
+    "src/walletSync/getEnvironmentParams.ts",
+    "src/families/kaspa/react.ts",
+    "src/families/kaspa/types.ts"
   ],
   "ignoreUnused": [
+    "ethers",
     "@dfinity/agent",
     "@ledgerhq/hw-app-eth",
     "@ledgerhq/hw-transport-mocker",

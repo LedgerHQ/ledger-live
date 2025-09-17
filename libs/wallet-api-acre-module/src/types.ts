@@ -75,3 +75,21 @@ export type TransactionSignAndBroadcastParams = {
 export type TransactionSignAndBroadcastResult = {
   transactionHash: string;
 };
+
+// Minimal types for registering yield-bearing Ethereum addresses
+export type RegisterYieldBearingEthereumAddressParams = {
+  ethereumAddress: string;
+  tokenContractAddress?: string; // ERC20 contract address (optional, defaults to acreBTC)
+  tokenTicker?: string; // Token ticker (optional, alternative to contractAddress, must be provided with full path : ie ethereum/erc20/acreBTC)
+  meta?: Record<string, unknown>;
+};
+
+export type RegisterYieldBearingEthereumAddressResult = {
+  success: boolean;
+  accountName: string;
+  parentAccountId: string; // ID of the created Ethereum parent account
+  tokenAccountId: string; // ID of the created token account
+  ethereumAddress: string; // The Ethereum address that was registered
+  tokenContractAddress: string; // The final token contract address used
+  meta?: Record<string, unknown>; // Optional metadata
+};
