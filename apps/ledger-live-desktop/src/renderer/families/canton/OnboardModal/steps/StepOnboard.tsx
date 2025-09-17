@@ -1,30 +1,19 @@
 import BigNumber from "bignumber.js";
-import React, { memo, useCallback, useEffect, useState } from "react";
+import React, { memo, useCallback } from "react";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
 import { OnboardStatus } from "@ledgerhq/coin-canton/types";
 import { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import { getDefaultAccountNameForCurrencyIndex } from "@ledgerhq/live-wallet/accountName";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import AccountRow from "~/renderer/components/AccountsList/AccountRow";
 import Alert from "~/renderer/components/Alert";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
 import CurrencyBadge from "~/renderer/components/CurrencyBadge";
 import Spinner from "~/renderer/components/Spinner";
-import Text from "~/renderer/components/Text";
 import TransactionConfirm from "~/renderer/components/TransactionConfirm";
 import logger from "~/renderer/logger";
-import { OnboardingData, StepId, StepProps } from "../types";
-
-interface FooterProps {
-  currency: CryptoCurrency;
-  transitionTo: (stepId: StepId) => void;
-  onboardingCompleted: boolean;
-  isProcessing: boolean;
-  status?: OnboardStatus;
-  startOnboarding?: () => void;
-}
+import { StepId, StepProps } from "../types";
 
 export const SectionAccountsStyled = styled(Box)`
   position: relative;
@@ -114,11 +103,6 @@ const SectionAccounts = memo(
 
 SectionAccounts.displayName = "SectionAccounts";
 
-/**
- * Get user-friendly status message for onboarding status
- * @param status - The current onboarding status
- * @returns Human-readable status message
- */
 const getStatusMessage = (status: OnboardStatus): string => {
   switch (status) {
     case OnboardStatus.INIT:
@@ -147,61 +131,9 @@ export default function StepOnboard({
   importableAccounts,
   creatableAccount,
   signingData,
-  setOnboardingData,
-  setOnboardingCompleted,
-  error,
-  clearError,
 }: StepProps) {
-  const [statusMessage, setStatusMessage] = useState("");
-  const [_retryCount, setRetryCount] = useState(0);
-
-  const resetState = useCallback(() => {
-    setStatusMessage("Starting Canton onboarding...");
-  }, []);
-
-  const retry = useCallback(() => {
-    setRetryCount(prev => prev + 1);
-  }, []);
-
-  useEffect(() => {
-    setOnboardingData?.(null as unknown as OnboardingData);
-    setOnboardingCompleted?.(false);
-    setStatusMessage("Ready to start Canton onboarding");
-  }, [setOnboardingData, setOnboardingCompleted]);
-
-  useEffect(() => {
-    setStatusMessage(getStatusMessage(onboardingStatus as OnboardStatus));
-  }, [onboardingStatus]);
-
-  const handleRetry = useCallback(() => {
-    clearError();
-    resetState();
-    retry();
-  }, [clearError, resetState, retry]);
-
   const renderContent = (onboardingStatus?: OnboardStatus) => {
     switch (onboardingStatus) {
-      case OnboardStatus.INIT:
-        return (
-          <Box>
-            <SectionAccounts
-              currency={currency}
-              accountName={accountName}
-              editedNames={editedNames}
-              creatableAccount={creatableAccount}
-              importableAccounts={importableAccounts}
-            />
-
-            <Box>
-              <Alert>
-                <Trans i18nKey="canton.addAccount.onboard.ready">
-                  Set up your new Canton account by clicking Continue
-                </Trans>
-              </Alert>
-            </Box>
-          </Box>
-        );
-
       case OnboardStatus.PREPARE:
         return (
           <Box>
@@ -216,7 +148,7 @@ export default function StepOnboard({
             <LoadingRow>
               <Spinner color="palette.text.shade60" size={16} />
               <Box ml={2} ff="Inter|Regular" color="palette.text.shade60" fontSize={4}>
-                {statusMessage}
+                {getStatusMessage(onboardingStatus)}
               </Box>
             </LoadingRow>
           </Box>
@@ -274,7 +206,7 @@ export default function StepOnboard({
             <LoadingRow>
               <Spinner color="palette.text.shade60" size={16} />
               <Box ml={2} ff="Inter|Regular" color="palette.text.shade60" fontSize={4}>
-                {statusMessage}
+                {getStatusMessage(onboardingStatus)}
               </Box>
             </LoadingRow>
           </Box>
@@ -301,21 +233,26 @@ export default function StepOnboard({
           </Box>
         );
 
-      case OnboardStatus.ERROR:
+      default:
         return (
           <Box>
-            <Alert type="error" mb={4}>
-              {error && <Text mt={2}>{error.message}</Text>}
-            </Alert>
+            <SectionAccounts
+              currency={currency}
+              accountName={accountName}
+              editedNames={editedNames}
+              creatableAccount={creatableAccount}
+              importableAccounts={importableAccounts}
+            />
 
-            <Button primary onClick={handleRetry}>
-              <Trans i18nKey="common.retry">Retry</Trans>
-            </Button>
+            <Box>
+              <Alert>
+                <Trans i18nKey="canton.addAccount.onboard.ready">
+                  Set up your new Canton account by clicking Continue
+                </Trans>
+              </Alert>
+            </Box>
           </Box>
         );
-
-      default:
-        return <></>;
     }
   };
 
@@ -329,7 +266,7 @@ export const StepOnboardFooter = ({
   isProcessing,
   status,
   startOnboarding,
-}: FooterProps) => {
+}: StepProps) => {
   const handleNext = useCallback(() => {
     logger.log("[StepOnboardFooter] Continue button clicked:", {
       onboardingCompleted,

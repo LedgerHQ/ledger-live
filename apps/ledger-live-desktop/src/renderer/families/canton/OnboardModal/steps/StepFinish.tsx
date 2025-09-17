@@ -5,28 +5,17 @@ import Button from "~/renderer/components/Button";
 import { CurrencyCircleIcon } from "~/renderer/components/CurrencyBadge";
 import { StepProps } from "../types";
 
-/**
- * Final step component showing successful account creation
- * Displays success message and account information
- */
-export default function StepFinish({
-  t,
-  currency,
-  creatableAccount,
-  importableAccounts,
-}: StepProps) {
+const StepFinish = ({ t, currency, creatableAccount, importableAccounts }: StepProps) => {
   const accounts = [...importableAccounts, creatableAccount];
 
   return (
     <Box alignItems="center" py={6} role="status" aria-live="polite">
-      {currency ? (
-        <CurrencyCircleIcon
-          currency={currency}
-          size={50}
-          showCheckmark
-          aria-label={`${currency.name} account created successfully`}
-        />
-      ) : null}
+      <CurrencyCircleIcon
+        currency={currency}
+        size={50}
+        showCheckmark
+        aria-label={`${currency.name} account created successfully`}
+      />
       <Title>
         {t("addAccounts.success", {
           count: accounts.length,
@@ -39,16 +28,10 @@ export default function StepFinish({
       </Text>
     </Box>
   );
-}
+};
 
-/**
- * Footer component for the final step
- * Provides actions to add more accounts or complete the process
- */
 export const StepFinishFooter = ({
   t,
-  currency: _currency,
-  closeModal: _closeModal,
   onAddAccounts,
   importableAccounts,
   onboardingData,
@@ -107,3 +90,5 @@ const Text = styled(Box).attrs(() => ({
 }))`
   text-align: center;
 `;
+
+export default StepFinish;

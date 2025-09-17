@@ -1,9 +1,8 @@
-// External dependencies
 import { TFunction } from "i18next";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { Account } from "@ledgerhq/types-live";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { OnboardStatus } from "@ledgerhq/coin-canton/types";
+import { OnboardStatus, PreApprovalStatus } from "@ledgerhq/coin-canton/types";
 
 /**
  * Base data structure for the onboarding modal
@@ -90,9 +89,15 @@ export type StepProps = {
   setOnboardingCompleted?: (completed: boolean) => void;
   setOnboardingData?: (data: OnboardingData) => void;
 
+  isProcessing: boolean;
+  status?: OnboardStatus;
+
   // Transaction data
   signingData: SigningData | null;
 
   // Actions
   startOnboarding?: (() => void) | undefined;
+
+  authorizeStatus: PreApprovalStatus;
+  handlePreapproval?: () => void;
 };

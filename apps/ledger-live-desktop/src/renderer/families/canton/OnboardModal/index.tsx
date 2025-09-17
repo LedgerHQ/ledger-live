@@ -1,18 +1,9 @@
+import { TFunction } from "i18next";
 import React, { PureComponent } from "react";
 import { Trans, withTranslation } from "react-i18next";
 import { connect } from "react-redux";
 import { compose } from "redux";
 import { createStructuredSelector } from "reselect";
-import { TFunction } from "i18next";
-
-// Ledger Live types
-import { Account } from "@ledgerhq/types-live";
-import { Device } from "@ledgerhq/live-common/hw/actions/types";
-import { getCurrencyBridge } from "@ledgerhq/live-common/bridge/index";
-import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
-import { addAccountsAction } from "@ledgerhq/live-wallet/addAccounts";
-
-// Canton types
 import type { CantonCurrencyBridge } from "@ledgerhq/coin-canton/types";
 import {
   CantonPreApprovalProgress,
@@ -20,20 +11,17 @@ import {
   OnboardStatus,
   PreApprovalStatus,
 } from "@ledgerhq/coin-canton/types";
-
-// UI components
+import { getCurrencyBridge } from "@ledgerhq/live-common/bridge/index";
+import { Device } from "@ledgerhq/live-common/hw/actions/types";
+import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
+import { addAccountsAction } from "@ledgerhq/live-wallet/addAccounts";
+import { Account } from "@ledgerhq/types-live";
+import { closeModal } from "~/renderer/actions/modals";
 import Modal from "~/renderer/components/Modal";
 import Stepper, { Step } from "~/renderer/components/Stepper";
-
-// Redux
-import { closeModal } from "~/renderer/actions/modals";
+import logger from "~/renderer/logger";
 import { accountsSelector } from "~/renderer/reducers/accounts";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
-
-// Utils
-import logger from "~/renderer/logger";
-
-// Local components
 import StepAuthorize, { StepAuthorizeFooter } from "./steps/StepAuthorize";
 import StepFinish, { StepFinishFooter } from "./steps/StepFinish";
 import StepOnboard, { StepOnboardFooter } from "./steps/StepOnboard";
@@ -143,7 +131,7 @@ class OnboardModal extends PureComponent<Props, State> {
     const renamings = Object.fromEntries(
       accounts.map(account => [
         account.id,
-        editedNames[account.id] || getDefaultAccountName(account!),
+        editedNames[account.id] || getDefaultAccountName(account),
       ]),
     );
 

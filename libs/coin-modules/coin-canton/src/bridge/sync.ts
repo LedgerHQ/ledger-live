@@ -75,7 +75,7 @@ export function makeGetAccountShape(
     if (!xpubOrAddress) {
       const getAddress = resolver(signerContext);
       const { publicKey } = await getAddress(info.deviceId || "", {
-        path: "44'/6767'/30'/0'/0'",
+        path: derivationPath,
         currency: currency,
         derivationMode: derivationMode,
         verify: false,
