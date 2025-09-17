@@ -15,7 +15,7 @@ type Props = {
 // Animated bar displaying a bar filling itself with a color until it reaches the progress percentage.
 function ProgressBar({
   style,
-  height,
+  height = 6,
   backgroundColor,
   progressColor,
   progress,
@@ -65,9 +65,6 @@ function ProgressBar({
   );
 }
 
-ProgressBar.defaultProps = {
-  height: 6,
-};
 const styles = StyleSheet.create({
   wrapper: {
     flexGrow: 1,
