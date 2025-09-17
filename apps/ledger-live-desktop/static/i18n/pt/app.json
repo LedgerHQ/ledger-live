@@ -165,9 +165,8 @@
     "type" : {
       "IN" : "Recebido",
       "OUT" : "Enviado",
-      "NFT_IN" : "NFT Recebido",
-      "NFT_OUT" : "NFT Enviado",
       "CREATE" : "Criado",
+      "UNKNOWN" : "Desconhecido",
       "REVEAL" : "Revelado",
       "DELEGATE" : "Delegado",
       "REDELEGATE" : "Redelegado",
@@ -1437,11 +1436,6 @@
       }
     }
   },
-  "hideNftCollection" : {
-    "title" : "Ocultar coleção de NFT",
-    "desc" : "Esta ação ocultará todos os NFTs da coleção <1><0>{{collectionName}}</0></1>. Você pode exibi-los novamente em <3>Configurações</3>",
-    "hideCTA" : "Ocultar coleção de NFT"
-  },
   "banners" : {
     "cleanCache" : {
       "title" : "Para modificar configurações experimentais, é necessário limpar o cache",
@@ -1708,50 +1702,6 @@
       "browseAssets" : "Pesquisar Ativos"
     }
   },
-  "NFT" : {
-    "viewer" : {
-      "actions" : {
-        "send" : "Enviar",
-        "open" : "Abrir no {{viewer}}"
-      },
-      "attributes" : {
-        "properties" : "Propriedades",
-        "description" : "Descrição",
-        "tokenAddress" : "Endereço do token",
-        "tokenId" : "ID do token",
-        "quantity" : "Quantidade",
-        "floorPrice" : "Preço Mínimo"
-      }
-    },
-    "collections" : {
-      "title" : "Coleções NFT (Tokens Não Fungíveis)",
-      "receiveCTA" : "Receber NFT",
-      "galleryCTA" : "Ver Galeria",
-      "seeMore" : "Ver mais coleções",
-      "seeAll" : "Ver todas as coleções",
-      "seeLess" : "Ver Menos",
-      "placeholder" : "Para adicionar NFTs, basta enviá-los ao seu endereço {{currency}}."
-    },
-    "gallery" : {
-      "title" : "Todos os NFTs",
-      "collection" : {
-        "header" : {
-          "sendCTA" : "Enviar",
-          "contract" : "Contrato: {{contract}}"
-        },
-        "operationList" : {
-          "header" : "Últimas Operações",
-          "OUT" : "Enviado",
-          "IN" : "Recebido"
-        }
-      },
-      "tokensList" : {
-        "item" : {
-          "tokenId" : "ID: {{tokenId}}"
-        }
-      }
-    }
-  },
   "tokensList" : {
     "title" : "Tokens",
     "cta" : "Adicionar Token",
@@ -1863,12 +1813,6 @@
     "internalOpTooltip" : "Esta operação possui operações internas",
     "details" : "Detalhes de {{ currency }}",
     "multipleAddresses" : "Por que múltiplos endereços?",
-    "nft" : {
-      "name" : "Nome do token",
-      "contract" : "Contrato do token",
-      "id" : "ID do token (NFT)",
-      "quantity" : "Quantidade"
-    },
     "extra" : {
       "frozenAmount" : "Quantia Congelada",
       "unfreezeAmount" : "Descongelar Quantia",
@@ -2350,12 +2294,10 @@
   },
   "send" : {
     "title" : "Enviar",
-    "titleNft" : "Enviar NFT",
     "totalSpent" : "Total a debitar",
     "steps" : {
       "recipient" : {
         "title" : "Destinatário",
-        "nftRecipient" : "NFT para enviar",
         "verifyAddress" : "Verifique se o endereço corresponde ao endereço compartilhado pelo destinatário.",
         "domainService" : {
           "resolve" : "Este é um ENS válido, vinculado ao seguinte endereço:",
@@ -2380,8 +2322,7 @@
         "banner" : "Quantia máxima a ser gasta é",
         "fees" : "Saiba mais sobre as taxas",
         "standard" : "Padrão",
-        "advanced" : "Avançado",
-        "nftQuantity" : "Quantidade"
+        "advanced" : "Avançado"
       },
       "summary" : {
         "title" : "Resumo"
@@ -2425,8 +2366,6 @@
         "nextBlock" : "Próximo bloco",
         "suggested" : "Sugerido",
         "unitVByte" : "{{unit}}/vbyte",
-        "nft" : "NFT",
-        "nftQuantity" : "Quantidade",
         "splExtensionsWarning" : "Você está interagindo com um token que faz parte do programa Token-2022, também conhecido como Token Extensions. Este token tem riscos específicos. <0>Clique aqui</0> para saber mais."
       },
       "verification" : {
@@ -4531,11 +4470,6 @@
       "debugAppsDesc" : "Exibe e permite abrir aplicativos da plataforma marcados como 'debug'.",
       "debugReactQuery" : "Permitir debug do ReactQuery",
       "debugReactQueryDesc" : "Exibir e permitir a abertura do console de debug do ReactQuery.",
-      "nfts" : {
-        "title" : "Coleções de NFTs ocultas",
-        "description" : "Redefinir a lista de coleções ocultas",
-        "reset" : "Redefinir ({{count}})"
-      },
       "exchangeDeveloperMode" : {
         "title" : "Exchange em Modo Desenvolvedor",
         "desc" : "Informe o provedor de Exchange",
@@ -4574,136 +4508,6 @@
             "path" : "Path"
           }
         }
-      },
-      "debugSimpleHash" : {
-        "testSimpleHash" : {
-          "title" : "Ferramentas SimpleHash",
-          "description" : "Fornece algumas ferramentas úteis para usar o SimpleHash",
-          "cta" : "Abrir",
-          "tabs" : {
-            "spam" : "Relatório de Spam",
-            "refresh" : "Atualizar Metadados",
-            "check" : "Pontuação de Spam"
-          }
-        },
-        "mockAccounts" : {
-          "title" : "Gerar contas de simulação",
-          "description" : "Gerar contas de simulação para fins de teste. Essas ferramentas permitem que você crie contas de teste com várias moedas e configurações.",
-          "customGenerate" : {
-            "title" : "Geração personalizada",
-            "desc" : "Selecione moedas específicas e adicione tokens"
-          },
-          "quickGenerate" : {
-            "title" : "Geração rápida",
-            "desc" : "Gerar 10 contas aleatórias com moedas aleatórias"
-          },
-          "currencySelector" : {
-            "placeholder" : "Escolher moedas…",
-            "searchPlaceholder" : "Pesquisar moedas…",
-            "noCurrenciesFound" : "Nenhuma moeda encontrada",
-            "noCurrenciesAvailable" : "Não há moedas disponíveis",
-            "selectedCount" : "{{count}} moeda selecionada",
-            "selectedCount_other" : "{{count}} moedas selecionadas"
-          },
-          "tokenIds" : {
-            "label" : "IDs de token (opcional)",
-            "placeholder" : "token1, token2, token3"
-          },
-          "buttons" : {
-            "generateAccounts" : "Gerar {{count}} conta",
-            "generateAccounts_other" : "Gerar {{count}} contas",
-            "generateAccountsQuick" : "Gerar {{count}} contas"
-          },
-          "alerts" : {
-            "selectCurrency" : "Selecione pelo menos uma moeda",
-            "confirmErase" : "Isso apagará as contas existentes. Continuar?",
-            "generateError" : "Falha ao gerar contas de simulação. Tente novamente."
-          }
-        },
-        "debugSpamNft" : {
-          "report" : "Reportar",
-          "contractAddress" : "Endereço do Contrato",
-          "contractAddressDesc" : "contract_address do NFT reportado ou o próprio contrato",
-          "chainId" : "ID da Cadeia",
-          "chainIdDesc" : "chain_id (por exemplo, ethereum) do NFT ou contrato reportado",
-          "collectionId" : "ID da Coleção",
-          "collectionIdDesc" : "SimpleHash do ID da coleção do NFT reportado",
-          "tokenId" : "ID do Token",
-          "tokenIdDesc" : "token_id do NFT reportado",
-          "eventType" : "Tipo de Evento",
-          "eventTypeDesc" : "Tipo de denúncia que você deseja fazer",
-          "success" : "A denúncia foi enviada com sucesso. Pode levar de 5 a 10 minutos para ter efeito.",
-          "error" : "Ocorreu um erro ao enviar a denúncia. Tente novamente mais tarde.",
-          "reportType" : {
-            "title" : "O que você gostaria de denunciar?",
-            "desc" : "Selecione o tipo de denúncia que você deseja fazer",
-            "individual" : "Denúncia de spam para um NFT singular",
-            "contract" : "Denúncia de spam para um contrato",
-            "collection" : "Denúncia de spam para uma coleção"
-          }
-        },
-        "debugRefreshMetadata" : {
-          "refresh" : "Atualizar",
-          "contractAddress" : "Endereço do Contrato",
-          "contractAddressDesc" : "contract_address do NFT atualizado ou o próprio contrato",
-          "chainId" : "ID da Cadeia",
-          "chainIdDesc" : "chain_id (por exemplo, ethereum) do NFT ou contrato atualizado",
-          "tokenId" : "ID do Token",
-          "tokenIdDesc" : "token_id do NFT atualizado",
-          "success" : "A atualização foi enviada com sucesso. Pode levar de 5 a 10 minutos para ter efeito.",
-          "error" : "Ocorreu um erro ao enviar a atualização. Tente novamente mais tarde.",
-          "refreshType" : {
-            "desc" : "O que você gostaria de atualizar?",
-            "nft" : "Atualizar metadados de um NFT individual",
-            "contract" : "Atualizar metadados de um contrato"
-          }
-        },
-        "debugCheckSpamScore" : {
-          "check" : "Verificar",
-          "contractAddress" : "Endereço do Contrato",
-          "contractAddressDesc" : "contract_address do NFT atualizado ou o próprio contrato",
-          "chainId" : "ID da Cadeia",
-          "chainIdDesc" : "chain_id (por exemplo, ethereum) do NFT ou contrato verificado",
-          "tokenId" : "ID do Token",
-          "tokenIdDesc" : "token_id do NFT verificado",
-          "result" : {
-            "title" : "Esse contrato tem uma pontuação de spam de {{score}}.",
-            "desc" : "A pontuação é um valor numérico de 0 a 100, sendo que 0 é considerado não spam e 100 é considerado provavelmente spam.\n Se a resposta for nula, a coleção não tem informações suficientes para ser pontuada ou ainda não foi avaliada"
-          },
-          "error" : "Ocorreu um erro ao enviar a solicitação. Tente novamente mais tarde.",
-          "refreshType" : {
-            "desc" : "O que você gostaria de verificar?",
-            "nft" : "Um NFT individual",
-            "contract" : "Um contrato"
-          }
-        },
-        "back" : "Voltar"
-      },
-      "debugNfts" : {
-        "title" : "Ferramentas de NFT",
-        "description" : "Fornece algumas ferramentas úteis para gerenciar NFTs no Ledger Live",
-        "cta" : "Abrir",
-        "tabs" : {
-          "config" : "Configuração",
-          "generatorAndDestructor" : "Geradores e Destruidores"
-        },
-        "configuration" : {
-          "supported" : "Cadeia NFT Suportada",
-          "supported_other" : "Cadeias NFT Suportadas",
-          "nms" : {
-            "title" : "Serviço de Metadados de NFT (NMS)",
-            "env" : "Ambiente : {{env}}"
-          }
-        },
-        "generatorAndDestructor" : {
-          "genAcc" : "Gerar Contas",
-          "genAccDesc" : "Gerar uma conta com NFTs",
-          "cta" : "Gerar",
-          "deleteAcc" : "Excluir Contas",
-          "deleteAccDesc" : "Excluir todas as contas da loja",
-          "delete" : "Excluir"
-        },
-        "back" : "Voltar"
       },
       "debugWalletSync" : {
         "title" : "Debug do Ledger Sync",
@@ -4786,8 +4590,6 @@
       "runLocalAppOpenButton" : "Abrir",
       "enableLearnStagingUrl" : "Staging URL da página Aprender",
       "enableLearnStagingUrlDesc" : "Habilite a staging URL da página Aprender.",
-      "enableStagingNftMetadataService" : "Teste do serviço de metadados de NFTs",
-      "enableStagingNftMetadataServiceDesc" : "Habilite o teste do serviço de metadados de NFTs e redefina o cache de NFTs",
       "openOnboardingAppInstallDebug" : "Abrir a tela inicial de debug da instalação do aplicativo",
       "openOnboardingAppInstallDebugDesc" : "Abra uma tela com os componentes da etapa de instalação do aplicativo de sincronização inicial"
     },
@@ -4968,18 +4770,6 @@
         "desc" : "Você pode ocultar tokens acessando a conta principal, clicando com o botão direito do mouse no token e selecionando 'Ocultar token'.",
         "count" : "1 token",
         "count_other" : "{{count}} tokens"
-      },
-      "hiddenNftCollections" : {
-        "title" : "Coleções NFT ocultas",
-        "desc" : "Você pode ocultar coleções NFT clicando no nome da coleção com o botão direito do mouse e selecionando 'Ocultar coleção NFT'.",
-        "count" : "1 coleção",
-        "count_other" : "{{count}} coleções"
-      },
-      "hiddenOrdinalsAsset" : {
-        "title" : "Inscriptions ocultas",
-        "desc" : "Você pode ocultar a Inscription clicando com o botão direito do mouse na inscrição e selecionando “Ocultar Inscription\".",
-        "count" : "1 inscription",
-        "count_other" : "{{count}} inscriptions"
       },
       "fullNode" : {
         "title" : "Conectar node completo de Bitcoin",
@@ -5866,6 +5656,10 @@
       "commentPlaceholder" : "Opcional",
       "comment" : "Comentários"
     },
+    "canton" : {
+      "commentPlaceholder" : "Opcional",
+      "comment" : "Comentário"
+    },
     "stellar" : {
       "memo" : "Memo",
       "memoType" : {
@@ -6313,6 +6107,10 @@
       "title" : "Algo deu errado",
       "description" : "A transação falhou. Tente novamente."
     },
+    "TransactionCannotBeCreated" : {
+      "title" : "Erro de processamento",
+      "description" : "A Changelly não pode processar esta transação. Código do erro 8HBB{{errorCode}}"
+    },
     "TimeoutError" : {
       "title" : "O servidor demorou muito para responder",
       "description" : "Tente Novamente."
@@ -6447,10 +6245,6 @@
       "title" : "Verificação automática indisponível: verifique o endereço com cuidado.",
       "description" : null
     },
-    "EthAppNftNotSupported" : {
-      "title" : "Operação não disponível para este dispositivo",
-      "description" : "A função de enviar NFTs está disponível apenas para a Nano X e a Nano S+. Visite nossa plataforma de suporte ao cliente para saber como enviar um NFT com uma Nano S."
-    },
     "TransactionHasBeenValidatedError" : {
       "title" : "Não pode ser acelerada nem cancelada",
       "description" : "Essa transação já foi validada"
@@ -6460,6 +6254,9 @@
       "description" : "Feche a janela e tente novamente mais tarde"
     },
     "TonCommentInvalid" : {
+      "title" : "O comentário não deve exceder 120 caracteres sem caracteres especiais"
+    },
+    "CantonCommentInvalid" : {
       "title" : "O comentário não deve exceder 120 caracteres sem caracteres especiais"
     },
     "CantScanQRCode" : {
@@ -6736,9 +6533,6 @@
       "title" : "O token é intransferível",
       "description" : "Esses tokens são vinculados à alma (“soul-bound”) e não podem ser transferidos"
     },
-    "NotEnoughNftOwned" : {
-      "title" : "Você excedeu o número de tokens disponíveis"
-    },
     "CardanoMinAmountError" : {
       "title" : "A quantia mínima a ser enviada é {{amount}} ADA"
     },
@@ -6824,10 +6618,6 @@
       "title" : "Falha no carregamento da imagem do arquivo",
       "description" : "Tente novamente com outra imagem"
     },
-    "ImageLoadFromNftError" : {
-      "title" : "Falha no carregamento da imagem do NFT",
-      "description" : "Tente novamente com outro NFT"
-    },
     "ImageDownloadError" : {
       "title" : "Falha m baixar a imagem",
       "description" : "Tente novamente com outra imagem"
@@ -6853,11 +6643,11 @@
       "description" : "Tente novamente com outra imagem"
     },
     "ImageCommitRefusedOnDevice" : {
-      "title" : "Instalação da imagem da tela de\nbloqueio cancelada na {{productName}}",
+      "title" : "Imagem da tela de bloqueio descartada na\n{{productName}}",
       "description" : "Se isso foi um erro, tente novamente agora."
     },
     "ImageLoadRefusedOnDevice" : {
-      "title" : "Instalação da imagem da tela de\nbloqueio cancelada na {{productName}}",
+      "title" : "Imagem da tela de bloqueio cancelada na\n{{productName}}",
       "description" : "Se isso foi um erro, tente novamente agora."
     },
     "ImageDoesNotExistOnDevice" : {
@@ -7182,15 +6972,9 @@
     "steps" : {
       "choose" : {
         "stepLabel" : "Escolher foto",
-        "description" : "Escolha uma imagem para definir como (...)",
-        "pickFromNftGallery" : "Selecionar na minha galeria de NFTs",
-        "myNfts" : "Meus NFTs",
+        "description" : "Escolha qualquer arte digital ou foto.\nPersonalize a sua {{productName}}.\nDeixe-a do seu jeito.",
         "upload" : "Enviar do computador",
-        "chooseNft" : "Escolha um NFT",
-        "remove" : "Remover a imagem atual",
-        "selectNft" : "Escolher NFT",
-        "nftEmptyStateTitle" : "Sem NFTs para mostrar ainda",
-        "nftEmptyStateDescription" : "Comece adicionando NFTs à sua carteira."
+        "remove" : "Remover a imagem atual"
       },
       "adjust" : {
         "stepLabel" : "Cortar",
@@ -7206,7 +6990,7 @@
         "useAnotherPicture" : "Enviar outra foto",
         "allowPreview" : "Clique em “Carregar imagem” para\npersonalizar a imagem da tela de bloqueio",
         "allowConfirmPreview" : "Clique em “Carregar imagem” para\nrestaurar a imagem da tela de bloqueio",
-        "loadingPicture" : "Instalando...",
+        "loadingPicture" : "Carregando...",
         "voila" : "Voilà!",
         "imageLoaded" : "Imagem carregada em {{productName}}",
         "confirmPicture" : "Gostou do que está vendo?\nMantenha assim!",
@@ -7265,9 +7049,9 @@
   "webview" : {
     "networkError" : {
       "title" : "Erro de rede",
-      "subtitle" : "Algo deu errado. Tente novamente. Se o problema persistir, salve seu registro e entre em contato com o Suporte Ledger.",
+      "subtitle" : "Algo deu errado. Tente novamente. Se o problema persistir, salve seus registros e entre em contato com o Suporte Ledger.",
       "contactSupport" : "Fale com o Suporte Ledger",
-      "saveLog" : "Salvar registro"
+      "saveLog" : "Salvar registros"
     },
     "noAccounts" : {
       "title" : "Você precisa de uma conta para acessar este aplicativo.",
@@ -7500,95 +7284,6 @@
     "deviceAction" : {
       "title" : "Continuar em sua Ledger {{wording}}",
       "description" : "Siga as instruções que aparecem na Tela Confiável da sua Ledger."
-    }
-  },
-  "ordinals" : {
-    "inscriptions" : {
-      "seeMore" : "Ver mais inscrições",
-      "empty" : "Para adicionar Inscriptions, basta enviá-las para seu endereço Bitcoin.",
-      "receive" : "Receber Inscription",
-      "hide" : "Ocultar inscription",
-      "modal" : {
-        "title" : "Ocultar inscription",
-        "desc" : "Essa ação ocultará a seguinte inscription <0>{{inscriptionName}}</0> da sua conta. Você pode desoculta-las a qualquer momento nas configurações."
-      },
-      "discoveryDrawer" : {
-        "title" : "Explorar Ordinals",
-        "description" : "Você sabe que é possível ter valiosos Sats Raros e Inscriptions?",
-        "learnMore" : "Saiba mais",
-        "protectTitle" : "Proteja seus ativos ordinals",
-        "protectDescription" : "Exclua seus ativos Ordinals de suas transações."
-      },
-      "detailsDrawer" : {
-        "description" : "Descrição",
-        "collectionName" : "Nome da Coleção",
-        "inscriptionId" : "ID da inscrição",
-        "inscriptionNumber" : "Número de inscrições",
-        "mintedTo" : "Emitido para",
-        "genesisTx" : "Transação gênesis",
-        "blockNumber" : "Número do bloco",
-        "contentType" : "Tipo de conteúdo",
-        "createdDate" : "Data de criação",
-        "satribute" : "Raridade do Sat",
-        "satNumber" : "Número Sat",
-        "satName" : "Nome Sat",
-        "location" : "Local",
-        "outputValue" : "Valor de saída",
-        "storedOnChain" : "Armazenado On-Chain",
-        "hide" : "Ocultar"
-      }
-    },
-    "rareSats" : {
-      "empty" : "Para adicionar Sats Raros, basta enviá-los para seu endereço Bitcoin.",
-      "receive" : "Receber Sat Raro",
-      "title" : "Sats Raros",
-      "table" : {
-        "type" : "Quantia / Tipo de Sat",
-        "year" : "Ano"
-      },
-      "rareSat" : {
-        "description" : {
-          "alpha" : "Saiba o nascimento de cada bitcoin com Alpha, marcando o satoshi inicial. Esse rótulo significa a gênese de uma unidade de Bitcoin.",
-          "black_epic" : "O satoshi final de cada evento de halving, que ocorre aproximadamente a cada quatro anos, quando a recompensa de mineração do Bitcoin é reduzida pela metade.",
-          "black_legendary" : "Nenhuma descrição para Black Legendary",
-          "black_mythic" : "Nenhuma descrição para Black Mythic",
-          "black_rare" : "Denota o satoshi final na conclusão de cada período de ajuste de dificuldade de mineração.",
-          "black_uncommon" : "O satoshi final de cada evento de halving, que ocorre aproximadamente a cada quatro anos, quando a recompensa de mineração do Bitcoin é reduzida pela metade.",
-          "block_9" : "O bloco 9 tem uma distinção única na história do Bitcoin. Como um dos primeiros blocos minerados, os satoshis incluídos nele são alguns dos sats mais antigos em circulação. Esses sats oferecem uma conexão tangível com os primórdios do Bitcoin, logo após sua criação.",
-          "block_9_450x" : "Volte no tempo com o Bloco 9 450x, em que os sats do primeiro bitcoin do 9º bloco são destacados. Esse selo revela um capítulo cativante da história do Bitcoin.",
-          "block_78" : "O bloco 78 ocupa um lugar marcante nos anais da história do Bitcoin. Este bloco foi minerado por Hal Finney, marcando o primeiro caso em que alguém diferente do enigmático Satoshi Nakamoto contribuiu para o crescimento da blockchain.",
-          "block_286" : "Descubra o significado do Bloco 286, que representa os satoshis da segunda transação de Bitcoin minerada por Satoshi Nakamoto. Esses sats carregam o peso do enigmático criador do Bitcoin e contribuem para a narrativa de suas origens misteriosas.",
-          "block_666" : "Nenhuma descrição para o Bloco 666",
-          "common" : "Sem descrição para Common",
-          "epic" : "A cada quatro anos, a rede Bitcoin passa por um evento de “halving”, em que a recompensa de mineração é cortada pela metade. O primeiro sat de cada uma dessas épocas de halving do Bitcoin é rotulado como “Épico”, marcando um momento significativo no modelo econômico do Bitcoin.",
-          "first_tx" : "Em 12 de janeiro de 2009, história foi feita quando Satoshi Nakamoto enviou 10 Bitcoins para um cientista da computação chamado Hal Finney. Essa foi a primeira transação de Bitcoin. Os Sats originados dessa transação icônica têm o rótulo “First Transaction” (Primeira transação), simbolizando a gênese das negociações peer-to-peer em Bitcoin.",
-          "hitman" : "Nenhuma descrição para Hitman",
-          "jpeg" : "Volte ao passado com o JPEG, pois esses satoshis podem estar vinculados à primeira negociação de Bitcoin por uma imagem em 24 de fevereiro de 2010. Esse selo narra uma história de inovação, mostrando as primeiras incursões do Bitcoin em transações e trocas não convencionais.",
-          "legacy" : "Nenhuma descrição para Legacy",
-          "legendary" : "Nenhuma descrição para Legendary",
-          "mythic" : "Nenhuma descrição para Mythic",
-          "nakamoto" : "A mística em torno do criador pseudônimo do Bitcoin, Satoshi Nakamoto, continua inalterada. Os Sats que foram minerados pelo próprio Nakamoto são marcados com este selo, o que os torna muito procurados entre colecionadores.",
-          "omega" : "Viva a conclusão poética de cada bitcoin com Omega, o último satoshi. O satoshi final em uma unidade de Bitcoin.",
-          "paliblock" : "Nenhuma descrição para o PaliBlock Palindrome",
-          "palindrome" : "Em uma reviravolta divertida, qualquer sat cujo número possa ser lido da mesma forma para frente e para trás é chamado de “Palíndromo”. Por exemplo, um sat com o número 12321 ou 45654. Esses atributos numéricos exclusivos acrescentam uma camada de raridade e curiosidade aos sats com selo.",
-          "palinception" : "Mergulhe no fascinante mundo da “palinception” uniforme, em que cada satoshi forma um palíndromo de palíndromos. Esses sats intrincadamente estruturados criam uma fascinante tapeçaria de dígitos espelhados.",
-          "pizza" : "Uma das histórias mais icônicas da comunidade Bitcoin é a de um programador que pagou 10.000 Bitcoins por duas pizzas Papa John's em 22 de maio de 2010. Esse evento é frequentemente citado para demonstrar o aumento meteórico do valor do Bitcoin. Os sats dessa lendária transação carregam o selo “Pizza”.",
-          "rare" : "A rede Bitcoin ajusta periodicamente sua dificuldade de mineração para garantir que os blocos sejam adicionados aproximadamente a cada dez minutos. O primeiro sat do primeiro dia útil de cada período de ajuste é marcado como “Raro”. Isso reflete a natureza, em constante evolução, da segurança da rede e de seus mecanismos de consenso. ",
-          "uncommon" : "Esse selo é designado para o primeiro satoshi de cada bloco. Considerando que um novo bloco é adicionado à blockchain do Bitcoin aproximadamente a cada 10 minutos, esses sats capturam o início desse período de tempo.",
-          "vintage" : "A aurora do Bitcoin foi marcada por seus 1.000 blocos iniciais. Os sats minerados nesse período são denominados “Vintage”."
-        }
-      }
-    },
-    "coinControl" : {
-      "amountToSend" : "Quantia a enviar:",
-      "of" : "de",
-      "excludeAssets" : "Excluir ativos Ordinals",
-      "selectDesc" : "Selecione o UTXO que deseja usar ao fazer transações. UTXO não verificados não serão usados.",
-      "utxos" : "UTXOs",
-      "learnMore" : "Saiba mais sobre essa configuração",
-      "confirm" : "Confirmar",
-      "address" : "Endereço",
-      "transactionId" : "ID da transação"
     }
   },
   "lnsUpsell" : {
