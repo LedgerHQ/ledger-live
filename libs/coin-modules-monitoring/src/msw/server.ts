@@ -27,5 +27,3 @@ function bump(req: Request) {
 server.events.on("request:start", ({ request }) => bump(request));
 
 server.use(http.all("*", () => passthrough()));
-
-server.listen({ onUnhandledRequest: "warn" });
