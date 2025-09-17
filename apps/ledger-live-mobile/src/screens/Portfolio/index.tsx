@@ -104,14 +104,6 @@ function PortfolioScreen({ navigation }: NavigationProps) {
   const refreshAccountsOrdering = useRefreshAccountsOrdering();
   useFocusEffect(refreshAccountsOrdering);
 
-  // Force re-render when screen regains focus to fix AnimatedContainer height issue
-  const [focusKey, setFocusKey] = useState(0);
-  useFocusEffect(
-    useCallback(() => {
-      setFocusKey(prev => prev + 1);
-    }, []),
-  );
-
   useEffect(() => {
     if (!llmDatadog?.enabled) return;
     const topChains = allAccounts.reduce<string[]>((acc, account) => {
@@ -169,10 +161,7 @@ function PortfolioScreen({ navigation }: NavigationProps) {
       </WalletTabSafeAreaView>,
       showAssets ? (
         isAccountListUIEnabled ? (
-          <AnimatedContainer
-            key={`PortfolioAssets-${focusKey}`}
-            onHeightChange={handleHeightChange}
-          >
+          <AnimatedContainer onHeightChange={handleHeightChange}>
             <Box background={colors.background.main} px={6} key="PortfolioAssets">
               <RecoverBanner />
               <PortfolioAssets
@@ -241,7 +230,6 @@ function PortfolioScreen({ navigation }: NavigationProps) {
       openAddModal,
       isAWalletCardDisplayed,
       isLNSUpsellBannerShown,
-      focusKey,
       t,
     ],
   );
