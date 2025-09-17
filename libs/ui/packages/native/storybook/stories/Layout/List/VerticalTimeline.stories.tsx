@@ -6,8 +6,9 @@ import Flex from "../../../../src/components/Layout/Flex";
 import Switch from "../../../../src/components/Form/Switch";
 import Button from "../../../../src/components/cta/Button";
 import VerticalTimeline from "../../../../src/components/Layout/List/VerticalTimeline";
+import { TimelineStep } from "../../../../src/components/Layout/List/VerticalTimeline/TimelineItem";
 import ContinueOnDevice from "../../../../src/components/message/ContinueOnDevice";
-import { Item, ItemStatus } from "../../../../src/components/Layout/List/types";
+import { ItemStatus } from "../../../../src/components/Layout/List/types";
 
 export default {
   title: "Layout/List",
@@ -16,7 +17,7 @@ export default {
 
 const { BodyText, SubtitleText } = VerticalTimeline;
 
-const defaultItems: Item[] = [
+const defaultItems: TimelineStep[] = [
   {
     status: ItemStatus.active,
     title: "step's {title} prop",
@@ -144,7 +145,7 @@ export const VerticalTimelineStory: StoryFn<typeof VerticalTimeline> = () => {
       <Button my={3} type="main" outline onPress={() => setActiveIndex(items.length)}>
         Set last step complete
       </Button>
-      <Button my={3} type="main" outline onPress={() => setLastStepNeutral(items.length)}>
+      <Button my={3} type="main" outline onPress={() => setLastStepNeutral()}>
         Set step as {items[items.length - 1].isNeutral ? "" : "not "}neutral
       </Button>
       <Divider />
