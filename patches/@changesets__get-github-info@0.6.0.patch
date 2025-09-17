@@ -7,7 +7,7 @@ index a74df59f8a5988f458a3476087399f5e6dfe4818..6cb2dbab81854301c5ad1525a4bf9bb1
      return cleanedData[repo][data.kind][data.kind === "pull" ? data.pull : data.commit];
    });
 -});
-+}, { maxBatchSize: 500 });
++}, { maxBatchSize: 10 });
  async function getInfo(request) {
    if (!request.commit) {
      throw new Error("Please pass a commit SHA to getInfo");
@@ -27,7 +27,7 @@ index 27e5c972ab1202ff16f5124b471f4bbcc46be2b5..e15e719adf9a6fda8d1ba003b6528120
      return cleanedData[repo][data.kind][data.kind === "pull" ? data.pull : data.commit];
    });
 -});
-+}, { maxBatchSize: 500 });
++}, { maxBatchSize: 10 });
  async function getInfo(request) {
    if (!request.commit) {
      throw new Error("Please pass a commit SHA to getInfo");
