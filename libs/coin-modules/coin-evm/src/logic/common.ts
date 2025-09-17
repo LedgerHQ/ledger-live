@@ -16,6 +16,9 @@ import {
   TransactionLikeWithPreparedParams,
 } from "../types";
 import { getNodeApi } from "../network/node";
+import { STAKING_CONTRACTS } from "../staking";
+import { StakingOperation } from "../types/staking";
+import { encodeStakingData } from "../staking/encoder";
 
 export function isApiGasOptions(options: unknown): options is ApiGasOptions {
   if (!options || typeof options !== "object") return false;
@@ -97,16 +100,42 @@ function getCallData(intent: TransactionIntent<MemoNotSupported, BufferTxData>):
   return isNative(intent.asset) ? Buffer.from([]) : getErc20Data(intent.recipient, intent.amount);
 }
 
+const stakingOperations = [
+  "delegate",
+  "undelegate",
+  "redelegate",
+  "getStakedBalance",
+  "getUnstakedBalance",
+] as const;
+
+function isStakingOperation(value: string): value is StakingOperation {
+  return (stakingOperations as readonly string[]).includes(value);
+}
+
 export async function prepareUnsignedTxParams(
   currency: CryptoCurrency,
   transactionIntent: TransactionIntent<MemoNotSupported, BufferTxData>,
 ): Promise<TransactionLikeWithPreparedParams> {
-  const { amount, asset, recipient, sender, type } = transactionIntent;
+  const { amount, asset, recipient, sender, type, mode, parameters } = transactionIntent;
   const transactionType = getTransactionType(type);
   const node = getNodeApi(currency);
 
   const to = isNative(asset) ? recipient : (asset.assetReference as string);
-  const data = getCallData(transactionIntent);
+  let data: Buffer;
+  const config = STAKING_CONTRACTS[currency.id];
+  if (config && mode && isStakingOperation(mode)) {
+    data = Buffer.from(
+      encodeStakingData({
+        currencyId: currency.id,
+        operation: mode,
+        config,
+        params: parameters || [],
+      }).slice(2),
+      "hex",
+    );
+  } else {
+    data = getCallData(transactionIntent);
+  }
   const value = isNative(asset) ? amount : 0n;
 
   const gasLimit = await node.getGasEstimation(

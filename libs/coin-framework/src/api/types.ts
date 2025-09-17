@@ -327,6 +327,7 @@ export type TransactionIntent<
 > = {
   type: string;
   sender: string;
+  mode?: string | any;
   senderPublicKey?: string;
   expiration?: number;
   recipient: string;
@@ -335,6 +336,7 @@ export type TransactionIntent<
   asset: AssetInfo;
   sequence?: number;
   feesStrategy?: FeesStrategy;
+  parameters?: string[];
 } & MaybeMemo<MemoType> &
   MaybeTxData<TxDataType>;
 
