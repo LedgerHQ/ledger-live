@@ -1,5 +1,23 @@
 # ledger-live-desktop
 
+## 2.128.0-nightly.10
+
+### Minor Changes
+
+- [#11694](https://github.com/LedgerHQ/ledger-live/pull/11694) [`cc9e6cc`](https://github.com/LedgerHQ/ledger-live/commit/cc9e6cc025b1e6399ac83387fb61d942fb53706c) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Improve performance of LLD startup time
+
+- [#11716](https://github.com/LedgerHQ/ledger-live/pull/11716) [`db1bc8c`](https://github.com/LedgerHQ/ledger-live/commit/db1bc8cfb847c87a1a1824e2281607577de3f0c5) Thanks [@ooke-ledger](https://github.com/ooke-ledger)! - Display generic error message for suspect users on Changelly
+
+### Patch Changes
+
+- [#11830](https://github.com/LedgerHQ/ledger-live/pull/11830) [`6c7ede3`](https://github.com/LedgerHQ/ledger-live/commit/6c7ede327fcfa0f87ffdb9684da4e3b95612643c) Thanks [@jonezque](https://github.com/jonezque)! - canton: removed comment label from send window, fixed account recreation
+
+- Updated dependencies [[`a3bf70e`](https://github.com/LedgerHQ/ledger-live/commit/a3bf70ea59fc31277a170d4cb5530f2f58d0a2ab), [`6c7ede3`](https://github.com/LedgerHQ/ledger-live/commit/6c7ede327fcfa0f87ffdb9684da4e3b95612643c), [`7d23713`](https://github.com/LedgerHQ/ledger-live/commit/7d23713789ff91bd93d0cdba7dbed27e4efec6ce)]:
+  - @ledgerhq/coin-canton@0.5.0-nightly.6
+  - @ledgerhq/coin-evm@2.30.0-nightly.6
+  - @ledgerhq/live-common@34.48.0-nightly.9
+  - @ledgerhq/live-dmk-desktop@0.9.5-nightly.9
+
 ## 2.128.0-nightly.9
 
 ### Minor Changes

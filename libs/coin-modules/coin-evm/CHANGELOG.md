@@ -1,5 +1,11 @@
 # @ledgerhq/coin-evm
 
+## 2.30.0-nightly.6
+
+### Minor Changes
+
+- [#11823](https://github.com/LedgerHQ/ledger-live/pull/11823) [`7d23713`](https://github.com/LedgerHQ/ledger-live/commit/7d23713789ff91bd93d0cdba7dbed27e4efec6ce) Thanks [@qperrot](https://github.com/qperrot)! - Remove duplicate code in estimateFees & craftTransaction
+
 ## 2.30.0-nightly.5
 
 ### Patch Changes

@@ -1,5 +1,13 @@
 # @ledgerhq/coin-canton
 
+## 0.5.0-nightly.6
+
+### Patch Changes
+
+- [#11831](https://github.com/LedgerHQ/ledger-live/pull/11831) [`a3bf70e`](https://github.com/LedgerHQ/ledger-live/commit/a3bf70ea59fc31277a170d4cb5530f2f58d0a2ab) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Update fee canton
+
+- [#11830](https://github.com/LedgerHQ/ledger-live/pull/11830) [`6c7ede3`](https://github.com/LedgerHQ/ledger-live/commit/6c7ede327fcfa0f87ffdb9684da4e3b95612643c) Thanks [@jonezque](https://github.com/jonezque)! - canton: removed comment label from send window, fixed account recreation
+
 ## 0.5.0-nightly.5
 
 ### Minor Changes

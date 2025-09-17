@@ -1,5 +1,16 @@
 # @ledgerhq/live-common
 
+## 34.48.0-nightly.9
+
+### Patch Changes
+
+- Updated dependencies [[`a3bf70e`](https://github.com/LedgerHQ/ledger-live/commit/a3bf70ea59fc31277a170d4cb5530f2f58d0a2ab), [`6c7ede3`](https://github.com/LedgerHQ/ledger-live/commit/6c7ede327fcfa0f87ffdb9684da4e3b95612643c), [`7d23713`](https://github.com/LedgerHQ/ledger-live/commit/7d23713789ff91bd93d0cdba7dbed27e4efec6ce)]:
+  - @ledgerhq/coin-canton@0.5.0-nightly.6
+  - @ledgerhq/coin-evm@2.30.0-nightly.6
+  - @ledgerhq/live-signer-canton@0.2.4-nightly.6
+  - @ledgerhq/coin-celo@1.4.0-nightly.6
+  - @ledgerhq/live-signer-evm@0.7.5-nightly.7
+
 ## 34.48.0-nightly.8
 
 ### Patch Changes

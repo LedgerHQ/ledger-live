@@ -1,5 +1,18 @@
 # live-mobile
 
+## 3.93.0-nightly.10
+
+### Minor Changes
+
+- [#11716](https://github.com/LedgerHQ/ledger-live/pull/11716) [`db1bc8c`](https://github.com/LedgerHQ/ledger-live/commit/db1bc8cfb847c87a1a1824e2281607577de3f0c5) Thanks [@ooke-ledger](https://github.com/ooke-ledger)! - Display generic error message for suspect users on Changelly
+
+- [#11733](https://github.com/LedgerHQ/ledger-live/pull/11733) [`e47d39b`](https://github.com/LedgerHQ/ledger-live/commit/e47d39bbd39e2430edf796e0ebde97a27d6c8b65) Thanks [@ooke-ledger](https://github.com/ooke-ledger)! - Add feedback link
+
+### Patch Changes
+
+- Updated dependencies [[`7d23713`](https://github.com/LedgerHQ/ledger-live/commit/7d23713789ff91bd93d0cdba7dbed27e4efec6ce)]:
+  - @ledgerhq/coin-evm@2.30.0-nightly.6
+
 ## 3.93.0-nightly.9
 
 ### Patch Changes
