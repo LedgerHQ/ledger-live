@@ -1,6 +1,7 @@
 import { localForger } from "@taquito/local-forging";
 import { createApi } from ".";
 import type { TezosApi } from "./types";
+import { InvalidAddressError } from "@taquito/utils";
 
 /**
  * https://teztnets.com/ghostnet-about
@@ -70,7 +71,7 @@ describe("Tezos Api", () => {
       "tz3DvEBHrtFkq9pTXqt6yavnf4sPe2jut2XH",
       "0466839a78481025e3613f65fcd4b492a492bedd1a3cba77ae48eaa1803611d8e5f4e23c0d0f3586e2095f4f83d09c841e1c17586b2356d5d3a3ed3f45bb3a857e",
     ],
-  ])("it does not fail when providing a %s address with pub key", async (_, sender, pubKey) => {
+  ])("does not fail when providing a %s address with pub key", async (_, sender, pubKey) => {
     // When
     const result = await module.estimateFees({
       asset: { type: "native" },
@@ -86,6 +87,18 @@ describe("Tezos Api", () => {
     expect(result.parameters).toBeDefined();
     expect(result.parameters?.gasLimit).toBeGreaterThanOrEqual(BigInt(0));
     expect(result.parameters?.storageLimit).toBeGreaterThanOrEqual(BigInt(0));
+  });
+
+  it("fails when using an unsupported address type", async () => {
+    await expect(
+      module.estimateFees({
+        asset: { type: "native" },
+        type: "send",
+        sender: address,
+        recipient: "tz5heMGVHQnx7ALDcDKqez8fan64Eyicw4DJ",
+        amount: BigInt(100),
+      }),
+    ).rejects.toThrow('Invalid address "tz5heMGVHQnx7ALDcDKqez8fan64Eyicw4DJ"');
   });
 
   describe("listOperations", () => {
