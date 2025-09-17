@@ -28,7 +28,7 @@
   "license": "Apache-2.0",
   "dependencies": {
     "@ledgerhq/coin-solana": "workspace:^",
-    "@ledgerhq/device-management-kit": "0.0.0-fix-lns-20250901094837",
+    "@ledgerhq/device-management-kit": "0.9.0",
     "@ledgerhq/device-signer-kit-solana": "0.0.0-transactionInspector-resolutionObj-20250916153045",
     "@ledgerhq/devices": "workspace:^",
     "@ledgerhq/errors": "workspace:^",

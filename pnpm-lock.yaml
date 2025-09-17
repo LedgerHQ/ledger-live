@@ -8479,11 +8479,11 @@ importers:
         specifier: workspace:^
         version: link:../coin-modules/coin-solana
       '@ledgerhq/device-management-kit':
-        specifier: 0.0.0-fix-lns-20250901094837
-        version: 0.0.0-fix-lns-20250901094837(rxjs@7.8.1)
+        specifier: 0.9.0
+        version: 0.9.0(rxjs@7.8.1)
       '@ledgerhq/device-signer-kit-solana':
         specifier: 0.0.0-transactionInspector-resolutionObj-20250916153045
-        version: 0.0.0-transactionInspector-resolutionObj-20250916153045(@ledgerhq/device-management-kit@0.0.0-fix-lns-20250901094837(rxjs@7.8.1))(typescript@5.4.3)
+        version: 0.0.0-transactionInspector-resolutionObj-20250916153045(@ledgerhq/device-management-kit@0.9.0(rxjs@7.8.1))(typescript@5.4.3)
       '@ledgerhq/devices':
         specifier: workspace:*
         version: link:../ledgerjs/packages/devices
@@ -14534,11 +14534,6 @@ packages:
 
   '@ledgerhq/cryptoassets@6.37.0':
     resolution: {integrity: sha512-xwrDKTS9koQBNNzc7CqgV6zfGHvNFWJjlIL0Kc4O4DVWYR2vUdztUHcvwHD1KPjxNYhVnsgIopmtq47fHt3nMg==}
-
-  '@ledgerhq/device-management-kit@0.0.0-fix-lns-20250901094837':
-    resolution: {integrity: sha512-Ma+gqkgunX0Vcmww4ultxJfIx0GwmSYXrD7FOCS86l991UBye8tXd5Ny/vbOqT5IQgAeJLxmrbO+K7zFp6/yXw==}
-    peerDependencies:
-      rxjs: 7.8.2
 
   '@ledgerhq/device-management-kit@0.9.0':
     resolution: {integrity: sha512-zWcQ0TOerZU4tvBdHd7RWpmYB+nVN3aTZ/hHz5IVnESEmQa2m4YsmOb2vm55k3tvyc5yRW/sOqX83Bnr+y+G+w==}
@@ -43461,9 +43456,9 @@ snapshots:
 
   '@kwsites/promise-deferred@1.1.1': {}
 
-  '@ledgerhq/context-module@0.0.0-transactionInspector-resolutionObj-20250916153045(@ledgerhq/device-management-kit@0.0.0-fix-lns-20250901094837(rxjs@7.8.1))':
+  '@ledgerhq/context-module@0.0.0-transactionInspector-resolutionObj-20250916153045(@ledgerhq/device-management-kit@0.9.0(rxjs@7.8.1))':
     dependencies:
-      '@ledgerhq/device-management-kit': 0.0.0-fix-lns-20250901094837(rxjs@7.8.1)
+      '@ledgerhq/device-management-kit': 0.9.0(rxjs@7.8.1)
       axios: 1.8.2
       crypto-js: 4.2.0
       ethers: 6.14.1
@@ -43520,24 +43515,6 @@ snapshots:
     dependencies:
       invariant: 2.2.4
 
-  '@ledgerhq/device-management-kit@0.0.0-fix-lns-20250901094837(rxjs@7.8.1)':
-    dependencies:
-      '@sentry/minimal': 6.19.7
-      axios: 1.8.2
-      inversify: 7.5.1(reflect-metadata@0.2.2)
-      isomorphic-ws: 5.0.0(ws@8.18.3)
-      purify-ts: 2.1.0
-      reflect-metadata: 0.2.2
-      rxjs: 7.8.1
-      semver: 7.7.2
-      url: 0.11.4
-      uuid: 11.0.3
-      ws: 8.18.3
-      xstate: 5.19.2
-    transitivePeerDependencies:
-      - bufferutil
-      - utf-8-validate
-
   '@ledgerhq/device-management-kit@0.9.0':
     dependencies:
       '@sentry/minimal': 6.19.7
@@ -43588,11 +43565,11 @@ snapshots:
       - bufferutil
       - utf-8-validate
 
-  '@ledgerhq/device-signer-kit-solana@0.0.0-transactionInspector-resolutionObj-20250916153045(@ledgerhq/device-management-kit@0.0.0-fix-lns-20250901094837(rxjs@7.8.1))(typescript@5.4.3)':
+  '@ledgerhq/device-signer-kit-solana@0.0.0-transactionInspector-resolutionObj-20250916153045(@ledgerhq/device-management-kit@0.9.0(rxjs@7.8.1))(typescript@5.4.3)':
     dependencies:
-      '@ledgerhq/context-module': 0.0.0-transactionInspector-resolutionObj-20250916153045(@ledgerhq/device-management-kit@0.0.0-fix-lns-20250901094837(rxjs@7.8.1))
-      '@ledgerhq/device-management-kit': 0.0.0-fix-lns-20250901094837(rxjs@7.8.1)
-      '@ledgerhq/signer-utils': 0.0.0-transactionInspector-resolutionObj-20250916153045(@ledgerhq/device-management-kit@0.0.0-fix-lns-20250901094837(rxjs@7.8.1))
+      '@ledgerhq/context-module': 0.0.0-transactionInspector-resolutionObj-20250916153045(@ledgerhq/device-management-kit@0.9.0(rxjs@7.8.1))
+      '@ledgerhq/device-management-kit': 0.9.0(rxjs@7.8.1)
+      '@ledgerhq/signer-utils': 0.0.0-transactionInspector-resolutionObj-20250916153045(@ledgerhq/device-management-kit@0.9.0(rxjs@7.8.1))
       '@solana/spl-token': 0.4.14(@solana/web3.js@1.98.4(typescript@5.4.3))(typescript@5.4.3)
       '@solana/web3.js': 1.98.4(typescript@5.4.3)
       bs58: 6.0.0
@@ -43709,9 +43686,9 @@ snapshots:
 
   '@ledgerhq/logs@6.13.0': {}
 
-  '@ledgerhq/signer-utils@0.0.0-transactionInspector-resolutionObj-20250916153045(@ledgerhq/device-management-kit@0.0.0-fix-lns-20250901094837(rxjs@7.8.1))':
+  '@ledgerhq/signer-utils@0.0.0-transactionInspector-resolutionObj-20250916153045(@ledgerhq/device-management-kit@0.9.0(rxjs@7.8.1))':
     dependencies:
-      '@ledgerhq/device-management-kit': 0.0.0-fix-lns-20250901094837(rxjs@7.8.1)
+      '@ledgerhq/device-management-kit': 0.9.0(rxjs@7.8.1)
 
   '@ledgerhq/signer-utils@1.1.0(@ledgerhq/device-management-kit@0.9.0(rxjs@7.8.1))':
     dependencies:
