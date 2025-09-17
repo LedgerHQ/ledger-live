@@ -25,7 +25,7 @@ describe("estimateFees", () => {
     type: "send-legacy",
     amount: BigInt("1000000000000000000"),
     asset: mockNativeAsset,
-    recipient: "0x7b2c7232f9e38f30e2868f0e5bf311cd83554b5a",
+    recipient: "0x7b2C7232f9E38F30E2868f0E5Bf311Cd83554b5A",
     sender: "0xsender",
     feesStrategy: "fast",
   };
@@ -57,6 +57,25 @@ describe("estimateFees", () => {
           },
         }) as unknown as EvmCoinConfig,
     );
+  });
+
+  it("does not try to estimate with an invalid address and returns 0 as fallback", async () => {
+    expect(
+      await estimateFees(
+        {} as CryptoCurrency,
+        { type: "send-legacy", recipient: "not-an-address" } as TransactionIntent,
+      ),
+    ).toEqual({ value: 0n });
+    expect(
+      await estimateFees(
+        {} as CryptoCurrency,
+        {
+          type: "send-legacy",
+          recipient: "0x7b2c7232f9e38f30e2868f0e5bf311cd83554b5a",
+        } as TransactionIntent,
+      ),
+    ).toEqual({ value: 0n });
+    expect(mockNodeApi.getGasEstimation).not.toHaveBeenCalled();
   });
 
   it("should estimate fees for native asset", async () => {

@@ -1,29 +1,8 @@
-import { Account, TokenAccount, TransactionCommon } from "@ledgerhq/types-live";
+import { Account, TokenAccount } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
-import type { Unit } from "@ledgerhq/types-cryptoassets";
+import { GenericTransaction } from "./types";
 
-export enum NetworkCongestionLevel {
-  LOW = "LOW",
-  MEDIUM = "MEDIUM",
-  HIGH = "HIGH",
-}
-
-export type NetworkInfo = {
-  fees: BigNumber;
-};
-
-export function createTransaction(account: Account | TokenAccount): TransactionCommon & {
-  family: string;
-  fees?: BigNumber | null;
-  tag?: number | null | undefined;
-  feeCustomUnit?: Unit | null | undefined;
-  memoType?: string | null;
-  memoValue?: string | null;
-  mode?: "send" | "changeTrust" | "send-legacy" | "send-eip1559";
-  assetReference?: string;
-  assetOwner?: string;
-  networkInfo?: NetworkInfo | null;
-} {
+export function createTransaction(account: Account | TokenAccount): GenericTransaction {
   const currency =
     account.type === "TokenAccount" ? account.token.parentCurrency : account.currency;
   switch (currency.family) {
@@ -57,6 +36,8 @@ export function createTransaction(account: Account | TokenAccount): TransactionC
         family: currency.family,
         amount: new BigNumber(0),
         recipient: "",
+        useAllAmount: false,
+        feesStrategy: "medium",
       };
     }
     default:
