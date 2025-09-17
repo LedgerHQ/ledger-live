@@ -285,6 +285,7 @@ export type SettingsState = {
   fromLedgerSyncOnboarding: boolean;
   mevProtection: boolean;
   selectedTabPortfolioAssets: TabPortfolioAssetsType;
+  deprecationDoNotRemind: string[];
 };
 
 export type NotificationsSettings = {

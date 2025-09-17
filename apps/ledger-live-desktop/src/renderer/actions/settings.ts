@@ -222,6 +222,11 @@ export const hideOrdinalsAsset = (inscriptionId: string) => ({
   payload: inscriptionId,
 });
 
+export const deprecateWarningReminder = (coinName: string) => ({
+  type: "DEPRECATION_DO_NOT_REMIND",
+  payload: coinName,
+});
+
 export const setLastSeenCustomImage = (lastSeenCustomImage: {
   imageSize: number;
   imageHash: string;
