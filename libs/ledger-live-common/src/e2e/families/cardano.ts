@@ -58,6 +58,7 @@ export async function delegateCardano() {
     [DeviceLabels.TRANSACTION_FEE, "both"],
     [DeviceLabels.REGISTER, "both"],
     [DeviceLabels.STAKE_KEY, "both"],
+    [DeviceLabels.DEPOSIT, "both"],
     [DeviceLabels.CONFIRM, "right"],
     [DeviceLabels.DELEGATE_STAKE, "both"],
     [DeviceLabels.STAKE_KEY, "both"],

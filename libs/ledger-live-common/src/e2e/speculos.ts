@@ -40,6 +40,7 @@ import { Delegate } from "./models/Delegate";
 import { Swap } from "./models/Swap";
 import { delegateOsmosis } from "./families/osmosis";
 import { AppInfos } from "./enum/AppInfos";
+import { DEVICE_LABELS_CONFIG } from "./data/deviceLabelsData";
 
 const isSpeculosRemote = process.env.REMOTE_SPECULOS === "true";
 
@@ -469,23 +470,22 @@ async function retryAxiosRequest<T>(
   throw lastError!;
 }
 
-export async function waitFor(text: string, maxAttempts = 60): Promise<string[]> {
+export async function waitFor(text: string, maxAttempts = 60): Promise<string> {
   const port = getEnv("SPECULOS_API_PORT");
-  const address = getSpeculosAddress();
-  const url = `${address}:${port}/events?stream=false&currentscreenonly=true`;
-
+  let texts = "";
   for (let attempt = 0; attempt < maxAttempts; attempt++) {
-    const { data } = await retryAxiosRequest(() => axios.get<ResponseData>(url));
-    const texts = data.events.map(event => event.text);
+    texts = await fetchCurrentScreenTexts(port);
 
-    if (texts?.some(t => t?.toLowerCase().includes(text.toLowerCase()))) {
+    if (texts.toLowerCase().includes(text.toLowerCase())) {
       return texts;
     }
 
     await waitForTimeOut(500);
   }
 
-  throw new Error(`Text "${text}" not found on device screen after ${maxAttempts} attempts.`);
+  throw new Error(
+    `Text "${text}" not found on device screen after ${maxAttempts} attempts. Last screen text: "${texts}"`,
+  );
 }
 
 export async function pressBoth() {
@@ -502,7 +502,7 @@ export async function pressUntilTextFound(
   targetText: string,
   strictMatch: boolean = false,
 ): Promise<string[]> {
-  const maxAttempts = 15;
+  const maxAttempts = 18;
   const speculosApiPort = getEnv("SPECULOS_API_PORT");
 
   for (let attempts = 0; attempts < maxAttempts; attempts++) {
@@ -527,7 +527,7 @@ async function fetchCurrentScreenTexts(speculosApiPort: number): Promise<string>
       `${speculosAddress}:${speculosApiPort}/events?stream=false&currentscreenonly=true`,
     ),
   );
-  return response.data.events.map(event => event.text).join("");
+  return response.data.events.map(event => event.text).join(" ");
 }
 
 async function fetchAllEvents(speculosApiPort: number): Promise<string[]> {
@@ -623,24 +623,38 @@ export async function goToSettings() {
   await pressBoth();
 }
 
-const APP_LABEL_MAP = new Map<AppInfos, [string, string]>([
-  [AppInfos.ETHEREUM, [DeviceLabels.VERIFY_ETHEREUM, DeviceLabels.CONFIRM]],
-  [AppInfos.BNB_CHAIN, [DeviceLabels.VERIFY_BSC, DeviceLabels.CONFIRM]],
-  [AppInfos.POLYGON, [DeviceLabels.VERIFY_POLYGON, DeviceLabels.CONFIRM]],
-  [AppInfos.SOLANA, [DeviceLabels.VERIFY_SOLANA_ADDRESS, DeviceLabels.CONFIRM]],
-  [AppInfos.POLKADOT, [DeviceLabels.PLEASE_REVIEW, DeviceLabels.CAPS_APPROVE]],
-  [AppInfos.COSMOS, [DeviceLabels.PLEASE_REVIEW, DeviceLabels.CAPS_APPROVE]],
-  [AppInfos.BITCOIN, [DeviceLabels.ADDRESS, DeviceLabels.CONFIRM]],
-]);
+type DeviceLabelsReturn = {
+  delegateConfirmLabel: string;
+  delegateVerifyLabel: string;
+  receiveConfirmLabel: string;
+  receiveVerifyLabel: string;
+};
 
-const DEFAULT_LABELS: [string, string] = [DeviceLabels.ADDRESS, DeviceLabels.APPROVE];
+function getDeviceLabels(appInfo: AppInfos): DeviceLabelsReturn {
+  const deviceModel = getSpeculosModel();
+  const deviceConfig = DEVICE_LABELS_CONFIG[deviceModel] ?? DEVICE_LABELS_CONFIG.default;
+
+  if (!deviceConfig) {
+    throw new Error(`No device configuration found for ${deviceModel}`);
+  }
+
+  const receiveVerifyLabel =
+    deviceConfig.receiveVerify[appInfo.name] ?? deviceConfig.receiveVerify.default;
+  const receiveConfirmLabel =
+    deviceConfig.receiveConfirm[appInfo.name] ?? deviceConfig.receiveConfirm.default;
+  const delegateVerifyLabel =
+    deviceConfig.delegateVerify[appInfo.name] ?? deviceConfig.delegateVerify.default;
+  const delegateConfirmLabel =
+    deviceConfig.delegateConfirm[appInfo.name] ?? deviceConfig.delegateConfirm.default;
+
+  return { receiveVerifyLabel, receiveConfirmLabel, delegateVerifyLabel, delegateConfirmLabel };
+}
 
 export async function expectValidAddressDevice(account: Account, addressDisplayed: string) {
-  const labels = APP_LABEL_MAP.get(account.currency.speculosApp) ?? DEFAULT_LABELS;
-  const [firstLabel, confirmLabel] = labels;
+  const { receiveVerifyLabel, receiveConfirmLabel } = getDeviceLabels(account.currency.speculosApp);
 
-  await waitFor(firstLabel);
-  const events = await pressUntilTextFound(confirmLabel);
+  await waitFor(receiveVerifyLabel);
+  const events = await pressUntilTextFound(receiveConfirmLabel);
   const isAddressCorrect = containsSubstringInEvent(addressDisplayed, events);
   expect(isAddressCorrect).toBeTruthy();
   await pressBoth();
@@ -707,7 +721,7 @@ export async function signDelegationTransaction(delegatingAccount: Delegate) {
   const currencyName = delegatingAccount.account.currency.name;
   switch (currencyName) {
     case Account.SOL_1.currency.name:
-      await delegateSolana();
+      await delegateSolana(delegatingAccount);
       break;
     case Account.NEAR_1.currency.name:
       await delegateNear(delegatingAccount);
@@ -720,13 +734,13 @@ export async function signDelegationTransaction(delegatingAccount: Delegate) {
       await delegateOsmosis(delegatingAccount);
       break;
     case Account.MULTIVERS_X_1.currency.name:
-      await delegateMultiversX();
+      await delegateMultiversX(delegatingAccount);
       break;
     case Account.ADA_1.currency.name:
       await delegateCardano();
       break;
     case Account.XTZ_1.currency.name:
-      await delegateTezos();
+      await delegateTezos(delegatingAccount);
       break;
     case Account.CELO_1.currency.name:
       await delegateCelo(delegatingAccount);
@@ -739,9 +753,21 @@ export async function signDelegationTransaction(delegatingAccount: Delegate) {
   }
 }
 
+export async function getDelegateEvents(delegatingAccount: Delegate): Promise<string[]> {
+  const { delegateVerifyLabel, delegateConfirmLabel } = getDeviceLabels(
+    delegatingAccount.account.currency.speculosApp,
+  );
+
+  await waitFor(delegateVerifyLabel);
+  return await pressUntilTextFound(delegateConfirmLabel);
+}
+
 export async function verifyAmountsAndAcceptSwap(swap: Swap, amount: string) {
   await waitFor(DeviceLabels.REVIEW_TRANSACTION);
-  const events = await pressUntilTextFound(DeviceLabels.SIGN_TRANSACTION);
+  const events =
+    getSpeculosModel() === DeviceModelId.nanoS
+      ? await pressUntilTextFound(DeviceLabels.ACCEPT_AND_SEND)
+      : await pressUntilTextFound(DeviceLabels.SIGN_TRANSACTION);
   await verifySwapData(swap, events, amount);
   await pressBoth();
 }
