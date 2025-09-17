@@ -6,7 +6,7 @@ import { SkipReason } from "@ledgerhq/live-common/apps/types";
 import withRemountableWrapper from "@ledgerhq/live-common/hoc/withRemountableWrapper";
 import { Alert, Flex, ProgressLoader, VerticalTimeline } from "@ledgerhq/native-ui";
 import { getDeviceModel } from "@ledgerhq/devices";
-import { DeviceModelInfo } from "@ledgerhq/types-live";
+import { DeviceModelInfo, SeedOriginType } from "@ledgerhq/types-live";
 
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { TrackScreen, track } from "~/analytics";
@@ -19,6 +19,8 @@ import Restore from "./Restore";
 import { lastSeenDeviceSelector } from "~/reducers/settings";
 import { useAppDeviceAction } from "~/hooks/deviceActions";
 import { UserRefusedAllowManager } from "@ledgerhq/errors";
+import NewSeedConfirmation from "./NewSeedConfirmation";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 
 type Props = {
   restore?: boolean;
@@ -27,6 +29,8 @@ type Props = {
   onResult: (done: boolean) => void;
   onError?: (error: Error) => void;
   debugLastSeenDeviceModelId?: DeviceModelId;
+  isNewSeed?: boolean;
+  seedConfiguration?: SeedOriginType;
 };
 
 /**
@@ -44,9 +48,12 @@ const InstallSetOfApps = ({
   onError,
   remountMe,
   debugLastSeenDeviceModelId,
+  isNewSeed = false,
+  seedConfiguration,
 }: Props & { remountMe: () => void }) => {
   const action = useAppDeviceAction();
   const { t } = useTranslation();
+  const isSyncIncr1Enabled = useFeature("llmSyncOnboardingIncr1")?.enabled || false;
   const [userConfirmed, setUserConfirmed] = useState(false);
   const productName = getDeviceModel(selectedDevice.modelId).productName;
   const lastSeenDevice: DeviceModelInfo | null | undefined = useSelector(lastSeenDeviceSelector);
@@ -56,11 +63,16 @@ const InstallSetOfApps = ({
 
   const dependenciesToInstall = useMemo(() => {
     if (shouldRestoreApps && lastSeenDevice) {
+      if (lastSeenDevice.apps.length === 0) {
+        return dependencies;
+      }
       return lastSeenDevice.apps.map(app => app.name);
     }
+
     if (shouldRestoreApps && !lastSeenDevice) {
       return [];
     }
+
     return dependencies;
   }, [shouldRestoreApps, dependencies, lastSeenDevice]);
 
@@ -106,7 +118,13 @@ const InstallSetOfApps = ({
 
   if (opened) {
     onResult(true);
-    return error ? null : <TrackScreen category="Step 5: Install apps - successful" />;
+    return error ? null : (
+      <TrackScreen
+        category="Step 5: Install apps - successful"
+        flow="onboarding"
+        seedConfiguration={seedConfiguration}
+      />
+    );
   }
 
   return userConfirmed ? (
@@ -147,7 +165,11 @@ const InstallSetOfApps = ({
           return (
             <>
               {!shouldRestoreApps && currentAppOp?.name === appName && (
-                <TrackScreen category={`Installing ${appName}`} />
+                <TrackScreen
+                  category={`Installing ${appName}`}
+                  flow="onboarding"
+                  seedConfiguration={seedConfiguration}
+                />
               )}
               <Item
                 key={appName}
@@ -167,7 +189,12 @@ const InstallSetOfApps = ({
         onModalHide={onWrappedError}
       >
         {error instanceof UserRefusedAllowManager ? (
-          <TrackScreen category="App restoration cancelled on device" refreshSource={false} />
+          <TrackScreen
+            category="App restoration cancelled on device"
+            refreshSource={false}
+            flow="onboarding"
+            seedConfiguration={seedConfiguration}
+          />
         ) : null}
         <Flex alignItems="center">
           <Flex flexDirection="row">
@@ -178,30 +205,76 @@ const InstallSetOfApps = ({
     </Flex>
   ) : shouldRestoreApps ? (
     <>
-      <TrackScreen category="Restore Applications Start" />
+      <TrackScreen
+        category="Restore Applications Start"
+        flow="onboarding"
+        seedConfiguration={seedConfiguration}
+      />
       <Restore
         deviceName={productName}
         onConfirm={() => {
-          track("button_clicked", { button: "Restore applications" });
+          track("button_clicked", {
+            button: "Restore applications",
+            flow: "onboarding",
+            seedConfiguration,
+          });
           setUserConfirmed(true);
         }}
         onReject={() => {
-          track("button_clicked", { button: "I'll do this later" });
+          track("button_clicked", {
+            button: "I'll do this later",
+            flow: "onboarding",
+            seedConfiguration,
+          });
+          onResult(false);
+        }}
+      />
+    </>
+  ) : isNewSeed ? (
+    <>
+      <TrackScreen
+        category="Secure Funds Start"
+        flow="onboarding"
+        seedConfiguration={seedConfiguration}
+      />
+      <NewSeedConfirmation
+        onConfirm={() => {
+          track("button_clicked", {
+            button: "Secure my crypto",
+            flow: "onboarding",
+            seedConfiguration,
+          });
+          isSyncIncr1Enabled ? onResult(true) : setUserConfirmed(true);
+        }}
+        onReject={() => {
+          track("button_clicked", { button: "Maybe later", flow: "onboarding", seedConfiguration });
           onResult(false);
         }}
       />
     </>
   ) : (
     <>
-      <TrackScreen category="Install Applications Start" />
+      <TrackScreen
+        category="Install Applications Start"
+        flow="onboarding"
+        seedConfiguration={seedConfiguration}
+      />
       <Confirmation
         productName={productName}
         onConfirm={() => {
-          track("button_clicked", { button: "Install applications" });
+          track("button_clicked", {
+            button: "Install applications",
+            flow: "onboarding",
+            seedConfiguration,
+          });
           setUserConfirmed(true);
         }}
         onReject={() => {
-          track("button_clicked", { button: "I'll do this later" });
+          track("button_clicked", {
+            button: "I'll do this later",
+            flow: "onboarding",
+            seedConfiguration,
+          });
           onResult(false);
         }}
       />
