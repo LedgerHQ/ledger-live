@@ -1,5 +1,23 @@
 # @ledgerhq/react-ui
 
+## 0.38.0-next.0
+
+### Minor Changes
+
+- [#11803](https://github.com/LedgerHQ/ledger-live/pull/11803) [`94d91da`](https://github.com/LedgerHQ/ledger-live/commit/94d91da4e1b19dc5132e11b4c63b0d2cda87c71b) Thanks [@ooke-ledger](https://github.com/ooke-ledger)! - Add auto focus to asset search input
+
+- [#11829](https://github.com/LedgerHQ/ledger-live/pull/11829) [`e6de5d9`](https://github.com/LedgerHQ/ledger-live/commit/e6de5d906be3e33a1c62b6f80985eca53fae94f0) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLD - Implement marketTrend modular parameters for the left and right elements of the mad assets page
+
+- [#11843](https://github.com/LedgerHQ/ledger-live/pull/11843) [`4b7c1d3`](https://github.com/LedgerHQ/ledger-live/commit/4b7c1d37f2a11b5cf9ac40238e77f889d027c4ec) Thanks [@ooke-ledger](https://github.com/ooke-ledger)! - Add fix for layout shift
+
+- [#11777](https://github.com/LedgerHQ/ledger-live/pull/11777) [`3c11d8e`](https://github.com/LedgerHQ/ledger-live/commit/3c11d8e0ad901a25dfd63e93e332ad73707a58a1) Thanks [@ooke-ledger](https://github.com/ooke-ledger)! - Fix Tab Indicator Sync
+
+### Patch Changes
+
+- Updated dependencies [[`d56bebe`](https://github.com/LedgerHQ/ledger-live/commit/d56bebe672a1ed825697b371662dbff19dcc63d8), [`12909c4`](https://github.com/LedgerHQ/ledger-live/commit/12909c464d22e72d741262df106d0b3ce7f9130a), [`0108eaf`](https://github.com/LedgerHQ/ledger-live/commit/0108eafb64e36ce68f44e03cc3f66ccdb5ee5a92), [`aade218`](https://github.com/LedgerHQ/ledger-live/commit/aade21864a36bce4b81dcce7ae46fe73894f9d33)]:
+  - @ledgerhq/crypto-icons-ui@1.19.0-next.0
+  - @ledgerhq/icons-ui@0.14.0-next.0
+
 ## 0.37.0
 
 ### Minor Changes
