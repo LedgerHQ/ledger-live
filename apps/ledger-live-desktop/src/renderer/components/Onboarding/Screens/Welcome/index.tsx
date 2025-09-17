@@ -1,10 +1,6 @@
 import React from "react";
-import { WelcomeNew } from "./WelcomeNew";
-import { WelcomeOld } from "./WelcomeOld";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { Welcome as WelcomeNewArch } from "~/newArch/features/Onboarding/screens/Welcome";
 
 export function Welcome() {
-  const welcomeScreenVideoCarouselFeature = useFeature("welcomeScreenVideoCarousel");
-
-  return welcomeScreenVideoCarouselFeature?.enabled ? <WelcomeNew /> : <WelcomeOld />;
+  return <WelcomeNewArch />;
 }
