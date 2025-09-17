@@ -205,7 +205,8 @@ const DEFAULT_SWAP_PROVIDERS: Record<string, ProviderConfig & Partial<Additional
 };
 
 export const dexProvidersContractAddress: { [key: string]: string } = {
-  "0x3fC91A3afd70395Cd496C647d5a6CC9D4B2b7FAD": "Uniswap",
+  "0x3fc91a3afd70395cd496c647d5a6cc9d4b2b7fad": "Uniswap",
+  "0x111111125421ca6dc452d289314280a0f8842a65": "1inch",
 };
 
 export const termsOfUse: { [key: string]: string } = {
