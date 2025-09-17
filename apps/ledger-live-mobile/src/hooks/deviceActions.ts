@@ -6,10 +6,10 @@ import { createAction as initSwapCreateAction } from "@ledgerhq/live-common/hw/a
 import { createAction as managerCreateAction } from "@ledgerhq/live-common/hw/actions/manager";
 import { createAction as signMessageCreateAction } from "@ledgerhq/live-common/hw/signMessage/index";
 import { createAction as completeExchangeCreateAction } from "@ledgerhq/live-common/hw/actions/completeExchange";
-import { createAction as staxLoadImageCreateAction } from "@ledgerhq/live-common/hw/actions/customLockScreenLoad";
-import { createAction as staxFetchImageCreateAction } from "@ledgerhq/live-common/hw/actions/customLockScreenFetch";
+import { createAction as loadImageCreateAction } from "@ledgerhq/live-common/hw/actions/customLockScreenLoad";
+import { createAction as fetchImageCreateAction } from "@ledgerhq/live-common/hw/actions/customLockScreenFetch";
 import { createAction as installLanguageCreateAction } from "@ledgerhq/live-common/hw/actions/installLanguage";
-import { createAction as staxRemoveImageCreateAction } from "@ledgerhq/live-common/hw/actions/customLockScreenRemove";
+import { createAction as removeImageCreateAction } from "@ledgerhq/live-common/hw/actions/customLockScreenRemove";
 import { createAction as renameDeviceCreateAction } from "@ledgerhq/live-common/hw/actions/renameDevice";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import renameDevice from "@ledgerhq/live-common/hw/renameDevice";
@@ -27,12 +27,12 @@ import {
   connectAppExecMock,
   initSwapExecMock,
   connectManagerExecMock,
-  staxFetchImageExecMock,
+  fetchImageExecMock,
   startExchangeExecMock,
   completeExchangeExecMock,
   installLanguageExecMock,
-  staxLoadImageExecMock,
-  staxRemoveImageExecMock,
+  loadImageExecMock,
+  removeImageExecMock,
   renameDeviceExecMock,
 } from "../../e2e/bridge/types";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
@@ -105,26 +105,26 @@ export function useInstallLanguageDeviceAction() {
   );
 }
 
-export function useStaxLoadImageDeviceAction() {
+export function useLoadImageDeviceAction() {
   const mock = useEnv("MOCK");
   return useMemo(
-    () => staxLoadImageCreateAction(mock ? staxLoadImageExecMock : customLockScreenLoad),
+    () => loadImageCreateAction(mock ? loadImageExecMock : customLockScreenLoad),
     [mock],
   );
 }
 
-export function useStaxFetchImageDeviceAction() {
+export function useFetchImageDeviceAction() {
   const mock = useEnv("MOCK");
   return useMemo(
-    () => staxFetchImageCreateAction(mock ? staxFetchImageExecMock : customLockScreenFetch),
+    () => fetchImageCreateAction(mock ? fetchImageExecMock : customLockScreenFetch),
     [mock],
   );
 }
 
-export function useStaxRemoveImageDeviceAction() {
+export function useRemoveImageDeviceAction() {
   const mock = useEnv("MOCK");
   return useMemo(
-    () => staxRemoveImageCreateAction(mock ? staxRemoveImageExecMock : customLockScreenRemove),
+    () => removeImageCreateAction(mock ? removeImageExecMock : customLockScreenRemove),
     [mock],
   );
 }
