@@ -11,7 +11,7 @@ import {
   buildStakeWithdrawInstructions,
   buildStakeSplitInstructions,
 } from "./network/chain/web3";
-import { assertUnreachable } from "./utils";
+import { assertUnreachable, DUMMY_SIGNATURE } from "./utils";
 import {
   PublicKey,
   VersionedTransaction as OnChainTransaction,
@@ -22,10 +22,6 @@ import {
 } from "@solana/web3.js";
 import { ChainAPI } from "./network";
 import { trace } from "@ledgerhq/logs";
-
-const SIGNATURE_SIZE = 64;
-const DUMMY_SIGNATURE_FILL = 1;
-const dummySignature = Buffer.alloc(SIGNATURE_SIZE, DUMMY_SIGNATURE_FILL);
 
 export const buildTransactionWithAPI = async (
   address: string,
@@ -46,7 +42,7 @@ export const buildTransactionWithAPI = async (
     // Update the recent blockhash if no real signatures are present
     // This ensures the transaction uses a fresh blockhash for submission
     // NOTE: we could also make use of the isBlockHashValid rpc method to check the validity
-    if (web3SolanaTransaction.signatures.every(sig => Buffer.from(sig).equals(dummySignature))) {
+    if (web3SolanaTransaction.signatures.every(sig => Buffer.from(sig).equals(DUMMY_SIGNATURE))) {
       web3SolanaTransaction.message.recentBlockhash = recentBlockhash.blockhash;
     }
   } else {
