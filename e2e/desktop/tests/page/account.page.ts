@@ -84,6 +84,7 @@ export class AccountPage extends AppPage {
 
   @step("Click Stake button")
   async startStakingFlowFromMainStakeButton() {
+    await this.page.waitForTimeout(500); // App crashes if we don't wait a bit here
     await this.stakeButton.click();
   }
 
