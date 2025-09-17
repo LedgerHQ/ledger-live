@@ -70,6 +70,8 @@ export function makeGetAccountShape(
   return async info => {
     const { initialAccount, currency, derivationMode, derivationPath } = info;
 
+    console.log("Canton sync - info:", info);
+
     let xpubOrAddress = initialAccount?.xpub || "";
 
     if (!xpubOrAddress) {
@@ -95,13 +97,10 @@ export function makeGetAccountShape(
       derivationMode,
     });
 
-    const accountsWithBalances = ["0", "1", "2"];
-
     const balances = xpubOrAddress ? await getBalance(currency, xpubOrAddress) : [];
     const balanceData = balances.find(balance => balance.instrument_id.includes("Amulet")) || {
       instrument_id: "Amulet",
-      // TODO: need for tests remove this
-      amount: accountsWithBalances.includes(derivationPath.split("'/")[2]) ? 1 : 0,
+      amount: 0,
       locked: false,
     };
     const balance = BigNumber(balanceData.amount);
@@ -134,21 +133,21 @@ export function makeGetAccountShape(
     const shape = {
       id: accountId,
       type: "Account" as const,
-      creationDate,
       balance,
       blockHeight,
-      freshAddress: xpubOrAddress,
-      freshAddressPath: derivationPath,
+      creationDate,
+      lastSyncDate: new Date(),
+      // freshAddress: xpubOrAddress,
+      // freshAddressPath: derivationPath,
       operations,
       operationsCount: operations.length,
-      seedIdentifier: xpubOrAddress,
+      // seedIdentifier: xpubOrAddress,
       spendableBalance,
-      xpub: xpubOrAddress,
+      // xpub: xpubOrAddress,
       used: balance.gt(0),
     };
 
     console.log("Canton sync - shape:", shape);
-    console.log("Canton sync - xpubOrAddress:", xpubOrAddress);
 
     return shape;
   };

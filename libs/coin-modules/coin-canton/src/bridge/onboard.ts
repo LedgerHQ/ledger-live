@@ -15,11 +15,11 @@ import {
 } from "../network/gateway";
 import {
   OnboardStatus,
-  PreApprovalStatus,
+  AuthorizeStatus,
   CantonOnboardProgress,
   CantonOnboardResult,
-  CantonPreApprovalProgress,
-  CantonPreApprovalResult,
+  CantonAuthorizeProgress,
+  CantonAuthorizeResult,
   PrepareTransactionResponse,
 } from "../types/onboard";
 import resolver from "../signer";
@@ -225,12 +225,12 @@ export const buildAuthorizePreapproval =
     deviceId: string,
     creatableAccount: Account,
     partyId: string,
-  ): Observable<CantonPreApprovalProgress | CantonPreApprovalResult> =>
+  ): Observable<CantonAuthorizeProgress | CantonAuthorizeResult> =>
     new Observable(observer => {
       async function main() {
         log("buildAuthorizePreapproval", "creatableAccount", creatableAccount, "partyId", partyId);
         observer.next({
-          status: PreApprovalStatus.PREPARE,
+          status: AuthorizeStatus.PREPARE,
         });
 
         const preparedTransaction: PrepareTransactionResponse = await preparePreApprovalTransaction(
@@ -239,7 +239,7 @@ export const buildAuthorizePreapproval =
         );
 
         observer.next({
-          status: PreApprovalStatus.SIGN,
+          status: AuthorizeStatus.SIGN,
         });
 
         const signature = await signerContext(deviceId, signer =>
@@ -247,7 +247,7 @@ export const buildAuthorizePreapproval =
         );
 
         observer.next({
-          status: PreApprovalStatus.SUBMIT,
+          status: AuthorizeStatus.SUBMIT,
         });
 
         const { isApproved } = await submitPreApprovalTransaction(
@@ -258,7 +258,7 @@ export const buildAuthorizePreapproval =
         );
 
         observer.next({
-          status: PreApprovalStatus.SUCCESS,
+          status: AuthorizeStatus.SUCCESS,
         });
 
         observer.next({
@@ -273,7 +273,7 @@ export const buildAuthorizePreapproval =
 
             if (serialized && hash) {
               observer.next({
-                status: PreApprovalStatus.SIGN,
+                status: AuthorizeStatus.SIGN,
               });
 
               const signature = await signerContext(deviceId, signer =>
@@ -281,7 +281,7 @@ export const buildAuthorizePreapproval =
               );
 
               observer.next({
-                status: PreApprovalStatus.SUBMIT,
+                status: AuthorizeStatus.SUBMIT,
               });
 
               await submitTapRequest(currency, {
@@ -291,7 +291,7 @@ export const buildAuthorizePreapproval =
               });
 
               observer.next({
-                status: PreApprovalStatus.SUCCESS,
+                status: AuthorizeStatus.SUCCESS,
               });
             }
           } catch (err) {

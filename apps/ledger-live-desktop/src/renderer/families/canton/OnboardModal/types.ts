@@ -45,8 +45,8 @@ export type StepProps = {
   status?: OnboardStatus;
 
   // Actions
-  startOnboarding?: (() => void) | undefined;
+  onOnboardAccount: () => void;
 
   authorizeStatus: PreApprovalStatus;
-  handlePreapproval?: () => void;
+  onAuthorizePreapproval: () => void;
 };

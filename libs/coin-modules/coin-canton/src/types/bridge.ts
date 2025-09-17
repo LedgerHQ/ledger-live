@@ -13,8 +13,8 @@ import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import type {
   CantonOnboardProgress,
   CantonOnboardResult,
-  CantonPreApprovalProgress,
-  CantonPreApprovalResult,
+  CantonAuthorizeProgress,
+  CantonAuthorizeResult,
 } from "./onboard";
 
 export interface CantonCurrencyBridge extends CurrencyBridge {
@@ -29,7 +29,7 @@ export interface CantonCurrencyBridge extends CurrencyBridge {
     deviceId: string,
     creatableAccount: Account,
     partyId: string,
-  ) => Observable<CantonPreApprovalProgress | CantonPreApprovalResult>;
+  ) => Observable<CantonAuthorizeProgress | CantonAuthorizeResult>;
 }
 
 export type NetworkInfo = {

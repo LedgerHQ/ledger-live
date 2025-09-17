@@ -9,7 +9,7 @@ export enum OnboardStatus {
   ERROR,
 }
 
-export enum PreApprovalStatus {
+export enum AuthorizeStatus {
   INIT,
   PREPARE,
   SIGN,
@@ -27,11 +27,11 @@ export type CantonOnboardResult = {
   account: Partial<Account>;
 };
 
-export type CantonPreApprovalProgress = {
-  status: PreApprovalStatus;
+export type CantonAuthorizeProgress = {
+  status: AuthorizeStatus;
 };
 
-export type CantonPreApprovalResult = {
+export type CantonAuthorizeResult = {
   isApproved: boolean;
 };
 

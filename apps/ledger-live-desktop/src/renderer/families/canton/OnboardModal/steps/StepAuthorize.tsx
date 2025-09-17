@@ -85,20 +85,20 @@ const StepAuthorize = ({ accountName, authorizeStatus, device, onboardingData }:
 export const StepAuthorizeFooter = ({
   currency,
   authorizeStatus,
-  handlePreapproval,
+  onAuthorizePreapproval,
 }: StepProps) => {
   if (authorizeStatus === PreApprovalStatus.SIGN) {
     return <></>;
   }
 
-  const handleClick = () => {
-    handlePreapproval?.();
-  };
-
   return (
     <Box horizontal alignItems="center" justifyContent="space-between" grow>
       <CurrencyBadge currency={currency} />
-      <Button primary onClick={handleClick} disabled={authorizeStatus === PreApprovalStatus.SUBMIT}>
+      <Button
+        primary
+        onClick={onAuthorizePreapproval}
+        disabled={authorizeStatus === PreApprovalStatus.SUBMIT}
+      >
         {authorizeStatus === PreApprovalStatus.SUBMIT && (
           <Box mr={2}>
             <Spinner size={20} />

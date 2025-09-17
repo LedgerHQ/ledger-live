@@ -4,19 +4,18 @@ import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { emptyHistoryCache } from "@ledgerhq/coin-framework/account/index";
 import { generateMockKeyPair, createMockSigner } from "../test/cantonTestUtils";
 import {
+  AuthorizeStatus,
   OnboardStatus,
-  PreApprovalStatus,
+  CantonAuthorizeProgress,
+  CantonAuthorizeResult,
   CantonOnboardProgress,
   CantonOnboardResult,
-  CantonPreApprovalProgress,
-  CantonPreApprovalResult,
 } from "../types/onboard";
 import coinConfig from "../config";
 import { buildOnboardAccount, getAccountStatus, buildAuthorizePreapproval } from "./onboard";
 
 describe("onboard (devnet)", () => {
   const mockDeviceId = "test-device-id";
-  const mockDerivationPath = "44'/6767'/0'/0'/0'";
   const mockCurrency = {
     id: "canton_network",
   } as unknown as CryptoCurrency;
@@ -171,7 +170,7 @@ describe("onboard (devnet)", () => {
 
     it("should complete full onboarding flow with already onboarded account", async () => {
       // GIVEN
-      const { keyPair, mockSignerContext, onboardResult: firstResult } = getOnboardedAccount();
+      const { mockSignerContext, onboardResult: firstResult } = getOnboardedAccount();
       const secondOnboardObservable = buildOnboardAccount(mockSignerContext);
 
       // WHEN
@@ -203,18 +202,17 @@ describe("onboard (devnet)", () => {
       );
 
       const progressValues = preapprovalValues.filter(
-        (value): value is CantonPreApprovalProgress =>
-          "status" in value && !("isApproved" in value),
+        (value): value is CantonAuthorizeProgress => "status" in value && !("isApproved" in value),
       );
       const resultValues = preapprovalValues.filter(
-        (value): value is CantonPreApprovalResult => "isApproved" in value,
+        (value): value is CantonAuthorizeResult => "isApproved" in value,
       );
 
       // THEN
       // Check expected status progression
-      expect(progressValues.some(p => p.status === PreApprovalStatus.PREPARE)).toBe(true);
-      expect(progressValues.some(p => p.status === PreApprovalStatus.SIGN)).toBe(true);
-      expect(progressValues.some(p => p.status === PreApprovalStatus.SUBMIT)).toBe(true);
+      expect(progressValues.some(p => p.status === AuthorizeStatus.PREPARE)).toBe(true);
+      expect(progressValues.some(p => p.status === AuthorizeStatus.SIGN)).toBe(true);
+      expect(progressValues.some(p => p.status === AuthorizeStatus.SUBMIT)).toBe(true);
 
       // Check final result (should be approved)
       expect(resultValues.length).toBeGreaterThan(0);

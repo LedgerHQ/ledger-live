@@ -216,42 +216,42 @@ export const StepOnboardFooter = ({
   onboardingCompleted,
   isProcessing,
   status,
-  startOnboarding,
+  onOnboardAccount,
 }: StepProps) => {
   const handleNext = useCallback(() => {
     logger.log("[StepOnboardFooter] Continue button clicked:", {
       onboardingCompleted,
       isProcessing,
       status,
-      startOnboarding: !!startOnboarding,
+      onOnboardAccount: !!onOnboardAccount,
     });
 
     if (status === OnboardStatus.INIT) {
       logger.log("StepOnboard: Starting onboarding process via parent");
-      startOnboarding?.();
+      onOnboardAccount();
     } else if (onboardingCompleted && !isProcessing) {
       logger.log("StepOnboard: Transitioning to authorization");
       transitionTo(StepId.AUTHORIZE);
     } else {
       logger.warn("StepOnboard: Cannot transition - conditions not met", {
         status,
-        startOnboarding: !!startOnboarding,
+        onOnboardAccount: !!onOnboardAccount,
         onboardingCompleted,
         isProcessing,
       });
     }
-  }, [onboardingCompleted, isProcessing, status, startOnboarding, transitionTo]);
+  }, [onboardingCompleted, isProcessing, status, onOnboardAccount, transitionTo]);
+
+  const isButtonDisabled =
+    status === OnboardStatus.INIT ? false : isProcessing || !onboardingCompleted;
 
   if (status === OnboardStatus.SIGN) {
     return <></>;
   }
 
-  const isButtonDisabled =
-    status === OnboardStatus.INIT ? false : isProcessing || !onboardingCompleted;
-
   return (
     <Box horizontal alignItems="center" justifyContent="space-between" grow>
-      {currency && <CurrencyBadge currency={currency} />}
+      <CurrencyBadge currency={currency} />
       <Button primary disabled={isButtonDisabled} onClick={handleNext}>
         <Trans i18nKey="common.continue" />
       </Button>
