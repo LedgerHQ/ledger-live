@@ -1,4 +1,5 @@
 import React from "react";
+import styled from "styled-components";
 import invariant from "invariant";
 import { Trans } from "react-i18next";
 import { AuthorizeStatus } from "@ledgerhq/coin-canton/types";
@@ -9,8 +10,8 @@ import Button from "~/renderer/components/Button";
 import CurrencyBadge from "~/renderer/components/CurrencyBadge";
 import Link from "~/renderer/components/Link";
 import Spinner from "~/renderer/components/Spinner";
-import SignMessageConfirm from "~/renderer/components/SignMessageConfirm";
-import { ValidatorRow } from "../fields/ValidatorRow";
+import { TransactionConfirm } from "../components/TransactionConfirm";
+import { ValidatorRow } from "../components/ValidatorRow";
 import { StepProps } from "../types";
 
 const StepAuthorize = ({ accountName, authorizeStatus, device, onboardingData }: StepProps) => {
@@ -20,18 +21,15 @@ const StepAuthorize = ({ accountName, authorizeStatus, device, onboardingData }:
     switch (status) {
       case AuthorizeStatus.SIGN:
         return (
-          <SignMessageConfirm
-            device={device!}
+          <TransactionConfirm
+            device={device}
             account={onboardingData.completedAccount}
-            parentAccount={null}
-            signMessageRequested={{
-              message: "Canton Authorize",
-            }}
+            message="Canton Authorize"
           />
         );
       default:
         return (
-          <Box>
+          <SectionAuthorizze>
             <Box mb={4}>
               <Box
                 horizontal
@@ -46,7 +44,7 @@ const StepAuthorize = ({ accountName, authorizeStatus, device, onboardingData }:
               <AccountRow
                 account={onboardingData.completedAccount}
                 accountName={accountName}
-                isDisabled={true}
+                isDisabled={false}
                 hideAmount={true}
                 isReadonly={true}
               />
@@ -64,7 +62,7 @@ const StepAuthorize = ({ accountName, authorizeStatus, device, onboardingData }:
                 <Trans i18nKey="canton.addAccount.authorization.validatorLabel">Authorize</Trans>
               </Box>
 
-              <ValidatorRow isSelected={true} disabled={true} />
+              <ValidatorRow isSelected={true} disabled={false} />
             </Box>
 
             <Alert>
@@ -75,7 +73,7 @@ const StepAuthorize = ({ accountName, authorizeStatus, device, onboardingData }:
                 </Link>
               </Trans>
             </Alert>
-          </Box>
+          </SectionAuthorizze>
         );
     }
   };
@@ -109,5 +107,17 @@ export const StepAuthorizeFooter = ({
     </Box>
   );
 };
+
+const SectionAuthorizze = styled(Box)`
+  position: relative;
+  &::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+  }
+`;
 
 export default StepAuthorize;

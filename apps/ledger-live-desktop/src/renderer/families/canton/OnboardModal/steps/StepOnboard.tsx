@@ -9,21 +9,9 @@ import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
 import CurrencyBadge from "~/renderer/components/CurrencyBadge";
 import Spinner from "~/renderer/components/Spinner";
-import SignMessageConfirm from "~/renderer/components/SignMessageConfirm";
 import logger from "~/renderer/logger";
+import { TransactionConfirm } from "../components/TransactionConfirm";
 import { StepId, StepProps } from "../types";
-
-export const SectionAccountsStyled = styled(Box)`
-  position: relative;
-  &::after {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-  }
-`;
 
 const SectionAccounts = memo(
   ({
@@ -154,13 +142,10 @@ export default function StepOnboard({
 
       case OnboardStatus.SIGN:
         return (
-          <SignMessageConfirm
-            device={device!}
-            account={creatableAccount!}
-            parentAccount={null}
-            signMessageRequested={{
-              message: "Canton Onboarding",
-            }}
+          <TransactionConfirm
+            device={device}
+            account={creatableAccount}
+            message="Canton Onboarding"
           />
         );
 
@@ -269,4 +254,16 @@ const LoadingRow = styled(Box).attrs(() => ({
 }))`
   height: 48px;
   border: 1px dashed ${p => p.theme.colors.palette.text.shade60};
+`;
+
+const SectionAccountsStyled = styled(Box)`
+  position: relative;
+  &::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+  }
 `;

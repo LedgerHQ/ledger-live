@@ -168,14 +168,12 @@ const StepReceiveFunds = ({
   receiveTokenMode,
   isFromPostOnboardingEntryPoint,
 }: StepProps) => {
-  console.log("account", account);
   const mainAccount = account
     ? getMainAccount<CantonAccount>(account as CantonAccount, parentAccount as CantonAccount)
     : null;
   invariant(account && mainAccount && mainAccount.xpub, "No account given");
   const name = useAccountName(account);
   const initialDevice = useRef(device);
-  console.log("mainAccount", mainAccount);
   const address = mainAccount.xpub;
   const [modalVisible, setModalVisible] = useState(false);
   const hideQRCodeModal = useCallback(() => setModalVisible(false), [setModalVisible]);
