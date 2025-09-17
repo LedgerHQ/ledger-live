@@ -1,7 +1,6 @@
 import { localForger } from "@taquito/local-forging";
 import { createApi } from ".";
 import type { TezosApi } from "./types";
-import { InvalidAddressError } from "@taquito/utils";
 
 /**
  * https://teztnets.com/ghostnet-about
