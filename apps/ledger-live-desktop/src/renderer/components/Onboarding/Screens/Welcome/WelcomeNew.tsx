@@ -222,14 +222,17 @@ export function WelcomeNew() {
       {
         video: LedgerWalletBuySell,
         title: t("onboarding.screens.welcome.videos.buySell"),
+        id: "buy-sell",
       },
       {
         video: LedgerWalletThousandsCrypto,
         title: t("onboarding.screens.welcome.videos.thousandsCrypto"),
+        id: "thousands-crypto",
       },
       {
         video: LedgerWalletSecureWallet,
         title: t("onboarding.screens.welcome.videos.secureWallet"),
+        id: "secure-wallet",
       },
     ],
     [t],
@@ -285,12 +288,12 @@ export function WelcomeNew() {
 
   return (
     <WelcomeContainer ref={containerRef}>
-      {VIDEO_SLIDES.map(({ video }, index) => (
+      {VIDEO_SLIDES.map(({ video, id }, index) => (
         <VideoBackground
           ref={el => (videoRefs.current[index] = el)}
           autoPlay={index === currentSlide && isVisible}
           muted
-          key={index}
+          key={`video-${id}`}
           onLoadedMetadata={() => handleVideoLoadedMetadata(index)}
           onEnded={handleVideoEnded}
           isActive={index === currentSlide}
@@ -306,9 +309,9 @@ export function WelcomeNew() {
             <Logos.LedgerLiveRegular color={colors.neutral.c100} />
           </Box>
           <ProgressBarsContainer onClick={() => handleOpenFeatureFlagsDrawer("2")}>
-            {VIDEO_SLIDES.map((_, index) => (
+            {VIDEO_SLIDES.map(({ id }, index) => (
               <ProgressBar
-                key={index}
+                key={`progress-bar-${id}`}
                 isActive={index === currentSlide && isVisible}
                 isFull={index < currentSlide}
                 transitionDuration={videoDurations[index]}
