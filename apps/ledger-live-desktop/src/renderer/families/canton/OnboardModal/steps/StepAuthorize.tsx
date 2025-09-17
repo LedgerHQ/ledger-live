@@ -1,9 +1,7 @@
-import BigNumber from "bignumber.js";
 import React from "react";
 import invariant from "invariant";
 import { Trans } from "react-i18next";
 import { PreApprovalStatus } from "@ledgerhq/coin-canton/types";
-import { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import AccountRow from "~/renderer/components/AccountsList/AccountRow";
 import Alert from "~/renderer/components/Alert";
 import Box from "~/renderer/components/Box";
@@ -11,7 +9,7 @@ import Button from "~/renderer/components/Button";
 import CurrencyBadge from "~/renderer/components/CurrencyBadge";
 import Link from "~/renderer/components/Link";
 import Spinner from "~/renderer/components/Spinner";
-import TransactionConfirm from "~/renderer/components/TransactionConfirm";
+import SignMessageConfirm from "~/renderer/components/SignMessageConfirm";
 import { ValidatorRow } from "../fields/ValidatorRow";
 import { StepProps } from "../types";
 
@@ -22,32 +20,14 @@ const StepAuthorize = ({ accountName, authorizeStatus, device, onboardingData }:
     switch (status) {
       case PreApprovalStatus.SIGN:
         return (
-          <Box>
-            <TransactionConfirm
-              device={device!}
-              account={onboardingData.completedAccount}
-              parentAccount={null}
-              transaction={
-                {
-                  family: "canton",
-                  mode: "preapproval",
-                  recipient: "",
-                  amount: new BigNumber(0),
-                  fee: new BigNumber(0),
-                  onboardingData,
-                } as Transaction
-              }
-              status={
-                {
-                  amount: new BigNumber(0),
-                  totalSpent: new BigNumber(0),
-                  estimatedFees: new BigNumber(0),
-                  errors: {},
-                  warnings: {},
-                } as TransactionStatus
-              }
-            />
-          </Box>
+          <SignMessageConfirm
+            device={device!}
+            account={onboardingData.completedAccount}
+            parentAccount={null}
+            signMessageRequested={{
+              message: "Canton Authorize",
+            }}
+          />
         );
       default:
         return (
@@ -102,7 +82,6 @@ const StepAuthorize = ({ accountName, authorizeStatus, device, onboardingData }:
 
   return renderContent(authorizeStatus);
 };
-
 export const StepAuthorizeFooter = ({
   currency,
   authorizeStatus,

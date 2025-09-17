@@ -1,9 +1,7 @@
-import BigNumber from "bignumber.js";
 import React, { memo, useCallback } from "react";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
 import { OnboardStatus } from "@ledgerhq/coin-canton/types";
-import { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import { getDefaultAccountNameForCurrencyIndex } from "@ledgerhq/live-wallet/accountName";
 import AccountRow from "~/renderer/components/AccountsList/AccountRow";
 import Alert from "~/renderer/components/Alert";
@@ -11,7 +9,7 @@ import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
 import CurrencyBadge from "~/renderer/components/CurrencyBadge";
 import Spinner from "~/renderer/components/Spinner";
-import TransactionConfirm from "~/renderer/components/TransactionConfirm";
+import SignMessageConfirm from "~/renderer/components/SignMessageConfirm";
 import logger from "~/renderer/logger";
 import { StepId, StepProps } from "../types";
 
@@ -103,7 +101,7 @@ const SectionAccounts = memo(
 
 SectionAccounts.displayName = "SectionAccounts";
 
-const getStatusMessage = (status: OnboardStatus): string => {
+const getStatusMessage = (status?: OnboardStatus): string => {
   switch (status) {
     case OnboardStatus.INIT:
       return "Ready to start Canton onboarding";
@@ -130,11 +128,10 @@ export default function StepOnboard({
   editedNames,
   importableAccounts,
   creatableAccount,
-  signingData,
 }: StepProps) {
   const renderContent = (onboardingStatus?: OnboardStatus) => {
     switch (onboardingStatus) {
-      case OnboardStatus.PREPARE:
+      case OnboardStatus.INIT:
         return (
           <Box>
             <SectionAccounts
@@ -145,71 +142,26 @@ export default function StepOnboard({
               importableAccounts={importableAccounts}
             />
 
-            <LoadingRow>
-              <Spinner color="palette.text.shade60" size={16} />
-              <Box ml={2} ff="Inter|Regular" color="palette.text.shade60" fontSize={4}>
-                {getStatusMessage(onboardingStatus)}
-              </Box>
-            </LoadingRow>
+            <Box>
+              <Alert>
+                <Trans i18nKey="canton.addAccount.onboard.ready">
+                  Set up your new Canton account by clicking Continue
+                </Trans>
+              </Alert>
+            </Box>
           </Box>
         );
 
       case OnboardStatus.SIGN:
-        if (!device) {
-          return (
-            <LoadingRow>
-              <Spinner color="palette.text.shade60" size={16} />
-            </LoadingRow>
-          );
-        }
-
         return (
-          <TransactionConfirm
-            device={device}
+          <SignMessageConfirm
+            device={device!}
             account={creatableAccount!}
             parentAccount={null}
-            transaction={
-              {
-                family: "canton",
-                mode: "onboarding",
-                recipient: signingData?.partyId || "",
-                amount: new BigNumber(0),
-                fee: new BigNumber(0),
-                onboardingData: signingData,
-              } as Transaction
-            }
-            status={
-              {
-                amount: new BigNumber(0),
-                totalSpent: new BigNumber(0),
-                estimatedFees: new BigNumber(0),
-                errors: {},
-                warnings: {},
-              } as TransactionStatus
-            }
-            manifestId="canton-onboarding"
-            manifestName="Canton Onboarding"
+            signMessageRequested={{
+              message: "Canton Onboarding",
+            }}
           />
-        );
-
-      case OnboardStatus.SUBMIT:
-        return (
-          <Box>
-            <SectionAccounts
-              currency={currency}
-              accountName={accountName}
-              editedNames={editedNames}
-              creatableAccount={creatableAccount}
-              importableAccounts={importableAccounts}
-            />
-
-            <LoadingRow>
-              <Spinner color="palette.text.shade60" size={16} />
-              <Box ml={2} ff="Inter|Regular" color="palette.text.shade60" fontSize={4}>
-                {getStatusMessage(onboardingStatus)}
-              </Box>
-            </LoadingRow>
-          </Box>
         );
 
       case OnboardStatus.SUCCESS:
@@ -244,13 +196,12 @@ export default function StepOnboard({
               importableAccounts={importableAccounts}
             />
 
-            <Box>
-              <Alert>
-                <Trans i18nKey="canton.addAccount.onboard.ready">
-                  Set up your new Canton account by clicking Continue
-                </Trans>
-              </Alert>
-            </Box>
+            <LoadingRow>
+              <Spinner color="palette.text.shade60" size={16} />
+              <Box ml={2} ff="Inter|Regular" color="palette.text.shade60" fontSize={4}>
+                {getStatusMessage(onboardingStatus)}
+              </Box>
+            </LoadingRow>
           </Box>
         );
     }
