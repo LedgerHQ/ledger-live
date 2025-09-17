@@ -1,5 +1,21 @@
 # ledger-live-desktop-e2e-tests
 
+## 0.6.6
+
+### Patch Changes
+
+- Updated dependencies [[`ef18dc8`](https://github.com/LedgerHQ/ledger-live/commit/ef18dc8dff93b13ab7879fbe9666f68ee66a8466)]:
+  - @ledgerhq/live-common@34.48.1
+  - @ledgerhq/live-cli@24.23.1
+
+## 0.6.6-hotfix.0
+
+### Patch Changes
+
+- Updated dependencies [[`ef18dc8`](https://github.com/LedgerHQ/ledger-live/commit/ef18dc8dff93b13ab7879fbe9666f68ee66a8466)]:
+  - @ledgerhq/live-common@34.48.1-hotfix.0
+  - @ledgerhq/live-cli@24.23.1-hotfix.0
+
 ## 0.6.5
 
 ### Patch Changes
