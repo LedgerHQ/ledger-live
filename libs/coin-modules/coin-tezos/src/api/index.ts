@@ -108,7 +108,7 @@ async function estimate(transactionIntent: TransactionIntent): Promise<TezosFeeE
   } = await estimateFees({
     account: {
       address: transactionIntent.sender,
-      revealed: senderAccountInfo.type === "user" ? senderAccountInfo.revealed : false,
+      revealed: senderAccountInfo.type === "user" && senderAccountInfo.revealed,
       balance: BigInt(senderAccountInfo.type === "user" ? senderAccountInfo.balance : 0),
       // NOTE: previously we checked for .sender.xpub
       xpub:
