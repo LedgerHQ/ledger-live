@@ -11,6 +11,5 @@ export type TezosFeeEstimation = FeeEstimation & {
 };
 
 export type TezosSender = { address: string; xpub?: string };
-export type TezosTransactionIntent = TransactionIntent;
 
 export type TezosApi = Api;

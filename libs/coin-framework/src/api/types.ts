@@ -321,24 +321,62 @@ type MaybeTxData<TxDataType extends TxData> = TxDataType extends TxDataNotSuppor
 
 export type FeesStrategy = "slow" | "medium" | "fast";
 
+type StakingIntent = {
+  intentType: "staking";
+};
+
+export type StakingTransactionIntent<T extends StakingIntent> = TransactionIntent & T;
+
+type StakingIntent = {
+  intentType: "staking";
+};
+
+export type StakingTransactionIntent<T extends StakingIntent> = Omit<
+  TransactionIntent,
+  "intentType"
+> &
+  T;
+
 export type TransactionIntent<
   MemoType extends Memo = MemoNotSupported,
   TxDataType extends TxData = TxDataNotSupported,
 > = {
+  intentType: "transaction";
   type: string;
   sender: string;
-  mode?: string | any;
-  senderPublicKey?: string;
-  expiration?: number;
   recipient: string;
   amount: bigint;
-  useAllAmount?: boolean;
   asset: AssetInfo;
-  sequence?: number;
+  useAllAmount?: boolean;
   feesStrategy?: FeesStrategy;
-  parameters?: string[];
 } & MaybeMemo<MemoType> &
   MaybeTxData<TxDataType>;
+
+  export type AnyIntent =
+  | TransactionIntent<MemoNotSupported>
+  | StakingTransactionIntent<StakingIntent>
+
+export type StakingTransactionIntent = TransactionIntent & {
+  intentType: "staking";
+  mode: StakingOperation;
+  sourceValidatorAddress?: string;
+};
+
+export type SendTransactionIntent<MemoType extends Memo = MemoNotSupported> = TransactionIntent & {
+  intentType?: "transaction";
+  expiration?: number;
+} & MaybeMemo<MemoType>;
+
+export type StakingTransactionIntent = TransactionIntent & {
+  intentType: "staking";
+  mode: StakingOperation;
+  sourceValidatorAddress?: string;
+};
+
+export type SendTransactionIntent<MemoType extends Memo = MemoNotSupported> = TransactionIntent & {
+  intentType: "transaction";
+  expiration?: number;
+} & MaybeMemo<MemoType>;
 
 export type TransactionValidation = {
   errors: Record<string, Error>;

@@ -24,6 +24,7 @@ describe("estimateFees", () => {
   const mockTokenAsset: AssetInfo = { type: "erc20", assetReference: "0x1234" };
   const mockIntent: TransactionIntent<MemoNotSupported, BufferTxData> = {
     type: "send-legacy",
+    intentType: "transaction",
     amount: BigInt("1000000000000000000"),
     asset: mockNativeAsset,
     recipient: "0x7b2C7232f9E38F30E2868f0E5Bf311Cd83554b5A",

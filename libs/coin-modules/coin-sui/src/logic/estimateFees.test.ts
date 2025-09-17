@@ -23,6 +23,7 @@ describe("estimateFees", () => {
     });
 
     const transactionIntent = {
+      intentType: "transaction",
       sender: "0x123",
       recipient: "0x456",
       amount: BigInt("1000000000"),
@@ -50,6 +51,7 @@ describe("estimateFees", () => {
     });
 
     const transactionIntent = {
+      intentType: "transaction",
       sender: "0x123",
       recipient: "0x456",
       amount: BigInt("0"),

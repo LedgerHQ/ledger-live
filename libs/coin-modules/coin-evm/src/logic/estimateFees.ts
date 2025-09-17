@@ -5,6 +5,7 @@ import type {
   FeeEstimation,
   MemoNotSupported,
   TransactionIntent,
+  AnyIntent,
 } from "@ledgerhq/coin-framework/api/index";
 import { ApiFeeData, ApiGasOptions, FeeData, GasOptions, TransactionTypes } from "../types";
 import { getGasTracker } from "../network/gasTracker";

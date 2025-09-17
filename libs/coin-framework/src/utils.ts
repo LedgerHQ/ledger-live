@@ -1,4 +1,5 @@
 import BigNumber from "bignumber.js";
+import { SendTransactionIntent, TransactionIntent } from "./api";
 
 export function fromBigNumberToBigInt<T>(
   bigNumber: BigNumber | undefined,
@@ -8,4 +9,8 @@ export function fromBigNumberToBigInt<T>(
     return BigInt(bigNumber.toFixed());
   }
   return defaultValue as T;
+}
+
+export function isSendTransactionIntent(tx: TransactionIntent): tx is SendTransactionIntent {
+  return tx.intentType === "transaction";
 }

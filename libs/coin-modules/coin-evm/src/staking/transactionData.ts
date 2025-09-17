@@ -1,4 +1,11 @@
+import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import type { TransactionIntent, MemoNotSupported } from "@ledgerhq/coin-framework/api/index";
 import type { StakingOperation } from "../types/staking";
+import { isNative } from "../types";
+import { isStakingIntent } from "../utils";
+import { STAKING_CONTRACTS } from "./contracts";
+import { encodeStakingData } from "./encoder";
+import { isStakingOperation } from "./detectOperationType";
 
 type OperationFn = (
   recipient: string,
@@ -53,3 +60,53 @@ export const buildTransactionParams = (
 
   return operation(recipient, amount, sourceValidator, delegator);
 };
+
+/**
+ * Builds transaction parameters for staking transactions
+ */
+export function buildStakingTransactionParams(
+  currency: CryptoCurrency,
+  intent: TransactionIntent<MemoNotSupported>,
+): {
+  to: string;
+  data: Buffer;
+  value: bigint;
+} {
+  if (!isStakingIntent(intent)) {
+    throw new Error("Intent must be a staking intent");
+  }
+
+  const { amount, asset, recipient, sender, mode, sourceValidatorAddress } = intent;
+
+  const config = STAKING_CONTRACTS[currency.id];
+  if (!config) {
+    throw new Error(`Unsupported staking currency: ${currency.id}`);
+  }
+
+  if (!mode || !isStakingOperation(mode)) {
+    throw new Error(`Invalid staking operation: ${mode}`);
+  }
+
+  const stakingParams = buildTransactionParams(
+    currency.id,
+    mode as StakingOperation,
+    recipient,
+    amount,
+    sourceValidatorAddress, // sourceValidator for redelegate
+    sender, // delegator address
+  );
+
+  const to = config.contractAddress;
+  const data = Buffer.from(
+    encodeStakingData({
+      currencyId: currency.id,
+      operation: mode as StakingOperation,
+      config,
+      params: stakingParams,
+    }).slice(2),
+    "hex",
+  );
+  const value = isNative(asset) ? amount : 0n;
+
+  return { to, data, value };
+}

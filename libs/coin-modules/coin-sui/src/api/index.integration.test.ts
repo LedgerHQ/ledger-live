@@ -27,6 +27,7 @@ describe("Sui Api", () => {
 
       // When
       const result: FeeEstimation = await module.estimateFees({
+        intentType: "transaction",
         asset: { type: "native" },
         type: "send",
         sender: SENDER,
