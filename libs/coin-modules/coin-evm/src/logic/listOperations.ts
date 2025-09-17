@@ -94,7 +94,7 @@ export async function listOperations(
   );
 
   const hasValidType = (operation: Operation): boolean =>
-    ["NONE", "FEES", "IN", "OUT"].includes(operation.type);
+    ["NONE", "FEES", "IN", "OUT", "DELEGATE", "UNDELEGATE", "REDELEGATE"].includes(operation.type);
   const isAlone = (operation: Operation): boolean =>
     ["NONE", "FEES"].includes(operation.type) && !("assetAmount" in (operation.details ?? {}));
 

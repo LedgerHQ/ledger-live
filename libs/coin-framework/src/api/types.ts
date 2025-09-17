@@ -321,12 +321,7 @@ type MaybeTxData<TxDataType extends TxData> = TxDataType extends TxDataNotSuppor
 
 export type FeesStrategy = "slow" | "medium" | "fast";
 
-export type StakingOperation =
-  | "delegate"
-  | "undelegate"
-  | "redelegate"
-  | "getStakedBalance"
-  | "getUnstakedBalance";
+export type StakingOperation = "delegate" | "undelegate" | "redelegate";
 
 export type TransactionIntent<
   MemoType extends Memo = MemoNotSupported,
