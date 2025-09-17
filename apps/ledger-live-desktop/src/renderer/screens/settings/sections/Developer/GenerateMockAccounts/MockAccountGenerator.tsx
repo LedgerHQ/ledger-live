@@ -19,7 +19,7 @@ export default function MockAccountGenerator({ count, title, desc }: Props) {
       await injectMockAccounts(accounts, true);
     } catch (error) {
       console.error("Failed to generate mock accounts:", error);
-      alert(t("settings.developer.debugSimpleHash.mockAccounts.alerts.generateError"));
+      alert(t("settings.developer.mockAccounts.alerts.generateError"));
     }
   };
 
@@ -28,14 +28,12 @@ export default function MockAccountGenerator({ count, title, desc }: Props) {
       <Button
         primary
         onClick={() => {
-          if (
-            window.confirm(t("settings.developer.debugSimpleHash.mockAccounts.alerts.confirmErase"))
-          ) {
+          if (window.confirm(t("settings.developer.mockAccounts.alerts.confirmErase"))) {
             handleGenerate();
           }
         }}
       >
-        {t("settings.developer.debugSimpleHash.mockAccounts.buttons.generateAccountsQuick", {
+        {t("settings.developer.mockAccounts.buttons.generateAccountsQuick", {
           count,
         })}
       </Button>
