@@ -19,6 +19,7 @@ export class SendDrawer extends Drawer {
 
   @step("Verify that the information of the transaction is visible")
   async expectReceiverInfos(tx: Transaction) {
+    await this.amountValue.waitFor();
     await expect(this.addressValue(getAccountAddress(tx.accountToCredit))).toBeVisible();
     await expect(this.amountValue).toBeVisible();
     const displayedAmount = await this.amountValue.innerText();

@@ -49,6 +49,7 @@
     "transactionDate" : "Date de la transaction",
     "outdated" : "Obsolète",
     "satPerByte" : "sat/bytes",
+    "sompiPerByte" : "sompi/bytes",
     "notAvailable" : "Indisponible",
     "import" : "Importer",
     "bluetooth" : "Bluetooth",
