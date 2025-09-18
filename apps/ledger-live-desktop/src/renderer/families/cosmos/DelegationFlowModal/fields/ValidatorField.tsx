@@ -5,7 +5,7 @@ import {
   TransactionStatus,
 } from "@ledgerhq/live-common/families/cosmos/types";
 import { Account } from "@ledgerhq/types-live";
-import React, { useCallback, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { TFunction } from "i18next";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
@@ -29,24 +29,36 @@ const ValidatorField = ({ account, onChangeValidator, chosenVoteAccAddr }: Props
   const [search, setSearch] = useState("");
   const unit = useAccountUnit(account);
   const currencyId = account.currency.id;
-  const validators = useLedgerFirstShuffledValidatorsCosmosFamily(currencyId, search);
+  const fetchedValidators = useLedgerFirstShuffledValidatorsCosmosFamily(currencyId, search);
+  const [validators, setValidators] = useState<CosmosValidatorItem[]>([]);
   const onSearch = useCallback(
     (evt: React.ChangeEvent<HTMLInputElement>) => setSearch(evt.target.value),
     [setSearch],
   );
+
+  useEffect(() => {
+    // Update the state if fetchedValidators is not empty
+    if (fetchedValidators.length > 0 && validators.length === 0) {
+      setValidators(fetchedValidators);
+    }
+  }, [fetchedValidators, validators]);
+
   const chosenValidator = useMemo(() => {
     return [validators.find(v => v.validatorAddress === chosenVoteAccAddr) || validators[0]];
   }, [validators, chosenVoteAccAddr]);
 
-  if (chosenVoteAccAddr === "") {
+  if (chosenVoteAccAddr === "" && validators.length > 0) {
     onChangeValidator({ address: validators[0].validatorAddress });
   }
 
   const renderItem = (validator: CosmosValidatorItem) => {
+    // Only render the row if validator is defined
+    if (!validator) return null;
+
     return (
       <ValidatorRow
         currency={account.currency}
-        key={validator.validatorAddress}
+        key={validator?.validatorAddress}
         validator={validator}
         unit={unit}
         active={chosenVoteAccAddr === validator.validatorAddress}
@@ -54,6 +66,7 @@ const ValidatorField = ({ account, onChangeValidator, chosenVoteAccAddr }: Props
       ></ValidatorRow>
     );
   };
+  console.log("validators", validators);
   return (
     <>
       {showAll && <ValidatorSearchInput noMargin={true} search={search} onSearch={onSearch} />}
