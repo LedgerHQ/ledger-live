@@ -55,8 +55,8 @@ async function getTokenBalances(
   );
 
   // Collect unique contract addresses and their types
-  type Entry = { contract: string; asset: AssetInfo };
-  const entries = new Set<Entry>();
+  const contracts = new Set<string>();
+  const assets = new Map<string, AssetInfo>();
   for (const operation of lastTokenOperations) {
     if (operation.contract) {
       let assetType = "erc20";
@@ -68,22 +68,26 @@ async function getTokenBalances(
           assetType = "erc1155";
           break;
       }
-      entries.add({
-        contract: operation.contract,
-        asset: { type: assetType, assetReference: operation.contract, assetOwner: address },
+      contracts.add(operation.contract);
+      assets.set(operation.contract, {
+        type: assetType,
+        assetReference: operation.contract,
+        assetOwner: address,
       });
     }
   }
 
   // Fetch balances in parallel (by batches)
   const balances: Balance[] = [];
-  const entriesArray = Array.from(entries);
-  for (let i = 0; i < entriesArray.length; i += TOKEN_BALANCE_BATCH_SIZE) {
-    const chunk = entriesArray.slice(i, i + TOKEN_BALANCE_BATCH_SIZE);
+  const contractsArray = Array.from(contracts);
+  for (let i = 0; i < contractsArray.length; i += TOKEN_BALANCE_BATCH_SIZE) {
+    const chunk = contractsArray.slice(i, i + TOKEN_BALANCE_BATCH_SIZE);
     const chunkBalances = await Promise.all(
-      chunk.map(async entry => {
-        const balance = await nodeApi.getTokenBalance(currency, address, entry.contract);
-        return { asset: entry.asset, value: BigInt(balance.toFixed(0)) };
+      chunk.map(async contract => {
+        const asset = assets.get(contract);
+        if (asset === undefined) throw new Error(`No asset defined for contract ${contract}`);
+        const balance = await nodeApi.getTokenBalance(currency, address, contract);
+        return { asset, value: BigInt(balance.toFixed(0)) };
       }),
     );
     balances.push(...chunkBalances);
