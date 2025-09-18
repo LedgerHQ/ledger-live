@@ -196,3 +196,25 @@ interface BlockIdentifier {
   block_height: number;
   block_hash: string;
 }
+
+export interface FungibleTokenMetadata {
+  tx_id: string;
+  sender_address: string;
+  asset_identifier: string;
+  contract_principal: string;
+  name: string;
+  symbol: string;
+  decimals: number;
+  total_supply: string;
+  token_uri: string;
+  description: string;
+  image_uri: string;
+  image_canonical_uri: string;
+}
+
+export interface FungibleTokenMetadataResponse {
+  limit: number;
+  offset: number;
+  total: number;
+  results: FungibleTokenMetadata[];
+}

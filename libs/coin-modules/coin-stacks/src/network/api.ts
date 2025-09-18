@@ -8,6 +8,7 @@ import {
   BroadcastTransactionResponse,
   EstimatedFeesRequest,
   EstimatedFeesResponse,
+  FungibleTokenMetadataResponse,
   GetNonceResponse,
   MempoolResponse,
   MempoolTransaction,
@@ -21,6 +22,7 @@ import {
   extractSendManyTransactions,
   extractContractTransactions,
 } from "./transformers";
+import { makeLRUCache, minutes } from "@ledgerhq/live-network/cache";
 
 /**
  * Builds the Stacks API URL with an optional path
@@ -214,7 +216,7 @@ export const fetchFullTxs = async (
   // 2. Extract regular token transfers
   const tokenTransfers = extractTokenTransferTransactions(allTransactions);
   // 3. Extract and group contract calls
-  const contractTransactions = extractContractTransactions(allTransactions);
+  const contractTransactions = await extractContractTransactions(allTransactions);
 
   // 4. Add send-many transactions to token transfers
   const sendManyTransactions = extractSendManyTransactions(allTransactions);
@@ -276,3 +278,26 @@ export const fetchNonce = async (addr: string): Promise<GetNonceResponse> => {
   const response = await fetch<GetNonceResponse>(`/extended/v1/address/${addr}/nonces`);
   return response;
 };
+
+/**
+ * Fetches metadata for a fungible token by contract address
+ * This can be used to extract the asset_identifier from a contract_id
+ * @param contractAddress - The contract address in format: ADDRESS.CONTRACT_NAME
+ * @returns The fungible token metadata including asset_identifier
+ */
+export const fetchFungibleTokenMetadata = async (
+  contractAddress: string,
+): Promise<FungibleTokenMetadataResponse> => {
+  const url = `/metadata/v1/ft?address=${contractAddress}`;
+  const response = await fetch<FungibleTokenMetadataResponse>(url);
+  return response;
+};
+
+/**
+ * Fetches metadata for a fungible token by contract address with caching
+ */
+export const fetchFungibleTokenMetadataCached = makeLRUCache(
+  fetchFungibleTokenMetadata,
+  args => args,
+  minutes(60),
+);

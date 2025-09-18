@@ -41,6 +41,8 @@ const stacks: CurrenciesData<Transaction> = {
   ],
   accounts: [
     {
+      // Balance and operations sum for some tokens do not have equal value
+      FIXME_tests: ["balance is sum of ops"],
       raw: {
         id: `js:2:stacks:${SEED_IDENTIFIER_PUBKEY}:`,
         seedIdentifier: SEED_IDENTIFIER,

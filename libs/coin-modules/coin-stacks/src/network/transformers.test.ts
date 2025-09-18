@@ -150,8 +150,8 @@ describe("Stacks API Transformers", () => {
   });
 
   describe("extractContractTransactions", () => {
-    it("should extract and group transfer transactions by token ID", () => {
-      const result = extractContractTransactions(mockTransactions);
+    it("should extract and group transfer transactions by token ID", async () => {
+      const result = await extractContractTransactions(mockTransactions);
 
       // We expect two tokens with transfer function
       expect(Object.keys(result)).toHaveLength(2);
@@ -167,8 +167,8 @@ describe("Stacks API Transformers", () => {
       expect(result["SP789.TOKEN-C::TOKEN-C"][0].tx?.tx_id).toEqual("0xjkl012");
     });
 
-    it("should exclude non-contract calls", () => {
-      const result = extractContractTransactions(mockTransactions);
+    it("should exclude non-contract calls", async () => {
+      const result = await extractContractTransactions(mockTransactions);
 
       // Make sure token_transfer and smart_contract are excluded
       const allTxIds = Object.values(result)
@@ -178,8 +178,8 @@ describe("Stacks API Transformers", () => {
       expect(allTxIds).not.toContain("0xmno345"); // smart_contract
     });
 
-    it("should exclude send-many transactions", () => {
-      const result = extractContractTransactions(mockTransactions);
+    it("should exclude send-many transactions", async () => {
+      const result = await extractContractTransactions(mockTransactions);
 
       const allTxIds = Object.values(result)
         .flat()
@@ -187,8 +187,8 @@ describe("Stacks API Transformers", () => {
       expect(allTxIds).not.toContain("0xdef456"); // send-many
     });
 
-    it("should exclude non-transfer function calls", () => {
-      const result = extractContractTransactions(mockTransactions);
+    it("should exclude non-transfer function calls", async () => {
+      const result = await extractContractTransactions(mockTransactions);
 
       const allTxIds = Object.values(result)
         .flat()
@@ -196,8 +196,8 @@ describe("Stacks API Transformers", () => {
       expect(allTxIds).not.toContain("0xpqr678"); // other-function
     });
 
-    it("should handle missing post_conditions", () => {
-      const result = extractContractTransactions(mockTransactions);
+    it("should handle missing post_conditions", async () => {
+      const result = await extractContractTransactions(mockTransactions);
 
       const allTxIds = Object.values(result)
         .flat()
@@ -205,8 +205,8 @@ describe("Stacks API Transformers", () => {
       expect(allTxIds).not.toContain("0xstu901"); // Missing post_conditions
     });
 
-    it("should handle missing contract_id", () => {
-      const result = extractContractTransactions(mockTransactions);
+    it("should handle missing contract_id", async () => {
+      const result = await extractContractTransactions(mockTransactions);
 
       const allTxIds = Object.values(result)
         .flat()
@@ -214,9 +214,9 @@ describe("Stacks API Transformers", () => {
       expect(allTxIds).not.toContain("0xvwx234"); // Missing contract_id
     });
 
-    it("should return empty object when no valid contract transactions exist", () => {
+    it("should return empty object when no valid contract transactions exist", async () => {
       const noContractTxs = mockTransactions.filter(tx => tx.tx?.tx_type !== "contract_call");
-      const result = extractContractTransactions(noContractTxs);
+      const result = await extractContractTransactions(noContractTxs);
 
       expect(Object.keys(result)).toHaveLength(0);
     });

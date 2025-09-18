@@ -91,7 +91,7 @@ export function createTokenAccount(
       operationsCount: operations.length,
       operations,
       pendingOperations: maybeExistingSubAccount ? maybeExistingSubAccount.pendingOperations : [],
-      creationDate: operations.length > 0 ? operations[0].date : new Date(),
+      creationDate: operations.length > 0 ? operations[operations.length - 1].date : new Date(),
       swapHistory: maybeExistingSubAccount ? maybeExistingSubAccount.swapHistory : [],
       balanceHistoryCache: emptyHistoryCache, // calculated in the jsHelpers
     };
