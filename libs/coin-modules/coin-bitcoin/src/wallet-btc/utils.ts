@@ -133,6 +133,7 @@ export function maxTxSize(
     inputsWeight += 64 * inputCount;
   }
   const txWeight = fixed + inputsWeight + outputsWeight;
+  // console.log({ txWeight, txWeightDivided: txWeight / 4 });
 
   return txWeight / 4;
 }
@@ -145,6 +146,7 @@ export function maxTxSizeCeil(
   derivationMode: string,
 ): number {
   const s = maxTxSize(inputCount, outputScripts, includeChange, currency, derivationMode);
+  // console.log({ maxTxsSizeCeils: s, maxTxsSizeCeiled: Math.ceil(s) });
 
   return Math.ceil(s);
 }
