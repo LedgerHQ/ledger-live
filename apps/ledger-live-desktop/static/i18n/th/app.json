@@ -165,9 +165,8 @@
     "type" : {
       "IN" : "ได้รับแล้ว",
       "OUT" : "ส่งแล้ว",
-      "NFT_IN" : "ได้รับ NFT แล้ว",
-      "NFT_OUT" : "ส่ง NFT แล้ว",
       "CREATE" : "สร้างแล้ว",
+      "UNKNOWN" : "Unknown",
       "REVEAL" : "เปิดเผยแล้ว",
       "DELEGATE" : "Delegate เรียบร้อยแล้ว",
       "REDELEGATE" : "Redelegate เรียบร้อยแล้ว",
@@ -1437,11 +1436,6 @@
       }
     }
   },
-  "hideNftCollection" : {
-    "title" : "ซ่อนคอลเลกชัน NFT",
-    "desc" : "การกระทำนี้จะซ่อน NFT ทั้งหมดจากคอลเลกชัน <1><0>{{collectionName}}</0></1> คุณสามารถเปิดการมองเห็นอีกครั้งโดยไปที่<3>การตั้งค่า</3>",
-    "hideCTA" : "ซ่อนคอลเลกชัน NFT"
-  },
   "banners" : {
     "cleanCache" : {
       "title" : "การปรับเปลี่ยนการตั้งค่า Experimental ต้องทำการล้างแคชก่อน",
@@ -1708,50 +1702,6 @@
       "browseAssets" : "เรียกดูสินทรัพย์"
     }
   },
-  "NFT" : {
-    "viewer" : {
-      "actions" : {
-        "send" : "ส่ง",
-        "open" : "เปิดใน {{viewer}}"
-      },
-      "attributes" : {
-        "properties" : "คุณสมบัติ",
-        "description" : "คำอธิบาย",
-        "tokenAddress" : "Address โทเคน",
-        "tokenId" : "ID โทเคน",
-        "quantity" : "ปริมาณ",
-        "floorPrice" : "ราคาฟลอร์"
-      }
-    },
-    "collections" : {
-      "title" : "คอลเลกชัน NFT (โทเคนที่ไม่สามารถแลกเปลี่ยนหรือแทนที่กันได้)",
-      "receiveCTA" : "รับ NFT",
-      "galleryCTA" : "ดูแกลเลอรี",
-      "seeMore" : "ดูคอลเลกชันเพิ่มเติม",
-      "seeAll" : "ดูคอลเลกชันทั้งหมด",
-      "seeLess" : "ดูน้อยลง",
-      "placeholder" : "สามารถเพิ่ม NFT ได้เพียงส่งไปยังบัญชี {{currency}} ของคุณ"
-    },
-    "gallery" : {
-      "title" : "NFT ทั้งหมด",
-      "collection" : {
-        "header" : {
-          "sendCTA" : "ส่ง",
-          "contract" : "สัญญา: {{contract}}"
-        },
-        "operationList" : {
-          "header" : "การดำเนินการล่าสุด",
-          "OUT" : "ส่งเรียบร้อยแล้ว",
-          "IN" : "ได้รับแล้ว"
-        }
-      },
-      "tokensList" : {
-        "item" : {
-          "tokenId" : "ID: {{tokenId}}"
-        }
-      }
-    }
-  },
   "tokensList" : {
     "title" : "โทเคน",
     "cta" : "เพิ่มโทเคน",
@@ -1863,12 +1813,6 @@
     "internalOpTooltip" : "การดำเนินการนี้มีการดำเนินการภายใน",
     "details" : "รายละเอียด {{ currency }}",
     "multipleAddresses" : "ทำไมต้องหลาย Address",
-    "nft" : {
-      "name" : "ชื่อโทเคน",
-      "contract" : "สัญญาโทเคน",
-      "id" : "ID (NFT) ของโทเคน",
-      "quantity" : "ปริมาณ"
-    },
     "extra" : {
       "frozenAmount" : "จำนวนที่ถูก Freeze",
       "unfreezeAmount" : "จำนวนที่ Unfreeze",
@@ -2350,12 +2294,10 @@
   },
   "send" : {
     "title" : "ส่ง",
-    "titleNft" : "ส่ง NFT",
     "totalSpent" : "ยอดรวมที่จะส่ง",
     "steps" : {
       "recipient" : {
         "title" : "ผู้รับ",
-        "nftRecipient" : "NFT ที่จะส่ง",
         "verifyAddress" : "โปรดตรวจสอบว่า Address ตรงกับที่ผู้รับแชร์",
         "domainService" : {
           "resolve" : "นี่คือ ENS ที่ถูกต้องซึ่งเชื่อมโยงกับ Address ต่อไปนี้:",
@@ -2380,8 +2322,7 @@
         "banner" : "จำนวนที่ใช้ได้สูงสุดคือ",
         "fees" : "ดูข้อมูลเพิ่มเติมเกี่ยวกับค่าธรรมเนียม",
         "standard" : "มาตรฐาน",
-        "advanced" : "ขั้นสูง",
-        "nftQuantity" : "ปริมาณ"
+        "advanced" : "ขั้นสูง"
       },
       "summary" : {
         "title" : "สรุป"
@@ -2425,8 +2366,7 @@
         "nextBlock" : "บล็อกถัดไป",
         "suggested" : "แนะนำ",
         "unitVByte" : "{{unit}}/vbyte",
-        "nft" : "NFT",
-        "nftQuantity" : "ปริมาณ",
+        "unitPerByte" : "{{unit}}/byte",
         "splExtensionsWarning" : "คุณกำลังโต้ตอบกับโทเคนที่เป็นส่วนหนึ่งของโปรแกรม Token-2022 หรือที่เรียกว่า Token Extensions โทเคนนี้มาพร้อมกับความเสี่ยง <0>คลิกที่นี่</0>เพื่อเรียนรู้เพิ่มเติม"
       },
       "verification" : {
@@ -4531,11 +4471,6 @@
       "debugAppsDesc" : "แสดงและอนุญาตให้เปิดแอปแพลตฟอร์มที่ติดแท็ก Debug",
       "debugReactQuery" : "อนุญาตให้ทำการ Debug ReactQuery",
       "debugReactQueryDesc" : "แสดงและอนุญาตการเปิดคอนโซลสำหรับการ Debug ReactQuery",
-      "nfts" : {
-        "title" : "คอลเล็กชั่น NFT ที่ซ่อนอยู่",
-        "description" : "รีเซ็ตรายการคอลเลกชันที่ซ่อนอยู่",
-        "reset" : "รีเซ็ต ({{count}})"
-      },
       "exchangeDeveloperMode" : {
         "title" : "โหมด Dev Exchange",
         "desc" : "เพิ่มข้อมูลของผู้ให้บริการ Exchange",
@@ -4574,136 +4509,6 @@
             "path" : "เส้นทาง"
           }
         }
-      },
-      "debugSimpleHash" : {
-        "testSimpleHash" : {
-          "title" : "เครื่องมือ SimpleHash",
-          "description" : "ให้เครื่องมือที่มีประโยชน์โดยใช้ SimpleHash",
-          "cta" : "เปิด",
-          "tabs" : {
-            "spam" : "รายงานสแปม",
-            "refresh" : "รีเฟรช Metadata",
-            "check" : "คะแนนสแปม"
-          }
-        },
-        "mockAccounts" : {
-          "title" : "สร้างบัญชีจำลอง",
-          "description" : "สร้างบัญชีจำลองเพื่อวัตถุประสงค์ในการทดสอบ เครื่องมือเหล่านี้ช่วยให้คุณสามารถสร้างบัญชีทดสอบด้วยสกุลเงินและการกำหนดค่าต่าง ๆ",
-          "customGenerate" : {
-            "title" : "สร้างแบบกำหนดเอง",
-            "desc" : "เลือกสกุลเงินเฉพาะและเพิ่มโทเคน"
-          },
-          "quickGenerate" : {
-            "title" : "สร้างแบบเร็ว ๆ",
-            "desc" : "สร้างบัญชีสุ่ม 10 บัญชีพร้อมสกุลเงินแบบสุ่ม"
-          },
-          "currencySelector" : {
-            "placeholder" : "เลือกสกุลเงิน...",
-            "searchPlaceholder" : "ค้นหาสกุลเงิน...",
-            "noCurrenciesFound" : "ไม่พบสกุลเงิน",
-            "noCurrenciesAvailable" : "ไม่มีสกุลเงินที่ใช้ได้",
-            "selectedCount" : "เลือกแล้ว {{count}} สกุลเงิน",
-            "selectedCount_other" : "เลือกแล้ว {{count}} สกุลเงิน"
-          },
-          "tokenIds" : {
-            "label" : "Token ID (ไม่บังคับ)",
-            "placeholder" : "โทเคน1, โทเคน2, โทเคน3"
-          },
-          "buttons" : {
-            "generateAccounts" : "สร้าง {{count}} บัญชี",
-            "generateAccounts_other" : "สร้าง {{count}} บัญชี",
-            "generateAccountsQuick" : "สร้าง {{count}} บัญชี"
-          },
-          "alerts" : {
-            "selectCurrency" : "โปรดเลือกอย่างน้อยหนึ่งสกุลเงิน",
-            "confirmErase" : "การดำเนินการนี้จะเป็นการลบบัญชีที่มีอยู่ ดำเนินการต่อ?",
-            "generateError" : "ไม่สามารถสร้างบัญชีจำลองได้ โปรดลองอีกครั้ง"
-          }
-        },
-        "debugSpamNft" : {
-          "report" : "รายงาน",
-          "contractAddress" : "Address ของสัญญา",
-          "contractAddressDesc" : "รายงาน contract_address ของ NFT หรือตัวสัญญาแล้ว",
-          "chainId" : "ID เชน",
-          "chainIdDesc" : "รายงาน chain_id (เช่น Ethereum) ของ NFT หรือสัญญาแล้ว",
-          "collectionId" : "ID คอลเลกชัน",
-          "collectionIdDesc" : "SimpleHash Collection ID ของ NFT ที่มีการรายงานแล้ว",
-          "tokenId" : "ID โทเคน",
-          "tokenIdDesc" : "รายงาน token_id ของ NFT แล้ว",
-          "eventType" : "ประเภทกิจกรรม",
-          "eventTypeDesc" : "ประเภทของรายงานที่คุณต้องการ",
-          "success" : "ส่งรายงานเรียบร้อยแล้ว อาจใช้เวลาประมาณ 5 ถึง 10 นาทีเพื่อให้มีผลบังคับใช้",
-          "error" : "เกิดข้อผิดพลาดระหว่างส่งรายงาน โปรดลองอีกครั้งในภายหลัง",
-          "reportType" : {
-            "title" : "คุณต้องการรายงานอะไร?",
-            "desc" : "เลือกประเภทของรายงานที่คุณต้องการทำ",
-            "individual" : "รายงานสแปมสำหรับ NFT แต่ละรายการ",
-            "contract" : "รายงานสแปมสำหรับสัญญา",
-            "collection" : "รายงานสแปมสำหรับคอลเลกชัน"
-          }
-        },
-        "debugRefreshMetadata" : {
-          "refresh" : "รีเฟรช",
-          "contractAddress" : "Address ของสัญญา",
-          "contractAddressDesc" : "รีเฟรช contract_address ของ NFT หรือตัวสัญญาแล้ว",
-          "chainId" : "ID เชน",
-          "chainIdDesc" : "รีเฟรช chain_id (เช่น Ethereum) ของ NFT หรือสัญญาแล้ว",
-          "tokenId" : "ID โทเคน",
-          "tokenIdDesc" : "รีเฟรช token_id ของ NFT แล้ว",
-          "success" : "ส่งการรีเฟรชเรียบร้อยแล้ว อาจใช้เวลาประมาณ 5 ถึง 10 นาทีเพื่อให้มีผลบังคับใช้",
-          "error" : "เกิดข้อผิดพลาดขณะส่งการรีเฟรช โปรดลองอีกครั้งในภายหลัง",
-          "refreshType" : {
-            "desc" : "คุณต้องการรีเฟรชอะไร",
-            "nft" : "รีเฟรช Metadata สำหรับ NFT แต่ละรายการ",
-            "contract" : "รีเฟรช Metadata สำหรับสัญญา"
-          }
-        },
-        "debugCheckSpamScore" : {
-          "check" : "ตรวจสอบ",
-          "contractAddress" : "Address ของสัญญา",
-          "contractAddressDesc" : "ตรวจสอบ contract_address ของ NFT หรือตัวสัญญาแล้ว",
-          "chainId" : "ID เชน",
-          "chainIdDesc" : "ตรวจสอบ chain_id (เช่น Ethereum) ของ NFT หรือสัญญาแล้ว",
-          "tokenId" : "ID โทเคน",
-          "tokenIdDesc" : "ตรวจสอบ token_id ของ NFT แล้ว",
-          "result" : {
-            "title" : "สัญญานี้มีคะแนนสแปม {{score}}",
-            "desc" : "คะแนนเป็นค่าตัวเลขตั้งแต่ 0 ถึง 100 โดย 0 คือไม่ใช่สแปม และ 100 ถือว่าน่าจะเป็นสแปม\n หากการตอบสนองเป็นค่าว่าง (null) แสดงว่าคอลเลกชันมีข้อมูลไม่เพียงพอที่จะให้คะแนนหรือยังไม่ได้รับการประเมิน"
-          },
-          "error" : "เกิดข้อผิดพลาดระหว่างส่งคำขอ โปรดลองอีกครั้งในภายหลัง",
-          "refreshType" : {
-            "desc" : "คุณต้องการตรวจสอบอะไร?",
-            "nft" : "NFT แต่ละรายการ",
-            "contract" : "สัญญา"
-          }
-        },
-        "back" : "ย้อนกลับ"
-      },
-      "debugNfts" : {
-        "title" : "เครื่องมือ NFT",
-        "description" : "ให้บริการเครื่องมือที่มีประโยชน์เพื่อจัดการ NFT ใน Ledger Live",
-        "cta" : "เปิด",
-        "tabs" : {
-          "config" : "การกำหนดค่า",
-          "generatorAndDestructor" : "ระบบสร้างข้อมูลและระบบลบข้อมูล"
-        },
-        "configuration" : {
-          "supported" : "เชนของ NFT ที่รองรับ",
-          "supported_other" : "เชนของ NFT ที่รองรับ",
-          "nms" : {
-            "title" : "บริการด้าน Metadata สำหรับ NFT (NMS)",
-            "env" : "สภาพแวดล้อม: {{env}}"
-          }
-        },
-        "generatorAndDestructor" : {
-          "genAcc" : "สร้างบัญชี",
-          "genAccDesc" : "สร้างบัญชีด้วย NFT",
-          "cta" : "สร้าง",
-          "deleteAcc" : "ลบบัญชี",
-          "deleteAccDesc" : "ลบบัญชีทั้งหมดจากร้านค้า",
-          "delete" : "ลบ"
-        },
-        "back" : "ย้อนกลับ"
       },
       "debugWalletSync" : {
         "title" : "โปรแกรมตรวจสอบจุดบกพร่อง Ledger Sync",
@@ -4786,8 +4591,6 @@
       "runLocalAppOpenButton" : "เปิด",
       "enableLearnStagingUrl" : "เรียนรู้ Page Staging URL",
       "enableLearnStagingUrlDesc" : "เปิดใช้งาน Staging URL สำหรับหน้าการเรียนรู้",
-      "enableStagingNftMetadataService" : "บริการ Staging NFT Metadata",
-      "enableStagingNftMetadataServiceDesc" : "เปิดใช้งานบริการ Staging NFT Metadata และรีเซ็ตแคช NFT",
       "openOnboardingAppInstallDebug" : "เปิดหน้าจอ Debug การติดตั้งแอปสำหรับการเข้าร่วม",
       "openOnboardingAppInstallDebugDesc" : "เปิดหน้าจอที่มีส่วนประกอบจากขั้นตอนการติดตั้งแอปสำหรับการเข้าร่วมในการซิงค์"
     },
@@ -4968,18 +4771,6 @@
         "desc" : "คุณสามารถซ่อนโทเคนได้โดยไปที่บัญชีหลัก จากนั้นคลิกขวาที่โทเคนและเลือก 'ซ่อนโทเคน'",
         "count" : "1 โทเคน",
         "count_other" : "{{count}} โทเคน"
-      },
-      "hiddenNftCollections" : {
-        "title" : "คอลเลกชัน NFT ที่ซ่อนอยู่",
-        "desc" : "คุณสามารถซ่อนคอลเลกชัน NFT ได้โดยการคลิกขวาที่ชื่อคอลเลกชัน และเลือก 'ซ่อนคอลเลกชัน NFT'",
-        "count" : "1 คอลเล็คชัน",
-        "count_other" : "{{count}} คอลเลกชัน"
-      },
-      "hiddenOrdinalsAsset" : {
-        "title" : "Inscriptions ที่ซ่อนไว้",
-        "desc" : "คุณสามารถซ่อน Inscriptions ได้โดยการคลิกขวาที่ชื่อคอลเลกชัน และเลือก 'ซ่อน Inscriptions'",
-        "count" : "1 Inscription",
-        "count_other" : "{{count}} Inscriptions"
       },
       "fullNode" : {
         "title" : "เชื่อมต่อ Full Node ของ Bitcoin",
@@ -5866,6 +5657,10 @@
       "commentPlaceholder" : "ไม่บังคับ",
       "comment" : "ความคิดเห็น"
     },
+    "canton" : {
+      "commentPlaceholder" : "Optional",
+      "comment" : "Comment"
+    },
     "stellar" : {
       "memo" : "Memo",
       "memoType" : {
@@ -6313,6 +6108,10 @@
       "title" : "มีบางอย่างผิดปกติ",
       "description" : "ธุรกรรมล้มเหลว โปรดลองอีกครั้ง"
     },
+    "TransactionCannotBeCreated" : {
+      "title" : "Processing Error",
+      "description" : "Changelly cannot process this transaction. Error code 8HBB{{errorCode}}"
+    },
     "TimeoutError" : {
       "title" : "ขออภัย เซิร์ฟเวอร์ใช้เวลาตอบกลับนานเกินไป",
       "description" : "โปรดลองอีกครั้ง"
@@ -6447,10 +6246,6 @@
       "title" : "ไม่มีการยืนยันอัตโนมัติ: ตรวจสอบ Address อย่างรอบคอบ",
       "description" : null
     },
-    "EthAppNftNotSupported" : {
-      "title" : "อุปกรณ์นี้ไม่สามารถดำเนินการได้",
-      "description" : "คุณสมบัติการส่ง NFT ใช้ได้กับ Nano X และ Nano S+ เท่านั้น โปรดไปที่แพลตฟอร์มการสนับสนุนลูกค้าของเราเพื่อดูวิธีส่ง NFT ด้วย Nano S"
-    },
     "TransactionHasBeenValidatedError" : {
       "title" : "เร่งความเร็วหรือยกเลิกไม่ได้",
       "description" : "ธุรกรรมนี้ได้รับการตรวจสอบแล้ว"
@@ -6461,6 +6256,9 @@
     },
     "TonCommentInvalid" : {
       "title" : "ความคิดเห็นต้องมีความยาวไม่เกิน 120 ตัวอักษรโดยไม่มีตัวอักษรพิเศษ"
+    },
+    "CantonCommentInvalid" : {
+      "title" : "Comment must not exceed 120 characters without special characters"
     },
     "CantScanQRCode" : {
       "title" : "สแกน QR Code นี้ไม่ได้: Address นี้ไม่รองรับการยืนยันอัตโนมัติ"
@@ -6736,9 +6534,6 @@
       "title" : "โทเคนนี้ไม่สามารถโอนได้",
       "description" : "โทเคนเหล่านี้เป็นแบบ Soul-bound คือไม่สามารถโอนย้ายได้"
     },
-    "NotEnoughNftOwned" : {
-      "title" : "คุณใช้มีโทเคนเกินจำนวนที่มีอยู่แล้ว"
-    },
     "CardanoMinAmountError" : {
       "title" : "จำนวนขั้นต่ำที่สามารถส่งได้คือ {{amount}} ADA"
     },
@@ -6824,10 +6619,6 @@
       "title" : "การโหลดรูปภาพจากไฟล์ล้มเหลว",
       "description" : "โปรดลองอีกครั้งด้วยภาพอื่น"
     },
-    "ImageLoadFromNftError" : {
-      "title" : "การโหลดรูปภาพจาก NFT ล้มเหลว",
-      "description" : "โปรดลองอีกครั้งด้วย NFT อื่น"
-    },
     "ImageDownloadError" : {
       "title" : "ดาวน์โหลดรูปภาพไม่สำเร็จ",
       "description" : "โปรดลองอีกครั้งด้วยภาพอื่น"
@@ -6853,11 +6644,11 @@
       "description" : "โปรดลองอีกครั้งด้วยภาพอื่น"
     },
     "ImageCommitRefusedOnDevice" : {
-      "title" : "การติดตั้ง ภาพล็อกสกรีน\nถูกยกเลิกบน {{productName}}",
+      "title" : "ทิ้งภาพล็อกสกรีนบน {{productName}}",
       "description" : "หากเป็นข้อผิดพลาด ลองใหม่ตอนนี้"
     },
     "ImageLoadRefusedOnDevice" : {
-      "title" : "การติดตั้ง ภาพล็อกสกรีน\nถูกยกเลิกบน {{productName}}",
+      "title" : "ยกเลิกภาพล็อกสกรีนบน\n {{productName}}",
       "description" : "หากเป็นข้อผิดพลาด ลองใหม่ตอนนี้"
     },
     "ImageDoesNotExistOnDevice" : {
@@ -7182,20 +6973,14 @@
     "steps" : {
       "choose" : {
         "stepLabel" : "เลือกภาพ",
-        "description" : "เลือกภาพที่จะตั้งค่าเป็น (...)",
-        "pickFromNftGallery" : "เลือกจากแกลเลอรี NFT ของฉัน",
-        "myNfts" : "NFT ของฉัน",
+        "description" : "เลือกงานศิลปะดิจิทัลหรือภาพที่คุณต้องการ\nปรับแต่ง {{productName}}\nให้สะท้อนตัวตนของคุณ",
         "upload" : "อัปโหลดจากคอมพิวเตอร์",
-        "chooseNft" : "เลือก NFT",
-        "remove" : "นำภาพปัจจุบันออก",
-        "selectNft" : "เลือก NFT",
-        "nftEmptyStateTitle" : "ยังไม่มี NFT ที่จะแสดง",
-        "nftEmptyStateDescription" : "เริ่มต้นด้วยการเพิ่ม NFT ลงใน Wallet ของคุณ"
+        "remove" : "นำภาพปัจจุบันออก"
       },
       "adjust" : {
         "stepLabel" : "ครอบตัด",
         "rotate" : "หมุน",
-        "confirmCrop" : "ยืนยันการครอบตัด"
+        "confirmCrop" : "ยืนยันการครอบภาพ"
       },
       "contrast" : {
         "stepLabel" : "ตั้งค่าคอนทราสต์",
@@ -7206,7 +6991,7 @@
         "useAnotherPicture" : "อัปโหลดอีกภาพ",
         "allowPreview" : "แตะที่ “โหลดภาพ” เพื่อ\nปรับแต่งภาพ ภาพล็อกสกรีนของคุณ",
         "allowConfirmPreview" : "แตะที่ “โหลดภาพ“ เพื่อ\nกู้คืน ภาพล็อกสกรีนของคุณ",
-        "loadingPicture" : "กำลังติดตั้ง...",
+        "loadingPicture" : "กำลังโหลด...",
         "voila" : "ครบถ้วนแล้ว!",
         "imageLoaded" : "โหลดภาพบน {{productName}}",
         "confirmPicture" : "ชอบสิ่งที่เห็น?\nเก็บไว้เลยสิ!",
@@ -7265,7 +7050,7 @@
   "webview" : {
     "networkError" : {
       "title" : "ข้อผิดพลาดของเครือข่าย",
-      "subtitle" : "มีบางอย่างผิดปกติ โปรดลองอีกครั้ง หากยังคงพบปัญหาอยู่ ให้บันทึก Log และติดต่อ Ledger Support",
+      "subtitle" : "Something went wrong. Please try again. If the problem persists, save your logs and contact Ledger support.",
       "contactSupport" : "ติดต่อ Ledger Support",
       "saveLog" : "บันทึก Log"
     },
@@ -7500,95 +7285,6 @@
     "deviceAction" : {
       "title" : "ดำเนินการต่อกับ Ledger {{wording}} ของคุณ",
       "description" : "ปฏิบัติตามคำแนะนำที่ปรากฏบน Trusted Display ของ Ledger ของคุณ"
-    }
-  },
-  "ordinals" : {
-    "inscriptions" : {
-      "seeMore" : "ดู Inscriptions เพิ่มเติม",
-      "empty" : "เพิ่ม Inscriptions ได้ง่าย ๆ แค่ส่งไปยัง Bitcoin Address ของคุณ",
-      "receive" : "รับ Inscription",
-      "hide" : "ซ่อน Inscription",
-      "modal" : {
-        "title" : "ซ่อน Inscription",
-        "desc" : "การดำเนินการนี้จะซ่อน Inscription ต่อไปนี้ <0>{{inscriptionName}}</0> จากบัญชีของคุณ คุณสามารถยกเลิกการซ่อนได้ตลอดเวลาจากการตั้งค่า"
-      },
-      "discoveryDrawer" : {
-        "title" : "สำรวจ Ordinals",
-        "description" : "รู้หรือไม่ว่าคุณอาจเป็นเจ้าของ Sats และ Inscriptions ที่หายากและมีมูลค่าสูง?",
-        "learnMore" : "เรียนรู้เพิ่มเติม",
-        "protectTitle" : "ปกป้องสินทรัพย์ Ordinals ของคุณ",
-        "protectDescription" : "ยกเว้นสินทรัพย์ Ordinals ของคุณจากธุรกรรม"
-      },
-      "detailsDrawer" : {
-        "description" : "คำอธิบาย",
-        "collectionName" : "ชื่อคอลเลกชัน",
-        "inscriptionId" : "ID ของ Inscription",
-        "inscriptionNumber" : "หมายเลข Inscription",
-        "mintedTo" : "สร้างไปยัง",
-        "genesisTx" : "ธุรกรรม Genesis",
-        "blockNumber" : "หมายเลขบล็อก",
-        "contentType" : "ประเภทเนื้อหา",
-        "createdDate" : "วันที่สร้าง",
-        "satribute" : "ความหายากของ Sat",
-        "satNumber" : "หมายเลข Sat",
-        "satName" : "ชื่อ Sat",
-        "location" : "ตำแหน่ง",
-        "outputValue" : "มูลค่าเอาต์พุต",
-        "storedOnChain" : "เก็บไว้แบบ On-Chain",
-        "hide" : "ซ่อน"
-      }
-    },
-    "rareSats" : {
-      "empty" : "เพิ่ม Sat ได้ง่าย ๆ เพียงส่งไปยัง Bitcoin Address ของคุณ",
-      "receive" : "รับ Rare Sat",
-      "title" : "Rare Sats",
-      "table" : {
-        "type" : "ประเภท/จำนวนของ Sat",
-        "year" : "ปี"
-      },
-      "rareSat" : {
-        "description" : {
-          "alpha" : "ก้าวเข้าสู่การเกิดของแต่ละ Bitcoin ด้วย Alpha ทำเครื่องหมาย Satoshi เริ่มต้น ป้ายกำกับนี้แสดงถึงการกำเนิดของหน่วย Bitcoin",
-          "black_epic" : "Satoshi สรุปของแต่ละเหตุการณ์ Halving ซึ่งเกิดขึ้นประมาณทุกสี่ปีเมื่อ Reward การขุด Bitcoin ลดลงครึ่งหนึ่ง",
-          "black_legendary" : "ไม่มีคำอธิบายสำหรับ Black Legendary",
-          "black_mythic" : "ไม่มีคำอธิบายสำหรับ Black Mythic",
-          "black_rare" : "แสดงถึง Satoshi หน่วยสุดท้ายเมื่อสิ้นสุดช่วงเวลาปรับความยากในการขุดแต่ละครั้ง",
-          "black_uncommon" : "Satoshi สรุปของแต่ละเหตุการณ์ Halving ซึ่งเกิดขึ้นประมาณทุกสี่ปีเมื่อ Reward การขุด Bitcoin ลดลงครึ่งหนึ่ง",
-          "block_9" : "Block 9 มีความโดดเด่นเฉพาะแบบในประวัติศาสตร์ของ Bitcoin เนื่องจากเป็นหนึ่งในบล็อกแรก ๆ ที่มีการขุด ซาโตชิที่อยู่ในนั้นจึงเป็น Sat บางกลุ่มที่เก่าแก่ที่สุดที่อยู่ในระบบหมุนเวียน Sat เหล่านี้ให้การเชื่อมต่อแบบจับต้องได้กับจุดเริ่มต้นของ Bitcoin ไม่นานหลังจากเริ่มก่อตั้ง",
-          "block_9_450x" : "ย้อนเวลากลับไปด้วย Block 9 450x ซึ่งมีการเน้น Sats ใน Bitcoin แรกของบล็อกที่ 9 ป้ายกำกับนี้เผยให้เห็นถึงบทที่น่าสนใจในประวัติศาสตร์ของ Bitcoin",
-          "block_78" : "บล็อก 78 เป็นสถานที่ที่ลึกซึ้งในประวัติศาสตร์ของ Bitcoin บล็อกนี้ถูกขุดโดย Hal Finney ซึ่งเป็นกรณีแรกที่มีคนอื่นที่ไม่ใช่ Satoshi Nakamoto ผู้เป็นตำนาน ที่มีส่วนช่วยในการเติบโตของบล็อกเชน",
-          "block_286" : "ค้นพบความสำคัญของบล็อก 286 ซึ่งเป็นตัวแทนของ Satoshi จากธุรกรรม Bitcoin ครั้งที่สองที่ขุดโดยซาโตชิ นากาโมโตะ Sats เหล่านี้ประกอบด้วยตำนานของผู้สร้าง Bitcoin และนำไปสู่การเล่าเรื่องของต้นกำเนิดที่น่าพิศวง",
-          "block_666" : "ไม่มีคำอธิบายสำหรับบล็อก 666",
-          "common" : "ไม่มีคำอธิบายสำหรับ Common",
-          "epic" : "ทุก ๆ สี่ปี เครือข่าย Bitcoin จะประสบกับเหตุการณ์ \"ลดครึ่ง\" ซึ่งจะลดรางวัลในการขุดลงครึ่งหนึ่ง Sat แรกของแต่ละยุคการลดลงครึ่งหนึ่งได้รับการติดป้ายว่า \"Epic\" ซึ่งถือเป็นช่วงเวลาสำคัญในรูปแบบเศรษฐกิจของ Bitcoin",
-          "first_tx" : "ในวันที่ 12 มกราคม 2009 มีการสร้างประวัติศาสตร์เมื่อ Satoshi Nakamoto ส่ง 10 Bitcoin ให้กับนักวิทยาศาสตร์คอมพิวเตอร์ชื่อ Hal Finney นี่เป็นการทำธุรกรรม Bitcoin ครั้งแรก Sats ที่มีต้นกำเนิดมาจากการทำธุรกรรมที่โดดเด่นนี้จะมีป้ายกำกับ \"ธุรกรรมครั้งแรก\" ซึ่งเป็นสัญลักษณ์ของการกำเนิดของการแลกเปลี่ยนแบบ Peer to Peer ของ Bitcoin",
-          "hitman" : "ไม่มีคำอธิบายสำหรับ Hitman",
-          "jpeg" : "เดินทางสู่อดีตด้วย JPEG เนื่องจาก Satoshi เหล่านี้อาจเชื่อมโยงกับการซื้อขาย Bitcoin ครั้งแรกสำหรับภาพในวันที่ 24 กุมภาพันธ์ 2010 ป้ายกำกับนี้บรรยายเรื่องราวของนวัตกรรม แสดงเริ่มราวในช่วงต้นของ Bitcoin ในการทำธุรกรรมและการแลกเปลี่ยนที่แปลกใหม่",
-          "legacy" : "ไม่มีคำอธิบายสำหรับ Legacy",
-          "legendary" : "ไม่มีคำอธิบายสำหรับ Legendary",
-          "mythic" : "ไม่มีคำอธิบายสำหรับ Mythic",
-          "nakamoto" : "ใครคือ \"ซาโตชิ นากาโมโตะ\" ผู้สร้าง Bitcoin ยังคงเป็นปริศนา Sat ที่ขุดโดย \"นากาโมโตะ\" เองมีป้ายนี้ติดไว้ ดังนั้นเองจึงทำให้นักสะสมต่างพากันตามหาอย่างมาก",
-          "omega" : "สัมผัสบทสรุปของทุก Bitcoin ด้วยคำว่า Omega ซึ่งเป็น Satoshi สุดท้าย ในฐานะที่เป็น Satoshi สุดท้ายในหน่วย Bitcoin",
-          "paliblock" : "ไม่มีคำอธิบายสำหรับ PaliBlock Palindrome",
-          "palindrome" : "ในมุมมองที่สนุกสนาน Sat ใด ๆ ที่สามารถอ่านหมายเลขเดียวกันไปข้างหน้าและข้างหลังได้จะมีตรา \"Palindrome\" ตัวอย่างเช่น Sat ที่มีหมายเลข 12321 หรือ 45654 คุณลักษณะตัวเลขที่ไม่ซ้ำกันเหล่านี้เพิ่มเลเยอร์ของความหายากและความน่าสนใจให้กับ Sats ที่มีป้ายกำกับ",
-          "palinception" : "เจาะลึกเข้าไปในโลกที่น่าหลงใหลของ Palinception ซึ่งแต่ละ Satoshi สร้าง Palindrome ของ Palindrome Sat ที่มีโครงสร้างที่ซับซ้อนเหล่านี้สร้างความน่าสนใจของตัวเลขที่สะท้อนออกมา",
-          "pizza" : "หนึ่งในเรื่องราวที่โดดเด่นที่สุดในชุมชน Bitcoin คือโปรแกรมเมอร์ที่จ่าย 10,000 Bitcoin สำหรับพิซซ่าสองถาดจากร้าน Papa John เมื่อวันที่ 22 พฤษภาคม 2010 เหตุการณ์นี้มักถูกอ้างถึงเพื่อแสดงให้เห็นถึงการเพิ่มขึ้นของมูลค่าของ Bitcoin Sats จากการทำธุรกรรมในตำนานนี้ใช้ป้ายกำกับ \"Pizza\"",
-          "rare" : "เครือข่าย Bitcoin จะปรับความยากในการขุดเป็นระยะ ๆ เพื่อให้แน่ใจว่ามีการเพิ่มบล็อกทุกประมาณสิบนาที Sat แรกของแต่ละช่วงเวลาการปรับเปลี่ยนดังกล่าวมีตราว่า \"Rare\" สิ่งนี้สะท้อนให้เห็นถึงลักษณะที่พัฒนาอยู่ตลอดเวลาของกลไกความปลอดภัยและฉันทามติของเครือข่าย ",
-          "uncommon" : "ป้ายกำกับนี้ถูกกำหนดให้กับ Satoshi แรกของทุกบล็อก เนื่องจากมีการเพิ่มบล็อกใหม่ลงในบล็อกเชน Bitcoin ประมาณทุก 10 นาที SAT เหล่านี้จะจับภาพจุดเริ่มต้นของกรอบเวลานั้น",
-          "vintage" : "Bitcoin นั้นเริ่มต้นด้วยบล็อกจำนวน 1,000 บล็อก Sat ที่ขุดได้ในช่วงเวลานี้จะระบุชื่อเป็น \"วินเทจ\""
-        }
-      }
-    },
-    "coinControl" : {
-      "amountToSend" : "จำนวนที่จะส่ง:",
-      "of" : "ของ",
-      "excludeAssets" : "ยกเว้นสินทรัพย์ Ordinals",
-      "selectDesc" : "เลือก UTXO ที่คุณต้องการใช้เมื่อคุณทำธุรกรรม UTXO ที่ไม่ได้เลือกจะไม่ถูกใช้",
-      "utxos" : "UTXOs",
-      "learnMore" : "ดูข้อมูลเพิ่มเติมเกี่ยวกับการตั้งค่านี้",
-      "confirm" : "ยืนยัน",
-      "address" : "Address",
-      "transactionId" : "ID ธุรกรรม"
     }
   },
   "lnsUpsell" : {
