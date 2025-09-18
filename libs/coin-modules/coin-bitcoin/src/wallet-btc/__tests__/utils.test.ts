@@ -231,6 +231,24 @@ describe("Unit tests for maxTxSize", () => {
     // 0xffff inputs will add 4 bytes
     [256 * 256, [], true, p2tr, Math.ceil(53.5 + 57.75 * (256 * 256) + 4)],
 
+    [1, [btc.toOutputScript(pkh)], false, p2wpkh, 113], // OK RIGHT NOW
+    [1, [btc.toOutputScript(pkh)], false, p2pkh, 192], // OK RIGHT NOW
+    [1, [btc.toOutputScript(pkh)], false, p2tr, 102], // 103 overestimating by one
+    [1, [btc.toOutputScript(sh)], false, p2sh, 134], // 133 understimating by one
+    [1, [btc.toOutputScript(wpkh)], false, p2sh, 133], // 132 understimating by one
+
+    // // output correctly handled at this level
+    // [1, [btc.toOutputScript(wpkh)], true, p2sh, 165],
+
+    //STOP HERE
+    // [1, [btc.toOutputScript(wpkh), btc.toOutputScript(sh)], false, p2sh, 165],
+    //
+    // // 1 input: P2WPKH, outputs: P2SH + P2WPKH  => 142 vB
+    // [1, [btc.toOutputScript(sh), btc.toOutputScript(wpkh)], false, p2wpkh, 142],
+    // //
+    // // 1 input: P2WPKH, outputs: P2SH + P2WPKH  => 142 vB
+    // [1, [btc.toOutputScript(sh), btc.toOutputScript(wpkh)], true, p2wpkh, 142],
+
     // test address with witness version 16 and witness program [0x01, 0x02] => tb1sqypqyuzpgh
     [
       2,
