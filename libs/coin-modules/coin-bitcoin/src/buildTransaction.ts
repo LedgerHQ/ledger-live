@@ -13,6 +13,7 @@ import { bitcoinPickingStrategy } from "./types";
 import wallet, { getWalletAccount } from "./wallet-btc";
 import { log } from "@ledgerhq/logs";
 import { Account } from "@ledgerhq/types-live";
+import { getRelayFeeFloorSatVb } from "./wallet-btc/utils";
 
 const selectUtxoPickingStrategy = (walletAccount: WalletAccount, utxoStrategy: UtxoStrategy) => {
   const handler = {
@@ -29,12 +30,6 @@ const selectUtxoPickingStrategy = (walletAccount: WalletAccount, utxoStrategy: U
   );
 };
 
-// --- Helpers: BTC/kB → sat/vB (ceil) ---
-function btcPerKbToSatPerVB(btcPerKbStr: string): BigNumber {
-  // sat/vB = BTC/kB * 1e8 (sat/BTC) / 1000 (vB/kB)
-  return new BigNumber(btcPerKbStr).times(1e8).div(1000).integerValue(BigNumber.ROUND_CEIL);
-}
-
 export const buildTransaction = async (
   account: Account,
   transaction: Transaction,
@@ -48,22 +43,7 @@ export const buildTransaction = async (
   const walletAccount = getWalletAccount(account);
   const utxoPickingStrategy = selectUtxoPickingStrategy(walletAccount, transaction.utxoStrategy);
 
-  // --- Determine relay floor (sat/vB), prefer explorer.getNetwork(); fallback = 1 sat/vB ---
-  let floorSatPerVB = new BigNumber(1);
-  try {
-    const explorerAny = walletAccount.xpub.explorer as any;
-    if (typeof explorerAny.getNetwork === "function") {
-      const net = await explorerAny.getNetwork();
-      if (net?.relay_fee) {
-        const rel = btcPerKbToSatPerVB(net.relay_fee);
-        if (rel.isFinite() && rel.gte(0)) {
-          floorSatPerVB = BigNumber.max(rel, 1);
-        }
-      }
-    }
-  } catch {
-    // ignore network errors; keep default floor = 1 sat/vB
-  }
+  const floorSatPerVB = await getRelayFeeFloorSatVb(walletAccount.xpub.explorer);
 
   // --- Clamp user/endpoint fee to ≥ floor + 1 sat/vB, return integer sat/vB ---
   const originalFeeBN = feePerByte;
