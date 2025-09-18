@@ -49,7 +49,11 @@ export const MarketPercentIndicator = ({ percent }: { percent: number }) => {
       borderRadius="4px"
       backgroundColor={percentageDisplay.backgroundColor}
     >
-      <Text color={percentageDisplay.color} fontSize="12px">
+      <Text
+        data-testid="market-percent-indicator-value"
+        color={percentageDisplay.color}
+        fontSize="12px"
+      >
         {percentageDisplay.text}
       </Text>
     </Wrapper>
