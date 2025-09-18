@@ -37,6 +37,7 @@ export class Merge extends PickingStrategy {
         ).length,
     );
 
+    // NOTE: clamping at this level, might remove...?
     const safeFeePerByte = Math.max(1, Math.ceil(feePerByte));
     const outputScripts = outputs.map(o => o.script);
     // integer vbytes everywhere
