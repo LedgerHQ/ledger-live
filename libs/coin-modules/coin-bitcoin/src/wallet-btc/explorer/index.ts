@@ -12,7 +12,7 @@ type ExplorerParams = {
   order?: "ascending" | "descending";
 };
 
-type NetworkInfoResponse = {
+export type NetworkInfoResponse = {
   relay_fee?: string; // BTC per kB, e.g. "0.00001000"
   incremental_fee?: string; // BTC per kB
   version?: string; // e.g. "290000"

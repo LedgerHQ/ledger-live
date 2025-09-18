@@ -1,9 +1,11 @@
+import BigNumber from "bignumber.js";
 import { DerivationModes } from "./types";
 import { Currency, ICrypto } from "./crypto/types";
 import cryptoFactory from "./crypto/factory";
 import { fallbackValidateAddress } from "./crypto/base";
 import { UnsupportedDerivation } from "@ledgerhq/coin-framework/errors";
 import varuint from "varuint-bitcoin";
+import { NetworkInfoResponse } from "./explorer";
 
 export function byteSize(count: number): number {
   if (count < 0xfd) {
@@ -241,4 +243,38 @@ export function maxTxVBytesCeil(
   return vbytesCeilFromWeight(
     maxTxWeight(inputCount, outputScripts, includeChange, currency, derivationMode),
   );
+}
+
+// --- Helpers: BTC/kB → sat/vB and clamping ---
+function btcPerKbToSatPerVB(btcPerKbStr: string): BigNumber {
+  // sat/vB = BTC/kB * 1e8 (sat/BTC) / 1000 (vB/kB); ceil to avoid under-floor
+  return new BigNumber(btcPerKbStr).times(1e8).div(1000).integerValue(BigNumber.ROUND_CEIL);
+}
+
+/**
+ * Ask the explorer for relay fee and return a safe sat/vB floor.
+ * - Converts BTC/kB → sat/vB
+ * - Clamps to ≥ 1 sat/vB
+ * - Returns defaultFloor (1 sat/vB) on error or missing fields
+ */
+export async function getRelayFeeFloorSatVb(
+  explorer: unknown,
+  defaultFloor: BigNumber = new BigNumber(1),
+): Promise<BigNumber> {
+  try {
+    const maybeExplorer = explorer as { getNetwork?: () => Promise<NetworkInfoResponse> };
+    if (typeof maybeExplorer?.getNetwork !== "function") return defaultFloor;
+
+    const net = await maybeExplorer.getNetwork();
+    const relay = net?.relay_fee;
+    if (relay === undefined || relay === null) return defaultFloor;
+
+    const relSatPerVB = btcPerKbToSatPerVB(relay);
+    if (!relSatPerVB.isFinite() || relSatPerVB.lt(0)) return defaultFloor;
+
+    // keep it as provided (may be fractional), but never below 1
+    return BigNumber.max(relSatPerVB, 1);
+  } catch {
+    return defaultFloor;
+  }
 }
