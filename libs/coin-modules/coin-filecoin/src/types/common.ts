@@ -35,12 +35,28 @@ export interface TransactionResponse {
   amount: string;
   to: string;
   from: string;
+  fee_data?: string;
   status: string;
   type: string;
   hash: string;
   timestamp: number;
   height: number;
-  fee?: string;
+}
+
+export interface FeeData {
+  MinerFee: {
+    MinerAddress: string;
+    Amount: string;
+  };
+  OverEstimationBurnFee: {
+    BurnAddress: string;
+    Amount: string;
+  };
+  BurnFee: {
+    BurnAddress: string;
+    Amount: string;
+  };
+  TotalCost: string;
 }
 
 export interface BalanceResponse {
