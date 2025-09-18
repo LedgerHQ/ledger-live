@@ -10,6 +10,8 @@ import { IsInDrawerProvider } from "~/context/IsInDrawerContext";
 import { DrawerInQueue, useQueuedDrawerContext } from "./QueuedDrawersContext";
 import { logDrawer } from "./utils/logDrawer";
 
+export { default as default } from "./temp/QueuedDrawerNative";
+
 // Purposefully removes isOpen prop so consumers can't use it directly
 export type Props = Merge<
   Omit<BaseModalProps, "isOpen">,
@@ -171,4 +173,4 @@ const QueuedDrawer = ({
   );
 };
 
-export default React.memo(QueuedDrawer);
+// export default React.memo(QueuedDrawer);
