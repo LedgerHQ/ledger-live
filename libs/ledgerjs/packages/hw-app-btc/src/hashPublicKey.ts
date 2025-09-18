@@ -1,5 +1,5 @@
-import RIPEMD160 from "ripemd160";
-import sha from "sha.js";
+import { sha256 } from "@noble/hashes/sha256";
+import { ripemd160 } from "@noble/hashes/ripemd160";
 export function hashPublicKey(buffer: Buffer): Buffer {
-  return new RIPEMD160().update(sha("sha256").update(buffer).digest()).digest();
+  return Buffer.from(ripemd160(sha256(buffer)));
 }
