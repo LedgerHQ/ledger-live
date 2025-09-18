@@ -30,13 +30,14 @@ function fixedWeight(currency: ICrypto, derivationMode: string): number {
 }
 
 function inputWeight(derivationMode: string): number {
-  let inputWeight = (32 + 4 + 1 + 4) * baseByte;
+  let inputWeight = (32 + 4 + 1 + 4) * baseByte; // 41 * 4 = 164
   if (derivationMode === DerivationModes.TAPROOT) {
     inputWeight += 1 + 1 + 65;
   } else if (derivationMode === DerivationModes.NATIVE_SEGWIT) {
     inputWeight += 1 + 1 + 72 + 1 + 33;
   } else if (derivationMode === DerivationModes.SEGWIT) {
-    inputWeight += 22 * baseByte + 1 + 1 + 72 + 1 + 33;
+    // inputWeight += 22 * baseByte + 1 + 1 + 72 + 1 + 33;
+    inputWeight += 23 * baseByte + 107; //1 + 1 + 72 + 1 + 33;
   } else if (derivationMode === DerivationModes.LEGACY) {
     inputWeight += 107 * baseByte;
   } else {
