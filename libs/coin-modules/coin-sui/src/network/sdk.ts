@@ -46,7 +46,7 @@ import { getEnv } from "@ledgerhq/live-env";
 import { SUI_SYSTEM_STATE_OBJECT_ID } from "@mysten/sui/utils";
 import { getCurrentSuiPreloadData } from "../bridge/preload";
 import { ONE_SUI } from "../constants";
-import { SuiMoveObject } from "@mysten/signers/ledger";
+import { getInputObjects } from "@mysten/signers/ledger";
 import bs58 from "bs58";
 
 const apiMap: Record<string, SuiClient> = {};
@@ -586,27 +586,38 @@ export const getListOperations = async (
     const rpcOrder = convertApiOrderToSdkOrder(order);
     const { out: outCursor, in: inCursor } = deserializeCursor(cursor);
 
-    const opsOut = await loadOperations({
-      api,
-      addr,
-      type: "OUT",
-      cursor,
-      order: rpcOrder,
-      operations: [],
-    });
-    const opsIn = await loadOperations({
-      api,
-      addr,
-      type: "IN",
-      cursor,
-      order: rpcOrder,
-      operations: [],
-    });
-    const list = filterOperations(opsIn, opsOut, rpcOrder, true);
+    const [opsOut, opsIn] = await Promise.all([
+      queryTransactions({
+        api,
+        addr,
+        type: "OUT",
+        cursor: toSdkCursor(outCursor),
+        order: rpcOrder,
+      }),
+      queryTransactions({
+        api,
+        addr,
+        type: "IN",
+        cursor: toSdkCursor(inCursor),
+        order: rpcOrder,
+      }),
+    ]);
+
+    const ops = [...opsOut.data, ...opsIn.data]
+      .sort((a, b) => Number(b.timestampMs) - Number(a.timestampMs))
+      .map(t => transactionToOp(addr, t));
+
+    const nextCursor: Cursor = {};
+    if (opsOut.hasNextPage && opsOut.nextCursor) {
+      nextCursor.out = opsOut.nextCursor;
+    }
+    if (opsIn.hasNextPage && opsIn.nextCursor) {
+      nextCursor.in = opsIn.nextCursor;
+    }
 
     return {
-      items: list.operations.map(t => transactionToOp(addr, t)),
-      next: list.cursor ?? undefined,
+      items: ops,
+      next: serializeCursor(nextCursor),
     };
   });
 
@@ -781,66 +792,12 @@ export const createTransaction = async (
     const serialized = await tx.build({ client: api });
 
     if (withObjects) {
-      const objects = await getObjects(tx, api);
-      return { unsigned: serialized, objects };
+      const { bcsObjects } = await getInputObjects(tx, api);
+      return { unsigned: serialized, objects: bcsObjects as Uint8Array[] };
     }
 
     return { unsigned: serialized };
   });
-
-/**
- * Get all input objects for a transaction, in serialized form.
- *
- * @param transaction transaction being crafted
- * @param api RPC client
- */
-const getObjects = async (transaction: Transaction, api: SuiClient): Promise<Uint8Array[]> => {
-  // Note: this method duplicates MystenLabs clear signing implementation for Ledger:
-  // https://github.com/MystenLabs/ts-sdks/blob/main/packages/signers/src/ledger/index.ts#L138
-
-  const data = transaction.getData();
-
-  const gasObjectIds = data.gasData.payment?.map(object => object.objectId) ?? [];
-  const inputObjectIds = data.inputs
-    .map(input => {
-      return input.$kind === "Object" && input.Object.$kind === "ImmOrOwnedObject"
-        ? input.Object.ImmOrOwnedObject.objectId
-        : null;
-    })
-    .filter((objectId): objectId is string => !!objectId);
-
-  const objects = await api.multiGetObjects({
-    ids: [...gasObjectIds, ...inputObjectIds],
-    options: {
-      showBcs: true,
-      showPreviousTransaction: true,
-      showStorageRebate: true,
-      showOwner: true,
-    },
-  });
-
-  return objects
-    .map(object => {
-      if (object.error || !object.data || object.data.bcs?.dataType !== "moveObject") {
-        return null;
-      }
-
-      return SuiMoveObject.serialize({
-        data: {
-          MoveObject: {
-            type: object.data.bcs.type,
-            hasPublicTransfer: object.data.bcs.hasPublicTransfer,
-            version: object.data.bcs.version,
-            contents: object.data.bcs.bcsBytes,
-          },
-        },
-        owner: object.data.owner!,
-        previousTransaction: object.data.previousTransaction!,
-        storageRebate: object.data.storageRebate!,
-      }).toBytes();
-    })
-    .filter((bcsBytes): bcsBytes is Uint8Array => !!bcsBytes);
-};
 
 /**
  * Performs a dry run of a transaction to estimate gas costs and fees
