@@ -4535,6 +4535,40 @@
           }
         }
       },
+      "mockAccounts": {
+        "title": "Generate mock accounts",
+        "description": "Generate mock accounts for testing purposes. These tools allow you to create test accounts with various currencies and configurations.",
+        "customGenerate": {
+          "title": "Custom generation",
+          "desc": "Select currencies and add tokens"
+        },
+        "quickGenerate": {
+          "title": "Quick generation",
+          "desc": "Generate 10 random accounts with random currencies"
+        },
+        "currencySelector": {
+          "placeholder": "Choose currencies...",
+          "searchPlaceholder": "Search",
+          "noCurrenciesFound": "No currencies found",
+          "noCurrenciesAvailable": "No currencies available",
+          "selectedCount": "{{count}} currency selected",
+          "selectedCount_other": "{{count}} currencies selected"
+        },
+        "tokenIds": {
+          "label": "Token IDs (optional)",
+          "placeholder": "token1, token2, token3"
+        },
+        "buttons": {
+          "generateAccounts": "Generate {{count}} account",
+          "generateAccounts_other": "Generate {{count}} accounts",
+          "generateAccountsQuick": "Generate {{count}} accounts"
+        },
+        "alerts": {
+          "selectCurrency": "Please select at least one currency",
+          "confirmErase": "Existing accounts will be erased. Continue?",
+          "generateError": "Failed to generate mock accounts. Please try again."
+        }
+      },
       "debugWalletSync": {
         "title": "Ledger Sync Debugger",
         "description": "Allows you to launch a specific LedgerSync flow or check current state of LedgerSync",
