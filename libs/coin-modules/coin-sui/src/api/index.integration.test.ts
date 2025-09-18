@@ -135,6 +135,16 @@ describe("Sui Api", () => {
     it("returns block height as a number", async () => {
       expect(txs.every(t => typeof t.tx.block.height === "number")).toBeTruthy();
     });
+
+    it("should fail when address is invalid", async () => {
+      // capture exception with jest
+      await expect(
+        module.listOperations("0xABCDEF0000000000000000000000000000000001", {
+          minHeight: 0,
+          order: "asc",
+        }),
+      ).rejects.toThrow("Invalid params");
+    });
   });
 
   describe("getBalance", () => {
