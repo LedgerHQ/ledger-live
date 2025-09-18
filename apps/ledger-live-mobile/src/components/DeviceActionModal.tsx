@@ -44,7 +44,7 @@ export default function DeviceActionModal<Req, Stt, Res>({
   analyticsPropertyFlow,
   registerDeviceSelection,
   noCloseButton,
-  preventBackdropClick
+  preventBackdropClick,
 }: Props<Req, Stt, Res>) {
   const { t } = useTranslation();
   const showAlert = !device?.wired;

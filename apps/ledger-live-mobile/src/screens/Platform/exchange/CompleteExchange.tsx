@@ -113,7 +113,7 @@ const PlatformCompleteExchange: React.FC<Props> = ({
           location={HOOKS_TRACKING_LOCATIONS.swapFlow}
           noCloseButton={true}
           preventBackdropClick={true}
-        />  
+        />
       ) : (
         <DeviceActionModal
           key="sign"
