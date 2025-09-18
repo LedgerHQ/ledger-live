@@ -1,5 +1,12 @@
 # @ledgerhq/hw-app-exchange
 
+## 0.13.3-nightly.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport@6.31.11-nightly.0
+
 ## 0.13.3-nightly.0
 
 ### Patch Changes

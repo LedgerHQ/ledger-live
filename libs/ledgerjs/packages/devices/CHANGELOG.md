@@ -1,5 +1,11 @@
 # @ledgerhq/devices
 
+## 8.5.2-nightly.0
+
+### Patch Changes
+
+- [#11871](https://github.com/LedgerHQ/ledger-live/pull/11871) [`38a172c`](https://github.com/LedgerHQ/ledger-live/commit/38a172c23035040d077433c7f4fce60f72962ae0) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Update BLE identifiers for Apex
+
 ## 8.5.1
 
 ### Patch Changes

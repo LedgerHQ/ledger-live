@@ -1,5 +1,30 @@
 # web-tools
 
+## 0.23.0-nightly.0
+
+### Minor Changes
+
+- [#11190](https://github.com/LedgerHQ/ledger-live/pull/11190) [`3b5576e`](https://github.com/LedgerHQ/ledger-live/commit/3b5576e0b67fedad0f5dbbd6b9546281af4e6111) Thanks [@semeano](https://github.com/semeano)! - [Kaspa] Coin support for LLD and LLM
+
+### Patch Changes
+
+- Updated dependencies [[`2444623`](https://github.com/LedgerHQ/ledger-live/commit/244462341ee0d2d85a2e1370624500e565cb030a), [`e6de5d9`](https://github.com/LedgerHQ/ledger-live/commit/e6de5d906be3e33a1c62b6f80985eca53fae94f0), [`c8fe586`](https://github.com/LedgerHQ/ledger-live/commit/c8fe586f1427d4d7a9fad092b51221ec8221399d), [`3b5576e`](https://github.com/LedgerHQ/ledger-live/commit/3b5576e0b67fedad0f5dbbd6b9546281af4e6111), [`fe97131`](https://github.com/LedgerHQ/ledger-live/commit/fe971313776194e5942dfa9a95d6082950c3111e), [`f671769`](https://github.com/LedgerHQ/ledger-live/commit/f6717696fcb2ad672a48fdd7f8654dedf11b4a65)]:
+  - @ledgerhq/live-common@34.49.0-nightly.0
+  - @ledgerhq/types-live@6.85.0-nightly.0
+  - @ledgerhq/live-env@2.17.0-nightly.0
+  - @ledgerhq/coin-framework@6.4.1-nightly.0
+  - @ledgerhq/hw-transport@6.31.11-nightly.0
+  - @ledgerhq/hw-transport-web-ble@6.29.11-nightly.0
+  - @ledgerhq/hw-transport-webhid@6.30.7-nightly.0
+  - @ledgerhq/hw-transport-webusb@6.29.11-nightly.0
+  - @ledgerhq/domain-service@1.2.44-nightly.0
+  - @ledgerhq/hw-app-eth@6.45.19-nightly.0
+  - @ledgerhq/live-wallet@0.14.1-nightly.0
+  - @ledgerhq/hw-ledger-key-ring-protocol@0.4.1-nightly.0
+  - @ledgerhq/ledger-key-ring-protocol@0.6.6-nightly.0
+  - @ledgerhq/cryptoassets@13.28.1-nightly.0
+  - @ledgerhq/hw-transport-http@6.30.11-nightly.0
+
 ## 0.22.2
 
 ### Patch Changes

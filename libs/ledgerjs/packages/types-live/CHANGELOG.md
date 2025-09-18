@@ -1,5 +1,13 @@
 # @ledgerhq/types-live
 
+## 6.85.0-nightly.0
+
+### Minor Changes
+
+- [#11863](https://github.com/LedgerHQ/ledger-live/pull/11863) [`c8fe586`](https://github.com/LedgerHQ/ledger-live/commit/c8fe586f1427d4d7a9fad092b51221ec8221399d) Thanks [@mitchellv-ledger](https://github.com/mitchellv-ledger)! - Add syncOnboardingIncr1 feature flag
+
+- [#11190](https://github.com/LedgerHQ/ledger-live/pull/11190) [`3b5576e`](https://github.com/LedgerHQ/ledger-live/commit/3b5576e0b67fedad0f5dbbd6b9546281af4e6111) Thanks [@semeano](https://github.com/semeano)! - [Kaspa] Coin support for LLD and LLM
+
 ## 6.84.0
 
 ### Minor Changes

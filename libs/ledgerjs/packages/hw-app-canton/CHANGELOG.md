@@ -1,5 +1,12 @@
 # @ledgerhq/hw-app-canton
 
+## 0.4.1-nightly.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport@6.31.11-nightly.0
+
 ## 0.4.0
 
 ### Minor Changes

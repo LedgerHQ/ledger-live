@@ -1,5 +1,16 @@
 # @ledgerhq/native-ui
 
+## 0.46.0-nightly.0
+
+### Minor Changes
+
+- [#11829](https://github.com/LedgerHQ/ledger-live/pull/11829) [`e6de5d9`](https://github.com/LedgerHQ/ledger-live/commit/e6de5d906be3e33a1c62b6f80985eca53fae94f0) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLM - Implement marketTrend modular parameters for the left and right elements of the mad assets page
+
+### Patch Changes
+
+- Updated dependencies [[`aade218`](https://github.com/LedgerHQ/ledger-live/commit/aade21864a36bce4b81dcce7ae46fe73894f9d33)]:
+  - @ledgerhq/icons-ui@0.14.0-nightly.0
+
 ## 0.45.0
 
 ### Minor Changes

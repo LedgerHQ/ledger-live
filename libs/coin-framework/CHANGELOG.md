@@ -1,5 +1,16 @@
 # @ledgerhq/coin-framework
 
+## 6.4.1-nightly.0
+
+### Patch Changes
+
+- Updated dependencies [[`38a172c`](https://github.com/LedgerHQ/ledger-live/commit/38a172c23035040d077433c7f4fce60f72962ae0), [`c8fe586`](https://github.com/LedgerHQ/ledger-live/commit/c8fe586f1427d4d7a9fad092b51221ec8221399d), [`3b5576e`](https://github.com/LedgerHQ/ledger-live/commit/3b5576e0b67fedad0f5dbbd6b9546281af4e6111), [`fe97131`](https://github.com/LedgerHQ/ledger-live/commit/fe971313776194e5942dfa9a95d6082950c3111e)]:
+  - @ledgerhq/devices@8.5.2-nightly.0
+  - @ledgerhq/types-live@6.85.0-nightly.0
+  - @ledgerhq/live-env@2.17.0-nightly.0
+  - @ledgerhq/cryptoassets@13.28.1-nightly.0
+  - @ledgerhq/live-network@2.0.18-nightly.0
+
 ## 6.4.0
 
 ### Minor Changes

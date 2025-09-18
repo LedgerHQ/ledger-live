@@ -1,5 +1,12 @@
 # @ledgerhq/hw-app-aptos
 
+## 6.34.7-nightly.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport@6.31.11-nightly.0
+
 ## 6.34.6
 
 ### Patch Changes

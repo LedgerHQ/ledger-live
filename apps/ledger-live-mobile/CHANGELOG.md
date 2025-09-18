@@ -1,5 +1,46 @@
 # live-mobile
 
+## 3.94.0-nightly.0
+
+### Minor Changes
+
+- [#11829](https://github.com/LedgerHQ/ledger-live/pull/11829) [`e6de5d9`](https://github.com/LedgerHQ/ledger-live/commit/e6de5d906be3e33a1c62b6f80985eca53fae94f0) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLM - Implement marketTrend modular parameters for the left and right elements of the mad assets page
+
+- [#11851](https://github.com/LedgerHQ/ledger-live/pull/11851) [`f67e4ed`](https://github.com/LedgerHQ/ledger-live/commit/f67e4edb1cfa9e54f741ef6d1edbf0485cfa387c) Thanks [@lpaquet-ledger](https://github.com/lpaquet-ledger)! - revert LIVE-21138
+
+- [#11190](https://github.com/LedgerHQ/ledger-live/pull/11190) [`3b5576e`](https://github.com/LedgerHQ/ledger-live/commit/3b5576e0b67fedad0f5dbbd6b9546281af4e6111) Thanks [@semeano](https://github.com/semeano)! - [Kaspa] Coin support for LLD and LLM
+
+- [#11714](https://github.com/LedgerHQ/ledger-live/pull/11714) [`b5288a2`](https://github.com/LedgerHQ/ledger-live/commit/b5288a2f00a09f8df166eac4108e93e43d361b2a) Thanks [@jiyuzhuang](https://github.com/jiyuzhuang)! - Adapt custom lock screen workflow
+
+- [#11840](https://github.com/LedgerHQ/ledger-live/pull/11840) [`0dadc57`](https://github.com/LedgerHQ/ledger-live/commit/0dadc5761ffc3c33da4fe5571d6f17d15ca5ed6c) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Cleanup Jest logs on LLM
+
+### Patch Changes
+
+- Updated dependencies [[`38a172c`](https://github.com/LedgerHQ/ledger-live/commit/38a172c23035040d077433c7f4fce60f72962ae0), [`2444623`](https://github.com/LedgerHQ/ledger-live/commit/244462341ee0d2d85a2e1370624500e565cb030a), [`e6de5d9`](https://github.com/LedgerHQ/ledger-live/commit/e6de5d906be3e33a1c62b6f80985eca53fae94f0), [`c8fe586`](https://github.com/LedgerHQ/ledger-live/commit/c8fe586f1427d4d7a9fad092b51221ec8221399d), [`3b5576e`](https://github.com/LedgerHQ/ledger-live/commit/3b5576e0b67fedad0f5dbbd6b9546281af4e6111), [`fe97131`](https://github.com/LedgerHQ/ledger-live/commit/fe971313776194e5942dfa9a95d6082950c3111e), [`aade218`](https://github.com/LedgerHQ/ledger-live/commit/aade21864a36bce4b81dcce7ae46fe73894f9d33)]:
+  - @ledgerhq/devices@8.5.2-nightly.0
+  - @ledgerhq/coin-evm@2.31.0-nightly.0
+  - @ledgerhq/native-ui@0.46.0-nightly.0
+  - @ledgerhq/types-live@6.85.0-nightly.0
+  - @ledgerhq/live-env@2.17.0-nightly.0
+  - @ledgerhq/icons-ui@0.14.0-nightly.0
+  - @ledgerhq/coin-framework@6.4.1-nightly.0
+  - @ledgerhq/coin-cosmos@0.17.2-nightly.0
+  - @ledgerhq/coin-filecoin@1.12.1-nightly.0
+  - @ledgerhq/coin-multiversx@0.5.2-nightly.0
+  - @ledgerhq/coin-stacks@0.9.2-nightly.0
+  - @ledgerhq/hw-transport@6.31.11-nightly.0
+  - @ledgerhq/react-native-hid@6.32.11-nightly.0
+  - @ledgerhq/react-native-hw-transport-ble@6.35.4-nightly.0
+  - @ledgerhq/live-dmk-mobile@0.11.5-nightly.1
+  - @ledgerhq/domain-service@1.2.44-nightly.0
+  - @ledgerhq/live-countervalues@0.7.2-nightly.0
+  - @ledgerhq/live-countervalues-react@0.6.1-nightly.0
+  - @ledgerhq/live-wallet@0.14.1-nightly.0
+  - @ledgerhq/hw-ledger-key-ring-protocol@0.4.1-nightly.0
+  - @ledgerhq/ledger-key-ring-protocol@0.6.6-nightly.0
+  - @ledgerhq/live-network@2.0.18-nightly.0
+  - @ledgerhq/hw-transport-http@6.30.11-nightly.0
+
 ## 3.93.0
 
 ### Minor Changes

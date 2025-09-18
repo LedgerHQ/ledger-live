@@ -1,5 +1,48 @@
 # ledger-live-desktop
 
+## 2.129.0-nightly.0
+
+### Minor Changes
+
+- [#11875](https://github.com/LedgerHQ/ledger-live/pull/11875) [`b720d11`](https://github.com/LedgerHQ/ledger-live/commit/b720d11a8d4847a9a6cd7633636cabb02e28e361) Thanks [@qperrot](https://github.com/qperrot)! - Fix defaultBaker might be undefined
+
+- [#11829](https://github.com/LedgerHQ/ledger-live/pull/11829) [`e6de5d9`](https://github.com/LedgerHQ/ledger-live/commit/e6de5d906be3e33a1c62b6f80985eca53fae94f0) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLD - Implement marketTrend modular parameters for the left and right elements of the mad assets page
+
+- [#11190](https://github.com/LedgerHQ/ledger-live/pull/11190) [`3b5576e`](https://github.com/LedgerHQ/ledger-live/commit/3b5576e0b67fedad0f5dbbd6b9546281af4e6111) Thanks [@semeano](https://github.com/semeano)! - [Kaspa] Coin support for LLD and LLM
+
+- [#11714](https://github.com/LedgerHQ/ledger-live/pull/11714) [`b5288a2`](https://github.com/LedgerHQ/ledger-live/commit/b5288a2f00a09f8df166eac4108e93e43d361b2a) Thanks [@jiyuzhuang](https://github.com/jiyuzhuang)! - Adapt custom lock screen workflow
+
+### Patch Changes
+
+- Updated dependencies [[`38a172c`](https://github.com/LedgerHQ/ledger-live/commit/38a172c23035040d077433c7f4fce60f72962ae0), [`2444623`](https://github.com/LedgerHQ/ledger-live/commit/244462341ee0d2d85a2e1370624500e565cb030a), [`e6de5d9`](https://github.com/LedgerHQ/ledger-live/commit/e6de5d906be3e33a1c62b6f80985eca53fae94f0), [`c8fe586`](https://github.com/LedgerHQ/ledger-live/commit/c8fe586f1427d4d7a9fad092b51221ec8221399d), [`3b5576e`](https://github.com/LedgerHQ/ledger-live/commit/3b5576e0b67fedad0f5dbbd6b9546281af4e6111), [`fe97131`](https://github.com/LedgerHQ/ledger-live/commit/fe971313776194e5942dfa9a95d6082950c3111e), [`f671769`](https://github.com/LedgerHQ/ledger-live/commit/f6717696fcb2ad672a48fdd7f8654dedf11b4a65), [`4b7c1d3`](https://github.com/LedgerHQ/ledger-live/commit/4b7c1d37f2a11b5cf9ac40238e77f889d027c4ec)]:
+  - @ledgerhq/devices@8.5.2-nightly.0
+  - @ledgerhq/coin-evm@2.31.0-nightly.0
+  - @ledgerhq/live-common@34.49.0-nightly.0
+  - @ledgerhq/react-ui@0.38.0-nightly.0
+  - @ledgerhq/types-live@6.85.0-nightly.0
+  - @ledgerhq/live-env@2.17.0-nightly.0
+  - @ledgerhq/coin-framework@6.4.1-nightly.0
+  - @ledgerhq/coin-bitcoin@0.22.1-nightly.0
+  - @ledgerhq/coin-canton@0.5.1-nightly.0
+  - @ledgerhq/coin-cosmos@0.17.2-nightly.0
+  - @ledgerhq/coin-filecoin@1.12.1-nightly.0
+  - @ledgerhq/hw-transport@6.31.11-nightly.0
+  - @ledgerhq/hw-transport-node-hid-singleton@6.31.12-nightly.0
+  - @ledgerhq/live-dmk-desktop@0.9.7-nightly.0
+  - @ledgerhq/domain-service@1.2.44-nightly.0
+  - @ledgerhq/live-countervalues@0.7.2-nightly.0
+  - @ledgerhq/live-countervalues-react@0.6.1-nightly.0
+  - @ledgerhq/live-nft@0.8.21-nightly.0
+  - @ledgerhq/live-nft-react@0.9.21-nightly.0
+  - @ledgerhq/live-wallet@0.14.1-nightly.0
+  - @ledgerhq/hw-ledger-key-ring-protocol@0.4.1-nightly.0
+  - @ledgerhq/ledger-key-ring-protocol@0.6.6-nightly.0
+  - @ledgerhq/cryptoassets@13.28.1-nightly.0
+  - @ledgerhq/live-network@2.0.18-nightly.0
+  - @ledgerhq/hw-transport-http@6.30.11-nightly.0
+  - @ledgerhq/hw-transport-node-speculos-http@6.30.1-nightly.0
+  - @ledgerhq/hw-transport-vault@1.3.11-nightly.0
+
 ## 2.128.1
 
 ### Patch Changes

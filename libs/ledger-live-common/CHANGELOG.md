@@ -1,5 +1,87 @@
 # @ledgerhq/live-common
 
+## 34.49.0-nightly.0
+
+### Minor Changes
+
+- [#11797](https://github.com/LedgerHQ/ledger-live/pull/11797) [`2444623`](https://github.com/LedgerHQ/ledger-live/commit/244462341ee0d2d85a2e1370624500e565cb030a) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - refactor(llc, coin-evm): support several EVM configs
+
+- [#11829](https://github.com/LedgerHQ/ledger-live/pull/11829) [`e6de5d9`](https://github.com/LedgerHQ/ledger-live/commit/e6de5d906be3e33a1c62b6f80985eca53fae94f0) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLD - Implement marketTrend modular parameters for the left and right elements of the mad assets page
+
+- [#11863](https://github.com/LedgerHQ/ledger-live/pull/11863) [`c8fe586`](https://github.com/LedgerHQ/ledger-live/commit/c8fe586f1427d4d7a9fad092b51221ec8221399d) Thanks [@mitchellv-ledger](https://github.com/mitchellv-ledger)! - Add syncOnboardingIncr1 feature flag
+
+- [#11190](https://github.com/LedgerHQ/ledger-live/pull/11190) [`3b5576e`](https://github.com/LedgerHQ/ledger-live/commit/3b5576e0b67fedad0f5dbbd6b9546281af4e6111) Thanks [@semeano](https://github.com/semeano)! - [Kaspa] Coin support for LLD and LLM
+
+- [#11768](https://github.com/LedgerHQ/ledger-live/pull/11768) [`f671769`](https://github.com/LedgerHQ/ledger-live/commit/f6717696fcb2ad672a48fdd7f8654dedf11b4a65) Thanks [@CremaFR](https://github.com/CremaFR)! - Adding fallback CAL Near and local CDN near
+
+### Patch Changes
+
+- Updated dependencies [[`38a172c`](https://github.com/LedgerHQ/ledger-live/commit/38a172c23035040d077433c7f4fce60f72962ae0), [`2444623`](https://github.com/LedgerHQ/ledger-live/commit/244462341ee0d2d85a2e1370624500e565cb030a), [`173073d`](https://github.com/LedgerHQ/ledger-live/commit/173073da1f9a0a899fdb4d5fa3625554bf7c41dd), [`4b7f90c`](https://github.com/LedgerHQ/ledger-live/commit/4b7f90cdfe730e40f43f53359ece99127b93c310), [`3b5576e`](https://github.com/LedgerHQ/ledger-live/commit/3b5576e0b67fedad0f5dbbd6b9546281af4e6111), [`fe97131`](https://github.com/LedgerHQ/ledger-live/commit/fe971313776194e5942dfa9a95d6082950c3111e), [`f671769`](https://github.com/LedgerHQ/ledger-live/commit/f6717696fcb2ad672a48fdd7f8654dedf11b4a65)]:
+  - @ledgerhq/devices@8.5.2-nightly.0
+  - @ledgerhq/coin-evm@2.31.0-nightly.0
+  - @ledgerhq/coin-solana@0.33.1-nightly.0
+  - @ledgerhq/coin-tezos@6.5.0-nightly.0
+  - @ledgerhq/live-env@2.17.0-nightly.0
+  - @ledgerhq/ledger-cal-service@1.5.0-nightly.0
+  - @ledgerhq/coin-framework@6.4.1-nightly.0
+  - @ledgerhq/coin-algorand@0.10.2-nightly.0
+  - @ledgerhq/coin-aptos@3.3.1-nightly.0
+  - @ledgerhq/coin-bitcoin@0.22.1-nightly.0
+  - @ledgerhq/coin-canton@0.5.1-nightly.0
+  - @ledgerhq/coin-cardano@0.12.2-nightly.0
+  - @ledgerhq/coin-casper@2.1.2-nightly.0
+  - @ledgerhq/coin-celo@1.4.1-nightly.0
+  - @ledgerhq/coin-cosmos@0.17.2-nightly.0
+  - @ledgerhq/coin-filecoin@1.12.1-nightly.0
+  - @ledgerhq/coin-hedera@1.11.2-nightly.0
+  - @ledgerhq/coin-icon@0.12.2-nightly.0
+  - @ledgerhq/coin-internet_computer@1.8.2-nightly.0
+  - @ledgerhq/coin-kaspa@1.1.1-nightly.0
+  - @ledgerhq/coin-mina@1.2.2-nightly.0
+  - @ledgerhq/coin-multiversx@0.5.2-nightly.0
+  - @ledgerhq/coin-near@0.13.2-nightly.0
+  - @ledgerhq/coin-polkadot@6.10.1-nightly.0
+  - @ledgerhq/coin-stacks@0.9.2-nightly.0
+  - @ledgerhq/coin-stellar@6.4.1-nightly.0
+  - @ledgerhq/coin-ton@0.14.2-nightly.0
+  - @ledgerhq/coin-tron@5.4.1-nightly.0
+  - @ledgerhq/coin-vechain@2.9.2-nightly.0
+  - @ledgerhq/coin-xrp@7.4.1-nightly.0
+  - @ledgerhq/device-core@0.6.4-nightly.0
+  - @ledgerhq/hw-transport@6.31.11-nightly.0
+  - @ledgerhq/live-signer-canton@0.3.1-nightly.0
+  - @ledgerhq/live-signer-solana@0.5.6-nightly.0
+  - @ledgerhq/speculos-transport@0.2.11-nightly.0
+  - @ledgerhq/live-signer-evm@0.7.6-nightly.0
+  - @ledgerhq/coin-sui@0.13.1-nightly.0
+  - @ledgerhq/hw-app-eth@6.45.19-nightly.0
+  - @ledgerhq/live-countervalues@0.7.2-nightly.0
+  - @ledgerhq/live-countervalues-react@0.6.1-nightly.0
+  - @ledgerhq/live-nft@0.8.21-nightly.0
+  - @ledgerhq/live-wallet@0.14.1-nightly.0
+  - @ledgerhq/cryptoassets@13.28.1-nightly.0
+  - @ledgerhq/live-network@2.0.18-nightly.0
+  - @ledgerhq/hw-app-algorand@6.31.7-nightly.0
+  - @ledgerhq/hw-app-aptos@6.34.7-nightly.0
+  - @ledgerhq/hw-app-btc@10.11.1-nightly.0
+  - @ledgerhq/hw-app-celo@6.34.4-nightly.0
+  - @ledgerhq/hw-app-cosmos@6.32.7-nightly.0
+  - @ledgerhq/hw-app-exchange@0.13.3-nightly.1
+  - @ledgerhq/hw-app-hedera@1.2.7-nightly.0
+  - @ledgerhq/hw-app-icon@1.3.7-nightly.0
+  - @ledgerhq/hw-app-kaspa@1.3.0-nightly.1
+  - @ledgerhq/hw-app-multiversx@6.25.2-nightly.0
+  - @ledgerhq/hw-app-near@6.31.7-nightly.0
+  - @ledgerhq/hw-app-polkadot@6.34.7-nightly.0
+  - @ledgerhq/hw-app-str@7.2.7-nightly.0
+  - @ledgerhq/hw-app-tezos@6.31.7-nightly.0
+  - @ledgerhq/hw-app-trx@6.31.7-nightly.0
+  - @ledgerhq/hw-app-vet@0.5.17-nightly.0
+  - @ledgerhq/hw-app-xrp@6.32.5-nightly.0
+  - @ledgerhq/hw-transport-mocker@6.29.11-nightly.0
+  - @ledgerhq/live-dmk-shared@0.12.4-nightly.1
+  - @ledgerhq/hw-app-sui@1.4.0
+
 ## 34.48.1
 
 ### Patch Changes

@@ -1,5 +1,12 @@
 # @ledgerhq/hw-app-kaspa
 
+## 1.3.0-nightly.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport@6.31.11-nightly.0
+
 ## 1.3.0-nightly.0
 
 ### Minor Changes

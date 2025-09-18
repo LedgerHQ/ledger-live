@@ -1,5 +1,13 @@
 # @ledgerhq/live-wallet
 
+## 0.4.1-nightly.0
+
+### Patch Changes
+
+- Updated dependencies [[`3b5576e`](https://github.com/LedgerHQ/ledger-live/commit/3b5576e0b67fedad0f5dbbd6b9546281af4e6111), [`fe97131`](https://github.com/LedgerHQ/ledger-live/commit/fe971313776194e5942dfa9a95d6082950c3111e)]:
+  - @ledgerhq/live-env@2.17.0-nightly.0
+  - @ledgerhq/hw-transport@6.31.11-nightly.0
+
 ## 0.4.0
 
 ### Minor Changes
