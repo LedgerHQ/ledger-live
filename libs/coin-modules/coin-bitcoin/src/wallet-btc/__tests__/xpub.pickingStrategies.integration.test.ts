@@ -316,9 +316,8 @@ describe("picking strategies – segwit edge cases", () => {
   const network = coininfo.bitcoin.test.toBitcoinJS();
   const crypto = new Crypto({ network });
 
-  /** handy helpers to synthesize scripts by length (content doesn't matter for size) **/
+  /** helper to synthesize scripts by length (content doesn't matter for size) **/
   const scriptP2WPKH = Buffer.alloc(22); // OP_0 + PUSH20 + 20 bytes
-  const scriptP2SH = Buffer.alloc(23); // HASH160 + PUSH20 + 20 + EQUAL
 
   function makeXpubNativeSegwit() {
     const storage = new BitcoinLikeStorage();
@@ -509,10 +508,6 @@ describe("CoinSelect – segwit change delta must match input derivation (not re
   const network = coininfo.bitcoin.test.toBitcoinJS();
   const crypto = new Crypto({ network });
 
-  // synthesize scripts by length (content is irrelevant for sizing)
-  const scriptP2TR = Buffer.alloc(34); // Taproot output (recipient)
-  const scriptP2WPKH = Buffer.alloc(22); // P2WPKH output (change for native segwit)
-
   function makeXpubNativeSegwit() {
     const storage = new BitcoinLikeStorage();
     const xpub = new Xpub({
@@ -523,17 +518,6 @@ describe("CoinSelect – segwit change delta must match input derivation (not re
       derivationMode: DerivationModes.NATIVE_SEGWIT, // inputs ⇒ P2WPKH ⇒ change must be P2WPKH
     });
     return { storage, xpub };
-  }
-
-  function recipient(amount: number, script: Buffer): OutputInfo[] {
-    return [
-      {
-        address: "tb1p-taproot-dest",
-        isChange: false,
-        script,
-        value: new BigNumber(amount),
-      },
-    ];
   }
 
   it("adds change using P2WPKH delta even when recipient is Taproot (P2TR)", async () => {
