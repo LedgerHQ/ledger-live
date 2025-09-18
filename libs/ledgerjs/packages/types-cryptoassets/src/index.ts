@@ -128,6 +128,7 @@ export type CryptoCurrencyId =
   | "bitcoin_testnet"
   | "ethereum_sepolia"
   | "ethereum_holesky"
+  | "ethereum_hoodi"
   | "stacks"
   | "crypto_org_croeseid"
   | "solana_testnet"
@@ -207,6 +208,7 @@ export type LedgerExplorerId =
   | "eth"
   | "eth_sepolia"
   | "eth_holesky"
+  | "eth_hoodi"
   | "etc"
   | "matic"
   | "bnb";
