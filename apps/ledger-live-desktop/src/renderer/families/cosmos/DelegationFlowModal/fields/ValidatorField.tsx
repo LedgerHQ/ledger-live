@@ -34,11 +34,13 @@ const ValidatorField = ({ account, onChangeValidator, chosenVoteAccAddr }: Props
     (evt: React.ChangeEvent<HTMLInputElement>) => setSearch(evt.target.value),
     [setSearch],
   );
+
   const chosenValidator = useMemo(() => {
+    if (validators.length === 0) return [];
     return [validators.find(v => v.validatorAddress === chosenVoteAccAddr) || validators[0]];
   }, [validators, chosenVoteAccAddr]);
 
-  if (chosenVoteAccAddr === "") {
+  if (chosenVoteAccAddr === "" && validators.length > 0) {
     onChangeValidator({ address: validators[0].validatorAddress });
   }
 
