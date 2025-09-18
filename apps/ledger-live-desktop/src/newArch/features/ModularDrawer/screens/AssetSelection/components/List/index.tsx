@@ -1,5 +1,11 @@
-import React, { useCallback, useEffect } from "react";
-import { ApyIndicator, AssetList, AssetType } from "@ledgerhq/react-ui/pre-ldls";
+import React, { useCallback, useEffect, useMemo } from "react";
+import {
+  ApyIndicator,
+  AssetList,
+  AssetType,
+  MarketPercentIndicator,
+  MarketPriceIndicator,
+} from "@ledgerhq/react-ui/pre-ldls";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { useModularDrawerAnalytics } from "LLD/features/ModularDrawer/analytics/useModularDrawerAnalytics";
 import { ListWrapper } from "LLD/features/ModularDrawer/components/ListWrapper";
@@ -10,6 +16,8 @@ import { CurrenciesByProviderId, LoadingStatus } from "@ledgerhq/live-common/dep
 import GenericEmptyList from "LLD/components/GenericEmptyList";
 import { balanceItem } from "LLD/features/ModularDrawer/components/Balance";
 import { useBalanceDeps } from "LLD/features/ModularDrawer/hooks/useBalanceDeps";
+import { useSelector } from "react-redux";
+import { modularDrawerIsDebuggingDuplicatesSelector } from "~/renderer/reducers/modularDrawer";
 
 export type SelectAssetProps = {
   assetsToDisplay: CryptoOrTokenCurrency[];
@@ -45,9 +53,12 @@ export const SelectAssetList = ({
 }: SelectAssetProps) => {
   const assetConfigurationDeps = {
     ApyIndicator,
+    MarketPriceIndicator,
+    MarketPercentIndicator,
     useBalanceDeps,
     balanceItem,
   };
+  const isDebuggingDuplicates = useSelector(modularDrawerIsDebuggingDuplicatesSelector);
 
   const makeAssetConfigurationHook = createAssetConfigurationHook(assetConfigurationDeps);
 
@@ -56,10 +67,23 @@ export const SelectAssetList = ({
     currenciesByProvider,
   });
 
-  const formattedAssets = transformAssets(assetsToDisplay);
+  const assetsTransformed = transformAssets(assetsToDisplay);
+  const formattedAssets = useMemo(() => {
+    return assetsTransformed.map(asset => {
+      const currencyByProvider = currenciesByProvider.find(
+        c => c.currenciesByNetwork[0]?.id === asset.id,
+      );
+      return {
+        ...asset,
+        numberOfNetworks: currencyByProvider?.currenciesByNetwork?.length,
+        assetId: currencyByProvider?.metaCurrencyId,
+      };
+    });
+  }, [assetsTransformed, currenciesByProvider]);
 
   const isLoading = [LoadingStatus.Pending, LoadingStatus.Idle].includes(providersLoadingStatus);
-  const shouldDisplayEmptyState = (!formattedAssets || formattedAssets.length === 0) && !isLoading;
+  const shouldDisplayEmptyState =
+    (!assetsTransformed || assetsTransformed.length === 0) && !isLoading;
   const { trackModularDrawerEvent } = useModularDrawerAnalytics();
 
   const onClick = useCallback(
@@ -108,6 +132,7 @@ export const SelectAssetList = ({
         onClick={onClick}
         onVisibleItemsScrollEnd={loadNext}
         hasNextPage={!!loadNext}
+        isDebuggingDuplicates={isDebuggingDuplicates}
       />
     </ListWrapper>
   );

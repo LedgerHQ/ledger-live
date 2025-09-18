@@ -162,11 +162,6 @@ const envDefinitions = {
     def: "https://kaspa.coin.ledger.com",
     desc: "Kaspa API url",
   },
-  API_KASPA_TESTNET_ENDPOINT: {
-    parser: stringParser,
-    def: "https://kaspa.coin.ledger-test.com",
-    desc: "Kaspa testnet API url",
-  },
   API_STELLAR_HORIZON: {
     parser: stringParser,
     def: "https://stellar.coin.ledger.com",
@@ -472,16 +467,6 @@ const envDefinitions = {
     parser: stringParser,
     desc: "Ledger generic explorer API",
   },
-  EXPLORER_STAGING: {
-    def: "https://explorers.api-01.live.ledger-stg.com",
-    parser: stringParser,
-    desc: "Ledger staging explorer API",
-  },
-  EXPLORER_BETA: {
-    def: "https://explorers.api.live.ledger.com",
-    parser: stringParser,
-    desc: "Ledger generic explorer beta API",
-  },
   EXPLORER_SATSTACK: {
     def: "http://localhost:20000",
     parser: stringParser,
@@ -670,11 +655,6 @@ const envDefinitions = {
     def: false,
     parser: boolParser,
     desc: "allow the creation of legacy accounts",
-  },
-  SIMPLE_HASH_API_BASE: {
-    def: "https://simplehash.api.live.ledger.com/api/v0",
-    parser: stringParser,
-    desc: "SimpleHash API base url",
   },
   SKIP_ONBOARDING: {
     def: false,

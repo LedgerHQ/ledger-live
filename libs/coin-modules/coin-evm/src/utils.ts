@@ -69,3 +69,7 @@ export const padHexString = (str: string): string => {
 export const DEFAULT_NONCE = -1;
 
 export const DEFAULT_GAS_LIMIT = new BigNumber(21000);
+
+export function isEthAddress(address: string): boolean {
+  return /^(0x)?[0-9a-fA-F]{40}$/.test(address);
+}

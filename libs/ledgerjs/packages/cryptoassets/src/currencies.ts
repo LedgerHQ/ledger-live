@@ -614,7 +614,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     scheme: "canton_network",
     color: "#F8FFAE",
     family: "canton",
-    blockAvgTime: 20,
+    blockAvgTime: 100,
     units: [
       {
         name: "cc",
@@ -645,7 +645,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     scheme: "canton_network_localnet",
     color: "#F8FFAE",
     family: "canton",
-    blockAvgTime: 20,
+    blockAvgTime: 100,
     isTestnetFor: "canton_network",
     units: [
       {
@@ -677,7 +677,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     scheme: "canton_network_devnet",
     color: "#F8FFAE",
     family: "canton",
-    blockAvgTime: 20,
+    blockAvgTime: 100,
     isTestnetFor: "canton_network",
     units: [
       {

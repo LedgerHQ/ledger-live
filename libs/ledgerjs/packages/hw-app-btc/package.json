@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/hw-app-btc",
-  "version": "10.10.2",
+  "version": "10.11.0",
   "description": "Ledger Hardware Wallet Bitcoin Application API",
   "keywords": [
     "Ledger",
@@ -67,9 +67,8 @@
     "bs58": "^4.0.1",
     "bs58check": "^2.1.2",
     "invariant": "^2.2.4",
-    "ripemd160": "2",
+    "@noble/hashes": "1.8.0",
     "semver": "^7.3.5",
-    "sha.js": "2",
     "@noble/curves": "1.9.7",
     "varuint-bitcoin": "1.1.2"
   },

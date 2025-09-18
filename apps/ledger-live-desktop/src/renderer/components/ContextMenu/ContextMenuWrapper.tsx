@@ -1,7 +1,6 @@
 import React, { PureComponent } from "react";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
-import { ItemType } from "LLD/features/Collectibles/types/enum/Links";
 import Box from "~/renderer/components/Box";
 import IconExternal from "~/renderer/icons/ExternalLink";
 
@@ -30,7 +29,7 @@ export type ContextMenuItemType = {
   callback?: (a: React.MouseEvent<HTMLDivElement>) => void;
   dontTranslateLabel?: boolean;
   id?: string;
-  type?: ItemType;
+  type?: "external" | "separator";
 };
 type Props = {
   children: React.ReactNode;

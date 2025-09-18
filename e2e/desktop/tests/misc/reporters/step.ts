@@ -1,5 +1,11 @@
 import test from "@playwright/test";
 
+type HasConstructor = {
+  constructor: {
+    name: string;
+  };
+};
+
 /**
  * Decorator that wraps a function with a Playwright test step.
  * Used for reporting purposes.
@@ -15,24 +21,19 @@ import test from "@playwright/test";
  }
  ```
  */
-export function step<This, Args extends unknown[], Return = unknown>(message?: string) {
+export function step<This extends HasConstructor, Args extends unknown[], Return = unknown>(message?: string) {
   return function actualDecorator(
     target: (this: This, ...args: Args) => Promise<Return>,
     context: ClassMethodDecoratorContext<This, (this: This, ...args: Args) => Promise<Return>>,
   ) {
     async function replacementMethod(this: This, ...args: Args): Promise<Return> {
-      const ctorName = (this as any).constructor.name as string;
+      const ctorName = this.constructor.name;
 
       const name = message
         ? message.replace(/\$(\d+)/g, (_, idx) => String(args[Number(idx)]))
         : `${ctorName}.${String(context.name)}`;
 
-      try {
-        test.info();
-        return await test.step(name, () => target.call(this, ...args), { box: true });
-      } catch {
-        return await target.call(this, ...args);
-      }
+      return await test.step(name, () => target.call(this, ...args), { box: true });
     }
 
     return replacementMethod;

@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-bitcoin",
-  "version": "0.21.0",
+  "version": "0.22.0",
   "description": "Ledger Bitcoin Coin integration",
   "keywords": [
     "Ledger",
@@ -66,10 +66,8 @@
     "expect": "^27.4.6",
     "invariant": "^2.2.2",
     "lodash": "^4.17.21",
-    "ripemd160": "^2.0.2",
     "rxjs": "^7.8.1",
     "@noble/curves": "^1.9.7",
-    "sha.js": "^2.4.11",
     "utility-types": "^3.10.0",
     "varuint-bitcoin": "1.1.2"
   },

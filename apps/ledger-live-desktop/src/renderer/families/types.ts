@@ -14,7 +14,6 @@ import {
   Account,
   AnyMessage,
   FeeStrategy,
-  NFTStandard,
   Operation,
   OperationType,
   TokenAccount,
@@ -368,15 +367,6 @@ export type LLDCoinFamily<
     operation: Operation,
   ) => string | null | undefined;
 
-  nft?: {
-    injectNftIntoTransaction: (
-      transaction: T,
-      nftProperties: Partial<NftProperties>,
-      standard?: NFTStandard,
-    ) => T;
-    getNftTransactionProperties: (transaction: T) => NftProperties;
-  };
-
   message?: {
     getMessageProperties: (message: AnyMessage) => Promise<MessageProperties | null>;
   };
@@ -410,10 +400,4 @@ export type ManageAction = {
   disabled?: boolean;
   tooltip?: string;
   accountActionsTestId?: string;
-};
-
-export type NftProperties = {
-  tokenId: string | null;
-  contract: string | null;
-  quantity: BigNumber | null;
 };

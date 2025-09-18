@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import styled from "styled-components/native";
 import { Flex, InfiniteLoader } from "@ledgerhq/native-ui";
 import { Image, ImageErrorEventData, NativeSyntheticEvent, Pressable } from "react-native";
-import Animated, { useAnimatedStyle, useSharedValue, withTiming } from "react-native-reanimated";
+import { useSharedValue, withTiming } from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { ImagePreviewError } from "@ledgerhq/live-common/customImage/errors";
 import {
@@ -162,20 +162,6 @@ const Step2ChooseContrast = ({ navigation, route }: NavigationProps) => {
     [animSelectedIndex],
   );
 
-  const leftBoxAnimatedStyle = useAnimatedStyle(
-    () => ({
-      width: (3 - animSelectedIndex.value) * 54,
-    }),
-    [animSelectedIndex],
-  );
-
-  const rightBoxAnimatedStyle = useAnimatedStyle(
-    () => ({
-      width: animSelectedIndex.value * 54,
-    }),
-    [animSelectedIndex],
-  );
-
   const confirmEventProperties = useMemo(
     () => ({
       button: "Confirm contrast",
@@ -219,6 +205,7 @@ const Step2ChooseContrast = ({ navigation, route }: NavigationProps) => {
               height:
                 (screenVisibleAreaDimensions.height / screenVisibleAreaDimensions.width) *
                 previewDimensions.width,
+              borderRadius: 8,
             }}
             resizeMode="contain"
             onError={handlePreviewImageError}
@@ -230,8 +217,7 @@ const Step2ChooseContrast = ({ navigation, route }: NavigationProps) => {
         )}
       </Flex>
       {resizedImage?.imageBase64DataUri && (
-        <Flex flexDirection="row" my={6}>
-          <Animated.View style={leftBoxAnimatedStyle} />
+        <Flex flexDirection="row" my={6} justifyContent="center" alignItems="center">
           {availableDitheringConfigKeys.map((configKey, index, arr) => {
             const appearance = mapDitheringConfigKeyToAppearance[configKey];
             return (
@@ -255,7 +241,6 @@ const Step2ChooseContrast = ({ navigation, route }: NavigationProps) => {
               </Pressable>
             );
           })}
-          <Animated.View style={rightBoxAnimatedStyle} />
         </Flex>
       )}
       <BottomButtonsContainer style={{ paddingTop: 0 }}>

@@ -15,10 +15,9 @@ import CustomImageDeviceAction from "~/components/CustomLockScreenDeviceAction";
 import ImageHexProcessor from "~/components/CustomImage/dithering/ImageFromDeviceProcessor";
 import { ProcessorPreviewResult } from "~/components/CustomImage/dithering/types";
 import FramedPicture from "~/components/CustomImage/FramedPicture";
-import { getFramedPictureConfig } from "~/components/CustomImage/framedPictureConfigs";
 import { NavigationHeaderBackButton } from "~/components/NavigationHeaderBackButton";
 import { ReactNavigationHeaderOptions } from "~/components/RootNavigator/types/helpers";
-import { useStaxFetchImageDeviceAction } from "~/hooks/deviceActions";
+import { useFetchImageDeviceAction } from "~/hooks/deviceActions";
 
 // Defines here some of the header options for this screen to be able to reset back to them.
 export const debugFetchCustomImageHeaderOptions: ReactNavigationHeaderOptions = {
@@ -29,8 +28,8 @@ export const debugFetchCustomImageHeaderOptions: ReactNavigationHeaderOptions = 
 };
 
 export default React.memo(function DebugFetchCustomImage() {
-  const fetchDeviceAction = useStaxFetchImageDeviceAction();
-  const { colors, dark } = useTheme();
+  const fetchDeviceAction = useFetchImageDeviceAction();
+  const { colors } = useTheme();
   const navigation = useNavigation();
 
   const [device, setDevice] = useState<Device | null>(null);
@@ -173,14 +172,7 @@ export default React.memo(function DebugFetchCustomImage() {
             />
             {imageSource ? (
               <Flex flexDirection="row" flexGrow={0}>
-                <FramedPicture
-                  framedPictureConfig={getFramedPictureConfig(
-                    "transfer",
-                    clsDeviceModelId,
-                    dark ? "dark" : "light",
-                  )}
-                  source={imageSource}
-                />
+                <FramedPicture deviceModelId={clsDeviceModelId} source={imageSource} />
               </Flex>
             ) : null}
           </>

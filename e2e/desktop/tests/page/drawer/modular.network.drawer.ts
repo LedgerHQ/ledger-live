@@ -4,7 +4,7 @@ import { Drawer } from "../../component/drawer.component";
 
 export class ModularNetworkDrawer extends Drawer {
   private networkSelectorListContainer = this.page
-    .getByTestId("modular-network-selection-container")
+    .getByTestId("modular-drawer-screen-NETWORK_SELECTION")
     .first();
   private networkItemByName = (name: string) => this.page.getByTestId(`network-item-name-${name}`);
   private firstNetworkItem = this.page.locator("[data-testid^='network-item-name-']").first();

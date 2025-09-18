@@ -1,8 +1,8 @@
-import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import React, { useState } from "react";
-import Item from "./Item";
-import { Button, Flex } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
+import { Button, Flex } from "@ledgerhq/native-ui";
+import { Device } from "@ledgerhq/live-common/hw/actions/types";
+import DeviceItem from "./DeviceItem";
 
 const MAX_LEDGERS_DISPLAYED = 3;
 
@@ -18,7 +18,7 @@ export function DeviceList({ deviceList, handleOnSelect }: Props) {
   return (
     <Flex>
       {deviceList.slice(0, showAll ? deviceList.length : MAX_LEDGERS_DISPLAYED).map((device, i) => (
-        <Item
+        <DeviceItem
           key={`${device.deviceId}-${device.deviceName ?? "no-name"}-${i}`}
           device={device}
           onPress={handleOnSelect}

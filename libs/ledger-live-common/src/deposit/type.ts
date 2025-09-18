@@ -25,6 +25,7 @@ export type GroupedCurrency = {
 export type CurrenciesByProviderId = {
   currenciesByNetwork: CryptoOrTokenCurrency[];
   providerId: string;
+  metaCurrencyId?: string;
 };
 
 export type GroupedCurrencies = {

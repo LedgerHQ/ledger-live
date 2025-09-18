@@ -96,6 +96,7 @@ export const CURRENCY_DEFAULT_FEATURES = {
   currencyBerachain: DEFAULT_FEATURE,
   currencyHyperevm: DEFAULT_FEATURE,
   currencyCantonNetwork: DEFAULT_FEATURE,
+  currencyKaspa: DEFAULT_FEATURE,
 };
 
 /**
@@ -110,6 +111,7 @@ export const DEFAULT_FEATURES: Features = {
   ptxServiceCtaExchangeDrawer: DEFAULT_FEATURE,
   ptxServiceCtaScreens: DEFAULT_FEATURE,
   ptxSwapReceiveTRC20WithoutTrx: DEFAULT_FEATURE,
+  ptxSwapconfirmSwapOnDevice: DEFAULT_FEATURE,
   disableNftLedgerMarket: DEFAULT_FEATURE,
   disableNftRaribleOpensea: DEFAULT_FEATURE,
   disableNftSend: DEFAULT_FEATURE,
@@ -464,13 +466,7 @@ export const DEFAULT_FEATURES: Features = {
   ptxSwapExodusProvider: DEFAULT_FEATURE,
 
   myLedgerDisplayAppDeveloperName: DEFAULT_FEATURE,
-  nftsFromSimplehash: {
-    ...DEFAULT_FEATURE,
-    params: {
-      threshold: 75,
-      staleTime: 1000 * 60 * 15,
-    },
-  },
+
   marketperformanceWidgetDesktop: {
     enabled: false,
     params: {
@@ -497,7 +493,6 @@ export const DEFAULT_FEATURES: Features = {
       refreshTime: 3, //nb minutes
     },
   },
-  spamReportNfts: DEFAULT_FEATURE,
   lldWalletSync: {
     ...DEFAULT_FEATURE,
     params: {
@@ -514,13 +509,9 @@ export const DEFAULT_FEATURES: Features = {
       learnMoreLink: "",
     },
   },
-  lldNftsGalleryNewArch: DEFAULT_FEATURE,
-  lldnewArchOrdinals: DEFAULT_FEATURE,
   enableAppsBackup: DEFAULT_FEATURE,
   web3hub: DEFAULT_FEATURE,
   llmMarketQuickActions: DEFAULT_FEATURE,
-  spamFilteringTx: DEFAULT_FEATURE,
-  lldSpamFilteringTx: DEFAULT_FEATURE,
   llmMemoTag: DEFAULT_FEATURE,
   lldMemoTag: DEFAULT_FEATURE,
   ldmkTransport: {
@@ -601,8 +592,6 @@ export const DEFAULT_FEATURES: Features = {
   },
   llmThai: DEFAULT_FEATURE,
   lldThai: DEFAULT_FEATURE,
-  lldSolanaNfts: DEFAULT_FEATURE,
-  llmSolanaNfts: DEFAULT_FEATURE,
   largemoverLandingpage: DEFAULT_FEATURE,
   llmMmkvMigration: {
     ...DEFAULT_FEATURE,
@@ -638,7 +627,6 @@ export const DEFAULT_FEATURES: Features = {
       backendEnvironment: "PROD",
     },
   },
-  llNftSupport: DEFAULT_FEATURE,
   llNftEntryPoint: {
     ...DEFAULT_FEATURE,
     params: {
@@ -681,6 +669,7 @@ export const DEFAULT_FEATURES: Features = {
     params: {},
   },
   supportDeviceApex: DEFAULT_FEATURE,
+  llmSyncOnboardingIncr1: DEFAULT_FEATURE,
 };
 
 // Firebase SDK treat JSON values as strings

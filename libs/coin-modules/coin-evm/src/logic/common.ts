@@ -76,6 +76,14 @@ export function getTransactionType(intentType: string): TransactionTypes {
   return intentType === "send-legacy" ? TransactionTypes.legacy : TransactionTypes.eip1559;
 }
 
+export function isEip55Address(address: string): boolean {
+  try {
+    return address === ethers.getAddress(address);
+  } catch {
+    return false;
+  }
+}
+
 export function getErc20Data(recipient: string, amount: bigint): Buffer {
   const contract = new ethers.Interface(ERC20ABI);
   const data = contract.encodeFunctionData("transfer", [recipient, amount]);

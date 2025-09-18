@@ -1,12 +1,16 @@
 import expect from "expect";
 import { Delegate } from "../models/Delegate";
 import { Transaction } from "../models/Transaction";
-import { pressBoth, pressUntilTextFound, waitFor, containsSubstringInEvent } from "../speculos";
+import {
+  pressBoth,
+  pressUntilTextFound,
+  containsSubstringInEvent,
+  getDelegateEvents,
+} from "../speculos";
 import { DeviceLabels } from "../enum/DeviceLabels";
 
 export async function delegateCosmos(delegatingAccount: Delegate) {
-  await waitFor(DeviceLabels.PLEASE_REVIEW);
-  const events = await pressUntilTextFound(DeviceLabels.CAPS_APPROVE);
+  const events = await getDelegateEvents(delegatingAccount);
   const isAmountCorrect = containsSubstringInEvent(delegatingAccount.amount, events);
   expect(isAmountCorrect).toBeTruthy();
   await pressBoth();

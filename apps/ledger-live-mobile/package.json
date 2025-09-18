@@ -1,6 +1,6 @@
 {
   "name": "live-mobile",
-  "version": "3.92.0",
+  "version": "3.93.0",
   "private": true,
   "scripts": {
     "postinstall": "zx ./scripts/post.mjs",
@@ -284,7 +284,7 @@
     "babel-plugin-transform-inline-environment-variables": "0.4.4",
     "body-parser": "1.20.3",
     "cors": "2.8.5",
-    "detox": "20.39.0",
+    "detox": "20.41.2",
     "detox-allure2-adapter": "1.0.0-alpha.18",
     "eslint-import-resolver-typescript": "3.6.1",
     "eslint-plugin-detox": "1.0.0",

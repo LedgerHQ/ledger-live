@@ -1,5 +1,5 @@
 import React from "react";
-import { render, waitFor, act } from "@tests/test-renderer";
+import { render, waitFor, act, screen } from "@tests/test-renderer";
 import {
   ModularDrawerSharedNavigator,
   WITHOUT_ACCOUNT_SELECTION,
@@ -191,10 +191,13 @@ describe("ModularDrawer integration", () => {
   it("should display generic error when a Backend error occurs", async () => {
     server.use(http.get("https://dada.api.ledger.com/v1/assets", () => HttpResponse.error()));
     const { getByText, user } = render(<ModularDrawerSharedNavigator />);
+    advanceTimers();
 
     await user.press(getByText(WITHOUT_ACCOUNT_SELECTION));
 
-    expect(getByText(/Something went wrong on our end. Please try again later/i)).toBeVisible();
+    expect(
+      await screen.findByText(/Something went wrong on our end\. Please try again later/i),
+    ).toBeVisible();
   });
 
   it("should display generic error when an internet error occurs", async () => {

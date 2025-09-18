@@ -7,7 +7,8 @@ import type {
 } from "@ledgerhq/coin-framework/api/index";
 import { ApiFeeData, ApiGasOptions, FeeData, GasOptions, TransactionTypes } from "../types";
 import { getGasTracker } from "../network/gasTracker";
-import { prepareUnsignedTxParams } from "./common";
+import { isEthAddress } from "../utils";
+import { prepareUnsignedTxParams, isEip55Address } from "./common";
 
 function toApiFeeData(feeData: FeeData): ApiFeeData {
   return {
@@ -31,6 +32,10 @@ export async function estimateFees(
   currency: CryptoCurrency,
   transactionIntent: TransactionIntent<MemoNotSupported>,
 ): Promise<FeeEstimation> {
+  if (!isEthAddress(transactionIntent.recipient) || !isEip55Address(transactionIntent.recipient)) {
+    return { value: 0n };
+  }
+
   const { type, gasLimit, feeData } = await prepareUnsignedTxParams(currency, transactionIntent);
 
   const gasTracker = getGasTracker(currency);
