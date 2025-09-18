@@ -29,6 +29,7 @@ import { SettingsPage } from "./settings.page";
 import { SpeculosPage } from "./speculos.page";
 import { SwapConfirmationDrawer } from "./drawer/swap.confirmation.drawer";
 import { SwapPage } from "./swap.page";
+import { MemoTagPage } from "./memoTag.page";
 
 export class Application extends PageHolder {
   public account = new AccountPage(this.page);
@@ -61,4 +62,5 @@ export class Application extends PageHolder {
   public speculos = new SpeculosPage(this.page);
   public swap = new SwapPage(this.page);
   public swapDrawer = new SwapConfirmationDrawer(this.page);
+  public memoTag = new MemoTagPage(this.page);
 }

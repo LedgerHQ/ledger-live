@@ -10,6 +10,7 @@ type LearnMoreCtaProps = {
   style?: React.CSSProperties;
   Icon?: React.ComponentType<{ size: number; color?: string }>;
   url: string;
+  "data-testid"?: string;
 };
 
 const LearnMoreCta = ({
@@ -18,6 +19,7 @@ const LearnMoreCta = ({
   style,
   Icon,
   url,
+  "data-testid": dataTestId,
 }: LearnMoreCtaProps) => {
   const localizedUrl = useLocalizedUrl(url);
 
@@ -32,6 +34,7 @@ const LearnMoreCta = ({
       onClick={handleOpenLMLink}
       style={style}
       {...(Icon && { Icon })}
+      {...(dataTestId && { "data-testid": dataTestId })}
     >
       <Trans i18nKey="common.memoTag.learnMore" />
     </Link>

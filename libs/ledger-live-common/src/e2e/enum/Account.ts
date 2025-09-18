@@ -503,6 +503,9 @@ export class Account {
     1,
   );
 
+  static readonly HBAR_1 = new Account(Currency.HBAR, "Hedera 1", "0.0.1234567", 0);
+  static readonly HBAR_2 = new Account(Currency.HBAR, "Hedera 2", "0.0.7654321", 1);
+
   static readonly EMPTY = new Account(Currency.BTC, "Empty", "", 0);
 }
 

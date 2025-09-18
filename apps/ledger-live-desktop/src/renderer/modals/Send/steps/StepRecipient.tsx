@@ -1,3 +1,4 @@
+
 import React from "react";
 import { getStuckAccountAndOperation } from "@ledgerhq/live-common/operation";
 import { Trans } from "react-i18next";
@@ -206,9 +207,13 @@ export const StepRecipientFooter = ({
   };
 
   return isMemoTagBoxVisibile && lldMemoTag?.enabled ? (
-    <Flex justifyContent="space-between" width="100%">
+    <Flex justifyContent="space-between" width="100%" data-testid="memo-tag-intermediate-screen">
       <Flex alignItems="center">
-        <CheckBox isChecked={!alwaysShowMemoTagInfo} onChange={handleOnCheckboxChange} />
+        <CheckBox
+          isChecked={!alwaysShowMemoTagInfo}
+          onChange={handleOnCheckboxChange}
+          data-testid="memo-tag-show-again-checkbox"
+        />
         <Text
           ff="Inter|SemiBold"
           fontSize={4}
@@ -222,10 +227,10 @@ export const StepRecipientFooter = ({
         </Text>
       </Flex>
       <Flex columnGap={2}>
-        <Button secondary onClick={handleOnRefuseAddTag}>
+        <Button secondary onClick={handleOnRefuseAddTag} data-testid="memo-tag-dont-add-button">
           {t("send.info.needMemoTag.cta.not.addTag")}
         </Button>
-        <Button primary onClick={handleOnAddTag}>
+        <Button primary onClick={handleOnAddTag} data-testid="memo-tag-add-button">
           {t("send.info.needMemoTag.cta.addTag")}
         </Button>
       </Flex>
