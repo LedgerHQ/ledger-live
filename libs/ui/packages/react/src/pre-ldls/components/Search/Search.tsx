@@ -2,6 +2,17 @@ import React, { ChangeEvent, useEffect, useMemo, useRef } from "react";
 import { Icons } from "../../../assets";
 import { useDebouncedCallback } from "../../hooks";
 import { Input } from "..";
+import styled from "styled-components";
+import { withTokens } from "../../libs";
+
+const Wrapper = styled.div`
+  ${withTokens("colors-border-active-default", "radius-s")}
+
+  :focus-within {
+    box-shadow: inset 0 0 0 2px var(--colors-border-active-default);
+  }
+  border-radius: var(--radius-s, 8px);
+`;
 
 type InputProps = React.ComponentProps<"input">;
 type Props = Readonly<
@@ -53,11 +64,13 @@ export function Search({
   }, [handleDebouncedChange, onChange]);
 
   return (
-    <Input
-      {...props}
-      ref={searchInputRef}
-      icon={<Icons.Search size="S" />}
-      onChange={handleChange}
-    />
+    <Wrapper>
+      <Input
+        {...props}
+        ref={searchInputRef}
+        icon={<Icons.Search size="S" />}
+        onChange={handleChange}
+      />
+    </Wrapper>
   );
 }
