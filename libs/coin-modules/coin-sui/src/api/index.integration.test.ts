@@ -53,12 +53,18 @@ describe("Sui Api", () => {
 
       expect(operations1.length).toBeGreaterThan(2);
       expect(token1).toBeTruthy();
+
       const [operations2, _] = await module.listOperations(binance, {
         ...baseOpts,
         lastPagingToken: token1,
       });
       expect(operations2.length).toBeGreaterThan(2);
       expect(operations2[0].tx.hash).not.toBe(operations1[0].tx.hash);
+
+      // check that none of the operations in operations2 are in operations1
+      expect(
+        operations2.every(op2 => !operations1.some(op1 => op1.tx.hash === op2.tx.hash)),
+      ).toBeTruthy();
     }
 
     it("should fetch operations successfully in desc order", async () => {
