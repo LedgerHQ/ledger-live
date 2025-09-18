@@ -47,6 +47,7 @@ export function useModularDrawerData({
           asset: {
             ...data.cryptoAssets[currencyId],
             id: firstNetworkId,
+            metaCurrencyId: currencyId,
           },
           networks: Object.values(data.cryptoAssets[currencyId].assetsIds)
             .map(assetId => data.cryptoOrTokenCurrencies[assetId])
@@ -67,6 +68,7 @@ export function useModularDrawerData({
         .map(network => findCryptoCurrencyById(network.id) ?? findTokenById(network.id))
         .filter((currency): currency is NonNullable<typeof currency> => currency !== undefined),
       providerId: assetData.asset.id,
+      metaCurrencyId: assetData.asset.metaCurrencyId,
     }));
   }, [assetsSorted, data]);
 
