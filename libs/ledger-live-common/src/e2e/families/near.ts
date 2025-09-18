@@ -1,11 +1,16 @@
 import expect from "expect";
 import { Delegate } from "../models/Delegate";
-import { pressBoth, pressUntilTextFound, waitFor, containsSubstringInEvent } from "../speculos";
+import {
+  pressBoth,
+  pressUntilTextFound,
+  waitFor,
+  containsSubstringInEvent,
+  getDelegateEvents,
+} from "../speculos";
 import { DeviceLabels } from "../enum/DeviceLabels";
 
 export async function delegateNear(delegatingAccount: Delegate) {
-  await waitFor(DeviceLabels.VIEW_HEADER);
-  const events = await pressUntilTextFound(DeviceLabels.CONTINUE_TO_ACTION);
+  const events = await getDelegateEvents(delegatingAccount);
   const isProviderCorrect = containsSubstringInEvent(delegatingAccount.provider, events);
   expect(isProviderCorrect).toBeTruthy();
   await pressBoth();

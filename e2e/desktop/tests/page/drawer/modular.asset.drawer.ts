@@ -5,7 +5,7 @@ import { Drawer } from "../../component/drawer.component";
 export class ModularAssetDrawer extends Drawer {
   private searchInputTestId = "modular-asset-drawer-search-input";
   private modularAssetSelectorContainer = this.page.getByTestId(
-    "modular-asset-selection-container",
+    "modular-drawer-screen-ASSET_SELECTION",
   );
   private searchInput = this.page.getByTestId(this.searchInputTestId);
   private drawerCloseButton = this.page.getByTestId("mad-close-button");

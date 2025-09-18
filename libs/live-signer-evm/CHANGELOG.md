@@ -1,62 +1,20 @@
 # @ledgerhq/live-signer-evm
 
-## 0.7.5-nightly.7
+## 0.7.5
 
 ### Patch Changes
 
-- Updated dependencies [[`7d23713`](https://github.com/LedgerHQ/ledger-live/commit/7d23713789ff91bd93d0cdba7dbed27e4efec6ce)]:
-  - @ledgerhq/coin-evm@2.30.0-nightly.6
+- Updated dependencies [[`776fae2`](https://github.com/LedgerHQ/ledger-live/commit/776fae24bf98f4695ea729885259e6b1b0a2fc14), [`2b896f9`](https://github.com/LedgerHQ/ledger-live/commit/2b896f94d6fc53ef965ed567489ad96d913466d4), [`2482195`](https://github.com/LedgerHQ/ledger-live/commit/24821957c838a304be60ff6e16798ef3cac987cd), [`89fc31e`](https://github.com/LedgerHQ/ledger-live/commit/89fc31e8ecfc5e2fd679a2694b3514f8fb19d7b7), [`4835688`](https://github.com/LedgerHQ/ledger-live/commit/48356882efadc15ed59f608e01b44cdcbc6637fb), [`3489203`](https://github.com/LedgerHQ/ledger-live/commit/34892030dcfbd1a19a0eb0a8fcae9f8f01d3d2a9)]:
+  - @ledgerhq/coin-evm@2.30.0
+  - @ledgerhq/hw-app-eth@6.45.18
 
-## 0.7.5-nightly.6
-
-### Patch Changes
-
-- [#11779](https://github.com/LedgerHQ/ledger-live/pull/11779) [`d93c0aa`](https://github.com/LedgerHQ/ledger-live/commit/d93c0aab902bfba5b36ebdf707e88b5d3453dacb) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Update Device Management Kit to 0.9.0 (and associated libs)
-
-## 0.7.5-nightly.5
+## 0.7.5-next.0
 
 ### Patch Changes
 
-- Updated dependencies []:
-  - @ledgerhq/coin-evm@2.30.0-nightly.5
-
-## 0.7.5-nightly.4
-
-### Patch Changes
-
-- Updated dependencies []:
-  - @ledgerhq/coin-evm@2.30.0-nightly.4
-  - @ledgerhq/hw-app-eth@6.45.18-nightly.2
-
-## 0.7.5-nightly.3
-
-### Patch Changes
-
-- Updated dependencies [[`f8092e3`](https://github.com/LedgerHQ/ledger-live/commit/f8092e3b3b5df2e4a7b8ba9f83d393701854d7f7)]:
-  - @ledgerhq/coin-evm@2.30.0-nightly.3
-
-## 0.7.5-nightly.2
-
-### Patch Changes
-
-- Updated dependencies []:
-  - @ledgerhq/coin-evm@2.30.0-nightly.2
-  - @ledgerhq/hw-app-eth@6.45.18-nightly.1
-
-## 0.7.5-nightly.1
-
-### Patch Changes
-
-- Updated dependencies [[`2b896f9`](https://github.com/LedgerHQ/ledger-live/commit/2b896f94d6fc53ef965ed567489ad96d913466d4), [`4835688`](https://github.com/LedgerHQ/ledger-live/commit/48356882efadc15ed59f608e01b44cdcbc6637fb)]:
-  - @ledgerhq/coin-evm@2.30.0-nightly.1
-  - @ledgerhq/hw-app-eth@6.45.18-nightly.0
-
-## 0.7.5-nightly.0
-
-### Patch Changes
-
-- Updated dependencies []:
-  - @ledgerhq/coin-evm@2.29.1-nightly.0
+- Updated dependencies [[`776fae2`](https://github.com/LedgerHQ/ledger-live/commit/776fae24bf98f4695ea729885259e6b1b0a2fc14), [`2b896f9`](https://github.com/LedgerHQ/ledger-live/commit/2b896f94d6fc53ef965ed567489ad96d913466d4), [`2482195`](https://github.com/LedgerHQ/ledger-live/commit/24821957c838a304be60ff6e16798ef3cac987cd), [`89fc31e`](https://github.com/LedgerHQ/ledger-live/commit/89fc31e8ecfc5e2fd679a2694b3514f8fb19d7b7), [`4835688`](https://github.com/LedgerHQ/ledger-live/commit/48356882efadc15ed59f608e01b44cdcbc6637fb), [`3489203`](https://github.com/LedgerHQ/ledger-live/commit/34892030dcfbd1a19a0eb0a8fcae9f8f01d3d2a9)]:
+  - @ledgerhq/coin-evm@2.30.0-next.0
+  - @ledgerhq/hw-app-eth@6.45.18-next.0
 
 ## 0.7.4
 

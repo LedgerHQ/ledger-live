@@ -1,12 +1,10 @@
-import { pressBoth, pressUntilTextFound, waitFor, containsSubstringInEvent } from "../speculos";
-import { DeviceLabels } from "../enum/DeviceLabels";
+import { pressBoth, containsSubstringInEvent, getDelegateEvents } from "../speculos";
 import { Delegate } from "../models/Delegate";
 import expect from "expect";
 
-export async function delegateCelo(tx: Delegate) {
-  await waitFor(DeviceLabels.REVIEW_OPERATION);
-  const events = await pressUntilTextFound(DeviceLabels.ACCEPT);
-  const isAmountCorrect = containsSubstringInEvent(tx.amount, events);
+export async function delegateCelo(delegatingAccount: Delegate) {
+  const events = await getDelegateEvents(delegatingAccount);
+  const isAmountCorrect = containsSubstringInEvent(delegatingAccount.amount, events);
   expect(isAmountCorrect).toBeTruthy();
   await pressBoth();
 }

@@ -1,89 +1,66 @@
 # @ledgerhq/coin-canton
 
-## 0.5.0-nightly.6
-
-### Patch Changes
-
-- [#11831](https://github.com/LedgerHQ/ledger-live/pull/11831) [`a3bf70e`](https://github.com/LedgerHQ/ledger-live/commit/a3bf70ea59fc31277a170d4cb5530f2f58d0a2ab) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Update fee canton
-
-- [#11830](https://github.com/LedgerHQ/ledger-live/pull/11830) [`6c7ede3`](https://github.com/LedgerHQ/ledger-live/commit/6c7ede327fcfa0f87ffdb9684da4e3b95612643c) Thanks [@jonezque](https://github.com/jonezque)! - canton: removed comment label from send window, fixed account recreation
-
-## 0.5.0-nightly.5
+## 0.5.0
 
 ### Minor Changes
 
-- [#11799](https://github.com/LedgerHQ/ledger-live/pull/11799) [`65c128a`](https://github.com/LedgerHQ/ledger-live/commit/65c128a93f07857b421bed3696bc9984f860ada9) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Canton memo
+- [#11591](https://github.com/LedgerHQ/ledger-live/pull/11591) [`284a2c7`](https://github.com/LedgerHQ/ledger-live/commit/284a2c7f571c8d8e622ba60bef24d186ce42605d) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - coin-canton broadcast
 
-### Patch Changes
-
-- Updated dependencies [[`65c128a`](https://github.com/LedgerHQ/ledger-live/commit/65c128a93f07857b421bed3696bc9984f860ada9)]:
-  - @ledgerhq/cryptoassets@13.28.0-nightly.3
-  - @ledgerhq/coin-framework@6.4.0-nightly.5
-
-## 0.5.0-nightly.4
-
-### Patch Changes
-
-- [#11769](https://github.com/LedgerHQ/ledger-live/pull/11769) [`6941aac`](https://github.com/LedgerHQ/ledger-live/commit/6941aac638dcc8d4fb03aa92f42d2a71d4089202) Thanks [@ishaba](https://github.com/ishaba)! - fix canton receive flow
-
-- [#11783](https://github.com/LedgerHQ/ledger-live/pull/11783) [`fcb6dd3`](https://github.com/LedgerHQ/ledger-live/commit/fcb6dd3701373df22fba0e94bdbe04a3e730dffd) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - fee on firebase canton
-
-- Updated dependencies [[`9b8689a`](https://github.com/LedgerHQ/ledger-live/commit/9b8689ae2c44bdeccae26378e05cbf6899b83aec), [`6941aac`](https://github.com/LedgerHQ/ledger-live/commit/6941aac638dcc8d4fb03aa92f42d2a71d4089202)]:
-  - @ledgerhq/types-live@6.84.0-nightly.1
-  - @ledgerhq/coin-framework@6.4.0-nightly.4
-
-## 0.5.0-nightly.3
-
-### Patch Changes
-
-- [#11756](https://github.com/LedgerHQ/ledger-live/pull/11756) [`2d747cf`](https://github.com/LedgerHQ/ledger-live/commit/2d747cf63f120a6634c2e2adbe60c4e94d37fc71) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Canton send support
-
-- Updated dependencies [[`d56bebe`](https://github.com/LedgerHQ/ledger-live/commit/d56bebe672a1ed825697b371662dbff19dcc63d8)]:
-  - @ledgerhq/cryptoassets@13.28.0-nightly.2
-  - @ledgerhq/coin-framework@6.4.0-nightly.3
-  - @ledgerhq/types-live@6.83.1-nightly.0
-
-## 0.5.0-nightly.2
-
-### Minor Changes
-
-- [#11722](https://github.com/LedgerHQ/ledger-live/pull/11722) [`a87922d`](https://github.com/LedgerHQ/ledger-live/commit/a87922dc99e4f2e4b40a46fd52ad08a71012fe94) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Add canton onboard ui flow
-
-### Patch Changes
-
-- [#11717](https://github.com/LedgerHQ/ledger-live/pull/11717) [`aaa16b7`](https://github.com/LedgerHQ/ledger-live/commit/aaa16b718454dca51d59bb138ab1a638dc4b8243) Thanks [@ishaba](https://github.com/ishaba)! - add canton api key
-
-- [#11596](https://github.com/LedgerHQ/ledger-live/pull/11596) [`075cdb4`](https://github.com/LedgerHQ/ledger-live/commit/075cdb4975a584e2b6f715fc6db4d364c0997848) Thanks [@jonezque](https://github.com/jonezque)! - feat: craft transaction for canton alpaca
-
-- [#11729](https://github.com/LedgerHQ/ledger-live/pull/11729) [`4a0b0c6`](https://github.com/LedgerHQ/ledger-live/commit/4a0b0c629e147f680cac0d0f3854834dd3dbb0bd) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - add locked balance calculation and update sync integration tests
-
-- Updated dependencies [[`aaa16b7`](https://github.com/LedgerHQ/ledger-live/commit/aaa16b718454dca51d59bb138ab1a638dc4b8243), [`0108eaf`](https://github.com/LedgerHQ/ledger-live/commit/0108eafb64e36ce68f44e03cc3f66ccdb5ee5a92), [`a87922d`](https://github.com/LedgerHQ/ledger-live/commit/a87922dc99e4f2e4b40a46fd52ad08a71012fe94)]:
-  - @ledgerhq/live-env@2.16.0-nightly.1
-  - @ledgerhq/cryptoassets@13.28.0-nightly.1
-  - @ledgerhq/types-live@6.83.1-nightly.0
-  - @ledgerhq/coin-framework@6.4.0-nightly.2
-  - @ledgerhq/live-network@2.0.17-nightly.1
-
-## 0.5.0-nightly.1
-
-### Minor Changes
+- [#11542](https://github.com/LedgerHQ/ledger-live/pull/11542) [`c1209a7`](https://github.com/LedgerHQ/ledger-live/commit/c1209a70f6362fe8a52139ad5ad0b4705aac00fb) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Canton getbalance
 
 - [#11699](https://github.com/LedgerHQ/ledger-live/pull/11699) [`2b896f9`](https://github.com/LedgerHQ/ledger-live/commit/2b896f94d6fc53ef965ed567489ad96d913466d4) Thanks [@jnicoulaud-ledger](https://github.com/jnicoulaud-ledger)! - feat(BACK-9645): add support for returning details in AlpacaApi.craftTransaction
 
+- [#11531](https://github.com/LedgerHQ/ledger-live/pull/11531) [`58ef394`](https://github.com/LedgerHQ/ledger-live/commit/58ef39468870e56745a3a4bc95a1292a1e1f64ca) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Move lastblock canton to gateway
+
+- [#11273](https://github.com/LedgerHQ/ledger-live/pull/11273) [`2482195`](https://github.com/LedgerHQ/ledger-live/commit/24821957c838a304be60ff6e16798ef3cac987cd) Thanks [@estrauser-ledger](https://github.com/estrauser-ledger)! - add cursor to pagintion api
+
+- [#11610](https://github.com/LedgerHQ/ledger-live/pull/11610) [`0dfba50`](https://github.com/LedgerHQ/ledger-live/commit/0dfba503a0e3c4d8ae8e32489499e3174b1741b8) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - coin-canton adapt getbalance
+
+- [#11722](https://github.com/LedgerHQ/ledger-live/pull/11722) [`a87922d`](https://github.com/LedgerHQ/ledger-live/commit/a87922dc99e4f2e4b40a46fd52ad08a71012fe94) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Add canton onboard ui flow
+
+- [#11574](https://github.com/LedgerHQ/ledger-live/pull/11574) [`485bf49`](https://github.com/LedgerHQ/ledger-live/commit/485bf494470d96313fd89c92b8e9a74270acd419) Thanks [@sprohaszka-ledger](https://github.com/sprohaszka-ledger)! - Add Canton combine function
+
+- [#11554](https://github.com/LedgerHQ/ledger-live/pull/11554) [`e8a0185`](https://github.com/LedgerHQ/ledger-live/commit/e8a01854e07d313659f9740843731e97601cf41d) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - List operations canton
+
 ### Patch Changes
 
-- Updated dependencies [[`2b896f9`](https://github.com/LedgerHQ/ledger-live/commit/2b896f94d6fc53ef965ed567489ad96d913466d4), [`338d979`](https://github.com/LedgerHQ/ledger-live/commit/338d979bae349b185c52b1d8c9f6718a3d142526), [`b27c96c`](https://github.com/LedgerHQ/ledger-live/commit/b27c96ccbcefb1982a40688a8385209eac99165a)]:
-  - @ledgerhq/coin-framework@6.4.0-nightly.1
-  - @ledgerhq/cryptoassets@13.28.0-nightly.0
-  - @ledgerhq/live-env@2.16.0-nightly.0
-  - @ledgerhq/live-network@2.0.17-nightly.0
+- Updated dependencies [[`2b896f9`](https://github.com/LedgerHQ/ledger-live/commit/2b896f94d6fc53ef965ed567489ad96d913466d4), [`338d979`](https://github.com/LedgerHQ/ledger-live/commit/338d979bae349b185c52b1d8c9f6718a3d142526), [`2482195`](https://github.com/LedgerHQ/ledger-live/commit/24821957c838a304be60ff6e16798ef3cac987cd), [`228ed30`](https://github.com/LedgerHQ/ledger-live/commit/228ed3030601644e807e85a1693276b788b5cd2a), [`e52268a`](https://github.com/LedgerHQ/ledger-live/commit/e52268a3bc7d97a7ed09ed082786a647e048a6e8), [`89fc31e`](https://github.com/LedgerHQ/ledger-live/commit/89fc31e8ecfc5e2fd679a2694b3514f8fb19d7b7), [`ff22728`](https://github.com/LedgerHQ/ledger-live/commit/ff22728a61ab2cde6835991bf8ed115d4a39a1d0), [`c190e2b`](https://github.com/LedgerHQ/ledger-live/commit/c190e2b104a9dd0dd693c2d72433b98115f4089f), [`a87922d`](https://github.com/LedgerHQ/ledger-live/commit/a87922dc99e4f2e4b40a46fd52ad08a71012fe94), [`80a109a`](https://github.com/LedgerHQ/ledger-live/commit/80a109a5f8ecdbb22cf6fb3ec084398a7e54dcfb), [`3489203`](https://github.com/LedgerHQ/ledger-live/commit/34892030dcfbd1a19a0eb0a8fcae9f8f01d3d2a9), [`b27c96c`](https://github.com/LedgerHQ/ledger-live/commit/b27c96ccbcefb1982a40688a8385209eac99165a)]:
+  - @ledgerhq/coin-framework@6.4.0
+  - @ledgerhq/cryptoassets@13.28.0
+  - @ledgerhq/types-live@6.84.0
+  - @ledgerhq/live-env@2.16.0
+  - @ledgerhq/live-network@2.0.17
 
-## 0.4.1-nightly.0
+## 0.5.0-next.0
+
+### Minor Changes
+
+- [#11591](https://github.com/LedgerHQ/ledger-live/pull/11591) [`284a2c7`](https://github.com/LedgerHQ/ledger-live/commit/284a2c7f571c8d8e622ba60bef24d186ce42605d) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - coin-canton broadcast
+
+- [#11542](https://github.com/LedgerHQ/ledger-live/pull/11542) [`c1209a7`](https://github.com/LedgerHQ/ledger-live/commit/c1209a70f6362fe8a52139ad5ad0b4705aac00fb) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Canton getbalance
+
+- [#11699](https://github.com/LedgerHQ/ledger-live/pull/11699) [`2b896f9`](https://github.com/LedgerHQ/ledger-live/commit/2b896f94d6fc53ef965ed567489ad96d913466d4) Thanks [@jnicoulaud-ledger](https://github.com/jnicoulaud-ledger)! - feat(BACK-9645): add support for returning details in AlpacaApi.craftTransaction
+
+- [#11531](https://github.com/LedgerHQ/ledger-live/pull/11531) [`58ef394`](https://github.com/LedgerHQ/ledger-live/commit/58ef39468870e56745a3a4bc95a1292a1e1f64ca) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Move lastblock canton to gateway
+
+- [#11273](https://github.com/LedgerHQ/ledger-live/pull/11273) [`2482195`](https://github.com/LedgerHQ/ledger-live/commit/24821957c838a304be60ff6e16798ef3cac987cd) Thanks [@estrauser-ledger](https://github.com/estrauser-ledger)! - add cursor to pagintion api
+
+- [#11610](https://github.com/LedgerHQ/ledger-live/pull/11610) [`0dfba50`](https://github.com/LedgerHQ/ledger-live/commit/0dfba503a0e3c4d8ae8e32489499e3174b1741b8) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - coin-canton adapt getbalance
+
+- [#11722](https://github.com/LedgerHQ/ledger-live/pull/11722) [`a87922d`](https://github.com/LedgerHQ/ledger-live/commit/a87922dc99e4f2e4b40a46fd52ad08a71012fe94) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Add canton onboard ui flow
+
+- [#11574](https://github.com/LedgerHQ/ledger-live/pull/11574) [`485bf49`](https://github.com/LedgerHQ/ledger-live/commit/485bf494470d96313fd89c92b8e9a74270acd419) Thanks [@sprohaszka-ledger](https://github.com/sprohaszka-ledger)! - Add Canton combine function
+
+- [#11554](https://github.com/LedgerHQ/ledger-live/pull/11554) [`e8a0185`](https://github.com/LedgerHQ/ledger-live/commit/e8a01854e07d313659f9740843731e97601cf41d) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - List operations canton
 
 ### Patch Changes
 
-- Updated dependencies [[`c190e2b`](https://github.com/LedgerHQ/ledger-live/commit/c190e2b104a9dd0dd693c2d72433b98115f4089f)]:
-  - @ledgerhq/coin-framework@6.4.0-nightly.0
+- Updated dependencies [[`2b896f9`](https://github.com/LedgerHQ/ledger-live/commit/2b896f94d6fc53ef965ed567489ad96d913466d4), [`338d979`](https://github.com/LedgerHQ/ledger-live/commit/338d979bae349b185c52b1d8c9f6718a3d142526), [`2482195`](https://github.com/LedgerHQ/ledger-live/commit/24821957c838a304be60ff6e16798ef3cac987cd), [`228ed30`](https://github.com/LedgerHQ/ledger-live/commit/228ed3030601644e807e85a1693276b788b5cd2a), [`e52268a`](https://github.com/LedgerHQ/ledger-live/commit/e52268a3bc7d97a7ed09ed082786a647e048a6e8), [`89fc31e`](https://github.com/LedgerHQ/ledger-live/commit/89fc31e8ecfc5e2fd679a2694b3514f8fb19d7b7), [`ff22728`](https://github.com/LedgerHQ/ledger-live/commit/ff22728a61ab2cde6835991bf8ed115d4a39a1d0), [`c190e2b`](https://github.com/LedgerHQ/ledger-live/commit/c190e2b104a9dd0dd693c2d72433b98115f4089f), [`a87922d`](https://github.com/LedgerHQ/ledger-live/commit/a87922dc99e4f2e4b40a46fd52ad08a71012fe94), [`80a109a`](https://github.com/LedgerHQ/ledger-live/commit/80a109a5f8ecdbb22cf6fb3ec084398a7e54dcfb), [`3489203`](https://github.com/LedgerHQ/ledger-live/commit/34892030dcfbd1a19a0eb0a8fcae9f8f01d3d2a9), [`b27c96c`](https://github.com/LedgerHQ/ledger-live/commit/b27c96ccbcefb1982a40688a8385209eac99165a)]:
+  - @ledgerhq/coin-framework@6.4.0-next.0
+  - @ledgerhq/cryptoassets@13.28.0-next.0
+  - @ledgerhq/types-live@6.84.0-next.0
+  - @ledgerhq/live-env@2.16.0-next.0
+  - @ledgerhq/live-network@2.0.17-next.0
 
 ## 0.4.0
 

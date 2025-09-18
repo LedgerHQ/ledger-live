@@ -12,7 +12,7 @@ import { BaseNavigatorStackParamList } from "../RootNavigator/types/BaseNavigato
 import { StackNavigatorNavigation } from "../RootNavigator/types/helpers";
 import { TrackScreen } from "~/analytics";
 import DeviceAction from "../DeviceAction";
-import { useStaxRemoveImageDeviceAction } from "~/hooks/deviceActions";
+import { useRemoveImageDeviceAction } from "~/hooks/deviceActions";
 import { type CLSSupportedDeviceModelId } from "@ledgerhq/live-common/device/use-cases/isCustomLockScreenSupported";
 import { HOOKS_TRACKING_LOCATIONS } from "~/analytics/hooks/variables";
 import { useToastsActions } from "~/actions/toast";
@@ -116,7 +116,7 @@ const CustomImageBottomModal: React.FC<Props> = props => {
     [setDeviceHasImage],
   );
 
-  const action = useStaxRemoveImageDeviceAction();
+  const action = useRemoveImageDeviceAction();
 
   return (
     <QueuedDrawer

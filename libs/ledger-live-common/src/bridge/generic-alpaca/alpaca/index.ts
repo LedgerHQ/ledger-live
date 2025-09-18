@@ -26,7 +26,10 @@ export function getAlpacaApi(network: string, kind: string): Api<any> {
       case "tron":
         return createTronApi(getCurrencyConfiguration<TronCoinConfig>(currency)) as Api<any>;
       case "evm":
-        return createEvmApi(getCurrencyConfiguration<EvmConfigInfo>(currency), network) as Api<any>;
+        return createEvmApi(
+          getCurrencyConfiguration<EvmConfigInfo>(currency),
+          currency.id,
+        ) as Api<any>;
     }
   }
   return getNetworkAlpacaApi(network) satisfies Partial<Api<any>>;

@@ -1,27 +1,6 @@
 # @ledgerhq/cryptoassets
 
-## 13.28.0-nightly.3
-
-### Minor Changes
-
-- [#11799](https://github.com/LedgerHQ/ledger-live/pull/11799) [`65c128a`](https://github.com/LedgerHQ/ledger-live/commit/65c128a93f07857b421bed3696bc9984f860ada9) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Canton memo
-
-## 13.28.0-nightly.2
-
-### Minor Changes
-
-- [#11672](https://github.com/LedgerHQ/ledger-live/pull/11672) [`d56bebe`](https://github.com/LedgerHQ/ledger-live/commit/d56bebe672a1ed825697b371662dbff19dcc63d8) Thanks [@semeano](https://github.com/semeano)! - Kaspa commons libs
-
-## 13.28.0-nightly.1
-
-### Patch Changes
-
-- [#11747](https://github.com/LedgerHQ/ledger-live/pull/11747) [`0108eaf`](https://github.com/LedgerHQ/ledger-live/commit/0108eafb64e36ce68f44e03cc3f66ccdb5ee5a92) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Update IOTA ticker
-
-- Updated dependencies [[`aaa16b7`](https://github.com/LedgerHQ/ledger-live/commit/aaa16b718454dca51d59bb138ab1a638dc4b8243)]:
-  - @ledgerhq/live-env@2.16.0-nightly.1
-
-## 13.28.0-nightly.0
+## 13.28.0
 
 ### Minor Changes
 
@@ -29,8 +8,19 @@
 
 ### Patch Changes
 
-- Updated dependencies [[`b27c96c`](https://github.com/LedgerHQ/ledger-live/commit/b27c96ccbcefb1982a40688a8385209eac99165a)]:
-  - @ledgerhq/live-env@2.16.0-nightly.0
+- Updated dependencies [[`e52268a`](https://github.com/LedgerHQ/ledger-live/commit/e52268a3bc7d97a7ed09ed082786a647e048a6e8), [`b27c96c`](https://github.com/LedgerHQ/ledger-live/commit/b27c96ccbcefb1982a40688a8385209eac99165a)]:
+  - @ledgerhq/live-env@2.16.0
+
+## 13.28.0-next.0
+
+### Minor Changes
+
+- [#11682](https://github.com/LedgerHQ/ledger-live/pull/11682) [`338d979`](https://github.com/LedgerHQ/ledger-live/commit/338d979bae349b185c52b1d8c9f6718a3d142526) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Update canton explorer link
+
+### Patch Changes
+
+- Updated dependencies [[`e52268a`](https://github.com/LedgerHQ/ledger-live/commit/e52268a3bc7d97a7ed09ed082786a647e048a6e8), [`b27c96c`](https://github.com/LedgerHQ/ledger-live/commit/b27c96ccbcefb1982a40688a8385209eac99165a)]:
+  - @ledgerhq/live-env@2.16.0-next.0
 
 ## 13.27.0
 

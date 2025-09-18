@@ -1,14 +1,18 @@
 # @ledgerhq/live-env
 
-## 2.16.0-nightly.1
-
-### Patch Changes
-
-- [#11717](https://github.com/LedgerHQ/ledger-live/pull/11717) [`aaa16b7`](https://github.com/LedgerHQ/ledger-live/commit/aaa16b718454dca51d59bb138ab1a638dc4b8243) Thanks [@ishaba](https://github.com/ishaba)! - add canton api key
-
-## 2.16.0-nightly.0
+## 2.16.0
 
 ### Minor Changes
+
+- [#11562](https://github.com/LedgerHQ/ledger-live/pull/11562) [`e52268a`](https://github.com/LedgerHQ/ledger-live/commit/e52268a3bc7d97a7ed09ed082786a647e048a6e8) Thanks [@semeano](https://github.com/semeano)! - Kaspa coin integration (coin module)
+
+- [#11665](https://github.com/LedgerHQ/ledger-live/pull/11665) [`b27c96c`](https://github.com/LedgerHQ/ledger-live/commit/b27c96ccbcefb1982a40688a8385209eac99165a) Thanks [@semeano](https://github.com/semeano)! - Disable Celo tokens via env var
+
+## 2.16.0-next.0
+
+### Minor Changes
+
+- [#11562](https://github.com/LedgerHQ/ledger-live/pull/11562) [`e52268a`](https://github.com/LedgerHQ/ledger-live/commit/e52268a3bc7d97a7ed09ed082786a647e048a6e8) Thanks [@semeano](https://github.com/semeano)! - Kaspa coin integration (coin module)
 
 - [#11665](https://github.com/LedgerHQ/ledger-live/pull/11665) [`b27c96c`](https://github.com/LedgerHQ/ledger-live/commit/b27c96ccbcefb1982a40688a8385209eac99165a) Thanks [@semeano](https://github.com/semeano)! - Disable Celo tokens via env var
 

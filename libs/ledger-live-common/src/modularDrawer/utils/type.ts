@@ -111,6 +111,8 @@ type Props = {
 
 export type AssetConfigurationDeps = {
   ApyIndicator: (args: { value: number; type: ApyType }) => ReactNode;
+  MarketPercentIndicator: (args: { percent: number }) => ReactNode;
+  MarketPriceIndicator: (args: { price: string; percent: number }) => ReactNode;
   useBalanceDeps: UseBalanceDeps;
   balanceItem: (asset: { fiatValue?: string; balance?: string }) => ReactNode;
 };

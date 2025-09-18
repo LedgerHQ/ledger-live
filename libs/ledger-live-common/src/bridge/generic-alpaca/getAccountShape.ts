@@ -5,11 +5,12 @@ import { getAlpacaApi } from "./alpaca";
 import { adaptCoreOperationToLiveOperation, extractBalance } from "./utils";
 import { inferSubOperations } from "@ledgerhq/coin-framework/serialization";
 import { buildSubAccounts, OperationCommon } from "./buildSubAccounts";
+import { Pagination } from "@ledgerhq/coin-framework/api/types";
 
 export function genericGetAccountShape(network: string, kind: string): GetAccountShape {
   return async (info, syncConfig) => {
     const { address, initialAccount, currency, derivationMode } = info;
-    const alpacaApi = getAlpacaApi(network, kind);
+    const alpacaApi = getAlpacaApi(currency.id, kind);
 
     if (alpacaApi.getChainSpecificRules) {
       const chainSpecificValidation = alpacaApi.getChainSpecificRules();
@@ -41,7 +42,7 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
     const lastPagingToken = oldOps[0]?.extra?.pagingToken || "";
 
     const blockHeight = oldOps.length ? (oldOps[0].blockHeight ?? 0) + 1 : 0;
-    const paginationParams: any = { minHeight: blockHeight, order: "asc" };
+    const paginationParams: Pagination = { minHeight: blockHeight, order: "asc" };
     if (lastPagingToken) {
       paginationParams.lastPagingToken = lastPagingToken;
     }

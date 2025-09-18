@@ -85,6 +85,58 @@ describe("ModularDrawer modules integration", () => {
     expect(queryByText(/3.66% APY/i)).toBeNull();
   });
 
+  it("should display market trend on the left at assetSelection step", async () => {
+    const { getByText, queryAllByText, user } = render(
+      <ModularDrawerSharedNavigator
+        assetsConfiguration={{
+          leftElement: "marketTrend",
+        }}
+      />,
+      {
+        ...INITIAL_STATE,
+        overrideInitialState: (state: State) => ({
+          ...state,
+          settings: {
+            ...state.settings,
+            overriddenFeatureFlags: mockedFF,
+          },
+        }),
+      },
+    );
+    await user.press(getByText(WITHOUT_ACCOUNT_SELECTION));
+    advanceTimers();
+    expect(getByText(/ethereum/i)).toBeVisible();
+    const percentElements = queryAllByText(/[+-]?\d+\.?\d*%/);
+    expect(percentElements.length).toBeGreaterThan(0);
+  });
+
+  it("should display market trend on the right at assetSelection step", async () => {
+    const { getByText, queryAllByText, user } = render(
+      <ModularDrawerSharedNavigator
+        assetsConfiguration={{
+          rightElement: "marketTrend",
+        }}
+      />,
+      {
+        ...INITIAL_STATE,
+        overrideInitialState: (state: State) => ({
+          ...state,
+          settings: {
+            ...state.settings,
+            overriddenFeatureFlags: mockedFF,
+          },
+        }),
+      },
+    );
+    await user.press(getByText(WITHOUT_ACCOUNT_SELECTION));
+    advanceTimers();
+    expect(getByText(/ethereum/i)).toBeVisible();
+    const percentElements = queryAllByText(/[+-]?\d+\.?\d*%/);
+    expect(percentElements.length).toBeGreaterThan(0);
+    const priceElements = queryAllByText(/\$\d+\.?\d*/);
+    expect(priceElements.length).toBeGreaterThan(0);
+  });
+
   it("should display the number of accounts and apy indicator on network list", async () => {
     const { getByText, getAllByText, user } = render(
       <ModularDrawerSharedNavigator

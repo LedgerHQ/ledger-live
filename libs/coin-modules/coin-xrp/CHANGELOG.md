@@ -1,65 +1,44 @@
 # @ledgerhq/coin-xrp
 
-## 7.4.0-nightly.6
-
-### Patch Changes
-
-- Updated dependencies [[`65c128a`](https://github.com/LedgerHQ/ledger-live/commit/65c128a93f07857b421bed3696bc9984f860ada9)]:
-  - @ledgerhq/cryptoassets@13.28.0-nightly.3
-  - @ledgerhq/coin-framework@6.4.0-nightly.5
-
-## 7.4.0-nightly.5
+## 7.4.0
 
 ### Minor Changes
 
-- [#11770](https://github.com/LedgerHQ/ledger-live/pull/11770) [`81a2bc9`](https://github.com/LedgerHQ/ledger-live/commit/81a2bc980d25aec3b2445aa2004aa8a72a60cea1) Thanks [@qperrot](https://github.com/qperrot)! - Prevent negative XRP spendable balance
-
-## 7.4.0-nightly.4
-
-### Patch Changes
-
-- Updated dependencies [[`9b8689a`](https://github.com/LedgerHQ/ledger-live/commit/9b8689ae2c44bdeccae26378e05cbf6899b83aec), [`6941aac`](https://github.com/LedgerHQ/ledger-live/commit/6941aac638dcc8d4fb03aa92f42d2a71d4089202)]:
-  - @ledgerhq/types-live@6.84.0-nightly.1
-  - @ledgerhq/coin-framework@6.4.0-nightly.4
-
-## 7.4.0-nightly.3
-
-### Patch Changes
-
-- Updated dependencies [[`d56bebe`](https://github.com/LedgerHQ/ledger-live/commit/d56bebe672a1ed825697b371662dbff19dcc63d8)]:
-  - @ledgerhq/cryptoassets@13.28.0-nightly.2
-  - @ledgerhq/coin-framework@6.4.0-nightly.3
-  - @ledgerhq/types-live@6.83.1-nightly.0
-
-## 7.4.0-nightly.2
-
-### Patch Changes
-
-- Updated dependencies [[`0108eaf`](https://github.com/LedgerHQ/ledger-live/commit/0108eafb64e36ce68f44e03cc3f66ccdb5ee5a92), [`a87922d`](https://github.com/LedgerHQ/ledger-live/commit/a87922dc99e4f2e4b40a46fd52ad08a71012fe94)]:
-  - @ledgerhq/cryptoassets@13.28.0-nightly.1
-  - @ledgerhq/types-live@6.83.1-nightly.0
-  - @ledgerhq/coin-framework@6.4.0-nightly.2
-  - @ledgerhq/live-network@2.0.17-nightly.1
-
-## 7.4.0-nightly.1
-
-### Minor Changes
+- [#11635](https://github.com/LedgerHQ/ledger-live/pull/11635) [`8e79bfb`](https://github.com/LedgerHQ/ledger-live/commit/8e79bfb5ab1189f27c031f775d7378319774570c) Thanks [@estrauser-ledger](https://github.com/estrauser-ledger)! - fix xrp operations pagination
 
 - [#11699](https://github.com/LedgerHQ/ledger-live/pull/11699) [`2b896f9`](https://github.com/LedgerHQ/ledger-live/commit/2b896f94d6fc53ef965ed567489ad96d913466d4) Thanks [@jnicoulaud-ledger](https://github.com/jnicoulaud-ledger)! - feat(BACK-9645): add support for returning details in AlpacaApi.craftTransaction
 
-### Patch Changes
+- [#11273](https://github.com/LedgerHQ/ledger-live/pull/11273) [`2482195`](https://github.com/LedgerHQ/ledger-live/commit/24821957c838a304be60ff6e16798ef3cac987cd) Thanks [@estrauser-ledger](https://github.com/estrauser-ledger)! - add cursor to pagintion api
 
-- Updated dependencies [[`2b896f9`](https://github.com/LedgerHQ/ledger-live/commit/2b896f94d6fc53ef965ed567489ad96d913466d4), [`338d979`](https://github.com/LedgerHQ/ledger-live/commit/338d979bae349b185c52b1d8c9f6718a3d142526)]:
-  - @ledgerhq/coin-framework@6.4.0-nightly.1
-  - @ledgerhq/cryptoassets@13.28.0-nightly.0
-  - @ledgerhq/live-network@2.0.17-nightly.0
-
-## 7.3.1-nightly.0
+- [#11560](https://github.com/LedgerHQ/ledger-live/pull/11560) [`0432d2a`](https://github.com/LedgerHQ/ledger-live/commit/0432d2aca30d74eb00abdc8427c4c34725f34b13) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Integ tests xrp mainnet + value fix for xrp ops
 
 ### Patch Changes
 
-- Updated dependencies [[`c190e2b`](https://github.com/LedgerHQ/ledger-live/commit/c190e2b104a9dd0dd693c2d72433b98115f4089f)]:
-  - @ledgerhq/coin-framework@6.4.0-nightly.0
+- Updated dependencies [[`2b896f9`](https://github.com/LedgerHQ/ledger-live/commit/2b896f94d6fc53ef965ed567489ad96d913466d4), [`338d979`](https://github.com/LedgerHQ/ledger-live/commit/338d979bae349b185c52b1d8c9f6718a3d142526), [`2482195`](https://github.com/LedgerHQ/ledger-live/commit/24821957c838a304be60ff6e16798ef3cac987cd), [`228ed30`](https://github.com/LedgerHQ/ledger-live/commit/228ed3030601644e807e85a1693276b788b5cd2a), [`89fc31e`](https://github.com/LedgerHQ/ledger-live/commit/89fc31e8ecfc5e2fd679a2694b3514f8fb19d7b7), [`ff22728`](https://github.com/LedgerHQ/ledger-live/commit/ff22728a61ab2cde6835991bf8ed115d4a39a1d0), [`c190e2b`](https://github.com/LedgerHQ/ledger-live/commit/c190e2b104a9dd0dd693c2d72433b98115f4089f), [`a87922d`](https://github.com/LedgerHQ/ledger-live/commit/a87922dc99e4f2e4b40a46fd52ad08a71012fe94), [`80a109a`](https://github.com/LedgerHQ/ledger-live/commit/80a109a5f8ecdbb22cf6fb3ec084398a7e54dcfb), [`3489203`](https://github.com/LedgerHQ/ledger-live/commit/34892030dcfbd1a19a0eb0a8fcae9f8f01d3d2a9)]:
+  - @ledgerhq/coin-framework@6.4.0
+  - @ledgerhq/cryptoassets@13.28.0
+  - @ledgerhq/types-live@6.84.0
+  - @ledgerhq/live-network@2.0.17
+
+## 7.4.0-next.0
+
+### Minor Changes
+
+- [#11635](https://github.com/LedgerHQ/ledger-live/pull/11635) [`8e79bfb`](https://github.com/LedgerHQ/ledger-live/commit/8e79bfb5ab1189f27c031f775d7378319774570c) Thanks [@estrauser-ledger](https://github.com/estrauser-ledger)! - fix xrp operations pagination
+
+- [#11699](https://github.com/LedgerHQ/ledger-live/pull/11699) [`2b896f9`](https://github.com/LedgerHQ/ledger-live/commit/2b896f94d6fc53ef965ed567489ad96d913466d4) Thanks [@jnicoulaud-ledger](https://github.com/jnicoulaud-ledger)! - feat(BACK-9645): add support for returning details in AlpacaApi.craftTransaction
+
+- [#11273](https://github.com/LedgerHQ/ledger-live/pull/11273) [`2482195`](https://github.com/LedgerHQ/ledger-live/commit/24821957c838a304be60ff6e16798ef3cac987cd) Thanks [@estrauser-ledger](https://github.com/estrauser-ledger)! - add cursor to pagintion api
+
+- [#11560](https://github.com/LedgerHQ/ledger-live/pull/11560) [`0432d2a`](https://github.com/LedgerHQ/ledger-live/commit/0432d2aca30d74eb00abdc8427c4c34725f34b13) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Integ tests xrp mainnet + value fix for xrp ops
+
+### Patch Changes
+
+- Updated dependencies [[`2b896f9`](https://github.com/LedgerHQ/ledger-live/commit/2b896f94d6fc53ef965ed567489ad96d913466d4), [`338d979`](https://github.com/LedgerHQ/ledger-live/commit/338d979bae349b185c52b1d8c9f6718a3d142526), [`2482195`](https://github.com/LedgerHQ/ledger-live/commit/24821957c838a304be60ff6e16798ef3cac987cd), [`228ed30`](https://github.com/LedgerHQ/ledger-live/commit/228ed3030601644e807e85a1693276b788b5cd2a), [`89fc31e`](https://github.com/LedgerHQ/ledger-live/commit/89fc31e8ecfc5e2fd679a2694b3514f8fb19d7b7), [`ff22728`](https://github.com/LedgerHQ/ledger-live/commit/ff22728a61ab2cde6835991bf8ed115d4a39a1d0), [`c190e2b`](https://github.com/LedgerHQ/ledger-live/commit/c190e2b104a9dd0dd693c2d72433b98115f4089f), [`a87922d`](https://github.com/LedgerHQ/ledger-live/commit/a87922dc99e4f2e4b40a46fd52ad08a71012fe94), [`80a109a`](https://github.com/LedgerHQ/ledger-live/commit/80a109a5f8ecdbb22cf6fb3ec084398a7e54dcfb), [`3489203`](https://github.com/LedgerHQ/ledger-live/commit/34892030dcfbd1a19a0eb0a8fcae9f8f01d3d2a9)]:
+  - @ledgerhq/coin-framework@6.4.0-next.0
+  - @ledgerhq/cryptoassets@13.28.0-next.0
+  - @ledgerhq/types-live@6.84.0-next.0
+  - @ledgerhq/live-network@2.0.17-next.0
 
 ## 7.3.0
 

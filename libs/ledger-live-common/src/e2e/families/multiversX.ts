@@ -1,8 +1,7 @@
-import { pressBoth, pressUntilTextFound, waitFor } from "../speculos";
-import { DeviceLabels } from "../enum/DeviceLabels";
+import { getDelegateEvents, pressBoth } from "../speculos";
+import { Delegate } from "../models/Delegate";
 
-export async function delegateMultiversX() {
-  await waitFor(DeviceLabels.RECEIVER);
-  await pressUntilTextFound(DeviceLabels.SIGN);
+export async function delegateMultiversX(delegatingAccount: Delegate) {
+  await getDelegateEvents(delegatingAccount);
   await pressBoth();
 }

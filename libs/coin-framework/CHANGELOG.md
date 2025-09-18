@@ -1,61 +1,58 @@
 # @ledgerhq/coin-framework
 
-## 6.4.0-nightly.5
-
-### Patch Changes
-
-- Updated dependencies [[`65c128a`](https://github.com/LedgerHQ/ledger-live/commit/65c128a93f07857b421bed3696bc9984f860ada9)]:
-  - @ledgerhq/cryptoassets@13.28.0-nightly.3
-
-## 6.4.0-nightly.4
-
-### Patch Changes
-
-- [#11769](https://github.com/LedgerHQ/ledger-live/pull/11769) [`6941aac`](https://github.com/LedgerHQ/ledger-live/commit/6941aac638dcc8d4fb03aa92f42d2a71d4089202) Thanks [@ishaba](https://github.com/ishaba)! - fix canton receive flow
-
-- Updated dependencies [[`9b8689a`](https://github.com/LedgerHQ/ledger-live/commit/9b8689ae2c44bdeccae26378e05cbf6899b83aec)]:
-  - @ledgerhq/types-live@6.84.0-nightly.1
-
-## 6.4.0-nightly.3
-
-### Patch Changes
-
-- Updated dependencies [[`d56bebe`](https://github.com/LedgerHQ/ledger-live/commit/d56bebe672a1ed825697b371662dbff19dcc63d8)]:
-  - @ledgerhq/types-cryptoassets@7.27.0-nightly.0
-  - @ledgerhq/cryptoassets@13.28.0-nightly.2
-  - @ledgerhq/types-live@6.83.1-nightly.0
-
-## 6.4.0-nightly.2
-
-### Patch Changes
-
-- [#11722](https://github.com/LedgerHQ/ledger-live/pull/11722) [`a87922d`](https://github.com/LedgerHQ/ledger-live/commit/a87922dc99e4f2e4b40a46fd52ad08a71012fe94) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Add canton onboard ui flow
-
-- Updated dependencies [[`aaa16b7`](https://github.com/LedgerHQ/ledger-live/commit/aaa16b718454dca51d59bb138ab1a638dc4b8243), [`0108eaf`](https://github.com/LedgerHQ/ledger-live/commit/0108eafb64e36ce68f44e03cc3f66ccdb5ee5a92), [`a87922d`](https://github.com/LedgerHQ/ledger-live/commit/a87922dc99e4f2e4b40a46fd52ad08a71012fe94)]:
-  - @ledgerhq/live-env@2.16.0-nightly.1
-  - @ledgerhq/cryptoassets@13.28.0-nightly.1
-  - @ledgerhq/types-live@6.83.1-nightly.0
-  - @ledgerhq/live-network@2.0.17-nightly.1
-
-## 6.4.0-nightly.1
+## 6.4.0
 
 ### Minor Changes
 
 - [#11699](https://github.com/LedgerHQ/ledger-live/pull/11699) [`2b896f9`](https://github.com/LedgerHQ/ledger-live/commit/2b896f94d6fc53ef965ed567489ad96d913466d4) Thanks [@jnicoulaud-ledger](https://github.com/jnicoulaud-ledger)! - feat(BACK-9645): add support for returning details in AlpacaApi.craftTransaction
 
-### Patch Changes
+- [#11273](https://github.com/LedgerHQ/ledger-live/pull/11273) [`2482195`](https://github.com/LedgerHQ/ledger-live/commit/24821957c838a304be60ff6e16798ef3cac987cd) Thanks [@estrauser-ledger](https://github.com/estrauser-ledger)! - add cursor to pagintion api
 
-- Updated dependencies [[`338d979`](https://github.com/LedgerHQ/ledger-live/commit/338d979bae349b185c52b1d8c9f6718a3d142526), [`b27c96c`](https://github.com/LedgerHQ/ledger-live/commit/b27c96ccbcefb1982a40688a8385209eac99165a)]:
-  - @ledgerhq/cryptoassets@13.28.0-nightly.0
-  - @ledgerhq/live-env@2.16.0-nightly.0
-  - @ledgerhq/live-network@2.0.17-nightly.0
+- [#11494](https://github.com/LedgerHQ/ledger-live/pull/11494) [`89fc31e`](https://github.com/LedgerHQ/ledger-live/commit/89fc31e8ecfc5e2fd679a2694b3514f8fb19d7b7) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - feat(coin-framework): add `getTokenFromAsset` in `BridgeApi`
 
-## 6.4.0-nightly.0
-
-### Minor Changes
+- [#11652](https://github.com/LedgerHQ/ledger-live/pull/11652) [`ff22728`](https://github.com/LedgerHQ/ledger-live/commit/ff22728a61ab2cde6835991bf8ed115d4a39a1d0) Thanks [@Canestin](https://github.com/Canestin)! - update depracation banner wording
 
 - [#11675](https://github.com/LedgerHQ/ledger-live/pull/11675) [`c190e2b`](https://github.com/LedgerHQ/ledger-live/commit/c190e2b104a9dd0dd693c2d72433b98115f4089f) Thanks [@semeano](https://github.com/semeano)! - fix: added missing ASSOCIATE_TOKEN operation type
   test: snapshot update
+
+- [#11722](https://github.com/LedgerHQ/ledger-live/pull/11722) [`a87922d`](https://github.com/LedgerHQ/ledger-live/commit/a87922dc99e4f2e4b40a46fd52ad08a71012fe94) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Add canton onboard ui flow
+
+- [#11625](https://github.com/LedgerHQ/ledger-live/pull/11625) [`3489203`](https://github.com/LedgerHQ/ledger-live/commit/34892030dcfbd1a19a0eb0a8fcae9f8f01d3d2a9) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - refactor(llc): use standard token account id encoding
+
+### Patch Changes
+
+- Updated dependencies [[`338d979`](https://github.com/LedgerHQ/ledger-live/commit/338d979bae349b185c52b1d8c9f6718a3d142526), [`228ed30`](https://github.com/LedgerHQ/ledger-live/commit/228ed3030601644e807e85a1693276b788b5cd2a), [`e52268a`](https://github.com/LedgerHQ/ledger-live/commit/e52268a3bc7d97a7ed09ed082786a647e048a6e8), [`a87922d`](https://github.com/LedgerHQ/ledger-live/commit/a87922dc99e4f2e4b40a46fd52ad08a71012fe94), [`80a109a`](https://github.com/LedgerHQ/ledger-live/commit/80a109a5f8ecdbb22cf6fb3ec084398a7e54dcfb), [`b27c96c`](https://github.com/LedgerHQ/ledger-live/commit/b27c96ccbcefb1982a40688a8385209eac99165a)]:
+  - @ledgerhq/cryptoassets@13.28.0
+  - @ledgerhq/types-live@6.84.0
+  - @ledgerhq/live-env@2.16.0
+  - @ledgerhq/live-network@2.0.17
+
+## 6.4.0-next.0
+
+### Minor Changes
+
+- [#11699](https://github.com/LedgerHQ/ledger-live/pull/11699) [`2b896f9`](https://github.com/LedgerHQ/ledger-live/commit/2b896f94d6fc53ef965ed567489ad96d913466d4) Thanks [@jnicoulaud-ledger](https://github.com/jnicoulaud-ledger)! - feat(BACK-9645): add support for returning details in AlpacaApi.craftTransaction
+
+- [#11273](https://github.com/LedgerHQ/ledger-live/pull/11273) [`2482195`](https://github.com/LedgerHQ/ledger-live/commit/24821957c838a304be60ff6e16798ef3cac987cd) Thanks [@estrauser-ledger](https://github.com/estrauser-ledger)! - add cursor to pagintion api
+
+- [#11494](https://github.com/LedgerHQ/ledger-live/pull/11494) [`89fc31e`](https://github.com/LedgerHQ/ledger-live/commit/89fc31e8ecfc5e2fd679a2694b3514f8fb19d7b7) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - feat(coin-framework): add `getTokenFromAsset` in `BridgeApi`
+
+- [#11652](https://github.com/LedgerHQ/ledger-live/pull/11652) [`ff22728`](https://github.com/LedgerHQ/ledger-live/commit/ff22728a61ab2cde6835991bf8ed115d4a39a1d0) Thanks [@Canestin](https://github.com/Canestin)! - update depracation banner wording
+
+- [#11675](https://github.com/LedgerHQ/ledger-live/pull/11675) [`c190e2b`](https://github.com/LedgerHQ/ledger-live/commit/c190e2b104a9dd0dd693c2d72433b98115f4089f) Thanks [@semeano](https://github.com/semeano)! - fix: added missing ASSOCIATE_TOKEN operation type
+  test: snapshot update
+
+- [#11722](https://github.com/LedgerHQ/ledger-live/pull/11722) [`a87922d`](https://github.com/LedgerHQ/ledger-live/commit/a87922dc99e4f2e4b40a46fd52ad08a71012fe94) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Add canton onboard ui flow
+
+- [#11625](https://github.com/LedgerHQ/ledger-live/pull/11625) [`3489203`](https://github.com/LedgerHQ/ledger-live/commit/34892030dcfbd1a19a0eb0a8fcae9f8f01d3d2a9) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - refactor(llc): use standard token account id encoding
+
+### Patch Changes
+
+- Updated dependencies [[`338d979`](https://github.com/LedgerHQ/ledger-live/commit/338d979bae349b185c52b1d8c9f6718a3d142526), [`228ed30`](https://github.com/LedgerHQ/ledger-live/commit/228ed3030601644e807e85a1693276b788b5cd2a), [`e52268a`](https://github.com/LedgerHQ/ledger-live/commit/e52268a3bc7d97a7ed09ed082786a647e048a6e8), [`a87922d`](https://github.com/LedgerHQ/ledger-live/commit/a87922dc99e4f2e4b40a46fd52ad08a71012fe94), [`80a109a`](https://github.com/LedgerHQ/ledger-live/commit/80a109a5f8ecdbb22cf6fb3ec084398a7e54dcfb), [`b27c96c`](https://github.com/LedgerHQ/ledger-live/commit/b27c96ccbcefb1982a40688a8385209eac99165a)]:
+  - @ledgerhq/cryptoassets@13.28.0-next.0
+  - @ledgerhq/types-live@6.84.0-next.0
+  - @ledgerhq/live-env@2.16.0-next.0
+  - @ledgerhq/live-network@2.0.17-next.0
 
 ## 6.3.0
 

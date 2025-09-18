@@ -119,6 +119,7 @@ setSupportedCurrencies([
   "canton_network",
   "canton_network_devnet",
   "canton_network_localnet",
+  "kaspa",
 ]);
 
 for (const k in process.env) setEnvUnsafe(k as EnvName, process.env[k]);

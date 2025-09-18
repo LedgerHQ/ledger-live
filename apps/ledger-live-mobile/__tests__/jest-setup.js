@@ -2,7 +2,6 @@ import "@testing-library/react-native/extend-expect";
 import "react-native-gesture-handler/jestSetup";
 import "@shopify/flash-list/jestSetup";
 import "@mocks/console";
-import { ALLOWED_UNHANDLED_REQUESTS } from "./handlers";
 import { server } from "./server";
 import { NativeModules } from "react-native";
 // Needed for react-reanimated https://docs.swmansion.com/react-native-reanimated/docs/3.x/guides/testing#timers
@@ -11,12 +10,7 @@ jest.runAllTimers();
 
 beforeAll(() =>
   server.listen({
-    onUnhandledRequest(request, print) {
-      if (ALLOWED_UNHANDLED_REQUESTS.some(ignoredUrl => request.url.includes(ignoredUrl))) {
-        return;
-      }
-      print.warning();
-    },
+    onUnhandledRequest: "bypass",
   }),
 );
 afterEach(() => server.resetHandlers());
@@ -155,10 +149,20 @@ jest.mock("react-native-device-info", () => ({
 
 const originalError = console.error;
 const originalWarn = console.warn;
+// eslint-disable-next-line no-console
+const originalLog = console.log;
 
-const EXCLUDED_ERRORS = [];
+const EXCLUDED_ERRORS = ["act(...)"];
 
-const EXCLUDED_WARNINGS = [];
+const EXCLUDED_WARNINGS = [
+  "[Reanimated] Writing",
+  "[Reanimated] Reading",
+  'getHost: "Invalid non-string URL" for scriptURL',
+  "@polkadot",
+  "Node of type rule not supported as an inline style",
+];
+
+const EXCLUDED_LOG_MESSAGES = ["Shims Injected", "Missing FileReader", "nextTick"];
 
 console.error = (...args) => {
   const error = args.join();
@@ -174,4 +178,12 @@ console.warn = (...args) => {
     return;
   }
   originalWarn.call(console, ...args);
+};
+// eslint-disable-next-line no-console
+console.log = (...args) => {
+  const log = args.join();
+  if (EXCLUDED_LOG_MESSAGES.some(excluded => log.includes(excluded))) {
+    return;
+  }
+  originalLog.call(console, ...args);
 };

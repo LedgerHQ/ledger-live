@@ -1,14 +1,18 @@
 # @ledgerhq/hw-app-canton
 
-## 0.3.1-nightly.1
+## 0.4.0
 
-### Patch Changes
+### Minor Changes
 
-- [#11769](https://github.com/LedgerHQ/ledger-live/pull/11769) [`6941aac`](https://github.com/LedgerHQ/ledger-live/commit/6941aac638dcc8d4fb03aa92f42d2a71d4089202) Thanks [@ishaba](https://github.com/ishaba)! - fix canton receive flow
+- [#11535](https://github.com/LedgerHQ/ledger-live/pull/11535) [`205458e`](https://github.com/LedgerHQ/ledger-live/commit/205458e2d3ca5ec1d7a50d30b63050a692a5e045) Thanks [@sprohaszka-ledger](https://github.com/sprohaszka-ledger)! - Canton add sign hash function
 
-## 0.3.1-nightly.0
+- [#11722](https://github.com/LedgerHQ/ledger-live/pull/11722) [`a87922d`](https://github.com/LedgerHQ/ledger-live/commit/a87922dc99e4f2e4b40a46fd52ad08a71012fe94) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Add canton onboard ui flow
 
-### Patch Changes
+## 0.4.0-next.0
+
+### Minor Changes
+
+- [#11535](https://github.com/LedgerHQ/ledger-live/pull/11535) [`205458e`](https://github.com/LedgerHQ/ledger-live/commit/205458e2d3ca5ec1d7a50d30b63050a692a5e045) Thanks [@sprohaszka-ledger](https://github.com/sprohaszka-ledger)! - Canton add sign hash function
 
 - [#11722](https://github.com/LedgerHQ/ledger-live/pull/11722) [`a87922d`](https://github.com/LedgerHQ/ledger-live/commit/a87922dc99e4f2e4b40a46fd52ad08a71012fe94) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Add canton onboard ui flow
 

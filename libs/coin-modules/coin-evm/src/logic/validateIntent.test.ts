@@ -3,6 +3,7 @@ import {
   AmountRequired,
   ETHAddressNonEIP,
   FeeNotLoaded,
+  FeeTooHigh,
   GasLessThanEstimate,
   InvalidAddress,
   MaxFeeTooLow,
@@ -94,6 +95,29 @@ describe("validateIntent", () => {
   });
   afterEach(() => {
     jest.restoreAllMocks();
+  });
+
+  describe("fee ratio", () => {
+    it.each([
+      [
+        "warns",
+        "native",
+        {
+          feeTooHigh: new FeeTooHigh(),
+        },
+      ],
+      ["does not warn", "erc20", {}],
+    ])("%s with too high fees on a %s asset", async (_s, assetType, expectedWarnings) => {
+      const res = await validateIntent(
+        {} as CryptoCurrency,
+        eip1559Intent({ amount: 1n, asset: { type: assetType } }),
+        {
+          value: 2n,
+        },
+      );
+
+      expect(res.warnings).toEqual(expectedWarnings);
+    });
   });
 
   describe("recipient", () => {
@@ -531,11 +555,49 @@ describe("validateIntent", () => {
     });
   });
 
-  describe("valid intent", () => {
-    it("does not return any error of warning for a valid legacy intent", async () => {
+  describe.each([
+    [
+      "native asset",
+      { type: "native" },
+      { amount: 100n },
+      { expectedTotalSpent: 104n, expectedAmount: 100n },
+    ],
+    [
+      "native asset, using all amounts",
+      { type: "native" },
+      { useAllAmount: true },
+      { expectedTotalSpent: 200n, expectedAmount: 196n },
+    ],
+    [
+      "token asset",
+      { type: "erc20", assetReference: "contract-address" },
+      { amount: 2n },
+      { expectedTotalSpent: 2n, expectedAmount: 2n },
+    ],
+    [
+      "token asset, using all amounts",
+      { type: "erc20", assetReference: "contract-address" },
+      { useAllAmount: true },
+      { expectedTotalSpent: 10n, expectedAmount: 10n },
+    ],
+  ])("valid intent with %s", (_s, asset, amount, { expectedTotalSpent, expectedAmount }) => {
+    it("does not return any error or warning for a valid legacy intent", async () => {
+      jest.spyOn(ledgerExplorer, "getLastOperations").mockResolvedValue({
+        lastCoinOperations: [],
+        lastInternalOperations: [],
+        lastNftOperations: [],
+        lastTokenOperations: [{ contract: "contract-address" } as Operation],
+      });
+      jest.spyOn(ledgerNode, "getCoinBalance").mockResolvedValue(new BigNumber(200));
+      jest.spyOn(ledgerNode, "getTokenBalance").mockResolvedValue(new BigNumber(10));
+
       const res = await validateIntent(
         {} as CryptoCurrency,
-        legacyIntent({ amount: 2n, recipient: "0xe2ca7390e76c5A992749bB622087310d2e63ca29" }),
+        legacyIntent({
+          ...amount,
+          recipient: "0xe2ca7390e76c5A992749bB622087310d2e63ca29",
+          asset,
+        }),
         {
           value: 4n,
           parameters: { gasLimit: 21000n, gasPrice: 10n },
@@ -544,14 +606,22 @@ describe("validateIntent", () => {
 
       expect(res).toEqual({
         estimatedFees: 4n,
-        totalSpent: 6n,
-        amount: 2n,
+        totalSpent: expectedTotalSpent,
+        amount: expectedAmount,
         errors: {},
         warnings: {},
       });
     });
 
-    it("does not return any error of warning for a valid eip1559 intent", async () => {
+    it("does not return any error or warning for a valid eip1559 intent", async () => {
+      jest.spyOn(ledgerExplorer, "getLastOperations").mockResolvedValue({
+        lastCoinOperations: [],
+        lastInternalOperations: [],
+        lastNftOperations: [],
+        lastTokenOperations: [{ contract: "contract-address" } as Operation],
+      });
+      jest.spyOn(ledgerNode, "getCoinBalance").mockResolvedValue(new BigNumber(200));
+      jest.spyOn(ledgerNode, "getTokenBalance").mockResolvedValue(new BigNumber(10));
       jest.spyOn(ledgerGasTracker, "getGasOptions").mockResolvedValue({
         slow: {
           maxFeePerGas: null,
@@ -575,7 +645,11 @@ describe("validateIntent", () => {
 
       const res = await validateIntent(
         {} as CryptoCurrency,
-        eip1559Intent({ amount: 2n, recipient: "0xe2ca7390e76c5A992749bB622087310d2e63ca29" }),
+        eip1559Intent({
+          ...amount,
+          recipient: "0xe2ca7390e76c5A992749bB622087310d2e63ca29",
+          asset,
+        }),
         {
           value: 4n,
           parameters: { gasLimit: 21000n, maxPriorityFeePerGas: 3n, maxFeePerGas: 5n },
@@ -584,14 +658,22 @@ describe("validateIntent", () => {
 
       expect(res).toEqual({
         estimatedFees: 4n,
-        totalSpent: 6n,
-        amount: 2n,
+        totalSpent: expectedTotalSpent,
+        amount: expectedAmount,
         errors: {},
         warnings: {},
       });
     });
 
     it("does not call the gas tracker if unnecessary", async () => {
+      jest.spyOn(ledgerExplorer, "getLastOperations").mockResolvedValue({
+        lastCoinOperations: [],
+        lastInternalOperations: [],
+        lastNftOperations: [],
+        lastTokenOperations: [{ contract: "contract-address" } as Operation],
+      });
+      jest.spyOn(ledgerNode, "getCoinBalance").mockResolvedValue(new BigNumber(200));
+      jest.spyOn(ledgerNode, "getTokenBalance").mockResolvedValue(new BigNumber(10));
       const getGasOptions = jest.spyOn(ledgerGasTracker, "getGasOptions").mockResolvedValue({
         slow: {
           maxFeePerGas: null,
@@ -615,7 +697,11 @@ describe("validateIntent", () => {
 
       const res = await validateIntent(
         {} as CryptoCurrency,
-        eip1559Intent({ amount: 2n, recipient: "0xe2ca7390e76c5A992749bB622087310d2e63ca29" }),
+        eip1559Intent({
+          ...amount,
+          recipient: "0xe2ca7390e76c5A992749bB622087310d2e63ca29",
+          asset,
+        }),
         {
           value: 4n,
           parameters: {
@@ -648,8 +734,8 @@ describe("validateIntent", () => {
 
       expect(res).toEqual({
         estimatedFees: 4n,
-        totalSpent: 6n,
-        amount: 2n,
+        totalSpent: expectedTotalSpent,
+        amount: expectedAmount,
         errors: {},
         warnings: {},
       });

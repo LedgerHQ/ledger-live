@@ -133,6 +133,50 @@ describe("ModularDrawerFlowManager - Modules configuration", () => {
     expect(apyTag).toBeVisible();
   });
 
+  it("should display market trend on the left at assetSelection step", async () => {
+    renderWithMockedCounterValuesProvider(
+      <ModularDrawerFlowManager
+        currencies={mockCurrencies}
+        onAssetSelected={mockOnAssetSelected}
+        drawerConfiguration={{
+          assets: {
+            leftElement: "marketTrend",
+          },
+        }}
+        source="sourceTest"
+        flow="flowTest"
+      />,
+      mockedInitialState,
+    );
+
+    await waitFor(() => expect(screen.getByText(/ethereum/i)).toBeVisible());
+    const percentElements = screen.queryAllByText(/[+-]?\d+\.?\d*%/);
+    expect(percentElements.length).toBeGreaterThan(0);
+  });
+
+  it("should display market trend on the right at assetSelection step", async () => {
+    renderWithMockedCounterValuesProvider(
+      <ModularDrawerFlowManager
+        currencies={mockCurrencies}
+        onAssetSelected={mockOnAssetSelected}
+        drawerConfiguration={{
+          assets: {
+            rightElement: "marketTrend",
+          },
+        }}
+        source="sourceTest"
+        flow="flowTest"
+      />,
+      mockedInitialState,
+    );
+
+    await waitFor(() => expect(screen.getByText(/ethereum/i)).toBeVisible());
+    const percentElements = screen.queryAllByText(/[+-]?\d+\.?\d*%/);
+    expect(percentElements.length).toBeGreaterThan(0);
+    const priceElements = screen.queryAllByText(/\$\d+\.?\d*/);
+    expect(priceElements.length).toBeGreaterThan(0);
+  });
+
   it("should not display balance on the right at assetSelection step when enableModularization is false ", async () => {
     renderWithMockedCounterValuesProvider(
       <ModularDrawerFlowManager

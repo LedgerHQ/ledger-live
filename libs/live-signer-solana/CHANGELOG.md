@@ -1,50 +1,22 @@
 # @ledgerhq/live-signer-solana
 
-## 0.5.5-nightly.5
+## 0.5.5
 
 ### Patch Changes
 
-- Updated dependencies []:
-  - @ledgerhq/coin-solana@0.32.1-nightly.5
+- Updated dependencies [[`64b059c`](https://github.com/LedgerHQ/ledger-live/commit/64b059cc514e199320b0e668dfed647ac2b658a9), [`21ebab2`](https://github.com/LedgerHQ/ledger-live/commit/21ebab29b2b2a7650460ba6db3362ffacf6ab8dc)]:
+  - @ledgerhq/coin-solana@0.33.0
+  - @ledgerhq/ledger-cal-service@1.4.0
+  - @ledgerhq/ledger-trust-service@0.3.12
 
-## 0.5.5-nightly.4
-
-### Patch Changes
-
-- Updated dependencies []:
-  - @ledgerhq/coin-solana@0.32.1-nightly.4
-
-## 0.5.5-nightly.3
+## 0.5.5-next.0
 
 ### Patch Changes
 
-- Updated dependencies []:
-  - @ledgerhq/coin-solana@0.32.1-nightly.3
-
-## 0.5.5-nightly.2
-
-### Patch Changes
-
-- Updated dependencies []:
-  - @ledgerhq/coin-solana@0.32.1-nightly.2
-  - @ledgerhq/ledger-cal-service@1.3.2-nightly.1
-  - @ledgerhq/ledger-trust-service@0.3.12-nightly.1
-
-## 0.5.5-nightly.1
-
-### Patch Changes
-
-- Updated dependencies []:
-  - @ledgerhq/coin-solana@0.32.1-nightly.1
-  - @ledgerhq/ledger-cal-service@1.3.2-nightly.0
-  - @ledgerhq/ledger-trust-service@0.3.12-nightly.0
-
-## 0.5.5-nightly.0
-
-### Patch Changes
-
-- Updated dependencies []:
-  - @ledgerhq/coin-solana@0.32.1-nightly.0
+- Updated dependencies [[`64b059c`](https://github.com/LedgerHQ/ledger-live/commit/64b059cc514e199320b0e668dfed647ac2b658a9), [`21ebab2`](https://github.com/LedgerHQ/ledger-live/commit/21ebab29b2b2a7650460ba6db3362ffacf6ab8dc)]:
+  - @ledgerhq/coin-solana@0.33.0-next.0
+  - @ledgerhq/ledger-cal-service@1.4.0-next.0
+  - @ledgerhq/ledger-trust-service@0.3.12-next.0
 
 ## 0.5.4
 

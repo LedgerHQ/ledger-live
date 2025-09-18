@@ -102,6 +102,15 @@ export const SWAP_DATA_CDN: Record<string, AdditionalProviderConfig> = {
     mainUrl: "https://www.thorswap.finance/",
     needsKYC: false,
   },
+  nearintents: {
+    type: "CEX",
+    useInExchangeApp: true,
+    displayName: "Near Intents",
+    termsOfUseUrl: "https://docs.thorswap.finance/thorswap/resources/terms-of-service",
+    supportUrl: "https://ledgerhelp.swapkit.dev/",
+    mainUrl: "https://www.thorswap.finance/",
+    needsKYC: false,
+  },
   lifi: {
     useInExchangeApp: true,
     displayName: "LI.FI",

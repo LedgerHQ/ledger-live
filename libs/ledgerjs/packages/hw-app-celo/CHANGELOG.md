@@ -1,25 +1,18 @@
 # @ledgerhq/hw-app-polkadot
 
-## 6.34.3-nightly.2
+## 6.34.3
 
 ### Patch Changes
 
 - Updated dependencies []:
-  - @ledgerhq/hw-app-eth@6.45.18-nightly.2
+  - @ledgerhq/hw-app-eth@6.45.18
 
-## 6.34.3-nightly.1
-
-### Patch Changes
-
-- Updated dependencies []:
-  - @ledgerhq/hw-app-eth@6.45.18-nightly.1
-
-## 6.34.3-nightly.0
+## 6.34.3-next.0
 
 ### Patch Changes
 
 - Updated dependencies []:
-  - @ledgerhq/hw-app-eth@6.45.18-nightly.0
+  - @ledgerhq/hw-app-eth@6.45.18-next.0
 
 ## 6.34.2
 

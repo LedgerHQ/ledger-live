@@ -279,14 +279,14 @@ export class Account {
   static readonly KASPA_1 = new Account(
     Currency.KAS,
     "KASPA 1",
-    "kaspa:kaspa:qqpqtujclz2usyj7rgmhghfu8e5echrh8t2pkz69tq37uclfrpu3g0w6laqqk",
+    "kaspa:qpck869lulhmmkvnh40ety6ra2jhaq44wkfqaxnzmxp6gkgy0axh5zv726p3g",
     0,
   );
 
   static readonly KASPA_2 = new Account(
     Currency.KAS,
     "KASPA 2",
-    "kaspa:qrx2agwk93qyjvlcuzz5jy37knt298zupvw2ls05p4te55c29uwuyzzra5qkv",
+    "kaspa:qzyl5q3ektgp8j576ztwvqvq7pyrx8wscwft42ykchxrufwkhmp7ky2uf7ln0",
     1,
   );
 

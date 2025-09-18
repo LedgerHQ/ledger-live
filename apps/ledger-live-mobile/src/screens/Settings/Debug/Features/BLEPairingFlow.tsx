@@ -72,7 +72,7 @@ export default () => {
   return (
     <SettingsRow
       title="BLE Pairing flow"
-      iconLeft={<IconsLegacy.BluetoothMedium size={32} color="black" />}
+      iconLeft={<IconsLegacy.BluetoothMedium size={24} color="black" />}
       onPress={onPress}
       desc={`Paired device: ${pairedDevice?.deviceName ?? pairedDevice?.deviceId ?? "no device"}`}
     >

@@ -49,6 +49,7 @@
     "transactionDate" : "Fecha de la transacción",
     "outdated" : "Desactualizado",
     "satPerByte" : "sat/bytes",
+    "sompiPerByte" : "sompi/bytes",
     "notAvailable" : "No disponible",
     "import" : "Importar",
     "bluetooth" : "Bluetooth",
@@ -2156,26 +2157,6 @@
         "learnHowToUpdate" : "Aprende cómo actualizarlo"
       }
     },
-    "stepImportAccounts" : {
-      "title" : "Sincroniza tus cripto desde la PC",
-      "desc" : "Si ya tienes tus cripto configuradas en la aplicación Ledger Desktop, puedes sincronizarlas para administrarlas desde tu teléfono.",
-      "cta" : "Estoy listo para escanear",
-      "bullets" : {
-        "0" : {
-          "label" : "Dentro de la aplicación Desktop, selecciona<1>Ajustes > Cuentas > Exportar cuenta</1>"
-        },
-        "1" : {
-        },
-        "2" : {
-          "label" : "Selecciona las cuentas de cripto a importar."
-        }
-      },
-      "warning" : {
-        "title" : "Es necesario sincronizar manualmente tus aplicaciones Desktop y Mobile.",
-        "desc" : "Ledger Live respeta tu privacidad y almacena tus datos de manera local. Si cambias las cuentas y la configuración en tu teléfono, deberás hacer lo mismo en tu PC y viceversa. Tus transacciones se mantienen sincronizadas con la cadena de bloques.",
-        "cta" : "¡Entendido!"
-      }
-    },
     "stepSetupPin" : {
       "step1" : "Enciende tu {{fullDeviceName}} y sigue las instrucciones.",
       "step1-nanoS" : "Conecta tu {{fullDeviceName}} a tu teléfono por medio de un cable OTG.",
@@ -2855,8 +2836,8 @@
       "contactSupport" : "Ponte en contacto con Soporte"
     },
     "willBedeprecatedBanner" : {
-      "title" : "Por razones de optimización de eficiencia, {{currencyName}} dejará de ser compatible con Ledger Live el {{deprecatedDate}}. No obstante, seguirá siendo compatible con las billeteras de hardware de Ledger. Ponte en contacto con el servicio de soporte al cliente de Ledger si necesitas ayuda con esto.",
-      "contactSupport" : "Ponte en contacto con Soporte"
+      "title" : "Ledger Live dejará de ser compatible con {{currencyName}} a partir del {{deprecatedDate}}. No obstante, tu hardware wallet Ledger lo seguirá protegiendo. Para obtener más información, lee el artículo completo del Centro de ayuda en el siguiente enlace.",
+      "learnMore" : "Más información"
     },
     "tokens" : {
       "contractAddress" : "Dirección del contrato",
@@ -3769,6 +3750,10 @@
       "twoStepApproval" : {
         "title" : "Completar los pasos"
       },
+      "loader" : {
+        "title" : "Procesando permuta",
+        "description" : "Espera mientras procesamos tu petición."
+      },
       "history" : {
         "title" : "Historial de permutas"
       },
@@ -4376,7 +4361,7 @@
       "title" : "Selecciona las cuentas que quieres agregar",
       "ctaStopScan" : "Detener escaneo",
       "confirm" : "Confirmar",
-      "scanningTitle" : "Buscando cuentas existentes en la cadena de bloques...",
+      "scanningTitle" : "Checking the blockchain...",
       "whichAddressType" : "Descubre cómo elegir el tipo de dirección",
       "sections" : {
         "importable" : {
@@ -4441,7 +4426,7 @@
     "confirmSwap" : {
       "title" : "Confirma la operación de permuta en tu dispositivo",
       "alert" : {
-        "default" : "Verifica los detalles de la permuta en tu dispositivo antes de enviarla. Las direcciones se intercambian de forma segura por lo que no es necesario verificarlas.",
+        "default" : "Verify the swap details on your Ledger before sending it.",
         "provider" : "Verifica la información de permuta en tu dispositivo antes de enviar la transacción. {{providerName}} tal vez requiera una verificación adicional para algunas transacciones, lo que puede provocar retrasos."
       },
       "acceptTerms" : "Al validar esta transacción, acepto los <0>términos de uso de\n<0> {{provider}}</0>",
@@ -7960,7 +7945,13 @@
     "searchPlaceholder" : "Buscar",
     "emptyAssetList" : "No se encontraron activos",
     "accountCount" : "{{count}} cuenta",
-    "accountCount_plural" : "{{count}} cuentas"
+    "accountCount_plural" : "{{count}} cuentas",
+    "errors" : {
+      "title" : "La conexión ha fallado",
+      "backend" : "Algo ha salido mal en nuestro sistema. Inténtalo de nuevo más tarde",
+      "internet" : "No tienes conexión a Internet. Inténtalo de nuevo.",
+      "cta" : "Inténtalo de nuevo"
+    }
   },
   "swapErrors" : {
     "incorrectCommandData" : {

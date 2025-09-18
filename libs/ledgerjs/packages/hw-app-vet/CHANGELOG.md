@@ -1,36 +1,18 @@
 # @ledgerhq/hw-app-vet
 
-## 0.6.0-nightly.3
-
-### Patch Changes
-
-- Updated dependencies [[`65c128a`](https://github.com/LedgerHQ/ledger-live/commit/65c128a93f07857b421bed3696bc9984f860ada9)]:
-  - @ledgerhq/cryptoassets@13.28.0-nightly.3
-
-## 0.6.0-nightly.2
-
-### Patch Changes
-
-- Updated dependencies [[`d56bebe`](https://github.com/LedgerHQ/ledger-live/commit/d56bebe672a1ed825697b371662dbff19dcc63d8)]:
-  - @ledgerhq/cryptoassets@13.28.0-nightly.2
-
-## 0.6.0-nightly.1
-
-### Minor Changes
-
-- [#11634](https://github.com/LedgerHQ/ledger-live/pull/11634) [`b13ad45`](https://github.com/LedgerHQ/ledger-live/commit/b13ad454195aac4603665f1f7791d8bd16be90be) Thanks [@semeano](https://github.com/semeano)! - Vechain: galactica fee system
-
-### Patch Changes
-
-- Updated dependencies [[`0108eaf`](https://github.com/LedgerHQ/ledger-live/commit/0108eafb64e36ce68f44e03cc3f66ccdb5ee5a92)]:
-  - @ledgerhq/cryptoassets@13.28.0-nightly.1
-
-## 0.5.16-nightly.0
+## 0.5.16
 
 ### Patch Changes
 
 - Updated dependencies [[`338d979`](https://github.com/LedgerHQ/ledger-live/commit/338d979bae349b185c52b1d8c9f6718a3d142526)]:
-  - @ledgerhq/cryptoassets@13.28.0-nightly.0
+  - @ledgerhq/cryptoassets@13.28.0
+
+## 0.5.16-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`338d979`](https://github.com/LedgerHQ/ledger-live/commit/338d979bae349b185c52b1d8c9f6718a3d142526)]:
+  - @ledgerhq/cryptoassets@13.28.0-next.0
 
 ## 0.5.15
 

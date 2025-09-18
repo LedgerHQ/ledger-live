@@ -802,8 +802,8 @@
       "support" : "客服"
     },
     "willBeDeprecatedBanner" : {
-      "title" : "为了优化效率，自 {{deprecatedDate}} 起，Ledger Live 将不再支持 {{currencyName}}。但 Ledger 硬件钱包将继续支持该币种。如需这方面的帮助，请联系 Ledger 客服。",
-      "contactSupport" : "联系客服"
+      "title" : "自 {{deprecatedDate}} 起 Ledger Live 将不再支持 {{currencyName}}。但该币种仍会受到 Ledger 硬件钱包的保护。请访问下方链接，阅读完整的帮助中心文章，了解更多信息。",
+      "learnMore" : "了解更多"
     },
     "lastOperations" : "近期操作",
     "contractAddress" : "合约：",
@@ -1940,7 +1940,8 @@
       "payoutNetworkFeesTooltip" : "该数额不会在您的设备上显示",
       "acceptTerms" : "验证此交易，即表示我接受\n<0>{{provider}} 的使用条款</0>",
       "exodusAcceptTerms" : "Exodus 依赖第三方来进行互换。\n验证此交易，即表示我接受 <0>Exodus 的使用条款</0>",
-      "changellyAcceptTerms" : "点击“使用 Changelly 互换”即表示您接受 Changelly 的<0>使用条款</0>及其\n<1>反洗钱 (AML)/客户身份核实 (KYC) 政策</1>。Changelly 可能会采用 AML/KYC 程序，\n这可能在少数情况下影响您完成交易。如果发生这种情况，\n您需要联系 Changelly <2>客服</2>。"
+      "changellyAcceptTerms" : "点击“使用 Changelly 互换”即表示您接受 Changelly 的<0>使用条款</0>及其\n<1>反洗钱 (AML)/客户身份核实 (KYC) 政策</1>。Changelly 可能会采用 AML/KYC 程序，\n这可能在少数情况下影响您完成交易。如果发生这种情况，\n您需要联系 Changelly <2>客服</2>。",
+      "cicAcceptTerms" : "“使用 CIC 互换”即表示您接受 CIC 的<0>使用条款</0>及其<1>反洗钱 (AML)/客户身份核实 (KYC) 政策</1>。CIC 可能会采用 AML/KYC 程序，这可能在少数情况下影响您完成交易。如果发生这种情况，您需要联系 CIC <2>客服</2>。"
     },
     "swap2" : {
       "amountSent" : "发送数额",
@@ -2282,8 +2283,8 @@
     }
   },
   "fund" : {
-    "title" : "Fund",
-    "titleCrypto" : "Fund {{currency}}",
+    "title" : "资金",
+    "titleCrypto" : "资金 {{currency}}",
     "exchangeDrawer" : {
       "completed" : {
         "title" : "交易播送成功",
@@ -7651,7 +7652,7 @@
         "foundAccounts_other" : "我们找到了 {{count}} 个账户",
         "scanning" : "正在扫描账户..."
       },
-      "title" : "正在查找区块链上的现有账户……"
+      "title" : "正在检查区块链……"
     },
     "connectYourDevice" : {
       "title" : "连接并解锁您的设备"
@@ -7671,6 +7672,11 @@
         "selectAccount" : "继续",
         "close" : "关闭"
       }
+    },
+    "genericError" : {
+      "title" : "发生网络错误",
+      "description" : "出错了，请重试；如有疑问，请联系 Ledger 客服。",
+      "cta" : "重试"
     }
   },
   "nftEntryPoint" : {

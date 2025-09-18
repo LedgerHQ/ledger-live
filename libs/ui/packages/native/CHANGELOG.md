@@ -1,24 +1,26 @@
 # @ledgerhq/native-ui
 
-## 0.45.0-nightly.2
+## 0.45.0
 
 ### Minor Changes
 
-- [#11807](https://github.com/LedgerHQ/ledger-live/pull/11807) [`cd77268`](https://github.com/LedgerHQ/ledger-live/commit/cd77268985adab566c797ac854ad993cbb43972f) Thanks [@LucasWerey](https://github.com/LucasWerey)! - MAD - LLM - CryptoIcons add param to be have responsive background behind network icon
-
-## 0.44.1-nightly.1
+- [#11556](https://github.com/LedgerHQ/ledger-live/pull/11556) [`5040e5c`](https://github.com/LedgerHQ/ledger-live/commit/5040e5c986517a958702639b577a9e6bc90d9dfc) Thanks [@LucasWerey](https://github.com/LucasWerey)! - LargeMover fix PriceVariation indicator and ProgressPoint
 
 ### Patch Changes
 
-- Updated dependencies [[`d56bebe`](https://github.com/LedgerHQ/ledger-live/commit/d56bebe672a1ed825697b371662dbff19dcc63d8)]:
-  - @ledgerhq/crypto-icons-ui@1.19.0-nightly.1
+- Updated dependencies [[`5336021`](https://github.com/LedgerHQ/ledger-live/commit/53360213fe1545cfac761d872c0bd7a592697279), [`222bd7b`](https://github.com/LedgerHQ/ledger-live/commit/222bd7b69d32fd93562e9cb4bc1cf2840d0a0620)]:
+  - @ledgerhq/ui-shared@0.4.0
 
-## 0.44.1-nightly.0
+## 0.45.0-next.0
+
+### Minor Changes
+
+- [#11556](https://github.com/LedgerHQ/ledger-live/pull/11556) [`5040e5c`](https://github.com/LedgerHQ/ledger-live/commit/5040e5c986517a958702639b577a9e6bc90d9dfc) Thanks [@LucasWerey](https://github.com/LucasWerey)! - LargeMover fix PriceVariation indicator and ProgressPoint
 
 ### Patch Changes
 
-- Updated dependencies [[`12909c4`](https://github.com/LedgerHQ/ledger-live/commit/12909c464d22e72d741262df106d0b3ce7f9130a), [`0108eaf`](https://github.com/LedgerHQ/ledger-live/commit/0108eafb64e36ce68f44e03cc3f66ccdb5ee5a92)]:
-  - @ledgerhq/crypto-icons-ui@1.18.1-nightly.0
+- Updated dependencies [[`5336021`](https://github.com/LedgerHQ/ledger-live/commit/53360213fe1545cfac761d872c0bd7a592697279), [`222bd7b`](https://github.com/LedgerHQ/ledger-live/commit/222bd7b69d32fd93562e9cb4bc1cf2840d0a0620)]:
+  - @ledgerhq/ui-shared@0.4.0-next.0
 
 ## 0.44.0
 

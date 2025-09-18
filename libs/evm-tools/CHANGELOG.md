@@ -1,20 +1,20 @@
 # @ledgerhq/evm-tools
 
-## 1.7.6-nightly.1
+## 1.7.6
 
 ### Patch Changes
 
-- Updated dependencies [[`aaa16b7`](https://github.com/LedgerHQ/ledger-live/commit/aaa16b718454dca51d59bb138ab1a638dc4b8243)]:
-  - @ledgerhq/live-env@2.16.0-nightly.1
-  - @ledgerhq/cryptoassets-evm-signatures@13.6.2-nightly.1
+- Updated dependencies [[`e52268a`](https://github.com/LedgerHQ/ledger-live/commit/e52268a3bc7d97a7ed09ed082786a647e048a6e8), [`b27c96c`](https://github.com/LedgerHQ/ledger-live/commit/b27c96ccbcefb1982a40688a8385209eac99165a)]:
+  - @ledgerhq/live-env@2.16.0
+  - @ledgerhq/cryptoassets-evm-signatures@13.6.2
 
-## 1.7.6-nightly.0
+## 1.7.6-next.0
 
 ### Patch Changes
 
-- Updated dependencies [[`b27c96c`](https://github.com/LedgerHQ/ledger-live/commit/b27c96ccbcefb1982a40688a8385209eac99165a)]:
-  - @ledgerhq/live-env@2.16.0-nightly.0
-  - @ledgerhq/cryptoassets-evm-signatures@13.6.2-nightly.0
+- Updated dependencies [[`e52268a`](https://github.com/LedgerHQ/ledger-live/commit/e52268a3bc7d97a7ed09ed082786a647e048a6e8), [`b27c96c`](https://github.com/LedgerHQ/ledger-live/commit/b27c96ccbcefb1982a40688a8385209eac99165a)]:
+  - @ledgerhq/live-env@2.16.0-next.0
+  - @ledgerhq/cryptoassets-evm-signatures@13.6.2-next.0
 
 ## 1.7.5
 

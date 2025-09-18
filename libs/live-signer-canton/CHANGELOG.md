@@ -1,59 +1,28 @@
 # @ledgerhq/live-signer-canton
 
-## 0.2.4-nightly.6
+## 0.3.0
 
-### Patch Changes
-
-- Updated dependencies [[`a3bf70e`](https://github.com/LedgerHQ/ledger-live/commit/a3bf70ea59fc31277a170d4cb5530f2f58d0a2ab), [`6c7ede3`](https://github.com/LedgerHQ/ledger-live/commit/6c7ede327fcfa0f87ffdb9684da4e3b95612643c)]:
-  - @ledgerhq/coin-canton@0.5.0-nightly.6
-
-## 0.2.4-nightly.5
-
-### Patch Changes
-
-- Updated dependencies [[`65c128a`](https://github.com/LedgerHQ/ledger-live/commit/65c128a93f07857b421bed3696bc9984f860ada9)]:
-  - @ledgerhq/coin-canton@0.5.0-nightly.5
-
-## 0.2.4-nightly.4
-
-### Patch Changes
-
-- [#11769](https://github.com/LedgerHQ/ledger-live/pull/11769) [`6941aac`](https://github.com/LedgerHQ/ledger-live/commit/6941aac638dcc8d4fb03aa92f42d2a71d4089202) Thanks [@ishaba](https://github.com/ishaba)! - fix canton receive flow
-
-- Updated dependencies [[`6941aac`](https://github.com/LedgerHQ/ledger-live/commit/6941aac638dcc8d4fb03aa92f42d2a71d4089202), [`fcb6dd3`](https://github.com/LedgerHQ/ledger-live/commit/fcb6dd3701373df22fba0e94bdbe04a3e730dffd)]:
-  - @ledgerhq/hw-app-canton@0.3.1-nightly.1
-  - @ledgerhq/coin-canton@0.5.0-nightly.4
-
-## 0.2.4-nightly.3
-
-### Patch Changes
-
-- Updated dependencies [[`2d747cf`](https://github.com/LedgerHQ/ledger-live/commit/2d747cf63f120a6634c2e2adbe60c4e94d37fc71)]:
-  - @ledgerhq/coin-canton@0.5.0-nightly.3
-
-## 0.2.4-nightly.2
-
-### Patch Changes
+### Minor Changes
 
 - [#11722](https://github.com/LedgerHQ/ledger-live/pull/11722) [`a87922d`](https://github.com/LedgerHQ/ledger-live/commit/a87922dc99e4f2e4b40a46fd52ad08a71012fe94) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Add canton onboard ui flow
 
-- Updated dependencies [[`aaa16b7`](https://github.com/LedgerHQ/ledger-live/commit/aaa16b718454dca51d59bb138ab1a638dc4b8243), [`075cdb4`](https://github.com/LedgerHQ/ledger-live/commit/075cdb4975a584e2b6f715fc6db4d364c0997848), [`a87922d`](https://github.com/LedgerHQ/ledger-live/commit/a87922dc99e4f2e4b40a46fd52ad08a71012fe94), [`4a0b0c6`](https://github.com/LedgerHQ/ledger-live/commit/4a0b0c629e147f680cac0d0f3854834dd3dbb0bd)]:
-  - @ledgerhq/coin-canton@0.5.0-nightly.2
-  - @ledgerhq/hw-app-canton@0.3.1-nightly.0
+### Patch Changes
 
-## 0.2.4-nightly.1
+- Updated dependencies [[`284a2c7`](https://github.com/LedgerHQ/ledger-live/commit/284a2c7f571c8d8e622ba60bef24d186ce42605d), [`c1209a7`](https://github.com/LedgerHQ/ledger-live/commit/c1209a70f6362fe8a52139ad5ad0b4705aac00fb), [`205458e`](https://github.com/LedgerHQ/ledger-live/commit/205458e2d3ca5ec1d7a50d30b63050a692a5e045), [`2b896f9`](https://github.com/LedgerHQ/ledger-live/commit/2b896f94d6fc53ef965ed567489ad96d913466d4), [`58ef394`](https://github.com/LedgerHQ/ledger-live/commit/58ef39468870e56745a3a4bc95a1292a1e1f64ca), [`2482195`](https://github.com/LedgerHQ/ledger-live/commit/24821957c838a304be60ff6e16798ef3cac987cd), [`0dfba50`](https://github.com/LedgerHQ/ledger-live/commit/0dfba503a0e3c4d8ae8e32489499e3174b1741b8), [`a87922d`](https://github.com/LedgerHQ/ledger-live/commit/a87922dc99e4f2e4b40a46fd52ad08a71012fe94), [`485bf49`](https://github.com/LedgerHQ/ledger-live/commit/485bf494470d96313fd89c92b8e9a74270acd419), [`e8a0185`](https://github.com/LedgerHQ/ledger-live/commit/e8a01854e07d313659f9740843731e97601cf41d)]:
+  - @ledgerhq/coin-canton@0.5.0
+  - @ledgerhq/hw-app-canton@0.4.0
+
+## 0.3.0-next.0
+
+### Minor Changes
+
+- [#11722](https://github.com/LedgerHQ/ledger-live/pull/11722) [`a87922d`](https://github.com/LedgerHQ/ledger-live/commit/a87922dc99e4f2e4b40a46fd52ad08a71012fe94) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Add canton onboard ui flow
 
 ### Patch Changes
 
-- Updated dependencies [[`2b896f9`](https://github.com/LedgerHQ/ledger-live/commit/2b896f94d6fc53ef965ed567489ad96d913466d4)]:
-  - @ledgerhq/coin-canton@0.5.0-nightly.1
-
-## 0.2.4-nightly.0
-
-### Patch Changes
-
-- Updated dependencies []:
-  - @ledgerhq/coin-canton@0.4.1-nightly.0
+- Updated dependencies [[`284a2c7`](https://github.com/LedgerHQ/ledger-live/commit/284a2c7f571c8d8e622ba60bef24d186ce42605d), [`c1209a7`](https://github.com/LedgerHQ/ledger-live/commit/c1209a70f6362fe8a52139ad5ad0b4705aac00fb), [`205458e`](https://github.com/LedgerHQ/ledger-live/commit/205458e2d3ca5ec1d7a50d30b63050a692a5e045), [`2b896f9`](https://github.com/LedgerHQ/ledger-live/commit/2b896f94d6fc53ef965ed567489ad96d913466d4), [`58ef394`](https://github.com/LedgerHQ/ledger-live/commit/58ef39468870e56745a3a4bc95a1292a1e1f64ca), [`2482195`](https://github.com/LedgerHQ/ledger-live/commit/24821957c838a304be60ff6e16798ef3cac987cd), [`0dfba50`](https://github.com/LedgerHQ/ledger-live/commit/0dfba503a0e3c4d8ae8e32489499e3174b1741b8), [`a87922d`](https://github.com/LedgerHQ/ledger-live/commit/a87922dc99e4f2e4b40a46fd52ad08a71012fe94), [`485bf49`](https://github.com/LedgerHQ/ledger-live/commit/485bf494470d96313fd89c92b8e9a74270acd419), [`e8a0185`](https://github.com/LedgerHQ/ledger-live/commit/e8a01854e07d313659f9740843731e97601cf41d)]:
+  - @ledgerhq/coin-canton@0.5.0-next.0
+  - @ledgerhq/hw-app-canton@0.4.0-next.0
 
 ## 0.2.3
 

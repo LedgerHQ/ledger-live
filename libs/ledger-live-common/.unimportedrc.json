@@ -309,12 +309,7 @@
     "src/walletConnect/index.ts",
     "src/wallet-api/ModularDrawer/utils.ts"
   ],
-  "extensions": [
-    ".ts",
-    ".js",
-    ".jsx",
-    ".tsx"
-  ],
+  "extensions": [".ts", ".js", ".jsx", ".tsx"],
   "ignorePatterns": [
     "**/node_modules/**",
     "**/__tests__/**",
@@ -409,6 +404,7 @@
     "src/families/canton/logic.ts",
     "src/families/canton/types.ts",
     "src/modularDrawer/data/entities/index.ts",
+    "src/modularDrawer/data/entities/selectorUtils.ts",
     "src/modularDrawer/data/entities/interestRateSelectors.ts",
     "src/modularDrawer/data/state-manager/api.ts",
     "src/modularDrawer/data/state-manager/types.ts",
@@ -426,6 +422,10 @@
     "src/modularDrawer/hooks/useAssetAccountCounts.tsx",
     "src/modularDrawer/hooks/useSearch.ts",
     "src/modularDrawer/hooks/useModularDrawerConfiguration.ts",
+    "src/modularDrawer/data/entities/marketSelectors.ts",
+    "src/modularDrawer/hooks/modules/useLeftMarketTrendModule.tsx",
+    "src/modularDrawer/hooks/modules/useRightMarketTrendModule.tsx",
+    "src/modularDrawer/hooks/useMarketByCurrencies.ts",
     "src/modularDrawer/modules/createAssetConfiguration.ts",
     "src/modularDrawer/modules/createNetworkConfiguration.ts",
     "src/modularDrawer/types.ts",

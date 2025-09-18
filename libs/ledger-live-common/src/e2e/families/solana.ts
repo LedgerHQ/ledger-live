@@ -1,17 +1,27 @@
 import expect from "expect";
-import { pressBoth, pressUntilTextFound, waitFor, containsSubstringInEvent } from "../speculos";
+import {
+  pressBoth,
+  pressUntilTextFound,
+  containsSubstringInEvent,
+  getDelegateEvents,
+  getSpeculosModel,
+} from "../speculos";
 import { DeviceLabels } from "../enum/DeviceLabels";
 import { Device } from "../enum/Device";
 import { Transaction } from "../models/Transaction";
+import { Delegate } from "../models/Delegate";
+import { DeviceModelId } from "@ledgerhq/types-devices";
 
-export async function delegateSolana() {
-  await waitFor(DeviceLabels.REVIEW_TRANSACTION);
-  await pressUntilTextFound(DeviceLabels.SIGN_TRANSACTION);
+export async function delegateSolana(delegatingAccount: Delegate) {
+  await getDelegateEvents(delegatingAccount);
   await pressBoth();
 }
 
 export async function sendSolana(tx: Transaction) {
-  const events = await pressUntilTextFound(DeviceLabels.SIGN_TRANSACTION);
+  const events =
+    getSpeculosModel() !== DeviceModelId.nanoS
+      ? await pressUntilTextFound(DeviceLabels.SIGN_TRANSACTION)
+      : await pressUntilTextFound(DeviceLabels.APPROVE);
   const isAmountCorrect = containsSubstringInEvent(tx.amount, events);
   expect(isAmountCorrect).toBeTruthy();
   if (process.env.SPECULOS_DEVICE !== Device.LNS) {

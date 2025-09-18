@@ -2,6 +2,8 @@ export * from "./Input/Input";
 export * from "./AssetItem/AssetItem";
 export * from "./AssetTypeList/AssetList";
 export * from "./ApyIndicator/ApyIndicator";
+export * from "./MarketPriceIndicator/MarketPriceIndicator";
+export * from "./MarketPercentIndicator/MarketPercentIndicator";
 export * from "./NetworkItem/NetworkItem";
 export * from "./NetworkList/NetworkList";
 export * from "./Tag/Tag";

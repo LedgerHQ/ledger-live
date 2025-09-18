@@ -1,5 +1,11 @@
 import React, { useCallback, useEffect } from "react";
-import { ApyIndicator, AssetList, AssetType } from "@ledgerhq/react-ui/pre-ldls";
+import {
+  ApyIndicator,
+  AssetList,
+  AssetType,
+  MarketPercentIndicator,
+  MarketPriceIndicator,
+} from "@ledgerhq/react-ui/pre-ldls";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { useModularDrawerAnalytics } from "LLD/features/ModularDrawer/analytics/useModularDrawerAnalytics";
 import { ListWrapper } from "LLD/features/ModularDrawer/components/ListWrapper";
@@ -45,6 +51,8 @@ export const SelectAssetList = ({
 }: SelectAssetProps) => {
   const assetConfigurationDeps = {
     ApyIndicator,
+    MarketPriceIndicator,
+    MarketPercentIndicator,
     useBalanceDeps,
     balanceItem,
   };
