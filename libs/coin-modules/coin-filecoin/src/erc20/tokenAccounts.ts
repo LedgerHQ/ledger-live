@@ -152,7 +152,7 @@ export async function buildTokenAccounts(
         operationsCount: txns.length,
         operations: mergeOps(existingAccount?.operations ?? [], operations),
         pendingOperations: existingAccount?.pendingOperations ?? [],
-        creationDate: operations[0]?.date ?? new Date(),
+        creationDate: operations[operations.length - 1]?.date ?? new Date(),
         swapHistory: existingAccount?.swapHistory ?? [],
         balanceHistoryCache: emptyHistoryCache, // calculated in the jsHelpers
       };
