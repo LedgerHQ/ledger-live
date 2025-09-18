@@ -70,12 +70,10 @@ export class Merge extends PickingStrategy {
       }
       total = total.plus(unspentUtxos[i].value);
       unspentUtxoSelected.push(unspentUtxos[i]);
-      // fee += sizePerInput * feePerByte;
       fee += perInputV * safeFeePerByte;
       i += 1;
     }
-    // OLD: if (total.minus(amount.plus(fee)).lt(sizePerOutput * feePerByte)) {
-    //
+
     // If we can't afford to add the change output, drop it
     if (total.minus(amount.plus(fee)).lt(changeDeltaV * safeFeePerByte)) {
       // not enough fund to make a change output
@@ -87,7 +85,6 @@ export class Merge extends PickingStrategy {
       };
     }
     fee += changeDeltaV * safeFeePerByte; // add change output cost
-    //OLD: fee += sizePerOutput * feePerByte; // fee to make a change output
     return {
       totalValue: total,
       unspentUtxos: unspentUtxoSelected,
