@@ -1153,7 +1153,7 @@ const SwapConfirmationSimpleView: React.FC<{
       <Trans i18nKey="DeviceAction.swap.confirmSwap" />
     </Text>
     <Text color="palette.text.shade60" fontSize="14px" textAlign="center">
-      <Trans i18nKey={`DeviceAction.swap.alert.${noticeType.message}`} />
+      <Trans i18nKey={`DeviceAction.swap.simpleViewNotice.${noticeType.message}`} />
     </Text>
   </DeviceSwapSummaryContainer>
 );
