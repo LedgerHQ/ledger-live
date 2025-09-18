@@ -46,7 +46,7 @@ import { getEnv } from "@ledgerhq/live-env";
 import { SUI_SYSTEM_STATE_OBJECT_ID } from "@mysten/sui/utils";
 import { getCurrentSuiPreloadData } from "../bridge/preload";
 import { ONE_SUI } from "../constants";
-import { SuiMoveObject } from "../../node_modules/@mysten/signers/dist/cjs/ledger/bcs.js";
+import { SuiMoveObject } from "@mysten/signers/ledger";
 import bs58 from "bs58";
 
 const apiMap: Record<string, SuiClient> = {};
@@ -586,38 +586,27 @@ export const getListOperations = async (
     const rpcOrder = convertApiOrderToSdkOrder(order);
     const { out: outCursor, in: inCursor } = deserializeCursor(cursor);
 
-    const [opsOut, opsIn] = await Promise.all([
-      queryTransactions({
-        api,
-        addr,
-        type: "OUT",
-        cursor: toSdkCursor(outCursor),
-        order: rpcOrder,
-      }),
-      queryTransactions({
-        api,
-        addr,
-        type: "IN",
-        cursor: toSdkCursor(inCursor),
-        order: rpcOrder,
-      }),
-    ]);
-
-    const ops = [...opsOut.data, ...opsIn.data]
-      .sort((a, b) => Number(b.timestampMs) - Number(a.timestampMs))
-      .map(t => transactionToOp(addr, t));
-
-    const nextCursor: Cursor = {};
-    if (opsOut.hasNextPage && opsOut.nextCursor) {
-      nextCursor.out = opsOut.nextCursor;
-    }
-    if (opsIn.hasNextPage && opsIn.nextCursor) {
-      nextCursor.in = opsIn.nextCursor;
-    }
+    const opsOut = await loadOperations({
+      api,
+      addr,
+      type: "OUT",
+      cursor,
+      order: rpcOrder,
+      operations: [],
+    });
+    const opsIn = await loadOperations({
+      api,
+      addr,
+      type: "IN",
+      cursor,
+      order: rpcOrder,
+      operations: [],
+    });
+    const list = filterOperations(opsIn, opsOut, rpcOrder, true);
 
     return {
-      items: ops,
-      next: serializeCursor(nextCursor),
+      items: list.operations.map(t => transactionToOp(addr, t)),
+      next: list.cursor ?? undefined,
     };
   });
 

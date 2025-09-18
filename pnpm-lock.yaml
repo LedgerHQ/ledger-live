@@ -4114,11 +4114,11 @@ importers:
         specifier: workspace:^
         version: link:../../ledgerjs/packages/types-live
       '@mysten/signers':
-        specifier: 0.3.4
-        version: 0.3.4(typescript@5.4.3)
+        specifier: 0.0.0-experimental-20250918164847
+        version: 0.0.0-experimental-20250918164847(typescript@5.4.3)
       '@mysten/sui':
-        specifier: 1.37.1
-        version: 1.37.1(typescript@5.4.3)
+        specifier: 1.38.0
+        version: 1.38.0(typescript@5.4.3)
       bignumber.js:
         specifier: ^9.1.2
         version: 9.1.2
@@ -6836,8 +6836,8 @@ importers:
   libs/ledgerjs/packages/hw-app-sui:
     dependencies:
       '@mysten/ledgerjs-hw-app-sui':
-        specifier: 0.5.2
-        version: 0.5.2
+        specifier: 0.6.0
+        version: 0.6.0
     devDependencies:
       '@ledgerhq/hw-transport-mocker':
         specifier: workspace:^
@@ -13899,8 +13899,8 @@ packages:
       react: '*'
       react-native: '*'
 
-  '@gql.tada/cli-utils@1.7.0':
-    resolution: {integrity: sha512-Jj74qfIplT+MzUUWABeUJxHF5lxiyOJpE4ENeIOwvcPAi+QYoxsKNj/aPcGAk2jK5CrP9aFtE5O7794q2rWjlQ==}
+  '@gql.tada/cli-utils@1.7.1':
+    resolution: {integrity: sha512-wg5ysZNQxtNQm67T3laVWmZzLpGb7QfyYWZdaUD2r1OjDj5Bgftq7eQlplmH+hsdffjuUyhJw/b5XAjeE2mJtg==}
     peerDependencies:
       '@gql.tada/svelte-support': 1.0.1
       '@gql.tada/vue-support': 1.0.1
@@ -14595,22 +14595,22 @@ packages:
   '@multiversx/sdk-transaction-decoder@1.0.2':
     resolution: {integrity: sha512-j43QsKquu8N51WLmVlJ7dV2P3A1448R7/ktvl8r3i6wRMpfdtzDPNofTdHmMRT7DdQdvs4+RNgz8hVKL11Etsw==}
 
-  '@mysten/bcs@1.7.0':
-    resolution: {integrity: sha512-8zE2Jzj2ai55RlVXx2pEMbbq+X3vB+uPGBvZr0F79IdTwuwcu4QdFG3PT/zHsytsvATkn+z0f2YDWhM5916u2A==}
+  '@mysten/bcs@1.8.0':
+    resolution: {integrity: sha512-bDoLN1nN+XPONsvpNyNyqYHndM3PKWS419GLeRnbLoWyNm4bnyD1X4luEpJLLDq400hBuXiCan4RWjofvyTUIQ==}
 
-  '@mysten/ledgerjs-hw-app-sui@0.5.2':
-    resolution: {integrity: sha512-qLLODXIZ7FZLqbxeSACGfOlN0jk9DYTQgE4GJDYyGFratVvthtSTg3/YjG+AkTPVzmOnZjiwWE3VyqDQ2qlSCA==}
+  '@mysten/ledgerjs-hw-app-sui@0.6.0':
+    resolution: {integrity: sha512-UopsSSI1gphfoh59feiPPhZUEybYIvYEcvmudGR2RAIN3IDJHkaA3Uu0HPH8BZQbQXhkgvFW4V2KNWIWj2IE2g==}
 
-  '@mysten/signers@0.3.4':
-    resolution: {integrity: sha512-s6XcsXzJApF3kay/5sqEpeYKTe4qWttpzIyzmNdBdWVxFf1d5hXfoZ3KgKWvkIyBJ7orwGeVu5PcdrXScN2L+g==}
+  '@mysten/signers@0.0.0-experimental-20250918164847':
+    resolution: {integrity: sha512-BD8ezLJOO34a2jMsS5gcPVdRrj29SPUNT/DnAOh0o4kTyfF6w8f2VLWfl4Dvj3rTF9sQ3dhlU9OudtiXo8UQLQ==}
     engines: {node: '>=20'}
 
-  '@mysten/sui@1.37.1':
-    resolution: {integrity: sha512-xkQEgO/XdGz9T5vJU0iEiw8ZnuDSHWjdYA+u783wY5dt0TknYDBBcThaufhz9j+tksCxKhR5OkktE+Wz3zdYtw==}
+  '@mysten/sui@1.38.0':
+    resolution: {integrity: sha512-tH6V4BJsYi5d97MOiLoOhyldrYxkm/cu8dYV52asqh1i88HrSVMbPAJ9sVoeWN2Ju+QsJ/Go4ldSjdCkaBCyJQ==}
     engines: {node: '>=18'}
 
-  '@mysten/utils@0.1.1':
-    resolution: {integrity: sha512-jvhJC6/2la1QHltukQXzfyTZ+VVHxe187JjPx+mEXRUWyAo6jCSdioOQJIfaGu4K4i+37KeiydXRwV/bq/7UJQ==}
+  '@mysten/utils@0.2.0':
+    resolution: {integrity: sha512-CM6kJcJHX365cK6aXfFRLBiuyXc5WSBHQ43t94jqlCAIRw8umgNcTb5EnEA9n31wPAQgLDGgbG/rCUISCTJ66w==}
 
   '@ndelangen/get-tarball@3.0.9':
     resolution: {integrity: sha512-9JKTEik4vq+yGosHYhZ1tiH/3WpUS0Nh0kej4Agndhox8pAdWhEx5knFVRcb/ya9knCRCs1rPxNrSXTDdfVqpA==}
@@ -25362,8 +25362,8 @@ packages:
     resolution: {integrity: sha512-DI8zV1231tqiGzOiOzQWDhsBmncFW7oQDH6Zgy6pDPrqJuVZMtoSgPLLsBZQj8Jg4JFfwoOsDA8NGtLQLnIx2g==}
     engines: {node: '>=20'}
 
-  gql.tada@1.8.12:
-    resolution: {integrity: sha512-VuHbhYyhPN7XDc06Gl3jYWxMlqa1MLX5xbrmbBbzelX/+M5khxDsNBE7FvTEvAmx0RyLyDkEtRPWRfIdMCTKTw==}
+  gql.tada@1.8.13:
+    resolution: {integrity: sha512-fYoorairdPgxtE7Sf1X9/6bSN9Kt2+PN8KLg3hcF8972qFnawwUgs1OLVU8efZMHwL7EBHhhKBhrsGPlOs2lZQ==}
     hasBin: true
     peerDependencies:
       typescript: ^5.0.0
@@ -38665,7 +38665,7 @@ snapshots:
       '@babel/parser': 7.28.3
       '@babel/template': 7.27.2
       '@babel/types': 7.28.2
-      debug: 4.4.1
+      debug: 4.3.4
     transitivePeerDependencies:
       - supports-color
 
@@ -41141,7 +41141,7 @@ snapshots:
       '@expo/image-utils': 0.6.5
       '@expo/json-file': 9.1.4
       '@react-native/normalize-colors': 0.76.9
-      debug: 4.4.1
+      debug: 4.3.4
       fs-extra: 9.1.0
       resolve-from: 5.0.0
       semver: 7.7.1
@@ -42038,7 +42038,7 @@ snapshots:
       react: 18.3.1
       react-native: 0.77.3(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1)
 
-  '@gql.tada/cli-utils@1.7.0(graphql@16.11.0)(typescript@5.4.3)':
+  '@gql.tada/cli-utils@1.7.1(graphql@16.11.0)(typescript@5.4.3)':
     dependencies:
       '@0no-co/graphqlsp': 1.12.16(graphql@16.11.0)(typescript@5.4.3)
       '@gql.tada/internal': 1.0.8(graphql@16.11.0)(typescript@5.4.3)
@@ -43343,7 +43343,7 @@ snapshots:
 
   '@kwsites/file-exists@1.1.1':
     dependencies:
-      debug: 4.4.1
+      debug: 4.3.4
     transitivePeerDependencies:
       - supports-color
 
@@ -43739,21 +43739,21 @@ snapshots:
     dependencies:
       bech32: 2.0.0
 
-  '@mysten/bcs@1.7.0':
+  '@mysten/bcs@1.8.0':
     dependencies:
-      '@mysten/utils': 0.1.1
+      '@mysten/utils': 0.2.0
       '@scure/base': 1.2.6
 
-  '@mysten/ledgerjs-hw-app-sui@0.5.2':
+  '@mysten/ledgerjs-hw-app-sui@0.6.0':
     dependencies:
       '@ledgerhq/hw-transport': link:libs/ledgerjs/packages/hw-transport
       fast-sha256: 1.3.0
 
-  '@mysten/signers@0.3.4(typescript@5.4.3)':
+  '@mysten/signers@0.0.0-experimental-20250918164847(typescript@5.4.3)':
     dependencies:
       '@google-cloud/kms': 4.5.0
-      '@mysten/ledgerjs-hw-app-sui': 0.5.2
-      '@mysten/sui': 1.37.1(typescript@5.4.3)
+      '@mysten/ledgerjs-hw-app-sui': 0.6.0
+      '@mysten/sui': 1.38.0(typescript@5.4.3)
       '@noble/curves': 1.9.7
       '@noble/hashes': 1.8.0
       asn1-ts: 8.0.5
@@ -43764,17 +43764,17 @@ snapshots:
       - supports-color
       - typescript
 
-  '@mysten/sui@1.37.1(typescript@5.4.3)':
+  '@mysten/sui@1.38.0(typescript@5.4.3)':
     dependencies:
       '@graphql-typed-document-node/core': 3.2.0(graphql@16.11.0)
-      '@mysten/bcs': 1.7.0
-      '@mysten/utils': 0.1.1
+      '@mysten/bcs': 1.8.0
+      '@mysten/utils': 0.2.0
       '@noble/curves': 1.9.7
       '@noble/hashes': 1.8.0
       '@scure/base': 1.2.6
       '@scure/bip32': 1.7.0
       '@scure/bip39': 1.6.0
-      gql.tada: 1.8.12(graphql@16.11.0)(typescript@5.4.3)
+      gql.tada: 1.8.13(graphql@16.11.0)(typescript@5.4.3)
       graphql: 16.11.0
       poseidon-lite: 0.2.1
       valibot: 0.36.0
@@ -43783,7 +43783,7 @@ snapshots:
       - '@gql.tada/vue-support'
       - typescript
 
-  '@mysten/utils@0.1.1':
+  '@mysten/utils@0.2.0':
     dependencies:
       '@scure/base': 1.2.6
 
@@ -49780,7 +49780,7 @@ snapshots:
 
   '@storybook/react-docgen-typescript-plugin@1.0.6--canary.9.0c3f3b7.0(typescript@5.4.3)(webpack@5.94.0(metro@0.81.5))':
     dependencies:
-      debug: 4.4.1
+      debug: 4.3.4
       endent: 2.1.0
       find-cache-dir: 3.3.2
       flat-cache: 3.2.0
@@ -51449,7 +51449,7 @@ snapshots:
       '@typescript-eslint/scope-manager': 5.62.0
       '@typescript-eslint/type-utils': 5.62.0(eslint@8.57.0)(typescript@5.4.3)
       '@typescript-eslint/utils': 5.62.0(eslint@8.57.0)(typescript@5.4.3)
-      debug: 4.4.1
+      debug: 4.3.4
       eslint: 8.57.0
       graphemer: 1.4.0
       ignore: 5.3.1
@@ -51591,7 +51591,7 @@ snapshots:
     dependencies:
       '@typescript-eslint/typescript-estree': 5.62.0(typescript@5.4.3)
       '@typescript-eslint/utils': 5.62.0(eslint@8.57.0)(typescript@5.4.3)
-      debug: 4.4.1
+      debug: 4.3.4
       eslint: 8.57.0
       tsutils: 3.21.0(typescript@5.4.3)
     optionalDependencies:
@@ -51720,7 +51720,7 @@ snapshots:
     dependencies:
       '@typescript-eslint/types': 8.30.1
       '@typescript-eslint/visitor-keys': 8.30.1
-      debug: 4.4.1
+      debug: 4.3.4
       fast-glob: 3.3.2
       is-glob: 4.0.3
       minimatch: 9.0.4
@@ -53436,7 +53436,7 @@ snapshots:
       loader-utils: 2.0.4
       make-dir: 3.1.0
       schema-utils: 2.7.1
-      webpack: 5.94.0
+      webpack: 5.94.0(webpack-cli@4.10.0)
 
   babel-loader@9.2.1(@babel/core@7.27.1)(webpack@5.94.0(esbuild@0.19.12)):
     dependencies:
@@ -56206,7 +56206,7 @@ snapshots:
   detect-port@1.5.1:
     dependencies:
       address: 1.2.2
-      debug: 4.4.1
+      debug: 4.3.4
     transitivePeerDependencies:
       - supports-color
 
@@ -57025,7 +57025,7 @@ snapshots:
 
   esbuild-register@3.5.0(esbuild@0.18.20):
     dependencies:
-      debug: 4.4.1
+      debug: 4.3.4
       esbuild: 0.18.20
     transitivePeerDependencies:
       - supports-color
@@ -58598,7 +58598,7 @@ snapshots:
     dependencies:
       loader-utils: 2.0.4
       schema-utils: 3.3.0
-      webpack: 5.94.0
+      webpack: 5.94.0(webpack-cli@4.10.0)
 
   file-selector@0.6.0:
     dependencies:
@@ -59196,7 +59196,7 @@ snapshots:
     dependencies:
       basic-ftp: 5.0.5
       data-uri-to-buffer: 6.0.2
-      debug: 4.4.1
+      debug: 4.3.4
     transitivePeerDependencies:
       - supports-color
 
@@ -59483,11 +59483,11 @@ snapshots:
       responselike: 3.0.0
       type-fest: 4.40.0
 
-  gql.tada@1.8.12(graphql@16.11.0)(typescript@5.4.3):
+  gql.tada@1.8.13(graphql@16.11.0)(typescript@5.4.3):
     dependencies:
       '@0no-co/graphql.web': 1.0.11(graphql@16.11.0)
       '@0no-co/graphqlsp': 1.12.16(graphql@16.11.0)(typescript@5.4.3)
-      '@gql.tada/cli-utils': 1.7.0(graphql@16.11.0)(typescript@5.4.3)
+      '@gql.tada/cli-utils': 1.7.1(graphql@16.11.0)(typescript@5.4.3)
       '@gql.tada/internal': 1.0.8(graphql@16.11.0)(typescript@5.4.3)
       typescript: 5.4.3
     transitivePeerDependencies:
@@ -59827,7 +59827,7 @@ snapshots:
       pretty-error: 4.0.0
       tapable: 2.2.1
     optionalDependencies:
-      webpack: 5.94.0
+      webpack: 5.94.0(webpack-cli@4.10.0)
 
   htmlparser2@6.1.0:
     dependencies:
@@ -59893,7 +59893,7 @@ snapshots:
     dependencies:
       '@tootallnate/once': 1.1.2
       agent-base: 6.0.2
-      debug: 4.4.1
+      debug: 4.3.4
     transitivePeerDependencies:
       - supports-color
 
@@ -59901,7 +59901,7 @@ snapshots:
     dependencies:
       '@tootallnate/once': 2.0.0
       agent-base: 6.0.2
-      debug: 4.4.1
+      debug: 4.3.4
     transitivePeerDependencies:
       - supports-color
 
@@ -59967,7 +59967,7 @@ snapshots:
   https-proxy-agent@4.0.0:
     dependencies:
       agent-base: 5.1.1
-      debug: 4.4.1
+      debug: 4.3.4
     transitivePeerDependencies:
       - supports-color
 
@@ -63726,7 +63726,7 @@ snapshots:
 
   koa-route@3.2.0:
     dependencies:
-      debug: 4.4.1
+      debug: 4.3.4
       methods: 1.1.2
       path-to-regexp: 1.8.0
     transitivePeerDependencies:
@@ -63734,7 +63734,7 @@ snapshots:
 
   koa-send@5.0.1:
     dependencies:
-      debug: 4.4.1
+      debug: 4.3.4
       http-errors: 1.8.1
       resolve-path: 1.4.0
     transitivePeerDependencies:
@@ -63754,7 +63754,7 @@ snapshots:
       content-disposition: 0.5.4
       content-type: 1.0.5
       cookies: 0.9.1
-      debug: 4.4.1
+      debug: 4.3.4
       delegates: 1.0.0
       depd: 2.0.0
       destroy: 1.2.0
@@ -65251,7 +65251,7 @@ snapshots:
   micromark@3.2.0:
     dependencies:
       '@types/debug': 4.1.12
-      debug: 4.4.1
+      debug: 4.3.4
       decode-named-character-reference: 1.0.2
       micromark-core-commonmark: 1.1.0
       micromark-factory-space: 1.1.0
@@ -66450,7 +66450,7 @@ snapshots:
     dependencies:
       '@tootallnate/quickjs-emscripten': 0.23.0
       agent-base: 7.1.3
-      debug: 4.4.1
+      debug: 4.3.4
       get-uri: 6.0.4
       http-proxy-agent: 7.0.2
       https-proxy-agent: 7.0.6
@@ -67890,7 +67890,7 @@ snapshots:
   puppeteer-core@2.1.1:
     dependencies:
       '@types/mime-types': 2.1.4
-      debug: 4.4.1
+      debug: 4.3.4
       extract-zip: 1.7.0
       https-proxy-agent: 4.0.0
       mime: 2.6.0
@@ -70329,7 +70329,7 @@ snapshots:
   socks-proxy-agent@8.0.5:
     dependencies:
       agent-base: 7.1.3
-      debug: 4.4.1
+      debug: 4.3.4
       socks: 2.8.5
     transitivePeerDependencies:
       - supports-color
@@ -70451,7 +70451,7 @@ snapshots:
 
   spdy-transport@3.0.0:
     dependencies:
-      debug: 4.4.1
+      debug: 4.3.4
       detect-node: 2.1.0
       hpack.js: 2.1.6
       obuf: 1.1.2
@@ -71468,7 +71468,7 @@ snapshots:
       schema-utils: 3.3.0
       serialize-javascript: 6.0.2
       terser: 5.36.0
-      webpack: 5.94.0
+      webpack: 5.94.0(webpack-cli@4.10.0)
     transitivePeerDependencies:
       - metro
 
@@ -73829,7 +73829,7 @@ snapshots:
       mime-types: 2.1.35
       range-parser: 1.2.1
       schema-utils: 4.2.0
-      webpack: 5.94.0
+      webpack: 5.94.0(webpack-cli@4.10.0)
 
   webpack-dev-middleware@6.1.2(webpack@5.94.0(esbuild@0.19.12)):
     dependencies:
