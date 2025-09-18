@@ -155,7 +155,7 @@ describe("SUI SDK Integration tests", () => {
         recipient: "0x33444cf803c690db96527cec67e3c9ab512596f4ba2d4eace43f0b4f716e0164",
         errors: {},
       };
-      const tx = await createTransaction(address, transaction);
+      const { unsigned: tx } = await createTransaction(address, transaction);
       expect(tx).toBeInstanceOf(Uint8Array);
     });
   });
