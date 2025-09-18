@@ -186,6 +186,7 @@ export type Features = CurrencyFeatures & {
   ptxSwapLiveAppMobile: Feature_PtxSwapLiveApp;
   ptxSwapLiveAppKycWarning: DefaultFeature;
   ptxSwapLiveApp: Feature_PtxSwapLiveApp;
+  ptxSwapconfirmSwapOnDevice: Feature_PtxSwapconfirmSwapOnDevice;
   ptxEarnLiveApp: Feature_PtxEarnLiveApp;
   ptxSwapReceiveTRC20WithoutTrx: Feature_PtxSwapReceiveTRC20WithoutTrx;
   flexibleContentCards: Feature_FlexibleContentCards;
@@ -560,6 +561,8 @@ export type Feature_PtxSwapLiveApp = Feature<{
   currencies?: string[];
   families?: string[];
 }>;
+
+export type Feature_PtxSwapconfirmSwapOnDevice = DefaultFeature;
 
 export type Feature_PtxEarnLiveApp = Feature<{
   manifest_id: string;
