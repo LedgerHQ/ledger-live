@@ -436,12 +436,6 @@ importers:
       '@ledgerhq/live-network':
         specifier: workspace:^
         version: link:../../libs/live-network
-      '@ledgerhq/live-nft':
-        specifier: workspace:^
-        version: link:../../libs/live-nft
-      '@ledgerhq/live-nft-react':
-        specifier: workspace:^
-        version: link:../../libs/live-nft-react
       '@ledgerhq/live-wallet':
         specifier: workspace:^
         version: link:../../libs/live-wallet
@@ -583,9 +577,6 @@ importers:
       react-motion:
         specifier: 0.5.2
         version: 0.5.2(react@18.3.1)
-      react-prismazoom:
-        specifier: 3.3.5
-        version: 3.3.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       react-redux:
         specifier: 7.2.9
         version: 7.2.9(@types/react@18.2.73)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -31154,12 +31145,6 @@ packages:
     peerDependenciesMeta:
       '@types/react':
         optional: true
-
-  react-prismazoom@3.3.5:
-    resolution: {integrity: sha512-bpXY6Te325Ot11PzWAPrwrxi06CcJeKx9WOQvjdt+msmPOdgJgmvC70Khu+UG9Hur161TeNKNfepwvg0BT/USQ==}
-    peerDependencies:
-      react: '>=16.8.0'
-      react-dom: '>=16.8.0'
 
   react-redux@7.2.9:
     resolution: {integrity: sha512-Gx4L3uM182jEEayZfRbI/G11ZpYdNAnBs70lFVMNdHJI76XYtR+7m0MN+eAs7UHBPhWXcnFPaS+9owSCJQHNpQ==}
@@ -68865,13 +68850,6 @@ snapshots:
       - metro-transform-worker
       - supports-color
       - utf-8-validate
-
-  react-prismazoom@3.3.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
-    dependencies:
-      react: 18.3.1
-      react-dom: 18.3.1(react@18.3.1)
-    optionalDependencies:
-      fsevents: 2.3.3
 
   react-redux@7.2.9(@types/react@18.2.73)(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
     dependencies:

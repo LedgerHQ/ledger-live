@@ -177,7 +177,6 @@ const StepReceiveFunds = (props: StepProps) => {
     eventType,
     currencyName,
     receiveTokenMode,
-    receiveNFTMode,
     isFromPostOnboardingEntryPoint,
   } = props;
   const dispatch = useDispatch();
@@ -246,7 +245,6 @@ const StepReceiveFunds = (props: StepProps) => {
       global.localStorage.getItem(`${LOCAL_STORAGE_KEY_PREFIX}${receivedCurrencyId}`) === "true";
     if (
       !dismissModal &&
-      !receiveNFTMode &&
       !receiveTokenMode &&
       isStakingEnabledForAccount &&
       !isFromPostOnboardingEntryPoint &&
@@ -282,7 +280,6 @@ const StepReceiveFunds = (props: StepProps) => {
   }, [
     receivedCurrencyId,
     isFromPostOnboardingEntryPoint,
-    receiveNFTMode,
     receiveTokenMode,
     isStakingEnabledForAccount,
     isDirectStakingEnabledForAccount,
