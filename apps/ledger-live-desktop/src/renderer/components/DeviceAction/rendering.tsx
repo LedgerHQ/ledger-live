@@ -10,6 +10,7 @@ import ProviderIcon from "~/renderer/components/ProviderIcon";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
 import { ExchangeRate, ExchangeSwap } from "@ledgerhq/live-common/exchange/swap/types";
 import { getNoticeType, getProviderName } from "@ledgerhq/live-common/exchange/swap/utils/index";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import {
   FirmwareNotRecognized,
   LockedDeviceError,
@@ -264,6 +265,14 @@ const DeviceSwapSummaryValueStyled = styled.div`
   display: flex;
   align-items: center;
   gap: ${({ theme }) => theme.space[1]}px;
+`;
+
+const DeviceSwapSummaryContainer = styled(Flex)`
+  margin: ${({ theme }) => theme.space[3]}px;
+  display: flex;
+  flex-direction: column;
+  gap: ${({ theme }) => theme.space[4]}px;
+  padding: ${({ theme }) => theme.space[6]}px;
 `;
 
 const EllipsesTextStyled = styled(Text)`
@@ -1089,18 +1098,7 @@ const renderFirmwareUpdatingBase = ({
 
 export const renderFirmwareUpdating = withV3StyleProvider(renderFirmwareUpdatingBase);
 
-export const renderSwapDeviceConfirmation = ({
-  modelId,
-  type,
-  transaction,
-  exchangeRate,
-  exchange,
-  amountExpectedTo,
-  estimatedFees,
-  swapDefaultTrack,
-  stateSettings,
-  walletState,
-}: {
+interface SwapConfirmationProps {
   modelId: DeviceModelId;
   type: Theme["theme"];
   transaction: Transaction;
@@ -1111,7 +1109,68 @@ export const renderSwapDeviceConfirmation = ({
   swapDefaultTrack: Record<string, string | boolean>;
   stateSettings: SettingsState;
   walletState: WalletState;
+}
+
+const SwapConfirmationDetailedView: React.FC<{
+  alertProperties: Record<string, unknown>;
+  noticeType: { message: string };
+  exchangeRate: { provider: string };
+  deviceSwapSummaryFields: [string, React.ReactNode][];
+  modelId: DeviceModelId;
+  type: Theme["theme"];
+}> = ({ alertProperties, noticeType, exchangeRate, deviceSwapSummaryFields, modelId, type }) => (
+  <>
+    <Box flex={0}>
+      <Alert type="primary" {...alertProperties} mb={5} mx={4}>
+        <Trans
+          i18nKey={`DeviceAction.swap.notice.${noticeType.message}`}
+          values={{ providerName: getProviderName(exchangeRate.provider) }}
+        />
+      </Alert>
+    </Box>
+    <DeviceSwapSummaryStyled data-testid="device-swap-summary">
+      {deviceSwapSummaryFields.map(([key, value]) => (
+        <Fragment key={key}>
+          <Text fontWeight="medium" color="palette.text.shade40" fontSize="14px">
+            <Trans i18nKey={`DeviceAction.swap2.${key}`} />
+          </Text>
+          <DeviceSwapSummaryValueStyled data-testid={key}>{value}</DeviceSwapSummaryValueStyled>
+        </Fragment>
+      ))}
+    </DeviceSwapSummaryStyled>
+    {renderVerifyUnwrapped({ modelId, type })}
+  </>
+);
+
+const SwapConfirmationSimpleView: React.FC<{
+  modelId: DeviceModelId;
+  type: Theme["theme"];
+  noticeType: { message: string };
+}> = ({ modelId, type, noticeType }) => (
+  <DeviceSwapSummaryContainer>
+    {renderVerifyUnwrapped({ modelId, type })}
+    <Text fontSize="24px" fontWeight="semiBold" textAlign="center">
+      <Trans i18nKey="DeviceAction.swap.confirmSwap" />
+    </Text>
+    <Text color="palette.text.shade60" fontSize="14px" textAlign="center">
+      <Trans i18nKey={`DeviceAction.swap.alert.${noticeType.message}`} />
+    </Text>
+  </DeviceSwapSummaryContainer>
+);
+
+const SwapDeviceConfirmation: React.FC<SwapConfirmationProps> = ({
+  modelId,
+  type,
+  transaction,
+  exchangeRate,
+  exchange,
+  amountExpectedTo,
+  estimatedFees,
+  swapDefaultTrack,
+  stateSettings,
+  walletState,
 }) => {
+  const isDetailedViewEnabled = useFeature("ptxSwapconfirmSwapOnDevice")?.enabled ?? false;
   const sourceAccountCurrency = exchange.fromCurrency;
   const targetAccountCurrency = exchange.toCurrency;
   const sourceAccountName =
@@ -1226,32 +1285,28 @@ export const renderSwapDeviceConfirmation = ({
           provider={exchangeRate.provider}
           {...swapDefaultTrack}
         />
-        <Box flex={0}>
-          <Alert type="primary" {...alertProperties} mb={5} mx={4}>
-            <Trans
-              i18nKey={`DeviceAction.swap.notice.${noticeType.message}`}
-              values={{ providerName: getProviderName(exchangeRate.provider) }}
-            />
-          </Alert>
-        </Box>
-
-        <DeviceSwapSummaryStyled data-testid="device-swap-summary">
-          {deviceSwapSummaryFields.map(([key, value]) => (
-            <Fragment key={key}>
-              <Text fontWeight="medium" color="palette.text.shade40" fontSize="14px">
-                <Trans i18nKey={`DeviceAction.swap2.${key}`} />
-              </Text>
-              <DeviceSwapSummaryValueStyled data-testid={key}>{value}</DeviceSwapSummaryValueStyled>
-            </Fragment>
-          ))}
-        </DeviceSwapSummaryStyled>
-        {renderVerifyUnwrapped({ modelId, type })}
+        {isDetailedViewEnabled ? (
+          <SwapConfirmationDetailedView
+            alertProperties={alertProperties}
+            noticeType={noticeType}
+            exchangeRate={exchangeRate}
+            deviceSwapSummaryFields={deviceSwapSummaryFields}
+            modelId={modelId}
+            type={type}
+          />
+        ) : (
+          <SwapConfirmationSimpleView modelId={modelId} type={type} noticeType={noticeType} />
+        )}
       </ConfirmWrapper>
       <Separator />
       <DrawerFooter provider={exchangeRate.provider} />
     </>
   );
 };
+
+export const renderSwapDeviceConfirmation = (props: SwapConfirmationProps) => (
+  <SwapDeviceConfirmation {...props} />
+);
 
 export const renderSecureTransferDeviceConfirmation = ({
   exchangeType,
