@@ -107,7 +107,10 @@ export class DMKSignerSolana implements SolanaSigner {
    * @param display - whether to prompt user confirmation on device
    */
   async getAddress(path: string, display?: boolean): Promise<SolanaAddress> {
-    const { observable } = this.dmkSigner.getAddress(path, { checkOnDevice: !!display });
+    const { observable } = this.dmkSigner.getAddress(path, {
+      checkOnDevice: !!display,
+      skipOpenApp: true,
+    });
     return new Promise<SolanaAddress>((resolve, reject) => {
       observable.subscribe({
         next: state => {
@@ -139,6 +142,7 @@ export class DMKSignerSolana implements SolanaSigner {
   ): Promise<SolanaSignature> {
     const { observable } = this.dmkSigner.signTransaction(path, txBuffer, {
       transactionResolutionContext: resolution,
+      skipOpenApp: true,
     });
     return new Promise<SolanaSignature>((resolve, reject) => {
       observable.subscribe({
@@ -165,7 +169,9 @@ export class DMKSignerSolana implements SolanaSigner {
    */
   async signMessage(path: string, messageHex: string): Promise<SolanaSignature> {
     console.log("Signing message via DMK");
-    const { observable } = this.dmkSigner.signMessage(path, messageHex);
+    const { observable } = this.dmkSigner.signMessage(path, messageHex, {
+      skipOpenApp: true,
+    });
     return new Promise<SolanaSignature>((resolve, reject) => {
       observable.subscribe({
         next: state => {
