@@ -3,7 +3,6 @@ export const supportLinkByTokenType = {
   trc10: "https://support.ledger.com/article/360013062159-zd",
   trc20: "https://support.ledger.com/article/360013062159-zd",
   asa: "https://support.ledger.com/article/360015896040-zd",
-  nfts: "https://support.ledger.com/article/4404389453841-zd",
   spl: "https://support.ledger.com/article/7723954701469-zd",
 };
 
@@ -194,7 +193,6 @@ export const urls = {
   },
   howToUpdateNewLedger: "https://support.ledger.com/article/9305992683165-zd",
   genuineCheck: "https://support.ledger.com/article/4404389367057-zd",
-  whatAreOrdinals: "https://www.ledger.com/academy/bitcoin-ordinals",
   ledgerShop:
     "https://shop.ledger.com?utm_source=live&utm_medium=draw&utm_campaign=ledger_sync_lns_uncompatible&utm_content=to_shop",
   learnMoreLedgerSync:

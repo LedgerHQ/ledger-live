@@ -11,7 +11,6 @@ import {
   getTransactionExplorer as getDefaultTransactionExplorer,
 } from "@ledgerhq/live-common/explorers";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
-import { useNftMetadata } from "@ledgerhq/live-nft-react";
 import {
   findOperationInAccount,
   getOperationAmountNumber,
@@ -22,7 +21,7 @@ import {
 } from "@ledgerhq/live-common/operation";
 import { getEnv } from "@ledgerhq/live-env";
 import { CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
-import { Account, AccountLike, NFTMetadata, Operation, OperationType } from "@ledgerhq/types-live";
+import { Account, AccountLike, Operation, OperationType } from "@ledgerhq/types-live";
 import { TFunction } from "i18next";
 import invariant from "invariant";
 import uniq from "lodash/uniq";
@@ -47,7 +46,6 @@ import LabelInfoTooltip from "~/renderer/components/LabelInfoTooltip";
 import Link from "~/renderer/components/Link";
 import LinkHelp from "~/renderer/components/LinkHelp";
 import LinkWithExternalIcon from "~/renderer/components/LinkWithExternalIcon";
-import Skeleton from "~/renderer/components/Nft/Skeleton";
 import { SplitAddress } from "~/renderer/components/OperationsList/AddressCell";
 import ConfirmationCheck from "~/renderer/components/OperationsList/ConfirmationCheck";
 import OperationComponent from "~/renderer/components/OperationsList/Operation";
@@ -61,11 +59,10 @@ import { openURL } from "~/renderer/linking";
 import { State } from "~/renderer/reducers";
 import { accountSelector } from "~/renderer/reducers/accounts";
 import { confirmationsNbForCurrencySelector } from "~/renderer/reducers/settings";
-import { centerEllipsis, getMarketColor } from "~/renderer/styles/helpers";
+import { getMarketColor } from "~/renderer/styles/helpers";
 import { colors } from "~/renderer/styles/theme";
 import { setDrawer } from "../Provider";
 import AmountDetails from "./AmountDetails";
-import NFTOperationDetails from "./NFTOperationDetails";
 import {
   B,
   GradientHover,
@@ -146,17 +143,15 @@ const OperationD = (props: Props) => {
   const history = useHistory();
   const location = useLocation();
   const mainAccount = getMainAccount(account, parentAccount);
-  const { hash, date, senders, type, fee, recipients: _recipients, contract, tokenId } = operation;
+  const { hash, date, senders, type, fee, recipients: _recipients } = operation;
 
   const dateFormatted = useDateFormatted(date, dayAndHourFormat);
   const uniqueSenders = uniq(senders);
   const recipients = _recipients.filter(Boolean);
   const name = useAccountName(mainAccount);
-  const isNftOperation = ["NFT_IN", "NFT_OUT"].includes(operation.type);
   const currency = getAccountCurrency(account);
   const mainCurrency = getAccountCurrency(mainAccount);
-  const { status, metadata } = useNftMetadata(contract, tokenId, currency.id);
-  const show = useMemo(() => status === "loading", [status]);
+
   const unit = useAccountUnit(account);
   const amount = getOperationAmountNumber(operation);
   const isNegative = amount.isNegative();
@@ -332,64 +327,44 @@ const OperationD = (props: Props) => {
       >
         <Trans i18nKey={`operation.type.${editable ? "SENDING" : operation.type}`} />
       </Text>
-      {/* TODO clean up these conditional components into currency specific blocks */}
-      {!isNftOperation ? (
-        <Box alignItems="center" mt={0}>
-          {!amount.isZero() && (
-            <Box selectable>
-              {hasFailed ? (
-                <Box color="alertRed">
-                  <Trans i18nKey="operationDetails.failed" />
-                </Box>
-              ) : (
-                <ToolTip
-                  content={
-                    AmountTooltip ? (
-                      <AmountTooltip operation={operation} amount={amount} unit={unit} />
-                    ) : null
+
+      <Box alignItems="center" mt={0}>
+        {!amount.isZero() && (
+          <Box selectable>
+            {hasFailed ? (
+              <Box color="alertRed">
+                <Trans i18nKey="operationDetails.failed" />
+              </Box>
+            ) : (
+              <ToolTip
+                content={
+                  AmountTooltip ? (
+                    <AmountTooltip operation={operation} amount={amount} unit={unit} />
+                  ) : null
+                }
+              >
+                <FormattedVal
+                  color={
+                    !isConfirmed && operation.type === "IN"
+                      ? colors.warning
+                      : amount.isNegative()
+                        ? "palette.text.shade80"
+                        : undefined
                   }
-                >
-                  <FormattedVal
-                    color={
-                      !isConfirmed && operation.type === "IN"
-                        ? colors.warning
-                        : amount.isNegative()
-                          ? "palette.text.shade80"
-                          : undefined
-                    }
-                    unit={unit}
-                    alwaysShowSign
-                    showCode
-                    val={amount}
-                    fontSize={7}
-                    data-testid="amountReceived-drawer"
-                    disableRounding
-                  />
-                </ToolTip>
-              )}
-            </Box>
-          )}
-        </Box>
-      ) : (
-        <Box flex={1} mb={2} alignItems="center">
-          <Skeleton show={show} width={160} barHeight={16} minHeight={32}>
-            <Text
-              data-testid="nft-name-operationDrawer"
-              ff="Inter|SemiBold"
-              textAlign="center"
-              fontSize={7}
-              color="palette.text.shade80"
-            >
-              {(metadata as NFTMetadata)?.nftName || "-"}
-            </Text>
-          </Skeleton>
-          <Skeleton show={show} width={200} barHeight={10} minHeight={24} mt={1}>
-            <Text ff="Inter|Regular" textAlign="center" fontSize={5} color="palette.text.shade50">
-              ID {operation.tokenId && centerEllipsis(operation.tokenId)}
-            </Text>
-          </Skeleton>
-        </Box>
-      )}
+                  unit={unit}
+                  alwaysShowSign
+                  showCode
+                  val={amount}
+                  fontSize={7}
+                  data-testid="amountReceived-drawer"
+                  disableRounding
+                />
+              </ToolTip>
+            )}
+          </Box>
+        )}
+      </Box>
+
       {url ? (
         <Box m={0} ff="Inter|SemiBold" horizontal justifyContent="center" fontSize={4} my={1}>
           <LinkWithExternalIcon
@@ -419,29 +394,29 @@ const OperationD = (props: Props) => {
           </div>
         </Alert>
       ) : null}
-      {!isNftOperation ? (
-        <OpDetailsSection>
-          <OpDetailsTitle>{t("operationDetails.amount")}</OpDetailsTitle>
-          <OpDetailsData onClick={openAmountDetails}>
-            <OpDetailsSideButton mt={0}>
-              <Box mr={2}>
-                {hasFailed ? null : (
-                  <CounterValue
-                    data-testid="operation-amount"
-                    alwaysShowSign
-                    color="palette.text.shade60"
-                    fontSize={3}
-                    date={date}
-                    currency={currency}
-                    value={amount}
-                  />
-                )}
-              </Box>
-              <IconChevronRight size={12} />
-            </OpDetailsSideButton>
-          </OpDetailsData>
-        </OpDetailsSection>
-      ) : null}
+
+      <OpDetailsSection>
+        <OpDetailsTitle>{t("operationDetails.amount")}</OpDetailsTitle>
+        <OpDetailsData onClick={openAmountDetails}>
+          <OpDetailsSideButton mt={0}>
+            <Box mr={2}>
+              {hasFailed ? null : (
+                <CounterValue
+                  data-testid="operation-amount"
+                  alwaysShowSign
+                  color="palette.text.shade60"
+                  fontSize={3}
+                  date={date}
+                  currency={currency}
+                  value={amount}
+                />
+              )}
+            </Box>
+            <IconChevronRight size={12} />
+          </OpDetailsSideButton>
+        </OpDetailsData>
+      </OpDetailsSection>
+
       {(isNegative || fee) && (
         <OpDetailsSection>
           <OpDetailsTitle>{t("operationDetails.fees")}</OpDetailsTitle>
@@ -650,7 +625,6 @@ const OperationD = (props: Props) => {
           account={account as Account}
         />
       )}
-      {isNftOperation ? <NFTOperationDetails operation={operation} /> : null}
       <OpDetailsSection>
         <OpDetailsTitle>{t("operationDetails.date")}</OpDetailsTitle>
         <OpDetailsData data-testid="operation-date">{dateFormatted}</OpDetailsData>

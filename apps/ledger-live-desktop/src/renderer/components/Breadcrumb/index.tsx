@@ -3,7 +3,6 @@ import styled from "styled-components";
 import { Route } from "react-router-dom";
 import AccountCrumb from "./AccountCrumb";
 import AssetCrumb from "./AssetCrumb";
-import NFTCrumb from "./NFTCrumb";
 import MarketCrumb from "./MarketCrumb";
 const Wrapper = styled.div`
   display: flex;
@@ -37,7 +36,6 @@ const Breadcrumb = () => (
     <Route path="/account/:parentId/:id/" component={AccountCrumb} />
 
     <Route path="/asset/:assetId+" component={AssetCrumb} />
-    <Route path="/account/:id/nft-collection/:collectionAddress?" component={NFTCrumb} />
 
     <Route path="/market/:currencyId/" component={MarketCrumb} />
   </Wrapper>

@@ -48,7 +48,6 @@ describe("StepRecipient", () => {
         onOperationBroadcasted={() => {}}
         onRetry={() => {}}
         onTransactionError={() => {}}
-        onChangeNFT={() => {}}
         onChangeTransaction={() => {}}
         onResetMaybeAmount={() => {}}
         onResetMaybeRecipient={() => {}}
@@ -58,7 +57,6 @@ describe("StepRecipient", () => {
         signed={false}
         updateTransaction={() => {}}
         currencyName={null}
-        onChangeQuantities={() => {}}
         shouldSkipAmount={false}
       />,
     );
@@ -102,7 +100,6 @@ describe("StepRecipient", () => {
         onOperationBroadcasted={() => {}}
         onRetry={() => {}}
         onTransactionError={() => {}}
-        onChangeNFT={() => {}}
         onChangeTransaction={() => {}}
         onResetMaybeAmount={() => {}}
         onResetMaybeRecipient={() => {}}
@@ -112,7 +109,6 @@ describe("StepRecipient", () => {
         signed={false}
         updateTransaction={() => {}}
         currencyName={null}
-        onChangeQuantities={() => {}}
         shouldSkipAmount={false}
       />,
     );
