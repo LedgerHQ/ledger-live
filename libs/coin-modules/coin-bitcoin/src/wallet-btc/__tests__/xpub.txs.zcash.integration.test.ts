@@ -1,5 +1,4 @@
 import coininfo from "coininfo";
-import BigNumber from "bignumber.js";
 import { DerivationModes } from "../types";
 import Xpub from "../xpub";
 import BitcoinLikeExplorer from "../explorer";
@@ -121,7 +120,6 @@ describe("testing zcash transactions", () => {
     // leave headroom for fees since pickers clamp fpb >= 1
     const amountMinusFees = balance.minus(50_000);
     expect(amountMinusFees.isPositive()).toBe(true);
-    console.log({ balance });
 
     const txInfo = await xpub.buildTx({
       destAddress: "t1T8MQwJhUiDdxP2XCfcLviTPCsnQJyfcL1",
