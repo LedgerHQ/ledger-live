@@ -1,6 +1,6 @@
 ---
-"@ledgerhq/coin-canton": patch
-"@ledgerhq/live-env": patch
+"@ledgerhq/coin-canton": minor
+"@ledgerhq/live-env": minor
 ---
 
 add canton api key

@@ -1,5 +1,5 @@
 ---
-"@ledgerhq/cryptoassets": patch
+"@ledgerhq/cryptoassets": minor
 ---
 
 Update canton blockavg
