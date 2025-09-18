@@ -132,7 +132,8 @@ export class CoinSelect extends PickingStrategy {
       //   if (currentValue - actualTarget > safeFeePerByte * oneOutputV) {
       if (currentValue >= actualTarget) {
         // ✅ Decide “add change?” against the real change delta, not the recipient script size
-        if (currentValue - actualTarget > safeFeePerByte * changeDeltaV) {
+        // if (currentValue - actualTarget > safeFeePerByte * changeDeltaV) {
+        if (currentValue - actualTarget >= safeFeePerByte * changeDeltaV) {
           // changeoutput is required
           currentSelectionNeedChangeoutput = true;
           currentWaste =
