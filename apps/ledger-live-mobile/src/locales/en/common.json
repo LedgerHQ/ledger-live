@@ -1622,7 +1622,7 @@
       "skipped": "Not yet available for {{ productName }}"
     },
     "newSeed": {
-      "subtitle": "You can transfer crypto from any exchange or wallet to your Ledger Wallet for maximum security.",
+      "subtitle": "You can transfer crypto from any exchange or wallet to your Ledger Live for maximum security.",
       "installCTA": "Secure my crypto",
       "skipCTA": "Maybe later"
     }
