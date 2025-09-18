@@ -31,7 +31,7 @@ const handleUrlClick = (url?: string) => () => url && openURL(url);
 
 const ConfirmFooter = ({ footer, transaction, manifestId, manifestName }: Props) => {
   if (!manifestId) return;
-  const appNameByAddr = dexProvidersContractAddress[transaction?.recipient || ""];
+  const appNameByAddr = dexProvidersContractAddress[transaction?.recipient?.toLowerCase() || ""];
   const termsOfUseUrl = termsOfUse[appNameByAddr || manifestId];
   const privacyUrl = privacyPolicy[appNameByAddr || manifestId];
   if (!termsOfUseUrl) return;
