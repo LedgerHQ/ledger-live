@@ -495,17 +495,23 @@ export function runSwapEntryPoints(account: Account, tmsLinks: string[], tags: s
     it("Access Swap from different entry points", async () => {
       await app.portfolio.openViaDeeplink();
       await app.transferMenuDrawer.open();
+      let readyPromise = waitSwapReady();
       await app.transferMenuDrawer.navigateToSwap();
+      await readyPromise;
       await handleSwapPageFlow(account);
 
       await app.account.openViaDeeplink();
+      readyPromise = waitSwapReady();
       await app.account.goToAccountByName(account.accountName);
       await app.account.tapSwap();
+      await readyPromise;
       await handleSwapPageFlow(account);
 
       await app.portfolio.openViaDeeplink();
       await app.portfolio.goToSpecificAsset(account.currency.name);
+      readyPromise = waitSwapReady();
       await app.assetAccountsPage.tapOnAssetQuickActionButton("swap");
+      await readyPromise;
       await handleSwapPageFlow(account);
     });
   });
