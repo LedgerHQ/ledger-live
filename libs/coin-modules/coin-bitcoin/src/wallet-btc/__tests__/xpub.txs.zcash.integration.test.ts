@@ -125,10 +125,8 @@ describe("testing zcash transactions", () => {
 
     const txInfo = await xpub.buildTx({
       destAddress: "t1T8MQwJhUiDdxP2XCfcLviTPCsnQJyfcL1",
-      // amount: new BigNumber(balance),
       amount: amountMinusFees,
-      // feePerByte: 0,
-      feePerByte: 1, //Merge will clamp anyway
+      feePerByte: 1, // Merge will clamp anyway
       changeAddress,
       utxoPickingStrategy,
       sequence: 0,

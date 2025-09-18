@@ -12,6 +12,7 @@ import { Merge } from "../pickingstrategies/Merge";
 import { DeepFirst } from "../pickingstrategies/DeepFirst";
 import { CoinSelect } from "../pickingstrategies/CoinSelect";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
+import * as utils from "../utils";
 
 describe("testing xpub legacy transactions", () => {
   const network = coininfo.bitcoin.test.toBitcoinJS();
@@ -311,8 +312,6 @@ describe("testing xpub legacy transactions", () => {
   }, 180000);
 });
 
-import * as utils from "../utils";
-
 describe("picking strategies – segwit edge cases", () => {
   const network = coininfo.bitcoin.test.toBitcoinJS();
   const crypto = new Crypto({ network });
@@ -409,84 +408,12 @@ describe("picking strategies – segwit edge cases", () => {
   }, 30_000);
 
   // NOTE: passed without changes
-  it.skip("CHANGE DELTA: decision must use input-derivation change size (P2WPKH change) not recipient script", async () => {
-    const { storage, xpub } = makeXpubNativeSegwit();
-    const feePerByte = 1;
-
-    // recipient is P2SH, but inputs are P2WPKH => change must be P2WPKH
-    const recipientScripts = [scriptP2SH];
-
-    const emptyV = utils.maxTxSizeCeil(0, [], false, xpub.crypto, xpub.derivationMode);
-    const vNoInput = utils.maxTxSizeCeil(
-      0,
-      recipientScripts,
-      false,
-      xpub.crypto,
-      xpub.derivationMode,
-    );
-    const vPerInput = utils.maxTxSizeCeil(1, [], false, xpub.crypto, xpub.derivationMode) - emptyV;
-
-    // correct change delta (from input derivation)
-    const changeDeltaV =
-      utils.maxTxSizeCeil(0, [], true, xpub.crypto, xpub.derivationMode) - emptyV;
-    // WRONG delta some code used: output[0] script (P2SH) as change proxy
-    const wrongChangeDeltaV =
-      utils.maxTxSizeCeil(0, [scriptP2SH], false, xpub.crypto, xpub.derivationMode) - emptyV;
-    expect(wrongChangeDeltaV).toBe(changeDeltaV + 1); // P2SH output is 1 vB larger than P2WPKH
-
-    // we choose UTXO value so that leftover equals the TRUE change delta exactly
-    const amount = 80_000;
-    const feeNoChange = (vNoInput + vPerInput) * feePerByte;
-    const utxoValue = amount + feeNoChange + changeDeltaV * feePerByte;
-
-    storage.appendTxs([
-      {
-        id: "tx-utxo-2",
-        inputs: [],
-        outputs: [
-          {
-            output_index: 0,
-            value: String(utxoValue),
-            address: "tb1qmyutxo2",
-            output_hash: "tx-utxo-2",
-            block_height: 2,
-            rbf: false,
-          },
-        ],
-        block: { hash: "h2", height: 2, time: "2024-01-02T00:00:00Z" },
-        account: 0,
-        index: 0,
-        address: "tb1qmyutxo2",
-        received_at: "2024-01-02T00:00:00Z",
-      },
-    ]);
-
-    const strat = new Merge(xpub.crypto, xpub.derivationMode, []);
-    const res = await strat.selectUnspentUtxosToUse(xpub, out(amount, scriptP2SH), feePerByte);
-
-    // with correct logic we have just enough to add P2WPKH change (31 vB), not enough for "wrong" 32 vB
-    expect(res.needChangeoutput).toBe(true);
-
-    const expectedFeeWithChange =
-      utils.maxTxSizeCeil(1, recipientScripts, true, xpub.crypto, xpub.derivationMode) * feePerByte;
-
-    // fee must match vbytes(1-in, recipient P2SH, + P2WPKH change)
-    expect(res.fee).toBe(expectedFeeWithChange);
-
-    // and we selected exactly that single utxo
-    expect(res.unspentUtxos.length).toBe(1);
-    expect(Number(res.unspentUtxos[0].value)).toBe(utxoValue);
-  }, 30_000);
-
   it("CHANGE DELTA: must use input-derivation change size (P2WPKH) not recipient script (P2TR)", async () => {
     const { storage, xpub } = makeXpubNativeSegwit();
     const feePerByte = 1;
 
     // recipient is Taproot, change must be P2WPKH (since derivation = native segwit)
     const scriptP2TR = Buffer.alloc(34); // taproot output script length
-    const scriptP2WPKH = Buffer.alloc(22); // change output script length
-
-    const emptyV = utils.maxTxSizeCeil(0, [], false, xpub.crypto, xpub.derivationMode);
 
     // base vbytes for tx with recipient only (no inputs yet), use the *same* function as strategies do:
     const baseVNoInput_FLOAT = utils.maxTxSize(
@@ -578,182 +505,6 @@ describe("picking strategies – segwit edge cases", () => {
   });
 });
 
-// NOTE: addr0 undefined
-describe.skip("picking strategies – segwit fee correctness & change pricing", () => {
-  const network = coininfo.bitcoin.test.toBitcoinJS();
-
-  const mkDataset = (derivationMode: DerivationModes) => {
-    const crypto = new Crypto({ network });
-    const storage = new BitcoinLikeStorage();
-    const seed = bip39.mnemonicToSeedSync("test1 test1 test1");
-    const node = bip32.fromSeed(seed, network);
-    const xpub = new Xpub({
-      storage,
-      explorer: new BitcoinLikeExplorer({
-        cryptoCurrency: getCryptoCurrencyById("bitcoin"),
-      }),
-      crypto,
-      xpub: node.neutered().toBase58(),
-      derivationMode,
-    });
-    return { crypto, storage, seed, node, xpub };
-  };
-
-  const toOut = (addr: string, value: number, crypto: Crypto) =>
-    ({
-      address: addr,
-      isChange: false,
-      script: crypto.toOutputScript(addr),
-      value: new BigNumber(value),
-    }) as OutputInfo;
-
-  /**
-   * Ensures the strategy's fee equals Math.ceil(maxTxSize(...)) * feePerByte.
-   * This fails when the picker mixes ceil into deltas (classic segwit off-by-1).
-   */
-  it("native segwit (P2WPKH): fee matches maxTxSizeCeil (no ceil mixing)", async () => {
-    const { crypto, storage, xpub } = mkDataset(DerivationModes.NATIVE_SEGWIT);
-    // Derive a couple of our own addresses and fund them as UTXOs
-    const [addr0] = await xpub.getXpubAddresses();
-    // Create 4 small UTXOs so the picker needs multiple inputs
-    const utxoVals = [120_000, 120_000, 120_000, 120_000];
-    utxoVals.forEach((v, i) =>
-      storage.appendTxs([
-        {
-          id: `tx${i}`,
-          inputs: [],
-          outputs: [
-            {
-              output_index: 0,
-              value: String(v),
-              address: addr0.address,
-              output_hash: `tx${i}`,
-              block_height: 1 + i,
-              rbf: false,
-            },
-          ],
-          block: { hash: `h${i}`, height: 1 + i, time: "2021-07-28T13:34:17Z" },
-          account: 0,
-          index: 0,
-          address: addr0.address,
-          received_at: "2021-07-28T13:34:17Z",
-        },
-      ]),
-    );
-
-    // One P2WPKH recipient
-    const recipient = "tb1qhff3j7euu6t3lv8s5gsy9t5x82wuhfw5z863gj";
-    const outs = [toOut(recipient, 300_000, crypto)];
-    const feePerByte = 1;
-
-    // Use Merge (any picker is fine; we just want its final fee decision)
-    const picker = new Merge(crypto, DerivationModes.NATIVE_SEGWIT, []);
-    const res = await picker.selectUnspentUtxosToUse(xpub, outs, feePerByte);
-
-    // Compute the exact expected size using utils and compare
-    const outputScripts = outs.map(o => o.script);
-    const expectedVb = utils.maxTxSizeCeil(
-      res.unspentUtxos.length,
-      outputScripts,
-      res.needChangeoutput,
-      crypto,
-      DerivationModes.NATIVE_SEGWIT,
-    );
-    const expectedFee = expectedVb * feePerByte;
-    expect(res.fee).toBe(expectedFee);
-  }, 100_000);
-
-  /**
-   * Ensures the "add change?" decision uses the correct change script for the *input derivation*.
-   * Here: inputs are nested segwit (P2SH-P2WPKH), but the first recipient is P2WPKH.
-   * Incorrect implementations price change at 31 vB (P2WPKH) instead of 32 vB (P2SH),
-   * which can flip the decision at the boundary and/or underpay by 1 sat/vB.
-   */
-  it("nested segwit (P2SH-P2WPKH): change decision must use P2SH change, not recipient[0]", async () => {
-    const { crypto, storage, xpub } = mkDataset(DerivationModes.SEGWIT); // P2SH-P2WPKH inputs
-    const [addr0] = await xpub.getXpubAddresses();
-    // Single moderately sized UTXO to make us hover around change threshold
-    const utxoValue = 200_000;
-    storage.appendTxs([
-      {
-        id: "utxo_nested",
-        inputs: [],
-        outputs: [
-          {
-            output_index: 0,
-            value: String(utxoValue),
-            address: addr0.address,
-            output_hash: "utxo_nested",
-            block_height: 1,
-            rbf: false,
-          },
-        ],
-        block: { hash: "h0", height: 1, time: "2021-07-28T13:34:17Z" },
-        account: 0,
-        index: 0,
-        address: addr0.address,
-        received_at: "2021-07-28T13:34:17Z",
-      },
-    ]);
-
-    // First recipient is P2WPKH (31 vB output), but input derivation is nested (P2SH change = 32 vB).
-    const recipientWpkh = "tb1qhff3j7euu6t3lv8s5gsy9t5x82wuhfw5z863gj";
-    const out = toOut(recipientWpkh, 0, crypto); // value set below
-    const feePerByte = 1;
-    const picker = new Merge(crypto, DerivationModes.SEGWIT, []);
-
-    // We'll scan amounts near the threshold and assert the final state is consistent
-    // with the *true* change delta (computed via utils), not the recipient[0] script.
-    const tryAmounts = [100_000, 120_000, 140_000, 150_000, 160_000];
-    let found = false;
-
-    for (const amount of tryAmounts) {
-      out.value = new BigNumber(amount);
-      const outs = [out];
-      const res = await picker.selectUnspentUtxosToUse(xpub, outs, feePerByte);
-
-      const outputScripts = outs.map(o => o.script);
-      const n = res.unspentUtxos.length;
-      const baseNoChange = utils.maxTxSize(n, outputScripts, false, crypto, DerivationModes.SEGWIT);
-      const baseWithChange = utils.maxTxSize(
-        n,
-        outputScripts,
-        true,
-        crypto,
-        DerivationModes.SEGWIT,
-      );
-      const trueChangeDelta = baseWithChange - baseNoChange; // vbytes
-
-      const leftover = new BigNumber(res.totalValue.toNumber())
-        .minus(amount)
-        .minus(res.fee) // fee already ceiled in picker
-        .toNumber();
-
-      // If the picker chose to add change, there must be enough leftover to pay the *true* change cost.
-      // If not, it priced change with the wrong script (recipient[0]) — exactly the bug we want to catch.
-      if (res.needChangeoutput) {
-        // Allow a 0/1 off-by-one if feePerByte != 1, but here it's 1 so we can be strict.
-        expect(leftover).toBeGreaterThanOrEqual(Math.ceil(trueChangeDelta));
-      } else {
-        // If picker refused change, leftover must be strictly less than the true change cost.
-        expect(leftover).toBeLessThan(Math.ceil(trueChangeDelta));
-      }
-      // Also check the final fee equals the exact tx ceil
-      const expectedVb = utils.maxTxSizeCeil(
-        n,
-        outputScripts,
-        res.needChangeoutput,
-        crypto,
-        DerivationModes.SEGWIT,
-      );
-      expect(res.fee).toBe(expectedVb * feePerByte);
-      found = true;
-      break; // one successful case is enough
-    }
-    expect(found).toBe(true);
-  }, 120_000);
-});
-
 describe("CoinSelect – segwit change delta must match input derivation (not recipient)", () => {
   const network = coininfo.bitcoin.test.toBitcoinJS();
   const crypto = new Crypto({ network });
@@ -789,7 +540,6 @@ describe("CoinSelect – segwit change delta must match input derivation (not re
     const { storage, xpub } = makeXpubNativeSegwit();
     const feePerByte = 1; // integer sat/vB
     const scriptP2TR = Buffer.alloc(34); // recipient
-    const scriptP2WPKH = Buffer.alloc(22); // change (by derivation)
 
     // --- all sizes in INTEGER vbytes, exactly like the strategy ---
     const fixedV = utils.maxTxVBytesCeil(0, [], false, xpub.crypto, xpub.derivationMode);

@@ -29,6 +29,7 @@ function fixedWeight(currency: ICrypto, derivationMode: string): number {
   return fixedWeight;
 }
 
+// https://ledgerhq.atlassian.net/wiki/spaces/WALLETCO/pages/6209372206/Fees+management
 function inputWeight(derivationMode: string): number {
   let inputWeight = (32 + 4 + 1 + 4) * baseByte; // 41 * 4 = 164
   if (derivationMode === DerivationModes.TAPROOT) {
@@ -36,8 +37,7 @@ function inputWeight(derivationMode: string): number {
   } else if (derivationMode === DerivationModes.NATIVE_SEGWIT) {
     inputWeight += 1 + 1 + 72 + 1 + 33;
   } else if (derivationMode === DerivationModes.SEGWIT) {
-    // inputWeight += 22 * baseByte + 1 + 1 + 72 + 1 + 33;
-    inputWeight += 23 * baseByte + 107; //1 + 1 + 72 + 1 + 33;
+    inputWeight += 23 * baseByte + 107;
   } else if (derivationMode === DerivationModes.LEGACY) {
     inputWeight += 107 * baseByte;
   } else {
@@ -134,23 +134,10 @@ export function maxTxSize(
     inputsWeight += 64 * inputCount;
   }
   const txWeight = fixed + inputsWeight + outputsWeight;
-  // console.log({ txWeight, txWeightDivided: txWeight / 4 });
 
   return txWeight / 4;
 }
 
-// export function maxTxSizeCeil(
-//   inputCount: number,
-//   outputScripts: Buffer[],
-//   includeChange: boolean,
-//   currency: ICrypto,
-//   derivationMode: string,
-// ): number {
-//   const s = maxTxSize(inputCount, outputScripts, includeChange, currency, derivationMode);
-//   // console.log({ maxTxsSizeCeils: s, maxTxsSizeCeiled: Math.ceil(s) });
-//
-//   return Math.ceil(s);
-// }
 export function maxTxSizeCeil(
   inputCount: number,
   outputScripts: Buffer[],
@@ -254,34 +241,4 @@ export function maxTxVBytesCeil(
   return vbytesCeilFromWeight(
     maxTxWeight(inputCount, outputScripts, includeChange, currency, derivationMode),
   );
-}
-
-/** Safe deltas (ceil) for one input / one output in current derivation. */
-export function deltaInputVBytesCeil(currency: ICrypto, derivationMode: string): number {
-  const baseWU = maxTxWeight(0, [], false, currency, derivationMode);
-  const oneInputWU = maxTxWeight(1, [], false, currency, derivationMode);
-  return vbytesCeilFromWeight(oneInputWU - baseWU);
-}
-
-export function deltaOutputVBytesCeil(
-  currency: ICrypto,
-  derivationMode: string,
-  exampleOutputScript?: Buffer, // if provided, we use it; else derive from derivationMode
-): number {
-  const script =
-    exampleOutputScript ??
-    // generic single-recipient script size per derivation (matches outputWeight branches)
-    Buffer.alloc(
-      derivationMode === DerivationModes.TAPROOT
-        ? 34
-        : derivationMode === DerivationModes.NATIVE_SEGWIT
-          ? 22
-          : derivationMode === DerivationModes.SEGWIT
-            ? 23
-            : 25, // LEGACY
-    );
-
-  const baseWU = maxTxWeight(0, [], false, currency, derivationMode);
-  const withOneWU = maxTxWeight(0, [script], false, currency, derivationMode);
-  return vbytesCeilFromWeight(withOneWU - baseWU);
 }
