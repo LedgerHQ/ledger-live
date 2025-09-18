@@ -1,4 +1,3 @@
-
 import React from "react";
 import { getStuckAccountAndOperation } from "@ledgerhq/live-common/operation";
 import { Trans } from "react-i18next";
