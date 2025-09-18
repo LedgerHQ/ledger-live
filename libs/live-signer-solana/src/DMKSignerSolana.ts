@@ -137,7 +137,9 @@ export class DMKSignerSolana implements SolanaSigner {
     txBuffer: Uint8Array,
     resolution?: Resolution | undefined,
   ): Promise<SolanaSignature> {
-    const { observable } = this.dmkSigner.signTransaction(path, txBuffer, resolution);
+    const { observable } = this.dmkSigner.signTransaction(path, txBuffer, {
+      transactionResolutionContext: resolution,
+    });
     return new Promise<SolanaSignature>((resolve, reject) => {
       observable.subscribe({
         next: state => {
