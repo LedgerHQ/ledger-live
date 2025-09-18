@@ -1,5 +1,11 @@
 # @ledgerhq/cryptoassets
 
+## 13.28.1-nightly.1
+
+### Patch Changes
+
+- [#11887](https://github.com/LedgerHQ/ledger-live/pull/11887) [`af64263`](https://github.com/LedgerHQ/ledger-live/commit/af642634bd4536183f766323d0ec5b9b99841dc6) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Update canton blockavg
+
 ## 13.28.1-nightly.0
 
 ### Patch Changes

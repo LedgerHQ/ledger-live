@@ -1,5 +1,12 @@
 # @ledgerhq/live-dmk-desktop
 
+## 0.9.7-nightly.1
+
+### Patch Changes
+
+- Updated dependencies [[`13ac4d7`](https://github.com/LedgerHQ/ledger-live/commit/13ac4d7ed05f0fc448cc0a013688c917cb73e0f5)]:
+  - @ledgerhq/live-common@34.49.0-nightly.1
+
 ## 0.9.7-nightly.0
 
 ### Patch Changes

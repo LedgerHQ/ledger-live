@@ -1,5 +1,11 @@
 # @ledgerhq/react-ui
 
+## 0.38.0-nightly.1
+
+### Minor Changes
+
+- [#11893](https://github.com/LedgerHQ/ledger-live/pull/11893) [`ffd388f`](https://github.com/LedgerHQ/ledger-live/commit/ffd388fde99bda2079ed4a30f7816b614e29be79) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Add colored border on search focus
+
 ## 0.38.0-nightly.0
 
 ### Minor Changes

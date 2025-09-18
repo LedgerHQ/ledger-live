@@ -1,5 +1,11 @@
 # @ledgerhq/types-live
 
+## 6.85.0-nightly.1
+
+### Minor Changes
+
+- [#11787](https://github.com/LedgerHQ/ledger-live/pull/11787) [`13ac4d7`](https://github.com/LedgerHQ/ledger-live/commit/13ac4d7ed05f0fc448cc0a013688c917cb73e0f5) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - remove NFTs from LLD
+
 ## 6.85.0-nightly.0
 
 ### Minor Changes

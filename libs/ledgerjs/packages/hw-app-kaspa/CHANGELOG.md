@@ -1,5 +1,11 @@
 # @ledgerhq/hw-app-kaspa
 
+## 1.3.0-nightly.2
+
+### Patch Changes
+
+- [#11891](https://github.com/LedgerHQ/ledger-live/pull/11891) [`cf4d979`](https://github.com/LedgerHQ/ledger-live/commit/cf4d979a0059a0fd4d05d54d8de30f6adb1fc986) Thanks [@lewisd5](https://github.com/lewisd5)! - Resolve dependency pinning issues
+
 ## 1.3.0-nightly.1
 
 ### Patch Changes

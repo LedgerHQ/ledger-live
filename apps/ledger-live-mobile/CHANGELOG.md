@@ -1,5 +1,28 @@
 # live-mobile
 
+## 3.94.0-nightly.1
+
+### Minor Changes
+
+- [#11736](https://github.com/LedgerHQ/ledger-live/pull/11736) [`4b2b3fe`](https://github.com/LedgerHQ/ledger-live/commit/4b2b3fecab4302e207384efea99e8d254d1f1475) Thanks [@RobinVncnt](https://github.com/RobinVncnt)! - feat: Large Mover integration test
+
+### Patch Changes
+
+- [#11891](https://github.com/LedgerHQ/ledger-live/pull/11891) [`cf4d979`](https://github.com/LedgerHQ/ledger-live/commit/cf4d979a0059a0fd4d05d54d8de30f6adb1fc986) Thanks [@lewisd5](https://github.com/lewisd5)! - Dependency updates
+
+- Updated dependencies [[`13ac4d7`](https://github.com/LedgerHQ/ledger-live/commit/13ac4d7ed05f0fc448cc0a013688c917cb73e0f5)]:
+  - @ledgerhq/types-live@6.85.0-nightly.1
+  - @ledgerhq/coin-framework@6.4.1-nightly.1
+  - @ledgerhq/coin-cosmos@0.17.2-nightly.1
+  - @ledgerhq/coin-evm@2.31.0-nightly.1
+  - @ledgerhq/coin-filecoin@1.12.1-nightly.1
+  - @ledgerhq/coin-multiversx@0.5.2-nightly.1
+  - @ledgerhq/coin-stacks@0.9.2-nightly.1
+  - @ledgerhq/live-countervalues@0.7.2-nightly.1
+  - @ledgerhq/live-countervalues-react@0.6.1-nightly.1
+  - @ledgerhq/live-wallet@0.14.1-nightly.1
+  - @ledgerhq/domain-service@1.2.44-nightly.1
+
 ## 3.94.0-nightly.0
 
 ### Minor Changes

@@ -1,5 +1,56 @@
 # @ledgerhq/live-common
 
+## 34.49.0-nightly.1
+
+### Minor Changes
+
+- [#11787](https://github.com/LedgerHQ/ledger-live/pull/11787) [`13ac4d7`](https://github.com/LedgerHQ/ledger-live/commit/13ac4d7ed05f0fc448cc0a013688c917cb73e0f5) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - remove NFTs from LLD
+
+### Patch Changes
+
+- Updated dependencies [[`af64263`](https://github.com/LedgerHQ/ledger-live/commit/af642634bd4536183f766323d0ec5b9b99841dc6), [`cf4d979`](https://github.com/LedgerHQ/ledger-live/commit/cf4d979a0059a0fd4d05d54d8de30f6adb1fc986)]:
+  - @ledgerhq/cryptoassets@13.28.1-nightly.1
+  - @ledgerhq/hw-app-kaspa@1.3.0-nightly.2
+  - @ledgerhq/coin-framework@6.4.1-nightly.1
+  - @ledgerhq/coin-algorand@0.10.2-nightly.1
+  - @ledgerhq/coin-aptos@3.3.1-nightly.1
+  - @ledgerhq/coin-bitcoin@0.22.1-nightly.1
+  - @ledgerhq/coin-canton@0.5.1-nightly.1
+  - @ledgerhq/coin-cardano@0.12.2-nightly.1
+  - @ledgerhq/coin-casper@2.1.2-nightly.1
+  - @ledgerhq/coin-celo@1.4.1-nightly.1
+  - @ledgerhq/coin-cosmos@0.17.2-nightly.1
+  - @ledgerhq/coin-evm@2.31.0-nightly.1
+  - @ledgerhq/coin-filecoin@1.12.1-nightly.1
+  - @ledgerhq/coin-hedera@1.11.2-nightly.1
+  - @ledgerhq/coin-icon@0.12.2-nightly.1
+  - @ledgerhq/coin-internet_computer@1.8.2-nightly.1
+  - @ledgerhq/coin-kaspa@1.1.1-nightly.1
+  - @ledgerhq/coin-mina@1.2.2-nightly.1
+  - @ledgerhq/coin-multiversx@0.5.2-nightly.1
+  - @ledgerhq/coin-near@0.13.2-nightly.1
+  - @ledgerhq/coin-polkadot@6.10.1-nightly.1
+  - @ledgerhq/coin-solana@0.33.1-nightly.1
+  - @ledgerhq/coin-stacks@0.9.2-nightly.1
+  - @ledgerhq/coin-stellar@6.4.1-nightly.1
+  - @ledgerhq/coin-sui@0.13.1-nightly.1
+  - @ledgerhq/coin-tezos@6.5.0-nightly.1
+  - @ledgerhq/coin-ton@0.14.2-nightly.1
+  - @ledgerhq/coin-tron@5.4.1-nightly.1
+  - @ledgerhq/coin-vechain@2.9.2-nightly.1
+  - @ledgerhq/coin-xrp@7.4.1-nightly.1
+  - @ledgerhq/hw-app-vet@0.5.17-nightly.1
+  - @ledgerhq/live-countervalues@0.7.2-nightly.1
+  - @ledgerhq/live-countervalues-react@0.6.1-nightly.1
+  - @ledgerhq/live-nft@0.8.21-nightly.1
+  - @ledgerhq/live-wallet@0.14.1-nightly.1
+  - @ledgerhq/device-core@0.6.4-nightly.1
+  - @ledgerhq/hw-app-eth@6.45.19-nightly.1
+  - @ledgerhq/live-signer-canton@0.3.1-nightly.1
+  - @ledgerhq/live-signer-evm@0.7.6-nightly.1
+  - @ledgerhq/live-signer-solana@0.5.6-nightly.1
+  - @ledgerhq/hw-app-celo@6.34.4-nightly.1
+
 ## 34.49.0-nightly.0
 
 ### Minor Changes
