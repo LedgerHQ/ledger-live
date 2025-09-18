@@ -21,7 +21,7 @@ export type NetworkInfoRaw = {
 
 export type Transaction = TransactionCommon & {
   family: "xrp";
-  fee: BigNumber | null | undefined;
+  fees: BigNumber | null | undefined;
   networkInfo: NetworkInfo | null | undefined;
   tag: number | null | undefined;
   feeCustomUnit: Unit | null | undefined;
@@ -29,7 +29,7 @@ export type Transaction = TransactionCommon & {
 
 export type TransactionRaw = TransactionCommonRaw & {
   family: "xrp";
-  fee: string | null | undefined;
+  fees: string | null | undefined;
   networkInfo: NetworkInfoRaw | null | undefined;
   tag: number | null | undefined;
   feeCustomUnit: Unit | null | undefined;

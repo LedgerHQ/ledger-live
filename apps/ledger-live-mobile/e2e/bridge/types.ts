@@ -16,6 +16,7 @@ import { CompleteExchangeRequestEvent } from "@ledgerhq/live-common/exchange/pla
 import { RemoveImageEvent } from "@ledgerhq/live-common/hw/customLockScreenRemove";
 import { RenameDeviceEvent } from "@ledgerhq/live-common/hw/renameDevice";
 import { SettingsSetOverriddenFeatureFlagsPlayload } from "~/actions/types";
+import WebSocket from "ws";
 
 export type ServerData =
   | {
@@ -27,6 +28,10 @@ export type ServerData =
       payload: string;
     }
   | {
+      type: "appFile";
+      payload: string;
+    }
+  | {
       type: "appFlags";
       payload: string;
     }
@@ -34,7 +39,9 @@ export type ServerData =
       type: "appEnvs";
       payload: string;
     }
-  | { type: "ACK"; id: string };
+  | { type: "ACK"; id: string }
+  | { type: "swapLiveAppReady" }
+  | { type: "earnLiveAppReady" };
 
 export type MessageData =
   | {
@@ -65,6 +72,8 @@ export type MessageData =
   | { type: "overrideFeatureFlags"; id: string; payload: SettingsSetOverriddenFeatureFlagsPlayload }
   | { type: "setGlobals"; id: string; payload: { [key: string]: unknown } }
   | { type: "swapSetup"; id: string }
+  | { type: "waitSwapReady"; id: string }
+  | { type: "waitEarnReady"; id: string }
   | { type: "ACK"; id: string };
 
 export type MockDeviceEvent =
@@ -83,6 +92,7 @@ export type MockDeviceEvent =
 
 export const mockDeviceEventSubject = new Subject<MockDeviceEvent>();
 
+/* eslint-disable @typescript-eslint/consistent-type-assertions */
 // these adaptor will filter the event type to satisfy typescript (workaround), it works because underlying exec usage will ignore unknown event type
 export const connectAppExecMock = (): Observable<ConnectAppEvent> =>
   mockDeviceEventSubject as Observable<ConnectAppEvent>;
@@ -92,11 +102,11 @@ export const startExchangeExecMock = (): Observable<ExchangeRequestEvent> =>
   mockDeviceEventSubject as Observable<ExchangeRequestEvent>;
 export const connectManagerExecMock = (): Observable<ConnectManagerEvent> =>
   mockDeviceEventSubject as Observable<ConnectManagerEvent>;
-export const staxFetchImageExecMock = (): Observable<FetchImageEvent> =>
+export const fetchImageExecMock = (): Observable<FetchImageEvent> =>
   mockDeviceEventSubject as Observable<FetchImageEvent>;
-export const staxLoadImageExecMock = (): Observable<LoadImageEvent> =>
+export const loadImageExecMock = (): Observable<LoadImageEvent> =>
   mockDeviceEventSubject as Observable<LoadImageEvent>;
-export const staxRemoveImageExecMock = (): Observable<RemoveImageEvent> =>
+export const removeImageExecMock = (): Observable<RemoveImageEvent> =>
   mockDeviceEventSubject as Observable<RemoveImageEvent>;
 export const installLanguageExecMock = (): Observable<InstallLanguageEvent> =>
   mockDeviceEventSubject as Observable<InstallLanguageEvent>;
@@ -104,3 +114,14 @@ export const completeExchangeExecMock = (): Observable<CompleteExchangeRequestEv
   mockDeviceEventSubject as Observable<CompleteExchangeRequestEvent>;
 export const renameDeviceExecMock = (): Observable<RenameDeviceEvent> =>
   mockDeviceEventSubject as Observable<RenameDeviceEvent>;
+/* eslint-enable @typescript-eslint/consistent-type-assertions */
+
+declare global {
+  // eslint-disable-next-line no-var
+  var webSocket: {
+    wss: WebSocket.Server | undefined;
+    ws: WebSocket | undefined;
+    messages: { [id: string]: MessageData };
+    e2eBridgeServer: Subject<ServerData>;
+  };
+}

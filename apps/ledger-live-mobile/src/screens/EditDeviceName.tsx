@@ -4,7 +4,6 @@ import { Trans, useTranslation } from "react-i18next";
 import { connect } from "react-redux";
 import { TextInput as NativeTextInput } from "react-native";
 import { DeviceNameInvalid } from "@ledgerhq/errors";
-import { useToasts } from "@ledgerhq/live-common/notifications/ToastProvider/index";
 import { Button, Text, IconsLegacy, Flex } from "@ledgerhq/native-ui";
 import getDeviceNameMaxLength from "@ledgerhq/live-common/hw/getDeviceNameMaxLength";
 import { TrackScreen } from "~/analytics";
@@ -21,6 +20,7 @@ import { BaseOnboardingNavigatorParamList } from "~/components/RootNavigator/typ
 import { BleSaveDeviceNamePayload } from "~/actions/types";
 import { useRenameDeviceAction } from "~/hooks/deviceActions";
 import { HOOKS_TRACKING_LOCATIONS } from "~/analytics/hooks/variables";
+import { useToastsActions } from "~/actions/toast";
 
 const mapDispatchToProps = {
   saveBleDeviceName,
@@ -44,7 +44,6 @@ function EditDeviceName({ navigation, route, saveBleDeviceName }: Props) {
   const textInputRef = useRef<NativeTextInput | null>(null);
 
   const { t } = useTranslation();
-  const { pushToast } = useToasts();
 
   const maxDeviceName = useMemo(
     () =>
@@ -60,6 +59,7 @@ function EditDeviceName({ navigation, route, saveBleDeviceName }: Props) {
   const [error, setError] = useState<Error | undefined | null>(null);
   const [running, setRunning] = useState(false);
   const request = useMemo(() => ({ name }), [name]);
+  const { pushToast } = useToastsActions();
 
   const onChangeText = useCallback((name: string) => {
     // Nb mobile devices tend to use U+2018 for single quote, not supported

@@ -1,17 +1,15 @@
 import React, { useCallback } from "react";
-import config from "react-native-config";
 import { getEnv } from "@ledgerhq/live-env";
 import { Alert as Confirmation } from "react-native";
-import { Alert, Flex, Icons, IconsLegacy } from "@ledgerhq/native-ui";
+import { Alert, Flex, IconsLegacy } from "@ledgerhq/native-ui";
 import { useDispatch } from "react-redux";
 import GenerateMockAccounts from "./GenerateMockAccounts";
-import ImportBridgeStreamData from "./ImportBridgeStreamData";
 import GenerateMockAccount from "./GenerateMockAccountsSelect";
 import SettingsNavigationScrollView from "../../SettingsNavigationScrollView";
 import ToggleServiceStatusIncident from "./ToggleServiceStatus";
 import SettingsRow from "~/components/SettingsRow";
-import { dangerouslyOverrideState, resetNftStatus } from "~/actions/settings";
-import { useReboot } from "~/context/Reboot";
+import { dangerouslyOverrideState } from "~/actions/settings";
+import { reboot } from "~/actions/appstate";
 
 import { INITIAL_STATE as INITIAL_SETTINGS_STATE } from "~/reducers/settings";
 import { INITIAL_STATE as INITIAL_ACCOUNTS_STATE } from "~/reducers/accounts";
@@ -19,7 +17,6 @@ import { INITIAL_STATE as INITIAL_BLE_STATE } from "~/reducers/ble";
 
 export default function Generators() {
   const dispatch = useDispatch();
-  const reboot = useReboot();
 
   const onCallbackWithConfirmation = (callback: () => void) => {
     Confirmation.alert(
@@ -73,11 +70,7 @@ export default function Generators() {
   }, [dispatch]);
 
   const onForceRefresh = useCallback(() => {
-    reboot();
-  }, [reboot]);
-
-  const onWipeAntiSpam = useCallback(() => {
-    dispatch(resetNftStatus());
+    dispatch(reboot());
   }, [dispatch]);
 
   return (
@@ -92,17 +85,9 @@ export default function Generators() {
         desc="Replace existing accounts with 10 mock accounts from random currencies."
         count={10}
       />
-      <GenerateMockAccount
-        title="Accounts with NFTs"
-        desc="Select for which currencies you want to generate accounts and NFTs"
-        iconLeft={<Icons.Nft size="M" color="black" />}
-        withNft
-      />
+
       {getEnv("MOCK") ? <ToggleServiceStatusIncident /> : null}
-      <ImportBridgeStreamData
-        title="Import .env BRIDGESTREAM_DATA"
-        dataStr={config.BRIDGESTREAM_DATA as string}
-      />
+
       <Flex p={6}>
         <Alert
           type="error"
@@ -133,12 +118,6 @@ export default function Generators() {
         desc="Forget all seed devices"
         iconLeft={<IconsLegacy.NanoMedium size={24} color="black" />}
         onPress={onWipeBLE}
-      />
-      <SettingsRow
-        title="Reset HiddenCollections NFTs"
-        desc="Remove all NFTs from the HiddenCollection list"
-        iconLeft={<Icons.Nft size="M" color="black" />}
-        onPress={onWipeAntiSpam}
       />
     </SettingsNavigationScrollView>
   );

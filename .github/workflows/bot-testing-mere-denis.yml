@@ -1,4 +1,4 @@
-name: "[Bot] Testing with 'Mère Denis'"
+name: "[Coin] - Testing with 'Mère Denis' - Manual"
 run-name: Test with 🤖 Mère Denis by @${{github.actor}} ${{inputs.families &&  format('families={0}',inputs.families) || ''}} ${{inputs.currencies && format('currencies={0}',inputs.currencies) || ''}}
 on:
   workflow_dispatch:

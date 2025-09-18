@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { ComponentStory } from "@storybook/react-native";
+import { StoryFn } from "@storybook/react";
 import SlideIndicator from "../../../../src/components/Navigation/SlideIndicator";
 
 export default {
@@ -7,7 +7,7 @@ export default {
   component: SlideIndicator,
 };
 
-export const SlideIndicatorSample: ComponentStory<typeof SlideIndicator> = (
+export const SlideIndicatorSample: StoryFn<typeof SlideIndicator> = (
   args: typeof SlideIndicatorSampleArgs,
 ) => {
   const [activeIndex, setActiveIndex] = useState<number | null>(null);

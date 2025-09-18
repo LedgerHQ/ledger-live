@@ -1,4 +1,4 @@
-name: "[Release](Nightly) Publish"
+name: "[Nightly] - Build & Publish - Scheduled"
 
 on:
   schedule:
@@ -108,7 +108,7 @@ jobs:
             });
 
   nightly-fail:
-    name: Nightly Release Failure Reporting
+    name: Nightly Release > Failure Reporting
     needs: nightly-release
     if: failure()
     runs-on: ubuntu-latest

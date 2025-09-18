@@ -8,7 +8,6 @@ import {
   NotEnoughBalance,
   RecipientRequired,
 } from "@ledgerhq/errors";
-import { findTokenByAddressInCurrency } from "@ledgerhq/cryptoassets";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import type { AccountRaw, CurrenciesData, DatasetTest } from "@ledgerhq/types-live";
 import {
@@ -29,6 +28,7 @@ import { assertUnreachable } from "./utils";
 import { getEnv } from "@ledgerhq/live-env";
 import { encodeAccountId } from "@ledgerhq/coin-framework/lib/account/accountId";
 import { testOnChainData } from "./tests/test-onchain-data.fixture";
+import { getCryptoAssetsStore } from "./cryptoAssetsStore";
 
 const mainAccId = encodeAccountId({
   type: "js",
@@ -43,7 +43,7 @@ const wSolSubAccId = encodeAccountIdWithTokenAccountAddress(
   testOnChainData.wSolSenderAssocTokenAccAddress,
 );
 
-const wSolToken = findTokenByAddressInCurrency(
+const wSolToken = getCryptoAssetsStore().findTokenByAddressInCurrency(
   "So11111111111111111111111111111111111111112",
   "solana",
 ) as TokenCurrency;
@@ -57,7 +57,7 @@ const solana: CurrenciesData<Transaction> = {
   scanAccounts: [scanAccounts1],
   // FIXME Ordering of validators must be always the same, for this test to be stable:
   // https://github.com/LedgerHQ/ledger-live-common/blob/develop/src/__tests__/test-helpers/bridge.ts#L171-L188
-  FIXME_ignorePreloadFields: ["validators"],
+  FIXME_ignorePreloadFields: ["validators", "splTokens"],
   accounts: [
     {
       raw: makeAccount(testOnChainData.fundedSenderAddress),
@@ -237,11 +237,14 @@ function memoIsTooLong(): TransactionTestSpec[] {
             },
           };
         case "token.createATA":
+        case "token.approve":
+        case "token.revoke":
         case "stake.createAccount":
         case "stake.delegate":
         case "stake.undelegate":
         case "stake.withdraw":
         case "stake.split":
+        case "raw":
           return undefined;
         default:
           return assertUnreachable(tx.model);

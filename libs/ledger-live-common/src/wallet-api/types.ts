@@ -77,3 +77,9 @@ export type RecentlyUsedIdDb = {
 };
 
 export type CurrentAccountHistIDb = Record<string, string>;
+
+export type DAppTrackingData = {
+  type: string;
+  currency: string;
+  network: CryptoCurrency["id"];
+};

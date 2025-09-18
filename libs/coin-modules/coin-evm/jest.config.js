@@ -8,21 +8,18 @@ module.exports = {
     "!src/test/**/*.ts",
     "!src/__tests__/**/*.ts",
   ],
-  coverageReporters: ["json", ["lcov", { file: "evm-lcov.info", projectRoot: "../" }], "text"],
+  coverageReporters: ["json", ["lcov", { file: "lcov.info", projectRoot: "../../../" }], "text"],
   preset: "ts-jest",
   testEnvironment: "node",
-  testPathIgnorePatterns: ["lib/", "lib-es/", ".integration.test.ts"],
+  testPathIgnorePatterns: ["lib/", "lib-es/", ".*\\.(integ|integration)\\.test\\.ts"],
   modulePathIgnorePatterns: [
     "__tests__/fixtures",
     "__tests__/coin-tester",
     "__tests__/integration/bridge.integration.test.ts", // this file is tested at the live-common level
   ],
-  setupFilesAfterEnv: ["jest-expect-message", "dotenv/config"],
+  setupFilesAfterEnv: ["jest-expect-message", "dotenv/config", "@ledgerhq/disable-network-setup"],
   reporters: [
     "default",
-    [
-      "jest-sonar",
-      { outputName: "evm-sonar-executionTests-report.xml", reportedFilePath: "absolute" },
-    ],
+    ["jest-sonar", { outputName: "sonar-executionTests-report.xml", reportedFilePath: "absolute" }],
   ],
 };

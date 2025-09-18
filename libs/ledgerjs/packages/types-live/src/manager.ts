@@ -43,6 +43,8 @@ export type DeviceInfo = {
   bootloaderVersion?: string;
   hardwareVersion?: number;
   languageId?: number;
+  seFlags: Buffer;
+  charonState?: Buffer;
 };
 
 /**
@@ -101,6 +103,8 @@ export enum SeedPhraseType {
   TwentyFour = "24-words",
 }
 
+export type SeedOriginType = "new_seed" | "restore_seed" | "recover_seed" | "restore_charon";
+
 /**
  *
  */
@@ -117,6 +121,8 @@ export type FirmwareInfo = {
   bootloaderVersion?: string;
   hardwareVersion?: number;
   languageId?: number;
+  recoverState?: Buffer;
+  charonState?: Buffer;
 };
 type BaseFirmware = {
   id: Id;

@@ -22,9 +22,11 @@ import TableContainer, { TableHeader } from "~/renderer/components/TableContaine
 import AngleDown from "~/renderer/icons/AngleDown";
 import { getLLDCoinFamily } from "~/renderer/families";
 import { blacklistedTokenIdsSelector } from "~/renderer/reducers/settings";
+
 type Props = {
   account: Account;
 };
+
 export default memo<Props>(TokensList);
 function TokensList({ account }: Props) {
   const { t } = useTranslation();
@@ -68,7 +70,8 @@ function TokensList({ account }: Props) {
   if (!isTokenAccount && isEmpty) return null;
   const url =
     currency && currency.type && tokenTypes && tokenTypes.length > 0
-      ? supportLinkByTokenType[tokenTypes[0] as keyof typeof supportLinkByTokenType]
+      ? // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+        supportLinkByTokenType[tokenTypes[0] as keyof typeof supportLinkByTokenType]
       : null;
   const specific = getLLDCoinFamily(family)?.tokenList;
   const hasSpecificTokenWording = specific?.hasSpecificTokenWording;

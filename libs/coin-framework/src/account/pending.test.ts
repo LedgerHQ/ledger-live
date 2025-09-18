@@ -180,9 +180,45 @@ describe("shouldRetainPendingOperation", () => {
     // Then
     expect(shouldRetainPending).toBe(true);
   });
+
+  it("should replace existing pending operation with same transactionSequenceNumber", () => {
+    const account = createAccount("12");
+    const op1 = createOperation("12", ["addr"], 5);
+    const op2 = createOperation("12", ["addr"], 5); // same sequence
+
+    const result = addPendingOperation(addPendingOperation(account, op1), op2);
+
+    expect(result.pendingOperations.length).toBe(1);
+    expect(result.pendingOperations[0]).toBe(op2);
+  });
+
+  it("should remove the pending operation when confirmed version appears in second sync", () => {
+    const account = createAccount("12");
+    const now = new Date();
+    const senders = ["abc"];
+
+    // First sync: we get a pending operation
+    const pendingOp = createOperation("12", senders, 42, now);
+    const withPending = addPendingOperation(account, pendingOp);
+
+    expect(withPending.pendingOperations).toHaveLength(1);
+    expect(withPending.pendingOperations[0]).toBe(pendingOp);
+
+    // Second sync: confirmed operation shows up in the history
+    const confirmedOp: Operation = {
+      ...pendingOp,
+      blockHeight: 100,
+      blockHash: "blockhash",
+    };
+    withPending.operations.push(confirmedOp);
+
+    // Should not retain pending now
+    const retain = shouldRetainPendingOperation(withPending, pendingOp);
+    expect(retain).toBe(false);
+  });
 });
 
-function createAccount(id: string): Account {
+export function createAccount(id: string): Account {
   const currency = listCryptoCurrencies(true)[0];
 
   return {
@@ -226,7 +262,7 @@ function createTokenAccount(id: string): TokenAccount {
   };
 }
 
-function createOperation(
+export function createOperation(
   accountId: string,
   sender?: string[],
   sequenceNumber?: number,

@@ -1,6 +1,6 @@
 // TODO: to remove once live-app-sdk is depreciated and removed from LL
 
-import { DEFAULT_NONCE } from "@ledgerhq/coin-evm/createTransaction";
+import { DEFAULT_NONCE } from "@ledgerhq/coin-evm/utils";
 import { Transaction } from "@ledgerhq/coin-evm/types/index";
 import { EthereumTransaction as PlatformTransaction } from "@ledgerhq/live-app-sdk";
 

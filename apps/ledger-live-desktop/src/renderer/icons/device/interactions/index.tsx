@@ -1,5 +1,4 @@
 import React from "react";
-import styled from "styled-components";
 import NanoS from "./NanoS";
 import NanoX from "./NanoX";
 import Blue from "./Blue";
@@ -23,9 +22,6 @@ export type Props = {
   width?: number;
   error?: Error | null;
 };
-export const Wrapper = styled.div`
-  position: relative;
-`;
 
 const usbMap = {
   wired: "plugged",
@@ -60,6 +56,7 @@ const Interactions = ({
   const props = {
     error: !!error,
     screen: error ? "fail" : screen,
+    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
     usb: wire && (usbMap[wire] as React.ComponentProps<typeof Device>["usb"]),
     leftHint: action === "left" || (type === "nanoX" && action === "accept"),
     rightHint: action === "accept",

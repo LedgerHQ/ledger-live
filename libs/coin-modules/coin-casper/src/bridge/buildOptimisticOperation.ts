@@ -27,5 +27,7 @@ export const buildOptimisticOperation = (
     extra: {
       transferId: transaction.transferId,
     },
+    nftOperations: [],
+    subOperations: [],
   };
 };

@@ -1,5 +1,5 @@
 import { DeviceExtractOnboardingStateError } from "@ledgerhq/errors";
-import { extractOnboardingState, OnboardingStep } from "./extractOnboardingState";
+import { CharonStatus, extractOnboardingState, OnboardingStep } from "./extractOnboardingState";
 
 describe("@hw/extractOnboardingState", () => {
   describe("extractOnboardingState", () => {
@@ -21,6 +21,85 @@ describe("@hw/extractOnboardingState", () => {
 
         expect(onboardingState).not.toBeNull();
         expect(onboardingState?.isOnboarded).toBe(true);
+      });
+
+      describe("and the user is on the charon backup screen", () => {
+        const flagsBytes = Buffer.from([1 << 2, 0, 0, 0xb]);
+
+        describe("and the device was seeded with charon", () => {
+          it("should return an onboarding step that is set at the charon screen", () => {
+            const charonState = Buffer.from([0x0]);
+            const onboardingState = extractOnboardingState(flagsBytes, charonState);
+
+            expect(onboardingState).not.toBeNull();
+            expect(onboardingState?.currentOnboardingStep).toBe(OnboardingStep.Ready);
+            expect(onboardingState?.charonStatus).toBeNull();
+          });
+
+          it("should ignore charon update status", () => {
+            const charonState = Buffer.from([0x20]);
+            const onboardingState = extractOnboardingState(flagsBytes, charonState);
+
+            expect(onboardingState).not.toBeNull();
+            expect(onboardingState?.currentOnboardingStep).toBe(OnboardingStep.Ready);
+            expect(onboardingState?.charonStatus).toBeNull();
+          });
+        });
+
+        describe("and the user refuse to backup the charon", () => {
+          it("should return an onboarding step that is set at ready", () => {
+            const charonState = Buffer.from([0x1]);
+            const onboardingState = extractOnboardingState(flagsBytes, charonState);
+
+            expect(onboardingState).not.toBeNull();
+            expect(onboardingState?.currentOnboardingStep).toBe(OnboardingStep.Ready);
+            expect(onboardingState?.charonStatus).toBe(CharonStatus.Rejected);
+          });
+
+          describe("and charon backup process started but not finished", () => {
+            it("should return an onboarding step that is set at the charon screen", () => {
+              const charonState = Buffer.from([0x3]);
+              const onboardingState = extractOnboardingState(flagsBytes, charonState);
+
+              expect(onboardingState).not.toBeNull();
+              expect(onboardingState?.currentOnboardingStep).toBe(OnboardingStep.BackupCharon);
+              expect(onboardingState?.charonStatus).toBe(CharonStatus.Running);
+            });
+
+            describe("and the charon backup is done and naming not finished", () => {
+              it("should return an onboarding step that is set at the charon screen", () => {
+                const charonState = Buffer.from([0x4]);
+                const onboardingState = extractOnboardingState(flagsBytes, charonState);
+
+                expect(onboardingState).not.toBeNull();
+                expect(onboardingState?.currentOnboardingStep).toBe(OnboardingStep.BackupCharon);
+                expect(onboardingState?.charonStatus).toBe(CharonStatus.Naming);
+              });
+
+              describe("and the charon backup is done and backup-process exited", () => {
+                it("should return an onboarding step that is set at ready", () => {
+                  const charonState = Buffer.from([0x5]);
+                  const onboardingState = extractOnboardingState(flagsBytes, charonState);
+
+                  expect(onboardingState).not.toBeNull();
+                  expect(onboardingState?.currentOnboardingStep).toBe(OnboardingStep.Ready);
+                  expect(onboardingState?.charonStatus).toBe(CharonStatus.Ready);
+                });
+              });
+            });
+          });
+        });
+
+        describe("and charon backup is not started and not fully refused", () => {
+          it("should return an onboarding step that is set at ready", () => {
+            const charonState = Buffer.from([0x2]);
+            const onboardingState = extractOnboardingState(flagsBytes, charonState);
+
+            expect(onboardingState).not.toBeNull();
+            expect(onboardingState?.currentOnboardingStep).toBe(OnboardingStep.BackupCharon);
+            expect(onboardingState?.charonStatus).toBe(CharonStatus.Choice);
+          });
+        });
       });
     });
 
@@ -282,9 +361,26 @@ describe("@hw/extractOnboardingState", () => {
         });
       });
 
-      describe("and the user finished the onboarding process", () => {
+      describe("and the user finished the onboarding process with a device that does not support charon", () => {
         beforeEach(() => {
           flagsBytes[3] = 11;
+          flagsBytes[4] = 0; // recover
+          flagsBytes[5] = undefined as unknown as number; // charon not supported
+        });
+
+        it("should return an onboarding step that is set at ready", () => {
+          const onboardingState = extractOnboardingState(flagsBytes);
+
+          expect(onboardingState).not.toBeNull();
+          expect(onboardingState?.currentOnboardingStep).toBe(OnboardingStep.Ready);
+        });
+      });
+
+      describe("and the user finished the onboarding process with a device that does not support recover and charon", () => {
+        beforeEach(() => {
+          flagsBytes[3] = 11;
+          flagsBytes[4] = undefined as unknown as number; // recover not supported
+          flagsBytes[5] = undefined as unknown as number; // charon not supported
         });
 
         it("should return an onboarding step that is set at ready", () => {
@@ -308,6 +404,39 @@ describe("@hw/extractOnboardingState", () => {
             DeviceExtractOnboardingStateError,
           );
         });
+      });
+
+      describe("and the user is on the restore charon screen", () => {
+        beforeEach(() => {
+          flagsBytes = Buffer.from([0, 0, 0, 0x10]);
+        });
+
+        it("should return an onboarding step that is set at the restore from charon screen", () => {
+          const onboardingState = extractOnboardingState(flagsBytes);
+
+          expect(onboardingState).not.toBeNull();
+          expect(onboardingState?.currentOnboardingStep).toBe(OnboardingStep.RestoreCharon);
+        });
+      });
+    });
+
+    describe("When charon flags are provided", () => {
+      it("should return charonSupported=true", () => {
+        const onboardingState = extractOnboardingState(
+          Buffer.from([0, 0, 0, 0]),
+          Buffer.from([0x0]),
+        );
+
+        expect(onboardingState).not.toBeNull();
+        expect(onboardingState?.charonSupported).toBe(true);
+      });
+    });
+    describe("When charon flags are not provided", () => {
+      it("should return charonSupported=false", () => {
+        const onboardingState = extractOnboardingState(Buffer.from([0, 0, 0, 0]));
+
+        expect(onboardingState).not.toBeNull();
+        expect(onboardingState?.charonSupported).toBe(false);
       });
     });
   });

@@ -5,6 +5,7 @@ import { Switch } from "@ledgerhq/native-ui";
 import SettingsRow from "~/components/SettingsRow";
 import { setReportErrors } from "~/actions/settings";
 import { reportErrorsEnabledSelector } from "~/reducers/settings";
+import { Track } from "~/analytics";
 
 const ReportErrorsRow = () => {
   const { t } = useTranslation();
@@ -13,13 +14,19 @@ const ReportErrorsRow = () => {
   const dispatch = useDispatch();
 
   return (
-    <SettingsRow
-      event="ReportErrorsRow"
-      title={t("settings.display.reportErrors")}
-      desc={t("settings.display.reportErrorsDesc")}
-    >
-      <Switch checked={reportErrorsEnabled} onChange={value => dispatch(setReportErrors(value))} />
-    </SettingsRow>
+    <>
+      <Track event={reportErrorsEnabled ? "EnableReportBug" : "DisableReportBug"} onUpdate />
+      <SettingsRow
+        event="ReportErrorsRow"
+        title={t("settings.display.reportErrors")}
+        desc={t("settings.display.reportErrorsDesc")}
+      >
+        <Switch
+          checked={reportErrorsEnabled}
+          onChange={value => dispatch(setReportErrors(value))}
+        />
+      </SettingsRow>
+    </>
   );
 };
 

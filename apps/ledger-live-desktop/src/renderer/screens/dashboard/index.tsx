@@ -36,7 +36,6 @@ import { useDisplayOnPortfolioAnalytics } from "LLD/features/AnalyticsOptInPromp
 import PortfolioContentCards from "LLD/features/DynamicContent/components/PortfolioContentCards";
 import { LNSUpsellBanner, useLNSUpsellBannerState } from "LLD/features/LNSUpsell";
 import useActionCards from "~/renderer/hooks/useActionCards";
-import { useNftCollectionsStatus } from "~/renderer/hooks/nfts/useNftCollectionsStatus";
 
 // This forces only one visible top banner at a time
 export const TopBannerContainer = styled.div`
@@ -64,19 +63,16 @@ export default function DashboardPage() {
   );
   const isPostOnboardingBannerVisible = usePostOnboardingEntryPointVisibleOnWallet();
   const [shouldFilterTokenOpsZeroAmount] = useFilterTokenOperationsZeroAmount();
-  const { hiddenNftCollections } = useNftCollectionsStatus(true);
+
   const filterOperations = useCallback(
     (operation: Operation, account: AccountLike) => {
       // Remove operations linked to address poisoning
       const removeZeroAmountTokenOp =
         shouldFilterTokenOpsZeroAmount && isAddressPoisoningOperation(operation, account);
-      // Remove operations coming from an NFT collection considered spam
-      const opFromBlacklistedNftCollection = operation?.nftOperations?.find(op =>
-        hiddenNftCollections.includes(`${account.id}|${op?.contract}`),
-      );
-      return !opFromBlacklistedNftCollection && !removeZeroAmountTokenOp;
+
+      return !removeZeroAmountTokenOp;
     },
-    [hiddenNftCollections, shouldFilterTokenOpsZeroAmount],
+    [shouldFilterTokenOpsZeroAmount],
   );
 
   const { enabled: marketPerformanceEnabled, variant: marketPerformanceVariant } =
@@ -151,6 +147,7 @@ export default function DashboardPage() {
                 withAccount
                 withSubAccounts
                 filterOperation={filterOperations}
+                t={t}
               />
             )}
           </>

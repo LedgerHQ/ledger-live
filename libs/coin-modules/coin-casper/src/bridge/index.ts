@@ -17,6 +17,8 @@ import { createTransaction } from "./createTransaction";
 import { getAccountShape } from "./bridgeHelpers/accountShape";
 import { buildSignOperation } from "./signOperation";
 import { broadcast } from "./broadcast";
+import { CasperCoinConfig } from "../config";
+import { setCoinConfig } from "../config";
 
 function buildCurrencyBridge(signerContext: SignerContext<CasperSigner>): CurrencyBridge {
   const getAddress = resolver(signerContext);
@@ -57,7 +59,12 @@ function buildAccountBridge(
   };
 }
 
-export function createBridges(signerContext: SignerContext<CasperSigner>) {
+export function createBridges(
+  signerContext: SignerContext<CasperSigner>,
+  coinConfig: CasperCoinConfig,
+) {
+  setCoinConfig(coinConfig);
+
   return {
     currencyBridge: buildCurrencyBridge(signerContext),
     accountBridge: buildAccountBridge(signerContext),

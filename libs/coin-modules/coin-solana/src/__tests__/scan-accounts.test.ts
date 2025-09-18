@@ -236,7 +236,11 @@ describe("Scan account", () => {
                   lamports: 30000,
                   program: "spl-token-2022",
                   type: "account",
-                  info: parsedTokenInfo({ state: "frozen", owner: publicKeyOf(address) }),
+                  info: parsedTokenInfo({
+                    state: "frozen",
+                    owner: publicKeyOf(address),
+                    extensions: [{ extension: "immutableOwner" }, { extension: "pausableAccount" }],
+                  }),
                 }),
               },
             ],

@@ -4,3 +4,4 @@ export { DeviceManagementKitTransport } from "./transport/DeviceManagementKitTra
 export * from "./errors";
 export * from "./hooks";
 export { useDeviceSessionState };
+export { type DmkError } from "@ledgerhq/device-management-kit";

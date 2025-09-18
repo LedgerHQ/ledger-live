@@ -1,6 +1,6 @@
 import React, { useState, memo, useCallback, useEffect, useRef } from "react";
 import { useLocation, useHistory } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import styled from "styled-components";
 import { Trans } from "react-i18next";
 import { TFunction } from "i18next";
@@ -17,7 +17,6 @@ import Item from "./Item";
 import Filter from "./Filter";
 import Sort from "./Sort";
 import UninstallAllButton from "./UninstallAllButton";
-import { openModal } from "~/renderer/actions/modals";
 import debounce from "lodash/debounce";
 import InstallSuccessBanner from "./InstallSuccessBanner";
 import SearchBox from "../../../accounts/AccountList/SearchBox";
@@ -26,6 +25,8 @@ import { AppType, SortOptions } from "@ledgerhq/live-common/apps/filtering";
 import NoResults from "~/renderer/icons/NoResults";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { getEnv } from "@ledgerhq/live-env";
+import { ModularDrawerLocation } from "LLD/features/ModularDrawer";
+import { useOpenAssetFlow } from "LLD/features/ModularDrawer/hooks/useOpenAssetFlow";
 
 // sticky top bar with extra width to cover card boxshadow underneath
 export const StickyTabBar = styled.div`
@@ -78,7 +79,6 @@ const AppsList = ({
 }: Props) => {
   const { push } = useHistory();
   const { search } = useLocation();
-  const reduxDispatch = useDispatch();
   const currenciesAccountsSetup = useSelector(currenciesSelector);
   const inputRef = useRef<HTMLInputElement | null>(null);
   const [query, setQuery] = useState("");
@@ -91,6 +91,11 @@ const AppsList = ({
   const onTextChange = useCallback(
     (evt: React.ChangeEvent<HTMLInputElement>) => setQuery(evt.target.value),
     [setQuery],
+  );
+
+  const { openAddAccountFlow } = useOpenAssetFlow(
+    { location: ModularDrawerLocation.ADD_ACCOUNT },
+    "manager",
   );
 
   /** clear search field on tab change */
@@ -108,15 +113,11 @@ const AppsList = ({
   }, [search]);
   const { installed: installedApps, uninstallQueue, apps } = state;
   const addAccount = useCallback(
-    (currency?: CryptoOrTokenCurrency) => {
+    (currency: CryptoOrTokenCurrency) => {
       push("/accounts");
-      reduxDispatch(
-        openModal("MODAL_ADD_ACCOUNTS", {
-          currency: currency || null,
-        }),
-      );
+      openAddAccountFlow(currency, true);
     },
-    [push, reduxDispatch],
+    [push, openAddAccountFlow],
   );
   const { update, device, catalog } = useAppsSections(state, {
     query,

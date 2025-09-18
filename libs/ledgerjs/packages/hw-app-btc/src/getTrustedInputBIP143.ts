@@ -1,5 +1,5 @@
 import Transport from "@ledgerhq/hw-transport";
-import shajs from "sha.js";
+import { sha256 } from "@noble/hashes/sha256";
 import type { Transaction } from "./types";
 import { serializeTransaction } from "./serializeTransaction";
 export function getTrustedInputBIP143(
@@ -18,9 +18,7 @@ export function getTrustedInputBIP143(
     throw new Error("Decred does not implement BIP143");
   }
 
-  let hash = shajs("sha256")
-    .update(shajs("sha256").update(serializeTransaction(transaction, true)).digest())
-    .digest();
+  let hash = Buffer.from(sha256(sha256(serializeTransaction(transaction, true))));
   const data = Buffer.alloc(4);
   data.writeUInt32LE(indexLookup, 0);
   const { outputs, locktime } = transaction;

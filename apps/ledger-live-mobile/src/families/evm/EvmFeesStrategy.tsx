@@ -1,4 +1,4 @@
-import { getEstimatedFees } from "@ledgerhq/coin-evm/lib/logic";
+import { getEstimatedFees } from "@ledgerhq/coin-evm/lib/utils";
 import type { Transaction, TransactionStatus } from "@ledgerhq/coin-evm/types/index";
 import { getMainAccount } from "@ledgerhq/live-common/account/helpers";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";

@@ -2,7 +2,7 @@ import { Account, TokenAccount } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { ACTIVATION_FEES, STANDARD_FEES_NATIVE, STANDARD_FEES_TRC_20 } from "../logic/constants";
 import type { AccountTronAPI } from "../network/types";
-import type { Transaction, TronAsset } from "../types";
+import type { Transaction } from "../types";
 import { extractBandwidthInfo, getEstimatedBlockSize } from "./utils";
 import { estimateFees, getAccount } from "../logic";
 import type { TransactionIntent } from "@ledgerhq/coin-framework/api/index";
@@ -10,7 +10,7 @@ import type { TransactionIntent } from "@ledgerhq/coin-framework/api/index";
 // see : https://developers.tron.network/docs/bandwith#section-bandwidth-points-consumption
 // 1. cost around 200 Bandwidth, if not enough check Free Bandwidth
 // 2. If not enough, will cost some TRX
-// 3. normal transfert cost around 0.002 TRX
+// 3. normal transfert cost around 0.270 TRX
 const getFeesFromBandwidth = (account: Account, transaction: Transaction): BigNumber => {
   const { freeUsed, freeLimit, gainedUsed, gainedLimit } = extractBandwidthInfo(
     transaction.networkInfo,
@@ -19,7 +19,7 @@ const getFeesFromBandwidth = (account: Account, transaction: Transaction): BigNu
   const estimatedBandwidthCost = getEstimatedBlockSize(account, transaction);
 
   if (available.lt(estimatedBandwidthCost)) {
-    return STANDARD_FEES_NATIVE; // cost is around 0.002 TRX
+    return STANDARD_FEES_NATIVE; // cost is around 0.270 TRX
   }
 
   return new BigNumber(0); // no fee
@@ -48,7 +48,7 @@ const getFeesFromAccountActivation = async (
       return ACTIVATION_FEES; // cost is around 1 TRX
     }
 
-    const transactionIntent: TransactionIntent<TronAsset> = {
+    const transactionIntent: TransactionIntent = {
       type: transaction.mode,
       sender: account.freshAddress,
       recipient: transaction.recipient,
@@ -56,11 +56,10 @@ const getFeesFromAccountActivation = async (
       asset:
         tokenAccount?.token.tokenType === "trc20"
           ? {
-              type: "token",
-              standard: "trc20",
-              contractAddress: tokenAccount.token.contractAddress,
+              type: "trc20",
+              assetReference: tokenAccount.token.contractAddress,
             }
-          : { type: "token", standard: "trc10", tokenId: tokenAccount?.token.id },
+          : { type: "trc10", assetReference: tokenAccount?.token.id },
     };
 
     // if we have a token account but the recipient is either not active or the account does not have a trc20 balance for the given token.

@@ -3,21 +3,25 @@ import {
   buildTransferInstructions,
   buildTokenTransferInstructions,
   buildCreateAssociatedTokenAccountInstruction,
+  buildApproveTransactionInstructions,
+  buildRevokeTransactionInstructions,
   buildStakeCreateAccountInstructions,
   buildStakeDelegateInstructions,
   buildStakeUndelegateInstructions,
   buildStakeWithdrawInstructions,
   buildStakeSplitInstructions,
 } from "./network/chain/web3";
-import { assertUnreachable } from "./utils";
+import { assertUnreachable, DUMMY_SIGNATURE } from "./utils";
 import {
   PublicKey,
   VersionedTransaction as OnChainTransaction,
   TransactionInstruction,
   TransactionMessage,
   BlockhashWithExpiryBlockHeight,
+  VersionedTransaction,
 } from "@solana/web3.js";
 import { ChainAPI } from "./network";
+import { trace } from "@ledgerhq/logs";
 
 export const buildTransactionWithAPI = async (
   address: string,
@@ -30,27 +34,34 @@ export const buildTransactionWithAPI = async (
     (signature: Buffer) => OnChainTransaction,
   ]
 > => {
-  const [instructions, recentBlockhash] = await Promise.all([
-    buildInstructions(api, transaction),
-    api.getLatestBlockhash(),
-  ]);
+  const recentBlockhash = await api.getLatestBlockhash();
 
-  const feePayer = new PublicKey(address);
+  let web3SolanaTransaction: VersionedTransaction;
+  if (transaction.raw) {
+    web3SolanaTransaction = OnChainTransaction.deserialize(Buffer.from(transaction.raw, "base64"));
+    // Update the recent blockhash if no real signatures are present
+    // This ensures the transaction uses a fresh blockhash for submission
+    // NOTE: we could also make use of the isBlockHashValid rpc method to check the validity
+    if (web3SolanaTransaction.signatures.every(sig => Buffer.from(sig).equals(DUMMY_SIGNATURE))) {
+      web3SolanaTransaction.message.recentBlockhash = recentBlockhash.blockhash;
+    }
+  } else {
+    const instructions = await buildInstructions(api, transaction);
+    const transactionMessage = new TransactionMessage({
+      payerKey: new PublicKey(address),
+      recentBlockhash: recentBlockhash.blockhash,
+      instructions,
+    });
 
-  const tm = new TransactionMessage({
-    payerKey: feePayer,
-    recentBlockhash: recentBlockhash.blockhash,
-    instructions,
-  });
-
-  const tx = new OnChainTransaction(tm.compileToLegacyMessage());
+    web3SolanaTransaction = new OnChainTransaction(transactionMessage.compileToLegacyMessage());
+  }
 
   return [
-    tx,
+    web3SolanaTransaction,
     recentBlockhash,
     (signature: Buffer) => {
-      tx.addSignature(new PublicKey(address), signature);
-      return tx;
+      web3SolanaTransaction.addSignature(new PublicKey(address), signature);
+      return web3SolanaTransaction;
     },
   ];
 };
@@ -63,7 +74,14 @@ async function buildInstructions(
   if (commandDescriptor === undefined) {
     throw new Error("missing command descriptor");
   }
-  if (Object.keys(commandDescriptor.errors).length > 0) {
+  const errorEntries = Object.entries(commandDescriptor.errors);
+  if (errorEntries.length > 0) {
+    trace({
+      type: "solana/buildTransaction",
+      message: "can not build invalid command",
+      data: Object.fromEntries(errorEntries.map(([key, value]) => [key, value.message])),
+      context: { commandKind: commandDescriptor.command.kind },
+    });
     throw new Error("can not build invalid command");
   }
   return buildInstructionsForCommand(api, commandDescriptor.command);
@@ -80,6 +98,10 @@ async function buildInstructionsForCommand(
       return buildTokenTransferInstructions(api, command);
     case "token.createATA":
       return buildCreateAssociatedTokenAccountInstruction(api, command);
+    case "token.approve":
+      return buildApproveTransactionInstructions(api, command);
+    case "token.revoke":
+      return buildRevokeTransactionInstructions(api, command);
     case "stake.createAccount":
       return buildStakeCreateAccountInstructions(api, command);
     case "stake.delegate":
@@ -90,6 +112,8 @@ async function buildInstructionsForCommand(
       return buildStakeWithdrawInstructions(api, command);
     case "stake.split":
       return buildStakeSplitInstructions(api, command);
+    case "raw":
+      throw new Error("Raw transactions should not be built with this function");
     default:
       return assertUnreachable(command);
   }

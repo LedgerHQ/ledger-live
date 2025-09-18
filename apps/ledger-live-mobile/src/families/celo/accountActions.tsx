@@ -1,7 +1,6 @@
 import React from "react";
 import { Trans } from "react-i18next";
 import { CeloAccount } from "@ledgerhq/live-common/families/celo/types";
-import invariant from "invariant";
 import type { Account } from "@ledgerhq/types-live";
 import { isAccountEmpty } from "@ledgerhq/live-common/account/index";
 import CeloIcon from "./components/CeloIcon";
@@ -16,8 +15,6 @@ const getMainActions = ({
   account: CeloAccount;
   parentAccount: Account;
 }): ActionButtonEvent[] => {
-  const { celoResources } = account;
-  invariant(celoResources, "celo resources not parsed");
   const label = getStakeLabelLocaleBased();
 
   const navigationParams: NavigationParamsType = isAccountEmpty(account)

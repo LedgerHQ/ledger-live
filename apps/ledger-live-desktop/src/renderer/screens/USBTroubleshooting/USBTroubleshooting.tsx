@@ -33,18 +33,20 @@ const USBTroubleshooting = ({ onboarding = false }: { onboarding?: boolean }) =>
   const fallBackUSBTroubleshootingIndex = useSelector(USBTroubleshootingIndexSelector);
 
   // Maybe extract an index from the state, fallback to selector
+  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
   let { USBTroubleshootingIndex } = (locationState || {}) as { USBTroubleshootingIndex?: number };
   USBTroubleshootingIndex = USBTroubleshootingIndex ?? fallBackUSBTroubleshootingIndex;
 
   // Show the splash screen only if we are not already mid troubleshooting
   const [showIntro, setShowIntro] = useState(USBTroubleshootingIndex === undefined);
   const [state, sendEvent] = useMachine(USBTroubleshootingMachine, {
-    context: {
+    input: {
       currentIndex: USBTroubleshootingIndex,
     },
   });
   const { context } = state || {};
   const { currentIndex, solutions, SolutionComponent, platform, done } = context;
+  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
   const platformSolutions = solutions[platform as keyof typeof solutions];
   const isLastStep = useMemo(() => SolutionComponent === RepairFunnel, [SolutionComponent]);
   useEffect(() => {
@@ -67,7 +69,7 @@ const USBTroubleshooting = ({ onboarding = false }: { onboarding?: boolean }) =>
         });
   }, [dispatch, history, onboarding]);
   const onDone = useCallback(() => {
-    sendEvent("DONE");
+    sendEvent({ type: "DONE" });
   }, [sendEvent]);
   const showExitOnboardingButton = onboarding && !currentIndex;
   return showIntro ? (
@@ -90,7 +92,10 @@ const USBTroubleshooting = ({ onboarding = false }: { onboarding?: boolean }) =>
               <Text ml={1}>{t("connectTroubleshooting.steps.entry.back")}</Text>
             </Button>
           ) : currentIndex ? (
-            <Button onClick={() => sendEvent("PREVIOUS")} id="USBTroubleshooting-previous">
+            <Button
+              onClick={() => sendEvent({ type: "PREVIOUS" })}
+              id="USBTroubleshooting-previous"
+            >
               <ArrowRightIcon flipped size={16} />
               <Text ml={1}>{t("connectTroubleshooting.previousSolution")}</Text>
             </Button>
@@ -103,7 +108,7 @@ const USBTroubleshooting = ({ onboarding = false }: { onboarding?: boolean }) =>
           {!isLastStep && (
             <Button
               disabled={currentIndex === platformSolutions.length - 1}
-              onClick={() => sendEvent("NEXT")}
+              onClick={() => sendEvent({ type: "NEXT" })}
               id="USBTroubleshooting-next"
             >
               <Text mr={1}>{t("connectTroubleshooting.nextSolution")}</Text>

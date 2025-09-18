@@ -1,12 +1,12 @@
 /* instanbul ignore file: don't test fixtures */
 
 import BigNumber from "bignumber.js";
-import { getTokenById } from "@ledgerhq/cryptoassets/tokens";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { encodeSubOperationId } from "@ledgerhq/coin-framework/operation";
 import * as logic from "../../logic";
 import { getCoinConfig } from "../../config";
+import { getCryptoAssetsStore } from "../../cryptoAssetsStore";
 import {
   makeAccount,
   makeNft,
@@ -55,8 +55,10 @@ export const swapHistory = [
 ];
 
 export const tokenCurrencies = [
-  Object.freeze(getTokenById("ethereum/erc20/usd__coin")),
-  Object.freeze(getTokenById("ethereum/erc20/usd_tether__erc20_")),
+  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+  getCryptoAssetsStore().findTokenById("ethereum/erc20/usd__coin") as TokenCurrency,
+  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+  getCryptoAssetsStore().findTokenById("ethereum/erc20/usd_tether__erc20_") as TokenCurrency,
 ];
 
 export const tokenAccount = {
@@ -268,14 +270,6 @@ export const internalOperations = [
     id: encodeSubOperationId(coinOperations[2].accountId, coinOperations[2].hash, "IN", 0),
   }),
 ];
-
-export const ignoredTokenOperation = makeOperation({
-  hash: "0xigN0r3Me",
-  accountId: "js:2:ethereum:0xkvn:+ethereum%2Ferc20%2Fusd_tether__erc20_",
-  contract: "0xUnknownContract",
-  date: new Date(Date.now() + 4),
-  blockHeight: 12000,
-});
 
 export const pendingOperation = makeOperation({
   hash: "123",

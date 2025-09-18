@@ -1,0 +1,1 @@
+{"request":{"url":"https://celo.coin.ledger.com/indexer//status","method":"GET"},"response":{"body":{"app_name":"celo-indexer","app_version":"0.1.10","go_version":"1.20.5","chain_id":42220,"indexing_started":true,"last_index_version":2,"last_indexed_height":31871620,"last_indexed_time":"2025-04-04T13:12:58Z","last_indexed_at":"2025-04-04T13:12:58.673707Z","indexing_lag":0}}}

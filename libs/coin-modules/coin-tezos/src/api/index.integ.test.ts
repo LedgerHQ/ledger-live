@@ -1,14 +1,13 @@
-import { type Api } from "@ledgerhq/coin-framework/api/index";
 import { localForger } from "@taquito/local-forging";
 import { createApi } from ".";
-import { TezosAsset } from "../types";
+import type { TezosApi } from "./types";
 
 /**
  * https://teztnets.com/ghostnet-about
  * https://api.tzkt.io/#section/Get-Started/Free-TzKT-API
  */
 describe("Tezos Api", () => {
-  let module: Api<TezosAsset>;
+  let module: TezosApi;
   const address = "tz1heMGVHQnx7ALDcDKqez8fan64Eyicw4DJ";
 
   beforeAll(() => {
@@ -48,14 +47,63 @@ describe("Tezos Api", () => {
       });
 
       // Then
-      expect(result).toBeGreaterThanOrEqual(BigInt(0));
+      expect(result.value).toBeGreaterThanOrEqual(BigInt(0));
+      expect(result.parameters).toBeDefined();
+      expect(result.parameters?.gasLimit).toBeGreaterThanOrEqual(BigInt(0));
+      expect(result.parameters?.storageLimit).toBeGreaterThanOrEqual(BigInt(0));
     });
+  });
+
+  it.each([
+    [
+      "ed25519 / tz1",
+      "tz1heMGVHQnx7ALDcDKqez8fan64Eyicw4DJ",
+      "6D9733FB7E27C56F032FAD41E4C0C90D58D0D5F1A253B2430B702071B57E47C1",
+    ],
+    [
+      "secp256k1 / tz2",
+      "tz2DvEBHrtFkq9pTXqt6yavnf4sPe2jut2XH",
+      "032fede4de54cf92381832a053f0787125fdc0d065d231585eb34d5eae327c0222",
+    ],
+    [
+      "P256 / tz3",
+      "tz3DvEBHrtFkq9pTXqt6yavnf4sPe2jut2XH",
+      "0466839a78481025e3613f65fcd4b492a492bedd1a3cba77ae48eaa1803611d8e5f4e23c0d0f3586e2095f4f83d09c841e1c17586b2356d5d3a3ed3f45bb3a857e",
+    ],
+  ])("does not fail when providing a %s address with pub key", async (_, sender, pubKey) => {
+    // When
+    const result = await module.estimateFees({
+      asset: { type: "native" },
+      type: "send",
+      sender: "tz3DvEBHrtFkq9pTXqt6yavnf4sPe2jut2XH",
+      senderPublicKey: pubKey,
+      recipient: sender,
+      amount: BigInt(100),
+    });
+
+    // Then
+    expect(result.value).toBeGreaterThanOrEqual(BigInt(0));
+    expect(result.parameters).toBeDefined();
+    expect(result.parameters?.gasLimit).toBeGreaterThanOrEqual(BigInt(0));
+    expect(result.parameters?.storageLimit).toBeGreaterThanOrEqual(BigInt(0));
+  });
+
+  it("fails when using an unsupported address type", async () => {
+    await expect(
+      module.estimateFees({
+        asset: { type: "native" },
+        type: "send",
+        sender: address,
+        recipient: "tz5heMGVHQnx7ALDcDKqez8fan64Eyicw4DJ",
+        amount: BigInt(100),
+      }),
+    ).rejects.toThrow('Invalid address "tz5heMGVHQnx7ALDcDKqez8fan64Eyicw4DJ"');
   });
 
   describe("listOperations", () => {
     it("returns a list regarding address parameter", async () => {
       // When
-      const [tx, _] = await module.listOperations(address, { minHeight: 0 });
+      const [tx, _] = await module.listOperations(address, { minHeight: 0, order: "asc" });
 
       // Then
       expect(tx.length).toBeGreaterThanOrEqual(1);
@@ -69,12 +117,23 @@ describe("Tezos Api", () => {
 
     it("returns all operations", async () => {
       // When
-      const [tx, _] = await module.listOperations(address, { minHeight: 0 });
+      const [tx, _] = await module.listOperations(address, { minHeight: 0, order: "asc" });
 
       // Then
       // Find a way to create a unique id. In Tezos, the same hash may represent different operations in case of delegation.
       const checkSet = new Set(tx.map(elt => `${elt.tx.hash}${elt.type}${elt.senders[0]}`));
       expect(checkSet.size).toEqual(tx.length);
+    });
+
+    it("returns operations from latest, but in asc order", async () => {
+      // When
+      const [txDesc] = await module.listOperations(address, { minHeight: 0, order: "desc" });
+
+      // Then
+      // Check if the result is sorted in ascending order
+      expect(txDesc[0].tx.block.height).toBeGreaterThanOrEqual(
+        txDesc[txDesc.length - 1].tx.block.height,
+      );
     });
   });
 
@@ -103,14 +162,16 @@ describe("Tezos Api", () => {
 
   describe("craftTransaction", () => {
     async function decode(sbytes: string) {
-      return await localForger.parse(sbytes);
+      // note: strip the conventional prefix (aka watermark) added by rawEncode
+      // output of craftTransaction is "payload to sign = prefix + actual raw transaction"
+      return await localForger.parse(sbytes.slice(2));
     }
 
     it.each(["send", "delegate", "undelegate"])("returns a raw transaction with %s", async type => {
       const recipient = "tz1aWXP237BLwNHJcCD4b3DutCevhqq2T1Z9";
       const amount = BigInt(10);
       // When
-      const encodedTransaction = await module.craftTransaction({
+      const { transaction: encodedTransaction } = await module.craftTransaction({
         asset: { type: "native" },
         type,
         sender: address,
@@ -134,7 +195,7 @@ describe("Tezos Api", () => {
     });
 
     it("should use estimated fees when user does not provide them for crafting a transaction", async () => {
-      const encodedTransaction = await module.craftTransaction({
+      const { transaction: encodedTransaction } = await module.craftTransaction({
         asset: { type: "native" },
         type: "send",
         sender: address,
@@ -150,7 +211,7 @@ describe("Tezos Api", () => {
     it.each([1n, 50n, 99n])(
       "should use custom user fees when user provides it for crafting a transaction",
       async (customFees: bigint) => {
-        const encodedTransaction = await module.craftTransaction(
+        const { transaction: encodedTransaction } = await module.craftTransaction(
           {
             asset: { type: "native" },
             type: "send",
@@ -158,7 +219,7 @@ describe("Tezos Api", () => {
             recipient: "tz1aWXP237BLwNHJcCD4b3DutCevhqq2T1Z9",
             amount: BigInt(10),
           },
-          customFees,
+          { value: customFees },
         );
 
         const decodedTransaction = await decode(encodedTransaction);

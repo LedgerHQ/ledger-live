@@ -1,0 +1,72 @@
+name: "[Desktop] - Test Electron Builder Config"
+
+on:
+  pull_request:
+    paths:
+      - 'apps/ledger-live-desktop/electron-builder*.yml'
+      - 'apps/ledger-live-desktop/scripts/notarize.js'
+      - 'apps/ledger-live-desktop/scripts/sign-windows.js'
+      - 'apps/ledger-live-desktop/scripts/beforePack.js'
+      - 'apps/ledger-live-desktop/package.json'
+  push:
+    branches: [main, develop]
+    paths:
+      - 'apps/ledger-live-desktop/electron-builder*.yml'
+      - 'apps/ledger-live-desktop/scripts/notarize.js'
+      - 'apps/ledger-live-desktop/scripts/sign-windows.js'
+      - 'apps/ledger-live-desktop/scripts/beforePack.js'
+      - 'apps/ledger-live-desktop/package.json'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  test-electron-builder-configs:
+    name: "Test Electron Builder Configs"
+    runs-on: ubuntu-22.04
+    env:
+      NODE_OPTIONS: "--max-old-space-size=7168"
+      FORCE_COLOR: 3
+      CI_OS: ubuntu-22.04
+    
+    strategy:
+      fail-fast: false
+      matrix:
+        config: ['electron-builder.yml', 'electron-builder-nightly.yml', 'electron-builder-pre.yml']
+    
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup the caches
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        with:
+          install-proto: true
+          skip-turbo-cache: "true"
+
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libudev-dev build-essential
+
+      - name: Install dependencies
+        run: pnpm i --filter="ledger-live-desktop..." --filter="ledger-live" --unsafe-perm
+
+      - name: Build dependencies
+        run: pnpm build:lld:deps
+
+      - name: Build desktop JS
+        run: |
+          cd apps/ledger-live-desktop
+          pnpm build:js
+
+      - name: Validate electron-builder config - ${{ matrix.config }}
+        run: |
+          cd apps/ledger-live-desktop
+          npx electron-builder --linux --dir --config ${{ matrix.config }}
+        env:
+          SKIP_SIGNING: true

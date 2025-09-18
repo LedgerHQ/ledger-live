@@ -5,14 +5,14 @@
 
 import React, { useEffect, useMemo } from "react";
 import { Trans, useTranslation } from "react-i18next";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import logger from "~/renderer/logger";
 import Text from "../Text";
 import ExternalLink from "../ExternalLink";
 import { openURL } from "~/renderer/linking";
 import { urls } from "~/config/urls";
 import { useErrorLinks } from "./hooks/useErrorLinks";
-
+import { isDmkError } from "@ledgerhq/live-dmk-desktop";
+import { renderWithLinks } from "./ErrorWithAnchor";
 type Props = {
   error: Error | undefined | null;
   field?: "title" | "description" | "list";
@@ -43,7 +43,6 @@ export function TranslatedError({
   dataTestId,
 }: Props): JSX.Element {
   const { t } = useTranslation();
-  const ldmkTransportFlag = useFeature("ldmkTransport");
 
   const errorName = error?.name;
 
@@ -76,14 +75,19 @@ export function TranslatedError({
 
   if (!error || !isValidError) {
     // NOTE: Temporary handling of DMK errors
-    if (ldmkTransportFlag?.enabled && error && "_tag" in error) {
-      if (field === "description") {
-        const errorMessage =
-          ("originalError" in error && (error.originalError as Error)?.message) ?? error._tag;
+    if (isDmkError(error)) {
+      const translatedKey = `errors.${error._tag}.${field}`;
+      const translated = t(translatedKey);
+      if (translated !== translatedKey) {
+        return <Text>{translated}</Text>;
+      } else {
+        const message =
+          field === "title"
+            ? error._tag
+            : (error?.originalError as Error)?.message ?? error.message ?? error._tag;
 
-        return <Text>{errorMessage}</Text>;
+        return <Text>{t(`errors.generic.${field}`, { message })}</Text>;
       }
-      return <Text>{error._tag as string}</Text>;
     }
 
     return <></>;
@@ -100,11 +104,18 @@ export function TranslatedError({
     return <ErrorList translation={translation} />;
   }
 
+  // Specific to Ledger Status API
+  const hasAnchorsInTranslation = translation.includes("<a");
+
   return (
     <>
-      <span data-testid={dataTestId}>
-        <Trans i18nKey={translationKey} components={{ ...links }} values={args} />
-      </span>
+      {hasAnchorsInTranslation ? (
+        <span data-testid={dataTestId}>{renderWithLinks(translation)}</span>
+      ) : (
+        <span data-testid={dataTestId}>
+          <Trans i18nKey={translationKey} components={{ ...links }} values={args} />
+        </span>
+      )}
 
       {urls.errors[error.name] && !noLink && (
         <>

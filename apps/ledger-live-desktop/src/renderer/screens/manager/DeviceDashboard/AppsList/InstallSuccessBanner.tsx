@@ -85,6 +85,8 @@ const InstallSuccessBanner = ({ state, addAccount, disabled }: Props) => {
   }, [addAccount, installedSupportedApps]);
   const onClose = useCallback(() => setHasBeenShown(true), []);
   const visible = !hasBeenShown && installedSupportedApps.length > 0;
+  const numberOfApps = installedSupportedApps.length;
+  const appNameToDisplay = numberOfApps === 1 && installedSupportedApps[0].name;
   return (
     <Container ref={cardRef}>
       <FadeInOutBox in={visible} timing={800} color="palette.primary.contrastText">
@@ -105,16 +107,13 @@ const InstallSuccessBanner = ({ state, addAccount, disabled }: Props) => {
             <Box flex={1} justifyContent="space-between">
               <Box mb={3}>
                 <Text ff="Inter|SemiBold" fontSize={6} color="palette.primary.contrastText">
-                  {installedSupportedApps.length === 1 ? (
-                    <Trans
-                      i18nKey="manager.applist.installSuccess.title"
-                      values={{
-                        app: installedSupportedApps[0].name,
-                      }}
-                    />
-                  ) : (
-                    <Trans i18nKey="manager.applist.installSuccess.title_plural" />
-                  )}
+                  <Trans
+                    i18nKey="manager.applist.installSuccess.title"
+                    values={{
+                      app: appNameToDisplay,
+                    }}
+                    count={numberOfApps}
+                  />
                 </Text>
               </Box>
               <Box horizontal>

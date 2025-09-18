@@ -30,6 +30,7 @@ import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
 import cosmosBase from "@ledgerhq/coin-cosmos/chain/cosmosBase";
 import { useHistory } from "react-router";
+import { getCurrencyConfiguration } from "@ledgerhq/live-common/config/index";
 
 const Wrapper = styled(Box).attrs(() => ({
   p: 3,
@@ -263,6 +264,11 @@ const Delegation = ({ account }: { account: CosmosAccount }) => {
 };
 const Delegations = ({ account }: { account: CosmosAccount | TokenAccount }) => {
   if (account.type !== "Account") return null;
+
+  const coinConfig = getCurrencyConfiguration(account.currency);
+  if ("disableDelegation" in coinConfig && coinConfig.disableDelegation === true) {
+    return null;
+  }
 
   return <Delegation account={account} />;
 };

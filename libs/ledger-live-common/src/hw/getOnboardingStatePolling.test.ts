@@ -13,6 +13,7 @@ import { withDevice } from "./deviceAccess";
 import { getVersion } from "../device/use-cases/getVersionUseCase";
 import { extractOnboardingState, OnboardingState, OnboardingStep } from "./extractOnboardingState";
 import { SeedPhraseType } from "@ledgerhq/types-live";
+import { DeviceDisconnectedWhileSendingError } from "@ledgerhq/device-management-kit";
 
 jest.mock("./deviceAccess");
 jest.mock("../device/use-cases/getVersionUseCase");
@@ -56,6 +57,8 @@ describe("getOnboardingStatePolling", () => {
       seedPhraseType: SeedPhraseType.TwentyFour,
       currentSeedWordIndex: 0,
       currentOnboardingStep: OnboardingStep.NewDevice,
+      charonSupported: false,
+      charonStatus: null,
     };
   });
 
@@ -82,6 +85,34 @@ describe("getOnboardingStatePolling", () => {
             try {
               expect(value.onboardingState).toBeNull();
               expect(value.allowedError).toBeInstanceOf(DisconnectedDevice);
+              expect(value.lockedDevice).toBe(false);
+              done();
+            } catch (expectError) {
+              done(expectError);
+            }
+          },
+        });
+
+        // The timeout is equal to pollingPeriodMs by default
+        jest.advanceTimersByTime(pollingPeriodMs - 1);
+      });
+
+      it("should update the onboarding state to null and keep track of the allowed DMK error", done => {
+        mockedGetVersion.mockRejectedValue(
+          new DeviceDisconnectedWhileSendingError("An allowed error"),
+        );
+        mockedExtractOnboardingState.mockReturnValue(anOnboardingState);
+
+        const device = aDevice;
+
+        getOnboardingStatePolling({
+          deviceId: device.deviceId,
+          pollingPeriodMs,
+        }).subscribe({
+          next: value => {
+            try {
+              expect(value.onboardingState).toBeNull();
+              expect(value.allowedError).toBeInstanceOf(DeviceDisconnectedWhileSendingError);
               expect(value.lockedDevice).toBe(false);
               done();
             } catch (expectError) {

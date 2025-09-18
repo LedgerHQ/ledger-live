@@ -14,7 +14,7 @@ import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
 import { log } from "@ledgerhq/logs";
 import BigNumber from "bignumber.js";
 import { Observable } from "rxjs";
-import secp256k1 from "secp256k1";
+import { secp256k1 } from "@noble/curves/secp256k1";
 import { getCurrencyExchangeConfig } from "../";
 import { getAccountCurrency, getMainAccount } from "../../account";
 import { getAccountBridge } from "../../bridge";
@@ -25,6 +25,8 @@ import { CompleteExchangeStep, convertTransportError } from "../error";
 import type { CompleteExchangeInputSwap, CompleteExchangeRequestEvent } from "../platform/types";
 import { convertToAppExchangePartnerKey, getSwapProvider } from "../providers";
 import { CEXProviderConfig } from "../providers/swap";
+import { isAddressSanctioned } from "@ledgerhq/coin-framework/sanction/index";
+import { AddressesSanctionedError } from "@ledgerhq/coin-framework/sanction/errors";
 
 const COMPLETE_EXCHANGE_LOG = "SWAP-CompleteExchange";
 
@@ -64,6 +66,18 @@ const completeExchange = (
         const payoutCurrency = getAccountCurrency(toAccount);
         const refundCurrency = getAccountCurrency(fromAccount);
         const mainRefundCurrency = getAccountCurrency(refundAccount);
+
+        const sanctionedAddresses: string[] = [];
+        for (const acc of [refundAccount, payoutAccount]) {
+          const isSanctioned = await isAddressSanctioned(acc.currency, acc.freshAddress);
+          if (isSanctioned) sanctionedAddresses.push(acc.freshAddress);
+        }
+
+        if (sanctionedAddresses.length > 0) {
+          throw new AddressesSanctionedError("AddressesSanctionedError", {
+            addresses: sanctionedAddresses,
+          });
+        }
         if (mainPayoutCurrency.type !== "CryptoCurrency")
           throw new Error("This should be a cryptocurrency");
         if (mainRefundCurrency.type !== "CryptoCurrency")
@@ -93,6 +107,15 @@ const completeExchange = (
         } else {
           transaction = await accountBridge.prepareTransaction(refundAccount, transaction);
         }
+
+        if (transaction.family === "bitcoin") {
+          const transactionFixed = {
+            ...transaction,
+            rbf: true,
+          };
+          transaction = await accountBridge.prepareTransaction(refundAccount, transactionFixed);
+        }
+
         if (unsubscribed) return;
 
         const { errors, estimatedFees } = await accountBridge.getTransactionStatus(
@@ -152,7 +175,7 @@ const completeExchange = (
         } catch (e) {
           if (e instanceof TransportStatusError && e.statusCode === 0x6a83) {
             throw new WrongDeviceForAccountPayout(
-              getExchangeErrorMessage(e.statusCode, currentStep),
+              getExchangeErrorMessage(e.statusCode, currentStep).errorMessage,
               {
                 accountName: getDefaultAccountName(payoutAccount),
               },
@@ -194,7 +217,7 @@ const completeExchange = (
           if (e instanceof TransportStatusError && e.statusCode === 0x6a83) {
             log(COMPLETE_EXCHANGE_LOG, "transport error");
             throw new WrongDeviceForAccountRefund(
-              getExchangeErrorMessage(e.statusCode, currentStep),
+              getExchangeErrorMessage(e.statusCode, currentStep).errorMessage,
               {
                 accountName: getDefaultAccountName(refundAccount),
               },
@@ -248,7 +271,10 @@ const completeExchange = (
 function convertSignature(signature: string, exchangeType: ExchangeTypes): Buffer {
   return exchangeType === ExchangeTypes.SwapNg
     ? base64UrlDecode(signature)
-    : <Buffer>secp256k1.signatureExport(Buffer.from(signature, "hex"));
+    : (() => {
+        const sig = secp256k1.Signature.fromCompact(Buffer.from(signature, "hex"));
+        return Buffer.from(sig.toDERRawBytes());
+      })();
 }
 
 function base64UrlDecode(base64Url: string): Buffer {

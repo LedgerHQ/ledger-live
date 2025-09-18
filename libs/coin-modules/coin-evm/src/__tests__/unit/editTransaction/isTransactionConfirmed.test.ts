@@ -1,5 +1,5 @@
 import { isTransactionConfirmed } from "../../../editTransaction/isTransactionConfirmed";
-import * as nodeApi from "../../../api/node/rpc.common";
+import * as nodeApi from "../../../network/node/rpc.common";
 import { getCoinConfig } from "../../../config";
 
 jest.mock("../../../config");

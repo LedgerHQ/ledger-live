@@ -34,7 +34,9 @@ export default function LandingPagesNavigator() {
         <Stack.Screen
           name={ScreenName.LargeMoverLandingPage}
           component={LargeMoverLandingPage}
-          options={navigationOptions}
+          options={{
+            headerShown: false,
+          }}
         />
       )}
     </Stack.Navigator>

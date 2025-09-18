@@ -4,7 +4,7 @@ import prepareTransaction from "./prepareTransaction";
 import { faker } from "@faker-js/faker";
 import coinConfig, { TezosCoinConfig } from "../config";
 import { mockConfig } from "../test/config";
-import { COST_PER_BYTE, DEFAULT_FEE } from "@taquito/taquito";
+import { COST_PER_BYTE, getRevealFee } from "@taquito/taquito";
 
 const mockTezosEstimate = jest.fn();
 jest.mock("../logic/tezosToolkit", () => ({
@@ -125,7 +125,7 @@ describe("prepareTransaction", () => {
       gasLimit: faker.number.int(20),
       storageLimit: faker.number.int(20),
       opSize: faker.number.int(20),
-      burnFeeMutez: faker.number.int(20),
+      burnFeeMutez: faker.number.int({ min: 1, max: 20 }),
     };
     mockTezosEstimate.mockResolvedValue(tezosEstimate);
     const account = createFixtureAccount({ balance: BigNumber(1_000) });
@@ -172,14 +172,18 @@ describe("prepareTransaction", () => {
 
     // Then
     const gasLimit = 500; // hardcoded in the function
-    const computedFees = new BigNumber(tezosEstimate.suggestedFeeMutez + DEFAULT_FEE.REVEAL);
+    const computedFees = new BigNumber(
+      tezosEstimate.suggestedFeeMutez + getRevealFee(account.freshAddress),
+    );
 
     const maxAmount = account.balance.minus(computedFees);
 
     expect(newTx).toEqual({
       ...tx,
       fees: new BigNumber(tezosEstimate.suggestedFeeMutez),
-      estimatedFees: new BigNumber(tezosEstimate.suggestedFeeMutez + DEFAULT_FEE.REVEAL),
+      estimatedFees: new BigNumber(
+        tezosEstimate.suggestedFeeMutez + getRevealFee(account.freshAddress),
+      ),
       gasLimit: new BigNumber(tezosEstimate.gasLimit),
       storageLimit: new BigNumber(tezosEstimate.storageLimit),
       amount: maxAmount.minus(gasLimit - (tezosEstimate.opSize + gasLimit * 0.1)),

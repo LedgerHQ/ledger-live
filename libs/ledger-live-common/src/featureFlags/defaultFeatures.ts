@@ -91,6 +91,12 @@ export const CURRENCY_DEFAULT_FEATURES = {
   currencySonic: DEFAULT_FEATURE,
   currencySui: DEFAULT_FEATURE,
   currencyMina: DEFAULT_FEATURE,
+  currencyBabylon: DEFAULT_FEATURE,
+  currencySeiNetworkEvm: DEFAULT_FEATURE,
+  currencyBerachain: DEFAULT_FEATURE,
+  currencyHyperevm: DEFAULT_FEATURE,
+  currencyCantonNetwork: DEFAULT_FEATURE,
+  currencyKaspa: DEFAULT_FEATURE,
 };
 
 /**
@@ -98,7 +104,6 @@ export const CURRENCY_DEFAULT_FEATURES = {
  */
 export const DEFAULT_FEATURES: Features = {
   ...CURRENCY_DEFAULT_FEATURES,
-  brazeLearn: DEFAULT_FEATURE,
   portfolioExchangeBanner: DEFAULT_FEATURE,
   postOnboardingAssetsTransfer: DEFAULT_FEATURE,
   counterValue: DEFAULT_FEATURE,
@@ -106,6 +111,7 @@ export const DEFAULT_FEATURES: Features = {
   ptxServiceCtaExchangeDrawer: DEFAULT_FEATURE,
   ptxServiceCtaScreens: DEFAULT_FEATURE,
   ptxSwapReceiveTRC20WithoutTrx: DEFAULT_FEATURE,
+  ptxSwapconfirmSwapOnDevice: DEFAULT_FEATURE,
   disableNftLedgerMarket: DEFAULT_FEATURE,
   disableNftRaribleOpensea: DEFAULT_FEATURE,
   disableNftSend: DEFAULT_FEATURE,
@@ -152,6 +158,7 @@ export const DEFAULT_FEATURES: Features = {
   protectServicesDesktop: {
     enabled: false,
     params: {
+      openWithDevTools: false,
       availableOnDesktop: false,
       isNew: false,
       ledgerliveStorageState: false,
@@ -395,6 +402,13 @@ export const DEFAULT_FEATURES: Features = {
     },
   },
 
+  buySellLoader: {
+    enabled: false,
+    params: {
+      durationMs: 0,
+    },
+  },
+
   buySellShortcut: {
     enabled: false,
   },
@@ -407,11 +421,22 @@ export const DEFAULT_FEATURES: Features = {
     },
   },
 
+  ptxEarnLiveApp: {
+    enabled: true,
+    params: {
+      manifest_id: "earn",
+    },
+  },
+
   ptxSwapLiveAppMobile: {
     enabled: false,
     params: {
       manifest_id: "swap-live-app-demo-3",
     },
+  },
+
+  ptxSwapLiveAppKycWarning: {
+    enabled: false,
   },
 
   llmAnalyticsOptInPrompt: {
@@ -441,13 +466,7 @@ export const DEFAULT_FEATURES: Features = {
   ptxSwapExodusProvider: DEFAULT_FEATURE,
 
   myLedgerDisplayAppDeveloperName: DEFAULT_FEATURE,
-  nftsFromSimplehash: {
-    ...DEFAULT_FEATURE,
-    params: {
-      threshold: 75,
-      staleTime: 1000 * 60 * 15,
-    },
-  },
+
   marketperformanceWidgetDesktop: {
     enabled: false,
     params: {
@@ -474,7 +493,6 @@ export const DEFAULT_FEATURES: Features = {
       refreshTime: 3, //nb minutes
     },
   },
-  spamReportNfts: DEFAULT_FEATURE,
   lldWalletSync: {
     ...DEFAULT_FEATURE,
     params: {
@@ -491,14 +509,9 @@ export const DEFAULT_FEATURES: Features = {
       learnMoreLink: "",
     },
   },
-  lldNftsGalleryNewArch: DEFAULT_FEATURE,
-  lldnewArchOrdinals: DEFAULT_FEATURE,
   enableAppsBackup: DEFAULT_FEATURE,
   web3hub: DEFAULT_FEATURE,
   llmMarketQuickActions: DEFAULT_FEATURE,
-  spamFilteringTx: DEFAULT_FEATURE,
-  lldSpamFilteringTx: DEFAULT_FEATURE,
-  llmSpamFilteringTx: DEFAULT_FEATURE,
   llmMemoTag: DEFAULT_FEATURE,
   lldMemoTag: DEFAULT_FEATURE,
   ldmkTransport: {
@@ -511,7 +524,6 @@ export const DEFAULT_FEATURES: Features = {
     ...DEFAULT_FEATURE,
     params: { link: null },
   },
-  llmNetworkBasedAddAccountFlow: DEFAULT_FEATURE,
   llCounterValueGranularitiesRates: {
     ...DEFAULT_FEATURE,
     params: {
@@ -580,20 +592,84 @@ export const DEFAULT_FEATURES: Features = {
   },
   llmThai: DEFAULT_FEATURE,
   lldThai: DEFAULT_FEATURE,
-  lldSolanaNfts: DEFAULT_FEATURE,
-  llmSolanaNfts: DEFAULT_FEATURE,
   largemoverLandingpage: DEFAULT_FEATURE,
-  llmMmkvMigration: DEFAULT_FEATURE,
+  llmMmkvMigration: {
+    ...DEFAULT_FEATURE,
+    params: {
+      shouldRollback: false,
+    },
+  },
   lldModularDrawer: {
     ...DEFAULT_FEATURE,
     params: {
       add_account: true,
-      earn_flow: true,
       live_app: true,
+      live_apps_allowlist: [],
+      live_apps_blocklist: [],
       receive_flow: true,
       send_flow: true,
+      enableModularization: false,
+      searchDebounceTime: 500,
+      backendEnvironment: "PROD",
     },
   },
+  llmModularDrawer: {
+    ...DEFAULT_FEATURE,
+    params: {
+      add_account: true,
+      live_app: true,
+      live_apps_allowlist: [],
+      live_apps_blocklist: [],
+      receive_flow: true,
+      send_flow: true,
+      enableModularization: false,
+      searchDebounceTime: 500,
+      backendEnvironment: "PROD",
+    },
+  },
+  llNftEntryPoint: {
+    ...DEFAULT_FEATURE,
+    params: {
+      opensea: false,
+      magiceden: false,
+      chains: ["ethereum", "polygon", "base", "arbitrum"],
+    },
+  },
+  ldmkConnectApp: DEFAULT_FEATURE,
+  lldNetworkBasedAddAccount: DEFAULT_FEATURE,
+  llmOfacGeoBlocking: DEFAULT_FEATURE,
+  lldOfacGeoBlocking: DEFAULT_FEATURE,
+  llmDatadog: {
+    ...DEFAULT_FEATURE,
+    params: {
+      batchProcessingLevel: "MEDIUM",
+      batchSize: "MEDIUM",
+      bundleLogsWithRum: true,
+      bundleLogsWithTraces: true,
+      longTaskThresholdMs: 0,
+      nativeInteractionTracking: false,
+      nativeLongTaskThresholdMs: 0,
+      nativeViewTracking: false,
+      resourceTracingSamplingRate: 0,
+      serviceName: "Ledger Live Mobile (default)",
+      sessionSamplingRate: 0,
+      trackBackgroundEvents: false,
+      trackFrustrations: true,
+      trackErrors: false,
+      trackResources: false,
+      trackInteractions: false,
+      trackWatchdogTerminations: false,
+      uploadFrequency: "AVERAGE",
+      vitalsUpdateFrequency: "AVERAGE",
+    },
+  },
+  llmSentry: { enabled: true },
+  onboardingIgnoredOsUpdates: {
+    ...DEFAULT_FEATURE,
+    params: {},
+  },
+  supportDeviceApex: DEFAULT_FEATURE,
+  llmSyncOnboardingIncr1: DEFAULT_FEATURE,
 };
 
 // Firebase SDK treat JSON values as strings

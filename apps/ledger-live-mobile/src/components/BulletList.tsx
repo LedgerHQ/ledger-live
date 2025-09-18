@@ -82,14 +82,7 @@ export class BulletItem extends PureComponent<{
     );
   }
 }
-export function BulletChevron() {
-  const { colors } = useTheme();
-  return (
-    <View style={styles.chevron}>
-      <Icon size={16} name="chevron-right" color={colors.grey} />
-    </View>
-  );
-}
+
 export function BulletGreenCheck() {
   const { colors } = useTheme();
   return (
@@ -97,10 +90,6 @@ export function BulletGreenCheck() {
       <Icon size={16} name="check" color={colors.white} />
     </Circle>
   );
-}
-export function BulletSmallDot() {
-  const { colors } = useTheme();
-  return <Circle size={4} bg={colors.live} />;
 }
 
 class BulletList extends PureComponent<{

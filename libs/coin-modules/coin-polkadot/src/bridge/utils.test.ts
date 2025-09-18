@@ -44,7 +44,7 @@ describe("canUnbond", () => {
         ],
       },
     });
-    expect(canUnbond(account)).toBeTruthy();
+    expect(canUnbond(account)).toBe(true);
   });
   test("can't unbond because unlockings is too much", () => {
     const account = createFixtureAccount({
@@ -65,7 +65,7 @@ describe("canUnbond", () => {
         ],
       },
     });
-    expect(canUnbond(account)).toBeFalsy();
+    expect(canUnbond(account)).toBe(false);
   });
   test("can't unbond because not enough lockedBalance", () => {
     const account: Partial<PolkadotAccount> = {
@@ -86,7 +86,7 @@ describe("canUnbond", () => {
         ],
       },
     };
-    expect(canUnbond(account as PolkadotAccount)).toBeFalsy();
+    expect(canUnbond(account as PolkadotAccount)).toBe(false);
   });
 });
 
@@ -96,7 +96,7 @@ describe("isStash", () => {
     const result = isStash(createFixtureAccount());
 
     // Then
-    expect(result).toBeFalsy();
+    expect(result).toBe(false);
   });
 
   it("returns true if account has controller", () => {
@@ -109,7 +109,7 @@ describe("isStash", () => {
     const result = isStash(account);
 
     // Then
-    expect(result).toBeTruthy();
+    expect(result).toBe(true);
   });
 });
 
@@ -124,7 +124,7 @@ describe("isFirstBond", () => {
     const result = isFirstBond(account);
 
     // Then
-    expect(result).toBeFalsy();
+    expect(result).toBe(false);
   });
 
   it("returns true if account has no controller", () => {
@@ -132,6 +132,6 @@ describe("isFirstBond", () => {
     const result = isFirstBond(createFixtureAccount());
 
     // Then
-    expect(result).toBeTruthy();
+    expect(result).toBe(true);
   });
 });

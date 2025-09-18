@@ -4,7 +4,6 @@ import {
   BrazeContentCard,
   AssetContentCard,
   Background,
-  LearnContentCard,
   ContentCardLocation,
   NotificationContentCard,
   WalletContentCard,
@@ -112,18 +111,6 @@ export const mapAsAssetContentCard = (card: BrazeContentCard): AssetContentCard 
   cta: card.extras.cta,
   assets: card.extras.assets ?? "",
   displayOnEveryAssets: Boolean(card.extras.displayOnEveryAssets),
-  createdAt: card.created,
-  viewed: card.viewed,
-  order: parseInt(card.extras.order) ?? undefined,
-});
-
-export const mapAsLearnContentCard = (card: BrazeContentCard): LearnContentCard => ({
-  id: card.id,
-  tag: card.extras.tag,
-  title: card.extras.title,
-  location: ContentCardLocation.Learn,
-  image: card.extras.image,
-  link: card.extras.link,
   createdAt: card.created,
   viewed: card.viewed,
   order: parseInt(card.extras.order) ?? undefined,

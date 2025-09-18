@@ -1,8 +1,8 @@
-import { craftTransaction } from "./craftTransaction";
+import { craftTransaction, rawEncode } from "./craftTransaction";
 import { getTezosToolkit } from "./tezosToolkit";
 import coinConfig from "../config";
 import { OpKind } from "@taquito/rpc";
-import { DEFAULT_FEE } from "@taquito/taquito";
+import { getRevealFee } from "@taquito/taquito";
 
 type TransactionType = "send" | "delegate" | "undelegate";
 
@@ -128,7 +128,7 @@ describe("craftTransaction", () => {
     expect(result.contents).toEqual([
       {
         kind: OpKind.REVEAL,
-        fee: DEFAULT_FEE.REVEAL.toString(),
+        fee: getRevealFee(account.address).toString(),
         gas_limit: "100",
         storage_limit: "0",
         source: publicKey.publicKeyHash,
@@ -158,5 +158,15 @@ describe("craftTransaction", () => {
     };
 
     await expect(craftTransaction(account, transaction)).rejects.toThrow("unsupported mode");
+  });
+
+  it("should include leading watermark byte when using rawEncode", async () => {
+    mockTezosToolkit.rpc.getBlock.mockResolvedValue({ hash: "aaaa" });
+    mockTezosToolkit.rpc.forgeOperations.mockResolvedValue("deadcafe");
+
+    const rawTx = await rawEncode([]);
+
+    // 0x03 is a conventional prefix (aka a watermark) for tezos transactions
+    expect(rawTx).toEqual("03deadcafe");
   });
 });

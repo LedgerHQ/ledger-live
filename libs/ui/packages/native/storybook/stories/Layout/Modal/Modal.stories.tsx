@@ -1,7 +1,7 @@
 import React, { useState, useCallback } from "react";
 import { Button } from "react-native";
 import { action } from "@storybook/addon-actions";
-import { ComponentStory } from "@storybook/react-native";
+import { StoryFn } from "@storybook/react";
 import { Alert, BaseModal, IconBox } from "../../../../src/components";
 import { IconsLegacy } from "../../../../src/assets";
 
@@ -40,7 +40,7 @@ const Template = (args: typeof BaseStoryArgs & typeof WithoutHeaderStoryArgs) =>
   );
 };
 
-export const BaseStory: ComponentStory<typeof BaseModal> = Template.bind({});
+export const BaseStory: StoryFn<typeof BaseModal> = Template.bind({});
 BaseStory.storyName = "BaseModal";
 const BaseStoryArgs = {
   noHeader: false,
@@ -50,7 +50,7 @@ const BaseStoryArgs = {
   noCloseButton: false,
 };
 BaseStory.args = BaseStoryArgs;
-export const WithoutHeaderStory: ComponentStory<typeof BaseModal> = Template.bind({});
+export const WithoutHeaderStory: StoryFn<typeof BaseModal> = Template.bind({});
 WithoutHeaderStory.storyName = "BaseModal (no header)";
 const WithoutHeaderStoryArgs = {
   noHeader: true,

@@ -1,5 +1,6 @@
 import React, { forwardRef, useState } from "react";
-import { ActivityIndicator, StyleSheet, View } from "react-native";
+import VersionNumber from "react-native-version-number";
+import { ActivityIndicator, Platform, StyleSheet, View } from "react-native";
 import { WebView as RNWebView } from "react-native-webview";
 import Config from "react-native-config";
 import { WebviewAPI, WebviewProps } from "./types";
@@ -9,6 +10,8 @@ import { INTERNAL_APP_IDS, WC_ID } from "@ledgerhq/live-common/wallet-api/consta
 import { useInternalAppIds } from "@ledgerhq/live-common/hooks/useInternalAppIds";
 import { INJECTED_JAVASCRIPT } from "./dappInject";
 import { NoAccountScreen } from "./NoAccountScreen";
+
+const APPLICATION_NAME = `ledgerlivemobile/${VersionNumber.appVersion} llm-${Platform.OS}/${VersionNumber.appVersion}`;
 
 export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
   (
@@ -20,6 +23,7 @@ export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
       onStateChange,
       allowsBackForwardNavigationGestures = true,
       onScroll,
+      Loader = DefaultLoader,
     },
     ref,
   ) => {
@@ -31,6 +35,8 @@ export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
       webviewRef,
       webviewCacheOptions,
       noAccounts,
+      isModularDrawerVisible,
+      openModularDrawer,
     } = useWebView(
       {
         manifest,
@@ -54,7 +60,13 @@ export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
       internalAppIds.includes(manifest.id) || manifest.id === WC_ID;
 
     if (!!manifest.dapp && noAccounts) {
-      return <NoAccountScreen manifest={manifest} currentAccountHistDb={currentAccountHistDb} />;
+      return (
+        <NoAccountScreen
+          manifest={manifest}
+          currentAccountHistDb={currentAccountHistDb}
+          openModularDrawer={isModularDrawerVisible ? openModularDrawer : undefined}
+        />
+      );
     }
 
     return (
@@ -66,7 +78,7 @@ export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
         showsHorizontalScrollIndicator={false}
         allowsBackForwardNavigationGestures={allowsBackForwardNavigationGestures}
         showsVerticalScrollIndicator={false}
-        renderLoading={renderLoading}
+        renderLoading={Loader}
         originWhitelist={manifest.domains}
         allowsInlineMediaPlayback
         onMessage={onMessage}
@@ -83,6 +95,7 @@ export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
         style={[styles.webview, { display: error ? "none" : "flex" }]}
         renderError={() => <NetworkError handleTryAgain={reloadWebView} />}
         testID="wallet-api-webview"
+        applicationNameForUserAgent={APPLICATION_NAME}
         webviewDebuggingEnabled={__DEV__}
         allowsUnsecureHttps={__DEV__ && !!Config.IGNORE_CERTIFICATE_ERRORS}
         javaScriptCanOpenWindowsAutomatically={javaScriptCanOpenWindowsAutomatically}
@@ -96,7 +109,7 @@ export const WalletAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
 
 WalletAPIWebview.displayName = "WalletAPIWebview";
 
-function renderLoading() {
+function DefaultLoader() {
   return (
     <View style={styles.center}>
       <ActivityIndicator size="small" />

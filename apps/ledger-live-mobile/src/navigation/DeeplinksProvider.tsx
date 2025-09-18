@@ -20,15 +20,28 @@ import { navigationRef, isReadyRef } from "../rootnavigation";
 import { ScreenName, NavigatorName } from "~/const";
 import { setWallectConnectUri } from "~/actions/walletconnect";
 import { useGeneralTermsAccepted } from "~/logic/terms";
-import { Writeable } from "~/types/helpers";
 import { lightTheme, darkTheme, Theme } from "../colors";
 import { track } from "~/analytics";
-import { makeSetEarnInfoModalAction, makeSetEarnMenuModalAction } from "~/actions/earn";
+import {
+  makeSetEarnInfoModalAction,
+  makeSetEarnMenuModalAction,
+  makeSetEarnProtocolInfoModalAction,
+} from "~/actions/earn";
 import { blockPasswordLock } from "../actions/appstate";
 import { useStorylyContext } from "~/components/StorylyStories/StorylyProvider";
 import { navigationIntegration } from "../sentry";
-import { OptionMetadata } from "~/reducers/types";
+
 const TRACKING_EVENT = "deeplink_clicked";
+import { DdRumReactNavigationTracking } from "@datadog/mobile-react-navigation";
+import {
+  validateEarnAction,
+  validateEarnInfoModal,
+  validateEarnMenuModal,
+  logSecurityEvent,
+  EarnDeeplinkAction,
+  validateEarnDepositScreen,
+} from "./deeplinks/validation";
+import { viewNamePredicate } from "~/datadog";
 
 const themes: {
   [key: string]: Theme;
@@ -209,7 +222,7 @@ const linkingOptions = () => ({
           },
 
           [NavigatorName.Settings]: {
-            initialRouteName: [ScreenName.SettingsScreen],
+            initialRouteName: ScreenName.SettingsScreen,
             screens: {
               /**
                * ie: "ledgerlive://settings/experimental" -> will redirect to the experimental settings panel
@@ -233,23 +246,6 @@ const linkingOptions = () => ({
               [ScreenName.CustomImageStep0Welcome]: "custom-image",
             },
           },
-          [NavigatorName.ExploreTab]: {
-            initialRouteName: "explore",
-            screens: {
-              /**
-               * ie: "ledgerlive://learn"
-               */
-              [ScreenName.Newsfeed]: "newsfeed",
-            },
-          },
-          [NavigatorName.ImportAccounts]: {
-            screens: {
-              /**
-               * ie: "ledgerlive://ScanAccounts"
-               */
-              [ScreenName.ScanAccounts]: "scan-accounts",
-            },
-          },
           [NavigatorName.LandingPages]: {
             screens: {
               /**
@@ -258,6 +254,7 @@ const linkingOptions = () => ({
                *
                */
               [ScreenName.GenericLandingPage]: "landing-page",
+              [ScreenName.LargeMoverLandingPage]: "landing-page-large-mover",
             },
           },
 
@@ -342,18 +339,19 @@ export const DeeplinksProvider = ({
   const userAcceptedTerms = useGeneralTermsAccepted();
   const storylyContext = useStorylyContext();
   const buySellUiFlag = useFeature("buySellUi");
-  const llmNetworkBasedAddAccountFlow = useFeature("llmNetworkBasedAddAccountFlow");
   const llmAccountListUI = useFeature("llmAccountListUI");
+  const modularDrawer = useFeature("llmModularDrawer");
   const buySellUiManifestId = buySellUiFlag?.params?.manifestId;
-  const AddAccountNavigatorEntryPoint = llmNetworkBasedAddAccountFlow?.enabled
-    ? NavigatorName.AssetSelection
-    : NavigatorName.AddAccounts; // both navigators share the same ScreenName.AddAccountsSelectCrypto screen
+  const AddAccountNavigatorEntryPoint = NavigatorName.AssetSelection;
+  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+  const theme = themes[resolvedTheme] as ReactNavigation.Theme;
   const AccountsListScreenName = llmAccountListUI?.enabled
     ? ScreenName.AccountsList
     : ScreenName.Accounts;
 
   const linking = useMemo<LinkingOptions<ReactNavigation.RootParamList>>(
     () =>
+      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
       ({
         ...(hasCompletedOnboarding
           ? {
@@ -366,19 +364,31 @@ export const DeeplinksProvider = ({
                     ...linkingOptions().config.screens[NavigatorName.Base],
                     screens: {
                       ...linkingOptions().config.screens[NavigatorName.Base].screens,
-                      // Add account entry point navigator differ from the legacy to the new flow, when the deeplink is hit and the FF is enabled we should pass by the AssetSelection Feature
-                      [AddAccountNavigatorEntryPoint]: {
-                        screens: {
-                          /**
-                           * ie: "ledgerlive://add-account" will open the add account flow
-                           *
-                           * @params ?currency: string
-                           * ie: "ledgerlive://add-account?currency=bitcoin" will open the add account flow with "bitcoin" prefilled in the search input
-                           *
-                           */
-                          [ScreenName.AddAccountsSelectCrypto]: "add-account",
-                        },
-                      },
+
+                      ...(modularDrawer?.enabled
+                        ? {
+                            [NavigatorName.ModularDrawer]: {
+                              screens: {
+                                [ScreenName.ModularDrawerDeepLinkHandler]: "add-account",
+                              },
+                            },
+                          }
+                        : {
+                            // Add account entry point navigator differ from the legacy to the new flow, when the deeplink is hit and the FF is enabled we should pass by the AssetSelection Feature
+                            [AddAccountNavigatorEntryPoint]: {
+                              screens: {
+                                /**
+                                 * ie: "ledgerlive://add-account" will open the add account flow
+                                 *
+                                 * @params ?currency: string
+                                 * ie: "ledgerlive://add-account?currency=bitcoin" will open the add account flow with "bitcoin" prefilled in the search input
+                                 *
+                                 */
+                                [ScreenName.AddAccountsSelectCrypto]: "add-account",
+                              },
+                            },
+                          }),
+
                       /** "ledgerlive://assets will open assets screen. */
                       ...(llmAccountListUI?.enabled && {
                         [NavigatorName.Assets]: {
@@ -417,7 +427,6 @@ export const DeeplinksProvider = ({
                               [NavigatorName.WalletTab]: {
                                 screens: {
                                   [ScreenName.Portfolio]: "portfolio",
-                                  [ScreenName.WalletNftGallery]: "nftgallery",
                                   [NavigatorName.Market]: {
                                     screens: {
                                       /**
@@ -592,34 +601,78 @@ export const DeeplinksProvider = ({
           }
 
           if (hostname === "earn") {
-            if (searchParams.get("action") === "info-modal") {
-              const message = searchParams.get("message") ?? "";
-              const messageTitle = searchParams.get("messageTitle") ?? "";
-              const learnMoreLink = searchParams.get("learnMoreLink") ?? "";
+            const earnParamAction = searchParams.get("action");
+            const validatedAction = validateEarnAction(earnParamAction);
 
-              dispatch(
-                makeSetEarnInfoModalAction({
-                  message,
-                  messageTitle,
-                  learnMoreLink,
-                }),
-              );
+            if (!validatedAction && earnParamAction) {
+              logSecurityEvent("blocked_action", {
+                hostname,
+                action: earnParamAction,
+                reason: "Invalid action type",
+              });
               return;
             }
-            if (searchParams.get("action") === "menu-modal") {
-              const title = searchParams.get("title") ?? "";
-              const options = searchParams.get("options") ?? "";
 
-              dispatch(
-                makeSetEarnMenuModalAction({
-                  title,
-                  options: JSON.parse(options) as {
-                    label: string;
-                    metadata: OptionMetadata;
-                  }[],
-                }),
+            switch (validatedAction) {
+              case EarnDeeplinkAction.INFO_MODAL: {
+                const validatedModal = validateEarnInfoModal(
+                  searchParams.get("message"),
+                  searchParams.get("messageTitle"),
+                  searchParams.get("learnMoreLink"),
+                );
+
+                if (!validatedModal) {
+                  logSecurityEvent("validation_failed", {
+                    hostname,
+                    action: validatedAction,
+                    reason: "Invalid info modal parameters",
+                  });
+                  return;
+                }
+
+                dispatch(makeSetEarnInfoModalAction(validatedModal));
+                return;
+              }
+              case EarnDeeplinkAction.MENU_MODAL: {
+                const validatedModal = validateEarnMenuModal(
+                  searchParams.get("title"),
+                  searchParams.get("options"),
+                );
+
+                if (!validatedModal) {
+                  logSecurityEvent("validation_failed", {
+                    hostname,
+                    action: validatedAction,
+                    reason: "Invalid menu modal parameters",
+                  });
+                  return;
+                }
+
+                dispatch(
+                  makeSetEarnMenuModalAction({
+                    title: validatedModal.title,
+                    options: validatedModal.options,
+                  }),
+                );
+                return;
+              }
+              case EarnDeeplinkAction.PROTOCOL_INFO_MODAL: {
+                dispatch(makeSetEarnProtocolInfoModalAction(true));
+                return;
+              }
+            }
+            if (pathname === "/deposit") {
+              const validatedModal = validateEarnDepositScreen(
+                searchParams.get("cryptoAssetId") || undefined,
+                searchParams.get("accountId") || undefined,
               );
-              return;
+              // Handle deposit deeplink on earnLiveAppNavigator
+              // Creating own search params for deposit deeplink
+              url.pathname = "";
+              url.searchParams.set("action", "deposit");
+              url.searchParams.set("cryptoAssetId", validatedModal.cryptoAssetId ?? "");
+              url.searchParams.set("accountId", validatedModal.accountId ?? "");
+              return getStateFromPath(url.href?.split("://")[1], config);
             }
           }
           if ((hostname === "discover" || hostname === "recover") && platform) {
@@ -652,8 +705,9 @@ export const DeeplinksProvider = ({
       }) as LinkingOptions<ReactNavigation.RootParamList>,
     [
       hasCompletedOnboarding,
-      llmAccountListUI?.enabled,
+      modularDrawer?.enabled,
       AddAccountNavigatorEntryPoint,
+      llmAccountListUI?.enabled,
       AccountsListScreenName,
       userAcceptedTerms,
       buySellUiManifestId,
@@ -670,9 +724,11 @@ export const DeeplinksProvider = ({
     setIsReady(true);
   }, [userAcceptedTerms]);
 
-  React.useEffect(
+  useEffect(
     () => () => {
-      (isReadyRef as Writeable<typeof isReadyRef>).current = false;
+      if (isReadyRef.current) {
+        isReadyRef.current = false;
+      }
     },
     [],
   );
@@ -683,13 +739,14 @@ export const DeeplinksProvider = ({
 
   return (
     <NavigationContainer
-      theme={themes[resolvedTheme]}
+      theme={theme}
       linking={linking}
       ref={navigationRef}
       onReady={() => {
-        (isReadyRef as Writeable<typeof isReadyRef>).current = true;
+        isReadyRef.current = true;
         setTimeout(() => SplashScreen.hide(), 300);
         navigationIntegration.registerNavigationContainer(navigationRef);
+        DdRumReactNavigationTracking.startTrackingViews(navigationRef.current, viewNamePredicate);
       }}
     >
       {children}

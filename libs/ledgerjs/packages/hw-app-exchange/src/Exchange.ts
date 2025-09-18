@@ -2,6 +2,7 @@ import Transport from "@ledgerhq/hw-transport";
 import { BigNumber } from "bignumber.js";
 import { TransportStatusError } from "@ledgerhq/errors";
 import invariant from "invariant";
+import { type DeviceManagementKit } from "@ledgerhq/device-management-kit";
 
 import { OkStatus, ErrorStatus } from "./ReturnCode";
 
@@ -52,6 +53,17 @@ const maybeThrowProtocolError = (result: Buffer): void => {
   if (resultCode !== OkStatus) {
     throw new TransportStatusError(resultCode);
   }
+};
+
+const isDmkTransport = (
+  transport: Transport,
+): transport is Transport & { dmk: DeviceManagementKit; sessionId: string } => {
+  return (
+    "dmk" in transport &&
+    transport.dmk !== undefined &&
+    "sessionId" in transport &&
+    transport.sessionId !== undefined
+  );
 };
 
 export type PartnerKeyInfo = {
@@ -327,15 +339,35 @@ export default class Exchange {
   }
 
   async signCoinTransaction(): Promise<void> {
-    const result: Buffer = await this.transport.send(
-      CLA,
-      SIGN_COIN_TRANSACTION,
-      this.transactionRate,
-      this.transactionType,
-      Buffer.alloc(0),
-      this.allowedStatuses,
-    );
-    maybeThrowProtocolError(result);
+    if (isDmkTransport(this.transport)) {
+      const result: Buffer = await this.transport.dmk
+        .sendApdu({
+          sessionId: this.transport.sessionId,
+          apdu: new Uint8Array([
+            CLA,
+            SIGN_COIN_TRANSACTION,
+            this.transactionRate,
+            this.transactionType,
+            0,
+          ]),
+          triggersDisconnection: true,
+        })
+        .then(apduResponse => Buffer.from([...apduResponse.data, ...apduResponse.statusCode]))
+        .catch(e => {
+          throw e;
+        });
+      maybeThrowProtocolError(result);
+    } else {
+      const result: Buffer = await this.transport.send(
+        CLA,
+        SIGN_COIN_TRANSACTION,
+        this.transactionRate,
+        this.transactionType,
+        Buffer.alloc(0),
+        this.allowedStatuses,
+      );
+      maybeThrowProtocolError(result);
+    }
   }
 
   async getChallenge(): Promise<number> {

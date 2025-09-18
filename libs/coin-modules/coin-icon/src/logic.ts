@@ -26,7 +26,6 @@ export const convertICXtoLoop = (value: string | number | BigNumber): BigNumber 
 export const EXISTENTIAL_DEPOSIT = convertICXtoLoop(0.00125);
 export const EXISTENTIAL_DEPOSIT_RECOMMENDED_MARGIN = convertICXtoLoop(0.00125);
 export const FEES_SAFETY_BUFFER = convertICXtoLoop(0.00125); // Arbitrary buffer for paying fees of next transactions
-export const MAX_AMOUNT_INPUT = convertICXtoLoop(5000);
 /**
  * Returns true if address is a valid md5
  *
@@ -117,8 +116,6 @@ export const calculateAmount = ({
         amount = account.spendableBalance.minus(transaction.fees || 0);
         break;
     }
-  } else if (transaction.amount.gt(MAX_AMOUNT_INPUT)) {
-    return new BigNumber(MAX_AMOUNT_INPUT);
   }
 
   return amount.lt(0) ? new BigNumber(0) : amount;

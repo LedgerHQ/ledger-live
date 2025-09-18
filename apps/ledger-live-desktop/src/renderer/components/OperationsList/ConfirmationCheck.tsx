@@ -30,14 +30,11 @@ const border = (p: ThemedStyledProps<ContainerProps, DefaultTheme>) =>
     : p.isConfirmed
       ? 0
       : `1px solid ${
-          p.type === "IN" || p.type === "NFT_IN"
-            ? p.theme.colors.warning
-            : rgba(p.theme.colors.palette.text.shade60, 0.2)
+          p.type === "IN" ? p.theme.colors.warning : rgba(p.theme.colors.palette.text.shade60, 0.2)
         }`;
 function inferColor(p: ThemedStyledProps<ContainerProps, DefaultTheme>) {
   switch (p.type) {
     case "IN":
-    case "NFT_IN":
       return p.isConfirmed ? p.marketColor : p.theme.colors.warning;
     case "FREEZE":
       return p.theme.colors.wallet;
@@ -59,7 +56,8 @@ export const Container = styled(Box).attrs<ContainerProps>(p => ({
   bg: p.hasFailed
     ? mix(p.theme.colors.alertRed, p.theme.colors.palette.background.paper, 0.95)
     : p.isConfirmed
-      ? mix(inferColor(p) as string, p.theme.colors.palette.background.paper, 0.8)
+      ? // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+        mix(inferColor(p) as string, p.theme.colors.palette.background.paper, 0.8)
       : p.theme.colors.palette.background.paper,
   color: p.hasFailed ? p.theme.colors.alertRed : inferColor(p),
   alignItems: "center",
@@ -84,8 +82,8 @@ const WrapperClock = styled(Box).attrs(() => ({
 const iconsComponent = {
   OUT: IconSend,
   IN: IconReceive,
-  NFT_OUT: IconSend,
   NFT_IN: IconReceive,
+  NFT_OUT: IconSend,
   DELEGATE: IconDelegate,
   REDELEGATE: IconRedelegate,
   UNDELEGATE: IconUndelegate,
@@ -123,6 +121,7 @@ const iconsComponent = {
   WITHDRAW_UNSTAKED: IconCoins,
   UNKNOWN: IconCheck,
   BURN: IconTrash,
+  ASSOCIATE_TOKEN: IconPlus,
 };
 class ConfirmationCheck extends PureComponent<{
   marketColor: string;

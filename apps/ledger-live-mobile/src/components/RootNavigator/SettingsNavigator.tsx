@@ -16,7 +16,6 @@ import DebugCrash from "~/screens/Settings/Debug/Debugging/Crashes";
 import DebugCustomImageGraphics from "~/screens/Settings/Debug/Features/CustomImageGraphics";
 import DebugDebugging from "~/screens/Settings/Debug/Debugging";
 import DebugEnv from "~/screens/Settings/Debug/Configuration/DebugEnv";
-import DebugExport from "~/screens/Settings/Debug/Features/ExportAccounts";
 import DebugFeatureFlags from "~/screens/FeatureFlagsSettings";
 import DebugFeatures from "~/screens/Settings/Debug/Features";
 import DebugFetchCustomImage, {
@@ -78,6 +77,9 @@ import {
 } from "LLM/components/QueuedDrawer/TestScreens";
 import { LargeMoverLandingPage } from "LLM/features/LandingPages/screens/LargeMoverLandingPage";
 import SwiperScreenDebug from "~/screens/Settings/Debug/Features/SwiperScreenDebug";
+import { DebugStorageMigration } from "~/screens/Settings/Debug/Debugging/StorageMigration";
+import CustomCALRefInput from "~/screens/Settings/Developer/CustomCALRefInput";
+import ModularDrawerScreenDebug from "LLM/features/ModularDrawer/Debug";
 
 const Stack = createStackNavigator<SettingsNavigatorStackParamList>();
 
@@ -210,6 +212,13 @@ export default function SettingsNavigator() {
         }}
       />
       <Stack.Screen
+        name={ScreenName.CustomCALRefInput}
+        component={CustomCALRefInput}
+        options={{
+          title: t("settings.developer.customCALRef.title"),
+        }}
+      />
+      <Stack.Screen
         name={ScreenName.DebugSettings}
         component={DebugSettings}
         options={{
@@ -285,13 +294,6 @@ export default function SettingsNavigator() {
         }}
       />
       <Stack.Screen
-        name={ScreenName.DebugExport}
-        component={DebugExport}
-        options={{
-          title: "Export Accounts and Settings",
-        }}
-      />
-      <Stack.Screen
         name={ScreenName.DebugPlayground}
         component={DebugPlayground}
         options={{
@@ -303,6 +305,13 @@ export default function SettingsNavigator() {
         component={DebugBluetoothAndLocationServices}
         options={{
           title: "Bluetooth and location services",
+        }}
+      />
+      <Stack.Screen
+        name={ScreenName.DebugStorageMigration}
+        component={DebugStorageMigration}
+        options={{
+          title: "Storage migration",
         }}
       />
       <Stack.Screen
@@ -510,7 +519,7 @@ export default function SettingsNavigator() {
           name={ScreenName.LargeMoverLandingPage}
           component={LargeMoverLandingPage}
           options={{
-            title: "Large Mover",
+            headerShown: false,
           }}
         />
       )}
@@ -519,6 +528,14 @@ export default function SettingsNavigator() {
         component={SwiperScreenDebug}
         options={{
           title: "Swiper Screen Debug",
+        }}
+      />
+
+      <Stack.Screen
+        name={ScreenName.DebugModularAssetDrawer}
+        component={ModularDrawerScreenDebug}
+        options={{
+          title: "ModularAssetDrawer Screen Debug",
         }}
       />
     </Stack.Navigator>

@@ -24,6 +24,11 @@ const PostOnboardingHubTester = () => {
       translationKey: "testEuropaPostonboarding",
       dataTestId: "europa-postonboarding-tester-button",
     },
+    {
+      deviceModelId: DeviceModelId.apex,
+      translationKey: "testApexPostonboarding",
+      dataTestId: "apex-postonboarding-tester-button",
+    },
   ];
 
   return (

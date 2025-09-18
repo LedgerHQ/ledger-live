@@ -1,5 +1,5 @@
 import React from "react";
-import { Story, Meta } from "@storybook/react";
+import { StoryFn, Meta } from "@storybook/react";
 import * as Icons from "@ledgerhq/icons-ui/react";
 import styled from "styled-components";
 import { Flex, Text } from "../../..";
@@ -16,11 +16,12 @@ interface AvailableSizes {
   M: SizeData;
   L: SizeData;
   XL: SizeData;
+  XXL: SizeData;
 }
 
 export default {
   title: "asorted/Icons",
-  component: null, // Since we're rendering multiple icons, we don't have a single component to import
+  components: Icons,
 } as Meta;
 
 interface IconProps {
@@ -62,7 +63,7 @@ const IconGridTemplate: React.FC<IconProps> = ({ size, color, style }) => {
   );
 };
 
-export const IconGrid: Story<IconProps> = (args: IconProps) => <IconGridTemplate {...args} />;
+export const IconGrid: StoryFn<IconProps> = (args: IconProps) => <IconGridTemplate {...args} />;
 
 IconGrid.args = {
   size: "M",
@@ -72,7 +73,7 @@ IconGrid.args = {
 
 IconGrid.argTypes = {
   size: {
-    options: ["XS", "S", "M", "L", "XL"],
+    options: ["XS", "S", "M", "L", "XL", "XXL"],
     control: {
       type: "select",
     },

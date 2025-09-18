@@ -306,8 +306,6 @@ describe("Web3Hub integration test", () => {
     expect(await screen.findByText("Explore web3")).toBeOnTheScreen();
 
     expect((await screen.findAllByText("Dummy Wallet App"))[0]).toBeOnTheScreen();
-    // Strange bug where I need to press on something else (that will not receive the press) to be able to press again
-    await user.press(screen.getAllByText("Dummy Wallet App")[1]);
     await user.press(screen.getAllByText("Dummy Wallet App")[0]);
     expect(await screen.findByText("dummy-0")).toBeOnTheScreen();
     expect(await screen.findByText("Dummy Wallet App")).toBeOnTheScreen();

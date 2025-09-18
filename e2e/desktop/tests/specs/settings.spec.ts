@@ -1,7 +1,7 @@
 import { test } from "../fixtures/common";
 import { addTmsLink } from "../utils/allureUtils";
 import { getDescription } from "../utils/customJsonReporter";
-import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
+import { Account, TokenAccount } from "@ledgerhq/live-common/e2e/enum/Account";
 import { CLI } from "../utils/cliUtils";
 import { FileUtils } from "../utils/fileUtils";
 
@@ -13,6 +13,7 @@ test.describe("Settings", () => {
   test(
     `ERC20 token with 0 balance is hidden if 'hide empty token accounts' is ON`,
     {
+      tag: ["@NanoSP", "@LNS", "@NanoX"],
       annotation: [{ type: "TMS", description: "B2CQA-817" }],
     },
     async ({ app }) => {
@@ -22,11 +23,11 @@ test.describe("Settings", () => {
       await app.accounts.showParentAccountTokens(Account.ETH_1.accountName);
       await app.accounts.verifyTokenVisibility(
         Account.ETH_1.accountName,
-        Account.ETH_USDT_1.currency,
+        TokenAccount.ETH_USDT_1.currency,
       );
       await app.accounts.expectTokenBalanceToBeNull(
         Account.ETH_1.accountName,
-        Account.ETH_USDT_1.currency,
+        TokenAccount.ETH_USDT_1.currency,
       );
       await app.layout.goToSettings();
       await app.settings.goToAccountsTab();
@@ -34,7 +35,7 @@ test.describe("Settings", () => {
       await app.layout.goToAccounts();
       await app.accounts.verifyChildrenTokensAreNotVisible(
         Account.ETH_1.accountName,
-        Account.ETH_USDT_1.currency,
+        TokenAccount.ETH_USDT_1.currency,
       );
     },
   );
@@ -60,6 +61,7 @@ test.describe("Password", () => {
   test(
     "The user enter his password to access to the app",
     {
+      tag: ["@NanoSP", "@LNS", "@NanoX"],
       annotation: {
         type: "TMS",
         description: "B2CQA-2343, B2CQA-1763, B2CQA-826",
@@ -106,6 +108,7 @@ test.describe("counter value selection", () => {
   test(
     "User can select a counter value to display amount",
     {
+      tag: ["@NanoSP", "@LNS", "@NanoX"],
       annotation: {
         type: "TMS",
         description: "B2CQA-804",
@@ -136,6 +139,7 @@ test.describe("Ledger Support (web link)", () => {
   test(
     "Verify that user can access to Ledger Support (Web Link)",
     {
+      tag: ["@NanoSP", "@LNS", "@NanoX"],
       annotation: {
         type: "TMS",
         description: "B2CQA-820",
@@ -160,6 +164,7 @@ test.describe("Reset app", () => {
   test(
     "Verify that user can Reset app",
     {
+      tag: ["@NanoSP", "@LNS", "@NanoX"],
       annotation: {
         type: "TMS",
         description: "B2CQA-821",
@@ -177,6 +182,31 @@ test.describe("Reset app", () => {
       await app.onboarding.waitForLaunch();
       const appJsonAfter = await FileUtils.getAppJsonSize(userdataFile);
       await FileUtils.compareAppJsonSize(appJsonBefore, appJsonAfter);
+    },
+  );
+});
+
+test.describe("Settings - Help tab", () => {
+  test.use({
+    userdata: "1AccountBTC1AccountETH",
+  });
+
+  test(
+    "Verify that user can view user data folder and export logs",
+    {
+      tag: ["@NanoSP", "@LNS", "@NanoX"],
+      annotation: {
+        type: "TMS",
+        description: "B2CQA-825, B2CQA-2074",
+      },
+    },
+    async ({ app }) => {
+      await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
+
+      await app.layout.goToSettings();
+      await app.settings.goToHelpTab();
+      await app.settings.checkViewUserDataButtonIsEnabled();
+      await app.settings.clickExportLogs();
     },
   );
 });

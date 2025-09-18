@@ -1,5 +1,5 @@
 import React from "react";
-import type { ComponentMeta, ComponentStory } from "@storybook/react-native";
+import type { Meta, StoryFn } from "@storybook/react";
 import SideImageCard from "../../../src/components/Cards/SideImageCard";
 import Flex from "../../../src/components/Layout/Flex";
 import { descriptionSideImageCard } from "./descriptionsCards";
@@ -14,9 +14,9 @@ export default {
       },
     },
   },
-} as ComponentMeta<typeof SideImageCard>;
+} as Meta<typeof SideImageCard>;
 
-export const SideImageCardStory: ComponentStory<typeof SideImageCard> = (
+export const SideImageCardStory: StoryFn<typeof SideImageCard> = (
   args: typeof SideImageCardStoryArgs,
 ) => {
   return (

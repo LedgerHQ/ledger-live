@@ -41,7 +41,7 @@ import bech32 from "bech32";
 export function getBipPathFromString(path: string): BipPath {
   const regEx = new RegExp(`^${CARDANO_PURPOSE}'/${CARDANO_COIN_TYPE}'/(\\d*)'/([012])/(\\d*)`);
   const result = path.match(regEx);
-  if (result == null) {
+  if (result === null) {
     throw new Error("Invalid derivation path");
   }
   return getBipPath({

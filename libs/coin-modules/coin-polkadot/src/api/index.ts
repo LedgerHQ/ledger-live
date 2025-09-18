@@ -1,8 +1,16 @@
-import type {
-  Api,
+import {
+  AlpacaApi,
+  Block,
+  BlockInfo,
+  Cursor,
+  Page,
+  FeeEstimation,
   Operation,
   Pagination,
+  Reward,
+  Stake,
   TransactionIntent,
+  CraftedTransaction,
 } from "@ledgerhq/coin-framework/api/index";
 import coinConfig, { type PolkadotConfig } from "../config";
 import {
@@ -15,9 +23,8 @@ import {
   lastBlock,
   listOperations,
 } from "../logic";
-import { PolkadotAsset } from "../types";
 
-export function createApi(config: PolkadotConfig): Api<PolkadotAsset> {
+export function createApi(config: PolkadotConfig): AlpacaApi {
   coinConfig.setCoinConfig(() => ({ ...config, status: { type: "active" } }));
 
   return {
@@ -30,10 +37,22 @@ export function createApi(config: PolkadotConfig): Api<PolkadotAsset> {
     getBalance,
     lastBlock,
     listOperations: operations,
+    getBlock(_height): Promise<Block> {
+      throw new Error("getBlock is not supported");
+    },
+    getBlockInfo(_height: number): Promise<BlockInfo> {
+      throw new Error("getBlockInfo is not supported");
+    },
+    getStakes(_address: string, _cursor?: Cursor): Promise<Page<Stake>> {
+      throw new Error("getStakes is not supported");
+    },
+    getRewards(_address: string, _cursor?: Cursor): Promise<Page<Reward>> {
+      throw new Error("getRewards is not supported");
+    },
   };
 }
 
-async function craft(transactionIntent: TransactionIntent<PolkadotAsset>): Promise<string> {
+async function craft(transactionIntent: TransactionIntent): Promise<CraftedTransaction> {
   const extrinsicArg = defaultExtrinsicArg(transactionIntent.amount, transactionIntent.recipient);
   //TODO: Retrieve correctly the nonce via a call to the node `await api.rpc.system.accountNextIndex(address)`
   const nonce = 0;
@@ -41,19 +60,19 @@ async function craft(transactionIntent: TransactionIntent<PolkadotAsset>): Promi
   const extrinsic = tx.registry.createType("Extrinsic", tx.unsigned, {
     version: tx.unsigned.version,
   });
-  return extrinsic.toHex();
+  return { transaction: extrinsic.toHex() };
 }
 
-async function estimate(transactionIntent: TransactionIntent<PolkadotAsset>): Promise<bigint> {
+async function estimate(transactionIntent: TransactionIntent): Promise<FeeEstimation> {
   const tx = await craftEstimationTransaction(transactionIntent.sender, transactionIntent.amount);
-  const estimatedFees = await estimateFees(tx);
-  return estimatedFees;
+  const value = await estimateFees(tx);
+  return { value };
 }
 
 async function operations(
   address: string,
   { minHeight }: Pagination,
-): Promise<[Operation<PolkadotAsset>[], string]> {
+): Promise<[Operation[], string]> {
   const [ops, nextHeight] = await listOperations(address, { limit: 0, startAt: minHeight });
   return [ops, JSON.stringify(nextHeight)];
 }

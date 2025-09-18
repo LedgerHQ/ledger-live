@@ -1,17 +1,20 @@
 // Goal of this file is to inject all necessary device/signer dependency to coin-modules
 
-import { createBridges } from "@ledgerhq/coin-casper/bridge/index";
+import { createBridges } from "@ledgerhq/coin-casper/bridge";
 import Transport from "@ledgerhq/hw-transport";
 import Casper from "@zondax/ledger-casper";
-import casperResolver from "@ledgerhq/coin-casper/signer/index";
+import casperResolver from "@ledgerhq/coin-casper/signer";
 import { signMessage } from "@ledgerhq/coin-casper/hw-signMessage";
 import type { Account, Bridge } from "@ledgerhq/types-live";
 import makeCliTools from "@ledgerhq/coin-casper/test/cli";
 import { CreateSigner, createResolver, executeWithSigner } from "../../bridge/setup";
 import { Resolver } from "../../hw/getAddress/types";
-import { TransactionStatus, Transaction } from "@ledgerhq/coin-casper/types/index";
+import { TransactionStatus, Transaction } from "@ledgerhq/coin-casper/types";
 import { CasperGetAddrResponse, CasperSignature, CasperSigner } from "./types";
+import { getCurrencyConfiguration } from "../../config";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { getPath, isError } from "./common";
+import { CasperCoinConfig } from "@ledgerhq/coin-casper/config";
 
 const createSigner: CreateSigner<CasperSigner> = (transport: Transport) => {
   const casper = new Casper(transport);
@@ -37,8 +40,12 @@ const createSigner: CreateSigner<CasperSigner> = (transport: Transport) => {
   };
 };
 
+const getCoinConfig: CasperCoinConfig = () =>
+  getCurrencyConfiguration<ReturnType<CasperCoinConfig>>(getCryptoCurrencyById("casper"));
+
 const bridge: Bridge<Transaction, Account, TransactionStatus> = createBridges(
   executeWithSigner(createSigner),
+  getCoinConfig,
 );
 
 const messageSigner = {

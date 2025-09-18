@@ -17,6 +17,7 @@ import Illustration from "~/images/illustration/Illustration";
 import { BaseNavigationComposite } from "~/components/RootNavigator/types/helpers";
 import { MainNavigatorParamList } from "~/components/RootNavigator/types/MainNavigator";
 import AddAccountDrawer from "LLM/features/Accounts/screens/AddAccount";
+import { ScreenName } from "~/const";
 
 type Props = {
   showHelp?: boolean;
@@ -34,7 +35,9 @@ function EmptyStatePortfolio({ showHelp = true }: Props) {
   const closeAddModal = useCallback(() => setAddModalOpened(false), [setAddModalOpened]);
 
   const navigateToManager = useCallback(() => {
-    navigation.navigate(NavigatorName.MyLedger);
+    navigation.navigate(NavigatorName.MyLedger, {
+      screen: ScreenName.MyLedgerChooseDevice,
+    });
   }, [navigation]);
 
   const [darkSource, lightSource] = hasInstalledAnyApp

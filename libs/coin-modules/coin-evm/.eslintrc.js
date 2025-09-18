@@ -3,11 +3,14 @@ module.exports = {
     browser: true,
     es6: true,
   },
+  extends: ["plugin:import/typescript"],
   plugins: ["import"],
   rules: {
+    eqeqeq: ["error"],
     "no-console": ["error", { allow: ["warn", "error"] }],
     "@typescript-eslint/no-empty-function": "off",
     "@typescript-eslint/explicit-function-return-type": "error",
+    "import/no-cycle": ["error"],
     "import/order": ["error"],
   },
   overrides: [

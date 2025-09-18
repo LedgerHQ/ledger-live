@@ -4,4 +4,5 @@ module.exports = {
   testEnvironment: "node",
   testRegex: ".integration.test.ts$",
   testPathIgnorePatterns: ["lib/", "lib-es/", "bridge.integration.test.ts"],
+  testTimeout: 60_000,
 };

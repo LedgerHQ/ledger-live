@@ -8,7 +8,8 @@ import {
   isTokenAccount,
 } from "@ledgerhq/coin-framework/account/index";
 import { Account, AccountLike, AnyMessage, Operation, SignedOperation } from "@ledgerhq/types-live";
-import { findTokenById } from "@ledgerhq/cryptoassets";
+import { findTokenById, findTokenByAddressInCurrency } from "@ledgerhq/cryptoassets";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import {
   MessageSignParams,
   MessageSignResult,
@@ -18,17 +19,21 @@ import {
   TransactionSignAndBroadcastResult,
   TransactionSignParams,
   TransactionSignResult,
+  RegisterYieldBearingEthereumAddressParams,
+  RegisterYieldBearingEthereumAddressResult,
 } from "@ledgerhq/wallet-api-acre-module";
-import { TrackingAPI } from "./tracking";
+import { Transaction } from "../../generated/types";
 import { AppManifest } from "../types";
+import { TrackingAPI } from "./tracking";
 import {
   getAccountIdFromWalletAccountId,
   getWalletAPITransactionSignFlowInfos,
 } from "../converters";
 import { getAccountBridge } from "../../bridge";
-import { Transaction } from "../../generated/types";
 import { UserRefusedOnDevice } from "@ledgerhq/errors";
 import { getEnv } from "@ledgerhq/live-env";
+import BigNumber from "bignumber.js";
+import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 
 type Handlers = {
   "custom.acre.messageSign": RPCHandler<MessageSignResult, MessageSignParams>;
@@ -37,9 +42,13 @@ type Handlers = {
     TransactionSignAndBroadcastResult,
     TransactionSignAndBroadcastParams
   >;
+  "custom.acre.registerYieldBearingEthereumAddress": RPCHandler<
+    RegisterYieldBearingEthereumAddressResult,
+    RegisterYieldBearingEthereumAddressParams
+  >;
 };
 
-type ACREUiHooks = {
+export type ACREUiHooks = {
   "custom.acre.messageSign": (params: {
     account: AccountLike;
     message: AnyMessage;
@@ -66,7 +75,116 @@ type ACREUiHooks = {
     mainAccount: Account,
     optimisticOperation: Operation,
   ) => void;
+  "custom.acre.registerAccount": (params: {
+    parentAccount: Account;
+    accountName: string;
+    existingAccounts: Account[];
+    onSuccess: () => void;
+    onError: (error: Error) => void;
+  }) => void;
 };
+
+// Helper function to validate Ethereum address format
+function isValidEthereumAddress(address: string): boolean {
+  return /^0x[a-fA-F0-9]{40}$/.test(address);
+}
+
+// Helper function to validate all inputs before account creation
+function validateInputs(params: RegisterYieldBearingEthereumAddressParams): {
+  ethereumAddress: string;
+  tokenContractAddress?: string;
+  tokenTicker?: string;
+  meta?: Record<string, unknown>;
+} {
+  const { ethereumAddress, tokenContractAddress, tokenTicker, meta } = params;
+
+  // Validate Ethereum address format
+  if (!ethereumAddress) {
+    throw new Error("Ethereum address is required");
+  }
+  if (!isValidEthereumAddress(ethereumAddress)) {
+    throw new Error("Invalid Ethereum address format");
+  }
+
+  // Validate that at least one token identifier is provided
+  if (!tokenContractAddress && !tokenTicker) {
+    throw new Error("Either tokenContractAddress or tokenTicker must be provided");
+  }
+
+  return { ethereumAddress, tokenContractAddress, tokenTicker, meta };
+}
+
+// Helper function to find acreToken by address or token id
+function findAcreToken(
+  tokenContractAddress?: string,
+  tokenTicker?: string,
+): { token: TokenCurrency; contractAddress: string } {
+  let foundToken: TokenCurrency | undefined;
+  // Try to find token by contract address first (if provided)
+  if (tokenContractAddress) {
+    foundToken = findTokenByAddressInCurrency(tokenContractAddress, "ethereum");
+  } else if (tokenTicker) {
+    foundToken = findTokenById(tokenTicker.toLowerCase());
+  }
+  if (!foundToken) {
+    throw new Error(
+      `Token not found. Tried contract address: ${tokenContractAddress || "not provided"}, ticker: ${tokenTicker || "not provided"}`,
+    );
+  }
+  return { token: foundToken, contractAddress: foundToken.contractAddress };
+}
+
+// Helper function to generate unique account names with suffixes
+// This is clearly a hack as we do not have account name on Account type, we leverage on how many accounts have acreBTC as token sub account to define the name
+// This is made to help user to identify different ACRE account but not resilient to token account being wiped, emptied
+// (empty subAccount would not been included in the list therefore parent account not considered as an acre account anymore).
+function generateUniqueAccountName(
+  existingAccounts: Account[],
+  baseName: string,
+  tokenAddress: string,
+): string {
+  const existingAccountWithAcreToken = existingAccounts.flatMap(
+    account =>
+      account.subAccounts?.filter(
+        subAccount => subAccount.token.contractAddress.toLowerCase() === tokenAddress.toLowerCase(),
+      ) || [],
+  );
+  return existingAccountWithAcreToken.length > 0
+    ? `${baseName} ${existingAccountWithAcreToken.length}`
+    : baseName;
+}
+
+// Helper function to create parent Ethereum account
+function createParentAccount(ethereumAddress: string, ethereumCurrency: CryptoCurrency): Account {
+  return {
+    type: "Account" as const,
+    id: `js:2:ethereum:${ethereumAddress}:`,
+    seedIdentifier: `04${ethereumAddress.slice(2)}`,
+    derivationMode: "" as any,
+    index: 0,
+    freshAddress: ethereumAddress,
+    freshAddressPath: "44'/60'/0'/0/0",
+    used: false,
+    blockHeight: 0,
+    creationDate: new Date(),
+    balance: new BigNumber(0),
+    spendableBalance: new BigNumber(0),
+    operationsCount: 0,
+    operations: [],
+    pendingOperations: [],
+    currency: ethereumCurrency,
+    lastSyncDate: new Date(),
+    swapHistory: [],
+    balanceHistoryCache: {
+      HOUR: { latestDate: Date.now(), balances: [] },
+      DAY: { latestDate: Date.now(), balances: [] },
+      WEEK: { latestDate: Date.now(), balances: [] },
+    },
+    syncHash: "0x00000000", // Use proper hash format
+    subAccounts: [], // Add empty subAccounts array
+    nfts: [],
+  };
+}
 
 export const handlers = ({
   accounts,
@@ -76,6 +194,7 @@ export const handlers = ({
     "custom.acre.messageSign": uiMessageSign,
     "custom.acre.transactionSign": uiTransactionSign,
     "custom.acre.transactionBroadcast": uiTransactionBroadcast,
+    "custom.acre.registerAccount": uiRegisterAccount,
   },
 }: {
   accounts: AccountLike[];
@@ -92,20 +211,16 @@ export const handlers = ({
     const transaction = deserializeTransaction(rawTransaction);
 
     tracking.signTransactionRequested(manifest);
-
     if (!transaction) {
       tracking.signTransactionFail(manifest);
       return Promise.reject(new Error("Transaction required"));
     }
-
     const accountId = getAccountIdFromWalletAccountId(walletAccountId);
     if (!accountId) {
       tracking.signTransactionFail(manifest);
       return Promise.reject(new Error(`accountId ${walletAccountId} unknown`));
     }
-
     const account = accounts.find(account => account.id === accountId);
-
     if (!account) {
       tracking.signTransactionFail(manifest);
       return Promise.reject(new Error("Account required"));
@@ -120,7 +235,6 @@ export const handlers = ({
     const mainAccount = getMainAccount(account, parentAccount);
     const currency = tokenCurrency ? findTokenById(tokenCurrency) : null;
     const signerAccount = currency ? makeEmptyTokenAccount(mainAccount, currency) : account;
-
     const { canEditFees, liveTx, hasFeesProvided } = getWalletAPITransactionSignFlowInfos({
       walletApiTransaction: transaction,
       account,
@@ -162,7 +276,6 @@ export const handlers = ({
       });
     });
   }
-
   return {
     "custom.acre.messageSign": customWrapper<MessageSignParams, MessageSignResult>(async params => {
       if (!params) {
@@ -275,7 +388,6 @@ export const handlers = ({
       const broadcastAccount = getMainAccount(signerAccount, parentAccount);
 
       let optimisticOperation: Operation = signedOperation.operation;
-
       if (!getEnv("DISABLE_TRANSACTION_BROADCAST")) {
         try {
           optimisticOperation = await bridge.broadcast({
@@ -288,17 +400,93 @@ export const handlers = ({
           throw error;
         }
       }
-
       uiTransactionBroadcast &&
         uiTransactionBroadcast(account, parentAccount, mainAccount, optimisticOperation);
-
       return {
         transactionHash: optimisticOperation.hash,
       };
     }),
+    "custom.acre.registerYieldBearingEthereumAddress": customWrapper<
+      RegisterYieldBearingEthereumAddressParams,
+      RegisterYieldBearingEthereumAddressResult
+    >(async params => {
+      if (!params) {
+        return Promise.reject(new Error("Parameters required"));
+      }
+      const validatedInputs = validateInputs(params);
+      const ethereumCurrency = getCryptoCurrencyById("ethereum");
+      const { token: existingToken, contractAddress: finalTokenContractAddress } = findAcreToken(
+        validatedInputs.tokenContractAddress,
+        validatedInputs.tokenTicker,
+      );
+      const existingBearingAccount = accounts.find(
+        account =>
+          "freshAddress" in account &&
+          (account as any).freshAddress === validatedInputs.ethereumAddress,
+      );
+      const baseName = "Yield-bearing BTC on ACRE";
+      // Account already added, skip registration.
+      if (existingBearingAccount) {
+        return {
+          success: true,
+          accountName: baseName,
+          parentAccountId: existingBearingAccount.id,
+          tokenAccountId: existingBearingAccount.id,
+          ethereumAddress: validatedInputs.ethereumAddress,
+          tokenContractAddress: finalTokenContractAddress,
+          meta: validatedInputs.meta,
+        };
+      }
+
+      if (uiRegisterAccount) {
+        // Create account & manage the case where an ACRE account has been already registered on another Ethereum address
+        // Filter to have only root accounts
+        const existingParentAccounts = accounts.filter(
+          (acc): acc is Account => acc.type === "Account",
+        );
+        const accountName = generateUniqueAccountName(
+          existingParentAccounts,
+          baseName,
+          finalTokenContractAddress,
+        );
+        const parentAccount = createParentAccount(
+          validatedInputs.ethereumAddress,
+          ethereumCurrency,
+        );
+        const tokenAccount = makeEmptyTokenAccount(parentAccount, existingToken);
+        // Add token account as sub-account of parent account
+        const parentAccountWithSubAccount = {
+          ...parentAccount,
+          subAccounts: [tokenAccount],
+        };
+
+        return new Promise((resolve, reject) => {
+          uiRegisterAccount({
+            parentAccount: parentAccountWithSubAccount,
+            accountName,
+            existingAccounts: existingParentAccounts,
+            onSuccess: () => {
+              resolve({
+                success: true,
+                accountName,
+                parentAccountId: parentAccountWithSubAccount.id,
+                tokenAccountId: tokenAccount.id,
+                ethereumAddress: validatedInputs.ethereumAddress,
+                tokenContractAddress: finalTokenContractAddress,
+                meta: validatedInputs.meta,
+              });
+            },
+            onError: error => {
+              reject(error);
+            },
+          });
+        });
+      } else {
+        throw new Error("No account registration UI hook available");
+      }
+    }),
   } as const satisfies Handlers;
 };
-
 function fromRelativePath(basePath: string, derivationPath?: string) {
   if (!derivationPath) {
     return basePath;

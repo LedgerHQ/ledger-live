@@ -5,7 +5,6 @@ const Illustration = () => (
   <Svg width="107" height="40" fill="none" viewBox="0 0 107 40">
     <Mask
       id="mask0_6211_193898"
-      // @ts-expect-error maskType is not in the type definition
       style={{ maskType: "alpha" }}
       width="76"
       height="52"
@@ -29,7 +28,6 @@ const Illustration = () => (
     </G>
     <Mask
       id="mask1_6211_193898"
-      // @ts-expect-error maskType is not in the type definition
       style={{ maskType: "alpha" }}
       width="76"
       height="52"

@@ -1,7 +1,7 @@
 import React, { useState, useCallback } from "react";
 import { Button, ScrollView } from "react-native";
 import { action } from "@storybook/addon-actions";
-import { ComponentStory } from "@storybook/react-native";
+import { StoryFn } from "@storybook/react";
 import BottomDrawer from "../../../../src/components/Layout/Modals/BottomDrawer";
 import { Alert, Text } from "../../../../src/components";
 import { IconsLegacy } from "../../../../src/assets";
@@ -40,7 +40,7 @@ const Template = (args: typeof BaseStoryArgs & typeof WithoutStoryArgs) => {
     </>
   );
 };
-export const BaseStory: ComponentStory<typeof BottomDrawer> = Template.bind({});
+export const BaseStory: StoryFn<typeof BottomDrawer> = Template.bind({});
 BaseStory.storyName = "BottomDrawer";
 const BaseStoryArgs = {
   noHeader: false,
@@ -51,7 +51,7 @@ const BaseStoryArgs = {
 };
 BaseStory.args = BaseStoryArgs;
 
-export const WithoutHeaderStory: ComponentStory<typeof BottomDrawer> = Template.bind({});
+export const WithoutHeaderStory: StoryFn<typeof BottomDrawer> = Template.bind({});
 WithoutHeaderStory.storyName = "BottomDrawer (no header)";
 const WithoutStoryArgs = {
   noHeader: true,

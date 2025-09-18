@@ -2,7 +2,7 @@ import { step } from "../../misc/reporters/step";
 import { Drawer } from "../../component/drawer.component";
 import { expect } from "@playwright/test";
 import { Swap } from "@ledgerhq/live-common/e2e/models/Swap";
-import { Provider } from "@ledgerhq/live-common/e2e/enum/Swap";
+import { Provider } from "@ledgerhq/live-common/e2e/enum/Provider";
 
 export class OperationDrawer extends Drawer {
   readonly transactionIdLabel = this.page.getByText("Transaction ID");
@@ -26,7 +26,7 @@ export class OperationDrawer extends Drawer {
   readonly swapOperationDetailsLink = this.page.getByTestId("swap-drawer-operation-details-link");
 
   @step("Verify drawer information")
-  async expectDrawerInfos(accountName: string) {
+  async expectDrawerInfos(accountName: string, status: string) {
     await this.waitForDrawerToBeVisible();
     const transactionType = await this.transactionType.textContent();
     await expect(this.accountName).toHaveText(accountName);
@@ -36,11 +36,10 @@ export class OperationDrawer extends Drawer {
     );
     await expect(this.transactionIdLabel).toBeVisible();
     expect(await this.transactionIdValue.textContent()).toMatch(/^[a-zA-Z0-9+/=]{40,}$/);
-    if (transactionType !== "NFT Received") {
+    if (transactionType !== "NFT Received" && status !== "Failed") {
       await expect(this.amountLabel).toBeVisible();
       expect(await this.amountValue.textContent()).toMatch(/^[+-]?\$\d+\.\d{2}$/);
     } else {
-      await expect(this.amountLabel).not.toBeVisible();
       await expect(this.amountValue).not.toBeVisible();
     }
   }

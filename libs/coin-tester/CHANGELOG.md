@@ -1,5 +1,180 @@
 # @ledgerhq/coin-tester
 
+## 0.9.3
+
+### Patch Changes
+
+- Updated dependencies [[`205458e`](https://github.com/LedgerHQ/ledger-live/commit/205458e2d3ca5ec1d7a50d30b63050a692a5e045)]:
+  - @ledgerhq/hw-transport-node-speculos-http@6.30.0
+
+## 0.9.3-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`205458e`](https://github.com/LedgerHQ/ledger-live/commit/205458e2d3ca5ec1d7a50d30b63050a692a5e045)]:
+  - @ledgerhq/hw-transport-node-speculos-http@6.30.0-next.0
+
+## 0.9.2
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport-node-speculos-http@6.29.10
+
+## 0.9.2-next.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport-node-speculos-http@6.29.10-next.0
+
+## 0.9.1
+
+### Patch Changes
+
+- Updated dependencies [[`29d9828`](https://github.com/LedgerHQ/ledger-live/commit/29d9828ff1bde9e7a7171e8e37986ee52f01cd59)]:
+  - @ledgerhq/types-devices@6.27.0
+
+## 0.9.1-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`29d9828`](https://github.com/LedgerHQ/ledger-live/commit/29d9828ff1bde9e7a7171e8e37986ee52f01cd59)]:
+  - @ledgerhq/types-devices@6.27.0-next.0
+
+## 0.9.0
+
+### Minor Changes
+
+- [#11223](https://github.com/LedgerHQ/ledger-live/pull/11223) [`9868c13`](https://github.com/LedgerHQ/ledger-live/commit/9868c1358cb80de41a70e876ab2285fb8102e9a6) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - refactor(coin-tester-evm): adapt for generic adapter
+
+### Patch Changes
+
+- Updated dependencies [[`67e2a7c`](https://github.com/LedgerHQ/ledger-live/commit/67e2a7c5a74d000f22684254778dfec5b8b5163d)]:
+  - @ledgerhq/types-devices@6.26.0
+  - @ledgerhq/hw-transport-node-speculos-http@6.29.9
+
+## 0.9.0-next.0
+
+### Minor Changes
+
+- [#11223](https://github.com/LedgerHQ/ledger-live/pull/11223) [`9868c13`](https://github.com/LedgerHQ/ledger-live/commit/9868c1358cb80de41a70e876ab2285fb8102e9a6) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - refactor(coin-tester-evm): adapt for generic adapter
+
+### Patch Changes
+
+- Updated dependencies [[`67e2a7c`](https://github.com/LedgerHQ/ledger-live/commit/67e2a7c5a74d000f22684254778dfec5b8b5163d)]:
+  - @ledgerhq/types-devices@6.26.0-next.0
+  - @ledgerhq/hw-transport-node-speculos-http@6.29.9-next.0
+
+## 0.8.0
+
+### Minor Changes
+
+- [#11073](https://github.com/LedgerHQ/ledger-live/pull/11073) [`b5cbffa`](https://github.com/LedgerHQ/ledger-live/commit/b5cbffac207569027e241db761a6aa70b3b1b636) Thanks [@Canestin](https://github.com/Canestin)! - update sonic manager app name
+
+## 0.8.0-next.0
+
+### Minor Changes
+
+- [#11073](https://github.com/LedgerHQ/ledger-live/pull/11073) [`b5cbffa`](https://github.com/LedgerHQ/ledger-live/commit/b5cbffac207569027e241db761a6aa70b3b1b636) Thanks [@Canestin](https://github.com/Canestin)! - update sonic manager app name
+
+## 0.7.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport-node-speculos-http@6.29.8
+
+## 0.7.1-next.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport-node-speculos-http@6.29.8-next.0
+
+## 0.7.0
+
+### Minor Changes
+
+- [#10225](https://github.com/LedgerHQ/ledger-live/pull/10225) [`e65c386`](https://github.com/LedgerHQ/ledger-live/commit/e65c386cfb3e53e3ee9f501dc08971a93eb5cf81) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - core(coin-solana,hw-app-solana): support SPL tokens dynamically
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport-node-speculos-http@6.29.7
+
+## 0.7.0-next.0
+
+### Minor Changes
+
+- [#10225](https://github.com/LedgerHQ/ledger-live/pull/10225) [`e65c386`](https://github.com/LedgerHQ/ledger-live/commit/e65c386cfb3e53e3ee9f501dc08971a93eb5cf81) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - core(coin-solana,hw-app-solana): support SPL tokens dynamically
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport-node-speculos-http@6.29.7-next.0
+
+## 0.6.0
+
+### Minor Changes
+
+- [#10385](https://github.com/LedgerHQ/ledger-live/pull/10385) [`1a4e5e5`](https://github.com/LedgerHQ/ledger-live/commit/1a4e5e5913fe5e12d6127b36f3849e4c81e5e50e) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - feat(solana-coin-tester): add SPL scenarios
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport-node-speculos-http@6.29.6
+
+## 0.6.0-next.2
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport-node-speculos-http@6.29.6-next.1
+
+## 0.6.0-next.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport-node-speculos-http@6.29.6-next.0
+
+## 0.6.0-next.0
+
+### Minor Changes
+
+- [#10385](https://github.com/LedgerHQ/ledger-live/pull/10385) [`1a4e5e5`](https://github.com/LedgerHQ/ledger-live/commit/1a4e5e5913fe5e12d6127b36f3849e4c81e5e50e) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - feat(solana-coin-tester): add SPL scenarios
+
+## 0.5.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport-node-speculos-http@6.29.5
+
+## 0.5.1-next.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport-node-speculos-http@6.29.5-next.0
+
+## 0.5.0
+
+### Minor Changes
+
+- [#9919](https://github.com/LedgerHQ/ledger-live/pull/9919) [`5d6d223`](https://github.com/LedgerHQ/ledger-live/commit/5d6d223fe1691200911e81c8d83eec7b4ae0cd65) Thanks [@qperrot](https://github.com/qperrot)! - Move all coin tester into its own coin tester modules
+
+- [#9775](https://github.com/LedgerHQ/ledger-live/pull/9775) [`fe89dd5`](https://github.com/LedgerHQ/ledger-live/commit/fe89dd51cd35000c7b661d6364fe78f88bbf6c62) Thanks [@Canestin](https://github.com/Canestin)! - extract coin-tester-evm module
+
+## 0.5.0-next.0
+
+### Minor Changes
+
+- [#9919](https://github.com/LedgerHQ/ledger-live/pull/9919) [`5d6d223`](https://github.com/LedgerHQ/ledger-live/commit/5d6d223fe1691200911e81c8d83eec7b4ae0cd65) Thanks [@qperrot](https://github.com/qperrot)! - Move all coin tester into its own coin tester modules
+
+- [#9775](https://github.com/LedgerHQ/ledger-live/pull/9775) [`fe89dd5`](https://github.com/LedgerHQ/ledger-live/commit/fe89dd51cd35000c7b661d6364fe78f88bbf6c62) Thanks [@Canestin](https://github.com/Canestin)! - extract coin-tester-evm module
+
 ## 0.4.0
 
 ### Minor Changes

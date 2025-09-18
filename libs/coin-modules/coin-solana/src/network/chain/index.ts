@@ -287,7 +287,7 @@ export function getChainAPI(
           commitment,
         );
         if (status.err) {
-          if (signature != null) {
+          if (signature) {
             throw new SendTransactionError({
               action: "send",
               signature: signature,

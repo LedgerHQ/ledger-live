@@ -1,4 +1,4 @@
-name: "[Push] Build and Test"
+name: "[All Platforms] - Build and Test - Push"
 on:
   push:
     branches:
@@ -24,21 +24,18 @@ jobs:
     uses: LedgerHQ/ledger-live/.github/workflows/test-desktop-reusable.yml@develop
     secrets: inherit
 
-  # LLM
-  build-mobile:
-    name: "Build Mobile"
-    uses: LedgerHQ/ledger-live/.github/workflows/build-mobile-reusable.yml@develop
-    secrets: inherit
-
   test-mobile:
     name: "Test Mobile"
     uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-reusable.yml@develop
     secrets: inherit
 
-  test-mobile-e2e:
-    name: "Test Mobile E2E"
-    uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-e2e-reusable.yml@develop
+  build-test-mobile:
+    name: "Build & Test Mobile"
+    uses: LedgerHQ/ledger-live/.github/workflows/test-mobile-mock-reusable.yml@develop
     secrets: inherit
+    with:
+      macos-specificity-runner-label: "performance-pool"
+      skip-bundle-size-reporting: true
 
   # Tests
   test-libraries:
@@ -47,7 +44,7 @@ jobs:
     secrets: inherit
 
   test-design-system:
-    name: "Test Design System"
+    name: "Test UI Libs"
     uses: LedgerHQ/ledger-live/.github/workflows/test-design-system-reusable.yml@develop
     secrets: inherit
 
@@ -67,9 +64,8 @@ jobs:
     needs:
       - build-desktop
       - test-desktop
-      - build-mobile
       - test-mobile
-      - test-mobile-e2e
+      - build-test-mobile
       - test-libraries
       - test-design-system
       - build-web-tools

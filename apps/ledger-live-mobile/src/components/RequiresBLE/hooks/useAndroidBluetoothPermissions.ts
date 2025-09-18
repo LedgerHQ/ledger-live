@@ -34,7 +34,7 @@ async function checkBluetoothPermissions(): Promise<boolean> {
 
 type RequestMultipleResult = {
   allGranted: boolean;
-  generalStatus: (typeof PermissionsAndroid.RESULTS)[number];
+  generalStatus: (typeof PermissionsAndroid.RESULTS)[keyof typeof PermissionsAndroid.RESULTS];
 };
 
 /**

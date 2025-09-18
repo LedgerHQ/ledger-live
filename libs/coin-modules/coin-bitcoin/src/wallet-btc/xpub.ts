@@ -267,7 +267,7 @@ class Xpub {
     });
 
     const associatedDerivations: [number, number][] = unspentUtxoSelected.map((_utxo, index) => {
-      if (txs[index] == null) {
+      if (!txs[index]) {
         throw new Error("Invalid index in txs[index]");
       }
       return [txs[index]?.account || 0, txs[index]?.index || 0];
@@ -304,7 +304,7 @@ class Xpub {
     };
   }
 
-  async broadcastTx(rawTxHex: string): Promise<any> {
+  async broadcastTx(rawTxHex: string): Promise<{ data: { result: string } }> {
     return this.explorer.broadcast(rawTxHex);
   }
 

@@ -1,4 +1,4 @@
-name: "[Test] Bridge"
+name: "[Common] - Bridge Test - PR"
 
 on: pull_request
 

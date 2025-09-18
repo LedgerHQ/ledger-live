@@ -83,7 +83,7 @@ describe("getDerivationModesForCurrency", () => {
     ["bitcoin_cash", ["unsplit", ""]], // forkedFrom
     ["bitcoin_gold", ["unsplit", "segwit_unsplit", "segwit", ""]], // forkedFrom + supportsSegwit
     ["tezos", ["galleonL", "tezboxL", "tezosbip44h", "tezbox"]], // disableBIP44
-    ["solana", ["solanaMain", "solanaSub"]], // backward compatible change in getDerivationModesForCurrency
+    ["solana", ["solanaMain", "solanaBip44Change", "solanaSub"]], // backward compatible change in getDerivationModesForCurrency
   ];
 
   let envBackup: boolean;
@@ -139,6 +139,11 @@ describe("getSeedIdentifierDerivation", () => {
     {
       currencyId: "solana",
       mode: asDerivationMode("solanaMain"),
+      expectedSeedPath: `44'/501'`,
+    },
+    {
+      currencyId: "solana",
+      mode: asDerivationMode("solanaBip44Change"),
       expectedSeedPath: `44'/501'`,
     },
     {

@@ -44,6 +44,7 @@ export const withV3StyleProvider = <T,>(Component: React.ComponentType<T>) => {
     const theme = useTheme();
 
     return (
+      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
       <StyleProviderV3 selectedPalette={theme.colors.type as "light" | "dark"}>
         <Component {...props} />
       </StyleProviderV3>

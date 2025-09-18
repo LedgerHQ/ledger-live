@@ -28,6 +28,7 @@ interface SizeData {
     M: SizeData;
     L: SizeData;
     XL: SizeData;
+    XXL: SizeData;
   }
   `;
 
@@ -51,6 +52,10 @@ const availableSizes = {
   XL: {
     size: 48,
     stroke: 2.5,
+  },
+  XXL: {
+    size: 70,
+    stroke: 2.8,
   },
 };
 

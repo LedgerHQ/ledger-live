@@ -11,7 +11,7 @@ import getAddressWrapper from "@ledgerhq/coin-framework/bridge/getAddressWrapper
 import type { CardanoAccount, Transaction, TransactionStatus } from "../types";
 import { assignToAccountRaw, assignFromAccountRaw } from "../serialization";
 import { estimateMaxSpendable } from "../estimateMaxSpendable";
-import { getTransactionStatus } from "../getTransactionStatus";
+import { getTransactionStatus } from "../getTransactionStatus/getTransactionStatus";
 import { prepareTransaction } from "../prepareTransaction";
 import { createTransaction } from "../createTransaction";
 import { makeGetAccountShape } from "../synchronisation";

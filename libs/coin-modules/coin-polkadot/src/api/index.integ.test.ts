@@ -1,9 +1,8 @@
-import type { Api } from "@ledgerhq/coin-framework/api/index";
+import type { AlpacaApi } from "@ledgerhq/coin-framework/api/index";
 import { createApi } from ".";
-import { PolkadotAsset } from "../types";
 
 describe("Polkadot Api", () => {
-  let module: Api<PolkadotAsset>;
+  let module: AlpacaApi;
   const address = "144HGaYrSdK3543bi26vT6Rd8Bg7pLPMipJNr2WLc3NuHgD2";
 
   beforeAll(() => {
@@ -32,7 +31,7 @@ describe("Polkadot Api", () => {
       const amount = BigInt(100);
 
       // When
-      const result = await module.estimateFees({
+      const { value } = await module.estimateFees({
         asset: { type: "native" },
         type: "send",
         sender: address,
@@ -41,28 +40,26 @@ describe("Polkadot Api", () => {
       });
 
       // Then
-      expect(result).toBeGreaterThanOrEqual(BigInt(100000000));
-      expect(result).toBeLessThanOrEqual(BigInt(200000000));
+      expect(value).toBeGreaterThanOrEqual(BigInt(100000000));
+      expect(value).toBeLessThanOrEqual(BigInt(200000000));
     });
   });
 
   describe("listOperations", () => {
     it.skip("returns a list regarding address parameter", async () => {
       // When
-      const [tx, _] = await module.listOperations(address, { minHeight: 0 });
+      const [tx, _] = await module.listOperations(address, { minHeight: 0, order: "asc" });
 
       // Then
       expect(tx.length).toBeGreaterThanOrEqual(1);
       tx.forEach(operation => {
-        const isSenderOrReceipt =
-          operation.senders.includes(address) || operation.recipients.includes(address);
-        expect(isSenderOrReceipt).toBeTruthy();
+        expect(operation.senders.concat(operation.recipients)).toContainEqual(address);
       });
     }, 20000);
 
     it.skip("returns all operations", async () => {
       // When
-      const [tx, _] = await module.listOperations(address, { minHeight: 0 });
+      const [tx, _] = await module.listOperations(address, { minHeight: 0, order: "asc" });
 
       // Then
       const checkSet = new Set(tx.map(elt => elt.tx.hash));
@@ -76,8 +73,8 @@ describe("Polkadot Api", () => {
       const result = await module.lastBlock();
 
       // Then
-      expect(result.hash).toBeDefined();
-      expect(result.height).toBeDefined();
+      expect(result.hash).toMatch(/^0x[a-fA-F0-9]{64}$/);
+      expect(result.height).toBeGreaterThan(0);
       expect(result.time).toBeInstanceOf(Date);
     });
   });
@@ -105,9 +102,10 @@ describe("Polkadot Api", () => {
       });
 
       // Then
-      expect(result).toEqual(
-        "0x9404050300f578e65647d6c76b4d05a74e6c2d33d87f32d8d16959400b38ab97d758eb061928",
-      );
+      expect(result).toEqual({
+        transaction:
+          "0x9404050300f578e65647d6c76b4d05a74e6c2d33d87f32d8d16959400b38ab97d758eb061928",
+      });
     });
   });
 });

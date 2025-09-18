@@ -1,0 +1,253 @@
+name: "[Mobile] - Test Build iOS - Called"
+
+on:
+  workflow_call:
+    inputs:
+      macos-specificity-runner-label:
+        description: The specificity runner label to run the tests on (e.g. performance-pool, performance-pool or runner)
+        required: true
+        type: string
+        default: "general-pool"
+      disable-turbo-cache:
+        description: Disable turbo caching
+        required: false
+        type: boolean
+        default: false
+      ref:
+        description: Ref to checkout
+        required: false
+        type: string
+      build-ios-native:
+        description: Whether to build the iOS native app
+        required: true
+        type: boolean
+        default: true
+      build-ios-js:
+        description: Whether to build the iOS JS bundle
+        required: true
+        type: boolean
+        default: true
+      ios-native-cache-key:
+        description: The cache key to use for the iOS native build
+        required: false
+        type: string
+        default: "detox-ios-native-cache"
+      ios-js-cache-key:
+        description: The cache key to use for the iOS JS bundle
+        required: false
+        type: string
+        default: "detox-ios-js-cache"
+    outputs:
+      js-bundle-size:
+        description: The JS bundle size of the built app
+        value: ${{ jobs.build-ios-js.outputs.js-bundle-size }}
+
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: |
+          If you run this manually, and want to run on a PR, the correct ref should be refs/pull/{PR_NUMBER}/merge to
+          have the "normal" scenario involving checking out a merge commit between your branch and the base branch.
+          If you want to run only on a branch or specific commit, you can use either the sha or the branch name instead (prefer the first verion for PRs).
+        type: string
+        required: false
+      macos-specificity-runner-label:
+        description: The specificity runner label to run the tests on (e.g. performance-pool, performance-pool or runner)
+        required: false
+        type: string
+        default: "general-pool"
+      build-ios-native:
+        description: Whether to build the iOS native app
+        required: true
+        type: boolean
+        default: true
+      build-ios-js:
+        description: Whether to build the iOS JS bundle
+        required: true
+        type: boolean
+        default: true
+      ios-native-cache-key:
+        description: The cache key to use for the iOS native build
+        required: false
+        type: string
+        default: "detox-ios-native-cache"
+      ios-js-cache-key:
+        description: The cache key to use for the iOS JS bundle
+        required: false
+        type: string
+        default: "detox-ios-js-cache"
+
+permissions:
+  id-token: write
+  contents: read
+
+env:
+  IOS_JSBUNDLE_PATH: apps/ledger-live-mobile/ios/build/Build/Products/Release-iphonesimulator/ledgerlivemobile.app/main.jsbundle
+  IOS_NATIVE_PATH: apps/ledger-live-mobile/ios/build/Build/Products/Release-iphonesimulator
+  cache-bucket: ll-gha-s3-cache
+
+jobs:
+
+  build-ios-native:
+    name: "iOS Build Native"
+    if: ${{ inputs.build-ios-native == true }}
+    env:
+      NODE_OPTIONS: "--max-old-space-size=7168"
+      LANG: en_US.UTF-8
+      LANGUAGE: en_US.UTF-8
+      LC_ALL: en_US.UTF-8
+    runs-on: ["${{ inputs.macos-specificity-runner-label }}", macOS, ARM64]
+    steps:
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        id: aws
+        with:
+          role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID_PROD }}:role/${{ secrets.AWS_CACHE_ROLE_NAME }}
+          aws-region: ${{ secrets.AWS_CACHE_REGION }}
+
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.ref || github.sha }}
+          repository: LedgerHQ/ledger-live
+          persist-credentials: false
+
+      - name: setup caches
+        id: setup-caches
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        with:
+          skip-pod-cache: "true"
+          skip-turbo-cache: "false"
+          skip-pnpm-cache: "false"
+          accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
+          roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
+          region: ${{ secrets.AWS_CACHE_REGION }}
+          turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
+
+      - uses: nick-fields/retry@v3
+        name: install dependencies
+        id: install-dependencies
+        with:
+          max_attempts: 2
+          timeout_minutes: 15
+          command: pnpm i --filter="live-mobile..." --filter="ledger-live" --filter="@ledgerhq/dummy-*-app..." --no-frozen-lockfile --unsafe-perm
+          new_command_on_retry: rm -rf ~/.cocoapods/ && pnpm clean && pnpm i --filter="live-mobile..." --filter="ledger-live" --filter="@ledgerhq/dummy-*-app..." --no-frozen-lockfile --unsafe-perm
+
+      - name: Flake alert - ArgumentError
+        uses: LedgerHQ/ledger-live/tools/actions/composites/ci-flake-notifier@develop
+        if: failure() && steps.install-dependencies.outputs.error == 'ArgumentError - pathname contains null byte'
+        with:
+          live_bot_token: ${{ secrets.SLACK_LIVE_CI_BOT_TOKEN }}
+          halt_runner: true
+
+      - name: Flake alert - Reruns
+        uses: LedgerHQ/ledger-live/tools/actions/composites/ci-flake-notifier@develop
+        if: success() && steps.install-dependencies.outputs.total_attempts == 2
+        with:
+          live_bot_token: ${{ secrets.SLACK_LIVE_CI_BOT_TOKEN }}
+          custom_message: "${{ steps.install-dependencies.outputs.total_attempts }} attempts happened on install dependencies and it was eventually successful :face_with_raised_eyebrow:"
+
+      - name: Build dependencies
+        uses: LedgerHQ/ledger-live/tools/actions/composites/turbo-step@develop
+        with:
+          command: pnpm build:llm:deps
+          turbo_server_token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
+          turbo_port: ${{ steps.setup-caches.outputs.port }}
+          disable_cache: ${{ inputs.disable-turbo-cache || false }}
+
+      - name: Build iOS app for Detox test run
+        run: pnpm mobile e2e:ci -p ios -b
+        env:
+          SKIP_JS_BUNDLING: "true"
+
+      - name: Upload Detox Build
+        uses: LedgerHQ/ledger-live/tools/actions/composites/cache/upload@develop
+        with:
+          endpoint: ${{ secrets.S3_DIRECTCONNECT_ENDPOINT }}
+          path: ${{ github.workspace }}/${{ env.IOS_NATIVE_PATH }}
+          key: ${{ inputs.ios-native-cache-key }}
+          accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
+          secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
+          sessionToken: ${{ env.AWS_SESSION_TOKEN}}
+          bucket: ${{ env.cache-bucket }}
+          region: ${{ secrets.AWS_CACHE_REGION }}
+
+  build-ios-js:
+    name: "iOS Build JS"
+    if: ${{ inputs.build-ios-js == true }}
+    env:
+      NODE_OPTIONS: "--max-old-space-size=7168"
+      LANG: en_US.UTF-8
+      LANGUAGE: en_US.UTF-8
+      LC_ALL: en_US.UTF-8
+    runs-on: [ ledger-live-linux-8CPU-32RAM ]
+    outputs:
+      js-bundle-size: ${{ steps.output-js-bundle-size.outputs.size }}
+    steps:
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        id: aws
+        with:
+          role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID_PROD }}:role/${{ secrets.AWS_CACHE_ROLE_NAME }}
+          aws-region: ${{ secrets.AWS_CACHE_REGION }}
+
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.ref || github.sha }}
+          repository: LedgerHQ/ledger-live
+          persist-credentials: false
+
+      - name: setup caches
+        id: setup-caches
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        with:
+          install-proto: "true"
+          skip-pod-cache: "true"
+          skip-turbo-cache: "false"
+          skip-pnpm-cache: "false"
+          accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
+          roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
+          region: ${{ secrets.AWS_CACHE_REGION }}
+          turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
+
+      - uses: nick-fields/retry@v3
+        name: install dependencies
+        id: install-dependencies
+        with:
+          max_attempts: 2
+          timeout_minutes: 15
+          command: pnpm i --filter="live-mobile..." --filter="ledger-live" --filter="@ledgerhq/dummy-*-app..." --no-frozen-lockfile --unsafe-perm
+          new_command_on_retry: rm -rf ~/.cocoapods/ && pnpm clean && pnpm i --filter="live-mobile..." --filter="ledger-live" --filter="@ledgerhq/dummy-*-app..." --no-frozen-lockfile --unsafe-perm
+
+      - name: Build dependencies
+        uses: LedgerHQ/ledger-live/tools/actions/composites/turbo-step@develop
+        with:
+          command: pnpm build:llm:deps
+          turbo_server_token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
+          turbo_port: ${{ steps.setup-caches.outputs.port }}
+          disable_cache: ${{ inputs.disable-turbo-cache || false }}
+
+      - name: Build JS Bundle app for Detox test run
+        run: pnpm mobile e2e:ci -p ios --bundle
+
+      - name: Output bundle size for analysis
+        id: output-js-bundle-size
+        run: echo size=`ls -l ${{ github.workspace }}/apps/ledger-live-mobile/main.jsbundle  | cut -d " " -f5` >> $GITHUB_OUTPUT
+
+      - name: Upload Detox JS Build
+        uses: tespkg/actions-cache/save@v1
+        with:
+          path: ${{ github.workspace }}/apps/ledger-live-mobile/main.jsbundle
+          key: ${{ inputs.ios-js-cache-key }}
+          accessKey: ${{ env.AWS_ACCESS_KEY_ID }}
+          secretKey: ${{ env.AWS_SECRET_ACCESS_KEY }}
+          sessionToken: ${{ env.AWS_SESSION_TOKEN}}
+          bucket: ${{ env.cache-bucket }}
+          region: ${{ secrets.AWS_CACHE_REGION }}
+          use-fallback: false
+
+  skip-ios-js:
+    name: "iOS Build JS - Skip"
+    if: ${{ inputs.build-ios-js != true }}
+    runs-on: [ ubuntu-22.04 ]
+    steps:
+      - run: echo "Skipping"

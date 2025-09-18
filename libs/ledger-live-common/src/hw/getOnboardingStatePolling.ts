@@ -16,6 +16,7 @@ import {
 } from "@ledgerhq/errors";
 import { FirmwareInfo } from "@ledgerhq/types-live";
 import { extractOnboardingState, OnboardingState } from "./extractOnboardingState";
+import { DeviceDisconnectedWhileSendingError } from "@ledgerhq/device-management-kit";
 
 export type OnboardingStatePollingResult = {
   onboardingState: OnboardingState | null;
@@ -83,7 +84,7 @@ export const getOnboardingStatePolling = ({
           }
 
           try {
-            onboardingState = extractOnboardingState(firmwareInfo.flags);
+            onboardingState = extractOnboardingState(firmwareInfo.flags, firmwareInfo.charonState);
           } catch (error: unknown) {
             if (error instanceof DeviceExtractOnboardingStateError) {
               return {
@@ -143,6 +144,7 @@ export const isAllowedOnboardingStatePollingError = (error: unknown): boolean =>
       error instanceof TransportExchangeTimeoutError ||
       error instanceof DisconnectedDevice ||
       error instanceof DisconnectedDeviceDuringOperation ||
+      error instanceof DeviceDisconnectedWhileSendingError ||
       error instanceof CantOpenDevice ||
       error instanceof TransportRaceCondition ||
       error instanceof TransportStatusError ||

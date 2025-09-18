@@ -15,7 +15,7 @@ export class LockscreenPage extends AppPage {
     await this.loginButton.click();
   }
 
-  @step("Check input error state visibibility: $0")
+  @step("Check input error state visibility: $0")
   async checkInputErrorVisibility(expectedState: "visible" | "hidden") {
     await this.inputError.waitFor({ state: expectedState });
   }

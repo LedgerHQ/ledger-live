@@ -13,18 +13,15 @@ import type { Exec, State, AppOp, RunnerEvent, Action } from "./types";
 import { reducer, getActionPlan, getNextAppOp } from "./logic";
 import { delay } from "../promise";
 import { getEnv } from "@ledgerhq/live-env";
-import { AppStorageType, StorageProvider } from "../device/use-cases/appDataBackup/types";
 
 export const runAppOp = ({
   state,
   appOp,
   exec,
-  storage,
 }: {
   state: State;
   appOp: AppOp;
   exec: Exec;
-  storage?: StorageProvider<AppStorageType>;
 }): Observable<RunnerEvent> => {
   const { appByName, deviceInfo, deviceModel } = state;
   const app = appByName[appOp.name];
@@ -56,7 +53,6 @@ export const runAppOp = ({
         targetId: deviceInfo.targetId,
         app,
         modelId: deviceModel.id,
-        ...(storage ? { storage } : {}),
         ...(state.skipAppDataBackup ? { skipAppDataBackup: true } : {}),
       }),
     ).pipe(
@@ -99,7 +95,6 @@ type InlineInstallProgress = {
 export const runAllWithProgress = (
   state: State,
   exec: Exec,
-  storage?: StorageProvider<AppStorageType>,
   precision = 100,
 ): Observable<InlineInstallProgress> => {
   const total = state.uninstallQueue.length + state.installQueue.length;
@@ -110,9 +105,7 @@ export const runAllWithProgress = (
     return p;
   }
 
-  return concat(
-    ...getActionPlan(state).map(appOp => runAppOp({ state, appOp, exec, storage })),
-  ).pipe(
+  return concat(...getActionPlan(state).map(appOp => runAppOp({ state, appOp, exec }))).pipe(
     map(event => {
       if (event.type === "runError") {
         throw event.error;

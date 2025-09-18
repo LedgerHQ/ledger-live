@@ -8,6 +8,10 @@ import Animated, {
 } from "react-native-reanimated";
 
 const { width } = Dimensions.get("window");
+const SPRING_CONFIG = {
+  damping: 30,
+  stiffness: 400,
+};
 
 type SwipeableCardProps = {
   children: React.ReactNode;
@@ -30,22 +34,23 @@ function useSwipeStyle(swipeX: SharedValue<number>, swipeY: SharedValue<number>,
     if (isActive) {
       translateX = swipeX.value;
       translateY = swipeY.value;
-      rotate = `${interpolate(swipeX.value, [-width / 2, 0, width / 2], [-15, 0, 15])}deg`;
+      rotate = `${interpolate(swipeX.value, [-width / 2, 0, width / 2], [-16, 0, 15])}deg`;
     } else if (isNext) {
       scale = interpolate(Math.abs(swipeX.value), [0, width], [0.95, 1]);
-      translateY = interpolate(Math.abs(swipeX.value), [0, width], [-32, 0]);
+      translateY = interpolate(Math.abs(swipeX.value), [0, width], [-28, 0]);
     } else if (isAfterNext) {
       scale = interpolate(index, [2, 5], [0.9, 0.8]);
-      translateY = interpolate(index, [2, 5], [-64, -96]);
+      translateY = interpolate(index, [2, 5], [-56, -96]);
     }
 
     return {
       transform: [
-        { translateX: withSpring(translateX) },
-        { translateY: withSpring(translateY) },
-        { scale: withSpring(scale) },
-        { rotate: withSpring(rotate) },
+        { translateX: withSpring(translateX, SPRING_CONFIG) },
+        { translateY: withSpring(translateY, SPRING_CONFIG) },
+        { scale: withSpring(scale, SPRING_CONFIG) },
+        { rotate: withSpring(rotate, SPRING_CONFIG) },
       ],
+
       zIndex: isActive ? 100 : 100 - index,
     };
   });

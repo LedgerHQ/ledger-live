@@ -7,6 +7,7 @@ exports[`cardano_testnet currency bridge scanAccounts cardano_testnet seed 1 1`]
     "cardanoResources": {
       "delegation": {
         "dRepHex": undefined,
+        "deposit": "2000000",
         "name": "Apex Cardano Pool",
         "poolId": "7facad662e180ce45e5c504957cd1341940c72a708728f7ecfc6e349",
         "rewards": "0",

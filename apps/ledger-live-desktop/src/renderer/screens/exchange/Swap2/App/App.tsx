@@ -2,29 +2,16 @@ import { useSwapLiveConfig } from "@ledgerhq/live-common/exchange/swap/hooks/ind
 import { DEFAULT_FEATURES } from "@ledgerhq/live-common/featureFlags/index";
 import { useRemoteLiveAppManifest } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
 import { useLocalLiveAppManifest } from "@ledgerhq/live-common/wallet-api/LocalLiveAppProvider/index";
-import React, { useState } from "react";
+import React from "react";
 import styled from "styled-components";
 import SwapWebView from "~/renderer/screens/exchange/Swap2/Form/SwapWebViewDemo3";
+import { NetworkErrorScreen } from "~/renderer/components/Web3AppWebview/NetworkError";
+import { useRemoteLiveAppContext } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
 
 const Root = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
-`;
-
-// TODO: fix with proper error handling
-const ErrorWrapper = styled.div`
-  width: auto;
-  display: inline-flex;
-  align-self: center;
-  align-items: center;
-  justify-self: center;
-  justify-content: center;
-  padding: 24px;
-  border-radius: 14px;
-  background-color: rgba(255, 0, 0, 0.3);
-  color: #fff;
-  font-weight: 500;
 `;
 
 // set the default manifest ID for the production swap live app
@@ -34,27 +21,23 @@ const DEFAULT_MANIFEST_ID =
   process.env.DEFAULT_SWAP_MANIFEST_ID || DEFAULT_FEATURES.ptxSwapLiveApp.params?.manifest_id;
 
 export function SwapApp() {
-  const [unavailable, setUnavailable] = useState(false);
   const swapLiveEnabledFlag = useSwapLiveConfig();
   const swapLiveAppManifestID = swapLiveEnabledFlag?.params?.manifest_id || DEFAULT_MANIFEST_ID;
 
   const localManifest = useLocalLiveAppManifest(swapLiveAppManifestID || undefined);
   const remoteManifest = useRemoteLiveAppManifest(swapLiveAppManifestID || undefined);
+
   const manifest = localManifest || remoteManifest;
 
-  if (!manifest) {
-    // TODO: fix with proper error handling
-    return <ErrorWrapper>Unable to load application: missing manifest</ErrorWrapper>;
-  }
+  const { updateManifests } = useRemoteLiveAppContext();
 
-  if (unavailable) {
-    // TODO: fix with proper error handling
-    return <ErrorWrapper>Unable to load application: Unavailable</ErrorWrapper>;
+  if (!manifest) {
+    return <NetworkErrorScreen refresh={updateManifests} type="warning" />;
   }
 
   return (
     <Root>
-      <SwapWebView manifest={manifest} liveAppUnavailable={() => setUnavailable(true)} />
+      <SwapWebView manifest={manifest} />
     </Root>
   );
 }

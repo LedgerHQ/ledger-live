@@ -5,22 +5,15 @@ export class CustomImageDrawer extends Component {
   private importImageInputSelector = "data-testid=custom-image-import-image-input";
   readonly container = this.page.getByTestId("custom-image-container");
   readonly importImageInput = this.page.locator(this.importImageInputSelector);
-  private importNftButton = this.page.getByTestId("custom-image-import-nft-button");
-  readonly importNftPreviousButton = this.page.getByTestId("custom-image-nft-previous-button");
-  private nftCard = (index: number) => this.page.getByTestId(`custom-image-nft-card-${index}`);
-  readonly nftCardMedia = (index: number) =>
-    this.page.getByTestId(`custom-image-nft-card-media-${index}`);
-  readonly nftCardName = (index: number) =>
-    this.page.getByTestId(`custom-image-nft-card-name-${index}`);
-  readonly nftCardId = (index: number) =>
-    this.page.getByTestId(`custom-image-nft-card-id-${index}`);
   private cropView = this.page.getByTestId("custom-image-crop-view");
   private cropRotateButton = this.page.getByTestId("custom-image-crop-rotate-button");
   private cropContinueButton = this.page.getByTestId("custom-image-crop-continue-button");
 
   private contrastOptionButton = (index: number) =>
     this.page.getByTestId(`custom-image-contrast-option-${index}-button`);
-  private contrastPreviousButton = this.page.getByTestId("custom-image-contrast-previous-button");
+  private readonly contrastPreviousButton = this.page.getByTestId(
+    "custom-image-contrast-previous-button",
+  );
   readonly contrastContinueButton = this.page.getByTestId("custom-image-contrast-continue-button");
   readonly finishButton = this.page.getByTestId("custom-image-finish-button");
   readonly deviceActionImageLoadRequested = this.page.getByTestId(
@@ -35,16 +28,6 @@ export class CustomImageDrawer extends Component {
   async importImage(filePath: string) {
     await this.importImageInput.waitFor({ state: "attached" });
     await this.page.setInputFiles(this.importImageInputSelector, filePath);
-  }
-
-  async openNftGallery() {
-    await this.importNftButton.waitFor({ state: "attached" });
-    await this.importNftButton.click();
-  }
-
-  async selectNft(index: number) {
-    await this.nftCard(index).waitFor({ state: "attached" });
-    await this.nftCard(index).click();
   }
 
   async waitForCropConfirmable(): Promise<boolean> {

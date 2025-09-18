@@ -106,13 +106,16 @@ export function TransferTabIcon() {
     pointerEvents: openAnimValue.value === 1 ? ("auto" as const) : ("none" as const),
   }));
 
-  const translateYStyle = useAnimatedStyle(() => ({
-    transform: [
-      {
-        translateY: interpolate(openAnimValue.value, [0, 1, 2], [Y_AMPLITUDE, 0, Y_AMPLITUDE]),
-      },
-    ],
-  }));
+  const translateYStyle = useAnimatedStyle(
+    () => ({
+      transform: [
+        {
+          translateY: interpolate(openAnimValue.value, [0, 1, 2], [Y_AMPLITUDE, 0, Y_AMPLITUDE]),
+        },
+      ],
+    }),
+    [openAnimValue],
+  );
 
   /**
    * openAnimValue.value:
@@ -127,9 +130,12 @@ export function TransferTabIcon() {
     progress: interpolate(openAnimValue.value, [0, 1, 2], [0, 0.5, 1]),
   }));
 
-  const opacityStyle = useAnimatedStyle(() => ({
-    opacity: interpolate(openAnimValue.value, [0, 1, 2], [0, 1, 0]),
-  }));
+  const opacityStyle = useAnimatedStyle(
+    () => ({
+      opacity: interpolate(openAnimValue.value, [0, 1, 2], [0, 1, 0]),
+    }),
+    [openAnimValue],
+  );
 
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
 

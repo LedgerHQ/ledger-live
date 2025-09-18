@@ -2,8 +2,8 @@ import React, { memo } from "react";
 import { StyleSheet, View } from "react-native";
 import type { BaseButtonProps } from "~/components/Button";
 import Button from "~/components/Button";
-import QueuedDrawer from "~/components/QueuedDrawer";
 import getWindowDimensions from "~/logic/getWindowDimensions";
+import QueuedDrawerGorhom from "LLM/components/QueuedDrawer/temp/QueuedDrawerGorhom";
 
 const { height } = getWindowDimensions();
 type Props = {
@@ -14,7 +14,7 @@ type Props = {
 };
 
 const ActionModal = ({ isOpened, onClose, children, actions = [], ...rest }: Props) => (
-  <QueuedDrawer
+  <QueuedDrawerGorhom
     {...rest}
     isRequestingToBeOpened={isOpened}
     onClose={onClose}
@@ -40,7 +40,7 @@ const ActionModal = ({ isOpened, onClose, children, actions = [], ...rest }: Pro
         </View>
       )}
     </View>
-  </QueuedDrawer>
+  </QueuedDrawerGorhom>
 );
 
 const styles = StyleSheet.create({

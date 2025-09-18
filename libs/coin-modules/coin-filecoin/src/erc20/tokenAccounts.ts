@@ -187,7 +187,7 @@ export const encodeTxnParams = (abiEncodedParams: string) => {
 };
 
 export const abiEncodeTransferParams = (recipient: string, amount: string) => {
-  const contract = new ethers.utils.Interface(contractABI);
+  const contract = new ethers.Interface(contractABI);
   const data = contract.encodeFunctionData("transfer", [recipient, amount]);
   return data;
 };

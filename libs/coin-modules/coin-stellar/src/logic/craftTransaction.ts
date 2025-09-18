@@ -28,7 +28,7 @@ export async function craftTransaction(
     memoType?: string | null | undefined;
     memoValue?: string | null | undefined;
   },
-): Promise<{ transaction: StellarSdkTransaction; xdr: string }> {
+): Promise<{ transaction: StellarSdkTransaction; xdr: string; signatureBase: string }> {
   const { amount, recipient, fee, memoType, memoValue, type, assetCode, assetIssuer } = transaction;
   const source = await loadAccount(account.address);
 
@@ -78,6 +78,7 @@ export async function craftTransaction(
   return {
     transaction: craftedTransaction,
     xdr: craftedTransaction.toXDR(),
+    signatureBase: craftedTransaction.signatureBase().toString("base64"),
   };
 }
 

@@ -43,6 +43,10 @@ const sui: CurrenciesData<Transaction> = {
                 <= 027cfea3aa1e07cc4b500c237a8bf8dcb31d5cb855f29dfdeb92f9e4df9493a6cd9000
                 => 0002000036010000000000000000000000000000000000000000000000000000000000000000052c00008010030080000000800000008000000080
                 <= 0120e95d14c7b906d66090556e0fce65ed3b71167b37e0c19136857d35b44f082ba720117527fdcf2f5f6e82fa499c0398def2643550d63f7e8311245d75f4635f04359000
+                => 000200002100c9bf8a5402439450fbf5c9a819b69c7e8c164aef2dc7a337929ecfbb7b8f00ff
+                <= 02c9bf8a5402439450fbf5c9a819b69c7e8c164aef2dc7a337929ecfbb7b8f00ff9000
+                => 0002000036010000000000000000000000000000000000000000000000000000000000000000052c00008010030080010000800000008000000080
+                <= 0120e0eee36ff838a4df06ebcfdc31fab96a134c71b29ee763e2c72aebe427338c9a20ba7080172a6d957b9ed2e3eb643529860be963cf4af896fb84f1cde00f46b5619000
         `,
     },
   ],
@@ -57,6 +61,7 @@ const sui: CurrenciesData<Transaction> = {
             recipient: OWNER,
             amount: DEFAULT_AMOUNT,
             mode: "send",
+            coinType: "0x2::sui::SUI",
           }),
           expectedStatus: {
             amount: new BigNumber(DEFAULT_AMOUNT),
@@ -72,6 +77,7 @@ const sui: CurrenciesData<Transaction> = {
             useAllAmount: false,
             family: "sui",
             mode: "send",
+            coinType: "0x2::sui::SUI",
             fees: "0",
           }),
           expectedStatus: {
@@ -89,6 +95,7 @@ const sui: CurrenciesData<Transaction> = {
             recipient: RECIPIENT,
             amount: "10000000000000000000",
             mode: "send",
+            coinType: "0x2::sui::SUI",
           }),
           expectedStatus: {
             errors: {
@@ -104,6 +111,7 @@ const sui: CurrenciesData<Transaction> = {
             recipient: "",
             amount: "1000000",
             mode: "send",
+            coinType: "0x2::sui::SUI",
           }),
           expectedStatus: {
             errors: {
@@ -119,6 +127,7 @@ const sui: CurrenciesData<Transaction> = {
             recipient: RECIPIENT,
             amount: "0",
             mode: "send",
+            coinType: "0x2::sui::SUI",
           }),
           expectedStatus: {
             errors: {

@@ -152,8 +152,6 @@ if (!__DEV__) {
   });
 }
 
-// eslint-disable-next-line no-console
-console.log(`Ledger Live ${__APP_VERSION__}`);
 contextMenu({
   showInspectElement: __DEV__,
   showCopyImageAddress: false,
@@ -165,7 +163,4 @@ contextMenu({
     copyLink: "Copy Link",
     inspect: "Inspect element",
   },
-});
-console.log(`Ledger Live version: ${__APP_VERSION__}`, {
-  type: "system-info",
 });

@@ -10,10 +10,8 @@ import { isCurrencySupported } from "@ledgerhq/coin-framework/currencies/index";
 import { NotEnoughGas } from "@ledgerhq/errors";
 import { getAccountCurrency, getMainAccount } from "@ledgerhq/live-common/account/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
-import { isNftTransaction } from "@ledgerhq/live-nft";
 import { fromTransactionRaw } from "@ledgerhq/live-common/transaction/index";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import type { Account } from "@ledgerhq/types-live";
 import { useTheme } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import invariant from "invariant";
@@ -39,7 +37,6 @@ import { useTransactionChangeFromNavigation } from "~/logic/screenTransactionHoo
 import { accountScreenSelector } from "~/reducers/accounts";
 import SummaryAmountSection from "~/screens/SendFunds/SummaryAmountSection";
 import SummaryFromSection from "~/screens/SendFunds/SummaryFromSection";
-import SummaryNft from "~/screens/SendFunds/SummaryNft";
 import SummaryToSection from "~/screens/SendFunds/SummaryToSection";
 import SummaryTotalSection from "~/screens/SendFunds/SummaryTotalSection";
 import { CurrentNetworkFee } from "../CurrentNetworkFee";
@@ -81,8 +78,6 @@ function EditTransactionSummary({ navigation, route }: Props) {
   });
 
   invariant(transaction, "transaction is missing");
-
-  const isNFTSend = isNftTransaction(transaction);
 
   // handle any edit screen changes like fees changes
   useTransactionChangeFromNavigation(setTransaction);
@@ -196,16 +191,14 @@ function EditTransactionSummary({ navigation, route }: Props) {
           route={route as any}
         />
         <SectionSeparator lineColor={colors.lightFog} />
-        {isNFTSend ? (
-          <SummaryNft transaction={transaction} currencyId={(account as Account).currency.id} />
-        ) : (
-          <SummaryAmountSection
-            account={mainAccount}
-            parentAccount={undefined}
-            amount={amount}
-            overrideAmountLabel={overrideAmountLabel}
-          />
-        )}
+
+        <SummaryAmountSection
+          account={mainAccount}
+          parentAccount={undefined}
+          amount={amount}
+          overrideAmountLabel={overrideAmountLabel}
+        />
+
         <SendRowsFee
           setTransaction={setTransaction}
           status={status}

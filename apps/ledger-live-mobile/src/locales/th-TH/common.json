@@ -47,6 +47,7 @@
     "transactionDate" : "วันที่ของธุรกรรม",
     "outdated" : "ล้าสมัย",
     "satPerByte" : "sat/ไบต์",
+    "sompiPerByte" : "sompi/ไบต์",
     "notAvailable" : "ไม่สามารถใช้ได้",
     "import" : "นำเข้า",
     "bluetooth" : "Bluetooth",
@@ -761,9 +762,6 @@
     },
     "PolkadotAllFundsWarning" : {
       "title" : "ตรวจสอบให้แน่ใจว่าคุณมียอดคงเหลือในบัญชีเพียงพอสำหรับค่าธรรมเนียมธุรกรรมในอนาคต"
-    },
-    "PolkadotDoMaxSendInstead" : {
-      "title" : "ยอดคงเหลือในบัญชีต้องไม่ต่ำกว่า {{minimumBalance}} ส่งสูงสุดไปยังบัญชีที่ว่างเปล่า"
     },
     "PolkadotBondMinimumAmount" : {
       "title" : "คุณต้องผูกมัดอย่างน้อย {{minimumBondAmount}}"
@@ -1961,7 +1959,6 @@
           "label" : "บนแอปเดสก์ท็อป เลือก\n<1>การตั้งค่า > บัญชี > ส่งออกบัญชี</1>"
         },
         "1" : {
-          "label" : "สแกน LiveQR Code ด้วยโทรศัพท์ของคุณ"
         },
         "2" : {
           "label" : "เลือกบัญชีคริปโตเพื่อนำเข้า"

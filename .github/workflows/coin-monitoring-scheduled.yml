@@ -1,0 +1,82 @@
+name: "[Coin] - Daily Monitoring - Scheduled"
+run-name: Daily Coin Monitoring
+permissions:
+  contents: read
+on:
+  schedule:
+    - cron: "0 15 * * 1-5" # every working day at 3pm
+
+jobs:
+  run-monitoring:
+    runs-on: [ledger-live-4xlarge]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup the toolchain
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        with:
+          install-proto: true
+      - uses: LedgerHQ/ledger-live/tools/actions/composites/monitor@develop
+        id: monitoring
+        timeout-minutes: 120
+        with:
+          DD_API_KEY: ${{ secrets.DD_API_KEY }}
+          DD_APP_KEY: ${{ secrets.DD_APP_KEY }}
+          DD_DOMAIN: datadoghq.eu
+          MONITOR_FILTER_CURRENCIES: all
+          SUBMIT_LOGS: true
+
+  monitoring-fail:
+    name: Failure report
+    needs: run-monitoring
+    if: failure() && github.event_name != 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Post to live-repo-health slack channel
+        uses: slackapi/slack-github-action@v2.0.0
+        with:
+          token: ${{ secrets.SLACK_BOT_USER_OAUTH_ACCESS_TOKEN }}
+          method: chat.postMessage
+          payload: |
+            channel: "C05FKJ7DFAP"
+            text: "[Monitoring] Coin modules"
+            blocks: 
+              - type: "section"
+                text:
+                  type: "mrkdwn"
+                  text: "❌ *Coin modules monitoring failed*"
+              - type: "section"
+                text:
+                  type: "mrkdwn"
+                  text: ":github: <${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Workflow run>"
+              - type: "section"
+                text:
+                  type: "mrkdwn"
+                  text: ":datadog_logo: <https://app.datadoghq.eu/dashboard/5wd-rjr-fzh/coin-integration-general-dashboard|Monitoring dashboard>"
+
+  monitoring-success:
+    name: Success report
+    needs: run-monitoring
+    if: success() && github.event_name != 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Post to live-repo-health slack channel
+        uses: slackapi/slack-github-action@v2.0.0
+        with:
+          token: ${{ secrets.SLACK_BOT_USER_OAUTH_ACCESS_TOKEN }}
+          method: chat.postMessage
+          payload: |
+            channel: "C05FKJ7DFAP"
+            text: "[Monitoring] Coin modules"
+            blocks: 
+              - type: "section"
+                text:
+                  type: "mrkdwn"
+                  text: "✅️ *Coin modules monitoring success*"
+              - type: "section"
+                text:
+                  type: "mrkdwn"
+                  text: ":github: <${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|Workflow run>"
+              - type: "section"
+                text:
+                  type: "mrkdwn"
+                  text: ":datadog_logo: <https://app.datadoghq.eu/dashboard/5wd-rjr-fzh/coin-integration-general-dashboard|Monitoring dashboard>"

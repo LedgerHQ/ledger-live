@@ -5,7 +5,6 @@ export enum LocationContentCard {
 }
 
 export enum Platform {
-  Mobile = "mobile",
   Desktop = "desktop",
 }
 
@@ -15,7 +14,7 @@ export type ContentCard = {
   description: string;
   location?: LocationContentCard;
   order?: number;
-  created: Date;
+  created: Date | null;
   isMock?: boolean;
 };
 

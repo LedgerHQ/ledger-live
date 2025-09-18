@@ -18,14 +18,15 @@ const navItems = ["One", "Two", "Three", "Four", "Five"];
 function Sample({ children, ...args }: Props) {
   const [activeIndex, setActiveIndex] = useState(args.initialActiveIndex);
   return (
-    <div style={{ marginBottom: "10px" }}>
+    <div style={{ marginBottom: "10px", padding: "5px" }}>
       <div style={{ width: "100%" }}>
         <ChipTabs {...args} onTabChange={setActiveIndex}>
           {children}
         </ChipTabs>
       </div>
-      <Text variant="subtitle">Active index: {activeIndex}</Text>
-      <hr />
+      <Text color="neutral.c100" variant="subtitle">
+        Active index: {activeIndex}
+      </Text>
     </div>
   );
 }

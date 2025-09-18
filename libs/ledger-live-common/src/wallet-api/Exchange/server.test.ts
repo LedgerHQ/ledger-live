@@ -1,14 +1,15 @@
-import { handlers } from "./server";
-import { AppBranch, AppPlatform, Visibility } from "../types";
-import { of } from "rxjs";
+import { RpcRequest } from "@ledgerhq/wallet-api-core";
 import {
   ExchangeStartParams,
   ExchangeStartSellParams,
   ExchangeStartSwapParams,
+  ExchangeStartFundParams,
 } from "@ledgerhq/wallet-api-exchange-module";
-import { RpcRequest } from "@ledgerhq/wallet-api-core";
-import { genAccount } from "../../mock/account";
 import { WalletContext, WalletHandlers } from "@ledgerhq/wallet-api-server";
+import { of } from "rxjs";
+import { genAccount } from "../../mock/account";
+import { AppBranch, AppPlatform, Visibility } from "../types";
+import { handlers } from "./server";
 
 const mockTracking = {
   startExchangeRequested: jest.fn(),
@@ -46,12 +47,16 @@ const testAppManifest = {
 
 const mockUiStartExchange = jest.fn();
 const mockUiCompleteExchange = jest.fn();
+const mockUiSwap = jest.fn();
 const mockUiError = jest.fn();
+const mockIsReady = jest.fn();
 
 const mockUiHooks = {
   "custom.exchange.start": mockUiStartExchange,
   "custom.exchange.complete": mockUiCompleteExchange,
   "custom.exchange.error": mockUiError,
+  "custom.isReady": mockIsReady,
+  "custom.exchange.swap": mockUiSwap,
 };
 
 // Mock converter id to send back the id received in params.
@@ -149,8 +154,10 @@ describe("handlers", () => {
         uiHooks: mockUiHooks,
       });
 
-      const params: ExchangeStartParams = {
+      const params: ExchangeStartFundParams = {
         exchangeType: "FUND",
+        provider: "TestFundProvider",
+        fromAccountId: accounts[0].id,
       };
       const { request, context, walletHandlers } = prepareSellRequest(params);
 
@@ -166,6 +173,7 @@ describe("handlers", () => {
       expect(mockUiStartExchange).toHaveBeenCalledTimes(1);
       const receivedParams = mockUiStartExchange.mock.calls[0][0].exchangeParams;
       expect(receivedParams.exchangeType).toBe("FUND");
+      expect(receivedParams.provider).toBe("TestFundProvider");
       expect(mockUiCompleteExchange).not.toHaveBeenCalled();
     });
   });

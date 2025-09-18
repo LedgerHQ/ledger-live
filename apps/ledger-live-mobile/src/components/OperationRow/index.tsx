@@ -21,7 +21,6 @@ import CounterValue from "../CounterValue";
 import OperationIcon from "../OperationIcon";
 import { ScreenName } from "~/const";
 import OperationRowDate from "../OperationRowDate";
-import OperationRowNftName from "../OperationRowNftName";
 import perFamilyOperationDetails from "../../generated/operationDetails";
 import { track } from "~/analytics";
 import { UnionToIntersection } from "~/types/helpers";
@@ -81,6 +80,7 @@ type Props = {
   multipleAccounts?: boolean;
   isLast: boolean;
   isSubOperation?: boolean;
+  testID?: string;
 };
 
 const placeholderProps = {
@@ -95,6 +95,7 @@ function OperationRow({
   isSubOperation,
   multipleAccounts,
   isLast,
+  testID,
 }: Props) {
   const navigation = useNavigation<BaseNavigation>();
 
@@ -117,9 +118,6 @@ function OperationRow({
     if (isSubOperation) navigation.push(...params);
     else navigation.navigate(...params);
   }, 300);
-
-  const isNftOperation =
-    ["NFT_IN", "NFT_OUT"].includes(operation.type) && operation.contract && operation.tokenId;
 
   const unit = useAccountUnit(account);
 
@@ -190,7 +188,13 @@ function OperationRow({
       </Box>
       <Wrapper opacity={isOptimistic ? 0.5 : 1}>
         <BodyLeftContainer>
-          <Text variant="body" fontWeight="semiBold" color={colors.neutral.c100} numberOfLines={1}>
+          <Text
+            variant="body"
+            fontWeight="semiBold"
+            color={colors.neutral.c100}
+            numberOfLines={1}
+            testID={testID}
+          >
             {multipleAccounts ? accountName : text}
           </Text>
 
@@ -225,15 +229,7 @@ function OperationRow({
 
         <BodyRightContainer>{renderAmountCellExtra()}</BodyRightContainer>
 
-        {isNftOperation ? (
-          <BodyRightContainer flexShrink={1} maxWidth="70%">
-            <OperationRowNftName
-              operation={operation}
-              account={account}
-              parentAccount={parentAccount}
-            />
-          </BodyRightContainer>
-        ) : amount.isZero() ? null : (
+        {amount.isZero() ? null : (
           <BodyRightContainer>
             <Text
               numberOfLines={1}
@@ -244,7 +240,12 @@ function OperationRow({
             >
               <CurrencyUnitValue showCode unit={unit} value={amount} alwaysShowSign />
             </Text>
-            <Text variant="paragraph" fontWeight="medium" color={colors.neutral.c70}>
+            <Text
+              variant="paragraph"
+              fontWeight="medium"
+              color={colors.neutral.c70}
+              testID="operationRow-counterValue-label"
+            >
               <CounterValue
                 showCode
                 date={operation.date}

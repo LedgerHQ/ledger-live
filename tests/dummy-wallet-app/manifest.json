@@ -30,9 +30,13 @@
     "transaction.sign",
     "transaction.signAndBroadcast",
     "wallet.capabilities",
+    "wallet.userId",
+    "wallet.info",
     "custom.logger.log",
+    "storage.get",
     "storage.set",
-    "event.custom.test"
+    "event.custom.test",
+    "bitcoin.getXPub"
   ],
   "domains": ["http://*", "https://*"]
 }

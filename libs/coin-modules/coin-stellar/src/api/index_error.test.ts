@@ -1,9 +1,9 @@
-import type { Api } from "@ledgerhq/coin-framework/api/index";
+import type { AlpacaApi } from "@ledgerhq/coin-framework/api/index";
 import { createApi } from ".";
-import { StellarAsset } from "../types";
+import { StellarMemo } from "../types";
 import nock from "nock";
 describe("Stellar Api", () => {
-  let module: Api<StellarAsset>;
+  let module: AlpacaApi<StellarMemo>;
   const ADDRESS = "GBAUZBDXMVV7HII4JWBGFMLVKVJ6OLQAKOCGXM5E2FM4TAZB6C7JO2L7";
 
   beforeAll(() => {
@@ -26,7 +26,7 @@ describe("Stellar Api", () => {
 
   describe("listOperations can handle 429 errors", () => {
     it("retrieved operations", async () => {
-      const [txs] = await module.listOperations(ADDRESS, { minHeight: 0 });
+      const [txs] = await module.listOperations(ADDRESS, { minHeight: 0, order: "asc" });
       expect(txs.length).toBe(0);
     });
   });

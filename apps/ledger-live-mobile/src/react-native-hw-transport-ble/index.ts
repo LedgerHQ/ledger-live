@@ -55,7 +55,7 @@ const getBLETransport = ({
 }: {
   isLDMKEnabled: boolean;
 }): CommonTransportConstructor => {
-  if (Config.MOCK) {
+  if (Config.MOCK || Config.DETOX) {
     return makeMock({
       // TODO E2E: This could be dynamically set in bridge/server.js
       createTransportDeviceMock: (id: string, name: string, serviceUUID: string) => {

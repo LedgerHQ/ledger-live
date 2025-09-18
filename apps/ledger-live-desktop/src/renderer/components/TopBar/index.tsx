@@ -11,8 +11,6 @@ import Box from "~/renderer/components/Box";
 import Tooltip from "~/renderer/components/Tooltip";
 import Breadcrumb from "~/renderer/components/Breadcrumb";
 import HelpSideBar from "~/renderer/modals/Help";
-import BreadCrumbNewArch from "LLD/components/BreadCrumb";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 
 // TODO: ActivityIndicator
 import ActivityIndicator from "./ActivityIndicator";
@@ -38,13 +36,7 @@ const Inner = styled(Box).attrs(() => ({
 }))`
   height: 100%;
 `;
-export const SeparatorBar = styled.div`
-  height: 1px;
-  border-bottom: 1px solid ${p => p.theme.colors.palette.divider};
-  width: calc(100% - ${p => p.theme.space[6] * 2}px);
-  left: ${p => p.theme.space[6]};
-  position: relative;
-`;
+
 const TopBar = () => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
@@ -53,8 +45,6 @@ const TopBar = () => {
   const hasPassword = useSelector(hasPasswordSelector);
   const hasAccounts = useSelector(hasAccountsSelector);
   const discreetMode = useSelector(discreetModeSelector);
-  const nftReworked = useFeature("lldNftsGalleryNewArch");
-  const isNftReworkedEnabled = nftReworked?.enabled;
   const [helpSideBarVisible, setHelpSideBarVisible] = useState(false);
   const handleLock = useCallback(() => dispatch(lock()), [dispatch]);
   const handleDiscreet = useCallback(() => {
@@ -77,7 +67,7 @@ const TopBar = () => {
     <Container color="palette.text.shade80">
       <Inner bg="palette.background.default">
         <Box grow horizontal justifyContent="space-between">
-          {isNftReworkedEnabled ? <BreadCrumbNewArch /> : <Breadcrumb />}
+          <Breadcrumb />
           <Box horizontal>
             {hasAccounts && (
               <>

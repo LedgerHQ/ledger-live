@@ -4,7 +4,7 @@ import { Trans } from "react-i18next";
 import type { Account, AccountLike, TokenAccount } from "@ledgerhq/types-live";
 import { useSelector } from "react-redux";
 import { CompositeScreenProps, useTheme } from "@react-navigation/native";
-import { CryptoCurrency, CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { useGetAccountIds } from "@ledgerhq/live-common/wallet-api/react";
 import { accountsByCryptoCurrencyScreenSelector } from "~/reducers/accounts";
 import { TrackScreen } from "~/analytics";
@@ -23,8 +23,8 @@ import type {
 import { RequestAccountNavigatorParamList } from "~/components/RootNavigator/types/RequestAccountNavigator";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import { Flex } from "@ledgerhq/native-ui";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { AddAccountContexts } from "LLM/features/Accounts/screens/AddAccount/enums";
+import { withDiscreetMode } from "~/context/DiscreetModeContext";
 
 const SEARCH_KEYS = [
   "name",
@@ -101,13 +101,39 @@ function SelectAccount({ navigation, route }: Props) {
   const { accounts$, currency, allowAddAccount, onSuccess } = route.params;
   const accountIds = useGetAccountIds(accounts$);
   const accounts = useSelector(accountsByCryptoCurrencyScreenSelector(currency, accountIds));
-  const llmNetworkBasedAddAccountFlow = useFeature("llmNetworkBasedAddAccountFlow");
   const onSelect = useCallback(
     (account: AccountLike, parentAccount?: Account) => {
-      onSuccess && onSuccess(account, parentAccount);
       const n =
         navigation.getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>() || navigation;
-      n.pop();
+
+      // Navigation Conflict Resolution:
+      //
+      // Problem: RequestAccount screen automatically calls n.pop() after onSuccess,
+      // but some onSuccess callbacks (like staking flows) navigate to new screens.
+      // This creates a race condition where:
+      // 1. onSuccess navigates to a new flow (e.g., CosmosDelegationFlow)
+      // 2. RequestAccount immediately pops, undoing the navigation
+      // 3. User ends up back at portfolio instead of the intended flow
+      //
+      // So, we check if onSuccess actually navigated before popping:
+      // - Track navigation stack size before calling onSuccess
+      // - Use setTimeout(0) to defer the check until after React Navigation processes
+      // - Only pop if no new route was added (stack size unchanged),
+      //   meaning we are in drawer case
+      //
+      // Covered behaviors:
+      // - Drawer navigation: onSuccess opens drawer → no stack change → we pop as usual
+      // - Navigator flows: onSuccess navigates to flow → stack grows → we don't pop
+      const initialRouteCount = n.getState().routes.length;
+
+      onSuccess && onSuccess(account, parentAccount);
+
+      setTimeout(() => {
+        const currentRouteCount = n.getState().routes.length;
+        if (currentRouteCount === initialRouteCount) {
+          n.pop();
+        }
+      }, 0);
     },
     [navigation, onSuccess],
   );
@@ -127,37 +153,20 @@ function SelectAccount({ navigation, route }: Props) {
   }, [route.params, navigation]);
 
   const onAddAccount = useCallback(() => {
-    if (llmNetworkBasedAddAccountFlow?.enabled) {
-      navigation.navigate(NavigatorName.DeviceSelection, {
-        screen: ScreenName.SelectDevice,
-        params: {
-          currency:
-            currency.type === "TokenCurrency"
-              ? currency.parentCurrency
-              : (currency as CryptoCurrency),
-          context: AddAccountContexts.AddAccounts,
-          inline: true,
-          sourceScreenName: ScreenName.RequestAccountsSelectAccount,
-          onSuccess: navigateOnAddAccountSuccess,
-        },
-      });
-    } else {
-      navigation.navigate(NavigatorName.RequestAccountsAddAccounts, {
-        screen: ScreenName.AddAccountsSelectDevice,
-        params: {
-          currency: currency as CryptoOrTokenCurrency,
-          onSuccess: () =>
-            navigation.navigate(ScreenName.RequestAccountsSelectAccount, route.params),
-        },
-      });
-    }
-  }, [
-    currency,
-    navigation,
-    route.params,
-    llmNetworkBasedAddAccountFlow?.enabled,
-    navigateOnAddAccountSuccess,
-  ]);
+    navigation.navigate(NavigatorName.DeviceSelection, {
+      screen: ScreenName.SelectDevice,
+      params: {
+        currency:
+          currency.type === "TokenCurrency"
+            ? currency.parentCurrency
+            : (currency as CryptoCurrency),
+        context: AddAccountContexts.AddAccounts,
+        inline: true,
+        sourceScreenName: ScreenName.RequestAccountsSelectAccount,
+        onSuccess: navigateOnAddAccountSuccess,
+      },
+    });
+  }, [currency, navigation, navigateOnAddAccountSuccess]);
 
   const renderFooter = useCallback(
     () =>
@@ -169,11 +178,7 @@ function SelectAccount({ navigation, route }: Props) {
             type="primary"
             title={
               <Trans
-                i18nKey={
-                  llmNetworkBasedAddAccountFlow?.enabled
-                    ? "addAccounts.addNewOrExisting"
-                    : "requestAccount.selectAccount.addAccount"
-                }
+                i18nKey={"addAccounts.addNewOrExisting"}
                 values={{
                   currency: currency.name,
                 }}
@@ -183,7 +188,7 @@ function SelectAccount({ navigation, route }: Props) {
           />
         </View>
       ) : null,
-    [allowAddAccount, currency.name, onAddAccount, llmNetworkBasedAddAccountFlow?.enabled],
+    [allowAddAccount, currency.name, onAddAccount],
   );
 
   const renderList = useCallback(
@@ -272,4 +277,4 @@ const styles = StyleSheet.create({
     flexDirection: "row",
   },
 });
-export default SelectAccount;
+export default withDiscreetMode(SelectAccount);

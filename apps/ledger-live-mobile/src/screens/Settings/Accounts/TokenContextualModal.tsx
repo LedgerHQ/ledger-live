@@ -1,7 +1,8 @@
 import React, { useCallback, useState } from "react";
+import Animated, { useSharedValue, useAnimatedStyle, withTiming } from "react-native-reanimated";
 import { connect } from "react-redux";
 import type { TokenAccount, Account } from "@ledgerhq/types-live";
-import { View, StyleSheet } from "react-native";
+import { View, StyleSheet, LayoutChangeEvent } from "react-native";
 import { Trans, useTranslation } from "react-i18next";
 import { getAccountCurrency, getMainAccount } from "@ledgerhq/live-common/account/index";
 import {
@@ -17,7 +18,6 @@ import Button from "~/components/Button";
 import { parentAccountSelector } from "~/reducers/accounts";
 import ParentCurrencyIcon from "~/components/ParentCurrencyIcon";
 import BottomModalChoice from "~/components/BottomModalChoice";
-import { NavigatorName } from "~/const";
 import { StackNavigatorNavigation } from "~/components/RootNavigator/types/helpers";
 import { PortfolioNavigatorStackParamList } from "~/components/RootNavigator/types/PortfolioNavigator";
 import { State } from "~/reducers/types";
@@ -58,8 +58,26 @@ const TokenContextualModal = ({
     if (!account) return;
     blacklistToken(account.token.id);
     onCloseModal();
-    navigation.navigate(NavigatorName.WalletTab);
+    navigation.pop();
   }, [onCloseModal, blacklistToken, account, navigation]);
+
+  // UPGRADE-RN77:
+  // It should already be animated by the `react-native-modal` but currently `react-native-modal`
+  // is not maintained and its animation dependency too. The internal animation is flaky and not
+  // working properly on Android. So, we are using reanimated to enforce redraw after animation.
+  const sharedHeight = useSharedValue(0);
+  const onLayout = useCallback(
+    ({ nativeEvent: { layout } }: LayoutChangeEvent) => {
+      sharedHeight.value = withTiming(layout.height, { duration: 200 });
+    },
+    [sharedHeight],
+  );
+  const animatedStyle = useAnimatedStyle(
+    () => ({
+      height: sharedHeight.value ?? 0,
+    }),
+    [sharedHeight.value],
+  );
 
   if (!isOpened || !account) return null;
   const mainAccount = account ? getMainAccount(account, parentAccount) : null;
@@ -67,6 +85,7 @@ const TokenContextualModal = ({
   const url = explorerView
     ? getAccountContractExplorer(explorerView, account, parentAccount!)
     : null;
+
   return (
     <QueuedDrawer
       isRequestingToBeOpened={isOpened}
@@ -115,20 +134,22 @@ const TokenContextualModal = ({
           </View>
         </View>
       ) : (
-        <>
-          <BottomModalChoice
-            title={t("settings.accounts.hideTokenCTA")}
-            onPress={() => setShowConfirmation(true)}
-            iconName="EyeNone"
-          />
-          {url && (
+        <Animated.ScrollView style={animatedStyle}>
+          <Animated.View onLayout={onLayout}>
             <BottomModalChoice
-              title={t("settings.accounts.showContractCTA")}
-              onPress={() => setShowContract(true)}
-              iconName="News"
+              title={t("settings.accounts.hideTokenCTA")}
+              onPress={() => setShowConfirmation(true)}
+              iconName="EyeNone"
             />
-          )}
-        </>
+            {url && (
+              <BottomModalChoice
+                title={t("settings.accounts.showContractCTA")}
+                onPress={() => setShowContract(true)}
+                iconName="News"
+              />
+            )}
+          </Animated.View>
+        </Animated.ScrollView>
       )}
     </QueuedDrawer>
   );

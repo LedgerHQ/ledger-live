@@ -2,19 +2,16 @@ import { useCallback, useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import debounce from "lodash/debounce";
 import { useNavigation } from "@react-navigation/core";
-
 import { findCryptoCurrencyByKeyword } from "@ledgerhq/live-common/currencies/index";
-
 import { NavigatorName, ScreenName } from "~/const";
 import { track } from "~/analytics";
-
-import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { AssetSelectionNavigationProps, CommonParams } from "../../types";
 import { useGroupedCurrenciesByProvider } from "@ledgerhq/live-common/deposit/index";
-import { LoadingBasedGroupedCurrencies } from "@ledgerhq/live-common/deposit/type";
 import { AddAccountContexts } from "LLM/features/Accounts/screens/AddAccount/enums";
 import { AnalyticMetadata } from "LLM/hooks/useAnalytics/types";
 import { AnalyticPages } from "LLM/hooks/useAnalytics/enums";
+import { useAssets } from "./useAssets";
 
 type SelectCryptoViewModelProps = Pick<CommonParams, "context"> & {
   filterCurrencyIds?: string[];
@@ -32,19 +29,17 @@ export default function useSelectCryptoViewModel({
   path,
 }: SelectCryptoViewModelProps) {
   const { t } = useTranslation();
-  const filterCurrencyIdsSet = useMemo(
-    () => (filterCurrencyIds ? new Set(filterCurrencyIds) : null),
-    [filterCurrencyIds],
-  );
   const navigation = useNavigation<AssetSelectionNavigationProps["navigation"]>();
 
-  const { result, loadingStatus: providersLoadingStatus } = useGroupedCurrenciesByProvider(
-    true,
-  ) as LoadingBasedGroupedCurrencies;
+  const groupedCurrencies = useGroupedCurrenciesByProvider(true);
+  const { result, loadingStatus: providersLoadingStatus } =
+    "loadingStatus" in groupedCurrencies
+      ? groupedCurrencies
+      : { result: groupedCurrencies, loadingStatus: undefined };
   const { currenciesByProvider, sortedCryptoCurrencies } = result;
 
   const onPressItem = useCallback(
-    (curr: CryptoCurrency | TokenCurrency) => {
+    (curr: CryptoOrTokenCurrency) => {
       const clickMetadata = analyticsMetadata.AddAccountsSelectCrypto?.onAssetClick;
       if (clickMetadata)
         track(clickMetadata?.eventName, {
@@ -53,9 +48,7 @@ export default function useSelectCryptoViewModel({
         });
 
       const provider = currenciesByProvider.find(elem =>
-        elem.currenciesByNetwork.some(
-          currencyByNetwork => (currencyByNetwork as CryptoCurrency | TokenCurrency).id === curr.id,
-        ),
+        elem.currenciesByNetwork.some(currencyByNetwork => currencyByNetwork.id === curr.id),
       );
 
       // If the selected currency exists on multiple networks we redirect to the SelectNetwork screen
@@ -111,13 +104,6 @@ export default function useSelectCryptoViewModel({
       });
   }, 1500);
 
-  const list = useMemo(
-    () =>
-      filterCurrencyIdsSet
-        ? sortedCryptoCurrencies.filter(crypto => filterCurrencyIdsSet.has(crypto.id))
-        : sortedCryptoCurrencies,
-    [filterCurrencyIdsSet, sortedCryptoCurrencies],
-  );
   const { titleText, titleTestId } = useMemo(() => {
     switch (context) {
       case AddAccountContexts.AddAccounts:
@@ -135,10 +121,29 @@ export default function useSelectCryptoViewModel({
     }
   }, [context, t]);
 
+  // This fix an issue we had with provider of crypto.
+  // As we have it for the MAD I use the same hook
+  // In the future the MAD will replace this so it's fine to do it this way
+  const filterCurrencyIdsSet = useMemo(
+    () => (filterCurrencyIds ? new Set(filterCurrencyIds) : null),
+    [filterCurrencyIds],
+  );
+
+  const filteredCurrencies = useMemo(() => {
+    if (!filterCurrencyIdsSet) return sortedCryptoCurrencies;
+    return sortedCryptoCurrencies.filter(currency => filterCurrencyIdsSet.has(currency.id));
+  }, [sortedCryptoCurrencies, filterCurrencyIdsSet]);
+
+  const { availableAssets } = useAssets(
+    filteredCurrencies,
+    currenciesByProvider,
+    sortedCryptoCurrencies,
+  );
+
   return {
     titleText,
     titleTestId,
-    list,
+    list: availableAssets,
     debounceTrackOnSearchChange,
     onPressItem,
     providersLoadingStatus,

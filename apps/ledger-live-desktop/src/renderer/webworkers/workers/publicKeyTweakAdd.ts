@@ -18,8 +18,16 @@ function uint8ArrayToHex(arr: Uint8Array) {
   return hex;
 }
 
-onmessage = (e: MessageEvent<{ publicKey: string; tweak: string; id: string }>) => {
+onmessage = (e: MessageEvent<{ publicKey?: string; tweak?: string; id: string }>) => {
   const { publicKey, tweak, id } = e.data;
+
+  // Simple ping-pong test if no parameters provided
+  if (!publicKey || !tweak) {
+    postMessage({ response: "pong", id });
+    return;
+  }
+
+  // Normal publicKeyTweakAdd operation
   getSecp256k1Instance()
     .publicKeyTweakAdd(hexToUint8Array(publicKey), hexToUint8Array(tweak))
     .then((r: Uint8Array) => {
@@ -27,5 +35,7 @@ onmessage = (e: MessageEvent<{ publicKey: string; tweak: string; id: string }>) 
     })
     .catch((e: unknown) => {
       console.error(e);
+      const errorMessage = e instanceof Error ? e.message : String(e);
+      postMessage({ error: errorMessage, id });
     });
 };

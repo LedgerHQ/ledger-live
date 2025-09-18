@@ -1,7 +1,7 @@
 import invariant from "invariant";
 import type Transport from "@ledgerhq/hw-transport";
-import type { Transaction } from "./types";
-import { MAX_SCRIPT_BLOCK } from "./constants";
+import type { OrchardData, SaplingData, Transaction } from "./types";
+import { MAX_SCRIPT_BLOCK, zCashEncCiphertextSize } from "./constants";
 import { createVarint } from "./varint";
 export async function getTrustedInputRaw(
   transport: Transport,
@@ -100,7 +100,6 @@ export async function getTrustedInput(
       ? processWholeScriptBlock(Buffer.concat([input.script, input.sequence]))
       : processScriptBlocks(input.script, input.sequence));
   }
-
   await getTrustedInputRaw(transport, createVarint(outputs.length));
 
   for (const output of outputs) {
@@ -111,6 +110,24 @@ export async function getTrustedInput(
       output.script,
     ]);
     await getTrustedInputRaw(transport, data);
+  }
+
+  if (isZcash) {
+    const data = Buffer.concat([
+      createVarint(transaction.sapling?.vSpendsSapling.length || 0),
+      createVarint(transaction.sapling?.vOutputSapling.length || 0),
+      createVarint(transaction.orchard?.vActions.length || 0),
+    ]);
+
+    await getTrustedInputRaw(transport, data);
+
+    if (transaction.sapling) {
+      await sendSapling(transport, transaction.sapling);
+    }
+
+    if (transaction.orchard) {
+      await sendOrchard(transport, transaction.orchard);
+    }
   }
 
   const endData: Buffer[] = [];
@@ -133,4 +150,86 @@ export async function getTrustedInput(
   const res = await processScriptBlocks(Buffer.concat([locktime, extraPart || Buffer.alloc(0)]));
   invariant(res, "missing result in processScriptBlocks");
   return res;
+}
+
+export async function sendSapling(transport: Transport, sapling: SaplingData): Promise<void> {
+  const saplingData = Buffer.concat([sapling.valueBalanceSapling, sapling.anchorSapling]);
+  await getTrustedInputRaw(transport, saplingData);
+  // send spends
+  for (const spend of sapling.vSpendsSapling) {
+    const spendData = Buffer.concat([spend.cv, spend.nullifier, spend.rk]);
+
+    await getTrustedInputRaw(transport, spendData);
+  }
+  for (const output of sapling.vOutputSapling) {
+    const outputData = Buffer.concat([
+      output.cmu,
+      output.ephemeralKey,
+      output.encCiphertext.slice(0, 52), // https://zips.z.cash/zip-0244
+    ]);
+
+    await getTrustedInputRaw(transport, outputData);
+  }
+  // send outputs memo
+  for (const output of sapling.vOutputSapling) {
+    // Send memo and noncompact ciphertext in 128-byte blocks
+    // https://zips.z.cash/zip-0244
+    for (let i = 0; i < 4; i++) {
+      const start = 52 + i * 128;
+      const end = start + 128;
+      const outputData = Buffer.concat([output.encCiphertext.slice(start, end)]);
+
+      await getTrustedInputRaw(transport, outputData);
+    }
+  }
+  // send outputs noncompact
+  for (const output of sapling.vOutputSapling) {
+    const outputData = Buffer.concat([
+      output.cv,
+      output.encCiphertext.slice(564, zCashEncCiphertextSize), // https://zips.z.cash/zip-0244
+      output.outCiphertext,
+    ]);
+    await getTrustedInputRaw(transport, outputData);
+  }
+}
+
+export async function sendOrchard(transport: Transport, orchard: OrchardData): Promise<void> {
+  // compact digest data
+  for (const action of orchard.vActions) {
+    const actionData = Buffer.concat([
+      action.nullifier,
+      action.cmx,
+      action.ephemeralKey,
+      action.encCiphertext.slice(0, 52), // https://zips.z.cash/zip-0244
+    ]);
+
+    await getTrustedInputRaw(transport, actionData);
+  }
+  // memo digest data
+  for (const action of orchard.vActions) {
+    // Send memo and noncompact ciphertext in 128-byte blocks
+    // https://zips.z.cash/zip-0244
+    for (let i = 0; i < 4; i++) {
+      const start = 52 + i * 128;
+      const end = start + 128;
+      const outputData = Buffer.concat([action.encCiphertext.slice(start, end)]);
+
+      await getTrustedInputRaw(transport, outputData);
+    }
+  }
+  // noncompact
+  for (const action of orchard.vActions) {
+    const actionData = Buffer.concat([
+      action.cv,
+      action.rk,
+      action.encCiphertext.slice(564, zCashEncCiphertextSize), // https://zips.z.cash/zip-0244
+      action.outCiphertext,
+    ]);
+
+    await getTrustedInputRaw(transport, actionData);
+  }
+
+  const orchardData = Buffer.concat([orchard.flags, orchard.valueBalance, orchard.anchor]);
+
+  await getTrustedInputRaw(transport, orchardData);
 }

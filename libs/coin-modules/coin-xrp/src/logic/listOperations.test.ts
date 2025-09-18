@@ -3,7 +3,6 @@ import { listOperations } from "./listOperations";
 import { RIPPLE_EPOCH } from "./utils";
 import { Marker } from "../network/types";
 import { Operation } from "@ledgerhq/coin-framework/api/types";
-import { XrpAsset } from "../types";
 
 const maxHeight = 2;
 const minHeight = 1;
@@ -42,7 +41,7 @@ describe("listOperations", () => {
     // Given
     mockNetworkGetTransactions.mockResolvedValue(mockNetworkTxs([]));
     // When
-    const [results, token] = await listOperations("any address", { minHeight: 0 });
+    const [results, token] = await listOperations("any address", { minHeight: 0, order: "asc" });
     // Then
     expect(mockGetServerInfos).toHaveBeenCalledTimes(1);
     expect(mockNetworkGetTransactions).toHaveBeenCalledTimes(1);
@@ -147,7 +146,7 @@ describe("listOperations", () => {
     async ({ address, opSender, opDestination, expectedType }) => {
       // Given
       const deliveredAmount = 100;
-      const fee = 10;
+      const fees = 10;
       mockNetworkGetTransactions.mockResolvedValue(
         mockNetworkTxs([
           {
@@ -157,7 +156,7 @@ describe("listOperations", () => {
             meta: { delivered_amount: deliveredAmount.toString() },
             tx_json: {
               TransactionType: "Payment",
-              Fee: fee.toString(),
+              Fee: fees.toString(),
               ledger_index: 1,
               date: 1000,
               Account: opSender,
@@ -173,7 +172,7 @@ describe("listOperations", () => {
             meta: { delivered_amount: deliveredAmount.toString() },
             tx_json: {
               TransactionType: "Payment",
-              Fee: fee.toString(),
+              Fee: fees.toString(),
               ledger_index: 1,
               date: 1000,
               Account: opSender,
@@ -190,7 +189,7 @@ describe("listOperations", () => {
             meta: { delivered_amount: deliveredAmount.toString() },
             tx_json: {
               TransactionType: "Payment",
-              Fee: fee.toString(),
+              Fee: fees.toString(),
               ledger_index: 1,
               date: 1000,
               Account: opSender,
@@ -216,13 +215,11 @@ describe("listOperations", () => {
       // Then
       expect(mockGetServerInfos).toHaveBeenCalledTimes(1);
       expect(mockNetworkGetTransactions).toHaveBeenCalledTimes(1);
-      // if expectedType is "OUT", compute value with fees (i.e. delivered_amount + Fee)
-      const expectedValue =
-        expectedType === "IN" ? BigInt(deliveredAmount) : BigInt(deliveredAmount + fee);
+      const expectedValue = BigInt(deliveredAmount);
       expect(results).toEqual([
         {
+          id: "HASH_VALUE",
           asset: { type: "native" },
-          operationIndex: 0,
           tx: {
             fees: BigInt(10),
             hash: "HASH_VALUE",
@@ -250,8 +247,8 @@ describe("listOperations", () => {
           },
         },
         {
+          id: "HASH_VALUE",
           asset: { type: "native" },
-          operationIndex: 0,
           tx: {
             hash: "HASH_VALUE",
             fees: BigInt(10),
@@ -274,6 +271,7 @@ describe("listOperations", () => {
           },
         },
         {
+          id: "HASH_VALUE",
           asset: { type: "native" },
           tx: {
             hash: "HASH_VALUE",
@@ -294,9 +292,8 @@ describe("listOperations", () => {
           value: expectedValue,
           senders: [opSender],
           recipients: [opDestination],
-          operationIndex: 0,
         },
-      ] satisfies Operation<XrpAsset>[]);
+      ] satisfies Operation[]);
     },
   );
 });

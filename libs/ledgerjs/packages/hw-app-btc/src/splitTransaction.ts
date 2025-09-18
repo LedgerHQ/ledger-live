@@ -1,7 +1,21 @@
 import { log } from "@ledgerhq/logs";
-import type { Transaction, TransactionInput, TransactionOutput } from "./types";
+import type {
+  Transaction,
+  TransactionInput,
+  TransactionOutput,
+  SaplingData,
+  SaplingSpendDescriptionV5,
+  SaplingOutputDescriptionV5,
+  OrchardAction,
+  OrchardData,
+} from "./types";
 import { getVarint } from "./varint";
 import { formatTransactionDebug } from "./debug";
+import {
+  zCashOutCiphertextSize,
+  zCashEncCiphertextSize,
+  zCashProofsSaplingSize,
+} from "./constants";
 
 export function splitTransaction(
   transactionHex: string,
@@ -101,6 +115,18 @@ export function splitTransaction(
     });
   }
 
+  let sapling: SaplingData | undefined;
+  let orchard: OrchardData | undefined;
+  if (hasExtraData) {
+    if (isZcashv5) {
+      ({ sapling, offset } = splitSaplingPart(transaction, offset));
+
+      ({ orchard, offset } = splitOrchardPart(transaction, offset));
+
+      extraData = transaction.subarray(offset);
+    }
+  }
+
   if (witness) {
     witnessScript = transaction.slice(offset, -4);
     locktime = transaction.slice(transaction.length - 4);
@@ -116,7 +142,9 @@ export function splitTransaction(
   }
 
   if (hasExtraData) {
-    extraData = transaction.slice(offset);
+    if (!isZcashv5) {
+      extraData = transaction.slice(offset);
+    }
   }
 
   //Get witnesses for Decred
@@ -154,7 +182,212 @@ export function splitTransaction(
     nVersionGroupId,
     nExpiryHeight,
     extraData,
+    sapling,
+    orchard,
   };
   log("btc", `splitTransaction ${transactionHex}:\n${formatTransactionDebug(t)}`);
   return t;
+}
+
+/**
+ * Splits the Sapling part of a Zcash v5 transaction buffer according to https://zips.z.cash/zip-0225
+ */
+function splitSaplingPart(
+  transaction: Buffer,
+  offset: number,
+): { sapling?: SaplingData; offset: number } {
+  let varint = getVarint(transaction, offset);
+  const nSpendsSapling = varint[0];
+  offset += varint[1];
+
+  const vSpendsSapling: SaplingSpendDescriptionV5[] = [];
+  for (let i = 0; i < nSpendsSapling; i++) {
+    const cv = transaction.slice(offset, offset + 32);
+    offset += 32;
+    const nullifier = transaction.slice(offset, offset + 32);
+    offset += 32;
+    const rk = transaction.slice(offset, offset + 32);
+    offset += 32;
+
+    vSpendsSapling.push({
+      cv,
+      nullifier,
+      rk,
+    } as SaplingSpendDescriptionV5);
+  }
+
+  varint = getVarint(transaction, offset);
+  const nOutputsSapling = varint[0];
+  offset += varint[1];
+  const vOutputSapling: SaplingOutputDescriptionV5[] = [];
+
+  for (let i = 0; i < nOutputsSapling; i++) {
+    const cv = transaction.slice(offset, offset + 32);
+
+    offset += 32;
+    const cmu = transaction.slice(offset, offset + 32);
+
+    offset += 32;
+    const ephemeralKey = transaction.slice(offset, offset + 32);
+    offset += 32;
+
+    const encCiphertext = transaction.slice(offset, offset + zCashEncCiphertextSize);
+    offset += zCashEncCiphertextSize;
+
+    const outCiphertext = transaction.slice(offset, offset + zCashOutCiphertextSize);
+    offset += zCashOutCiphertextSize;
+
+    vOutputSapling.push({
+      cv,
+      cmu,
+      ephemeralKey,
+      encCiphertext,
+      outCiphertext,
+    } as SaplingOutputDescriptionV5);
+  }
+
+  let valueBalanceSapling = Buffer.alloc(0);
+  if (nSpendsSapling + nOutputsSapling > 0) {
+    valueBalanceSapling = transaction.slice(offset, offset + 8);
+    offset += 8;
+  }
+
+  let anchorSapling = Buffer.alloc(0);
+  if (nSpendsSapling > 0) {
+    anchorSapling = transaction.slice(offset, offset + 32);
+    offset += 32;
+  }
+
+  let vSpendProofsSapling = Buffer.alloc(0);
+  let vSpendAuthSigsSapling = Buffer.alloc(0);
+  if (nSpendsSapling > 0) {
+    vSpendProofsSapling = transaction.slice(
+      offset,
+      offset + zCashProofsSaplingSize * nSpendsSapling,
+    );
+    offset += zCashProofsSaplingSize * nSpendsSapling;
+
+    vSpendAuthSigsSapling = transaction.slice(offset, offset + 64 * nSpendsSapling);
+    offset += 64 * nSpendsSapling;
+  }
+
+  let vOutputProofsSapling = Buffer.alloc(0);
+  if (nOutputsSapling > 0) {
+    vOutputProofsSapling = transaction.slice(
+      offset,
+      offset + zCashProofsSaplingSize * nOutputsSapling,
+    );
+    offset += zCashProofsSaplingSize * nOutputsSapling;
+  }
+
+  let bindingSigSapling = Buffer.alloc(0);
+  if (nSpendsSapling + nOutputsSapling > 0) {
+    bindingSigSapling = transaction.slice(offset, offset + 64);
+    offset += 64;
+  }
+
+  let sapling: SaplingData | undefined;
+  if (nSpendsSapling + nOutputsSapling > 0) {
+    sapling = {
+      nSpendsSapling,
+      vSpendsSapling,
+      nOutputsSapling,
+      vOutputSapling,
+      valueBalanceSapling,
+      anchorSapling,
+      vSpendProofsSapling,
+      vSpendAuthSigsSapling,
+      vOutputProofsSapling,
+      bindingSigSapling,
+    } as SaplingData;
+  }
+
+  return { sapling, offset };
+}
+
+/**
+ * Splits the Orchard part of a Zcash v5 transaction buffer according to https://zips.z.cash/zip-0225
+ */
+function splitOrchardPart(
+  transaction: Buffer,
+  offset: number,
+): { orchard?: OrchardData; offset: number } {
+  // orchard
+  let varint = getVarint(transaction, offset);
+  const nActionsOrchard = varint[0];
+  offset += varint[1];
+
+  let orchard: OrchardData | undefined;
+  if (nActionsOrchard > 0) {
+    const actionsOrchard: OrchardAction[] = [];
+
+    for (let i = 0; i < nActionsOrchard; i++) {
+      const cv = transaction.subarray(offset, offset + 32);
+      offset += 32;
+      const nullifier = transaction.subarray(offset, offset + 32);
+      offset += 32;
+      const rk = transaction.subarray(offset, offset + 32);
+      offset += 32;
+      const cmx = transaction.subarray(offset, offset + 32);
+      offset += 32;
+      const ephemeralKey = transaction.subarray(offset, offset + 32);
+      offset += 32;
+      const encCiphertext = transaction.subarray(offset, offset + zCashEncCiphertextSize);
+      offset += zCashEncCiphertextSize;
+      const outCiphertext = transaction.subarray(offset, offset + zCashOutCiphertextSize);
+      offset += zCashOutCiphertextSize;
+
+      const action: OrchardAction = {
+        cv,
+        nullifier,
+        rk,
+        cmx,
+        ephemeralKey,
+        encCiphertext,
+        outCiphertext,
+      };
+
+      actionsOrchard.push(action);
+    }
+
+    // flag field
+    const flagsOrchard = transaction.subarray(offset, offset + 1);
+    offset += 1;
+    // value balance orchard
+    const valueBalanceOrchard = transaction.subarray(offset, offset + 8);
+    offset += 8;
+
+    const anchorOrchard = transaction.subarray(offset, offset + 32);
+    offset += 32;
+
+    // read the size of proof
+    varint = getVarint(transaction, offset);
+    const sizeProofsOrchard = transaction.subarray(offset, offset + varint[1]);
+    offset += varint[1];
+
+    // proof field
+    const proofsOrchard = transaction.subarray(offset, offset + varint[0]);
+    offset += varint[0];
+
+    // vSpendAuthSigsOrchard field
+    const vSpendAuthSigsOrchard = transaction.subarray(offset, offset + nActionsOrchard * 64);
+    offset += nActionsOrchard * 64;
+
+    // bindingSigOrchard
+    const bindingSigOrchard = transaction.subarray(offset, offset + 64);
+    offset += 64;
+
+    orchard = {
+      vActions: actionsOrchard,
+      flags: flagsOrchard,
+      valueBalance: valueBalanceOrchard,
+      anchor: anchorOrchard,
+      sizeProofs: sizeProofsOrchard,
+      proofs: proofsOrchard,
+      vSpendsAuthSigs: vSpendAuthSigsOrchard,
+      bindingSig: bindingSigOrchard,
+    } as OrchardData;
+  }
+
+  return { orchard, offset };
 }

@@ -1,16 +1,17 @@
 import BigNumber from "bignumber.js";
 import Prando from "prando";
 import { Operation } from "@ledgerhq/types-live";
-import { getCryptoCurrencyById, getTokenById } from "@ledgerhq/cryptoassets/index";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/index";
 import { genAccount, genOperation, genTokenAccount } from "./mocks/account";
 import { isAddressPoisoningOperation, isOldestPendingOperation } from "./operation";
+import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 
 const ethereum = getCryptoCurrencyById("ethereum");
-const usdc = getTokenById("ethereum/erc20/usd__coin");
+// eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+const usdc = { parentCurrency: { family: "evm" } } as TokenCurrency;
 const cardano = getCryptoCurrencyById("cardano");
-const lobster = getTokenById(
-  "cardano/native/8654e8b350e298c80d2451beb5ed80fc9eee9f38ce6b039fb8706bc34c4f4253544552",
-);
+// eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+const lobster = { parentCurrency: { family: "cardano" } } as TokenCurrency;
 
 describe("Operation.ts", () => {
   describe("isPoisoningAddressOperation", () => {
@@ -131,6 +132,31 @@ describe("Operation.ts", () => {
       };
 
       expect(isOldestPendingOperation(testAccount, 1)).toBe(false);
+    });
+
+    it("should throw if a pending operation is missing transactionSequenceNumber", () => {
+      const malformedOp = {
+        ...pendingCoinOperation0,
+        transactionSequenceNumber: undefined,
+      } as Operation;
+
+      const testAccount = {
+        ...account,
+        pendingOperations: [malformedOp],
+      };
+
+      expect(() => isOldestPendingOperation(testAccount, 0)).toThrow(
+        "transactionSequenceNumber required",
+      );
+    });
+
+    it("should still return true when pending operations are out of order", () => {
+      const testAccount = {
+        ...account,
+        pendingOperations: [pendingCoinOperation2, pendingCoinOperation0],
+      };
+
+      expect(isOldestPendingOperation(testAccount, 0)).toBe(true);
     });
   });
 });

@@ -1,0 +1,151 @@
+name: "[Coin] - Coin Tester - Scheduled"
+
+on:
+  schedule:
+    - cron: "9 16 * * 1-5"
+
+  pull_request:
+    branches-ignore:
+      - "smartling-content-updated**"
+      - "smartling-translation-completed**"
+  workflow_dispatch:
+    inputs:
+      chain:
+        description: "Coin family to test, separated by commas (,)"
+        required: false
+        default: ""
+
+permissions:
+  id-token: write
+  contents: read
+
+env:
+  COIN_TESTER_CURRENCIES: "evm polkadot solana"
+
+jobs:
+  is-affected:
+    runs-on: ubuntu-22.04
+    outputs:
+      is-affected: ${{ steps.detect.outputs.is-affected }}
+      matrix: ${{ steps.detect.outputs.matrix }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: develop
+          fetch-depth: 0
+
+      - name: Checkout PR
+        if: ${{ github.event_name == 'pull_request' }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh pr checkout ${{ github.event.pull_request.number }}
+
+      - name: Checkout push/ref
+        if: ${{ github.event_name != 'pull_request' }}
+        run: git checkout $GITHUB_SHA
+
+      - name: Run live-common-affected
+        uses: LedgerHQ/ledger-live/tools/actions/live-common-affected@develop
+        id: affected
+        with:
+          ref: ${{ github.event_name == 'pull_request' && format('origin/{0}', github.event.pull_request.base.ref) || 'HEAD^' }}
+
+      - name: Build matrix from affected paths or manual input
+        id: detect
+        run: |
+          if [ -n "${{ github.event.inputs.chain }}" ]; then
+            # If user provided a manual list of chains, use that directly
+            IFS=',' read -ra CHAINS <<< "${{ github.event.inputs.chain }}"
+            MATRIX_CHAINS=()
+            for chain in "${CHAINS[@]}"; do
+                MATRIX_CHAINS+=("\"$(echo $chain | xargs)\"")
+            done
+            echo "matrix={\"chain\":[${MATRIX_CHAINS[*]}]}" >> $GITHUB_OUTPUT
+            echo "is-affected=true" >> $GITHUB_OUTPUT
+            else
+            # Fallback to checking affected paths
+            CHAINS=()
+            for coin in $COIN_TESTER_CURRENCIES; do
+                if echo "${{ steps.affected.outputs.paths }}" | grep -q "$coin"; then
+                  CHAINS+=("$coin")
+                fi
+            done
+            # If it's a scheduled job and no chain is detected, run all chains by default
+            if [ "${{ github.event_name }}" == "schedule" ] && [ ${#CHAINS[@]} -eq 0 ]; then
+              for coin in $COIN_TESTER_CURRENCIES; do
+                CHAINS+=("$coin")
+              done
+              echo "Running all chains by default on schedule: ${CHAINS[*]}"
+              CHAIN_JSON=$(printf '%s\n' "${CHAINS[@]}" | jq -R . | jq -cs '{chain: .}')
+              echo "matrix=${CHAIN_JSON}" >> "$GITHUB_OUTPUT"
+              echo "is-affected=true" >> $GITHUB_OUTPUT
+            elif [ ${#CHAINS[@]} -eq 0 ]; then
+                echo "matrix={\"chain\":[]}" >> $GITHUB_OUTPUT
+                echo "is-affected=false" >> $GITHUB_OUTPUT
+            else
+                CHAIN_JSON=$(printf '%s\n' "${CHAINS[@]}" | jq -R . | jq -cs '{chain: .}')
+                echo "matrix=${CHAIN_JSON}" >> "$GITHUB_OUTPUT"
+                echo "is-affected=true" >> $GITHUB_OUTPUT
+            fi
+          fi
+
+      - name: Debug affected paths (for troubleshooting)
+        run: |
+          echo "Affected paths: ${{ steps.affected.outputs.paths }}"
+          echo "Is affected: ${{ steps.detect.outputs.is-affected }}"
+          echo "Matrix: ${{ steps.detect.outputs.matrix }}"
+
+  coin-tester:
+    name: Coin Tester - ${{ matrix.chain }}
+    needs: is-affected
+    if: ${{ needs.is-affected.outputs.is-affected == 'true' }}
+    runs-on: ubuntu-22.04
+    continue-on-error: true
+
+    strategy:
+      matrix:
+        chain: ${{ fromJson(needs.is-affected.outputs.matrix).chain }}
+
+    env:
+      SEED: chronic find success crew board merit elder life achieve scout gravity soul brief pen job
+      SPECULOS_API_PORT: 4040
+      SPECULOS_IMAGE: speculos
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup the caches
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        with:
+          install-proto: true
+          skip-turbo-cache: "false"
+          accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
+          roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
+          region: ${{ secrets.AWS_CACHE_REGION }}
+          turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
+
+      - name: Generate token
+        id: generate-token
+        uses: tibdex/github-app-token@v1
+        with:
+          app_id: ${{ secrets.GH_BOT_APP_ID }}
+          private_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
+
+      - name: Checkout coin-apps
+        uses: actions/checkout@v4
+        with:
+          ref: generated/ledger-live-bot
+          repository: LedgerHQ/coin-apps
+          token: ${{ steps.generate-token.outputs.token }}
+          path: coin-apps
+
+      - name: Setup environment
+        uses: ./tools/actions/composites/setup-coin-tester-env
+
+      - name: Run Coin Tester
+        uses: ./tools/actions/composites/run-coin-tester
+        with:
+          chain: ${{ matrix.chain }}
+        env:
+          GH_TOKEN: ${{ steps.generate-token.outputs.token }}

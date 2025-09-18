@@ -3,7 +3,7 @@ import { Observable, Subscription } from "rxjs";
 import { NativeModules, Platform } from "react-native";
 import Config from "react-native-config";
 import getBLETransport from "~/react-native-hw-transport-ble";
-import { useLdmkFeatureEnabled } from "@ledgerhq/live-dmk-mobile";
+import { useDeviceManagementKitEnabled } from "@ledgerhq/live-dmk-mobile";
 
 const { BluetoothHelperModule } = NativeModules;
 
@@ -93,7 +93,7 @@ export function useEnableBluetooth(
 ) {
   const [observedTransportState, setObservedTransportState] = useState<string>("Unknown");
 
-  const isLDMKEnabled = useLdmkFeatureEnabled();
+  const isLDMKEnabled = useDeviceManagementKitEnabled();
 
   const promptBluetoothCallback = usePromptEnableBluetoothCallback();
 

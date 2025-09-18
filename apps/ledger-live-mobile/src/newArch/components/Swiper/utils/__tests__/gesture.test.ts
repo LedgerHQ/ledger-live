@@ -2,6 +2,15 @@ import { resetGesture, handleGesture, canSwipe } from "../gesture";
 import { GestureParams } from "../../types";
 import { SwipeDirection } from "../../enums";
 
+// Mock withSpring to return the target value instead of animation object
+jest.mock("react-native-reanimated", () => {
+  const actualReanimated = jest.requireActual("react-native-reanimated");
+  return {
+    ...actualReanimated,
+    withSpring: jest.fn(value => value),
+  };
+});
+
 describe("gesture utilities", () => {
   describe("resetGesture", () => {
     it("resets swipeX and swipeY values to 0", () => {

@@ -7,9 +7,7 @@ import {
   ImageSizeLoadingError,
   ImageTooLargeError,
 } from "@ledgerhq/live-common/customImage/errors";
-import { NFTMediaSize, NFTMetadata } from "@ledgerhq/types-live";
 import { ImageDimensions, ImageFileUri, ImageUrl } from "./types";
-import { getMetadataMediaTypes } from "../../logic/nft";
 
 /**
  * Call this to prompt the user to pick an image from its phone.
@@ -58,20 +56,6 @@ export async function importImageFromPhoneGallery(): Promise<ImageFileUri | null
   }
 }
 
-export function extractImageUrlFromNftMetadata(nftMetadata?: NFTMetadata): string | null {
-  if (nftMetadata?.staxImage) {
-    return nftMetadata?.staxImage;
-  }
-
-  const nftMediaTypes = nftMetadata ? getMetadataMediaTypes(nftMetadata) : null;
-  const nftMediaSize = nftMediaTypes
-    ? (["big", "preview"] as NFTMediaSize[]).find(size => nftMediaTypes[size] === "image")
-    : null;
-  const nftImageUri = nftMediaSize && nftMetadata?.medias?.[nftMediaSize]?.uri;
-
-  return nftImageUri || null;
-}
-
 type CancellablePromise<T> = {
   cancel: () => void;
   resultPromise: Promise<T>;
@@ -87,28 +71,6 @@ export function downloadImageToFile({ imageUrl }: ImageUrl): CancellablePromise<
         throw new ImageDownloadError();
       }),
     cancel: downloadTask.cancel,
-  };
-}
-
-export function downloadImageToFileWithDimensions(
-  source: ImageUrl,
-): CancellablePromise<ImageFileUri & Partial<ImageDimensions>> {
-  const { imageUrl } = source;
-  const { resultPromise, cancel } = downloadImageToFile({
-    imageUrl,
-  });
-  return {
-    resultPromise: Promise.all([loadImageSizeAsync(imageUrl), resultPromise])
-      .then(([dims, { imageFileUri }]) => ({
-        width: dims.width,
-        height: dims.height,
-        imageFileUri,
-      }))
-      .catch(e => {
-        cancel();
-        throw e;
-      }),
-    cancel,
   };
 }
 
@@ -174,12 +136,5 @@ export function fitImageContain(
   return {
     width: (imageWidth / imageHeight) * boxHeight,
     height: boxHeight,
-  };
-}
-
-export function scaleDimensions(dimensions: ImageDimensions, scale: number) {
-  return {
-    width: dimensions.width * scale,
-    height: dimensions.height * scale,
   };
 }

@@ -24,6 +24,9 @@ import Words from "../components/Words";
 import type { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { CeloRevokeFlowFlowParamList } from "./types";
 import { useAccountUnit } from "~/hooks/useAccountUnit";
+import LText from "~/components/LText";
+import TranslatedError from "~/components/TranslatedError";
+import SupportLinkError from "~/components/SupportLinkError";
 
 type Props = BaseComposite<
   StackNavigatorProps<CeloRevokeFlowFlowParamList, ScreenName.CeloRevokeSummary>
@@ -149,6 +152,17 @@ export default function RevokeSummary({ navigation, route }: Props) {
             amount={transaction.amount}
           />
         </View>
+        {status.errors.sender && (
+          <View>
+            <LText style={[styles.fieldStatus]} color="alert" numberOfLines={5}>
+              <TranslatedError error={status.errors.sender} />
+            </LText>
+            <LText style={[styles.fieldStatus]} color="alert" numberOfLines={5}>
+              <TranslatedError error={status.errors.sender} field="description" />
+            </LText>
+            <SupportLinkError error={status.errors.sender} type="alert" />
+          </View>
+        )}
       </View>
       <View style={styles.footer}>
         <Button
@@ -195,6 +209,10 @@ const styles = StyleSheet.create({
   continueButton: {
     alignSelf: "stretch",
     marginTop: 12,
+  },
+  fieldStatus: {
+    fontSize: 14,
+    textAlign: "center",
   },
 });
 

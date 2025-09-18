@@ -3,7 +3,6 @@ import styled from "styled-components";
 import noop from "lodash/noop";
 import { decodeURIScheme } from "@ledgerhq/live-common/currencies/index";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { RecipientRequired } from "@ledgerhq/errors";
 import { radii } from "~/renderer/styles/theme";
 import QRCodeCameraPickerCanvas from "~/renderer/components/QRCodeCameraPickerCanvas";
 import Box from "~/renderer/components/Box";
@@ -49,7 +48,7 @@ type Props = {
   placeholder: string;
   autoFocus: boolean | undefined;
   readOnly: boolean | undefined;
-  error: typeof RecipientRequired | null;
+  error: Error | null;
   warning: Error;
   value: string;
   id: string;
@@ -113,7 +112,7 @@ class RecipientAddress extends PureComponent<Props, State> {
       <Box relative justifyContent="center">
         <Input
           {...rest}
-          error={error as unknown as Error}
+          error={error}
           spellCheck={false}
           value={value}
           onChange={preOnChange}

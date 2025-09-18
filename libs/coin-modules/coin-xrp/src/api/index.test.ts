@@ -1,8 +1,8 @@
 import { Operation, TransactionIntent } from "@ledgerhq/coin-framework/api/types";
 import * as LogicFunctions from "../logic";
 import { GetTransactionsOptions } from "../network";
-import { NetworkInfo, XrpAsset } from "../types";
-import { createApi, TransactionIntentExtra } from "./index";
+import { NetworkInfo, XrpMapMemo } from "../types";
+import { createApi } from "./index";
 
 const mockGetServerInfos = jest.fn().mockResolvedValue({
   info: {
@@ -106,14 +106,13 @@ describe("listOperations", () => {
     const txs = givenTxs(BigInt(10), BigInt(10), "src", "dest");
     // each time it's called it returns a marker, so in theory it would loop forever
     mockGetTransactions.mockResolvedValue(mockNetworkTxs(txs, defaultMarker));
-    const [results, _] = await api.listOperations("src", { minHeight: 0 });
+    const [results, _] = await api.listOperations("src", { minHeight: 0, order: "asc" });
 
-    // called 10 times because there is a hard limit of 10 iterations in case something goes wrong
-    // with interpretation of the token (bug / explorer api changed ...)
-    expect(mockGetServerInfos).toHaveBeenCalledTimes(10);
-    expect(mockGetTransactions).toHaveBeenCalledTimes(10);
+    // called 1 times because the client is expected to do the pagination itself
+    expect(mockGetServerInfos).toHaveBeenCalledTimes(1);
+    expect(mockGetTransactions).toHaveBeenCalledTimes(1);
 
-    expect(results.length).toBe(txs.length * 10);
+    expect(results.length).toBe(txs.length);
   });
 
   it("should pass the token returned by previous calls", async () => {
@@ -122,11 +121,10 @@ describe("listOperations", () => {
       .mockReturnValueOnce(mockNetworkTxs(txs, defaultMarker))
       .mockReturnValueOnce(mockNetworkTxs(txs, undefined));
 
-    const [results, _] = await api.listOperations("src", { minHeight: 0 });
+    const [results, token] = await api.listOperations("src", { minHeight: 0, order: "asc" });
 
-    // called 2 times because the second time there is no marker
-    expect(mockGetServerInfos).toHaveBeenCalledTimes(2);
-    expect(mockGetTransactions).toHaveBeenCalledTimes(2);
+    expect(mockGetServerInfos).toHaveBeenCalledTimes(1);
+    expect(mockGetTransactions).toHaveBeenCalledTimes(1);
 
     // check tokens are passed
     const baseOptions = {
@@ -135,13 +133,14 @@ describe("listOperations", () => {
       forward: true,
     };
     expect(mockGetTransactions).toHaveBeenNthCalledWith(1, "src", baseOptions);
+    await api.listOperations("src", { minHeight: 0, order: "asc", lastPagingToken: token });
     const optionsWithToken = {
       ...baseOptions,
       marker: defaultMarker,
     };
     expect(mockGetTransactions).toHaveBeenNthCalledWith(2, "src", optionsWithToken);
 
-    expect(results.length).toBe(txs.length * 2);
+    expect(results.length).toBe(txs.length);
   });
 
   it.each([
@@ -171,20 +170,17 @@ describe("listOperations", () => {
       mockGetTransactions.mockResolvedValue(mockNetworkTxs([], undefined));
 
       // When
-      const [results, _] = await api.listOperations(address, { minHeight: 0 });
+      const [results, _] = await api.listOperations(address, { minHeight: 0, order: "asc" });
 
       // Then
-      // called twice because the marker is set the first time
-      expect(mockGetServerInfos).toHaveBeenCalledTimes(2);
-      expect(mockGetTransactions).toHaveBeenCalledTimes(2);
+      expect(mockGetServerInfos).toHaveBeenCalledTimes(1);
+      expect(mockGetTransactions).toHaveBeenCalledTimes(1);
 
-      // if expectedType is "OUT", compute value with fees (i.e. delivered_amount + Fee)
-      const expectedValue = expectedType === "IN" ? deliveredAmount : deliveredAmount + fee;
       // the order is reversed so that the result is always sorted by newest tx first element of the list
       expect(results).toEqual([
         {
+          id: "HASH_VALUE",
           asset: { type: "native" },
-          operationIndex: 0,
           tx: {
             hash: "HASH_VALUE",
             fees: fee,
@@ -196,7 +192,7 @@ describe("listOperations", () => {
             },
           },
           type: expectedType,
-          value: expectedValue,
+          value: deliveredAmount,
           senders: [opSender],
           recipients: [opDestination],
           details: {
@@ -211,8 +207,8 @@ describe("listOperations", () => {
           },
         },
         {
+          id: "HASH_VALUE",
           asset: { type: "native" },
-          operationIndex: 0,
           tx: {
             hash: "HASH_VALUE",
             fees: fee,
@@ -224,7 +220,7 @@ describe("listOperations", () => {
             },
           },
           type: expectedType,
-          value: expectedValue,
+          value: deliveredAmount,
           senders: [opSender],
           recipients: [opDestination],
           details: {
@@ -234,8 +230,8 @@ describe("listOperations", () => {
           },
         },
         {
+          id: "HASH_VALUE",
           asset: { type: "native" },
-          operationIndex: 0,
           tx: {
             hash: "HASH_VALUE",
             fees: fee,
@@ -247,7 +243,7 @@ describe("listOperations", () => {
             },
           },
           type: expectedType,
-          value: expectedValue,
+          value: deliveredAmount,
           senders: [opSender],
           recipients: [opDestination],
           details: {
@@ -255,7 +251,7 @@ describe("listOperations", () => {
             sequence: 1,
           },
         },
-      ] satisfies Operation<XrpAsset>[]);
+      ] satisfies Operation[]);
     },
   );
 });
@@ -277,57 +273,118 @@ describe("Testing craftTransaction function", () => {
     jest.spyOn(LogicFunctions, "estimateFees").mockImplementation(_networkInfo => {
       return Promise.resolve({
         networkInfo: {} as NetworkInfo,
-        fee: DEFAULT_ESTIMATED_FEES,
+        fees: DEFAULT_ESTIMATED_FEES,
       });
     });
   });
 
   it("should use custom user fees when user provides it for crafting a transaction", async () => {
     const customFees = 99n;
-    await api.craftTransaction({} as TransactionIntent<XrpAsset>, customFees);
+    await api.craftTransaction({ sender: "foo" } as TransactionIntent<XrpMapMemo>, {
+      value: customFees,
+    });
 
     expect(logicCraftTransactionSpy).toHaveBeenCalledWith(
       expect.any(Object),
       expect.objectContaining({
-        fee: customFees,
+        fees: customFees,
       }),
+      undefined,
     );
   });
 
   it("should use default fees when user does not provide them for crafting a transaction", async () => {
-    await api.craftTransaction({} as TransactionIntent<XrpAsset>);
+    await api.craftTransaction({ sender: "foo" } as TransactionIntent<XrpMapMemo>);
 
     expect(logicCraftTransactionSpy).toHaveBeenCalledWith(
       expect.any(Object),
       expect.objectContaining({
-        fee: DEFAULT_ESTIMATED_FEES,
+        fees: DEFAULT_ESTIMATED_FEES,
       }),
+      undefined,
+    );
+  });
+
+  it("should pass signing pub key when user provides it for crafting a transaction", async () => {
+    await api.craftTransaction({
+      sender: "foo",
+      senderPublicKey: "bar",
+    } as TransactionIntent<XrpMapMemo>);
+
+    expect(logicCraftTransactionSpy).toHaveBeenCalledWith(
+      expect.any(Object),
+      expect.any(Object),
+      "bar",
     );
   });
 
   it("should pass memos when user provides it for crafting a transaction", async () => {
     await api.craftTransaction({
-      memos: [{ data: "testdata", format: "testformat", type: "testtype" }],
-    } as TransactionIntent<XrpAsset, TransactionIntentExtra>);
+      sender: "foo",
+      memo: {
+        type: "map",
+        memos: new Map([["memos", ["testdata"]]]),
+      },
+    } as TransactionIntent<XrpMapMemo>);
 
     expect(logicCraftTransactionSpy).toHaveBeenCalledWith(
       expect.any(Object),
       expect.objectContaining({
-        memos: [{ data: "testdata", format: "testformat", type: "testtype" }],
+        // NOTE: before
+        // memos: [{ data: "testdata", format: "testformat", type: "testtype" }],
+        memos: [{ data: "testdata", type: "memo" }],
       }),
+      undefined,
+    );
+  });
+
+  it("should not pass memos when user does not provide it for crafting a transaction", async () => {
+    await api.craftTransaction({
+      sender: "foo",
+    } as TransactionIntent<XrpMapMemo>);
+
+    expect(logicCraftTransactionSpy).toHaveBeenCalledWith(
+      expect.any(Object),
+      expect.objectContaining({
+        memos: undefined,
+      }),
+      undefined,
+    );
+  });
+
+  it("should not pass memos when user provides an empty memo list it for crafting a transaction", async () => {
+    await api.craftTransaction({
+      sender: "foo",
+      memo: {
+        type: "map",
+        memos: new Map(),
+      },
+    } as TransactionIntent<XrpMapMemo>);
+
+    expect(logicCraftTransactionSpy).toHaveBeenCalledWith(
+      expect.any(Object),
+      expect.objectContaining({
+        memos: undefined,
+      }),
+      undefined,
     );
   });
 
   it("should pass destination tag when user provides it for crafting a transaction", async () => {
     await api.craftTransaction({
-      destinationTag: 1337,
-    } as TransactionIntent<XrpAsset, TransactionIntentExtra>);
+      sender: "foo",
+      memo: {
+        type: "map",
+        memos: new Map([["destinationTag", "1337"]]),
+      },
+    } as TransactionIntent<XrpMapMemo>);
 
     expect(logicCraftTransactionSpy).toHaveBeenCalledWith(
       expect.any(Object),
       expect.objectContaining({
-        destinationTag: 1337,
+        destinationTag: 1337, // logic should convert `value: string` -> `number`
       }),
+      undefined,
     );
   });
 });

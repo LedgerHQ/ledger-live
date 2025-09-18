@@ -72,14 +72,13 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        perspective: 2000px;
-        transition: opacity 0.5s 2s ease-out;
         opacity: 1;
         pointer-events: none;
         background-color: black;
       }
 
-      #loader-container.loaded {
+      #loader-container.fade-out {
+        transition: opacity 0.5s ease-out;
         opacity: 0;
       }
 
@@ -95,27 +94,17 @@
         height: 100%;
         width: 290px;
         top: 0;
-        transition: transform 1s cubic-bezier(0.8, 0.01, 0.2, 0.99);
         background-color: black;
-        will-change: transform;
       }
 
       #ledger-logo {
-        left: 0;
+        left: -130px; /* Final position - end of animation */
         z-index: 1;
       }
 
       #bracket-logo-container {
-        left: 43px;
+        left: 134px; /* Final position - end of animation (43px + 91px) */
         z-index: 2;
-      }
-
-      #loader-container.loaded #ledger-logo {
-        transform: translateX(-130px);
-      }
-
-      #loader-container.loaded #bracket-logo-container {
-        transform: translateX(91px);
       }
 
       #bracket-logo {

@@ -1,17 +1,9 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import {
-  StyleSheet,
-  SafeAreaView,
-  BackHandler,
-  Platform,
-  View,
-  TouchableOpacity,
-} from "react-native";
+import { StyleSheet, BackHandler, Platform, View, TouchableOpacity } from "react-native";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 
 import { Flex, Icon, Text } from "@ledgerhq/native-ui";
-import { AppManifest } from "@ledgerhq/live-common/wallet-api/types";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { safeGetRefValue } from "@ledgerhq/live-common/wallet-api/react";
 import { INTERNAL_APP_IDS } from "@ledgerhq/live-common/wallet-api/constants";
@@ -22,6 +14,7 @@ import storage from "LLM/storage";
 import { useNavigation } from "@react-navigation/native";
 
 import { useTheme } from "styled-components/native";
+import SafeAreaView from "~/components/SafeAreaView";
 
 import { flattenAccountsSelector } from "~/reducers/accounts";
 import { WebviewAPI, WebviewState } from "../Web3AppWebview/types";
@@ -36,9 +29,6 @@ import { Loading } from "../Loading";
 import { usePTXCustomHandlers } from "./CustomHandlers";
 
 type BackToInternalDomainProps = {
-  manifest: AppManifest;
-  webviewURL?: string;
-  lastMatchingURL?: string | null;
   config: {
     screen: ScreenName.ExchangeBuy | ScreenName.ExchangeSell | ScreenName.Card;
     navigator: NavigatorName.Exchange | NavigatorName.Card;
@@ -46,18 +36,11 @@ type BackToInternalDomainProps = {
   };
 };
 
-function BackToInternalDomain({
-  manifest,
-  webviewURL,
-  lastMatchingURL,
-  config,
-}: BackToInternalDomainProps) {
+function BackToInternalDomain({ config }: BackToInternalDomainProps) {
   const { t } = useTranslation();
   const { screen, navigator, btnText } = config;
   const navigation =
     useNavigation<RootNavigationComposite<StackNavigatorNavigation<BaseNavigatorStackParamList>>>();
-
-  const internalAppIds = useInternalAppIds() || INTERNAL_APP_IDS;
 
   const handleBackClick = async () => {
     const manifestId = (await storage.getString("manifest-id")) ?? "";
@@ -80,21 +63,17 @@ function BackToInternalDomain({
           referrer: "isExternal",
         },
       });
-    } else if (internalAppIds.includes(manifest.id) && lastMatchingURL && webviewURL) {
-      const currentHostname = new URL(webviewURL).hostname;
-      const url = new URL(lastMatchingURL);
-      const urlParams = new URLSearchParams(url.searchParams);
-      const flowName = urlParams.get("liveAppFlow")!;
-
-      track("button_clicked", {
-        button: flowName === "compare_providers" ? "back to quote" : "back to liveapp",
-        provider: currentHostname,
-        flow: flowName,
+    } else {
+      // We've lost our persisted state so go all the back home
+      navigation.getParent()?.navigate(NavigatorName.Base, {
+        screen: NavigatorName.Main,
       });
-
-      navigation.goBack();
     }
   };
+
+  const buttonLabel = useMemo(() => {
+    return t("common.backTo", { to: btnText });
+  }, [t, btnText]);
 
   return (
     <View style={styles.headerLeft}>
@@ -102,7 +81,7 @@ function BackToInternalDomain({
         <Flex alignItems="center" flexDirection="row" height={40}>
           <Icon name="ChevronLeft" color="neutral.c100" size={30} />
           <Text fontWeight="semiBold" fontSize={16} color="neutral.c100">
-            {t("common.backTo", { to: btnText })}
+            {buttonLabel}
           </Text>
         </Flex>
       </TouchableOpacity>
@@ -132,6 +111,11 @@ function HeaderRight({ softExit }: { softExit: boolean }) {
   );
 }
 
+export type InterstitialType = React.ComponentType<{
+  manifest: LiveAppManifest;
+  isLoading: boolean;
+}>;
+
 type Props = {
   manifest: LiveAppManifest;
   inputs?: Record<string, string | undefined>;
@@ -148,6 +132,7 @@ type Props = {
         btnText: string;
       };
   softExit?: boolean;
+  Interstitial?: InterstitialType;
 };
 
 export const WebPTXPlayer = ({
@@ -160,6 +145,7 @@ export const WebPTXPlayer = ({
     navigator: NavigatorName.Exchange,
   },
   softExit = false,
+  Interstitial,
 }: Props) => {
   const lastMatchingURL = useRef<string | null>(null);
   const webviewAPIRef = useRef<WebviewAPI>(null);
@@ -234,13 +220,15 @@ export const WebPTXPlayer = ({
     return false;
   }, [webviewState.canGoBack, webviewAPIRef]);
 
-  // eslint-disable-next-line consistent-return
   useEffect(() => {
     if (Platform.OS === "android") {
-      BackHandler.addEventListener("hardwareBackPress", handleHardwareBackPress);
+      const subscription = BackHandler.addEventListener(
+        "hardwareBackPress",
+        handleHardwareBackPress,
+      );
 
       return () => {
-        BackHandler.removeEventListener("hardwareBackPress", handleHardwareBackPress);
+        subscription.remove();
       };
     }
   }, [handleHardwareBackPress]);
@@ -263,42 +251,36 @@ export const WebPTXPlayer = ({
   useEffect(() => {
     if (!disableHeader) {
       navigation.setOptions({
-        headerRight: () => <HeaderRight softExit={softExit} />,
-        headerLeft: () =>
-          isInternalApp ? null : (
-            <BackToInternalDomain
-              manifest={manifest}
-              webviewURL={webviewState?.url}
-              lastMatchingURL={lastMatchingURL?.current}
-              config={config}
-            />
-          ),
+        headerRight: () => (isInternalApp ? null : <HeaderRight softExit={softExit} />),
+        headerLeft: () => (isInternalApp ? null : <BackToInternalDomain config={config} />),
         headerTitle: () => null,
+        headerShown: !isInternalApp,
       });
     }
   }, [config, disableHeader, isInternalApp, manifest, navigation, webviewState?.url, softExit]);
 
   const accounts = useSelector(flattenAccountsSelector);
   const customHandlers = usePTXCustomHandlers(manifest, accounts);
-
   return (
-    <SafeAreaView style={[styles.root]}>
+    <SafeAreaView edges={isInternalApp ? ["left", "right", "top"] : ["left", "right"]} isFlex>
       <Web3AppWebview
         ref={webviewAPIRef}
         manifest={manifest}
         inputs={inputs}
         onStateChange={setWebviewState}
         customHandlers={customHandlers}
+        Loader={PTXLoader}
       />
-      {webviewState.loading ? <Loading /> : null}
+      {Interstitial && <Interstitial manifest={manifest} isLoading={webviewState.loading} />}
     </SafeAreaView>
   );
 };
 
+const PTXLoader = () => {
+  return <Loading />;
+};
+
 const styles = StyleSheet.create({
-  root: {
-    flex: 1,
-  },
   headerLeft: {
     display: "flex",
     flexDirection: "row",

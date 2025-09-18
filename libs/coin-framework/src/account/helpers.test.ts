@@ -1,7 +1,6 @@
 import BigNumber from "bignumber.js";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import type { Account, Operation, TokenAccount } from "@ledgerhq/types-live";
-import { getTokenById } from "@ledgerhq/cryptoassets/tokens";
 import {
   emptyHistoryCache,
   getAccountCurrency,
@@ -189,11 +188,7 @@ describe(clearAccount.name, () => {
     } as CryptoCurrency;
     const withSubAccounts = {
       ...mockAccount,
-      subAccounts: [
-        {
-          token: getTokenById("ethereum/erc20/dao_maker"),
-        } as TokenAccount,
-      ],
+      subAccounts: [{} as TokenAccount],
       currency: ethereumCurrency,
     };
     it("should clear operations", () => {

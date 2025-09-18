@@ -35,7 +35,7 @@ export const shouldShowNewAccount = (
 export const getReceiveFlowError = (
   account: AccountLike,
   parentAccount: Account | null | undefined,
-): Error | null | undefined => {
+): Error | undefined => {
   if (parentAccount && parentAccount.currency.id === "tezos") {
     return new UnavailableTezosOriginatedAccountReceive("");
   }

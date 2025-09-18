@@ -4,11 +4,11 @@ import { tokens as localTokensByChainId } from "@ledgerhq/cryptoassets/data/evm/
 import { fromAccountRaw, toAccountRaw } from "@ledgerhq/coin-framework/serialization/account";
 import { decodeTokenAccountId } from "@ledgerhq/coin-framework/account";
 import { __clearAllLists } from "@ledgerhq/cryptoassets/tokens";
-import * as etherscanAPI from "../../api/explorer/etherscan";
+import * as etherscanAPI from "../../network/explorer/etherscan";
 import { __resetCALHash, getCALHash } from "../../logic";
-import { getAccountShape } from "../../synchronization";
-import * as nodeApi from "../../api/node/rpc.common";
-import { preload, hydrate } from "../../preload";
+import { getAccountShape } from "../../bridge/synchronization";
+import * as nodeApi from "../../network/node/rpc.common";
+import { preload, hydrate } from "../../bridge/preload";
 import { getCoinConfig } from "../../config";
 import {
   currency,
@@ -22,7 +22,7 @@ jest.mock("axios");
 const mockedAxios = jest.mocked(axios);
 mockedAxios.AxiosError = jest.requireActual("axios").AxiosError;
 
-jest.mock("../../api/node/rpc.common");
+jest.mock("../../network/node/rpc.common");
 jest.useFakeTimers().setSystemTime(new Date("2014-04-21"));
 jest.mock("../../config");
 const mockGetConfig = jest.mocked(getCoinConfig);

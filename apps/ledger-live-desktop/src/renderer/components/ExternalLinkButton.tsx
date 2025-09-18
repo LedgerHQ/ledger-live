@@ -1,7 +1,7 @@
 import React from "react";
 import { openURL } from "~/renderer/linking";
 import Button, { Props as ButtonProps } from "~/renderer/components/Button";
-export function ExternalLinkButton({
+function ExternalLinkButton({
   label,
   url,
   ...props

@@ -17,6 +17,10 @@ import globalSyncRefreshControl from "~/components/globalSyncRefreshControl";
 import usePullToRefresh from "../../hooks/usePullToRefresh";
 import useMarketListViewModel from "./useMarketListViewModel";
 import { LIMIT } from "~/reducers/market";
+import { DdRum } from "@datadog/mobile-react-native";
+import { ScreenName } from "~/const";
+import { MARKET_LIST_VIEW_ID } from "~/utils/constants";
+import { buildFeatureFlagTags } from "~/utils/datadogUtils";
 
 const RefreshableCollapsibleHeaderFlatList = globalSyncRefreshControl(
   CollapsibleHeaderFlatList<CurrencyData>,
@@ -102,6 +106,12 @@ function View({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  useEffect(() => {
+    DdRum.startView(MARKET_LIST_VIEW_ID, ScreenName.MarketList, {
+      featureFlags: buildFeatureFlagTags(),
+    });
+    DdRum.addViewLoadingTime(true);
+  }, []);
   /**
    * Try to Refetch data every REFRESH_RATE time
    */
@@ -134,6 +144,7 @@ function View({
         hasEmptyStarredCoins={filterByStarredCurrencies && starredMarketCoins.length <= 0}
         search={search}
         resetSearch={resetSearch}
+        isLoading={loading}
       />
     ),
     refreshControl: (
@@ -149,6 +160,7 @@ function View({
   return (
     <RefreshableCollapsibleHeaderFlatList
       {...listProps}
+      testID="market-list"
       stickyHeaderIndices={[0]}
       ListHeaderComponent={
         <WalletTabSafeAreaView edges={["left", "right"]}>

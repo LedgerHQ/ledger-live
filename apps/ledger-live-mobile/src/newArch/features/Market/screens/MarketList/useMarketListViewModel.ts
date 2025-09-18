@@ -51,9 +51,13 @@ function useMarketListViewModel() {
     starred: filterByStarredCurrencies ? starredMarketCoins : [],
   });
 
-  const marketDataFiltered = filterByStarredCurrencies
+  const baseData = filterByStarredCurrencies
     ? marketResult.data?.filter(d => starredMarketCoins.includes(d.id)) ?? undefined
     : marketResult.data;
+
+  const marketDataFiltered = baseData
+    ? baseData.filter((item, index, arr) => arr.findIndex(i => i.id === item.id) === index)
+    : undefined;
 
   useEffect(() => {
     if (initialTop100) {

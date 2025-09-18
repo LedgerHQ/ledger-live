@@ -17,8 +17,8 @@ describe("parseGetVersionResult", () => {
         "01", //         hw version aka `hardwareVersion`
         "01", //         language id length
         "00", //         language id
-        "01", // ?
-        "00", // ?
+        "01", //         recoverState length
+        "00", //         recoverState
         "9000", //       status
       ].join(""),
       "hex",
@@ -37,6 +37,8 @@ describe("parseGetVersionResult", () => {
       bootloaderVersion: "1.16",
       hardwareVersion: 1,
       languageId: 0,
+      recoverState: Buffer.from([0]),
+      charonState: undefined,
     };
 
     const parseResult = parseGetVersionResponse(responseBuffer);
@@ -114,6 +116,51 @@ describe("parseGetVersionResult", () => {
       bootloaderVersion: undefined,
       hardwareVersion: undefined,
       languageId: undefined,
+    };
+
+    const parseResult = parseGetVersionResponse(responseBuffer);
+
+    expect(parseResult).toEqual(expectedParseResult);
+  });
+
+  it("should handle charon state and recover state", () => {
+    const responseBuffer = Buffer.from(
+      [
+        "33300004", //   targetId
+        "05", //         device version length
+        "312e342e30", // device version aka `rawVersion`
+        "04", //         flags length
+        "ee000000", //   flags
+        "05",
+        "362e352e32", //   mcu version aka `mcuVersion`
+        "05", //         bootloader version length
+        "352e352e32", //   bootloader version aka `bootloaderVersion`
+        "01", //         language id length
+        "00", //         language id
+        "01", //         recoverState length
+        "06", //         recoverState
+        "01", //         charonLength
+        "02", //         charon
+        "9000", //       status
+      ].join(""),
+      "hex",
+    );
+
+    const expectedParseResult = {
+      isBootloader: false,
+      rawVersion: "1.4.0",
+      targetId: 858783748,
+      seVersion: "1.4.0",
+      mcuVersion: "6.5.2",
+      mcuBlVersion: undefined,
+      mcuTargetId: undefined,
+      seTargetId: 858783748,
+      flags: Buffer.from([238, 0, 0, 0]),
+      bootloaderVersion: "5.5.2",
+      hardwareVersion: undefined,
+      languageId: 0,
+      recoverState: Buffer.from([6]),
+      charonState: Buffer.from([2]),
     };
 
     const parseResult = parseGetVersionResponse(responseBuffer);

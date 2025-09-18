@@ -540,7 +540,6 @@ export const createAction = (
         displayUpgradeWarning: false,
       }));
     }, []);
-
     return {
       ...state,
       inWrongDeviceForAccount:

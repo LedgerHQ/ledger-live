@@ -3,7 +3,6 @@ import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Button, Flex, InfiniteLoader } from "@ledgerhq/native-ui";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
-import { useToasts } from "@ledgerhq/live-common/notifications/ToastProvider/index";
 import { ImageDoesNotExistOnDevice } from "@ledgerhq/live-common/errors";
 import { NavigatorName, ScreenName } from "~/const";
 import QueuedDrawer, { Props as BottomModalProps } from "../QueuedDrawer";
@@ -13,19 +12,15 @@ import { BaseNavigatorStackParamList } from "../RootNavigator/types/BaseNavigato
 import { StackNavigatorNavigation } from "../RootNavigator/types/helpers";
 import { TrackScreen } from "~/analytics";
 import DeviceAction from "../DeviceAction";
-import { useStaxRemoveImageDeviceAction } from "~/hooks/deviceActions";
+import { useRemoveImageDeviceAction } from "~/hooks/deviceActions";
 import { type CLSSupportedDeviceModelId } from "@ledgerhq/live-common/device/use-cases/isCustomLockScreenSupported";
 import { HOOKS_TRACKING_LOCATIONS } from "~/analytics/hooks/variables";
+import { useToastsActions } from "~/actions/toast";
 
 const analyticsDrawerName = "Choose an image to set as your device lockscreen";
 
 const analyticsButtonChoosePhoneGalleryEventProps = {
   button: "Choose from my picture gallery",
-  drawer: analyticsDrawerName,
-};
-
-const analyticsButtonChooseNFTGalleryEventProps = {
-  button: "Choose from NFT gallery",
   drawer: analyticsDrawerName,
 };
 
@@ -52,7 +47,7 @@ const CustomImageBottomModal: React.FC<Props> = props => {
     referral = undefined,
   } = props;
   const { t } = useTranslation();
-  const { pushToast } = useToasts();
+  const { pushToast } = useToastsActions();
 
   const navigation = useNavigation<StackNavigatorNavigation<BaseNavigatorStackParamList>>();
 
@@ -82,14 +77,6 @@ const CustomImageBottomModal: React.FC<Props> = props => {
     setIsLoading(false);
     onClose && onClose();
   }, [navigation, onClose, device, deviceModelId, referral]);
-
-  const handleSelectFromNFTGallery = useCallback(() => {
-    navigation.navigate(NavigatorName.CustomImage, {
-      screen: ScreenName.CustomImageNFTGallery,
-      params: { device, deviceModelId },
-    });
-    onClose && onClose();
-  }, [navigation, device, onClose, deviceModelId]);
 
   const request = useMemo(() => ({ deviceId: device?.deviceId || "", request: {} }), [device]);
 
@@ -129,7 +116,7 @@ const CustomImageBottomModal: React.FC<Props> = props => {
     [setDeviceHasImage],
   );
 
-  const action = useStaxRemoveImageDeviceAction();
+  const action = useRemoveImageDeviceAction();
 
   return (
     <QueuedDrawer
@@ -169,13 +156,6 @@ const CustomImageBottomModal: React.FC<Props> = props => {
             eventProperties={analyticsButtonChoosePhoneGalleryEventProps}
           />
           <Flex mt={6} />
-          <ModalChoice
-            onPress={handleSelectFromNFTGallery}
-            title={t("customImage.drawer.options.selectFromNFTGallery")}
-            iconName={"Ticket"}
-            event="button_clicked"
-            eventProperties={analyticsButtonChooseNFTGalleryEventProps}
-          />
           {deviceHasImage ? (
             <Button
               mt={6}

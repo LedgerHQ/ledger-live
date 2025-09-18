@@ -1,0 +1,22 @@
+{
+  "entry": [
+    "src/Polkadot.ts"
+  ],
+  "ignoreUnresolved": [],
+  "ignoreUnused": [
+    "@celo/connect",
+    "@celo/contractkit",
+    "@celo/utils",
+    "@celo/wallet-base",
+    "@celo/wallet-ledger",
+    "@ledgerhq/errors",
+    "@ledgerhq/hw-app-eth",
+    "@ledgerhq/hw-transport",
+    "bip32-path",
+    "rlp",
+    "semver"
+  ],
+  "ignoreUnimported": [
+    "src/Celo.ts"
+  ]
+}

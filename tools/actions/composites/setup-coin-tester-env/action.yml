@@ -1,0 +1,18 @@
+name: "Setup Env for Coin Tester"
+description: "Installs deps, pulls docker, builds modules"
+runs:
+  using: "composite"
+  steps:
+    # Option `-p` of Speculos is only available on `master` tag
+    - run: docker pull ghcr.io/ledgerhq/speculos:master
+      shell: bash
+
+    # Map `master` tag to `latest` in order to preserve local images
+    - run: docker tag ghcr.io/ledgerhq/speculos:master speculos:latest
+      shell: bash
+
+    - run: pnpm i --filter="!./apps/**"
+      shell: bash
+
+    - run: pnpm build:coin-tester-modules:deps
+      shell: bash

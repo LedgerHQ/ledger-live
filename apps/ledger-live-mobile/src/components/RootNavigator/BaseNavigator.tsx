@@ -10,7 +10,6 @@ import { RouteProp, useRoute } from "@react-navigation/native";
 import { useTheme } from "styled-components/native";
 import { useSelector } from "react-redux";
 import { Button, IconsLegacy } from "@ledgerhq/native-ui";
-
 import { ScreenName, NavigatorName } from "~/const";
 import * as families from "~/families";
 import OperationDetails from "~/screens/OperationDetails";
@@ -28,20 +27,17 @@ import SignTransactionNavigator from "./SignTransactionNavigator";
 import FreezeNavigator from "./FreezeNavigator";
 import UnfreezeNavigator from "./UnfreezeNavigator";
 import ClaimRewardsNavigator from "./ClaimRewardsNavigator";
-import AddAccountsNavigator from "./AddAccountsNavigator";
 import ExchangeLiveAppNavigator from "./ExchangeLiveAppNavigator";
 import CardLiveAppNavigator from "./CardLiveAppNavigator";
 import EarnLiveAppNavigator from "./EarnLiveAppNavigator";
 import PlatformExchangeNavigator from "./PlatformExchangeNavigator";
 import AccountSettingsNavigator from "./AccountSettingsNavigator";
-import ImportAccountsNavigator from "./ImportAccountsNavigator";
 import PasswordAddFlowNavigator from "./PasswordAddFlowNavigator";
 import PasswordModifyFlowNavigator from "./PasswordModifyFlowNavigator";
 import SwapNavigator from "./SwapNavigator";
 import NotificationCenterNavigator from "./NotificationCenterNavigator";
 import AnalyticsAllocation from "~/screens/Analytics/Allocation";
 import AnalyticsOperations from "~/screens/Analytics/Operations";
-import NftNavigator from "./NftNavigator";
 import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
 import Account from "~/screens/Account";
 import ReadOnlyAccount from "~/screens/Account/ReadOnly/ReadOnlyAccount";
@@ -58,7 +54,6 @@ import {
   BleDevicePairingFlow,
   bleDevicePairingFlowHeaderOptions,
 } from "~/screens/BleDevicePairingFlow";
-
 import PostBuyDeviceScreen from "LLM/features/Reborn/screens/PostBuySuccess";
 import { useNoNanoBuyNanoWallScreenOptions } from "~/context/NoNanoBuyNanoWall";
 import PostBuyDeviceSetupNanoWallScreen from "~/screens/PostBuyDeviceSetupNanoWallScreen";
@@ -70,12 +65,11 @@ import { readOnlyModeEnabledSelector } from "~/reducers/settings";
 import { hasNoAccountsSelector } from "~/reducers/accounts";
 import { BaseNavigatorStackParamList } from "./types/BaseNavigator";
 import DeviceConnect, { deviceConnectHeaderOptions } from "~/screens/DeviceConnect";
-import ExploreTabNavigator from "./ExploreTabNavigator";
 import NoFundsFlowNavigator from "./NoFundsFlowNavigator";
 import StakeFlowNavigator from "./StakeFlowNavigator";
 import { RecoverPlayer } from "~/screens/Protect/Player";
 import { RedirectToOnboardingRecoverFlowScreen } from "~/screens/Protect/RedirectToOnboardingRecoverFlow";
-import { NavigationHeaderBackButton } from "../NavigationHeaderBackButton";
+import { NavigationHeaderBackButton } from "~/components/NavigationHeaderBackButton";
 import {
   NavigationHeaderCloseButton,
   NavigationHeaderCloseButtonAdvanced,
@@ -89,6 +83,8 @@ import FirmwareUpdateScreen from "~/screens/FirmwareUpdate";
 import EditCurrencyUnits from "~/screens/Settings/CryptoAssets/Currencies/EditCurrencyUnits";
 import CustomErrorNavigator from "./CustomErrorNavigator";
 import WalletSyncNavigator from "LLM/features/WalletSync/WalletSyncNavigator";
+import ModularDrawerNavigator from "LLM/features/ModularDrawer/ModularDrawerNavigator";
+import { LedgerSyncDeepLinkHandler } from "LLM/features/WalletSync/LedgerSyncDeepLinkHandler";
 import Web3HubNavigator from "LLM/features/Web3Hub/Navigator";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import AddAccountsV2Navigator from "LLM/features/Accounts/Navigator";
@@ -96,6 +92,7 @@ import DeviceSelectionNavigator from "LLM/features/DeviceSelection/Navigator";
 import AssetSelectionNavigator from "LLM/features/AssetSelection/Navigator";
 import AssetsListNavigator from "LLM/features/Assets/Navigator";
 import FeesNavigator from "./FeesNavigator";
+import { getStakeLabelLocaleBased } from "~/helpers/getStakeLabelLocaleBased";
 
 const Stack = createStackNavigator<BaseNavigatorStackParamList>();
 
@@ -114,7 +111,6 @@ export default function BaseNavigator() {
   const isAccountsEmpty = useSelector(hasNoAccountsSelector);
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector) && isAccountsEmpty;
   const web3hub = useFeature("web3hub");
-  const llmNetworkBasedAddAccountFlow = useFeature("llmNetworkBasedAddAccountFlow");
   const llmAccountListUI = useFeature("llmAccountListUI");
 
   return (
@@ -151,7 +147,7 @@ export default function BaseNavigator() {
             gestureEnabled: true,
             headerTitle: "",
             headerRight: () => null,
-            headerBackTitleVisible: false,
+            headerBackButtonDisplayMode: "minimal",
             title: "",
             cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS,
           }}
@@ -219,17 +215,6 @@ export default function BaseNavigator() {
           {...noNanoBuyNanoWallScreenOptions}
         />
         <Stack.Screen
-          name={NavigatorName.ExploreTab}
-          component={ExploreTabNavigator}
-          options={{
-            headerShown: true,
-            animationEnabled: false,
-            headerTitle: t("discover.sections.news.title"),
-            headerLeft: () => <NavigationHeaderBackButton />,
-            headerRight: () => null,
-          }}
-        />
-        <Stack.Screen
           name={NavigatorName.SignMessage}
           component={SignMessageNavigator}
           options={{ headerShown: false }}
@@ -284,12 +269,7 @@ export default function BaseNavigator() {
             headerShown: false,
           }}
           listeners={({ route }) => ({
-            beforeRemove: () => {
-              const onClose = route.params?.onClose;
-              if (onClose && typeof onClose === "function") {
-                onClose();
-              }
-            },
+            beforeRemove: () => handleOnClose(route),
           })}
         />
         <Stack.Screen
@@ -300,13 +280,7 @@ export default function BaseNavigator() {
             title: t("transfer.receive.headerTitle"),
           }}
           listeners={({ route }) => ({
-            beforeRemove: () => {
-              const onClose =
-                route.params?.onClose || (route.params as unknown as typeof route)?.params?.onClose;
-              if (onClose && typeof onClose === "function") {
-                onClose();
-              }
-            },
+            beforeRemove: () => handleOnClose(route),
           })}
         />
         <Stack.Screen
@@ -380,16 +354,14 @@ export default function BaseNavigator() {
           options={{ headerShown: false }}
         />
         <Stack.Screen
-          name={NavigatorName.ImportAccounts}
-          component={ImportAccountsNavigator}
-          options={{ headerShown: false }}
-        />
-        <Stack.Screen
           name={ScreenName.PairDevices}
           component={PairDevices}
           options={({ navigation, route }) => ({
             title: "",
-            headerRight: () => <ErrorHeaderInfo route={route} navigation={navigation} />,
+            headerRight: () => {
+              const nav = navigation;
+              return <ErrorHeaderInfo route={route} navigation={nav} />;
+            },
             headerShown: true,
             headerStyle: styles.headerNoShadow,
           })}
@@ -433,6 +405,16 @@ export default function BaseNavigator() {
         <Stack.Screen
           name={NavigatorName.WalletSync}
           component={WalletSyncNavigator}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name={ScreenName.LedgerSyncDeepLinkHandler}
+          component={LedgerSyncDeepLinkHandler}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name={NavigatorName.ModularDrawer}
+          component={ModularDrawerNavigator}
           options={{ headerShown: false }}
         />
         {MarketNavigator({ Stack })}
@@ -479,11 +461,6 @@ export default function BaseNavigator() {
           options={{ headerShown: false }}
         />
         <Stack.Screen
-          name={NavigatorName.NftNavigator}
-          component={NftNavigator}
-          options={{ headerShown: false }}
-        />
-        <Stack.Screen
           name={NavigatorName.Accounts}
           component={AccountsNavigator}
           options={{ headerShown: false }}
@@ -495,13 +472,19 @@ export default function BaseNavigator() {
         />
         {/* This is a freaking hack… */}
         {Object.keys(families).map(name => {
+          /* eslint-disable @typescript-eslint/consistent-type-assertions */
           const { component, options } = families[name as keyof typeof families];
+          const screenName = name as keyof BaseNavigatorStackParamList;
+          const screenComponent = component as React.ComponentType;
+          const screenOptions = options as StackNavigationOptions;
+          /* eslint-enable @typescript-eslint/consistent-type-assertions */
+
           return (
             <Stack.Screen
               key={name}
-              name={name as keyof BaseNavigatorStackParamList}
-              component={component as React.ComponentType}
-              options={options as StackNavigationOptions}
+              name={screenName}
+              component={screenComponent}
+              options={screenOptions}
             />
           );
         })}
@@ -520,13 +503,7 @@ export default function BaseNavigator() {
           component={DeviceConnect}
           options={useMemo(() => deviceConnectHeaderOptions(t), [t])}
           listeners={({ route }) => ({
-            beforeRemove: () => {
-              const onClose =
-                route.params?.onClose || (route.params as unknown as typeof route)?.params?.onClose;
-              if (onClose && typeof onClose === "function") {
-                onClose();
-              }
-            },
+            beforeRemove: () => handleOnClose(route),
           })}
         />
         <Stack.Screen
@@ -537,7 +514,19 @@ export default function BaseNavigator() {
         <Stack.Screen
           name={NavigatorName.Earn}
           component={EarnLiveAppNavigator}
-          options={{ headerShown: false }}
+          options={props => {
+            const stakeLabel = getStakeLabelLocaleBased();
+            const intent = props.route?.params?.params?.intent;
+
+            return intent === "deposit" || intent === "withdraw"
+              ? {
+                  headerShown: true,
+                  closable: false,
+                  headerTitle: t(stakeLabel),
+                  headerRight: () => null,
+                }
+              : { headerShown: false };
+          }}
         />
         <Stack.Screen
           name={NavigatorName.NoFundsFlow}
@@ -584,25 +573,22 @@ export default function BaseNavigator() {
         />
         <Stack.Screen
           name={NavigatorName.AddAccounts}
-          component={
-            llmNetworkBasedAddAccountFlow?.enabled ? AddAccountsV2Navigator : AddAccountsNavigator
-          }
+          component={AddAccountsV2Navigator}
           options={{ headerShown: false }}
         />
-        {llmNetworkBasedAddAccountFlow?.enabled && (
-          <Stack.Screen
-            name={NavigatorName.DeviceSelection}
-            component={DeviceSelectionNavigator}
-            options={{ headerShown: false }}
-          />
-        )}
-        {llmNetworkBasedAddAccountFlow?.enabled && (
-          <Stack.Screen
-            name={NavigatorName.AssetSelection}
-            component={AssetSelectionNavigator}
-            options={{ headerShown: false }}
-          />
-        )}
+
+        <Stack.Screen
+          name={NavigatorName.DeviceSelection}
+          component={DeviceSelectionNavigator}
+          options={{ headerShown: false }}
+        />
+
+        <Stack.Screen
+          name={NavigatorName.AssetSelection}
+          component={AssetSelectionNavigator}
+          options={{ headerShown: false }}
+        />
+
         {llmAccountListUI?.enabled && (
           <Stack.Screen
             name={NavigatorName.Assets}
@@ -614,3 +600,50 @@ export default function BaseNavigator() {
     </>
   );
 }
+
+/**
+ * Handle the onClose callback for the route
+ *
+ * If the route has a onClose callback, call it
+ * If the route has a nested route with a onClose callback, call it
+ *
+ * @param route
+ * The route object
+ */
+function handleOnClose(route: object) {
+  if (route == null || !("params" in route)) return;
+  const params = route.params;
+  if (params == null) return;
+
+  if (isRouteWithCloseCallback(params)) {
+    params.onClose();
+  }
+  if (isNestedRouteWithCloseCallback(params)) {
+    params.params.onClose();
+  }
+}
+
+/**
+ * Check if the route has a onClose callback
+ *
+ * @param params
+ * The route params
+ */
+function isRouteWithCloseCallback(params: object): params is Readonly<WithCloseCallback> {
+  return "onClose" in params && typeof params.onClose === "function";
+}
+
+/**
+ * Check if the route has a nested route with a onClose callback
+ *
+ * @param params
+ * The route params
+ */
+function isNestedRouteWithCloseCallback(params: object): params is { params: WithCloseCallback } {
+  if (!("params" in params)) return false;
+  const nestedParams = params.params;
+  if (nestedParams == null) return false;
+  return isRouteWithCloseCallback(nestedParams);
+}
+
+type WithCloseCallback = { onClose: () => void };

@@ -18,7 +18,7 @@ import { urls } from "~/utils/urls";
 import { Linking } from "react-native";
 import { LegacyBleDevicesScanning } from "~/components/BleDevicePairingFlow/LegacyBleDevicesScanning";
 import { useLocalizedUrl } from "LLM/hooks/useLocalizedUrls";
-import { useLdmkFeatureEnabled } from "@ledgerhq/live-dmk-mobile";
+import { useDeviceManagementKitEnabled } from "@ledgerhq/live-dmk-mobile";
 
 const TIMEOUT_AFTER_PAIRED_MS = 2000;
 
@@ -173,7 +173,7 @@ const BleDevicePairingFlow: React.FC<BleDevicePairingFlowProps> = ({
       setPairingFlowStep("scanning");
     }
   }, [isPaired]);
-  const isDmkTransportEnabled = useLdmkFeatureEnabled();
+  const isDmkTransportEnabled = useDeviceManagementKitEnabled();
 
   const onOpenHelp = useCallback(() => {
     Linking.openURL(pairingUrl);

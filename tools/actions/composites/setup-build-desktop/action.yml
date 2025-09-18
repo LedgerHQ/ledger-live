@@ -15,6 +15,12 @@ outputs:
 runs:
   using: "composite"
   steps:
+    - name: Install system dependencies (Linux)
+      if: runner.os == 'Linux'
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y libudev-dev build-essential
+      shell: bash
     - name: install dependencies
       env:
         LC_ALL: en_US.UTF-8

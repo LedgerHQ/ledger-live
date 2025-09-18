@@ -11,7 +11,7 @@ import Box from "~/renderer/components/Box";
 import DownloadCloud from "~/renderer/icons/DownloadCloud";
 import Label from "~/renderer/components/Label";
 import Button from "~/renderer/components/Button";
-import { activeAccountsSelector } from "~/renderer/reducers/accounts";
+import { accountsSelector } from "~/renderer/reducers/accounts";
 
 type Props = {
   t: TFunction;
@@ -24,7 +24,7 @@ const mapDispatchToProps = {
   openModal,
 };
 const mapStateToProps = createStructuredSelector({
-  accounts: activeAccountsSelector,
+  accounts: accountsSelector,
 });
 class ExportOperationsBtn extends Component<Props> {
   openModal = () => this.props.openModal("MODAL_EXPORT_OPERATIONS");

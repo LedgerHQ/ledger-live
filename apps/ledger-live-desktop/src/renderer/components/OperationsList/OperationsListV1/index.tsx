@@ -44,7 +44,7 @@ const ShowMore = styled(Box).attrs(() => ({
 const mapDispatchToProps = {
   openModal,
 };
-type Props = {
+export type Props = {
   account?: AccountLike;
   parentAccount?: Account | null;
   accounts?: AccountLike[];
@@ -114,6 +114,7 @@ export class OperationsList extends PureComponent<Props, State> {
         : undefined;
 
     const all = flattenAccounts(accounts || []).concat(
+      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
       [account as AccountLike, parentAccount as AccountLike].filter(Boolean),
     );
     const accountsMap = keyBy(all, "id");

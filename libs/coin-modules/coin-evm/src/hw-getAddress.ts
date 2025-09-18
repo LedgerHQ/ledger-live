@@ -4,7 +4,7 @@ import { GetAddressOptions } from "@ledgerhq/coin-framework/derivation";
 import { GetAddressFn } from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
 import { EvmSigner } from "./types/signer";
 
-const resolver = (signerContext: SignerContext<EvmSigner>): GetAddressFn => {
+const resolver = (signerContext: SignerContext<Pick<EvmSigner, "getAddress">>): GetAddressFn => {
   return async (deviceId: string, { path, verify, currency }: GetAddressOptions) => {
     const { address, publicKey } = await signerContext(deviceId, signer => {
       /* istanbul ignore next: optional chaining + undefined is a valid value */

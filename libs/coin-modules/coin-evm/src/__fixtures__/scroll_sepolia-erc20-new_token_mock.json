@@ -1,0 +1,68 @@
+{
+    "type": "TokenCurrency",
+    "id": "scroll_sepolia/erc20/new_token_mock",
+    "ledgerSignature": "dadcoffee",
+    "contractAddress": "0xdeadbeef",
+    "parentCurrency": {
+      "type": "CryptoCurrency",
+      "id": "scroll_sepolia",
+      "coinType": 60,
+      "name": "Scroll Sepolia",
+      "managerAppName": "Ethereum",
+      "ticker": "ETH",
+      "scheme": "scroll_sepolia",
+      "color": "#ff0000",
+      "family": "evm",
+      "units": [
+        {
+          "name": "ETH",
+          "code": "ETH",
+          "magnitude": 18
+        },
+        {
+          "name": "Gwei",
+          "code": "Gwei",
+          "magnitude": 9
+        },
+        {
+          "name": "Mwei",
+          "code": "Mwei",
+          "magnitude": 6
+        },
+        {
+          "name": "Kwei",
+          "code": "Kwei",
+          "magnitude": 3
+        },
+        {
+          "name": "wei",
+          "code": "wei",
+          "magnitude": 0
+        }
+      ],
+      "disableCountervalue": false,
+      "isTestnetFor": "scroll",
+      "ethereumLikeInfo": {
+        "chainId": 534351
+      },
+      "explorerViews": [
+        {
+          "tx": "https://scroll-sepolia.blockscout.com/tx/$hash",
+          "address": "https://scroll-sepolia.blockscout.com/address/$address",
+          "token": "https://scroll-sepolia.blockscout.com/address/$address?tab=token_transfer&token=$contractAddress"
+        }
+      ]
+    },
+    "tokenType": "erc20",
+    "name": "Awesome Fake Token",
+    "ticker": "NTM",
+    "delisted": false,
+    "disableCountervalue": true,
+    "units": [
+      {
+        "name": "Awesome Fake Token",
+        "code": "NTM",
+        "magnitude": 18
+      }
+    ]
+  }

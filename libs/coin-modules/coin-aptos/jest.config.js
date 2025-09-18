@@ -9,15 +9,12 @@ module.exports = {
     "!src/test/**/*.ts",
     "!src/__tests__/**/*.ts",
   ],
-  coverageReporters: ["json", ["lcov", { file: "aptos-lcov.info", projectRoot: "../" }], "text"],
+  coverageReporters: ["json", ["lcov", { file: "lcov.info", projectRoot: "../../../" }], "text"],
   testEnvironment: "node",
-  testPathIgnorePatterns: ["lib/", "lib-es/", ".integration.test.ts"],
+  testPathIgnorePatterns: ["lib/", "lib-es/", ".integ.test.ts"],
   reporters: [
     "default",
-    [
-      "jest-sonar",
-      { outputName: "aptos-sonar-executionTests-report.xml", reportedFilePath: "absolute" },
-    ],
+    ["jest-sonar", { outputName: "sonar-executionTests-report.xml", reportedFilePath: "absolute" }],
   ],
   coveragePathIgnorePatterns: [
     "src/test",
@@ -25,4 +22,5 @@ module.exports = {
     "src/index.ts",
     "src/bridge/bridge.fixture.ts",
   ],
+  setupFilesAfterEnv: ["@ledgerhq/disable-network-setup"],
 };

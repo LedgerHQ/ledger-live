@@ -10,7 +10,10 @@ import {
   localeSelector,
 } from "~/renderer/reducers/settings";
 import { accountsSelector } from "~/renderer/reducers/accounts";
-import { useRemoteLiveAppManifest } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
+import {
+  useRemoteLiveAppContext,
+  useRemoteLiveAppManifest,
+} from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
 import useTheme from "~/renderer/hooks/useTheme";
 import WebPTXPlayer from "~/renderer/components/WebPTXPlayer";
 import { getParentAccount, isTokenAccount } from "@ledgerhq/live-common/account/index";
@@ -24,8 +27,11 @@ import {
 import { useInternalAppIds } from "@ledgerhq/live-common/hooks/useInternalAppIds";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { useLocalLiveAppManifest } from "@ledgerhq/live-common/wallet-api/LocalLiveAppProvider/index";
+import { useProviderInterstitalEnabled } from "@ledgerhq/live-common/hooks/useShowProviderLoadingTransition";
 import { walletSelector } from "~/renderer/reducers/wallet";
 import { useDiscreetMode } from "~/renderer/components/Discreet";
+import { ProviderInterstitial } from "./BuySell/ProviderInterstitial";
+import { NetworkErrorScreen } from "~/renderer/components/Web3AppWebview/NetworkError";
 
 type ExchangeState = { account?: string } | undefined;
 
@@ -49,6 +55,10 @@ const LiveAppExchange = ({ appId }: { appId: string }) => {
   const internalAppIds = useInternalAppIds() || INTERNAL_APP_IDS;
   const walletState = useSelector(walletSelector);
 
+  const providerInterstitialEnabled = useProviderInterstitalEnabled({
+    manifest,
+  });
+
   /**
    * Pass correct account ID
    * Due to Platform SDK account ID not being equivalent to Wallet API account ID
@@ -71,6 +81,12 @@ const LiveAppExchange = ({ appId }: { appId: string }) => {
     return urlParams;
   }, [accounts, manifest?.apiVersion, urlParams, walletState]);
 
+  const { updateManifests } = useRemoteLiveAppContext();
+
+  if (!manifest) {
+    return <NetworkErrorScreen refresh={updateManifests} type="warning" />;
+  }
+
   /**
    * Given the user is on an internal app (webview url is owned by LL) we must reset the session
    * to ensure the context is reset. last-screen is used to give an external app's webview context
@@ -91,28 +107,27 @@ const LiveAppExchange = ({ appId }: { appId: string }) => {
         height: "100%",
       }}
     >
-      {manifest ? (
-        <WebPTXPlayer
-          manifest={manifest}
-          inputs={{
-            theme: themeType,
-            ...customUrlParams,
-            lang,
-            locale,
-            currencyTicker,
-            devMode,
-            discreetMode: discreetMode ? "true" : "false",
-            ...(localManifest?.providerTestBaseUrl && {
-              providerTestBaseUrl: localManifest?.providerTestBaseUrl,
-            }),
-            ...(localManifest?.providerTestId && {
-              providerTestId: localManifest?.providerTestId,
-            }),
+      <WebPTXPlayer
+        manifest={manifest}
+        inputs={{
+          theme: themeType,
+          ...customUrlParams,
+          lang,
+          locale,
+          currencyTicker,
+          devMode,
+          discreetMode: discreetMode ? "true" : "false",
+          ...(localManifest?.providerTestBaseUrl && {
+            providerTestBaseUrl: localManifest?.providerTestBaseUrl,
+          }),
+          ...(localManifest?.providerTestId && {
+            providerTestId: localManifest?.providerTestId,
+          }),
 
-            ...Object.fromEntries(searchParams.entries()),
-          }}
-        />
-      ) : null}
+          ...Object.fromEntries(searchParams.entries()),
+        }}
+        Loader={providerInterstitialEnabled ? ProviderInterstitial : undefined}
+      />
     </Card>
   );
 };

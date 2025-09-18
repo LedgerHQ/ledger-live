@@ -33,6 +33,9 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     textAlign: "right",
   },
+  valueText: {
+    textAlign: "right",
+  },
   text: {
     fontSize: 14,
     flex: 1,
@@ -97,9 +100,11 @@ export function TextValueField({
       <LText numberOfLines={numberOfLines} style={styles.dataRowLabel} color="grey">
         {label}
       </LText>
-      <LText numberOfLines={numberOfLines} style={styles.dataRowValue} testID={testID}>
-        {value}
-      </LText>
+      <View style={styles.dataRowValue}>
+        <LText numberOfLines={numberOfLines} testID={testID} style={styles.valueText}>
+          {value}
+        </LText>
+      </View>
     </View>
   );
 }
@@ -144,34 +149,6 @@ export function ValidatorField({
         {amount}
       </LText>
     </DataRow>
-  );
-}
-export function DataColumn({
-  label,
-  children,
-  numberOfLines,
-}: {
-  label?: React.ReactNode;
-  children: React.ReactNode;
-  numberOfLines?: number;
-}) {
-  const { colors } = useTheme();
-  return (
-    <View
-      style={[
-        styles.dataColumn,
-        {
-          backgroundColor: colors.background,
-        },
-      ]}
-    >
-      {label ? (
-        <LText numberOfLines={numberOfLines ?? 1} style={styles.dataRowLabel} color="grey">
-          {label}
-        </LText>
-      ) : null}
-      {children}
-    </View>
   );
 }
 

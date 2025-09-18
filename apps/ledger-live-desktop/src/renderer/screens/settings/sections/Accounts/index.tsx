@@ -7,19 +7,14 @@ import FilterTokenOperationsZeroAmount from "./FilterTokenOperationsZeroAmount";
 import SectionExport from "./Export";
 import Currencies from "./Currencies";
 import BlacklistedTokens from "./BlacklistedTokens";
-import HiddenNftCollections from "./HiddenNFTCollections";
-import HiddenInscriptions from "./HiddenInscriptions";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+
 export default function SectionAccounts() {
   const { t } = useTranslation();
-  const ordinalsFeatureFlag = useFeature("lldnewArchOrdinals");
-  const isOrdinalsEnabled = ordinalsFeatureFlag?.enabled;
 
   return (
     <Body>
       <TrackPage category="Settings" name="Accounts" />
       <SectionExport />
-
       <Row
         title={t("settings.accounts.hideEmptyTokens.title")}
         desc={t("settings.accounts.hideEmptyTokens.desc")}
@@ -28,8 +23,6 @@ export default function SectionAccounts() {
       </Row>
       <FilterTokenOperationsZeroAmount />
       <BlacklistedTokens />
-      <HiddenNftCollections />
-      {isOrdinalsEnabled && <HiddenInscriptions />}
       <Currencies />
     </Body>
   );

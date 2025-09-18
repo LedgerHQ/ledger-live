@@ -49,6 +49,7 @@ const ParentCurrencyIcon = ({
       alignItems={"center"}
       justifyContent={"center"}
       borderRadius={size}
+      testID="parent-currency-icon"
     >
       <CurrencyIcon
         size={iconSize}

@@ -1,9 +1,9 @@
 import BigNumber from "bignumber.js";
-import { hashes as localTokensHashesByChainId } from "@ledgerhq/cryptoassets/data/evm/index";
 import { ERC20Token } from "@ledgerhq/cryptoassets/types";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { AccountShapeInfo } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { makeOperation } from "./common.fixtures";
+import "./cryptoAssetsStore.fixtures";
 
 export const currency = getCryptoCurrencyById("scroll_sepolia");
 export const fakeToken: ERC20Token = [
@@ -18,10 +18,6 @@ export const fakeToken: ERC20Token = [
   false, // delisted
 ];
 
-export const localCALHash =
-  localTokensHashesByChainId[
-    currency.ethereumLikeInfo!.chainId as keyof typeof localTokensHashesByChainId
-  ];
 export const getAccountShapeParameters: AccountShapeInfo = {
   address: "0xkvn",
   currency,
@@ -29,6 +25,7 @@ export const getAccountShapeParameters: AccountShapeInfo = {
   derivationPath: "44'/60'/0'/0/0",
   index: 0,
 };
+
 export const TMUSDTTransaction = makeOperation({
   hash: "anyHash",
   accountId:

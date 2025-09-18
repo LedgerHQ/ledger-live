@@ -31,6 +31,7 @@ Logic for all Ledger devices.
 *   [nanoX](#nanox)
 *   [stax](#stax)
 *   [europa](#europa)
+*   [apex](#apex)
 *   [ledgerUSBVendorId](#ledgerusbvendorid)
 *   [getDeviceModel](#getdevicemodel)
     *   [Parameters](#parameters-7)
@@ -179,6 +180,12 @@ Type: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Globa
 ### europa
 
 Ledger Flex ("europa" is the internal name)
+
+Type: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)
+
+### apex
+
+Apex
 
 Type: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)
 

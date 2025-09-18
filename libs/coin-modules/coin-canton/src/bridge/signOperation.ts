@@ -1,0 +1,99 @@
+import { Observable } from "rxjs";
+import BigNumber from "bignumber.js";
+import { FeeNotLoaded } from "@ledgerhq/errors";
+import { AccountBridge, Operation } from "@ledgerhq/types-live";
+import { SignerContext } from "@ledgerhq/coin-framework/signer";
+import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
+import { combine, craftTransaction } from "../common-logic";
+import { Transaction, CantonSigner } from "../types";
+
+export const buildSignOperation =
+  (signerContext: SignerContext<CantonSigner>): AccountBridge<Transaction>["signOperation"] =>
+  ({ account, deviceId, transaction }) =>
+    new Observable(o => {
+      async function main() {
+        const { fee } = transaction;
+        if (!fee) throw new FeeNotLoaded();
+
+        try {
+          // o observables allows to define steps of the signing process with the device
+          o.next({
+            type: "device-signature-requested",
+          });
+
+          const signature = await signerContext(deviceId, async signer => {
+            const { freshAddressPath: derivationPath } = account;
+            const partyId = (account as unknown as { cantonResources: { partyId: string } })
+              .cantonResources.partyId;
+            const params: {
+              recipient?: string;
+              amount: BigNumber;
+              tokenId: string;
+              expireInSeconds: number;
+              memo?: string;
+            } = {
+              recipient: transaction.recipient,
+              amount: transaction.amount,
+              expireInSeconds: 60 * 60,
+              tokenId: "Amulet",
+            };
+            if (transaction.memo) {
+              params.memo = transaction.memo;
+            }
+
+            const { hash, serializedTransaction } = await craftTransaction(
+              account.currency,
+              {
+                address: partyId,
+              },
+              params,
+            );
+            const transactionSignature = await signer.signTransaction(derivationPath, hash);
+
+            return combine(serializedTransaction, `${transactionSignature}__PARTY__${partyId}`);
+          });
+
+          o.next({
+            type: "device-signature-granted",
+          });
+
+          // We create an optimistic operation here, the framework will then replace this transaction with the one returned by the indexer
+          const hash = "";
+          const operation: Operation = {
+            id: encodeOperationId(account.id, hash, "OUT"),
+            hash,
+            accountId: account.id,
+            type: "OUT",
+            value: transaction.amount,
+            fee,
+            blockHash: null,
+            blockHeight: null,
+            senders: [account.freshAddress],
+            recipients: [transaction.recipient],
+            date: new Date(),
+            extra: {},
+          };
+
+          o.next({
+            type: "signed",
+            signedOperation: {
+              operation,
+              signature,
+            },
+          });
+        } catch (e) {
+          if (e instanceof Error) {
+            throw new Error(
+              (e as Error & { data?: { resultMessage?: string } })?.data?.resultMessage,
+            );
+          }
+
+          throw e;
+        }
+      }
+
+      main().then(
+        () => o.complete(),
+        e => o.error(e),
+      );
+    });

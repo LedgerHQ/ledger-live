@@ -1,7 +1,7 @@
 import { CryptoCurrency, LedgerExplorerId } from "@ledgerhq/types-cryptoassets";
 import { CurrencyConfig } from "@ledgerhq/coin-framework/config";
 
-type EvmConfig = {
+export type EvmConfig = {
   node:
     | {
         type: "external";
@@ -19,6 +19,7 @@ type EvmConfig = {
     | {
         type: "ledger";
         explorerId: LedgerExplorerId;
+        batchSize?: number | undefined;
       }
     | {
         type: "none";
@@ -29,11 +30,12 @@ type EvmConfig = {
     type: "ledger";
     explorerId: LedgerExplorerId;
   };
+  showNfts: boolean;
 };
 
 export type EvmConfigInfo = CurrencyConfig & EvmConfig;
 
-type EvmCoinConfig = {
+export type EvmCoinConfig = {
   info: EvmConfigInfo;
 };
 

@@ -10,7 +10,7 @@ import { Account } from "@ledgerhq/types-live";
 import { Currency } from "@ledgerhq/types-cryptoassets";
 import logger from "~/renderer/logger";
 import { counterValueCurrencySelector } from "~/renderer/reducers/settings";
-import { activeAccountsSelector } from "~/renderer/reducers/accounts";
+import { accountsSelector } from "~/renderer/reducers/accounts";
 import { closeModal } from "~/renderer/actions/modals";
 import { colors } from "~/renderer/styles/theme";
 import Modal from "~/renderer/components/Modal";
@@ -33,7 +33,7 @@ type Props = OwnProps & {
 };
 
 const mapStateToProps = createStructuredSelector({
-  accounts: activeAccountsSelector,
+  accounts: accountsSelector,
   countervalueCurrency: counterValueCurrencySelector,
 });
 const mapDispatchToProps = {

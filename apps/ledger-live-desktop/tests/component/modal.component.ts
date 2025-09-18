@@ -1,4 +1,4 @@
-import { Locator } from "@playwright/test";
+import { expect } from "@playwright/test";
 import { step } from "tests/misc/reporters/step";
 import { Component } from "tests/page/abstractClasses";
 
@@ -39,25 +39,13 @@ export class Modal extends Component {
     await this.maxAmountCheckbox.click();
   }
 
-  @step("Click Continue button")
-  async continueAmountModal() {
+  @step("Continue to sign transaction")
+  async continueToSignTransaction() {
     await this.continueButton.click();
   }
 
-  @step("Continue to sign transaction")
-  async continueToSignTransaction() {
-    await this.continueButton.click({ force: true });
-  }
-
-  @step("continue until option is displayed")
-  async scrollUntilOptionIsDisplayed(dropdown: Locator, element: Locator) {
-    let isVisible = await element.isVisible();
-
-    while (!isVisible) {
-      await dropdown.evaluate(node => {
-        node.scrollBy(0, 50);
-      });
-      isVisible = await element.isVisible();
-    }
+  @step("Continue is disabled")
+  async continueIsDisabled() {
+    expect(await this.continueButton.isDisabled()).toBe(true);
   }
 }

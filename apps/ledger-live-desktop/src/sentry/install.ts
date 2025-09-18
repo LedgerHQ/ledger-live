@@ -142,6 +142,7 @@ export function init(Sentry: typeof SentryMainModule, opts?: Partial<ElectronMai
 
       delete data.server_name; // hides the user machine name
       try {
+        // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
         anonymizer.filepathRecursiveReplacer(data as unknown as Record<string, unknown>);
       } catch (e) {
         console.error("can't anonymize", e);

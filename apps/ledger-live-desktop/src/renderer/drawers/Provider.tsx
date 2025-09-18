@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useReducer, useEffect, useCallback, useState, useContext } from "react";
 import { DrawerProps as SideDrawerProps } from "~/renderer/components/SideDrawer";
+import { v4 as uuid } from "uuid";
 
 type ExtractProps<TComponent> =
   TComponent extends React.ComponentType<infer TProps> ? TProps : undefined;
@@ -12,6 +13,7 @@ export type State<
   props: ExtractProps<C> & {
     onRequestBack?: (a: React.MouseEvent<Element, MouseEvent> | KeyboardEvent) => void;
   };
+  id: string;
   open: boolean;
   options: Omit<SideDrawerProps, "children" | "isOpen" | "onRequestBack">;
 }; // actions
@@ -32,6 +34,7 @@ const reducer = (state: State, update: Partial<State>) => {
 };
 const initialState: State = {
   Component: undefined,
+  id: "",
   props: null,
   open: false,
   options: {},
@@ -60,8 +63,10 @@ const DrawerProvider = ({ children }: { children: React.ReactNode }) => {
   const _setDrawer: typeof setDrawer = useCallback(
     (Component, props, options = {}) => {
       setAnalyticsDrawerName(undefined);
+      const id = uuid();
       dispatch({
         Component,
+        id,
         props,
         open: !!Component,
         options,

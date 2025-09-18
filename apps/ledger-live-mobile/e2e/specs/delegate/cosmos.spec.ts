@@ -28,8 +28,8 @@ describe("Cosmos delegate flow", () => {
 
   $TmsLink("B2CQA-384");
   it("open account stake flow", async () => {
-    await app.transfertMenu.open();
-    await app.transfertMenu.navigateToStake();
+    await app.transferMenu.open();
+    await app.transferMenu.navigateToStake();
   });
 
   $TmsLink("B2CQA-387");

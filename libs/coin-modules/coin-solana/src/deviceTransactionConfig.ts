@@ -10,7 +10,9 @@ import type {
   StakeSplitCommand,
   StakeUndelegateCommand,
   StakeWithdrawCommand,
+  TokenCreateApproveCommand,
   TokenCreateATACommand,
+  TokenCreateRevokeCommand,
   TokenTransferCommand,
   Transaction,
   TransferCommand,
@@ -49,6 +51,10 @@ function fieldsForCommand(
       return fieldsForTokenTransfer(command);
     case "token.createATA":
       return fieldsForCreateATA(command);
+    case "token.approve":
+      return fieldsForCreateApprove(command);
+    case "token.revoke":
+      return fieldsForCreateRevoke(command);
     case "stake.createAccount":
       return fieldsForStakeCreateAccount(command, account);
     case "stake.delegate":
@@ -139,6 +145,54 @@ function fieldsForCreateATA(command: TokenCreateATACommand): DeviceTransactionFi
 
   return fields;
 }
+
+function fieldsForCreateApprove(command: TokenCreateApproveCommand): DeviceTransactionField[] {
+  const fields: Array<DeviceTransactionField> = [];
+
+  fields.push({
+    type: "address",
+    label: "Approve token account",
+    address: command.account,
+  });
+
+  fields.push({
+    type: "address",
+    label: "Owned by",
+    address: command.owner,
+  });
+
+  fields.push({
+    type: "address",
+    label: "Delegate to ",
+    address: command.recipientDescriptor.walletAddress,
+  });
+
+  fields.push({
+    type: "amount",
+    label: "Amount",
+  });
+
+  return fields;
+}
+
+function fieldsForCreateRevoke(command: TokenCreateRevokeCommand): DeviceTransactionField[] {
+  const fields: Array<DeviceTransactionField> = [];
+
+  fields.push({
+    type: "address",
+    label: "Revoke token account",
+    address: command.account,
+  });
+
+  fields.push({
+    type: "address",
+    label: "Owned by",
+    address: command.owner,
+  });
+
+  return fields;
+}
+
 function fieldsForStakeCreateAccount(
   command: StakeCreateAccountCommand,
   account: AccountLike,

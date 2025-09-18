@@ -11,9 +11,13 @@ import { StackNavigatorNavigation } from "../RootNavigator/types/helpers";
 import { BaseNavigatorStackParamList } from "../RootNavigator/types/BaseNavigator";
 import { WebviewProps } from "../Web3AppWebview/types";
 import prepareSignTransaction from "../Web3AppWebview/liveSDKLogic";
+import { useDispatch } from "react-redux";
+import { addOneAccount } from "~/actions/accounts";
+import { setAccountName } from "@ledgerhq/live-wallet/lib/store";
 
 export function useACRECustomHandlers(manifest: WebviewProps["manifest"], accounts: AccountLike[]) {
   const navigation = useNavigation<StackNavigatorNavigation<BaseNavigatorStackParamList>>();
+  const dispatch = useDispatch();
 
   const tracking = useMemo(
     () =>
@@ -45,7 +49,10 @@ export function useACRECustomHandlers(manifest: WebviewProps["manifest"], accoun
             onCancel,
           }) => {
             navigation.navigate(NavigatorName.SignMessage, {
-              screen: ScreenName.SignSummary,
+              screen:
+                message.standard === "EIP712"
+                  ? ScreenName.SignSelectDevice
+                  : ScreenName.SignSummary,
               params: {
                 message,
                 accountId: account.id,
@@ -85,8 +92,23 @@ export function useACRECustomHandlers(manifest: WebviewProps["manifest"], accoun
               onError,
             });
           },
+          "custom.acre.registerAccount": ({
+            parentAccount,
+            accountName,
+            existingAccounts: _existingAccounts,
+            onSuccess,
+            onError,
+          }) => {
+            try {
+              dispatch(addOneAccount(parentAccount));
+              dispatch(setAccountName(parentAccount.id, accountName));
+              onSuccess();
+            } catch (error) {
+              onError(error as Error);
+            }
+          },
         },
       }),
     };
-  }, [accounts, tracking, manifest, navigation]);
+  }, [accounts, tracking, manifest, dispatch, navigation]);
 }

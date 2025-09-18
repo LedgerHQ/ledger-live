@@ -1,4 +1,4 @@
-import secp256k1 from "secp256k1";
+import { secp256k1 } from "@noble/curves/secp256k1";
 import { firstValueFrom, from, Observable } from "rxjs";
 import { TransportStatusError, WrongDeviceForAccount } from "@ledgerhq/errors";
 
@@ -187,7 +187,8 @@ function convertSignature(signature: string, exchangeType: ExchangeTypes): Buffe
     return Buffer.from(base64Signature, "base64");
   }
   if (exchangeType === ExchangeTypes.Sell) return Buffer.from(signature, "hex");
-  return <Buffer>secp256k1.signatureExport(Buffer.from(signature, "hex"));
+  const sig = secp256k1.Signature.fromCompact(Buffer.from(signature, "hex"));
+  return Buffer.from(sig.toDERRawBytes());
 }
 
 export default completeExchange;

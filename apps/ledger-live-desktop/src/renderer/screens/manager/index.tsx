@@ -1,27 +1,24 @@
 import React, { useState, useCallback, useContext } from "react";
-import { Result, createAction } from "@ledgerhq/live-common/hw/actions/manager";
+import { Result } from "@ledgerhq/live-common/hw/actions/manager";
 import Dashboard from "~/renderer/screens/manager/Dashboard";
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
 import DeviceAction from "~/renderer/components/DeviceAction";
 import { firstValueFrom, from } from "rxjs";
 import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
 import getDeviceInfo from "@ledgerhq/live-common/hw/getDeviceInfo";
-import connectManager from "@ledgerhq/live-common/hw/connectManager";
-import { mockedEventEmitter } from "~/renderer/components/debug/DebugMock";
-import { getEnv } from "@ledgerhq/live-env";
 import Disconnected from "./Disconnected";
 import { setLastSeenDevice } from "~/renderer/actions/settings";
 import { useDispatch } from "react-redux";
 import { context } from "~/renderer/drawers/Provider";
 import { HOOKS_TRACKING_LOCATIONS } from "~/renderer/analytics/hooks/variables";
+import { useConnectManagerAction } from "~/renderer/hooks/useConnectAppAction";
 
-const action = createAction(getEnv("MOCK") ? mockedEventEmitter : connectManager);
 const Manager = () => {
+  const action = useConnectManagerAction();
   const [appsToRestore, setRestoreApps] = useState<string[]>([]);
   const { setDrawer } = useContext(context);
   const [result, setResult] = useState<Result | null>(null);
   const [hasReset, setHasReset] = useState(false);
-
   const onReset = useCallback(
     (apps?: string[] | null) => {
       setRestoreApps(apps ?? []);
@@ -31,7 +28,6 @@ const Manager = () => {
     },
     [setDrawer],
   );
-
   const dispatch = useDispatch();
   const refreshDeviceInfo = useCallback(() => {
     if (result?.device) {
@@ -53,6 +49,7 @@ const Manager = () => {
   const onResult = useCallback((result: Result) => {
     setResult(result);
   }, []);
+
   return (
     <>
       <SyncSkipUnderPriority priority={999} />
@@ -65,15 +62,15 @@ const Manager = () => {
           appsToRestore={appsToRestore}
           onRefreshDeviceInfo={refreshDeviceInfo}
         />
-      ) : !hasReset ? (
+      ) : hasReset ? (
+        <Disconnected onTryAgain={setHasReset} />
+      ) : (
         <DeviceAction
           onResult={onResult}
           action={action}
           request={null}
           location={HOOKS_TRACKING_LOCATIONS.managerDashboard}
         />
-      ) : (
-        <Disconnected onTryAgain={setHasReset} />
       )}
     </>
   );

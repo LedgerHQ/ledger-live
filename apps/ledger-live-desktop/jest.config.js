@@ -23,6 +23,7 @@ const moduleNameMapper = {
   electron: "<rootDir>/tests/mocks/electron.ts",
   uuid: require.resolve("uuid"),
   "react-spring": require.resolve("react-spring"),
+  "^react-redux": "<rootDir>/node_modules/react-redux",
   "@braze/web-sdk": require.resolve("@braze/web-sdk"),
   "@polkadot/x-fetch": "<rootDir>/__mocks__/x-fetch.js",
   "@polkadot/x-ws": "<rootDir>/__mocks__/x-ws.js",
@@ -79,10 +80,7 @@ module.exports = {
   coverageReporters: ["json", ["lcov", { projectRoot: "../" }], "json-summary"],
   reporters: [
     "default",
-    [
-      "jest-sonar",
-      { outputName: "lld-sonar-executionTests-report.xml", reportedFilePath: "absolute" },
-    ],
+    ["jest-sonar", { outputName: "sonar-executionTests-report.xml", reportedFilePath: "absolute" }],
   ],
   silent: false,
   verbose: true,

@@ -4,6 +4,8 @@
 import * as fs from "fs/promises";
 import * as path from "path";
 
+$.verbose = true; // everything works like in v7
+
 if (os.platform() === "win32") {
   usePowerShell();
 }

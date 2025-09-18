@@ -1,5 +1,6 @@
 import React from "react";
 import { getStuckAccountAndOperation } from "@ledgerhq/live-common/operation";
+import { Trans } from "react-i18next";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import Box from "~/renderer/components/Box";
@@ -8,12 +9,10 @@ import CurrencyDownStatusAlert from "~/renderer/components/CurrencyDownStatusAle
 import ErrorBanner from "~/renderer/components/ErrorBanner";
 import Label from "~/renderer/components/Label";
 import SelectAccount from "~/renderer/components/SelectAccount";
-import SelectNFT from "~/renderer/screens/nft/Send/SelectNFT";
 import SendRecipientFields, { getFields } from "../SendRecipientFields";
 import RecipientField from "../fields/RecipientField";
 import { StepProps } from "../types";
 import StepRecipientSeparator from "~/renderer/components/StepRecipientSeparator";
-import { Account } from "@ledgerhq/types-live";
 import EditOperationPanel from "~/renderer/components/OperationsList/EditOperationPanel";
 import { MEMO_TAG_COINS } from "LLD/features/MemoTag/constants";
 import { useDispatch, useSelector } from "react-redux";
@@ -23,12 +22,22 @@ import {
   memoTagBoxVisibilitySelector,
 } from "~/renderer/reducers/UI";
 import MemoTagSendInfo from "LLD/features/MemoTag/components/MemoTagSendInfo";
-import { Flex, Text } from "@ledgerhq/react-ui";
+import { Flex, Link, Text } from "@ledgerhq/react-ui";
 import CheckBox from "~/renderer/components/CheckBox";
 import { alwaysShowMemoTagInfoSelector } from "~/renderer/reducers/settings";
 import { toggleShouldDisplayMemoTagInfo } from "~/renderer/actions/settings";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { getMemoTagValueByTransactionFamily } from "LLD/features/MemoTag/utils";
+import {
+  getTokenExtensions,
+  hasProblematicExtension,
+} from "@ledgerhq/live-common/families/solana/token";
+import Alert from "~/renderer/components/Alert";
+import { openURL } from "~/renderer/linking";
+import { urls } from "~/config/urls";
+import { getLLDCoinFamily } from "~/renderer/families";
+
+const openSplTokenExtensionsArticle = () => openURL(urls.solana.splTokenExtensions);
 
 const StepRecipient = ({
   t,
@@ -42,11 +51,7 @@ const StepRecipient = ({
   status,
   maybeRecipient,
   onResetMaybeRecipient,
-  maybeNFTId,
   currencyName,
-  isNFTSend,
-  onChangeNFT,
-  maybeNFTCollection,
 }: StepProps) => {
   const isMemoTagBoxVisibile = useSelector(memoTagBoxVisibilitySelector);
   const forceAutoFocusOnMemoField = useSelector(forceAutoFocusOnMemoFieldSelector);
@@ -55,48 +60,45 @@ const StepRecipient = ({
   if (!status || !account) return null;
 
   const mainAccount = getMainAccount(account, parentAccount);
+  const extensions = getTokenExtensions(account);
+
   // check if there is a stuck transaction. If so, display a warning panel with "speed up or cancel" button
   const stuckAccountAndOperation = getStuckAccountAndOperation(account, parentAccount);
 
   return (
     <Box flow={4}>
-      <TrackPage
-        category="Send Flow"
-        name="Step Recipient"
-        currencyName={currencyName}
-        isNFTSend={isNFTSend}
-      />
+      <TrackPage category="Send Flow" name="Step Recipient" currencyName={currencyName} />
       {isMemoTagBoxVisibile && lldMemoTag?.enabled ? (
         <MemoTagSendInfo />
       ) : (
         <>
           {mainAccount ? <CurrencyDownStatusAlert currencies={[mainAccount.currency]} /> : null}
           {error ? <ErrorBanner error={error} /> : null}
-          {isNFTSend ? (
-            <Box flow={1}>
-              <Label>{t("send.steps.recipient.nftRecipient")}</Label>
-              {account && (
-                <SelectNFT
-                  onSelect={onChangeNFT}
-                  maybeNFTId={maybeNFTId}
-                  maybeNFTCollection={maybeNFTCollection}
-                  account={account as Account}
-                />
-              )}
-            </Box>
-          ) : (
-            <Box flow={1}>
-              <Label>{t("send.steps.details.selectAccountDebit")}</Label>
-              <SelectAccount
-                id="account-debit-placeholder"
-                withSubAccounts
-                enforceHideEmptySubAccounts
-                autoFocus={!openedFromAccount && !forceAutoFocusOnMemoField}
-                onChange={onChangeAccount}
-                value={account}
-              />
-            </Box>
-          )}
+          {status.errors && status.errors.sender ? (
+            <div data-testid="sender-error-container">
+              <ErrorBanner dataTestId="sender-error" error={status.errors.sender} />
+            </div>
+          ) : null}
+
+          <Box flow={1}>
+            <Label>{t("send.steps.details.selectAccountDebit")}</Label>
+            <SelectAccount
+              id="account-debit-placeholder"
+              withSubAccounts
+              enforceHideEmptySubAccounts
+              autoFocus={!openedFromAccount && !forceAutoFocusOnMemoField}
+              onChange={onChangeAccount}
+              value={account}
+            />
+          </Box>
+
+          {extensions && hasProblematicExtension(extensions) ? (
+            <Alert data-testid="spl-2022-problematic-extension" type="warning" small={true}>
+              <Trans i18nKey="send.steps.details.splExtensionsWarning">
+                <Link type="color" onClick={openSplTokenExtensionsArticle} />
+              </Trans>
+            </Alert>
+          ) : null}
           {stuckAccountAndOperation ? (
             <EditOperationPanel
               operation={stuckAccountAndOperation.operation}
@@ -152,7 +154,14 @@ export const StepRecipientFooter = ({
     mainAccount ? getFields(mainAccount, lldMemoTag?.enabled) : [],
   );
   const hasFieldError = Object.keys(errors).some(name => fields.includes(name));
-  const canNext = !bridgePending && !hasFieldError && !isTerminated;
+  const specific = mainAccount ? getLLDCoinFamily(mainAccount.currency.family) : null;
+  const customValidationSuccess = specific?.sendRecipientCanNext?.(status) ?? true;
+  const canNext =
+    !bridgePending &&
+    !hasFieldError &&
+    !isTerminated &&
+    customValidationSuccess &&
+    !status.errors.sender;
   const isMemoTagBoxVisibile = useSelector(memoTagBoxVisibilitySelector);
   const alwaysShowMemoTagInfo = useSelector(alwaysShowMemoTagInfoSelector);
 

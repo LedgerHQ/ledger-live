@@ -8,7 +8,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { NavigationContainerEventMap } from "@react-navigation/native";
 import { Box } from "@ledgerhq/native-ui";
 import Portfolio from "~/screens/Portfolio";
-import WalletNftGallery from "~/screens/Nft/WalletNftGallery";
 import {
   readOnlyModeEnabledSelector,
   walletTabNavigatorLastVisitedTabSelector,
@@ -42,18 +41,19 @@ export default function WalletTabNavigator() {
           initialRouteName={lastVisitedTab}
           tabBar={tabBarOptions}
           style={{ backgroundColor: "transparent" }}
-          sceneContainerStyle={{ backgroundColor: "transparent" }}
           screenOptions={{
             lazy: true,
             swipeEnabled: false, // For Contents Cards issue
+            sceneStyle: { backgroundColor: "transparent" },
           }}
           screenListeners={{
-            state: e => {
-              const data = e.data as NavigationContainerEventMap["state"]["data"];
+            state: (e: { data: NavigationContainerEventMap["state"]["data"] }) => {
+              const data = e.data;
               if (data?.state?.routeNames && (data?.state?.index || data?.state?.index === 0)) {
                 setCurrentRouteName(data.state.routeNames[data.state.index]);
                 dispatch(
                   setWalletTabNavigatorLastVisitedTab(
+                    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
                     data.state.routeNames[
                       data.state.index
                     ] as keyof WalletTabNavigatorStackParamList,
@@ -68,14 +68,6 @@ export default function WalletTabNavigator() {
             component={readOnlyModeEnabled && hasNoAccounts ? ReadOnlyPortfolio : Portfolio}
             options={{
               title: t("wallet.tabs.crypto"),
-            }}
-          />
-
-          <WalletTab.Screen
-            name={ScreenName.WalletNftGallery}
-            component={WalletNftGallery}
-            options={{
-              title: t("wallet.tabs.nft"),
             }}
           />
 

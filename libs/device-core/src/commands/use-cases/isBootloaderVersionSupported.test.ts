@@ -1,7 +1,7 @@
 import { DeviceModelId } from "@ledgerhq/devices";
 import { isBootloaderVersionSupported } from "./isBootloaderVersionSupported";
 
-const { nanoS, nanoSP, nanoX, stax } = DeviceModelId;
+const { nanoS, nanoSP, nanoX, stax, europa, apex } = DeviceModelId;
 
 test("isBootloaderVersionSupported", () => {
   /**
@@ -59,6 +59,12 @@ test("isBootloaderVersionSupported", () => {
   /**
    * Europa
    */
-  expect(isBootloaderVersionSupported("0.1.0", "europa" as DeviceModelId)).toBe(true);
-  expect(isBootloaderVersionSupported("0.1.0-whatever0", "europa" as DeviceModelId)).toBe(true);
+  expect(isBootloaderVersionSupported("0.1.0", europa)).toBe(true);
+  expect(isBootloaderVersionSupported("0.1.0-whatever0", europa)).toBe(true);
+
+  /**
+   * Apex
+   */
+  expect(isBootloaderVersionSupported("0.1.0", apex)).toBe(true);
+  expect(isBootloaderVersionSupported("0.1.0-whatever0", apex)).toBe(true);
 });

@@ -3,8 +3,6 @@ import { Flex } from "@ledgerhq/native-ui";
 import Button from "./Button";
 import { GenericInformationBody } from "./GenericInformationBody";
 
-export type InformationaIconType = "error" | "success" | "warning" | "info";
-
 type Props = {
   title: string;
   icon: React.ReactElement;

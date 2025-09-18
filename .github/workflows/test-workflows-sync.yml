@@ -1,0 +1,253 @@
+---
+name: "[CI] - Worflow Files Check - PR"
+
+on:
+  pull_request:
+    branches:
+      - develop
+    types: [opened, labeled, unlabeled, synchronize, reopened]
+  workflow_call:
+    inputs:
+      base_branch:
+        description: "Base branch to compare against"
+        required: false
+        default: "develop"
+        type: string
+      skip_check:
+        description: "Skip the workflow synchronization check"
+        required: false
+        default: false
+        type: boolean
+      check_folders:
+        description: "Comma-separated list of folders to check for changes (e.g., '.github/workflows/,tools/actions/')"
+        required: false
+        default: ".github/workflows/,tools/actions"
+        type: string
+      fail_on_changes:
+        description: "Whether to fail the workflow when changes are detected"
+        required: false
+        default: true
+        type: boolean
+      bypass_label:
+        description: "PR label that bypasses the sync check"
+        required: false
+        default: "skip-sync-check"
+        type: string
+    outputs:
+      workflows_changed:
+        description: "Whether any workflow files were changed"
+        value: ${{ jobs.check-sync.outputs.workflows_changed }}
+      can_proceed:
+        description: "Whether subsequent workflows can proceed"
+        value: ${{ jobs.check-sync.outputs.can_proceed }}
+      changed_files:
+        description: "List of changed files"
+        value: ${{ jobs.check-sync.outputs.changed_files }}
+
+jobs:
+  check-sync:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+    outputs:
+      workflows_changed: ${{ steps.analyze.outputs.workflows_changed || (steps.bypass-check.outputs.should_skip == 'true' && 'unknown') }}
+      can_proceed: ${{ steps.analyze.outputs.can_proceed || (steps.bypass-check.outputs.should_skip == 'true' && 'true') }}
+      changed_files: ${{ steps.analyze.outputs.changed_files || '' }}
+    steps:
+      - name: Checkout PR
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set default inputs for PR triggers
+        id: set-defaults
+        run: |
+          # Set defaults when triggered by PR (not workflow_call)
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            echo "base_branch=${{ github.base_ref }}" >> $GITHUB_OUTPUT
+            echo "skip_check=false" >> $GITHUB_OUTPUT
+            echo "check_folders=.github/workflows/" >> $GITHUB_OUTPUT
+            echo "fail_on_changes=true" >> $GITHUB_OUTPUT
+            echo "bypass_label=skip-sync-check" >> $GITHUB_OUTPUT
+          else
+            echo "base_branch=${{ inputs.base_branch }}" >> $GITHUB_OUTPUT
+            echo "skip_check=${{ inputs.skip_check }}" >> $GITHUB_OUTPUT
+            echo "check_folders=${{ inputs.check_folders }}" >> $GITHUB_OUTPUT
+            echo "fail_on_changes=${{ inputs.fail_on_changes }}" >> $GITHUB_OUTPUT
+            echo "bypass_label=${{ inputs.bypass_label }}" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Check for bypass conditions
+        id: bypass-check
+        run: |
+          SKIP_CHECK="${{ steps.set-defaults.outputs.skip_check }}"
+          BYPASS_LABEL="${{ steps.set-defaults.outputs.bypass_label }}"
+
+          # Skip check if requested via input parameter (for workflow_call)
+          if [ "$SKIP_CHECK" = "true" ]; then
+            echo "should_skip=true" >> $GITHUB_OUTPUT
+            echo "skip_reason=input parameter" >> $GITHUB_OUTPUT
+            echo "⚠️  Workflow synchronization check skipped via input parameter"
+            exit 0
+          fi
+
+          # Check for bypass label on PR (for pull_request events)
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            if echo '${{ toJson(github.event.pull_request.labels.*.name) }}' | jq -r '.[]' | grep -q "^${BYPASS_LABEL}$"; then
+              echo "should_skip=true" >> $GITHUB_OUTPUT
+              echo "skip_reason=PR label: $BYPASS_LABEL" >> $GITHUB_OUTPUT
+              echo "⚠️  Workflow synchronization check bypassed via PR label: $BYPASS_LABEL"
+              exit 0
+            fi
+          fi
+
+          echo "should_skip=false" >> $GITHUB_OUTPUT
+          echo "skip_reason=" >> $GITHUB_OUTPUT
+
+      - name: Analyze workflow synchronization
+        id: analyze
+        if: steps.bypass-check.outputs.should_skip == 'false'
+        run: |
+          BASE_BRANCH="${{ steps.set-defaults.outputs.base_branch }}"
+          CHECK_FOLDERS="${{ steps.set-defaults.outputs.check_folders }}"
+          FAIL_ON_CHANGES="${{ steps.set-defaults.outputs.fail_on_changes }}"
+
+          # Fetch base branch for comparison
+          git fetch origin $BASE_BRANCH
+
+          echo "🔍 Checking synchronization against $BASE_BRANCH..."
+          echo "📁 Monitoring folders: $CHECK_FOLDERS"
+
+          # Convert comma-separated folders to array and build git diff arguments
+          IFS=',' read -ra FOLDERS <<< "$CHECK_FOLDERS"
+          DIFF_ARGS=""
+          for folder in "${FOLDERS[@]}"; do
+            # Trim whitespace
+            folder=$(echo "$folder" | xargs)
+            if [ -n "$folder" ]; then
+              DIFF_ARGS="$DIFF_ARGS -- '$folder'"
+            fi
+          done
+
+          # Get all changed files in specified folders
+          CHANGED_FILES_CMD="git diff --name-only origin/$BASE_BRANCH...HEAD $DIFF_ARGS"
+          echo "🔍 Running: $CHANGED_FILES_CMD"
+
+          CHANGED_FILES=$(eval $CHANGED_FILES_CMD || true)
+
+          if [ -z "$CHANGED_FILES" ]; then
+            echo "workflows_changed=false" >> $GITHUB_OUTPUT
+            echo "can_proceed=true" >> $GITHUB_OUTPUT
+            echo "changed_files=" >> $GITHUB_OUTPUT
+            echo "✅ No files changed in monitored folders - perfectly synchronized"
+            exit 0
+          fi
+
+          echo "workflows_changed=true" >> $GITHUB_OUTPUT
+          # Set changed_files output (replace newlines with commas for output)
+          CHANGED_FILES_COMMA=$(echo "$CHANGED_FILES" | tr '\n' ',' | sed 's/,$//')
+          echo "changed_files=$CHANGED_FILES_COMMA" >> $GITHUB_OUTPUT
+
+          echo "📝 Changed files in monitored folders:"
+          echo "$CHANGED_FILES"
+
+          if [ "$FAIL_ON_CHANGES" = "true" ]; then
+            echo "can_proceed=false" >> $GITHUB_OUTPUT
+            echo "❌ Files changed in monitored folders - action required"
+          else
+            echo "can_proceed=true" >> $GITHUB_OUTPUT
+            echo "⚠️  Files changed in monitored folders - proceeding anyway"
+          fi
+
+      - name: Show file differences
+        if: steps.analyze.outputs.workflows_changed == 'true' && steps.bypass-check.outputs.should_skip == 'false'
+        run: |
+          BASE_BRANCH="${{ steps.set-defaults.outputs.base_branch }}"
+          CHECK_FOLDERS="${{ steps.set-defaults.outputs.check_folders }}"
+
+          echo "::group::📋 File differences in monitored folders"
+
+          # Convert comma-separated folders to array and build git diff arguments
+          IFS=',' read -ra FOLDERS <<< "$CHECK_FOLDERS"
+          DIFF_ARGS=""
+          for folder in "${FOLDERS[@]}"; do
+            folder=$(echo "$folder" | xargs)
+            if [ -n "$folder" ]; then
+              DIFF_ARGS="$DIFF_ARGS -- '$folder'"
+            fi
+          done
+
+          DIFF_CMD="git diff origin/$BASE_BRANCH...HEAD $DIFF_ARGS"
+          eval $DIFF_CMD || true
+          echo "::endgroup::"
+
+      - name: Provide guidance
+        if: steps.analyze.outputs.can_proceed == 'false' && steps.bypass-check.outputs.should_skip == 'false'
+        run: |
+          BASE_BRANCH="${{ steps.set-defaults.outputs.base_branch }}"
+          echo "::notice::💡 To resolve this issue, rebase your branch: git rebase origin/$BASE_BRANCH"
+          echo "::notice::   This ensures consistent behavior across all PRs"
+
+      - name: Create or update PR comment with results
+        if: github.event_name == 'pull_request' && steps.analyze.outputs.workflows_changed == 'true' && steps.bypass-check.outputs.should_skip == 'false'
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const canProceed = '${{ steps.analyze.outputs.can_proceed }}' === 'true';
+            const changedFiles = '${{ steps.analyze.outputs.changed_files }}'.split(',').filter(f => f.length > 0);
+            const baseBranch = '${{ steps.set-defaults.outputs.base_branch }}';
+
+            const status = canProceed ? '⚠️ Warning' : '❌ Action Required';
+            const filesList = changedFiles.map(f => `- \`${f}\``).join('\n');
+
+            const body = `## ${status}: Monitored Files Changed
+
+            The following files in monitored folders have been modified:
+
+            ${filesList}
+
+            ${canProceed ?
+              '**Note**: This is informational only. The workflow will continue.' :
+              `**Action Required**: Please rebase your branch against \`${baseBranch}\` to ensure consistency:\n\n\`\`\`bash\ngit rebase origin/${baseBranch}\n\`\`\`\n\n`
+            }
+
+            <!-- sync-check-comment -->`;
+
+            // Find existing comment
+            const comments = await github.rest.issues.listComments({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+            });
+
+            const existingComment = comments.data.find(comment => 
+              comment.body.includes('<!-- sync-check-comment -->')
+            );
+
+            if (existingComment) {
+              // Update existing comment
+              await github.rest.issues.updateComment({
+                comment_id: existingComment.id,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                body: body
+              });
+            } else {
+              // Create new comment
+              await github.rest.issues.createComment({
+                issue_number: context.issue.number,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                body: body
+              });
+            }
+
+      - name: Fail if changes detected and fail_on_changes is true
+        if: steps.analyze.outputs.can_proceed == 'false' && steps.bypass-check.outputs.should_skip == 'false'
+        run: |
+          BASE_BRANCH="${{ steps.set-defaults.outputs.base_branch }}"
+          echo "::error::Files in monitored folders have been modified and must be synchronized."
+          echo "::error::Please rebase your branch against $BASE_BRANCH"
+          exit 1

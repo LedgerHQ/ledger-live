@@ -15,10 +15,18 @@ type BasicErrorsProps = {
   domainError: DomainServiceResponseError | null;
   domainErrorHandled: boolean;
   isForwardResolution: boolean;
+  noLink?: boolean;
 };
 
 export const BasicErrorsView = memo(
-  ({ error, warning, domainError, domainErrorHandled, isForwardResolution }: BasicErrorsProps) => {
+  ({
+    error,
+    warning,
+    domainError,
+    domainErrorHandled,
+    isForwardResolution,
+    noLink,
+  }: BasicErrorsProps) => {
     // if no error or warning to show, ignore
     if (!error && !warning) return null;
 
@@ -35,14 +43,16 @@ export const BasicErrorsView = memo(
           >
             <TranslatedError error={error || warning} />
           </LText>
-          <View
-            style={{
-              display: "flex",
-              alignItems: "flex-start",
-            }}
-          >
-            <SupportLinkError error={error} type="alert" />
-          </View>
+          {noLink ? null : (
+            <View
+              style={{
+                display: "flex",
+                alignItems: "flex-start",
+              }}
+            >
+              <SupportLinkError error={error} type="alert" />
+            </View>
+          )}
         </>
       );
     }

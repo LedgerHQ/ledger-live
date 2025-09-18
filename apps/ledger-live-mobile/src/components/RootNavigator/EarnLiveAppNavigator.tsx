@@ -1,21 +1,20 @@
-import React, { useEffect, useMemo } from "react";
-import { createStackNavigator } from "@react-navigation/stack";
-
-import { useTheme } from "styled-components/native";
-import { useRoute } from "@react-navigation/native";
-import { useDispatch, useSelector } from "react-redux";
+import { getParentAccount, isTokenAccount } from "@ledgerhq/coin-framework/lib/account/helpers";
 import { getAccountIdFromWalletAccountId } from "@ledgerhq/live-common/wallet-api/converters";
-
-import { ScreenName, NavigatorName } from "~/const";
+import { useRoute } from "@react-navigation/native";
+import { createStackNavigator } from "@react-navigation/stack";
+import React, { useEffect, useMemo } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useTheme } from "styled-components/native";
+import { NavigatorName, ScreenName } from "~/const";
 import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
+import { flattenAccountsSelector } from "~/reducers/accounts";
+import { EarnScreen } from "~/screens/PTX/Earn";
+import { EarnInfoDrawer } from "~/screens/PTX/Earn/EarnInfoDrawer";
+import { EarnMenuDrawer } from "~/screens/PTX/Earn/EarnMenuDrawer";
+import { EarnProtocolInfoDrawer } from "~/screens/PTX/Earn/EarnProtocolInfoDrawer";
+import { useStakingDrawer } from "../Stake/useStakingDrawer";
 import type { EarnLiveAppNavigatorParamList } from "./types/EarnLiveAppNavigator";
 import type { BaseComposite, StackNavigatorProps } from "./types/helpers";
-import { EarnScreen } from "~/screens/PTX/Earn";
-import { flattenAccountsSelector } from "~/reducers/accounts";
-import { EarnInfoDrawer } from "~/screens/PTX/Earn/EarnInfoDrawer";
-import { useStakingDrawer } from "../Stake/useStakingDrawer";
-import { EarnMenuDrawer } from "~/screens/PTX/Earn/EarnMenuDrawer";
-import { getParentAccount, isTokenAccount } from "@ledgerhq/coin-framework/lib/account/helpers";
 
 const Stack = createStackNavigator<EarnLiveAppNavigatorParamList>();
 
@@ -51,6 +50,20 @@ const Earn = (props: NavigationProps) => {
 
     function deeplinkRouting() {
       switch (paramAction) {
+        case "deposit": {
+          navigation.navigate(NavigatorName.Base, {
+            screen: NavigatorName.Earn,
+            params: {
+              screen: ScreenName.Earn,
+              params: {
+                intent: "deposit",
+                cryptoAssetId: props.route.params?.cryptoAssetId,
+                accountId: props.route.params?.accountId,
+              },
+            },
+          });
+          break;
+        }
         case "stake":
           navigation.navigate(NavigatorName.StakeFlow, {
             screen: ScreenName.Stake,
@@ -76,7 +89,6 @@ const Earn = (props: NavigationProps) => {
               : undefined;
             openStakingDrawer(account, parent);
           } else {
-            // eslint-disable-next-line no-console
             console.warn("no matching account found for given id.");
           }
           break;
@@ -101,9 +113,22 @@ const Earn = (props: NavigationProps) => {
           }
           break;
         }
+        case "go-back": {
+          if (navigation.canGoBack()) {
+            navigation.goBack();
+          } else if (navigation.getParent()?.canGoBack()) {
+            navigation.getParent()?.goBack();
+          } else {
+            // Fallback to main earn screen
+            navigation.navigate(NavigatorName.Earn, {
+              screen: ScreenName.Earn,
+              params: props.route.params,
+            });
+          }
+          break;
+        }
         default: {
-          // eslint-disable-next-line no-console
-          console.log(`EarnLiveAppNavigator: No route for action "${paramAction}"`);
+          console.warn(`EarnLiveAppNavigator: No route for action "${paramAction}"`);
         }
       }
     }
@@ -115,17 +140,20 @@ const Earn = (props: NavigationProps) => {
 
   return (
     <>
+      {/* EarnScreen contains the EarnWebview */}
       <EarnScreen
         navigation={props.navigation}
         route={{
           ...props.route,
           params: {
             platform: "earn",
+            ...props.route.params,
           },
         }}
       />
+      <EarnProtocolInfoDrawer />
       <EarnInfoDrawer />
-      <EarnMenuDrawer />
+      <EarnMenuDrawer navigation={props.navigation} />
     </>
   );
 };

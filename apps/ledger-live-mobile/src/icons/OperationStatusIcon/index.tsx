@@ -36,8 +36,6 @@ const iconsComponent = {
   CHILL: IconsLegacy.VoteMedium,
   REWARD_PAYOUT: IconsLegacy.ClaimRewardsMedium,
   SET_CONTROLLER: IconsLegacy.ArrowFromBottomMedium,
-  NFT_IN: IconsLegacy.ArrowBottomMedium,
-  NFT_OUT: IconsLegacy.ArrowTopMedium,
   ACTIVATE: IconsLegacy.ShieldCheckMedium,
   LOCK: IconsLegacy.LockMedium,
   UNLOCK: IconsLegacy.UnlockMedium,
@@ -46,6 +44,7 @@ const iconsComponent = {
   STAKE: IconsLegacy.HandshakeMedium,
   UNSTAKE: IconsLegacy.UndelegateMedium,
   WITHDRAW_UNSTAKED: IconsLegacy.CoinsMedium,
+  ASSOCIATE_TOKEN: IconsLegacy.PlusMedium,
 };
 
 const OperationStatusIcon = ({

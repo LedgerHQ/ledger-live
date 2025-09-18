@@ -32,6 +32,7 @@ export default function CardPlatformApp() {
           manifest={manifest}
           inputs={{
             theme: themeType,
+            // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
             ...(urlParams as Record<string, string>),
           }}
         />

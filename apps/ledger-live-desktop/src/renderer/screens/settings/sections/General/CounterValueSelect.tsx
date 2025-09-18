@@ -9,10 +9,9 @@ import {
 import Select from "~/renderer/components/Select";
 import Track from "~/renderer/analytics/Track";
 
-const CounterValueSelect = React.memo<{}>(function CounterValueSelect() {
+const CounterValueSelectComponent: React.FC = () => {
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
   const supportedCounterValues = useSelector(supportedCounterValuesSelector);
-
   const dispatch = useDispatch();
 
   const handleChangeCounterValue = useCallback(
@@ -22,10 +21,12 @@ const CounterValueSelect = React.memo<{}>(function CounterValueSelect() {
     },
     [dispatch],
   );
+
   const cvOption = useMemo(
     () => supportedCounterValues.find(f => f.value === counterValueCurrency.ticker),
     [counterValueCurrency, supportedCounterValues],
   );
+
   return (
     <>
       <Track onUpdate event="CounterValueSelect" counterValue={cvOption && cvOption.value} />
@@ -40,5 +41,9 @@ const CounterValueSelect = React.memo<{}>(function CounterValueSelect() {
       />
     </>
   );
-});
+};
+
+const CounterValueSelect = React.memo(CounterValueSelectComponent);
+CounterValueSelect.displayName = "CounterValueSelect";
+
 export default CounterValueSelect;

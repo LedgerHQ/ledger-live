@@ -1,15 +1,17 @@
-import celo from "../families/celo/cli-transaction";
 import { cliTools as algorand } from "../families/algorand/setup";
 import { cliTools as aptos } from "../families/aptos/setup";
 import { cliTools as bitcoin } from "../families/bitcoin/setup";
 import { cliTools as cardano } from "../families/cardano/setup";
 import { cliTools as casper } from "../families/casper/setup";
+import { cliTools as canton } from "../families/canton/setup";
+import { cliTools as celo } from "../families/celo/setup";
 import { cliTools as cosmos } from "../families/cosmos/setup";
 import { cliTools as evm } from "../families/evm/setup";
 import { cliTools as hedera } from "../families/hedera/setup";
 import { cliTools as filecoin } from "../families/filecoin/setup";
 import { cliTools as internet_computer } from "../families/internet_computer/setup";
 import { cliTools as icon } from "../families/icon/setup";
+import { cliTools as kaspa } from "../families/kaspa/setup";
 import { cliTools as multiversx } from "../families/multiversx/setup";
 import { cliTools as near } from "../families/near/setup";
 import { cliTools as polkadot } from "../families/polkadot/setup";
@@ -25,18 +27,20 @@ import { cliTools as sui } from "../families/sui/setup";
 import { cliTools as mina } from "../families/mina/setup";
 
 export default {
-  celo,
   algorand,
   aptos,
   bitcoin,
   cardano,
   casper,
+  canton,
+  celo,
   cosmos,
   evm,
   hedera,
   filecoin,
   internet_computer,
   icon,
+  kaspa,
   multiversx,
   near,
   polkadot,

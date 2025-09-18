@@ -2,6 +2,8 @@
 import "zx/globals";
 import rimraf from "rimraf";
 
+$.verbose = true; // everything works like in v7
+
 if (os.platform() === "win32") {
   usePowerShell();
 }
@@ -27,10 +29,12 @@ const targets = [
   "AccountSubHeader",
   "SendRowsCustom",
   "SendRowsFee",
+  "SendSelectRecipient",
   "AccountBalanceSummaryFooter",
   "SubAccountList",
   "Confirmation",
   "ReceiveConfirmationPostAlert",
+  "ReceiveConfirmationTokenAlert",
   "ConnectDevice",
   "NoAssociatedAccounts",
   "EditOperationPanel",

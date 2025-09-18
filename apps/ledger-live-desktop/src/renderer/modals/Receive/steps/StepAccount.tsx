@@ -2,15 +2,12 @@ import React, { useCallback, useMemo } from "react";
 import { Trans } from "react-i18next";
 import { Account, AccountLike } from "@ledgerhq/types-live";
 import { TokenCurrency, CryptoCurrency, CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
-import {
-  getAccountCurrency,
-  getMainAccount,
-  getReceiveFlowError,
-} from "@ledgerhq/live-common/account/index";
+import { getAccountCurrency, getMainAccount } from "@ledgerhq/live-common/account/index";
 import {
   listTokensForCryptoCurrency,
   listTokenTypesForCryptoCurrency,
 } from "@ledgerhq/live-common/currencies/index";
+import { supportLinkByTokenType } from "~/config/urls";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import Box from "~/renderer/components/Box";
 import Label from "~/renderer/components/Label";
@@ -20,8 +17,8 @@ import SelectCurrency from "~/renderer/components/SelectCurrency";
 import CurrencyDownStatusAlert from "~/renderer/components/CurrencyDownStatusAlert";
 import ErrorBanner from "~/renderer/components/ErrorBanner";
 import Alert from "~/renderer/components/Alert";
+import { getLLDCoinFamily } from "~/renderer/families";
 import { StepProps } from "../Body";
-import { supportLinkByTokenType } from "~/config/urls";
 
 type OnChangeAccount = (account?: AccountLike | null, tokenAccount?: Account | null) => void;
 const AccountSelection = ({
@@ -86,17 +83,18 @@ const TokenSelection = ({
     </>
   );
 };
-export default function StepAccount({
-  token,
-  account,
-  parentAccount,
-  receiveTokenMode,
-  onChangeAccount,
-  onChangeToken,
-  eventType,
-}: StepProps) {
+export default function StepAccount(props: Readonly<StepProps>) {
+  const {
+    token,
+    account,
+    parentAccount,
+    receiveTokenMode,
+    onChangeAccount,
+    onChangeToken,
+    eventType,
+    accountError,
+  } = props;
   const mainAccount = account ? getMainAccount(account, parentAccount) : null;
-  const error = account ? getReceiveFlowError(account, parentAccount) : null;
   const tokenTypes = mainAccount ? listTokenTypesForCryptoCurrency(mainAccount.currency) : [];
 
   // Nb in the context of LL-6449 (nft integration) simplified the wording for the warning.
@@ -105,11 +103,15 @@ export default function StepAccount({
       ? mainAccount.currency.name
       : tokenTypes.map(tt => tt.toUpperCase()).join("/");
   const url = supportLinkByTokenType[tokenTypes[0] as keyof typeof supportLinkByTokenType];
+  const specific = mainAccount ? getLLDCoinFamily(mainAccount.currency.family) : null;
+  const StepReceiveAccountCustomAlert = specific?.StepReceiveAccountCustomAlert;
+
   return (
     <Box flow={1}>
       <TrackPage category={`Receive Flow${eventType ? ` (${eventType})` : ""}`} name="Step 1" />
       {mainAccount ? <CurrencyDownStatusAlert currencies={[mainAccount.currency]} /> : null}
-      {error ? <ErrorBanner error={error} /> : null}
+      {accountError ? <ErrorBanner error={accountError} /> : null}
+
       {receiveTokenMode && mainAccount ? (
         <TokenParentSelection mainAccount={mainAccount} onChangeAccount={onChangeAccount} />
       ) : (
@@ -149,6 +151,9 @@ export default function StepAccount({
           </Alert>
         </div>
       ) : null}
+      {!!account && !!StepReceiveAccountCustomAlert && (
+        <StepReceiveAccountCustomAlert {...props} account={account} />
+      )}
     </Box>
   );
 }
@@ -157,13 +162,12 @@ export function StepAccountFooter({
   receiveTokenMode,
   token,
   account,
-  parentAccount,
+  accountError,
 }: StepProps) {
-  const error = account ? getReceiveFlowError(account, parentAccount) : null;
   return (
     <Button
       data-testid="modal-continue-button"
-      disabled={!account || (receiveTokenMode && !token) || !!error}
+      disabled={!account || (receiveTokenMode && !token) || accountError}
       primary
       onClick={() => transitionTo("device")}
     >

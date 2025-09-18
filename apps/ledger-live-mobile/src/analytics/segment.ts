@@ -17,12 +17,11 @@ import {
 import snakeCase from "lodash/snakeCase";
 import React, { MutableRefObject, useCallback } from "react";
 import { ABTestingVariants, FeatureId, Features, idsToLanguage } from "@ledgerhq/types-live";
-import {
-  hasNftInAccounts,
-  GENESIS_PASS_COLLECTION_CONTRACT,
-  INFINITY_PASS_COLLECTION_CONTRACT,
-} from "@ledgerhq/live-nft";
+
 import { runOnceWhen } from "@ledgerhq/live-common/utils/runOnceWhen";
+import { getStablecoinYieldSetting } from "@ledgerhq/live-common/featureFlags/stakePrograms/index";
+import { getTokensWithFunds } from "@ledgerhq/live-common/domain/getTokensWithFunds";
+import { getEnv } from "@ledgerhq/live-env";
 import { getAndroidArchitecture, getAndroidVersionCode } from "../logic/cleanBuildVersion";
 import { getIsNotifEnabled } from "../logic/getNotifPermissions";
 import getOrCreateUser from "../user";
@@ -56,10 +55,11 @@ import { BrazePlugin } from "./BrazePlugin";
 import { Maybe } from "../types/helpers";
 import { appStartupTime } from "../StartupTimeMarker";
 import { aggregateData, getUniqueModelIdList } from "../logic/modelIdList";
-import { getEnv } from "@ledgerhq/live-env";
-import { getTokensWithFunds } from "LLM/utils/getTokensWithFunds";
+import { getMigrationUserProps } from "LLM/storage/utils/migrations/analytics";
+import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
+import { getVersionedRedirects } from "LLM/hooks/useStake/useVersionedStakePrograms";
 
-let sessionId = uuid();
+const sessionId = uuid();
 const appVersion = `${VersionNumber.appVersion || ""} (${VersionNumber.buildVersion || ""})`;
 const { ANALYTICS_LOGS, ANALYTICS_TOKEN } = Config;
 
@@ -78,7 +78,11 @@ const getFeatureFlagProperties = () => {
   (async () => {
     const fetchAdditionalCoins = analyticsFeatureFlagMethod("fetchAdditionalCoins");
     const stakingProviders = analyticsFeatureFlagMethod("ethStakingProviders");
-    const stakePrograms = analyticsFeatureFlagMethod("stakePrograms");
+    const rawStakePrograms = analyticsFeatureFlagMethod("stakePrograms");
+    const ptxCard = analyticsFeatureFlagMethod("ptxCard");
+
+    const ptxSwapLiveAppMobileFlag = analyticsFeatureFlagMethod("ptxSwapLiveAppMobile");
+    const ptxSwapLiveAppKycWarning = analyticsFeatureFlagMethod("ptxSwapLiveAppKycWarning");
 
     const isBatch1Enabled =
       !!fetchAdditionalCoins?.enabled && fetchAdditionalCoins?.params?.batch === 1;
@@ -89,39 +93,42 @@ const getFeatureFlagProperties = () => {
     const stakingProvidersEnabled =
       stakingProviders?.enabled && stakingProviders?.params?.listProvider.length;
 
-    const stakingCurrenciesEnabled =
+    const ptxSwapLiveAppMobileEnabled = Boolean(ptxSwapLiveAppMobileFlag?.enabled);
+    const ptxSwapLiveAppKycWarningEnabled = Boolean(ptxSwapLiveAppKycWarning?.enabled);
+
+    // Apply versioned redirects logic to the stakePrograms feature flag
+    const appVersion = LiveConfig.instance.appVersion || "0.0.0";
+    const stakePrograms = rawStakePrograms
+      ? getVersionedRedirects(rawStakePrograms, appVersion)
+      : null;
+
+    const stakingCurrenciesEnabled: string[] | string =
       stakePrograms?.enabled && stakePrograms?.params?.list?.length
-        ? Object.fromEntries(
-            stakePrograms.params.list.map((currencyId: string) => [
-              `feature_earn_${currencyId}_enabled`,
-              true,
-            ]),
-          )
-        : {};
-    const partnerStakingCurrenciesEnabled =
+        ? stakePrograms.params.list
+        : "flag not loaded";
+    const partnerStakingCurrenciesEnabled: string[] | string =
       stakePrograms?.enabled && stakePrograms?.params?.redirects
-        ? Object.keys(stakePrograms.params.redirects).map(assetId => [
-            `feature_earn_${assetId}_enabled`,
-            true,
-            `feature_earn_${assetId}_partner`,
-            stakePrograms?.params?.redirects?.[assetId]?.platform,
-          ])
-        : {};
+        ? Object.keys(stakePrograms.params.redirects)
+        : "flag not loaded";
+
+    const stablecoinYield = getStablecoinYieldSetting(stakePrograms);
 
     updateIdentify({
       isBatch1Enabled,
       isBatch2Enabled,
       isBatch3Enabled,
       stakingProvidersEnabled,
-      ...stakingCurrenciesEnabled,
-      ...partnerStakingCurrenciesEnabled,
+      ptxCard: ptxCard?.enabled,
+      stablecoinYield,
+      stakingCurrenciesEnabled,
+      partnerStakingCurrenciesEnabled,
+      ptxSwapLiveAppMobileEnabled,
+      ptxSwapLiveAppKycWarningEnabled,
     });
   })();
 };
 
 runOnceWhen(() => !!analyticsFeatureFlagMethod && !!segmentClient, getFeatureFlagProperties);
-
-export const updateSessionId = () => (sessionId = uuid());
 
 const getLedgerSyncAttributes = (state: State) => {
   if (!analyticsFeatureFlagMethod) return false;
@@ -155,15 +162,6 @@ const getMEVAttributes = (state: State) => {
   };
 };
 
-const getNewAddAccountsAttribues = () => {
-  if (!analyticsFeatureFlagMethod) return false;
-  const llmNetworkBasedAddAccountFlow = analyticsFeatureFlagMethod("llmNetworkBasedAddAccountFlow");
-
-  return {
-    hasNewAddAccounts: llmNetworkBasedAddAccountFlow?.enabled ? "Yes" : "No",
-  };
-};
-
 const getMandatoryProperties = async (store: AppStore) => {
   const state: State = store.getState();
   const { user } = await getOrCreateUser();
@@ -182,8 +180,27 @@ const getMandatoryProperties = async (store: AppStore) => {
   };
 };
 
+const getMADAttributes = () => {
+  if (!analyticsFeatureFlagMethod) return false;
+  const madFeatureFlag = analyticsFeatureFlagMethod("llmModularDrawer");
+  const rollout_phase = "INC2";
+
+  const isEnabled = madFeatureFlag?.enabled ?? false;
+
+  return {
+    rollout_phase,
+    isEnabled,
+    add_account: madFeatureFlag?.params?.add_account ?? false,
+    live_app: madFeatureFlag?.params?.live_app ?? false,
+    receive_flow: madFeatureFlag?.params?.receive_flow ?? false,
+    send_flow: madFeatureFlag?.params?.send_flow ?? false,
+    isModularizationEnabled: madFeatureFlag?.params?.enableModularization ?? false,
+  };
+};
+
 const extraProperties = async (store: AppStore) => {
   const state: State = store.getState();
+  const madAttributes = getMADAttributes();
   const mandatoryProperties = await getMandatoryProperties(store);
   const sensitiveAnalytics = sensitiveAnalyticsSelector(state);
   const systemLanguage = sensitiveAnalytics ? null : RNLocalize.getLocales()[0]?.languageTag;
@@ -196,6 +213,12 @@ const extraProperties = async (store: AppStore) => {
   const satisfaction = satisfactionSelector(state);
   const accounts = accountsSelector(state);
   const lastDevice = devices.at(-1) || bleDevices.at(-1);
+  const ldmkTransport = analyticsFeatureFlagMethod
+    ? analyticsFeatureFlagMethod("ldmkTransport")
+    : { enabled: false };
+  const ldmkConnectApp = analyticsFeatureFlagMethod
+    ? analyticsFeatureFlagMethod("ldmkConnectApp")
+    : { enabled: false };
   const deviceInfo = lastDevice
     ? {
         deviceVersion: lastDevice.deviceInfo?.version,
@@ -234,15 +257,6 @@ const extraProperties = async (store: AppStore) => {
       ]
     : [];
 
-  const blockchainsWithNftsOwned = accounts
-    ? [
-        ...new Set(
-          accounts.filter(account => account.nfts?.length).map(account => account.currency.ticker),
-        ),
-      ]
-    : [];
-  const hasGenesisPass = hasNftInAccounts(GENESIS_PASS_COLLECTION_CONTRACT, accounts);
-  const hasInfinityPass = hasNftInAccounts(INFINITY_PASS_COLLECTION_CONTRACT, accounts);
   const nps = userNpsSelector(state);
 
   const stakingProviders =
@@ -250,11 +264,20 @@ const extraProperties = async (store: AppStore) => {
   const stakingProvidersCount =
     stakingProviders?.enabled && stakingProviders?.params?.listProvider.length;
 
+  const stakePrograms = analyticsFeatureFlagMethod && analyticsFeatureFlagMethod("stakePrograms");
+  const stakingCurrenciesEnabled =
+    stakePrograms?.enabled && stakePrograms?.params?.list?.length ? stakePrograms.params.list : [];
+  const partnerStakingCurrenciesEnabled =
+    stakePrograms?.enabled && stakePrograms?.params?.redirects
+      ? Object.keys(stakePrograms.params.redirects)
+      : [];
+
+  const stablecoinYield = getStablecoinYieldSetting(stakePrograms);
   const ledgerSyncAtributes = getLedgerSyncAttributes(state);
   const rebornAttributes = getRebornAttributes();
   const mevProtectionAttributes = getMEVAttributes(state);
-  const addAccountsAttributes = getNewAddAccountsAttribues();
   const tokenWithFunds = getTokensWithFunds(accounts);
+  const migrationToMMKV = getMigrationUserProps();
 
   // NOTE: Currently there no reliable way to uniquely identify devices from DeviceModelInfo.
   // So device counts is approximated as follows:
@@ -270,6 +293,7 @@ const extraProperties = async (store: AppStore) => {
     androidVersionCode: getAndroidVersionCode(VersionNumber.buildVersion),
     androidArchitecture: getAndroidArchitecture(VersionNumber.buildVersion),
     environment: ANALYTICS_LOGS ? "development" : "production",
+    platform: "mobile",
     systemLanguage: sensitiveAnalytics ? null : systemLanguage,
     language,
     appLanguage: language, // In Braze it can't be called language
@@ -291,19 +315,22 @@ const extraProperties = async (store: AppStore) => {
     notificationsBlacklisted,
     ...notificationsOptedIn,
     accountsWithFunds,
-    blockchainsWithNftsOwned,
-    hasGenesisPass,
-    hasInfinityPass,
     appTimeToInteractiveMilliseconds: appStartupTime,
     staxDeviceUser: knownDeviceModelIds.stax,
     staxLockscreen: customImageType || "none",
     nps,
     stakingProvidersEnabled: stakingProvidersCount || "flag not loaded",
+    stablecoinYield,
     ...ledgerSyncAtributes,
     ...rebornAttributes,
     ...mevProtectionAttributes,
-    ...addAccountsAttributes,
+    migrationToMMKV,
     tokenWithFunds,
+    isLDMKTransportEnabled: ldmkTransport?.enabled,
+    isLDMKConnectAppEnabled: ldmkConnectApp?.enabled,
+    stakingCurrenciesEnabled,
+    partnerStakingCurrenciesEnabled,
+    madAttributes,
   };
 };
 
@@ -360,11 +387,6 @@ export const updateIdentify = async (additionalProperties?: UserTraits, mandator
   if (ANALYTICS_LOGS) console.log("analytics:identify", allProperties);
   if (!token) return;
   await segmentClient?.identify(userExtraProperties.userId, allProperties);
-};
-
-export const stop = () => {
-  if (ANALYTICS_LOGS) console.log("analytics:stop");
-  storeInstance = null;
 };
 
 type Properties = Error | Record<string, unknown> | null;

@@ -24,6 +24,16 @@ export function createWrongSellParams(params: unknown): ExchangeErrorData {
   };
 }
 
+export function createWrongFundParams(params: unknown): ExchangeErrorData {
+  return {
+    code: "WRONG_FUND_PARAMS",
+    message: "fund params are not correctly set",
+    data: {
+      params,
+    },
+  };
+}
+
 export function createAccounIdNotFound(accountId: string): ExchangeErrorData {
   return {
     code: "ACCOUNT_ID_NOT_FOUND",

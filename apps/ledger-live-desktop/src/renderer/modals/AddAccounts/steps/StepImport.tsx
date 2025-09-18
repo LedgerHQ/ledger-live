@@ -43,9 +43,12 @@ const statusCodeErrorMap = new Map<number, (appName: string) => Error>([
 ]);
 
 const remapTransportError = (err: unknown, appName: string): Error => {
+  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
   if (!err || typeof err !== "object") return err as Error;
+  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
   const { statusCode } = err as { name: string; statusCode: number };
   const errorFromStatusCode = statusCodeErrorMap.get(statusCode)?.(appName);
+  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
   return errorFromStatusCode || (err as Error);
 };
 const LoadingRow = styled(Box).attrs(() => ({
@@ -172,12 +175,13 @@ class StepImport extends PureComponent<
           error: err => {
             logger.critical(err);
             const error = remapTransportError(err, currency.name);
-            setScanStatus("error", error as Error);
+            setScanStatus("error", error);
           },
         });
     } catch (err) {
       logger.critical(err);
       const { setScanStatus } = this.props;
+      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
       setScanStatus("error", err as Error);
     }
   }
@@ -343,6 +347,7 @@ class StepImport extends PureComponent<
                 title={t(`addAccounts.sections.${id}.title`, {
                   count: data.length,
                 })}
+                // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
                 emptyText={emptyTexts[id as keyof typeof emptyTexts]}
                 accounts={data}
                 autoFocusFirstInput={selectable && i === 0}

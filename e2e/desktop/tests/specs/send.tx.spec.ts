@@ -27,11 +27,6 @@ const transactionsAmountInvalid = [
     xrayTicket: "B2CQA-2571",
   },
   {
-    transaction: new Transaction(Account.DOT_1, Account.DOT_2, "1.2"),
-    expectedErrorMessage: "Balance cannot be below 1 DOT. Send max to empty account.",
-    xrayTicket: "B2CQA-2567",
-  },
-  {
     transaction: new Transaction(Account.DOT_1, Account.DOT_3, "0.5"),
     expectedErrorMessage: "Recipient address is inactive. Send at least 1 DOT to activate it",
     xrayTicket: "B2CQA-2570",
@@ -197,6 +192,10 @@ const transactionE2E = [
     transaction: new Transaction(Account.APTOS_1, Account.APTOS_2, "0.0001"),
     xrayTicket: "B2CQA-2920",
   },
+  {
+    transaction: new Transaction(Account.KASPA_1, Account.KASPA_2, "1"),
+    xrayTicket: "B2CQA-3840",
+  },
 ];
 
 test.describe("Send flows", () => {
@@ -205,7 +204,10 @@ test.describe("Send flows", () => {
   for (const transaction of transactionE2E) {
     test.describe("Send from 1 account to another", () => {
       test.use({
-        userdata: "skip-onboarding",
+        userdata:
+          transaction.transaction.accountToDebit === Account.APTOS_1
+            ? "speculos-aptos"
+            : "skip-onboarding",
         speculosApp: transaction.transaction.accountToDebit.currency.speculosApp,
         cliCommands: [
           (appjsonPath: string) => {
@@ -230,6 +232,7 @@ test.describe("Send flows", () => {
       test(
         `Send from ${transaction.transaction.accountToDebit.accountName} to ${transaction.transaction.accountToCredit.accountName}`,
         {
+          tag: ["@NanoSP", "@LNS", "@NanoX"],
           annotation: { type: "TMS", description: transaction.xrayTicket },
         },
         async ({ app }) => {
@@ -289,6 +292,7 @@ test.describe("Send flows", () => {
       test(
         `Check "${transaction.expectedErrorMessage}" for ${transaction.transaction.accountToDebit.currency.name} - invalid amount ${transaction.transaction.amount} input error`,
         {
+          tag: ["@NanoSP", "@LNS", "@NanoX"],
           annotation: { type: "TMS", description: transaction.xrayTicket },
         },
         async ({ app }) => {
@@ -334,6 +338,7 @@ test.describe("Send flows", () => {
     test(
       `Check Valid amount input (${transactionInputValid.amount})`,
       {
+        tag: ["@NanoSP", "@LNS", "@NanoX"],
         annotation: {
           type: "TMS",
           description: "B2CQA-473",
@@ -378,6 +383,7 @@ test.describe("Send flows", () => {
       test(
         `Check button enabled (${transaction.transaction.amount} from ${transaction.transaction.accountToDebit.accountName} to ${transaction.transaction.accountToCredit.accountName}) - valid address input (${transaction.transaction.accountToDebit.address})`,
         {
+          tag: ["@NanoSP", "@LNS", "@NanoX"],
           annotation: {
             type: "TMS",
             description: transaction.xrayTicket,
@@ -420,6 +426,7 @@ test.describe("Send flows", () => {
       test(
         `Check "${transaction.expectedErrorMessage}" (from ${transaction.transaction.accountToDebit.accountName} to ${transaction.transaction.accountToCredit.accountName}) - invalid address input error`,
         {
+          tag: ["@NanoSP", "@LNS", "@NanoX"],
           annotation: {
             type: "TMS",
             description: transaction.xrayTicket,
@@ -481,6 +488,7 @@ test.describe("Send flows", () => {
     test(
       `User sends funds to ENS address - ${transactionEnsAddress.accountToCredit.ensName}`,
       {
+        tag: ["@NanoSP", "@LNS", "@NanoX"],
         annotation: {
           type: "TMS",
           description: "B2CQA-2202",

@@ -89,6 +89,7 @@ export const getModalData = <Name extends keyof ModalData>(
 // Exporting reducer
 
 export default handleActions<ModalsState, HandlersPayloads[keyof HandlersPayloads]>(
+  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
   handlers as unknown as ModalsHandlers<false>,
   state,
 );

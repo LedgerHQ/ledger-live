@@ -4,18 +4,15 @@ import { useDispatch, useSelector } from "react-redux";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import DeviceAction from "~/renderer/components/DeviceAction";
 import StepProgress from "~/renderer/components/StepProgress";
-import { createAction } from "@ledgerhq/live-common/hw/actions/transaction";
 import { useBroadcast } from "@ledgerhq/live-common/hooks/useBroadcast";
 import { Account, AccountLike, Operation, SignedOperation } from "@ledgerhq/types-live";
 import { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
-import { getEnv } from "@ledgerhq/live-env";
-import { mockedEventEmitter } from "~/renderer/components/debug/DebugMock";
 import { DeviceBlocker } from "~/renderer/components/DeviceAction/DeviceBlocker";
 import { closeModal } from "~/renderer/actions/modals";
 import { mevProtectionSelector } from "~/renderer/reducers/settings";
-import connectApp from "@ledgerhq/live-common/hw/connectApp";
 import { HOOKS_TRACKING_LOCATIONS } from "~/renderer/analytics/hooks/variables";
-const action = createAction(getEnv("MOCK") ? mockedEventEmitter : connectApp);
+import { useTransactionAction } from "~/renderer/hooks/useConnectAppAction";
+
 const Result = (
   props:
     | {
@@ -76,6 +73,7 @@ export default function StepConnectDevice({
     }),
     [account, parentAccount, status, tokenCurrency, transaction],
   );
+  const action = useTransactionAction();
   if (!transaction || !account) return null;
 
   return (

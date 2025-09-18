@@ -52,6 +52,7 @@ export const mocks: AppManifest[] = [
     branch: "debug",
     categories: ["other"],
     currencies: [
+      "aptos",
       "bitcoin",
       "ethereum/**",
       "axelar",
@@ -132,6 +133,9 @@ export const mocks: AppManifest[] = [
       "base_goerli",
       "base_sepolia",
       "telos_evm",
+      "hyperevm",
+      "sei_network_evm",
+      "berachain",
       "coreum",
       "injective",
       "neon_evm",

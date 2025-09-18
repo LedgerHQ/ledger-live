@@ -2,6 +2,9 @@ import { AppPage } from "./abstractClasses";
 import { step } from "../misc/reporters/step";
 import { expect } from "@playwright/test";
 import axios from "axios";
+import * as path from "path";
+import { FileUtils } from "../utils/fileUtils";
+import fs from "fs/promises";
 
 export class SettingsPage extends AppPage {
   private manageLedgerSyncButton = this.page.getByRole("button", { name: "Manage" });
@@ -13,12 +16,14 @@ export class SettingsPage extends AppPage {
   readonly experimentalTab = this.page.getByTestId("settings-experimental-tab");
   private ledgerSupport = this.page.getByTestId("ledgerSupport-link");
   private resetAppButton = this.page.getByTestId("reset-button");
+  private viewUserDataButton = this.page.getByTestId("view-user-data-button");
+  private exportLogsButton = this.page.getByTestId("export-logs-button");
 
   readonly counterValueSelector = this.page.locator(
     "[data-testid='setting-countervalue-dropDown'] .select__value-container",
   );
   private counterValueSearchBar = this.page.locator('[placeholder="Search"]');
-  private counterValueropdownChoiceEuro = this.page.locator(".select__option");
+  private counterValueDropdownChoiceEuro = this.page.locator(".select__option");
   readonly languageSelector = this.page.locator(
     "[data-testid='setting-language-dropDown'] .select__value-container",
   );
@@ -51,7 +56,7 @@ export class SettingsPage extends AppPage {
   async changeCounterValue(currency: string) {
     await this.counterValueSelector.click();
     await this.counterValueSearchBar.fill(currency);
-    await this.counterValueropdownChoiceEuro.click();
+    await this.counterValueDropdownChoiceEuro.click();
   }
 
   @step("Expect counter value to be $0")
@@ -94,5 +99,25 @@ export class SettingsPage extends AppPage {
   @step("Reset App")
   async resetApp() {
     await this.resetAppButton.click();
+  }
+
+  @step("check View User Data button is enabled")
+  async checkViewUserDataButtonIsEnabled() {
+    await expect(this.viewUserDataButton).toBeEnabled();
+  }
+
+  @step("Click on export logs")
+  async clickExportLogs() {
+    await this.exportLogsButton.click();
+
+    const originalFilePath = path.resolve("./ledgerlive-logs.txt");
+    const targetFilePath = path.resolve(__dirname, "../artifacts/ledgerlive-logs.txt");
+
+    const fileExists = await FileUtils.waitForFileToExist(originalFilePath, 5000);
+    expect(fileExists).toBeTruthy();
+
+    const targetDir = path.dirname(targetFilePath);
+    await fs.mkdir(targetDir, { recursive: true });
+    await fs.rename(originalFilePath, targetFilePath);
   }
 }

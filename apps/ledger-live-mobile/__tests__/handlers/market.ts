@@ -5,18 +5,28 @@ import coinsListMock from "@mocks/api/market/coinsList.json";
 
 const handlers = [
   http.get("https://countervalues.live.ledger.com/v3/markets", ({ request }) => {
-    const searchParams = new URLSearchParams(request.url);
+    const searchParams = new URL(request.url).searchParams;
+
+    let filteredData = marketsMock;
+
     // When we perform a search
     if (searchParams.get("filter")) {
       const coins = searchParams.get("filter")?.toLowerCase().split(",") || [];
-      return HttpResponse.json(marketsMock.filter(({ ticker }) => coins.includes(ticker)));
+      filteredData = marketsMock.filter(({ ticker }) => coins.includes(ticker));
     }
     // When we perform starred
-    if (searchParams.get("ids")) {
+    else if (searchParams.get("ids")) {
       const coins = searchParams.get("ids")?.split(",") || [];
-      return HttpResponse.json(marketsMock.filter(({ id }) => coins.includes(id)));
+      filteredData = marketsMock.filter(({ id }) => coins.includes(id));
     }
-    return HttpResponse.json(marketsMock);
+
+    const page = parseInt(searchParams.get("page") || "0");
+    const pageSize = 10;
+    const startIndex = page * pageSize;
+    const endIndex = startIndex + pageSize;
+    const paginatedData = filteredData.slice(startIndex, endIndex);
+
+    return HttpResponse.json(paginatedData);
   }),
   http.get("https://proxycg.api.live.ledger.com/api/v3/coins/:coin/market_chart", ({ params }) => {
     return HttpResponse.json(marketsMock.find(({ id }) => id === params.coin));

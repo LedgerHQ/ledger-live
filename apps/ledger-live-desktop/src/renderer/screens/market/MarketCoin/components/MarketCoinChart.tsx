@@ -36,6 +36,7 @@ const transitionStyles = {
 };
 
 const FadeIn = styled.div.attrs<{ state: string }>(p => ({
+  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
   style: transitionStyles[p.state as keyof typeof transitionStyles],
 }))<{
   state: string;

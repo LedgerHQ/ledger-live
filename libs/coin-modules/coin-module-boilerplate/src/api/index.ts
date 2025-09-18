@@ -1,4 +1,15 @@
-import type { Api, TransactionIntent } from "@ledgerhq/coin-framework/api/index";
+import {
+  AlpacaApi,
+  Block,
+  BlockInfo,
+  Cursor,
+  Page,
+  FeeEstimation,
+  Reward,
+  Stake,
+  TransactionIntent,
+  CraftedTransaction,
+} from "@ledgerhq/coin-framework/api/index";
 import coinConfig, { type BoilerplateConfig } from "../config";
 import {
   broadcast,
@@ -11,9 +22,8 @@ import {
   listOperations,
 } from "../common-logic";
 import BigNumber from "bignumber.js";
-import { BoilerplateAsset } from "../types";
 
-export function createApi(config: BoilerplateConfig): Api<BoilerplateAsset> {
+export function createApi(config: BoilerplateConfig): AlpacaApi {
   coinConfig.setCoinConfig(() => ({ ...config, status: { type: "active" } }));
 
   return {
@@ -24,10 +34,22 @@ export function createApi(config: BoilerplateConfig): Api<BoilerplateAsset> {
     getBalance,
     lastBlock,
     listOperations,
+    getBlock(_height): Promise<Block> {
+      throw new Error("getBlock is not supported");
+    },
+    getBlockInfo(_height: number): Promise<BlockInfo> {
+      throw new Error("getBlockInfo is not supported");
+    },
+    getStakes(_address: string, _cursor?: Cursor): Promise<Page<Stake>> {
+      throw new Error("getStakes is not supported");
+    },
+    getRewards(_address: string, _cursor?: Cursor): Promise<Page<Reward>> {
+      throw new Error("getRewards is not supported");
+    },
   };
 }
 
-async function craft(transactionIntent: TransactionIntent<BoilerplateAsset>): Promise<string> {
+async function craft(transactionIntent: TransactionIntent): Promise<CraftedTransaction> {
   const nextSequenceNumber = await getNextValidSequence(transactionIntent.sender);
   const tx = await craftTransaction(
     { address: transactionIntent.sender, nextSequenceNumber },
@@ -36,10 +58,10 @@ async function craft(transactionIntent: TransactionIntent<BoilerplateAsset>): Pr
       amount: new BigNumber(transactionIntent.amount.toString()),
     },
   );
-  return tx.serializedTransaction;
+  return { transaction: tx.serializedTransaction };
 }
 
-async function estimate(transactionIntent: TransactionIntent<BoilerplateAsset>): Promise<bigint> {
+async function estimate(transactionIntent: TransactionIntent): Promise<FeeEstimation> {
   const { serializedTransaction } = await craftTransaction(
     { address: transactionIntent.sender },
     {
@@ -47,5 +69,8 @@ async function estimate(transactionIntent: TransactionIntent<BoilerplateAsset>):
       amount: new BigNumber(transactionIntent.amount.toString()),
     },
   );
-  return await estimateFees(serializedTransaction);
+
+  const value = await estimateFees(serializedTransaction);
+
+  return { value };
 }

@@ -1,11 +1,6 @@
 // Goal of this file is to inject all necessary device/signer dependency to coin-modules
-
-import {
-  AptosAccount,
-  TransactionStatus,
-  createBridges,
-  type Transaction,
-} from "@ledgerhq/coin-aptos";
+import { createBridges } from "@ledgerhq/coin-aptos";
+import { AptosAccount, TransactionStatus, type Transaction } from "@ledgerhq/coin-aptos/types";
 import Transport from "@ledgerhq/hw-transport";
 import Aptos from "@ledgerhq/hw-app-aptos";
 import type { Bridge } from "@ledgerhq/types-live";

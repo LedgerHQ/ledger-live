@@ -3,7 +3,6 @@ export const supportLinkByTokenType = {
   trc10: "https://support.ledger.com/article/360013062159-zd",
   trc20: "https://support.ledger.com/article/360013062159-zd",
   asa: "https://support.ledger.com/article/360015896040-zd",
-  nfts: "https://support.ledger.com/article/4404389453841-zd",
   spl: "https://support.ledger.com/article/7723954701469-zd",
 };
 
@@ -18,6 +17,7 @@ const errors: Record<string, string> = {
   TronSendTrc20ToNewAccountForbidden: "https://support.ledger.com/article/6516823445533-zd",
   TronStakingDisable: "https://support.ledger.com/article/9949980566173-zd",
   OperatingSystemOutdated: "https://support.ledger.com/article/8083692639901-zd",
+  AddressesSanctionedError: "https://support.ledger.com/article/Why-Ledger-Complies-with-Sanctions",
 };
 
 export const urls = {
@@ -39,8 +39,7 @@ export const urls = {
     "https://www.ledger.com/pages/ledger-nano-x#utm_source=Ledger%20Live%20Desktop%20App&utm_medium=Ledger%20Live&utm_campaign=Ledger%20Live%20Desktop%20-%20Banner%20LNX",
   // Ledger support
   faq: "https://support.ledger.com",
-  chatbot:
-    "https://live-chat-static.sprinklr.com/test-html/index.html?appId=633307d2cd91267be7d0eea7_app_300078095&env=prod3&skin=MODERN&variant=PAGE&scope=CONVERSATION",
+  chatbot: "https://ledgercustomersuccess.my.salesforce-sites.com/fullscreenbot",
   ledgerStatus: "https://status.ledger.com/",
   syncErrors: "https://support.ledger.com/article/360012207759-zd",
   terms:
@@ -98,6 +97,8 @@ export const urls = {
   cardanoStakingRewards: "https://support.ledger.com/article/7880073204253-zd",
   algorandStakingRewards: "https://support.ledger.com/article/360015897740-zd",
   nearStakingRewards: "https://support.ledger.com/article/360020450619-zd",
+  // TODO: change to LL sui link
+  suiStakingRewards: "",
   polkadotFeesInfo: "https://support.ledger.com/article/360016289919-zd",
   multiversxStaking: "https://support.ledger.com/article/7228337345693-zd",
   xpubLearnMore: "https://support.ledger.com/article/360011069619-zd",
@@ -156,13 +157,19 @@ export const urls = {
     staking: "https://support.ledger.com/article/4731749170461-zd",
     splTokenInfo:
       "https://support.ledger.com/article/Verify-Solana-Address-from-Token-Account-Address",
+    splTokenExtensions: "https://support.ledger.com/article/Solana-Token-Extensions",
     recipient_info: "https://support.ledger.com",
     ledgerByChorusOneTC: "https://chorus.one/tos",
     ledgerByFigmentTC:
       "https://cdn.figment.io/legal/Current%20Ledger_Online%20Staking%20Delgation%20Services%20Agreement.pdf",
   },
+  aptos: {
+    staking: "https://support.ledger.com/article/5961622776861-zd",
+  },
   hedera: {
     supportArticleLink: "https://support.ledger.com/article/4494505217565-zd",
+    tokenAssociation:
+      "https://support.ledger.com/article/How-to-manage-Hedera-tokens-with-Ledger-Live",
   },
   celo: {
     ledgerByFigmentTC:
@@ -186,7 +193,6 @@ export const urls = {
   },
   howToUpdateNewLedger: "https://support.ledger.com/article/9305992683165-zd",
   genuineCheck: "https://support.ledger.com/article/4404389367057-zd",
-  whatAreOrdinals: "https://www.ledger.com/academy/bitcoin-ordinals",
   ledgerShop:
     "https://shop.ledger.com?utm_source=live&utm_medium=draw&utm_campaign=ledger_sync_lns_uncompatible&utm_content=to_shop",
   learnMoreLedgerSync:
@@ -200,6 +206,12 @@ export const urls = {
   },
   memoTag: {
     learnMore: "https://support.ledger.com/article/4409603715217-zd",
+  },
+  geoBlock: {
+    learnMore: "https://support.ledger.com/article/Why-Ledger-Complies-with-Sanctions",
+  },
+  sanctionCompliance: {
+    learnMore: "https://support.ledger.com/article/Why-Ledger-Complies-with-Sanctions",
   },
 };
 

@@ -269,7 +269,7 @@ export async function createQRCodeCandidateInstance({
 }): Promise<Trustchain | void> {
   const m = scannedUrl.match(/host=([0-9A-Fa-f]+)/);
   if (!m) {
-    if (isFromOldAccountsImport(scannedUrl)) throw new ScannedOldImportQrCode();
+    if (isOldBase64Import(scannedUrl)) throw new ScannedOldImportQrCode();
     throw new ScannedInvalidQrCode();
   }
   const hostPublicKey = crypto.from_hex(m[1]);
@@ -389,6 +389,30 @@ function fromErrorMessage(payload: { message: string; type: string }): Error {
   return error;
 }
 
-function isFromOldAccountsImport(scannedUrl: string): boolean {
-  return !!scannedUrl.match(/^[A-Za-z0-9+/=]*$/);
+const BASE64_CHARSET = /^[A-Za-z0-9+/=]+$/;
+const BASE64_STRUCTURE = /^([A-Za-z0-9+/]{4})*([A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$/;
+const LEGACY_HEADER = Uint8Array.from([0x64, 0x00, 0x03, 0x00]);
+const MIN_BASE64_LENGTH = 100;
+
+const cleanBase64 = (value: string): string => value.trim().replace(/\s+/g, "");
+
+const isValidBase64Format = (value: string): boolean =>
+  BASE64_CHARSET.test(value) && BASE64_STRUCTURE.test(value);
+
+const hasLegacyHeader = (bytes: Uint8Array): boolean =>
+  bytes.length >= LEGACY_HEADER.length && LEGACY_HEADER.every((byte, i) => bytes[i] === byte);
+
+export function isOldBase64Import(input: string): boolean {
+  if (typeof input !== "string" || input.length === 0) return false;
+
+  const clean = cleanBase64(input);
+  if (clean.length < MIN_BASE64_LENGTH || !isValidBase64Format(clean)) return false;
+
+  try {
+    const decoded = Buffer.from(clean, "base64");
+    if (decoded.toString("base64") !== clean) return false;
+    return hasLegacyHeader(decoded);
+  } catch {
+    return false;
+  }
 }

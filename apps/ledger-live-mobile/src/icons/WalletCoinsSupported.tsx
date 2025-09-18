@@ -11,7 +11,6 @@ const SvgComponent = ({
   <Svg width={197} height={52} fill="none" {...props}>
     <Mask
       id="a"
-      // @ts-expect-error maskType is not in the type definition
       style={{
         maskType: "alpha",
       }}
@@ -37,7 +36,6 @@ const SvgComponent = ({
     </G>
     <Mask
       id="b"
-      // @ts-expect-error maskType is not in the type definition
       style={{
         maskType: "alpha",
       }}
@@ -61,7 +59,6 @@ const SvgComponent = ({
     </G>
     <Mask
       id="c"
-      // @ts-expect-error maskType is not in the type definition
       style={{
         maskType: "alpha",
       }}

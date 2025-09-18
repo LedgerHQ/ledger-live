@@ -43,7 +43,6 @@ function initializeTrustchain() {
       }),
   ];
 }
-
 test.describe(`[${app.name}] Sync Accounts`, () => {
   setupSeed();
   test.use({
@@ -53,11 +52,12 @@ test.describe(`[${app.name}] Sync Accounts`, () => {
   });
 
   test(
-    "Synchronize one instance then delete the backup",
+    "Sync instances, rename and delete accounts, delete instance then delete the backup",
     {
+      tag: ["@NanoSP", "@NanoX"],
       annotation: {
         type: "TMS",
-        description: "B2CQA-2292, B2CQA-2293, B2CQA-2296",
+        description: "B2CQA-2303, B2CQA-2302, B2CQA-2300, B2CQA-2297, B2CQA-2296",
       },
     },
     async ({ app, page }) => {
@@ -97,6 +97,14 @@ test.describe(`[${app.name}] Sync Accounts`, () => {
       });
 
       const parsedData = LedgerSyncCliHelper.parseData(pulledData);
+
+      await app.layout.goToSettings();
+      await app.settings.openManageLedgerSync();
+      await app.ledgerSync.manageInstances();
+      await app.ledgerSync.removeCLIMember();
+      await app.speculos.removeMemberFromLedgerSync();
+      await app.ledgerSync.expectMemberRemoval();
+      await app.drawer.closeDrawer();
 
       await app.layout.goToSettings();
       await app.settings.openManageLedgerSync();

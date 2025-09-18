@@ -1,6 +1,5 @@
 import React from "react";
-// @ts-expect-error Typings…
-import { useArgs } from "@storybook/client-api";
+import { useArgs } from "@storybook/manager-api";
 
 import Checkbox from "./index";
 import type { CheckboxProps } from "./Checkbox";
@@ -35,6 +34,12 @@ export default {
       control: { type: "text" },
     },
     name: { control: false },
+    size: {
+      type: "number",
+      description: "Size of the checkbox",
+      required: false,
+      control: { type: "number" },
+    },
   },
 };
 

@@ -12,9 +12,9 @@ export const addCustomErrorDeserializer = (name: string, deserializer: (obj: any
 
 export interface LedgerErrorConstructor<F extends { [key: string]: unknown }>
   extends ErrorConstructor {
-  new (message?: string, fields?: F, options?: any): Error;
-  (message?: string, fields?: F, options?: any): Error;
-  readonly prototype: Error;
+  new (message?: string, fields?: F, options?: any): Error & F;
+  (message?: string, fields?: F, options?: any): Error & F;
+  readonly prototype: Error & F;
 }
 
 export const createCustomErrorClass = <

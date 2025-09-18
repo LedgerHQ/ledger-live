@@ -17,6 +17,10 @@ import cryptoFactory from "./wallet-btc/crypto/factory";
 import { computeDustAmount } from "./wallet-btc/utils";
 import { TaprootNotActivated } from "./errors";
 import { Currency } from "./wallet-btc";
+import { isAddressSanctioned } from "@ledgerhq/coin-framework/sanction/index";
+import { AddressesSanctionedError } from "@ledgerhq/coin-framework/sanction/errors";
+
+export const MAX_BLOCK_HEIGHT_FOR_TAPROOT = 709632;
 
 export const getTransactionStatus: AccountBridge<
   Transaction,
@@ -44,7 +48,7 @@ export const getTransactionStatus: AccountBridge<
     transaction.recipient &&
     !errors.recipient &&
     account.currency.id === "bitcoin" &&
-    account.blockHeight <= 709632
+    account.blockHeight <= MAX_BLOCK_HEIGHT_FOR_TAPROOT
   ) {
     const isTaproot = await isTaprootRecipient(account.currency, transaction.recipient);
     if (isTaproot) {
@@ -91,6 +95,22 @@ export const getTransactionStatus: AccountBridge<
 
   if (txInputs) {
     log("bitcoin", `${txInputs.length} inputs, sum: ${sumOfInputs.toString()}`);
+
+    const sanctionedAddresses: string[] = [];
+    for (const input of txInputs) {
+      if (input.address) {
+        const addressIsSanctioned = await isAddressSanctioned(account.currency, input.address);
+        if (addressIsSanctioned) {
+          sanctionedAddresses.push(input.address);
+        }
+      }
+    }
+
+    if (sanctionedAddresses.length > 0) {
+      errors.sender = new AddressesSanctionedError("AddressesSanctionedError", {
+        addresses: sanctionedAddresses,
+      });
+    }
   }
 
   if (txOutputs) {

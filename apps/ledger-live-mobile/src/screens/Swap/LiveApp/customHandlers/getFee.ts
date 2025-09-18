@@ -1,10 +1,12 @@
+import { reduce, firstValueFrom } from "rxjs";
 import { Strategy } from "@ledgerhq/coin-evm/lib/types/index";
 import { getMainAccount, getParentAccount } from "@ledgerhq/live-common/account/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { getAbandonSeedAddress } from "@ledgerhq/live-common/currencies/index";
 import { TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import { getAccountIdFromWalletAccountId } from "@ledgerhq/live-common/wallet-api/converters";
-import { AccountLike } from "@ledgerhq/types-live";
+import { AccountLike, Account } from "@ledgerhq/types-live";
+import { log } from "@ledgerhq/logs";
 import BigNumber from "bignumber.js";
 import { NavigatorName, ScreenName } from "~/const";
 import { NavigationType } from ".";
@@ -117,8 +119,24 @@ export const getFee =
 
     // Setup accounts and bridge
     const fromParentAccount = getParentAccount(fromAccount, accounts);
-    const mainAccount = getMainAccount(fromAccount, fromParentAccount);
+    let mainAccount = getMainAccount(fromAccount, fromParentAccount);
     const bridge = getAccountBridge(fromAccount, fromParentAccount);
+
+    if (mainAccount.currency.id === "bitcoin") {
+      try {
+        const syncedAccount = await firstValueFrom(
+          bridge
+            .sync(mainAccount, { paginationConfig: {} })
+            .pipe(reduce((a, f: (arg0: Account) => Account) => f(a), mainAccount)),
+        );
+
+        if (syncedAccount) {
+          mainAccount = syncedAccount;
+        }
+      } catch (e) {
+        log("swap", "Error syncing account", e);
+      }
+    }
 
     // Create and prepare transaction
     const subAccountId = fromAccount.type !== "Account" && fromAccount.id;

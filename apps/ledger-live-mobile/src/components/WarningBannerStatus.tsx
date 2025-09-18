@@ -7,6 +7,7 @@ import { Linking } from "react-native";
 import { View } from "react-native-animatable";
 import styled from "styled-components/native";
 import Alert from "~/components/Alert";
+import { useFormatDate } from "~/hooks/useDateFormatter";
 import { urls } from "~/utils/urls";
 
 const UnderlinedText = styled(Text)`
@@ -19,6 +20,7 @@ type Props = {
 };
 
 const WarningBannerStatus = ({ currencyConfig, currency }: Props) => {
+  const formatDate = useFormatDate();
   const supportLink =
     currencyConfig?.status?.type === "feature_unavailable" ||
     currencyConfig?.status?.type === "migration"
@@ -59,14 +61,14 @@ const WarningBannerStatus = ({ currencyConfig, currency }: Props) => {
         <Alert
           key="deprecated_banner"
           type="warning"
-          learnMoreKey="account.willBedeprecatedBanner.contactSupport"
-          learnMoreUrl={urls.contactSupportWebview.en}
+          learnMoreKey="account.willBedeprecatedBanner.learnMore"
+          learnMoreUrl={currencyConfig.status.link || urls.contactSupportWebview.en}
         >
           <Trans
             i18nKey="account.willBedeprecatedBanner.title"
             values={{
               currencyName: currency.name,
-              deprecatedDate: currencyConfig.status.deprecated_date,
+              deprecatedDate: formatDate(new Date(currencyConfig.status.deprecated_date)),
             }}
           />
         </Alert>

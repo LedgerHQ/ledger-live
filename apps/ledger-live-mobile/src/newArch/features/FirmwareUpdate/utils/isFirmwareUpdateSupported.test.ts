@@ -82,6 +82,16 @@ const blueDeviceModelInfo = {
   },
 } as DeviceModelInfo;
 
+const apexDevice = {
+  modelId: DeviceModelId.apex,
+} as Device;
+const apexDeviceModelInfo = {
+  modelId: DeviceModelId.apex,
+  deviceInfo: {
+    version: "0.0.0",
+  },
+} as DeviceModelInfo;
+
 describe("isNewFirmwareUpdateUxSupported", () => {
   it("should return true if new firmware update flow is supported", () => {
     expect(isNewFirmwareUpdateUxSupported(staxDevice, staxDeviceModelInfo)).toBe(true);
@@ -89,6 +99,7 @@ describe("isNewFirmwareUpdateUxSupported", () => {
     expect(
       isNewFirmwareUpdateUxSupported(nanoXSupportedDevice, nanoXSupportedDeviceModelInfo),
     ).toBe(true);
+    expect(isNewFirmwareUpdateUxSupported(apexDevice, apexDeviceModelInfo)).toBe(true);
   });
 
   it("should return false if new firmware update flow is not supported", () => {

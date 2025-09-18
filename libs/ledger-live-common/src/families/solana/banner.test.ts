@@ -109,6 +109,7 @@ const validatorsMap = {
   version: "1",
   validatorsWithMeta: [],
   validators,
+  splTokens: null,
 } as SolanaPreloadDataV1;
 
 describe("solana/banner", () => {

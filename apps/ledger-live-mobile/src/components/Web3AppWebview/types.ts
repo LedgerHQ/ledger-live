@@ -12,6 +12,7 @@ export type WebviewProps = {
   allowsBackForwardNavigationGestures?: boolean;
   customHandlers?: WalletAPICustomHandlers;
   onScroll?: ComponentProps<typeof WebView>["onScroll"];
+  Loader?: () => React.JSX.Element;
 };
 
 export type WebviewState = {
@@ -27,3 +28,10 @@ export type WebviewAPI = Pick<WebView, "reload" | "goBack" | "goForward"> & {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   notify: (method: `event.${string}`, params: any) => void;
 };
+
+export enum SwapWebviewAllowedPageNames {
+  AccountSelection = "account-selection",
+  QuotesList = "quotes-list",
+  TwoStepApproval = "two-step-approval",
+  UnknownError = "unknown-error",
+}

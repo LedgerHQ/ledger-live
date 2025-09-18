@@ -40,6 +40,8 @@ import { useAccountUnit } from "~/hooks/useAccountUnit";
 import NotEnoughFundFeesAlert from "../../shared/StakingErrors/NotEnoughFundFeesAlert";
 import { NotEnoughBalance } from "@ledgerhq/errors";
 import Config from "react-native-config";
+import { AddressesSanctionedError } from "@ledgerhq/coin-framework/sanction/errors";
+import SupportLinkError from "~/components/SupportLinkError";
 
 type Props = StackNavigatorProps<SolanaDelegationFlowParamList, ScreenName.DelegationSummary>;
 
@@ -236,7 +238,20 @@ export default function DelegationSummary({ navigation, route }: Props) {
       </View>
       <View style={styles.footer}>
         {hasErrorWhileDesactivating && <NotEnoughFundFeesAlert account={account} />}
-        <TranslatedError error={error} />
+
+        {status.errors.sender && status.errors.sender instanceof AddressesSanctionedError ? (
+          <>
+            <Text color="alert">
+              <TranslatedError error={status.errors.sender} />
+            </Text>
+            <Text color="alert">
+              <TranslatedError error={status.errors.sender} field="description" />
+            </Text>
+            <SupportLinkError error={status.errors.sender} type="alert" />
+          </>
+        ) : (
+          <TranslatedError error={error} />
+        )}
         <Button
           event="SummaryContinue"
           type="primary"

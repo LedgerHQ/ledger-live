@@ -9,12 +9,7 @@ import type {
   TokenAccountRaw,
   TransactionCommon,
 } from "@ledgerhq/types-live";
-import {
-  findCryptoCurrencyById,
-  findTokenById,
-  getCryptoCurrencyById,
-  getTokenById,
-} from "@ledgerhq/cryptoassets/index";
+import { findCryptoCurrencyById, getCryptoCurrencyById } from "@ledgerhq/cryptoassets/index";
 import { emptyHistoryCache, generateHistoryFromOperations } from "../account/balanceHistoryCache";
 import { isAccountEmpty } from "../account/helpers";
 import { fromNFTRaw, toNFTRaw } from "./nft";
@@ -24,6 +19,8 @@ import {
   toOperationRaw,
   toSwapOperationRaw,
 } from "./operation";
+import { getCryptoAssetsStore } from "../crypto-assets";
+import invariant from "invariant";
 
 export type FromFamiliyRaw = {
   assignFromAccountRaw?: AccountBridge<TransactionCommon>["assignFromAccountRaw"];
@@ -61,12 +58,13 @@ export function fromAccountRaw(rawAccount: AccountRaw, fromRaw?: FromFamiliyRaw)
   const convertOperation = (op: OperationRaw) =>
     fromOperationRaw(op, id, subAccounts as TokenAccount[], fromRaw?.fromOperationExtraRaw);
 
+  const store = getCryptoAssetsStore();
   const subAccounts =
     subAccountsRaw &&
     subAccountsRaw
       .map(ta => {
         if (ta.type === "TokenAccountRaw") {
-          if (findTokenById(ta.tokenId)) {
+          if (store.findTokenById(ta.tokenId)) {
             return fromTokenAccountRaw(ta);
           }
         }
@@ -74,7 +72,7 @@ export function fromAccountRaw(rawAccount: AccountRaw, fromRaw?: FromFamiliyRaw)
       .filter(Boolean);
   const currency = getCryptoCurrencyById(currencyId);
   const feesCurrency = feesCurrencyId
-    ? findCryptoCurrencyById(feesCurrencyId) || findTokenById(feesCurrencyId)
+    ? findCryptoCurrencyById(feesCurrencyId) || store.findTokenById(feesCurrencyId)
     : undefined;
 
   const res: Account = {
@@ -256,7 +254,9 @@ function fromTokenAccountRaw(
     balanceHistoryCache,
     swapHistory,
   } = raw;
-  const token = getTokenById(tokenId);
+  const store = getCryptoAssetsStore();
+  const token = store.findTokenById(tokenId);
+  invariant(token, `Token with id ${tokenId} not found`);
 
   const convertOperation = (op: OperationRaw) =>
     fromOperationRaw(op, id, null, fromOperationExtraRaw);

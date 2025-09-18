@@ -2,12 +2,9 @@ import {
   TransportStatusError,
   UserRefusedDeviceNameChange,
   UserRefusedOnDevice,
-} from "@ledgerhq/errors";
-import {
-  DeviceNotOnboarded,
-  ImageDoesNotExistOnDevice,
   LatestFirmwareVersionRequired,
-} from "@ledgerhq/live-common/errors";
+} from "@ledgerhq/errors";
+import { DeviceNotOnboarded, ImageDoesNotExistOnDevice } from "@ledgerhq/live-common/errors";
 import {
   ExchangeRate,
   ExchangeSwap,
@@ -31,6 +28,7 @@ import { useTrackAddAccountFlow } from "~/analytics/hooks/useTrackAddAccountFlow
 import { useTrackLedgerSyncFlow } from "~/analytics/hooks/useTrackLedgerSyncFlow";
 import { useTrackMyLedgerSectionEvents } from "~/analytics/hooks/useTrackMyLedgerEvents";
 import { useTrackReceiveFlow } from "~/analytics/hooks/useTrackReceiveFlow";
+import { TermsProviders } from "~/components/TermsFooter";
 import { useTrackSendFlow } from "~/analytics/hooks/useTrackSendFlow";
 import { useTrackSwapFlow } from "~/analytics/hooks/useTrackSwapFlow";
 import { HOOKS_TRACKING_LOCATIONS } from "~/analytics/hooks/variables";
@@ -67,6 +65,8 @@ import {
 import { WalletState } from "@ledgerhq/live-wallet/lib/store";
 import { SettingsState } from "~/reducers/types";
 import { Theme } from "~/colors";
+import { useTrackTransactionChecksFlow } from "~/analytics/hooks/useTrackTransactionChecksFlow";
+import { useTrackDmkErrorsEvents } from "~/analytics/hooks/useTrackDmkErrorsEvents";
 
 type Status = PartialNullable<{
   appAndVersion: AppAndVersion;
@@ -118,6 +118,8 @@ type Status = PartialNullable<{
   loadingImage: boolean;
   imageLoaded: boolean;
   imageCommitRequested: boolean;
+  transactionChecksOptInTriggered: boolean;
+  transactionChecksOptIn: boolean;
 }>;
 
 type Props<H extends Status, P> = {
@@ -219,6 +221,8 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
     installingApp,
     progress,
     listingApps,
+    transactionChecksOptInTriggered,
+    transactionChecksOptIn,
   } = status;
 
   useTrackMyLedgerSectionEvents({
@@ -273,6 +277,17 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
     inWrongDeviceForAccount,
     error,
   });
+
+  useTrackTransactionChecksFlow({
+    location,
+    device: selectedDevice,
+    deviceInfo,
+    appAndVersion,
+    transactionChecksOptInTriggered,
+    transactionChecksOptIn,
+  });
+
+  useTrackDmkErrorsEvents({ error });
 
   useEffect(() => {
     if (deviceInfo && device) {
@@ -446,7 +461,7 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
       estimatedFees: status.estimatedFees,
     } as {
       selectedDevice: Device;
-      provider: string;
+      provider: TermsProviders;
       transaction: Transaction;
       exchangeRate: ExchangeRate;
       exchange: ExchangeSwap;

@@ -1,4 +1,4 @@
-import React, { useState, useCallback, memo } from "react";
+import React, { useState, useCallback, memo, useMemo } from "react";
 import { TouchableOpacity, StyleSheet, View } from "react-native";
 import { BigNumber } from "bignumber.js";
 import { useSelector } from "react-redux";
@@ -46,21 +46,27 @@ function DoubleCounterValue({
   const { colors } = useTheme();
   const [isOpened, setIsOpened] = useState(false);
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
-  const val = value.toNumber();
-  const countervalue = useCalculate({
-    from: currency,
-    to: counterValueCurrency,
-    value: val,
-    disableRounding: true,
-    date,
-  });
-  const compareCountervalue = useCalculate({
-    from: currency,
-    to: counterValueCurrency,
-    value: val,
-    disableRounding: true,
-    date: compareDate,
-  });
+  const { params, compareParams } = useMemo(() => {
+    const val = value.toNumber();
+    return {
+      params: {
+        from: currency,
+        to: counterValueCurrency,
+        value: val,
+        disableRounding: true,
+        date,
+      },
+      compareParams: {
+        from: currency,
+        to: counterValueCurrency,
+        value: val,
+        disableRounding: true,
+        date: compareDate,
+      },
+    };
+  }, [compareDate, counterValueCurrency, currency, date, value]);
+  const countervalue = useCalculate(params);
+  const compareCountervalue = useCalculate(compareParams);
   const onClose = useCallback(() => setIsOpened(false), []);
   const onOpen = useCallback(() => setIsOpened(true), []);
   const [placeholderModalOpened, setPlaceholderModalOpened] = useState(false);

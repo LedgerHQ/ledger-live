@@ -1,23 +1,27 @@
 import { fail, AssertionError } from "assert";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
+import { concat, of, throwError } from "rxjs";
 import { prepareMessageToSign, signMessage } from "../../hw-signMessage";
 import { makeAccount } from "../fixtures/common.fixtures";
 
-const signPersonalMessage = jest.fn(async () => ({
-  r: "01",
-  s: "02",
-  v: 3,
-}));
-const signEIP712Message = jest.fn(async () => ({
-  r: "03",
-  s: "04",
-  v: 6,
-}));
-const signEIP712HashedMessage = jest.fn(async () => ({
-  r: "07",
-  s: "08",
-  v: 9,
-}));
+const signPersonalMessage = jest.fn(() =>
+  concat(
+    of({ type: "signer.evm.signing" }),
+    of({ type: "signer.evm.signed", value: { r: "01", s: "02", v: 27 } }),
+  ),
+);
+const signEIP712Message = jest.fn(() =>
+  concat(
+    of({ type: "signer.evm.signing" }),
+    of({ type: "signer.evm.signed", value: { r: "03", s: "04", v: 28 } }),
+  ),
+);
+const signEIP712HashedMessage = jest.fn(() =>
+  concat(
+    of({ type: "signer.evm.signing" }),
+    of({ type: "signer.evm.signed", value: { r: "07", s: "08", v: 27 } }),
+  ),
+);
 
 const signerContextMock: any = async (deviceId: string, fn: any) => {
   return fn({
@@ -99,7 +103,7 @@ describe("EVM Family", () => {
           rsv: {
             r: "01",
             s: "02",
-            v: 3,
+            v: 27,
           },
           signature:
             "0x000000000000000000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000000000000000021b",
@@ -118,7 +122,7 @@ describe("EVM Family", () => {
           rsv: {
             r: "03",
             s: "04",
-            v: 6,
+            v: 28,
           },
           signature:
             "0x000000000000000000000000000000000000000000000000000000000000000300000000000000000000000000000000000000000000000000000000000000041c",
@@ -128,10 +132,11 @@ describe("EVM Family", () => {
 
       it("should sign an EIP712 message and fallback on signEIP712Message when signEIP712Message is not supported", async () => {
         signEIP712Message.mockImplementationOnce(() => {
-          const e = new Error();
-          (e as any).statusText = "INS_NOT_SUPPORTED";
-
-          throw e;
+          return throwError(() => {
+            const error = new Error();
+            (error as any).statusText = "INS_NOT_SUPPORTED";
+            return error;
+          });
         });
 
         const result = await signMessage(signerContextMock)("", account, {
@@ -144,7 +149,7 @@ describe("EVM Family", () => {
           rsv: {
             r: "07",
             s: "08",
-            v: 9,
+            v: 27,
           },
           signature:
             "0x000000000000000000000000000000000000000000000000000000000000000700000000000000000000000000000000000000000000000000000000000000081b",
@@ -154,7 +159,7 @@ describe("EVM Family", () => {
 
       it("should throw for any other error", async () => {
         signEIP712Message.mockImplementationOnce(() => {
-          throw new Error();
+          return throwError(() => new Error());
         });
 
         try {

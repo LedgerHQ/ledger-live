@@ -49,6 +49,16 @@ const mockInitialState: LiveAppManifest[] = [
       ],
     },
   } as LiveAppManifest,
+  {
+    id: "earn",
+    name: "Mock Earn Live App",
+    url: "https://earn-live-app.com",
+    apiVersion: "^2.0.0",
+    manifestVersion: "2",
+    currencies: ["ethereum", "ethereum/**"],
+    permissions: ["account.request"],
+    domains: ["https://"],
+  } as LiveAppManifest,
 ];
 
 const mockLiveAppContext: LiveAppContextType = {

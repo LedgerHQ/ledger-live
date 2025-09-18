@@ -1,0 +1,2 @@
+export const FOOTER_PADDING_BOTTOM_PX = 40;
+export const FOOTER_PADDING_TOP_PX = 10;

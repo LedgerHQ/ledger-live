@@ -32,7 +32,7 @@ const FeeField = ({
     (fees: BigNumber) => {
       onChange(
         bridge.updateTransaction(transaction, {
-          fees,
+          customFees: { parameters: { fees: fees } },
         }),
       );
     },

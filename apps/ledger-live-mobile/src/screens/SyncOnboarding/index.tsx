@@ -18,6 +18,7 @@ import { NavigationHeaderCloseButton } from "~/components/NavigationHeaderCloseB
 import UnlockDeviceDrawer from "~/components/UnlockDeviceDrawer";
 import AutoRepairDrawer from "./AutoRepairDrawer";
 import { type SyncOnboardingScreenProps } from "./SyncOnboardingScreenProps";
+import { useIsFocused } from "@react-navigation/core";
 
 const POLLING_PERIOD_MS = 1000;
 const DESYNC_TIMEOUT_MS = 20000;
@@ -55,6 +56,8 @@ export const SyncOnboarding = ({ navigation, route }: SyncOnboardingScreenProps)
   const [headerOverlayDelayMs, setHeaderOverlayDelayMs] = useState<number>(
     NORMAL_DESYNC_OVERLAY_DISPLAY_DELAY_MS,
   );
+
+  const isFocused = useIsFocused();
 
   const productName = getDeviceModel(device.modelId).productName || device.modelId;
 
@@ -157,7 +160,6 @@ export const SyncOnboarding = ({ navigation, route }: SyncOnboardingScreenProps)
       setIsPollingOn(false);
       setToggleOnboardingEarlyCheckType("enter");
     } else if (!isOnboarded && currentOnboardingStep === OnboardingStep.OnboardingEarlyCheck) {
-      setIsPollingOn(false);
       // Resets the `useToggleOnboardingEarlyCheck` hook. Avoids having a case where for ex
       // check type == "exit" and toggle status still being == "success" from the previous toggle
       setToggleOnboardingEarlyCheckType(null);
@@ -170,8 +172,8 @@ export const SyncOnboarding = ({ navigation, route }: SyncOnboardingScreenProps)
 
   // A fatal error during polling triggers directly an error message (or the auto repair)
   useEffect(() => {
-    if (fatalError) {
-      if ((fatalError as unknown) instanceof UnexpectedBootloader) {
+    if (isFocused && fatalError) {
+      if (fatalError instanceof UnexpectedBootloader) {
         log("SyncOnboardingIndex", "Device in bootloader mode. Trying to auto repair", {
           fatalError,
         });
@@ -183,13 +185,13 @@ export const SyncOnboarding = ({ navigation, route }: SyncOnboardingScreenProps)
         setIsDesyncDrawerOpen(true);
       }
     }
-  }, [fatalError]);
+  }, [fatalError, isFocused]);
 
   // An allowed error during polling (which makes the polling retry) only triggers an error message after a timeout
   useEffect(() => {
     let timeout: ReturnType<typeof setTimeout>;
 
-    if (allowedError && !(allowedError instanceof LockedDeviceError)) {
+    if (isFocused && allowedError && !(allowedError instanceof LockedDeviceError)) {
       log("SyncOnboardingIndex", "Polling allowed error", { allowedError });
 
       timeout = setTimeout(() => {
@@ -203,7 +205,7 @@ export const SyncOnboarding = ({ navigation, route }: SyncOnboardingScreenProps)
         clearTimeout(timeout);
       }
     };
-  }, [allowedError]);
+  }, [allowedError, isFocused]);
 
   useEffect(() => {
     if (lockedDevice) {
@@ -296,7 +298,7 @@ export const SyncOnboarding = ({ navigation, route }: SyncOnboardingScreenProps)
   return (
     <>
       <DesyncDrawer
-        isOpen={isDesyncDrawerOpen}
+        isOpen={isDesyncDrawerOpen && isFocused}
         onClose={handleDesyncClose}
         onRetry={handleDesyncRetry}
         device={device}

@@ -4,7 +4,6 @@ import { openDeeplink } from "../../helpers/commonHelpers";
 export default class SwapPage {
   baseLink = "swap";
   swapFormTab = () => getElementById("swap-form-tab");
-  swapHistoryTab = () => getElementById("swap-history-tab");
   swapSourceSelector = () => getElementById("swap-source-selector");
   swapDestinationSelector = () => getElementById("swap-destination-selector");
   swapSourceInputTextbox = () => getElementById("swap-source-amount-textbox");
@@ -14,8 +13,6 @@ export default class SwapPage {
   sendMaxToggle = () => getElementById("exchange-send-max-toggle");
   termsAcceptButton = () => getElementById("terms-accept-button");
   termsCloseButton = () => getElementById("terms-close-button");
-  confirmSwapOnDeviceDrawerId = "confirm-swap-on-device";
-  swapSuccessTitleId = "swap-success-title";
 
   async openViaDeeplink() {
     await openDeeplink(this.baseLink);
@@ -23,14 +20,6 @@ export default class SwapPage {
 
   async expectSwapPage() {
     await expect(this.swapFormTab()).toBeVisible();
-  }
-
-  async navigateToSwapForm() {
-    await tapByElement(this.swapFormTab());
-  }
-
-  async navigateToSwapHistory() {
-    await tapByElement(this.swapHistoryTab());
   }
 
   async openSourceAccountSelector() {
@@ -42,6 +31,7 @@ export default class SwapPage {
   }
 
   async selectAccount(accountText: string) {
+    await scrollToText(accountText);
     await tapByText(accountText);
   }
 
@@ -58,10 +48,6 @@ export default class SwapPage {
     await tapByText(providerName);
   }
 
-  async sendMax() {
-    await tapByElement(this.sendMaxToggle());
-  }
-
   async startExchange() {
     await this.exchangeScrollView().scrollTo("bottom");
     await tapByElement(this.exchangeButton());
@@ -74,16 +60,5 @@ export default class SwapPage {
   async expectTerms() {
     await expect(this.termsAcceptButton()).toBeVisible();
     await expect(this.termsCloseButton()).toBeVisible();
-  }
-
-  @Step("Wait for device confirm drawer")
-  async waitForDeviceConfirmDrawer() {
-    await waitForElementById(this.confirmSwapOnDeviceDrawerId);
-  }
-
-  @Step("Wait for swap success and continue")
-  async waitForSuccessAndContinue() {
-    await waitForElementById(this.swapSuccessTitleId, 2 * 60000);
-    await tapById(app.common.proceedButtonId);
   }
 }

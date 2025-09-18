@@ -13,8 +13,9 @@ import { openModal } from "~/renderer/actions/modals";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import { OperationDetails } from "~/renderer/drawers/OperationDetails";
 import { currentRouteNameRef } from "~/renderer/analytics/screenRefs";
-import { updateAccountWithUpdater } from "~/renderer/actions/accounts";
+import { replaceAccounts, updateAccountWithUpdater } from "~/renderer/actions/accounts";
 import { WebviewProps } from "../Web3AppWebview/types";
+import { setAccountName } from "@ledgerhq/live-wallet/lib-es/store";
 
 export function useACRECustomHandlers(manifest: WebviewProps["manifest"], accounts: AccountLike[]) {
   const { pushToast } = useToasts();
@@ -126,6 +127,22 @@ export function useACRECustomHandlers(manifest: WebviewProps["manifest"], accoun
                 });
               },
             });
+          },
+          "custom.acre.registerAccount": ({
+            parentAccount,
+            accountName,
+            existingAccounts,
+            onSuccess,
+            onError,
+          }) => {
+            try {
+              // Desktop: Limitation, can't add one single account, only REPLACE_ACCOUNT redux store action has 'DB:' prefix and make the storage
+              dispatch(replaceAccounts([parentAccount, ...existingAccounts]));
+              dispatch(setAccountName(parentAccount.id, accountName));
+              onSuccess();
+            } catch (error) {
+              onError(error as Error);
+            }
           },
         },
       }),

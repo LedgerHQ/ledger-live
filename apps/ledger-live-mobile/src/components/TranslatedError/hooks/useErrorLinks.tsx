@@ -1,7 +1,8 @@
+import { DmkError } from "@ledgerhq/device-management-kit";
 import React, { useCallback, useMemo } from "react";
 import { Linking, Text } from "react-native";
 
-export function useErrorLinks(error?: Error | null) {
+export function useErrorLinks(error?: Error | DmkError | null) {
   const onErrorLinkPress = useCallback(async (errorLink: string) => {
     const canOpenURL = await Linking.canOpenURL(errorLink);
     if (canOpenURL) {

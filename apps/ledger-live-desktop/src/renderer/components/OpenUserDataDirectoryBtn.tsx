@@ -8,7 +8,12 @@ const OpenUserDataDirectoryBtn = (props: Partial<ButtonProps>) => {
     ipcRenderer.invoke("openUserDataDirectory");
   }, []);
   return (
-    <Button event="View user data" onClick={handleOpenUserDataDirectory} {...props}>
+    <Button
+      data-testid="view-user-data-button"
+      event="View user data"
+      onClick={handleOpenUserDataDirectory}
+      {...props}
+    >
       {props.children || t("settings.openUserDataDirectory.btn")}
     </Button>
   );

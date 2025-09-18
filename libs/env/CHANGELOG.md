@@ -1,5 +1,137 @@
 # @ledgerhq/live-env
 
+## 2.16.0
+
+### Minor Changes
+
+- [#11562](https://github.com/LedgerHQ/ledger-live/pull/11562) [`e52268a`](https://github.com/LedgerHQ/ledger-live/commit/e52268a3bc7d97a7ed09ed082786a647e048a6e8) Thanks [@semeano](https://github.com/semeano)! - Kaspa coin integration (coin module)
+
+- [#11665](https://github.com/LedgerHQ/ledger-live/pull/11665) [`b27c96c`](https://github.com/LedgerHQ/ledger-live/commit/b27c96ccbcefb1982a40688a8385209eac99165a) Thanks [@semeano](https://github.com/semeano)! - Disable Celo tokens via env var
+
+## 2.16.0-next.0
+
+### Minor Changes
+
+- [#11562](https://github.com/LedgerHQ/ledger-live/pull/11562) [`e52268a`](https://github.com/LedgerHQ/ledger-live/commit/e52268a3bc7d97a7ed09ed082786a647e048a6e8) Thanks [@semeano](https://github.com/semeano)! - Kaspa coin integration (coin module)
+
+- [#11665](https://github.com/LedgerHQ/ledger-live/pull/11665) [`b27c96c`](https://github.com/LedgerHQ/ledger-live/commit/b27c96ccbcefb1982a40688a8385209eac99165a) Thanks [@semeano](https://github.com/semeano)! - Disable Celo tokens via env var
+
+## 2.15.0
+
+### Minor Changes
+
+- [#11385](https://github.com/LedgerHQ/ledger-live/pull/11385) [`87617a9`](https://github.com/LedgerHQ/ledger-live/commit/87617a9930be43a6cdbc5cc5711cc24b00309184) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLD - Modular Drawer is now leveraging the DADA service instead of local data
+
+- [#10672](https://github.com/LedgerHQ/ledger-live/pull/10672) [`8936f39`](https://github.com/LedgerHQ/ledger-live/commit/8936f390edbe9cbc36ac6590b01562daf5c580e1) Thanks [@may01](https://github.com/may01)! - added Hedera tokens to CAL
+  added send/receive support to Hedera in LLD & LLM
+  added support for HTS token association flow to LLD & LLM
+  added support for "Associate token" transaction type to Hedera
+  added test fixtures to coin-hedera
+
+## 2.15.0-next.0
+
+### Minor Changes
+
+- [#11385](https://github.com/LedgerHQ/ledger-live/pull/11385) [`87617a9`](https://github.com/LedgerHQ/ledger-live/commit/87617a9930be43a6cdbc5cc5711cc24b00309184) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLD - Modular Drawer is now leveraging the DADA service instead of local data
+
+- [#10672](https://github.com/LedgerHQ/ledger-live/pull/10672) [`8936f39`](https://github.com/LedgerHQ/ledger-live/commit/8936f390edbe9cbc36ac6590b01562daf5c580e1) Thanks [@may01](https://github.com/may01)! - added Hedera tokens to CAL
+  added send/receive support to Hedera in LLD & LLM
+  added support for HTS token association flow to LLD & LLM
+  added support for "Associate token" transaction type to Hedera
+  added test fixtures to coin-hedera
+
+## 2.14.0
+
+### Minor Changes
+
+- [#11214](https://github.com/LedgerHQ/ledger-live/pull/11214) [`75a08cc`](https://github.com/LedgerHQ/ledger-live/commit/75a08cc3061347bae98ddef7ac3cdcd6181ddab5) Thanks [@dilaouid](https://github.com/dilaouid)! - feat: Display APY for Solana validators
+
+## 2.14.0-next.0
+
+### Minor Changes
+
+- [#11214](https://github.com/LedgerHQ/ledger-live/pull/11214) [`75a08cc`](https://github.com/LedgerHQ/ledger-live/commit/75a08cc3061347bae98ddef7ac3cdcd6181ddab5) Thanks [@dilaouid](https://github.com/dilaouid)! - feat: Display APY for Solana validators
+
+## 2.13.0
+
+### Minor Changes
+
+- [#11048](https://github.com/LedgerHQ/ledger-live/pull/11048) [`b9debdf`](https://github.com/LedgerHQ/ledger-live/commit/b9debdfbc822e9f5dc0b26619208f94bbd788777) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - core(live-env): expose `SPECULOS_DEVICE`
+
+## 2.13.0-next.0
+
+### Minor Changes
+
+- [#11048](https://github.com/LedgerHQ/ledger-live/pull/11048) [`b9debdf`](https://github.com/LedgerHQ/ledger-live/commit/b9debdfbc822e9f5dc0b26619208f94bbd788777) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - core(live-env): expose `SPECULOS_DEVICE`
+
+## 2.12.0
+
+### Minor Changes
+
+- [#10938](https://github.com/LedgerHQ/ledger-live/pull/10938) [`17e039b`](https://github.com/LedgerHQ/ledger-live/commit/17e039b0c7487dda4a68f6a0fe493b4cf5fd265b) Thanks [@semeano](https://github.com/semeano)! - Add client version to HTTP headers
+
+- [#10891](https://github.com/LedgerHQ/ledger-live/pull/10891) [`20406e5`](https://github.com/LedgerHQ/ledger-live/commit/20406e52b4167289fced610c6ca9824a6d68cdac) Thanks [@semeano](https://github.com/semeano)! - Staking for Aptos
+
+## 2.12.0-next.0
+
+### Minor Changes
+
+- [#10938](https://github.com/LedgerHQ/ledger-live/pull/10938) [`17e039b`](https://github.com/LedgerHQ/ledger-live/commit/17e039b0c7487dda4a68f6a0fe493b4cf5fd265b) Thanks [@semeano](https://github.com/semeano)! - Add client version to HTTP headers
+
+- [#10891](https://github.com/LedgerHQ/ledger-live/pull/10891) [`20406e5`](https://github.com/LedgerHQ/ledger-live/commit/20406e52b4167289fced610c6ca9824a6d68cdac) Thanks [@semeano](https://github.com/semeano)! - Staking for Aptos
+
+## 2.11.0
+
+### Minor Changes
+
+- [#10507](https://github.com/LedgerHQ/ledger-live/pull/10507) [`5735489`](https://github.com/LedgerHQ/ledger-live/commit/5735489ddcee66110fc0cccc6bdd696876b8be4d) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - feat(lld, llm): target a custom reference of the CAL
+
+## 2.11.0-next.0
+
+### Minor Changes
+
+- [#10507](https://github.com/LedgerHQ/ledger-live/pull/10507) [`5735489`](https://github.com/LedgerHQ/ledger-live/commit/5735489ddcee66110fc0cccc6bdd696876b8be4d) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - feat(lld, llm): target a custom reference of the CAL
+
+## 2.10.0
+
+### Minor Changes
+
+- [#10035](https://github.com/LedgerHQ/ledger-live/pull/10035) [`8551c28`](https://github.com/LedgerHQ/ledger-live/commit/8551c280f24f7bd4475c6cc12f1b1d92636d9357) Thanks [@lawRathod](https://github.com/lawRathod)! - Add support for casper 2.0
+
+## 2.10.0-next.0
+
+### Minor Changes
+
+- [#10035](https://github.com/LedgerHQ/ledger-live/pull/10035) [`8551c28`](https://github.com/LedgerHQ/ledger-live/commit/8551c280f24f7bd4475c6cc12f1b1d92636d9357) Thanks [@lawRathod](https://github.com/lawRathod)! - Add support for casper 2.0
+
+## 2.9.0
+
+### Minor Changes
+
+- [#9929](https://github.com/LedgerHQ/ledger-live/pull/9929) [`107f35a`](https://github.com/LedgerHQ/ledger-live/commit/107f35a0650412716b088a3503b86435e6d9cf47) Thanks [@semeano](https://github.com/semeano)! - Add aptos tokens functionality
+
+## 2.9.0-next.0
+
+### Minor Changes
+
+- [#9929](https://github.com/LedgerHQ/ledger-live/pull/9929) [`107f35a`](https://github.com/LedgerHQ/ledger-live/commit/107f35a0650412716b088a3503b86435e6d9cf47) Thanks [@semeano](https://github.com/semeano)! - Add aptos tokens functionality
+
+## 2.8.0
+
+### Minor Changes
+
+- [#9551](https://github.com/LedgerHQ/ledger-live/pull/9551) [`32d46cc`](https://github.com/LedgerHQ/ledger-live/commit/32d46cc77debe059ae0bcd848a21065dec7ee091) Thanks [@themooneer](https://github.com/themooneer)! - support Solana as NFT currency
+
+- [#9690](https://github.com/LedgerHQ/ledger-live/pull/9690) [`d694069`](https://github.com/LedgerHQ/ledger-live/commit/d6940698a49b7a0ed48f84d6e8184d80760cca4f) Thanks [@Justkant](https://github.com/Justkant)! - feat: support Solana NFTs
+
+## 2.8.0-next.0
+
+### Minor Changes
+
+- [#9551](https://github.com/LedgerHQ/ledger-live/pull/9551) [`32d46cc`](https://github.com/LedgerHQ/ledger-live/commit/32d46cc77debe059ae0bcd848a21065dec7ee091) Thanks [@themooneer](https://github.com/themooneer)! - support Solana as NFT currency
+
+- [#9690](https://github.com/LedgerHQ/ledger-live/pull/9690) [`d694069`](https://github.com/LedgerHQ/ledger-live/commit/d6940698a49b7a0ed48f84d6e8184d80760cca4f) Thanks [@Justkant](https://github.com/Justkant)! - feat: support Solana NFTs
+
 ## 2.7.0
 
 ### Minor Changes

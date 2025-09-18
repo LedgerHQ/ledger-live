@@ -9,24 +9,32 @@ import coinConfig from "../config";
 export type TezosApiBaker = {
   address: string;
   name: string;
-  logo: string;
+  status: string;
   balance: number;
-  stakingBalance: number;
-  stakingCapacity: number;
-  maxStakingBalance: number;
-  freeSpace: number;
-  fee: number;
-  minDelegation: number;
-  payoutDelay: number;
-  payoutPeriod: number;
-  openForDelegation: true;
-  estimatedRoi: number;
-  serviceType: string;
-  serviceHealth: string;
-  payoutTiming: string;
-  payoutAccuracy: string;
-  audit?: string;
-  insuranceCoverage: number;
+  features: TezosBakerFeature[];
+  delegation: {
+    enabled: boolean;
+    minBalance: number;
+    fee: number;
+    capacity: number;
+    freeSpace: number;
+    estimatedApy: number;
+    features: TezosBakerFeature[];
+  };
+  staking: {
+    enabled: boolean;
+    minBalance: number;
+    fee: number;
+    capacity: number;
+    freeSpace: number;
+    estimatedApy: number;
+    features: TezosBakerFeature[];
+  };
+};
+
+export type TezosBakerFeature = {
+  title: string;
+  content: string | unknown;
 };
 
 export const cache = makeLRUCache(
@@ -34,13 +42,13 @@ export const cache = makeLRUCache(
     const bakers: Baker[] = [];
     const TEZOS_API_BASE_URL = coinConfig.getCoinConfig().baker.url;
     const { data } = await network<TezosApiBaker[]>({
-      url: `${TEZOS_API_BASE_URL}/v2/bakers`,
+      url: `${TEZOS_API_BASE_URL}/v3/bakers`,
     });
 
     if (data && Array.isArray(data)) {
       log("tezos/bakers", "found " + data.length + " bakers");
       data
-        .filter(raw => raw.serviceHealth === "active")
+        .filter(raw => raw.status === "active" && raw.delegation.enabled)
         .forEach(raw => {
           const baker = asBaker(raw);
 
@@ -135,24 +143,22 @@ export async function loadAccountDelegation(
 }
 
 export const asBaker = (data: TezosApiBaker): Baker | undefined => {
-  const { address, name, logo, freeSpace, estimatedRoi } = data;
+  const { address, name, delegation } = data;
 
   if (
     typeof name === "string" &&
     typeof address === "string" &&
-    typeof logo === "string" &&
-    typeof freeSpace === "number" &&
-    typeof estimatedRoi === "number" &&
-    (logo.startsWith("https://") || logo.startsWith("http://")) &&
-    estimatedRoi >= 0 &&
-    estimatedRoi <= 1
+    typeof delegation.freeSpace === "number" &&
+    typeof delegation.estimatedApy === "number" &&
+    delegation.estimatedApy >= 0 &&
+    delegation.estimatedApy <= 1
   ) {
     return {
       name,
       address,
-      logoURL: logo,
-      nominalYield: `${Math.floor(10000 * estimatedRoi) / 100} %`,
-      capacityStatus: freeSpace <= 0 ? "full" : "normal",
+      logoURL: `https://services.tzkt.io/v1/avatars/${address}`,
+      nominalYield: `${Math.floor(10000 * delegation.estimatedApy) / 100} %`,
+      capacityStatus: delegation.freeSpace <= 0 ? "full" : "normal",
     };
   }
 };

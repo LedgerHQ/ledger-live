@@ -50,27 +50,38 @@ export const getDatesAround = () => {
 };
 
 /**
- *
- * @dev default options for useDateFormatter.
- */
-export type useDateFormatterOptions = {
-  calendar?: boolean;
-};
-
-/**
- *
+ * @param intlOpts - Intl.DateTimeFormatOptions
+ * @param forcedLanguage - language to force, if not provided, the locale will be used. This should be only used for notifications panel.
  * @returns a function that format a date into a string based on the current
  * locale.
  */
-export const useDateFormatter = (intlOpts?: Intl.DateTimeFormatOptions) => {
+export const useDateFormatter = (
+  intlOpts?: Intl.DateTimeFormatOptions,
+  forcedLanguage?: string,
+) => {
   const locale = useSelector(localeSelector);
-  const format = useMemo(() => new Intl.DateTimeFormat(locale, intlOpts), [locale, intlOpts]);
+  const targetLanguage = forcedLanguage ?? locale;
+  const format = useMemo(
+    () => new Intl.DateTimeFormat(targetLanguage, intlOpts),
+    [targetLanguage, intlOpts],
+  );
   const f = useCallback((date: Date) => format.format(date), [format]);
   return f;
 };
 
-export const useDateFormatted = (date?: Date, intlOpts?: Intl.DateTimeFormatOptions): string => {
-  const dateFormatter = useDateFormatter(intlOpts);
+/**
+ *
+ * @param date - date to format
+ * @param intlOpts - Intl.DateTimeFormatOptions
+ * @param forcedLanguage - language to force, if not provided, the locale will be used. This should be only used for notifications panel.
+ * @returns a formatted date string
+ */
+export const useDateFormatted = (
+  date?: Date,
+  intlOpts?: Intl.DateTimeFormatOptions,
+  forcedLanguage?: string,
+): string => {
+  const dateFormatter = useDateFormatter(intlOpts, forcedLanguage);
   return useMemo(() => (date ? dateFormatter(date) : ""), [date, dateFormatter]);
 };
 
@@ -160,6 +171,3 @@ export function fromNow(date: Date): string {
 
 export const useDateFromNow = (date?: Date | null | undefined): string =>
   useMemo(() => (date ? fromNow(date) : ""), [date]);
-
-export const useDateFromNowFn = (): ((date?: Date) => string) =>
-  useCallback(date => (date ? fromNow(date) : ""), []);

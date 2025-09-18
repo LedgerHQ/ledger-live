@@ -2,30 +2,22 @@ import React from "react";
 import Modal, { ModalBody } from "~/renderer/components/Modal";
 import Box from "~/renderer/components/Box";
 import DeviceAction from "~/renderer/components/DeviceAction";
-import { createAction } from "@ledgerhq/live-common/hw/actions/startExchange";
-import startExchange from "@ledgerhq/live-common/exchange/platform/startExchange";
 import { ExchangeType } from "@ledgerhq/live-common/wallet-api/react";
-import connectApp from "@ledgerhq/live-common/hw/connectApp";
 import {
   StartExchangeErrorResult,
   StartExchangeSuccessResult,
 } from "@ledgerhq/live-common/hw/actions/startExchange";
+import { useStartExchangeAction } from "~/renderer/hooks/useConnectAppAction";
 
 export type Data = {
   onCancel?: (error: StartExchangeErrorResult) => void;
   exchangeType: ExchangeType;
   onResult: (startExchangeResult: StartExchangeSuccessResult) => void;
 };
-export function isStartExchangeData(data: unknown): data is Data {
-  if (data === null || typeof data !== "object") {
-    return false;
-  }
-  return "exchangeType" in data;
-}
-
-const action = createAction(connectApp, startExchange);
 
 const StartExchange = () => {
+  const action = useStartExchangeAction();
+
   return (
     <Modal
       name="MODAL_PLATFORM_EXCHANGE_START"

@@ -9,11 +9,13 @@ import { Track } from "~/analytics";
 import Circle from "~/components/Circle";
 import QueuedDrawer from "~/components/QueuedDrawer";
 import { earnInfoModalSelector } from "~/reducers/earn";
+import { useIsFocused } from "@react-navigation/core";
 
 export function EarnInfoDrawer() {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const [modalOpened, setModalOpened] = useState(false);
+  const isFocused = useIsFocused();
 
   const openModal = useCallback(() => setModalOpened(true), []);
 
@@ -24,10 +26,10 @@ export function EarnInfoDrawer() {
   const { message, messageTitle, learnMoreLink } = useSelector(earnInfoModalSelector);
 
   useEffect(() => {
-    if (!modalOpened && (message || messageTitle)) {
+    if (isFocused && !modalOpened && (message || messageTitle)) {
       openModal();
     }
-  }, [openModal, message, messageTitle, modalOpened]);
+  }, [isFocused, openModal, message, messageTitle, modalOpened]);
 
   const onLearnMorePress = useCallback(() => {
     if (learnMoreLink) {

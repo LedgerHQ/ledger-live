@@ -1,11 +1,16 @@
 import BigNumber from "bignumber.js";
-import { createFixtureAccount, createFixtureTransaction } from "../../bridge/bridge.fixture";
+import {
+  createFixtureAccount,
+  createFixtureAccountWithSubAccount,
+  createFixtureTransaction,
+  createFixtureTransactionWithSubAccount,
+} from "../../bridge/bridge.fixture";
 import * as getFeesForTransaction from "../../bridge/getFeesForTransaction";
-import { AptosAPI } from "../../api";
+import { AptosAPI } from "../../network";
 
 let simulateTransaction = jest.fn();
 
-jest.mock("../../api", () => {
+jest.mock("../../network", () => {
   return {
     AptosAPI: function () {
       return {
@@ -24,16 +29,18 @@ jest.mock("@aptos-labs/ts-sdk", () => {
   };
 });
 
-jest.mock("../../bridge/logic", () => {
-  return {
-    DEFAULT_GAS: 201,
-    DEFAULT_GAS_PRICE: 101,
-    ESTIMATE_GAS_MUL: 1,
-    normalizeTransactionOptions: jest.fn(),
-  };
-});
+const mockedGetTokenAccount = jest.fn();
 
 describe("getFeesForTransaction Test", () => {
+  beforeEach(() => {
+    jest.mock("../../bridge/logic", () => ({
+      DEFAULT_GAS: 201,
+      DEFAULT_GAS_PRICE: 101,
+      ESTIMATE_GAS_MUL: 1,
+      normalizeTransactionOptions: jest.fn(),
+      getTokenAccount: mockedGetTokenAccount,
+    }));
+  });
   describe("when using getFee", () => {
     describe("with vm_status as INSUFFICIENT_BALANCE", () => {
       it("should return a fee estimation object", async () => {
@@ -46,6 +53,7 @@ describe("getFeesForTransaction Test", () => {
             gas_unit_price: "102",
           },
         ]);
+        mockedGetTokenAccount.mockReturnValue(undefined);
 
         const account = createFixtureAccount();
         const transaction = createFixtureTransaction();
@@ -58,9 +66,43 @@ describe("getFeesForTransaction Test", () => {
         const result = await getFeesForTransaction.getFee(account, transaction, aptosClient);
 
         const expected = {
-          fees: new BigNumber(20604),
+          fees: new BigNumber(22644),
           estimate: {
-            maxGasAmount: "202",
+            maxGasAmount: "222",
+            gasUnitPrice: "102",
+          },
+          errors: {},
+        };
+
+        expect(result).toEqual(expected);
+      });
+
+      it("should return a fee estimation object for the token transaction", async () => {
+        simulateTransaction = jest.fn(() => [
+          {
+            success: true,
+            vm_status: [],
+            expiration_timestamp_secs: 5,
+            gas_used: "202",
+            gas_unit_price: "102",
+          },
+        ]);
+        mockedGetTokenAccount.mockReturnValue(undefined);
+
+        const account = createFixtureAccountWithSubAccount("coin");
+        const transaction = createFixtureTransactionWithSubAccount();
+        const aptosClient = new AptosAPI(account.currency.id);
+
+        transaction.amount = new BigNumber(1);
+        account.xpub = "xpub";
+        account.spendableBalance = new BigNumber(100000000);
+
+        const result = await getFeesForTransaction.getFee(account, transaction, aptosClient);
+
+        const expected = {
+          fees: new BigNumber(22644),
+          estimate: {
+            maxGasAmount: "222",
             gasUnitPrice: "102",
           },
           errors: {},
@@ -81,6 +123,7 @@ describe("getFeesForTransaction Test", () => {
             gas_unit_price: "100",
           },
         ]);
+        mockedGetTokenAccount.mockReturnValue(undefined);
 
         const account = createFixtureAccount();
         const transaction = createFixtureTransaction();
@@ -93,6 +136,44 @@ describe("getFeesForTransaction Test", () => {
         expect(async () => {
           await getFeesForTransaction.getFee(account, transaction, aptosClient);
         }).rejects.toThrow("Simulation failed with following error: DUMMY_STATE");
+      });
+    });
+
+    describe("with vm_status as MAX_GAS_UNITS_BELOW_MIN_TRANSACTION_GAS_UNITS", () => {
+      it("should return a fee estimation object with GasInsuficeinetBalance error", async () => {
+        simulateTransaction = jest.fn(() => [
+          {
+            success: false,
+            vm_status: ["MAX_GAS_UNITS_BELOW_MIN_TRANSACTION_GAS_UNITS"],
+            expiration_timestamp_secs: 5,
+            gas_used: "0",
+            gas_unit_price: "100",
+          },
+        ]);
+        mockedGetTokenAccount.mockReturnValue(undefined);
+
+        const account = createFixtureAccountWithSubAccount("coin");
+        const transaction = createFixtureTransactionWithSubAccount();
+        const aptosClient = new AptosAPI(account.currency.id);
+
+        transaction.amount = new BigNumber(1);
+        account.xpub = "xpub";
+        account.spendableBalance = new BigNumber(100000000);
+
+        const result = await getFeesForTransaction.getFee(account, transaction, aptosClient);
+
+        const expected = {
+          fees: new BigNumber(0),
+          estimate: {
+            maxGasAmount: "0",
+            gasUnitPrice: "100",
+          },
+          errors: {
+            maxGasAmount: "GasInsufficientBalance",
+          },
+        };
+
+        expect(result).toEqual(expected);
       });
     });
   });
@@ -109,6 +190,7 @@ describe("getFeesForTransaction Test", () => {
             gas_unit_price: "102",
           },
         ]);
+        mockedGetTokenAccount.mockReturnValue(undefined);
 
         const account = createFixtureAccount();
         const transaction = createFixtureTransaction();
@@ -128,9 +210,9 @@ describe("getFeesForTransaction Test", () => {
           errors: {},
           estimate: {
             gasUnitPrice: "102",
-            maxGasAmount: "9",
+            maxGasAmount: "10",
           },
-          fees: new BigNumber("918"),
+          fees: new BigNumber(1020),
         };
 
         expect(result).toEqual(expected);
@@ -152,6 +234,8 @@ describe("getFeesForTransaction Test", () => {
             gas_unit_price: "102",
           },
         ]);
+        mockedGetTokenAccount.mockReturnValue(undefined);
+
         const account = createFixtureAccount();
         account.xpub = "xpub";
         const transaction = createFixtureTransaction();
@@ -176,14 +260,65 @@ describe("getFeesForTransaction Test", () => {
           errors: {},
           estimate: {
             gasUnitPrice: "102",
-            maxGasAmount: "202",
+            maxGasAmount: "222",
           },
-          fees: new BigNumber("20604"),
+          fees: new BigNumber(22644),
         };
 
         expect(result1).toEqual(expected);
         expect(result2).toEqual(expected);
       });
+    });
+  });
+
+  describe("when key is in cache from a token account", () => {
+    beforeEach(() => {
+      jest.clearAllMocks();
+    });
+
+    it("should return cached fee", async () => {
+      simulateTransaction = jest.fn(() => [
+        {
+          success: true,
+          vm_status: [],
+          expiration_timestamp_secs: 5,
+          gas_used: "202",
+          gas_unit_price: "102",
+        },
+      ]);
+      mockedGetTokenAccount.mockReturnValue(undefined);
+
+      const account = createFixtureAccountWithSubAccount("coin");
+      account.xpub = "xpub";
+      const transaction = createFixtureTransactionWithSubAccount();
+      const aptosClient = new AptosAPI(account.currency.id);
+
+      transaction.amount = new BigNumber(10);
+
+      const result1 = await getFeesForTransaction.getEstimatedGas(
+        account,
+        transaction,
+        aptosClient,
+      );
+      const result2 = await getFeesForTransaction.getEstimatedGas(
+        account,
+        transaction,
+        aptosClient,
+      );
+
+      expect(simulateTransaction.mock.calls).toHaveLength(1);
+
+      const expected = {
+        errors: {},
+        estimate: {
+          gasUnitPrice: "102",
+          maxGasAmount: "222",
+        },
+        fees: new BigNumber(22644),
+      };
+
+      expect(result1).toEqual(expected);
+      expect(result2).toEqual(expected);
     });
   });
 });

@@ -37,6 +37,7 @@ import TranslatedError from "./TranslatedError";
 import { useNavigation } from "@react-navigation/core";
 import { NavigatorName, ScreenName } from "~/const";
 import { Flex, Text } from "@ledgerhq/native-ui";
+import SupportLinkError from "./SupportLinkError";
 
 export type SelectFeeStrategy = FeeStrategy & {
   userGasLimit?: BigNumber;
@@ -90,6 +91,7 @@ export default function SelectFeesStrategy({
   const navigation = useNavigation();
 
   const errors = status?.errors;
+  const accountError = status?.errors.sender ?? undefined;
   const insufficuentError = Object.values(errors || {})[0] || null;
 
   const closeNetworkFeeHelpModal = () => setNetworkFeeHelpOpened(false);
@@ -215,7 +217,19 @@ export default function SelectFeesStrategy({
         >
           {null}
         </SummaryRow>
-        {insufficuentError && (
+        {accountError ? (
+          <Alert type="warning">
+            <Flex width={"90%"}>
+              <Text>
+                <TranslatedError error={accountError} />
+              </Text>
+              <Text>
+                <TranslatedError error={accountError} field="description" />
+              </Text>
+              <SupportLinkError error={accountError} type="alert" />
+            </Flex>
+          </Alert>
+        ) : insufficuentError ? (
           <TouchableOpacity onPress={() => onBuy(mainAccount)}>
             <Alert type="warning">
               <Flex width={"90%"}>
@@ -225,7 +239,7 @@ export default function SelectFeesStrategy({
               </Flex>
             </Alert>
           </TouchableOpacity>
-        )}
+        ) : null}
         <SafeAreaView style={styles.strategiesContainer}>
           <FlatList
             data={strategies}

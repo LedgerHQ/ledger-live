@@ -24,6 +24,7 @@ function LedgerSupportRow() {
       title={<Trans i18nKey="settings.help.support" />}
       desc={<Trans i18nKey="settings.help.supportDesc" />}
       onPress={() => Linking.openURL(urls.faq)}
+      testID={`ledger-support-row-${urls.faq}`}
     >
       <ExternalLinkMedium size={20} color={"neutral.c100"} />
     </SettingsRow>

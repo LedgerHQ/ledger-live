@@ -72,6 +72,7 @@ const StorageBarItem = styled.div.attrs<{
 }>(props => ({
   style: {
     backgroundColor: props.installing ? props.theme.colors.palette.text.shade30 : props.color,
+    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
     ...transitionStyles[props.state as keyof typeof transitionStyles](
       `${(props.ratio * 1e2).toFixed(3)}%`,
     ),
@@ -141,6 +142,7 @@ const getAppStorageBarColor = ({
 }: {
   currency: CryptoCurrency | undefined | null;
   name: string;
+  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
 }) => (name in appDataColors ? appDataColors[name as keyof typeof appDataColors] : currency?.color);
 
 /**

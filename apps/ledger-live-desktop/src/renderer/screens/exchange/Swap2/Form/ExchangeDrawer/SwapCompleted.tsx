@@ -83,7 +83,7 @@ const SwapCompleted = ({
       flow: "swap",
       button: "FeedbackForm",
     });
-    openURL("https://ledger.typeform.com/to/FIHc3fk2");
+    openURL("https://form.typeform.com/to/FIHc3fk2#source=desktop");
   };
 
   const SwapPill = ({ swapId }: { swapId: string }) => (

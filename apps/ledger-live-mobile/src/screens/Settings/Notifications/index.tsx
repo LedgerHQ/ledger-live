@@ -12,6 +12,7 @@ import { setNotifications } from "~/actions/settings";
 import type { State } from "~/reducers/types";
 import useNotifications from "~/logic/notifications";
 import { updateUserPreferences } from "~/notifications/braze";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 
 const notificationsMapping = {
   areNotificationsAllowed: "allowed",
@@ -72,6 +73,7 @@ function NotificationsSettings() {
     notificationsCategoriesHidden,
   } = useNotifications();
   const [isNotifPermissionEnabled, setIsNotifPermissionEnabled] = useState<boolean | undefined>();
+  const featureTransactionsAlerts = useFeature("transactionsAlerts");
 
   const refreshNotifPermission = useCallback(() => {
     getIsNotifEnabled().then(isNotifPermissionEnabled => {
@@ -171,8 +173,9 @@ function NotificationsSettings() {
                 disabled={disableSubSettings}
               />
             ) : null}
-            {!notificationsCategoriesHidden ||
-            !notificationsCategoriesHidden.includes("transactionsAlertsCategory") ? (
+            {featureTransactionsAlerts?.enabled &&
+            (!notificationsCategoriesHidden ||
+              !notificationsCategoriesHidden.includes("transactionsAlertsCategory")) ? (
               <NotificationSettingsRow
                 notificationKey={"transactionsAlertsCategory"}
                 disabled={disableSubSettings}

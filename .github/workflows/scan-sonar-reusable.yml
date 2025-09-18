@@ -1,0 +1,93 @@
+name: "[All Platforms] - Scan Sonar - Called"
+
+on:
+  workflow_call:
+    inputs:
+      should_download_desktop_coverage:
+        required: false
+        default: "false"
+        type: string
+      should_download_mobile_coverage:
+        required: false
+        default: "false"
+        type: string
+      should_download_libs_coverage:
+        required: false
+        default: "false"
+        type: string
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  scan-sonar:
+    name: "Sonar Cloud"
+    runs-on: [ ubuntu-22.04 ]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.ref || github.sha }}
+          fetch-depth: 0
+
+      - name: fetch develop
+        run: |
+          git fetch origin develop
+
+      - name: Setup the caches
+        uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
+        id: setup-caches
+        with:
+          install-proto: true
+          skip-turbo-cache: "false"
+          accountId: ${{ secrets.AWS_ACCOUNT_ID_PROD }}
+          roleName: ${{ secrets.AWS_CACHE_ROLE_NAME }}
+          region: ${{ secrets.AWS_CACHE_REGION }}
+          turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
+
+      - name: Download desktop unit test coverage
+        if: ${{ inputs.should_download_desktop_coverage == 'true' }}
+        uses: actions/download-artifact@v4
+        with:
+          name: coverage-desktop
+          path: coverage-desktop
+
+      - name: Download mobile unit test coverage
+        if: ${{ inputs.should_download_mobile_coverage == 'true' }}
+        uses: actions/download-artifact@v4
+        with:
+          name: coverage-mobile
+          path: coverage-mobile
+
+      - name: Download libs unit test coverage
+        if: ${{ inputs.should_download_libs_coverage == 'true' }}
+        uses: actions/download-artifact@v4
+        with:
+          name: coverage-libs
+          path: coverage-libs
+
+      - name: Merge coverage files
+        run: |
+          if [ -d ./coverage-desktop ]; then
+            echo "Merging desktop coverage files"
+            cat ./coverage-desktop/lcov.info >> ./lcov.info
+            cat ./coverage-desktop/sonar-executionTests-report.xml >> ./sonar-executionTests-report.xml
+          fi
+          if [ -d ./coverage-mobile ]; then
+            echo "Merging mobile coverage files"
+            cat ./coverage-mobile/lcov.info >> ./lcov.info
+            cat ./coverage-mobile/sonar-executionTests-report.xml >> ./sonar-executionTests-report.xml
+          fi
+          if [ -d ./coverage-libs ]; then
+            echo "Merging libs coverage files"
+            cat ./coverage-libs/lcov.info >> ./lcov.info
+            cat ./coverage-libs/sonar-executionTests-report.xml >> ./sonar-executionTests-report.xml
+          fi
+
+      - uses: SonarSource/sonarqube-scan-action@v4
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        with:
+          args: >
+            -Dsonar.sources=apps,libs
+            -Dsonar.testExecutionReportPaths=sonar-executionTests-report.xml

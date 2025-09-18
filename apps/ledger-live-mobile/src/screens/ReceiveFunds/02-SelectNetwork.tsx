@@ -17,7 +17,6 @@ import BigCurrencyRow from "~/components/BigCurrencyRow";
 import { findAccountByCurrency } from "~/logic/deposit";
 import { AccountLike } from "@ledgerhq/types-live";
 import { urls } from "~/utils/urls";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { AddAccountContexts } from "LLM/features/Accounts/screens/AddAccount/enums";
 import NetworkBanner from "LLM/features/AssetSelection/components/NetworkBanner";
 import useBannerAnimation from "LLM/features/AssetSelection/screens/SelectNetwork/useBannerAnimation";
@@ -33,7 +32,6 @@ const keyExtractor = (elem: CryptoWithAccounts) => elem.crypto.id;
 export default function SelectNetwork({ navigation, route }: Props) {
   const provider = route?.params?.provider;
   const filterCurrencyIds = route?.params?.filterCurrencyIds;
-  const llmNetworkBasedAddAccountFlow = useFeature("llmNetworkBasedAddAccountFlow");
 
   const networks = useMemo(
     () =>
@@ -89,23 +87,16 @@ export default function SelectNetwork({ navigation, route }: Props) {
   );
 
   const goToDeviceSelection = useCallback(
-    (currency: CryptoCurrency, createTokenAccount?: boolean) => {
-      if (llmNetworkBasedAddAccountFlow?.enabled) {
-        navigation.replace(NavigatorName.DeviceSelection, {
-          screen: ScreenName.SelectDevice,
-          params: {
-            currency,
-            context: AddAccountContexts.ReceiveFunds,
-          },
-        });
-      } else {
-        navigation.navigate(ScreenName.ReceiveAddAccountSelectDevice, {
+    (currency: CryptoCurrency) => {
+      navigation.replace(NavigatorName.DeviceSelection, {
+        screen: ScreenName.SelectDevice,
+        params: {
           currency,
-          ...(createTokenAccount && { createTokenAccount }),
-        });
-      }
+          context: AddAccountContexts.ReceiveFunds,
+        },
+      });
     },
-    [llmNetworkBasedAddAccountFlow?.enabled, navigation],
+    [navigation],
   );
 
   const onPressItem = useCallback(
@@ -143,7 +134,7 @@ export default function SelectNetwork({ navigation, route }: Props) {
           });
         } else {
           // if we didn't find any account of the parent currency we add and create one
-          goToDeviceSelection(cryptoToSend.parentCurrency, true);
+          goToDeviceSelection(cryptoToSend.parentCurrency);
         }
       } else {
         // else we create a currency account

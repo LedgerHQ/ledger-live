@@ -1,7 +1,15 @@
 import { sortCurrenciesByIds } from "./sortByMarketcap";
-import { findCurrencyByTicker, listCryptoCurrencies, listTokens } from ".";
+import { listCryptoCurrencies, listTokens } from ".";
 import { getBTCValues } from "@ledgerhq/live-countervalues/mock";
 import { CURRENCIES_LIST, IDS } from "./mock";
+import { setCryptoAssetsStore as setCryptoAssetsStoreForCoinFramework } from "@ledgerhq/coin-framework/crypto-assets/index";
+import type { CryptoAssetsStore } from "@ledgerhq/types-live";
+import { findCurrencyByTicker } from "@ledgerhq/live-countervalues/findCurrencyByTicker";
+
+// eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+setCryptoAssetsStoreForCoinFramework({
+  findTokenByTicker: (_: string) => undefined,
+} as CryptoAssetsStore);
 
 test("sortCurrenciesByIds snapshot", () => {
   const list = [...listCryptoCurrencies(), ...listTokens()];
@@ -35,6 +43,7 @@ test("sortCurrenciesByIds simulate staking from portfolio", () => {
     "crypto_org",
     "xion",
     "zenrock",
+    "babylon",
     "quicksilver",
   ]);
 });

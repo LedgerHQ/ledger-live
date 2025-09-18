@@ -1,4 +1,4 @@
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/index";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { TransportStatusError, UserRefusedAddress } from "@ledgerhq/errors";
 import { getEnv } from "@ledgerhq/live-env";
 import { log } from "@ledgerhq/logs";
@@ -150,6 +150,10 @@ const modes: Readonly<Record<DerivationMode, ModeSpec>> = Object.freeze({
   solanaSub: {
     overridesDerivation: "44'/501'/<account>'",
   },
+  solanaBip44Change: {
+    overridesDerivation: "44'/501'/<account>'/0'",
+    mandatoryEmptyAccountSkip: 10,
+  },
   hederaBip44: {
     overridesDerivation: "44/3030",
   },
@@ -187,6 +191,11 @@ const modes: Readonly<Record<DerivationMode, ModeSpec>> = Object.freeze({
   sui: {
     overridesDerivation: "44'/784'/<account>'/0'/0'",
   },
+  canton: {
+    overridesDerivation: "44'/6767'/<account>'/0'/0'",
+    mandatoryEmptyAccountSkip: 10,
+    tag: "canton",
+  },
 });
 
 // WIP
@@ -219,11 +228,14 @@ const legacyDerivations: Partial<Record<CryptoCurrency["id"], DerivationMode[]>>
   ton: ["ton"],
   ethereum: ["ethM", "ethMM"],
   ethereum_classic: ["ethM", "ethMM", "etcM"],
-  solana: ["solanaMain", "solanaSub"],
+  solana: ["solanaMain", "solanaBip44Change", "solanaSub"],
   solana_devnet: ["solanaMain", "solanaSub"],
   solana_testnet: ["solanaMain", "solanaSub"],
   sui: ["sui"],
   aptos: ["aptos"],
+  canton_network: ["canton"],
+  canton_network_devnet: ["canton"],
+  canton_network_localnet: ["canton"],
 };
 
 export function isDerivationMode(mode: string): mode is DerivationMode {
@@ -361,6 +373,9 @@ const disableBIP44: Record<string, boolean> = {
   filecoin: true,
   ton: true,
   sui: true,
+  canton_network: true,
+  canton_network_devnet: true,
+  canton_network_localnet: true,
 };
 type SeedInfo = {
   purpose: number;
@@ -388,6 +403,10 @@ const seedIdentifierPath = (currencyId: string): SeedPathFn => {
     case "ton":
     case "sui":
       return ({ purpose, coinType }) => `${purpose}'/${coinType}'/0'/0'/0'/0'`;
+    case "canton_network":
+    case "canton_network_devnet":
+    case "canton_network_localnet":
+      return ({ purpose, coinType }) => `${purpose}'/${coinType}'/0'/0'/0'`;
     default:
       return ({ purpose, coinType }) => `${purpose}'/${coinType}'/0'`;
   }

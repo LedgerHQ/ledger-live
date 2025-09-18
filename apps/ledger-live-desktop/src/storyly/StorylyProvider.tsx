@@ -23,6 +23,7 @@ const StorylyContext = createContext<StorylyContextType | undefined>(undefined);
 type StoriesType = Feature_Storyly["params"] extends { stories: infer S } ? S : never;
 
 const getTokenForInstanceId = (stories: StoriesType, targetInstanceId: string): string | null => {
+  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
   const foundStory = Object.values(stories) as StorylyInstanceType[];
   const matchingStory = foundStory.find(story => story.instanceId === targetInstanceId);
   return matchingStory ? matchingStory?.token : null;
@@ -52,7 +53,7 @@ const StorylyProvider: React.FC<StorylyProviderProps> = ({ children }) => {
 
     storylyRef.current?.on("actionClicked", (story: Story) => {
       if (!story.actionUrl) return;
-      openURL(story.actionUrl as string);
+      openURL(story.actionUrl);
       storylyRef.current?.close?.();
       dispatch(closeAllModal());
       setDrawer();
@@ -77,6 +78,7 @@ const StorylyProvider: React.FC<StorylyProviderProps> = ({ children }) => {
       const storylyQuery = Object.fromEntries(searchParams);
       setQuery(storylyQuery);
       if (storylyQuery?.instance)
+        // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
         setToken(getTokenForInstanceId(stories as StoriesType, storylyQuery?.instance));
     }
   }, [stories, url]);

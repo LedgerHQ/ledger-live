@@ -13,7 +13,7 @@ import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 const tokens = listTokens();
 type Props = {
   query: string;
-  addAccount: (a?: TokenCurrency) => void;
+  addAccount: (a: TokenCurrency) => void;
   dispatch: (a: Action) => void;
   installed: InstalledItem[];
   apps: App[];
@@ -48,7 +48,9 @@ const Placeholder = ({ query, addAccount, dispatch, installed, apps }: Props) =>
     () => parent && installed.find(({ name }) => name === parent.name),
     [parent, installed],
   );
-  const goToAccounts = useCallback(() => addAccount(found), [addAccount, found]);
+  const goToAccounts = useCallback(() => {
+    if (found) addAccount(found);
+  }, [addAccount, found]);
   return found && parent ? (
     <Box alignItems="center" pt={5} py={6}>
       <Image alt="" resource={manager.getIconUrl(parent.icon)} width={40} height={40} />

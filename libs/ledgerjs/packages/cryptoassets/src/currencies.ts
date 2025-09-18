@@ -565,7 +565,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     type: "CryptoCurrency",
     id: "bsc",
     coinType: CoinType.ETH,
-    name: "Binance Smart Chain",
+    name: "BNB Chain",
     managerAppName: "Ethereum",
     ticker: "BNB",
     scheme: "bsc",
@@ -603,6 +603,101 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
       },
     ],
     explorerViews: [],
+  },
+  canton_network: {
+    type: "CryptoCurrency",
+    id: "canton_network",
+    coinType: CoinType.CANTON_NETWORK,
+    name: "Canton Network",
+    managerAppName: "Canton",
+    ticker: "CC",
+    scheme: "canton_network",
+    color: "#F8FFAE",
+    family: "canton",
+    blockAvgTime: 100,
+    units: [
+      {
+        name: "cc",
+        code: "CC",
+        magnitude: 38,
+      },
+      {
+        name: "ucc",
+        code: "ucc",
+        magnitude: 0,
+      },
+    ],
+    explorerViews: [
+      {
+        tx: "https://lighthouse.cantonloop.com/transactions/$hash",
+        address: "https://lighthouse.cantonloop.com/party/$address",
+      },
+    ],
+    keywords: ["canton_network"],
+  },
+  canton_network_localnet: {
+    type: "CryptoCurrency",
+    id: "canton_network_localnet",
+    coinType: CoinType.CANTON_NETWORK,
+    name: "Canton Network (Localnet)",
+    managerAppName: "Canton",
+    ticker: "CC",
+    scheme: "canton_network_localnet",
+    color: "#F8FFAE",
+    family: "canton",
+    blockAvgTime: 100,
+    isTestnetFor: "canton_network",
+    units: [
+      {
+        name: "cc",
+        code: "CC",
+        magnitude: 38,
+      },
+      {
+        name: "ucc",
+        code: "ucc",
+        magnitude: 0,
+      },
+    ],
+    explorerViews: [
+      {
+        tx: "https://explorer-to-define.io/transaction/$hash",
+        address: "https://explorer-to-define.io/address/$address",
+      },
+    ],
+    keywords: ["canton_network_localnet"],
+  },
+  canton_network_devnet: {
+    type: "CryptoCurrency",
+    id: "canton_network_devnet",
+    coinType: CoinType.CANTON_NETWORK,
+    name: "Canton Network (Devnet)",
+    managerAppName: "Canton",
+    ticker: "CC",
+    scheme: "canton_network_devnet",
+    color: "#F8FFAE",
+    family: "canton",
+    blockAvgTime: 100,
+    isTestnetFor: "canton_network",
+    units: [
+      {
+        name: "cc",
+        code: "CC",
+        magnitude: 38,
+      },
+      {
+        name: "ucc",
+        code: "ucc",
+        magnitude: 0,
+      },
+    ],
+    explorerViews: [
+      {
+        tx: "https://lighthouse.devnet.cantonloop.com/transactions/$hash",
+        address: "https://lighthouse.devnet.cantonloop.com/party/$address",
+      },
+    ],
+    keywords: ["canton_network_devnet"],
   },
   cardano: {
     type: "CryptoCurrency",
@@ -687,6 +782,9 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
         magnitude: 18,
       },
     ],
+    ethereumLikeInfo: {
+      chainId: 42220,
+    },
     explorerViews: [
       {
         tx: "https://explorer.celo.org/tx/$hash",
@@ -1547,7 +1645,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     coinType: CoinType.IOTA,
     name: "IOTA",
     managerAppName: "IOTA",
-    ticker: "MIOTA",
+    ticker: "IOTA",
     scheme: "iota",
     color: "#000000",
     family: "iota",
@@ -1578,6 +1676,36 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
       },
     ],
     explorerViews: [],
+  },
+  kaspa: {
+    type: "CryptoCurrency",
+    id: "kaspa",
+    coinType: CoinType.KASPA,
+    name: "KASPA",
+    managerAppName: "Kaspa",
+    ticker: "KAS",
+    scheme: "kaspa",
+    color: "#70C7BA",
+    family: "kaspa",
+    units: [
+      {
+        name: "KAS",
+        code: "KAS",
+        magnitude: 8,
+        showAllDigits: true,
+      },
+      {
+        name: "Sompis",
+        code: "Sompi",
+        magnitude: 0,
+      },
+    ],
+    explorerViews: [
+      {
+        address: "https://explorer.kaspa.org/addresses/$address",
+        tx: "https://explorer.kaspa.org/txs/$hash",
+      },
+    ],
   },
   kin: {
     type: "CryptoCurrency",
@@ -2899,7 +3027,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     scheme: "tron",
     color: "#D9012C",
     family: "tron",
-    blockAvgTime: 3,
+    blockAvgTime: 9,
     units: [
       {
         name: "TRX",
@@ -3584,7 +3712,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     id: "sonic",
     coinType: CoinType.ETH,
     name: "Sonic",
-    managerAppName: "Ethereum",
+    managerAppName: "Sonic",
     ticker: "S",
     scheme: "sonic",
     color: "#FFFFFF",
@@ -3607,7 +3735,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     isTestnetFor: "sonic",
     coinType: CoinType.ETH,
     name: "Sonic Blaze",
-    managerAppName: "Ethereum",
+    managerAppName: "Sonic",
     ticker: "S",
     scheme: "sonic_blaze",
     color: "#FFFFFF",
@@ -3979,6 +4107,72 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
         tx: "https://www.teloscan.io/tx/$hash",
         address: "https://www.teloscan.io/address/$address",
         token: "https://www.teloscan.io/token/$contractAddress?a=$address",
+      },
+    ],
+  },
+  berachain: {
+    type: "CryptoCurrency",
+    id: "berachain",
+    coinType: CoinType.ETH,
+    name: "Berachain",
+    managerAppName: "Ethereum",
+    ticker: "BERA",
+    scheme: "berachain",
+    color: "#814625",
+    family: "evm",
+    units: ethereumUnits("BERA", "BERA"),
+    ethereumLikeInfo: {
+      chainId: 80094,
+    },
+    explorerViews: [
+      {
+        tx: "https://berascan.com/tx/$hash",
+        address: "https://berascan.com/address/$address",
+        token: "https://berascan.com/token/$contractAddress?a=$address",
+      },
+    ],
+  },
+  sei_network_evm: {
+    type: "CryptoCurrency",
+    id: "sei_network_evm",
+    coinType: CoinType.ETH,
+    name: "SEI Network EVM",
+    managerAppName: "Ethereum",
+    ticker: "SEI",
+    scheme: "sei",
+    color: "#89395b",
+    family: "evm",
+    units: ethereumUnits("SEI", "SEI"),
+    ethereumLikeInfo: {
+      chainId: 1329,
+    },
+    explorerViews: [
+      {
+        tx: "https://seistream.app/transactions/$hash",
+        address: "https://seistream.app/account/$address",
+        token: "https://seistream.app/tokens/$address",
+      },
+    ],
+  },
+  hyperevm: {
+    type: "CryptoCurrency",
+    id: "hyperevm",
+    coinType: CoinType.ETH,
+    name: "HyperEVM",
+    managerAppName: "Ethereum",
+    ticker: "HYPE",
+    scheme: "hyperevm",
+    color: "#97FCE4",
+    family: "evm",
+    units: ethereumUnits("HYPE", "HYPE"),
+    ethereumLikeInfo: {
+      chainId: 999,
+    },
+    explorerViews: [
+      {
+        tx: "https://www.hyperscan.com/tx/$hash",
+        address: "https://www.hyperscan.com/address/$address",
+        token: "https://www.hyperscan.com/token/$contractAddress",
       },
     ],
   },
@@ -4415,6 +4609,35 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
       {
         tx: "https://suivision.xyz/txblock/$hash",
         address: "https://suivision.xyz/account/$address",
+      },
+    ],
+  },
+  babylon: {
+    type: "CryptoCurrency",
+    id: "babylon",
+    coinType: CoinType.ATOM,
+    name: "Babylon",
+    managerAppName: "Cosmos",
+    ticker: "BABY",
+    scheme: "babylon",
+    color: "#CE6533",
+    family: "cosmos",
+    units: [
+      {
+        name: "Babylon",
+        code: "BABY",
+        magnitude: 6,
+      },
+      {
+        name: "micro BBN",
+        code: "ubbn",
+        magnitude: 0,
+      },
+    ],
+    explorerViews: [
+      {
+        tx: "https://www.mintscan.io/babylon/txs/$hash",
+        address: "https://www.mintscan.io/babylon/validators/$address",
       },
     ],
   },

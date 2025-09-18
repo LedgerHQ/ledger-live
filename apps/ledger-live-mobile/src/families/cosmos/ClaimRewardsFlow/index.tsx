@@ -13,6 +13,7 @@ import ClaimRewardsConnectDevice from "~/screens/ConnectDevice";
 import ClaimRewardsValidationError from "./04-ValidationError";
 import ClaimRewardsValidationSuccess from "./04-ValidationSuccess";
 import type { CosmosClaimRewardsFlowParamList } from "./types";
+import { Flex } from "@ledgerhq/native-ui";
 
 const totalSteps = "3";
 
@@ -32,13 +33,16 @@ function ClaimRewardsFlow() {
         component={ClaimRewardsSelectValidator}
         options={{
           headerTitle: () => (
-            <StepHeader
-              title={t("cosmos.claimRewards.stepperHeader.validator")}
-              subtitle={t("cosmos.claimRewards.stepperHeader.stepRange", {
-                currentStep: "1",
-                totalSteps,
-              })}
-            />
+            <Flex flex={1} width="90%" alignSelf="center">
+              <StepHeader
+                title={t("cosmos.claimRewards.stepperHeader.validator")}
+                subtitle={t("cosmos.claimRewards.stepperHeader.stepRange", {
+                  currentStep: "1",
+                  totalSteps,
+                })}
+                adjustFontSize
+              />
+            </Flex>
           ),
           headerLeft: () => null,
           headerStyle: {

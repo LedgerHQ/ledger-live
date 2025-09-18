@@ -1,20 +1,22 @@
 import { useMemo, useEffect, useRef, useCallback, useState } from "react";
 import { Account, AccountLike, Operation, SignedOperation } from "@ledgerhq/types-live";
 import { atom, useAtom } from "jotai";
-import { AppManifest, WalletAPITransaction } from "./types";
+import { AppManifest, DAppTrackingData, WalletAPITransaction } from "./types";
 import { getMainAccount, getParentAccount } from "../account";
 import { TrackingAPI } from "./tracking";
 import { getAccountBridge } from "../bridge";
 import { getEnv } from "@ledgerhq/live-env";
 import network from "@ledgerhq/live-network/network";
 import { getWalletAPITransactionSignFlowInfos } from "./converters";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/index";
+import { findTokenByAddress, getCryptoCurrencyById } from "@ledgerhq/cryptoassets/index";
 import { prepareMessageToSign } from "../hw/signMessage/index";
 import { CurrentAccountHistDB, UiHook, usePermission } from "./react";
 import BigNumber from "bignumber.js";
-import { safeEncodeEIP55 } from "@ledgerhq/coin-evm/logic";
+import { safeEncodeEIP55 } from "@ledgerhq/coin-evm/utils";
 import { SmartWebsocket } from "./SmartWebsocket";
 import { stripHexPrefix } from "./helpers";
+import { getTxType } from "./utils/txTrackingHelper";
+import { Transaction as EvmTransaction } from "@ledgerhq/coin-evm/types/transaction";
 
 type MessageId = number | string | null;
 
@@ -471,16 +473,37 @@ export function useDappLogic({
               : currentParentAccount.freshAddress;
 
           if (address.toLowerCase() === ethTX.from.toLowerCase()) {
+            let trackingData: DAppTrackingData | undefined;
             try {
-              const options = nanoApp
-                ? { hwAppId: nanoApp, dependencies: dependencies }
-                : undefined;
-              tracking.dappSendTransactionRequested(manifest);
-
               const signFlowInfos = getWalletAPITransactionSignFlowInfos({
                 walletApiTransaction: tx,
                 account: currentAccount,
               });
+
+              const transactionType = getTxType(signFlowInfos.liveTx as EvmTransaction);
+
+              const token = findTokenByAddress(tx.recipient);
+
+              const accountCurrencyName =
+                currentAccount.type === "TokenAccount"
+                  ? currentAccount.token.name
+                  : currentAccount.currency.name;
+
+              const accountNetwork =
+                currentAccount.type === "TokenAccount"
+                  ? currentAccount.token.parentCurrency.id
+                  : currentAccount.currency.id;
+
+              trackingData = {
+                type: transactionType,
+                currency: token ? token.name : accountCurrencyName,
+                network: token ? token.parentCurrency.id : accountNetwork,
+              };
+
+              const options = nanoApp
+                ? { hwAppId: nanoApp, dependencies: dependencies }
+                : undefined;
+              tracking.dappSendTransactionRequested(manifest, trackingData);
 
               const signedTransaction = await new Promise<SignedOperation>((resolve, reject) =>
                 uiHook["transaction.sign"]({
@@ -517,7 +540,7 @@ export function useDappLogic({
                 optimisticOperation,
               );
 
-              tracking.dappSendTransactionSuccess(manifest);
+              tracking.dappSendTransactionSuccess(manifest, trackingData);
 
               postMessage(
                 JSON.stringify({
@@ -527,7 +550,7 @@ export function useDappLogic({
                 }),
               );
             } catch (error) {
-              tracking.dappSendTransactionFail(manifest);
+              tracking.dappSendTransactionFail(manifest, trackingData);
               postMessage(
                 JSON.stringify({
                   id: data.id,
@@ -558,10 +581,12 @@ export function useDappLogic({
               message,
             );
 
+            const options = nanoApp ? { hwAppId: nanoApp, dependencies: dependencies } : undefined;
             const signedMessage = await new Promise<string>((resolve, reject) =>
               uiHook["message.sign"]({
                 account: currentAccount,
                 message: formattedMessage,
+                options,
                 onSuccess: resolve,
                 onError: reject,
                 onCancel: () => {
@@ -603,10 +628,12 @@ export function useDappLogic({
               Buffer.from(message).toString("hex"),
             );
 
+            const options = nanoApp ? { hwAppId: nanoApp, dependencies: dependencies } : undefined;
             const signedMessage = await new Promise<string>((resolve, reject) =>
               uiHook["message.sign"]({
                 account: currentAccount,
                 message: formattedMessage,
+                options,
                 onSuccess: resolve,
                 onError: reject,
                 onCancel: () => {

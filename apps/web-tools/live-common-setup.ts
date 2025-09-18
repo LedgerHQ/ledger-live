@@ -74,4 +74,6 @@ setSupportedCurrencies([
   "zenrock",
   "sui",
   "mina",
+  "babylon",
+  "kaspa",
 ]);

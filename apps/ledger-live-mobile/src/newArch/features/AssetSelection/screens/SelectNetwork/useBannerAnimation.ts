@@ -40,7 +40,7 @@ const useBannerAnimation = ({ displayBanner }: Props) => {
       height,
       paddingTop,
     };
-  });
+  }, [displayBanner, bannerHeight]);
 
   return { onBannerLayout, animatedStyle };
 };

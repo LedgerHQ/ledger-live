@@ -1,8 +1,16 @@
-import type {
+import {
   Api,
+  Block,
+  BlockInfo,
+  Cursor,
+  Page,
+  FeeEstimation,
   Operation,
   Pagination,
+  Reward,
+  Stake,
   TransactionIntent,
+  CraftedTransaction,
 } from "@ledgerhq/coin-framework/api/index";
 import { log } from "@ledgerhq/logs";
 import coinConfig, { type XrpConfig } from "../config";
@@ -12,113 +20,103 @@ import {
   craftTransaction,
   estimateFees,
   getBalance,
+  getAccountInfo,
   getNextValidSequence,
   lastBlock,
   listOperations,
+  validateIntent,
   MemoInput,
 } from "../logic";
-import { ListOperationsOptions, XrpAsset } from "../types";
+import { ListOperationsOptions, XrpMapMemo } from "../types";
 
-export function createApi(config: XrpConfig): Api<XrpAsset> {
+export function createApi(config: XrpConfig): Api<XrpMapMemo> {
   coinConfig.setCoinConfig(() => ({ ...config, status: { type: "active" } }));
 
   return {
     broadcast,
     combine,
     craftTransaction: craft,
-    estimateFees: () => estimateFees().then(fees => fees.fee),
+    estimateFees: estimate,
     getBalance,
     lastBlock,
     listOperations: operations,
+    validateIntent,
+    getBlock(_height): Promise<Block> {
+      throw new Error("getBlock is not supported");
+    },
+    getBlockInfo(_height: number): Promise<BlockInfo> {
+      throw new Error("getBlockInfo is not supported");
+    },
+    getSequence: async (address: string) => {
+      const accountInfo = await getAccountInfo(address);
+      return accountInfo.sequence;
+    },
+    getStakes(_address: string, _cursor?: Cursor): Promise<Page<Stake>> {
+      throw new Error("getStakes is not supported");
+    },
+    getRewards(_address: string, _cursor?: Cursor): Promise<Page<Reward>> {
+      throw new Error("getRewards is not supported");
+    },
   };
 }
 
-export type TransactionIntentExtra = {
-  destinationTag?: number | null | undefined;
-  memos?: MemoInput[];
-};
-
 async function craft(
-  transactionIntent: TransactionIntent<XrpAsset, TransactionIntentExtra>,
-  customFees?: bigint,
-): Promise<string> {
+  transactionIntent: TransactionIntent<XrpMapMemo>,
+  customFees?: FeeEstimation,
+): Promise<CraftedTransaction> {
   const nextSequenceNumber = await getNextValidSequence(transactionIntent.sender);
-  const estimatedFees = customFees !== undefined ? customFees : (await estimateFees()).fee;
+  const estimatedFees = customFees?.value ?? (await estimateFees()).fees;
+
+  const memosMap =
+    transactionIntent.memo?.type === "map" ? transactionIntent.memo.memos : new Map();
+
+  const destinationTagValue = memosMap.get("destinationTag");
+  const destinationTag =
+    typeof destinationTagValue === "string" ? Number(destinationTagValue) : undefined;
+
+  const memoStrings = memosMap.get("memos") as string[] | undefined;
+
+  let memoEntries: MemoInput[] | undefined = undefined;
+
+  if (Array.isArray(memoStrings) && memoStrings.length > 0) {
+    memoEntries = memoStrings.map(value => ({ type: "memo", data: value }));
+  }
+
   const tx = await craftTransaction(
     { address: transactionIntent.sender, nextSequenceNumber },
     {
       recipient: transactionIntent.recipient,
       amount: transactionIntent.amount,
-      fee: estimatedFees,
-      destinationTag: transactionIntent.destinationTag,
-      memos: transactionIntent.memos ?? [],
+      fees: estimatedFees,
+      destinationTag,
+      // NOTE: double check before/after here
+      memos: memoEntries,
     },
+    transactionIntent.senderPublicKey,
   );
-  return tx.serializedTransaction;
+
+  return { transaction: tx.serializedTransaction };
 }
 
-type PaginationState = {
-  readonly pageSize: number; // must be large enough to avoid unnecessary calls to the underlying explorer
-  readonly maxIterations: number; // a security to avoid infinite loop
-  currentIteration: number;
-  readonly minHeight: number;
-  continueIterations: boolean;
-  apiNextCursor?: string;
-  accumulator: Operation<XrpAsset>[];
-};
+async function estimate(): Promise<FeeEstimation> {
+  const estimation = await estimateFees();
+  return { value: estimation.fees };
+}
 
-async function operationsFromHeight(
-  address: string,
-  minHeight: number,
-): Promise<[Operation<XrpAsset>[], string]> {
-  async function fetchNextPage(state: PaginationState): Promise<PaginationState> {
-    const options: ListOperationsOptions = {
-      limit: state.pageSize,
-      minHeight: state.minHeight,
-      order: "asc",
-    };
-    if (state.apiNextCursor) {
-      options.token = state.apiNextCursor;
-    }
-    const [operations, apiNextCursor] = await listOperations(address, options);
-    const newCurrentIteration = state.currentIteration + 1;
-    let continueIteration = true;
-    if (apiNextCursor === "") {
-      continueIteration = false;
-    } else if (newCurrentIteration >= state.maxIterations) {
-      log("coin:xrp", "(api/operations): max iterations reached", state.maxIterations);
-      continueIteration = false;
-    }
-    const accumulated = state.accumulator.concat(operations);
-    return {
-      ...state,
-      currentIteration: newCurrentIteration,
-      continueIterations: continueIteration,
-      apiNextCursor: apiNextCursor,
-      accumulator: accumulated,
-    };
-  }
-
-  const firstState: PaginationState = {
-    pageSize: 200,
-    maxIterations: 10,
-    currentIteration: 0,
+// NOTE: double check
+async function operations(address: string, pagination: Pagination): Promise<[Operation[], string]> {
+  const { minHeight, lastPagingToken, order } = pagination;
+  const options: ListOperationsOptions = {
+    limit: 200,
     minHeight: minHeight,
-    continueIterations: true,
-    accumulator: [],
+    order: order ?? "asc",
   };
-
-  let state = await fetchNextPage(firstState);
-  while (state.continueIterations) {
-    state = await fetchNextPage(state);
+  if (lastPagingToken) {
+    const token = lastPagingToken.split("-");
+    options.token = JSON.stringify({ ledger: Number(token[0]), seq: Number(token[1]) });
+    log(options.token);
   }
-  return [state.accumulator, state.apiNextCursor ?? ""];
-}
-
-async function operations(
-  address: string,
-  { minHeight }: Pagination,
-): Promise<[Operation<XrpAsset>[], string]> {
-  // TODO token must be implemented properly (waiting ack from the design document)
-  return await operationsFromHeight(address, minHeight);
+  const [operations, apiNextCursor] = await listOperations(address, options);
+  const next = apiNextCursor ? JSON.parse(apiNextCursor) : null;
+  return [operations, next ? next.ledger + "-" + next.seq : ""];
 }

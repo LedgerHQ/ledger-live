@@ -13,6 +13,7 @@ import {
 import { ValidatorsAppValidator } from "./network/validator-app";
 import { TokenAccountState } from "./network/chain/account/token";
 import { PARSED_PROGRAMS } from "./network/chain/program/constants";
+import { SPLToken } from "@ledgerhq/cryptoassets/data/spl";
 
 export type TransferCommand = {
   kind: "transfer";
@@ -27,6 +28,24 @@ export type TokenCreateATACommand = {
   owner: string;
   mint: string;
   associatedTokenAccountAddress: string;
+};
+
+export type TokenCreateApproveCommand = {
+  kind: "token.approve";
+  account: string;
+  mintAddress: string;
+  recipientDescriptor: TokenRecipientDescriptor;
+  owner: string;
+  amount: number;
+  decimals: number;
+  tokenProgram: SolanaTokenProgram;
+};
+
+export type TokenCreateRevokeCommand = {
+  kind: "token.revoke";
+  account: string;
+  owner: string;
+  tokenProgram: SolanaTokenProgram;
 };
 
 export type StakeCreateAccountCommand = {
@@ -94,6 +113,7 @@ export type TokenTransferCommand = {
   amount: number;
   mintAddress: string;
   mintDecimals: number;
+  tokenId: string;
   memo?: string | undefined;
   tokenProgram: SolanaTokenProgram;
   extensions?: {
@@ -101,15 +121,23 @@ export type TokenTransferCommand = {
   };
 };
 
+export type RawCommand = {
+  kind: "raw";
+  raw: string;
+};
+
 export type Command =
   | TransferCommand
   | TokenTransferCommand
   | TokenCreateATACommand
+  | TokenCreateApproveCommand
+  | TokenCreateRevokeCommand
   | StakeCreateAccountCommand
   | StakeDelegateCommand
   | StakeUndelegateCommand
   | StakeWithdrawCommand
-  | StakeSplitCommand;
+  | StakeSplitCommand
+  | RawCommand;
 
 export type CommandDescriptor = {
   command: Command;
@@ -137,6 +165,20 @@ export type TokenCreateATATransaction = {
   kind: "token.createATA";
   uiState: {
     tokenId: string;
+  };
+};
+
+export type TokenCreateApproveTransaction = {
+  kind: "token.approve";
+  uiState: {
+    subAccountId: string;
+  };
+};
+
+export type TokenCreateRevokeTransaction = {
+  kind: "token.revoke";
+  uiState: {
+    subAccountId: string;
   };
 };
 
@@ -178,20 +220,29 @@ export type StakeSplitTransaction = {
   };
 };
 
+export type RawTransaction = {
+  kind: "raw";
+  uiState: object;
+};
+
 export type TransactionModel = { commandDescriptor?: CommandDescriptor } & (
   | TransferTransaction
   | TokenTransferTransaction
   | TokenCreateATATransaction
+  | TokenCreateApproveTransaction
+  | TokenCreateRevokeTransaction
   | StakeCreateAccountTransaction
   | StakeDelegateTransaction
   | StakeUndelegateTransaction
   | StakeWithdrawTransaction
   | StakeSplitTransaction
+  | RawTransaction
 );
 
 export type Transaction = TransactionCommon & {
   family: "solana";
   model: TransactionModel;
+  raw?: string;
 };
 
 export type TransactionRaw = TransactionCommonRaw & {
@@ -255,6 +306,7 @@ export type SolanaPreloadDataV1 = {
   version: "1";
   validatorsWithMeta: SolanaValidatorWithMeta[];
   validators: ValidatorsAppValidator[];
+  splTokens: SPLToken[] | null;
 };
 
 // exists for discriminated union to work

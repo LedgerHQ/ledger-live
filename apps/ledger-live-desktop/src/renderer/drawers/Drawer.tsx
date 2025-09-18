@@ -40,7 +40,7 @@ const Bar = styled.div.attrs<{ state: TransitionStatus; withPaddingTop: boolean 
   overflow-x: hidden;
   overflow-y: auto;
 `;
-export const Drawer = () => {
+const Drawer = () => {
   const { state, setDrawer } = useContext(context);
   const [queue, setQueue] = useState<State[]>([]);
   useEffect(() => {
@@ -78,14 +78,14 @@ export const Drawer = () => {
     >
       <>
         <TransitionGroup>
-          {queue.map(({ Component, props }, index) => (
+          {queue.map(({ Component, props, id }, index) => (
             <Transition
               timeout={{
                 appear: DURATION,
                 enter: DURATION,
                 exit: DURATION * 2,
               }}
-              key={index}
+              key={id}
             >
               {s => (
                 <Bar

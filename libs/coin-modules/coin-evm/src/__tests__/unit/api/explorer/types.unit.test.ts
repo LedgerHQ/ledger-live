@@ -1,10 +1,10 @@
 import {
   isEtherscanLikeExplorerConfig,
   isLedgerExplorerConfig,
-} from "../../../../api/explorer/types";
+} from "../../../../network/explorer/types";
 
 describe("EVM Family", () => {
-  describe("api/explorer/types.ts", () => {
+  describe("network/explorer/types.ts", () => {
     describe("type guards", () => {
       it("should narrow the param to a Ledger explorer type", () => {
         expect(isLedgerExplorerConfig({ type: "ledger", explorerId: "eth" })).toBe(true);

@@ -7,7 +7,10 @@ import {
   DiscoveredDevice,
   OpeningConnectionError,
 } from "@ledgerhq/device-management-kit";
-import { rnBleTransportIdentifier } from "@ledgerhq/device-transport-kit-react-native-ble";
+import {
+  PairingRefusedError,
+  rnBleTransportIdentifier,
+} from "@ledgerhq/device-transport-kit-react-native-ble";
 import { activeDeviceSessionSubject, dmkToLedgerDeviceIdMap } from "@ledgerhq/live-dmk-shared";
 import { LocalTracer, TraceContext } from "@ledgerhq/logs";
 import {
@@ -26,11 +29,15 @@ import type {
   Observer as TransportObserver,
   Subscription as TransportSubscription,
 } from "@ledgerhq/hw-transport";
-import { HwTransportError } from "@ledgerhq/errors";
+import { HwTransportError, PairingFailed, PeerRemovedPairing } from "@ledgerhq/errors";
 import { getDeviceManagementKit } from "../hooks/useDeviceManagementKit";
 import { BlePlxManager } from "./BlePlxManager";
+import { isPeerRemovedPairingError } from "../errors";
+import { getDeviceModel } from "@ledgerhq/devices";
 
-export const tracer = new LocalTracer("live-dmk", { function: "DeviceManagementKitTransport" });
+export const tracer = new LocalTracer("live-dmk-tracer", {
+  function: "DeviceManagementKitTransport",
+});
 
 export class DeviceManagementKitTransport extends Transport {
   sessionId: string;
@@ -159,10 +166,22 @@ export class DeviceManagementKitTransport extends Transport {
 
           tracer.trace(`[DMKTransport] [open] device found ${found.id}`);
 
-          const sessionId = await getDeviceManagementKit().connect({
-            device: found,
-            sessionRefresherOptions: { isRefresherDisabled: true },
-          });
+          await getDeviceManagementKit().close();
+          const sessionId = await getDeviceManagementKit()
+            .connect({
+              device: found,
+              sessionRefresherOptions: { isRefresherDisabled: true },
+            })
+            .catch(error => {
+              if (isPeerRemovedPairingError(error)) {
+                // NB: remapping this error here because we need the device model info
+                throw new PeerRemovedPairing(undefined, {
+                  productName: getDeviceModel(dmkToLedgerDeviceIdMap[found.deviceModel.model])
+                    ?.productName,
+                });
+              }
+              throw error;
+            });
           const transport = new DeviceManagementKitTransport(getDeviceManagementKit(), sessionId);
 
           activeDeviceSessionSubject.next({ sessionId, transport });
@@ -175,7 +194,13 @@ export class DeviceManagementKitTransport extends Transport {
             getDeviceManagementKit().stopDiscovering();
 
             tracer.trace("[DMKTransport] [open2] error", error);
-            if (error instanceof OpeningConnectionError) {
+            if (error instanceof PairingRefusedError) {
+              // NB: in LLM, we don't have a specific error for pairing refused, so we remap it to PairingFailed
+              return throwError(() => new PairingFailed());
+            } else if (
+              error instanceof PeerRemovedPairing ||
+              error instanceof OpeningConnectionError
+            ) {
               return throwError(() => error);
             }
 
@@ -199,6 +224,7 @@ export class DeviceManagementKitTransport extends Transport {
         throw error;
       }
     } else {
+      await getDeviceManagementKit().close();
       const sessionId = await getDeviceManagementKit().connect({
         device: deviceOrId,
         sessionRefresherOptions: { isRefresherDisabled: true },
@@ -263,7 +289,10 @@ export class DeviceManagementKitTransport extends Transport {
           this.tracer.trace(
             "[DMKTransport] [listenToDisconnect] Device disconnected, closing transport",
           );
-          activeDeviceSessionSubject.next(null);
+
+          if (activeDeviceSessionSubject.value?.sessionId === this.sessionId) {
+            activeDeviceSessionSubject.next(null);
+          }
           this.emit("disconnect");
         }
       },
@@ -286,8 +315,6 @@ export class DeviceManagementKitTransport extends Transport {
   };
 
   close() {
-    tracer.trace("[DMKTransport] [close] closing transport");
-    this.dmk.stopDiscovering();
     return Promise.resolve();
   }
 
@@ -308,8 +335,6 @@ export class DeviceManagementKitTransport extends Transport {
       throw new Error("No active session found");
     }
 
-    tracer.trace(`[exchange] => ${apdu.toString("hex")}`);
-
     return await this.dmk
       .sendApdu({
         sessionId: activeSessionId,
@@ -318,11 +343,12 @@ export class DeviceManagementKitTransport extends Transport {
       })
       .then((apduResponse: { data: Uint8Array; statusCode: Uint8Array }): Buffer => {
         const response = Buffer.from([...apduResponse.data, ...apduResponse.statusCode]);
+        tracer.trace(`[exchange] => ${apdu.toString("hex")}`);
         tracer.trace(`[exchange] <= ${response.toString("hex")}`);
         return response;
       })
       .catch(error => {
-        tracer.trace("[DMKTransport] [exchange] error", { error });
+        tracer.trace("[Error][exchange] ", { error });
         throw error;
       });
   }

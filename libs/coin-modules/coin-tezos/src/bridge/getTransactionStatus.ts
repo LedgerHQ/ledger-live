@@ -95,6 +95,11 @@ export const getTransactionStatus: AccountBridge<Transaction>["getTransactionSta
     errors.amount = new NotEnoughBalance();
   }
 
+  if (!errors.amount && transaction.mode === "delegate" && account.balance.lte(estimatedFees)) {
+    resetTotalSpent = true;
+    errors.amount = new NotEnoughBalance();
+  }
+
   // Catch a specific case that requires a minimum amount
   if (
     !errors.amount &&

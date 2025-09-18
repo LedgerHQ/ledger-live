@@ -46,7 +46,10 @@ describe("getCertificate", () => {
     "returns descriptor and signature with the given version for $device",
     async ({ device, version, descriptor, signature }) => {
       // When
-      const result = await getCertificate(device, version, { env: "test", signatureKind: "test" });
+      const result = await getCertificate(device, "trusted_name", version, {
+        env: "test",
+        signatureKind: "test",
+      });
 
       // Then
       expect(result).toEqual({
@@ -96,7 +99,10 @@ describe("getCertificate", () => {
     "returns the latest data in expected format for $device",
     async ({ device, descriptor, signature }) => {
       // When
-      const result = await getCertificate(device, "latest", { env: "test", signatureKind: "test" });
+      const result = await getCertificate(device, "trusted_name", "latest", {
+        env: "test",
+        signatureKind: "test",
+      });
 
       // Then
       expect(result).toEqual({

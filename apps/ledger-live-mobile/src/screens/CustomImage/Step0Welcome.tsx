@@ -1,7 +1,7 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import { StackScreenProps } from "@react-navigation/stack";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Flex, Text } from "@ledgerhq/native-ui";
+import { Flex, Icons, Text } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
 import { getDeviceModel } from "@ledgerhq/devices";
 import CustomImageBottomModal from "~/components/CustomImage/CustomImageBottomModal";
@@ -11,8 +11,11 @@ import { ScreenName } from "~/const";
 import { CustomImageNavigatorParamList } from "~/components/RootNavigator/types/CustomImageNavigator";
 import { TrackScreen } from "~/analytics";
 import { DeviceModelId } from "@ledgerhq/types-devices";
-import EuropaWelcomeView from "./EuropaWelcomeView";
-import StaxWelcomeView from "./StaxWelcomeView";
+import Animation from "~/components/Animation";
+import STAX_CLS_PREVIEW from "~/animations/device/customLockScreen/stax.json";
+import FLEX_CLS_PREVIEW from "~/animations/device/customLockScreen/flex.json";
+import APEX_CLS_PREVIEW from "~/animations/device/customLockScreen/apex.json";
+import { useTheme } from "styled-components/native";
 
 const analyticsScreenName = "Introduction of the customization flow";
 const analyticsButtonEventProps = {
@@ -38,25 +41,38 @@ const Step0Welcome: React.FC<
     setModalOpened(false);
   }, [setModalOpened]);
 
+  const animationSource = useMemo(() => {
+    switch (deviceModelId) {
+      case DeviceModelId.stax:
+        return STAX_CLS_PREVIEW;
+      case DeviceModelId.europa:
+        return FLEX_CLS_PREVIEW;
+      case DeviceModelId.apex:
+        return APEX_CLS_PREVIEW;
+      default:
+        return "";
+    }
+  }, [deviceModelId]);
+
+  const { colors } = useTheme();
+
   return (
     <SafeAreaView style={{ flex: 1 }} edges={["bottom"]}>
       <TrackScreen category={analyticsScreenName} />
-      <Flex flex={1} mt={8} justifyContent={"space-between"}>
-        <Flex>
-          {deviceModelId === DeviceModelId.europa ? <EuropaWelcomeView /> : <StaxWelcomeView />}
-
-          <Flex px={7} mt={11}>
-            <Text
-              variant="h4"
-              fontWeight="semiBold"
-              textAlign="center"
-              testID="custom-image-welcome-title"
-            >
-              {t("customImage.landingPage.title", {
-                productName: getDeviceModel(deviceModelId ?? DeviceModelId.stax).productName,
-              })}
-            </Text>
-          </Flex>
+      <Flex flex={1} mt={8} alignItems={"center"} justifyContent={"space-between"} pb={8}>
+        <Flex my={"auto"}>
+          <Animation source={animationSource} style={{ width: "100%" }} />
+          <Text
+            variant="h4"
+            fontWeight="semiBold"
+            textAlign="center"
+            mt={-10}
+            testID="custom-image-welcome-title"
+          >
+            {t("customImage.landingPage.title", {
+              productName: getDeviceModel(deviceModelId ?? DeviceModelId.stax).productName,
+            })}
+          </Text>
         </Flex>
         <BottomButtonsContainer>
           <Button
@@ -68,6 +84,8 @@ const Step0Welcome: React.FC<
             event="button_clicked"
             eventProperties={analyticsButtonEventProps}
             testID="custom-image-choose-picture-button"
+            iconPosition="left"
+            Icon={<Icons.DoublePicture color={colors.neutral.c00} size="S" />}
           >
             {t("customImage.landingPage.choosePicture")}
           </Button>

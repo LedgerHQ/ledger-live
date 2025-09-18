@@ -28,7 +28,8 @@ describe("transaction", () => {
     it("should convert from raw transaction", () => {
       const rawTransaction = {
         family: "sui" as const,
-        mode: "send",
+        mode: "send" as const,
+        coinType: "0x2::sui::SUI",
         amount: "500000000",
         recipient: "0x456",
         useAllAmount: false,
@@ -39,6 +40,7 @@ describe("transaction", () => {
       expect(transaction).toEqual({
         family: "sui",
         mode: "send",
+        coinType: "0x2::sui::SUI",
         amount: new BigNumber("500000000"),
         recipient: "0x456",
         useAllAmount: false,
@@ -54,8 +56,9 @@ describe("transaction", () => {
 
       const rawTransaction = toTransactionRaw(transaction);
       expect(rawTransaction).toEqual({
-        family: "sui" as const,
+        family: "sui",
         mode: "send",
+        coinType: "0x2::sui::SUI",
         amount: "3000000000",
         recipient: "0x65449f57946938c84c512732f1d69405d1fce417d9c9894696ddf4522f479e24",
         useAllAmount: false,

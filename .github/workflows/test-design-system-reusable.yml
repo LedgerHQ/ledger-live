@@ -1,4 +1,4 @@
-name: "Test Design System"
+name: "[UI Libs] - Test - Called"
 
 on:
   workflow_call:
@@ -31,7 +31,7 @@ permissions:
 
 jobs:
   test-design-system:
-    name: "Design System Tests"
+    name: "UI Libs Test"
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
       FORCE_COLOR: 3
@@ -57,7 +57,7 @@ jobs:
         run: pnpm i --filter="./libs/ui/**"
       - name: Build and Test affected libraries
         id: test-ui
-        run: pnpm run test --continue --filter="./libs/ui/**" --filter="!./apps/ledger-live*...[${{ inputs.since_branch && format('origin/{0}', inputs.since_branch) || 'HEAD^1' }}]" --api="http://127.0.0.1:${{ steps.setup-caches.outputs.port }}" --token="${{ secrets.TURBOREPO_SERVER_TOKEN }}" --team="foo"
+        run: pnpm run test --continue --filter="./libs/ui/**" --filter="!./e2e/mobile/**" --filter="!./apps/ledger-live*...[${{ inputs.since_branch && format('origin/{0}', inputs.since_branch) || 'HEAD^1' }}]" --api="http://127.0.0.1:${{ steps.setup-caches.outputs.port }}" --token="${{ secrets.TURBOREPO_SERVER_TOKEN }}" --team="foo"
         shell: bash
       - name: (On Failure) Upload react-ui test results
         uses: actions/upload-artifact@v4

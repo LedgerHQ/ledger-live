@@ -26,6 +26,7 @@
     "react-native",
     "css-select",
     "css-tree",
+    "warn-once",
     "regenerator-runtime"
   ]
 }

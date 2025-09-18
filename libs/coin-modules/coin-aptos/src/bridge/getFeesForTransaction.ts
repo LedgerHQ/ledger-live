@@ -3,10 +3,17 @@ import { log } from "@ledgerhq/logs";
 import type { Account } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { makeLRUCache, seconds } from "@ledgerhq/live-network/cache";
-import { AptosAPI } from "../api";
-import buildTransaction from "./buildTransaction";
-import { DEFAULT_GAS, DEFAULT_GAS_PRICE, ESTIMATE_GAS_MUL } from "./logic";
+import { AptosAPI } from "../network";
+import { getTokenAccount } from "./logic";
+import {
+  DEFAULT_GAS,
+  DEFAULT_GAS_PRICE,
+  ESTIMATE_GAS_MUL,
+  ESTIMATE_GAS_MUL_FOR_STAKING,
+  STAKING_TX_MODES,
+} from "../constants";
 import type { Transaction, TransactionErrors } from "../types";
+import buildTransaction from "../logic/buildTransaction";
 
 type IGetEstimatedGasReturnType = {
   fees: BigNumber;
@@ -37,28 +44,35 @@ export const getFee = async (
     maxGasAmount: gasLimit.toString(),
     gasUnitPrice: gasPrice.toString(),
   };
+
   if (account.xpub) {
     try {
       const publicKeyEd = new Ed25519PublicKey(account.xpub as string);
       const tx = await buildTransaction(account, transaction, aptosClient);
-      const simulation = await aptosClient.simulateTransaction(publicKeyEd, tx);
-      const completedTx = simulation[0];
+      const [completedTx] = await aptosClient.simulateTransaction(publicKeyEd, tx);
 
-      gasLimit = new BigNumber(completedTx.gas_used).multipliedBy(ESTIMATE_GAS_MUL);
+      const gasMultiplier = STAKING_TX_MODES.includes(transaction.mode)
+        ? ESTIMATE_GAS_MUL_FOR_STAKING
+        : ESTIMATE_GAS_MUL;
+      gasLimit = new BigNumber(completedTx.gas_used).multipliedBy(gasMultiplier).integerValue();
       gasPrice = new BigNumber(completedTx.gas_unit_price);
 
       const expectedGas = gasPrice.multipliedBy(gasLimit);
 
-      const isUnderMaxSpendable = transaction.amount
-        .plus(expectedGas)
-        .isLessThan(account.spendableBalance);
-
-      if (isUnderMaxSpendable && !completedTx.success) {
-        // we want to skip INSUFFICIENT_BALANCE error because it will be processed by getTransactionStatus
-        if (!completedTx.vm_status.includes("INSUFFICIENT_BALANCE")) {
+      if (!completedTx.success) {
+        if (completedTx.vm_status.includes("MAX_GAS_UNITS_BELOW_MIN_TRANSACTION_GAS_UNITS")) {
+          res.errors.maxGasAmount = "GasInsufficientBalance";
+        } else if (
+          !completedTx.vm_status.includes("INSUFFICIENT_BALANCE") &&
+          !completedTx.vm_status.includes("EDELEGATOR_ACTIVE_BALANCE_TOO_LOW") &&
+          !completedTx.vm_status.includes("EDELEGATOR_PENDING_INACTIVE_BALANCE_TOO_LOW") &&
+          !completedTx.vm_status.includes("0x203ed") // 0x203ed -> PROLOGUE_ECANT_PAY_GAS_DEPOSIT equivalent to INSUFFICIENT_BALANCE_FOR_TRANSACTION_FEE
+        ) {
+          // INSUFFICIENT_BALANCE and EDELEGATOR_ACTIVE_BALANCE_TOO_LOW will be processed by getTransactionStatus
           throw Error(`Simulation failed with following error: ${completedTx.vm_status}`);
         }
       }
+
       res.fees = expectedGas;
       res.estimate.maxGasAmount = gasLimit.toString();
       res.estimate.gasUnitPrice = completedTx.gas_unit_price;
@@ -67,12 +81,16 @@ export const getFee = async (
       throw error;
     }
   }
+
   return res;
 };
 
 const CACHE = makeLRUCache(
   getFee,
-  (account: Account, transaction: Transaction) => `${account.id}-${transaction.amount.toString()}}`,
+  (account: Account, transaction: Transaction) => {
+    const tokenAccount = getTokenAccount(account, transaction);
+    return `${tokenAccount ? tokenAccount.id : account.id}-${transaction.amount.toString()}}`;
+  },
   seconds(30),
 );
 

@@ -1,4 +1,4 @@
-name: "Auto Author Assign"
+name: "[CI] - Auto Author Assign - PR"
 
 on:
   pull_request_target:

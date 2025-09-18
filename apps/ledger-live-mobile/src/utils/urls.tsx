@@ -1,20 +1,19 @@
 export const urls = {
   faq: "https://support.ledger.com/",
-  chatbot:
-    "https://live-chat-static.sprinklr.com/test-html/index.html?appId=633307d2cd91267be7d0eea7_app_300078095&env=prod3&skin=MODERN&variant=PAGE&scope=CONVERSATION",
+  chatbot: "https://ledgercustomersuccess.my.salesforce-sites.com/fullscreenbot",
   contact: "https://support.ledger.com/",
   terms: {
-    en: "https://shop.ledger.com/pages/ledger-live-terms-of-use",
-    fr: "https://shop.ledger.com/fr/pages/ledger-live-terms-of-use",
-    de: "https://shop.ledger.com/de/pages/ledger-live-terms-of-use",
-    es: "https://shop.ledger.com/es/pages/ledger-live-terms-of-use",
-    tr: "https://shop.ledger.com/tr/pages/ledger-live-terms-of-use",
-    ar: "https://shop.ledger.com/ar/pages/ledger-live-terms-of-use",
-    ja: "https://shop.ledger.com/ja/pages/ledger-live-terms-of-use",
-    zh: "https://shop.ledger.com/zh-cn/pages/ledger-live-terms-of-use",
-    ko: "https://shop.ledger.com/ko/pages/ledger-live-terms-of-use",
-    ru: "https://shop.ledger.com/ru/pages/ledger-live-terms-of-use",
-    pt: "https://shop.ledger.com/pt-br/pages/ledger-live-terms-of-use",
+    en: "https://shop.ledger.com/pages/ledger-live-terms-of-use?utm_source=ledger-live-mobile",
+    fr: "https://shop.ledger.com/fr/pages/ledger-live-terms-of-use?utm_source=ledger-live-mobile",
+    de: "https://shop.ledger.com/de/pages/ledger-live-terms-of-use?utm_source=ledger-live-mobile",
+    es: "https://shop.ledger.com/es/pages/ledger-live-terms-of-use?utm_source=ledger-live-mobile",
+    tr: "https://shop.ledger.com/tr/pages/ledger-live-terms-of-use?utm_source=ledger-live-mobile",
+    ar: "https://shop.ledger.com/ar/pages/ledger-live-terms-of-use?utm_source=ledger-live-mobile",
+    ja: "https://shop.ledger.com/ja/pages/ledger-live-terms-of-use?utm_source=ledger-live-mobile",
+    zh: "https://shop.ledger.com/zh-cn/pages/ledger-live-terms-of-use?utm_source=ledger-live-mobile",
+    ko: "https://shop.ledger.com/ko/pages/ledger-live-terms-of-use?utm_source=ledger-live-mobile",
+    ru: "https://shop.ledger.com/ru/pages/ledger-live-terms-of-use?utm_source=ledger-live-mobile",
+    pt: "https://shop.ledger.com/pt-br/pages/ledger-live-terms-of-use?utm_source=ledger-live-mobile",
   },
   privacyPolicy: {
     en: "https://www.ledger.com/privacy-policy?utm_content=privacy&utm_medium=self_referral&utm_source=ledger_live_mobile",
@@ -64,8 +63,7 @@ export const urls = {
     "https://shop.ledger.com/products/ledger-flex?utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=onboarding",
   playstore: "https://play.google.com/store/apps/details?id=com.ledger.live",
   applestoreRate: "https://apps.apple.com/app/id1361671700?action=write-review",
-  applestore:
-    "itms-apps://itunes.apple.com/WebObjects/MZStore.woa/wa/viewContentsUserReviews?id=1361671700&onlyLatestVersion=true&pageNumber=0&sortOrdering=1&type=Purple+Software",
+  applestore: "https://apps.apple.com/app/id1361671700",
   feesMoreInfo: "https://support.ledger.com/article/360021039173-zd",
   feesEthereum: "https://support.ledger.com/article/4406211657233-zd",
   feesPolkadot: "https://support.ledger.com/article/360016289919-zd",
@@ -82,6 +80,8 @@ export const urls = {
       "https://status.ledger.com?utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=error_apierrorwithmessage",
     StratisDown2021Warning: "https://support.ledger.com/article/115005175329-zd",
     TronSendTrc20ToNewAccountForbidden: "https://support.ledger.com/article/6516823445533-zd",
+    AddressesSanctionedError:
+      "https://support.ledger.com/article/Why-Ledger-Complies-with-Sanctions",
   },
   multipleAddresses: "https://support.ledger.com/article/360033802154-zd",
   delegation:
@@ -108,6 +108,7 @@ export const urls = {
   polkadotStaking: "https://support.ledger.com/article/360018131260-zd",
   multiversxStaking: "https://support.ledger.com/article/360016750819-zd",
   nearStakingRewards: "https://support.ledger.com/article/360020450619-zd",
+  stakingRewards: "https://support.ledger.com/article/5961622776861-zd",
   swap: {
     info: "https://www.ledger.com/swap?utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=swap_intro",
     learnMore:
@@ -170,6 +171,7 @@ export const urls = {
     stakingPage: "https://support.ledger.com/article/4731749170461-zd",
     splTokenInfo:
       "https://support.ledger.com/article/Verify-Solana-Address-from-Token-Account-Address",
+    splTokenExtensions: "https://support.ledger.com/article/Solana-Token-Extensions",
   },
   resources: {
     gettingStarted:
@@ -198,10 +200,8 @@ export const urls = {
   hedera: {
     supportArticleLink:
       "https://launchbadge.com/blog/using-a-ledger-nano-to-create-your-hedera-account",
-  },
-  nft: {
-    supportDisableIos: "https://support.ledger.com/article/7572912170653-zd",
-    howToSecure: "https://www.ledger.com/academy/how-to-secure-your-nfts",
+    tokenAssociation:
+      "https://support.ledger.com/article/How-to-manage-Hedera-tokens-with-Ledger-Live",
   },
   fwUpdateReleaseNotes: {
     nanoS: "https://support.ledger.com/article/360010446000-zd",
@@ -228,5 +228,8 @@ export const urls = {
     badTxns: "https://support.ledger.com/article/5129526865821-zd",
     blobsLimit: "https://support.ledger.com/article/17830974229661-zd",
     txnMempoolConflict: "https://support.ledger.com/article/14593285242525-zd",
+  },
+  geoBlock: {
+    learnMore: "https://support.ledger.com/article/Why-Ledger-Complies-with-Sanctions",
   },
 };

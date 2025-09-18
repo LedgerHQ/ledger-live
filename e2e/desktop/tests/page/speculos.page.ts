@@ -7,9 +7,11 @@ import {
   signSendNFTTransaction,
   signDelegationTransaction,
   verifyAmountsAndAcceptSwap,
+  verifyAmountsAndAcceptSwapForDifferentSeed,
   verifyAmountsAndRejectSwap,
   activateExpertMode,
   activateContractData,
+  removeMemberLedgerSync,
 } from "@ledgerhq/live-common/e2e/speculos";
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { NFTTransaction, Transaction } from "@ledgerhq/live-common/e2e/models/Transaction";
@@ -20,6 +22,11 @@ export class SpeculosPage extends AppPage {
   @step("Verify receive address correctness on device")
   async expectValidAddressDevice(account: Account, addressDisplayed: string) {
     await expectValidAddressDevice(account, addressDisplayed);
+  }
+
+  @step("Remove member from Ledger Sync")
+  async removeMemberFromLedgerSync() {
+    await removeMemberLedgerSync();
   }
 
   @step("Activate Ledger Sync")
@@ -43,13 +50,18 @@ export class SpeculosPage extends AppPage {
   }
 
   @step("Verify amounts and accept swap")
-  async verifyAmountsAndAcceptSwap(swap: Swap) {
-    await verifyAmountsAndAcceptSwap(swap);
+  async verifyAmountsAndAcceptSwap(swap: Swap, amount: string) {
+    await verifyAmountsAndAcceptSwap(swap, amount);
+  }
+
+  @step("Verify amounts and accept swap for different seed")
+  async verifyAmountsAndAcceptSwapForDifferentSeed(swap: Swap, amount: string) {
+    await verifyAmountsAndAcceptSwapForDifferentSeed(swap, amount);
   }
 
   @step("Verify amounts and reject swap")
-  async verifyAmountsAndRejectSwap(swap: Swap) {
-    await verifyAmountsAndRejectSwap(swap);
+  async verifyAmountsAndRejectSwap(swap: Swap, amount: string) {
+    await verifyAmountsAndRejectSwap(swap, amount);
   }
 
   @step("Activate expert mode")

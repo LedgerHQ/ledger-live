@@ -40,16 +40,13 @@ const getRegionsOptions = (languageLocale: string) =>
     .filter(regionLocale => !OFAC_LOCALES.includes(regionLocale))
     .map(regionLocale => getRegionOption(regionLocale, languageLocale))
     .sort((a, b) => a.label.localeCompare(b.label));
-const RegionSelect = () => {
+
+const RegionSelectComponent: React.FC = () => {
   const dispatch = useDispatch();
   const language = useSelector(languageSelector);
   const locale = useSelector(localeSelector);
-  const regionsOptions = useMemo(() => {
-    return getRegionsOptions(language);
-  }, [language]);
 
-  const avoidEmptyValue = (region?: RegionSelectOption | null) =>
-    region && handleChangeRegion(region);
+  const regionsOptions = useMemo(() => getRegionsOptions(language), [language]);
 
   const handleChangeRegion = useCallback(
     (region?: RegionSelectOption) => {
@@ -57,10 +54,17 @@ const RegionSelect = () => {
     },
     [dispatch],
   );
+
+  const avoidEmptyValue = useCallback(
+    (region?: RegionSelectOption | null) => region && handleChangeRegion(region),
+    [handleChangeRegion],
+  );
+
   const currentRegionOption = useMemo(
     () => regionsOptions.find(o => o.value === locale) || getRegionOption(locale, language),
     [locale, language, regionsOptions],
   );
+
   return (
     <>
       <Track onUpdate event="RegionSelectChange" currentRegion={currentRegionOption.region} />
@@ -68,11 +72,15 @@ const RegionSelect = () => {
         small
         minWidth={260}
         onChange={avoidEmptyValue}
-        renderSelected={(item: { name: string }) => item && item.name}
+        renderSelected={(item: { label: string }) => item && item.label}
         value={currentRegionOption}
         options={regionsOptions}
       />
     </>
   );
 };
+
+const RegionSelect = React.memo(RegionSelectComponent);
+RegionSelect.displayName = "RegionSelect";
+
 export default RegionSelect;

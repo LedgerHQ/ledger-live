@@ -1,0 +1,73 @@
+{
+    "type": "TokenCurrency",
+    "id": "ethereum/erc20/usd_tether__erc20_",
+    "ledgerSignature": "3044022078c66ccea3e4dedb15a24ec3c783d7b582cd260daf62fd36afe9a8212a344aed0220160ba8c1c4b6a8aa6565bed20632a091aeeeb7bfdac67fc6589a6031acbf511c",
+    "contractAddress": "0xdAC17F958D2ee523a2206206994597C13D831ec7",
+    "parentCurrency": {
+      "type": "CryptoCurrency",
+      "id": "ethereum",
+      "coinType": 60,
+      "name": "Ethereum",
+      "managerAppName": "Ethereum",
+      "ticker": "ETH",
+      "scheme": "ethereum",
+      "color": "#0ebdcd",
+      "symbol": "Ξ",
+      "family": "evm",
+      "blockAvgTime": 15,
+      "units": [
+        {
+          "name": "ether",
+          "code": "ETH",
+          "magnitude": 18
+        },
+        {
+          "name": "Gwei",
+          "code": "Gwei",
+          "magnitude": 9
+        },
+        {
+          "name": "Mwei",
+          "code": "Mwei",
+          "magnitude": 6
+        },
+        {
+          "name": "Kwei",
+          "code": "Kwei",
+          "magnitude": 3
+        },
+        {
+          "name": "wei",
+          "code": "wei",
+          "magnitude": 0
+        }
+      ],
+      "ethereumLikeInfo": {
+        "chainId": 1
+      },
+      "explorerViews": [
+        {
+          "tx": "https://etherscan.io/tx/$hash",
+          "address": "https://etherscan.io/address/$address",
+          "token": "https://etherscan.io/token/$contractAddress?a=$address"
+        }
+      ],
+      "keywords": [
+        "eth",
+        "ethereum"
+      ],
+      "explorerId": "eth"
+    },
+    "tokenType": "erc20",
+    "name": "Tether USD",
+    "ticker": "USDT",
+    "delisted": false,
+    "disableCountervalue": false,
+    "units": [
+      {
+        "name": "Tether USD",
+        "code": "USDT",
+        "magnitude": 6
+      }
+    ]
+  }

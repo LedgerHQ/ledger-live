@@ -130,6 +130,14 @@ export type FeeHistory = {
   reward: string[][];
 };
 
+export type ApiFeeData = {
+  maxFeePerGas: bigint | null;
+  maxPriorityFeePerGas: bigint | null;
+  gasPrice: bigint | null;
+  // only used by UI send flow in advanced mode for EIP-1559
+  nextBaseFee: bigint | null;
+};
+
 export type FeeData = {
   maxFeePerGas: BigNumber | null;
   maxPriorityFeePerGas: BigNumber | null;
@@ -147,6 +155,10 @@ export type FeeDataRaw = {
 };
 
 export type Strategy = "slow" | "medium" | "fast";
+
+export type ApiGasOptions = {
+  [key in Strategy]: ApiFeeData;
+};
 
 export type GasOptions = {
   [key in Strategy]: FeeData;
@@ -168,4 +180,18 @@ type EvmTransactionNftParamRaw = {
   contract: ProtoNFTRaw["contract"];
   quantity: ProtoNFTRaw["amount"];
   collectionName: string;
+};
+
+export enum TransactionTypes {
+  legacy = 0,
+  eip1559 = 2,
+}
+
+export type TransactionLikeWithPreparedParams = {
+  type: TransactionTypes;
+  to: string | null;
+  data: string;
+  value: bigint | null;
+  gasLimit: BigNumber;
+  feeData: FeeData;
 };

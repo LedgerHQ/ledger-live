@@ -150,7 +150,7 @@ const Body = ({
     },
     [account, dispatch],
   );
-  const error = transactionError || bridgeError;
+  const error = transactionError || bridgeError || status.errors.sender;
   const errorSteps = [];
   if (transactionError) {
     errorSteps.push(2);

@@ -62,6 +62,22 @@ describe("getDeviceNameMaxLength", () => {
       }),
     ).toBe(20);
   });
+  test("Europa of any version should max at 20", async () => {
+    expect(
+      getDeviceNameMaxLength({
+        deviceModelId: DeviceModelId.europa,
+        version: "0.0.1",
+      }),
+    ).toBe(20);
+  });
+  test("Apex of any version should max at 20", async () => {
+    expect(
+      getDeviceNameMaxLength({
+        deviceModelId: DeviceModelId.apex,
+        version: "0.0.1",
+      }),
+    ).toBe(20);
+  });
   test("Other models should just return 17 as a fallback", async () => {
     expect(
       getDeviceNameMaxLength({

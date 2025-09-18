@@ -17,6 +17,12 @@ import type {
   TransactionStatusRaw as bitcoinTransactionStatusRaw,
 } from "@ledgerhq/coin-bitcoin/types";
 import type {
+  Transaction as cantonTransaction,
+  TransactionRaw as cantonTransactionRaw,
+  TransactionStatus as cantonTransactionStatus,
+  TransactionStatusRaw as cantonTransactionStatusRaw,
+} from "@ledgerhq/coin-canton/types/index";
+import type {
   Transaction as cardanoTransaction,
   TransactionRaw as cardanoTransactionRaw,
   TransactionStatus as cardanoTransactionStatus,
@@ -33,7 +39,7 @@ import type {
   TransactionRaw as celoTransactionRaw,
   TransactionStatus as celoTransactionStatus,
   TransactionStatusRaw as celoTransactionStatusRaw,
-} from "../families/celo/types";
+} from "@ledgerhq/coin-celo/types/index";
 import type {
   Transaction as cosmosTransaction,
   TransactionRaw as cosmosTransactionRaw,
@@ -70,6 +76,12 @@ import type {
   TransactionStatus as internet_computerTransactionStatus,
   TransactionStatusRaw as internet_computerTransactionStatusRaw,
 } from "@ledgerhq/coin-internet_computer/types/index";
+import type {
+  Transaction as kaspaTransaction,
+  TransactionRaw as kaspaTransactionRaw,
+  TransactionStatus as kaspaTransactionStatus,
+  TransactionStatusRaw as kaspaTransactionStatusRaw,
+} from "@ledgerhq/coin-kaspa/types/index";
 import type {
   Transaction as minaTransaction,
   TransactionRaw as minaTransactionRaw,
@@ -153,6 +165,7 @@ export type Transaction =
   | algorandTransaction
   | aptosTransaction
   | bitcoinTransaction
+  | cantonTransaction
   | cardanoTransaction
   | casperTransaction
   | celoTransaction
@@ -162,6 +175,7 @@ export type Transaction =
   | hederaTransaction
   | iconTransaction
   | internet_computerTransaction
+  | kaspaTransaction
   | minaTransaction
   | multiversxTransaction
   | nearTransaction
@@ -180,6 +194,7 @@ export type TransactionRaw =
   | algorandTransactionRaw
   | aptosTransactionRaw
   | bitcoinTransactionRaw
+  | cantonTransactionRaw
   | cardanoTransactionRaw
   | casperTransactionRaw
   | celoTransactionRaw
@@ -189,6 +204,7 @@ export type TransactionRaw =
   | hederaTransactionRaw
   | iconTransactionRaw
   | internet_computerTransactionRaw
+  | kaspaTransactionRaw
   | minaTransactionRaw
   | multiversxTransactionRaw
   | nearTransactionRaw
@@ -207,6 +223,7 @@ export type TransactionStatus =
   | algorandTransactionStatus
   | aptosTransactionStatus
   | bitcoinTransactionStatus
+  | cantonTransactionStatus
   | cardanoTransactionStatus
   | casperTransactionStatus
   | celoTransactionStatus
@@ -216,6 +233,7 @@ export type TransactionStatus =
   | hederaTransactionStatus
   | iconTransactionStatus
   | internet_computerTransactionStatus
+  | kaspaTransactionStatus
   | minaTransactionStatus
   | multiversxTransactionStatus
   | nearTransactionStatus
@@ -234,6 +252,7 @@ export type TransactionStatusRaw =
   | algorandTransactionStatusRaw
   | aptosTransactionStatusRaw
   | bitcoinTransactionStatusRaw
+  | cantonTransactionStatusRaw
   | cardanoTransactionStatusRaw
   | casperTransactionStatusRaw
   | celoTransactionStatusRaw
@@ -243,6 +262,7 @@ export type TransactionStatusRaw =
   | hederaTransactionStatusRaw
   | iconTransactionStatusRaw
   | internet_computerTransactionStatusRaw
+  | kaspaTransactionStatusRaw
   | minaTransactionStatusRaw
   | multiversxTransactionStatusRaw
   | nearTransactionStatusRaw

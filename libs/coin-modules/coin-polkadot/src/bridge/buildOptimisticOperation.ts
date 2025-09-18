@@ -46,9 +46,10 @@ const getExtra = (
 ): PolkadotOperationExtra => {
   const extra: PolkadotOperationExtra = {
     palletMethod: MODE_TO_PALLET_METHOD[transaction.mode],
+    index: 0,
   };
 
-  if (transaction.mode == "send" && transaction.useAllAmount) {
+  if (transaction.mode === "send" && transaction.useAllAmount) {
     extra.palletMethod = MODE_TO_PALLET_METHOD["sendMax"];
   } else if (transaction.mode === "bond" && !isFirstBond(account)) {
     extra.palletMethod = MODE_TO_PALLET_METHOD["bondExtra"];

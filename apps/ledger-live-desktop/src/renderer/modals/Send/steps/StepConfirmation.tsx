@@ -34,7 +34,6 @@ function StepConfirmation({
   t,
   optimisticOperation,
   error,
-  isNFTSend,
   signed,
   currencyName,
   account,
@@ -43,12 +42,7 @@ function StepConfirmation({
   if (optimisticOperation) {
     return (
       <Container>
-        <TrackPage
-          category="Send Flow"
-          name="Step Confirmed"
-          currencyName={currencyName}
-          isNFTSend={isNFTSend}
-        />
+        <TrackPage category="Send Flow" name="Step Confirmed" currencyName={currencyName} />
         <SyncOneAccountOnMount
           reason="transaction-flow-confirmation"
           priority={10}

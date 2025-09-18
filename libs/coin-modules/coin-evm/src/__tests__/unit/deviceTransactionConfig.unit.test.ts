@@ -5,8 +5,9 @@ import { Account, ProtoNFT } from "@ledgerhq/types-live";
 import { getCryptoCurrencyById, getTokenById } from "@ledgerhq/cryptoassets";
 import { makeAccount, makeTokenAccount } from "../fixtures/common.fixtures";
 import getDeviceTransactionConfig from "../../deviceTransactionConfig";
-import getTransactionStatus from "../../getTransactionStatus";
+import getTransactionStatus from "../../bridge/getTransactionStatus";
 import { Transaction as EvmTransaction } from "../../types";
+import "../fixtures/cryptoAssetsStore.fixtures";
 
 enum NFT_CONTRACTS {
   ERC721 = "0x60F80121C31A0d46B5279700f9DF786054aa5eE5",

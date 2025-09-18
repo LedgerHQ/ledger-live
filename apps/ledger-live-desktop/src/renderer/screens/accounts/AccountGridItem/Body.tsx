@@ -9,10 +9,12 @@ import CounterValue from "~/renderer/components/CounterValue";
 import Chart from "~/renderer/components/ChartPreview";
 import useTheme from "~/renderer/hooks/useTheme";
 import { Data } from "~/renderer/components/Chart/types";
+
 type Props = {
   account: AccountLike;
   range: PortfolioRange;
 };
+
 function Body({ account, range }: Props) {
   const { history, countervalueAvailable, countervalueChange } = useBalanceHistoryWithCountervalue({
     account,
@@ -47,6 +49,7 @@ function Body({ account, range }: Props) {
       </Box>
       <Chart
         // TODO make date non optional
+        // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
         data={history as Data}
         color={color}
         valueKey={countervalueAvailable ? "countervalue" : "value"}
@@ -55,5 +58,6 @@ function Body({ account, range }: Props) {
     </Box>
   );
 }
+
 const MemoedBody: React.ComponentType<Props> = React.memo(Body);
 export default MemoedBody;

@@ -14,7 +14,6 @@ import Tooltip from "~/renderer/components/Tooltip";
 import { openModal } from "~/renderer/actions/modals";
 import { useHideEmptyTokenAccounts } from "~/renderer/actions/settings";
 import { Icons } from "@ledgerhq/react-ui";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 
 const Separator = styled.div`
   background-color: ${p => p.theme.colors.palette.divider};
@@ -38,15 +37,12 @@ const OptionsButton = () => {
   const dispatch = useDispatch();
   const [hideEmptyTokenAccounts, setHideEmptyTokenAccounts] = useHideEmptyTokenAccounts();
   const onOpenModal = useCallback(
-    (modal: "MODAL_EXPORT_ACCOUNTS" | "MODAL_EXPORT_OPERATIONS") => {
+    (modal: "MODAL_EXPORT_OPERATIONS") => {
       dispatch(openModal(modal, undefined));
     },
     [dispatch],
   );
   const { t } = useTranslation();
-
-  const lldLedgerSyncFF = useFeature("lldWalletSync");
-  const isLedgerSyncEnabled = lldLedgerSyncFF?.enabled;
 
   const items: ItemType[] = [
     {
@@ -55,16 +51,6 @@ const OptionsButton = () => {
       icon: <Icons.Download size="S" />,
       onClick: () => onOpenModal("MODAL_EXPORT_OPERATIONS"),
     },
-    ...(isLedgerSyncEnabled
-      ? []
-      : [
-          {
-            key: "exportAccounts",
-            label: t("accounts.optionsMenu.exportToMobile"),
-            icon: <Icons.QrCode size="S" />,
-            onClick: () => onOpenModal("MODAL_EXPORT_ACCOUNTS"),
-          },
-        ]),
     {
       key: "sep1",
       type: "separator",

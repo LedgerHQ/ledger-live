@@ -5,11 +5,8 @@
     "declarationMap": true,
     "downlevelIteration": true,
     "lib": ["es2020", "dom"],
-    "rootDir": "./src",
     "outDir": "lib",
-    "exactOptionalPropertyTypes": true,
-    "module": "esnext",
-    "moduleResolution": "bundler"
+    "exactOptionalPropertyTypes": true
   },
   "include": ["src/**/*", "deviceTransactionConfig.ts", "transaction.ts"]
 }

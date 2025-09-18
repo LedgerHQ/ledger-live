@@ -50,8 +50,8 @@ export const formatTrongridTrc20TxResponse = (tx: Trc20API): TrongridTxInfo | nu
       hasFailed: false, // trc20 txs are succeeded if returned by trongrid,
     };
   } catch (e) {
-    log("tron-error", "could not parse transaction", tx);
-    return undefined;
+    log("tron-error", `could not parse transaction ${tx}`);
+    throw e;
   }
 };
 

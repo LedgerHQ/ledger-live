@@ -26,6 +26,7 @@ export function useShouldRedirect(): {
       DeviceModelId.nanoX,
       DeviceModelId.stax,
       DeviceModelId.europa,
+      DeviceModelId.apex,
     ],
   });
 }

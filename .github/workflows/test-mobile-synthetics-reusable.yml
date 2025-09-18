@@ -1,0 +1,256 @@
+name: "[Mobile] - Synthetic Tests - Called"
+on:
+  workflow_call:
+    inputs:
+      artifact-name:
+        description: The name of the artifact to upload to Datadog and run the tests on
+        required: true
+        type: string
+      platform:
+        description: The platform to run the tests on (e.g. ios, android)
+        required: true
+        type: string
+      test_env:
+        description: The environment to run the tests on (e.g. prod, stg)
+        required: false
+        default: stg
+        type: string
+      version:
+        description: The version of the application to run the tests on
+        required: true
+        type: string
+      enable-comparison:
+        description: Compare performance metrics against the latest successful release workflow run.
+        required: false
+        default: false
+        type: boolean
+      enable-comparison-notification:
+        description: Enable notification on Slack when the comparison is enabled. Will publish the comparison report to the Slack channel.
+        required: false
+        default: false
+        type: boolean
+      latest:
+        description: The application to upload is the latest version of the application
+        required: false
+        default: false
+        type: boolean
+      ref:
+        description: The ref to run the tests on
+        required: false
+        type: string
+      datadog-site:
+        description: The Datadog site to use
+        required: true
+        type: string
+      datadog-subdomain:
+        description: The Datadog subdomain to use. If your URL is `myorg.datadoghq.com`, the custom subdomain is `myorg`.
+        required: false
+        type: string
+    secrets:
+      DATADOG_API_KEY:
+        description: The Datadog API key to use
+        required: true
+      DATADOG_APP_KEY:
+        description: The Datadog app key to use
+        required: true
+      SLACK_BOT_TOKEN:
+        description: The Slack bot token to use
+        required: false
+
+permissions:
+  actions: read
+
+jobs:
+  run-tests:
+    runs-on: ledger-live-medium
+    steps:
+      - name: Download mobile application file
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ inputs.artifact-name }}
+          path: ${{ github.workspace }}/downloaded_artifacts/
+
+      - name: Print downloaded artifact structure
+        run: |
+          echo "=== Downloaded artifacts structure ==="
+          find ${{ github.workspace }}/downloaded_artifacts/ -type f
+          echo "=== End structure ==="
+
+      - name: Set mobile application file path
+        id: artifact-path
+        run: |
+          ARTIFACT_FILE=$(find ${{ github.workspace }}/downloaded_artifacts/ -name "*.ipa" -o -name "*-arm64-v8a-*.apk" | head -1)
+          echo "Found mobile application file: $ARTIFACT_FILE"
+          echo "value=$ARTIFACT_FILE" >> $GITHUB_OUTPUT
+
+      - name: Select Datadog configuration
+        id: datadog-config
+        run: |
+          case "${{ inputs.platform }}-${{ inputs.test_env }}" in
+            ios-prod)
+              echo "app_id=${{ vars.DATADOG_PROD_LLM_IOS_APP }}" >> $GITHUB_OUTPUT
+              echo "public_id=${{ vars.DATADOG_PROD_LLM_IOS_TEST }}" >> $GITHUB_OUTPUT
+              ;;
+            ios-stg)
+              echo "app_id=${{ vars.DATADOG_STG_LLM_IOS_APP }}" >> $GITHUB_OUTPUT
+              echo "public_id=${{ vars.DATADOG_STG_LLM_IOS_TEST }}" >> $GITHUB_OUTPUT
+              ;;
+            android-prod)
+              echo "app_id=${{ vars.DATADOG_PROD_LLM_ANDROID_APP }}" >> $GITHUB_OUTPUT
+              echo "public_id=${{ vars.DATADOG_PROD_LLM_ANDROID_TEST }}" >> $GITHUB_OUTPUT
+              ;;
+            android-stg)
+              echo "app_id=${{ vars.DATADOG_STG_LLM_ANDROID_APP }}" >> $GITHUB_OUTPUT
+              echo "public_id=${{ vars.DATADOG_STG_LLM_ANDROID_TEST }}" >> $GITHUB_OUTPUT
+              ;;
+            *)
+              echo "Unknown platform-test_env combination: ${{ inputs.platform }}-${{ inputs.test_env }}"
+              exit 1
+              ;;
+          esac
+
+      - name: Upload mobile application file as new version
+        run: >
+          npx @datadog/datadog-ci@3.11.0 synthetics upload-application
+          --datadogSite ${{ inputs.datadog-site }}
+          --apiKey ${{ secrets.DATADOG_API_KEY }}
+          --appKey ${{ secrets.DATADOG_APP_KEY }}
+          --mobileApplicationId ${{ steps.datadog-config.outputs.app_id }}
+          --mobileApplicationVersionFilePath ${{ steps.artifact-path.outputs.value }} 
+          --versionName '${{ inputs.version }}' 
+          ${{ inputs.latest && '--latest' || '' }}
+          | tee upload_output.txt
+
+      - name: Extract mobile application version ID
+        id: upload-version
+        run: |
+          if grep -q "The new version has version ID:" upload_output.txt; then
+            VERSION_ID=$(grep -oE 'The new version has version ID: [a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}' upload_output.txt | grep -oE '[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}')
+            echo "Found version ID: $VERSION_ID"
+            echo "version-id=$VERSION_ID" >> $GITHUB_OUTPUT
+          else
+            echo "No version ID found in upload output. Upload may have failed or version already exists."
+            echo "Exiting early - no performance tests needed."
+            exit 0
+          fi
+
+      - name: Run performance tests
+        uses: LedgerHQ/ledger-live/tools/actions/mobile-performance-test@develop
+        id: test-results
+        with:
+          api-key: ${{ secrets.DATADOG_API_KEY }}
+          app-key: ${{ secrets.DATADOG_APP_KEY }}
+          site: ${{ inputs.datadog-site }}
+          subdomain: ${{ inputs.datadog-subdomain }}
+          public-id: ${{ steps.datadog-config.outputs.public_id }}
+          mobile-application: ${{ steps.datadog-config.outputs.app_id }}
+          mobile-application-version: ${{ steps.upload-version.outputs.version-id }}
+          mobile-application-version-name: ${{ inputs.version }}
+          mobile-application-platform: ${{ inputs.platform }}
+          enable-comparison: ${{ inputs.enable-comparison }}
+          baseline-repo: ${{ github.repository }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Print performance tests results
+        run: |
+          echo '${{ steps.test-results.outputs.performance-report }}' > ./performance-report.json
+          echo '${{ steps.test-results.outputs.slack-report }}' > ./slack-report.txt
+
+      - name: Upload performance report
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ inputs.platform }}-performance-report.json
+          path: ./performance-report.json
+
+      - name: Upload Slack report
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ inputs.platform }}-slack-report.txt
+          path: ./slack-report.txt
+
+  report-on-slack:
+    runs-on: ledger-live-medium
+    needs: run-tests
+    if: ${{ (inputs.enable-comparison || inputs.enable-comparison == 'true') && (inputs.enable-comparison-notification || inputs.enable-comparison-notification == 'true') && (success() || failure()) }}
+    steps:
+      - name: Download Slack report
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ inputs.platform }}-slack-report.txt
+          path: ./
+
+      - name: Format Slack message
+        uses: actions/github-script@v7
+        id: message
+        with:
+          script: |
+            const fs = require("fs");
+            const text = `✨ A new ${{ inputs.platform == 'ios' && 'iOS' || 'Android' }} ${{ inputs.test_env == 'prod' && 'production' || 'staging' }} build has been tested ✨`
+
+            let slackReport = "";
+            try {
+              slackReport = fs.readFileSync('./slack-report.txt', 'utf8');
+            } catch (error) {
+              console.log("Could not read Slack report:", error);
+              slackReport = "⚠️ *Performance Report*: Could not load performance data";
+            }
+
+            // Split the report by blank lines to create separate blocks
+            const reportParts = slackReport.split('\n\n').filter(part => part.trim() !== '');
+            const blocks = [
+              {
+                "type": "divider"
+              },
+              {
+                "type": "section",
+                "text": {
+                  "type": "mrkdwn",
+                  "text": [
+                    "🚀 *version*: ${{ inputs.version }}",
+                    "⚙️ *platform*: ${{ inputs.platform }}"
+                  ].join("\n")
+                }
+              },
+              {
+                "type": "divider"
+              },
+            ];
+
+            // Add each part as a separate block
+            reportParts.forEach(part => {
+              blocks.push({
+                "type": "section",
+                "text": {
+                  "type": "mrkdwn",
+                  "text": part.trim()
+                }
+              });
+            });
+
+            // Add info block
+            blocks.push(
+              {
+                "type": "divider"
+              },
+              {
+                "type": "section",
+                "text": {
+                  "type": "mrkdwn",
+                  "text": "<https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}|Workflow run> for more informations"
+                }
+              }
+            );
+            const result = {
+              text,
+              blocks
+            };
+
+            fs.writeFileSync(`./payload-slack-content.json`, JSON.stringify(result, null, 2));
+      - name: post to a Slack channel
+        id: slack
+        uses: slackapi/slack-github-action@v1.27.0
+        with:
+          channel-id: "C0895PWD890"
+          payload-file-path: "./payload-slack-content.json"
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}

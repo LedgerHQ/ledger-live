@@ -1,23 +1,23 @@
-import React, { useRef, useEffect, useCallback, useState, ComponentProps } from "react";
+import React, { useEffect, useCallback, useState, ComponentProps, useMemo } from "react";
 import { useNavigation, useTheme } from "@react-navigation/native";
 import { Image, StyleSheet, View } from "react-native";
 import { Text, Flex, Button } from "@ledgerhq/native-ui";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
-import { useSelector, useDispatch } from "react-redux";
-import { getScreenVisibleAreaDimensions } from "@ledgerhq/live-common/device/use-cases/screenSpecs";
+import {
+  getScreenSpecs,
+  getScreenVisibleAreaDimensions,
+  isCustomLockScreenSupported,
+} from "@ledgerhq/live-common/device/use-cases/screenSpecs";
 import { DeviceModelId } from "@ledgerhq/types-devices";
-import { customImageBackupSelector } from "~/reducers/settings";
-import { setCustomImageBackup } from "~/actions/settings";
 import NavigationScrollView from "~/components/NavigationScrollView";
 import SelectDevice2, { SetHeaderOptionsRequest } from "~/components/SelectDevice2";
 import CustomImageDeviceAction from "~/components/CustomLockScreenDeviceAction";
-import ImageHexProcessor from "~/components/CustomImage/ImageHexProcessor";
-import { ProcessorPreviewResult } from "~/components/CustomImage/ImageProcessor";
+import ImageHexProcessor from "~/components/CustomImage/dithering/ImageFromDeviceProcessor";
+import { ProcessorPreviewResult } from "~/components/CustomImage/dithering/types";
 import FramedPicture from "~/components/CustomImage/FramedPicture";
-import { getFramedPictureConfig } from "~/components/CustomImage/framedPictureConfigs";
 import { NavigationHeaderBackButton } from "~/components/NavigationHeaderBackButton";
 import { ReactNavigationHeaderOptions } from "~/components/RootNavigator/types/helpers";
-import { useStaxFetchImageDeviceAction } from "~/hooks/deviceActions";
+import { useFetchImageDeviceAction } from "~/hooks/deviceActions";
 
 // Defines here some of the header options for this screen to be able to reset back to them.
 export const debugFetchCustomImageHeaderOptions: ReactNavigationHeaderOptions = {
@@ -27,64 +27,65 @@ export const debugFetchCustomImageHeaderOptions: ReactNavigationHeaderOptions = 
   headerLeft: () => <NavigationHeaderBackButton />,
 };
 
-export default function DebugFetchCustomImage() {
-  const deviceAction = useStaxFetchImageDeviceAction();
-  const { colors, dark } = useTheme();
+export default React.memo(function DebugFetchCustomImage() {
+  const fetchDeviceAction = useFetchImageDeviceAction();
+  const { colors } = useTheme();
   const navigation = useNavigation();
 
   const [device, setDevice] = useState<Device | null>(null);
   const [action, setAction] = useState<string>("");
   const [imageSource, setImageSource] = useState<ComponentProps<typeof Image>["source"]>();
 
-  const { hash, hex, deviceModelId } = useSelector(customImageBackupSelector) || {};
-  const currentBackup = useRef<string>(hash || "");
-  const dispatch = useDispatch();
+  const clsDeviceModelId =
+    device?.modelId && isCustomLockScreenSupported(device?.modelId)
+      ? device.modelId
+      : DeviceModelId.stax;
 
   // TODO move all the logic here onto its own thing
   // when we implement the screens of the flow.
-  const status = deviceAction.useHook(action === "fetch" ? device : undefined, {
-    backupHash: currentBackup.current,
-    allowedEmpty: false,
-    deviceModelId: device?.modelId ?? DeviceModelId.stax,
-  });
+
+  const fetchImageRequest = useMemo(
+    () => ({
+      allowedEmpty: false,
+      deviceModelId: clsDeviceModelId,
+    }),
+    [clsDeviceModelId],
+  );
+
+  const fetchStatus = fetchDeviceAction.useHook(
+    action === "fetch" ? device : undefined,
+    fetchImageRequest,
+  );
 
   const onReset = useCallback(() => {
     setDevice(null);
-  }, []);
-
-  const onRestore = useCallback(() => {
-    setAction("restore");
+    setAction("");
   }, []);
 
   const onFetch = useCallback(() => {
     setAction("fetch");
   }, []);
 
-  const onResult = useCallback(() => {
-    // TS be happy please
-  }, []);
+  const onResult = useCallback(() => {}, []);
 
-  const onSkip = useCallback(() => {
-    // TS be happy please
-  }, []);
-
-  const onDeleteBackup = useCallback(() => {
-    dispatch(setCustomImageBackup(null));
-    currentBackup.current = "";
-  }, [dispatch]);
+  const onSkip = useCallback(() => {}, []);
 
   const handleImageSourceLoaded = useCallback((res: ProcessorPreviewResult) => {
     setImageSource({ uri: res.imageBase64DataUri });
   }, []);
 
   const { progress, fetchingImage, imageAlreadyBackedUp, imageFetched, hexImage, imgHash, error } =
-    status;
+    fetchStatus;
+
+  const [hash, setHash] = useState<string | null>(null);
+  const [hex, setHex] = useState<string | null>(null);
 
   useEffect(() => {
-    if (imgHash && hexImage && deviceModelId) {
-      dispatch(setCustomImageBackup({ hash: imgHash, hex: hexImage, deviceModelId }));
+    if (imgHash && hexImage) {
+      setHash(imgHash);
+      setHex(hexImage);
     }
-  }, [dispatch, imgHash, hexImage, deviceModelId]);
+  }, [imgHash, hexImage]);
 
   const requestToSetHeaderOptions = useCallback(
     (request: SetHeaderOptionsRequest) => {
@@ -115,34 +116,26 @@ export default function DebugFetchCustomImage() {
           />
         ) : null}
         <Flex>
-          {hash ? (
-            <Button mb={2} onPress={onDeleteBackup} type="main">
-              {"Delete backup"}
-            </Button>
-          ) : null}
           {device ? (
             !action ? (
               <>
                 <Button onPress={onFetch} mb={2} type="main">
-                  {"Conditionally fetch"}
+                  {"Fetch image"}
                 </Button>
-                {hex ? (
-                  <Button onPress={onRestore} type="main">
-                    {"Restore backup"}
-                  </Button>
-                ) : null}
               </>
             ) : action === "fetch" ? (
               <>
                 <Button onPress={onReset} type="main">
-                  {"Reset"}
+                  {"Reset selected device"}
                 </Button>
                 {fetchingImage && progress ? (
                   <Text variant="bodyLineHeight">{`Backing up image ${progress}`}</Text>
                 ) : fetchingImage && !progress ? (
                   <Text variant="bodyLineHeight">{"Fetch current hash"}</Text>
                 ) : imageAlreadyBackedUp ? (
-                  <Text variant="bodyLineHeight">{"No need to backup"}</Text>
+                  <Text variant="bodyLineHeight">
+                    {"Image already backed up, no need to backup"}
+                  </Text>
                 ) : imageFetched ? (
                   <Text variant="bodyLineHeight">{"Completed backup"}</Text>
                 ) : error ? (
@@ -153,10 +146,10 @@ export default function DebugFetchCustomImage() {
                   <Text variant="bodyLineHeight">{"Something else"}</Text>
                 )}
               </>
-            ) : hex && deviceModelId ? (
+            ) : hex && device.modelId ? (
               <CustomImageDeviceAction
                 device={device}
-                deviceModelId={deviceModelId}
+                deviceModelId={clsDeviceModelId}
                 hexImage={hex}
                 onResult={onResult}
                 onSkip={onSkip}
@@ -168,24 +161,18 @@ export default function DebugFetchCustomImage() {
             {hash ? `Current backup hash '${hash}'` : "No backup available"}
           </Text>
         </Flex>
-        {hex && deviceModelId ? (
+        {hex && device?.modelId ? (
           <>
             <ImageHexProcessor
-              hexData={hex as string}
-              {...getScreenVisibleAreaDimensions(deviceModelId)}
+              hexData={hex}
+              {...getScreenVisibleAreaDimensions(clsDeviceModelId)}
+              bitsPerPixel={getScreenSpecs(clsDeviceModelId).bitsPerPixel}
               onPreviewResult={handleImageSourceLoaded}
               onError={() => console.error(error)}
             />
             {imageSource ? (
               <Flex flexDirection="row" flexGrow={0}>
-                <FramedPicture
-                  framedPictureConfig={getFramedPictureConfig(
-                    "transfer",
-                    deviceModelId,
-                    dark ? "dark" : "light",
-                  )}
-                  source={imageSource}
-                />
+                <FramedPicture deviceModelId={clsDeviceModelId} source={imageSource} />
               </Flex>
             ) : null}
           </>
@@ -193,7 +180,7 @@ export default function DebugFetchCustomImage() {
       </View>
     </NavigationScrollView>
   );
-}
+});
 
 const styles = StyleSheet.create({
   root: {

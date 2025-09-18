@@ -430,15 +430,6 @@ const MainSideBar = () => {
                   collapsed={secondAnim}
                 />
                 <SideBarListItem
-                  id={"catalog"}
-                  label={t("sidebar.catalog")}
-                  icon={Icons.Globe}
-                  iconActiveColor="wallet"
-                  isActive={location.pathname.startsWith("/platform") && !isLiveAppTabSelected}
-                  onClick={handleClickCatalog}
-                  collapsed={secondAnim}
-                />
-                <SideBarListItem
                   id={"send"}
                   label={t("send.title")}
                   icon={Icons.ArrowUp}
@@ -457,6 +448,16 @@ const MainSideBar = () => {
                   collapsed={secondAnim}
                 />
                 <SideBarListItem
+                  id={"swap"}
+                  label={t("sidebar.swap")}
+                  icon={Icons.Exchange}
+                  iconActiveColor="wallet"
+                  onClick={handleClickSwap}
+                  isActive={location.pathname.startsWith("/swap")}
+                  disabled={noAccounts}
+                  collapsed={secondAnim}
+                />
+                <SideBarListItem
                   id={"earn"}
                   label={earnLabel}
                   icon={Icons.Percentage}
@@ -464,11 +465,6 @@ const MainSideBar = () => {
                   onClick={handleClickEarn}
                   isActive={location.pathname === "/earn"}
                   collapsed={secondAnim}
-                  NotifComponent={
-                    <CustomTag active type="plain" size="small">
-                      {t("common.new")}
-                    </CustomTag>
-                  }
                 />
                 <SideBarListItem
                   id={"exchange"}
@@ -481,13 +477,12 @@ const MainSideBar = () => {
                   collapsed={secondAnim}
                 />
                 <SideBarListItem
-                  id={"swap"}
-                  label={t("sidebar.swap")}
-                  icon={Icons.Exchange}
+                  id={"catalog"}
+                  label={t("sidebar.catalog")}
+                  icon={Icons.Globe}
                   iconActiveColor="wallet"
-                  onClick={handleClickSwap}
-                  isActive={location.pathname.startsWith("/swap")}
-                  disabled={noAccounts}
+                  isActive={location.pathname.startsWith("/platform") && !isLiveAppTabSelected}
+                  onClick={handleClickCatalog}
                   collapsed={secondAnim}
                 />
                 <FeatureToggle featureId="referralProgramDesktopSidebar">

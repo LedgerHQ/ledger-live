@@ -124,9 +124,12 @@ export function registerTransportModules(store: Store) {
       setDeviceMode("polling");
       const params = new URLSearchParams(id.split(vaultTransportPrefixID)[1]);
       return retry(() =>
+        // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
         VaultTransport.open(params.get("host") as string).then(transport => {
           transport.setData({
+            // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
             token: params.get("token") as string,
+            // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
             workspace: params.get("workspace") as string,
           });
           return Promise.resolve(transport);

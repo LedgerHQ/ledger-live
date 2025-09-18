@@ -1,10 +1,11 @@
 /* eslint-disable consistent-return */
-import { Middleware } from "redux";
+import { Middleware } from "@reduxjs/toolkit";
 import { setKey } from "~/renderer/storage";
 import { postOnboardingSelector } from "@ledgerhq/live-common/postOnboarding/reducer";
 import { actionTypePrefix as postOnboardingActionTypePrefix } from "@ledgerhq/live-common/postOnboarding/actions";
+import { isActionWithType } from "./utils";
 
-import { settingsExportSelector, areSettingsLoaded } from "./../reducers/settings";
+import { settingsStoreSelector, areSettingsLoaded } from "./../reducers/settings";
 import { State } from "../reducers";
 import { Account, AccountUserData } from "@ledgerhq/types-live";
 import {
@@ -39,6 +40,10 @@ function accountsExportSelector(state: State) {
 }
 
 const DBMiddleware: Middleware<{}, State> = store => next => action => {
+  if (!isActionWithType(action)) {
+    return next(action);
+  }
+
   if (DB_MIDDLEWARE_ENABLED && action.type.startsWith("DB:")) {
     const [, type] = action.type.split(":");
     store.dispatch({
@@ -67,7 +72,7 @@ const DBMiddleware: Middleware<{}, State> = store => next => action => {
     // NB Prevent write attempts when the app is locked.
     if (!oldState.application.isLocked || action.type === "APPLICATION_SET_DATA") {
       if (areSettingsLoaded(newState) && oldState.settings !== newState.settings) {
-        setKey("app", "settings", settingsExportSelector(newState));
+        setKey("app", "settings", settingsStoreSelector(newState));
       }
     }
 

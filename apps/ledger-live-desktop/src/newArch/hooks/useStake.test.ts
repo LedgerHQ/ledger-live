@@ -8,6 +8,8 @@ import { AccountRaw, TokenAccount } from "@ledgerhq/types-live";
 
 import { fromAccountRaw } from "@ledgerhq/coin-framework/serialization/account";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoAssetsStore } from "@ledgerhq/types-live";
+import { setCryptoAssetsStore } from "@ledgerhq/coin-framework/crypto-assets/index";
 
 const raw: AccountRaw = {
   id: "js:2:ethereum:0x01:",
@@ -39,6 +41,9 @@ const rawTron: AccountRaw = {
   lastSyncDate: "2025-07-17T15:13:30.318Z",
   balance: "100000000000000",
 };
+
+// eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+setCryptoAssetsStore({} as CryptoAssetsStore);
 
 const mockEthereumAccount = fromAccountRaw(raw);
 const mockTronAccount = fromAccountRaw(rawTron);
@@ -258,6 +263,7 @@ describe("useStake()", () => {
           name: "Mock Dapp v3",
           walletAccountId: "1a536838-dd18-5e39-b13f-0ba422fb395c",
           returnTo: "/account/js:2:ethereum:0x01:/js:2:ethereum:0x01:usdt:",
+          chainId: 1,
         },
       }),
     );
@@ -287,6 +293,7 @@ describe("useStake()", () => {
           appId: "mock-dapp-v1",
           walletAccountId: "6760dd02-ab43-5c5a-9c7e-c75731580a08",
           returnTo: "/account/js:2:ethereum:0x01:/js:2:ethereum:0x01:usdc:",
+          chainId: 1,
         },
       }),
     );
@@ -316,6 +323,7 @@ describe("useStake()", () => {
         appId: "mock-live-app",
         walletAccountId: "0eda416c-9669-57a2-84f6-741df8c11267",
         returnTo: "/account/js:2:tron:T:",
+        yieldId: "tron-native-staking",
       },
     });
   });

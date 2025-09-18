@@ -1,7 +1,13 @@
 import type { Transaction as EvmTransaction, GasOptions } from "@ledgerhq/coin-evm/types/index";
-import { ExchangeRate, SwapDataType } from "@ledgerhq/live-common/exchange/swap/types";
+import type { NavigatorScreenParams } from "@react-navigation/core";
+import {
+  ExchangeRate,
+  SwapDataType,
+  SwapLiveError,
+} from "@ledgerhq/live-common/exchange/swap/types";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { SwapFormNavigatorParamList } from "./SwapFormNavigator";
 
 import type {
   AlgorandAccount,
@@ -32,23 +38,27 @@ import type { Transaction as StacksTransaction } from "@ledgerhq/live-common/fam
 import type { Transaction as StellarTransaction } from "@ledgerhq/live-common/families/stellar/types";
 import type { Transaction as TonTransaction } from "@ledgerhq/live-common/families/ton/types";
 import type { Transaction as RippleTransaction } from "@ledgerhq/live-common/families/xrp/types";
+import type {
+  Transaction as KaspaTransaction,
+  TransactionStatus as KaspaTransactionStatus,
+} from "@ledgerhq/live-common/families/kaspa/types";
 import { Account, Operation } from "@ledgerhq/types-live";
-import { NavigatorScreenParams } from "@react-navigation/core";
 import BigNumber from "bignumber.js";
 import { AssetSelectionNavigatorParamsList } from "LLM/features/AssetSelection/types";
 import { NavigatorName, ScreenName } from "~/const";
 import type {
   DefaultAccountSwapParamList,
   DetailsSwapParamList,
-  SwapOperation,
+  SwapOperationDetails,
   SwapPendingOperation,
   SwapSelectCurrency,
-} from "../../../screens/Swap/types";
+} from "~/screens/Swap/types";
 
 type Target = "from" | "to";
 
 export type SwapNavigatorParamList = {
   [ScreenName.SwapTab]:
+    | NavigatorScreenParams<SwapFormNavigatorParamList>
     | DetailsSwapParamList
     | DefaultAccountSwapParamList
     | SwapSelectCurrency
@@ -58,7 +68,7 @@ export type SwapNavigatorParamList = {
     provider?: string;
     swap: SwapDataType;
     selectableCurrencyIds: string[];
-    selectedCurrency: CryptoCurrency | TokenCurrency;
+    selectedCurrency?: CryptoCurrency | TokenCurrency;
   };
   [ScreenName.SwapSelectCurrency]: SwapSelectCurrency;
   [ScreenName.SwapSelectProvider]: {
@@ -88,7 +98,7 @@ export type SwapNavigatorParamList = {
   [ScreenName.SwapHistory]: undefined;
   [ScreenName.SwapPendingOperation]: SwapPendingOperation;
   [ScreenName.SwapOperationDetails]: {
-    swapOperation: SwapOperation;
+    swapOperation: SwapOperationDetails;
     fromPendingOperation?: true;
   };
   [ScreenName.AlgorandEditMemo]: {
@@ -168,10 +178,11 @@ export type SwapNavigatorParamList = {
       | ScreenName.SendSelectDevice
       | ScreenName.SwapForm;
   };
-  [ScreenName.XrpEditFee]: {
+  [ScreenName.KaspaEditCustomFees]: {
     accountId: string;
     parentId?: string;
-    transaction: RippleTransaction;
+    transaction: KaspaTransaction;
+    status?: KaspaTransactionStatus;
     currentNavigation:
       | ScreenName.SignTransactionSummary
       | ScreenName.SendSummary
@@ -180,6 +191,8 @@ export type SwapNavigatorParamList = {
       | ScreenName.SignTransactionSelectDevice
       | ScreenName.SendSelectDevice
       | ScreenName.SwapForm;
+    sompiPerByte?: BigNumber | null;
+    setSompiPerByte?: (_: BigNumber) => void;
   };
   [ScreenName.StellarEditCustomFees]: {
     accountId: string;
@@ -325,4 +338,8 @@ export type SwapNavigatorParamList = {
   [NavigatorName.AssetSelection]?: Partial<
     NavigatorScreenParams<AssetSelectionNavigatorParamsList>
   >;
+  [ScreenName.SwapCustomError]: {
+    error?: SwapLiveError | Error;
+  };
+  [ScreenName.SwapLoading]: undefined;
 };

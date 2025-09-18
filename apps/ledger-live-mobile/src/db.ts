@@ -6,21 +6,19 @@ import type {
   RateMapRaw,
   CounterValuesStatus,
 } from "@ledgerhq/live-countervalues/types";
-import { Announcement } from "@ledgerhq/live-common/notifications/AnnouncementProvider/types";
 import { useDBRaw } from "@ledgerhq/live-common/hooks/useDBRaw";
 import { Dispatch, SetStateAction } from "react";
 import storage from "LLM/storage";
 import type { User } from "./types/store";
-import type { BleState, MarketState, ProtectState, SettingsState } from "./reducers/types";
+import type {
+  BleState,
+  LargeMoverState,
+  MarketState,
+  ProtectState,
+  SettingsState,
+} from "./reducers/types";
 import { TrustchainStore } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { ExportedWalletState } from "@ledgerhq/live-wallet/store";
-
-export type Notifications = {
-  announcements: Announcement[];
-  seenIds: string[];
-  lastUpdateTime: number;
-  initDate?: number;
-};
 
 const ACCOUNTS_KEY = "accounts";
 const ACCOUNTS_KEY_SORT = "accounts.sort";
@@ -48,13 +46,6 @@ export async function saveSettings(obj: Partial<SettingsState>): Promise<void> {
   await storage.save("settings", obj);
 }
 
-export async function getWCSession(): Promise<unknown> {
-  const wcsession = await storage.get("wcsession");
-  return wcsession;
-}
-export async function saveWCSession(obj: unknown): Promise<void> {
-  await storage.save("wcsession", obj);
-}
 export const getCountervalues: typeof unsafeGetCountervalues = atomicQueue(unsafeGetCountervalues);
 export const saveCountervalues: typeof unsafeSaveCountervalues =
   atomicQueue(unsafeSaveCountervalues);
@@ -291,14 +282,6 @@ export async function getProtect(): Promise<ProtectState> {
   return protect;
 }
 
-export async function saveProtect(obj: ProtectState): Promise<void> {
-  await storage.save("protect", obj);
-}
-
-export async function deleteProtect(): Promise<void> {
-  await storage.delete("protect");
-}
-
 export function useDB<State, Selected>(
   key: string,
   initialState: State,
@@ -311,4 +294,11 @@ export function useDB<State, Selected>(
     setter: (state: State) => storage.save(key, state),
     selector,
   });
+}
+
+export function getLargeMoverState(): Promise<LargeMoverState> {
+  return storage.get("largeMover") as Promise<LargeMoverState>;
+}
+export async function saveLargeMoverState(state: LargeMoverState): Promise<void> {
+  await storage.save("largeMover", state);
 }

@@ -1,5 +1,5 @@
 import React from "react";
-import { ComponentStory } from "@storybook/react-native";
+import { StoryFn } from "@storybook/react";
 import { IconBoxList } from "../../../../src/components";
 import { IconsLegacy } from "../../../../src/assets";
 
@@ -14,7 +14,7 @@ export default {
   },
 };
 
-export const Default: ComponentStory<typeof IconBoxList> = (args: typeof DefaultArgs) => {
+export const Default: StoryFn<typeof IconBoxList> = (args: typeof DefaultArgs) => {
   return (
     <IconBoxList
       items={[

@@ -1,9 +1,9 @@
 import React, { useMemo } from "react";
+import { useTranslation } from "react-i18next";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { getDeviceModel } from "@ledgerhq/devices";
 import { Text, Flex, IconsLegacy, IconBadge } from "@ledgerhq/native-ui";
 import { useTheme } from "styled-components/native";
-import { TFunction } from "react-i18next";
 import Button from "../wrappedUi/Button";
 import Animation from "../Animation";
 import { getDeviceAnimation, getDeviceAnimationStyles } from "~/helpers/getDeviceAnimation";
@@ -31,17 +31,16 @@ export const AllowManager = ({ wording, device }: { wording: string; device: Dev
 };
 
 export const ConfirmFirmwareUpdate = ({
-  t,
   device,
   currentFirmwareVersion,
   newFirmwareVersion,
 }: {
-  t: TFunction;
   device: Device;
   currentFirmwareVersion: string;
   newFirmwareVersion: string;
 }) => {
   const { theme, space } = useTheme();
+  const { t } = useTranslation();
   return (
     <Flex pt={6} alignItems="center">
       <Flex mb={9}>
@@ -76,8 +75,9 @@ export const ConfirmFirmwareUpdate = ({
   );
 };
 
-export const FinishFirmwareUpdate = ({ t, device }: { t: TFunction; device: Device }) => {
+export const FinishFirmwareUpdate = ({ device }: { device: Device }) => {
   const { theme } = useTheme();
+  const { t } = useTranslation();
 
   return (
     <Flex py={2}>
@@ -109,19 +109,19 @@ export const FinishFirmwareUpdate = ({ t, device }: { t: TFunction; device: Devi
 };
 
 export const FirmwareUpdateDenied = ({
-  t,
   device,
   newFirmwareVersion,
   onPressRestart,
   onPressQuit,
 }: {
-  t: TFunction;
   device: Device;
   newFirmwareVersion: string;
   onPressRestart: () => void;
   onPressQuit: () => void;
 }) => {
+  const { t } = useTranslation();
   const drawerName = "Error: update cancelled on device";
+
   return (
     <Flex alignItems="center" justifyContent="center" px={1}>
       <TrackScreen category={drawerName} type="drawer" refreshSource={false} />
@@ -169,18 +169,17 @@ export const FirmwareUpdateDenied = ({
 };
 
 export const DeviceActionError = ({
-  t,
   device,
   errorName,
   translationContext,
   children,
 }: {
-  t: TFunction;
   device: Device;
   errorName: string;
   translationContext?: string;
   children?: React.ReactNode;
 }) => {
+  const { t } = useTranslation();
   const { errorTitle, errorDescription } = useMemo(() => {
     const contextSpecificErrorTitleId = `${translationContext}.errors.${errorName}.title`;
     const contextSpecificErrorDescriptionId = `${translationContext}.errors.${errorName}.description`;

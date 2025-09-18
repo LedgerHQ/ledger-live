@@ -14,7 +14,6 @@ import HasOrderedNanoRow from "./HasOrderedNanoRow";
 import { StackNavigatorNavigation } from "~/components/RootNavigator/types/helpers";
 import { SettingsNavigatorStackParamList } from "~/components/RootNavigator/types/SettingsNavigator";
 import ResetOnboardingStateRow from "./ResetOnboardingStateRow";
-import NftMetadataServiceRow from "./NftMetadataServiceRow";
 import HasStaxEuropaRows from "./HasStaxEuropaRows";
 import SkipOnboardingRow from "./SkipOnboardingRow";
 import { RecoverUpsellRow } from "./RecoverUpsellRow";
@@ -47,7 +46,6 @@ export default function Configuration() {
       <HasStaxEuropaRows />
       <MockModeRow />
       <AnalyticsConsoleRow />
-      <NftMetadataServiceRow />
       <ThemeToggleRow />
       <SkipLock />
     </SettingsNavigationScrollView>

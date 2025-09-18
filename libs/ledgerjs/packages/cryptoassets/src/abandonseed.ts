@@ -3,6 +3,9 @@ import invariant from "invariant";
 
 const EVM_DEAD_ADDRESS = "0x000000000000000000000000000000000000dEaD";
 
+// Close to dead address, but not banned on Zksync
+const EVM_RAND_ADDRESS = "0x123000000000000000000000000000000000dEaD";
+
 /**
  * these are either "dead"/"burn" addresses OR "abandon" seed addresses.
  * These addresses are PUBLIC addresses
@@ -32,6 +35,7 @@ const abandonSeedAddresses: Partial<Record<CryptoCurrency["id"], string>> = {
   digibyte: "DG1KhhBKpsyWXTakHNezaDQ34focsXjN1i",
   dogecoin: "DBus3bamQjgJULBJtYXpEzDWQRwF5iwxgC",
   game_credits: "GJgbzWpGhrZmSvc2V5Npqf57Kg9xfB79tj",
+  kaspa: "kaspa:qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqkx9awp4e",
   komodo: "RW8gfgpCUdgZbkPAs1uJQF2S9681JVkGRi",
   litecoin: "LUWPbpM43E2p7ZSh8cyTBEkvpHmr3cB8Ez",
   nix: "GRpn2DPiQxAczMrQFt2sK1CS8EYdnvSHxo",
@@ -115,8 +119,8 @@ const abandonSeedAddresses: Partial<Record<CryptoCurrency["id"], string>> = {
   scroll: EVM_DEAD_ADDRESS,
   scroll_sepolia: EVM_DEAD_ADDRESS,
   etherlink: EVM_DEAD_ADDRESS,
-  zksync: EVM_DEAD_ADDRESS,
-  zksync_sepolia: EVM_DEAD_ADDRESS,
+  zksync: EVM_RAND_ADDRESS,
+  zksync_sepolia: EVM_RAND_ADDRESS,
   mantra: "mantra12jypwtxm7npfszx5x9780fhz0j3ken696fdp33",
   xion: "xion19rl4cm2hmr8afy4kldpxz3fka4jguq0a5xyz123",
   sui: "0x33444cf803c690db96527cec67e3c9ab512596f4ba2d4eace43f0b4f716e0164",
@@ -124,6 +128,13 @@ const abandonSeedAddresses: Partial<Record<CryptoCurrency["id"], string>> = {
   sonic: EVM_DEAD_ADDRESS,
   sonic_blaze: EVM_DEAD_ADDRESS,
   mina: "B62qmphduibdMJQjEvnnDizL9kVV4ripuiE9adR2wsqtegJaxHJzCic",
+  babylon: "bbn1vh34djka7ug2gww9njrsmmr7emj3dx3paz5sj4",
+  hyperevm: EVM_DEAD_ADDRESS,
+  sei_network_evm: EVM_DEAD_ADDRESS,
+  berachain: EVM_DEAD_ADDRESS,
+  canton_network: "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+  canton_network_devnet: "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+  canton_network_localnet: "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
 };
 
 /**

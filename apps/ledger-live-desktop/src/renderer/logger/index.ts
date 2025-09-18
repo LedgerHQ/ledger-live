@@ -343,6 +343,7 @@ export default {
   },
   add,
   onLog: (log: LogEntry | string) => {
+    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
     logger.log(log as LogEntry);
   },
 };

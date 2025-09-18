@@ -10,7 +10,6 @@ import {
 } from "@ledgerhq/errors";
 import { getDeviceModel } from "@ledgerhq/devices";
 
-import { withDevice } from "./deviceAccess";
 import getDeviceInfo from "./getDeviceInfo";
 import { ImageLoadRefusedOnDevice, ImageCommitRefusedOnDevice } from "../errors";
 import getAppAndVersion from "./getAppAndVersion";
@@ -20,7 +19,9 @@ import customLockScreenFetchSize from "./customLockScreenFetchSize";
 import customLockScreenFetchHash from "./customLockScreenFetchHash";
 import { gzip } from "pako";
 import { CLSSupportedDeviceModelId } from "../device/use-cases/isCustomLockScreenSupported";
-import { getScreenSpecs } from "../device/use-cases/screenSpecs";
+import { getScreenSpecs, type ScreenSpecs } from "../device/use-cases/screenSpecs";
+import { DeviceDisconnectedWhileSendingError } from "@ledgerhq/device-management-kit";
+import { withTransport } from "../deviceSDK/transports/core";
 
 const MAX_APDU_SIZE = 255;
 const COMPRESS_CHUNK_SIZE = 2048;
@@ -43,18 +44,20 @@ export type LoadImageEvent =
       imageHash: string;
     };
 
+/**
+ * Type guard to check if the given error is a DeviceDisconnectedWhileSendingError.
+ * Ensures that the error is an object, is not null, and matches the expected structure.
+ * This is used to identify specific disconnection errors from the DMK device.
+ */
+const isDmkDeviceDisconnectedError = (err: unknown): err is DeviceDisconnectedWhileSendingError =>
+  typeof err === "object" &&
+  err !== null &&
+  (err instanceof DeviceDisconnectedWhileSendingError ||
+    ("_tag" in err && err._tag === "DeviceDisconnectedWhileSendingError"));
+
 export type LoadimageResult = {
   imageHash: string;
   imageSize: number;
-};
-
-type ScreenSpecs = {
-  width: number;
-  height: number;
-  paddingTop: number;
-  paddingBottom: number;
-  paddingLeft: number;
-  paddingRight: number;
 };
 
 export type LoadImageRequest = {
@@ -72,14 +75,14 @@ export default function loadImage({ deviceId, request }: Input): Observable<Load
   const { hexImage, padImage = true, deviceModelId } = request;
   const screenSpecs = getScreenSpecs(deviceModelId);
 
-  const sub = withDevice(deviceId)(
-    transport =>
+  const sub = withTransport(deviceId)(
+    ({ transportRef }) =>
       new Observable(subscriber => {
         const timeoutSub = of<LoadImageEvent>({ type: "unresponsiveDevice" })
           .pipe(delay(1000))
           .subscribe(e => subscriber.next(e));
 
-        const sub = from(getDeviceInfo(transport))
+        const sub = from(getDeviceInfo(transportRef.current))
           .pipe(
             mergeMap(async () => {
               timeoutSub.unsubscribe();
@@ -96,11 +99,14 @@ export default function loadImage({ deviceId, request }: Input): Observable<Load
               imageSize.writeUIntBE(imageLength, 0, 4);
 
               subscriber.next({ type: "loadImagePermissionRequested" });
-              const createImageResponse = await transport.send(0xe0, 0x60, 0x00, 0x00, imageSize, [
-                StatusCodes.NOT_ENOUGH_SPACE,
-                StatusCodes.USER_REFUSED_ON_DEVICE,
-                StatusCodes.OK,
-              ]);
+              const createImageResponse = await transportRef.current.send(
+                0xe0,
+                0x60,
+                0x00,
+                0x00,
+                imageSize,
+                [StatusCodes.NOT_ENOUGH_SPACE, StatusCodes.USER_REFUSED_ON_DEVICE, StatusCodes.OK],
+              );
 
               const createImageStatus = createImageResponse.readUInt16BE(
                 createImageResponse.length - 2,
@@ -140,13 +146,13 @@ export default function loadImage({ deviceId, request }: Input): Observable<Load
                 chunkOffsetBuffer.writeUIntBE(currentOffset, 0, 4);
 
                 const apduData = Buffer.concat([chunkOffsetBuffer, chunkDataBuffer]);
-                await transport.send(0xe0, 0x61, 0x00, 0x00, apduData);
+                await transportRef.current.send(0xe0, 0x61, 0x00, 0x00, apduData);
                 currentOffset += chunkSize;
               }
 
               subscriber.next({ type: "commitImagePermissionRequested" });
 
-              const commitResponse = await transport.send(
+              const commitResponse = await transportRef.current.send(
                 0xe0,
                 0x62,
                 0x00,
@@ -172,10 +178,10 @@ export default function loadImage({ deviceId, request }: Input): Observable<Load
               }
 
               // Fetch image size
-              const imageBytes = await customLockScreenFetchSize(transport);
+              const imageBytes = await customLockScreenFetchSize(transportRef.current);
 
               // Fetch image hash
-              const imageHash = await customLockScreenFetchHash(transport);
+              const imageHash = await customLockScreenFetchHash(transportRef.current);
 
               subscriber.next({
                 type: "imageLoaded",
@@ -192,10 +198,10 @@ export default function loadImage({ deviceId, request }: Input): Observable<Load
                   e instanceof TransportStatusError &&
                   [0x6e00, 0x6d00, 0x6e01, 0x6d01, 0x6d02].includes(e.statusCode))
               ) {
-                return from(getAppAndVersion(transport)).pipe(
+                return from(getAppAndVersion(transportRef.current)).pipe(
                   concatMap(appAndVersion => {
                     return !isDashboardName(appAndVersion.name)
-                      ? attemptToQuitApp(transport, appAndVersion)
+                      ? attemptToQuitApp(transportRef.current, appAndVersion)
                       : of<LoadImageEvent>({
                           type: "appDetected",
                         });
@@ -213,9 +219,8 @@ export default function loadImage({ deviceId, request }: Input): Observable<Load
         };
       }),
   ).pipe(
-    // timeout(5000),
     catchError(err => {
-      if (err.name === "TimeoutError") {
+      if (err.name === "TimeoutError" || isDmkDeviceDisconnectedError(err)) {
         return throwError(() => new DisconnectedDevice());
       }
       return throwError(() => err);
@@ -254,6 +259,11 @@ function padHexImage(hexImage: string, screenSpecs: ScreenSpecs): string {
   return result;
 }
 
+const bitsPerPixelToBppIndicator: Record<ScreenSpecs["bitsPerPixel"], number> = {
+  1: 0,
+  4: 2,
+};
+
 export async function generateCustomLockScreenImageFormat(
   hexImage: string,
   compressImage: boolean,
@@ -262,7 +272,7 @@ export async function generateCustomLockScreenImageFormat(
 ) {
   const width = screenSpecs.width;
   const height = screenSpecs.height;
-  const bpp = 2; // value for 4 bits per pixel
+  const bpp = bitsPerPixelToBppIndicator[screenSpecs.bitsPerPixel];
   const compression = compressImage ? 1 : 0;
 
   const header = Buffer.alloc(8);

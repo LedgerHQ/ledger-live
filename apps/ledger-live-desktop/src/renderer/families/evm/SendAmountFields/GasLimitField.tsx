@@ -1,5 +1,4 @@
-import { getGasLimit } from "@ledgerhq/coin-evm/logic";
-import { DEFAULT_GAS_LIMIT } from "@ledgerhq/coin-evm/transaction";
+import { getGasLimit, DEFAULT_GAS_LIMIT } from "@ledgerhq/coin-evm/utils";
 import { Transaction } from "@ledgerhq/coin-evm/types/index";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { Button } from "@ledgerhq/react-ui";

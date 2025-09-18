@@ -1,4 +1,4 @@
-import { createMachine, assign, actions, EventObject } from "xstate";
+import { AnyEventObject, assign, enqueueActions, setup } from "xstate";
 import { track } from "~/renderer/analytics/segment";
 // Solutions
 import ChangeUSBCable from "./solutions/ChangeUSBCable";
@@ -12,6 +12,7 @@ import UpdateUSBDeviceDrivers from "./solutions/UpdateUSBDeviceDrivers";
 import EnableFullDiskAccess from "./solutions/EnableFullDiskAccess";
 import ResetNVRAM from "./solutions/ResetNVRAM";
 import RepairFunnel from "./solutions/RepairFunnel";
+
 const commonSolutions = [
   DifferentPort,
   ChangeUSBCable,
@@ -19,97 +20,111 @@ const commonSolutions = [
   TurnOffAntivirus,
   TryAnotherComputer,
 ];
-const { choose } = actions;
+
 const detectedPlatform =
   process.platform === "darwin" ? "mac" : process.platform === "win32" ? "windows" : "linux";
-export default createMachine(
-  {
-    id: "USBTroubleshooting",
-    initial: "solution",
-    context: {
-      opened: true,
-      done: false,
-      SolutionComponent: (() => null) as React.ComponentType<{
-        number: number;
-        sendEvent: (event: string) => unknown;
-        done: boolean;
-      }> | null,
-      platform: process.env.USBTROUBLESHOOTING_PLATFORM || detectedPlatform,
-      currentIndex: undefined as number | undefined,
-      solutions: {
-        mac: [...commonSolutions, EnableFullDiskAccess, ResetNVRAM, RepairFunnel],
-        windows: [RunAsAdmin, ...commonSolutions, UpdateUSBDeviceDrivers, RepairFunnel],
-        linux: [UpdateUdevRules, ...commonSolutions, RepairFunnel],
-      },
+export default setup({
+  types: {
+    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+    input: {} as {
+      currentIndex: number | undefined;
     },
-    states: {
-      solution: {
-        entry: [
-          choose<{ currentIndex?: number }, EventObject>([
-            {
-              actions: "next",
-              cond: ({ currentIndex }) => currentIndex === undefined, // Nb Prevent 'next' if we are already in the flow,
-            },
-          ]),
-          "load",
-          "log",
-        ],
-        on: {
-          NEXT: {
-            actions: ["next", "load", "log"],
-          },
-          PREVIOUS: {
-            actions: ["previous", "load", "log"],
-          },
-          DONE: {
-            actions: ["done", "log"],
-          },
+  },
+  guards: {
+    noCurrentIndex: ({ context }) => context.currentIndex === undefined, // Nb Prevent 'next' if we are already in the flow,
+  },
+  actions: {
+    load: assign(({ context }) => {
+      const { platform, currentIndex, solutions } = context;
+      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+      if (!solutions[platform as keyof typeof solutions])
+        throw new Error(`Unknown platform ${platform}`);
+      const index =
+        // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+        !currentIndex || currentIndex >= solutions[platform as keyof typeof solutions].length
+          ? 0
+          : currentIndex;
+      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+      const SolutionComponent = solutions[platform as keyof typeof solutions][index];
+      return {
+        currentIndex: index,
+        SolutionComponent,
+      };
+    }),
+    // For Nano X and Blue, after all options, we give up.
+    done: assign({
+      done: true,
+    }),
+    // Move forwards to another solution.
+    next: assign(({ context }) => {
+      const { platform, currentIndex: i, solutions } = context;
+      const currentIndex =
+        // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+        solutions[platform as keyof typeof solutions].length > i! + 1 ? i! + 1 : i;
+      return {
+        currentIndex,
+      };
+    }),
+    // Move back to a previous solution.
+    previous: assign(({ context }) => {
+      const { platform, currentIndex: i, solutions } = context;
+      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+      const currentIndex = solutions[platform as keyof typeof solutions].length <= 0 ? 0 : i! - 1;
+      return {
+        currentIndex,
+        done: false,
+      };
+    }),
+    // Tracking actions
+    log: ({ context, event }) =>
+      track(`USBTroubleshooting ${event.type}`, {
+        event,
+        detectedPlatform,
+        currentIndex: context.currentIndex,
+      }),
+  },
+}).createMachine({
+  id: "USBTroubleshooting",
+  initial: "solution",
+  context: ({ input }) => ({
+    opened: true,
+    done: false,
+    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+    SolutionComponent: (() => null) as React.ComponentType<{
+      number: number;
+      sendEvent: (event: AnyEventObject) => unknown;
+      done: boolean;
+    }> | null,
+    platform: process.env.USBTROUBLESHOOTING_PLATFORM || detectedPlatform,
+    currentIndex: input.currentIndex,
+    solutions: {
+      mac: [...commonSolutions, EnableFullDiskAccess, ResetNVRAM, RepairFunnel],
+      windows: [RunAsAdmin, ...commonSolutions, UpdateUSBDeviceDrivers, RepairFunnel],
+      linux: [UpdateUdevRules, ...commonSolutions, RepairFunnel],
+    },
+  }),
+  states: {
+    solution: {
+      entry: [
+        enqueueActions(({ enqueue, check }) => {
+          if (check("noCurrentIndex")) {
+            enqueue("next");
+          }
+          enqueue("load");
+          enqueue("log");
+        }),
+      ],
+      on: {
+        NEXT: {
+          actions: ["next", "load", "log"],
+        },
+        PREVIOUS: {
+          actions: ["previous", "load", "log"],
+        },
+        DONE: {
+          actions: ["done", "log"],
         },
       },
     },
   },
-  {
-    actions: {
-      load: assign(({ platform, currentIndex, solutions }) => {
-        if (!solutions[platform as keyof typeof solutions])
-          throw new Error(`Unknown platform ${platform}`);
-        const index =
-          !currentIndex || currentIndex >= solutions[platform as keyof typeof solutions].length
-            ? 0
-            : currentIndex;
-        const SolutionComponent = solutions[platform as keyof typeof solutions][index];
-        return {
-          currentIndex: index,
-          SolutionComponent,
-        };
-      }),
-      // For Nano X and Blue, after all options, we give up.
-      done: assign({
-        done: true,
-      }),
-      // Move forwards to another solution.
-      next: assign(({ platform, currentIndex: i, solutions }) => {
-        const currentIndex =
-          solutions[platform as keyof typeof solutions].length > i! + 1 ? i! + 1 : i;
-        return {
-          currentIndex,
-        };
-      }),
-      // Move back to a previous solution.
-      previous: assign(({ platform, currentIndex: i, solutions }) => {
-        const currentIndex = solutions[platform as keyof typeof solutions].length <= 0 ? 0 : i! - 1;
-        return {
-          currentIndex,
-          done: false,
-        };
-      }),
-      // Tracking actions
-      log: (context, event) =>
-        track(`USBTroubleshooting ${event.type}`, {
-          event,
-          detectedPlatform,
-          currentIndex: context.currentIndex,
-        }),
-    },
-  },
-);
+});

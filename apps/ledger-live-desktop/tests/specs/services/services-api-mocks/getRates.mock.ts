@@ -209,4 +209,9 @@ export const getProvidersCDNDataMock = () =>
       needsKYC: false,
       needsBearerToken: false,
     },
+    velora: {
+      type: "DEX",
+      needsKYC: false,
+      needsBearerToken: false,
+    },
   });

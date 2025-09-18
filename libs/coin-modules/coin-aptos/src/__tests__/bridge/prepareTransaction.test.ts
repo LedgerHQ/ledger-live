@@ -1,18 +1,17 @@
 import prepareTransaction from "../../bridge/prepareTransaction";
-import { AptosAPI } from "../../api";
+import { AptosAPI } from "../../network";
 import { getEstimatedGas } from "../../bridge/getFeesForTransaction";
 import { getMaxSendBalance } from "../../bridge/logic";
 import BigNumber from "bignumber.js";
-import type { Account } from "@ledgerhq/types-live";
-import type { Transaction } from "../../types";
+import type { AptosAccount, Transaction } from "../../types";
 
-jest.mock("../../api");
+jest.mock("../../network");
 jest.mock("../../bridge/getFeesForTransaction");
 jest.mock("../../bridge/logic");
 
 describe("Aptos prepareTransaction", () => {
   describe("prepareTransaction", () => {
-    let account: Account;
+    let account: AptosAccount;
     let transaction: Transaction;
 
     beforeEach(() => {
@@ -33,13 +32,14 @@ describe("Aptos prepareTransaction", () => {
         unit: { code: "APT", name: "Aptos", magnitude: 6 },
         lastSyncDate: new Date(),
         subAccounts: [],
-      } as unknown as Account;
+      } as unknown as AptosAccount;
 
       transaction = {
         amount: new BigNumber(0),
         recipient: "",
         useAllAmount: false,
         fees: new BigNumber(0),
+        mode: "send",
       } as Transaction;
     });
 

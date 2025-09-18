@@ -89,6 +89,9 @@ setSupportedCurrencies([
   "base_sepolia",
   "stacks",
   "telos_evm",
+  "sei_network_evm",
+  "berachain",
+  "hyperevm",
   "coreum",
   "injective",
   "casper",
@@ -112,6 +115,11 @@ setSupportedCurrencies([
   "sonic",
   "sonic_blaze",
   "mina",
+  "babylon",
+  "canton_network",
+  "canton_network_devnet",
+  "canton_network_localnet",
+  "kaspa",
 ]);
 
 for (const k in process.env) setEnvUnsafe(k as EnvName, process.env[k]);

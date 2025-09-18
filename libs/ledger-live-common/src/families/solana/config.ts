@@ -10,6 +10,7 @@ export const solanaConfig: CurrencyLiveConfigDefinition = {
       },
       token2022Enabled: false,
       queuedInterval: 100,
-    } as SolanaCoinConfig,
+      legacyOCMSMaxVersion: "1.8.0",
+    } satisfies SolanaCoinConfig,
   },
 };

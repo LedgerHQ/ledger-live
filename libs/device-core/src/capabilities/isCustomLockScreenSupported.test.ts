@@ -20,6 +20,10 @@ describe("isCustomLockScreenSupported", () => {
 
 describe("supportedDeviceModelIds", () => {
   it("should return supported device model ids", () => {
-    expect(supportedDeviceModelIds).toEqual([DeviceModelId.stax, DeviceModelId.europa]);
+    expect(supportedDeviceModelIds).toEqual([
+      DeviceModelId.stax,
+      DeviceModelId.europa,
+      DeviceModelId.apex,
+    ]);
   });
 });

@@ -138,7 +138,7 @@ export const buildOptimisticOperation = (
     c => c.type === TyphonTypes.CertificateType.STAKE_DELEGATION,
   )
     ? "DELEGATE"
-    : txCertificates.find(c => c.type === TyphonTypes.CertificateType.STAKE_DE_REGISTRATION)
+    : txCertificates.find(c => c.type === TyphonTypes.CertificateType.STAKE_KEY_DE_REGISTRATION)
       ? "UNDELEGATE"
       : getOperationType({
           valueChange: operationValue,

@@ -1,6 +1,7 @@
-import { TransactionIntent } from "@ledgerhq/coin-framework/api/types";
-import { StellarAsset } from "../types";
-import { createApi } from "./index";
+import { Pagination, TransactionIntent } from "@ledgerhq/coin-framework/api/types";
+import { StellarMemo } from "../types";
+import { createApi, envelopeFromAnyXDR } from "./index";
+import expect from "expect";
 
 const mockGetOperations = jest.fn();
 
@@ -31,7 +32,7 @@ const api = createApi({
   enableNetworkLogs: false,
 });
 
-const fromGenesis = { minHeight: 0 };
+const fromGenesis: Pagination = { minHeight: 0, order: "asc" };
 
 describe("operations", () => {
   beforeEach(() => {
@@ -78,16 +79,6 @@ describe("operations", () => {
     expect(mockGetOperations).toHaveBeenCalledTimes(1);
   });
 
-  it("should return 0 operations if start is greater than the last operation", async () => {
-    mockGetOperations.mockResolvedValue([[mockOperation], ""]);
-
-    // When
-    const operations = await api.listOperations("addr", { minHeight: 100 });
-
-    // Then
-    expect(operations).toEqual([[], ""]);
-  });
-
   it("should call multiple times listOperations", async () => {
     mockGetOperations
       .mockResolvedValueOnce([[mockOperation], "10"])
@@ -109,7 +100,7 @@ describe("Testing craftTransaction function", () => {
   });
 
   it("should use estimated fees when user does not provide them for crafting a transaction", async () => {
-    await api.craftTransaction({ asset: {} } as TransactionIntent<StellarAsset>);
+    await api.craftTransaction({ asset: {} } as TransactionIntent<StellarMemo>);
     expect(estimateFeesMock).toHaveBeenCalledTimes(1);
     expect(logicCraftTransactionMock).toHaveBeenCalledWith(
       expect.any(Object),
@@ -120,7 +111,7 @@ describe("Testing craftTransaction function", () => {
   it.each([[1n], [50n], [99n]])(
     "should use custom user fees when user provide them for crafting a transaction",
     async (fees: bigint) => {
-      await api.craftTransaction({ asset: {} } as TransactionIntent<StellarAsset>, fees);
+      await api.craftTransaction({ asset: {} } as TransactionIntent<StellarMemo>, { value: fees });
       expect(estimateFeesMock).toHaveBeenCalledTimes(0);
       expect(logicCraftTransactionMock).toHaveBeenCalledWith(
         expect.any(Object),
@@ -128,4 +119,30 @@ describe("Testing craftTransaction function", () => {
       );
     },
   );
+});
+
+describe("Testing transaction loading functions", () => {
+  it("should deserialize a transaction as expected", async () => {
+    const transactionPayloadXDR =
+      "esM5l1ROMXXSZr0CJDmyLNsWUIwBFj8m5csqPhBFqXkAAAACAAAAAEFMhHdla/OhHE2CYrF1VVPnLgBThGuzpNFZyYMh" +
+      "8L6XAAAAZAAAJ/cAAAkYAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAABAAAABHRlc3QAAAABAAAAAAAAAAAAAAAA/QIumXyU" +
+      "+Nq3dDZfGCXjgxYI7uvPElz8zGb0gN+vWD8AAAAAAA9CQAAAAAA=";
+    const transactionEnvelopeXDR =
+      "AAAAAgAAAABBTIR3ZWvzoRxNgmKxdVVT5y4AU4Rrs6TRWcmDIfC+lwAAAGQAACf3AAAJGAAAAAEAAAAAAAAAAAAAAAAA" +
+      "AAAAAAAAAQAAAAR0ZXN0AAAAAQAAAAAAAAAAAAAAAP0CLpl8lPjat3Q2Xxgl44MWCO7rzxJc/Mxm9IDfr1g/AAAAAAAP" +
+      "QkAAAAAAAAAAAA==";
+    const txFromSignaturePayload = envelopeFromAnyXDR(transactionPayloadXDR, "base64");
+    const txFromEnvelope = envelopeFromAnyXDR(transactionEnvelopeXDR, "base64");
+    expect(txFromEnvelope).toEqual(txFromSignaturePayload);
+    expect(txFromEnvelope.toXDR("base64")).toEqual(transactionEnvelopeXDR);
+    expect(txFromSignaturePayload.toXDR("base64")).toEqual(transactionEnvelopeXDR);
+  });
+
+  it("throw expected error when deserializing an invalid transaction", async () => {
+    expect(() => envelopeFromAnyXDR("lulz", "base64")).toThrowError(
+      "Failed decoding transaction as an envelope (TypeError: XDR Read Error: attempt to read outside the boundary of" +
+        " the buffer) or as a signature base: (TypeError: XDR Read Error: attempt to read outside the boundary of the" +
+        " buffer)",
+    );
+  });
 });

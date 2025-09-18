@@ -1,3 +1,109 @@
+# 2.128.1
+
+This release includes small security improvements, UI tweaks, and minor bug fixes.
+
+# 2.128.0
+
+This release includes small security improvements, UI tweaks, and minor bug fixes.
+
+# 2.126.2
+
+We fixed an issue that prevented Nano S users to send or swap USDT/stETH ERC-20 tokens
+
+# 2.126.1
+
+We fixed an issue that prevented Nano S users to send or swap USDT/stETH ERC-20 tokens
+
+# 2.126.0
+
+### 🌷 Improvements
+
+We've improved some error labels about device connectivity issues. You will now get clearer, more useful messages if something goes wrong.
+
+### 🐛 Fix
+
+Resolved an issue that could cause significant slowdowns during app startup and overall responsiveness. Things should feel snappier now.
+
+# 2.124.0
+
+This release includes small security improvements, UI tweaks, and minor bug fixes.
+
+# 2.122.1
+
+This release includes small security improvements, UI tweaks, and minor bug fixes.
+
+# 2.122.0
+
+This release includes small security improvements, UI tweaks, and minor bug fixes.
+
+# 2.120.1
+
+This release includes small security improvements, UI tweaks, and minor bug fixes.
+
+# 2.120.0
+
+### 🌷 Improvements
+
+This update brings connectivity improvements.
+
+# 2.118.1
+
+### 🐛 Fix
+
+Fixed a bug that prevented a new Aptos account from being added to Ledger Live.
+
+# 2.118.0
+
+This release includes small security improvements, UI tweaks, and minor bug fixes.
+
+# 2.117.0
+
+### 🌷 Improvements
+
+Solana accounts created with Phantom are now visible in Ledger Live.
+With this update, we now support Casper Network v2.
+
+### 🐛 Fixes
+
+Fixed a bug that prevented SUI funded wallets from being added to Ledger Live.
+
+# 2.115.0
+
+### 🐛 Fixes
+
+Resolved issue preventing send of USDT ERC-20 on Ledger Nano-S.
+
+Resolved issue preventing users to add an Avalanche or Ethereum Classic account.
+
+# 2.113.2
+
+This release includes small security improvements, UI tweaks, and minor bug fixes.
+
+# 2.113.1
+
+We have resolved an issue that was affecting several Ledger Live services for Ledger Nano S users.
+The following functionalities are now fully restored
+
+- Swapping EVM tokens
+- Topping up the CL Card with EVM
+- Selling EVM tokens
+
+# 2.113.0
+
+This release includes small security improvements, UI tweaks, and minor bug fixes.
+
+# 2.111.0
+
+This release includes small security improvements, UI tweaks, and minor bug fixes.
+
+# 2.109.0
+
+Addressed a bug affecting the reliability of Zcash transaction processing.
+
+# 2.107.0
+
+This release includes small security improvements, UI tweaks, and minor bug fixes.
+
 # 2.106.0
 
 This release includes small security improvements, UI tweaks, and minor bug fixes.
@@ -48,7 +154,7 @@ This release includes minor bug fixes.
 
 # 2.91.0
 
-Ledger Sync is now available on desktop! Easily sync your Ledger Live accounts across devices for seamless access. To enable Ledger Sync, go to Settings  > General tab > Ledger Sync, then click Manage. Ensure you have the latest Ledger Live and OS versions to get started, with full data encryption for security.
+Ledger Sync is now available on desktop! Easily sync your Ledger Live accounts across devices for seamless access. To enable Ledger Sync, go to Settings > General tab > Ledger Sync, then click Manage. Ensure you have the latest Ledger Live and OS versions to get started, with full data encryption for security.
 To Learn more about Ledger Sync, see our article [here](https://support.ledger.com/article/How-to-synchronize-your-Ledger-Live-accounts-with-Ledger-Sync).
 
 # 2.89.1

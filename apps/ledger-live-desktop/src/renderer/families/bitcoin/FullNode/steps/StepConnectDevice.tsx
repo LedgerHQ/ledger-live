@@ -13,15 +13,12 @@ import BigSpinner from "~/renderer/components/BigSpinner";
 import Text from "~/renderer/components/Text";
 import OpenUserDataDirectoryBtn from "~/renderer/components/OpenUserDataDirectoryBtn";
 import { Trans } from "react-i18next";
-import { createAction } from "@ledgerhq/live-common/hw/actions/app";
-import connectApp from "@ledgerhq/live-common/hw/connectApp";
-import { getEnv } from "@ledgerhq/live-env";
-import { mockedEventEmitter } from "~/renderer/components/debug/DebugMock";
 import { FullNodeSteps, ConnectionStatus, CheckWrapper, connectionStatus } from "..";
 import IconCheck from "~/renderer/icons/Check";
 import { Device } from "@ledgerhq/types-devices";
 import { ScannedDescriptor } from "../../types";
-const action = createAction(getEnv("MOCK") ? mockedEventEmitter : connectApp);
+import useConnectAppAction from "~/renderer/hooks/useConnectAppAction";
+
 const StepConnectDevice = ({
   setScannedDescriptors,
   numberOfAccountsToScan,
@@ -35,6 +32,8 @@ const StepConnectDevice = ({
   const [device, setDevice] = useState<Device>(null);
   const [scanStatus, setScanStatus] = useState<ConnectionStatus>(connectionStatus.IDLE);
   const request = useMemo(() => ({ currency }), [currency]);
+  const action = useConnectAppAction();
+
   useEffect(() => {
     if (device) {
       const sub = scanDescriptors(

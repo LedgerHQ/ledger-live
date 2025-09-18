@@ -17,3 +17,4 @@ export * from "./messages";
 export * from "./swap";
 export * from "./ABTesting";
 export * from "./walletSync";
+export * from "./crypto-assets";

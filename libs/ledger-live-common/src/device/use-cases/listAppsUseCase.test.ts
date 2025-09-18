@@ -1,7 +1,7 @@
 import { listAppsUseCase } from "./listAppsUseCase";
 import Transport from "@ledgerhq/hw-transport";
 import { DeviceInfo } from "@ledgerhq/types-live";
-import { HttpManagerApiRepository } from "./screenSpecs";
+import { HttpManagerApiRepository } from "@ledgerhq/device-core";
 
 const listAppsModule = jest.requireActual("../../apps/listApps");
 

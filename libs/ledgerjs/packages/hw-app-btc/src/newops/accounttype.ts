@@ -1,5 +1,25 @@
 import { crypto } from "bitcoinjs-lib";
-import { pointAddScalar } from "tiny-secp256k1";
+import { secp256k1 } from "@noble/curves/secp256k1";
+
+// Helper function to convert bytes to bigint for scalar operations
+function bytesToBigInt(bytes: Uint8Array): bigint {
+  const hex = Array.from(bytes)
+    .map(b => b.toString(16).padStart(2, "0"))
+    .join("");
+  return BigInt("0x" + hex);
+}
+
+// Replacement for pointAddScalar from tiny-secp256k1
+function pointAddScalar(point: Uint8Array, scalar: Uint8Array): Uint8Array | null {
+  try {
+    const p = secp256k1.ProjectivePoint.fromHex(point);
+    const s = bytesToBigInt(scalar);
+    const result = p.add(secp256k1.ProjectivePoint.BASE.multiply(s));
+    return result.toRawBytes(point.length === 33);
+  } catch {
+    return null;
+  }
+}
 import { BufferWriter } from "../buffertools";
 import { HASH_SIZE, OP_CHECKSIG, OP_DUP, OP_EQUAL, OP_EQUALVERIFY, OP_HASH160 } from "../constants";
 import { hashPublicKey } from "../hashPublicKey";
@@ -227,7 +247,9 @@ export class p2tr extends SingleKeyAccount {
     const tweak = this.hashTapTweak(internalPubkey);
 
     // Q = P + int(hash_TapTweak(bytes(P)))G
-    const outputEcdsaKey = Buffer.from(pointAddScalar(evenEcdsaPubkey, tweak));
+    const tweakedKey = pointAddScalar(evenEcdsaPubkey, tweak);
+    if (!tweakedKey) throw new Error("Point addition failed");
+    const outputEcdsaKey = Buffer.from(tweakedKey);
     // Convert to schnorr.
     const outputSchnorrKey = outputEcdsaKey.slice(1);
     // Create address

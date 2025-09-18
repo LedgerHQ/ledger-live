@@ -3,7 +3,7 @@ import { getEnv, setEnv } from "@ledgerhq/live-env";
 import network from "@ledgerhq/live-network/network";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import BigNumber from "bignumber.js";
-import { getGasOptions } from "../../../../api/gasTracker/ledger";
+import { getGasOptions } from "../../../../network/gasTracker/ledger";
 import { LedgerGasTrackerUsedIncorrectly, NoGasTrackerFound } from "../../../../errors";
 import { GasOptions } from "../../../../types";
 import { getCoinConfig } from "../../../../config";
@@ -42,7 +42,7 @@ describe("EVM Family", () => {
     });
   });
 
-  describe("api/gasTracker/index.ts", () => {
+  describe("network/gasTracker/index.ts", () => {
     const originalEIP1559_BASE_FEE_MULTIPLIER: number = getEnv("EIP1559_BASE_FEE_MULTIPLIER");
 
     beforeAll(() => {

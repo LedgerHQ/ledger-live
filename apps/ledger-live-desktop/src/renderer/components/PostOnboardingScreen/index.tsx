@@ -55,7 +55,7 @@ const PostOnboardingScreen = () => {
               })}
         </Text>
       </Flex>
-      <Flex flex={1} paddingRight={100} paddingLeft={50}>
+      <Flex flex={1} paddingRight={100} paddingLeft={50} paddingTop={50} overflow="auto">
         <PostOnboardingHubContent />
       </Flex>
     </Flex>

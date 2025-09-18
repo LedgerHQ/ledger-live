@@ -65,7 +65,7 @@ export const expectedToFieldForTokenTransfer = (recipient: string) => {
   let value = recipient;
   const equivalent = getEquivalentAddress(value);
 
-  if (equivalent && value != equivalent) {
+  if (equivalent && value !== equivalent) {
     value += ` / ${equivalent}`;
   }
 

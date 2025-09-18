@@ -93,7 +93,10 @@ const NanoXScreen = ({ active, display, error, ...props }: Props) => {
           transform="translate(-40 -6)"
         />
         <g id="NanoXScreen-screen-content" opacity={active ? 1 : 0}>
-          {display ? screens[display as keyof typeof screens] : null}
+          {display
+            ? // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+              screens[display as keyof typeof screens]
+            : null}
         </g>
       </g>
     </ScreenSVG>

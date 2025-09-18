@@ -4,6 +4,7 @@ import { DeviceModelId, getDeviceModel } from "@ledgerhq/devices";
 import { Flex } from "@ledgerhq/react-ui";
 import { DeviceSelectorOption } from "./DeviceSelectorOption";
 import DeviceIllustration from "~/renderer/components/DeviceIllustration";
+import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 
 const DeviceSelectContainer = styled(Flex).attrs({
   flexDirection: "row",
@@ -12,19 +13,20 @@ const DeviceSelectContainer = styled(Flex).attrs({
   height: "100%",
 })``;
 
-const allDevicesModelIds = [
-  DeviceModelId.stax,
-  DeviceModelId.europa,
-  DeviceModelId.nanoS,
-  DeviceModelId.nanoSP,
-  DeviceModelId.nanoX,
-];
-
-interface DeviceSelectorProps {
-  onClick: (arg1: DeviceModelId) => void;
-}
+type DeviceSelectorProps = {
+  onClick(deviceModelId: DeviceModelId): void;
+};
 
 export function DeviceSelector({ onClick }: DeviceSelectorProps) {
+  const isApexSupported = useFeature("supportDeviceApex")?.enabled ?? false;
+  const allDevicesModelIds: DeviceModelId[] = [
+    DeviceModelId.stax,
+    DeviceModelId.europa,
+    ...(isApexSupported ? [DeviceModelId.apex] : []),
+    DeviceModelId.nanoS,
+    DeviceModelId.nanoSP,
+    DeviceModelId.nanoX,
+  ];
   return (
     <DeviceSelectContainer>
       {allDevicesModelIds.map((deviceModelId, index, arr) => (
@@ -32,8 +34,8 @@ export function DeviceSelector({ onClick }: DeviceSelectorProps) {
           id={`device-${deviceModelId}`}
           key={deviceModelId}
           label={getDeviceModel(deviceModelId).productName}
-          Illu={<DeviceIllustration deviceId={deviceModelId as DeviceModelId} />}
-          onClick={() => onClick(deviceModelId as DeviceModelId)}
+          illustration={<DeviceIllustration deviceId={deviceModelId} />}
+          onClick={() => onClick(deviceModelId)}
           isFirst={index === 0}
           isLast={index === arr.length - 1}
         />

@@ -1,4 +1,4 @@
-name: "Bot Super Report (custom)"
+name: "[Coin] - Bot Super Report - Manual"
 on:
   workflow_dispatch:
     inputs:

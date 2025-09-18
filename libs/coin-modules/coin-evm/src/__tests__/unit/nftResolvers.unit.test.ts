@@ -1,7 +1,7 @@
 import { AssertionError, fail } from "assert";
 import axios from "axios";
 import { NFTMetadata } from "@ledgerhq/types-live";
-import { collectionMetadata, nftMetadata } from "../../nftResolvers";
+import { collectionMetadata, nftMetadata } from "../../bridge/nftResolvers";
 
 jest.mock("axios");
 const mockedAxios = jest.mocked(axios);

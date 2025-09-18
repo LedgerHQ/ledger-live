@@ -15,6 +15,7 @@ export type AdditionalProviderConfig = SwapProviderConfig & { type: "DEX" | "CEX
   version?: number;
   termsOfUseUrl: string;
   supportUrl: string;
+  usefulUrls?: string[];
   mainUrl: string;
   useInExchangeApp: boolean;
   displayName: string;
@@ -39,9 +40,40 @@ const DEFAULT_SWAP_PROVIDERS: Record<string, ProviderConfig & Partial<Additional
     needsKYC: false,
     needsBearerToken: false,
     type: "CEX",
+    usefulUrls: [
+      "https://changelly.com/terms-of-use",
+      "https://changelly.com/aml-kyc",
+      "https://support.changelly.com/en/support/tickets/new",
+    ],
     termsOfUseUrl: "https://changelly.com/terms-of-use",
     supportUrl: "https://support.changelly.com/en/support/home",
     mainUrl: "https://changelly.com/",
+  },
+  changelly_v2: {
+    name: "Changelly",
+    publicKey: {
+      curve: "secp256k1",
+      data: Buffer.from(
+        "0480d7c0d3a9183597395f58dda05999328da6f18fabd5cda0aff8e8e3fc633436a2dbf48ecb23d40df7c3c7d3e774b77b4b5df0e9f7e08cf1cdf2dba788eb085b",
+        "hex",
+      ),
+    },
+    signature: Buffer.from(
+      "3045022100c2db00da651cfcc84702f75ab5f131a3f037592080ea750a6f665a8cb36797c802200e594938cdf2c836b34717f57487002a0588f2088f64f00a6c4d320fd37db6fa",
+      "hex",
+    ),
+    needsKYC: false,
+    needsBearerToken: false,
+    type: "CEX",
+    usefulUrls: [
+      "https://changelly.com/terms-of-use",
+      "https://changelly.com/aml-kyc",
+      "https://support.changelly.com/en/support/tickets/new",
+    ],
+    termsOfUseUrl: "https://changelly.com/terms-of-use",
+    supportUrl: "https://support.changelly.com/en/support/home",
+    mainUrl: "https://changelly.com/",
+    version: 2,
   },
   exodus: {
     name: "exodus",
@@ -141,6 +173,27 @@ const DEFAULT_SWAP_PROVIDERS: Record<string, ProviderConfig & Partial<Additional
       "hex",
     ),
   },
+  nearintents: {
+    type: "CEX",
+    name: "NEAR Intents",
+    needsBearerToken: false,
+    termsOfUseUrl: "https://docs.thorswap.finance/thorswap/resources/terms-of-service",
+    supportUrl: "https://ledgerhelp.swapkit.dev/",
+    mainUrl: "https://www.thorswap.finance/",
+    needsKYC: false,
+    version: 2,
+    publicKey: {
+      curve: "secp256r1",
+      data: Buffer.from(
+        "0480a453a91e728c5f622d966b90d15de6fdb6c267bb8147dd0e0d4e1c730d631594e724aaf2b2f526600f3713ce6bc2adbfdbaafd2121bfee64fce93fd59a9050",
+        "hex",
+      ),
+    },
+    signature: Buffer.from(
+      "30440220331fca95bc6b8cf2264d72a0da9d791888c4ead9ed02bee4f6525f7e512911ca02204a78d416baa7b3fc8d6a82abbadda2e096abcbfa9a57769a8a20260d3e553b7d",
+      "hex",
+    ),
+  },
   lifi: {
     type: "CEX",
     name: "lifi",
@@ -162,10 +215,19 @@ const DEFAULT_SWAP_PROVIDERS: Record<string, ProviderConfig & Partial<Additional
       "hex",
     ),
   },
+  velora: {
+    type: "DEX",
+    needsKYC: false,
+    needsBearerToken: false,
+    termsOfUseUrl: "https://files.paraswap.io/tos_v4.pdf",
+    supportUrl: "https://help.paraswap.io/en/",
+    mainUrl: "https://www.velora.xyz/",
+  },
 };
 
 export const dexProvidersContractAddress: { [key: string]: string } = {
-  "0x3fC91A3afd70395Cd496C647d5a6CC9D4B2b7FAD": "Uniswap",
+  "0x3fc91a3afd70395cd496c647d5a6cc9d4b2b7fad": "Uniswap",
+  "0x111111125421ca6dc452d289314280a0f8842a65": "1inch",
 };
 
 export const termsOfUse: { [key: string]: string } = {

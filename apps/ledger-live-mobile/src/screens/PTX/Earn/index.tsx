@@ -1,29 +1,35 @@
-import React, { memo } from "react";
-import { useLocalLiveAppManifest } from "@ledgerhq/live-common/wallet-api/LocalLiveAppProvider/index";
+import { stakeProgramsToEarnParam } from "@ledgerhq/live-common/featureFlags/stakePrograms/index";
+import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
+import { DEFAULT_FEATURES } from "@ledgerhq/live-common/featureFlags/index";
 import {
   useRemoteLiveAppContext,
   useRemoteLiveAppManifest,
 } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
-import TabBarSafeAreaView from "~/components/TabBar/TabBarSafeAreaView";
-import { useTheme } from "styled-components/native";
+import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
+import { useLocalLiveAppManifest } from "@ledgerhq/live-common/wallet-api/LocalLiveAppProvider/index";
 import { Flex, InfiniteLoader } from "@ledgerhq/native-ui";
+import React, { Fragment, memo, useMemo } from "react";
+import { Platform } from "react-native";
+import { useSelector } from "react-redux";
+import { useTheme } from "styled-components/native";
 import TrackScreen from "~/analytics/TrackScreen";
 import GenericErrorView from "~/components/GenericErrorView";
-import { WebPTXPlayer } from "~/components/WebPTXPlayer";
 import { EarnLiveAppNavigatorParamList } from "~/components/RootNavigator/types/EarnLiveAppNavigator";
 import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
+import TabBarSafeAreaView from "~/components/TabBar/TabBarSafeAreaView";
 import { ScreenName } from "~/const";
-import { counterValueCurrencySelector, discreetModeSelector } from "~/reducers/settings";
-import { useSelector } from "react-redux";
-import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
-import { useSettings } from "~/hooks";
-import { Platform } from "react-native";
 import { getCountryLocale } from "~/helpers/getStakeLabelLocaleBased";
+import { useSettings } from "~/hooks";
+import { counterValueCurrencySelector, discreetModeSelector } from "~/reducers/settings";
+import { EarnWebview } from "./EarnWebview";
+import { useVersionedStakePrograms } from "LLM/hooks/useStake/useVersionedStakePrograms";
 
 export type Props = StackNavigatorProps<EarnLiveAppNavigatorParamList, ScreenName.Earn>;
 
 const appManifestNotFoundError = new Error("Earn App not found");
-const DEFAULT_EARN_APP_ID = "earn";
+
+const DEFAULT_MANIFEST_ID =
+  process.env.DEFAULT_EARN_MANIFEST_ID || DEFAULT_FEATURES.ptxEarnLiveApp.params?.manifest_id;
 
 export const EarnScreen = memo(Earn);
 
@@ -33,28 +39,43 @@ function Earn({ route }: Props) {
   const { ticker: currencyTicker } = useSelector(counterValueCurrencySelector);
   const discreet = useSelector(discreetModeSelector);
   const { platform: appId, ...params } = route.params || {};
-  const searchParams = route.path
-    ? new URL("ledgerlive://" + route.path).searchParams
-    : new URLSearchParams();
+  const searchParams = useMemo(
+    () => (route.path ? new URL("ledgerlive://" + route.path).searchParams : new URLSearchParams()),
+    [route.path],
+  );
+  const hideMainNavigator = useMemo(
+    () => ["deposit", "withdraw"].includes(params?.intent ?? ""),
+    [params],
+  );
 
-  const localManifest: LiveAppManifest | undefined = useLocalLiveAppManifest(DEFAULT_EARN_APP_ID);
-  const remoteManifest: LiveAppManifest | undefined = useRemoteLiveAppManifest(DEFAULT_EARN_APP_ID);
+  const earnFlag = useFeature("ptxEarnLiveApp");
+  const earnManifestId = earnFlag?.enabled ? earnFlag.params?.manifest_id : DEFAULT_MANIFEST_ID;
+  const localManifest: LiveAppManifest | undefined = useLocalLiveAppManifest(earnManifestId);
+  const remoteManifest: LiveAppManifest | undefined = useRemoteLiveAppManifest(earnManifestId);
   const { state: remoteLiveAppState } = useRemoteLiveAppContext();
 
   const manifest: LiveAppManifest | undefined = !localManifest ? remoteManifest : localManifest;
   const countryLocale = getCountryLocale();
+
+  const stakePrograms = useVersionedStakePrograms();
+  const { stakeProgramsParam } = useMemo(
+    () => stakeProgramsToEarnParam(stakePrograms),
+    [stakePrograms],
+  );
+  const stakeCurrenciesParam = useMemo(() => stakePrograms?.params?.list, [stakePrograms]);
 
   if (!remoteLiveAppState.isLoading && !manifest) {
     // We want to track occurrences of this error in Sentry
     console.error(appManifestNotFoundError);
   }
 
+  const Container = hideMainNavigator ? Fragment : TabBarSafeAreaView;
+
   return manifest ? (
-    <TabBarSafeAreaView>
+    <Container>
       <TrackScreen category="EarnDashboard" name="Earn" />
-      <WebPTXPlayer
+      <EarnWebview
         manifest={manifest}
-        disableHeader
         inputs={{
           theme,
           lang: language,
@@ -62,12 +83,16 @@ function Earn({ route }: Props) {
           countryLocale,
           currencyTicker,
           discreetMode: discreet ? "true" : "false",
+          stakeProgramsParam: stakeProgramsParam ? JSON.stringify(stakeProgramsParam) : undefined,
+          stakeCurrenciesParam: stakeCurrenciesParam?.length
+            ? JSON.stringify(stakeCurrenciesParam)
+            : undefined,
           OS: Platform.OS,
           ...params,
           ...Object.fromEntries(searchParams.entries()),
         }}
       />
-    </TabBarSafeAreaView>
+    </Container>
   ) : (
     <Flex flex={1} p={10} justifyContent="center" alignItems="center">
       {remoteLiveAppState.isLoading ? (

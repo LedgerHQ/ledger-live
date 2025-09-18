@@ -100,6 +100,6 @@ describe("WalletSyncActivation", () => {
     });
 
     expect(await screen.findByText(/Turn on Ledger Sync for this phone/i)).toBeVisible();
-    expect(screen.queryByText(/How does Ledger Sync work?/i)).toBeUndefined;
+    expect(screen.queryByText(/How does Ledger Sync work?/i)).toBeNull();
   });
 });
