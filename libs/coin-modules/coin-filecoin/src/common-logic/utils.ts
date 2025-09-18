@@ -1,7 +1,13 @@
 import { Account, Operation } from "@ledgerhq/types-live";
 import type { Unit } from "@ledgerhq/types-cryptoassets";
 import { BigNumber } from "bignumber.js";
-import { BroadcastTransactionRequest, TransactionResponse, TxStatus, Transaction } from "../types";
+import {
+  BroadcastTransactionRequest,
+  TransactionResponse,
+  TxStatus,
+  Transaction,
+  FeeData,
+} from "../types";
 import { GetAccountShape, AccountShapeInfo } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { fetchBalances, fetchBlockHeight, fetchTxsWithPages } from "../api/api";
 import { encodeAccountId } from "@ledgerhq/coin-framework/account";
@@ -12,11 +18,13 @@ import { buildTokenAccounts } from "../erc20/tokenAccounts";
 export const mapTxToOps =
   (accountId: string, { address }: AccountShapeInfo) =>
   (tx: TransactionResponse): Operation[] => {
-    const { to, from, hash, timestamp, amount, fee, status } = tx;
+    const { to, from, hash, timestamp, amount, fee_data: feeDataRaw, status } = tx;
+    const feeData: FeeData | undefined = feeDataRaw ? JSON.parse(feeDataRaw) : undefined;
+
     const ops: Operation[] = [];
     const date = new Date(timestamp * 1000);
     const value = new BigNumber(amount);
-    const feeToUse = new BigNumber(fee || 0);
+    const feeToUse = new BigNumber(feeData?.TotalCost || 0);
 
     const isSending = address === from;
     const isReceiving = address === to;
