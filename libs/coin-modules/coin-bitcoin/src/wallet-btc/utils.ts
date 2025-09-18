@@ -139,6 +139,18 @@ export function maxTxSize(
   return txWeight / 4;
 }
 
+// export function maxTxSizeCeil(
+//   inputCount: number,
+//   outputScripts: Buffer[],
+//   includeChange: boolean,
+//   currency: ICrypto,
+//   derivationMode: string,
+// ): number {
+//   const s = maxTxSize(inputCount, outputScripts, includeChange, currency, derivationMode);
+//   // console.log({ maxTxsSizeCeils: s, maxTxsSizeCeiled: Math.ceil(s) });
+//
+//   return Math.ceil(s);
+// }
 export function maxTxSizeCeil(
   inputCount: number,
   outputScripts: Buffer[],
@@ -146,10 +158,9 @@ export function maxTxSizeCeil(
   currency: ICrypto,
   derivationMode: string,
 ): number {
-  const s = maxTxSize(inputCount, outputScripts, includeChange, currency, derivationMode);
-  // console.log({ maxTxsSizeCeils: s, maxTxsSizeCeiled: Math.ceil(s) });
-
-  return Math.ceil(s);
+  return vbytesCeilFromWeight(
+    maxTxWeight(inputCount, outputScripts, includeChange, currency, derivationMode),
+  );
 }
 
 // refer to https://github.com/LedgerHQ/lib-ledger-core/blob/fc9d762b83fc2b269d072b662065747a64ab2816/core/src/wallet/bitcoin/api_impl/BitcoinLikeTransactionApi.cpp#L253
@@ -195,4 +206,82 @@ export function writeVarInt(buffer: Buffer, i: number, offset: number): number {
   varuint.encode(i, buffer, offset);
   offset += varuint.encode.bytes;
   return offset;
+}
+
+// --- NEW: exact weight helpers (no floats) ---
+export function maxTxWeight(
+  inputCount: number,
+  outputScripts: Buffer[],
+  includeChange: boolean,
+  currency: ICrypto,
+  derivationMode: string,
+): number {
+  const fixed = fixedWeight(currency, derivationMode); // already in WU
+  let outputsWeight = byteSize(outputScripts.length) * baseByte; // varint count (WU)
+  outputScripts.forEach(script => {
+    // outputSize() returns bytes; multiply by baseByte (4) to get WU
+    outputsWeight += outputSize(currency, script) * baseByte;
+  });
+  if (includeChange) {
+    outputsWeight += outputWeight(derivationMode); // already in WU
+  }
+
+  let inputsWeight = byteSize(inputCount) * baseByte; // varint count
+  inputsWeight += inputWeight(derivationMode) * inputCount; // mixed witness/non-witness handled inside
+
+  // Decred extra WU as before
+  if (currency.network.name === "Decred") {
+    inputsWeight += 64 * inputCount;
+  }
+
+  return fixed + inputsWeight + outputsWeight; // integer WU
+}
+
+/** Convert integer weight (WU) to vbytes ceil without FP. */
+export function vbytesCeilFromWeight(weightWU: number): number {
+  // ceil(weight/4) = (weight + 3) >> 2
+  return (weightWU + 3) >> 2;
+}
+
+/** Exact vbytes ceil for a full tx (no FP). */
+export function maxTxVBytesCeil(
+  inputCount: number,
+  outputScripts: Buffer[],
+  includeChange: boolean,
+  currency: ICrypto,
+  derivationMode: string,
+): number {
+  return vbytesCeilFromWeight(
+    maxTxWeight(inputCount, outputScripts, includeChange, currency, derivationMode),
+  );
+}
+
+/** Safe deltas (ceil) for one input / one output in current derivation. */
+export function deltaInputVBytesCeil(currency: ICrypto, derivationMode: string): number {
+  const baseWU = maxTxWeight(0, [], false, currency, derivationMode);
+  const oneInputWU = maxTxWeight(1, [], false, currency, derivationMode);
+  return vbytesCeilFromWeight(oneInputWU - baseWU);
+}
+
+export function deltaOutputVBytesCeil(
+  currency: ICrypto,
+  derivationMode: string,
+  exampleOutputScript?: Buffer, // if provided, we use it; else derive from derivationMode
+): number {
+  const script =
+    exampleOutputScript ??
+    // generic single-recipient script size per derivation (matches outputWeight branches)
+    Buffer.alloc(
+      derivationMode === DerivationModes.TAPROOT
+        ? 34
+        : derivationMode === DerivationModes.NATIVE_SEGWIT
+          ? 22
+          : derivationMode === DerivationModes.SEGWIT
+            ? 23
+            : 25, // LEGACY
+    );
+
+  const baseWU = maxTxWeight(0, [], false, currency, derivationMode);
+  const withOneWU = maxTxWeight(0, [script], false, currency, derivationMode);
+  return vbytesCeilFromWeight(withOneWU - baseWU);
 }
