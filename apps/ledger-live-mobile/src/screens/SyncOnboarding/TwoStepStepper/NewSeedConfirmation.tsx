@@ -31,13 +31,13 @@ const NewSeedConfirmation = ({ handlePress, seedConfiguration }: Props) => {
         <NewSeedIllustration />
       </Flex>
       <Text variant="paragraph" color="neutral.c70" textAlign="center" mt={3}>
-        <Trans i18nKey="onboarding.newSeed.subtitle" />
+        <Trans i18nKey="syncOnboarding.newSeed.subtitle" />
       </Text>
       <Button mb={3} mt={6} size="small" type="main" onPress={handleConfirm}>
-        <Trans i18nKey="onboarding.newSeed.installCTA" />
+        <Trans i18nKey="syncOnboarding.newSeed.installCTA" />
       </Button>
       <Button size="small" onPress={handleSkip}>
-        <Trans i18nKey="onboarding.newSeed.skipCTA" />
+        <Trans i18nKey="syncOnboarding.newSeed.skipCTA" />
       </Button>
     </Flex>
   );
