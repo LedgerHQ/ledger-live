@@ -1625,6 +1625,11 @@
       "installCTA" : "Apps installieren",
       "skipCTA" : "Ich mache das später"
     },
+    "newSeed" : {
+      "subtitle" : "Du kannst Kryptos von jeder Börse oder Wallet nach Ledger Wallet übertragen, um maximale Sicherheit zu garantieren.",
+      "installCTA" : "Meine Kryptos schützen",
+      "skipCTA" : "Vielleicht später"
+    },
     "ongoing" : {
       "resolving" : "Auflösen von Abhängigkeiten",
       "progress" : "Bleibe auf Ledger Live, während die Apps installiert werden.",
@@ -2156,26 +2161,6 @@
         "learnHowToUpdate" : "Erfahren Sie, wie Sie aktualisieren können"
       }
     },
-    "stepImportAccounts" : {
-      "title" : "Krypto vom Desktop synchronisieren",
-      "desc" : "Wenn Sie Ihre Kryptowährungen bereits in der Ledger-Desktop-App eingerichtet haben, können Sie diese synchronisieren, um sie von Ihrem Smartphone aus zu verwalten.",
-      "cta" : "Ich bin bereit zum Scannen",
-      "bullets" : {
-        "0" : {
-          "label" : "Wählen Sie in der Desktop-App <1>Einstellungen > Konten > Kontoexport</1>."
-        },
-        "1" : {
-        },
-        "2" : {
-          "label" : "Wählen Sie die zu importierenden Krypto-Konten aus."
-        }
-      },
-      "warning" : {
-        "title" : "Ihre Desktop- und Mobil-Apps müssen manuell synchronisiert werden.",
-        "desc" : "Ledger Live respektiert Ihre Privatsphäre und speichert Ihre Daten lokal. Wenn Sie Konten und Einstellungen auf Ihrem Telefon ändern, müssen Sie dies auch auf Ihrem Computer tun und umgekehrt. Ihre Transaktionen bleiben mit der Blockchain synchronisiert.",
-        "cta" : "Verstanden!"
-      }
-    },
     "stepSetupPin" : {
       "step1" : "Schalten Sie Ihren {{fullDeviceName}} ein und folgen Sie den Anweisungen.",
       "step1-nanoS" : "Verbinden Sie Ihren {{fullDeviceName}} über ein OTG-Kabel mit Ihrem Smartphone.",
@@ -2280,6 +2265,9 @@
         "continueCTA" : "Weiter",
         "contactSupportCTA" : "Support kontaktieren"
       }
+    },
+    "completionScreen" : {
+      "title" : "Jetzt hast du die volle Kontrolle"
     }
   },
   "blePairingFlow" : {
@@ -2410,6 +2398,8 @@
   },
   "syncOnboarding" : {
     "title" : "{{productName}} bereithalten",
+    "twoStepTitle" : "Los geht's!",
+    "firstStepReadyTitle" : "{{productName}} ist bereit",
     "estimatedTimeFormat" : "{{estimatedTime}} Min.",
     "deviceSelection" : {
       "title" : "Wähle das Ledger-Gerät aus, das du einrichten möchtest:",
@@ -2527,6 +2517,10 @@
       "newSeedContinueOnDevice" : "Befolge die Anweisungen auf deiner {{productName}}",
       "recovery" : "Schütze deine Vermögenswerte optimal mithilfe einer von einem Ledger-Gerät generierten geheimen Wiederherstellungsphrase. \n\nDu hast keine solche Phrase? Dann kannst du mit deinem {{productName}}-Gerät eine neue Phrase generieren."
     },
+    "secureCryptoStep" : {
+      "title" : "Deine Kryptos schützen",
+      "doneSubTitle" : "Deine Blockchain-Apps sind installiert."
+    },
     "backup" : {
       "title" : "Sicherheitskopie für deine geheime Wiederherstellungsphrase",
       "description" : "Mit einer digital verschlüsselten Sicherheitskopie kannst du den Zugang zu deiner Wallet wiederherstellen – auch ohne deine geheime Wiederherstellungsphrase.\n\nWähl aus, ob du eine digitale Sicherheitskopie möchtest:",
@@ -2554,6 +2548,9 @@
     },
     "completion" : {
       "title" : "Jetzt haben Sie alles unter Kontrolle"
+    },
+    "successStep" : {
+      "title" : "Deine {{productName}} ist nun einsatzbereit, um deine digitalen Assets zu schützen"
     }
   },
   "tabs" : {
@@ -2855,8 +2852,8 @@
       "contactSupport" : "Support kontaktieren"
     },
     "willBedeprecatedBanner" : {
-      "title" : "Um die Effizienz zu steigern, wird {{currencyName}} ab dem {{deprecatedDate}} nicht mehr in Ledger Live unterstützt. Auf den Hardware-Wallets von Ledger bleibt die Unterstützung jedoch bestehen. Wenn du Hilfe benötigst, wende dich bitte an den Ledger-Kundenservice.",
-      "contactSupport" : "Support kontaktieren"
+      "title" : "{{currencyName}} wird ab dem {{deprecatedDate}} nicht mehr in Ledger Live unterstützt. Auf Ledger-Hardware-Wallets bleibt die Unterstützung jedoch erhalten. Ausführliche Informationen findest du im nachstehend verlinkten Artikel im Hilfe-Center.",
+      "learnMore" : "Weitere Informationen"
     },
     "tokens" : {
       "contractAddress" : "Vertragsadresse",
@@ -3769,6 +3766,10 @@
       "twoStepApproval" : {
         "title" : "Schritte erledigen"
       },
+      "loader" : {
+        "title" : "Swap wird verarbeitet",
+        "description" : "Bitte warte, während wir deine Anfrage bearbeiten."
+      },
       "history" : {
         "title" : "Swap-Verlauf"
       },
@@ -4441,7 +4442,7 @@
     "confirmSwap" : {
       "title" : "Swap-Vorgang auf dem Gerät bestätigen",
       "alert" : {
-        "default" : "Überprüfen Sie die Details des Tauschs auf Ihrem Gerät, bevor Sie sie senden. Die Adressen werden sicher ausgetauscht, sodass Sie diese nicht verifizieren müssen.",
+        "default" : "Verifiziere die Swap-Details auf deiner Ledger, bevor du sie sendest.",
         "provider" : "Verifizieren Sie die Swap-Details auf Ihrem Gerät, bevor Sie diese senden. {{providerName}} muss möglicherweise eine zusätzliche Überprüfung für einige Transaktionen durchführen, was zu einer Verzögerung führen kann."
       },
       "acceptTerms" : "Durch Validieren dieser Transaktion stimme ich den\n<0>Nutzungsbedingungen von <0>{{provider}}</0> zu</0>",
@@ -7960,7 +7961,13 @@
     "searchPlaceholder" : "Suche",
     "emptyAssetList" : "Keine Assets gefunden",
     "accountCount" : "{{count}} Konto",
-    "accountCount_plural" : "{{count}} Konten"
+    "accountCount_plural" : "{{count}} Konten",
+    "errors" : {
+      "title" : "Verbindung fehlgeschlagen",
+      "backend" : "Bei uns ist ein Problem aufgetreten. Versuche es bitte später noch einmal.",
+      "internet" : "Keine Internetverbindung. Bitte versuche es noch einmal.",
+      "cta" : "Wiederholen"
+    }
   },
   "swapErrors" : {
     "incorrectCommandData" : {
