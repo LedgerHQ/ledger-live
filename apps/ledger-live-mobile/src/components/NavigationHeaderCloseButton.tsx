@@ -92,6 +92,7 @@ type AdvancedProps = {
   confirmCTAConfig?: Partial<CtaConfig>;
   confirmButtonText?: React.ReactNode;
   rejectButtonText?: React.ReactNode;
+  isOnboardingFlow?: boolean;
 };
 
 /**
@@ -117,6 +118,7 @@ export const NavigationHeaderCloseButtonAdvanced: React.FC<AdvancedProps> = Reac
     confirmCTAConfig,
     confirmButtonText,
     rejectButtonText,
+    isOnboardingFlow = false,
   }) => {
     const navigation = useNavigation();
     const [isConfirmationModalOpened, setIsConfirmationModalOpened] = useState(false);
@@ -125,7 +127,7 @@ export const NavigationHeaderCloseButtonAdvanced: React.FC<AdvancedProps> = Reac
     const navigateToPostOnboardingHub = useNavigateToPostOnboardingHubCallback();
 
     const close = useCallback(() => {
-      if (postOnboardingInProgress) {
+      if (postOnboardingInProgress && !isOnboardingFlow) {
         navigateToPostOnboardingHub();
         return;
       }
@@ -140,6 +142,7 @@ export const NavigationHeaderCloseButtonAdvanced: React.FC<AdvancedProps> = Reac
       const parent = navigation.getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>();
       if (parent && "pop" in parent && preferDismiss) {
         const parentNavigation = parent;
+
         if ("canGoBack" in parentNavigation && parentNavigation.canGoBack()) {
           parentNavigation.pop();
           onClose?.();
@@ -160,6 +163,7 @@ export const NavigationHeaderCloseButtonAdvanced: React.FC<AdvancedProps> = Reac
       postOnboardingInProgress,
       preferDismiss,
       skipNavigation,
+      isOnboardingFlow,
     ]);
 
     const openConfirmationModal = useCallback(() => {
