@@ -27,7 +27,6 @@ type Props = {
   onResult: (done: boolean) => void;
   onError?: (error: Error) => void;
   debugLastSeenDeviceModelId?: DeviceModelId;
-  isNewSeed?: boolean;
   seedConfiguration?: SeedOriginType;
 };
 
