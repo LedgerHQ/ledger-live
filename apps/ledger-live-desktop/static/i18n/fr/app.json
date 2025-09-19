@@ -254,7 +254,7 @@
     }
   },
   "byteSize" : {
-    "bytes" : "{{size}} octets",
+    "bytes" : "{{size}} bytes",
     "kbUnit" : "{{size}} Ko",
     "mbUnit" : "{{size}} Mo"
   },
@@ -802,8 +802,8 @@
       "support" : "assistance"
     },
     "willBeDeprecatedBanner" : {
-      "title" : "Pour une meilleure performance, Ledger Live ne prendra plus en charge {{currencyName}} à partir du {{deprecatedDate}}. Cette monnaie restera prise en charge par les wallets physiques Ledger. Veuillez contacter l’Assistance Ledger pour toute question.",
-      "contactSupport" : "Contacter l’Assistance"
+      "title" : "{{currencyName}} ne sera plus pris en charge sur Ledger Live dès le {{deprecatedDate}}. Vos actifs resteront sécurisés par votre wallet physique Ledger. Pour en savoir plus, veuillez consulter l’article du Centre d’aide ci-dessous.",
+      "learnMore" : "En savoir plus"
     },
     "lastOperations" : "Dernières opérations",
     "contractAddress" : "Contrat :",
@@ -937,7 +937,7 @@
     "active" : "Comptes approuvés",
     "lendAsset" : "Prêter",
     "account" : {
-      "amountSupplied" : "Montant déposé",
+      "amountSupplied" : "Montant placé",
       "amountSuppliedTooltip" : "Montant prêté sur le réseau",
       "currencyAPY" : "APY",
       "currencyAPYTooltip" : "Rendement annuel d’un dépôt sans cesse capitalisé",
@@ -979,7 +979,7 @@
       "active" : {
         "accounts" : "Compte",
         "amountSupplied" : "Prêts en cours",
-        "amountSuppliedTooltip" : "Montant déposé sur le réseau",
+        "amountSuppliedTooltip" : "Montant placé sur le réseau",
         "accruedInterests" : "Solde des récompenses",
         "accruedInterestsTooltip" : "Récompenses gagnées sur les prêts",
         "status" : "Statut du compte",
@@ -1927,8 +1927,8 @@
     "listAppsDescription" : "Patientez pendant que nous vérifions que vous avez toutes les apps requises.",
     "swap" : {
       "notice" : {
-        "default" : "Vérifiez les détails de l’échange sur votre appareil avant de l’envoyer. Les adresses sont échangées de manière sécurisée afin que vous n’ayez pas à les vérifier.",
-        "provider" : "Vérifiez les détails de l’échange sur votre appareil avant de l’envoyer. Une vérification supplémentaire peut être effectuée par {{providerName}} pour certaines transactions, entraînant un temps d’attente."
+        "default" : "Vérifiez les détails de l’échange sur votre appareil Ledger avant de le valider. Les adresses sont échangées de manière sécurisée afin que vous n’ayez pas à les vérifier.",
+        "provider" : "Vérifiez les détails de l’échange sur votre appareil Ledger avant de le valider. Une vérification supplémentaire peut être effectuée par {{providerName}} pour certaines transactions, entraînant un temps d’attente."
       },
       "confirm" : "Confirmer l’échange",
       "amountSent" : "Montant à envoyer",
@@ -1940,7 +1940,8 @@
       "payoutNetworkFeesTooltip" : "Ce montant n’apparaîtra pas sur votre appareil.",
       "acceptTerms" : "En validant cette transaction, j’accepte\n<0>les Conditions d’utilisation de {{provider}}</0>.",
       "exodusAcceptTerms" : "Pour traiter les échanges, Exodus fait appel à des tiers.\nEn validant cette transaction, j’accepte <0>les Conditions d’utilisation d’Exodus</0>.",
-      "changellyAcceptTerms" : "En cliquant sur Échanger avec Changelly, vous acceptez les <0>Conditions d’utilisation</0>\nde Changelly et sa <1>Politique LCB-FT/KYC</1>. Changelly peut mettre en place\ndes procédures LCB-FT/KYC qui, dans certains cas,\npeuvent avoir un impact sur l’aboutissement de votre transaction. Le cas échéant, vous devez contacter l’<2>assistance clientèle</2> de Changelly."
+      "changellyAcceptTerms" : "En cliquant sur Échanger avec Changelly, vous acceptez les <0>Conditions d’utilisation</0>\nde Changelly et sa <1>Politique LCB-FT/KYC</1>. Changelly peut mettre en place\ndes procédures LCB-FT/KYC qui, dans certains cas,\npeuvent avoir un impact sur l’aboutissement de votre transaction. Le cas échéant, vous devez contacter l’<2>assistance clientèle</2> de Changelly.",
+      "cicAcceptTerms" : "En cliquant sur Échanger avec CIC, vous acceptez les <0>Conditions d’utilisation</0> de CIC et sa <1>Politique LCB-FT/KYC</1>. CIC peut mettre en place des procédures LCB-FT/KYC qui, dans certains cas, peuvent avoir un impact sur l’aboutissement de votre transaction. Le cas échéant, vous devez contacter l’<2>assistance clientèle</2> de CIC."
     },
     "swap2" : {
       "amountSent" : "Montant à envoyer",
@@ -2282,8 +2283,8 @@
     }
   },
   "fund" : {
-    "title" : "Fund",
-    "titleCrypto" : "Fund {{currency}}",
+    "title" : "Approvisionner",
+    "titleCrypto" : "Approvisionner avec des {{currency}}",
     "exchangeDrawer" : {
       "completed" : {
         "title" : "Transaction bien émise",
@@ -2401,6 +2402,10 @@
         "solanaRawTransaction" : {
           "title" : "Demande de signature aveugle",
           "description" : "Vous ne pouvez pas vérifier les détails de la transaction sur votre appareil Ledger. Si vous la signez, vous pourriez perdre tous vos actifs. Signez cette transaction uniquement si vous faites confiance à ce site Web."
+        },
+        "bitcoinPsbtTransaction" : {
+          "title" : "Vérifier sur votre appareil",
+          "description" : "Vous pourrez vérifier le montant de la transaction et le bénéficiaire sur votre appareil à la prochaine étape."
         },
         "utxoLag" : "Cette transaction peut prendre plus de temps à être vérifiée et signée, car le compte a un nombre élevé de coins.",
         "subaccountsWarning" : "Vous devez approvisionner ce compte avec des {{ currency }} afin d’envoyer les tokens de ce compte.",
@@ -4889,7 +4894,7 @@
         },
         "testApexPostonboarding" : {
           "title" : "Tester le Post-Onboarding d’Apex",
-          "description" : "Testez toutes les fonctionnalités des pages Post-Onboarding d’Apex"
+          "description" : "Testez toutes les fonctionnalités des pages Post-Onboarding d’Apex."
         },
         "1559DeactivateGate" : {
           "title" : "Désactiver le seuil minimal pour les frais de priorité (EIP-1559)",
@@ -5105,7 +5110,7 @@
         "description" : "Des difficultés ? Visitez notre <0>page d’aide</0>"
       },
       "statusNotOk" : {
-        "title" : "L’application Ledger Live rencontre des problèmes.",
+        "title" : "Perturbations en cours sur l’application Ledger Live",
         "learnMore" : "En savoir plus"
       }
     },
@@ -6968,7 +6973,7 @@
       "threeCtas" : "<cta1>{{cta1Label}}</cta1>, <cta2>{{cta2Label}}</cta2> ou <cta3>{{cta3Label}}</cta3> des{{assetName}} pour approvisionner votre compte.",
       "ctas" : {
         "buy" : "Achetez",
-        "swap" : "Échangez",
+        "swap" : "Échanger",
         "deposit" : "Déposez"
       }
     },
@@ -7651,7 +7656,7 @@
         "foundAccounts_other" : "{{count}} comptes ont été trouvés",
         "scanning" : "Recherche de comptes..."
       },
-      "title" : "Recherche des comptes déjà présents sur la blockchain..."
+      "title" : "Vérification de la blockchain..."
     },
     "connectYourDevice" : {
       "title" : "Connectez et déverrouillez votre appareil."
@@ -7671,6 +7676,11 @@
         "selectAccount" : "Continuer",
         "close" : "Fermer"
       }
+    },
+    "genericError" : {
+      "title" : "Une erreur réseau s’est produite",
+      "description" : "Une erreur est survenue. Veuillez réessayer ou contacter l’Assistance Ledger.",
+      "cta" : "Réessayer"
     }
   },
   "nftEntryPoint" : {
