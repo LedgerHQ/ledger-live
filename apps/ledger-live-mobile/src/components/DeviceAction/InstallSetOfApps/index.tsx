@@ -19,8 +19,6 @@ import Restore from "./Restore";
 import { lastSeenDeviceSelector } from "~/reducers/settings";
 import { useAppDeviceAction } from "~/hooks/deviceActions";
 import { UserRefusedAllowManager } from "@ledgerhq/errors";
-import NewSeedConfirmation from "./NewSeedConfirmation";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 
 type Props = {
   restore?: boolean;
@@ -48,12 +46,11 @@ const InstallSetOfApps = ({
   onError,
   remountMe,
   debugLastSeenDeviceModelId,
-  isNewSeed = false,
   seedConfiguration,
 }: Props & { remountMe: () => void }) => {
   const action = useAppDeviceAction();
   const { t } = useTranslation();
-  const isSyncIncr1Enabled = useFeature("llmSyncOnboardingIncr1")?.enabled || false;
+
   const [userConfirmed, setUserConfirmed] = useState(false);
   const productName = getDeviceModel(selectedDevice.modelId).productName;
   const lastSeenDevice: DeviceModelInfo | null | undefined = useSelector(lastSeenDeviceSelector);
@@ -226,28 +223,6 @@ const InstallSetOfApps = ({
             flow: "onboarding",
             seedConfiguration,
           });
-          onResult(false);
-        }}
-      />
-    </>
-  ) : isNewSeed ? (
-    <>
-      <TrackScreen
-        category="Secure Funds Start"
-        flow="onboarding"
-        seedConfiguration={seedConfiguration}
-      />
-      <NewSeedConfirmation
-        onConfirm={() => {
-          track("button_clicked", {
-            button: "Secure my crypto",
-            flow: "onboarding",
-            seedConfiguration,
-          });
-          isSyncIncr1Enabled ? onResult(true) : setUserConfirmed(true);
-        }}
-        onReject={() => {
-          track("button_clicked", { button: "Maybe later", flow: "onboarding", seedConfiguration });
           onResult(false);
         }}
       />
