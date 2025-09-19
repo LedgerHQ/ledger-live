@@ -77,6 +77,12 @@ export default function Features() {
         onPress={() => navigation.navigate(ScreenName.DebugVideos)}
       />
       <SettingsRow
+        title="Tooltip"
+        desc="Open a screen that demonstrates a tooltip"
+        iconLeft={<IconsLegacy.InfoMedium size={24} color="black" />}
+        onPress={() => navigation.navigate(ScreenName.DebugTooltip)}
+      />
+      <SettingsRow
         title="BaseModal demo"
         desc="Opens InfoModal (BaseModal-based)"
         iconLeft={<IconsLegacy.InfoMedium size={24} color="black" />}

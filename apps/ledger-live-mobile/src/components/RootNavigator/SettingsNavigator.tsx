@@ -40,7 +40,7 @@ import DebugStore from "~/screens/Settings/Debug/Debugging/Store";
 import DebugStoryly from "~/screens/Settings/Debug/Features/Storyly";
 import DebugSwap from "~/screens/Settings/Debug/Features/Swap";
 import DebugVideos from "~/screens/Settings/Debug/Features/Videos";
-
+import TooltipDemo from "~/screens/Settings/Debug/Features/TooltipDemo";
 import Settings from "~/screens/Settings";
 import AccountsSettings from "~/screens/Settings/Accounts";
 import AboutSettings from "~/screens/Settings/About";
@@ -411,6 +411,13 @@ export default function SettingsNavigator() {
         component={DebugVideos}
         options={{
           title: "Debug Videos",
+        }}
+      />
+      <Stack.Screen
+        name={ScreenName.DebugTooltip}
+        component={TooltipDemo}
+        options={{
+          title: "Debug Tooltip",
         }}
       />
       <Stack.Screen
