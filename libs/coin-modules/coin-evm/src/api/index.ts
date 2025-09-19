@@ -62,7 +62,7 @@ export function createApi(config: EvmConfig, currencyId: string): Api {
     getBlockInfo(_height: number): Promise<BlockInfo> {
       throw new Error("getBlockInfo is not supported");
     },
-    getStakes(_address: string, _cursor?: Cursor): Promise<Page<Stake>> {
+    getStakes(_address: string): Promise<Page<Stake>> {
       throw new Error("getStakes is not supported");
     },
     getRewards(_address: string, _cursor?: Cursor): Promise<Page<Reward>> {

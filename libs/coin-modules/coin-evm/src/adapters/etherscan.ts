@@ -17,6 +17,7 @@ import {
 } from "../types";
 import { safeEncodeEIP55 } from "../utils";
 import { getCryptoAssetsStore } from "../cryptoAssetsStore";
+import { detectEvmStakingOperationType } from "../staking/detectOperationType";
 
 /**
  * Adapter to convert an Etherscan operation into Ledger Live Operations.
@@ -26,7 +27,7 @@ export const etherscanOperationToOperations = (
   accountId: string,
   etherscanOp: EtherscanOperation,
 ): Operation[] => {
-  const { xpubOrAddress: address } = decodeAccountId(accountId);
+  const { xpubOrAddress: address, currencyId } = decodeAccountId(accountId);
   const checksummedAddress = eip55.encode(address);
   const from = safeEncodeEIP55(etherscanOp.from);
   const to = safeEncodeEIP55(etherscanOp.to);
@@ -40,34 +41,44 @@ export const etherscanOperationToOperations = (
   }
   if (from === checksummedAddress) {
     const isContractInteraction = new RegExp(/0[xX][0-9a-fA-F]{8}/).test(etherscanOp.methodId); // 0x + 4 bytes selector
-    types.push(isContractInteraction ? "FEES" : "OUT");
+    const stakingType = detectEvmStakingOperationType(currencyId, to, etherscanOp.methodId);
+    types.push(stakingType ?? (isContractInteraction ? "FEES" : "OUT"));
   }
   if (!types.length) {
     types.push("NONE");
   }
 
-  return types.map(
-    type =>
-      ({
-        id: encodeOperationId(accountId, etherscanOp.hash, type),
-        hash: etherscanOp.hash,
-        type,
-        value: type === "OUT" || type === "FEES" ? (hasFailed ? fee : value.plus(fee)) : value,
-        fee,
-        senders: [from],
-        recipients: [to],
-        blockHeight: parseInt(etherscanOp.blockNumber, 10),
-        blockHash: etherscanOp.blockHash,
-        transactionSequenceNumber: parseInt(etherscanOp.nonce, 10),
-        accountId: accountId,
-        date: new Date(parseInt(etherscanOp.timeStamp, 10) * 1000),
-        subOperations: [],
-        nftOperations: [],
-        internalOperations: [],
-        hasFailed,
-        extra: {},
-      }) as Operation,
-  );
+  const valueIncludesFees = ["OUT", "FEES", "DELEGATE", "UNDELEGATE", "REDELEGATE"];
+
+  return types.map(type => {
+    let operationValue: BigNumber = value;
+
+    if (valueIncludesFees.includes(type) && hasFailed) {
+      operationValue = fee;
+    } else if (valueIncludesFees.includes(type)) {
+      operationValue = value.plus(fee);
+    }
+
+    return {
+      id: encodeOperationId(accountId, etherscanOp.hash, type),
+      hash: etherscanOp.hash,
+      type,
+      value: operationValue,
+      fee,
+      senders: [from],
+      recipients: [to],
+      blockHeight: parseInt(etherscanOp.blockNumber, 10),
+      blockHash: etherscanOp.blockHash,
+      transactionSequenceNumber: parseInt(etherscanOp.nonce, 10),
+      accountId: accountId,
+      date: new Date(parseInt(etherscanOp.timeStamp, 10) * 1000),
+      subOperations: [],
+      nftOperations: [],
+      internalOperations: [],
+      hasFailed,
+      extra: {},
+    } as Operation;
+  });
 };
 
 /**

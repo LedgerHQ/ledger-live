@@ -1,8 +1,12 @@
-import type { Balance } from "@ledgerhq/coin-framework/lib/api/types";
+import type { Balance, AssetInfo } from "@ledgerhq/coin-framework/lib/api/types";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 
 import { getNodeApi } from "../network/node";
 import { getExplorerApi } from "../network/explorer";
+import { NodeApi } from "../network/node/types";
+import { ExplorerApi } from "../network/explorer/types";
+
+export const TOKEN_BALANCE_BATCH_SIZE = 10;
 
 /**
  * Get all assets linked to the user (native, tokens, ...)
@@ -11,19 +15,37 @@ import { getExplorerApi } from "../network/explorer";
  * @returns Promise<Balance[]> - Array of balances for all assets (first element will always be the native asset)
  */
 export async function getBalance(currency: CryptoCurrency, address: string): Promise<Balance[]> {
-  const balance: Balance[] = [];
-
   const nodeApi = getNodeApi(currency);
   const explorerApi = getExplorerApi(currency);
 
+  const [nativeBalance, tokensBalances] = await Promise.all([
+    getNativeBalance(currency, address, nodeApi),
+    getTokenBalances(currency, address, nodeApi, explorerApi),
+  ]);
+
+  return [nativeBalance].concat(tokensBalances);
+}
+
+async function getNativeBalance(
+  currency: CryptoCurrency,
+  address: string,
+  nodeApi: NodeApi,
+): Promise<Balance> {
   // Get native balance for the first element array
   const nativeBalance = await nodeApi.getCoinBalance(currency, address);
 
-  balance.push({
-    value: BigInt(nativeBalance.toFixed(0)),
+  return {
     asset: { type: "native" },
-  });
+    value: BigInt(nativeBalance.toFixed(0)),
+  };
+}
 
+async function getTokenBalances(
+  currency: CryptoCurrency,
+  address: string,
+  nodeApi: NodeApi,
+  explorerApi: ExplorerApi,
+): Promise<Balance[]> {
   // Get user's token operations to get all his contract address for the next balance elements
   const { lastTokenOperations } = await explorerApi.getLastOperations(
     currency,
@@ -32,31 +54,46 @@ export async function getBalance(currency: CryptoCurrency, address: string): Pro
     0,
   );
 
-  const contractAddresses = new Set<string>();
+  // Collect unique contract addresses and their types
+  const contracts = new Set<string>();
+  const assets = new Map<string, AssetInfo>();
   for (const operation of lastTokenOperations) {
-    if (operation.contract && !contractAddresses.has(operation.contract)) {
-      const tokenBalance = await nodeApi.getTokenBalance(currency, address, operation.contract);
-      const integerString = tokenBalance.toFixed(0);
+    if (operation.contract) {
       let assetType = "erc20";
-      if (operation.standard === "ERC721") {
-        assetType = "erc721";
-      } else if (operation.standard === "ERC1155") {
-        assetType = "erc1155";
+      switch (operation.standard) {
+        case "ERC721":
+          assetType = "erc721";
+          break;
+        case "ERC1155":
+          assetType = "erc1155";
+          break;
       }
-
-      balance.push({
-        value: BigInt(integerString),
-        asset: {
-          type: assetType,
-          assetReference: operation.contract,
-          assetOwner: address,
-        },
+      contracts.add(operation.contract);
+      assets.set(operation.contract, {
+        type: assetType,
+        assetReference: operation.contract,
+        assetOwner: address,
       });
-      contractAddresses.add(operation.contract);
     }
   }
 
-  return balance;
+  // Fetch balances in parallel (by batches)
+  const balances: Balance[] = [];
+  const contractsArray = Array.from(contracts);
+  for (let i = 0; i < contractsArray.length; i += TOKEN_BALANCE_BATCH_SIZE) {
+    const chunk = contractsArray.slice(i, i + TOKEN_BALANCE_BATCH_SIZE);
+    const chunkBalances = await Promise.all(
+      chunk.map(async contract => {
+        const asset = assets.get(contract);
+        if (asset === undefined) throw new Error(`No asset defined for contract ${contract}`);
+        const balance = await nodeApi.getTokenBalance(currency, address, contract);
+        return { asset, value: BigInt(balance.toFixed(0)) };
+      }),
+    );
+    balances.push(...chunkBalances);
+  }
+
+  return balances;
 }
 
 export default getBalance;
