@@ -802,8 +802,8 @@
       "support" : "suporte"
     },
     "willBeDeprecatedBanner" : {
-      "title" : "Para otimizar a eficiência, {{currencyName}} não será mais compatível com o Ledger Live a partir de {{deprecatedDate}}. No entanto, este ativo ainda será compatível com as carteiras hardware Ledger. Fale com o Suporte ao Cliente Ledger para obter ajuda com isso.",
-      "contactSupport" : "Falar com o suporte"
+      "title" : "{{currencyName}} não será compatível com o Ledger Live a partir de {{deprecatedDate}}. O ativo ainda estará protegido pela sua hard wallet Ledger. Para saber mais, leia o artigo completo do Centro de Ajuda no link abaixo.",
+      "learnMore" : "Saiba mais"
     },
     "lastOperations" : "Últimas Operações",
     "contractAddress" : "Contrato:",
@@ -1940,7 +1940,8 @@
       "payoutNetworkFeesTooltip" : "Esta quantia não será mostrada no seu dispositivo",
       "acceptTerms" : "Ao validar esta transação, eu aceito\n<0>os termos de uso da {{provider}}</0>",
       "exodusAcceptTerms" : "A Exodus depende de terceiros para realizar swaps.\nAo validar esta transação, eu aceito os <0>termos de uso da Exodus</0>",
-      "changellyAcceptTerms" : "Ao clicar em “Trocar com a Changelly”, você aceita os <0>Termos de Uso</0> da Changelly e\nsua <1>política de AML/KYC</1> A Changelly pode aplicar procedimentos AML/KYC que\npodem, em casos limitados, afetar a conclusão de sua transação. Caso isso\naconteça, você deve entrar em contato com o <2>suporte ao cliente</2> da Changelly."
+      "changellyAcceptTerms" : "Ao clicar em “Trocar com a Changelly”, você aceita os <0>Termos de Uso</0> da Changelly e\nsua <1>política de AML/KYC</1> A Changelly pode aplicar procedimentos AML/KYC que\npodem, em casos limitados, afetar a conclusão de sua transação. Caso isso\naconteça, você deve entrar em contato com o <2>suporte ao cliente</2> da Changelly.",
+      "cicAcceptTerms" : "Ao clicar em “Trocar com a CIC”, você aceita os <0>Termos de Uso</0> da CIC e sua <1>política de AML/KYC</1>. A CIC pode aplicar procedimentos AML/KYC que podem, em casos limitados, afetar a conclusão de sua transação. Caso isso aconteça, você deve entrar em contato com o <2>suporte ao cliente</2> da CIC."
     },
     "swap2" : {
       "amountSent" : "Quantia a enviar",
@@ -2282,8 +2283,8 @@
     }
   },
   "fund" : {
-    "title" : "Fund",
-    "titleCrypto" : "Fund {{currency}}",
+    "title" : "Financiar",
+    "titleCrypto" : "Financiar {{currency}}",
     "exchangeDrawer" : {
       "completed" : {
         "title" : "Transação transmitida com sucesso",
@@ -2401,6 +2402,10 @@
         "solanaRawTransaction" : {
           "title" : "Assinatura cega necessária",
           "description" : "Não é possível verificar os detalhes da transação em seu dispositivo Ledger. Se você assiná-la, poderá perder todos os ativos. Assine somente se você confiar neste site."
+        },
+        "bitcoinPsbtTransaction" : {
+          "title" : "Verificar no dispositivo",
+          "description" : "Você pode verificar a quantia da transação e o destinatário no dispositivo na próxima etapa."
         },
         "utxoLag" : "Esta transação pode demorar muito para ser verificada e assinada porque a conta tem um número significativo de moedas.",
         "subaccountsWarning" : "Você precisará recarregar esta conta com {{ currency }} para enviar os tokens desta conta",
@@ -7651,7 +7656,7 @@
         "foundAccounts_other" : "Encontramos {{count}} contas",
         "scanning" : "Escaneando contas..."
       },
-      "title" : "Buscando contas existentes na blockchain…"
+      "title" : "Verificando a blockchain…"
     },
     "connectYourDevice" : {
       "title" : "Conecte e desbloqueie seu dispositivo"
@@ -7671,6 +7676,11 @@
         "selectAccount" : "Continuar",
         "close" : "Fechar"
       }
+    },
+    "genericError" : {
+      "title" : "Ocorreu um erro de rede",
+      "description" : "Algo deu errado. Tente novamente ou fale com o Suporte Ledger em caso de dúvida.",
+      "cta" : "Tentar Novamente"
     }
   },
   "nftEntryPoint" : {
