@@ -1625,6 +1625,11 @@
       "installCTA" : "Uygulama yükleyin",
       "skipCTA" : "Daha sonra yapacağım"
     },
+    "newSeed" : {
+      "subtitle" : "Maksimum güvenlik için kriptolarınızı herhangi bir borsadan veya cüzdandan Ledger Wallet’ınıza aktarabilirsiniz.",
+      "installCTA" : "Kriptolarınızı güvende tutun",
+      "skipCTA" : "Belki sonra"
+    },
     "ongoing" : {
       "resolving" : "Gereksinimler çözümleniyor",
       "progress" : "Uygulamalar yüklenirken Ledger Live'dan ayrılmayın.",
@@ -2156,26 +2161,6 @@
         "learnHowToUpdate" : "Güncelleme yönergeleri"
       }
     },
-    "stepImportAccounts" : {
-      "title" : "Masaüstünden kripto senkronizasyonu",
-      "desc" : "Kriptolarınızı Ledger masaüstü uygulamasında zaten kurduysanız, telefonunuzdan da yönetmek için senkronize edebilirsiniz.",
-      "cta" : "Taramaya hazırım.",
-      "bullets" : {
-        "0" : {
-          "label" : "Masaüstü uygulamasında \n<1>Ayarlar > Hesaplar > Hesap Dışa Aktarma</1> seçeneğini seçin."
-        },
-        "1" : {
-        },
-        "2" : {
-          "label" : "İçe aktarılacak kripto hesaplarını seçin."
-        }
-      },
-      "warning" : {
-        "title" : "Masaüstü ve mobil uygulamalarınız manuel olarak senkronize edilmelidir.",
-        "desc" : "Ledger Live gizliliğinize saygı duyar ve verilerinizi yerel olarak saklar. Telefonunuzdaki hesapları ve ayarları değiştirirseniz, aynı şeyi bilgisayarınızda da yapmanız gerekir ve bunun aksi de geçerlidir. İşlemleriniz blok zinciri ile senkronize kalır.",
-        "cta" : "Anladım!"
-      }
-    },
     "stepSetupPin" : {
       "step1" : "{{fullDeviceName}} cihazınızı açın ve yönergeleri izleyin.",
       "step1-nanoS" : "{{fullDeviceName}} cihazınızı bir OTG kablosu kullanarak telefonunuza bağlayın.",
@@ -2280,6 +2265,9 @@
         "continueCTA" : "Devam",
         "contactSupportCTA" : "Destek al"
       }
+    },
+    "completionScreen" : {
+      "title" : "Artık kontrol sizde"
     }
   },
   "blePairingFlow" : {
@@ -2410,6 +2398,8 @@
   },
   "syncOnboarding" : {
     "title" : "{{productName}} cihazınızı hazırlayın",
+    "twoStepTitle" : "Hadi başlayalım",
+    "firstStepReadyTitle" : "{{productName}} cihazınız hazır",
     "estimatedTimeFormat" : "{{estimatedTime}} dk.",
     "deviceSelection" : {
       "title" : "Kurmak istediğiniz Ledger'ı seçin:",
@@ -2527,6 +2517,10 @@
       "newSeedContinueOnDevice" : "{{productName}} cihazınızdaki yönergeleri izleyin",
       "recovery" : "Varlıklarınızın azami düzeyde güvenliği için Ledger cihazı tarafından oluşturulan bir Gizli Kurtarma İfadesi kullandığınızdan emin olun. \n\nGizli Kurtarma İfadeniz yok mu? Yeni bir İfade oluşturmak için {{productName}} cihazınızı kullanın."
     },
+    "secureCryptoStep" : {
+      "title" : "Kriptolarınızı güvende tutun",
+      "doneSubTitle" : "Blok zinciri uygulamalarınız yüklendi."
+    },
     "backup" : {
       "title" : "Gizli Kurtarma İfadenizin yedeklemesi",
       "description" : "Dijital olarak şifrelenmiş bir yedekleme ile, Gizli Kurtarma İfadeniz gerekmeden cüzdanınıza erişimi geri kazanın.\n\nDijital yedekleme isteyip istemediğinizi seçin:",
@@ -2554,6 +2548,9 @@
     },
     "completion" : {
       "title" : "Artık kontrol sizde"
+    },
+    "successStep" : {
+      "title" : "{{productName}} cihazınız dijital varlıklarınızı güvende tutmaya hazır"
     }
   },
   "tabs" : {
@@ -2855,8 +2852,8 @@
       "contactSupport" : "Destek al"
     },
     "willBedeprecatedBanner" : {
-      "title" : "Verimliliği iyileştirmek için {{deprecatedDate}} tarihinden itibaren {{currencyName}} artık Ledger Live'da desteklenmeyecektir. Ancak Ledger donanım cüzdanlarında desteklenmeye devam edecektir. Bu konuda yardım almak isterseniz Ledger Müşteri Destek ekibiyle lütfen iletişime geçin.",
-      "contactSupport" : "Destek al"
+      "title" : "{{deprecatedDate}} tarihinden itibaren {{currencyName}} artık Ledger Live’da desteklenmeyecektir. Ancak Ledger donanım cüzdanınızda güvenle tutulmaya devam edecektir. Daha fazla bilgi edinmek için aşağıda bağlantısı verilen Yardım Merkezi makalesini lütfen baştan sona okuyun.",
+      "learnMore" : "Daha fazla bilgi"
     },
     "tokens" : {
       "contractAddress" : "Sözleşme adresi",
@@ -3769,6 +3766,10 @@
       "twoStepApproval" : {
         "title" : "Adımları tamamlayın"
       },
+      "loader" : {
+        "title" : "Takas İşleniyor",
+        "description" : "Talebiniz işlenirken lütfen bekleyin."
+      },
       "history" : {
         "title" : "Takas geçmişi"
       },
@@ -4441,7 +4442,7 @@
     "confirmSwap" : {
       "title" : "Takas işlemini cihazdan onaylayın",
       "alert" : {
-        "default" : "Göndermeden önce cihazınızdaki takas bilgilerini doğrulayın. Adresler güvenli bir şekilde aktarılır, böylece onları doğrulamak zorunda kalmazsınız.",
+        "default" : "Göndermeden önce Ledger cihazınızdaki takas bilgilerini doğrulayın.",
         "provider" : "Göndermeden önce cihazınızdaki Takas bilgilerini doğrulayın. {{providerName}} bazı işlemler için ek doğrulama adımları gerçekleştirmek zorunda kalabilir ve bu, gecikmeye neden olabilir."
       },
       "acceptTerms" : "Bu işlemi onaylayarak,\n<0><0>{{provider}}</0> Kullanım Koşullarını</0> kabul ediyorum.",
@@ -7960,7 +7961,13 @@
     "searchPlaceholder" : "Ara",
     "emptyAssetList" : "Hiçbir varlık bulunamadı",
     "accountCount" : "{{count}} hesap",
-    "accountCount_plural" : "{{count}} hesap"
+    "accountCount_plural" : "{{count}} hesap",
+    "errors" : {
+      "title" : "Bağlantı başarısız oldu",
+      "backend" : "Bizim tarafımızda bir sorun oluştu. Lütfen daha sonra tekrar deneyin.",
+      "internet" : "İnternet bağlantısı yok. Lütfen tekrar deneyin.",
+      "cta" : "Tekrar dene"
+    }
   },
   "swapErrors" : {
     "incorrectCommandData" : {
