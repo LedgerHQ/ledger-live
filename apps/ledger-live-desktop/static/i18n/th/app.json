@@ -168,6 +168,7 @@
       "NFT_IN" : "ได้รับ NFT แล้ว",
       "NFT_OUT" : "ส่ง NFT แล้ว",
       "CREATE" : "สร้างแล้ว",
+      "UNKNOWN" : "ไม่รู้จัก",
       "REVEAL" : "เปิดเผยแล้ว",
       "DELEGATE" : "Delegate เรียบร้อยแล้ว",
       "REDELEGATE" : "Redelegate เรียบร้อยแล้ว",
@@ -802,8 +803,8 @@
       "support" : "การสนับสนุน"
     },
     "willBeDeprecatedBanner" : {
-      "title" : "เพื่อประสิทธิภาพสูงสุด Ledger Live จะไม่รองรับ {{currencyName}} ตั้งแต่วันที่ {{deprecatedDate}} อย่างไรก็ตาม คุณยังจัดการสกุลเงินนี้บน Hardware Wallet ของ Ledger ได้ตามปกติ โปรดติดต่อฝ่ายสนับสนุนลูกค้าของ Ledger หากคุณต้องการความช่วยเหลือในเรื่องนี้",
-      "contactSupport" : "ติดต่อฝ่ายสนับสนุน"
+      "title" : "{{currencyName}} จะไม่ได้รับการรองรับบนแอป Ledger Live ตั้งแต่วันที่ {{deprecatedDate}} เป็นต้นไป อย่างไรก็ตาม สินทรัพย์ของคุณจะยังคงได้รับการปกป้องโดยฮาร์ดแวร์วอลเล็ตของ Ledger หากต้องการเรียนรู้เพิ่มเติม โปรดอ่านบทความฉบับเต็มจากศูนย์ช่วยเหลือได้ที่ลิงก์ด้านล่างนี้",
+      "learnMore" : "เรียนรู้เพิ่มเติม"
     },
     "lastOperations" : "การดำเนินการล่าสุด",
     "contractAddress" : "สัญญา:",
@@ -1940,7 +1941,8 @@
       "payoutNetworkFeesTooltip" : "จำนวนนี้จะไม่ปรากฏบนอุปกรณ์ของคุณ",
       "acceptTerms" : "ในการตรวจสอบธุรกรรมนี้ ฉันยอมรับ\n<0>เงื่อนไขการใช้งานของ {{provider}}</0>",
       "exodusAcceptTerms" : "Exodus อาศัยบุคคลที่สามในการดำเนินการ Swap\nในการตรวจสอบธุรกรรมนี้ ฉันยอมรับ\n<0>เงื่อนไขการใช้งานของ Exodus</0>",
-      "changellyAcceptTerms" : "การคลิก “สวอปด้วย Changelly” จะถือว่าคุณยอมรับ<0>ข้อกำหนดการใช้งาน</0>ของ Changelly และ\n<1>นโยบาย AML/KYC</1> โดย Changelly อาจบังคับใช้มาตรการ AML/KYC ซึ่งสามารถ\nส่งผลกระทบต่อการทำธุรกรรมของคุณให้เสร็จสมบูรณ์ได้ในบางกรณี หาก\nเกิดเหตุการณ์ดังกล่าวขึ้น คุณต้องติดต่อ<2>ฝ่ายสนับสนุนลูกค้า</2>ของ Changelly"
+      "changellyAcceptTerms" : "การคลิก “สวอปด้วย Changelly” จะถือว่าคุณยอมรับ<0>ข้อกำหนดการใช้งาน</0>ของ Changelly และ\n<1>นโยบาย AML/KYC</1> โดย Changelly อาจบังคับใช้มาตรการ AML/KYC ซึ่งสามารถ\nส่งผลกระทบต่อการทำธุรกรรมของคุณให้เสร็จสมบูรณ์ได้ในบางกรณี หาก\nเกิดเหตุการณ์ดังกล่าวขึ้น คุณต้องติดต่อ<2>ฝ่ายสนับสนุนลูกค้า</2>ของ Changelly",
+      "cicAcceptTerms" : "เมื่อคุณทำการ “สวอปกับ CIC” จะถือว่าคุณยอมรับ<0>ข้อกำหนดการใช้งาน</0>และ<1>นโยบาย AML/KYC</1>  โดย CIC อาจดำเนินขั้นตอน AML/KYC ซึ่งในบางกรณีอาจส่งผลต่อการดำเนินธุรกรรมของคุณ หากเกิดเหตุการณ์ดังกล่าวขึ้น  กรุณาติดต่อ<2>ฝ่ายสนับสนุนลูกค้า</2>ของ CIC"
     },
     "swap2" : {
       "amountSent" : "จำนวนที่จะส่ง",
@@ -2282,12 +2284,12 @@
     }
   },
   "fund" : {
-    "title" : "Fund",
-    "titleCrypto" : "Fund {{currency}}",
+    "title" : "เงินทุน",
+    "titleCrypto" : "จำนวน {{currency}}",
     "exchangeDrawer" : {
       "completed" : {
-        "title" : "Transaction broadcast successfully",
-        "description" : "Your operation has been sent to the network for confirmation. Please wait for your transaction to be confirmed and for the provider to process it."
+        "title" : "ประกาศธุรกรรมเรียบร้อยแล้ว",
+        "description" : "การดำเนินการของคุณได้รับการส่งไปยังเครือข่ายเพื่อการยืนยัน กรุณารอการยืนยันธุรกรรม และการประมวลผลจากผู้ให้บริการ"
       }
     }
   },
@@ -2424,6 +2426,7 @@
         "nextBlock" : "บล็อกถัดไป",
         "suggested" : "แนะนำ",
         "unitVByte" : "{{unit}}/vbyte",
+        "unitPerByte" : "{{unit}}/ไบต์",
         "nft" : "NFT",
         "nftQuantity" : "ปริมาณ",
         "splExtensionsWarning" : "คุณกำลังโต้ตอบกับโทเคนที่เป็นส่วนหนึ่งของโปรแกรม Token-2022 หรือที่เรียกว่า Token Extensions โทเคนนี้มาพร้อมกับความเสี่ยง <0>คลิกที่นี่</0>เพื่อเรียนรู้เพิ่มเติม"
@@ -5865,6 +5868,10 @@
       "commentPlaceholder" : "ไม่บังคับ",
       "comment" : "ความคิดเห็น"
     },
+    "canton" : {
+      "commentPlaceholder" : "ไม่บังคับ",
+      "comment" : "ความคิดเห็น"
+    },
     "stellar" : {
       "memo" : "Memo",
       "memoType" : {
@@ -6460,6 +6467,9 @@
     },
     "TonCommentInvalid" : {
       "title" : "ความคิดเห็นต้องมีความยาวไม่เกิน 120 ตัวอักษรโดยไม่มีตัวอักษรพิเศษ"
+    },
+    "CantonCommentInvalid" : {
+      "title" : "ความคิดเห็นต้องมีความยาวไม่เกิน 120 ตัวอักษร และไม่มีตัวอักษรพิเศษ"
     },
     "CantScanQRCode" : {
       "title" : "สแกน QR Code นี้ไม่ได้: Address นี้ไม่รองรับการยืนยันอัตโนมัติ"
@@ -7651,7 +7661,7 @@
         "foundAccounts_other" : "เราพบ {{count}} บัญชี",
         "scanning" : "กำลังสแกนบัญชี..."
       },
-      "title" : "กำลังมองหาบัญชีที่มีอยู่บนบล็อกเชน..."
+      "title" : "กำลังตรวจสอบบล็อกเชน..."
     },
     "connectYourDevice" : {
       "title" : "เชื่อมต่อและปลดล็อกอุปกรณ์ของคุณ"
@@ -7671,6 +7681,11 @@
         "selectAccount" : "ดำเนินการต่อ",
         "close" : "ปิด"
       }
+    },
+    "genericError" : {
+      "title" : "เกิดข้อผิดพลาดของเครือข่าย",
+      "description" : "มีบางอย่างผิดพลาด  โปรดลองอีกครั้งหรือติดต่อฝ่ายสนับสนุน Ledger หากมีข้อสงสัย",
+      "cta" : "ลองอีกครั้ง"
     }
   },
   "nftEntryPoint" : {
