@@ -1625,6 +1625,11 @@
       "installCTA" : "アプリをインストール",
       "skipCTA" : "後で行う"
     },
+    "newSeed" : {
+      "subtitle" : "取引所やウォレットから暗号資産をLedgerウォレットへ移すことで、最高水準のセキュリティで保管することができます。",
+      "installCTA" : "暗号資産を守る",
+      "skipCTA" : "後で"
+    },
     "ongoing" : {
       "resolving" : "依存関係を解決しています",
       "progress" : "アプリのインストール中でもLedger Liveをお使いいただけます。",
@@ -2156,26 +2161,6 @@
         "learnHowToUpdate" : "アップデート方法を確認"
       }
     },
-    "stepImportAccounts" : {
-      "title" : "デスクトップアプリから暗号資産を同期",
-      "desc" : "Ledgerデスクトップ版アプリで、すでに暗号資産をセットアップ済みの場合は、それらを同期してスマートフォンで管理することができます。",
-      "cta" : "スキャン準備完了",
-      "bullets" : {
-        "0" : {
-          "label" : "デスクトップアプリで\n<1>「設定」>「アカウント」>「アカウントをエクスポート」</1>を選択。"
-        },
-        "1" : {
-        },
-        "2" : {
-          "label" : "インポートする暗号資産のアカウントを選択する。"
-        }
-      },
-      "warning" : {
-        "title" : "デスクトップアプリとモバイルアプリは、手動で同期する必要があります。",
-        "desc" : "Ledger Liveはあなたのプライバシーを尊重し、ローカルにのみデータを保存します。スマートフォン上でアカウントや設定を変更した場合は、コンピューター上でも同様の変更を行う必要があります。その逆も同様です。トランザクションのブロックチェーンとの同期は保たれます。",
-        "cta" : "了解！"
-      }
-    },
     "stepSetupPin" : {
       "step1" : "{{fullDeviceName}}の電源をオンにして、画面の指示に従ってください。",
       "step1-nanoS" : "OTGケーブルを使用して、{{fullDeviceName}}をスマートフォンに接続します。",
@@ -2280,6 +2265,9 @@
         "continueCTA" : "続行",
         "contactSupportCTA" : "サポートへお問い合わせ"
       }
+    },
+    "completionScreen" : {
+      "title" : "資産を完全にコントロール"
     }
   },
   "blePairingFlow" : {
@@ -2410,6 +2398,8 @@
   },
   "syncOnboarding" : {
     "title" : "{{productName}}を準備",
+    "twoStepTitle" : "セットアップ",
+    "firstStepReadyTitle" : "{{productName}}、準備完了",
     "estimatedTimeFormat" : "{{estimatedTime}}分",
     "deviceSelection" : {
       "title" : "設定したいLedgerを選択：",
@@ -2527,6 +2517,10 @@
       "newSeedContinueOnDevice" : "{{productName}}の指示に従う",
       "recovery" : "資産のセキュリティを最大限に高めるために、Ledgerデバイスによって生成されたシークレットリカバリーフレーズを必ず使用してください。 \n\nリカバリーフレーズをお持ちではありませんか？{{productName}}を使用して、新しいフレーズを生成してください。"
     },
+    "secureCryptoStep" : {
+      "title" : "暗号資産を保護",
+      "doneSubTitle" : "ブロックチェーンアプリのインストールが完了しました。"
+    },
     "backup" : {
       "title" : "シークレットリカバリーフレーズのバックアップ",
       "description" : "デジタル暗号化バックアップを使用すると、シークレットリカバリーフレーズなしでウォレットへのアクセスを復元できます。\n\nデジタルバックアップが必要かどうかを選択してください：",
@@ -2554,6 +2548,9 @@
     },
     "completion" : {
       "title" : "コントロール可能です"
+    },
+    "successStep" : {
+      "title" : "{{productName}}で、暗号資産を保護する準備が整いました"
     }
   },
   "tabs" : {
@@ -2855,8 +2852,8 @@
       "contactSupport" : "サポートへお問い合わせ"
     },
     "willBedeprecatedBanner" : {
-      "title" : "効率を最適化するため、{{deprecatedDate}}以降、{{currencyName}}はLedger Liveではサポートされなくなります。ただし、Ledgerハードウェアウォレットでは引き続きサポートされます。この件に関してご不明な点などがございましたら、Ledgerカスタマーサポートまでご連絡ください。",
-      "contactSupport" : "サポートへお問い合わせ"
+      "title" : "{{deprecatedDate}}以降、{{currencyName}}はLedger Liveではサポートされなくなります。しかし、Ledgerハードウェアウォレットで引き続き保護されます。詳細は、下記のリンク先のヘルプセンター記事を参照してください。",
+      "learnMore" : "詳細はこちら"
     },
     "tokens" : {
       "contractAddress" : "コントラクトアドレス",
@@ -3769,6 +3766,10 @@
       "twoStepApproval" : {
         "title" : "手順を完了する"
       },
+      "loader" : {
+        "title" : "スワップ処理中",
+        "description" : "リクエストを処理しています。しばらくお待ちください。"
+      },
       "history" : {
         "title" : "スワップ履歴"
       },
@@ -4441,7 +4442,7 @@
     "confirmSwap" : {
       "title" : "スワップ処理をデバイス上で確認する",
       "alert" : {
-        "default" : "送付する前に、スワップの詳細をデバイス上で確認してください。アドレスは安全にやりとりされるため、確認の必要はありません。",
+        "default" : "送付前に、スワップの詳細をLedger上で確認してください。",
         "provider" : "送付前に、スワップの詳細をデバイス上で確認してください。{{providerName}}では、一部のトランザクションに対して追加の検証を実行する必要があり、遅延が発生する場合があります。"
       },
       "acceptTerms" : "このトランザクションを検証することにより、私は\n<0><0>{{provider}}</0>の利用規約</0>に同意します",
@@ -7960,7 +7961,13 @@
     "searchPlaceholder" : "検索",
     "emptyAssetList" : "資産が見つかりません",
     "accountCount" : "{{count}}アカウント",
-    "accountCount_plural" : "{{count}}アカウント"
+    "accountCount_plural" : "{{count}}アカウント",
+    "errors" : {
+      "title" : "接続に失敗しました。",
+      "backend" : "システムでエラーが発生しました。後でもう一度お試しください。",
+      "internet" : "インターネットに接続されていません。接続をご確認の上、もう一度お試しください。",
+      "cta" : "再試行"
+    }
   },
   "swapErrors" : {
     "incorrectCommandData" : {
