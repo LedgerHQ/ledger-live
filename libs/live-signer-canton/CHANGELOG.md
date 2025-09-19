@@ -1,5 +1,12 @@
 # @ledgerhq/live-signer-canton
 
+## 0.3.1-nightly.2
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/coin-canton@0.5.1-nightly.2
+
 ## 0.3.1-nightly.1
 
 ### Patch Changes

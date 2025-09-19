@@ -1,5 +1,13 @@
 # @ledgerhq/types-live
 
+## 6.85.0-nightly.2
+
+### Minor Changes
+
+- [#11894](https://github.com/LedgerHQ/ledger-live/pull/11894) [`e3bcefb`](https://github.com/LedgerHQ/ledger-live/commit/e3bcefbf8a46c91388d6f936fd31d6ffcdc24756) Thanks [@ooke-ledger](https://github.com/ooke-ledger)! - Add simplified view for swap tx confirmation
+
+- [#11841](https://github.com/LedgerHQ/ledger-live/pull/11841) [`ed4c073`](https://github.com/LedgerHQ/ledger-live/commit/ed4c073b304d85355cf510551bcb225de4a3391c) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Remove NFTs libs
+
 ## 6.85.0-nightly.1
 
 ### Minor Changes

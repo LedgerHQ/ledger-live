@@ -1,5 +1,11 @@
 # @ledgerhq/react-ui
 
+## 0.38.0-nightly.2
+
+### Patch Changes
+
+- [#11868](https://github.com/LedgerHQ/ledger-live/pull/11868) [`f55291b`](https://github.com/LedgerHQ/ledger-live/commit/f55291b02f6a603e37eae2aee0c569e434982c21) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLD MAD - add a Debug Duplicates devtool
+
 ## 0.38.0-nightly.1
 
 ### Minor Changes

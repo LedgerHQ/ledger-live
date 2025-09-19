@@ -1,5 +1,11 @@
 # @ledgerhq/live-env
 
+## 2.17.0-nightly.1
+
+### Minor Changes
+
+- [#11841](https://github.com/LedgerHQ/ledger-live/pull/11841) [`2a58b72`](https://github.com/LedgerHQ/ledger-live/commit/2a58b720de42e63e59ea430bd03b2c95e903634c) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Fix LLD translations
+
 ## 2.17.0-nightly.0
 
 ### Minor Changes

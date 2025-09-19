@@ -1,5 +1,11 @@
 # @ledgerhq/native-ui
 
+## 0.46.0-nightly.1
+
+### Minor Changes
+
+- [#11874](https://github.com/LedgerHQ/ledger-live/pull/11874) [`10124f6`](https://github.com/LedgerHQ/ledger-live/commit/10124f6519157b2250e452966c16f67aad40204e) Thanks [@mitchellv-ledger](https://github.com/mitchellv-ledger)! - Add neutral last step to native vertical timeline component
+
 ## 0.46.0-nightly.0
 
 ### Minor Changes

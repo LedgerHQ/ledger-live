@@ -1,5 +1,12 @@
 # next.js-example
 
+## 0.1.38-nightly.2
+
+### Patch Changes
+
+- Updated dependencies [[`f55291b`](https://github.com/LedgerHQ/ledger-live/commit/f55291b02f6a603e37eae2aee0c569e434982c21)]:
+  - @ledgerhq/react-ui@0.38.0-nightly.2
+
 ## 0.1.38-nightly.1
 
 ### Patch Changes
