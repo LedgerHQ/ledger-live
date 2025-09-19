@@ -16,7 +16,7 @@ import useTwoStepDesync from "./useTwoStepDesync";
 import {
   completeOnboarding,
   setHasOrderedNano,
-  setIsOnboardingFlow,
+  // setIsOnboardingFlow,
   setReadOnlyMode,
 } from "~/actions/settings";
 import FirstStepSyncOnboarding from "./FirstStepSyncOnboarding";
@@ -152,7 +152,8 @@ export const TwoStepSyncOnboardingCompanion: React.FC<TwoStepSyncOnboardingCompa
         handleOnboardingDone();
       } else if (companionStep === SEED_STATE.NEW_SEED) {
         handleOnboardingDoneState();
-        dispatchRedux(setIsOnboardingFlow(true));
+        // TODO: add back in during actions PR
+        // dispatchRedux(setIsOnboardingFlow(true));
         baseNavigation.reset({
           index: 1,
           routes: [
