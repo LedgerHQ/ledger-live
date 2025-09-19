@@ -1,10 +1,32 @@
 import { haveOneCommonProvider } from "../haveOneCommonProvider";
-import { useGroupedCurrenciesByProvider } from "../../__mocks__/useGroupedCurrenciesByProvider.mock";
-import { LoadingBasedGroupedCurrencies } from "../../../deposit/type";
+import { AssetData } from "../type";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/lib/currencies";
 
-jest.mock("../../../deposit/useGroupedCurrenciesByProvider.hook", () => ({
-  useGroupedCurrenciesByProvider: () => useGroupedCurrenciesByProvider(),
-}));
+const MOCK_ASSETS_SORTED: AssetData[] = [
+  {
+    asset: {
+      id: "ethereum",
+      ticker: "ETH",
+      name: "Ethereum",
+      assetsIds: {
+        ethereum: "ethereum",
+        arbitrum: "arbitrum",
+      },
+    },
+    networks: [getCryptoCurrencyById("ethereum"), getCryptoCurrencyById("arbitrum")],
+  },
+  {
+    asset: {
+      id: "bitcoin",
+      ticker: "BTC",
+      name: "Bitcoin",
+      assetsIds: {
+        bitcoin: "bitcoin",
+      },
+    },
+    networks: [getCryptoCurrencyById("bitcoin")],
+  },
+];
 
 describe("haveOneCommonProvider", () => {
   it("should return false for an empty array", () => {
@@ -12,23 +34,14 @@ describe("haveOneCommonProvider", () => {
   });
 
   it("should return true for a single currency with one provider", () => {
-    const { result } = useGroupedCurrenciesByProvider(true) as LoadingBasedGroupedCurrencies;
-    const { currenciesByProvider } = result;
-
-    expect(haveOneCommonProvider(["bitcoin"], currenciesByProvider)).toBe(true);
+    expect(haveOneCommonProvider(["bitcoin"], MOCK_ASSETS_SORTED)).toBe(true);
   });
 
   it("should return false for multiple currencies with different providers", () => {
-    const { result } = useGroupedCurrenciesByProvider(true) as LoadingBasedGroupedCurrencies;
-    const { currenciesByProvider } = result;
-
-    expect(haveOneCommonProvider(["bitcoin", "ethereum"], currenciesByProvider)).toBe(false);
+    expect(haveOneCommonProvider(["bitcoin", "ethereum"], MOCK_ASSETS_SORTED)).toBe(false);
   });
 
   it("should return true for multiple currencies with the same provider", () => {
-    const { result } = useGroupedCurrenciesByProvider(true) as LoadingBasedGroupedCurrencies;
-    const { currenciesByProvider } = result;
-
-    expect(haveOneCommonProvider(["ethereum", "arbitrum"], currenciesByProvider)).toBe(true);
+    expect(haveOneCommonProvider(["ethereum", "arbitrum"], MOCK_ASSETS_SORTED)).toBe(true);
   });
 });

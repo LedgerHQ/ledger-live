@@ -5,7 +5,7 @@ import SearchInputContainer from "./components/SearchInputContainer";
 import { EnhancedModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/types";
 import { MODULAR_DRAWER_PAGE_NAME } from "../../analytics/modularDrawer.types";
 import TrackDrawerScreen from "../../analytics/TrackDrawerScreen";
-import { CurrenciesByProviderId, LoadingStatus } from "@ledgerhq/live-common/deposit/type";
+import { LoadingStatus } from "@ledgerhq/live-common/deposit/type";
 import { GenericError } from "../../components/GenericError";
 import { useSelector } from "react-redux";
 import { modularDrawerSearchedSelector } from "~/renderer/reducers/modularDrawer";
@@ -15,7 +15,6 @@ export type AssetSelectionStepProps = {
   assetsToDisplay: CryptoOrTokenCurrency[];
   providersLoadingStatus: LoadingStatus;
   assetsConfiguration: EnhancedModularDrawerConfiguration["assets"];
-  currenciesByProvider: CurrenciesByProviderId[];
   onAssetSelected: (asset: CryptoOrTokenCurrency) => void;
   hasOneCurrency?: boolean;
   loadNext?: () => void;
@@ -28,7 +27,6 @@ const AssetSelection = ({
   assetsToDisplay,
   providersLoadingStatus,
   assetsConfiguration,
-  currenciesByProvider,
   onAssetSelected,
   hasOneCurrency,
   loadNext,
@@ -69,7 +67,6 @@ const AssetSelection = ({
           assetsToDisplay={assetsToDisplay}
           providersLoadingStatus={providersLoadingStatus}
           assetsConfiguration={assetsConfiguration}
-          currenciesByProvider={currenciesByProvider}
           scrollToTop={shouldScrollToTop}
           onAssetSelected={onAssetSelected}
           onScrolledToTop={() => setShouldScrollToTop(false)}

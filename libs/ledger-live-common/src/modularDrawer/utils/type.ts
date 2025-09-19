@@ -108,7 +108,6 @@ export type CreateNetworkConfigurationHookProps = {
 
 type Props = {
   assetsConfiguration: EnhancedModularDrawerConfiguration["assets"];
-  currenciesByProvider?: CurrenciesByProviderId[];
 };
 
 export type AssetConfigurationDeps = {

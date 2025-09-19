@@ -80,7 +80,7 @@ describe("ModularDrawerFlowManager - Modules configuration", () => {
     expect(screen.queryByText(/base/i)).toBeNull();
     expect(screen.queryByText(/scroll/i)).toBeNull();
 
-    expect(screen.queryByText(/\$95,622,923.34/i)).toBeVisible();
+    expect(screen.queryByText(/\$95,622,923.34/i)).toBeVisible(); // TODO This fails because balance is not aggregated across networks
     expect(screen.queryByText(/34,478.4 eth/i)).toBeVisible();
   });
 
@@ -322,7 +322,7 @@ describe("ModularDrawerFlowManager - Modules configuration", () => {
     expect(screen.queryByText(/base/i)).toBeNull();
     expect(screen.queryByText(/scroll/i)).toBeNull();
 
-    expect(screen.getByText(/\$95,622,923.34/i)).toBeVisible();
+    expect(screen.getByText(/\$95,622,923.34/i)).toBeVisible(); // TODO This fails because balance is not aggregated across networks
     expect(screen.getByText(/34,478.4 eth/i)).toBeVisible();
   });
 });
