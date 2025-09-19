@@ -2,4 +2,4 @@
 "live-mobile": minor
 ---
 
-Add new seed confirmation and illustration to InstallSetOfApps component. Add onboarding flow field to tracking in InstallSetOfApps.
+Add default apps install when empty ledger restored. Add onboarding flow field and seed configuration to tracking in InstallSetOfApps.
