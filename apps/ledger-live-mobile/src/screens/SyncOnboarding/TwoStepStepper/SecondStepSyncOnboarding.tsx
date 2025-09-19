@@ -15,6 +15,7 @@ import Animated, {
 } from "react-native-reanimated";
 import { LayoutChangeEvent } from "react-native";
 import { SeedOriginType } from "@ledgerhq/types-live";
+import NewSeedConfirmation from "./NewSeedConfirmation";
 
 const ENTRY_TIMING = 300;
 const ENTRY_OPACITY_TIMING = 400;
@@ -117,14 +118,20 @@ const SecondStepSyncOnboarding = ({
       <Animated.ScrollView style={animatedStyle} showsVerticalScrollIndicator={false}>
         <Animated.View onLayout={handleLayout}>
           <Box mt={3}>
-            <InstallSetOfApps
-              isNewSeed={companionStep === SEED_STATE.NEW_SEED}
-              restore={companionStep === SEED_STATE.RESTORE}
-              device={device}
-              onResult={handleExit}
-              dependencies={initialAppsToInstall}
-              seedConfiguration={analyticsSeedConfiguration.current}
-            />
+            {companionStep === SEED_STATE.NEW_SEED ? (
+              <NewSeedConfirmation
+                handlePress={handleExit}
+                seedConfiguration={analyticsSeedConfiguration.current}
+              />
+            ) : (
+              <InstallSetOfApps
+                restore={companionStep === SEED_STATE.RESTORE}
+                device={device}
+                onResult={handleExit}
+                dependencies={initialAppsToInstall}
+                seedConfiguration={analyticsSeedConfiguration.current}
+              />
+            )}
           </Box>
         </Animated.View>
       </Animated.ScrollView>
