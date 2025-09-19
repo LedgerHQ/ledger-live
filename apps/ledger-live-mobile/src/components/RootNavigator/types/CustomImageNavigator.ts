@@ -3,7 +3,7 @@ import { type CLSSupportedDeviceModelId } from "@ledgerhq/live-common/device/use
 import { ScreenName } from "~/const";
 import { CropResult } from "../../CustomImage/ImageCropper";
 import { ProcessorPreviewResult, ProcessorRawResult } from "../../CustomImage/dithering/types";
-import { ImageFileUri, ImageUrl, ImageType } from "../../CustomImage/types";
+import { ImageFileUri, ImageFileUriPromise, ImageType } from "../../CustomImage/types";
 
 type BaseParams = {
   device: Device | null;
@@ -14,15 +14,12 @@ type WithMandatoryDeviceModelId = {
 };
 
 type WithOptionalDeviceModelId = {
-  // in some cases (deeplink, navigation from an NFT, etc), the deviceModelId is undetermined
+  // in some cases (deeplink), the deviceModelId is undetermined
   deviceModelId: CLSSupportedDeviceModelId | null;
   referral?: string;
 };
 
-type PreviewPreEditAdditionalParams = (ImageUrl | ImageFileUri) & {
-  isPictureFromGallery?: boolean;
-  isStaxEnabled?: boolean;
-};
+type PreviewPreEditAdditionalParams = ImageFileUri | ImageFileUriPromise;
 
 export type CustomImageNavigatorParamList = {
   [ScreenName.CustomImageErrorScreen]: BaseParams & WithOptionalDeviceModelId & { error: Error };
@@ -56,4 +53,8 @@ export type CustomImageNavigatorParamList = {
       previewData: ProcessorPreviewResult;
       referral?: string;
     };
+  [ScreenName.CustomImageRemoval]: BaseParams & {
+    setDeviceHasImage?: (hasImage: boolean) => void;
+    referral?: string;
+  };
 };

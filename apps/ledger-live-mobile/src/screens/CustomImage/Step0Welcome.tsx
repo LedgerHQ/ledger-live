@@ -1,13 +1,12 @@
-import React, { useCallback, useMemo, useState } from "react";
+import React, { useCallback, useMemo } from "react";
 import { StackScreenProps } from "@react-navigation/stack";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Flex, Icons, Text } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
 import { getDeviceModel } from "@ledgerhq/devices";
-import CustomImageBottomModal from "~/components/CustomImage/CustomImageBottomModal";
 import BottomButtonsContainer from "~/components/CustomImage/BottomButtonsContainer";
 import Button from "~/components/wrappedUi/Button";
-import { ScreenName } from "~/const";
+import { NavigatorName, ScreenName } from "~/const";
 import { CustomImageNavigatorParamList } from "~/components/RootNavigator/types/CustomImageNavigator";
 import { TrackScreen } from "~/analytics";
 import { DeviceModelId } from "@ledgerhq/types-devices";
@@ -16,6 +15,10 @@ import STAX_CLS_PREVIEW from "~/animations/device/customLockScreen/stax.json";
 import FLEX_CLS_PREVIEW from "~/animations/device/customLockScreen/flex.json";
 import APEX_CLS_PREVIEW from "~/animations/device/customLockScreen/apex.json";
 import { useTheme } from "styled-components/native";
+import { importImageFromPhoneGallery } from "~/components/CustomImage/imageUtils";
+import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
+import { StackNavigatorNavigation } from "~/components/RootNavigator/types/helpers";
+import { useNavigation } from "@react-navigation/core";
 
 const analyticsScreenName = "Introduction of the customization flow";
 const analyticsButtonEventProps = {
@@ -25,7 +28,6 @@ const analyticsButtonEventProps = {
 const Step0Welcome: React.FC<
   StackScreenProps<CustomImageNavigatorParamList, ScreenName.CustomImageStep0Welcome>
 > = ({ route }) => {
-  const [modalOpened, setModalOpened] = useState(false);
   const { t } = useTranslation();
 
   /**
@@ -33,13 +35,18 @@ const Step0Welcome: React.FC<
    */
   const { params: { device, deviceModelId } = { deviceModelId: null } } = route;
 
-  const openModal = useCallback(() => {
-    setModalOpened(true);
-  }, [setModalOpened]);
+  const navigation = useNavigation<StackNavigatorNavigation<BaseNavigatorStackParamList>>();
 
-  const closeModal = useCallback(() => {
-    setModalOpened(false);
-  }, [setModalOpened]);
+  const handlePressChoosePicture = useCallback(() => {
+    navigation.navigate(NavigatorName.CustomImage, {
+      screen: ScreenName.CustomImagePreviewPreEdit,
+      params: {
+        imageFileUriPromise: importImageFromPhoneGallery(),
+        device,
+        deviceModelId,
+      },
+    });
+  }, [navigation, device, deviceModelId]);
 
   const animationSource = useMemo(() => {
     switch (deviceModelId) {
@@ -80,24 +87,17 @@ const Step0Welcome: React.FC<
             size="large"
             type="main"
             outline={false}
-            onPress={openModal}
+            onPress={handlePressChoosePicture}
             event="button_clicked"
             eventProperties={analyticsButtonEventProps}
             testID="custom-image-choose-picture-button"
             iconPosition="left"
-            Icon={<Icons.DoublePicture color={colors.neutral.c00} size="S" />}
+            Icon={() => <Icons.DoublePicture color={colors.neutral.c00} size="M" />}
           >
             {t("customImage.landingPage.choosePicture")}
           </Button>
         </BottomButtonsContainer>
       </Flex>
-      <CustomImageBottomModal
-        device={device}
-        isOpened={modalOpened}
-        onClose={closeModal}
-        deviceModelId={deviceModelId}
-        referral={route?.params?.referral}
-      />
     </SafeAreaView>
   );
 };

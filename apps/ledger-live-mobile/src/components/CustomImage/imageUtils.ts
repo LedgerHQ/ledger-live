@@ -1,13 +1,11 @@
 import { Image, NativeModules, Platform } from "react-native";
-import RNFetchBlob from "rn-fetch-blob";
 import * as ImagePicker from "react-native-image-picker";
 import {
-  ImageDownloadError,
   ImageLoadFromGalleryError,
   ImageSizeLoadingError,
   ImageTooLargeError,
 } from "@ledgerhq/live-common/customImage/errors";
-import { ImageDimensions, ImageFileUri, ImageUrl } from "./types";
+import { ImageDimensions, ImageFileUri } from "./types";
 
 /**
  * Call this to prompt the user to pick an image from its phone.
@@ -54,24 +52,6 @@ export async function importImageFromPhoneGallery(): Promise<ImageFileUri | null
     console.error(e);
     throw new ImageLoadFromGalleryError();
   }
-}
-
-type CancellablePromise<T> = {
-  cancel: () => void;
-  resultPromise: Promise<T>;
-};
-
-export function downloadImageToFile({ imageUrl }: ImageUrl): CancellablePromise<ImageFileUri> {
-  const downloadTask = RNFetchBlob.config({ fileCache: true }).fetch("GET", imageUrl);
-  return {
-    resultPromise: downloadTask
-      .then(res => ({ imageFileUri: "file://" + res.path() }))
-      .catch(e => {
-        if (e.message === "canceled") throw e;
-        throw new ImageDownloadError();
-      }),
-    cancel: downloadTask.cancel,
-  };
 }
 
 export async function loadImageSizeAsync(url: string): Promise<ImageDimensions> {

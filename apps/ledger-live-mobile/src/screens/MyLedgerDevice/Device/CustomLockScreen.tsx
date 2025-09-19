@@ -18,6 +18,7 @@ import { NavigatorName, ScreenName } from "~/const";
 import CustomImageBottomModal from "~/components/CustomImage/CustomImageBottomModal";
 import DeviceOptionRow from "./DeviceOptionRow";
 import { HOOKS_TRACKING_LOCATIONS } from "~/analytics/hooks/variables";
+import { importImageFromPhoneGallery } from "~/components/CustomImage/imageUtils";
 
 const CustomLockScreen: React.FC<{
   device: Device;
@@ -45,20 +46,40 @@ const CustomLockScreen: React.FC<{
     });
   }, [device.deviceId]);
 
-  const handleStartCustomImage = useCallback(
-    () =>
-      hasCompletedCustomImageFlow
-        ? setIsCustomImageOpen(true)
-        : navigation.navigate(NavigatorName.CustomImage, {
-            screen: ScreenName.CustomImageStep0Welcome,
-            params: {
-              device,
-              deviceModelId,
-              referral: HOOKS_TRACKING_LOCATIONS.myLedgerDashboard,
-            },
-          }),
-    [device, hasCompletedCustomImageFlow, navigation, deviceModelId],
-  );
+  const handleStartCustomImage = useCallback(() => {
+    const openModal = () => {
+      setIsCustomImageOpen(true);
+    };
+    const navigateToPreviewPreEdit = () => {
+      navigation.navigate(NavigatorName.CustomImage, {
+        screen: ScreenName.CustomImagePreviewPreEdit,
+        params: {
+          imageFileUriPromise: importImageFromPhoneGallery(),
+          device,
+          deviceModelId,
+          referral: HOOKS_TRACKING_LOCATIONS.myLedgerDashboard,
+        },
+      });
+    };
+    const navigateToStep0Welcome = () => {
+      navigation.navigate(NavigatorName.CustomImage, {
+        screen: ScreenName.CustomImageStep0Welcome,
+        params: {
+          device,
+          deviceModelId,
+          referral: HOOKS_TRACKING_LOCATIONS.myLedgerDashboard,
+        },
+      });
+    };
+
+    if (deviceHasImage) {
+      openModal();
+    } else if (hasCompletedCustomImageFlow) {
+      navigateToPreviewPreEdit();
+    } else {
+      navigateToStep0Welcome();
+    }
+  }, [device, hasCompletedCustomImageFlow, navigation, deviceModelId, deviceHasImage]);
 
   return (
     <>

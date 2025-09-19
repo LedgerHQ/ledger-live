@@ -7186,9 +7186,10 @@
     "title": "Lock screen picture",
     "change": "Change",
     "drawer": {
+      "title": "Custom lock screen",
       "options": {
-        "uploadFromPhone": "Choose from my picture gallery",
-        "remove": "Remove current picture"
+        "uploadFromPhone": "Change picture",
+        "remove": "Delete lock screen"
       }
     },
     "toastRemove": "Lock screen picture removed",

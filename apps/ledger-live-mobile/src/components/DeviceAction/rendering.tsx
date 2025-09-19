@@ -354,14 +354,14 @@ export const renderAllowRemoveCustomLockscreen = ({
   return (
     <Wrapper>
       <TrackScreen category={`Allow CLS removal on ${productName}`} />
-      <Text variant="h4" textAlign="center">
-        {t("DeviceAction.allowRemoveCustomLockscreen", { productName })}
-      </Text>
       <AnimationContainer>
         <Animation
           source={getDeviceAnimation({ modelId: device.modelId, key, theme })}
           style={getDeviceAnimationStyles(device.modelId)}
         />
+        <Text variant="h3Inter" fontWeight="semiBold" fontSize="24px" textAlign="center" mt={8}>
+          {t("DeviceAction.allowRemoveCustomLockscreen", { productName })}
+        </Text>
       </AnimationContainer>
     </Wrapper>
   );
