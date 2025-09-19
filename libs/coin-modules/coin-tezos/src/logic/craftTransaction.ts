@@ -37,7 +37,6 @@ export async function craftTransaction(
   };
 
   const tezosToolkit = getTezosToolkit();
-
   // Configure signer for Taquito operations (same as in estimateFees)
   if (publicKey) {
     tezosToolkit.setProvider({

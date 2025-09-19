@@ -61,6 +61,52 @@ export function createMockSigner(publicKeyHash: string, publicKey: string) {
 }
 
 /**
+ * Compresses an uncompressed public key (65 bytes) to compressed format (33 bytes)
+ */
+function compressKey(keyBuf: Buffer): Buffer {
+  if (keyBuf.length === 65 && keyBuf[0] === 0x04) {
+    const parity = keyBuf[64] & 1;
+    return Buffer.concat([Buffer.from([0x02 + parity]), keyBuf.slice(1, 33)]);
+  }
+  return keyBuf;
+}
+
+/**
+ * Processes a public key for the given curve type
+ */
+function processKeyForCurve(
+  keyBuf: Buffer,
+  curveType: "ed25519" | "secp256k1" | "p256",
+): string | undefined {
+  let processedKey: Buffer;
+  let expectedLength: number;
+  let prefix: PrefixV2;
+
+  switch (curveType) {
+    case "ed25519":
+      // For ed25519, hardware often returns 32-byte raw key (64 hex)
+      // If a 33-byte buffer is provided (leading 0x00), drop the first byte
+      processedKey = keyBuf.length === 33 && keyBuf[0] === 0x00 ? keyBuf.slice(1) : keyBuf;
+      expectedLength = 32;
+      prefix = PrefixV2.Ed25519PublicKey;
+      break;
+    case "secp256k1":
+      processedKey = compressKey(keyBuf);
+      expectedLength = 33;
+      prefix = PrefixV2.Secp256k1PublicKey;
+      break;
+    case "p256":
+      processedKey = compressKey(keyBuf);
+      expectedLength = 33;
+      prefix = PrefixV2.P256PublicKey;
+      break;
+  }
+
+  if (processedKey.length !== expectedLength) return undefined;
+  return b58Encode(processedKey, prefix);
+}
+
+/**
  * Normalize a Tezos public key to base58 format (edpk/sppk/p2pk) based on the
  * sender address prefix (tz1/tz2/tz3). Accepts either an already base58-encoded
  * key or a hex key returned by the Ledger app. Returns undefined if input is
@@ -81,50 +127,18 @@ export function normalizePublicKeyForAddress(
     if (pkHex === "") return undefined;
     const keyBuf = Buffer.from(pkHex, "hex");
 
-    // Choose curve/prefix from address tz1/tz2/tz3
-    let curve: DerivationType;
-    let b58Prefix: PrefixV2;
+    // Choose curve type from address tz1/tz2/tz3
     if (address.startsWith("tz1")) {
-      // For ed25519, hardware often returns 32-byte raw key (64 hex)
-      // If a 33-byte buffer is provided (leading 0x00), drop the first byte.
-      const edKey = keyBuf.length === 33 && keyBuf[0] === 0x00 ? keyBuf.slice(1) : keyBuf;
-      if (edKey.length !== 32) return undefined;
-
-      curve = DerivationType.ED25519;
-      b58Prefix = PrefixV2.Ed25519PublicKey;
-      return b58Encode(edKey, b58Prefix);
+      return processKeyForCurve(keyBuf, "ed25519");
     } else if (address.startsWith("tz2")) {
-      // Accept 33-byte compressed or 65-byte uncompressed (0x04 + 64)
-      let secp = keyBuf;
-      if (secp.length === 65 && secp[0] === 0x04) {
-        // compress: 0x02|0x03 + X
-        const parity = secp[64] & 1;
-        secp = Buffer.concat([Buffer.from([0x02 + parity]), secp.slice(1, 33)]);
-      }
-      if (secp.length !== 33) return undefined;
-
-      curve = DerivationType.SECP256K1;
-      b58Prefix = PrefixV2.Secp256k1PublicKey;
-      return b58Encode(secp, b58Prefix);
+      return processKeyForCurve(keyBuf, "secp256k1");
     } else if (address.startsWith("tz3")) {
-      let p256 = keyBuf;
-      if (p256.length === 65 && p256[0] === 0x04) {
-        const parity = p256[64] & 1;
-        p256 = Buffer.concat([Buffer.from([0x02 + parity]), p256.slice(1, 33)]);
-      }
-      if (p256.length !== 33) return undefined;
-
-      curve = DerivationType.P256;
-      b58Prefix = PrefixV2.P256PublicKey;
-      return b58Encode(p256, b58Prefix);
+      return processKeyForCurve(keyBuf, "p256");
     } else {
       // Fallback to ed25519 when address prefix is unexpected
-      curve = DerivationType.ED25519;
-      b58Prefix = PrefixV2.Ed25519PublicKey;
+      const compressed = compressPublicKey(keyBuf, DerivationType.ED25519);
+      return b58Encode(compressed, PrefixV2.Ed25519PublicKey);
     }
-
-    const compressed = compressPublicKey(keyBuf, curve);
-    return b58Encode(compressed, b58Prefix);
   } catch {
     return undefined;
   }

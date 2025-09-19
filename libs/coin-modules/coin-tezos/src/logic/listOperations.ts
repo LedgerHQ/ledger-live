@@ -12,41 +12,6 @@ import {
 import { Operation } from "@ledgerhq/coin-framework/api/types";
 
 /**
- * Determines the operation type based on operation data and addresses
- */
-function determineOperationType(
-  operation: APITransactionType | APIDelegationType | APIRevealType,
-  address: string,
-  sender: { address: string } | null | undefined,
-  targetAddress: string | undefined,
-  amount: bigint,
-): Operation["type"] {
-  if (isAPIDelegationType(operation)) {
-    return operation.newDelegate?.address ? "DELEGATE" : "UNDELEGATE";
-  }
-
-  if (isAPITransactionType(operation)) {
-    const isOut = sender?.address === address;
-    const isIn = targetAddress === address;
-
-    if ((isOut && isIn) || amount === 0n) {
-      return "FEES";
-    }
-    if (isOut) return "OUT";
-    if (isIn) return "IN";
-    return "OUT"; // fallback
-  }
-
-  if (isAPIRevealType(operation)) {
-    return "REVEAL";
-  }
-
-  // fallback for unknown types
-  log("coin:tezos", "(logic/operations): Unknown operation type, defaulting to OUT");
-  return "OUT";
-}
-
-/**
  * Returns list of "Transfer", "Delegate" and "Undelegate" Operations associated to an account.
  * @param address Account address
  * @param limit the maximum number of operations to return. Beware that's a weak limit, as explorers might not respect it.
@@ -137,7 +102,29 @@ function convertOperation(
     BigInt(operation.bakerFee ?? 0) +
     BigInt(operation.allocationFee ?? 0);
 
-  const normalizedType = determineOperationType(operation, address, sender, targetAddress, amount);
+  // Determine operation type inline
+  let normalizedType: Operation["type"];
+  if (isAPIDelegationType(operation)) {
+    normalizedType = operation.newDelegate?.address ? "DELEGATE" : "UNDELEGATE";
+  } else if (isAPITransactionType(operation)) {
+    const isOut = sender?.address === address;
+    const isIn = targetAddress === address;
+    if ((isOut && isIn) || amount === 0n) {
+      normalizedType = "FEES";
+    } else if (isOut) {
+      normalizedType = "OUT";
+    } else if (isIn) {
+      normalizedType = "IN";
+    } else {
+      normalizedType = "OUT"; // fallback
+    }
+  } else if (isAPIRevealType(operation)) {
+    normalizedType = "REVEAL";
+  } else {
+    // fallback for unknown types
+    log("coin:tezos", "(logic/operations): Unknown operation type, defaulting to OUT");
+    normalizedType = "OUT";
+  }
 
   // Tezos uses "applied" for every sucess operation (something else=failed )
   const hasFailed = operation.status && operation.status !== "applied";
