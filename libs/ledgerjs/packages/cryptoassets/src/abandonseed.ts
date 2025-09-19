@@ -41,6 +41,8 @@ const abandonSeedAddresses: Partial<Record<CryptoCurrency["id"], string>> = {
   nix: "GRpn2DPiQxAczMrQFt2sK1CS8EYdnvSHxo",
   polkadot: "111111111111111111111111111111111HC1",
   westend: "111111111111111111111111111111111HC1",
+  assethub_westend: "111111111111111111111111111111111HC1",
+  assethub_polkadot: "111111111111111111111111111111111HC1",
   qtum: "QPvRe2C17qk24K6v5gTg7CPghZ8b4WMxZP",
   stratis: "Sdo6x9k5AxWtfyJe5B9SZPteYTKgUoMMr1",
   zcash: "t1XVXWCvpMgBvUaed4XDqWtgQgJSu1Ghz7F",

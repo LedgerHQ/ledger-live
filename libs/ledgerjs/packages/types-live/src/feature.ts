@@ -141,6 +141,8 @@ export type CurrencyFeatures = {
   currencyCantonNetwork: DefaultFeature;
   currencyKaspa: DefaultFeature;
   currencyWestend: DefaultFeature;
+  currencyAssetHubWestend: DefaultFeature;
+  currencyAssetHubPolkadot: DefaultFeature;
 };
 
 /**

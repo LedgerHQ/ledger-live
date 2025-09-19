@@ -98,6 +98,8 @@ export const CURRENCY_DEFAULT_FEATURES = {
   currencyCantonNetwork: DEFAULT_FEATURE,
   currencyKaspa: DEFAULT_FEATURE,
   currencyWestend: DEFAULT_FEATURE,
+  currencyAssetHubPolkadot: DEFAULT_FEATURE,
+  currencyAssetHubWestend: DEFAULT_FEATURE,
 };
 
 /**

@@ -100,6 +100,8 @@ const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
   const canton = useFeature("currencyCantonNetwork");
   const kaspa = useFeature("currencyKaspa");
   const westend = useFeature("currencyWestend");
+  const assetHubWestend = useFeature("currencyAssetHubWestend");
+  const assetHubPolkadot = useFeature("currencyAssetHubPolkadot");
 
   const featureFlaggedCurrencies = useMemo(
     (): Partial<Record<CryptoCurrencyId, Feature<unknown> | null>> => ({
@@ -168,6 +170,8 @@ const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
       canton_network: canton,
       kaspa,
       westend,
+      assetHubWestend,
+      assetHubPolkadot,
     }),
     [
       aptos,
@@ -235,6 +239,8 @@ const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
       canton,
       kaspa,
       westend,
+      assetHubWestend,
+      assetHubPolkadot,
     ],
   );
 
