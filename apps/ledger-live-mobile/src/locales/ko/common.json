@@ -1625,6 +1625,11 @@
       "installCTA" : "앱 설치하기",
       "skipCTA" : "나중에 할게요"
     },
+    "newSeed" : {
+      "subtitle" : "이제 Ledger Wallet으로 모든 거래소와 지갑에서 암호화폐를 안전하게 전송하고 최고 수준의 보안을 누려보세요.",
+      "installCTA" : "자산 보호 시작하기",
+      "skipCTA" : "다음에 결정하기"
+    },
     "ongoing" : {
       "resolving" : "의존성 해결",
       "progress" : "앱을 설치하는 동안 Ledger Live를 종료하지 마세요.",
@@ -2156,26 +2161,6 @@
         "learnHowToUpdate" : "업데이트 방법 알아보기"
       }
     },
-    "stepImportAccounts" : {
-      "title" : "데스크탑에서 암호화폐를 동기화하세요",
-      "desc" : "Ledger 데스크탑 앱에서 암호화 설정을 마친 경우 이를 동기화하여 휴대폰에서 관리할 수 있습니다.",
-      "cta" : "스캔할 준비가 되었습니다",
-      "bullets" : {
-        "0" : {
-          "label" : "데스크탑 앱에서\n<1> 설정 > 계정 > 계정 내보내기</1>를 선택하세요."
-        },
-        "1" : {
-        },
-        "2" : {
-          "label" : "가져올 암호화폐 계정을 선택하세요."
-        }
-      },
-      "warning" : {
-        "title" : "데스크탑 및 모바일 앱은 수동으로 동기화해야 합니다.",
-        "desc" : "Ledger Live는 사용자의 개인 정보를 소중히 다루며 귀하의 정보를 로컬에 저장합니다. 휴대폰의 계정과 설정을 변경하면 컴퓨터에서도 동일하게 변경해야 하며, 그 반대의 경우도 마찬가지입니다. 귀하의 트랜잭션은 계속 블록체인에 동기화됩니다.",
-        "cta" : "알겠습니다!"
-      }
-    },
     "stepSetupPin" : {
       "step1" : "{{fullDeviceName}}를 켜고 지침을 따르세요.",
       "step1-nanoS" : "OTG 케이블을 이용하여 휴대폰에 {{fullDeviceName}}(을)를 연결하세요.",
@@ -2280,6 +2265,9 @@
         "continueCTA" : "계속",
         "contactSupportCTA" : "지원 부서 연락"
       }
+    },
+    "completionScreen" : {
+      "title" : "이제 모든 것은 내 손끝에서 시작됩니다"
     }
   },
   "blePairingFlow" : {
@@ -2410,6 +2398,8 @@
   },
   "syncOnboarding" : {
     "title" : "{{productName}}의 준비를 완료합니다",
+    "twoStepTitle" : "시작하기",
+    "firstStepReadyTitle" : "{{productName}} 장치가 준비되었습니다",
     "estimatedTimeFormat" : "{{estimatedTime}}분",
     "deviceSelection" : {
       "title" : "아래와 같이 설정하려는 Ledger 장치를 선택합니다.",
@@ -2527,6 +2517,10 @@
       "newSeedContinueOnDevice" : "{{productName}}에 표시되는 안내를 따라주세요.",
       "recovery" : "Ledger 장치에서 생성된 비밀 복구 문구를 사용해 자산에 대한 보안을 극대화하세요.\n\n복구 문구가 없으신가요? {{productName}}을 사용해 새로운 복구 문구를 생성하세요."
     },
+    "secureCryptoStep" : {
+      "title" : "소중한 암호화폐를 안전하게",
+      "doneSubTitle" : "블록체인 앱이 설치되었습니다."
+    },
     "backup" : {
       "title" : "비밀 복구 문구 백업",
       "description" : "디지털 암호화 백업을 사용하면 비밀 복구 문구 없이 지갑에 대한 액세스를 복원할 수 있습니다.\n\n다음에서 원하는 디지털 백업을 선택하세요.",
@@ -2554,6 +2548,9 @@
     },
     "completion" : {
       "title" : "이제 통제권은 귀하에게 있습니다"
+    },
+    "successStep" : {
+      "title" : "{{productName}} 장치에서 디지털 자산을 안전하게 보호하세요"
     }
   },
   "tabs" : {
@@ -2855,8 +2852,8 @@
       "contactSupport" : "지원 부서 연락"
     },
     "willBedeprecatedBanner" : {
-      "title" : "효율성을 최적화하기 위해 {{currencyName}}은 {{deprecatedDate}}부터 Ledger Live에서 지원되지 않습니다. 그러나 Ledger 하드웨어 지갑에서는 계속 지원됩니다. 이와 관련하여 도움이 필요하다면 Ledger 고객 지원팀에 문의하세요.",
-      "contactSupport" : "지원 부서 연락"
+      "title" : "{{deprecatedDate}}부터 Ledger Live에서 {{currencyName}} 지원이 중단됩니다. 단, 해당 암호화폐는 Ledger 하드웨어 지갑에서 여전히 안전하게 보호됩니다. 더 자세한 내용은 아래 링크를 통해 지원 센터 관련 안내를 읽어 주세요.",
+      "learnMore" : "자세히 알아보기"
     },
     "tokens" : {
       "contractAddress" : "계약 주소",
@@ -3769,6 +3766,10 @@
       "twoStepApproval" : {
         "title" : "단계 완료하기"
       },
+      "loader" : {
+        "title" : "스왑 처리 중",
+        "description" : "요청이 처리될 때까지 잠시 기다려 주세요."
+      },
       "history" : {
         "title" : "스왑 내역"
       },
@@ -4441,7 +4442,7 @@
     "confirmSwap" : {
       "title" : "장치에서 스왑 거래를 확인하세요",
       "alert" : {
-        "default" : "장치에서 스왑 세부사항을 확인한 후 전송하세요. 주소가 안전하게 교환되어 주소를 따로 인증할 필요 없습니다.",
+        "default" : "Ledger 장치에서 스왑 상세 정보를 확인한 후 전송하세요.",
         "provider" : "장치에서 스왑 세부사항을 확인한 후 전송하세요. 일부 트랜잭션에서 {{providerName}}의 추가 확인 단계가 필요할 수 있어 지연이 발생할 수 있습니다."
       },
       "acceptTerms" : "본인은 이 트랜잭션을 확인함으로써 \n<0><0>{{provider}}</0>의 이용약관</0>을 수락합니다.",
@@ -7960,7 +7961,13 @@
     "searchPlaceholder" : "검색",
     "emptyAssetList" : "자산을 찾을 수 없습니다",
     "accountCount" : "{{count}}개 계정",
-    "accountCount_plural" : "{{count}}개 계정"
+    "accountCount_plural" : "{{count}}개 계정",
+    "errors" : {
+      "title" : "연결에 실패했습니다",
+      "backend" : "문제가 발생했습니다. 나중에 다시 시도해 주세요",
+      "internet" : "인터넷에 연결되지 않았습니다. 다시 시도해 주세요",
+      "cta" : "다시 시도하세요"
+    }
   },
   "swapErrors" : {
     "incorrectCommandData" : {
