@@ -7,8 +7,8 @@ export const cantonConfig: Record<string, ConfigInfo> = {
       status: {
         type: "active",
       },
-      nodeUrl: "https://canton-gateway.api.live.ledger.com/v1/node/ledger-mainnet-prd",
-      nodeId: "ledger-live-mainnet-prd",
+      nodeUrl: "https://canton-gateway.api.live.ledger.com/v1/node/figment-mainnet",
+      nodeId: "figment-mainnet",
       gatewayUrl: "https://canton-gateway.api.live.ledger.com",
       minReserve: 0,
       useGateway: true,
@@ -21,8 +21,8 @@ export const cantonConfig: Record<string, ConfigInfo> = {
       status: {
         type: "active",
       },
-      nodeUrl: "https://wallet-validator-devnet-canton.ledger-test.com",
-      nodeId: "ledger-devnet-stg",
+      nodeUrl: "https://canton-gateway.api.live.ledger.com/v1/node/figment-devnet",
+      nodeId: "figment-devnet",
       gatewayUrl: "https://canton-gateway.api.live.ledger-test.com",
       minReserve: 0,
       useGateway: true,
