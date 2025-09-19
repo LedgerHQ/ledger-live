@@ -80,7 +80,7 @@ const buildViteConfig = argv =>
       ...DotEnvPlugin.buildDefine(DOTENV_FILE),
     },
     resolve: {
-      conditions: ["node", "import", "module", "browser", "default"],
+      conditions: ["browser", "import", "module", "node", "default"],
       alias: {
         "~": path.resolve(lldRoot, "src"),
         LLD: [path.resolve(lldRoot, "src", "newArch")],
@@ -90,6 +90,8 @@ const buildViteConfig = argv =>
         ),
         "styled-components": [require.resolve("styled-components/dist/styled-components")],
         electron: path.join(__dirname, "electronRendererStubs.js"),
+        // Force @noble/hashes to use browser version instead of Node version
+        "@noble/hashes/crypto": require.resolve("@noble/hashes/crypto.js"),
       },
     },
     optimizeDeps: {
