@@ -32,7 +32,7 @@ export default function useAddFundsButtonViewModel({
 
   const navigation = useNavigation<StackNavigationProp<BaseNavigatorStackParamList>>();
 
-  const isSyncIncr1Enabled = useFeature("llmSyncOnboardingIncr1")?.enabled || false;
+  const isSyncIncr1Enabled = !!useFeature("llmSyncOnboardingIncr1")?.enabled;
 
   const openFundOrAccountListDrawer = useCallback(() => {
     let clickMetadata;
