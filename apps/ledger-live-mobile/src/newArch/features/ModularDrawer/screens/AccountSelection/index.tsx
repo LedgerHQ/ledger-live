@@ -2,7 +2,7 @@ import React, { useCallback, useRef } from "react";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { AccountLike } from "@ledgerhq/types-live";
 import { FlatList } from "react-native";
-import { Flex } from "@ledgerhq/native-ui";
+import { BottomSheetVirtualizedList } from "@gorhom/bottom-sheet";
 import { AccountItem } from "@ledgerhq/native-ui/pre-ldls/index";
 import {
   TrackDrawerScreen,
@@ -46,7 +46,7 @@ const AccountSelectionContent = ({
     onAccountSelected,
     accounts$,
   );
-  const listRef = useRef<FlatList<AccountUI>>(null);
+  const listRef = useRef<FlatList>(null);
   const { t } = useTranslation();
   const { colors } = useTheme();
 
@@ -85,20 +85,21 @@ const AccountSelectionContent = ({
   return (
     <>
       <TrackDrawerScreen page={EVENTS_NAME.MODULAR_ACCOUNT_SELECTION} flow={flow} source={source} />
-      <Flex flexGrow={1}>
-        <FlatList
-          ref={listRef}
-          data={detailedAccounts}
-          keyExtractor={item => item.id}
-          renderItem={renderItem}
-          ListFooterComponent={renderFooter}
-          showsVerticalScrollIndicator={false}
-          contentContainerStyle={{
-            paddingBottom: MARGIN_BOTTOM,
-            marginTop: 16,
-          }}
-        />
-      </Flex>
+      <BottomSheetVirtualizedList
+        ref={listRef}
+        scrollToOverflowEnabled={true}
+        data={detailedAccounts}
+        keyExtractor={item => item.id}
+        getItemCount={data => data.length}
+        getItem={(data, index) => data[index]}
+        renderItem={renderItem}
+        ListFooterComponent={renderFooter}
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{
+          paddingBottom: MARGIN_BOTTOM,
+          marginTop: 16,
+        }}
+      />
     </>
   );
 };
