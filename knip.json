@@ -82,12 +82,6 @@
         "react-native-udp"
       ]
     },
-    "./libs/live-nft-react": {
-      "entry": ["src/index.ts", "src/tools/*", "src/hooks/*"]
-    },
-    "./libs/live-nft": {
-      "entry": ["src/api/index.ts", "src/index.ts", "src/index.test.ts", "src/types.ts"]
-    },
     "./libs/env": {
       "entry": ["src/index.ts"]
     },

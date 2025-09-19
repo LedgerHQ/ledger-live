@@ -10,7 +10,7 @@ import { AccountSelection } from "./screens/AccountSelection";
 import { useModularDrawerNavigation } from "./hooks/useModularDrawerNavigation";
 import { BackButtonArrow } from "./components/BackButton";
 import { useModularDrawerRemoteData } from "./hooks/useModularDrawerRemoteData";
-import { setSearchedValue } from "~/renderer/reducers/modularDrawer";
+import { resetModularDrawerState } from "~/renderer/reducers/modularDrawer";
 import { useModularDrawerConfiguration } from "@ledgerhq/live-common/modularDrawer/hooks/useModularDrawerConfiguration";
 
 const ModularDrawerFlowManager = ({
@@ -30,8 +30,7 @@ const ModularDrawerFlowManager = ({
 
   useEffect(() => {
     return () => {
-      // Reset search value when the drawer closes/unmounts
-      dispatch(setSearchedValue(undefined));
+      dispatch(resetModularDrawerState());
     };
   }, [dispatch]);
 

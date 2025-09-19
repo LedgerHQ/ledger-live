@@ -71,15 +71,18 @@ const DeviceIcon = ({ color, size = 16 }: { color?: string; size?: number }) => 
 
   let icon;
   switch (lastSeenDevice?.modelId) {
+    case DeviceModelId.stax:
+      icon = <Icons.Stax size="M" color={color} />;
+      break;
+    case DeviceModelId.europa:
+      icon = <Icons.Flex size="M" color={color} />;
+      break;
+    case DeviceModelId.apex:
+      icon = <Icons.Flex size="M" color={color} />;
+      break;
     case DeviceModelId.nanoS:
     case DeviceModelId.nanoSP:
       icon = <IconsLegacy.NanoSFoldedMedium size={size} color={color} />;
-      break;
-    case DeviceModelId.stax:
-      icon = <IconsLegacy.StaxMedium size={size} color={color} />;
-      break;
-    case DeviceModelId.europa:
-      icon = <Icons.Flex color={color} />;
       break;
     case DeviceModelId.nanoX:
     default:

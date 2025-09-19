@@ -656,11 +656,6 @@ const envDefinitions = {
     parser: boolParser,
     desc: "allow the creation of legacy accounts",
   },
-  SIMPLE_HASH_API_BASE: {
-    def: "https://simplehash.api.live.ledger.com/api/v0",
-    parser: stringParser,
-    desc: "SimpleHash API base url",
-  },
   SKIP_ONBOARDING: {
     def: false,
     parser: boolParser,

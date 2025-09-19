@@ -6,6 +6,7 @@ import Flex from "../../../../src/components/Layout/Flex";
 import Switch from "../../../../src/components/Form/Switch";
 import Button from "../../../../src/components/cta/Button";
 import VerticalTimeline from "../../../../src/components/Layout/List/VerticalTimeline";
+import { TimelineStep } from "../../../../src/components/Layout/List/VerticalTimeline/TimelineItem";
 import ContinueOnDevice from "../../../../src/components/message/ContinueOnDevice";
 import { ItemStatus } from "../../../../src/components/Layout/List/types";
 
@@ -16,7 +17,7 @@ export default {
 
 const { BodyText, SubtitleText } = VerticalTimeline;
 
-const defaultItems = [
+const defaultItems: TimelineStep[] = [
   {
     status: ItemStatus.active,
     title: "step's {title} prop",
@@ -113,6 +114,12 @@ export const VerticalTimelineStory: StoryFn<typeof VerticalTimeline> = () => {
     setItems(newItems);
   }, []);
 
+  const setLastStepNeutral = useCallback(() => {
+    const newItems = [...items];
+    newItems[newItems.length - 1].isNeutral = !newItems[newItems.length - 1].isNeutral;
+    setItems(newItems);
+  }, [items]);
+
   useEffect(() => {
     let timeout: ReturnType<typeof setTimeout>;
     if (animate) {
@@ -137,6 +144,9 @@ export const VerticalTimelineStory: StoryFn<typeof VerticalTimeline> = () => {
       <Switch checked={animate} onChange={setAnimate} label={"Auto animate VerticalTimeline"} />
       <Button my={3} type="main" outline onPress={() => setActiveIndex(items.length)}>
         Set last step complete
+      </Button>
+      <Button my={3} type="main" outline onPress={() => setLastStepNeutral()}>
+        Set step as {items[items.length - 1].isNeutral ? "" : "not "}neutral
       </Button>
       <Divider />
       <VerticalTimeline steps={items} setActiveIndex={animate ? undefined : setActiveIndex} />

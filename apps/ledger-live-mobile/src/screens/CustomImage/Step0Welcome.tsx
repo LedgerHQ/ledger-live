@@ -85,7 +85,7 @@ const Step0Welcome: React.FC<
             eventProperties={analyticsButtonEventProps}
             testID="custom-image-choose-picture-button"
             iconPosition="left"
-            Icon={() => <Icons.DoublePicture color={colors.neutral.c00} size="S" />}
+            Icon={<Icons.DoublePicture color={colors.neutral.c00} size="S" />}
           >
             {t("customImage.landingPage.choosePicture")}
           </Button>

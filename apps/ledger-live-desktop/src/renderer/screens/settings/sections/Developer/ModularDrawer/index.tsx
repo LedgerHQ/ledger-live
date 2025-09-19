@@ -11,6 +11,8 @@ import { DrawerConfiguration } from "./DrawerConfiguration";
 import { DevToolControls } from "./DevToolControls";
 import { useDrawerConfiguration, useDevToolState } from "./hooks";
 import { ModularDrawerDevToolContentProps } from "./types";
+import { useDispatch } from "react-redux";
+import { setIsDebuggingDuplicates } from "~/renderer/reducers/modularDrawer";
 
 export const ModularDrawerDevToolContent = (props: ModularDrawerDevToolContentProps) => {
   const { t } = useTranslation();
@@ -24,6 +26,7 @@ export const ModularDrawerDevToolContent = (props: ModularDrawerDevToolContentPr
     liveApp,
     setLiveApp,
   } = useDevToolState();
+  const dispatch = useDispatch();
 
   const {
     assetsLeftElement,
@@ -44,6 +47,14 @@ export const ModularDrawerDevToolContent = (props: ModularDrawerDevToolContentPr
     "receive",
     openModal ? "MODAL_RECEIVE" : undefined,
   );
+
+  const debugDuplicates = () => {
+    dispatch(setIsDebuggingDuplicates(true));
+    openAssetFlow(true, {
+      assets: { leftElement: "undefined", rightElement: "undefined" },
+      networks: { leftElement: "undefined", rightElement: "undefined" },
+    });
+  };
 
   const openDrawerFunctions: Record<ModularDrawerLocation, () => void> = {
     [ModularDrawerLocation.ADD_ACCOUNT]: () => openAssetFlow(includeTokens, drawerConfiguration),
@@ -84,9 +95,12 @@ export const ModularDrawerDevToolContent = (props: ModularDrawerDevToolContentPr
             networksRightElement={networksRightElement}
             setNetworksRightElement={setNetworksRightElement}
           />
-          <Flex>
+          <Flex columnGap={"12px"}>
             <Button variant="color" onClick={() => openDrawerFunctions[location.value]()}>
               Open Drawer
+            </Button>
+            <Button variant="color" onClick={debugDuplicates}>
+              Debug Duplicates
             </Button>
           </Flex>
         </Flex>

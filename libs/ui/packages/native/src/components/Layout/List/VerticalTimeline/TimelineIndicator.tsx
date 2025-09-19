@@ -82,8 +82,13 @@ const BottomSegmentSvg: React.FC<SegmentProps> = ({ status, hidden }) => {
   );
 };
 
-const getIconBackground = (theme: Theme, status: ItemStatus, isLastItem?: boolean) => {
-  if (isLastItem) {
+const getIconBackground = (
+  theme: Theme,
+  status: ItemStatus,
+  isLastItem?: boolean,
+  isNeutral?: boolean,
+) => {
+  if (isLastItem && !isNeutral) {
     if (status === "inactive") return theme.colors.success.c10;
     return "transparent";
   } else if (status === "active") {
@@ -93,8 +98,13 @@ const getIconBackground = (theme: Theme, status: ItemStatus, isLastItem?: boolea
   }
 };
 
-const getIconBorder = (theme: Theme, status: ItemStatus, isLastItem?: boolean) => {
-  if (isLastItem) {
+const getIconBorder = (
+  theme: Theme,
+  status: ItemStatus,
+  isLastItem?: boolean,
+  isNeutral?: boolean,
+) => {
+  if (isLastItem && !isNeutral) {
     return theme.colors.success.c70;
   } else if (status === "inactive") {
     return theme.colors.neutral.c40;
@@ -102,12 +112,16 @@ const getIconBorder = (theme: Theme, status: ItemStatus, isLastItem?: boolean) =
   return theme.colors.primary.c80;
 };
 
-const CenterCircle = styled(Flex)<{ status: ItemStatus; isLastItem?: boolean }>`
+const CenterCircle = styled(Flex)<{
+  status: ItemStatus;
+  isLastItem?: boolean;
+  isNeutral?: boolean;
+}>`
   border-radius: 9999px;
   width: 16px;
   height: 16px;
-  background: ${(p) => getIconBackground(p.theme, p.status, p.isLastItem)};
-  border: 2px solid ${(p) => getIconBorder(p.theme, p.status, p.isLastItem)};
+  background: ${(p) => getIconBackground(p.theme, p.status, p.isLastItem, p.isNeutral)};
+  border: 2px solid ${(p) => getIconBorder(p.theme, p.status, p.isLastItem, p.isNeutral)};
   align-items: center;
   justify-content: center;
 `;
@@ -116,6 +130,7 @@ export type Props = FlexProps & {
   status: ItemStatus;
   isFirstItem?: boolean;
   isLastItem?: boolean;
+  isNeutral?: boolean;
   topHeight?: number;
 };
 
@@ -123,6 +138,7 @@ export default function TimelineIndicator({
   status,
   isFirstItem,
   isLastItem,
+  isNeutral,
   topHeight,
   ...props
 }: Props) {
@@ -135,10 +151,10 @@ export default function TimelineIndicator({
         hidden={isFirstItem}
         height={PixelRatio.roundToNearestPixel(topHeight || topSegmentDefaultHeight)}
       />
-      <CenterCircle status={status} isLastItem={isLastItem}>
+      <CenterCircle status={status} isLastItem={isLastItem} isNeutral={isNeutral}>
         {status === "completed" && (
           <CircledCheckSolidMedium
-            color={isLastItem ? colors.success.c70 : colors.primary.c80}
+            color={isLastItem && !isNeutral ? colors.success.c70 : colors.primary.c80}
             size={20}
           />
         )}

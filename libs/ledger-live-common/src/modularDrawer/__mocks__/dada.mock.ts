@@ -1,6 +1,7 @@
 export const expectedAssetsSorted = [
   {
     id: "bitcoin",
+    metaCurrencyId: "bitcoin",
     ticker: "BTC",
     name: "Bitcoin",
     assetsIds: {
@@ -9,6 +10,7 @@ export const expectedAssetsSorted = [
   },
   {
     id: "ethereum",
+    metaCurrencyId: "urn:crypto:meta-currency:ethereum",
     ticker: "ETH",
     name: "Ethereum",
     assetsIds: {
@@ -26,6 +28,7 @@ export const expectedAssetsSorted = [
   },
   {
     id: "ripple",
+    metaCurrencyId: "ripple",
     ticker: "XRP",
     name: "Ripple",
     assetsIds: {
@@ -34,6 +37,7 @@ export const expectedAssetsSorted = [
   },
   {
     id: "ethereum/erc20/usd_tether__erc20_",
+    metaCurrencyId: "urn:crypto:meta-currency:tether",
     ticker: "USDT",
     name: "Tether USD",
     assetsIds: {
@@ -57,6 +61,7 @@ export const expectedAssetsSorted = [
   },
   {
     id: "bsc",
+    metaCurrencyId: "urn:crypto:meta-currency:binancecoin",
     ticker: "BNB",
     name: "Binance Smart Chain",
     assetsIds: {
@@ -67,6 +72,7 @@ export const expectedAssetsSorted = [
   },
   {
     id: "solana",
+    metaCurrencyId: "solana",
     ticker: "SOL",
     name: "Solana",
     assetsIds: {
@@ -75,6 +81,7 @@ export const expectedAssetsSorted = [
   },
   {
     id: "ethereum/erc20/usd__coin",
+    metaCurrencyId: "urn:crypto:meta-currency:usd_coin",
     ticker: "USDC",
     name: "USD Coin",
     assetsIds: {
@@ -104,6 +111,7 @@ export const expectedAssetsSorted = [
   },
   {
     id: "ethereum/erc20/steth",
+    metaCurrencyId: "ethereum/erc20/steth",
     ticker: "stETH",
     name: "LIDO Staked ETH",
     assetsIds: {
@@ -112,6 +120,7 @@ export const expectedAssetsSorted = [
   },
   {
     id: "tron",
+    metaCurrencyId: "tron",
     ticker: "TRX",
     name: "Tron",
     assetsIds: {
@@ -120,6 +129,7 @@ export const expectedAssetsSorted = [
   },
   {
     id: "dogecoin",
+    metaCurrencyId: "dogecoin",
     ticker: "DOGE",
     name: "Dogecoin",
     assetsIds: {
