@@ -419,10 +419,6 @@
       "title" : "无法自动验证。请仔细核对该地址。",
       "description" : null
     },
-    "EthAppNftNotSupported" : {
-      "title" : "操作不可用于此设备",
-      "description" : "仅 Nano X 和 Nano S Plus 提供发送 NFT 功能。请访问我们的客服平台，了解如何使用 Nano S 发送 NFT。"
-    },
     "Touch ID Error" : {
       "title" : "生物特征认证失败",
       "description" : "请使用您的密码或重置应用程序。"
@@ -925,9 +921,6 @@
     "TaprootNotActivated" : {
       "title" : "Taproot 主网尚未激活"
     },
-    "NotEnoughNftOwned" : {
-      "title" : "您已超过可用代币的数量"
-    },
     "generic" : {
       "title" : "{{message}}",
       "description" : "出错了。请重试。如果问题依旧存在，请使用下面的按钮保存您的日志，并将其提供给 Ledger 客服。",
@@ -1051,10 +1044,6 @@
     "ImageDownloadError" : {
       "title" : "图片下载失败",
       "description" : "使用其他图片重试。"
-    },
-    "NFTMetadataLoadingError" : {
-      "title" : "NFT 元数据加载问题",
-      "description" : "使用其他 NFT 重试。"
     },
     "ImageSizeLoadingError" : {
       "title" : "未能检索图片尺寸",
@@ -2156,26 +2145,6 @@
         "learnHowToUpdate" : "了解如何更新"
       }
     },
-    "stepImportAccounts" : {
-      "title" : "通过桌面应用程序同步加密资产",
-      "desc" : "如果您已经在 Ledger 桌面应用程序设置好了您的加密资产，就可以通过您的手机完成同步并进行管理。",
-      "cta" : "我准备好扫描了",
-      "bullets" : {
-        "0" : {
-          "label" : "在桌面应用程序中，选择 <1>设置 > 账户 > 账户导出</1>。"
-        },
-        "1" : {
-        },
-        "2" : {
-          "label" : "选择需要导入的加密资产账户。"
-        }
-      },
-      "warning" : {
-        "title" : "必须手动完成桌面应用程序和手机应用程序的同步。",
-        "desc" : "Ledger Live 尊重您的隐私，只会本地存储您的数据。如果您在手机上更改了账户和设置，那么也需要在电脑上做出同样的操作，反之亦然。您的交易数据会和区块链保持同步。",
-        "cta" : "知道了！"
-      }
-    },
     "stepSetupPin" : {
       "step1" : "启动您的 {{fullDeviceName}} 并按照说明操作。",
       "step1-nanoS" : "使用 OTG 数据线来将您的 {{fullDeviceName}} 连接到您的手机上。",
@@ -2712,9 +2681,7 @@
   "operations" : {
     "types" : {
       "IN" : "已接收",
-      "NFT_IN" : "已收到的 NFT",
       "OUT" : "已发送",
-      "NFT_OUT" : "已发送的 NFT",
       "CREATE" : "已创建",
       "REVEAL" : "已显示",
       "DELEGATE" : "已委托",
@@ -2819,11 +2786,7 @@
       "stakedAmount" : "权益质押数额",
       "accountCreationFee" : "账户创建费"
     },
-    "multipleAddresses" : "为什么有多个地址？",
-    "tokenName" : "代币名称",
-    "collectionContract" : "代币合约",
-    "tokenId" : "代币（NFT）ID",
-    "quantity" : "数量"
+    "multipleAddresses" : "为什么有多个地址？"
   },
   "operationList" : {
     "noOperations" : "不作操作",
@@ -2855,8 +2818,8 @@
       "contactSupport" : "联系客服"
     },
     "willBedeprecatedBanner" : {
-      "title" : "为了优化效率，自 {{deprecatedDate}} 起，Ledger Live 将不再支持 {{currencyName}}。但 Ledger 硬件钱包将继续支持该币种。如需这方面的帮助，请联系 Ledger 客服。",
-      "contactSupport" : "联系客服"
+      "title" : "自 {{deprecatedDate}} 起 Ledger Live 将不再支持 {{currencyName}}。但该币种仍会受到 Ledger 硬件钱包的保护。请访问下方链接，阅读完整的帮助中心文章，了解更多信息。",
+      "learnMore" : "了解更多"
     },
     "tokens" : {
       "contractAddress" : "合约地址",
@@ -2992,10 +2955,6 @@
     },
     "undelegation" : {
       "sectionLabel" : "解除委托"
-    },
-    "nft" : {
-      "receiveNft" : "接收 NFT",
-      "howTo" : "要添加 NFT，您需要使用您的 <1>{{currency}} 地址</1><0>来接收</0>。"
     },
     "readOnly" : {
       "noTransaction" : {
@@ -3206,11 +3165,6 @@
         "title" : "隐藏代币",
         "desc" : "此操作将隐藏全部 <1><0>{tokenName}</0></1> 账户，您可以使用 <3>设置</3> 再次显示这些账户。",
         "confirm" : "隐藏代币"
-      },
-      "hideNFTCollectionCTA" : "隐藏收藏",
-      "hideNFTCollectionModal" : {
-        "title" : "隐藏收藏？",
-        "desc" : "您可以在设置选项中取消隐藏此收藏。"
       },
       "cryptoAssets" : {
         "header" : "加密资产",
@@ -3769,6 +3723,10 @@
       "twoStepApproval" : {
         "title" : "完成步骤"
       },
+      "loader" : {
+        "title" : "正在处理互换",
+        "description" : "我们正在处理您的请求，请稍候。"
+      },
       "history" : {
         "title" : "互换历史记录"
       },
@@ -4036,10 +3994,7 @@
       "summary" : "概要",
       "selectDevice" : "选择设备",
       "connectDevice" : "连接设备",
-      "stepRange" : "步骤 {{currentStep}} 之 {{totalSteps}}",
-      "quantity" : "数量",
-      "selectCollection" : "收藏",
-      "selectNft" : "NFT"
+      "stepRange" : "步骤 {{currentStep}} 之 {{totalSteps}}"
     },
     "recipient" : {
       "scan" : "扫描二维码",
@@ -4073,6 +4028,10 @@
       "solanaRawTransaction" : {
         "title" : "需要盲签名",
         "description" : "您无法在 Ledger 设备上验证交易详情。如果您签署此交易，可能会丢失所有资产。仅在您信任此网站的情况下才可签署。"
+      },
+      "bitcoinPsbtTransaction" : {
+        "title" : "在设备上验证",
+        "description" : "在下一步中，您可以在设备上核对交易数额和接收方。"
       },
       "subaccountsWarning" : "您需要向此账户充值 {{ currency }} 才能发送此账户的代币",
       "tag" : "标签 (可选)",
@@ -4376,7 +4335,7 @@
       "title" : "选择您要添加的账户",
       "ctaStopScan" : "停止扫描",
       "confirm" : "确认",
-      "scanningTitle" : "正在查找区块链上的现有账户……",
+      "scanningTitle" : "正在检查区块链……",
       "whichAddressType" : "了解如何选择地址类型",
       "sections" : {
         "importable" : {
@@ -4441,7 +4400,7 @@
     "confirmSwap" : {
       "title" : "在设备上确认互换操作",
       "alert" : {
-        "default" : "发送之前请在您的设备上验证互换详情。地址会被安全地交换因此您不必对其进行验证。",
+        "default" : "发送资金之前，请先在您的 Ledger 设备上核实互换详情。",
         "provider" : "发送资金之前，请先在您的设备上核实互换详情。{{providerName}} 可能需要对某些交易进行额外验证，因此导致延迟。"
       },
       "acceptTerms" : "验证此交易，即表示我接受\n<0><0>{{provider}}</0>的使用条款</0>",
@@ -7142,47 +7101,6 @@
       }
     }
   },
-  "nft" : {
-    "account" : {
-      "seeAllNfts" : "查看所有 NFT",
-      "seeFewerNfts" : "看到更少 NFT"
-    },
-    "gallery" : {
-      "allNft" : "所有 NFT",
-      "addNew" : "添加新的"
-    },
-    "designedForStax" : {
-      "title" : "<0>专为</0> <1>Ledger</1> <2>Stax</2> 设计",
-      "drawer" : {
-        "description" : "此 NFT 包含 NFT 的附加图片，专为 Ledger Stax 的 E Ink 屏幕设计。\n\n当您将此 NFT 设置为锁屏时，将使用此图片。",
-        "cta" : "知道了"
-      }
-    },
-    "viewer" : {
-      "properties" : "属性",
-      "description" : "描述",
-      "tokenContract" : "代币地址",
-      "tokenContractCopied" : "代币地址已复制！",
-      "tokenId" : "代币 ID",
-      "tokenIdCopied" : "代币 ID 已复制！",
-      "quantity" : "数量",
-      "attributes" : {
-        "floorPrice" : "底价"
-      }
-    },
-    "viewerModal" : {
-      "viewOn" : "查看",
-      "viewInExplorer" : "在浏览器中查看",
-      "hide" : "隐藏 NFT 藏品",
-      "txDetails" : "交易详情"
-    },
-    "modalDisabled" : {
-      "title" : "iOS 上不能使用发送功能",
-      "body" : "为了遵守 Apple 对 App Store 的最新更新，暂时无法发送 NFT。您仍然可以在桌面设备上使用 Ledger Live 发送 NFT。",
-      "learnMore" : "了解更多",
-      "continue" : "知道了！"
-    }
-  },
   "ApplicationVersion" : "{{version}}版本",
   "analytics" : {
     "title" : "数据分析",
@@ -7266,7 +7184,6 @@
     "drawer" : {
       "options" : {
         "uploadFromPhone" : "从我的图片库中选择",
-        "selectFromNFTGallery" : "从 NFT 库中选择",
         "remove" : "移除当前图片"
       }
     },
@@ -7297,9 +7214,6 @@
       "setPicture" : "设置为锁屏界面",
       "editPicture" : "编辑图片",
       "pickDeviceModel" : "选择设备"
-    },
-    "nftGallery" : {
-      "title" : "我的 NFT"
     }
   },
   "postOnboarding" : {
@@ -7344,50 +7258,7 @@
   "wallet" : {
     "tabs" : {
       "crypto" : "加密货币",
-      "nft" : "NFT",
       "market" : "市场"
-    },
-    "nftGallery" : {
-      "filters" : {
-        "select" : "选择",
-        "filter" : "筛选",
-        "blockchain" : "区块链",
-        "seeAll" : "显示全部",
-        "selectAndHide" : "选择并隐藏",
-        "hide" : "隐藏 {{count}} 件藏品",
-        "hiddenCollections" : "隐藏藏品",
-        "hide_plural" : "隐藏 {{count}} 件藏品",
-        "empty" : "没有可显示的隐藏藏品",
-        "alertHide" : "已隐藏 1 件藏品。您可以随时在藏品库筛选条件中取消隐藏。",
-        "alertHide_plural" : "已隐藏 {{count}} 件藏品。您可以随时在藏品库筛选条件中取消隐藏。"
-      },
-      "emptyFiltered" : {
-        "title" : "没有符合您的条件的 NFT",
-        "button" : "重置筛选条件"
-      },
-      "empty" : {
-        "title" : "暂时没有 NFT 可显示",
-        "subtitle" : "首先将 NFT 添加到您的钱包",
-        "receive" : "接收 NFT",
-        "supportLink" : "如何从其他钱包获取 NFT？"
-      },
-      "receiveModal" : {
-        "title" : "以与任何其他加密货币相同的方式接收 NFT",
-        "bullets" : {
-          "0" : "• 选择 NFT 的加密货币区块链。",
-          "1" : "• 选择接收 NFT 的账户"
-        },
-        "cta" : "好，知道了",
-        "info" : "我想了解更多"
-      },
-      "hideNftModal" : {
-        "title" : "隐藏 NFT 藏品",
-        "desc" : "此操作将隐藏{{collectionName}}藏品中的所有 NFT，您可以在藏品库筛选条件中取消隐藏",
-        "cta" : "隐藏此 NFT"
-      },
-      "media" : {
-        "tag" : "{{count}} 个 NFT"
-      }
     },
     "referralProgram" : "$20"
   },
@@ -7960,7 +7831,13 @@
     "searchPlaceholder" : "搜索",
     "emptyAssetList" : "未找到资产",
     "accountCount" : "{{count}} 个账户",
-    "accountCount_plural" : "{{count}} 个账户"
+    "accountCount_plural" : "{{count}} 个账户",
+    "errors" : {
+      "title" : "连接失败",
+      "backend" : "我们这边出错了。请稍后重试",
+      "internet" : "无互联网连接。请重试",
+      "cta" : "请重试"
+    }
   },
   "swapErrors" : {
     "incorrectCommandData" : {
