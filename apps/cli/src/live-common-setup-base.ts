@@ -17,6 +17,8 @@ setSupportedCurrencies([
   "bsc",
   "polkadot",
   "westend",
+  "assethub_westend",
+  "assethub_polkadot",
   "ripple",
   "litecoin",
   "polygon",

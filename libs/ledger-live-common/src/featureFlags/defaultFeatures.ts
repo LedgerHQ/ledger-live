@@ -100,6 +100,8 @@ export const CURRENCY_DEFAULT_FEATURES = {
   currencyEthereumHoodi: DEFAULT_FEATURE,
   currencyCore: DEFAULT_FEATURE,
   currencyWestend: DEFAULT_FEATURE,
+  currencyAssetHubPolkadot: DEFAULT_FEATURE,
+  currencyAssetHubWestend: DEFAULT_FEATURE,
 };
 
 /**

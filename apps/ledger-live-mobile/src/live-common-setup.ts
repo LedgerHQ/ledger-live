@@ -42,6 +42,8 @@ setSupportedCurrencies([
   "bsc",
   "polkadot",
   "westend",
+  "assethub_westend",
+  "assethub_polkadot",
   "solana",
   "solana_testnet",
   "solana_devnet",

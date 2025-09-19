@@ -2349,6 +2349,31 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     ],
     keywords: ["dot", "polkadot"],
   },
+  assethub_polkadot: {
+    type: "CryptoCurrency",
+    id: "assethub_polkadot",
+    coinType: CoinType.POLKADOT,
+    name: "Assethub Polkadot",
+    managerAppName: "Polkadot",
+    ticker: "DOT",
+    deviceTicker: "DOT",
+    scheme: "assethub_polkadot",
+    color: "#E6007A",
+    units: [
+      {
+        name: "DOT",
+        code: "DOT",
+        magnitude: 10,
+      },
+    ],
+    family: "polkadot",
+    explorerViews: [
+      {
+        address: "https://assethub-polkadot.subscan.io/account/$address",
+        tx: "https://assethub-polkadot.subscan.io/extrinsic/$hash",
+      },
+    ],
+  },
   polygon: {
     type: "CryptoCurrency",
     id: "polygon",
@@ -3397,6 +3422,32 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
       {
         address: "https://westend.subscan.io/account/$address",
         tx: "https://westend.subscan.io/extrinsic/$hash",
+      },
+    ],
+  },
+  assethub_westend: {
+    type: "CryptoCurrency",
+    id: "assethub_westend",
+    coinType: CoinType.POLKADOT,
+    name: "Assethub Westend",
+    managerAppName: "Polkadot",
+    ticker: "WND",
+    deviceTicker: "DOT",
+    scheme: "assethub_westend",
+    color: "#00ff00",
+    units: [
+      {
+        code: "WND",
+        name: "WND",
+        magnitude: 12,
+      },
+    ],
+    isTestnetFor: "polkadot",
+    family: "polkadot",
+    explorerViews: [
+      {
+        address: "https://assethub-westend.subscan.io/account/$address",
+        tx: "https://assethub-westend.subscan.io/extrinsic/$hash",
       },
     ],
   },

@@ -143,6 +143,8 @@ export type CurrencyFeatures = {
   currencyEthereumHoodi: DefaultFeature;
   currencyCore: DefaultFeature;
   currencyWestend: DefaultFeature;
+  currencyAssetHubWestend: DefaultFeature;
+  currencyAssetHubPolkadot: DefaultFeature;
 };
 
 /**
