@@ -28,7 +28,7 @@ class MainApplication : Application(), ReactApplication {
     const val FW_UPDATE_NOTIFICATION_USER = 2
   }
 
-  override val reactNativeHost: ReactNativeHost =
+  override val reactNativeHost: ReactNativeHost by lazy {
       ReactNativeHostWrapper(
           this,
           object : DefaultReactNativeHost(this) {
@@ -48,9 +48,11 @@ class MainApplication : Application(), ReactApplication {
             override val isHermesEnabled: Boolean = BuildConfig.IS_HERMES_ENABLED
           }
       )
+  }
 
-  override val reactHost: ReactHost
-    get() = getDefaultReactHost(applicationContext, reactNativeHost)
+  override val reactHost: ReactHost by lazy {
+    getDefaultReactHost(applicationContext, reactNativeHost)
+  }
 
     private var appProcessStartTime: Long = 0
     private var didInitialColdLaunchComplete: Boolean = false
@@ -65,12 +67,16 @@ class MainApplication : Application(), ReactApplication {
       appProcessStartTime = SystemClock.uptimeMillis()
 
       SoLoader.init(this, OpenSourceMergedSoMapping)
+
+      if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
+        // Override RN feature flags after SoLoader is ready, before using RN instances.
+        load()
+      }
       registerActivityLifecycleCallbacks(StartupLifecycleListener(appProcessStartTime))
 
       registerActivityLifecycleCallbacks(BrazeActivityLifecycleCallbackListener())
 
       setupStartupTracking()
-
 
       reactNativeHost.reactInstanceManager.addReactInstanceEventListener(object : ReactInstanceEventListener {
           override fun onReactContextInitialized(context: ReactContext) {
@@ -80,12 +86,6 @@ class MainApplication : Application(), ReactApplication {
       })
 
       didInitialColdLaunchComplete = true
-
-      if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
-        // If you opted-in for the New Architecture, 
-        // we load the native entry point for this app.
-        load()
-      }
 
       ApplicationLifecycleDispatcher.onApplicationCreate(this)
 
