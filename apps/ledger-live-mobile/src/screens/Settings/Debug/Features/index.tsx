@@ -10,8 +10,11 @@ import { StackNavigatorNavigation } from "~/components/RootNavigator/types/helpe
 import { SettingsNavigatorStackParamList } from "~/components/RootNavigator/types/SettingsNavigator";
 import { FeatureToggle } from "@ledgerhq/live-common/featureFlags/index";
 import { InitialRange } from "~/components/RootNavigator/types/LandingPagesNavigator";
+import InfoModal from "~/modals/Info";
+import { useState } from "react";
 
 export default function Features() {
+  const [showBaseModalDemo, setShowBaseModalDemo] = useState(false);
   const navigation = useNavigation<StackNavigatorNavigation<SettingsNavigatorStackParamList>>();
   const navigateToLargeMover = () => {
     navigation.navigate(ScreenName.LargeMoverLandingPage, {
@@ -74,6 +77,12 @@ export default function Features() {
         onPress={() => navigation.navigate(ScreenName.DebugVideos)}
       />
       <SettingsRow
+        title="BaseModal demo"
+        desc="Opens InfoModal (BaseModal-based)"
+        iconLeft={<IconsLegacy.InfoMedium size={24} color="black" />}
+        onPress={() => setShowBaseModalDemo(true)}
+      />
+      <SettingsRow
         title="Storyly"
         desc="Remote video slides (stories) used on the new onboarding"
         iconLeft={<IconsLegacy.InstagramMedium size={24} color="black" />}
@@ -131,6 +140,16 @@ export default function Features() {
           onPress={() => navigation.navigate(ScreenName.DebugModularAssetDrawer)}
         />
       </FeatureToggle>
+      <InfoModal
+        isOpened={showBaseModalDemo}
+        onClose={() => setShowBaseModalDemo(false)}
+        data={[
+          {
+            title: "Demo title",
+            description: "This InfoModal uses BaseModal under the hood.",
+          },
+        ]}
+      />
     </SettingsNavigationScrollView>
   );
 }
