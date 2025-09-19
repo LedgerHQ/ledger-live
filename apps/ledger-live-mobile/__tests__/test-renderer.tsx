@@ -1,4 +1,3 @@
-import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import { INITIAL_STATE as TRUSTCHAIN_INITIAL_STATE } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { initialState as POST_ONBOARDING_INITIAL_STATE } from "@ledgerhq/live-common/postOnboarding/reducer";
 import { CountervaluesBridge, CountervaluesProvider } from "@ledgerhq/live-countervalues-react";
@@ -176,11 +175,9 @@ function Providers({
       // For default rendering, add new providers here
       <StyleProvider selectedPalette="dark">
         <I18nextProvider i18n={i18n}>
-          <BottomSheetModalProvider>
-            <QueuedDrawersContextProvider>
-              <AnalyticsContextProvider>{content}</AnalyticsContextProvider>
-            </QueuedDrawersContextProvider>
-          </BottomSheetModalProvider>
+          <QueuedDrawersContextProvider>
+            <AnalyticsContextProvider>{content}</AnalyticsContextProvider>
+          </QueuedDrawersContextProvider>
         </I18nextProvider>
       </StyleProvider>
     );

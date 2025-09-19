@@ -3,8 +3,8 @@ import { Keyboard } from "react-native";
 import { useIsFocused } from "@react-navigation/native";
 import { useSelector } from "react-redux";
 import { isModalLockedSelector } from "~/reducers/appstate";
-import { DrawerInQueue, useQueuedDrawerContext } from "../QueuedDrawersContext";
-import { logDrawer } from "../utils/logDrawer";
+import { DrawerInQueue, useQueuedDrawerContext } from "./QueuedDrawersContext";
+import { logDrawer } from "./utils/logDrawer";
 
 interface UseQueuedDrawerNativeProps {
   isRequestingToBeOpened?: boolean;
