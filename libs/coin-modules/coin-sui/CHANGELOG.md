@@ -1,5 +1,11 @@
 # @ledgerhq/coin-sui
 
+## 0.13.1-nightly.3
+
+### Patch Changes
+
+- [#11886](https://github.com/LedgerHQ/ledger-live/pull/11886) [`e86b0e1`](https://github.com/LedgerHQ/ledger-live/commit/e86b0e166a6dbec688426c530261c3481121d5e4) Thanks [@jprudent](https://github.com/jprudent)! - coin:sui deduplicate operations
+
 ## 0.13.1-nightly.2
 
 ### Patch Changes

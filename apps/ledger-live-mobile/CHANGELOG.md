@@ -1,5 +1,16 @@
 # live-mobile
 
+## 3.94.0-nightly.3
+
+### Minor Changes
+
+- [#11914](https://github.com/LedgerHQ/ledger-live/pull/11914) [`626f4e3`](https://github.com/LedgerHQ/ledger-live/commit/626f4e3d4a6d251171d38135d0dbfc8fe6a15956) Thanks [@mitchellv-ledger](https://github.com/mitchellv-ledger)! - Add default apps install when empty ledger restored. Add onboarding flow field and seed configuration to tracking in InstallSetOfApps.
+
+### Patch Changes
+
+- Updated dependencies [[`f4fa9d5`](https://github.com/LedgerHQ/ledger-live/commit/f4fa9d57e494db378bb00b114870b164a57c7039), [`e56c3a8`](https://github.com/LedgerHQ/ledger-live/commit/e56c3a855d038cac74bdef225b9d057653c9ca18)]:
+  - @ledgerhq/coin-evm@2.31.0-nightly.3
+
 ## 3.94.0-nightly.2
 
 ### Minor Changes

@@ -1,5 +1,14 @@
 # ledger-live-desktop
 
+## 2.129.0-nightly.3
+
+### Patch Changes
+
+- Updated dependencies [[`f4fa9d5`](https://github.com/LedgerHQ/ledger-live/commit/f4fa9d57e494db378bb00b114870b164a57c7039), [`e56c3a8`](https://github.com/LedgerHQ/ledger-live/commit/e56c3a855d038cac74bdef225b9d057653c9ca18)]:
+  - @ledgerhq/coin-evm@2.31.0-nightly.3
+  - @ledgerhq/live-common@34.49.0-nightly.3
+  - @ledgerhq/live-dmk-desktop@0.9.7-nightly.3
+
 ## 2.129.0-nightly.2
 
 ### Minor Changes

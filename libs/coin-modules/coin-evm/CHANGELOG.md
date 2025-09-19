@@ -1,5 +1,13 @@
 # @ledgerhq/coin-evm
 
+## 2.31.0-nightly.3
+
+### Minor Changes
+
+- [#11547](https://github.com/LedgerHQ/ledger-live/pull/11547) [`f4fa9d5`](https://github.com/LedgerHQ/ledger-live/commit/f4fa9d57e494db378bb00b114870b164a57c7039) Thanks [@dilaouid](https://github.com/dilaouid)! - feat: add getStakes method + contracts lists and methods
+
+- [#11892](https://github.com/LedgerHQ/ledger-live/pull/11892) [`e56c3a8`](https://github.com/LedgerHQ/ledger-live/commit/e56c3a855d038cac74bdef225b9d057653c9ca18) Thanks [@jnicoulaud-ledger](https://github.com/jnicoulaud-ledger)! - tech(evm): parallelize balance fetching
+
 ## 2.31.0-nightly.2
 
 ### Patch Changes
