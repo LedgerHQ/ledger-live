@@ -6,6 +6,8 @@ import { Observable } from "rxjs";
 import { WalletAPIAccount } from "../../wallet-api/types";
 import { CurrenciesByProviderId } from "../../deposit/type";
 import { EnhancedModularDrawerConfiguration } from "../../wallet-api/ModularDrawer/types";
+import { InterestRate } from "../data/entities";
+import { MarketItemResponse } from "../../market/utils/types";
 
 export type ApyType = "NRR" | "APY" | "APR";
 
@@ -106,7 +108,6 @@ export type CreateNetworkConfigurationHookProps = {
 
 type Props = {
   assetsConfiguration: EnhancedModularDrawerConfiguration["assets"];
-  currenciesByProvider?: CurrenciesByProviderId[];
 };
 
 export type AssetConfigurationDeps = {
@@ -120,3 +121,15 @@ export type AssetConfigurationDeps = {
 export type CreateAssetConfigurationHook = (
   AssetConfigurationDeps: AssetConfigurationDeps,
 ) => (props: Props) => (assets: CryptoOrTokenCurrency[]) => (CryptoOrTokenCurrency & AssetType)[];
+
+export type AssetData = {
+  asset: {
+    id: string;
+    ticker: string;
+    name: string;
+    assetsIds: Record<string, string>;
+  };
+  networks: CryptoOrTokenCurrency[];
+  interestRates?: InterestRate;
+  market?: Partial<MarketItemResponse>;
+};

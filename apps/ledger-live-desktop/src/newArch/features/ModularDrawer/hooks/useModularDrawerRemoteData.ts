@@ -24,13 +24,13 @@ export function useModularDrawerRemoteData({
   isSelectAccountFlow,
 }: UseModularDrawerRemoteDataProps) {
   const {
-    currenciesByProvider,
     sortedCryptoCurrencies,
     error,
     refetch,
     isSuccess,
     loadingStatus,
     loadNext,
+    assetsSorted,
   } = useModularDrawerData({ currencyIds, useCase, areCurrenciesFiltered });
 
   const {
@@ -39,10 +39,9 @@ export function useModularDrawerRemoteData({
     networksToDisplay,
     setNetworksToDisplay,
     hasOneCurrency,
-    filteredCurrenciesByProvider,
   } = useModularDrawerFiltering({
     currencyIds,
-    currenciesByProvider,
+    assets: assetsSorted,
     sortedCryptoCurrencies,
     isSuccess,
   });
@@ -55,7 +54,7 @@ export function useModularDrawerRemoteData({
     goBackToAssetSelection,
     goBackToNetworkSelection,
   } = useModularDrawerFlowState({
-    currenciesByProvider,
+    assets: assetsSorted,
     sortedCryptoCurrencies,
     currencyIds,
     isSelectAccountFlow,
@@ -77,7 +76,6 @@ export function useModularDrawerRemoteData({
     error,
     refetch,
     loadingStatus,
-    currenciesByProvider: filteredCurrenciesByProvider,
     assetsToDisplay,
     setAssetsToDisplay,
     networksToDisplay,
@@ -90,5 +88,6 @@ export function useModularDrawerRemoteData({
     goBackToAssetSelection,
     goBackToNetworkSelection,
     loadNext,
+    assetsSorted,
   };
 }

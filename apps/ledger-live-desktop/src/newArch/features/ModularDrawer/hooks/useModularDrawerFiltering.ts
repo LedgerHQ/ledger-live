@@ -1,30 +1,22 @@
 import { useMemo, useState } from "react";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { CurrenciesByProviderId } from "@ledgerhq/live-common/deposit/type";
 import { useAssetSelection } from "./useAssetSelection";
 import { haveOneCommonProvider } from "@ledgerhq/live-common/modularDrawer/utils/index";
-import {
-  buildProviderCoverageMap,
-  filterProvidersByIds,
-} from "@ledgerhq/live-common/modularDrawer/utils/currencyUtils";
-import { addTestnetCurrencies } from "LLD/utils/testnetCurrencies";
-import useEnv from "@ledgerhq/live-common/hooks/useEnv";
+import { AssetData } from "@ledgerhq/live-common/modularDrawer/utils/type";
 
 interface UseModularDrawerFilteringProps {
   currencyIds: string[];
-  currenciesByProvider: CurrenciesByProviderId[];
+  assets?: AssetData[];
   sortedCryptoCurrencies: CryptoOrTokenCurrency[];
   isSuccess: boolean;
 }
 
 export function useModularDrawerFiltering({
   currencyIds,
-  currenciesByProvider,
+  assets,
   sortedCryptoCurrencies,
   isSuccess,
 }: UseModularDrawerFilteringProps) {
-  const devMode = useEnv("MANAGER_DEV_MODE");
-
   const { assetsToDisplay, currencyIdsSet, setAssetsToDisplay } = useAssetSelection(
     currencyIds,
     sortedCryptoCurrencies,
@@ -32,33 +24,11 @@ export function useModularDrawerFiltering({
 
   const [networksToDisplay, setNetworksToDisplay] = useState<CryptoOrTokenCurrency[]>();
 
+  // TODO assets would be of length 1 if there is a common provider
   const hasOneCurrency = useMemo(() => {
-    if (!isSuccess) return false;
-    return haveOneCommonProvider(currencyIds, currenciesByProvider);
-  }, [currencyIds, currenciesByProvider, isSuccess]);
-
-  const filteredCurrenciesByProvider = useMemo(() => {
-    if (currencyIdsSet.size === 0) {
-      return currenciesByProvider;
-    }
-
-    const providerCoverageMap = buildProviderCoverageMap(currenciesByProvider);
-    const filtered = filterProvidersByIds(
-      currenciesByProvider,
-      currencyIdsSet,
-      providerCoverageMap,
-    );
-    const allProviderCurrencies = filtered
-      .map(provider => provider.currenciesByNetwork[0])
-      .filter(currency => currency !== null);
-    const currenciesEnhanced = devMode
-      ? addTestnetCurrencies(allProviderCurrencies)
-      : allProviderCurrencies;
-
-    setAssetsToDisplay(currenciesEnhanced);
-
-    return filtered;
-  }, [currenciesByProvider, currencyIdsSet, setAssetsToDisplay, devMode]);
+    if (!isSuccess || !assets) return false;
+    return haveOneCommonProvider(currencyIds, assets);
+  }, [currencyIds, assets, isSuccess]);
 
   return {
     assetsToDisplay,
@@ -67,6 +37,5 @@ export function useModularDrawerFiltering({
     networksToDisplay,
     setNetworksToDisplay,
     hasOneCurrency,
-    filteredCurrenciesByProvider,
   };
 }

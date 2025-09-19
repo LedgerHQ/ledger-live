@@ -6,7 +6,6 @@ import { useModularDrawerAnalytics } from "../../../analytics/useModularDrawerAn
 import { MODULAR_DRAWER_PAGE_NAME } from "../../../analytics/modularDrawer.types";
 import { EnhancedModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/types";
 import { createNetworkConfigurationHook } from "@ledgerhq/live-common/modularDrawer/modules/createNetworkConfiguration";
-import { CurrenciesByProviderId } from "@ledgerhq/live-common/deposit/type";
 import { Observable } from "rxjs";
 import { WalletAPIAccount } from "@ledgerhq/live-common/wallet-api/types";
 import { accountsCount } from "../../../components/AccountCount";
@@ -19,7 +18,6 @@ type SelectNetworkProps = {
   networks?: CryptoOrTokenCurrency[];
   onNetworkSelected: (network: CryptoOrTokenCurrency) => void;
   networksConfig: EnhancedModularDrawerConfiguration["networks"];
-  currenciesByProvider: CurrenciesByProviderId[];
   selectedAssetId?: string;
   accounts$?: Observable<WalletAPIAccount[]>;
 };
@@ -28,7 +26,6 @@ export const SelectNetwork = ({
   networks,
   onNetworkSelected,
   networksConfig,
-  currenciesByProvider,
   selectedAssetId,
   accounts$,
 }: SelectNetworkProps) => {
@@ -52,7 +49,6 @@ export const SelectNetwork = ({
     networksConfig,
     accounts$,
     selectedAssetId,
-    currenciesByProvider,
   });
   const networksCryptoCurrencies = networks.map(n =>
     n.type === "CryptoCurrency" ? n : n.parentCurrency,

@@ -1,4 +1,4 @@
-import { CurrenciesByProviderId } from "@ledgerhq/live-common/deposit/type";
+import { AssetData } from "@ledgerhq/live-common/modularDrawer/utils/type";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 
 /**
@@ -6,16 +6,14 @@ import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
  * from a list of currencies by provider.
  *
  * @param {CryptoCurrency | TokenCurrency} currency - The cryptocurrency or token currency to find the provider for.
- * @param {CurrenciesByProviderId[]} currenciesByProvider - An array of currencies grouped by provider.
- * @returns {CurrenciesByProviderId | undefined} - The provider that contains the given currency, or undefined if not found.
+ * @param {Asset[]} assets - An array of assets grouped by provider.
+ * @returns {Asset | undefined} - The provider that contains the given currency, or undefined if not found.
  */
 export const getProvider = (
   currency: CryptoCurrency | TokenCurrency,
-  currenciesByProvider: CurrenciesByProviderId[],
+  assets: AssetData[] | undefined,
 ) =>
   currency &&
-  currenciesByProvider.find(elem =>
-    elem.currenciesByNetwork.some(
-      currencyByNetwork => (currencyByNetwork as CryptoCurrency | TokenCurrency).id === currency.id,
-    ),
+  assets?.find(elem =>
+    elem.networks.some(currencyByNetwork => currencyByNetwork.id === currency.id),
   );

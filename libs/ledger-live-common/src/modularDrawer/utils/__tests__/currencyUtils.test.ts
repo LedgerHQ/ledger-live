@@ -10,10 +10,10 @@ import {
   safeCurrencyLookup,
 } from "../currencyUtils";
 import {
-  usdcToken,
   mockBaseCryptoCurrency,
   mockBtcCryptoCurrency,
   mockEthCryptoCurrency,
+  usdcToken,
 } from "../../__mocks__/currencies.mock";
 
 describe("safeCurrencyLookup", () => {
