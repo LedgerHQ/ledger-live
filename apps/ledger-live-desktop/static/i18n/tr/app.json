@@ -802,8 +802,8 @@
       "support" : "destek bölümüne"
     },
     "willBeDeprecatedBanner" : {
-      "title" : "Verimliliği iyileştirmek için {{deprecatedDate}} tarihinden itibaren {{currencyName}} artık Ledger Live'da desteklenmeyecektir. Ancak Ledger donanım cüzdanlarında desteklenmeye devam edecektir. Bu konuda yardım almak isterseniz Ledger Müşteri Destek ekibiyle lütfen iletişime geçin.",
-      "contactSupport" : "Destek Al"
+      "title" : "{{deprecatedDate}} tarihinden itibaren {{currencyName}} artık Ledger Live’da desteklenmeyecektir. Ancak Ledger donanım cüzdanınızda güvenle tutulmaya devam edecektir. Daha fazla bilgi edinmek için aşağıda bağlantısı verilen Yardım Merkezi makalesini lütfen baştan sona okuyun.",
+      "learnMore" : "Daha fazla bilgi"
     },
     "lastOperations" : "Son işlemler",
     "contractAddress" : "Sözleşme:",
@@ -1940,7 +1940,8 @@
       "payoutNetworkFeesTooltip" : "Bu tutar cihazınızda gösterilmeyecektir",
       "acceptTerms" : "Bu işlemi onaylayarak,\n<0>{{provider}} kullanım koşullarını</0> kabul ediyorum.",
       "exodusAcceptTerms" : "Exodus, takas işlemlerini gerçekleştirmek için üçüncü tarafları kullanır.\nBu işlemi onaylayarak, <0>Exodus'un kullanım koşullarını</0> kabul ediyorum.",
-      "changellyAcceptTerms" : "“Changelly ile Takas Edin” seçeneğine tıkladığınızda Changelly'nin <0>Kullanım Koşulları</0>'nı\nve <1>Kara Paranın Aklanmasının Önlenmesi/KYC politikasını</1> kabul etmiş olursunuz. Changelly, işleminizin tamamlanmasını\nbazı durumlarda etkileyebilecek olan, Kara Paranın Aklanmasının Önlenmesi/KYC prosedürleri uygulayabilir. \nBöyle bir durumda Changelly'nin <2>müşteri destek</2> ekibi ile iletişime geçmeniz gerekir."
+      "changellyAcceptTerms" : "“Changelly ile Takas Edin” seçeneğine tıkladığınızda Changelly'nin <0>Kullanım Koşulları</0>'nı\nve <1>Kara Paranın Aklanmasının Önlenmesi/KYC politikasını</1> kabul etmiş olursunuz. Changelly, işleminizin tamamlanmasını\nbazı durumlarda etkileyebilecek olan, Kara Paranın Aklanmasının Önlenmesi/KYC prosedürleri uygulayabilir. \nBöyle bir durumda Changelly'nin <2>müşteri destek</2> ekibi ile iletişime geçmeniz gerekir.",
+      "cicAcceptTerms" : "“CIC ile Takas Edin” seçeneğine tıkladığınızda CIC’nin <0>Kullanım Koşulları</0>’nı ve <1>Kara Paranın Aklanmasının Önlenmesi/KYC politikasını</1> kabul etmiş olursunuz. CIC, bazı durumlarda işleminizin tamamlanmasını etkileyebilecek olan, Kara Paranın Aklanmasının Önlenmesi/KYC prosedürleri uygulayabilir. Böyle bir durumda CIC’nin <2>müşteri destek</2> ekibi ile iletişime geçmeniz gerekir."
     },
     "swap2" : {
       "amountSent" : "Gönderilecek tutar",
@@ -2282,8 +2283,8 @@
     }
   },
   "fund" : {
-    "title" : "Fund",
-    "titleCrypto" : "Fund {{currency}}",
+    "title" : "Fon ekleyin",
+    "titleCrypto" : "{{currency}} ekleyin",
     "exchangeDrawer" : {
       "completed" : {
         "title" : "İşlem başarıyla yayımlandı",
@@ -7651,7 +7652,7 @@
         "foundAccounts_other" : "{{count}} hesap bulundu",
         "scanning" : "Hesaplar taranıyor..."
       },
-      "title" : "Blok zincirindeki mevcut tüm hesaplar aranıyor..."
+      "title" : "Blok zinciri kontrol ediliyor..."
     },
     "connectYourDevice" : {
       "title" : "Cihazınızı bağlayın ve kilidini açın"
@@ -7671,6 +7672,11 @@
         "selectAccount" : "Devam",
         "close" : "Kapat"
       }
+    },
+    "genericError" : {
+      "title" : "Bir ağ hatası oluştu",
+      "description" : "Bir hata oluştu, lütfen tekrar deneyin veya şüpheniz varsa Ledger Destek ile iletişime geçin.",
+      "cta" : "Tekrar dene"
     }
   },
   "nftEntryPoint" : {
