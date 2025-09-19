@@ -55,7 +55,7 @@ window.addEventListener("DOMContentLoaded", () => {
   if (imgNode && loaderContainer) {
     imgNode.src = logo;
     loaderContainer.style.backgroundColor = "#000000";
-    loaderContainer.classList.add("loading");
+    loaderContainer.classList.add("fade-out");
   }
 
   // Send ready-to-show immediately
