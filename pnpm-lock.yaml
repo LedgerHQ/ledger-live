@@ -1866,8 +1866,8 @@ importers:
         specifier: 4.17.16
         version: 4.17.16
       electron:
-        specifier: 38.0.0
-        version: 38.0.0
+        specifier: 38.1.2
+        version: 38.1.2
       playwright:
         specifier: 1.51.1
         version: 1.51.1
@@ -23514,11 +23514,6 @@ packages:
 
   electron-updater@6.6.2:
     resolution: {integrity: sha512-Cr4GDOkbAUqRHP5/oeOmH/L2Bn6+FQPxVLZtPbcmKZC63a1F3uu5EefYOssgZXG3u/zBlubbJ5PJdITdMVggbw==}
-
-  electron@38.0.0:
-    resolution: {integrity: sha512-egljptiPJqbL/oamFCEY+g3RNeONWTVxZSGeyLqzK8xq106JhzuxnhJZ3sxt4DzJFaofbGyGJA37Oe9d+gVzYw==}
-    engines: {node: '>= 12.20.55'}
-    hasBin: true
 
   electron@38.1.2:
     resolution: {integrity: sha512-WXUcN3W8h8NTTZViA3KNX0rV2YBU0X0mEUM3ubupXTDY4QtIN7tmiqYVOKSKpR2LckTmBWGuEeY4D6xVoffwKQ==}
@@ -56724,14 +56719,6 @@ snapshots:
       lodash.isequal: 4.5.0
       semver: 7.7.1
       tiny-typed-emitter: 2.1.0
-    transitivePeerDependencies:
-      - supports-color
-
-  electron@38.0.0:
-    dependencies:
-      '@electron/get': 2.0.3
-      '@types/node': 22.10.10
-      extract-zip: 2.0.1
     transitivePeerDependencies:
       - supports-color
 
