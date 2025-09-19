@@ -13,7 +13,7 @@ import {
   EVENTS_NAME,
   MODULAR_DRAWER_PAGE_NAME,
 } from "../../analytics";
-import { FlatList } from "react-native";
+import { BottomSheetFlatList } from "@gorhom/bottom-sheet";
 import { createNetworkConfigurationHook } from "@ledgerhq/live-common/modularDrawer/modules/createNetworkConfiguration";
 import { accountsCount } from "../../components/AccountCount";
 import { accountsCountAndApy } from "../../components/AccountCountAndApy";
@@ -95,7 +95,7 @@ const NetworkSelection = ({
         networksConfig={networksConfiguration}
         formatNetworkConfig
       />
-      <FlatList
+      <BottomSheetFlatList
         scrollEnabled={true}
         showsVerticalScrollIndicator={false}
         data={formattedNetworks}

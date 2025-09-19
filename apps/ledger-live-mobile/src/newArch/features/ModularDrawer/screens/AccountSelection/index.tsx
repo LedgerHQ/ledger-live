@@ -1,6 +1,5 @@
-import { AccountLike } from "@ledgerhq/types-live";
 import { FlatList } from "react-native";
-import { Flex } from "@ledgerhq/native-ui";
+import { BottomSheetVirtualizedList } from "@gorhom/bottom-sheet";
 import {
   TrackDrawerScreen,
   EVENTS_NAME,
@@ -10,11 +9,7 @@ import {
 import { useDetailedAccounts, RawDetailedAccount } from "../../hooks/useDetailedAccounts";
 import { WalletAPIAccount } from "@ledgerhq/live-common/wallet-api/types";
 import { Observable } from "rxjs";
-import {
-  AddAccountButton,
-  AccountItem,
-  AccountUI,
-} from "@ledgerhq/native-ui/pre-ldls/components/index";
+import { AddAccountButton, AccountItem } from "@ledgerhq/native-ui/pre-ldls/components/index";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 import { modularDrawerFlowSelector, modularDrawerSourceSelector } from "~/reducers/modularDrawer";
@@ -22,6 +17,7 @@ import { withDiscreetMode } from "~/context/DiscreetModeContext";
 import { useCallback, useRef } from "react";
 import React from "react";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { AccountLike } from "@ledgerhq/types-live";
 
 export type AccountSelectionStepProps = {
   accounts$?: Observable<WalletAPIAccount[]>;
@@ -49,7 +45,7 @@ const AccountSelectionContent = ({
     onAccountSelected,
     accounts$,
   );
-  const listRef = useRef<FlatList<AccountUI>>(null);
+  const listRef = useRef<FlatList>(null);
   const { t } = useTranslation();
 
   const renderItem = useCallback(
@@ -87,20 +83,21 @@ const AccountSelectionContent = ({
   return (
     <>
       <TrackDrawerScreen page={EVENTS_NAME.MODULAR_ACCOUNT_SELECTION} flow={flow} source={source} />
-      <Flex flexGrow={1}>
-        <FlatList
-          ref={listRef}
-          data={detailedAccounts}
-          keyExtractor={item => item.id}
-          renderItem={renderItem}
-          ListFooterComponent={renderFooter}
-          showsVerticalScrollIndicator={false}
-          contentContainerStyle={{
-            paddingBottom: MARGIN_BOTTOM,
-            marginTop: 16,
-          }}
-        />
-      </Flex>
+      <BottomSheetVirtualizedList
+        ref={listRef}
+        scrollToOverflowEnabled={true}
+        data={detailedAccounts}
+        keyExtractor={item => item.id}
+        getItemCount={data => data.length}
+        getItem={(data, index) => data[index]}
+        renderItem={renderItem}
+        ListFooterComponent={renderFooter}
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{
+          paddingBottom: MARGIN_BOTTOM,
+          marginTop: 16,
+        }}
+      />
     </>
   );
 };

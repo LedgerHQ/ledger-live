@@ -17,7 +17,11 @@ import {
   MODULAR_DRAWER_PAGE_NAME,
 } from "../../analytics";
 import { FlatList } from "react-native";
-import { Flex } from "@ledgerhq/native-ui";
+import {
+  BottomSheetVirtualizedList,
+  useBottomSheetInternal,
+  useBottomSheet,
+} from "@gorhom/bottom-sheet";
 import { AssetsEmptyList } from "LLM/components/EmptyList/AssetsEmptyList";
 import { GenericError } from "../../components/GenericError";
 import { useNetInfo } from "@react-native-community/netinfo";
@@ -62,7 +66,9 @@ const AssetSelection = ({
   const source = useSelector(modularDrawerSourceSelector);
 
   const { trackModularDrawerEvent } = useModularDrawerAnalytics();
-  const listRef = useRef<FlatList<AssetType>>(null);
+  const { shouldHandleKeyboardEvents } = useBottomSheetInternal();
+  const { collapse } = useBottomSheet();
+  const listRef = useRef<FlatList>(null);
 
   const assetsMap = groupCurrenciesByProvider(assetsSorted || []);
 
@@ -86,6 +92,7 @@ const AssetSelection = ({
     (asset: AssetType) => {
       const originalAsset = availableAssets.find(a => a.id === asset.id);
       if (originalAsset) {
+        collapse();
         trackModularDrawerEvent(
           EVENTS_NAME.ASSET_CLICKED,
           {
@@ -102,16 +109,28 @@ const AssetSelection = ({
         onAssetSelected(originalAsset);
       }
     },
-    [availableAssets, onAssetSelected, assetsConfiguration, flow, source, trackModularDrawerEvent],
+    [
+      availableAssets,
+      onAssetSelected,
+      collapse,
+      assetsConfiguration,
+      flow,
+      source,
+      trackModularDrawerEvent,
+    ],
   );
 
   const handleSearchPressIn = () => {
     listRef.current?.scrollToOffset({ offset: 0, animated: true });
   };
 
-  const handleSearchFocus = () => {};
+  const handleSearchFocus = () => {
+    shouldHandleKeyboardEvents.value = true;
+  };
 
-  const handleSearchBlur = () => {};
+  const handleSearchBlur = () => {
+    shouldHandleKeyboardEvents.value = false;
+  };
 
   const renderItem = useCallback(
     ({ item }: { item: AssetType }) => <AssetItem {...item} onClick={handleAssetClick} />,
@@ -125,7 +144,27 @@ const AssetSelection = ({
       return <GenericError onClick={refetch} type={!isConnected ? "internet" : "backend"} />;
     }
 
-    return null;
+    return (
+      <BottomSheetVirtualizedList
+        ref={listRef}
+        scrollToOverflowEnabled
+        data={formattedAssets}
+        keyExtractor={item => item.id}
+        getItemCount={items => items.length}
+        getItem={(items, index) => items[index]}
+        renderItem={renderItem}
+        showsVerticalScrollIndicator={false}
+        keyboardShouldPersistTaps="handled"
+        ListEmptyComponent={<AssetsEmptyList />}
+        contentContainerStyle={{
+          paddingBottom: SAFE_MARGIN_BOTTOM,
+          marginTop: 16,
+        }}
+        onEndReached={loadNext}
+        onEndReachedThreshold={0.5}
+        ListFooterComponent={loadNext ? <InfiniteLoader size={20} /> : null}
+      />
+    );
   };
 
   return (
@@ -146,28 +185,7 @@ const AssetSelection = ({
         onBlur={handleSearchBlur}
         onPressIn={handleSearchPressIn}
       />
-      <Flex flexGrow={1}>
-        {isLoading || hasError || !isConnected ? (
-          renderContent()
-        ) : (
-          <FlatList
-            ref={listRef}
-            data={formattedAssets}
-            keyExtractor={item => item.id}
-            renderItem={renderItem}
-            showsVerticalScrollIndicator={false}
-            keyboardShouldPersistTaps="handled"
-            ListEmptyComponent={<AssetsEmptyList />}
-            contentContainerStyle={{
-              paddingBottom: SAFE_MARGIN_BOTTOM,
-              marginTop: 16,
-            }}
-            onEndReached={loadNext}
-            onEndReachedThreshold={0.5}
-            ListFooterComponent={loadNext ? <InfiniteLoader size={20} /> : null}
-          />
-        )}
-      </Flex>
+      {renderContent()}
     </>
   );
 };
