@@ -1,6 +1,7 @@
 import BigNumber from "bignumber.js";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import type {
+  BufferTxData,
   FeeEstimation,
   MemoNotSupported,
   TransactionIntent,
@@ -30,7 +31,7 @@ function toApiGasOptions(options: GasOptions): ApiGasOptions {
 
 export async function estimateFees(
   currency: CryptoCurrency,
-  transactionIntent: TransactionIntent<MemoNotSupported>,
+  transactionIntent: TransactionIntent<MemoNotSupported, BufferTxData>,
 ): Promise<FeeEstimation> {
   if (!isEthAddress(transactionIntent.recipient) || !isEip55Address(transactionIntent.recipient)) {
     return { value: 0n };

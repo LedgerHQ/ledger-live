@@ -24,11 +24,14 @@ export function genericEstimateMaxSpendable(
 
     let fees = transaction?.fees;
     if (transaction?.fees === null || transaction?.fees === undefined) {
-      fees = (await alpacaApi.estimateFees(transactionToIntent(mainAccount, draftTransaction)))
-        .value;
+      fees = (
+        await alpacaApi.estimateFees(
+          transactionToIntent(mainAccount, draftTransaction, alpacaApi.computeIntentType),
+        )
+      ).value;
     }
     const { amount } = await alpacaApi.validateIntent(
-      transactionToIntent(account, { ...draftTransaction }),
+      transactionToIntent(account, { ...draftTransaction }, alpacaApi.computeIntentType),
       { value: transaction?.fees ? BigInt(transaction.fees.toString()) : 0n },
     );
     if (network === "stellar") {

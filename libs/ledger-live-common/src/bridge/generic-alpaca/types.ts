@@ -9,13 +9,15 @@ type NetworkInfo = {
 export type GenericTransaction = TransactionCommon & {
   family: string;
   fees?: BigNumber | null;
+  storageLimit?: BigNumber | null;
   customFees?: {
-    parameters: { fees?: BigNumber | null };
+    parameters: { fees?: BigNumber | null; storageLimit?: BigNumber | null };
   };
   tag?: number | null | undefined;
   feeCustomUnit?: Unit | null | undefined;
   memoType?: string | null;
   memoValue?: string | null;
+  data?: Buffer;
   mode?:
     | "send"
     | "changeTrust"
@@ -25,6 +27,7 @@ export type GenericTransaction = TransactionCommon & {
     | "stake"
     | "undelegate"
     | "unstake";
+  type?: number;
   assetReference?: string;
   assetOwner?: string;
   networkInfo?: NetworkInfo | null;

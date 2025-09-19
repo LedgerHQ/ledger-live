@@ -79,6 +79,25 @@ export function adaptCoreOperationToLiveOperation(accountId: string, op: CoreOpe
 }
 
 /**
+ * Default implementation of `computeIntentType` is a simple whitelist
+ * with a fallback to "Payment"
+ */
+function defaultComputeIntentType(transaction: GenericTransaction): string {
+  if (!transaction.mode) return "Payment"; // NOTE: assuming payment by default here, can be changed based on transaction.mode
+
+  const modeRemap = {
+    delegate: "stake",
+    undelegate: "unstake",
+  };
+  const mode = modeRemap[transaction.mode] ?? transaction.mode;
+
+  if (["changeTrust", "send", "send-legacy", "send-eip1559", "stake", "unstake"].includes(mode))
+    return mode;
+
+  throw new Error(`Unsupported transaction mode: ${transaction.mode}`);
+}
+
+/**
  * Converts a transaction object into a `TransactionIntent` object, which is used to represent
  * the intent of a transaction in a standardized format.
  *
@@ -92,6 +111,7 @@ export function adaptCoreOperationToLiveOperation(accountId: string, op: CoreOpe
  *   - `fees` (optional): The fees associated with the transaction.
  *   - `memoType` (optional): The type of memo to attach to the transaction.
  *   - `memoValue` (optional): The value of the memo to attach to the transaction.
+ * @param computeIntentType - An optional function to compute the intent type that supersedes the default implementation if present
  *
  * @returns A `TransactionIntent` object containing the standardized representation of the transaction.
  *   - Includes details such as type, sender, recipient, amount, fees, asset, and an optional memo.
@@ -103,54 +123,34 @@ export function adaptCoreOperationToLiveOperation(accountId: string, op: CoreOpe
 export function transactionToIntent(
   account: Account,
   transaction: GenericTransaction,
-): TransactionIntent<any> & { memo?: { type: string; value?: string } } {
-  let transactionType = "Payment"; // NOTE: assuming payment by default here, can be changed based on transaction.mode
-  if (transaction.mode) {
-    switch (transaction.mode) {
-      case "changeTrust":
-        transactionType = "changeTrust";
-        break;
-      case "send":
-        transactionType = "send";
-        break;
-      case "delegate":
-      case "stake":
-        transactionType = "stake";
-        break;
-      case "undelegate":
-      case "unstake":
-        transactionType = "unstake";
-        break;
-      case "send-legacy":
-        transactionType = "send-legacy";
-        break;
-      case "send-eip1559":
-        transactionType = "send-eip1559";
-        break;
-      default:
-        throw new Error(`Unsupported transaction mode: ${transaction.mode}`);
-    }
-  }
-
-  const isStaking = transactionType === "stake" || transactionType === "unstake";
+  computeIntentType?: (transaction: GenericTransaction) => string,
+): TransactionIntent & { memo?: { type: string; value?: string } } & {
+  data?: { type: string; value?: unknown };
+} {
+  const intentType = (computeIntentType ?? defaultComputeIntentType)(transaction);
+  const isStaking = ["stake", "unstake"].includes(intentType);
   const amount = isStaking ? 0n : fromBigNumberToBigInt(transaction.amount, 0n);
   const useAllAmount = isStaking || !!transaction.useAllAmount;
-
-  const res: TransactionIntent & { memo?: { type: string; value?: string } } = {
-    type: transactionType,
+  const res: TransactionIntent & { memo?: { type: string; value?: string } } & {
+    data?: { type: string; value?: unknown };
+  } = {
+    type: intentType,
     sender: account.freshAddress,
     recipient: transaction.recipient,
     amount,
     asset: { type: "native", name: account.currency.name, unit: account.currency.units[0] },
     useAllAmount,
+    feesStrategy:
+      transaction.feesStrategy === "custom" ? undefined : transaction.feesStrategy ?? undefined,
+    data: Buffer.isBuffer(transaction.data)
+      ? { type: "buffer", value: transaction.data }
+      : { type: "none" },
   };
   if (transaction.assetReference && transaction.assetOwner) {
     const { subAccountId } = transaction;
     const { subAccounts } = account;
 
-    const tokenAccount = !subAccountId
-      ? null
-      : subAccounts && subAccounts.find(ta => ta.id === subAccountId);
+    const tokenAccount = subAccountId ? subAccounts?.find(ta => ta.id === subAccountId) : null;
 
     res.asset = {
       type: tokenAccount?.token.tokenType ?? "token",
@@ -168,6 +168,7 @@ export function transactionToIntent(
   } else {
     res.memo = { type: "NO_MEMO" };
   }
+
   return res;
 }
 
@@ -201,9 +202,7 @@ export const buildOptimisticOperation = (
     },
   };
 
-  const tokenAccount = !subAccountId
-    ? null
-    : subAccounts && subAccounts.find(ta => ta.id === subAccountId);
+  const tokenAccount = subAccountId ? subAccounts?.find(ta => ta.id === subAccountId) : null;
   if (tokenAccount && subAccountId) {
     operation.subOperations = [
       {
