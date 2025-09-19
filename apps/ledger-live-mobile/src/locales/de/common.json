@@ -419,10 +419,6 @@
       "title" : "Automatische Verifizierung nicht verfügbar: Überprüfen Sie die Adresse sorgfältig.",
       "description" : null
     },
-    "EthAppNftNotSupported" : {
-      "title" : "Vorgang auf diesem Gerät nicht verfügbar",
-      "description" : "Die Funktion zum Senden von NFTs ist nur für Nano X und Nano S+ verfügbar. Bitte besuchen Sie unsere Kunden-Support-Plattform, um herauszufinden, wie man ein NFT mit einem Nano S sendet."
-    },
     "Touch ID Error" : {
       "title" : "Biometrische Authentifizierung fehlgeschlagen",
       "description" : "Bitte verwenden Sie Ihr Passwort oder setzen Sie die App zurück."
@@ -925,9 +921,6 @@
     "TaprootNotActivated" : {
       "title" : "Taproot Mainnet ist noch nicht aktiviert"
     },
-    "NotEnoughNftOwned" : {
-      "title" : "Sie haben die Anzahl der verfügbaren Token überschritten"
-    },
     "generic" : {
       "title" : "{{message}}",
       "description" : "Ein Problem ist aufgetreten. Bitte versuche es noch einmal. Wenn das Problem weiterhin besteht, speichere deine Logdateien über die Schaltfläche unten und übergib sie dem Ledger-Kundenservice.",
@@ -1051,10 +1044,6 @@
     "ImageDownloadError" : {
       "title" : "Das Bild konnte nicht heruntergeladen werden",
       "description" : "Versuche es noch einmal mit einem anderen Bild."
-    },
-    "NFTMetadataLoadingError" : {
-      "title" : "Problem beim Laden der NFT-Metadaten",
-      "description" : "Versuche es noch einmal mit einem anderen NFT."
     },
     "ImageSizeLoadingError" : {
       "title" : "Abrufen der Bildabmessungen fehlgeschlagen",
@@ -2156,26 +2145,6 @@
         "learnHowToUpdate" : "Erfahren Sie, wie Sie aktualisieren können"
       }
     },
-    "stepImportAccounts" : {
-      "title" : "Krypto vom Desktop synchronisieren",
-      "desc" : "Wenn Sie Ihre Kryptowährungen bereits in der Ledger-Desktop-App eingerichtet haben, können Sie diese synchronisieren, um sie von Ihrem Smartphone aus zu verwalten.",
-      "cta" : "Ich bin bereit zum Scannen",
-      "bullets" : {
-        "0" : {
-          "label" : "Wählen Sie in der Desktop-App <1>Einstellungen > Konten > Kontoexport</1>."
-        },
-        "1" : {
-        },
-        "2" : {
-          "label" : "Wählen Sie die zu importierenden Krypto-Konten aus."
-        }
-      },
-      "warning" : {
-        "title" : "Ihre Desktop- und Mobil-Apps müssen manuell synchronisiert werden.",
-        "desc" : "Ledger Live respektiert Ihre Privatsphäre und speichert Ihre Daten lokal. Wenn Sie Konten und Einstellungen auf Ihrem Telefon ändern, müssen Sie dies auch auf Ihrem Computer tun und umgekehrt. Ihre Transaktionen bleiben mit der Blockchain synchronisiert.",
-        "cta" : "Verstanden!"
-      }
-    },
     "stepSetupPin" : {
       "step1" : "Schalten Sie Ihren {{fullDeviceName}} ein und folgen Sie den Anweisungen.",
       "step1-nanoS" : "Verbinden Sie Ihren {{fullDeviceName}} über ein OTG-Kabel mit Ihrem Smartphone.",
@@ -2712,9 +2681,7 @@
   "operations" : {
     "types" : {
       "IN" : "Empfangen",
-      "NFT_IN" : "NFT erhalten",
       "OUT" : "Gesendet",
-      "NFT_OUT" : "NFT gesendet",
       "CREATE" : "Erstellt",
       "REVEAL" : "Enthüllt",
       "DELEGATE" : "Delegiert",
@@ -2819,11 +2786,7 @@
       "stakedAmount" : "Betrag gestaked",
       "accountCreationFee" : "Kontoerstellungsgebühr"
     },
-    "multipleAddresses" : "Warum mehrere Adressen?",
-    "tokenName" : "Token-Name",
-    "collectionContract" : "Token-Vertrag",
-    "tokenId" : "Token (NFT) ID",
-    "quantity" : "Menge"
+    "multipleAddresses" : "Warum mehrere Adressen?"
   },
   "operationList" : {
     "noOperations" : "Keine Aktionen",
@@ -2855,8 +2818,8 @@
       "contactSupport" : "Support kontaktieren"
     },
     "willBedeprecatedBanner" : {
-      "title" : "Um die Effizienz zu steigern, wird {{currencyName}} ab dem {{deprecatedDate}} nicht mehr in Ledger Live unterstützt. Auf den Hardware-Wallets von Ledger bleibt die Unterstützung jedoch bestehen. Wenn du Hilfe benötigst, wende dich bitte an den Ledger-Kundenservice.",
-      "contactSupport" : "Support kontaktieren"
+      "title" : "{{currencyName}} wird ab dem {{deprecatedDate}} nicht mehr in Ledger Live unterstützt. Auf Ledger-Hardware-Wallets bleibt die Unterstützung jedoch erhalten. Ausführliche Informationen findest du im nachstehend verlinkten Artikel im Hilfe-Center.",
+      "learnMore" : "Weitere Informationen"
     },
     "tokens" : {
       "contractAddress" : "Vertragsadresse",
@@ -2992,10 +2955,6 @@
     },
     "undelegation" : {
       "sectionLabel" : "Aufgehobene Delegierung(en)"
-    },
-    "nft" : {
-      "receiveNft" : "NFT erhalten",
-      "howTo" : "Um NFTs hinzuzufügen, müssen Sie sie <0>empfangen</0> mit Ihrer <1>{{currency}} Adresse</1>."
     },
     "readOnly" : {
       "noTransaction" : {
@@ -3206,11 +3165,6 @@
         "title" : "Token ausblenden",
         "desc" : "Diese Aktion blendet alle <1><0>{tokenName}</0></1> Konten aus, Sie können sie unter <3>Einstellungen</3> wieder einblenden",
         "confirm" : "Token ausblenden"
-      },
-      "hideNFTCollectionCTA" : "Sammlung ausblenden",
-      "hideNFTCollectionModal" : {
-        "title" : "Sammlung ausblenden?",
-        "desc" : "Sie können diese Sammlung in den Einstellungen wiedergeben."
       },
       "cryptoAssets" : {
         "header" : "Kryptowährungen",
@@ -3769,6 +3723,10 @@
       "twoStepApproval" : {
         "title" : "Schritte erledigen"
       },
+      "loader" : {
+        "title" : "Swap wird verarbeitet",
+        "description" : "Bitte warte, während wir deine Anfrage bearbeiten."
+      },
       "history" : {
         "title" : "Swap-Verlauf"
       },
@@ -4036,10 +3994,7 @@
       "summary" : "Zusammenfassung",
       "selectDevice" : "Gerät wählen",
       "connectDevice" : "Verbundenes Gerät",
-      "stepRange" : "Schritt {{currentStep}} von {{totalSteps}}",
-      "quantity" : "Menge",
-      "selectCollection" : "Sammlung",
-      "selectNft" : "NFT"
+      "stepRange" : "Schritt {{currentStep}} von {{totalSteps}}"
     },
     "recipient" : {
       "scan" : "QR-Code scannen",
@@ -4073,6 +4028,10 @@
       "solanaRawTransaction" : {
         "title" : "Blindsignatur erforderlich",
         "description" : "Du kannst die Transaktionsdetails nicht auf deinem Ledger-Gerät bestätigen. Wenn du sie signierst, könntest du alle deine Assets verlieren. Signiere nur, wenn du dieser Website wirklich vertraust."
+      },
+      "bitcoinPsbtTransaction" : {
+        "title" : "Auf Gerät bestätigen",
+        "description" : "Im nächsten Schritt kannst du den Transaktionsbetrag und den Empfänger auf dem Gerät bestätigen."
       },
       "subaccountsWarning" : "Sie müssen dieses Konto mit {{ currency }} auffüllen, um die Token dieses Kontos zu senden",
       "tag" : "Markierung (optional)",
@@ -4376,7 +4335,7 @@
       "title" : "Wähle die Konten aus, die du hinzufügen möchtest",
       "ctaStopScan" : "Scannen stoppen",
       "confirm" : "Bestätigen",
-      "scanningTitle" : "Nach vorhandenen Konten in der Blockchain wird gesucht …",
+      "scanningTitle" : "Blockchain wird geprüft …",
       "whichAddressType" : "So wählst du einen Adresstyp aus",
       "sections" : {
         "importable" : {
@@ -4441,7 +4400,7 @@
     "confirmSwap" : {
       "title" : "Swap-Vorgang auf dem Gerät bestätigen",
       "alert" : {
-        "default" : "Überprüfen Sie die Details des Tauschs auf Ihrem Gerät, bevor Sie sie senden. Die Adressen werden sicher ausgetauscht, sodass Sie diese nicht verifizieren müssen.",
+        "default" : "Verifiziere die Swap-Details auf deiner Ledger, bevor du sie sendest.",
         "provider" : "Verifizieren Sie die Swap-Details auf Ihrem Gerät, bevor Sie diese senden. {{providerName}} muss möglicherweise eine zusätzliche Überprüfung für einige Transaktionen durchführen, was zu einer Verzögerung führen kann."
       },
       "acceptTerms" : "Durch Validieren dieser Transaktion stimme ich den\n<0>Nutzungsbedingungen von <0>{{provider}}</0> zu</0>",
@@ -7142,47 +7101,6 @@
       }
     }
   },
-  "nft" : {
-    "account" : {
-      "seeAllNfts" : "Alle NFT anzeigen",
-      "seeFewerNfts" : "Weniger NFT anzeigen"
-    },
-    "gallery" : {
-      "allNft" : "Alle NFT",
-      "addNew" : "Neu hinzufügen"
-    },
-    "designedForStax" : {
-      "title" : "<0>Entwickelt für</0><1>Ledger</1><2>Stax</2>",
-      "drawer" : {
-        "description" : "Dieses NFT enthält ein zusätzliches Bild des NFT, das speziell für das E Ink-Display der Ledger Stax gestaltet wurde.\n\nDieses Bild wird verwendet, wenn du dieses NFT als Sperrbildschirm festlegst.",
-        "cta" : "Verstanden"
-      }
-    },
-    "viewer" : {
-      "properties" : "Eigenschaften",
-      "description" : "Beschreibung",
-      "tokenContract" : "TOKEN-Adresse",
-      "tokenContractCopied" : "Token-Adresse kopiert!",
-      "tokenId" : "Token ID",
-      "tokenIdCopied" : "Token-ID kopiert!",
-      "quantity" : "Menge",
-      "attributes" : {
-        "floorPrice" : "Tiefstpreis"
-      }
-    },
-    "viewerModal" : {
-      "viewOn" : "Ansehen auf",
-      "viewInExplorer" : "Im Explorer ansehen",
-      "hide" : "NFT-Sammlung ausblenden",
-      "txDetails" : "Transaktionsdetails"
-    },
-    "modalDisabled" : {
-      "title" : "Sendefunktion ist auf iOS nicht verfügbar",
-      "body" : "Aufgrund aktueller Änderungen im Apple App Store ist das Versenden von NFTs vorübergehend nicht möglich. Du kannst allerdings Ledger Live auf dem Desktop verwenden, um auch künftig NFTs zu versenden.",
-      "learnMore" : "Weitere Informationen",
-      "continue" : "Verstanden!"
-    }
-  },
   "ApplicationVersion" : "v{{version}}",
   "analytics" : {
     "title" : "Analysen",
@@ -7266,7 +7184,6 @@
     "drawer" : {
       "options" : {
         "uploadFromPhone" : "Aus meiner Bildergalerie auswählen",
-        "selectFromNFTGallery" : "Aus meiner NFT-Galerie auswählen",
         "remove" : "Aktuelles Bild entfernen"
       }
     },
@@ -7297,9 +7214,6 @@
       "setPicture" : "Als Sperrbildschirm festlegen",
       "editPicture" : "Bild bearbeiten",
       "pickDeviceModel" : "Gerät auswählen"
-    },
-    "nftGallery" : {
-      "title" : "Meine NFTs"
     }
   },
   "postOnboarding" : {
@@ -7344,50 +7258,7 @@
   "wallet" : {
     "tabs" : {
       "crypto" : "Krypto",
-      "nft" : "NFTs",
       "market" : "Markt"
-    },
-    "nftGallery" : {
-      "filters" : {
-        "select" : "Auswählen",
-        "filter" : "Filtern",
-        "blockchain" : "Blockchain",
-        "seeAll" : "Alles anzeigen",
-        "selectAndHide" : "Auswählen und ausblenden",
-        "hide" : "{{count}} Sammlung ausblenden",
-        "hiddenCollections" : "Ausgeblendete Sammlungen",
-        "hide_plural" : "{{count}} Sammlungen ausblenden",
-        "empty" : "Es gibt keine ausgeblendeten Sammlungen",
-        "alertHide" : "1 Sammlung ist ausgeblendet. Du kannst sie mit dem Galeriefilter jederzeit wieder einblenden.",
-        "alertHide_plural" : "{{count}} Sammlungen ausgeblendet. Du kannst sie mit dem Galeriefilter jederzeit wieder einblenden."
-      },
-      "emptyFiltered" : {
-        "title" : "Es gibt keine NFTs, die deinen Kriterien entsprechen",
-        "button" : "Filter zurücksetzen"
-      },
-      "empty" : {
-        "title" : "Es können noch keine NFTs angezeigt werden",
-        "subtitle" : "Füge NFTs zu deiner Wallet hinzu, um loszulegen.",
-        "receive" : "NFT erhalten",
-        "supportLink" : "Wie erhalte NFTs von anderen Wallets?"
-      },
-      "receiveModal" : {
-        "title" : "Sie erhalten ein NFT auf die gleiche Weise wie jede andere Kryptowährung",
-        "bullets" : {
-          "0" : "• Wählen Sie die NFT Krypto-Blockchain.",
-          "1" : "• Wählen Sie das für das NFT vorgesehene Konto"
-        },
-        "cta" : "Ok, verstanden",
-        "info" : "Ich würde gerne mehr erfahren"
-      },
-      "hideNftModal" : {
-        "title" : "NFT-Sammlung ausblenden",
-        "desc" : "Bei diesem Vorgang werden alle NFTs aus der Sammlung „{{collectionName}}“ ausgeblendet. Mithilfe des Galeriefilters kannst du sie wieder einblenden.",
-        "cta" : "Dieses NFT ausblenden"
-      },
-      "media" : {
-        "tag" : "{{count}} NFTs"
-      }
     },
     "referralProgram" : "20 USD"
   },
@@ -7960,7 +7831,13 @@
     "searchPlaceholder" : "Suche",
     "emptyAssetList" : "Keine Assets gefunden",
     "accountCount" : "{{count}} Konto",
-    "accountCount_plural" : "{{count}} Konten"
+    "accountCount_plural" : "{{count}} Konten",
+    "errors" : {
+      "title" : "Verbindung fehlgeschlagen",
+      "backend" : "Bei uns ist ein Problem aufgetreten. Versuche es bitte später noch einmal.",
+      "internet" : "Keine Internetverbindung. Bitte versuche es noch einmal.",
+      "cta" : "Wiederholen"
+    }
   },
   "swapErrors" : {
     "incorrectCommandData" : {
