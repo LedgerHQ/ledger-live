@@ -1876,7 +1876,7 @@
       },
       "simpleViewNotice": {
         "default": "Verify the swap details on your Ledger before sending it.",
-        "provider": "Verify the Swap details on your device before sending it. {{providerName}} may need to perform additional verification for some transactions, resulting in a delay."
+        "provider": "Verify the Swap details on your device before sending it."
       },
       "confirm": "Confirm Swap transaction",
       "confirmSwap": "Confirm swap operation on device",

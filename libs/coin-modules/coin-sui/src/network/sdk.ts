@@ -534,21 +534,6 @@ function convertApiOrderToSdkOrder(order: "asc" | "desc"): "ascending" | "descen
   return order === "asc" ? "ascending" : "descending";
 }
 
-type Cursor = {
-  out?: string;
-  in?: string;
-};
-
-function serializeCursor(cursor: Cursor): string | undefined {
-  return cursor.in || cursor.out ? bs58.encode(Buffer.from(JSON.stringify(cursor))) : undefined;
-}
-
-function deserializeCursor(b58cursor: string | undefined): Cursor {
-  return b58cursor
-    ? (JSON.parse(Buffer.from(bs58.decode(b58cursor)).toString()) as Cursor)
-    : ({} as Cursor);
-}
-
 function toSdkCursor(cursor: string | undefined): QueryTransactionBlocksParams["cursor"] {
   const ret: QueryTransactionBlocksParams["cursor"] = cursor;
   return ret;
@@ -558,20 +543,6 @@ function toSdkCursor(cursor: string | undefined): QueryTransactionBlocksParams["
  * Fetch operations for Alpaca
  * It fetches separately the "OUT" and "IN" operations and then merge them.
  * The cursor is composed of the last "OUT" and "IN" operation cursors.
- *
- * Warning:
- * Some IN operations are also OUT operations because the sender receive a new version of the coin objects,
- * and the complexity of this function don't go that far to detect it.
- * IN calls and OUT calls are not disjoint
- * Consequence: 2 successive calls of this function when passing cursor may return an operation we already saw in previous calls,
- * fetched as an OUT operation.
- *
- * Note: I think it's possible to detect duplicated IN oprations:
- * - if the address is the sender of the tx
- * - and there is some transfer to other address
- * - and the address is the single only owner of mutated or deleted object
- * when all that conditions are met, the transaction will be fetched as an OUT operation,
- * and it can be filtered out from the IN operations results.
  *
  * @returns the operations.
  *
@@ -584,42 +555,94 @@ export const getListOperations = async (
 ): Promise<Page<Op>> =>
   withApiImpl(async api => {
     const rpcOrder = convertApiOrderToSdkOrder(order);
-    const { out: outCursor, in: inCursor } = deserializeCursor(cursor);
 
     const [opsOut, opsIn] = await Promise.all([
       queryTransactions({
         api,
         addr,
         type: "OUT",
-        cursor: toSdkCursor(outCursor),
+        cursor: toSdkCursor(cursor),
         order: rpcOrder,
       }),
       queryTransactions({
         api,
         addr,
         type: "IN",
-        cursor: toSdkCursor(inCursor),
+        cursor: toSdkCursor(cursor),
         order: rpcOrder,
       }),
     ]);
 
-    const ops = [...opsOut.data, ...opsIn.data]
+    const ops = dedupOperations(opsOut, opsIn, order);
+
+    const operations = ops.operations
       .sort((a, b) => Number(b.timestampMs) - Number(a.timestampMs))
       .map(t => transactionToOp(addr, t));
 
-    const nextCursor: Cursor = {};
-    if (opsOut.hasNextPage && opsOut.nextCursor) {
-      nextCursor.out = opsOut.nextCursor;
-    }
-    if (opsIn.hasNextPage && opsIn.nextCursor) {
-      nextCursor.in = opsIn.nextCursor;
-    }
-
     return {
-      items: ops,
-      next: serializeCursor(nextCursor),
+      items: operations,
+      next: ops.cursor ?? "",
     };
   });
+
+const oldestOpTime = (ops: PaginatedTransactionResponse) =>
+  Number(ops.data[ops.data.length - 1].timestampMs ?? 0);
+const newestOpTime = (ops: PaginatedTransactionResponse) => Number(ops.data[0].timestampMs ?? 0);
+
+/**
+ * Some IN operations are also OUT operations because the sender receive a new version of the coin objects,
+ * So IN operations and OUT operations are not disjoint
+ * This function will takes the logical lowest operation of the two lists (according so sort order)
+ * and remove any higher operation of the other list.
+ *
+ * Most of the logic have been duplicated from filterOperations (used by bridge).
+ *
+ * Warning:
+ * This function removes some results, so it's not very efficient
+ * What we want is the FromOrToAddress filter from SUI RPC, but it's not supported yet
+ *
+ * Note: I think it's possible to detect duplicated IN oprations:
+ * - if the address is the sender of the tx
+ * - and there is some transfer to other address
+ * - and the address is the single only owner of mutated or deleted object
+ * when all that conditions are met, the transaction will be fetched as an OUT operation,
+ * and it can be filtered out from the IN operations results.
+ *
+ * @returns a chronologically sorted list of operations without duplicates and
+ *          a cursor that guarantee to not return any operation that was already returned in previous calls
+ *
+ */
+export const dedupOperations = (
+  outOps: PaginatedTransactionResponse,
+  inOps: PaginatedTransactionResponse,
+  order: "asc" | "desc",
+): LoadOperationResponse => {
+  // in asc order, the operations are sorted by timestamp in ascending order
+  // in desc order, the operations are sorted by timestamp in descending order
+
+  let lastOpTime: number = 0;
+  let nextCursor: string | null | undefined = undefined;
+  const findLastOpTime = order === "asc" ? newestOpTime : oldestOpTime;
+
+  // When we've reached the limit for either sent or received operations,
+  // we filter out extra operations to maintain correct chronological order
+  if (outOps.hasNextPage || inOps.hasNextPage) {
+    const lastOut = findLastOpTime(outOps);
+    const lastIn = findLastOpTime(inOps);
+    if (lastOut >= lastIn) {
+      nextCursor = outOps.nextCursor;
+      lastOpTime = lastOut;
+    } else {
+      nextCursor = inOps.nextCursor;
+      lastOpTime = lastIn;
+    }
+  }
+  const operations = [...outOps.data, ...inOps.data]
+    .sort((a, b) => Number(b.timestampMs) - Number(a.timestampMs))
+    .filter(op => Number(op.timestampMs) >= lastOpTime);
+
+  return { operations: uniqBy(operations, tx => tx.digest), cursor: nextCursor };
+};
 
 /**
  * Get a checkpoint (a.k.a, a block) metadata.
@@ -883,6 +906,8 @@ export const queryTransactions = async (params: {
   cursor?: QueryTransactionBlocksParams["cursor"];
 }): Promise<PaginatedTransactionResponse> => {
   const { api, addr, type, cursor, order } = params;
+  // what we really want is te  FromOrToAddress filter, but it's not supported yet
+  // it would relieve a lot of complexity (see dedupOperations)
   const filter: QueryTransactionBlocksParams["filter"] =
     type === "IN" ? { ToAddress: addr } : { FromAddress: addr };
 
