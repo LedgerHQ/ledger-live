@@ -1,6 +1,6 @@
 import React, { useCallback, useState } from "react";
 import Button, { WrappedButtonProps } from "./wrappedUi/Button";
-import { GestureResponderEvent } from "react-native-modal";
+import { GestureResponderEvent } from "react-native";
 
 type CtaProps = Pick<
   WrappedButtonProps,
