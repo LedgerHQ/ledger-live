@@ -61,7 +61,6 @@
     "@ledgerhq/icons-ui": "workspace:^",
     "@ledgerhq/ui-shared": "workspace:^",
     "color": "^4.0.0",
-    "react-native-modal": "14.0.0-rc.1",
     "rn-range-slider": "2.1.1",
     "styled-system": "^5.1.5"
   },
