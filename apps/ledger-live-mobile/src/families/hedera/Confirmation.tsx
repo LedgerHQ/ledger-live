@@ -1,10 +1,9 @@
 import React, { useEffect, useRef, useState } from "react";
-import { View, StyleSheet, Platform } from "react-native";
+import { View, StyleSheet, Platform, Modal, Pressable } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useSelector } from "react-redux";
 import QRCode from "react-native-qrcode-svg";
 import { Trans } from "react-i18next";
-import ReactNativeModal from "react-native-modal";
 import type { Account, TokenAccount } from "@ledgerhq/types-live";
 import { getMainAccount, getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { CompositeScreenProps, useTheme } from "@react-navigation/native";
@@ -209,24 +208,30 @@ export default function ReceiveConfirmation({ navigation, route }: Props) {
           <ReceiveConfirmationTokenAlert account={account} mainAccount={mainAccount} />
         </View>
       </NavigationScrollView>
-      <ReactNativeModal
-        isVisible={zoom}
-        onBackdropPress={onZoom}
-        onBackButtonPress={onZoom}
-        useNativeDriver
-        hideModalContentWhileAnimating
-      >
-        <View
-          style={[
-            styles.qrZoomWrapper,
-            {
-              backgroundColor: "#FFF",
-            },
-          ]}
+      <Modal visible={zoom} transparent animationType="fade" onRequestClose={onZoom}>
+        <Pressable
+          onPress={onZoom}
+          style={{
+            flex: 1,
+            backgroundColor: "rgba(0,0,0,0.7)",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
         >
-          <QRCode size={width - 66} value={address} ecl="H" />
-        </View>
-      </ReactNativeModal>
+          <Pressable onPress={() => {}}>
+            <View
+              style={[
+                styles.qrZoomWrapper,
+                {
+                  backgroundColor: "#fff",
+                },
+              ]}
+            >
+              <QRCode size={width - 66} value={address} ecl="H" />
+            </View>
+          </Pressable>
+        </Pressable>
+      </Modal>
       <QueuedDrawer
         isRequestingToBeOpened={isModalOpened}
         onClose={onModalClose}
