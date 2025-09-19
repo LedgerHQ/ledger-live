@@ -419,10 +419,6 @@
       "title" : "自動認証が利用できません：アドレスを慎重に確認してください。",
       "description" : null
     },
-    "EthAppNftNotSupported" : {
-      "title" : "お使いのデバイスではこの操作をご利用いただけません",
-      "description" : "NFTの送付機能は、Nano XとNano S+でのみご利用いただけます。Nano SでNFTを送付する方法については、当社のカスタマーサポートのプラットフォームをご覧ください。"
-    },
     "Touch ID Error" : {
       "title" : "生体認証に失敗しました。",
       "description" : "パスワードを使用するか、アプリをリセットしてください。"
@@ -925,9 +921,6 @@
     "TaprootNotActivated" : {
       "title" : "Taproot mainnetは、まだ有効化されていません。"
     },
-    "NotEnoughNftOwned" : {
-      "title" : "利用可能なトークン数を超えています"
-    },
     "generic" : {
       "title" : "{{message}}",
       "description" : "問題が発生しました。もう一度お試しください。問題が解決しない場合は、以下のボタンを使ってログを保存し、Ledgerサポートに提出してください。",
@@ -1051,10 +1044,6 @@
     "ImageDownloadError" : {
       "title" : "画像のダウンロードに失敗しました",
       "description" : "別の画像でもう一度お試しください。"
-    },
-    "NFTMetadataLoadingError" : {
-      "title" : "NFTメタデータの読み込みに問題が発生しました",
-      "description" : "別のNFTでもう一度お試しください。"
     },
     "ImageSizeLoadingError" : {
       "title" : "画像のサイズを取得できませんでした",
@@ -2156,26 +2145,6 @@
         "learnHowToUpdate" : "アップデート方法を確認"
       }
     },
-    "stepImportAccounts" : {
-      "title" : "デスクトップアプリから暗号資産を同期",
-      "desc" : "Ledgerデスクトップ版アプリで、すでに暗号資産をセットアップ済みの場合は、それらを同期してスマートフォンで管理することができます。",
-      "cta" : "スキャン準備完了",
-      "bullets" : {
-        "0" : {
-          "label" : "デスクトップアプリで\n<1>「設定」>「アカウント」>「アカウントをエクスポート」</1>を選択。"
-        },
-        "1" : {
-        },
-        "2" : {
-          "label" : "インポートする暗号資産のアカウントを選択する。"
-        }
-      },
-      "warning" : {
-        "title" : "デスクトップアプリとモバイルアプリは、手動で同期する必要があります。",
-        "desc" : "Ledger Liveはあなたのプライバシーを尊重し、ローカルにのみデータを保存します。スマートフォン上でアカウントや設定を変更した場合は、コンピューター上でも同様の変更を行う必要があります。その逆も同様です。トランザクションのブロックチェーンとの同期は保たれます。",
-        "cta" : "了解！"
-      }
-    },
     "stepSetupPin" : {
       "step1" : "{{fullDeviceName}}の電源をオンにして、画面の指示に従ってください。",
       "step1-nanoS" : "OTGケーブルを使用して、{{fullDeviceName}}をスマートフォンに接続します。",
@@ -2712,9 +2681,7 @@
   "operations" : {
     "types" : {
       "IN" : "受取済み",
-      "NFT_IN" : "NFT受取済み",
       "OUT" : "送付済み",
-      "NFT_OUT" : "NFT送付済み",
       "CREATE" : "作成済み",
       "REVEAL" : "表示済み",
       "DELEGATE" : "デリゲート",
@@ -2819,11 +2786,7 @@
       "stakedAmount" : "ステーキング済み量",
       "accountCreationFee" : "アカウント作成手数料"
     },
-    "multipleAddresses" : "なぜ複数のアドレスがあるのですか？",
-    "tokenName" : "トークン名",
-    "collectionContract" : "トークンコントラクト",
-    "tokenId" : "トークン(NFT)ID",
-    "quantity" : "数量"
+    "multipleAddresses" : "なぜ複数のアドレスがあるのですか？"
   },
   "operationList" : {
     "noOperations" : "オペレーションはありません。",
@@ -2855,8 +2818,8 @@
       "contactSupport" : "サポートへお問い合わせ"
     },
     "willBedeprecatedBanner" : {
-      "title" : "効率を最適化するため、{{deprecatedDate}}以降、{{currencyName}}はLedger Liveではサポートされなくなります。ただし、Ledgerハードウェアウォレットでは引き続きサポートされます。この件に関してご不明な点などがございましたら、Ledgerカスタマーサポートまでご連絡ください。",
-      "contactSupport" : "サポートへお問い合わせ"
+      "title" : "{{deprecatedDate}}以降、{{currencyName}}はLedger Liveではサポートされなくなります。しかし、Ledgerハードウェアウォレットで引き続き保護されます。詳細は、下記のリンク先のヘルプセンター記事を参照してください。",
+      "learnMore" : "詳細はこちら"
     },
     "tokens" : {
       "contractAddress" : "コントラクトアドレス",
@@ -2992,10 +2955,6 @@
     },
     "undelegation" : {
       "sectionLabel" : "デリゲート解除"
-    },
-    "nft" : {
-      "receiveNft" : "NFTを受け取る",
-      "howTo" : "NFTを追加するには、<1>{{currency}}アドレス</1>を使用して<0>受け取る</0>必要があります。"
     },
     "readOnly" : {
       "noTransaction" : {
@@ -3206,11 +3165,6 @@
         "title" : "トークンを非表示",
         "desc" : "この操作により、すべての<1><0>{tokenName}</0></1>アカウントが非表示になります。<3>設定 > アカウント</3>から再度表示可能です。",
         "confirm" : "トークンを非表示"
-      },
-      "hideNFTCollectionCTA" : "コレクションを非表示",
-      "hideNFTCollectionModal" : {
-        "title" : "コレクションを非表示にしますか?",
-        "desc" : "設定オプションでコレクションの非表示を解除することができます。"
       },
       "cryptoAssets" : {
         "header" : "暗号資産",
@@ -3769,6 +3723,10 @@
       "twoStepApproval" : {
         "title" : "手順を完了する"
       },
+      "loader" : {
+        "title" : "スワップ処理中",
+        "description" : "リクエストを処理しています。しばらくお待ちください。"
+      },
       "history" : {
         "title" : "スワップ履歴"
       },
@@ -4036,10 +3994,7 @@
       "summary" : "概要",
       "selectDevice" : "デバイスを選択",
       "connectDevice" : "デバイスを接続",
-      "stepRange" : "ステップ{{currentStep}}/{{totalSteps}}",
-      "quantity" : "数量",
-      "selectCollection" : "コレクション",
-      "selectNft" : "NFT"
+      "stepRange" : "ステップ{{currentStep}}/{{totalSteps}}"
     },
     "recipient" : {
       "scan" : "QRコードをスキャン",
@@ -4073,6 +4028,10 @@
       "solanaRawTransaction" : {
         "title" : "ブラインド署名が必要です",
         "description" : "お使いのLedgerデバイスでトランザクションの詳細を認証することはできません。署名すると、すべての資産を失う可能性があります。このウェブサイトを信頼する場合のみ署名してください。"
+      },
+      "bitcoinPsbtTransaction" : {
+        "title" : "デバイス上で確認",
+        "description" : "次のステップで、デバイス上で取引数量と受取人をご確認いただけます。"
       },
       "subaccountsWarning" : "このアカウントのトークンを送付するには、このアカウントに{{ currency }}を追加する必要があります。",
       "tag" : "タグ（任意）",
@@ -4376,7 +4335,7 @@
       "title" : "追加したいアカウントを選択する",
       "ctaStopScan" : "スキャン停止",
       "confirm" : "確認",
-      "scanningTitle" : "ブロックチェーン上の既存のアカウントを探しています...",
+      "scanningTitle" : "ブロックチェーンを確認中…",
       "whichAddressType" : "アドレスの種類の選び方を確認",
       "sections" : {
         "importable" : {
@@ -4441,7 +4400,7 @@
     "confirmSwap" : {
       "title" : "スワップ処理をデバイス上で確認する",
       "alert" : {
-        "default" : "送付する前に、スワップの詳細をデバイス上で確認してください。アドレスは安全にやりとりされるため、確認の必要はありません。",
+        "default" : "送付前に、スワップの詳細をLedger上で確認してください。",
         "provider" : "送付前に、スワップの詳細をデバイス上で確認してください。{{providerName}}では、一部のトランザクションに対して追加の検証を実行する必要があり、遅延が発生する場合があります。"
       },
       "acceptTerms" : "このトランザクションを検証することにより、私は\n<0><0>{{provider}}</0>の利用規約</0>に同意します",
@@ -7142,47 +7101,6 @@
       }
     }
   },
-  "nft" : {
-    "account" : {
-      "seeAllNfts" : "すべてのNFTを見る",
-      "seeFewerNfts" : "少量のNFTを見る"
-    },
-    "gallery" : {
-      "allNft" : "全てのNFT",
-      "addNew" : "新規追加"
-    },
-    "designedForStax" : {
-      "title" : "<1>Ledger</1><2> Stax</2><0>用に設計</0>",
-      "drawer" : {
-        "description" : "このNFTには、Ledger StaxのE Inkスクリーン用に特別に設計されたNFTの追加の画像が含まれています。\n\nこの画像は、このNFTをロック画面として設定するときに使用されます。",
-        "cta" : "了解"
-      }
-    },
-    "viewer" : {
-      "properties" : "プロパティ",
-      "description" : "説明",
-      "tokenContract" : "トークンアドレス",
-      "tokenContractCopied" : "トークンアドレスがコピーされました！",
-      "tokenId" : "トークンID",
-      "tokenIdCopied" : "トークンIDがコピーされました！",
-      "quantity" : "数量",
-      "attributes" : {
-        "floorPrice" : "フロア価格"
-      }
-    },
-    "viewerModal" : {
-      "viewOn" : "表示",
-      "viewInExplorer" : "エクスプローラーで表示",
-      "hide" : "NFTコレクションを非表示",
-      "txDetails" : "トランザクションの詳細"
-    },
-    "modalDisabled" : {
-      "title" : "送信機能はiOSでは利用できません",
-      "body" : "AppleのApp Storeによる最近のアップデートに準拠するため、NFTの送信は現在、一時的にご利用いただけなくなっています。デスクトップのLedger Liveを使用してNFTを送信することは引き続き可能です。",
-      "learnMore" : "詳細はこちら",
-      "continue" : "了解！"
-    }
-  },
   "ApplicationVersion" : "v{{version}}",
   "analytics" : {
     "title" : "アナリティクス",
@@ -7266,7 +7184,6 @@
     "drawer" : {
       "options" : {
         "uploadFromPhone" : "画像ギャラリーから選択",
-        "selectFromNFTGallery" : "NFTギャラリーから選択",
         "remove" : "現在の画像を削除する"
       }
     },
@@ -7297,9 +7214,6 @@
       "setPicture" : "ロック画面に設定",
       "editPicture" : "画像を編集",
       "pickDeviceModel" : "デバイスを選択"
-    },
-    "nftGallery" : {
-      "title" : "私のNFT"
     }
   },
   "postOnboarding" : {
@@ -7344,50 +7258,7 @@
   "wallet" : {
     "tabs" : {
       "crypto" : "暗号資産",
-      "nft" : "NFT",
       "market" : "マーケット"
-    },
-    "nftGallery" : {
-      "filters" : {
-        "select" : "選択",
-        "filter" : "フィルター",
-        "blockchain" : "ブロックチェーン",
-        "seeAll" : "すべて表示",
-        "selectAndHide" : "選択して非表示",
-        "hide" : "{{count}}個のコレクションを非表示",
-        "hiddenCollections" : "非表示のNFTコレクション",
-        "hide_plural" : "{{count}}個のコレクションを非表示",
-        "empty" : "非表示のコレクションなし",
-        "alertHide" : "1件のコレクションが非表示です。ギャラリーフィルターから、いつでも再表示可能です。",
-        "alertHide_plural" : "{{count}}件のコレクションが非表示です。ギャラリーフィルターから、いつでも再表示可能です。"
-      },
-      "emptyFiltered" : {
-        "title" : "条件に合うNFTはありません",
-        "button" : "フィルターをリセットする"
-      },
-      "empty" : {
-        "title" : "表示できるNFTがありません",
-        "subtitle" : "NFTをウォレットに追加しましょう。",
-        "receive" : "NFTを受け取る",
-        "supportLink" : "別のウォレットからNFTを入手するには？"
-      },
-      "receiveModal" : {
-        "title" : "その他の暗号資産と同じ方法でNFTを受け取る",
-        "bullets" : {
-          "0" : "•NFTの暗号資産ブロックチェーンを選択する。",
-          "1" : "• NFTの受け取り方法を選ぶ"
-        },
-        "cta" : "了解",
-        "info" : "さらに詳しく"
-      },
-      "hideNftModal" : {
-        "title" : "NFTコレクションを非表示",
-        "desc" : "この操作により、すべてのNFTが{{collectionName}}個のコレクションから非表示になります。ギャラリーフィルターから再表示できます。",
-        "cta" : "このNFTを非表示にする"
-      },
-      "media" : {
-        "tag" : "{{count}}NFT"
-      }
     },
     "referralProgram" : "20ドル"
   },
@@ -7960,7 +7831,13 @@
     "searchPlaceholder" : "検索",
     "emptyAssetList" : "資産が見つかりません",
     "accountCount" : "{{count}}アカウント",
-    "accountCount_plural" : "{{count}}アカウント"
+    "accountCount_plural" : "{{count}}アカウント",
+    "errors" : {
+      "title" : "接続に失敗しました。",
+      "backend" : "システムでエラーが発生しました。後でもう一度お試しください。",
+      "internet" : "インターネットに接続されていません。接続をご確認の上、もう一度お試しください。",
+      "cta" : "再試行"
+    }
   },
   "swapErrors" : {
     "incorrectCommandData" : {
