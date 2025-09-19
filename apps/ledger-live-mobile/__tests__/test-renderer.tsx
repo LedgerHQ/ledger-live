@@ -45,6 +45,7 @@ import CustomLiveAppProvider from "./CustomLiveAppProvider";
 import { getFeature } from "./featureFlags";
 import { assetsDataApi } from "@ledgerhq/live-common/dada-client/state-manager/api";
 import { INITIAL_STATE as TOOLS_INITIAL_STATE } from "~/reducers/tools";
+import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 
 const INITIAL_STATE: State = {
   accounts: ACCOUNTS_INITIAL_STATE,
@@ -175,9 +176,11 @@ function Providers({
       // For default rendering, add new providers here
       <StyleProvider selectedPalette="dark">
         <I18nextProvider i18n={i18n}>
-          <QueuedDrawersContextProvider>
-            <AnalyticsContextProvider>{content}</AnalyticsContextProvider>
-          </QueuedDrawersContextProvider>
+          <BottomSheetModalProvider>
+            <QueuedDrawersContextProvider>
+              <AnalyticsContextProvider>{content}</AnalyticsContextProvider>
+            </QueuedDrawersContextProvider>
+          </BottomSheetModalProvider>
         </I18nextProvider>
       </StyleProvider>
     );
