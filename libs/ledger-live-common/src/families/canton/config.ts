@@ -42,6 +42,8 @@ export const cantonConfig: Record<string, ConfigInfo> = {
       minReserve: 0,
       useGateway: false,
       networkType: "localnet",
+      // 2 CC
+      fee: 2,
     },
   },
 };
