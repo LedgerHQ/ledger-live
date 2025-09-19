@@ -1,6 +1,5 @@
-import React, { ComponentProps, useState } from "react";
-import { StyleSheet, ScrollView, Pressable } from "react-native";
-import Modal from "react-native-modal";
+import React, { ComponentProps, useMemo, useState } from "react";
+import { StyleSheet, ScrollView, Pressable, Modal } from "react-native";
 import { Edge, SafeAreaView } from "react-native-safe-area-context";
 import { useTheme } from "@react-navigation/native";
 import Video from "react-native-video";
@@ -24,6 +23,8 @@ const DebugVideos = () => {
   const [fullScreen, setFullScreen] = useState(false);
   const key = entries[selectedIndex][0];
   const videoSource = entries[selectedIndex][1];
+
+  const resizeModeOptions: ResizeMode[] = useMemo(() => ["contain", "cover"], []);
 
   const video = videoSource ? (
     <Video
@@ -52,8 +53,16 @@ const DebugVideos = () => {
       <Text mb={4} color="neutral.c70" alignSelf="center">
         Tap on the video to display it in full screen
       </Text>
-      <Modal style={{ margin: 0 }} coverScreen isVisible={fullScreen}>
-        <Pressable style={{ flex: 1 }} onPress={() => setFullScreen(false)}>
+      <Modal
+        visible={fullScreen}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setFullScreen(false)}
+      >
+        <Pressable
+          style={{ flex: 1, backgroundColor: "rgba(0,0,0,0.8)" }}
+          onPress={() => setFullScreen(false)}
+        >
           <Flex flex={1}>{video}</Flex>
         </Pressable>
       </Modal>
@@ -65,7 +74,7 @@ const DebugVideos = () => {
       <Flex p={3}>
         <Flex flexDirection="row" alignItems="center">
           <Text>Resize mode:</Text>
-          {(["contain", "cover"] as ResizeMode[]).map(val => (
+          {resizeModeOptions.map(val => (
             <Button
               ml={3}
               type="primary"
@@ -101,7 +110,7 @@ const DebugVideos = () => {
       </Flex>
       <QueuedDrawer
         isRequestingToBeOpened={keyModalVisible}
-        onClose={setKeyModalVisible as () => void}
+        onClose={() => setKeyModalVisible(false)}
       >
         <ScrollView style={styles.modal}>
           {entries.map(([key], i) => (
