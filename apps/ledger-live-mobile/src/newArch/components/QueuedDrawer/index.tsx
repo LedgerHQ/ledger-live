@@ -1,176 +1,182 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
-import { StyleProp, ViewStyle } from "react-native";
-import { BottomDrawer } from "@ledgerhq/native-ui";
-import { useIsFocused } from "@react-navigation/native";
-import type { BaseModalProps } from "@ledgerhq/native-ui/components/Layout/Modals/BaseModal/index";
-import { useSelector } from "react-redux";
-import { isModalLockedSelector } from "~/reducers/appstate";
-import { Merge } from "~/types/helpers";
+import React, { useCallback, useMemo } from "react";
+import { Modal, Platform, Pressable, StyleProp, View, ViewStyle } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import Animated, {
+  Easing,
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming,
+  runOnJS,
+} from "react-native-reanimated";
+import { useTheme } from "styled-components/native";
 import { IsInDrawerProvider } from "~/context/IsInDrawerContext";
-import { DrawerInQueue, useQueuedDrawerContext } from "./QueuedDrawersContext";
-import { logDrawer } from "./utils/logDrawer";
+import useQueuedDrawerNative from "./useQueuedDrawerNative";
+import Header from "./Header";
 
-export { default as default } from "./temp/QueuedDrawerNative";
+export type Props = {
+  isRequestingToBeOpened?: boolean;
+  isForcingToBeOpened?: boolean;
+  title?: string;
+  noCloseButton?: boolean;
+  hasBackButton?: boolean;
+  onBack?: () => void;
+  onClose?: () => void;
+  onModalHide?: () => void;
+  preventBackdropClick?: boolean;
+  style?: StyleProp<ViewStyle>;
+  containerStyle?: StyleProp<ViewStyle>;
+  children: React.ReactNode;
+};
 
-// Purposefully removes isOpen prop so consumers can't use it directly
-export type Props = Merge<
-  Omit<BaseModalProps, "isOpen">,
-  {
-    isRequestingToBeOpened?: boolean;
-    isForcingToBeOpened?: boolean;
-    style?: StyleProp<ViewStyle>;
-    containerStyle?: StyleProp<ViewStyle>;
-  }
->;
+const ANIMATION_DURATION = 250;
 
-/**
- * A drawer taking into account the currently displayed drawer and other drawers waiting to be displayed.
- *
- * This is made possible thanks to a queue of drawers waiting to be displayed. Once the currently displayed drawer
- * is not displayed anymore (hidden), the next drawer in the queue is notified, and it updates its state
- * to be make itself visible.
- *
- * Setting to true the isRequestingToBeOpened prop will add the drawer to the queue. Setting to false will remove it from the queue.
- *
- * A new drawer can bypass the queue and forcefully close the currently displayed drawer by setting the isForcingToBeOpened prop
- * to true. This entirely cleans the drawers queue. It notifies the removed drawers by calling their onClose prop.
- *
- * The queue is cleaned when its associated screen loses its navigation focus. If a drawer is requesting to be opened while
- * its associated screen has not the focus, it is not added to the queue and its onClose prop is called.
- *
- * You can also block the drawer for closing by setting the modalLock redux app state.
- * To do this, you can use the component components/ModalLock.
- * A drawer can still forcefully close other drawers and opens itself while the modalLock is set to true.
- *
- * Note: avoid conditionally render this component. Always render it and use isRequestingToBeOpened to control its visibility.
- * Note: to avoid a UI glitch on Android, do not put this drawer inside NavigationScrollView (and probably any other ScrollView)
- *
- * @param isRequestingToBeOpened: to use in place of isOpen. Setting to true will add the drawer to the queue.
- *   Setting to false will remove it from the queue. Default to false.
- * @param isForcingToBeOpened: when set to true, forcefully cleans the existing drawers queue, closes the currently displayed drawer,
- *   and displays itself. It should only be used when the drawer has priority over the other drawers in the queue.
- *   Prefer using isRequestingToBeOpened insted to respect the queue order. Default to false.
- * @param onClose: when the user closes the drawer (by clicking on the backdrop or the close button) + when the drawer is hidden
- *   (this is currently due to a legacy behavior of the BaseModal component. It might change in the future).
- *   Even if you set noCloseButton, the drawer can be closed for other reasons (lost screen focus, other drawer forced it to close).
- *   It is a good practice to always clean the state that tried to open the drawer when onClose is called.
- * @param onModalHide: when the drawer is fully hidden
- * @param noCloseButton: whether to display the close button or not
- * @param preventBackdropClick: whether to prevent the user from closing the drawer by clicking somewhere on the screen
- *   or on the back button
- * @params all other props are passed to the BaseModal component. Double check the behavior of the props you pass
- *   before using them in production. Do not use the isOpen prop.
- */
-const QueuedDrawer = ({
+const QueuedDrawerNative = ({
   isRequestingToBeOpened = false,
   isForcingToBeOpened = false,
   onClose,
   onBack,
-  hasBackButton,
   onModalHide,
   noCloseButton,
+  hasBackButton,
   preventBackdropClick,
   style,
   containerStyle,
   children,
-  ...rest
+  title,
 }: Props) => {
-  const [isDisplayed, setIsDisplayed] = useState(false);
-  const { addDrawerToQueue } = useQueuedDrawerContext();
-  const drawerInQueueRef = useRef<DrawerInQueue>();
+  const { colors } = useTheme();
+  const insets = useSafeAreaInsets();
 
-  const isFocused = useIsFocused();
-
-  const triggerOpen = useCallback(() => {
-    setIsDisplayed(true);
-  }, []);
-
-  const onCloseRef = useRef(onClose);
-  onCloseRef.current = onClose;
-
-  const triggerClose = useCallback(() => {
-    setIsDisplayed(false);
-    if (drawerInQueueRef.current?.getPositionInQueue() !== 0) {
-      drawerInQueueRef.current?.removeDrawerFromQueue();
-      drawerInQueueRef.current = undefined;
-    }
-    onCloseRef.current && onCloseRef.current(); // hack to avoid triggering the useEffect below if the parent changes the onClose prop
-  }, []);
-
-  useEffect(() => {
-    if (!isFocused && (isRequestingToBeOpened || isForcingToBeOpened)) {
-      // Add delay to prevent premature closing due to React Navigation v7 focus timing
-      const timer = setTimeout(() => {
-        if (!isFocused && (isRequestingToBeOpened || isForcingToBeOpened)) {
-          logDrawer("trigger close because not focused");
-          triggerClose();
-        }
-      }, 100);
-      return () => clearTimeout(timer);
-    } else if ((isRequestingToBeOpened || isForcingToBeOpened) && !drawerInQueueRef.current) {
-      const onDrawerStateChanged = (isOpen: boolean) => {
-        if (isOpen) {
-          triggerOpen();
-        } else {
-          logDrawer("setDrawerOpenedCallback triggerClose");
-          triggerClose();
-        }
-      };
-      drawerInQueueRef.current = addDrawerToQueue(onDrawerStateChanged, isForcingToBeOpened);
-      return () => {
-        logDrawer("trigger close in cleanup");
-        triggerClose();
-      };
-    }
-  }, [
-    addDrawerToQueue,
-    isFocused,
-    isForcingToBeOpened,
+  const {
+    areDrawersLocked,
+    isVisible,
+    handleDismiss,
+    onBack: hookOnBack,
+    enablePanDownToClose,
+  } = useQueuedDrawerNative({
     isRequestingToBeOpened,
-    triggerClose,
-    triggerOpen,
-  ]);
+    isForcingToBeOpened,
+    onClose,
+    onBack,
+    onModalHide,
+    preventBackdropClick,
+  });
 
-  const handleCloseUserEvent = useCallback(() => {
-    logDrawer("handleClose");
-    triggerClose();
-  }, [triggerClose]);
+  const translateY = useSharedValue(1000);
+  const backdropOpacity = useSharedValue(0);
 
-  const handleModalHide = useCallback(() => {
-    logDrawer("handleModalHide");
-    onModalHide && onModalHide();
-    setIsDisplayed(false);
-    drawerInQueueRef.current?.removeDrawerFromQueue();
-    drawerInQueueRef.current = undefined;
-  }, [onModalHide]);
+  const openAnim = useCallback(() => {
+    translateY.value = withTiming(0, {
+      duration: ANIMATION_DURATION,
+      easing: Easing.out(Easing.cubic),
+    });
+    backdropOpacity.value = withTiming(1, { duration: ANIMATION_DURATION });
+  }, [translateY, backdropOpacity]);
 
-  useEffect(() => {
-    return () => {
-      logDrawer("UNMOUNT drawer...");
-      drawerInQueueRef.current?.removeDrawerFromQueue();
-      drawerInQueueRef.current = undefined;
-    };
-  }, []);
+  const closeAnim = useCallback(
+    (after?: () => void) => {
+      translateY.value = withTiming(
+        1000,
+        { duration: ANIMATION_DURATION, easing: Easing.in(Easing.cubic) },
+        () => {
+          if (after) runOnJS(after)();
+        },
+      );
+      backdropOpacity.value = withTiming(0, { duration: ANIMATION_DURATION });
+    },
+    [translateY, backdropOpacity],
+  );
 
-  // If the drawer system is locked to the currently opened drawer
-  const areDrawersLocked = useSelector(isModalLockedSelector);
+  const containerAnimatedStyle = useAnimatedStyle(() => ({
+    transform: [{ translateY: translateY.value }],
+  }));
+
+  const backdropAnimatedStyle = useAnimatedStyle(() => ({
+    opacity: backdropOpacity.value,
+  }));
+
+  const onShow = useCallback(() => {
+    openAnim();
+  }, [openAnim]);
+
+  const onRequestClose = useCallback(() => {
+    if (!enablePanDownToClose) return;
+    closeAnim(() => handleDismiss());
+  }, [enablePanDownToClose, closeAnim, handleDismiss]);
+
+  const onBackdropPress = useCallback(() => {
+    if (!enablePanDownToClose) return;
+    closeAnim(() => handleDismiss());
+  }, [enablePanDownToClose, closeAnim, handleDismiss]);
+
+  const shouldShowHeader = useMemo(
+    () => title || hasBackButton || (!noCloseButton && !areDrawersLocked),
+    [title, hasBackButton, noCloseButton, areDrawersLocked],
+  );
 
   return (
-    <BottomDrawer
-      preventBackdropClick={areDrawersLocked || preventBackdropClick}
-      onClose={handleCloseUserEvent}
-      onModalHide={handleModalHide}
-      onBack={onBack}
-      hasBackButton={hasBackButton}
-      noCloseButton={areDrawersLocked || noCloseButton}
-      modalStyle={style}
-      containerStyle={containerStyle}
-      isOpen={isDisplayed}
-      {...rest}
+    <Modal
+      presentationStyle="overFullScreen"
+      animationType="none"
+      transparent
+      visible={isVisible}
+      onShow={onShow}
+      onRequestClose={onRequestClose}
+      statusBarTranslucent={Platform.OS === "android"}
     >
-      <IsInDrawerProvider>{children}</IsInDrawerProvider>
-    </BottomDrawer>
+      <View
+        style={{
+          flex: 1,
+          justifyContent: "flex-end",
+        }}
+      >
+        <Pressable
+          testID="drawer-backdrop"
+          onPress={onBackdropPress}
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: colors.constant.overlay,
+          }}
+        >
+          <Animated.View style={[{ flex: 1 }, backdropAnimatedStyle]} />
+        </Pressable>
+
+        <Animated.View
+          style={[
+            containerAnimatedStyle,
+            {
+              backgroundColor: colors.background.drawer,
+              borderTopLeftRadius: 24,
+              borderTopRightRadius: 24,
+              paddingHorizontal: 16,
+              paddingTop: 16,
+              paddingBottom: Math.max(insets.bottom, 12) + 32,
+            },
+            containerStyle || undefined,
+          ]}
+        >
+          {shouldShowHeader ? (
+            <Header
+              title={title}
+              hasBackButton={hasBackButton}
+              hookOnBack={hookOnBack}
+              noCloseButton={noCloseButton}
+              areDrawersLocked={areDrawersLocked}
+              handleCloseUserEvent={() => closeAnim(() => handleDismiss())}
+            />
+          ) : null}
+
+          <View style={style || undefined}>
+            <IsInDrawerProvider>{children}</IsInDrawerProvider>
+          </View>
+        </Animated.View>
+      </View>
+    </Modal>
   );
 };
 
-// export default React.memo(QueuedDrawer);
+export default React.memo(QueuedDrawerNative);
