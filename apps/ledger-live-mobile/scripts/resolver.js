@@ -14,6 +14,7 @@ module.exports = (path, options) => {
         "@solana/codecs-strings",
         "@solana/options",
         "@aptos-labs/aptos-client",
+        "@noble/hashes",
       ]);
 
       if (pkgNamesToTarget.has(pkg.name)) {
