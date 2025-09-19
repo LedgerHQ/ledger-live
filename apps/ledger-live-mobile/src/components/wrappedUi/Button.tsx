@@ -2,12 +2,11 @@ import React, { useCallback } from "react";
 import { ButtonProps } from "@ledgerhq/native-ui/components/cta/Button/index";
 import { Button as UiButton } from "@ledgerhq/native-ui";
 import { track } from "~/analytics";
-import { TouchableOpacityProps } from "react-native";
-import { GestureResponderEvent } from "react-native-modal";
+import { TouchableOpacityProps, GestureResponderEvent } from "react-native";
 
 export type WrappedButtonProps = ButtonProps & {
   event?: string;
-  eventProperties?: unknown;
+  eventProperties?: Record<string, unknown>;
   buttonTestId?: string;
   onPressWhenDisabled?: TouchableOpacityProps["onPress"];
 };
@@ -23,7 +22,7 @@ function Button({
     async (pressEvent: GestureResponderEvent) => {
       if (!onPress) return;
       if (event) {
-        track(event, eventProperties as Record<string, unknown>);
+        track(event, eventProperties);
       }
       onPress(pressEvent);
     },
