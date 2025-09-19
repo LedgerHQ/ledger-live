@@ -1625,6 +1625,11 @@
       "installCTA" : "Instalar aplicaciones",
       "skipCTA" : "Lo haré más adelante"
     },
+    "newSeed" : {
+      "subtitle" : "Puedes transferir cripto desde cualquier exchange o wallet a tu Ledger Wallet para contar con la máxima seguridad.",
+      "installCTA" : "Proteger mis cripto",
+      "skipCTA" : "Quizás más tarde"
+    },
     "ongoing" : {
       "resolving" : "Resolviendo dependencias",
       "progress" : "No cierres Ledger Live mientras se instalan las aplicaciones.",
@@ -2156,26 +2161,6 @@
         "learnHowToUpdate" : "Aprende cómo actualizarlo"
       }
     },
-    "stepImportAccounts" : {
-      "title" : "Sincroniza tus cripto desde la PC",
-      "desc" : "Si ya tienes tus cripto configuradas en la aplicación Ledger Desktop, puedes sincronizarlas para administrarlas desde tu teléfono.",
-      "cta" : "Estoy listo para escanear",
-      "bullets" : {
-        "0" : {
-          "label" : "Dentro de la aplicación Desktop, selecciona<1>Ajustes > Cuentas > Exportar cuenta</1>"
-        },
-        "1" : {
-        },
-        "2" : {
-          "label" : "Selecciona las cuentas de cripto a importar."
-        }
-      },
-      "warning" : {
-        "title" : "Es necesario sincronizar manualmente tus aplicaciones Desktop y Mobile.",
-        "desc" : "Ledger Live respeta tu privacidad y almacena tus datos de manera local. Si cambias las cuentas y la configuración en tu teléfono, deberás hacer lo mismo en tu PC y viceversa. Tus transacciones se mantienen sincronizadas con la cadena de bloques.",
-        "cta" : "¡Entendido!"
-      }
-    },
     "stepSetupPin" : {
       "step1" : "Enciende tu {{fullDeviceName}} y sigue las instrucciones.",
       "step1-nanoS" : "Conecta tu {{fullDeviceName}} a tu teléfono por medio de un cable OTG.",
@@ -2280,6 +2265,9 @@
         "continueCTA" : "Continuar",
         "contactSupportCTA" : "Ponte en contacto con Soporte"
       }
+    },
+    "completionScreen" : {
+      "title" : "Ya lo tienes todo bajo control"
     }
   },
   "blePairingFlow" : {
@@ -2410,6 +2398,8 @@
   },
   "syncOnboarding" : {
     "title" : "Prepara tu {{productName}}",
+    "twoStepTitle" : "Comencemos",
+    "firstStepReadyTitle" : "Tu {{productName}} está listo",
     "estimatedTimeFormat" : "{{estimatedTime}} min",
     "deviceSelection" : {
       "title" : "Selecciona el Ledger que quieres configurar:",
@@ -2527,6 +2517,10 @@
       "newSeedContinueOnDevice" : "Sigue las instrucciones que se muestran en tu {{productName}}",
       "recovery" : "Para que tus activos estén lo más seguros posible, utiliza una Frase de Recuperación Secreta generada por un dispositivo Ledger. \n\n¿No tienes una? Usa tu {{productName}} para generar una Frase nueva."
     },
+    "secureCryptoStep" : {
+      "title" : "Protege tus cripto",
+      "doneSubTitle" : "Tus aplicaciones de blockchain están instaladas."
+    },
     "backup" : {
       "title" : "Copia de respaldo para tu Frase de Recuperación Secreta",
       "description" : "Restaura el acceso a tu billetera sin tu Frase de Recuperación Secreta con una copia de respaldo cifrada digital.\n\nElige si quieres tener una copia de respaldo digital:",
@@ -2554,6 +2548,9 @@
     },
     "completion" : {
       "title" : "Ahora tienes el control"
+    },
+    "successStep" : {
+      "title" : "Tu {{productName}} está listo para proteger tus activos digitales"
     }
   },
   "tabs" : {
@@ -2855,8 +2852,8 @@
       "contactSupport" : "Ponte en contacto con Soporte"
     },
     "willBedeprecatedBanner" : {
-      "title" : "Por razones de optimización de eficiencia, {{currencyName}} dejará de ser compatible con Ledger Live el {{deprecatedDate}}. No obstante, seguirá siendo compatible con las billeteras de hardware de Ledger. Ponte en contacto con el servicio de soporte al cliente de Ledger si necesitas ayuda con esto.",
-      "contactSupport" : "Ponte en contacto con Soporte"
+      "title" : "Ledger Live dejará de ser compatible con {{currencyName}} a partir del {{deprecatedDate}}. No obstante, tu hardware wallet Ledger lo seguirá protegiendo. Para obtener más información, lee el artículo completo del Centro de ayuda en el siguiente enlace.",
+      "learnMore" : "Más información"
     },
     "tokens" : {
       "contractAddress" : "Dirección del contrato",
@@ -3769,6 +3766,10 @@
       "twoStepApproval" : {
         "title" : "Completar los pasos"
       },
+      "loader" : {
+        "title" : "Procesando permuta",
+        "description" : "Espera mientras procesamos tu petición."
+      },
       "history" : {
         "title" : "Historial de permutas"
       },
@@ -4441,7 +4442,7 @@
     "confirmSwap" : {
       "title" : "Confirma la operación de permuta en tu dispositivo",
       "alert" : {
-        "default" : "Verifica los detalles de la permuta en tu dispositivo antes de enviarla. Las direcciones se intercambian de forma segura por lo que no es necesario verificarlas.",
+        "default" : "Verifica la información de permuta en tu Ledger antes de enviar la transacción.",
         "provider" : "Verifica la información de permuta en tu dispositivo antes de enviar la transacción. {{providerName}} tal vez requiera una verificación adicional para algunas transacciones, lo que puede provocar retrasos."
       },
       "acceptTerms" : "Al validar esta transacción, acepto los <0>términos de uso de\n<0> {{provider}}</0>",
@@ -7960,7 +7961,13 @@
     "searchPlaceholder" : "Buscar",
     "emptyAssetList" : "No se encontraron activos",
     "accountCount" : "{{count}} cuenta",
-    "accountCount_plural" : "{{count}} cuentas"
+    "accountCount_plural" : "{{count}} cuentas",
+    "errors" : {
+      "title" : "La conexión ha fallado",
+      "backend" : "Algo ha salido mal en nuestro sistema. Inténtalo de nuevo más tarde",
+      "internet" : "No tienes conexión a Internet. Inténtalo de nuevo.",
+      "cta" : "Inténtalo de nuevo"
+    }
   },
   "swapErrors" : {
     "incorrectCommandData" : {
