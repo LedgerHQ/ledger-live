@@ -802,8 +802,8 @@
       "support" : "サポート"
     },
     "willBeDeprecatedBanner" : {
-      "title" : "効率を最適化するため、{{deprecatedDate}}以降、{{currencyName}}はLedger Liveではサポートされなくなります。ただし、Ledgerハードウェアウォレットでは引き続きサポートされます。この件に関してご不明な点などがございましたら、Ledgerカスタマーサポートまでご連絡ください。",
-      "contactSupport" : "サポートへお問い合わせ"
+      "title" : "{{deprecatedDate}}以降、{{currencyName}}はLedger Liveではサポートされなくなります。しかし、Ledgerハードウェアウォレットで引き続き保護されます。詳細は、下記のリンク先のヘルプセンター記事を参照してください。",
+      "learnMore" : "詳細はこちら"
     },
     "lastOperations" : "最近の取引",
     "contractAddress" : "コントラクト：",
@@ -1940,7 +1940,8 @@
       "payoutNetworkFeesTooltip" : "これはデバイスには表示されません。",
       "acceptTerms" : "このトランザクションを検証することにより、私は\n<0>{{provider}}の利用規約</0>に同意します",
       "exodusAcceptTerms" : "Exodusは、スワップの実行をサードパーティに依存しています。\nこのトランザクションを承認することにより、私は<0>Exodusの利用規約</0>に同意します",
-      "changellyAcceptTerms" : "「Swap with Changelly（Changellyでスワップ）」をクリックすると、Changellyの<0>利用規約</0>およびその\n<1>AML/KYC</1>ポリシーに同意したことになります。ChangellyはAML/KYC（本人確認手続き）を適用する場合があり、\n稀にトランザクションの完了に影響する可能性があります。そのような場合は、\nChangellyの<2>カスタマーサポート</2>に連絡する必要があります。"
+      "changellyAcceptTerms" : "「Swap with Changelly（Changellyでスワップ）」をクリックすると、Changellyの<0>利用規約</0>およびその\n<1>AML/KYC</1>ポリシーに同意したことになります。ChangellyはAML/KYC（本人確認手続き）を適用する場合があり、\n稀にトランザクションの完了に影響する可能性があります。そのような場合は、\nChangellyの<2>カスタマーサポート</2>に連絡する必要があります。",
+      "cicAcceptTerms" : "「Swap with CIC（CICでスワップ）」を選択すると、CICの<0>利用規約</0>およびその<1>AML/KYC</1>ポリシーに同意したことになります。CICはAML/KYC（本人確認手続き）を適用する場合があり、特定の状況下で、トランザクションの完了に影響する可能性があります。万が一、当該事象が発生した際には、CICの<2>カスタマーサポート</2>までお問い合わせください。"
     },
     "swap2" : {
       "amountSent" : "送付額",
@@ -2282,12 +2283,12 @@
     }
   },
   "fund" : {
-    "title" : "Fund",
-    "titleCrypto" : "Fund {{currency}}",
+    "title" : "入金",
+    "titleCrypto" : "{{currency}}を入金",
     "exchangeDrawer" : {
       "completed" : {
-        "title" : "Transaction broadcast successfully",
-        "description" : "Your operation has been sent to the network for confirmation. Please wait for your transaction to be confirmed and for the provider to process it."
+        "title" : "トランザクションのブロードキャスト成功",
+        "description" : "操作は、承認のためにネットワークに送信されました。トランザクションが承認され、プロバイダーが処理するまでお待ちください。"
       }
     }
   },
@@ -2401,6 +2402,10 @@
         "solanaRawTransaction" : {
           "title" : "ブラインド署名が必要です",
           "description" : "お使いのLedgerデバイスでトランザクションの詳細を認証することはできません。署名すると、すべての資産を失う可能性があります。このウェブサイトを信頼する場合のみ署名してください。"
+        },
+        "bitcoinPsbtTransaction" : {
+          "title" : "デバイス上で確認",
+          "description" : "次のステップで、デバイス上で取引数量と受取人をご確認いただけます。"
         },
         "utxoLag" : "アカウントに大量のコインがあるため、このトランザクションの承認と署名には時間がかかる場合があります。",
         "subaccountsWarning" : "このアカウントのトークンを送金するには、このアカウントに{{ currency }}を補充する必要があります",
@@ -7651,7 +7656,7 @@
         "foundAccounts_other" : "{{count}}個のアカウントが見つかりました",
         "scanning" : "アカウントをスキャン中…"
       },
-      "title" : "ブロックチェーン上の既存のアカウントを検索中..."
+      "title" : "ブロックチェーンを確認中…"
     },
     "connectYourDevice" : {
       "title" : "デバイスを接続してロックを解除する"
@@ -7671,6 +7676,11 @@
         "selectAccount" : "続行",
         "close" : "閉じる"
       }
+    },
+    "genericError" : {
+      "title" : "ネットワークエラー発生",
+      "description" : "問題が発生しました。再試行するか、Ledgerサポートにご連絡ください。",
+      "cta" : "再試行"
     }
   },
   "nftEntryPoint" : {
