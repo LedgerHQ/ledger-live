@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.94.0-nightly.4
+
+### Minor Changes
+
+- [#11835](https://github.com/LedgerHQ/ledger-live/pull/11835) [`6cf6b1a`](https://github.com/LedgerHQ/ledger-live/commit/6cf6b1a775d36e5e935c185ace4e32129dffa7ff) Thanks [@lpaquet-ledger](https://github.com/lpaquet-ledger)! - Only skip select device if it's available
+
 ## 3.94.0-nightly.3
 
 ### Minor Changes

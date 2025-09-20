@@ -1,5 +1,11 @@
 # @ledgerhq/react-ui
 
+## 0.38.0-nightly.3
+
+### Minor Changes
+
+- [#11908](https://github.com/LedgerHQ/ledger-live/pull/11908) [`b038092`](https://github.com/LedgerHQ/ledger-live/commit/b03809244e08f5259b7be816366f368743591096) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Fix double dash when market trend is negative
+
 ## 0.38.0-nightly.2
 
 ### Patch Changes

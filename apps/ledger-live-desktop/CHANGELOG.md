@@ -1,5 +1,16 @@
 # ledger-live-desktop
 
+## 2.129.0-nightly.4
+
+### Minor Changes
+
+- [#11919](https://github.com/LedgerHQ/ledger-live/pull/11919) [`af6beb7`](https://github.com/LedgerHQ/ledger-live/commit/af6beb7a5b07b4bedf617628f4495a04f3962e95) Thanks [@ooke-ledger](https://github.com/ooke-ledger)! - Fix simple view translation
+
+### Patch Changes
+
+- Updated dependencies [[`b038092`](https://github.com/LedgerHQ/ledger-live/commit/b03809244e08f5259b7be816366f368743591096)]:
+  - @ledgerhq/react-ui@0.38.0-nightly.3
+
 ## 2.129.0-nightly.3
 
 ### Patch Changes
