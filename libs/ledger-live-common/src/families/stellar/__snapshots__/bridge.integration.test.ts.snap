@@ -3,17 +3,17 @@
 exports[`stellar currency bridge scanAccounts stellar seed 1 1`] = `
 [
   {
-    "balance": "341064694",
+    "balance": "341064981",
     "currencyId": "stellar",
     "derivationMode": "sep5",
     "freshAddress": "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
     "freshAddressPath": "44'/148'/0'",
     "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
     "index": 0,
-    "operationsCount": 85,
+    "operationsCount": 106,
     "pendingOperations": [],
     "seedIdentifier": "27c586f8499294c64d57f8d7956eef4431de58ab20e1c88001f6cf131c97d6f3",
-    "spendableBalance": "311064594",
+    "spendableBalance": "311064881",
     "subAccounts": [],
     "swapHistory": [],
     "syncHash": undefined,
@@ -21,17 +21,17 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 1`] = `
     "xpub": "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
   },
   {
-    "balance": "89999840",
+    "balance": "89999857",
     "currencyId": "stellar",
     "derivationMode": "sep5",
     "freshAddress": "GAIXIJBMYPTSF2CDVQ35WOTULCLZIE4W2SDEK3RQGAA3A22BPWY7R53Z",
     "freshAddressPath": "44'/148'/1'",
     "id": "js:2:stellar:GAIXIJBMYPTSF2CDVQ35WOTULCLZIE4W2SDEK3RQGAA3A22BPWY7R53Z:sep5",
     "index": 1,
-    "operationsCount": 23,
+    "operationsCount": 40,
     "pendingOperations": [],
     "seedIdentifier": "27c586f8499294c64d57f8d7956eef4431de58ab20e1c88001f6cf131c97d6f3",
-    "spendableBalance": "79999740",
+    "spendableBalance": "79999757",
     "subAccounts": [],
     "swapHistory": [],
     "syncHash": undefined,
@@ -39,17 +39,17 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 1`] = `
     "xpub": "GAIXIJBMYPTSF2CDVQ35WOTULCLZIE4W2SDEK3RQGAA3A22BPWY7R53Z",
   },
   {
-    "balance": "59999341",
+    "balance": "59999358",
     "currencyId": "stellar",
     "derivationMode": "sep5",
     "freshAddress": "GCDDN6T2LJN3T7SPWJQV6BCCL5KNY5GBN7X4CMSZLDEXDHXAH32TOAHS",
     "freshAddressPath": "44'/148'/2'",
     "id": "js:2:stellar:GCDDN6T2LJN3T7SPWJQV6BCCL5KNY5GBN7X4CMSZLDEXDHXAH32TOAHS:sep5",
     "index": 2,
-    "operationsCount": 17,
+    "operationsCount": 34,
     "pendingOperations": [],
     "seedIdentifier": "27c586f8499294c64d57f8d7956eef4431de58ab20e1c88001f6cf131c97d6f3",
-    "spendableBalance": "44999241",
+    "spendableBalance": "44999258",
     "subAccounts": [],
     "swapHistory": [],
     "syncHash": undefined,
@@ -274,6 +274,32 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
     },
     {
       "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
+      "blockHash": "06c74bf052c9d457f9d827132d26e23284380db0ba1d25f4859520c33a1af0c5",
+      "blockHeight": 58632999,
+      "extra": {
+        "assetAmount": "1",
+        "ledgerOpType": "IN",
+        "memo": {
+          "type": "MEMO_TEXT",
+          "value": "Buy HRX Earn XLM every hour",
+        },
+      },
+      "fee": "10000",
+      "hasFailed": false,
+      "hash": "0daaff2574aba699354f23726950b9b5dd030fbb174b551d6a648eed91f36fbe",
+      "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-0daaff2574aba699354f23726950b9b5dd030fbb174b551d6a648eed91f36fbe-IN",
+      "recipients": [
+        "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
+      ],
+      "senders": [
+        "GBK5IHITJ7HKKDZ3KQNX5CEFBL7IJ7ZUB2CX2VLPYDYGH4TCBQFJC7R5",
+      ],
+      "transactionSequenceNumber": 251606365385007000,
+      "type": "IN",
+      "value": "1",
+    },
+    {
+      "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
       "blockHash": "b9d39c8c122b2d90115d5acdd54ea685094f3ba4098bd5bc9d6c058c4d34cd82",
       "blockHeight": 57521497,
       "extra": {
@@ -321,6 +347,32 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
         "GBCTYLNHE5XJNGD76R7EVQSMFXMT4SC5PD4XKT2P4LBN2BBB42BKC5EA",
       ],
       "transactionSequenceNumber": 250201623316409700,
+      "type": "IN",
+      "value": "1",
+    },
+    {
+      "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
+      "blockHash": "2d1ac87afb9a431be36736b6f01a08473e62d9eda24c1cab7cc38e94b6c5431e",
+      "blockHeight": 58712852,
+      "extra": {
+        "assetAmount": "1",
+        "ledgerOpType": "IN",
+        "memo": {
+          "type": "MEMO_TEXT",
+          "value": "Buy HRX Earn XLM every hour",
+        },
+      },
+      "fee": "10000",
+      "hasFailed": false,
+      "hash": "10d2aa5659db41ff0231b5322915dad946107b9b57d33ac3eb90e85439b609bb",
+      "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-10d2aa5659db41ff0231b5322915dad946107b9b57d33ac3eb90e85439b609bb-IN",
+      "recipients": [
+        "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
+      ],
+      "senders": [
+        "GB2VGXJPNGZI4HFJLCEJSP24V6TEJVZUQUVB6JIEOBE4TFHB2DCRTCDU",
+      ],
+      "transactionSequenceNumber": 252114271037557900,
       "type": "IN",
       "value": "1",
     },
@@ -482,6 +534,32 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
     },
     {
       "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
+      "blockHash": "c7114fa9838825b727ca80dc4489b72f65bd302ce3ef1410a887c22bfeaf16aa",
+      "blockHeight": 58647362,
+      "extra": {
+        "assetAmount": "0",
+        "ledgerOpType": "IN",
+        "memo": {
+          "type": "MEMO_TEXT",
+          "value": "claim your HRX airdrop",
+        },
+      },
+      "fee": "10000",
+      "hasFailed": true,
+      "hash": "20c8c45fa010f95e09bb856fea24e863ed0cd4253ba1545c2bbcbcd100e10162",
+      "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-20c8c45fa010f95e09bb856fea24e863ed0cd4253ba1545c2bbcbcd100e10162-IN",
+      "recipients": [
+        "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
+      ],
+      "senders": [
+        "GDKIHRMYMRMQSZRJ25S6BBK6X5A3KDWVDHLDYQG3JHUGWMD7WIZH57CL",
+      ],
+      "transactionSequenceNumber": 251606365385008900,
+      "type": "IN",
+      "value": "0",
+    },
+    {
+      "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
       "blockHash": "d209e12db579fc91297c2be86e432005ecca40be839dc1d9911b135b0f4eb4a8",
       "blockHeight": 56541880,
       "extra": {
@@ -635,6 +713,84 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
       "transactionSequenceNumber": 248002359542688200,
       "type": "IN",
       "value": "1",
+    },
+    {
+      "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
+      "blockHash": "09b021087eec4c23b87f1e8174124ab6a223f6651d3e16e779e5b2e3b6e40a06",
+      "blockHeight": 58773889,
+      "extra": {
+        "assetAmount": "1",
+        "ledgerOpType": "IN",
+        "memo": {
+          "type": "MEMO_TEXT",
+          "value": "Buy HRX Earn XLM every hour",
+        },
+      },
+      "fee": "10000",
+      "hasFailed": false,
+      "hash": "2cf51612efa3521443753a9661a562cfdf6b1675115daeb5484eb6fd2d9232ce",
+      "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-2cf51612efa3521443753a9661a562cfdf6b1675115daeb5484eb6fd2d9232ce-IN",
+      "recipients": [
+        "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
+      ],
+      "senders": [
+        "GB2VGXJPNGZI4HFJLCEJSP24V6TEJVZUQUVB6JIEOBE4TFHB2DCRTCDU",
+      ],
+      "transactionSequenceNumber": 252114271037568160,
+      "type": "IN",
+      "value": "1",
+    },
+    {
+      "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
+      "blockHash": "28eb035a74418b35516969a4d3701f6812b6b3fdc2d8ae537c569c4add8d3462",
+      "blockHeight": 58701391,
+      "extra": {
+        "assetAmount": "1",
+        "ledgerOpType": "IN",
+        "memo": {
+          "type": "MEMO_TEXT",
+          "value": "Buy HRX Earn XLM every hour",
+        },
+      },
+      "fee": "10000",
+      "hasFailed": false,
+      "hash": "2e283fd7c8d21b28c241a178de4cc45c0d10ccedcea914402be5379aed4c8369",
+      "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-2e283fd7c8d21b28c241a178de4cc45c0d10ccedcea914402be5379aed4c8369-IN",
+      "recipients": [
+        "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
+      ],
+      "senders": [
+        "GB2VGXJPNGZI4HFJLCEJSP24V6TEJVZUQUVB6JIEOBE4TFHB2DCRTCDU",
+      ],
+      "transactionSequenceNumber": 252114271037555300,
+      "type": "IN",
+      "value": "1",
+    },
+    {
+      "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
+      "blockHash": "12db61c3b9f2c1daaea54d5a028e986d002af56dc47663547047680f84634bf9",
+      "blockHeight": 58675968,
+      "extra": {
+        "assetAmount": "90",
+        "ledgerOpType": "IN",
+        "memo": {
+          "type": "MEMO_TEXT",
+          "value": "claim your HRX airdrop",
+        },
+      },
+      "fee": "10000",
+      "hasFailed": false,
+      "hash": "2ee040aa8e3bfc557eb7da0c9f829c8422fc636d7a51333d77ba4117f9092cc6",
+      "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-2ee040aa8e3bfc557eb7da0c9f829c8422fc636d7a51333d77ba4117f9092cc6-IN",
+      "recipients": [
+        "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
+      ],
+      "senders": [
+        "GDKIHRMYMRMQSZRJ25S6BBK6X5A3KDWVDHLDYQG3JHUGWMD7WIZH57CL",
+      ],
+      "transactionSequenceNumber": 251606365385010370,
+      "type": "IN",
+      "value": "90",
     },
     {
       "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
@@ -872,6 +1028,32 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
     },
     {
       "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
+      "blockHash": "0d7b1ca6c48ef14a2e06f05709ccc66cb9d70e064e63d40ca721762f4e35dce1",
+      "blockHeight": 58980149,
+      "extra": {
+        "assetAmount": "1",
+        "ledgerOpType": "IN",
+        "memo": {
+          "type": "MEMO_TEXT",
+          "value": "Buy NXR Earn Native XLM!",
+        },
+      },
+      "fee": "10000",
+      "hasFailed": false,
+      "hash": "4864c46fa14ed3c9c38bacbf7ea6747aef32801d75785de9c9222531367ba53b",
+      "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-4864c46fa14ed3c9c38bacbf7ea6747aef32801d75785de9c9222531367ba53b-IN",
+      "recipients": [
+        "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
+      ],
+      "senders": [
+        "GCQT4EXO3BRHEWYP3KGY6ZM7ETQ6HQBX4VRGZGONCQHSPYGO4U72U3RF",
+      ],
+      "transactionSequenceNumber": 253311312782688900,
+      "type": "IN",
+      "value": "1",
+    },
+    {
+      "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
       "blockHash": "4491a4493bf5e72eadb67b3290bb47752e81af90d1951cf78c66b2a20c50906b",
       "blockHeight": 55310780,
       "extra": {
@@ -1002,6 +1184,32 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
     },
     {
       "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
+      "blockHash": "38ab63e0dc14a0e2a5b92898a4545723af9aed1d3543f290438e57740909305c",
+      "blockHeight": 58970946,
+      "extra": {
+        "assetAmount": "1",
+        "ledgerOpType": "IN",
+        "memo": {
+          "type": "MEMO_TEXT",
+          "value": "Buy NXR Earn Native XLM!",
+        },
+      },
+      "fee": "10000",
+      "hasFailed": false,
+      "hash": "650d29673c3b6ed5a5a60d9c73f126469d0b0acebf3ee08cef7d5c95160c0d1b",
+      "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-650d29673c3b6ed5a5a60d9c73f126469d0b0acebf3ee08cef7d5c95160c0d1b-IN",
+      "recipients": [
+        "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
+      ],
+      "senders": [
+        "GDMNUKN4NCB2YZ2DDWD2TM737SZVDE4YNDDE7R6SP3FDI7O24KSVSLEW",
+      ],
+      "transactionSequenceNumber": 253218412640076450,
+      "type": "IN",
+      "value": "1",
+    },
+    {
+      "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
       "blockHash": "723a8d844d152b162d25add89553a55468e15dc5d8316e1db2296c8a05aefcf4",
       "blockHeight": 58409809,
       "extra": {
@@ -1127,6 +1335,32 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
         "GB7T62LJPM7RAQOILVX6DDPVNJQLMIBKGV6SJGXUWOB7IAFGR5US6WS3",
       ],
       "transactionSequenceNumber": 247017862844134460,
+      "type": "IN",
+      "value": "1",
+    },
+    {
+      "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
+      "blockHash": "a1083ff7b547d2ea2257df0d46dca38986ce47c67617c7a3a2686410041b20ca",
+      "blockHeight": 58613285,
+      "extra": {
+        "assetAmount": "1",
+        "ledgerOpType": "IN",
+        "memo": {
+          "type": "MEMO_TEXT",
+          "value": "Buy HRX Earn XLM every hour",
+        },
+      },
+      "fee": "10000",
+      "hasFailed": false,
+      "hash": "706bfde71c0f218f4327f313f10a1e71add25493f776b1921c13d83567b93e13",
+      "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-706bfde71c0f218f4327f313f10a1e71add25493f776b1921c13d83567b93e13-IN",
+      "recipients": [
+        "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
+      ],
+      "senders": [
+        "GBK5IHITJ7HKKDZ3KQNX5CEFBL7IJ7ZUB2CX2VLPYDYGH4TCBQFJC7R5",
+      ],
+      "transactionSequenceNumber": 251606365385004500,
       "type": "IN",
       "value": "1",
     },
@@ -1288,6 +1522,32 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
     },
     {
       "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
+      "blockHash": "902f88477f744f055202f3b898f22bf040451e69059f6d78a32b4387fdc721a1",
+      "blockHeight": 58754740,
+      "extra": {
+        "assetAmount": "1",
+        "ledgerOpType": "IN",
+        "memo": {
+          "type": "MEMO_TEXT",
+          "value": "Buy HRX Earn XLM every hour",
+        },
+      },
+      "fee": "10000",
+      "hasFailed": false,
+      "hash": "8476f752d085e1833a79e69db7044a644abd1916e6c7189defeadf194e593ca6",
+      "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-8476f752d085e1833a79e69db7044a644abd1916e6c7189defeadf194e593ca6-IN",
+      "recipients": [
+        "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
+      ],
+      "senders": [
+        "GB2VGXJPNGZI4HFJLCEJSP24V6TEJVZUQUVB6JIEOBE4TFHB2DCRTCDU",
+      ],
+      "transactionSequenceNumber": 252114271037565600,
+      "type": "IN",
+      "value": "1",
+    },
+    {
+      "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
       "blockHash": "1a5bfecea672170945dcefce62af99913290d3696d2b5fe8b3c40e756bbe2f04",
       "blockHeight": 58270682,
       "extra": {
@@ -1340,6 +1600,32 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
     },
     {
       "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
+      "blockHash": "efc4b41d6fc9032353a18eb50792a4a0d398493dbb7dbf871acbaec3f3dc8c4c",
+      "blockHeight": 58684097,
+      "extra": {
+        "assetAmount": "90",
+        "ledgerOpType": "IN",
+        "memo": {
+          "type": "MEMO_TEXT",
+          "value": "claim your HRX airdrop",
+        },
+      },
+      "fee": "10000",
+      "hasFailed": false,
+      "hash": "897e4bf4da068ea100809c688b23a2bacdf821261ed9b808dcb36e3885b3dd4c",
+      "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-897e4bf4da068ea100809c688b23a2bacdf821261ed9b808dcb36e3885b3dd4c-IN",
+      "recipients": [
+        "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
+      ],
+      "senders": [
+        "GDKIHRMYMRMQSZRJ25S6BBK6X5A3KDWVDHLDYQG3JHUGWMD7WIZH57CL",
+      ],
+      "transactionSequenceNumber": 251606365385011260,
+      "type": "IN",
+      "value": "90",
+    },
+    {
+      "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
       "blockHash": "048042c685b3650c1e1d6f87196b26ba227b34fddf5b7ab3915ae2aa4a590ad1",
       "blockHeight": 57897210,
       "extra": {
@@ -1361,6 +1647,58 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
         "GDWRQJE5LV6BJ4YPQEXPNEMPESBS2YEN4AD75HQJWS67LQ3USWFPXYJT",
       ],
       "transactionSequenceNumber": 248584795762724670,
+      "type": "IN",
+      "value": "1",
+    },
+    {
+      "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
+      "blockHash": "2f6ab97983064ceb310129ec656897613cf21e8e94c2f43aecd09dac79c5cba9",
+      "blockHeight": 58647365,
+      "extra": {
+        "assetAmount": "90",
+        "ledgerOpType": "IN",
+        "memo": {
+          "type": "MEMO_TEXT",
+          "value": "claim your HRX airdrop",
+        },
+      },
+      "fee": "9900",
+      "hasFailed": false,
+      "hash": "8d96b882dd041fee5d2ff5ccace8963313c7c7064f52d9eddf4e2c810ce8dcea",
+      "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-8d96b882dd041fee5d2ff5ccace8963313c7c7064f52d9eddf4e2c810ce8dcea-IN",
+      "recipients": [
+        "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
+      ],
+      "senders": [
+        "GDKIHRMYMRMQSZRJ25S6BBK6X5A3KDWVDHLDYQG3JHUGWMD7WIZH57CL",
+      ],
+      "transactionSequenceNumber": 251606365385008900,
+      "type": "IN",
+      "value": "90",
+    },
+    {
+      "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
+      "blockHash": "0c914284bbfeecc582e799ff1fa8ce1a7cf81a5e96e6eb7746006cde2b33ae88",
+      "blockHeight": 58992367,
+      "extra": {
+        "assetAmount": "1",
+        "ledgerOpType": "IN",
+        "memo": {
+          "type": "MEMO_TEXT",
+          "value": "Buy NXR Earn Native XLM!",
+        },
+      },
+      "fee": "10000",
+      "hasFailed": false,
+      "hash": "8f3ecbd5fb5a0644b3677d930466e36184efdb181daf7486f5732b1575ffec48",
+      "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-8f3ecbd5fb5a0644b3677d930466e36184efdb181daf7486f5732b1575ffec48-IN",
+      "recipients": [
+        "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
+      ],
+      "senders": [
+        "GCQT4EXO3BRHEWYP3KGY6ZM7ETQ6HQBX4VRGZGONCQHSPYGO4U72U3RF",
+      ],
+      "transactionSequenceNumber": 253311312782691620,
       "type": "IN",
       "value": "1",
     },
@@ -1574,6 +1912,32 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
     },
     {
       "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
+      "blockHash": "cad562350c5ecb9219f0add77487e6f14a73f917a9dfa9aac638382ad115d149",
+      "blockHeight": 58584512,
+      "extra": {
+        "assetAmount": "1",
+        "ledgerOpType": "IN",
+        "memo": {
+          "type": "MEMO_TEXT",
+          "value": "Buy HRX & Earn Native XLM!",
+        },
+      },
+      "fee": "10000",
+      "hasFailed": false,
+      "hash": "9d48e8e9cdbdb43f7ad5e703183156aee90eb192610259ed1c15150d9f21abc2",
+      "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-9d48e8e9cdbdb43f7ad5e703183156aee90eb192610259ed1c15150d9f21abc2-IN",
+      "recipients": [
+        "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
+      ],
+      "senders": [
+        "GBK5IHITJ7HKKDZ3KQNX5CEFBL7IJ7ZUB2CX2VLPYDYGH4TCBQFJC7R5",
+      ],
+      "transactionSequenceNumber": 251606365384999520,
+      "type": "IN",
+      "value": "1",
+    },
+    {
+      "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
       "blockHash": "a7ac120842484fecc3b25f7a92db368606fcaa79bb7672b4db07e3203c70a283",
       "blockHeight": 57794145,
       "extra": {
@@ -1730,6 +2094,32 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
     },
     {
       "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
+      "blockHash": "1058d34cfbefa549a7e154f49e47cd80c8caedbf3c9e2e8c2c1080827787c796",
+      "blockHeight": 58722525,
+      "extra": {
+        "assetAmount": "1",
+        "ledgerOpType": "IN",
+        "memo": {
+          "type": "MEMO_TEXT",
+          "value": "Buy HRX Earn XLM every hour",
+        },
+      },
+      "fee": "10000",
+      "hasFailed": false,
+      "hash": "a6876521efceed856f16ada45312f8315bd16e3582ec40297c5105918f6a8e2e",
+      "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-a6876521efceed856f16ada45312f8315bd16e3582ec40297c5105918f6a8e2e-IN",
+      "recipients": [
+        "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
+      ],
+      "senders": [
+        "GB2VGXJPNGZI4HFJLCEJSP24V6TEJVZUQUVB6JIEOBE4TFHB2DCRTCDU",
+      ],
+      "transactionSequenceNumber": 252114271037560450,
+      "type": "IN",
+      "value": "1",
+    },
+    {
+      "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
       "blockHash": "8279d9992095515d69a8bc6d598f2d23757ad9e28b3a1546e12d211a21a98b0f",
       "blockHeight": 57882240,
       "extra": {
@@ -1803,6 +2193,32 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
         "GAWCZGEYH7ZNYMS2YYOEHBDAGRXTAIZ6MCGG3DTNCZLLIAYM64PGL2YV",
       ],
       "transactionSequenceNumber": 250863061164886430,
+      "type": "IN",
+      "value": "1",
+    },
+    {
+      "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
+      "blockHash": "bda74599258dc9bc54e8e156a73d2673c0082d5b1c8ec488abf17a89e0a47f3a",
+      "blockHeight": 58842622,
+      "extra": {
+        "assetAmount": "1",
+        "ledgerOpType": "IN",
+        "memo": {
+          "type": "MEMO_TEXT",
+          "value": "SLR is Future,Be First holde",
+        },
+      },
+      "fee": "10000",
+      "hasFailed": false,
+      "hash": "b007a594762ea858b776ff69b1805ee023b9b862dac02d3a5e022c5205b9a0f6",
+      "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-b007a594762ea858b776ff69b1805ee023b9b862dac02d3a5e022c5205b9a0f6-IN",
+      "recipients": [
+        "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
+      ],
+      "senders": [
+        "GBT7NJBE7G34XUS3RQEUO5TGPW3XIDFGROO4HU4DFQNQ5FBEW77GGQGS",
+      ],
+      "transactionSequenceNumber": 252588130484358270,
       "type": "IN",
       "value": "1",
     },
@@ -1886,6 +2302,32 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
     },
     {
       "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
+      "blockHash": "6e3e0972c0f94ffe478a687ab90b298203ab8dd5137c1acd9d354a5e4e08847a",
+      "blockHeight": 58597431,
+      "extra": {
+        "assetAmount": "1",
+        "ledgerOpType": "IN",
+        "memo": {
+          "type": "MEMO_TEXT",
+          "value": "Buy HRX & Earn Native XLM!",
+        },
+      },
+      "fee": "10000",
+      "hasFailed": false,
+      "hash": "b84499fe30f56b75fdd418bd2a2bd1a5b9f89bfc06399da2d0d527d59db05fce",
+      "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-b84499fe30f56b75fdd418bd2a2bd1a5b9f89bfc06399da2d0d527d59db05fce-IN",
+      "recipients": [
+        "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
+      ],
+      "senders": [
+        "GBK5IHITJ7HKKDZ3KQNX5CEFBL7IJ7ZUB2CX2VLPYDYGH4TCBQFJC7R5",
+      ],
+      "transactionSequenceNumber": 251606365385002020,
+      "type": "IN",
+      "value": "1",
+    },
+    {
+      "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
       "blockHash": "7109c350309e1c9bc50ca866b2698ba7730b3c4e9d1749b44fc11676140fb893",
       "blockHeight": 56580132,
       "extra": {
@@ -1959,6 +2401,32 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
         "GAWCZGEYH7ZNYMS2YYOEHBDAGRXTAIZ6MCGG3DTNCZLLIAYM64PGL2YV",
       ],
       "transactionSequenceNumber": 250863061164888740,
+      "type": "IN",
+      "value": "1",
+    },
+    {
+      "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
+      "blockHash": "2b79afce1bb394a8d8a749e3ee4296ec64eeb1dd8b84e04b8484997acc07f030",
+      "blockHeight": 58681442,
+      "extra": {
+        "assetAmount": "1",
+        "ledgerOpType": "IN",
+        "memo": {
+          "type": "MEMO_TEXT",
+          "value": "Buy HRX Earn XLM every hour",
+        },
+      },
+      "fee": "10000",
+      "hasFailed": false,
+      "hash": "c5e91682f88b0e7e997dcef91572a3dcb0d38a3d11145ba2fdcd262c3b305f77",
+      "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-c5e91682f88b0e7e997dcef91572a3dcb0d38a3d11145ba2fdcd262c3b305f77-IN",
+      "recipients": [
+        "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
+      ],
+      "senders": [
+        "GBK5IHITJ7HKKDZ3KQNX5CEFBL7IJ7ZUB2CX2VLPYDYGH4TCBQFJC7R5",
+      ],
+      "transactionSequenceNumber": 251606365385012030,
       "type": "IN",
       "value": "1",
     },
@@ -2146,6 +2614,32 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
     },
     {
       "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
+      "blockHash": "f2dbd19683d9a7de7a6a5574b12c45a9bfe57e81a4e0c8d0215fdbc9123f04dd",
+      "blockHeight": 58657106,
+      "extra": {
+        "assetAmount": "1",
+        "ledgerOpType": "IN",
+        "memo": {
+          "type": "MEMO_TEXT",
+          "value": "Buy HRX Earn XLM every hour",
+        },
+      },
+      "fee": "10000",
+      "hasFailed": false,
+      "hash": "dfbbf728fe66977b55450a378512fbbe6c80a05cbf045e16bc8617309c217848",
+      "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-dfbbf728fe66977b55450a378512fbbe6c80a05cbf045e16bc8617309c217848-IN",
+      "recipients": [
+        "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
+      ],
+      "senders": [
+        "GBK5IHITJ7HKKDZ3KQNX5CEFBL7IJ7ZUB2CX2VLPYDYGH4TCBQFJC7R5",
+      ],
+      "transactionSequenceNumber": 251606365385009540,
+      "type": "IN",
+      "value": "1",
+    },
+    {
+      "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
       "blockHash": "57f597bb85d242b312104c8ca90fee3006ca5d962f8abf9979070e530d10d2ec",
       "blockHeight": 56572918,
       "extra": {
@@ -2224,6 +2718,32 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
     },
     {
       "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
+      "blockHash": "66291e6d3543ca08c1f1b7b0e7be604bfaf370980ec0596f5ff6e243e9fb24a6",
+      "blockHeight": 58824415,
+      "extra": {
+        "assetAmount": "1",
+        "ledgerOpType": "IN",
+        "memo": {
+          "type": "MEMO_TEXT",
+          "value": "SLR is Future,Be First holde",
+        },
+      },
+      "fee": "10000",
+      "hasFailed": false,
+      "hash": "f4c3a39e05d14f65b12b9da958b1d92041317dca0463c3c81a526f231ce33160",
+      "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-f4c3a39e05d14f65b12b9da958b1d92041317dca0463c3c81a526f231ce33160-IN",
+      "recipients": [
+        "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
+      ],
+      "senders": [
+        "GBT7NJBE7G34XUS3RQEUO5TGPW3XIDFGROO4HU4DFQNQ5FBEW77GGQGS",
+      ],
+      "transactionSequenceNumber": 252588130484355680,
+      "type": "IN",
+      "value": "1",
+    },
+    {
+      "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
       "blockHash": "509e696e61783d3cefd8cc5828d5d4769f082cb862a119c8e49ecc0dfa9900fe",
       "blockHeight": 53713438,
       "extra": {
@@ -2271,6 +2791,32 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
         "GAWCZGEYH7ZNYMS2YYOEHBDAGRXTAIZ6MCGG3DTNCZLLIAYM64PGL2YV",
       ],
       "transactionSequenceNumber": 250863061164895330,
+      "type": "IN",
+      "value": "1",
+    },
+    {
+      "accountId": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5",
+      "blockHash": "3316dffb8812aa7dfa845e65bbaa11422e9d8b4a97a0b9972171e9fea8fa8d28",
+      "blockHeight": 58735175,
+      "extra": {
+        "assetAmount": "1",
+        "ledgerOpType": "IN",
+        "memo": {
+          "type": "MEMO_TEXT",
+          "value": "Buy HRX Earn XLM every hour",
+        },
+      },
+      "fee": "10000",
+      "hasFailed": false,
+      "hash": "f8a043f0dbb5a69301ca63d36a1899a893b35a67788b0c45faeeb3702595be3e",
+      "id": "js:2:stellar:GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV:sep5-f8a043f0dbb5a69301ca63d36a1899a893b35a67788b0c45faeeb3702595be3e-IN",
+      "recipients": [
+        "GAT4LBXYJGJJJRSNK74NPFLO55CDDXSYVMQODSEAAH3M6EY4S7LPH5GV",
+      ],
+      "senders": [
+        "GB2VGXJPNGZI4HFJLCEJSP24V6TEJVZUQUVB6JIEOBE4TFHB2DCRTCDU",
+      ],
+      "transactionSequenceNumber": 252114271037563000,
       "type": "IN",
       "value": "1",
     },
@@ -2328,6 +2874,84 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
     },
   ],
   [
+    {
+      "accountId": "js:2:stellar:GAIXIJBMYPTSF2CDVQ35WOTULCLZIE4W2SDEK3RQGAA3A22BPWY7R53Z:sep5",
+      "blockHash": "2fa262d1acacb69eb8cc7749cb6f56e2bc705805d4179434853ea0eb4e23dbb3",
+      "blockHeight": 58847121,
+      "extra": {
+        "assetAmount": "1",
+        "ledgerOpType": "IN",
+        "memo": {
+          "type": "MEMO_TEXT",
+          "value": "SLR is Future,Be First holde",
+        },
+      },
+      "fee": "10000",
+      "hasFailed": false,
+      "hash": "0055b4d68ccc326d4597c88512baf8f89828034060c19c58ab9790da70d53354",
+      "id": "js:2:stellar:GAIXIJBMYPTSF2CDVQ35WOTULCLZIE4W2SDEK3RQGAA3A22BPWY7R53Z:sep5-0055b4d68ccc326d4597c88512baf8f89828034060c19c58ab9790da70d53354-IN",
+      "recipients": [
+        "GAIXIJBMYPTSF2CDVQ35WOTULCLZIE4W2SDEK3RQGAA3A22BPWY7R53Z",
+      ],
+      "senders": [
+        "GDDYK7XAT5H7GD2VXJFDTKA736UOEWWNUCLRACNBCJIXCRVQUSXLL24E",
+      ],
+      "transactionSequenceNumber": 252588130484360500,
+      "type": "IN",
+      "value": "1",
+    },
+    {
+      "accountId": "js:2:stellar:GAIXIJBMYPTSF2CDVQ35WOTULCLZIE4W2SDEK3RQGAA3A22BPWY7R53Z:sep5",
+      "blockHash": "79441d63172f727dc9382276fa20c8f0bc9a8a29a361598cb1abd7dc6a5576f6",
+      "blockHeight": 58716581,
+      "extra": {
+        "assetAmount": "1",
+        "ledgerOpType": "IN",
+        "memo": {
+          "type": "MEMO_TEXT",
+          "value": "Buy HRX Earn XLM every hour",
+        },
+      },
+      "fee": "10000",
+      "hasFailed": false,
+      "hash": "00ed4669cb94813623318ac18a852600dac2676a54cf3e821f5c5919b7ac6e32",
+      "id": "js:2:stellar:GAIXIJBMYPTSF2CDVQ35WOTULCLZIE4W2SDEK3RQGAA3A22BPWY7R53Z:sep5-00ed4669cb94813623318ac18a852600dac2676a54cf3e821f5c5919b7ac6e32-IN",
+      "recipients": [
+        "GAIXIJBMYPTSF2CDVQ35WOTULCLZIE4W2SDEK3RQGAA3A22BPWY7R53Z",
+      ],
+      "senders": [
+        "GAIVBYBMOGPZMPKN2L2VJQUBJHTLJZ6LKBIHKX74HVYCINYNUSKFJZ4I",
+      ],
+      "transactionSequenceNumber": 252114271037560060,
+      "type": "IN",
+      "value": "1",
+    },
+    {
+      "accountId": "js:2:stellar:GAIXIJBMYPTSF2CDVQ35WOTULCLZIE4W2SDEK3RQGAA3A22BPWY7R53Z:sep5",
+      "blockHash": "030ea24940455a2658b058c41734edc14f34951136ca7539ff1809418b831bfe",
+      "blockHeight": 58758805,
+      "extra": {
+        "assetAmount": "1",
+        "ledgerOpType": "IN",
+        "memo": {
+          "type": "MEMO_TEXT",
+          "value": "Buy HRX Earn XLM every hour",
+        },
+      },
+      "fee": "10000",
+      "hasFailed": false,
+      "hash": "036c13c6f8a3e01f067ab5effdb47f97095a537bb3943083ccf5ff301a4ba316",
+      "id": "js:2:stellar:GAIXIJBMYPTSF2CDVQ35WOTULCLZIE4W2SDEK3RQGAA3A22BPWY7R53Z:sep5-036c13c6f8a3e01f067ab5effdb47f97095a537bb3943083ccf5ff301a4ba316-IN",
+      "recipients": [
+        "GAIXIJBMYPTSF2CDVQ35WOTULCLZIE4W2SDEK3RQGAA3A22BPWY7R53Z",
+      ],
+      "senders": [
+        "GAIVBYBMOGPZMPKN2L2VJQUBJHTLJZ6LKBIHKX74HVYCINYNUSKFJZ4I",
+      ],
+      "transactionSequenceNumber": 252114271037568160,
+      "type": "IN",
+      "value": "1",
+    },
     {
       "accountId": "js:2:stellar:GAIXIJBMYPTSF2CDVQ35WOTULCLZIE4W2SDEK3RQGAA3A22BPWY7R53Z:sep5",
       "blockHash": "aae161e7d46c1f3dbd654c13ab997bd1affd649fd31e563b0b26795794e1b4a7",
@@ -2406,6 +3030,32 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
     },
     {
       "accountId": "js:2:stellar:GAIXIJBMYPTSF2CDVQ35WOTULCLZIE4W2SDEK3RQGAA3A22BPWY7R53Z:sep5",
+      "blockHash": "a71f8d701aebfea2a565e1306fd6f1c87b20a3260fd768c297f3f33695a80cb5",
+      "blockHeight": 58976309,
+      "extra": {
+        "assetAmount": "1",
+        "ledgerOpType": "IN",
+        "memo": {
+          "type": "MEMO_TEXT",
+          "value": "Buy NXR Earn Native XLM!",
+        },
+      },
+      "fee": "10000",
+      "hasFailed": false,
+      "hash": "09020819230c680de229e165a3e88854aa8773e967b68303d3527acfd20cbe14",
+      "id": "js:2:stellar:GAIXIJBMYPTSF2CDVQ35WOTULCLZIE4W2SDEK3RQGAA3A22BPWY7R53Z:sep5-09020819230c680de229e165a3e88854aa8773e967b68303d3527acfd20cbe14-IN",
+      "recipients": [
+        "GAIXIJBMYPTSF2CDVQ35WOTULCLZIE4W2SDEK3RQGAA3A22BPWY7R53Z",
+      ],
+      "senders": [
+        "GBUWGCMCPRBBOE2T5QA734RCHJBEBLMPHY423S4IXXRE5XLU5EK4UIYB",
+      ],
+      "transactionSequenceNumber": 253218412640078660,
+      "type": "IN",
+      "value": "1",
+    },
+    {
+      "accountId": "js:2:stellar:GAIXIJBMYPTSF2CDVQ35WOTULCLZIE4W2SDEK3RQGAA3A22BPWY7R53Z:sep5",
       "blockHash": "a503209c6c00b8266962e78a5737d64cf055b5fa4ed0b8ee9837cbd85a4aa1ae",
       "blockHeight": 56007260,
       "extra": {
@@ -2427,6 +3077,32 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
         "GCVTUT4QMMCZFKOQTXFRHWFGBT6B4V3GUECDE6OVNC6HFKSPOBHHTBHI",
       ],
       "transactionSequenceNumber": 240200272276639000,
+      "type": "IN",
+      "value": "1",
+    },
+    {
+      "accountId": "js:2:stellar:GAIXIJBMYPTSF2CDVQ35WOTULCLZIE4W2SDEK3RQGAA3A22BPWY7R53Z:sep5",
+      "blockHash": "32887d0962f2ef9c1f39868556dea37d60b7a6eefaaa610fabcf3607e7b443c3",
+      "blockHeight": 58686634,
+      "extra": {
+        "assetAmount": "1",
+        "ledgerOpType": "IN",
+        "memo": {
+          "type": "MEMO_TEXT",
+          "value": "Buy HRX Earn XLM every hour",
+        },
+      },
+      "fee": "10000",
+      "hasFailed": false,
+      "hash": "130b0ec1c9a0d46270856ac4196236af915b0b28e506a55a2e2ceb9aec0a632f",
+      "id": "js:2:stellar:GAIXIJBMYPTSF2CDVQ35WOTULCLZIE4W2SDEK3RQGAA3A22BPWY7R53Z:sep5-130b0ec1c9a0d46270856ac4196236af915b0b28e506a55a2e2ceb9aec0a632f-IN",
+      "recipients": [
+        "GAIXIJBMYPTSF2CDVQ35WOTULCLZIE4W2SDEK3RQGAA3A22BPWY7R53Z",
+      ],
+      "senders": [
+        "GALFD7PPS3CYZDJN44CZFX45EWO3LQBWSDT2K42WSRDAN2SDVEANGMZP",
+      ],
+      "transactionSequenceNumber": 251606365385014000,
       "type": "IN",
       "value": "1",
     },
@@ -2458,6 +3134,84 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
     },
     {
       "accountId": "js:2:stellar:GAIXIJBMYPTSF2CDVQ35WOTULCLZIE4W2SDEK3RQGAA3A22BPWY7R53Z:sep5",
+      "blockHash": "0f1e31ef3547e8874f452d840b73361bce0097ba368c05d40a1b21d443a23396",
+      "blockHeight": 58726544,
+      "extra": {
+        "assetAmount": "1",
+        "ledgerOpType": "IN",
+        "memo": {
+          "type": "MEMO_TEXT",
+          "value": "Buy HRX Earn XLM every hour",
+        },
+      },
+      "fee": "10000",
+      "hasFailed": false,
+      "hash": "26506a5b13ae29b909522eaf670ed621176d1e7f0c0ca5435cf94a9d2adaa056",
+      "id": "js:2:stellar:GAIXIJBMYPTSF2CDVQ35WOTULCLZIE4W2SDEK3RQGAA3A22BPWY7R53Z:sep5-26506a5b13ae29b909522eaf670ed621176d1e7f0c0ca5435cf94a9d2adaa056-IN",
+      "recipients": [
+        "GAIXIJBMYPTSF2CDVQ35WOTULCLZIE4W2SDEK3RQGAA3A22BPWY7R53Z",
+      ],
+      "senders": [
+        "GAIVBYBMOGPZMPKN2L2VJQUBJHTLJZ6LKBIHKX74HVYCINYNUSKFJZ4I",
+      ],
+      "transactionSequenceNumber": 252114271037562750,
+      "type": "IN",
+      "value": "1",
+    },
+    {
+      "accountId": "js:2:stellar:GAIXIJBMYPTSF2CDVQ35WOTULCLZIE4W2SDEK3RQGAA3A22BPWY7R53Z:sep5",
+      "blockHash": "2e817c61d6c6594b36bdb1c91513da46356b7ea6c4e4236e725fa5f50b31b2fb",
+      "blockHeight": 58661602,
+      "extra": {
+        "assetAmount": "1",
+        "ledgerOpType": "IN",
+        "memo": {
+          "type": "MEMO_TEXT",
+          "value": "Buy HRX Earn XLM every hour",
+        },
+      },
+      "fee": "10000",
+      "hasFailed": false,
+      "hash": "2ed06a7c6e8f26d2d1b5ce4521e6a8402f198d532a070bae9171fd8bfc8090a9",
+      "id": "js:2:stellar:GAIXIJBMYPTSF2CDVQ35WOTULCLZIE4W2SDEK3RQGAA3A22BPWY7R53Z:sep5-2ed06a7c6e8f26d2d1b5ce4521e6a8402f198d532a070bae9171fd8bfc8090a9-IN",
+      "recipients": [
+        "GAIXIJBMYPTSF2CDVQ35WOTULCLZIE4W2SDEK3RQGAA3A22BPWY7R53Z",
+      ],
+      "senders": [
+        "GALFD7PPS3CYZDJN44CZFX45EWO3LQBWSDT2K42WSRDAN2SDVEANGMZP",
+      ],
+      "transactionSequenceNumber": 251606365385011400,
+      "type": "IN",
+      "value": "1",
+    },
+    {
+      "accountId": "js:2:stellar:GAIXIJBMYPTSF2CDVQ35WOTULCLZIE4W2SDEK3RQGAA3A22BPWY7R53Z:sep5",
+      "blockHash": "26bafd805bfaf5fa1e86b180bde8b4bb6910f5ac72353f562e481a46ba4853c6",
+      "blockHeight": 58777960,
+      "extra": {
+        "assetAmount": "1",
+        "ledgerOpType": "IN",
+        "memo": {
+          "type": "MEMO_TEXT",
+          "value": "Buy HRX Earn XLM every hour",
+        },
+      },
+      "fee": "10000",
+      "hasFailed": false,
+      "hash": "344998c80e469f386704754dccf9febdff12816deae9a83f6614011bcdf00a8e",
+      "id": "js:2:stellar:GAIXIJBMYPTSF2CDVQ35WOTULCLZIE4W2SDEK3RQGAA3A22BPWY7R53Z:sep5-344998c80e469f386704754dccf9febdff12816deae9a83f6614011bcdf00a8e-IN",
+      "recipients": [
+        "GAIXIJBMYPTSF2CDVQ35WOTULCLZIE4W2SDEK3RQGAA3A22BPWY7R53Z",
+      ],
+      "senders": [
+        "GAIVBYBMOGPZMPKN2L2VJQUBJHTLJZ6LKBIHKX74HVYCINYNUSKFJZ4I",
+      ],
+      "transactionSequenceNumber": 252114271037570850,
+      "type": "IN",
+      "value": "1",
+    },
+    {
+      "accountId": "js:2:stellar:GAIXIJBMYPTSF2CDVQ35WOTULCLZIE4W2SDEK3RQGAA3A22BPWY7R53Z:sep5",
       "blockHash": "e8d7e4b973a1d55fbf77c6267129f4a94181e0d4edd6f9a1d001cdfa8a040c2a",
       "blockHeight": 28114251,
       "extra": {
@@ -2483,6 +3237,32 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
     },
     {
       "accountId": "js:2:stellar:GAIXIJBMYPTSF2CDVQ35WOTULCLZIE4W2SDEK3RQGAA3A22BPWY7R53Z:sep5",
+      "blockHash": "ac80e36fb4bef62ae2aa9b9e8b55be5b998c7a0bae0c9e9ff8896612e09ac2e8",
+      "blockHeight": 58705236,
+      "extra": {
+        "assetAmount": "1",
+        "ledgerOpType": "IN",
+        "memo": {
+          "type": "MEMO_TEXT",
+          "value": "Buy HRX Earn XLM every hour",
+        },
+      },
+      "fee": "10000",
+      "hasFailed": false,
+      "hash": "3ebc4199def5c45f6bbf7c8b6eda077e17b0656f5669452b43536b1e5cdb953a",
+      "id": "js:2:stellar:GAIXIJBMYPTSF2CDVQ35WOTULCLZIE4W2SDEK3RQGAA3A22BPWY7R53Z:sep5-3ebc4199def5c45f6bbf7c8b6eda077e17b0656f5669452b43536b1e5cdb953a-IN",
+      "recipients": [
+        "GAIXIJBMYPTSF2CDVQ35WOTULCLZIE4W2SDEK3RQGAA3A22BPWY7R53Z",
+      ],
+      "senders": [
+        "GAIVBYBMOGPZMPKN2L2VJQUBJHTLJZ6LKBIHKX74HVYCINYNUSKFJZ4I",
+      ],
+      "transactionSequenceNumber": 252114271037557340,
+      "type": "IN",
+      "value": "1",
+    },
+    {
+      "accountId": "js:2:stellar:GAIXIJBMYPTSF2CDVQ35WOTULCLZIE4W2SDEK3RQGAA3A22BPWY7R53Z:sep5",
       "blockHash": "29c5e1094688a64b8dbf901ef2e60896b52e2e2ab6026e4b10f61c0050835aa2",
       "blockHeight": 27963532,
       "extra": {
@@ -2504,7 +3284,7 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
       ],
       "transactionSequenceNumber": 119193803549573120,
       "type": "OUT",
-      "value": "10000000",
+      "value": "10000100",
     },
     {
       "accountId": "js:2:stellar:GAIXIJBMYPTSF2CDVQ35WOTULCLZIE4W2SDEK3RQGAA3A22BPWY7R53Z:sep5",
@@ -2555,7 +3335,7 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
       ],
       "transactionSequenceNumber": 119193803549573120,
       "type": "OUT",
-      "value": "9999800",
+      "value": "9999900",
     },
     {
       "accountId": "js:2:stellar:GAIXIJBMYPTSF2CDVQ35WOTULCLZIE4W2SDEK3RQGAA3A22BPWY7R53Z:sep5",
@@ -2580,7 +3360,7 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
       ],
       "transactionSequenceNumber": 119193803549573120,
       "type": "OUT",
-      "value": "10000000",
+      "value": "10000100",
     },
     {
       "accountId": "js:2:stellar:GAIXIJBMYPTSF2CDVQ35WOTULCLZIE4W2SDEK3RQGAA3A22BPWY7R53Z:sep5",
@@ -2660,6 +3440,32 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
     },
     {
       "accountId": "js:2:stellar:GAIXIJBMYPTSF2CDVQ35WOTULCLZIE4W2SDEK3RQGAA3A22BPWY7R53Z:sep5",
+      "blockHash": "dd62b9987eae622f60e0cc4bf1de604ac18cef7a1de1c1dd93e849b913b7e008",
+      "blockHeight": 58637725,
+      "extra": {
+        "assetAmount": "1",
+        "ledgerOpType": "IN",
+        "memo": {
+          "type": "MEMO_TEXT",
+          "value": "Buy HRX Earn XLM every hour",
+        },
+      },
+      "fee": "10000",
+      "hasFailed": false,
+      "hash": "6e18f44f6023dc9fb5191abb4b930ac0d2c5b0767c362170992403aa381cb358",
+      "id": "js:2:stellar:GAIXIJBMYPTSF2CDVQ35WOTULCLZIE4W2SDEK3RQGAA3A22BPWY7R53Z:sep5-6e18f44f6023dc9fb5191abb4b930ac0d2c5b0767c362170992403aa381cb358-IN",
+      "recipients": [
+        "GAIXIJBMYPTSF2CDVQ35WOTULCLZIE4W2SDEK3RQGAA3A22BPWY7R53Z",
+      ],
+      "senders": [
+        "GALFD7PPS3CYZDJN44CZFX45EWO3LQBWSDT2K42WSRDAN2SDVEANGMZP",
+      ],
+      "transactionSequenceNumber": 251606365385008860,
+      "type": "IN",
+      "value": "1",
+    },
+    {
+      "accountId": "js:2:stellar:GAIXIJBMYPTSF2CDVQ35WOTULCLZIE4W2SDEK3RQGAA3A22BPWY7R53Z:sep5",
       "blockHash": "7cc5f24068f69a7d0405ca2c1bc836f291bd3ebb848bf512a923d2f7951cfaf7",
       "blockHeight": 55968678,
       "extra": {
@@ -2681,6 +3487,58 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
         "GAN5MKWRBXUZSOMS4WJUWCWIMO4YV3MEVB4UN6LQDNJ46KCZA6ZTQHZM",
       ],
       "transactionSequenceNumber": 224182410789548900,
+      "type": "IN",
+      "value": "1",
+    },
+    {
+      "accountId": "js:2:stellar:GAIXIJBMYPTSF2CDVQ35WOTULCLZIE4W2SDEK3RQGAA3A22BPWY7R53Z:sep5",
+      "blockHash": "fee55ffa2e0023b015fd0870584d2944f8a85857ed4076e08b44298e66706894",
+      "blockHeight": 58739615,
+      "extra": {
+        "assetAmount": "1",
+        "ledgerOpType": "IN",
+        "memo": {
+          "type": "MEMO_TEXT",
+          "value": "Buy HRX Earn XLM every hour",
+        },
+      },
+      "fee": "10000",
+      "hasFailed": false,
+      "hash": "8636c090d7e853c0e874fba6b4af95e26bd3ae07186f7f74983c5ea508162e98",
+      "id": "js:2:stellar:GAIXIJBMYPTSF2CDVQ35WOTULCLZIE4W2SDEK3RQGAA3A22BPWY7R53Z:sep5-8636c090d7e853c0e874fba6b4af95e26bd3ae07186f7f74983c5ea508162e98-IN",
+      "recipients": [
+        "GAIXIJBMYPTSF2CDVQ35WOTULCLZIE4W2SDEK3RQGAA3A22BPWY7R53Z",
+      ],
+      "senders": [
+        "GAIVBYBMOGPZMPKN2L2VJQUBJHTLJZ6LKBIHKX74HVYCINYNUSKFJZ4I",
+      ],
+      "transactionSequenceNumber": 252114271037565440,
+      "type": "IN",
+      "value": "1",
+    },
+    {
+      "accountId": "js:2:stellar:GAIXIJBMYPTSF2CDVQ35WOTULCLZIE4W2SDEK3RQGAA3A22BPWY7R53Z:sep5",
+      "blockHash": "601bee32865e06f03695b1013f22439ab8f1aa7144fe2430265c6c9d4e564c04",
+      "blockHeight": 58996597,
+      "extra": {
+        "assetAmount": "1",
+        "ledgerOpType": "IN",
+        "memo": {
+          "type": "MEMO_TEXT",
+          "value": "Buy NXR Earn Native XLM!",
+        },
+      },
+      "fee": "10000",
+      "hasFailed": false,
+      "hash": "8e04c7c6a727b1d59e3a3e846864495e260114017db2cb6910020b98df188900",
+      "id": "js:2:stellar:GAIXIJBMYPTSF2CDVQ35WOTULCLZIE4W2SDEK3RQGAA3A22BPWY7R53Z:sep5-8e04c7c6a727b1d59e3a3e846864495e260114017db2cb6910020b98df188900-IN",
+      "recipients": [
+        "GAIXIJBMYPTSF2CDVQ35WOTULCLZIE4W2SDEK3RQGAA3A22BPWY7R53Z",
+      ],
+      "senders": [
+        "GBIF5H5T56P7TQPVSFXFJPGWYGHNPYY7DGQ2TIG6O6YLWYGDILDUQQXI",
+      ],
+      "transactionSequenceNumber": 253311312782694050,
       "type": "IN",
       "value": "1",
     },
@@ -2711,6 +3569,58 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
     },
     {
       "accountId": "js:2:stellar:GAIXIJBMYPTSF2CDVQ35WOTULCLZIE4W2SDEK3RQGAA3A22BPWY7R53Z:sep5",
+      "blockHash": "63de29557d4ab574038906879200736998cebdaef0c5cdcbb9c0d18419cd6f9e",
+      "blockHeight": 58590757,
+      "extra": {
+        "assetAmount": "1",
+        "ledgerOpType": "IN",
+        "memo": {
+          "type": "MEMO_TEXT",
+          "value": "Buy HRX & Earn Native XLM!",
+        },
+      },
+      "fee": "10000",
+      "hasFailed": false,
+      "hash": "903e1ba8d372b01e2d34449bbad6d00d3453cb86f4da936898c73332f9285ba1",
+      "id": "js:2:stellar:GAIXIJBMYPTSF2CDVQ35WOTULCLZIE4W2SDEK3RQGAA3A22BPWY7R53Z:sep5-903e1ba8d372b01e2d34449bbad6d00d3453cb86f4da936898c73332f9285ba1-IN",
+      "recipients": [
+        "GAIXIJBMYPTSF2CDVQ35WOTULCLZIE4W2SDEK3RQGAA3A22BPWY7R53Z",
+      ],
+      "senders": [
+        "GALFD7PPS3CYZDJN44CZFX45EWO3LQBWSDT2K42WSRDAN2SDVEANGMZP",
+      ],
+      "transactionSequenceNumber": 251606365385001380,
+      "type": "IN",
+      "value": "1",
+    },
+    {
+      "accountId": "js:2:stellar:GAIXIJBMYPTSF2CDVQ35WOTULCLZIE4W2SDEK3RQGAA3A22BPWY7R53Z:sep5",
+      "blockHash": "f650fdd8f49edcc124a859ef8188c7679864a0a79e1d50d7b748fb634499b974",
+      "blockHeight": 58828516,
+      "extra": {
+        "assetAmount": "1",
+        "ledgerOpType": "IN",
+        "memo": {
+          "type": "MEMO_TEXT",
+          "value": "SLR is Future,Be First holde",
+        },
+      },
+      "fee": "10000",
+      "hasFailed": false,
+      "hash": "967c686f5b22e999d0b7ac8ff4e0d492ae4053fa08a3802de42d76bc134a2a55",
+      "id": "js:2:stellar:GAIXIJBMYPTSF2CDVQ35WOTULCLZIE4W2SDEK3RQGAA3A22BPWY7R53Z:sep5-967c686f5b22e999d0b7ac8ff4e0d492ae4053fa08a3802de42d76bc134a2a55-IN",
+      "recipients": [
+        "GAIXIJBMYPTSF2CDVQ35WOTULCLZIE4W2SDEK3RQGAA3A22BPWY7R53Z",
+      ],
+      "senders": [
+        "GDDYK7XAT5H7GD2VXJFDTKA736UOEWWNUCLRACNBCJIXCRVQUSXLL24E",
+      ],
+      "transactionSequenceNumber": 252588130484357730,
+      "type": "IN",
+      "value": "1",
+    },
+    {
+      "accountId": "js:2:stellar:GAIXIJBMYPTSF2CDVQ35WOTULCLZIE4W2SDEK3RQGAA3A22BPWY7R53Z:sep5",
       "blockHash": "fd62594dcb89d0cc29207a6376391b0ed7392f868700d484239d57be2dde84f6",
       "blockHeight": 28115381,
       "extra": {
@@ -2732,7 +3642,7 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
       ],
       "transactionSequenceNumber": 119193803549573120,
       "type": "OUT",
-      "value": "10000100",
+      "value": "10000200",
     },
     {
       "accountId": "js:2:stellar:GAIXIJBMYPTSF2CDVQ35WOTULCLZIE4W2SDEK3RQGAA3A22BPWY7R53Z:sep5",
@@ -2838,6 +3748,32 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
     },
     {
       "accountId": "js:2:stellar:GAIXIJBMYPTSF2CDVQ35WOTULCLZIE4W2SDEK3RQGAA3A22BPWY7R53Z:sep5",
+      "blockHash": "ad619af5a6848a4cc0426b3e1a492c7489cbdf49f060b293a54de6ddb011c190",
+      "blockHeight": 58984967,
+      "extra": {
+        "assetAmount": "1",
+        "ledgerOpType": "IN",
+        "memo": {
+          "type": "MEMO_TEXT",
+          "value": "Buy NXR Earn Native XLM!",
+        },
+      },
+      "fee": "10000",
+      "hasFailed": false,
+      "hash": "c395ec85c88e32f838458b15bf87af640feb87cd34fe9c8eacd6ae48e57a5fb1",
+      "id": "js:2:stellar:GAIXIJBMYPTSF2CDVQ35WOTULCLZIE4W2SDEK3RQGAA3A22BPWY7R53Z:sep5-c395ec85c88e32f838458b15bf87af640feb87cd34fe9c8eacd6ae48e57a5fb1-IN",
+      "recipients": [
+        "GAIXIJBMYPTSF2CDVQ35WOTULCLZIE4W2SDEK3RQGAA3A22BPWY7R53Z",
+      ],
+      "senders": [
+        "GBIF5H5T56P7TQPVSFXFJPGWYGHNPYY7DGQ2TIG6O6YLWYGDILDUQQXI",
+      ],
+      "transactionSequenceNumber": 253311312782691140,
+      "type": "IN",
+      "value": "1",
+    },
+    {
+      "accountId": "js:2:stellar:GAIXIJBMYPTSF2CDVQ35WOTULCLZIE4W2SDEK3RQGAA3A22BPWY7R53Z:sep5",
       "blockHash": "96acae41ad560c3f3f819ca054b6fdb93a8e05d7f8f88468e5b720e0af075903",
       "blockHeight": 27966558,
       "extra": {
@@ -2913,8 +3849,216 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
       "type": "IN",
       "value": "1",
     },
+    {
+      "accountId": "js:2:stellar:GAIXIJBMYPTSF2CDVQ35WOTULCLZIE4W2SDEK3RQGAA3A22BPWY7R53Z:sep5",
+      "blockHash": "a30d17c2285b104505a522921e05b508bb563e91edeb20ebe9df94e6009cca61",
+      "blockHeight": 58620632,
+      "extra": {
+        "assetAmount": "1",
+        "ledgerOpType": "IN",
+        "memo": {
+          "type": "MEMO_TEXT",
+          "value": "Buy HRX Earn XLM every hour",
+        },
+      },
+      "fee": "10000",
+      "hasFailed": false,
+      "hash": "df7d78f7479d91eeef9c9cbb08adca6e8bf4a2dca293481a6307c78be8b2caef",
+      "id": "js:2:stellar:GAIXIJBMYPTSF2CDVQ35WOTULCLZIE4W2SDEK3RQGAA3A22BPWY7R53Z:sep5-df7d78f7479d91eeef9c9cbb08adca6e8bf4a2dca293481a6307c78be8b2caef-IN",
+      "recipients": [
+        "GAIXIJBMYPTSF2CDVQ35WOTULCLZIE4W2SDEK3RQGAA3A22BPWY7R53Z",
+      ],
+      "senders": [
+        "GALFD7PPS3CYZDJN44CZFX45EWO3LQBWSDT2K42WSRDAN2SDVEANGMZP",
+      ],
+      "transactionSequenceNumber": 251606365385006370,
+      "type": "IN",
+      "value": "1",
+    },
+    {
+      "accountId": "js:2:stellar:GAIXIJBMYPTSF2CDVQ35WOTULCLZIE4W2SDEK3RQGAA3A22BPWY7R53Z:sep5",
+      "blockHash": "e3e7a8c8032f5cf31a483536e54a46b21a5634f91c41412853cc068ecc38ee56",
+      "blockHeight": 58602944,
+      "extra": {
+        "assetAmount": "1",
+        "ledgerOpType": "IN",
+        "memo": {
+          "type": "MEMO_TEXT",
+          "value": "Buy HRX & Earn Native XLM!",
+        },
+      },
+      "fee": "10000",
+      "hasFailed": false,
+      "hash": "ed1a79339beccdd78a4a7e853e8f6b10b2ff1b7d1e04124a460e1a4d55bccb9b",
+      "id": "js:2:stellar:GAIXIJBMYPTSF2CDVQ35WOTULCLZIE4W2SDEK3RQGAA3A22BPWY7R53Z:sep5-ed1a79339beccdd78a4a7e853e8f6b10b2ff1b7d1e04124a460e1a4d55bccb9b-IN",
+      "recipients": [
+        "GAIXIJBMYPTSF2CDVQ35WOTULCLZIE4W2SDEK3RQGAA3A22BPWY7R53Z",
+      ],
+      "senders": [
+        "GALFD7PPS3CYZDJN44CZFX45EWO3LQBWSDT2K42WSRDAN2SDVEANGMZP",
+      ],
+      "transactionSequenceNumber": 251606365385003870,
+      "type": "IN",
+      "value": "1",
+    },
   ],
   [
+    {
+      "accountId": "js:2:stellar:GCDDN6T2LJN3T7SPWJQV6BCCL5KNY5GBN7X4CMSZLDEXDHXAH32TOAHS:sep5",
+      "blockHash": "89e8b7747c6ce650cbcddaa27922f11117cc2271ff8395d800f763176ad7b7b5",
+      "blockHeight": 58635428,
+      "extra": {
+        "assetAmount": "1",
+        "ledgerOpType": "IN",
+        "memo": {
+          "type": "MEMO_TEXT",
+          "value": "Buy HRX Earn XLM every hour",
+        },
+      },
+      "fee": "10000",
+      "hasFailed": false,
+      "hash": "00a531f0cb6d2b7149cec4e6cb1e95effff1f312fa959dfe4cffb7dd024c687c",
+      "id": "js:2:stellar:GCDDN6T2LJN3T7SPWJQV6BCCL5KNY5GBN7X4CMSZLDEXDHXAH32TOAHS:sep5-00a531f0cb6d2b7149cec4e6cb1e95effff1f312fa959dfe4cffb7dd024c687c-IN",
+      "recipients": [
+        "GCDDN6T2LJN3T7SPWJQV6BCCL5KNY5GBN7X4CMSZLDEXDHXAH32TOAHS",
+      ],
+      "senders": [
+        "GAIDSBGSJPQGZ3VBBS7A4RMOSURXQA6E7D2V5RLSZC2VUY53PSHZBTDR",
+      ],
+      "transactionSequenceNumber": 251606365385007870,
+      "type": "IN",
+      "value": "1",
+    },
+    {
+      "accountId": "js:2:stellar:GCDDN6T2LJN3T7SPWJQV6BCCL5KNY5GBN7X4CMSZLDEXDHXAH32TOAHS:sep5",
+      "blockHash": "3343dfa0041fc2dcf175fbbd1fd4d6bc67267f6cf7b587758121f37815b8ae50",
+      "blockHeight": 58994782,
+      "extra": {
+        "assetAmount": "1",
+        "ledgerOpType": "IN",
+        "memo": {
+          "type": "MEMO_TEXT",
+          "value": "Buy NXR Earn Native XLM!",
+        },
+      },
+      "fee": "10000",
+      "hasFailed": false,
+      "hash": "07818f6bba579c0f58efba18c2da7e01bc2cae839a07c5c0966f6b4f6c05b91f",
+      "id": "js:2:stellar:GCDDN6T2LJN3T7SPWJQV6BCCL5KNY5GBN7X4CMSZLDEXDHXAH32TOAHS:sep5-07818f6bba579c0f58efba18c2da7e01bc2cae839a07c5c0966f6b4f6c05b91f-IN",
+      "recipients": [
+        "GCDDN6T2LJN3T7SPWJQV6BCCL5KNY5GBN7X4CMSZLDEXDHXAH32TOAHS",
+      ],
+      "senders": [
+        "GCVLCPS5BET7PGVMFQCEEM5NTLQGX32TP4WMW4NYUZRXTZPULGKV3532",
+      ],
+      "transactionSequenceNumber": 253311312782693100,
+      "type": "IN",
+      "value": "1",
+    },
+    {
+      "accountId": "js:2:stellar:GCDDN6T2LJN3T7SPWJQV6BCCL5KNY5GBN7X4CMSZLDEXDHXAH32TOAHS:sep5",
+      "blockHash": "d46da8bbef390e095994a964e6b65d5b46eb7eef1d99555b4efa712103af99c5",
+      "blockHeight": 58982780,
+      "extra": {
+        "assetAmount": "1",
+        "ledgerOpType": "IN",
+        "memo": {
+          "type": "MEMO_TEXT",
+          "value": "Buy NXR Earn Native XLM!",
+        },
+      },
+      "fee": "10000",
+      "hasFailed": false,
+      "hash": "1143921416a452ce067e9984ca2ebfce4e6f2399f67dd36c671383c4b9656a54",
+      "id": "js:2:stellar:GCDDN6T2LJN3T7SPWJQV6BCCL5KNY5GBN7X4CMSZLDEXDHXAH32TOAHS:sep5-1143921416a452ce067e9984ca2ebfce4e6f2399f67dd36c671383c4b9656a54-IN",
+      "recipients": [
+        "GCDDN6T2LJN3T7SPWJQV6BCCL5KNY5GBN7X4CMSZLDEXDHXAH32TOAHS",
+      ],
+      "senders": [
+        "GCVLCPS5BET7PGVMFQCEEM5NTLQGX32TP4WMW4NYUZRXTZPULGKV3532",
+      ],
+      "transactionSequenceNumber": 253311312782690080,
+      "type": "IN",
+      "value": "1",
+    },
+    {
+      "accountId": "js:2:stellar:GCDDN6T2LJN3T7SPWJQV6BCCL5KNY5GBN7X4CMSZLDEXDHXAH32TOAHS:sep5",
+      "blockHash": "075930f1db627d396992ea20cd6e070bc0f768d7967622f65736a64da1fc8668",
+      "blockHeight": 58756537,
+      "extra": {
+        "assetAmount": "1",
+        "ledgerOpType": "IN",
+        "memo": {
+          "type": "MEMO_TEXT",
+          "value": "Buy HRX Earn XLM every hour",
+        },
+      },
+      "fee": "10000",
+      "hasFailed": false,
+      "hash": "1a9e69fae694d02b2d40105e76177c2ffb32e517d30c9d0c5f921fd37838e907",
+      "id": "js:2:stellar:GCDDN6T2LJN3T7SPWJQV6BCCL5KNY5GBN7X4CMSZLDEXDHXAH32TOAHS:sep5-1a9e69fae694d02b2d40105e76177c2ffb32e517d30c9d0c5f921fd37838e907-IN",
+      "recipients": [
+        "GCDDN6T2LJN3T7SPWJQV6BCCL5KNY5GBN7X4CMSZLDEXDHXAH32TOAHS",
+      ],
+      "senders": [
+        "GBJOLOIVJNRUHN5MD5CFBANSDDB5UFAKZXQHSSO5WOYS3V6RRV3KAWTE",
+      ],
+      "transactionSequenceNumber": 252114271037567300,
+      "type": "IN",
+      "value": "1",
+    },
+    {
+      "accountId": "js:2:stellar:GCDDN6T2LJN3T7SPWJQV6BCCL5KNY5GBN7X4CMSZLDEXDHXAH32TOAHS:sep5",
+      "blockHash": "e1401548d87cf6e825f038fbf84b2065d868aa4389d3f94fa1d6e3a0a987558f",
+      "blockHeight": 58703335,
+      "extra": {
+        "assetAmount": "1",
+        "ledgerOpType": "IN",
+        "memo": {
+          "type": "MEMO_TEXT",
+          "value": "Buy HRX Earn XLM every hour",
+        },
+      },
+      "fee": "10000",
+      "hasFailed": false,
+      "hash": "227b3d4b580e11993ffabee163ada659dba5186865f966ab621074912fd1b3a2",
+      "id": "js:2:stellar:GCDDN6T2LJN3T7SPWJQV6BCCL5KNY5GBN7X4CMSZLDEXDHXAH32TOAHS:sep5-227b3d4b580e11993ffabee163ada659dba5186865f966ab621074912fd1b3a2-IN",
+      "recipients": [
+        "GCDDN6T2LJN3T7SPWJQV6BCCL5KNY5GBN7X4CMSZLDEXDHXAH32TOAHS",
+      ],
+      "senders": [
+        "GBJOLOIVJNRUHN5MD5CFBANSDDB5UFAKZXQHSSO5WOYS3V6RRV3KAWTE",
+      ],
+      "transactionSequenceNumber": 252114271037556300,
+      "type": "IN",
+      "value": "1",
+    },
+    {
+      "accountId": "js:2:stellar:GCDDN6T2LJN3T7SPWJQV6BCCL5KNY5GBN7X4CMSZLDEXDHXAH32TOAHS:sep5",
+      "blockHash": "3c50b47876a562d519f66708c6e5f314b047d06140a4e3e388311289c5195db3",
+      "blockHeight": 58599494,
+      "extra": {
+        "assetAmount": "1",
+        "ledgerOpType": "IN",
+        "memo": {
+          "type": "MEMO_TEXT",
+          "value": "Buy HRX & Earn Native XLM!",
+        },
+      },
+      "fee": "10000",
+      "hasFailed": false,
+      "hash": "2bddb6593a571273d6c3daf210e70fd62b13687a2d02f01914e23ba4c363086a",
+      "id": "js:2:stellar:GCDDN6T2LJN3T7SPWJQV6BCCL5KNY5GBN7X4CMSZLDEXDHXAH32TOAHS:sep5-2bddb6593a571273d6c3daf210e70fd62b13687a2d02f01914e23ba4c363086a-IN",
+      "recipients": [
+        "GCDDN6T2LJN3T7SPWJQV6BCCL5KNY5GBN7X4CMSZLDEXDHXAH32TOAHS",
+      ],
+      "senders": [
+        "GAIDSBGSJPQGZ3VBBS7A4RMOSURXQA6E7D2V5RLSZC2VUY53PSHZBTDR",
+      ],
+      "transactionSequenceNumber": 251606365385002880,
+      "type": "IN",
+      "value": "1",
+    },
     {
       "accountId": "js:2:stellar:GCDDN6T2LJN3T7SPWJQV6BCCL5KNY5GBN7X4CMSZLDEXDHXAH32TOAHS:sep5",
       "blockHash": "b3e8116a49827ada541e4dbbcb201f288c12a45188ede995d87c0944adb966d3",
@@ -2943,6 +4087,32 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
     },
     {
       "accountId": "js:2:stellar:GCDDN6T2LJN3T7SPWJQV6BCCL5KNY5GBN7X4CMSZLDEXDHXAH32TOAHS:sep5",
+      "blockHash": "519046504c68d3ff40de61c2289bb24f355c59353ab358094abc329a741c43e8",
+      "blockHeight": 58775717,
+      "extra": {
+        "assetAmount": "1",
+        "ledgerOpType": "IN",
+        "memo": {
+          "type": "MEMO_TEXT",
+          "value": "Buy HRX Earn XLM every hour",
+        },
+      },
+      "fee": "10000",
+      "hasFailed": false,
+      "hash": "45d6fba98df2fb112a5f6aab4d79d96cb71321f8f8bc08ec5fe73eaa5214e564",
+      "id": "js:2:stellar:GCDDN6T2LJN3T7SPWJQV6BCCL5KNY5GBN7X4CMSZLDEXDHXAH32TOAHS:sep5-45d6fba98df2fb112a5f6aab4d79d96cb71321f8f8bc08ec5fe73eaa5214e564-IN",
+      "recipients": [
+        "GCDDN6T2LJN3T7SPWJQV6BCCL5KNY5GBN7X4CMSZLDEXDHXAH32TOAHS",
+      ],
+      "senders": [
+        "GBJOLOIVJNRUHN5MD5CFBANSDDB5UFAKZXQHSSO5WOYS3V6RRV3KAWTE",
+      ],
+      "transactionSequenceNumber": 252114271037570080,
+      "type": "IN",
+      "value": "1",
+    },
+    {
+      "accountId": "js:2:stellar:GCDDN6T2LJN3T7SPWJQV6BCCL5KNY5GBN7X4CMSZLDEXDHXAH32TOAHS:sep5",
       "blockHash": "d48bd056ea07be983256c0507ebfe2a1d2184acbd170033e5a4b2f54db1e4ae6",
       "blockHeight": 27889727,
       "extra": {
@@ -2965,6 +4135,32 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
       "transactionSequenceNumber": 119193803549573120,
       "type": "IN",
       "value": "9999800",
+    },
+    {
+      "accountId": "js:2:stellar:GCDDN6T2LJN3T7SPWJQV6BCCL5KNY5GBN7X4CMSZLDEXDHXAH32TOAHS:sep5",
+      "blockHash": "9ded1330fd8c95b51f254995eb23695b27e212a1287773ddd0a210183561c6c6",
+      "blockHeight": 58737385,
+      "extra": {
+        "assetAmount": "1",
+        "ledgerOpType": "IN",
+        "memo": {
+          "type": "MEMO_TEXT",
+          "value": "Buy HRX Earn XLM every hour",
+        },
+      },
+      "fee": "10000",
+      "hasFailed": false,
+      "hash": "4e9473fb60414726c664668cf7281741654837eb474ab635c6dc92f3f7db840a",
+      "id": "js:2:stellar:GCDDN6T2LJN3T7SPWJQV6BCCL5KNY5GBN7X4CMSZLDEXDHXAH32TOAHS:sep5-4e9473fb60414726c664668cf7281741654837eb474ab635c6dc92f3f7db840a-IN",
+      "recipients": [
+        "GCDDN6T2LJN3T7SPWJQV6BCCL5KNY5GBN7X4CMSZLDEXDHXAH32TOAHS",
+      ],
+      "senders": [
+        "GBJOLOIVJNRUHN5MD5CFBANSDDB5UFAKZXQHSSO5WOYS3V6RRV3KAWTE",
+      ],
+      "transactionSequenceNumber": 252114271037564540,
+      "type": "IN",
+      "value": "1",
     },
     {
       "accountId": "js:2:stellar:GCDDN6T2LJN3T7SPWJQV6BCCL5KNY5GBN7X4CMSZLDEXDHXAH32TOAHS:sep5",
@@ -3019,6 +4215,32 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
     },
     {
       "accountId": "js:2:stellar:GCDDN6T2LJN3T7SPWJQV6BCCL5KNY5GBN7X4CMSZLDEXDHXAH32TOAHS:sep5",
+      "blockHash": "6d4a0251278640dc7baa7d3abd69632b889ff20c59d15f1078db6e5e536dda63",
+      "blockHeight": 58683617,
+      "extra": {
+        "assetAmount": "1",
+        "ledgerOpType": "IN",
+        "memo": {
+          "type": "MEMO_TEXT",
+          "value": "Buy HRX Earn XLM every hour",
+        },
+      },
+      "fee": "10000",
+      "hasFailed": false,
+      "hash": "8464ab93056a643fd7072dee80be952a50c898650f4442d02c39bd000dbf3402",
+      "id": "js:2:stellar:GCDDN6T2LJN3T7SPWJQV6BCCL5KNY5GBN7X4CMSZLDEXDHXAH32TOAHS:sep5-8464ab93056a643fd7072dee80be952a50c898650f4442d02c39bd000dbf3402-IN",
+      "recipients": [
+        "GCDDN6T2LJN3T7SPWJQV6BCCL5KNY5GBN7X4CMSZLDEXDHXAH32TOAHS",
+      ],
+      "senders": [
+        "GAIDSBGSJPQGZ3VBBS7A4RMOSURXQA6E7D2V5RLSZC2VUY53PSHZBTDR",
+      ],
+      "transactionSequenceNumber": 251606365385013060,
+      "type": "IN",
+      "value": "1",
+    },
+    {
+      "accountId": "js:2:stellar:GCDDN6T2LJN3T7SPWJQV6BCCL5KNY5GBN7X4CMSZLDEXDHXAH32TOAHS:sep5",
       "blockHash": "b1dc829d8aeab361098dd6992aa4853c71bdee44d8d814f5bbb17177b93d4188",
       "blockHeight": 27904466,
       "extra": {
@@ -3070,6 +4292,110 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
     },
     {
       "accountId": "js:2:stellar:GCDDN6T2LJN3T7SPWJQV6BCCL5KNY5GBN7X4CMSZLDEXDHXAH32TOAHS:sep5",
+      "blockHash": "ff356e1578a27180de15f43921c9716aec614ad015f7056d45c536bb7f2b744c",
+      "blockHeight": 58974044,
+      "extra": {
+        "assetAmount": "1",
+        "ledgerOpType": "IN",
+        "memo": {
+          "type": "MEMO_TEXT",
+          "value": "Buy NXR Earn Native XLM!",
+        },
+      },
+      "fee": "10000",
+      "hasFailed": false,
+      "hash": "8f1a079a150cc285344fdd948dc4208a14de90587075e09d971199ee78a2be03",
+      "id": "js:2:stellar:GCDDN6T2LJN3T7SPWJQV6BCCL5KNY5GBN7X4CMSZLDEXDHXAH32TOAHS:sep5-8f1a079a150cc285344fdd948dc4208a14de90587075e09d971199ee78a2be03-IN",
+      "recipients": [
+        "GCDDN6T2LJN3T7SPWJQV6BCCL5KNY5GBN7X4CMSZLDEXDHXAH32TOAHS",
+      ],
+      "senders": [
+        "GA6UMI47CT5TIM3HRY6QMX3W5W4JLA3W5RSKL3D5QX4KXGGGKC77BEWV",
+      ],
+      "transactionSequenceNumber": 253218412640077600,
+      "type": "IN",
+      "value": "1",
+    },
+    {
+      "accountId": "js:2:stellar:GCDDN6T2LJN3T7SPWJQV6BCCL5KNY5GBN7X4CMSZLDEXDHXAH32TOAHS:sep5",
+      "blockHash": "d03e9e429aa259fcda9363b05d3266ec311d8a54256129ac1820decf1ce443fa",
+      "blockHeight": 58826374,
+      "extra": {
+        "assetAmount": "1",
+        "ledgerOpType": "IN",
+        "memo": {
+          "type": "MEMO_TEXT",
+          "value": "SLR is Future,Be First holde",
+        },
+      },
+      "fee": "10000",
+      "hasFailed": false,
+      "hash": "93f983a95235f9102a3c0d677f65a714cd22aa3a98550c59bc0cc5e0e7b0fe67",
+      "id": "js:2:stellar:GCDDN6T2LJN3T7SPWJQV6BCCL5KNY5GBN7X4CMSZLDEXDHXAH32TOAHS:sep5-93f983a95235f9102a3c0d677f65a714cd22aa3a98550c59bc0cc5e0e7b0fe67-IN",
+      "recipients": [
+        "GCDDN6T2LJN3T7SPWJQV6BCCL5KNY5GBN7X4CMSZLDEXDHXAH32TOAHS",
+      ],
+      "senders": [
+        "GA7GBJQIR7TOTDUO6GYUTDRZFFUIBTJO43LQOP2XSMQA5FCAMAJDGCMT",
+      ],
+      "transactionSequenceNumber": 252588130484356700,
+      "type": "IN",
+      "value": "1",
+    },
+    {
+      "accountId": "js:2:stellar:GCDDN6T2LJN3T7SPWJQV6BCCL5KNY5GBN7X4CMSZLDEXDHXAH32TOAHS:sep5",
+      "blockHash": "63860caf482038cb6859a38bbb9ea317c1fa292bf4ed018d56a6543dfc76cb05",
+      "blockHeight": 58616882,
+      "extra": {
+        "assetAmount": "1",
+        "ledgerOpType": "IN",
+        "memo": {
+          "type": "MEMO_TEXT",
+          "value": "Buy HRX Earn XLM every hour",
+        },
+      },
+      "fee": "10000",
+      "hasFailed": false,
+      "hash": "9bfebf73762cf9d73197bae2fbb8af1fc31d61400cca775e6a4b1566ea6767d5",
+      "id": "js:2:stellar:GCDDN6T2LJN3T7SPWJQV6BCCL5KNY5GBN7X4CMSZLDEXDHXAH32TOAHS:sep5-9bfebf73762cf9d73197bae2fbb8af1fc31d61400cca775e6a4b1566ea6767d5-IN",
+      "recipients": [
+        "GCDDN6T2LJN3T7SPWJQV6BCCL5KNY5GBN7X4CMSZLDEXDHXAH32TOAHS",
+      ],
+      "senders": [
+        "GAIDSBGSJPQGZ3VBBS7A4RMOSURXQA6E7D2V5RLSZC2VUY53PSHZBTDR",
+      ],
+      "transactionSequenceNumber": 251606365385005380,
+      "type": "IN",
+      "value": "1",
+    },
+    {
+      "accountId": "js:2:stellar:GCDDN6T2LJN3T7SPWJQV6BCCL5KNY5GBN7X4CMSZLDEXDHXAH32TOAHS:sep5",
+      "blockHash": "2aaf719222e610367a4850dfbcb725b40d599efdd538cd43bfdb552a99fc4b82",
+      "blockHeight": 58659133,
+      "extra": {
+        "assetAmount": "1",
+        "ledgerOpType": "IN",
+        "memo": {
+          "type": "MEMO_TEXT",
+          "value": "Buy HRX Earn XLM every hour",
+        },
+      },
+      "fee": "10000",
+      "hasFailed": false,
+      "hash": "9e3707fe9d952993e5c6cbeabd5d885f32000db33cdd93ec239bde3d9f68aeac",
+      "id": "js:2:stellar:GCDDN6T2LJN3T7SPWJQV6BCCL5KNY5GBN7X4CMSZLDEXDHXAH32TOAHS:sep5-9e3707fe9d952993e5c6cbeabd5d885f32000db33cdd93ec239bde3d9f68aeac-IN",
+      "recipients": [
+        "GCDDN6T2LJN3T7SPWJQV6BCCL5KNY5GBN7X4CMSZLDEXDHXAH32TOAHS",
+      ],
+      "senders": [
+        "GAIDSBGSJPQGZ3VBBS7A4RMOSURXQA6E7D2V5RLSZC2VUY53PSHZBTDR",
+      ],
+      "transactionSequenceNumber": 251606365385010370,
+      "type": "IN",
+      "value": "1",
+    },
+    {
+      "accountId": "js:2:stellar:GCDDN6T2LJN3T7SPWJQV6BCCL5KNY5GBN7X4CMSZLDEXDHXAH32TOAHS:sep5",
       "blockHash": "7a8bf9226a0987d1afc8aa37e3bd4c97172e04e62f5d184f744cf0119d28f4bf",
       "blockHeight": 37742747,
       "extra": {
@@ -3093,6 +4419,32 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
       "transactionSequenceNumber": 161783523890446980,
       "type": "IN",
       "value": "25",
+    },
+    {
+      "accountId": "js:2:stellar:GCDDN6T2LJN3T7SPWJQV6BCCL5KNY5GBN7X4CMSZLDEXDHXAH32TOAHS:sep5",
+      "blockHash": "077df80f98f0c2547a0b7273eb3a05352ecb867bf98b450b103133e023933b71",
+      "blockHeight": 58714685,
+      "extra": {
+        "assetAmount": "1",
+        "ledgerOpType": "IN",
+        "memo": {
+          "type": "MEMO_TEXT",
+          "value": "Buy HRX Earn XLM every hour",
+        },
+      },
+      "fee": "10000",
+      "hasFailed": false,
+      "hash": "b098a03130a4ca5998e3212eff5ec4bd0b028b1f72215fe259cd270536f084b7",
+      "id": "js:2:stellar:GCDDN6T2LJN3T7SPWJQV6BCCL5KNY5GBN7X4CMSZLDEXDHXAH32TOAHS:sep5-b098a03130a4ca5998e3212eff5ec4bd0b028b1f72215fe259cd270536f084b7-IN",
+      "recipients": [
+        "GCDDN6T2LJN3T7SPWJQV6BCCL5KNY5GBN7X4CMSZLDEXDHXAH32TOAHS",
+      ],
+      "senders": [
+        "GBJOLOIVJNRUHN5MD5CFBANSDDB5UFAKZXQHSSO5WOYS3V6RRV3KAWTE",
+      ],
+      "transactionSequenceNumber": 252114271037559040,
+      "type": "IN",
+      "value": "1",
     },
     {
       "accountId": "js:2:stellar:GCDDN6T2LJN3T7SPWJQV6BCCL5KNY5GBN7X4CMSZLDEXDHXAH32TOAHS:sep5",
@@ -3143,7 +4495,7 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
       ],
       "transactionSequenceNumber": 119784086674866180,
       "type": "OUT",
-      "value": "20000000",
+      "value": "20000100",
     },
     {
       "accountId": "js:2:stellar:GCDDN6T2LJN3T7SPWJQV6BCCL5KNY5GBN7X4CMSZLDEXDHXAH32TOAHS:sep5",
@@ -3168,6 +4520,32 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
         "GCVTUT4QMMCZFKOQTXFRHWFGBT6B4V3GUECDE6OVNC6HFKSPOBHHTBHI",
       ],
       "transactionSequenceNumber": 240200272276640450,
+      "type": "IN",
+      "value": "1",
+    },
+    {
+      "accountId": "js:2:stellar:GCDDN6T2LJN3T7SPWJQV6BCCL5KNY5GBN7X4CMSZLDEXDHXAH32TOAHS:sep5",
+      "blockHash": "0b20d37f5c4cb37a09f3a2cc40a74f768a06587c17792f21fedbead08d6bb580",
+      "blockHeight": 58845079,
+      "extra": {
+        "assetAmount": "1",
+        "ledgerOpType": "IN",
+        "memo": {
+          "type": "MEMO_TEXT",
+          "value": "SLR is Future,Be First holde",
+        },
+      },
+      "fee": "10000",
+      "hasFailed": false,
+      "hash": "cfb177f208ffbd3c5058c179f6088d632c9e1ff3960bd05b2466653d1183c0fd",
+      "id": "js:2:stellar:GCDDN6T2LJN3T7SPWJQV6BCCL5KNY5GBN7X4CMSZLDEXDHXAH32TOAHS:sep5-cfb177f208ffbd3c5058c179f6088d632c9e1ff3960bd05b2466653d1183c0fd-IN",
+      "recipients": [
+        "GCDDN6T2LJN3T7SPWJQV6BCCL5KNY5GBN7X4CMSZLDEXDHXAH32TOAHS",
+      ],
+      "senders": [
+        "GA7GBJQIR7TOTDUO6GYUTDRZFFUIBTJO43LQOP2XSMQA5FCAMAJDGCMT",
+      ],
+      "transactionSequenceNumber": 252588130484359580,
       "type": "IN",
       "value": "1",
     },
@@ -3245,7 +4623,7 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
       ],
       "transactionSequenceNumber": 119784086674866180,
       "type": "OUT",
-      "value": "100",
+      "value": "200",
     },
     {
       "accountId": "js:2:stellar:GCDDN6T2LJN3T7SPWJQV6BCCL5KNY5GBN7X4CMSZLDEXDHXAH32TOAHS:sep5",
@@ -3275,6 +4653,58 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
     },
     {
       "accountId": "js:2:stellar:GCDDN6T2LJN3T7SPWJQV6BCCL5KNY5GBN7X4CMSZLDEXDHXAH32TOAHS:sep5",
+      "blockHash": "2164355cfd64b0dbc054d4aa3ad16ce7afce13bd0f3859d297552a1b3aa9cdd5",
+      "blockHeight": 58587497,
+      "extra": {
+        "assetAmount": "1",
+        "ledgerOpType": "IN",
+        "memo": {
+          "type": "MEMO_TEXT",
+          "value": "Buy HRX & Earn Native XLM!",
+        },
+      },
+      "fee": "10000",
+      "hasFailed": false,
+      "hash": "ea4f7387f443a92fa413d2cf7f10836dcc7034a063e57da82bda6d1df7bdb814",
+      "id": "js:2:stellar:GCDDN6T2LJN3T7SPWJQV6BCCL5KNY5GBN7X4CMSZLDEXDHXAH32TOAHS:sep5-ea4f7387f443a92fa413d2cf7f10836dcc7034a063e57da82bda6d1df7bdb814-IN",
+      "recipients": [
+        "GCDDN6T2LJN3T7SPWJQV6BCCL5KNY5GBN7X4CMSZLDEXDHXAH32TOAHS",
+      ],
+      "senders": [
+        "GAIDSBGSJPQGZ3VBBS7A4RMOSURXQA6E7D2V5RLSZC2VUY53PSHZBTDR",
+      ],
+      "transactionSequenceNumber": 251606365385000350,
+      "type": "IN",
+      "value": "1",
+    },
+    {
+      "accountId": "js:2:stellar:GCDDN6T2LJN3T7SPWJQV6BCCL5KNY5GBN7X4CMSZLDEXDHXAH32TOAHS:sep5",
+      "blockHash": "be388d6c108104565305716bdb577acd6c4674d33fc9b96b92130f69b2ce5a57",
+      "blockHeight": 58724518,
+      "extra": {
+        "assetAmount": "1",
+        "ledgerOpType": "IN",
+        "memo": {
+          "type": "MEMO_TEXT",
+          "value": "Buy HRX Earn XLM every hour",
+        },
+      },
+      "fee": "10000",
+      "hasFailed": false,
+      "hash": "eaaf20d2c14ce77f0213fe73c08951b48db17506d335c3029fbcbdb643563938",
+      "id": "js:2:stellar:GCDDN6T2LJN3T7SPWJQV6BCCL5KNY5GBN7X4CMSZLDEXDHXAH32TOAHS:sep5-eaaf20d2c14ce77f0213fe73c08951b48db17506d335c3029fbcbdb643563938-IN",
+      "recipients": [
+        "GCDDN6T2LJN3T7SPWJQV6BCCL5KNY5GBN7X4CMSZLDEXDHXAH32TOAHS",
+      ],
+      "senders": [
+        "GBJOLOIVJNRUHN5MD5CFBANSDDB5UFAKZXQHSSO5WOYS3V6RRV3KAWTE",
+      ],
+      "transactionSequenceNumber": 252114271037561800,
+      "type": "IN",
+      "value": "1",
+    },
+    {
+      "accountId": "js:2:stellar:GCDDN6T2LJN3T7SPWJQV6BCCL5KNY5GBN7X4CMSZLDEXDHXAH32TOAHS:sep5",
       "blockHash": "8ddf2943fb33e1073e0465753c07f67c9b716870a4805de91b9628e355f91f83",
       "blockHeight": 28067899,
       "extra": {
@@ -3296,7 +4726,7 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
       ],
       "transactionSequenceNumber": 119784086674866180,
       "type": "OUT",
-      "value": "10000100",
+      "value": "10000200",
     },
     {
       "accountId": "js:2:stellar:GCDDN6T2LJN3T7SPWJQV6BCCL5KNY5GBN7X4CMSZLDEXDHXAH32TOAHS:sep5",
@@ -3576,7 +5006,7 @@ exports[`stellar currency bridge scanAccounts stellar seed 1 2`] = `
       ],
       "transactionSequenceNumber": 120550708272431100,
       "type": "OUT",
-      "value": "10000100",
+      "value": "10000200",
     },
     {
       "accountId": "js:2:stellar:GAHQKL7UW5DSNJXWNA4ASJ6D2I7JYFWVHDFWYJZK3WDR4BUTG27K2PWC:sep5",

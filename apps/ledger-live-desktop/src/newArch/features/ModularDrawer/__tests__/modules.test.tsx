@@ -149,9 +149,11 @@ describe("ModularDrawerFlowManager - Modules configuration", () => {
       mockedInitialState,
     );
 
-    await waitFor(() => expect(screen.getByText(/ethereum/i)).toBeVisible());
-    const percentElements = screen.queryAllByText(/[+-]?\d+\.?\d*%/);
-    expect(percentElements.length).toBeGreaterThan(0);
+    await waitFor(() => expect(screen.getByText(/bitcoin/i)).toBeVisible());
+    const bitcoinTicker = screen.getByTestId(/asset-item-ticker-btc/i);
+    const bitcoinRow = bitcoinTicker.parentElement;
+    const percentIndicator = bitcoinRow?.querySelector('[data-testid="market-percent-indicator"]');
+    expect(percentIndicator).toHaveTextContent(/-2.27%$/);
   });
 
   it("should display market trend on the right at assetSelection step", async () => {
@@ -171,10 +173,12 @@ describe("ModularDrawerFlowManager - Modules configuration", () => {
     );
 
     await waitFor(() => expect(screen.getByText(/ethereum/i)).toBeVisible());
-    const percentElements = screen.queryAllByText(/[+-]?\d+\.?\d*%/);
-    expect(percentElements.length).toBeGreaterThan(0);
-    const priceElements = screen.queryAllByText(/\$\d+\.?\d*/);
-    expect(priceElements.length).toBeGreaterThan(0);
+    const ethereumIcon = screen.getByAltText(/eth/i);
+    const ethereumRow = ethereumIcon.parentElement?.parentElement;
+    const percentIndicator = ethereumRow?.querySelector(
+      '[data-testid="market-price-indicator-percent"]',
+    );
+    expect(percentIndicator).toHaveTextContent(/-3.64%$/);
   });
 
   it("should not display balance on the right at assetSelection step when enableModularization is false ", async () => {

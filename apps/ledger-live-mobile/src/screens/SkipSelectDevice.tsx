@@ -11,12 +11,14 @@ import { ScreenName } from "~/const";
 import { useDebouncedRequireBluetooth } from "~/components/RequiresBLE/hooks/useRequireBluetooth";
 import RequiresBluetoothDrawer from "~/components/RequiresBLE/RequiresBluetoothDrawer";
 import { DeviceSelectionNavigatorParamsList } from "LLM/features/DeviceSelection/types";
+import { PlatformExchangeNavigatorParamList } from "~/components/RootNavigator/types/PlatformExchangeNavigator";
 
 type Navigation =
   | StackNavigatorProps<AddAccountsNavigatorParamList, ScreenName.AddAccountsSelectDevice>
   | StackNavigatorProps<ReceiveFundsStackParamList, ScreenName.ReceiveAddAccountSelectDevice>
   | StackNavigatorProps<ReceiveFundsStackParamList, ScreenName.ReceiveConnectDevice>
-  | StackNavigatorProps<DeviceSelectionNavigatorParamsList, ScreenName.SelectDevice>;
+  | StackNavigatorProps<DeviceSelectionNavigatorParamsList, ScreenName.SelectDevice>
+  | StackNavigatorProps<PlatformExchangeNavigatorParamList, ScreenName.PlatformStartExchange>;
 
 type Props = {
   onResult: (device: Device) => void;
