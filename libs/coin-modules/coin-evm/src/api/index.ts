@@ -77,7 +77,7 @@ export function createApi(
     validateIntent: (
       intent: TransactionIntent<MemoNotSupported, BufferTxData>,
     ): Promise<TransactionValidation> => validateIntent(currency, intent),
-    getTokenFromAsset: (asset: AssetInfo): TokenCurrency | undefined =>
+    getTokenFromAsset: (asset: AssetInfo): Promise<TokenCurrency | undefined> =>
       getTokenFromAsset(currency, asset),
     getAssetFromToken: (token: TokenCurrency, owner: string): AssetInfo =>
       getAssetFromToken(currency, token, owner),
