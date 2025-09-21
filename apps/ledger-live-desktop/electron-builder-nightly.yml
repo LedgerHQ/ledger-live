@@ -4,6 +4,7 @@ protocols:
   name: Ledger Live
   schemes:
     - ledgerlive
+    - ledgerwallet
 
 afterSign: scripts/notarize.js
 

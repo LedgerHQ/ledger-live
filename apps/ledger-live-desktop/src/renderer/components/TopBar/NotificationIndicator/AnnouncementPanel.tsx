@@ -156,7 +156,7 @@ function ArticleLink({ label, href, utmCampaign, color }: ArticleLinkProps) {
     return url;
   }, [href, utmCampaign]);
   const onLinkClick = useCallback(() => {
-    const isDeepLink = url.protocol === "ledgerlive:";
+    const isDeepLink = ["ledgerlive:", "ledgerwallet:"].includes(url.protocol);
     if (isDeepLink) {
       handler(null, url.href);
       dispatch(closeInformationCenter());
