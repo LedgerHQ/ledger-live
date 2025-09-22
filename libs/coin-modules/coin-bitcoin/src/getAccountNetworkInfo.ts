@@ -8,12 +8,12 @@ import { getRelayFeeFloorSatVb } from "./wallet-btc/utils";
 const speeds = ["fast", "medium", "slow"];
 
 // Clamp each level to ≥ floor + ε and return integers
-export function clampFeesToFloor(
-  fees: BigNumber[],
+export function clamp(
   floor: BigNumber,
   epsilon: BigNumber = new BigNumber(1), // +1 sat/vB safety
-): BigNumber[] {
-  return fees.map(f => BigNumber.max(f, floor.plus(epsilon)).integerValue(BigNumber.ROUND_CEIL));
+): (f: BigNumber) => BigNumber {
+  const threshold = floor.plus(epsilon);
+  return (f: BigNumber) => BigNumber.max(f, threshold).integerValue(BigNumber.ROUND_CEIL);
 }
 
 export function avoidDups(nums: Array<BigNumber>): Array<BigNumber> {
