@@ -36,16 +36,14 @@ function ExperimentalHeader() {
   // Reanimated value representing the state of the header: 0: closed, 1: opened
   const openState = useSharedValue(Config.MOCK ? 1 : 0);
 
-  useEffect(
-    () => {
-      if (Config.MOCK) return;
-      if (isExperimental || areFeatureFlagsOverridden) {
-        openState.value = withTiming(1, { duration: 200 });
-      } else {
-        openState.value = withTiming(0, { duration: 200 });
-      }
-    }, [isExperimental, areFeatureFlagsOverridden, openState],
-  );
+  useEffect(() => {
+    if (Config.MOCK) return;
+    if (isExperimental || areFeatureFlagsOverridden) {
+      openState.value = withTiming(1, { duration: 200 });
+    } else {
+      openState.value = withTiming(0, { duration: 200 });
+    }
+  }, [isExperimental, areFeatureFlagsOverridden, openState]);
 
   const opacityStyle = useAnimatedStyle(
     () => ({
