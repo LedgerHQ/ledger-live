@@ -88,6 +88,7 @@
     "unimported": "pnpm knip --directory ../.. -W libs/ledger-key-ring-protocol",
     "test": "jest",
     "coverage": "jest --coverage",
+    "break-trustchain": "ts-node scripts/break-trustchain.ts",
     "e2e": "ts-node scripts/e2e.ts"
   }
 }

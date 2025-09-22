@@ -325,6 +325,7 @@ export const StatusCodes = {
   INVALID_RESTORE_STATE: 0x6643,
   INVALID_CHUNK_LENGTH: 0x6734,
   INVALID_BACKUP_HEADER: 0x684a,
+  SW_STREAM_PARSER_INVALID_FORMAT: 0xb00a, // Invalid or unsupported command stream format
 
   // Not documented:
   TRUSTCHAIN_WRONG_SEED: 0xb007,
