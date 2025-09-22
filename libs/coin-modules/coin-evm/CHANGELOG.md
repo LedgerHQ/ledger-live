@@ -1,5 +1,11 @@
 # @ledgerhq/coin-evm
 
+## 2.31.0-next.1
+
+### Minor Changes
+
+- [#11925](https://github.com/LedgerHQ/ledger-live/pull/11925) [`c40c867`](https://github.com/LedgerHQ/ledger-live/commit/c40c867c790107270a7db63eeacdddc67dd22769) Thanks [@qperrot](https://github.com/qperrot)! - Fix evm fetch tokens for external node
+
 ## 2.31.0-next.0
 
 ### Minor Changes

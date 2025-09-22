@@ -1,5 +1,12 @@
 # live-mobile
 
+## 3.94.0-next.2
+
+### Patch Changes
+
+- Updated dependencies [[`c40c867`](https://github.com/LedgerHQ/ledger-live/commit/c40c867c790107270a7db63eeacdddc67dd22769)]:
+  - @ledgerhq/coin-evm@2.31.0-next.1
+
 ## 3.94.0-next.1
 
 ### Minor Changes
