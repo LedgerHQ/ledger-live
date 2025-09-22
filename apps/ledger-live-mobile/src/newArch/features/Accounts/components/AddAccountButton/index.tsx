@@ -37,6 +37,7 @@ const AddAccountButton: FC<Props> = ({ sourceScreenName, disabled, currency, onC
         currencies: currencyToUse ? [currencyToUse.id] : [],
         flow: "add_account",
         source: sourceScreenName,
+        areCurrenciesFiltered: currencyToUse ? true : false,
       });
     } else {
       return onClick?.();
