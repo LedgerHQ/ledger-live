@@ -41,6 +41,7 @@ export class Modal extends Component {
 
   @step("Continue to sign transaction")
   async continueToSignTransaction() {
+    await this.continueButton.hover();
     await this.continueButton.click();
   }
 
