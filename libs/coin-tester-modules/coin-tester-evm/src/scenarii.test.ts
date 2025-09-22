@@ -66,7 +66,7 @@ describe.each([["legacy"], ["generic-adapter"]] as const)(
 
     it("scenario Core", async () => {
       try {
-        await executeScenario(scenarioCore);
+        await executeScenario(scenarioCore, strategy);
       } catch (e) {
         if (e != "done") {
           await Promise.all([killSpeculos(), killAnvil()]);
