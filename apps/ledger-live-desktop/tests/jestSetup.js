@@ -103,7 +103,6 @@ jest.mock("src/sentry/renderer", () => ({
   captureException: jest.fn(),
   captureBreadcrumb: jest.fn(),
   setTags: jest.fn(),
-  getSentryIfAvailable: jest.fn().mockReturnValue(false),
 }));
 
 if (!globalThis.Buffer) {
