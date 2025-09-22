@@ -1,7 +1,3 @@
-import { log } from "@ledgerhq/logs";
-import type { Result, AccountData } from "./cross";
-import { accountDataToAccount } from "./cross";
-import { checkAccountSupported } from "@ledgerhq/coin-framework/account/index";
 import type { Account, AccountBridge, TransactionCommon } from "@ledgerhq/types-live";
 import { promiseAllBatched } from "@ledgerhq/live-promise";
 import { getEnv } from "@ledgerhq/live-env";
@@ -9,70 +5,11 @@ import { Observable, firstValueFrom } from "rxjs";
 import { reduce } from "rxjs/operators";
 import type { BridgeCacheSystem } from "@ledgerhq/types-live";
 
-const itemModeDisplaySort = {
-  create: 1,
-  update: 2,
-  id: 3,
-  unsupported: 4,
-};
-export type ImportItemMode = keyof typeof itemModeDisplaySort;
+export type ImportItemMode = "create" | "update" | "id" | "unsupported";
 export type ImportItem = {
   initialAccountId: string;
   account: Account;
   mode: ImportItemMode;
-};
-export const importAccountsMakeItems = ({
-  result,
-  accounts,
-  items,
-}: {
-  result: Result;
-  accounts: Account[];
-  items?: ImportItem[];
-}): {
-  items: ImportItem[];
-  accountNames: Map<string, string>;
-} => {
-  const accountNames = new Map<string, string>();
-  const resultItems = result.accounts
-    .map((accInput: AccountData) => {
-      const prevItem = (items || []).find(item => item.account.id === accInput.id);
-      if (prevItem) return prevItem;
-
-      try {
-        const account = accountDataToAccount(accInput)[0];
-        const error = checkAccountSupported(account);
-
-        if (error) {
-          return {
-            initialAccountId: account.id,
-            account,
-            mode: "unsupported",
-          };
-        }
-
-        accountNames.set(accInput.id, accInput.name);
-
-        const existingAccount = accounts.find(a => a.id === accInput.id);
-
-        if (existingAccount) {
-          return;
-        }
-
-        return {
-          initialAccountId: account.id,
-          account,
-          mode: "create",
-        };
-      } catch (e) {
-        log("error", String(e));
-        return null;
-      }
-    })
-    .filter((item): item is ImportItem => Boolean(item))
-    .sort((a, b) => itemModeDisplaySort[a.mode] - itemModeDisplaySort[b.mode]);
-
-  return { items: resultItems, accountNames };
 };
 
 /**
@@ -92,7 +29,7 @@ export type SyncNewAccountsInput = {
 
 /**
  *
- * @param items: result of importAccountsMakeItems
+ * @param items: import items to sync
  * @param selectedAccounts: user's selected accounts
  * @param bridgeCache: the bridge cache created on user land to prepare currency for a sync
  * @param blacklistedTokenIds: the list of blacklisted token ids to ignore sync with
@@ -137,7 +74,7 @@ export type ImportAccountsReduceInput = {
 /**
  *
  * @param existingAccounts
- * @param items: value resulting of importAccountsMakeItems
+ * @param items: import items to process
  * @params selectedAccounts: array of all account ids selected by user for import
  * @param syncedNewAccounts: accounts resulting of syncNewAccountsToImport(). all accounts that would be missing from that list would be ignored to be imported (fresh sync is needed to make sure the accounts are "ready")
  * @returns all accounts

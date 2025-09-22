@@ -1,5 +1,6 @@
 import { client, v2 } from "@datadog/datadog-api-client";
 import { AccountType } from "./currencies";
+import { Dist } from "./measure";
 
 const configuration = client.createConfiguration({
   authMethods: {
@@ -20,6 +21,10 @@ export interface LogEntry {
   accountType: AccountType;
   transactions: number;
   accountAddressOrXpub: string;
+  totalNetworkCalls: number;
+  networkCallsByDomain: Record<string, number>;
+  cpu: Dist;
+  memory: Dist;
 }
 
 export async function submitLogs(entries: LogEntry[]) {
