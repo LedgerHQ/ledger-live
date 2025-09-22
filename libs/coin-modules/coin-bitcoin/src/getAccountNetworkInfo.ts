@@ -56,10 +56,9 @@ export async function getAccountNetworkInfo(account: Account): Promise<NetworkIn
 
   // --- Enforce network floor (+1 sat/vB safety) and preserve strict ordering ---
   // const minRelayFloor = getMinRelayFloorSatVb(account.currency);
-  // let clamped = clampFeesToFloor(feesPerByte, minRelayFloor);
 
   // --- Enforce dynamic floor (+1 sat/vB safety) and preserve strict ordering ---
-  let clamped = feesPerByte.map(clamp(floorSatPerVB))
+  let clamped = feesPerByte.map(clamp(floorSatPerVB));
   clamped = avoidDups(clamped);
 
   const feeItems = {
