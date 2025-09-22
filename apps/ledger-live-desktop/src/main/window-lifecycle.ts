@@ -79,29 +79,6 @@ export const loadWindow = async () => {
     fullUrl.searchParams.append("appLocale", app.getLocale());
     fullUrl.searchParams.append("systemLocale", app.getSystemLocale());
 
-    if (__DEV__) {
-      const setUserAgent = (webContents: Electron.WebContents) => {
-        webContents.setUserAgent(`${webContents.getUserAgent()} LedgerLive/${__APP_VERSION__}`);
-      };
-      setUserAgent(mainWindow.webContents);
-      mainWindow.webContents.on("did-attach-webview", function (_event, webContents) {
-        setUserAgent(webContents);
-
-        // Track and clean up a webview's DevTools WebContents to avoid orphaned DevTools windows.
-        let devtoolContents: WebContents | null = null;
-        webContents.on("devtools-opened", () => {
-          devtoolContents = webContents.devToolsWebContents;
-          devtoolContents?.on("destroyed", () => {
-            devtoolContents = null;
-          });
-        });
-
-        webContents.on("destroyed", () => {
-          devtoolContents?.close();
-        });
-      });
-    }
-
     await mainWindow.loadURL(fullUrl.href);
   }
 };
@@ -223,6 +200,31 @@ function setupMainWindowHandlers() {
     }
     return false;
   });
+
+  // Track and clean up a webview's DevTools WebContents to avoid orphaned DevTools windows.
+  mainWindow.webContents.on("did-attach-webview", function (_event, webContents) {
+    let devtoolContents: WebContents | null = null;
+    webContents.on("devtools-opened", () => {
+      devtoolContents = webContents.devToolsWebContents;
+      devtoolContents?.on("destroyed", () => {
+        devtoolContents = null;
+      });
+    });
+
+    webContents.on("destroyed", () => {
+      devtoolContents?.close();
+    });
+  });
+
+  if (__DEV__) {
+    const setUserAgent = (webContents: Electron.WebContents) => {
+      webContents.setUserAgent(`${webContents.getUserAgent()} LedgerLive/${__APP_VERSION__}`);
+    };
+    setUserAgent(mainWindow.webContents);
+    mainWindow.webContents.on("did-attach-webview", function (_event, webContents) {
+      setUserAgent(webContents);
+    });
+  }
 }
 
 /**

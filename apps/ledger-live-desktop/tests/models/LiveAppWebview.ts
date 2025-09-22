@@ -8,6 +8,8 @@ export class LiveAppWebview {
   readonly page: Page;
   readonly electronApp: ElectronApplication;
   readonly liveAppTitle: Locator;
+  readonly liveAppDevtools: Locator;
+  readonly liveAppClose: Locator;
   readonly liveAppLoadingSpinner: Locator;
   readonly webview: Locator;
   readonly selectAssetSearchBar: Locator;
@@ -18,6 +20,8 @@ export class LiveAppWebview {
     this.electronApp = electronApp;
     this.webview = page.locator("webview");
     this.liveAppTitle = page.getByTestId("live-app-title");
+    this.liveAppDevtools = page.getByTestId("live-app-devtools");
+    this.liveAppClose = page.getByTestId("live-app-close");
     this.liveAppLoadingSpinner = page.getByTestId("live-app-loading-spinner");
     this.selectAssetSearchBar = page.getByTestId("select-asset-drawer-search-input");
   }
@@ -56,6 +60,53 @@ export class LiveAppWebview {
 
   async getLiveAppTitle() {
     return await this.liveAppTitle.textContent();
+  }
+
+  async openDevTools() {
+    // There is likely some race condition in the page and without hover() you click on the element before all it's event listeners are setup.
+    // https://github.com/microsoft/playwright/issues/20253#issuecomment-1398568789
+    await this.liveAppDevtools.hover();
+    await this.liveAppDevtools.click();
+  }
+
+  async closeLiveApp() {
+    // There is likely some race condition in the page and without hover() you click on the element before all it's event listeners are setup.
+    // https://github.com/microsoft/playwright/issues/20253#issuecomment-1398568789
+    await this.liveAppClose.hover();
+    await this.liveAppClose.click();
+  }
+
+  async checkDevToolsOpened() {
+    const all = this.electronApp.windows();
+    let devtools: Page;
+    if (all.length > 2) {
+      devtools = all[2];
+    } else {
+      devtools = await this.electronApp.waitForEvent("window", {
+        timeout: this.defaultWebViewTimeout,
+      });
+    }
+
+    await devtools.waitForLoadState("domcontentloaded", {
+      timeout: this.defaultWebViewTimeout,
+    });
+    devtools.setDefaultTimeout(this.defaultWebViewTimeout);
+
+    const newAll = this.electronApp.windows();
+    expect(newAll.length).toBe(3);
+    expect(devtools.title()).resolves.toBe("DevTools");
+  }
+
+  async checkDevToolsClosed() {
+    const all = this.electronApp.windows();
+    const titles = await Promise.all(all.map(page => page.title()));
+    const devToolsIndex = titles.findIndex(title => title === "DevTools");
+    const devtools = devToolsIndex !== -1 ? all[devToolsIndex] : undefined;
+    await devtools?.waitForEvent("close", { timeout: this.defaultWebViewTimeout });
+
+    const newAll = this.electronApp.windows();
+    expect(newAll.length).toBe(1);
+    expect(Promise.all(newAll.map(w => w.title()))).resolves.not.toContain("DevTools");
   }
 
   async getLiveAppDappURL() {
