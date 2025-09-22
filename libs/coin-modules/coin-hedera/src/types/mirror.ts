@@ -17,7 +17,7 @@ export interface HederaMirrorTokenTransfer {
 export interface HederaMirrorTransaction {
   transfers: HederaMirrorCoinTransfer[];
   token_transfers: HederaMirrorTokenTransfer[];
-  charged_tx_fee: string;
+  charged_tx_fee: number;
   transaction_hash: string;
   consensus_timestamp: string;
   result: string;

@@ -67,7 +67,7 @@ describe("listOperations", () => {
       {
         consensus_timestamp: "1625097600.000000000",
         transaction_hash: "hash1",
-        charged_tx_fee: "500000",
+        charged_tx_fee: 500000,
         result: "SUCCESS",
         memo_base64: "test-memo",
         token_transfers: [],
@@ -129,7 +129,7 @@ describe("listOperations", () => {
       {
         consensus_timestamp: "1625097600.000000000",
         transaction_hash: "hash1",
-        charged_tx_fee: "500000",
+        charged_tx_fee: 500000,
         result: "SUCCESS",
         token_transfers: [
           { token_id: tokenId, account: address, amount: "-1000" },
@@ -187,7 +187,7 @@ describe("listOperations", () => {
       {
         consensus_timestamp: "1625097600.000000000",
         transaction_hash: "hash1",
-        charged_tx_fee: "500000",
+        charged_tx_fee: 500000,
         result: "SUCCESS",
         token_transfers: [],
         transfers: [{ account: address, amount: "-500000" }],
@@ -236,7 +236,7 @@ describe("listOperations", () => {
       {
         consensus_timestamp: "1625097600.000000000",
         transaction_hash: "hash1",
-        charged_tx_fee: "500000",
+        charged_tx_fee: 500000,
         result: "SUCCESS",
         token_transfers: [
           { token_id: tokenId, account: address, amount: "-1000" },
@@ -301,7 +301,7 @@ describe("listOperations", () => {
       {
         consensus_timestamp: "1625097600.000000000",
         transaction_hash: "hash1",
-        charged_tx_fee: "500000",
+        charged_tx_fee: 500000,
         result: "INVALID_SIGNATURE",
         memo_base64: null,
         token_transfers: [],

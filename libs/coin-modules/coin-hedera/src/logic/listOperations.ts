@@ -56,12 +56,12 @@ export async function listOperations({
     };
 
     if (tokenTransfers.length > 0) {
-      const tokenId = rawTx.token_transfers[0].token_id;
+      const tokenId = tokenTransfers[0].token_id;
       const token = findTokenByAddressInCurrency(tokenId, currency.id);
       if (!token) continue;
 
       const encodedTokenId = encodeTokenAccountId(ledgerAccountId, token);
-      const { type, value, senders, recipients } = parseTransfers(rawTx.token_transfers, address);
+      const { type, value, senders, recipients } = parseTransfers(tokenTransfers, address);
       const extra = { ...commonExtra };
 
       // add main FEES coin operation for send token transfer
@@ -101,7 +101,7 @@ export async function listOperations({
         extra,
       });
     } else if (transfers.length > 0) {
-      const { type, value, senders, recipients } = parseTransfers(rawTx.transfers, address);
+      const { type, value, senders, recipients } = parseTransfers(transfers, address);
       const extra = { ...commonExtra };
       let operationType = type;
 
