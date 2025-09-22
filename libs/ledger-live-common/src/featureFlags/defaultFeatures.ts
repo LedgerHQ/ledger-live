@@ -685,6 +685,7 @@ export const DEFAULT_FEATURES: Features = {
     ...DEFAULT_FEATURE,
     params: {},
   },
+  llmHomescreen: DEFAULT_FEATURE,
   supportDeviceApex: DEFAULT_FEATURE,
   llmSyncOnboardingIncr1: DEFAULT_FEATURE,
   noah: DEFAULT_FEATURE,
