@@ -21,7 +21,7 @@ const getPercentageDisplay = (percent: number) => {
   if (percent < 0) {
     return {
       color: "var(--colors-surface-status-error-strong-default)",
-      text: `-${percent}%`,
+      text: `-${Math.abs(percent)}%`,
     };
   }
   return {
@@ -40,10 +40,19 @@ export const MarketPriceIndicator = ({ percent, price }: { percent: number; pric
       alignItems="flex-end"
       width="fit-content"
     >
-      <Text variant="body" fontWeight="semiBold" mb="4px">
+      <Text
+        data-testid="market-price-indicator-value"
+        variant="body"
+        fontWeight="semiBold"
+        mb="4px"
+      >
         {price}
       </Text>
-      <Text color={percentageDisplay.color} fontSize="12px">
+      <Text
+        data-testid="market-price-indicator-percent"
+        color={percentageDisplay.color}
+        fontSize="12px"
+      >
         {percentageDisplay.text}
       </Text>
     </Wrapper>

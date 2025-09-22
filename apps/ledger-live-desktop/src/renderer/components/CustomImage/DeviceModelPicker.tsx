@@ -11,22 +11,23 @@ type Props = {
   onChange: (deviceModelId: CLSSupportedDeviceModelId) => void;
 };
 
+function DeviceIcon({ deviceModelId }: { deviceModelId: CLSSupportedDeviceModelId }) {
+  switch (deviceModelId) {
+    case DeviceModelId.stax:
+      return <Icons.Stax size="M" />;
+    case DeviceModelId.europa:
+      return <Icons.Flex size="M" />;
+    case DeviceModelId.apex:
+      return <Icons.PiggyBank size="M" />;
+    default:
+      return null;
+  }
+}
+
 export default function DeviceModelPicker({
   deviceModelId: initialDeviceModelId,
   onChange,
 }: Props) {
-  const DeviceIcon = (deviceModelId: DeviceModelId) => {
-    switch (deviceModelId) {
-      case DeviceModelId.stax:
-        return <Icons.Stax size="M" />;
-      case DeviceModelId.europa:
-        return <Icons.Flex size="M" />;
-      case DeviceModelId.apex:
-        return <Icons.PiggyBank size="M" />;
-      default:
-        return null;
-    }
-  };
   return (
     <Flex height={40} justifyContent={"center"} alignItems="center">
       <Bar
@@ -44,7 +45,7 @@ export default function DeviceModelPicker({
             px={3}
             key={`settings-developer-debug-cls-${deviceModelId}`}
           >
-            {DeviceIcon(deviceModelId)}
+            <DeviceIcon deviceModelId={deviceModelId} />
             <Text size="medium" alignSelf="center" color="inherit" ml={1}>
               {getDeviceModel(deviceModelId).productName}
             </Text>
