@@ -129,25 +129,3 @@ async function handleAssetFromSelected(
     await legacyDrawerFlow(app, electronApp, swap);
   }
 }
-
-export async function performSwapUntilDeviceVerificationStep(
-  app: Application,
-  electronApp: ElectronApplication,
-  swap: Swap,
-  selectedProvider: string,
-  amount: string,
-) {
-  await app.swap.clickExchangeButton(electronApp, selectedProvider);
-
-  const amountTo = await app.swapDrawer.getAmountToReceive();
-  const fees = await app.swapDrawer.getFees();
-
-  swap.setAmountToReceive(amountTo);
-  swap.setFeesAmount(fees);
-
-  await app.swapDrawer.verifyAmountToReceive(amountTo);
-  await app.swapDrawer.verifyAmountSent(amount.toString(), swap.accountToDebit.currency.ticker);
-  await app.swapDrawer.verifySourceAccount(swap.accountToDebit.currency.name);
-  await app.swapDrawer.verifyTargetCurrency(swap.accountToCredit.currency.name);
-  await app.swapDrawer.verifyProvider(selectedProvider);
-}

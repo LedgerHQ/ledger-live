@@ -11,11 +11,7 @@ import { addTmsLink } from "../utils/allureUtils";
 import { getDescription } from "../utils/customJsonReporter";
 import { Provider } from "@ledgerhq/live-common/e2e/enum/Provider";
 import { CLI } from "../utils/cliUtils";
-import {
-  setupEnv,
-  performSwapUntilQuoteSelectionStep,
-  performSwapUntilDeviceVerificationStep,
-} from "../utils/swapUtils";
+import { setupEnv, performSwapUntilQuoteSelectionStep } from "../utils/swapUtils";
 import { getEnv } from "@ledgerhq/live-env";
 import { overrideNetworkPayload } from "../utils/networkUtils";
 
@@ -269,13 +265,7 @@ test.describe("Swap - Rejected on device", () => {
       await performSwapUntilQuoteSelectionStep(app, electronApp, rejectedSwap, minAmount);
       const selectedProvider = await app.swap.selectExchangeWithoutKyc(electronApp);
 
-      await performSwapUntilDeviceVerificationStep(
-        app,
-        electronApp,
-        rejectedSwap,
-        selectedProvider,
-        minAmount,
-      );
+      await app.swap.clickExchangeButton(electronApp, selectedProvider);
       await app.speculos.verifyAmountsAndRejectSwap(rejectedSwap, minAmount);
       await app.swapDrawer.verifyExchangeErrorTextContent("Operation denied on device");
     },
@@ -398,13 +388,7 @@ for (const { swap, xrayTicket, userData, errorMessage } of swapWithDifferentSeed
           await app.swap.clickExchangeButton(electronApp, selectedProvider);
           await app.swapDrawer.checkErrorMessage(errorMessage);
         } else {
-          await performSwapUntilDeviceVerificationStep(
-            app,
-            electronApp,
-            swap,
-            selectedProvider,
-            minAmount,
-          );
+          await app.swap.clickExchangeButton(electronApp, selectedProvider);
           await app.speculos.verifyAmountsAndAcceptSwapForDifferentSeed(swap, minAmount);
           await app.swapDrawer.verifyExchangeCompletedTextContent(
             swap.accountToCredit.currency.name,
@@ -1021,13 +1005,7 @@ for (const { fromAccount, toAccount, xrayTicket } of swapMax) {
         const selectedProvider = await app.swap.selectExchangeWithoutKyc(electronApp);
         const swap = new Swap(fromAccount, toAccount, amountToSend);
 
-        await performSwapUntilDeviceVerificationStep(
-          app,
-          electronApp,
-          swap,
-          selectedProvider,
-          amountToSend,
-        );
+        await app.swap.clickExchangeButton(electronApp, selectedProvider);
         await app.speculos.verifyAmountsAndAcceptSwap(swap, amountToSend);
         await app.swapDrawer.verifyExchangeCompletedTextContent(swap.accountToCredit.currency.name);
       },
