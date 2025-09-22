@@ -26,7 +26,6 @@ const fallbackDefaultAppsToInstall = ["Bitcoin", "Ethereum", "Polygon"];
 interface SecondStepSyncOnboardingProps {
   device: Device;
   companionStep: CompanionStep;
-  isCollapsed: boolean;
   handleDone: (done: boolean) => void;
   analyticsSeedConfiguration: React.MutableRefObject<SeedOriginType | undefined>;
 }
@@ -34,7 +33,6 @@ interface SecondStepSyncOnboardingProps {
 const SecondStepSyncOnboarding = ({
   device,
   companionStep,
-  isCollapsed,
   handleDone,
   analyticsSeedConfiguration,
 }: SecondStepSyncOnboardingProps) => {
@@ -80,6 +78,7 @@ const SecondStepSyncOnboarding = ({
       if (!done || analyticsSeedConfiguration.current === "new_seed") return handleDone(done);
 
       setIsFinished(true);
+
       sharedHeight.value = withTiming(0, { duration: EXIT_TIMING });
       setTimeout(() => {
         handleDone(done);
@@ -89,19 +88,22 @@ const SecondStepSyncOnboarding = ({
   );
 
   useEffect(() => {
-    if (!isCollapsed) {
-      sharedOpacity.value = withTiming(100, { duration: ENTRY_OPACITY_TIMING });
-    } else {
+    if (companionStep === COMPANION_STATE.SETUP || companionStep === COMPANION_STATE.EXIT) {
       sharedOpacity.value = withTiming(0, { duration: EXIT_TIMING });
+    } else {
+      sharedOpacity.value = withTiming(100, { duration: ENTRY_OPACITY_TIMING });
     }
-  }, [isCollapsed, sharedOpacity]);
+  }, [companionStep, sharedOpacity]);
 
   return (
     <CollapsibleStep
-      isCollapsed={isCollapsed}
+      showDoneSubtitle={isFinished}
+      isCollapsed={
+        companionStep === COMPANION_STATE.SETUP || companionStep === COMPANION_STATE.EXIT
+      }
       title={t("syncOnboarding.secureCryptoStep.title")}
       doneSubTitle={t("syncOnboarding.secureCryptoStep.doneSubTitle")}
-      status={companionStep === COMPANION_STATE.EXIT || isFinished ? "complete" : "unfinished"}
+      status={isFinished || companionStep === COMPANION_STATE.EXIT ? "complete" : "unfinished"}
       background={
         isFinished ? null : (
           <Animated.View
@@ -117,7 +119,7 @@ const SecondStepSyncOnboarding = ({
     >
       <Animated.ScrollView style={animatedStyle} showsVerticalScrollIndicator={false}>
         <Animated.View onLayout={handleLayout}>
-          <Box mt={3}>
+          <Box mt={isFinished ? 0 : 3}>
             {companionStep === SEED_STATE.NEW_SEED ? (
               <NewSeedConfirmation
                 handlePress={handleExit}

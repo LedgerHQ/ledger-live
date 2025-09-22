@@ -13,6 +13,7 @@ interface CollapsibleStepProps extends PropsWithChildren {
   hideTitle?: boolean;
   background?: React.JSX.Element | null;
   doneSubTitle?: string;
+  showDoneSubtitle?: boolean;
 }
 
 interface CenterCircleProps {
@@ -58,6 +59,7 @@ const CollapsibleStep = ({
   hideTitle,
   background: Background,
   doneSubTitle,
+  showDoneSubtitle,
 }: CollapsibleStepProps) => {
   if (isCollapsed) {
     return (
@@ -68,7 +70,7 @@ const CollapsibleStep = ({
           </Text>
           <StatusIcon status={status} />
         </Flex>
-        {status === "complete" && doneSubTitle && (
+        {(showDoneSubtitle || status === "complete") && doneSubTitle && (
           <Text variant="paragraph" color="neutral.c70" mt={3}>
             {doneSubTitle}
           </Text>
@@ -84,12 +86,19 @@ const CollapsibleStep = ({
       {hideTitle ? (
         <StatusIcon status={status} isAbsolute={hideTitle} />
       ) : (
-        <Flex justifyContent="space-between" alignItems="center" flexDirection="row">
-          <Text fontSize="16px" fontWeight="bold">
-            {title}
-          </Text>
-          <StatusIcon status={status} />
-        </Flex>
+        <>
+          <Flex justifyContent="space-between" alignItems="center" flexDirection="row">
+            <Text fontSize="16px" fontWeight="bold">
+              {title}
+            </Text>
+            <StatusIcon status={status} />
+          </Flex>
+          {showDoneSubtitle && doneSubTitle && (
+            <Text variant="paragraph" color="neutral.c70" mt={3}>
+              {doneSubTitle}
+            </Text>
+          )}
+        </>
       )}
       {children}
     </CollapsibleCard>

@@ -267,9 +267,6 @@ export const TwoStepSyncOnboardingCompanion: React.FC<TwoStepSyncOnboardingCompa
             />
             <SecondStepSyncOnboarding
               companionStep={companionStep}
-              isCollapsed={
-                companionStep === COMPANION_STATE.SETUP || companionStep === COMPANION_STATE.EXIT
-              }
               device={device}
               handleDone={handleSecondStepFinish}
               analyticsSeedConfiguration={analyticsSeedConfiguration}
