@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.94.0-next.1
+
+### Minor Changes
+
+- [#11927](https://github.com/LedgerHQ/ledger-live/pull/11927) [`6350cfc`](https://github.com/LedgerHQ/ledger-live/commit/6350cfce3b13b8bff7985175777845e647096d5e) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Fix navigation inside the GeneralSettings Navigator
+
 ## 3.94.0-next.0
 
 ### Minor Changes
