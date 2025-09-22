@@ -92,7 +92,7 @@ export class Currency {
   static readonly POL = new Currency("Polygon", "POL", "polygon", AppInfos.POLYGON, [
     Network.POLYGON,
   ]);
-  static readonly BSC = new Currency("BNB Chain", "BNB", "bsc", AppInfos.BNB_CHAIN, [
+  static readonly BSC = new Currency("BNB Chain", "BNB", "bnb", AppInfos.BNB_CHAIN, [
     Network.BNB_CHAIN,
   ]);
   static readonly TON = new Currency("TON", "TON", "ton", AppInfos.TON, [Network.TON]);
