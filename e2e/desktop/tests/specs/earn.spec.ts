@@ -131,7 +131,7 @@ const earnDashboardCurrencies = [
   //   staking: false,
   // },
   {
-    account: Account.SOL_1,
+    account: Account.SOL_3,
     xrayTicket: "B2CQA-3680",
     staking: false,
   },
