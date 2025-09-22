@@ -16,6 +16,10 @@ exports[`formatCurrencyUnit with custom options with locale de-DE should correct
 
 exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Ark unit (ARK) 1`] = `"123.456.789,00000000- -ARK"`;
 
+exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Assethub Polkadot unit (DOT) 1`] = `"1.234.567,8900000000- -DOT"`;
+
+exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Assethub Westend unit (WND) 1`] = `"12.345,678900000000- -WND"`;
+
 exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Astar unit (ASTR) 1`] = `"0,012345678900000000- -ASTR"`;
 
 exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Atheios unit (ATH) 1`] = `"123.456.789,00000000- -ATH"`;
@@ -57,6 +61,10 @@ exports[`formatCurrencyUnit with custom options with locale de-DE should correct
 exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Boba unit (ETH) 1`] = `"0,012345678900000000- -ETH"`;
 
 exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Callisto unit (CLO) 1`] = `"123.456.789,00000000- -CLO"`;
+
+exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Canton Network (Devnet) unit (cc) 1`] = `"0,00000000000000000000000000000000000000- -CC"`;
+
+exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Canton Network (Localnet) unit (cc) 1`] = `"0,00000000000000000000000000000000000000- -CC"`;
 
 exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Canton Network unit (cc) 1`] = `"123.456,78900000000- -CC"`;
 
@@ -165,6 +173,8 @@ exports[`formatCurrencyUnit with custom options with locale de-DE should correct
 exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Injective unit (Injective) 1`] = `"0,012345678900000000- -INJ"`;
 
 exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Internet Computer unit (ICP) 1`] = `"123.456.789,00000000- -ICP"`;
+
+exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format KASPA unit (KAS) 1`] = `"123.456.789,00000000- -KAS"`;
 
 exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Kin unit (KIN) 1`] = `"123.456.789.000,00000- -KIN"`;
 
@@ -334,6 +344,8 @@ exports[`formatCurrencyUnit with custom options with locale de-DE should correct
 
 exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Waves unit (WAVES) 1`] = `"123.456.789,00000000- -WAVES"`;
 
+exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Westend unit (WND) 1`] = `"12.345,678900000000- -WND"`;
+
 exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format XRP unit (XRP) 1`] = `"12.345.678.900,000000- -XRP"`;
 
 exports[`formatCurrencyUnit with custom options with locale de-DE should correctly format Xion unit (Xion) 1`] = `"12.345.678.900,000000- -XION"`;
@@ -373,6 +385,10 @@ exports[`formatCurrencyUnit with custom options with locale en-US should correct
 exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Arbitrum unit (ETH) 1`] = `"0.012345678900000000- -ETH"`;
 
 exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Ark unit (ARK) 1`] = `"123,456,789.00000000- -ARK"`;
+
+exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Assethub Polkadot unit (DOT) 1`] = `"1,234,567.8900000000- -DOT"`;
+
+exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Assethub Westend unit (WND) 1`] = `"12,345.678900000000- -WND"`;
 
 exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Astar unit (ASTR) 1`] = `"0.012345678900000000- -ASTR"`;
 
@@ -415,6 +431,10 @@ exports[`formatCurrencyUnit with custom options with locale en-US should correct
 exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Boba unit (ETH) 1`] = `"0.012345678900000000- -ETH"`;
 
 exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Callisto unit (CLO) 1`] = `"123,456,789.00000000- -CLO"`;
+
+exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Canton Network (Devnet) unit (cc) 1`] = `"0.00000000000000000000000000000000000000- -CC"`;
+
+exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Canton Network (Localnet) unit (cc) 1`] = `"0.00000000000000000000000000000000000000- -CC"`;
 
 exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Canton Network unit (cc) 1`] = `"123,456.78900000000- -CC"`;
 
@@ -523,6 +543,8 @@ exports[`formatCurrencyUnit with custom options with locale en-US should correct
 exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Injective unit (Injective) 1`] = `"0.012345678900000000- -INJ"`;
 
 exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Internet Computer unit (ICP) 1`] = `"123,456,789.00000000- -ICP"`;
+
+exports[`formatCurrencyUnit with custom options with locale en-US should correctly format KASPA unit (KAS) 1`] = `"123,456,789.00000000- -KAS"`;
 
 exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Kin unit (KIN) 1`] = `"123,456,789,000.00000- -KIN"`;
 
@@ -692,6 +714,8 @@ exports[`formatCurrencyUnit with custom options with locale en-US should correct
 
 exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Waves unit (WAVES) 1`] = `"123,456,789.00000000- -WAVES"`;
 
+exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Westend unit (WND) 1`] = `"12,345.678900000000- -WND"`;
+
 exports[`formatCurrencyUnit with custom options with locale en-US should correctly format XRP unit (XRP) 1`] = `"12,345,678,900.000000- -XRP"`;
 
 exports[`formatCurrencyUnit with custom options with locale en-US should correctly format Xion unit (Xion) 1`] = `"12,345,678,900.000000- -XION"`;
@@ -731,6 +755,10 @@ exports[`formatCurrencyUnit with custom options with locale es-ES should correct
 exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Arbitrum unit (ETH) 1`] = `"0,012345678900000000- -ETH"`;
 
 exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Ark unit (ARK) 1`] = `"123.456.789,00000000- -ARK"`;
+
+exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Assethub Polkadot unit (DOT) 1`] = `"1.234.567,8900000000- -DOT"`;
+
+exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Assethub Westend unit (WND) 1`] = `"12.345,678900000000- -WND"`;
 
 exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Astar unit (ASTR) 1`] = `"0,012345678900000000- -ASTR"`;
 
@@ -773,6 +801,10 @@ exports[`formatCurrencyUnit with custom options with locale es-ES should correct
 exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Boba unit (ETH) 1`] = `"0,012345678900000000- -ETH"`;
 
 exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Callisto unit (CLO) 1`] = `"123.456.789,00000000- -CLO"`;
+
+exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Canton Network (Devnet) unit (cc) 1`] = `"0,00000000000000000000000000000000000000- -CC"`;
+
+exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Canton Network (Localnet) unit (cc) 1`] = `"0,00000000000000000000000000000000000000- -CC"`;
 
 exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Canton Network unit (cc) 1`] = `"123.456,78900000000- -CC"`;
 
@@ -881,6 +913,8 @@ exports[`formatCurrencyUnit with custom options with locale es-ES should correct
 exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Injective unit (Injective) 1`] = `"0,012345678900000000- -INJ"`;
 
 exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Internet Computer unit (ICP) 1`] = `"123.456.789,00000000- -ICP"`;
+
+exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format KASPA unit (KAS) 1`] = `"123.456.789,00000000- -KAS"`;
 
 exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Kin unit (KIN) 1`] = `"123.456.789.000,00000- -KIN"`;
 
@@ -1050,6 +1084,8 @@ exports[`formatCurrencyUnit with custom options with locale es-ES should correct
 
 exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Waves unit (WAVES) 1`] = `"123.456.789,00000000- -WAVES"`;
 
+exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Westend unit (WND) 1`] = `"12.345,678900000000- -WND"`;
+
 exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format XRP unit (XRP) 1`] = `"12.345.678.900,000000- -XRP"`;
 
 exports[`formatCurrencyUnit with custom options with locale es-ES should correctly format Xion unit (Xion) 1`] = `"12.345.678.900,000000- -XION"`;
@@ -1089,6 +1125,10 @@ exports[`formatCurrencyUnit with custom options with locale fr-FR should correct
 exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Arbitrum unit (ETH) 1`] = `"0,012345678900000000- -ETH"`;
 
 exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Ark unit (ARK) 1`] = `"123 456 789,00000000- -ARK"`;
+
+exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Assethub Polkadot unit (DOT) 1`] = `"1 234 567,8900000000- -DOT"`;
+
+exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Assethub Westend unit (WND) 1`] = `"12 345,678900000000- -WND"`;
 
 exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Astar unit (ASTR) 1`] = `"0,012345678900000000- -ASTR"`;
 
@@ -1131,6 +1171,10 @@ exports[`formatCurrencyUnit with custom options with locale fr-FR should correct
 exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Boba unit (ETH) 1`] = `"0,012345678900000000- -ETH"`;
 
 exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Callisto unit (CLO) 1`] = `"123 456 789,00000000- -CLO"`;
+
+exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Canton Network (Devnet) unit (cc) 1`] = `"0,00000000000000000000000000000000000000- -CC"`;
+
+exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Canton Network (Localnet) unit (cc) 1`] = `"0,00000000000000000000000000000000000000- -CC"`;
 
 exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Canton Network unit (cc) 1`] = `"123 456,78900000000- -CC"`;
 
@@ -1239,6 +1283,8 @@ exports[`formatCurrencyUnit with custom options with locale fr-FR should correct
 exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Injective unit (Injective) 1`] = `"0,012345678900000000- -INJ"`;
 
 exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Internet Computer unit (ICP) 1`] = `"123 456 789,00000000- -ICP"`;
+
+exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format KASPA unit (KAS) 1`] = `"123 456 789,00000000- -KAS"`;
 
 exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Kin unit (KIN) 1`] = `"123 456 789 000,00000- -KIN"`;
 
@@ -1408,6 +1454,8 @@ exports[`formatCurrencyUnit with custom options with locale fr-FR should correct
 
 exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Waves unit (WAVES) 1`] = `"123 456 789,00000000- -WAVES"`;
 
+exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Westend unit (WND) 1`] = `"12 345,678900000000- -WND"`;
+
 exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format XRP unit (XRP) 1`] = `"12 345 678 900,000000- -XRP"`;
 
 exports[`formatCurrencyUnit with custom options with locale fr-FR should correctly format Xion unit (Xion) 1`] = `"12 345 678 900,000000- -XION"`;
@@ -1447,6 +1495,10 @@ exports[`formatCurrencyUnit with custom options with locale ja-JP should correct
 exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Arbitrum unit (ETH) 1`] = `"0.012345678900000000- -ETH"`;
 
 exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Ark unit (ARK) 1`] = `"123,456,789.00000000- -ARK"`;
+
+exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Assethub Polkadot unit (DOT) 1`] = `"1,234,567.8900000000- -DOT"`;
+
+exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Assethub Westend unit (WND) 1`] = `"12,345.678900000000- -WND"`;
 
 exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Astar unit (ASTR) 1`] = `"0.012345678900000000- -ASTR"`;
 
@@ -1489,6 +1541,10 @@ exports[`formatCurrencyUnit with custom options with locale ja-JP should correct
 exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Boba unit (ETH) 1`] = `"0.012345678900000000- -ETH"`;
 
 exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Callisto unit (CLO) 1`] = `"123,456,789.00000000- -CLO"`;
+
+exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Canton Network (Devnet) unit (cc) 1`] = `"0.00000000000000000000000000000000000000- -CC"`;
+
+exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Canton Network (Localnet) unit (cc) 1`] = `"0.00000000000000000000000000000000000000- -CC"`;
 
 exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Canton Network unit (cc) 1`] = `"123,456.78900000000- -CC"`;
 
@@ -1597,6 +1653,8 @@ exports[`formatCurrencyUnit with custom options with locale ja-JP should correct
 exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Injective unit (Injective) 1`] = `"0.012345678900000000- -INJ"`;
 
 exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Internet Computer unit (ICP) 1`] = `"123,456,789.00000000- -ICP"`;
+
+exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format KASPA unit (KAS) 1`] = `"123,456,789.00000000- -KAS"`;
 
 exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Kin unit (KIN) 1`] = `"123,456,789,000.00000- -KIN"`;
 
@@ -1766,6 +1824,8 @@ exports[`formatCurrencyUnit with custom options with locale ja-JP should correct
 
 exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Waves unit (WAVES) 1`] = `"123,456,789.00000000- -WAVES"`;
 
+exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Westend unit (WND) 1`] = `"12,345.678900000000- -WND"`;
+
 exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format XRP unit (XRP) 1`] = `"12,345,678,900.000000- -XRP"`;
 
 exports[`formatCurrencyUnit with custom options with locale ja-JP should correctly format Xion unit (Xion) 1`] = `"12,345,678,900.000000- -XION"`;
@@ -1805,6 +1865,10 @@ exports[`formatCurrencyUnit with custom options with locale ko-KR should correct
 exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Arbitrum unit (ETH) 1`] = `"0.012345678900000000- -ETH"`;
 
 exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Ark unit (ARK) 1`] = `"123,456,789.00000000- -ARK"`;
+
+exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Assethub Polkadot unit (DOT) 1`] = `"1,234,567.8900000000- -DOT"`;
+
+exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Assethub Westend unit (WND) 1`] = `"12,345.678900000000- -WND"`;
 
 exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Astar unit (ASTR) 1`] = `"0.012345678900000000- -ASTR"`;
 
@@ -1847,6 +1911,10 @@ exports[`formatCurrencyUnit with custom options with locale ko-KR should correct
 exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Boba unit (ETH) 1`] = `"0.012345678900000000- -ETH"`;
 
 exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Callisto unit (CLO) 1`] = `"123,456,789.00000000- -CLO"`;
+
+exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Canton Network (Devnet) unit (cc) 1`] = `"0.00000000000000000000000000000000000000- -CC"`;
+
+exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Canton Network (Localnet) unit (cc) 1`] = `"0.00000000000000000000000000000000000000- -CC"`;
 
 exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Canton Network unit (cc) 1`] = `"123,456.78900000000- -CC"`;
 
@@ -1955,6 +2023,8 @@ exports[`formatCurrencyUnit with custom options with locale ko-KR should correct
 exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Injective unit (Injective) 1`] = `"0.012345678900000000- -INJ"`;
 
 exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Internet Computer unit (ICP) 1`] = `"123,456,789.00000000- -ICP"`;
+
+exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format KASPA unit (KAS) 1`] = `"123,456,789.00000000- -KAS"`;
 
 exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Kin unit (KIN) 1`] = `"123,456,789,000.00000- -KIN"`;
 
@@ -2124,6 +2194,8 @@ exports[`formatCurrencyUnit with custom options with locale ko-KR should correct
 
 exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Waves unit (WAVES) 1`] = `"123,456,789.00000000- -WAVES"`;
 
+exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Westend unit (WND) 1`] = `"12,345.678900000000- -WND"`;
+
 exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format XRP unit (XRP) 1`] = `"12,345,678,900.000000- -XRP"`;
 
 exports[`formatCurrencyUnit with custom options with locale ko-KR should correctly format Xion unit (Xion) 1`] = `"12,345,678,900.000000- -XION"`;
@@ -2163,6 +2235,10 @@ exports[`formatCurrencyUnit with custom options with locale pt-BR should correct
 exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Arbitrum unit (ETH) 1`] = `"0,012345678900000000- -ETH"`;
 
 exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Ark unit (ARK) 1`] = `"123.456.789,00000000- -ARK"`;
+
+exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Assethub Polkadot unit (DOT) 1`] = `"1.234.567,8900000000- -DOT"`;
+
+exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Assethub Westend unit (WND) 1`] = `"12.345,678900000000- -WND"`;
 
 exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Astar unit (ASTR) 1`] = `"0,012345678900000000- -ASTR"`;
 
@@ -2205,6 +2281,10 @@ exports[`formatCurrencyUnit with custom options with locale pt-BR should correct
 exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Boba unit (ETH) 1`] = `"0,012345678900000000- -ETH"`;
 
 exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Callisto unit (CLO) 1`] = `"123.456.789,00000000- -CLO"`;
+
+exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Canton Network (Devnet) unit (cc) 1`] = `"0,00000000000000000000000000000000000000- -CC"`;
+
+exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Canton Network (Localnet) unit (cc) 1`] = `"0,00000000000000000000000000000000000000- -CC"`;
 
 exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Canton Network unit (cc) 1`] = `"123.456,78900000000- -CC"`;
 
@@ -2313,6 +2393,8 @@ exports[`formatCurrencyUnit with custom options with locale pt-BR should correct
 exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Injective unit (Injective) 1`] = `"0,012345678900000000- -INJ"`;
 
 exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Internet Computer unit (ICP) 1`] = `"123.456.789,00000000- -ICP"`;
+
+exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format KASPA unit (KAS) 1`] = `"123.456.789,00000000- -KAS"`;
 
 exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Kin unit (KIN) 1`] = `"123.456.789.000,00000- -KIN"`;
 
@@ -2482,6 +2564,8 @@ exports[`formatCurrencyUnit with custom options with locale pt-BR should correct
 
 exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Waves unit (WAVES) 1`] = `"123.456.789,00000000- -WAVES"`;
 
+exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Westend unit (WND) 1`] = `"12.345,678900000000- -WND"`;
+
 exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format XRP unit (XRP) 1`] = `"12.345.678.900,000000- -XRP"`;
 
 exports[`formatCurrencyUnit with custom options with locale pt-BR should correctly format Xion unit (Xion) 1`] = `"12.345.678.900,000000- -XION"`;
@@ -2521,6 +2605,10 @@ exports[`formatCurrencyUnit with custom options with locale ru-RU should correct
 exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Arbitrum unit (ETH) 1`] = `"0,012345678900000000- -ETH"`;
 
 exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Ark unit (ARK) 1`] = `"123 456 789,00000000- -ARK"`;
+
+exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Assethub Polkadot unit (DOT) 1`] = `"1 234 567,8900000000- -DOT"`;
+
+exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Assethub Westend unit (WND) 1`] = `"12 345,678900000000- -WND"`;
 
 exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Astar unit (ASTR) 1`] = `"0,012345678900000000- -ASTR"`;
 
@@ -2563,6 +2651,10 @@ exports[`formatCurrencyUnit with custom options with locale ru-RU should correct
 exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Boba unit (ETH) 1`] = `"0,012345678900000000- -ETH"`;
 
 exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Callisto unit (CLO) 1`] = `"123 456 789,00000000- -CLO"`;
+
+exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Canton Network (Devnet) unit (cc) 1`] = `"0,00000000000000000000000000000000000000- -CC"`;
+
+exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Canton Network (Localnet) unit (cc) 1`] = `"0,00000000000000000000000000000000000000- -CC"`;
 
 exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Canton Network unit (cc) 1`] = `"123 456,78900000000- -CC"`;
 
@@ -2671,6 +2763,8 @@ exports[`formatCurrencyUnit with custom options with locale ru-RU should correct
 exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Injective unit (Injective) 1`] = `"0,012345678900000000- -INJ"`;
 
 exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Internet Computer unit (ICP) 1`] = `"123 456 789,00000000- -ICP"`;
+
+exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format KASPA unit (KAS) 1`] = `"123 456 789,00000000- -KAS"`;
 
 exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Kin unit (KIN) 1`] = `"123 456 789 000,00000- -KIN"`;
 
@@ -2840,6 +2934,8 @@ exports[`formatCurrencyUnit with custom options with locale ru-RU should correct
 
 exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Waves unit (WAVES) 1`] = `"123 456 789,00000000- -WAVES"`;
 
+exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Westend unit (WND) 1`] = `"12 345,678900000000- -WND"`;
+
 exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format XRP unit (XRP) 1`] = `"12 345 678 900,000000- -XRP"`;
 
 exports[`formatCurrencyUnit with custom options with locale ru-RU should correctly format Xion unit (Xion) 1`] = `"12 345 678 900,000000- -XION"`;
@@ -2879,6 +2975,10 @@ exports[`formatCurrencyUnit with custom options with locale tr-TR should correct
 exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Arbitrum unit (ETH) 1`] = `"0,012345678900000000- -ETH"`;
 
 exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Ark unit (ARK) 1`] = `"123.456.789,00000000- -ARK"`;
+
+exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Assethub Polkadot unit (DOT) 1`] = `"1.234.567,8900000000- -DOT"`;
+
+exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Assethub Westend unit (WND) 1`] = `"12.345,678900000000- -WND"`;
 
 exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Astar unit (ASTR) 1`] = `"0,012345678900000000- -ASTR"`;
 
@@ -2921,6 +3021,10 @@ exports[`formatCurrencyUnit with custom options with locale tr-TR should correct
 exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Boba unit (ETH) 1`] = `"0,012345678900000000- -ETH"`;
 
 exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Callisto unit (CLO) 1`] = `"123.456.789,00000000- -CLO"`;
+
+exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Canton Network (Devnet) unit (cc) 1`] = `"0,00000000000000000000000000000000000000- -CC"`;
+
+exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Canton Network (Localnet) unit (cc) 1`] = `"0,00000000000000000000000000000000000000- -CC"`;
 
 exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Canton Network unit (cc) 1`] = `"123.456,78900000000- -CC"`;
 
@@ -3029,6 +3133,8 @@ exports[`formatCurrencyUnit with custom options with locale tr-TR should correct
 exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Injective unit (Injective) 1`] = `"0,012345678900000000- -INJ"`;
 
 exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Internet Computer unit (ICP) 1`] = `"123.456.789,00000000- -ICP"`;
+
+exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format KASPA unit (KAS) 1`] = `"123.456.789,00000000- -KAS"`;
 
 exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Kin unit (KIN) 1`] = `"123.456.789.000,00000- -KIN"`;
 
@@ -3198,6 +3304,8 @@ exports[`formatCurrencyUnit with custom options with locale tr-TR should correct
 
 exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Waves unit (WAVES) 1`] = `"123.456.789,00000000- -WAVES"`;
 
+exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Westend unit (WND) 1`] = `"12.345,678900000000- -WND"`;
+
 exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format XRP unit (XRP) 1`] = `"12.345.678.900,000000- -XRP"`;
 
 exports[`formatCurrencyUnit with custom options with locale tr-TR should correctly format Xion unit (Xion) 1`] = `"12.345.678.900,000000- -XION"`;
@@ -3237,6 +3345,10 @@ exports[`formatCurrencyUnit with custom options with locale zh-CN should correct
 exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Arbitrum unit (ETH) 1`] = `"0.012345678900000000- -ETH"`;
 
 exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Ark unit (ARK) 1`] = `"123,456,789.00000000- -ARK"`;
+
+exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Assethub Polkadot unit (DOT) 1`] = `"1,234,567.8900000000- -DOT"`;
+
+exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Assethub Westend unit (WND) 1`] = `"12,345.678900000000- -WND"`;
 
 exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Astar unit (ASTR) 1`] = `"0.012345678900000000- -ASTR"`;
 
@@ -3279,6 +3391,10 @@ exports[`formatCurrencyUnit with custom options with locale zh-CN should correct
 exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Boba unit (ETH) 1`] = `"0.012345678900000000- -ETH"`;
 
 exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Callisto unit (CLO) 1`] = `"123,456,789.00000000- -CLO"`;
+
+exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Canton Network (Devnet) unit (cc) 1`] = `"0.00000000000000000000000000000000000000- -CC"`;
+
+exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Canton Network (Localnet) unit (cc) 1`] = `"0.00000000000000000000000000000000000000- -CC"`;
 
 exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Canton Network unit (cc) 1`] = `"123,456.78900000000- -CC"`;
 
@@ -3387,6 +3503,8 @@ exports[`formatCurrencyUnit with custom options with locale zh-CN should correct
 exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Injective unit (Injective) 1`] = `"0.012345678900000000- -INJ"`;
 
 exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Internet Computer unit (ICP) 1`] = `"123,456,789.00000000- -ICP"`;
+
+exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format KASPA unit (KAS) 1`] = `"123,456,789.00000000- -KAS"`;
 
 exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Kin unit (KIN) 1`] = `"123,456,789,000.00000- -KIN"`;
 
@@ -3556,6 +3674,8 @@ exports[`formatCurrencyUnit with custom options with locale zh-CN should correct
 
 exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Waves unit (WAVES) 1`] = `"123,456,789.00000000- -WAVES"`;
 
+exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Westend unit (WND) 1`] = `"12,345.678900000000- -WND"`;
+
 exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format XRP unit (XRP) 1`] = `"12,345,678,900.000000- -XRP"`;
 
 exports[`formatCurrencyUnit with custom options with locale zh-CN should correctly format Xion unit (Xion) 1`] = `"12,345,678,900.000000- -XION"`;
@@ -3595,6 +3715,10 @@ exports[`formatCurrencyUnit with default options should correctly format Arbitru
 exports[`formatCurrencyUnit with default options should correctly format Arbitrum unit (ETH) 1`] = `"0.0123456"`;
 
 exports[`formatCurrencyUnit with default options should correctly format Ark unit (ARK) 1`] = `"123,456,789"`;
+
+exports[`formatCurrencyUnit with default options should correctly format Assethub Polkadot unit (DOT) 1`] = `"1,234,567"`;
+
+exports[`formatCurrencyUnit with default options should correctly format Assethub Westend unit (WND) 1`] = `"12,345.6"`;
 
 exports[`formatCurrencyUnit with default options should correctly format Astar unit (ASTR) 1`] = `"0.0123456"`;
 
@@ -3637,6 +3761,10 @@ exports[`formatCurrencyUnit with default options should correctly format Blast u
 exports[`formatCurrencyUnit with default options should correctly format Boba unit (ETH) 1`] = `"0.0123456"`;
 
 exports[`formatCurrencyUnit with default options should correctly format Callisto unit (CLO) 1`] = `"123,456,789"`;
+
+exports[`formatCurrencyUnit with default options should correctly format Canton Network (Devnet) unit (cc) 1`] = `"0"`;
+
+exports[`formatCurrencyUnit with default options should correctly format Canton Network (Localnet) unit (cc) 1`] = `"0"`;
 
 exports[`formatCurrencyUnit with default options should correctly format Canton Network unit (cc) 1`] = `"123,456"`;
 
@@ -3745,6 +3873,8 @@ exports[`formatCurrencyUnit with default options should correctly format IOV uni
 exports[`formatCurrencyUnit with default options should correctly format Injective unit (Injective) 1`] = `"0.0123456"`;
 
 exports[`formatCurrencyUnit with default options should correctly format Internet Computer unit (ICP) 1`] = `"123,456,789"`;
+
+exports[`formatCurrencyUnit with default options should correctly format KASPA unit (KAS) 1`] = `"123,456,789.00000000"`;
 
 exports[`formatCurrencyUnit with default options should correctly format Kin unit (KIN) 1`] = `"123,456,789,000"`;
 
@@ -3913,6 +4043,8 @@ exports[`formatCurrencyUnit with default options should correctly format Velas E
 exports[`formatCurrencyUnit with default options should correctly format Wanchain unit (WAN) 1`] = `"123,456,789"`;
 
 exports[`formatCurrencyUnit with default options should correctly format Waves unit (WAVES) 1`] = `"123,456,789"`;
+
+exports[`formatCurrencyUnit with default options should correctly format Westend unit (WND) 1`] = `"12,345.6"`;
 
 exports[`formatCurrencyUnit with default options should correctly format XRP unit (XRP) 1`] = `"12,345,678,900"`;
 
