@@ -18,9 +18,12 @@ export function useAppLoadingManager({
   const [lottieStartTime, setLottieStartTime] = useState<number | null>(null);
   const [appIsReady, setAppIsReady] = useState(false);
   const [lottieFinished, setLottieFinished] = useState(false);
+  const [minTimeElapsed, setMinTimeElapsed] = useState(false);
+  const [maxTimeElapsed, setMaxTimeElapsed] = useState(false);
 
   const lottieOpacity = useRef(new Animated.Value(0)).current;
   const appOpacity = useRef(new Animated.Value(0)).current;
+  const hasTransitionedRef = useRef(false);
 
   useEffect(() => {
     SplashScreen.hide();
@@ -38,44 +41,63 @@ export function useAppLoadingManager({
   useEffect(() => {
     if (loadingState !== LoadingState.LOTTIE_LOADING || !lottieStartTime) return;
 
-    const checkTransition = () => {
-      const elapsedTime = Date.now() - lottieStartTime;
-      const minTimeReached = elapsedTime >= (config.lottieMinDuration || 0);
-      const maxTimeReached = elapsedTime >= (config.lottieMaxDuration || Infinity);
+    setMinTimeElapsed(false);
+    setMaxTimeElapsed(false);
+    hasTransitionedRef.current = false;
 
-      if (isNavigationReady && (minTimeReached || maxTimeReached) && lottieFinished) {
-        setAppIsReady(true);
+    const minDuration = config.lottieMinDuration || 0;
+    const maxDuration = config.lottieMaxDuration;
 
-        Animated.parallel([
-          Animated.timing(lottieOpacity, {
-            toValue: 0,
-            duration: 300,
-            useNativeDriver: true,
-            easing: Easing.out(Easing.cubic),
-          }),
-          Animated.timing(appOpacity, {
-            toValue: 1,
-            duration: 300,
-            useNativeDriver: true,
-            easing: Easing.inOut(Easing.cubic),
-          }),
-        ]).start(() => {
-          setLoadingState(LoadingState.APP_READY);
-          onAppReady?.();
-        });
-      } else {
-        setTimeout(checkTransition, 50);
-      }
+    let minTimer: ReturnType<typeof setTimeout> | null = null;
+    let maxTimer: ReturnType<typeof setTimeout> | null = null;
+
+    if (minDuration > 0) {
+      minTimer = setTimeout(() => setMinTimeElapsed(true), minDuration);
+    } else {
+      setMinTimeElapsed(true);
+    }
+
+    if (typeof maxDuration === "number" && isFinite(maxDuration)) {
+      maxTimer = setTimeout(() => setMaxTimeElapsed(true), maxDuration);
+    }
+
+    return () => {
+      if (minTimer) clearTimeout(minTimer);
+      if (maxTimer) clearTimeout(maxTimer);
     };
+  }, [loadingState, lottieStartTime, config]);
 
-    const timeoutId = setTimeout(checkTransition, 0);
-    return () => clearTimeout(timeoutId);
+  useEffect(() => {
+    if (loadingState !== LoadingState.LOTTIE_LOADING) return;
+    const canTransition = isNavigationReady && (minTimeElapsed || maxTimeElapsed) && lottieFinished;
+    if (!canTransition || hasTransitionedRef.current) return;
+
+    hasTransitionedRef.current = true;
+    setAppIsReady(true);
+
+    Animated.parallel([
+      Animated.timing(lottieOpacity, {
+        toValue: 0,
+        duration: 300,
+        useNativeDriver: true,
+        easing: Easing.out(Easing.cubic),
+      }),
+      Animated.timing(appOpacity, {
+        toValue: 1,
+        duration: 300,
+        useNativeDriver: true,
+        easing: Easing.inOut(Easing.cubic),
+      }),
+    ]).start(() => {
+      setLoadingState(LoadingState.APP_READY);
+      onAppReady?.();
+    });
   }, [
     loadingState,
     isNavigationReady,
-    lottieStartTime,
-    config,
     lottieFinished,
+    minTimeElapsed,
+    maxTimeElapsed,
     onAppReady,
     lottieOpacity,
     appOpacity,

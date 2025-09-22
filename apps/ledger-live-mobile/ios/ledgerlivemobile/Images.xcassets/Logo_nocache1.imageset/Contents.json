@@ -1,23 +1,25 @@
 {
-  "images": [
+  "images" : [
     {
-      "filename": "Ledger_Wallet_Splashscreen_030.png",
-      "idiom": "universal",
-      "scale": "1x"
+      "filename" : "splash_logo@1x.png",
+      "idiom" : "universal",
+      "scale" : "1x"
     },
     {
-      "filename": "Ledger_Wallet_Splashscreen_030 1.png",
-      "idiom": "universal",
-      "scale": "2x"
+      "filename" : "splash_logo@2x.png",
+      "idiom" : "universal",
+      "scale" : "2x"
     },
     {
-      "filename": "Ledger_Wallet_Splashscreen_030 2.png",
-      "idiom": "universal",
-      "scale": "3x"
+      "filename" : "splash_logo@3x.png",
+      "idiom" : "universal",
+      "scale" : "3x"
     }
   ],
-  "info": {
-    "author": "xcode",
-    "version": 1
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
   }
 }
+
+
