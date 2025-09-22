@@ -1,4 +1,4 @@
-import { BrowserWindow, screen, app, WebPreferences } from "electron";
+import { BrowserWindow, screen, app, WebPreferences, WebContents } from "electron";
 import path from "path";
 import { delay } from "@ledgerhq/live-common/promise";
 import { URL, pathToFileURL } from "url";
@@ -86,6 +86,19 @@ export const loadWindow = async () => {
       setUserAgent(mainWindow.webContents);
       mainWindow.webContents.on("did-attach-webview", function (_event, webContents) {
         setUserAgent(webContents);
+
+        // Track and clean up a webview's DevTools WebContents to avoid orphaned DevTools windows.
+        let devtoolContents: WebContents | null = null;
+        webContents.on("devtools-opened", () => {
+          devtoolContents = webContents.devToolsWebContents;
+          devtoolContents?.on("destroyed", () => {
+            devtoolContents = null;
+          });
+        });
+
+        webContents.on("destroyed", () => {
+          devtoolContents?.close();
+        });
       });
     }
 
