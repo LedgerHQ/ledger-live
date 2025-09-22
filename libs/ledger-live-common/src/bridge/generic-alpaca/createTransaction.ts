@@ -1,5 +1,6 @@
-import { Account, TokenAccount } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
+import { HEDERA_TRANSACTION_MODES } from "@ledgerhq/coin-hedera/constants";
+import { Account, TokenAccount } from "@ledgerhq/types-live";
 import { GenericTransaction } from "./types";
 
 export function createTransaction(account: Account | TokenAccount): GenericTransaction {
@@ -53,10 +54,10 @@ export function createTransaction(account: Account | TokenAccount): GenericTrans
     }
     case "hedera": {
       return {
+        mode: HEDERA_TRANSACTION_MODES.Send,
         family: currency.family,
         amount: new BigNumber(0),
         recipient: "",
-        mode: "send",
         useAllAmount: false,
       };
     }

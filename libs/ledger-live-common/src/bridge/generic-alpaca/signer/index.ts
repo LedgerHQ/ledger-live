@@ -4,8 +4,8 @@ import hederaGetAddress from "@ledgerhq/coin-hedera/signer/getAddress";
 import {
   deserializeTransaction as deserializeHederaTransaction,
   serializeSignature as serializeHederaSignature,
+  getHederaTransactionBodyBytes,
 } from "@ledgerhq/coin-hedera/logic/utils";
-import { getHederaTransactionBodyBytes } from "@ledgerhq/coin-hedera/logic/utils";
 import Stellar from "@ledgerhq/hw-app-str";
 import {
   signTransaction,

@@ -11,8 +11,7 @@ describe("js-estimateMaxSpendable", () => {
 
   beforeAll(async () => {
     const signer = jest.fn();
-    const coinConfig = jest.fn();
-    bridge = createBridges(signer, coinConfig);
+    bridge = createBridges(signer);
 
     const mockedAccount = getMockedAccount();
     const crypto = await estimateFees(

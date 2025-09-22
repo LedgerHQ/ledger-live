@@ -12,8 +12,7 @@ describe("js-transaction", () => {
 
   beforeAll(() => {
     const signer = jest.fn();
-    const coinConfig = jest.fn();
-    bridge = createBridges(signer, coinConfig);
+    bridge = createBridges(signer);
   });
 
   test("createTransaction", () => {

@@ -1,12 +1,9 @@
 import type {
   Api,
-  AssetInfo,
   Block,
   BlockInfo,
-  Cursor,
   Operation,
   Page,
-  Pagination,
   Reward,
   Stake,
 } from "@ledgerhq/coin-framework/api/index";
@@ -58,12 +55,12 @@ export function createApi(config: HederaConfig): Api<HederaMemo> {
         value: BigInt(estimatedFee.toString()),
       };
     },
-    getBalance: (address: string) => getBalance(currency, address),
+    getBalance: address => getBalance(currency, address),
     lastBlock,
     validateIntent: (transactionIntent, customFees) => {
       return validateIntent(currency, transactionIntent, customFees);
     },
-    listOperations: async (address: string, pagination: Pagination) => {
+    listOperations: async (address, pagination) => {
       const mirrorTokens = await hederaMirrorNode.getAccountTokens(address);
       const latestAccountOperations = await logicListOperations({
         currency,
@@ -121,20 +118,20 @@ export function createApi(config: HederaConfig): Api<HederaMemo> {
 
       return [alpacaOperations, next];
     },
-    getTokenFromAsset: (asset: AssetInfo) => getTokenFromAsset(currency, asset),
+    getTokenFromAsset: asset => getTokenFromAsset(currency, asset),
     getAssetFromToken,
     getSequence,
     getChainSpecificData,
     getBlock: async (_height): Promise<Block> => {
       throw new Error("getBlock is not supported");
     },
-    getBlockInfo: async (_height: number): Promise<BlockInfo> => {
+    getBlockInfo: async (_height): Promise<BlockInfo> => {
       throw new Error("getBlockInfo is not supported");
     },
-    getStakes: async (_address: string, _cursor?: Cursor): Promise<Page<Stake>> => {
+    getStakes: async (_address, _cursor): Promise<Page<Stake>> => {
       throw new Error("getStakes is not supported");
     },
-    getRewards: async (_address: string, _cursor?: Cursor): Promise<Page<Reward>> => {
+    getRewards: async (_address, _cursor): Promise<Page<Reward>> => {
       throw new Error("getRewards is not supported");
     },
   };
