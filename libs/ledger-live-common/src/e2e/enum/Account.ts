@@ -248,6 +248,13 @@ export class Account {
     "0xa1baa625c5E6A9304cB7AcD86d2fee6B710eC3eB",
     1,
     undefined,
+  );
+  static readonly ETH_2_WITH_ENS = new Account(
+    Currency.ETH,
+    "Ethereum 2",
+    "0xa1baa625c5E6A9304cB7AcD86d2fee6B710eC3eB",
+    1,
+    undefined,
     "speculos.eth",
   );
   static readonly ETH_2_LOWER_CASE = new Account(
