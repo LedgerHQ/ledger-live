@@ -20,6 +20,8 @@ export const TINYBAR_SCALE = 8;
 
 export const ESTIMATED_FEE_SAFETY_RATE = 2;
 
+export const MEMO_CHARACTER_LIMIT = 100;
+
 /**
  * https://docs.hedera.com/hedera/networks/mainnet/fees
  *

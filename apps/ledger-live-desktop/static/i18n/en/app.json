@@ -6724,6 +6724,9 @@
       "title": "Unable to verify token association",
       "description": "We couldn’t confirm if the destination account can receive this token. The address might be invalid, or there could be a network or service problem."
     },
+    "HederaMemoIsTooLong": {
+      "title": "Memo is too long. Max length is {{maxLength}} characters"
+    },
     "ImageIncorrectFileTypeError": {
       "title": "Image loading from file failed.",
       "description": "Please try again with an image."

@@ -8,7 +8,8 @@ import {
   HederaRecipientTokenAssociationRequired,
   HederaRecipientTokenAssociationUnverified,
 } from "@ledgerhq/errors";
-import { HEDERA_TRANSACTION_MODES } from "../constants";
+import { MEMO_CHARACTER_LIMIT } from "../constants";
+import { HederaMemoIsTooLong } from "../errors";
 import { getTransactionStatus } from "./getTransactionStatus";
 import * as estimateFees from "../logic/estimateFees";
 import * as logicUtils from "../logic/utils";
@@ -89,6 +90,15 @@ describe("getTransactionStatus", () => {
     const result = await getTransactionStatus(mockedAccount, mockedTransaction);
 
     expect(result.errors.recipient).toBeInstanceOf(InvalidAddress);
+  });
+
+  test("adds error for too long memo", async () => {
+    const mockedAccount = getMockedAccount();
+    const mockedTransaction = getMockedTransaction({ memo: "a".repeat(MEMO_CHARACTER_LIMIT + 1) });
+
+    const result = await getTransactionStatus(mockedAccount, mockedTransaction);
+
+    expect(result.errors.memo).toBeInstanceOf(HederaMemoIsTooLong);
   });
 
   test("adds error for self transfers", async () => {

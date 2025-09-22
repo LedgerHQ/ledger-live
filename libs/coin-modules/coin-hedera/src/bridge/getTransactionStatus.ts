@@ -13,7 +13,8 @@ import {
 import type { Account, AccountBridge, TokenAccount } from "@ledgerhq/types-live";
 import { findSubAccountById, isTokenAccount } from "@ledgerhq/coin-framework/account";
 import { getEnv } from "@ledgerhq/live-env";
-import { HEDERA_OPERATION_TYPES } from "../constants";
+import { HEDERA_OPERATION_TYPES, MEMO_CHARACTER_LIMIT } from "../constants";
+import { HederaMemoIsTooLong } from "../errors";
 import { estimateFees } from "../logic/estimateFees";
 import {
   isTokenAssociateTransaction,
@@ -42,6 +43,14 @@ function validateRecipient(account: Account, recipient: string): Error | null {
     return new InvalidAddress("", {
       currencyName: account.currency.name,
     });
+  }
+
+  return null;
+}
+
+function validateMemo(memo: string | undefined): Error | null {
+  if (!!memo && memo.length > MEMO_CHARACTER_LIMIT) {
+    return new HederaMemoIsTooLong(undefined, { maxLength: MEMO_CHARACTER_LIMIT });
   }
 
   return null;
@@ -97,9 +106,14 @@ async function handleTokenTransaction(
   ]);
 
   const recipientError = validateRecipient(account, transaction.recipient);
+  const memoError = validateMemo(transaction.memo);
 
   if (recipientError) {
     errors.recipient = recipientError;
+  }
+
+  if (memoError) {
+    errors.memo = memoError;
   }
 
   if (!errors.recipient) {
@@ -150,9 +164,14 @@ async function handleCoinTransaction(
   ]);
 
   const recipientError = validateRecipient(account, transaction.recipient);
+  const memoError = validateMemo(transaction.memo);
 
   if (recipientError) {
     errors.recipient = recipientError;
+  }
+
+  if (memoError) {
+    errors.memo = memoError;
   }
 
   if (transaction.amount.eq(0) && !transaction.useAllAmount) {
