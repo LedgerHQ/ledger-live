@@ -17,11 +17,7 @@ import StorageWarningModal from "./Modals/StorageWarningModal";
 import InstallAppDependenciesModal from "./Modals/InstallAppDependenciesModal";
 import UninstallAppDependenciesModal from "./Modals/UninstallAppDependenciesModal";
 import { useLockNavigation } from "~/components/RootNavigator/CustomBlockRouterNavigator";
-import {
-  setHasInstalledAnyApp,
-  setLastConnectedDevice,
-  setLastSeenDeviceInfo,
-} from "~/actions/settings";
+import { setHasInstalledAnyApp, setLastSeenDeviceInfo } from "~/actions/settings";
 import { NavigatorName, ScreenName } from "~/const";
 import FirmwareUpdateScreen from "~/components/FirmwareUpdate";
 import { MyLedgerNavigatorStackParamList } from "~/components/RootNavigator/types/MyLedgerNavigator";
@@ -37,9 +33,6 @@ import {
   AppWithDependents,
   AppsInstallUninstallWithDependenciesContextProvider,
 } from "./AppsInstallUninstallWithDependenciesContext";
-import { discoverDevices } from "@ledgerhq/live-common/hw/index";
-import { first, map } from "rxjs/operators";
-import { Device } from "@ledgerhq/types-devices";
 
 type NavigationProps = BaseComposite<
   StackNavigatorProps<MyLedgerNavigatorStackParamList, ScreenName.MyLedgerDevice>
