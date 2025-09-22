@@ -32,13 +32,16 @@ export default function useAddFundsButtonViewModel({
 
   const navigation = useNavigation<StackNavigationProp<BaseNavigatorStackParamList>>();
 
-  const isSyncIncr1Enabled = !!useFeature("llmSyncOnboardingIncr1")?.enabled;
+  const shouldOnboardingRedirectToReceive = !!useFeature("llmSyncOnboardingIncr1")?.enabled;
 
   const openFundOrAccountListDrawer = useCallback(() => {
     let clickMetadata;
     const parentNavigationState = navigation.getParent()?.getState();
 
-    if (isSyncIncr1Enabled && parentNavigationState?.routeNames[0] === NavigatorName.Onboarding) {
+    if (
+      shouldOnboardingRedirectToReceive &&
+      parentNavigationState?.routeNames[0] === NavigatorName.Onboarding
+    ) {
       clickMetadata = analyticsMetadata.AddFunds?.onQuickActionOpen;
       track(clickMetadata.eventName, { ...clickMetadata.payload, flow: "onboarding" });
       navigation.navigate(NavigatorName.ReceiveFunds, {
@@ -63,7 +66,7 @@ export default function useAddFundsButtonViewModel({
     analyticsMetadata.AddFunds?.onOpenDrawer,
     navigation,
     currency,
-    isSyncIncr1Enabled,
+    shouldOnboardingRedirectToReceive,
   ]);
 
   const closeAccountListDrawer = useCallback(() => {
