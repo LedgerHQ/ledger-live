@@ -42,6 +42,7 @@ import {
   validateEarnDepositScreen,
 } from "./deeplinks/validation";
 import { viewNamePredicate } from "~/datadog";
+import { AppLoadingManager } from "LLM/features/LaunchScreen";
 
 const themes: {
   [key: string]: Theme;
@@ -740,18 +741,24 @@ export const DeeplinksProvider = ({
   }
 
   return (
-    <NavigationContainer
-      theme={theme}
-      linking={linking}
-      ref={navigationRef}
-      onReady={() => {
-        isReadyRef.current = true;
-        setTimeout(() => SplashScreen.hide(), 300);
+    <AppLoadingManager
+      isNavigationReady={isReady}
+      onAppReady={() => {
         navigationIntegration.registerNavigationContainer(navigationRef);
         DdRumReactNavigationTracking.startTrackingViews(navigationRef.current, viewNamePredicate);
       }}
     >
-      {children}
-    </NavigationContainer>
+      <NavigationContainer
+        theme={theme}
+        linking={linking}
+        ref={navigationRef}
+        onReady={() => {
+          isReadyRef.current = true;
+          setTimeout(() => SplashScreen.hide(), 300);
+        }}
+      >
+        {children}
+      </NavigationContainer>
+    </AppLoadingManager>
   );
 };
