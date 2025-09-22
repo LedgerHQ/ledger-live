@@ -72,33 +72,27 @@ export class LiveAppWebview {
   }
 
   async getAccountsList() {
-    const webviewPage = await this.getWebView();
-    await webviewPage.getByTestId("get-all-accounts-button").click();
+    await this.clickByTestId("get-all-accounts-button");
   }
 
   async requestAsset() {
-    const webviewPage = await this.getWebView();
-    await webviewPage.getByTestId("request-single-account-button").click();
+    await this.clickByTestId("request-single-account-button");
   }
 
   async verifyAddress() {
-    const webviewPage = await this.getWebView();
-    await webviewPage.getByTestId("verify-address-button").click();
+    await this.clickByTestId("verify-address-button");
   }
 
   async listCurrencies() {
-    const webviewPage = await this.getWebView();
-    await webviewPage.getByTestId("list-currencies-button").click();
+    await this.clickByTestId("list-currencies-button");
   }
 
   async signBitcoinTransaction() {
-    const webviewPage = await this.getWebView();
-    await webviewPage.getByTestId("sign-bitcoin-transaction-button").click();
+    await this.clickByTestId("sign-bitcoin-transaction-button");
   }
 
   async signEthereumTransaction() {
-    const webviewPage = await this.getWebView();
-    await webviewPage.getByTestId("sign-ethereum-transaction-button").click();
+    await this.clickByTestId("sign-ethereum-transaction-button");
   }
 
   async setCurrencyIds(currencies: string[]) {
@@ -127,73 +121,59 @@ export class LiveAppWebview {
   }
 
   async accountRequest() {
-    const webview = await this.getWebView();
-    return webview.getByTestId("account-request").click();
+    return this.clickByTestId("account-request");
   }
 
   async accountReceive() {
-    const webview = await this.getWebView();
-    return webview.getByTestId("account-receive").click();
+    return this.clickByTestId("account-receive");
   }
 
   async accountList() {
-    const webview = await this.getWebView();
-    return webview.getByTestId("account-list").click();
+    return this.clickByTestId("account-list");
   }
 
   async bitcoinGetXPub() {
-    const webview = await this.getWebView();
-    return webview.getByTestId("bitcoin-getXPub").click();
+    return this.clickByTestId("bitcoin-getXPub");
   }
 
   async currencyList() {
-    const webview = await this.getWebView();
-    return webview.getByTestId("currency-list").click();
+    return this.clickByTestId("currency-list");
   }
 
   async storage() {
-    const webview = await this.getWebView();
-    return webview.getByTestId("storage").click();
+    return this.clickByTestId("storage");
   }
 
   async transactionSign() {
-    const webview = await this.getWebView();
-    return webview.getByTestId("transaction-sign").click();
+    return this.clickByTestId("transaction-sign");
   }
 
   async transactionSignSolana() {
-    const webview = await this.getWebView();
-    return webview.getByTestId("transaction-sign-solana").click();
+    return this.clickByTestId("transaction-sign-solana");
   }
 
   async transactionSignRawSolana() {
-    const webview = await this.getWebView();
-    return webview.getByTestId("transaction-sign-raw-solana").click();
+    return this.clickByTestId("transaction-sign-raw-solana");
   }
 
   async transactionSignAndBroadcast() {
-    const webview = await this.getWebView();
-    return webview.getByTestId("transaction-signAndBroadcast").click();
+    return this.clickByTestId("transaction-signAndBroadcast");
   }
 
   async walletCapabilities() {
-    const webview = await this.getWebView();
-    return webview.getByTestId("wallet-capabilities").click();
+    return this.clickByTestId("wallet-capabilities");
   }
 
   async walletUserId() {
-    const webview = await this.getWebView();
-    return webview.getByTestId("wallet-userId").click();
+    return this.clickByTestId("wallet-userId");
   }
 
   async walletInfo() {
-    const webview = await this.getWebView();
-    return webview.getByTestId("wallet-info").click();
+    return this.clickByTestId("wallet-info");
   }
 
   async clearStates() {
-    const webview = await this.getWebView();
-    return webview.getByTestId("clear-states").click();
+    return this.clickByTestId("clear-states");
   }
 
   async getResOutput() {
@@ -252,5 +232,14 @@ export class LiveAppWebview {
       const webview = document.querySelector("webview") as WebviewTag;
       return webview.executeJavaScript(functionToExecute);
     }, sendFunction);
+  }
+
+  async clickByTestId(testId: string) {
+    const page = await this.getWebView();
+    const locator = page.getByTestId(testId);
+    // There is likely some race condition in the page and without hover() you click on the element before all it's event listeners are setup.
+    // https://github.com/microsoft/playwright/issues/20253#issuecomment-1398568789
+    await locator.hover();
+    return locator.click();
   }
 }
