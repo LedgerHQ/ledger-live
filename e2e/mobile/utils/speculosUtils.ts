@@ -1,10 +1,5 @@
 import { allure } from "jest-allure2-reporter/api";
-import {
-  getSpecs,
-  startSpeculos,
-  stopSpeculos,
-  takeScreenshot,
-} from "@ledgerhq/live-common/e2e/speculos";
+import { startSpeculos, stopSpeculos, takeScreenshot } from "@ledgerhq/live-common/e2e/speculos";
 import invariant from "invariant";
 import { setEnv } from "@ledgerhq/live-env";
 import { closeProxy, startProxy } from "../bridge/proxy";
@@ -32,9 +27,7 @@ export async function launchSpeculos(appName: string) {
 
   const testName = jestExpect.getState().testPath || "unknown";
 
-  const specs = await getSpecs();
-
-  const device = await startSpeculos(testName, appName.replace(/ /g, "_") as keyof typeof specs);
+  const device = await startSpeculos(testName, appName.replace(/ /g, "_"));
 
   invariant(device, "[E2E Setup] Speculos not started");
   setEnv("SPECULOS_API_PORT", device.port);

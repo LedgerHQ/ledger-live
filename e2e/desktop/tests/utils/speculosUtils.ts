@@ -1,5 +1,5 @@
 import { setEnv } from "@ledgerhq/live-env";
-import { startSpeculos, getSpecs, stopSpeculos } from "@ledgerhq/live-common/e2e/speculos";
+import { startSpeculos, stopSpeculos } from "@ledgerhq/live-common/e2e/speculos";
 import invariant from "invariant";
 
 const BASE_PORT = 30000;
@@ -22,12 +22,7 @@ export async function launchSpeculos(appName: string, testTitle?: string) {
     (speculosPort - BASE_PORT) * 1000 + parseInt(process.env.TEST_WORKER_INDEX || "0") * 100,
   );
 
-  const specs = await getSpecs();
-
-  const device = await startSpeculos(
-    testTitle ?? "cli_speculos",
-    appName.replace(/ /g, "_") as keyof typeof specs,
-  );
+  const device = await startSpeculos(testTitle ?? "cli_speculos", appName.replace(/ /g, "_"));
 
   invariant(device, "[E2E Setup] Speculos not started");
   setEnv("SPECULOS_API_PORT", device.port);

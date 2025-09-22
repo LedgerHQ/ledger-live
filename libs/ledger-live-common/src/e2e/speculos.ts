@@ -8,7 +8,6 @@ import {
   SpeculosTransport,
 } from "../load/speculos";
 import { createSpeculosDeviceCI, releaseSpeculosDeviceCI } from "./speculosCI";
-import type { AppCandidate } from "@ledgerhq/coin-framework/bot/types";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import axios, { AxiosError, AxiosResponse } from "axios";
@@ -47,6 +46,7 @@ import * as fs from "fs";
 import * as path from "path";
 
 const isSpeculosRemote = process.env.REMOTE_SPECULOS === "true";
+let isCatalogGenerated = false;
 
 export type Spec = {
   currency?: CryptoCurrency;
@@ -68,16 +68,13 @@ export type SpeculosDevice = {
 };
 
 export async function setExchangeDependencies(dependencies: Dependency[]) {
-  const specs = await getSpecs();
   const map = new Map<string, Dependency>();
   for (const dep of dependencies) {
     if (!map.has(dep.name)) {
       map.set(dep.name, dep);
     }
   }
-  const finalDeps = Array.from(map.values());
-  specs["Exchange"].dependencies = finalDeps;
-  specsInstance = specs;
+  specs["Exchange"].dependencies = Array.from(map.values());
 }
 
 export function getSpeculosModel() {
@@ -131,13 +128,14 @@ export function getAppVersionFromCatalog(currency: string): string {
       ? "artifacts/appVersion/nano-app-catalog.json"
       : "tests/artifacts/appVersion/nano-app-catalog.json";
     const jsonFilePath = path.join(rootDir, filepPath);
-    const catalog = JSON.parse(fs.readFileSync(jsonFilePath, "utf8"));
+    type CatalogApp = { versionDisplayName: string; version: string };
+    const raw = fs.readFileSync(jsonFilePath, "utf8");
+    const catalog: CatalogApp[] = JSON.parse(raw);
 
-    const app = catalog.find((app: any) => app.versionDisplayName === currency);
+    const app = catalog.find(entry => entry.versionDisplayName === currency);
 
-    return app.version;
+    return app?.version ?? "";
   } catch (error) {
-    console.error("Error in getAppVersionFromCatalog:", error);
     return "";
   }
 }
@@ -152,291 +150,289 @@ export type Device = {
   appPath: string;
 };
 
-let specsInstance: Specs | null = null;
-
-export const getSpecs = async (): Promise<Specs> => {
-  if (!specsInstance) {
-    await nanoAppCatalog();
-
-    specsInstance = {
-      Bitcoin: {
-        currency: getCryptoCurrencyById("bitcoin"),
-        appQuery: {
-          model: getSpeculosModel(),
-          appName: "Bitcoin",
-          appVersion: getAppVersionFromCatalog("Bitcoin"),
-        },
-        dependency: "",
-      },
-      Aptos: {
-        currency: getCryptoCurrencyById("aptos"),
-        appQuery: {
-          model: getSpeculosModel(),
-          appName: "Aptos",
-          appVersion: getAppVersionFromCatalog("Aptos"),
-        },
-        dependency: "",
-      },
-      Exchange: {
-        appQuery: {
-          model: getSpeculosModel(),
-          appName: "Exchange",
-          appVersion: getAppVersionFromCatalog("Exchange"),
-        },
-        dependencies: [],
-      },
-      LedgerSync: {
-        appQuery: {
-          model: getSpeculosModel(),
-          appName: "Ledger Sync",
-          appVersion: getAppVersionFromCatalog("Ledger Sync"),
-        },
-        dependency: "",
-      },
-      Dogecoin: {
-        currency: getCryptoCurrencyById("dogecoin"),
-        appQuery: {
-          model: getSpeculosModel(),
-          appName: "Dogecoin",
-          appVersion: getAppVersionFromCatalog("Dogecoin"),
-        },
-        dependency: "",
-      },
-      Ethereum: {
-        currency: getCryptoCurrencyById("ethereum"),
-        appQuery: {
-          model: getSpeculosModel(),
-          appName: "Ethereum",
-          appVersion: getAppVersionFromCatalog("Ethereum"),
-        },
-        dependency: "",
-      },
-      Ethereum_Holesky: {
-        currency: getCryptoCurrencyById("ethereum_holesky"),
-        appQuery: {
-          model: getSpeculosModel(),
-          appName: "Ethereum",
-          appVersion: getAppVersionFromCatalog("Ethereum"),
-        },
-        dependency: "",
-      },
-      Ethereum_Sepolia: {
-        currency: getCryptoCurrencyById("ethereum_sepolia"),
-        appQuery: {
-          model: getSpeculosModel(),
-          appName: "Ethereum",
-          appVersion: getAppVersionFromCatalog("Ethereum"),
-        },
-        dependency: "",
-      },
-      Ethereum_Classic: {
-        currency: getCryptoCurrencyById("ethereum_classic"),
-        appQuery: {
-          model: getSpeculosModel(),
-          appName: "Ethereum Classic",
-          appVersion: getAppVersionFromCatalog("Ethereum Classic"),
-        },
-        dependency: "Ethereum",
-      },
-      Bitcoin_Testnet: {
-        currency: getCryptoCurrencyById("bitcoin_testnet"),
-        appQuery: {
-          model: getSpeculosModel(),
-          appName: "Bitcoin Test",
-          appVersion: getAppVersionFromCatalog("Bitcoin Test"),
-        },
-        dependency: "",
-      },
-      Solana: {
-        currency: getCryptoCurrencyById("solana"),
-        appQuery: {
-          model: getSpeculosModel(),
-          appName: "Solana",
-          appVersion: getAppVersionFromCatalog("Solana"),
-        },
-        dependency: "",
-      },
-      Cardano: {
-        currency: getCryptoCurrencyById("cardano"),
-        appQuery: {
-          model: getSpeculosModel(),
-          appName: "CardanoADA",
-          appVersion: getAppVersionFromCatalog("Cardano ADA"),
-        },
-        dependency: "",
-      },
-      Polkadot: {
-        currency: getCryptoCurrencyById("polkadot"),
-        appQuery: {
-          model: getSpeculosModel(),
-          appName: "Polkadot",
-          appVersion: getAppVersionFromCatalog("Polkadot"),
-        },
-        dependency: "",
-      },
-      Tron: {
-        currency: getCryptoCurrencyById("tron"),
-        appQuery: {
-          model: getSpeculosModel(),
-          appName: "Tron",
-          appVersion: getAppVersionFromCatalog("Tron"),
-        },
-        dependency: "",
-      },
-      XRP: {
-        currency: getCryptoCurrencyById("ripple"),
-        appQuery: {
-          model: getSpeculosModel(),
-          appName: "XRP",
-          appVersion: getAppVersionFromCatalog("XRP"),
-        },
-        dependency: "",
-      },
-      Stellar: {
-        currency: getCryptoCurrencyById("stellar"),
-        appQuery: {
-          model: getSpeculosModel(),
-          appName: "Stellar",
-          appVersion: getAppVersionFromCatalog("Stellar"),
-        },
-        dependency: "",
-      },
-      Bitcoin_Cash: {
-        currency: getCryptoCurrencyById("bitcoin_cash"),
-        appQuery: {
-          model: getSpeculosModel(),
-          appName: "Bitcoin Cash",
-          appVersion: getAppVersionFromCatalog("Bitcoin Cash"),
-        },
-        dependency: "",
-      },
-      Algorand: {
-        currency: getCryptoCurrencyById("algorand"),
-        appQuery: {
-          model: getSpeculosModel(),
-          appName: "Algorand",
-          appVersion: getAppVersionFromCatalog("Algorand"),
-        },
-        dependency: "",
-      },
-      Cosmos: {
-        currency: getCryptoCurrencyById("cosmos"),
-        appQuery: {
-          model: getSpeculosModel(),
-          appName: "Cosmos",
-          appVersion: getAppVersionFromCatalog("Cosmos"),
-        },
-        dependency: "",
-      },
-      Tezos: {
-        currency: getCryptoCurrencyById("tezos"),
-        appQuery: {
-          model: getSpeculosModel(),
-          appName: "TezosWallet",
-          appVersion: getAppVersionFromCatalog("Tezos Wallet"),
-        },
-        dependency: "",
-      },
-      Polygon: {
-        currency: getCryptoCurrencyById("polygon"),
-        appQuery: {
-          model: getSpeculosModel(),
-          appName: "Ethereum",
-          appVersion: getAppVersionFromCatalog("Ethereum"),
-        },
-        dependency: "",
-      },
-      BNB_Chain: {
-        currency: getCryptoCurrencyById("bsc"),
-        appQuery: {
-          model: getSpeculosModel(),
-          appName: "Ethereum",
-          appVersion: getAppVersionFromCatalog("Ethereum"),
-        },
-        dependency: "",
-      },
-      Ton: {
-        currency: getCryptoCurrencyById("ton"),
-        appQuery: {
-          model: getSpeculosModel(),
-          appName: "TON",
-          appVersion: getAppVersionFromCatalog("TON"),
-        },
-        dependency: "",
-      },
-      Near: {
-        currency: getCryptoCurrencyById("near"),
-        appQuery: {
-          model: getSpeculosModel(),
-          appName: "NEAR",
-          appVersion: getAppVersionFromCatalog("NEAR"),
-        },
-        dependency: "",
-      },
-      Multivers_X: {
-        currency: getCryptoCurrencyById("elrond"),
-        appQuery: {
-          model: getSpeculosModel(),
-          appName: "MultiversX",
-          appVersion: getAppVersionFromCatalog("MultiversX"),
-        },
-        dependency: "",
-      },
-      Osmosis: {
-        currency: getCryptoCurrencyById("osmo"),
-        appQuery: {
-          model: getSpeculosModel(),
-          appName: "Cosmos",
-          appVersion: getAppVersionFromCatalog("Cosmos"),
-        },
-        dependency: "",
-      },
-      Injective: {
-        currency: getCryptoCurrencyById("injective"),
-        appQuery: {
-          model: getSpeculosModel(),
-          appName: "Cosmos",
-          appVersion: getAppVersionFromCatalog("Cosmos"),
-        },
-        dependency: "",
-      },
-      Celo: {
-        currency: getCryptoCurrencyById("celo"),
-        appQuery: {
-          model: getSpeculosModel(),
-          appName: "Celo",
-          appVersion: getAppVersionFromCatalog("Celo"),
-        },
-        dependency: "",
-      },
-      Litecoin: {
-        currency: getCryptoCurrencyById("litecoin"),
-        appQuery: {
-          model: getSpeculosModel(),
-          appName: "Litecoin",
-          appVersion: getAppVersionFromCatalog("Litecoin"),
-        },
-        dependency: "",
-      },
-      Kaspa: {
-        currency: getCryptoCurrencyById("kaspa"),
-        appQuery: {
-          model: getSpeculosModel(),
-          appName: "Kaspa",
-          appVersion: getAppVersionFromCatalog("Kaspa"),
-        },
-        dependency: "",
-      },
-    };
-  }
-  return specsInstance;
+export const specs: Specs = {
+  Bitcoin: {
+    currency: getCryptoCurrencyById("bitcoin"),
+    appQuery: {
+      model: getSpeculosModel(),
+      appName: "Bitcoin",
+      appVersion: getAppVersionFromCatalog("Bitcoin"),
+    },
+    dependency: "",
+  },
+  Aptos: {
+    currency: getCryptoCurrencyById("aptos"),
+    appQuery: {
+      model: getSpeculosModel(),
+      appName: "Aptos",
+      appVersion: getAppVersionFromCatalog("Aptos"),
+    },
+    dependency: "",
+  },
+  Exchange: {
+    appQuery: {
+      model: getSpeculosModel(),
+      appName: "Exchange",
+      appVersion: getAppVersionFromCatalog("Exchange"),
+    },
+    dependencies: [],
+  },
+  LedgerSync: {
+    appQuery: {
+      model: getSpeculosModel(),
+      appName: "Ledger Sync",
+      appVersion: getAppVersionFromCatalog("Ledger Sync"),
+    },
+    dependency: "",
+  },
+  Dogecoin: {
+    currency: getCryptoCurrencyById("dogecoin"),
+    appQuery: {
+      model: getSpeculosModel(),
+      appName: "Dogecoin",
+      appVersion: getAppVersionFromCatalog("Dogecoin"),
+    },
+    dependency: "",
+  },
+  Ethereum: {
+    currency: getCryptoCurrencyById("ethereum"),
+    appQuery: {
+      model: getSpeculosModel(),
+      appName: "Ethereum",
+      appVersion: getAppVersionFromCatalog("Ethereum"),
+    },
+    dependency: "",
+  },
+  Ethereum_Holesky: {
+    currency: getCryptoCurrencyById("ethereum_holesky"),
+    appQuery: {
+      model: getSpeculosModel(),
+      appName: "Ethereum",
+      appVersion: getAppVersionFromCatalog("Ethereum"),
+    },
+    dependency: "",
+  },
+  Ethereum_Sepolia: {
+    currency: getCryptoCurrencyById("ethereum_sepolia"),
+    appQuery: {
+      model: getSpeculosModel(),
+      appName: "Ethereum",
+      appVersion: getAppVersionFromCatalog("Ethereum"),
+    },
+    dependency: "",
+  },
+  Ethereum_Classic: {
+    currency: getCryptoCurrencyById("ethereum_classic"),
+    appQuery: {
+      model: getSpeculosModel(),
+      appName: "Ethereum Classic",
+      appVersion: getAppVersionFromCatalog("Ethereum Classic"),
+    },
+    dependency: "Ethereum",
+  },
+  Bitcoin_Testnet: {
+    currency: getCryptoCurrencyById("bitcoin_testnet"),
+    appQuery: {
+      model: getSpeculosModel(),
+      appName: "Bitcoin Test",
+      appVersion: getAppVersionFromCatalog("Bitcoin Test"),
+    },
+    dependency: "",
+  },
+  Solana: {
+    currency: getCryptoCurrencyById("solana"),
+    appQuery: {
+      model: getSpeculosModel(),
+      appName: "Solana",
+      appVersion: getAppVersionFromCatalog("Solana"),
+    },
+    dependency: "",
+  },
+  Cardano: {
+    currency: getCryptoCurrencyById("cardano"),
+    appQuery: {
+      model: getSpeculosModel(),
+      appName: "CardanoADA",
+      appVersion: getAppVersionFromCatalog("Cardano ADA"),
+    },
+    dependency: "",
+  },
+  Polkadot: {
+    currency: getCryptoCurrencyById("polkadot"),
+    appQuery: {
+      model: getSpeculosModel(),
+      appName: "Polkadot",
+      appVersion: getAppVersionFromCatalog("Polkadot"),
+    },
+    dependency: "",
+  },
+  Tron: {
+    currency: getCryptoCurrencyById("tron"),
+    appQuery: {
+      model: getSpeculosModel(),
+      appName: "Tron",
+      appVersion: getAppVersionFromCatalog("Tron"),
+    },
+    dependency: "",
+  },
+  XRP: {
+    currency: getCryptoCurrencyById("ripple"),
+    appQuery: {
+      model: getSpeculosModel(),
+      appName: "XRP",
+      appVersion: getAppVersionFromCatalog("XRP"),
+    },
+    dependency: "",
+  },
+  Stellar: {
+    currency: getCryptoCurrencyById("stellar"),
+    appQuery: {
+      model: getSpeculosModel(),
+      appName: "Stellar",
+      appVersion: getAppVersionFromCatalog("Stellar"),
+    },
+    dependency: "",
+  },
+  Bitcoin_Cash: {
+    currency: getCryptoCurrencyById("bitcoin_cash"),
+    appQuery: {
+      model: getSpeculosModel(),
+      appName: "Bitcoin Cash",
+      appVersion: getAppVersionFromCatalog("Bitcoin Cash"),
+    },
+    dependency: "",
+  },
+  Algorand: {
+    currency: getCryptoCurrencyById("algorand"),
+    appQuery: {
+      model: getSpeculosModel(),
+      appName: "Algorand",
+      appVersion: getAppVersionFromCatalog("Algorand"),
+    },
+    dependency: "",
+  },
+  Cosmos: {
+    currency: getCryptoCurrencyById("cosmos"),
+    appQuery: {
+      model: getSpeculosModel(),
+      appName: "Cosmos",
+      appVersion: getAppVersionFromCatalog("Cosmos"),
+    },
+    dependency: "",
+  },
+  Tezos: {
+    currency: getCryptoCurrencyById("tezos"),
+    appQuery: {
+      model: getSpeculosModel(),
+      appName: "TezosWallet",
+      appVersion: getAppVersionFromCatalog("Tezos Wallet"),
+    },
+    dependency: "",
+  },
+  Polygon: {
+    currency: getCryptoCurrencyById("polygon"),
+    appQuery: {
+      model: getSpeculosModel(),
+      appName: "Ethereum",
+      appVersion: getAppVersionFromCatalog("Ethereum"),
+    },
+    dependency: "",
+  },
+  BNB_Chain: {
+    currency: getCryptoCurrencyById("bsc"),
+    appQuery: {
+      model: getSpeculosModel(),
+      appName: "Ethereum",
+      appVersion: getAppVersionFromCatalog("Ethereum"),
+    },
+    dependency: "",
+  },
+  Ton: {
+    currency: getCryptoCurrencyById("ton"),
+    appQuery: {
+      model: getSpeculosModel(),
+      appName: "TON",
+      appVersion: getAppVersionFromCatalog("TON"),
+    },
+    dependency: "",
+  },
+  Near: {
+    currency: getCryptoCurrencyById("near"),
+    appQuery: {
+      model: getSpeculosModel(),
+      appName: "NEAR",
+      appVersion: getAppVersionFromCatalog("NEAR"),
+    },
+    dependency: "",
+  },
+  Multivers_X: {
+    currency: getCryptoCurrencyById("elrond"),
+    appQuery: {
+      model: getSpeculosModel(),
+      appName: "MultiversX",
+      appVersion: getAppVersionFromCatalog("MultiversX"),
+    },
+    dependency: "",
+  },
+  Osmosis: {
+    currency: getCryptoCurrencyById("osmo"),
+    appQuery: {
+      model: getSpeculosModel(),
+      appName: "Cosmos",
+      appVersion: getAppVersionFromCatalog("Cosmos"),
+    },
+    dependency: "",
+  },
+  Injective: {
+    currency: getCryptoCurrencyById("injective"),
+    appQuery: {
+      model: getSpeculosModel(),
+      appName: "Cosmos",
+      appVersion: getAppVersionFromCatalog("Cosmos"),
+    },
+    dependency: "",
+  },
+  Celo: {
+    currency: getCryptoCurrencyById("celo"),
+    appQuery: {
+      model: getSpeculosModel(),
+      appName: "Celo",
+      appVersion: getAppVersionFromCatalog("Celo"),
+    },
+    dependency: "",
+  },
+  Litecoin: {
+    currency: getCryptoCurrencyById("litecoin"),
+    appQuery: {
+      model: getSpeculosModel(),
+      appName: "Litecoin",
+      appVersion: getAppVersionFromCatalog("Litecoin"),
+    },
+    dependency: "",
+  },
+  Kaspa: {
+    currency: getCryptoCurrencyById("kaspa"),
+    appQuery: {
+      model: getSpeculosModel(),
+      appName: "Kaspa",
+      appVersion: getAppVersionFromCatalog("Kaspa"),
+    },
+    dependency: "",
+  },
 };
 
 export async function startSpeculos(
   testName: string,
-  specKey: keyof Specs,
+  specKey: string,
 ): Promise<SpeculosDevice | undefined> {
-  const specs = await getSpecs();
+  if (!isCatalogGenerated) {
+    try {
+      await nanoAppCatalog();
+    } catch (e) {
+      log("speculos", `nanoAppCatalog failed: ${String(e)}`);
+    }
+    isCatalogGenerated = true;
+  }
   const spec = specs[specKey];
   log("engine", `test ${testName}`);
   log("speculos", `Starting speculos for ${specKey} with spec: ${JSON.stringify(spec, null, 2)}`);
@@ -454,54 +450,69 @@ export async function startSpeculos(
   }
 
   const { appQuery, dependency, onSpeculosDeviceCreated } = spec;
-  const { model, appVersion } = appQuery;
-  const appCandidate = appCandidates.find(
+  const { model } = appQuery;
+  if (!appQuery.appVersion) {
+    appQuery.appVersion = getAppVersionFromCatalog(appQuery.appName);
+  }
+  const desiredVersion = appQuery.appVersion;
+  let appCandidate = appCandidates.find(
     app =>
       app.appName === appQuery.appName.replace(/ /g, "") &&
-      app.appVersion === appVersion &&
+      (desiredVersion ? app.appVersion === desiredVersion : true) &&
       app.firmware === process.env.SPECULOS_FIRMWARE_VERSION,
   );
+  if (!appCandidate) {
+    appCandidate = findLatestAppCandidate(appCandidates, {
+      model,
+      appName: appQuery.appName.replace(/ /g, ""),
+      firmware: process.env.SPECULOS_FIRMWARE_VERSION,
+    });
+  }
 
   if (!appCandidate) {
-    console.warn("Could not find exact version", appVersion, "for app", appQuery.appName);
+    console.warn("Could not find exact version", appQuery.appVersion, "for app", appQuery.appName);
     console.warn(
       "Available versions:",
       appCandidates.filter(app => app.appName === appQuery.appName).map(app => app.appVersion),
     );
+    return undefined;
   }
   const { dependencies } = spec;
-  const newAppQuery = dependencies?.map(dep => {
-    const candidate = findLatestAppCandidate(appCandidates, {
-      model,
-      appName: dep.name,
-      firmware: appCandidate?.firmware,
-    });
+  const resolvedDeps = dependencies?.map(dep => {
+    const depDisplayName = dep.name.replace(/_/g, " ");
+    const desiredDepVersion = dep.appVersion || getAppVersionFromCatalog(depDisplayName);
+    let candidate = appCandidates.find(
+      a =>
+        a.appName === depDisplayName.replace(/ /g, "") &&
+        (desiredDepVersion ? a.appVersion === desiredDepVersion : true) &&
+        a.firmware === appCandidate?.firmware,
+    );
+    if (!candidate) {
+      candidate = findLatestAppCandidate(appCandidates, {
+        model,
+        appName: depDisplayName.replace(/ /g, ""),
+        firmware: appCandidate?.firmware,
+      });
+    }
     return candidate;
   });
-  const appVersionMap = new Map(newAppQuery?.map(app => [app?.appName, app?.appVersion]));
+  const appVersionMap = new Map(resolvedDeps?.map(app => [app?.appName, app?.appVersion]));
 
-  dependencies?.forEach(dependency => {
-    const version = appVersionMap.get(dependency.name) || "1.0.0";
-    dependency.appVersion = version;
+  dependencies?.forEach(dep => {
+    const version =
+      appVersionMap.get(dep.name.replace(/ /g, "")) ||
+      appVersionMap.get(dep.name) ||
+      dep.appVersion ||
+      desiredVersion;
+    dep.appVersion = version;
   });
 
-  if (!appCandidate) {
-    console.warn("no app found for " + testName);
-    console.warn(appQuery);
-    console.warn(JSON.stringify(appCandidates, undefined, 2));
-  }
-  invariant(
-    appCandidate,
-    "%s: no app found. Are you sure your COINAPPS is up to date?",
-    testName,
-    coinapps,
-  );
   log(
     "engine",
     `test ${testName} will use ${appCandidate.appName} ${appCandidate.appVersion} on ${appCandidate.model} ${appCandidate.firmware}`,
   );
   const deviceParams = {
-    ...(appCandidate as AppCandidate),
+    ...appCandidate,
     appName: spec.currency ? spec.currency.managerAppName : spec.appQuery.appName,
     seed,
     dependency,
@@ -550,13 +561,17 @@ async function retryAxiosRequest<T>(
   baseDelay: number = 1000,
   retryableStatusCodes: number[] = [500, 502, 503, 504],
 ): Promise<AxiosResponse<T>> {
-  let lastError: AxiosError | Error;
+  let lastError: AxiosError | Error | undefined;
 
   for (let attempt = 0; attempt <= maxRetries; attempt++) {
     try {
       return await requestFn();
     } catch (error) {
-      lastError = error as AxiosError | Error;
+      lastError = axios.isAxiosError(error)
+        ? error
+        : error instanceof Error
+          ? error
+          : new Error(String(error));
 
       const isRetryable =
         axios.isAxiosError(error) &&
@@ -582,7 +597,13 @@ async function retryAxiosRequest<T>(
     }
   }
 
-  throw lastError!;
+  if (lastError) {
+    if (axios.isAxiosError(lastError)) {
+      throw lastError;
+    }
+    throw lastError;
+  }
+  throw new Error("Unknown error during retryAxiosRequest");
 }
 
 export async function waitFor(text: string, maxAttempts = 60): Promise<string> {
