@@ -4,7 +4,7 @@ import { useSelector } from "react-redux";
 import { firstValueFrom, from } from "rxjs";
 
 import { useNavigation } from "@react-navigation/native";
-import { Icons } from "@ledgerhq/native-ui";
+import { Icons, InfiniteLoader } from "@ledgerhq/native-ui";
 import { Device } from "@ledgerhq/types-devices";
 import customLockScreenFetchHash from "@ledgerhq/live-common/hw/customLockScreenFetchHash";
 import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
@@ -27,6 +27,31 @@ const CustomLockScreen: React.FC<{
 }> = ({ device, deviceModelId, disabled }) => {
   const navigation = useNavigation();
   const [isCustomImageOpen, setIsCustomImageOpen] = useState(false);
+  const [waitingForUserPicture, setWaitingForUserPicture] = useState(false);
+
+  useEffect(() => {
+    let dead = false;
+    if (waitingForUserPicture) {
+      importImageFromPhoneGallery().then(res => {
+        if (dead) return;
+        if (res !== null) {
+          navigation.navigate(NavigatorName.CustomImage, {
+            screen: ScreenName.CustomImagePreviewPreEdit,
+            params: {
+              ...res,
+              device,
+              deviceModelId,
+            },
+          });
+        }
+        setWaitingForUserPicture(false);
+      });
+    }
+    return () => {
+      dead = true;
+    };
+  }, [waitingForUserPicture, device, deviceModelId, navigation]);
+
   const [deviceHasImage, setDeviceHasImage] = useState(false);
   const lastSeenCustomImage = useSelector(lastSeenCustomImageSelector);
 
@@ -50,17 +75,6 @@ const CustomLockScreen: React.FC<{
     const openModal = () => {
       setIsCustomImageOpen(true);
     };
-    const navigateToPreviewPreEdit = () => {
-      navigation.navigate(NavigatorName.CustomImage, {
-        screen: ScreenName.CustomImagePreviewPreEdit,
-        params: {
-          imageFileUriPromise: importImageFromPhoneGallery(),
-          device,
-          deviceModelId,
-          referral: HOOKS_TRACKING_LOCATIONS.myLedgerDashboard,
-        },
-      });
-    };
     const navigateToStep0Welcome = () => {
       navigation.navigate(NavigatorName.CustomImage, {
         screen: ScreenName.CustomImageStep0Welcome,
@@ -75,7 +89,7 @@ const CustomLockScreen: React.FC<{
     if (deviceHasImage) {
       openModal();
     } else if (hasCompletedCustomImageFlow) {
-      navigateToPreviewPreEdit();
+      setWaitingForUserPicture(true);
     } else {
       navigateToStep0Welcome();
     }
@@ -86,7 +100,8 @@ const CustomLockScreen: React.FC<{
       <DeviceOptionRow
         Icon={Icons.PictureImage}
         label={t("customImage.title")}
-        onPress={disabled ? undefined : handleStartCustomImage}
+        onPress={disabled || waitingForUserPicture ? undefined : handleStartCustomImage}
+        right={waitingForUserPicture ? <InfiniteLoader size={16} /> : undefined}
         linkLabel={t(deviceHasImage ? "customImage.change" : "common.add")}
       />
       <CustomImageBottomModal

@@ -1,7 +1,8 @@
-import React, { useCallback, useMemo } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { StackScreenProps } from "@react-navigation/stack";
+import { useNavigation } from "@react-navigation/core";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Flex, Icons, Text } from "@ledgerhq/native-ui";
+import { Flex, Icons, InfiniteLoader, Text } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
 import { getDeviceModel } from "@ledgerhq/devices";
 import BottomButtonsContainer from "~/components/CustomImage/BottomButtonsContainer";
@@ -18,7 +19,6 @@ import { useTheme } from "styled-components/native";
 import { importImageFromPhoneGallery } from "~/components/CustomImage/imageUtils";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import { StackNavigatorNavigation } from "~/components/RootNavigator/types/helpers";
-import { useNavigation } from "@react-navigation/core";
 
 const analyticsScreenName = "Introduction of the customization flow";
 const analyticsButtonEventProps = {
@@ -35,18 +35,36 @@ const Step0Welcome: React.FC<
    */
   const { params: { device, deviceModelId } = { deviceModelId: null } } = route;
 
+  const [waitingForUserPicture, setWaitingForUserPicture] = useState(false);
   const navigation = useNavigation<StackNavigatorNavigation<BaseNavigatorStackParamList>>();
 
-  const handlePressChoosePicture = useCallback(() => {
-    navigation.navigate(NavigatorName.CustomImage, {
-      screen: ScreenName.CustomImagePreviewPreEdit,
-      params: {
-        imageFileUriPromise: importImageFromPhoneGallery(),
-        device,
-        deviceModelId,
-      },
-    });
-  }, [navigation, device, deviceModelId]);
+  useEffect(() => {
+    let dead = false;
+    if (waitingForUserPicture) {
+      importImageFromPhoneGallery().then(res => {
+        if (dead) return;
+        if (res !== null) {
+          navigation.navigate(NavigatorName.CustomImage, {
+            screen: ScreenName.CustomImagePreviewPreEdit,
+            params: {
+              ...res,
+              device,
+              deviceModelId,
+              referral: route?.params?.referral,
+            },
+          });
+        }
+        setWaitingForUserPicture(false);
+      });
+    }
+    return () => {
+      dead = true;
+    };
+  }, [waitingForUserPicture, device, deviceModelId, navigation, route?.params?.referral]);
+
+  const handlePressChoosePicture = useCallback(async () => {
+    setWaitingForUserPicture(true);
+  }, [setWaitingForUserPicture]);
 
   const animationSource = useMemo(() => {
     switch (deviceModelId) {
@@ -89,10 +107,17 @@ const Step0Welcome: React.FC<
             outline={false}
             onPress={handlePressChoosePicture}
             event="button_clicked"
+            disabled={waitingForUserPicture}
             eventProperties={analyticsButtonEventProps}
             testID="custom-image-choose-picture-button"
             iconPosition="left"
-            Icon={() => <Icons.DoublePicture color={colors.neutral.c00} size="M" />}
+            Icon={() =>
+              waitingForUserPicture ? (
+                <InfiniteLoader size={24} />
+              ) : (
+                <Icons.DoublePicture color={colors.neutral.c00} size="M" />
+              )
+            }
           >
             {t("customImage.landingPage.choosePicture")}
           </Button>

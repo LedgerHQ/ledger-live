@@ -1,7 +1,7 @@
 import { useNavigation } from "@react-navigation/native";
-import React, { useCallback } from "react";
+import React, { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Flex, Icons, Text } from "@ledgerhq/native-ui";
+import { Flex, Icons, InfiniteLoader, Text } from "@ledgerhq/native-ui";
 import Button from "../Button";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { NavigatorName, ScreenName } from "~/const";
@@ -56,23 +56,28 @@ const CustomImageBottomModal: React.FC<Props> = props => {
     deviceModelId,
     referral = undefined,
   } = props;
+  const [loading, setLoading] = useState(false);
   const { t } = useTranslation();
 
   const navigation = useNavigation<StackNavigatorNavigation<BaseNavigatorStackParamList>>();
 
   const handleUploadFromPhone = useCallback(async () => {
-    const imageFileUriPromise = importImageFromPhoneGallery();
-    navigation.navigate(NavigatorName.CustomImage, {
-      screen: ScreenName.CustomImagePreviewPreEdit,
-      params: {
-        imageFileUriPromise,
-        device,
-        deviceModelId,
-        referral: referral,
-      },
-    });
+    setLoading(true);
+    const result = await importImageFromPhoneGallery();
+    if (result !== null) {
+      navigation.navigate(NavigatorName.CustomImage, {
+        screen: ScreenName.CustomImagePreviewPreEdit,
+        params: {
+          device,
+          deviceModelId,
+          referral: referral,
+          ...result,
+        },
+      });
+    }
     onClose && onClose();
-  }, [navigation, onClose, device, deviceModelId, referral]);
+    setLoading(false);
+  }, [device, deviceModelId, navigation, onClose, referral]);
 
   const handleRemoveImage = useCallback(() => {
     navigation.navigate(NavigatorName.CustomImage, {
@@ -86,9 +91,17 @@ const CustomImageBottomModal: React.FC<Props> = props => {
   }, [navigation, device, referral, setDeviceHasImage]);
 
   return (
-    <QueuedDrawer isRequestingToBeOpened={!!isOpened} onClose={onClose} CustomHeader={Header}>
+    <QueuedDrawer
+      isRequestingToBeOpened={!!isOpened}
+      onClose={onClose}
+      CustomHeader={loading ? () => null : Header}
+    >
       <TrackScreen category={analyticsDrawerName} type="drawer" refreshSource={false} />
-      {
+      {loading ? (
+        <Flex m={10}>
+          <InfiniteLoader />
+        </Flex>
+      ) : (
         <ButtonContainer>
           <Button
             onPress={handleUploadFromPhone}
@@ -114,7 +127,7 @@ const CustomImageBottomModal: React.FC<Props> = props => {
             </Button>
           ) : null}
         </ButtonContainer>
-      }
+      )}
     </QueuedDrawer>
   );
 };

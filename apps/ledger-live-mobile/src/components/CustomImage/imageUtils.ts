@@ -28,18 +28,22 @@ export async function importImageFromPhoneGallery(): Promise<ImageFileUri | null
             mediaType: "photo",
             quality: 1,
             includeBase64: false,
-          }).then(res => {
-            if (res.errorCode)
-              throw new Error(
-                `ImagePicker.launchImageLibrary Error (error code: ${res.errorCode}): ${res.errorMessage}`,
-              );
-            const assets = res?.assets || [];
-            if (assets.length === 0 && !res.didCancel) throw new Error("Assets length is 0");
-            return {
-              cancelled: res.didCancel,
-              uri: assets[0]?.uri,
-            };
-          });
+          })
+            .then(res => {
+              if (res.errorCode)
+                throw new Error(
+                  `ImagePicker.launchImageLibrary Error (error code: ${res.errorCode}): ${res.errorMessage}`,
+                );
+              const assets = res?.assets || [];
+              if (assets.length === 0 && !res.didCancel) throw new Error("Assets length is 0");
+              return {
+                cancelled: res.didCancel,
+                uri: assets[0]?.uri,
+              };
+            })
+            .catch(err => {
+              throw err;
+            });
     const { uri, cancelled } = await pickImagePromise;
     if (cancelled) return null;
     if (uri) {

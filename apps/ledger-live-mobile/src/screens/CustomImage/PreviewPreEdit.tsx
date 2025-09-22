@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import React, { useCallback, useMemo, useRef, useState } from "react";
 import styled from "styled-components/native";
 import { Flex, InfiniteLoader, Text } from "@ledgerhq/native-ui";
 import { ImagePreviewError } from "@ledgerhq/live-common/customImage/errors";
@@ -99,8 +99,11 @@ function Tab({
 
 const PreviewPreEdit = ({ navigation, route }: NavigationProps) => {
   const { t } = useTranslation();
-  const [loadedImage, setLoadedImage] = useState<ImageFileUri | null>(null);
   const { params } = route;
+
+  const [loadedImage, setLoadedImage] = useState<ImageFileUri | null>({
+    imageFileUri: params.imageFileUri,
+  });
   const { device } = params;
   const [deviceModelId, setSelectedDeviceModelId] = useState<CLSSupportedDeviceModelId>(
     params.deviceModelId ?? DeviceModelId.stax,
@@ -110,9 +113,6 @@ const PreviewPreEdit = ({ navigation, route }: NavigationProps) => {
     () => getScreenVisibleAreaDimensions(deviceModelId),
     [deviceModelId],
   );
-
-  const isImageFileUri = "imageFileUri" in params;
-  const isImageFileUriPromise = "imageFileUriPromise" in params;
 
   const forceDefaultNavigationBehaviour = useRef(false);
   const navigateToErrorScreen = useCallback(
@@ -132,40 +132,6 @@ const PreviewPreEdit = ({ navigation, route }: NavigationProps) => {
   );
 
   const imageType = "customImage";
-
-  const imageFileUri = isImageFileUri ? params.imageFileUri : undefined;
-  const imageFileUriPromise = isImageFileUriPromise ? params.imageFileUriPromise : undefined;
-
-  /** LOAD SOURCE IMAGE FROM PARAMS */
-  useEffect(() => {
-    let dead = false;
-    if (imageFileUri) {
-      setLoadedImage({
-        imageFileUri,
-      });
-    } else if (imageFileUriPromise) {
-      imageFileUriPromise
-        .then(res => {
-          if (!dead) {
-            if (res === null) {
-              forceDefaultNavigationBehaviour.current = true;
-              navigation.goBack();
-            } else {
-              setLoadedImage(res);
-            }
-          }
-        })
-        .catch(e => {
-          if (!dead) handleError(e);
-        });
-      return () => {
-        dead = true;
-      };
-    }
-    return () => {
-      dead = true;
-    };
-  }, [handleError, imageFileUri, imageFileUriPromise, navigation]);
 
   /** IMAGE RESIZING */
 

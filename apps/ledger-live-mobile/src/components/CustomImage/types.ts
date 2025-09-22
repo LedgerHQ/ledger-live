@@ -23,7 +23,3 @@ export type ImageFileUri = {
    */
   imageFileUri: string;
 };
-
-export type ImageFileUriPromise = {
-  imageFileUriPromise: Promise<ImageFileUri | null>;
-};
