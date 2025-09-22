@@ -69,7 +69,7 @@ describe("Receive Flow", () => {
     await openReceive();
     await app.common.performSearch("Polygon");
     await app.receive.selectAsset("POL");
-    await app.receive.selectNetwork("bsc");
+    await app.receive.selectNetwork("bnb");
     first && (await deviceAction.selectMockDevice(), (first = false));
     await deviceAction.openApp();
     await app.addAccount.addAccountAtIndex(Currency.BSC.name, Currency.BSC.id, 0);
