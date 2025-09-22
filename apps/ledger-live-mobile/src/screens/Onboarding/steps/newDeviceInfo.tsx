@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from "react";
-import * as Animatable from "react-native-animatable";
+import Animated, { FadeIn } from "react-native-reanimated";
 import { useTranslation } from "react-i18next";
 import { Flex, Carousel, Text, Button, IconsLegacy } from "@ledgerhq/native-ui";
 import { useNavigation, useRoute } from "@react-navigation/native";
@@ -91,14 +91,13 @@ const Footer = ({ index }: { index: number }) => {
   if (!Component) return null;
 
   return (
-    <Animatable.View
+    <Animated.View
       style={styles.animatable}
-      animation="fadeIn"
-      useNativeDriver
+      entering={FadeIn}
       testID="onboarding-stepNewDevice-cta"
     >
       <Component label={t(`onboarding.stepNewDevice.cta`)} />
-    </Animatable.View>
+    </Animated.View>
   );
 };
 
