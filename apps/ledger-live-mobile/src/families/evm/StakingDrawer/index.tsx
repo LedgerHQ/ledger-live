@@ -92,8 +92,9 @@ function Content({ accountId, has32Eth, providers, walletApiAccountId }: Props) 
       rowGap: 24,
       display: "flex",
       paddingTop: insets.top,
+      paddingBottom: insets.bottom,
     }),
-    [sharedHeight],
+    [sharedHeight, insets.top, insets.bottom],
   );
   const onLayout = useCallback(
     (_: LayoutChangeEvent) => {
