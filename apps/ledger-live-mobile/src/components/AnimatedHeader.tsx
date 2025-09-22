@@ -18,16 +18,14 @@ import Animated, {
   useSharedValue,
   useAnimatedScrollHandler,
   useAnimatedStyle,
+  FadeInUp,
 } from "react-native-reanimated";
-import * as Animatable from "react-native-animatable";
 import { space } from "@ledgerhq/native-ui/styles/theme";
 import Styles from "~/navigation/styles";
 import LText from "./LText";
 import { width } from "~/helpers/normalizeSize";
 import { NavigationHeaderBackButton } from "./NavigationHeaderBackButton";
 import { NavigationHeaderCloseButton } from "./NavigationHeaderCloseButton";
-
-const AnimatedView = Animatable.View;
 
 type Props = {
   title: React.ReactNode;
@@ -41,7 +39,7 @@ type Props = {
   titleStyle?: StyleProp<TextStyle>;
   edges?: ("top" | "right" | "left" | "bottom")[];
 };
-const AnimatedFlatList = Animated.createAnimatedComponent(FlatList);
+
 export default function AnimatedHeaderView({
   title,
   hasBackButton,
@@ -123,8 +121,8 @@ export default function AnimatedHeaderView({
         </Animated.View>
       </Animated.View>
       {children && isReady && (
-        <AnimatedView animation="fadeInUp" delay={50} duration={300}>
-          <AnimatedFlatList
+        <Animated.View entering={FadeInUp.delay(50).duration(300)}>
+          <Animated.FlatList
             onScroll={scrollHandler}
             scrollEventThrottle={10}
             contentContainerStyle={[styles.scrollArea]}
@@ -132,7 +130,7 @@ export default function AnimatedHeaderView({
             data={[children]}
             renderItem={({ item, index }) => <View key={index}>{item as React.ReactNode}</View>}
           />
-        </AnimatedView>
+        </Animated.View>
       )}
       {footer}
     </SafeAreaView>
