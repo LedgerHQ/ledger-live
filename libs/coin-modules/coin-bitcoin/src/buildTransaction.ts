@@ -6,7 +6,6 @@ import {
   type TransactionInfo as WalletTxInfo,
 } from "./wallet-btc";
 import { FeeNotLoaded } from "@ledgerhq/errors";
-import { BigNumber } from "bignumber.js";
 
 import type { Transaction, UtxoStrategy } from "./types";
 import { bitcoinPickingStrategy } from "./types";
