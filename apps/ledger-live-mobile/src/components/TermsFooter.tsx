@@ -1,3 +1,4 @@
+import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { Text } from "@ledgerhq/native-ui";
 import React, { useCallback } from "react";
 import { Trans } from "react-i18next";
@@ -24,6 +25,7 @@ export type TermsProviders = keyof typeof urls.swap.providers;
 const TermsFooter: React.FC<{
   provider?: TermsProviders;
 }> = ({ provider }) => {
+  const isDetailedViewEnabled = useFeature("ptxSwapconfirmSwapOnDevice");
   const url = provider && urls.swap.providers[provider]?.tos;
   const onLinkClick = useCallback(() => {
     if (url) {
@@ -34,11 +36,15 @@ const TermsFooter: React.FC<{
   if (!url) {
     return null;
   }
+  const translationKey =
+    isDetailedViewEnabled?.enabled && provider === "changelly"
+      ? "DeviceAction.confirmSwap.acceptTermsSimplified"
+      : "DeviceAction.confirmSwap.acceptTerms";
 
   return (
     <CenteredText marginTop={16}>
       <Trans
-        i18nKey="DeviceAction.confirmSwap.acceptTerms"
+        i18nKey={translationKey}
         values={{ provider }}
         components={[
           <UnderlinedText onPress={onLinkClick} textAlign="center" key="ProviderText">
