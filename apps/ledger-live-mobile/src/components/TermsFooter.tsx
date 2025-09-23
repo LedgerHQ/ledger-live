@@ -9,12 +9,12 @@ import { urls } from "~/utils/urls";
 const CenteredText = styled(Text).attrs({
   fontWeight: "medium",
   textAlign: "center",
-  fontSize: "paragraph",
+  fontSize: "12px",
   color: "neutral.c60",
 })``;
 
 const UnderlinedText = styled(Text).attrs({
-  fontSize: "paragraph",
+  fontSize: "12px",
   color: "neutral.c60",
 })`
   text-decoration-line: underline;
@@ -26,7 +26,8 @@ const TermsFooter: React.FC<{
   provider?: TermsProviders;
 }> = ({ provider }) => {
   const isDetailedViewEnabled = useFeature("ptxSwapconfirmSwapOnDevice");
-  const url = provider && urls.swap.providers[provider]?.tos;
+  const providerName = provider?.includes("changelly") ? "changelly" : provider;
+  const url = provider && providerName && urls.swap.providers[providerName]?.tos;
   const onLinkClick = useCallback(() => {
     if (url) {
       Linking.openURL(url);
@@ -37,8 +38,8 @@ const TermsFooter: React.FC<{
     return null;
   }
   const translationKey =
-    isDetailedViewEnabled?.enabled && provider === "changelly"
-      ? "DeviceAction.confirmSwap.acceptTermsSimplified"
+    isDetailedViewEnabled?.enabled && provider.includes("changelly")
+      ? "DeviceAction.confirmSwap.changellySimplifiedAcceptTerms"
       : "DeviceAction.confirmSwap.acceptTerms";
 
   return (
