@@ -80,7 +80,7 @@ describe("ModularDrawerFlowManager - Modules configuration", () => {
     expect(screen.queryByText(/base/i)).toBeNull();
     expect(screen.queryByText(/scroll/i)).toBeNull();
 
-    expect(screen.queryByText(/\$95,622,923.34/i)).toBeVisible(); // TODO This fails because balance is not aggregated across networks
+    expect(screen.queryByText(/\$95,622,923.34/i)).toBeVisible();
     expect(screen.queryByText(/34,478.4 eth/i)).toBeVisible();
   });
 
@@ -99,9 +99,9 @@ describe("ModularDrawerFlowManager - Modules configuration", () => {
     );
 
     await waitFor(() => expect(screen.getByText(/ethereum/i)).toBeVisible());
-    const ethereumBalance = screen.getByText(/23.4663 eth/i);
+    const ethereumBalance = screen.getByText(/34,478.4 eth/i);
     expect(ethereumBalance).toBeVisible();
-    const usdBalance = screen.getByText(/\$65,081.79/i);
+    const usdBalance = screen.getByText(/\$95,622,923.34/i);
     expect(usdBalance).toBeVisible();
 
     const apyTags = screen.queryAllByText(/% APY/i);
@@ -199,9 +199,9 @@ describe("ModularDrawerFlowManager - Modules configuration", () => {
     );
 
     await waitFor(() => expect(screen.getByText(/ethereum/i)).toBeVisible());
-    const ethereumBalance = screen.queryByText(/23.4663 eth/i);
+    const ethereumBalance = screen.queryByText(/34,478.4 eth/i);
     expect(ethereumBalance).toBeNull();
-    const usdBalance = screen.queryByText(/\$65,081.79/i);
+    const usdBalance = screen.queryByText(/\$95,622,923.34/i);
     expect(usdBalance).toBeNull();
   });
 
@@ -322,7 +322,7 @@ describe("ModularDrawerFlowManager - Modules configuration", () => {
     expect(screen.queryByText(/base/i)).toBeNull();
     expect(screen.queryByText(/scroll/i)).toBeNull();
 
-    expect(screen.getByText(/\$95,622,923.34/i)).toBeVisible(); // TODO This fails because balance is not aggregated across networks
+    expect(screen.getByText(/\$95,622,923.34/i)).toBeVisible();
     expect(screen.getByText(/34,478.4 eth/i)).toBeVisible();
   });
 });

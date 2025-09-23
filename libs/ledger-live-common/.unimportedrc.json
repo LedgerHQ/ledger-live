@@ -424,7 +424,6 @@
     "src/modularDrawer/modules/createAssetConfiguration.ts",
     "src/modularDrawer/modules/createNetworkConfiguration.ts",
     "src/modularDrawer/types.ts",
-    "src/modularDrawer/utils/buildProviderCurrenciesMap.tsx",
     "src/modularDrawer/utils/calculateProviderTotal.ts",
     "src/modularDrawer/utils/counterValueFormatter.ts",
     "src/modularDrawer/utils/currencyUtils.ts",

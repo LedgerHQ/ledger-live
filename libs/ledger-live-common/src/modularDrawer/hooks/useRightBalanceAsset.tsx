@@ -5,8 +5,6 @@ import BigNumber from "bignumber.js";
 import { counterValueFormatter } from "../utils/counterValueFormatter";
 import { compareByBalanceThenFiat } from "../utils/sortByBalance";
 import { UseBalanceDeps } from "../utils/type";
-import { buildProviderCurrenciesMap } from "../utils/buildProviderCurrenciesMap";
-import { CurrenciesByProviderId } from "../../deposit/type";
 import { calculateProviderTotals } from "../utils/calculateProviderTotal";
 import { groupAccountsByAsset } from "../utils/groupAccountsByAsset";
 
@@ -41,20 +39,12 @@ export function createUseRightBalanceAsset({ useBalanceDeps, balanceItem, assets
     return { balance, fiatValue };
   };
 
-  return function useRightBalanceAsset(
-    assets: CryptoOrTokenCurrency[],
-    currenciesByProvider: CurrenciesByProviderId[],
-  ) {
+  return function useRightBalanceAsset(assets: CryptoOrTokenCurrency[]) {
     const { flattenedAccounts, discreet, state, counterValueCurrency, locale } = useBalanceDeps();
 
     const grouped = useMemo(
       () => groupAccountsByAsset(flattenedAccounts, state, counterValueCurrency, discreet),
       [flattenedAccounts, state, counterValueCurrency, discreet],
-    );
-
-    const providerMap = useMemo(
-      () => buildProviderCurrenciesMap(currenciesByProvider),
-      [currenciesByProvider],
     );
 
     return useMemo(() => {

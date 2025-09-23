@@ -48,7 +48,6 @@ export const SelectNetwork = ({
   const transformNetworks = makeNetworkConfigurationHook({
     networksConfig,
     accounts$,
-    selectedAssetId,
   });
   const networksCryptoCurrencies = networks.map(n =>
     n.type === "CryptoCurrency" ? n : n.parentCurrency,

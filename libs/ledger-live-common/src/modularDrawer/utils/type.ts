@@ -4,7 +4,6 @@ import { AccountLike } from "@ledgerhq/types-live";
 import { ReactNode } from "react";
 import { Observable } from "rxjs";
 import { WalletAPIAccount } from "../../wallet-api/types";
-import { CurrenciesByProviderId } from "../../deposit/type";
 import { EnhancedModularDrawerConfiguration } from "../../wallet-api/ModularDrawer/types";
 import { InterestRate } from "../data/entities";
 import { MarketItemResponse } from "../../market/utils/types";
@@ -74,8 +73,6 @@ export type UseAccountData = (params: AccountModuleParams) => AccountDataItem[];
 export type NetworkHookParams = {
   assets: CryptoOrTokenCurrency[];
   networks: CryptoOrTokenCurrency[];
-  selectedAssetId: string;
-  currenciesByProvider: CurrenciesByProviderId[];
   accounts$?: Observable<WalletAPIAccount[]>;
 };
 export type NetworkHook = (params: NetworkHookParams) => Array<CryptoOrTokenCurrency & Network>;
@@ -101,8 +98,6 @@ export type Network = {
 
 export type CreateNetworkConfigurationHookProps = {
   networksConfig: EnhancedModularDrawerConfiguration["networks"];
-  currenciesByProvider?: CurrenciesByProviderId[];
-  selectedAssetId: string;
   accounts$?: Observable<WalletAPIAccount[]>;
 };
 

@@ -29,46 +29,6 @@ import ModularDrawerFlowManager from "../ModularDrawerFlowManager";
 
 const MAD_BACK_BUTTON_TEST_ID = "mad-back-button";
 
-jest.mock("@ledgerhq/live-common/modularDrawer/hooks/useAssetsData", () => ({
-  useAssetsData: ({ search }: { search?: string }) => {
-    const ids = ["bitcoin", "ethereum", "base", "usd_coin"];
-
-    // Mocks the API response based on the search term
-    const metaCurrencyIds = search
-      ? ids.filter(id => id.toLowerCase().includes(search.toLowerCase()))
-      : ids;
-
-    return {
-      data: {
-        currenciesOrder: {
-          metaCurrencyIds,
-        },
-        cryptoAssets: {
-          bitcoin: { assetsIds: { bitcoin: "bitcoin" } },
-          ethereum: { assetsIds: { ethereum: "ethereum", arbitrum: "arbitrum" } },
-          base: { assetsIds: { base: "base", scroll: "scroll" } },
-          usd_coin: {
-            assetsIds: { ethereum: "ethereum/erc20/usd__coin" },
-          },
-        },
-        cryptoOrTokenCurrencies: {
-          bitcoin: bitcoinCurrency,
-          ethereum: ethereumCurrency,
-          arbitrum: arbitrumCurrency,
-          base: baseCurrency,
-          scroll: scrollCurrency,
-          "ethereum/erc20/usd__coin": usdcToken,
-        },
-      },
-      isLoading: false,
-      isSuccess: true,
-      error: null,
-      loadNext: undefined,
-      refetch: jest.fn(),
-    };
-  },
-}));
-
 beforeEach(() => {
   mockDomMeasurements();
 });
@@ -167,6 +127,7 @@ describe("ModularDrawerFlowManager - Select Account Flow", () => {
       <ModularDrawerFlowManager
         currencies={[ethereumCurrency]}
         onAccountSelected={mockOnAccountSelected}
+        areCurrenciesFiltered
       />,
       {
         ...INITIAL_STATE,
@@ -184,6 +145,7 @@ describe("ModularDrawerFlowManager - Select Account Flow", () => {
       <ModularDrawerFlowManager
         currencies={[ethereumCurrency, arbitrumCurrency]}
         onAccountSelected={mockOnAccountSelected}
+        areCurrenciesFiltered
       />,
     );
 
@@ -300,6 +262,7 @@ describe("ModularDrawerFlowManager - Select Account Flow", () => {
       <ModularDrawerFlowManager
         currencies={[ethereumCurrency, arbitrumCurrency]}
         onAccountSelected={mockOnAccountSelected}
+        areCurrenciesFiltered
       />,
     );
 
@@ -407,6 +370,7 @@ describe("ModularDrawerFlowManager - Select Account Flow", () => {
       <ModularDrawerFlowManager
         currencies={[usdcToken]}
         onAccountSelected={mockOnAccountSelected}
+        areCurrenciesFiltered
       />,
       {
         ...INITIAL_STATE,
@@ -426,6 +390,7 @@ describe("ModularDrawerFlowManager - Select Account Flow", () => {
       <ModularDrawerFlowManager
         currencies={[baseCurrency, scrollCurrency, bitcoinCurrency]}
         onAccountSelected={mockOnAccountSelected}
+        areCurrenciesFiltered
       />,
       {
         ...INITIAL_STATE,
@@ -452,6 +417,7 @@ describe("ModularDrawerFlowManager - Select Account Flow", () => {
         <ModularDrawerFlowManager
           currencies={[baseCurrency, scrollCurrency, bitcoinCurrency]}
           onAccountSelected={mockOnAccountSelected}
+          areCurrenciesFiltered
         />
         <ModalsLayer />
       </>,

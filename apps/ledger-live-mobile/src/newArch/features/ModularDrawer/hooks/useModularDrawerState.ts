@@ -147,7 +147,6 @@ export function useModularDrawerState({
   };
 
   return {
-    asset,
     accountCurrency,
     network,
     availableNetworks,

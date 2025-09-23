@@ -155,7 +155,8 @@ export function useModularDrawerFlowState({
   );
 
   useEffect(() => {
-    if (hasOneCurrency && searchedValue === undefined && !selectedAsset && assets?.length === 1) {
+    if (hasOneCurrency && searchedValue === undefined && !selectedAsset && assets) {
+      // TODO hasOneCurrency could be replaced with assets?.length === 1
       const assetItem = assets[0];
 
       if (assetItem.networks.length > 0) {

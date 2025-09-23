@@ -73,7 +73,6 @@ describe("useModularDrawerState", () => {
         assetsSorted: [],
       }),
     );
-    expect(result.current.asset).toBeUndefined();
     expect(result.current.network).toBeUndefined();
     expect(result.current.availableNetworks).toEqual([]);
   });
@@ -90,7 +89,6 @@ describe("useModularDrawerState", () => {
       result.current.handleAsset(mockEthCryptoCurrency);
     });
 
-    expect(result.current.asset).toEqual(mockEthCryptoCurrency);
     expect(result.current.availableNetworks.length).toBeGreaterThan(1);
   });
 
@@ -104,11 +102,9 @@ describe("useModularDrawerState", () => {
     act(() => {
       result.current.handleAsset(mockEthCryptoCurrency);
     });
-    expect(result.current.asset).toEqual(mockEthCryptoCurrency);
     act(() => {
       result.current.handleCloseButton();
     });
-    expect(result.current.asset).toBeUndefined();
     expect(result.current.network).toBeUndefined();
     expect(result.current.availableNetworks).toEqual([]);
   });
