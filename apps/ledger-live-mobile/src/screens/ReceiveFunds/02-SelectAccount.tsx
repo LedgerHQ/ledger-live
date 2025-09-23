@@ -143,7 +143,11 @@ function ReceiveSelectAccount({
   const keyExtractor = useCallback((item: AccountLikeEnhanced) => item?.id, []);
 
   return currency && aggregatedAccounts && aggregatedAccounts.length > 0 ? (
-    <SafeAreaViewFixed isFlex edges={["left", "right", "bottom"]}>
+    <SafeAreaViewFixed
+      isFlex
+      edges={["left", "right", "bottom"]}
+      useDetoxInsets={Config.DETOX === "1"}
+    >
       <TrackScreen category="Deposit" name="Select account to deposit to" asset={currency.name} />
       <Flex p={6}>
         <Text
@@ -168,7 +172,7 @@ function ReceiveSelectAccount({
         keyExtractor={keyExtractor}
         showsVerticalScrollIndicator={false}
       />
-      <Flex mb={(Config.DETOX ? insets.bottom : 0) + 6} px={6}>
+      <Flex mb={6} px={6}>
         <Button
           type="shade"
           size="large"
