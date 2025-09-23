@@ -128,6 +128,7 @@ export type AssetData = {
     ticker: string;
     name: string;
     assetsIds: Record<string, string>;
+    metaCurrencyId: string;
   };
   networks: CryptoOrTokenCurrency[];
   interestRates?: InterestRate;

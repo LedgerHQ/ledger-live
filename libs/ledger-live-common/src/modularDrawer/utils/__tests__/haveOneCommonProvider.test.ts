@@ -12,6 +12,7 @@ const MOCK_ASSETS_SORTED: AssetData[] = [
         ethereum: "ethereum",
         arbitrum: "arbitrum",
       },
+      metaCurrencyId: "urn:crypto:meta-currency:ethereum",
     },
     networks: [getCryptoCurrencyById("ethereum"), getCryptoCurrencyById("arbitrum")],
   },
@@ -23,6 +24,7 @@ const MOCK_ASSETS_SORTED: AssetData[] = [
       assetsIds: {
         bitcoin: "bitcoin",
       },
+      metaCurrencyId: "bitcoin",
     },
     networks: [getCryptoCurrencyById("bitcoin")],
   },

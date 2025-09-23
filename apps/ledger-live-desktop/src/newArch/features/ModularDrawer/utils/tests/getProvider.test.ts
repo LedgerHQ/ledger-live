@@ -17,6 +17,7 @@ const MOCK_ASSETS_SORTED: AssetData[] = [
         ethereum: "ethereum",
         arbitrum: "arbitrum",
       },
+      metaCurrencyId: "ethereum",
     },
     networks: [ethereumCurrency, arbitrumCurrency],
   },
@@ -28,6 +29,7 @@ const MOCK_ASSETS_SORTED: AssetData[] = [
       assetsIds: {
         bitcoin: "bitcoin",
       },
+      metaCurrencyId: "bitcoin",
     },
     networks: [bitcoinCurrency],
   },
