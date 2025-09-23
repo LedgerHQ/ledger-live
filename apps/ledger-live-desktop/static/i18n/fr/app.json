@@ -165,9 +165,8 @@
     "type" : {
       "IN" : "Reçu",
       "OUT" : "Envoyé",
-      "NFT_IN" : "NFT reçu",
-      "NFT_OUT" : "NFT envoyé",
       "CREATE" : "Créé",
+      "UNKNOWN" : "Inconnu",
       "REVEAL" : "Révélé",
       "DELEGATE" : "Délégué",
       "REDELEGATE" : "Redélégué",
@@ -464,6 +463,8 @@
       "apt_description" : "Pour échanger des Aptos, utilisez un autre appareil Ledger compatible, tel que le Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™.",
       "cosmos_title" : "Le Ledger Nano S™ ne prend pas en charge l’échange de Cosmos",
       "cosmos_description" : "Pour échanger des Cosmos, utilisez un autre appareil Ledger compatible, tel que le Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™.",
+      "hedera_title" : "Le Ledger Nano S™ ne prend pas en charge l’échange d’Hedera",
+      "hedera_description" : "Pour échanger des Hedera, utilisez un autre appareil Ledger compatible, tel que le Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™.",
       "osmo_title" : "Le Ledger Nano S™ ne prend pas en charge l’échange d’Osmosis",
       "osmo_description" : "Pour échanger des Osmosis, utilisez un autre appareil Ledger compatible, tel que le Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™.",
       "dydx_title" : "Le Ledger Nano S™ ne prend pas en charge l’échange de dYdX",
@@ -1437,11 +1438,6 @@
       }
     }
   },
-  "hideNftCollection" : {
-    "title" : "Masquer la collection de NFT",
-    "desc" : "Vous vous apprêtez à cacher tous les NFT de la collection <1><0>{{collectionName}}</0></1>. Vous pouvez restaurer leur visibilité à tout moment à partir des <3>Paramètres</3>.",
-    "hideCTA" : "Masquer la collection de NFT"
-  },
   "banners" : {
     "cleanCache" : {
       "title" : "La modification des paramètres expérimentaux nécessite de vider le cache.",
@@ -1708,50 +1704,6 @@
       "browseAssets" : "Parcourir les actifs"
     }
   },
-  "NFT" : {
-    "viewer" : {
-      "actions" : {
-        "send" : "Envoyer",
-        "open" : "Ouvrir dans {{viewer}}"
-      },
-      "attributes" : {
-        "properties" : "Attributs",
-        "description" : "Description",
-        "tokenAddress" : "Adresse du token",
-        "tokenId" : "Identifiant du token",
-        "quantity" : "Nombre",
-        "floorPrice" : "Prix plancher"
-      }
-    },
-    "collections" : {
-      "title" : "Collections de NFT (tokens non fongibles)",
-      "receiveCTA" : "Recevoir NFT",
-      "galleryCTA" : "Voir la galerie",
-      "seeMore" : "Voir plus de collections",
-      "seeAll" : "Voir toutes les collections",
-      "seeLess" : "Voir moins",
-      "placeholder" : "Pour ajouter des NFT, il vous suffit de les recevoir sur votre adresse {{currency}}."
-    },
-    "gallery" : {
-      "title" : "Tous les NFT",
-      "collection" : {
-        "header" : {
-          "sendCTA" : "Envoyer",
-          "contract" : "Contrat : {{contract}}"
-        },
-        "operationList" : {
-          "header" : "Dernières opérations",
-          "OUT" : "Envoyé",
-          "IN" : "Reçu"
-        }
-      },
-      "tokensList" : {
-        "item" : {
-          "tokenId" : "Identifiant : {{tokenId}}"
-        }
-      }
-    }
-  },
   "tokensList" : {
     "title" : "Tokens",
     "cta" : "Ajouter un token",
@@ -1863,12 +1815,6 @@
     "internalOpTooltip" : "Cette opération a des opérations internes.",
     "details" : "Détails sur {{ currency }}",
     "multipleAddresses" : "Pourquoi plusieurs adresses ?",
-    "nft" : {
-      "name" : "Nom du token",
-      "contract" : "Contrat du token",
-      "id" : "Identifiant token (NFT)",
-      "quantity" : "Nombre"
-    },
     "extra" : {
       "frozenAmount" : "Montant gelé",
       "unfreezeAmount" : "Dégeler le montant",
@@ -1930,7 +1876,12 @@
         "default" : "Vérifiez les détails de l’échange sur votre appareil Ledger avant de le valider. Les adresses sont échangées de manière sécurisée afin que vous n’ayez pas à les vérifier.",
         "provider" : "Vérifiez les détails de l’échange sur votre appareil Ledger avant de le valider. Une vérification supplémentaire peut être effectuée par {{providerName}} pour certaines transactions, entraînant un temps d’attente."
       },
+      "simpleViewNotice" : {
+        "default" : "Vérifiez les détails de l’échange sur votre appareil Ledger avant de le valider.",
+        "provider" : "Vérifiez les détails de l’échange sur votre appareil Ledger avant de le valider."
+      },
       "confirm" : "Confirmer l’échange",
+      "confirmSwap" : "Confirmer l’opération d’échange sur l’appareil",
       "amountSent" : "Montant à envoyer",
       "amountReceived" : "Montant à recevoir",
       "amountReceivedFloat" : "Montant à recevoir sans les frais de service",
@@ -2296,6 +2247,16 @@
     "title" : "Recevoir",
     "successTitle" : "Adresse partagée en toute sécurité",
     "steps" : {
+      "options" : {
+        "fromBank" : {
+          "title" : "From a bank account",
+          "description" : "Deposit USD or EUR"
+        },
+        "fromCrypto" : {
+          "title" : "From a crypto address",
+          "description" : "Receive crypto"
+        }
+      },
       "chooseAccount" : {
         "title" : "Compte",
         "label" : "Compte à créditer",
@@ -2350,12 +2311,10 @@
   },
   "send" : {
     "title" : "Envoyer",
-    "titleNft" : "Envoyer le NFT",
     "totalSpent" : "Total débité",
     "steps" : {
       "recipient" : {
         "title" : "Bénéficiaire",
-        "nftRecipient" : "NFT à envoyer",
         "verifyAddress" : "Vérifiez que l’adresse est identique à celle partagée par le bénéficiaire.",
         "domainService" : {
           "resolve" : "Cet ENS est valide et est associé à l’adresse suivante :",
@@ -2380,8 +2339,7 @@
         "banner" : "Montant maximal pouvant être envoyé :",
         "fees" : "En savoir plus sur les frais",
         "standard" : "Standard",
-        "advanced" : "Avancé",
-        "nftQuantity" : "Nombre"
+        "advanced" : "Avancé"
       },
       "summary" : {
         "title" : "Récapitulatif"
@@ -2425,8 +2383,7 @@
         "nextBlock" : "Bloc suivant",
         "suggested" : "Suggéré",
         "unitVByte" : "{{unit}}/vByte",
-        "nft" : "NFT",
-        "nftQuantity" : "Nombre",
+        "unitPerByte" : "{{unit}}/byte",
         "splExtensionsWarning" : "Vous interagissez avec un token faisant partie du programme Token-2022, aussi appelé extension de tokens. Ce token présente des risques spécifiques. <0>Cliquez ici</0> pour en savoir plus."
       },
       "verification" : {
@@ -4531,11 +4488,6 @@
       "debugAppsDesc" : "Affichez et autorisez l’ouverture des Platform Apps \"Debug\".",
       "debugReactQuery" : "Autoriser le débogage avec React Query",
       "debugReactQueryDesc" : "Affichez et autorisez l’ouverture de la console de débogage de React Query.",
-      "nfts" : {
-        "title" : "Collections de NFT masquées",
-        "description" : "Réinitialiser la liste des collections masquées",
-        "reset" : "Réinitialiser ({{count}})"
-      },
       "exchangeDeveloperMode" : {
         "title" : "Mode développeur Exchange",
         "desc" : "Ajoutez les informations sur le prestataire d’Exchange.",
@@ -4575,135 +4527,39 @@
           }
         }
       },
-      "debugSimpleHash" : {
-        "testSimpleHash" : {
-          "title" : "Outils SimpleHash",
-          "description" : "Utilisez quelques outils pratiques avec SimpleHash.",
-          "cta" : "Ouvrir",
-          "tabs" : {
-            "spam" : "Signaler spam",
-            "refresh" : "Actualiser métadonnées",
-            "check" : "Score de spam"
-          }
+      "mockAccounts" : {
+        "title" : "Générer des comptes de simulation",
+        "description" : "Générez des comptes de simulation à des fins de test. Ces outils vous permettent de créer des comptes test, avec diverses monnaies et configurations.",
+        "customGenerate" : {
+          "title" : "Custom generation",
+          "desc" : "Select currencies and add tokens"
         },
-        "mockAccounts" : {
-          "title" : "Générer des comptes de simulation",
-          "description" : "Générez des comptes de simulation à des fins de test. Ces outils vous permettent de créer des comptes test, avec diverses monnaies et configurations.",
-          "customGenerate" : {
-            "title" : "Génération personnalisée",
-            "desc" : "Sélectionnez des monnaies et ajoutez des tokens"
-          },
-          "quickGenerate" : {
-            "title" : "Génération rapide",
-            "desc" : "Générez 10 comptes aléatoires avec des monnaies aléatoires"
-          },
-          "currencySelector" : {
-            "placeholder" : "Choisir des monnaies...",
-            "searchPlaceholder" : "Rechercher",
-            "noCurrenciesFound" : "Aucune monnaie trouvée",
-            "noCurrenciesAvailable" : "Aucune monnaie disponible",
-            "selectedCount" : "{{count}} monnaie sélectionnée",
-            "selectedCount_other" : "{{count}} monnaies sélectionnées"
-          },
-          "tokenIds" : {
-            "label" : "ID token (facultatif)",
-            "placeholder" : "token1, token2, token3"
-          },
-          "buttons" : {
-            "generateAccounts" : "Générer {{count}} compte",
-            "generateAccounts_other" : "Générer {{count}} comptes",
-            "generateAccountsQuick" : "Générer {{count}} comptes"
-          },
-          "alerts" : {
-            "selectCurrency" : "Veuillez sélectionner au moins une monnaie",
-            "confirmErase" : "Les comptes existants seront supprimés. Continuer ?",
-            "generateError" : "Impossible de générer les comptes de simulation. Veuillez réessayer."
-          }
+        "quickGenerate" : {
+          "title" : "Quick generation",
+          "desc" : "Générez 10 comptes aléatoires avec des monnaies aléatoires"
         },
-        "debugSpamNft" : {
-          "report" : "Signaler",
-          "contractAddress" : "Adresse du contrat",
-          "contractAddressDesc" : "contract_address du NFT signalé/de son contrat",
-          "chainId" : "Identifiant de chaîne",
-          "chainIdDesc" : "chain_id (ex. Ethereum) du NFT signalé/de son contrat",
-          "collectionId" : "Identifiant de la collection",
-          "collectionIdDesc" : "Identifiant (ID) SimpleHash de la collection du NFT signalé",
-          "tokenId" : "Identifiant du token",
-          "tokenIdDesc" : "token_id du NFT signalé",
-          "eventType" : "Type d’événement",
-          "eventTypeDesc" : "Type de signalement à faire",
-          "success" : "Votre signalement a bien été envoyé. Il prendra effet dans un délai de 5 à 10 minutes.",
-          "error" : "Une erreur est survenue lors de l’envoi du signalement. Veuillez réessayer plus tard.",
-          "reportType" : {
-            "title" : "Que souhaiteriez-vous signaler ?",
-            "desc" : "Sélectionnez le type de signalement",
-            "individual" : "Signaler un NFT comme spam",
-            "contract" : "Signaler un contrat comme spam",
-            "collection" : "Signaler une collection comme spam"
-          }
+        "currencySelector" : {
+          "placeholder" : "Choisir des monnaies...",
+          "searchPlaceholder" : "Rechercher",
+          "noCurrenciesFound" : "Aucune monnaie trouvée",
+          "noCurrenciesAvailable" : "Aucune monnaie disponible",
+          "selectedCount" : "{{count}} monnaie sélectionnée",
+          "selectedCount_other" : "{{count}} monnaies sélectionnées"
         },
-        "debugRefreshMetadata" : {
-          "refresh" : "Actualiser",
-          "contractAddress" : "Adresse du contrat",
-          "contractAddressDesc" : "contract_address du NFT à actualiser/de son contrat",
-          "chainId" : "Identifiant de chaîne",
-          "chainIdDesc" : "chain_id (ex. Ethereum) du NFT à actualiser/de son contrat",
-          "tokenId" : "Identifiant du token",
-          "tokenIdDesc" : "token_id du NFT à actualiser",
-          "success" : "Votre actualisation a bien été envoyée. Elle prendra effet dans un délai de 5 à 10 minutes.",
-          "error" : "Une erreur est survenue lors de l’envoi de l’actualisation. Veuillez réessayer plus tard.",
-          "refreshType" : {
-            "desc" : "Que souhaiteriez-vous actualiser ?",
-            "nft" : "Actualiser les métadonnées d’un NFT",
-            "contract" : "Actualiser les métadonnées d’un contrat"
-          }
+        "tokenIds" : {
+          "label" : "ID token (facultatif)",
+          "placeholder" : "token1, token2, token3"
         },
-        "debugCheckSpamScore" : {
-          "check" : "Consulter",
-          "contractAddress" : "Adresse du contrat",
-          "contractAddressDesc" : "contract_address du NFT à consulter/de son contrat",
-          "chainId" : "Identifiant de chaîne",
-          "chainIdDesc" : "chain_id (ex. Ethereum) du NFT à consulter/de son contrat",
-          "tokenId" : "Identifiant du token",
-          "tokenIdDesc" : "token_id du NFT à consulter",
-          "result" : {
-            "title" : "Le score de spam de ce contrat est de : {{score}}.",
-            "desc" : "Le score est une valeur numérique comprise entre 0 et 100. 0 indique l’absence de spam et 100 est associé à un spam probable.\n Si la réponse est \"null\", c’est que la collection ne dispose pas d’informations suffisantes pour être évaluée ou n’a pas encore été évaluée."
-          },
-          "error" : "Une erreur est survenue lors de l’envoi de la demande. Veuillez réessayer plus tard.",
-          "refreshType" : {
-            "desc" : "Que souhaiteriez-vous consulter ?",
-            "nft" : "Un NFT",
-            "contract" : "Un contrat"
-          }
+        "buttons" : {
+          "generateAccounts" : "Générer {{count}} compte",
+          "generateAccounts_other" : "Générer {{count}} comptes",
+          "generateAccountsQuick" : "Générer {{count}} comptes"
         },
-        "back" : "Retour"
-      },
-      "debugNfts" : {
-        "title" : "Outils NFT",
-        "description" : "Des outils pratiques pour la prise en charge des NFT dans Ledger Live.",
-        "cta" : "Ouvrir",
-        "tabs" : {
-          "config" : "Configuration",
-          "generatorAndDestructor" : "Générateurs et destructeurs"
-        },
-        "configuration" : {
-          "supported" : "Blockchain NFT prise en charge",
-          "supported_other" : "Blockchains NFT prises en charge",
-          "nms" : {
-            "title" : "NFT Metadata Service (NMS)",
-            "env" : "Environnement : {{env}}"
-          }
-        },
-        "generatorAndDestructor" : {
-          "genAcc" : "Générer des comptes",
-          "genAccDesc" : "Générez des comptes avec des NFT.",
-          "cta" : "Générer",
-          "deleteAcc" : "Supprimer des comptes",
-          "deleteAccDesc" : "Supprimez tous les comptes générés.",
-          "delete" : "Supprimer"
-        },
-        "back" : "Retour"
+        "alerts" : {
+          "selectCurrency" : "Veuillez sélectionner au moins une monnaie",
+          "confirmErase" : "Existing accounts will be erased. Continue?",
+          "generateError" : "Impossible de générer les comptes de simulation. Veuillez réessayer."
+        }
       },
       "debugWalletSync" : {
         "title" : "Débuggeur Ledger Sync",
@@ -4786,8 +4642,6 @@
       "runLocalAppOpenButton" : "Ouvrir",
       "enableLearnStagingUrl" : "Activer l’URL de test de la page Apprendre",
       "enableLearnStagingUrlDesc" : "Activez l’URL de test de la page Apprendre.",
-      "enableStagingNftMetadataService" : "Mode test pour le service des métadonnées des NFT",
-      "enableStagingNftMetadataServiceDesc" : "Activez le mode test pour le service des métadonnées des NFT et réinitialisez le cache pour les NFT.",
       "openOnboardingAppInstallDebug" : "Ouvrir l’écran de débogage relatif à l’installation des apps (Onboarding)",
       "openOnboardingAppInstallDebugDesc" : "Ouvrez un écran contenant les composants de l’étape d’installation des apps (flux Sync Onboarding)."
     },
@@ -4968,18 +4822,6 @@
         "desc" : "Vous pouvez masquer les tokens en vous rendant sur le compte parent, en faisant un clic droit sur le token et en sélectionnant Masquer le token.",
         "count" : "1 token",
         "count_other" : "{{count}} tokens"
-      },
-      "hiddenNftCollections" : {
-        "title" : "Collections de NFT masquées",
-        "desc" : "Vous pouvez cacher des collections NFT en faisant un clic droit sur le nom de la collection et sélectionnant Masquer la collection de NFT.",
-        "count" : "1 collection",
-        "count_other" : "{{count}} collections"
-      },
-      "hiddenOrdinalsAsset" : {
-        "title" : "Inscriptions masquées",
-        "desc" : "Vous pouvez masquer une inscription en faisant un clic droit sur l’inscription en question et en sélectionnant Masquer l’inscription.",
-        "count" : "1 inscription",
-        "count_other" : "{{count}} inscriptions"
       },
       "fullNode" : {
         "title" : "Connecter un nœud Bitcoin complet",
@@ -5866,6 +5708,10 @@
       "commentPlaceholder" : "Facultatif",
       "comment" : "Commentaire"
     },
+    "canton" : {
+      "commentPlaceholder" : "Facultatif",
+      "comment" : "Commentaire"
+    },
     "stellar" : {
       "memo" : "Mémo",
       "memoType" : {
@@ -6313,6 +6159,10 @@
       "title" : "Une erreur est survenue.",
       "description" : "Échec de la transaction. Veuillez réessayer."
     },
+    "TransactionCannotBeCreated" : {
+      "title" : "Erreur de traitement",
+      "description" : "Changelly ne peut pas traiter cette transaction. Code d’erreur : 8HBB{{errorCode}}"
+    },
     "TimeoutError" : {
       "title" : "Le serveur a mis trop longtemps à répondre.",
       "description" : "Veuillez réessayer."
@@ -6447,10 +6297,6 @@
       "title" : "Vérification automatique indisponible : vérifiez l’adresse attentivement.",
       "description" : null
     },
-    "EthAppNftNotSupported" : {
-      "title" : "Opération indisponible sur cet appareil",
-      "description" : "La fonctionnalité Envoi de NFT n’est disponible que pour le Nano X et le Nano S Plus. Visitez notre centre d’aide pour découvrir comment envoyer un NFT avec un Nano S."
-    },
     "TransactionHasBeenValidatedError" : {
       "title" : "Impossible de l’accélérer ou de l’annuler",
       "description" : "Cette transaction a déjà été validée."
@@ -6460,6 +6306,9 @@
       "description" : "Veuillez fermer la fenêtre et réessayer plus tard."
     },
     "TonCommentInvalid" : {
+      "title" : "Le commentaire ne doit ni dépasser 120 caractères ni contenir de caractères spéciaux"
+    },
+    "CantonCommentInvalid" : {
       "title" : "Le commentaire ne doit ni dépasser 120 caractères ni contenir de caractères spéciaux"
     },
     "CantScanQRCode" : {
@@ -6608,6 +6457,9 @@
     "EthAppPleaseEnableContractData" : {
       "title" : "Activez la signature aveugle dans l’app Ethereum (\"Settings\" > \"Blind signing\"/\"Contract Data\")."
     },
+    "CeloAppPleaseEnableContractData" : {
+      "title" : "Please enable Contract data in the Celo app Settings"
+    },
     "InvalidXRPTag" : {
       "title" : "Tag de destination XRP invalide"
     },
@@ -6736,9 +6588,6 @@
       "title" : "Le token n’est pas transférable",
       "description" : "Ces tokens sont des soulbound tokens et ne peuvent pas être transférés."
     },
-    "NotEnoughNftOwned" : {
-      "title" : "Nombre de tokens disponibles insuffisant"
-    },
     "CardanoMinAmountError" : {
       "title" : "Montant minimal pouvant être envoyé : {{amount}} ADA"
     },
@@ -6824,10 +6673,6 @@
       "title" : "Échec du chargement de l’image.",
       "description" : "Veuillez réessayer avec une autre image."
     },
-    "ImageLoadFromNftError" : {
-      "title" : "Échec du chargement du NFT",
-      "description" : "Veuillez réessayer avec un autre NFT."
-    },
     "ImageDownloadError" : {
       "title" : "Échec du téléchargement de l’image",
       "description" : "Veuillez réessayer avec une autre image."
@@ -6853,11 +6698,11 @@
       "description" : "Veuillez réessayer avec une autre image."
     },
     "ImageCommitRefusedOnDevice" : {
-      "title" : "Configuration du fond d’écran\nannulée sur votre {{productName}}",
+      "title" : "Fond d’écran refusé sur votre\n{{productName}}",
       "description" : "S’il s’agit d’une erreur, réessayez maintenant."
     },
     "ImageLoadRefusedOnDevice" : {
-      "title" : "Configuration du fond d’écran\nannulée sur votre {{productName}}",
+      "title" : "Fond d’écran annulé sur votre\n{{productName}}",
       "description" : "S’il s’agit d’une erreur, réessayez maintenant."
     },
     "ImageDoesNotExistOnDevice" : {
@@ -6970,7 +6815,7 @@
       "ctas" : {
         "buy" : "Achetez",
         "swap" : "Échanger",
-        "deposit" : "Déposez"
+        "deposit" : "Déposer"
       }
     },
     "InvalidMemoMina" : {
@@ -7182,15 +7027,9 @@
     "steps" : {
       "choose" : {
         "stepLabel" : "Image",
-        "description" : "Choisir une image à définir comme (...)",
-        "pickFromNftGallery" : "Sélectionner depuis ma galerie de NFT",
-        "myNfts" : "Mes NFT",
+        "description" : "Choisissez une œuvre d’art numérique ou une image.\nPersonnalisez votre {{productName}}.\nCréez votre style.",
         "upload" : "Télécharger à partir de l’ordinateur",
-        "chooseNft" : "Choisir un NFT",
-        "remove" : "Retirer l’image actuelle",
-        "selectNft" : "Choisir ce NFT",
-        "nftEmptyStateTitle" : "Pas (encore) de NFT",
-        "nftEmptyStateDescription" : "Commencez par ajouter des NFT à votre wallet."
+        "remove" : "Retirer l’image actuelle"
       },
       "adjust" : {
         "stepLabel" : "Recadrage",
@@ -7206,7 +7045,7 @@
         "useAnotherPicture" : "Télécharger une autre image",
         "allowPreview" : "Appuyez sur Charger pour\npersonnaliser le fond d’écran",
         "allowConfirmPreview" : "Appuyez sur Charger pour\nrestaurer le fond d’écran",
-        "loadingPicture" : "Installation...",
+        "loadingPicture" : "Chargement...",
         "voila" : "Voilà !",
         "imageLoaded" : "Image chargée sur votre {{productName}}",
         "confirmPicture" : "C’est parfait ?\nValidez !",
@@ -7265,9 +7104,9 @@
   "webview" : {
     "networkError" : {
       "title" : "Erreur réseau",
-      "subtitle" : "Une erreur est survenue. Veuillez réessayer. Si le problème persiste, enregistrez votre log et contactez l’Assistance Ledger.",
+      "subtitle" : "Une erreur est survenue. Veuillez réessayer. Si le problème persiste, enregistrez vos logs et contactez l’Assistance Ledger.",
       "contactSupport" : "Contacter l’Assistance Ledger",
-      "saveLog" : "Enregistrer le log"
+      "saveLog" : "Enregistrer les logs"
     },
     "noAccounts" : {
       "title" : "Vous avez besoin d’un compte pour accéder à cette app.",
@@ -7500,95 +7339,6 @@
     "deviceAction" : {
       "title" : "Continuez sur votre Ledger {{wording}}",
       "description" : "Suivez les instructions sur l’écran sécurisé de votre appareil Ledger."
-    }
-  },
-  "ordinals" : {
-    "inscriptions" : {
-      "seeMore" : "Voir plus d’inscriptions",
-      "empty" : "Pour ajouter des inscriptions, il vous suffit de les recevoir sur votre adresse Bitcoin.",
-      "receive" : "Recevoir une inscription",
-      "hide" : "Masquer l’inscription",
-      "modal" : {
-        "title" : "Masquer l’inscription",
-        "desc" : "Cela cachera l’inscription <0>{{inscriptionName}}</0> dans votre compte. Vous pouvez restaurer sa visibilité à tout moment à partir des Paramètres."
-      },
-      "discoveryDrawer" : {
-        "title" : "Découvrez les ordinals",
-        "description" : "Savez-vous que vous possédez peut-être des rare sats et des inscriptions de grande valeur ?",
-        "learnMore" : "En savoir plus",
-        "protectTitle" : "Protégez vos ordinals",
-        "protectDescription" : "Excluez vos ordinals de vos transactions."
-      },
-      "detailsDrawer" : {
-        "description" : "Description",
-        "collectionName" : "Nom de la collection",
-        "inscriptionId" : "ID de l’inscription",
-        "inscriptionNumber" : "Numéro de l’inscription",
-        "mintedTo" : "Minté sur",
-        "genesisTx" : "Transaction de création",
-        "blockNumber" : "Numéro du bloc",
-        "contentType" : "Type de contenu",
-        "createdDate" : "Date de création",
-        "satribute" : "Rareté du sat",
-        "satNumber" : "Numéro du sat",
-        "satName" : "Nom du sat",
-        "location" : "Emplacement",
-        "outputValue" : "Valeur de l’output",
-        "storedOnChain" : "Stockée en chaîne",
-        "hide" : "Masquer"
-      }
-    },
-    "rareSats" : {
-      "empty" : "Pour ajouter des Rare Sats, il vous suffit de les recevoir sur votre adresse Bitcoin.",
-      "receive" : "Recevoir un Rare Sat",
-      "title" : "Rare Sats",
-      "table" : {
-        "type" : "Type/Nombre de sat",
-        "year" : "Année"
-      },
-      "rareSat" : {
-        "description" : {
-          "alpha" : "Découvrez la naissance de chaque bitcoin avec Alpha, qui désigne le premier satoshi. Cette mention marque la genèse d’une unité Bitcoin.",
-          "black_epic" : "Le dernier satoshi de chaque halving, qui se produit à peu près tous les quatre ans. À cette occasion, la récompense de minage du Bitcoin est réduite de moitié.",
-          "black_legendary" : "Aucune description pour Black Legendary",
-          "black_mythic" : "Aucune description pour Black Mythic",
-          "black_rare" : "Correspond au dernier satoshi à la fin de chaque période d’ajustement de la difficulté de minage.",
-          "black_uncommon" : "Le dernier satoshi de chaque halving, qui se produit à peu près tous les quatre ans. À cette occasion, la récompense de minage du Bitcoin est réduite de moitié.",
-          "block_9" : "Le bloc 9 est unique dans l’histoire de Bitcoin. Comme il s’agit de l’un des premiers blocs minés, les satoshis qu’il contient sont parmi les plus anciens sats en circulation. Ces sats constituent un lien tangible avec les débuts de Bitcoin, peu de temps après sa création.",
-          "block_9_450x" : "Remontez le temps avec Block 9 450x, qui met en évidence les sats du premier bitcoin du 9e bloc. Cette mention révèle un chapitre captivant de l’histoire de Bitcoin.",
-          "block_78" : "Le bloc 78 occupe une place importante dans les annales de l’histoire de Bitcoin. Ce bloc a été miné par Hal Finney, et constitue le premier cas où quelqu’un d’autre que le mystérieux Satoshi Nakamoto a contribué à la croissance de la blockchain.",
-          "block_286" : "Levez le voile sur le bloc 286, constitué de satoshis issus de la deuxième transaction Bitcoin minée par Satoshi Nakamoto. Ces sats représentent l’héritage du mystérieux inventeur du Bitcoin et participent à la légende de ses origines énigmatiques.",
-          "block_666" : "Aucune description pour Block 666",
-          "common" : "Aucune description pour Common",
-          "epic" : "Tous les quatre ans, le réseau Bitcoin procède à un « halving », qui consiste à diviser par deux la récompense de minage. Le premier sat de chacune de ces epoch de halving est un Epic, et indique ce moment important dans le modèle économique de Bitcoin.",
-          "first_tx" : "La date du 12 janvier 2009 est entrée dans l’histoire lorsque Satoshi Nakamoto a envoyé 10 bitcoins à un informaticien du nom d’Hal Finney. Il s’agit de la toute première transaction Bitcoin. Les sats issus de celle-ci portent la mention First Transaction, et symbolisent la genèse de l’échange de pair à pair sur Bitcoin.",
-          "hitman" : "Aucune description pour Hitman",
-          "jpeg" : "Remontez le temps avec les JPEG. Ces satoshis pourraient être liés au premier échange de bitcoins contre une image, qui a eu lieu le 24 février 2010. Cette mention relate l’histoire d’une innovation, retraçant les premières incursions de Bitcoin dans le monde des transactions et des échanges non conventionnels.",
-          "legacy" : "Aucune description pour Legacy",
-          "legendary" : "Aucune description pour Legendary",
-          "mythic" : "Aucune description pour Mythic",
-          "nakamoto" : "Le mystère qui entoure l’inventeur du Bitcoin, connu sous le pseudonyme de Satoshi Nakamoto, reste entier. Les sats minés par Nakamoto portent cette mention. Ils sont donc très recherchés par les collectionneurs.",
-          "omega" : "Découvrez l’achèvement de chaque bitcoin avec Omega. Il s’agit du dernier satoshi d’une unité de bitcoin.",
-          "paliblock" : "Aucune description pour PaliBlock Palindrome",
-          "palindrome" : "Un Palindrome est le nom donné à tout sat dont le numéro peut être lu de la même manière dans les deux sens. Par exemple : les sat numéro 12321 et 45654. Ces attributs numériques uniques rendent ces sats plus rares et plus singuliers.",
-          "palinception" : "Plongez dans le monde fascinant des Uniform Palinceptions, où chaque satoshi forme un palindrome de palindromes. Ces sats à la structure complexe créent une fascinante mosaïque de chiffres à effet miroir.",
-          "pizza" : "L’une des histoires les plus célèbres de la communauté Bitcoin est celle d’un programmeur qui a payé 10 000 bitcoins pour deux pizzas Papa John’s le 22 mai 2010. Cette anecdote est souvent citée pour illustrer l’ascension fulgurante de la valeur du bitcoin. Les sats issus de cette transaction légendaire portent la mention Pizza.",
-          "rare" : "Le réseau Bitcoin ajuste périodiquement le niveau de la difficulté de minage pour s’assurer que des blocs soient créés toutes les dix minutes environ. Le premier sat de chaque période de réajustement porte la mention Rare. Cela permet de souligner la nature dynamique de la sécurité du réseau et des mécanismes de consensus. ",
-          "uncommon" : "Cette mention est donc attribuée au premier satoshi de chaque bloc. Un nouveau bloc est ajouté à la blockchain Bitcoin toutes les 10 minutes environ, ces sats indiquent donc le tout début de cette période.",
-          "vintage" : "L’avènement du bitcoin a été marqué par ses 1 000 premiers blocs. Les sats minés durant cette période portent la mention Vintage."
-        }
-      }
-    },
-    "coinControl" : {
-      "amountToSend" : "Montant à envoyer :",
-      "of" : "de",
-      "excludeAssets" : "Exclure les ordinals",
-      "selectDesc" : "Sélectionnez les UTXO que vos souhaitez utiliser dans vos transactions. Les UTXO non sélectionnés ne seront pas utilisés.",
-      "utxos" : "UTXO",
-      "learnMore" : "En savoir plus sur ce paramètre",
-      "confirm" : "Confirmer",
-      "address" : "Adresse",
-      "transactionId" : "Identifiant de la transaction"
     }
   },
   "lnsUpsell" : {
