@@ -3,6 +3,8 @@ import { Application } from "../page";
 import { ElectronApplication } from "@playwright/test";
 import { Swap } from "@ledgerhq/live-common/e2e/models/Swap";
 import { Currency } from "@ledgerhq/live-common/e2e/enum/Currency";
+import { getSpeculosModel } from "@ledgerhq/live-common/e2e/speculos";
+import { DeviceModelId } from "@ledgerhq/types-devices";
 
 export function setupEnv(disableBroadcast?: boolean) {
   const originalBroadcastValue = process.env.DISABLE_TRANSACTION_BROADCAST;
@@ -127,5 +129,31 @@ async function handleAssetFromSelected(
     await modularDrawerSelectToAssetOnlyFlow(app, electronApp, swap);
   } else {
     await legacyDrawerFlow(app, electronApp, swap);
+  }
+}
+
+export async function handleSwapErrorOrSuccess(
+  app: Application,
+  electronApp: ElectronApplication,
+  swap: Swap,
+  minAmount: string,
+  errorMessage: string | null,
+  expectedErrorPerDevice?: { [deviceId: string]: string },
+) {
+  const selectedProvider = await app.swap.selectExchangeWithoutKyc(electronApp);
+  await app.swap.clickExchangeButton(electronApp, selectedProvider);
+
+  const deviceId = getSpeculosModel();
+
+  if (errorMessage) {
+    const expectedMessage = expectedErrorPerDevice?.[deviceId] ?? errorMessage;
+    await app.swapDrawer.checkErrorMessage(expectedMessage);
+  } else if (deviceId === DeviceModelId.nanoS) {
+    await app.swapDrawer.checkErrorMessage(
+      "This receiving account does not belong to the device you have connected. Please change and retry",
+    );
+  } else {
+    await app.speculos.verifyAmountsAndAcceptSwapForDifferentSeed(swap, minAmount);
+    await app.swapDrawer.verifyExchangeCompletedTextContent(swap.accountToCredit.currency.name);
   }
 }

@@ -1828,6 +1828,9 @@ importers:
       '@ledgerhq/live-wallet':
         specifier: workspace:^
         version: link:../../libs/live-wallet
+      '@ledgerhq/types-devices':
+        specifier: 6.27.0
+        version: 6.27.0
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../../libs/ledgerjs/packages/types-live
@@ -14492,6 +14495,9 @@ packages:
     resolution: {integrity: sha512-zp8kyNF0sNMUG2VkgOL7rDu8W6U1P8yvTA3wIDjjlqoIOPanvodfezeub69fOuHJ2QG/JmnS8YZCGIoSWpQYkA==}
     peerDependencies:
       '@ledgerhq/device-management-kit': 0.9.0
+
+  '@ledgerhq/types-devices@6.27.0':
+    resolution: {integrity: sha512-FQZdCoYxxMjY7PWFWM8gflSl4++T3Ems2koMiVZhbH4ji3PzafLvK+y422bRdt78zIP3UURbOhuzrpZ2ASv3gw==}
 
   '@ledgerhq/types-live@6.53.1':
     resolution: {integrity: sha512-ukaDDyxg7quBQ0vdoQQjj3ICqiG13gO/rGIO0Jm2nRh/icbLWgxfsI2wX0u0ugJQJ+q/muiX+wJrMJn9EKhEaQ==}
@@ -43531,6 +43537,8 @@ snapshots:
   '@ledgerhq/signer-utils@1.1.0(@ledgerhq/device-management-kit@0.9.0(rxjs@7.8.1))':
     dependencies:
       '@ledgerhq/device-management-kit': 0.9.0(rxjs@7.8.1)
+
+  '@ledgerhq/types-devices@6.27.0': {}
 
   '@ledgerhq/types-live@6.53.1':
     dependencies:

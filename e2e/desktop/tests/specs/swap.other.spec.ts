@@ -11,10 +11,14 @@ import { addTmsLink } from "../utils/allureUtils";
 import { getDescription } from "../utils/customJsonReporter";
 import { Provider } from "@ledgerhq/live-common/e2e/enum/Provider";
 import { CLI } from "../utils/cliUtils";
-import { setupEnv, performSwapUntilQuoteSelectionStep } from "../utils/swapUtils";
+import {
+  setupEnv,
+  performSwapUntilQuoteSelectionStep,
+  handleSwapErrorOrSuccess,
+} from "../utils/swapUtils";
+import { DeviceModelId } from "@ledgerhq/types-devices";
 import { getEnv } from "@ledgerhq/live-env";
 import { overrideNetworkPayload } from "../utils/networkUtils";
-
 const app: AppInfos = AppInfos.EXCHANGE;
 
 const liveDataCommand = (currencyApp: { name: string }, index: number) => (userdataPath?: string) =>
@@ -328,53 +332,68 @@ test.describe("Swap - Landing page", () => {
   );
 });
 
-const swapWithDifferentSeed = [
+interface SwapTestCase {
+  swap: Swap;
+  xrayTicket: string;
+  errorMessage?: string | null;
+  expectedErrorPerDevice?: {
+    [deviceId: string]: string;
+  };
+}
+
+const swapWithDifferentSeed: SwapTestCase[] = [
   {
     swap: new Swap(Account.ETH_1, Account.SOL_1, "0.03"),
     xrayTicket: "B2CQA-3089",
-    userData: "speculos-x-other-account",
     errorMessage:
       "This sending account does not belong to the device you have connected. Please change and retry",
+    expectedErrorPerDevice: {
+      [DeviceModelId.nanoS]:
+        "This receiving account does not belong to the device you have connected. Please change and retry",
+    },
   },
   {
     swap: new Swap(Account.BTC_NATIVE_SEGWIT_1, Account.ETH_1, "0.002"),
     xrayTicket: "B2CQA-3090",
-    userData: "speculos-x-other-account",
     errorMessage: null,
   },
   {
     swap: new Swap(Account.ETH_1, Account.BTC_NATIVE_SEGWIT_1, "0.03"),
     xrayTicket: "B2CQA-3091",
-    userData: "speculos-x-other-account",
     errorMessage:
       "This sending account does not belong to the device you have connected. Please change and retry",
+    expectedErrorPerDevice: {
+      [DeviceModelId.nanoS]:
+        "This sending account does not belong to the device you have connected. Please change and retry",
+    },
   },
 ];
 
-for (const { swap, xrayTicket, userData, errorMessage } of swapWithDifferentSeed) {
-  test.describe("Swap - Using different seed", () => {
-    setupEnv(true);
+test.describe("Swap - Using different seed", () => {
+  setupEnv(true);
 
+  test.use({
+    userdata: "speculos-x-other-account",
+    speculosApp: app,
+  });
+
+  for (const { swap, xrayTicket, errorMessage, expectedErrorPerDevice } of swapWithDifferentSeed) {
     test.beforeEach(async () => {
-      const accountPair: string[] = [swap.accountToDebit, swap.accountToCredit].map(acc =>
-        acc.currency.speculosApp.name.replace(/ /g, "_"),
+      const accountPair = [swap.accountToDebit, swap.accountToCredit].map(acc =>
+        acc.currency.speculosApp.name.replaceAll(" ", "_"),
       );
       setExchangeDependencies(accountPair.map(name => ({ name })));
     });
 
-    test.use({
-      userdata: userData,
-      speculosApp: app,
-    });
-
     test(
-      `Swap using a different seed - ${swap.accountToDebit.currency.name} to ${swap.accountToCredit.currency.name}`,
+      `Swap using a different seed - ${swap.accountToDebit.currency.name} → ${swap.accountToCredit.currency.name}`,
       {
         tag: ["@NanoSP", "@LNS", "@NanoX"],
         annotation: { type: "TMS", description: xrayTicket },
       },
       async ({ app, electronApp }) => {
-        await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
+        const tmsDescription = getDescription(test.info().annotations, "TMS");
+        await addTmsLink(tmsDescription.split(", "));
 
         const minAmount = await app.swap.getMinimumAmount(
           swap.accountToDebit,
@@ -382,22 +401,19 @@ for (const { swap, xrayTicket, userData, errorMessage } of swapWithDifferentSeed
         );
 
         await performSwapUntilQuoteSelectionStep(app, electronApp, swap, minAmount);
-        const selectedProvider = await app.swap.selectExchangeWithoutKyc(electronApp);
 
-        if (errorMessage) {
-          await app.swap.clickExchangeButton(electronApp, selectedProvider);
-          await app.swapDrawer.checkErrorMessage(errorMessage);
-        } else {
-          await app.swap.clickExchangeButton(electronApp, selectedProvider);
-          await app.speculos.verifyAmountsAndAcceptSwapForDifferentSeed(swap, minAmount);
-          await app.swapDrawer.verifyExchangeCompletedTextContent(
-            swap.accountToCredit.currency.name,
-          );
-        }
+        await handleSwapErrorOrSuccess(
+          app,
+          electronApp,
+          swap,
+          minAmount,
+          errorMessage ?? null,
+          expectedErrorPerDevice,
+        );
       },
     );
-  });
-}
+  }
+});
 
 const swapWithoutAccount = [
   {
