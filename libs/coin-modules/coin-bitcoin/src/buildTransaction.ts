@@ -13,6 +13,7 @@ import { bitcoinPickingStrategy } from "./types";
 import wallet, { getWalletAccount } from "./wallet-btc";
 import { log } from "@ledgerhq/logs";
 import { Account } from "@ledgerhq/types-live";
+import { clamp } from "./getAccountNetworkInfo";
 import { getRelayFeeFloorSatVb } from "./wallet-btc/utils";
 
 const selectUtxoPickingStrategy = (walletAccount: WalletAccount, utxoStrategy: UtxoStrategy) => {
@@ -47,9 +48,8 @@ export const buildTransaction = async (
 
   // --- Clamp user/endpoint fee to ≥ floor + 1 sat/vB, return integer sat/vB ---
   const originalFeeBN = feePerByte;
-  const safeFeeBN = BigNumber.max(originalFeeBN, floorSatPerVB.plus(1)).integerValue(
-    BigNumber.ROUND_CEIL,
-  );
+  const safeFeeBN = clamp(floorSatPerVB)(originalFeeBN);
+
   const safeFeePerByte = safeFeeBN.toNumber(); // wallet-btc expects number
   if (!safeFeeBN.eq(originalFeeBN)) {
     log(
