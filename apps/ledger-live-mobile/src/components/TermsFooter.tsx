@@ -1,6 +1,5 @@
-import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { Text } from "@ledgerhq/native-ui";
-import React, { useCallback } from "react";
+import React, { useMemo } from "react";
 import { Trans } from "react-i18next";
 import { Linking } from "react-native";
 import styled from "styled-components/native";
@@ -25,40 +24,50 @@ export type TermsProviders = keyof typeof urls.swap.providers;
 const TermsFooter: React.FC<{
   provider?: TermsProviders;
 }> = ({ provider }) => {
-  const isDetailedViewEnabled = useFeature("ptxSwapconfirmSwapOnDevice");
+  // Map provider variants (e.g., changelly_v2) to base provider name
   const providerName = provider?.includes("changelly") ? "changelly" : provider;
-  const url = provider && providerName && urls.swap.providers[providerName]?.tos;
-  const onLinkClick = useCallback(() => {
-    if (url) {
-      Linking.openURL(url);
-    }
-  }, [url]);
+  const providerUrls = provider && providerName && urls.swap.providers[providerName];
 
-  if (!url) {
+  const { acceptTerms, urlsArray } = useMemo(() => {
+    //we need to check if the provider is changelly
+    //This helps to display specific message and urls for changelly
+    const isProviderChangelly = provider?.includes("changelly");
+
+    if (isProviderChangelly) {
+      return {
+        acceptTerms: "DeviceAction.confirmSwap.changellySimplifiedAcceptTerms",
+        urlsArray: [
+          providerUrls?.tos,
+          providerName === "changelly" && providerUrls && "amlKyc" in providerUrls
+            ? providerUrls.amlKyc
+            : undefined,
+          providerUrls?.support,
+        ].filter(Boolean),
+      };
+    }
+
+    return {
+      acceptTerms: "DeviceAction.confirmSwap.acceptTerms",
+      urlsArray: [providerUrls?.tos].filter(Boolean),
+    };
+  }, [provider, providerUrls, providerName]);
+
+  if (!urlsArray.length) {
     return null;
   }
-  const translationKey =
-    isDetailedViewEnabled?.enabled && provider.includes("changelly")
-      ? "DeviceAction.confirmSwap.changellySimplifiedAcceptTerms"
-      : "DeviceAction.confirmSwap.acceptTerms";
 
   return (
     <CenteredText marginTop={16}>
       <Trans
-        i18nKey={translationKey}
+        i18nKey={acceptTerms}
         values={{ provider }}
-        components={[
-          <UnderlinedText onPress={onLinkClick} textAlign="center" key="ProviderText">
-            <Text
-              textTransform="capitalize"
-              textAlign="center"
-              fontSize="paragraph"
-              color="neutral.c60"
-            >
-              {provider}
-            </Text>
-          </UnderlinedText>,
-        ]}
+        components={urlsArray.map((url, idx) => (
+          <UnderlinedText
+            onPress={() => url && Linking.openURL(url)}
+            textAlign="center"
+            key={`external-link-${idx}`}
+          />
+        ))}
       />
     </CenteredText>
   );

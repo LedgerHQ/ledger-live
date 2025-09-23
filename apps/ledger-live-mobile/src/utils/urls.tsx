@@ -117,6 +117,8 @@ export const urls = {
       changelly: {
         main: "https://changelly.com/",
         tos: "https://changelly.com/terms-of-use",
+        amlKyc: "https://changelly.com/aml-kyc",
+        support: "https://support.changelly.com/en/support/tickets/new",
       },
       cic: {
         main: "https://criptointercambio.com/",
