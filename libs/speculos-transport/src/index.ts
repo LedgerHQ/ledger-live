@@ -199,10 +199,15 @@ export async function createSpeculosDevice(
         ]
       : []),
     ...(dependencies !== undefined
-      ? dependencies.flatMap(dependency => [
-          "-l",
-          `${dependency.name}:./apps/${conventionalAppSubpath(model, firmware, dependency.name, dependency.appVersion ? dependency.appVersion : "1.0.0")}`,
-        ])
+      ? dependencies.flatMap(dependency => {
+          const depPath = conventionalAppSubpath(
+            model,
+            firmware,
+            dependency.name,
+            dependency.appVersion ? dependency.appVersion : "1.0.0",
+          );
+          return ["-l", `${dependency.name}:./apps/${depPath}`];
+        })
       : []),
     ...(sdk ? ["--sdk", sdk] : []),
     "--display",

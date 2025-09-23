@@ -28,7 +28,7 @@ export async function openDeeplink(path?: string) {
 }
 
 export const describeIfNotNanoS = (...args: Parameters<typeof describe>) =>
-  process.env.SPECULOS_DEVICE !== Device.LNS
+  process.env.SPECULOS_DEVICE !== Device.LNS.name
     ? describe(...args)
     : describe.skip("[not available on LNS] " + args[0], args[1]);
 
@@ -85,7 +85,7 @@ export function setupEnvironment() {
   setEnv("MOCK", "");
   process.env.MOCK = "";
   setEnv("DETOX", "1");
-  process.env.SPECULOS_DEVICE = process.env.SPECULOS_DEVICE || Device.LNX;
+  process.env.SPECULOS_DEVICE = process.env.SPECULOS_DEVICE || Device.LNX.name;
 
   const disableBroadcastEnv = process.env.DISABLE_TRANSACTION_BROADCAST;
   const shouldBroadcast = disableBroadcastEnv === "0";
