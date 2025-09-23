@@ -13,7 +13,6 @@ import { checkLibs } from "@ledgerhq/live-common/sanityChecks";
 import "./config/configInit";
 import "./config/bridge-setup";
 import Config from "react-native-config";
-import { enableFreeze } from "react-native-screens";
 import useEnv from "@ledgerhq/live-common/hooks/useEnv";
 import { useDispatch, useSelector } from "react-redux";
 import { init } from "../e2e/bridge/client";
