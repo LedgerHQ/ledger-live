@@ -7,7 +7,6 @@ import {
 } from "@ledgerhq/errors";
 import { isSyncOnboardingSupported } from "@ledgerhq/live-common/device/use-cases/screenSpecs";
 import { ExchangeRate, ExchangeSwap } from "@ledgerhq/live-common/exchange/swap/types";
-import { getNoticeType, getProviderName } from "@ledgerhq/live-common/exchange/swap/utils/index";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
 import { AppRequest } from "@ledgerhq/live-common/hw/actions/app";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
@@ -255,6 +254,7 @@ export function renderConfirmSwap({
         </Wrapper>
       </Wrapper>
       <TermsFooter provider={provider} />
+      <ModalLock />
     </ScrollView>
   );
 }
