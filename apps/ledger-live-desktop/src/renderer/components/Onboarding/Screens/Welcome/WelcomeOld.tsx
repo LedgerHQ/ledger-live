@@ -220,6 +220,7 @@ export function WelcomeOld() {
             outline={true}
             flexDirection="column"
             whiteSpace="normal"
+            mb="24px"
           >
             {t("onboarding.screens.welcome.buyLink")}
           </Button>

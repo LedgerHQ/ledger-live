@@ -1,8 +1,8 @@
 /**
  * @jest-environment jsdom
  */
-import { renderHook, act } from "@testing-library/react";
-import { useWelcomeNewViewModel } from "../useWelcomeNewViewModel";
+import { renderHook, act } from "tests/testSetup";
+import { useWelcomeNewViewModel } from "../hooks/useWelcomeNewViewModel";
 
 // Mock dependencies
 const mockHistoryPush = jest.fn();

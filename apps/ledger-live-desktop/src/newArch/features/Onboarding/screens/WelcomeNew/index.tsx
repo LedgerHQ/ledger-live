@@ -8,8 +8,8 @@ import { EntryPoint as LSEntryPoint } from "LLD/features/LedgerSyncEntryPoints/t
 import WalletSyncDrawer from "LLD/features/WalletSync/components/Drawer";
 import { AnalyticsPage } from "LLD/features/WalletSync/hooks/useLedgerSyncAnalytics";
 
-import { useWelcomeNewViewModel } from "./useWelcomeNewViewModel";
-import { useVideoCarouselViewModel } from "./useVideoCarouselViewModel";
+import { useWelcomeNewViewModel } from "./hooks/useWelcomeNewViewModel";
+import { useVideoCarousel } from "./hooks/useVideoCarousel";
 import {
   WelcomeContainer,
   VideoBackground,
@@ -49,7 +49,7 @@ export function WelcomeNew() {
     containerRef,
     handleVideoLoadedMetadata,
     handleVideoEnded,
-  } = useVideoCarouselViewModel();
+  } = useVideoCarousel();
 
   const { colors } = useTheme();
 

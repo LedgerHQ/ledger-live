@@ -1,8 +1,8 @@
 /**
  * @jest-environment jsdom
  */
-import { renderHook, act } from "@testing-library/react";
-import { useVideoCarouselViewModel } from "../useVideoCarouselViewModel";
+import { renderHook, act } from "tests/testSetup";
+import { useVideoCarousel } from "../hooks/useVideoCarousel";
 
 // Mock video files
 jest.mock("../assets/ledgerWalletBuySell.webm", () => "mock-buy-sell.webm");
@@ -15,7 +15,7 @@ jest.mock("react-i18next", () => ({
   useTranslation: () => ({ t: mockT }),
 }));
 
-describe("useVideoCarouselViewModel", () => {
+describe("useVideoCarousel", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     jest.useFakeTimers();
@@ -26,7 +26,7 @@ describe("useVideoCarouselViewModel", () => {
   });
 
   it("should initialize with correct default state", () => {
-    const { result } = renderHook(() => useVideoCarouselViewModel());
+    const { result } = renderHook(() => useVideoCarousel());
 
     expect(result.current.currentSlide).toBe(0);
     expect(result.current.isVisible).toBe(false);
@@ -35,7 +35,7 @@ describe("useVideoCarouselViewModel", () => {
   });
 
   it("should provide correct video slides configuration", () => {
-    const { result } = renderHook(() => useVideoCarouselViewModel());
+    const { result } = renderHook(() => useVideoCarousel());
 
     expect(result.current.VIDEO_SLIDES).toHaveLength(3);
 
@@ -66,7 +66,7 @@ describe("useVideoCarouselViewModel", () => {
   });
 
   it("should handle video ended and advance to next slide", () => {
-    const { result } = renderHook(() => useVideoCarouselViewModel());
+    const { result } = renderHook(() => useVideoCarousel());
 
     act(() => {
       result.current.handleVideoEnded();
@@ -89,10 +89,11 @@ describe("useVideoCarouselViewModel", () => {
   });
 
   it("should handle video loaded metadata", () => {
-    const { result } = renderHook(() => useVideoCarouselViewModel());
+    const { result } = renderHook(() => useVideoCarousel());
 
     // Mock video element with duration
     const mockVideoElement = { duration: 5.5 };
+    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
     result.current.videoRefs.current[0] = mockVideoElement as HTMLVideoElement;
 
     act(() => {
@@ -103,7 +104,7 @@ describe("useVideoCarouselViewModel", () => {
   });
 
   it("should set visibility to true after fallback timeout", () => {
-    const { result } = renderHook(() => useVideoCarouselViewModel());
+    const { result } = renderHook(() => useVideoCarousel());
 
     expect(result.current.isVisible).toBe(false);
 
@@ -115,14 +116,14 @@ describe("useVideoCarouselViewModel", () => {
   });
 
   it("should provide refs for video elements and container", () => {
-    const { result } = renderHook(() => useVideoCarouselViewModel());
+    const { result } = renderHook(() => useVideoCarousel());
 
     expect(result.current.videoRefs.current).toHaveLength(3);
     expect(result.current.containerRef.current).toBeNull();
   });
 
   it("should handle video loaded metadata with no video element", () => {
-    const { result } = renderHook(() => useVideoCarouselViewModel());
+    const { result } = renderHook(() => useVideoCarousel());
 
     // No video element at index 0
     result.current.videoRefs.current[0] = null;
