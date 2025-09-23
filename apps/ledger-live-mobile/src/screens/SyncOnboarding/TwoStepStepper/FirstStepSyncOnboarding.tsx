@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from
 import { Flex, VerticalTimeline } from "@ledgerhq/native-ui";
 import CollapsibleStep from "./CollapsibleStep";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
-import useCompanionSteps, { FirstStepCompanionStepKey } from "./useCompanionSteps";
+import useCompanionSteps from "./useCompanionSteps";
 import { useTranslation } from "react-i18next";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
@@ -32,7 +32,7 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 import { LayoutChangeEvent, ScrollView } from "react-native";
-import { SEED_STATE } from "./TwoStepSyncOnboardingCompanion";
+import { SEED_STATE, SeedPathStatus, FirstStepCompanionStepKey } from "./types";
 
 /*
  * Constants
@@ -51,15 +51,6 @@ const fromSeedPhraseTypeToAnalyticsPropertyString = new Map<SeedPhraseType, stri
 /*
  * Types
  */
-
-export type SeedPathStatus =
-  | "choice_new_or_restore"
-  | "new_seed"
-  | "choice_restore_direct_or_recover"
-  | "restore_seed"
-  | "recover_seed"
-  | "backup_charon"
-  | "restore_charon";
 
 interface FirstStepSyncOnboardingProps {
   device: Device;

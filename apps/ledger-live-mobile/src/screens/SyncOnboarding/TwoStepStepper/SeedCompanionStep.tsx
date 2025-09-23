@@ -18,7 +18,7 @@ import {
 import { ShadowedView } from "react-native-fast-shadow";
 import Animation from "~/components/Animation";
 import CHARON from "~/animations/device/charon/charon.json";
-import { SeedPathStatus } from "./FirstStepSyncOnboarding";
+import { SeedPathStatus } from "./types";
 
 const { BodyText, SubtitleText } = VerticalTimeline;
 

@@ -26,6 +26,7 @@ import { ScrollView } from "react-native";
 import { TrackScreen } from "~/analytics";
 import { RootNavigation } from "~/components/RootNavigator/types/helpers";
 import { SeedOriginType } from "@ledgerhq/types-live";
+import { COMPANION_STATE, CompanionStep, SEED_STATE } from "./types";
 
 /*
  * Constants
@@ -36,15 +37,6 @@ const READY_REDIRECT_DELAY_MS = 2500;
 /*
  * Types
  */
-export enum SEED_STATE {
-  NEW_SEED = "new_seed",
-  RESTORE = "restore",
-}
-export enum COMPANION_STATE {
-  SETUP = "setup",
-  EXIT = "exit",
-}
-export type CompanionStep = SEED_STATE | COMPANION_STATE;
 
 export type TwoStepSyncOnboardingCompanionProps = {
   /**

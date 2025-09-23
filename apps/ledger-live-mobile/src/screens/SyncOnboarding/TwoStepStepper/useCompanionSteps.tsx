@@ -8,18 +8,9 @@ import BackgroundBlue from "../assets/BackgroundBlue";
 import BackgroundRed from "../assets/BackgroundRed";
 import SeedCompanionStep from "./SeedCompanionStep";
 import { OnboardingState } from "@ledgerhq/live-common/hw/extractOnboardingState";
-import { SeedPathStatus } from "./FirstStepSyncOnboarding";
+import { SeedPathStatus, FirstStepCompanionStepKey } from "./types";
 
 const { BodyText } = VerticalTimeline;
-
-// Because of https://github.com/typescript-eslint/typescript-eslint/issues/1197
-export enum FirstStepCompanionStepKey {
-  EarlySecurityCheckCompleted = 0,
-  Pin,
-  Seed,
-  Ready,
-  Exit,
-}
 
 type StepStatus = "completed" | "active" | "inactive";
 

@@ -3,7 +3,7 @@ import CollapsibleStep from "./CollapsibleStep";
 import { useTranslation } from "react-i18next";
 import InstallSetOfApps from "~/components/DeviceAction/InstallSetOfApps";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
-import { CompanionStep, COMPANION_STATE, SEED_STATE } from "./TwoStepSyncOnboardingCompanion";
+import { CompanionStep, COMPANION_STATE, SEED_STATE } from "./types";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import BackgroundBlue from "../assets/BackgroundBlue";
 import { Box } from "@ledgerhq/native-ui";
