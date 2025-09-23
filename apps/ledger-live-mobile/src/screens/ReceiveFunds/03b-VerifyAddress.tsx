@@ -30,6 +30,7 @@ import { e2eBridgeClient } from "../../../e2e/bridge/client";
 import { useTrackReceiveFlow } from "~/analytics/hooks/useTrackReceiveFlow";
 import { HOOKS_TRACKING_LOCATIONS } from "~/analytics/hooks/variables";
 import { lastConnectedDeviceSelector } from "~/reducers/settings";
+import SafeAreaViewFixed from "~/components/SafeAreaView";
 
 const illustrations = {
   dark: require("~/images/illustration/Dark/_080.webp"),
@@ -149,7 +150,7 @@ export default function ReceiveVerifyAddress({ navigation, route }: Props) {
   if (!account || !currency || !mainAccount || !device) return null;
 
   return (
-    <>
+    <SafeAreaViewFixed isFlex edges={["left", "right", "bottom"]}>
       <PreventNativeBack />
       <SkipLock />
       <SyncSkipUnderPriority priority={100} />
@@ -212,6 +213,6 @@ export default function ReceiveVerifyAddress({ navigation, route }: Props) {
           </AnimationContainer>
         </Flex>
       )}
-    </>
+    </SafeAreaViewFixed>
   );
 }
