@@ -1578,9 +1578,6 @@ importers:
       local-web-server:
         specifier: 4.2.1
         version: 4.2.1
-      metro-react-native-babel-preset:
-        specifier: 0.77.0
-        version: 0.77.0(@babel/core@7.27.1)
       msw:
         specifier: 2.3.4
         version: 2.3.4(typescript@5.4.3)
