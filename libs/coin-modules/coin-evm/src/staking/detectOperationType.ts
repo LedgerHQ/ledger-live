@@ -2,6 +2,7 @@ import { ethers } from "ethers";
 import type { OperationType } from "@ledgerhq/types-live";
 import type { StakingOperation } from "../types/staking";
 import { STAKING_CONTRACTS } from "./contracts";
+import { getStakingABI } from "./abis";
 
 const OP_MAP: Partial<Record<StakingOperation, OperationType>> = {
   delegate: "DELEGATE",
@@ -16,7 +17,8 @@ const getStakingMethodSelectors = (
   currencyId: string,
 ): Record<string, OperationType> | undefined => {
   const config = STAKING_CONTRACTS[currencyId];
-  if (!config) return undefined;
+  const abi = getStakingABI(currencyId);
+  if (!config || !abi) return undefined;
 
   const selectors: Record<string, OperationType> = {};
 
@@ -26,8 +28,17 @@ const getStakingMethodSelectors = (
     if (!mapped || !fn) continue; // only map delegate/undelegate/redelegate
 
     try {
-      // calculate selector (first 4 bytes of the keccak256 hash)
-      const selector = ethers.id(fn).slice(0, 10).toLowerCase();
+      // Find the appropriate function in the ABI by the name
+      const abiFunction = abi.find(item => item.type === "function" && item.name === fn);
+      if (!abiFunction) continue;
+
+      // Build the complete function signature from ABI
+      const inputs = abiFunction.inputs || [];
+      const paramTypes = inputs.map(input => input.type).join(",");
+      const signature = `${fn}(${paramTypes})`;
+
+      // Calculate selector (first 4 bytes of the keccak256 hash)
+      const selector = ethers.id(signature).slice(0, 10).toLowerCase();
       selectors[selector] = mapped;
     } catch {
       // ignore if function not in ABI or malformed
@@ -52,6 +63,5 @@ export const detectEvmStakingOperationType = (
 
   const selectors = getStakingMethodSelectors(currencyId);
   if (!selectors) return undefined;
-
   return selectors[methodId.toLowerCase()];
 };
