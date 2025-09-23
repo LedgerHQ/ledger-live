@@ -5,7 +5,7 @@ import cryptoFactory from "./crypto/factory";
 import { fallbackValidateAddress } from "./crypto/base";
 import { UnsupportedDerivation } from "@ledgerhq/coin-framework/errors";
 import varuint from "varuint-bitcoin";
-import { NetworkInfoResponse } from "./explorer";
+import { NetworkInfoResponse } from "./explorer/types";
 
 export function byteSize(count: number): number {
   if (count < 0xfd) {

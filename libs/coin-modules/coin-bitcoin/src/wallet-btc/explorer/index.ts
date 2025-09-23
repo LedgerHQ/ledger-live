@@ -1,6 +1,6 @@
 import { Address, Block, TX } from "../storage/types";
 import network from "@ledgerhq/live-network/network";
-import { IExplorer } from "./types";
+import { IExplorer, NetworkInfoResponse } from "./types";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { blockchainBaseURL } from "../../explorer";
 
@@ -10,13 +10,6 @@ type ExplorerParams = {
   to_height?: number;
   token?: string;
   order?: "ascending" | "descending";
-};
-
-export type NetworkInfoResponse = {
-  relay_fee?: string; // BTC per kB, e.g. "0.00001000"
-  incremental_fee?: string; // BTC per kB
-  version?: string; // e.g. "290000"
-  subversion?: string; // e.g. "/Satoshi:29.0.0/"
 };
 
 class BitcoinLikeExplorer implements IExplorer {
