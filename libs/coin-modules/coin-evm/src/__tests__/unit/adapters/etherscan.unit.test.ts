@@ -1462,6 +1462,180 @@ describe("EVM Family", () => {
           );
         });
       });
+      describe("etherscanStakingToOperations", () => {
+        it("should convert an etherscan-like staking smart contract delegate operation (from their API) to a Ledger Live Operation", () => {
+          const etherscanOp: EtherscanOperation = {
+            blockNumber: "12345678",
+            timeStamp: "1694851200",
+            hash: "0xabc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc1",
+            nonce: "7",
+            blockHash: "0x8df71a12a8c06b36c06c26bf6248857dd2a2b75b6edbb4e33e9477078897b282",
+            transactionIndex: "27",
+            from: "0x9aa99c23f67c81701c772b106b4f83f6e858dd2e",
+            to: "0x0000000000000000000000000000000000001005", // Sei staking precompile
+            value: "0",
+            gas: "6000000",
+            gasPrice: "125521409858",
+            isError: "0",
+            txreceipt_status: "1",
+            input:
+              "0x9ddb511a0000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000001a73656976616c6f7065723178797a616263313233343536373839300000000000",
+            contractAddress: "0x0000000000000000000000000000000000001005",
+            cumulativeGasUsed: "1977481",
+            gasUsed: "57168",
+            confirmations: "122471",
+            methodId: "0x9ddb511a",
+            functionName: "delegate(string)",
+          };
+
+          const accountId = encodeAccountId({
+            type: "js",
+            version: "2",
+            currencyId: "sei_network_evm",
+            xpubOrAddress: "0x9aa99c23f67c81701c772b106b4f83f6e858dd2e",
+            derivationMode: "",
+          });
+
+          const expectedOperation: Operation = {
+            id: "js:2:sei_network_evm:0x9aa99c23f67c81701c772b106b4f83f6e858dd2e:-0xabc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc1-DELEGATE",
+            hash: "0xabc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc1",
+            accountId,
+            blockHash: "0x8df71a12a8c06b36c06c26bf6248857dd2a2b75b6edbb4e33e9477078897b282",
+            blockHeight: 12345678,
+            recipients: ["0x0000000000000000000000000000000000001005"],
+            senders: ["0x9AA99C23F67c81701C772B106b4F83f6e858dd2E"],
+            value: new BigNumber("7175807958762144"),
+            fee: new BigNumber("7175807958762144"),
+            date: new Date(1694851200 * 1000), // timestamp in ms
+            transactionSequenceNumber: 7,
+            hasFailed: false,
+            nftOperations: [],
+            subOperations: [],
+            internalOperations: [],
+            type: "DELEGATE",
+            extra: {},
+          };
+
+          expect(etherscanOperationToOperations(accountId, etherscanOp)).toEqual([
+            expectedOperation,
+          ]);
+        });
+
+        it("should convert an etherscan-like staking smart contract redelegate operation (from their API) to a Ledger Live Operation", () => {
+          const etherscanOp: EtherscanOperation = {
+            blockNumber: "12345678",
+            timeStamp: "1694851200",
+            hash: "0xabc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc1",
+            nonce: "7",
+            blockHash: "0x8df71a12a8c06b36c06c26bf6248857dd2a2b75b6edbb4e33e9477078897b282",
+            transactionIndex: "27",
+            from: "0x9aa99c23f67c81701c772b106b4f83f6e858dd2e",
+            to: "0x0000000000000000000000000000000000001005", // Sei staking precompile
+            value: "0",
+            gas: "6000000",
+            gasPrice: "125521409858",
+            isError: "0",
+            txreceipt_status: "1",
+            input:
+              "0x7dd0209d00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000a76616c696461746f723100000000000000000000000000000000000000000000000000000000000000000a76616c696461746f72320000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000003e8",
+            contractAddress: "0x0000000000000000000000000000000000001005",
+            cumulativeGasUsed: "1977481",
+            gasUsed: "57168",
+            confirmations: "122471",
+            methodId: "0x7dd0209d",
+            functionName: "redelegate(string,string,uint256)",
+          };
+
+          const accountId = encodeAccountId({
+            type: "js",
+            version: "2",
+            currencyId: "sei_network_evm",
+            xpubOrAddress: "0x9aa99c23f67c81701c772b106b4f83f6e858dd2e",
+            derivationMode: "",
+          });
+
+          const expectedOperation: Operation = {
+            id: "js:2:sei_network_evm:0x9aa99c23f67c81701c772b106b4f83f6e858dd2e:-0xabc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc1-REDELEGATE",
+            hash: "0xabc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc1",
+            accountId,
+            blockHash: "0x8df71a12a8c06b36c06c26bf6248857dd2a2b75b6edbb4e33e9477078897b282",
+            blockHeight: 12345678,
+            recipients: ["0x0000000000000000000000000000000000001005"],
+            senders: ["0x9AA99C23F67c81701C772B106b4F83f6e858dd2E"],
+            value: new BigNumber("7175807958762144"),
+            fee: new BigNumber("7175807958762144"),
+            date: new Date(1694851200 * 1000), // timestamp in ms
+            transactionSequenceNumber: 7,
+            hasFailed: false,
+            nftOperations: [],
+            subOperations: [],
+            internalOperations: [],
+            type: "REDELEGATE",
+            extra: {},
+          };
+
+          expect(etherscanOperationToOperations(accountId, etherscanOp)).toEqual([
+            expectedOperation,
+          ]);
+        });
+        it.only("should convert an etherscan-like staking smart contract undelegate operation (from their API) to a Ledger Live Operation", () => {
+          const etherscanOp: EtherscanOperation = {
+            blockNumber: "12345678",
+            timeStamp: "1694851200",
+            hash: "0xabc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc1",
+            nonce: "7",
+            blockHash: "0x8df71a12a8c06b36c06c26bf6248857dd2a2b75b6edbb4e33e9477078897b282",
+            transactionIndex: "27",
+            from: "0x9aa99c23f67c81701c772b106b4f83f6e858dd2e",
+            to: "0x0000000000000000000000000000000000001005", // Sei staking precompile
+            value: "0",
+            gas: "6000000",
+            gasPrice: "125521409858",
+            isError: "0",
+            txreceipt_status: "1",
+            input:
+              "0x8dfc88970000000000000000000000",
+            contractAddress: "0x0000000000000000000000000000000000001005",
+            cumulativeGasUsed: "1977481",
+            gasUsed: "57168",
+            confirmations: "122471",
+            methodId: "0x8dfc8897",
+            functionName: "redelegate(string,string,uint256)",
+          };
+
+          const accountId = encodeAccountId({
+            type: "js",
+            version: "2",
+            currencyId: "sei_network_evm",
+            xpubOrAddress: "0x9aa99c23f67c81701c772b106b4f83f6e858dd2e",
+            derivationMode: "",
+          });
+
+          const expectedOperation: Operation = {
+            id: "js:2:sei_network_evm:0x9aa99c23f67c81701c772b106b4f83f6e858dd2e:-0xabc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc1-UNDELEGATE",
+            hash: "0xabc123abc123abc123abc123abc123abc123abc123abc123abc123abc123abc1",
+            accountId,
+            blockHash: "0x8df71a12a8c06b36c06c26bf6248857dd2a2b75b6edbb4e33e9477078897b282",
+            blockHeight: 12345678,
+            recipients: ["0x0000000000000000000000000000000000001005"],
+            senders: ["0x9AA99C23F67c81701C772B106b4F83f6e858dd2E"],
+            value: new BigNumber("7175807958762144"),
+            fee: new BigNumber("7175807958762144"),
+            date: new Date(1694851200 * 1000), // timestamp in ms
+            transactionSequenceNumber: 7,
+            hasFailed: false,
+            nftOperations: [],
+            subOperations: [],
+            internalOperations: [],
+            type: "UNDELEGATE",
+            extra: {},
+          };
+
+          expect(etherscanOperationToOperations(accountId, etherscanOp)).toEqual([
+            expectedOperation,
+          ]);
+        });
+      });
     });
   });
 });
