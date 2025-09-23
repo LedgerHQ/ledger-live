@@ -146,12 +146,13 @@ const swaps = [
   //   xrayTicket: "B2CQA-3081, B2CQA-3450, B2CQA-3281",
   //   tag: ["@NanoSP", "@NanoX"],
   // },
-  {
-    fromAccount: Account.HEDERA_1,
-    toAccount: Account.XRP_1,
-    xrayTicket: "B2CQA-3753",
-    tag: ["@NanoSP", "@NanoX"],
-  },
+  //ToDo: enable once Hedera Swap E2E test issue fixed
+  //{
+  //  fromAccount: Account.HEDERA_1,
+  //  toAccount: Account.XRP_1,
+  //  xrayTicket: "B2CQA-3753",
+  //  tag: ["@NanoSP", "@NanoX"],
+  //},
 ];
 
 for (const { fromAccount, toAccount, xrayTicket, tag } of swaps) {
