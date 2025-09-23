@@ -67,8 +67,8 @@ describe("Receive Flow", () => {
   $TmsLink("B2CQA-650");
   it("Should access to receive after importing a cryptocurrency on a selected network", async () => {
     await openReceive();
-    await app.common.performSearch("Polygon");
-    await app.receive.selectAsset("POL");
+    await app.common.performSearch("Matic");
+    await app.receive.selectAsset("MATIC");
     await app.receive.selectNetwork("bsc");
     first && (await deviceAction.selectMockDevice(), (first = false));
     await deviceAction.openApp();

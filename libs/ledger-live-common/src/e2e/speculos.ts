@@ -19,7 +19,7 @@ import { Account } from "./enum/Account";
 import { Device as CryptoWallet } from "./enum/Device";
 import { Currency } from "./enum/Currency";
 import expect from "expect";
-import { sendBTCBasedCoin } from "./families/bitcoin";
+import { sendBTC, sendBTCBasedCoin } from "./families/bitcoin";
 import { sendEVM, sendEvmNFT } from "./families/evm";
 import { sendPolkadot } from "./families/polkadot";
 import { sendAlgorand } from "./families/algorand";
@@ -666,6 +666,12 @@ export async function signSendTransaction(tx: Transaction) {
     case Currency.sepETH:
     case Currency.POL:
     case Currency.ETH:
+      await sendEVM(tx);
+      break;
+    case Currency.BTC:
+      await sendBTC(tx);
+      break;
+    case Currency.ETH_USDT:
       await sendEVM(tx);
       break;
     case Currency.DOGE:

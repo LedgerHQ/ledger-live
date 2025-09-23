@@ -80,8 +80,13 @@ import SwiperScreenDebug from "~/screens/Settings/Debug/Features/SwiperScreenDeb
 import { DebugStorageMigration } from "~/screens/Settings/Debug/Debugging/StorageMigration";
 import CustomCALRefInput from "~/screens/Settings/Developer/CustomCALRefInput";
 import ModularDrawerScreenDebug from "LLM/features/ModularDrawer/Debug";
+import { UnmountOnBlur } from "./utils/UnmountOnBlur";
 
 const Stack = createStackNavigator<SettingsNavigatorStackParamList>();
+
+const unmountOnBlur = ({ children }: { children: React.ReactNode }) => (
+  <UnmountOnBlur>{children}</UnmountOnBlur>
+);
 
 export default function SettingsNavigator() {
   const { t } = useTranslation();
@@ -117,6 +122,7 @@ export default function SettingsNavigator() {
       <Stack.Screen
         name={ScreenName.GeneralSettings}
         component={GeneralSettings}
+        layout={unmountOnBlur}
         options={{
           title: t("settings.display.title"),
         }}

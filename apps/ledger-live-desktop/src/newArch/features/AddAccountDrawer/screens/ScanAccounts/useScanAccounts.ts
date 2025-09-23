@@ -220,7 +220,11 @@ export function useScanAccounts({
     if (!scanning && !hasImportedAccounts) {
       if (alreadyEmptyAccount && !importableAccounts.length) {
         navigateToWarningScreen(WARNING_REASON.ALREADY_EMPTY_ACCOUNT, alreadyEmptyAccount);
-      } else if (!scannedAccounts.length && CustomNoAssociatedAccounts) {
+      } else if (
+        !importableAccounts.length &&
+        !creatableAccounts.length &&
+        CustomNoAssociatedAccounts
+      ) {
         navigateToWarningScreen(WARNING_REASON.NO_ASSOCIATED_ACCOUNTS);
       }
     }

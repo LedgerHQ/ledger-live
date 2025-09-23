@@ -465,6 +465,14 @@ test.describe("Send token (subAccount) - valid address & amount input", () => {
           appjson: appjsonPath,
         });
       },
+      (appjsonPath: string) => {
+        return CLI.liveData({
+          currency: tokenTransactionValid.accountToCredit.currency.speculosApp.name,
+          index: tokenTransactionValid.accountToCredit.index,
+          add: true,
+          appjson: appjsonPath,
+        });
+      },
     ],
   });
 
@@ -474,7 +482,7 @@ test.describe("Send token (subAccount) - valid address & amount input", () => {
       tag: ["@NanoSP", "@LNS", "@NanoX"],
       annotation: {
         type: "TMS",
-        description: "B2CQA-2703, B2CQA-475",
+        description: "B2CQA-2703, B2CQA-475, B2CQA-3901",
       },
     },
     async ({ app }) => {
@@ -492,6 +500,31 @@ test.describe("Send token (subAccount) - valid address & amount input", () => {
       await app.send.continue();
       await app.send.fillAmount(tokenTransactionValid.amount);
       await app.send.checkContinueButtonEnable();
+
+      await app.send.continueAmountModal();
+      await app.send.expectTxInfoValidity(tokenTransactionValid);
+      await app.send.clickContinueToDevice();
+
+      await app.speculos.signSendTransaction(tokenTransactionValid);
+      await app.send.expectTxSent();
+      await app.account.navigateToViewDetails();
+      await app.sendDrawer.addressValueIsVisible(tokenTransactionValid.accountToCredit.address);
+      await app.drawer.closeDrawer();
+
+      if (!getEnv("DISABLE_TRANSACTION_BROADCAST")) {
+        await app.layout.goToAccounts();
+        await app.accounts.clickSyncBtnForAccount(
+          getParentAccountName(tokenTransactionValid.accountToCredit),
+        );
+        await app.accounts.navigateToAccountByName(
+          getParentAccountName(tokenTransactionValid.accountToCredit),
+        );
+        await app.account.navigateToTokenInAccount(tokenTransactionValid.accountToCredit);
+        await app.account.expectAccountBalance();
+        await app.account.checkAccountChart();
+        await app.account.selectAndClickOnLastOperation(TransactionStatus.RECEIVED);
+        await app.sendDrawer.expectReceiverInfos(tokenTransactionValid);
+      }
     },
   );
 });

@@ -39,8 +39,8 @@ describe("Receive Flow", () => {
   $TmsLink("B2CQA-650");
   it("Should access to receive after importing a cryptocurrency on a selected network", async () => {
     await openReceive();
-    await app.common.performSearch("Polygon");
-    await app.receive.selectCurrency("Polygon");
+    await app.common.performSearch("Matic");
+    await app.receive.selectCurrency("MATIC");
     await app.receive.selectNetwork("bsc");
     await app.addAccount.addAccountAtIndex(`${Currency.BSC.name} 1`, Currency.BSC.id, 0);
     await app.addAccount.tapAddFunds();

@@ -3,9 +3,12 @@ module.exports = {
     browser: true,
     es6: true,
   },
+  plugins: ["import"],
   ignorePatterns: ["lib", "lib-es"],
   rules: {
     "@typescript-eslint/no-explicit-any": "error",
+    "import/no-cycle": ["error"],
+    "import/order": ["error"],
   },
   overrides: [
     {
