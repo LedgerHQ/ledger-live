@@ -222,21 +222,9 @@ const TagContainerFeatureFlags = ({ collapsed }: { collapsed: boolean }) => {
   ) : null;
 };
 
-const TagContainerLDMK = ({ collapsed }: { collapsed: boolean }) => {
-  const ldmkTransportFlag = useFeature("ldmkTransport");
-  const { t } = useTranslation();
-  return ldmkTransportFlag?.enabled && ldmkTransportFlag?.params?.warningVisible ? (
-    <Tag
-      data-testid="drawer-ldmk-button"
-      to={{
-        pathname: "/settings/developer",
-      }}
-      onClick={() => setTrackingSource("sidebar")}
-    >
-      <Icons.UsbC size="S" color="primary.c80" />
-      <TagText collapsed={collapsed}>{t("common.ldmkEnabled")}</TagText>
-    </Tag>
-  ) : null;
+// WebHID is now the default transport, no need for warning tag
+const TagContainerLDMK = ({ collapsed: _collapsed }: { collapsed: boolean }) => {
+  return null;
 };
 
 // Check if the selected tab is a Live-App under discovery tab
