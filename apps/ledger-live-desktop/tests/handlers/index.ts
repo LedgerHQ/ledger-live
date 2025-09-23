@@ -9,8 +9,3 @@ export default [
   ...CounterValuesHandlers,
   ...AssetsHandlers,
 ];
-
-export const ALLOWED_UNHANDLED_REQUESTS = [
-  "https://cloud-sync-backend.api.aws.stg.ldg-tech.com/_info",
-  "https://trustchain-backend.api.aws.stg.ldg-tech.com/_info",
-];

@@ -1,7 +1,6 @@
 import "@jest/globals";
 import "@testing-library/jest-dom";
 import { server } from "./server";
-import { ALLOWED_UNHANDLED_REQUESTS } from "./handlers";
 
 jest.mock("framer-motion", () => {
   const originalModule = jest.requireActual("framer-motion");
@@ -29,12 +28,7 @@ global.ResizeObserver = ResizeObserver;
 
 beforeAll(() =>
   server.listen({
-    onUnhandledRequest(request, print) {
-      if (ALLOWED_UNHANDLED_REQUESTS.some(ignoredUrl => request.url.includes(ignoredUrl))) {
-        return;
-      }
-      print.warning();
-    },
+    onUnhandledRequest: "bypass",
   }),
 );
 afterEach(() => server.resetHandlers());
@@ -121,3 +115,38 @@ if (!globalThis.Buffer) {
 }
 
 jest.mock("@ledgerhq/device-transport-kit-web-hid");
+
+const originalError = console.error;
+const originalWarn = console.warn;
+// eslint-disable-next-line no-console
+const originalLog = console.log;
+
+const EXCLUDED_ERRORS = ["act(...)", "ReactDOMTestUtils.act", "Warning: findDOMNode is deprecated"];
+
+const EXCLUDED_WARNINGS = ["@polkadot"];
+
+const EXCLUDED_LOG_MESSAGES = ["Message posted to worker"];
+
+console.error = (...args) => {
+  const error = args.join();
+  if (EXCLUDED_ERRORS.some(excluded => error.includes(excluded))) {
+    return;
+  }
+  originalError.call(console, ...args);
+};
+
+console.warn = (...args) => {
+  const warning = args.join();
+  if (EXCLUDED_WARNINGS.some(excluded => warning.includes(excluded))) {
+    return;
+  }
+  originalWarn.call(console, ...args);
+};
+// eslint-disable-next-line no-console
+console.log = (...args) => {
+  const log = args.join();
+  if (EXCLUDED_LOG_MESSAGES.some(excluded => log.includes(excluded))) {
+    return;
+  }
+  originalLog.call(console, ...args);
+};
