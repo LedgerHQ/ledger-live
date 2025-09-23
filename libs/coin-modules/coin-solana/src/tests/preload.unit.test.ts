@@ -2,8 +2,8 @@ jest.useFakeTimers();
 
 import { jlpDefinition, soEthDefinition, graphitDefinition } from "./preload.fixtures";
 import axios, { AxiosResponse } from "axios";
-import * as CALTokensAPI from "@ledgerhq/cryptoassets/legacy";
-import { convertSplTokens } from "@ledgerhq/cryptoassets/legacy";
+import * as CALTokensAPI from "@ledgerhq/cryptoassets/legacy/legacy-utils";
+import { convertSplTokens } from "@ledgerhq/cryptoassets/legacy/legacy-utils";
 import { fetchSPLTokens, hydrate, preloadWithAPI } from "../preload";
 import { __resetCALHash, getCALHash, setCALHash } from "../logic";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";

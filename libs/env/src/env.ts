@@ -878,6 +878,11 @@ const envDefinitions = {
     parser: stringParser,
     desc: "Cryptoassets list service url",
   },
+  CRYPTO_ASSETS_CACHE_TTL: {
+    def: 3600000,
+    parser: intParser,
+    desc: "Crypto assets cache TTL in milliseconds (default: 1 hour)",
+  },
   FEATURE_FLAGS: {
     def: "{}",
     parser: jsonParser,

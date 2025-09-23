@@ -12,7 +12,7 @@ import {
   convertSuiTokens,
   convertAptCoinTokens,
   convertAptFaTokens,
-} from "./legacy";
+} from "./legacy/legacy-utils";
 import {
   AlgorandASAToken,
   CardanoNativeToken,

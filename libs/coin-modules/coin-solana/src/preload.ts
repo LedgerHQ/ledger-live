@@ -11,11 +11,17 @@ import {
   ledgerFirstValidators,
 } from "./utils";
 import { getValidators, ValidatorsAppValidator } from "./network/validator-app";
-import spltokensList, { hash as embeddedHash, SPLToken } from "@ledgerhq/cryptoassets/data/spl";
+// POC: Commented out direct data import to avoid bundling
+// import spltokensList, { hash as embeddedHash, SPLToken } from "@ledgerhq/cryptoassets/data/spl";
+import type { SPLToken } from "@ledgerhq/cryptoassets/data/spl";
+
+// POC: Provide empty defaults to avoid bundling legacy data
+const spltokensList: any[] = [];
+const embeddedHash: string = "";
 import { fetchTokensFromCALService } from "@ledgerhq/cryptoassets/crypto-assets-importer/fetch/index";
 import { getCALHash, setCALHash } from "./logic";
 import { addTokens } from "@ledgerhq/cryptoassets/tokens";
-import { convertSplTokens } from "@ledgerhq/cryptoassets/legacy";
+import { convertSplTokens } from "@ledgerhq/cryptoassets/legacy/legacy-utils";
 import { AxiosError } from "axios";
 
 let shouldSkipTokenLoading = false;

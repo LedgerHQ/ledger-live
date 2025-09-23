@@ -9,6 +9,7 @@ import { resetStore } from "~/renderer/store";
 import { cleanAccountsCache } from "~/renderer/actions/accounts";
 import { disable as disableDBMiddleware } from "./middlewares/db";
 import { clearBridgeCache } from "./bridge/cache";
+import { clearCryptoAssetsCache } from "~/renderer/store/cryptoAssetsStoreSetup";
 
 function reload() {
   ipcRenderer.send("app-reload");
@@ -16,6 +17,8 @@ function reload() {
 export async function hardReset() {
   log("clear-cache", "clearBridgeCache()");
   clearBridgeCache();
+  log("clear-cache", "clearCryptoAssetsCache()");
+  clearCryptoAssetsCache();
   log("clear-cache", "hardReset()");
   disableDBMiddleware();
   resetAll();
@@ -34,6 +37,8 @@ export function useSoftReset() {
   return useCallback(async () => {
     log("clear-cache", "clearBridgeCache()");
     clearBridgeCache();
+    log("clear-cache", "clearCryptoAssetsCache()");
+    clearCryptoAssetsCache();
     log("clear-cache", "cleanAccountsCache()");
     dispatch(cleanAccountsCache());
     await delay(500);

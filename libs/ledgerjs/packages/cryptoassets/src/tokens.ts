@@ -13,78 +13,112 @@ import {
   tokensByCurrencyAddress,
 } from "./legacy-state";
 
-// Initialize legacy tokens
-initializeLegacyTokens(addTokensLegacy);
-
-// Re-export from legacy for compatibility
+// Re-export types for compatibility
 export type { TokensListOptions };
 
+// Store reference for dependency injection
+let cryptoAssetsStore: CryptoAssetsStore | undefined = undefined;
+
+
 /**
- * NB: implementation is currently hooked to the legacy token store, but will be moved to the new async token store in the future
+ * Set the CryptoAssetsStore instance to use for token operations
+ * This must be called before using any token functions
  */
-export async function findTokenByTicker(ticker: string): Promise<TokenCurrency | undefined> {
-  return tokensByTicker[ticker];
+export function setCryptoAssetsStoreForTokens(store: CryptoAssetsStore): void {
+  cryptoAssetsStore = store;
 }
 
 /**
- * NB: implementation is currently hooked to the legacy token store, but will be moved to the new async token store in the future
+ * Get the configured CryptoAssetsStore instance
+ * @private
+ */
+function getCryptoAssetsStore(): CryptoAssetsStore {
+  if (!cryptoAssetsStore) {
+    throw new Error("CryptoAssetsStore not configured. Call setCryptoAssetsStoreForTokens first.");
+  }
+  return cryptoAssetsStore;
+}
+
+/**
+ * Find a token by its ticker using the async CryptoAssetsStore
+ */
+export async function findTokenByTicker(ticker: string): Promise<TokenCurrency | undefined> {
+  const store = getCryptoAssetsStore();
+  return await store.findTokenByTicker(ticker);
+}
+
+/**
+ * Find a token by its ID using the async CryptoAssetsStore
  */
 export async function findTokenById(id: string): Promise<TokenCurrency | undefined> {
-  return tokensById[id];
+  const store = getCryptoAssetsStore();
+  return await store.findTokenById(id);
+}
+
+/**
+ * Get a token by its ID using the async CryptoAssetsStore
+ * Throws if the token is not found
+ */
+export async function getTokenById(id: string): Promise<TokenCurrency> {
+  const store = getCryptoAssetsStore();
+  return await store.getTokenById(id);
 }
 
 let deprecatedDisplayed = false;
 
 /**
- * @deprecated, use findTokenByAdressInCurrency instead
- * NB: implementation is currently hooked to the legacy token store, but will be moved to the new async token store in the future
+ * @deprecated, use findTokenByAddressInCurrency instead
  */
 export async function findTokenByAddress(address: string): Promise<TokenCurrency | undefined> {
   if (!deprecatedDisplayed) {
     deprecatedDisplayed = true;
     console.warn("findTokenByAddress is deprecated. use findTokenByAddressInCurrency");
   }
-  return tokensByAddress[address.toLowerCase()];
+  const store = getCryptoAssetsStore();
+  return await store.findTokenByAddress(address);
 }
 
 /**
- * NB: implementation is currently hooked to the legacy token store, but will be moved to the new async token store in the future
+ * Find a token by its contract address and parent currency using the async CryptoAssetsStore
  */
 export async function findTokenByAddressInCurrency(
   address: string,
   currencyId: string,
 ): Promise<TokenCurrency | undefined> {
-  return tokensByCurrencyAddress[currencyId + ":" + address.toLowerCase()];
+  const store = getCryptoAssetsStore();
+  return await store.findTokenByAddressInCurrency(address, currencyId);
 }
 
 /**
  * @deprecated use findTokenById instead
  */
-export function hasTokenId(id: string): boolean {
-  return id in tokensById;
+export function hasTokenId(_id: string): boolean {
+  console.warn("hasTokenId is deprecated and always returns false. Use findTokenById instead.");
+  return false;
 }
 
-/**
- * NB: implementation is currently hooked to the legacy token store, but will be moved to the new async token store in the future
- */
-export async function getTokenById(id: string): Promise<TokenCurrency> {
-  const currency = await findTokenById(id);
-
-  if (!currency) {
-    throw new Error(`token with id "${id}" not found`);
-  }
-
-  return currency;
-}
-
-// Legacy functions - moved to legacy module
+// Legacy list functions - deprecated and return empty arrays
 
 /**
  * @deprecated This function is deprecated since tokens will no longer be listable as we moved to DaDa API everywhere
  * Use the new async token API instead
  */
 export function listTokens(options?: Partial<TokensListOptions>): TokenCurrency[] {
-  return listTokensLegacy(options);
+  console.warn("listTokens is deprecated. Use the new async token API instead.");
+
+  // POC: Return empty array to avoid bundling legacy data
+  const tokens: TokenCurrency[] = []; // Object.values(tokensById);
+
+  if (!options) {
+    return tokens;
+  }
+
+  return tokens.filter(token => {
+    if (options.withDelisted === false && token.delisted) {
+      return false;
+    }
+    return true;
+  });
 }
 
 /**
@@ -95,7 +129,21 @@ export function listTokensForCryptoCurrency(
   currency: CryptoCurrency,
   options?: Partial<TokensListOptions>,
 ): TokenCurrency[] {
-  return listTokensForCryptoCurrencyLegacy(currency, options);
+  console.warn("listTokensForCryptoCurrency is deprecated. Use the new async token API instead.");
+
+  // POC: Return empty array to avoid bundling legacy data
+  const tokens: TokenCurrency[] = []; // Object.values(tokensById).filter(token => token.parentCurrency === currency);
+
+  if (!options) {
+    return tokens;
+  }
+
+  return tokens.filter(token => {
+    if (options.withDelisted === false && token.delisted) {
+      return false;
+    }
+    return true;
+  });
 }
 
 /**
@@ -108,6 +156,7 @@ export function listTokenTypesForCryptoCurrency(currency: CryptoCurrency): strin
 /**
  * @deprecated
  */
-export function addTokens(tokens: (TokenCurrency | undefined)[]): void {
-  addTokensLegacy(tokens);
+export function addTokens(_tokens: (TokenCurrency | undefined)[]): void {
+  console.warn("addTokens is deprecated and does nothing. Use the new async token API instead.");
+  // No-op: we don't maintain a local token list anymore
 }

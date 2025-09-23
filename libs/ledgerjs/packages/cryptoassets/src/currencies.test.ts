@@ -1,6 +1,8 @@
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { listFiatCurrencies, getFiatCurrencyByTicker, hasFiatCurrencyTicker } from "./fiats";
 import { listTokens, findTokenByAddressInCurrency } from "./tokens";
+import { initializeLegacyTokens } from "./legacy/legacy-data";
+import { addTokens } from "./legacy/legacy-utils";
 import {
   listCryptoCurrencies,
   hasCryptoCurrencyId,
@@ -13,6 +15,9 @@ import {
   registerCryptoCurrency,
   cryptocurrenciesById,
 } from "./currencies";
+
+// Initialize legacy tokens for tests
+initializeLegacyTokens(addTokens);
 
 test("can get currency by coin type", () => {
   expect(getCryptoCurrencyById("bitcoin")).toMatchObject({
