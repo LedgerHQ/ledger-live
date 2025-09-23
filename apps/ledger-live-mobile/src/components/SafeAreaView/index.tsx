@@ -7,6 +7,11 @@ type Props = {
   style?: StyleProp<ViewStyle>;
   edges?: readonly Edge[] | undefined;
   isFlex?: boolean;
+  /**
+   * When using detox it adds a global header height to the insets resulting bottom buttons
+   * not being visible even for the test runner, this is used to compensate for that
+   */
+  useDetoxInsets?: boolean;
 } & ViewProps;
 
 /**
@@ -16,7 +21,14 @@ type Props = {
  * [219](https://github.com/th3rdwave/react-native-safe-area-context/issues/219),
  * [226](https://github.com/th3rdwave/react-native-safe-area-context/issues/226)
  */
-export default function SafeAreaViewFixed({ children, style, edges, isFlex, ...rest }: Props) {
+export default function SafeAreaViewFixed({
+  children,
+  style,
+  edges,
+  isFlex,
+  useDetoxInsets,
+  ...rest
+}: Props) {
   const insets = useSafeAreaInsets();
   const defaultEdges = edges === undefined;
   return (
@@ -24,7 +36,12 @@ export default function SafeAreaViewFixed({ children, style, edges, isFlex, ...r
       style={StyleSheet.compose(
         {
           paddingTop: defaultEdges || edges?.includes("top") ? insets.top : undefined,
-          paddingBottom: defaultEdges || edges?.includes("bottom") ? insets.bottom : undefined,
+          paddingBottom:
+            defaultEdges || edges?.includes("bottom")
+              ? useDetoxInsets
+                ? insets.bottom * 2
+                : insets.bottom
+              : undefined,
           paddingLeft: defaultEdges || edges?.includes("left") ? insets.left : undefined,
           paddingRight: defaultEdges || edges?.includes("right") ? insets.right : undefined,
           flex: isFlex ? 1 : 0,
