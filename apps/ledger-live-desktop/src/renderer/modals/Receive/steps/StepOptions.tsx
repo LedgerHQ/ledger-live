@@ -58,7 +58,7 @@ export default function StepOptions(props: Readonly<StepProps>) {
   return (
     <Box>
       <TrackPage category={`Receive Flow${eventType ? ` (${eventType})` : ""}`} name="Step 1" />
-      <Option onClick={() => transitionTo("account")}>
+      <Option onClick={() => transitionTo("account")} data-testid="fromCrypto">
         <IconWrapper>
           <Icons.CoinsCrypto size={"M"} />
         </IconWrapper>
@@ -71,7 +71,7 @@ export default function StepOptions(props: Readonly<StepProps>) {
           </Text>
         </Content>
       </Option>
-      <Option onClick={handleGoToReceiveProvider}>
+      <Option onClick={handleGoToReceiveProvider} data-testid="fromBank">
         <IconWrapper>
           <Icons.Bank size={"M"} />
         </IconWrapper>
