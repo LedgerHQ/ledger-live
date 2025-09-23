@@ -68,7 +68,7 @@ test("Buy / Sell @smoke", async ({ page, electronApp }) => {
 
   await test.step("Navigate to Buy app from market", async () => {
     await layout.goToMarket();
-    await marketPage.openBuyPage("usdt");
+    await marketPage.openBuyPage("usdt", "Ethereum 1");
     await liveAppWebview.waitForText("theme: dark");
     await liveAppWebview.waitForText("currency: ethereum/erc20/usd_tether__erc20_");
     await liveAppWebview.waitForText("mode: buy");
