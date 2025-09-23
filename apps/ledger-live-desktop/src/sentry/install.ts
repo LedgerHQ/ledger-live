@@ -73,6 +73,7 @@ const ignoreErrors = [
   "could not read from HID device",
   "DeviceOnDashboardExpected",
   "EthAppPleaseEnableContractData",
+  "CeloAppPleaseEnableContractData",
   "VechainAppPleaseEnableContractDataAndMultiClause",
   "failed with status code",
   "GetAppAndVersionUnsupportedFormat",

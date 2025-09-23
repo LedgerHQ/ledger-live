@@ -6483,6 +6483,9 @@
     "EthAppPleaseEnableContractData": {
       "title": "Please enable Blind signing or Contract data in the Ethereum app Settings"
     },
+    "CeloAppPleaseEnableContractData": {
+      "title": "Please enable Contract data in the Celo app Settings"
+    },
     "InvalidXRPTag": {
       "title": "Invalid XRP Destination tag"
     },

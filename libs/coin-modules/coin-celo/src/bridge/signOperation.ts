@@ -40,13 +40,6 @@ export const buildSignOperation =
         const subAccount = findSubAccountById(account, transaction.subAccountId ?? "");
         const isTokenTransaction = subAccount?.type === "TokenAccount";
 
-        await signerContext(deviceId, signer => {
-          return signer.verifyTokenInfo(
-            isTokenTransaction ? subAccount.token.contractAddress : to!,
-            chainId!,
-          );
-        });
-
         const finalTransaction: CeloTx = {
           ...unsignedTransaction,
           to: isTokenTransaction ? subAccount.token.contractAddress : to!,
