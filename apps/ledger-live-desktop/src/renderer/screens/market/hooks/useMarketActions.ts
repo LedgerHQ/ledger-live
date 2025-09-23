@@ -1,22 +1,21 @@
 import { CurrencyData } from "@ledgerhq/live-common/market/utils/types";
 import { useCallback, useMemo } from "react";
-import { useSelector } from "react-redux";
 import { useHistory } from "react-router-dom";
-import { setTrackingSource } from "~/renderer/analytics/TrackPage";
-import { track } from "~/renderer/analytics/segment";
 import { stakeDefaultTrack } from "../../stake/constants";
 import useStakeFlow from "../../stake";
 import { useGetSwapTrackingProperties } from "../../exchange/Swap2/utils";
-import { accountsSelector } from "~/renderer/reducers/accounts";
-import { flattenAccounts } from "@ledgerhq/live-common/account/index";
-import { getAvailableAccountsById } from "@ledgerhq/live-common/exchange/swap/utils/index";
 import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/useRampCatalog";
 import { isAvailableOnBuy, isAvailableOnSwap } from "../utils";
 import { useStake } from "LLD/hooks/useStake";
-import { ModularDrawerLocation } from "LLD/features/ModularDrawer";
-import { useOpenAssetFlow } from "LLD/features/ModularDrawer/hooks/useOpenAssetFlow";
-import { Account } from "@ledgerhq/types-live";
+import { useModularDrawerVisibility } from "LLD/features/ModularDrawer";
+import { AccountLike } from "@ledgerhq/types-live";
 import { setDrawer } from "~/renderer/drawers/Provider";
+import { useMarketOnBuy } from "./useMarketOnBuy";
+import { useMarketOnSwap } from "./useMarketOnSwap";
+import { useMarketOnStake } from "./useMarketOnStake";
+import { flattenAccounts } from "@ledgerhq/coin-framework/lib-es/account/helpers";
+import { useSelector } from "react-redux";
+import { accountsSelector } from "~/renderer/reducers/accounts";
 
 export enum Page {
   Market = "Page Market",
@@ -37,7 +36,7 @@ export const useMarketActions = ({ currency, page, currenciesAll }: MarketAction
   const swapDefaultTrack = useGetSwapTrackingProperties();
 
   const allAccounts = useSelector(accountsSelector);
-  const flattenedAccounts = flattenAccounts(allAccounts);
+  const flattenedAccounts = useMemo(() => flattenAccounts(allAccounts), [allAccounts]);
 
   const { isCurrencyAvailable } = useRampCatalog();
 
@@ -45,126 +44,94 @@ export const useMarketActions = ({ currency, page, currenciesAll }: MarketAction
 
   const internalCurrency = currency?.internalCurrency;
 
-  const onAccountSelected = useCallback(
-    (account: Account) => {
+  const currencyId = useMemo(() => {
+    if (!internalCurrency) return undefined;
+    return internalCurrency.type === "CryptoCurrency"
+      ? internalCurrency.id
+      : internalCurrency.parentCurrency?.id;
+  }, [internalCurrency]);
+
+  const currenciesArray = useMemo(
+    () => (internalCurrency ? [internalCurrency] : []),
+    [internalCurrency],
+  );
+
+  const onSwapAccountSelected = useCallback(
+    (account: AccountLike) => {
       setDrawer();
       history.push({
         pathname: "/swap",
         state: {
+          defaultCurrency: internalCurrency,
           defaultAccount: account,
+          defaultAmountFrom: "0",
+          defaultParentAccount:
+            "parentId" in account && account.parentId
+              ? flattenedAccounts.find(a => a.id === account.parentId) || null
+              : null,
+          from: history.location.pathname,
         },
       });
     },
-    [history],
+    [history, internalCurrency, flattenedAccounts],
   );
 
-  const { openAddAccountFlow } = useOpenAssetFlow(
-    { location: ModularDrawerLocation.ADD_ACCOUNT },
-    "market",
-  );
-
-  const openAddAccounts = useCallback(() => {
-    if (internalCurrency) openAddAccountFlow(internalCurrency, true, onAccountSelected);
-  }, [internalCurrency, onAccountSelected, openAddAccountFlow]);
-
-  const onBuy = useCallback(
-    (e: React.SyntheticEvent<HTMLButtonElement>) => {
-      e.preventDefault();
-      e.stopPropagation();
-      setTrackingSource(page);
-      // PTX smart routing redirect to live app or to native implementation
-
+  const onBuyAccountSelected = useCallback(
+    (account: AccountLike) => {
+      setDrawer();
       history.push({
         pathname: "/exchange",
         state: internalCurrency
           ? {
+              account: account.id,
               currency: internalCurrency?.id,
               mode: "buy", // buy or sell
             }
           : {
               mode: "onRamp",
+              account: account.id,
               defaultTicker:
                 currency && currency.ticker ? currency.ticker.toUpperCase() : undefined,
             },
       });
     },
-    [currency, history, internalCurrency, page],
+    [history, internalCurrency, currency],
   );
 
-  const onSwap = useCallback(
-    (e: React.SyntheticEvent<HTMLButtonElement>) => {
-      if (internalCurrency?.id) {
-        e.preventDefault();
-        e.stopPropagation();
-        track("button_clicked2", {
-          button: "swap",
-          currency: currency?.ticker,
-          page,
-          ...swapDefaultTrack,
-        });
-        setTrackingSource(page);
+  const { isModularDrawerVisible } = useModularDrawerVisibility({
+    modularDrawerFeatureFlagKey: "lldModularDrawer",
+  });
 
-        const currencyId = internalCurrency?.id;
+  const onBuy = useMarketOnBuy({
+    page,
+    currencies: currenciesArray,
+    isModularDrawerVisible,
+    onBuyAccountSelected,
+  });
 
-        const defaultAccount = getAvailableAccountsById(currencyId, flattenedAccounts).find(
-          Boolean,
-        );
+  const onSwap = useMarketOnSwap({
+    page,
+    currencies: currenciesArray,
+    isModularDrawerVisible,
+    onSwapAccountSelected,
+    swapDefaultTrack,
+  });
 
-        if (!defaultAccount) return openAddAccounts();
-
-        history.push({
-          pathname: "/swap",
-          state: {
-            defaultCurrency: internalCurrency,
-            defaultAccount,
-            defaultAmountFrom: "0",
-            defaultParentAccount:
-              "parentId" in defaultAccount && defaultAccount.parentId
-                ? flattenedAccounts.find(a => a.id === defaultAccount.parentId)
-                : null,
-            from: history.location.pathname,
-          },
-        });
-      }
-    },
-    [
-      internalCurrency,
-      currency?.ticker,
-      page,
-      swapDefaultTrack,
-      flattenedAccounts,
-      openAddAccounts,
-      history,
-    ],
-  );
-
-  const onStake = useCallback(
-    (e: React.SyntheticEvent<HTMLButtonElement>) => {
-      e.preventDefault();
-      e.stopPropagation();
-
-      track("button_clicked2", {
-        button: "stake",
-        currency: internalCurrency ? internalCurrency.ticker : currency?.ticker,
-        page,
-        ...stakeDefaultTrack,
-      });
-      setTrackingSource(page);
-      startStakeFlow({
-        currencies: internalCurrency ? [internalCurrency.id] : undefined,
-        source: page,
-        returnTo: history.location.pathname,
-      });
-    },
-    [internalCurrency, currency?.ticker, page, startStakeFlow, history.location.pathname],
-  );
+  const onStake = useMarketOnStake({
+    internalCurrency,
+    page,
+    stakeDefaultTrack,
+    startStakeFlow,
+    currentPathname: history.location.pathname,
+    currencyTicker: currency?.ticker,
+  });
 
   const availableOnBuy = isAvailableOnBuy(currency, isCurrencyAvailable);
   const availableOnSwap = isAvailableOnSwap(currency, currenciesForSwapAllSet);
 
   const { getCanStakeCurrency } = useStake();
 
-  const availableOnStake = !!internalCurrency?.id && getCanStakeCurrency(internalCurrency?.id);
+  const availableOnStake = !!currencyId && getCanStakeCurrency(currencyId);
 
   return {
     onBuy,
