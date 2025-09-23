@@ -6,8 +6,7 @@ import {
   getSupportedCoinsList,
   supportedCounterCurrencies,
 } from "../api";
-import { listCryptoCurrencies } from "@ledgerhq/cryptoassets/currencies";
-import { listTokens } from "@ledgerhq/cryptoassets/tokens";
+import { useDaDaCurrencies } from "./useDaDaCurrencies";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 
 import { useMemo } from "react";
@@ -25,10 +24,12 @@ import {
   Order,
 } from "../utils/types";
 
-const cryptoCurrenciesList = [...listCryptoCurrencies(), ...listTokens()];
-
-export function useMarketDataProvider() {
+export function useMarketDataProvider(params: { product: "llm" | "lld"; version: string }) {
   const supportedCurrenciesInLIve = listSupportedCurrencies();
+  const { data: dadaCurrencies } = useDaDaCurrencies({
+    product: params.product,
+    version: params.version,
+  });
 
   const liveCompatibleIds: string[] = supportedCurrenciesInLIve
     .map(({ id }: CryptoCurrency) => id)
@@ -48,6 +49,7 @@ export function useMarketDataProvider() {
     supportedCounterCurrencies,
     supportedCurrencies,
     liveCoinsList,
+    cryptoCurrenciesList: dadaCurrencies || [], // Provide DaDa currencies for backward compatibility
   };
 }
 
@@ -59,14 +61,23 @@ export const useCurrencyChartData = ({ id, counterCurrency, range }: MarketCurre
     staleTime: REFETCH_TIME_ONE_MINUTE * BASIC_REFETCH,
   });
 
-export const useCurrencyData = ({ id, counterCurrency }: MarketCurrencyRequestParams) =>
-  useQuery({
+export const useCurrencyData = ({
+  id,
+  counterCurrency,
+  product,
+  version,
+}: MarketCurrencyRequestParams & { product: "llm" | "lld"; version: string }) => {
+  const { cryptoCurrenciesList } = useMarketDataProvider({ product, version });
+
+  return useQuery({
     queryKey: [QUERY_KEY.CurrencyDataRaw, id, counterCurrency],
     queryFn: () => fetchCurrency({ id, counterCurrency }),
     refetchInterval: REFETCH_TIME_ONE_MINUTE * BASIC_REFETCH,
     staleTime: REFETCH_TIME_ONE_MINUTE * BASIC_REFETCH,
     select: data => format(data, cryptoCurrenciesList),
+    enabled: cryptoCurrenciesList.length > 0, // Wait for DaDa data to load
   });
+};
 
 export const useSupportedCounterCurrencies = () =>
   useQuery({
@@ -84,8 +95,15 @@ export const useSupportedCurrencies = () =>
     staleTime: ONE_DAY,
   });
 
-export function useMarketData(props: MarketListRequestParams): MarketListRequestResult {
+export function useMarketData(
+  props: MarketListRequestParams & { product: "llm" | "lld"; version: string },
+): MarketListRequestResult {
   const search = props.search?.toLowerCase() ?? "";
+  const { cryptoCurrenciesList } = useMarketDataProvider({
+    product: props.product,
+    version: props.version,
+  });
+
   return useQueries({
     queries: Array.from({ length: props.page ?? 1 }, (_, i) => i).map(page => ({
       queryKey: [
@@ -110,6 +128,7 @@ export function useMarketData(props: MarketListRequestParams): MarketListRequest
       refetchOnMount: false,
       refetchOnReconnect: false,
       refetchOnWindowFocus: false,
+      enabled: cryptoCurrenciesList.length > 0, // Wait for DaDa data to load
     })),
     combine: combineMarketData,
   });

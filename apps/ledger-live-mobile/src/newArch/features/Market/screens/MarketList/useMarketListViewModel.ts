@@ -11,6 +11,7 @@ import { useMarket } from "../../hooks/useMarket";
 import { getCurrentPage, isDataStale } from "../../utils";
 import { ViewToken } from "react-native";
 import { Order } from "@ledgerhq/live-common/market/utils/types";
+import VersionNumber from "react-native-version-number";
 type NavigationProps = BaseComposite<
   StackNavigatorProps<MarketNavigatorStackParamList, ScreenName.MarketList>
 >;
@@ -49,6 +50,8 @@ function useMarketListViewModel() {
   const marketResult = useMarketDataHook({
     ...marketParams,
     starred: filterByStarredCurrencies ? starredMarketCoins : [],
+    product: "llm",
+    version: VersionNumber.appVersion,
   });
 
   const baseData = filterByStarredCurrencies

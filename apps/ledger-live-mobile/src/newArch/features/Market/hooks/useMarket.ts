@@ -9,11 +9,15 @@ import {
   marketFilterByStarredCurrenciesSelector,
 } from "~/reducers/market";
 import { starredMarketCoinsSelector } from "~/reducers/settings";
+import VersionNumber from "react-native-version-number";
 
 export function useMarket() {
   const dispatch = useDispatch();
   const { supportedCurrencies, liveCoinsList, supportedCounterCurrencies } =
-    useMarketDataProvider();
+    useMarketDataProvider({
+      product: "llm",
+      version: VersionNumber.appVersion,
+    });
   const starredMarketCoins: string[] = useSelector(starredMarketCoinsSelector);
   const filterByStarredCurrencies: boolean = useSelector(marketFilterByStarredCurrenciesSelector);
   const marketParams = useSelector(marketParamsSelector);

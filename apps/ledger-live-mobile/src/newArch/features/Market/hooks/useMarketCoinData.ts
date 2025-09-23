@@ -5,6 +5,7 @@ import {
 
 import { useSelector } from "react-redux";
 import { marketParamsSelector } from "~/reducers/market";
+import VersionNumber from "react-native-version-number";
 
 type HookProps = {
   currencyId: string;
@@ -24,6 +25,8 @@ export const useMarketCoinData = ({ currencyId }: HookProps) => {
   const { data: currency, isLoading } = useCurrencyData({
     counterCurrency,
     id: currencyId,
+    product: "llm",
+    version: VersionNumber.appVersion,
   });
 
   return {

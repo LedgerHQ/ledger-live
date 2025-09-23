@@ -41,11 +41,16 @@ export function useMarket() {
 
   const { data: fromCurrencies } = useFetchCurrencyFrom();
 
-  const { liveCoinsList, supportedCounterCurrencies } = useMarketDataProvider();
+  const { liveCoinsList, supportedCounterCurrencies } = useMarketDataProvider({
+    product: "lld",
+    version: __APP_VERSION__,
+  });
 
   const marketResult = useMarketDataHook({
     ...marketParams,
     liveCoinsList: liveCompatible ? liveCoinsList : [],
+    product: "lld",
+    version: __APP_VERSION__,
   });
 
   const timeRanges = useMemo(
