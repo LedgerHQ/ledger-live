@@ -49,7 +49,7 @@
     "transactionDate" : "Дата транзакции",
     "outdated" : "Устарело",
     "satPerByte" : "сатоши/байт",
-    "sompiPerByte" : "сомпи/байт",
+    "sompiPerByte" : "сомпи/байты",
     "notAvailable" : "Недоступно",
     "import" : "Импортировать",
     "bluetooth" : "Bluetooth",
@@ -419,10 +419,6 @@
     "ETHAddressNonEIP" : {
       "title" : "Автопроверка недоступна: внимательно проверьте адрес.",
       "description" : null
-    },
-    "EthAppNftNotSupported" : {
-      "title" : "Операция недоступна на этом устройстве",
-      "description" : "Функция отправки NFT доступна только в Nano X и Nano S Plus. Пожалуйста, обратитесь в Поддержку, чтобы узнать, как отправлять NFT с Nano S."
     },
     "Touch ID Error" : {
       "title" : "Ошибка биометрической аутентификации",
@@ -926,9 +922,6 @@
     "TaprootNotActivated" : {
       "title" : "Мейннет Taproot ещё не активирован"
     },
-    "NotEnoughNftOwned" : {
-      "title" : "Это больше доступного баланса"
-    },
     "generic" : {
       "title" : "{{message}}",
       "description" : "Что-то пошло не так. Пожалуйста, попробуйте ещё раз. Если проблема не уходит, сохраните логи и отправьте их в Поддержку Ledger.",
@@ -1052,10 +1045,6 @@
     "ImageDownloadError" : {
       "title" : "Картинка не загрузилась",
       "description" : "Попробуйте с другой картинкой."
-    },
-    "NFTMetadataLoadingError" : {
-      "title" : "Не удалось загрузить метаданные NFT",
-      "description" : "Попробуйте с другим NFT."
     },
     "ImageSizeLoadingError" : {
       "title" : "Не удалось получить размеры изображения",
@@ -2693,9 +2682,7 @@
   "operations" : {
     "types" : {
       "IN" : "Получение",
-      "NFT_IN" : "NFT получен",
       "OUT" : "Отправка",
-      "NFT_OUT" : "NFT отправлен",
       "CREATE" : "Создано",
       "REVEAL" : "Раскрытие",
       "DELEGATE" : "Делегирование",
@@ -2800,11 +2787,7 @@
       "stakedAmount" : "В стейкинге",
       "accountCreationFee" : "Комиссия за создание счёта"
     },
-    "multipleAddresses" : "Почему несколько адресов?",
-    "tokenName" : "Название токена",
-    "collectionContract" : "Контракт токена",
-    "tokenId" : "ID токена (NFT)",
-    "quantity" : "Количество"
+    "multipleAddresses" : "Почему несколько адресов?"
   },
   "operationList" : {
     "noOperations" : "Нет операций",
@@ -2973,10 +2956,6 @@
     },
     "undelegation" : {
       "sectionLabel" : "Отозванные средства"
-    },
-    "nft" : {
-      "receiveNft" : "Получить NFT",
-      "howTo" : "Чтобы добавить счета для токенов, вам нужно <0>получить средства</0> на <1>адрес {{currency}}</1>."
     },
     "readOnly" : {
       "noTransaction" : {
@@ -3187,11 +3166,6 @@
         "title" : "Скрыть токен",
         "desc" : "Это действие скроет все токены <1><0>{tokenName}</0></1>. Вы можете снова отобразить их в меню <3>Настройки > Счета</3>.",
         "confirm" : "Скрыть токен"
-      },
-      "hideNFTCollectionCTA" : "Скрыть коллекцию",
-      "hideNFTCollectionModal" : {
-        "title" : "Скрыть коллекцию?",
-        "desc" : "Вы можете вновь отобразить эту коллекцию в Настройках."
       },
       "cryptoAssets" : {
         "header" : "Криптоактивы",
@@ -3692,7 +3666,8 @@
         "empty" : {
           "title" : "Здесь будет история ваших обменов",
           "desc" : "Вы ещё ничего не меняли, либо недавно сбрасывали приложение Ledger Live."
-        }
+        },
+        "feedback" : "Поделитесь мнением"
       }
     },
     "swap2" : {
@@ -3774,6 +3749,8 @@
         "apt_description" : "Для обмена Aptos используйте любое другое устройство Ledger. Это может быть Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ или Ledger Stax™.",
         "cosmos_title" : "Ledger Nano S™ не поддерживает обмен Cosmos",
         "cosmos_description" : "Для обмена Cosmos используйте любое другое устройство Ledger. Это может быть Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ или Ledger Stax™.",
+        "hedera_title" : "Ledger Nano S™ не поддерживает обмен Hedera",
+        "hedera_description" : "Используйте другие совместимые устройства Ledger для обмена Hedera. Это Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ и Ledger Stax™.",
         "osmo_title" : "Ledger Nano S™ не поддерживает обмен Osmosis",
         "osmo_description" : "Используйте другие совместимые устройства Ledger для обмена Osmosis. Это Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ и Ledger Stax™.",
         "dydx_title" : "Ledger Nano S™ не поддерживает обмен dYdX",
@@ -4021,10 +3998,7 @@
       "summary" : "Сводка",
       "selectDevice" : "Выбор устройства",
       "connectDevice" : "Подключение устройства",
-      "stepRange" : "Шаг {{currentStep}} из {{totalSteps}}",
-      "quantity" : "Количество",
-      "selectCollection" : "Коллекция",
-      "selectNft" : "NFT"
+      "stepRange" : "Шаг {{currentStep}} из {{totalSteps}}"
     },
     "recipient" : {
       "scan" : "Сканировать QR-код",
@@ -7127,47 +7101,6 @@
       }
     }
   },
-  "nft" : {
-    "account" : {
-      "seeAllNfts" : "Посмотреть все NFT",
-      "seeFewerNfts" : "Скрыть"
-    },
-    "gallery" : {
-      "allNft" : "Все NFT",
-      "addNew" : "Добавить"
-    },
-    "designedForStax" : {
-      "title" : "<0>Разработано для</0><1>Ledger</1><2>Stax</2>",
-      "drawer" : {
-        "description" : "В этом NFT есть дополнительная картинка, созданная специально для экрана E Ink® в Ledger Stax.\n\nОна будет использоваться при установке этого NFT в качестве экрана блокировки.",
-        "cta" : "Понятно"
-      }
-    },
-    "viewer" : {
-      "properties" : "Свойства",
-      "description" : "Описание",
-      "tokenContract" : "Адрес токена",
-      "tokenContractCopied" : "Адрес токена скопирован!",
-      "tokenId" : "ID токена",
-      "tokenIdCopied" : "ID токена скопирован!",
-      "quantity" : "Количество",
-      "attributes" : {
-        "floorPrice" : "Мин. цена"
-      }
-    },
-    "viewerModal" : {
-      "viewOn" : "Посмотреть в",
-      "viewInExplorer" : "Посмотреть в Обозревателе",
-      "hide" : "Скрыть коллекцию NFT",
-      "txDetails" : "Детали транзакции"
-    },
-    "modalDisabled" : {
-      "title" : "Функция отправки недоступна на iOS",
-      "body" : "В связи с последними требованиями App Store отправка NFT временно недоступна. Вы по-прежнему можете использовать настольную версию Ledger Live для отправки NFT.",
-      "learnMore" : "Подробнее",
-      "continue" : "Понятно!"
-    }
-  },
   "ApplicationVersion" : "v {{version}}",
   "analytics" : {
     "title" : "Аналитика",
@@ -7251,7 +7184,6 @@
     "drawer" : {
       "options" : {
         "uploadFromPhone" : "Выбрать из галереи",
-        "selectFromNFTGallery" : "Выбрать из галереи NFT",
         "remove" : "Удалить изображение"
       }
     },
@@ -7282,9 +7214,6 @@
       "setPicture" : "Установить на экран блокировки",
       "editPicture" : "Изменить картинку",
       "pickDeviceModel" : "Выберите устройство"
-    },
-    "nftGallery" : {
-      "title" : "Мои NFT"
     }
   },
   "postOnboarding" : {
@@ -7329,50 +7258,7 @@
   "wallet" : {
     "tabs" : {
       "crypto" : "Криптовалюты",
-      "nft" : "NFT",
       "market" : "Рынок"
-    },
-    "nftGallery" : {
-      "filters" : {
-        "select" : "Выбрать",
-        "filter" : "Фильтр",
-        "blockchain" : "Блокчейн",
-        "seeAll" : "Просмотреть все",
-        "selectAndHide" : "Выбрать и скрыть",
-        "hide" : "Скрыть коллекции ({{count}})",
-        "hiddenCollections" : "Скрытые коллекции",
-        "hide_plural" : "Скрыть коллекции: {{count}}",
-        "empty" : "Нет скрытых коллекций",
-        "alertHide" : "1 коллекция скрыта. Отобразить её вновь можно в фильтрах галереи.",
-        "alertHide_plural" : "Скрытых коллекций: {{count}}. Отобразить их вновь можно в фильтрах галереи."
-      },
-      "emptyFiltered" : {
-        "title" : "Подходящих NFT нет",
-        "button" : "Сбросить фильтры"
-      },
-      "empty" : {
-        "title" : "Пока тут ничего нет",
-        "subtitle" : "Сначала добавьте NFT в кошелёк",
-        "receive" : "Получить NFT",
-        "supportLink" : "Как получить NFT с других кошельков?"
-      },
-      "receiveModal" : {
-        "title" : "Получать NFT можно так же, как и другие криптоактивы",
-        "bullets" : {
-          "0" : "• Выберите блокчейн NFT",
-          "1" : "• Выберите счёт для получения NFT"
-        },
-        "cta" : "Понятно",
-        "info" : "Хочу узнать больше"
-      },
-      "hideNftModal" : {
-        "title" : "Скрыть коллекцию NFT",
-        "desc" : "Это действие скроет все NFT из коллекции. Вы можете снова отобразить их в <3>Настройках</3>.",
-        "cta" : "Скрыть этот NFT"
-      },
-      "media" : {
-        "tag" : "{{count}} NFT"
-      }
     },
     "referralProgram" : "20$"
   },
@@ -8025,6 +7911,10 @@
     "signatureVerificationFail" : {
       "title" : "Сбой проверки подписи",
       "description" : "Повторите попытку или обратитесь в Поддержку Ledger"
+    },
+    "transactionCannotBeCreated" : {
+      "title" : "Оператор недоступен",
+      "description" : "Не удалось провести обмен с этим оператором. Попробуйте провести операцию с другим. Код ошибки — 8HBB{{errorCode}}"
     },
     "default" : {
       "title" : "Что-то пошло не так",
