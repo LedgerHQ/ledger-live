@@ -84,22 +84,38 @@ function fixedWeight(currency: ICrypto, derivationMode: string): number {
 }
 
 // https://ledgerhq.atlassian.net/wiki/spaces/WALLETCO/pages/6209372206/Fees+management
+// function inputWeight(derivationMode: string): number {
+//   const spec = INPUT_WEIGHT_SPECS[derivationMode];
+//   if (!spec) {
+//     throw UnsupportedDerivation(`Derivation mode ${derivationMode} unknown`);
+//   }
+//
+//   // base non-witness weight for every input
+//   let weightWU = IN_NONWIT_PREFIX_BYTES * WU;
+//
+//   // add derivation-specific non-witness payload (scriptSig)
+//   weightWU += spec.extraNonWitnessBytes * WU;
+//
+//   // add witness (already in WU; no ×4)
+//   weightWU += spec.witnessWU;
+//
+//   return weightWU;
+// }
+
 function inputWeight(derivationMode: string): number {
-  const spec = INPUT_WEIGHT_SPECS[derivationMode];
-  if (!spec) {
+  let inputWeight = (32 + 4 + 1 + 4) * baseByte; // 41 * 4 = 164
+  if (derivationMode === DerivationModes.TAPROOT) {
+    inputWeight += 1 + 1 + 65;
+  } else if (derivationMode === DerivationModes.NATIVE_SEGWIT) {
+    inputWeight += 1 + 1 + 72 + 1 + 33;
+  } else if (derivationMode === DerivationModes.SEGWIT) {
+    inputWeight += 23 * baseByte + 107;
+  } else if (derivationMode === DerivationModes.LEGACY) {
+    inputWeight += 107 * baseByte;
+  } else {
     throw UnsupportedDerivation(`Derivation mode ${derivationMode} unknown`);
   }
-
-  // base non-witness weight for every input
-  let weightWU = IN_NONWIT_PREFIX_BYTES * WU;
-
-  // add derivation-specific non-witness payload (scriptSig)
-  weightWU += spec.extraNonWitnessBytes * WU;
-
-  // add witness (already in WU; no ×4)
-  weightWU += spec.witnessWU;
-
-  return weightWU;
+  return inputWeight;
 }
 
 function outputWeight(derivationMode: string): number {
