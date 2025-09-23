@@ -56,7 +56,7 @@ function KaspaEditCustomFees({ navigation, route }: Props) {
     const bridge = getAccountBridge(account, parentAccount);
     // @ts-expect-error: Type mismatch due to dynamic navigation params
     navigation.navigate(NavigatorName.SendFunds, {
-      screen: "SendSummary",
+      screen: ScreenName.SendSummary,
       params: {
         ...route.params,
         accountId: account.id,
