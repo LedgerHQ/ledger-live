@@ -150,7 +150,7 @@ export function convertApiToken(apiToken: ApiTokenData): TokenCurrency | undefin
       return convertAptFaTokens(aptFaData);
     }
     case "sui": {
-      const suiData: SuiToken = [id, name, ticker, contractAddress, magnitude];
+      const suiData: SuiToken = [id, name, ticker, contractAddress, magnitude, ""];
       return convertSuiTokens(suiData);
     }
     default:
