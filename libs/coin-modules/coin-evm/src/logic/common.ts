@@ -93,13 +93,7 @@ export function getErc20Data(recipient: string, amount: bigint): Buffer {
   return Buffer.from(data.slice(2), "hex");
 }
 
-const stakingOperations = [
-  "delegate",
-  "undelegate",
-  "redelegate",
-  "getStakedBalance",
-  "getUnstakedBalance",
-] as const;
+const stakingOperations = ["delegate", "undelegate", "redelegate"] as const;
 
 function isStakingOperation(value: string): value is StakingOperation {
   return (stakingOperations as readonly string[]).includes(value);
