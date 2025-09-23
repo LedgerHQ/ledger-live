@@ -21,6 +21,58 @@ export function byteSize(count: number): number {
 }
 
 const baseByte = 4;
+
+/** Weight unit multiplier for non-witness bytes */
+const WU = baseByte; // = 4
+
+/** Common non-witness prefix present in ALL inputs (bytes) */
+const IN_NONWIT_PREFIX_BYTES =
+  32 /* prev txid */ + 4 /* vout */ + 1 /* scriptSig length varint */ + 4; /* sequence */
+
+/** ScriptSig sizes (bytes) */
+const SCRIPTSIG_P2PKH_BYTES = 107; // canonical DER sig + pubkey, typical case
+const SCRIPTSIG_P2SH_P2WPKH_BYTES =
+  1 /* push redeemscript */ + 22; /* redeemscript: OP_0 <20-byte keyhash> */ // = 23
+
+/** Witness stack weights (already in weight units, not bytes) */
+// P2WPKH witness: 1 (stack items)
+//  + (1 + 72) push+sig
+//  + (1 + 33) push+pubkey  => 108 WU
+const WITNESS_P2WPKH_WU = 1 + (1 + 72) + (1 + 33); // 108
+
+// P2TR key-path witness: 1 (stack items)
+//  + (1 + 65) push + 64-byte sig + sighash byte => 67 WU
+const WITNESS_P2TR_KEYPATH_WU = 1 + (1 + 65); // 67
+
+type InputWeightSpec = {
+  /** extra non-witness bytes beyond the shared prefix (scriptSig bytes) */
+  extraNonWitnessBytes: number;
+  /** witness weight units to add (0 for legacy) */
+  witnessWU: number;
+};
+
+const INPUT_WEIGHT_SPECS: Record<string, InputWeightSpec> = {
+  [DerivationModes.LEGACY]: {
+    extraNonWitnessBytes: SCRIPTSIG_P2PKH_BYTES,
+    witnessWU: 0,
+  },
+  [DerivationModes.SEGWIT]: {
+    // P2SH-P2WPKH: scriptSig holds the redeemscript (23 bytes), plus P2WPKH witness
+    extraNonWitnessBytes: SCRIPTSIG_P2SH_P2WPKH_BYTES,
+    witnessWU: WITNESS_P2WPKH_WU,
+  },
+  [DerivationModes.NATIVE_SEGWIT]: {
+    // empty scriptSig (already accounted by the 1-byte length in the prefix), P2WPKH witness
+    extraNonWitnessBytes: 0,
+    witnessWU: WITNESS_P2WPKH_WU,
+  },
+  [DerivationModes.TAPROOT]: {
+    // empty scriptSig, Taproot key-path witness
+    extraNonWitnessBytes: 0,
+    witnessWU: WITNESS_P2TR_KEYPATH_WU,
+  },
+};
+
 function fixedWeight(currency: ICrypto, derivationMode: string): number {
   let fixedWeight = 4 * baseByte; // Transaction version
   if (currency.network.usesTimestampedTransaction) fixedWeight += 4 * baseByte; // Timestamp
@@ -33,19 +85,21 @@ function fixedWeight(currency: ICrypto, derivationMode: string): number {
 
 // https://ledgerhq.atlassian.net/wiki/spaces/WALLETCO/pages/6209372206/Fees+management
 function inputWeight(derivationMode: string): number {
-  let inputWeight = (32 + 4 + 1 + 4) * baseByte; // 41 * 4 = 164
-  if (derivationMode === DerivationModes.TAPROOT) {
-    inputWeight += 1 + 1 + 65;
-  } else if (derivationMode === DerivationModes.NATIVE_SEGWIT) {
-    inputWeight += 1 + 1 + 72 + 1 + 33;
-  } else if (derivationMode === DerivationModes.SEGWIT) {
-    inputWeight += 23 * baseByte + 107;
-  } else if (derivationMode === DerivationModes.LEGACY) {
-    inputWeight += 107 * baseByte;
-  } else {
+  const spec = INPUT_WEIGHT_SPECS[derivationMode];
+  if (!spec) {
     throw UnsupportedDerivation(`Derivation mode ${derivationMode} unknown`);
   }
-  return inputWeight;
+
+  // base non-witness weight for every input
+  let weightWU = IN_NONWIT_PREFIX_BYTES * WU;
+
+  // add derivation-specific non-witness payload (scriptSig)
+  weightWU += spec.extraNonWitnessBytes * WU;
+
+  // add witness (already in WU; no ×4)
+  weightWU += spec.witnessWU;
+
+  return weightWU;
 }
 
 function outputWeight(derivationMode: string): number {
