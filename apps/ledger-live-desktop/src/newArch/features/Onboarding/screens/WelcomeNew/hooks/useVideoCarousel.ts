@@ -1,11 +1,11 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 
-import LedgerWalletBuySell from "./assets/ledgerWalletBuySell.webm";
-import LedgerWalletThousandsCrypto from "./assets/ledgerWalletThousandsCrypto.webm";
-import LedgerWalletSecureWallet from "./assets/ledgerWalletSecureWallet.webm";
+import LedgerWalletBuySell from "../assets/ledgerWalletBuySell.webm";
+import LedgerWalletThousandsCrypto from "../assets/ledgerWalletThousandsCrypto.webm";
+import LedgerWalletSecureWallet from "../assets/ledgerWalletSecureWallet.webm";
 
-export function useVideoCarouselViewModel() {
+export function useVideoCarousel() {
   const { t } = useTranslation();
 
   // Video carousel state
