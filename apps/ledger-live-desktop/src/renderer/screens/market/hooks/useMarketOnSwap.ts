@@ -11,6 +11,8 @@ import {
 } from "LLD/features/ModularDrawer";
 import SelectAccountAndCurrencyDrawer from "~/renderer/drawers/DataSelector/SelectAccountAndCurrencyDrawer";
 
+const DRAWER_FLOW = "swap";
+
 type UseMarketOnSwapProps = {
   currencyTicker?: string;
   page?: string;
@@ -52,7 +54,7 @@ export function useMarketOnSwap({
           useCase: "swap",
           onSuccess: onSwapAccountSelected,
           onCancel: () => setDrawer(),
-          flow: "swap",
+          flow: DRAWER_FLOW,
           source: page ?? "Page Market",
         });
       } else {
@@ -60,7 +62,7 @@ export function useMarketOnSwap({
           SelectAccountAndCurrencyDrawer,
           {
             currencies,
-            flow: "swap",
+            flow: DRAWER_FLOW,
             source: page,
             onAccountSelected: onSwapAccountSelected,
           },

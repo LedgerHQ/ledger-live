@@ -10,6 +10,8 @@ import {
 } from "LLD/features/ModularDrawer";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 
+const DRAWER_FLOW = "buy";
+
 type UseMarketOnBuyProps = {
   page?: string;
   currencies: CryptoOrTokenCurrency[];
@@ -40,7 +42,7 @@ export function useMarketOnBuy({
           useCase: "buy",
           onSuccess: onBuyAccountSelected,
           onCancel: () => setDrawer(),
-          flow: "buy",
+          flow: DRAWER_FLOW,
           source: page ?? "Page Market",
         });
       } else {
@@ -48,7 +50,7 @@ export function useMarketOnBuy({
           SelectAccountAndCurrencyDrawer,
           {
             currencies,
-            flow: "buy",
+            flow: DRAWER_FLOW,
             source: page,
             onAccountSelected: onBuyAccountSelected,
           },
