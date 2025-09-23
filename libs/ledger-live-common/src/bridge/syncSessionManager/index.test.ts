@@ -104,4 +104,48 @@ describe("syncSessionManager", () => {
     session.onAccountSyncDone("x1", accounts);
     expect(trackAnalytics).not.toHaveBeenCalled();
   });
+  test("tracks SyncSuccessAllAccounts with correct aggregates when all accounts complete and errors", () => {
+    const trackAnalytics = jest.fn();
+    const session = createSyncSessionManager(trackAnalytics);
+
+    const BTC = getCryptoCurrencyById("bitcoin");
+    const ETH = getCryptoCurrencyById("ethereum");
+    const a1 = genAccount("a1", { currency: BTC, operationsSize: 3 });
+    const a2 = genAccount("a2", { currency: BTC, operationsSize: 5 });
+    const a3 = genAccount("a3", { currency: ETH, operationsSize: 7 });
+    const accounts = [a1, a2, a3];
+
+    const nowSpy = jest
+      .spyOn(Date, "now")
+      // start time
+      .mockReturnValueOnce(1_000)
+      // end time (when last account completes)
+      .mockReturnValueOnce(5_000);
+
+    session.start(["a1", "a2", "a3"], "initial");
+
+    // Completing accounts one by one should only trigger analytics on last one
+    session.onAccountSyncDone("a1", accounts);
+    expect(trackAnalytics).not.toHaveBeenCalled();
+
+    session.onAccountSyncDone("a2", accounts, true);
+    expect(trackAnalytics).not.toHaveBeenCalled();
+
+    session.onAccountSyncDone("a3", accounts, true);
+
+    expect(trackAnalytics).toHaveBeenCalledTimes(1);
+    expect(trackAnalytics).toHaveBeenCalledWith(
+      "SyncSuccessAllAccounts",
+      expect.objectContaining({
+        duration: 4, // (5000 - 1000) / 1000
+        accountsCount: accounts.length,
+        operationsCount: a1.operationsCount + a2.operationsCount + a3.operationsCount,
+        chains: ["Bitcoin", "Ethereum"],
+        reason: "initial",
+        syncWithErrors: 2,
+      }),
+    );
+
+    nowSpy.mockRestore();
+  });
 });

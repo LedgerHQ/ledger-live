@@ -7,6 +7,7 @@ type Session = {
   startTime: number;
   accountIds: string[];
   remaining: Set<string>;
+  errorsCount: number;
 };
 
 // Session manager factory to track global sync sessions (Accounts)
@@ -22,14 +23,25 @@ export function createSyncSessionManager(trackAnalytics: Props["trackAnalytics"]
       startTime: Date.now(),
       accountIds: ids,
       remaining: new Set(ids),
+      errorsCount: 0,
     };
     logSyncSession("started", { reason, accounts: ids.length });
   };
 
-  const onAccountSyncDone = (accountId: string, accounts: Account[]) => {
+  /**
+   *
+   * @param accountId - the account id that has completed sync
+   * @param accounts - the accounts that will be synced
+   * @param hadError - whether the account sync had an error
+   *
+   */
+  const onAccountSyncDone = (accountId: string, accounts: Account[], hadError = false) => {
     if (!current) return;
 
     current.remaining.delete(accountId);
+    if (hadError) {
+      current.errorsCount += 1;
+    }
 
     if (current.remaining.size === 0) {
       trackSessionAnalytics(trackAnalytics, current, accounts);
@@ -67,6 +79,7 @@ export function trackSessionAnalytics(
     operationsCount: totalOps,
     chains,
     reason: session.reason,
+    syncWithErrors: session.errorsCount,
   });
 
   logSyncSession("finished", { reason: session.reason, duration: `${duration}s` });

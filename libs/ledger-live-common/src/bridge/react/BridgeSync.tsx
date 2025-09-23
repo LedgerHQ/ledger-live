@@ -230,7 +230,7 @@ function useSyncQueue({
               pending: false,
               error,
             });
-            sessionManager.onAccountSyncDone(accountId, accounts);
+            sessionManager.onAccountSyncDone(accountId, accounts, true);
             next();
           },
         });
@@ -239,7 +239,7 @@ function useSyncQueue({
           pending: false,
           error,
         });
-        sessionManager.onAccountSyncDone(accountId, accounts);
+        sessionManager.onAccountSyncDone(accountId, accounts, true);
         next();
       }
     },
