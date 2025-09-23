@@ -147,6 +147,7 @@ const swaps = [
   //   tag: ["@NanoSP", "@NanoX"],
   // },
   //ToDo: enable once Hedera Swap E2E test issue fixed
+  // Task https://ledgerhq.atlassian.net/browse/LIVE-21744
   //{
   //  fromAccount: Account.HEDERA_1,
   //  toAccount: Account.XRP_1,
