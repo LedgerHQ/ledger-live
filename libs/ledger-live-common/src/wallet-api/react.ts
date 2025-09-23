@@ -1010,11 +1010,11 @@ export interface RecentlyUsed {
 
 export type RecentlyUsedManifest = AppManifest & { usedAt: UsedAt };
 export type UsedAt = {
-  unit: Intl.RelativeTimeFormatUnit;
+  unit?: Intl.RelativeTimeFormatUnit;
   diff: number;
 };
 
-function calculateTimeDiff(usedAt: string) {
+function calculateTimeDiff(usedAt: string): UsedAt {
   const start = new Date();
   const end = new Date(usedAt);
   const interval = intervalToDuration({ start, end });
@@ -1027,7 +1027,7 @@ function calculateTimeDiff(usedAt: string) {
     "minutes",
     "seconds",
   ];
-  let timeDiff = { unit: units[-1], diff: 0 };
+  let timeDiff: UsedAt = { unit: undefined, diff: 0 };
 
   for (const unit of units) {
     if (interval[unit] > 0) {
