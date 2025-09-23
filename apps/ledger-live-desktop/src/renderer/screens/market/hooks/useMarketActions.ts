@@ -13,7 +13,11 @@ import { setDrawer } from "~/renderer/drawers/Provider";
 import { useMarketOnBuy } from "./useMarketOnBuy";
 import { useMarketOnSwap } from "./useMarketOnSwap";
 import { useMarketOnStake } from "./useMarketOnStake";
-import { flattenAccounts } from "@ledgerhq/coin-framework/lib-es/account/helpers";
+import {
+  flattenAccounts,
+  getMainAccount,
+  getParentAccount,
+} from "@ledgerhq/coin-framework/account/helpers";
 import { useSelector } from "react-redux";
 import { accountsSelector } from "~/renderer/reducers/accounts";
 
@@ -58,6 +62,8 @@ export const useMarketActions = ({ currency, page, currenciesAll }: MarketAction
 
   const onSwapAccountSelected = useCallback(
     (account: AccountLike) => {
+      const parentAccount = getParentAccount(account, flattenedAccounts);
+
       setDrawer();
       history.push({
         pathname: "/swap",
@@ -65,10 +71,7 @@ export const useMarketActions = ({ currency, page, currenciesAll }: MarketAction
           defaultCurrency: internalCurrency,
           defaultAccount: account,
           defaultAmountFrom: "0",
-          defaultParentAccount:
-            "parentId" in account && account.parentId
-              ? flattenedAccounts.find(a => a.id === account.parentId) || null
-              : null,
+          defaultParentAccount: parentAccount,
           from: history.location.pathname,
         },
       });
@@ -78,12 +81,15 @@ export const useMarketActions = ({ currency, page, currenciesAll }: MarketAction
 
   const onBuyAccountSelected = useCallback(
     (account: AccountLike) => {
+      const parentAccount = getParentAccount(account, flattenedAccounts);
+      const mainAccount = getMainAccount(account, parentAccount);
+
       setDrawer();
       history.push({
         pathname: "/exchange",
         state: internalCurrency
           ? {
-              account: account.id,
+              account: mainAccount.id,
               currency: internalCurrency?.id,
               mode: "buy", // buy or sell
             }
@@ -95,7 +101,7 @@ export const useMarketActions = ({ currency, page, currenciesAll }: MarketAction
             },
       });
     },
-    [history, internalCurrency, currency],
+    [flattenedAccounts, history, internalCurrency, currency],
   );
 
   const { isModularDrawerVisible } = useModularDrawerVisibility({

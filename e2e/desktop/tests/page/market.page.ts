@@ -14,6 +14,8 @@ export class MarketPage extends AppPage {
   readonly swapButton = (ticker: string) => this.page.getByTestId(`market-${ticker}-swap-button`);
   private stakeButton = (ticker: string) => this.page.getByTestId(`market-${ticker}-stake-button`);
   private swapButtonOnAsset = this.page.getByTestId("market-coin-swap-button");
+  private accountRow = (currencyName: string, index: number) =>
+    this.page.getByTestId(`account-row-${currencyName.toLowerCase()}-${index}`);
 
   @step("Search for $0")
   async search(query: string) {
@@ -53,8 +55,11 @@ export class MarketPage extends AppPage {
   }
 
   @step("Open buy page for $0")
-  async openBuyPage(ticker: string) {
+  async openBuyPage(ticker: string, accountName: string, currencyName: string) {
     await this.buyButton(ticker.toLowerCase()).click();
+    await this.accountRow(currencyName, 0).getByText(currencyName);
+    await this.accountRow(currencyName, 0).getByText(accountName).waitFor({ state: "visible" });
+    await this.page.click(`text=${accountName}`);
   }
 
   @step("Wait for loading")
@@ -69,8 +74,11 @@ export class MarketPage extends AppPage {
   }
 
   @step("Click on swap button for $0")
-  async startSwapForSelectedTicker(ticker: string) {
+  async startSwapForSelectedTicker(ticker: string, accountName: string, currencyName: string) {
     await this.swapButton(ticker.toLowerCase()).click();
+    await this.accountRow(currencyName, 0).getByText(currencyName);
+    await this.accountRow(currencyName, 0).getByText(accountName).waitFor({ state: "visible" });
+    await this.page.click(`text=${accountName}`);
   }
 
   @step("Click on swap button on asset")

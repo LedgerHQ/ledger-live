@@ -5,6 +5,8 @@ export class AssetPage extends AppPage {
   private stakeButton = this.page.getByTestId("asset-page-stake-button");
   private buyButton = this.page.getByTestId("asset-page-buy-button");
   private swapButton = this.page.getByTestId("asset-page-swap-button");
+  private accountRow = (currencyName: string, index: number) =>
+    this.page.getByTestId(`account-row-${currencyName.toLowerCase()}-${index}`);
 
   @step("Start stake flow")
   async startStakeFlow() {

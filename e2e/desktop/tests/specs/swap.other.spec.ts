@@ -784,7 +784,7 @@ test.describe("Swap flow from different entry point", () => {
   const { accountToDebit, accountToCredit } = swapEntryPoint.swap;
 
   test.use({
-    userdata: "skip-onboarding",
+    userdata: "1AccountBTC1AccountETH",
     speculosApp: app,
 
     cliCommandsOnApp: [
@@ -855,7 +855,11 @@ test.describe("Swap flow from different entry point", () => {
       await app.layout.goToMarket();
 
       await app.swap.goAndWaitForSwapToBeReady(() =>
-        app.market.startSwapForSelectedTicker(swapEntryPoint.swap.accountToDebit.currency.ticker),
+        app.market.startSwapForSelectedTicker(
+          swapEntryPoint.swap.accountToDebit.currency.ticker,
+          swapEntryPoint.swap.accountToDebit.accountName,
+          swapEntryPoint.swap.accountToDebit.currency.name,
+        ),
       );
       await app.swap.expectSelectedAssetDisplayed(
         swapEntryPoint.swap.accountToDebit.currency.name,

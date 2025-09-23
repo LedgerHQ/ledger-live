@@ -10,6 +10,8 @@ import {
   openAssetAndAccountDrawer,
 } from "LLD/features/ModularDrawer";
 import SelectAccountAndCurrencyDrawer from "~/renderer/drawers/DataSelector/SelectAccountAndCurrencyDrawer";
+import { setFlowValue, setSourceValue } from "~/renderer/reducers/modularDrawer";
+import { useDispatch } from "react-redux";
 
 const DRAWER_FLOW = "swap";
 
@@ -30,6 +32,8 @@ export function useMarketOnSwap({
   isModularDrawerVisible,
   onSwapAccountSelected,
 }: UseMarketOnSwapProps) {
+  const dispatch = useDispatch();
+
   return useCallback(
     (e: React.SyntheticEvent<HTMLButtonElement>) => {
       e.preventDefault();
@@ -49,13 +53,13 @@ export function useMarketOnSwap({
       });
 
       if (modularDrawerVisible) {
+        dispatch(setFlowValue(DRAWER_FLOW));
+        dispatch(setSourceValue(page ?? "Page Market"));
         openAssetAndAccountDrawer({
           currencies,
           useCase: "swap",
           onSuccess: onSwapAccountSelected,
           onCancel: () => setDrawer(),
-          flow: DRAWER_FLOW,
-          source: page ?? "Page Market",
         });
       } else {
         setDrawer(
@@ -73,12 +77,13 @@ export function useMarketOnSwap({
       }
     },
     [
-      page,
-      currencies,
-      isModularDrawerVisible,
-      onSwapAccountSelected,
-      swapDefaultTrack,
       currencyTicker,
+      page,
+      swapDefaultTrack,
+      isModularDrawerVisible,
+      dispatch,
+      currencies,
+      onSwapAccountSelected,
     ],
   );
 }

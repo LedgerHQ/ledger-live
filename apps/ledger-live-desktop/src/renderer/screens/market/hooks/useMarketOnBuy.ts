@@ -9,6 +9,8 @@ import {
   openAssetAndAccountDrawer,
 } from "LLD/features/ModularDrawer";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { setFlowValue, setSourceValue } from "~/renderer/reducers/modularDrawer";
+import { useDispatch } from "react-redux";
 
 const DRAWER_FLOW = "buy";
 
@@ -25,6 +27,8 @@ export function useMarketOnBuy({
   isModularDrawerVisible,
   onBuyAccountSelected,
 }: UseMarketOnBuyProps) {
+  const dispatch = useDispatch();
+
   return useCallback(
     (e: React.SyntheticEvent<HTMLButtonElement>) => {
       e.preventDefault();
@@ -37,13 +41,13 @@ export function useMarketOnBuy({
       });
 
       if (modularDrawerVisible) {
+        dispatch(setFlowValue(DRAWER_FLOW));
+        dispatch(setSourceValue(page ?? "Page Market"));
         openAssetAndAccountDrawer({
           currencies,
           useCase: "buy",
           onSuccess: onBuyAccountSelected,
           onCancel: () => setDrawer(),
-          flow: DRAWER_FLOW,
-          source: page ?? "Page Market",
         });
       } else {
         setDrawer(
@@ -60,6 +64,6 @@ export function useMarketOnBuy({
         );
       }
     },
-    [page, currencies, isModularDrawerVisible, onBuyAccountSelected],
+    [page, isModularDrawerVisible, dispatch, currencies, onBuyAccountSelected],
   );
 }

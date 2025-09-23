@@ -140,11 +140,16 @@ export class BuyAndSellPage extends WebViewAppPage {
     await this.modularDrawer.selectAccountByName(account);
   }
 
+  @step("Select account in drawer")
+  async selectAccountInDrawer(account: AccountType) {
+    await this.chooseAssetDrawer.selectAccountByName(account);
+  }
+
   private async selectAssetInLegacyDrawer(account: AccountType) {
     const networkName = account.parentAccount?.currency.name;
 
     await this.chooseAssetDrawer.chooseFromAsset(account.currency.name, networkName);
-    await this.chooseAssetDrawer.selectAccountByName(account);
+    await this.selectAccountInDrawer(account);
   }
 
   @step("Change region and currency")
