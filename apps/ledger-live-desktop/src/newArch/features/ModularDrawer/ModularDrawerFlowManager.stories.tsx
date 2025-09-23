@@ -100,8 +100,6 @@ const meta: Meta<StoryArgs> = {
     currencies: [ethereumCurrency, arbitrumCurrency, arbitrumToken, bitcoinCurrency],
     onAssetSelected: () => null,
     onAccountSelected: () => null,
-    source: "sourceTest",
-    flow: "Modular Asset Flow",
   },
   argTypes: {
     assetsFilter: {
@@ -238,8 +236,6 @@ export const CustomDrawerConfig: StoryObj<StoryArgs> = {
             currencies={[ethereumCurrency, arbitrumCurrency, arbitrumToken, bitcoinCurrency]}
             onAssetSelected={() => null}
             onAccountSelected={() => null}
-            source="sourceTest"
-            flow="Modular Asset Flow"
             drawerConfiguration={drawerConfiguration}
             // Changing drawerConfiguration may alter which hooks are called.
             // The dynamic key ensures the component is remounted to avoid hook order violations

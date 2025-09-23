@@ -14,11 +14,10 @@ import ModularDrawerFlowManager from "../ModularDrawerFlowManager";
 import { useModularDrawerAnalytics } from "../analytics/useModularDrawerAnalytics";
 import { CloseButton } from "../components/CloseButton";
 import type { EnhancedModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/types";
+import { setFlowValue, setSourceValue } from "~/renderer/reducers/modularDrawer";
 
 function selectCurrency(
   onAssetSelected: (currency: CryptoOrTokenCurrency) => void,
-  source: string,
-  flow: string,
   includeTokens?: boolean,
   currencies?: CryptoOrTokenCurrency[],
   onClose?: () => void,
@@ -31,8 +30,6 @@ function selectCurrency(
     {
       currencies: filteredCurrencies,
       onAssetSelected,
-      source,
-      flow,
       drawerConfiguration: drawerConfiguration ?? {
         assets: { leftElement: "undefined", rightElement: "balance" },
         networks: { leftElement: "numberOfAccounts", rightElement: "balance" },
@@ -61,10 +58,9 @@ export function useOpenAssetFlow(
     setDrawer();
     trackModularDrawerEvent("button_clicked", {
       button: "Close",
-      flow: modularDrawerVisibleParams.location,
       page: currentRouteNameRef.current ?? "Unknown",
     });
-  }, [modularDrawerVisibleParams.location, trackModularDrawerEvent]);
+  }, [trackModularDrawerEvent]);
 
   const openAddAccountFlow = useCallback(
     (
@@ -72,11 +68,13 @@ export function useOpenAssetFlow(
       autoCloseDrawer: boolean = true,
       onAccountSelected?: (account: Account) => void,
     ) => {
+      dispatch(setFlowValue("add account"));
+      dispatch(setSourceValue(source));
+
       const onClose = () => {
         setDrawer();
         trackModularDrawerEvent("button_clicked", {
           button: "Close",
-          flow: "add account",
           page: currentRouteNameRef.current ?? "Unknown",
         });
       };
@@ -92,7 +90,6 @@ export function useOpenAssetFlow(
           ModularDrawerAddAccountFlowManager,
           {
             currency,
-            source,
             onAccountSelected: modalNameToReopen
               ? onFlowFinishedWithModalReopen
               : onAccountSelected,
@@ -123,10 +120,10 @@ export function useOpenAssetFlow(
   const openAssetFlow = useCallback(
     (includeTokens: boolean, drawerConfiguration?: EnhancedModularDrawerConfiguration) => {
       if (isModularDrawerVisible(modularDrawerVisibleParams)) {
+        dispatch(setFlowValue(modularDrawerVisibleParams.location));
+        dispatch(setSourceValue(source));
         selectCurrency(
           openAddAccountFlow,
-          source,
-          modularDrawerVisibleParams.location,
           includeTokens,
           undefined,
           handleClose,
