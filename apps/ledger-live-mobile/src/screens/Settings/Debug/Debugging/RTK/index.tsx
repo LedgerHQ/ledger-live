@@ -12,6 +12,7 @@ import ApiSection from "./ApiSection";
 import { ApiSlice, Section } from "./types";
 import Tabs from "./Tabs";
 import SectionHeader from "./SectionHeader";
+import { rtkDevPanelSelector } from "~/reducers/tools";
 
 enum Visibility {
   opaque = "opaque",
@@ -29,7 +30,7 @@ export default function RtkQueryDevPanel() {
   const [view, setView] = useState<Section>("api");
 
   const state = useSelector((s: State) => s);
-  const enabled = useSelector((s: State) => s.settings.rtkConsoleEnabled ?? false);
+  const enabled = useSelector(rtkDevPanelSelector);
 
   const isRecord = (value: unknown): value is Record<string, unknown> =>
     typeof value === "object" && value !== null;
