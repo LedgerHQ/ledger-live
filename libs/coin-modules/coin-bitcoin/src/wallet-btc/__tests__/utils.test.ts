@@ -209,7 +209,7 @@ describe("Unit tests for maxTxSize", () => {
     [0, [], true, p2sh, 43],
     [1, [], false, p2sh, 102],
     [1, [btc.toOutputScript(sh)], false, p2sh, 134],
-    [2, [btc.toOutputScript(sh)], false, p2sh, 224],
+    [2, [btc.toOutputScript(sh)], false, p2sh, 225], // before 224
 
     // Fixed 10.5 In 57.75 out 43
     [0, [], false, p2tr, 11],
@@ -231,11 +231,11 @@ describe("Unit tests for maxTxSize", () => {
     // 0xffff inputs will add 4 bytes
     [256 * 256, [], true, p2tr, Math.ceil(53.5 + 57.75 * (256 * 256) + 4)],
 
-    [1, [btc.toOutputScript(pkh)], false, p2wpkh, 113], // OK RIGHT NOW
-    [1, [btc.toOutputScript(pkh)], false, p2pkh, 192], // OK RIGHT NOW
+    [1, [btc.toOutputScript(pkh)], false, p2wpkh, 113],
+    [1, [btc.toOutputScript(pkh)], false, p2pkh, 192],
     // NOTE: [1, [btc.toOutputScript(pkh)], false, p2tr, 102], // 103 overestimating by one, expected as a buffer for optional byte
-    [1, [btc.toOutputScript(sh)], false, p2sh, 134], // 133 understimating by one
-    [1, [btc.toOutputScript(wpkh)], false, p2sh, 133], // 132 understimating by one
+    [1, [btc.toOutputScript(sh)], false, p2sh, 134], // before 133
+    [1, [btc.toOutputScript(wpkh)], false, p2sh, 133], // before 132
 
     // test address with witness version 16 and witness program [0x01, 0x02] => tb1sqypqyuzpgh
     [
