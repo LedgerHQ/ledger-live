@@ -126,7 +126,6 @@ export async function prepareUnsignedTxParams(
       }).slice(2),
       "hex",
     );
-    // console.log("data", data);
   } else {
     data = isNative(asset) ? Buffer.from([]) : getErc20Data(recipient, amount);
   }
