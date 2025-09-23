@@ -2245,6 +2245,16 @@
     "title": "Receive",
     "successTitle": "Address shared securely",
     "steps": {
+      "options": {
+        "fromBank": {
+          "title": "From a bank account",
+          "description": "Deposit USD or EUR"
+        },
+        "fromCrypto": {
+          "title": "From a crypto address",
+          "description": "Receive crypto"
+        }
+      },
       "chooseAccount": {
         "title": "Account",
         "label": "Account to credit",
