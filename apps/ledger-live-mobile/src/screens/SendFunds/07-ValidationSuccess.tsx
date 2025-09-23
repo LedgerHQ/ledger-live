@@ -1,5 +1,4 @@
 import React, { useCallback, useEffect } from "react";
-import { View, StyleSheet } from "react-native";
 import { useSelector } from "react-redux";
 import { CompositeScreenProps, useTheme } from "@react-navigation/native";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
@@ -15,6 +14,8 @@ import {
   StackNavigatorProps,
 } from "~/components/RootNavigator/types/helpers";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
+import SafeAreaViewFixed from "~/components/SafeAreaView";
+import Config from "react-native-config";
 
 type Props = CompositeScreenProps<
   StackNavigatorProps<SendFundsNavigatorStackParamList, ScreenName.SendValidationSuccess>,
@@ -50,22 +51,17 @@ export default function ValidationSuccess({ navigation, route }: Props) {
     });
   }, [account, route.params?.result, navigation, parentAccount]);
   return (
-    <View
-      style={[
-        styles.root,
-        {
-          backgroundColor: colors.background,
-        },
-      ]}
+    <SafeAreaViewFixed
+      isFlex
+      edges={["left", "right", "bottom"]}
+      useDetoxInsets={Config.DETOX === "1"}
+      style={{
+        backgroundColor: colors.background,
+      }}
     >
       <TrackScreen category="SendFunds" name="ValidationSuccess" currencyName={currency?.name} />
       <PreventNativeBack />
       <ValidateSuccess onClose={onClose} onViewDetails={goToOperationDetails} />
-    </View>
+    </SafeAreaViewFixed>
   );
 }
-const styles = StyleSheet.create({
-  root: {
-    flex: 1,
-  },
-});
