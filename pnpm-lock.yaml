@@ -1130,9 +1130,6 @@ importers:
       expo:
         specifier: 52.0.46
         version: 52.0.46(uysekgyrq3rh5u5kokaefcfxai)
-      expo-camera:
-        specifier: 16.0.15
-        version: 16.0.15(expo-modules-core@2.2.3(react-native@0.77.3(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1))(react@18.3.1))(expo@52.0.46(uysekgyrq3rh5u5kokaefcfxai))(react-native@0.77.3(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1))(react@18.3.1)
       expo-crypto:
         specifier: 13.0.2
         version: 13.0.2(expo-modules-core@2.2.3(react-native@0.77.3(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1))(react@18.3.1))(expo@52.0.46(uysekgyrq3rh5u5kokaefcfxai))(react-native@0.77.3(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1))(react@18.3.1)
@@ -1328,6 +1325,9 @@ importers:
       react-native-video:
         specifier: 6.14.0
         version: 6.14.0(react-native@0.77.3(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1))(react@18.3.1)
+      react-native-vision-camera:
+        specifier: ^4.6.1
+        version: 4.7.2(react-native-reanimated@3.16.7(@babel/core@7.27.1)(react-native@0.77.3(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1))(react@18.3.1))(react-native@0.77.3(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1))(react@18.3.1)
       react-native-webview:
         specifier: 13.13.5
         version: 13.13.5(patch_hash=r7bejpcnocn3555cbyefvt6uqm)(react-native@0.77.3(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1))(react@18.3.1)
@@ -24240,23 +24240,6 @@ packages:
       react-native:
         optional: true
 
-  expo-camera@16.0.15:
-    resolution: {integrity: sha512-JrczE3PwQeoxotdLkfhTSjZj+u/s+Yi3AdL6RL4/Kt+rfuvl9jn3vqCsWKyERLC8yQPE6uj9hN3DnCTqkhi0Iw==}
-    peerDependencies:
-      expo: '*'
-      expo-constants: '*'
-      expo-modules-core: '*'
-      react: '*'
-      react-native: '*'
-      react-native-web: '*'
-    peerDependenciesMeta:
-      expo-constants:
-        optional: true
-      expo-modules-core:
-        optional: true
-      react-native-web:
-        optional: true
-
   expo-constants@17.0.8:
     resolution: {integrity: sha512-XfWRyQAf1yUNgWZ1TnE8pFBMqGmFP5Gb+SFSgszxDdOoheB/NI5D4p7q86kI2fvGyfTrxAe+D+74nZkfsGvUlg==}
     peerDependencies:
@@ -31032,6 +31015,22 @@ packages:
     peerDependencies:
       react: '*'
       react-native: '*'
+
+  react-native-vision-camera@4.7.2:
+    resolution: {integrity: sha512-C+5PvlSunN6I4aYplSask+v3jfhgduZumIVw6H6lG+Afpf8boIcG3uFSsSfVgj+hxI7fx6qM6bsciEhzgxEUYg==}
+    peerDependencies:
+      '@shopify/react-native-skia': '*'
+      react: '*'
+      react-native: '*'
+      react-native-reanimated: '*'
+      react-native-worklets-core: '*'
+    peerDependenciesMeta:
+      '@shopify/react-native-skia':
+        optional: true
+      react-native-reanimated:
+        optional: true
+      react-native-worklets-core:
+        optional: true
 
   react-native-web@0.19.10:
     resolution: {integrity: sha512-IQoHiTQq8egBCVVwmTrYcFLgEFyb4LMZYEktHn4k22JMk9+QTCEz5WTfvr+jdNoeqj/7rtE81xgowKbfGO74qg==}
@@ -58065,15 +58064,6 @@ snapshots:
     transitivePeerDependencies:
       - expo
 
-  expo-camera@16.0.15(expo-modules-core@2.2.3(react-native@0.77.3(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1))(react@18.3.1))(expo@52.0.46(uysekgyrq3rh5u5kokaefcfxai))(react-native@0.77.3(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1))(react@18.3.1):
-    dependencies:
-      expo: 52.0.46(uysekgyrq3rh5u5kokaefcfxai)
-      invariant: 2.2.4
-      react: 18.3.1
-      react-native: 0.77.3(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1)
-    optionalDependencies:
-      expo-modules-core: 2.2.3(react-native@0.77.3(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1))(react@18.3.1)
-
   expo-constants@17.0.8(expo-modules-core@2.2.3(react-native@0.77.3(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1))(react@18.3.1))(expo@52.0.46(uysekgyrq3rh5u5kokaefcfxai))(react-native@0.77.3(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1))(react@18.3.1):
     dependencies:
       '@expo/config': 10.0.11
@@ -68551,6 +68541,13 @@ snapshots:
     dependencies:
       react: 18.3.1
       react-native: 0.77.3(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1)
+
+  react-native-vision-camera@4.7.2(react-native-reanimated@3.16.7(@babel/core@7.27.1)(react-native@0.77.3(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1))(react@18.3.1))(react-native@0.77.3(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1))(react@18.3.1):
+    dependencies:
+      react: 18.3.1
+      react-native: 0.77.3(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1)
+    optionalDependencies:
+      react-native-reanimated: 3.16.7(@babel/core@7.27.1)(react-native@0.77.3(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1))(react@18.3.1)
 
   react-native-web@0.19.10(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
     dependencies:

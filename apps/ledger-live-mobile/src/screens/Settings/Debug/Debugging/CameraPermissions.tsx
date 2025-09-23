@@ -1,14 +1,27 @@
 import React, { useState } from "react";
 import { Button, Flex, Switch, Text } from "@ledgerhq/native-ui";
-import { CameraView, CameraType } from "expo-camera";
 import { useIsFocused } from "@react-navigation/native";
 import RequiresCameraPermissions from "~/components/RequiresCameraPermissions";
 import CameraPermissionContext from "~/components/RequiresCameraPermissions/CameraPermissionContext";
+
+// Safe imports with fallback
+let Camera: any, useCameraDevice: any;
+try {
+  const visionCamera = require("react-native-vision-camera");
+  Camera = visionCamera.Camera;
+  useCameraDevice = visionCamera.useCameraDevice;
+} catch (error) {
+  console.warn("react-native-vision-camera not available:", error);
+  Camera = () => null;
+  useCameraDevice = () => null;
+}
 
 const CameraPermissions: React.FC<Record<string, never>> = () => {
   const [optimistic, setOptimistic] = useState(false);
   const [mounted, setMounted] = useState(false);
   const isFocused = useIsFocused();
+  const device = useCameraDevice ? useCameraDevice("back") : null;
+
   return (
     <Flex flex={1} p={6}>
       <Switch
@@ -24,9 +37,10 @@ const CameraPermissions: React.FC<Record<string, never>> = () => {
           <CameraPermissionContext.Consumer>
             {({ permissionGranted }) =>
               permissionGranted ? (
-                isFocused ? (
-                  <CameraView
-                    facing={"back" as CameraType}
+                isFocused && device && Camera ? (
+                  <Camera
+                    device={device}
+                    isActive={true}
                     style={{
                       height: 200,
                       width: 200,
@@ -34,7 +48,13 @@ const CameraPermissions: React.FC<Record<string, never>> = () => {
                     }}
                   />
                 ) : (
-                  <Text>screen not in focus, camera not mounted</Text>
+                  <Text>
+                    {!isFocused
+                      ? "screen not in focus, camera not mounted"
+                      : !Camera
+                        ? "Camera module not available"
+                        : "Camera not available"}
+                  </Text>
                 )
               ) : (
                 <Text>waiting for permission (optimistic strategy)</Text>

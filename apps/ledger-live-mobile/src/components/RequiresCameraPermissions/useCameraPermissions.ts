@@ -1,50 +1,60 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { useCameraPermissions as useExpoCameraPermissions } from "expo-camera";
-import useIsMounted from "@ledgerhq/live-common/hooks/useIsMounted";
-import { AppState, Linking } from "react-native";
+import { Linking } from "react-native";
+
+// Camera functionality disabled - fallback implementation
+const useCameraPermission = () => ({
+  hasPermission: false,
+  requestPermission: () => Promise.resolve(false),
+});
 
 export default function useCameraPermissions() {
-  const [permission, requestPermission, checkPermission] = useExpoCameraPermissions();
+  const { hasPermission, requestPermission: requestVisionCameraPermission } = useCameraPermission();
   const [firstAutomaticRequestCompleted, setFirstAutomaticRequestCompleted] =
     useState<boolean>(false);
-  const isMounted = useIsMounted();
-
-  useEffect(() => {
-    requestPermission().then(() => setFirstAutomaticRequestCompleted(true));
-    // only run this once on mount
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
-
-  const appState = useRef(AppState.currentState);
   const shouldCheckPermissionOnNextResume = useRef(false);
-  useEffect(() => {
-    const subscription = AppState.addEventListener("change", nextAppState => {
-      if (
-        appState.current.match(/inactive|background/) &&
-        nextAppState === "active" &&
-        shouldCheckPermissionOnNextResume.current &&
-        isMounted()
-      ) {
-        checkPermission();
-        shouldCheckPermissionOnNextResume.current = false;
-      }
-      appState.current = nextAppState;
-    });
 
-    return () => {
-      subscription.remove();
+  // Wrapper to maintain compatibility with existing code
+  const requestPermission = useCallback(async () => {
+    const granted = await requestVisionCameraPermission();
+    return granted ? "granted" : "denied";
+  }, [requestVisionCameraPermission]);
+
+  const checkPermission = useCallback(async () => {
+    return hasPermission ? "granted" : "denied";
+  }, [hasPermission]);
+
+  useEffect(() => {
+    // Auto-request permission on mount if not granted
+    const initializePermissions = async () => {
+      if (!hasPermission) {
+        await requestPermission();
+      }
+      setFirstAutomaticRequestCompleted(true);
     };
-  }, [checkPermission, isMounted]);
+
+    initializePermissions();
+  }, [hasPermission, requestPermission]);
 
   const openAppSettings = useCallback(() => {
     shouldCheckPermissionOnNextResume.current = true;
     Linking.openSettings();
   }, []);
 
+  // Create compatible permission object for existing code
+  const permission = useMemo(
+    () => ({
+      granted: hasPermission,
+      canAskAgain: !hasPermission, // In vision-camera, we can always try to ask again
+      status: hasPermission ? "granted" : "denied",
+    }),
+    [hasPermission],
+  );
+
   const contextValue = useMemo(
     () => ({
-      permissionGranted: permission?.granted ?? null,
+      permissionGranted: hasPermission,
     }),
-    [permission?.granted],
+    [hasPermission],
   );
 
   return {

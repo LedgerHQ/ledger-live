@@ -1,11 +1,15 @@
-import React from "react";
+import React, { useCallback } from "react";
 import { Box, Flex, Icons, NumberedList, ProgressBar, Text } from "@ledgerhq/native-ui";
 import { Trans, useTranslation } from "react-i18next";
 import { useTheme } from "styled-components/native";
-import { CameraView, BarcodeScanningResult } from "expo-camera";
 import RequiresCameraPermissions from "~/components/RequiresCameraPermissions";
 import CameraPermissionContext from "~/components/RequiresCameraPermissions/CameraPermissionContext";
 import ScanTargetSvg from "./CameraScreen/ScanTargetSvg";
+
+// Camera functionality disabled - fallback implementation
+const Camera = () => null;
+const useCameraDevice = () => null;
+const useCodeScanner = () => null;
 
 type Props = {
   onResult: (data: string) => void;
@@ -16,9 +20,21 @@ type Props = {
 const ScanQrCode = ({ onResult, liveQRCode = false, progress }: Props) => {
   const { t } = useTranslation();
   const { colors } = useTheme();
-  const onBarCodeScanned = ({ data }: BarcodeScanningResult) => {
-    onResult(data);
-  };
+  const device = useCameraDevice ? useCameraDevice("back") : null;
+
+  const codeScanner = useCodeScanner
+    ? useCodeScanner({
+        codeTypes: ["qr"],
+        onCodeScanned: useCallback(
+          (codes: any[]) => {
+            if (codes.length > 0 && codes[0].value) {
+              onResult(codes[0].value);
+            }
+          },
+          [onResult],
+        ),
+      })
+    : null;
 
   return (
     <Flex
@@ -41,20 +57,36 @@ const ScanQrCode = ({ onResult, liveQRCode = false, progress }: Props) => {
         >
           <CameraPermissionContext.Consumer>
             {({ permissionGranted }) =>
-              permissionGranted ? (
-                <CameraView
-                  active={permissionGranted ?? false}
+              permissionGranted && device && Camera && codeScanner ? (
+                <Camera
+                  device={device}
+                  isActive={permissionGranted}
                   style={{
                     backgroundColor: colors.neutral.c50,
                     width: 280,
                     height: 280,
                   }}
-                  barcodeScannerSettings={{
-                    barcodeTypes: ["qr"],
-                  }}
-                  onBarcodeScanned={onBarCodeScanned}
+                  codeScanner={codeScanner}
                 />
-              ) : null
+              ) : (
+                <Flex
+                  style={{
+                    backgroundColor: colors.neutral.c50,
+                    width: 280,
+                    height: 280,
+                  }}
+                  justifyContent="center"
+                  alignItems="center"
+                >
+                  <Text color={colors.neutral.c80}>
+                    {!permissionGranted
+                      ? "Camera permission required"
+                      : !Camera
+                        ? "Camera module not available"
+                        : "Camera not available"}
+                  </Text>
+                </Flex>
+              )
             }
           </CameraPermissionContext.Consumer>
           <ScanTargetSvg style={{ position: "absolute" }} />

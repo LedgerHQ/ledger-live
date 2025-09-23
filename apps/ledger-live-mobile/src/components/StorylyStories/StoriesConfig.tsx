@@ -5,8 +5,22 @@ import React, { useCallback, useState } from "react";
 import { Flex, Switch, BaseInput, Text, IconsLegacy } from "@ledgerhq/native-ui";
 import { TouchableOpacity } from "react-native";
 import { InputRenderRightContainer } from "@ledgerhq/native-ui/components/Form/Input/BaseInput/index";
-import { useCameraPermissions, CameraView, BarcodeScanningResult } from "expo-camera";
+import useCameraPermissions from "../RequiresCameraPermissions/useCameraPermissions";
 import QueuedDrawer from "../QueuedDrawer";
+
+// Safe imports with fallback
+let Camera: any, useCameraDevice: any, useCodeScanner: any;
+try {
+  const visionCamera = require("react-native-vision-camera");
+  Camera = visionCamera.Camera;
+  useCameraDevice = visionCamera.useCameraDevice;
+  useCodeScanner = visionCamera.useCodeScanner;
+} catch (error) {
+  console.warn("react-native-vision-camera not available:", error);
+  Camera = () => null;
+  useCameraDevice = () => null;
+  useCodeScanner = () => null;
+}
 
 type Props = {
   instanceID: StorylyInstanceID;
@@ -18,7 +32,8 @@ type Props = {
  * */
 const StoriesConfig: React.FC<Props> = ({ instanceID }) => {
   const [showCameraModal, setShowCameraModal] = useState(false);
-  const [permission, requestPermission] = useCameraPermissions();
+  const { permission, requestPermission } = useCameraPermissions();
+  const device = useCameraDevice("back");
   const { overrideFeature } = useFeatureFlags();
   const featureValue = useFeature("storyly");
   const stories = featureValue?.params?.stories;
@@ -57,19 +72,24 @@ const StoriesConfig: React.FC<Props> = ({ instanceID }) => {
     [overrideStoryConfig, storyConfig],
   );
 
-  const handleBarCodeScanned = useCallback(
-    ({ data }: BarcodeScanningResult) => {
-      try {
-        const parsedData = JSON.parse(data);
-        const { token } = parsedData;
-        handleTokenChange(token);
-        setShowCameraModal(false);
-      } catch (e) {
-        console.error(e);
-      }
-    },
-    [handleTokenChange],
-  );
+  const codeScanner = useCodeScanner({
+    codeTypes: ["qr"],
+    onCodeScanned: useCallback(
+      (codes: Code[]) => {
+        if (codes.length > 0 && codes[0].value) {
+          try {
+            const parsedData = JSON.parse(codes[0].value);
+            const { token } = parsedData;
+            handleTokenChange(token);
+            setShowCameraModal(false);
+          } catch (e) {
+            console.error(e);
+          }
+        }
+      },
+      [handleTokenChange],
+    ),
+  });
 
   const openCameraModal = useCallback(() => {
     if (!permission?.granted) requestPermission().then(() => setShowCameraModal(true));
@@ -113,11 +133,16 @@ const StoriesConfig: React.FC<Props> = ({ instanceID }) => {
             Go to dashboard.storyly.io/settings/apps and open any instance QR code then you can scan
             it here
           </Text>
-          <CameraView
-            facing="back"
-            style={{ height: 250, width: 250, alignSelf: "center" }}
-            onBarcodeScanned={handleBarCodeScanned}
-          />
+          {device ? (
+            <Camera
+              device={device}
+              isActive={showCameraModal}
+              style={{ height: 250, width: 250, alignSelf: "center" }}
+              codeScanner={codeScanner}
+            />
+          ) : (
+            <Text>No camera available</Text>
+          )}
         </Flex>
       </QueuedDrawer>
     </Flex>

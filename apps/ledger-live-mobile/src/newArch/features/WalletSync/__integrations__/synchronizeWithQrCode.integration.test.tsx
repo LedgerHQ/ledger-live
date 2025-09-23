@@ -2,25 +2,22 @@ import React from "react";
 import { render, screen, act } from "@tests/test-renderer";
 import { INITIAL_TEST, WalletSyncSettingsNavigator } from "./shared";
 import { createQRCodeCandidateInstance } from "@ledgerhq/ledger-key-ring-protocol/qrcode/index";
-import { BarcodeScanningResult } from "expo-camera";
+import { Code } from "react-native-vision-camera";
 
 import { mockSimulateBarcodeScanned } from "@tests/jest-setup";
 
-const MOCK_BARCODE: BarcodeScanningResult = {
-  cornerPoints: [],
-  bounds: {
-    origin: {
+const MOCK_BARCODE: Code[] = [
+  {
+    type: "qr",
+    value: "",
+    frame: {
       x: 0,
       y: 0,
-    },
-    size: {
-      height: 0,
       width: 0,
+      height: 0,
     },
   },
-  type: "",
-  data: "",
-};
+];
 
 jest.mock("@ledgerhq/ledger-key-ring-protocol/qrcode/index", () => ({
   createQRCodeCandidateInstance: jest.fn(),

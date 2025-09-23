@@ -55,17 +55,33 @@ const mockPermissions = {
 
 export const mockSimulateBarcodeScanned = jest.fn();
 
-jest.mock("expo-camera", () => {
+jest.mock("react-native-vision-camera", () => {
   return {
-    CameraView: jest.fn(({ onBarcodeScanned }) => {
-      mockSimulateBarcodeScanned.mockImplementation(onBarcodeScanned);
-      return null;
+    Camera: jest.fn(() => null),
+    useCameraDevice: jest.fn(() => ({
+      id: "mock-camera",
+      name: "Mock Camera",
+      position: "back",
+      hasFlash: false,
+      hasTorch: false,
+      minFocusDistance: 0,
+      isMultiCam: false,
+      supportsParallelVideoProcessing: false,
+      supportsFocus: true,
+      supportsLowLightBoost: false,
+      formats: [],
+    })),
+    useCodeScanner: jest.fn(config => {
+      mockSimulateBarcodeScanned.mockImplementation(codes => {
+        config.onCodeScanned(codes);
+      });
+      return {
+        codeTypes: config.codeTypes,
+        onCodeScanned: config.onCodeScanned,
+      };
     }),
-    useCameraPermissions: jest.fn(() => [
-      mockPermissions,
-      jest.fn(() => Promise.resolve(mockPermissions)),
-      jest.fn(() => Promise.resolve(mockPermissions)),
-    ]),
+    getCameraPermissionStatus: jest.fn(() => Promise.resolve("granted")),
+    requestCameraPermission: jest.fn(() => Promise.resolve("granted")),
   };
 });
 

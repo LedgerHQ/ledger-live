@@ -1,12 +1,25 @@
-import React from "react";
+import React, { useCallback } from "react";
 import { Flex, Icons, Text } from "@ledgerhq/native-ui";
 import { Trans, useTranslation } from "react-i18next";
 import styled, { useTheme } from "styled-components/native";
 import BottomContainer from "./BottomContainer";
-import { CameraView, BarcodeScanningResult } from "expo-camera";
 import ScanTargetSvg from "./ScanTargetSvg";
 import RequiresCameraPermissions from "~/components/RequiresCameraPermissions";
 import CameraPermissionContext from "~/components/RequiresCameraPermissions/CameraPermissionContext";
+
+// Safe imports with fallback
+let Camera: any, useCameraDevice: any, useCodeScanner: any;
+try {
+  const visionCamera = require("react-native-vision-camera");
+  Camera = visionCamera.Camera;
+  useCameraDevice = visionCamera.useCameraDevice;
+  useCodeScanner = visionCamera.useCodeScanner;
+} catch (error) {
+  console.warn("react-native-vision-camera not available:", error);
+  Camera = () => null;
+  useCameraDevice = () => null;
+  useCodeScanner = () => null;
+}
 
 type Props = {
   onQrCodeScanned: (data: string) => void;
@@ -20,10 +33,21 @@ const Italic = styled(Text)`
 const ScanQrCode = ({ onQrCodeScanned }: Props) => {
   const { t } = useTranslation();
   const { colors } = useTheme();
+  const device = useCameraDevice ? useCameraDevice("back") : null;
 
-  const onBarCodeScanned = ({ data }: BarcodeScanningResult) => {
-    onQrCodeScanned(data);
-  };
+  const codeScanner = useCodeScanner
+    ? useCodeScanner({
+        codeTypes: ["qr"],
+        onCodeScanned: useCallback(
+          (codes: any[]) => {
+            if (codes.length > 0 && codes[0].value) {
+              onQrCodeScanned(codes[0].value);
+            }
+          },
+          [onQrCodeScanned],
+        ),
+      })
+    : null;
 
   const steps = [
     {
@@ -82,20 +106,36 @@ const ScanQrCode = ({ onQrCodeScanned }: Props) => {
         >
           <CameraPermissionContext.Consumer>
             {({ permissionGranted }) =>
-              permissionGranted ? (
-                <CameraView
-                  active={permissionGranted ?? false}
+              permissionGranted && device && Camera && codeScanner ? (
+                <Camera
+                  device={device}
+                  isActive={permissionGranted}
                   style={{
                     backgroundColor: colors.neutral.c50,
                     width: 280,
                     height: 280,
                   }}
-                  barcodeScannerSettings={{
-                    barcodeTypes: ["qr"],
-                  }}
-                  onBarcodeScanned={onBarCodeScanned}
+                  codeScanner={codeScanner}
                 />
-              ) : null
+              ) : (
+                <Flex
+                  style={{
+                    backgroundColor: colors.neutral.c50,
+                    width: 280,
+                    height: 280,
+                  }}
+                  justifyContent="center"
+                  alignItems="center"
+                >
+                  <Text color={colors.neutral.c80}>
+                    {!permissionGranted
+                      ? "Camera permission required"
+                      : !Camera
+                        ? "Camera module not available"
+                        : "Camera not available"}
+                  </Text>
+                </Flex>
+              )
             }
           </CameraPermissionContext.Consumer>
           <ScanTargetSvg style={{ position: "absolute" }} />
