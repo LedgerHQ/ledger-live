@@ -285,6 +285,7 @@ export type SettingsState = {
   fromLedgerSyncOnboarding: boolean;
   mevProtection: boolean;
   selectedTabPortfolioAssets: TabPortfolioAssetsType;
+  rtkConsoleEnabled?: boolean;
 };
 
 export type NotificationsSettings = {
