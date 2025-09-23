@@ -415,7 +415,7 @@ describe("picking strategies – segwit edge cases", () => {
     const scriptP2TR = Buffer.alloc(34); // taproot output script length
 
     // base vbytes for tx with recipient only (no inputs yet), use the *same* function as strategies do:
-    const baseVNoInput_FLOAT = utils.maxTxSize(
+    const baseVNoInput_FLOAT = utils.maxTxWeight(
       0,
       [scriptP2TR],
       false,
@@ -423,18 +423,18 @@ describe("picking strategies – segwit edge cases", () => {
       xpub.derivationMode,
     );
     const perInputV_FLOAT =
-      utils.maxTxSize(1, [], false, xpub.crypto, xpub.derivationMode) -
-      utils.maxTxSize(0, [], false, xpub.crypto, xpub.derivationMode);
+      utils.maxTxWeight(1, [], false, xpub.crypto, xpub.derivationMode) -
+      utils.maxTxWeight(0, [], false, xpub.crypto, xpub.derivationMode);
 
     // True change delta (P2WPKH change)
     const trueChangeDeltaV_FLOAT =
-      utils.maxTxSize(0, [], true, xpub.crypto, xpub.derivationMode) -
-      utils.maxTxSize(0, [], false, xpub.crypto, xpub.derivationMode);
+      utils.maxTxWeight(0, [], true, xpub.crypto, xpub.derivationMode) -
+      utils.maxTxWeight(0, [], false, xpub.crypto, xpub.derivationMode);
 
     // Wrong change delta (recipient=P2TR)
     const wrongChangeDeltaV_FLOAT =
-      utils.maxTxSize(0, [scriptP2TR], false, xpub.crypto, xpub.derivationMode) -
-      utils.maxTxSize(0, [], false, xpub.crypto, xpub.derivationMode);
+      utils.maxTxWeight(0, [scriptP2TR], false, xpub.crypto, xpub.derivationMode) -
+      utils.maxTxWeight(0, [], false, xpub.crypto, xpub.derivationMode);
 
     // Sanity: Taproot output is ~3 vB bigger than P2WPKH change
     expect(Math.round(wrongChangeDeltaV_FLOAT - trueChangeDeltaV_FLOAT)).toBeGreaterThanOrEqual(2);

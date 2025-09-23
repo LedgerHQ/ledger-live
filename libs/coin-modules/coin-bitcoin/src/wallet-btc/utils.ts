@@ -129,71 +129,6 @@ export function outputSize(currency: ICrypto, outputScript: Buffer): number {
   return size;
 }
 
-/**
- * Calculates the maximun size of an imaginary transaction in virtual bytes
- * (vB). 1vB = 4 WU (weight units). If a cryptocurrency doesn't use segwit, then
- * 1 byte = 1 vB. Weight units are used for segwit transactions, where certain
- * bytes of the transaction is counted as 4 WU and some as 1 WU. The resulting
- * size is then ceil(totalWU/4) vB.
- *
- * refer to https://medium.com/coinmonks/on-bitcoin-transaction-sizes-part-2-9445373d17f4
- * and https://bitcoin.stackexchange.com/questions/96017/what-are-the-sizes-of-single-sig-and-2-of-3-multisig-taproot-inputs
- * and https://bitcoinops.org/en/tools/calc-size/
- *
- * Suggested improvement: I assume that these calculations won't be exactly
- * correct for altcoins (but I don't know). Therefore we should move this
- * functionality into ICrypto, to make it easier to provide slightly different
- * calculations for different cryptocurrencies.
- *
- * The reason for the name maxTxSize, instead of just txSize, is that the size
- * of modern ecdsa signatures aren't know beforehand. They are either 71 or
- * 72 bytes. This function always count with 72 byte signatures.
- *
- * The size of schnorr signatures is expected to be 65 bytes, since the Bitcoin
- * hardware app appends the optional sighash type 01 at the end of the
- * signature. If the app removes that optional byte, this functions should be
- * updated to use 64 byte schnorr signatures, even if 65 still is an acceptable
- * maximum.
- *
- * @param inputCount Number of inputs of the imaginary transaction
- * @param outputAddrs The addresses of the outputs, excluding change.
- * @param includeChange Indicates whether we should add a change output. The
- * change output will have the same derivation mode as the inputs. See
- * derivationMode parameter.
- * @param currency The currency for which the calculation is done.
- * @param derivationMode The derivation mode used for calculating the size of
- * the inputs.
- */
-export function maxTxSize(
-  inputCount: number,
-  outputScripts: Buffer[],
-  includeChange: boolean,
-  currency: ICrypto,
-  derivationMode: string,
-): number {
-  const fixed = fixedWeight(currency, derivationMode);
-
-  let outputsWeight = byteSize(outputScripts.length) * baseByte; // Number of outputs;
-  outputScripts.forEach(script => {
-    outputsWeight += outputSize(currency, script) * baseByte;
-  });
-
-  if (includeChange) {
-    outputsWeight += outputWeight(derivationMode);
-  }
-
-  // Input: 32 PrevTxHash + 4 Index + 1 scriptSigLength + 4 sequence
-  let inputsWeight = byteSize(inputCount) * baseByte; // Number of inputs
-  inputsWeight += inputWeight(derivationMode) * inputCount;
-  // More bytes for decred, refer to https://github.com/LedgerHQ/lib-ledger-core/blob/fc9d762b83fc2b269d072b662065747a64ab2816/core/src/wallet/bitcoin/api_impl/BitcoinLikeTransactionApi.cpp#L162
-  if (currency.network.name === "Decred") {
-    inputsWeight += 64 * inputCount;
-  }
-  const txWeight = fixed + inputsWeight + outputsWeight;
-
-  return txWeight / 4;
-}
-
 export function maxTxSizeCeil(
   inputCount: number,
   outputScripts: Buffer[],
@@ -251,7 +186,51 @@ export function writeVarInt(buffer: Buffer, i: number, offset: number): number {
   return offset;
 }
 
-// --- NEW: exact weight helpers (no floats) ---
+/**
+ * Calculates the maximum **weight** of an imaginary transaction in **weight units (WU)**.
+ *
+ * Why weight first?
+ * - BIP141 defines transaction cost in *weight*, where non-witness bytes count as 4 WU
+ *   and witness bytes count as 1 WU. Virtual bytes (vB) are then ceil(weight/4).
+ * - This function returns an **integer WU** so callers can convert to vB with an exact
+ *   integer step (see `vbytesCeilFromWeight`) without any floating-point drift.
+ *
+ * 
+ * refer to https://medium.com/coinmonks/on-bitcoin-transaction-sizes-part-2-9445373d17f4
+ * and https://bitcoin.stackexchange.com/questions/96017/what-are-the-sizes-of-single-sig-and-2-of-3-multisig-taproot-inputs
+ * and https://bitcoinops.org/en/tools/calc-size/
+ *
+
+ *
+ * Assumptions & notes
+ * - Like `maxTxSize`, this uses a *maximum* signature size:
+ *   - ECDSA sigs are assumed 72 bytes (DER) for worst-case (+1 varint for push).
+ *   - Schnorr (Taproot) sigs are assumed **65 bytes** because the Bitcoin app appends
+ *     an optional sighash byte `0x01`. If that byte is ever dropped, update the Taproot
+ *     witness accounting to 64 bytes (still safe today because 65 ≥ 64).
+ * - Change output, when requested, **always** matches the *input derivation mode*,
+ *   not the recipient script type (critical for correct fee/change thresholds).
+ * - For non-segwit currencies, every byte is effectively non-witness (4 WU per byte).
+ *
+ * Altcoins
+ * - Exact sizes can vary across forks and sidechains. Where needed, this should live
+ *   behind `ICrypto` so coin-specific quirks (script templates, extra fields, etc.)
+ *   can be tuned without touching generic Bitcoin logic.
+ *
+ * Relationship to vbytes
+ * - If you need virtual bytes (vB), call `vbytesCeilFromWeight(maxTxWeight(...))`.
+ *   This is equivalent to `Math.ceil(weight/4)` but done with integers only.
+ *
+ * @param inputCount    Number of inputs of the imaginary transaction.
+ * @param outputScripts Raw output scripts (excluding change). Each Buffer is the full PK script
+ *                      that will appear in the tx output (OP codes + data).
+ * @param includeChange Whether to add a change output. The change output **follows the input
+ *                      derivation mode** (P2PKH / P2SH-P2WPKH / P2WPKH / P2TR).
+ * @param currency      The currency/network context (provides address/output sizing rules).
+ * @param derivationMode Derivation mode used to size inputs and the (optional) change output.
+ *
+ * @returns Integer **weight units (WU)** for the transaction with the given shape.
+ */
 export function maxTxWeight(
   inputCount: number,
   outputScripts: Buffer[],
