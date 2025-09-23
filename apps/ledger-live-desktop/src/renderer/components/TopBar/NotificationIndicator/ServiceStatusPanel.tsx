@@ -144,7 +144,7 @@ const PanelContainer = styled.div`
   height: 100%;
 `;
 export function ServiceStatusPanel() {
-  const { incidents } = useFilteredServiceStatus();
+  const { incidents } = useFilteredServiceStatus({ entryPoint: "notifications" });
   return (
     <PanelContainer>
       <TrackPage category="Notification Center" name="notification_center_status" />

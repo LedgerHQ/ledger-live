@@ -1,5 +1,4 @@
 import Eth from "@ledgerhq/hw-app-eth";
-import { tokenInfoByAddressAndChainId } from "@celo/wallet-ledger/lib/tokens";
 import { rlpEncodedTx, LegacyEncodedTx } from "@celo/wallet-base";
 import type { CeloTx, RLPEncodedTx } from "@celo/connect";
 
@@ -12,27 +11,7 @@ export default class Celo extends Eth {
     path: string,
     rawTxHex: string,
   ): Promise<{ s: string; v: string; r: string }> {
-    return super.signTransaction(path, rawTxHex, {
-      erc20Tokens: [],
-      nfts: [],
-      externalPlugin: [],
-      plugin: [],
-      domains: [],
-    });
-  }
-
-  // celo-spender-app below version 1.2.3 used a different private key to validate erc20 token info.
-  // this legacy version of the app also only supported celo type 0 transactions.
-  // if you are reading this after celo moved to op based L2 those celo type 0 transactions will no longer work
-  // so you can safely remove all the legacy paths.
-  async verifyTokenInfo(to: string, chainId: number): Promise<void> {
-    const tokenInfo = tokenInfoByAddressAndChainId(to, chainId);
-
-    if (tokenInfo) {
-      // celo-spender-app below version 1.2.3 expected unprefixed hex strings only
-      const dataString = `${tokenInfo.data.toString("hex")}`;
-      await this.provideERC20TokenInformation(dataString);
-    }
+    return super.signTransaction(path, rawTxHex);
   }
 
   async rlpEncodedTxForLedger(txParams: CeloTx): Promise<RLPEncodedTx | LegacyEncodedTx> {

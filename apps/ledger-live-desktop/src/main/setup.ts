@@ -30,7 +30,7 @@ ipcMain.on("updater", (e, type) => {
 });
 
 /**
- * Saves logs from the renderer process and logs recorded from the internal process to a file.
+ * Saves logs from the renderer process to a file.
  */
 ipcMain.handle(
   "save-logs",
