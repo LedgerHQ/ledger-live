@@ -56,6 +56,13 @@ export function useVideoCarouselViewModel() {
 
   // Visibility detection effect
   useEffect(() => {
+    if (!document.getElementById("loader-container")) {
+      setTimeout(() => {
+        setIsVisible(true);
+      }, 50);
+      return;
+    }
+
     const fallbackTimeout = setTimeout(() => {
       if (!isVisible) {
         setIsVisible(true);
