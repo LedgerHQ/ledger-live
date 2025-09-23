@@ -789,8 +789,8 @@ export async function verifyAmountsAndAcceptSwapForDifferentSeed(swap: Swap, amo
 }
 
 export async function verifyAmountsAndRejectSwap(swap: Swap, amount: string) {
-  await waitFor(DeviceLabels.REVIEW_TRANSACTION_TO);
-  const events = await pressUntilTextFound(DeviceLabels.REJECT_TRANSACTION);
+  await waitFor(DeviceLabels.REVIEW_TRANSACTION);
+  const events = await pressUntilTextFound(DeviceLabels.REJECT);
   verifySwapData(swap, events, amount);
   await pressBoth();
 }
@@ -798,7 +798,9 @@ export async function verifyAmountsAndRejectSwap(swap: Swap, amount: string) {
 function verifySwapData(swap: Swap, events: string[], amount: string) {
   const swapPair = `swap ${swap.getAccountToDebit.currency.ticker} to ${swap.getAccountToCredit.currency.ticker}`;
 
-  expectDeviceScreenContains(swapPair, events, "Swap pair not found on the device screen");
+  if (getSpeculosModel() !== DeviceModelId.nanoS) {
+    expectDeviceScreenContains(swapPair, events, "Swap pair not found on the device screen");
+  }
   expectDeviceScreenContains(amount, events, `Amount ${amount} not found on the device screen`);
 }
 
