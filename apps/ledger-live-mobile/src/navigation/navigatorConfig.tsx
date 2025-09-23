@@ -13,6 +13,8 @@ export const defaultNavigationOptions: Partial<NativeStackNavigationOptions> = {
   headerTitle: (props: HeaderTitleProps) => <HeaderTitle {...props} />,
   headerLeft: () => <NavigationHeaderBackButton />,
   headerBackButtonDisplayMode: "minimal" as const,
+  headerLargeTitleShadowVisible: false,
+  headerShadowVisible: false,
 };
 
 type ColorV2 = Theme["colors"];
@@ -34,9 +36,6 @@ export const getStackNavigatorConfig = (
   headerStyle: {
     backgroundColor: (c as ColorV3).background?.main || (c as ColorV2).background,
     borderBottomColor: (c as ColorV3).neutral?.c40 || (c as ColorV2).white,
-    // borderBottomWidth: 1,
-    elevation: 0, // remove shadow on Android
-    shadowOpacity: 0, // remove shadow on iOS
   },
   headerTitleAlign: "center" as const,
   headerTitleStyle: {
