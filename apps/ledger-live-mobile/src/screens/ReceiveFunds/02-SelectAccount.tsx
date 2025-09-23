@@ -20,6 +20,7 @@ import { accountNameWithDefaultSelector } from "@ledgerhq/live-wallet/store";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { AddAccountContexts } from "LLM/features/Accounts/screens/AddAccount/enums";
 import SafeAreaViewFixed from "~/components/SafeAreaView";
+import Config from "react-native-config";
 
 type SubAccountEnhanced = TokenAccount & {
   parentAccount: Account;
@@ -142,7 +143,7 @@ function ReceiveSelectAccount({
   const keyExtractor = useCallback((item: AccountLikeEnhanced) => item?.id, []);
 
   return currency && aggregatedAccounts && aggregatedAccounts.length > 0 ? (
-    <SafeAreaViewFixed isFlex edges={["left", "right", "bottom"]} style={{ marginBottom: 16 }}>
+    <SafeAreaViewFixed isFlex edges={["left", "right", "bottom"]}>
       <TrackScreen category="Deposit" name="Select account to deposit to" asset={currency.name} />
       <Flex p={6}>
         <Text
@@ -167,8 +168,7 @@ function ReceiveSelectAccount({
         keyExtractor={keyExtractor}
         showsVerticalScrollIndicator={false}
       />
-
-      <Flex mb={insets.bottom + 2} px={6}>
+      <Flex mb={(Config.DETOX ? insets.bottom : 0) + 6} px={6}>
         <Button
           type="shade"
           size="large"
