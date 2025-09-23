@@ -1,5 +1,11 @@
 # @ledgerhq/live-common
 
+## 34.49.0-nightly.4
+
+### Minor Changes
+
+- [#11938](https://github.com/LedgerHQ/ledger-live/pull/11938) [`1efc340`](https://github.com/LedgerHQ/ledger-live/commit/1efc340299242edd73512d1931976458fc6b8201) Thanks [@Justkant](https://github.com/Justkant)! - fix(wallet-api): correct UsedAt type
+
 ## 34.49.0-nightly.3
 
 ### Patch Changes

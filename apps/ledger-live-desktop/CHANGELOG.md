@@ -1,5 +1,19 @@
 # ledger-live-desktop
 
+## 2.129.0-nightly.5
+
+### Minor Changes
+
+- [#11938](https://github.com/LedgerHQ/ledger-live/pull/11938) [`7787420`](https://github.com/LedgerHQ/ledger-live/commit/77874202b22a835fdb7cbf48a2c315d9e7b86421) Thanks [@Justkant](https://github.com/Justkant)! - fix: auto close DevTools WebContents when webviews are destroyed
+
+- [#11953](https://github.com/LedgerHQ/ledger-live/pull/11953) [`18acfce`](https://github.com/LedgerHQ/ledger-live/commit/18acfce98ffa14553106a80eb5f8a5ac66201d1a) Thanks [@LucasWerey](https://github.com/LucasWerey)! - MAD LLD Hbar empty screen
+
+### Patch Changes
+
+- Updated dependencies [[`1efc340`](https://github.com/LedgerHQ/ledger-live/commit/1efc340299242edd73512d1931976458fc6b8201)]:
+  - @ledgerhq/live-common@34.49.0-nightly.4
+  - @ledgerhq/live-dmk-desktop@0.9.7-nightly.4
+
 ## 2.129.0-nightly.4
 
 ### Minor Changes

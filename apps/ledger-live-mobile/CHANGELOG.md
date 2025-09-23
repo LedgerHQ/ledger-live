@@ -1,5 +1,20 @@
 # live-mobile
 
+## 3.94.0-nightly.5
+
+### Minor Changes
+
+- [#11933](https://github.com/LedgerHQ/ledger-live/pull/11933) [`bb25ec4`](https://github.com/LedgerHQ/ledger-live/commit/bb25ec472bf24e308ae062a75fda8672c7dac596) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Fix android crash caused by unexpected string style property
+
+- [#11928](https://github.com/LedgerHQ/ledger-live/pull/11928) [`fc99a35`](https://github.com/LedgerHQ/ledger-live/commit/fc99a359ef8d49b602533bc352d5c0aa0e9a6570) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Fix navigation inside the GeneralSettings Navigator
+
+### Patch Changes
+
+- [#11944](https://github.com/LedgerHQ/ledger-live/pull/11944) [`12d86b2`](https://github.com/LedgerHQ/ledger-live/commit/12d86b226c89ec24ce956d18c6301a4dc415c719) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Update B2CQA-650 test
+
+- Updated dependencies [[`bb25ec4`](https://github.com/LedgerHQ/ledger-live/commit/bb25ec472bf24e308ae062a75fda8672c7dac596)]:
+  - @ledgerhq/native-ui@0.46.0-nightly.2
+
 ## 3.94.0-nightly.4
 
 ### Minor Changes

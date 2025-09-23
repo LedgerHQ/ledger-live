@@ -1,5 +1,11 @@
 # @ledgerhq/native-ui
 
+## 0.46.0-nightly.2
+
+### Minor Changes
+
+- [#11933](https://github.com/LedgerHQ/ledger-live/pull/11933) [`bb25ec4`](https://github.com/LedgerHQ/ledger-live/commit/bb25ec472bf24e308ae062a75fda8672c7dac596) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Fix android crash caused by unexpected string style property
+
 ## 0.46.0-nightly.1
 
 ### Minor Changes

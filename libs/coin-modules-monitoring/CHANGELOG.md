@@ -1,5 +1,16 @@
 # @ledgerhq/coin-modules-monitoring
 
+## 2.4.0-nightly.4
+
+### Minor Changes
+
+- [#11754](https://github.com/LedgerHQ/ledger-live/pull/11754) [`d2695fc`](https://github.com/LedgerHQ/ledger-live/commit/d2695fc17c69ce52f9a8147722cc97ae23c0a63b) Thanks [@Antoine-bls83](https://github.com/Antoine-bls83)! - add cpu, mem and number of calls during a sync
+
+### Patch Changes
+
+- Updated dependencies [[`1efc340`](https://github.com/LedgerHQ/ledger-live/commit/1efc340299242edd73512d1931976458fc6b8201)]:
+  - @ledgerhq/live-common@34.49.0-nightly.4
+
 ## 2.3.2-nightly.3
 
 ### Patch Changes
