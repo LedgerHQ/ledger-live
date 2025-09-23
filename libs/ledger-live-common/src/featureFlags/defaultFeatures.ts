@@ -670,6 +670,7 @@ export const DEFAULT_FEATURES: Features = {
   },
   supportDeviceApex: DEFAULT_FEATURE,
   llmSyncOnboardingIncr1: DEFAULT_FEATURE,
+  noah: DEFAULT_FEATURE,
 };
 
 // Firebase SDK treat JSON values as strings

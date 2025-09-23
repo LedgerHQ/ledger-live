@@ -69,6 +69,7 @@ const Card = lazy(() => import("~/renderer/screens/card"));
 const Manager = lazy(() => import("~/renderer/screens/manager"));
 const Exchange = lazy(() => import("~/renderer/screens/exchange"));
 const Earn = lazy(() => import("~/renderer/screens/earn"));
+const Receive = lazy(() => import("~/renderer/screens/receive"));
 const SwapWeb = lazy(() => import("~/renderer/screens/swapWeb"));
 const Swap2 = lazy(() => import("~/renderer/screens/exchange/Swap2"));
 
@@ -377,6 +378,7 @@ export default function Default() {
                                     render={withSuspense(MarketCoin)}
                                   />
                                   <Route path="/market" render={withSuspense(Market)} />
+                                  <Route path="/receive" render={withSuspense(Receive)} />
                                 </Switch>
                               </Page>
                               <Drawer />
