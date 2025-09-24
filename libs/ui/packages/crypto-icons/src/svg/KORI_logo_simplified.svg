@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="1080" viewBox="0 0 1080 1080">
+  <circle cx='540' cy='540' r='520' fill='#111111'/>
+  <!-- Stylized dog head (Pomeranian) with sunglasses -->
+  <!-- Face -->
+  <path d="M540 260
+           C 420 260, 330 350, 330 470
+           C 330 600, 410 720, 540 740
+           C 670 720, 750 600, 750 470
+           C 750 350, 660 260, 540 260 Z"
+        fill="#F2CFA3"/>
+  <!-- Ears -->
+  <path d="M370 320 L300 260 L310 360 Z" fill="#E4B986"/>
+  <path d="M710 320 L770 260 L760 360 Z" fill="#E4B986"/>
+  <!-- Sunglasses strap -->
+  <path d="M270 470 Q 540 430 810 470 L810 510 Q 540 470 270 510 Z" fill="#0F0F10"/>
+  <!-- Sunglasses lenses -->
+  <rect x="340" y="455" rx="60" ry="60" width="190" height="120" fill="#2C2C2E"/>
+  <rect x="550" y="455" rx="60" ry="60" width="190" height="120" fill="#2C2C2E"/>
+  <!-- Bridge -->
+  <rect x="530" y="490" width="20" height="40" fill="#1E1E20"/>
+  <!-- Lens gloss -->
+  <path d="M360 475 Q 420 445 500 470 Q 470 490 420 500 Z" fill="#6D6D72" opacity="0.35"/>
+  <path d="M570 475 Q 630 445 710 470 Q 680 490 630 500 Z" fill="#6D6D72" opacity="0.35"/>
+  <!-- Snout -->
+  <ellipse cx="540" cy="610" rx="90" ry="70" fill="#F8E2C3"/>
+  <path d="M540 585
+           c 22 0 40 14 40 32
+           c 0 25 -25 35 -40 35
+           c -15 0 -40 -10 -40 -35
+           c 0 -18 18 -32 40 -32 Z" fill="#FFFFFF" opacity="0.65"/>
+  <!-- Nose -->
+  <path d="M540 595
+           c 20 0 35 12 35 26
+           c 0 14 -15 26 -35 26
+           c -20 0 -35 -12 -35 -26
+           c 0 -14 15 -26 35 -26 Z" fill="#1C1C1E"/>
+  <!-- Mouth -->
+  <path d="M520 650 Q 540 665 560 650" stroke="#1C1C1E" stroke-width="10" fill="none"/>
+  <!-- Cheek shading -->
+  <ellipse cx="460" cy="640" rx="40" ry="22" fill="#D9B88F" opacity="0.5"/>
+  <ellipse cx="620" cy="640" rx="40" ry="22" fill="#D9B88F" opacity="0.5"/>
+</svg>
