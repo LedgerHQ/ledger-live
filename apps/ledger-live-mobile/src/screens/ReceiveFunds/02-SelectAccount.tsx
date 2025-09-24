@@ -11,7 +11,6 @@ import { track, TrackScreen } from "~/analytics";
 import { ReceiveFundsStackParamList } from "~/components/RootNavigator/types/ReceiveFundsNavigator";
 import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import AccountCard from "~/components/AccountCard";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { AccountsNavigatorParamList } from "~/components/RootNavigator/types/AccountsNavigator";
 import { useNavigation } from "@react-navigation/core";
 import { withDiscreetMode } from "~/context/DiscreetModeContext";
@@ -44,7 +43,6 @@ function ReceiveSelectAccount({
 
   const { t } = useTranslation();
   const navigationAccount = useNavigation<NavigationProps["navigation"]>();
-  const insets = useSafeAreaInsets();
   const accounts = useSelector(
     currency && currency.type === "CryptoCurrency"
       ? flattenAccountsByCryptoCurrencyScreenSelector(currency)
