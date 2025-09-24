@@ -49,7 +49,7 @@
     "transactionDate" : "تاريخ المعاملة",
     "outdated" : "قديم",
     "satPerByte" : "ساتوشي/بايت",
-    "sompiPerByte" : "سومبي/بايت",
+    "sompiPerByte" : "sompi/بايت",
     "notAvailable" : "غير متاح",
     "import" : "استيراد",
     "bluetooth" : "بلوتوث",
@@ -419,10 +419,6 @@
     "ETHAddressNonEIP" : {
       "title" : "التحقق التلقائي غير متاح: تحقق بعناية من العنوان.",
       "description" : null
-    },
-    "EthAppNftNotSupported" : {
-      "title" : "العملية غير متوفرة لهذا الجهاز",
-      "description" : "خاصية إرسال NFT متوفرة فقط لـ Nano X و +Nano S. يرجى زيارة منصة دعم العملاء لدينا لمعرفة كيفية إرسال NFT عن طريق Nano S."
     },
     "Touch ID Error" : {
       "title" : "فشل التوثيق البيومتري",
@@ -926,9 +922,6 @@
     "TaprootNotActivated" : {
       "title" : "لم يتم تفعيل شبكة Taproot الرئيسية (mainnet) بعد"
     },
-    "NotEnoughNftOwned" : {
-      "title" : "لقد تجاوزت عدد رموز التوكن المتاحة"
-    },
     "generic" : {
       "title" : "{{message}}",
       "description" : "حدث خطأ ما. يرجى إعادة المحاولة مرة أخرى. إذا استمرت المشكلة، يرجى حفظ سجلاتك باستخدام الزر أدناه وتقديمها إلى فريق دعم Ledger.",
@@ -1052,10 +1045,6 @@
     "ImageDownloadError" : {
       "title" : "فشل تنزيل الصورة",
       "description" : "حاول مرة أخرى باستخدام صورة مختلفة."
-    },
-    "NFTMetadataLoadingError" : {
-      "title" : "مشكلة تحميل البيانات الوصفية للرموز غير القابلة للاستبدال",
-      "description" : "حاول مرة أخرى برمز غير قابل للاستبدال مختلف."
     },
     "ImageSizeLoadingError" : {
       "title" : "فشل تحديد أبعاد الصورة",
@@ -2261,6 +2250,9 @@
         "continueCTA" : "متابعة",
         "contactSupportCTA" : "تواصل مع الدعم"
       }
+    },
+    "completionScreen" : {
+      "title" : "الآن أنت المتحكم"
     }
   },
   "blePairingFlow" : {
@@ -2391,6 +2383,8 @@
   },
   "syncOnboarding" : {
     "title" : "جهّز {{productName}} الخاص بك",
+    "twoStepTitle" : "لنبدأ",
+    "firstStepReadyTitle" : "جهازك {{productName}} مُستعد",
     "estimatedTimeFormat" : "{{estimatedTime}} دقيقة",
     "deviceSelection" : {
       "title" : "اختر جهاز Ledger الذي تريد إعداده:",
@@ -2508,6 +2502,10 @@
       "newSeedContinueOnDevice" : "اتبع التعليمات على جهازك {{productName}}",
       "recovery" : "تأكد من استخدام عبارة استرداد سرية تم إنشاؤها عن طريق جهاز Ledger لأقصى درجات الأمان لأصولك. \n\nليس لديك عبارة استرداد؟ استخدم جهازك {{productName}} لإنشاء واحدة جديدة."
     },
+    "secureCryptoStep" : {
+      "title" : "تأمين أصولك المشفرة",
+      "doneSubTitle" : "تطبيقات سلسلة الكتل (بلوكتشين) الخاصة بك تم تثبيتها."
+    },
     "backup" : {
       "title" : "نسخة احتياطية لعبارة الاسترداد السرية الخاصة بك",
       "description" : "مع نسخة احتياطية رقمية مشفرة، استعدْ الوصول إلى محفظتك بدون عبارة الاسترداد السرية الخاصة بك.\n\nاختر إذا كنت ترغب في نسخة احتياطية رقمية:",
@@ -2535,6 +2533,14 @@
     },
     "completion" : {
       "title" : "أنت المتحكّم الآن"
+    },
+    "successStep" : {
+      "title" : "جهازك {{productName}} جاهز لتأمين أصولك الرقمية"
+    },
+    "newSeed" : {
+      "subtitle" : "يمكنك تحويل الأصول المشفرة من أي منصة تداول أو محفظة إلى Ledger Live خاصتك من أجل أقصى درجات الأمان.",
+      "installCTA" : "تأمين أصولي المشفرة",
+      "skipCTA" : "ربّما في وقت لاحق"
     }
   },
   "tabs" : {
@@ -2693,9 +2699,7 @@
   "operations" : {
     "types" : {
       "IN" : "تم الاستلام",
-      "NFT_IN" : "تم تلقي NFT",
       "OUT" : "تم الإرسال",
-      "NFT_OUT" : "تم إرسال NFT",
       "CREATE" : "تم إنشاؤه",
       "REVEAL" : "تم الإظهار",
       "DELEGATE" : "تفويض",
@@ -2800,11 +2804,7 @@
       "stakedAmount" : "المبلغ المُكدَّس",
       "accountCreationFee" : "رسوم إنشاء الحساب"
     },
-    "multipleAddresses" : "لماذا عناوين متعددة؟",
-    "tokenName" : "اسم رمز التوكن",
-    "collectionContract" : "عقد رمز التوكن",
-    "tokenId" : "مُعرّف رمز التوكن (NFT)",
-    "quantity" : "الكمية"
+    "multipleAddresses" : "لماذا عناوين متعددة؟"
   },
   "operationList" : {
     "noOperations" : "لا توجد عمليات",
@@ -2973,10 +2973,6 @@
     },
     "undelegation" : {
       "sectionLabel" : "إلغاء التفويض (إلغاء التفويضات)"
-    },
-    "nft" : {
-      "receiveNft" : "تلقي NFT",
-      "howTo" : "لإضافة رموز غير قابلة للاستبدال، تحتاج الى <0>تلقيهم</0> باستخدام <1>عنوانك {{currency}}</1>."
     },
     "readOnly" : {
       "noTransaction" : {
@@ -3187,11 +3183,6 @@
         "title" : "إخفاء رمز التوكن",
         "desc" : "هذا الإجراء سيقوم بإخفاء جميع حسابات <1><0>{tokenName}</0></1>، يمكنك إظهارهم مرة أخرى باستخدام <3>الإعدادات > الحسابات</3>.",
         "confirm" : "إخفاء رمز التوكن"
-      },
-      "hideNFTCollectionCTA" : "إخفاء المجموعة؟",
-      "hideNFTCollectionModal" : {
-        "title" : "إخفاء المجموعة؟",
-        "desc" : "يمكنك إلغاء إخفاء هذه المجموعة في خيارات الإعدادات."
       },
       "cryptoAssets" : {
         "header" : "الأصول المشفرة",
@@ -3692,7 +3683,8 @@
         "empty" : {
           "title" : "ستظهر مبادلاتك السابقة هنا",
           "desc" : "إما أنك لم تقم بأي مبادلات بعد، أو تمت إعادة تعيين Ledger Live في هذه الأثناء."
-        }
+        },
+        "feedback" : "شاركنا ملاحظاتك"
       }
     },
     "swap2" : {
@@ -3774,6 +3766,8 @@
         "apt_description" : "لمبادلة Aptos، استخدم أي جهاز Ledger متوافق آخر مثل ™Ledger Nano S Plus أو ™Ledger Nano X أو ™Ledger Flex أو ™Ledger Stax.",
         "cosmos_title" : "™Ledger Nano S لا تدعم مبادلة Cosmos",
         "cosmos_description" : "لمبادلة Cosmos، استخدم أي جهاز Ledger متوافق آخر مثل ™Ledger Nano S Plus أو ™Ledger Nano X أو ™Ledger Flex أو ™Ledger Stax.",
+        "hedera_title" : "™Ledger Nano S لا تدعم مبادلة Hedera",
+        "hedera_description" : "لمبادلة Hedera، استخدِم أي جهاز Ledger متوافق آخر مثل ™Ledger Nano S Plus أو ™Ledger Nano X أو ™Ledger Flex أو ™Ledger Stax.",
         "osmo_title" : "™Ledger Nano S لا تدعم مبادلة Osmosis",
         "osmo_description" : "لمبادلة Osmosis، استخدم أي جهاز Ledger متوافق آخر مثل ™Ledger Nano S Plus أو ™Ledger Nano X أو ™Ledger Flex أو ™Ledger Stax.",
         "dydx_title" : "™Ledger Nano S لا تدعم مبادلة dYdX",
@@ -4021,10 +4015,7 @@
       "summary" : "الملخص",
       "selectDevice" : "اختر جهاز",
       "connectDevice" : "توصيل الجهاز",
-      "stepRange" : "خطوة {{currentStep}} من {{totalSteps}}",
-      "quantity" : "الكمية",
-      "selectCollection" : "مجموعة",
-      "selectNft" : "NFT"
+      "stepRange" : "خطوة {{currentStep}} من {{totalSteps}}"
     },
     "recipient" : {
       "scan" : "مسح ضوئي لكود QR",
@@ -4429,7 +4420,7 @@
         "default" : "تحقق من تفاصيل المبادلة على جهازك Ledger قبل إرسالها.",
         "provider" : "تحقق من تفاصيل المبادلة على جهازك قبل إرسالها. {{providerName}} قد يحتاج إلى إجراء تحقق إضافي لبعض المعاملات، ما يؤدي إلى تأخير."
       },
-      "acceptTerms" : "بتأكيد صحة هذه المعاملة، أنا أقبل\n<0><0>شروط استخدام</0> {{provider}}</0>",
+      "acceptTerms" : "By signing this transaction, you accept <0><0>{{provider}}</0>'s terms of use</0>",
       "notice" : "تحقق من تفاصيل المبادلة على جهازك قبل إرسالها. يتم تبادل العناوين بشكل آمن حتى لا تضطر إلى التحقق منهم."
     },
     "swap2" : {
@@ -7127,47 +7118,6 @@
       }
     }
   },
-  "nft" : {
-    "account" : {
-      "seeAllNfts" : "رؤية جميع NFT",
-      "seeFewerNfts" : "رؤية NFT أقل"
-    },
-    "gallery" : {
-      "allNft" : "جميع NFT",
-      "addNew" : "اضف جديد"
-    },
-    "designedForStax" : {
-      "title" : "<0>مُصمَّم من أجل</0><1>Ledger</1><2>Stax</2>",
-      "drawer" : {
-        "description" : "هذا الرمز غير القابل للاستبدال يحتوي على صورة إضافية للرمز غير القابل للاستبدال، مُصمَّمة خصيصاً لشاشة Ledger Stax بتقنية E Ink (الحبر الإلكتروني).\n\nهذه الصورة سيتم استخدامها عندما تقوم بتعيين هذا الرمز غير القابل للاستبدال كشاشة القَفل لديك.",
-        "cta" : "فهمت ذلك"
-      }
-    },
-    "viewer" : {
-      "properties" : "الخصائص",
-      "description" : "الوصف",
-      "tokenContract" : "عنوان رمز التوكن",
-      "tokenContractCopied" : "تم نسخ عنوان رمز التوكن !",
-      "tokenId" : "مُعرّف رمز التوكن",
-      "tokenIdCopied" : "تم نسخ مُعرف رمز التوكن !",
-      "quantity" : "الكمية",
-      "attributes" : {
-        "floorPrice" : "أقل سعر"
-      }
-    },
-    "viewerModal" : {
-      "viewOn" : "مشاهدة على",
-      "viewInExplorer" : "عرض في المتصفح",
-      "hide" : "إخفاء مجموعة NFT",
-      "txDetails" : "تفاصيل المعاملة"
-    },
-    "modalDisabled" : {
-      "title" : "وظيفة الإرسال غير متاحة على iOS",
-      "body" : "من أجل الامتثال لتحديثات Apple الأخيرة على App Store، فإن إرسال الرموز غير القابلة للاستبدال (NFTs) غير متاح مؤقتاً. لا يزال بوسعك استخدام Ledger Live على سطح المكتب لإرسال الرموز غير القابلة للاستبدال.",
-      "learnMore" : "تعرّف على المزيد",
-      "continue" : "فهمت ذلك!"
-    }
-  },
   "ApplicationVersion" : "إصدار {{version}}",
   "analytics" : {
     "title" : "التحليلات",
@@ -7251,7 +7201,6 @@
     "drawer" : {
       "options" : {
         "uploadFromPhone" : "اختر من معرض الصور خاصتي",
-        "selectFromNFTGallery" : "اختر من معرض الرموز غير القابلة للاستبدال (NFT)",
         "remove" : "إزالة الصورة الحالية"
       }
     },
@@ -7282,9 +7231,6 @@
       "setPicture" : "تعيين كشاشة القَفل",
       "editPicture" : "تعديل الصورة",
       "pickDeviceModel" : "اختر جهازاً"
-    },
-    "nftGallery" : {
-      "title" : "رموزي غير القابلة للاستبدال"
     }
   },
   "postOnboarding" : {
@@ -7329,50 +7275,7 @@
   "wallet" : {
     "tabs" : {
       "crypto" : "الأصول المشفرة",
-      "nft" : "الرموز غير القابلة للاستبدال (NFTs)",
       "market" : "السوق"
-    },
-    "nftGallery" : {
-      "filters" : {
-        "select" : "اختر",
-        "filter" : "تصفية",
-        "blockchain" : "سلسلة الكتل (blockchain)",
-        "seeAll" : "رؤية الكل",
-        "selectAndHide" : "اختيار وإخفاء",
-        "hide" : "إخفاء {{count}} مجموعة",
-        "hiddenCollections" : "المجموعات المخفية",
-        "hide_plural" : "إخفاء {{count}} مجموعة",
-        "empty" : "ليس هناك مجموعات مخفية لعرضها",
-        "alertHide" : "تم إخفاء 1 مجموعة. يمكنك إلغاء إخفائها في أي وقت من تصفية المعرض.",
-        "alertHide_plural" : "تم إخفاء {{count}} مجموعة. يمكنك إلغاء إخفائها في أي وقت من تصفية المعرض."
-      },
-      "emptyFiltered" : {
-        "title" : "ليس هناك رموز غير قابلة للاستبدال تطابق المعايير الخاصة بك",
-        "button" : "إعادة تعيين التصفيات"
-      },
-      "empty" : {
-        "title" : "ليس هناك رموز غير قابلة للاستبدال بعد لعرضها",
-        "subtitle" : "ابدأ عن طريق إضافة رموز غير قابلة للاستبدال إلى محفظتك.",
-        "receive" : "تلقي الرموز غير القابلة للاستبدال",
-        "supportLink" : "كيف تحصل على رموز غير قابلة للاستبدال من محافظ أخرى؟"
-      },
-      "receiveModal" : {
-        "title" : "تلقى رمز غير قابل للاستبدال بنفس الطريقة مثل أصل مشفر آخر",
-        "bullets" : {
-          "0" : "• اختر سلسلة كتل الأصول المشفرة للرمز غير القابل للاستبدال.",
-          "1" : "• اختر حساب ليتم تلقي الرمز غير القابل للاستبدال عليه"
-        },
-        "cta" : "حسناً، فهمت.",
-        "info" : "أرغب في تعلم المزيد"
-      },
-      "hideNftModal" : {
-        "title" : "إخفاء مجموعة NFT",
-        "desc" : "هذا الإجراء سيُخفي جميع الرموز غير القابلة للاستبدال من مجموعة {{collectionName}}، يمكنك إلغاء الإخفاء من تصفية المعرض",
-        "cta" : "إخفاء هذا الرمز غير القابل للاستبدال"
-      },
-      "media" : {
-        "tag" : "{{count}} رمز غير قابل للاستبدال"
-      }
     },
     "referralProgram" : "$20"
   },
@@ -8025,6 +7928,10 @@
     "signatureVerificationFail" : {
       "title" : "فشل التحقق من التوقيع",
       "description" : "يرجى إعادة المحاولة أو التواصل مع دعم Ledger إذا كان لديك شك"
+    },
+    "transactionCannotBeCreated" : {
+      "title" : "المزود غير متاح",
+      "description" : "Changelly لا يمكنها معالجة هذه المعاملة. كود الخطأ {{errorCode}}8HBB"
     },
     "default" : {
       "title" : "حدث خطأ ما",
