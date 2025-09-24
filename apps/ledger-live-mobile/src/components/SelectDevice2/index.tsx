@@ -30,7 +30,7 @@ import { useDebouncedRequireBluetooth } from "../RequiresBLE/hooks/useRequireBlu
 import RequiresBluetoothDrawer from "../RequiresBLE/RequiresBluetoothDrawer";
 import QueuedDrawer from "../QueuedDrawer";
 import { DeviceList } from "./DeviceList";
-import { useBleDevicesScanning } from "@ledgerhq/live-dmk-mobile";
+import { filterScannedDevice, useBleDevicesScanning } from "@ledgerhq/live-dmk-mobile";
 
 export type { SetHeaderOptionsRequest };
 
@@ -88,19 +88,19 @@ export default function SelectDevice({
   const knownDevices = useSelector(bleDevicesSelector);
   const navigation = useNavigation<Navigation["navigation"]>();
 
-  const scanningFilterOptions = useMemo(
-    () => (filterByDeviceModelId ? { filterByDeviceModelIds: [filterByDeviceModelId] } : undefined),
-    [filterByDeviceModelId],
-  );
-
   const [pairingFlowStep, setPairingFlowStep] = useState<PairingFlowStep | null>(null);
 
   const bleScanningState = useBleDevicesScanning(
     isFocused && !stopBleScanning && pairingFlowStep !== "pairing",
-    scanningFilterOptions,
   );
 
-  const { scannedDevices, isScanning, scanningBleError } = bleScanningState;
+  const filteredScannedDevices = useMemo(() => {
+    return bleScanningState.scannedDevices.filter(device =>
+      filterScannedDevice(device, {
+        filterByDeviceModelIds: filterByDeviceModelId ? [filterByDeviceModelId] : undefined,
+      }),
+    );
+  }, [bleScanningState.scannedDevices, filterByDeviceModelId]);
 
   // useEffect(() => {
   //   console.log("SelectDevice2 isScanning", isScanning, scanningBleError);
@@ -209,7 +209,7 @@ export default function SelectDevice({
   const deviceList = useMemo(() => {
     const devices: Device[] = knownDevices
       .map(device => {
-        const equivalentScannedDevice = scannedDevices.find(
+        const equivalentScannedDevice = filteredScannedDevices.find(
           ({ deviceId }) => device.id === deviceId,
         );
 
@@ -233,12 +233,12 @@ export default function SelectDevice({
     return filterByDeviceModelId
       ? devices.filter(d => d.modelId === filterByDeviceModelId)
       : devices;
-  }, [knownDevices, scannedDevices, USBDevice, ProxyDevice, filterByDeviceModelId]);
+  }, [knownDevices, filteredScannedDevices, USBDevice, ProxyDevice, filterByDeviceModelId]);
 
   // update device name on store when needed
   useEffect(() => {
     knownDevices.forEach(knownDevice => {
-      const equivalentScannedDevice = scannedDevices.find(
+      const equivalentScannedDevice = filteredScannedDevices.find(
         ({ deviceId }) => knownDevice.id === deviceId,
       );
 
@@ -254,7 +254,7 @@ export default function SelectDevice({
         );
       }
     });
-  }, [dispatch, knownDevices, scannedDevices]);
+  }, [dispatch, knownDevices, filteredScannedDevices]);
 
   const onAddNewPress = useCallback(() => setIsAddNewDrawerOpen(true), []);
 
