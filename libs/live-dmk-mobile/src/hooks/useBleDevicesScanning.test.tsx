@@ -1,26 +1,19 @@
 import * as dmkUtils from "./useDeviceManagementKit";
 import React from "react";
-import { Device, DeviceModelId } from "@ledgerhq/types-devices";
-import { defaultMapper, useBleDevicesScanning } from "./useBleDevicesScanning";
+import { DeviceModelId } from "@ledgerhq/types-devices";
+import { mapDiscoveredDeviceToDevice, useBleDevicesScanning } from "./useBleDevicesScanning";
 import { DeviceId, DiscoveredDevice } from "@ledgerhq/device-management-kit";
 import { Observable } from "rxjs";
 import { act, render } from "@testing-library/react";
 
-const deviceMapper = vi.fn(defaultMapper);
-
-const TestComponent = <T = Device,>(
-  {
-    mapper = deviceMapper,
-    filterByDeviceModelIds,
-    filterOutDevicesByDeviceIds,
-  }: {
-    mapper?: (device: DiscoveredDevice) => T;
-    filterByDeviceModelIds?: DeviceModelId[];
-    filterOutDevicesByDeviceIds?: DeviceId[];
-  } = { mapper: deviceMapper },
-) => {
+const TestComponent = ({
+  filterByDeviceModelIds,
+  filterOutDevicesByDeviceIds,
+}: {
+  filterByDeviceModelIds?: DeviceModelId[];
+  filterOutDevicesByDeviceIds?: DeviceId[];
+}) => {
   const { scannedDevices, scanningBleError } = useBleDevicesScanning(true, {
-    mapper,
     filterOutDevicesByDeviceIds,
     filterByDeviceModelIds,
   });
@@ -75,7 +68,7 @@ describe("defaultMapper", () => {
       },
     ] as DiscoveredDevice[];
     // when
-    const devices = discoveredDevice.map(defaultMapper);
+    const devices = discoveredDevice.map(mapDiscoveredDeviceToDevice);
     // then
     expect(devices).toEqual([
       {
@@ -170,7 +163,9 @@ describe("useBleDevicesScanning", () => {
     const scanError = getByTestId("scan-error");
 
     // then
-    expect(devices).toHaveTextContent(JSON.stringify(scannedDevices.map(defaultMapper)));
+    expect(devices).toHaveTextContent(
+      JSON.stringify(scannedDevices.map(mapDiscoveredDeviceToDevice)),
+    );
     expect(scanError).toHaveTextContent("null");
   });
 
@@ -249,7 +244,7 @@ describe("useBleDevicesScanning", () => {
 
     // then
     expect(devices).toHaveTextContent(
-      JSON.stringify([scannedDevices[0], scannedDevices[1]].map(defaultMapper)),
+      JSON.stringify([scannedDevices[0], scannedDevices[1]].map(mapDiscoveredDeviceToDevice)),
     );
     expect(scanError).toHaveTextContent("null");
   });
@@ -301,7 +296,9 @@ describe("useBleDevicesScanning", () => {
     const scanError = getByTestId("scan-error");
 
     // then
-    expect(devices).toHaveTextContent(JSON.stringify([scannedDevices[1]].map(defaultMapper)));
+    expect(devices).toHaveTextContent(
+      JSON.stringify([scannedDevices[1]].map(mapDiscoveredDeviceToDevice)),
+    );
     expect(scanError).toHaveTextContent("null");
   });
 });

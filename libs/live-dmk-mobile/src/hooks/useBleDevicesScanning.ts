@@ -5,7 +5,7 @@ import { dmkToLedgerDeviceIdMap } from "@ledgerhq/live-dmk-shared";
 import { Device, DeviceModelId } from "@ledgerhq/types-devices";
 import { useDeviceManagementKit } from "./useDeviceManagementKit";
 
-export const defaultMapper = (device: DiscoveredDevice): Device => ({
+export const mapDiscoveredDeviceToDevice = (device: DiscoveredDevice): Device => ({
   deviceId: device.id,
   deviceName: `${device.name}`,
   wired: false,
@@ -13,20 +13,18 @@ export const defaultMapper = (device: DiscoveredDevice): Device => ({
   isAlreadyKnown: false,
 });
 
-export const useBleDevicesScanning = <T = Device>(
+export const useBleDevicesScanning = (
   enabled: boolean,
   {
-    mapper = defaultMapper,
     filterByDeviceModelIds = [],
     filterOutDevicesByDeviceIds = [],
   }: {
-    mapper?: (device: DiscoveredDevice) => T;
     filterByDeviceModelIds?: DeviceModelId[];
     filterOutDevicesByDeviceIds?: DeviceId[];
-  } = { mapper: defaultMapper },
+  },
 ) => {
   const dmk = useDeviceManagementKit();
-  const [scannedDevicesById, setScannedDevicesById] = useState<Record<string, T>>({});
+  const [scannedDevicesById, setScannedDevicesById] = useState<Record<string, Device>>({});
   const [scanningBleError, setScanningBleError] = useState<Error | null>(null);
 
   useEffect(() => {
@@ -41,7 +39,7 @@ export const useBleDevicesScanning = <T = Device>(
           const newDeviceByIds: Record<string, Device> = {};
           //Map in record by ID
           devices.forEach(device => {
-            const mappedDevice: Device = mapper(device);
+            const mappedDevice = mapDiscoveredDeviceToDevice(device);
             newDeviceByIds[mappedDevice.deviceId] = mappedDevice;
           });
 
