@@ -1,5 +1,6 @@
 import {
   type Api,
+  AnyIntent,
   Balance,
   Block,
   BlockInfo,
@@ -46,9 +47,8 @@ export function createApi(config: EvmConfig, currencyId: string): Api {
       transactionIntent: TransactionIntent<MemoNotSupported>,
       customFees?: FeeEstimation,
     ): Promise<CraftedTransaction> => craftTransaction(currency, { transactionIntent, customFees }),
-    estimateFees: (
-      transactionIntent: TransactionIntent<MemoNotSupported>,
-    ): Promise<FeeEstimation> => estimateFees(currency, transactionIntent),
+    estimateFees: (transactionIntent: AnyIntent): Promise<FeeEstimation> =>
+      estimateFees(currency, transactionIntent),
     getBalance: (address: string): Promise<Balance[]> => getBalance(currency, address),
     lastBlock: (): Promise<BlockInfo> => lastBlock(currency),
     listOperations: (
