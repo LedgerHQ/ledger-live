@@ -41,7 +41,7 @@ export const getBalanceAndFiatValueByAssets = (
   });
 };
 
-const formatAssetDetails = (
+export const formatAssetDetails = (
   assetGroup: GroupedAccount,
   asset: CryptoOrTokenCurrency,
   targetCurrency: Currency,

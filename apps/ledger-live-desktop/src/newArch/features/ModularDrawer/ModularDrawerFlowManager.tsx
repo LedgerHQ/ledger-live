@@ -12,6 +12,7 @@ import { BackButtonArrow } from "./components/BackButton";
 import { useModularDrawerRemoteData } from "./hooks/useModularDrawerRemoteData";
 import { resetModularDrawerState } from "~/renderer/reducers/modularDrawer";
 import { useModularDrawerConfiguration } from "@ledgerhq/live-common/modularDrawer/hooks/useModularDrawerConfiguration";
+import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 
 const ModularDrawerFlowManager = ({
   currencies,
@@ -60,6 +61,8 @@ const ModularDrawerFlowManager = ({
     "lldModularDrawer",
     drawerConfiguration,
   );
+
+  // map.forEach((v, k) => console.log(k, v));
 
   const renderStepContent = (step: ModularDrawerStep) => {
     switch (step) {

@@ -48,12 +48,34 @@ export const SelectAssetList = ({
   loadNext,
   assetsSorted,
 }: SelectAssetProps) => {
+  const map = new Map<
+    string,
+    { mainCurrency: CryptoOrTokenCurrency; currencies: CryptoOrTokenCurrency[]; currency: string }
+  >();
+
+  console.log({ assetsSorted });
+
+  assetsSorted?.forEach(
+    ({ asset: { id: providerId, metaCurrencyId }, networks: currenciesByNetwork = [] }) => {
+      if (currenciesByNetwork.length > 0) {
+        const mainCurrency =
+          currenciesByNetwork.find(c => c.id === providerId) ?? currenciesByNetwork[0];
+        map.set(providerId, {
+          mainCurrency,
+          currencies: currenciesByNetwork,
+          currency: metaCurrencyId, // TODO check
+        });
+      }
+    },
+  );
+
   const assetConfigurationDeps = {
     ApyIndicator,
     MarketPriceIndicator,
     MarketPercentIndicator,
     useBalanceDeps,
     balanceItem,
+    map,
   };
   const isDebuggingDuplicates = useSelector(modularDrawerIsDebuggingDuplicatesSelector);
 

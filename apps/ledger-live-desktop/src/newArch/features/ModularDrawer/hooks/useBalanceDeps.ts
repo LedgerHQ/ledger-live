@@ -11,6 +11,9 @@ import {
 
 export const useBalanceDeps = () => {
   const allAccounts = useSelector(accountsSelector);
+
+  console.log({ allAccounts });
+
   const flattenedAccounts = useMemo(() => flattenAccounts(allAccounts), [allAccounts]);
   const discreet = useSelector(discreetModeSelector);
   const state = useCountervaluesState();

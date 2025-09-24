@@ -116,6 +116,7 @@ export type AssetConfigurationDeps = {
   MarketPriceIndicator: (args: { price: string; percent: number }) => ReactNode;
   useBalanceDeps: UseBalanceDeps;
   balanceItem: (asset: { fiatValue?: string; balance?: string }) => ReactNode;
+  map: Map<string, { mainCurrency: CryptoOrTokenCurrency; currencies: CryptoOrTokenCurrency[] }>;
 };
 
 export type CreateAssetConfigurationHook = (
