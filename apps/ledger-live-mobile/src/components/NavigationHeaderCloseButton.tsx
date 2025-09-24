@@ -93,6 +93,7 @@ type AdvancedProps = {
   confirmButtonText?: React.ReactNode;
   rejectButtonText?: React.ReactNode;
   isOnboardingFlow?: boolean;
+  popToTop?: boolean;
 };
 
 /**
@@ -119,6 +120,7 @@ export const NavigationHeaderCloseButtonAdvanced: React.FC<AdvancedProps> = Reac
     confirmButtonText,
     rejectButtonText,
     isOnboardingFlow = false,
+    popToTop = false,
   }) => {
     const navigation = useNavigation();
     const [isConfirmationModalOpened, setIsConfirmationModalOpened] = useState(false);
@@ -143,7 +145,11 @@ export const NavigationHeaderCloseButtonAdvanced: React.FC<AdvancedProps> = Reac
       if (parent && "pop" in parent && preferDismiss) {
         const parentNavigation = parent;
 
-        if ("canGoBack" in parentNavigation && parentNavigation.canGoBack()) {
+        if (popToTop && "popToTop" in parentNavigation) {
+          parentNavigation.popToTop();
+          onClose?.();
+          return;
+        } else if ("canGoBack" in parentNavigation && parentNavigation.canGoBack()) {
           parentNavigation.pop();
           onClose?.();
           return;
