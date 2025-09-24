@@ -1,4 +1,5 @@
 import { device } from "detox";
+import { delay } from "../helpers/commonHelpers";
 
 describe("Password Lock Screen", () => {
   const CORRECT_PASSWORD = "passWORD$123!";
@@ -16,6 +17,7 @@ describe("Password Lock Screen", () => {
     await app.settingsGeneral.enterNewPassword(CORRECT_PASSWORD);
     await app.settingsGeneral.enterNewPassword(CORRECT_PASSWORD); // confirm password step
     await device.sendToHome();
+    await delay(1000); // can be to fast for the app to be in the background
     await device.launchApp(); // restart LLM
     await app.passwordEntry.expectLock();
   });
