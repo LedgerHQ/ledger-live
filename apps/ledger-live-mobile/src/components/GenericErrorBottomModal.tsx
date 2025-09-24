@@ -4,7 +4,7 @@ import QueuedDrawer from "./QueuedDrawer";
 import type { Props as BottomModalProps } from "./QueuedDrawer";
 import GenericErrorView from "./GenericErrorView";
 
-type Props = Omit<BottomModalProps, "isRequestingToBeOpened"> & {
+type Props = Omit<BottomModalProps, "isRequestingToBeOpened" | "children"> & {
   error: Error | null | undefined;
   onClose?: () => void;
   footerButtons?: React.ReactNode;
