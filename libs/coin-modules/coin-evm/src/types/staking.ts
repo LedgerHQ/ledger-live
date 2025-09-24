@@ -1,5 +1,6 @@
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { Stake } from "@ledgerhq/coin-framework/api/types";
+import { StakingTransactionIntent } from "@ledgerhq/coin-framework/api/types";
 
 export type StakingOperation =
   | "delegate"
@@ -71,3 +72,10 @@ export interface EncodeStakingDataParams {
   config: StakingContractConfig;
   params: unknown[];
 }
+
+export type EvmStakingExtras = {
+  mode: StakingOperation;
+  params: string[];
+};
+
+export type EvmStakingIntent = StakingTransactionIntent<EvmStakingExtras>;

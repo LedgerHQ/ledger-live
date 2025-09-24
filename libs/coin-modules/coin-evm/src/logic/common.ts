@@ -18,6 +18,7 @@ import { getNodeApi } from "../network/node";
 import { STAKING_CONTRACTS } from "../staking";
 import { StakingOperation } from "../types/staking";
 import { encodeStakingData } from "../staking/encoder";
+import { isStakingIntent } from "../utils";
 
 export function isApiGasOptions(options: unknown): options is ApiGasOptions {
   if (!options || typeof options !== "object") return false;
@@ -110,16 +111,22 @@ export async function prepareUnsignedTxParams(
   const to = isNative(asset) ? recipient : (asset.assetReference as string);
   let data: Buffer;
   const config = STAKING_CONTRACTS[currency.id];
-  if (config && mode && isStakingOperation(mode)) {
-    data = Buffer.from(
-      encodeStakingData({
-        currencyId: currency.id,
-        operation: mode,
-        config,
-        params: parameters || [],
-      }).slice(2),
-      "hex",
-    );
+  if (isStakingIntent(transactionIntent)) {
+    if (config && mode && isStakingOperation(mode)) {
+      data = Buffer.from(
+        encodeStakingData({
+          currencyId: currency.id,
+          operation: mode,
+          config,
+          params: parameters || [],
+        }).slice(2),
+        "hex",
+      );
+    } else {
+      throw new Error(
+        `Staking contract config not found for currency ${currency.id} or invalid/no staking mode provided`,
+      );
+    }
   } else {
     data = isNative(asset) ? Buffer.from([]) : getErc20Data(recipient, amount);
   }
