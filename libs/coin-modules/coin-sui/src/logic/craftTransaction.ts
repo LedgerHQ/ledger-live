@@ -17,7 +17,7 @@ export async function craftTransaction(
     stakedSuiId?: string;
   },
   withObjects: boolean = false,
-): Promise<CoreTransaction & { objects?: Uint8Array[] }> {
+): Promise<CoreTransaction> {
   let coinType = DEFAULT_COIN_TYPE;
   if (asset.type === "token" && asset.assetReference) {
     coinType = asset.assetReference;

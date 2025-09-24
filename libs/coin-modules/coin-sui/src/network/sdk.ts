@@ -746,7 +746,7 @@ export const createTransaction = async (
   address: string,
   transaction: CreateExtrinsicArg,
   withObjects: boolean = false,
-): Promise<CoreTransaction & { objects?: Uint8Array[] }> =>
+): Promise<CoreTransaction> =>
   withApi(async api => {
     const tx = new Transaction();
     tx.setSender(ensureAddressFormat(address));
