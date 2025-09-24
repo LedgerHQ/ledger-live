@@ -195,8 +195,7 @@ export const TwoStepSyncOnboardingCompanion: React.FC<TwoStepSyncOnboardingCompa
       device,
       handleOnboardingDone,
       handleOnboardingDoneState,
-      // TODO: Add back in with actions PR
-      // dispatchRedux,
+      dispatchRedux,
     ],
   );
   /*

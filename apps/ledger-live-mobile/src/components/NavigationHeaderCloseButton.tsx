@@ -170,6 +170,7 @@ export const NavigationHeaderCloseButtonAdvanced: React.FC<AdvancedProps> = Reac
       preferDismiss,
       skipNavigation,
       isOnboardingFlow,
+      popToTop,
     ]);
 
     const openConfirmationModal = useCallback(() => {
