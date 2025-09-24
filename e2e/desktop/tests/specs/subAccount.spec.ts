@@ -529,7 +529,7 @@ test.describe("Send token (subAccount) - valid address & amount input", () => {
   );
 });
 
-test.describe.only("Send token (subAccount) - e2e ", () => {
+test.describe("Send token (subAccount) - e2e ", () => {
   const tokenValidSend = {
     tx: new Transaction(TokenAccount.SUI_USDC_1, TokenAccount.SUI_USDC_2, "1", Fee.MEDIUM),
     xrayTicket: "B2CQA-3908",
