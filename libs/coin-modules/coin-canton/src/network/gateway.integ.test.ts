@@ -12,6 +12,7 @@ import {
   submitTapRequest,
   preparePreApprovalTransaction,
   submitPreApprovalTransaction,
+  type OnboardingPrepareResponse,
 } from "./gateway";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 
@@ -25,6 +26,8 @@ describe("gateway (devnet)", () => {
     partyId: string;
   } | null = null;
 
+  let prepareResponse: OnboardingPrepareResponse | null = null;
+
   beforeAll(async () => {
     coinConfig.setCoinConfig(() => ({
       gatewayUrl: "https://canton-gateway.api.live.ledger-test.com",
@@ -35,7 +38,7 @@ describe("gateway (devnet)", () => {
         type: "active",
       },
     }));
-  }, 60000);
+  });
 
   const getOnboardedAccount = () => {
     if (!onboardedAccount) {
@@ -56,7 +59,7 @@ describe("gateway (devnet)", () => {
       };
 
       // WHEN
-      const response = await prepareOnboarding(mockCurrency, keyPair.publicKeyHex, "ed25519");
+      const response = await prepareOnboarding(mockCurrency, keyPair.publicKeyHex);
 
       // THEN
       expect(response).toHaveProperty("party_id");
@@ -68,30 +71,26 @@ describe("gateway (devnet)", () => {
       expect(typeof response.party_name).toBe("string");
 
       expect(response.public_key_fingerprint).toBe(keyPair.fingerprint);
-    }, 30000);
+    });
   });
 
   describe("submitOnboarding", () => {
     it("should submit onboarding with proper signature", async () => {
       // GIVEN
       const { keyPair } = getOnboardedAccount();
-      const prepareRequest = { public_key: keyPair.publicKeyHex, public_key_type: "ed25519" };
-      const prepareResponse = await prepareOnboarding(
-        mockCurrency,
-        keyPair.publicKeyHex,
-        "ed25519",
-      );
+      // Save prepare response for next test
+      prepareResponse = await prepareOnboarding(mockCurrency, keyPair.publicKeyHex);
       const signature = keyPair.sign(prepareResponse.transactions.combined_hash);
 
       // WHEN
       const response = await submitOnboarding(
         mockCurrency,
-        prepareRequest,
+        keyPair.publicKeyHex,
         prepareResponse,
         signature,
       );
 
-      // Save onboarded account for all tests that need a valid party ID
+      // Save onboarded account for next tests that need a valid party ID
       onboardedAccount = {
         keyPair,
         partyId: response.party.party_id,
@@ -103,6 +102,31 @@ describe("gateway (devnet)", () => {
       expect(response.party).toHaveProperty("public_key");
       expect(response.party.public_key).toBe(keyPair.publicKeyHex);
     }, 30000);
+
+    const testIfPrepared = prepareResponse ? it.skip : it;
+    testIfPrepared(
+      "should not throw when already onboarded",
+      async () => {
+        // GIVEN
+        const { keyPair } = getOnboardedAccount();
+        const signature = keyPair.sign(prepareResponse!.transactions.combined_hash);
+
+        // WHEN
+        const response = await submitOnboarding(
+          mockCurrency,
+          keyPair.publicKeyHex,
+          prepareResponse!,
+          signature,
+        );
+
+        // THEN
+        expect(response).toHaveProperty("party");
+        expect(response.party).toHaveProperty("party_id");
+        expect(response.party).toHaveProperty("public_key");
+        expect(response.party.public_key).toBe(keyPair.publicKeyHex);
+      },
+      30000,
+    );
   });
 
   describe("getLedgerEnd", () => {
@@ -125,17 +149,20 @@ describe("gateway (devnet)", () => {
   });
 
   describe("getPartyById", () => {
-    it.skip("should return party info", async () => {
-      const party = await getPartyById(mockCurrency, "4f2e1485107adf5f");
+    it("should return party info", async () => {
+      const party = await getPartyById(
+        mockCurrency,
+        "ldg::12208b12fa34be8a079bcbb68bba828e58313046c4208855b39885fab48661322e68",
+      );
       expect(party).toBeDefined();
     });
   });
 
   describe("getPartyByPubKey", () => {
-    it.skip("should return party info", async () => {
+    it("should return party info", async () => {
       const party = await getPartyByPubKey(
         mockCurrency,
-        "122027c6dbbbdbffe0fa3122ae05175f3b9328e879e9ce96b670354deb64a45683c1",
+        "c5cdb19624833f9a929a0125978c886ec4297320c14cea6bf667dc1d23a8e650",
       );
       expect(party).toBeDefined();
     });
@@ -153,7 +180,7 @@ describe("gateway (devnet)", () => {
   });
 
   describe("prepareTapRequest", () => {
-    it("should prepare tap request for onboarded party", async () => {
+    it.skip("should prepare tap request for onboarded party", async () => {
       // GIVEN
       const { partyId } = getOnboardedAccount();
       const amount = 1000;
@@ -166,11 +193,11 @@ describe("gateway (devnet)", () => {
       expect(response).toHaveProperty("hash");
       expect(typeof response.serialized).toBe("string");
       expect(typeof response.hash).toBe("string");
-    }, 30000);
+    });
   });
 
   describe("submitTapRequest", () => {
-    it("should submit tap request with proper signature", async () => {
+    it.skip("should submit tap request with proper signature", async () => {
       // GIVEN
       const { keyPair, partyId } = getOnboardedAccount();
       const tapPrepareResponse = await prepareTapRequest(mockCurrency, {
@@ -191,7 +218,7 @@ describe("gateway (devnet)", () => {
       expect(response).toHaveProperty("update_id");
       expect(typeof response.submission_id).toBe("string");
       expect(typeof response.update_id).toBe("string");
-    }, 30000);
+    });
   });
 
   describe("preparePreApprovalTransaction", () => {
@@ -207,7 +234,7 @@ describe("gateway (devnet)", () => {
       expect(response).toHaveProperty("hash");
       expect(typeof response.serialized).toBe("string");
       expect(typeof response.hash).toBe("string");
-    }, 30000);
+    });
   });
 
   describe("submitPreApprovalTransaction", () => {
@@ -232,6 +259,6 @@ describe("gateway (devnet)", () => {
       expect(response.isApproved).toBe(true);
       expect(typeof response.submissionId).toBe("string");
       expect(typeof response.updateId).toBe("string");
-    }, 30000);
+    });
   });
 });

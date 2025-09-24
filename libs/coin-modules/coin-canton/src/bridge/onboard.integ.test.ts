@@ -1,23 +1,45 @@
+import BigNumber from "bignumber.js";
 import { firstValueFrom, toArray } from "rxjs";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { emptyHistoryCache } from "@ledgerhq/coin-framework/account/index";
 import { generateMockKeyPair, createMockSigner } from "../test/cantonTestUtils";
-import { buildOnboardAccount, isAccountOnboarded, buildAuthorizePreapproval } from "./onboard";
 import {
+  AuthorizeStatus,
   OnboardStatus,
-  PreApprovalStatus,
+  CantonAuthorizeProgress,
+  CantonAuthorizeResult,
   CantonOnboardProgress,
   CantonOnboardResult,
-  CantonPreApprovalProgress,
-  CantonPreApprovalResult,
 } from "../types/onboard";
 import coinConfig from "../config";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { buildOnboardAccount, isAccountOnboarded, buildAuthorizePreapproval } from "./onboard";
 
 describe("onboard (devnet)", () => {
   const mockDeviceId = "test-device-id";
-  const mockDerivationPath = "44'/6767'/0'/0'/0'";
   const mockCurrency = {
     id: "canton_network",
   } as unknown as CryptoCurrency;
+  const mockAccount = {
+    type: "Account" as const,
+    id: "js:2:canton_network:canton_3f5c9d9a:canton",
+    seedIdentifier: "canton_3f5c9d9a",
+    derivationMode: "canton" as const,
+    index: 0,
+    freshAddress: "canton_3f5c9d9a",
+    freshAddressPath: "44'/6767'/0'/0'/0'",
+    used: false,
+    balance: BigNumber(10000),
+    spendableBalance: BigNumber(10000),
+    creationDate: new Date(),
+    blockHeight: 1,
+    currency: mockCurrency,
+    operationsCount: 0,
+    operations: [],
+    pendingOperations: [],
+    lastSyncDate: new Date(),
+    balanceHistoryCache: emptyHistoryCache,
+    swapHistory: [],
+  };
 
   let onboardedAccount: {
     keyPair: ReturnType<typeof generateMockKeyPair>;
@@ -58,7 +80,7 @@ describe("onboard (devnet)", () => {
 
       const onboardObservable = buildOnboardAccount(mockSignerContext);
       const onboardValues = await firstValueFrom(
-        onboardObservable(mockCurrency, mockDeviceId, mockDerivationPath).pipe(toArray()),
+        onboardObservable(mockCurrency, mockDeviceId, mockAccount).pipe(toArray()),
       );
       const onboardResult = onboardValues.find(
         (value): value is CantonOnboardResult => "partyId" in value,
@@ -82,8 +104,8 @@ describe("onboard (devnet)", () => {
       // THEN
       expect(result).not.toBe(false);
       if (typeof result === "object") {
-        expect(result.party_id).toBeDefined();
-        expect(result.party_id).toBe(onboardResult!.partyId);
+        expect(result.partyId).toBeDefined();
+        expect(result.partyId).toBe(onboardResult.partyId);
       }
     }, 30000);
 
@@ -122,7 +144,7 @@ describe("onboard (devnet)", () => {
 
       // WHEN
       const allValues = await firstValueFrom(
-        onboardObservable(mockCurrency, mockDeviceId, mockDerivationPath).pipe(toArray()),
+        onboardObservable(mockCurrency, mockDeviceId, mockAccount).pipe(toArray()),
       );
       const progressValues = allValues.filter(
         (value): value is CantonOnboardProgress => "status" in value && !("partyId" in value),
@@ -149,12 +171,12 @@ describe("onboard (devnet)", () => {
 
     it("should complete full onboarding flow with already onboarded account", async () => {
       // GIVEN
-      const { keyPair, mockSignerContext, onboardResult: firstResult } = getOnboardedAccount();
+      const { mockSignerContext, onboardResult: firstResult } = getOnboardedAccount();
       const secondOnboardObservable = buildOnboardAccount(mockSignerContext);
 
       // WHEN
       const secondOnboardValues = await firstValueFrom(
-        secondOnboardObservable(mockCurrency, mockDeviceId, mockDerivationPath).pipe(toArray()),
+        secondOnboardObservable(mockCurrency, mockDeviceId, mockAccount).pipe(toArray()),
       );
       const secondResult = secondOnboardValues.find(
         (value): value is CantonOnboardResult => "partyId" in value,
@@ -175,27 +197,23 @@ describe("onboard (devnet)", () => {
 
       // WHEN
       const preapprovalValues = await firstValueFrom(
-        preapprovalObservable(
-          mockCurrency,
-          mockDeviceId,
-          mockDerivationPath,
-          onboardResult.partyId,
-        ).pipe(toArray()),
+        preapprovalObservable(mockCurrency, mockDeviceId, mockAccount, onboardResult.partyId).pipe(
+          toArray(),
+        ),
       );
 
       const progressValues = preapprovalValues.filter(
-        (value): value is CantonPreApprovalProgress =>
-          "status" in value && !("isApproved" in value),
+        (value): value is CantonAuthorizeProgress => "status" in value && !("isApproved" in value),
       );
       const resultValues = preapprovalValues.filter(
-        (value): value is CantonPreApprovalResult => "isApproved" in value,
+        (value): value is CantonAuthorizeResult => "isApproved" in value,
       );
 
       // THEN
       // Check expected status progression
-      expect(progressValues.some(p => p.status === PreApprovalStatus.PREPARE)).toBe(true);
-      expect(progressValues.some(p => p.status === PreApprovalStatus.SIGN)).toBe(true);
-      expect(progressValues.some(p => p.status === PreApprovalStatus.SUBMIT)).toBe(true);
+      expect(progressValues.some(p => p.status === AuthorizeStatus.PREPARE)).toBe(true);
+      expect(progressValues.some(p => p.status === AuthorizeStatus.SIGN)).toBe(true);
+      expect(progressValues.some(p => p.status === AuthorizeStatus.SUBMIT)).toBe(true);
 
       // Check final result (should be approved)
       expect(resultValues.length).toBeGreaterThan(0);
@@ -216,12 +234,7 @@ describe("onboard (devnet)", () => {
       // WHEN & THEN
       try {
         await firstValueFrom(
-          preapprovalObservable(
-            mockCurrency,
-            mockDeviceId,
-            mockDerivationPath,
-            "invalid-party-id-123",
-          ),
+          preapprovalObservable(mockCurrency, mockDeviceId, mockAccount, "invalid-party-id-123"),
         );
         expect(true).toBe(true);
       } catch (error) {

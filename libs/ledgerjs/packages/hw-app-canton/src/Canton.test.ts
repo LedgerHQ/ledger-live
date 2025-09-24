@@ -34,7 +34,7 @@ describe("Canton", () => {
 
       // THEN
       expect(result).toEqual({
-        address: "402f2e68",
+        address: "canton_402f2e68",
         path: "44'/6767'/0'/0'/0'",
         publicKey: "c59f7f29374d24506dd6490a5db472cf00958e195e146f3dc9c97f96d5c51097",
       });
@@ -55,7 +55,7 @@ describe("Canton", () => {
 
       // THEN
       expect(result).toEqual({
-        address: "402f2e68",
+        address: "canton_402f2e68",
         path: "44'/6767'/0'/0'/0'",
         publicKey: "c59f7f29374d24506dd6490a5db472cf00958e195e146f3dc9c97f96d5c51097",
       });

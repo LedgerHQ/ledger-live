@@ -6,17 +6,11 @@ import type {
   CantonResourcesRaw,
 } from "../types";
 
-function toResourcesRaw(r: CantonResources): CantonResourcesRaw {
-  const { partyId } = r;
-  return {
-    partyId,
-  };
+function toResourcesRaw(_r: CantonResources): CantonResourcesRaw {
+  return {};
 }
-function fromResourcesRaw(r: CantonResourcesRaw): CantonResources {
-  const { partyId } = r;
-  return {
-    partyId,
-  };
+function fromResourcesRaw(_r: CantonResourcesRaw): CantonResources {
+  return {};
 }
 
 export function assignToAccountRaw(account: Account, accountRaw: AccountRaw): void {
