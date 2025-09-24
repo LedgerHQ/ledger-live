@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from "react";
+import React, { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { AnimatePresence } from "framer-motion";
 import AnimatedScreenWrapper from "./components/AnimatedScreenWrapper";
@@ -22,7 +22,6 @@ const ModularDrawerFlowManager = ({
   onAssetSelected,
   onAccountSelected,
 }: ModularDrawerFlowManagerProps) => {
-  const currencyIds = useMemo(() => (currencies || []).map(currency => currency.id), [currencies]);
   const dispatch = useDispatch();
   const { currentStep, navigationDirection, goToStep } = useModularDrawerNavigation();
 
@@ -48,7 +47,7 @@ const ModularDrawerFlowManager = ({
     assetsSorted,
   } = useModularDrawerRemoteData({
     currentStep,
-    currencyIds,
+    currencyIds: currencies,
     goToStep,
     onAssetSelected,
     isSelectAccountFlow: Boolean(onAccountSelected),

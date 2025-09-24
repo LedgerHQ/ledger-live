@@ -93,11 +93,15 @@ type ExtraStoryArgs = {
 
 type StoryArgs = ModularDrawerFlowManagerProps & ExtraStoryArgs;
 
+const mockCurrencies = [ethereumCurrency, arbitrumCurrency, arbitrumToken, bitcoinCurrency].map(
+  currency => currency.id,
+);
+
 const meta: Meta<StoryArgs> = {
   title: "ModularDrawer/ModularDrawerFlowManager",
   component: ModularDrawerFlowManager,
   args: {
-    currencies: [ethereumCurrency, arbitrumCurrency, arbitrumToken, bitcoinCurrency],
+    currencies: mockCurrencies,
     onAssetSelected: () => null,
     onAccountSelected: () => null,
   },
@@ -233,7 +237,7 @@ export const CustomDrawerConfig: StoryObj<StoryArgs> = {
           }}
         >
           <ModularDrawerFlowManager
-            currencies={[ethereumCurrency, arbitrumCurrency, arbitrumToken, bitcoinCurrency]}
+            currencies={mockCurrencies}
             onAssetSelected={() => null}
             onAccountSelected={() => null}
             drawerConfiguration={drawerConfiguration}

@@ -33,18 +33,13 @@ export function useModularDrawerRemoteData({
     assetsSorted,
   } = useModularDrawerData({ currencyIds, useCase, areCurrenciesFiltered });
 
-  const {
-    assetsToDisplay,
-    setAssetsToDisplay,
-    networksToDisplay,
-    setNetworksToDisplay,
-    hasOneCurrency,
-  } = useModularDrawerFiltering({
-    currencyIds,
-    assets: assetsSorted,
-    sortedCryptoCurrencies,
-    isSuccess,
-  });
+  const { assetsToDisplay, networksToDisplay, setNetworksToDisplay, hasOneCurrency } =
+    useModularDrawerFiltering({
+      currencyIds,
+      assets: assetsSorted,
+      sortedCryptoCurrencies,
+      isSuccess,
+    });
 
   const {
     selectedAsset,
@@ -77,7 +72,7 @@ export function useModularDrawerRemoteData({
     refetch,
     loadingStatus,
     assetsToDisplay,
-    setAssetsToDisplay,
+
     networksToDisplay,
     selectedAsset,
     selectedNetwork,

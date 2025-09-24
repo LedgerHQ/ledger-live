@@ -17,7 +17,7 @@ export function useModularDrawerFiltering({
   sortedCryptoCurrencies,
   isSuccess,
 }: UseModularDrawerFilteringProps) {
-  const { assetsToDisplay, currencyIdsSet, setAssetsToDisplay } = useAssetSelection(
+  const { assetsToDisplay, currencyIdsSet } = useAssetSelection(
     currencyIds,
     sortedCryptoCurrencies,
   );
@@ -32,7 +32,6 @@ export function useModularDrawerFiltering({
   return {
     assetsToDisplay,
     currencyIdsSet,
-    setAssetsToDisplay,
     networksToDisplay,
     setNetworksToDisplay,
     hasOneCurrency,

@@ -94,12 +94,11 @@ function useUiHook(manifest: AppManifest, tracking: TrackingAPI): UiHook {
           openAssetAndAccountDrawer({
             accounts$,
             drawerConfiguration,
-            currencies: areCurrenciesFiltered && !useCase ? currencies : undefined,
+            currencies: areCurrenciesFiltered && !useCase ? currencies.map(c => c.id) : undefined,
             areCurrenciesFiltered,
             useCase,
             onSuccess,
             onCancel,
-            includeTokens: true,
           });
         } else {
           setDrawer(
