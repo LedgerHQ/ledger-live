@@ -292,10 +292,20 @@ type MaybeMemo<MemoType extends Memo> = MemoType extends MemoNotSupported ? {} :
 
 export type FeesStrategy = "slow" | "medium" | "fast";
 
+type StakingIntent = {
+  intentType: "staking";
+};
+
+export type StakingTransactionIntent<T extends StakingIntent> = Omit<
+  TransactionIntent,
+  "intentType"
+> &
+  T;
+
 export type TransactionIntent<MemoType extends Memo = MemoNotSupported> = {
+  intentType: "transaction";
   type: string;
   sender: string;
-  mode?: string | any;
   senderPublicKey?: string;
   expiration?: number;
   recipient: string;
@@ -304,8 +314,11 @@ export type TransactionIntent<MemoType extends Memo = MemoNotSupported> = {
   asset: AssetInfo;
   sequence?: number;
   feesStrategy?: FeesStrategy;
-  parameters?: string[];
 } & MaybeMemo<MemoType>;
+
+export type AnyIntent =
+  | TransactionIntent<MemoNotSupported>
+  | StakingTransactionIntent<StakingIntent>;
 
 export type TransactionValidation = {
   errors: Record<string, Error>;

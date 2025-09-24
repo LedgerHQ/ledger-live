@@ -26,6 +26,7 @@ import { validateIntent } from "./validateIntent";
 function legacyIntent(intent: Omit<Partial<TransactionIntent>, "type">): TransactionIntent {
   return {
     type: "send-legacy",
+    intentType: "transaction",
     sender: "",
     recipient: "",
     amount: 0n,
@@ -37,6 +38,7 @@ function legacyIntent(intent: Omit<Partial<TransactionIntent>, "type">): Transac
 function eip1559Intent(intent: Omit<Partial<TransactionIntent>, "type">): TransactionIntent {
   return {
     type: "send-eip1559",
+    intentType: "transaction",
     sender: "",
     recipient: "",
     amount: 0n,

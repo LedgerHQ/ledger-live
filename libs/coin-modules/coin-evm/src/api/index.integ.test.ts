@@ -80,6 +80,7 @@ describe.each([
     it("crafts a transaction with the native asset", async () => {
       const { transaction: result } = await module.craftTransaction({
         type: `send-${mode}`,
+        intentType: "transaction",
         amount: 10n,
         sender: "0x9bcd841436ef4f85dacefb1aec772af71619024e",
         recipient: "0x7b2c7232f9e38f30e2868f0e5bf311cd83554b5a",
@@ -99,6 +100,7 @@ describe.each([
     it("crafts a transaction with the USDC asset", async () => {
       const { transaction: result } = await module.craftTransaction({
         type: `send-${mode}`,
+        intentType: "transaction",
         amount: 10n,
         sender: "0x9bcd841436ef4f85dacefb1aec772af71619024e",
         recipient: "0x7b2c7232f9e38f30e2868f0e5bf311cd83554b5a",
@@ -217,6 +219,7 @@ describe.each([
     it("estimates fees for native asset transfer", async () => {
       const result = await module.estimateFees({
         type: `send-${mode}`,
+        intentType: "transaction",
         amount: 100000000000000n, // 0.0001 ETH (smaller amount)
         sender: "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045",
         recipient: "0x7b2C7232f9E38F30E2868f0E5Bf311Cd83554b5A",
@@ -231,6 +234,7 @@ describe.each([
     it("estimates fees for USDC token transfer", async () => {
       const result = await module.estimateFees({
         type: `send-${mode}`,
+        intentType: "transaction",
         amount: 1000000n, // 1 USDC (6 decimals)
         sender: "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045",
         recipient: "0x7b2C7232f9E38F30E2868f0E5Bf311Cd83554b5A",

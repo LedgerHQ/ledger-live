@@ -2,7 +2,7 @@ import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import type { TransactionIntent, MemoNotSupported } from "@ledgerhq/coin-framework/api/index";
 import type { StakingOperation } from "../types/staking";
 import { isNative } from "../types";
-import { EvmStakingIntent } from "../types/staking-draft";
+import { isStakingIntent } from "../utils";
 import { STAKING_CONTRACTS } from "./contracts";
 import { encodeStakingData } from "./encoder";
 import { isStakingOperation } from "./detectOperationType";
@@ -72,7 +72,11 @@ export function buildStakingTransactionParams(
   data: Buffer;
   value: bigint;
 } {
-  const { amount, asset, recipient, sender, mode, parameters } = intent as EvmStakingIntent;
+  if (!isStakingIntent(intent)) {
+    throw new Error("Intent must be a staking intent");
+  }
+
+  const { amount, asset, recipient, sender, mode, parameters } = intent;
 
   const config = STAKING_CONTRACTS[currency.id];
   if (!config) {

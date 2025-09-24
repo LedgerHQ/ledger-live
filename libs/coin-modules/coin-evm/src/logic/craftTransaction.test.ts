@@ -189,6 +189,7 @@ describe("craftTransaction", () => {
             } as CryptoCurrency,
             {
               transactionIntent: {
+                intentType: "staking",
                 type: `staking-${transactionType}`,
                 sender: "0x1234567890abcdef1234567890abcdef12345678",
                 recipient: "seivaloper1234567890abcdef1234567890abcdef12345678",
@@ -228,6 +229,7 @@ describe("craftTransaction", () => {
             } as CryptoCurrency,
             {
               transactionIntent: {
+                intentType: "staking",
                 type: `staking-${transactionType}`,
                 sender: "0x1234567890abcdef1234567890abcdef12345678",
                 recipient: "seivaloper1234567890abcdef1234567890abcdef12345678",
@@ -267,6 +269,7 @@ describe("craftTransaction", () => {
             } as CryptoCurrency,
             {
               transactionIntent: {
+                intentType: "staking",
                 type: `staking-${transactionType}`,
                 sender: "0x1234567890abcdef1234567890abcdef12345678",
                 recipient: "0xabcdef1234567890abcdef1234567890abcdef12",
