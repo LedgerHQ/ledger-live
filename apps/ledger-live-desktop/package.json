@@ -1,7 +1,7 @@
 {
   "name": "ledger-live-desktop",
-  "productName": "Ledger Live",
-  "description": "Ledger Live - Desktop",
+  "productName": "Ledger Wallet",
+  "description": "Ledger Wallet - Desktop",
   "author": "Ledger Live Team <team-live@ledger.fr>",
   "repository": {
     "type": "git",
