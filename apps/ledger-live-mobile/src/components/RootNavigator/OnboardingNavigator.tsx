@@ -13,6 +13,7 @@ import { useTheme } from "styled-components/native";
 import { ScreenName, NavigatorName } from "~/const";
 import PasswordAddFlowNavigator from "./PasswordAddFlowNavigator";
 import LegacyOnboardingWelcome from "~/screens/Onboarding/steps/welcome";
+import OnboardingWelcome from "LLM/features/WelcomePage";
 import OnboardingLanguage from "~/screens/Onboarding/steps/language";
 import OnboardingTerms from "~/screens/Onboarding/steps/terms";
 import OnboardingDeviceSelection from "~/screens/Onboarding/steps/deviceSelection";
@@ -116,7 +117,7 @@ export default function OnboardingNavigator() {
     >
       <Stack.Screen
         name={ScreenName.OnboardingWelcome}
-        component={llmHomescreenEnabled ? LegacyOnboardingWelcome : LegacyOnboardingWelcome}
+        component={llmHomescreenEnabled ? OnboardingWelcome : LegacyOnboardingWelcome}
       />
       <Stack.Screen
         name={ScreenName.OnboardingPostWelcomeSelection}
