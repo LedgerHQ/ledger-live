@@ -15,6 +15,7 @@ import { DmkBleDevicePairing } from "./DmkBleDevicePairing";
 import { urls } from "~/utils/urls";
 import { Linking } from "react-native";
 import { useLocalizedUrl } from "LLM/hooks/useLocalizedUrls";
+import { BleScanningState } from "@ledgerhq/live-dmk-mobile";
 
 const TIMEOUT_AFTER_PAIRED_MS = 2000;
 
@@ -72,6 +73,16 @@ export type BleDevicePairingFlowProps = {
    * should react to a request from this component to set or to clean its header.
    */
   requestToSetHeaderOptions: (request: SetHeaderOptionsRequest) => void;
+
+  /**
+   * In some cases, the parent of this component handles the scanning logic, so we pass the scanning state there.
+   */
+  bleScanningState?: BleScanningState;
+
+  /**
+   * Notifies changes in the pairing flow step
+   */
+  onPairingFlowStepChanged?: (step: PairingFlowStep | null) => void;
 };
 
 // A "done" state to avoid having the BLE scanning on the device that we just paired
@@ -89,10 +100,19 @@ const BleDevicePairingFlow: React.FC<BleDevicePairingFlowProps> = ({
   onPairingSuccess,
   onPairingSuccessAddToKnownDevices = false,
   requestToSetHeaderOptions,
+  onPairingFlowStepChanged,
+  bleScanningState,
 }) => {
   const dispatchRedux = useDispatch();
 
   const [pairingFlowStep, setPairingFlowStep] = useState<PairingFlowStep>("scanning");
+
+  useEffect(() => {
+    onPairingFlowStepChanged?.(pairingFlowStep);
+    return () => {
+      onPairingFlowStepChanged?.(null);
+    };
+  }, [pairingFlowStep, onPairingFlowStepChanged]);
 
   const [deviceToPair, setDeviceToPair] = useState<Device | null>(null);
   const [isPaired, setIsPaired] = useState(false);
@@ -235,6 +255,7 @@ const BleDevicePairingFlow: React.FC<BleDevicePairingFlowProps> = ({
           areKnownDevicesDisplayed={areKnownDevicesDisplayed}
           areKnownDevicesPairable={areKnownDevicesPairable}
           onDeviceSelect={onDeviceSelect}
+          bleScanningState={bleScanningState}
         />
       ) : null}
     </RequiresBLE>

@@ -20,14 +20,17 @@ import { BaseComposite, StackNavigatorProps } from "../RootNavigator/types/helpe
 import { MyLedgerNavigatorStackParamList } from "../RootNavigator/types/MyLedgerNavigator";
 import { MainNavigatorParamList } from "../RootNavigator/types/MainNavigator";
 import PostOnboardingEntryPointCard from "../PostOnboarding/PostOnboardingEntryPointCard";
-import BleDevicePairingFlow, { SetHeaderOptionsRequest } from "../BleDevicePairingFlow";
+import BleDevicePairingFlow, {
+  PairingFlowStep,
+  SetHeaderOptionsRequest,
+} from "../BleDevicePairingFlow";
 import BuyDeviceCTA from "../BuyDeviceCTA";
 import { useResetOnNavigationFocusState } from "~/helpers/useResetOnNavigationFocusState";
 import { useDebouncedRequireBluetooth } from "../RequiresBLE/hooks/useRequireBluetooth";
 import RequiresBluetoothDrawer from "../RequiresBLE/RequiresBluetoothDrawer";
 import QueuedDrawer from "../QueuedDrawer";
 import { DeviceList } from "./DeviceList";
-import { useBleDevicesScanning, useDeviceManagementKit } from "@ledgerhq/live-dmk-mobile";
+import { useBleDevicesScanning } from "@ledgerhq/live-dmk-mobile";
 
 export type { SetHeaderOptionsRequest };
 
@@ -85,13 +88,23 @@ export default function SelectDevice({
   const knownDevices = useSelector(bleDevicesSelector);
   const navigation = useNavigation<Navigation["navigation"]>();
 
-  const isLDMKEnabled = true;
-  const dmk = useDeviceManagementKit();
-
-  const { scannedDevices: DMKscannedDevices } = useBleDevicesScanning(
-    isFocused && !isPairingDevices && !stopBleScanning,
+  const scanningFilterOptions = useMemo(
+    () => (filterByDeviceModelId ? { filterByDeviceModelIds: [filterByDeviceModelId] } : undefined),
+    [filterByDeviceModelId],
   );
-  const scannedDevices = DMKscannedDevices;
+
+  const [pairingFlowStep, setPairingFlowStep] = useState<PairingFlowStep | null>(null);
+
+  const bleScanningState = useBleDevicesScanning(
+    isFocused && !stopBleScanning && pairingFlowStep !== "pairing",
+    scanningFilterOptions,
+  );
+
+  const { scannedDevices, isScanning, scanningBleError } = bleScanningState;
+
+  // useEffect(() => {
+  //   console.log("SelectDevice2 isScanning", isScanning, scanningBleError);
+  // }, [isScanning, scanningBleError]);
 
   // Each time the user navigates back to the screen the BLE requirements are not enforced
   const [isBleRequired, setIsBleRequired] = useResetOnNavigationFocusState(false);
@@ -270,14 +283,11 @@ export default function SelectDevice({
   }, [dispatch, isFocused]);
 
   const closeBlePairingFlow = useCallback(() => {
-    if (isLDMKEnabled && dmk) {
-      dmk.stopDiscovering();
-    }
     // When coming back from the pairing, the visibility of the bottom tab bar is reset
     dispatch(updateMainNavigatorVisibility(true));
     setIsPairingDevices(false);
     setIsAddNewDrawerOpen(false);
-  }, [dispatch, isLDMKEnabled, dmk]);
+  }, [dispatch]);
 
   const onSetUpNewDevice = useCallback(() => {
     setIsAddNewDrawerOpen(false);
@@ -333,6 +343,8 @@ export default function SelectDevice({
           onPairingSuccessAddToKnownDevices
           requestToSetHeaderOptions={requestToSetHeaderOptions}
           filterByDeviceModelId={filterByDeviceModelId}
+          onPairingFlowStepChanged={setPairingFlowStep}
+          bleScanningState={bleScanningState}
         />
       ) : (
         <Flex flex={1}>

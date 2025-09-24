@@ -4,6 +4,7 @@ import { rnBleTransportIdentifier } from "@ledgerhq/device-transport-kit-react-n
 import { dmkToLedgerDeviceIdMap } from "@ledgerhq/live-dmk-shared";
 import { Device, DeviceModelId } from "@ledgerhq/types-devices";
 import { useDeviceManagementKit } from "./useDeviceManagementKit";
+import { BleScanningState } from "./BleScanningState";
 
 export const mapDiscoveredDeviceToDevice = (device: DiscoveredDevice): Device => ({
   deviceId: device.id,
@@ -21,15 +22,17 @@ export const useBleDevicesScanning = (
   }: {
     filterByDeviceModelIds?: DeviceModelId[];
     filterOutDevicesByDeviceIds?: DeviceId[];
-  },
-) => {
+  } = {},
+): BleScanningState => {
   const dmk = useDeviceManagementKit();
-  const [scannedDevicesById, setScannedDevicesById] = useState<Record<string, Device>>({});
+  const [isScanning, setIsScanning] = useState(false);
+  const [scannedDevices, setScannedDevices] = useState<Device[]>([]);
   const [scanningBleError, setScanningBleError] = useState<Error | null>(null);
 
   useEffect(() => {
     if (!dmk) return;
     if (!enabled) return;
+    setIsScanning(true);
     const subscription = dmk
       .listenToAvailableDevices({
         transport: rnBleTransportIdentifier,
@@ -61,15 +64,17 @@ export const useBleDevicesScanning = (
             }
           });
 
-          setScannedDevicesById(newDeviceByIds);
+          setScannedDevices(Object.values(newDeviceByIds));
         },
         error: error => {
           setScanningBleError(error);
           dmk.stopDiscovering();
+          setIsScanning(false);
         },
         complete: () => {
           subscription.unsubscribe();
           dmk.stopDiscovering();
+          setIsScanning(false);
         },
       });
     return () => {
@@ -77,11 +82,13 @@ export const useBleDevicesScanning = (
         subscription.unsubscribe();
       }
       dmk.stopDiscovering();
+      setIsScanning(false);
     };
   }, [dmk, enabled]);
 
   return {
-    scannedDevices: Object.values(scannedDevicesById),
+    scannedDevices,
     scanningBleError,
+    isScanning,
   };
 };
