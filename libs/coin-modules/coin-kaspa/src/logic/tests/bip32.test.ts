@@ -1,4 +1,5 @@
 import KaspaBIP32 from "../bip32";
+import * as kaspaAddr from "../kaspaAddresses";
 
 describe("KaspaBIP32", () => {
   it("should generate the expected addresses", () => {
@@ -44,6 +45,31 @@ describe("KaspaBIP32", () => {
       "kaspa:qzese5lc37m2a9np8k5gect4l2jj8svyqq392p7aa7mxsqarjg9sjgxr4wvru",
     );
   });
+  it("should cache value", () => {
+    const compressedPublicKey = Buffer.from(
+      "035a19ab1842af431d3b4fa88a15b1fe7d7c3f6e26e808124a10dc0523352d462d",
+      "hex",
+    );
+    const compressedPublicKey2 = Buffer.from(
+      "02bb257a3f0b6bc2104539be649e6f7fe0b42e38c660500598fb1dc833b7ecbb1a",
+      "hex",
+    );
+    const chainCode = Buffer.from(
+      "0ba599a9c5bad1106065eab47b48efa070f4b31e9639c9d096f7756b248a6ff4",
+      "hex",
+    );
+    const bip32 = new KaspaBIP32(compressedPublicKey, chainCode);
+
+    const addrSpy = jest.spyOn(kaspaAddr, "publicKeyToAddress").mockReturnValue("dummy");
+    expect(bip32.getAddress(0, 1010)).toBe("dummy");
+    expect(addrSpy).toHaveBeenCalledTimes(1);
+    const bip32_2 = new KaspaBIP32(compressedPublicKey, chainCode);
+    expect(bip32_2.getAddress(0, 1010)).toBe("dummy");
+    expect(addrSpy).toHaveBeenCalledTimes(1);
+    const bip32_3 = new KaspaBIP32(compressedPublicKey2, chainCode);
+    expect(bip32_3.getAddress(0, 1010)).toBe("dummy");
+    expect(addrSpy).toHaveBeenCalledTimes(2);
+  });
   it("result from ledger hw device", () => {
     const testCases = [
       {
@@ -74,5 +100,10 @@ describe("KaspaBIP32", () => {
       const path = testCase.derivationPath.split("/");
       expect(bip32.getAddress(Number(path[3]), Number(path[4]))).toBe(testCase.address);
     }
+  });
+  afterEach(() => {
+    jest.restoreAllMocks();
+    jest.clearAllMocks();
+    jest.resetModules();
   });
 });
