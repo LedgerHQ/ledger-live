@@ -1,5 +1,11 @@
 # @ledgerhq/live-common
 
+## 34.49.0-next.2
+
+### Minor Changes
+
+- [#11990](https://github.com/LedgerHQ/ledger-live/pull/11990) [`1c4bcb9`](https://github.com/LedgerHQ/ledger-live/commit/1c4bcb9e9082dedb37598b2b0a35be0665e80d20) Thanks [@semeano](https://github.com/semeano)! - Update Kaspa bridge integration test snapshot
+
 ## 34.49.0-next.1
 
 ### Patch Changes

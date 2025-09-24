@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.94.0-next.3
+
+### Minor Changes
+
+- [#11989](https://github.com/LedgerHQ/ledger-live/pull/11989) [`9492d4a`](https://github.com/LedgerHQ/ledger-live/commit/9492d4a0071ff695113f67b873c215ff95a1e1ab) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Update B2CQA-650 test
+
 ## 3.94.0-next.2
 
 ### Patch Changes
