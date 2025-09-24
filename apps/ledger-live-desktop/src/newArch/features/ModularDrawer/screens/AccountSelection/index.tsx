@@ -15,8 +15,6 @@ import {
 
 type Props = {
   asset: CryptoOrTokenCurrency;
-  source: string;
-  flow: string;
   accounts$?: Observable<WalletAPIAccount[]>;
   hideAddAccountButton?: boolean;
   overridePageName?: ModularDrawerEventName;
@@ -25,8 +23,6 @@ type Props = {
 
 export const AccountSelection = ({
   asset,
-  source,
-  flow,
   accounts$,
   onAccountSelected,
   hideAddAccountButton,
@@ -34,8 +30,6 @@ export const AccountSelection = ({
 }: Props) => {
   const { detailedAccounts, accounts, onAddAccountClick } = useDetailedAccounts(
     asset,
-    flow,
-    source,
     accounts$,
     onAccountSelected,
   );
@@ -50,12 +44,8 @@ export const AccountSelection = ({
     <>
       <TrackDrawerScreen
         page={overridePageName ?? MODULAR_DRAWER_PAGE_NAME.MODULAR_ACCOUNT_SELECTION}
-        source={source}
-        flow={flow}
       />
       <SelectAccountList
-        source={source}
-        flow={flow}
         accounts={accounts}
         detailedAccounts={detailedAccounts}
         onAccountSelected={onAccountSelected}

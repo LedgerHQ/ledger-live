@@ -2245,6 +2245,16 @@
     "title": "Receive",
     "successTitle": "Address shared securely",
     "steps": {
+      "options": {
+        "fromBank": {
+          "title": "From a bank account",
+          "description": "Deposit USD or EUR"
+        },
+        "fromCrypto": {
+          "title": "From a crypto address",
+          "description": "Receive crypto"
+        }
+      },
       "chooseAccount": {
         "title": "Account",
         "label": "Account to credit",
@@ -6472,6 +6482,9 @@
     },
     "EthAppPleaseEnableContractData": {
       "title": "Please enable Blind signing or Contract data in the Ethereum app Settings"
+    },
+    "CeloAppPleaseEnableContractData": {
+      "title": "Please enable Contract data in the Celo app Settings"
     },
     "InvalidXRPTag": {
       "title": "Invalid XRP Destination tag"

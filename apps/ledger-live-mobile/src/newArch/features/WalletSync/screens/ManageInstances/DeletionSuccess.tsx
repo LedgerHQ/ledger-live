@@ -23,7 +23,7 @@ export function WalletSyncManageInstanceDeletionSuccess({ navigation, route }: P
       button: AnalyticsButton.Close,
       page: AnalyticsPage.RemoveInstanceSuccess,
     });
-    navigation.navigate(NavigatorName.Settings, {
+    navigation.popTo(NavigatorName.Settings, {
       screen: ScreenName.GeneralSettings,
     });
   }

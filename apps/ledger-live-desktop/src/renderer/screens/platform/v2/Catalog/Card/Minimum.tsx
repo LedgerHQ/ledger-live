@@ -15,10 +15,10 @@ export function MinimumCard(props: PropsCard<RecentlyUsedManifest | LiveAppManif
 
   const lang = useSelector(languageSelector);
   const usedAt = useMemo(() => {
-    if ("usedAt" in manifest) {
+    if ("usedAt" in manifest && manifest.usedAt.unit) {
       const rtf = new Intl.RelativeTimeFormat(lang);
       return rtf.format(-manifest.usedAt.diff, manifest.usedAt.unit);
-    } else return;
+    }
   }, [lang, manifest]);
 
   return (
