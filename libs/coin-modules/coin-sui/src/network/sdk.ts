@@ -47,7 +47,6 @@ import { SUI_SYSTEM_STATE_OBJECT_ID } from "@mysten/sui/utils";
 import { getCurrentSuiPreloadData } from "../bridge/preload";
 import { ONE_SUI } from "../constants";
 import { getInputObjects } from "@mysten/signers/ledger";
-import bs58 from "bs58";
 
 const apiMap: Record<string, SuiClient> = {};
 type AsyncApiFunction<T> = (api: SuiClient) => Promise<T>;
