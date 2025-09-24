@@ -3846,6 +3846,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
         token: "https://scan.coredao.org/token/$address",
       },
     ],
+    tokenTypes: ["erc20"],
   },
   fantom: {
     type: "CryptoCurrency",
