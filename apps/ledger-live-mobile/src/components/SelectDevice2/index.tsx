@@ -34,15 +34,11 @@ import {
   filterScannedDevice,
   findMatchingNewDevice,
   useBleDevicesScanning,
-  useDeviceManagementKitEnabled,
 } from "@ledgerhq/live-dmk-mobile";
-import getBLETransport from "../../react-native-hw-transport-ble";
-import { useBleDevicesScanning as useLegacyBleDevicesScanning } from "@ledgerhq/live-common/ble/hooks/useBleDevicesScanning";
 import styled from "styled-components/native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { DisplayedDevice } from "./DisplayedDevice";
 import BleDeviceNotAvailableDrawer from "./BleDeviceNotAvailableDrawer";
-import { mapLegacyScannedDeviceToScannedDevice } from "./mapLegacyScannedDeviceToScannedDevice";
 import { TAB_BAR_HEIGHT } from "../TabBar/shared";
 import { lastConnectedDeviceSelector } from "~/reducers/settings";
 import { useAutoSelectDevice } from "./useAutoSelectDevice";
@@ -137,33 +133,15 @@ export default function SelectDevice({
   const bleKnownDevices = useSelector(bleDevicesSelector);
   const navigation = useNavigation<Navigation["navigation"]>();
 
-  const isLDMKEnabled = useDeviceManagementKitEnabled();
-
-  const { scannedDevices: legacyScannedDevices } = useLegacyBleDevicesScanning({
-    bleTransportListen: getBLETransport({ isLDMKEnabled }).listen,
-    stopBleScanning,
-    enabled: !isLDMKEnabled,
-  });
-
   const [deviceToCheckLockedStatus, setDeviceToCheckLockedStatus] = useState<Device | null>(null);
 
   const [pairingFlowStep, setPairingFlowStep] = useState<PairingFlowStep | null>(null);
 
   const bleScanningState = useBleDevicesScanning(
-    isLDMKEnabled &&
-      isFocused &&
-      !stopBleScanning &&
-      pairingFlowStep !== "pairing" &&
-      !deviceToCheckLockedStatus,
+    isFocused && !stopBleScanning && pairingFlowStep !== "pairing" && !deviceToCheckLockedStatus,
   );
 
-  const scannedDevices = useMemo(
-    () =>
-      isLDMKEnabled
-        ? bleScanningState.scannedDevices
-        : legacyScannedDevices.map(mapLegacyScannedDeviceToScannedDevice),
-    [isLDMKEnabled, bleScanningState.scannedDevices, legacyScannedDevices],
-  );
+  const scannedDevices = bleScanningState.scannedDevices;
 
   const filteredScannedDevices = useMemo(() => {
     return scannedDevices.filter(device =>

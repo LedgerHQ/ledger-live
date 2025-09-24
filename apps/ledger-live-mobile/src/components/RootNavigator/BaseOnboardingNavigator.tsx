@@ -1,63 +1,22 @@
-import React, { useCallback, useMemo } from "react";
+import React, { useMemo } from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useTranslation } from "~/context/Locale";
 import { useTheme } from "styled-components/native";
-import { TouchableOpacity } from "react-native";
 import { ScreenName, NavigatorName } from "~/const";
-import PairDevices from "~/screens/PairDevices";
 import EditDeviceName from "~/screens/EditDeviceName";
 import OnboardingNavigator from "./OnboardingNavigator";
 import { SyncOnboardingNavigator } from "./SyncOnboardingNavigator";
 import PasswordAddFlowNavigator from "./PasswordAddFlowNavigator";
 import PasswordModifyFlowNavigator from "./PasswordModifyFlowNavigator";
 import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
-import Question from "~/icons/Question";
 import BuyDeviceNavigator from "./BuyDeviceNavigator";
 import { BaseOnboardingNavigatorParamList } from "./types/BaseOnboardingNavigator";
-import { StackNavigatorProps } from "./types/helpers";
-import { BaseNavigatorStackParamList } from "./types/BaseNavigator";
-import { NavigationHeaderBackButton } from "../NavigationHeaderBackButton";
 import WalletSyncNavigator from "LLM/features/WalletSync/WalletSyncNavigator";
 import ReceiveFundsNavigator from "./ReceiveFundsNavigator";
 import DeviceSelectionNavigator from "LLM/features/DeviceSelection/Navigator";
 import AddAccountsV2Navigator from "LLM/features/Accounts/Navigator";
 import AccountSettingsNavigator from "./AccountSettingsNavigator";
 
-const hitSlop = {
-  bottom: 10,
-  left: 24,
-  right: 24,
-  top: 10,
-};
-
-type ErrorHeaderInfoNavigatorProps = StackNavigatorProps<
-  BaseNavigatorStackParamList,
-  ScreenName.PairDevices
->;
-
-export const ErrorHeaderInfo = ({ route, navigation }: ErrorHeaderInfoNavigatorProps) => {
-  const { colors } = useTheme();
-  const openInfoModal = useCallback(() => {
-    // FIXME: OnboardingInfoModal belongs to the "OnboardingNavigator", not the "BaseOnboardingNavigator"
-    // So I'm not sure if the redirection works at all.
-    // @ts-expect-error Typescript seems be right here…
-    navigation.navigate(ScreenName.OnboardingInfoModal, {
-      sceneInfoKey: "pairNewErrorInfoModalProps",
-    });
-  }, [navigation]);
-
-  return route.params?.hasError ? (
-    <TouchableOpacity
-      style={{
-        marginRight: 24,
-      }}
-      hitSlop={hitSlop}
-      onPress={openInfoModal}
-    >
-      <Question size={20} color={colors.neutral.c70} />
-    </TouchableOpacity>
-  ) : null;
-};
 export default function BaseOnboardingNavigator() {
   const { t } = useTranslation();
   const { colors } = useTheme();
@@ -102,17 +61,6 @@ export default function BaseOnboardingNavigator() {
         name={NavigatorName.DeviceSelection}
         component={DeviceSelectionNavigator}
         options={{ headerShown: false }}
-      />
-
-      <Stack.Screen
-        name={ScreenName.PairDevices}
-        component={PairDevices}
-        options={{
-          title: "",
-          headerLeft: () => <NavigationHeaderBackButton />,
-          headerRight: () => null,
-          headerShown: true,
-        }}
       />
       <Stack.Screen
         name={ScreenName.EditDeviceName}
