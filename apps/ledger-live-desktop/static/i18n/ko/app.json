@@ -165,9 +165,8 @@
     "type" : {
       "IN" : "수령됨",
       "OUT" : "전송됨",
-      "NFT_IN" : "NFT 수령됨",
-      "NFT_OUT" : "NFT 전송됨",
       "CREATE" : "생성됨",
+      "UNKNOWN" : "알려지지 않음",
       "REVEAL" : "숨김 해제",
       "DELEGATE" : "위임됨",
       "REDELEGATE" : "재위임됨",
@@ -1437,11 +1436,6 @@
       }
     }
   },
-  "hideNftCollection" : {
-    "title" : "NFT 컬렉션 숨기기",
-    "desc" : "이 작업은 <1><0>{{collectionName}}</0></1> 컬렉션에서 모든 NFT를 숨기며 <3>설정</3>을 사용하여 다시 표시할 수 있습니다",
-    "hideCTA" : "NFT 컬렉션 숨기기"
-  },
   "banners" : {
     "cleanCache" : {
       "title" : "실험적 설정을 변경하려면 캐시 삭제가 필요합니다",
@@ -1708,50 +1702,6 @@
       "browseAssets" : "자산 찾기"
     }
   },
-  "NFT" : {
-    "viewer" : {
-      "actions" : {
-        "send" : "전송",
-        "open" : "{{viewer}}에서 열기"
-      },
-      "attributes" : {
-        "properties" : "속성",
-        "description" : "설명",
-        "tokenAddress" : "토큰 주소",
-        "tokenId" : "토큰 ID",
-        "quantity" : "수량",
-        "floorPrice" : "가격 하한선"
-      }
-    },
-    "collections" : {
-      "title" : "NFT(대체 불가능한 토큰) 컬렉션",
-      "receiveCTA" : "NFT 수령",
-      "galleryCTA" : "갤러리 보기",
-      "seeMore" : "더 많은 컬렉션 보기",
-      "seeAll" : "모든 컬렉션 보기",
-      "seeLess" : "줄이기",
-      "placeholder" : "NFT를 추가하려면 {{currency}} 주소로 보내면 됩니다."
-    },
-    "gallery" : {
-      "title" : "모든 NFT",
-      "collection" : {
-        "header" : {
-          "sendCTA" : "전송",
-          "contract" : "계약: {{contract}}"
-        },
-        "operationList" : {
-          "header" : "최신 운영",
-          "OUT" : "전송됨",
-          "IN" : "수령됨"
-        }
-      },
-      "tokensList" : {
-        "item" : {
-          "tokenId" : "ID: {{tokenId}}"
-        }
-      }
-    }
-  },
   "tokensList" : {
     "title" : "토큰",
     "cta" : "토큰 추가",
@@ -1863,12 +1813,6 @@
     "internalOpTooltip" : "이 거래는 내부 거래입니다",
     "details" : "{{ currency }} 세부정보",
     "multipleAddresses" : "왜 주소가 여러 개인가요?",
-    "nft" : {
-      "name" : "토큰명",
-      "contract" : "토큰 계약",
-      "id" : "토큰 (NFT) ID",
-      "quantity" : "수량"
-    },
     "extra" : {
       "frozenAmount" : "동결 금액",
       "unfreezeAmount" : "동결 해제 금액",
@@ -2350,12 +2294,10 @@
   },
   "send" : {
     "title" : "전송",
-    "titleNft" : "NFT 보내기",
     "totalSpent" : "입금할 총액",
     "steps" : {
       "recipient" : {
         "title" : "수령인",
-        "nftRecipient" : "보낼 NFT",
         "verifyAddress" : "주소가 수령인이 공유한 것과 일치하는지 확인하세요.",
         "domainService" : {
           "resolve" : "이는 다음 주소에 연결된 유효한 ENS입니다.",
@@ -2380,8 +2322,7 @@
         "banner" : "최대 사용 가능 금액은",
         "fees" : "수수료 자세히 알아보기",
         "standard" : "스탠다드",
-        "advanced" : "고급",
-        "nftQuantity" : "수량"
+        "advanced" : "고급"
       },
       "summary" : {
         "title" : "요약"
@@ -2425,8 +2366,7 @@
         "nextBlock" : "다음 블록",
         "suggested" : "추천",
         "unitVByte" : "{{unit}}/vbyte",
-        "nft" : "NFT",
-        "nftQuantity" : "수량",
+        "unitPerByte" : "{{unit}}/바이트",
         "splExtensionsWarning" : "현재 사용 중인 토큰은 토큰 확장 프로그램(Token Extensions)으로도 알려진 토큰-2022 프로그램의 일부입니다. 이 토큰은 몇 가지 리스크가 수반됩니다. <0>여기</0>를 클릭하여 자세히 알아보세요."
       },
       "verification" : {
@@ -4531,11 +4471,6 @@
       "debugAppsDesc" : "디버그 태그된 플랫폼 앱 열기를 표시하고 허용하세요.",
       "debugReactQuery" : "디버그 ReactQuery 허용",
       "debugReactQueryDesc" : "디버그 ReactQuery 콘솔을 표시하고 열 수 있도록 허용합니다.",
-      "nfts" : {
-        "title" : "숨겨진 NFT 컬렉션",
-        "description" : "숨겨진 컬렉션 목록을 재설정하세요",
-        "reset" : "재설정 ({{count}})"
-      },
       "exchangeDeveloperMode" : {
         "title" : "거래소 개발 모드",
         "desc" : "거래소 공급자 정보 추가",
@@ -4575,135 +4510,39 @@
           }
         }
       },
-      "debugSimpleHash" : {
-        "testSimpleHash" : {
-          "title" : "SimpleHash 도구",
-          "description" : "SimpleHash를 사용해 유용한 도구 제공",
-          "cta" : "열기",
-          "tabs" : {
-            "spam" : "스팸 신고",
-            "refresh" : "메타데이터 갱신",
-            "check" : "스팸 점수"
-          }
+      "mockAccounts" : {
+        "title" : "모의 계좌 생성",
+        "description" : "테스트용 모의 계좌를 생성합니다. 이 도구를 사용하면 다양한 통화와 구성으로 테스트 계좌를 만들 수 있습니다.",
+        "customGenerate" : {
+          "title" : "Custom generation",
+          "desc" : "Select currencies and add tokens"
         },
-        "mockAccounts" : {
-          "title" : "모의 계좌 생성",
-          "description" : "테스트용 모의 계좌를 생성합니다. 이 도구를 사용하면 다양한 통화와 설정으로 테스트 계좌를 만들 수 있습니다.",
-          "customGenerate" : {
-            "title" : "맞춤 생성",
-            "desc" : "특정 통화를 선택하고 토큰을 추가합니다."
-          },
-          "quickGenerate" : {
-            "title" : "빠른 생성",
-            "desc" : "무작위 통화로 구성된 계좌 10개를 자동 생성합니다."
-          },
-          "currencySelector" : {
-            "placeholder" : "통화 선택",
-            "searchPlaceholder" : "통화 검색",
-            "noCurrenciesFound" : "검색 결과가 없습니다",
-            "noCurrenciesAvailable" : "사용 가능한 통화가 없습니다",
-            "selectedCount" : "{{count}}개 통화 선택됨",
-            "selectedCount_other" : "{{count}}개 통화 선택됨"
-          },
-          "tokenIds" : {
-            "label" : "토큰 ID(선택 사항)",
-            "placeholder" : "token1, token2, token3"
-          },
-          "buttons" : {
-            "generateAccounts" : "계좌 {{count}}개 생성",
-            "generateAccounts_other" : "계좌 {{count}}개 생성",
-            "generateAccountsQuick" : "계좌 {{count}}개 생성"
-          },
-          "alerts" : {
-            "selectCurrency" : "통화를 1개 이상 선택하세요.",
-            "confirmErase" : "기존 계좌가 삭제됩니다. 계속하시겠습니까?",
-            "generateError" : "모의 계좌 생성에 실패했습니다. 다시 시도해 주세요."
-          }
+        "quickGenerate" : {
+          "title" : "Quick generation",
+          "desc" : "무작위 통화로 구성된 계좌 10개를 자동 생성합니다."
         },
-        "debugSpamNft" : {
-          "report" : "신고하기",
-          "contractAddress" : "계약 주소",
-          "contractAddressDesc" : "보고된 NFT의 contract_address 또는 계약 자체",
-          "chainId" : "체인 ID",
-          "chainIdDesc" : "보고된 NFT 또는 계약의 chain_id(예: 이더리움)",
-          "collectionId" : "컬렉션 ID",
-          "collectionIdDesc" : "보고된 NFT의 SimpleHash 컬렉션 ID",
-          "tokenId" : "토큰 ID",
-          "tokenIdDesc" : "보고된 NFT의 token_id",
-          "eventType" : "이벤트 유형",
-          "eventTypeDesc" : "작성하려는 보고서 유형",
-          "success" : "보고서가 성공적으로 전송되었습니다. 적용되는 데 5~10분 정도 걸릴 수 있습니다.",
-          "error" : "보고서를 보내는 동안 오류가 발생했습니다. 나중에 다시 시도해 주세요.",
-          "reportType" : {
-            "title" : "무엇을 신고하시겠습니까?",
-            "desc" : "작성하려는 보고서 유형을 선택하세요.",
-            "individual" : "개별 NFT에 대한 스팸 신고",
-            "contract" : "계약에 대한 스팸 신고",
-            "collection" : "컬렉션에 대한 스팸 신고"
-          }
+        "currencySelector" : {
+          "placeholder" : "통화 선택",
+          "searchPlaceholder" : "검색",
+          "noCurrenciesFound" : "검색 결과가 없습니다",
+          "noCurrenciesAvailable" : "사용 가능한 통화가 없습니다",
+          "selectedCount" : "{{count}}개 통화 선택됨",
+          "selectedCount_other" : "{{count}}개 통화 선택됨"
         },
-        "debugRefreshMetadata" : {
-          "refresh" : "새로고침",
-          "contractAddress" : "계약 주소",
-          "contractAddressDesc" : "갱신된 NFT의 contract_address 또는 계약 자체",
-          "chainId" : "체인 ID",
-          "chainIdDesc" : "갱신된 NFT 또는 계약의 chain_id(예: 이더리움)",
-          "tokenId" : "토큰 ID",
-          "tokenIdDesc" : "갱신된 NFT의 token_id",
-          "success" : "갱신 내용이 성공적으로 전송되었습니다. 적용되는 데 5~10분 정도 걸릴 수 있습니다.",
-          "error" : "갱신 내용을 전송하는 중에 오류가 발생했습니다. 나중에 다시 시도해 주세요.",
-          "refreshType" : {
-            "desc" : "무엇을 갱신하시겠습니까?",
-            "nft" : "개별 NFT에 대한 메타데이터 갱신",
-            "contract" : "계약에 대한 메타데이터 갱신"
-          }
+        "tokenIds" : {
+          "label" : "토큰 ID(선택 사항)",
+          "placeholder" : "token1, token2, token3"
         },
-        "debugCheckSpamScore" : {
-          "check" : "점검",
-          "contractAddress" : "계약 주소",
-          "contractAddressDesc" : "점검된 NFT의 contract_address 또는 계약 자체",
-          "chainId" : "체인 ID",
-          "chainIdDesc" : "점검된 NFT 또는 계약의 chain_id(예: 이더리움)",
-          "tokenId" : "토큰 ID",
-          "tokenIdDesc" : "점검된 NFT의 token_id",
-          "result" : {
-            "title" : "이 계약의 스팸 점수는 {{score}}입니다.",
-            "desc" : "점수는 0부터 100까지의 숫자 값으로, 0은 스팸이 아님을 뜻하고, 100은 스팸 가능성이 있음을 뜻합니다.\n 응답이 null인 경우, 컬렉션에 점수를 매기기에 충분한 정보가 없거나, 해당 컬렉션 평가가 완료되지 않은 것입니다."
-          },
-          "error" : "요청을 보내는 동안 오류가 발생했습니다. 나중에 다시 시도해 주세요.",
-          "refreshType" : {
-            "desc" : "무엇을 점검하시겠습니까?",
-            "nft" : "개별 NFT",
-            "contract" : "계약"
-          }
+        "buttons" : {
+          "generateAccounts" : "계좌 {{count}}개 생성",
+          "generateAccounts_other" : "계좌 {{count}}개 생성",
+          "generateAccountsQuick" : "계좌 {{count}}개 생성"
         },
-        "back" : "돌아가기"
-      },
-      "debugNfts" : {
-        "title" : "NFT 도구",
-        "description" : "Ledger Live에서 NFT 처리를 위한 유용한 도구 제공",
-        "cta" : "열기",
-        "tabs" : {
-          "config" : "구성",
-          "generatorAndDestructor" : "생성 & 삭제"
-        },
-        "configuration" : {
-          "supported" : "지원되는 NFT 체인",
-          "supported_other" : "지원되는 NFT 체인",
-          "nms" : {
-            "title" : "NFT 메타데이터 서비스 (NMS)",
-            "env" : "환경: {{env}}"
-          }
-        },
-        "generatorAndDestructor" : {
-          "genAcc" : "계정 생성",
-          "genAccDesc" : "NFT로 계정 생성",
-          "cta" : "생성",
-          "deleteAcc" : "계정 삭제",
-          "deleteAccDesc" : "스토어에서 모든 계정 삭제",
-          "delete" : "삭제"
-        },
-        "back" : "돌아가기"
+        "alerts" : {
+          "selectCurrency" : "통화를 1개 이상 선택하세요.",
+          "confirmErase" : "Existing accounts will be erased. Continue?",
+          "generateError" : "모의 계좌 생성에 실패했습니다. 다시 시도해 주세요."
+        }
       },
       "debugWalletSync" : {
         "title" : "Ledger 동기화 디버거",
@@ -4786,8 +4625,6 @@
       "runLocalAppOpenButton" : "열기",
       "enableLearnStagingUrl" : "페이지 스테이징 URL 알아보기",
       "enableLearnStagingUrlDesc" : "학습 페이지의 스테이징 URL을 활성화합니다.",
-      "enableStagingNftMetadataService" : "NFT 메타데이터 서비스 스테이징",
-      "enableStagingNftMetadataServiceDesc" : "NFT 메타데이터 서비스 스테이징 활성화 및 NFT 캐시 재설정",
       "openOnboardingAppInstallDebug" : "온보딩 앱 설치 디버그 화면 열기",
       "openOnboardingAppInstallDebugDesc" : "동기화 온보딩 앱 설치 단계의 구성 요소가 있는 화면을 엽니다."
     },
@@ -4968,18 +4805,6 @@
         "desc" : "상위 계정으로 이동한 후 토큰을 오른쪽 마우스 클릭하여 '토큰 숨기기'를 선택하면 토큰을 숨길 수 있습니다.",
         "count" : "1개의 토큰",
         "count_other" : "{{count}}개의 토큰"
-      },
-      "hiddenNftCollections" : {
-        "title" : "숨겨진 NFT 컬렉션",
-        "desc" : "컬렉션 이름을 마우스 오른쪽 버튼으로 클릭하고 'NFT 컬렉션 숨기기'를 선택하여 NFT 컬렉션을 숨길 수 있습니다.",
-        "count" : "1개의 컬렉션",
-        "count_other" : "{{count}}개의 컬렉션"
-      },
-      "hiddenOrdinalsAsset" : {
-        "title" : "숨겨진 인스크립션",
-        "desc" : "인스크립션을 마우스 오른쪽 버튼으로 클릭하고 '인스크립션 숨기기'를 선택하여 인스크립션을 숨길 수 있습니다.",
-        "count" : "1개의 인스크립션",
-        "count_other" : "{{count}}개의 인스크립션"
       },
       "fullNode" : {
         "title" : "비트코인 풀 노드 연결",
@@ -5866,6 +5691,10 @@
       "commentPlaceholder" : "선택 사항",
       "comment" : "코멘트"
     },
+    "canton" : {
+      "commentPlaceholder" : "선택 사항",
+      "comment" : "코멘트"
+    },
     "stellar" : {
       "memo" : "메모",
       "memoType" : {
@@ -6313,6 +6142,10 @@
       "title" : "문제가 발생했습니다",
       "description" : "트랜잭션을 수행하지 못했습니다. 다시 시도해 주세요."
     },
+    "TransactionCannotBeCreated" : {
+      "title" : "처리 오류",
+      "description" : "Changelly에서 처리할 수 없는 트랜잭션입니다. 오류 코드 8HBB{{errorCode}}"
+    },
     "TimeoutError" : {
       "title" : "죄송하지만 서버 응답에 너무 많은 시간이 소요되었습니다",
       "description" : "다시 시도해 주세요."
@@ -6447,10 +6280,6 @@
       "title" : "자동 확인을 사용할 수 없습니다: 주소를 신중하게 확인해주세요",
       "description" : null
     },
-    "EthAppNftNotSupported" : {
-      "title" : "이 장치에서 사용할 수 없는 작업",
-      "description" : "NFT 보내기 기능은 Nano X 및 Nano S+에서만 사용할 수 있습니다. Nano S로 NFT를 보내는 방법을 알아보려면 고객 지원 플랫폼을 방문하세요."
-    },
     "TransactionHasBeenValidatedError" : {
       "title" : "속도를 높이거나 취소할 수 없음",
       "description" : "이 트랜잭션은 이미 검증되었습니다"
@@ -6461,6 +6290,9 @@
     },
     "TonCommentInvalid" : {
       "title" : "코멘트는 120자를 초과할 수 없으며, 특수문자를 사용해서는 안 됩니다."
+    },
+    "CantonCommentInvalid" : {
+      "title" : "코멘트는 120자를 초과할 수 없으며, 특수문자를 사용할 수 없습니다."
     },
     "CantScanQRCode" : {
       "title" : "이 QR 코드를 스캔할 수 없습니다: 이 주소는 자동 확인을 지원하지 않습니다"
@@ -6736,9 +6568,6 @@
       "title" : "토큰은 전송할 수 없습니다",
       "description" : "그러한 토큰은 \"소울 바운드\" 토큰으로, 전송이나 소각이 불가능합니다."
     },
-    "NotEnoughNftOwned" : {
-      "title" : "사용 가능한 토큰 수를 초과했습니다"
-    },
     "CardanoMinAmountError" : {
       "title" : "전송할 수 있는 최소 금액은 {{amount}} ADA입니다"
     },
@@ -6824,10 +6653,6 @@
       "title" : "파일 이미지 로딩 실패",
       "description" : "다른 이미지로 다시 시도하세요"
     },
-    "ImageLoadFromNftError" : {
-      "title" : "NFT 이미지 로딩 실패",
-      "description" : "다른 NFT로 다시 시도하세요"
-    },
     "ImageDownloadError" : {
       "title" : "이미지 다운로드 실패",
       "description" : "다른 이미지로 다시 시도하세요"
@@ -6853,11 +6678,11 @@
       "description" : "다른 이미지로 다시 시도하세요"
     },
     "ImageCommitRefusedOnDevice" : {
-      "title" : "{{productName}}에서 잠금 화면 사진 복구가\n취소되었습니다",
+      "title" : "{{productName}}에서 잠금 화면 이미지가 삭제되었습니다",
       "description" : "실수였다면 지금 바로 다시 시도하세요."
     },
     "ImageLoadRefusedOnDevice" : {
-      "title" : "{{productName}}에서 잠금 화면 사진 복구가\n취소되었습니다",
+      "title" : "{{productName}}에서 잠금 화면 이미지가 취소되었습니다\n",
       "description" : "실수였다면 지금 바로 다시 시도하세요."
     },
     "ImageDoesNotExistOnDevice" : {
@@ -7182,20 +7007,14 @@
     "steps" : {
       "choose" : {
         "stepLabel" : "사진 선택",
-        "description" : "(...)로 설정할 이미지 선택",
-        "pickFromNftGallery" : "내 NFT 갤러리에서 선택",
-        "myNfts" : "내 NFT",
+        "description" : "디지털 아트나 사진으로\n나만의 {{productName}} 장치를\n만들어 보세요.",
         "upload" : "컴퓨터에서 업로드",
-        "chooseNft" : "NFT 선택하기",
-        "remove" : "현재 사진 삭제",
-        "selectNft" : "NFT 선택",
-        "nftEmptyStateTitle" : "아직 표시할 NFT가 없습니다",
-        "nftEmptyStateDescription" : "지갑에 NFT를 추가하고 시작하세요."
+        "remove" : "현재 사진 삭제"
       },
       "adjust" : {
         "stepLabel" : "잘라내기",
         "rotate" : "회전",
-        "confirmCrop" : "크롭한 이미지를 확인하세요"
+        "confirmCrop" : "크롭 적용"
       },
       "contrast" : {
         "stepLabel" : "대비 설정",
@@ -7206,7 +7025,7 @@
         "useAnotherPicture" : "다른 사진을 업로드하세요",
         "allowPreview" : "잠금 화면 사진을 사용자 정의하려면\n\"사진 로드\"를 탭하세요",
         "allowConfirmPreview" : "잠금 화면 사진을 복구하려면\n\"사진 로드\"를 탭하세요",
-        "loadingPicture" : "설치 중...",
+        "loadingPicture" : "로딩 중...",
         "voila" : "짜잔!",
         "imageLoaded" : "{{productName}}에서 로드한 이미지",
         "confirmPicture" : "마음에 드시나요?\n그러면 저장하세요!",
@@ -7265,9 +7084,9 @@
   "webview" : {
     "networkError" : {
       "title" : "네트워크 오류",
-      "subtitle" : "문제가 발생했습니다. 다시 시도해주세요. 문제가 지속될 경우, 로그를 저장하고 Ledger 지원 부서에 연락하세요.",
+      "subtitle" : "문제가 발생했습니다. 다시 시도해주세요. 문제가 지속될 경우, 로그를 저장하고 Ledger 지원팀으로 문의하세요.",
       "contactSupport" : "Ledger 지원 부서에 문의해주세요",
-      "saveLog" : "로그 저장"
+      "saveLog" : "로그 저장하기"
     },
     "noAccounts" : {
       "title" : "이 앱에 액세스하려면 계정이 필요합니다.",
@@ -7500,95 +7319,6 @@
     "deviceAction" : {
       "title" : "Ledger {{wording}}에서 계속하세요",
       "description" : "Ledger의 신뢰할 수 있는 디스플레이에 표시되는 지침을 따르세요."
-    }
-  },
-  "ordinals" : {
-    "inscriptions" : {
-      "seeMore" : "더 많은 인스크립션 보기",
-      "empty" : "내 비트코인 주소로 전송하여 간편하게 인스크립션을 추가할 수 있습니다.",
-      "receive" : "인스크립션 받기",
-      "hide" : "인스크립션 숨기기",
-      "modal" : {
-        "title" : "인스크립션 숨기기",
-        "desc" : "이 조치는 사용자 개정에서 다음 인스크립션 <0>{{inscriptionName}}</0>(을)를 숨깁니다. 언제든지 설정에서 숨김을 해제할 수 있습니다."
-      },
-      "discoveryDrawer" : {
-        "title" : "Ordinals 살펴보기",
-        "description" : "내가 가치 있는 Rare Sat나 인스크립션을 보유 중일 수 있다는 사실, 알고 계시나요?",
-        "learnMore" : "자세히 알아보기",
-        "protectTitle" : "Ordinals 자산 보호",
-        "protectDescription" : "트랜잭션에서 Ordinals 자산을 제외하세요."
-      },
-      "detailsDrawer" : {
-        "description" : "설명",
-        "collectionName" : "컬렉션명",
-        "inscriptionId" : "인스크립션 ID",
-        "inscriptionNumber" : "인스크립션 번호",
-        "mintedTo" : "민팅 대상",
-        "genesisTx" : "제네시스 트랜잭션",
-        "blockNumber" : "블록 번호",
-        "contentType" : "콘텐츠 유형",
-        "createdDate" : "생성 일자",
-        "satribute" : "Sat 희귀성",
-        "satNumber" : "Sat 번호",
-        "satName" : "Sat 이름",
-        "location" : "위치",
-        "outputValue" : "산출값",
-        "storedOnChain" : "온체인에 저장됨",
-        "hide" : "숨기기"
-      }
-    },
-    "rareSats" : {
-      "empty" : "내 Bitcoin 계정으로 전송하여 간편하게 Rare Sats를 추가할 수 있습니다.",
-      "receive" : "Rare Sat 받기",
-      "title" : "Rare Sats",
-      "table" : {
-        "type" : "Sat 유형 / 수량",
-        "year" : "년"
-      },
-      "rareSat" : {
-        "description" : {
-          "alpha" : "Alpha로 각 비트코인의 탄생에 대해 자세히 들여다 보고, 최초 발행된 사토시의 탄생을 기려보세요. 이 라벨은 비트코인 유닛의 시작을 나타냅니다.",
-          "black_epic" : "반감기 이벤트(약 4년마다 발생)의 마지막 사토시로, 반감기란 비트코인 채굴 보상이 반으로 줄어드는 시점을 말합니다.",
-          "black_legendary" : "Black Legendary에 대한 설명 없음",
-          "black_mythic" : "Black Mythic에 대한 설명 없음",
-          "black_rare" : "각 채굴 난이도 조정 기간이 끝날 때의 마지막 사토시를 나타냅니다.",
-          "black_uncommon" : "반감기 이벤트(약 4년마다 발생)의 마지막 사토시로, 반감기란 비트코인 채굴 보상이 반으로 줄어드는 시점을 말합니다.",
-          "block_9" : "블록 9는 비트코인 역사에서 독특한 특징을 가지고 있습니다. 가장 초기에 채굴된 블록 중 하나로, 여기에는 유통 중인 가장 오래된 SAT 중 일부가 포함되어 있습니다. 이 SAT는 모든 것의 시작, 다시 말해 비트코인의 탄생 직후와 실질적으로 연관이 있습니다.",
-          "block_9_450x" : "블록 9 450x로 시간을 거슬러 올라가 9번째 블록에서 최초의 비트코인에 해당하는 SAT에 주목해 보겠습니다. 비트코인 역사상 중요한 순간 중 하나가 펼쳐질 것입니다.",
-          "block_78" : "블록 78은 비트코인 역사의 연대기에서 매우 의미 있는 위치에 존재합니다. 이 블록은 Hal Finney가 채굴했으며, 이는 사토시 나카모토가 아닌 다른 사람이 블록체인의 성장에 기여한 첫 번째 사례이기 때문입니다.",
-          "block_286" : "사토시 나카모토가 채굴한 두 번째 비트코인 트랜잭션 사토시인 블록 286의 중요성에 대해 알아보세요. 이 사토시이야말로 여전히 수수께끼로 남아 있는 비트코인 창시자와 그 기원에 대한 신비감을 더합니다.",
-          "block_666" : "블록 666에 대한 설명 없음",
-          "common" : "일반 블록에 대한 설명 없음",
-          "epic" : "4년마다 비트코인 네트워크에는 채굴 보상이 절반으로 줄어드는 \"반감기\" 이벤트가 발생합니다. 각각의 반감기 에포크에서 최초로 발행되는 사토시는 \"에픽\"이라는 라벨이 붙어 비트코인 경제 모델에서 중요한 순간을 표시합니다.",
-          "first_tx" : "2009년 1월 12일, 사토시 나카모토가 할 피니(Hal Finney)라는 컴퓨터 과학자에게 10개의 비트코인을 보냈는데,  이는 최초의 비트코인 트랜잭션으로 역사에 기록되었습니다. 이 상징적인 트랜잭션에서 유래한 사토시에는 \"첫 번째 트랜잭션\"이라는 라벨이 붙어 비트코인 P2P 거래의 기원이 되었습니다.",
-          "hitman" : "Hitman에 대한 설명 없음",
-          "jpeg" : "JPEG를 통한 과거로의 여행. 이 사토시는 2010년 2월 24일 이미지에 대한 최초의 비트코인 트랜잭션과 연관이 있을 수 있습니다. 이 라벨은 혁신에 대한 이야기를 담고 있으며, 비트코인이 비전통적인 트랜잭션과 교환에 대한 초기 시도를 보여줍니다.",
-          "legacy" : "Legacy에 대한 설명 없음",
-          "legendary" : "Legendary에 대한 설명 없음",
-          "mythic" : "Mythic에 대한 설명 없음",
-          "nakamoto" : "비트코인의 창시자로 알려진 사토시 나카모토의 정체는 여전히 베일에 쌓여 있습니다. 사토시가 직접 채굴한 SAT는 이 라벨이 붙어 있어 수집가들에게 큰 인기를 끌고 있습니다.",
-          "omega" : "마지막 사토시인, Omega로 모든 비트코인의 시적 끝을 체험해보세요. 비트코인 유닛의 마지막 사토시.",
-          "paliblock" : "PaliBlock Palindrome에 대한 설명 없음",
-          "palindrome" : "앞뒤로 같은 숫자를 읽을 수 있는 모든 SAT를 장난스럽게 \"Palindrome\"이라고 부릅니다. 예를 들어, 12321 또는 45654로 번호가 매겨진 SAT가 이에 해당합니다. 이러한 고유한 숫자 속성은 라벨이 붙은 SAT에 희소성과 호기심을 더합니다.",
-          "palinception" : "각 SAT가 Palindrome의 배열을 형성하는 매혹적인 사토시 세계를 탐구해보세요. 이러한 복잡하게 구성된 SAT는 동일한 숫자로 구성된 매혹적인 태피스트리와 같습니다.",
-          "pizza" : "비트코인 커뮤니티에서 가장 상징적인 이야기 중 하나는 2010년 5월 22일에 파파존스 피자 두 개를 사기 위해 10,000비트코인을 지불한 프로그래머의 사례입니다. 이 사건은 비트코인 가치의 급격한 폭등을 보여주는 데 이용됩니다. 이 전설적인 트랜잭션에 사용된 SAT에는 \"피자\"라는 라벨이 붙어 있습니다.",
-          "rare" : "비트코인 네트워크는 블록이 약 10분마다 추가되도록 채굴 난이도를 주기적으로 조정합니다. 이러한 각 조정 기간의 첫 번째 SAT에는 \"Rare(진귀한)\"라고 표시됩니다. 이는 네트워크의 보안 및 합의 메커니즘이 끊임없이 진화한다는 사실을 잘 보여줍니다. ",
-          "uncommon" : "이 라벨은 모든 블록의 첫 번째 사토시에 붙습니다. 비트코인 블록체인에 약 10분마다 새로운 블록이 추가된다는 점을 감안할 때 이 SAT를 통해 해당 기간의 시작을 알 수 있습니다.",
-          "vintage" : "비트코인은 최초 1,000개의 블록으로 그 시작을 표시했습니다. 이 기간 내에 채굴된 SAT에는 \"Vintage\"라는 표식이 붙습니다."
-        }
-      }
-    },
-    "coinControl" : {
-      "amountToSend" : "전송 금액",
-      "of" : "/",
-      "excludeAssets" : "Ordinals 자산 배제",
-      "selectDesc" : "트랜잭션 시 사용할 UTXO를 선택하세요. 확인되지 않은 UTXO가 사용되지 않습니다.",
-      "utxos" : "UTXO",
-      "learnMore" : "이 설정 자세히 알아보기",
-      "confirm" : "확인",
-      "address" : "주소",
-      "transactionId" : "트랜잭션 ID"
     }
   },
   "lnsUpsell" : {
