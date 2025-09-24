@@ -61,9 +61,8 @@ export default class ManagerPage {
           : "notInstalled";
 
       await scrollToId(this.appRow(app), this.deviceInfoScrollView);
-      await expect(
-        element(by.id(this.appRow(app)).withDescendant(by.id(this.appState(app, status)))),
-      ).toBeVisible();
+      await expect(element(by.id(this.appRow(app)))).toBeVisible();
+      await expect(element(by.id(this.appState(app, status)))).toBeVisible();
     }
   }
 }
