@@ -2,14 +2,14 @@ import React, { useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import SettingsRow from "~/components/SettingsRow";
 import Switch from "~/components/Switch";
-import { setRtkConsoleEnabled } from "~/actions/settings";
-import { State } from "~/reducers/types";
+
+import { rtkDevPanelSelector, setRtkDevPanel } from "~/reducers/tools";
 
 const RtkConsoleRow = () => {
   const dispatch = useDispatch();
-  const enabled = useSelector((s: State) => s.settings.rtkConsoleEnabled ?? false);
+  const enabled = useSelector(rtkDevPanelSelector);
   const onToggle = useCallback(() => {
-    dispatch(setRtkConsoleEnabled(!enabled));
+    dispatch(setRtkDevPanel(!enabled));
   }, [dispatch, enabled]);
 
   return (

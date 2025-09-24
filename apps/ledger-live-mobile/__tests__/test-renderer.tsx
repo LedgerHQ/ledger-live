@@ -45,6 +45,7 @@ import StyleProvider from "~/StyleProvider";
 import CustomLiveAppProvider from "./CustomLiveAppProvider";
 import { getFeature } from "./featureFlags";
 import { assetsDataApi } from "@ledgerhq/live-common/modularDrawer/data/state-manager/api";
+import { INITIAL_STATE as TOOLS_INITIAL_STATE } from "~/reducers/tools";
 
 const INITIAL_STATE: State = {
   accounts: ACCOUNTS_INITIAL_STATE,
@@ -70,6 +71,7 @@ const INITIAL_STATE: State = {
   walletSync: WALLETSYNC_INITIAL_STATE,
   auth: AUTH_INITIAL_STATE,
   assetsDataApi: assetsDataApi.reducer(undefined, { type: "INIT" }),
+  tools: TOOLS_INITIAL_STATE,
 };
 
 type ExtraOptions = RenderOptions & {
