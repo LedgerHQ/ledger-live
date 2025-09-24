@@ -100,6 +100,7 @@ import getOrCreateUser from "./user";
 import { FIRST_PARTY_MAIN_HOST_DOMAIN } from "./utils/constants";
 import useNativeStartupInfo from "./hooks/useNativeStartupInfo";
 import { ConfigureDBSaveEffects } from "./components/DBSave";
+import { useRef } from "react";
 
 if (Config.DISABLE_YELLOW_BOX) {
   LogBox.ignoreAllLogs();
@@ -132,6 +133,7 @@ function App() {
   const hasSeenAnalyticsOptInPrompt = useSelector(hasSeenAnalyticsOptInPromptSelector);
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
   const isOnboardingFlow = useSelector(isOnboardingFlowSelector);
+  const initiatedIsOnboardingFlow = useRef<boolean>(isOnboardingFlow);
   const dmk = useDeviceManagementKit();
   const dispatch = useDispatch();
   const isTrackingEnabled = useSelector(trackingEnabledSelector);
@@ -184,11 +186,9 @@ function App() {
   ]);
 
   useEffect(() => {
-    if (isOnboardingFlow) {
+    if (initiatedIsOnboardingFlow.current) {
       dispatch(setIsOnboardingFlow(false));
     }
-    // set only on initialisation in case user exits onboarding early
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dispatch]);
 
   useEffect(() => {
