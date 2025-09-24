@@ -5,6 +5,7 @@ import { getAccount, getBalances, getRegistry } from "./sidecar";
 import mockServer, { SIDECAR_BASE_URL_TEST } from "./sidecar.mock";
 import * as node from "./node";
 import { SidecarAccountBalanceInfo, SidecarStakingInfo } from "./types";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 
 jest.mock("./node", () => ({
   fetchConstants: jest.fn(),
@@ -16,6 +17,7 @@ jest.mock("./node", () => ({
 beforeAll(() => mockServer.listen({ onUnhandledRequest: "error" }));
 afterEach(() => mockServer.resetHandlers());
 afterAll(() => mockServer.close());
+const currency = getCryptoCurrencyById("polkadot");
 
 describe("getAccount", () => {
   let balanceResponseStub: Partial<SidecarAccountBalanceInfo> = {};
@@ -31,7 +33,11 @@ describe("getAccount", () => {
       sidecar: {
         url: SIDECAR_BASE_URL_TEST,
       },
+      indexer: {
+        url: "https://polkadot.coin.ledger.com",
+      },
       metadataShortener: {
+        id: "dot",
         url: "",
       },
       metadataHash: {
@@ -249,9 +255,13 @@ describe("getBalances", () => {
         url: SIDECAR_BASE_URL_TEST,
       },
       metadataShortener: {
+        id: "dot",
         url: "",
       },
       metadataHash: {
+        url: "",
+      },
+      indexer: {
         url: "",
       },
     }));
@@ -295,10 +305,14 @@ describe("getRegistry", () => {
       node: {
         url: "https://httpbin.org/",
       },
+      indexer: {
+        url: "https://polkadot.coin.ledger.com",
+      },
       sidecar: {
         url: SIDECAR_BASE_URL_TEST,
       },
       metadataShortener: {
+        id: "dot",
         url: "",
       },
       metadataHash: {
@@ -310,7 +324,7 @@ describe("getRegistry", () => {
   });
 
   it("works", async () => {
-    const { registry, extrinsics } = await getRegistry();
+    const { registry, extrinsics } = await getRegistry(currency);
     expect(registry).not.toBeNull();
     expect(extrinsics).not.toBeNull();
   });

@@ -15,14 +15,13 @@ const ensureEnv = () => {
   }
 };
 
-export async function spawnChopsticksAndSidecar() {
+export async function spawnChopsticksAndSidecar(chopsticksConfig: string): Promise<void> {
   ensureEnv();
   console.log("Starting chopsticks and sidecar...");
-
   await compose.upAll({
     cwd,
     log: Boolean(process.env.DEBUG),
-    env: process.env,
+    env: { ...process.env, CHOPSTICKS_CONFIG: chopsticksConfig },
   });
 
   let chopsticksStarted = false;

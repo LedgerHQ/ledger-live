@@ -140,6 +140,9 @@ export type CurrencyFeatures = {
   currencyHyperevm: DefaultFeature;
   currencyCantonNetwork: DefaultFeature;
   currencyKaspa: DefaultFeature;
+  currencyWestend: DefaultFeature;
+  currencyAssetHubWestend: DefaultFeature;
+  currencyAssetHubPolkadot: DefaultFeature;
 };
 
 /**
