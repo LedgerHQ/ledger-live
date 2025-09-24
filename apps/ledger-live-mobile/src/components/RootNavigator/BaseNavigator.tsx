@@ -93,6 +93,7 @@ import AssetSelectionNavigator from "LLM/features/AssetSelection/Navigator";
 import AssetsListNavigator from "LLM/features/Assets/Navigator";
 import FeesNavigator from "./FeesNavigator";
 import { getStakeLabelLocaleBased } from "~/helpers/getStakeLabelLocaleBased";
+import { getReceiveStackOptions } from "~/logic/getReceiveStackOptions";
 
 const Stack = createStackNavigator<BaseNavigatorStackParamList>();
 
@@ -112,6 +113,7 @@ export default function BaseNavigator() {
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector) && isAccountsEmpty;
   const web3hub = useFeature("web3hub");
   const llmAccountListUI = useFeature("llmAccountListUI");
+  const noah = useFeature("noah");
 
   return (
     <>
@@ -184,7 +186,12 @@ export default function BaseNavigator() {
         <Stack.Screen
           name={NavigatorName.ReceiveFunds}
           component={ReceiveFundsNavigator}
-          options={{ headerShown: false }}
+          options={({ route }) =>
+            getReceiveStackOptions({
+              route,
+              noahEnabled: noah?.enabled,
+            })
+          }
           {...noNanoBuyNanoWallScreenOptions}
         />
         <Stack.Screen
