@@ -8,7 +8,6 @@ import type {
   TransactionStatusCommon,
   TransactionStatusCommonRaw,
 } from "@ledgerhq/types-live";
-import { HEDERA_TRANSACTION_KINDS } from "../constants";
 
 export type NetworkInfo = {
   family: "hedera";
@@ -18,22 +17,41 @@ export type NetworkInfoRaw = {
   family: "hedera";
 };
 
-export type TokenAssociateProperties = {
-  name: typeof HEDERA_TRANSACTION_KINDS.TokenAssociate.name;
-  token: TokenCurrency;
-};
-
 export type Transaction = TransactionCommon & {
   family: "hedera";
   memo?: string | undefined;
-  properties?: TokenAssociateProperties;
-};
+} & (
+    | {
+        mode: "send";
+        properties?: never;
+      }
+    | {
+        mode: "token-associate";
+        assetReference: string;
+        assetOwner: string;
+        properties: {
+          token: TokenCurrency;
+        };
+      }
+  );
 
 export type TransactionRaw = TransactionCommonRaw & {
   family: "hedera";
   memo?: string | undefined;
-  properties?: TokenAssociateProperties;
-};
+} & (
+    | {
+        mode: "send";
+        properties?: never;
+      }
+    | {
+        mode: "token-associate";
+        assetReference: string;
+        assetOwner: string;
+        properties: {
+          token: TokenCurrency;
+        };
+      }
+  );
 
 export type TransactionStatus = TransactionStatusCommon;
 
@@ -61,6 +79,8 @@ export type HederaOperationExtra = {
   consensusTimestamp?: string;
   transactionId?: string;
   associatedTokenId?: string;
+  pagingToken?: string;
+  memo?: string | null;
 };
 
 export type HederaOperation = Operation<HederaOperationExtra>;

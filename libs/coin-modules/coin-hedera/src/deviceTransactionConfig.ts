@@ -1,7 +1,7 @@
 import type { AccountLike, Account } from "@ledgerhq/types-live";
-import type { Transaction, TransactionStatus } from "./types";
 import type { CommonDeviceTransactionField as DeviceTransactionField } from "@ledgerhq/coin-framework/transaction/common";
-import { isTokenAssociateTransaction } from "./logic";
+import { isTokenAssociateTransaction } from "./logic/utils";
+import type { Transaction, TransactionStatus } from "./types";
 
 function getDeviceTransactionConfig({
   transaction,

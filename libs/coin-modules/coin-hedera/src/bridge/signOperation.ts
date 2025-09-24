@@ -1,9 +1,17 @@
 import { Observable } from "rxjs";
-import { PublicKey } from "@hashgraph/sdk";
 import { Account, AccountBridge } from "@ledgerhq/types-live";
-import { buildOptimisticOperation } from "./buildOptimisticOperation";
-import { buildUnsignedTransaction } from "../api/network";
+import { AssetInfo } from "@ledgerhq/coin-framework/api/types";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
+import { findSubAccountById, isTokenAccount } from "@ledgerhq/coin-framework/account/helpers";
+import { buildOptimisticOperation } from "./buildOptimisticOperation";
+import { combine } from "../logic/combine";
+import { craftTransaction } from "../logic/craftTransaction";
+import {
+  serializeSignature,
+  serializeTransaction,
+  getHederaTransactionBodyBytes,
+  isTokenAssociateTransaction,
+} from "../logic/utils";
 import { Transaction, HederaSigner } from "../types";
 
 export const buildSignOperation =
@@ -18,18 +26,55 @@ export const buildSignOperation =
             type: "device-signature-requested",
           });
 
-          const hederaTransaction = await buildUnsignedTransaction({
-            account,
-            transaction,
-          });
+          let type: Transaction["mode"];
+          let asset: AssetInfo;
+          const accountAddress = account.freshAddress;
+          const accountPublicKey = account.seedIdentifier;
+          const subAccount = findSubAccountById(account, transaction.subAccountId || "");
+          const isTokenTransaction = isTokenAccount(subAccount);
 
-          const accountPublicKey = PublicKey.fromString(account.seedIdentifier);
+          if (isTokenAssociateTransaction(transaction)) {
+            type = "token-associate";
+            asset = {
+              type: "hts",
+              assetReference: transaction.properties.token.contractAddress,
+            };
+          } else if (isTokenTransaction) {
+            type = "send";
+            asset = {
+              type: subAccount.token.tokenType,
+              assetReference: subAccount.token.contractAddress,
+              assetOwner: accountAddress,
+            };
+          } else {
+            type = "send";
+            asset = {
+              type: "native",
+            };
+          }
 
-          const res = await signerContext(deviceId, async signer => {
-            await hederaTransaction.signWith(accountPublicKey, async bodyBytes => {
-              return await signer.signTransaction(bodyBytes);
+          const signedTx = await signerContext(deviceId, async signer => {
+            const { tx } = await craftTransaction({
+              type,
+              asset,
+              amount: BigInt(transaction.amount.toString()),
+              sender: accountAddress,
+              recipient: transaction.recipient,
+              memo: {
+                kind: "text",
+                type: "string",
+                value: transaction.memo ?? "",
+              },
             });
-            return hederaTransaction.toBytes();
+
+            const txBodyBytes = getHederaTransactionBodyBytes(tx);
+            const signatureBytes = await signer.signTransaction(txBodyBytes);
+
+            return combine(
+              serializeTransaction(tx),
+              serializeSignature(signatureBytes),
+              accountPublicKey,
+            );
           });
 
           o.next({
@@ -45,8 +90,7 @@ export const buildSignOperation =
             type: "signed",
             signedOperation: {
               operation,
-              // NOTE: this needs to match the inverse operation in js-broadcast
-              signature: Buffer.from(res).toString("base64"),
+              signature: signedTx,
             },
           });
 

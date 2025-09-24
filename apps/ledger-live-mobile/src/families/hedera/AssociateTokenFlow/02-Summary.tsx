@@ -6,7 +6,6 @@ import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransact
 import { Transaction } from "@ledgerhq/live-common/families/hedera/types";
 import { View, SafeAreaView, StyleSheet } from "react-native";
 import { findTokenByAddress } from "@ledgerhq/live-common/currencies/index";
-import { HEDERA_TRANSACTION_KINDS } from "@ledgerhq/live-common/families/hedera/constants";
 import { getMainAccount } from "@ledgerhq/coin-framework/account/helpers";
 import { useTheme } from "@react-navigation/native";
 import invariant from "invariant";
@@ -36,19 +35,21 @@ export default function Summary({ navigation, route }: Props) {
 
   const { tokenAddress } = route.params;
   const token = findTokenByAddress(tokenAddress);
-
-  invariant(account, "hedera: account is required");
   invariant(token, `hedera: token with address ${tokenAddress} is not available`);
+  invariant(account, "hedera: account is required");
+  const mainAccount = getMainAccount(account, parentAccount);
 
   const { transaction, status, bridgeError, bridgePending } = useBridgeTransaction(() => {
     const bridge = getAccountBridge(account, parentAccount);
     const transaction = bridge.createTransaction(account);
     const updatedTransaction = bridge.updateTransaction(transaction, {
+      mode: "token-associate",
+      assetReference: token.contractAddress,
+      assetOwner: mainAccount.freshAddress,
       properties: {
-        name: HEDERA_TRANSACTION_KINDS.TokenAssociate.name,
         token,
-      } satisfies Transaction["properties"],
-    });
+      },
+    } satisfies Partial<Transaction>);
 
     return {
       account,
@@ -64,7 +65,6 @@ export default function Summary({ navigation, route }: Props) {
     });
   }, [navigation, transaction, route]);
 
-  const mainAccount = getMainAccount(account, parentAccount);
   const transactionError = status.errors.transaction;
   const error = status.errors[Object.keys(status.errors)[0]];
 

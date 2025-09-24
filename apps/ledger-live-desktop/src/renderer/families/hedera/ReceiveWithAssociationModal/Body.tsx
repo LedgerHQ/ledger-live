@@ -8,12 +8,11 @@ import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index"
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import type { Transaction } from "@ledgerhq/live-common/families/hedera/types";
-import { isTokenAssociationRequired } from "@ledgerhq/live-common/families/hedera/logic";
-import { HEDERA_TRANSACTION_KINDS } from "@ledgerhq/live-common/families/hedera/constants";
+import { isTokenAssociationRequired } from "@ledgerhq/live-common/families/hedera/utils";
 import { UserRefusedOnDevice } from "@ledgerhq/errors";
 import type { Account, Operation, TokenAccount } from "@ledgerhq/types-live";
 import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { getAccountCurrency } from "@ledgerhq/live-common/account/helpers";
+import { getAccountCurrency, getMainAccount } from "@ledgerhq/live-common/account/helpers";
 import Track from "~/renderer/analytics/Track";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 import { accountsSelector } from "~/renderer/reducers/accounts";
@@ -143,6 +142,7 @@ const Body = ({
 
   const currency = getAccountCurrency(account);
   const currencyName = currency ? currency.name : undefined;
+  const mainAccount = getMainAccount(account, parentAccount);
 
   const {
     transaction,
@@ -165,17 +165,21 @@ const Body = ({
   });
 
   const getTransactionProperties = useCallback(
-    (token: TokenCurrency | undefined | null): Transaction["properties"] | null => {
+    (token: TokenCurrency | undefined | null): Partial<Transaction> => {
       if (!token) {
-        return null;
+        return {};
       }
 
       return {
-        name: HEDERA_TRANSACTION_KINDS.TokenAssociate.name,
-        token,
+        mode: "token-associate",
+        assetReference: token.contractAddress,
+        assetOwner: mainAccount.freshAddress,
+        properties: {
+          token,
+        },
       };
     },
-    [],
+    [mainAccount],
   );
 
   const handleChangeAccount = useCallback(
@@ -183,9 +187,8 @@ const Body = ({
       setAccount(account);
       setParentAccount(parentAccount);
 
-      const transactionProperties = getTransactionProperties(token);
       updateTransactionAccount(account, parentAccount);
-      updateTransaction(prev => ({ ...prev, properties: transactionProperties }));
+      updateTransaction(prev => ({ ...prev, ...getTransactionProperties(token) }));
     },
     [
       token,
@@ -201,8 +204,7 @@ const Body = ({
     (token?: TokenCurrency | null) => {
       setToken(token ?? null);
 
-      const transactionProperties = getTransactionProperties(token);
-      updateTransaction(prev => ({ ...prev, properties: transactionProperties }));
+      updateTransaction(prev => ({ ...prev, ...getTransactionProperties(token) }));
     },
     [getTransactionProperties, updateTransaction],
   );

@@ -5,9 +5,11 @@ import {
   updateTransaction,
 } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import getAddressWrapper from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
+import { CoinConfig } from "@ledgerhq/coin-framework/config";
 import type { SignerContext } from "@ledgerhq/coin-framework/signer";
 import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
 import { broadcast } from "./broadcast";
+import hederaCoinConfig, { HederaCoinConfig } from "../config";
 import { createTransaction } from "./createTransaction";
 import { estimateMaxSpendable } from "./estimateMaxSpendable";
 import { getTransactionStatus } from "./getTransactionStatus";
@@ -60,7 +62,12 @@ function buildAccountBridge(
   };
 }
 
-export function createBridges(signerContext: SignerContext<HederaSigner>) {
+export function createBridges(
+  signerContext: SignerContext<HederaSigner>,
+  coinConfig: CoinConfig<HederaCoinConfig>,
+) {
+  hederaCoinConfig.setCoinConfig(coinConfig);
+
   return {
     currencyBridge: buildCurrencyBridge(signerContext),
     accountBridge: buildAccountBridge(signerContext),
