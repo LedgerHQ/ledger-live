@@ -1,11 +1,10 @@
 import React from "react";
-import styled from "styled-components";
 import { Trans } from "react-i18next";
-import { Tabbable } from "~/renderer/components/Box";
-import Box from "~/renderer/components/Box";
-import Text from "~/renderer/components/Text";
+import styled from "styled-components";
+import Box, { Tabbable } from "~/renderer/components/Box";
 import CheckBox from "~/renderer/components/CheckBox";
 import LedgerLiveLogo from "~/renderer/components/LedgerLiveLogo";
+import Text from "~/renderer/components/Text";
 import Logo from "~/renderer/icons/Logo";
 
 interface ValidatorRowProps {
