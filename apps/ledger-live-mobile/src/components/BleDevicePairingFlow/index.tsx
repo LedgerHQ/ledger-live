@@ -279,7 +279,6 @@ const BleDevicePairingFlow: React.FC<BleDevicePairingFlowProps> = ({
             onDeviceSelect={onDeviceSelect}
           />
         )
-
       ) : null}
     </RequiresBLE>
   );

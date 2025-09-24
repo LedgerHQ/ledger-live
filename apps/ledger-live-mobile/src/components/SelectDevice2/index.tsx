@@ -30,7 +30,11 @@ import { useDebouncedRequireBluetooth } from "../RequiresBLE/hooks/useRequireBlu
 import RequiresBluetoothDrawer from "../RequiresBLE/RequiresBluetoothDrawer";
 import QueuedDrawer from "../QueuedDrawer";
 import { DeviceList } from "./DeviceList";
-import { useBleDevicesScanning, useDeviceManagementKitEnabled } from "@ledgerhq/live-dmk-mobile";
+import {
+  useBleDevicesScanning,
+  filterScannedDevice,
+  useDeviceManagementKitEnabled,
+} from "@ledgerhq/live-dmk-mobile";
 import getBLETransport from "../../react-native-hw-transport-ble";
 import { useBleDevicesScanning as useLegacyBleDevicesScanning } from "@ledgerhq/live-common/ble/hooks/useBleDevicesScanning";
 
@@ -97,21 +101,21 @@ export default function SelectDevice({
     stopBleScanning,
     enabled: !isLDMKEnabled,
   });
-  const scanningFilterOptions = useMemo(
-    () => (filterByDeviceModelId ? { filterByDeviceModelIds: [filterByDeviceModelId] } : undefined),
-    [filterByDeviceModelId],
-  );
 
   const [pairingFlowStep, setPairingFlowStep] = useState<PairingFlowStep | null>(null);
 
   const bleScanningState = useBleDevicesScanning(
     isFocused && !stopBleScanning && pairingFlowStep !== "pairing",
-    scanningFilterOptions,
   );
+  const scannedDevices = isLDMKEnabled ? bleScanningState.scannedDevices : legacyScannedDevices;
 
-  const { scannedDevices: DMKscannedDevices } = bleScanningState;
-
-  const scannedDevices = isLDMKEnabled ? DMKscannedDevices : legacyScannedDevices;
+  const filteredScannedDevices = useMemo(() => {
+    return scannedDevices.filter(device =>
+      filterScannedDevice(device, {
+        filterByDeviceModelIds: filterByDeviceModelId ? [filterByDeviceModelId] : undefined,
+      }),
+    );
+  }, [scannedDevices, filterByDeviceModelId]);
 
   // Each time the user navigates back to the screen the BLE requirements are not enforced
   const [isBleRequired, setIsBleRequired] = useResetOnNavigationFocusState(false);
@@ -216,7 +220,7 @@ export default function SelectDevice({
   const deviceList = useMemo(() => {
     const devices: Device[] = knownDevices
       .map(device => {
-        const equivalentScannedDevice = scannedDevices.find(
+        const equivalentScannedDevice = filteredScannedDevices.find(
           ({ deviceId }) => device.id === deviceId,
         );
 
@@ -240,12 +244,12 @@ export default function SelectDevice({
     return filterByDeviceModelId
       ? devices.filter(d => d.modelId === filterByDeviceModelId)
       : devices;
-  }, [knownDevices, scannedDevices, USBDevice, ProxyDevice, filterByDeviceModelId]);
+  }, [knownDevices, filteredScannedDevices, USBDevice, ProxyDevice, filterByDeviceModelId]);
 
   // update device name on store when needed
   useEffect(() => {
     knownDevices.forEach(knownDevice => {
-      const equivalentScannedDevice = scannedDevices.find(
+      const equivalentScannedDevice = filteredScannedDevices.find(
         ({ deviceId }) => knownDevice.id === deviceId,
       );
 
@@ -261,7 +265,7 @@ export default function SelectDevice({
         );
       }
     });
-  }, [dispatch, knownDevices, scannedDevices]);
+  }, [dispatch, knownDevices, filteredScannedDevices]);
 
   const onAddNewPress = useCallback(() => setIsAddNewDrawerOpen(true), []);
 

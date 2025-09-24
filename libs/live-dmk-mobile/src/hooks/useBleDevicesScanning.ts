@@ -1,32 +1,23 @@
 import { useEffect, useState } from "react";
-import { DeviceId, DiscoveredDevice } from "@ledgerhq/device-management-kit";
+import { DiscoveredDevice } from "@ledgerhq/device-management-kit";
 import { rnBleTransportIdentifier } from "@ledgerhq/device-transport-kit-react-native-ble";
 import { dmkToLedgerDeviceIdMap } from "@ledgerhq/live-dmk-shared";
-import { Device, DeviceModelId } from "@ledgerhq/types-devices";
 import { useDeviceManagementKit } from "./useDeviceManagementKit";
 import { BleScanningState } from "./BleScanningState";
+import { ScannedDevice } from "./ScannedDevice";
 
-export const mapDiscoveredDeviceToDevice = (device: DiscoveredDevice): Device => ({
+export const mapDiscoveredDeviceToScannedDevice = (device: DiscoveredDevice): ScannedDevice => ({
   deviceId: device.id,
-  deviceName: `${device.name}`,
+  deviceName: device.name,
   wired: false,
-  modelId: `${dmkToLedgerDeviceIdMap[device.deviceModel.model]}`,
+  modelId: dmkToLedgerDeviceIdMap[device.deviceModel.model],
   isAlreadyKnown: false,
 });
 
-export const useBleDevicesScanning = (
-  enabled: boolean,
-  {
-    filterByDeviceModelIds = [],
-    filterOutDevicesByDeviceIds = [],
-  }: {
-    filterByDeviceModelIds?: DeviceModelId[];
-    filterOutDevicesByDeviceIds?: DeviceId[];
-  } = {},
-): BleScanningState => {
+export const useBleDevicesScanning = (enabled: boolean): BleScanningState => {
   const dmk = useDeviceManagementKit();
   const [isScanning, setIsScanning] = useState(false);
-  const [scannedDevices, setScannedDevices] = useState<Device[]>([]);
+  const [scannedDevices, setScannedDevices] = useState<ScannedDevice[]>([]);
   const [scanningBleError, setScanningBleError] = useState<Error | null>(null);
 
   useEffect(() => {
@@ -39,29 +30,11 @@ export const useBleDevicesScanning = (
       })
       .subscribe({
         next: devices => {
-          const newDeviceByIds: Record<string, Device> = {};
+          const newDeviceByIds: Record<string, ScannedDevice> = {};
           //Map in record by ID
           devices.forEach(device => {
-            const mappedDevice = mapDiscoveredDeviceToDevice(device);
+            const mappedDevice = mapDiscoveredDeviceToScannedDevice(device);
             newDeviceByIds[mappedDevice.deviceId] = mappedDevice;
-          });
-
-          //filter devices by model or by id
-          Object.keys(newDeviceByIds).forEach(deviceId => {
-            //Remove if we need to avoid to list device of model given
-            if (
-              filterByDeviceModelIds.length > 0 &&
-              !filterByDeviceModelIds.includes(newDeviceByIds[deviceId].modelId)
-            ) {
-              delete newDeviceByIds[deviceId];
-            }
-            //Remove if we need to avoid to list device already known by ID
-            else if (filterOutDevicesByDeviceIds.length > 0) {
-              // filter out devices by id
-              if (filterOutDevicesByDeviceIds.includes(newDeviceByIds[deviceId].deviceId)) {
-                delete newDeviceByIds[deviceId];
-              }
-            }
           });
 
           setScannedDevices(Object.values(newDeviceByIds));

@@ -1,5 +1,9 @@
 import React, { useMemo } from "react";
-import { BleScanningState, useBleDevicesScanning } from "@ledgerhq/live-dmk-mobile";
+import {
+  BleScanningState,
+  filterScannedDevice,
+  useBleDevicesScanning,
+} from "@ledgerhq/live-dmk-mobile";
 import {
   BleDevicesScanning,
   BleDevicesScanningProps,
@@ -45,14 +49,20 @@ export const DmkBleDevicesScanning = (props: DmkBleDevicesScanningProps) => {
 
   const scanningEnabled = !bleScanningState && isFocused; // if the parent handles the scanning logic, we don't need to scan here
 
-  const { scannedDevices: scannedDevicesFromHook } = useBleDevicesScanning(scanningEnabled, {
-    filterOutDevicesByDeviceIds,
-    filterByDeviceModelIds,
-  });
+  const { scannedDevices: scannedDevicesFromHook } = useBleDevicesScanning(scanningEnabled);
 
   const scannedDevices = props.bleScanningState
     ? props.bleScanningState.scannedDevices
     : scannedDevicesFromHook;
 
-  return <BleDevicesScanning devices={scannedDevices} {...props} />;
+  const filteredScannedDevices = useMemo(() => {
+    return scannedDevices.filter(device =>
+      filterScannedDevice(device, {
+        filterOutDevicesByDeviceIds,
+        filterByDeviceModelIds,
+      }),
+    );
+  }, [scannedDevices, filterOutDevicesByDeviceIds, filterByDeviceModelIds]);
+
+  return <BleDevicesScanning devices={filteredScannedDevices} {...props} />;
 };
