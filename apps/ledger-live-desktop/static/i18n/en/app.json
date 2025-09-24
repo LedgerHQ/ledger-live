@@ -5052,10 +5052,10 @@
       "welcome": {
         "videos": {
           "buySell": "A wallet that protects and puts you in control",
-          "thousandsCrypto": "Send, receive, swap and stake thousands of crypto*",
+          "thousandsCrypto": "Send, receive, swap and stake thousands of crypto",
           "secureWallet": "Verify all your transactions with peace of mind"
         },
-        "notice": "By continuing, you agree to Ledger's <Link1>Terms & Conditions</Link1> and <Link2>Privacy Policy</Link2>. Ledger provides no financial advice.\n*Transaction services are provided by third parties.",
+        "notice": "By continuing, you agree to Ledger's <Link1>Terms & Conditions</Link1> and <Link2>Privacy Policy</Link2>. Ledger provides no financial advice.\nSwap and staking services are provided by third parties.",
         "title": "The most secure cryptocurrency & NFT wallet",
         "description": "Securely manage, buy and grow your crypto and NFTs on Ledger Live.",
         "nextButton": "Get started",
