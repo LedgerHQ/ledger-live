@@ -257,6 +257,7 @@ export type Features = CurrencyFeatures & {
   onboardingIgnoredOsUpdates: Feature_OnboardingIgnoredOSUpdates;
   supportDeviceApex: DefaultFeature;
   llmSyncOnboardingIncr1: DefaultFeature;
+  noah: DefaultFeature;
 };
 
 /**

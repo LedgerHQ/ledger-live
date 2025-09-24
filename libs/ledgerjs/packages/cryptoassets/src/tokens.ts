@@ -145,15 +145,7 @@ export function listTokensForCryptoCurrency(
  *
  */
 export function listTokenTypesForCryptoCurrency(currency: CryptoCurrency): string[] {
-  return listTokensForCryptoCurrency(currency).reduce<string[]>((acc, cur) => {
-    const tokenType = cur.tokenType.replace("_", " ");
-
-    if (acc.indexOf(tokenType) < 0) {
-      return [...acc, tokenType];
-    }
-
-    return acc;
-  }, []);
+  return currency.tokenTypes || [];
 }
 
 /**

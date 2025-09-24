@@ -73,8 +73,6 @@ const meta: Meta<typeof AccountSelection> = {
   component: AccountSelection,
   args: {
     asset: bitcoinCurrency,
-    source: "Accounts",
-    flow: "Modular Account Flow",
     onAccountSelected: onAccountSelected(),
   },
   decorators: [
@@ -95,8 +93,6 @@ type Story = StoryObj<typeof AccountSelection>;
 export const Default: Story = {
   args: {
     asset: bitcoinCurrency,
-    source: "Accounts",
-    flow: "Modular Account Flow",
     onAccountSelected,
   },
 };

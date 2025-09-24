@@ -17,8 +17,6 @@ import { useBalanceDeps } from "../../../hooks/useBalanceDeps";
 
 type SelectNetworkProps = {
   networks?: CryptoOrTokenCurrency[];
-  source: string;
-  flow: string;
   onNetworkSelected: (network: CryptoOrTokenCurrency) => void;
   networksConfig: EnhancedModularDrawerConfiguration["networks"];
   currenciesByProvider: CurrenciesByProviderId[];
@@ -29,8 +27,6 @@ type SelectNetworkProps = {
 export const SelectNetwork = ({
   networks,
   onNetworkSelected,
-  source,
-  flow,
   networksConfig,
   currenciesByProvider,
   selectedAssetId,
@@ -73,8 +69,6 @@ export const SelectNetwork = ({
       {
         network: network.name,
         page: MODULAR_DRAWER_PAGE_NAME.MODULAR_NETWORK_SELECTION,
-        flow,
-        source,
       },
       {
         formatNetworkConfig: true,

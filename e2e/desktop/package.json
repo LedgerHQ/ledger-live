@@ -13,6 +13,7 @@
     "@ledgerhq/live-common": "workspace:^",
     "@ledgerhq/live-env": "workspace:^",
     "@ledgerhq/live-wallet": "workspace:^",
+    "@ledgerhq/types-devices": "6.27.0",
     "@ledgerhq/types-live": "workspace:^",
     "@playwright/test": "^1.51.0",
     "@types/node": "22.10.10",

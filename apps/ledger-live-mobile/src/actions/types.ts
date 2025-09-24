@@ -262,6 +262,7 @@ export enum SettingsActionTypes {
   SETTINGS_SET_PAIRS = "SETTINGS_SET_PAIRS",
   SETTINGS_SET_SELECTED_TIME_RANGE = "SETTINGS_SET_SELECTED_TIME_RANGE",
   SETTINGS_COMPLETE_ONBOARDING = "SETTINGS_COMPLETE_ONBOARDING",
+  SETTINGS_SET_IS_ONBOARDING_FlOW = "SETTINGS_SET_IS_ONBOARDING_FlOW",
   SETTINGS_COMPLETE_CUSTOM_IMAGE_FLOW = "SETTINGS_COMPLETE_CUSTOM_IMAGE_FLOW",
   SETTINGS_SET_HAS_INSTALLED_ANY_APP = "SETTINGS_SET_HAS_INSTALLED_ANY_APP",
   SETTINGS_SET_READONLY_MODE = "SETTINGS_SET_READONLY_MODE",
@@ -312,6 +313,7 @@ export enum SettingsActionTypes {
   SET_LEDGER_SYNC_ONBOARDING = "SET_LEDGER_SYNC_ONBOARDING",
   SET_MEV_PROTECTION = "SET_MEV_PROTECTION",
   SET_SELECTED_TAB_PORTFOLIO_ASSETS = "SET_SELECTED_TAB_PORTFOLIO_ASSETS",
+  SET_RTK_CONSOLE_ENABLED = "SET_RTK_CONSOLE_ENABLED",
 
   ADD_STARRED_MARKET_COINS = "ADD_STARRED_MARKET_COINS",
   REMOVE_STARRED_MARKET_COINS = "REMOVE_STARRED_MARKET_COINS",
@@ -394,6 +396,7 @@ export type SettingsSetHasBeenRedirectedToPostOnboardingPayload =
   SettingsState["hasBeenRedirectedToPostOnboarding"];
 
 export type SettingsCompleteOnboardingPayload = void | SettingsState["hasCompletedOnboarding"];
+export type SettingsIsOnboardingFlowPayload = void | SettingsState["isOnboardingFlow"];
 export type SettingsSetGeneralTermsVersionAccepted = SettingsState["generalTermsVersionAccepted"];
 export type SettingsSetUserNps = number;
 export type SettingsSetSupportedCounterValues = SettingsState["supportedCounterValues"];
@@ -407,6 +410,7 @@ export type SettingsAddStarredMarketcoinsPayload = Unpacked<SettingsState["starr
 export type SettingsRemoveStarredMarketcoinsPayload = Unpacked<SettingsState["starredMarketCoins"]>;
 export type SettingsSetSelectedTabPortfolioAssetsPayload =
   SettingsState["selectedTabPortfolioAssets"];
+export type SettingsSetRtkConsoleEnabledPayload = boolean;
 
 export type SettingsPayload =
   | SettingsImportPayload
@@ -448,6 +452,7 @@ export type SettingsPayload =
   | SettingsSetOverriddenFeatureFlagsPlayload
   | SettingsSetFeatureFlagsBannerVisiblePayload
   | SettingsCompleteOnboardingPayload
+  | SettingsIsOnboardingFlowPayload
   | SettingsSetDebugAppLevelDrawerOpenedPayload
   | SettingsSetGeneralTermsVersionAccepted
   | SettingsSetHasBeenUpsoldProtectPayload
@@ -461,6 +466,7 @@ export type SettingsPayload =
   | SettingsSetFromLedgerSyncOnboardingPayload
   | SettingsSetMevProtectionPayload
   | SettingsSetSelectedTabPortfolioAssetsPayload
+  | SettingsSetRtkConsoleEnabledPayload
   | SettingsAddStarredMarketcoinsPayload
   | SettingsRemoveStarredMarketcoinsPayload;
 

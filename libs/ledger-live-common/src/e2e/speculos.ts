@@ -630,7 +630,7 @@ type DeviceLabelsReturn = {
   receiveVerifyLabel: string;
 };
 
-function getDeviceLabels(appInfo: AppInfos): DeviceLabelsReturn {
+export function getDeviceLabels(appInfo: AppInfos): DeviceLabelsReturn {
   const deviceModel = getSpeculosModel();
   const deviceConfig = DEVICE_LABELS_CONFIG[deviceModel] ?? DEVICE_LABELS_CONFIG.default;
 
@@ -765,6 +765,7 @@ export async function getDelegateEvents(delegatingAccount: Delegate): Promise<st
   );
 
   await waitFor(delegateVerifyLabel);
+
   return await pressUntilTextFound(delegateConfirmLabel);
 }
 
@@ -774,54 +775,38 @@ export async function verifyAmountsAndAcceptSwap(swap: Swap, amount: string) {
     getSpeculosModel() === DeviceModelId.nanoS
       ? await pressUntilTextFound(DeviceLabels.ACCEPT_AND_SEND)
       : await pressUntilTextFound(DeviceLabels.SIGN_TRANSACTION);
-  await verifySwapData(swap, events, amount);
+  verifySwapData(swap, events, amount);
   await pressBoth();
 }
 
 export async function verifyAmountsAndAcceptSwapForDifferentSeed(swap: Swap, amount: string) {
-  await waitFor(DeviceLabels.RECEIVE_ADDRESS_DOES_NOT_BELONG);
-  await pressUntilTextFound(DeviceLabels.I_UNDERSTAND);
-  await pressBoth();
+  await waitFor(DeviceLabels.REVIEW_TRANSACTION);
   const events = await pressUntilTextFound(DeviceLabels.SIGN_TRANSACTION);
-  await verifySwapData(swap, events, amount);
+  verifySwapData(swap, events, amount);
   await pressBoth();
 }
 
 export async function verifyAmountsAndRejectSwap(swap: Swap, amount: string) {
   await waitFor(DeviceLabels.REVIEW_TRANSACTION);
   const events = await pressUntilTextFound(DeviceLabels.REJECT);
-  await verifySwapData(swap, events, amount);
+  verifySwapData(swap, events, amount);
   await pressBoth();
 }
 
-async function verifySwapData(swap: Swap, events: string[], amount: string) {
-  const sendAmountScreen = containsSubstringInEvent(amount, events);
-  expect(sendAmountScreen).toBeTruthy();
-  verifySwapGetAmountScreen(swap, events);
-  verifySwapFeesAmountScreen(swap, events);
+function verifySwapData(swap: Swap, events: string[], amount: string) {
+  const swapPair = `swap ${swap.getAccountToDebit.currency.ticker} to ${swap.getAccountToCredit.currency.ticker}`;
+
+  if (getSpeculosModel() !== DeviceModelId.nanoS) {
+    expectDeviceScreenContains(swapPair, events, "Swap pair not found on the device screen");
+  }
+  expectDeviceScreenContains(amount, events, `Amount ${amount} not found on the device screen`);
 }
 
-function verifySwapGetAmountScreen(swap: Swap, events: string[]) {
-  const parsedAmountToReceive = extractNumberFromString(swap.amountToReceive);
-  swap.amountToReceive =
-    parsedAmountToReceive.length < 19
-      ? parsedAmountToReceive
-      : parsedAmountToReceive.substring(0, 18);
-
-  const receivedGetAmount = containsSubstringInEvent(`${swap.amountToReceive}`, events);
-  expect(receivedGetAmount).toBeTruthy();
+function expectDeviceScreenContains(substring: string, events: string[], message: string) {
+  const found = containsSubstringInEvent(substring, events);
+  if (!found) {
+    throw new Error(
+      `${message}. Expected events to contain "${substring}". Got: ${JSON.stringify(events)}`,
+    );
+  }
 }
-
-function verifySwapFeesAmountScreen(swap: Swap, events: string[]) {
-  const parsedFeesAmount = extractNumberFromString(swap.feesAmount);
-  swap.feesAmount =
-    parsedFeesAmount.length < 19 ? parsedFeesAmount : parsedFeesAmount.substring(0, 18);
-
-  const receivedFeesAmount = containsSubstringInEvent(swap.feesAmount, events);
-  expect(receivedFeesAmount).toBeTruthy();
-}
-
-const extractNumberFromString = (input: string | undefined): string => {
-  const match = input?.match(/[\d.]+/);
-  return match ? match[0] : "";
-};

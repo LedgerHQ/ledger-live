@@ -8,6 +8,7 @@ export const supportLinkByTokenType = {
 
 const errors: Record<string, string> = {
   EthAppPleaseEnableContractData: "https://support.ledger.com/article/4405481324433-zd",
+  CeloAppPleaseEnableContractData: "https://support.ledger.com/article/4405481324433-zd",
   NotEnoughGas: "https://support.ledger.com/article/9096370252573-zd",
   CantOpenDevice: "https://support.ledger.com/article/115005165269-zd",
   WrongDeviceForAccount: "https://support.ledger.com/article/360025322153-zd",

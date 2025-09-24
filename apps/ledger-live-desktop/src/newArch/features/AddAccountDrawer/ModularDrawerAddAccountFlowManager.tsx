@@ -10,7 +10,6 @@ import { MODULAR_DRAWER_PAGE_NAME } from "../ModularDrawer/analytics/modularDraw
 import AnimatedScreenWrapper from "../ModularDrawer/components/AnimatedScreenWrapper";
 import { BackButtonArrow } from "../ModularDrawer/components/BackButton";
 import { AccountSelection } from "../ModularDrawer/screens/AccountSelection";
-import { ADD_ACCOUNT_FLOW_NAME } from "./analytics/addAccount.types";
 import HeaderGradient from "./components/HeaderGradient";
 import { MODULAR_DRAWER_ADD_ACCOUNT_STEP, ModularDrawerAddAccountStep } from "./domain";
 import AccountsAdded from "./screens/AccountsAdded";
@@ -20,12 +19,14 @@ import EditAccountName from "./screens/EditAccountName";
 import FundAccount from "./screens/FundAccount";
 import ScanAccounts from "./screens/ScanAccounts";
 import { useAddAccountFlowNavigation } from "./useAddAccountFlowNavigation";
+import { useDispatch } from "react-redux";
+import { setFlowValue } from "~/renderer/reducers/modularDrawer";
+import { ADD_ACCOUNT_FLOW_NAME } from "./analytics/addAccount.types";
 
 const ANALYTICS_PROPERTY_FLOW = "Modular Add Account Flow";
 
 export type ModularDrawerAddAccountFlowManagerProps = {
   currency: CryptoOrTokenCurrency;
-  source: string;
   onAccountSelected?: (account: Account) => void;
 };
 
@@ -47,7 +48,6 @@ const StepContainer = styled(Flex)`
 
 const ModularDrawerAddAccountFlowManager = ({
   currency,
-  source,
   onAccountSelected,
 }: ModularDrawerAddAccountFlowManagerProps) => {
   const { t } = useTranslation();
@@ -86,6 +86,8 @@ const ModularDrawerAddAccountFlowManager = ({
     [navigateToScanAccounts],
   );
 
+  const dispatch = useDispatch();
+
   const renderStepContent = (step: ModularDrawerAddAccountStep) => {
     switch (step) {
       case MODULAR_DRAWER_ADD_ACCOUNT_STEP.CONNECT_YOUR_DEVICE:
@@ -95,7 +97,6 @@ const ModularDrawerAddAccountFlowManager = ({
               currency={cryptoCurrency}
               onConnect={handleConnect}
               analyticsPropertyFlow={ANALYTICS_PROPERTY_FLOW}
-              source={source}
             />
           </StepContainer>
         );
@@ -109,7 +110,6 @@ const ModularDrawerAddAccountFlowManager = ({
               currency={cryptoCurrency}
               deviceId={connectAppResult.device.deviceId}
               onRetry={navigateToConnectDevice}
-              source={source}
               onComplete={accounts => {
                 setSelectedAccounts(accounts);
                 navigateToAccountsAdded();
@@ -128,7 +128,6 @@ const ModularDrawerAddAccountFlowManager = ({
               navigateToFundAccount={navigateToFundAccount}
               navigateToSelectAccount={navigateToSelectAccount}
               isAccountSelectionFlow={isAccountSelectionFlow}
-              source={source}
             />
           </StepContainer>
         );
@@ -144,7 +143,6 @@ const ModularDrawerAddAccountFlowManager = ({
               emptyAccount={emptyAccount}
               navigateToEditAccountName={navigateToEditAccountName}
               navigateToFundAccount={navigateToFundAccount}
-              source={source}
               isAccountSelectionFlow={isAccountSelectionFlow}
             />
           </StepContainer>
@@ -155,7 +153,7 @@ const ModularDrawerAddAccountFlowManager = ({
         }
         return (
           <StepContainer paddingX="8px" data-test-id="content">
-            <EditAccountName account={accountToEdit} navigateBack={navigateBack} source={source} />
+            <EditAccountName account={accountToEdit} navigateBack={navigateBack} />
           </StepContainer>
         );
       case MODULAR_DRAWER_ADD_ACCOUNT_STEP.FUND_ACCOUNT:
@@ -164,10 +162,11 @@ const ModularDrawerAddAccountFlowManager = ({
         }
         return (
           <StepContainer paddingX="8px" data-test-id="content">
-            <FundAccount account={accountToFund} currency={cryptoCurrency} source={source} />
+            <FundAccount account={accountToFund} currency={cryptoCurrency} />
           </StepContainer>
         );
       case MODULAR_DRAWER_ADD_ACCOUNT_STEP.SELECT_ACCOUNT:
+        dispatch(setFlowValue(ADD_ACCOUNT_FLOW_NAME));
         return (
           <StepContainer data-test-id="content">
             <Title>
@@ -178,8 +177,6 @@ const ModularDrawerAddAccountFlowManager = ({
             <AccountSelection
               asset={cryptoCurrency}
               overridePageName={MODULAR_DRAWER_PAGE_NAME.FUND_ACCOUNT_LIST}
-              source={source}
-              flow={ADD_ACCOUNT_FLOW_NAME}
               onAccountSelected={accountToFund => navigateToFundAccount(accountToFund as Account)}
               hideAddAccountButton
             />

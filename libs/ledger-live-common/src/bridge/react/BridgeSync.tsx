@@ -12,6 +12,7 @@ import type { SyncAction, SyncState, BridgeSyncState } from "./types";
 import { BridgeSyncContext, BridgeSyncStateContext } from "./context";
 import type { Account, TokenAccount } from "@ledgerhq/types-live";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { createSyncSessionManager } from "../syncSessionManager";
 
 export type Props = {
   // this is a wrapping component that you need to put in your tree
@@ -52,6 +53,7 @@ export const BridgeSync = ({
     accounts,
     hydrateCurrency,
   });
+  const sessionManager = useRef(createSyncSessionManager(trackAnalytics)).current;
   const [syncQueue, syncState] = useSyncQueue({
     accounts,
     prepareCurrency,
@@ -59,10 +61,12 @@ export const BridgeSync = ({
     trackAnalytics,
     updateAccountWithUpdater,
     blacklistedTokenIds,
+    sessionManager,
   });
   const sync = useSync({
     syncQueue,
     accounts,
+    sessionManager,
   });
   useSyncBackground({
     sync,
@@ -111,6 +115,7 @@ function useSyncQueue({
   trackAnalytics,
   updateAccountWithUpdater,
   blacklistedTokenIds,
+  sessionManager,
 }) {
   const [bridgeSyncState, setBridgeSyncState]: [BridgeSyncState, any] = useState({});
   const setAccountSyncState = useCallback((accountId: string, s: SyncState) => {
@@ -204,6 +209,7 @@ function useSyncQueue({
               pending: false,
               error: null,
             });
+            sessionManager.onAccountSyncDone(accountId, accounts);
             next();
           },
           error: (raw: Error) => {
@@ -215,6 +221,7 @@ function useSyncQueue({
                 pending: false,
                 error: null,
               });
+              sessionManager.onAccountSyncDone(accountId, accounts);
               next();
               return;
             }
@@ -223,6 +230,7 @@ function useSyncQueue({
               pending: false,
               error,
             });
+            sessionManager.onAccountSyncDone(accountId, accounts, true);
             next();
           },
         });
@@ -231,6 +239,7 @@ function useSyncQueue({
           pending: false,
           error,
         });
+        sessionManager.onAccountSyncDone(accountId, accounts, true);
         next();
       }
     },
@@ -243,6 +252,7 @@ function useSyncQueue({
       trackAnalytics,
       updateAccountWithUpdater,
       blacklistedTokenIds,
+      sessionManager,
     ],
   );
   const synchronizeRef = useRef(synchronize);
@@ -259,7 +269,7 @@ function useSyncQueue({
 }
 
 // useSync: returns a sync function with the syncQueue
-function useSync({ syncQueue, accounts }) {
+function useSync({ syncQueue, accounts, sessionManager }) {
   const skipUnderPriority = useRef(-1);
   const sync = useMemo(() => {
     const schedule = (ids: string[], priority: number, reason: string) => {
@@ -267,6 +277,10 @@ function useSync({ syncQueue, accounts }) {
       // by convention we remove concurrent tasks with same priority
       // FIXME this is somehow a hack. ideally we should just dedup the account ids in the pending queue...
       syncQueue.remove(o => priority === o.priority);
+      // start a global session only if initial + all accounts
+      if (reason === "initial" && ids.length === accounts.length) {
+        sessionManager.start(ids, reason);
+      }
       log("bridge", "schedule " + ids.join(", "));
       syncQueue.push(
         ids.map(accountId => ({
@@ -289,7 +303,7 @@ function useSync({ syncQueue, accounts }) {
       SET_SKIP_UNDER_PRIORITY: ({ priority }: { priority: number }) => {
         if (priority === skipUnderPriority.current) return;
         skipUnderPriority.current = priority;
-        syncQueue.remove(({ priority }) => priority < skipUnderPriority);
+        syncQueue.remove(({ priority }) => priority < skipUnderPriority.current);
 
         if (priority === -1 && !accounts.every(isUpToDateAccount)) {
           // going back to -1 priority => retriggering a background sync if it is "Paused"
@@ -338,7 +352,7 @@ function useSync({ syncQueue, accounts }) {
         });
       }
     };
-  }, [accounts, syncQueue]);
+  }, [accounts, syncQueue, sessionManager]);
   const ref = useRef(sync);
   useEffect(() => {
     ref.current = sync;

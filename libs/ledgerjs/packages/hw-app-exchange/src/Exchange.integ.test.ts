@@ -606,6 +606,7 @@ type SellPayload = {
   outCurrency: string;
   outAmount: UDecimal;
   deviceTransactionId: Buffer;
+  inExtraId?: string;
 };
 async function generateSellPayloadProtobuf(payload: SellPayload): Promise<Buffer> {
   const root = await protobuf.load("protocol.proto");

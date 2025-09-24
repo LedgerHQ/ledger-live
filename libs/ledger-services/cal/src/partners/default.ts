@@ -106,9 +106,9 @@ export const SWAP_DATA_CDN: Record<string, AdditionalProviderConfig> = {
     type: "CEX",
     useInExchangeApp: true,
     displayName: "Near Intents",
-    termsOfUseUrl: "https://docs.thorswap.finance/thorswap/resources/terms-of-service",
+    termsOfUseUrl: "https://swapkit.dev/terms-of-service/",
     supportUrl: "https://ledgerhelp.swapkit.dev/",
-    mainUrl: "https://www.thorswap.finance/",
+    mainUrl: "https://www.near.org/intents",
     needsKYC: false,
   },
   lifi: {

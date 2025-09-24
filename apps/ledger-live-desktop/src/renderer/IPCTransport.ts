@@ -1,229 +1,171 @@
+/**
+ * IPC Transport for Speculos and HTTP Proxy only
+ * WebHID devices use DeviceManagementKit directly in renderer
+ */
 import { ipcRenderer } from "electron";
-import Transport from "@ledgerhq/hw-transport";
-import { TraceContext, trace } from "@ledgerhq/logs";
-import { deserializeError } from "@ledgerhq/errors";
-import { v4 as uuidv4 } from "uuid";
-import {
-  transportCloseChannel,
-  transportListenChannel,
-  transportListenUnsubscribeChannel,
-  transportExchangeBulkChannel,
-  transportExchangeBulkUnsubscribeChannel,
-  transportExchangeChannel,
-  transportOpenChannel,
-} from "~/config/transportChannels";
-import { Observer } from "rxjs";
+import Transport, { TransportError } from "@ledgerhq/hw-transport";
+import { log, trace, TraceContext } from "@ledgerhq/logs";
 import { DescriptorEvent } from "@ledgerhq/types-devices";
+import { Observer } from "rxjs";
+import { DeviceModelId } from "@ledgerhq/types-devices";
+import { getDeviceModel } from "@ledgerhq/devices";
+// No longer need transport channels - using direct invoke
 
-const LOG_TYPE = "ipc-transport";
+const LOG_TYPE = "hid-ipc";
+
+// No longer need complex message interfaces - using simple invoke/response
 
 /**
- * Transport implementation communicating via IPC to an actual Transport implementation in the internal process.
+ * IPC Transport implementation for communication with internal process
+ * Only used for Speculos and HTTP proxy transports
  */
-export class IPCTransport extends Transport {
-  static isSupported = (): Promise<boolean> => Promise.resolve(typeof ipcRenderer === "function");
-  // this transport is not discoverable
+export default class IPCTransport extends Transport {
+  static isSupported = (): Promise<boolean> => Promise.resolve(typeof ipcRenderer === "object");
+
   static list = (): Promise<unknown[]> => Promise.resolve([]);
 
   static listen = (observer: Observer<DescriptorEvent<string>>) => {
-    const requestId = uuidv4();
-    const replyChannel = `${transportListenChannel}_RESPONSE_${requestId}`;
-    const handler = (
-      _event: Electron.IpcRendererEvent,
-      message: { error?: unknown; data: DescriptorEvent<string> },
-    ) => {
-      if (message.error) {
-        observer.error(deserializeError(message.error));
-      } else {
-        const { data } = message;
-        if (data) {
-          observer.next(data);
+    let unsubscribed = false;
+    const requestId = String(Math.random());
+
+    const unsubscribe = () => {
+      if (unsubscribed) return;
+      unsubscribed = true;
+      ipcRenderer.invoke("transport:listen:unsubscribe", { requestId }).catch(() => {
+        // Ignore errors on unsubscribe
+      });
+    };
+
+    // For HTTP transports, we don't have real device discovery
+    // Just send a simple available signal
+    ipcRenderer
+      .invoke("transport:listen", { requestId })
+      .then(result => {
+        if (unsubscribed) return;
+        if (result.type === "listen-error") {
+          observer.error(new TransportError(result.error.message, result.error.id));
         } else {
-          observer.complete();
+          observer.next({
+            type: "add",
+            descriptor: "http-proxy",
+            device: {},
+            deviceModel: getDeviceModel(DeviceModelId.nanoS),
+          });
         }
-      }
-    };
-    ipcRenderer.on(replyChannel, handler);
-    ipcRenderer.send(transportListenChannel, {
-      requestId,
-    });
-    return {
-      unsubscribe: () => {
-        ipcRenderer.removeListener(replyChannel, handler);
-        ipcRenderer.send(transportListenUnsubscribeChannel, {
-          requestId,
-        });
-      },
-    };
+      })
+      .catch(error => {
+        if (unsubscribed) return;
+        const err = error as Error;
+        observer.error(new TransportError(err.message, "TransportListenError"));
+      });
+
+    return { unsubscribe };
   };
 
-  /**
-   * Sends an `open` IPC message to open a transport on the internal process
-   *
-   * @param id id representing the device and how it is connected
-   * @param timeoutMs optional timeout that limits in time the open attempt of the matching registered transport.
-   * @param context optional context to be used in logs
-   * @returns an instance of the IPCTransport once a transport on the internal process has been successfully opened.
-   *  Rejects with an Error if no transport implementation on the internal process can open the device
-   */
-  static async open(id: string, timeoutMs?: number, context?: TraceContext): Promise<Transport> {
+  static async open(
+    descriptor: string,
+    timeout?: number,
+    context?: TraceContext,
+  ): Promise<IPCTransport> {
+    log(LOG_TYPE, "open", { descriptor, timeout });
+
+    const requestId = String(Math.random());
+
     try {
-      await rendererRequest(transportOpenChannel, {
-        descriptor: id,
-        timeoutMs,
+      const result = await ipcRenderer.invoke("transport:open", {
+        requestId,
+        descriptor,
+        timeout,
         context,
       });
+
+      if (result.type === "open-error") {
+        trace({
+          type: LOG_TYPE,
+          message: "open error",
+          data: { descriptor, error: result.error },
+        });
+        throw new TransportError(result.error.message, result.error.id);
+      }
+
+      trace({ type: LOG_TYPE, message: "open success", data: { descriptor } });
+      return new IPCTransport(descriptor, requestId);
     } catch (error) {
-      trace({
-        type: LOG_TYPE,
-        message: "Error while trying to open a transport",
-        data: { error },
-        context,
-      });
-
-      throw error;
+      if (error instanceof TransportError) {
+        throw error;
+      }
+      const err = error as Error;
+      throw new TransportError(err.message, "TransportOpenError");
     }
-    return new IPCTransport(id, { context });
   }
 
-  id: string;
-  constructor(id: string, { context }: { context?: TraceContext } = {}) {
-    super({ context, logType: LOG_TYPE });
-    this.id = id;
-
-    this.tracer.trace(`New instance of IPCTransport for id: ${this.id}`);
+  constructor(
+    private descriptor: string,
+    private requestId: string,
+  ) {
+    super();
   }
 
-  /**
-   * Sends an `exchange` IPC message to a transport on the internal process and waits for a response
-   *
-   * @param apdu
-   * @param options Contains optional options for the exchange function
-   *  - abortTimeoutMs: stop the exchange after a given timeout. Another timeout exists
-   *    to detect unresponsive device (see `unresponsiveTimeout`). This timeout aborts the exchange.
-   * @returns A promise that resolves with the response data from the device.
-   */
   async exchange(
     apdu: Buffer,
     { abortTimeoutMs }: { abortTimeoutMs?: number } = {},
   ): Promise<Buffer> {
     const apduHex = apdu.toString("hex");
-    this.tracer.withType("ipc-apdu").trace(`=> ${apduHex}`);
 
-    const responseHex = await rendererRequest(transportExchangeChannel, {
-      descriptor: this.id,
-      apduHex,
-      abortTimeoutMs,
-      context: this.tracer.getContext(),
-    });
+    log(LOG_TYPE, "exchange", { apdu: apduHex, timeout: abortTimeoutMs });
 
-    this.tracer.withType("ipc-apdu").trace(`<= ${responseHex}`);
-    return Buffer.from(responseHex as string, "hex");
+    try {
+      const result = await ipcRenderer.invoke("transport:exchange", {
+        requestId: this.requestId,
+        apdu: apduHex,
+        timeout: abortTimeoutMs,
+      });
+
+      if (result.type === "exchange-error") {
+        trace({
+          type: LOG_TYPE,
+          message: "exchange error",
+          data: { apdu: apduHex, error: result.error },
+        });
+        throw new TransportError(result.error.message, result.error.id);
+      }
+
+      trace({ type: LOG_TYPE, message: "exchange success", data: { apdu: apduHex } });
+      return Buffer.from(result.data, "hex");
+    } catch (error) {
+      if (error instanceof TransportError) {
+        throw error;
+      }
+      const err = error as Error;
+      throw new TransportError(err.message, "TransportExchangeError");
+    }
   }
 
-  exchangeBulk(apdus: Buffer[], observer: Observer<Buffer>) {
-    const apdusHex = apdus.map(apdu => apdu.toString("hex"));
-    this.tracer.trace("Bulk exchange", { apdusLength: apdusHex.length });
+  async close(): Promise<void> {
+    log(LOG_TYPE, "close", { descriptor: this.descriptor });
 
-    const requestId = uuidv4();
-    const replyChannel = `${transportExchangeBulkChannel}_RESPONSE_${requestId}`;
+    try {
+      await ipcRenderer.invoke("transport:close", {
+        requestId: this.requestId,
+      });
 
-    const handler = (
-      _event: Electron.IpcRendererEvent,
-      message: { error?: unknown; data: unknown },
-    ) => {
-      if (message.error) {
-        this.tracer.trace(`Error on bulk exchange: ${message.error}`, { error: message.error });
-        observer.error(deserializeError(message.error));
-      } else {
-        const { data } = message;
-        if (data) {
-          observer.next(Buffer.from(data as string, "hex"));
-        } else {
-          observer.complete();
-        }
-      }
-    };
-
-    ipcRenderer.on(replyChannel, handler);
-
-    ipcRenderer.send(transportExchangeBulkChannel, {
-      data: {
-        descriptor: this.id,
-        apdusHex,
-        context: this.tracer.getContext(),
-      },
-      requestId,
-    });
-
-    return {
-      unsubscribe: () => {
-        ipcRenderer.removeListener(replyChannel, handler);
-        ipcRenderer.send(transportExchangeBulkUnsubscribeChannel, {
-          data: {
-            descriptor: this.id,
-          },
-          requestId,
-        });
-      },
-    };
+      trace({
+        type: LOG_TYPE,
+        message: "close success",
+        data: { descriptor: this.descriptor },
+      });
+    } catch (error) {
+      const err = error as Error;
+      trace({
+        type: LOG_TYPE,
+        message: "close error",
+        data: { descriptor: this.descriptor, error: err.message },
+      });
+      // Don't throw on close errors - best effort cleanup
+    }
   }
 
   setScrambleKey() {
-    // empty fn
+    // Not needed for IPC transport
   }
-
-  close(): Promise<void> {
-    return rendererRequest(transportCloseChannel, {
-      descriptor: this.id,
-    }).then(response => {
-      this.tracer.trace("Received response from close request message", { response });
-      /* close() must return a Promise<void> */
-    });
-  }
-}
-
-/**
- * Sends a request from the renderer process to the main process.
- *
- * It waits for a response before resolving.
- * This is a classic request/response communication: one request then one response.
- *
- * @param channel name of the IPC channel to communicate with the main process
- * @param data
- * @returns a Promise that will resolve when a response (error or message) is received
- */
-function rendererRequest(channel: string, data: unknown): Promise<unknown> {
-  return new Promise((resolve, reject) => {
-    const requestId = uuidv4();
-    // This channel name will be constructed the same way on the main process to send back a response
-    const replyChannel = `${channel}_RESPONSE_${requestId}`;
-
-    trace({
-      type: LOG_TYPE,
-      message: "Sending IPC request",
-      data: { data },
-      context: { requestId, replyChannel },
-    });
-
-    const responseHandler = (
-      _event: Electron.IpcRendererEvent,
-      message: { error?: unknown; data: unknown },
-    ) => {
-      if (message.error) {
-        reject(deserializeError(message.error));
-      } else {
-        resolve(message.data);
-      }
-      ipcRenderer.removeListener(replyChannel, responseHandler);
-    };
-
-    // Listens to response
-    ipcRenderer.on(replyChannel, responseHandler);
-
-    ipcRenderer.send(channel, {
-      data,
-      requestId,
-    });
-  });
 }

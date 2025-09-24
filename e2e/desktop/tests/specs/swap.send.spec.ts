@@ -6,11 +6,7 @@ import { Swap } from "@ledgerhq/live-common/e2e/models/Swap";
 import { addTmsLink } from "../utils/allureUtils";
 import { getDescription } from "../utils/customJsonReporter";
 import { CLI } from "../utils/cliUtils";
-import {
-  setupEnv,
-  performSwapUntilQuoteSelectionStep,
-  performSwapUntilDeviceVerificationStep,
-} from "../utils/swapUtils";
+import { setupEnv, performSwapUntilQuoteSelectionStep } from "../utils/swapUtils";
 
 const app: AppInfos = AppInfos.EXCHANGE;
 
@@ -205,13 +201,7 @@ for (const { fromAccount, toAccount, xrayTicket, tag } of swaps) {
         await performSwapUntilQuoteSelectionStep(app, electronApp, swap, minAmount);
         const selectedProvider = await app.swap.selectExchangeWithoutKyc(electronApp);
 
-        await performSwapUntilDeviceVerificationStep(
-          app,
-          electronApp,
-          swap,
-          selectedProvider,
-          minAmount,
-        );
+        await app.swap.clickExchangeButton(electronApp, selectedProvider);
         await app.speculos.verifyAmountsAndAcceptSwap(swap, minAmount);
         await app.swapDrawer.verifyExchangeCompletedTextContent(swap.accountToCredit.currency.name);
       },

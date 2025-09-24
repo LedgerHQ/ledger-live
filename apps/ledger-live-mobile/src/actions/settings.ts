@@ -66,6 +66,8 @@ import {
   SettingsSetMevProtectionPayload,
   SettingsSetSelectedTabPortfolioAssetsPayload,
   SettingsSetIsRebornPayload,
+  SettingsIsOnboardingFlowPayload,
+  SettingsSetRtkConsoleEnabledPayload,
 } from "./types";
 import { ImageType } from "~/components/CustomImage/types";
 
@@ -116,6 +118,9 @@ export const clearLastSeenCustomImage = () =>
 
 export const completeOnboarding = createAction<SettingsCompleteOnboardingPayload>(
   SettingsActionTypes.SETTINGS_COMPLETE_ONBOARDING,
+);
+export const setIsOnboardingFlow = createAction<SettingsIsOnboardingFlowPayload>(
+  SettingsActionTypes.SETTINGS_SET_IS_ONBOARDING_FlOW,
 );
 export const setHasInstalledAnyApp = createAction<SettingsSetHasInstalledAnyAppPayload>(
   SettingsActionTypes.SETTINGS_SET_HAS_INSTALLED_ANY_APP,
@@ -287,6 +292,10 @@ export const setSelectedTabPortfolioAssets =
   createAction<SettingsSetSelectedTabPortfolioAssetsPayload>(
     SettingsActionTypes.SET_SELECTED_TAB_PORTFOLIO_ASSETS,
   );
+
+export const setRtkConsoleEnabled = createAction<SettingsSetRtkConsoleEnabledPayload>(
+  SettingsActionTypes.SET_RTK_CONSOLE_ENABLED,
+);
 
 type PortfolioRangeOption = {
   key: PortfolioRange;

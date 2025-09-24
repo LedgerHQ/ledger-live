@@ -73,6 +73,7 @@ const ignoreErrors = [
   "could not read from HID device",
   "DeviceOnDashboardExpected",
   "EthAppPleaseEnableContractData",
+  "CeloAppPleaseEnableContractData",
   "VechainAppPleaseEnableContractDataAndMultiClause",
   "failed with status code",
   "GetAppAndVersionUnsupportedFormat",
@@ -171,12 +172,6 @@ export function init(Sentry: typeof SentryMainModule, opts?: Partial<ElectronMai
             };
           }
           return breadcrumb;
-        }
-        case "console": {
-          if (pname === "internal") {
-            // ignore console of internal because it's used to send to main and too verbose
-            return null;
-          }
         }
       }
       return breadcrumb;

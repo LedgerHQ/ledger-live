@@ -9,8 +9,7 @@ export const prepareTransaction: AccountBridge<Transaction>["prepareTransaction"
   transaction,
 ) => {
   let fee = transaction.fee;
-  if (!fee || fee.eq(0)) {
-    fee = BigNumber((await estimateFees(account.currency)).toString());
-  }
+  const amount = transaction.amount || BigNumber(0);
+  fee = BigNumber((await estimateFees(account.currency, BigInt(amount.toString()))).toString());
   return updateTransaction(transaction, { fee });
 };

@@ -79,7 +79,7 @@ import type { ModularDrawerNavigatorStackParamList } from "./ModularDrawerNaviga
 import type { WalletSyncNavigatorStackParamList } from "./WalletSyncNavigator";
 import type { WalletTabNavigatorStackParamList } from "./WalletTabNavigator";
 
-type CommonAddAccountNavigatorParamsList = {
+export type CommonAddAccountNavigatorParamsList = {
   currency?: CryptoCurrency | TokenCurrency | null;
   token?: TokenCurrency;
   returnToSwap?: boolean;

@@ -63,6 +63,7 @@ const AccountHeaderManageActions = (props: {
         button: "stake",
       },
       accountActionsTestId: "stake-button",
+      disabled: !validators || validators.length === 0,
     },
   ];
 };

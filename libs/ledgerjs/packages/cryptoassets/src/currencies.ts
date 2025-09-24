@@ -271,6 +271,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
       },
     ],
     keywords: ["algo", "algorand"],
+    tokenTypes: ["asa"],
   },
   ark: {
     type: "CryptoCurrency",
@@ -584,6 +585,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     ],
     keywords: ["bsc", "bnb", "binance", "binance smart chain", "binance chain"],
     explorerId: "bnb",
+    tokenTypes: ["bep20"],
   },
   callisto: {
     type: "CryptoCurrency",
@@ -730,6 +732,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
       },
     ],
     keywords: ["ada", "cardano"],
+    tokenTypes: ["native"],
   },
   cardano_testnet: {
     type: "CryptoCurrency",
@@ -791,6 +794,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
         address: "https://explorer.celo.org/address/$address",
       },
     ],
+    tokenTypes: ["erc20"],
   },
   clubcoin: {
     terminated: {
@@ -1241,6 +1245,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     ],
     keywords: ["eth", "ethereum"],
     explorerId: "eth",
+    tokenTypes: ["erc20"],
   },
   ethereum_classic: {
     type: "CryptoCurrency",
@@ -1511,6 +1516,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
         address: "https://hashscan.io/mainnet/account/$address",
       },
     ],
+    tokenTypes: ["hts"],
   },
   helium: {
     type: "CryptoCurrency",
@@ -1940,6 +1946,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
       },
     ],
     keywords: ["multiversx"],
+    tokenTypes: ["esdt"],
   },
   musicoin: {
     type: "CryptoCurrency",
@@ -2365,6 +2372,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     ],
     keywords: ["matic", "polygon"],
     explorerId: "matic",
+    tokenTypes: ["erc20"],
   },
   poswallet: {
     type: "CryptoCurrency",
@@ -2700,6 +2708,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
       },
     ],
     keywords: ["sol", "solana"],
+    tokenTypes: ["spl"],
   },
   stakenet: {
     type: "CryptoCurrency",
@@ -2836,6 +2845,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
       },
     ],
     keywords: ["xlm", "stellar"],
+    tokenTypes: ["stellar"],
   },
   osmosis: {
     type: "CryptoCurrency",
@@ -3016,6 +3026,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
         address: "https://tonscan.org/address/$address",
       },
     ],
+    tokenTypes: ["jetton"],
   },
   tron: {
     type: "CryptoCurrency",
@@ -3042,6 +3053,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
       },
     ],
     keywords: ["trx", "tron"],
+    tokenTypes: ["trc10", "trc20"],
   },
   ubiq: {
     type: "CryptoCurrency",
@@ -3134,6 +3146,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
         address: "https://explore.vechain.org/accounts/$address",
       },
     ],
+    tokenTypes: ["vip180"],
   },
   wanchain: {
     type: "CryptoCurrency",
@@ -3598,6 +3611,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
         address: "https://beryx.io/v1/explore/fil/mainnet/address/$address",
       },
     ],
+    tokenTypes: ["erc20"],
   },
   internet_computer: {
     type: "CryptoCurrency",
@@ -3728,6 +3742,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
         token: "https://sonicscan.org/token/$contractAddress?a=$address",
       },
     ],
+    tokenTypes: ["erc20"],
   },
   sonic_blaze: {
     type: "CryptoCurrency",
@@ -4611,6 +4626,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
         address: "https://suivision.xyz/account/$address",
       },
     ],
+    tokenTypes: ["sui"],
   },
   babylon: {
     type: "CryptoCurrency",

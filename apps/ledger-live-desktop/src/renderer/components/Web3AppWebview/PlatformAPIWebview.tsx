@@ -41,6 +41,7 @@ import { mevProtectionSelector } from "~/renderer/reducers/settings";
 import { walletSelector } from "~/renderer/reducers/wallet";
 import { HOOKS_TRACKING_LOCATIONS } from "~/renderer/analytics/hooks/variables";
 import { ModularDrawerLocation, useModularDrawerVisibility } from "LLD/features/ModularDrawer";
+import { setFlowValue, setSourceValue } from "~/renderer/reducers/modularDrawer";
 
 export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
   ({ manifest, inputs = {}, onStateChange }, ref) => {
@@ -100,9 +101,19 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
 
     const requestAccount = useCallback(
       (request: RequestAccountParams) => {
+        const source =
+          currentRouteNameRef.current === "Platform Catalog"
+            ? "Discover"
+            : currentRouteNameRef.current ?? "Unknown";
+
+        const flow = manifest.name;
+
+        dispatch(setFlowValue(flow));
+        dispatch(setSourceValue(source));
+
         return requestAccountLogic(walletState, { manifest }, request, modularDrawerVisible);
       },
-      [walletState, manifest, modularDrawerVisible],
+      [manifest, dispatch, walletState, modularDrawerVisible],
     );
 
     const receiveOnAccount = useCallback(

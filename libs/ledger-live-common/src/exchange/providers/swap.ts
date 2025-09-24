@@ -177,9 +177,9 @@ const DEFAULT_SWAP_PROVIDERS: Record<string, ProviderConfig & Partial<Additional
     type: "CEX",
     name: "NEAR Intents",
     needsBearerToken: false,
-    termsOfUseUrl: "https://docs.thorswap.finance/thorswap/resources/terms-of-service",
+    termsOfUseUrl: "https://swapkit.dev/terms-of-service/",
     supportUrl: "https://ledgerhelp.swapkit.dev/",
-    mainUrl: "https://www.thorswap.finance/",
+    mainUrl: "https://www.near.org/intents",
     needsKYC: false,
     version: 2,
     publicKey: {
