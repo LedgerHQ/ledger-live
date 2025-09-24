@@ -6,7 +6,6 @@ import { Transaction } from "@ledgerhq/live-common/e2e/models/Transaction";
 import { addTmsLink } from "../utils/allureUtils";
 import { getDescription } from "../utils/customJsonReporter";
 import { CLI } from "../utils/cliUtils";
-import { getEnv } from "@ledgerhq/live-env";
 
 //Warning 🚨: XRP Tests may fail due to API HTTP 429 issue - Jira: LIVE-14237
 
@@ -269,7 +268,7 @@ test.describe("Send flows", () => {
             transaction.transaction.accountToCredit.address,
           );
           await app.drawer.closeDrawer();
-          if (!getEnv("DISABLE_TRANSACTION_BROADCAST")) {
+          if (process.env.DISABLE_TRANSACTION_BROADCAST !== "1") {
             await app.layout.goToAccounts();
             await app.accounts.clickSyncBtnForAccount(
               transaction.transaction.accountToCredit.accountName,
