@@ -41,7 +41,7 @@ export default function useAddFundsButtonViewModel({
     if (
       shouldOnboardingRedirectToReceive &&
       parentNavigationState?.routeNames[0] === NavigatorName.Onboarding &&
-      selectedAccount
+      selectedAccount?.id
     ) {
       clickMetadata = analyticsMetadata.AddFunds?.onQuickActionOpen;
       track(clickMetadata.eventName, { ...clickMetadata.payload, flow: "onboarding" });
@@ -49,8 +49,7 @@ export default function useAddFundsButtonViewModel({
         screen: ScreenName.ReceiveConfirmation,
         params: {
           currency: currency.type === "TokenCurrency" ? currency.parentCurrency : currency,
-          accountId: selectedAccount.id,
-          parentId: selectedAccount.parentId,
+          accountId: selectedAccount?.id,
         },
       });
     } else {
@@ -70,7 +69,7 @@ export default function useAddFundsButtonViewModel({
     navigation,
     currency,
     shouldOnboardingRedirectToReceive,
-    selectedAccount,
+    selectedAccount?.id,
   ]);
 
   const closeAccountListDrawer = useCallback(() => {
