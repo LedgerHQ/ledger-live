@@ -24,6 +24,7 @@ import {
   hasCompletedOnboardingSelector,
   trackingEnabledSelector,
   reportErrorsEnabledSelector,
+  isOnboardingFlowSelector,
 } from "~/reducers/settings";
 import { accountsSelector } from "~/reducers/accounts";
 import { rebootIdSelector } from "~/reducers/appstate";
@@ -55,7 +56,12 @@ import { useListenToHidDevices } from "~/hooks/useListenToHidDevices";
 import { DeeplinksProvider } from "~/navigation/DeeplinksProvider";
 import StyleProvider from "./StyleProvider";
 
-import { setAnalytics, setOsTheme, setPersonalizedRecommendations } from "~/actions/settings";
+import {
+  setAnalytics,
+  setOsTheme,
+  setPersonalizedRecommendations,
+  setIsOnboardingFlow,
+} from "~/actions/settings";
 import TransactionsAlerts from "~/components/TransactionsAlerts";
 import {
   useFetchCurrencyAll,
@@ -125,6 +131,7 @@ function App() {
   const providerNumber = useEnv("FORCE_PROVIDER");
   const hasSeenAnalyticsOptInPrompt = useSelector(hasSeenAnalyticsOptInPromptSelector);
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
+  const isOnboardingFlow = useSelector(isOnboardingFlowSelector);
   const dmk = useDeviceManagementKit();
   const dispatch = useDispatch();
   const isTrackingEnabled = useSelector(trackingEnabledSelector);
@@ -175,6 +182,14 @@ function App() {
     hasSeenAnalyticsOptInPrompt,
     hasCompletedOnboarding,
   ]);
+
+  useEffect(() => {
+    if (isOnboardingFlow) {
+      dispatch(setIsOnboardingFlow(false));
+    }
+    // set only on initialisation in case user exits onboarding early
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dispatch]);
 
   useEffect(() => {
     if (!datadogFF?.enabled) return;
