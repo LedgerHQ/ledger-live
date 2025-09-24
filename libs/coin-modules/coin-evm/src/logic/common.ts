@@ -67,16 +67,8 @@ export function isEip1559FeeEstimation(
   );
 }
 
-export function getTransactionType(
-  intentType: string,
-  feeData?: { gasPrice?: unknown; maxFeePerGas?: unknown },
-): TransactionTypes {
-  if (intentType === "send-legacy") {
-    return TransactionTypes.legacy;
-  }
-
-  // For staking, determine type based on fee data
-  if (intentType === "staking" && feeData?.gasPrice && !feeData?.maxFeePerGas) {
+export function getTransactionType(intentType: string): TransactionTypes {
+  if (intentType === "send-legacy" || intentType === "staking-legacy") {
     return TransactionTypes.legacy;
   }
 
@@ -104,47 +96,36 @@ export async function prepareUnsignedTxParams(
   const { sender, type } = transactionIntent;
 
   // Validate intent type first
-  if (!["send-legacy", "send-eip1559", "staking"].includes(type)) {
+  if (!["send-legacy", "send-eip1559", "staking-legacy", "staking-eip1559"].includes(type)) {
     throw new Error(
-      `Unsupported intent type '${type}'. Must be 'send-legacy', 'send-eip1559', or 'staking'`,
+      `Unsupported intent type '${type}'. Must be 'send-legacy', 'send-eip1559', 'staking-legacy', or 'staking-eip1559'`,
     );
   }
 
   const node = getNodeApi(currency);
+  const transactionType = getTransactionType(type);
 
   const feeData = await node.getFeeData(currency, {
-    type: TransactionTypes.eip1559, // default fee
+    type: transactionType,
     feesStrategy: transactionIntent.feesStrategy,
   });
 
-  const transactionType = getTransactionType(type, feeData);
-
   // Build transaction parameters based on type
-  const { to, data, value } =
-    type === "staking"
-      ? buildStakingTransactionParams(currency, transactionIntent)
-      : ((): { to: string; data: Buffer; value: bigint } => {
-          const { amount, asset, recipient } = transactionIntent;
-          return {
-            to: isNative(asset) ? recipient : asset.assetReference || "",
-            data: isNative(asset) ? Buffer.from([]) : getErc20Data(recipient, amount),
-            value: isNative(asset) ? amount : 0n,
-          };
-        })();
+  const { to, data, value } = type.startsWith("staking-")
+    ? buildStakingTransactionParams(currency, transactionIntent)
+    : ((): { to: string; data: Buffer; value: bigint } => {
+        const { amount, asset, recipient } = transactionIntent;
+        return {
+          to: isNative(asset) ? recipient : asset.assetReference || "",
+          data: isNative(asset) ? Buffer.from([]) : getErc20Data(recipient, amount),
+          value: isNative(asset) ? amount : 0n,
+        };
+      })();
 
   const gasLimit = await node.getGasEstimation(
     { currency, freshAddress: sender },
     { amount: BigNumber(value.toString()), recipient: to, data },
   );
-
-  // Re-fetch fee data (changes later need to )
-  const finalFeeData =
-    transactionType !== TransactionTypes.eip1559
-      ? await node.getFeeData(currency, {
-          type: transactionType,
-          feesStrategy: transactionIntent.feesStrategy,
-        })
-      : feeData;
 
   return {
     type: transactionType,
@@ -152,6 +133,6 @@ export async function prepareUnsignedTxParams(
     data: "0x" + data.toString("hex"),
     value,
     gasLimit,
-    feeData: finalFeeData,
+    feeData,
   };
 }

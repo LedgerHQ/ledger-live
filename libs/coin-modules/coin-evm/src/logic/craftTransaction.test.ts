@@ -16,7 +16,7 @@ describe("craftTransaction", () => {
     await expect(
       craftTransaction({} as CryptoCurrency, { transactionIntent: { type: "any" } } as any),
     ).rejects.toThrow(
-      "Unsupported intent type 'any'. Must be 'send-legacy', 'send-eip1559', or 'staking'",
+      "Unsupported intent type 'any'. Must be 'send-legacy', 'send-eip1559', 'staking-legacy', or 'staking-eip1559'",
     );
   });
 
@@ -189,7 +189,7 @@ describe("craftTransaction", () => {
             } as CryptoCurrency,
             {
               transactionIntent: {
-                type: "staking",
+                type: `staking-${transactionType}`,
                 sender: "0x1234567890abcdef1234567890abcdef12345678",
                 recipient: "seivaloper1234567890abcdef1234567890abcdef12345678",
                 amount: 1000000000000000000n, // 1 SEI
@@ -228,7 +228,7 @@ describe("craftTransaction", () => {
             } as CryptoCurrency,
             {
               transactionIntent: {
-                type: "staking",
+                type: `staking-${transactionType}`,
                 sender: "0x1234567890abcdef1234567890abcdef12345678",
                 recipient: "seivaloper1234567890abcdef1234567890abcdef12345678",
                 amount: 500000000000000000n, // 0.5 SEI
@@ -267,7 +267,7 @@ describe("craftTransaction", () => {
             } as CryptoCurrency,
             {
               transactionIntent: {
-                type: "staking",
+                type: `staking-${transactionType}`,
                 sender: "0x1234567890abcdef1234567890abcdef12345678",
                 recipient: "0xabcdef1234567890abcdef1234567890abcdef12",
                 amount: 100000000000000000000n, // 100 CELO
