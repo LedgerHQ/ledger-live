@@ -1,5 +1,5 @@
 import React, { memo, useCallback, useState } from "react";
-import { View, StyleSheet, Platform } from "react-native";
+import { View, StyleSheet } from "react-native";
 import { useTranslation } from "react-i18next";
 import LText from "~/components/LText";
 import KeyboardView from "~/components/KeyboardView";
