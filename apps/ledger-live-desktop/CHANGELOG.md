@@ -1,5 +1,52 @@
 # ledger-live-desktop
 
+## 2.129.0-nightly.6
+
+### Minor Changes
+
+- [#11838](https://github.com/LedgerHQ/ledger-live/pull/11838) [`c2d8d86`](https://github.com/LedgerHQ/ledger-live/commit/c2d8d8670f848989836c46ea08ae88c88086fdd6) Thanks [@semeano](https://github.com/semeano)! - Enable Celo tokens
+
+- [#11725](https://github.com/LedgerHQ/ledger-live/pull/11725) [`5d75ba7`](https://github.com/LedgerHQ/ledger-live/commit/5d75ba75aaf38859272b181f5503f14def2180b9) Thanks [@ejaycoleman](https://github.com/ejaycoleman)! - Migrates flow and source to redux for LLD MAD
+
+- [#11750](https://github.com/LedgerHQ/ledger-live/pull/11750) [`f015ef3`](https://github.com/LedgerHQ/ledger-live/commit/f015ef32660905d00f55a45f451f38bc12aec9ba) Thanks [@hhumphrey-ledger](https://github.com/hhumphrey-ledger)! - Add entry points for iban in LLD
+
+- [#11957](https://github.com/LedgerHQ/ledger-live/pull/11957) [`21e515c`](https://github.com/LedgerHQ/ledger-live/commit/21e515c412f4a8be424bea5d3e99e52c930fcb96) Thanks [@qperrot](https://github.com/qperrot)! - disabled stake button if validators is empty
+
+- [#11903](https://github.com/LedgerHQ/ledger-live/pull/11903) [`321e514`](https://github.com/LedgerHQ/ledger-live/commit/321e5145e94a34c4a348855deb1acce14cb90b18) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Fix incidents & filtering display
+
+- [#11955](https://github.com/LedgerHQ/ledger-live/pull/11955) [`1b1eb2f`](https://github.com/LedgerHQ/ledger-live/commit/1b1eb2f7eb99bce9ad8dc6ed9f922bbee4a7380c) Thanks [@gre-ledger](https://github.com/gre-ledger)! - remove unused node-hid and usb making LLD faster to build and possibly faster to boot.
+
+- [#11899](https://github.com/LedgerHQ/ledger-live/pull/11899) [`42f2449`](https://github.com/LedgerHQ/ledger-live/commit/42f244956720dfe13cf16334ef79064f651c67d0) Thanks [@adammino-ledger](https://github.com/adammino-ledger)! - Add nearintents to swap config for drawer and cal info
+
+### Patch Changes
+
+- Updated dependencies [[`2abaa52`](https://github.com/LedgerHQ/ledger-live/commit/2abaa522471e8247d274c4b22cb4e297969ebe9a), [`777bf68`](https://github.com/LedgerHQ/ledger-live/commit/777bf6884e89bcbec9523fe17a7bc94ec0e5e624), [`ab0e1bc`](https://github.com/LedgerHQ/ledger-live/commit/ab0e1bcc97b66b750b6c29e618eb03ce6f25bb7b), [`c2d8d86`](https://github.com/LedgerHQ/ledger-live/commit/c2d8d8670f848989836c46ea08ae88c88086fdd6), [`f015ef3`](https://github.com/LedgerHQ/ledger-live/commit/f015ef32660905d00f55a45f451f38bc12aec9ba), [`321e514`](https://github.com/LedgerHQ/ledger-live/commit/321e5145e94a34c4a348855deb1acce14cb90b18), [`49a8534`](https://github.com/LedgerHQ/ledger-live/commit/49a85340a9c4e5dd8dd07db87028fe48f307d1f6), [`42f2449`](https://github.com/LedgerHQ/ledger-live/commit/42f244956720dfe13cf16334ef79064f651c67d0)]:
+  - @ledgerhq/coin-canton@0.5.1-nightly.3
+  - @ledgerhq/live-common@34.49.0-nightly.5
+  - @ledgerhq/cryptoassets@13.29.0-nightly.3
+  - @ledgerhq/types-cryptoassets@7.27.0-nightly.1
+  - @ledgerhq/errors@6.26.0-nightly.0
+  - @ledgerhq/live-env@2.17.0-nightly.2
+  - @ledgerhq/types-live@6.85.0-nightly.3
+  - @ledgerhq/live-dmk-desktop@0.9.7-nightly.5
+  - @ledgerhq/coin-framework@6.4.1-nightly.3
+  - @ledgerhq/coin-bitcoin@0.22.1-nightly.3
+  - @ledgerhq/coin-cosmos@0.17.2-nightly.3
+  - @ledgerhq/coin-evm@2.31.0-nightly.4
+  - @ledgerhq/coin-filecoin@1.12.1-nightly.3
+  - @ledgerhq/live-countervalues@0.7.2-nightly.3
+  - @ledgerhq/live-countervalues-react@0.6.1-nightly.3
+  - @ledgerhq/live-wallet@0.14.1-nightly.3
+  - @ledgerhq/domain-service@1.2.44-nightly.3
+  - @ledgerhq/ledger-key-ring-protocol@0.6.6-nightly.2
+  - @ledgerhq/devices@8.5.2-nightly.1
+  - @ledgerhq/hw-transport@6.31.11-nightly.1
+  - @ledgerhq/hw-transport-http@6.30.11-nightly.1
+  - @ledgerhq/hw-transport-node-speculos-http@6.30.1-nightly.1
+  - @ledgerhq/hw-transport-vault@1.3.11-nightly.1
+  - @ledgerhq/live-network@2.0.18-nightly.2
+  - @ledgerhq/hw-ledger-key-ring-protocol@0.4.1-nightly.2
+
 ## 2.129.0-nightly.5
 
 ### Minor Changes

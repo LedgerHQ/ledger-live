@@ -1,5 +1,11 @@
 # @ledgerhq/types-live
 
+## 6.85.0-nightly.3
+
+### Minor Changes
+
+- [#11750](https://github.com/LedgerHQ/ledger-live/pull/11750) [`f015ef3`](https://github.com/LedgerHQ/ledger-live/commit/f015ef32660905d00f55a45f451f38bc12aec9ba) Thanks [@hhumphrey-ledger](https://github.com/hhumphrey-ledger)! - Add entry points for iban in LLD
+
 ## 6.85.0-nightly.2
 
 ### Minor Changes

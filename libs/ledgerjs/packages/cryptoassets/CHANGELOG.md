@@ -1,5 +1,16 @@
 # @ledgerhq/cryptoassets
 
+## 13.29.0-nightly.3
+
+### Minor Changes
+
+- [#11948](https://github.com/LedgerHQ/ledger-live/pull/11948) [`ab0e1bc`](https://github.com/LedgerHQ/ledger-live/commit/ab0e1bcc97b66b750b6c29e618eb03ce6f25bb7b) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Simplify implementation of listTokenTypesForCryptoCurrency to not depend on bundled tokens.
+
+### Patch Changes
+
+- Updated dependencies [[`c2d8d86`](https://github.com/LedgerHQ/ledger-live/commit/c2d8d8670f848989836c46ea08ae88c88086fdd6)]:
+  - @ledgerhq/live-env@2.17.0-nightly.2
+
 ## 13.28.1-nightly.2
 
 ### Patch Changes

@@ -1,5 +1,19 @@
 # @ledgerhq/coin-evm
 
+## 2.31.0-nightly.4
+
+### Patch Changes
+
+- Updated dependencies [[`ab0e1bc`](https://github.com/LedgerHQ/ledger-live/commit/ab0e1bcc97b66b750b6c29e618eb03ce6f25bb7b), [`c2d8d86`](https://github.com/LedgerHQ/ledger-live/commit/c2d8d8670f848989836c46ea08ae88c88086fdd6)]:
+  - @ledgerhq/cryptoassets@13.29.0-nightly.3
+  - @ledgerhq/errors@6.26.0-nightly.0
+  - @ledgerhq/live-env@2.17.0-nightly.2
+  - @ledgerhq/coin-framework@6.4.1-nightly.3
+  - @ledgerhq/domain-service@1.2.44-nightly.3
+  - @ledgerhq/devices@8.5.2-nightly.1
+  - @ledgerhq/live-network@2.0.18-nightly.2
+  - @ledgerhq/evm-tools@1.7.7-nightly.2
+
 ## 2.31.0-nightly.3
 
 ### Minor Changes

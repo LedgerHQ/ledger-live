@@ -1,5 +1,87 @@
 # @ledgerhq/live-common
 
+## 34.49.0-nightly.5
+
+### Minor Changes
+
+- [#11917](https://github.com/LedgerHQ/ledger-live/pull/11917) [`777bf68`](https://github.com/LedgerHQ/ledger-live/commit/777bf6884e89bcbec9523fe17a7bc94ec0e5e624) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - add Time to view balance (Sync all accounts on init)
+
+- [#11750](https://github.com/LedgerHQ/ledger-live/pull/11750) [`f015ef3`](https://github.com/LedgerHQ/ledger-live/commit/f015ef32660905d00f55a45f451f38bc12aec9ba) Thanks [@hhumphrey-ledger](https://github.com/hhumphrey-ledger)! - Add entry points for iban in LLD
+
+- [#11903](https://github.com/LedgerHQ/ledger-live/pull/11903) [`321e514`](https://github.com/LedgerHQ/ledger-live/commit/321e5145e94a34c4a348855deb1acce14cb90b18) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Fix incidents & filtering display
+
+- [#11899](https://github.com/LedgerHQ/ledger-live/pull/11899) [`42f2449`](https://github.com/LedgerHQ/ledger-live/commit/42f244956720dfe13cf16334ef79064f651c67d0) Thanks [@adammino-ledger](https://github.com/adammino-ledger)! - Add nearintents to swap config for drawer and cal info
+
+### Patch Changes
+
+- [#11923](https://github.com/LedgerHQ/ledger-live/pull/11923) [`49a8534`](https://github.com/LedgerHQ/ledger-live/commit/49a85340a9c4e5dd8dd07db87028fe48f307d1f6) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Canton accurate fees
+
+- Updated dependencies [[`2abaa52`](https://github.com/LedgerHQ/ledger-live/commit/2abaa522471e8247d274c4b22cb4e297969ebe9a), [`ab0e1bc`](https://github.com/LedgerHQ/ledger-live/commit/ab0e1bcc97b66b750b6c29e618eb03ce6f25bb7b), [`c2d8d86`](https://github.com/LedgerHQ/ledger-live/commit/c2d8d8670f848989836c46ea08ae88c88086fdd6), [`a0da1ef`](https://github.com/LedgerHQ/ledger-live/commit/a0da1efb84783a68127ba28e79c8dec5294d4543), [`49a8534`](https://github.com/LedgerHQ/ledger-live/commit/49a85340a9c4e5dd8dd07db87028fe48f307d1f6), [`42f2449`](https://github.com/LedgerHQ/ledger-live/commit/42f244956720dfe13cf16334ef79064f651c67d0)]:
+  - @ledgerhq/coin-canton@0.5.1-nightly.3
+  - @ledgerhq/cryptoassets@13.29.0-nightly.3
+  - @ledgerhq/hw-app-celo@6.35.0-nightly.3
+  - @ledgerhq/hw-app-eth@6.46.0-nightly.3
+  - @ledgerhq/errors@6.26.0-nightly.0
+  - @ledgerhq/coin-celo@1.5.0-nightly.4
+  - @ledgerhq/live-env@2.17.0-nightly.2
+  - @ledgerhq/hw-app-exchange@0.14.0-nightly.2
+  - @ledgerhq/ledger-cal-service@1.5.0-nightly.2
+  - @ledgerhq/live-signer-canton@0.3.1-nightly.3
+  - @ledgerhq/coin-framework@6.4.1-nightly.3
+  - @ledgerhq/coin-algorand@0.10.2-nightly.3
+  - @ledgerhq/coin-aptos@3.3.1-nightly.3
+  - @ledgerhq/coin-bitcoin@0.22.1-nightly.3
+  - @ledgerhq/coin-cardano@0.12.2-nightly.3
+  - @ledgerhq/coin-casper@2.1.2-nightly.3
+  - @ledgerhq/coin-cosmos@0.17.2-nightly.3
+  - @ledgerhq/coin-evm@2.31.0-nightly.4
+  - @ledgerhq/coin-filecoin@1.12.1-nightly.3
+  - @ledgerhq/coin-hedera@1.11.2-nightly.3
+  - @ledgerhq/coin-icon@0.12.2-nightly.3
+  - @ledgerhq/coin-internet_computer@1.8.2-nightly.3
+  - @ledgerhq/coin-kaspa@1.1.1-nightly.3
+  - @ledgerhq/coin-mina@1.2.2-nightly.3
+  - @ledgerhq/coin-multiversx@0.5.2-nightly.3
+  - @ledgerhq/coin-near@0.13.2-nightly.3
+  - @ledgerhq/coin-polkadot@6.10.1-nightly.3
+  - @ledgerhq/coin-solana@0.33.1-nightly.3
+  - @ledgerhq/coin-stacks@0.9.2-nightly.3
+  - @ledgerhq/coin-stellar@6.4.1-nightly.3
+  - @ledgerhq/coin-sui@0.13.1-nightly.4
+  - @ledgerhq/coin-tezos@6.5.0-nightly.3
+  - @ledgerhq/coin-ton@0.14.2-nightly.3
+  - @ledgerhq/coin-tron@5.4.1-nightly.3
+  - @ledgerhq/coin-vechain@2.9.2-nightly.3
+  - @ledgerhq/coin-xrp@7.4.1-nightly.3
+  - @ledgerhq/hw-app-vet@0.5.17-nightly.3
+  - @ledgerhq/live-countervalues@0.7.2-nightly.3
+  - @ledgerhq/live-countervalues-react@0.6.1-nightly.3
+  - @ledgerhq/live-wallet@0.14.1-nightly.3
+  - @ledgerhq/live-signer-evm@0.7.6-nightly.4
+  - @ledgerhq/device-core@0.6.4-nightly.3
+  - @ledgerhq/devices@8.5.2-nightly.1
+  - @ledgerhq/hw-app-algorand@6.31.7-nightly.1
+  - @ledgerhq/hw-app-aptos@6.34.7-nightly.1
+  - @ledgerhq/hw-app-cosmos@6.32.7-nightly.1
+  - @ledgerhq/hw-app-hedera@1.2.7-nightly.1
+  - @ledgerhq/hw-app-icon@1.3.7-nightly.1
+  - @ledgerhq/hw-app-kaspa@1.3.0-nightly.3
+  - @ledgerhq/hw-app-polkadot@6.34.7-nightly.1
+  - @ledgerhq/hw-app-str@7.2.7-nightly.1
+  - @ledgerhq/hw-transport@6.31.11-nightly.1
+  - @ledgerhq/live-network@2.0.18-nightly.2
+  - @ledgerhq/live-signer-solana@0.5.6-nightly.3
+  - @ledgerhq/speculos-transport@0.2.11-nightly.2
+  - @ledgerhq/hw-app-btc@10.11.1-nightly.1
+  - @ledgerhq/hw-app-multiversx@6.25.2-nightly.1
+  - @ledgerhq/hw-app-near@6.31.7-nightly.1
+  - @ledgerhq/hw-app-tezos@6.31.7-nightly.1
+  - @ledgerhq/hw-app-trx@6.31.7-nightly.1
+  - @ledgerhq/hw-app-xrp@6.32.5-nightly.1
+  - @ledgerhq/hw-transport-mocker@6.29.11-nightly.1
+  - @ledgerhq/live-dmk-shared@0.12.4-nightly.2
+  - @ledgerhq/hw-app-sui@1.4.0
+
 ## 34.49.0-nightly.4
 
 ### Minor Changes

@@ -1,5 +1,12 @@
 # @ledgerhq/live-dmk
 
+## 0.12.4-nightly.2
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport@6.31.11-nightly.1
+
 ## 0.12.4-nightly.1
 
 ### Patch Changes

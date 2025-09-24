@@ -1,5 +1,19 @@
 # @ledgerhq/coin-tester-evm
 
+## 1.7.2-nightly.5
+
+### Patch Changes
+
+- Updated dependencies [[`777bf68`](https://github.com/LedgerHQ/ledger-live/commit/777bf6884e89bcbec9523fe17a7bc94ec0e5e624), [`ab0e1bc`](https://github.com/LedgerHQ/ledger-live/commit/ab0e1bcc97b66b750b6c29e618eb03ce6f25bb7b), [`f015ef3`](https://github.com/LedgerHQ/ledger-live/commit/f015ef32660905d00f55a45f451f38bc12aec9ba), [`321e514`](https://github.com/LedgerHQ/ledger-live/commit/321e5145e94a34c4a348855deb1acce14cb90b18), [`49a8534`](https://github.com/LedgerHQ/ledger-live/commit/49a85340a9c4e5dd8dd07db87028fe48f307d1f6), [`42f2449`](https://github.com/LedgerHQ/ledger-live/commit/42f244956720dfe13cf16334ef79064f651c67d0)]:
+  - @ledgerhq/live-common@34.49.0-nightly.5
+  - @ledgerhq/cryptoassets@13.29.0-nightly.3
+  - @ledgerhq/types-cryptoassets@7.27.0-nightly.1
+  - @ledgerhq/types-live@6.85.0-nightly.3
+  - @ledgerhq/coin-framework@6.4.1-nightly.3
+  - @ledgerhq/coin-evm@2.31.0-nightly.4
+  - @ledgerhq/coin-tester@0.9.4-nightly.1
+  - @ledgerhq/live-signer-evm@0.7.6-nightly.4
+
 ## 1.7.2-nightly.4
 
 ### Patch Changes

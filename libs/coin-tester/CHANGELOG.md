@@ -1,5 +1,12 @@
 # @ledgerhq/coin-tester
 
+## 0.9.4-nightly.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport-node-speculos-http@6.30.1-nightly.1
+
 ## 0.9.4-nightly.0
 
 ### Patch Changes

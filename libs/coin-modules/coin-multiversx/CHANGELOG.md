@@ -1,5 +1,19 @@
 # @ledgerhq/coin-elrond
 
+## 0.5.2-nightly.3
+
+### Patch Changes
+
+- Updated dependencies [[`ab0e1bc`](https://github.com/LedgerHQ/ledger-live/commit/ab0e1bcc97b66b750b6c29e618eb03ce6f25bb7b), [`c2d8d86`](https://github.com/LedgerHQ/ledger-live/commit/c2d8d8670f848989836c46ea08ae88c88086fdd6), [`f015ef3`](https://github.com/LedgerHQ/ledger-live/commit/f015ef32660905d00f55a45f451f38bc12aec9ba)]:
+  - @ledgerhq/cryptoassets@13.29.0-nightly.3
+  - @ledgerhq/types-cryptoassets@7.27.0-nightly.1
+  - @ledgerhq/errors@6.26.0-nightly.0
+  - @ledgerhq/live-env@2.17.0-nightly.2
+  - @ledgerhq/types-live@6.85.0-nightly.3
+  - @ledgerhq/coin-framework@6.4.1-nightly.3
+  - @ledgerhq/devices@8.5.2-nightly.1
+  - @ledgerhq/live-network@2.0.18-nightly.2
+
 ## 0.5.2-nightly.2
 
 ### Patch Changes

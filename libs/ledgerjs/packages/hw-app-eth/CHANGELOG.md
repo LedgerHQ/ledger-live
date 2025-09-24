@@ -1,5 +1,22 @@
 # @ledgerhq/hw-app-eth
 
+## 6.46.0-nightly.3
+
+### Minor Changes
+
+- [#11838](https://github.com/LedgerHQ/ledger-live/pull/11838) [`c2d8d86`](https://github.com/LedgerHQ/ledger-live/commit/c2d8d8670f848989836c46ea08ae88c88086fdd6) Thanks [@semeano](https://github.com/semeano)! - Enable Celo tokens
+
+### Patch Changes
+
+- Updated dependencies [[`c2d8d86`](https://github.com/LedgerHQ/ledger-live/commit/c2d8d8670f848989836c46ea08ae88c88086fdd6), [`f015ef3`](https://github.com/LedgerHQ/ledger-live/commit/f015ef32660905d00f55a45f451f38bc12aec9ba)]:
+  - @ledgerhq/errors@6.26.0-nightly.0
+  - @ledgerhq/types-live@6.85.0-nightly.3
+  - @ledgerhq/domain-service@1.2.44-nightly.3
+  - @ledgerhq/cryptoassets-evm-signatures@13.6.3-nightly.2
+  - @ledgerhq/hw-transport@6.31.11-nightly.1
+  - @ledgerhq/evm-tools@1.7.7-nightly.2
+  - @ledgerhq/hw-transport-mocker@6.29.11-nightly.1
+
 ## 6.45.19-nightly.2
 
 ### Patch Changes

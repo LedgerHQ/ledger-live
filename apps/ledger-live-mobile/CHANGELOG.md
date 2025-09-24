@@ -1,5 +1,50 @@
 # live-mobile
 
+## 3.94.0-nightly.6
+
+### Minor Changes
+
+- [#11920](https://github.com/LedgerHQ/ledger-live/pull/11920) [`33b5855`](https://github.com/LedgerHQ/ledger-live/commit/33b5855ff26dfea7d4b3c6844cd567c50c27ad62) Thanks [@mitchellv-ledger](https://github.com/mitchellv-ledger)! - Add direct redirect to receive when onboarding flow in add funds button
+
+- [#11954](https://github.com/LedgerHQ/ledger-live/pull/11954) [`5c09b61`](https://github.com/LedgerHQ/ledger-live/commit/5c09b618a42fd38022c90af6455993ea3c1c41a8) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Fix HBAR add account LLM
+
+- [#11947](https://github.com/LedgerHQ/ledger-live/pull/11947) [`6dbc1ee`](https://github.com/LedgerHQ/ledger-live/commit/6dbc1ee06f80517fefcfa2c0b357f8ed29f3119c) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add RTK debug tool
+
+- [#11838](https://github.com/LedgerHQ/ledger-live/pull/11838) [`c2d8d86`](https://github.com/LedgerHQ/ledger-live/commit/c2d8d8670f848989836c46ea08ae88c88086fdd6) Thanks [@semeano](https://github.com/semeano)! - Enable Celo tokens
+
+- [#11924](https://github.com/LedgerHQ/ledger-live/pull/11924) [`ab5483f`](https://github.com/LedgerHQ/ledger-live/commit/ab5483faa2ecbdf6b7ec188cc8c41348c63bfe99) Thanks [@mitchellv-ledger](https://github.com/mitchellv-ledger)! - Add receive fund navigators to onboarding navigation. Make close button in receive flow go to completion screen when in onboarding flow
+
+- [#11903](https://github.com/LedgerHQ/ledger-live/pull/11903) [`321e514`](https://github.com/LedgerHQ/ledger-live/commit/321e5145e94a34c4a348855deb1acce14cb90b18) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Fix incidents & filtering display
+
+- [#11939](https://github.com/LedgerHQ/ledger-live/pull/11939) [`239abc7`](https://github.com/LedgerHQ/ledger-live/commit/239abc702d5752e978902eac7e99f0af56a91ab8) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - fix Add account link unresponsive on asset details screen
+
+### Patch Changes
+
+- Updated dependencies [[`ab0e1bc`](https://github.com/LedgerHQ/ledger-live/commit/ab0e1bcc97b66b750b6c29e618eb03ce6f25bb7b), [`c2d8d86`](https://github.com/LedgerHQ/ledger-live/commit/c2d8d8670f848989836c46ea08ae88c88086fdd6), [`f015ef3`](https://github.com/LedgerHQ/ledger-live/commit/f015ef32660905d00f55a45f451f38bc12aec9ba)]:
+  - @ledgerhq/types-cryptoassets@7.27.0-nightly.1
+  - @ledgerhq/errors@6.26.0-nightly.0
+  - @ledgerhq/live-env@2.17.0-nightly.2
+  - @ledgerhq/types-live@6.85.0-nightly.3
+  - @ledgerhq/coin-framework@6.4.1-nightly.3
+  - @ledgerhq/coin-cosmos@0.17.2-nightly.3
+  - @ledgerhq/coin-evm@2.31.0-nightly.4
+  - @ledgerhq/coin-filecoin@1.12.1-nightly.3
+  - @ledgerhq/coin-multiversx@0.5.2-nightly.3
+  - @ledgerhq/coin-stacks@0.9.2-nightly.3
+  - @ledgerhq/live-countervalues@0.7.2-nightly.3
+  - @ledgerhq/live-countervalues-react@0.6.1-nightly.3
+  - @ledgerhq/live-wallet@0.14.1-nightly.3
+  - @ledgerhq/domain-service@1.2.44-nightly.3
+  - @ledgerhq/ledger-key-ring-protocol@0.6.6-nightly.2
+  - @ledgerhq/devices@8.5.2-nightly.1
+  - @ledgerhq/hw-transport@6.31.11-nightly.1
+  - @ledgerhq/hw-transport-http@6.30.11-nightly.1
+  - @ledgerhq/react-native-hid@6.32.11-nightly.1
+  - @ledgerhq/react-native-hw-transport-ble@6.35.4-nightly.1
+  - @ledgerhq/live-dmk-mobile@0.11.5-nightly.2
+  - @ledgerhq/live-network@2.0.18-nightly.2
+  - @ledgerhq/hw-ledger-key-ring-protocol@0.4.1-nightly.2
+
 ## 3.94.0-nightly.5
 
 ### Minor Changes

@@ -1,5 +1,11 @@
 # @ledgerhq/types-cryptoassets
 
+## 7.27.0-nightly.1
+
+### Minor Changes
+
+- [#11948](https://github.com/LedgerHQ/ledger-live/pull/11948) [`ab0e1bc`](https://github.com/LedgerHQ/ledger-live/commit/ab0e1bcc97b66b750b6c29e618eb03ce6f25bb7b) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Simplify implementation of listTokenTypesForCryptoCurrency to not depend on bundled tokens.
+
 ## 7.27.0-nightly.0
 
 ### Minor Changes

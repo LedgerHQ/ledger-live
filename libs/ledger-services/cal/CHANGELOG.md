@@ -1,5 +1,17 @@
 # @ledgerhq/ledger-cal-service
 
+## 1.5.0-nightly.2
+
+### Minor Changes
+
+- [#11899](https://github.com/LedgerHQ/ledger-live/pull/11899) [`42f2449`](https://github.com/LedgerHQ/ledger-live/commit/42f244956720dfe13cf16334ef79064f651c67d0) Thanks [@adammino-ledger](https://github.com/adammino-ledger)! - Add nearintents to swap config for drawer and cal info
+
+### Patch Changes
+
+- Updated dependencies [[`c2d8d86`](https://github.com/LedgerHQ/ledger-live/commit/c2d8d8670f848989836c46ea08ae88c88086fdd6)]:
+  - @ledgerhq/live-env@2.17.0-nightly.2
+  - @ledgerhq/live-network@2.0.18-nightly.2
+
 ## 1.5.0-nightly.1
 
 ### Patch Changes
