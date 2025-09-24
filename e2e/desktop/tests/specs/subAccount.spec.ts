@@ -529,24 +529,27 @@ test.describe("Send token (subAccount) - valid address & amount input", () => {
   );
 });
 
-test.describe("Send token (subAccount) - valid address & amount input", () => {
-  const tx = new Transaction(TokenAccount.SUI_USDC_1, TokenAccount.SUI_USDC_2, "1", Fee.MEDIUM);
+test.describe.only("Send token (subAccount) - e2e ", () => {
+  const tokenValidSend = {
+    tx: new Transaction(TokenAccount.SUI_USDC_1, TokenAccount.SUI_USDC_2, "1", Fee.MEDIUM),
+    xrayTicket: "B2CQA-3908",
+  };
   test.use({
     userdata: "skip-onboarding",
-    speculosApp: tx.accountToDebit.currency.speculosApp,
+    speculosApp: tokenValidSend.tx.accountToDebit.currency.speculosApp,
     cliCommands: [
       (appjsonPath: string) => {
         return CLI.liveData({
-          currency: tx.accountToDebit.currency.speculosApp.name,
-          index: tx.accountToDebit.index,
+          currency: tokenValidSend.tx.accountToDebit.currency.speculosApp.name,
+          index: tokenValidSend.tx.accountToDebit.index,
           add: true,
           appjson: appjsonPath,
         });
       },
       (appjsonPath: string) => {
         return CLI.liveData({
-          currency: tx.accountToCredit.currency.speculosApp.name,
-          index: tx.accountToCredit.index,
+          currency: tokenValidSend.tx.accountToCredit.currency.speculosApp.name,
+          index: tokenValidSend.tx.accountToCredit.index,
           add: true,
           appjson: appjsonPath,
         });
@@ -554,12 +557,13 @@ test.describe("Send token (subAccount) - valid address & amount input", () => {
     ],
   });
   test(
-    `Send from ${tx.accountToDebit.accountName} to ${tx.accountToCredit.accountName} - valid address & amount input`,
+    `Send from ${tokenValidSend.tx.accountToDebit.accountName} to ${tokenValidSend.tx.accountToCredit.accountName} - e2e`,
     {
       tag: ["@NanoSP", "@LNS", "@NanoX"],
-      annotation: { type: "TMS", description: "B2CQA-3908" },
+      annotation: { type: "TMS", description: tokenValidSend.xrayTicket },
     },
     async ({ app }) => {
+      const tx = tokenValidSend.tx;
       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
       await app.layout.goToAccounts();
       await app.accounts.navigateToAccountByName(getParentAccountName(tx.accountToDebit));
