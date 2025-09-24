@@ -3,7 +3,6 @@ import {
   View,
   StyleSheet,
   Platform,
-  FlatList,
   StyleProp,
   ViewStyle,
   TextStyle,

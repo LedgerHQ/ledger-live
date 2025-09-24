@@ -1,7 +1,7 @@
 import { BigNumber } from "bignumber.js";
 import React, { useCallback, useState, useMemo } from "react";
 import { View, StyleSheet, Linking } from "react-native";
-import { useNavigation, useTheme, NavigationProp, ParamListBase } from "@react-navigation/native";
+import { useNavigation, useTheme } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useTranslation } from "react-i18next";
 import { getAccountCurrency, getMainAccount } from "@ledgerhq/live-common/account/index";
@@ -59,13 +59,10 @@ function StakingPositions({ account }: Props) {
       params?: { [key: string]: unknown };
     }) => {
       setStakingPosition(undefined);
-      navigation.navigate(
-        route as never,
-        {
-          screen,
-          params: { ...params, accountId: account.id },
-        } as any,
-      );
+      navigation.navigate(route as never, {
+        screen,
+        params: { ...params, accountId: account.id },
+      });
     },
     [navigation, account.id],
   );

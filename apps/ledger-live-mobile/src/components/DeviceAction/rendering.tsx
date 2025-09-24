@@ -28,7 +28,6 @@ import { DeviceModelId } from "@ledgerhq/types-devices";
 import type { DeviceModelInfo } from "@ledgerhq/types-live";
 import { ParamListBase, T } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import BigNumber from "bignumber.js";
 import React, { useEffect, useState } from "react";
 import { TFunction } from "react-i18next";
 import { Image, Linking, ScrollView } from "react-native";
