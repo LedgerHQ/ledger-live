@@ -19,6 +19,7 @@ import { useBalanceDeps } from "LLD/features/ModularDrawer/hooks/useBalanceDeps"
 import { useSelector } from "react-redux";
 import { modularDrawerIsDebuggingDuplicatesSelector } from "~/renderer/reducers/modularDrawer";
 import { AssetData } from "@ledgerhq/live-common/modularDrawer/utils/type";
+import { groupCurrenciesByProvider } from "@ledgerhq/live-common/modularDrawer/utils/groupCurrenciesByProvider";
 
 export type SelectAssetProps = {
   assetsToDisplay: CryptoOrTokenCurrency[];
@@ -50,20 +51,7 @@ export const SelectAssetList = ({
   loadNext,
   assetsSorted,
 }: SelectAssetProps) => {
-  const assetsMap = new Map<
-    string,
-    { mainCurrency: CryptoOrTokenCurrency; currencies: CryptoOrTokenCurrency[] }
-  >();
-
-  assetsSorted?.forEach(({ asset: { id: providerId }, networks = [] }) => {
-    if (networks.length > 0) {
-      const mainCurrency = networks.find(c => c.id === providerId) ?? networks[0];
-      assetsMap.set(providerId, {
-        mainCurrency,
-        currencies: networks,
-      });
-    }
-  });
+  const assetsMap = groupCurrenciesByProvider(assetsSorted || []);
 
   const assetConfigurationDeps = {
     ApyIndicator,
