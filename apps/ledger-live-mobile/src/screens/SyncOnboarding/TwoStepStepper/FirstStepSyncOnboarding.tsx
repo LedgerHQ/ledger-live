@@ -178,10 +178,13 @@ const FirstStepSyncOnboarding = ({
     deviceOnboardingState,
   });
 
+  // Destructure for useEffect dependency
+  const { setStep } = companionSteps;
+
   // Sets the state which is active based on device response
   useFirstStepCompanionState({
     deviceOnboardingState,
-    setCompanionStep: companionSteps.setStep,
+    setCompanionStep: setStep,
     notifyEarlySecurityCheckShouldReset,
     setSeedPathStatus,
     analyticsSeedConfiguration,
@@ -235,13 +238,13 @@ const FirstStepSyncOnboarding = ({
     );
     setIsFinishedStep(true);
     setTimeout(() => {
-      companionSteps.setStep(FirstStepCompanionStepKey.Exit);
+      setStep(FirstStepCompanionStepKey.Exit);
       setIsFinishedStep(false);
       setHasFinishedExitAnimation(true);
     }, 400);
   }, [
     handleFinishStep,
-    companionSteps,
+    setStep,
     sharedHeight,
     analyticsSeedConfiguration,
     setHasFinishedExitAnimation,
