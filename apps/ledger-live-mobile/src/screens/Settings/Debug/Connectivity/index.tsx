@@ -60,16 +60,6 @@ export default function Connectivity() {
         <Flex>
           <Alert type="info" title="The following actions will use the selected device" />
           <SettingsRow
-            title="Ble tool"
-            desc={`Debugging tool using ${device.deviceName || device.deviceId}`}
-            iconLeft={<IconsLegacy.BluetoothMedium size={32} color="black" />}
-            onPress={() =>
-              navigation.navigate(ScreenName.DebugBLE, {
-                deviceId: device.deviceId,
-              })
-            }
-          />
-          <SettingsRow
             title="Command sender"
             desc={"Send commands to the device and get a response"}
             iconLeft={<IconsLegacy.ToolboxMedium size={32} color="black" />}

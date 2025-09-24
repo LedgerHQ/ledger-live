@@ -77,7 +77,7 @@ export type UseEnableBluetoothArgs = {
  *
  * Works for both iOS and Android.
  *
- * Not Transport agnostic. It uses @ledgerhq/react-native-hw-transport-ble.
+ * Not Transport agnostic. It uses the BLE transport.
  *
  * @param isHookEnabled if false, the hook will not check/request the bluetooth services, and will not listen to the
  *   the bluetooth services state from BleTransport. Defaults to true.
@@ -122,7 +122,7 @@ export function useEnableBluetooth(
     let sub: null | Subscription;
 
     if (isHookEnabled) {
-      sub = new Observable(getBLETransport({ isLDMKEnabled }).observeState).subscribe({
+      sub = new Observable(getBLETransport().observeState).subscribe({
         next: ({ type }: { type: string }) => setObservedTransportState(type),
       });
     }

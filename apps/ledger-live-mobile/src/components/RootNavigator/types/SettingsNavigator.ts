@@ -47,12 +47,6 @@ export type SettingsNavigatorStackParamList = {
     deviceId: string;
   };
   [ScreenName.DebugSwap]: undefined;
-  [ScreenName.DebugBLE]: {
-    deviceId: string;
-  };
-  [ScreenName.DebugBLEBenchmark]: {
-    deviceId: string;
-  };
   [ScreenName.DebugBLEDevicePairing]: {
     areKnownDevicesDisplayed: boolean;
     onSuccessAddToKnownDevices: boolean;

@@ -1,5 +1,4 @@
 import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { DeviceModelId } from "@ledgerhq/types-devices";
 import type {
   Account,
   AccountLike,
@@ -148,11 +147,6 @@ export type BaseNavigatorStackParamList = {
     disableAllLinks?: boolean;
     isSubOperation?: boolean;
     key?: string;
-  };
-  [ScreenName.PairDevices]: {
-    onDone?: ((_: Device) => void) | null;
-    hasError?: boolean;
-    deviceModelIds?: DeviceModelId[];
   };
   [ScreenName.EditDeviceName]: {
     device: Device;

@@ -13,10 +13,10 @@ import getBLETransport from "~/react-native-hw-transport-ble";
 /**
  * Registers transport modules for different connection types (BLE, HID, HTTP Debug).
  *
- * @param {boolean} isLDMKEnabled - Flag to enable or disable LDMK support.
+ * @param {boolean} _isLDMKEnabled - Flag to enable or disable LDMK support.
  */
-export const registerTransports = (isLDMKEnabled: boolean) => {
-  if (Config.BLE_LOG_LEVEL) getBLETransport({ isLDMKEnabled }).setLogLevel(Config.BLE_LOG_LEVEL);
+export const registerTransports = (_isLDMKEnabled: boolean) => {
+  if (Config.BLE_LOG_LEVEL) getBLETransport().setLogLevel(Config.BLE_LOG_LEVEL);
 
   // Add support of HID (experimental until we stabilize it)
   registerTransportModule({
@@ -85,7 +85,7 @@ export const registerTransports = (isLDMKEnabled: boolean) => {
   // BLE is always the fallback choice because we always keep raw id in it
   registerTransportModule({
     id: "ble",
-    open: (...args) => getBLETransport({ isLDMKEnabled }).open(...args),
-    disconnect: id => getBLETransport({ isLDMKEnabled }).disconnectDevice(id),
+    open: (...args) => getBLETransport().open(...args),
+    disconnect: id => getBLETransport().disconnectDevice(id),
   });
 };

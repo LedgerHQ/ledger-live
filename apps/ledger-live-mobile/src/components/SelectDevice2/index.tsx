@@ -27,13 +27,7 @@ import { useDebouncedRequireBluetooth } from "../RequiresBLE/hooks/useRequireBlu
 import RequiresBluetoothDrawer from "../RequiresBLE/RequiresBluetoothDrawer";
 import QueuedDrawer from "../QueuedDrawer";
 import { DeviceList } from "./DeviceList";
-import {
-  useBleDevicesScanning,
-  useDeviceManagementKit,
-  useDeviceManagementKitEnabled,
-} from "@ledgerhq/live-dmk-mobile";
-import getBLETransport from "../../react-native-hw-transport-ble";
-import { useBleDevicesScanning as useLegacyBleDevicesScanning } from "@ledgerhq/live-common/ble/hooks/useBleDevicesScanning";
+import { useBleDevicesScanning, useDeviceManagementKit } from "@ledgerhq/live-dmk-mobile";
 
 export type { SetHeaderOptionsRequest };
 
@@ -91,18 +85,13 @@ export default function SelectDevice({
   const knownDevices = useSelector(bleDevicesSelector);
   const navigation = useNavigation<Navigation["navigation"]>();
 
-  const isLDMKEnabled = useDeviceManagementKitEnabled();
+  const isLDMKEnabled = true;
   const dmk = useDeviceManagementKit();
 
   const { scannedDevices: DMKscannedDevices } = useBleDevicesScanning(
     isFocused && !isPairingDevices && !stopBleScanning,
   );
-  const { scannedDevices: legacyScannedDevices } = useLegacyBleDevicesScanning({
-    bleTransportListen: getBLETransport({ isLDMKEnabled }).listen,
-    stopBleScanning,
-    enabled: !isLDMKEnabled,
-  });
-  const scannedDevices = isLDMKEnabled ? DMKscannedDevices : legacyScannedDevices;
+  const scannedDevices = DMKscannedDevices;
 
   // Each time the user navigates back to the screen the BLE requirements are not enforced
   const [isBleRequired, setIsBleRequired] = useResetOnNavigationFocusState(false);

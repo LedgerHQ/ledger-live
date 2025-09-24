@@ -108,7 +108,6 @@
     "@ledgerhq/logs": "workspace:^",
     "@ledgerhq/native-ui": "workspace:^",
     "@ledgerhq/react-native-hid": "workspace:^",
-    "@ledgerhq/react-native-hw-transport-ble": "workspace:^",
     "@ledgerhq/types-cryptoassets": "workspace:^",
     "@ledgerhq/types-devices": "workspace:^",
     "@ledgerhq/types-live": "workspace:^",

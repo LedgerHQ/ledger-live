@@ -7,7 +7,7 @@ import {
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { useSelector } from "react-redux";
 import { bleDevicesSelector } from "~/reducers/ble";
-import { FilterByDeviceModelId } from "~/components/BleDevicePairingFlow/LegacyBleDevicesScanning";
+import { FilterByDeviceModelId } from "./FilterByDeviceModelId";
 import { useIsFocused } from "@react-navigation/core";
 
 type DmkBleDevicesScanningProps = Omit<BleDevicesScanningProps, "devices">;
