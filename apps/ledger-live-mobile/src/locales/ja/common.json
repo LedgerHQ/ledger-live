@@ -420,10 +420,6 @@
       "title" : "自動認証が利用できません：アドレスを慎重に確認してください。",
       "description" : null
     },
-    "EthAppNftNotSupported" : {
-      "title" : "お使いのデバイスではこの操作をご利用いただけません",
-      "description" : "NFTの送付機能は、Nano XとNano S+でのみご利用いただけます。Nano SでNFTを送付する方法については、当社のカスタマーサポートのプラットフォームをご覧ください。"
-    },
     "Touch ID Error" : {
       "title" : "生体認証に失敗しました。",
       "description" : "パスワードを使用するか、アプリをリセットしてください。"
@@ -926,9 +922,6 @@
     "TaprootNotActivated" : {
       "title" : "Taproot mainnetは、まだ有効化されていません。"
     },
-    "NotEnoughNftOwned" : {
-      "title" : "利用可能なトークン数を超えています"
-    },
     "generic" : {
       "title" : "{{message}}",
       "description" : "問題が発生しました。もう一度お試しください。問題が解決しない場合は、以下のボタンを使ってログを保存し、Ledgerサポートに提出してください。",
@@ -1052,10 +1045,6 @@
     "ImageDownloadError" : {
       "title" : "画像のダウンロードに失敗しました",
       "description" : "別の画像でもう一度お試しください。"
-    },
-    "NFTMetadataLoadingError" : {
-      "title" : "NFTメタデータの読み込みに問題が発生しました",
-      "description" : "別のNFTでもう一度お試しください。"
     },
     "ImageSizeLoadingError" : {
       "title" : "画像のサイズを取得できませんでした",
@@ -2261,6 +2250,9 @@
         "continueCTA" : "続行",
         "contactSupportCTA" : "サポートへお問い合わせ"
       }
+    },
+    "completionScreen" : {
+      "title" : "資産を完全にコントロール"
     }
   },
   "blePairingFlow" : {
@@ -2391,6 +2383,8 @@
   },
   "syncOnboarding" : {
     "title" : "{{productName}}を準備",
+    "twoStepTitle" : "セットアップ",
+    "firstStepReadyTitle" : "{{productName}}、準備完了",
     "estimatedTimeFormat" : "{{estimatedTime}}分",
     "deviceSelection" : {
       "title" : "設定したいLedgerを選択：",
@@ -2508,6 +2502,10 @@
       "newSeedContinueOnDevice" : "{{productName}}の指示に従う",
       "recovery" : "資産のセキュリティを最大限に高めるために、Ledgerデバイスによって生成されたシークレットリカバリーフレーズを必ず使用してください。 \n\nリカバリーフレーズをお持ちではありませんか？{{productName}}を使用して、新しいフレーズを生成してください。"
     },
+    "secureCryptoStep" : {
+      "title" : "暗号資産を保護",
+      "doneSubTitle" : "ブロックチェーンアプリのインストールが完了しました。"
+    },
     "backup" : {
       "title" : "シークレットリカバリーフレーズのバックアップ",
       "description" : "デジタル暗号化バックアップを使用すると、シークレットリカバリーフレーズなしでウォレットへのアクセスを復元できます。\n\nデジタルバックアップが必要かどうかを選択してください：",
@@ -2535,6 +2533,14 @@
     },
     "completion" : {
       "title" : "コントロール可能です"
+    },
+    "successStep" : {
+      "title" : "{{productName}}で、暗号資産を保護する準備が整いました"
+    },
+    "newSeed" : {
+      "subtitle" : "どの取引所やウォレットからでも、Ledger Liveに暗号資産を移して、最大限のセキュリティを確保できます。",
+      "installCTA" : "暗号資産を守る",
+      "skipCTA" : "後で"
     }
   },
   "tabs" : {
@@ -2693,9 +2699,7 @@
   "operations" : {
     "types" : {
       "IN" : "受取済み",
-      "NFT_IN" : "NFT受取済み",
       "OUT" : "送付済み",
-      "NFT_OUT" : "NFT送付済み",
       "CREATE" : "作成済み",
       "REVEAL" : "表示済み",
       "DELEGATE" : "デリゲート",
@@ -2800,11 +2804,7 @@
       "stakedAmount" : "ステーキング済み量",
       "accountCreationFee" : "アカウント作成手数料"
     },
-    "multipleAddresses" : "なぜ複数のアドレスがあるのですか？",
-    "tokenName" : "トークン名",
-    "collectionContract" : "トークンコントラクト",
-    "tokenId" : "トークン(NFT)ID",
-    "quantity" : "数量"
+    "multipleAddresses" : "なぜ複数のアドレスがあるのですか？"
   },
   "operationList" : {
     "noOperations" : "オペレーションはありません。",
@@ -2973,10 +2973,6 @@
     },
     "undelegation" : {
       "sectionLabel" : "デリゲート解除"
-    },
-    "nft" : {
-      "receiveNft" : "NFTを受け取る",
-      "howTo" : "NFTを追加するには、<1>{{currency}}アドレス</1>を使用して<0>受け取る</0>必要があります。"
     },
     "readOnly" : {
       "noTransaction" : {
@@ -3187,11 +3183,6 @@
         "title" : "トークンを非表示",
         "desc" : "この操作により、すべての<1><0>{tokenName}</0></1>アカウントが非表示になります。<3>設定 > アカウント</3>から再度表示可能です。",
         "confirm" : "トークンを非表示"
-      },
-      "hideNFTCollectionCTA" : "コレクションを非表示",
-      "hideNFTCollectionModal" : {
-        "title" : "コレクションを非表示にしますか?",
-        "desc" : "設定オプションでコレクションの非表示を解除することができます。"
       },
       "cryptoAssets" : {
         "header" : "暗号資産",
@@ -3692,7 +3683,8 @@
         "empty" : {
           "title" : "過去のスワップがここに表示されます。",
           "desc" : "まだスワップを行っていないか、Ledger Liveがリセットされています。"
-        }
+        },
+        "feedback" : "フィードバックをお寄せください"
       }
     },
     "swap2" : {
@@ -3774,6 +3766,8 @@
         "apt_description" : "Aptosをスワップするには、Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™、Ledger Stax™など、対応する他のLedgerデバイスをご使用ください。",
         "cosmos_title" : "Ledger Nano S™はCosmosのスワップに対応していません",
         "cosmos_description" : "Cosmosをスワップするには、Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™、Ledger Stax™など、対応する他のLedgerデバイスをご使用ください。",
+        "hedera_title" : "Ledger Nano S™は、Hederaのスワップに対応していません",
+        "hedera_description" : "Hederaをスワップするには、Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™、Ledger Stax™など、対応する他のLedgerデバイスをご使用ください。",
         "osmo_title" : "Ledger Nano S™は、Osmosisのスワップに対応していません",
         "osmo_description" : "Osmosisをスワップするには、Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™、Ledger Stax™など、対応する他のLedgerデバイスをご使用ください。",
         "dydx_title" : "Ledger Nano S™は、dYdXのスワップに対応していません",
@@ -4021,10 +4015,7 @@
       "summary" : "概要",
       "selectDevice" : "デバイスを選択",
       "connectDevice" : "デバイスを接続",
-      "stepRange" : "ステップ{{currentStep}}/{{totalSteps}}",
-      "quantity" : "数量",
-      "selectCollection" : "コレクション",
-      "selectNft" : "NFT"
+      "stepRange" : "ステップ{{currentStep}}/{{totalSteps}}"
     },
     "recipient" : {
       "scan" : "QRコードをスキャン",
@@ -4429,7 +4420,7 @@
         "default" : "送付前に、スワップの詳細をLedger上で確認してください。",
         "provider" : "送付前に、スワップの詳細をデバイス上で確認してください。{{providerName}}では、一部のトランザクションに対して追加の検証を実行する必要があり、遅延が発生する場合があります。"
       },
-      "acceptTerms" : "このトランザクションを検証することにより、私は\n<0><0>{{provider}}</0>の利用規約</0>に同意します",
+      "acceptTerms" : "By signing this transaction, you accept <0><0>{{provider}}</0>'s terms of use</0>",
       "notice" : "送付する前に、スワップの詳細をデバイス上で確認してください。アドレスは安全にやりとりされるため、確認の必要はありません。"
     },
     "swap2" : {
@@ -7127,47 +7118,6 @@
       }
     }
   },
-  "nft" : {
-    "account" : {
-      "seeAllNfts" : "すべてのNFTを見る",
-      "seeFewerNfts" : "少量のNFTを見る"
-    },
-    "gallery" : {
-      "allNft" : "全てのNFT",
-      "addNew" : "新規追加"
-    },
-    "designedForStax" : {
-      "title" : "<1>Ledger</1><2> Stax</2><0>用に設計</0>",
-      "drawer" : {
-        "description" : "このNFTには、Ledger StaxのE Inkスクリーン用に特別に設計されたNFTの追加の画像が含まれています。\n\nこの画像は、このNFTをロック画面として設定するときに使用されます。",
-        "cta" : "了解"
-      }
-    },
-    "viewer" : {
-      "properties" : "プロパティ",
-      "description" : "説明",
-      "tokenContract" : "トークンアドレス",
-      "tokenContractCopied" : "トークンアドレスがコピーされました！",
-      "tokenId" : "トークンID",
-      "tokenIdCopied" : "トークンIDがコピーされました！",
-      "quantity" : "数量",
-      "attributes" : {
-        "floorPrice" : "フロア価格"
-      }
-    },
-    "viewerModal" : {
-      "viewOn" : "表示",
-      "viewInExplorer" : "エクスプローラーで表示",
-      "hide" : "NFTコレクションを非表示",
-      "txDetails" : "トランザクションの詳細"
-    },
-    "modalDisabled" : {
-      "title" : "送信機能はiOSでは利用できません",
-      "body" : "AppleのApp Storeによる最近のアップデートに準拠するため、NFTの送信は現在、一時的にご利用いただけなくなっています。デスクトップのLedger Liveを使用してNFTを送信することは引き続き可能です。",
-      "learnMore" : "詳細はこちら",
-      "continue" : "了解！"
-    }
-  },
   "ApplicationVersion" : "v{{version}}",
   "analytics" : {
     "title" : "アナリティクス",
@@ -7251,7 +7201,6 @@
     "drawer" : {
       "options" : {
         "uploadFromPhone" : "画像ギャラリーから選択",
-        "selectFromNFTGallery" : "NFTギャラリーから選択",
         "remove" : "現在の画像を削除する"
       }
     },
@@ -7282,9 +7231,6 @@
       "setPicture" : "ロック画面に設定",
       "editPicture" : "画像を編集",
       "pickDeviceModel" : "デバイスを選択"
-    },
-    "nftGallery" : {
-      "title" : "私のNFT"
     }
   },
   "postOnboarding" : {
@@ -7329,50 +7275,7 @@
   "wallet" : {
     "tabs" : {
       "crypto" : "暗号資産",
-      "nft" : "NFT",
       "market" : "マーケット"
-    },
-    "nftGallery" : {
-      "filters" : {
-        "select" : "選択",
-        "filter" : "フィルター",
-        "blockchain" : "ブロックチェーン",
-        "seeAll" : "すべて表示",
-        "selectAndHide" : "選択して非表示",
-        "hide" : "{{count}}個のコレクションを非表示",
-        "hiddenCollections" : "非表示のNFTコレクション",
-        "hide_plural" : "{{count}}個のコレクションを非表示",
-        "empty" : "非表示のコレクションなし",
-        "alertHide" : "1件のコレクションが非表示です。ギャラリーフィルターから、いつでも再表示可能です。",
-        "alertHide_plural" : "{{count}}件のコレクションが非表示です。ギャラリーフィルターから、いつでも再表示可能です。"
-      },
-      "emptyFiltered" : {
-        "title" : "条件に合うNFTはありません",
-        "button" : "フィルターをリセットする"
-      },
-      "empty" : {
-        "title" : "表示できるNFTがありません",
-        "subtitle" : "NFTをウォレットに追加しましょう。",
-        "receive" : "NFTを受け取る",
-        "supportLink" : "別のウォレットからNFTを入手するには？"
-      },
-      "receiveModal" : {
-        "title" : "その他の暗号資産と同じ方法でNFTを受け取る",
-        "bullets" : {
-          "0" : "•NFTの暗号資産ブロックチェーンを選択する。",
-          "1" : "• NFTの受け取り方法を選ぶ"
-        },
-        "cta" : "了解",
-        "info" : "さらに詳しく"
-      },
-      "hideNftModal" : {
-        "title" : "NFTコレクションを非表示",
-        "desc" : "この操作により、すべてのNFTが{{collectionName}}個のコレクションから非表示になります。ギャラリーフィルターから再表示できます。",
-        "cta" : "このNFTを非表示にする"
-      },
-      "media" : {
-        "tag" : "{{count}}NFT"
-      }
     },
     "referralProgram" : "20ドル"
   },
@@ -8025,6 +7928,10 @@
     "signatureVerificationFail" : {
       "title" : "署名の検証に失敗しました",
       "description" : "再試行するか、ご不明な点がありましたら、Ledgerサポートにお問い合わせください。"
+    },
+    "transactionCannotBeCreated" : {
+      "title" : "スワッププロバイダー利用不可",
+      "description" : "Changelly cannot process this transaction. Error code 8HBB{{errorCode}}"
     },
     "default" : {
       "title" : "問題が発生しました。",
