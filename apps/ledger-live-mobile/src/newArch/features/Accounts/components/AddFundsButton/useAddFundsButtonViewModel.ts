@@ -50,7 +50,7 @@ export default function useAddFundsButtonViewModel({
         params: {
           currency: currency.type === "TokenCurrency" ? currency.parentCurrency : currency,
           accountId: selectedAccount.id,
-          parentId: selectedAccount.parentAccount?.id,
+          parentId: selectedAccount.parentId,
         },
       });
     } else {
