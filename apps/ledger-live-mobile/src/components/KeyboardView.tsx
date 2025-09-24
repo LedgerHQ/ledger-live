@@ -7,7 +7,7 @@ import {
   StatusBar,
 } from "react-native";
 import Config from "react-native-config";
-import { useHeaderHeight } from "@react-navigation/elements";
+import { HeaderHeightContext } from "@react-navigation/elements";
 import { HEIGHT as ExperimentalHeaderHeight } from "~/screens/Settings/Experimental/ExperimentalHeader";
 import { useExperimental } from "../experimental";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -27,7 +27,7 @@ const KeyboardView = React.memo<Props>(
     behavior,
   }: Props) => {
     const isExperimental = useExperimental();
-    const headerHeight = useHeaderHeight();
+    const headerHeight = React.useContext(HeaderHeightContext) ?? 0;
     const [isKeyboardVisible, setIsKeyboardVisible] = React.useState(false);
     const isAndroid35 = Platform.OS === "android" && Platform.Version >= 35;
     const experimentalHeaderHeight = isExperimental || Config.DETOX ? ExperimentalHeaderHeight : 0;
