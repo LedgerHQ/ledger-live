@@ -60,16 +60,5 @@ export type TransactionRaw = TransactionCommonRaw & {
 export type TransactionStatus = TransactionStatusCommon;
 export type TransactionStatusRaw = TransactionStatusCommonRaw;
 
-export type CantonResources = {
-  // empty
-};
-export type CantonResourcesRaw = {
-  // empty
-};
-
-export type CantonAccount = Account & {
-  cantonResources?: CantonResources;
-};
-export type CantonAccountRaw = AccountRaw & {
-  cantonResources: CantonResourcesRaw;
-};
+export type CantonAccount = Account;
+export type CantonAccountRaw = AccountRaw;
