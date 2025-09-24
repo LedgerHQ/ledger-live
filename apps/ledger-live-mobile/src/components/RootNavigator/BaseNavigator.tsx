@@ -10,11 +10,9 @@ import { useSelector } from "~/context/hooks";
 import { ScreenName, NavigatorName } from "~/const";
 import * as families from "~/families";
 import OperationDetails from "~/screens/OperationDetails";
-import PairDevices from "~/screens/PairDevices";
 import EditDeviceName from "~/screens/EditDeviceName";
 import ScanRecipient from "~/screens/SendFunds/ScanRecipient";
 import Main from "./MainNavigator";
-import { ErrorHeaderInfo } from "./BaseOnboardingNavigator";
 import SettingsNavigator from "./SettingsNavigator";
 import BuyDeviceNavigator from "./BuyDeviceNavigator";
 import ReceiveFundsNavigator from "./ReceiveFundsNavigator";
@@ -354,19 +352,6 @@ export default function BaseNavigator() {
           name={NavigatorName.AccountSettings}
           component={AccountSettingsNavigator}
           options={{ headerShown: false }}
-        />
-        <Stack.Screen
-          name={ScreenName.PairDevices}
-          component={PairDevices}
-          options={({ navigation, route }) => ({
-            title: "",
-            headerRight: () => {
-              const nav = navigation;
-              return <ErrorHeaderInfo route={route} navigation={nav} />;
-            },
-            headerShown: true,
-            headerStyle: styles.headerNoShadow,
-          })}
         />
         <Stack.Screen
           name={ScreenName.EditDeviceName}
