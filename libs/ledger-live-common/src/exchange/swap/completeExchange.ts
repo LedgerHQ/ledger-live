@@ -30,6 +30,7 @@ import { convertToAppExchangePartnerKey, getSwapProvider } from "../providers";
 import { CEXProviderConfig } from "../providers/swap";
 import { isAddressSanctioned } from "@ledgerhq/coin-framework/sanction/index";
 import { AddressesSanctionedError } from "@ledgerhq/coin-framework/sanction/errors";
+import { getCryptoCurrencyById } from "../../currencies";
 
 const COMPLETE_EXCHANGE_LOG = "SWAP-CompleteExchange";
 
@@ -167,10 +168,11 @@ const completeExchange = (
         // but the device app requires the related public key for verification.
         // Since this key is stored on-chain, we use the TrustedService
         // to fetch a signed descriptor linking the address to its public key.
+        const hederaCurrency = getCryptoCurrencyById("hedera");
         let hederaAccount: Account | null = null;
-        if (payoutAccount.currency.family === "hedera") {
+        if (payoutAccount.currency.family === hederaCurrency.family) {
           hederaAccount = payoutAccount;
-        } else if (refundAccount.currency.family === "hedera") {
+        } else if (refundAccount.currency.family === hederaCurrency.family) {
           hederaAccount = refundAccount;
         }
 
