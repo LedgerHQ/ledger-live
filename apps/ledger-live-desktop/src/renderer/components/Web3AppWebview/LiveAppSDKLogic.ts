@@ -61,8 +61,7 @@ export const requestAccountLogic = async (
 
   const { account, parentAccount } = modularDrawerVisible
     ? await openAssetAndAccountDrawerPromise({
-        assetIds: safeCurrencies,
-        includeTokens,
+        currencies: safeCurrencies,
         areCurrenciesFiltered: manifest.currencies !== "*",
       })
     : await selectAccountAndCurrency(safeCurrencies, includeTokens, flow, source);
