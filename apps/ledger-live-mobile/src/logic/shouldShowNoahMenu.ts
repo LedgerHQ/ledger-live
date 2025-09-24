@@ -17,15 +17,15 @@ export function shouldShowNoahMenu(route: NoahRouteProp, noahFlagEnabled: boolea
   const currency = params?.currency;
   let hasValidCurrency = true;
 
-  // Show the original configuration in the stack
-  if (!noahFlagEnabled || !hasValidCurrency || fromMenu || !route.params) {
-    return false;
-  }
-
   if (currency) {
     // @ts-expect-error issue in typing
     const decoraters = perFamilyAccountActions[getCurrencyFamily(currency)];
     hasValidCurrency = decoraters?.getShouldShowReceiveOptions?.(getCurrencyId(currency)) ?? false;
+  }
+
+  // Show the original configuration in the stack
+  if (!noahFlagEnabled || !hasValidCurrency || fromMenu || !route.params) {
+    return false;
   }
 
   return true;
