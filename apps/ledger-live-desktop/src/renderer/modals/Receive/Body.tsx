@@ -19,11 +19,18 @@ import StepConnectDevice, { StepConnectDeviceFooter } from "./steps/StepConnectD
 import StepWarning, { StepWarningFooter } from "./steps/StepWarning";
 import StepReceiveFunds from "./steps/StepReceiveFunds";
 import StepReceiveStakingFlow, { StepReceiveStakingFooter } from "./steps/StepReceiveStakingFlow";
+import StepOptions from "./steps/StepOptions";
 import { isAddressSanctioned } from "@ledgerhq/coin-framework/sanction/index";
 import { AddressesSanctionedError } from "@ledgerhq/coin-framework/sanction/errors";
 import { getReceiveFlowError } from "@ledgerhq/live-common/account/index";
 
-export type StepId = "warning" | "account" | "device" | "receive" | "stakingFlow";
+export type StepId =
+  | "warning"
+  | "account"
+  | "device"
+  | "receive"
+  | "stakingFlow"
+  | "receiveOptions";
 
 export type Data = {
   account?: AccountLike | undefined | null;
@@ -75,6 +82,11 @@ export type StepProps = {
 };
 export type St = Step<StepId, StepProps>;
 const createSteps = (): Array<St> => [
+  {
+    id: "receiveOptions",
+    excludeFromBreadcrumb: true,
+    component: StepOptions,
+  },
   {
     id: "warning",
     excludeFromBreadcrumb: true,

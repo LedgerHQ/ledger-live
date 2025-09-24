@@ -28,7 +28,19 @@ run(monitoredCurrencies)
     if (!result.entries.length) {
       console.log("No resulted entries. Exit now.");
     } else {
-      console.table(result.entries);
+      console.log("========== SUMMARY ========== \n");
+      console.table(
+        result.entries.map(log => ({
+          address: log.accountAddressOrXpub,
+          type: log.accountType,
+          transactions: log.transactions,
+          currency: log.currencyName,
+          module: log.coinModuleName,
+          operation: log.operationType,
+          "duration (ms)": log.duration,
+          "network calls": log.totalNetworkCalls,
+        })),
+      );
     }
     process.exit(result.failed ? 1 : 0);
   })
