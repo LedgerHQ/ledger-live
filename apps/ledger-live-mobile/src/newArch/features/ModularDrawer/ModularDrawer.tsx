@@ -126,6 +126,7 @@ export function ModularDrawer({
           hasError: isError,
           refetch,
           loadNext,
+          assetsSorted,
         }}
         networksViewModel={{
           onNetworkSelected: handleNetwork,

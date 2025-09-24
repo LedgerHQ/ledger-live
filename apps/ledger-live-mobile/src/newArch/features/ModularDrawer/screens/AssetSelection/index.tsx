@@ -31,6 +31,7 @@ import { balanceItem } from "../../components/Balance";
 import { useBalanceDeps } from "../../hooks/useBalanceDeps";
 import { useSelector } from "react-redux";
 import { modularDrawerFlowSelector, modularDrawerSourceSelector } from "~/reducers/modularDrawer";
+import { AssetData } from "@ledgerhq/live-common/modularDrawer/utils/type";
 
 export type AssetSelectionStepProps = {
   isOpen: boolean;
@@ -41,6 +42,7 @@ export type AssetSelectionStepProps = {
   hasError?: boolean;
   refetch?: () => void;
   loadNext?: () => void;
+  assetsSorted?: AssetData[];
 };
 
 const SAFE_MARGIN_BOTTOM = 48;
@@ -54,6 +56,7 @@ const AssetSelection = ({
   hasError,
   refetch,
   loadNext,
+  assetsSorted,
 }: Readonly<AssetSelectionStepProps>) => {
   const { isConnected } = useNetInfo();
 
@@ -65,12 +68,28 @@ const AssetSelection = ({
   const { collapse } = useBottomSheet();
   const listRef = useRef<FlatList>(null);
 
+  const assetsMap = new Map<
+    string,
+    { mainCurrency: CryptoOrTokenCurrency; currencies: CryptoOrTokenCurrency[] }
+  >();
+
+  assetsSorted?.forEach(({ asset: { id: providerId }, networks = [] }) => {
+    if (networks.length > 0) {
+      const mainCurrency = networks.find(c => c.id === providerId) ?? networks[0];
+      assetsMap.set(providerId, {
+        mainCurrency,
+        currencies: networks,
+      });
+    }
+  });
+
   const assetConfigurationDeps = {
     ApyIndicator,
     MarketPriceIndicator,
     MarketPercentIndicator,
     useBalanceDeps,
     balanceItem,
+    assetsMap,
   };
 
   const makeAssetConfigurationHook = createAssetConfigurationHook(assetConfigurationDeps);

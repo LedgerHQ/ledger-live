@@ -24,6 +24,7 @@ const getRightElement =
         return createUseRightBalanceAsset({
           useBalanceDeps: AssetConfigurationDeps.useBalanceDeps,
           balanceItem: AssetConfigurationDeps.balanceItem,
+          assetsMap: AssetConfigurationDeps.assetsMap,
         });
     }
   };

@@ -46,6 +46,7 @@ const ModularDrawerFlowManager = ({
     handleNetworkSelected,
     handleBack,
     loadNext,
+    assetsSorted,
   } = useModularDrawerRemoteData({
     currentStep,
     currencyIds,
@@ -75,6 +76,7 @@ const ModularDrawerFlowManager = ({
             loadNext={loadNext}
             error={!!error}
             refetch={refetch}
+            assetsSorted={assetsSorted}
           />
         );
       case MODULAR_DRAWER_STEP.NETWORK_SELECTION:
