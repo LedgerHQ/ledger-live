@@ -10,20 +10,28 @@ interface BroadcastRawData {
   encodedSignedCallBlob: string;
 }
 
+// Type guard to validate rawData shape
+function isBroadcastRawData(data: unknown): data is BroadcastRawData {
+  return (
+    typeof data === "object" &&
+    data !== null &&
+    "encodedSignedCallBlob" in data &&
+    typeof (data as any).encodedSignedCallBlob === "string"
+  );
+}
+
 // Main broadcast function for handling Internet Computer transactions
 export const broadcast: AccountBridge<Transaction>["broadcast"] = async ({
   signedOperation: { operation, rawData },
 }) => {
   log("debug", "[broadcast] Internet Computer transaction broadcast initiated");
 
-  // Type assertion and validation for rawData
-  const rawDataTyped = rawData as unknown as BroadcastRawData;
-  invariant(rawDataTyped, "[ICP](broadcast) Missing rawData");
-  invariant(rawDataTyped.encodedSignedCallBlob, "[ICP](broadcast) Missing encodedSignedCallBlob");
+  // Validate rawData with type guard
+  invariant(isBroadcastRawData(rawData), "[ICP](broadcast) Invalid rawData format");
   invariant(operation.extra, "[ICP](broadcast) Missing operation extra");
 
   await broadcastTxn(
-    Buffer.from(rawDataTyped.encodedSignedCallBlob, "hex"),
+    Buffer.from(rawData.encodedSignedCallBlob, "hex"),
     MAINNET_LEDGER_CANISTER_ID,
     "call",
   );
