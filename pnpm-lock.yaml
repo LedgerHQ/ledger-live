@@ -4108,8 +4108,8 @@ importers:
         specifier: workspace:^
         version: link:../../ledgerjs/packages/types-live
       '@mysten/signers':
-        specifier: 0.0.0-experimental-20250918164847
-        version: 0.0.0-experimental-20250918164847(typescript@5.4.3)
+        specifier: 0.5.0
+        version: 0.5.0(typescript@5.4.3)
       '@mysten/sui':
         specifier: 1.38.0
         version: 1.38.0(typescript@5.4.3)
@@ -14593,8 +14593,8 @@ packages:
   '@mysten/ledgerjs-hw-app-sui@0.6.0':
     resolution: {integrity: sha512-UopsSSI1gphfoh59feiPPhZUEybYIvYEcvmudGR2RAIN3IDJHkaA3Uu0HPH8BZQbQXhkgvFW4V2KNWIWj2IE2g==}
 
-  '@mysten/signers@0.0.0-experimental-20250918164847':
-    resolution: {integrity: sha512-BD8ezLJOO34a2jMsS5gcPVdRrj29SPUNT/DnAOh0o4kTyfF6w8f2VLWfl4Dvj3rTF9sQ3dhlU9OudtiXo8UQLQ==}
+  '@mysten/signers@0.5.0':
+    resolution: {integrity: sha512-BVbOJLTXLHzHSB/P2PHUSCEDnlQkkyQd8Xwl0ZTLEHMYWUeK9lMiKyijk+8dw8wF3hTJFfob7N8mBZ1PK3gJow==}
     engines: {node: '>=20'}
 
   '@mysten/sui@1.38.0':
@@ -43737,7 +43737,7 @@ snapshots:
       '@ledgerhq/hw-transport': link:libs/ledgerjs/packages/hw-transport
       fast-sha256: 1.3.0
 
-  '@mysten/signers@0.0.0-experimental-20250918164847(typescript@5.4.3)':
+  '@mysten/signers@0.5.0(typescript@5.4.3)':
     dependencies:
       '@google-cloud/kms': 4.5.0
       '@mysten/ledgerjs-hw-app-sui': 0.6.0
