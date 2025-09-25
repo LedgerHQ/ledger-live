@@ -25,6 +25,7 @@ export const buildSignOperation =
             const { freshAddressPath: derivationPath } = account;
             const partyId = (account as unknown as { cantonResources: { partyId: string } })
               .cantonResources.partyId;
+
             const params: {
               recipient?: string;
               amount: BigNumber;
@@ -35,7 +36,7 @@ export const buildSignOperation =
               recipient: transaction.recipient,
               amount: transaction.amount,
               expireInSeconds: 60 * 60,
-              tokenId: "Amulet",
+              tokenId: transaction.tokenId,
             };
             if (transaction.memo) {
               params.memo = transaction.memo;

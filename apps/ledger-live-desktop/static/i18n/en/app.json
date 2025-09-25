@@ -172,6 +172,7 @@
       "REDELEGATE": "Redelegated",
       "UNDELEGATE": "Undelegated",
       "APPROVE": "Approved",
+      "PRE_APPROVAL": "Pre-approval",
       "VOTE": "Voted",
       "FREEZE": "Frozen",
       "UNFREEZE": "Unfrozen",
