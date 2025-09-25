@@ -1,11 +1,7 @@
 import BigNumber from "bignumber.js";
 import { ethers } from "ethers";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import type {
-  FeeEstimation,
-  MemoNotSupported,
-  TransactionIntent,
-} from "@ledgerhq/coin-framework/api/index";
+import type { FeeEstimation, AnyIntent } from "@ledgerhq/coin-framework/api/index";
 import ERC20ABI from "../abis/erc20.abi.json";
 import {
   ApiFeeData,
@@ -91,7 +87,7 @@ export function getErc20Data(recipient: string, amount: bigint): Buffer {
 
 export async function prepareUnsignedTxParams(
   currency: CryptoCurrency,
-  transactionIntent: TransactionIntent<MemoNotSupported>,
+  transactionIntent: AnyIntent,
 ): Promise<TransactionLikeWithPreparedParams> {
   const { sender, type } = transactionIntent;
 

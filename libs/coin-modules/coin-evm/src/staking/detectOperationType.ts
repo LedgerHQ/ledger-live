@@ -12,7 +12,7 @@ const OP_MAP: Partial<Record<StakingOperation, OperationType>> = {
 /**
  * Checks if a string is a valid staking operation
  */
-export function isStakingOperation(value: string): value is StakingOperation {
+export function isStakingOperation(value: StakingOperation): boolean {
   const stakingOperations: StakingOperation[] = [
     "delegate",
     "undelegate",
@@ -20,7 +20,7 @@ export function isStakingOperation(value: string): value is StakingOperation {
     "getStakedBalance",
     "getUnstakedBalance",
   ];
-  return stakingOperations.some(op => op === value);
+  return stakingOperations.includes(value);
 }
 
 /**

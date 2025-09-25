@@ -1,5 +1,5 @@
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import type { TransactionIntent, MemoNotSupported } from "@ledgerhq/coin-framework/api/index";
+import type { AnyIntent } from "@ledgerhq/coin-framework/api/index";
 import type { StakingOperation } from "../types/staking";
 import { isNative } from "../types";
 import { isStakingIntent } from "../utils";
@@ -66,7 +66,7 @@ export const buildTransactionParams = (
  */
 export function buildStakingTransactionParams(
   currency: CryptoCurrency,
-  intent: TransactionIntent<MemoNotSupported>,
+  intent: AnyIntent,
 ): {
   to: string;
   data: Buffer;
@@ -89,7 +89,7 @@ export function buildStakingTransactionParams(
 
   const stakingParams = buildTransactionParams(
     currency.id,
-    mode as StakingOperation,
+    mode,
     recipient,
     amount,
     parameters?.[0], // sourceValidator for redelegate
@@ -100,7 +100,7 @@ export function buildStakingTransactionParams(
   const data = Buffer.from(
     encodeStakingData({
       currencyId: currency.id,
-      operation: mode as StakingOperation,
+      operation: mode,
       config,
       params: stakingParams,
     }).slice(2),
