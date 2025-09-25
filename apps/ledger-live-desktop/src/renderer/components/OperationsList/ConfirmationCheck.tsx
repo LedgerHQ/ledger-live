@@ -102,6 +102,7 @@ const iconsComponent = {
   OPT_OUT: IconTrash,
   CLOSE_ACCOUNT: IconTrash,
   APPROVE: IconPlus,
+  PRE_APPROVAL: IconPlus,
   BOND: IconLink,
   UNBOND: IconUndelegate,
   WITHDRAW_UNBONDED: IconCoins,
