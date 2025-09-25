@@ -163,7 +163,7 @@ function View({
       testID="market-list"
       stickyHeaderIndices={[0]}
       ListHeaderComponent={
-        <WalletTabSafeAreaView edges={["left", "right"]} backgroundColor={colors.background.main}>
+        <WalletTabSafeAreaView edges={["left", "right"]}>
           <Flex backgroundColor={colors.background.main}>
             <SearchHeader search={search} refresh={refresh} />
             <BottomSection />
