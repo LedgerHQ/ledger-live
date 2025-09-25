@@ -7,7 +7,7 @@ import Transport from "@ledgerhq/hw-transport";
 import type { DescriptorEvent } from "@ledgerhq/hw-transport";
 import { Subject, from, concat } from "rxjs";
 import { mergeMap } from "rxjs/operators";
-type DeviceObj = {
+export type DeviceObj = {
   vendorId: number;
   productId: number;
 };

@@ -174,7 +174,7 @@ const Manager = ({ navigation, route }: NavigationProps) => {
   );
 
   const onBackFromNewUpdateUx = useCallback(
-    (updateState: UpdateStep) => {
+    async (updateState: UpdateStep) => {
       navigation.navigate(NavigatorName.Main, {
         screen: NavigatorName.MyLedger,
         params: {

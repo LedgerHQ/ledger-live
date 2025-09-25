@@ -47,6 +47,7 @@ import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import AnimatedContainer from "./AnimatedContainer";
 import storage from "LLM/storage";
 import type { Feature_LlmMmkvMigration } from "@ledgerhq/types-live";
+import { useListenToHidDevices } from "~/hooks/useListenToHidDevices";
 import { DdRum } from "@datadog/mobile-react-native";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { PORTFOLIO_VIEW_ID, TOP_CHAINS } from "~/utils/constants";
@@ -71,6 +72,7 @@ function PortfolioScreen({ navigation }: NavigationProps) {
   const isAccountListUIEnabled = accountListFF?.enabled;
   const llmDatadog = useFeature("llmDatadog");
   const allAccounts = useSelector(flattenAccountsSelector, shallowEqual);
+  useListenToHidDevices();
 
   const mmkvMigrationFF = useFeature("llmMmkvMigration");
 
