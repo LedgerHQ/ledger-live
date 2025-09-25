@@ -45,8 +45,8 @@ const TermsFooter: React.FC<{
         acceptTerms: "DeviceAction.confirmSwap.changellySimplifiedAcceptTerms",
         urlsArray: [
           providerUrls?.tos,
-          (providerUrls as any)?.amlKyc,
-          (providerUrls as any)?.support,
+          providerUrls && "amlKyc" in providerUrls ? providerUrls.amlKyc : undefined,
+          providerUrls && "support" in providerUrls ? providerUrls.support : undefined,
         ].filter(Boolean),
       };
     }
