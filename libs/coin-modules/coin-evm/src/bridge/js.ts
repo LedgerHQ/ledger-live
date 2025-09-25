@@ -6,9 +6,15 @@ import {
   makeScanAccounts,
 } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
-import type { AccountBridge, Bridge, CurrencyBridge } from "@ledgerhq/types-live";
+import type {
+  AccountBridge,
+  Bridge,
+  CurrencyBridge,
+  SignOperationEvent,
+} from "@ledgerhq/types-live";
 import getAddressWrapper from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
 import type { CryptoAssetsStoreGetter } from "@ledgerhq/types-live";
+import type { Observable } from "rxjs";
 import type { Transaction as EvmTransaction } from "../types/index";
 import { setCoinConfig, type CoinConfig } from "../config";
 import type { EvmSigner } from "../types/signer";
@@ -59,6 +65,9 @@ export function buildAccountBridge(
     sync,
     receive,
     signOperation,
+    signRawOperation: (): Observable<SignOperationEvent> => {
+      throw new Error("signRawOperation is not supported");
+    },
     broadcast,
     estimateMaxSpendable,
     getSerializedAddressParameters,

@@ -139,6 +139,41 @@ export function signTransactionLogic(
   });
 }
 
+export function signRawTransactionLogic(
+  { manifest, accounts, tracking }: WalletAPIContext,
+  walletAccountId: string,
+  transaction: string,
+  uiNavigation: (
+    account: AccountLike,
+    parentAccount: Account | undefined,
+    transaction: string,
+  ) => Promise<SignedOperation>,
+): Promise<SignedOperation> {
+  tracking.signRawTransactionRequested(manifest);
+
+  if (!transaction) {
+    tracking.signRawTransactionFail(manifest);
+    return Promise.reject(new Error("Transaction required"));
+  }
+
+  const accountId = getAccountIdFromWalletAccountId(walletAccountId);
+  if (!accountId) {
+    tracking.signRawTransactionFail(manifest);
+    return Promise.reject(new Error(`accountId ${walletAccountId} unknown`));
+  }
+
+  const account = accounts.find(account => account.id === accountId);
+
+  if (!account) {
+    tracking.signRawTransactionFail(manifest);
+    return Promise.reject(new Error("Account required"));
+  }
+
+  const parentAccount = getParentAccount(account, accounts);
+
+  return uiNavigation(account, parentAccount, transaction);
+}
+
 export function broadcastTransactionLogic(
   { manifest, accounts, tracking }: WalletAPIContext,
   walletAccountId: string,

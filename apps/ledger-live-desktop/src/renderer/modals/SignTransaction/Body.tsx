@@ -151,6 +151,7 @@ export default function Body({ onChangeStepId, onClose, setError, stepId, params
       transaction,
     };
   });
+  console.log(transaction);
   const [transactionError, setTransactionError] = useState<Error | null>(null);
   const handleOpenModal = useCallback(
     <Name extends keyof ModalData>(name: Name, data: ModalData[Name]) =>
