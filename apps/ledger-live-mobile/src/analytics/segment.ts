@@ -84,6 +84,7 @@ const getFeatureFlagProperties = () => {
 
     const ptxSwapLiveAppMobileFlag = analyticsFeatureFlagMethod("ptxSwapLiveAppMobile");
     const ptxSwapLiveAppKycWarning = analyticsFeatureFlagMethod("ptxSwapLiveAppKycWarning");
+    const llmSyncOnboardingIncr1Flag = analyticsFeatureFlagMethod("llmSyncOnboardingIncr1");
 
     const isBatch1Enabled =
       !!fetchAdditionalCoins?.enabled && fetchAdditionalCoins?.params?.batch === 1;
@@ -96,6 +97,7 @@ const getFeatureFlagProperties = () => {
 
     const ptxSwapLiveAppMobileEnabled = Boolean(ptxSwapLiveAppMobileFlag?.enabled);
     const ptxSwapLiveAppKycWarningEnabled = Boolean(ptxSwapLiveAppKycWarning?.enabled);
+    const llmSyncOnboardingIncr1 = Boolean(llmSyncOnboardingIncr1Flag?.enabled);
 
     // Apply versioned redirects logic to the stakePrograms feature flag
     const appVersion = LiveConfig.instance.appVersion || "0.0.0";
@@ -125,6 +127,7 @@ const getFeatureFlagProperties = () => {
       partnerStakingCurrenciesEnabled,
       ptxSwapLiveAppMobileEnabled,
       ptxSwapLiveAppKycWarningEnabled,
+      llmSyncOnboardingIncr1,
     });
   })();
 };
@@ -219,6 +222,9 @@ const extraProperties = async (store: AppStore) => {
     : { enabled: false };
   const ldmkConnectApp = analyticsFeatureFlagMethod
     ? analyticsFeatureFlagMethod("ldmkConnectApp")
+    : { enabled: false };
+  const llmSyncOnboardingIncr1 = analyticsFeatureFlagMethod
+    ? analyticsFeatureFlagMethod("llmSyncOnboardingIncr1")
     : { enabled: false };
   const deviceInfo = lastDevice
     ? {
@@ -332,6 +338,7 @@ const extraProperties = async (store: AppStore) => {
     tokenWithFunds,
     isLDMKTransportEnabled: ldmkTransport?.enabled,
     isLDMKConnectAppEnabled: ldmkConnectApp?.enabled,
+    llmSyncOnboardingIncr1: llmSyncOnboardingIncr1?.enabled,
     stakingCurrenciesEnabled,
     partnerStakingCurrenciesEnabled,
     madAttributes,
