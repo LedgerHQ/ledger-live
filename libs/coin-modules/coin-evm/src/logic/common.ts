@@ -1,11 +1,7 @@
 import BigNumber from "bignumber.js";
 import { ethers } from "ethers";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import type {
-  FeeEstimation,
-  MemoNotSupported,
-  TransactionIntent,
-} from "@ledgerhq/coin-framework/api/index";
+import type { FeeEstimation, AnyIntent } from "@ledgerhq/coin-framework/api/index";
 import ERC20ABI from "../abis/erc20.abi.json";
 import {
   ApiFeeData,
@@ -15,10 +11,7 @@ import {
   TransactionLikeWithPreparedParams,
 } from "../types";
 import { getNodeApi } from "../network/node";
-import { STAKING_CONTRACTS } from "../staking";
-import { StakingOperation } from "../types/staking";
-import { encodeStakingData } from "../staking/encoder";
-import { isStakingIntent } from "../utils";
+import { buildStakingTransactionParams } from "../staking";
 
 export function isApiGasOptions(options: unknown): options is ApiGasOptions {
   if (!options || typeof options !== "object") return false;
@@ -71,13 +64,11 @@ export function isEip1559FeeEstimation(
 }
 
 export function getTransactionType(intentType: string): TransactionTypes {
-  if (!["send-legacy", "send-eip1559"].includes(intentType)) {
-    throw new Error(
-      `Unsupported intent type '${intentType}'. Must be 'send-legacy' or 'send-eip1559'`,
-    );
+  if (intentType === "send-legacy" || intentType === "staking-legacy") {
+    return TransactionTypes.legacy;
   }
 
-  return intentType === "send-legacy" ? TransactionTypes.legacy : TransactionTypes.eip1559;
+  return TransactionTypes.eip1559;
 }
 
 export function isEip55Address(address: string): boolean {
@@ -94,53 +85,43 @@ export function getErc20Data(recipient: string, amount: bigint): Buffer {
   return Buffer.from(data.slice(2), "hex");
 }
 
-const stakingOperations = ["delegate", "undelegate", "redelegate"] as const;
-
-function isStakingOperation(value: string): value is StakingOperation {
-  return (stakingOperations as readonly string[]).includes(value);
-}
-
 export async function prepareUnsignedTxParams(
   currency: CryptoCurrency,
-  transactionIntent: TransactionIntent<MemoNotSupported>,
+  transactionIntent: AnyIntent,
 ): Promise<TransactionLikeWithPreparedParams> {
-  const { amount, asset, recipient, sender, type, mode, parameters } = transactionIntent;
-  const transactionType = getTransactionType(type);
-  const node = getNodeApi(currency);
+  const { sender, type } = transactionIntent;
 
-  const to = isNative(asset) ? recipient : (asset.assetReference as string);
-  let data: Buffer;
-  const config = STAKING_CONTRACTS[currency.id];
-  if (isStakingIntent(transactionIntent)) {
-    if (config && mode && isStakingOperation(mode)) {
-      data = Buffer.from(
-        encodeStakingData({
-          currencyId: currency.id,
-          operation: mode,
-          config,
-          params: parameters || [],
-        }).slice(2),
-        "hex",
-      );
-    } else {
-      throw new Error(
-        `Staking contract config not found for currency ${currency.id} or invalid/no staking mode provided`,
-      );
-    }
-  } else {
-    data = isNative(asset) ? Buffer.from([]) : getErc20Data(recipient, amount);
+  // Validate intent type first
+  if (!["send-legacy", "send-eip1559", "staking-legacy", "staking-eip1559"].includes(type)) {
+    throw new Error(
+      `Unsupported intent type '${type}'. Must be 'send-legacy', 'send-eip1559', 'staking-legacy', or 'staking-eip1559'`,
+    );
   }
-  const value = isNative(asset) ? amount : 0n;
 
-  const gasLimit = await node.getGasEstimation(
-    { currency, freshAddress: sender },
-    { amount: BigNumber(value.toString()), recipient: to, data },
-  );
+  const node = getNodeApi(currency);
+  const transactionType = getTransactionType(type);
 
   const feeData = await node.getFeeData(currency, {
     type: transactionType,
     feesStrategy: transactionIntent.feesStrategy,
   });
+
+  // Build transaction parameters based on type
+  const { to, data, value } = type.startsWith("staking-")
+    ? buildStakingTransactionParams(currency, transactionIntent)
+    : ((): { to: string; data: Buffer; value: bigint } => {
+        const { amount, asset, recipient } = transactionIntent;
+        return {
+          to: isNative(asset) ? recipient : asset.assetReference || "",
+          data: isNative(asset) ? Buffer.from([]) : getErc20Data(recipient, amount),
+          value: isNative(asset) ? amount : 0n,
+        };
+      })();
+
+  const gasLimit = await node.getGasEstimation(
+    { currency, freshAddress: sender },
+    { amount: BigNumber(value.toString()), recipient: to, data },
+  );
 
   return {
     type: transactionType,

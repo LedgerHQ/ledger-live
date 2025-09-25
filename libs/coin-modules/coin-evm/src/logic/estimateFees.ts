@@ -1,11 +1,6 @@
 import BigNumber from "bignumber.js";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import type {
-  FeeEstimation,
-  MemoNotSupported,
-  TransactionIntent,
-  AnyIntent,
-} from "@ledgerhq/coin-framework/api/index";
+import type { FeeEstimation, AnyIntent } from "@ledgerhq/coin-framework/api/index";
 import { ApiFeeData, ApiGasOptions, FeeData, GasOptions, TransactionTypes } from "../types";
 import { getGasTracker } from "../network/gasTracker";
 import { isEthAddress } from "../utils";
