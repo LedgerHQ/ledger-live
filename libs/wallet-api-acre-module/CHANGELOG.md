@@ -1,5 +1,11 @@
 # @ledgerhq/wallet-api-acre-module
 
+## 0.7.0
+
+### Minor Changes
+
+- [#11369](https://github.com/LedgerHQ/ledger-live/pull/11369) [`9ed8f42`](https://github.com/LedgerHQ/ledger-live/commit/9ed8f42b179e6c18811a613e5fe9d8ff899b5b94) Thanks [@RomanWlm](https://github.com/RomanWlm)! - Add new ACRE custom handler endpoint alowwing ACRE dApp to register btc Yield Bearing ETh account as part of LedgerLive accounts
+
 ## 0.7.0-next.0
 
 ### Minor Changes

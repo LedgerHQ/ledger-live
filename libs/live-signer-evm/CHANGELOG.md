@@ -1,5 +1,17 @@
 # @ledgerhq/live-signer-evm
 
+## 0.8.0
+
+### Minor Changes
+
+- [#11779](https://github.com/LedgerHQ/ledger-live/pull/11779) [`d93c0aa`](https://github.com/LedgerHQ/ledger-live/commit/d93c0aab902bfba5b36ebdf707e88b5d3453dacb) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Update Device Management Kit to 0.9.0 (and associated libs)
+
+### Patch Changes
+
+- Updated dependencies [[`2444623`](https://github.com/LedgerHQ/ledger-live/commit/244462341ee0d2d85a2e1370624500e565cb030a), [`f8092e3`](https://github.com/LedgerHQ/ledger-live/commit/f8092e3b3b5df2e4a7b8ba9f83d393701854d7f7), [`7d23713`](https://github.com/LedgerHQ/ledger-live/commit/7d23713789ff91bd93d0cdba7dbed27e4efec6ce), [`c40c867`](https://github.com/LedgerHQ/ledger-live/commit/c40c867c790107270a7db63eeacdddc67dd22769)]:
+  - @ledgerhq/coin-evm@2.31.0
+  - @ledgerhq/hw-app-eth@6.45.19
+
 ## 0.8.0-next.1
 
 ### Patch Changes

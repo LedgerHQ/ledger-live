@@ -1,5 +1,19 @@
 # @ledgerhq/types-live
 
+## 6.85.0
+
+### Minor Changes
+
+- [#11738](https://github.com/LedgerHQ/ledger-live/pull/11738) [`9b8689a`](https://github.com/LedgerHQ/ledger-live/commit/9b8689ae2c44bdeccae26378e05cbf6899b83aec) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLM / LLD - Added searchDebounceTime and backendEnvironment parameters to modular drawer feature flags
+
+- [#11863](https://github.com/LedgerHQ/ledger-live/pull/11863) [`c8fe586`](https://github.com/LedgerHQ/ledger-live/commit/c8fe586f1427d4d7a9fad092b51221ec8221399d) Thanks [@mitchellv-ledger](https://github.com/mitchellv-ledger)! - Add syncOnboardingIncr1 feature flag
+
+- [#11190](https://github.com/LedgerHQ/ledger-live/pull/11190) [`3b5576e`](https://github.com/LedgerHQ/ledger-live/commit/3b5576e0b67fedad0f5dbbd6b9546281af4e6111) Thanks [@semeano](https://github.com/semeano)! - [Kaspa] Coin support for LLD and LLM
+
+- [#11787](https://github.com/LedgerHQ/ledger-live/pull/11787) [`13ac4d7`](https://github.com/LedgerHQ/ledger-live/commit/13ac4d7ed05f0fc448cc0a013688c917cb73e0f5) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - remove NFTs from LLD
+
+- [#11841](https://github.com/LedgerHQ/ledger-live/pull/11841) [`ed4c073`](https://github.com/LedgerHQ/ledger-live/commit/ed4c073b304d85355cf510551bcb225de4a3391c) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Remove NFTs libs
+
 ## 6.85.0-next.0
 
 ### Minor Changes

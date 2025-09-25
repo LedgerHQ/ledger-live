@@ -1,5 +1,18 @@
 # @ledgerhq/coin-tester
 
+## 0.10.0
+
+### Minor Changes
+
+- [#11677](https://github.com/LedgerHQ/ledger-live/pull/11677) [`f8092e3`](https://github.com/LedgerHQ/ledger-live/commit/f8092e3b3b5df2e4a7b8ba9f83d393701854d7f7) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - feat(coin-tester-evm): support the generic adapter
+
+- [#11809](https://github.com/LedgerHQ/ledger-live/pull/11809) [`2a3a861`](https://github.com/LedgerHQ/ledger-live/commit/2a3a861cbd6530f863824d0bab8ba8a170211e34) Thanks [@Antoine-bls83](https://github.com/Antoine-bls83)! - fix speculos waiting logs
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport-node-speculos-http@6.30.1
+
 ## 0.10.0-next.0
 
 ### Minor Changes

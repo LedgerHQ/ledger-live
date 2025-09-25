@@ -1,5 +1,22 @@
 # ledger-live-desktop-e2e-tests
 
+## 0.7.0
+
+### Minor Changes
+
+- [#11190](https://github.com/LedgerHQ/ledger-live/pull/11190) [`3b5576e`](https://github.com/LedgerHQ/ledger-live/commit/3b5576e0b67fedad0f5dbbd6b9546281af4e6111) Thanks [@semeano](https://github.com/semeano)! - [Kaspa] Coin support for LLD and LLM
+
+### Patch Changes
+
+- Updated dependencies [[`d93c0aa`](https://github.com/LedgerHQ/ledger-live/commit/d93c0aab902bfba5b36ebdf707e88b5d3453dacb), [`289f623`](https://github.com/LedgerHQ/ledger-live/commit/289f623c2b9055a596647676499cd3c8b34117fa), [`2444623`](https://github.com/LedgerHQ/ledger-live/commit/244462341ee0d2d85a2e1370624500e565cb030a), [`aee931f`](https://github.com/LedgerHQ/ledger-live/commit/aee931fdc9d6028ddfcaea014b033822e178d7a0), [`e70a351`](https://github.com/LedgerHQ/ledger-live/commit/e70a351dc3298c59301cfff1939c7e3d16efa880), [`1d06127`](https://github.com/LedgerHQ/ledger-live/commit/1d06127d433c5e61482c1b49cca3c15aa6662499), [`aaa16b7`](https://github.com/LedgerHQ/ledger-live/commit/aaa16b718454dca51d59bb138ab1a638dc4b8243), [`9b8689a`](https://github.com/LedgerHQ/ledger-live/commit/9b8689ae2c44bdeccae26378e05cbf6899b83aec), [`e6de5d9`](https://github.com/LedgerHQ/ledger-live/commit/e6de5d906be3e33a1c62b6f80985eca53fae94f0), [`d56bebe`](https://github.com/LedgerHQ/ledger-live/commit/d56bebe672a1ed825697b371662dbff19dcc63d8), [`2d747cf`](https://github.com/LedgerHQ/ledger-live/commit/2d747cf63f120a6634c2e2adbe60c4e94d37fc71), [`c8fe586`](https://github.com/LedgerHQ/ledger-live/commit/c8fe586f1427d4d7a9fad092b51221ec8221399d), [`3840b29`](https://github.com/LedgerHQ/ledger-live/commit/3840b295fe6bef518b506c3d1d68f62d0137df22), [`65c128a`](https://github.com/LedgerHQ/ledger-live/commit/65c128a93f07857b421bed3696bc9984f860ada9), [`3b5576e`](https://github.com/LedgerHQ/ledger-live/commit/3b5576e0b67fedad0f5dbbd6b9546281af4e6111), [`6941aac`](https://github.com/LedgerHQ/ledger-live/commit/6941aac638dcc8d4fb03aa92f42d2a71d4089202), [`3c19e0d`](https://github.com/LedgerHQ/ledger-live/commit/3c19e0d23812b99ec709603493691c10170d1b42), [`f8092e3`](https://github.com/LedgerHQ/ledger-live/commit/f8092e3b3b5df2e4a7b8ba9f83d393701854d7f7), [`fe97131`](https://github.com/LedgerHQ/ledger-live/commit/fe971313776194e5942dfa9a95d6082950c3111e), [`2a58b72`](https://github.com/LedgerHQ/ledger-live/commit/2a58b720de42e63e59ea430bd03b2c95e903634c), [`f671769`](https://github.com/LedgerHQ/ledger-live/commit/f6717696fcb2ad672a48fdd7f8654dedf11b4a65), [`13ac4d7`](https://github.com/LedgerHQ/ledger-live/commit/13ac4d7ed05f0fc448cc0a013688c917cb73e0f5), [`1c4bcb9`](https://github.com/LedgerHQ/ledger-live/commit/1c4bcb9e9082dedb37598b2b0a35be0665e80d20), [`6847918`](https://github.com/LedgerHQ/ledger-live/commit/6847918323d59e7ec089b8c70bef7f2d768a41c9), [`ed4c073`](https://github.com/LedgerHQ/ledger-live/commit/ed4c073b304d85355cf510551bcb225de4a3391c), [`f55291b`](https://github.com/LedgerHQ/ledger-live/commit/f55291b02f6a603e37eae2aee0c569e434982c21)]:
+  - @ledgerhq/live-common@34.49.0
+  - @ledgerhq/live-env@2.17.0
+  - @ledgerhq/types-live@6.85.0
+  - @ledgerhq/live-cli@24.24.0
+  - @ledgerhq/ledger-key-ring-protocol@0.6.6
+  - @ledgerhq/live-wallet@0.14.1
+  - @ledgerhq/hw-transport-node-speculos-http@6.30.1
+
 ## 0.7.0-next.2
 
 ### Patch Changes

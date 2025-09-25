@@ -1,5 +1,17 @@
 # @ledgerhq/live-wallet
 
+## 0.5.0
+
+### Minor Changes
+
+- [#11790](https://github.com/LedgerHQ/ledger-live/pull/11790) [`370e573`](https://github.com/LedgerHQ/ledger-live/commit/370e573eaf988ec9590e1991bf8b51d03cce40f1) Thanks [@thesan](https://github.com/thesan)! - Fix the LKRP Software device block the signature
+
+### Patch Changes
+
+- Updated dependencies [[`aaa16b7`](https://github.com/LedgerHQ/ledger-live/commit/aaa16b718454dca51d59bb138ab1a638dc4b8243), [`3b5576e`](https://github.com/LedgerHQ/ledger-live/commit/3b5576e0b67fedad0f5dbbd6b9546281af4e6111), [`fe97131`](https://github.com/LedgerHQ/ledger-live/commit/fe971313776194e5942dfa9a95d6082950c3111e), [`2a58b72`](https://github.com/LedgerHQ/ledger-live/commit/2a58b720de42e63e59ea430bd03b2c95e903634c)]:
+  - @ledgerhq/live-env@2.17.0
+  - @ledgerhq/hw-transport@6.31.11
+
 ## 0.5.0-next.0
 
 ### Minor Changes

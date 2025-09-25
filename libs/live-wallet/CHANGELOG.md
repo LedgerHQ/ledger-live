@@ -1,5 +1,18 @@
 # @ledgerhq/live-wallet
 
+## 0.14.1
+
+### Patch Changes
+
+- Updated dependencies [[`aaa16b7`](https://github.com/LedgerHQ/ledger-live/commit/aaa16b718454dca51d59bb138ab1a638dc4b8243), [`9b8689a`](https://github.com/LedgerHQ/ledger-live/commit/9b8689ae2c44bdeccae26378e05cbf6899b83aec), [`d56bebe`](https://github.com/LedgerHQ/ledger-live/commit/d56bebe672a1ed825697b371662dbff19dcc63d8), [`c8fe586`](https://github.com/LedgerHQ/ledger-live/commit/c8fe586f1427d4d7a9fad092b51221ec8221399d), [`af64263`](https://github.com/LedgerHQ/ledger-live/commit/af642634bd4536183f766323d0ec5b9b99841dc6), [`0108eaf`](https://github.com/LedgerHQ/ledger-live/commit/0108eafb64e36ce68f44e03cc3f66ccdb5ee5a92), [`65c128a`](https://github.com/LedgerHQ/ledger-live/commit/65c128a93f07857b421bed3696bc9984f860ada9), [`3b5576e`](https://github.com/LedgerHQ/ledger-live/commit/3b5576e0b67fedad0f5dbbd6b9546281af4e6111), [`6941aac`](https://github.com/LedgerHQ/ledger-live/commit/6941aac638dcc8d4fb03aa92f42d2a71d4089202), [`fe97131`](https://github.com/LedgerHQ/ledger-live/commit/fe971313776194e5942dfa9a95d6082950c3111e), [`2a58b72`](https://github.com/LedgerHQ/ledger-live/commit/2a58b720de42e63e59ea430bd03b2c95e903634c), [`13ac4d7`](https://github.com/LedgerHQ/ledger-live/commit/13ac4d7ed05f0fc448cc0a013688c917cb73e0f5), [`ed4c073`](https://github.com/LedgerHQ/ledger-live/commit/ed4c073b304d85355cf510551bcb225de4a3391c)]:
+  - @ledgerhq/live-env@2.17.0
+  - @ledgerhq/types-live@6.85.0
+  - @ledgerhq/types-cryptoassets@7.27.0
+  - @ledgerhq/cryptoassets@13.29.0
+  - @ledgerhq/coin-framework@6.5.0
+  - @ledgerhq/ledger-key-ring-protocol@0.6.6
+  - @ledgerhq/live-network@2.0.18
+
 ## 0.14.1-next.0
 
 ### Patch Changes
