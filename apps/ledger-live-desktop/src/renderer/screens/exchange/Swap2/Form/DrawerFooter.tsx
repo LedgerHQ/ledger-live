@@ -32,7 +32,7 @@ export function DrawerFooter({ provider }: { provider: string }) {
   const ptxSwapLiveAppKycWarning = useFeature("ptxSwapLiveAppKycWarning");
   const url = providerData?.termsOfUseUrl;
   const providerName = getProviderName(provider);
-  const isDetailedViewEnabled = useFeature("ptxSwapconfirmSwapOnDevice");
+  const isDetailedViewEnabled = useFeature("ptxSwapDetailedView");
 
   const { acceptTerms, urls } = useMemo(() => {
     if (!ptxSwapLiveAppKycWarning?.enabled) {
