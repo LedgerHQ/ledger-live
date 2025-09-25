@@ -2,6 +2,7 @@ import BigNumber from "bignumber.js";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import type {
   AssetInfo,
+  BufferTxData,
   MemoNotSupported,
   TransactionIntent,
 } from "@ledgerhq/coin-framework/api/index";
@@ -21,13 +22,14 @@ describe("estimateFees", () => {
   } as CryptoCurrency;
   const mockNativeAsset: AssetInfo = { type: "native" };
   const mockTokenAsset: AssetInfo = { type: "erc20", assetReference: "0x1234" };
-  const mockIntent: TransactionIntent<MemoNotSupported> = {
+  const mockIntent: TransactionIntent<MemoNotSupported, BufferTxData> = {
     type: "send-legacy",
     amount: BigInt("1000000000000000000"),
     asset: mockNativeAsset,
     recipient: "0x7b2C7232f9E38F30E2868f0E5Bf311Cd83554b5A",
     sender: "0xsender",
     feesStrategy: "fast",
+    data: { type: "buffer", value: Buffer.from([]) },
   };
 
   const mockGasLimit = new BigNumber("21000");
@@ -63,7 +65,10 @@ describe("estimateFees", () => {
     expect(
       await estimateFees(
         {} as CryptoCurrency,
-        { type: "send-legacy", recipient: "not-an-address" } as TransactionIntent,
+        { type: "send-legacy", recipient: "not-an-address" } as TransactionIntent<
+          MemoNotSupported,
+          BufferTxData
+        >,
       ),
     ).toEqual({ value: 0n });
     expect(
@@ -72,7 +77,7 @@ describe("estimateFees", () => {
         {
           type: "send-legacy",
           recipient: "0x7b2c7232f9e38f30e2868f0e5bf311cd83554b5a",
-        } as TransactionIntent,
+        } as TransactionIntent<MemoNotSupported, BufferTxData>,
       ),
     ).toEqual({ value: 0n });
     expect(mockNodeApi.getGasEstimation).not.toHaveBeenCalled();

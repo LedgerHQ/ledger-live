@@ -26,7 +26,7 @@ export function genericPrepareTransaction(
   kind,
 ): AccountBridge<GenericTransaction, Account>["prepareTransaction"] {
   return async (account, transaction: GenericTransaction) => {
-    const { getAssetFromToken, estimateFees, validateIntent } = getAlpacaApi(
+    const { getAssetFromToken, computeIntentType, estimateFees, validateIntent } = getAlpacaApi(
       account.currency.id,
       kind,
     );
@@ -38,27 +38,19 @@ export function genericPrepareTransaction(
     if (fees === null) {
       fees = (
         await estimateFees(
-          transactionToIntent(account, {
-            ...transaction,
-          }),
+          transactionToIntent(
+            account,
+            {
+              ...transaction,
+            },
+            computeIntentType,
+          ),
         )
       ).value;
     }
 
     if (!bnEq(transaction.fees, new BigNumber(fees.toString()))) {
-      const next: typeof transaction & {
-        fees: BigNumber;
-        assetReference: string;
-        assetOwner: string;
-        customFees: {
-          parameters: {
-            fees: BigNumber;
-            storageLimit?: BigNumber;
-          };
-        };
-        storageLimit?: BigNumber;
-        amount?: BigNumber;
-      } = {
+      const next: GenericTransaction = {
         ...transaction,
         fees: new BigNumber(fees.toString()),
         assetReference,
@@ -72,9 +64,13 @@ export function genericPrepareTransaction(
 
       // propagate storageLimit fee parameter when present (ex: tezos)
       const feeEstimation = await estimateFees(
-        transactionToIntent(account, {
-          ...transaction,
-        }),
+        transactionToIntent(
+          account,
+          {
+            ...transaction,
+          },
+          computeIntentType,
+        ),
       );
       const params = feeEstimation?.parameters;
       if (params) {
@@ -87,7 +83,7 @@ export function genericPrepareTransaction(
         ) {
           next.storageLimit = new BigNumber(storageLimit.toString());
           // Add storageLimit to customFees parameters
-          if (next.customFees.parameters) {
+          if (next.customFees?.parameters) {
             next.customFees.parameters.storageLimit = new BigNumber(storageLimit.toString());
           }
         }
@@ -100,9 +96,13 @@ export function genericPrepareTransaction(
         transaction["mode"] === "unstake"
       ) {
         const { amount } = await validateIntent(
-          transactionToIntent(account, {
-            ...transaction,
-          }),
+          transactionToIntent(
+            account,
+            {
+              ...transaction,
+            },
+            computeIntentType,
+          ),
         );
         next.amount = new BigNumber(amount.toString());
       }
