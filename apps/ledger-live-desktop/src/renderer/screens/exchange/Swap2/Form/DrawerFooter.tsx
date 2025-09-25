@@ -32,6 +32,7 @@ export function DrawerFooter({ provider }: { provider: string }) {
   const ptxSwapLiveAppKycWarning = useFeature("ptxSwapLiveAppKycWarning");
   const url = providerData?.termsOfUseUrl;
   const providerName = getProviderName(provider);
+  const isDetailedViewEnabled = useFeature("ptxSwapDetailedView");
 
   const { acceptTerms, urls } = useMemo(() => {
     if (!ptxSwapLiveAppKycWarning?.enabled) {
@@ -43,18 +44,25 @@ export function DrawerFooter({ provider }: { provider: string }) {
         urls: [url],
       };
     }
-
     switch (providerName) {
       case "Exodus":
         return {
           acceptTerms: "DeviceAction.swap.exodusAcceptTerms",
           urls: [url],
         };
-      case "Changelly":
-        return {
-          acceptTerms: "DeviceAction.swap.changellyAcceptTerms",
-          urls: providerData?.usefulUrls,
-        };
+      case "Changelly": {
+        if (isDetailedViewEnabled?.enabled) {
+          return {
+            acceptTerms: "DeviceAction.swap.changellyAcceptTerms",
+            urls: providerData?.usefulUrls,
+          };
+        } else {
+          return {
+            acceptTerms: "DeviceAction.swap.changellySimplifiedAcceptTerms",
+            urls: providerData?.usefulUrls,
+          };
+        }
+      }
       case "CIC":
         return {
           acceptTerms: "DeviceAction.swap.cicAcceptTerms",
@@ -66,7 +74,13 @@ export function DrawerFooter({ provider }: { provider: string }) {
           urls: [url],
         };
     }
-  }, [providerData?.usefulUrls, providerName, ptxSwapLiveAppKycWarning?.enabled, url]);
+  }, [
+    providerData?.usefulUrls,
+    providerName,
+    ptxSwapLiveAppKycWarning?.enabled,
+    url,
+    isDetailedViewEnabled?.enabled,
+  ]);
 
   if (!url) {
     return null;
