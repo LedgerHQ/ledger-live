@@ -4,7 +4,7 @@ import { BigNumber } from "bignumber.js";
 // ---------- Mocks (paths must match imports inside estimateMaxSpendable.ts) ----------
 const estimateAccountMaxSpendable = jest.fn().mockResolvedValue(new BigNumber(123456));
 
-// swap-able explorer for each test
+// swap-able explorer for each test (no longer affects result since we don't clamp here)
 let currentExplorer: any = {
   getNetwork: jest.fn().mockResolvedValue({ relay_fee: "0.00001000" }), // 1 sat/vB
 };
@@ -62,7 +62,6 @@ function makeTx(feePerByte?: BigNumber.Value, overrides: Partial<Transaction> = 
 
 beforeEach(() => {
   jest.clearAllMocks();
-  // default network floor = 1 sat/vB
   setExplorer({ getNetwork: jest.fn().mockResolvedValue({ relay_fee: "0.00001000" }) });
   estimateAccountMaxSpendable.mockResolvedValue(new BigNumber(123456));
   getAccountNetworkInfo.mockResolvedValue({
@@ -70,38 +69,37 @@ beforeEach(() => {
   });
 });
 
-test("clamps manual 1 sat/vB to floor+1 (relay=1 → 2)", async () => {
+test("passes manual 1 sat/vB through unchanged", async () => {
   const account = makeAccount();
   const tx = makeTx(1);
 
   await estimateMaxSpendable({ account, parentAccount: undefined, transaction: tx });
 
   const feeArg = estimateAccountMaxSpendable.mock.calls[0][1]; // number
-  expect(feeArg).toBe(2);
+  expect(feeArg).toBe(1);
 });
 
-test("does not clamp when user fee already ≥ floor+1 (relay=1, user=3)", async () => {
+test("passes user fee already above floor through unchanged (user=3)", async () => {
   const account = makeAccount();
   const tx = makeTx(3);
 
   await estimateMaxSpendable({ account, parentAccount: undefined, transaction: tx });
 
-  expect(estimateAccountMaxSpendable).toHaveBeenCalled();
   const feeArg = estimateAccountMaxSpendable.mock.calls[0][1];
   expect(feeArg).toBe(3);
 });
 
-test("ceil fractional user fee then apply floor logic (user=1.2, relay=1 → 2)", async () => {
+test("passes fractional fee through unchanged (user=1.2)", async () => {
   const account = makeAccount();
   const tx = makeTx(1.2);
 
   await estimateMaxSpendable({ account, parentAccount: undefined, transaction: tx });
 
   const feeArg = estimateAccountMaxSpendable.mock.calls[0][1];
-  expect(feeArg).toBe(2);
+  expect(feeArg).toBe(1.2);
 });
 
-test("higher floor (relay=0.00002000 → 2 sat/vB) clamps user=1 to 3", async () => {
+test("ignores higher relay floor when not clamping (relay≈2, user=1 → still 1)", async () => {
   setExplorer({ getNetwork: jest.fn().mockResolvedValue({ relay_fee: "0.00002000" }) });
   const account = makeAccount();
   const tx = makeTx(1);
@@ -109,10 +107,10 @@ test("higher floor (relay=0.00002000 → 2 sat/vB) clamps user=1 to 3", async ()
   await estimateMaxSpendable({ account, parentAccount: undefined, transaction: tx });
 
   const feeArg = estimateAccountMaxSpendable.mock.calls[0][1];
-  expect(feeArg).toBe(3);
+  expect(feeArg).toBe(1);
 });
 
-test("fallback to floor=1 when getNetwork throws (user=1 → 2)", async () => {
+test("no clamp on explorer error (user=1 → 1)", async () => {
   setExplorer({ getNetwork: jest.fn().mockRejectedValue(new Error("boom")) });
   const account = makeAccount();
   const tx = makeTx(1);
@@ -120,11 +118,11 @@ test("fallback to floor=1 when getNetwork throws (user=1 → 2)", async () => {
   await estimateMaxSpendable({ account, parentAccount: undefined, transaction: tx });
 
   const feeArg = estimateAccountMaxSpendable.mock.calls[0][1];
-  expect(feeArg).toBe(2);
+  expect(feeArg).toBe(1);
 });
 
-test("uses defaultFeePerByte from getAccountNetworkInfo when tx.feePerByte is missing, then clamps", async () => {
-  // defaultFeePerByte = 1 (mocked above), relay=1 → clamp to 2
+test("uses defaultFeePerByte from getAccountNetworkInfo when tx.feePerByte is missing (no clamp)", async () => {
+  // defaultFeePerByte = 1 (mocked above)
   const account = makeAccount();
   const tx = makeTx(undefined);
 
@@ -132,7 +130,7 @@ test("uses defaultFeePerByte from getAccountNetworkInfo when tx.feePerByte is mi
 
   expect(getAccountNetworkInfo).toHaveBeenCalled();
   const feeArg = estimateAccountMaxSpendable.mock.calls[0][1];
-  expect(feeArg).toBe(2);
+  expect(feeArg).toBe(1);
 });
 
 test("returns 0 when wallet estimator returns negative", async () => {
