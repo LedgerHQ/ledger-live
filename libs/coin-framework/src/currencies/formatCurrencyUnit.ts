@@ -31,6 +31,59 @@ const defaultFormatOptions = {
   staticSignificantDigits: 8,
 };
 
+// TODO: configure global precision elsewhere, default is 20
+BigNumber.set({ DECIMAL_PLACES: 40, ROUNDING_MODE: BigNumber.ROUND_HALF_UP });
+
+/**
+ * Compute natural logarithm ln(x) using a Taylor series around 1
+ * Accurate for x close to 1 (1 ≤ x < 10)
+ */
+function ln(x: BigNumber, terms = 30) {
+  if (x.lte(0)) throw new Error("ln is undefined for non-positive numbers");
+
+  // Use transformation: ln(x) = 2 * sum_k [((x - 1)/(x + 1))^(2k - 1) / (2k - 1)]
+  const one = new BigNumber(1);
+  const y = x.minus(one).div(x.plus(one)); // y = (x - 1) / (x + 1)
+  const ySquared = y.times(y);
+
+  let result = new BigNumber(0);
+  let term = y;
+
+  for (let k = 1; k <= terms; k += 2) {
+    if (k > 1) {
+      term = term.times(ySquared);
+    }
+    result = result.plus(term.div(k));
+  }
+
+  return result.times(2);
+}
+
+function log10BigNumber(value: bigint | number | BigNumber, lnTerms = 30) {
+  let x;
+  if (typeof value === "bigint") {
+    x = new BigNumber(value.toString());
+  } else {
+    x = new BigNumber(value);
+  }
+
+  if (x.lte(0)) {
+    throw new Error("log10 is undefined for zero or negative values.");
+  }
+
+  const digits = x.toFixed(0).length;
+  // mantissa in [1, 10)
+  const mantissa = x.div(new BigNumber(10).pow(digits - 1));
+  const lnMantissa = ln(mantissa, lnTerms);
+  const ln10 = ln(new BigNumber(10), lnTerms);
+  const fractional = lnMantissa.div(ln10);
+  return new BigNumber(digits - 1).plus(fractional);
+}
+
+function bigNumberCeil(bn: BigNumber): BigNumber {
+  return bn.integerValue(BigNumber.ROUND_CEIL);
+}
+
 export type formatCurrencyUnitOptions = Partial<typeof defaultFormatOptions>;
 
 type FormatFragment =
@@ -96,6 +149,7 @@ function formatCurrencyUnitFragment(
     dynamicSignificantDigits,
     staticSignificantDigits,
   } = { ...defaultFormatOptions, ...unit, ...options };
+
   const { magnitude, code } = unit;
   const floatValue = value.div(new BigNumber(10).pow(magnitude));
   const floatValueAbs = floatValue.abs();
@@ -107,7 +161,7 @@ function formatCurrencyUnitFragment(
         Math.max(
           0, // dynamic max number of digits based on the value itself. to only show significant part
           Math.min(
-            dynamicSignificantDigits - Math.ceil(Math.log10(floatValueAbs.toNumber())),
+            dynamicSignificantDigits - bigNumberCeil(log10BigNumber(floatValueAbs)).toNumber(),
             magnitude + subMagnitude,
             staticSignificantDigits,
           ),
