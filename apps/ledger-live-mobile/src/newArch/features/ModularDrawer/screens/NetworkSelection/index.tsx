@@ -22,12 +22,15 @@ import { useAccountData } from "../../hooks/useAccountData";
 import { useBalanceDeps } from "../../hooks/useBalanceDeps";
 import { useSelector } from "react-redux";
 import { modularDrawerFlowSelector, modularDrawerSourceSelector } from "~/reducers/modularDrawer";
+import { groupCurrenciesByToken } from "@ledgerhq/live-common/modularDrawer/utils/groupCurrenciesByProvider";
+import { AssetData } from "@ledgerhq/live-common/modularDrawer/utils/type";
 
 export type NetworkSelectionStepProps = {
   availableNetworks: CryptoOrTokenCurrency[];
   asset?: CryptoOrTokenCurrency;
   onNetworkSelected: (asset: CryptoOrTokenCurrency) => void;
   networksConfiguration?: EnhancedModularDrawerConfiguration["networks"];
+  assetsSorted?: AssetData[];
 };
 
 const SAFE_MARGIN_BOTTOM = 48;
@@ -37,6 +40,7 @@ const NetworkSelection = ({
   onNetworkSelected,
   networksConfiguration,
   asset,
+  assetsSorted,
 }: Readonly<NetworkSelectionStepProps>) => {
   const flow = useSelector(modularDrawerFlowSelector);
   const source = useSelector(modularDrawerSourceSelector);
@@ -68,12 +72,15 @@ const NetworkSelection = ({
     [networks, trackModularDrawerEvent, flow, source, networksConfiguration, onNetworkSelected],
   );
 
+  const validAssets = groupCurrenciesByToken(assetsSorted || [], asset ? asset.id : "", networks);
+
   const networkConfigurationDeps = {
     useAccountData,
     accountsCount,
     accountsCountAndApy,
     useBalanceDeps,
     balanceItem,
+    validAssets,
   };
 
   const makeNetworkConfigurationHook = createNetworkConfigurationHook(networkConfigurationDeps);

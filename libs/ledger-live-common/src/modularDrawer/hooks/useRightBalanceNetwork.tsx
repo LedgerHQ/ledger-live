@@ -8,19 +8,26 @@ import { getBalanceAndFiatValueByAssets } from "../utils/getBalanceAndFiatValueB
 export type NetworkDeps = {
   balanceItem: (asset: { fiatValue?: string; balance?: string }) => ReactNode;
   useBalanceDeps: UseBalanceDeps;
+  validAssets: CryptoOrTokenCurrency[];
 };
 
 type Params = {
   assets: CryptoOrTokenCurrency[];
   selectedAssetId: string;
   currenciesByProvider: CurrenciesByProviderId[];
+  networks?: CryptoOrTokenCurrency[];
 };
 
-export function createUseRightBalanceNetwork({ useBalanceDeps, balanceItem }: NetworkDeps) {
+export function createUseRightBalanceNetwork({
+  useBalanceDeps,
+  balanceItem,
+  validAssets,
+}: NetworkDeps) {
   return function useRightBalanceNetwork({
     assets: networks,
     selectedAssetId,
     currenciesByProvider,
+    networks: actualNetworks,
   }: Params) {
     const { flattenedAccounts, discreet, state, counterValueCurrency, locale } = useBalanceDeps();
 
@@ -77,7 +84,7 @@ export function createUseRightBalanceNetwork({ useBalanceDeps, balanceItem }: Ne
 
       const networkBalanceData = getBalanceAndFiatValueByAssets(
         flattenedAccounts,
-        networks,
+        validAssets,
         state,
         counterValueCurrency,
         discreet,
@@ -86,7 +93,7 @@ export function createUseRightBalanceNetwork({ useBalanceDeps, balanceItem }: Ne
 
       const balanceMap = new Map(networkBalanceData.map(b => [b.id, b]));
 
-      const networksWithBalance = networks.map(network => {
+      const networksWithBalance = (actualNetworks || []).map(network => {
         const balanceData = balanceMap.get(network.id) || {};
         return {
           network,
@@ -103,14 +110,15 @@ export function createUseRightBalanceNetwork({ useBalanceDeps, balanceItem }: Ne
         rightElement: balanceItem(balanceData),
       }));
     }, [
-      networks,
-      selectedAssetId,
       currenciesByProvider,
       flattenedAccounts,
       state,
       counterValueCurrency,
       discreet,
       locale,
+      networks,
+      actualNetworks,
+      selectedAssetId,
     ]);
   };
 }

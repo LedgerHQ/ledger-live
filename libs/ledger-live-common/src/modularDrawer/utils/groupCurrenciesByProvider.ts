@@ -25,3 +25,24 @@ export const groupCurrenciesByProvider = (assetsSorted: AssetData[]) => {
 
   return assetMap;
 };
+
+export const groupCurrenciesByToken = (
+  assetsSorted: AssetData[],
+  selectedAssetId: string,
+  networks: CryptoOrTokenCurrency[],
+) => {
+  const providerOfSelectedAsset = assetsSorted.find(provider =>
+    provider.networks.some(currency => currency.id === selectedAssetId),
+  );
+
+  const pairs = networks.map(network => ({
+    network,
+    asset: providerOfSelectedAsset?.networks.find(currency =>
+      currency.type === "TokenCurrency"
+        ? currency.parentCurrency.id === network.id
+        : currency.id === network.id,
+    ),
+  }));
+
+  return pairs.filter(p => p.asset).map(p => p.asset!);
+};

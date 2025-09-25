@@ -47,6 +47,7 @@ export const getRightElement =
         return createUseRightBalanceNetwork({
           useBalanceDeps: NetworkConfigurationDeps.useBalanceDeps,
           balanceItem: NetworkConfigurationDeps.balanceItem,
+          validAssets: NetworkConfigurationDeps.validAssets,
         });
     }
   };

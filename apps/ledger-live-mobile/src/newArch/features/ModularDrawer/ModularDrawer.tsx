@@ -133,6 +133,7 @@ export function ModularDrawer({
           availableNetworks,
           networksConfiguration: networkConfigurationSanitized,
           asset,
+          assetsSorted,
         }}
         accountsViewModel={{
           accounts$,

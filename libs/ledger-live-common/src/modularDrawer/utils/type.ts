@@ -86,6 +86,7 @@ export type NetworkConfigurationDeps = {
   accountsCountAndApy: CreateAccountsCountAndApy;
   useBalanceDeps: UseBalanceDeps;
   balanceItem: CreateBalanceItem;
+  validAssets: CryptoOrTokenCurrency[];
 };
 
 export type LeftElementKind = "numberOfAccounts" | "numberOfAccountsAndApy" | "undefined";
