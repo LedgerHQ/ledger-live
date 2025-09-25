@@ -6,6 +6,7 @@ import { useAssetsData } from "@ledgerhq/live-common/modularDrawer/hooks/useAsse
 import { modularDrawerSearchedSelector } from "~/renderer/reducers/modularDrawer";
 import { useSelector } from "react-redux";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { AssetData } from "@ledgerhq/live-common/modularDrawer/utils/type";
 
 interface UseModularDrawerDataProps {
   currencyIds?: string[];
@@ -36,7 +37,7 @@ export function useModularDrawerData({
     isStaging,
   });
 
-  const assetsSorted = useMemo(() => {
+  const assetsSorted: AssetData[] | undefined = useMemo(() => {
     if (!data?.currenciesOrder.metaCurrencyIds) return undefined;
 
     return data.currenciesOrder.metaCurrencyIds
