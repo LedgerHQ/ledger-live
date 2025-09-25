@@ -1,3 +1,4 @@
+import { getProviderName } from "@ledgerhq/live-common/exchange/swap/utils/index";
 import { Text } from "@ledgerhq/native-ui";
 import React, { useMemo } from "react";
 import { Trans } from "react-i18next";
@@ -10,6 +11,8 @@ const CenteredText = styled(Text).attrs({
   textAlign: "center",
   fontSize: "12px",
   color: "neutral.c60",
+  marginLeft: 16,
+  marginRight: 16,
 })``;
 
 const UnderlinedText = styled(Text).attrs({
@@ -57,10 +60,10 @@ const TermsFooter: React.FC<{
   }
 
   return (
-    <CenteredText marginTop={16}>
+    <CenteredText>
       <Trans
         i18nKey={acceptTerms}
-        values={{ provider }}
+        values={{ provider: getProviderName(provider) }}
         components={urlsArray.map((url, idx) => (
           <UnderlinedText
             onPress={() => url && Linking.openURL(url)}

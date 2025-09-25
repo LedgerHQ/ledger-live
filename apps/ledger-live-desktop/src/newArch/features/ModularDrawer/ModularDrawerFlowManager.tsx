@@ -19,8 +19,6 @@ const ModularDrawerFlowManager = ({
   useCase,
   areCurrenciesFiltered,
   accounts$,
-  flow,
-  source,
   onAssetSelected,
   onAccountSelected,
 }: ModularDrawerFlowManagerProps) => {
@@ -54,7 +52,6 @@ const ModularDrawerFlowManager = ({
     goToStep,
     onAssetSelected,
     isSelectAccountFlow: Boolean(onAccountSelected),
-    flow,
     useCase,
     areCurrenciesFiltered,
   });
@@ -74,8 +71,6 @@ const ModularDrawerFlowManager = ({
             assetsConfiguration={assetsConfiguration}
             currenciesByProvider={currenciesByProvider}
             onAssetSelected={handleAssetSelected}
-            flow={flow}
-            source={source}
             hasOneCurrency={hasOneCurrency}
             loadNext={loadNext}
             error={!!error}
@@ -88,8 +83,6 @@ const ModularDrawerFlowManager = ({
             networks={networksToDisplay}
             networksConfiguration={networkConfiguration}
             currenciesByProvider={currenciesByProvider}
-            flow={flow}
-            source={source}
             onNetworkSelected={handleNetworkSelected}
             selectedAssetId={selectedAsset?.id}
             accounts$={accounts$}
@@ -102,8 +95,6 @@ const ModularDrawerFlowManager = ({
               asset={selectedAsset}
               accounts$={accounts$}
               onAccountSelected={onAccountSelected}
-              flow={flow}
-              source={source}
             />
           );
         }

@@ -6,5 +6,5 @@ import api from "../network/tzkt";
  */
 export async function getBalance(address: string): Promise<bigint> {
   const apiAccount = await api.getAccountByAddress(address);
-  return apiAccount.type === "user" ? BigInt(apiAccount.balance) : BigInt(-1);
+  return apiAccount.type === "user" ? BigInt(apiAccount.balance) : -1n;
 }

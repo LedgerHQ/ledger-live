@@ -239,9 +239,9 @@ export default function useScanDeviceAccountsViewModel({
     ],
   );
   const alreadyEmptyAccountName = useMaybeAccountName(alreadyEmptyAccount);
-  const cantCreateAccount = !sections.some(s => s.id === "creatable");
+  const cantCreateAccount = !sections.some(s => s.id === "creatable" && s.data.length > 0);
   const noImportableAccounts = !sections.some(
-    s => s.id === "importable" || s.id === "creatable" || s.id === "migrate",
+    s => (s.id === "importable" || s.id === "creatable" || s.id === "migrate") && s.data.length > 0,
   );
   // We don't show already imported accounts in the UI
   const sanitizedSections = sections.filter(s => s.id !== "imported");
@@ -282,7 +282,7 @@ export default function useScanDeviceAccountsViewModel({
   }, [existingAccounts, latestScannedAccount, onlyNewAccounts, scannedAccounts, selectedIds]);
 
   useEffect(() => {
-    if (!cantCreateAccount && !isAddingAccounts && !scanning) {
+    if (!isAddingAccounts && !scanning) {
       if (alreadyEmptyAccount && !hasImportableAccounts) {
         navigation.replace(ScreenName.AddAccountsWarning, {
           emptyAccount: alreadyEmptyAccount,
@@ -290,7 +290,7 @@ export default function useScanDeviceAccountsViewModel({
           currency,
           context,
         });
-      } else if (!scannedAccounts.length && CustomNoAssociatedAccounts) {
+      } else if (noImportableAccounts && CustomNoAssociatedAccounts) {
         navigation.replace(ScreenName.NoAssociatedAccounts, {
           CustomNoAssociatedAccounts,
         });
@@ -306,7 +306,7 @@ export default function useScanDeviceAccountsViewModel({
     navigation,
     currency,
     CustomNoAssociatedAccounts,
-    scannedAccounts,
+    noImportableAccounts,
     context,
   ]);
   return {

@@ -135,6 +135,7 @@ export type CryptoCurrencyId =
   | "filecoin"
   | "arbitrum"
   | "arbitrum_sepolia"
+  | "core"
   | "cronos"
   | "fantom"
   | "flare"
@@ -328,6 +329,7 @@ export type CryptoCurrency = CurrencyCommon & {
   deviceTicker?: string;
   // Used to connect to the right endpoint url since it is different from currencyId and ticker
   explorerId?: LedgerExplorerId;
+  tokenTypes?: string[];
 };
 
 /**

@@ -75,6 +75,7 @@ setSupportedCurrencies([
   "osmosis",
   "filecoin",
   "fantom",
+  "core",
   "cronos",
   "moonbeam",
   "songbird",

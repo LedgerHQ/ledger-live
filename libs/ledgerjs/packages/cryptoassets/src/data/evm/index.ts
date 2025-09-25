@@ -20,6 +20,7 @@ import astar_tokens from "./592/erc20.json";
 import hyperevm_tokens from "./999/erc20.json";
 import metis_tokens from "./1088/erc20.json";
 import polygon_zk_evm_tokens from "./1101/erc20.json";
+import core_tokens from "./1116/erc20.json";
 import moonbeam_tokens from "./1284/erc20.json";
 import polygon_zk_evm_testnet_tokens from "./1442/erc20.json";
 import klaytn_tokens from "./8217/erc20.json";
@@ -29,6 +30,7 @@ import celo_tokens from "./42220/erc20.json";
 import etherlink_tokens from "./42793/erc20.json";
 import avalanche_c_chain_tokens from "./43114/erc20.json";
 import linea_tokens from "./59144/erc20.json";
+import berachain_tokens from "./80094/erc20.json";
 import blast_tokens from "./81457/erc20.json";
 import base_sepolia_tokens from "./84532/erc20.json";
 import arbitrum_sepolia_tokens from "./421614/erc20.json";
@@ -59,6 +61,7 @@ import astar_tokens_hash from "./592/erc20-hash.json";
 import hyperevm_tokens_hash from "./999/erc20-hash.json";
 import metis_tokens_hash from "./1088/erc20-hash.json";
 import polygon_zk_evm_tokens_hash from "./1101/erc20-hash.json";
+import core_tokens_hash from "./1116/erc20-hash.json";
 import moonbeam_tokens_hash from "./1284/erc20-hash.json";
 import polygon_zk_evm_testnet_tokens_hash from "./1442/erc20-hash.json";
 import klaytn_tokens_hash from "./8217/erc20-hash.json";
@@ -68,6 +71,7 @@ import celo_tokens_hash from "./42220/erc20-hash.json";
 import etherlink_tokens_hash from "./42793/erc20-hash.json";
 import avalanche_c_chain_tokens_hash from "./43114/erc20-hash.json";
 import linea_tokens_hash from "./59144/erc20-hash.json";
+import berachain_tokens_hash from "./80094/erc20-hash.json";
 import blast_tokens_hash from "./81457/erc20-hash.json";
 import base_sepolia_tokens_hash from "./84532/erc20-hash.json";
 import arbitrum_sepolia_tokens_hash from "./421614/erc20-hash.json";
@@ -98,6 +102,7 @@ import astar_signatures from "./592/erc20-signatures.json";
 import hyperevm_signatures from "./999/erc20-signatures.json";
 import metis_signatures from "./1088/erc20-signatures.json";
 import polygon_zk_evm_signatures from "./1101/erc20-signatures.json";
+import core_signatures from "./1116/erc20-signatures.json";
 import moonbeam_signatures from "./1284/erc20-signatures.json";
 import polygon_zk_evm_testnet_signatures from "./1442/erc20-signatures.json";
 import klaytn_signatures from "./8217/erc20-signatures.json";
@@ -107,6 +112,7 @@ import celo_signatures from "./42220/erc20-signatures.json";
 import etherlink_signatures from "./42793/erc20-signatures.json";
 import avalanche_c_chain_signatures from "./43114/erc20-signatures.json";
 import linea_signatures from "./59144/erc20-signatures.json";
+import berachain_signatures from "./80094/erc20-signatures.json";
 import blast_signatures from "./81457/erc20-signatures.json";
 import base_sepolia_signatures from "./84532/erc20-signatures.json";
 import arbitrum_sepolia_signatures from "./421614/erc20-signatures.json";
@@ -138,6 +144,7 @@ export const tokens = {
   999: hyperevm_tokens as ERC20Token[],
   1088: metis_tokens as ERC20Token[],
   1101: polygon_zk_evm_tokens as ERC20Token[],
+  1116: core_tokens as ERC20Token[],
   1284: moonbeam_tokens as ERC20Token[],
   1442: polygon_zk_evm_testnet_tokens as ERC20Token[],
   8217: klaytn_tokens as ERC20Token[],
@@ -147,6 +154,7 @@ export const tokens = {
   42793: etherlink_tokens as ERC20Token[],
   43114: avalanche_c_chain_tokens as ERC20Token[],
   59144: linea_tokens as ERC20Token[],
+  80094: berachain_tokens as ERC20Token[],
   81457: blast_tokens as ERC20Token[],
   84532: base_sepolia_tokens as ERC20Token[],
   421614: arbitrum_sepolia_tokens as ERC20Token[],
@@ -179,6 +187,7 @@ export const signatures = {
   999: hyperevm_signatures,
   1088: metis_signatures,
   1101: polygon_zk_evm_signatures,
+  1116: core_signatures,
   1284: moonbeam_signatures,
   1442: polygon_zk_evm_testnet_signatures,
   8217: klaytn_signatures,
@@ -188,6 +197,7 @@ export const signatures = {
   42793: etherlink_signatures,
   43114: avalanche_c_chain_signatures,
   59144: linea_signatures,
+  80094: berachain_signatures,
   81457: blast_signatures,
   84532: base_sepolia_signatures,
   421614: arbitrum_sepolia_signatures,
@@ -220,6 +230,7 @@ export const hashes = {
   999: hyperevm_tokens_hash,
   1088: metis_tokens_hash,
   1101: polygon_zk_evm_tokens_hash,
+  1116: core_tokens_hash,
   1284: moonbeam_tokens_hash,
   1442: polygon_zk_evm_testnet_tokens_hash,
   8217: klaytn_tokens_hash,
@@ -229,6 +240,7 @@ export const hashes = {
   42793: etherlink_tokens_hash,
   43114: avalanche_c_chain_tokens_hash,
   59144: linea_tokens_hash,
+  80094: berachain_tokens_hash,
   81457: blast_tokens_hash,
   84532: base_sepolia_tokens_hash,
   421614: arbitrum_sepolia_tokens_hash,

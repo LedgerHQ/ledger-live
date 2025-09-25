@@ -348,6 +348,22 @@ const evmConfig: CurrencyLiveConfigDefinition = {
       showNfts: false,
     },
   },
+  config_currency_core: {
+    type: "object",
+    default: {
+      status: {
+        type: "active",
+      },
+      node: {
+        type: "external",
+        uri: "https://rpc.ankr.com/core",
+      },
+      explorer: {
+        type: "none",
+      },
+      showNfts: false,
+    },
+  },
   config_currency_fantom: {
     type: "object",
     default: {

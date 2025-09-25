@@ -55,9 +55,6 @@ const meta: Meta<typeof AssetSelection> = {
     assetsConfiguration: {},
     currenciesByProvider: [],
     onAssetSelected: onAssetSelected,
-
-    flow: "test",
-    source: "storybook",
     providersLoadingStatus: LoadingStatus.Success,
   },
   decorators: [

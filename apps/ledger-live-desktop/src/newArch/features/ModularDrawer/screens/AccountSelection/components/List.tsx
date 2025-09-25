@@ -9,8 +9,6 @@ import { AccountTuple } from "@ledgerhq/live-common/utils/getAccountTuplesForCur
 type SelectAccountProps = {
   onAccountSelected: (account: AccountLike, parentAccount?: Account) => void;
   accounts: AccountTuple[];
-  source: string;
-  flow: string;
   detailedAccounts: DetailedAccount[];
   bottomComponent: React.ReactNode;
 };
@@ -21,8 +19,6 @@ const LIST_HEIGHT = `calc(100% - ${TITLE_HEIGHT}px)`;
 export const SelectAccountList = ({
   detailedAccounts,
   accounts,
-  source,
-  flow,
   onAccountSelected,
   bottomComponent,
 }: SelectAccountProps) => {
@@ -32,8 +28,6 @@ export const SelectAccountList = ({
     trackModularDrawerEvent("account_clicked", {
       currency: name,
       page: MODULAR_DRAWER_PAGE_NAME.MODULAR_ACCOUNT_SELECTION,
-      flow,
-      source,
     });
   };
 
