@@ -1,8 +1,10 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState, useMemo } from "react";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
 import BigNumber from "bignumber.js";
+import { Account } from "@ledgerhq/types-live";
 import {
+  getDerivationModesForCurrency,
   getDerivationScheme,
   runAccountDerivationScheme,
 } from "@ledgerhq/coin-framework/derivation";
@@ -33,6 +35,7 @@ interface SigningData {
 
 interface OnboardingResult {
   partyId: string;
+  account: Partial<Account>;
   address?: string;
   publicKey?: string;
   transactionHash?: string;
@@ -83,44 +86,48 @@ export default function StepOnboard({
   const selectedAccount = selectedAccounts[0];
 
   // Create a placeholder account for display purposes during onboarding
-  const placeholderAccount =
-    selectedAccount ||
-    (() => {
-      const derivationScheme = getDerivationScheme({ derivationMode: "", currency });
-      const freshAddressPath = runAccountDerivationScheme(derivationScheme, currency, {
-        account: 0,
-      });
+  const placeholderAccount = useMemo(() => {
+    return (
+      selectedAccount ||
+      (() => {
+        const derivationMode = getDerivationModesForCurrency(currency)[0];
+        const derivationScheme = getDerivationScheme({ derivationMode, currency });
+        const freshAddressPath = runAccountDerivationScheme(derivationScheme, currency, {
+          account: 0,
+        });
 
-      const accountId = encodeAccountId({
-        type: "js",
-        version: "2",
-        currencyId: currency.id,
-        xpubOrAddress: "canton-placeholder-address",
-        derivationMode: "",
-      });
+        const accountId = encodeAccountId({
+          type: "js",
+          version: "2",
+          currencyId: currency.id,
+          xpubOrAddress: "canton-placeholder-address",
+          derivationMode,
+        });
 
-      return {
-        type: "Account" as const,
-        id: accountId,
-        seedIdentifier: "canton-onboard",
-        derivationMode: "",
-        index: 0,
-        freshAddress: "canton-placeholder-address",
-        freshAddressPath,
-        used: false,
-        balance: new BigNumber(0),
-        spendableBalance: new BigNumber(0),
-        blockHeight: 0,
-        currency,
-        operationsCount: 0,
-        operations: [],
-        pendingOperations: [],
-        lastSyncDate: new Date(),
-        creationDate: new Date(),
-        balanceHistoryCache: createEmptyHistoryCache(),
-        swapHistory: [],
-      };
-    })();
+        return {
+          type: "Account" as const,
+          id: accountId,
+          seedIdentifier: "canton-onboard",
+          derivationMode,
+          index: 0,
+          freshAddress: "canton-placeholder-address",
+          freshAddressPath,
+          used: false,
+          balance: new BigNumber(0),
+          spendableBalance: new BigNumber(0),
+          blockHeight: 0,
+          currency,
+          operationsCount: 0,
+          operations: [],
+          pendingOperations: [],
+          lastSyncDate: new Date(),
+          creationDate: new Date(),
+          balanceHistoryCache: createEmptyHistoryCache(),
+          swapHistory: [],
+        };
+      })()
+    );
+  }, [selectedAccount, currency]);
 
   const [status, setStatus] = useState<OnboardStatus>(OnboardStatus.INIT);
   const [statusMessage, setStatusMessage] = useState("");
@@ -179,89 +186,94 @@ export default function StepOnboard({
 
     const accountIndex = 0;
 
-    const derivationScheme = getDerivationScheme({ derivationMode: "", currency });
+    const derivationMode = getDerivationModesForCurrency(currency)[0];
+    const derivationScheme = getDerivationScheme({ derivationMode, currency });
     const derivationPath = runAccountDerivationScheme(derivationScheme, currency, {
       account: accountIndex,
     });
 
     let onboardingResult: OnboardingResult | null = null;
 
-    subscription = cantonBridge.onboardAccount(device.deviceId, derivationPath).subscribe({
-      next: (progressData: CantonOnboardProgress | CantonOnboardResult) => {
-        logger.log("Canton onboarding progress", progressData);
+    subscription = cantonBridge
+      .onboardAccount(currency, device.deviceId, derivationPath)
+      .subscribe({
+        next: (progressData: CantonOnboardProgress | CantonOnboardResult) => {
+          logger.log("Canton onboarding progress", progressData);
 
-        // Handle progress updates (CantonOnboardProgress has status)
-        if ("status" in progressData) {
-          const statusMessage = getStatusMessage(progressData.status);
-          handleStateUpdate(progressData.status, statusMessage);
-          setOnboardingStatus?.(progressData.status);
+          // Handle progress updates (CantonOnboardProgress has status)
+          if ("status" in progressData) {
+            const statusMessage = getStatusMessage(progressData.status);
+            handleStateUpdate(progressData.status, statusMessage);
+            setOnboardingStatus?.(progressData.status);
 
-          if (progressData.status === OnboardStatus.SIGN) {
-            logger.log("Entering signing phase, storing transaction data");
-            const signingData: SigningData = {
-              partyId:
-                ((progressData as Record<string, unknown>).partyId as string) || "pending-party-id",
-              publicKey:
-                ((progressData as Record<string, unknown>).publicKey as string) ||
-                "pending-public-key",
-              transactionData:
-                (progressData as Record<string, unknown>).transactionData || progressData,
-              combinedHash:
-                ((progressData as Record<string, unknown>).combinedHash as string) ||
-                ((progressData as Record<string, unknown>).combined_hash as string) ||
-                "",
-              derivationPath: (progressData as Record<string, unknown>).derivationPath as string,
-            };
-            handleStateUpdate(progressData.status, statusMessage, signingData);
+            if (progressData.status === OnboardStatus.SIGN) {
+              logger.log("Entering signing phase, storing transaction data");
+              const signingData: SigningData = {
+                partyId:
+                  ((progressData as Record<string, unknown>).partyId as string) ||
+                  "pending-party-id",
+                publicKey:
+                  ((progressData as Record<string, unknown>).publicKey as string) ||
+                  "pending-public-key",
+                transactionData:
+                  (progressData as Record<string, unknown>).transactionData || progressData,
+                combinedHash:
+                  ((progressData as Record<string, unknown>).combinedHash as string) ||
+                  ((progressData as Record<string, unknown>).combined_hash as string) ||
+                  "",
+                derivationPath: (progressData as Record<string, unknown>).derivationPath as string,
+              };
+              handleStateUpdate(progressData.status, statusMessage, signingData);
+            }
           }
-        }
 
-        // Handle final result (CantonOnboardResult has partyId)
-        if ("partyId" in progressData && !("status" in progressData)) {
-          onboardingResult = {
-            partyId: progressData.partyId,
-            // The bridge implementation doesn't provide these fields, so we'll use placeholders
-            publicKey: "generated-public-key",
-            address: progressData.partyId,
-          };
-        }
-      },
-      complete: () => {
-        logger.log("Canton onboarding completed successfully", onboardingResult);
+          // Handle final result (CantonOnboardResult has partyId)
+          if ("partyId" in progressData && !("status" in progressData)) {
+            onboardingResult = {
+              partyId: progressData.partyId,
+              account: progressData.account,
+              // The bridge implementation doesn't provide these fields, so we'll use placeholders
+              publicKey: "generated-public-key",
+              address: progressData.partyId,
+            };
+          }
+        },
+        complete: () => {
+          logger.log("Canton onboarding completed successfully", onboardingResult);
 
-        if (onboardingResult?.partyId) {
-          const onboardingDataObject = {
-            partyId: onboardingResult.partyId,
-            address: onboardingResult.address || "",
-            publicKey: onboardingResult.publicKey || "",
-            device: device.deviceId,
-            accountIndex,
-            currency: currency.id,
-            accountName: accountName,
-            transactionHash: onboardingResult.transactionHash || "",
-            completedAccount: placeholderAccount,
-          };
+          if (onboardingResult?.partyId && onboardingResult?.account) {
+            const onboardingDataObject = {
+              partyId: onboardingResult.partyId,
+              address: onboardingResult.address || "",
+              publicKey: onboardingResult.publicKey || "",
+              device: device.deviceId,
+              accountIndex,
+              currency: currency.id,
+              accountName: accountName,
+              transactionHash: onboardingResult.transactionHash || "",
+              completedAccount: onboardingResult.account || placeholderAccount,
+            };
 
-          logger.log("[StepOnboard] Storing onboarding data:", onboardingDataObject);
-          setOnboardingData?.(onboardingDataObject);
+            logger.log("[StepOnboard] Storing onboarding data:", onboardingDataObject);
+            setOnboardingData?.(onboardingDataObject as OnboardingData);
 
-          logger.log("[StepOnboard] Setting onboarding completed to true");
-          setOnboardingCompleted?.(true);
+            logger.log("[StepOnboard] Setting onboarding completed to true");
+            setOnboardingCompleted?.(true);
 
-          logger.log("[StepOnboard] Onboarding completion callbacks called");
-        } else {
-          logger.error("[StepOnboard] No partyId in onboarding result, not marking as completed");
-        }
+            logger.log("[StepOnboard] Onboarding completion callbacks called");
+          } else {
+            logger.error("[StepOnboard] No partyId in onboarding result, not marking as completed");
+          }
 
-        setOnboardingStatus?.(OnboardStatus.SUCCESS);
-        handleFinish();
-      },
-      error: (error: Error) => {
-        logger.error("Canton account creation failed", error);
-        setOnboardingStatus?.(OnboardStatus.ERROR);
-        handleError(error);
-      },
-    });
+          setOnboardingStatus?.(OnboardStatus.SUCCESS);
+          handleFinish();
+        },
+        error: (error: Error) => {
+          logger.error("Canton account creation failed", error);
+          setOnboardingStatus?.(OnboardStatus.ERROR);
+          handleError(error);
+        },
+      });
 
     return () => {
       if (subscription) {

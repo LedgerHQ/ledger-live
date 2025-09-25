@@ -38,7 +38,6 @@ export enum AnalyticsPage {
   Manager = "Manager",
   Onboarding = "Onboarding",
   Settings = "Settings",
-  LedgerSyncAccounts = "Ledger Sync Accounts",
 }
 
 export type AnalyticsFlow = "Ledger Sync";

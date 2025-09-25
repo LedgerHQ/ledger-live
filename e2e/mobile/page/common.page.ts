@@ -91,9 +91,9 @@ export default class CommonPage {
   @Step("Go to the account with the name")
   async goToAccountByName(name: string) {
     const accountTitle = getElementByText(name);
-    const id = await getIdOfElement(accountTitle);
-    jestExpect(id).toContain(this.accountItemId);
-    await tapByElement(accountTitle);
+    const rowId = (await getIdOfElement(accountTitle)).replace("-name", ""); // Workaround on iOS (name on top of the return arrow clickable layout)
+    jestExpect(rowId).toContain(this.accountItemId);
+    await tapById(rowId);
   }
 
   @Step("Remove Speculos")

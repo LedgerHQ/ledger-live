@@ -89,9 +89,6 @@ export const MODULAR_DRAWER_PAGE_NAME = {
   FUND_ACCOUNT_LIST: "Fund Account Drawer List",
 } as const;
 
-export type ModularDrawerPageName =
-  (typeof MODULAR_DRAWER_PAGE_NAME)[keyof typeof MODULAR_DRAWER_PAGE_NAME];
-
 export const MAD_SOURCE_PAGES = {
   ACCOUNTS_PAGE: "Accounts",
 };

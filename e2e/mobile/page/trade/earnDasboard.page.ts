@@ -35,7 +35,7 @@ export default class EarnDashboardPage {
 
   @Step("Click on earn button")
   async clickEarnCurrencyButton(id: string) {
-    const elem = getWebElementByTestId(this.earnButton(id), 0, "data-test-id");
+    const elem = getWebElementByTestId(this.earnButton(id), 0, "data-testid");
     await tapWebElementByElement(elem);
   }
 
@@ -110,11 +110,11 @@ export default class EarnDashboardPage {
     const assetTitleElement = getWebElementByTestId(this.assetsTitleId, 0, "data-test-id");
     await detoxExpect(assetTitleElement).toExist();
     await detoxExpect(assetTitleElement).toHaveText(this.assetsTitleText(false));
-    const rowsContent = await getWebElementsByCssSelector("tr");
-    jestExpect(normalizeText(rowsContent[1])).toContain(
+    const rowsContent = await getWebElementsText("multi-header-table-earn-more");
+    jestExpect(normalizeText(rowsContent.join(" "))).toContain(
       `${account.accountName} ${account.currency.ticker}`,
     );
-    const button = getWebElementByTestId(this.earnButton(id), 0, "data-test-id");
+    const button = getWebElementByTestId(this.earnButton(id), 0, "data-testid");
     await detoxExpect(button).toExist();
     await detoxExpect(button).toHaveText("Earn");
   }
@@ -125,8 +125,8 @@ export default class EarnDashboardPage {
     await detoxExpect(assetTitleElement).toExist();
     await detoxExpect(assetTitleElement).toHaveText(this.assetsTitleText(true));
 
-    const rowsContent = await getWebElementsByCssSelector("tr");
-    jestExpect(normalizeText(rowsContent[1])).toContain(
+    const rowsContent = await getWebElementsText("multi-header-table-rewards-earned");
+    jestExpect(normalizeText(rowsContent.join(" "))).toContain(
       `${account.accountName} ${account.currency.ticker}`,
     );
   }

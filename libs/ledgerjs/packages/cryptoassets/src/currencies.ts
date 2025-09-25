@@ -614,12 +614,12 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     scheme: "canton_network",
     color: "#F8FFAE",
     family: "canton",
-    blockAvgTime: 20,
+    blockAvgTime: 100,
     units: [
       {
         name: "cc",
         code: "CC",
-        magnitude: 11,
+        magnitude: 38,
       },
       {
         name: "ucc",
@@ -629,8 +629,8 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     ],
     explorerViews: [
       {
-        tx: "https://www.cantonscan.com/update/$hash",
-        address: "https://www.cantonscan.com/party/$address",
+        tx: "https://lighthouse.cantonloop.com/transactions/$hash",
+        address: "https://lighthouse.cantonloop.com/party/$address",
       },
     ],
     keywords: ["canton_network"],
@@ -645,13 +645,13 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     scheme: "canton_network_localnet",
     color: "#F8FFAE",
     family: "canton",
-    blockAvgTime: 20,
+    blockAvgTime: 100,
     isTestnetFor: "canton_network",
     units: [
       {
         name: "cc",
         code: "CC",
-        magnitude: 11,
+        magnitude: 38,
       },
       {
         name: "ucc",
@@ -677,13 +677,13 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     scheme: "canton_network_devnet",
     color: "#F8FFAE",
     family: "canton",
-    blockAvgTime: 20,
+    blockAvgTime: 100,
     isTestnetFor: "canton_network",
     units: [
       {
         name: "cc",
         code: "CC",
-        magnitude: 11,
+        magnitude: 38,
       },
       {
         name: "ucc",
@@ -693,8 +693,8 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     ],
     explorerViews: [
       {
-        tx: "https://devnet.explorer.canton.nodefortress.io/transactions/$hash",
-        address: "https://devnet.explorer.canton.nodefortress.io/parties/$address",
+        tx: "https://lighthouse.devnet.cantonloop.com/transactions/$hash",
+        address: "https://lighthouse.devnet.cantonloop.com/party/$address",
       },
     ],
     keywords: ["canton_network_devnet"],
@@ -1645,7 +1645,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     coinType: CoinType.IOTA,
     name: "IOTA",
     managerAppName: "IOTA",
-    ticker: "MIOTA",
+    ticker: "IOTA",
     scheme: "iota",
     color: "#000000",
     family: "iota",
@@ -1676,6 +1676,36 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
       },
     ],
     explorerViews: [],
+  },
+  kaspa: {
+    type: "CryptoCurrency",
+    id: "kaspa",
+    coinType: CoinType.KASPA,
+    name: "KASPA",
+    managerAppName: "Kaspa",
+    ticker: "KAS",
+    scheme: "kaspa",
+    color: "#70C7BA",
+    family: "kaspa",
+    units: [
+      {
+        name: "KAS",
+        code: "KAS",
+        magnitude: 8,
+        showAllDigits: true,
+      },
+      {
+        name: "Sompis",
+        code: "Sompi",
+        magnitude: 0,
+      },
+    ],
+    explorerViews: [
+      {
+        address: "https://explorer.kaspa.org/addresses/$address",
+        tx: "https://explorer.kaspa.org/txs/$hash",
+      },
+    ],
   },
   kin: {
     type: "CryptoCurrency",

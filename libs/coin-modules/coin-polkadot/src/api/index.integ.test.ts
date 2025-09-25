@@ -102,9 +102,10 @@ describe("Polkadot Api", () => {
       });
 
       // Then
-      expect(result).toEqual(
-        "0x9404050300f578e65647d6c76b4d05a74e6c2d33d87f32d8d16959400b38ab97d758eb061928",
-      );
+      expect(result).toEqual({
+        transaction:
+          "0x9404050300f578e65647d6c76b4d05a74e6c2d33d87f32d8d16959400b38ab97d758eb061928",
+      });
     });
   });
 });

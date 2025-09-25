@@ -14,8 +14,9 @@ export function genericEstimateMaxSpendable(
       return account.spendableBalance;
     }
     const mainAccount = getMainAccount(account, parentAccount);
+    const alpacaApi = getAlpacaApi(mainAccount.currency.id, kind);
     const draftTransaction = {
-      ...createTransaction(account as any),
+      ...createTransaction(account),
       ...transaction,
       amount: mainAccount.spendableBalance,
       useAllAmount: true,
@@ -23,13 +24,10 @@ export function genericEstimateMaxSpendable(
 
     let fees = transaction?.fees;
     if (transaction?.fees === null || transaction?.fees === undefined) {
-      fees = (
-        await getAlpacaApi(network, kind).estimateFees(
-          transactionToIntent(mainAccount, draftTransaction),
-        )
-      ).value;
+      fees = (await alpacaApi.estimateFees(transactionToIntent(mainAccount, draftTransaction)))
+        .value;
     }
-    const { amount } = await getAlpacaApi(network, kind).validateIntent(
+    const { amount } = await alpacaApi.validateIntent(
       transactionToIntent(account, { ...draftTransaction }),
       { value: transaction?.fees ? BigInt(transaction.fees.toString()) : 0n },
     );

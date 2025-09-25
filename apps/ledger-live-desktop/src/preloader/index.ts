@@ -9,20 +9,21 @@
 import { ipcRenderer } from "electron";
 import logo from "./logo.svg";
 import palettes from "~/renderer/styles/palettes";
+// When dashboard is ready, fade out the splash screen
 const appLoaded = () => {
-  setTimeout(() => {
-    const rendererNode = document.getElementById("react-root");
-    const loaderContainer = document.getElementById("loader-container");
-    if (rendererNode && loaderContainer) {
-      rendererNode.style.visibility = "visible";
-      requestAnimationFrame(() => {
-        loaderContainer.classList.add("loaded");
-        setTimeout(() => {
-          loaderContainer.remove();
-        }, 3000);
-      });
-    }
-  }, 2000);
+  const rendererNode = document.getElementById("react-root");
+  const loaderContainer = document.getElementById("loader-container");
+
+  if (rendererNode && loaderContainer) {
+    // Make renderer visible immediately
+    rendererNode.style.visibility = "visible";
+
+    // Fade out the loader
+    loaderContainer.classList.add("fade-out");
+    setTimeout(() => {
+      loaderContainer.remove();
+    }, 500); // Wait for fade-out animation to complete
+  }
 };
 const reloadRenderer = () => ipcRenderer.invoke("reloadRenderer");
 
@@ -56,6 +57,8 @@ window.addEventListener("DOMContentLoaded", () => {
     loaderContainer.style.backgroundColor = "#000000";
     loaderContainer.classList.add("loading");
   }
+
+  // Send ready-to-show immediately
   setTimeout(() => {
     ipcRenderer.send("ready-to-show", {});
   }, 200);

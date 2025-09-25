@@ -1,4 +1,4 @@
-import { useCallback, useLayoutEffect, useRef } from "react";
+import { useCallback } from "react";
 import { useSelector } from "react-redux";
 import { lastOnboardedDeviceSelector } from "~/renderer/reducers/settings";
 import { useShouldRedirect } from "./useShouldRedirect";
@@ -50,16 +50,4 @@ export function useRedirectToPostOnboardingCallback() {
       shouldRedirectToRecoverUpsell,
     ],
   );
-}
-
-export function useAutoRedirectToPostOnboarding() {
-  const redirectToPostOnboarding = useRedirectToPostOnboardingCallback();
-  const redirectionDone = useRef(false);
-  useLayoutEffect(() => {
-    if (!redirectionDone.current) {
-      redirectToPostOnboarding(() => {
-        redirectionDone.current = true;
-      });
-    }
-  }, [redirectToPostOnboarding]);
 }

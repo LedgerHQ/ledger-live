@@ -1,5 +1,5 @@
-import sha from "sha.js";
+import { sha256 as nobleSha256 } from "@noble/hashes/sha256";
 
 export function sha256(buffer: Buffer | string) {
-  return sha("sha256").update(buffer).digest();
+  return Buffer.from(nobleSha256(buffer));
 }

@@ -75,4 +75,5 @@ setSupportedCurrencies([
   "sui",
   "mina",
   "babylon",
+  "kaspa",
 ]);

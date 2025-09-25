@@ -1,9 +1,13 @@
 import BigNumber from "bignumber.js";
-import { BoilerplateNativeTransaction } from "../../types";
-
-const encodeNativeTx = (nativeTx: BoilerplateNativeTransaction) => JSON.stringify(nativeTx);
+import {
+  PrepareTransferRequest,
+  prepareTransferRequest,
+  PrepareTransferResponse,
+} from "../../network/gateway";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 
 export async function craftTransaction(
+  currency: CryptoCurrency,
   account: {
     address: string;
     nextSequenceNumber?: number;
@@ -12,25 +16,36 @@ export async function craftTransaction(
   transaction: {
     recipient?: string;
     amount: BigNumber;
-    fee?: BigNumber;
+    tokenId: string;
+    expireInSeconds: number;
+    memo?: string;
   },
 ): Promise<{
-  nativeTransaction: BoilerplateNativeTransaction;
+  nativeTransaction: PrepareTransferResponse;
   serializedTransaction: string;
+  hash: string;
 }> {
-  const nativeTransaction: BoilerplateNativeTransaction = {
-    TransactionType: "Payment",
-    Account: account.address,
-    Amount: transaction.amount.toString(),
-    Destination: transaction.recipient || "",
-    Fee: transaction.fee?.toString() || "0",
-    Sequence: account.nextSequenceNumber || 0,
+  const params: PrepareTransferRequest = {
+    recipient: transaction.recipient || "",
+    amount: transaction.amount.toString(),
+    type: "token-transfer-request" as const,
+    execute_before_secs: transaction.expireInSeconds,
+    instrument_id: transaction.tokenId,
   };
 
-  const serializedTransaction = encodeNativeTx(nativeTransaction);
+  if (transaction.memo) {
+    params.reason = transaction.memo;
+  }
+
+  const { serialized, json, hash } = await prepareTransferRequest(
+    currency,
+    account.address,
+    params,
+  );
 
   return {
-    nativeTransaction,
-    serializedTransaction,
+    nativeTransaction: json,
+    serializedTransaction: serialized,
+    hash,
   };
 }

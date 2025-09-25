@@ -31,7 +31,7 @@ type CustomExchangeHandlersHookType = {
   sendAppReady: () => void;
   onCompleteResult?: (exchangeParams: CompleteExchangeUiRequest, operationHash: string) => void;
   onCompleteError?: (error: Error) => void;
-  onShowLoadingDrawer?: () => void;
+  handleLoaderDrawer?: () => void;
 };
 
 export function useCustomExchangeHandlers({
@@ -40,7 +40,6 @@ export function useCustomExchangeHandlers({
   onCompleteResult,
   sendAppReady,
   onCompleteError,
-  onShowLoadingDrawer,
 }: CustomExchangeHandlersHookType) {
   const navigation = useNavigation<StackNavigatorNavigation<BaseNavigatorStackParamList>>();
   const [device, setDevice] = useState<Device>();
@@ -168,7 +167,6 @@ export function useCustomExchangeHandlers({
                     );
                   }
                   navigation.pop();
-                  onShowLoadingDrawer?.();
                 },
                 onClose: () => onCancel(drawerClosedError),
               },
@@ -290,7 +288,6 @@ export function useCustomExchangeHandlers({
     navigation,
     onCompleteError,
     onCompleteResult,
-    onShowLoadingDrawer,
     sendAppReady,
     syncAccountById,
     tracking,

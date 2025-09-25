@@ -74,7 +74,7 @@ const SelectionDisplay = ({
     if (selectedCount <= 3) {
       return selectedCurrenciesList.map(c => c.name).join(", ");
     }
-    return t("settings.developer.debugSimpleHash.mockAccounts.currencySelector.selectedCount", {
+    return t("settings.developer.mockAccounts.currencySelector.selectedCount", {
       count: selectedCount,
     });
   };
@@ -86,7 +86,7 @@ const SelectionDisplay = ({
       </Text>
       {selectedCount > 0 && (
         <Text ff="Inter|Regular" fontSize={2} color="palette.text.shade60" mt={1}>
-          {t("settings.developer.debugSimpleHash.mockAccounts.currencySelector.selectedCount", {
+          {t("settings.developer.mockAccounts.currencySelector.selectedCount", {
             count: selectedCount,
           })}
         </Text>
@@ -214,9 +214,7 @@ export default function CurrencySelector({
             <Input
               value={searchValue}
               onChange={handleSearchChange}
-              placeholder={t(
-                "settings.developer.debugSimpleHash.mockAccounts.currencySelector.searchPlaceholder",
-              )}
+              placeholder={t("settings.developer.mockAccounts.currencySelector.searchPlaceholder")}
               maxLength={50}
               autoFocus
             />
@@ -226,12 +224,8 @@ export default function CurrencySelector({
             <Box p={3} horizontal alignItems="center" justifyContent="center">
               <Text ff="Inter|Regular" fontSize={3} color="palette.text.shade60">
                 {searchValue
-                  ? t(
-                      "settings.developer.debugSimpleHash.mockAccounts.currencySelector.noCurrenciesFound",
-                    )
-                  : t(
-                      "settings.developer.debugSimpleHash.mockAccounts.currencySelector.noCurrenciesAvailable",
-                    )}
+                  ? t("settings.developer.mockAccounts.currencySelector.noCurrenciesFound")
+                  : t("settings.developer.mockAccounts.currencySelector.noCurrenciesAvailable")}
               </Text>
             </Box>
           ) : (

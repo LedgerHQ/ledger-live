@@ -246,15 +246,6 @@ const linkingOptions = () => ({
               [ScreenName.CustomImageStep0Welcome]: "custom-image",
             },
           },
-          [NavigatorName.ExploreTab]: {
-            initialRouteName: "explore",
-            screens: {
-              /**
-               * ie: "ledgerlive://learn"
-               */
-              [ScreenName.Newsfeed]: "newsfeed",
-            },
-          },
           [NavigatorName.LandingPages]: {
             screens: {
               /**
@@ -436,7 +427,6 @@ export const DeeplinksProvider = ({
                               [NavigatorName.WalletTab]: {
                                 screens: {
                                   [ScreenName.Portfolio]: "portfolio",
-                                  [ScreenName.WalletNftGallery]: "nftgallery",
                                   [NavigatorName.Market]: {
                                     screens: {
                                       /**

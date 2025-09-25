@@ -2,25 +2,21 @@ import { encodeTokenAccountId } from "@ledgerhq/coin-framework/account/index";
 import { Scenario, ScenarioTransaction } from "@ledgerhq/coin-tester/main";
 import { killSpeculos, spawnSpeculos } from "@ledgerhq/coin-tester/signers/speculos";
 import { getTokenById } from "@ledgerhq/cryptoassets/tokens";
-import { LegacySignerEth } from "@ledgerhq/live-signer-evm";
 import { Account } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import { ethers } from "ethers";
 import { makeAccount } from "@ledgerhq/coin-evm/__tests__/fixtures/common.fixtures";
-import { buildAccountBridge, buildCurrencyBridge } from "@ledgerhq/coin-evm/bridge/js";
 import { getCoinConfig, setCoinConfig } from "@ledgerhq/coin-evm/config";
-import resolver from "@ledgerhq/coin-evm/hw-getAddress";
 import {
   EvmNftTransaction,
   Transaction as EvmTransaction,
 } from "@ledgerhq/coin-evm/types/transaction";
 import { killAnvil, spawnAnvil } from "../anvil";
-import { callMyDealer, ethereum, VITALIK } from "../helpers";
+import { callMyDealer, ethereum, VITALIK, getBridges } from "../helpers";
 import { indexBlocks, initMswHandlers, resetIndexer, setBlock } from "../indexer";
 import { defaultNanoApp } from "../scenarii.test";
-import { getAlpacaCurrencyBridge } from "@ledgerhq/live-common/bridge/generic-alpaca/currencyBridge";
-import { getAlpacaAccountBridge } from "@ledgerhq/live-common/bridge/generic-alpaca/accountBridge";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
+import { BridgeStrategy } from "@ledgerhq/coin-tester/types";
 
 type EthereumScenarioTransaction = ScenarioTransaction<EvmTransaction, Account>;
 
@@ -32,8 +28,10 @@ const cloneXTokenId = "951";
 
 const makeScenarioTransactions = ({
   address,
+  strategy,
 }: {
   address: string;
+  strategy: BridgeStrategy;
 }): EthereumScenarioTransaction[] => {
   const scenarioSendEthTransaction: EthereumScenarioTransaction = {
     name: "Send 1 ETH",
@@ -127,8 +125,9 @@ const makeScenarioTransactions = ({
   return [
     scenarioSendEthTransaction,
     scenarioSendUSDCTransaction,
-    scenarioSendERC721Transaction,
-    scenarioSendERC1155Transaction,
+    ...(strategy === "legacy"
+      ? [scenarioSendERC721Transaction, scenarioSendERC1155Transaction]
+      : []),
   ];
 };
 
@@ -139,9 +138,6 @@ export const scenarioEthereum: Scenario<EvmTransaction, Account> = {
       spawnSpeculos(`/${defaultNanoApp.firmware}/Ethereum/app_${defaultNanoApp.version}.elf`),
       spawnAnvil("https://ethereum-rpc.publicnode.com"),
     ]);
-
-    const signerContext: Parameters<typeof resolver>[0] = (_, fn) =>
-      fn(new LegacySignerEth(transport));
 
     setCoinConfig(() => ({
       info: {
@@ -190,15 +186,11 @@ export const scenarioEthereum: Scenario<EvmTransaction, Account> = {
     initMswHandlers(getCoinConfig(ethereum).info);
 
     const onSignerConfirmation = getOnSpeculosConfirmation();
-    const currencyBridge =
-      strategy === "legacy"
-        ? buildCurrencyBridge(signerContext)
-        : getAlpacaCurrencyBridge("ethereum", "local");
-    const accountBridge =
-      strategy === "legacy"
-        ? buildAccountBridge(signerContext)
-        : getAlpacaAccountBridge("ethereum", "local");
-    const getAddress = resolver(signerContext);
+    const { currencyBridge, accountBridge, getAddress } = getBridges(
+      strategy,
+      transport,
+      "ethereum",
+    );
     const { address } = await getAddress("", {
       path: "44'/60'/0'/0/0",
       currency: ethereum,
@@ -254,25 +246,25 @@ export const scenarioEthereum: Scenario<EvmTransaction, Account> = {
       onSignerConfirmation,
     };
   },
-  beforeAll: account => {
+  beforeAll: (account, strategy) => {
     expect(account.balance.toFixed()).toBe(ethers.parseEther("10000").toString());
     expect(account.subAccounts?.[0].type).toBe("TokenAccount");
     expect(account.subAccounts?.[0].balance.toFixed()).toBe(
       ethers.parseUnits("100", USDC_ON_ETHEREUM.units[0].magnitude).toString(),
     );
-    expect(account.nfts?.length).toBe(2);
+    expect(account.nfts?.length).toBe(strategy === "legacy" ? 2 : 0);
   },
-  getTransactions: address => makeScenarioTransactions({ address }),
+  getTransactions: (address, strategy) => makeScenarioTransactions({ address, strategy }),
   beforeSync: async () => {
     await indexBlocks();
   },
-  afterAll: account => {
+  afterAll: (account, strategy) => {
     expect(account.subAccounts?.length).toBe(1);
     expect(account.subAccounts?.[0].balance.toFixed()).toBe(
       ethers.parseUnits("20", USDC_ON_ETHEREUM.units[0].magnitude).toString(),
     );
     expect(account.nfts?.length).toBe(0);
-    expect(account.operations.length).toBe(7);
+    expect(account.operations.length).toBe(strategy === "legacy" ? 7 : 3);
   },
   teardown: async () => {
     resetIndexer();

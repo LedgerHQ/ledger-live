@@ -5,6 +5,6 @@ export const listOperations = async (
   address: string,
   { lastPagingToken, order }: Pagination,
 ): Promise<[Operation[], string]> => {
-  const ops = await getListOperations(address, lastPagingToken, withApi, order);
+  const ops = await getListOperations(address, order ?? "asc", withApi, lastPagingToken);
   return [ops.items, ops.next || ""];
 };

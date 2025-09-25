@@ -1,8 +1,9 @@
-import { ChangeEvent, useCallback, useState } from "react";
+import { ChangeEvent, useCallback } from "react";
 import { useModularDrawerAnalytics } from "LLD/features/ModularDrawer/analytics/useModularDrawerAnalytics";
 import { MODULAR_DRAWER_PAGE_NAME } from "LLD/features/ModularDrawer/analytics/modularDrawer.types";
 import { useDispatch, useSelector } from "react-redux";
-import { modularDrawerStateSelector, setSearchedValue } from "~/renderer/reducers/modularDrawer";
+import { useSearchCommon } from "@ledgerhq/live-common/modularDrawer/hooks/useSearch";
+import { modularDrawerSearchedSelector, setSearchedValue } from "~/renderer/reducers/modularDrawer";
 
 export type SearchProps = {
   source: string;
@@ -18,21 +19,12 @@ export type SearchResult = {
 export const useSearch = ({ source, flow }: SearchProps): SearchResult => {
   const dispatch = useDispatch();
 
-  const { searchedValue } = useSelector(modularDrawerStateSelector);
+  const searchedValue = useSelector(modularDrawerSearchedSelector);
 
   const { trackModularDrawerEvent } = useModularDrawerAnalytics();
-  const [displayedValue, setDisplayedValue] = useState(searchedValue);
 
-  const handleDebouncedChange = useCallback(
-    (current: string, previous: string) => {
-      const query = current;
-      const prevQuery = previous;
-      dispatch(setSearchedValue(query));
-
-      if (query === prevQuery) {
-        return;
-      }
-
+  const onTrackSearch = useCallback(
+    (query: string) => {
       trackModularDrawerEvent(
         "asset_searched",
         {
@@ -46,14 +38,21 @@ export const useSearch = ({ source, flow }: SearchProps): SearchResult => {
         },
       );
     },
-    [dispatch, trackModularDrawerEvent, flow, source],
+    [trackModularDrawerEvent, flow, source],
   );
 
-  const handleSearch = useCallback((queryOrEvent: string | ChangeEvent<HTMLInputElement>) => {
-    const query = typeof queryOrEvent === "string" ? queryOrEvent : queryOrEvent.target.value;
+  const onPersistSearchValue = useCallback(
+    (value: string) => {
+      dispatch(setSearchedValue(value));
+    },
+    [dispatch],
+  );
 
-    setDisplayedValue(query);
-  }, []);
+  const { handleSearch, handleDebouncedChange, displayedValue } = useSearchCommon({
+    initialValue: searchedValue,
+    onPersistSearchValue,
+    onTrackSearch,
+  });
 
   return { handleDebouncedChange, handleSearch, displayedValue };
 };

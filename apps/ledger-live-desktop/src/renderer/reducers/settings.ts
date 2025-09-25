@@ -7,8 +7,6 @@ import {
   OFAC_CURRENCIES,
 } from "@ledgerhq/live-common/currencies/index";
 import { getEnv } from "@ledgerhq/live-env";
-import { SupportedBlockchain } from "@ledgerhq/live-nft/supported";
-import { NftStatus } from "@ledgerhq/live-nft/types";
 import { CryptoCurrency, Currency, Unit } from "@ledgerhq/types-cryptoassets";
 import {
   AccountLike,
@@ -18,7 +16,6 @@ import {
   FirmwareUpdateContext,
   PortfolioRange,
 } from "@ledgerhq/types-live";
-import { Layout, LayoutKey } from "LLD/features/Collectibles/types/Layouts";
 import { handleActions } from "redux-actions";
 import { createSelector } from "reselect";
 import {
@@ -35,12 +32,10 @@ import regionsByKey from "~/renderer/screens/settings/sections/General/regions.j
 import { State } from ".";
 import {
   PURGE_EXPIRED_ANONYMOUS_USER_NOTIFICATIONS,
-  RESET_HIDDEN_NFT_COLLECTIONS,
   TOGGLE_MARKET_WIDGET,
   TOGGLE_MEMOTAG_INFO,
   TOGGLE_MEV,
   UPDATE_ANONYMOUS_USER_NOTIFICATIONS,
-  UPDATE_NFT_COLLECTION_STATUS,
 } from "../actions/constants";
 import { OnboardingUseCase } from "../components/Onboarding/OnboardingUseCase";
 import { Handlers } from "./types";
@@ -87,8 +82,6 @@ export type SettingsState = {
   lastUsedVersion: string;
   dismissedBanners: string[];
   accountsViewMode: "card" | "list";
-  nftsViewMode: "grid" | "list";
-  collectiblesViewMode: LayoutKey;
   showAccountsHelperBanner: boolean;
   mevProtection: boolean;
   marketPerformanceWidget: boolean;
@@ -98,8 +91,6 @@ export type SettingsState = {
   discreetMode: boolean;
   starredAccountIds?: string[];
   blacklistedTokenIds: string[];
-  nftCollectionsStatusByNetwork: Record<SupportedBlockchain, Record<string, NftStatus>>;
-  hiddenOrdinalsAsset: string[];
   deepLinkUrl: string | undefined | null;
   lastSeenCustomImage: {
     size: number;
@@ -131,8 +122,6 @@ export type SettingsState = {
   dismissedContentCards: { [key: string]: number };
   anonymousBrazeId: string | null;
   starredMarketCoins: string[];
-  hasSeenOrdinalsDiscoveryDrawer: boolean;
-  hasProtectedOrdinalsAssets: boolean;
   hasBeenUpsoldRecover: boolean;
   hasBeenRedirectedToPostOnboarding: boolean;
   onboardingUseCase: OnboardingUseCase | null;
@@ -185,8 +174,6 @@ export const INITIAL_STATE: SettingsState = {
   lastUsedVersion: __APP_VERSION__,
   dismissedBanners: [],
   accountsViewMode: "list",
-  nftsViewMode: "list",
-  collectiblesViewMode: Layout.LIST,
   showAccountsHelperBanner: true,
   hideEmptyTokenAccounts: getEnv("HIDE_EMPTY_TOKEN_ACCOUNTS"),
   filterTokenOperationsZeroAmount: getEnv("FILTER_ZERO_AMOUNT_ERC20_EVENTS"),
@@ -197,8 +184,6 @@ export const INITIAL_STATE: SettingsState = {
   lastSeenDevice: null,
   mevProtection: true,
   marketPerformanceWidget: true,
-  hasSeenOrdinalsDiscoveryDrawer: false,
-  hasProtectedOrdinalsAssets: false,
   devicesModelList: [],
   lastSeenCustomImage: {
     size: 0,
@@ -206,9 +191,6 @@ export const INITIAL_STATE: SettingsState = {
   },
   latestFirmware: null,
   blacklistedTokenIds: [],
-  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-  nftCollectionsStatusByNetwork: {} as Record<SupportedBlockchain, Record<string, NftStatus>>,
-  hiddenOrdinalsAsset: [],
   deepLinkUrl: null,
   firstTimeLend: false,
   showClearCacheBanner: false,
@@ -251,24 +233,11 @@ export const INITIAL_STATE: SettingsState = {
 /* Handlers */
 
 type HandlersPayloads = {
-  SETTINGS_SET_PAIRS: Array<{
-    from: Currency;
-    to: Currency;
-    exchange: string;
-  }>;
   SAVE_SETTINGS: Partial<SettingsState>;
   FETCH_SETTINGS: Partial<SettingsState>;
   SETTINGS_DISMISS_BANNER: string;
   SHOW_TOKEN: string;
   BLACKLIST_TOKEN: string;
-  [UPDATE_NFT_COLLECTION_STATUS]: {
-    blockchain: SupportedBlockchain;
-    collectionId: string;
-    status: NftStatus;
-  };
-  [RESET_HIDDEN_NFT_COLLECTIONS]: void;
-  UNHIDE_ORDINALS_ASSET: string;
-  HIDE_ORDINALS_ASSET: string;
   LAST_SEEN_DEVICE_INFO: {
     lastSeenDevice: DeviceModelInfo;
     latestFirmware: FirmwareUpdateContext;
@@ -276,10 +245,6 @@ type HandlersPayloads = {
   LAST_SEEN_DEVICE: DeviceModelInfo;
   ADD_NEW_DEVICE_MODEL: DeviceModelId;
   SET_DEEPLINK_URL: string | null | undefined;
-  SET_FIRST_TIME_LEND: never;
-  SET_SWAP_SELECTABLE_CURRENCIES: string[];
-  SET_SWAP_ACCEPTED_IP_SHARING: boolean;
-  ACCEPT_SWAP_PROVIDER: string;
   SET_LAST_SEEN_CUSTOM_IMAGE: {
     imageSize: number;
     imageHash: string;
@@ -308,8 +273,6 @@ type HandlersPayloads = {
 
   MARKET_ADD_STARRED_COINS: string;
   MARKET_REMOVE_STARRED_COINS: string;
-  SET_HAS_SEEN_ORDINALS_DISCOVERY_DRAWER: boolean;
-  SET_HAS_PROTECTED_ORDINALS_ASSETS: boolean;
 
   SET_HAS_BEEN_UPSOLD_RECOVER: boolean;
   SET_ONBOARDING_USE_CASE: OnboardingUseCase;
@@ -327,18 +290,6 @@ type HandlersPayloads = {
 type SettingsHandlers<PreciseKey = true> = Handlers<SettingsState, HandlersPayloads, PreciseKey>;
 
 const handlers: SettingsHandlers = {
-  SETTINGS_SET_PAIRS: (state, { payload: pairs }) => {
-    const copy = {
-      ...state,
-    };
-    copy.pairExchanges = {
-      ...copy.pairExchanges,
-    };
-    for (const { to, from, exchange } of pairs) {
-      copy.pairExchanges[pairHash(from, to)] = exchange;
-    }
-    return copy;
-  },
   SAVE_SETTINGS: (state, { payload }) => {
     if (!payload) return state;
     // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
@@ -376,39 +327,6 @@ const handlers: SettingsHandlers = {
       blacklistedTokenIds: [...new Set([...ids, tokenId])],
     };
   },
-  [UPDATE_NFT_COLLECTION_STATUS]: (state, { payload: { blockchain, collectionId, status } }) => {
-    return {
-      ...state,
-      nftCollectionsStatusByNetwork: {
-        ...state.nftCollectionsStatusByNetwork,
-        [blockchain]: {
-          ...state.nftCollectionsStatusByNetwork[blockchain],
-          [collectionId]: status,
-        },
-      },
-    };
-  },
-
-  [RESET_HIDDEN_NFT_COLLECTIONS]: state => ({
-    ...state,
-    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-    nftCollectionsStatusByNetwork: {} as Record<SupportedBlockchain, Record<string, NftStatus>>,
-  }),
-
-  UNHIDE_ORDINALS_ASSET: (state, { payload: inscriptionId }) => {
-    const ids = state.hiddenOrdinalsAsset;
-    return {
-      ...state,
-      hiddenOrdinalsAsset: ids.filter(id => id !== inscriptionId),
-    };
-  },
-  HIDE_ORDINALS_ASSET: (state, { payload: inscriptionId }) => {
-    const collections = state.hiddenOrdinalsAsset;
-    return {
-      ...state,
-      hiddenOrdinalsAsset: [...collections, inscriptionId],
-    };
-  },
   LAST_SEEN_DEVICE_INFO: (state, { payload }) => ({
     ...state,
     lastSeenDevice: Object.assign({}, state.lastSeenDevice, payload.lastSeenDevice),
@@ -432,31 +350,6 @@ const handlers: SettingsHandlers = {
   SET_DEEPLINK_URL: (state, { payload: deepLinkUrl }) => ({
     ...state,
     deepLinkUrl,
-  }),
-  SET_FIRST_TIME_LEND: state => ({
-    ...state,
-    firstTimeLend: false,
-  }),
-  SET_SWAP_SELECTABLE_CURRENCIES: (state, { payload }) => ({
-    ...state,
-    swap: {
-      ...state.swap,
-      selectableCurrencies: payload,
-    },
-  }),
-  SET_SWAP_ACCEPTED_IP_SHARING: (state: SettingsState, { payload }) => ({
-    ...state,
-    swap: {
-      ...state.swap,
-      hasAcceptedIPSharing: payload,
-    },
-  }),
-  ACCEPT_SWAP_PROVIDER: (state: SettingsState, { payload }) => ({
-    ...state,
-    swap: {
-      ...state.swap,
-      acceptedProviders: [...new Set([...(state.swap?.acceptedProviders || []), payload])],
-    },
   }),
   SET_LAST_SEEN_CUSTOM_IMAGE: (state: SettingsState, { payload }) => ({
     ...state,
@@ -540,14 +433,6 @@ const handlers: SettingsHandlers = {
     ...state,
     starredMarketCoins: state.starredMarketCoins.filter(id => id !== payload),
   }),
-  SET_HAS_SEEN_ORDINALS_DISCOVERY_DRAWER: (state: SettingsState, { payload }) => ({
-    ...state,
-    hasSeenOrdinalsDiscoveryDrawer: payload,
-  }),
-  SET_HAS_PROTECTED_ORDINALS_ASSETS: (state: SettingsState, { payload }) => ({
-    ...state,
-    hasProtectedOrdinalsAssets: payload,
-  }),
   SET_HAS_BEEN_UPSOLD_RECOVER: (state: SettingsState, { payload }) => ({
     ...state,
     hasBeenUpsoldRecover: payload,
@@ -607,8 +492,6 @@ export default handleActions<SettingsState, HandlersPayloads[keyof HandlersPaylo
   INITIAL_STATE,
 );
 
-const pairHash = (from: Currency, to: Currency) => `${from.ticker}_${to.ticker}`;
-
 /* Selectors */
 
 export type CurrencySettings = {
@@ -653,13 +536,7 @@ export const currencySettingsDefaults = (c: Currency): ConfirmationDefaults & Un
 const bitcoin = getCryptoCurrencyById("bitcoin");
 const ethereum = getCryptoCurrencyById("ethereum");
 export const possibleIntermediaries = [bitcoin, ethereum];
-export const timeRangeDaysByKey = {
-  day: 1,
-  week: 7,
-  month: 30,
-  year: 365,
-  all: -1,
-};
+
 export type LangAndRegion = {
   language: string;
   region: string | undefined | null;
@@ -692,10 +569,8 @@ export const getsupportedCountervalues = async (): Promise<SupportedCountervalue
 };
 // TODO refactor selectors to *Selector naming convention
 
-export const storeSelector = (state: State): SettingsState => state.settings;
-export const settingsExportSelector = storeSelector;
+export const settingsStoreSelector = (state: State): SettingsState => state.settings;
 export const discreetModeSelector = (state: State): boolean => state.settings.discreetMode === true;
-export const getCounterValueCode = (state: State) => state.settings.counterValue;
 export const lastSeenCustomImageSelector = (state: State) => state.settings.lastSeenCustomImage;
 export const deepLinkUrlSelector = (state: State) => state.settings.deepLinkUrl;
 export const counterValueCurrencyLocalSelector = (state: SettingsState): Currency => {
@@ -706,10 +581,13 @@ export const counterValueCurrencyLocalSelector = (state: SettingsState): Currenc
 };
 
 export const counterValueCurrencySelector = createSelector(
-  storeSelector,
+  settingsStoreSelector,
   counterValueCurrencyLocalSelector,
 );
-export const countervalueFirstSelector = createSelector(storeSelector, s => s.countervalueFirst);
+export const countervalueFirstSelector = createSelector(
+  settingsStoreSelector,
+  s => s.countervalueFirst,
+);
 export const developerModeSelector = (state: State): boolean => state.settings.developerMode;
 export const lastUsedVersionSelector = (state: State): string => state.settings.lastUsedVersion;
 export const userThemeSelector = (state: State): "dark" | "light" | undefined | null => {
@@ -796,25 +674,6 @@ export const currencySettingsLocaleSelector = (
   };
 };
 
-export const currencyPropExtractor = (_: State, { currency }: { currency: CryptoCurrency }) =>
-  currency;
-
-// TODO: drop (bad perf implication)
-export const currencySettingsSelector = createSelector(
-  storeSelector,
-  currencyPropExtractor,
-  currencySettingsLocaleSelector,
-);
-export const exchangeSettingsForPairSelector = (
-  state: State,
-  {
-    from,
-    to,
-  }: {
-    from: Currency;
-    to: Currency;
-  },
-): string | undefined | null => state.settings.pairExchanges[pairHash(from, to)];
 export const confirmationsNbForCurrencySelector = (
   state: State,
   {
@@ -854,15 +713,13 @@ export const accountUnitSelector = (state: State, account: AccountLike): Unit =>
 export const preferredDeviceModelSelector = (state: State) => state.settings.preferredDeviceModel;
 export const sidebarCollapsedSelector = (state: State) => state.settings.sidebarCollapsed;
 export const accountsViewModeSelector = (state: State) => state.settings.accountsViewMode;
-export const nftsViewModeSelector = (state: State) => state.settings.nftsViewMode;
-export const collectiblesViewModeSelector = (state: State) => state.settings.collectiblesViewMode;
 export const sentryLogsSelector = (state: State) => state.settings.sentryLogs;
 export const autoLockTimeoutSelector = (state: State) => state.settings.autoLockTimeout;
 export const shareAnalyticsSelector = (state: State) => state.settings.shareAnalytics;
 export const sharePersonalizedRecommendationsSelector = (state: State) =>
   state.settings.sharePersonalizedRecommandations;
 export const trackingEnabledSelector = createSelector(
-  storeSelector,
+  settingsStoreSelector,
   s => s.shareAnalytics || s.sharePersonalizedRecommandations,
 );
 export const selectedTimeRangeSelector = (state: State) => state.settings.selectedTimeRange;
@@ -878,20 +735,9 @@ export const catalogProviderSelector = (state: State) => state.settings.catalogP
 export const enableLearnPageStagingUrlSelector = (state: State) =>
   state.settings.enableLearnPageStagingUrl;
 export const blacklistedTokenIdsSelector = (state: State) => state.settings.blacklistedTokenIds;
-export const hiddenOrdinalsAssetSelector = (state: State) => state.settings.hiddenOrdinalsAsset;
 export const hasCompletedOnboardingSelector = (state: State) =>
   state.settings.hasCompletedOnboarding || getEnv("SKIP_ONBOARDING");
 export const dismissedBannersSelector = (state: State) => state.settings.dismissedBanners || [];
-export const dismissedBannerSelector = (
-  state: State,
-  {
-    bannerKey,
-  }: {
-    bannerKey: string;
-  },
-) => (state.settings.dismissedBanners || []).includes(bannerKey);
-export const dismissedBannerSelectorLoaded = (bannerKey: string) => (state: State) =>
-  (state.settings.dismissedBanners || []).includes(bannerKey);
 export const hideEmptyTokenAccountsSelector = (state: State) =>
   state.settings.hideEmptyTokenAccounts;
 export const filterTokenOperationsZeroAmountSelector = (state: State) =>
@@ -905,33 +751,9 @@ export const lastSeenDeviceSelector = (state: State): DeviceModelInfo | null | u
 export const devicesModelListSelector = (state: State): DeviceModelId[] =>
   state.settings.devicesModelList;
 export const latestFirmwareSelector = (state: State) => state.settings.latestFirmware;
-export const swapHasAcceptedIPSharingSelector = (state: State) =>
-  state.settings.swap.hasAcceptedIPSharing;
 export const swapSelectableCurrenciesSelector = (state: State) =>
   state.settings.swap.selectableCurrencies;
-export const swapAcceptedProvidersSelector = (state: State) =>
-  state.settings.swap.acceptedProviders;
 export const showClearCacheBannerSelector = (state: State) => state.settings.showClearCacheBanner;
-export const exportSettingsSelector = createSelector(
-  counterValueCurrencySelector,
-  (state: State) => state.settings.currenciesSettings,
-  (state: State) => state.settings.pairExchanges,
-  developerModeSelector,
-  blacklistedTokenIdsSelector,
-  (
-    counterValueCurrency,
-    currenciesSettings,
-    pairExchanges,
-    developerModeEnabled,
-    blacklistedTokenIds,
-  ) => ({
-    counterValue: counterValueCurrency.ticker,
-    currenciesSettings,
-    pairExchanges,
-    developerModeEnabled,
-    blacklistedTokenIds,
-  }),
-);
 export const overriddenFeatureFlagsSelector = (state: State) =>
   state.settings.overriddenFeatureFlags;
 export const featureFlagsButtonVisibleSelector = (state: State) =>
@@ -944,13 +766,7 @@ export const hasSeenAnalyticsOptInPromptSelector = (state: State) =>
 export const dismissedContentCardsSelector = (state: State) => state.settings.dismissedContentCards;
 export const anonymousBrazeIdSelector = (state: State) => state.settings.anonymousBrazeId;
 
-export const currenciesSettingsSelector = (state: State) => state.settings.currenciesSettings;
-
 export const starredMarketCoinsSelector = (state: State) => state.settings.starredMarketCoins;
-export const hasSeenOrdinalsDiscoveryDrawerSelector = (state: State) =>
-  state.settings.hasSeenOrdinalsDiscoveryDrawer;
-export const hasProtectedOrdinalsAssetsSelector = (state: State) =>
-  state.settings.hasProtectedOrdinalsAssets;
 export const hasBeenUpsoldRecoverSelector = (state: State) => state.settings.hasBeenUpsoldRecover;
 export const onboardingUseCaseSelector = (state: State) => state.settings.onboardingUseCase;
 export const hasBeenRedirectedToPostOnboardingSelector = (state: State) =>
@@ -961,7 +777,5 @@ export const mevProtectionSelector = (state: State) => state.settings.mevProtect
 export const marketPerformanceWidgetSelector = (state: State) =>
   state.settings.marketPerformanceWidget;
 export const alwaysShowMemoTagInfoSelector = (state: State) => state.settings.alwaysShowMemoTagInfo;
-export const nftCollectionsStatusByNetworkSelector = (state: State) =>
-  state.settings.nftCollectionsStatusByNetwork;
 export const anonymousUserNotificationsSelector = (state: State) =>
   state.settings.anonymousUserNotifications;

@@ -12,22 +12,11 @@ interface IndexedWebElement extends WebElement {
 const scroller = new PageScroller();
 
 const DEFAULT_TIMEOUT = 60000;
-const RN75_DELAY = 200; // React Native 75 workaround: QAA-370
-
-function sync_delay(ms: number) {
-  const done = new Int32Array(new SharedArrayBuffer(4));
-  Atomics.wait(done, 0, 0, ms); // Wait for the specified duration
-}
-
-function withRN75Delay<T>(fn: () => T) {
-  if (!isAndroid()) sync_delay(RN75_DELAY);
-  return fn();
-}
 
 export const NativeElementHelpers = {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   expect(element: any) {
-    return withRN75Delay(() => detoxExpect(element));
+    return detoxExpect(element);
   },
 
   waitForElementById(id: string | RegExp, timeout: number = DEFAULT_TIMEOUT) {
@@ -68,19 +57,19 @@ export const NativeElementHelpers = {
   },
 
   getElementsById(id: string | RegExp) {
-    return withRN75Delay(() => element(by.id(id)));
+    return element(by.id(id));
   },
 
   getElementById(id: string | RegExp, index = 0) {
-    return withRN75Delay(() => element(by.id(id)).atIndex(index));
+    return element(by.id(id)).atIndex(index);
   },
 
   getElementByText(text: string | RegExp, index = 0) {
-    return withRN75Delay(() => element(by.text(text)).atIndex(index));
+    return element(by.text(text)).atIndex(index);
   },
 
   getElementByIdAndText(id: string | RegExp, text: string | RegExp, index = 0) {
-    return withRN75Delay(() => element(by.id(id).and(by.text(text))).atIndex(index));
+    return element(by.id(id).and(by.text(text))).atIndex(index);
   },
 
   async isIdVisible(id: string | RegExp, timeout: number = 1_000): Promise<boolean> {
@@ -317,6 +306,16 @@ export const WebElementHelpers = {
     return String(url);
   },
 
+  async isWebElementEnabled(element: WebElement) {
+    const isEnabled = await element.runScript(
+      (el: HTMLButtonElement | HTMLInputElement, android: boolean) => {
+        return android ? el.ariaDisabled !== "true" : el.getAttributeNames().toString();
+      },
+      [isAndroid()],
+    );
+    return typeof isEnabled === "string" ? !isEnabled.includes("disabled") : isEnabled;
+  },
+
   async waitForWebElementToBeEnabled(
     id: string,
     timeout = DEFAULT_TIMEOUT,
@@ -328,18 +327,14 @@ export const WebElementHelpers = {
     while (Date.now() - start < timeout) {
       try {
         const element = WebElementHelpers.getWebElementByTestId(id, index);
-        const isEnabled = await element.runScript((el: HTMLButtonElement | HTMLInputElement) => {
-          return (
-            el.getAttribute("aria-disabled") !== "true"
-          );
-        });
-
+        const isEnabled = await WebElementHelpers.isWebElementEnabled(element);
         if (isEnabled) {
           return;
         }
       } catch (e) {
         lastErr = e instanceof Error ? e : new Error(String(e));
       }
+      await delay(100);
     }
 
     throw new Error(

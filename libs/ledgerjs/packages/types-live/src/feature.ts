@@ -139,6 +139,7 @@ export type CurrencyFeatures = {
   currencyBerachain: DefaultFeature;
   currencyHyperevm: DefaultFeature;
   currencyCantonNetwork: DefaultFeature;
+  currencyKaspa: DefaultFeature;
 };
 
 /**
@@ -148,7 +149,6 @@ export type CurrencyFeatures = {
  */
 export type Features = CurrencyFeatures & {
   brazePushNotifications: Feature_BrazePushNotifications;
-  brazeLearn: Feature_BrazeLearn;
   ratingsPrompt: Feature_RatingsPrompt;
   npsRatingsPrompt: Feature_NpsRatingsPrompt;
   counterValue: Feature_CounterValue;
@@ -196,22 +196,15 @@ export type Features = CurrencyFeatures & {
   lldChatbotSupport: Feature_LldChatbotSupport;
   llmChatbotSupport: Feature_LlmChatbotSupport;
   myLedgerDisplayAppDeveloperName: Feature_MyLedgerDisplayAppDeveloperName;
-  nftsFromSimplehash: Feature_NftsFromSimpleHash;
   lldActionCarousel: Feature_lldActionCarousel;
   marketperformanceWidgetDesktop: Feature_MarketperformanceWidgetDesktop;
   lldRefreshMarketData: Feature_LldRefreshMarketData;
   llmRefreshMarketData: Feature_LlmRefreshMarketData;
-  spamReportNfts: Feature_SpamReportNfts;
   lldWalletSync: Feature_LldWalletSync;
   llmWalletSync: Feature_LlmWalletSync;
-  lldNftsGalleryNewArch: DefaultFeature;
-  lldnewArchOrdinals: DefaultFeature;
   enableAppsBackup: Feature_EnableAppsBackup;
   web3hub: Feature_web3hub;
   llmMarketQuickActions: DefaultFeature;
-  spamFilteringTx: Feature_SpamFilteringTx;
-  lldSpamFilteringTx: DefaultFeature;
-  llmSpamFilteringTx: DefaultFeature;
   llmMemoTag: Feature_MemoTag;
   lldMemoTag: Feature_MemoTag;
   ldmkTransport: Feature_LdmkTransport;
@@ -226,13 +219,10 @@ export type Features = CurrencyFeatures & {
   llmNanoSUpsellBanners: Feature_LlmNanoSUpsellBanners;
   llmThai: DefaultFeature;
   lldThai: DefaultFeature;
-  lldSolanaNfts: DefaultFeature;
-  llmSolanaNfts: DefaultFeature;
   largemoverLandingpage: DefaultFeature;
   llmMmkvMigration: Feature_LlmMmkvMigration;
   lldModularDrawer: Feature_ModularDrawer;
   llmModularDrawer: Feature_ModularDrawer;
-  llNftSupport: DefaultFeature;
   llNftEntryPoint: Feature_LlNftEntryPoint;
   ldmkConnectApp: DefaultFeature;
   lldNetworkBasedAddAccount: DefaultFeature;
@@ -265,6 +255,7 @@ export type Features = CurrencyFeatures & {
   llmSentry: DefaultFeature;
   onboardingIgnoredOsUpdates: Feature_OnboardingIgnoredOSUpdates;
   supportDeviceApex: DefaultFeature;
+  llmSyncOnboardingIncr1: DefaultFeature;
 };
 
 /**
@@ -592,11 +583,6 @@ export type Feature_MarketperformanceWidgetDesktop = Feature<{
   enableNewFeature: boolean;
 }>;
 
-export type Feature_NftsFromSimpleHash = Feature<{
-  threshold: number;
-  staleTime: number;
-}>;
-
 export type Feature_LldRefreshMarketData = Feature<{
   refreshTime: number;
 }>;
@@ -662,6 +648,8 @@ type Feature_ModularDrawer = Feature<{
   receive_flow: boolean;
   send_flow: boolean;
   enableModularization: boolean;
+  searchDebounceTime: number;
+  backendEnvironment: string;
 }>;
 
 export type Feature_CounterValue = DefaultFeature;
@@ -673,18 +661,13 @@ export type Feature_PostOnboardingAssetsTransfer = DefaultFeature;
 export type Feature_PtxServiceCtaExchangeDrawer = DefaultFeature;
 export type Feature_PtxServiceCtaScreens = DefaultFeature;
 export type Feature_PortfolioExchangeBanner = DefaultFeature;
-export type Feature_BrazeLearn = DefaultFeature;
 export type Feature_PtxSwapReceiveTRC20WithoutTrx = DefaultFeature;
 export type Feature_FlexibleContentCards = DefaultFeature;
 export type Feature_MyLedgerDisplayAppDeveloperName = DefaultFeature;
 export type Feature_LldChatbotSupport = DefaultFeature;
 export type Feature_LlmChatbotSupport = DefaultFeature;
-export type Feature_SpamReportNfts = DefaultFeature;
 export type Feature_EnableAppsBackup = DefaultFeature;
 export type Feature_web3hub = DefaultFeature;
-export type Feature_lldNftsGalleryNewArch = DefaultFeature;
-export type Feature_lldnewArchOrdinals = DefaultFeature;
-export type Feature_SpamFilteringTx = DefaultFeature;
 export type Feature_MemoTag = DefaultFeature;
 export type Feature_PtxSwapMoonpayProvider = DefaultFeature;
 export type Feature_PtxSwapExodusProvider = DefaultFeature;

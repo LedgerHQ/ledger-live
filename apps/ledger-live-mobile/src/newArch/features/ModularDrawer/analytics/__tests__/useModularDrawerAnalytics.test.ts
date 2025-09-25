@@ -1,4 +1,4 @@
-import { renderHook } from "@testing-library/react-native";
+import { renderHook, act } from "@tests/test-renderer";
 import { useModularDrawerAnalytics } from "../useModularDrawerAnalytics";
 import { track } from "~/analytics/segment";
 import { EnhancedModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/types";
@@ -15,7 +15,9 @@ describe("useModularDrawerAnalytics", () => {
     const eventName = EVENTS_NAME.ASSET_CLICKED;
     const params = { flow: "flowtest", source: "sourcetest", asset: "assettest", page: "pagetest" };
 
-    result.current.trackModularDrawerEvent(eventName, params);
+    act(() => {
+      result.current.trackModularDrawerEvent(eventName, params);
+    });
 
     expect(track).toHaveBeenCalledWith(eventName, params);
   });
@@ -35,9 +37,11 @@ describe("useModularDrawerAnalytics", () => {
       filter: "topNetworks",
     };
 
-    result.current.trackModularDrawerEvent(eventName, params, {
-      formatAssetConfig: true,
-      assetsConfig,
+    act(() => {
+      result.current.trackModularDrawerEvent(eventName, params, {
+        formatAssetConfig: true,
+        assetsConfig,
+      });
     });
 
     expect(track).toHaveBeenCalledWith(eventName, {
@@ -65,9 +69,11 @@ describe("useModularDrawerAnalytics", () => {
       leftElement: "numberOfAccounts",
     };
 
-    result.current.trackModularDrawerEvent(eventName, params, {
-      formatNetworkConfig: true,
-      networksConfig,
+    act(() => {
+      result.current.trackModularDrawerEvent(eventName, params, {
+        formatNetworkConfig: true,
+        networksConfig,
+      });
     });
 
     expect(track).toHaveBeenCalledWith(eventName, {

@@ -116,6 +116,7 @@ export default class SwapLiveAppPage {
   @Step("Tap execute swap button")
   async tapExecuteSwap() {
     await waitWebElementByTestId(this.executeSwapButton);
+    await waitForWebElementToBeEnabled(this.executeSwapButton);
     await tapWebElementByTestId(this.executeSwapButton);
   }
 

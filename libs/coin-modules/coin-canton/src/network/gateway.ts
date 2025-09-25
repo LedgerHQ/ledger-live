@@ -1,4 +1,6 @@
 import network from "@ledgerhq/live-network";
+import type { LiveNetworkRequest } from "@ledgerhq/live-network/network";
+import { getEnv } from "@ledgerhq/live-env";
 import coinConfig from "../config";
 import {
   PrepareTransactionRequest,
@@ -7,6 +9,7 @@ import {
   SubmitTransactionResponse,
   PreApprovalResult,
 } from "../types/onboard";
+import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 
 type OnboardingPrepareResponse = {
   party_id: string;
@@ -37,6 +40,21 @@ type OnboardingPrepareRequest = {
   public_key_type: string;
 };
 
+export type PrepareTransferResponse = {
+  hash: string;
+  json: any; // The actual structure is complex, using any for now
+  serialized: string;
+};
+
+export type PrepareTransferRequest = {
+  type: "token-transfer-request";
+  amount: string;
+  recipient: string;
+  execute_before_secs: number;
+  instrument_id: string;
+  reason?: string;
+};
+
 type OnboardingSubmitRequest = {
   prepare_request: OnboardingPrepareRequest;
   prepare_response: OnboardingPrepareResponse;
@@ -55,7 +73,7 @@ type TransactionSubmitRequest = {
   signature: string;
 };
 
-type TransactionSubmitResponse = { updateId: string };
+type TransactionSubmitResponse = { update_id: string };
 
 export type InstrumentBalance = {
   instrument_id: string;
@@ -134,6 +152,9 @@ export type OperationInfo =
           asset: string;
           details: {
             type: "pre-approval";
+            metadata: {
+              reason?: string;
+            };
           };
         },
       ];
@@ -176,6 +197,9 @@ export type OperationInfo =
           asset: string;
           details: {
             type: "tap";
+            metadata: {
+              reason?: string;
+            };
           };
         },
       ];
@@ -218,6 +242,9 @@ export type OperationInfo =
           asset: string;
           details: {
             type: "transfer";
+            metadata: {
+              reason?: string;
+            };
           };
         },
       ];
@@ -245,84 +272,114 @@ export type OperationInfo =
       };
     };
 
-const getGatewayUrl = () => coinConfig.getCoinConfig().gatewayUrl;
-const getNodeId = () => coinConfig.getCoinConfig().nodeId || "ledger-devnet-stg";
+const getGatewayUrl = (currency: CryptoCurrency) => coinConfig.getCoinConfig(currency).gatewayUrl;
+const getNodeId = (currency: CryptoCurrency) =>
+  coinConfig.getCoinConfig(currency).nodeId || "ledger-devnet-stg";
+const getNetworkType = (currency: CryptoCurrency) => coinConfig.getCoinConfig(currency).networkType;
+
+const gatewayNetwork = <T, U = unknown>(req: LiveNetworkRequest<U>) => {
+  const API_KEY = getEnv("CANTON_API_KEY");
+  return network<T, U>({
+    ...req,
+    headers: {
+      ...(req.headers || {}),
+      ...(API_KEY && { "X-Ledger-Canton-Api-Key": API_KEY }),
+    },
+  });
+};
 
 export async function prepareOnboarding(
+  currency: CryptoCurrency,
   pubKey: string,
   pubKeyType: string,
 ): Promise<OnboardingPrepareResponse> {
-  const gatewayUrl = getGatewayUrl();
-  const nodeId = getNodeId();
+  const gatewayUrl = getGatewayUrl(currency);
+  const nodeId = getNodeId(currency);
   const fullUrl = `${gatewayUrl}/v1/node/${nodeId}/onboarding/prepare`;
 
-  const { data } = await network<OnboardingPrepareResponse>({
+  const { data } = await gatewayNetwork<OnboardingPrepareResponse, OnboardingPrepareRequest>({
     method: "POST",
     url: fullUrl,
     data: {
       public_key: pubKey,
       public_key_type: pubKeyType,
-    } satisfies OnboardingPrepareRequest,
+    },
   });
 
   return data;
 }
 
 export async function submitOnboarding(
+  currency: CryptoCurrency,
   prepareRequest: OnboardingPrepareRequest,
   prepareResponse: OnboardingPrepareResponse,
   signature: string,
 ) {
-  const { data } = await network<OnboardingSubmitResponse>({
+  const { data } = await gatewayNetwork<OnboardingSubmitResponse, OnboardingSubmitRequest>({
     method: "POST",
-    url: `${getGatewayUrl()}/v1/node/${getNodeId()}/onboarding/submit`,
+    url: `${getGatewayUrl(currency)}/v1/node/${getNodeId(currency)}/onboarding/submit`,
     data: {
       prepare_request: prepareRequest,
       prepare_response: prepareResponse,
       signature,
-    } satisfies OnboardingSubmitRequest,
+    },
   });
   return data;
 }
 
-export async function submit(serializedTx: string, signature: string) {
-  const { data } = await network<TransactionSubmitResponse>({
+export async function submit(
+  currency: CryptoCurrency,
+  partyId: string,
+  serialized: string,
+  signature: string,
+) {
+  const { data } = await gatewayNetwork<TransactionSubmitResponse, TransactionSubmitRequest>({
     method: "POST",
-    url: `${getGatewayUrl()}/v1/node/${getNodeId()}/transaction/submit`,
+    url: `${getGatewayUrl(currency)}/v1/node/${getNodeId(currency)}/party/${partyId}/transaction/submit`,
     data: {
-      serialized: serializedTx,
+      serialized,
       signature,
-    } satisfies TransactionSubmitRequest,
+    },
   });
   return data;
 }
 
-export async function getBalance(partyId: string): Promise<InstrumentBalance[]> {
-  const { data } = await network<InstrumentBalance[]>({
+export async function getBalance(
+  currency: CryptoCurrency,
+  partyId: string,
+): Promise<InstrumentBalance[]> {
+  const { data } = await gatewayNetwork<InstrumentBalance[]>({
     method: "GET",
-    // TODO: we need better solution ?
-    url: `${getGatewayUrl()}/v1/node/${getNodeId()}/party/${partyId.replace(/_/g, ":")}/balance`,
+    url: `${getGatewayUrl(currency)}/v1/node/${getNodeId(currency)}/party/${partyId}/balance`,
   });
   return data;
 }
 
-export async function getPartyById(partyId: string): Promise<PartyInfo> {
-  return await getParty(partyId, "party-id");
+export async function getPartyById(currency: CryptoCurrency, partyId: string): Promise<PartyInfo> {
+  return await getParty(currency, partyId, "party-id");
 }
 
-export async function getPartyByPubKey(pubKey: string): Promise<PartyInfo> {
-  return await getParty(pubKey, "public-key");
+export async function getPartyByPubKey(
+  currency: CryptoCurrency,
+  pubKey: string,
+): Promise<PartyInfo> {
+  return await getParty(currency, pubKey, "public-key");
 }
 
-async function getParty(identifier: string, by: "party-id" | "public-key"): Promise<PartyInfo> {
-  const { data } = await network<PartyInfo>({
+async function getParty(
+  currency: CryptoCurrency,
+  identifier: string,
+  by: "party-id" | "public-key",
+): Promise<PartyInfo> {
+  const { data } = await gatewayNetwork<PartyInfo>({
     method: "GET",
-    url: `${getGatewayUrl()}/v1/node/${getNodeId()}/party/${identifier}?by=${by}`,
+    url: `${getGatewayUrl(currency)}/v1/node/${getNodeId(currency)}/party/${identifier}?by=${by}`,
   });
   return data;
 }
 
 export async function getOperations(
+  currency: CryptoCurrency,
   partyId: string,
   options?: {
     cursor?: number | undefined;
@@ -334,26 +391,26 @@ export async function getOperations(
   next: number;
   operations: OperationInfo[];
 }> {
-  const { data } = await network<{
+  const { data } = await gatewayNetwork<{
     next: number;
     operations: OperationInfo[];
   }>({
     method: "GET",
-    url: `${getGatewayUrl()}/v1/node/${getNodeId()}/party/${partyId.replace(/_/g, ":")}/operations`,
-    data: options,
+    url: `${getGatewayUrl(currency)}/v1/node/${getNodeId(currency)}/party/${partyId}/operations`,
+    params: options,
   });
   return data;
 }
 
-type PrepareTapRequestRequest = {
+type PrepareTapRequest = {
   partyId: string;
   amount?: number;
 };
 
-type PrepareTapRequestResponse = {
-  serialized: "string";
+type PrepareTapResponse = {
+  serialized: string;
   json: null;
-  hash: "string";
+  hash: string;
 };
 
 enum TransactionType {
@@ -361,13 +418,20 @@ enum TransactionType {
   TRANSFER_PRE_APPROVAL_PROPOSAL = "transfer-pre-approval-proposal",
 }
 
-export async function prepareTapRequest({
-  partyId,
-  amount = 1000000,
-}: PrepareTapRequestRequest): Promise<PrepareTapRequestResponse> {
-  const { data } = await network<PrepareTapRequestResponse>({
+export async function prepareTapRequest(
+  currency: CryptoCurrency,
+  { partyId, amount = 1000000 }: PrepareTapRequest,
+): Promise<PrepareTapResponse> {
+  if (getNetworkType(currency) === "mainnet") {
+    return {
+      serialized: "",
+      json: null,
+      hash: "",
+    };
+  }
+  const { data } = await gatewayNetwork<PrepareTapResponse, { amount: number; type: string }>({
     method: "POST",
-    url: `${getGatewayUrl()}/v1/node/${getNodeId()}/party/${partyId}/transaction/prepare`,
+    url: `${getGatewayUrl(currency)}/v1/node/${getNodeId(currency)}/party/${partyId}/transaction/prepare`,
     data: {
       amount: parseInt(amount.toString(), 10), // Convert to integer to avoid scientific notation
       type: TransactionType.TAP_REQUEST,
@@ -387,58 +451,73 @@ type SubmitTapRequestResponse = {
   update_id: string;
 };
 
-export async function submitTapRequest({
-  partyId,
-  serialized,
-  signature,
-}: SubmitTapRequestRequest): Promise<SubmitTapRequestResponse> {
-  const { data } = await network<SubmitTapRequestResponse>({
+export async function submitTapRequest(
+  currency: CryptoCurrency,
+  { partyId, serialized, signature }: SubmitTapRequestRequest,
+): Promise<SubmitTapRequestResponse> {
+  const { data } = await gatewayNetwork<
+    SubmitTapRequestResponse,
+    Omit<SubmitTapRequestRequest, "partyId">
+  >({
     method: "POST",
-    url: `${getGatewayUrl()}/v1/node/${getNodeId()}/party/${partyId}/transaction/submit`,
+    url: `${getGatewayUrl(currency)}/v1/node/${getNodeId(currency)}/party/${partyId}/transaction/submit`,
     data: {
       serialized,
       signature,
-    } satisfies Omit<SubmitTapRequestRequest, "partyId">,
+    },
   });
   return data;
 }
 
-export async function getLedgerEnd(): Promise<number> {
-  const { data } = await network<number>({
+export async function prepareTransferRequest(
+  currency: CryptoCurrency,
+  partyId: string,
+  params: PrepareTransferRequest,
+): Promise<PrepareTransferResponse> {
+  const { data } = await gatewayNetwork<PrepareTransferResponse, PrepareTransferRequest>({
+    method: "POST",
+    url: `${getGatewayUrl(currency)}/v1/node/${getNodeId(currency)}/party/${partyId}/transaction/prepare`,
+    data: params,
+  });
+  return data;
+}
+
+export async function getLedgerEnd(currency: CryptoCurrency): Promise<number> {
+  const { data } = await gatewayNetwork<number>({
     method: "GET",
-    url: `${getGatewayUrl()}/v1/node/${getNodeId()}/ledger-end`,
+    url: `${getGatewayUrl(currency)}/v1/node/${getNodeId(currency)}/ledger-end`,
   });
   return data;
 }
 
 export async function preparePreApprovalTransaction(
+  currency: CryptoCurrency,
   partyId: string,
 ): Promise<PrepareTransactionResponse> {
-  const { data } = await network<PrepareTransactionResponse>({
+  const { data } = await gatewayNetwork<PrepareTransactionResponse, PrepareTransactionRequest>({
     method: "POST",
-    url: `${getGatewayUrl()}/v1/node/${getNodeId()}/party/${partyId}/transaction/prepare`,
+    url: `${getGatewayUrl(currency)}/v1/node/${getNodeId(currency)}/party/${partyId}/transaction/prepare`,
     data: {
       type: TransactionType.TRANSFER_PRE_APPROVAL_PROPOSAL,
       receiver: partyId,
-    } satisfies PrepareTransactionRequest,
+    },
   });
   return data;
 }
 
 export async function submitPreApprovalTransaction(
+  currency: CryptoCurrency,
   partyId: string,
-  preparedTransaction: PrepareTransactionResponse,
+  { serialized }: PrepareTransactionResponse,
   signature: string,
 ): Promise<PreApprovalResult> {
-  const submitRequest: SubmitTransactionRequest = {
-    serialized: preparedTransaction.serialized,
-    signature,
-  };
-
-  const { data } = await network<SubmitTransactionResponse>({
+  const { data } = await gatewayNetwork<SubmitTransactionResponse, SubmitTransactionRequest>({
     method: "POST",
-    url: `${getGatewayUrl()}/v1/node/${getNodeId()}/party/${partyId}/transaction/submit`,
-    data: submitRequest,
+    url: `${getGatewayUrl(currency)}/v1/node/${getNodeId(currency)}/party/${partyId}/transaction/submit`,
+    data: {
+      serialized,
+      signature,
+    },
   });
 
   return {

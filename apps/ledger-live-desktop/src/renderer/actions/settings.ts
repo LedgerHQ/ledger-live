@@ -10,7 +10,6 @@ import {
   Feature,
   DeviceInfo,
 } from "@ledgerhq/types-live";
-import { Currency } from "@ledgerhq/types-cryptoassets";
 import { setEnvOnAllThreads } from "~/helpers/env";
 import {
   SettingsState as Settings,
@@ -24,18 +23,13 @@ import {
 } from "~/renderer/reducers/settings";
 import { useRefreshAccountsOrdering } from "~/renderer/actions/general";
 import { Language, Locale } from "~/config/languages";
-import { Layout } from "LLD/features/Collectibles/types/Layouts";
 import {
   PURGE_EXPIRED_ANONYMOUS_USER_NOTIFICATIONS,
-  RESET_HIDDEN_NFT_COLLECTIONS,
   TOGGLE_MARKET_WIDGET,
   TOGGLE_MEMOTAG_INFO,
   TOGGLE_MEV,
   UPDATE_ANONYMOUS_USER_NOTIFICATIONS,
-  UPDATE_NFT_COLLECTION_STATUS,
 } from "./constants";
-import { SupportedBlockchain } from "@ledgerhq/live-nft/supported";
-import { NftStatus } from "@ledgerhq/live-nft/types";
 export type SaveSettings = (a: Partial<Settings>) => {
   type: string;
   payload: Partial<Settings>;
@@ -52,14 +46,6 @@ export const setAccountsViewMode = (accountsViewMode: "list" | "card" | undefine
   saveSettings({
     accountsViewMode,
   });
-export const setNftsViewMode = (nftsViewMode: "list" | "grid" | undefined) =>
-  saveSettings({
-    nftsViewMode,
-  });
-export const setCollectiblesViewMode = (collectiblesViewMode: Layout) =>
-  saveSettings({
-    collectiblesViewMode,
-  });
 export const setSelectedTimeRange = (selectedTimeRange: PortfolioRange) =>
   saveSettings({
     selectedTimeRange,
@@ -75,10 +61,6 @@ export const setDiscreetMode = (discreetMode: boolean) =>
 export const setSentryLogs = (sentryLogs: boolean) =>
   saveSettings({
     sentryLogs,
-  });
-export const setFullNodeEnabled = (fullNodeEnabled: boolean) =>
-  saveSettings({
-    fullNodeEnabled,
   });
 export const setShareAnalytics = (shareAnalytics: boolean) =>
   saveSettings({
@@ -115,10 +97,6 @@ export const setAllowExperimentalApps = (allowExperimentalApps: boolean) =>
 export const setEnablePlatformDevTools = (enablePlatformDevTools: boolean) =>
   saveSettings({
     enablePlatformDevTools,
-  });
-export const setCatalogProvider = (catalogProvider: string) =>
-  saveSettings({
-    catalogProvider,
   });
 export const setEnableLearnPageStagingUrl = (enableLearnPageStagingUrl: boolean) =>
   saveSettings({
@@ -226,11 +204,6 @@ export const blacklistToken = (tokenId: string) => ({
   payload: tokenId,
 });
 
-export const hideOrdinalsAsset = (inscriptionId: string) => ({
-  type: "HIDE_ORDINALS_ASSET",
-  payload: inscriptionId,
-});
-
 export const setLastSeenCustomImage = (lastSeenCustomImage: {
   imageSize: number;
   imageHash: string;
@@ -248,32 +221,11 @@ export const clearLastSeenCustomImage = () => ({
     imageHash: "",
   },
 });
-export const swapAcceptProvider = (providerId: string) => ({
-  type: "ACCEPT_SWAP_PROVIDER",
-  payload: providerId,
-});
 export const showToken = (tokenId: string) => ({
   type: "SHOW_TOKEN",
   payload: tokenId,
 });
 
-export const updateNftStatus = (
-  blockchain: SupportedBlockchain,
-  collectionId: string,
-  status: NftStatus,
-) => ({
-  type: UPDATE_NFT_COLLECTION_STATUS,
-  payload: { blockchain, collectionId, status },
-});
-
-export const resetHiddenNftCollections = () => ({
-  type: RESET_HIDDEN_NFT_COLLECTIONS,
-});
-
-export const unhideOrdinalsAsset = (inscriptionId: string) => ({
-  type: "UNHIDE_ORDINALS_ASSET",
-  payload: inscriptionId,
-});
 type FetchSettings = (a: SettingsState) => (a: Dispatch<Action<"FETCH_SETTINGS">>) => void;
 export const fetchSettings: FetchSettings = (settings: SettingsState) => dispatch => {
   dispatch({
@@ -282,21 +234,6 @@ export const fetchSettings: FetchSettings = (settings: SettingsState) => dispatc
   });
 };
 
-type ExchangePairs = Array<{
-  from: Currency;
-  to: Currency;
-  exchange: string | undefined | null;
-}>;
-
-type SetExchangePairs = (a: ExchangePairs) => {
-  type: "SETTINGS_SET_PAIRS";
-  payload: ExchangePairs;
-};
-
-export const setExchangePairsAction: SetExchangePairs = pairs => ({
-  type: "SETTINGS_SET_PAIRS",
-  payload: pairs,
-});
 export const dismissBanner = (bannerKey: string) => ({
   type: "SETTINGS_DISMISS_BANNER",
   payload: bannerKey,
@@ -332,17 +269,6 @@ export const addNewDeviceModel = ({ deviceModelId }: { deviceModelId: DeviceMode
 export const setDeepLinkUrl = (url?: string | null) => ({
   type: "SET_DEEPLINK_URL",
   payload: url,
-});
-export const setFirstTimeLend = () => ({
-  type: "SET_FIRST_TIME_LEND",
-});
-export const setSwapSelectableCurrencies = (selectableCurrencies: string[]) => ({
-  type: "SET_SWAP_SELECTABLE_CURRENCIES",
-  payload: selectableCurrencies,
-});
-export const setSwapHasAcceptedIPSharing = (hasAcceptedIPSharing: boolean) => ({
-  type: "SET_SWAP_ACCEPTED_IP_SHARING",
-  payload: hasAcceptedIPSharing,
 });
 export const setOverriddenFeatureFlag = (featureFlag: {
   key: FeatureId;
@@ -413,16 +339,6 @@ export const addStarredMarketCoins = (payload: string) => ({
 
 export const removeStarredMarketCoins = (payload: string) => ({
   type: "MARKET_REMOVE_STARRED_COINS",
-  payload,
-});
-
-export const setHasSeenOrdinalsDiscoveryDrawer = (payload: boolean) => ({
-  type: "SET_HAS_SEEN_ORDINALS_DISCOVERY_DRAWER",
-  payload,
-});
-
-export const setHasProtectedOrdinalsAssets = (payload: boolean) => ({
-  type: "SET_HAS_PROTECTED_ORDINALS_ASSETS",
   payload,
 });
 

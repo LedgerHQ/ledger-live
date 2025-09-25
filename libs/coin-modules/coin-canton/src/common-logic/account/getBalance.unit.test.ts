@@ -2,6 +2,11 @@ import { getBalance as getBalanceFromNetwork } from "../../network/gateway";
 import * as coinConfigModule from "../../config";
 import { getBalance } from "./getBalance";
 import { Balance } from "@ledgerhq/coin-framework/api/types";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+
+const mockCurrency = {
+  id: "canton_network",
+} as unknown as CryptoCurrency;
 
 jest.mock("../../network/gateway", () => ({
   getBalance: jest.fn(),
@@ -35,9 +40,9 @@ describe("getBalance", () => {
 
     (getBalanceFromNetwork as jest.Mock).mockResolvedValue(mockInstruments);
 
-    const result = await getBalance("party-id");
+    const result = await getBalance(mockCurrency, "party-id");
 
-    expect(getBalanceFromNetwork).toHaveBeenCalledWith("party-id");
+    expect(getBalanceFromNetwork).toHaveBeenCalledWith(mockCurrency, "party-id");
     expect(result).toEqual<Balance[]>([
       {
         value: BigInt(1000),
@@ -57,7 +62,7 @@ describe("getBalance", () => {
       useGateway: false,
     } as any);
 
-    await expect(getBalance("party-id")).rejects.toThrow("Not implemented");
+    await expect(getBalance(mockCurrency, "party-id")).rejects.toThrow("Not implemented");
     expect(getBalanceFromNetwork).not.toHaveBeenCalled();
   });
 });
