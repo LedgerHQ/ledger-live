@@ -642,15 +642,15 @@ const OperationD = (props: Props) => {
         </OpDetailsData>
       </OpDetailsSection>
       {uniqueSenders.length ? (
-        <OpDetailsSection>
+        <OpDetailsSection data-testid="operation-from" >
           <OpDetailsTitle>{t("operationDetails.from")}</OpDetailsTitle>
-          <DataList lines={uniqueSenders} t={t} />
+          <DataList  lines={uniqueSenders} t={t} />
         </OpDetailsSection>
       ) : null}
       {recipients.length ? (
         <OpDetailsSection>
           <OpDetailsTitle>{t("operationDetails.to")}</OpDetailsTitle>
-          <Box alignItems="flex-end" flex="1">
+          <Box data-testid="operation-to" alignItems="flex-end" flex="1">
             {recipients.length > 1 ? (
               <Link>
                 <FakeLink

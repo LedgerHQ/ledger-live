@@ -15,6 +15,8 @@ export class SendDrawer extends Drawer {
   private transactionMessageStatus = this.page.getByTestId("success-message-label");
   private transactionStatus = this.page.getByTestId("status-drawer");
   private drawerOperationtype = this.page.getByTestId("operation-type");
+  private operationFromAccount = this.page.getByTestId("operation-from");
+  private operationToAccount = this.page.getByTestId("operation-to");
 
   @step("Verify address is visible")
   async addressValueIsVisible(address: string) {
@@ -47,6 +49,12 @@ export class SendDrawer extends Drawer {
   async expectTransactionStatus(transactionStatus: string) {
     const displayedTransactionStatus = await this.transactionStatus.innerText();
     expect(displayedTransactionStatus).toEqual(transactionStatus);
+  }
+
+  @step("Verify drawer accounts")
+  async expectDrawerAccounts(tx: Transaction) {
+    await expect(this.operationToAccount).toContainText(tx.accountToCredit.address);
+    await expect(this.operationFromAccount).toContainText(tx.accountToDebit.address);
   }
 
   @step("Verify drawer operation type")

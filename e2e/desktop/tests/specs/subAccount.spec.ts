@@ -595,6 +595,7 @@ test.describe("Send token (subAccount) - e2e ", () => {
         await app.account.selectAndClickOnLastOperation(TransactionStatus.RECEIVED);
         await app.sendDrawer.expectTransactionStatus(TransactionStatus.CONFIRMED);
         await app.sendDrawer.expectDrawerOperationType(TransactionStatus.RECEIVED);
+        await app.sendDrawer.expectDrawerAccounts(tx);
         await app.sendDrawer.expectTokenReceiverInfos(tx);
       }
     },
