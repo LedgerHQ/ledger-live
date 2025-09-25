@@ -11,6 +11,10 @@ export class SendDrawer extends Drawer {
   private amountValue = this.page.getByTestId("amountReceived-drawer").first();
   private transactionType = this.page.getByTestId("transaction-type");
   private nftName = this.page.getByTestId("nft-name-operationDrawer");
+  private transactionTitle = this.page.getByTestId("modal-title").first();
+  private transactionMessageStatus = this.page.getByTestId("success-message-label");
+  private transactionStatus = this.page.getByTestId("status-drawer");
+  private drawerOperationtype = this.page.getByTestId("operation-type");
 
   @step("Verify address is visible")
   async addressValueIsVisible(address: string) {
@@ -25,6 +29,30 @@ export class SendDrawer extends Drawer {
     const displayedAmount = await this.amountValue.innerText();
     expect(displayedAmount).toEqual(expect.stringContaining(tx.amount));
     expect(displayedAmount).toEqual(expect.stringContaining(tx.accountToDebit.currency.ticker));
+  }
+
+  @step("Verify transaction title")
+  async expectTransactionTitle(transactionTitle: string) {
+    const displayedTransactionTitle = await this.transactionTitle.innerText();
+    expect(displayedTransactionTitle).toEqual(transactionTitle);
+  }
+
+  @step("Verify transaction message status")
+  async expectTransactionMessageStatus(transactionMessage: string) {
+    const displayedTransactionMessageStatus = await this.transactionMessageStatus.innerText();
+    expect(displayedTransactionMessageStatus).toEqual(transactionMessage);
+  }
+
+  @step("Verify transaction status")
+  async expectTransactionStatus(transactionStatus: string) {
+    const displayedTransactionStatus = await this.transactionStatus.innerText();
+    expect(displayedTransactionStatus).toEqual(transactionStatus);
+  }
+
+  @step("Verify drawer operation type")
+  async expectDrawerOperationType(operationType: string) {
+    const displayedOperationType = await this.drawerOperationtype.innerText();
+    expect(displayedOperationType).toEqual(operationType);
   }
 
   @step("Verify Send NFT information")

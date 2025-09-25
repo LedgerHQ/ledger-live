@@ -496,7 +496,7 @@ const OperationD = (props: Props) => {
           horizontal
           flow={1}
         >
-          <Box>
+          <Box data-testid="status-drawer">
             {hasFailed
               ? t("operationDetails.failed")
               : isConfirmed

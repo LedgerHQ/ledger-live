@@ -531,7 +531,7 @@ test.describe("Send token (subAccount) - valid address & amount input", () => {
 
 test.describe("Send token (subAccount) - e2e ", () => {
   const tokenValidSend = {
-    tx: new Transaction(TokenAccount.SUI_USDC_1, TokenAccount.SUI_USDC_2, "1", Fee.MEDIUM),
+    tx: new Transaction(TokenAccount.SUI_USDC_1, TokenAccount.SUI_USDC_2, "0.01", Fee.MEDIUM),
     xrayTicket: "B2CQA-3908",
   };
   test.use({
@@ -575,13 +575,17 @@ test.describe("Send token (subAccount) - e2e ", () => {
       await app.send.continue();
       await app.send.fillAmount(tx.amount);
       await app.send.continue();
+      await app.send.expectTxInfoValidity(tx);
       await app.send.clickContinueToDevice();
       await app.speculos.signSendTransaction(tx);
       await app.send.expectTxSent();
+      await app.sendDrawer.expectTransactionTitle(TransactionStatus.SEND);
+      await app.sendDrawer.expectTransactionMessageStatus(TransactionStatus.TRANSACTION_SENT);
       await app.account.navigateToViewDetails();
       await app.sendDrawer.addressValueIsVisible(tx.accountToCredit.address);
+      await app.sendDrawer.expectReceiverInfos(tx);
       await app.drawer.closeDrawer();
-      if (!getEnv("DISABLE_TRANSACTION_BROADCAST")) {
+      if (process.env.DISABLE_TRANSACTION_BROADCAST !== "1") {
         await app.layout.goToAccounts();
         await app.accounts.clickSyncBtnForAccount(getParentAccountName(tx.accountToCredit));
         await app.accounts.navigateToAccountByName(getParentAccountName(tx.accountToCredit));
@@ -589,6 +593,8 @@ test.describe("Send token (subAccount) - e2e ", () => {
         await app.account.expectAccountBalance();
         await app.account.checkAccountChart();
         await app.account.selectAndClickOnLastOperation(TransactionStatus.RECEIVED);
+        await app.sendDrawer.expectTransactionStatus(TransactionStatus.CONFIRMED);
+        await app.sendDrawer.expectDrawerOperationType(TransactionStatus.RECEIVED);
         await app.sendDrawer.expectTokenReceiverInfos(tx);
       }
     },
