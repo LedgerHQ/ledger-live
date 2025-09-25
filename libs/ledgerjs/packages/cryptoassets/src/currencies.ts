@@ -3825,6 +3825,29 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     ],
     explorerViews: [blockscoutExplorerView("https://cronos.org/explorer")],
   },
+  core: {
+    type: "CryptoCurrency",
+    id: "core",
+    coinType: CoinType.ETH,
+    name: "Core",
+    managerAppName: "Ethereum",
+    ticker: "CORE",
+    scheme: "core",
+    color: "#FF962B",
+    family: "evm",
+    units: ethereumUnits("CORE", "CORE"),
+    ethereumLikeInfo: {
+      chainId: 1116,
+    },
+    explorerViews: [
+      {
+        tx: "https://scan.coredao.org/tx/$hash",
+        address: "https://scan.coredao.org/address/$address",
+        token: "https://scan.coredao.org/token/$address",
+      },
+    ],
+    tokenTypes: ["erc20"],
+  },
   fantom: {
     type: "CryptoCurrency",
     id: "fantom",
