@@ -303,7 +303,7 @@ export type StakingTransactionIntent<T extends StakingIntent> = Omit<
   T;
 
 export type TransactionIntent<MemoType extends Memo = MemoNotSupported> = {
-  intentType: "transaction";
+  intentType?: "transaction";
   type: string;
   sender: string;
   senderPublicKey?: string;
