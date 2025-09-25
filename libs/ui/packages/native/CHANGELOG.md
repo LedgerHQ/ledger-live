@@ -1,5 +1,16 @@
 # @ledgerhq/native-ui
 
+## 0.47.0-next.0
+
+### Minor Changes
+
+- [#11933](https://github.com/LedgerHQ/ledger-live/pull/11933) [`bb25ec4`](https://github.com/LedgerHQ/ledger-live/commit/bb25ec472bf24e308ae062a75fda8672c7dac596) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Fix android crash caused by unexpected string style property
+
+### Patch Changes
+
+- Updated dependencies [[`4d60b7e`](https://github.com/LedgerHQ/ledger-live/commit/4d60b7e0984f0f8ef75c1483e0cfaf5784fbc5ed)]:
+  - @ledgerhq/crypto-icons-ui@1.20.0-next.0
+
 ## 0.46.0
 
 ### Minor Changes

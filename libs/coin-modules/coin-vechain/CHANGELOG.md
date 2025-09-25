@@ -1,5 +1,17 @@
 # @ledgerhq/coin-evm
 
+## 2.10.1-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`ab0e1bc`](https://github.com/LedgerHQ/ledger-live/commit/ab0e1bcc97b66b750b6c29e618eb03ce6f25bb7b), [`c2d8d86`](https://github.com/LedgerHQ/ledger-live/commit/c2d8d8670f848989836c46ea08ae88c88086fdd6), [`4d60b7e`](https://github.com/LedgerHQ/ledger-live/commit/4d60b7e0984f0f8ef75c1483e0cfaf5784fbc5ed), [`e3b568d`](https://github.com/LedgerHQ/ledger-live/commit/e3b568d2cbeee6dcf19a7047ce9fa11a04b0ae2a), [`0d368f0`](https://github.com/LedgerHQ/ledger-live/commit/0d368f0e682b3bd3daafa6af5b396648a95b1488), [`fe1abf6`](https://github.com/LedgerHQ/ledger-live/commit/fe1abf640cc1a30b2e78bf7aa4a12e983a068f2e)]:
+  - @ledgerhq/cryptoassets@13.30.0-next.0
+  - @ledgerhq/errors@6.26.0-next.0
+  - @ledgerhq/live-env@2.18.0-next.0
+  - @ledgerhq/coin-framework@6.6.0-next.0
+  - @ledgerhq/devices@8.6.1-next.0
+  - @ledgerhq/live-network@2.0.19-next.0
+
 ## 2.10.0
 
 ### Minor Changes
