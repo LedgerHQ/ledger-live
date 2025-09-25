@@ -1,7 +1,7 @@
 import { BigNumber } from "bignumber.js";
-import { bitcoinPickingStrategy } from "./types";
+import { bitcoinPickingStrategy } from "../../types";
 
-// --------- MOCK ./wallet-btc (path must match SUT import exactly) ---------
+// --------- MOCK ./wallet-btc  ---------
 const estimateAccountMaxSpendable = jest.fn().mockResolvedValue(new BigNumber(123456));
 const buildAccountTx = jest.fn().mockResolvedValue({ fee: 999, inputs: [], outputs: [] });
 
@@ -21,7 +21,6 @@ jest.mock("./wallet-btc", () => ({
     estimateAccountMaxSpendable: (...args: any[]) => estimateAccountMaxSpendable(...args),
     buildAccountTx: (...args: any[]) => buildAccountTx(...args),
   },
-  // SUT calls this to obtain walletAccount
   getWalletAccount: jest.fn((_account: any) => ({
     xpub: { explorer: currentExplorer, crypto: {} },
     derivationMode: "native_segwit",
@@ -31,8 +30,7 @@ jest.mock("./wallet-btc", () => ({
   Merge: DummyStrategy,
 }));
 
-// Import SUT AFTER the mock above
-import { buildTransaction } from "./buildTransaction";
+import { buildTransaction } from "../../buildTransaction";
 
 const BN = (v: BigNumber.Value) => new BigNumber(v);
 const setExplorer = (exp: any) => {
