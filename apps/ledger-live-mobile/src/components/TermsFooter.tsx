@@ -1,3 +1,4 @@
+import { getProviderName } from "@ledgerhq/live-common/exchange/swap/utils/index";
 import { Text } from "@ledgerhq/native-ui";
 import React, { useCallback } from "react";
 import { Trans } from "react-i18next";
@@ -10,6 +11,8 @@ const CenteredText = styled(Text).attrs({
   textAlign: "center",
   fontSize: "paragraph",
   color: "neutral.c60",
+  marginLeft: 16,
+  marginRight: 16,
 })``;
 
 const UnderlinedText = styled(Text).attrs({
@@ -36,10 +39,10 @@ const TermsFooter: React.FC<{
   }
 
   return (
-    <CenteredText marginTop={16}>
+    <CenteredText>
       <Trans
         i18nKey="DeviceAction.confirmSwap.acceptTerms"
-        values={{ provider }}
+        values={{ provider: getProviderName(provider) }}
         components={[
           <UnderlinedText onPress={onLinkClick} textAlign="center" key="ProviderText">
             <Text
@@ -48,7 +51,7 @@ const TermsFooter: React.FC<{
               fontSize="paragraph"
               color="neutral.c60"
             >
-              {provider}
+              {getProviderName(provider)}
             </Text>
           </UnderlinedText>,
         ]}

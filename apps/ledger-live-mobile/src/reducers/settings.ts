@@ -164,7 +164,6 @@ export const INITIAL_STATE: SettingsState = {
   mevProtection: true,
   selectedTabPortfolioAssets: "Assets",
   isOnboardingFlow: false,
-  rtkConsoleEnabled: false,
 };
 
 const pairHash = (from: { ticker: string }, to: { ticker: string }) =>
@@ -620,10 +619,6 @@ const handlers: ReducerMap<SettingsState, SettingsPayload> = {
     ...state,
     selectedTabPortfolioAssets: (action as Action<SettingsSetSelectedTabPortfolioAssetsPayload>)
       .payload,
-  }),
-  [SettingsActionTypes.SET_RTK_CONSOLE_ENABLED]: (state, action) => ({
-    ...state,
-    rtkConsoleEnabled: (action as Action<boolean>).payload,
   }),
 };
 

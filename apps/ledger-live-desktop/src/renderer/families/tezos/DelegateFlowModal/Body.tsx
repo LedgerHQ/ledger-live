@@ -136,8 +136,9 @@ const Body = ({ stepId, params, onChangeStepId, onClose }: Props) => {
       patch.mode === "delegate" &&
       !transaction.recipient &&
       stepId !== "custom" &&
-      defaultBaker
+      defaultBaker?.address
     ) {
+      // guard against an empty bakers list while the hook loads
       patch.recipient = defaultBaker.address;
     }
 

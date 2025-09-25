@@ -52,6 +52,7 @@ setSupportedCurrencies([
   "osmosis",
   "fantom",
   "moonbeam",
+  "core",
   "cronos",
   "songbird",
   "flare",

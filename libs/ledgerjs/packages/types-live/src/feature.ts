@@ -141,6 +141,7 @@ export type CurrencyFeatures = {
   currencyCantonNetwork: DefaultFeature;
   currencyKaspa: DefaultFeature;
   currencyEthereumHoodi: DefaultFeature;
+  currencyCore: DefaultFeature;
 };
 
 /**
@@ -187,7 +188,7 @@ export type Features = CurrencyFeatures & {
   ptxSwapLiveAppMobile: Feature_PtxSwapLiveApp;
   ptxSwapLiveAppKycWarning: DefaultFeature;
   ptxSwapLiveApp: Feature_PtxSwapLiveApp;
-  ptxSwapconfirmSwapOnDevice: DefaultFeature;
+  ptxSwapDetailedView: DefaultFeature;
   ptxEarnLiveApp: Feature_PtxEarnLiveApp;
   ptxSwapReceiveTRC20WithoutTrx: Feature_PtxSwapReceiveTRC20WithoutTrx;
   flexibleContentCards: Feature_FlexibleContentCards;
