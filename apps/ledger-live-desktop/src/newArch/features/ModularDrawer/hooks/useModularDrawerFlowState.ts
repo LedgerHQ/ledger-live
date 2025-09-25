@@ -26,7 +26,6 @@ type Props = {
   isSelectAccountFlow?: boolean;
   onAssetSelected?: (asset: CryptoOrTokenCurrency) => void;
   hasOneCurrency: boolean;
-  flow: string;
 };
 
 export function useModularDrawerFlowState({
@@ -38,7 +37,6 @@ export function useModularDrawerFlowState({
   isSelectAccountFlow,
   onAssetSelected,
   hasOneCurrency,
-  flow,
 }: Props) {
   const { trackModularDrawerEvent } = useModularDrawerAnalytics();
   const searchedValue = useSelector(modularDrawerSearchedSelector);
@@ -54,10 +52,9 @@ export function useModularDrawerFlowState({
     trackModularDrawerEvent("button_clicked", {
       button: "Back",
       page: MODULAR_DRAWER_PAGE_NAME.MODULAR_NETWORK_SELECTION,
-      flow: flow,
     });
     goToStep("ASSET_SELECTION");
-  }, [flow, goToStep, setNetworksToDisplay, trackModularDrawerEvent]);
+  }, [goToStep, setNetworksToDisplay, trackModularDrawerEvent]);
 
   const goBackToNetworkSelection = useCallback(() => {
     setSelectedNetwork(undefined);

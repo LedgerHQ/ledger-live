@@ -79,9 +79,7 @@ describe("useOpenAssetFlow", () => {
           assets: { leftElement: "undefined", rightElement: "balance" },
           networks: { leftElement: "numberOfAccounts", rightElement: "balance" },
         },
-        flow: "add_account",
         onAssetSelected: expect.any(Function),
-        source: "test",
       },
       {
         closeButtonComponent: expect.any(Function),

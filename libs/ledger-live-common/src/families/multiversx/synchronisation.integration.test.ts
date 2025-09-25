@@ -8,7 +8,7 @@ import { multiversx1 } from "./datasets/multiversx1";
 import { firstValueFrom } from "rxjs";
 
 describe("ESDT tokens sync functionality", () => {
-  const account = fromAccountRaw(multiversx1);
+  let account: Account;
   const localCache = {};
   const cache = makeBridgeCacheSystem({
     saveData(c, d) {
@@ -19,6 +19,10 @@ describe("ESDT tokens sync functionality", () => {
     getData(c) {
       return Promise.resolve(localCache[c.id]);
     },
+  });
+
+  beforeAll(async () => {
+    account = await fromAccountRaw(multiversx1);
   });
 
   test("initial raw account contains no token accounts", async () => {

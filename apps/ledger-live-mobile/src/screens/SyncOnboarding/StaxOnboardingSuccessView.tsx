@@ -1,9 +1,10 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { ViewStyle } from "react-native";
 import Video from "react-native-video";
 import { useTheme } from "styled-components/native";
 import useIsAppInBackground from "~/components/useIsAppInBackground";
 import videoSources from "../../../assets/videos";
+import { useIsFocused } from "@react-navigation/core";
 
 const { onboardingSuccessStaxLight, onboardingSuccessStaxDark } = videoSources;
 const REDIRECTION_DELAY = 5_000;
@@ -16,34 +17,48 @@ const absoluteStyle: ViewStyle = {
 };
 
 type StaxOnboardingSuccessViewProps = {
-  onAnimationFinish: () => void;
+  onAnimationFinish?: () => void;
 };
 
 export default function StaxOnboardingSuccessView({
   onAnimationFinish,
 }: StaxOnboardingSuccessViewProps) {
   const videoMounted = !useIsAppInBackground();
+  const [isPaused, setIsPaused] = useState<boolean>(true);
   const { theme } = useTheme();
+  const isFocused = useIsFocused();
 
+  const videoSource = theme === "light" ? onboardingSuccessStaxLight : onboardingSuccessStaxDark;
   const delayRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
   useEffect(() => {
-    delayRef.current = setTimeout(onAnimationFinish, REDIRECTION_DELAY);
+    if (onAnimationFinish && videoMounted && !isPaused) {
+      delayRef.current = setTimeout(onAnimationFinish, REDIRECTION_DELAY);
+    }
+
     return () => {
       if (delayRef.current) {
         clearTimeout(delayRef.current);
         delayRef.current = null;
       }
     };
-  }, [onAnimationFinish]);
+  }, [onAnimationFinish, videoMounted, isPaused]);
+
+  useEffect(() => {
+    if (isPaused && isFocused) {
+      setIsPaused(false);
+    }
+  }, [isFocused, setIsPaused, isPaused]);
 
   return videoMounted ? (
     <Video
       disableFocus
-      source={theme === "light" ? onboardingSuccessStaxLight : onboardingSuccessStaxDark}
+      source={videoSource}
       style={absoluteStyle}
       muted
       repeat
       resizeMode="cover"
+      paused={isPaused}
     />
   ) : null;
 }

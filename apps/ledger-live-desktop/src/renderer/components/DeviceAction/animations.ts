@@ -45,6 +45,7 @@ import NANOSP_DARK_CONTINUE from "~/renderer/animations/nanoSP/dark/continue.jso
 import NANOSP_LIGHT_PIN from "~/renderer/animations/nanoSP/light/pin.json";
 import NANOSP_LIGHT_CONTINUE from "~/renderer/animations/nanoSP/light/continue.json";
 
+/* Lottie animations for devices with touchscreen */
 import STAX_DARK_PIN from "~/renderer/animations/stax/dark/pin.json";
 import STAX_DARK_CONTINUE from "~/renderer/animations/stax/dark/continue.json";
 import STAX_LIGHT_PIN from "~/renderer/animations/stax/light/pin.json";
@@ -60,17 +61,8 @@ import APEX_DARK_CONTINUE from "~/renderer/animations/apex/dark/continue.json";
 import APEX_LIGHT_PIN from "~/renderer/animations/apex/light/pin.json";
 import APEX_LIGHT_CONTINUE from "~/renderer/animations/apex/light/continue.json";
 
-// Onboarding Success, all of these should be removed in the future
-import STAX_LIGHT_CONFIRM_LOCKSCREEN from "~/renderer/animations/stax/light/frame.json";
-import STAX_DARK_CONFIRM_LOCKSCREEN from "~/renderer/animations/stax/dark/frame.json";
-
 import FLEX_LIGHT_ONBOARDING_SUCCESS from "~/renderer/animations/flex/light/onboardingSuccess.json";
 import FLEX_DARK_ONBOARDING_SUCCESS from "~/renderer/animations/flex/dark/onboardingSuccess.json";
-import FLEX_LIGHT_CONFIRM_LOCKSCREEN from "~/renderer/animations/flex/light/confirmLockscreen.json";
-import FLEX_DARK_CONFIRM_LOCKSCREEN from "~/renderer/animations/flex/dark/confirmLockscreen.json";
-
-import APEX_LIGHT_CONFIRM_LOCKSCREEN from "~/renderer/animations/apex/light/confirmLockscreen.json";
-import APEX_DARK_CONFIRM_LOCKSCREEN from "~/renderer/animations/apex/dark/confirmLockscreen.json";
 
 type ThemedAnimation = Record<Theme["theme"], Record<string, unknown>>;
 
@@ -235,163 +227,6 @@ const nanoSP: DeviceAnimations = {
   },
 };
 
-const stax: DeviceAnimations = {
-  plugAndPinCode: {
-    light: STAX_LIGHT_PIN,
-    dark: STAX_DARK_PIN,
-  },
-  enterPinCode: {
-    light: STAX_LIGHT_PIN,
-    dark: STAX_DARK_PIN,
-  },
-  quitApp: {
-    light: STAX_LIGHT_CONTINUE,
-    dark: STAX_DARK_CONTINUE,
-  },
-  allowManager: {
-    light: STAX_LIGHT_CONTINUE,
-    dark: STAX_DARK_CONTINUE,
-  },
-  openApp: {
-    light: STAX_LIGHT_CONTINUE,
-    dark: STAX_DARK_CONTINUE,
-  },
-  verify: {
-    light: STAX_LIGHT_CONTINUE,
-    dark: STAX_DARK_CONTINUE,
-  },
-  sign: {
-    light: STAX_LIGHT_CONTINUE,
-    dark: STAX_DARK_CONTINUE,
-  },
-  firmwareUpdating: {
-    light: STAX_LIGHT_PIN,
-    dark: STAX_DARK_PIN,
-  },
-  installLoading: {
-    light: STAX_LIGHT_CONTINUE,
-    dark: STAX_DARK_CONTINUE,
-  },
-  confirmLockscreen: {
-    light: STAX_LIGHT_CONFIRM_LOCKSCREEN,
-    dark: STAX_DARK_CONFIRM_LOCKSCREEN,
-  },
-  recoverWithProtect: {
-    light: STAX_LIGHT_CONTINUE,
-    dark: STAX_DARK_CONTINUE,
-  },
-  connectionSuccess: {
-    light: STAX_LIGHT_CONTINUE,
-    dark: STAX_DARK_CONTINUE,
-  },
-};
-
-const europa: DeviceAnimations<AnimationKey | "onboardingSuccess"> = {
-  plugAndPinCode: {
-    light: FLEX_LIGHT_PIN,
-    dark: FLEX_DARK_PIN,
-  },
-  enterPinCode: {
-    light: FLEX_LIGHT_PIN,
-    dark: FLEX_DARK_PIN,
-  },
-  quitApp: {
-    light: FLEX_LIGHT_CONTINUE,
-    dark: FLEX_DARK_CONTINUE,
-  },
-  allowManager: {
-    light: FLEX_LIGHT_CONTINUE,
-    dark: FLEX_DARK_CONTINUE,
-  },
-  openApp: {
-    light: FLEX_LIGHT_CONTINUE,
-    dark: FLEX_DARK_CONTINUE,
-  },
-  verify: {
-    light: FLEX_LIGHT_CONTINUE,
-    dark: FLEX_DARK_CONTINUE,
-  },
-  sign: {
-    light: FLEX_LIGHT_CONTINUE,
-    dark: FLEX_DARK_CONTINUE,
-  },
-  firmwareUpdating: {
-    light: FLEX_LIGHT_PIN,
-    dark: FLEX_DARK_PIN,
-  },
-  installLoading: {
-    light: FLEX_LIGHT_CONTINUE,
-    dark: FLEX_DARK_CONTINUE,
-  },
-  confirmLockscreen: {
-    light: FLEX_LIGHT_CONFIRM_LOCKSCREEN,
-    dark: FLEX_DARK_CONFIRM_LOCKSCREEN,
-  },
-  recoverWithProtect: {
-    light: FLEX_LIGHT_CONTINUE,
-    dark: FLEX_DARK_CONTINUE,
-  },
-  connectionSuccess: {
-    light: FLEX_LIGHT_CONTINUE,
-    dark: FLEX_DARK_CONTINUE,
-  },
-  onboardingSuccess: {
-    light: FLEX_LIGHT_ONBOARDING_SUCCESS,
-    dark: FLEX_DARK_ONBOARDING_SUCCESS,
-  },
-};
-
-const apex: DeviceAnimations = {
-  plugAndPinCode: {
-    light: APEX_LIGHT_PIN,
-    dark: APEX_DARK_PIN,
-  },
-  enterPinCode: {
-    light: APEX_LIGHT_PIN,
-    dark: APEX_DARK_PIN,
-  },
-  quitApp: {
-    light: APEX_LIGHT_CONTINUE,
-    dark: APEX_DARK_CONTINUE,
-  },
-  allowManager: {
-    light: APEX_LIGHT_CONTINUE,
-    dark: APEX_DARK_CONTINUE,
-  },
-  openApp: {
-    light: APEX_LIGHT_CONTINUE,
-    dark: APEX_DARK_CONTINUE,
-  },
-  verify: {
-    light: APEX_LIGHT_CONTINUE,
-    dark: APEX_DARK_CONTINUE,
-  },
-  sign: {
-    light: APEX_LIGHT_CONTINUE,
-    dark: APEX_DARK_CONTINUE,
-  },
-  firmwareUpdating: {
-    light: APEX_LIGHT_PIN,
-    dark: APEX_DARK_PIN,
-  },
-  installLoading: {
-    light: APEX_LIGHT_CONTINUE,
-    dark: APEX_DARK_CONTINUE,
-  },
-  confirmLockscreen: {
-    light: APEX_LIGHT_CONFIRM_LOCKSCREEN,
-    dark: APEX_DARK_CONFIRM_LOCKSCREEN,
-  },
-  recoverWithProtect: {
-    light: APEX_LIGHT_CONTINUE,
-    dark: APEX_DARK_CONTINUE,
-  },
-  connectionSuccess: {
-    light: APEX_LIGHT_CONTINUE,
-    dark: APEX_DARK_CONTINUE,
-  },
-};
-
 const blue: DeviceAnimations = {
   plugAndPinCode: {
     light: BLUE_LIGHT_plugAndPinCode,
@@ -444,23 +279,164 @@ const blue: DeviceAnimations = {
   },
 };
 
-const animations = { nanoX, nanoS, nanoSP, stax, europa, apex, blue };
+const stax: DeviceAnimations = {
+  plugAndPinCode: {
+    light: STAX_LIGHT_PIN,
+    dark: STAX_DARK_PIN,
+  },
+  enterPinCode: {
+    light: STAX_LIGHT_PIN,
+    dark: STAX_DARK_PIN,
+  },
+  quitApp: {
+    light: STAX_LIGHT_CONTINUE,
+    dark: STAX_DARK_CONTINUE,
+  },
+  allowManager: {
+    light: STAX_LIGHT_CONTINUE,
+    dark: STAX_DARK_CONTINUE,
+  },
+  openApp: {
+    light: STAX_LIGHT_CONTINUE,
+    dark: STAX_DARK_CONTINUE,
+  },
+  verify: {
+    light: STAX_LIGHT_CONTINUE,
+    dark: STAX_DARK_CONTINUE,
+  },
+  sign: {
+    light: STAX_LIGHT_CONTINUE,
+    dark: STAX_DARK_CONTINUE,
+  },
+  firmwareUpdating: {
+    light: STAX_LIGHT_PIN,
+    dark: STAX_DARK_PIN,
+  },
+  installLoading: {
+    light: STAX_LIGHT_CONTINUE,
+    dark: STAX_DARK_CONTINUE,
+  },
+  recoverWithProtect: {
+    light: STAX_LIGHT_CONTINUE,
+    dark: STAX_DARK_CONTINUE,
+  },
+  connectionSuccess: {
+    light: STAX_LIGHT_CONTINUE,
+    dark: STAX_DARK_CONTINUE,
+  },
+};
+
+const europa: DeviceAnimations = {
+  plugAndPinCode: {
+    light: FLEX_LIGHT_PIN,
+    dark: FLEX_DARK_PIN,
+  },
+  enterPinCode: {
+    light: FLEX_LIGHT_PIN,
+    dark: FLEX_DARK_PIN,
+  },
+  quitApp: {
+    light: FLEX_LIGHT_CONTINUE,
+    dark: FLEX_DARK_CONTINUE,
+  },
+  allowManager: {
+    light: FLEX_LIGHT_CONTINUE,
+    dark: FLEX_DARK_CONTINUE,
+  },
+  openApp: {
+    light: FLEX_LIGHT_CONTINUE,
+    dark: FLEX_DARK_CONTINUE,
+  },
+  verify: {
+    light: FLEX_LIGHT_CONTINUE,
+    dark: FLEX_DARK_CONTINUE,
+  },
+  sign: {
+    light: FLEX_LIGHT_CONTINUE,
+    dark: FLEX_DARK_CONTINUE,
+  },
+  firmwareUpdating: {
+    light: FLEX_LIGHT_PIN,
+    dark: FLEX_DARK_PIN,
+  },
+  installLoading: {
+    light: FLEX_LIGHT_CONTINUE,
+    dark: FLEX_DARK_CONTINUE,
+  },
+  recoverWithProtect: {
+    light: FLEX_LIGHT_CONTINUE,
+    dark: FLEX_DARK_CONTINUE,
+  },
+  connectionSuccess: {
+    light: FLEX_LIGHT_CONTINUE,
+    dark: FLEX_DARK_CONTINUE,
+  },
+  onboardingSuccess: {
+    light: FLEX_LIGHT_ONBOARDING_SUCCESS,
+    dark: FLEX_DARK_ONBOARDING_SUCCESS,
+  },
+};
+
+const apex: DeviceAnimations = {
+  plugAndPinCode: {
+    light: APEX_LIGHT_PIN,
+    dark: APEX_DARK_PIN,
+  },
+  enterPinCode: {
+    light: APEX_LIGHT_PIN,
+    dark: APEX_DARK_PIN,
+  },
+  quitApp: {
+    light: APEX_LIGHT_CONTINUE,
+    dark: APEX_DARK_CONTINUE,
+  },
+  allowManager: {
+    light: APEX_LIGHT_CONTINUE,
+    dark: APEX_DARK_CONTINUE,
+  },
+  openApp: {
+    light: APEX_LIGHT_CONTINUE,
+    dark: APEX_DARK_CONTINUE,
+  },
+  verify: {
+    light: APEX_LIGHT_CONTINUE,
+    dark: APEX_DARK_CONTINUE,
+  },
+  sign: {
+    light: APEX_LIGHT_CONTINUE,
+    dark: APEX_DARK_CONTINUE,
+  },
+  firmwareUpdating: {
+    light: APEX_LIGHT_PIN,
+    dark: APEX_DARK_PIN,
+  },
+  installLoading: {
+    light: APEX_LIGHT_CONTINUE,
+    dark: APEX_DARK_CONTINUE,
+  },
+  recoverWithProtect: {
+    light: APEX_LIGHT_CONTINUE,
+    dark: APEX_DARK_CONTINUE,
+  },
+  connectionSuccess: {
+    light: APEX_LIGHT_CONTINUE,
+    dark: APEX_DARK_CONTINUE,
+  },
+};
+
+const animations = { nanoX, nanoS, nanoSP, blue, stax, europa, apex };
 
 export const getDeviceAnimation = (
-  modelId: DeviceModelId,
+  deviceModelId: DeviceModelId,
   theme: Theme["theme"],
   key: AnimationKey | "onboardingSuccess",
 ) => {
-  const animationModelId = (process.env.OVERRIDE_MODEL_ID as DeviceModelId) || modelId;
-
+  const animationModelId = (process.env.OVERRIDE_MODEL_ID as DeviceModelId) || deviceModelId;
   // Handles the case where OVERRIDE_MODEL_ID is incorrect
   const animationModel = animations[animationModelId] || animations.nanoX;
-  const animationKey: ThemedAnimation | undefined =
-    animationModel[animationModelId === "europa" ? key : (key as AnimationKey)];
-
+  const animationKey: ThemedAnimation | null = animationModel[key] ?? null;
   if (!animationKey) {
     return null;
   }
-
   return animationKey[theme];
 };

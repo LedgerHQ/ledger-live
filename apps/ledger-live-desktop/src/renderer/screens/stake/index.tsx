@@ -16,6 +16,7 @@ import {
   openAssetAndAccountDrawer,
   useModularDrawerVisibility,
 } from "LLD/features/ModularDrawer";
+import { setFlowValue, setSourceValue } from "~/renderer/reducers/modularDrawer";
 
 const DRAWER_FLOW = "stake";
 
@@ -124,6 +125,9 @@ const useStakeFlow = () => {
       entryPoint,
       returnTo,
     }: StakeFlowProps = {}) => {
+      dispatch(setFlowValue(DRAWER_FLOW));
+      dispatch(setSourceValue(source || ""));
+
       const cryptoCurrencies = filterCurrencies(listCurrencies(true), {
         currencies: currencies || list,
       });
@@ -152,8 +156,6 @@ const useStakeFlow = () => {
           useCase: "earn",
           onSuccess,
           onCancel: handleRequestClose,
-          flow: DRAWER_FLOW,
-          source: source ?? "",
         });
       } else {
         setDrawer(
@@ -180,6 +182,7 @@ const useStakeFlow = () => {
       }
     },
     [
+      dispatch,
       handleAccountSelected,
       handleRequestClose,
       history.location.pathname,

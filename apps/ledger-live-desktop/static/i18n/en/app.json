@@ -1874,7 +1874,12 @@
         "default": "Verify the Swap details on your device before sending it. The addresses are exchanged securely so you don’t have to verify them.",
         "provider": "Verify the Swap details on your device before sending it. {{providerName}} may need to perform additional verification for some transactions, resulting in a delay."
       },
+      "simpleViewNotice": {
+        "default": "Verify the swap details on your Ledger before sending it.",
+        "provider": "Verify the Swap details on your device before sending it."
+      },
       "confirm": "Confirm Swap transaction",
+      "confirmSwap": "Confirm swap operation on device",
       "amountSent": "Amount to send",
       "amountReceived": "Amount to receive",
       "amountReceivedFloat": "Amount to receive before service fees",
@@ -2240,6 +2245,16 @@
     "title": "Receive",
     "successTitle": "Address shared securely",
     "steps": {
+      "options": {
+        "fromBank": {
+          "title": "From a bank account",
+          "description": "Deposit USD or EUR"
+        },
+        "fromCrypto": {
+          "title": "From a crypto address",
+          "description": "Receive crypto"
+        }
+      },
       "chooseAccount": {
         "title": "Account",
         "label": "Account to credit",
@@ -6467,6 +6482,9 @@
     },
     "EthAppPleaseEnableContractData": {
       "title": "Please enable Blind signing or Contract data in the Ethereum app Settings"
+    },
+    "CeloAppPleaseEnableContractData": {
+      "title": "Please enable Contract data in the Celo app Settings"
     },
     "InvalidXRPTag": {
       "title": "Invalid XRP Destination tag"

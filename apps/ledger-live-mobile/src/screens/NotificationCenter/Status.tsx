@@ -15,7 +15,7 @@ const Container = styled(SettingsNavigationScrollView)``;
 const IncidentBox = styled(Flex)``;
 
 export default function StatusCenter() {
-  const { incidents } = useFilteredServiceStatus();
+  const { incidents } = useFilteredServiceStatus({ entryPoint: "notifications" });
   const { colors, space } = useTheme();
 
   const ListItem = (incident: Incident) => {

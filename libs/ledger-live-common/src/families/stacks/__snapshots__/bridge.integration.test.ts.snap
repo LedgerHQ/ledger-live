@@ -3,17 +3,17 @@
 exports[`stacks currency bridge scanAccounts stacks seed 1 1`] = `
 [
   {
-    "balance": "2074969",
+    "balance": "2084969",
     "currencyId": "stacks",
     "derivationMode": "",
     "freshAddress": "SP3KS7VMY2ZNE6SB88PHR4SKRK2EEPHS8N8MCCBR9",
     "freshAddressPath": "44'/5757'/0'/0/0",
     "id": "js:2:stacks:022a460decc9dba8c452927fecb33d7ae25a8d79dc5442b84feaf8f3aa0e2b575d:",
     "index": 0,
-    "operationsCount": 3,
+    "operationsCount": 4,
     "pendingOperations": [],
     "seedIdentifier": "022a460decc9dba8c452927fecb33d7ae25a8d79dc5442b84feaf8f3aa0e2b575d",
-    "spendableBalance": "2074969",
+    "spendableBalance": "2084969",
     "swapHistory": [],
     "syncHash": undefined,
     "used": true,
@@ -218,6 +218,26 @@ exports[`stacks currency bridge scanAccounts stacks seed 1 2`] = `
       "transactionSequenceNumber": 4,
       "type": "IN",
       "value": "100000",
+    },
+    {
+      "accountId": "js:2:stacks:022a460decc9dba8c452927fecb33d7ae25a8d79dc5442b84feaf8f3aa0e2b575d:",
+      "blockHash": "0x1f55e0b680d0651989d171e41949b4d83d28149838ca304cadcfcbd09ed57654",
+      "blockHeight": 989216,
+      "extra": {
+        "memo": "",
+      },
+      "fee": "400",
+      "hash": "0xf6ffba28055e50744b886982d03c58f7f9bb3ebe42607e80548dbaf06850a407",
+      "id": "js:2:stacks:022a460decc9dba8c452927fecb33d7ae25a8d79dc5442b84feaf8f3aa0e2b575d:-0xf6ffba28055e50744b886982d03c58f7f9bb3ebe42607e80548dbaf06850a407-IN",
+      "recipients": [
+        "SP3KS7VMY2ZNE6SB88PHR4SKRK2EEPHS8N8MCCBR9",
+      ],
+      "senders": [
+        "SP2417H88DQFN7FNDMSKM9N0B3Q6GNGEM40W7ZAZW",
+      ],
+      "transactionSequenceNumber": 372,
+      "type": "IN",
+      "value": "10000",
     },
   ],
   [

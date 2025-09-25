@@ -2,6 +2,7 @@ import BigNumber from "bignumber.js";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import * as nodeModule from "../network/node";
 import * as explorerModule from "../network/explorer";
+import * as getStakesModule from "./getStakes";
 import { getBalance } from ".";
 
 describe("getBalance", () => {
@@ -10,7 +11,23 @@ describe("getBalance", () => {
       "native balance only", // test description
       { lastTokenOperations: [] }, // operation
       {}, // token balances (empty)
-      [{ value: BigInt("10000000000000000000000"), asset: { type: "native" } }], // expected
+      [
+        {
+          value: BigInt("10000000000000000000000"),
+          asset: { type: "native" },
+        },
+        {
+          value: BigInt("10000000000000000000000"),
+          asset: { type: "native" },
+          stake: {
+            uid: "address",
+            address: "address",
+            state: "active",
+            asset: { type: "native" },
+            amount: BigInt("10000000000000000000000"),
+          },
+        },
+      ], // expected
     ],
     [
       "native and token balances", // test description
@@ -19,7 +36,21 @@ describe("getBalance", () => {
       }, // operations
       { "0x123": "1000000", "0x456": "2000000" }, // token balances
       [
-        { value: BigInt("10000000000000000000000"), asset: { type: "native" } }, // native balance
+        {
+          value: BigInt("10000000000000000000000"),
+          asset: { type: "native" },
+        }, // native balance
+        {
+          value: BigInt("10000000000000000000000"),
+          asset: { type: "native" },
+          stake: {
+            uid: "address",
+            address: "address",
+            state: "active",
+            asset: { type: "native" },
+            amount: BigInt("10000000000000000000000"),
+          },
+        }, // stake
         {
           value: BigInt("1000000"),
           asset: { type: "erc20", assetReference: "0x123", assetOwner: "address" },
@@ -46,6 +77,40 @@ describe("getBalance", () => {
       getLastOperations: jest.fn().mockResolvedValue(operations),
     } as any);
 
+    // Mock getStakes to return the expected stake data
+    jest.spyOn(getStakesModule, "getStakes").mockResolvedValue({
+      items: [
+        {
+          uid: "address",
+          address: "address",
+          state: "active",
+          asset: { type: "native" },
+          amount: BigInt("10000000000000000000000"),
+        },
+      ],
+    });
+
     expect(await getBalance({} as CryptoCurrency, "address")).toEqual(expected);
+  });
+
+  it("returns empty stake when balance is zero", async () => {
+    jest.spyOn(nodeModule, "getNodeApi").mockReturnValue({
+      getCoinBalance: jest.fn().mockResolvedValue(new BigNumber("0")),
+    } as any);
+
+    jest.spyOn(explorerModule, "getExplorerApi").mockReturnValue({
+      getLastOperations: jest.fn().mockResolvedValue({ lastTokenOperations: [] }),
+    } as any);
+
+    // Mock getStakes to return empty stakes
+    jest.spyOn(getStakesModule, "getStakes").mockResolvedValue({
+      items: [],
+    });
+
+    const result = await getBalance({} as CryptoCurrency, "address");
+    expect(result[0]).toEqual({
+      value: BigInt("0"),
+      asset: { type: "native" },
+    });
   });
 });

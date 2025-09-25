@@ -30,6 +30,7 @@ import { useSelector } from "react-redux";
 import {
   hasClosedNetworkBannerSelector,
   hasClosedWithdrawBannerSelector,
+  isOnboardingFlowSelector,
 } from "~/reducers/settings";
 import { urls } from "~/utils/urls";
 
@@ -39,6 +40,7 @@ export default function ReceiveFundsNavigator() {
   const route = useRoute();
   const hasClosedWithdrawBanner = useSelector(hasClosedWithdrawBannerSelector);
   const hasClosedNetworkBanner = useSelector(hasClosedNetworkBannerSelector);
+  const isOnboardingFlow = useSelector(isOnboardingFlowSelector);
 
   const onClose = useCallback(() => {
     track("button_clicked", {
@@ -50,9 +52,14 @@ export default function ReceiveFundsNavigator() {
   const stackNavigationConfig = useMemo(
     () => ({
       ...getStackNavigatorConfig(colors, true),
-      headerRight: () => <NavigationHeaderCloseButtonAdvanced onClose={onClose} />,
+      headerRight: () => (
+        <NavigationHeaderCloseButtonAdvanced
+          onClose={onClose}
+          isOnboardingFlow={isOnboardingFlow}
+        />
+      ),
     }),
-    [colors, onClose],
+    [colors, onClose, isOnboardingFlow],
   );
 
   const onConnectDeviceBack = useCallback((navigation: NavigationProp<Record<string, unknown>>) => {
@@ -91,7 +98,12 @@ export default function ReceiveFundsNavigator() {
         options={{
           headerLeft: () => <NavigationHeaderBackButton />,
           headerTitle: "",
-          headerRight: () => <NavigationHeaderCloseButtonAdvanced onClose={onClose} />,
+          headerRight: () => (
+            <NavigationHeaderCloseButtonAdvanced
+              onClose={onClose}
+              isOnboardingFlow={isOnboardingFlow}
+            />
+          ),
         }}
       />
 
@@ -106,7 +118,10 @@ export default function ReceiveFundsNavigator() {
               {hasClosedNetworkBanner && (
                 <HelpButton eventButton="Choose a network article" url={urls.chooseNetwork} />
               )}
-              <NavigationHeaderCloseButtonAdvanced onClose={onClose} />
+              <NavigationHeaderCloseButtonAdvanced
+                onClose={onClose}
+                isOnboardingFlow={isOnboardingFlow}
+              />
             </Flex>
           ),
         }}
@@ -135,7 +150,7 @@ export default function ReceiveFundsNavigator() {
               title={t("transfer.receive.stepperHeader.connectDevice")}
             />
           ),
-          ...addAccountsSelectDeviceHeaderOptions(onClose),
+          ...addAccountsSelectDeviceHeaderOptions(onClose, isOnboardingFlow),
         }}
       />
 
@@ -192,6 +207,7 @@ export default function ReceiveFundsNavigator() {
                 onClose={
                   route.params.verified ? onVerificationConfirmationClose : onConfirmationClose
                 }
+                isOnboardingFlow={isOnboardingFlow}
               />
             </Flex>
           ),

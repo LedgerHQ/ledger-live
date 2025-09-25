@@ -5,7 +5,6 @@ protocols:
   schemes:
     - ledgerlive
 
-beforePack: scripts/beforePack.js
 
 mac:
   artifactName: ${name}-${version}-${os}.${ext}
@@ -80,3 +79,7 @@ files:
       - "**/*.node"
   # Exclude files
   - "!node_modules"
+
+# Disable native module rebuilding since we removed all native dependencies (node-hid, usb)
+buildDependenciesFromSource: false
+npmRebuild: false

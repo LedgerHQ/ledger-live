@@ -6,7 +6,7 @@ interface Props {
   nbItems?: number;
 }
 const SkeletonList = ({ nbItems }: Props) => (
-  <Flex flexDirection="column" flex="1 1 auto" overflow="hidden" rowGap="8px">
+  <Flex flexDirection="column" flex={1} overflow="hidden" rowGap="8px">
     {Array.from({ length: nbItems ?? 10 }, (_, index) => (
       <Skeleton key={index} barHeight={64} minHeight={64} />
     ))}
