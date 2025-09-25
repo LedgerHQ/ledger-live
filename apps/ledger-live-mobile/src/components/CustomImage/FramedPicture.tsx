@@ -119,7 +119,6 @@ const FramedPicture: React.FC<Props> = ({
               }}
             />
           ) : null}
-          {/* This is a temporary solution while we wait for the new assets */}
           <AbsoluteInnerImageContainer
             style={{
               width: innerWidth,

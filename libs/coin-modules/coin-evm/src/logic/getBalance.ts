@@ -5,6 +5,7 @@ import { getNodeApi } from "../network/node";
 import { getExplorerApi } from "../network/explorer";
 import { NodeApi } from "../network/node/types";
 import { ExplorerApi } from "../network/explorer/types";
+import { getStakes } from "./getStakes";
 
 export const TOKEN_BALANCE_BATCH_SIZE = 10;
 
@@ -46,13 +47,30 @@ async function getTokenBalances(
   nodeApi: NodeApi,
   explorerApi: ExplorerApi,
 ): Promise<Balance[]> {
-  // Get user's token operations to get all his contract address for the next balance elements
-  const { lastTokenOperations } = await explorerApi.getLastOperations(
-    currency,
-    address,
-    `js:2:${currency.id}:${address}:`,
-    0,
-  );
+  const balances: Balance[] = [];
+
+  // Execute staking and token operations in parallel for better performance
+  const [stakingResult, tokenOperationsResult] = await Promise.allSettled([
+    getStakes(currency, address),
+    explorerApi.getLastOperations(currency, address, `js:2:${currency.id}:${address}:`, 0),
+  ]);
+
+  // Add staking positions to balances (with error handling)
+  if (stakingResult.status === "fulfilled") {
+    stakingResult.value.items.forEach(stake => {
+      balances.push({
+        value: stake.amount,
+        asset: stake.asset,
+        stake,
+      });
+    });
+  }
+
+  // Process token operations (with error handling)
+  const lastTokenOperations =
+    tokenOperationsResult.status === "fulfilled"
+      ? tokenOperationsResult.value.lastTokenOperations
+      : [];
 
   // Collect unique contract addresses and their types
   const contracts = new Set<string>();
@@ -78,7 +96,6 @@ async function getTokenBalances(
   }
 
   // Fetch balances in parallel (by batches)
-  const balances: Balance[] = [];
   const contractsArray = Array.from(contracts);
   for (let i = 0; i < contractsArray.length; i += TOKEN_BALANCE_BATCH_SIZE) {
     const chunk = contractsArray.slice(i, i + TOKEN_BALANCE_BATCH_SIZE);

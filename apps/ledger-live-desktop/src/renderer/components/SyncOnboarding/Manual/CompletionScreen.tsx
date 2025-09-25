@@ -1,31 +1,47 @@
-import React, { useEffect } from "react";
-import { Flex } from "@ledgerhq/react-ui";
+import React, { useEffect, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { DeviceModelId } from "@ledgerhq/devices";
+import { useHistory } from "react-router";
+import { Flex } from "@ledgerhq/react-ui";
+import { DeviceModelId } from "@ledgerhq/types-devices";
 import {
   saveSettings,
   setHasBeenUpsoldRecover,
   setHasRedirectedToPostOnboarding,
   setLastOnboardedDevice,
 } from "~/renderer/actions/settings";
-
 import StaxCompletionView from "./StaxCompletionView";
 import EuropaCompletionView from "./EuropaCompletionView";
 import ApexCompletionView from "./ApexCompletionView";
 import { lastSeenDeviceSelector } from "~/renderer/reducers/settings";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
-import { useHistory } from "react-router";
 import { useRedirectToPostOnboardingCallback } from "~/renderer/hooks/useAutoRedirectToPostOnboarding";
 
 const COMPLETION_SCREEN_TIMEOUT = 6000;
 
-const CompletionScreen = () => {
+function OnboardingSuccessView({ deviceModelId }: { deviceModelId: DeviceModelId }) {
+  switch (deviceModelId) {
+    case DeviceModelId.stax:
+      return <StaxCompletionView />;
+    case DeviceModelId.europa:
+      return <EuropaCompletionView />;
+    case DeviceModelId.apex:
+      return <ApexCompletionView />;
+    default:
+      return null;
+  }
+}
+
+export default function CompletionScreen() {
   const dispatch = useDispatch();
   const history = useHistory();
 
   const currentDevice = useSelector(getCurrentDevice);
   const lastSeenDevice = useSelector(lastSeenDeviceSelector);
-  const device = currentDevice || lastSeenDevice;
+
+  const deviceModelId = useMemo(() => {
+    const device = currentDevice || lastSeenDevice;
+    return device?.modelId || DeviceModelId.stax;
+  }, [currentDevice, lastSeenDevice]);
 
   const redirectToPostOnboarding = useRedirectToPostOnboardingCallback();
 
@@ -40,24 +56,9 @@ const CompletionScreen = () => {
     };
   }, [currentDevice, dispatch, history, redirectToPostOnboarding]);
 
-  const onboardingSuccessView = () => {
-    switch (device?.modelId) {
-      case DeviceModelId.stax:
-        return <StaxCompletionView />;
-      case DeviceModelId.europa:
-        return <EuropaCompletionView />;
-      case DeviceModelId.apex:
-        return <ApexCompletionView />;
-      default:
-        return null;
-    }
-  };
-
   return (
-    <Flex alignItems="center" width="100%" justifyContent="center">
-      {onboardingSuccessView()}
+    <Flex alignItems="center" justifyContent="center" width="100%">
+      <OnboardingSuccessView deviceModelId={deviceModelId} />
     </Flex>
   );
-};
-
-export default CompletionScreen;
+}

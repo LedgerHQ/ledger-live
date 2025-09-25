@@ -392,6 +392,12 @@ export class Account {
     "JC2dR4QRMt68r2h7Sjs5wshx1RdmDVrSbdL2jWBuVf2t",
     2,
   );
+  static readonly SOL_4 = new Account(
+    Currency.SOL,
+    "Solana 4",
+    "FKFMRmTEJ6wHMWviuDocuhsZoTi3DnypoPQXBUjCCTXM",
+    3,
+  );
 
   static readonly tBTC_1 = new Account(
     Currency.tBTC,

@@ -11,6 +11,7 @@ describe("EVM Staking - getStakes", () => {
 
   beforeEach(() => {
     jest.restoreAllMocks();
+    jest.spyOn(console, "error").mockImplementation(() => {});
   });
 
   it("should return stake objects with positive amounts for supported currencies", async () => {

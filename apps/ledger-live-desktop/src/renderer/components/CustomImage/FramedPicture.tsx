@@ -4,8 +4,6 @@ import styled, { useTheme } from "styled-components";
 import StyleProviderV3 from "~/renderer/styles/StyleProviderV3";
 import { getFramedPictureConfig, FramedPictureConfig } from "./framedPictureConfigs";
 import { CLSSupportedDeviceModelId } from "@ledgerhq/live-common/device/use-cases/isCustomLockScreenSupported";
-import { DeviceModelId } from "@ledgerhq/types-devices";
-import { FlexBoxProps } from "@ledgerhq/react-ui/components/layout/Flex/index";
 
 const absoluteFillObject = {
   position: "absolute",
@@ -67,35 +65,6 @@ const CheckButton = styled(Flex).attrs({
   ml: "auto",
 })``;
 
-function ConfirmationButton({
-  deviceModelId,
-  ...props
-}: {
-  deviceModelId: DeviceModelId;
-} & FlexBoxProps) {
-  switch (deviceModelId) {
-    case DeviceModelId.stax:
-      return (
-        <Flex {...props}>
-          <CheckButton>
-            <Icons.Check style={{ margin: "auto" }} color="constant.white" />
-          </CheckButton>
-        </Flex>
-      );
-    case DeviceModelId.europa:
-    case DeviceModelId.apex:
-      return (
-        <Flex {...props}>
-          <CheckButton>
-            <Icons.Check style={{ margin: "auto" }} />
-          </CheckButton>
-        </Flex>
-      );
-    default:
-      return null;
-  }
-}
-
 const FramedPicture: React.FC<Props> = ({
   source,
   loadingProgress = 1,
@@ -141,7 +110,6 @@ const FramedPicture: React.FC<Props> = ({
           <Flex height={frameHeight} justifyContent="center" width={frameWidth}>
             {background || null}
           </Flex>
-          {/* This is a temporary solution while we wait for the new assets */}
           <AbsoluteInnerImageContainer
             style={{
               top: innerTop,
@@ -182,8 +150,7 @@ const FramedPicture: React.FC<Props> = ({
             ) : null}
           </AbsoluteInnerImageContainer>
           {showConfirmationButton ? (
-            <ConfirmationButton
-              deviceModelId={deviceModelId}
+            <Flex
               width={`${innerWidth}px`}
               height={`${BUTTON_HEIGHT}px`}
               ml={`${innerLeft}px`}
@@ -193,7 +160,11 @@ const FramedPicture: React.FC<Props> = ({
               overflow={"hidden"}
               borderBottomLeftRadius={borderLeftRadius}
               borderBottomRightRadius={borderRightRadius}
-            />
+            >
+              <CheckButton>
+                <Icons.Check style={{ margin: "auto" }} color="constant.white" />
+              </CheckButton>
+            </Flex>
           ) : null}
         </StyleProviderV3>
       </Container>

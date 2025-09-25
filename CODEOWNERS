@@ -188,6 +188,7 @@ apps/ledger-live-mobile/src/components/ServicesWidget/Protect/          @ledgerh
 apps/ledger-live-mobile/src/components/WebRecoverPlayer/                @ledgerhq/recover-software
 apps/ledger-live-mobile/src/screens/Protect/                            @ledgerhq/recover-software
 libs/ledger-live-common/src/hooks/recoverFeatureFlag.ts                 @ledgerhq/recover-software
+apps/ledger-live-mobile/src/screens/SyncOnboarding/TwoStepStepper/      @ledgerhq/recover-software
 
 # Live hub overrides
 

@@ -67,7 +67,6 @@ import {
   SettingsSetSelectedTabPortfolioAssetsPayload,
   SettingsSetIsRebornPayload,
   SettingsIsOnboardingFlowPayload,
-  SettingsSetRtkConsoleEnabledPayload,
 } from "./types";
 import { ImageType } from "~/components/CustomImage/types";
 
@@ -292,10 +291,6 @@ export const setSelectedTabPortfolioAssets =
   createAction<SettingsSetSelectedTabPortfolioAssetsPayload>(
     SettingsActionTypes.SET_SELECTED_TAB_PORTFOLIO_ASSETS,
   );
-
-export const setRtkConsoleEnabled = createAction<SettingsSetRtkConsoleEnabledPayload>(
-  SettingsActionTypes.SET_RTK_CONSOLE_ENABLED,
-);
 
 type PortfolioRangeOption = {
   key: PortfolioRange;

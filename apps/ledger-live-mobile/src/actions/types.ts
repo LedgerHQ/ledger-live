@@ -313,7 +313,6 @@ export enum SettingsActionTypes {
   SET_LEDGER_SYNC_ONBOARDING = "SET_LEDGER_SYNC_ONBOARDING",
   SET_MEV_PROTECTION = "SET_MEV_PROTECTION",
   SET_SELECTED_TAB_PORTFOLIO_ASSETS = "SET_SELECTED_TAB_PORTFOLIO_ASSETS",
-  SET_RTK_CONSOLE_ENABLED = "SET_RTK_CONSOLE_ENABLED",
 
   ADD_STARRED_MARKET_COINS = "ADD_STARRED_MARKET_COINS",
   REMOVE_STARRED_MARKET_COINS = "REMOVE_STARRED_MARKET_COINS",
@@ -410,7 +409,6 @@ export type SettingsAddStarredMarketcoinsPayload = Unpacked<SettingsState["starr
 export type SettingsRemoveStarredMarketcoinsPayload = Unpacked<SettingsState["starredMarketCoins"]>;
 export type SettingsSetSelectedTabPortfolioAssetsPayload =
   SettingsState["selectedTabPortfolioAssets"];
-export type SettingsSetRtkConsoleEnabledPayload = boolean;
 
 export type SettingsPayload =
   | SettingsImportPayload
@@ -466,7 +464,6 @@ export type SettingsPayload =
   | SettingsSetFromLedgerSyncOnboardingPayload
   | SettingsSetMevProtectionPayload
   | SettingsSetSelectedTabPortfolioAssetsPayload
-  | SettingsSetRtkConsoleEnabledPayload
   | SettingsAddStarredMarketcoinsPayload
   | SettingsRemoveStarredMarketcoinsPayload;
 

@@ -1,6 +1,7 @@
 import { ComponentProps } from "react";
 import { Image, ImageProps } from "react-native";
 import { CLSSupportedDeviceModelId } from "@ledgerhq/live-common/device/use-cases/isCustomLockScreenSupported";
+import { DeviceModelId } from "@ledgerhq/types-devices";
 import STAX_DEVICE from "./assets/stax_device.png";
 import FLEX_DEVICE from "./assets/flex_device.png";
 import APEX_DEVICE from "./assets/apex_device.png";
@@ -77,9 +78,9 @@ export type FramedPictureConfig = {
   scaleCoefficient?: number;
 };
 
+/*  The dimensions of the Stax device image */
 const STAX_FRAME_HEIGHT = 425;
 const STAX_FRAME_WIDTH = 270;
-
 export const staxFrameConfig: Omit<FramedPictureConfig, "backgroundSource"> = {
   frameHeight: STAX_FRAME_HEIGHT,
   frameWidth: STAX_FRAME_WIDTH,
@@ -91,9 +92,9 @@ export const staxFrameConfig: Omit<FramedPictureConfig, "backgroundSource"> = {
   resizeMode: "cover",
 };
 
+/*  The dimensions of the Flex device image */
 const EUROPA_FRAME_WIDTH = 354;
 const EUROPA_FRAME_HEIGHT = 392;
-
 export const europaFrameConfig: Omit<FramedPictureConfig, "backgroundSource"> = {
   frameWidth: EUROPA_FRAME_WIDTH,
   frameHeight: EUROPA_FRAME_HEIGHT,
@@ -106,17 +107,32 @@ export const europaFrameConfig: Omit<FramedPictureConfig, "backgroundSource"> = 
   resizeMode: "cover",
 };
 
-const configs = {
-  stax: {
+/*  The dimensions of the Apex device image */
+const APEX_FRAME_WIDTH = 354;
+const APEX_FRAME_HEIGHT = 392;
+export const apexFrameConfig: Omit<FramedPictureConfig, "backgroundSource"> = {
+  frameWidth: APEX_FRAME_WIDTH,
+  frameHeight: APEX_FRAME_HEIGHT,
+  innerWidth: 224,
+  innerHeight: 282,
+  innerRight: 66,
+  innerTop: 29,
+  borderRightRadius: 4,
+  borderLeftRadius: 4,
+  resizeMode: "cover",
+};
+
+const configs: Record<CLSSupportedDeviceModelId, FramedPictureConfig> = {
+  [DeviceModelId.stax]: {
     ...staxFrameConfig,
     backgroundSource: STAX_DEVICE,
   },
-  europa: {
+  [DeviceModelId.europa]: {
     ...europaFrameConfig,
     backgroundSource: FLEX_DEVICE,
   },
-  apex: {
-    ...europaFrameConfig,
+  [DeviceModelId.apex]: {
+    ...apexFrameConfig,
     backgroundSource: APEX_DEVICE,
   },
 };

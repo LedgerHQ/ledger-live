@@ -1170,7 +1170,7 @@ const SwapDeviceConfirmation: React.FC<SwapConfirmationProps> = ({
   stateSettings,
   walletState,
 }) => {
-  const isDetailedViewEnabled = useFeature("ptxSwapconfirmSwapOnDevice")?.enabled ?? false;
+  const isDetailedViewEnabled = useFeature("ptxSwapDetailedView")?.enabled;
   const sourceAccountCurrency = exchange.fromCurrency;
   const targetAccountCurrency = exchange.toCurrency;
   const sourceAccountName =
