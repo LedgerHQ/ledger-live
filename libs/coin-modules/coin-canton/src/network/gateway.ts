@@ -274,7 +274,7 @@ export type OperationInfo =
 
 const getGatewayUrl = (currency: CryptoCurrency) => coinConfig.getCoinConfig(currency).gatewayUrl;
 const getNodeId = (currency: CryptoCurrency) =>
-  coinConfig.getCoinConfig(currency).nodeId || "ledger-devnet-stg";
+  coinConfig.getCoinConfig(currency).nodeId || "ledger-live-devnet";
 const getNetworkType = (currency: CryptoCurrency) => coinConfig.getCoinConfig(currency).networkType;
 
 const gatewayNetwork = <T, U = unknown>(req: LiveNetworkRequest<U>) => {

@@ -107,7 +107,7 @@ describe("onboard (devnet)", () => {
         expect(result.partyId).toBeDefined();
         expect(result.partyId).toBe(onboardResult.partyId);
       }
-    }, 30000);
+    }, 40000);
 
     it("should return false for non-onboarded account with fresh keypair", async () => {
       // GIVEN
