@@ -15,6 +15,14 @@ export type WSState = {
   version: number;
 };
 
+export type WalletSyncUserState = {
+  visualPending: boolean;
+  walletSyncError: Error | null;
+  onUserRefresh: () => void;
+};
+
+export type StoredWalletSyncUserState = Omit<WalletSyncUserState, "onUserRefresh">;
+
 export type WalletState = {
   // user's customized name for each account id
   accountNames: Map<string, string>;

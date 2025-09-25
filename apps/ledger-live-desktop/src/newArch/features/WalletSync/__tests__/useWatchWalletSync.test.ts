@@ -1,6 +1,7 @@
+import React from "react";
 import { renderHook } from "tests/testSetup";
 import { INITIAL_STATE as INITIAL_STATE_SETTINGS } from "~/renderer/reducers/settings";
-import { useWatchWalletSync } from "../hooks/useWatchWalletSync";
+import { useWalletSyncDesktop } from "../hooks/useWalletSyncDesktop";
 import {
   INSTANCES,
   lldWalletSyncFeatureFlag,
@@ -8,6 +9,10 @@ import {
   simpleTrustChain,
   walletSyncActivatedState,
 } from "./shared";
+import { useWatchWalletSync } from "@ledgerhq/live-wallet-sync-react";
+
+// eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+const mockUseWatchWalletSync = useWatchWalletSync as jest.MockedFunction<typeof useWatchWalletSync>;
 
 const INITIAL_STATE = {
   walletSync: {
@@ -35,19 +40,44 @@ jest.mock("../hooks/useTrustchainSdk", () => ({
   }),
 }));
 
-describe("useWatchWalletSync", () => {
+jest.mock("@ledgerhq/live-wallet-sync-react", () => ({
+  useWatchWalletSync: jest.fn(() => ({
+    visualPending: false,
+    walletSyncError: null,
+    onUserRefresh: jest.fn(),
+  })),
+  WalletSyncProvider: ({ children }: { children: React.ReactNode }) => children,
+  useWalletSyncBridgeContext: jest.fn(),
+}));
+
+describe("useWalletSyncDesktop", () => {
+  beforeEach(() => {
+    mockUseWatchWalletSync.mockReturnValue({
+      visualPending: false,
+      walletSyncError: null,
+      onUserRefresh: jest.fn(),
+    });
+  });
+
   it("should not run ledger sync watch loop when ff is disabled", async () => {
-    const { result, store } = renderHook(() => useWatchWalletSync(), {});
+    const { result, store } = renderHook(() => useWalletSyncDesktop(), {});
 
     expect(store.getState().settings.overriddenFeatureFlags.lldWalletSync).not.toBeDefined();
     expect(result.current.visualPending).toBe(false);
     expect(result.current.walletSyncError).toBe(null);
-    expect(result.current.onUserRefresh).toBeInstanceOf(Function);
+    expect(typeof result.current.onUserRefresh).toBe("function");
     expect(result.current.onUserRefresh).not.toThrow();
   });
 
   it("should run ledger sync watch loop when ff is enabled", async () => {
-    const { result, store } = renderHook(() => useWatchWalletSync(), {
+    // Update mock for this test case
+    mockUseWatchWalletSync.mockReturnValue({
+      visualPending: true,
+      walletSyncError: null,
+      onUserRefresh: jest.fn(),
+    });
+
+    const { result, store } = renderHook(() => useWalletSyncDesktop(), {
       initialState: INITIAL_STATE,
     });
 

@@ -10,8 +10,11 @@
       "nonImportedAccountInfos": [],
       "accountsData": { "accountNames": [], "starredAccountIds": [] }
     },
+    "walletSyncUserState": {
+      "visualPending": false,
+      "walletSyncError": null
+    },
     "settings": {
-      "readOnlyModeEnabled": false,
       "hasCompletedOnboarding": true,
       "counterValue": "USD",
       "language": "en",

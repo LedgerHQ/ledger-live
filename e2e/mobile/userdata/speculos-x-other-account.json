@@ -14385,6 +14385,10 @@
       "nonImportedAccountInfos": [],
       "accountsData": { "accountNames": [], "starredAccountIds": [] }
     },
+    "walletSyncUserState": {
+      "visualPending": false,
+      "walletSyncError": null
+    },
     "announcements": {
       "announcements": [],
       "seenIds": [],

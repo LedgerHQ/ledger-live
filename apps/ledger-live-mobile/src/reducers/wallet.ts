@@ -1,17 +1,17 @@
 import {
   HandlersPayloads,
   WalletHandlers,
-  initialState,
   WalletState,
-  handlers,
   accountNameWithDefaultSelector,
+  handlers,
+  initialState,
   walletSyncStateSelector,
 } from "@ledgerhq/live-wallet/store";
+import { DistantState } from "@ledgerhq/live-wallet/walletsync/index";
+import { AccountLike } from "@ledgerhq/types-live";
+import { useSelector } from "react-redux";
 import { handleActions } from "redux-actions";
 import { State } from "./types";
-import { useSelector } from "react-redux";
-import { AccountLike } from "@ledgerhq/types-live";
-import { DistantState } from "@ledgerhq/live-wallet/walletsync/index";
 
 export const walletSelector = (state: State): WalletState => state.wallet;
 
@@ -29,6 +29,8 @@ const getAccountName = (
 ): string | undefined => {
   return !account ? undefined : accountNameWithDefaultSelector(state.wallet, account);
 };
+
+/// Hooks
 
 export const useMaybeAccountName = (
   account: AccountLike | null | undefined,
@@ -48,6 +50,7 @@ export const useAccountName = (account: AccountLike) => {
 };
 
 export default handleActions<WalletState, HandlersPayloads[keyof HandlersPayloads]>(
+  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
   handlers as unknown as WalletHandlers<false>,
   initialState,
 );

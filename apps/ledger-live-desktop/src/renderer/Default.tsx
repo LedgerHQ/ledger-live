@@ -6,7 +6,6 @@ import { useDispatch, useSelector } from "react-redux";
 import TrackAppStart from "~/renderer/components/TrackAppStart";
 import { LiveApp } from "~/renderer/screens/platform";
 import { BridgeSyncProvider } from "~/renderer/bridge/BridgeSyncContext";
-import { WalletSyncProvider } from "LLD/features/WalletSync/components/WalletSyncContext";
 import { SyncNewAccounts } from "~/renderer/bridge/SyncNewAccounts";
 import Box from "~/renderer/components/Box/Box";
 import { useListenToHidDevices } from "./hooks/useListenToHidDevices";
@@ -60,6 +59,7 @@ import { useEnforceSupportedLanguage } from "./hooks/useEnforceSupportedLanguage
 import { useDeviceManagementKit } from "@ledgerhq/live-dmk-desktop";
 import { AppGeoBlocker } from "LLD/features/AppBlockers/components/AppGeoBlocker";
 import { AppVersionBlocker } from "LLD/features/AppBlockers/components/AppVersionBlocker";
+import { WalletSyncProvider } from "./components/WalletSyncProvider";
 
 const PlatformCatalog = lazy(() => import("~/renderer/screens/platform"));
 const Dashboard = lazy(() => import("~/renderer/screens/dashboard"));

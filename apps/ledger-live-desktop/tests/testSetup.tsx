@@ -1,6 +1,7 @@
 import { CountervaluesProvider } from "@ledgerhq/live-countervalues-react";
 import { CountervaluesMarketcapProvider } from "@ledgerhq/live-countervalues-react/CountervaluesMarketcapProvider";
 import { CounterValuesStateRaw } from "@ledgerhq/live-countervalues/lib-es/types";
+import { WalletSyncProvider as BaseWalletSyncProvider } from "@ledgerhq/live-wallet-sync-react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import {
   RenderHookResult,
@@ -17,6 +18,7 @@ import ContextMenuWrapper from "~/renderer/components/ContextMenu/ContextMenuWra
 import { useCountervaluesMarketcapBridge } from "~/renderer/components/CountervaluesMarketcapProvider";
 import { useCountervaluesBridge } from "~/renderer/components/CountervaluesProvider";
 import { FirebaseFeatureFlagsProvider } from "~/renderer/components/FirebaseFeatureFlags";
+import { useDesktopWalletSyncBridge } from "~/renderer/components/WalletSyncProvider";
 import type { ReduxStore } from "~/renderer/createStore";
 import createStore from "~/renderer/createStore";
 import DrawerProvider from "~/renderer/drawers/Provider";
@@ -56,6 +58,8 @@ type DeepPartial<T> = T extends Function
 
 config.disabled = true;
 
+/// SKELETON PROVIDERS
+
 function CountervaluesProviders({
   children,
   savedState,
@@ -74,6 +78,13 @@ function CountervaluesProviders({
     </CountervaluesMarketcapProvider>
   );
 }
+
+function WalletSyncTestProvider({ children }: { children: React.ReactNode }) {
+  const bridge = useDesktopWalletSyncBridge();
+  return <BaseWalletSyncProvider bridge={bridge}>{children}</BaseWalletSyncProvider>;
+}
+
+/// SETUP
 
 /**
  * A component that wraps the application with necessary context providers.
@@ -110,9 +121,11 @@ function Providers({
       <Provider store={store}>
         <FirebaseFeatureFlagsProvider getFeature={getFeature}>
           <MemoryRouter>
-            <CountervaluesProviders savedState={initialCountervalues}>
-              {withLiveApp ? <CustomLiveAppProvider>{content}</CustomLiveAppProvider> : content}
-            </CountervaluesProviders>
+            <WalletSyncTestProvider>
+              <CountervaluesProviders savedState={initialCountervalues}>
+                {withLiveApp ? <CustomLiveAppProvider>{content}</CustomLiveAppProvider> : content}
+              </CountervaluesProviders>
+            </WalletSyncTestProvider>
           </MemoryRouter>
         </FirebaseFeatureFlagsProvider>
       </Provider>
@@ -125,7 +138,9 @@ function EnhancedProviders({ children }: { children: React.ReactNode }): JSX.Ele
     <I18nextProvider i18n={i18n}>
       <DrawerProvider>
         <StyleProvider selectedPalette="dark">
-          <ContextMenuWrapper>{children}</ContextMenuWrapper>
+          <WalletSyncTestProvider>
+            <ContextMenuWrapper>{children}</ContextMenuWrapper>
+          </WalletSyncTestProvider>
         </StyleProvider>
       </DrawerProvider>
     </I18nextProvider>
@@ -216,6 +231,7 @@ function renderHook<Result, Props>(
     initialProps?: Props;
     initialState?: DeepPartial<State>;
     store?: ReduxStore;
+    minimal?: boolean;
   } = {},
 ): RenderHookResult<Result, Props> & { store: ReduxStore } {
   const {
@@ -223,13 +239,14 @@ function renderHook<Result, Props>(
     initialState = {},
     // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
     store = createStore({ state: initialState as State, dbMiddleware }),
+    minimal = true,
   } = options;
 
   return {
     store,
     ...rtlRenderHook(hook, {
       wrapper: ({ children }) => (
-        <Providers store={store} minimal>
+        <Providers store={store} minimal={minimal}>
           {children}
         </Providers>
       ),

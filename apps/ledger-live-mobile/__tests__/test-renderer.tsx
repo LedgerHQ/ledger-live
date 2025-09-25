@@ -3,6 +3,7 @@ import { INITIAL_STATE as TRUSTCHAIN_INITIAL_STATE } from "@ledgerhq/ledger-key-
 import { initialState as POST_ONBOARDING_INITIAL_STATE } from "@ledgerhq/live-common/postOnboarding/reducer";
 import { CountervaluesBridge, CountervaluesProvider } from "@ledgerhq/live-countervalues-react";
 import { initialState as WALLET_INITIAL_STATE } from "@ledgerhq/live-wallet/store";
+import { WalletSyncProvider } from "~/components/WalletSyncProvider";
 import { NavigationContainer } from "@react-navigation/native";
 import { configureStore } from "@reduxjs/toolkit";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -40,6 +41,7 @@ import { INITIAL_STATE as TOASTS_INITIAL_STATE } from "~/reducers/toast";
 import { State } from "~/reducers/types";
 import { INITIAL_STATE as WALLET_CONNECT_INITIAL_STATE } from "~/reducers/walletconnect";
 import { INITIAL_STATE as WALLETSYNC_INITIAL_STATE } from "~/reducers/walletSync";
+import { INITIAL_STATE as WALLET_SYNC_USER_STATE_INITIAL_STATE } from "~/reducers/walletSyncUserState";
 import { INITIAL_STATE as AUTH_INITIAL_STATE } from "~/reducers/auth";
 import StyleProvider from "~/StyleProvider";
 import CustomLiveAppProvider from "./CustomLiveAppProvider";
@@ -69,6 +71,7 @@ const INITIAL_STATE: State = {
   wallet: WALLET_INITIAL_STATE,
   walletconnect: WALLET_CONNECT_INITIAL_STATE,
   walletSync: WALLETSYNC_INITIAL_STATE,
+  walletSyncUserState: WALLET_SYNC_USER_STATE_INITIAL_STATE,
   auth: AUTH_INITIAL_STATE,
   assetsDataApi: assetsDataApi.reducer(undefined, { type: "INIT" }),
   tools: TOOLS_INITIAL_STATE,
@@ -189,7 +192,9 @@ function Providers({
   let providers = (
     <Provider store={store}>
       <FirebaseFeatureFlagsProvider getFeature={getFeature}>
-        <CountervaluesProviders store={store}>{extraProviders}</CountervaluesProviders>
+        <WalletSyncProvider>
+          <CountervaluesProviders store={store}>{extraProviders}</CountervaluesProviders>
+        </WalletSyncProvider>
       </FirebaseFeatureFlagsProvider>
     </Provider>
   );

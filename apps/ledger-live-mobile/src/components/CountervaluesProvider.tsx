@@ -4,7 +4,7 @@ import {
   useCountervaluesPolling,
 } from "@ledgerhq/live-countervalues-react";
 import { CounterValuesStateRaw } from "@ledgerhq/live-countervalues/types";
-import { flow } from "lodash/fp";
+import flow from "lodash/fp/flow";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { AppState, AppStateStatus } from "react-native";
 import { useDispatch } from "react-redux";

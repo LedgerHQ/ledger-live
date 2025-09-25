@@ -47,6 +47,10 @@
       "id": "08cf3393-c5eb-4ea7-92de-0deea22e3971"
     },
     "accounts": [],
-    "countervalues": {}
+    "countervalues": {},
+    "walletSyncUserState": {
+      "visualPending": false,
+      "walletSyncError": null
+    }
   }
 }

@@ -572,6 +572,22 @@ export type WalletSyncPayload =
   | WalletSyncSetActivateDrawer
   | WalletSyncSetActivateStep;
 
+// === WALLET SYNC USER STATE ACTIONS ===
+export enum WalletSyncUserStateActionTypes {
+  SET_WALLET_SYNC_USER_STATE = "SET_WALLET_SYNC_USER_STATE",
+  SET_WALLET_SYNC_PENDING = "SET_WALLET_SYNC_PENDING",
+  SET_WALLET_SYNC_ERROR = "SET_WALLET_SYNC_ERROR",
+}
+
+export type WalletSyncUserStateSetUserStatePayload =
+  import("@ledgerhq/live-wallet/store").StoredWalletSyncUserState;
+export type WalletSyncUserStateSetPendingPayload = boolean;
+export type WalletSyncUserStateSetErrorPayload = Error | null;
+export type WalletSyncUserStatePayload =
+  | WalletSyncUserStateSetUserStatePayload
+  | WalletSyncUserStateSetPendingPayload
+  | WalletSyncUserStateSetErrorPayload;
+
 // === AUTH ACTIONS ===
 export enum AuthActionTypes {
   INITIALIZE_AUTH_STATE = "AUTH_INITIALIZE_AUTH_STATE",
@@ -608,4 +624,5 @@ export type ActionsPayload =
   | Action<ProtectPayload>
   | Action<EarnPayload>
   | Action<MarketPayload>
+  | Action<WalletSyncUserStatePayload>
   | AnyAction;
