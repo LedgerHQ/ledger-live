@@ -40,17 +40,13 @@ const stacksSpecs: AppSpec<Transaction> = {
       transaction: ({ account, siblings, bridge }) => {
         const sibling = pickSiblings(siblings, 2);
         const recipient = sibling.freshAddress;
-
         let amount = account.spendableBalance.div(1.9 + 0.2 * Math.random()).integerValue();
-
         if (!sibling.used && amount.lt(MIN_SAFE)) {
           invariant(account.spendableBalance.gt(MIN_SAFE), "send is too low to activate account");
           amount = MIN_SAFE;
         }
-
         const transaction = bridge.createTransaction(account);
         const updates = [{ recipient }, { amount }];
-
         return {
           transaction,
           updates,
@@ -71,10 +67,8 @@ const stacksSpecs: AppSpec<Transaction> = {
       transaction: ({ account, siblings, bridge }) => {
         const sibling = pickSiblings(siblings, 2);
         const recipient = sibling.freshAddress;
-
         const transaction = bridge.createTransaction(account);
         const updates = [{ recipient }, { useAllAmount: true }];
-
         return {
           transaction,
           updates,
@@ -92,22 +86,17 @@ const stacksSpecs: AppSpec<Transaction> = {
       transaction: ({ account, siblings, bridge, maxSpendable }) => {
         const sibling = pickSiblings(siblings, 2);
         const recipient = sibling.freshAddress;
-
         invariant(maxSpendable.gt(0), "Spendable balance is too low");
-
         // Find a token subaccount with positive balance
         const subAccount = account.subAccounts?.find(
           a => a.type === AccountType.TokenAccount && a.spendableBalance.gt(0),
         );
-
         invariant(
           subAccount && subAccount.type === AccountType.TokenAccount,
           "no token subAccount found with positive balance",
         );
-
         // Calculate amount to send (around 50% of available balance)
         const amount = subAccount.balance.div(1.9 + 0.2 * Math.random()).integerValue();
-
         return {
           transaction: bridge.createTransaction(account),
           updates: [
@@ -129,7 +118,6 @@ const stacksSpecs: AppSpec<Transaction> = {
         const subAccountBeforeTransaction = accountBeforeTransaction.subAccounts?.find(
           sa => sa.id === subAccountId,
         );
-
         botTest("subAccount balance decreased with the tx amount", () =>
           expect(subAccount?.balance.toString()).toBe(
             subAccountBeforeTransaction?.balance.minus(status.amount).toString(),

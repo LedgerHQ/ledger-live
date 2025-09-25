@@ -2,7 +2,9 @@ import type { DeviceAction } from "@ledgerhq/coin-framework/bot/types";
 import type { Transaction } from "../types";
 import { deviceActionFlow, SpeculosButton } from "@ledgerhq/coin-framework/bot/specs";
 import { getSubAccount } from "../bridge/utils/token";
-import { getTokenContractDetails } from "../bridge/utils/transactions";
+import { formatCurrencyUnit } from "@ledgerhq/coin-framework/lib/currencies/formatCurrencyUnit";
+import { getTokenById } from "@ledgerhq/cryptoassets/tokens";
+import invariant from "invariant";
 
 export const acceptTransaction: DeviceAction<Transaction, any> = deviceActionFlow({
   steps: [
@@ -72,72 +74,31 @@ export const acceptTokenTransfer: DeviceAction<Transaction, any> = deviceActionF
       expectedValue: ({ transaction }) => (transaction.fee ? transaction.fee.toFixed() : "0"),
     },
     {
-      title: "Contract address",
+      title: "Amount",
       button: SpeculosButton.RIGHT,
-      expectedValue: ({ transaction, account }) => {
+      expectedValue: ({ transaction, status, account }) => {
         const subAccount = getSubAccount(account, transaction);
-        const tokenDetails = getTokenContractDetails(subAccount);
-        return tokenDetails?.contractAddress || "";
+        invariant(subAccount, "subAccount not found");
+
+        const token = getTokenById(subAccount.token.id);
+        const formattedAmount = formatCurrencyUnit(token.units[0], status.amount);
+        return `${formattedAmount} (${token.ticker})`;
       },
     },
     {
-      title: "Contract name",
-      button: SpeculosButton.RIGHT,
-      expectedValue: ({ transaction, account }) => {
-        const subAccount = getSubAccount(account, transaction);
-        const tokenDetails = getTokenContractDetails(subAccount);
-        return tokenDetails?.contractName || "";
-      },
-    },
-    {
-      title: "Function name",
-      button: SpeculosButton.RIGHT,
-      expectedValue: () => "transfer",
-    },
-    {
-      title: "arg0",
-      button: SpeculosButton.RIGHT,
-      expectedValue: ({ status }) => status.amount.toFixed(),
-    },
-    {
-      title: "arg1",
+      title: "From",
       button: SpeculosButton.RIGHT,
       expectedValue: ({ account }) => account.freshAddress,
     },
     {
-      title: "arg2",
+      title: "To",
       button: SpeculosButton.RIGHT,
       expectedValue: ({ transaction }) => transaction.recipient,
     },
     {
-      title: "arg3",
+      title: "Memo",
       button: SpeculosButton.RIGHT,
-      expectedValue: ({ transaction }) =>
-        !transaction.memo ? "is Option: None" : "is Option: Some",
-    },
-    {
-      title: "Principal",
-      button: SpeculosButton.RIGHT,
-      expectedValue: ({ account }) => account.freshAddress,
-    },
-    {
-      title: "Asset name",
-      button: SpeculosButton.RIGHT,
-      expectedValue: ({ transaction, account }) => {
-        const subAccount = getSubAccount(account, transaction);
-        const tokenDetails = getTokenContractDetails(subAccount);
-        return tokenDetails?.assetName || "";
-      },
-    },
-    {
-      title: "Fungi. Code",
-      button: SpeculosButton.RIGHT,
-      expectedValue: () => "SendEq",
-    },
-    {
-      title: "Token amount",
-      button: SpeculosButton.RIGHT,
-      expectedValue: ({ transaction }) => transaction.amount.toFixed(),
+      expectedValue: ({ transaction }) => (!transaction.memo ? "None" : "Complex memo value"),
     },
     {
       title: "APPROVE",

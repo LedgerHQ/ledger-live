@@ -216,7 +216,10 @@ export const getAccountShape: GetAccountShape = async info => {
     freshAddress: address,
     balance,
     spendableBalance,
-    operations,
+    // merge operations from both token and account
+    operations: [...operations, ...tokenAccounts.flatMap(t => t.operations)].sort(
+      (a, b) => b.date.getTime() - a.date.getTime(),
+    ),
     blockHeight: blockHeight.chain_tip.block_height,
   };
 
