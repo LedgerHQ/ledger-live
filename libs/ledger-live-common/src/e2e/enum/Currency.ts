@@ -196,4 +196,5 @@ export class Currency {
   static readonly OP = new Currency("OP Mainnet", "OP", "optimism", AppInfos.ETHEREUM, [
     Network.OPTIMISM,
   ]);
+  static readonly HBAR = new Currency("hbar", "Hedera", "HBAR", AppInfos.HEDERA, [Network.HEDERA]);
 }
