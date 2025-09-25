@@ -42,7 +42,7 @@ describe("useVideoCarousel", () => {
     // Check structure without exact video values since mocking is inconsistent
     expect(result.current.VIDEO_SLIDES[0]).toEqual(
       expect.objectContaining({
-        title: "onboarding.screens.welcome.videos.buySell",
+        title: "A wallet that protects and puts you in control",
         id: "buy-sell",
         video: expect.any(String),
       }),
@@ -50,7 +50,7 @@ describe("useVideoCarousel", () => {
 
     expect(result.current.VIDEO_SLIDES[1]).toEqual(
       expect.objectContaining({
-        title: "onboarding.screens.welcome.videos.thousandsCrypto",
+        title: "Send, receive, swap and stake thousands of crypto",
         id: "thousands-crypto",
         video: expect.any(String),
       }),
@@ -58,7 +58,7 @@ describe("useVideoCarousel", () => {
 
     expect(result.current.VIDEO_SLIDES[2]).toEqual(
       expect.objectContaining({
-        title: "onboarding.screens.welcome.videos.secureWallet",
+        title: "Verify all your transactions with peace of mind",
         id: "secure-wallet",
         video: expect.any(String),
       }),
