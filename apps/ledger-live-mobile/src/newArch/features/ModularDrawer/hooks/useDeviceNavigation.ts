@@ -44,6 +44,7 @@ export function useDeviceNavigation({
           createTokenAccount,
           context: AddAccountContexts.AddAccounts,
           inline: Boolean(onAccountSelected),
+          onCloseNavigation: onClose,
           onSuccess,
         },
       });

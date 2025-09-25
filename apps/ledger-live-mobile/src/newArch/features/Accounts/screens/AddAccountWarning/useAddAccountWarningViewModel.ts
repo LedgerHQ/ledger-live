@@ -13,7 +13,8 @@ export type Props = BaseComposite<
 >;
 
 export default function useAddAccountWarningViewModel({ route }: Props) {
-  const { emptyAccount, emptyAccountName, currency, context } = route.params || {};
+  const { emptyAccount, emptyAccountName, currency, context, onCloseNavigation } =
+    route.params || {};
   const { colors, space } = useTheme();
   const navigation = useNavigation();
   const { analyticsMetadata } = useAnalytics(context);
@@ -43,8 +44,12 @@ export default function useAddAccountWarningViewModel({ route }: Props) {
   );
 
   const handleOnCloseWarningScreen = useCallback(() => {
+    if (typeof onCloseNavigation === "function") {
+      onCloseNavigation();
+      return;
+    }
     navigation.goBack();
-  }, [navigation]);
+  }, [navigation, onCloseNavigation]);
 
   return {
     space,
