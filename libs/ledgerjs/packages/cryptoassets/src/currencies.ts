@@ -3457,6 +3457,32 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     ],
     explorerId: "eth_holesky",
   },
+  ethereum_hoodi: {
+    type: "CryptoCurrency",
+    id: "ethereum_hoodi",
+    coinType: CoinType.ETH,
+    name: "Ethereum Hoodi",
+    managerAppName: "Ethereum",
+    ticker: "ETH",
+    deviceTicker: "ETH",
+    scheme: "eth_hoodi",
+    color: "#0ebdcd",
+    units: ethereumUnits("ether", "ETH"),
+    isTestnetFor: "ethereum",
+    disableCountervalue: true,
+    family: "evm",
+    blockAvgTime: 15,
+    ethereumLikeInfo: {
+      chainId: 560048,
+    },
+    explorerViews: [
+      {
+        tx: "https://hoodi.etherscan.io/tx/$hash",
+        address: "https://hoodi.etherscan.io/address/$address",
+      },
+    ],
+    explorerId: "eth_hoodi",
+  },
   stacks: {
     type: "CryptoCurrency",
     id: "stacks",

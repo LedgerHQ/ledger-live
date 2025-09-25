@@ -802,6 +802,16 @@ const evmConfig: CurrencyLiveConfigDefinition = {
       showNfts: false,
     },
   },
+  config_currency_ethereum_hoodi: {
+    type: "object",
+    default: {
+      status: { type: "active" },
+      node: { type: "ledger", explorerId: "eth_hoodi" },
+      explorer: { type: "ledger", explorerId: "eth_hoodi" },
+      gasTracker: { type: "ledger", explorerId: "eth_hoodi" },
+      showNfts: false,
+    },
+  },
   config_currency_arbitrum_sepolia: {
     type: "object",
     default: {
