@@ -12,8 +12,6 @@ import { bitcoinPickingStrategy } from "./types";
 import wallet, { getWalletAccount } from "./wallet-btc";
 import { log } from "@ledgerhq/logs";
 import { Account } from "@ledgerhq/types-live";
-import { clamp } from "./getAccountNetworkInfo";
-import { getRelayFeeFloorSatVb } from "./wallet-btc/utils";
 
 const selectUtxoPickingStrategy = (walletAccount: WalletAccount, utxoStrategy: UtxoStrategy) => {
   const handler = {
@@ -43,24 +41,9 @@ export const buildTransaction = async (
   const walletAccount = getWalletAccount(account);
   const utxoPickingStrategy = selectUtxoPickingStrategy(walletAccount, transaction.utxoStrategy);
 
-  const floorSatPerVB = await getRelayFeeFloorSatVb(walletAccount.xpub.explorer);
-
-  // --- Clamp user/endpoint fee to ≥ floor + 1 sat/vB, return integer sat/vB ---
-  const originalFeeBN = feePerByte;
-  const safeFeeBN = clamp(floorSatPerVB)(originalFeeBN);
-
-  const safeFeePerByte = safeFeeBN.toNumber(); // wallet-btc expects number
-  if (!safeFeeBN.eq(originalFeeBN)) {
-    log(
-      "btcwallet",
-      `buildTransaction: feePerByte clamped ${originalFeeBN.toString()} -> ${safeFeeBN.toString()} (floor=${floorSatPerVB.toString()}+1)`,
-    );
-  }
-
   const maxSpendable = await wallet.estimateAccountMaxSpendable(
     walletAccount,
-    // feePerByte.toNumber(), //!\ wallet-btc handles fees as JS number
-    safeFeePerByte, //!\ wallet-btc handles fees as JS number
+    feePerByte.toNumber(), //!\ wallet-btc handles fees as JS number
     utxoStrategy.excludeUTXOs,
     [recipient],
     opReturnData,
@@ -72,8 +55,7 @@ export const buildTransaction = async (
     fromAccount: walletAccount,
     dest: transaction.recipient,
     amount: transaction.useAllAmount ? maxSpendable : transaction.amount,
-    // feePerByte: feePerByte.toNumber(), //!\ wallet-btc handles fees as JS number
-    feePerByte: safeFeePerByte, //!\ wallet-btc handles fees as JS number
+    feePerByte: feePerByte.toNumber(), //!\ wallet-btc handles fees as JS number
     utxoPickingStrategy,
     // Definition of replaceable, per the standard: https://github.com/bitcoin/bips/blob/61ccc84930051e5b4a99926510d0db4a8475a4e6/bip-0125.mediawiki#summary
     sequence: transaction.rbf ? 0 : 0xffffffff,
