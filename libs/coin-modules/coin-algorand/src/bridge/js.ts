@@ -60,6 +60,9 @@ export function buildAccountBridge(
     assignFromAccountRaw,
     initAccount,
     signOperation,
+    signRawOperation: () => {
+      throw new Error("signRawOperation is not supported");
+    },
     broadcast,
     estimateMaxSpendable,
     fromOperationExtraRaw,

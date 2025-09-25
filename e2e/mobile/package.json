@@ -23,7 +23,7 @@
     "@jest/reporters": "29.7.0",
     "@jest/types": "^29.6.3",
     "@ledgerhq/devices": "workspace:*",
-    "@ledgerhq/hw-transport": "workspace:^",
+    "@ledgerhq/hw-transport": "workspace:*",
     "@ledgerhq/hw-transport-node-speculos-http": "workspace:^",
     "@ledgerhq/ledger-key-ring-protocol": "workspace:^",
     "@ledgerhq/live-common": "workspace:^",

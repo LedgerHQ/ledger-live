@@ -29,10 +29,10 @@
   "license": "Apache-2.0",
   "dependencies": {
     "@ledgerhq/coin-canton": "workspace:^",
-    "@ledgerhq/devices": "workspace:^",
+    "@ledgerhq/devices": "workspace:*",
     "@ledgerhq/errors": "workspace:^",
     "@ledgerhq/hw-app-canton": "workspace:^",
-    "@ledgerhq/hw-transport": "workspace:^",
+    "@ledgerhq/hw-transport": "workspace:*",
     "semver": "^7"
   },
   "scripts": {

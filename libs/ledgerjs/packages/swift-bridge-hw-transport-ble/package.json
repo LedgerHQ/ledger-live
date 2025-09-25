@@ -28,7 +28,7 @@
   "types": "lib/TransportBLESwift.d.ts",
   "license": "Apache-2.0",
   "dependencies": {
-    "@ledgerhq/hw-transport": "workspace:^"
+    "@ledgerhq/hw-transport": "workspace:*"
   },
   "scripts": {
     "clean": "rimraf lib lib-es",

@@ -183,3 +183,7 @@ export const makeAccountBridgeReceive: () => (
     path: account.freshAddressPath,
     publicKey: "mockPublickKey", // We could probably keep the publicKey in `account.freshPublicKey`
   });
+
+export const signRawOperation = () => {
+  throw new Error("signRawOperation is not supported");
+};

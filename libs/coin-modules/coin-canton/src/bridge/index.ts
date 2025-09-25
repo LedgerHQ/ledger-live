@@ -63,6 +63,9 @@ export function createBridges(
     sync,
     receive,
     signOperation,
+    signRawOperation: () => {
+      throw new Error("signRawOperation is not supported");
+    },
     assignToAccountRaw,
     assignFromAccountRaw,
     getSerializedAddressParameters,

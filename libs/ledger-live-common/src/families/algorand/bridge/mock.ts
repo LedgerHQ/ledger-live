@@ -12,6 +12,7 @@ import {
   makeAccountBridgeReceive,
   scanAccounts,
   signOperation,
+  signRawOperation,
   broadcast,
   sync,
   isInvalidRecipient,
@@ -106,6 +107,7 @@ const accountBridge: AccountBridge<AlgorandTransaction, any> = {
   assignFromAccountRaw,
   initAccount,
   signOperation,
+  signRawOperation,
   broadcast,
   getSerializedAddressParameters,
 };

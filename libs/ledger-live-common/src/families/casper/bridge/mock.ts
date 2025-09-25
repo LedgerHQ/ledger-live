@@ -11,6 +11,7 @@ import type { Transaction, TransactionStatus } from "../types";
 import {
   scanAccounts,
   signOperation,
+  signRawOperation,
   broadcast,
   sync,
   makeAccountBridgeReceive,
@@ -167,6 +168,7 @@ const accountBridge: AccountBridge<Transaction> = {
   sync,
   receive,
   signOperation,
+  signRawOperation,
   broadcast,
   estimateMaxSpendable,
   getSerializedAddressParameters,
