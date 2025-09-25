@@ -642,9 +642,9 @@ const OperationD = (props: Props) => {
         </OpDetailsData>
       </OpDetailsSection>
       {uniqueSenders.length ? (
-        <OpDetailsSection data-testid="operation-from" >
+        <OpDetailsSection data-testid="operation-from">
           <OpDetailsTitle>{t("operationDetails.from")}</OpDetailsTitle>
-          <DataList  lines={uniqueSenders} t={t} />
+          <DataList lines={uniqueSenders} t={t} />
         </OpDetailsSection>
       ) : null}
       {recipients.length ? (
