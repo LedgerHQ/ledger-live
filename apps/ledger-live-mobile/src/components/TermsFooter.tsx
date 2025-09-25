@@ -9,14 +9,16 @@ import { urls } from "~/utils/urls";
 const CenteredText = styled(Text).attrs({
   fontWeight: "medium",
   textAlign: "center",
-  fontSize: "12px",
+  variant: "small",
   color: "neutral.c60",
   marginLeft: 16,
   marginRight: 16,
-})``;
+})`
+  overflow-wrap: break-word;
+`;
 
 const UnderlinedText = styled(Text).attrs({
-  fontSize: "12px",
+  variant: "small",
   color: "neutral.c60",
 })`
   text-decoration-line: underline;
@@ -24,27 +26,27 @@ const UnderlinedText = styled(Text).attrs({
 
 export type TermsProviders = keyof typeof urls.swap.providers;
 
+const CHANGELLY_PROVIDER = "changelly";
+
 const TermsFooter: React.FC<{
   provider?: TermsProviders;
 }> = ({ provider }) => {
-  // Map provider variants (e.g., changelly_v2) to base provider name
-  const providerName = provider?.includes("changelly") ? "changelly" : provider;
-  const providerUrls = provider && providerName && urls.swap.providers[providerName];
+  // Map changelly_v2 to changelly to access the correct urls
+  const providerName = provider?.includes(CHANGELLY_PROVIDER) ? CHANGELLY_PROVIDER : provider;
+  const providerUrls = providerName && urls.swap.providers[providerName];
 
   const { acceptTerms, urlsArray } = useMemo(() => {
     //we need to check if the provider is changelly
     //This helps to display specific message and urls for changelly
-    const isProviderChangelly = provider?.includes("changelly");
+    const isChangelly = providerName === CHANGELLY_PROVIDER;
 
-    if (isProviderChangelly) {
+    if (isChangelly) {
       return {
         acceptTerms: "DeviceAction.confirmSwap.changellySimplifiedAcceptTerms",
         urlsArray: [
           providerUrls?.tos,
-          providerName === "changelly" && providerUrls && "amlKyc" in providerUrls
-            ? providerUrls.amlKyc
-            : undefined,
-          providerUrls?.support,
+          (providerUrls as any)?.amlKyc,
+          (providerUrls as any)?.support,
         ].filter(Boolean),
       };
     }
@@ -53,7 +55,7 @@ const TermsFooter: React.FC<{
       acceptTerms: "DeviceAction.confirmSwap.acceptTerms",
       urlsArray: [providerUrls?.tos].filter(Boolean),
     };
-  }, [provider, providerUrls, providerName]);
+  }, [providerUrls, providerName]);
 
   if (!urlsArray.length) {
     return null;
@@ -63,7 +65,7 @@ const TermsFooter: React.FC<{
     <CenteredText>
       <Trans
         i18nKey={acceptTerms}
-        values={{ provider: getProviderName(provider) }}
+        values={{ provider: providerName && getProviderName(providerName) }}
         components={urlsArray.map((url, idx) => (
           <UnderlinedText
             onPress={() => url && Linking.openURL(url)}
