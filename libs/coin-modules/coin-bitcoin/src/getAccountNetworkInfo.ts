@@ -4,17 +4,7 @@ import type { NetworkInfo } from "./types";
 import { getWalletAccount } from "./wallet-btc";
 import { Account } from "@ledgerhq/types-live";
 import { BitcoinInfrastructureError } from "./errors";
-import { getRelayFeeFloorSatVb } from "./wallet-btc/utils";
 const speeds = ["fast", "medium", "slow"];
-
-// Clamp each level to ≥ floor + ε and return integers
-export function clamp(
-  floor: BigNumber,
-  epsilon: BigNumber = new BigNumber(1), // +1 sat/vB safety
-): (f: BigNumber) => BigNumber {
-  const threshold = floor.plus(epsilon);
-  return (f: BigNumber) => BigNumber.max(f, threshold).integerValue(BigNumber.ROUND_CEIL);
-}
 
 export function avoidDups(nums: Array<BigNumber>): Array<BigNumber> {
   nums = nums.slice(0);
@@ -30,7 +20,6 @@ export function avoidDups(nums: Array<BigNumber>): Array<BigNumber> {
 export async function getAccountNetworkInfo(account: Account): Promise<NetworkInfo> {
   const walletAccount = getWalletAccount(account);
   const rawFees = await walletAccount.xpub.explorer.getFees();
-  const floorSatPerVB = await getRelayFeeFloorSatVb(walletAccount.xpub.explorer);
 
   // Convoluted logic to convert from:
   // { "2": 2435, "3": 1241, "6": 1009, "last_updated": 1627973170 }
@@ -54,23 +43,13 @@ export async function getAccountNetworkInfo(account: Account): Promise<NetworkIn
     throw new BitcoinInfrastructureError();
   }
 
-  // --- Enforce network floor (+1 sat/vB safety) and preserve strict ordering ---
-  // const minRelayFloor = getMinRelayFloorSatVb(account.currency);
-
-  // --- Enforce dynamic floor (+1 sat/vB safety) and preserve strict ordering ---
-  let clamped = feesPerByte.map(clamp(floorSatPerVB));
-  clamped = avoidDups(clamped);
-
   const feeItems = {
-    // items: feesPerByte.map((feePerByte, i: number) => ({
-    items: clamped.map((feePerByte, i: number) => ({
+    items: feesPerByte.map((feePerByte, i: number) => ({
       key: String(i),
       speed: speeds[i],
       feePerByte,
     })),
-    // defaultFeePerByte: clamped[Math.floor(clamped.length / 2)] || new BigNumber(0),
-    // defaultFeePerByte: feesPerByte[Math.floor(feesPerByte.length / 2)] || new BigNumber(0),
-    defaultFeePerByte: clamped[Math.floor(clamped.length / 2)] || new BigNumber(0),
+    defaultFeePerByte: feesPerByte[Math.floor(feesPerByte.length / 2)] || new BigNumber(0),
   };
   return {
     family: "bitcoin",
