@@ -1,4 +1,3 @@
-import { AxiosError } from "axios";
 import { log } from "@ledgerhq/logs";
 import { addTokens, convertERC20 } from "@ledgerhq/cryptoassets/tokens";
 import {
@@ -7,7 +6,7 @@ import {
 } from "@ledgerhq/cryptoassets/data/evm/index";
 import { ERC20Token } from "@ledgerhq/cryptoassets/types";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { fetchTokensFromCALService } from "@ledgerhq/cryptoassets/crypto-assets-importer/fetch/index";
+import { getTokens } from "@ledgerhq/ledger-cal-service";
 import { getCALHash, setCALHash } from "../logic";
 
 let shouldSkipTokenLoading = false;
@@ -26,7 +25,7 @@ export const fetchERC20Tokens: (
   const embeddedHash = embeddedHashesByChainId[chainId as keyof typeof embeddedHashesByChainId];
   const latestCALHash = getCALHash(currency);
   try {
-    const { tokens, hash } = await fetchTokensFromCALService(
+    const { tokens, hash } = await getTokens(
       {
         chainId: chainId,
         standard: chainId === 56 ? "bep20" : "erc20",
@@ -41,7 +40,9 @@ export const fetchERC20Tokens: (
         "contract_address",
         "delisted",
       ],
-      latestCALHash || embeddedHash,
+      {
+        etag: latestCALHash || embeddedHash,
+      },
     );
     setCALHash(currency, hash || "");
 
@@ -60,11 +61,11 @@ export const fetchERC20Tokens: (
         token.live_signature,
         token.contract_address,
         false,
-        token.delisted,
+        token.delisted ?? false,
       ];
     });
   } catch (e) {
-    if (e instanceof AxiosError && e.response?.status === 304) {
+    if (e instanceof Error && e.message === "304") {
       log(
         "evm/preload",
         `laoding existing fallback tokens for ${chainId} with hash ${latestCALHash || embeddedHash}`,
