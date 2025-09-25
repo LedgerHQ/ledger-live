@@ -2,7 +2,11 @@ import invariant from "invariant";
 import React from "react";
 import styled from "styled-components";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
-import { useBaker, useDelegation } from "@ledgerhq/live-common/families/tezos/react";
+import {
+  useBaker,
+  useDelegation,
+  useStakingPositions,
+} from "@ledgerhq/live-common/families/tezos/react";
 import { Baker } from "@ledgerhq/live-common/families/tezos/types";
 import { Trans } from "react-i18next";
 import TrackPage from "~/renderer/analytics/TrackPage";
@@ -55,11 +59,14 @@ const StepSummary = ({ account, transaction, eventType, transitionTo, status }: 
   );
   const accountName = useAccountName(account);
   const delegation = useDelegation(account);
+  const stakingPositions = useStakingPositions(account);
   const baker = useBaker(transaction.recipient);
   const currency = getAccountCurrency(account);
   const unit = useAccountUnit(account);
   const getBakerName = (baker: Baker | undefined | null, fallback: string) =>
     baker ? baker.name : fallback;
+
+  const isDelegation = delegation || stakingPositions.length > 0;
 
   return (
     <Box flow={4} mx={40}>
@@ -168,48 +175,52 @@ const StepSummary = ({ account, transaction, eventType, transitionTo, status }: 
                 )}
               </Container>
             </Box>
-          ) : delegation ? (
-            <Box>
-              <Box horizontal justifyContent="space-between">
-                <Text ff="Inter|Medium" color="palette.text.shade60" fontSize={3}>
-                  <Trans i18nKey="delegation.flow.steps.summary.validator" />
-                </Text>
+          ) : (
+            isDelegation && (
+              <Box>
+                <Box horizontal justifyContent="space-between">
+                  <Text ff="Inter|Medium" color="palette.text.shade60" fontSize={3}>
+                    <Trans i18nKey="delegation.flow.steps.summary.validator" />
+                  </Text>
+                </Box>
+                <Container my={1}>
+                  <BakerImage size={32} baker={delegation?.baker} />
+                  <Ellipsis>
+                    <Text ff="Inter|SemiBold" color="palette.text.shade100" fontSize={3}>
+                      {delegation
+                        ? getBakerName(delegation.baker, delegation.address)
+                        : stakingPositions[0].delegate}
+                    </Text>
+                  </Ellipsis>
+                  {delegation?.baker && (
+                    <Text
+                      textAlign="center"
+                      ff="Inter|Medium"
+                      color="palette.text.shade60"
+                      fontSize={3}
+                    >
+                      <Trans
+                        i18nKey="delegation.flow.steps.summary.yield"
+                        values={{
+                          amount: delegation.baker.nominalYield,
+                        }}
+                      />
+                    </Text>
+                  )}
+                </Container>
               </Box>
-              <Container my={1}>
-                <BakerImage size={32} baker={delegation.baker} />
-                <Ellipsis>
-                  <Text ff="Inter|SemiBold" color="palette.text.shade100" fontSize={3}>
-                    {getBakerName(delegation.baker, delegation.address)}
-                  </Text>
-                </Ellipsis>
-                {delegation.baker ? (
-                  <Text
-                    textAlign="center"
-                    ff="Inter|Medium"
-                    color="palette.text.shade60"
-                    fontSize={3}
-                  >
-                    <Trans
-                      i18nKey="delegation.flow.steps.summary.yield"
-                      values={{
-                        amount: delegation.baker.nominalYield,
-                      }}
-                    />
-                  </Text>
-                ) : null}
-              </Container>
-            </Box>
-          ) : null
+            )
+          )
         }
       />
-      {transaction.mode === "delegate" ? (
+      {transaction.mode === "delegate" && (
         <Box mt={32}>
           <WarnBox>
             <Trans i18nKey="delegation.flow.steps.summary.termsAndPrivacy" />
           </WarnBox>
           {status.errors.sender && <ErrorBanner error={status.errors.sender} />}
         </Box>
-      ) : null}
+      )}
     </Box>
   );
 };
