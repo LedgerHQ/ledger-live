@@ -224,7 +224,7 @@
     "jest-environment-jsdom": "29.7.0",
     "listr": "0.14.3",
     "listr-verbose-renderer": "0.6.0",
-    "msw": "2.3.4",
+    "msw": "^2.11.3",
     "local-web-server": "4.2.1",
     "nock": "13.5.4",
     "prebuild-install": "7.1.3",

@@ -68,7 +68,7 @@
     "@solana/web3.js": "1.95.4",
     "bignumber.js": "^9",
     "docker-compose": "^1",
-    "msw": "^2"
+    "msw": "^2.11.3"
   },
   "devDependencies": {
     "@types/jest": "^29",

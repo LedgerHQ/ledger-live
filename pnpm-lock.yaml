@@ -864,8 +864,8 @@ importers:
         specifier: 4.2.1
         version: 4.2.1
       msw:
-        specifier: 2.3.4
-        version: 2.3.4(typescript@5.4.3)
+        specifier: ^2.11.3
+        version: 2.11.3(typescript@5.4.3)
       nock:
         specifier: 13.5.4
         version: 13.5.4
@@ -1591,8 +1591,8 @@ importers:
         specifier: 0.77.0
         version: 0.77.0(@babel/core@7.27.1)
       msw:
-        specifier: 2.3.4
-        version: 2.3.4(typescript@5.4.3)
+        specifier: ^2.11.3
+        version: 2.11.3(typescript@5.4.3)
       react-native-bundle-visualizer:
         specifier: 3.1.3
         version: 3.1.3(patch_hash=fgdd2c4kpymhnfnsaf5bc33xwi)
@@ -2123,8 +2123,8 @@ importers:
         specifier: workspace:^
         version: link:../live-config
       msw:
-        specifier: 2.3.4
-        version: 2.3.4(typescript@5.4.3)
+        specifier: ^2.11.3
+        version: 2.11.3(@types/node@22.10.10)(typescript@5.4.3)
       rxjs:
         specifier: ^7.8.1
         version: 7.8.1
@@ -2988,8 +2988,8 @@ importers:
         specifier: ^1.1.3
         version: 1.1.3
       msw:
-        specifier: ^2.2.12
-        version: 2.3.4(typescript@5.4.3)
+        specifier: ^2.11.3
+        version: 2.11.3(typescript@5.4.3)
       prando:
         specifier: ^6.0.1
         version: 6.0.1
@@ -3672,8 +3672,8 @@ importers:
         specifier: ^29.7.0
         version: 29.7.0
       msw:
-        specifier: ^2.0.11
-        version: 2.3.4(typescript@5.4.3)
+        specifier: ^2.11.3
+        version: 2.11.3(typescript@5.4.3)
       ts-jest:
         specifier: ^29.1.1
         version: 29.2.5(jest@29.7.0)(typescript@5.4.3)
@@ -3775,8 +3775,8 @@ importers:
         specifier: ^1.1.3
         version: 1.1.3
       msw:
-        specifier: ^2.2.13
-        version: 2.3.4(typescript@5.6.3)
+        specifier: ^2.11.3
+        version: 2.11.3(typescript@5.6.3)
       ts-jest:
         specifier: ^29.1.1
         version: 29.1.5(jest@29.7.0(ts-node@10.9.2(typescript@5.6.3)))(typescript@5.6.3)
@@ -3893,8 +3893,8 @@ importers:
         specifier: ^29.7.0
         version: 29.7.0
       msw:
-        specifier: 2.7.3
-        version: 2.7.3(typescript@5.4.3)
+        specifier: ^2.11.3
+        version: 2.11.3(typescript@5.4.3)
       ts-jest:
         specifier: ^29.1.1
         version: 29.1.5(jest@29.7.0)(typescript@5.4.3)
@@ -4066,8 +4066,8 @@ importers:
         specifier: ^29.7.0
         version: 29.7.0(@types/node@22.10.10)
       msw:
-        specifier: ^2.7.3
-        version: 2.7.3(@types/node@22.10.10)(typescript@5.4.3)
+        specifier: ^2.11.3
+        version: 2.11.3(@types/node@22.10.10)(typescript@5.4.3)
       nock:
         specifier: 14.0.2
         version: 14.0.2
@@ -4218,8 +4218,8 @@ importers:
         specifier: ^29.7.0
         version: 29.7.0
       msw:
-        specifier: ^2.7.3
-        version: 2.7.3(typescript@5.6.3)
+        specifier: ^2.11.3
+        version: 2.11.3(typescript@5.6.3)
       ts-jest:
         specifier: ^29.1.4
         version: 29.1.5(jest@29.7.0)(typescript@5.6.3)
@@ -4281,8 +4281,8 @@ importers:
         specifier: ^4.17.21
         version: 4.17.21
       msw:
-        specifier: ^2.0.11
-        version: 2.3.4(typescript@5.4.3)
+        specifier: ^2.11.3
+        version: 2.11.3(typescript@5.4.3)
       rxjs:
         specifier: ^7.8.1
         version: 7.8.1
@@ -4385,8 +4385,8 @@ importers:
         specifier: ^29.7.0
         version: 29.7.0
       msw:
-        specifier: ^2.2.13
-        version: 2.3.4(typescript@5.6.3)
+        specifier: ^2.11.3
+        version: 2.11.3(typescript@5.6.3)
       ts-jest:
         specifier: ^29.1.1
         version: 29.1.5(jest@29.7.0)(typescript@5.6.3)
@@ -4464,8 +4464,8 @@ importers:
         specifier: ^29.7.0
         version: 29.7.0
       msw:
-        specifier: ^2.2.13
-        version: 2.3.4(typescript@5.4.3)
+        specifier: ^2.11.3
+        version: 2.11.3(typescript@5.4.3)
       ts-jest:
         specifier: ^29.1.1
         version: 29.1.5(jest@29.7.0)(typescript@5.4.3)
@@ -4631,8 +4631,8 @@ importers:
         specifier: 6.15.0
         version: 6.15.0
       msw:
-        specifier: ^2.2.1
-        version: 2.7.3(typescript@5.6.3)
+        specifier: ^2.11.3
+        version: 2.11.3(typescript@5.6.3)
     devDependencies:
       '@ledgerhq/hw-transport':
         specifier: workspace:*
@@ -4710,8 +4710,8 @@ importers:
         specifier: ^27.4.6
         version: 27.5.1
       msw:
-        specifier: ^2.2.1
-        version: 2.7.3(typescript@5.6.3)
+        specifier: ^2.11.3
+        version: 2.11.3(typescript@5.6.3)
     devDependencies:
       '@polkadot/util':
         specifier: 12.6.2
@@ -4771,8 +4771,8 @@ importers:
         specifier: ^1
         version: 1.1.0
       msw:
-        specifier: ^2
-        version: 2.7.3(typescript@5.8.3)
+        specifier: ^2.11.3
+        version: 2.11.3(typescript@5.8.3)
     devDependencies:
       '@types/jest':
         specifier: ^29
@@ -5159,8 +5159,8 @@ importers:
         specifier: ^29.7.0
         version: 29.7.0(ts-node@10.9.2(typescript@5.4.3))
       msw:
-        specifier: ^2.2.13
-        version: 2.3.4(typescript@5.4.3)
+        specifier: ^2.11.3
+        version: 2.11.3(typescript@5.4.3)
       ts-jest:
         specifier: ^29.1.1
         version: 29.1.5(jest@29.7.0(ts-node@10.9.2(typescript@5.4.3)))(typescript@5.4.3)
@@ -5752,8 +5752,8 @@ importers:
         specifier: ^29.7.0
         version: 29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@types/node@22.10.10)(typescript@5.4.3))
       msw:
-        specifier: ^2.2.13
-        version: 2.3.4(typescript@5.4.3)
+        specifier: ^2.11.3
+        version: 2.11.3(@types/node@22.10.10)(typescript@5.4.3)
       ts-jest:
         specifier: ^29.1.1
         version: 29.2.5(jest@29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@types/node@22.10.10)(typescript@5.4.3)))(typescript@5.4.3)
@@ -5786,8 +5786,8 @@ importers:
         specifier: ^29.7.0
         version: 29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@types/node@22.10.10)(typescript@5.4.3))
       msw:
-        specifier: ^2.2.13
-        version: 2.3.4(typescript@5.4.3)
+        specifier: ^2.11.3
+        version: 2.11.3(@types/node@22.10.10)(typescript@5.4.3)
       ts-jest:
         specifier: ^29.1.1
         version: 29.2.5(jest@29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@types/node@22.10.10)(typescript@5.4.3)))(typescript@5.4.3)
@@ -8482,8 +8482,8 @@ importers:
         specifier: ^29.7.0
         version: 29.7.0
       msw:
-        specifier: ^2.3.1
-        version: 2.3.4(typescript@5.4.3)
+        specifier: ^2.11.3
+        version: 2.11.3(typescript@5.4.3)
       timemachine:
         specifier: ^0.3.2
         version: 0.3.2
@@ -11650,17 +11650,11 @@ packages:
   '@braze/web-sdk@4.10.2':
     resolution: {integrity: sha512-S5OtBpmHDeZZVG1WjCdJ1w/SjzhGGULPkNjJONnl4YqUKK85BrGxK3beWXutduT5uoUl1Vfq4c32wx/DRsVDBw==}
 
-  '@bundled-es-modules/cookie@2.0.0':
-    resolution: {integrity: sha512-Or6YHg/kamKHpxULAdSqhGqnWFneIXu1NKvvfBBzKGwpVsYuFIQ5aBPHDnnoR3ghW1nvSkALd+EF9iMtY7Vjxw==}
-
   '@bundled-es-modules/cookie@2.0.1':
     resolution: {integrity: sha512-8o+5fRPLNbjbdGRRmJj3h6Hh1AQJf2dk3qQ/5ZFb+PXkRNiSoMGGUKlsgLfrxneb72axVJyIYji64E2+nNfYyw==}
 
   '@bundled-es-modules/statuses@1.0.1':
     resolution: {integrity: sha512-yn7BklA5acgcBr+7w064fGV+SGIFySjCKpqjcWgBAIfrAkY+4GQTJJHQMeT3V/sgz23VTEVV8TtOmkvJAhFVfg==}
-
-  '@bundled-es-modules/tough-cookie@0.1.6':
-    resolution: {integrity: sha512-dvMHbL464C0zI+Yqxbz6kZ5TOEp7GLW+pry/RWndAR8MJQAXZ2rPmIs8tziTZjeIyhSNZgZbCePtfSbdWqStJw==}
 
   '@cardano-foundation/ledgerjs-hw-app-cardano@7.1.2':
     resolution: {integrity: sha512-bSR8MdKzotnf9WGO0BtDpTXsH4ObaQjCDSHA6MhJuAKoJEaLl7ASS4ctzqzGlKWoEvjdsgx+M8hJbWDLJ63TFw==}
@@ -14000,10 +13994,6 @@ packages:
     resolution: {integrity: sha512-6EwiSjwWYP7pTckG6I5eyFANjPhmPjUX9JRLUSfNPC7FX7zK9gyZAfUEaECL6ALTpGX5AjnBq3C9XmVWPitNpw==}
     deprecated: Use @eslint/object-schema instead
 
-  '@inquirer/confirm@3.1.7':
-    resolution: {integrity: sha512-BZjjj19W8gnh5UGFTdP5ZxpgMNRjy03Dzq3k28sB2MDlEUFrcyTkMEoGgvBmGpUw0vNBoCJkTcbHZ3e9tb+d+w==}
-    engines: {node: '>=18'}
-
   '@inquirer/confirm@5.1.7':
     resolution: {integrity: sha512-Xrfbrw9eSiHb+GsesO8TQIeHSMTP0xyvTCeeYevgZ4sKW+iz9w/47bgfG9b0niQm+xaLY2EWPBINUPldLwvYiw==}
     engines: {node: '>=18'}
@@ -14022,16 +14012,8 @@ packages:
       '@types/node':
         optional: true
 
-  '@inquirer/core@8.2.0':
-    resolution: {integrity: sha512-pexNF9j2orvMMTgoQ/uKOw8V6/R7x/sIDwRwXRhl4i0pPSh6paRzFehpFKpfMbqix1/+gzCekhYTmVbQpWkVjQ==}
-    engines: {node: '>=18'}
-
   '@inquirer/figures@1.0.11':
     resolution: {integrity: sha512-eOg92lvrn/aRUqbxRyvpEWnrvRuTYRifixHkYVpJiygTgVSBIHDqLh0SrMQXkafvULg3ck11V7xvR+zcgvpHFw==}
-    engines: {node: '>=18'}
-
-  '@inquirer/type@1.3.1':
-    resolution: {integrity: sha512-Pe3PFccjPVJV1vtlfVvm9OnlbxqdnP5QcscFEFEnK5quChf1ufZtM0r8mR5ToWHMxZOh0s8o/qp9ANGRTo/DAw==}
     engines: {node: '>=18'}
 
   '@inquirer/type@3.0.5':
@@ -14569,20 +14551,16 @@ packages:
       '@types/react': '>=16'
       react: '>=16'
 
-  '@mswjs/interceptors@0.29.1':
-    resolution: {integrity: sha512-3rDakgJZ77+RiQUuSK69t1F0m8BQKA8Vh5DCS5V0DWvNY67zob2JhhQrhCO0AKLGINTRSFd1tBaHcJTkhefoSw==}
-    engines: {node: '>=18'}
-
-  '@mswjs/interceptors@0.37.6':
-    resolution: {integrity: sha512-wK+5pLK5XFmgtH3aQ2YVvA3HohS3xqV/OxuVOdNx9Wpnz7VE/fnC+e1A7ln6LFYeck7gOJ/dsZV6OLplOtAJ2w==}
-    engines: {node: '>=18'}
-
   '@mswjs/interceptors@0.38.0':
     resolution: {integrity: sha512-nPHVM+LUl4V1kXPXuTcNN5OMD//ltCQ0lccuEagvidJdpbig3hP3W6/ctWHx6mee7vZIWE0L+Mqj3vx0ASlm/w==}
     engines: {node: '>=18'}
 
   '@mswjs/interceptors@0.38.3':
     resolution: {integrity: sha512-3AMc2fTnX4q3qyO6K/LKwWXjUAFc3COC3bo5YCROIyQYJ8g/++5Col5fSIglIyUdBN787CTbL+c04KRwaaZ/UA==}
+    engines: {node: '>=18'}
+
+  '@mswjs/interceptors@0.39.7':
+    resolution: {integrity: sha512-sURvQbbKsq5f8INV54YJgJEdk8oxBanqkTiXXd33rKmofFCwZLhLRszPduMZ9TA9b8/1CHc/IJmOlBHJk2Q5AQ==}
     engines: {node: '>=18'}
 
   '@multiversx/sdk-bls-wasm@0.3.5':
@@ -19427,9 +19405,6 @@ packages:
   '@types/ms@0.7.34':
     resolution: {integrity: sha512-nG96G3Wp6acyAgJqGasjODb+acrI7KltPiRxzHPXnP3NgI28bpQDRv53olbqGXbfcgF5aiiHmO3xpwEpS5Ld9g==}
 
-  '@types/mute-stream@0.0.4':
-    resolution: {integrity: sha512-CPM9nzrCPPJHQNA9keH9CVkVI+WR5kMa+7XEs5jcGQ0VoAGnLv242w8lIVgwAEfmE4oufJRaTc9PNLQl0ioAow==}
-
   '@types/mysql@2.15.22':
     resolution: {integrity: sha512-wK1pzsJVVAjYCSZWQoWHziQZbNggXFDUEIGf54g4ZM/ERuP86uGdWeKZWMYlqTPMZfHJJvLPyogXGvCOg87yLQ==}
 
@@ -19853,9 +19828,6 @@ packages:
 
   '@types/webpack-env@1.18.4':
     resolution: {integrity: sha512-I6e+9+HtWADAWeeJWDFQtdk4EVSAbj6Rtz4q8fJ7mSr1M0jzlFcs8/HZ+Xb5SHzVm1dxH7aUiI+A8kA8Gcrm0A==}
-
-  '@types/wrap-ansi@3.0.0':
-    resolution: {integrity: sha512-ltIpx+kM7g/MLRZfkbL7EsCEjfzCcScLpkg37eXEtx5kmrAKBkTJwd1GIAjDSL8wTpM6Hzn5YO4pSb91BEwu1g==}
 
   '@types/write-file-atomic@4.0.3':
     resolution: {integrity: sha512-qdo+vZRchyJIHNeuI1nrpsLw+hnkgqP/8mlaN6Wle/NKhydHmUN9l4p3ZE8yP90AJNJW4uB8HQhedb4f1vNayQ==}
@@ -22464,10 +22436,6 @@ packages:
 
   cookie@0.4.2:
     resolution: {integrity: sha512-aSWTXFzaKWkvHO1Ny/s+ePFpvKsPnjc551iI41v3ny/ow6tBG5Vd+FuqGNhh1LxOmVzOlGUriIlOaokOvhaStA==}
-    engines: {node: '>= 0.6'}
-
-  cookie@0.5.0:
-    resolution: {integrity: sha512-YZ3GUyn/o8gfKJlnlX7g7xq4gyO6OSuhGPKaaGssGB2qgDUS0gPgtTvoyZLTt9Ab6dC4hfc9dV5arkvc/OCmrw==}
     engines: {node: '>= 0.6'}
 
   cookie@0.6.0:
@@ -28692,18 +28660,8 @@ packages:
   ms@2.1.3:
     resolution: {integrity: sha512-6FlzubTLZG3J2a/NVCAleEhjzq5oxgHyaCU9yYXvcLsvoVaHJq/s5xXI6/XXP6tz7R9xAOtHnSO/tXtF3WRTlA==}
 
-  msw@2.3.4:
-    resolution: {integrity: sha512-sHMlwrajgmZSA2l1o7qRSe+azm/I+x9lvVVcOxAzi4vCtH8uVPJk1K5BQYDkzGl+tt0RvM9huEXXdeGrgcc79g==}
-    engines: {node: '>=18'}
-    hasBin: true
-    peerDependencies:
-      typescript: '>= 4.7.x'
-    peerDependenciesMeta:
-      typescript:
-        optional: true
-
-  msw@2.7.3:
-    resolution: {integrity: sha512-+mycXv8l2fEAjFZ5sjrtjJDmm2ceKGjrNbBr1durRg6VkU9fNUE/gsmQ51hWbHqs+l35W1iM+ZsmOD9Fd6lspw==}
+  msw@2.11.3:
+    resolution: {integrity: sha512-878imp8jxIpfzuzxYfX0qqTq1IFQz/1/RBHs/PyirSjzi+xKM/RRfIpIqHSCWjH0GxidrjhgiiXC+DWXNDvT9w==}
     engines: {node: '>=18'}
     hasBin: true
     peerDependencies:
@@ -28757,10 +28715,6 @@ packages:
 
   mute-stream@0.0.8:
     resolution: {integrity: sha512-nnbWWOkoWyUsTjKrhgD0dcz22mdkSnpYqbEjIm2nhwhuxlSkpywJmBo8h0ZqJdkp73mb90SssHkN4rsRaBAfAA==}
-
-  mute-stream@1.0.0:
-    resolution: {integrity: sha512-avsJQhyd+680gKXyG/sQc0nXaC6rBkPOfyHYcFb9+hdkqQkR9bdnkJ0AMZhke0oesPqIO+mFFJ+IdBc7mst4IA==}
-    engines: {node: ^14.17.0 || ^16.13.0 || >=18.0.0}
 
   mute-stream@2.0.0:
     resolution: {integrity: sha512-WWdIxpyjEn+FhQJQQv9aQAYlHoNVdzIzUySNV1gHUPDSdZJ3yZn7pAAbQcV7B56Mvu881q9FZV+0Vx2xC44VWA==}
@@ -29289,9 +29243,6 @@ packages:
   outdent@0.5.0:
     resolution: {integrity: sha512-/jHxFIzoMXdqPzTaCpFzAAWhpkSjZPF4Vsn6jAfNpmbH/ymsmd7Qc6VE9BGn0L6YMj6uwpQLxCECpus4ukKS9Q==}
 
-  outvariant@1.4.2:
-    resolution: {integrity: sha512-Ou3dJ6bA/UJ5GVHxah4LnqDwZRwAmWxrG3wtrHrbGnP4RnLCtA64A4F+ae7Y8ww660JaddSoArUR5HjipWSHAQ==}
-
   outvariant@1.4.3:
     resolution: {integrity: sha512-+Sl2UErvtsoajRDKCE5/dBz4DIvHXQQnAxtQTF04OJxY0+DyZXSo5P5Bb7XYWOh81syohlYL24hbDwxedPUJCA==}
 
@@ -29538,9 +29489,6 @@ packages:
 
   path-to-regexp@2.2.1:
     resolution: {integrity: sha512-gu9bD6Ta5bwGrrU8muHzVOBFFREpp2iRkVfhBJahwJ6p6Xw20SjT0MxLnwkjOibQmGSYhiUnf2FLe7k+jcFmGQ==}
-
-  path-to-regexp@6.2.1:
-    resolution: {integrity: sha512-JLyh7xT1kizaEvcaXOQwOc2/Yhw6KZOvPf1S8401UyLk86CU79LN3vl7ztXGm/pZ+YjoyAJ4rxmHwbkBXJX+yw==}
 
   path-to-regexp@6.3.0:
     resolution: {integrity: sha512-Yhpw4T9C6hPpgPeA28us07OJeqZ5EzQTkbfwuhsUg0c237RomFoETJgmp2sa3F/41gfLE6G5cqcYwznmeEeOlQ==}
@@ -31655,6 +31603,9 @@ packages:
     resolution: {integrity: sha512-XQBQ3I8W1Cge0Seh+6gjj03LbmRFWuoszgK9ooCpwYIrhhoO80pfq4cUkU5DkknwfOfFteRwlZ56PYOGYyFWdg==}
     engines: {node: '>= 4'}
 
+  rettime@0.7.0:
+    resolution: {integrity: sha512-LPRKoHnLKd/r3dVxcwO7vhCW+orkOGj9ViueosEBK6ie89CijnfRlhaDhHq/3Hxu4CkWQtxwlBG0mzTQY6uQjw==}
+
   reusify@1.0.4:
     resolution: {integrity: sha512-U9nH88a3fc/ekCF1l0/UP1IosiuIjyTh7hBvXVMHYgVcfGvt897Xguj2UOLDeI5BG2m7/uwyaLVT6fbtCwTyzw==}
     engines: {iojs: '>=1.0.0', node: '>=0.10.0'}
@@ -33163,8 +33114,15 @@ packages:
   tldts-core@6.1.75:
     resolution: {integrity: sha512-AOvV5YYIAFFBfransBzSTyztkc3IMfz5Eq3YluaRiEu55nn43Fzaufx70UqEKYr8BoLCach4q8g/bg6e5+/aFw==}
 
+  tldts-core@7.0.16:
+    resolution: {integrity: sha512-XHhPmHxphLi+LGbH0G/O7dmUH9V65OY20R7vH8gETHsp5AZCjBk9l8sqmRKLaGOxnETU7XNSDUPtewAy/K6jbA==}
+
   tldts@6.1.75:
     resolution: {integrity: sha512-+lFzEXhpl7JXgWYaXcB6DqTYXbUArvrWAE/5ioq/X3CdWLbDjpPP4XTrQBmEJ91y3xbe4Fkw7Lxv4P3GWeJaNg==}
+    hasBin: true
+
+  tldts@7.0.16:
+    resolution: {integrity: sha512-5bdPHSwbKTeHmXrgecID4Ljff8rQjv7g8zKQPkCozRo2HWWni+p310FSn5ImI+9kWw9kK4lzOB5q/a6iv0IJsw==}
     hasBin: true
 
   tmp-promise@3.0.3:
@@ -33237,6 +33195,10 @@ packages:
 
   tough-cookie@5.1.0:
     resolution: {integrity: sha512-rvZUv+7MoBYTiDmFPBrhL7Ujx9Sk+q9wwm22x8c8T5IJaR+Wsyc7TNxbVxo84kZoRJZZMazowFLqpankBEQrGg==}
+    engines: {node: '>=16'}
+
+  tough-cookie@6.0.0:
+    resolution: {integrity: sha512-kXuRi1mtaKMrsLUxz3sQYvVl37B0Ns6MzfrtV5DvJceE9bPyspOqk9xxv7XbZWcfLWbFmm997vl83qUWVJA64w==}
     engines: {node: '>=16'}
 
   tr46@0.0.3:
@@ -33643,10 +33605,6 @@ packages:
     resolution: {integrity: sha512-tLq3bSNx+xSpwvAJnzrK0Ep5CLNWjvFTOp71URMaAEWBfRb9nnJiBoUe0tF8bI4ZFO3omgBR6NvnbzVUT3Ly4g==}
     engines: {node: '>=14.16'}
 
-  type-fest@4.14.0:
-    resolution: {integrity: sha512-on5/Cw89wwqGZQu+yWO0gGMGu8VNxsaW9SB2HE8yJjllEk7IDTwnSN1dUVldYILhYPN5HzD7WAaw2cc/jBfn0Q==}
-    engines: {node: '>=16'}
-
   type-fest@4.40.0:
     resolution: {integrity: sha512-ABHZ2/tS2JkvH1PEjxFDTUWC8dB5OsIGZP4IFLhR293GqT5Y5qB1WwL2kMPYhQW9DVgVD8Hd7I8gjwPIf5GFkw==}
     engines: {node: '>=16'}
@@ -33962,6 +33920,9 @@ packages:
 
   unquote@1.1.1:
     resolution: {integrity: sha512-vRCqFv6UhXpWxZPyGDh/F3ZpNv8/qo7w6iufLpQg9aKnQ71qM4B5KiI7Mia9COcjEhrO9LueHpMYjYzsWH3OIg==}
+
+  until-async@3.0.2:
+    resolution: {integrity: sha512-IiSk4HlzAMqTUseHHe3VhIGyuFmN90zMTpD3Z3y8jeQbzLIq500MVM7Jq2vUAnTKAFPJrqwkzr6PoTcPhGcOiw==}
 
   untildify@4.0.0:
     resolution: {integrity: sha512-KK8xQ1mkzZeg9inewmFVDNkg3l5LUhoq9kN6iWYB/CC9YMG8HA+c1Q8HwDe6dEX7kErrEVNVBO3fWsVq5iDgtw==}
@@ -38752,10 +38713,6 @@ snapshots:
 
   '@braze/web-sdk@4.10.2': {}
 
-  '@bundled-es-modules/cookie@2.0.0':
-    dependencies:
-      cookie: 0.5.0
-
   '@bundled-es-modules/cookie@2.0.1':
     dependencies:
       cookie: 0.7.2
@@ -38763,11 +38720,6 @@ snapshots:
   '@bundled-es-modules/statuses@1.0.1':
     dependencies:
       statuses: 2.0.1
-
-  '@bundled-es-modules/tough-cookie@0.1.6':
-    dependencies:
-      '@types/tough-cookie': 4.0.5
-      tough-cookie: 4.1.4
 
   '@cardano-foundation/ledgerjs-hw-app-cardano@7.1.2':
     dependencies:
@@ -42218,11 +42170,6 @@ snapshots:
 
   '@humanwhocodes/object-schema@2.0.2': {}
 
-  '@inquirer/confirm@3.1.7':
-    dependencies:
-      '@inquirer/core': 8.2.0
-      '@inquirer/type': 1.3.1
-
   '@inquirer/confirm@5.1.7':
     dependencies:
       '@inquirer/core': 10.1.8
@@ -42259,25 +42206,7 @@ snapshots:
     optionalDependencies:
       '@types/node': 22.10.10
 
-  '@inquirer/core@8.2.0':
-    dependencies:
-      '@inquirer/figures': 1.0.11
-      '@inquirer/type': 1.3.1
-      '@types/mute-stream': 0.0.4
-      '@types/node': 20.12.12
-      '@types/wrap-ansi': 3.0.0
-      ansi-escapes: 4.3.2
-      chalk: 4.1.2
-      cli-spinners: 2.9.2
-      cli-width: 4.1.0
-      mute-stream: 1.0.0
-      signal-exit: 4.1.0
-      strip-ansi: 6.0.1
-      wrap-ansi: 6.2.0
-
   '@inquirer/figures@1.0.11': {}
-
-  '@inquirer/type@1.3.1': {}
 
   '@inquirer/type@3.0.5': {}
 
@@ -43709,24 +43638,6 @@ snapshots:
       '@types/react': 18.2.73
       react: 18.3.1
 
-  '@mswjs/interceptors@0.29.1':
-    dependencies:
-      '@open-draft/deferred-promise': 2.2.0
-      '@open-draft/logger': 0.3.0
-      '@open-draft/until': 2.1.0
-      is-node-process: 1.2.0
-      outvariant: 1.4.2
-      strict-event-emitter: 0.5.1
-
-  '@mswjs/interceptors@0.37.6':
-    dependencies:
-      '@open-draft/deferred-promise': 2.2.0
-      '@open-draft/logger': 0.3.0
-      '@open-draft/until': 2.1.0
-      is-node-process: 1.2.0
-      outvariant: 1.4.3
-      strict-event-emitter: 0.5.1
-
   '@mswjs/interceptors@0.38.0':
     dependencies:
       '@open-draft/deferred-promise': 2.2.0
@@ -43756,6 +43667,15 @@ snapshots:
       - canvas
       - supports-color
       - utf-8-validate
+
+  '@mswjs/interceptors@0.39.7':
+    dependencies:
+      '@open-draft/deferred-promise': 2.2.0
+      '@open-draft/logger': 0.3.0
+      '@open-draft/until': 2.1.0
+      is-node-process: 1.2.0
+      outvariant: 1.4.3
+      strict-event-emitter: 0.5.1
 
   '@multiversx/sdk-bls-wasm@0.3.5':
     optional: true
@@ -49815,7 +49735,7 @@ snapshots:
 
   '@storybook/react-docgen-typescript-plugin@1.0.6--canary.9.0c3f3b7.0(typescript@5.4.3)(webpack@5.94.0(esbuild@0.19.12))':
     dependencies:
-      debug: 4.3.4
+      debug: 4.4.1
       endent: 2.1.0
       find-cache-dir: 3.3.2
       flat-cache: 3.2.0
@@ -51072,10 +50992,6 @@ snapshots:
 
   '@types/ms@0.7.34': {}
 
-  '@types/mute-stream@0.0.4':
-    dependencies:
-      '@types/node': 20.12.12
-
   '@types/mysql@2.15.22':
     dependencies:
       '@types/node': 20.12.12
@@ -51457,8 +51373,6 @@ snapshots:
   '@types/web-bluetooth@0.0.20': {}
 
   '@types/webpack-env@1.18.4': {}
-
-  '@types/wrap-ansi@3.0.0': {}
 
   '@types/write-file-atomic@4.0.3':
     dependencies:
@@ -53485,7 +53399,7 @@ snapshots:
       loader-utils: 2.0.4
       make-dir: 3.1.0
       schema-utils: 2.7.1
-      webpack: 5.94.0
+      webpack: 5.94.0(webpack-cli@4.10.0)
 
   babel-loader@9.2.1(@babel/core@7.27.1)(webpack@5.94.0(esbuild@0.19.12)):
     dependencies:
@@ -55179,8 +55093,6 @@ snapshots:
   cookie-signature@1.0.6: {}
 
   cookie@0.4.2: {}
-
-  cookie@0.5.0: {}
 
   cookie@0.6.0: {}
 
@@ -57074,7 +56986,7 @@ snapshots:
 
   esbuild-register@3.5.0(esbuild@0.18.20):
     dependencies:
-      debug: 4.4.1
+      debug: 4.3.4
       esbuild: 0.18.20
     transitivePeerDependencies:
       - supports-color
@@ -58647,7 +58559,7 @@ snapshots:
     dependencies:
       loader-utils: 2.0.4
       schema-utils: 3.3.0
-      webpack: 5.94.0
+      webpack: 5.94.0(webpack-cli@4.10.0)
 
   file-selector@0.6.0:
     dependencies:
@@ -59876,7 +59788,7 @@ snapshots:
       pretty-error: 4.0.0
       tapable: 2.2.1
     optionalDependencies:
-      webpack: 5.94.0
+      webpack: 5.94.0(webpack-cli@4.10.0)
 
   htmlparser2@6.1.0:
     dependencies:
@@ -65565,144 +65477,104 @@ snapshots:
 
   ms@2.1.3: {}
 
-  msw@2.3.4(typescript@5.4.3):
-    dependencies:
-      '@bundled-es-modules/cookie': 2.0.0
-      '@bundled-es-modules/statuses': 1.0.1
-      '@bundled-es-modules/tough-cookie': 0.1.6
-      '@inquirer/confirm': 3.1.7
-      '@mswjs/interceptors': 0.29.1
-      '@open-draft/until': 2.1.0
-      '@types/cookie': 0.6.0
-      '@types/statuses': 2.0.5
-      chalk: 4.1.2
-      graphql: 16.11.0
-      headers-polyfill: 4.0.3
-      is-node-process: 1.2.0
-      outvariant: 1.4.2
-      path-to-regexp: 6.2.1
-      strict-event-emitter: 0.5.1
-      type-fest: 4.14.0
-      yargs: 17.7.2
-    optionalDependencies:
-      typescript: 5.4.3
-
-  msw@2.3.4(typescript@5.6.3):
-    dependencies:
-      '@bundled-es-modules/cookie': 2.0.0
-      '@bundled-es-modules/statuses': 1.0.1
-      '@bundled-es-modules/tough-cookie': 0.1.6
-      '@inquirer/confirm': 3.1.7
-      '@mswjs/interceptors': 0.29.1
-      '@open-draft/until': 2.1.0
-      '@types/cookie': 0.6.0
-      '@types/statuses': 2.0.5
-      chalk: 4.1.2
-      graphql: 16.11.0
-      headers-polyfill: 4.0.3
-      is-node-process: 1.2.0
-      outvariant: 1.4.2
-      path-to-regexp: 6.2.1
-      strict-event-emitter: 0.5.1
-      type-fest: 4.14.0
-      yargs: 17.7.2
-    optionalDependencies:
-      typescript: 5.6.3
-
-  msw@2.7.3(@types/node@22.10.10)(typescript@5.4.3):
+  msw@2.11.3(@types/node@22.10.10)(typescript@5.4.3):
     dependencies:
       '@bundled-es-modules/cookie': 2.0.1
       '@bundled-es-modules/statuses': 1.0.1
-      '@bundled-es-modules/tough-cookie': 0.1.6
       '@inquirer/confirm': 5.1.7(@types/node@22.10.10)
-      '@mswjs/interceptors': 0.37.6
+      '@mswjs/interceptors': 0.39.7
       '@open-draft/deferred-promise': 2.2.0
-      '@open-draft/until': 2.1.0
       '@types/cookie': 0.6.0
       '@types/statuses': 2.0.5
-      graphql: 16.10.0
+      graphql: 16.11.0
       headers-polyfill: 4.0.3
       is-node-process: 1.2.0
       outvariant: 1.4.3
       path-to-regexp: 6.3.0
       picocolors: 1.1.1
+      rettime: 0.7.0
       strict-event-emitter: 0.5.1
+      tough-cookie: 6.0.0
       type-fest: 4.40.0
+      until-async: 3.0.2
       yargs: 17.7.2
     optionalDependencies:
       typescript: 5.4.3
     transitivePeerDependencies:
       - '@types/node'
 
-  msw@2.7.3(typescript@5.4.3):
+  msw@2.11.3(typescript@5.4.3):
     dependencies:
       '@bundled-es-modules/cookie': 2.0.1
       '@bundled-es-modules/statuses': 1.0.1
-      '@bundled-es-modules/tough-cookie': 0.1.6
       '@inquirer/confirm': 5.1.7
-      '@mswjs/interceptors': 0.37.6
+      '@mswjs/interceptors': 0.39.7
       '@open-draft/deferred-promise': 2.2.0
-      '@open-draft/until': 2.1.0
       '@types/cookie': 0.6.0
       '@types/statuses': 2.0.5
-      graphql: 16.10.0
+      graphql: 16.11.0
       headers-polyfill: 4.0.3
       is-node-process: 1.2.0
       outvariant: 1.4.3
       path-to-regexp: 6.3.0
       picocolors: 1.1.1
+      rettime: 0.7.0
       strict-event-emitter: 0.5.1
+      tough-cookie: 6.0.0
       type-fest: 4.40.0
+      until-async: 3.0.2
       yargs: 17.7.2
     optionalDependencies:
       typescript: 5.4.3
     transitivePeerDependencies:
       - '@types/node'
 
-  msw@2.7.3(typescript@5.6.3):
+  msw@2.11.3(typescript@5.6.3):
     dependencies:
       '@bundled-es-modules/cookie': 2.0.1
       '@bundled-es-modules/statuses': 1.0.1
-      '@bundled-es-modules/tough-cookie': 0.1.6
       '@inquirer/confirm': 5.1.7
-      '@mswjs/interceptors': 0.37.6
+      '@mswjs/interceptors': 0.39.7
       '@open-draft/deferred-promise': 2.2.0
-      '@open-draft/until': 2.1.0
       '@types/cookie': 0.6.0
       '@types/statuses': 2.0.5
-      graphql: 16.10.0
+      graphql: 16.11.0
       headers-polyfill: 4.0.3
       is-node-process: 1.2.0
       outvariant: 1.4.3
       path-to-regexp: 6.3.0
       picocolors: 1.1.1
+      rettime: 0.7.0
       strict-event-emitter: 0.5.1
+      tough-cookie: 6.0.0
       type-fest: 4.40.0
+      until-async: 3.0.2
       yargs: 17.7.2
     optionalDependencies:
       typescript: 5.6.3
     transitivePeerDependencies:
       - '@types/node'
 
-  msw@2.7.3(typescript@5.8.3):
+  msw@2.11.3(typescript@5.8.3):
     dependencies:
       '@bundled-es-modules/cookie': 2.0.1
       '@bundled-es-modules/statuses': 1.0.1
-      '@bundled-es-modules/tough-cookie': 0.1.6
       '@inquirer/confirm': 5.1.7
-      '@mswjs/interceptors': 0.37.6
+      '@mswjs/interceptors': 0.39.7
       '@open-draft/deferred-promise': 2.2.0
-      '@open-draft/until': 2.1.0
       '@types/cookie': 0.6.0
       '@types/statuses': 2.0.5
-      graphql: 16.10.0
+      graphql: 16.11.0
       headers-polyfill: 4.0.3
       is-node-process: 1.2.0
       outvariant: 1.4.3
       path-to-regexp: 6.3.0
       picocolors: 1.1.1
+      rettime: 0.7.0
       strict-event-emitter: 0.5.1
+      tough-cookie: 6.0.0
       type-fest: 4.40.0
+      until-async: 3.0.2
       yargs: 17.7.2
     optionalDependencies:
       typescript: 5.8.3
@@ -65755,8 +65627,6 @@ snapshots:
   mute-stream@0.0.7: {}
 
   mute-stream@0.0.8: {}
-
-  mute-stream@1.0.0: {}
 
   mute-stream@2.0.0: {}
 
@@ -66413,8 +66283,6 @@ snapshots:
 
   outdent@0.5.0: {}
 
-  outvariant@1.4.2: {}
-
   outvariant@1.4.3: {}
 
   ox@0.9.3(typescript@5.4.3):
@@ -66666,8 +66534,6 @@ snapshots:
       isarray: 0.0.1
 
   path-to-regexp@2.2.1: {}
-
-  path-to-regexp@6.2.1: {}
 
   path-to-regexp@6.3.0: {}
 
@@ -69659,6 +69525,8 @@ snapshots:
 
   retry@0.13.1: {}
 
+  rettime@0.7.0: {}
+
   reusify@1.0.4: {}
 
   rfc4648@1.5.3: {}
@@ -71521,7 +71389,7 @@ snapshots:
       schema-utils: 3.3.0
       serialize-javascript: 6.0.2
       terser: 5.36.0
-      webpack: 5.94.0
+      webpack: 5.94.0(webpack-cli@4.10.0)
     transitivePeerDependencies:
       - metro
 
@@ -71672,9 +71540,15 @@ snapshots:
 
   tldts-core@6.1.75: {}
 
+  tldts-core@7.0.16: {}
+
   tldts@6.1.75:
     dependencies:
       tldts-core: 6.1.75
+
+  tldts@7.0.16:
+    dependencies:
+      tldts-core: 7.0.16
 
   tmp-promise@3.0.3:
     dependencies:
@@ -71741,6 +71615,10 @@ snapshots:
   tough-cookie@5.1.0:
     dependencies:
       tldts: 6.1.75
+
+  tough-cookie@6.0.0:
+    dependencies:
+      tldts: 7.0.16
 
   tr46@0.0.3: {}
 
@@ -72691,8 +72569,6 @@ snapshots:
 
   type-fest@3.13.1: {}
 
-  type-fest@4.14.0: {}
-
   type-fest@4.40.0: {}
 
   type-is@1.6.18:
@@ -73010,6 +72886,8 @@ snapshots:
       webpack-virtual-modules: 0.6.1
 
   unquote@1.1.1: {}
+
+  until-async@3.0.2: {}
 
   untildify@4.0.0: {}
 
@@ -73884,7 +73762,7 @@ snapshots:
       mime-types: 2.1.35
       range-parser: 1.2.1
       schema-utils: 4.2.0
-      webpack: 5.94.0
+      webpack: 5.94.0(webpack-cli@4.10.0)
 
   webpack-dev-middleware@6.1.2(webpack@5.94.0(esbuild@0.19.12)):
     dependencies:
