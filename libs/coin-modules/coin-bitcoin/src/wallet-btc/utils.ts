@@ -292,7 +292,7 @@ function btcPerKbToSatPerVB(btcPerKbStr: string): BigNumber {
  */
 export async function getRelayFeeFloorSatVb(
   explorer: unknown,
-  defaultFloor: BigNumber = new BigNumber(1),
+  defaultFloor: BigNumber = new BigNumber(0),
 ): Promise<BigNumber> {
   try {
     const maybeExplorer = explorer as { getNetwork?: () => Promise<NetworkInfoResponse> };
