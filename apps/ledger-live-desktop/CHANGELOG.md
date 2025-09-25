@@ -1,5 +1,32 @@
 # ledger-live-desktop
 
+## 2.129.0-nightly.7
+
+### Minor Changes
+
+- [#11982](https://github.com/LedgerHQ/ledger-live/pull/11982) [`a37c06f`](https://github.com/LedgerHQ/ledger-live/commit/a37c06f97b061a5db0dad3632bb5c3e8f293677c) Thanks [@ooke-ledger](https://github.com/ooke-ledger)! - rename confirmation screen FF
+
+- [#11930](https://github.com/LedgerHQ/ledger-live/pull/11930) [`4be1b10`](https://github.com/LedgerHQ/ledger-live/commit/4be1b10c779dcf6b31660b58c3a2bd292aa398eb) Thanks [@jiyuzhuang](https://github.com/jiyuzhuang)! - Cleanup and fix a remove CLS modal icon
+
+- [#11930](https://github.com/LedgerHQ/ledger-live/pull/11930) [`7167bb6`](https://github.com/LedgerHQ/ledger-live/commit/7167bb6c3206cd5d58892424e2acd6a972c4375d) Thanks [@jiyuzhuang](https://github.com/jiyuzhuang)! - Cleanup and fix some bugs
+
+### Patch Changes
+
+- Updated dependencies [[`a37c06f`](https://github.com/LedgerHQ/ledger-live/commit/a37c06f97b061a5db0dad3632bb5c3e8f293677c), [`7ec652c`](https://github.com/LedgerHQ/ledger-live/commit/7ec652c31d8d634385919478386fe560a62be3a5), [`980450f`](https://github.com/LedgerHQ/ledger-live/commit/980450ff9e57e1a150e137c7dea39ce5bcb36549)]:
+  - @ledgerhq/types-live@6.85.0-nightly.4
+  - @ledgerhq/live-common@34.49.0-nightly.6
+  - @ledgerhq/coin-evm@2.31.0-nightly.5
+  - @ledgerhq/coin-framework@6.4.1-nightly.4
+  - @ledgerhq/coin-bitcoin@0.22.1-nightly.4
+  - @ledgerhq/coin-canton@0.5.1-nightly.4
+  - @ledgerhq/coin-cosmos@0.17.2-nightly.4
+  - @ledgerhq/coin-filecoin@1.12.1-nightly.4
+  - @ledgerhq/domain-service@1.2.44-nightly.4
+  - @ledgerhq/live-countervalues@0.7.2-nightly.4
+  - @ledgerhq/live-countervalues-react@0.6.1-nightly.4
+  - @ledgerhq/live-wallet@0.14.1-nightly.4
+  - @ledgerhq/live-dmk-desktop@0.9.7-nightly.6
+
 ## 2.129.0-nightly.6
 
 ### Minor Changes

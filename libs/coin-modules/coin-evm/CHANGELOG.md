@@ -1,5 +1,18 @@
 # @ledgerhq/coin-evm
 
+## 2.31.0-nightly.5
+
+### Minor Changes
+
+- [#11822](https://github.com/LedgerHQ/ledger-live/pull/11822) [`7ec652c`](https://github.com/LedgerHQ/ledger-live/commit/7ec652c31d8d634385919478386fe560a62be3a5) Thanks [@dilaouid](https://github.com/dilaouid)! - feat: getBalance returns staking positions
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/coin-framework@6.4.1-nightly.4
+  - @ledgerhq/domain-service@1.2.44-nightly.4
+  - @ledgerhq/evm-tools@1.7.7-nightly.2
+
 ## 2.31.0-nightly.4
 
 ### Patch Changes

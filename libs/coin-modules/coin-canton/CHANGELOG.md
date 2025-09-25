@@ -1,5 +1,13 @@
 # @ledgerhq/coin-canton
 
+## 0.5.1-nightly.4
+
+### Patch Changes
+
+- Updated dependencies [[`a37c06f`](https://github.com/LedgerHQ/ledger-live/commit/a37c06f97b061a5db0dad3632bb5c3e8f293677c)]:
+  - @ledgerhq/types-live@6.85.0-nightly.4
+  - @ledgerhq/coin-framework@6.4.1-nightly.4
+
 ## 0.5.1-nightly.3
 
 ### Patch Changes

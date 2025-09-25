@@ -1,5 +1,11 @@
 # @ledgerhq/types-live
 
+## 6.85.0-nightly.4
+
+### Minor Changes
+
+- [#11982](https://github.com/LedgerHQ/ledger-live/pull/11982) [`a37c06f`](https://github.com/LedgerHQ/ledger-live/commit/a37c06f97b061a5db0dad3632bb5c3e8f293677c) Thanks [@ooke-ledger](https://github.com/ooke-ledger)! - rename confirmation screen FF
+
 ## 6.85.0-nightly.3
 
 ### Minor Changes

@@ -1,5 +1,38 @@
 # live-mobile
 
+## 3.94.0-nightly.7
+
+### Minor Changes
+
+- [#11980](https://github.com/LedgerHQ/ledger-live/pull/11980) [`bb63e1a`](https://github.com/LedgerHQ/ledger-live/commit/bb63e1a8d1bcaf2bae38610875878dc6f682953c) Thanks [@ooke-ledger](https://github.com/ooke-ledger)! - Update changelly error wording
+
+- [#11918](https://github.com/LedgerHQ/ledger-live/pull/11918) [`1b444f2`](https://github.com/LedgerHQ/ledger-live/commit/1b444f2970bd37e32776365a5850d381dbb378ef) Thanks [@mitchellv-ledger](https://github.com/mitchellv-ledger)! - Add two step sync onboarding companion. Update onboarding completion screen. Loop animations in completion screen with no exit on animation finish.
+
+- [#11962](https://github.com/LedgerHQ/ledger-live/pull/11962) [`ecdd27d`](https://github.com/LedgerHQ/ledger-live/commit/ecdd27d452381aa306bd128e5ea0aa010f7f7141) Thanks [@lpaquet-ledger](https://github.com/lpaquet-ledger)! - fit the drawer to whole screen for confirmation of swap on device
+
+- [#11930](https://github.com/LedgerHQ/ledger-live/pull/11930) [`4be1b10`](https://github.com/LedgerHQ/ledger-live/commit/4be1b10c779dcf6b31660b58c3a2bd292aa398eb) Thanks [@jiyuzhuang](https://github.com/jiyuzhuang)! - Cleanup and fix a remove CLS modal icon
+
+- [#11854](https://github.com/LedgerHQ/ledger-live/pull/11854) [`72e9122`](https://github.com/LedgerHQ/ledger-live/commit/72e91227fb38e3f858d2f63b3e3a988480579308) Thanks [@CremaFR](https://github.com/CremaFR)! - feat: no backdrop and no close button
+
+- [#11968](https://github.com/LedgerHQ/ledger-live/pull/11968) [`1662f8b`](https://github.com/LedgerHQ/ledger-live/commit/1662f8b723f349157487a9f00a3a60d1b7c17470) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - RTK Slice for tooling
+
+- [#11930](https://github.com/LedgerHQ/ledger-live/pull/11930) [`7167bb6`](https://github.com/LedgerHQ/ledger-live/commit/7167bb6c3206cd5d58892424e2acd6a972c4375d) Thanks [@jiyuzhuang](https://github.com/jiyuzhuang)! - Adjust framed picture config
+
+### Patch Changes
+
+- Updated dependencies [[`a37c06f`](https://github.com/LedgerHQ/ledger-live/commit/a37c06f97b061a5db0dad3632bb5c3e8f293677c), [`7ec652c`](https://github.com/LedgerHQ/ledger-live/commit/7ec652c31d8d634385919478386fe560a62be3a5)]:
+  - @ledgerhq/types-live@6.85.0-nightly.4
+  - @ledgerhq/coin-evm@2.31.0-nightly.5
+  - @ledgerhq/coin-framework@6.4.1-nightly.4
+  - @ledgerhq/coin-cosmos@0.17.2-nightly.4
+  - @ledgerhq/coin-filecoin@1.12.1-nightly.4
+  - @ledgerhq/coin-multiversx@0.5.2-nightly.4
+  - @ledgerhq/coin-stacks@0.9.2-nightly.4
+  - @ledgerhq/domain-service@1.2.44-nightly.4
+  - @ledgerhq/live-countervalues@0.7.2-nightly.4
+  - @ledgerhq/live-countervalues-react@0.6.1-nightly.4
+  - @ledgerhq/live-wallet@0.14.1-nightly.4
+
 ## 3.94.0-nightly.6
 
 ### Minor Changes
