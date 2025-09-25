@@ -40,8 +40,16 @@ type ConfigStatus =
       type: "deprecated";
     };
 
+type Banner = {
+  isDisplay: boolean;
+  bannerText: string;
+  bannerLink?: string;
+  bannerLinkText?: string;
+};
+
 export type CurrencyConfig = {
   status: ConfigStatus;
+  customBanner?: Banner;
   [key: string]: unknown;
 };
 

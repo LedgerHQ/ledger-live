@@ -140,6 +140,7 @@ export type CurrencyFeatures = {
   currencyHyperevm: DefaultFeature;
   currencyCantonNetwork: DefaultFeature;
   currencyKaspa: DefaultFeature;
+  currencyCore: DefaultFeature;
 };
 
 /**

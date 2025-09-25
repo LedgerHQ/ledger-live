@@ -13,7 +13,7 @@ export function genericGetTransactionStatus(
   return async (account, transaction: GenericTransaction) => {
     const alpacaApi = getAlpacaApi(account.currency.id, kind);
     const draftTransaction = {
-      mode: transaction?.mode,
+      mode: transaction?.mode ?? "send",
       recipient: transaction.recipient,
       amount: transaction.amount ?? new BigNumber(0),
       useAllAmount: !!transaction.useAllAmount,
@@ -23,6 +23,8 @@ export function genericGetTransactionStatus(
       memoType: transaction.memoType || "",
       memoValue: transaction.memoValue || "",
       family: transaction.family,
+      feesStrategy: transaction.feesStrategy,
+      data: transaction.data,
     };
 
     if (alpacaApi.getChainSpecificRules) {
@@ -35,11 +37,11 @@ export function genericGetTransactionStatus(
     }
 
     const { errors, warnings, estimatedFees, amount, totalSpent } = await alpacaApi.validateIntent(
-      transactionToIntent(account, draftTransaction),
+      transactionToIntent(account, draftTransaction, alpacaApi.computeIntentType),
       { value: transaction.fees ? BigInt(transaction.fees.toString()) : 0n },
     );
 
-    return Promise.resolve({
+    return {
       errors,
       warnings,
       estimatedFees:
@@ -48,6 +50,6 @@ export function genericGetTransactionStatus(
           : transaction.fees,
       amount: transaction.amount.eq(0) ? new BigNumber(amount.toString()) : transaction.amount,
       totalSpent: new BigNumber(totalSpent.toString()),
-    });
+    };
   };
 }

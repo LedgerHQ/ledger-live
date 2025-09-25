@@ -1,6 +1,8 @@
 import {
+  BufferTxData,
   CraftedTransaction,
   FeeEstimation,
+  MemoNotSupported,
   TransactionIntent,
 } from "@ledgerhq/coin-framework/api/types";
 import { Transaction, TransactionLike } from "ethers";
@@ -15,7 +17,7 @@ export async function craftTransaction(
     transactionIntent,
     customFees,
   }: {
-    transactionIntent: TransactionIntent;
+    transactionIntent: TransactionIntent<MemoNotSupported, BufferTxData>;
     customFees?: FeeEstimation | undefined;
   },
 ): Promise<CraftedTransaction> {

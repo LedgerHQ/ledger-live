@@ -33,6 +33,7 @@ import { type TabListType as TabPortfolioAssetsType } from "~/screens/Portfolio/
 import { CountervaluesState } from "./countervalues";
 import { ToastState } from "./toast";
 import { ModularDrawerState } from "./modularDrawer";
+import { ToolsState } from "./tools";
 import { assetsDataApi } from "@ledgerhq/live-common/modularDrawer/data/state-manager/api";
 
 // === ACCOUNT STATE ===
@@ -286,7 +287,6 @@ export type SettingsState = {
   fromLedgerSyncOnboarding: boolean;
   mevProtection: boolean;
   selectedTabPortfolioAssets: TabPortfolioAssetsType;
-  rtkConsoleEnabled?: boolean;
 };
 
 export type NotificationsSettings = {
@@ -390,6 +390,7 @@ export type State = {
   largeMover: LargeMoverState;
   market: MarketState;
   modularDrawer: ModularDrawerState;
+  tools: ToolsState;
   notifications: NotificationsState;
   postOnboarding: PostOnboardingState;
   protect: ProtectState;

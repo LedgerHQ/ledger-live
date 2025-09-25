@@ -27,6 +27,7 @@ import { getCryptoAssetsStore, setCryptoAssetsStore } from "./crypto-assets";
 const alpacaized = {
   xrp: true,
   stellar: true,
+  tezos: true,
 };
 
 // let accountBridgeInstance: AccountBridge<any> | null = null;

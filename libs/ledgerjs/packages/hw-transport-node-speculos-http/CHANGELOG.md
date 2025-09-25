@@ -1,5 +1,19 @@
 # @ledgerhq/hw-transport-node-speculos-http
 
+## 6.30.1
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport@6.31.11
+
+## 6.30.1-next.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport@6.31.11-next.0
+
 ## 6.30.0
 
 ### Minor Changes

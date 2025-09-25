@@ -10,6 +10,7 @@ import esdttokens, { MultiversXESDTToken } from "./data/esdt";
 import asatokens, { AlgorandASAToken } from "./data/asa";
 import { tokens as polygonTokens } from "./data/evm/137";
 import { tokens as sonicTokens } from "./data/evm/146";
+import { tokens as coreTokens } from "./data/evm/1116";
 import trc10tokens, { TRC10Token } from "./data/trc10";
 import trc20tokens, { TRC20Token } from "./data/trc20";
 import { tokens as mainnetTokens } from "./data/evm/1";
@@ -68,6 +69,8 @@ addTokens(spltokens.map(convertSplTokens));
 addTokens(sonicTokens.map(convertERC20));
 // Stacks tokens
 addTokens(stacksSip010Tokens.map(convertStacksSip010Token));
+// Core
+addTokens(coreTokens.map(convertERC20));
 // Celo
 addTokens(celoTokens.map(convertERC20));
 

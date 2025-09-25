@@ -1,4 +1,9 @@
-import { Api, FeeEstimation } from "@ledgerhq/coin-framework/api/types";
+import {
+  Api,
+  BufferTxData,
+  FeeEstimation,
+  MemoNotSupported,
+} from "@ledgerhq/coin-framework/api/types";
 import { ethers } from "ethers";
 import * as legacy from "@ledgerhq/cryptoassets/tokens";
 import { EvmConfig } from "../config";
@@ -27,7 +32,7 @@ describe.each([
     },
   ],
 ])("EVM Api (%s)", (_, config) => {
-  let module: Api;
+  let module: Api<MemoNotSupported, BufferTxData>;
 
   beforeAll(() => {
     setCryptoAssetsStoreGetter(() => legacy);
@@ -83,6 +88,7 @@ describe.each([
         amount: 10n,
         sender: "0x9bcd841436ef4f85dacefb1aec772af71619024e",
         recipient: "0x7b2c7232f9e38f30e2868f0e5bf311cd83554b5a",
+        data: { type: "buffer", value: Buffer.from([]) },
         asset: {
           type: "native",
         },
@@ -102,6 +108,7 @@ describe.each([
         amount: 10n,
         sender: "0x9bcd841436ef4f85dacefb1aec772af71619024e",
         recipient: "0x7b2c7232f9e38f30e2868f0e5bf311cd83554b5a",
+        data: { type: "buffer", value: Buffer.from([]) },
         asset: {
           type: "erc20",
           assetReference: "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
@@ -220,6 +227,7 @@ describe.each([
         amount: 100000000000000n, // 0.0001 ETH (smaller amount)
         sender: "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045",
         recipient: "0x7b2C7232f9E38F30E2868f0E5Bf311Cd83554b5A",
+        data: { type: "buffer", value: Buffer.from([]) },
         asset: {
           type: "native",
         },
@@ -234,6 +242,7 @@ describe.each([
         amount: 1000000n, // 1 USDC (6 decimals)
         sender: "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045",
         recipient: "0x7b2C7232f9E38F30E2868f0E5Bf311Cd83554b5A",
+        data: { type: "buffer", value: Buffer.from([]) },
         asset: {
           type: "erc20",
           assetReference: "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
