@@ -162,7 +162,7 @@ describe("SUI SDK Integration tests", () => {
 
   describe("paymentInfo", () => {
     test("paymentInfo should return gas budget and fees", async () => {
-      const sender = "0x6e143fe0a8ca010a86580dafac44298e5b1b7d73efc345356a59a15f0d7824f0";
+      const sender = "0xad79719ac7edb44f6e253f1f771e8291e281a6aaf1e4789b52bf85336f525e8e";
       const fakeTransaction = {
         mode: "send" as const,
         family: "sui" as const,
