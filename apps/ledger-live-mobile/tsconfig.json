@@ -6,7 +6,10 @@
     "allowJs": false,
     "checkJs": false,
     "jsx": "react-native",
-    "lib": ["es2017", "DOM"],
+    "lib": [
+      "es2017",
+      "DOM"
+    ],
     "types": [
       "jest",
       "@testing-library/jest-native/extend-expect",
@@ -17,13 +20,27 @@
     "incremental": true,
     "baseUrl": ".",
     "paths": {
-      "~/*": ["src/*"],
-      "LLM/*": ["src/newArch/*"],
-      "@tests/*": ["__tests__/*"],
-      "@mocks/*": ["__mocks__/*"]
+      "~/*": [
+        "src/*"
+      ],
+      "LLM/*": [
+        "src/newArch/*"
+      ],
+      "@tests/*": [
+        "__tests__/*"
+      ],
+      "@mocks/*": [
+        "__mocks__/*"
+      ]
     }
   },
-  "include": ["src/**/*", "e2e/**/*", "**/*.d.ts", "services/**/*"],
+  "include": [
+    "src/**/*",
+    "e2e/**/*",
+    "**/*.d.ts",
+    "services/**/*",
+    "nativewind-env.d.ts"
+  ],
   "exclude": [
     "node_modules",
     "babel.config.js",

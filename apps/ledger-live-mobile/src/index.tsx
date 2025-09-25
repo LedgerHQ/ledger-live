@@ -1,3 +1,5 @@
+import { Button } from "@ledgerhq/ldls-ui-rnative";
+
 import "./polyfill";
 import "./live-common-setup";
 import "./iosWebsocketFix";
@@ -316,6 +318,7 @@ export default class Root extends Component {
                                     <AppProviders initialCountervalues={initialCountervalues}>
                                       <AppGeoBlocker>
                                         <AppVersionBlocker>
+                                          <Button appearance="accent">TEST</Button>
                                           <App />
                                         </AppVersionBlocker>
                                       </AppGeoBlocker>

@@ -7,6 +7,7 @@ module.exports = {
         runtime: "automatic",
       },
     ],
+    "nativewind/babel",
   ],
   plugins: [
     "@babel/plugin-transform-named-capturing-groups-regex",
