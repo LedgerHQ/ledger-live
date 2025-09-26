@@ -94,6 +94,7 @@ import AssetsListNavigator from "LLM/features/Assets/Navigator";
 import FeesNavigator from "./FeesNavigator";
 import { getStakeLabelLocaleBased } from "~/helpers/getStakeLabelLocaleBased";
 import { getReceiveStackOptions } from "~/logic/getReceiveStackOptions";
+import SignRawTransactionNavigator from "./SignRawTransactionNavigator";
 
 const Stack = createStackNavigator<BaseNavigatorStackParamList>();
 
@@ -237,6 +238,16 @@ export default function BaseNavigator() {
         <Stack.Screen
           name={NavigatorName.SignTransaction}
           component={SignTransactionNavigator}
+          options={{ headerShown: false }}
+          listeners={({ route }) => ({
+            beforeRemove: () => {
+              route.params.onError(new Error("Signature interrupted by user"));
+            },
+          })}
+        />
+        <Stack.Screen
+          name={NavigatorName.SignRawTransaction}
+          component={SignRawTransactionNavigator}
           options={{ headerShown: false }}
           listeners={({ route }) => ({
             beforeRemove: () => {
