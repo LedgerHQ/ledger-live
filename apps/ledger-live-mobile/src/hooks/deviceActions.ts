@@ -1,6 +1,7 @@
 import { useCallback, useMemo, useRef, useState } from "react";
 import { createAction as appCreateAction } from "@ledgerhq/live-common/hw/actions/app";
 import { createAction as transactionCreateAction } from "@ledgerhq/live-common/hw/actions/transaction";
+import { createAction as rawTransactionCreateAction } from "@ledgerhq/live-common/hw/actions/rawTransaction";
 import { createAction as startExchangeCreateAction } from "@ledgerhq/live-common/hw/actions/startExchange";
 import { createAction as initSwapCreateAction } from "@ledgerhq/live-common/hw/actions/initSwap";
 import { createAction as managerCreateAction } from "@ledgerhq/live-common/hw/actions/manager";
@@ -55,6 +56,18 @@ export function useTransactionDeviceAction() {
   return useMemo(
     () =>
       transactionCreateAction(
+        mock ? connectAppExecMock : connectAppFactory({ isLdmkConnectAppEnabled }),
+      ),
+    [isLdmkConnectAppEnabled, mock],
+  );
+}
+
+export function useRawTransactionDeviceAction() {
+  const mock = useEnv("MOCK");
+  const isLdmkConnectAppEnabled = useFeature("ldmkConnectApp")?.enabled ?? false;
+  return useMemo(
+    () =>
+      rawTransactionCreateAction(
         mock ? connectAppExecMock : connectAppFactory({ isLdmkConnectAppEnabled }),
       ),
     [isLdmkConnectAppEnabled, mock],

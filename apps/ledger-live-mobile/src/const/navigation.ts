@@ -370,6 +370,9 @@ export enum ScreenName {
   SignTransactionSelectDevice = "SignTransactionSelectDevice",
   SignTransactionConnectDevice = "SignTransactionConnectDevice",
   SignTransactionValidationError = "SignTransactionValidationError",
+  SignRawTransactionSelectDevice = "SignRawTransactionSelectDevice",
+  SignRawTransactionConnectDevice = "SignRawTransactionConnectDevice",
+  SignRawTransactionValidationError = "SignRawTransactionValidationError",
   RequestAccountsSelectCrypto = "RequestAccountsSelectCrypto",
   RequestAccountsSelectAccount = "RequestAccountsSelectAccount",
   MarketList = "MarketList",
@@ -575,6 +578,7 @@ export enum NavigatorName {
   CustomError = "CustomError",
 
   SignTransaction = "SignTransaction",
+  SignRawTransaction = "SignRawTransaction",
   RequestAccount = "RequestAccount",
   RequestAccountsAddAccounts = "RequestAccountsAddAccounts",
 
