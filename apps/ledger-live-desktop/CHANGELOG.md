@@ -1,5 +1,11 @@
 # ledger-live-desktop
 
+## 2.130.0-next.1
+
+### Minor Changes
+
+- [#12019](https://github.com/LedgerHQ/ledger-live/pull/12019) [`3ced449`](https://github.com/LedgerHQ/ledger-live/commit/3ced449dd77460811504b94a5b3ea15c58cbb06f) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - fix(lld): do not crash on missing coin config
+
 ## 2.130.0-next.0
 
 ### Minor Changes
