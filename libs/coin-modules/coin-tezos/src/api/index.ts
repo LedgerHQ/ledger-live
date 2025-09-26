@@ -32,6 +32,7 @@ import { validatePublicKey, ValidationResult, getPkhfromPk } from "@taquito/util
 import { getRevealFee } from "@taquito/taquito";
 import {
   DUST_MARGIN_MUTEZ,
+  hasEmptyBalance,
   mapIntentTypeToTezosMode,
   normalizePublicKeyForAddress,
 } from "../utils";
@@ -267,11 +268,14 @@ async function estimate(transactionIntent: TransactionIntent): Promise<TezosFeeE
   } catch (error: any) {
     // Handle PublicKeyNotFoundError
     if (error?.message?.includes("Public key not found")) {
+      const apiAccount = await api.getAccountByAddress(transactionIntent.recipient);
+      const storageLimit =
+        !hasEmptyBalance(apiAccount) || transactionIntent.type === "stake" ? 0n : 277n;
       return {
-        value: 1000n, // Safe default with reveal fees (500 + 374 reveal + buffer)
+        value: 1000n,
         parameters: {
           gasLimit: 10000n,
-          storageLimit: 300n,
+          storageLimit,
           amount: 0n,
           txFee: 1000n,
         },
