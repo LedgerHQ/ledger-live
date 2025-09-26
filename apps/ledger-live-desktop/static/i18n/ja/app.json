@@ -168,6 +168,7 @@
       "NFT_IN" : "NFT受け取り済み",
       "NFT_OUT" : "NFT送付済み",
       "CREATE" : "作成済み",
+      "UNKNOWN" : "不明",
       "REVEAL" : "表示済み",
       "DELEGATE" : "デリゲート",
       "REDELEGATE" : "再デリゲート済み",
@@ -1930,7 +1931,12 @@
         "default" : "送付する前に、スワップの詳細をデバイス上で確認してください。アドレスは安全にやりとりされるため、確認の必要はありません。",
         "provider" : "送付前に、スワップの詳細をデバイス上で確認してください。{{providerName}}では、一部のトランザクションに対して追加の検証を実行する必要があり、遅延が発生する場合があります。"
       },
+      "simpleViewNotice" : {
+        "default" : "送付前に、スワップの詳細をLedger上で確認してください。",
+        "provider" : "送付前に、スワップの詳細をデバイス上で確認してください。{{providerName}}では、一部のトランザクションに対して追加の検証を実行する必要があり、遅延が発生する場合があります。"
+      },
       "confirm" : "スワップ取引を確定",
+      "confirmSwap" : "スワップ処理をデバイス上で確認する",
       "amountSent" : "送付額",
       "amountReceived" : "受取額",
       "amountReceivedFloat" : "サービス手数料を含まない受け取り額",
@@ -2425,6 +2431,7 @@
         "nextBlock" : "次のブロック",
         "suggested" : "提案済み",
         "unitVByte" : "{{unit}}/vbyte",
+        "unitPerByte" : "{{unit}}/バイト",
         "nft" : "NFT",
         "nftQuantity" : "数量",
         "splExtensionsWarning" : "お客様は、トークン拡張としても知られる、Token-2022プログラムの一部であるトークンを扱おうとしています。このトークンには特定のリスクが伴います。詳しくは<0>こちら</0>。"
@@ -5866,6 +5873,10 @@
       "commentPlaceholder" : "任意",
       "comment" : "コメント"
     },
+    "canton" : {
+      "commentPlaceholder" : "任意",
+      "comment" : "コメント"
+    },
     "stellar" : {
       "memo" : "メモ",
       "memoType" : {
@@ -6313,6 +6324,10 @@
       "title" : "問題が発生しました。",
       "description" : "トランザクションが失敗しました。もう一度お試しください。"
     },
+    "TransactionCannotBeCreated" : {
+      "title" : "処理エラー",
+      "description" : "Changellyはこの取引を処理できません。エラーコード 8HBB{{errorCode}}"
+    },
     "TimeoutError" : {
       "title" : "サーバーからの応答時間が長すぎます。",
       "description" : "もう一度お試しください。"
@@ -6460,6 +6475,9 @@
       "description" : "ウィンドウを閉じて、後でもう一度お試しください"
     },
     "TonCommentInvalid" : {
+      "title" : "コメントは特殊文字を除いて、120文字を超えてはなりません"
+    },
+    "CantonCommentInvalid" : {
       "title" : "コメントは特殊文字を除いて、120文字を超えてはなりません"
     },
     "CantScanQRCode" : {
@@ -6853,11 +6871,11 @@
       "description" : "別の画像でもう一度お試しください"
     },
     "ImageCommitRefusedOnDevice" : {
-      "title" : "{{productName}}でロック画面画像の\nインストールがキャンセルされました",
+      "title" : "{{productName}}で\nロック画面画像が破棄されました",
       "description" : "これが間違いである場合は、今すぐ再試行してください。"
     },
     "ImageLoadRefusedOnDevice" : {
-      "title" : "{{productName}}でロック画面画像の\nインストールがキャンセルされました",
+      "title" : "{{productName}}で\nロック画面画像がキャンセルされました",
       "description" : "これが間違いである場合は、今すぐ再試行してください。"
     },
     "ImageDoesNotExistOnDevice" : {
@@ -7182,7 +7200,7 @@
     "steps" : {
       "choose" : {
         "stepLabel" : "画像を選択",
-        "description" : "(...) として設定する画像を選択",
+        "description" : "デジタルアートか写真を選択。\n{{productName}}をカスタマイズ。\n自分仕様にカスタマイズ。",
         "pickFromNftGallery" : "NFTギャラリーから選択",
         "myNfts" : "私のNFT",
         "upload" : "パソコンからアップロード",
@@ -7206,7 +7224,7 @@
         "useAnotherPicture" : "別の写真をアップロード",
         "allowPreview" : "「Load picture（画像を読み込む）」をタップして\nロック画面画像をカスタマイズする",
         "allowConfirmPreview" : "「Load picture（画像を読み込む）」をタップして\nロック画面画像を復元する",
-        "loadingPicture" : "インストール中...",
+        "loadingPicture" : "読み込み中...",
         "voila" : "これで完了です！",
         "imageLoaded" : "{{productName}}に画像が読み込まれました",
         "confirmPicture" : "気に入りましたか？\n",
