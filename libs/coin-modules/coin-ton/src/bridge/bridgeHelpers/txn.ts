@@ -1,6 +1,6 @@
 import { decodeAccountId, encodeTokenAccountId } from "@ledgerhq/coin-framework/account/index";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
-import { findTokenByAddressInCurrency } from "@ledgerhq/cryptoassets/tokens";
+import { getCryptoAssetsStore } from "@ledgerhq/coin-framework/crypto-assets/index";
 import { Operation } from "@ledgerhq/types-live";
 import { Address, BitReader, BitString, Cell, Slice } from "@ton/core";
 import BigNumber from "bignumber.js";
@@ -203,8 +203,8 @@ export function mapJettonTxToOps(
   addr: string,
   addressBook: TonAddressBook,
   jettonTxMessageHashesMap?: Map<string, string>,
-): (tx: TonJettonTransfer) => TonOperation[] {
-  return (tx: TonJettonTransfer): TonOperation[] => {
+): (tx: TonJettonTransfer) => Promise<TonOperation[]> {
+  return async (tx: TonJettonTransfer): Promise<TonOperation[]> => {
     const accountAddr = Address.parse(addr).toString({ urlSafe: true, bounceable: false });
     if (accountAddr !== addr) throw Error(`[ton] unexpected address ${accountAddr} ${addr}`);
 
@@ -212,7 +212,7 @@ export function mapJettonTxToOps(
       urlSafe: true,
       bounceable: true,
     });
-    const tokenCurrency = findTokenByAddressInCurrency(
+    const tokenCurrency = await getCryptoAssetsStore().findTokenByAddressInCurrency(
       jettonMasterAddr.toLowerCase(),
       decodeAccountId(accountId).currencyId,
     );

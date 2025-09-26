@@ -99,7 +99,7 @@ export const getAccountShape: GetAccountShape<Account> = async (infos, { blackli
   );
 
   // Coin operations with children ops like token & nft ops attached to it
-  const lastCoinOperationsWithAttachements = attachOperations(
+  const lastCoinOperationsWithAttachements = await attachOperations(
     lastCoinOperations,
     lastTokenOperations,
     lastNftOperations,
@@ -147,28 +147,24 @@ export const getSubAccounts = async (
   accountId: string,
   lastTokenOperations: Operation[],
   blacklistedTokenIds: string[] = [],
-  swapHistoryMap: Map<TokenCurrency, TokenAccount["swapHistory"]>,
+  swapHistoryMap: Map<string, TokenAccount["swapHistory"]>,
 ): Promise<Partial<TokenAccount>[]> => {
   const { currency } = infos;
   const config = getCoinConfig(currency).info;
   const isLedgerNode = config?.node?.type === "ledger";
 
   // Creating a Map of Operations by TokenCurrencies in order to know which TokenAccounts should be synced as well
-  const erc20OperationsByToken = lastTokenOperations.reduce<Map<TokenCurrency, Operation[]>>(
-    (acc, operation) => {
-      const { accountId } = decodeOperationId(operation.id);
-      const { token } = decodeTokenAccountId(accountId);
-      if (!token || blacklistedTokenIds.includes(token.id)) return acc;
+  const erc20OperationsByToken = new Map<TokenCurrency, Operation[]>();
+  for (const operation of lastTokenOperations) {
+    const { accountId } = decodeOperationId(operation.id);
+    const { token } = await decodeTokenAccountId(accountId);
+    if (!token || blacklistedTokenIds.includes(token.id)) continue;
 
-      if (!acc.has(token)) {
-        acc.set(token, []);
-      }
-      acc.get(token)?.push(operation);
-
-      return acc;
-    },
-    new Map<TokenCurrency, Operation[]>(),
-  );
+    if (!erc20OperationsByToken.has(token)) {
+      erc20OperationsByToken.set(token, []);
+    }
+    erc20OperationsByToken.get(token)?.push(operation);
+  }
 
   const tokenEntries = Array.from(erc20OperationsByToken.entries());
 
@@ -176,7 +172,7 @@ export const getSubAccounts = async (
   if (isLedgerNode) {
     return Promise.all(
       tokenEntries.map(([token, ops]) =>
-        getSubAccountShape(currency, accountId, token, ops, swapHistoryMap.get(token) || []),
+        getSubAccountShape(currency, accountId, token, ops, swapHistoryMap.get(token.id) || []),
       ),
     );
   }
@@ -189,7 +185,7 @@ export const getSubAccounts = async (
     const chunk = tokenEntries.slice(i, i + chunkSize);
     const chunkResults = await Promise.all(
       chunk.map(([token, ops]) =>
-        getSubAccountShape(currency, accountId, token, ops, swapHistoryMap.get(token) || []),
+        getSubAccountShape(currency, accountId, token, ops, swapHistoryMap.get(token.id) || []),
       ),
     );
     result.push(...chunkResults);

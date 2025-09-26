@@ -6,7 +6,7 @@ import {
 import keyBy from "lodash/keyBy";
 import groupBy from "lodash/groupBy";
 import BigNumber from "bignumber.js";
-import { findTokenById } from "@ledgerhq/cryptoassets";
+import { getCryptoAssetsStore } from "@ledgerhq/coin-framework/crypto-assets/index";
 import { utils as TyphonUtils } from "@stricahq/typhonjs";
 import type { Account, TokenAccount } from "@ledgerhq/types-live";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
@@ -47,7 +47,7 @@ export const decodeTokenCurrencyId = (
 /**
  * @returns operations of tokens that are defined in ledgerjs cryptoassets
  */
-const mapTxToTokenAccountOperation = ({
+const mapTxToTokenAccountOperation = async ({
   parentAccountId,
   parentCurrency,
   newTransactions,
@@ -57,21 +57,21 @@ const mapTxToTokenAccountOperation = ({
   parentCurrency: CryptoCurrency;
   newTransactions: Array<APITransaction>;
   accountCredentialsMap: Record<string, PaymentCredential>;
-}): Array<CardanoOperation> => {
+}): Promise<Array<CardanoOperation>> => {
   const operations: Array<CardanoOperation> = [];
 
-  newTransactions.forEach(tx => {
+  for (const tx of newTransactions) {
     const accountChange = getAccountChange(tx, accountCredentialsMap);
-    accountChange.tokens.forEach(token => {
+    for (const token of accountChange.tokens) {
       const assetId = getTokenAssetId({
         policyId: token.policyId,
         assetName: token.assetName,
       });
       const tokenCurrencyId = encodeTokenCurrencyId(parentCurrency, assetId);
-      const tokenCurrency = findTokenById(tokenCurrencyId);
+      const tokenCurrency = await getCryptoAssetsStore().findTokenById(tokenCurrencyId);
       // skip the unsupported tokens by ledger-live
       if (tokenCurrency === null || tokenCurrency === undefined) {
-        return;
+        continue;
       }
 
       const tokenAccountId = encodeTokenAccountId(parentAccountId, tokenCurrency);
@@ -105,13 +105,13 @@ const mapTxToTokenAccountOperation = ({
         blockHash: undefined,
       };
       operations.push(operation);
-    });
-  });
+    }
+  }
 
   return operations;
 };
 
-export function buildSubAccounts({
+export async function buildSubAccounts({
   initialAccount,
   parentAccountId,
   parentCurrency,
@@ -125,7 +125,7 @@ export function buildSubAccounts({
   newTransactions: Array<APITransaction>;
   tokens: Array<Token>;
   accountCredentialsMap: Record<string, PaymentCredential>;
-}): Array<TokenAccount> {
+}): Promise<Array<TokenAccount>> {
   const tokenAccountsById: Record<string, TokenAccount> = {};
 
   if (initialAccount && initialAccount.subAccounts) {
@@ -136,7 +136,7 @@ export function buildSubAccounts({
     }
   }
 
-  const tokenOperations: Array<CardanoOperation> = mapTxToTokenAccountOperation({
+  const tokenOperations: Array<CardanoOperation> = await mapTxToTokenAccountOperation({
     parentAccountId,
     parentCurrency,
     newTransactions: newTransactions,
@@ -149,7 +149,7 @@ export function buildSubAccounts({
     const oldOperations = initialTokenAccount?.operations || [];
     const newOperations = tokenOperationsByAccId[tokenAccountId] || [];
     const operations = mergeOps(oldOperations, newOperations);
-    const { token: tokenCurrency } = decodeTokenAccountId(tokenAccountId);
+    const { token: tokenCurrency } = await decodeTokenAccountId(tokenAccountId);
     if (tokenCurrency) {
       const accountBalance =
         tokensBalanceByAssetId[tokenCurrency.contractAddress]?.amount || new BigNumber(0);

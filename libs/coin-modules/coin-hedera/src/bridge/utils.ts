@@ -3,11 +3,8 @@ import murmurhash from "imurmurhash";
 import invariant from "invariant";
 import type { Account, Operation, TokenAccount } from "@ledgerhq/types-live";
 import cvsApi from "@ledgerhq/live-countervalues/api/index";
-import {
-  findTokenByAddressInCurrency,
-  getFiatCurrencyByTicker,
-  listTokensForCryptoCurrency,
-} from "@ledgerhq/cryptoassets";
+import { getFiatCurrencyByTicker, listTokensForCryptoCurrency } from "@ledgerhq/cryptoassets";
+import { getCryptoAssetsStore } from "@ledgerhq/coin-framework/crypto-assets/index";
 import {
   decodeTokenAccountId,
   emptyHistoryCache,
@@ -172,27 +169,23 @@ export const getSubAccounts = async (
   mirrorTokens: HederaMirrorToken[],
 ): Promise<TokenAccount[]> => {
   // Creating a Map of Operations by TokenCurrencies in order to know which TokenAccounts should be synced as well
-  const operationsByToken = lastTokenOperations.reduce<Map<TokenCurrency, Operation[]>>(
-    (acc, tokenOperation) => {
-      const { token } = decodeTokenAccountId(tokenOperation.accountId);
-      if (!token) return acc;
+  const operationsByToken = new Map<TokenCurrency, Operation[]>();
+  for (const tokenOperation of lastTokenOperations) {
+    const { token } = await decodeTokenAccountId(tokenOperation.accountId);
+    if (!token) continue;
 
-      const isTokenListedInCAL = findTokenByAddressInCurrency(
-        token.contractAddress,
-        token.parentCurrency.id,
-      );
-      if (!isTokenListedInCAL) return acc;
+    const isTokenListedInCAL = await getCryptoAssetsStore().findTokenByAddressInCurrency(
+      token.contractAddress,
+      token.parentCurrency.id,
+    );
+    if (!isTokenListedInCAL) continue;
 
-      if (!acc.has(token)) {
-        acc.set(token, []);
-      }
+    if (!operationsByToken.has(token)) {
+      operationsByToken.set(token, []);
+    }
 
-      acc.get(token)?.push(tokenOperation);
-
-      return acc;
-    },
-    new Map<TokenCurrency, Operation[]>(),
-  );
+    operationsByToken.get(token)?.push(tokenOperation);
+  }
 
   const subAccounts: TokenAccount[] = [];
 
@@ -229,7 +222,10 @@ export const getSubAccounts = async (
     const parentAccountId = accountId;
     const rawBalance = rawToken.balance;
     const balance = new BigNumber(rawBalance);
-    const token = findTokenByAddressInCurrency(rawToken.token_id, "hedera");
+    const token = await getCryptoAssetsStore().findTokenByAddressInCurrency(
+      rawToken.token_id,
+      "hedera",
+    );
 
     if (!token) {
       continue;
@@ -263,11 +259,11 @@ export const getSubAccounts = async (
 type CoinOperationForOrphanChildOperation = Operation & Required<Pick<Operation, "subOperations">>;
 
 // create NONE coin operation that will be a parent of an orphan child operation
-const makeCoinOperationForOrphanChildOperation = (
+const makeCoinOperationForOrphanChildOperation = async (
   childOperation: Operation,
-): CoinOperationForOrphanChildOperation => {
+): Promise<CoinOperationForOrphanChildOperation> => {
   const type = "NONE";
-  const { accountId } = decodeTokenAccountId(childOperation.accountId);
+  const { accountId } = await decodeTokenAccountId(childOperation.accountId);
   const id = encodeOperationId(accountId, childOperation.hash, type);
 
   return {
@@ -293,11 +289,11 @@ const makeCoinOperationForOrphanChildOperation = (
 // this util handles:
 // - linking sub operations with coin operations, e.g. token transfer with fee payment
 // - if possible, assigning `extra.associatedTokenId = mirrorToken.tokenId` based on operation's consensus timestamp
-export const prepareOperations = (
+export const prepareOperations = async (
   coinOperations: Operation[],
   tokenOperations: Operation[],
   mirrorTokens: HederaMirrorToken[],
-): Operation[] => {
+): Promise<Operation[]> => {
   const preparedCoinOperations = coinOperations.map(op => ({ ...op }));
   const preparedTokenOperations = tokenOperations.map(op => ({ ...op }));
 
@@ -331,13 +327,13 @@ export const prepareOperations = (
 
   // loop through token operations to potentially copy them as a child operation of a coin operation
   for (const tokenOperation of preparedTokenOperations) {
-    const { token } = decodeTokenAccountId(tokenOperation.accountId);
+    const { token } = await decodeTokenAccountId(tokenOperation.accountId);
     if (!token) continue;
 
     let mainOperations = coinOperationsByHash[tokenOperation.hash];
 
     if (!mainOperations?.length) {
-      const noneOperation = makeCoinOperationForOrphanChildOperation(tokenOperation);
+      const noneOperation = await makeCoinOperationForOrphanChildOperation(tokenOperation);
       mainOperations = [noneOperation];
       preparedCoinOperations.push(noneOperation);
     }

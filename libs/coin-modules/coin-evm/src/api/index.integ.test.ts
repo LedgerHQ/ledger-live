@@ -5,7 +5,7 @@ import {
   MemoNotSupported,
 } from "@ledgerhq/coin-framework/api/types";
 import { ethers } from "ethers";
-import * as legacy from "@ledgerhq/cryptoassets/tokens";
+import { getCryptoAssetsStore } from "@ledgerhq/coin-framework/crypto-assets/index";
 import { EvmConfig } from "../config";
 import { setCryptoAssetsStoreGetter } from "../cryptoAssetsStore";
 import { createApi } from "./index";
@@ -35,7 +35,7 @@ describe.each([
   let module: Api<MemoNotSupported, BufferTxData>;
 
   beforeAll(() => {
-    setCryptoAssetsStoreGetter(() => legacy);
+    setCryptoAssetsStoreGetter(() => getCryptoAssetsStore());
     module = createApi(config as EvmConfig, "ethereum");
   });
 

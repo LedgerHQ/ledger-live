@@ -1,14 +1,15 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { Trans } from "react-i18next";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { Transaction } from "@ledgerhq/live-common/families/hedera/types";
 import { View, SafeAreaView, StyleSheet } from "react-native";
-import { findTokenByAddress } from "@ledgerhq/live-common/currencies/index";
+import { getCryptoAssetsStore } from "@ledgerhq/live-common/bridge/crypto-assets/index";
 import { HEDERA_TRANSACTION_KINDS } from "@ledgerhq/live-common/families/hedera/constants";
 import { getMainAccount } from "@ledgerhq/coin-framework/account/helpers";
 import { useTheme } from "@react-navigation/native";
+import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import invariant from "invariant";
 
 import SummaryToSection from "./SummaryToSection";
@@ -30,15 +31,15 @@ type Props = BaseComposite<
   StackNavigatorProps<HederaAssociateTokenFlowParamList, ScreenName.HederaAssociateTokenSummary>
 >;
 
-export default function Summary({ navigation, route }: Props) {
+interface SummaryWithTokenProps extends Props {
+  token: TokenCurrency;
+}
+
+function SummaryWithToken({ navigation, route, token }: SummaryWithTokenProps) {
   const { colors } = useTheme();
   const { account, parentAccount } = useSelector(accountScreenSelector(route));
 
-  const { tokenAddress } = route.params;
-  const token = findTokenByAddress(tokenAddress);
-
   invariant(account, "hedera: account is required");
-  invariant(token, `hedera: token with address ${tokenAddress} is not available`);
 
   const { transaction, status, bridgeError, bridgePending } = useBridgeTransaction(() => {
     const bridge = getAccountBridge(account, parentAccount);
@@ -107,6 +108,35 @@ export default function Summary({ navigation, route }: Props) {
       </View>
     </SafeAreaView>
   );
+}
+
+export default function Summary({ navigation, route }: Props) {
+  const { tokenAddress } = route.params;
+  const [token, setToken] = useState<TokenCurrency | null>(null);
+
+  useEffect(() => {
+    async function loadToken() {
+      try {
+        const foundToken = await getCryptoAssetsStore().findTokenByAddressInCurrency(
+          tokenAddress,
+          "hedera",
+        );
+        if (foundToken) {
+          setToken(foundToken);
+        }
+      } catch (error) {
+        console.error("Failed to load token:", error);
+      }
+    }
+    loadToken();
+  }, [tokenAddress]);
+
+  if (!token) {
+    // Token is still loading, return loading state or null
+    return null;
+  }
+
+  return <SummaryWithToken navigation={navigation} route={route} token={token} />;
 }
 
 const styles = StyleSheet.create({

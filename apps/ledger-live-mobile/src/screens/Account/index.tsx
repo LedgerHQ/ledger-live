@@ -16,8 +16,8 @@ import { switchCountervalueFirst } from "~/actions/settings";
 import { useBalanceHistoryWithCountervalue } from "~/hooks/portfolio";
 import {
   selectedTimeRangeSelector,
-  counterValueCurrencySelector,
   countervalueFirstSelector,
+  counterValueCurrencySelector,
 } from "~/reducers/settings";
 import { accountScreenSelector } from "~/reducers/accounts";
 import { track, TrackScreen } from "~/analytics";
@@ -93,7 +93,19 @@ const AccountScreenInner = ({
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
   const isEmpty = isAccountEmpty(account);
 
-  const onSwitchAccountCurrency = useCallback(() => {
+  // All hooks must be called before early returns
+  const [graphCardEndPosition, setGraphCardEndPosition] = useState(100);
+  const currentPositionY = useSharedValue(0);
+  const handleScroll = useAnimatedScrollHandler(event => {
+    currentPositionY.value = event.contentOffset.y;
+  });
+
+  const _onAccountCardLayout = useCallback((event: LayoutChangeEvent) => {
+    const { y, height } = event.nativeEvent.layout;
+    setGraphCardEndPosition(y + height / 10);
+  }, []);
+
+  const _onSwitchAccountCurrency = useCallback(() => {
     dispatch(switchCountervalueFirst());
     track("button_clicked", {
       button: "Switch Account Currency",
@@ -101,44 +113,25 @@ const AccountScreenInner = ({
     });
   }, [dispatch, useCounterValue]);
 
-  const onAccountPress = debounce((tokenAccount?: TokenAccount) => {
-    if (!tokenAccount) return;
-    navigation.push(ScreenName.Account, {
-      parentId: account.id,
-      accountId: tokenAccount.id,
-    });
-  }, 300);
+  const { secondaryActions: _secondaryActions } = useAccountActions({ account, parentAccount });
 
+  // Variables needed for hooks
   const mainAccount = getMainAccount(account, parentAccount);
   const currency = mainAccount.currency;
-
-  const analytics = (
-    <TrackScreen
-      category="Account"
-      currency={currency.name}
-      operationsSize={account.operations.length}
-    />
-  );
-
-  const [graphCardEndPosition, setGraphCardEndPosition] = useState(100);
-  const currentPositionY = useSharedValue(0);
-  const handleScroll = useAnimatedScrollHandler(event => {
-    currentPositionY.value = event.contentOffset.y;
-  });
-
-  const onAccountCardLayout = useCallback((event: LayoutChangeEvent) => {
-    const { y, height } = event.nativeEvent.layout;
-    setGraphCardEndPosition(y + height / 10);
-  }, []);
-
-  const { secondaryActions } = useAccountActions({ account, parentAccount });
-
   let currencyConfig: CurrencyConfig | undefined = undefined;
   try {
     currencyConfig = getCurrencyConfiguration(mainAccount.currency);
   } catch (err) {
     console.warn(err);
   }
+
+  const _onAccountPress = debounce((tokenAccount?: TokenAccount) => {
+    if (!tokenAccount) return;
+    navigation.push(ScreenName.Account, {
+      parentId: account.id,
+      accountId: tokenAccount.id,
+    });
+  }, 300);
 
   const { listHeaderComponents } = useListHeaderComponents({
     account,
@@ -151,14 +144,26 @@ const AccountScreenInner = ({
     history,
     countervalueChange,
     cryptoChange,
-    onAccountPress,
-    counterValueCurrency,
-    onSwitchAccountCurrency,
-    onAccountCardLayout,
+    counterValueCurrency: counterValueCurrency!,
+    onAccountPress: _onAccountPress,
+    onSwitchAccountCurrency: _onSwitchAccountCurrency,
+    onAccountCardLayout: _onAccountCardLayout,
     colors,
-    secondaryActions,
+    secondaryActions: _secondaryActions,
     t,
   });
+
+  if (!counterValueCurrency) {
+    return null; // or loading placeholder
+  }
+
+  const analytics = (
+    <TrackScreen
+      category="Account"
+      currency={currency.name}
+      operationsSize={account.operations.length}
+    />
+  );
 
   const data = [
     ...listHeaderComponents,

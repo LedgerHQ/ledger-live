@@ -9,10 +9,10 @@ import { MOCK_TOKENS_ONLY, MOCK_WITH_TOKEN_AND_CURRENCY_ASSET, MOCK_IDS, MOCK_PO
 import { MappedAsset } from "./type";
 import {
   getCryptoCurrencyById,
-  getTokenById,
   setSupportedCurrencies,
   sortCurrenciesByIds,
 } from "../currencies/index";
+import { getCryptoAssetsStore } from "../bridge/crypto-assets/index";
 import { isCurrencySupported, listSupportedCurrencies, listTokens } from "../currencies";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 
@@ -106,8 +106,11 @@ describe("Deposit logic", () => {
   });
 
   describe("groupCurrenciesByProvider", () => {
-    test("should group currencies by provider", () => {
-      const currencies = TOKEN_ONLY_ASSETS.map(asset => getTokenById(asset.ledgerId));
+    test("should group currencies by provider", async () => {
+      const currencyPromises = await Promise.all(
+        TOKEN_ONLY_ASSETS.map(asset => getCryptoAssetsStore().findTokenById(asset.ledgerId)),
+      );
+      const currencies = currencyPromises.filter((c): c is NonNullable<typeof c> => c != null);
       const { currenciesByProvider } = groupCurrenciesByProvider(TOKEN_ONLY_ASSETS, currencies);
       expect(currenciesByProvider).toEqual([
         {
@@ -117,12 +120,15 @@ describe("Deposit logic", () => {
       ]);
     });
 
-    test("should handle POL assets correctly", () => {
-      const currenciesPol = MOCK_POL.map(asset =>
-        asset.$type === "Token"
-          ? getTokenById(asset.ledgerId)
-          : getCryptoCurrencyById(asset.ledgerId),
+    test("should handle POL assets correctly", async () => {
+      const polResults = await Promise.all(
+        MOCK_POL.map(asset =>
+          asset.$type === "Token"
+            ? getCryptoAssetsStore().findTokenById(asset.ledgerId)
+            : Promise.resolve(getCryptoCurrencyById(asset.ledgerId)),
+        ),
       );
+      const currenciesPol = polResults.filter((c): c is NonNullable<typeof c> => c != null);
       const { currenciesByProvider: currenciesByProviderBis, sortedCryptoCurrencies } =
         groupCurrenciesByProvider(MOCK_POL as MappedAsset[], currenciesPol);
       expect(currenciesByProviderBis).toEqual([
@@ -135,8 +141,11 @@ describe("Deposit logic", () => {
       expect(sortedCryptoCurrencies).toEqual([currenciesPol[1]]);
     });
 
-    test("should handle empty assets array", () => {
-      const currencies = TOKEN_ONLY_ASSETS.map(asset => getTokenById(asset.ledgerId));
+    test("should handle empty assets array", async () => {
+      const currencyPromises = await Promise.all(
+        TOKEN_ONLY_ASSETS.map(asset => getCryptoAssetsStore().findTokenById(asset.ledgerId)),
+      );
+      const currencies = currencyPromises.filter((c): c is NonNullable<typeof c> => c != null);
       const { currenciesByProvider, sortedCryptoCurrencies } = groupCurrenciesByProvider(
         [],
         currencies,
@@ -165,30 +174,33 @@ describe("Deposit logic", () => {
       expect(sortedCryptoCurrencies).toEqual([]);
     });
 
-    test("should prioritize crypto currencies over tokens in sortedCryptoCurrencies", () => {
+    test("should prioritize crypto currencies over tokens in sortedCryptoCurrencies", async () => {
       const mockAssets = [
         { ...TOKEN_ONLY_ASSETS[0], providerId: "test-provider" },
       ] as MappedAsset[];
 
       setSupportedCurrencies(["ethereum"]);
       const ethCurrency = getCryptoCurrencyById("ethereum");
-      const tokenCurrency = getTokenById(TOKEN_ONLY_ASSETS[0].ledgerId);
+      const tokenCurrency = await getCryptoAssetsStore().findTokenById(
+        TOKEN_ONLY_ASSETS[0].ledgerId,
+      );
 
-      const { sortedCryptoCurrencies } = groupCurrenciesByProvider(mockAssets, [
-        tokenCurrency,
-        ethCurrency,
-      ]);
+      const { sortedCryptoCurrencies } = groupCurrenciesByProvider(
+        mockAssets,
+        [tokenCurrency, ethCurrency].filter((c): c is NonNullable<typeof c> => c != null),
+      );
 
       expect(sortedCryptoCurrencies.length).toBeGreaterThan(0);
     });
 
-    test("should handle duplicate provider IDs correctly", () => {
+    test("should handle duplicate provider IDs correctly", async () => {
       const duplicateAssets = [
         TOKEN_ONLY_ASSETS[0],
         { ...TOKEN_ONLY_ASSETS[0], ledgerId: "different-id" },
       ] as MappedAsset[];
 
-      const currencies = [getTokenById(TOKEN_ONLY_ASSETS[0].ledgerId)];
+      const currency = await getCryptoAssetsStore().findTokenById(TOKEN_ONLY_ASSETS[0].ledgerId);
+      const currencies = currency ? [currency] : [];
       const { currenciesByProvider } = groupCurrenciesByProvider(duplicateAssets, currencies);
 
       expect(currenciesByProvider).toHaveLength(1);
@@ -197,28 +209,28 @@ describe("Deposit logic", () => {
   });
 
   describe("getTokenOrCryptoCurrencyById", () => {
-    test("should return crypto currency by ID", () => {
-      const result = getTokenOrCryptoCurrencyById("bitcoin");
+    test("should return crypto currency by ID", async () => {
+      const result = await getTokenOrCryptoCurrencyById("bitcoin");
       expect(result).toBeDefined();
       expect(result.type).toBe("CryptoCurrency");
     });
 
-    test("should return token by ID", () => {
-      const result = getTokenOrCryptoCurrencyById("ethereum/erc20/usd_tether__erc20_");
+    test("should return token by ID", async () => {
+      const result = await getTokenOrCryptoCurrencyById("ethereum/erc20/usd_tether__erc20_");
       expect(result).toBeDefined();
       expect(result.type).toBe("TokenCurrency");
     });
 
-    test("should handle invalid crypto currency ID", () => {
-      expect(() => getTokenOrCryptoCurrencyById("invalid-crypto-id")).toThrow();
+    test("should handle invalid crypto currency ID", async () => {
+      await expect(() => getTokenOrCryptoCurrencyById("invalid-crypto-id")).rejects.toThrow();
     });
 
-    test("should handle invalid token ID", () => {
-      expect(() => getTokenOrCryptoCurrencyById("invalid/token/id")).toThrow();
+    test("should handle invalid token ID", async () => {
+      await expect(() => getTokenOrCryptoCurrencyById("invalid/token/id")).rejects.toThrow();
     });
 
-    test("should handle empty ID", () => {
-      expect(() => getTokenOrCryptoCurrencyById("")).toThrow();
+    test("should handle empty ID", async () => {
+      await expect(() => getTokenOrCryptoCurrencyById("")).rejects.toThrow();
     });
   });
 
@@ -308,7 +320,7 @@ describe("Deposit logic", () => {
   });
 
   describe("Token-only scenarios", () => {
-    it("should return only Polygon token while its currency is supported in the list", () => {
+    it("should return only Polygon token while its currency is supported in the list", async () => {
       setSupportedCurrencies(["polygon"]);
 
       const currencies = sortCurrenciesByIds(
@@ -319,10 +331,13 @@ describe("Deposit logic", () => {
         MOCK_TOKENS_ONLY as MappedAsset[],
         currencies,
       );
-      expect(sortedCryptoCurrencies).toEqual([getTokenById("polygon/erc20/(pos)_tether_usd")]);
+      const expectedToken = await getCryptoAssetsStore().findTokenById(
+        "polygon/erc20/(pos)_tether_usd",
+      );
+      expect(sortedCryptoCurrencies).toEqual([expectedToken]);
     });
 
-    it("should return only BSC token while its currency is supported in the list", () => {
+    it("should return only BSC token while its currency is supported in the list", async () => {
       setSupportedCurrencies(["bsc"]);
 
       const currencies = sortCurrenciesByIds(
@@ -333,7 +348,10 @@ describe("Deposit logic", () => {
         MOCK_TOKENS_ONLY as MappedAsset[],
         currencies,
       );
-      expect(sortedCryptoCurrencies).toEqual([getTokenById("bsc/bep20/binance-peg_bsc-usd")]);
+      const expectedToken = await getCryptoAssetsStore().findTokenById(
+        "bsc/bep20/binance-peg_bsc-usd",
+      );
+      expect(sortedCryptoCurrencies).toEqual([expectedToken]);
     });
 
     it("should return tokens that are actually supported based on mock data", () => {
@@ -590,32 +608,34 @@ describe("Deposit logic", () => {
   });
 
   describe("Error handling", () => {
-    test("should handle malformed asset data by throwing error", () => {
+    test("should handle malformed asset data by throwing error", async () => {
       const malformedAssets = [
         { ...TOKEN_ONLY_ASSETS[0], ledgerId: undefined as any },
         { ...TOKEN_ONLY_ASSETS[0], providerId: null as any },
       ] as MappedAsset[];
 
-      const currencies = [getTokenById(TOKEN_ONLY_ASSETS[0].ledgerId)];
+      const currency = await getCryptoAssetsStore().findTokenById(TOKEN_ONLY_ASSETS[0].ledgerId);
+      const currencies = currency ? [currency] : [];
 
       expect(() => {
         groupCurrenciesByProvider(malformedAssets, currencies);
       }).toThrow();
     });
 
-    test("should handle assets with null/undefined fields gracefully where possible", () => {
+    test("should handle assets with null/undefined fields gracefully where possible", async () => {
       const partiallyMalformedAssets = [
         { ...TOKEN_ONLY_ASSETS[0], providerId: "" },
       ] as MappedAsset[];
 
-      const currencies = [getTokenById(TOKEN_ONLY_ASSETS[0].ledgerId)];
+      const currency = await getCryptoAssetsStore().findTokenById(TOKEN_ONLY_ASSETS[0].ledgerId);
+      const currencies = currency ? [currency] : [];
 
       expect(() => {
         groupCurrenciesByProvider(partiallyMalformedAssets, currencies);
       }).not.toThrow();
     });
 
-    test("should handle very large datasets efficiently", () => {
+    test("should handle very large datasets efficiently", async () => {
       const largeAssetList = Array(10000)
         .fill(TOKEN_ONLY_ASSETS[0])
         .map((asset, index) => ({
@@ -624,7 +644,8 @@ describe("Deposit logic", () => {
           providerId: `provider_${index % 10}`,
         })) as MappedAsset[];
 
-      const currencies = [getTokenById(TOKEN_ONLY_ASSETS[0].ledgerId)];
+      const currency = await getCryptoAssetsStore().findTokenById(TOKEN_ONLY_ASSETS[0].ledgerId);
+      const currencies = currency ? [currency] : [];
 
       const startTime = Date.now();
       const result = groupCurrenciesByProvider(largeAssetList, currencies);
@@ -635,12 +656,13 @@ describe("Deposit logic", () => {
       expect(result.sortedCryptoCurrencies).toBeDefined();
     });
 
-    test("should handle case sensitivity in ledger IDs correctly", () => {
+    test("should handle case sensitivity in ledger IDs correctly", async () => {
       const mixedCaseAssets = [
         { ...TOKEN_ONLY_ASSETS[0], ledgerId: TOKEN_ONLY_ASSETS[0].ledgerId.toUpperCase() },
       ] as MappedAsset[];
 
-      const currencies = [getTokenById(TOKEN_ONLY_ASSETS[0].ledgerId)];
+      const currency = await getCryptoAssetsStore().findTokenById(TOKEN_ONLY_ASSETS[0].ledgerId);
+      const currencies = currency ? [currency] : [];
       const { currenciesByProvider } = groupCurrenciesByProvider(mixedCaseAssets, currencies);
 
       expect(currenciesByProvider).toHaveLength(1);

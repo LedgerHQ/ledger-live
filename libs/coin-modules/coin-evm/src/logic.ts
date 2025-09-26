@@ -11,8 +11,11 @@ import { getEnv } from "@ledgerhq/live-env";
 import { isNFTActive } from "@ledgerhq/coin-framework/nft/support";
 import { mergeOps } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
-import { decodeTokenAccountId } from "@ledgerhq/coin-framework/account/index";
-import { CryptoCurrency, TokenCurrency, Unit } from "@ledgerhq/types-cryptoassets";
+import {
+  decodeTokenAccountId,
+  decodeTokenAccountIdSync,
+} from "@ledgerhq/coin-framework/account/index";
+import { CryptoCurrency, Unit } from "@ledgerhq/types-cryptoassets";
 import { getEIP712FieldsDisplayedOnNano } from "@ledgerhq/evm-tools/message/EIP712/index";
 import { getNodeApi } from "./network/node/index";
 import { getCoinConfig } from "./config";
@@ -216,13 +219,13 @@ export const getSyncHash = (
  * creating a duplicate that will cause issues.
  * (Incorrect NFT balance & React key dup)
  */
-export const attachOperations = (
+export const attachOperations = async (
   _coinOperations: Operation[],
   _tokenOperations: Operation[],
   _nftOperations: Operation[],
   _internalOperations: Operation[],
   filters: { blacklistedTokenIds: string[] | undefined } = { blacklistedTokenIds: [] },
-): Operation[] => {
+): Promise<Operation[]> => {
   const { blacklistedTokenIds } = filters;
 
   // Creating deep copies of each Operation[] to prevent mutating the originals
@@ -237,7 +240,7 @@ export const attachOperations = (
   // Helper to create a coin operation with type NONE as a parent of an orphan child operation
   const makeCoinOpForOrphanChildOp = (childOp: Operation): OperationWithRequiredChildren => {
     const type = "NONE";
-    const { accountId } = decodeTokenAccountId(childOp.accountId);
+    const { accountId } = decodeTokenAccountIdSync(childOp.accountId);
     const id = encodeOperationId(accountId, childOp.hash, type);
 
     return {
@@ -277,7 +280,7 @@ export const attachOperations = (
 
   // Looping through token operations to potentially copy them as a child operation of a coin operation
   for (const tokenOperation of tokenOperations) {
-    const { token } = decodeTokenAccountId(tokenOperation.accountId);
+    const { token } = await decodeTokenAccountId(tokenOperation.accountId);
     if (!token || blacklistedTokenIds?.includes(token.id)) continue;
 
     let mainOperations = coinOperationsByHash[tokenOperation.hash];
@@ -353,12 +356,12 @@ export const getMessageProperties = async (
 // logic.ts
 export const createSwapHistoryMap = (
   initialAccount: Account | undefined,
-): Map<TokenCurrency, TokenAccount["swapHistory"]> => {
+): Map<string, TokenAccount["swapHistory"]> => {
   if (!initialAccount?.subAccounts) return new Map();
 
-  const swapHistoryMap = new Map<TokenCurrency, TokenAccount["swapHistory"]>();
+  const swapHistoryMap = new Map<string, TokenAccount["swapHistory"]>();
   for (const subAccount of initialAccount.subAccounts) {
-    swapHistoryMap.set(subAccount.token, subAccount.swapHistory);
+    swapHistoryMap.set(subAccount.token.id, subAccount.swapHistory);
   }
 
   return swapHistoryMap;

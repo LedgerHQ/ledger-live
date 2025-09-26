@@ -15,7 +15,7 @@ const iconReceive = IconsLegacy.ArrowBottomMedium;
 function ReadOnlyFabActions() {
   const { t } = useTranslation();
   const { navigate } = useNavigation();
-  const currency = useCurrency().name;
+  const currency = useCurrency()?.name;
 
   const buyDevice = useCallback(() => navigate(ScreenName.NoDeviceWallScreen), [navigate]);
 
@@ -33,6 +33,8 @@ function ReadOnlyFabActions() {
 
   const pressBuy = useCallback(() => handleOnPress("+ Buy"), [handleOnPress]);
   const pressReceive = useCallback(() => handleOnPress("Receive"), [handleOnPress]);
+
+  if (!currency) return null; // loading
 
   return (
     <Flex mx={16} flexDirection={"row"}>

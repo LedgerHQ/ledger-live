@@ -1,11 +1,14 @@
 import invariant from "invariant";
-import React, { useMemo } from "react";
+import React, { useMemo, useState, useEffect } from "react";
 import styled from "styled-components";
 import { Account, AccountLike, TransactionCommon } from "@ledgerhq/types-live";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
-import { getDeviceTransactionConfig } from "@ledgerhq/live-common/transaction/index";
+import {
+  getDeviceTransactionConfig,
+  DeviceTransactionField,
+} from "@ledgerhq/live-common/transaction/index";
 import Animation from "~/renderer/animations";
 import Box from "~/renderer/components/Box";
 import FormattedVal from "~/renderer/components/FormattedVal";
@@ -127,12 +130,18 @@ const TransactionConfirm = ({
   const mainAccount = getMainAccount(account, parentAccount);
   const type = useTheme().colors.palette.type;
 
-  const fields = getDeviceTransactionConfig({
-    account,
-    parentAccount,
-    transaction,
-    status,
-  });
+  const [fields, setFields] = useState<DeviceTransactionField[]>([]);
+
+  useEffect(() => {
+    if (account && transaction && status) {
+      getDeviceTransactionConfig({
+        account,
+        parentAccount,
+        transaction,
+        status,
+      }).then(setFields);
+    }
+  }, [account, parentAccount, transaction, status]);
 
   const displayedFields = useMemo(() => {
     return fields.filter(field => field.label !== "Address");
