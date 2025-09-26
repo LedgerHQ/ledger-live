@@ -5,6 +5,9 @@ permissions:
 on:
   workflow_dispatch:
     inputs:
+      account_types:
+        description: comma-separated account types, separated with commas (,) (pristine, average, big)
+        required: false
       currencies:
         description: Currencies to monitor, separated with commas (,), or "all" (default)
         required: false
@@ -22,4 +25,5 @@ jobs:
         id: monitoring
         timeout-minutes: 120
         with:
-          MONITOR_FILTER_CURRENCIES: ${{ inputs.currencies }}
+          MONITOR_FILTER_CURRENCIES: ${{ inputs.currencies || "all" }}
+          MONITOR_FILTER_ACCOUNT_TYPES: ${{ inputs.account_types || "pristine,average,big" }}

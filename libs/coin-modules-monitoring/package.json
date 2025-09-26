@@ -10,13 +10,14 @@
     "lint:fix": "pnpm lint --fix",
     "test": "jest",
     "typecheck": "tsc --project ./tsconfig.json --noEmit",
-    "start": "tsx src/cli.ts"
+    "start": "node lib/cli.js"
   },
   "dependencies": {
     "@datadog/datadog-api-client": "^1.40",
     "@ledgerhq/cryptoassets": "workspace:^",
     "@ledgerhq/live-common": "workspace:^",
     "@ledgerhq/live-config": "workspace:^",
+    "commander": "14.0.1",
     "msw": "2.3.4",
     "rxjs": "^7.8.1"
   },
