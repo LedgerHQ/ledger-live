@@ -71,7 +71,6 @@ export function useModularDrawerData({
   return {
     data,
     isLoading,
-    isSuccess,
     error,
     refetch,
     loadingStatus,
