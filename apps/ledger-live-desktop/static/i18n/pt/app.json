@@ -168,6 +168,7 @@
       "NFT_IN" : "NFT Recebido",
       "NFT_OUT" : "NFT Enviado",
       "CREATE" : "Criado",
+      "UNKNOWN" : "Desconhecido",
       "REVEAL" : "Revelado",
       "DELEGATE" : "Delegado",
       "REDELEGATE" : "Redelegado",
@@ -1930,7 +1931,12 @@
         "default" : "Verifique os detalhes da troca no seu dispositivo antes de enviá-la. Os endereços são comunicados com segurança para que você não precise verificá-los.",
         "provider" : "Verifique os detalhes da troca no seu dispositivo antes de enviá-la. {{providerName}} pode precisar fazer verificações adicionais para algumas transações, resultando em demora."
       },
+      "simpleViewNotice" : {
+        "default" : "Verifique os detalhes da troca na sua Ledger antes de confirmá-la.",
+        "provider" : "Verifique os detalhes da troca no seu dispositivo antes de enviá-la. {{providerName}} pode precisar fazer verificações adicionais em algumas transações, demorando um pouco mais."
+      },
       "confirm" : "Confirmar transação de troca",
+      "confirmSwap" : "Confirme a operação de troca no dispositivo",
       "amountSent" : "Quantia a enviar",
       "amountReceived" : "Quantia a receber",
       "amountReceivedFloat" : "Quantia a receber antes das taxas de serviço",
@@ -2425,6 +2431,7 @@
         "nextBlock" : "Próximo bloco",
         "suggested" : "Sugerido",
         "unitVByte" : "{{unit}}/vbyte",
+        "unitPerByte" : "{{unit}} byte",
         "nft" : "NFT",
         "nftQuantity" : "Quantidade",
         "splExtensionsWarning" : "Você está interagindo com um token que faz parte do programa Token-2022, também conhecido como Token Extensions. Este token tem riscos específicos. <0>Clique aqui</0> para saber mais."
@@ -5866,6 +5873,10 @@
       "commentPlaceholder" : "Opcional",
       "comment" : "Comentários"
     },
+    "canton" : {
+      "commentPlaceholder" : "Opcional",
+      "comment" : "Comentário"
+    },
     "stellar" : {
       "memo" : "Memo",
       "memoType" : {
@@ -6313,6 +6324,10 @@
       "title" : "Algo deu errado",
       "description" : "A transação falhou. Tente novamente."
     },
+    "TransactionCannotBeCreated" : {
+      "title" : "Erro de processamento",
+      "description" : "A Changelly não pode processar esta transação. Código do erro 8HBB{{errorCode}}"
+    },
     "TimeoutError" : {
       "title" : "O servidor demorou muito para responder",
       "description" : "Tente Novamente."
@@ -6460,6 +6475,9 @@
       "description" : "Feche a janela e tente novamente mais tarde"
     },
     "TonCommentInvalid" : {
+      "title" : "O comentário não deve exceder 120 caracteres sem caracteres especiais"
+    },
+    "CantonCommentInvalid" : {
       "title" : "O comentário não deve exceder 120 caracteres sem caracteres especiais"
     },
     "CantScanQRCode" : {
@@ -6853,11 +6871,11 @@
       "description" : "Tente novamente com outra imagem"
     },
     "ImageCommitRefusedOnDevice" : {
-      "title" : "Instalação da imagem da tela de\nbloqueio cancelada na {{productName}}",
+      "title" : "Imagem da tela de bloqueio descartada na\n{{productName}}",
       "description" : "Se isso foi um erro, tente novamente agora."
     },
     "ImageLoadRefusedOnDevice" : {
-      "title" : "Instalação da imagem da tela de\nbloqueio cancelada na {{productName}}",
+      "title" : "Imagem da tela de bloqueio cancelada na\n{{productName}}",
       "description" : "Se isso foi um erro, tente novamente agora."
     },
     "ImageDoesNotExistOnDevice" : {
@@ -7182,7 +7200,7 @@
     "steps" : {
       "choose" : {
         "stepLabel" : "Escolher foto",
-        "description" : "Escolha uma imagem para definir como (...)",
+        "description" : "Escolha qualquer arte digital ou foto.\nPersonalize a sua {{productName}}.\nDeixe-a do seu jeito.",
         "pickFromNftGallery" : "Selecionar na minha galeria de NFTs",
         "myNfts" : "Meus NFTs",
         "upload" : "Enviar do computador",
@@ -7206,7 +7224,7 @@
         "useAnotherPicture" : "Enviar outra foto",
         "allowPreview" : "Clique em “Carregar imagem” para\npersonalizar a imagem da tela de bloqueio",
         "allowConfirmPreview" : "Clique em “Carregar imagem” para\nrestaurar a imagem da tela de bloqueio",
-        "loadingPicture" : "Instalando...",
+        "loadingPicture" : "Carregando...",
         "voila" : "Voilà!",
         "imageLoaded" : "Imagem carregada em {{productName}}",
         "confirmPicture" : "Gostou do que está vendo?\nMantenha assim!",
@@ -7265,9 +7283,9 @@
   "webview" : {
     "networkError" : {
       "title" : "Erro de rede",
-      "subtitle" : "Algo deu errado. Tente novamente. Se o problema persistir, salve seu registro e entre em contato com o Suporte Ledger.",
+      "subtitle" : "Algo deu errado. Tente novamente. Se o problema persistir, salve seus registros e entre em contato com o Suporte Ledger.",
       "contactSupport" : "Fale com o Suporte Ledger",
-      "saveLog" : "Salvar registro"
+      "saveLog" : "Salvar registros"
     },
     "noAccounts" : {
       "title" : "Você precisa de uma conta para acessar este aplicativo.",
