@@ -168,6 +168,7 @@
       "NFT_IN" : "NFT erhalten",
       "NFT_OUT" : "NFT gesendet",
       "CREATE" : "Erstellt",
+      "UNKNOWN" : "Unbekannt",
       "REVEAL" : "Enthüllt",
       "DELEGATE" : "Delegiert",
       "REDELEGATE" : "Erneut delegiert",
@@ -1930,7 +1931,12 @@
         "default" : "Vor dem Senden der Swapping-Details musst du diese auf deinem Gerät verifizieren. Die Adressen musst du nicht verifizieren, da diese sicher ausgetauscht werden.",
         "provider" : "Verifiziere die Swap-Details auf deinem Gerät, bevor du sie sendest. {{providerName}} muss möglicherweise eine zusätzliche Überprüfung für einige Transaktionen durchführen, was zu einer Verzögerung führen kann."
       },
+      "simpleViewNotice" : {
+        "default" : "Verifiziere die Swap-Details auf deiner Ledger, bevor du sie sendest.",
+        "provider" : "Verifiziere die Swap-Details auf deinem Gerät, bevor du sie sendest. {{providerName}} muss möglicherweise eine zusätzliche Überprüfung für einige Transaktionen durchführen, was zu einer Verzögerung führen kann."
+      },
       "confirm" : "Swap-Transaktion bestätigen",
+      "confirmSwap" : "Swap-Vorgang auf dem Gerät bestätigen",
       "amountSent" : "Zu sendender Betrag",
       "amountReceived" : "Zu erhaltender Betrag",
       "amountReceivedFloat" : "Zu erhaltender Betrag vor Servicegebühren",
@@ -2425,6 +2431,7 @@
         "nextBlock" : "Nächster Block",
         "suggested" : "Empfohlen",
         "unitVByte" : "{{unit}}/vByte",
+        "unitPerByte" : "{{unit}}/Byte",
         "nft" : "NFT",
         "nftQuantity" : "Menge",
         "splExtensionsWarning" : "Du interagierst mit einem Token, das Teil des Token-2022-Programms ist (auch bekannt unter der Bezeichnung „Token Extensions“). Dieses Token birgt gewisse Risiken. <0>Klicke hier</0>, um mehr zu erfahren."
@@ -5866,6 +5873,10 @@
       "commentPlaceholder" : "Optional",
       "comment" : "Kommentar"
     },
+    "canton" : {
+      "commentPlaceholder" : "Optional",
+      "comment" : "Kommentar"
+    },
     "stellar" : {
       "memo" : "Memo",
       "memoType" : {
@@ -6313,6 +6324,10 @@
       "title" : "Etwas ist schief gelaufen",
       "description" : "Transaktion fehlgeschlagen. Bitte versuche es noch einmal."
     },
+    "TransactionCannotBeCreated" : {
+      "title" : "Verarbeitungsfehler",
+      "description" : "Changelly kann diese Transaktion nicht verarbeiten. Fehlercode: 8HBB{{errorCode}}"
+    },
     "TimeoutError" : {
       "title" : "Entschuldigung, der Server hat zu lange für die Antwort gebraucht",
       "description" : "Bitte versuchen Sie es erneut."
@@ -6460,6 +6475,9 @@
       "description" : "Bitte schließe das Fenster und versuche es später noch einmal"
     },
     "TonCommentInvalid" : {
+      "title" : "Der Kommentar darf eine Länge von 120 Zeichen nicht überschreiten und keine Sonderzeichen enthalten"
+    },
+    "CantonCommentInvalid" : {
       "title" : "Der Kommentar darf eine Länge von 120 Zeichen nicht überschreiten und keine Sonderzeichen enthalten"
     },
     "CantScanQRCode" : {
@@ -6853,11 +6871,11 @@
       "description" : "Bitte versuchen Sie es noch einmal mit einem anderen Bild"
     },
     "ImageCommitRefusedOnDevice" : {
-      "title" : "Die Installation des Bildes für den Sperrbildschirm auf\n{{productName}} wurde abgebrochen",
+      "title" : "Sperrbildschirmbild auf {{productName}} verworfen",
       "description" : "Wenn dies irrtümlich geschehen ist, wiederhole den Vorgang."
     },
     "ImageLoadRefusedOnDevice" : {
-      "title" : "Die Installation des Bildes für den Sperrbildschirm auf\n{{productName}} wurde abgebrochen",
+      "title" : "Sperrbildschirmbild verworfen auf\n{{productName}}",
       "description" : "Wenn dies irrtümlich geschehen ist, wiederhole den Vorgang."
     },
     "ImageDoesNotExistOnDevice" : {
@@ -7182,7 +7200,7 @@
     "steps" : {
       "choose" : {
         "stepLabel" : "Bild auswählen",
-        "description" : "Wählen Sie ein Bild, das als (...) festgelegt werden soll",
+        "description" : "Wähle eine beliebiges digitales Kunstwerk oder ein Foto aus.\nPersonalisiere dein {{productName}}-Gerät.\nDenn es gehört dir.",
         "pickFromNftGallery" : "Aus meiner NFT-Galerie auswählen",
         "myNfts" : "Meine NFTs",
         "upload" : "Vom Computer hochladen",
@@ -7206,7 +7224,7 @@
         "useAnotherPicture" : "Ein weiteres Bild hochladen",
         "allowPreview" : "Tippe auf „Load picture“ (Bild laden), um\ndas Sperrbildschirm-Bild anzupassen",
         "allowConfirmPreview" : "Tippe auf „Load picture“ (Bild laden), um\ndas Sperrbildschirm-Bild wiederherzustellen",
-        "loadingPicture" : "Installation in Bearbeitung …",
+        "loadingPicture" : "Lade Daten...",
         "voila" : "Voilà!",
         "imageLoaded" : "Bild geladen auf {{productName}}",
         "confirmPicture" : "Gefällt Ihnen, was Sie sehen?\nBehalten Sie es!",
@@ -7265,9 +7283,9 @@
   "webview" : {
     "networkError" : {
       "title" : "Netzwerkfehler",
-      "subtitle" : "Das hat leider nicht funktioniert. Bitte versuchen Sie es noch einmal. Wenn das Problem weiterhin besteht, speichern Sie Ihre Logdatei und kontaktieren Sie den Ledger-Kundenservice.",
+      "subtitle" : "Das hat leider nicht funktioniert. Bitte versuche es noch einmal. Wenn das Problem weiterhin besteht, speichere deine Logdateien und kontaktiere den Ledger-Kundenservice.",
       "contactSupport" : "Ledger-Kundenservice kontaktieren",
-      "saveLog" : "Log speichern"
+      "saveLog" : "Protokolle speichern"
     },
     "noAccounts" : {
       "title" : "Für den Zugriff auf diese App brauchst du ein Konto.",
