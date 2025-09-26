@@ -9,6 +9,7 @@
 
 const path = require("path");
 const tsconfig = require("./tsconfig.json");
+const { withNativeWind } = require("nativewind/metro");
 
 const forcedDependencies = [
   "react-redux",
@@ -105,4 +106,7 @@ const metroConfig = {
   },
 };
 
-module.exports = withSentryConfig(mergeConfig(getDefaultConfig(__dirname), metroConfig));
+const baseConfig = mergeConfig(getDefaultConfig(__dirname), metroConfig);
+module.exports = withSentryConfig(withNativeWind(baseConfig, { input: "./global.css" }));
+
+// module.exports = withSentryConfig(mergeConfig(getDefaultConfig(__dirname), metroConfig));

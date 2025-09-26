@@ -290,5 +290,9 @@
       }
     }
   },
-  "packageManager": "pnpm@9.12.3"
+  "packageManager": "pnpm@9.12.3",
+  "dependencies": {
+    "connect": "3.7.0",
+    "mobile": "0.0.1"
+  }
 }

@@ -20,6 +20,9 @@ import "./src/mocks/init";
 // import all possible polyfills done by live-common for React Native. See in reactNative.ts for more details.
 import "@ledgerhq/live-common/reactNative";
 
+// pulls the tailwind globals
+import "./global.css";
+
 import { AppRegistry } from "react-native";
 import BackgroundRunnerService from "./services/BackgroundRunnerService";
 import App from "./src";

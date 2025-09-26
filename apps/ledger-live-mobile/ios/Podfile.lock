@@ -1562,7 +1562,7 @@ PODS:
     - React-Core
   - react-native-restart (0.0.24):
     - React-Core
-  - react-native-safe-area-context (5.1.0):
+  - react-native-safe-area-context (5.4.0):
     - React-Core
   - react-native-slider (4.5.6):
     - DoubleConversion
@@ -2742,7 +2742,7 @@ SPEC CHECKSUMS:
   react-native-performance: 125a96c145e29918b55b45ce25cbba54f1e24dcd
   react-native-randombytes: 3c8f3e89d12487fd03a2f966c288d495415fc116
   react-native-restart: df7caae89026a8ab2ecdd82839978f657701f51d
-  react-native-safe-area-context: e134b241010ebe2aacdcea013565963d13826faa
+  react-native-safe-area-context: 9d72abf6d8473da73033b597090a80b709c0b2f1
   react-native-slider: 1dde58286559e272f42376a9ec9ebb9ea0bd2170
   react-native-splash-screen: a43276f9cf4b2e65d7ce30efe372ffc528064293
   react-native-startup-time: c7297d8a7892400239e6828bb94a3721c1a1a9df
