@@ -241,6 +241,10 @@ app.on("window-all-closed", () => {
   cleanupTransports();
   if (process.platform !== "darwin") {
     app.quit();
+    // Fallback: force exit if app.quit() doesn't work
+    setTimeout(() => {
+      process.exit(0);
+    }, 3000);
   }
 });
 
