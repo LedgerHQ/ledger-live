@@ -55,6 +55,36 @@ export async function listOperations(
 }
 
 /**
+ * Helper function to determine delegation type based on newDelegate presence
+ */
+function determineDelegationType(operation: APIDelegationType): Operation["type"] {
+  return operation.newDelegate?.address ? "DELEGATE" : "UNDELEGATE";
+}
+
+/**
+ * Helper function to determine transaction type based on sender, target, and amount
+ */
+function determineTransactionType(
+  senderAddress: string | undefined,
+  targetAddress: string | undefined,
+  accountAddress: string,
+  amount: bigint,
+): Operation["type"] {
+  const isIn = targetAddress === accountAddress;
+  const isOut = senderAddress === accountAddress;
+  switch (true) {
+    case (isOut && isIn) || amount === 0n:
+      return "FEES";
+    case isOut:
+      return "OUT";
+    case isIn:
+      return "IN";
+    default:
+      return "OUT"; // fallback
+  }
+}
+
+/**
  * Helper function to get the ledgerOpType for an operation
  */
 function getLedgerOpType(
@@ -62,7 +92,7 @@ function getLedgerOpType(
   normalizedType: Operation["type"],
 ): string | undefined {
   if (isAPIDelegationType(operation)) {
-    return operation.newDelegate?.address ? "DELEGATE" : "UNDELEGATE";
+    return determineDelegationType(operation);
   } else if (isAPIRevealType(operation)) {
     return "REVEAL";
   } else if (normalizedType === "FEES") {
@@ -103,20 +133,9 @@ function convertOperation(
   // Determine operation type inline
   let normalizedType: Operation["type"];
   if (isAPIDelegationType(operation)) {
-    normalizedType = operation.newDelegate?.address ? "DELEGATE" : "UNDELEGATE";
+    normalizedType = determineDelegationType(operation);
   } else if (isAPITransactionType(operation)) {
-    const isOut = sender?.address === address;
-    const isIn = targetAddress === address;
-
-    if ((isOut && isIn) || amount === 0n) {
-      normalizedType = "FEES";
-    } else if (isOut) {
-      normalizedType = "OUT";
-    } else if (isIn) {
-      normalizedType = "IN";
-    } else {
-      normalizedType = "OUT"; // fallback
-    }
+    normalizedType = determineTransactionType(sender?.address, targetAddress, address, amount);
   } else if (isAPIRevealType(operation)) {
     normalizedType = "REVEAL";
   } else {

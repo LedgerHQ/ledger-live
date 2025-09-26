@@ -119,28 +119,7 @@ async function craft(
   const mappedType = mapIntentTypeToTezosMode(transactionIntent.type);
 
   // Guard: send max is incompatible with delegated accounts
-  let amountToUse = transactionIntent.amount;
-  if (mappedType === "send" && transactionIntent.useAllAmount) {
-    const senderInfo = await api.getAccountByAddress(transactionIntent.sender);
-    if (senderInfo.type === "user" && senderInfo.delegate?.address) {
-      throw new RecommendUndelegation();
-    }
-    if (senderInfo.type === "user") {
-      // Use the amount calculated by the estimation which includes proper buffers and adjustments
-      if (estimation.parameters?.amount !== undefined) {
-        amountToUse = estimation.parameters.amount;
-      } else {
-        // Fallback to the original calculation if estimation doesn't provide amount
-        const bal = BigInt(senderInfo.balance);
-        const feeBI = BigInt(fee.fees || "0");
-        const dustMargin = BigInt(DUST_MARGIN_MUTEZ);
-        const totalToDeduct = feeBI + dustMargin;
-        amountToUse = bal > totalToDeduct ? bal - totalToDeduct : 0n;
-      }
-    } else {
-      amountToUse = 0n;
-    }
-  }
+  const amountToUse = await calculateAmountToUse(transactionIntent, mappedType, estimation, fee);
 
   const accountForCraft = {
     address: transactionIntent.sender,
@@ -149,14 +128,13 @@ async function craft(
   const needsReveal = senderApiAcc.type === "user" && !senderApiAcc.revealed;
   const totalFee = Number(fee.fees || "0");
 
-  let txFee: number;
-  if (customFees) {
-    txFee = totalFee;
-  } else if (estimation.parameters?.txFee !== undefined) {
-    txFee = Number(estimation.parameters.txFee);
-  } else {
-    txFee = needsReveal ? Math.max(totalFee - getRevealFee(transactionIntent.sender), 0) : totalFee;
-  }
+  const txFee = calculateTransactionFee(
+    !!customFees,
+    estimation,
+    totalFee,
+    needsReveal,
+    transactionIntent.sender,
+  );
 
   const txForCraft = {
     type: mappedType,
@@ -295,4 +273,75 @@ async function operations(
   });
 
   return [operations, newNextCursor || ""];
+}
+
+/**
+ * Helper function to calculate the amount to use for a transaction
+ */
+async function calculateAmountToUse(
+  transactionIntent: TransactionIntent,
+  mappedType: string,
+  estimation: TezosFeeEstimation,
+  fee: { fees: string; gasLimit?: string; storageLimit?: string },
+): Promise<bigint> {
+  let amountToUse = transactionIntent.amount;
+
+  if (mappedType === "send" && transactionIntent.useAllAmount) {
+    const senderInfo = await api.getAccountByAddress(transactionIntent.sender);
+
+    if (senderInfo.type === "user" && senderInfo.delegate?.address) {
+      throw new RecommendUndelegation();
+    }
+
+    if (senderInfo.type === "user") {
+      amountToUse = calculateUserAmount(estimation, fee, senderInfo);
+    } else {
+      amountToUse = 0n;
+    }
+  }
+
+  return amountToUse;
+}
+
+/**
+ * Helper function to calculate amount for user accounts
+ */
+function calculateUserAmount(
+  estimation: TezosFeeEstimation,
+  fee: { fees: string; gasLimit?: string; storageLimit?: string },
+  senderInfo: { balance: number },
+): bigint {
+  // Use the amount calculated by the estimation which includes proper buffers and adjustments
+  if (estimation.parameters?.amount !== undefined) {
+    return estimation.parameters.amount;
+  }
+
+  // Fallback to the original calculation if estimation doesn't provide amount
+  const bal = BigInt(senderInfo.balance);
+  const feeBI = BigInt(fee.fees || "0");
+  const dustMargin = BigInt(DUST_MARGIN_MUTEZ);
+  const totalToDeduct = feeBI + dustMargin;
+
+  return bal > totalToDeduct ? bal - totalToDeduct : 0n;
+}
+
+/**
+ * Helper function to calculate transaction fee
+ */
+function calculateTransactionFee(
+  customFees: boolean,
+  estimation: TezosFeeEstimation,
+  totalFee: number,
+  needsReveal: boolean,
+  senderAddress: string,
+): number {
+  if (customFees) {
+    return totalFee;
+  }
+
+  if (estimation.parameters?.txFee !== undefined) {
+    return Number(estimation.parameters.txFee);
+  }
+
+  return needsReveal ? Math.max(totalFee - getRevealFee(senderAddress), 0) : totalFee;
 }
