@@ -39,14 +39,16 @@ const maybeGetUpdatedSwapHistory = async (
         } else {
           // Collect all others swaps that need status update via getMultipleStatus
           const transactionId =
-            provider === "thorswap" || provider === "lifi"
+            provider === "thorswap" || provider === "lifi" || provider === "nearintents"
               ? operations?.find(o => o.id.includes(operationId))?.hash
               : undefined;
           pendingSwapIds.push({
             provider,
             swapId,
             transactionId,
-            ...((provider === "thorswap" || provider === "lifi") && { operationId }),
+            ...((provider === "thorswap" || provider === "lifi" || provider === "nearintents") && {
+              operationId,
+            }),
           });
         }
       }
