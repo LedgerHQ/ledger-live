@@ -33,8 +33,8 @@ const txInfoToOperationAdapter =
     } else if (txInfo.type === "Initialize") {
       type = "PRE_APPROVAL";
     }
-    const value = BigNumber(transferValue);
-    const feeValue = BigNumber(fee);
+    const value = new BigNumber(transferValue);
+    const feeValue = new BigNumber(fee);
     const memo = details.metadata.reason;
 
     const op: Operation = {
@@ -107,13 +107,10 @@ export function makeGetAccountShape(
       amount: 0,
       locked: false,
     };
-    const balance = BigNumber(balanceData.amount);
-    const reserveMin = coinConfig.getCoinConfig(currency).minReserve || 0;
-    const lockedAmount = balanceData.locked ? balance : BigNumber(0);
-    const spendableBalance = BigNumber.max(
-      0,
-      balance.minus(lockedAmount).minus(BigNumber(reserveMin)),
-    );
+    const balance = new BigNumber(balanceData.amount);
+    const reserveMin = new BigNumber(coinConfig.getCoinConfig(currency).minReserve || 0);
+    const lockedAmount = balanceData.locked ? balance : new BigNumber(0);
+    const spendableBalance = BigNumber.max(0, balance.minus(lockedAmount).minus(reserveMin));
 
     let operations: Operation[] = [];
     if (xpubOrAddress) {

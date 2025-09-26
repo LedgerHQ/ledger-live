@@ -5037,6 +5037,34 @@
       }
     }
   },
+  "canton": {
+    "addAccount": {
+      "title": "Add Canton Account",
+      "auth": {
+        "title": "Authorization",
+        "validator": "Authorize",
+        "error": "Failed to authorize preapproval. Please try again.",
+        "hint": "utomaticaly accept incoming funds to this account."
+      },
+      "onboard": {
+        "title": "Onboarding",
+        "onboarded": "Onboarded account",
+        "onboarded_plural": "Onboarded accounts",
+        "newAccount": "New account",
+        "status": {
+          "prepare": "Preparing account...",
+          "submit": "Onboarding account...",
+          "default": "Processing..."
+        },
+        "init": "Set up your new Canton account by clicking Continue",
+        "success": "Your new Canton account has been created and onboarded.",
+        "error": "Failed to create new Canton account. Please try again."
+      },
+      "finish": {
+        "title": "Confirmation"
+      }
+    }
+  },
   "cardano": {
     "info": {
       "balanceDoesNotIncludeRewards": {
