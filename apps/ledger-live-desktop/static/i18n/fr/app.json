@@ -168,6 +168,7 @@
       "NFT_IN" : "NFT reçu",
       "NFT_OUT" : "NFT envoyé",
       "CREATE" : "Créé",
+      "UNKNOWN" : "Inconnu",
       "REVEAL" : "Révélé",
       "DELEGATE" : "Délégué",
       "REDELEGATE" : "Redélégué",
@@ -1930,7 +1931,12 @@
         "default" : "Vérifiez les détails de l’échange sur votre appareil Ledger avant de le valider. Les adresses sont échangées de manière sécurisée afin que vous n’ayez pas à les vérifier.",
         "provider" : "Vérifiez les détails de l’échange sur votre appareil Ledger avant de le valider. Une vérification supplémentaire peut être effectuée par {{providerName}} pour certaines transactions, entraînant un temps d’attente."
       },
+      "simpleViewNotice" : {
+        "default" : "Vérifiez les détails de l’échange sur votre appareil Ledger avant de le valider.",
+        "provider" : "Vérifiez les détails de l’échange sur votre appareil Ledger avant de le valider. Une vérification supplémentaire peut être effectuée par {{providerName}} pour certaines transactions, entraînant un temps d’attente."
+      },
       "confirm" : "Confirmer l’échange",
+      "confirmSwap" : "Confirmer l’opération d’échange sur l’appareil",
       "amountSent" : "Montant à envoyer",
       "amountReceived" : "Montant à recevoir",
       "amountReceivedFloat" : "Montant à recevoir sans les frais de service",
@@ -2425,6 +2431,7 @@
         "nextBlock" : "Bloc suivant",
         "suggested" : "Suggéré",
         "unitVByte" : "{{unit}}/vByte",
+        "unitPerByte" : "{{unit}}/byte",
         "nft" : "NFT",
         "nftQuantity" : "Nombre",
         "splExtensionsWarning" : "Vous interagissez avec un token faisant partie du programme Token-2022, aussi appelé extension de tokens. Ce token présente des risques spécifiques. <0>Cliquez ici</0> pour en savoir plus."
@@ -5866,6 +5873,10 @@
       "commentPlaceholder" : "Facultatif",
       "comment" : "Commentaire"
     },
+    "canton" : {
+      "commentPlaceholder" : "Facultatif",
+      "comment" : "Commentaire"
+    },
     "stellar" : {
       "memo" : "Mémo",
       "memoType" : {
@@ -6313,6 +6324,10 @@
       "title" : "Une erreur est survenue.",
       "description" : "Échec de la transaction. Veuillez réessayer."
     },
+    "TransactionCannotBeCreated" : {
+      "title" : "Erreur de traitement",
+      "description" : "Changelly ne peut pas traiter cette transaction. Code d’erreur : 8HBB{{errorCode}}"
+    },
     "TimeoutError" : {
       "title" : "Le serveur a mis trop longtemps à répondre.",
       "description" : "Veuillez réessayer."
@@ -6460,6 +6475,9 @@
       "description" : "Veuillez fermer la fenêtre et réessayer plus tard."
     },
     "TonCommentInvalid" : {
+      "title" : "Le commentaire ne doit ni dépasser 120 caractères ni contenir de caractères spéciaux"
+    },
+    "CantonCommentInvalid" : {
       "title" : "Le commentaire ne doit ni dépasser 120 caractères ni contenir de caractères spéciaux"
     },
     "CantScanQRCode" : {
@@ -6853,11 +6871,11 @@
       "description" : "Veuillez réessayer avec une autre image."
     },
     "ImageCommitRefusedOnDevice" : {
-      "title" : "Configuration du fond d’écran\nannulée sur votre {{productName}}",
+      "title" : "Fond d’écran refusé sur votre\n{{productName}}",
       "description" : "S’il s’agit d’une erreur, réessayez maintenant."
     },
     "ImageLoadRefusedOnDevice" : {
-      "title" : "Configuration du fond d’écran\nannulée sur votre {{productName}}",
+      "title" : "Fond d’écran annulé sur votre\n{{productName}}",
       "description" : "S’il s’agit d’une erreur, réessayez maintenant."
     },
     "ImageDoesNotExistOnDevice" : {
@@ -6968,9 +6986,9 @@
       "twoCtas" : "<cta1>{{cta1Label}}</cta1> ou <cta2>{{cta2Label}}</cta2> des {{assetName}} pour approvisionner votre compte.",
       "threeCtas" : "<cta1>{{cta1Label}}</cta1>, <cta2>{{cta2Label}}</cta2> ou <cta3>{{cta3Label}}</cta3> des{{assetName}} pour approvisionner votre compte.",
       "ctas" : {
-        "buy" : "Achetez",
+        "buy" : "Acheter",
         "swap" : "Échanger",
-        "deposit" : "Déposez"
+        "deposit" : "Déposer"
       }
     },
     "InvalidMemoMina" : {
@@ -7182,7 +7200,7 @@
     "steps" : {
       "choose" : {
         "stepLabel" : "Image",
-        "description" : "Choisir une image à définir comme (...)",
+        "description" : "Choisissez une œuvre d’art numérique ou une image.\nPersonnalisez votre {{productName}}.\nCréez votre style.",
         "pickFromNftGallery" : "Sélectionner depuis ma galerie de NFT",
         "myNfts" : "Mes NFT",
         "upload" : "Télécharger à partir de l’ordinateur",
@@ -7206,7 +7224,7 @@
         "useAnotherPicture" : "Télécharger une autre image",
         "allowPreview" : "Appuyez sur Charger pour\npersonnaliser le fond d’écran",
         "allowConfirmPreview" : "Appuyez sur Charger pour\nrestaurer le fond d’écran",
-        "loadingPicture" : "Installation...",
+        "loadingPicture" : "Chargement...",
         "voila" : "Voilà !",
         "imageLoaded" : "Image chargée sur votre {{productName}}",
         "confirmPicture" : "C’est parfait ?\nValidez !",
@@ -7265,9 +7283,9 @@
   "webview" : {
     "networkError" : {
       "title" : "Erreur réseau",
-      "subtitle" : "Une erreur est survenue. Veuillez réessayer. Si le problème persiste, enregistrez votre log et contactez l’Assistance Ledger.",
+      "subtitle" : "Une erreur est survenue. Veuillez réessayer. Si le problème persiste, enregistrez vos logs et contactez l’Assistance Ledger.",
       "contactSupport" : "Contacter l’Assistance Ledger",
-      "saveLog" : "Enregistrer le log"
+      "saveLog" : "Enregistrer les logs"
     },
     "noAccounts" : {
       "title" : "Vous avez besoin d’un compte pour accéder à cette app.",
