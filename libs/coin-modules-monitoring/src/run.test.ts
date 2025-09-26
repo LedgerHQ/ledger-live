@@ -42,7 +42,7 @@ describe("Coin Modules Monitoring", () => {
         }),
       } as AccountBridge<TransactionCommon>);
 
-      const logs = await run(["solana"]);
+      const logs = await run(["solana"], ["pristine", "average", "big"]);
 
       expect(logs).toEqual({
         entries: [
@@ -165,6 +165,110 @@ describe("Coin Modules Monitoring", () => {
         ],
         failed: true,
       });
+      expect(logs.entries).toEqual(
+        expect.arrayContaining([
+          {
+            duration: expect.any(Number),
+            currencyName: "solana",
+            coinModuleName: "solana",
+            operationType: "scan",
+            accountType: "average",
+            transactions: 500,
+            accountAddressOrXpub: "Hj69wRzkrFuf1Nby4yzPEFHdsmQdMoVYjvDKZSLjZFEp",
+            cpu: {
+              max: expect.any(Number),
+              median: expect.any(Number),
+              min: expect.any(Number),
+              p90: expect.any(Number),
+              p99: expect.any(Number),
+            },
+            memory: {
+              max: expect.any(Number),
+              median: expect.any(Number),
+              min: expect.any(Number),
+              p90: expect.any(Number),
+              p99: expect.any(Number),
+            },
+            totalNetworkCalls: 0, // no network call on unit tests
+            networkCallsByDomain: {},
+          },
+          {
+            duration: expect.any(Number),
+            currencyName: "solana",
+            coinModuleName: "solana",
+            operationType: "sync",
+            accountType: "average",
+            transactions: 500,
+            accountAddressOrXpub: "Hj69wRzkrFuf1Nby4yzPEFHdsmQdMoVYjvDKZSLjZFEp",
+            cpu: {
+              max: expect.any(Number),
+              median: expect.any(Number),
+              min: expect.any(Number),
+              p90: expect.any(Number),
+              p99: expect.any(Number),
+            },
+            memory: {
+              max: expect.any(Number),
+              median: expect.any(Number),
+              min: expect.any(Number),
+              p90: expect.any(Number),
+              p99: expect.any(Number),
+            },
+            totalNetworkCalls: 0, // no network call on unit tests
+            networkCallsByDomain: {},
+          },
+          {
+            duration: expect.any(Number),
+            currencyName: "solana",
+            coinModuleName: "solana",
+            operationType: "scan",
+            accountType: "pristine",
+            transactions: 0,
+            accountAddressOrXpub: "Hbac8tM3SMbua9ZBqPRbEJ2n3FtikRJc7wFmZzpqbtBv",
+            cpu: {
+              max: expect.any(Number),
+              median: expect.any(Number),
+              min: expect.any(Number),
+              p90: expect.any(Number),
+              p99: expect.any(Number),
+            },
+            memory: {
+              max: expect.any(Number),
+              median: expect.any(Number),
+              min: expect.any(Number),
+              p90: expect.any(Number),
+              p99: expect.any(Number),
+            },
+            totalNetworkCalls: 0, // no network call on unit tests
+            networkCallsByDomain: {},
+          },
+          {
+            duration: expect.any(Number),
+            currencyName: "solana",
+            coinModuleName: "solana",
+            operationType: "sync",
+            accountType: "pristine",
+            transactions: 0,
+            accountAddressOrXpub: "Hbac8tM3SMbua9ZBqPRbEJ2n3FtikRJc7wFmZzpqbtBv",
+            cpu: {
+              max: expect.any(Number),
+              median: expect.any(Number),
+              min: expect.any(Number),
+              p90: expect.any(Number),
+              p99: expect.any(Number),
+            },
+            memory: {
+              max: expect.any(Number),
+              median: expect.any(Number),
+              min: expect.any(Number),
+              p90: expect.any(Number),
+              p99: expect.any(Number),
+            },
+            totalNetworkCalls: 0, // no network call on unit tests
+            networkCallsByDomain: {},
+          },
+        ]),
+      );
     });
   });
 });

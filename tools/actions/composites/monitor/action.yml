@@ -13,6 +13,9 @@ inputs:
   SUBMIT_LOGS:
     description: "Whether logs should be submitted to Datadog"
     required: false
+  MONITOR_FILTER_ACCOUNT_TYPES:
+    description: "Account types to filter on"
+    required: false
   MONITOR_FILTER_CURRENCIES:
     description: "Currencies to filter on"
     required: false
@@ -35,11 +38,22 @@ runs:
     - name: Build dependencies
       run: pnpm build:llc
       shell: bash
+    - name: Build coin-modules-monitoring
+      run: pnpm coin:modules:monitoring build
+      shell: bash
     - name: run monitoring
       env:
         DD_API_KEY: ${{ inputs.DD_API_KEY }}
         DD_APP_KEY: ${{ inputs.DD_APP_KEY }}
         DD_DOMAIN: ${{ inputs.DD_DOMAIN }}
         SUBMIT_LOGS: ${{ inputs.SUBMIT_LOGS }}
-      run: pnpm coin:modules:monitoring start ${{ inputs.MONITOR_FILTER_CURRENCIES }}
+      run: |
+        IFS=',' read -ra CURRENCIES <<< "${{ inputs.MONITOR_FILTER_CURRENCIES }}"
+        IFS=',' read -ra ACCOUNT_TYPES <<< "${{ inputs.MONITOR_FILTER_ACCOUNT_TYPES }}"
+        for currency in "${CURRENCIES[@]}"; do
+          for account_type in "${ACCOUNT_TYPES[@]}"; do
+            echo "Running monitoring for $currency with $account_type accounts"
+            pnpm coin:modules:monitoring start monitor --currencies $currency  --account-types $account_type
+          done
+        done
       shell: bash
