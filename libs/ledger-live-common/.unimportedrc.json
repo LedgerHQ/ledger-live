@@ -187,6 +187,7 @@
     "src/hw/actions/manager.ts",
     "src/hw/actions/renameDevice.ts",
     "src/hw/actions/startExchange.ts",
+    "src/hw/actions/rawTransaction.ts",
     "src/hw/actions/transaction.ts",
     "src/hw/actions/types.ts",
     "src/hw/connectApp.ts",
