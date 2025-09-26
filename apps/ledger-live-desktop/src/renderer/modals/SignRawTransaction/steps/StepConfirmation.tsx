@@ -23,7 +23,7 @@ function StepConfirmation({ account, error }: StepProps) {
     return (
       <Container>
         <TrackPage
-          category="Sign Transaction Flow"
+          category="Sign Raw Transaction Flow"
           name="Step Confirmation Error"
           currencyName={currencyName}
         />

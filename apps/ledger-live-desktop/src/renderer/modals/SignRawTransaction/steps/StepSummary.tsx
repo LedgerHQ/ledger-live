@@ -46,7 +46,7 @@ const StepSummary = ({ account, parentAccount, transaction }: StepProps) => {
 
   return (
     <Box flow={4} mx={40}>
-      <TrackPage category="Sign Flow" name="Step Summary" />
+      <TrackPage category="Sign Raw Transaction Flow" name="Step Summary" />
       <FromToWrapper>
         <Box>
           <Box horizontal alignItems="center">
