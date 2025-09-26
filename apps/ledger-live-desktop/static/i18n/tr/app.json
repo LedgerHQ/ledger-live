@@ -168,6 +168,7 @@
       "NFT_IN" : "NFT Alındı",
       "NFT_OUT" : "NFT Gönderildi",
       "CREATE" : "Oluşturuldu",
+      "UNKNOWN" : "Bilinmiyor",
       "REVEAL" : "Adres gösterildi",
       "DELEGATE" : "Yetki devredildi",
       "REDELEGATE" : "Yetki yeniden devredildi",
@@ -1930,7 +1931,12 @@
         "default" : "Göndermeden önce cihazınızdaki takas bilgilerini doğrulayın. Adresler güvenli bir şekilde aktarılır, böylece onları doğrulamak zorunda kalmazsınız.",
         "provider" : "Göndermeden önce cihazınızdaki Takas bilgilerini doğrulayın. {{providerName}} bazı işlemler için ek doğrulama adımları gerçekleştirmek zorunda kalabilir ve bu, gecikmeye neden olabilir."
       },
+      "simpleViewNotice" : {
+        "default" : "Göndermeden önce Ledger cihazınızdaki takas bilgilerini doğrulayın.",
+        "provider" : "Göndermeden önce cihazınızdaki Takas bilgilerini doğrulayın. {{providerName}} bazı işlemler için ek doğrulama adımları gerçekleştirmek zorunda kalabilir ve bu, gecikmeye neden olabilir."
+      },
       "confirm" : "Takas işlemini onayla",
+      "confirmSwap" : "Takas işlemini cihazdan onaylayın",
       "amountSent" : "Gönderilecek tutar",
       "amountReceived" : "Alınacak tutar",
       "amountReceivedFloat" : "Hizmet ücretleri hariç alınacak tutar",
@@ -2425,6 +2431,7 @@
         "nextBlock" : "Sonraki blok",
         "suggested" : "Önerilen",
         "unitVByte" : "{{unit}}/vbyte",
+        "unitPerByte" : "{{unit}}/bayt",
         "nft" : "NFT",
         "nftQuantity" : "Miktar",
         "splExtensionsWarning" : "Token Uzantıları (Token Extensions) olarak da bilinen Token-2022 programı kapsamındaki bir token’la etkileşime geçiyorsunuz. Bu token’ın belirli riskleri bulunmaktadır. Daha fazla bilgi edinmek için <0>buraya tıklayın</0>."
@@ -5866,6 +5873,10 @@
       "commentPlaceholder" : "Tercihe bağlı",
       "comment" : "Yorum"
     },
+    "canton" : {
+      "commentPlaceholder" : "Tercihe bağlı",
+      "comment" : "Yorum"
+    },
     "stellar" : {
       "memo" : "Memo",
       "memoType" : {
@@ -6313,6 +6324,10 @@
       "title" : "Bir hata oluştu",
       "description" : "İşlem başarısız. Lütfen tekrar deneyin."
     },
+    "TransactionCannotBeCreated" : {
+      "title" : "İşleme Hatası",
+      "description" : "Changelly bu işlemi gerçekleştiremiyor. Hata kodu 8HBB{{errorCode}}"
+    },
     "TimeoutError" : {
       "title" : "Üzgünüz, sunucunun yanıt vermesi çok uzun sürdü",
       "description" : "Lütfen tekrar deneyin."
@@ -6460,6 +6475,9 @@
       "description" : "Lütfen pencereyi kapatıp daha sonra tekrar deneyin"
     },
     "TonCommentInvalid" : {
+      "title" : "Yorum, özel karakterler içermemeli ve 120 karakteri aşmamalıdır"
+    },
+    "CantonCommentInvalid" : {
       "title" : "Yorum, özel karakterler içermemeli ve 120 karakteri aşmamalıdır"
     },
     "CantScanQRCode" : {
@@ -6853,11 +6871,11 @@
       "description" : "Lütfen başka bir görüntüyle tekrar deneyin"
     },
     "ImageCommitRefusedOnDevice" : {
-      "title" : "{{productName}} cihazında kilitli ekran resminin\nkurulumu iptal edildi",
+      "title" : "{{productName}} cihazında kilitli ekran resmi kaldırıldı",
       "description" : "Bunu yanlışlıkla yaptıysanız şimdi tekrar deneyin."
     },
     "ImageLoadRefusedOnDevice" : {
-      "title" : "{{productName}} cihazında kilitli ekran resminin\nkurulumu iptal edildi",
+      "title" : "Şu cihazdaki kilitli ekran resmi iptal edildi:\n{{productName}}",
       "description" : "Bunu yanlışlıkla yaptıysanız şimdi tekrar deneyin."
     },
     "ImageDoesNotExistOnDevice" : {
@@ -7182,7 +7200,7 @@
     "steps" : {
       "choose" : {
         "stepLabel" : "Resim seçin",
-        "description" : "Bir görüntü seçip ayarlayın (...)",
+        "description" : "İstediğiniz bir dijital sanat eserini veya fotoğrafı seçin.\n{{productName}} cihazınızı özelleştirin.\nCihazınız sizi yansıtsın.",
         "pickFromNftGallery" : "NFT galerimden seç",
         "myNfts" : "NFT'lerim",
         "upload" : "Bilgisayardan yükle",
@@ -7265,9 +7283,9 @@
   "webview" : {
     "networkError" : {
       "title" : "Ağ Hatası",
-      "subtitle" : "Bir hata oluştu. Lütfen tekrar deneyin. Sorun devam ederse log'unuzu kaydedin ve Ledger destek ekibiyle iletişime geçin.",
+      "subtitle" : "Bir hata oluştu. Lütfen tekrar deneyin. Sorun sürerse log’larınızı kaydedin ve Ledger destek ekibiyle iletişime geçin.",
       "contactSupport" : "Ledger Destek ile iletişime geçin",
-      "saveLog" : "Log'u kaydet"
+      "saveLog" : "Log'ları kaydedin"
     },
     "noAccounts" : {
       "title" : "Bu uygulamaya erişmek için bir hesabınızın olması gerekiyor.",
