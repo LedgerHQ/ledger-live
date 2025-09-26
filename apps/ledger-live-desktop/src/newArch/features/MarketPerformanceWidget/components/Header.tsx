@@ -39,7 +39,7 @@ export function MarketPerformanceWidgetHeader({ onChangeOrder, order }: HeaderPr
 
       <Flex py={2} px={3} backgroundColor="opacityDefault.c05" borderRadius={32}>
         <Element
-          data-testId="market-best-performers"
+          data-testid="market-best-performers"
           alignItems="center"
           onClick={() => onClickButton(Order.asc)}
         >
@@ -56,7 +56,7 @@ export function MarketPerformanceWidgetHeader({ onChangeOrder, order }: HeaderPr
         </Element>
 
         <Element
-          data-testId="market-worst-performers"
+          data-testid="market-worst-performers"
           alignItems="center"
           ml={3}
           onClick={() => onClickButton(Order.desc)}

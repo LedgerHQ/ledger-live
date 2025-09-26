@@ -6,10 +6,14 @@ import { Props as TextInputProps } from "./TextInput";
 
 type Props = TextInputProps & {
   onPaste?: () => void;
-  placeholderTranslationKey: string;
+  placeholderTranslationKey?: string;
 };
 
-const RecipientInput = ({ onPaste, placeholderTranslationKey, ...props }: Props) => {
+const RecipientInput = ({
+  onPaste,
+  placeholderTranslationKey = "transfer.recipient.input",
+  ...props
+}: Props) => {
   const { t } = useTranslation();
 
   return (
@@ -22,10 +26,6 @@ const RecipientInput = ({ onPaste, placeholderTranslationKey, ...props }: Props)
       {...props}
     />
   );
-};
-
-RecipientInput.defaultProps = {
-  placeholderTranslationKey: "transfer.recipient.input",
 };
 
 export default memo(RecipientInput);

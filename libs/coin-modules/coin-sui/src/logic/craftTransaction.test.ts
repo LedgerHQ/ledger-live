@@ -10,7 +10,7 @@ describe("craftTransaction", () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    mockCreateTransaction.mockResolvedValue(mockUnsignedTx);
+    mockCreateTransaction.mockResolvedValue({ unsigned: mockUnsignedTx });
   });
 
   it("should create a transaction with correct parameters", async () => {
@@ -27,12 +27,16 @@ describe("craftTransaction", () => {
       asset: { type: "native" },
     });
 
-    expect(mockCreateTransaction).toHaveBeenCalledWith(sender, {
-      amount: new BigNumber(amount.toString()),
-      recipient,
-      mode: type,
-      coinType: "0x2::sui::SUI",
-    });
+    expect(mockCreateTransaction).toHaveBeenCalledWith(
+      sender,
+      {
+        amount: new BigNumber(amount.toString()),
+        recipient,
+        mode: type,
+        coinType: "0x2::sui::SUI",
+      },
+      false,
+    );
     expect(result).toEqual({ unsigned: mockUnsignedTx });
   });
 
@@ -50,12 +54,16 @@ describe("craftTransaction", () => {
       asset: { type: "native" },
     });
 
-    expect(mockCreateTransaction).toHaveBeenCalledWith(sender, {
-      amount: new BigNumber(amount.toString()),
-      recipient,
-      mode: type,
-      coinType: "0x2::sui::SUI",
-    });
+    expect(mockCreateTransaction).toHaveBeenCalledWith(
+      sender,
+      {
+        amount: new BigNumber(amount.toString()),
+        recipient,
+        mode: type,
+        coinType: "0x2::sui::SUI",
+      },
+      false,
+    );
     expect(result).toEqual({ unsigned: mockUnsignedTx });
   });
 
@@ -73,12 +81,16 @@ describe("craftTransaction", () => {
       asset: { type: "native" },
     });
 
-    expect(mockCreateTransaction).toHaveBeenCalledWith(sender, {
-      amount: new BigNumber(amount.toString()),
-      recipient,
-      mode: type,
-      coinType: "0x2::sui::SUI",
-    });
+    expect(mockCreateTransaction).toHaveBeenCalledWith(
+      sender,
+      {
+        amount: new BigNumber(amount.toString()),
+        recipient,
+        mode: type,
+        coinType: "0x2::sui::SUI",
+      },
+      false,
+    );
     expect(result).toEqual({ unsigned: mockUnsignedTx });
   });
 
@@ -96,12 +108,16 @@ describe("craftTransaction", () => {
       asset: { type: "native" },
     });
 
-    expect(mockCreateTransaction).toHaveBeenCalledWith(sender, {
-      amount: new BigNumber(amount.toString()),
-      recipient,
-      mode: type,
-      coinType: "0x2::sui::SUI",
-    });
+    expect(mockCreateTransaction).toHaveBeenCalledWith(
+      sender,
+      {
+        amount: new BigNumber(amount.toString()),
+        recipient,
+        mode: type,
+        coinType: "0x2::sui::SUI",
+      },
+      false,
+    );
     expect(result).toEqual({ unsigned: mockUnsignedTx });
   });
 

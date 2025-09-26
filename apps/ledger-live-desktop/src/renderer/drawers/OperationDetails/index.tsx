@@ -594,7 +594,7 @@ const OperationD = (props: Props) => {
               </Box>
 
               <TextEllipsis>
-                <Link data-testId="account-name" onClick={goToMainAccount}>
+                <Link data-testid="account-name" onClick={goToMainAccount}>
                   {name}
                 </Link>
               </TextEllipsis>

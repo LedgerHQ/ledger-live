@@ -328,7 +328,7 @@ const SwapOperationDetails = ({
           <Trans i18nKey="swap.operationDetailsModal.date" />
         </OpDetailsTitle>
         <OpDetailsData>
-          <Box data-testId="operation-date">{dateFormatted}</Box>
+          <Box data-testid="operation-date">{dateFormatted}</Box>
         </OpDetailsData>
       </OpDetailsSection>
       <B />

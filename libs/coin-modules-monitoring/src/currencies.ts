@@ -141,9 +141,9 @@ const info: Record<string, { accounts: Partial<Record<AccountType, AccountInfo>>
     },
     tezos: {
       accounts: {
-        pristine: { address: "0082c6dcd37e14f83e852c8d3d21bc39289598f94cdd5800f6e4a9a8a5adfe3beb" },
-        average: { address: "0019b730b7b55718272cd409ca3480ff07c848579cfa65c41a57d50398098c50b2" },
-        big: { address: "007caac43b092bc041b15ca917c63ff7e721db93a16ace333c834fdcc1000884d2" },
+        pristine: { address: "tz1WMrppYADANWkNus4vs8xqKztacLETnKmT" },
+        average: { address: "tz1faGczABYaoG4JaSexQ3J7Pf16ePyLjB6a" },
+        big: { address: "tz1PUToVyv2yNHcCM9hvcBauNQzVoKpXEYoW" },
       },
     },
     tron: {
