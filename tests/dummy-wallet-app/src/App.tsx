@@ -163,6 +163,15 @@ export default function App() {
     }
   };
 
+  const handleTransactionSignRaw = async () => {
+    try {
+      const result = await client?.transaction.signRaw(accountId, data);
+      setRes(result?.toString() || "empty response");
+    } catch (err) {
+      setRes(err);
+    }
+  };
+
   const handleTransactionSignAndBroadcast = async () => {
     try {
       const transaction = {
@@ -371,6 +380,9 @@ export default function App() {
             data-testid="transaction-sign-raw-solana"
           >
             transaction.sign raw solana
+          </button>
+          <button onClick={handleTransactionSignRaw} data-testid="transaction-sign-raw">
+            transaction.signRaw
           </button>
           <button
             onClick={handleTransactionSignAndBroadcast}

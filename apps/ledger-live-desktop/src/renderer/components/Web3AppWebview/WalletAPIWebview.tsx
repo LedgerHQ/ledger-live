@@ -189,6 +189,30 @@ function useUiHook(manifest: AppManifest, tracking: TrackingAPI): UiHook {
           }),
         );
       },
+      "transaction.signRaw": ({
+        account,
+        parentAccount,
+        transaction,
+        options,
+        onSuccess,
+        onError,
+      }) => {
+        ipcRenderer.send("show-app", {});
+        dispatch(
+          openModal("MODAL_SIGN_RAW_TRANSACTION", {
+            transaction,
+            useApp: options?.hwAppId,
+            dependencies: options?.dependencies,
+            account,
+            parentAccount,
+            onResult: onSuccess,
+            onCancel: onError,
+            manifestId: manifest.id,
+            manifestName: manifest.name,
+            location: HOOKS_TRACKING_LOCATIONS.wapiRawTransactionSend,
+          }),
+        );
+      },
       "transaction.broadcast": (account, parentAccount, mainAccount, optimisticOperation) => {
         dispatch(
           updateAccountWithUpdater(mainAccount.id, account =>
