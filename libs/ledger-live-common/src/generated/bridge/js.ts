@@ -17,6 +17,7 @@ import { bridge as near } from "../../families/near/setup";
 import { bridge as polkadot } from "../../families/polkadot/setup";
 import { bridge as solana } from "../../families/solana/setup";
 import { bridge as stacks } from "../../families/stacks/setup";
+import { bridge as tezos } from "../../families/tezos/setup";
 import { bridge as ton } from "../../families/ton/setup";
 import { bridge as tron } from "../../families/tron/setup";
 import { bridge as vechain } from "../../families/vechain/setup";
@@ -43,6 +44,7 @@ export default {
   polkadot,
   solana,
   stacks,
+  tezos,
   ton,
   tron,
   vechain,

@@ -7,7 +7,6 @@ import type {
   TransactionStatusCommon,
   TransactionStatusCommonRaw,
 } from "@ledgerhq/types-live";
-import type { Stake } from "@ledgerhq/coin-framework/api/index";
 import type { BigNumber } from "bignumber.js";
 import { TezosOperationMode } from "./model";
 
@@ -80,11 +79,7 @@ export type Delegation = {
   sendShouldWarnDelegation: boolean;
 };
 
-export type StakingPosition = Stake;
-export type TezosAccount = Account & {
-  tezosResources: TezosResources;
-  stakingPositions: StakingPosition[];
-};
+export type TezosAccount = Account & { tezosResources: TezosResources };
 export function isTezosAccount(account: Account): account is TezosAccount {
   return "tezosResources" in account;
 }
