@@ -5,5 +5,4 @@ module.exports = {
   testRegex: ".integ.test.ts$",
   testPathIgnorePatterns: ["lib/", "lib-es/"],
   testTimeout: 60000,
-  workerThreads: true,
 };

@@ -21,7 +21,6 @@ describe("craftTransaction", () => {
     estimate: {
       reveal: jest.fn(),
     },
-    setProvider: jest.fn(),
   };
 
   beforeEach(() => {

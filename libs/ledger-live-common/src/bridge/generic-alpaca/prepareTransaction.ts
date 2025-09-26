@@ -26,7 +26,7 @@ export function genericPrepareTransaction(
   kind,
 ): AccountBridge<GenericTransaction, Account>["prepareTransaction"] {
   return async (account, transaction: GenericTransaction) => {
-    const { getAssetFromToken, computeIntentType, estimateFees, validateIntent } = getAlpacaApi(
+    const { getAssetFromToken, computeIntentType, estimateFees } = getAlpacaApi(
       account.currency.id,
       kind,
     );
@@ -50,7 +50,7 @@ export function genericPrepareTransaction(
     }
 
     if (!bnEq(transaction.fees, new BigNumber(fees.toString()))) {
-      const next: GenericTransaction = {
+      return {
         ...transaction,
         fees: new BigNumber(fees.toString()),
         assetReference,
@@ -61,52 +61,6 @@ export function genericPrepareTransaction(
           },
         },
       };
-
-      // propagate storageLimit fee parameter when present (ex: tezos)
-      const feeEstimation = await estimateFees(
-        transactionToIntent(
-          account,
-          {
-            ...transaction,
-          },
-          computeIntentType,
-        ),
-      );
-      const params = feeEstimation?.parameters;
-      if (params) {
-        const storageLimit = params["storageLimit"];
-        if (
-          storageLimit !== undefined &&
-          (typeof storageLimit === "bigint" ||
-            typeof storageLimit === "number" ||
-            typeof storageLimit === "string")
-        ) {
-          next.storageLimit = new BigNumber(storageLimit.toString());
-          // Add storageLimit to customFees parameters
-          if (next.customFees?.parameters) {
-            next.customFees.parameters.storageLimit = new BigNumber(storageLimit.toString());
-          }
-        }
-      }
-
-      // align with stellar/xrp: when send max (or staking intents), reflect validated amount in UI
-      if (
-        transaction.useAllAmount ||
-        transaction["mode"] === "stake" ||
-        transaction["mode"] === "unstake"
-      ) {
-        const { amount } = await validateIntent(
-          transactionToIntent(
-            account,
-            {
-              ...transaction,
-            },
-            computeIntentType,
-          ),
-        );
-        next.amount = new BigNumber(amount.toString());
-      }
-      return next;
     }
 
     return transaction;
