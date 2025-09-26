@@ -442,8 +442,7 @@ const FirstStepSyncOnboarding = ({
     };
   }, [setIsPollingOn]);
 
-  const showSuccess =
-    companionSteps.activeStep === FirstStepCompanionStepKey.Ready && hasFinishedAnimation;
+  const showSuccess = companionSteps.activeStep === FirstStepCompanionStepKey.Ready;
 
   useEffect(() => {
     if (showSuccess) {
