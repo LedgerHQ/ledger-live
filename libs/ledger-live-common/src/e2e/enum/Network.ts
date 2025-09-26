@@ -16,6 +16,7 @@ export enum Network {
   XRP = "XRP",
   CARDANO = "Cardano",
   STELLAR = "Stellar",
+  SUI = "Sui",
   BITCOIN_CASH = "Bitcoin Cash",
   ALGORAND = "Algorand",
   COSMOS = "Cosmos",
