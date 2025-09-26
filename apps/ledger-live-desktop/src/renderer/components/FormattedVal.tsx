@@ -75,7 +75,7 @@ function FormattedVal(props: Props) {
     locale,
     color,
     ellipsis,
-    subMagnitude,
+    subMagnitude = 0,
     prefix,
     suffix,
     showAllDigits,
@@ -147,8 +147,5 @@ function FormattedVal(props: Props) {
     </T>
   );
 }
-FormattedVal.defaultProps = {
-  subMagnitude: 0,
-};
 const m: React.ComponentType<OwnProps> = connect(mapStateToProps)(FormattedVal);
 export default m;
