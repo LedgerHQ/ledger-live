@@ -57,6 +57,7 @@ import FeesDrawerLiveApp from "./FeesDrawerLiveApp";
 import WebviewErrorDrawer from "./WebviewErrorDrawer/index";
 import { currentRouteNameRef } from "~/renderer/analytics/screenRefs";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import mixpanel from "mixpanel-browser";
 
 export class UnableToLoadSwapLiveError extends Error {
   constructor(message: string) {
@@ -150,6 +151,13 @@ const SwapWebView = ({ manifest }: SwapWebProps) => {
   const isOffline = networkStatus === NetworkStatus.OFFLINE;
   // Remove after KYC AB Testing
   const ptxSwapLiveAppKycWarning = useFeature("ptxSwapLiveAppKycWarning")?.enabled;
+  const lldSessionReplay = useFeature("lldSessionReplay");
+  const [distinctId, setDistinctId] = useState<string>("");
+
+  useEffect(() => {
+    const id = mixpanel.get_distinct_id();
+    setDistinctId(id);
+  }, []);
 
   const customPTXHandlers = usePTXCustomHandlers(manifest, accounts);
   const customHandlers = useMemo(
@@ -531,6 +539,8 @@ const SwapWebView = ({ manifest }: SwapWebProps) => {
             shareAnalytics,
             hasSeenAnalyticsOptInPrompt,
             ptxSwapLiveAppKycWarning,
+            lldSessionReplay: lldSessionReplay?.enabled,
+            distinctId: distinctId,
           }}
           onStateChange={onStateChange}
           ref={webviewAPIRef}
