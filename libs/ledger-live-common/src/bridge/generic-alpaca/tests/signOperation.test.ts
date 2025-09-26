@@ -83,7 +83,7 @@ describe("genericSignOperation", () => {
         },
       });
 
-      expect(transactionToIntent).toHaveBeenCalledWith(account, transaction);
+      expect(transactionToIntent).toHaveBeenCalledWith(account, transaction, undefined);
       expect(txIntent.memo.memos.get("destinationTag")).toBe("1234");
     });
 

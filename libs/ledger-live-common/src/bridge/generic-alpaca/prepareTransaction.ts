@@ -26,7 +26,10 @@ export function genericPrepareTransaction(
   kind,
 ): AccountBridge<GenericTransaction, Account>["prepareTransaction"] {
   return async (account, transaction: GenericTransaction) => {
-    const { getAssetFromToken } = getAlpacaApi(account.currency.id, kind);
+    const { getAssetFromToken, computeIntentType, estimateFees } = getAlpacaApi(
+      account.currency.id,
+      kind,
+    );
     const { assetReference, assetOwner } = getAssetFromToken
       ? getAssetInfos(transaction, account.freshAddress, getAssetFromToken)
       : assetInfosFallback(transaction);
@@ -34,10 +37,14 @@ export function genericPrepareTransaction(
     let fees: BigNumber | bigint | null = transaction.customFees?.parameters?.fees || null;
     if (fees === null) {
       fees = (
-        await getAlpacaApi(account.currency.id, kind).estimateFees(
-          transactionToIntent(account, {
-            ...transaction,
-          }),
+        await estimateFees(
+          transactionToIntent(
+            account,
+            {
+              ...transaction,
+            },
+            computeIntentType,
+          ),
         )
       ).value;
     }

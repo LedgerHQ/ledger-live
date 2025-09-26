@@ -12,6 +12,7 @@ export type NetworkDeps = {
 
 type Params = {
   assets: CryptoOrTokenCurrency[];
+  networks: CryptoOrTokenCurrency[];
   selectedAssetId: string;
   currenciesByProvider: CurrenciesByProviderId[];
 };
@@ -21,6 +22,7 @@ export function createUseRightBalanceNetwork({ useBalanceDeps, balanceItem }: Ne
     assets: networks,
     selectedAssetId,
     currenciesByProvider,
+    networks: actualNetworks,
   }: Params) {
     const { flattenedAccounts, discreet, state, counterValueCurrency, locale } = useBalanceDeps();
 
@@ -77,7 +79,7 @@ export function createUseRightBalanceNetwork({ useBalanceDeps, balanceItem }: Ne
 
       const networkBalanceData = getBalanceAndFiatValueByAssets(
         flattenedAccounts,
-        networks,
+        actualNetworks,
         state,
         counterValueCurrency,
         discreet,
@@ -86,7 +88,7 @@ export function createUseRightBalanceNetwork({ useBalanceDeps, balanceItem }: Ne
 
       const balanceMap = new Map(networkBalanceData.map(b => [b.id, b]));
 
-      const networksWithBalance = networks.map(network => {
+      const networksWithBalance = actualNetworks.map(network => {
         const balanceData = balanceMap.get(network.id) || {};
         return {
           network,

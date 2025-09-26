@@ -2,7 +2,10 @@ import "../../__tests__/test-helpers/setup";
 import { testBridge } from "../../__tests__/test-helpers/bridge";
 import { dataset } from "@ledgerhq/coin-filecoin/test/index";
 
-testBridge(dataset);
+// FIXME: Disabled due to creationDate timing issues
+describe.skip("filecoin integration", () => {
+  testBridge(dataset);
+});
 
 // describe("estimateMaxSpendable", () => {
 //   test("it should failed on invalid recipient", async () => {

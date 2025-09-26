@@ -6,6 +6,7 @@ import { scenarioPolygon } from "./scenarii/polygon";
 import { scenarioScroll } from "./scenarii/scroll";
 import { scenarioBlast } from "./scenarii/blast";
 import { scenarioSonic } from "./scenarii/sonic";
+import { scenarioCore } from "./scenarii/core";
 import { setCryptoAssetsStore as setCryptoAssetsStoreForCoinFramework } from "@ledgerhq/coin-framework/crypto-assets/index";
 import type { CryptoAssetsStore } from "@ledgerhq/types-live";
 import * as legacy from "@ledgerhq/cryptoassets/tokens";
@@ -55,6 +56,17 @@ describe.each([["legacy"], ["generic-adapter"]] as const)(
     it("scenario polygon", async () => {
       try {
         await executeScenario(scenarioPolygon, strategy);
+      } catch (e) {
+        if (e != "done") {
+          await Promise.all([killSpeculos(), killAnvil()]);
+          throw e;
+        }
+      }
+    });
+
+    it("scenario Core", async () => {
+      try {
+        await executeScenario(scenarioCore, strategy);
       } catch (e) {
         if (e != "done") {
           await Promise.all([killSpeculos(), killAnvil()]);

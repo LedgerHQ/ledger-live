@@ -14,7 +14,7 @@ import { accountScreenSelector } from "~/reducers/accounts";
 import TextInput from "~/components/FocusedTextInput";
 import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { SendFundsNavigatorStackParamList } from "~/components/RootNavigator/types/SendFundsNavigator";
-import { ScreenName } from "~/const";
+import { NavigatorName, ScreenName } from "~/const";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import { SignTransactionNavigatorParamList } from "~/components/RootNavigator/types/SignTransactionNavigator";
 import { SwapNavigatorParamList } from "~/components/RootNavigator/types/SwapNavigator";
@@ -54,15 +54,16 @@ function KaspaEditCustomFees({ navigation, route }: Props) {
     Keyboard.dismiss();
     setSompiPerByte && setSompiPerByte(BigNumber(ownSompiPerByte || 0));
     const bridge = getAccountBridge(account, parentAccount);
-    const { currentNavigation } = route.params;
-    // @ts-expect-error: Type mismatch due to dynamic navigation params
-    navigation.navigate(currentNavigation, {
-      ...route.params,
-      accountId: account.id,
-      transaction: bridge.updateTransaction(transaction, {
-        feePerByte: BigNumber(ownSompiPerByte || 0),
-        feesStrategy: "custom",
-      }),
+    navigation.navigate(NavigatorName.SendFunds, {
+      screen: ScreenName.SendSummary,
+      params: {
+        ...route.params,
+        accountId: account.id,
+        transaction: bridge.updateTransaction(transaction, {
+          customFeeRate: BigNumber(ownSompiPerByte || 0),
+          feesStrategy: "custom",
+        }),
+      },
     });
   }, [
     setSompiPerByte,

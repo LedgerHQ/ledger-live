@@ -11,4 +11,5 @@ export const createTransaction: AccountBridge<Transaction>["createTransaction"] 
   memo: "",
   networkInfo: null,
   feeCustomUnit: null,
+  tokenId: "",
 });

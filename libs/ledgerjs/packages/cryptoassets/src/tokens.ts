@@ -10,6 +10,7 @@ import esdttokens, { MultiversXESDTToken } from "./data/esdt";
 import asatokens, { AlgorandASAToken } from "./data/asa";
 import { tokens as polygonTokens } from "./data/evm/137";
 import { tokens as sonicTokens } from "./data/evm/146";
+import { tokens as coreTokens } from "./data/evm/1116";
 import trc10tokens, { TRC10Token } from "./data/trc10";
 import trc20tokens, { TRC20Token } from "./data/trc20";
 import { tokens as mainnetTokens } from "./data/evm/1";
@@ -65,6 +66,8 @@ addTokens(filecoinTokens.map(convertERC20));
 addTokens(spltokens.map(convertSplTokens));
 // Sonic
 addTokens(sonicTokens.map(convertERC20));
+// Core
+addTokens(coreTokens.map(convertERC20));
 // Celo
 addTokens(celoTokens.map(convertERC20));
 
@@ -145,15 +148,7 @@ export function listTokensForCryptoCurrency(
  *
  */
 export function listTokenTypesForCryptoCurrency(currency: CryptoCurrency): string[] {
-  return listTokensForCryptoCurrency(currency).reduce<string[]>((acc, cur) => {
-    const tokenType = cur.tokenType.replace("_", " ");
-
-    if (acc.indexOf(tokenType) < 0) {
-      return [...acc, tokenType];
-    }
-
-    return acc;
-  }, []);
+  return currency.tokenTypes || [];
 }
 
 /**

@@ -22,8 +22,11 @@ import { HOOKS_TRACKING_LOCATIONS } from "~/analytics/hooks/variables";
 // Defines some of the header options for this screen to be able to reset back to them.
 export const addAccountsSelectDeviceHeaderOptions = (
   onClose: () => void,
+  isOnboardingFlow: boolean = false,
 ): ReactNavigationHeaderOptions => ({
-  headerRight: () => <NavigationHeaderCloseButtonAdvanced onClose={onClose} />,
+  headerRight: () => (
+    <NavigationHeaderCloseButtonAdvanced onClose={onClose} isOnboardingFlow={isOnboardingFlow} />
+  ),
   headerLeft: () => <NavigationHeaderBackButton />,
 });
 

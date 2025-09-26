@@ -6,13 +6,13 @@ import { ModularDrawerStep } from "../types";
 import { useStepNavigation } from "./useStepNavigation";
 import { useDeviceNavigation } from "./useDeviceNavigation";
 import { useDrawerLifecycle } from "./useDrawerLifecycle";
-import { AssetsData } from "./useAssets";
+import { AssetData } from "@ledgerhq/live-common/modularDrawer/utils/type";
 import { getNetworksForAsset, resolveCurrency } from "../utils/helpers";
 import { useDispatch, useSelector } from "react-redux";
 import { modularDrawerEnableAccountSelectionSelector, setStep } from "~/reducers/modularDrawer";
 
 type ModularDrawerStateProps = {
-  assetsSorted: AssetsData;
+  assetsSorted?: AssetData[];
   selectedStep?: ModularDrawerStep;
   currencyIds: string[];
   isDrawerOpen?: boolean;

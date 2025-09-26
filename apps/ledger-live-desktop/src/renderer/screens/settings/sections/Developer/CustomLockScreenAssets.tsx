@@ -48,7 +48,7 @@ const CustomLockScreenAssets = () => {
         <DeviceModelPicker deviceModelId={deviceModelId} onChange={setDeviceModelId} />
       </Box>
       <Box horizontal alignItems="center" justifyContent="space-between" p={5} height={400}>
-        <AnimationWrapper>
+        <AnimationWrapper style={{ maxWidth: 300 }}>
           <Animation animation={getDeviceAnimation(deviceModelId, type, "allowManager")} />
         </AnimationWrapper>
         <FramedPicture
@@ -56,7 +56,7 @@ const CustomLockScreenAssets = () => {
           source={source}
           loadingProgress={+(fixedPercentage / 100).toFixed(2)}
         />
-        <AnimationWrapper>
+        <AnimationWrapper style={{ marginLeft: 20 }}>
           <FramedPicture deviceModelId={deviceModelId} source={source} showConfirmationButton />
         </AnimationWrapper>
       </Box>

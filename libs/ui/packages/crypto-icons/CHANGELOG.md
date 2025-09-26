@@ -1,5 +1,11 @@
 # @ledgerhq/icons-ui
 
+## 1.20.0-next.0
+
+### Minor Changes
+
+- [#11581](https://github.com/LedgerHQ/ledger-live/pull/11581) [`4d60b7e`](https://github.com/LedgerHQ/ledger-live/commit/4d60b7e0984f0f8ef75c1483e0cfaf5784fbc5ed) Thanks [@Canestin](https://github.com/Canestin)! - feature (lld,llm): integrate Core DAO Mainnet
+
 ## 1.19.0
 
 ### Minor Changes

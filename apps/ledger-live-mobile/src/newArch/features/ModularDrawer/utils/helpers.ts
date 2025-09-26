@@ -1,12 +1,12 @@
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { AssetsData } from "../hooks/useAssets";
+import { AssetData } from "@ledgerhq/live-common/modularDrawer/utils/type";
 
-function getNetworksForAsset(assetsSorted: AssetsData, assetId: string) {
+function getNetworksForAsset(assetsSorted: AssetData[] = [], assetId: string) {
   return assetsSorted?.find(elem => elem.asset.id === assetId)?.networks ?? [];
 }
 
 function resolveCurrency(
-  assetsSorted: AssetsData,
+  assetsSorted: AssetData[] = [],
   selectedAsset?: CryptoOrTokenCurrency,
   selectedNetwork?: CryptoOrTokenCurrency,
 ): CryptoOrTokenCurrency | undefined {

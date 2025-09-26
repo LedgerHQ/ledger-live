@@ -262,7 +262,7 @@ export const TopBar = ({
       {enablePlatformDevTools ? (
         <>
           <Separator />
-          <ItemContainer isInteractive onClick={onOpenDevTools}>
+          <ItemContainer data-testid="live-app-devtools" isInteractive onClick={onOpenDevTools}>
             <LightBulb size={16} />
             <ItemContent>
               <Trans i18nKey="common.sync.devTools" />
@@ -343,7 +343,7 @@ export const TopBar = ({
         )}
 
         {shouldDisplayClose && (
-          <ItemContainer isInteractive onClick={onClose}>
+          <ItemContainer data-testid="live-app-close" isInteractive onClick={onClose}>
             <IconClose size={16} />
           </ItemContainer>
         )}

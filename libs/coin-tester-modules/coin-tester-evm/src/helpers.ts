@@ -17,6 +17,7 @@ import { getAlpacaCurrencyBridge } from "@ledgerhq/live-common/bridge/generic-al
 import { getAlpacaAccountBridge } from "@ledgerhq/live-common/bridge/generic-alpaca/accountBridge";
 
 export const ethereum = getCryptoCurrencyById("ethereum");
+export const core = getCryptoCurrencyById("core");
 export const sonic = getCryptoCurrencyById("sonic");
 export const polygon = getCryptoCurrencyById("polygon");
 export const scroll = getCryptoCurrencyById("scroll");

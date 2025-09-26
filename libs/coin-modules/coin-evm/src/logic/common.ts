@@ -2,6 +2,7 @@ import BigNumber from "bignumber.js";
 import { ethers } from "ethers";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import type {
+  BufferTxData,
   FeeEstimation,
   MemoNotSupported,
   TransactionIntent,
@@ -90,16 +91,22 @@ export function getErc20Data(recipient: string, amount: bigint): Buffer {
   return Buffer.from(data.slice(2), "hex");
 }
 
+function getCallData(intent: TransactionIntent<MemoNotSupported, BufferTxData>): Buffer {
+  const data = intent.data?.value;
+  if (Buffer.isBuffer(data) && data.length) return data;
+  return isNative(intent.asset) ? Buffer.from([]) : getErc20Data(intent.recipient, intent.amount);
+}
+
 export async function prepareUnsignedTxParams(
   currency: CryptoCurrency,
-  transactionIntent: TransactionIntent<MemoNotSupported>,
+  transactionIntent: TransactionIntent<MemoNotSupported, BufferTxData>,
 ): Promise<TransactionLikeWithPreparedParams> {
   const { amount, asset, recipient, sender, type } = transactionIntent;
   const transactionType = getTransactionType(type);
   const node = getNodeApi(currency);
 
   const to = isNative(asset) ? recipient : (asset.assetReference as string);
-  const data = isNative(asset) ? Buffer.from([]) : getErc20Data(recipient, amount);
+  const data = getCallData(transactionIntent);
   const value = isNative(asset) ? amount : 0n;
 
   const gasLimit = await node.getGasEstimation(

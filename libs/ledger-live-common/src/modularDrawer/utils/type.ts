@@ -6,6 +6,8 @@ import { Observable } from "rxjs";
 import { WalletAPIAccount } from "../../wallet-api/types";
 import { CurrenciesByProviderId } from "../../deposit/type";
 import { EnhancedModularDrawerConfiguration } from "../../wallet-api/ModularDrawer/types";
+import { InterestRate } from "../data/entities";
+import { MarketItemResponse } from "../../market/utils/types";
 
 export type ApyType = "NRR" | "APY" | "APR";
 
@@ -115,8 +117,25 @@ export type AssetConfigurationDeps = {
   MarketPriceIndicator: (args: { price: string; percent: number }) => ReactNode;
   useBalanceDeps: UseBalanceDeps;
   balanceItem: (asset: { fiatValue?: string; balance?: string }) => ReactNode;
+  assetsMap: Map<
+    string,
+    { mainCurrency: CryptoOrTokenCurrency; currencies: CryptoOrTokenCurrency[] }
+  >;
 };
 
 export type CreateAssetConfigurationHook = (
   AssetConfigurationDeps: AssetConfigurationDeps,
 ) => (props: Props) => (assets: CryptoOrTokenCurrency[]) => (CryptoOrTokenCurrency & AssetType)[];
+
+export type AssetData = {
+  asset: {
+    id: string;
+    ticker: string;
+    name: string;
+    assetsIds: Record<string, string>;
+    metaCurrencyId?: string;
+  };
+  networks: CryptoOrTokenCurrency[];
+  interestRates?: InterestRate;
+  market?: Partial<MarketItemResponse>;
+};

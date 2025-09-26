@@ -51,6 +51,9 @@ export const EnpointConfigError = createCustomErrorClass("EnpointConfig");
 export const EthAppPleaseEnableContractData = createCustomErrorClass(
   "EthAppPleaseEnableContractData",
 );
+export const CeloAppPleaseEnableContractData = createCustomErrorClass(
+  "CeloAppPleaseEnableContractData",
+);
 export const FeeEstimationFailed = createCustomErrorClass("FeeEstimationFailed");
 export const FirmwareNotRecognized = createCustomErrorClass("FirmwareNotRecognized");
 export const HardResetFail = createCustomErrorClass("HardResetFail");

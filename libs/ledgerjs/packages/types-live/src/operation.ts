@@ -57,7 +57,9 @@ export type OperationType =
   // SOLANA
   | "BURN"
   // HEDERA
-  | "ASSOCIATE_TOKEN";
+  | "ASSOCIATE_TOKEN"
+  // CANTON
+  | "PRE_APPROVAL";
 
 export type OperationExtra = unknown;
 /**

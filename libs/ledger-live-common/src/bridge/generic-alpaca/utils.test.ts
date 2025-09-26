@@ -2,11 +2,76 @@ import {
   adaptCoreOperationToLiveOperation,
   extractBalance,
   findCryptoCurrencyByNetwork,
+  transactionToIntent,
 } from "./utils";
 import BigNumber from "bignumber.js";
 import { Operation as CoreOperation } from "@ledgerhq/coin-framework/api/types";
+import { Account } from "@ledgerhq/types-live";
+import { GenericTransaction } from "./types";
 
 describe("Alpaca utils", () => {
+  describe("transactionToIntent", () => {
+    describe("type", () => {
+      it("fallbacks to 'Payment' without a transaction mode", () => {
+        expect(
+          transactionToIntent(
+            { currency: { name: "ethereum", units: [{}] } } as Account,
+            { mode: undefined } as GenericTransaction,
+          ),
+        ).toMatchObject({
+          type: "Payment",
+        });
+      });
+
+      it.each([
+        ["changeTrust", "changeTrust"],
+        ["send", "send"],
+        ["send-legacy", "send-legacy"],
+        ["send-eip1559", "send-eip1559"],
+        ["stake", "stake"],
+        ["unstake", "unstake"],
+        ["delegate", "stake"],
+        ["undelegate", "unstake"],
+      ])(
+        "by default, associates '%s' transaction mode to '%s' intent type",
+        (mode, expectedType) => {
+          expect(
+            transactionToIntent(
+              { currency: { name: "ethereum", units: [{}] } } as Account,
+              { mode } as GenericTransaction,
+            ),
+          ).toMatchObject({
+            type: expectedType,
+          });
+        },
+      );
+
+      it("rejects other modes", () => {
+        expect(() =>
+          transactionToIntent(
+            { currency: { name: "ethereum", units: [{}] } } as Account,
+            { mode: "any" as unknown } as GenericTransaction,
+          ),
+        ).toThrow("Unsupported transaction mode: any");
+      });
+
+      it("supersedes the logic with a custom function", () => {
+        const computeIntentType = (transaction: GenericTransaction) =>
+          transaction.mode === "send" && transaction.type === 2 ? "send-eip1559" : "send-legacy";
+
+        expect(
+          transactionToIntent(
+            { currency: { name: "ethereum", units: [{}] } } as Account,
+            { mode: "send", type: 2 } as GenericTransaction,
+            computeIntentType,
+          ),
+        ).toMatchObject({
+          type: "send-eip1559",
+        });
+      });
+    });
+  });
+
   describe("findCryptoCurrencyByNetwork", () => {
     it("finds a crypto currency by id", () => {
       expect(findCryptoCurrencyByNetwork("ethereum")).toMatchObject({

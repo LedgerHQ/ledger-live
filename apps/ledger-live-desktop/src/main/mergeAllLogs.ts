@@ -56,11 +56,11 @@ export type MergeResult = Array<
 >;
 
 /**
- * Merges logs from the renderer process and logs recorded from the internal process.
+ * Merges logs from the renderer process and main process.
  * The logs are ordered by date and the most recent logs are kept.
  *
  * @param rendererLogsChronological Logs from the renderer process, ordered by date.
- * @param internalLogsChronological Logs from the internal process, ordered by date.
+ * @param internalLogsChronological Logs from the main process, ordered by date.
  * @param maxLogCount The maximum number of logs to keep.
  * @returns The merged logs, ordered by date.
  */
@@ -70,7 +70,7 @@ export function mergeAllLogs(
   maxLogCount: number,
 ): MergeResult {
   console.log(
-    `Saving ${rendererLogsChronological.length} logs from the renderer process and ${internalLogsChronological.length} logs from the internal process`,
+    `Saving ${rendererLogsChronological.length} logs from the renderer process and ${internalLogsChronological.length} logs from the main process`,
   );
 
   function compareLogs(

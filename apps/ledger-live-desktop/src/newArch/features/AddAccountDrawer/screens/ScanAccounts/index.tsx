@@ -16,21 +16,21 @@ import { Footer } from "./components/Footer";
 import { ImportableAccountsList } from "./components/ImportableAccountsList";
 import { useFormatAccount } from "./useFormatAccount";
 import { useScanAccounts, type UseScanAccountsProps } from "./useScanAccounts";
+import { modularDrawerSourceSelector } from "~/renderer/reducers/modularDrawer";
 
 interface Props extends UseScanAccountsProps {
   analyticsPropertyFlow?: string;
   onRetry?: () => void;
-  source: string;
 }
 
 const ScanAccounts = ({
   currency,
   deviceId,
-  source,
   onComplete,
   navigateToWarningScreen,
   onRetry,
 }: Props) => {
+  const source = useSelector(modularDrawerSourceSelector);
   const { colors } = useTheme();
   const currentTheme = useSelector(userThemeSelector);
   const { t } = useTranslation();

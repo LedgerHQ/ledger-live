@@ -4,7 +4,7 @@ import { Delegate } from "@ledgerhq/live-common/e2e/models/Delegate";
 import { CLI } from "../utils/cliUtils";
 import { Currency } from "@ledgerhq/live-common/e2e/enum/Currency";
 import { getEnv } from "@ledgerhq/live-env";
-import { addTmsLink } from "tests/utils/allureUtils";
+import { addBugLink, addTmsLink } from "tests/utils/allureUtils";
 import { getDescription } from "tests/utils/customJsonReporter";
 
 function setupEnv(disableBroadcast?: boolean) {
@@ -323,6 +323,7 @@ test.describe("e2e delegation - Celo", () => {
     },
     async ({ app }) => {
       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
+      await addBugLink(["NAPPS-1128"]);
       await app.layout.goToAccounts();
       await app.accounts.navigateToAccountByName(account.account.accountName);
       await app.account.startStakingFlowFromMainStakeButton();

@@ -7,14 +7,16 @@ import { TrackAddAccountScreen } from "../../analytics/TrackAddAccountScreen";
 import { ADD_ACCOUNT_FLOW_NAME, ADD_ACCOUNT_PAGE_NAME } from "../../analytics/addAccount.types";
 import { useAccountFormatter } from "../AccountsAdded/hooks";
 import { ActionsContainer } from "./components";
+import { useSelector } from "react-redux";
+import { modularDrawerSourceSelector } from "~/renderer/reducers/modularDrawer";
 
 interface Props {
   account: Account;
   currency: CryptoCurrency;
-  source: string;
 }
 
-const FundAccount = ({ account, currency, source }: Props) => {
+const FundAccount = ({ account, currency }: Props) => {
+  const source = useSelector(modularDrawerSourceSelector);
   const formattedAccount = useAccountFormatter()(account);
 
   return (

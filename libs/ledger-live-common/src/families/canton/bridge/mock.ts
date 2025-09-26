@@ -29,6 +29,7 @@ const createTransaction = (): CantonTransaction => {
     family: "canton",
     amount: new BigNumber(0),
     recipient: "",
+    tokenId: "Amulet",
     fee: null,
   };
 };

@@ -108,7 +108,7 @@ const envDefinitions = {
     desc: "Node endpoint for celo",
   },
   ENABLE_CELO_TOKENS: {
-    def: false,
+    def: true,
     parser: boolParser,
     desc: "Enable token send and receive for Celo",
   },

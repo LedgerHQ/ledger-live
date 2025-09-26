@@ -15,6 +15,7 @@ import {
   TransactionValidation,
   AssetInfo,
   CraftedTransaction,
+  BufferTxData,
 } from "@ledgerhq/coin-framework/api/index";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
@@ -32,9 +33,13 @@ import {
   validateIntent,
   getTokenFromAsset,
   getAssetFromToken,
+  computeIntentType,
 } from "../logic/index";
 
-export function createApi(config: EvmConfig, currencyId: string): Api {
+export function createApi(
+  config: EvmConfig,
+  currencyId: string,
+): Api<MemoNotSupported, BufferTxData> {
   setCoinConfig(() => ({ info: { ...config, status: { type: "active" } } }));
   const currency = getCryptoCurrencyById(currencyId);
 
@@ -43,11 +48,11 @@ export function createApi(config: EvmConfig, currencyId: string): Api {
       broadcast(currency, { signature: tx, broadcastConfig }),
     combine,
     craftTransaction: (
-      transactionIntent: TransactionIntent<MemoNotSupported>,
+      transactionIntent: TransactionIntent<MemoNotSupported, BufferTxData>,
       customFees?: FeeEstimation,
     ): Promise<CraftedTransaction> => craftTransaction(currency, { transactionIntent, customFees }),
     estimateFees: (
-      transactionIntent: TransactionIntent<MemoNotSupported>,
+      transactionIntent: TransactionIntent<MemoNotSupported, BufferTxData>,
     ): Promise<FeeEstimation> => estimateFees(currency, transactionIntent),
     getBalance: (address: string): Promise<Balance[]> => getBalance(currency, address),
     lastBlock: (): Promise<BlockInfo> => lastBlock(currency),
@@ -62,18 +67,20 @@ export function createApi(config: EvmConfig, currencyId: string): Api {
     getBlockInfo(_height: number): Promise<BlockInfo> {
       throw new Error("getBlockInfo is not supported");
     },
-    getStakes(_address: string, _cursor?: Cursor): Promise<Page<Stake>> {
+    getStakes(_address: string): Promise<Page<Stake>> {
       throw new Error("getStakes is not supported");
     },
     getRewards(_address: string, _cursor?: Cursor): Promise<Page<Reward>> {
       throw new Error("getRewards is not supported");
     },
     getSequence: (address: string): Promise<number> => getSequence(currency, address),
-    validateIntent: (intent: TransactionIntent): Promise<TransactionValidation> =>
-      validateIntent(currency, intent),
+    validateIntent: (
+      intent: TransactionIntent<MemoNotSupported, BufferTxData>,
+    ): Promise<TransactionValidation> => validateIntent(currency, intent),
     getTokenFromAsset: (asset: AssetInfo): TokenCurrency | undefined =>
       getTokenFromAsset(currency, asset),
     getAssetFromToken: (token: TokenCurrency, owner: string): AssetInfo =>
       getAssetFromToken(currency, token, owner),
+    computeIntentType,
   };
 }

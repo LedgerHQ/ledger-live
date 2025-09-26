@@ -1,4 +1,7 @@
 import React, { useState, useCallback, useEffect } from "react";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { Account, AccountLike } from "@ledgerhq/types-live";
+import { getAccountCurrency, getMainAccount } from "@ledgerhq/coin-framework/account/helpers";
 import logger from "~/renderer/logger";
 import Modal from "~/renderer/components/Modal";
 import Body, { StepId } from "./Body";
@@ -8,9 +11,11 @@ import { useTrackReceiveFlow } from "~/renderer/analytics/hooks/useTrackReceiveF
 import { trackingEnabledSelector } from "~/renderer/reducers/settings";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 import { HOOKS_TRACKING_LOCATIONS } from "~/renderer/analytics/hooks/variables";
+import { closeModal } from "~/renderer/actions/modals";
 import { ModularDrawerLocation } from "LLD/features/ModularDrawer";
 import { useOpenAssetFlow } from "LLD/features/ModularDrawer/hooks/useOpenAssetFlow";
-import { closeModal } from "~/renderer/actions/modals";
+import { GlobalModalData } from "../types";
+import { getLLDCoinFamily } from "~/renderer/families";
 
 type State = {
   stepId: StepId;
@@ -18,13 +23,29 @@ type State = {
   verifyAddressError: Error | undefined | null;
 };
 
-const INITIAL_STATE = {
-  stepId: "account" as StepId,
-  isAddressVerified: null,
-  verifyAddressError: null,
-};
-const ReceiveModal = () => {
-  const [state, setState] = useState<State>(INITIAL_STATE);
+function getInitialState(
+  isNoahActive: boolean,
+  account: AccountLike | null | undefined,
+  parentAccount: Account | null | undefined,
+): State {
+  const mainAccount = account ? getMainAccount(account, parentAccount) : null;
+  const accountCurrency = account ? getAccountCurrency(account) : null;
+  const module =
+    mainAccount && getLLDCoinFamily(mainAccount.currency.family)?.shouldUseReceiveOptions;
+  const isValidAccount = module ? module(accountCurrency?.id) : false;
+  const shouldUseReceiveOptions = isNoahActive && (!account || isValidAccount);
+
+  return {
+    stepId: shouldUseReceiveOptions ? "receiveOptions" : "account",
+    isAddressVerified: null,
+    verifyAddressError: null,
+  };
+}
+
+const ReceiveModal = (props: GlobalModalData["MODAL_RECEIVE"]) => {
+  const { enabled } = useFeature("noah") || {};
+  const initialState = getInitialState(enabled === true, props?.account, props?.parentAccount);
+  const [state, setState] = useState<State>(() => initialState);
 
   const { stepId, isAddressVerified, verifyAddressError } = state;
 
@@ -50,9 +71,9 @@ const ReceiveModal = () => {
   };
 
   const handleReset = () => {
-    setStepId(INITIAL_STATE.stepId);
-    setIsAddressVerified(INITIAL_STATE.isAddressVerified);
-    setVerifyAddressError(INITIAL_STATE.verifyAddressError);
+    setStepId(initialState.stepId);
+    setIsAddressVerified(initialState.isAddressVerified);
+    setVerifyAddressError(initialState.verifyAddressError);
   };
 
   const handleChangeAddressVerified = (isAddressVerified?: boolean | null, err?: Error | null) => {
@@ -90,6 +111,7 @@ const ReceiveModal = () => {
   if (!hasAccounts) return null;
 
   const isModalLocked = stepId === "receive" && isAddressVerified === null;
+
   return (
     <Modal
       name="MODAL_RECEIVE"

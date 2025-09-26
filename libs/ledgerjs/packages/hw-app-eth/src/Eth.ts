@@ -6,7 +6,11 @@ import type Transport from "@ledgerhq/hw-transport";
 import { EIP712Message } from "@ledgerhq/types-live";
 import { parse as parseTransaction } from "@ethersproject/transactions";
 import { LedgerEthTransactionResolution, LoadConfig, ResolutionConfig } from "./services/types";
-import { EthAppNftNotSupported, EthAppPleaseEnableContractData } from "./errors";
+import {
+  EthAppNftNotSupported,
+  EthAppPleaseEnableContractData,
+  CeloAppPleaseEnableContractData,
+} from "./errors";
 import { signEIP712HashedMessage, signEIP712Message } from "./modules/EIP712";
 import { domainResolutionFlow } from "./modules/Domains";
 import ledgerService from "./services/ledger";
@@ -32,8 +36,12 @@ const starkQuantizationTypeMap = {
   erc721mintable: 5,
 };
 
-const remapTransactionRelatedErrors = e => {
+const remapTransactionRelatedErrors = (e: any, chainId: BigNumber) => {
   if (e && e.statusCode === 0x6a80) {
+    if (chainId.toNumber() === 42220) {
+      return new CeloAppPleaseEnableContractData();
+    }
+
     return new EthAppPleaseEnableContractData(
       "Please enable Blind signing or Contract data in the Ethereum app Settings",
     );
@@ -263,7 +271,7 @@ export default class Eth {
           chunk,
         )
         .catch(e => {
-          throw remapTransactionRelatedErrors(e);
+          throw remapTransactionRelatedErrors(e, chainId);
         });
     }
 

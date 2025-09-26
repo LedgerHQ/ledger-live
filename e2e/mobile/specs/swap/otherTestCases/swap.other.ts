@@ -131,6 +131,7 @@ export function runSwapWithDifferentSeedTest(
       await app.swapLiveApp.checkExchangeButtonHasProviderName(provider.uiName);
       await app.swapLiveApp.tapExecuteSwap();
       await app.common.disableSynchronizationForiOS();
+      await app.common.selectKnownDevice();
       if (errorMessage) {
         await app.swapLiveApp.checkErrorMessage(errorMessage);
       } else {

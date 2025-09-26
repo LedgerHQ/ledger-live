@@ -49,6 +49,7 @@ describe("genericPrepareTransaction", () => {
     expect(transactionToIntent).toHaveBeenCalledWith(
       account,
       expect.objectContaining(baseTransaction),
+      undefined,
     );
   });
 

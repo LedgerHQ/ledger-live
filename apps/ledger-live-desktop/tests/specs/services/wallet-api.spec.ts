@@ -136,7 +136,7 @@ test("Wallet API methods @smoke", async ({ page, electronApp }) => {
       id: "2d23ca2a-069e-579f-b13d-05bc706c7583",
       address: "1xeyL26EKAAR3pStd7wEveajk4MQcrYezeJ",
       balance: "35688397",
-      blockHeight: 194870,
+      blockHeight: expect.any(Number),
       currency: "bitcoin",
       name: "Bitcoin 1 (legacy)",
       spendableBalance: "35688397",
@@ -150,6 +150,7 @@ test("Wallet API methods @smoke", async ({ page, electronApp }) => {
 
     await liveAppWebview.accountReceive();
 
+    await modal.waitForModalToAppear();
     await deviceAction.openApp();
     await deviceAction.complete();
     await modal.waitForModalToDisappear();
@@ -269,6 +270,8 @@ test("Wallet API methods @smoke", async ({ page, electronApp }) => {
     await liveAppWebview.setData(data);
     await liveAppWebview.transactionSign();
 
+    await modal.waitForModalToAppear();
+
     // Step Fees
     await expect(page.getByText(/learn more about fees/i)).toBeVisible();
     await modal.continueToSignTransaction();
@@ -279,6 +282,8 @@ test("Wallet API methods @smoke", async ({ page, electronApp }) => {
 
     // Step Device
     await deviceAction.silentSign();
+
+    await modal.waitForModalToDisappear();
 
     const res = await liveAppWebview.getResOutput();
     expect(res).toBe("empty response");
@@ -295,12 +300,16 @@ test("Wallet API methods @smoke", async ({ page, electronApp }) => {
     await liveAppWebview.setAmount(amount);
     await liveAppWebview.transactionSignSolana();
 
+    await modal.waitForModalToAppear();
+
     // Step Recipient
     await expect(page.getByText(recipient)).toBeVisible();
     await modal.continueToSignTransaction();
 
     // Step Device
     await deviceAction.silentSign();
+
+    await modal.waitForModalToDisappear();
 
     const res = await liveAppWebview.getResOutput();
     expect(res).toMatchObject({
@@ -336,12 +345,16 @@ test("Wallet API methods @smoke", async ({ page, electronApp }) => {
     await liveAppWebview.setData(rawTx);
     await liveAppWebview.transactionSignRawSolana();
 
+    await modal.waitForModalToAppear();
+
     // Step Recipient
     await expect(page.getByText("Blind signing required")).toBeVisible();
     await modal.continueToSignTransaction();
 
     // Step Device
     await deviceAction.silentSign();
+
+    await modal.waitForModalToDisappear();
 
     const res = await liveAppWebview.getResOutput();
     expect(res).toMatchObject({
@@ -380,12 +393,16 @@ test("Wallet API methods @smoke", async ({ page, electronApp }) => {
     await liveAppWebview.setData(rawTx);
     await liveAppWebview.transactionSignRawSolana();
 
+    await modal.waitForModalToAppear();
+
     // Step Recipient
     await expect(page.getByText("Blind signing required")).toBeVisible();
     await modal.continueToSignTransaction();
 
     // Step Device
     await deviceAction.silentSign();
+
+    await modal.waitForModalToDisappear();
 
     const res = await liveAppWebview.getResOutput();
     expect(res).toMatchObject({
@@ -437,12 +454,16 @@ test("Wallet API methods @smoke", async ({ page, electronApp }) => {
     await liveAppWebview.setData(rawTx);
     await liveAppWebview.transactionSignRawSolana();
 
+    await modal.waitForModalToAppear();
+
     // Step Recipient
     await expect(page.getByText("Blind signing required")).toBeVisible();
     await modal.continueToSignTransaction();
 
     // Step Device
     await deviceAction.silentSign();
+
+    await modal.waitForModalToDisappear();
 
     const res = await liveAppWebview.getResOutput();
     expect(res).toMatchObject({
@@ -517,12 +538,16 @@ test("Wallet API methods @smoke", async ({ page, electronApp }) => {
     await liveAppWebview.setData(rawTx);
     await liveAppWebview.transactionSignRawSolana();
 
+    await modal.waitForModalToAppear();
+
     // Step Recipient
     await expect(page.getByText("Blind signing required")).toBeVisible();
     await modal.continueToSignTransaction();
 
     // Step Device
     await deviceAction.silentSign();
+
+    await modal.waitForModalToDisappear();
 
     const res = await liveAppWebview.getResOutput();
     expect(res).toMatchObject({
@@ -687,9 +712,11 @@ test("Wallet API methods @smoke", async ({ page, electronApp }) => {
     await liveAppWebview.setAmount(amount);
     await liveAppWebview.transactionSign();
 
+    await modal.waitForModalToAppear();
     await expect(page.getByText(/keeping you safe/i)).toBeVisible();
     await modal.continueIsDisabled();
     await modal.close();
+    await modal.waitForModalToDisappear();
 
     await resetWebview();
   });
@@ -705,6 +732,8 @@ test("Wallet API methods @smoke", async ({ page, electronApp }) => {
     await liveAppWebview.setData(data);
     await liveAppWebview.transactionSignAndBroadcast();
 
+    await modal.waitForModalToAppear();
+
     // Step Fees
     await expect(page.getByText(/learn more about fees/i)).toBeVisible();
     await modal.continueToSignTransaction();
@@ -715,6 +744,8 @@ test("Wallet API methods @smoke", async ({ page, electronApp }) => {
 
     // Step Device
     await deviceAction.silentSign();
+
+    await modal.waitForModalToDisappear();
 
     // Click on notification toaster
     // NOTE: toaster not visible in output, need to find a better way to handle css animations

@@ -41,6 +41,7 @@ import {
   mevProtectionSelector,
   seenDevicesSelector,
   isRebornSelector,
+  isOnboardingFlowSelector,
 } from "../reducers/settings";
 import { bleDevicesSelector } from "../reducers/ble";
 import { DeviceLike, State } from "../reducers/types";
@@ -83,6 +84,7 @@ const getFeatureFlagProperties = () => {
 
     const ptxSwapLiveAppMobileFlag = analyticsFeatureFlagMethod("ptxSwapLiveAppMobile");
     const ptxSwapLiveAppKycWarning = analyticsFeatureFlagMethod("ptxSwapLiveAppKycWarning");
+    const llmSyncOnboardingIncr1Flag = analyticsFeatureFlagMethod("llmSyncOnboardingIncr1");
 
     const isBatch1Enabled =
       !!fetchAdditionalCoins?.enabled && fetchAdditionalCoins?.params?.batch === 1;
@@ -95,6 +97,7 @@ const getFeatureFlagProperties = () => {
 
     const ptxSwapLiveAppMobileEnabled = Boolean(ptxSwapLiveAppMobileFlag?.enabled);
     const ptxSwapLiveAppKycWarningEnabled = Boolean(ptxSwapLiveAppKycWarning?.enabled);
+    const llmSyncOnboardingIncr1 = Boolean(llmSyncOnboardingIncr1Flag?.enabled);
 
     // Apply versioned redirects logic to the stakePrograms feature flag
     const appVersion = LiveConfig.instance.appVersion || "0.0.0";
@@ -124,6 +127,7 @@ const getFeatureFlagProperties = () => {
       partnerStakingCurrenciesEnabled,
       ptxSwapLiveAppMobileEnabled,
       ptxSwapLiveAppKycWarningEnabled,
+      llmSyncOnboardingIncr1,
     });
   })();
 };
@@ -219,6 +223,9 @@ const extraProperties = async (store: AppStore) => {
   const ldmkConnectApp = analyticsFeatureFlagMethod
     ? analyticsFeatureFlagMethod("ldmkConnectApp")
     : { enabled: false };
+  const llmSyncOnboardingIncr1 = analyticsFeatureFlagMethod
+    ? analyticsFeatureFlagMethod("llmSyncOnboardingIncr1")
+    : { enabled: false };
   const deviceInfo = lastDevice
     ? {
         deviceVersion: lastDevice.deviceInfo?.version,
@@ -231,6 +238,7 @@ const extraProperties = async (store: AppStore) => {
       }
     : {};
 
+  const isOnboardingFlow = isOnboardingFlowSelector(state);
   const onboardingHasDevice = onboardingHasDeviceSelector(state);
   const isReborn = isRebornSelector(state);
 
@@ -306,6 +314,8 @@ const extraProperties = async (store: AppStore) => {
     modelIdList: getUniqueModelIdList(devices),
     isReborn,
     onboardingHasDevice,
+    // For tracking receive flow events during onboarding
+    ...(isOnboardingFlow ? { flow: "onboarding" } : {}),
     ...(satisfaction
       ? {
           satisfaction,
@@ -328,6 +338,7 @@ const extraProperties = async (store: AppStore) => {
     tokenWithFunds,
     isLDMKTransportEnabled: ldmkTransport?.enabled,
     isLDMKConnectAppEnabled: ldmkConnectApp?.enabled,
+    llmSyncOnboardingIncr1: llmSyncOnboardingIncr1?.enabled,
     stakingCurrenciesEnabled,
     partnerStakingCurrenciesEnabled,
     madAttributes,

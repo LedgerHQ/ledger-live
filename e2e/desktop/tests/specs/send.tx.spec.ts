@@ -6,7 +6,6 @@ import { Transaction } from "@ledgerhq/live-common/e2e/models/Transaction";
 import { addTmsLink } from "../utils/allureUtils";
 import { getDescription } from "../utils/customJsonReporter";
 import { CLI } from "../utils/cliUtils";
-import { getEnv } from "@ledgerhq/live-env";
 
 //Warning 🚨: XRP Tests may fail due to API HTTP 429 issue - Jira: LIVE-14237
 
@@ -177,7 +176,7 @@ const transactionE2E = [
     xrayTicket: "B2CQA-2813",
   },
   {
-    transaction: new Transaction(Account.ATOM_1, Account.ATOM_2, "0.0001", undefined, "noTag"),
+    transaction: new Transaction(Account.ATOM_1, Account.ATOM_2, "0.00001", undefined, "noTag"),
     xrayTicket: "B2CQA-2814",
   },
   {
@@ -191,6 +190,19 @@ const transactionE2E = [
   {
     transaction: new Transaction(Account.APTOS_1, Account.APTOS_2, "0.0001"),
     xrayTicket: "B2CQA-2920",
+  },
+  {
+    transaction: new Transaction(
+      Account.BTC_NATIVE_SEGWIT_1,
+      Account.BTC_NATIVE_SEGWIT_2,
+      "0.00001",
+      Fee.MEDIUM,
+    ),
+    xrayTicket: "B2CQA-3925",
+  },
+  {
+    transaction: new Transaction(Account.ETH_1, Account.ETH_2, "0.0001", Fee.SLOW),
+    xrayTicket: "B2CQA-3924",
   },
   {
     transaction: new Transaction(Account.KASPA_1, Account.KASPA_2, "1"),
@@ -256,7 +268,7 @@ test.describe("Send flows", () => {
             transaction.transaction.accountToCredit.address,
           );
           await app.drawer.closeDrawer();
-          if (!getEnv("DISABLE_TRANSACTION_BROADCAST")) {
+          if (process.env.DISABLE_TRANSACTION_BROADCAST !== "1") {
             await app.layout.goToAccounts();
             await app.accounts.clickSyncBtnForAccount(
               transaction.transaction.accountToCredit.accountName,
@@ -454,7 +466,7 @@ test.describe("Send flows", () => {
   test.describe("User sends funds to ENS address", () => {
     const transactionEnsAddress = new Transaction(
       Account.ETH_1,
-      Account.ETH_2,
+      Account.ETH_2_WITH_ENS,
       "0.0001",
       Fee.MEDIUM,
     );

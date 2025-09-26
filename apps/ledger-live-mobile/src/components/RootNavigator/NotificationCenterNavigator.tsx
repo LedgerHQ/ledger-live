@@ -24,7 +24,7 @@ export default function NotificationCenterNavigator() {
   const { colors, space } = useTheme();
 
   const stackNavConfig = useMemo(() => getStackNavigatorConfig(colors), [colors]);
-  const { incidents } = useFilteredServiceStatus();
+  const { incidents } = useFilteredServiceStatus({ entryPoint: "notifications" });
 
   const goToNotificationsSettings = useCallback(() => {
     track("button_clicked", {

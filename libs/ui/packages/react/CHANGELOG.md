@@ -1,5 +1,16 @@
 # @ledgerhq/react-ui
 
+## 0.39.0-next.0
+
+### Minor Changes
+
+- [#11908](https://github.com/LedgerHQ/ledger-live/pull/11908) [`b038092`](https://github.com/LedgerHQ/ledger-live/commit/b03809244e08f5259b7be816366f368743591096) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Fix double dash when market trend is negative
+
+### Patch Changes
+
+- Updated dependencies [[`4d60b7e`](https://github.com/LedgerHQ/ledger-live/commit/4d60b7e0984f0f8ef75c1483e0cfaf5784fbc5ed)]:
+  - @ledgerhq/crypto-icons-ui@1.20.0-next.0
+
 ## 0.38.0
 
 ### Minor Changes

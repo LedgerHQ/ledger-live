@@ -137,6 +137,9 @@ const SwapOperationDetails = ({
     case "thorswap":
       url = "https://runescan.io/tx/$hash".replace("$hash", operation.hash);
       break;
+    case "nearintents":
+      url = "https://track.swapkit.dev/tx/$hash".replace("$hash", operation.hash);
+      break;
     default:
       url = getTransactionExplorer(getDefaultExplorerView(mainCurrency), operation.hash);
       break;

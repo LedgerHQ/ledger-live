@@ -662,7 +662,7 @@ jobs:
 
   test-pod-lockfile:
     name: "Test Pod Lockfile"
-    runs-on: [ general-pool, macOS, ARM64 ]
+    runs-on: [ macOS, ARM64 ]
     needs: [ determine-builds ]
     if: needs.determine-builds.outputs.ios_native_exists == 'true'
     steps:

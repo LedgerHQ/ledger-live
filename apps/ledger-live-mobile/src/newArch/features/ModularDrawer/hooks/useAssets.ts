@@ -1,10 +1,8 @@
 import { useMemo } from "react";
 import { LoadingStatus } from "@ledgerhq/live-common/deposit/type";
 import { getLoadingStatus } from "@ledgerhq/live-common/modularDrawer/utils/getLoadingStatus";
-import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { useAssetsData } from "@ledgerhq/live-common/modularDrawer/hooks/useAssetsData";
-import { MarketItemResponse } from "@ledgerhq/live-common/market/utils/types";
-import { InterestRate } from "@ledgerhq/live-common/modularDrawer/data/entities/index";
+import { AssetData } from "@ledgerhq/live-common/modularDrawer/utils/type";
 import VersionNumber from "react-native-version-number";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 
@@ -14,20 +12,6 @@ interface AssetsProps {
   useCase?: string;
   areCurrenciesFiltered?: boolean;
 }
-
-export type AssetsData =
-  | {
-      asset: {
-        id: string;
-        ticker: string;
-        name: string;
-        assetsIds: Record<string, string>;
-      };
-      networks: CryptoOrTokenCurrency[];
-      interestRates?: InterestRate;
-      market?: Partial<MarketItemResponse>;
-    }[]
-  | undefined;
 
 export function useAssets({
   currencyIds,
@@ -52,7 +36,7 @@ export function useAssets({
     isStaging,
   });
 
-  const assetsSorted: AssetsData = useMemo(() => {
+  const assetsSorted: AssetData[] | undefined = useMemo(() => {
     if (!data?.currenciesOrder.metaCurrencyIds) return undefined;
 
     return data.currenciesOrder.metaCurrencyIds

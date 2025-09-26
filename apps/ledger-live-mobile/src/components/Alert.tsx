@@ -29,6 +29,7 @@ type Props = {
   noIcon?: boolean;
   onLearnMore?: () => void;
   learnMoreKey?: string;
+  learnMoreText?: string;
   learnMoreTransValues?: object;
   learnMoreUrl?: string;
   learnMoreIsInternal?: boolean;
@@ -89,6 +90,7 @@ type LearnMoreLinkProps = {
   onPress?: () => void;
   learnMoreIsInternal?: boolean;
   learnMoreKey?: string;
+  learnMoreText?: string;
   Icon?: IconType;
   transValues?: object;
 };
@@ -106,6 +108,7 @@ export const LearnMoreLink = ({
   onPress,
   learnMoreIsInternal,
   learnMoreKey,
+  learnMoreText,
   transValues,
   Icon,
 }: LearnMoreLinkProps) => {
@@ -113,7 +116,9 @@ export const LearnMoreLink = ({
   return (
     <LinkTouchable onPress={onPress}>
       <BaseAlert.UnderlinedText testID="learn-more-link" mr="5px">
-        <Trans i18nKey={learnMoreKey || "common.learnMore"} values={transValues} />
+        {learnMoreText || (
+          <Trans i18nKey={learnMoreKey || "common.learnMore"} values={transValues} />
+        )}
       </BaseAlert.UnderlinedText>
       {(Icon || !learnMoreIsInternal) && <IconComponent size={16} />}
     </LinkTouchable>
@@ -137,6 +142,7 @@ export default function Alert(props: Props) {
     onLearnMore,
     learnMoreUrl,
     learnMoreKey,
+    learnMoreText,
     learnMoreIsInternal = false,
     learnMoreIcon,
     learnMoreTransValues,
@@ -181,6 +187,7 @@ export default function Alert(props: Props) {
           <LearnMoreLink
             onPress={handleLearnMore}
             learnMoreKey={learnMoreKey}
+            learnMoreText={learnMoreText}
             learnMoreIsInternal={learnMoreIsInternal}
             Icon={learnMoreIcon}
             transValues={learnMoreTransValues}
