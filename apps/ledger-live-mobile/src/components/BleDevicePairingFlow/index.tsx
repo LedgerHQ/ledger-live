@@ -3,10 +3,8 @@ import { useDispatch } from "react-redux";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 
 import RequiresBLE from "../RequiresBLE";
-import BleDevicePairing from "./BleDevicePairing";
 import { addKnownDevice } from "~/actions/ble";
 import type { BleDevicesScanningProps } from "./BleDevicesScanning";
-import type { BleDevicePairingProps } from "./BleDevicePairing";
 import { track } from "~/analytics";
 import { NavigationHeaderBackButton } from "../NavigationHeaderBackButton";
 import { NavigationHeaderCloseButton } from "../NavigationHeaderCloseButton";
@@ -16,9 +14,8 @@ import { DmkBleDevicesScanning } from "./DmkBleDevicesScanning";
 import { DmkBleDevicePairing } from "./DmkBleDevicePairing";
 import { urls } from "~/utils/urls";
 import { Linking } from "react-native";
-import { LegacyBleDevicesScanning } from "~/components/BleDevicePairingFlow/LegacyBleDevicesScanning";
 import { useLocalizedUrl } from "LLM/hooks/useLocalizedUrls";
-import { useDeviceManagementKitEnabled } from "@ledgerhq/live-dmk-mobile";
+import { BleScanningState } from "@ledgerhq/live-dmk-mobile";
 
 const TIMEOUT_AFTER_PAIRED_MS = 2000;
 
@@ -62,7 +59,7 @@ export type BleDevicePairingFlowProps = {
   /**
    * During pairing step: callback called when the pairing is done and successful
    */
-  onPairingSuccess: BleDevicePairingProps["onPaired"];
+  onPairingSuccess: (device: Device) => void;
 
   /**
    * During pairing step: if true, this component adds the paired device to the list of known devices by LLM
@@ -76,6 +73,16 @@ export type BleDevicePairingFlowProps = {
    * should react to a request from this component to set or to clean its header.
    */
   requestToSetHeaderOptions: (request: SetHeaderOptionsRequest) => void;
+
+  /**
+   * In some cases, the parent of this component handles the scanning logic, so we pass the scanning state there.
+   */
+  bleScanningState?: BleScanningState;
+
+  /**
+   * Notifies changes in the pairing flow step
+   */
+  onPairingFlowStepChanged?: (step: PairingFlowStep | null) => void;
 };
 
 // A "done" state to avoid having the BLE scanning on the device that we just paired
@@ -93,10 +100,19 @@ const BleDevicePairingFlow: React.FC<BleDevicePairingFlowProps> = ({
   onPairingSuccess,
   onPairingSuccessAddToKnownDevices = false,
   requestToSetHeaderOptions,
+  onPairingFlowStepChanged,
+  bleScanningState,
 }) => {
   const dispatchRedux = useDispatch();
 
   const [pairingFlowStep, setPairingFlowStep] = useState<PairingFlowStep>("scanning");
+
+  useEffect(() => {
+    onPairingFlowStepChanged?.(pairingFlowStep);
+    return () => {
+      onPairingFlowStepChanged?.(null);
+    };
+  }, [pairingFlowStep, onPairingFlowStepChanged]);
 
   const [deviceToPair, setDeviceToPair] = useState<Device | null>(null);
   const [isPaired, setIsPaired] = useState(false);
@@ -173,7 +189,6 @@ const BleDevicePairingFlow: React.FC<BleDevicePairingFlowProps> = ({
       setPairingFlowStep("scanning");
     }
   }, [isPaired]);
-  const isDmkTransportEnabled = useDeviceManagementKitEnabled();
 
   const onOpenHelp = useCallback(() => {
     Linking.openURL(pairingUrl);
@@ -228,37 +243,20 @@ const BleDevicePairingFlow: React.FC<BleDevicePairingFlowProps> = ({
   return (
     <RequiresBLE>
       {pairingFlowStep === "pairing" && deviceToPair !== null ? (
-        isDmkTransportEnabled ? (
-          <DmkBleDevicePairing
-            device={deviceToPair}
-            onPaired={onPaired}
-            onRetry={onRetryPairingFlow}
-            onOpenHelp={onOpenHelp}
-          />
-        ) : (
-          <BleDevicePairing
-            deviceToPair={deviceToPair}
-            onPaired={onPaired}
-            onRetry={onRetryPairingFlow}
-            onOpenHelp={onOpenHelp}
-          />
-        )
+        <DmkBleDevicePairing
+          device={deviceToPair}
+          onPaired={onPaired}
+          onRetry={onRetryPairingFlow}
+          onOpenHelp={onOpenHelp}
+        />
       ) : pairingFlowStep === "scanning" ? (
-        isDmkTransportEnabled ? (
-          <DmkBleDevicesScanning
-            filterByDeviceModelId={filterByDeviceModelId}
-            areKnownDevicesDisplayed={areKnownDevicesDisplayed}
-            areKnownDevicesPairable={areKnownDevicesPairable}
-            onDeviceSelect={onDeviceSelect}
-          />
-        ) : (
-          <LegacyBleDevicesScanning
-            filterByDeviceModelId={filterByDeviceModelId}
-            areKnownDevicesDisplayed={areKnownDevicesDisplayed}
-            areKnownDevicesPairable={areKnownDevicesPairable}
-            onDeviceSelect={onDeviceSelect}
-          />
-        )
+        <DmkBleDevicesScanning
+          filterByDeviceModelId={filterByDeviceModelId}
+          areKnownDevicesDisplayed={areKnownDevicesDisplayed}
+          areKnownDevicesPairable={areKnownDevicesPairable}
+          onDeviceSelect={onDeviceSelect}
+          bleScanningState={bleScanningState}
+        />
       ) : null}
     </RequiresBLE>
   );

@@ -1,29 +1,12 @@
-import * as dmkUtils from "./useDeviceManagementKit";
 import React from "react";
-import { Device, DeviceModelId } from "@ledgerhq/types-devices";
-import { defaultMapper, useBleDevicesScanning } from "./useBleDevicesScanning";
-import { DeviceId, DiscoveredDevice } from "@ledgerhq/device-management-kit";
+import * as dmkUtils from "./useDeviceManagementKit";
+import { mapDiscoveredDeviceToScannedDevice, useBleDevicesScanning } from "./useBleDevicesScanning";
+import { DiscoveredDevice } from "@ledgerhq/device-management-kit";
 import { Observable } from "rxjs";
 import { act, render } from "@testing-library/react";
 
-const deviceMapper = vi.fn(defaultMapper);
-
-const TestComponent = <T = Device,>(
-  {
-    mapper = deviceMapper,
-    filterByDeviceModelIds,
-    filterOutDevicesByDeviceIds,
-  }: {
-    mapper?: (device: DiscoveredDevice) => T;
-    filterByDeviceModelIds?: DeviceModelId[];
-    filterOutDevicesByDeviceIds?: DeviceId[];
-  } = { mapper: deviceMapper },
-) => {
-  const { scannedDevices, scanningBleError } = useBleDevicesScanning(true, {
-    mapper,
-    filterOutDevicesByDeviceIds,
-    filterByDeviceModelIds,
-  });
+const TestComponent = () => {
+  const { scannedDevices, scanningBleError } = useBleDevicesScanning(true);
   return (
     <div>
       <span data-testid="devices">{JSON.stringify(scannedDevices)}</span>
@@ -75,7 +58,7 @@ describe("defaultMapper", () => {
       },
     ] as DiscoveredDevice[];
     // when
-    const devices = discoveredDevice.map(defaultMapper);
+    const devices = discoveredDevice.map(mapDiscoveredDeviceToScannedDevice);
     // then
     expect(devices).toEqual([
       {
@@ -170,7 +153,9 @@ describe("useBleDevicesScanning", () => {
     const scanError = getByTestId("scan-error");
 
     // then
-    expect(devices).toHaveTextContent(JSON.stringify(scannedDevices.map(defaultMapper)));
+    expect(devices).toHaveTextContent(
+      JSON.stringify(scannedDevices.map(mapDiscoveredDeviceToScannedDevice)),
+    );
     expect(scanError).toHaveTextContent("null");
   });
 
@@ -197,111 +182,5 @@ describe("useBleDevicesScanning", () => {
     // then
     expect(devices).toHaveTextContent(JSON.stringify([]));
     expect(scanError).toHaveTextContent("Error: scan error");
-  });
-
-  it("should filter devices by model ids", async () => {
-    // given
-    let result: ReturnType<typeof render> | undefined;
-    const scannedDevices = [
-      {
-        id: "id0",
-        name: "name0",
-        deviceModel: {
-          model: "flex",
-        },
-        rssi: 42,
-      },
-      {
-        id: "id1",
-        name: "name1",
-        deviceModel: {
-          model: "stax",
-        },
-        rssi: 32,
-      },
-      {
-        id: "id2",
-        name: "name2",
-        deviceModel: {
-          model: "nanoX",
-        },
-        rssi: 63,
-      },
-    ] as DiscoveredDevice[];
-    vi.spyOn(dmk, "listenToAvailableDevices").mockReturnValue(
-      new Observable(subscriber => {
-        subscriber.next(scannedDevices);
-      }),
-    );
-
-    // when
-    await act(async () => {
-      result = render(
-        <TestComponent filterByDeviceModelIds={[DeviceModelId.europa, DeviceModelId.stax]} />,
-      );
-    });
-    if (!result) {
-      throw new Error("Result is undefined");
-    }
-    const { getByTestId } = result!;
-    const devices = getByTestId("devices");
-    const scanError = getByTestId("scan-error");
-
-    // then
-    expect(devices).toHaveTextContent(
-      JSON.stringify([scannedDevices[0], scannedDevices[1]].map(defaultMapper)),
-    );
-    expect(scanError).toHaveTextContent("null");
-  });
-
-  it("should filter out devices by device ids", async () => {
-    // given
-    let result: ReturnType<typeof render> | undefined;
-    const scannedDevices = [
-      {
-        id: "id0",
-        name: "name0",
-        deviceModel: {
-          model: "flex",
-        },
-        rssi: 42,
-      },
-      {
-        id: "id1",
-        name: "name1",
-        deviceModel: {
-          model: "stax",
-        },
-        rssi: 32,
-      },
-      {
-        id: "id2",
-        name: "name2",
-        deviceModel: {
-          model: "nanoX",
-        },
-        rssi: 63,
-      },
-    ] as DiscoveredDevice[];
-    vi.spyOn(dmk, "listenToAvailableDevices").mockReturnValue(
-      new Observable(subscriber => {
-        subscriber.next(scannedDevices);
-      }),
-    );
-
-    // when
-    await act(async () => {
-      result = render(<TestComponent filterOutDevicesByDeviceIds={["id0", "id2"]} />);
-    });
-    if (!result) {
-      throw new Error("Result is undefined");
-    }
-    const { getByTestId } = result!;
-    const devices = getByTestId("devices");
-    const scanError = getByTestId("scan-error");
-
-    // then
-    expect(devices).toHaveTextContent(JSON.stringify([scannedDevices[1]].map(defaultMapper)));
-    expect(scanError).toHaveTextContent("null");
   });
 });

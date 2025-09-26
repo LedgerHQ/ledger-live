@@ -4,7 +4,7 @@ import { Flex, Text } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 import { getDeviceModel } from "@ledgerhq/devices";
-import { Device, DeviceModelId } from "@ledgerhq/types-devices";
+import { DeviceModelId } from "@ledgerhq/types-devices";
 import { IconsLegacy } from "@ledgerhq/native-ui";
 import { bleDevicesSelector } from "~/reducers/ble";
 import Animation from "../Animation";
@@ -13,13 +13,14 @@ import Link from "~/components/wrappedUi/Link";
 import lottie from "./assets/bluetooth.json";
 import { urls } from "~/utils/urls";
 import { TrackScreen, track } from "~/analytics";
+import { ScannedDevice } from "@ledgerhq/live-dmk-mobile";
 
 export type FilterByDeviceModelId = null | DeviceModelId;
 const CANT_SEE_DEVICE_TIMEOUT = 5000;
 
 export type BleDevicesScanningProps = {
-  devices: Device[];
-  onDeviceSelect: (item: Device) => void;
+  devices: ScannedDevice[];
+  onDeviceSelect: (item: ScannedDevice) => void;
   filterByDeviceModelId?: FilterByDeviceModelId | FilterByDeviceModelId[];
   areKnownDevicesDisplayed?: boolean;
   areKnownDevicesPairable?: boolean;
@@ -119,7 +120,7 @@ export const BleDevicesScanning: React.FC<BleDevicesScanningProps> = ({
                   deviceId: item.deviceId,
                   deviceName: item.deviceName,
                   wired: false,
-                  modelId: item.modelId as DeviceModelId,
+                  modelId: item.modelId,
                   isAlreadyKnown: item.isAlreadyKnown,
                 }}
                 areKnownDevicesPairable={false}
