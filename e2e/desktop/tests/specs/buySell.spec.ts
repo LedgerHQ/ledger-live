@@ -54,7 +54,7 @@ for (const asset of assets) {
     const { crypto, fiat, operation, amount } = asset.buySell;
 
     test.use({
-      userdata: "skip-onboarding",
+      userdata: "1AccountBTC1AccountETH",
       speculosApp: crypto.currency.speculosApp,
       cliCommands: [
         (appjsonPath: string) => {
@@ -84,6 +84,7 @@ for (const asset of assets) {
         await app.assetPage.startBuyFlow();
 
         await app.layout.verifyBuySellSideBarIsSelected();
+        await app.buyAndSell.selectAccountInDrawer(crypto);
         await app.buyAndSell.verifyBuySellLandingAndCryptoAssetSelector(crypto, operation);
         await app.buyAndSell.verifyFiatAssetSelector(fiat.currencyTicker);
       },
@@ -101,10 +102,13 @@ for (const asset of assets) {
       async ({ app }) => {
         await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
         await app.layout.goToMarket();
-        await app.market.search(crypto.currency.name);
-        await app.market.openBuyPage(crypto.currency.ticker);
+        await app.market.search(crypto.currency.ticker);
+        await app.market.openBuyPage(
+          crypto.currency.ticker,
+          getParentAccountName(crypto),
+          crypto.currency.name,
+        );
 
-        await app.layout.verifyBuySellSideBarIsSelected();
         await app.buyAndSell.verifyBuySellLandingAndCryptoAssetSelector(crypto, operation);
         await app.buyAndSell.verifyFiatAssetSelector(fiat.currencyTicker);
       },

@@ -7,7 +7,7 @@ import { MarketCoinPage } from "../../page/market.coin.page";
 import { LiveAppWebview } from "../../models/LiveAppWebview";
 import { BUY_SELL_UI_APP_ID } from "@ledgerhq/live-common/wallet-api/constants";
 
-test.use({ userdata: "skip-onboarding" });
+test.use({ userdata: "1AccountBTC1AccountETHStarred" });
 
 let testServerIsRunning = false;
 
@@ -186,7 +186,7 @@ test("Market", async ({ page, electronApp }) => {
   });
 
   await test.step("buy bitcoin from market page", async () => {
-    await marketPage.openBuyPage("btc");
+    await marketPage.openBuyPage("btc", "Bitcoin 1 (legacy)");
     await expect
       .soft(page)
       .toHaveScreenshot("market-btc-buy-page.png", { mask: [page.locator("webview")] });
@@ -214,7 +214,7 @@ test("Market", async ({ page, electronApp }) => {
   });
 
   await test.step("buy bitcoin from coin page", async () => {
-    await marketCoinPage.openBuyPage();
+    await marketCoinPage.openBuyPage("Bitcoin 1 (legacy)");
     await expect
       .soft(page)
       .toHaveScreenshot("market-btc-buy-page.png", { mask: [page.locator("webview")] });
