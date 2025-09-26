@@ -1,4 +1,4 @@
-import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoOrTokenCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { MappedAsset, CurrenciesByProviderId, GroupedCurrencies } from "./type";
 import {
   currenciesByMarketcap,
@@ -50,9 +50,22 @@ export const groupCurrenciesByProvider = (
   // So we need to take the first crypto or token currency of each provider to fix that
   for (const [, { currenciesByNetwork }] of assetsByProviderId.entries()) {
     const firstCrypto = currenciesByNetwork.find(c => c.type === "CryptoCurrency");
-    const elem = firstCrypto ?? currenciesByNetwork.find(c => c.type === "TokenCurrency");
-    if (elem) {
-      sortedCryptoCurrencies.push(elem);
+    if (firstCrypto) {
+      sortedCryptoCurrencies.push(firstCrypto);
+      continue;
+    }
+
+    const tokens = currenciesByNetwork.filter(
+      (c): c is TokenCurrency => c.type === "TokenCurrency",
+    );
+
+    let preferredToken = tokens.find(t => t.parentCurrency?.id === "ethereum");
+    if (!preferredToken) {
+      preferredToken = tokens[0];
+    }
+
+    if (preferredToken) {
+      sortedCryptoCurrencies.push(preferredToken);
     }
   }
 
