@@ -366,10 +366,7 @@ const StepReceiveFunds = (props: StepProps) => {
                 />
               </Alert>
               <Separator2 />
-              <Receive2NoDevice
-                onVerify={onVerify}
-                onContinue={() => onChangeAddressVerified(true)}
-              />
+              <Receive2NoDevice onVerify={onVerify} onContinue={onFinishReceiveFlow} />
             </>
           ) : device ? (
             // verification with device
