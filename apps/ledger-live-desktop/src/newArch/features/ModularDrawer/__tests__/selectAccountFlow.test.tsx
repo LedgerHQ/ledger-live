@@ -159,6 +159,7 @@ describe("ModularDrawerFlowManager - Select Account Flow", () => {
       <ModularDrawerFlowManager
         currencies={[bitcoinCurrency]}
         onAccountSelected={mockOnAccountSelected}
+        areCurrenciesFiltered
       />,
     );
 
@@ -174,6 +175,7 @@ describe("ModularDrawerFlowManager - Select Account Flow", () => {
       <ModularDrawerFlowManager
         currencies={[bitcoinCurrency]}
         onAccountSelected={mockOnAccountSelected}
+        areCurrenciesFiltered
       />,
     );
 
@@ -250,6 +252,7 @@ describe("ModularDrawerFlowManager - Select Account Flow", () => {
       <ModularDrawerFlowManager
         currencies={[ethereumCurrency]}
         onAccountSelected={mockOnAccountSelected}
+        areCurrenciesFiltered
       />,
     );
 

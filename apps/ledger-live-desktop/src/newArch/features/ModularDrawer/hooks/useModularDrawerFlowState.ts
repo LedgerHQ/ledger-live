@@ -19,7 +19,6 @@ type Props = {
   goToStep: (nextStep: ModularDrawerStep) => void;
   isSelectAccountFlow?: boolean;
   onAssetSelected?: (asset: CryptoOrTokenCurrency) => void;
-  hasOneCurrency: boolean;
 };
 
 export function useModularDrawerFlowState({
@@ -30,7 +29,6 @@ export function useModularDrawerFlowState({
   goToStep,
   isSelectAccountFlow,
   onAssetSelected,
-  hasOneCurrency,
 }: Props) {
   const { trackModularDrawerEvent } = useModularDrawerAnalytics();
   const searchedValue = useSelector(modularDrawerSearchedSelector);
@@ -155,7 +153,7 @@ export function useModularDrawerFlowState({
   );
 
   useEffect(() => {
-    if (hasOneCurrency && searchedValue === undefined && !selectedAsset && assets) {
+    if (assets?.length === 1 && searchedValue === undefined && !selectedAsset) {
       const assetItem = assets[0];
 
       if (assetItem.networks.length > 0) {
@@ -171,7 +169,6 @@ export function useModularDrawerFlowState({
     handleAssetSelected,
     selectedAsset,
     currencyIds,
-    hasOneCurrency,
     searchedValue,
     assets,
   ]);

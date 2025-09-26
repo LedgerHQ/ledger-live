@@ -1,8 +1,10 @@
 import { ModularDrawerFlowManagerProps, ModularDrawerStep } from "../types";
 import { useModularDrawerData } from "./useModularDrawerData";
-import { useModularDrawerFiltering } from "./useModularDrawerFiltering";
 import { useModularDrawerFlowState } from "./useModularDrawerFlowState";
 import { useModularDrawerBackButton } from "./useModularDrawerBackButton";
+import { useMemo, useState } from "react";
+import { useAssetSelection } from "./useAssetSelection";
+import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 
 interface UseModularDrawerRemoteDataProps {
   currentStep: ModularDrawerStep;
@@ -23,28 +25,15 @@ export function useModularDrawerRemoteData({
   onAssetSelected,
   isSelectAccountFlow,
 }: UseModularDrawerRemoteDataProps) {
-  const {
-    sortedCryptoCurrencies,
-    error,
-    refetch,
-    isSuccess,
-    loadingStatus,
-    loadNext,
-    assetsSorted,
-  } = useModularDrawerData({ currencyIds, useCase, areCurrenciesFiltered });
+  const [networksToDisplay, setNetworksToDisplay] = useState<CryptoOrTokenCurrency[]>();
 
-  const {
-    assetsToDisplay,
-    setAssetsToDisplay,
-    networksToDisplay,
-    setNetworksToDisplay,
-    hasOneCurrency,
-  } = useModularDrawerFiltering({
+  const { sortedCryptoCurrencies, error, refetch, loadingStatus, loadNext, assetsSorted } =
+    useModularDrawerData({ currencyIds, useCase, areCurrenciesFiltered });
+
+  const { assetsToDisplay, setAssetsToDisplay } = useAssetSelection(
     currencyIds,
-    assets: assetsSorted,
     sortedCryptoCurrencies,
-    isSuccess,
-  });
+  );
 
   const {
     selectedAsset,
@@ -61,8 +50,9 @@ export function useModularDrawerRemoteData({
     setNetworksToDisplay,
     goToStep,
     onAssetSelected,
-    hasOneCurrency,
   });
+
+  const hasOneCurrency = useMemo(() => assetsSorted?.length === 1, [assetsSorted]);
 
   const { handleBack } = useModularDrawerBackButton({
     currentStep,
@@ -81,7 +71,6 @@ export function useModularDrawerRemoteData({
     networksToDisplay,
     selectedAsset,
     selectedNetwork,
-    hasOneCurrency,
     handleAssetSelected,
     handleNetworkSelected,
     handleBack,

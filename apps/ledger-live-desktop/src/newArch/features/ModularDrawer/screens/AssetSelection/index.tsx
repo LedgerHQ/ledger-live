@@ -16,7 +16,6 @@ export type AssetSelectionStepProps = {
   providersLoadingStatus: LoadingStatus;
   assetsConfiguration: EnhancedModularDrawerConfiguration["assets"];
   onAssetSelected: (asset: CryptoOrTokenCurrency) => void;
-  hasOneCurrency?: boolean;
   loadNext?: () => void;
   error?: boolean;
   refetch?: () => void;
@@ -28,7 +27,6 @@ const AssetSelection = ({
   providersLoadingStatus,
   assetsConfiguration,
   onAssetSelected,
-  hasOneCurrency,
   loadNext,
   error,
   refetch,
@@ -52,7 +50,7 @@ const AssetSelection = ({
 
   return (
     <>
-      {!hasOneCurrency && (
+      {assetsSorted?.length !== 1 && (
         <TrackDrawerScreen
           page={MODULAR_DRAWER_PAGE_NAME.MODULAR_ASSET_SELECTION}
           assetsConfig={assetsConfiguration}
