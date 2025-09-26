@@ -1,5 +1,69 @@
 # @ledgerhq/live-common
 
+## 34.50.0-nightly.0
+
+### Minor Changes
+
+- [#11988](https://github.com/LedgerHQ/ledger-live/pull/11988) [`5d3b6c0`](https://github.com/LedgerHQ/ledger-live/commit/5d3b6c01904d50e700e480150b64e9c6d8bcbc98) Thanks [@ejaycoleman](https://github.com/ejaycoleman)! - Aggregate balances across networks
+
+- [#11852](https://github.com/LedgerHQ/ledger-live/pull/11852) [`e04d493`](https://github.com/LedgerHQ/ledger-live/commit/e04d49340c65c8b4608a37bb726d21350fdd32f1) Thanks [@jonezque](https://github.com/jonezque)! - feat: added new tx type for canton, removed hardcoded instrumentId, parse operations with new tx types
+
+- [#11581](https://github.com/LedgerHQ/ledger-live/pull/11581) [`4d60b7e`](https://github.com/LedgerHQ/ledger-live/commit/4d60b7e0984f0f8ef75c1483e0cfaf5784fbc5ed) Thanks [@Canestin](https://github.com/Canestin)! - feature (lld,llm): integrate Core DAO Mainnet
+
+- [#11889](https://github.com/LedgerHQ/ledger-live/pull/11889) [`e3b568d`](https://github.com/LedgerHQ/ledger-live/commit/e3b568d2cbeee6dcf19a7047ce9fa11a04b0ae2a) Thanks [@Canestin](https://github.com/Canestin)! - feat: ethereum hoodi testnet integration
+
+- [#11929](https://github.com/LedgerHQ/ledger-live/pull/11929) [`0d368f0`](https://github.com/LedgerHQ/ledger-live/commit/0d368f0e682b3bd3daafa6af5b396648a95b1488) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - feature(coin-evm): pass calldata to intent
+
+- [#12003](https://github.com/LedgerHQ/ledger-live/pull/12003) [`72e4a96`](https://github.com/LedgerHQ/ledger-live/commit/72e4a96f7d5b6ce224bd369508e2b5686c126e30) Thanks [@ejaycoleman](https://github.com/ejaycoleman)! - Display correct balance in MAD network page
+
+- [#11340](https://github.com/LedgerHQ/ledger-live/pull/11340) [`77ffab2`](https://github.com/LedgerHQ/ledger-live/commit/77ffab2f5d08fb45449b6b8316b0947dd46286b1) Thanks [@dilaouid](https://github.com/dilaouid)! - feat: staking generic bridge support (tezos)
+
+### Patch Changes
+
+- [#11992](https://github.com/LedgerHQ/ledger-live/pull/11992) [`c1c2539`](https://github.com/LedgerHQ/ledger-live/commit/c1c25396cfc4dbcd742cd9872f7b837becb1dfef) Thanks [@semeano](https://github.com/semeano)! - Add snapshot for Kaspa bridge integration test
+
+- Updated dependencies [[`3b4dfe6`](https://github.com/LedgerHQ/ledger-live/commit/3b4dfe6fa227dabdd2603be890e2cea5c89c050d), [`e04d493`](https://github.com/LedgerHQ/ledger-live/commit/e04d49340c65c8b4608a37bb726d21350fdd32f1), [`4d60b7e`](https://github.com/LedgerHQ/ledger-live/commit/4d60b7e0984f0f8ef75c1483e0cfaf5784fbc5ed), [`e3b568d`](https://github.com/LedgerHQ/ledger-live/commit/e3b568d2cbeee6dcf19a7047ce9fa11a04b0ae2a), [`0d368f0`](https://github.com/LedgerHQ/ledger-live/commit/0d368f0e682b3bd3daafa6af5b396648a95b1488), [`fe1abf6`](https://github.com/LedgerHQ/ledger-live/commit/fe1abf640cc1a30b2e78bf7aa4a12e983a068f2e), [`77ffab2`](https://github.com/LedgerHQ/ledger-live/commit/77ffab2f5d08fb45449b6b8316b0947dd46286b1)]:
+  - @ledgerhq/coin-kaspa@1.2.0-nightly.0
+  - @ledgerhq/coin-canton@0.7.0-nightly.0
+  - @ledgerhq/cryptoassets@13.30.0-nightly.0
+  - @ledgerhq/crypto-icons-ui@1.20.0-nightly.0
+  - @ledgerhq/coin-evm@2.32.0-nightly.0
+  - @ledgerhq/coin-framework@6.6.0-nightly.0
+  - @ledgerhq/coin-tezos@6.6.0-nightly.0
+  - @ledgerhq/coin-algorand@0.10.3-nightly.0
+  - @ledgerhq/coin-aptos@3.3.2-nightly.0
+  - @ledgerhq/coin-bitcoin@0.22.2-nightly.0
+  - @ledgerhq/coin-cardano@0.12.3-nightly.0
+  - @ledgerhq/coin-casper@2.1.3-nightly.0
+  - @ledgerhq/coin-celo@1.4.2-nightly.0
+  - @ledgerhq/coin-cosmos@0.17.3-nightly.0
+  - @ledgerhq/coin-filecoin@1.12.2-nightly.0
+  - @ledgerhq/coin-hedera@1.11.3-nightly.0
+  - @ledgerhq/coin-icon@0.12.3-nightly.0
+  - @ledgerhq/coin-internet_computer@1.8.3-nightly.0
+  - @ledgerhq/coin-mina@1.2.3-nightly.0
+  - @ledgerhq/coin-multiversx@0.5.3-nightly.0
+  - @ledgerhq/coin-near@0.13.3-nightly.0
+  - @ledgerhq/coin-polkadot@6.10.2-nightly.0
+  - @ledgerhq/coin-solana@0.34.1-nightly.0
+  - @ledgerhq/coin-stacks@0.9.3-nightly.0
+  - @ledgerhq/coin-stellar@6.4.2-nightly.0
+  - @ledgerhq/coin-sui@0.14.1-nightly.0
+  - @ledgerhq/coin-ton@0.14.3-nightly.0
+  - @ledgerhq/coin-tron@5.4.2-nightly.0
+  - @ledgerhq/coin-vechain@2.10.1-nightly.0
+  - @ledgerhq/coin-xrp@7.5.1-nightly.0
+  - @ledgerhq/device-core@0.6.5-nightly.0
+  - @ledgerhq/hw-app-eth@6.45.20-nightly.0
+  - @ledgerhq/live-countervalues@0.7.3-nightly.0
+  - @ledgerhq/live-countervalues-react@0.6.2-nightly.0
+  - @ledgerhq/live-signer-canton@0.4.1-nightly.0
+  - @ledgerhq/live-signer-evm@0.8.1-nightly.0
+  - @ledgerhq/live-signer-solana@0.5.7-nightly.0
+  - @ledgerhq/live-wallet@0.14.2-nightly.0
+  - @ledgerhq/hw-app-vet@0.6.1-nightly.0
+  - @ledgerhq/hw-app-celo@6.34.5-nightly.0
+
 ## 34.49.0
 
 ### Minor Changes

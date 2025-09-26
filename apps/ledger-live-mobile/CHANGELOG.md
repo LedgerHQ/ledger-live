@@ -1,5 +1,48 @@
 # live-mobile
 
+## 3.95.0-nightly.0
+
+### Minor Changes
+
+- [#11988](https://github.com/LedgerHQ/ledger-live/pull/11988) [`5d3b6c0`](https://github.com/LedgerHQ/ledger-live/commit/5d3b6c01904d50e700e480150b64e9c6d8bcbc98) Thanks [@ejaycoleman](https://github.com/ejaycoleman)! - Aggregate balances across networks
+
+- [#12006](https://github.com/LedgerHQ/ledger-live/pull/12006) [`3fb6ee3`](https://github.com/LedgerHQ/ledger-live/commit/3fb6ee381f8f9373271877480997d869eb71d564) Thanks [@LucasWerey](https://github.com/LucasWerey)! - MAD - Swap - Add account - fix redirection via AddAccountWarning screen when there is an empty account
+
+- [#11979](https://github.com/LedgerHQ/ledger-live/pull/11979) [`3b4dfe6`](https://github.com/LedgerHQ/ledger-live/commit/3b4dfe6fa227dabdd2603be890e2cea5c89c050d) Thanks [@semeano](https://github.com/semeano)! - Import and enable Kaspa custom fees for LLM. Add caching for KaspaBIP32 address generation.
+
+- [#11985](https://github.com/LedgerHQ/ledger-live/pull/11985) [`8b33df5`](https://github.com/LedgerHQ/ledger-live/commit/8b33df56ec3937a3e469e80fb183e23eb02709c2) Thanks [@mitchellv-ledger](https://github.com/mitchellv-ledger)! - Add onboarding flow field for onboarding tracking. Add popToTop for close on receive funds confirmation screen.
+
+- [#11581](https://github.com/LedgerHQ/ledger-live/pull/11581) [`4d60b7e`](https://github.com/LedgerHQ/ledger-live/commit/4d60b7e0984f0f8ef75c1483e0cfaf5784fbc5ed) Thanks [@Canestin](https://github.com/Canestin)! - feature (lld,llm): integrate Core DAO Mainnet
+
+- [#11977](https://github.com/LedgerHQ/ledger-live/pull/11977) [`b49729a`](https://github.com/LedgerHQ/ledger-live/commit/b49729a43f0701d30b23fa8213efbbc901c3a741) Thanks [@ooke-ledger](https://github.com/ooke-ledger)! - Add changelly specific footer message
+
+- [#11889](https://github.com/LedgerHQ/ledger-live/pull/11889) [`e3b568d`](https://github.com/LedgerHQ/ledger-live/commit/e3b568d2cbeee6dcf19a7047ce9fa11a04b0ae2a) Thanks [@Canestin](https://github.com/Canestin)! - feat: ethereum hoodi testnet integration
+
+- [#12002](https://github.com/LedgerHQ/ledger-live/pull/12002) [`38f1c9a`](https://github.com/LedgerHQ/ledger-live/commit/38f1c9a5304ec6e7eef0c61c3084b77ace41cf9e) Thanks [@mitchellv-ledger](https://github.com/mitchellv-ledger)! - Add llmSyncOnboardingIncr1 feature flag tracking
+
+- [#11798](https://github.com/LedgerHQ/ledger-live/pull/11798) [`fe1abf6`](https://github.com/LedgerHQ/ledger-live/commit/fe1abf640cc1a30b2e78bf7aa4a12e983a068f2e) Thanks [@Antoine-bls83](https://github.com/Antoine-bls83)! - add generic not translated banner
+
+- [#11991](https://github.com/LedgerHQ/ledger-live/pull/11991) [`614b3bb`](https://github.com/LedgerHQ/ledger-live/commit/614b3bbe55b88896e6ebfd476750bc53b697cfd1) Thanks [@mitchellv-ledger](https://github.com/mitchellv-ledger)! - Redirect add funds to receive confirmation in onboarding
+
+- [#11340](https://github.com/LedgerHQ/ledger-live/pull/11340) [`77ffab2`](https://github.com/LedgerHQ/ledger-live/commit/77ffab2f5d08fb45449b6b8316b0947dd46286b1) Thanks [@dilaouid](https://github.com/dilaouid)! - feat: staking generic bridge support (tezos)
+
+### Patch Changes
+
+- Updated dependencies [[`e04d493`](https://github.com/LedgerHQ/ledger-live/commit/e04d49340c65c8b4608a37bb726d21350fdd32f1), [`4d60b7e`](https://github.com/LedgerHQ/ledger-live/commit/4d60b7e0984f0f8ef75c1483e0cfaf5784fbc5ed), [`e3b568d`](https://github.com/LedgerHQ/ledger-live/commit/e3b568d2cbeee6dcf19a7047ce9fa11a04b0ae2a), [`0d368f0`](https://github.com/LedgerHQ/ledger-live/commit/0d368f0e682b3bd3daafa6af5b396648a95b1488), [`fe1abf6`](https://github.com/LedgerHQ/ledger-live/commit/fe1abf640cc1a30b2e78bf7aa4a12e983a068f2e)]:
+  - @ledgerhq/types-live@6.86.0-nightly.0
+  - @ledgerhq/types-cryptoassets@7.28.0-nightly.0
+  - @ledgerhq/coin-evm@2.32.0-nightly.0
+  - @ledgerhq/coin-framework@6.6.0-nightly.0
+  - @ledgerhq/coin-cosmos@0.17.3-nightly.0
+  - @ledgerhq/coin-filecoin@1.12.2-nightly.0
+  - @ledgerhq/coin-multiversx@0.5.3-nightly.0
+  - @ledgerhq/coin-stacks@0.9.3-nightly.0
+  - @ledgerhq/domain-service@1.2.45-nightly.0
+  - @ledgerhq/live-countervalues@0.7.3-nightly.0
+  - @ledgerhq/live-countervalues-react@0.6.2-nightly.0
+  - @ledgerhq/live-wallet@0.14.2-nightly.0
+  - @ledgerhq/native-ui@0.46.1-nightly.0
+
 ## 3.94.0
 
 ### Minor Changes
