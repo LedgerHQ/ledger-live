@@ -27,8 +27,8 @@ type State = {
   manifestId?: string;
   manifestName?: string;
 };
-type TransactionState = AppState & State;
-type TransactionRequest = {
+type RawTransactionState = AppState & State;
+type RawTransactionRequest = {
   parentAccount: Account | null | undefined;
   account: AccountLike;
   transaction: string;
@@ -38,7 +38,7 @@ type TransactionRequest = {
   manifestId?: string;
   manifestName?: string;
 };
-export type TransactionResult =
+export type RawTransactionResult =
   | {
       signedOperation: SignedOperation;
       device: Device;
@@ -47,13 +47,13 @@ export type TransactionResult =
   | {
       transactionSignError: Error;
     };
-type TransactionAction = Action<TransactionRequest, TransactionState, TransactionResult>;
+type TransactionAction = Action<RawTransactionRequest, RawTransactionState, RawTransactionResult>;
 
 const mapResult = ({
   device,
   signedOperation,
   transactionSignError,
-}: TransactionState): TransactionResult | null | undefined =>
+}: RawTransactionState): RawTransactionResult | null | undefined =>
   signedOperation && device
     ? {
         signedOperation,
@@ -131,8 +131,8 @@ export const createAction = (
       requireLatestFirmware,
       manifestId,
       manifestName,
-    }: TransactionRequest,
-  ): TransactionState => {
+    }: RawTransactionRequest,
+  ): RawTransactionState => {
     const mainAccount = getMainAccount(account, parentAccount);
     const appState = createAppAction(connectAppExec).useHook(reduxDevice, {
       account: mainAccount,

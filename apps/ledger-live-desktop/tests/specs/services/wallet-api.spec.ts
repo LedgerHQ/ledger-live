@@ -16,6 +16,7 @@ const methods = [
   "storage.get",
   "storage.set",
   "transaction.sign",
+  "transaction.signRaw",
   "transaction.signAndBroadcast",
   "device.transport",
   "device.select",
@@ -35,7 +36,7 @@ const methods = [
 ];
 
 test.use({
-  userdata: "1AccountBTC1AccountETH1AccountARB1AccountSOL",
+  userdata: "1AccountBTC1AccountETH1AccountARB1AccountSOL1AccountXRP",
   featureFlags: {
     lldModularDrawer: {
       enabled: false,
@@ -699,6 +700,27 @@ test("Wallet API methods @smoke", async ({ page, electronApp }) => {
         ],
       },
     });
+
+    await resetWebview();
+  });
+
+  await test.step("transaction.signRaw xrp", async () => {
+    const rawTx =
+      "12000022800000002400000002201B0077BE23614000000000989680684000000000000064732102F89EAEC7667B30F33D0687BBA86C3FE2A08CCA40A9186C5BDE2DAA6FA97A37D8D474463044022070C6E721D336797021A471757637E52C84D59096E37D6443ABF9C6464F37AA0C02207861D7FC5A68816017F54394B5F8D8ECEC33CEACC7F89929E7D6D2270286176A811450184ACDE08D7AB336301FBA85314C7776C6D0347F8314DF1C2708A3B92EBC42071CCBDE708722078BCE50";
+
+    await liveAppWebview.setAccountId("8f4a9c3e-6b2d-4e8a-9c1f-3a7b5d2f9e4c");
+    await liveAppWebview.setData(rawTx);
+    await liveAppWebview.transactionSignRaw();
+
+    await modal.waitForModalToAppear();
+
+    // Step Device
+    await deviceAction.silentSign();
+
+    await modal.waitForModalToDisappear();
+
+    const res = await liveAppWebview.getResOutput();
+    expect(res).toBe("empty response");
 
     await resetWebview();
   });

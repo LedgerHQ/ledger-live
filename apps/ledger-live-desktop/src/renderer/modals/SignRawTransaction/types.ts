@@ -1,7 +1,6 @@
 import { TFunction } from "i18next";
 import { BigNumber } from "bignumber.js";
 import { Account, AccountLike, SignedOperation } from "@ledgerhq/types-live";
-import { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { Step } from "~/renderer/components/Stepper";
 import { HOOKS_TRACKING_LOCATIONS } from "~/renderer/analytics/hooks/variables";
@@ -9,14 +8,12 @@ export type StepId = "amount" | "summary" | "device" | "confirmation" | "warning
 export type StepProps = {
   t: TFunction;
   transitionTo: (a: string) => void;
+  transaction: string;
+  account: AccountLike;
+  parentAccount: Account | undefined | null;
+  device: Device | undefined | null;
   useApp?: string;
   dependencies?: string[];
-  device: Device | undefined | null;
-  account: AccountLike | undefined | null;
-  parentAccount: Account | undefined | null;
-  transaction: Transaction | undefined | null;
-  status: TransactionStatus;
-  bridgePending: boolean;
   error: Error | undefined | null;
   warning: Error | undefined | null;
   closeModal: (a: void) => void;
@@ -30,10 +27,8 @@ export type StepProps = {
   onResetMaybeRecipient: () => void;
   maybeAmount?: BigNumber;
   onResetMaybeAmount: () => void;
-  updateTransaction: (updater: (_: Transaction) => Transaction) => void;
   manifestId?: string;
   manifestName?: string;
-  isACRE?: boolean;
   location?: HOOKS_TRACKING_LOCATIONS;
 };
 export type St = Step<StepId, StepProps>;
