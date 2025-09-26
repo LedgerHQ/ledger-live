@@ -145,7 +145,9 @@ const getFeesForTransaction = async ({
   // TODO: Should implement more clear logic for all flows
   // current FIX is to align with node_modules/.pnpm/@celo+connect@7.0.0/node_modules/@celo/connect/lib/connection.js : setFeeMarketGas
   const gasPrice = await kit.connection.gasPrice();
-  const maxFeePerGas = (((BigInt(gasPrice)-BigInt(maxPriorityFeePerGas)) * BigInt(120)) / BigInt(100)) + BigInt(maxPriorityFeePerGas);
+  const maxFeePerGas =
+    ((BigInt(gasPrice) - BigInt(maxPriorityFeePerGas)) * BigInt(120)) / BigInt(100) +
+    BigInt(maxPriorityFeePerGas);
   const maxFeePerGasNumber = new BigNumber(maxFeePerGas.toString());
   return maxFeePerGasNumber.times(gas);
 };
