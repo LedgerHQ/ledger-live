@@ -33,6 +33,8 @@ import {
   isOnboardingFlowSelector,
 } from "~/reducers/settings";
 import { urls } from "~/utils/urls";
+import ReceiveProvider from "~/screens/ReceiveFunds/01b-ReceiveProvider.";
+import { useReceiveNoahEntry } from "~/hooks/useNoahEntryPoint";
 
 export default function ReceiveFundsNavigator() {
   const { colors } = useTheme();
@@ -41,6 +43,7 @@ export default function ReceiveFundsNavigator() {
   const hasClosedWithdrawBanner = useSelector(hasClosedWithdrawBannerSelector);
   const hasClosedNetworkBanner = useSelector(hasClosedNetworkBannerSelector);
   const isOnboardingFlow = useSelector(isOnboardingFlowSelector);
+  const receiveNoahEntry = useReceiveNoahEntry();
 
   const onClose = useCallback(() => {
     track("button_clicked", {
@@ -91,6 +94,16 @@ export default function ReceiveFundsNavigator() {
         gestureEnabled: Platform.OS === "ios",
       }}
     >
+      <Stack.Screen
+        name={ScreenName.ReceiveProvider}
+        component={ReceiveProvider}
+        options={{
+          headerLeft: () => <NavigationHeaderBackButton />,
+          headerTitle: "",
+          headerRight: () => <NavigationHeaderCloseButtonAdvanced onClose={onClose} />,
+        }}
+      />
+
       {/* Select Crypto (see : apps/ledger-live-mobile/src/screens/AddAccounts/01-SelectCrypto.js) */}
       <Stack.Screen
         name={ScreenName.ReceiveSelectCrypto}
@@ -105,6 +118,7 @@ export default function ReceiveFundsNavigator() {
             />
           ),
         }}
+        {...receiveNoahEntry}
       />
 
       <Stack.Screen
@@ -134,6 +148,7 @@ export default function ReceiveFundsNavigator() {
         options={{
           headerTitle: "",
         }}
+        {...receiveNoahEntry}
       />
 
       {/* Select Account */}
@@ -213,6 +228,7 @@ export default function ReceiveFundsNavigator() {
             </Flex>
           ),
         })}
+        {...receiveNoahEntry}
       />
     </Stack.Navigator>
   );
