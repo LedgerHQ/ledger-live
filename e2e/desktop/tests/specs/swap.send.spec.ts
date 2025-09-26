@@ -39,20 +39,8 @@ const swaps = [
   },
   {
     fromAccount: Account.ETH_1,
-    toAccount: Account.SOL_1,
-    xrayTicket: "B2CQA-2748, B2CQA-3450",
-    tag: ["@NanoSP", "@LNS", "@NanoX"],
-  },
-  {
-    fromAccount: Account.ETH_1,
     toAccount: TokenAccount.ETH_USDT_1,
     xrayTicket: "B2CQA-2749, B2CQA-3450",
-    tag: ["@NanoSP", "@LNS", "@NanoX"],
-  },
-  {
-    fromAccount: Account.BTC_NATIVE_SEGWIT_1,
-    toAccount: Account.SOL_1,
-    xrayTicket: "B2CQA-2747, B2CQA-3450",
     tag: ["@NanoSP", "@LNS", "@NanoX"],
   },
   {
@@ -65,12 +53,6 @@ const swaps = [
     fromAccount: TokenAccount.ETH_USDT_1,
     toAccount: Account.BTC_NATIVE_SEGWIT_1,
     xrayTicket: "B2CQA-2753, B2CQA-3450",
-    tag: ["@NanoSP", "@LNS", "@NanoX"],
-  },
-  {
-    fromAccount: TokenAccount.ETH_USDT_1,
-    toAccount: Account.SOL_1,
-    xrayTicket: "B2CQA-2751, B2CQA-3450",
     tag: ["@NanoSP", "@LNS", "@NanoX"],
   },
   {
@@ -93,32 +75,8 @@ const swaps = [
   },
   {
     fromAccount: TokenAccount.ETH_USDC_1,
-    toAccount: Account.ETH_1,
-    xrayTicket: "B2CQA-2830, B2CQA-3450, B2CQA-3281",
-    tag: ["@NanoSP", "@LNS", "@NanoX"],
-  },
-  {
-    fromAccount: TokenAccount.ETH_USDC_1,
-    toAccount: Account.SOL_1,
-    xrayTicket: "B2CQA-2831, B2CQA-3450, B2CQA-3281",
-    tag: ["@NanoSP", "@LNS", "@NanoX"],
-  },
-  {
-    fromAccount: TokenAccount.ETH_USDC_1,
     toAccount: Account.BTC_NATIVE_SEGWIT_1,
     xrayTicket: "B2CQA-2832, B2CQA-3450, B2CQA-3281",
-    tag: ["@NanoSP", "@LNS", "@NanoX"],
-  },
-  {
-    fromAccount: Account.ETH_1,
-    toAccount: Account.DOT_1,
-    xrayTicket: "B2CQA-3017, B2CQA-3450, B2CQA-3281",
-    tag: ["@NanoSP", "@LNS", "@NanoX"],
-  },
-  {
-    fromAccount: Account.XRP_1,
-    toAccount: TokenAccount.ETH_USDC_1,
-    xrayTicket: "B2CQA-3075, B2CQA-3450, B2CQA-3281",
     tag: ["@NanoSP", "@LNS", "@NanoX"],
   },
   {
@@ -131,12 +89,6 @@ const swaps = [
     fromAccount: Account.XRP_1,
     toAccount: Account.BTC_NATIVE_SEGWIT_1,
     xrayTicket: "B2CQA-3077, B2CQA-3450, B2CQA-3281",
-    tag: ["@NanoSP", "@LNS", "@NanoX"],
-  },
-  {
-    fromAccount: Account.BTC_NATIVE_SEGWIT_1,
-    toAccount: Account.LTC_1,
-    xrayTicket: "B2CQA-3078, B2CQA-3450, B2CQA-3282",
     tag: ["@NanoSP", "@LNS", "@NanoX"],
   },
   //ToDo: enable once it's back in prod
