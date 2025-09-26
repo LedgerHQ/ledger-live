@@ -48,9 +48,9 @@
     "@vitejs/plugin-react": "4.3.4",
     "@vitest/coverage-istanbul": "3.0.7",
     "jsdom": "25.0.1",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
-    "react-native": "0.77.3",
+    "react": "19.1.1",
+    "react-dom": "19.1.1",
+    "react-native": "0.81.4",
     "react-native-ble-plx": "3.4.0",
     "rxjs": "^7.8.1",
     "vite": "6.0.9",
@@ -58,8 +58,8 @@
     "ws": "8.18.0"
   },
   "peerDependencies": {
-    "react": "^18.3.1",
-    "react-native": ">0.70",
+    "react": "19.1.1",
+    "react-native": ">0.81",
     "react-native-ble-plx": ">3.4.0",
     "rxjs": "^7.8.1"
   }

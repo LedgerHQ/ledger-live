@@ -3,8 +3,17 @@ import "./live-common-setup";
 import "./iosWebsocketFix";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import React, { Component, useCallback, useMemo, useEffect } from "react";
-import { StyleSheet, LogBox, Appearance, AppState } from "react-native";
-import { SafeAreaProvider } from "react-native-safe-area-context";
+import {
+  StatusBar,
+  StyleSheet,
+  useColorScheme,
+  View,
+  LogBox,
+  Appearance,
+  AppState,
+} from "react-native";
+import { NewAppScreen } from "@react-native/new-app-screen";
+import { SafeAreaProvider, useSafeAreaInsets } from "react-native-safe-area-context";
 import { I18nextProvider } from "react-i18next";
 import Transport from "@ledgerhq/hw-transport";
 import { NotEnoughBalance } from "@ledgerhq/errors";
@@ -217,10 +226,10 @@ function App() {
       <ExperimentalHeader />
       {datadogFF?.enabled ? (
         <DatadogProvider configuration={datadogAutoInstrumentation}>
-          <RootNavigator />
+          <AppContent />
         </DatadogProvider>
       ) : (
-        <RootNavigator />
+        <AppContent />
       )}
 
       <AnalyticsConsole />
@@ -232,6 +241,19 @@ function App() {
         <StoragePerformanceOverlay />
       </FeatureToggle>
     </>
+  );
+}
+
+function AppContent() {
+  const safeAreaInsets = useSafeAreaInsets();
+
+  return (
+    <View style={{ flex: 1 }}>
+      <NewAppScreen
+        templateFileName="src/components/RootNavigator/index.tsx"
+        safeAreaInsets={safeAreaInsets}
+      />
+    </View>
   );
 }
 

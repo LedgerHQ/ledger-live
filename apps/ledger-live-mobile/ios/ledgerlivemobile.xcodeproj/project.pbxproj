@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		0EC70FE5282B9CAA00E9E355 /* AdServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0EC70FE4282B9CAA00E9E355 /* AdServices.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
-		13B07FBC1A68108700A75B9A /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.mm */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		17F58472269C64670070C475 /* RCTBluetoothHelperModule.m in Sources */ = {isa = PBXBuildFile; fileRef = 17F58471269C64670070C475 /* RCTBluetoothHelperModule.m */; };
@@ -18,6 +17,7 @@
 		69EDAB402E322042006B3214 /* StartupInfoModule.m in Sources */ = {isa = PBXBuildFile; fileRef = 69EDAB3F2E322042006B3214 /* StartupInfoModule.m */; };
 		98626A1E5A61599CA1723CF2 /* Pods_ledgerlivemobile.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D2FF455C6D480B1F5F19E871 /* Pods_ledgerlivemobile.framework */; };
 		9DB523402249BD405124BA05 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 3FF1B576B23156C611F7B818 /* PrivacyInfo.xcprivacy */; };
+		ACF9D1E62CBE3D7F00A1BEEF /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = ACF9D1E52CBE3D7F00A1BEEF /* AppDelegate.swift */; };
 		AD6EE26071FA4673B5C89936 /* FontAwesome5_Pro_Brands.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4BD106EA37CA467F9525D699 /* FontAwesome5_Pro_Brands.ttf */; };
 		AD7A77B84DF3487C812B091B /* FontAwesome5_Pro_Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 668E26194DD94B6D8F10D450 /* FontAwesome5_Pro_Regular.ttf */; };
 		B116B48438CB416C980DD0E7 /* Inter-SemiBold.otf in Resources */ = {isa = PBXBuildFile; fileRef = F3993D7FF61549FE9270BC06 /* Inter-SemiBold.otf */; };
@@ -38,13 +38,11 @@
 
 /* Begin PBXFileReference section */
 		008F07F21AC5B25A0029DE68 /* main.jsbundle */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = main.jsbundle; sourceTree = "<group>"; };
-		00E356F11AD99517003FC87E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		00E356F21AD99517003FC87E /* ledgerlivemobileTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ledgerlivemobileTests.m; sourceTree = "<group>"; };
 		0EC70FE4282B9CAA00E9E355 /* AdServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AdServices.framework; path = System/Library/Frameworks/AdServices.framework; sourceTree = SDKROOT; };
 		0F189190C1964DD1B7E31BE6 /* FontAwesome5_Brands.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome5_Brands.ttf; path = "../node_modules/react-native-vector-icons/Fonts/FontAwesome5_Brands.ttf"; sourceTree = "<group>"; };
 		13B07F961A680F5B00A75B9A /* ledgerlivemobile.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ledgerlivemobile.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07FAF1A68108700A75B9A /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppDelegate.h; path = ledgerlivemobile/AppDelegate.h; sourceTree = "<group>"; };
-		13B07FB01A68108700A75B9A /* AppDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = AppDelegate.mm; path = ledgerlivemobile/AppDelegate.mm; sourceTree = "<group>"; };
 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = ledgerlivemobile/Images.xcassets; sourceTree = "<group>"; };
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = ledgerlivemobile/Info.plist; sourceTree = "<group>"; };
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = ledgerlivemobile/main.m; sourceTree = "<group>"; };
@@ -83,6 +81,7 @@
 		9390D938BCB148F2A34703E3 /* AntDesign.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = AntDesign.ttf; path = "../node_modules/react-native-vector-icons/Fonts/AntDesign.ttf"; sourceTree = "<group>"; };
 		991AA9919E4840DBB799E117 /* FontAwesome5_Pro_Solid.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome5_Pro_Solid.ttf; path = ../assets/fonts/FontAwesome5_Pro_Solid.ttf; sourceTree = "<group>"; };
 		99A82013C77445B4B2B54AB5 /* EvilIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = EvilIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/EvilIcons.ttf"; sourceTree = "<group>"; };
+		ACF9D1E52CBE3D7F00A1BEEF /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = ledgerlivemobile/AppDelegate.swift; sourceTree = "<group>"; };
 		ADB2A550442C64936574B49B /* Pods-ledgerlivemobile.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ledgerlivemobile.debug.xcconfig"; path = "Target Support Files/Pods-ledgerlivemobile/Pods-ledgerlivemobile.debug.xcconfig"; sourceTree = "<group>"; };
 		BA451DE627CE516700AAB209 /* GoogleService-Info-Production.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info-Production.plist"; sourceTree = "<group>"; };
 		BA451DE727CE516700AAB209 /* GoogleService-Info-Staging.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info-Staging.plist"; sourceTree = "<group>"; };
@@ -136,17 +135,8 @@
 			isa = PBXGroup;
 			children = (
 				00E356F21AD99517003FC87E /* ledgerlivemobileTests.m */,
-				00E356F01AD99517003FC87E /* Supporting Files */,
 			);
 			path = ledgerlivemobileTests;
-			sourceTree = "<group>";
-		};
-		00E356F01AD99517003FC87E /* Supporting Files */ = {
-			isa = PBXGroup;
-			children = (
-				00E356F11AD99517003FC87E /* Info.plist */,
-			);
-			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
 		07E26242AA68EF56DFCEFC67 /* Pods */ = {
@@ -170,7 +160,7 @@
 				008F07F21AC5B25A0029DE68 /* main.jsbundle */,
 				3407D5D8215D2AB800C9D40B /* NeededForBLE.swift */,
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
-				13B07FB01A68108700A75B9A /* AppDelegate.mm */,
+				ACF9D1E52CBE3D7F00A1BEEF /* AppDelegate.swift */,
 				69EDAB3E2E321FED006B3214 /* StartupInfoModule.h */,
 				69EDAB3F2E322042006B3214 /* StartupInfoModule.m */,
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
@@ -646,7 +636,7 @@
 			files = (
 				3407D5D9215D2AB800C9D40B /* NeededForBLE.swift in Sources */,
 				69EDAB402E322042006B3214 /* StartupInfoModule.m in Sources */,
-				13B07FBC1A68108700A75B9A /* AppDelegate.mm in Sources */,
+				ACF9D1E62CBE3D7F00A1BEEF /* AppDelegate.swift in Sources */,
 				17F58472269C64670070C475 /* RCTBluetoothHelperModule.m in Sources */,
 				13B07FC11A68108700A75B9A /* main.m in Sources */,
 				F45A09B01925C0C58A9D40CE /* ExpoModulesProvider.swift in Sources */,
@@ -842,6 +832,8 @@
 					"${PODS_CONFIGURATION_BUILD_DIR}/React-NativeModulesApple/React_NativeModulesApple.framework/Headers",
 					"${PODS_CONFIGURATION_BUILD_DIR}/React-graphics/React_graphics.framework/Headers",
 					"${PODS_CONFIGURATION_BUILD_DIR}/React-graphics/React_graphics.framework/Headers/react/renderer/graphics/platform/ios",
+					"${PODS_CONFIGURATION_BUILD_DIR}/React-runtimeexecutor/React_runtimeexecutor.framework/Headers",
+					"${PODS_CONFIGURATION_BUILD_DIR}/React-runtimeexecutor/React_runtimeexecutor.framework/Headers/platform/ios",
 				);
 				INFOPLIST_OTHER_PREPROCESSOR_FLAGS = "-traditional";
 				INFOPLIST_PREPROCESS = YES;
@@ -864,7 +856,7 @@
 					" ",
 				);
 				OTHER_LDFLAGS = "$(inherited)";
-				REACT_NATIVE_PATH = "${PODS_ROOT}/../../../../node_modules/.pnpm/react-native@0.77.3_@babel+core@7.27.1_@babel+preset-env@7.27.1_@babel+core@7.27.1__@react-na_iudnv3opqrvtatz53lek2dkvwu/node_modules/react-native";
+				REACT_NATIVE_PATH = "${PODS_ROOT}/../../../../node_modules/.pnpm/react-native@0.81.4_@babel+core@7.27.1_@react-native-community+cli@20.0.0_typescript@5.4.3__@_xfotj3qt32lnxi5afjhdofdbtu/node_modules/react-native";
 				SDKROOT = iphoneos;
 				SWIFT_VERSION = 5.0;
 				USE_HERMES = true;
@@ -987,6 +979,8 @@
 					"${PODS_CONFIGURATION_BUILD_DIR}/React-NativeModulesApple/React_NativeModulesApple.framework/Headers",
 					"${PODS_CONFIGURATION_BUILD_DIR}/React-graphics/React_graphics.framework/Headers",
 					"${PODS_CONFIGURATION_BUILD_DIR}/React-graphics/React_graphics.framework/Headers/react/renderer/graphics/platform/ios",
+					"${PODS_CONFIGURATION_BUILD_DIR}/React-runtimeexecutor/React_runtimeexecutor.framework/Headers",
+					"${PODS_CONFIGURATION_BUILD_DIR}/React-runtimeexecutor/React_runtimeexecutor.framework/Headers/platform/ios",
 				);
 				INFOPLIST_OTHER_PREPROCESSOR_FLAGS = "-traditional";
 				INFOPLIST_PREPROCESS = YES;
@@ -1009,7 +1003,7 @@
 					" ",
 				);
 				OTHER_LDFLAGS = "$(inherited)";
-				REACT_NATIVE_PATH = "${PODS_ROOT}/../../../../node_modules/.pnpm/react-native@0.77.3_@babel+core@7.27.1_@babel+preset-env@7.27.1_@babel+core@7.27.1__@react-na_iudnv3opqrvtatz53lek2dkvwu/node_modules/react-native";
+				REACT_NATIVE_PATH = "${PODS_ROOT}/../../../../node_modules/.pnpm/react-native@0.81.4_@babel+core@7.27.1_@react-native-community+cli@20.0.0_typescript@5.4.3__@_xfotj3qt32lnxi5afjhdofdbtu/node_modules/react-native";
 				SDKROOT = iphoneos;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) DEBUG";
 				SWIFT_VERSION = 5.0;
@@ -1077,6 +1071,8 @@
 					"${PODS_CONFIGURATION_BUILD_DIR}/React-NativeModulesApple/React_NativeModulesApple.framework/Headers",
 					"${PODS_CONFIGURATION_BUILD_DIR}/React-graphics/React_graphics.framework/Headers",
 					"${PODS_CONFIGURATION_BUILD_DIR}/React-graphics/React_graphics.framework/Headers/react/renderer/graphics/platform/ios",
+					"${PODS_CONFIGURATION_BUILD_DIR}/React-runtimeexecutor/React_runtimeexecutor.framework/Headers",
+					"${PODS_CONFIGURATION_BUILD_DIR}/React-runtimeexecutor/React_runtimeexecutor.framework/Headers/platform/ios",
 				);
 				INFOPLIST_OTHER_PREPROCESSOR_FLAGS = "-traditional";
 				INFOPLIST_PREPROCESS = YES;
@@ -1098,7 +1094,7 @@
 					" ",
 				);
 				OTHER_LDFLAGS = "$(inherited)";
-				REACT_NATIVE_PATH = "${PODS_ROOT}/../../../../node_modules/.pnpm/react-native@0.77.3_@babel+core@7.27.1_@babel+preset-env@7.27.1_@babel+core@7.27.1__@react-na_iudnv3opqrvtatz53lek2dkvwu/node_modules/react-native";
+				REACT_NATIVE_PATH = "${PODS_ROOT}/../../../../node_modules/.pnpm/react-native@0.81.4_@babel+core@7.27.1_@react-native-community+cli@20.0.0_typescript@5.4.3__@_xfotj3qt32lnxi5afjhdofdbtu/node_modules/react-native";
 				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_VERSION = 5.0;
@@ -1167,6 +1163,8 @@
 					"${PODS_CONFIGURATION_BUILD_DIR}/React-NativeModulesApple/React_NativeModulesApple.framework/Headers",
 					"${PODS_CONFIGURATION_BUILD_DIR}/React-graphics/React_graphics.framework/Headers",
 					"${PODS_CONFIGURATION_BUILD_DIR}/React-graphics/React_graphics.framework/Headers/react/renderer/graphics/platform/ios",
+					"${PODS_CONFIGURATION_BUILD_DIR}/React-runtimeexecutor/React_runtimeexecutor.framework/Headers",
+					"${PODS_CONFIGURATION_BUILD_DIR}/React-runtimeexecutor/React_runtimeexecutor.framework/Headers/platform/ios",
 				);
 				INFOPLIST_OTHER_PREPROCESSOR_FLAGS = "-traditional";
 				INFOPLIST_PREPROCESS = YES;
@@ -1188,7 +1186,7 @@
 					" ",
 				);
 				OTHER_LDFLAGS = "$(inherited)";
-				REACT_NATIVE_PATH = "${PODS_ROOT}/../../../../node_modules/.pnpm/react-native@0.77.3_@babel+core@7.27.1_@babel+preset-env@7.27.1_@babel+core@7.27.1__@react-na_iudnv3opqrvtatz53lek2dkvwu/node_modules/react-native";
+				REACT_NATIVE_PATH = "${PODS_ROOT}/../../../../node_modules/.pnpm/react-native@0.81.4_@babel+core@7.27.1_@react-native-community+cli@20.0.0_typescript@5.4.3__@_xfotj3qt32lnxi5afjhdofdbtu/node_modules/react-native";
 				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_VERSION = 5.0;
@@ -1307,6 +1305,8 @@
 					"${PODS_CONFIGURATION_BUILD_DIR}/React-NativeModulesApple/React_NativeModulesApple.framework/Headers",
 					"${PODS_CONFIGURATION_BUILD_DIR}/React-graphics/React_graphics.framework/Headers",
 					"${PODS_CONFIGURATION_BUILD_DIR}/React-graphics/React_graphics.framework/Headers/react/renderer/graphics/platform/ios",
+					"${PODS_CONFIGURATION_BUILD_DIR}/React-runtimeexecutor/React_runtimeexecutor.framework/Headers",
+					"${PODS_CONFIGURATION_BUILD_DIR}/React-runtimeexecutor/React_runtimeexecutor.framework/Headers/platform/ios",
 				);
 				INFOPLIST_OTHER_PREPROCESSOR_FLAGS = "-traditional";
 				INFOPLIST_PREPROCESS = YES;
@@ -1328,7 +1328,7 @@
 					" ",
 				);
 				OTHER_LDFLAGS = "$(inherited)";
-				REACT_NATIVE_PATH = "${PODS_ROOT}/../../../../node_modules/.pnpm/react-native@0.77.3_@babel+core@7.27.1_@babel+preset-env@7.27.1_@babel+core@7.27.1__@react-na_iudnv3opqrvtatz53lek2dkvwu/node_modules/react-native";
+				REACT_NATIVE_PATH = "${PODS_ROOT}/../../../../node_modules/.pnpm/react-native@0.81.4_@babel+core@7.27.1_@react-native-community+cli@20.0.0_typescript@5.4.3__@_xfotj3qt32lnxi5afjhdofdbtu/node_modules/react-native";
 				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_VERSION = 5.0;

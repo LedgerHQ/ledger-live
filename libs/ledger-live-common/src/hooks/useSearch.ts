@@ -2,7 +2,7 @@ import { useMemo, useState, useEffect, useRef, useCallback } from "react";
 import Fuse from "fuse.js";
 import { useDebounce } from "../hooks/useDebounce";
 
-export function useSearch<Item, T extends TextInput | undefined = undefined>({
+export function useSearch<Item, T extends TextInput | null = null>({
   list,
   options,
   defaultInput = "",
@@ -13,7 +13,7 @@ export function useSearch<Item, T extends TextInput | undefined = undefined>({
   options: Fuse.IFuseOptions<Item>;
   filter?: (item: Item, input: string) => void;
 }): SearchRaw<Item, T> {
-  const inputRef = useRef<T>(null);
+  const inputRef = useRef<T | null>(null);
   const [isActive, setIsActive] = useState(false);
 
   const [input, setInput] = useState(defaultInput);
@@ -78,8 +78,8 @@ export function useSearch<Item, T extends TextInput | undefined = undefined>({
   };
 }
 
-export interface SearchRaw<Item, T extends TextInput | undefined = undefined> {
-  inputRef: React.RefObject<T>;
+export interface SearchRaw<Item, T extends TextInput | null = null> {
+  inputRef: React.RefObject<T | null>;
   input: string;
   result: Item[];
   isActive: boolean;

@@ -13,6 +13,7 @@ export const Wrapper: React.FC<React.PropsWithChildren> = ({ children }) => {
     [],
   );
   return (
+    //@ts-expect-error: rn version alignment issue
     <CountervaluesMarketcapProvider bridge={bridge}>{children}</CountervaluesMarketcapProvider>
   );
 };

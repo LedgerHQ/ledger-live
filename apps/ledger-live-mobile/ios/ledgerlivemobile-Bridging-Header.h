@@ -1,5 +1,10 @@
 #import <Expo/Expo.h>
-//
-//  Use this file to import your target's public headers that you would like to expose to Swift.
-//
+// Expose React Native and app Obj-C headers to Swift
+#import <React/RCTBundleURLProvider.h>
+#import <React/RCTLinkingManager.h>
+#import "RNCConfig.h"
+#import "BrazeReactUtils.h"
+#import "BrazeReactBridge.h"
+#import "RNSplashScreen.h"
+#import "StartupInfoModule.h"
 

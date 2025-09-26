@@ -13,13 +13,11 @@ import com.facebook.react.ReactInstanceEventListener
 import com.facebook.react.ReactNativeHost
 import com.facebook.react.ReactPackage
 import com.facebook.react.bridge.ReactContext
-import com.facebook.react.defaults.DefaultNewArchitectureEntryPoint.load
 import com.facebook.react.defaults.DefaultReactHost.getDefaultReactHost
 import com.facebook.react.defaults.DefaultReactNativeHost
-import com.facebook.react.soloader.OpenSourceMergedSoMapping
-import com.facebook.soloader.SoLoader
 import expo.modules.ApplicationLifecycleDispatcher
 import expo.modules.ReactNativeHostWrapper
+import com.facebook.react.ReactNativeApplicationEntryPoint.loadReactNative
 
 class MainApplication : Application(), ReactApplication {
 
@@ -66,12 +64,7 @@ class MainApplication : Application(), ReactApplication {
     super.onCreate()
       appProcessStartTime = SystemClock.uptimeMillis()
 
-      SoLoader.init(this, OpenSourceMergedSoMapping)
-
-      if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
-        // Override RN feature flags after SoLoader is ready, before using RN instances.
-        load()
-      }
+      loadReactNative(this)
       registerActivityLifecycleCallbacks(StartupLifecycleListener(appProcessStartTime))
 
       registerActivityLifecycleCallbacks(BrazeActivityLifecycleCallbackListener())
