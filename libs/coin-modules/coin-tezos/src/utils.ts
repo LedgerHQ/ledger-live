@@ -1,6 +1,7 @@
 import { validatePublicKey, ValidationResult, b58Encode, PrefixV2 } from "@taquito/utils";
 import { DerivationType } from "@taquito/ledger-signer";
 import { compressPublicKey } from "@taquito/ledger-signer/dist/lib/utils";
+import type { APIAccount } from "./network/types";
 
 /**
  * Default limits and fees for Tezos operations
@@ -112,4 +113,8 @@ export function createFallbackEstimation() {
     storageLimit: DEFAULT_LIMITS.STORAGE,
     estimatedFees: DEFAULT_LIMITS.BASE_FEE,
   };
+}
+
+export function hasEmptyBalance(account: APIAccount) {
+  return (account.type === "user" && account.balance === 0) || account.type === "empty";
 }

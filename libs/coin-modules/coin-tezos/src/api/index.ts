@@ -32,6 +32,7 @@ import { validatePublicKey, ValidationResult, getPkhfromPk } from "@taquito/util
 import { getRevealFee } from "@taquito/taquito";
 import {
   DUST_MARGIN_MUTEZ,
+  hasEmptyBalance,
   mapIntentTypeToTezosMode,
   normalizePublicKeyForAddress,
 } from "../utils";
@@ -155,7 +156,10 @@ async function craft(
   } else if (estimation.parameters?.txFee !== undefined) {
     txFee = Number(estimation.parameters.txFee);
   } else {
-    txFee = needsReveal ? Math.max(totalFee - getRevealFee(transactionIntent.sender), 0) : totalFee;
+    const calculatedTxFee = needsReveal
+      ? Math.max(totalFee - getRevealFee(transactionIntent.sender), 0)
+      : totalFee;
+    txFee = calculatedTxFee;
   }
 
   const txForCraft = {
@@ -267,13 +271,24 @@ async function estimate(transactionIntent: TransactionIntent): Promise<TezosFeeE
   } catch (error: any) {
     // Handle PublicKeyNotFoundError
     if (error?.message?.includes("Public key not found")) {
+      const apiAccount = await api.getAccountByAddress(transactionIntent.recipient);
+      const storageLimit =
+        !hasEmptyBalance(apiAccount) || transactionIntent.type === "stake" ? 0n : 277n;
+
+      // Check if account needs reveal for proper fee calculation
+      const senderApiAcc = await api.getAccountByAddress(transactionIntent.sender);
+      const needsReveal = senderApiAcc.type === "user" && !senderApiAcc.revealed;
+      const baseTxFee = 388n; // Match legacy production value to get 722 total (388+334)
+      const revealFee = needsReveal ? BigInt(getRevealFee(transactionIntent.sender)) : 0n;
+      const totalFee = baseTxFee + revealFee;
+
       return {
-        value: 1000n, // Safe default with reveal fees (500 + 374 reveal + buffer)
+        value: totalFee,
         parameters: {
           gasLimit: 10000n,
-          storageLimit: 300n,
+          storageLimit,
           amount: 0n,
-          txFee: 1000n,
+          txFee: baseTxFee,
         },
       };
     } else {

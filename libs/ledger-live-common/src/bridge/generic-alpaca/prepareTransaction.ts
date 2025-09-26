@@ -33,8 +33,8 @@ export function genericPrepareTransaction(
     const { assetReference, assetOwner } = getAssetFromToken
       ? getAssetInfos(transaction, account.freshAddress, getAssetFromToken)
       : assetInfosFallback(transaction);
-
-    let fees: BigNumber | bigint | null = transaction.customFees?.parameters?.fees || null;
+    const customParametersFees = transaction.customFees?.parameters?.fees;
+    let fees: BigNumber | bigint | null = customParametersFees || null;
     if (fees === null) {
       fees = (
         await estimateFees(
@@ -57,7 +57,7 @@ export function genericPrepareTransaction(
         assetOwner,
         customFees: {
           parameters: {
-            fees: new BigNumber(fees.toString()),
+            fees: customParametersFees ? new BigNumber(customParametersFees.toString()) : undefined,
           },
         },
       };
@@ -82,10 +82,6 @@ export function genericPrepareTransaction(
             typeof storageLimit === "string")
         ) {
           next.storageLimit = new BigNumber(storageLimit.toString());
-          // Add storageLimit to customFees parameters
-          if (next.customFees?.parameters) {
-            next.customFees.parameters.storageLimit = new BigNumber(storageLimit.toString());
-          }
         }
       }
 
