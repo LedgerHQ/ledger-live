@@ -178,7 +178,7 @@
     "react-native-device-info": "11.1.0",
     "react-native-easy-markdown": "2.0.0",
     "react-native-extra-dimensions-android": "1.2.5",
-    "react-native-fast-crypto": "2.2.0",
+    "react-native-fast-crypto": "github:LedgerHQ/react-native-fast-crypto#feature/android-16kb-support",
     "react-native-fast-image": "8.6.3",
     "react-native-fast-pbkdf2": "0.3.1",
     "react-native-fast-shadow": "0.1.1",
