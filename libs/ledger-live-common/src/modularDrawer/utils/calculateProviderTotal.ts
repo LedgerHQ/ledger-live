@@ -9,6 +9,7 @@ export const calculateProviderTotals = (
   let totalBalance = new BigNumber(0);
   let totalFiatValue = new BigNumber(0);
   let hasAccounts = false;
+  let referenceCurrency: CryptoOrTokenCurrency | null = null;
 
   for (const currency of currencies) {
     const assetGroup = groupedAccountsByAsset[currency.id];
@@ -16,8 +17,13 @@ export const calculateProviderTotals = (
       totalBalance = totalBalance.plus(assetGroup.totalBalance);
       totalFiatValue = totalFiatValue.plus(assetGroup.totalFiatValue);
       hasAccounts = true;
+
+      // Use the referenceCurrency from the first asset group with accounts
+      if (!referenceCurrency) {
+        referenceCurrency = assetGroup.referenceCurrency;
+      }
     }
   }
 
-  return { totalBalance, totalFiatValue, hasAccounts };
+  return { totalBalance, totalFiatValue, hasAccounts, referenceCurrency };
 };

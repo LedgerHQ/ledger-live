@@ -231,6 +231,6 @@ describe("ModularDrawer modules integration", () => {
     const ethereumElements = getAllByText(/ethereum/i);
     await user.press(ethereumElements[0]);
     advanceTimers();
-    expect(getByText(/23.4663 eth/i)).toBeVisible();
+    expect(getByText(/23.4663 ETH/i)).toBeVisible();
   });
 });

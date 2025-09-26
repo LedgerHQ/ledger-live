@@ -11,16 +11,25 @@ import keyBy from "lodash/keyBy";
 import { accountsSelector } from "~/reducers/accounts";
 import { counterValueCurrencySelector } from "~/reducers/settings";
 import { useModularDrawerAnalytics, MODULAR_DRAWER_PAGE_NAME } from "../analytics";
-import { formatDetailedAccount } from "../utils/formatdetailedAccount";
-import { sortAccountsByFiatValue } from "../utils/sortAccountsByFiatValue";
 import { isTokenCurrency } from "@ledgerhq/live-common/currencies/helpers";
 import { useBatchMaybeAccountName } from "~/reducers/wallet";
 import {
   getAccountTuplesForCurrency,
   AccountTuple,
 } from "@ledgerhq/live-common/utils/getAccountTuplesForCurrency";
-import { AccountUI } from "@ledgerhq/native-ui/lib/pre-ldls/index";
 import { AccountLike } from "@ledgerhq/types-live";
+import { calculate } from "@ledgerhq/live-countervalues/logic";
+
+// Extended account type that includes raw data for UI formatting
+export type RawDetailedAccount = {
+  id: string;
+  name: string;
+  ticker: string;
+  account: AccountLike;
+  parentAccount?: AccountLike;
+  protocol?: string;
+  parentId?: string;
+};
 
 export const useDetailedAccounts = (
   asset: CryptoOrTokenCurrency,
@@ -29,11 +38,11 @@ export const useDetailedAccounts = (
   onAccountSelected: ((account: AccountLike, parentAccount?: AccountLike) => void) | undefined,
   accounts$?: Observable<WalletAPIAccount[]>,
 ) => {
-  const state = useCountervaluesState();
   const { trackModularDrawerEvent } = useModularDrawerAnalytics();
+  const state = useCountervaluesState();
+  const counterValueCurrency = useSelector(counterValueCurrencySelector);
   const accountIds = useGetAccountIds(accounts$);
   const nestedAccounts = useSelector(accountsSelector);
-  const counterValueCurrency = useSelector(counterValueCurrencySelector);
 
   const isATokenCurrency = useMemo(() => isTokenCurrency(asset), [asset]);
 
@@ -44,7 +53,21 @@ export const useDetailedAccounts = (
 
   const overridedAccountName = useBatchMaybeAccountName(accounts.map(({ account }) => account));
 
-  const detailedAccounts = useMemo(() => {
+  // Helper function to calculate fiat value for an account
+  const calculateFiatValue = useCallback(
+    (account: AccountLike): number => {
+      const currency = account.type === "Account" ? account.currency : account.token;
+      const fiatValue = calculate(state, {
+        from: currency,
+        to: counterValueCurrency,
+        value: account.balance.toNumber(),
+      });
+      return fiatValue || 0;
+    },
+    [state, counterValueCurrency],
+  );
+
+  const detailedAccounts = useMemo((): RawDetailedAccount[] => {
     const accountNameMap = keyBy(
       accounts
         .map(({ account }, index) => ({
@@ -55,52 +78,44 @@ export const useDetailedAccounts = (
       "id",
     );
 
-    const formattedAccounts = accounts.map(tuple => {
+    const rawAccounts = accounts.map(tuple => {
       const account = tuple.account;
       const protocol = getTagDerivationMode(account.currency, account.derivationMode) ?? "";
-      const currencyAccount = formatDetailedAccount(
-        account,
-        account.freshAddress,
-        state,
-        counterValueCurrency,
-      );
 
       if (isATokenCurrency && tuple.subAccount) {
-        const formattedSubAccount = formatDetailedAccount(
-          tuple.subAccount,
-          account.freshAddress,
-          state,
-          counterValueCurrency,
-        );
         const parentAccountName = accountNameMap[account.id]?.name;
+        const details = tuple.subAccount.token;
         return {
-          ...formattedSubAccount,
-          name: parentAccountName ?? formattedSubAccount.name,
+          id: tuple.subAccount.id,
+          name: parentAccountName ?? details.name,
+          ticker: details.ticker,
+          account: tuple.subAccount,
+          parentAccount: account,
+          parentId: details.parentCurrency.id,
         };
       } else {
         const accountName = accountNameMap[account.id]?.name;
+        const details = account.currency;
         return {
-          ...currencyAccount,
+          id: account.id,
+          name: accountName ?? details.name,
+          ticker: details.ticker,
+          account,
           protocol,
-          name: accountName ?? currencyAccount.name,
         };
       }
     });
 
-    return sortAccountsByFiatValue(formattedAccounts);
-  }, [accounts, state, counterValueCurrency, isATokenCurrency, overridedAccountName]);
+    // Sort by fiat value instead of balance
+    return rawAccounts.sort((a, b) => {
+      const fiatValueA = calculateFiatValue(a.account);
+      const fiatValueB = calculateFiatValue(b.account);
+      return fiatValueB - fiatValueA; // Descending order
+    });
+  }, [accounts, isATokenCurrency, overridedAccountName, calculateFiatValue]);
 
   const handleAccountSelected = useCallback(
-    (account: AccountUI) => {
-      const isToken = Boolean(account.parentId);
-
-      const matchedTuple = accounts.find(
-        tuple => tuple.account.id === account.id || tuple.subAccount?.id === account.id,
-      );
-
-      const specificAccount = isToken ? matchedTuple?.subAccount : matchedTuple?.account;
-      const parentAccount = isToken ? matchedTuple?.account : undefined;
-
+    (rawAccount: RawDetailedAccount) => {
       trackModularDrawerEvent("account_clicked", {
         page: MODULAR_DRAWER_PAGE_NAME.MODULAR_ACCOUNT_SELECTION,
         flow,
@@ -108,12 +123,9 @@ export const useDetailedAccounts = (
         currency: asset.ticker,
       });
 
-      if (specificAccount) {
-        onAccountSelected?.(specificAccount, parentAccount);
-        return;
-      }
+      onAccountSelected?.(rawAccount.account, rawAccount.parentAccount);
     },
-    [accounts, trackModularDrawerEvent, flow, source, asset.ticker, onAccountSelected],
+    [trackModularDrawerEvent, flow, source, asset.ticker, onAccountSelected],
   );
 
   return { detailedAccounts, accounts, handleAccountSelected };

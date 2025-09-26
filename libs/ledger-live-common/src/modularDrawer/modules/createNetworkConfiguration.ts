@@ -88,9 +88,7 @@ export const createNetworkConfigurationHook =
       }
 
       if (rightElement === "balance") {
-        const { discreet } = NetworkConfigurationDeps.useBalanceDeps();
-
-        result.sort((a, b) => compareByBalanceThenFiat(a?.balanceData, b?.balanceData, discreet));
+        result.sort((a, b) => compareByBalanceThenFiat(a?.balanceData, b?.balanceData));
       }
 
       return result;
