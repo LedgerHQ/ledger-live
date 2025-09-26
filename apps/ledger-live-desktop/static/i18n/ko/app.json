@@ -168,6 +168,7 @@
       "NFT_IN" : "NFT 수령됨",
       "NFT_OUT" : "NFT 전송됨",
       "CREATE" : "생성됨",
+      "UNKNOWN" : "알려지지 않음",
       "REVEAL" : "숨김 해제",
       "DELEGATE" : "위임됨",
       "REDELEGATE" : "재위임됨",
@@ -1930,7 +1931,12 @@
         "default" : "장치에서 스왑 세부사항을 확인한 후 전송하세요. 주소가 안전하게 교환되어 주소를 따로 인증할 필요 없습니다.",
         "provider" : "장치에서 스왑 세부사항을 확인한 후 전송하세요. 일부 트랜잭션에서 {{providerName}}의 추가 확인 단계가 필요할 수 있어 지연이 발생할 수 있습니다."
       },
+      "simpleViewNotice" : {
+        "default" : "Ledger 장치에서 스왑 상세 정보를 확인한 후 전송하세요.",
+        "provider" : "장치에서 스왑 상세 정보를 확인한 후 전송하세요. 일부 트랜잭션은 {{providerName}}의 추가 확인 단계가 필요할 수 있어 지연이 발생할 수 있습니다."
+      },
       "confirm" : "스왑 트랜잭션을 검증하세요",
+      "confirmSwap" : "장치에서 스왑 거래를 확인하세요",
       "amountSent" : "전송 금액",
       "amountReceived" : "수신 금액",
       "amountReceivedFloat" : "서비스 수수료 부과 전 수신 금액",
@@ -2425,6 +2431,7 @@
         "nextBlock" : "다음 블록",
         "suggested" : "추천",
         "unitVByte" : "{{unit}}/vbyte",
+        "unitPerByte" : "{{unit}}/바이트",
         "nft" : "NFT",
         "nftQuantity" : "수량",
         "splExtensionsWarning" : "현재 사용 중인 토큰은 토큰 확장 프로그램(Token Extensions)으로도 알려진 토큰-2022 프로그램의 일부입니다. 이 토큰은 몇 가지 리스크가 수반됩니다. <0>여기</0>를 클릭하여 자세히 알아보세요."
@@ -5866,6 +5873,10 @@
       "commentPlaceholder" : "선택 사항",
       "comment" : "코멘트"
     },
+    "canton" : {
+      "commentPlaceholder" : "선택 사항",
+      "comment" : "코멘트"
+    },
     "stellar" : {
       "memo" : "메모",
       "memoType" : {
@@ -6313,6 +6324,10 @@
       "title" : "문제가 발생했습니다",
       "description" : "트랜잭션을 수행하지 못했습니다. 다시 시도해 주세요."
     },
+    "TransactionCannotBeCreated" : {
+      "title" : "처리 오류",
+      "description" : "Changelly에서 처리할 수 없는 트랜잭션입니다. 오류 코드 8HBB{{errorCode}}"
+    },
     "TimeoutError" : {
       "title" : "죄송하지만 서버 응답에 너무 많은 시간이 소요되었습니다",
       "description" : "다시 시도해 주세요."
@@ -6461,6 +6476,9 @@
     },
     "TonCommentInvalid" : {
       "title" : "코멘트는 120자를 초과할 수 없으며, 특수문자를 사용해서는 안 됩니다."
+    },
+    "CantonCommentInvalid" : {
+      "title" : "코멘트는 120자를 초과할 수 없으며, 특수문자를 사용할 수 없습니다."
     },
     "CantScanQRCode" : {
       "title" : "이 QR 코드를 스캔할 수 없습니다: 이 주소는 자동 확인을 지원하지 않습니다"
@@ -6853,11 +6871,11 @@
       "description" : "다른 이미지로 다시 시도하세요"
     },
     "ImageCommitRefusedOnDevice" : {
-      "title" : "{{productName}}에서 잠금 화면 사진 복구가\n취소되었습니다",
+      "title" : "{{productName}}에서 잠금 화면 이미지가 삭제되었습니다",
       "description" : "실수였다면 지금 바로 다시 시도하세요."
     },
     "ImageLoadRefusedOnDevice" : {
-      "title" : "{{productName}}에서 잠금 화면 사진 복구가\n취소되었습니다",
+      "title" : "{{productName}}에서 잠금 화면 이미지가 취소되었습니다\n",
       "description" : "실수였다면 지금 바로 다시 시도하세요."
     },
     "ImageDoesNotExistOnDevice" : {
@@ -7182,7 +7200,7 @@
     "steps" : {
       "choose" : {
         "stepLabel" : "사진 선택",
-        "description" : "(...)로 설정할 이미지 선택",
+        "description" : "디지털 아트나 사진으로\n나만의 {{productName}} 장치를\n만들어 보세요.",
         "pickFromNftGallery" : "내 NFT 갤러리에서 선택",
         "myNfts" : "내 NFT",
         "upload" : "컴퓨터에서 업로드",
@@ -7195,7 +7213,7 @@
       "adjust" : {
         "stepLabel" : "잘라내기",
         "rotate" : "회전",
-        "confirmCrop" : "크롭한 이미지를 확인하세요"
+        "confirmCrop" : "크롭 적용"
       },
       "contrast" : {
         "stepLabel" : "대비 설정",
@@ -7206,7 +7224,7 @@
         "useAnotherPicture" : "다른 사진을 업로드하세요",
         "allowPreview" : "잠금 화면 사진을 사용자 정의하려면\n\"사진 로드\"를 탭하세요",
         "allowConfirmPreview" : "잠금 화면 사진을 복구하려면\n\"사진 로드\"를 탭하세요",
-        "loadingPicture" : "설치 중...",
+        "loadingPicture" : "로딩 중...",
         "voila" : "짜잔!",
         "imageLoaded" : "{{productName}}에서 로드한 이미지",
         "confirmPicture" : "마음에 드시나요?\n그러면 저장하세요!",
@@ -7265,9 +7283,9 @@
   "webview" : {
     "networkError" : {
       "title" : "네트워크 오류",
-      "subtitle" : "문제가 발생했습니다. 다시 시도해주세요. 문제가 지속될 경우, 로그를 저장하고 Ledger 지원 부서에 연락하세요.",
+      "subtitle" : "문제가 발생했습니다. 다시 시도해주세요. 문제가 지속될 경우, 로그를 저장하고 Ledger 지원팀으로 문의하세요.",
       "contactSupport" : "Ledger 지원 부서에 문의해주세요",
-      "saveLog" : "로그 저장"
+      "saveLog" : "로그 저장하기"
     },
     "noAccounts" : {
       "title" : "이 앱에 액세스하려면 계정이 필요합니다.",
