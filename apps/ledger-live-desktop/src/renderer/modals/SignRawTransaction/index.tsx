@@ -3,15 +3,14 @@ import { DomainServiceProvider } from "@ledgerhq/domain-service/hooks/index";
 import Modal from "~/renderer/components/Modal";
 import Body from "./Body";
 import { StepId } from "./types";
-type Props = {
-  stepId?: StepId;
-  canEditFees?: boolean;
-  error?: Error;
-};
-const SignTransactionModal = ({ stepId }: Props) => {
-  const [state, setState] = useState({
-    stepId: stepId || "summary",
-    error: undefined as Error | undefined,
+
+const SignTransactionModal = () => {
+  const [state, setState] = useState<{
+    stepId: StepId;
+    error?: Error;
+  }>({
+    stepId: "summary",
+    error: undefined,
   });
   const handleReset = () => {
     setState({
