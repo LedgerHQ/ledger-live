@@ -57,13 +57,14 @@ function isWalletConnectUrl(url: string) {
 function isWalletConnectLink(url: string) {
   return (
     isWalletConnectUrl(url) ||
+    url.startsWith("ledgerwallet://wc") ||
     url.startsWith("ledgerlive://wc") ||
     url.startsWith("https://ledger.com/wc")
   );
 }
 
 function isStorylyLink(url: string) {
-  return url.startsWith("ledgerlive://storyly?");
+  return url.startsWith("ledgerlive://storyly?") || url.startsWith("ledgerwallet://storyly?");
 }
 
 function getProxyURL(url: string, customBuySellUiAppId?: string) {
@@ -109,6 +110,7 @@ const linkingOptions = () => ({
   },
 
   prefixes: [
+    "ledgerwallet://",
     "ledgerlive://",
     "https://ledger.com",
     // FIXME: We will be fixing the universal links in this epic : https://ledgerhq.atlassian.net/browse/LIVE-14732
