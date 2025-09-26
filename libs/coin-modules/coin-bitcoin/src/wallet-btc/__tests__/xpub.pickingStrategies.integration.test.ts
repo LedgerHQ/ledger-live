@@ -12,6 +12,7 @@ import { Merge } from "../pickingstrategies/Merge";
 import { DeepFirst } from "../pickingstrategies/DeepFirst";
 import { CoinSelect } from "../pickingstrategies/CoinSelect";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
+import * as utils from "../utils";
 
 describe("testing xpub legacy transactions", () => {
   const network = coininfo.bitcoin.test.toBitcoinJS();
@@ -309,4 +310,312 @@ describe("testing xpub legacy transactions", () => {
         Number(res.unspentUtxos[2].value),
     ).toEqual(5000000000 + 600000000 + 100000000);
   }, 180000);
+});
+
+describe("picking strategies – segwit edge cases", () => {
+  const network = coininfo.bitcoin.test.toBitcoinJS();
+  const crypto = new Crypto({ network });
+
+  /** helper to synthesize scripts by length (content doesn't matter for size) **/
+  const scriptP2WPKH = Buffer.alloc(22); // OP_0 + PUSH20 + 20 bytes
+
+  function makeXpubNativeSegwit() {
+    const storage = new BitcoinLikeStorage();
+    const xpub = new Xpub({
+      storage,
+      explorer: new BitcoinLikeExplorer({ cryptoCurrency: getCryptoCurrencyById("bitcoin") }),
+      crypto,
+      xpub: "dummy", // not used by storage-only tests
+      derivationMode: DerivationModes.NATIVE_SEGWIT,
+    });
+    return { storage, xpub };
+  }
+
+  function out(amount: number, script: Buffer): OutputInfo[] {
+    return [
+      {
+        address: "tb1qdummydest", // label only
+        isChange: false,
+        script,
+        value: new BigNumber(amount),
+      },
+    ];
+  }
+
+  it("FLOAT vs CEIL: fee must equal ceil(vbytes) * feePerByte for P2WPKH (1-in/1-out, no change)", async () => {
+    const { storage, xpub } = makeXpubNativeSegwit();
+
+    // choose a simple 1-in / 1-out case at 1 sat/vB with no change
+    const feePerByte = 1;
+
+    // compute expected vbytes exactly (integer path)
+    const vNoInput = utils.maxTxSizeCeil(
+      0,
+      [scriptP2WPKH],
+      false,
+      xpub.crypto,
+      xpub.derivationMode,
+    );
+    const vPerInput =
+      utils.maxTxSizeCeil(1, [], false, xpub.crypto, xpub.derivationMode) -
+      utils.maxTxSizeCeil(0, [], false, xpub.crypto, xpub.derivationMode);
+    const changeDeltaV =
+      utils.maxTxSizeCeil(0, [], true, xpub.crypto, xpub.derivationMode) -
+      utils.maxTxSizeCeil(0, [], false, xpub.crypto, xpub.derivationMode);
+
+    // pick an amount & utxo so leftover < change delta => no change path
+    const amount = 50_000;
+    const expectedV = vNoInput + vPerInput; // 1 input, 1 recipient, no change
+    const expectedFee = expectedV * feePerByte;
+
+    // single utxo exactly amount + expectedFee
+    storage.appendTxs([
+      {
+        id: "tx-utxo-1",
+        inputs: [],
+        outputs: [
+          {
+            output_index: 0,
+            value: String(amount + expectedFee),
+            address: "tb1qmyutxo",
+            output_hash: "tx-utxo-1",
+            block_height: 1,
+            rbf: false,
+          },
+        ],
+        block: { hash: "h", height: 1, time: "2024-01-01T00:00:00Z" },
+        account: 0,
+        index: 0,
+        address: "tb1qmyutxo",
+        received_at: "2024-01-01T00:00:00Z",
+      },
+    ]);
+
+    // run any segwit strategy; DeepFirst is fine
+    const strat = new DeepFirst(xpub.crypto, xpub.derivationMode, []);
+    const res = await strat.selectUnspentUtxosToUse(xpub, out(amount, scriptP2WPKH), feePerByte);
+
+    expect(res.unspentUtxos.length).toBe(1);
+    expect(res.needChangeoutput).toBe(false);
+    // the key assertion: no float drift → fee equals integer vbytes * feerate
+    // NOTE: before changes, 109, expected is 110
+    expect(res.fee).toBe(expectedFee);
+
+    // sanity: leftover at boundary is < change delta
+    const leftover = amount + expectedFee - (amount + res.fee);
+    expect(leftover).toBeLessThan(changeDeltaV * feePerByte);
+  }, 30_000);
+
+  // NOTE: passed without changes
+  it("CHANGE DELTA: must use input-derivation change size (P2WPKH) not recipient script (P2TR)", async () => {
+    const { storage, xpub } = makeXpubNativeSegwit();
+    const feePerByte = 1;
+
+    // recipient is Taproot, change must be P2WPKH (since derivation = native segwit)
+    const scriptP2TR = Buffer.alloc(34); // taproot output script length
+
+    // base vbytes for tx with recipient only (no inputs yet), use the *same* function as strategies do:
+    const baseVNoInput_FLOAT = utils.maxTxWeight(
+      0,
+      [scriptP2TR],
+      false,
+      xpub.crypto,
+      xpub.derivationMode,
+    );
+    const perInputV_FLOAT =
+      utils.maxTxWeight(1, [], false, xpub.crypto, xpub.derivationMode) -
+      utils.maxTxWeight(0, [], false, xpub.crypto, xpub.derivationMode);
+
+    // True change delta (P2WPKH change)
+    const trueChangeDeltaV_FLOAT =
+      utils.maxTxWeight(0, [], true, xpub.crypto, xpub.derivationMode) -
+      utils.maxTxWeight(0, [], false, xpub.crypto, xpub.derivationMode);
+
+    // Wrong change delta (recipient=P2TR)
+    const wrongChangeDeltaV_FLOAT =
+      utils.maxTxWeight(0, [scriptP2TR], false, xpub.crypto, xpub.derivationMode) -
+      utils.maxTxWeight(0, [], false, xpub.crypto, xpub.derivationMode);
+
+    // Sanity: Taproot output is ~3 vB bigger than P2WPKH change
+    expect(Math.round(wrongChangeDeltaV_FLOAT - trueChangeDeltaV_FLOAT)).toBeGreaterThanOrEqual(2);
+
+    const amount = 80_000;
+
+    // Fee if we pick exactly 1 input and no change (float path, like the strategy)
+    const feeNoChange_FLOAT = (baseVNoInput_FLOAT + perInputV_FLOAT) * feePerByte;
+
+    // Choose leftover to be >= true change delta but < wrong change delta.
+    const targetLeftover = trueChangeDeltaV_FLOAT + 1.0; // sits between ~31 and ~34 safely
+
+    // Make a single-UTXO wallet with just enough to hit that leftover
+    const utxoValue = amount + Math.ceil(feeNoChange_FLOAT + targetLeftover);
+
+    storage.appendTxs([
+      {
+        id: "tx-utxo-taproot-recipient",
+        inputs: [],
+        outputs: [
+          {
+            output_index: 0,
+            value: String(utxoValue),
+            address: "tb1qmyutxo-change-test",
+            output_hash: "tx-utxo-taproot-recipient",
+            block_height: 10,
+            rbf: false,
+          },
+        ],
+        block: { hash: "h", height: 10, time: "2024-01-03T00:00:00Z" },
+        account: 0,
+        index: 0,
+        address: "tb1qmyutxo-change-test",
+        received_at: "2024-01-03T00:00:00Z",
+      },
+    ]);
+
+    const strat = new Merge(xpub.crypto, xpub.derivationMode, []);
+    const res = await strat.selectUnspentUtxosToUse(
+      xpub,
+      [
+        {
+          address: "tb1p-recipient",
+          isChange: false,
+          script: scriptP2TR,
+          value: new BigNumber(amount),
+        },
+      ],
+      feePerByte,
+    );
+
+    // EXPECTATION:
+    // - Correct logic (change delta from input derivation) => change fits => needChangeoutput = true
+    // - Current buggy logic (delta from recipient P2TR) => change would NOT fit
+    expect(res.needChangeoutput).toBe(true);
+
+    // And fee should equal vbytes(1-in, P2TR recipient, + P2WPKH change) * fpb (ceil’d at the end)
+    const vWithChange_INT = utils.maxTxSizeCeil(
+      1,
+      [scriptP2TR],
+      true,
+      xpub.crypto,
+      xpub.derivationMode,
+    );
+    // NOTE: before changes, 121, expected = 153
+    expect(res.fee).toBe(vWithChange_INT * feePerByte);
+  });
+});
+
+describe("CoinSelect – segwit change delta must match input derivation (not recipient)", () => {
+  const network = coininfo.bitcoin.test.toBitcoinJS();
+  const crypto = new Crypto({ network });
+
+  function makeXpubNativeSegwit() {
+    const storage = new BitcoinLikeStorage();
+    const xpub = new Xpub({
+      storage,
+      explorer: new BitcoinLikeExplorer({ cryptoCurrency: getCryptoCurrencyById("bitcoin") }),
+      crypto,
+      xpub: "dummy",
+      derivationMode: DerivationModes.NATIVE_SEGWIT, // inputs ⇒ P2WPKH ⇒ change must be P2WPKH
+    });
+    return { storage, xpub };
+  }
+
+  it("adds change using P2WPKH delta even when recipient is Taproot (P2TR)", async () => {
+    const { storage, xpub } = makeXpubNativeSegwit();
+    const feePerByte = 1; // integer sat/vB
+    const scriptP2TR = Buffer.alloc(34); // recipient
+
+    // --- all sizes in INTEGER vbytes, exactly like the strategy ---
+    const fixedV = utils.maxTxVBytesCeil(0, [], false, xpub.crypto, xpub.derivationMode);
+    const oneInputV =
+      utils.maxTxVBytesCeil(1, [], false, xpub.crypto, xpub.derivationMode) - fixedV;
+
+    // base vbytes with recipient (no inputs yet)
+    const baseNoInputV = utils.maxTxVBytesCeil(
+      0,
+      [scriptP2TR],
+      false,
+      xpub.crypto,
+      xpub.derivationMode,
+    );
+
+    // “true” change delta: add a change output of the *input derivation* (P2WPKH here)
+    const changeDeltaV =
+      utils.maxTxVBytesCeil(0, [], true, xpub.crypto, xpub.derivationMode) - fixedV;
+
+    // “wrong” change delta (buggy logic): use recipient’s script as proxy (Taproot)
+    const wrongChangeDeltaV =
+      utils.maxTxVBytesCeil(0, [scriptP2TR], false, xpub.crypto, xpub.derivationMode) - fixedV;
+
+    // sanity: Taproot (recipient) output is bigger than P2WPKH change (gap >= 2–3 vB)
+    expect(wrongChangeDeltaV - changeDeltaV).toBeGreaterThanOrEqual(2);
+
+    // fees (integer) for a 1-input, NO-CHANGE layout
+    const notInputFees = feePerByte * baseNoInputV;
+    const feeNoChange = notInputFees + feePerByte * oneInputV;
+
+    // We want leftover L so that:  L > feePerByte*changeDeltaV  and  L < feePerByte*wrongChangeDeltaV
+    const changeDeltaFee = feePerByte * changeDeltaV;
+    const wrongDeltaFee = feePerByte * wrongChangeDeltaV;
+
+    // pick L exactly one sat over the true threshold, safely below the wrong threshold
+    const L = changeDeltaFee + 1;
+    expect(L).toBeLessThan(wrongDeltaFee);
+
+    const amount = 80_000;
+    const utxoValue = amount + feeNoChange + L; // ensures currentValue - actualTarget = L
+
+    // single UTXO to force 1-input selection
+    storage.appendTxs([
+      {
+        id: "tx-utxo-coinselect-change-test",
+        inputs: [],
+        outputs: [
+          {
+            output_index: 0,
+            value: String(utxoValue),
+            address: "tb1q-my-utxo",
+            output_hash: "tx-utxo-coinselect-change-test",
+            block_height: 100,
+            rbf: false,
+          },
+        ],
+        block: { hash: "h", height: 100, time: "2024-01-05T00:00:00Z" },
+        account: 0,
+        index: 0,
+        address: "tb1q-my-utxo",
+        received_at: "2024-01-05T00:00:00Z",
+      },
+    ]);
+
+    const strat = new CoinSelect(xpub.crypto, xpub.derivationMode, []);
+    const res = await strat.selectUnspentUtxosToUse(
+      xpub,
+      [
+        {
+          address: "tb1p-taproot-dest",
+          isChange: false,
+          script: scriptP2TR,
+          value: new BigNumber(amount),
+        },
+      ],
+      feePerByte,
+    );
+
+    // With correct logic (threshold = changeDeltaV), leftover == changeDeltaFee+1 ⇒ add change
+    expect(res.needChangeoutput).toBe(true);
+
+    // Fee must equal integer vbytes * feerate for (1-in, P2TR recipient, + P2WPKH change)
+    const vWithChange = utils.maxTxVBytesCeil(
+      1,
+      [scriptP2TR],
+      true,
+      xpub.crypto,
+      xpub.derivationMode,
+    );
+    expect(res.fee).toBe(vWithChange * feePerByte);
+
+    expect(res.unspentUtxos.length).toBe(1);
+    expect(Number(res.unspentUtxos[0].value)).toBe(utxoValue);
+  });
 });

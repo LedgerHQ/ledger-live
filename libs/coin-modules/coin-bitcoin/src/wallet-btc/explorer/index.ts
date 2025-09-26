@@ -1,6 +1,6 @@
 import { Address, Block, TX } from "../storage/types";
 import network from "@ledgerhq/live-network/network";
-import { IExplorer } from "./types";
+import { IExplorer, NetworkInfoResponse } from "./types";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { blockchainBaseURL } from "../../explorer";
 
@@ -67,6 +67,19 @@ class BitcoinLikeExplorer implements IExplorer {
       url: `${this.baseUrl}/fees`,
     });
     return data;
+  }
+
+  /**
+   * Fetch node-level policy info (min relay, incremental relay, node version).
+   * Endpoint example:
+   *   GET https://explorers.api.live.ledger.com/blockchain/v4/btc/network
+   */
+  async getNetwork(): Promise<NetworkInfoResponse> {
+    const { data } = await network({
+      method: "GET",
+      url: `${this.baseUrl}/network`,
+    });
+    return data as NetworkInfoResponse;
   }
 
   async getPendings(address: Address, nbMax = 1000): Promise<TX[]> {

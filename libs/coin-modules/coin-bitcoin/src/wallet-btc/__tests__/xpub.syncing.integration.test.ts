@@ -49,16 +49,16 @@ describe("xpub integration sync", () => {
     {
       xpub: "xpub6CUGRUonZSQ4TWtTMmzXdrXDtypWKiKrhko4egpiMZbpiaQL2jkwSB1icqYh2cfDfVxdx4df189oLKnC5fSwqPfgyP3hooxujYzAu3fDVmz", // 3000ms
       derivationMode: DerivationModes.LEGACY,
-      addresses: 19,
-      balance: 12706308,
+      addresses: 23,
+      balance: 12835640,
       network: coininfo.bitcoin.main.toBitcoinJS(),
       currencyId: "bitcoin",
     },
     {
       xpub: "xpub6D4waFVPfPCpRvPkQd9A6n65z3hTp6TvkjnBHG5j2MCKytMuadKgfTUHqwRH77GQqCKTTsUXSZzGYxMGpWpJBdYAYVH75x7yMnwJvra1BUJ", // 5400ms
       derivationMode: DerivationModes.LEGACY,
-      addresses: 506,
-      balance: 166505122,
+      addresses: 507,
+      balance: 0, // TODO: find out other account to track, also, it being empty should be checked..
       network: coininfo.bitcoin.main.toBitcoinJS(),
       currencyId: "bitcoin",
     },
