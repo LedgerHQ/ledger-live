@@ -168,6 +168,7 @@
       "NFT_IN" : "ได้รับ NFT แล้ว",
       "NFT_OUT" : "ส่ง NFT แล้ว",
       "CREATE" : "สร้างแล้ว",
+      "UNKNOWN" : "ไม่รู้จัก",
       "REVEAL" : "เปิดเผยแล้ว",
       "DELEGATE" : "Delegate เรียบร้อยแล้ว",
       "REDELEGATE" : "Redelegate เรียบร้อยแล้ว",
@@ -1930,7 +1931,12 @@
         "default" : "ตรวจสอบรายละเอียด Swap บนอุปกรณ์ของคุณก่อนส่ง มีการแลกเปลี่ยน Address อย่างปลอดภัย ดังนั้นคุณไม่จำเป็นต้องตรวจสอบรายการเหล่านั้น",
         "provider" : "ตรวจสอบรายละเอียด Swap บนอุปกรณ์ของคุณก่อนส่ง {{providerName}} อาจต้องดำเนินการตรวจสอบเพิ่มเติมสำหรับบางธุรกรรม ส่งผลให้เกิดความล่าช้า"
       },
+      "simpleViewNotice" : {
+        "default" : "ตรวจสอบรายละเอียดการสวอป (Swap) บนอุปกรณ์ Ledger ของคุณก่อนส่งธุรกรรม",
+        "provider" : "ตรวจสอบรายละเอียดการสวอป (Swap) บนอุปกรณ์ของคุณก่อนส่งธุรกรรม {{providerName}} อาจต้องตรวจสอบธุรกรรมบางรายการเพิ่มเติม ซึ่งอาจทำให้เกิดความล่าช้า"
+      },
       "confirm" : "ยืนยันธุรกรรม Swap",
+      "confirmSwap" : "ยืนยันการดำเนินการสวอป (Swap) บนอุปกรณ์",
       "amountSent" : "จำนวนที่จะส่ง",
       "amountReceived" : "จำนวนที่จะได้รับ",
       "amountReceivedFloat" : "จำนวนที่จะได้รับก่อนคิดค่าบริการ",
@@ -2425,6 +2431,7 @@
         "nextBlock" : "บล็อกถัดไป",
         "suggested" : "แนะนำ",
         "unitVByte" : "{{unit}}/vbyte",
+        "unitPerByte" : "{{unit}}/ไบต์",
         "nft" : "NFT",
         "nftQuantity" : "ปริมาณ",
         "splExtensionsWarning" : "คุณกำลังโต้ตอบกับโทเคนที่เป็นส่วนหนึ่งของโปรแกรม Token-2022 หรือที่เรียกว่า Token Extensions โทเคนนี้มาพร้อมกับความเสี่ยง <0>คลิกที่นี่</0>เพื่อเรียนรู้เพิ่มเติม"
@@ -5866,6 +5873,10 @@
       "commentPlaceholder" : "ไม่บังคับ",
       "comment" : "ความคิดเห็น"
     },
+    "canton" : {
+      "commentPlaceholder" : "ไม่บังคับ",
+      "comment" : "ความคิดเห็น"
+    },
     "stellar" : {
       "memo" : "Memo",
       "memoType" : {
@@ -6313,6 +6324,10 @@
       "title" : "มีบางอย่างผิดปกติ",
       "description" : "ธุรกรรมล้มเหลว โปรดลองอีกครั้ง"
     },
+    "TransactionCannotBeCreated" : {
+      "title" : "ข้อผิดพลาดในการประมวลผล",
+      "description" : "Changelly ไม่สามารถประมวลผลธุรกรรมนี้ได้ รหัสข้อผิดพลาด 8HBB{{errorCode}}"
+    },
     "TimeoutError" : {
       "title" : "ขออภัย เซิร์ฟเวอร์ใช้เวลาตอบกลับนานเกินไป",
       "description" : "โปรดลองอีกครั้ง"
@@ -6461,6 +6476,9 @@
     },
     "TonCommentInvalid" : {
       "title" : "ความคิดเห็นต้องมีความยาวไม่เกิน 120 ตัวอักษรโดยไม่มีตัวอักษรพิเศษ"
+    },
+    "CantonCommentInvalid" : {
+      "title" : "ความคิดเห็นต้องมีความยาวไม่เกิน 120 ตัวอักษร และไม่มีตัวอักษรพิเศษ"
     },
     "CantScanQRCode" : {
       "title" : "สแกน QR Code นี้ไม่ได้: Address นี้ไม่รองรับการยืนยันอัตโนมัติ"
@@ -6853,11 +6871,11 @@
       "description" : "โปรดลองอีกครั้งด้วยภาพอื่น"
     },
     "ImageCommitRefusedOnDevice" : {
-      "title" : "การติดตั้ง ภาพล็อกสกรีน\nถูกยกเลิกบน {{productName}}",
+      "title" : "ทิ้งภาพล็อกสกรีนบน {{productName}}",
       "description" : "หากเป็นข้อผิดพลาด ลองใหม่ตอนนี้"
     },
     "ImageLoadRefusedOnDevice" : {
-      "title" : "การติดตั้ง ภาพล็อกสกรีน\nถูกยกเลิกบน {{productName}}",
+      "title" : "ยกเลิกภาพล็อกสกรีนบน\n {{productName}}",
       "description" : "หากเป็นข้อผิดพลาด ลองใหม่ตอนนี้"
     },
     "ImageDoesNotExistOnDevice" : {
@@ -7182,7 +7200,7 @@
     "steps" : {
       "choose" : {
         "stepLabel" : "เลือกภาพ",
-        "description" : "เลือกภาพที่จะตั้งค่าเป็น (...)",
+        "description" : "เลือกงานศิลปะดิจิทัลหรือภาพที่คุณต้องการ\nปรับแต่ง {{productName}}\nให้สะท้อนตัวตนของคุณ",
         "pickFromNftGallery" : "เลือกจากแกลเลอรี NFT ของฉัน",
         "myNfts" : "NFT ของฉัน",
         "upload" : "อัปโหลดจากคอมพิวเตอร์",
@@ -7195,7 +7213,7 @@
       "adjust" : {
         "stepLabel" : "ครอบตัด",
         "rotate" : "หมุน",
-        "confirmCrop" : "ยืนยันการครอบตัด"
+        "confirmCrop" : "ยืนยันการครอบภาพ"
       },
       "contrast" : {
         "stepLabel" : "ตั้งค่าคอนทราสต์",
@@ -7206,7 +7224,7 @@
         "useAnotherPicture" : "อัปโหลดอีกภาพ",
         "allowPreview" : "แตะที่ “โหลดภาพ” เพื่อ\nปรับแต่งภาพ ภาพล็อกสกรีนของคุณ",
         "allowConfirmPreview" : "แตะที่ “โหลดภาพ“ เพื่อ\nกู้คืน ภาพล็อกสกรีนของคุณ",
-        "loadingPicture" : "กำลังติดตั้ง...",
+        "loadingPicture" : "กำลังโหลด...",
         "voila" : "ครบถ้วนแล้ว!",
         "imageLoaded" : "โหลดภาพบน {{productName}}",
         "confirmPicture" : "ชอบสิ่งที่เห็น?\nเก็บไว้เลยสิ!",
@@ -7652,7 +7670,7 @@
         "foundAccounts_other" : "เราพบ {{count}} บัญชี",
         "scanning" : "กำลังสแกนบัญชี..."
       },
-      "title" : "Checking the blockchain..."
+      "title" : "กำลังตรวจสอบบล็อกเชน..."
     },
     "connectYourDevice" : {
       "title" : "เชื่อมต่อและปลดล็อกอุปกรณ์ของคุณ"
