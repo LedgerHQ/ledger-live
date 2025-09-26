@@ -15,7 +15,14 @@ type Props = {
 };
 
 export const AccountWarningCustomBanner = ({ currency }: Props) => {
-  const currencyConfig = getCurrencyConfiguration(currency);
+  let currencyConfig: CurrencyConfig | undefined = undefined;
+
+  try {
+    currencyConfig = getCurrencyConfiguration(currency);
+  } catch (err) {
+    console.warn(err);
+  }
+
   if (!currencyConfig) return null;
   const banner = currencyConfig.customBanner;
   if (!banner?.isDisplay) return null;

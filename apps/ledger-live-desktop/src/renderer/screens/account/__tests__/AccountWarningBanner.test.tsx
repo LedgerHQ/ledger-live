@@ -115,6 +115,16 @@ describe("AccountWarningCustomBanner", () => {
     jest.clearAllMocks();
   });
 
+  it("does not render banner if currencyConfig is undefined", () => {
+    mockedGetCurrencyConfiguration.mockImplementation(() => {
+      throw new Error("No config found");
+    });
+
+    render(<AccountWarningCustomBanner currency={mockCurrency} />);
+
+    expect(screen.queryByTestId("custom-banner")).not.toBeInTheDocument();
+  });
+
   it("renders nothing if no banner is defined in currencyConfig", () => {
     mockedGetCurrencyConfiguration.mockReturnValue({
       status: {
