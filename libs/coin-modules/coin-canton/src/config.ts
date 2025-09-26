@@ -7,7 +7,7 @@ export type CantonConfig = {
   gatewayUrl?: string;
   // TODELETE
   minReserve?: number;
-  networkType: "mainnet" | "devnet" | "localnet";
+  networkType: "mainnet" | "devnet" | "testnet" | "localnet";
   useGateway?: boolean;
   nativeInstrumentId: string;
   fee?: number;
