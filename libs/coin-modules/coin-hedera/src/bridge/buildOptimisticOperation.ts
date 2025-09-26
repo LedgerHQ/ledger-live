@@ -3,7 +3,7 @@ import type { Account, Operation, OperationType, TokenAccount } from "@ledgerhq/
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { findSubAccountById, isTokenAccount } from "@ledgerhq/coin-framework/account/helpers";
 import type { HederaOperationExtra, Transaction } from "../types";
-import { getEstimatedFees } from "./utils";
+import { getEstimatedFees, safeParseAccountId } from "./utils";
 import { isTokenAssociateTransaction } from "../logic";
 import { HEDERA_OPERATION_TYPES } from "../constants";
 
@@ -55,6 +55,8 @@ const buildOptimisticCoinOperation = async ({
       : await getEstimatedFees(account, HEDERA_OPERATION_TYPES.CryptoTransfer);
   const value = transaction.amount;
   const type: OperationType = transactionType ?? "OUT";
+  const [_, recipientAddress] = safeParseAccountId(transaction.recipient);
+  const recipientWithoutChecksum = recipientAddress?.accountId ?? transaction.recipient;
 
   const operation: Operation = {
     id: encodeOperationId(account.id, "", type),
@@ -65,7 +67,7 @@ const buildOptimisticCoinOperation = async ({
     blockHash: null,
     blockHeight: null,
     senders: [account.freshAddress.toString()],
-    recipients: [transaction.recipient],
+    recipients: [recipientWithoutChecksum],
     accountId: account.id,
     date: new Date(),
     extra: {},
@@ -86,6 +88,8 @@ const buildOptimisticTokenOperation = async ({
   const estimatedFee = await getEstimatedFees(account, HEDERA_OPERATION_TYPES.TokenTransfer);
   const value = transaction.amount;
   const type: OperationType = "OUT";
+  const [_, recipientAddress] = safeParseAccountId(transaction.recipient);
+  const recipientWithoutChecksum = recipientAddress?.accountId ?? transaction.recipient;
 
   const coinOperation = await buildOptimisticCoinOperation({
     account,
@@ -109,7 +113,7 @@ const buildOptimisticTokenOperation = async ({
         blockHash: null,
         blockHeight: null,
         senders: [account.freshAddress.toString()],
-        recipients: [transaction.recipient],
+        recipients: [recipientWithoutChecksum],
         accountId: tokenAccount.id,
         date: new Date(),
         extra: {},
