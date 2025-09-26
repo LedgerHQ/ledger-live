@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.95.0-nightly.1
+
+### Minor Changes
+
+- [#12017](https://github.com/LedgerHQ/ledger-live/pull/12017) [`1ad43ee`](https://github.com/LedgerHQ/ledger-live/commit/1ad43ee74ea3f26ccdc790ba67753da626c9af98) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Resolve errors & warnings during tests exec
+
 ## 3.95.0-nightly.0
 
 ### Minor Changes

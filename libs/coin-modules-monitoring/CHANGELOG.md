@@ -1,5 +1,16 @@
 # @ledgerhq/coin-modules-monitoring
 
+## 2.5.0-nightly.1
+
+### Minor Changes
+
+- [#12011](https://github.com/LedgerHQ/ledger-live/pull/12011) [`6405abf`](https://github.com/LedgerHQ/ledger-live/commit/6405abfe8fe73a8ba1a27b72531dc7d8886b8261) Thanks [@dilaouid](https://github.com/dilaouid)! - chore: use tezos addresses instead of public keys (following migration generic bridge)
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/live-common@34.50.0-nightly.1
+
 ## 2.4.1-nightly.0
 
 ### Patch Changes

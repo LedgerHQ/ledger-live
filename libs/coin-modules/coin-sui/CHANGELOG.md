@@ -1,5 +1,11 @@
 # @ledgerhq/coin-sui
 
+## 0.15.0-nightly.1
+
+### Minor Changes
+
+- [#11715](https://github.com/LedgerHQ/ledger-live/pull/11715) [`5e4c5c7`](https://github.com/LedgerHQ/ledger-live/commit/5e4c5c7f09fbb6d56bbb0bf4b4c74e2db7bedaa0) Thanks [@jnicoulaud-ledger](https://github.com/jnicoulaud-ledger)! - SUI/alpaca: return serialized objects when crafting a transaction
+
 ## 0.14.1-nightly.0
 
 ### Patch Changes

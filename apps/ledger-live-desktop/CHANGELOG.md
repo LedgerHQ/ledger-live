@@ -1,5 +1,19 @@
 # ledger-live-desktop
 
+## 2.130.0-nightly.1
+
+### Minor Changes
+
+- [#12017](https://github.com/LedgerHQ/ledger-live/pull/12017) [`1ad43ee`](https://github.com/LedgerHQ/ledger-live/commit/1ad43ee74ea3f26ccdc790ba67753da626c9af98) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Resolve errors & warnings during tests exec
+
+- [#11971](https://github.com/LedgerHQ/ledger-live/pull/11971) [`9a3e837`](https://github.com/LedgerHQ/ledger-live/commit/9a3e837d5010a23aebe304f5c8e432f8e93cddea) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Cleanup Jest logs
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/live-common@34.50.0-nightly.1
+  - @ledgerhq/live-dmk-desktop@0.10.1-nightly.1
+
 ## 2.130.0-nightly.0
 
 ### Minor Changes
