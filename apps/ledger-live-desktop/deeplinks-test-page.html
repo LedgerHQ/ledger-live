@@ -66,7 +66,7 @@
       outline: none
     }
 
-    input {
+    input[type="text"] {
       min-height: 50px;
       height: 50px;
       border: none;
@@ -75,6 +75,19 @@
       padding: 0 0 0 16px;
       margin: 8px 0;
       color: #bdb3ff;
+    }
+    .radioGroup {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      gap: 8px;
+      border: none;
+      padding: 0;
+      margin: 0 8px 16px 8px;
+
+      & > :first-child {
+        margin-right: auto;
+      }
     }
 
     .separator {
@@ -96,202 +109,154 @@
       </p>
   </header>
   <div class="scrollContent">
-    <input type="text" value="" placeholder="Edit currency..." id="currencyInput">
+    <fieldset class="radioGroup">
+      <div>Scheme:</div>
+      <label>
+        <input type="radio" name="scheme" value="ledgerwallet" checked />
+        ledgerwallet://
+      </label>
+      <label>
+        <input type="radio" name="scheme" value="ledgerlive" />
+        ledgerlive://
+      </label>
+    </fieldset>
+
+    <input type="text" name="CURRENCY_PARAM" value="bitcoin" placeholder="Edit currency...">
 
     <h3>Portfolio (Landing Page)</h3>
-    <button class="link" onclick="onClick('ledgerlive:\/\/')">
-      <p>ledgerlive://</p>
-      <p>🔗</p>
-    </button>
-
-    <button class="link" onclick="onClick('ledgerlive:\/\/portfolio')">
-      <p>ledgerlive://portfolio</p>
-      <p>🔗</p>
-    </button>
+    <deeplink-button pathname=""></deeplink-button>
+    <deeplink-button pathname="portfolio"></deeplink-button>
 
     <div class="separator"></div>
-    <h3>Accounts</h3>
-    <button class="link" onclick="onClick('ledgerlive:\/\/accounts')">
-      <p>ledgerlive://accounts</p>
-      <p>🔗</p>
-    </button>
 
-   
+    <h3>Accounts</h3>
+    <deeplink-button pathname="accounts"></deeplink-button>
 
     <div class="separator"></div>
 
     <h3>Account</h3>
-    <button class="link" onclick="onClick('ledgerlive:\/\/account')">
-      <p>ledgerlive://account</p>
-      <p>🔗</p>
-    </button>
-
-    <button class="link" onclick="onClick('ledgerlive:\/\/account?currency=CURRENCY_PARAM')">
-      <p>ledgerlive://account?currency=<b class="currencyName">bitcoin</b></p>
-      <p>🔗</p>
-    </button>
+    <deeplink-button pathname="account"></deeplink-button>
+    <deeplink-button pathname="account?currency=CURRENCY_PARAM"></deeplink-button>
 
     <div class="separator"></div>
+
     <h3>Add Account</h3>
-    <button class="link" onclick="onClick('ledgerlive:\/\/add-account')">
-      <p>ledgerlive://add-account</p>
-      <p>🔗</p>
-    </button>
-
-    <button class="link" onclick="onClick('ledgerlive:\/\/add-account?currency=CURRENCY_PARAM')">
-      <p>ledgerlive://add-account?currency=<b class="currencyName">bitcoin</b></p>
-      <p>🔗</p>
-    </button>
+    <deeplink-button pathname="add-account"></deeplink-button>
+    <deeplink-button pathname="add-account?currency=CURRENCY_PARAM"></deeplink-button>
 
     <div class="separator"></div>
+
     <h3>Send</h3>
-    <button class="link" onclick="onClick('ledgerlive:\/\/send')">
-      <p>ledgerlive://send</p>
-      <p>🔗</p>
-    </button>
-
-    <button class="link" onclick="onClick('ledgerlive:\/\/send?currency=CURRENCY_PARAM')">
-      <p>ledgerlive://send?currency=<b class="currencyName">bitcoin</b></p>
-      <p>🔗</p>
-    </button>
+    <deeplink-button pathname="send"></deeplink-button>
+    <deeplink-button pathname="send?currency=CURRENCY_PARAM"></deeplink-button>
 
     <div class="separator"></div>
+
     <h3>Receive</h3>
-    <button class="link" onclick="onClick('ledgerlive:\/\/receive')">
-      <p>ledgerlive://receive</p>
-      <p>🔗</p>
-    </button>
+    <deeplink-button pathname="receive"></deeplink-button>
+    <deeplink-button pathname="receive?currency=CURRENCY_PARAM"></deeplink-button>
 
-    <button class="link" onclick="onClick('ledgerlive:\/\/receive?currency=CURRENCY_PARAM')">
-      <p>ledgerlive://receive?currency=<b class="currencyName">bitcoin</b></p>
-      <p>🔗</p>
-    </button>
     <div class="separator"></div>
+
     <h3>Delegate</h3>
-
     <p>Only currency supported is currently tezos. </p>
-    <button class="link" onclick="onClick('ledgerlive:\/\/delegate')">
-      <p>ledgerlive://delegate</p>
-      <p>🔗</p>
-    </button>
-
-    <button class="link" onclick="onClick('ledgerlive:\/\/delegate?currency=tezos')">
-      <p>ledgerlive://delegate?currency=tezos</p>
-      <p>🔗</p>
-    </button>
+    <deeplink-button pathname="delegate"></deeplink-button>
+    <deeplink-button pathname="delegate?currency=tezos"></deeplink-button>
 
     <div class="separator"></div>
+
     <h3>Buy</h3>
-    <button class="link" onclick="onClick('ledgerlive:\/\/buy')">
-      <p>ledgerlive://buy</p>
-      <p>🔗</p>
-    </button>
-
-    <button class="link" onclick="onClick('ledgerlive:\/\/buy/CURRENCY_PARAM')">
-      <p>ledgerlive://buy/<b class="currencyName">bitcoin</b></p>
-      <p>🔗</p>
-    </button>
+    <deeplink-button pathname="buy"></deeplink-button>
+    <deeplink-button pathname="buy/CURRENCY_PARAM"></deeplink-button>
 
     <div class="separator"></div>
+
     <h3>Swap</h3>
-    <button class="link" onclick="onClick('ledgerlive:\/\/swap')">
-      <p>ledgerlive://swap</p>
-      <p>🔗</p>
-    </button>
+    <deeplink-button pathname="swap"></deeplink-button>
 
     <div class="separator"></div>
     <h3>MyLedger</h3>
-    <button class="link" onclick="onClick('ledgerlive:\/\/myledger')">
-      <p>ledgerlive://myledger</p>
-      <p>🔗</p>
-    </button>
-
-    <button class="link" onclick="onClick('ledgerlive:\/\/myledger?installApp=CURRENCY_PARAM')">
-      <p>ledgerlive://myledger?installApp=<b class="currencyName">bitcoin</b></p>
-      </p>
-      <p>🔗</p>
-    </button>
+    <deeplink-button pathname="myledger"></deeplink-button>
+    <deeplink-button pathname="myledger?installApp=CURRENCY_PARAM"></deeplink-button>
 
     <div class="separator"></div>
+
     <h3>Discover</h3>
-    <button class="link" onclick="onClick('ledgerlive:\/\/discover')">
-      <p>ledgerlive://discover</p>
-      <p>🔗</p>
-    </button>
+    <deeplink-button pathname="discover"></deeplink-button>
 
-    <input type="text" value="" placeholder="Edit platform app id..." id="platformAppInput">
+    <input type="text" name="PLATFORM_APP_PARAM" value="paraswap" placeholder="Edit platform app id...">
+    <deeplink-button pathname="discover/PLATFORM_APP_PARAM"></deeplink-button>
+    <deeplink-button pathname="discover/PLATFORM_APP_PARAM?accountId=1"></deeplink-button>
+    <deeplink-button pathname="discover?category=restaking"></deeplink-button>
 
-    <button class="link" onclick="onClick('ledgerlive:\/\/discover\/PLATFORM_APP_PARAM')">
-      <p>ledgerlive://discover/<b class="platformApp">paraswap</b></p>
-      <p>🔗</p>
-    </button>
-
-    <button class="link" onclick="onClick('ledgerlive:\/\/discover\/PLATFORM_APP_PARAM?accountId=1')">
-      <p>ledgerlive://discover/<b class="platformApp">paraswap</b>?accountId=1</p>
-      <p>🔗</p>
-    </button>
-
-    <button class="link" onclick="onClick('ledgerlive:\/\/discover\?category=restaking')">
-      <p>ledgerlive://discover?category=<b class="platformApp">restaking</b></p>
-      <p>🔗</p>
-    </button>
     <div class="separator"></div>
 
     <h3>Earn</h3>
-    <button class="link" onclick="onClick('ledgerlive:\/\/earn')">
-      <p>ledgerlive://earn</p>
-      <p>🔗</p>
-    </button>
-
-    <button class="link" onclick="onClick('ledgerlive:\/\/earn?action=stake')">
-      <p>ledgerlive://earn?action=stake</p>
-      <p>🔗</p>
-    </button>
-
-    <button class="link" onclick="onClick('ledgerlive:\/\/earn?action=stake-account&accountId=1')">
-      <p>ledgerlive://earn?action=stake-account&accountId=1</p>
-      <p>🔗</p>
-    </button>
-
-    <button class="link" onclick="onClick('ledgerlive:\/\/earn?action=get-funds&currencyId=ethereum')">
-      <p>ledgerlive://earn?action=get-funds&currencyId=ethereum</p>
-      <p>🔗</p>
-    </button>
+    <deeplink-button pathname="earn"></deeplink-button>
+    <deeplink-button pathname="earn?action=stake"></deeplink-button>
+    <deeplink-button pathname="earn?action=stake-account&accountId=1"></deeplink-button>
+    <deeplink-button pathname="earn?action=get-funds&currencyId=ethereum"></deeplink-button>
 
     <div class="separator"></div>
     
     <h3>Market</h3>
-    <button class="link" onclick="onClick('ledgerlive:\/\/market')">
-      <p>ledgerlive://market</p>
-      <p>🔗</p>
-    </button>
+    <deeplink-button pathname="market"></deeplink-button>
   </div>
   <script>
-    let currency = "bitcoin";
-    let platformApp = "paraswap"
-    function onClick(url) {
-      window.open(
-        url
-          .replace(/CURRENCY_PARAM/, currency)
-          .replace(/PLATFORM_APP_PARAM/, platformApp),
-        "_blank"
-      );
-    }
-
-    function onChangeCurrency(evt) {
-      currency = evt.target.value.toLowerCase();
-      Array.from(document.querySelectorAll("b.currencyName")).forEach(el => el.innerHTML = currency)
-    }
-
-    function onChangePlatformApp(evt) {
-      platformApp = event.target.value.toLowerCase()
-      Array.from(document.querySelectorAll("b.platformApp")).forEach(el => el.innerHTML = platformApp)
-    }
+    const state = {}
 
     window.onload = () => {
-      document.getElementById("currencyInput").onchange = onChangeCurrency;
-      document.getElementById("platformAppInput").onchange = onChangePlatformApp;
+      document.querySelectorAll("input[name]").forEach(input => {
+        state[input.name] = input.value;
+        input.oninput = (e) => {
+          state[input.name] = input.value;
+          dispatchEvent(new Event('rerender'));
+        }
+      });
+      document.querySelectorAll("input[name][checked]").forEach(input => {
+        state[input.name] = input.value;
+      });
+      dispatchEvent(new Event('rerender'));
     }
+
+
+    class LinkButton extends HTMLElement {
+      container = null;
+      pathname = "";
+
+      constructor() {
+        super();
+        this.pathname = this.getAttribute('pathname');
+
+        this.container = document.createElement("button");
+        this.container.className = "link";
+        this.container.onclick = () => this.onClick();
+        this.appendChild(this.container);
+        this.render();
+        window.addEventListener('rerender', () => this.render());
+      }
+
+      render() {
+        this.container.innerHTML = `
+          <p>${this.getUrl((key, value) => `<b class="${key}">${value}</b>`)}</p>
+          <p>🔗</p>
+        `;
+      }
+
+      onClick() {
+        window.open(this.getUrl(), "_blank");
+      }
+
+      getUrl(format = (k, v) => v) {
+        return Object.entries(state)
+          .filter(([key]) => /^\S+_PARAM$/.test(key))
+          .reduce(
+            (url, [key, value]) => url.replace(key, format(key, value)),
+           `${state.scheme}://${this.pathname}` 
+          );
+      }
+    }
+    customElements.define("deeplink-button", LinkButton);
   </script>
 </body>
 

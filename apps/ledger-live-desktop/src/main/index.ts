@@ -37,6 +37,8 @@ console.time("T-init");
 
 Store.initRenderer();
 
+const SUPPORTED_SCHEMES = ["ledgerlive", "ledgerwallet"];
+
 const gotLock = app.requestSingleInstanceLock();
 const { LEDGER_CONFIG_DIRECTORY } = process.env;
 const userDataDirectory = LEDGER_CONFIG_DIRECTORY || app.getPath("userData");
@@ -54,7 +56,9 @@ if (!gotLock) {
 
       // Deep linking for when the app is already running (Windows, Linux)
       if (process.platform === "win32" || process.platform === "linux") {
-        const uri = commandLine.filter(arg => arg.startsWith("ledgerlive://"));
+        const uri = commandLine.filter(arg =>
+          SUPPORTED_SCHEMES.some(scheme => arg.startsWith(`${scheme}://`)),
+        );
         if (uri.length) {
           if ("send" in w.webContents) {
             w.webContents.send("deep-linking", uri[0]);
@@ -211,20 +215,22 @@ app.on("ready", async () => {
   if (__DEV__ || process.env.PLAYWRIGHT_RUN) {
     // Catch ledgerlive:// deep-link requests in dev mode from the app or live-apps
     // We cannot get deep-links from outside the app, from the browser for example
-    protocol.handle("ledgerlive", request => {
-      const url = request.url;
-      getMainWindowAsync()
-        .then(w => {
-          if (w) {
-            show(w);
-            if ("send" in w.webContents) {
-              w.webContents.send("deep-linking", url);
+    SUPPORTED_SCHEMES.forEach(scheme => {
+      protocol.handle(scheme, request => {
+        const url = request.url;
+        getMainWindowAsync()
+          .then(w => {
+            if (w) {
+              show(w);
+              if ("send" in w.webContents) {
+                w.webContents.send("deep-linking", url);
+              }
             }
-          }
-        })
-        .catch((err: unknown) => console.log(err));
+          })
+          .catch((err: unknown) => console.log(err));
 
-      return new Response();
+        return new Response();
+      });
     });
   }
 
@@ -287,7 +293,9 @@ ipcMain.on("ready-to-show", () => {
     // Deep linking for when the app is not running already (Windows, Linux)
     if (process.platform === "win32" || process.platform === "linux") {
       const { argv } = process;
-      const uri = argv.filter(arg => arg.startsWith("ledgerlive://"));
+      const uri = argv.filter(arg =>
+        SUPPORTED_SCHEMES.some(scheme => arg.startsWith(`${scheme}://`)),
+      );
       if (uri.length) {
         show(w);
         if ("send" in w.webContents) {
