@@ -72,6 +72,7 @@ type Props = {
   setError: (error?: Error) => void;
 };
 export default function Body({ onChangeStepId, onClose, setError, params, stepId }: Props) {
+  const { t } = useTranslation();
   const device = useSelector(getCurrentDevice);
   const dispatch = useDispatch();
   const { account, parentAccount, transaction, manifestId, manifestName, useApp, dependencies } =
@@ -117,6 +118,7 @@ export default function Body({ onChangeStepId, onClose, setError, params, stepId
   return (
     <Stepper
       stepId={stepId}
+      title={t("sign.title")}
       manifestId={manifestId}
       manifestName={manifestName}
       useApp={useApp}
