@@ -11,7 +11,10 @@ import ErrorScreen from "~/screens/CustomImage/ErrorScreen";
 import Step0Welcome from "~/screens/CustomImage/Step0Welcome";
 import PreviewPreEdit from "~/screens/CustomImage/PreviewPreEdit";
 import PreviewPostEdit from "~/screens/CustomImage/PreviewPostEdit";
+import { CustomImageRemoval } from "~/screens/CustomImage/CustomImageRemoval";
 import { CustomImageNavigatorParamList } from "./types/CustomImageNavigator";
+
+const emptyComponent = () => null;
 
 export default function CustomImageNavigator() {
   const { colors } = useTheme();
@@ -66,6 +69,15 @@ export default function CustomImageNavigator() {
         options={{
           title: t("customImage.preview.title"),
           headerRight: undefined,
+        }}
+      />
+      <Stack.Screen
+        name={ScreenName.CustomImageRemoval}
+        component={CustomImageRemoval}
+        options={{
+          title: "",
+          headerLeft: emptyComponent,
+          gestureEnabled: false,
         }}
       />
     </Stack.Navigator>
