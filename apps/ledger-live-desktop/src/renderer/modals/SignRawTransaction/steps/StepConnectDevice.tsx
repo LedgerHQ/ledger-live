@@ -30,7 +30,7 @@ export default function StepConnectDevice({
 
   return (
     <>
-      <TrackPage category="Sign Transaction Flow" name="Step ConnectDevice" />
+      <TrackPage category="Sign Raw Transaction Flow" name="Step ConnectDevice" />
       <GenericStepConnectDevice
         account={account}
         useApp={useApp}
