@@ -4,7 +4,7 @@ import { isValidAddress } from "@celo/utils/lib/address";
 import getFeesForTransaction from "./getFeesForTransaction";
 import { CeloAccount, Transaction } from "../types";
 import { findSubAccountById } from "@ledgerhq/coin-framework/account/index";
-import { CELO_STABLE_TOKENS, MAX_PRIORITY_FEE_PER_GAS } from "../constants";
+import { CELO_STABLE_TOKENS } from "../constants";
 import { celoKit } from "../network/sdk";
 
 export const prepareTransaction: AccountBridge<
@@ -44,8 +44,9 @@ export const prepareTransaction: AccountBridge<
   }
 
   const block = await kit.connection.web3.eth.getBlock("latest");
-  const baseFee = BigInt(block.baseFeePerGas || MAX_PRIORITY_FEE_PER_GAS);
-  const maxFeePerGas = baseFee + MAX_PRIORITY_FEE_PER_GAS;
+  const maxPriorityFeePerGas = await kit.connection.getMaxPriorityFeePerGas();
+  const baseFee = BigInt(block.baseFeePerGas || maxPriorityFeePerGas);
+  const maxFeePerGas = baseFee + BigInt(maxPriorityFeePerGas);
 
   return {
     ...transaction,
