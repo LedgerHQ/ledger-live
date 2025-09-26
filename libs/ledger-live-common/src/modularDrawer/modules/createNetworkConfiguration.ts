@@ -53,12 +53,7 @@ export const getRightElement =
 
 export const createNetworkConfigurationHook =
   (NetworkConfigurationDeps: NetworkConfigurationDeps) =>
-  ({
-    networksConfig,
-    selectedAssetId,
-    currenciesByProvider,
-    accounts$,
-  }: CreateNetworkConfigurationHookProps) => {
+  ({ networksConfig, accounts$ }: CreateNetworkConfigurationHookProps) => {
     const { leftElement, rightElement } = networksConfig ?? {};
     const leftHook = getLeftElement(NetworkConfigurationDeps)(leftElement);
     const rightHook = getRightElement(NetworkConfigurationDeps)(rightElement);
@@ -75,8 +70,6 @@ export const createNetworkConfigurationHook =
           hook => () =>
             hook({
               assets,
-              selectedAssetId,
-              currenciesByProvider: currenciesByProvider || [],
               accounts$,
               networks,
             }),
