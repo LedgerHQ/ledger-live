@@ -39,7 +39,6 @@ import { SEED_STATE, SeedPathStatus, FirstStepCompanionStepKey } from "./types";
  */
 
 const POLLING_PERIOD_MS = 1000;
-const READY_SHOW_SUCCESS_DELAY_MS = 2000;
 const OPACITY_DURATION = 400;
 
 const fromSeedPhraseTypeToAnalyticsPropertyString = new Map<SeedPhraseType, string>([
@@ -99,7 +98,6 @@ const FirstStepSyncOnboarding = ({
    */
 
   const [seedPathStatus, setSeedPathStatus] = useState<SeedPathStatus>("choice_new_or_restore");
-  const [hasFinishedAnimation, setHasFinishedAnimation] = useState<boolean>(false);
   const [hasFinishedExitAnimation, setHasFinishedExitAnimation] = useState<boolean>(false);
   const [isFinishedStep, setIsFinishedStep] = useState<boolean>(false);
 
@@ -114,7 +112,6 @@ const FirstStepSyncOnboarding = ({
   const lastCompanionStepKey = useRef<FirstStepCompanionStepKey>();
   const analyticsSeedingTracked = useRef(false);
   const addedToKnownDevices = useRef(false);
-  const readyShowSuccessTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   /**
    * True if the device was initially onboarded/seeded when this component got
@@ -405,21 +402,6 @@ const FirstStepSyncOnboarding = ({
   }, [deviceOnboardingState, handleSeedGenerationDelay]);
 
   // Handle delay for animation to success step
-  useEffect(() => {
-    if (companionSteps.activeStep === FirstStepCompanionStepKey.Ready) {
-      readyShowSuccessTimerRef.current = setTimeout(
-        () => setHasFinishedAnimation(true),
-        READY_SHOW_SUCCESS_DELAY_MS,
-      );
-    }
-
-    return () => {
-      if (readyShowSuccessTimerRef.current) {
-        clearTimeout(readyShowSuccessTimerRef.current);
-        readyShowSuccessTimerRef.current = null;
-      }
-    };
-  }, [companionSteps.activeStep, setHasFinishedAnimation]);
 
   useEffect(() => {
     if (parentRef?.current && companionSteps.activeStep === FirstStepCompanionStepKey.Seed) {
