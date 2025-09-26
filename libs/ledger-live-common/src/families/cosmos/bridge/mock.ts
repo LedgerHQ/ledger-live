@@ -32,6 +32,7 @@ import {
   makeAccountBridgeReceive,
   scanAccounts,
   signOperation,
+  signRawOperation,
   sync,
 } from "../../../bridge/mockHelpers";
 import { getCurrencyConfiguration } from "../../../config";
@@ -126,6 +127,7 @@ const accountBridge: AccountBridge<Transaction> = {
   sync,
   receive,
   signOperation,
+  signRawOperation,
   broadcast,
   assignFromAccountRaw,
   assignToAccountRaw,

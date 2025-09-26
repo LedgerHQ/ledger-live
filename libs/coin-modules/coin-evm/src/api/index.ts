@@ -51,6 +51,14 @@ export function createApi(
       transactionIntent: TransactionIntent<MemoNotSupported, BufferTxData>,
       customFees?: FeeEstimation,
     ): Promise<CraftedTransaction> => craftTransaction(currency, { transactionIntent, customFees }),
+    craftRawTransaction: (
+      _transaction: string,
+      _sender: string,
+      _publicKey: string,
+      _sequence: number,
+    ): Promise<CraftedTransaction> => {
+      throw new Error("craftRawTransaction is not supported");
+    },
     estimateFees: (
       transactionIntent: TransactionIntent<MemoNotSupported, BufferTxData>,
     ): Promise<FeeEstimation> => estimateFees(currency, transactionIntent),

@@ -55,6 +55,9 @@ function buildAccountBridge(
     sync,
     receive: receive(getAddressWrapper(getAddress)),
     signOperation,
+    signRawOperation: () => {
+      throw new Error("signRawOperation is not supported");
+    },
     broadcast,
     getSerializedAddressParameters,
   };

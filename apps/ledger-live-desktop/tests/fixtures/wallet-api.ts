@@ -146,6 +146,14 @@ export const mockedAccountList = [
     balance: "10010000",
     spendableBalance: "10010000",
   },
+  {
+    id: "426a054c-7938-52bb-830a-4e620782038f",
+    name: "XRP 1",
+    address: "rN7n7otQDd6FczFgLdSqtcsAUxDkw6fzRH",
+    currency: "ripple",
+    balance: "25000000",
+    spendableBalance: "25000000",
+  },
 ];
 
 export const expectedCurrencyList = [
@@ -1093,5 +1101,14 @@ export const expectedCurrencyList = [
     family: "cosmos",
     color: "#CE6533",
     decimals: 6,
+  },
+  {
+    color: "#70C7BA",
+    decimals: 8,
+    family: "kaspa",
+    id: "kaspa",
+    name: "KASPA",
+    ticker: "KAS",
+    type: "CryptoCurrency",
   },
 ];

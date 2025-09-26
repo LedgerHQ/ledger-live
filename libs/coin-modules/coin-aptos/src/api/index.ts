@@ -26,6 +26,14 @@ export function createApi(config: AptosConfigApi): AlpacaApi {
     combine: (tx, signature, pubkey): string => combine(tx, signature, pubkey),
     craftTransaction: (transactionIntent, _customFees): Promise<CraftedTransaction> =>
       craftTransaction(client, transactionIntent),
+    craftRawTransaction: (
+      _transaction: string,
+      _sender: string,
+      _publicKey: string,
+      _sequence: number,
+    ): Promise<CraftedTransaction> => {
+      throw new Error("craftRawTransaction is not supported");
+    },
     estimateFees: (transactionIntent: TransactionIntent) => client.estimateFees(transactionIntent),
     getBalance: (address): Promise<Balance[]> => getBalances(client, address),
     lastBlock: () => client.getLastBlock(),

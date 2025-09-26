@@ -28,7 +28,7 @@
   "dependencies": {
     "@ledgerhq/devices": "workspace:*",
     "@ledgerhq/errors": "workspace:^",
-    "@ledgerhq/hw-transport": "workspace:^",
+    "@ledgerhq/hw-transport": "workspace:*",
     "@ledgerhq/logs": "workspace:^"
   },
   "devDependencies": {

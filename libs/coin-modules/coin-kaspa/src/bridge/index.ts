@@ -93,6 +93,9 @@ function buildAccountBridge(
     receive,
     initAccount,
     signOperation,
+    signRawOperation: () => {
+      throw new Error("signRawOperation is not supported");
+    },
     broadcast,
     estimateMaxSpendable,
   };

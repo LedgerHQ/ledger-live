@@ -25,6 +25,7 @@ import {
 import {
   scanAccounts,
   signOperation,
+  signRawOperation,
   broadcast,
   sync,
   makeAccountBridgeReceive,
@@ -168,6 +169,7 @@ const accountBridge: AccountBridge<CardanoTransaction> = {
   sync,
   receive,
   signOperation,
+  signRawOperation,
   broadcast,
   getSerializedAddressParameters,
 };

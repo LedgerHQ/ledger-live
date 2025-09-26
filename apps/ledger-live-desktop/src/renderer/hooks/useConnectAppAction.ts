@@ -15,6 +15,7 @@ import {
   createAction as createManagerAction,
 } from "@ledgerhq/live-common/hw/actions/manager";
 import { createAction as createTransactionAction } from "@ledgerhq/live-common/hw/actions/transaction";
+import { createAction as createRawTransactionAction } from "@ledgerhq/live-common/hw/actions/rawTransaction";
 import { createAction as createStartExchangeAction } from "@ledgerhq/live-common/hw/actions/startExchange";
 import { getEnv } from "@ledgerhq/live-env";
 import { mockedEventEmitter } from "~/renderer/components/debug/DebugMock";
@@ -46,6 +47,18 @@ export function useTransactionAction() {
   const action = useMemo(
     () =>
       createTransactionAction(
+        getEnv("MOCK") ? mockedEventEmitter : connectApp({ isLdmkConnectAppEnabled }),
+      ),
+    [isLdmkConnectAppEnabled],
+  );
+  return action;
+}
+
+export function useRawTransactionAction() {
+  const isLdmkConnectAppEnabled = useFeature("ldmkConnectApp")?.enabled ?? false;
+  const action = useMemo(
+    () =>
+      createRawTransactionAction(
         getEnv("MOCK") ? mockedEventEmitter : connectApp({ isLdmkConnectAppEnabled }),
       ),
     [isLdmkConnectAppEnabled],

@@ -1,6 +1,7 @@
 export { broadcast } from "./broadcast";
 export { combine } from "./combine";
 export { craftTransaction } from "./craftTransaction";
+export { craftRawTransaction } from "./craftRawTransaction";
 export type { MemoInput } from "./craftTransaction";
 export { estimateFees } from "./estimateFees";
 export { getBalance } from "./getBalance";

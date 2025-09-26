@@ -9,7 +9,6 @@ export type StepId = "amount" | "summary" | "device" | "confirmation" | "warning
 export type StepProps = {
   t: TFunction;
   transitionTo: (a: string) => void;
-  openedFromAccount: boolean;
   useApp?: string;
   dependencies?: string[];
   device: Device | undefined | null;
