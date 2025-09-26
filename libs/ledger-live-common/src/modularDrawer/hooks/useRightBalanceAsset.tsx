@@ -71,19 +71,15 @@ export function createUseRightBalanceAsset({ useBalanceDeps, balanceItem, assets
       const assetsWithBalanceData = assets.map(asset => {
         const balanceData = balanceMap.get(asset.id) || {};
         return {
-          asset,
+          ...asset,
           balanceData,
+          rightElement: balanceItem(balanceData),
         };
       });
 
-      assetsWithBalanceData.sort((a, b) =>
+      return assetsWithBalanceData.sort((a, b) =>
         compareByBalanceThenFiat(a.balanceData, b.balanceData, discreet),
       );
-
-      return assetsWithBalanceData.map(({ asset, balanceData }) => ({
-        ...asset,
-        rightElement: balanceItem(balanceData),
-      }));
     }, [assets, grouped, counterValueCurrency, locale, discreet]);
   };
 }

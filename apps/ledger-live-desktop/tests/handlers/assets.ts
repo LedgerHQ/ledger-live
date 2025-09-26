@@ -79,7 +79,7 @@ const handleFilteredCurrencyIds = (currencyIds: string[]) => {
   if (hasBitcoin) {
     Object.assign(res.cryptoAssets, {
       bitcoin: {
-        ...jsonResponse.cryptoAssets["bitcoin"],
+        ...jsonResponse.cryptoAssets.bitcoin,
       },
     });
     Object.assign(res.networks, {
@@ -89,7 +89,12 @@ const handleFilteredCurrencyIds = (currencyIds: string[]) => {
       bitcoin: { ...jsonResponse.cryptoOrTokenCurrencies.bitcoin },
     });
     Object.assign(res.interestRates, {
-      bitcoin: { ...jsonResponse.interestRates },
+      bitcoin: {
+        currencyId: "bitcoin",
+        rate: 0,
+        type: "APY",
+        fetchAt: "2025-09-23T13:13:12.088142Z",
+      },
     });
     Object.assign(res.markets, {
       bitcoin: { ...jsonResponse.markets.bitcoin },

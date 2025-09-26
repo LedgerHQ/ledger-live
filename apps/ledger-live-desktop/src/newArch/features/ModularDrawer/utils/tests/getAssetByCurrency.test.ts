@@ -4,7 +4,7 @@ import {
   bitcoinCurrency,
   ethereumCurrency,
 } from "../../../__mocks__/useSelectAssetFlow.mock";
-import { getProvider } from "../getProvider";
+import { getAssetByCurrency } from "../getAssetByCurrency";
 import { AssetData } from "@ledgerhq/live-common/modularDrawer/utils/type";
 
 const MOCK_ASSETS_SORTED: AssetData[] = [
@@ -37,19 +37,19 @@ const MOCK_ASSETS_SORTED: AssetData[] = [
 
 describe("getProvider", () => {
   it("should return the provider for a currency with a single provider", () => {
-    const result = getProvider(bitcoinCurrency, MOCK_ASSETS_SORTED);
+    const result = getAssetByCurrency(bitcoinCurrency, MOCK_ASSETS_SORTED);
     expect(result).toBeDefined();
     expect(result?.asset.id).toBe("bitcoin");
   });
 
   it("should return the provider for a currency with multiple providers", () => {
-    const result = getProvider(ethereumCurrency, MOCK_ASSETS_SORTED);
+    const result = getAssetByCurrency(ethereumCurrency, MOCK_ASSETS_SORTED);
     expect(result).toBeDefined();
     expect(result?.asset.id).toBe("ethereum");
   });
 
   it("should return undefined for a currency with no provider", () => {
-    const result = getProvider(baseCurrency, MOCK_ASSETS_SORTED);
+    const result = getAssetByCurrency(baseCurrency, MOCK_ASSETS_SORTED);
     expect(result).toBeUndefined();
   });
 });

@@ -9,7 +9,7 @@ import { AssetData } from "./type";
  * @returns boolean indicating whether all currencies in the array have one common provider
  */
 
-export const haveOneCommonProvider = (
+export const haveOneCommonAsset = (
   currenciesIdsArray: string[],
   currenciesByProvider: AssetData[],
 ): boolean => {

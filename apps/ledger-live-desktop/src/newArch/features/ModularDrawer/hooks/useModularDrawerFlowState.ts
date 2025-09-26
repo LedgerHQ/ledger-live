@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect } from "react";
-import { getProvider } from "../utils/getProvider";
+import { getAssetByCurrency } from "../utils/getAssetByCurrency";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { ModularDrawerStep } from "../types";
 import { useModularDrawerAnalytics } from "../analytics/useModularDrawerAnalytics";
@@ -128,7 +128,7 @@ export function useModularDrawerFlowState({
 
   const handleAssetSelected = useCallback(
     (currency: CryptoOrTokenCurrency) => {
-      const currentProvider = getProvider(currency, assets);
+      const currentProvider = getAssetByCurrency(currency, assets);
       setProviders(currentProvider);
 
       if (!currentProvider) {
@@ -156,7 +156,6 @@ export function useModularDrawerFlowState({
 
   useEffect(() => {
     if (hasOneCurrency && searchedValue === undefined && !selectedAsset && assets) {
-      // TODO hasOneCurrency could be replaced with assets?.length === 1
       const assetItem = assets[0];
 
       if (assetItem.networks.length > 0) {

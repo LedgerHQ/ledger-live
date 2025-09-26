@@ -70,12 +70,12 @@ export const SelectAssetList = ({
   const assetsTransformed = transformAssets(assetsToDisplay);
   const formattedAssets = useMemo(() => {
     return assetsTransformed.map(asset => {
-      const currencyByProvider = assetsSorted?.find(c => c.networks[0]?.id === asset.id);
+      const assetWithNetworks = assetsSorted?.find(c => c.networks[0]?.id === asset.id);
 
       return {
         ...asset,
-        numberOfNetworks: currencyByProvider?.networks?.length,
-        assetId: currencyByProvider?.asset.metaCurrencyId,
+        numberOfNetworks: assetWithNetworks?.networks?.length,
+        assetId: assetWithNetworks?.asset.metaCurrencyId,
       };
     });
   }, [assetsTransformed, assetsSorted]);
