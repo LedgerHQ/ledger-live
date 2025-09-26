@@ -184,6 +184,59 @@ export const makeAccountBridgeReceive: () => (
     publicKey: "mockPublickKey", // We could probably keep the publicKey in `account.freshPublicKey`
   });
 
-export const signRawOperation = () => {
-  throw new Error("signRawOperation is not supported");
-};
+export const signRawOperation: AccountBridge<any>["signRawOperation"] = ({ account }) =>
+  new Observable(o => {
+    let cancelled = false;
+
+    async function main() {
+      await delay(1000);
+      if (cancelled) return;
+
+      for (let i = 0; i <= 1; i += 0.1) {
+        o.next({
+          type: "device-streaming",
+          progress: i,
+          index: i,
+          total: 10,
+        });
+        await delay(300);
+      }
+
+      o.next({
+        type: "device-signature-requested",
+      });
+      await delay(2000);
+      if (cancelled) return;
+      o.next({
+        type: "device-signature-granted",
+      });
+      const rng = new Prando("");
+      const op = genOperation(account, account, account.operations, rng);
+      op.type = "OUT";
+      op.value = new BigNumber(0);
+      op.blockHash = null;
+      op.blockHeight = null;
+      op.senders = [account.freshAddress];
+      op.recipients = [];
+      op.blockHeight = account.blockHeight;
+      op.date = new Date();
+      await delay(1000);
+      if (cancelled) return;
+      broadcasted[account.id] = (broadcasted[account.id] || []).concat(op);
+      o.next({
+        type: "signed",
+        signedOperation: {
+          operation: { ...op },
+          signature: "",
+        },
+      });
+    }
+
+    main().then(
+      () => o.complete(),
+      e => o.error(e),
+    );
+    return () => {
+      cancelled = true;
+    };
+  });

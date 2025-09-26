@@ -166,7 +166,7 @@ export default function App() {
   const handleTransactionSignRaw = async () => {
     try {
       const result = await client?.transaction.signRaw(accountId, data);
-      setRes(result?.toString() || "empty response");
+      setRes(result || "no response");
     } catch (err) {
       setRes(err);
     }

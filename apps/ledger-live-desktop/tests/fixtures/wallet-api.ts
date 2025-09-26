@@ -147,7 +147,7 @@ export const mockedAccountList = [
     spendableBalance: "10010000",
   },
   {
-    id: "8f4a9c3e-6b2d-4e8a-9c1f-3a7b5d2f9e4c",
+    id: "426a054c-7938-52bb-830a-4e620782038f",
     name: "XRP 1",
     address: "rN7n7otQDd6FczFgLdSqtcsAUxDkw6fzRH",
     currency: "ripple",
