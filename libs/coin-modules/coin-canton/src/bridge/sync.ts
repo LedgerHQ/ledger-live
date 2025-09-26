@@ -21,11 +21,16 @@ const txInfoToOperationAdapter =
       transfers: [{ value: transferValue, details }],
     } = txInfo;
     let type: OperationType = "UNKNOWN";
-    if (txInfo.type === "Send") {
+    if (txInfo.type === "Send" && transferValue === "0") {
+      type = "FEES";
+    } else if (txInfo.type === "Send") {
       type = senders.includes(partyId) ? "OUT" : "IN";
     } else if (txInfo.type === "Receive") {
       type = "IN";
+    } else if (txInfo.type === "Initialize") {
+      type = "PRE_APPROVAL";
     }
+
     const value = new BigNumber(transferValue);
     const feeValue = new BigNumber(fee);
     const memo = details.metadata.reason;
@@ -64,7 +69,7 @@ export const getAccountShape: GetAccountShape<CantonAccount> = async info => {
   const { address, initialAccount, currency, derivationMode, derivationPath, rest } = info;
 
   const xpubOrAddress = (
-    (initialAccount && initialAccount.id && decodeAccountId(initialAccount.id).xpubOrAddress) ||
+    (initialAccount?.id && decodeAccountId(initialAccount.id).xpubOrAddress) ||
     ""
   ).replace(/:/g, "_");
   const partyId =
@@ -84,8 +89,10 @@ export const getAccountShape: GetAccountShape<CantonAccount> = async info => {
   // const accountInfo = await getAccountInfo(address);
   const balances = await getBalance(currency, partyId);
 
-  const balanceData = balances.find(balance => balance.instrument_id === "Amulet") || {
-    instrument_id: "Amulet",
+  const balanceData = balances.find(
+    balance => balance.instrument_id === coinConfig.getCoinConfig(currency).nativeInstrumentId,
+  ) || {
+    instrument_id: coinConfig.getCoinConfig(currency).nativeInstrumentId,
     amount: 0,
     locked: false,
   };

@@ -14,7 +14,7 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   setHasBeenRedirectedToPostOnboarding,
   setHasBeenUpsoldProtect,
-  // setIsOnboardingFlow,
+  setIsOnboardingFlow,
   setIsReborn,
   setOnboardingHasDevice,
 } from "~/actions/settings";
@@ -92,12 +92,11 @@ const CompletionScreen = ({ route }: Props) => {
     dispatch(setHasBeenRedirectedToPostOnboarding(false));
   }, [dispatch, hasCompletedOnboarding]);
 
-  // TODO: Add back in during actions PR
-  // useEffect(() => {
-  //   if (isFocused) {
-  //     dispatch(setIsOnboardingFlow(false));
-  //   }
-  // }, [dispatch, isFocused]);
+  useEffect(() => {
+    if (isFocused) {
+      dispatch(setIsOnboardingFlow(false));
+    }
+  }, [dispatch, isFocused]);
 
   useEffect(
     () =>

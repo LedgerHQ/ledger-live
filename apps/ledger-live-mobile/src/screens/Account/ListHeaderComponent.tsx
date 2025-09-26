@@ -34,6 +34,7 @@ import { ActionButtonEvent } from "~/components/FabActions";
 import { EditOperationCard } from "~/components/EditOperationCard";
 import { CurrencyConfig } from "@ledgerhq/coin-framework/config";
 import WarningBannerStatus from "~/components/WarningBannerStatus";
+import WarningCustomBanner from "~/components/WarningCustomBanner";
 import ErrorWarning from "./ErrorWarning";
 import NftEntryPoint from "LLM/features/NftEntryPoint";
 
@@ -159,6 +160,7 @@ export function useListHeaderComponents({
         currency={currency}
         key="WarningBannerStatus"
       />,
+      <WarningCustomBanner currencyConfig={currencyConfig} key="WarningCustomBanner" />,
       <ErrorWarning key="Header" />,
       !!AccountSubHeader && (
         <Box bg={colors.background.main} key="AccountSubHeader">

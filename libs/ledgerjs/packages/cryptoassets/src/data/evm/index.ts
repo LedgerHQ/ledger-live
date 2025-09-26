@@ -20,6 +20,7 @@ import astar_tokens from "./592/erc20.json";
 import hyperevm_tokens from "./999/erc20.json";
 import metis_tokens from "./1088/erc20.json";
 import polygon_zk_evm_tokens from "./1101/erc20.json";
+import core_tokens from "./1116/erc20.json";
 import moonbeam_tokens from "./1284/erc20.json";
 import polygon_zk_evm_testnet_tokens from "./1442/erc20.json";
 import klaytn_tokens from "./8217/erc20.json";
@@ -60,6 +61,7 @@ import astar_tokens_hash from "./592/erc20-hash.json";
 import hyperevm_tokens_hash from "./999/erc20-hash.json";
 import metis_tokens_hash from "./1088/erc20-hash.json";
 import polygon_zk_evm_tokens_hash from "./1101/erc20-hash.json";
+import core_tokens_hash from "./1116/erc20-hash.json";
 import moonbeam_tokens_hash from "./1284/erc20-hash.json";
 import polygon_zk_evm_testnet_tokens_hash from "./1442/erc20-hash.json";
 import klaytn_tokens_hash from "./8217/erc20-hash.json";
@@ -100,6 +102,7 @@ import astar_signatures from "./592/erc20-signatures.json";
 import hyperevm_signatures from "./999/erc20-signatures.json";
 import metis_signatures from "./1088/erc20-signatures.json";
 import polygon_zk_evm_signatures from "./1101/erc20-signatures.json";
+import core_signatures from "./1116/erc20-signatures.json";
 import moonbeam_signatures from "./1284/erc20-signatures.json";
 import polygon_zk_evm_testnet_signatures from "./1442/erc20-signatures.json";
 import klaytn_signatures from "./8217/erc20-signatures.json";
@@ -141,6 +144,7 @@ export const tokens = {
   999: hyperevm_tokens as ERC20Token[],
   1088: metis_tokens as ERC20Token[],
   1101: polygon_zk_evm_tokens as ERC20Token[],
+  1116: core_tokens as ERC20Token[],
   1284: moonbeam_tokens as ERC20Token[],
   1442: polygon_zk_evm_testnet_tokens as ERC20Token[],
   8217: klaytn_tokens as ERC20Token[],
@@ -183,6 +187,7 @@ export const signatures = {
   999: hyperevm_signatures,
   1088: metis_signatures,
   1101: polygon_zk_evm_signatures,
+  1116: core_signatures,
   1284: moonbeam_signatures,
   1442: polygon_zk_evm_testnet_signatures,
   8217: klaytn_signatures,
@@ -225,6 +230,7 @@ export const hashes = {
   999: hyperevm_tokens_hash,
   1088: metis_tokens_hash,
   1101: polygon_zk_evm_tokens_hash,
+  1116: core_tokens_hash,
   1284: moonbeam_tokens_hash,
   1442: polygon_zk_evm_testnet_tokens_hash,
   8217: klaytn_tokens_hash,

@@ -7,6 +7,7 @@ export enum Network {
   DOGECOIN = "Dogecoin",
   ETHEREUM = "Ethereum",
   ETHEREUM_HOLESKY = "Ethereum Holesky",
+  ETHEREUM_HOODI = "Ethereum Hoodi",
   ETHEREUM_SEPOLIA = "Ethereum Sepolia",
   ETHEREUM_CLASSIC = "Ethereum Classic",
   SOLANA = "Solana",

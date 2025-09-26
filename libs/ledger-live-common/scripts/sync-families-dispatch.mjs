@@ -57,6 +57,7 @@ const familiesWPackage = [
 const alpacaized = {
   xrp: true,
   stellar: true,
+  tezos: true,
 };
 
 cd(path.join(__dirname, "..", "src"));

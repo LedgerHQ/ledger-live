@@ -96,9 +96,11 @@ export const genericSignOperation =
             assetOwner: transaction?.assetOwner || "",
             subAccountId: transaction.subAccountId || "",
             family: transaction.family,
+            feesStrategy: transaction.feesStrategy,
+            data: transaction.data,
           };
           const { amount } = await alpacaApi.validateIntent(
-            transactionToIntent(account, draftTransaction),
+            transactionToIntent(account, draftTransaction, alpacaApi.computeIntentType),
             { value: fees },
           );
           transaction.amount = new BigNumber(amount.toString());
@@ -107,7 +109,11 @@ export const genericSignOperation =
           const derivationPath = account.freshAddressPath;
           const { publicKey } = (await signer.getAddress(derivationPath)) as Result;
 
-          let transactionIntent = transactionToIntent(account, { ...transaction });
+          let transactionIntent = transactionToIntent(
+            account,
+            { ...transaction },
+            alpacaApi.computeIntentType,
+          );
           transactionIntent.senderPublicKey = publicKey;
 
           // Enrich with memo and asset information

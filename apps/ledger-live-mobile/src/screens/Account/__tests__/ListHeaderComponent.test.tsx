@@ -64,7 +64,7 @@ describe("Testing ListHeaderComponent Component", () => {
         t: () => "",
       });
 
-      expect(listHeaderComponents[6]).toBeDefined();
+      expect(listHeaderComponents[7]).toBeDefined();
     });
 
     it("should generate account earn header component when disable delegation is not configured", () => {
@@ -99,7 +99,7 @@ describe("Testing ListHeaderComponent Component", () => {
         t: () => "",
       });
 
-      expect(listHeaderComponents[6]).toBeDefined();
+      expect(listHeaderComponents[7]).toBeDefined();
     });
 
     it("should not generate account earn header component when we disable delegation", () => {
@@ -130,7 +130,7 @@ describe("Testing ListHeaderComponent Component", () => {
         t: () => "",
       });
 
-      expect(listHeaderComponents[6]).toBeUndefined();
+      expect(listHeaderComponents[7]).toBeUndefined();
     });
   });
 });

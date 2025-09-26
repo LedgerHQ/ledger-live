@@ -1,19 +1,18 @@
 # @ledgerhq/hw-transport-vault
 
-## 1.3.11-nightly.1
-
-### Patch Changes
-
-- Updated dependencies [[`c2d8d86`](https://github.com/LedgerHQ/ledger-live/commit/c2d8d8670f848989836c46ea08ae88c88086fdd6)]:
-  - @ledgerhq/errors@6.26.0-nightly.0
-  - @ledgerhq/hw-transport-http@6.30.11-nightly.1
-
-## 1.3.11-nightly.0
+## 1.3.11
 
 ### Patch Changes
 
 - Updated dependencies []:
-  - @ledgerhq/hw-transport-http@6.30.11-nightly.0
+  - @ledgerhq/hw-transport-http@6.30.11
+
+## 1.3.11-next.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport-http@6.30.11-next.0
 
 ## 1.3.10
 

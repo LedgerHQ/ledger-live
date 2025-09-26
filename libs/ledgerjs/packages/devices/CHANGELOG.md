@@ -1,15 +1,14 @@
 # @ledgerhq/devices
 
-## 8.5.2-nightly.1
+## 8.6.0
 
-### Patch Changes
+### Minor Changes
 
-- Updated dependencies [[`c2d8d86`](https://github.com/LedgerHQ/ledger-live/commit/c2d8d8670f848989836c46ea08ae88c88086fdd6)]:
-  - @ledgerhq/errors@6.26.0-nightly.0
+- [#11871](https://github.com/LedgerHQ/ledger-live/pull/11871) [`38a172c`](https://github.com/LedgerHQ/ledger-live/commit/38a172c23035040d077433c7f4fce60f72962ae0) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Update BLE identifiers for Apex
 
-## 8.5.2-nightly.0
+## 8.6.0-next.0
 
-### Patch Changes
+### Minor Changes
 
 - [#11871](https://github.com/LedgerHQ/ledger-live/pull/11871) [`38a172c`](https://github.com/LedgerHQ/ledger-live/commit/38a172c23035040d077433c7f4fce60f72962ae0) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Update BLE identifiers for Apex
 

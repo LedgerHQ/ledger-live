@@ -248,7 +248,7 @@ export function renderConfirmSwap({
             />
           </AnimationContainer>
           <TitleText>{t("DeviceAction.confirmSwap.title")}</TitleText>
-          <Text textAlign="center" color={"neutral.c70"} fontSize={14} fontWeight="medium">
+          <Text textAlign="center" color={"neutral.c70"} fontSize={14} fontWeight="medium" px={16}>
             {t(`DeviceAction.confirmSwap.alert.default`)}
           </Text>
         </Wrapper>

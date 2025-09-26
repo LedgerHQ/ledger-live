@@ -31,6 +31,7 @@ export function useModularDrawerRemoteData({
     isSuccess,
     loadingStatus,
     loadNext,
+    assetsSorted,
   } = useModularDrawerData({ currencyIds, useCase, areCurrenciesFiltered });
 
   const {
@@ -90,5 +91,6 @@ export function useModularDrawerRemoteData({
     goBackToAssetSelection,
     goBackToNetworkSelection,
     loadNext,
+    assetsSorted,
   };
 }

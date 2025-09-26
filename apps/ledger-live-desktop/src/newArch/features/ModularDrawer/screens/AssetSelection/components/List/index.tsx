@@ -18,6 +18,8 @@ import { balanceItem } from "LLD/features/ModularDrawer/components/Balance";
 import { useBalanceDeps } from "LLD/features/ModularDrawer/hooks/useBalanceDeps";
 import { useSelector } from "react-redux";
 import { modularDrawerIsDebuggingDuplicatesSelector } from "~/renderer/reducers/modularDrawer";
+import { AssetData } from "@ledgerhq/live-common/modularDrawer/utils/type";
+import { groupCurrenciesByProvider } from "@ledgerhq/live-common/modularDrawer/utils/groupCurrenciesByProvider";
 
 export type SelectAssetProps = {
   assetsToDisplay: CryptoOrTokenCurrency[];
@@ -28,6 +30,7 @@ export type SelectAssetProps = {
   onAssetSelected: (asset: CryptoOrTokenCurrency) => void;
   onScrolledToTop?: () => void;
   loadNext?: () => void;
+  assetsSorted?: AssetData[];
 };
 
 const CURRENT_PAGE = "Modular Asset Selection";
@@ -46,13 +49,17 @@ export const SelectAssetList = ({
   onAssetSelected,
   onScrolledToTop,
   loadNext,
+  assetsSorted,
 }: SelectAssetProps) => {
+  const assetsMap = groupCurrenciesByProvider(assetsSorted || []);
+
   const assetConfigurationDeps = {
     ApyIndicator,
     MarketPriceIndicator,
     MarketPercentIndicator,
     useBalanceDeps,
     balanceItem,
+    assetsMap,
   };
   const isDebuggingDuplicates = useSelector(modularDrawerIsDebuggingDuplicatesSelector);
 

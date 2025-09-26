@@ -2,6 +2,7 @@ import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { CurrenciesByProviderId } from "../../deposit/type";
 import { haveOneCommonProvider } from "./haveOneCommonProvider";
 import { getBalanceAndFiatValue } from "./getBalanceAndFiatValue";
+import { groupCurrenciesByProvider } from "./groupCurrenciesByProvider";
 
 function isCorrespondingCurrency(
   elem: CryptoOrTokenCurrency,
@@ -33,4 +34,5 @@ export {
   getEffectiveCurrency,
   haveOneCommonProvider,
   getBalanceAndFiatValue,
+  groupCurrenciesByProvider,
 };

@@ -1,38 +1,32 @@
 # @ledgerhq/types-live
 
-## 6.85.0-nightly.4
+## 6.85.0
 
 ### Minor Changes
 
-- [#11982](https://github.com/LedgerHQ/ledger-live/pull/11982) [`a37c06f`](https://github.com/LedgerHQ/ledger-live/commit/a37c06f97b061a5db0dad3632bb5c3e8f293677c) Thanks [@ooke-ledger](https://github.com/ooke-ledger)! - rename confirmation screen FF
-
-## 6.85.0-nightly.3
-
-### Minor Changes
-
-- [#11750](https://github.com/LedgerHQ/ledger-live/pull/11750) [`f015ef3`](https://github.com/LedgerHQ/ledger-live/commit/f015ef32660905d00f55a45f451f38bc12aec9ba) Thanks [@hhumphrey-ledger](https://github.com/hhumphrey-ledger)! - Add entry points for iban in LLD
-
-## 6.85.0-nightly.2
-
-### Minor Changes
-
-- [#11894](https://github.com/LedgerHQ/ledger-live/pull/11894) [`e3bcefb`](https://github.com/LedgerHQ/ledger-live/commit/e3bcefbf8a46c91388d6f936fd31d6ffcdc24756) Thanks [@ooke-ledger](https://github.com/ooke-ledger)! - Add simplified view for swap tx confirmation
-
-- [#11841](https://github.com/LedgerHQ/ledger-live/pull/11841) [`ed4c073`](https://github.com/LedgerHQ/ledger-live/commit/ed4c073b304d85355cf510551bcb225de4a3391c) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Remove NFTs libs
-
-## 6.85.0-nightly.1
-
-### Minor Changes
-
-- [#11787](https://github.com/LedgerHQ/ledger-live/pull/11787) [`13ac4d7`](https://github.com/LedgerHQ/ledger-live/commit/13ac4d7ed05f0fc448cc0a013688c917cb73e0f5) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - remove NFTs from LLD
-
-## 6.85.0-nightly.0
-
-### Minor Changes
+- [#11738](https://github.com/LedgerHQ/ledger-live/pull/11738) [`9b8689a`](https://github.com/LedgerHQ/ledger-live/commit/9b8689ae2c44bdeccae26378e05cbf6899b83aec) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLM / LLD - Added searchDebounceTime and backendEnvironment parameters to modular drawer feature flags
 
 - [#11863](https://github.com/LedgerHQ/ledger-live/pull/11863) [`c8fe586`](https://github.com/LedgerHQ/ledger-live/commit/c8fe586f1427d4d7a9fad092b51221ec8221399d) Thanks [@mitchellv-ledger](https://github.com/mitchellv-ledger)! - Add syncOnboardingIncr1 feature flag
 
 - [#11190](https://github.com/LedgerHQ/ledger-live/pull/11190) [`3b5576e`](https://github.com/LedgerHQ/ledger-live/commit/3b5576e0b67fedad0f5dbbd6b9546281af4e6111) Thanks [@semeano](https://github.com/semeano)! - [Kaspa] Coin support for LLD and LLM
+
+- [#11787](https://github.com/LedgerHQ/ledger-live/pull/11787) [`13ac4d7`](https://github.com/LedgerHQ/ledger-live/commit/13ac4d7ed05f0fc448cc0a013688c917cb73e0f5) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - remove NFTs from LLD
+
+- [#11841](https://github.com/LedgerHQ/ledger-live/pull/11841) [`ed4c073`](https://github.com/LedgerHQ/ledger-live/commit/ed4c073b304d85355cf510551bcb225de4a3391c) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Remove NFTs libs
+
+## 6.85.0-next.0
+
+### Minor Changes
+
+- [#11738](https://github.com/LedgerHQ/ledger-live/pull/11738) [`9b8689a`](https://github.com/LedgerHQ/ledger-live/commit/9b8689ae2c44bdeccae26378e05cbf6899b83aec) Thanks [@cgrellard-ledger](https://github.com/cgrellard-ledger)! - LLM / LLD - Added searchDebounceTime and backendEnvironment parameters to modular drawer feature flags
+
+- [#11863](https://github.com/LedgerHQ/ledger-live/pull/11863) [`c8fe586`](https://github.com/LedgerHQ/ledger-live/commit/c8fe586f1427d4d7a9fad092b51221ec8221399d) Thanks [@mitchellv-ledger](https://github.com/mitchellv-ledger)! - Add syncOnboardingIncr1 feature flag
+
+- [#11190](https://github.com/LedgerHQ/ledger-live/pull/11190) [`3b5576e`](https://github.com/LedgerHQ/ledger-live/commit/3b5576e0b67fedad0f5dbbd6b9546281af4e6111) Thanks [@semeano](https://github.com/semeano)! - [Kaspa] Coin support for LLD and LLM
+
+- [#11787](https://github.com/LedgerHQ/ledger-live/pull/11787) [`13ac4d7`](https://github.com/LedgerHQ/ledger-live/commit/13ac4d7ed05f0fc448cc0a013688c917cb73e0f5) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - remove NFTs from LLD
+
+- [#11841](https://github.com/LedgerHQ/ledger-live/pull/11841) [`ed4c073`](https://github.com/LedgerHQ/ledger-live/commit/ed4c073b304d85355cf510551bcb225de4a3391c) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Remove NFTs libs
 
 ## 6.84.0
 

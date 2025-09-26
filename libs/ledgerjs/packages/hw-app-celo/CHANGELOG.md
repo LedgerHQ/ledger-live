@@ -1,46 +1,20 @@
 # @ledgerhq/hw-app-polkadot
 
-## 6.35.0-nightly.4
+## 6.34.4
 
 ### Patch Changes
 
 - Updated dependencies []:
-  - @ledgerhq/hw-app-eth@6.46.0-nightly.4
+  - @ledgerhq/hw-transport@6.31.11
+  - @ledgerhq/hw-app-eth@6.45.19
 
-## 6.35.0-nightly.3
-
-### Minor Changes
-
-- [#11838](https://github.com/LedgerHQ/ledger-live/pull/11838) [`c2d8d86`](https://github.com/LedgerHQ/ledger-live/commit/c2d8d8670f848989836c46ea08ae88c88086fdd6) Thanks [@semeano](https://github.com/semeano)! - Enable Celo tokens
-
-### Patch Changes
-
-- Updated dependencies [[`c2d8d86`](https://github.com/LedgerHQ/ledger-live/commit/c2d8d8670f848989836c46ea08ae88c88086fdd6)]:
-  - @ledgerhq/hw-app-eth@6.46.0-nightly.3
-  - @ledgerhq/errors@6.26.0-nightly.0
-  - @ledgerhq/hw-transport@6.31.11-nightly.1
-
-## 6.34.4-nightly.2
+## 6.34.4-next.0
 
 ### Patch Changes
 
 - Updated dependencies []:
-  - @ledgerhq/hw-app-eth@6.45.19-nightly.2
-
-## 6.34.4-nightly.1
-
-### Patch Changes
-
-- Updated dependencies []:
-  - @ledgerhq/hw-app-eth@6.45.19-nightly.1
-
-## 6.34.4-nightly.0
-
-### Patch Changes
-
-- Updated dependencies []:
-  - @ledgerhq/hw-transport@6.31.11-nightly.0
-  - @ledgerhq/hw-app-eth@6.45.19-nightly.0
+  - @ledgerhq/hw-transport@6.31.11-next.0
+  - @ledgerhq/hw-app-eth@6.45.19-next.0
 
 ## 6.34.3
 

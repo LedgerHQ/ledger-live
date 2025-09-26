@@ -1,26 +1,6 @@
 # @ledgerhq/ledger-cal-service
 
-## 1.5.0-nightly.2
-
-### Minor Changes
-
-- [#11899](https://github.com/LedgerHQ/ledger-live/pull/11899) [`42f2449`](https://github.com/LedgerHQ/ledger-live/commit/42f244956720dfe13cf16334ef79064f651c67d0) Thanks [@adammino-ledger](https://github.com/adammino-ledger)! - Add nearintents to swap config for drawer and cal info
-
-### Patch Changes
-
-- Updated dependencies [[`c2d8d86`](https://github.com/LedgerHQ/ledger-live/commit/c2d8d8670f848989836c46ea08ae88c88086fdd6)]:
-  - @ledgerhq/live-env@2.17.0-nightly.2
-  - @ledgerhq/live-network@2.0.18-nightly.2
-
-## 1.5.0-nightly.1
-
-### Patch Changes
-
-- Updated dependencies [[`2a58b72`](https://github.com/LedgerHQ/ledger-live/commit/2a58b720de42e63e59ea430bd03b2c95e903634c)]:
-  - @ledgerhq/live-env@2.17.0-nightly.1
-  - @ledgerhq/live-network@2.0.18-nightly.1
-
-## 1.5.0-nightly.0
+## 1.5.0
 
 ### Minor Changes
 
@@ -28,9 +8,21 @@
 
 ### Patch Changes
 
-- Updated dependencies [[`3b5576e`](https://github.com/LedgerHQ/ledger-live/commit/3b5576e0b67fedad0f5dbbd6b9546281af4e6111), [`fe97131`](https://github.com/LedgerHQ/ledger-live/commit/fe971313776194e5942dfa9a95d6082950c3111e)]:
-  - @ledgerhq/live-env@2.17.0-nightly.0
-  - @ledgerhq/live-network@2.0.18-nightly.0
+- Updated dependencies [[`aaa16b7`](https://github.com/LedgerHQ/ledger-live/commit/aaa16b718454dca51d59bb138ab1a638dc4b8243), [`3b5576e`](https://github.com/LedgerHQ/ledger-live/commit/3b5576e0b67fedad0f5dbbd6b9546281af4e6111), [`fe97131`](https://github.com/LedgerHQ/ledger-live/commit/fe971313776194e5942dfa9a95d6082950c3111e), [`2a58b72`](https://github.com/LedgerHQ/ledger-live/commit/2a58b720de42e63e59ea430bd03b2c95e903634c)]:
+  - @ledgerhq/live-env@2.17.0
+  - @ledgerhq/live-network@2.0.18
+
+## 1.5.0-next.0
+
+### Minor Changes
+
+- [#11768](https://github.com/LedgerHQ/ledger-live/pull/11768) [`f671769`](https://github.com/LedgerHQ/ledger-live/commit/f6717696fcb2ad672a48fdd7f8654dedf11b4a65) Thanks [@CremaFR](https://github.com/CremaFR)! - Adding fallback CAL Near and local CDN near
+
+### Patch Changes
+
+- Updated dependencies [[`aaa16b7`](https://github.com/LedgerHQ/ledger-live/commit/aaa16b718454dca51d59bb138ab1a638dc4b8243), [`3b5576e`](https://github.com/LedgerHQ/ledger-live/commit/3b5576e0b67fedad0f5dbbd6b9546281af4e6111), [`fe97131`](https://github.com/LedgerHQ/ledger-live/commit/fe971313776194e5942dfa9a95d6082950c3111e), [`2a58b72`](https://github.com/LedgerHQ/ledger-live/commit/2a58b720de42e63e59ea430bd03b2c95e903634c)]:
+  - @ledgerhq/live-env@2.17.0-next.0
+  - @ledgerhq/live-network@2.0.18-next.0
 
 ## 1.4.0
 

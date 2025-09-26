@@ -14,7 +14,31 @@ type Props = {
   currency: CryptoCurrency;
 };
 
-const AccountWarningBanner = ({ currency }: Props) => {
+export const AccountWarningCustomBanner = ({ currency }: Props) => {
+  const currencyConfig = getCurrencyConfiguration(currency);
+  if (!currencyConfig) return null;
+  const banner = currencyConfig.customBanner;
+  if (!banner?.isDisplay) return null;
+  return (
+    <TopBanner
+      testId="custom-banner"
+      status="warning"
+      content={{
+        message: (
+          <Text fontFamily="Inter|Bold" color="neutral.c00" flex={1}>
+            {banner.bannerText}
+          </Text>
+        ),
+      }}
+      link={{
+        text: banner.bannerLinkText || "",
+        href: banner.bannerLink || "",
+      }}
+    />
+  );
+};
+
+export const AccountWarningBanner = ({ currency }: Props) => {
   const { t } = useTranslation();
   const formatDate = useDateFormatter(dayFormat);
   const localizedContactSupportURL = useLocalizedUrl(urls.contactSupportWebview);
@@ -105,5 +129,3 @@ const AccountWarningBanner = ({ currency }: Props) => {
     </>
   );
 };
-
-export default AccountWarningBanner;

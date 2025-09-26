@@ -201,7 +201,7 @@ const transactionE2E = [
     xrayTicket: "B2CQA-3925",
   },
   {
-    transaction: new Transaction(Account.ETH_1, Account.ETH_2, "0.0001", Fee.SLOW),
+    transaction: new Transaction(Account.ETH_1, Account.ETH_3, "0.0001", Fee.SLOW),
     xrayTicket: "B2CQA-3924",
   },
   {

@@ -14,7 +14,7 @@ jest.mock("../utils", () => ({
   transactionToIntent: jest.fn(),
 }));
 describe("genericSignOperation", () => {
-  const networks = ["xrp", "stellar"];
+  const networks = ["xrp", "stellar", "tezos"];
   const kind = "local";
 
   const mockSignerContext = jest.fn();
@@ -83,7 +83,7 @@ describe("genericSignOperation", () => {
         },
       });
 
-      expect(transactionToIntent).toHaveBeenCalledWith(account, transaction);
+      expect(transactionToIntent).toHaveBeenCalledWith(account, transaction, undefined);
       expect(txIntent.memo.memos.get("destinationTag")).toBe("1234");
     });
 

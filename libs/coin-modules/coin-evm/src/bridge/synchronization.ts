@@ -23,6 +23,7 @@ import { getExplorerApi } from "../network/explorer";
 import { getNodeApi } from "../network/node/index";
 import { attachOperations, getSyncHash, mergeSubAccounts, createSwapHistoryMap } from "../logic";
 import { lastBlock } from "../logic/lastBlock";
+import { getCoinConfig } from "../config";
 
 /**
  * Number of blocks that are considered "unsafe" due to a potential reorg.
@@ -149,6 +150,8 @@ export const getSubAccounts = async (
   swapHistoryMap: Map<TokenCurrency, TokenAccount["swapHistory"]>,
 ): Promise<Partial<TokenAccount>[]> => {
   const { currency } = infos;
+  const config = getCoinConfig(currency).info;
+  const isLedgerNode = config?.node?.type === "ledger";
 
   // Creating a Map of Operations by TokenCurrencies in order to know which TokenAccounts should be synced as well
   const erc20OperationsByToken = lastTokenOperations.reduce<Map<TokenCurrency, Operation[]>>(
@@ -167,14 +170,32 @@ export const getSubAccounts = async (
     new Map<TokenCurrency, Operation[]>(),
   );
 
-  // Fetching all TokenAccounts possible and providing already filtered operations
-  const subAccountsPromises: Promise<Partial<TokenAccount>>[] = [];
-  for (const [token, ops] of erc20OperationsByToken.entries()) {
-    const swapHistory = swapHistoryMap.get(token) || [];
-    subAccountsPromises.push(getSubAccountShape(currency, accountId, token, ops, swapHistory));
+  const tokenEntries = Array.from(erc20OperationsByToken.entries());
+
+  // 🔁 Ledger node → execute all at once
+  if (isLedgerNode) {
+    return Promise.all(
+      tokenEntries.map(([token, ops]) =>
+        getSubAccountShape(currency, accountId, token, ops, swapHistoryMap.get(token) || []),
+      ),
+    );
   }
 
-  return Promise.all(subAccountsPromises);
+  // 🔁 Non-ledger → chunked execution
+  const chunkSize = 9;
+  const result: Partial<TokenAccount>[] = [];
+
+  for (let i = 0; i < tokenEntries.length; i += chunkSize) {
+    const chunk = tokenEntries.slice(i, i + chunkSize);
+    const chunkResults = await Promise.all(
+      chunk.map(([token, ops]) =>
+        getSubAccountShape(currency, accountId, token, ops, swapHistoryMap.get(token) || []),
+      ),
+    );
+    result.push(...chunkResults);
+  }
+
+  return result;
 };
 
 /**

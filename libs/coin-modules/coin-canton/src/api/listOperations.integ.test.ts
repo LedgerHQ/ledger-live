@@ -10,6 +10,7 @@ describe.skip("devnet", () => {
       networkType: "devnet",
       gatewayUrl: "https://canton-gateway.api.live.ledger-test.com",
       useGateway: true,
+      nativeInstrumentId: "Amulet",
     });
   });
 

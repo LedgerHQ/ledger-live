@@ -1,10 +1,16 @@
 # ledger-live-mobile-e2e-tests
 
-## 0.3.1-nightly.0
+## 0.4.0
 
-### Patch Changes
+### Minor Changes
 
-- [#11944](https://github.com/LedgerHQ/ledger-live/pull/11944) [`12d86b2`](https://github.com/LedgerHQ/ledger-live/commit/12d86b226c89ec24ce956d18c6301a4dc415c719) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Update B2CQA-650 test
+- [#11989](https://github.com/LedgerHQ/ledger-live/pull/11989) [`9492d4a`](https://github.com/LedgerHQ/ledger-live/commit/9492d4a0071ff695113f67b873c215ff95a1e1ab) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Update B2CQA-650 test
+
+## 0.4.0-next.0
+
+### Minor Changes
+
+- [#11989](https://github.com/LedgerHQ/ledger-live/pull/11989) [`9492d4a`](https://github.com/LedgerHQ/ledger-live/commit/9492d4a0071ff695113f67b873c215ff95a1e1ab) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Update B2CQA-650 test
 
 ## 0.3.0
 

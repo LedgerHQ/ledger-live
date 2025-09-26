@@ -1,21 +1,20 @@
 # @ledgerhq/hw-transport-web-ble
 
-## 6.29.11-nightly.1
-
-### Patch Changes
-
-- Updated dependencies [[`c2d8d86`](https://github.com/LedgerHQ/ledger-live/commit/c2d8d8670f848989836c46ea08ae88c88086fdd6)]:
-  - @ledgerhq/errors@6.26.0-nightly.0
-  - @ledgerhq/devices@8.5.2-nightly.1
-  - @ledgerhq/hw-transport@6.31.11-nightly.1
-
-## 6.29.11-nightly.0
+## 6.29.11
 
 ### Patch Changes
 
 - Updated dependencies [[`38a172c`](https://github.com/LedgerHQ/ledger-live/commit/38a172c23035040d077433c7f4fce60f72962ae0)]:
-  - @ledgerhq/devices@8.5.2-nightly.0
-  - @ledgerhq/hw-transport@6.31.11-nightly.0
+  - @ledgerhq/devices@8.6.0
+  - @ledgerhq/hw-transport@6.31.11
+
+## 6.29.11-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`38a172c`](https://github.com/LedgerHQ/ledger-live/commit/38a172c23035040d077433c7f4fce60f72962ae0)]:
+  - @ledgerhq/devices@8.6.0-next.0
+  - @ledgerhq/hw-transport@6.31.11-next.0
 
 ## 6.29.10
 

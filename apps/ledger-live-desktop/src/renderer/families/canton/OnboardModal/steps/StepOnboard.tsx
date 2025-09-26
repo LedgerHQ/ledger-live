@@ -355,6 +355,7 @@ export default function StepOnboard({
               {
                 family: "canton",
                 mode: "onboarding",
+                tokenId: "",
                 recipient: signingData?.partyId || "",
                 amount: new BigNumber(0),
                 fee: new BigNumber(0),

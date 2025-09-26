@@ -9,10 +9,10 @@ import {
   mockCurrencyIds,
 } from "@ledgerhq/live-common/modularDrawer/__mocks__/currencies.mock";
 import { NavigationProp } from "@react-navigation/native";
-import { AssetsData } from "../useAssets";
+import { AssetData } from "@ledgerhq/live-common/modularDrawer/utils/type";
 import { State } from "~/reducers/types";
 
-const assetsSorted: AssetsData = [
+const assetsSorted: AssetData[] = [
   {
     asset: {
       id: mockEthCryptoCurrency.id,
@@ -145,7 +145,7 @@ describe("useModularDrawerState", () => {
   });
 
   it("should go to Account when there is exactly one network (enableAccountSelection)", () => {
-    const singleAsset: AssetsData = [
+    const singleAsset: AssetData[] = [
       {
         asset: {
           id: mockEthCryptoCurrency.id,
@@ -181,7 +181,7 @@ describe("useModularDrawerState", () => {
   });
 
   it("should navigate to device when there is exactly one network (no account selection)", () => {
-    const singleAsset: AssetsData = [
+    const singleAsset: AssetData[] = [
       {
         asset: {
           id: mockEthCryptoCurrency.id,

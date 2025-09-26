@@ -1,32 +1,30 @@
 # @ledgerhq/live-dmk-mobile
 
-## 0.11.5-nightly.2
+## 0.12.0
 
-### Patch Changes
-
-- Updated dependencies [[`c2d8d86`](https://github.com/LedgerHQ/ledger-live/commit/c2d8d8670f848989836c46ea08ae88c88086fdd6)]:
-  - @ledgerhq/errors@6.26.0-nightly.0
-  - @ledgerhq/devices@8.5.2-nightly.1
-  - @ledgerhq/hw-transport@6.31.11-nightly.1
-  - @ledgerhq/live-dmk-shared@0.12.4-nightly.2
-
-## 0.11.5-nightly.1
-
-### Patch Changes
-
-- Updated dependencies [[`38a172c`](https://github.com/LedgerHQ/ledger-live/commit/38a172c23035040d077433c7f4fce60f72962ae0)]:
-  - @ledgerhq/devices@8.5.2-nightly.0
-  - @ledgerhq/hw-transport@6.31.11-nightly.0
-  - @ledgerhq/live-dmk-shared@0.12.4-nightly.1
-
-## 0.11.5-nightly.0
-
-### Patch Changes
+### Minor Changes
 
 - [#11779](https://github.com/LedgerHQ/ledger-live/pull/11779) [`d93c0aa`](https://github.com/LedgerHQ/ledger-live/commit/d93c0aab902bfba5b36ebdf707e88b5d3453dacb) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Update Device Management Kit to 0.9.0 (and associated libs)
 
-- Updated dependencies [[`d93c0aa`](https://github.com/LedgerHQ/ledger-live/commit/d93c0aab902bfba5b36ebdf707e88b5d3453dacb)]:
-  - @ledgerhq/live-dmk-shared@0.12.4-nightly.0
+### Patch Changes
+
+- Updated dependencies [[`d93c0aa`](https://github.com/LedgerHQ/ledger-live/commit/d93c0aab902bfba5b36ebdf707e88b5d3453dacb), [`38a172c`](https://github.com/LedgerHQ/ledger-live/commit/38a172c23035040d077433c7f4fce60f72962ae0)]:
+  - @ledgerhq/live-dmk-shared@0.13.0
+  - @ledgerhq/devices@8.6.0
+  - @ledgerhq/hw-transport@6.31.11
+
+## 0.12.0-next.0
+
+### Minor Changes
+
+- [#11779](https://github.com/LedgerHQ/ledger-live/pull/11779) [`d93c0aa`](https://github.com/LedgerHQ/ledger-live/commit/d93c0aab902bfba5b36ebdf707e88b5d3453dacb) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Update Device Management Kit to 0.9.0 (and associated libs)
+
+### Patch Changes
+
+- Updated dependencies [[`d93c0aa`](https://github.com/LedgerHQ/ledger-live/commit/d93c0aab902bfba5b36ebdf707e88b5d3453dacb), [`38a172c`](https://github.com/LedgerHQ/ledger-live/commit/38a172c23035040d077433c7f4fce60f72962ae0)]:
+  - @ledgerhq/live-dmk-shared@0.13.0-next.0
+  - @ledgerhq/devices@8.6.0-next.0
+  - @ledgerhq/hw-transport@6.31.11-next.0
 
 ## 0.11.4
 

@@ -208,6 +208,7 @@ export default function ReceiveFundsNavigator() {
                   route.params.verified ? onVerificationConfirmationClose : onConfirmationClose
                 }
                 isOnboardingFlow={isOnboardingFlow}
+                popToTop={isOnboardingFlow}
               />
             </Flex>
           ),

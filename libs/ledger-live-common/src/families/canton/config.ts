@@ -13,6 +13,7 @@ export const cantonConfig: Record<string, ConfigInfo> = {
       minReserve: 0,
       useGateway: true,
       networkType: "mainnet",
+      nativeInstrumentId: "Amulet",
     },
   },
   config_currency_canton_network_devnet: {
@@ -42,6 +43,7 @@ export const cantonConfig: Record<string, ConfigInfo> = {
       minReserve: 0,
       useGateway: false,
       networkType: "localnet",
+      nativeInstrumentId: "Amulet",
     },
   },
 };

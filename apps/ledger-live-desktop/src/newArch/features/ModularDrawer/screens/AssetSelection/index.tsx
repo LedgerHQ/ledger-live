@@ -9,6 +9,7 @@ import { CurrenciesByProviderId, LoadingStatus } from "@ledgerhq/live-common/dep
 import { GenericError } from "../../components/GenericError";
 import { useSelector } from "react-redux";
 import { modularDrawerSearchedSelector } from "~/renderer/reducers/modularDrawer";
+import { AssetData } from "@ledgerhq/live-common/modularDrawer/utils/type";
 
 export type AssetSelectionStepProps = {
   assetsToDisplay: CryptoOrTokenCurrency[];
@@ -20,6 +21,7 @@ export type AssetSelectionStepProps = {
   loadNext?: () => void;
   error?: boolean;
   refetch?: () => void;
+  assetsSorted?: AssetData[];
 };
 
 const AssetSelection = ({
@@ -32,6 +34,7 @@ const AssetSelection = ({
   loadNext,
   error,
   refetch,
+  assetsSorted,
 }: Readonly<AssetSelectionStepProps>) => {
   const searchedValue = useSelector(modularDrawerSearchedSelector);
 
@@ -71,6 +74,7 @@ const AssetSelection = ({
           onAssetSelected={onAssetSelected}
           onScrolledToTop={() => setShouldScrollToTop(false)}
           loadNext={loadNext}
+          assetsSorted={assetsSorted}
         />
       )}
     </>

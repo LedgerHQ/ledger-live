@@ -1,61 +1,28 @@
 # @ledgerhq/hw-app-eth
 
-## 6.46.0-nightly.4
+## 6.45.19
 
 ### Patch Changes
 
-- Updated dependencies [[`a37c06f`](https://github.com/LedgerHQ/ledger-live/commit/a37c06f97b061a5db0dad3632bb5c3e8f293677c)]:
-  - @ledgerhq/types-live@6.85.0-nightly.4
-  - @ledgerhq/domain-service@1.2.44-nightly.4
-  - @ledgerhq/evm-tools@1.7.7-nightly.2
+- Updated dependencies [[`9b8689a`](https://github.com/LedgerHQ/ledger-live/commit/9b8689ae2c44bdeccae26378e05cbf6899b83aec), [`c8fe586`](https://github.com/LedgerHQ/ledger-live/commit/c8fe586f1427d4d7a9fad092b51221ec8221399d), [`3b5576e`](https://github.com/LedgerHQ/ledger-live/commit/3b5576e0b67fedad0f5dbbd6b9546281af4e6111), [`13ac4d7`](https://github.com/LedgerHQ/ledger-live/commit/13ac4d7ed05f0fc448cc0a013688c917cb73e0f5), [`ed4c073`](https://github.com/LedgerHQ/ledger-live/commit/ed4c073b304d85355cf510551bcb225de4a3391c)]:
+  - @ledgerhq/types-live@6.85.0
+  - @ledgerhq/hw-transport@6.31.11
+  - @ledgerhq/evm-tools@1.7.7
+  - @ledgerhq/cryptoassets-evm-signatures@13.6.3
+  - @ledgerhq/domain-service@1.2.44
+  - @ledgerhq/hw-transport-mocker@6.29.11
 
-## 6.46.0-nightly.3
-
-### Minor Changes
-
-- [#11838](https://github.com/LedgerHQ/ledger-live/pull/11838) [`c2d8d86`](https://github.com/LedgerHQ/ledger-live/commit/c2d8d8670f848989836c46ea08ae88c88086fdd6) Thanks [@semeano](https://github.com/semeano)! - Enable Celo tokens
-
-### Patch Changes
-
-- Updated dependencies [[`c2d8d86`](https://github.com/LedgerHQ/ledger-live/commit/c2d8d8670f848989836c46ea08ae88c88086fdd6), [`f015ef3`](https://github.com/LedgerHQ/ledger-live/commit/f015ef32660905d00f55a45f451f38bc12aec9ba)]:
-  - @ledgerhq/errors@6.26.0-nightly.0
-  - @ledgerhq/types-live@6.85.0-nightly.3
-  - @ledgerhq/domain-service@1.2.44-nightly.3
-  - @ledgerhq/cryptoassets-evm-signatures@13.6.3-nightly.2
-  - @ledgerhq/hw-transport@6.31.11-nightly.1
-  - @ledgerhq/evm-tools@1.7.7-nightly.2
-  - @ledgerhq/hw-transport-mocker@6.29.11-nightly.1
-
-## 6.45.19-nightly.2
+## 6.45.19-next.0
 
 ### Patch Changes
 
-- Updated dependencies [[`e3bcefb`](https://github.com/LedgerHQ/ledger-live/commit/e3bcefbf8a46c91388d6f936fd31d6ffcdc24756), [`ed4c073`](https://github.com/LedgerHQ/ledger-live/commit/ed4c073b304d85355cf510551bcb225de4a3391c)]:
-  - @ledgerhq/types-live@6.85.0-nightly.2
-  - @ledgerhq/evm-tools@1.7.7-nightly.1
-  - @ledgerhq/cryptoassets-evm-signatures@13.6.3-nightly.1
-  - @ledgerhq/domain-service@1.2.44-nightly.2
-
-## 6.45.19-nightly.1
-
-### Patch Changes
-
-- Updated dependencies [[`13ac4d7`](https://github.com/LedgerHQ/ledger-live/commit/13ac4d7ed05f0fc448cc0a013688c917cb73e0f5)]:
-  - @ledgerhq/types-live@6.85.0-nightly.1
-  - @ledgerhq/domain-service@1.2.44-nightly.1
-  - @ledgerhq/evm-tools@1.7.7-nightly.0
-
-## 6.45.19-nightly.0
-
-### Patch Changes
-
-- Updated dependencies [[`c8fe586`](https://github.com/LedgerHQ/ledger-live/commit/c8fe586f1427d4d7a9fad092b51221ec8221399d), [`3b5576e`](https://github.com/LedgerHQ/ledger-live/commit/3b5576e0b67fedad0f5dbbd6b9546281af4e6111)]:
-  - @ledgerhq/types-live@6.85.0-nightly.0
-  - @ledgerhq/hw-transport@6.31.11-nightly.0
-  - @ledgerhq/domain-service@1.2.44-nightly.0
-  - @ledgerhq/evm-tools@1.7.7-nightly.0
-  - @ledgerhq/cryptoassets-evm-signatures@13.6.3-nightly.0
-  - @ledgerhq/hw-transport-mocker@6.29.11-nightly.0
+- Updated dependencies [[`9b8689a`](https://github.com/LedgerHQ/ledger-live/commit/9b8689ae2c44bdeccae26378e05cbf6899b83aec), [`c8fe586`](https://github.com/LedgerHQ/ledger-live/commit/c8fe586f1427d4d7a9fad092b51221ec8221399d), [`3b5576e`](https://github.com/LedgerHQ/ledger-live/commit/3b5576e0b67fedad0f5dbbd6b9546281af4e6111), [`13ac4d7`](https://github.com/LedgerHQ/ledger-live/commit/13ac4d7ed05f0fc448cc0a013688c917cb73e0f5), [`ed4c073`](https://github.com/LedgerHQ/ledger-live/commit/ed4c073b304d85355cf510551bcb225de4a3391c)]:
+  - @ledgerhq/types-live@6.85.0-next.0
+  - @ledgerhq/hw-transport@6.31.11-next.0
+  - @ledgerhq/evm-tools@1.7.7-next.0
+  - @ledgerhq/cryptoassets-evm-signatures@13.6.3-next.0
+  - @ledgerhq/domain-service@1.2.44-next.0
+  - @ledgerhq/hw-transport-mocker@6.29.11-next.0
 
 ## 6.45.18
 

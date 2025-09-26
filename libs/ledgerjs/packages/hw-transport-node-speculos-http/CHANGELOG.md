@@ -1,19 +1,18 @@
 # @ledgerhq/hw-transport-node-speculos-http
 
-## 6.30.1-nightly.1
-
-### Patch Changes
-
-- Updated dependencies [[`c2d8d86`](https://github.com/LedgerHQ/ledger-live/commit/c2d8d8670f848989836c46ea08ae88c88086fdd6)]:
-  - @ledgerhq/errors@6.26.0-nightly.0
-  - @ledgerhq/hw-transport@6.31.11-nightly.1
-
-## 6.30.1-nightly.0
+## 6.30.1
 
 ### Patch Changes
 
 - Updated dependencies []:
-  - @ledgerhq/hw-transport@6.31.11-nightly.0
+  - @ledgerhq/hw-transport@6.31.11
+
+## 6.30.1-next.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport@6.31.11-next.0
 
 ## 6.30.0
 

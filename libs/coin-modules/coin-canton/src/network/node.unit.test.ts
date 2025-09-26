@@ -16,6 +16,7 @@ describe("getLedgerEnd", () => {
     coinConfig.setCoinConfig(() => ({
       nodeUrl: "http://node-url",
       networkType: "mainnet",
+      nativeInstrumentId: "Amulet",
       status: {
         type: "active",
       },

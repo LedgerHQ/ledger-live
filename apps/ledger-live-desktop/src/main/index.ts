@@ -22,7 +22,7 @@ import {
 } from "./window-lifecycle";
 import db from "./db";
 import debounce from "lodash/debounce";
-import sentry from "~/sentry/main";
+import sentry, { setTags } from "~/sentry/main";
 import type { SettingsState } from "~/renderer/reducers/settings";
 import type { User } from "~/renderer/storage";
 import {
@@ -160,6 +160,9 @@ app.on("ready", async () => {
   ipcMain.handle("reloadRenderer", () => {
     console.log("reloading renderer ...");
     loadWindow();
+  });
+  ipcMain.handle("set-sentry-tags", (event, tags) => {
+    setTags(tags);
   });
 
   // To handle opening new windows from webview

@@ -135,6 +135,7 @@ export function runSwapWithDifferentSeedTest(
       if (errorMessage) {
         await app.swapLiveApp.checkErrorMessage(errorMessage);
       } else {
+        await app.common.selectKnownDevice();
         await app.swap.verifyAmountsAndAcceptSwapForDifferentSeed(swap, minAmount);
         await app.swap.verifyDeviceActionLoadingNotVisible();
         await app.swap.waitForSuccessAndContinue();

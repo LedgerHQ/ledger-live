@@ -14,7 +14,11 @@ import {
   PriorityFeeTooLow,
   RecipientRequired,
 } from "@ledgerhq/errors";
-import { TransactionIntent } from "@ledgerhq/coin-framework/api/types";
+import {
+  BufferTxData,
+  MemoNotSupported,
+  TransactionIntent,
+} from "@ledgerhq/coin-framework/api/types";
 import BigNumber from "bignumber.js";
 import { Operation } from "@ledgerhq/types-live";
 import { EvmCoinConfig, setCoinConfig } from "../config";
@@ -23,24 +27,30 @@ import ledgerExplorer from "../network/explorer/ledger";
 import ledgerGasTracker from "../network/gasTracker/ledger";
 import { validateIntent } from "./validateIntent";
 
-function legacyIntent(intent: Omit<Partial<TransactionIntent>, "type">): TransactionIntent {
+function legacyIntent(
+  intent: Omit<Partial<TransactionIntent>, "type">,
+): TransactionIntent<MemoNotSupported, BufferTxData> {
   return {
     type: "send-legacy",
     sender: "",
     recipient: "",
     amount: 0n,
     asset: { type: "native" },
+    data: { type: "buffer", value: Buffer.from([]) },
     ...intent,
   };
 }
 
-function eip1559Intent(intent: Omit<Partial<TransactionIntent>, "type">): TransactionIntent {
+function eip1559Intent(
+  intent: Omit<Partial<TransactionIntent>, "type">,
+): TransactionIntent<MemoNotSupported, BufferTxData> {
   return {
     type: "send-eip1559",
     sender: "",
     recipient: "",
     amount: 0n,
     asset: { type: "native" },
+    data: { type: "buffer", value: Buffer.from([]) },
     ...intent,
   };
 }

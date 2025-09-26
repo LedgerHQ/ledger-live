@@ -1,41 +1,20 @@
 # @ledgerhq/swift-bridge-hw-app-eth
 
-## 1.2.46-nightly.4
+## 1.2.46
 
 ### Patch Changes
 
 - Updated dependencies []:
-  - @ledgerhq/hw-app-eth@6.46.0-nightly.4
+  - @ledgerhq/hw-app-eth@6.45.19
+  - @ledgerhq/swift-bridge-hw-transport-ble@1.2.11
 
-## 1.2.46-nightly.3
-
-### Patch Changes
-
-- Updated dependencies [[`c2d8d86`](https://github.com/LedgerHQ/ledger-live/commit/c2d8d8670f848989836c46ea08ae88c88086fdd6)]:
-  - @ledgerhq/hw-app-eth@6.46.0-nightly.3
-  - @ledgerhq/swift-bridge-hw-transport-ble@1.2.11-nightly.1
-
-## 1.2.46-nightly.2
+## 1.2.46-next.0
 
 ### Patch Changes
 
 - Updated dependencies []:
-  - @ledgerhq/hw-app-eth@6.45.19-nightly.2
-
-## 1.2.46-nightly.1
-
-### Patch Changes
-
-- Updated dependencies []:
-  - @ledgerhq/hw-app-eth@6.45.19-nightly.1
-
-## 1.2.46-nightly.0
-
-### Patch Changes
-
-- Updated dependencies []:
-  - @ledgerhq/hw-app-eth@6.45.19-nightly.0
-  - @ledgerhq/swift-bridge-hw-transport-ble@1.2.11-nightly.0
+  - @ledgerhq/hw-app-eth@6.45.19-next.0
+  - @ledgerhq/swift-bridge-hw-transport-ble@1.2.11-next.0
 
 ## 1.2.45
 

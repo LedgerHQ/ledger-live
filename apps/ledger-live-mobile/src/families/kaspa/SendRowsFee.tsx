@@ -63,12 +63,11 @@ export default function KaspaSendRowsFee({
     [defaultStrategies, transaction],
   );
   const onFeesSelected = useCallback(
-    ({ amount, label }: SelectFeeStrategy) => {
+    ({ label }: SelectFeeStrategy) => {
       const bridge = getAccountBridge(account, parentAccount);
       setTransaction(
         bridge.updateTransaction(transaction, {
           feesStrategy: label,
-          feePerByte: amount,
         }),
       );
     },
@@ -85,9 +84,12 @@ export default function KaspaSendRowsFee({
     });
   }, [navigation, route.params, account.id, parentAccount?.id, transaction, sompiPerByte]);
 
+  const disabledStrategies = defaultStrategies.filter(x => x.disabled).map(x => x.label);
+
   return (
     <SelectFeesStrategy
       {...props}
+      disabledStrategies={disabledStrategies}
       strategies={strategies as FeeStrategy[]}
       onStrategySelect={onFeesSelected}
       onCustomFeesPress={openCustomFees}

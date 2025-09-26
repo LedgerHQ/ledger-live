@@ -84,7 +84,7 @@ const StepAuthorize = ({
   const placeholderAccount =
     selectedAccount ||
     (() => {
-      if (!currency || !currency.id) {
+      if (!currency?.id) {
         return null;
       }
 
@@ -139,6 +139,7 @@ const StepAuthorize = ({
                 {
                   family: "canton",
                   mode: "preapproval",
+                  tokenId: "",
                   recipient: onboardingData?.partyId || "",
                   amount: new BigNumber(0),
                   fee: new BigNumber(0),

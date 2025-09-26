@@ -1,46 +1,32 @@
 # @ledgerhq/live-signer-canton
 
-## 0.3.1-nightly.4
+## 0.4.0
+
+### Minor Changes
+
+- [#11769](https://github.com/LedgerHQ/ledger-live/pull/11769) [`6941aac`](https://github.com/LedgerHQ/ledger-live/commit/6941aac638dcc8d4fb03aa92f42d2a71d4089202) Thanks [@ishaba](https://github.com/ishaba)! - fix canton receive flow
 
 ### Patch Changes
 
-- Updated dependencies []:
-  - @ledgerhq/coin-canton@0.5.1-nightly.4
+- Updated dependencies [[`38a172c`](https://github.com/LedgerHQ/ledger-live/commit/38a172c23035040d077433c7f4fce60f72962ae0), [`aaa16b7`](https://github.com/LedgerHQ/ledger-live/commit/aaa16b718454dca51d59bb138ab1a638dc4b8243), [`2d747cf`](https://github.com/LedgerHQ/ledger-live/commit/2d747cf63f120a6634c2e2adbe60c4e94d37fc71), [`65c128a`](https://github.com/LedgerHQ/ledger-live/commit/65c128a93f07857b421bed3696bc9984f860ada9), [`a3bf70e`](https://github.com/LedgerHQ/ledger-live/commit/a3bf70ea59fc31277a170d4cb5530f2f58d0a2ab), [`6c7ede3`](https://github.com/LedgerHQ/ledger-live/commit/6c7ede327fcfa0f87ffdb9684da4e3b95612643c), [`6941aac`](https://github.com/LedgerHQ/ledger-live/commit/6941aac638dcc8d4fb03aa92f42d2a71d4089202), [`075cdb4`](https://github.com/LedgerHQ/ledger-live/commit/075cdb4975a584e2b6f715fc6db4d364c0997848), [`fcb6dd3`](https://github.com/LedgerHQ/ledger-live/commit/fcb6dd3701373df22fba0e94bdbe04a3e730dffd), [`4a0b0c6`](https://github.com/LedgerHQ/ledger-live/commit/4a0b0c629e147f680cac0d0f3854834dd3dbb0bd)]:
+  - @ledgerhq/devices@8.6.0
+  - @ledgerhq/coin-canton@0.6.0
+  - @ledgerhq/hw-app-canton@0.5.0
+  - @ledgerhq/hw-transport@6.31.11
 
-## 0.3.1-nightly.3
+## 0.4.0-next.0
 
-### Patch Changes
+### Minor Changes
 
-- Updated dependencies [[`2abaa52`](https://github.com/LedgerHQ/ledger-live/commit/2abaa522471e8247d274c4b22cb4e297969ebe9a), [`c2d8d86`](https://github.com/LedgerHQ/ledger-live/commit/c2d8d8670f848989836c46ea08ae88c88086fdd6), [`49a8534`](https://github.com/LedgerHQ/ledger-live/commit/49a85340a9c4e5dd8dd07db87028fe48f307d1f6)]:
-  - @ledgerhq/coin-canton@0.5.1-nightly.3
-  - @ledgerhq/errors@6.26.0-nightly.0
-  - @ledgerhq/devices@8.5.2-nightly.1
-  - @ledgerhq/hw-app-canton@0.4.1-nightly.1
-  - @ledgerhq/hw-transport@6.31.11-nightly.1
-
-## 0.3.1-nightly.2
+- [#11769](https://github.com/LedgerHQ/ledger-live/pull/11769) [`6941aac`](https://github.com/LedgerHQ/ledger-live/commit/6941aac638dcc8d4fb03aa92f42d2a71d4089202) Thanks [@ishaba](https://github.com/ishaba)! - fix canton receive flow
 
 ### Patch Changes
 
-- Updated dependencies []:
-  - @ledgerhq/coin-canton@0.5.1-nightly.2
-
-## 0.3.1-nightly.1
-
-### Patch Changes
-
-- Updated dependencies []:
-  - @ledgerhq/coin-canton@0.5.1-nightly.1
-
-## 0.3.1-nightly.0
-
-### Patch Changes
-
-- Updated dependencies [[`38a172c`](https://github.com/LedgerHQ/ledger-live/commit/38a172c23035040d077433c7f4fce60f72962ae0)]:
-  - @ledgerhq/devices@8.5.2-nightly.0
-  - @ledgerhq/coin-canton@0.5.1-nightly.0
-  - @ledgerhq/hw-transport@6.31.11-nightly.0
-  - @ledgerhq/hw-app-canton@0.4.1-nightly.0
+- Updated dependencies [[`38a172c`](https://github.com/LedgerHQ/ledger-live/commit/38a172c23035040d077433c7f4fce60f72962ae0), [`aaa16b7`](https://github.com/LedgerHQ/ledger-live/commit/aaa16b718454dca51d59bb138ab1a638dc4b8243), [`2d747cf`](https://github.com/LedgerHQ/ledger-live/commit/2d747cf63f120a6634c2e2adbe60c4e94d37fc71), [`65c128a`](https://github.com/LedgerHQ/ledger-live/commit/65c128a93f07857b421bed3696bc9984f860ada9), [`a3bf70e`](https://github.com/LedgerHQ/ledger-live/commit/a3bf70ea59fc31277a170d4cb5530f2f58d0a2ab), [`6c7ede3`](https://github.com/LedgerHQ/ledger-live/commit/6c7ede327fcfa0f87ffdb9684da4e3b95612643c), [`6941aac`](https://github.com/LedgerHQ/ledger-live/commit/6941aac638dcc8d4fb03aa92f42d2a71d4089202), [`075cdb4`](https://github.com/LedgerHQ/ledger-live/commit/075cdb4975a584e2b6f715fc6db4d364c0997848), [`fcb6dd3`](https://github.com/LedgerHQ/ledger-live/commit/fcb6dd3701373df22fba0e94bdbe04a3e730dffd), [`4a0b0c6`](https://github.com/LedgerHQ/ledger-live/commit/4a0b0c629e147f680cac0d0f3854834dd3dbb0bd)]:
+  - @ledgerhq/devices@8.6.0-next.0
+  - @ledgerhq/coin-canton@0.6.0-next.0
+  - @ledgerhq/hw-app-canton@0.5.0-next.0
+  - @ledgerhq/hw-transport@6.31.11-next.0
 
 ## 0.3.0
 

@@ -1,35 +1,38 @@
 # @ledgerhq/cryptoassets
 
-## 13.29.0-nightly.3
+## 13.29.0
 
 ### Minor Changes
 
-- [#11948](https://github.com/LedgerHQ/ledger-live/pull/11948) [`ab0e1bc`](https://github.com/LedgerHQ/ledger-live/commit/ab0e1bcc97b66b750b6c29e618eb03ce6f25bb7b) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Simplify implementation of listTokenTypesForCryptoCurrency to not depend on bundled tokens.
-
-### Patch Changes
-
-- Updated dependencies [[`c2d8d86`](https://github.com/LedgerHQ/ledger-live/commit/c2d8d8670f848989836c46ea08ae88c88086fdd6)]:
-  - @ledgerhq/live-env@2.17.0-nightly.2
-
-## 13.28.1-nightly.2
-
-### Patch Changes
-
-- Updated dependencies [[`2a58b72`](https://github.com/LedgerHQ/ledger-live/commit/2a58b720de42e63e59ea430bd03b2c95e903634c)]:
-  - @ledgerhq/live-env@2.17.0-nightly.1
-
-## 13.28.1-nightly.1
-
-### Patch Changes
+- [#11672](https://github.com/LedgerHQ/ledger-live/pull/11672) [`d56bebe`](https://github.com/LedgerHQ/ledger-live/commit/d56bebe672a1ed825697b371662dbff19dcc63d8) Thanks [@semeano](https://github.com/semeano)! - Kaspa commons libs
 
 - [#11887](https://github.com/LedgerHQ/ledger-live/pull/11887) [`af64263`](https://github.com/LedgerHQ/ledger-live/commit/af642634bd4536183f766323d0ec5b9b99841dc6) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Update canton blockavg
 
-## 13.28.1-nightly.0
+- [#11747](https://github.com/LedgerHQ/ledger-live/pull/11747) [`0108eaf`](https://github.com/LedgerHQ/ledger-live/commit/0108eafb64e36ce68f44e03cc3f66ccdb5ee5a92) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Update IOTA ticker
+
+- [#11799](https://github.com/LedgerHQ/ledger-live/pull/11799) [`65c128a`](https://github.com/LedgerHQ/ledger-live/commit/65c128a93f07857b421bed3696bc9984f860ada9) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Canton memo
 
 ### Patch Changes
 
-- Updated dependencies [[`3b5576e`](https://github.com/LedgerHQ/ledger-live/commit/3b5576e0b67fedad0f5dbbd6b9546281af4e6111), [`fe97131`](https://github.com/LedgerHQ/ledger-live/commit/fe971313776194e5942dfa9a95d6082950c3111e)]:
-  - @ledgerhq/live-env@2.17.0-nightly.0
+- Updated dependencies [[`aaa16b7`](https://github.com/LedgerHQ/ledger-live/commit/aaa16b718454dca51d59bb138ab1a638dc4b8243), [`3b5576e`](https://github.com/LedgerHQ/ledger-live/commit/3b5576e0b67fedad0f5dbbd6b9546281af4e6111), [`fe97131`](https://github.com/LedgerHQ/ledger-live/commit/fe971313776194e5942dfa9a95d6082950c3111e), [`2a58b72`](https://github.com/LedgerHQ/ledger-live/commit/2a58b720de42e63e59ea430bd03b2c95e903634c)]:
+  - @ledgerhq/live-env@2.17.0
+
+## 13.29.0-next.0
+
+### Minor Changes
+
+- [#11672](https://github.com/LedgerHQ/ledger-live/pull/11672) [`d56bebe`](https://github.com/LedgerHQ/ledger-live/commit/d56bebe672a1ed825697b371662dbff19dcc63d8) Thanks [@semeano](https://github.com/semeano)! - Kaspa commons libs
+
+- [#11887](https://github.com/LedgerHQ/ledger-live/pull/11887) [`af64263`](https://github.com/LedgerHQ/ledger-live/commit/af642634bd4536183f766323d0ec5b9b99841dc6) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Update canton blockavg
+
+- [#11747](https://github.com/LedgerHQ/ledger-live/pull/11747) [`0108eaf`](https://github.com/LedgerHQ/ledger-live/commit/0108eafb64e36ce68f44e03cc3f66ccdb5ee5a92) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Update IOTA ticker
+
+- [#11799](https://github.com/LedgerHQ/ledger-live/pull/11799) [`65c128a`](https://github.com/LedgerHQ/ledger-live/commit/65c128a93f07857b421bed3696bc9984f860ada9) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Canton memo
+
+### Patch Changes
+
+- Updated dependencies [[`aaa16b7`](https://github.com/LedgerHQ/ledger-live/commit/aaa16b718454dca51d59bb138ab1a638dc4b8243), [`3b5576e`](https://github.com/LedgerHQ/ledger-live/commit/3b5576e0b67fedad0f5dbbd6b9546281af4e6111), [`fe97131`](https://github.com/LedgerHQ/ledger-live/commit/fe971313776194e5942dfa9a95d6082950c3111e), [`2a58b72`](https://github.com/LedgerHQ/ledger-live/commit/2a58b720de42e63e59ea430bd03b2c95e903634c)]:
+  - @ledgerhq/live-env@2.17.0-next.0
 
 ## 13.28.0
 

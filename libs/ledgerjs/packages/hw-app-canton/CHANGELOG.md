@@ -1,19 +1,26 @@
 # @ledgerhq/hw-app-canton
 
-## 0.4.1-nightly.1
+## 0.5.0
 
-### Patch Changes
+### Minor Changes
 
-- Updated dependencies [[`c2d8d86`](https://github.com/LedgerHQ/ledger-live/commit/c2d8d8670f848989836c46ea08ae88c88086fdd6)]:
-  - @ledgerhq/errors@6.26.0-nightly.0
-  - @ledgerhq/hw-transport@6.31.11-nightly.1
-
-## 0.4.1-nightly.0
+- [#11769](https://github.com/LedgerHQ/ledger-live/pull/11769) [`6941aac`](https://github.com/LedgerHQ/ledger-live/commit/6941aac638dcc8d4fb03aa92f42d2a71d4089202) Thanks [@ishaba](https://github.com/ishaba)! - fix canton receive flow
 
 ### Patch Changes
 
 - Updated dependencies []:
-  - @ledgerhq/hw-transport@6.31.11-nightly.0
+  - @ledgerhq/hw-transport@6.31.11
+
+## 0.5.0-next.0
+
+### Minor Changes
+
+- [#11769](https://github.com/LedgerHQ/ledger-live/pull/11769) [`6941aac`](https://github.com/LedgerHQ/ledger-live/commit/6941aac638dcc8d4fb03aa92f42d2a71d4089202) Thanks [@ishaba](https://github.com/ishaba)! - fix canton receive flow
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport@6.31.11-next.0
 
 ## 0.4.0
 

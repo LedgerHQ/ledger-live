@@ -8,6 +8,7 @@ describe.skip("localnet", () => {
   beforeAll(() => {
     api = createApi({
       nodeUrl: "http://localhost:2975/v2",
+      nativeInstrumentId: "Amulet",
       networkType: "localnet",
     } satisfies Partial<CantonCoinConfig>);
   });
@@ -27,6 +28,7 @@ describe.skip("devnet", () => {
       networkType: "devnet",
       gatewayUrl: "https://canton-gateway.api.live.ledger-test.com",
       useGateway: true,
+      nativeInstrumentId: "Amulet",
     });
   });
 

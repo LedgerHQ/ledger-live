@@ -3,13 +3,19 @@ import { Transaction } from "../types";
 import { estimateFees } from "../common-logic";
 import BigNumber from "bignumber.js";
 import { updateTransaction } from "./updateTransaction";
+import coinConfig from "../config";
 
 export const prepareTransaction: AccountBridge<Transaction>["prepareTransaction"] = async (
   account,
   transaction,
 ) => {
-  let fee = transaction.fee;
   const amount = transaction.amount || BigNumber(0);
-  fee = BigNumber((await estimateFees(account.currency, BigInt(amount.toString()))).toString());
+  const fee = BigNumber(
+    (await estimateFees(account.currency, BigInt(amount.toString()))).toString(),
+  );
+
+  if (!transaction.tokenId) {
+    transaction.tokenId = coinConfig.getCoinConfig(account.currency).nativeInstrumentId;
+  }
   return updateTransaction(transaction, { fee });
 };

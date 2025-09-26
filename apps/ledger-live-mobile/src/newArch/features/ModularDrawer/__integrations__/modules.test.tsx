@@ -193,7 +193,7 @@ describe("ModularDrawer modules integration", () => {
     await user.press(getByText(WITHOUT_ACCOUNT_SELECTION));
     advanceTimers();
     expect(getByText(/ethereum/i)).toBeVisible();
-    expect(getByText(/23.4663 eth/i)).toBeVisible();
+    expect(getByText(/34,478.4 ETH/i)).toBeVisible();
   });
 
   it("should display balance on the right at networkSelection step", async () => {

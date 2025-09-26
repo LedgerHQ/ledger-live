@@ -10,15 +10,18 @@ import { buildProviderCurrenciesMap } from "../utils/buildProviderCurrenciesMap"
 import { CurrenciesByProviderId } from "../../deposit/type";
 import { calculateProviderTotals } from "../utils/calculateProviderTotal";
 import { getProviderCurrency } from "../utils/getProviderCurrency";
-import { getBalanceAndFiatValueByAssets } from "../utils/getBalanceAndFiatValueByAssets";
 import { groupAccountsByAsset } from "../utils/groupAccountsByAsset";
 
 export type AssetDeps = {
   useBalanceDeps: UseBalanceDeps;
   balanceItem: (asset: { fiatValue?: string; balance?: string }) => ReactNode;
+  assetsMap: Map<
+    string,
+    { mainCurrency: CryptoOrTokenCurrency; currencies: CryptoOrTokenCurrency[] }
+  >;
 };
 
-export function createUseRightBalanceAsset({ useBalanceDeps, balanceItem }: AssetDeps) {
+export function createUseRightBalanceAsset({ useBalanceDeps, balanceItem, assetsMap }: AssetDeps) {
   const formatProviderResult = (
     providerCurrency: CryptoOrTokenCurrency,
     totalBalance: BigNumber,
@@ -58,15 +61,26 @@ export function createUseRightBalanceAsset({ useBalanceDeps, balanceItem }: Asse
 
     return useMemo(() => {
       if (!providerMap) {
-        const allBalance = getBalanceAndFiatValueByAssets(
-          flattenedAccounts,
-          assets,
-          state,
-          counterValueCurrency,
-          discreet,
-          locale,
-        );
-        const balanceMap = new Map(allBalance.map(b => [b.id, b]));
+        const balanceMap = new Map();
+
+        for (const [, { currencies, mainCurrency }] of assetsMap) {
+          const { totalBalance, totalFiatValue } = calculateProviderTotals(currencies, grouped);
+
+          const { balance, fiatValue } = formatProviderResult(
+            mainCurrency,
+            totalBalance,
+            totalFiatValue,
+            counterValueCurrency,
+            locale,
+            discreet,
+          );
+
+          balanceMap.set(mainCurrency.id, {
+            balance: balance,
+            fiatValue: fiatValue,
+          });
+        }
+
         const assetsWithBalanceData = assets.map(asset => {
           const balanceData = balanceMap.get(asset.id) || {};
           return {
@@ -126,15 +140,6 @@ export function createUseRightBalanceAsset({ useBalanceDeps, balanceItem }: Asse
         ...asset,
         rightElement: balanceItem(balanceData),
       }));
-    }, [
-      assets,
-      providerMap,
-      flattenedAccounts,
-      state,
-      counterValueCurrency,
-      discreet,
-      locale,
-      grouped,
-    ]);
+    }, [providerMap, assets, grouped, counterValueCurrency, locale, discreet]);
   };
 }

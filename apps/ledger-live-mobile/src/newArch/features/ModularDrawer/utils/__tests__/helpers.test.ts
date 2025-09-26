@@ -1,5 +1,5 @@
 import { getNetworksForAsset, resolveCurrency } from "../helpers";
-import type { AssetsData } from "../../hooks/useAssets";
+import type { AssetData } from "@ledgerhq/live-common/modularDrawer/utils/type";
 import {
   mockEthCryptoCurrency,
   mockBtcCryptoCurrency,
@@ -10,7 +10,7 @@ import {
 describe("helpers", () => {
   describe("getNetworksForAsset", () => {
     it("should return an empty array if the asset id does not exist", () => {
-      const assets: AssetsData = [
+      const assets: AssetData[] = [
         {
           asset: { id: "a1", ticker: "A1", name: "Asset 1", assetsIds: {} },
           networks: [mockEthCryptoCurrency],
@@ -21,7 +21,7 @@ describe("helpers", () => {
 
     it("should return the networks for a matching asset id", () => {
       const networks = [mockEthCryptoCurrency, mockBtcCryptoCurrency];
-      const assets: AssetsData = [
+      const assets: AssetData[] = [
         {
           asset: { id: "btc", ticker: "BTC", name: "Bitcoin", assetsIds: {} },
           networks,
@@ -36,7 +36,7 @@ describe("helpers", () => {
     const base = mockBaseCryptoCurrency;
     const usdc = usdcToken;
 
-    const assets: AssetsData = [
+    const assets: AssetData[] = [
       {
         asset: { id: eth.id, name: eth.name, ticker: eth.ticker, assetsIds: {} },
         networks: [eth, usdc],
