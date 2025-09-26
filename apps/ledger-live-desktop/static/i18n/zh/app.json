@@ -168,6 +168,7 @@
       "NFT_IN" : "已收到的 NFT",
       "NFT_OUT" : "已发送的 NFT",
       "CREATE" : "已创建",
+      "UNKNOWN" : "未知",
       "REVEAL" : "已显示",
       "DELEGATE" : "已委托",
       "REDELEGATE" : "已重新委托",
@@ -1930,7 +1931,12 @@
         "default" : "发送之前请在您的设备上验证互换详情。地址会被安全地交换因此您不必对其进行验证。",
         "provider" : "发送资金之前，请先在您的设备上核实互换详情。{{providerName}} 可能需要对某些交易进行额外验证，因此导致延迟。"
       },
+      "simpleViewNotice" : {
+        "default" : "发送资金之前，请先在您的 Ledger 设备上核实互换详情。",
+        "provider" : "发送资金之前，请先在您的设备上核实互换详情。{{providerName}} 可能需要对某些交易进行额外验证，因此导致延迟。"
+      },
       "confirm" : "确认互换交易",
+      "confirmSwap" : "在设备上确认互换操作",
       "amountSent" : "发送数额",
       "amountReceived" : "待收数额",
       "amountReceivedFloat" : "服务费之前收到的数额",
@@ -2425,6 +2431,7 @@
         "nextBlock" : "下一个区块",
         "suggested" : "建议",
         "unitVByte" : "{{unit}}/vbyte",
+        "unitPerByte" : "{{unit}}/字节",
         "nft" : "NFT",
         "nftQuantity" : "数量",
         "splExtensionsWarning" : "您正在交互的代币属于 Token-2022 程序（亦称代币扩展程序）。该代币具有特定风险。<0>点击此处</0>了解详情。"
@@ -5866,6 +5873,10 @@
       "commentPlaceholder" : "可选",
       "comment" : "备注"
     },
+    "canton" : {
+      "commentPlaceholder" : "可选",
+      "comment" : "备注"
+    },
     "stellar" : {
       "memo" : "Memo",
       "memoType" : {
@@ -6313,6 +6324,10 @@
       "title" : "出错了",
       "description" : "交易失败。请重试。"
     },
+    "TransactionCannotBeCreated" : {
+      "title" : "处理出错",
+      "description" : "Changelly 无法处理此交易。错误代码 8HBB{{errorCode}}"
+    },
     "TimeoutError" : {
       "title" : "抱歉，服务器响应超时",
       "description" : "请再次尝试。"
@@ -6460,6 +6475,9 @@
       "description" : "请关闭窗口，稍后再重试"
     },
     "TonCommentInvalid" : {
+      "title" : "备注不得超过 120 个字符，不包含特殊字符"
+    },
+    "CantonCommentInvalid" : {
       "title" : "备注不得超过 120 个字符，不包含特殊字符"
     },
     "CantScanQRCode" : {
@@ -6853,11 +6871,11 @@
       "description" : "请使用另一张图片重试"
     },
     "ImageCommitRefusedOnDevice" : {
-      "title" : "已取消在 {{productName}} 上安装锁屏图片",
+      "title" : "已在 {{productName}} 上\n弃用锁屏图片",
       "description" : "如果是误操作，请立即重试。"
     },
     "ImageLoadRefusedOnDevice" : {
-      "title" : "已取消在 {{productName}} 上安装锁屏图片",
+      "title" : "已在 {{productName}} 上\n取消锁屏图片",
       "description" : "如果是误操作，请立即重试。"
     },
     "ImageDoesNotExistOnDevice" : {
@@ -7182,7 +7200,7 @@
     "steps" : {
       "choose" : {
         "stepLabel" : "选择图片",
-        "description" : "选择要设为 (...) 的图片",
+        "description" : "选择任意数字艺术或照片。\n自定义您的 {{productName}}。\n打造您的个性风格。",
         "pickFromNftGallery" : "从我的 NFT 画廊中选择",
         "myNfts" : "我的 NFT",
         "upload" : "从计算机上传",
@@ -7206,7 +7224,7 @@
         "useAnotherPicture" : "上传另一张图片",
         "allowPreview" : "点按“Load picture”（加载图片）\n自定义锁屏图片",
         "allowConfirmPreview" : "点按“Load picture”（加载图片）\n恢复锁屏图片",
-        "loadingPicture" : "正在安装……",
+        "loadingPicture" : "正在加载……",
         "voila" : "好啦！",
         "imageLoaded" : "图片已加载到 {{productName}}",
         "confirmPicture" : "很合心意？\n用此设定！",
@@ -7265,7 +7283,7 @@
   "webview" : {
     "networkError" : {
       "title" : "网络错误",
-      "subtitle" : "出错了。请再次尝试。如果仍有问题，请保存日志并联系 Ledger 客服。",
+      "subtitle" : "出错了。请重试。如果仍有问题，请保存日志并联系 Ledger 客服。",
       "contactSupport" : "联系 Ledger 客服",
       "saveLog" : "保存日志"
     },
