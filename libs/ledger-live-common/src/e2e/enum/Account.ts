@@ -248,6 +248,8 @@ export class Account {
     undefined,
     [Nft.ANTITUS, Nft.PODIUM, Nft.NY_LA_MUSE],
   );
+  // don't use this account as a recipient, it's balance
+  // should stay close to null to allow for error message testing
   static readonly ETH_2 = new Account(
     Currency.ETH,
     "Ethereum 2",
