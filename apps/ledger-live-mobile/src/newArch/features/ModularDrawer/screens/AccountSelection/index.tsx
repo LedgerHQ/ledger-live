@@ -3,7 +3,6 @@ import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { AccountLike } from "@ledgerhq/types-live";
 import { FlatList } from "react-native";
 import { BottomSheetVirtualizedList } from "@gorhom/bottom-sheet";
-import { AccountItem } from "@ledgerhq/native-ui/pre-ldls/index";
 import {
   TrackDrawerScreen,
   EVENTS_NAME,
@@ -13,12 +12,11 @@ import {
 import { useDetailedAccounts } from "../../hooks/useDetailedAccounts";
 import { WalletAPIAccount } from "@ledgerhq/live-common/wallet-api/types";
 import { Observable } from "rxjs";
-import { AccountUI } from "@ledgerhq/native-ui/pre-ldls/components/";
-import { AddAccountButton } from "@ledgerhq/native-ui/pre-ldls/components/index";
+import { AddAccountButton, AccountItem } from "@ledgerhq/native-ui/pre-ldls/components/index";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 import { modularDrawerFlowSelector, modularDrawerSourceSelector } from "~/reducers/modularDrawer";
-import { useTheme } from "styled-components/native";
+import { RawDetailedAccount } from "../../hooks/useDetailedAccounts";
 
 export type AccountSelectionStepProps = {
   accounts$?: Observable<WalletAPIAccount[]>;
@@ -48,19 +46,31 @@ const AccountSelectionContent = ({
   );
   const listRef = useRef<FlatList>(null);
   const { t } = useTranslation();
-  const { colors } = useTheme();
 
   const renderItem = useCallback(
-    ({ item }: { item: AccountUI }) => {
+    ({ item }: { item: RawDetailedAccount }) => {
+      const accountUI = {
+        address: item.account.type === "Account" ? item.account.freshAddress : "",
+        balance: "",
+        cryptoId:
+          item.account.type === "Account" ? item.account.currency.id : item.account.token.id,
+        fiatValue: "",
+        id: item.id,
+        name: item.name,
+        parentId: item.parentId,
+        protocol: item.protocol,
+        ticker: item.ticker,
+      };
+
       return (
         <AccountItem
-          account={item}
+          account={accountUI}
           onClick={() => handleAccountSelected(item)}
-          cryptoIconBackgroundColor={colors.background.drawer}
+          cryptoIconBackgroundColor="transparent"
         />
       );
     },
-    [handleAccountSelected, colors.background.drawer],
+    [handleAccountSelected],
   );
   const { trackModularDrawerEvent } = useModularDrawerAnalytics();
   const onAddNewAccountOnClick = useCallback(() => {
