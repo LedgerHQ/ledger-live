@@ -168,6 +168,7 @@
       "NFT_IN" : "NFT Recibido",
       "NFT_OUT" : "NFT Enviado",
       "CREATE" : "Creado",
+      "UNKNOWN" : "Desconocido",
       "REVEAL" : "Revelado",
       "DELEGATE" : "Delegado",
       "REDELEGATE" : "Redelegado",
@@ -1930,7 +1931,12 @@
         "default" : "Verifica los detalles de la permuta en tu dispositivo antes de enviarla. Las direcciones se intercambian de forma segura por lo que no es necesario verificarlas.",
         "provider" : "Verifica la información de permuta en tu dispositivo antes de enviar la transacción. {{providerName}} tal vez requiera una verificación adicional para algunas transacciones, lo que puede provocar retrasos."
       },
+      "simpleViewNotice" : {
+        "default" : "Verifica la información de permuta en tu Ledger antes de enviar la transacción.",
+        "provider" : "Verifica la información de permuta en tu dispositivo antes de enviar la transacción. {{providerName}} tal vez requiera una verificación adicional para algunas transacciones, lo que puede provocar retrasos."
+      },
       "confirm" : "Confirmar transacción de permuta",
+      "confirmSwap" : "Confirma la operación de permuta en tu dispositivo",
       "amountSent" : "Importe a enviar",
       "amountReceived" : "Importe a recibir",
       "amountReceivedFloat" : "Importe a recibir antes de aplicar las tarifas de servicios",
@@ -2425,6 +2431,7 @@
         "nextBlock" : "Siguiente bloque",
         "suggested" : "Sugerida",
         "unitVByte" : "{{unit}}/vbyte",
+        "unitPerByte" : "{{unit}}/byte",
         "nft" : "NFT",
         "nftQuantity" : "Cantidad",
         "splExtensionsWarning" : "Estás interactuando con un token incluido en el programa Token-2022, también conocido como Token Extensions. Este token conlleva riesgos concretos. <0>Haz clic aquí</0> para obtener más información."
@@ -5866,6 +5873,10 @@
       "commentPlaceholder" : "Opcional",
       "comment" : "Comentario"
     },
+    "canton" : {
+      "commentPlaceholder" : "Opcional",
+      "comment" : "Comentario"
+    },
     "stellar" : {
       "memo" : "Memo",
       "memoType" : {
@@ -6313,6 +6324,10 @@
       "title" : "Algo ha salido mal",
       "description" : "La transacción ha fallado. Inténtalo de nuevo."
     },
+    "TransactionCannotBeCreated" : {
+      "title" : "Error de procesamiento",
+      "description" : "Changelly no pudo procesar esta transacción. Código de error 8HBB{{errorCode}}"
+    },
     "TimeoutError" : {
       "title" : "El servidor ha tardado demasiado en responder",
       "description" : "Inténtalo de nuevo."
@@ -6460,6 +6475,9 @@
       "description" : "Cierra la ventana e inténtalo de nuevo más tarde"
     },
     "TonCommentInvalid" : {
+      "title" : "El comentario no debe superar los 120 caracteres y no debe incluir caracteres especiales"
+    },
+    "CantonCommentInvalid" : {
       "title" : "El comentario no debe superar los 120 caracteres y no debe incluir caracteres especiales"
     },
     "CantScanQRCode" : {
@@ -6853,11 +6871,11 @@
       "description" : "Vuelve a intentarlo con otra imagen"
     },
     "ImageCommitRefusedOnDevice" : {
-      "title" : "Instalación de imagen de pantalla de bloqueo\ncancelada en {{productName}}",
+      "title" : "Imagen de pantalla de bloqueo descartada en {{productName}}",
       "description" : "Si ha sido un error, inténtalo de nuevo."
     },
     "ImageLoadRefusedOnDevice" : {
-      "title" : "Instalación de imagen de pantalla de bloqueo\ncancelada en {{productName}}",
+      "title" : "Imagen de pantalla de bloqueo cancelada en\n{{productName}}",
       "description" : "Si ha sido un error, inténtalo de nuevo."
     },
     "ImageDoesNotExistOnDevice" : {
@@ -7182,7 +7200,7 @@
     "steps" : {
       "choose" : {
         "stepLabel" : "Elegir imagen",
-        "description" : "Elige una imagen para establecerla como (...)",
+        "description" : "Elige cualquier ejemplo de arte digital o foto.\nPersonaliza tu {{productName}}.\nHazlo tuyo.",
         "pickFromNftGallery" : "Elegir de la galería de NFTs",
         "myNfts" : "Mis NFTs",
         "upload" : "Cargar desde PC",
@@ -7206,7 +7224,7 @@
         "useAnotherPicture" : "Cargar otra imagen",
         "allowPreview" : "Toca “Cargar imagen” para\npersonalizar la imagen de pantalla de bloqueo",
         "allowConfirmPreview" : "Toca “Cargar imagen” para\nrestaurar la imagen de pantalla de bloqueo",
-        "loadingPicture" : "Instalando...",
+        "loadingPicture" : "Cargando...",
         "voila" : "¡Voilà!",
         "imageLoaded" : "Imagen cargada en {{productName}}",
         "confirmPicture" : "¿Te gusta lo que ves?\n¡Pues consérvalo!",
@@ -7265,9 +7283,9 @@
   "webview" : {
     "networkError" : {
       "title" : "Error de red",
-      "subtitle" : "Algo ha salido mal. Inténtalo de nuevo. Si el problema persiste, guarda el registro y ponte en contacto con el Soporte de Ledger.",
+      "subtitle" : "Se ha producido un error. Inténtalo de nuevo. Si el problema persiste, guarda los registros y ponte en contacto con el Soporte de Ledger.",
       "contactSupport" : "Ponte en contacto con el Soporte de Ledger",
-      "saveLog" : "Guardar registro"
+      "saveLog" : "Guardar registros"
     },
     "noAccounts" : {
       "title" : "Necesitas una cuenta para poder acceder a esta aplicación.",
@@ -7652,7 +7670,7 @@
         "foundAccounts_other" : "Hemos encontrado {{count}} cuentas",
         "scanning" : "Buscando cuentas..."
       },
-      "title" : "Checking the blockchain..."
+      "title" : "Comprobando la blockchain..."
     },
     "connectYourDevice" : {
       "title" : "Conecta y desbloquea tu dispositivo"
