@@ -90,6 +90,7 @@ jest.mock("../../network/sdk", () => {
         nonce: nonceMock,
         estimateGasWithInflationFactor: jest.fn().mockReturnValue(3),
         gasPrice: jest.fn(async () => BigNumber(2)),
+        getMaxPriorityFeePerGas: jest.fn().mockResolvedValue(1),
       },
     })),
   };
