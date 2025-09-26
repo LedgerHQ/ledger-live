@@ -71,6 +71,10 @@ const INCOMPATIBLE_NANO_S_CURRENCY_KEYS: Keys = {
     title: "swap.incompatibility.sui_title",
     description: "swap.incompatibility.sui_description",
   },
+  kaspa: {
+    title: "swap.incompatibility.kaspa_title",
+    description: "swap.incompatibility.kaspa_description",
+  },
 };
 
 export const getIncompatibleCurrencyKeys = (exchange: ExchangeSwap) => {
