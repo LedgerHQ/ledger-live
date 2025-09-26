@@ -7,7 +7,6 @@ export default function OnboardingEntryPoint({ onPress }: { onPress: () => void 
 
   return (
     <Button
-      mt="24px"
       iconPosition="right"
       onClick={onPress}
       outline={true}
