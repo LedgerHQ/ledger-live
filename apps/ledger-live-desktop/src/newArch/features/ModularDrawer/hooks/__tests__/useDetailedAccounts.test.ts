@@ -8,6 +8,48 @@ import { useDetailedAccounts } from "../useDetailedAccounts";
 
 jest.spyOn(reactRedux, "useDispatch").mockReturnValue(mockDispatch);
 
+// Mock countervalues logic
+jest.mock("@ledgerhq/live-countervalues-react", () => ({
+  useCountervaluesState: jest.fn(() => ({})),
+}));
+
+jest.mock("@ledgerhq/live-countervalues/logic", () => ({
+  calculate: jest.fn((state, { value }) => value), // Return balance as fiat value for testing
+}));
+
+// Mock analytics and other dependencies
+jest.mock("../../analytics/useModularDrawerAnalytics", () => ({
+  useModularDrawerAnalytics: jest.fn(() => ({
+    trackModularDrawerEvent: jest.fn(),
+  })),
+}));
+
+jest.mock("../useOpenAssetFlow", () => ({
+  useOpenAssetFlow: jest.fn(() => ({
+    openAddAccountFlow: jest.fn(),
+  })),
+}));
+
+jest.mock("~/renderer/reducers/modularDrawer", () => ({
+  modularDrawerSourceSelector: jest.fn(() => "test"),
+}));
+
+jest.mock("~/renderer/reducers/wallet", () => ({
+  useBatchMaybeAccountName: jest.fn(() => ["Ethereum 2"]),
+}));
+
+jest.mock("../../utils/formatDetailedAccount", () => ({
+  RawDetailedAccount: {},
+}));
+
+jest.mock("../../utils/sortAccountsByFiatValue", () => ({
+  sortAccountsByFiatValue: jest.fn(accounts => accounts),
+}));
+
+jest.mock("@ledgerhq/live-common/utils/getAccountTuplesForCurrency", () => ({
+  getAccountTuplesForCurrency: jest.fn(),
+}));
+
 describe("useDetailedAccounts", () => {
   it("should return formatted accounts for a crypto currency", () => {
     const asset = ethereumCurrency;
@@ -16,6 +58,11 @@ describe("useDetailedAccounts", () => {
       initialState: {
         accounts: [ETH_ACCOUNT],
         wallet: { accountNames: new Map([["eth1", "eth1"]]) },
+        settings: {
+          ...INITIAL_STATE.settings,
+          counterValueCurrency: { id: "usd", units: [{ code: "USD", magnitude: 2 }] },
+        },
+        modularDrawer: { source: "test" },
       },
     });
 
@@ -23,12 +70,11 @@ describe("useDetailedAccounts", () => {
       {
         id: ETH_ACCOUNT.id,
         name: "Ethereum 2",
-        address: "0x42D...339ED",
-        balance: "12.7161 ETH",
+        address: ETH_ACCOUNT.freshAddress,
+        balance: ETH_ACCOUNT.balance,
+        balanceUnit: ETH_ACCOUNT.currency.units[0],
         cryptoId: "ethereum",
-        fiatValue: undefined,
-        parentId: undefined,
-        protocol: "",
+        fiatValue: ETH_ACCOUNT.balance.toNumber(), // Mocked calculate function returns balance as fiat value
         ticker: "ETH",
       },
     ]);
@@ -41,6 +87,11 @@ describe("useDetailedAccounts", () => {
       initialState: {
         accounts: [ETH_ACCOUNT],
         wallet: { accountNames: new Map([["eth1", "eth1"]]) },
+        settings: {
+          ...INITIAL_STATE.settings,
+          counterValueCurrency: { id: "usd", units: [{ code: "USD", magnitude: 2 }] },
+        },
+        modularDrawer: { source: "test" },
       },
     });
 
@@ -65,6 +116,11 @@ describe("useDetailedAccounts", () => {
       initialState: {
         accounts: [ETH_ACCOUNT],
         wallet: { accountNames: new Map([["eth1", "eth1"]]) },
+        settings: {
+          ...INITIAL_STATE.settings,
+          counterValueCurrency: { id: "usd", units: [{ code: "USD", magnitude: 2 }] },
+        },
+        modularDrawer: { source: "test" },
       },
     });
 

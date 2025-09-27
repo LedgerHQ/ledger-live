@@ -105,9 +105,9 @@ function CountervaluesProviders({
   children: React.ReactNode;
   store: ReduxStore;
 }): JSX.Element {
-  // TODO This interim bridge is only a stop-gap. We’ll remove it once we either:
+  // TODO This interim bridge is only a stop-gap. We'll remove it once we either:
   // (a) separate counter-values user settings from the Firebase feature flag, or
-  // (b) introduce a proper feature-flag provider that doesn’t break our tests.
+  // (b) introduce a proper feature-flag provider that doesn't break our tests.
   const bridge = useMemo((): CountervaluesBridge => {
     const state = store.getState();
     return {
