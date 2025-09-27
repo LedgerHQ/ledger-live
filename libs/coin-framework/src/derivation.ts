@@ -235,7 +235,7 @@ const legacyDerivations: Partial<Record<CryptoCurrency["id"], DerivationMode[]>>
   aptos: ["aptos"],
   canton_network: ["canton"],
   canton_network_devnet: ["canton"],
-  canton_network_localnet: ["canton"],
+  canton_network_testnet: ["canton"],
 };
 
 export function isDerivationMode(mode: string): mode is DerivationMode {
@@ -375,7 +375,7 @@ const disableBIP44: Record<string, boolean> = {
   sui: true,
   canton_network: true,
   canton_network_devnet: true,
-  canton_network_localnet: true,
+  canton_network_testnet: true,
 };
 type SeedInfo = {
   purpose: number;
@@ -405,7 +405,7 @@ const seedIdentifierPath = (currencyId: string): SeedPathFn => {
       return ({ purpose, coinType }) => `${purpose}'/${coinType}'/0'/0'/0'/0'`;
     case "canton_network":
     case "canton_network_devnet":
-    case "canton_network_localnet":
+    case "canton_network_testnet":
       return ({ purpose, coinType }) => `${purpose}'/${coinType}'/0'/0'/0'`;
     default:
       return ({ purpose, coinType }) => `${purpose}'/${coinType}'/0'`;

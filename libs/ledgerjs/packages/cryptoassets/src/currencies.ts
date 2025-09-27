@@ -614,7 +614,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     managerAppName: "Canton",
     ticker: "CC",
     scheme: "canton_network",
-    color: "#F8FFAE",
+    color: "#F3FF97",
     family: "canton",
     blockAvgTime: 100,
     units: [
@@ -637,15 +637,15 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     ],
     keywords: ["canton_network"],
   },
-  canton_network_localnet: {
+  canton_network_testnet: {
     type: "CryptoCurrency",
-    id: "canton_network_localnet",
+    id: "canton_network_testnet",
     coinType: CoinType.CANTON_NETWORK,
-    name: "Canton Network (Localnet)",
+    name: "Canton Network (Testnet)",
     managerAppName: "Canton",
     ticker: "CC",
-    scheme: "canton_network_localnet",
-    color: "#F8FFAE",
+    scheme: "canton_network_testnet",
+    color: "#F3FF97",
     family: "canton",
     blockAvgTime: 100,
     isTestnetFor: "canton_network",
@@ -663,11 +663,11 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     ],
     explorerViews: [
       {
-        tx: "https://explorer-to-define.io/transaction/$hash",
-        address: "https://explorer-to-define.io/address/$address",
+        tx: "https://lighthouse.testnet.cantonloop.com/transactions/$hash",
+        address: "https://lighthouse.testnet.cantonloop.com/party/$address",
       },
     ],
-    keywords: ["canton_network_localnet"],
+    keywords: ["canton_network_testnet"],
   },
   canton_network_devnet: {
     type: "CryptoCurrency",
@@ -677,7 +677,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     managerAppName: "Canton",
     ticker: "CC",
     scheme: "canton_network_devnet",
-    color: "#F8FFAE",
+    color: "#F3FF97",
     family: "canton",
     blockAvgTime: 100,
     isTestnetFor: "canton_network",
