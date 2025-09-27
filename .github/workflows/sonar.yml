@@ -52,6 +52,6 @@ jobs:
           cat apps/ledger-live-desktop/coverage/lcov.info apps/ledger-live-mobile/coverage/lcov.info > ./lcov.info
           cat apps/ledger-live-desktop/coverage/sonar-executionTests-report.xml apps/ledger-live-mobile/coverage/sonar-executionTests-report.xml > ./sonar-executionTests-report.xml
 
-      - uses: SonarSource/sonarqube-scan-action@v4
+      - uses: SonarSource/sonarqube-scan-action@v6
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
