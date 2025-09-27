@@ -2,9 +2,9 @@ import { useMemo } from "react";
 import { LoadingStatus } from "@ledgerhq/live-common/deposit/type";
 import { getLoadingStatus } from "@ledgerhq/live-common/modularDrawer/utils/getLoadingStatus";
 import { useAssetsData } from "@ledgerhq/live-common/modularDrawer/hooks/useAssetsData";
-import { AssetData } from "@ledgerhq/live-common/modularDrawer/utils/type";
 import VersionNumber from "react-native-version-number";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { AssetData } from "@ledgerhq/live-common/modularDrawer/utils/type";
 
 interface AssetsProps {
   currencyIds?: string[];

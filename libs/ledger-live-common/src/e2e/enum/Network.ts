@@ -32,4 +32,5 @@ export enum Network {
   MULTIVERS_X = "MultiversX",
   LITECOIN = "Litecoin",
   KASPA = "Kaspa",
+  HEDERA = "Hedera",
 }

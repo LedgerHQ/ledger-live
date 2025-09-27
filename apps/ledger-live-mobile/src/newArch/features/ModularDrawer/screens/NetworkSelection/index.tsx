@@ -25,7 +25,6 @@ import { modularDrawerFlowSelector, modularDrawerSourceSelector } from "~/reduce
 
 export type NetworkSelectionStepProps = {
   availableNetworks: CryptoOrTokenCurrency[];
-  asset?: CryptoOrTokenCurrency;
   onNetworkSelected: (asset: CryptoOrTokenCurrency) => void;
   networksConfiguration?: EnhancedModularDrawerConfiguration["networks"];
 };
@@ -36,7 +35,6 @@ const NetworkSelection = ({
   availableNetworks,
   onNetworkSelected,
   networksConfiguration,
-  asset,
 }: Readonly<NetworkSelectionStepProps>) => {
   const flow = useSelector(modularDrawerFlowSelector);
   const source = useSelector(modularDrawerSourceSelector);
@@ -81,7 +79,6 @@ const NetworkSelection = ({
   const transformNetworks = makeNetworkConfigurationHook({
     networksConfig: networksConfiguration,
     accounts$: undefined,
-    selectedAssetId: asset ? asset.id : "",
   });
 
   const formattedNetworks = transformNetworks(networks, availableNetworks);

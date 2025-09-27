@@ -1,9 +1,5 @@
 import { Balance } from "@ledgerhq/coin-framework/api/types";
 import { fetchAccount } from "../network";
-import { findTokenById } from "@ledgerhq/cryptoassets/tokens";
-import { getAssetIdFromAsset } from "./utils";
-import { parseCurrencyUnit } from "@ledgerhq/coin-framework/currencies/parseCurrencyUnit";
-import BigNumber from "bignumber.js";
 
 export async function getBalance(addr: string): Promise<Balance[]> {
   const { balance, assets, spendableBalance } = await fetchAccount(addr);
@@ -18,23 +14,21 @@ export async function getBalance(addr: string): Promise<Balance[]> {
   if (!assets || assets.length === 0) {
     return nativeRes;
   }
-  const assetBalances: Balance[] = assets.map(asset => {
-    const token = findTokenById(`stellar/asset/${getAssetIdFromAsset(asset)}`);
-    let parsedBalance = new BigNumber(0);
-    if (token) {
-      parsedBalance = parseCurrencyUnit(token.units[0], asset.balance);
-    }
-    // NOTE: parse as-is (assumed decimal string), caller should decide how to render
-    const intBalance = BigInt(Math.floor(parseFloat(parsedBalance.toString()))); // 7 decimals, per Stellar convention
-    return {
-      value: intBalance,
-      asset: {
-        type: asset.asset_type,
-        assetReference: asset.asset_code,
-        assetOwner: asset.asset_issuer,
-      },
-    };
-  });
+  /**
+   * https://developers.stellar.org/docs/data/apis/horizon/api-reference/retrieve-an-account
+   * `asset.balance` matches [0-9]+\.[0-9]{7}
+   * NOTE `Math.floor` is still needed
+   * > Number.parseFloat('0.1468328') * 10 ** 7
+   * 1468328.0000000002
+   */
+  const assetBalances: Balance[] = assets.map(asset => ({
+    value: BigInt(Math.floor(Number.parseFloat(asset.balance) * 10 ** 7)),
+    asset: {
+      type: asset.asset_type,
+      assetReference: asset.asset_code,
+      assetOwner: asset.asset_issuer,
+    },
+  }));
 
   return [...nativeRes, ...assetBalances];
 }

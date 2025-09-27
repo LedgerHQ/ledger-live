@@ -1,3 +1,5 @@
+// TODO Remove dependency to `"@ledgerhq/types-live"` once
+// the legacy bridge is deleted
 import eip55 from "eip55";
 import BigNumber from "bignumber.js";
 import {
@@ -6,7 +8,7 @@ import {
 } from "@ledgerhq/coin-framework/nft/nftOperationId";
 import { Operation, OperationType } from "@ledgerhq/types-live";
 import { encodeNftId } from "@ledgerhq/coin-framework/nft/nftId";
-import { decodeAccountId, encodeTokenAccountId } from "@ledgerhq/coin-framework/account/index";
+import { decodeAccountId } from "@ledgerhq/coin-framework/account/index";
 import { encodeOperationId, encodeSubOperationId } from "@ledgerhq/coin-framework/operation";
 import {
   EtherscanOperation,
@@ -16,7 +18,6 @@ import {
   EtherscanInternalTransaction,
 } from "../types";
 import { safeEncodeEIP55 } from "../utils";
-import { getCryptoAssetsStore } from "../cryptoAssetsStore";
 import { detectEvmStakingOperationType } from "../staking/detectOperationType";
 
 /**
@@ -92,14 +93,8 @@ export const etherscanERC20EventToOperations = (
   event: EtherscanERC20Event,
   index = 0,
 ): Operation[] => {
-  const { currencyId, xpubOrAddress: address } = decodeAccountId(accountId);
-  const tokenCurrency = getCryptoAssetsStore().findTokenByAddressInCurrency(
-    event.contractAddress,
-    currencyId,
-  );
-  if (!tokenCurrency) return [];
+  const { xpubOrAddress: address } = decodeAccountId(accountId);
 
-  const tokenAccountId = encodeTokenAccountId(accountId, tokenCurrency);
   const checksummedAddress = eip55.encode(address);
   const from = safeEncodeEIP55(event.from);
   const to = safeEncodeEIP55(event.to);
@@ -117,18 +112,21 @@ export const etherscanERC20EventToOperations = (
   return types.map(
     type =>
       ({
-        id: encodeSubOperationId(tokenAccountId, event.hash, type, index),
+        // NOTE Bridge implementations replace property `id`
+        id: encodeSubOperationId(accountId, event.hash, type, index),
         hash: event.hash,
         type,
         value,
         fee,
         senders: [from],
         recipients: [to],
-        contract: tokenCurrency.contractAddress,
+        contract: eip55.encode(event.contractAddress),
         blockHeight: parseInt(event.blockNumber, 10),
         blockHash: event.blockHash,
         transactionSequenceNumber: parseInt(event.nonce, 10),
-        accountId: tokenAccountId,
+        // NOTE Bridge implementations replace property `accountId`
+        // TODO Remove property once the legacy bridge is deleted
+        accountId,
         date: new Date(parseInt(event.timeStamp, 10) * 1000),
         extra: {},
       }) as Operation,

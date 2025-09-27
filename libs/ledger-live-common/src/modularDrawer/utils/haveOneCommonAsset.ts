@@ -1,4 +1,4 @@
-import { CurrenciesByProviderId } from "../../deposit/type";
+import { AssetData } from "./type";
 
 /**
  * This function checks if all currencies in the provided array
@@ -8,9 +8,10 @@ import { CurrenciesByProviderId } from "../../deposit/type";
  * @param currenciesByProvider array of currencies grouped by provider
  * @returns boolean indicating whether all currencies in the array have one common provider
  */
-export const haveOneCommonProvider = (
+
+export const haveOneCommonAsset = (
   currenciesIdsArray: string[],
-  currenciesByProvider: CurrenciesByProviderId[],
+  currenciesByProvider: AssetData[],
 ): boolean => {
   if (currenciesIdsArray.length === 0) return false;
 
@@ -18,8 +19,8 @@ export const haveOneCommonProvider = (
 
   for (const currencyId of currenciesIdsArray) {
     for (const provider of currenciesByProvider) {
-      if (provider.currenciesByNetwork.some(currency => currency.id === currencyId)) {
-        providerIds.add(provider.providerId);
+      if (provider.networks.some(currency => currency.id === currencyId)) {
+        providerIds.add(provider.asset.id);
         if (providerIds.size > 1) {
           return false;
         }

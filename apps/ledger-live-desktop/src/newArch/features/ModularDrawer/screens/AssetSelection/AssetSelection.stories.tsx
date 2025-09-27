@@ -53,7 +53,6 @@ const meta: Meta<typeof AssetSelection> = {
   args: {
     assetsToDisplay,
     assetsConfiguration: {},
-    currenciesByProvider: [],
     onAssetSelected: onAssetSelected,
     providersLoadingStatus: LoadingStatus.Success,
   },

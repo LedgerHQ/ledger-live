@@ -27,6 +27,10 @@ export class Currency {
 
   static readonly KAS = new Currency("Kaspa", "KAS", "kaspa", AppInfos.KASPA, [Network.KASPA]);
 
+  static readonly HBAR = new Currency("Hedera", "HBAR", "hedera", AppInfos.HEDERA, [
+    Network.HEDERA,
+  ]);
+
   static readonly tBTC = new Currency(
     "Bitcoin Testnet",
     "𝚝BTC",
@@ -151,6 +155,13 @@ export class Currency {
     "bsc",
     AppInfos.BNB_CHAIN,
     [Network.BNB_CHAIN, Network.POLYGON],
+  );
+  static readonly BSC_POL = new Currency(
+    "Matic Token",
+    "MATIC",
+    "bsc/bep20/matic_token",
+    AppInfos.BNB_CHAIN,
+    [Network.BNB_CHAIN],
   );
   static readonly BSC_SHIBA = new Currency("Shiba Inu", "SHIB", "bsc", AppInfos.BNB_CHAIN, [
     Network.BNB_CHAIN,

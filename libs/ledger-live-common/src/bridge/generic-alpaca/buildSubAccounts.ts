@@ -55,47 +55,47 @@ function buildTokenAccount({
   };
 }
 
-export function buildSubAccounts({
+export async function buildSubAccounts({
   currency,
   accountId,
-  assetsBalance,
+  allTokenAssetsBalances,
   syncConfig,
   operations,
   getTokenFromAsset,
 }: {
   currency: CryptoCurrency;
   accountId: string;
-  assetsBalance: Balance[];
+  allTokenAssetsBalances: Balance[];
   syncConfig: SyncConfig;
   operations: OperationCommon[];
-  getTokenFromAsset?: (asset: AssetInfo) => TokenCurrency | undefined;
-}): TokenAccount[] | undefined {
+  getTokenFromAsset?: (asset: AssetInfo) => Promise<TokenCurrency | undefined>;
+}): Promise<TokenAccount[]> {
   const { blacklistedTokenIds = [] } = syncConfig;
   const allTokens = listTokensForCryptoCurrency(currency);
-
-  if (allTokens.length === 0 || assetsBalance.length === 0) {
-    return undefined;
-  }
   const tokenAccounts: TokenAccount[] = [];
-  assetsBalance
-    .filter(b => b.asset.type !== "native") // NOTE: this could be removed, keeping here while fixing things up
-    .map(balance => {
-      const token = getTokenFromAsset && getTokenFromAsset(balance.asset);
-      // NOTE: for future tokens, will need to check over currencyName/standard(erc20,trc10,trc20, etc)/id
-      if (token && !blacklistedTokenIds.includes(token.id)) {
-        tokenAccounts.push(
-          buildTokenAccount({
-            parentAccountId: accountId,
-            assetBalance: balance,
-            token,
-            operations: operations.filter(
-              op =>
-                op.extra.assetReference === balance.asset?.["assetReference"] &&
-                op.extra.assetOwner === balance.asset?.["assetOwner"], // NOTE: we could narrow type
-            ),
-          }),
-        );
-      }
-    });
+
+  if (allTokens.length === 0 || allTokenAssetsBalances.length === 0) {
+    return tokenAccounts;
+  }
+
+  for (const balance of allTokenAssetsBalances) {
+    const token = getTokenFromAsset && (await getTokenFromAsset(balance.asset));
+    // NOTE: for future tokens, will need to check over currencyName/standard(erc20,trc10,trc20, etc)/id
+    if (token && !blacklistedTokenIds.includes(token.id)) {
+      tokenAccounts.push(
+        buildTokenAccount({
+          parentAccountId: accountId,
+          assetBalance: balance,
+          token,
+          operations: operations.filter(
+            op =>
+              op.extra.assetReference === balance.asset?.["assetReference"] &&
+              op.extra.assetOwner === balance.asset?.["assetOwner"], // NOTE: we could narrow type
+          ),
+        }),
+      );
+    }
+  }
+
   return tokenAccounts;
 }
