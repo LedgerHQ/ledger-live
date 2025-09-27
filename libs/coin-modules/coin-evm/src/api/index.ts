@@ -21,7 +21,7 @@ import {
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { BroadcastConfig, Operation as LiveOperation } from "@ledgerhq/types-live";
-import { setCoinConfig, type EvmConfig } from "../config";
+import { EvmCoinConfig, setCoinConfig, type EvmConfig } from "../config";
 import {
   broadcast,
   combine,
@@ -38,11 +38,22 @@ import {
   refreshOperations,
 } from "../logic/index";
 
+// NOTE Celo still relies on the EVM coin config and injects its own
+// while creating an unused instance of API
+// TODO Change to Record<string, EvmConfig> once Celo bridge is removed
+const configs: Record<string, EvmConfig | (() => EvmCoinConfig)> = {};
+
 export function createApi(
-  config: EvmConfig,
+  config: EvmConfig | (() => EvmCoinConfig),
   currencyId: string,
 ): Api<MemoNotSupported, BufferTxData> {
-  setCoinConfig(() => ({ info: { ...config, status: { type: "active" } } }));
+  configs[currencyId] = config;
+  setCoinConfig(c => {
+    const evmConfig = configs[c.id];
+    return typeof evmConfig === "function"
+      ? evmConfig()
+      : { info: { ...evmConfig, status: { type: "active" } } };
+  });
   const currency = getCryptoCurrencyById(currencyId);
 
   return {

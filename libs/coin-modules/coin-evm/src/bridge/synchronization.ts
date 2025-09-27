@@ -1,3 +1,4 @@
+// TODO: Remove this file once Celo bridge is removed
 import { log } from "@ledgerhq/logs";
 import BigNumber from "bignumber.js";
 import {

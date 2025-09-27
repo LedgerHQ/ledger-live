@@ -27,8 +27,13 @@ export async function craftTransaction(
     transactionIntent,
   );
 
+  // Some apps including, including Magic Eden, set the nonce to -1
+  // instead of simply not providing it.
+  // In case of missing or nagative nonce, it must be re-computed.
   const nonce =
-    transactionIntent.sequence ?? (await getSequence(currency, transactionIntent.sender));
+    typeof transactionIntent.sequence === "bigint" && transactionIntent.sequence >= 0n
+      ? transactionIntent.sequence
+      : await getSequence(currency, transactionIntent.sender);
   const chainId = currency.ethereumLikeInfo?.chainId ?? 0;
 
   const unsignedTransaction: TransactionLike = {

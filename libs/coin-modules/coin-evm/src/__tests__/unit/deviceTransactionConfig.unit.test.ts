@@ -8,7 +8,6 @@ import { setCryptoAssetsStore } from "@ledgerhq/cryptoassets/state";
 import type { CryptoAssetsStore } from "@ledgerhq/types-live";
 import { makeAccount, makeTokenAccount } from "../fixtures/common.fixtures";
 import getDeviceTransactionConfig from "../../deviceTransactionConfig";
-import getTransactionStatus from "../../bridge/getTransactionStatus";
 import { Transaction as EvmTransaction } from "../../types";
 
 enum NFT_CONTRACTS {
@@ -250,7 +249,6 @@ describe("EVM Family", () => {
                 collectionName: "BAYC",
               },
             };
-            const status = await getTransactionStatus(account, nftTransaction);
 
             expect(
               await getDeviceTransactionConfig({
@@ -302,7 +300,6 @@ describe("EVM Family", () => {
                 collectionName: "BAYC",
               },
             };
-            const status = await getTransactionStatus(account, nftTransaction);
 
             expect(
               await getDeviceTransactionConfig({
@@ -1045,8 +1042,6 @@ describe("EVM Family", () => {
           amount: new BigNumber(100),
           mode: "unknown mode" as any,
         };
-
-        const status = await getTransactionStatus(account, coinTransaction);
 
         expect(
           await getDeviceTransactionConfig({
