@@ -251,9 +251,14 @@ export async function validateIntent(
   intent: TransactionIntent<MemoNotSupported, BufferTxData>,
   customFees?: FeeEstimation,
 ): Promise<TransactionValidation> {
-  const estimatedFees = customFees ?? (await estimateFees(currency, intent));
   const balances = await getBalance(currency, intent.sender);
   const balance = findBalance(intent.asset, balances);
+  const estimatedFees =
+    customFees ??
+    (await estimateFees(currency, {
+      ...intent,
+      amount: intent.useAllAmount && !isNative(intent.asset) ? balance.value : intent.amount,
+    }));
   const amount = computeAmount(intent, estimatedFees, balance);
   const totalSpent = isNative(intent.asset) ? amount + estimatedFees.value : amount;
 

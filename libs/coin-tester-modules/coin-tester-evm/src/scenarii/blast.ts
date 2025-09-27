@@ -1,4 +1,3 @@
-import { LegacySignerEth } from "@ledgerhq/live-signer-evm";
 import { BigNumber } from "bignumber.js";
 import { ethers } from "ethers";
 import { Account } from "@ledgerhq/types-live";
@@ -7,16 +6,12 @@ import { Scenario, ScenarioTransaction } from "@ledgerhq/coin-tester/main";
 import { encodeTokenAccountId } from "@ledgerhq/coin-framework/account/index";
 import { killSpeculos, spawnSpeculos } from "@ledgerhq/coin-tester/signers/speculos";
 import { resetIndexer, setBlock, indexBlocks, initMswHandlers } from "../indexer";
-import { buildAccountBridge, buildCurrencyBridge } from "@ledgerhq/coin-evm/bridge/js";
 import { getCoinConfig, setCoinConfig } from "@ledgerhq/coin-evm/config";
 import { Transaction as EvmTransaction } from "@ledgerhq/coin-evm/types/transaction";
 import { makeAccount } from "@ledgerhq/coin-evm/__tests__/fixtures/common.fixtures";
-import { blast, callMyDealer, VITALIK } from "../helpers";
+import { blast, callMyDealer, getBridges, VITALIK } from "../helpers";
 import { defaultNanoApp } from "../scenarii.test";
 import { killAnvil, spawnAnvil } from "../anvil";
-import resolver from "@ledgerhq/coin-evm/hw-getAddress";
-import { SignerContext } from "@ledgerhq/coin-framework/signer";
-import { EvmSigner } from "@ledgerhq/coin-evm/types/signer";
 
 type BlastScenarioTransaction = ScenarioTransaction<EvmTransaction, Account>;
 
@@ -72,7 +67,6 @@ export const scenarioBlast: Scenario<EvmTransaction, Account> = {
     ]);
 
     const provider = new ethers.JsonRpcProvider("http://127.0.0.1:8545");
-    const signerContext: SignerContext<EvmSigner> = (_, fn) => fn(new LegacySignerEth(transport));
 
     const lastBlockNumber = await provider.getBlockNumber();
     // start indexing at next block
@@ -97,10 +91,7 @@ export const scenarioBlast: Scenario<EvmTransaction, Account> = {
     initMswHandlers(getCoinConfig(blast).info);
 
     const onSignerConfirmation = getOnSpeculosConfirmation();
-    const currencyBridge = buildCurrencyBridge(signerContext);
-    await currencyBridge.preload(blast);
-    const accountBridge = buildAccountBridge(signerContext);
-    const getAddress = resolver(signerContext);
+    const { currencyBridge, accountBridge, getAddress } = getBridges(transport, "blast");
     const { address } = await getAddress("", {
       path: "44'/60'/0'/0/0",
       currency: blast,

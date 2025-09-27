@@ -1,6 +1,6 @@
 /* istanbul ignore file: pure exports */
 
-import { getEditTransactionStatus } from "../bridge/getTransactionStatus";
+import { getEditTransactionStatus } from "./getTransactionStatus";
 import { getEditTransactionPatch } from "./getEditTransactionPatch";
 import { getFormattedFeeFields } from "./getFormattedFeeFields";
 import { getMinFees } from "./getMinEditTransactionFees";
