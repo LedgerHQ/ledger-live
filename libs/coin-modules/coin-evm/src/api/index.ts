@@ -36,11 +36,14 @@ import {
   computeIntentType,
 } from "../logic/index";
 
+const configs: Record<string, EvmConfig> = {};
+
 export function createApi(
   config: EvmConfig,
   currencyId: string,
 ): Api<MemoNotSupported, BufferTxData> {
-  setCoinConfig(() => ({ info: { ...config, status: { type: "active" } } }));
+  configs[currencyId] = config;
+  setCoinConfig(c => ({ info: { ...configs[c.id], status: { type: "active" } } }));
   const currency = getCryptoCurrencyById(currencyId);
 
   return {

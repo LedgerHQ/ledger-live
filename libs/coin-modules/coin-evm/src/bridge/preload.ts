@@ -1,3 +1,6 @@
+// TODO: Remove this file once `preload` and `hydrate`
+// functions are deleted
+// https://ledgerhq.atlassian.net/browse/LIVE-20989
 import { AxiosError } from "axios";
 import { log } from "@ledgerhq/logs";
 import { addTokens, convertERC20 } from "@ledgerhq/cryptoassets/tokens";

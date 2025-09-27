@@ -25,6 +25,7 @@ import { setCryptoAssetsStore as setCryptoAssetsStoreForCoinFramework } from "@l
 import { getCryptoAssetsStore, setCryptoAssetsStore } from "./crypto-assets";
 
 const alpacaized = {
+  evm: true,
   xrp: true,
   stellar: true,
   tezos: true,
