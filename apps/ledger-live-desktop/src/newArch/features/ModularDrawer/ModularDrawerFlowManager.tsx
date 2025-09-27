@@ -40,7 +40,6 @@ const ModularDrawerFlowManager = ({
     networksToDisplay,
     selectedAsset,
     selectedNetwork,
-    hasOneCurrency,
     handleAssetSelected,
     handleNetworkSelected,
     handleBack,
@@ -70,7 +69,6 @@ const ModularDrawerFlowManager = ({
             providersLoadingStatus={loadingStatus}
             assetsConfiguration={assetsConfiguration}
             onAssetSelected={handleAssetSelected}
-            hasOneCurrency={hasOneCurrency}
             loadNext={loadNext}
             error={!!error}
             refetch={refetch}

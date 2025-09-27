@@ -9,7 +9,6 @@ describe("useModularDrawerData", () => {
 
     expect(result.current.isLoading).toBe(true);
     expect(result.current.data).toBeUndefined();
-    expect(result.current.isSuccess).toBe(false);
     expect(result.current.error).toBeUndefined();
     expect(result.current.loadingStatus).toBe(LoadingStatus.Pending);
 
@@ -21,7 +20,6 @@ describe("useModularDrawerData", () => {
     );
 
     expect(result.current.data).toBeDefined();
-    expect(result.current.isSuccess).toBe(true);
     expect(result.current.error).toBeUndefined();
     expect(result.current.loadingStatus).toBe(LoadingStatus.Success);
   });
