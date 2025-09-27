@@ -1,5 +1,17 @@
 # @ledgerhq/coin-hedera
 
+## 1.12.0-nightly.1
+
+### Minor Changes
+
+- [#10972](https://github.com/LedgerHQ/ledger-live/pull/10972) [`f077f72`](https://github.com/LedgerHQ/ledger-live/commit/f077f7205667f4f7b82ae7584e80964c5ac7601a) Thanks [@scavassa-yld](https://github.com/scavassa-yld)! - support for Hedera swaps
+
+### Patch Changes
+
+- Updated dependencies [[`3979c07`](https://github.com/LedgerHQ/ledger-live/commit/3979c0715e4f54165c89d00ebe1441e064e1a110)]:
+  - @ledgerhq/coin-framework@6.6.0-nightly.1
+  - @ledgerhq/live-countervalues@0.7.3-nightly.1
+
 ## 1.11.3-nightly.0
 
 ### Patch Changes

@@ -1,5 +1,34 @@
 # ledger-live-desktop
 
+## 2.130.0-nightly.2
+
+### Minor Changes
+
+- [#12021](https://github.com/LedgerHQ/ledger-live/pull/12021) [`6c0c833`](https://github.com/LedgerHQ/ledger-live/commit/6c0c833952f6125e9fe0a633bd7d4a3fbc8b5ae7) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Force MacOS to exit on window close
+
+- [#12020](https://github.com/LedgerHQ/ledger-live/pull/12020) [`4f2d6a3`](https://github.com/LedgerHQ/ledger-live/commit/4f2d6a34cae2f8cb90c410c75e280e93fe49deb7) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - fix(lld): do not crash on missing coin config
+
+- [#11940](https://github.com/LedgerHQ/ledger-live/pull/11940) [`1587cf4`](https://github.com/LedgerHQ/ledger-live/commit/1587cf47cd9722b00cb3b51c898634e26f752487) Thanks [@ejaycoleman](https://github.com/ejaycoleman)! - Removed redundant currenciesByProvider
+
+- [#10972](https://github.com/LedgerHQ/ledger-live/pull/10972) [`f077f72`](https://github.com/LedgerHQ/ledger-live/commit/f077f7205667f4f7b82ae7584e80964c5ac7601a) Thanks [@scavassa-yld](https://github.com/scavassa-yld)! - support for Hedera swaps
+
+- [#12033](https://github.com/LedgerHQ/ledger-live/pull/12033) [`88ca10f`](https://github.com/LedgerHQ/ledger-live/commit/88ca10fed69ec180d9f34a1a3cf43988d5e4fe76) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Don't display 'shared securely' during receive flow if the user didn't use his device
+
+### Patch Changes
+
+- Updated dependencies [[`3979c07`](https://github.com/LedgerHQ/ledger-live/commit/3979c0715e4f54165c89d00ebe1441e064e1a110), [`1587cf4`](https://github.com/LedgerHQ/ledger-live/commit/1587cf47cd9722b00cb3b51c898634e26f752487), [`f077f72`](https://github.com/LedgerHQ/ledger-live/commit/f077f7205667f4f7b82ae7584e80964c5ac7601a)]:
+  - @ledgerhq/coin-evm@2.32.0-nightly.1
+  - @ledgerhq/live-common@34.50.0-nightly.2
+  - @ledgerhq/coin-framework@6.6.0-nightly.1
+  - @ledgerhq/live-dmk-desktop@0.10.1-nightly.2
+  - @ledgerhq/coin-bitcoin@0.22.2-nightly.1
+  - @ledgerhq/coin-canton@0.7.0-nightly.1
+  - @ledgerhq/coin-cosmos@0.17.3-nightly.1
+  - @ledgerhq/coin-filecoin@1.12.2-nightly.1
+  - @ledgerhq/live-countervalues@0.7.3-nightly.1
+  - @ledgerhq/live-countervalues-react@0.6.2-nightly.1
+  - @ledgerhq/live-wallet@0.14.2-nightly.1
+
 ## 2.130.0-nightly.1
 
 ### Minor Changes

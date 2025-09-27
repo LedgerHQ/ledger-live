@@ -1,5 +1,54 @@
 # @ledgerhq/live-common
 
+## 34.50.0-nightly.2
+
+### Minor Changes
+
+- [#11965](https://github.com/LedgerHQ/ledger-live/pull/11965) [`3979c07`](https://github.com/LedgerHQ/ledger-live/commit/3979c0715e4f54165c89d00ebe1441e064e1a110) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - refactor(coin-evm,coin-stellar): remove CAL dependency from Alpaca
+
+- [#11940](https://github.com/LedgerHQ/ledger-live/pull/11940) [`1587cf4`](https://github.com/LedgerHQ/ledger-live/commit/1587cf47cd9722b00cb3b51c898634e26f752487) Thanks [@ejaycoleman](https://github.com/ejaycoleman)! - Removed redundant currenciesByProvider
+
+- [#10972](https://github.com/LedgerHQ/ledger-live/pull/10972) [`f077f72`](https://github.com/LedgerHQ/ledger-live/commit/f077f7205667f4f7b82ae7584e80964c5ac7601a) Thanks [@scavassa-yld](https://github.com/scavassa-yld)! - support for Hedera swaps
+
+### Patch Changes
+
+- Updated dependencies [[`3979c07`](https://github.com/LedgerHQ/ledger-live/commit/3979c0715e4f54165c89d00ebe1441e064e1a110), [`f077f72`](https://github.com/LedgerHQ/ledger-live/commit/f077f7205667f4f7b82ae7584e80964c5ac7601a)]:
+  - @ledgerhq/coin-stellar@6.5.0-nightly.1
+  - @ledgerhq/coin-evm@2.32.0-nightly.1
+  - @ledgerhq/coin-framework@6.6.0-nightly.1
+  - @ledgerhq/coin-hedera@1.12.0-nightly.1
+  - @ledgerhq/ledger-trust-service@0.4.0-nightly.0
+  - @ledgerhq/coin-celo@1.4.2-nightly.1
+  - @ledgerhq/live-signer-evm@0.8.1-nightly.1
+  - @ledgerhq/coin-algorand@0.10.3-nightly.1
+  - @ledgerhq/coin-aptos@3.3.2-nightly.1
+  - @ledgerhq/coin-bitcoin@0.22.2-nightly.1
+  - @ledgerhq/coin-canton@0.7.0-nightly.1
+  - @ledgerhq/coin-cardano@0.12.3-nightly.1
+  - @ledgerhq/coin-casper@2.1.3-nightly.1
+  - @ledgerhq/coin-cosmos@0.17.3-nightly.1
+  - @ledgerhq/coin-filecoin@1.12.2-nightly.1
+  - @ledgerhq/coin-icon@0.12.3-nightly.1
+  - @ledgerhq/coin-internet_computer@1.8.3-nightly.1
+  - @ledgerhq/coin-kaspa@1.2.0-nightly.1
+  - @ledgerhq/coin-mina@1.2.3-nightly.1
+  - @ledgerhq/coin-multiversx@0.5.3-nightly.1
+  - @ledgerhq/coin-near@0.13.3-nightly.1
+  - @ledgerhq/coin-polkadot@6.10.2-nightly.1
+  - @ledgerhq/coin-solana@0.34.1-nightly.1
+  - @ledgerhq/coin-stacks@0.9.3-nightly.1
+  - @ledgerhq/coin-sui@0.15.0-nightly.2
+  - @ledgerhq/coin-tezos@6.6.0-nightly.1
+  - @ledgerhq/coin-ton@0.14.3-nightly.1
+  - @ledgerhq/coin-tron@5.4.2-nightly.1
+  - @ledgerhq/coin-vechain@2.10.1-nightly.1
+  - @ledgerhq/coin-xrp@7.5.1-nightly.1
+  - @ledgerhq/live-countervalues@0.7.3-nightly.1
+  - @ledgerhq/live-countervalues-react@0.6.2-nightly.1
+  - @ledgerhq/live-wallet@0.14.2-nightly.1
+  - @ledgerhq/live-signer-solana@0.5.7-nightly.1
+  - @ledgerhq/live-signer-canton@0.4.1-nightly.1
+
 ## 34.50.0-nightly.1
 
 ### Patch Changes

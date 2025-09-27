@@ -1,5 +1,11 @@
 # @ledgerhq/ledger-trust-service
 
+## 0.4.0-nightly.0
+
+### Minor Changes
+
+- [#10972](https://github.com/LedgerHQ/ledger-live/pull/10972) [`f077f72`](https://github.com/LedgerHQ/ledger-live/commit/f077f7205667f4f7b82ae7584e80964c5ac7601a) Thanks [@scavassa-yld](https://github.com/scavassa-yld)! - support for Hedera swaps
+
 ## 0.3.13
 
 ### Patch Changes

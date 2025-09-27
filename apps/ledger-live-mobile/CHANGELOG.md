@@ -1,5 +1,30 @@
 # live-mobile
 
+## 3.95.0-nightly.2
+
+### Minor Changes
+
+- [#12029](https://github.com/LedgerHQ/ledger-live/pull/12029) [`29e7ae0`](https://github.com/LedgerHQ/ledger-live/commit/29e7ae021ce8959f7f2e2abcb97538c3d03f1e31) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Fix android 'copied to clipboard' toast spam
+
+- [#12016](https://github.com/LedgerHQ/ledger-live/pull/12016) [`61578ab`](https://github.com/LedgerHQ/ledger-live/commit/61578abd62b20a41e770ff40ced8f22dc7b402df) Thanks [@mitchellv-ledger](https://github.com/mitchellv-ledger)! - Remove last step of first step in two step sync companion
+
+- [#11940](https://github.com/LedgerHQ/ledger-live/pull/11940) [`1587cf4`](https://github.com/LedgerHQ/ledger-live/commit/1587cf47cd9722b00cb3b51c898634e26f752487) Thanks [@ejaycoleman](https://github.com/ejaycoleman)! - Removed redundant currenciesByProvider
+
+- [#10972](https://github.com/LedgerHQ/ledger-live/pull/10972) [`f077f72`](https://github.com/LedgerHQ/ledger-live/commit/f077f7205667f4f7b82ae7584e80964c5ac7601a) Thanks [@scavassa-yld](https://github.com/scavassa-yld)! - support for Hedera swaps
+
+### Patch Changes
+
+- Updated dependencies [[`3979c07`](https://github.com/LedgerHQ/ledger-live/commit/3979c0715e4f54165c89d00ebe1441e064e1a110)]:
+  - @ledgerhq/coin-evm@2.32.0-nightly.1
+  - @ledgerhq/coin-framework@6.6.0-nightly.1
+  - @ledgerhq/coin-cosmos@0.17.3-nightly.1
+  - @ledgerhq/coin-filecoin@1.12.2-nightly.1
+  - @ledgerhq/coin-multiversx@0.5.3-nightly.1
+  - @ledgerhq/coin-stacks@0.9.3-nightly.1
+  - @ledgerhq/live-countervalues@0.7.3-nightly.1
+  - @ledgerhq/live-countervalues-react@0.6.2-nightly.1
+  - @ledgerhq/live-wallet@0.14.2-nightly.1
+
 ## 3.95.0-nightly.1
 
 ### Minor Changes

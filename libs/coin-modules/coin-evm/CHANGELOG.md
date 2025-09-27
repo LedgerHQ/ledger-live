@@ -1,5 +1,16 @@
 # @ledgerhq/coin-evm
 
+## 2.32.0-nightly.1
+
+### Minor Changes
+
+- [#11965](https://github.com/LedgerHQ/ledger-live/pull/11965) [`3979c07`](https://github.com/LedgerHQ/ledger-live/commit/3979c0715e4f54165c89d00ebe1441e064e1a110) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - refactor(coin-evm,coin-stellar): remove CAL dependency from Alpaca
+
+### Patch Changes
+
+- Updated dependencies [[`3979c07`](https://github.com/LedgerHQ/ledger-live/commit/3979c0715e4f54165c89d00ebe1441e064e1a110)]:
+  - @ledgerhq/coin-framework@6.6.0-nightly.1
+
 ## 2.32.0-nightly.0
 
 ### Minor Changes
