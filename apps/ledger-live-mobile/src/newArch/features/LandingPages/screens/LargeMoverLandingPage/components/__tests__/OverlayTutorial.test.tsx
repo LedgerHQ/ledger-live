@@ -9,6 +9,7 @@ import {
   LandingPagesNavigatorParamList,
 } from "~/components/RootNavigator/types/LandingPagesNavigator";
 import { RouteProp } from "@react-navigation/core";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { mockCurrencyData } from "../../fixtures/currency";
 import { INITIAL_STATE } from "~/reducers/settings";
 import { mockNavigation } from "../../fixtures/navigation";
@@ -64,6 +65,29 @@ const mockRoute = {
     initialRange: InitialRange.Day,
   },
 } as RouteProp<LandingPagesNavigatorParamList, ScreenName.LargeMoverLandingPage>;
+
+const mockNavigation = {
+  navigate: jest.fn(),
+  goBack: jest.fn(),
+  dispatch: jest.fn(),
+  reset: jest.fn(),
+  isFocused: jest.fn().mockReturnValue(true),
+  canGoBack: jest.fn().mockReturnValue(true),
+  getParent: jest.fn(),
+  setOptions: jest.fn(),
+  addListener: jest.fn(),
+  removeListener: jest.fn(),
+  getId: jest.fn(),
+  getState: jest.fn(),
+  setParams: jest.fn(),
+  replace: jest.fn(),
+  push: jest.fn(),
+  pop: jest.fn(),
+  popToTop: jest.fn(),
+} as unknown as NativeStackNavigationProp<
+  LandingPagesNavigatorParamList,
+  ScreenName.LargeMoverLandingPage
+>;
 
 describe("OverlayTutorial", () => {
   beforeEach(() => {

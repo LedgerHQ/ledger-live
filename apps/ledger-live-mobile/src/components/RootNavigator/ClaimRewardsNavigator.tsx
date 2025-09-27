@@ -1,6 +1,6 @@
 import React, { useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { createStackNavigator } from "@react-navigation/stack";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useTheme } from "styled-components/native";
 import { ScreenName } from "~/const";
 import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
@@ -66,4 +66,4 @@ export default function ClaimRewardsNavigator() {
     </Stack.Navigator>
   );
 }
-const Stack = createStackNavigator<ClaimRewardsNavigatorParamList>();
+const Stack = createNativeStackNavigator<ClaimRewardsNavigatorParamList>();

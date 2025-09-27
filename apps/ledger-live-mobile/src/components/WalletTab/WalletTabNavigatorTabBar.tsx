@@ -1,17 +1,17 @@
-import { MaterialTopTabBarProps } from "@react-navigation/material-top-tabs";
-import { useTheme } from "styled-components/native";
-import React, { memo, useCallback, useContext } from "react";
-import styled, { BaseStyledProps } from "@ledgerhq/native-ui/components/styled";
 import { Box, Flex, Text } from "@ledgerhq/native-ui";
+import styled, { BaseStyledProps } from "@ledgerhq/native-ui/components/styled";
+import { MaterialTopTabBarProps } from "@react-navigation/material-top-tabs";
+import React, { memo, useCallback, useContext } from "react";
 import { Animated } from "react-native";
-import { useSelector } from "react-redux";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useSelector } from "react-redux";
+import { useTheme } from "styled-components/native";
 import { track } from "~/analytics";
-import { WalletTabNavigatorScrollContext } from "./WalletTabNavigatorScrollManager";
-import WalletTabBackgroundGradient from "./WalletTabBackgroundGradient";
-import { readOnlyModeEnabledSelector } from "~/reducers/settings";
-import { hasNoAccountsSelector } from "~/reducers/accounts";
 import { NavigatorName, ScreenName } from "~/const";
+import { hasNoAccountsSelector } from "~/reducers/accounts";
+import { readOnlyModeEnabledSelector } from "~/reducers/settings";
+import WalletTabBackgroundGradient from "./WalletTabBackgroundGradient";
+import { WalletTabNavigatorScrollContext } from "./WalletTabNavigatorScrollManager";
 
 const StyledTouchableOpacity = styled.TouchableOpacity`
   height: 32px;
@@ -19,7 +19,7 @@ const StyledTouchableOpacity = styled.TouchableOpacity`
   margin-right: ${p => p.theme.space[4]}px;
 `;
 
-const StyledAnimatedView = styled(Animated.View)<BaseStyledProps>`
+const StyledAnimatedView = styled(Animated.View).attrs({ pointerEvents: "none" })<BaseStyledProps>`
   position: absolute;
   top: 0;
   height: 100%;

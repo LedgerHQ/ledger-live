@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo } from "react";
+import React, { useCallback, useMemo } from "react";
 import { Modal, Platform, Pressable, StyleProp, View, ViewStyle } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Animated, {
@@ -11,7 +11,7 @@ import Animated, {
 import { useTheme } from "styled-components/native";
 import { IsInDrawerProvider } from "~/context/IsInDrawerContext";
 import useQueuedDrawerNative from "./useQueuedDrawerNative";
-import Header from "./Header";
+import Header from "./components/Header";
 
 export type Props = {
   isRequestingToBeOpened?: boolean;
@@ -113,13 +113,6 @@ const QueuedDrawerNative = ({
     () => title || hasBackButton || (!noCloseButton && !areDrawersLocked),
     [title, hasBackButton, noCloseButton, areDrawersLocked],
   );
-
-  // Close when opening conditions are no longer met (e.g., action succeeded)
-  useEffect(() => {
-    if (isVisible && !isRequestingToBeOpened && !isForcingToBeOpened) {
-      closeAnim(() => handleDismiss());
-    }
-  }, [isVisible, isRequestingToBeOpened, isForcingToBeOpened, closeAnim, handleDismiss]);
 
   return (
     <Modal

@@ -4,7 +4,7 @@ import EditAccountName from "../EditAccountName";
 import { ScreenName } from "~/const";
 import { AccountSettingsNavigatorParamList } from "~/components/RootNavigator/types/AccountSettingsNavigator";
 import { RouteProp } from "@react-navigation/native";
-import { createStackNavigator } from "@react-navigation/stack";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import { genAccount } from "@ledgerhq/live-common/mock/account";
@@ -46,7 +46,7 @@ const mockedRoute: RouteProp<AccountSettingsNavigatorParamList, ScreenName.EditA
   params: { accountId: genAcc.id },
 };
 
-const Stack = createStackNavigator<
+const Stack = createNativeStackNavigator<
   BaseNavigatorStackParamList & AccountSettingsNavigatorParamList
 >();
 

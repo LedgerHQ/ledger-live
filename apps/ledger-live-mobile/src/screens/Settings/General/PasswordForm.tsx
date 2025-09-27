@@ -6,6 +6,8 @@ import KeyboardView from "~/components/KeyboardView";
 import TranslatedError from "~/components/TranslatedError";
 import PasswordInput from "~/components/PasswordInput";
 import Button from "~/components/wrappedUi/Button";
+import SafeAreaView from "~/components/SafeAreaView";
+import { useIsFocused } from "@react-navigation/native";
 
 type Props = {
   onChange: (_: string) => void;
@@ -16,6 +18,11 @@ type Props = {
 };
 
 const PasswordForm = ({ onChange, onSubmit, error, placeholder, value }: Props) => {
+  // This is to force the keyboard view to re-render when the screen is focused. When
+  // transitioning from AddPassword to ConfirmPassword, the keyboard is displayed but
+  // the keyboard view is not re-rendered so we lose layout adjustments.
+  const isFocused = useIsFocused();
+  const kavKey = isFocused ? "focused" : "blurred";
   const { t } = useTranslation();
   const [secureTextEntry, setSecureTextEntry] = useState(true);
 
@@ -24,37 +31,39 @@ const PasswordForm = ({ onChange, onSubmit, error, placeholder, value }: Props) 
   }, []);
 
   return (
-    <KeyboardView behavior="padding">
-      <View style={styles.body}>
-        <PasswordInput
-          inline
-          autoFocus
-          error={error}
-          onChange={onChange}
-          onSubmit={onSubmit}
-          toggleSecureTextEntry={toggleSecureTextEntry}
-          secureTextEntry={secureTextEntry}
-          placeholder={placeholder}
-          password={value}
-          testID="password-text-input"
-        />
-      </View>
-      {error && (
-        <LText style={styles.errorStyle} color="alert">
-          <TranslatedError error={error} />
-        </LText>
-      )}
-      <View style={styles.footer}>
-        <Button
-          event="SubmitPassword"
-          type={"main"}
-          onPress={onSubmit}
-          disabled={!!error || value.length === 0}
-        >
-          {t("common.confirm")}
-        </Button>
-      </View>
-    </KeyboardView>
+    <SafeAreaView edges={["left", "right", "bottom"]} style={styles.root}>
+      <KeyboardView key={kavKey} style={{ flex: 1 }}>
+        <View style={styles.body}>
+          <PasswordInput
+            inline
+            autoFocus
+            error={error}
+            onChange={onChange}
+            onSubmit={onSubmit}
+            toggleSecureTextEntry={toggleSecureTextEntry}
+            secureTextEntry={secureTextEntry}
+            placeholder={placeholder}
+            password={value}
+            testID="password-text-input"
+          />
+        </View>
+        {error && (
+          <LText style={styles.errorStyle} color="alert">
+            <TranslatedError error={error} />
+          </LText>
+        )}
+        <View style={styles.footer}>
+          <Button
+            event="SubmitPassword"
+            type={"main"}
+            onPress={onSubmit}
+            disabled={!!error || value.length === 0}
+          >
+            {t("common.confirm")}
+          </Button>
+        </View>
+      </KeyboardView>
+    </SafeAreaView>
   );
 };
 
@@ -65,7 +74,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   body: {
-    paddingVertical: 8,
+    padding: 16,
   },
   buttonContainer: {
     marginHorizontal: 16,

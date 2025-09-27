@@ -1,13 +1,14 @@
 import React, { useMemo } from "react";
 import { Platform } from "react-native";
 import { useTranslation } from "react-i18next";
-import { createStackNavigator } from "@react-navigation/stack";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useTheme } from "@react-navigation/native";
 
 import StepHeader from "~/components/StepHeader";
 import ClaimRewardsSelectDevice from "~/screens/SelectDevice";
 import ClaimRewardsConnectDevice from "~/screens/ConnectDevice";
-import { getStackNavigatorConfig, defaultNavigationOptions } from "~/navigation/navigatorConfig";
+import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
+import styles from "~/navigation/styles";
 import { ScreenName } from "~/const";
 
 import PickValidator from "./components/PickValidator";
@@ -17,7 +18,7 @@ import ValidationSuccess from "./components/ValidationSuccess";
 
 import type { MultiversXClaimRewardsFlowParamList } from "./types";
 
-const Stack = createStackNavigator<MultiversXClaimRewardsFlowParamList>();
+const Stack = createNativeStackNavigator<MultiversXClaimRewardsFlowParamList>();
 const totalSteps = "3";
 const options = {
   headerShown: false,
@@ -59,12 +60,7 @@ const Claim = () => {
           ),
           headerLeft: () => null,
           gestureEnabled: false,
-          headerStyle: {
-            ...defaultNavigationOptions.headerStyle,
-            elevation: 0,
-            shadowOpacity: 0,
-            borderBottomWidth: 0,
-          },
+          headerStyle: styles.headerNoShadow,
         }}
       />
 

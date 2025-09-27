@@ -12,6 +12,7 @@ import { useRootDrawerContext } from "~/context/RootDrawerContext";
 import { urls } from "~/utils/urls";
 import { EvmStakingDrawerBody } from "./EvmStakingDrawerBody";
 import type { ListProvider } from "./types";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 type Option = EthStakingProviderCategory | "all";
 const OPTION_VALUES: Option[] = ["all", "liquid", "protocol", "pooling", "restaking"] as const;
@@ -26,14 +27,10 @@ const descending = (a: ListProvider, b: ListProvider) => (b?.min || 0) - (a?.min
 export function EvmStakingDrawer() {
   const { openDrawer, drawer } = useRootDrawerContext();
   const ethStakingProviders = useFeature("ethStakingProviders");
-  const isStakingProvidersEnabled = ethStakingProviders?.enabled;
-  const providers: ListProvider[] | undefined = ethStakingProviders?.params?.listProvider;
 
   useEffect(() => {
-    if (isStakingProvidersEnabled || (providers ?? []).length > 0) {
-      openDrawer();
-    }
-  }, [isStakingProvidersEnabled, openDrawer, providers]);
+    openDrawer();
+  }, [drawer, openDrawer]);
 
   return !ethStakingProviders || drawer.id !== "EvmStakingDrawer" ? null : (
     <Content
@@ -57,6 +54,7 @@ interface Props {
 
 function Content({ accountId, has32Eth, providers, walletApiAccountId }: Props) {
   const { isOpen, onModalHide, onClose } = useRootDrawerContext();
+  const insets = useSafeAreaInsets();
 
   const { t } = useTranslation();
   const { theme: themeName, colors } = useTheme();
@@ -93,8 +91,10 @@ function Content({ accountId, has32Eth, providers, walletApiAccountId }: Props) 
       height: sharedHeight.value,
       rowGap: 24,
       display: "flex",
+      paddingTop: insets.top,
+      paddingBottom: insets.bottom,
     }),
-    [sharedHeight],
+    [sharedHeight, insets.top, insets.bottom],
   );
   const onLayout = useCallback(
     (_: LayoutChangeEvent) => {

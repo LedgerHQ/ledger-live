@@ -1,7 +1,6 @@
 import React, { useCallback, useMemo } from "react";
 import { FlatList, ListRenderItemInfo } from "react-native";
 import { useSelector } from "react-redux";
-
 import { Button, Flex, Text } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
 import { Account, TokenAccount } from "@ledgerhq/types-live";
@@ -9,11 +8,9 @@ import { makeEmptyTokenAccount } from "@ledgerhq/live-common/account/index";
 import { flattenAccountsByCryptoCurrencyScreenSelector } from "~/reducers/accounts";
 import { NavigatorName, ScreenName } from "~/const";
 import { track, TrackScreen } from "~/analytics";
-
 import { ReceiveFundsStackParamList } from "~/components/RootNavigator/types/ReceiveFundsNavigator";
 import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import AccountCard from "~/components/AccountCard";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { AccountsNavigatorParamList } from "~/components/RootNavigator/types/AccountsNavigator";
 import { useNavigation } from "@react-navigation/core";
 import { withDiscreetMode } from "~/context/DiscreetModeContext";
@@ -21,6 +18,8 @@ import { walletSelector } from "~/reducers/wallet";
 import { accountNameWithDefaultSelector } from "@ledgerhq/live-wallet/store";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { AddAccountContexts } from "LLM/features/Accounts/screens/AddAccount/enums";
+import SafeAreaViewFixed from "~/components/SafeAreaView";
+import Config from "react-native-config";
 
 type SubAccountEnhanced = TokenAccount & {
   parentAccount: Account;
@@ -44,7 +43,6 @@ function ReceiveSelectAccount({
 
   const { t } = useTranslation();
   const navigationAccount = useNavigation<NavigationProps["navigation"]>();
-  const insets = useSafeAreaInsets();
   const accounts = useSelector(
     currency && currency.type === "CryptoCurrency"
       ? flattenAccountsByCryptoCurrencyScreenSelector(currency)
@@ -143,7 +141,11 @@ function ReceiveSelectAccount({
   const keyExtractor = useCallback((item: AccountLikeEnhanced) => item?.id, []);
 
   return currency && aggregatedAccounts && aggregatedAccounts.length > 0 ? (
-    <>
+    <SafeAreaViewFixed
+      isFlex
+      edges={["left", "right", "bottom"]}
+      useDetoxInsets={Config.DETOX === "1"}
+    >
       <TrackScreen category="Deposit" name="Select account to deposit to" asset={currency.name} />
       <Flex p={6}>
         <Text
@@ -168,8 +170,7 @@ function ReceiveSelectAccount({
         keyExtractor={keyExtractor}
         showsVerticalScrollIndicator={false}
       />
-
-      <Flex mb={insets.bottom + 2} px={6}>
+      <Flex mb={6} px={6}>
         <Button
           type="shade"
           size="large"
@@ -180,7 +181,7 @@ function ReceiveSelectAccount({
           {t("addAccounts.addNewOrExisting")}
         </Button>
       </Flex>
-    </>
+    </SafeAreaViewFixed>
   ) : null;
 }
 export default withDiscreetMode(ReceiveSelectAccount);

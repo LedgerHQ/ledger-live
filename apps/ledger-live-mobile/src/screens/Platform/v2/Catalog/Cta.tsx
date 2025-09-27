@@ -2,7 +2,7 @@ import React from "react";
 import { useTheme } from "@react-navigation/native";
 import { Stop } from "react-native-svg";
 import { Text } from "@ledgerhq/native-ui";
-import { View } from "react-native-animatable";
+import { View } from "react-native";
 import { BackgroundGradientHorizontal } from "~/components/TabBar/BackgroundGradient";
 
 const gradientsCta = {

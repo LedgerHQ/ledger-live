@@ -1,5 +1,5 @@
 import React, { useMemo } from "react";
-import { createStackNavigator } from "@react-navigation/stack";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useTheme } from "styled-components/native";
 import { NavigatorName } from "~/const";
 import AccountsNavigator from "./AccountsNavigator";
@@ -7,7 +7,7 @@ import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
 import WalletTabNavigator from "./WalletTabNavigator";
 import { PortfolioNavigatorStackParamList } from "./types/PortfolioNavigator";
 
-const Stack = createStackNavigator<PortfolioNavigatorStackParamList>();
+const Stack = createNativeStackNavigator<PortfolioNavigatorStackParamList>();
 
 export default function PortfolioNavigator() {
   const { colors } = useTheme();

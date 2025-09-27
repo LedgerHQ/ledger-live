@@ -1,8 +1,8 @@
 import React, { memo } from "react";
 import { useTranslation } from "react-i18next";
-import { AnimatedInput, Button } from "@ledgerhq/native-ui";
+import { Button } from "@ledgerhq/native-ui";
 import Paste from "@ledgerhq/icons-ui/native/Paste";
-import { Props as TextInputProps } from "./TextInput";
+import TextInput, { Props as TextInputProps } from "./TextInput";
 
 type Props = TextInputProps & {
   onPaste?: () => void;
@@ -17,7 +17,7 @@ const RecipientInput = ({
   const { t } = useTranslation();
 
   return (
-    <AnimatedInput
+    <TextInput
       testID="recipient-input"
       placeholder={t(placeholderTranslationKey)}
       renderRight={

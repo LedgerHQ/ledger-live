@@ -1,15 +1,23 @@
-import React from "react";
-import { KeyboardAvoidingView, Platform, StatusBar, KeyboardAvoidingViewProps } from "react-native";
+import React, { useEffect } from "react";
+import {
+  KeyboardAvoidingView,
+  Platform,
+  KeyboardAvoidingViewProps,
+  Keyboard,
+  StatusBar,
+} from "react-native";
 import Config from "react-native-config";
 import { HeaderHeightContext } from "@react-navigation/elements";
 import { HEIGHT as ExperimentalHeaderHeight } from "~/screens/Settings/Experimental/ExperimentalHeader";
 import { useExperimental } from "../experimental";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 type Props = {
   style?: KeyboardAvoidingViewProps["style"];
   children: React.ReactNode;
   behavior?: KeyboardAvoidingViewProps["behavior"];
 };
+
 const KeyboardView = React.memo<Props>(
   ({
     style = {
@@ -19,25 +27,38 @@ const KeyboardView = React.memo<Props>(
     behavior,
   }: Props) => {
     const isExperimental = useExperimental();
-    const headerHeight = React.useContext(HeaderHeightContext) || 0;
+    const headerHeight = React.useContext(HeaderHeightContext) ?? 0;
+    const [isKeyboardVisible, setIsKeyboardVisible] = React.useState(false);
     const isAndroid35 = Platform.OS === "android" && Platform.Version >= 35;
     const experimentalHeaderHeight = isExperimental || Config.DETOX ? ExperimentalHeaderHeight : 0;
-    const keyboardVerticalOffset = isAndroid35
-      ? headerHeight + experimentalHeaderHeight
-      : headerHeight + (StatusBar.currentHeight || 0) + experimentalHeaderHeight;
+    const insets = useSafeAreaInsets();
+
     const behaviorParam = behavior ?? "height";
     const behaviorProp: KeyboardAvoidingViewProps["behavior"] = Platform.select({
       ios: behaviorParam,
-      // On Android 34 or below, we leave it undefined to use the default behavior
-      // otherwise it can cause the keyboard avoiding to re-render infinitely in
-      // some cases like going back from a modal.
-      android: isAndroid35 ? "height" : undefined,
+      android: isAndroid35 ? behaviorParam : undefined,
     });
 
+    useEffect(() => {
+      const showEvent = Platform.OS === "ios" ? "keyboardWillShow" : "keyboardDidShow";
+      const hideEvent = Platform.OS === "ios" ? "keyboardWillHide" : "keyboardDidHide";
+      const showSub = Keyboard.addListener(showEvent, () => setIsKeyboardVisible(true));
+      const hideSub = Keyboard.addListener(hideEvent, () => setIsKeyboardVisible(false));
+      return () => {
+        showSub.remove();
+        hideSub.remove();
+      };
+    }, []);
+
+    const defaultOffset =
+      Platform.OS === "ios"
+        ? headerHeight + experimentalHeaderHeight
+        : (StatusBar.currentHeight ?? 24) + insets.bottom + 10;
+    const offsetToApply = isKeyboardVisible ? defaultOffset : 0;
     return (
       <KeyboardAvoidingView
         style={[style]}
-        keyboardVerticalOffset={keyboardVerticalOffset}
+        keyboardVerticalOffset={offsetToApply}
         behavior={behaviorProp}
         enabled
       >

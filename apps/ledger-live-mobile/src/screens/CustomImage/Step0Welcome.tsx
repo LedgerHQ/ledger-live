@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo, useState } from "react";
-import { StackScreenProps } from "@react-navigation/stack";
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Flex, Icons, Text } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
@@ -23,7 +23,7 @@ const analyticsButtonEventProps = {
 };
 
 const Step0Welcome: React.FC<
-  StackScreenProps<CustomImageNavigatorParamList, ScreenName.CustomImageStep0Welcome>
+  NativeStackScreenProps<CustomImageNavigatorParamList, ScreenName.CustomImageStep0Welcome>
 > = ({ route }) => {
   const [modalOpened, setModalOpened] = useState(false);
   const { t } = useTranslation();

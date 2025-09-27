@@ -1,4 +1,4 @@
-import { SafeAreaView } from "react-native-safe-area-context";
+import SafeAreaView from "~/components/SafeAreaView";
 import styled from "styled-components/native";
 import { TAB_BAR_HEIGHT } from "./shared";
 export { TAB_BAR_SAFE_HEIGHT } from "./shared";

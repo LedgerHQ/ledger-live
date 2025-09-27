@@ -1,5 +1,5 @@
 import React, { useMemo } from "react";
-import { createStackNavigator } from "@react-navigation/stack";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "styled-components/native";
 import { NavigatorName, ScreenName } from "~/const";
@@ -107,4 +107,4 @@ export default function SignMessageNavigator({
     </Stack.Navigator>
   );
 }
-const Stack = createStackNavigator<SignMessageNavigatorStackParamList>();
+const Stack = createNativeStackNavigator<SignMessageNavigatorStackParamList>();

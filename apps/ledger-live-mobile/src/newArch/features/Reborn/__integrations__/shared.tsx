@@ -1,8 +1,8 @@
 import React from "react";
-import { createStackNavigator } from "@react-navigation/stack";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import UpsellFlex from "../screens/UpsellFlex";
 
-const Stack = createStackNavigator();
+const Stack = createNativeStackNavigator();
 
 export const MockComponent = () => (
   <Stack.Navigator>

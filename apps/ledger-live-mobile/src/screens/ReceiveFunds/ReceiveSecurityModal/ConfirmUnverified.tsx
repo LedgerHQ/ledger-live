@@ -61,7 +61,7 @@ const ConfirmUnverified = ({ closeModal, setStep, setShouldNotRemindUserAgain }:
           </Text>
         </Flex>
       </TouchableOpacity>
-      <Flex flexDirection="row" mb={8}>
+      <Flex flexDirection="row">
         <Flex flex={1}>
           <Button onPress={onGoBack} outline type="main" size="large">
             <Trans i18nKey="transfer.receive.securityDontVerify.no" />
