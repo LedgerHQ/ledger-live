@@ -417,6 +417,7 @@
     "src/modularDrawer/hooks/useAssetAccountCounts.tsx",
     "src/modularDrawer/hooks/useSearch.ts",
     "src/modularDrawer/hooks/useModularDrawerConfiguration.ts",
+    "src/modularDrawer/hooks/useCurrenciesUnderFeatureFlag.ts",
     "src/modularDrawer/data/entities/marketSelectors.ts",
     "src/modularDrawer/hooks/modules/useLeftMarketTrendModule.tsx",
     "src/modularDrawer/hooks/modules/useRightMarketTrendModule.tsx",

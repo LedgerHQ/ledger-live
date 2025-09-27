@@ -15,6 +15,14 @@ import { http, HttpResponse } from "msw";
 import { server } from "@tests/server";
 import { NetInfoStateType, useNetInfo } from "@react-native-community/netinfo";
 
+jest.mock("@ledgerhq/live-common/modularDrawer/hooks/useCurrenciesUnderFeatureFlag", () => ({
+  useCurrenciesUnderFeatureFlag: () => mockUseCurrenciesUnderFeatureFlag(),
+}));
+
+const mockUseCurrenciesUnderFeatureFlag = jest.fn(() => ({
+  deactivatedCurrencyIds: new Set(),
+}));
+
 jest.mock("@react-native-community/netinfo", () => {
   const mockUseNetInfo = jest.fn(() => ({
     isConnected: true,

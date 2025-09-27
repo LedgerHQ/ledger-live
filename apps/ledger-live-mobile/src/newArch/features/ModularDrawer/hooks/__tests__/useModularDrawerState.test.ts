@@ -12,6 +12,14 @@ import { NavigationProp } from "@react-navigation/native";
 import { AssetData } from "@ledgerhq/live-common/modularDrawer/utils/type";
 import { State } from "~/reducers/types";
 
+jest.mock("@ledgerhq/live-common/modularDrawer/hooks/useCurrenciesUnderFeatureFlag", () => ({
+  useCurrenciesUnderFeatureFlag: () => mockUseCurrenciesUnderFeatureFlag(),
+}));
+
+const mockUseCurrenciesUnderFeatureFlag = jest.fn(() => ({
+  deactivatedCurrencyIds: new Set(),
+}));
+
 const assetsSorted: AssetData[] = [
   {
     asset: {

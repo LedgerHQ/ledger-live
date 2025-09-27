@@ -9,6 +9,14 @@ import {
 import { INITIAL_STATE } from "~/reducers/settings";
 import { State } from "~/reducers/types";
 
+jest.mock("@ledgerhq/live-common/modularDrawer/hooks/useCurrenciesUnderFeatureFlag", () => ({
+  useCurrenciesUnderFeatureFlag: () => mockUseCurrenciesUnderFeatureFlag(),
+}));
+
+const mockUseCurrenciesUnderFeatureFlag = jest.fn(() => ({
+  deactivatedCurrencyIds: new Set(),
+}));
+
 const advanceTimers = () => {
   act(() => {
     jest.advanceTimersByTime(500);
