@@ -76,7 +76,7 @@ export default class Canton {
     const responseData = this.handleTransportResponse(response, "address");
     const { publicKey } = this.extractPublicKeyAndChainCode(responseData);
 
-    const address = this.publicKeyToAddress(publicKey);
+    const address = "canton_" + this.publicKeyToAddress(publicKey);
 
     return {
       publicKey,

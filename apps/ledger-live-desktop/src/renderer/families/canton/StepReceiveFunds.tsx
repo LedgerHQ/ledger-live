@@ -171,10 +171,10 @@ const StepReceiveFunds = ({
   const mainAccount = account
     ? getMainAccount<CantonAccount>(account as CantonAccount, parentAccount as CantonAccount)
     : null;
-  invariant(account && mainAccount && mainAccount.cantonResources, "No account given");
+  invariant(account && mainAccount?.xpub, "No account given");
   const name = useAccountName(account);
   const initialDevice = useRef(device);
-  const address = mainAccount.cantonResources?.partyId;
+  const address = mainAccount.xpub;
   const [modalVisible, setModalVisible] = useState(false);
   const hideQRCodeModal = useCallback(() => setModalVisible(false), [setModalVisible]);
   const showQRCodeModal = useCallback(() => setModalVisible(true), [setModalVisible]);

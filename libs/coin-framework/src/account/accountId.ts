@@ -29,6 +29,18 @@ export function safeDecodeTokenId(encodedTokenId: string): string {
   return decodedURIComponent;
 }
 
+export function safeEncodeXpubOrAddress(xpubOrAddress: string): string {
+  if (!xpubOrAddress) return "";
+
+  return xpubOrAddress.replace(/::/g, "~!colons!~");
+}
+
+export function safeDecodeXpubOrAddress(encodedXpubOrAddress: string): string {
+  if (!encodedXpubOrAddress) return "";
+
+  return encodedXpubOrAddress.replace(/~!colons!~/g, "::");
+}
+
 export function encodeAccountId({
   type,
   version,
@@ -39,10 +51,7 @@ export function encodeAccountId({
   return `${ensureNoColon(type, "type")}:${ensureNoColon(version, "version")}:${ensureNoColon(
     currencyId,
     "currencyId",
-  )}:${ensureNoColon(xpubOrAddress, "xpubOrAddress")}:${ensureNoColon(
-    derivationMode,
-    "derivationMode",
-  )}`;
+  )}:${safeEncodeXpubOrAddress(xpubOrAddress)}:${ensureNoColon(derivationMode, "derivationMode")}`;
 }
 export function encodeTokenAccountId(accountId: string, token: TokenCurrency): string {
   return accountId + "+" + safeEncodeTokenId(token.id);
@@ -70,12 +79,12 @@ export function decodeAccountId(accountId: string): AccountIdParams {
   invariant(typeof accountId === "string", "accountId is not a string");
   const splitted = accountId.split(":");
   invariant(splitted.length === 5, "invalid size for accountId");
-  const [type, version, currencyId, xpubOrAddress, derivationMode] = splitted;
+  const [type, version, currencyId, encodedXpubOrAddress, derivationMode] = splitted;
   return {
     type,
     version,
     currencyId,
-    xpubOrAddress,
+    xpubOrAddress: safeDecodeXpubOrAddress(encodedXpubOrAddress),
     derivationMode: asDerivationMode(derivationMode),
   };
 }
