@@ -52,7 +52,7 @@ describe("StepAuthorize", () => {
       { status: AuthorizeStatus.SUCCESS, expectedText: "Account" },
       {
         status: AuthorizeStatus.ERROR,
-        expectedText: "Failed to authorize preapproval. Please try again.",
+        expectedText: "canton.addAccount.auth.error",
       },
     ];
 
@@ -73,7 +73,7 @@ describe("StepAuthorize", () => {
     render(<StepAuthorize {...defaultProps} />);
 
     expect(screen.getByText("Account")).toBeInTheDocument();
-    expect(screen.getByText("Authorize")).toBeInTheDocument();
+    expect(screen.getByText("canton.addAccount.auth.validator")).toBeInTheDocument();
     expect(screen.getByTestId("validator-row")).toBeInTheDocument();
   });
 
@@ -81,11 +81,11 @@ describe("StepAuthorize", () => {
     const testCases = [
       {
         status: AuthorizeStatus.INIT,
-        expectedAlert: "Automaticaly accept incoming funds to this account.",
+        expectedAlert: "canton.addAccount.auth.hint",
       },
       {
         status: AuthorizeStatus.ERROR,
-        expectedAlert: "Failed to authorize preapproval. Please try again.",
+        expectedAlert: "canton.addAccount.auth.error",
       },
     ];
 

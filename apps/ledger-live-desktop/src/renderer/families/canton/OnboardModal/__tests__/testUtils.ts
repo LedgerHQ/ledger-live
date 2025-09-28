@@ -7,25 +7,8 @@ import { CURRENCIES_LIST } from "@ledgerhq/live-common/currencies/mock";
 import { OnboardStatus, AuthorizeStatus } from "@ledgerhq/coin-canton/types";
 
 export const createMockCantonCurrency = (): CryptoCurrency => {
-  const found = CURRENCIES_LIST.find(c => c.id === "canton_network");
-  if (found) return found;
-
-  const mockCurrency: Partial<CryptoCurrency> = {
-    id: "canton_network",
-    name: "Canton",
-    type: "CryptoCurrency",
-    family: "canton",
-    units: [{ name: "Canton", code: "CANTON", magnitude: 38 }],
-    ticker: "CANTON",
-    scheme: "canton",
-    color: "#000000",
-    managerAppName: "Canton",
-    coinType: 6767,
-    explorerViews: [],
-  };
-
-  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-  return mockCurrency as CryptoCurrency;
+  const currencyCanton = CURRENCIES_LIST.filter(c => c.id === "canton_network");
+  return currencyCanton[0];
 };
 
 export const createMockDevice = (overrides: Partial<Device> = {}): Device => ({
@@ -182,12 +165,4 @@ export const mockOnboardingProgress = {
     partyId: "test-party-id",
   },
   ERROR: { error: new Error("Onboarding failed") },
-};
-
-export const mockAuthorizationProgress = {
-  PREPARE: { status: AuthorizeStatus.PREPARE },
-  SIGN: { status: AuthorizeStatus.SIGN },
-  SUBMIT: { status: AuthorizeStatus.SUBMIT },
-  SUCCESS: { status: AuthorizeStatus.SUCCESS },
-  ERROR: { error: new Error("Authorization failed") },
 };
