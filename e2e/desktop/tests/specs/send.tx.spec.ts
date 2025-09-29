@@ -1,7 +1,6 @@
 import { test } from "../fixtures/common";
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { Fee } from "@ledgerhq/live-common/e2e/enum/Fee";
-import { TransactionStatus } from "@ledgerhq/live-common/e2e/enum/TransactionStatus";
 import { Transaction } from "@ledgerhq/live-common/e2e/models/Transaction";
 import { addTmsLink } from "../utils/allureUtils";
 import { getDescription } from "../utils/customJsonReporter";
@@ -220,20 +219,9 @@ test.describe("Send flows", () => {
   for (const transaction of transactionE2E) {
     test.describe("Send from 1 account to another", () => {
       test.use({
-        userdata:
-          transaction.transaction.accountToDebit === Account.APTOS_1
-            ? "speculos-aptos"
-            : "skip-onboarding",
+        userdata: "skip-onboarding",
         speculosApp: transaction.transaction.accountToDebit.currency.speculosApp,
         cliCommands: [
-          (appjsonPath: string) => {
-            return CLI.liveData({
-              currency: transaction.transaction.accountToCredit.currency.id,
-              index: transaction.transaction.accountToCredit.index,
-              add: true,
-              appjson: appjsonPath,
-            });
-          },
           (appjsonPath: string) => {
             return CLI.liveData({
               currency: transaction.transaction.accountToDebit.currency.id,
@@ -271,18 +259,6 @@ test.describe("Send flows", () => {
           await app.sendDrawer.addressValueIsVisible(
             transaction.transaction.accountToCredit.address,
           );
-          await app.drawer.closeDrawer();
-          if (process.env.DISABLE_TRANSACTION_BROADCAST !== "1") {
-            await app.layout.goToAccounts();
-            await app.accounts.clickSyncBtnForAccount(
-              transaction.transaction.accountToCredit.accountName,
-            );
-            await app.accounts.navigateToAccountByName(
-              transaction.transaction.accountToCredit.accountName,
-            );
-            await app.account.selectAndClickOnLastOperation(TransactionStatus.RECEIVED);
-            await app.sendDrawer.expectReceiverInfos(transaction.transaction);
-          }
         },
       );
     });
@@ -483,14 +459,6 @@ test.describe("Send flows", () => {
       userdata: "skip-onboarding",
       speculosApp: transactionEnsAddress.accountToDebit.currency.speculosApp,
       cliCommands: [
-        (appjsonPath: string) => {
-          return CLI.liveData({
-            currency: transactionEnsAddress.accountToCredit.currency.id,
-            index: transactionEnsAddress.accountToCredit.index,
-            add: true,
-            appjson: appjsonPath,
-          });
-        },
         (appjsonPath: string) => {
           return CLI.liveData({
             currency: transactionEnsAddress.accountToDebit.currency.id,

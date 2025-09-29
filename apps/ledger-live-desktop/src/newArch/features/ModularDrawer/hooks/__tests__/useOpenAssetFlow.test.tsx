@@ -68,7 +68,7 @@ describe("useOpenAssetFlow", () => {
     );
 
     // Should open the drawer
-    result.current.openAssetFlow(false);
+    result.current.openAssetFlow();
 
     expect(setDrawer).toHaveBeenCalledTimes(1);
     expect(setDrawer).toHaveBeenLastCalledWith(

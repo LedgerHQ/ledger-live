@@ -1,9 +1,6 @@
 import { step } from "../../misc/reporters/step";
 import { Drawer } from "../../component/drawer.component";
 import { expect } from "@playwright/test";
-import { NFTTransaction, Transaction } from "@ledgerhq/live-common/e2e/models/Transaction";
-import { TransactionStatus } from "@ledgerhq/live-common/e2e/enum/TransactionStatus";
-import { getAccountAddress } from "@ledgerhq/live-common/e2e/enum/Account";
 
 export class SendDrawer extends Drawer {
   private sendDrawer = this.page.getByTestId("drawer-content");

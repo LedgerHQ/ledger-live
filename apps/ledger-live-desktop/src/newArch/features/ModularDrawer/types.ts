@@ -20,7 +20,7 @@ export const MODULAR_DRAWER_STEP = {
 export type ModularDrawerStep = (typeof MODULAR_DRAWER_STEP)[keyof typeof MODULAR_DRAWER_STEP];
 
 export type ModularDrawerFlowManagerProps = {
-  currencies: CryptoOrTokenCurrency[];
+  currencies: string[];
   drawerConfiguration?: EnhancedModularDrawerConfiguration;
   useCase?: string;
   areCurrenciesFiltered?: boolean;

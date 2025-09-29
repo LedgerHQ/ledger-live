@@ -110,6 +110,12 @@ export class Account {
     "0xa1baa625c5E6A9304cB7AcD86d2fee6B710eC3eB",
     1,
   );
+  static readonly BSC_POL = new Account(
+    Currency.BSC_POL,
+    "BNB Chain 1",
+    "0x4BE2E2B8872AA298D6d123b9211B53E41f611566",
+    0,
+  );
   static readonly BSC_SHIBA = new Account(
     Currency.BSC_SHIBA,
     "BNB Chain 1",
@@ -242,6 +248,8 @@ export class Account {
     undefined,
     [Nft.ANTITUS, Nft.PODIUM, Nft.NY_LA_MUSE],
   );
+  // don't use this account as a recipient, it's balance
+  // should stay close to null to allow for error message testing
   static readonly ETH_2 = new Account(
     Currency.ETH,
     "Ethereum 2",

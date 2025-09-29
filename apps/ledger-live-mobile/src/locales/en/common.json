@@ -3773,7 +3773,9 @@
         "dydx_title": "Ledger Nano S™ does not support swapping dYdX",
         "dydx_description": "To swap dYdX, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™.",
         "sui_title": "Ledger Nano S™ does not support swapping Sui",
-        "sui_description": "To swap Sui, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™."
+        "sui_description": "To swap Sui, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™.",
+        "kaspa_title": "Ledger Nano S™ does not support swapping Kaspa",
+        "kaspa_description": "To swap Kaspa, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™."
       }
     },
     "lending": {
@@ -7206,9 +7208,10 @@
     "title": "Lock screen picture",
     "change": "Change",
     "drawer": {
+      "title": "Custom lock screen",
       "options": {
-        "uploadFromPhone": "Choose from my picture gallery",
-        "remove": "Remove current picture"
+        "uploadFromPhone": "Change picture",
+        "remove": "Delete lock screen"
       }
     },
     "toastRemove": "Lock screen picture removed",
