@@ -195,8 +195,6 @@ describe("prepareTransaction", () => {
       index: 0,
       fees: BigNumber(24),
       subAccountId: "subAccountId",
-      maxFeePerGas: "11",
-      maxPriorityFeePerGas: 1,
       data: Buffer.from("0x73656E645F746F6B656E5F64617461"),
     });
   });
@@ -223,8 +221,6 @@ describe("prepareTransaction", () => {
       index: 0,
       fees: BigNumber(24),
       subAccountId: "subAccountId",
-      maxFeePerGas: "11",
-      maxPriorityFeePerGas: 1,
       data: Buffer.from("0x73656E645F65726332305F746F6B656E5F64617461"),
     });
   });
@@ -253,8 +249,6 @@ describe("prepareTransaction", () => {
       index: 0,
       fees: BigNumber(24),
       subAccountId: "subAccountId",
-      maxFeePerGas: "11",
-      maxPriorityFeePerGas: 1,
       data: Buffer.from("0x73656E645F65726332305F746F6B656E5F64617461"),
     });
   });

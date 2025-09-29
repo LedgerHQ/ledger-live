@@ -43,17 +43,10 @@ export const prepareTransaction: AccountBridge<
     token = await kit.contracts.getGoldToken();
   }
 
-  const block = await kit.connection.web3.eth.getBlock("latest");
-  const maxPriorityFeePerGas = await kit.connection.getMaxPriorityFeePerGas();
-  const baseFee = BigInt(block.baseFeePerGas || maxPriorityFeePerGas);
-  const maxFeePerGas = baseFee + BigInt(maxPriorityFeePerGas);
-
   return {
     ...transaction,
     amount,
     fees,
-    maxFeePerGas: maxFeePerGas.toString(),
-    maxPriorityFeePerGas: await kit.connection.getMaxPriorityFeePerGas(),
     ...(isTokenTransaction
       ? {
           data: Buffer.from(
