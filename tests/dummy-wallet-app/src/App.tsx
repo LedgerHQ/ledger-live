@@ -17,6 +17,7 @@ export default function App() {
   const [amount, setAmount] = useState("");
   const [data, setData] = useState("");
   const [message, setMessage] = useState("");
+  const [deeplinkUrl, setDeeplinkUrl] = useState("");
 
   const params = useMemo(
     () => Array.from(new URLSearchParams(window.location.search).entries()),
@@ -25,7 +26,7 @@ export default function App() {
 
   const testLogger = async () => {
     try {
-      await client?.custom.log("test");
+      await client?.custom.logger.log("test");
     } catch (err) {
       setRes(err);
     }
@@ -214,6 +215,15 @@ export default function App() {
     }
   };
 
+  const handleDeeplinkOpen = async () => {
+    try {
+      const result = await client?.custom.deeplink.open(deeplinkUrl);
+      setRes(result);
+    } catch (err) {
+      setRes(err);
+    }
+  };
+
   const clearStates = () => {
     setRes(undefined);
     setCurrencyIds("");
@@ -222,6 +232,7 @@ export default function App() {
     setAmount("");
     setData("");
     setMessage("");
+    setDeeplinkUrl("");
   };
 
   return (
@@ -316,6 +327,18 @@ export default function App() {
           />
         </div>
         <div>
+        <label htmlFor="deeplink-url-input">Deeplink URL: </label>
+          <input
+            id="deeplink-url-input"
+            data-testid="deeplink-url-input"
+            type="text"
+            value={deeplinkUrl}
+            onChange={e => setDeeplinkUrl(e.target.value)}
+            placeholder="e.g. ledgerlive://account?currency=bitcoin"
+            className="deeplink-url-input"
+          />
+        </div>
+        <div>
           <button onClick={testLogger} data-testid="test-logger">
             Test logger
           </button>
@@ -366,6 +389,8 @@ export default function App() {
           </button>
           <button onClick={handleMessageSign} data-testid="message-sign">
             message.sign
+          <button onClick={handleDeeplinkOpen} data-testid="deeplink-open">
+            custom.deeplink.open
           </button>
           <button onClick={clearStates} data-testid="clear-states">
             Clear States

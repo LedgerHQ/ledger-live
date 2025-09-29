@@ -4793,6 +4793,19 @@ importers:
         specifier: ^5
         version: 5.8.3
 
+  libs/deeplink-module:
+    dependencies:
+      '@ledgerhq/wallet-api-client':
+        specifier: ^1.10.0
+        version: 1.12.0(@ton/crypto@3.3.0)
+      '@ledgerhq/wallet-api-core':
+        specifier: ^1.22.0
+        version: 1.24.0(@ton/crypto@3.3.0)
+    devDependencies:
+      '@types/node':
+        specifier: ^22.10.10
+        version: 22.10.10
+
   libs/device-core:
     dependencies:
       '@ledgerhq/devices':
@@ -9425,6 +9438,9 @@ importers:
       '@ledgerhq/wallet-api-client-react':
         specifier: ^1.4.16
         version: 1.4.16(@ton/crypto@3.3.0)(react@18.3.1)
+      '@ledgerhq/wallet-api-deeplink-module':
+        specifier: workspace:*
+        version: link:../../libs/deeplink-module
       '@ledgerhq/wallet-api-simulator':
         specifier: ^1.2.16
         version: 1.2.16(@ton/crypto@3.3.0)(react@18.3.1)
@@ -49815,7 +49831,7 @@ snapshots:
 
   '@storybook/react-docgen-typescript-plugin@1.0.6--canary.9.0c3f3b7.0(typescript@5.4.3)(webpack@5.94.0(esbuild@0.19.12))':
     dependencies:
-      debug: 4.4.1
+      debug: 4.3.4
       endent: 2.1.0
       find-cache-dir: 3.3.2
       flat-cache: 3.2.0
@@ -67847,7 +67863,7 @@ snapshots:
       '@protobufjs/path': 1.1.2
       '@protobufjs/pool': 1.1.0
       '@protobufjs/utf8': 1.1.0
-      '@types/node': 22.10.10
+      '@types/node': 20.12.12
       long: 5.2.3
 
   protobufjs@7.3.2:

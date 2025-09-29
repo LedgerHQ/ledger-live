@@ -290,6 +290,7 @@
     "src/wallet-api/converters.ts",
     "src/wallet-api/CustomLogger/client.ts",
     "src/wallet-api/CustomLogger/server.ts",
+    "src/wallet-api/CustomDeeplink/server.ts",
     "src/wallet-api/Exchange/server.ts",
     "src/wallet-api/helpers.ts",
     "src/wallet-api/LocalLiveAppProvider/index.tsx",

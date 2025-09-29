@@ -27,6 +27,8 @@ import { NavigationHeaderCloseButtonAdvanced } from "../NavigationHeaderCloseBut
 import { NavigatorName, ScreenName } from "~/const";
 import { Loading } from "../Loading";
 import { usePTXCustomHandlers } from "./CustomHandlers";
+import { useDeeplinkCustomHandlers } from "../WebPlatformPlayer/CustomHandlers";
+import { WalletAPICustomHandlers } from "@ledgerhq/live-common/wallet-api/types";
 
 type BackToInternalDomainProps = {
   config: {
@@ -260,7 +262,14 @@ export const WebPTXPlayer = ({
   }, [config, disableHeader, isInternalApp, manifest, navigation, webviewState?.url, softExit]);
 
   const accounts = useSelector(flattenAccountsSelector);
-  const customHandlers = usePTXCustomHandlers(manifest, accounts);
+  const customPTXHandlers = usePTXCustomHandlers(manifest, accounts);
+  const customDeeplinkHandlers = useDeeplinkCustomHandlers();
+  const customHandlers = useMemo<WalletAPICustomHandlers>(() => {
+    return {
+      ...customPTXHandlers,
+      ...customDeeplinkHandlers,
+    };
+  }, [customPTXHandlers, customDeeplinkHandlers]);
   return (
     <SafeAreaView edges={isInternalApp ? ["left", "right", "top"] : ["left", "right"]} isFlex>
       <Web3AppWebview

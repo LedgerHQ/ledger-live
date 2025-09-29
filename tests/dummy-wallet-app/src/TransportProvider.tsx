@@ -7,6 +7,7 @@ import {
   WalletAPIClient,
   WindowMessageTransport,
 } from "@ledgerhq/wallet-api-client";
+import { DeeplinkModule } from "@ledgerhq/wallet-api-deeplink-module";
 
 // Register things for type safety
 declare module "@ledgerhq/wallet-api-client-react" {
@@ -16,11 +17,10 @@ declare module "@ledgerhq/wallet-api-client-react" {
 }
 
 function getCustomModule(client: WalletAPIClient) {
-  return new CustomLogger(client);
-  // We need to improve the types to make this work better
-  // return {
-  //   logger: new CustomLogger(client),
-  // };
+  return {
+    logger: new CustomLogger(client),
+    deeplink: new DeeplinkModule(client),
+  };
 }
 
 export function TransportProvider({ children }: PropsWithChildren<object>) {
