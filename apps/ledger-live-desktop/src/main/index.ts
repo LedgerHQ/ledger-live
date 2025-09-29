@@ -239,13 +239,7 @@ app.on("before-quit", () => {
 
 app.on("window-all-closed", () => {
   cleanupTransports();
-  if (process.platform !== "darwin") {
-    app.quit();
-    // Fallback: force exit if app.quit() doesn't work
-    setTimeout(() => {
-      process.exit(0);
-    }, 3000);
-  }
+  app.quit();
 });
 
 ipcMain.on("set-background-color", (_, color) => {
