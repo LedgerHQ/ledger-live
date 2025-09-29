@@ -49,7 +49,7 @@
     "transactionDate" : "트랜잭션 날짜",
     "outdated" : "오래됨",
     "satPerByte" : "sat/bytes",
-    "sompiPerByte" : "sompi/bytes",
+    "sompiPerByte" : "sompi/바이트",
     "notAvailable" : "이용할 수 없습니다",
     "import" : "가져오기",
     "bluetooth" : "블루투스",
@@ -419,10 +419,6 @@
     "ETHAddressNonEIP" : {
       "title" : "자동 검증이 불가능합니다. 주소를 신중하게 확인해 주세요.",
       "description" : null
-    },
-    "EthAppNftNotSupported" : {
-      "title" : "이 장치에서 사용할 수 없는 작업",
-      "description" : "NFT 보내기 기능은 Nano X 및 Nano S+에서만 사용할 수 있습니다. Nano S로 NFT를 보내는 방법을 알아보려면 고객 지원 플랫폼을 방문하세요."
     },
     "Touch ID Error" : {
       "title" : "생체 인증 실패",
@@ -926,9 +922,6 @@
     "TaprootNotActivated" : {
       "title" : "Taproot(탭루트) 메인넷이 아직 활성화되지 않았습니다"
     },
-    "NotEnoughNftOwned" : {
-      "title" : "사용 가능한 토큰 수를 초과했습니다"
-    },
     "generic" : {
       "title" : "{{message}}",
       "description" : "문제가 발생했습니다. 다시 시도해주세요. 문제가 지속될 경우, 아래 버튼을 이용해 로그를 저장하고 Ledger 지원 부서로 보내주세요.",
@@ -1052,10 +1045,6 @@
     "ImageDownloadError" : {
       "title" : "사진을 다운로드하지 못했습니다",
       "description" : "다른 사진으로 다시 시도해 보세요."
-    },
-    "NFTMetadataLoadingError" : {
-      "title" : "NFT 메타데이터 로딩 문제",
-      "description" : "다른 NFT로 다시 시도해 보세요."
     },
     "ImageSizeLoadingError" : {
       "title" : "가져올 수 없는 사진 크기입니다",
@@ -2261,6 +2250,9 @@
         "continueCTA" : "계속",
         "contactSupportCTA" : "지원 부서 연락"
       }
+    },
+    "completionScreen" : {
+      "title" : "이제 모든 것은 내 손끝에서 시작됩니다"
     }
   },
   "blePairingFlow" : {
@@ -2391,6 +2383,8 @@
   },
   "syncOnboarding" : {
     "title" : "{{productName}}의 준비를 완료합니다",
+    "twoStepTitle" : "시작하기",
+    "firstStepReadyTitle" : "{{productName}} 장치가 준비되었습니다",
     "estimatedTimeFormat" : "{{estimatedTime}}분",
     "deviceSelection" : {
       "title" : "아래와 같이 설정하려는 Ledger 장치를 선택합니다.",
@@ -2508,6 +2502,10 @@
       "newSeedContinueOnDevice" : "{{productName}}에 표시되는 안내를 따라주세요.",
       "recovery" : "Ledger 장치에서 생성된 비밀 복구 문구를 사용해 자산에 대한 보안을 극대화하세요.\n\n복구 문구가 없으신가요? {{productName}}을 사용해 새로운 복구 문구를 생성하세요."
     },
+    "secureCryptoStep" : {
+      "title" : "소중한 암호화폐를 안전하게",
+      "doneSubTitle" : "블록체인 앱이 설치되었습니다."
+    },
     "backup" : {
       "title" : "비밀 복구 문구 백업",
       "description" : "디지털 암호화 백업을 사용하면 비밀 복구 문구 없이 지갑에 대한 액세스를 복원할 수 있습니다.\n\n다음에서 원하는 디지털 백업을 선택하세요.",
@@ -2535,6 +2533,14 @@
     },
     "completion" : {
       "title" : "이제 통제권은 귀하에게 있습니다"
+    },
+    "successStep" : {
+      "title" : "{{productName}} 장치에서 디지털 자산을 안전하게 보호하세요"
+    },
+    "newSeed" : {
+      "subtitle" : "이제 Ledger Live로 모든 거래소와 지갑에서 암호화폐를 안전하게 전송하고 최고 수준의 보안을 누려보세요.",
+      "installCTA" : "자산 보호 시작하기",
+      "skipCTA" : "다음에 결정하기"
     }
   },
   "tabs" : {
@@ -2693,9 +2699,7 @@
   "operations" : {
     "types" : {
       "IN" : "수령됨",
-      "NFT_IN" : "NFT 수령됨",
       "OUT" : "전송됨",
-      "NFT_OUT" : "NFT 전송됨",
       "CREATE" : "생성됨",
       "REVEAL" : "숨김 해제",
       "DELEGATE" : "위임됨",
@@ -2800,11 +2804,7 @@
       "stakedAmount" : "스테이킹 금액",
       "accountCreationFee" : "계정 생성 수수료"
     },
-    "multipleAddresses" : "왜 주소가 여러 개인가요?",
-    "tokenName" : "토큰명",
-    "collectionContract" : "토큰 계약",
-    "tokenId" : "토큰 (NFT) ID",
-    "quantity" : "수량"
+    "multipleAddresses" : "왜 주소가 여러 개인가요?"
   },
   "operationList" : {
     "noOperations" : "거래 없음",
@@ -2973,10 +2973,6 @@
     },
     "undelegation" : {
       "sectionLabel" : "위임 해제"
-    },
-    "nft" : {
-      "receiveNft" : "NFT 수령",
-      "howTo" : "NFT를 추가하려면 <1>{{currency}} 주소</1>를 사용하여 <0>수령</0>해야 합니다."
     },
     "readOnly" : {
       "noTransaction" : {
@@ -3187,11 +3183,6 @@
         "title" : "토큰 숨기기",
         "desc" : "이 작업은 모든 <1><0>{tokenName}</0></1>의 계정을 숨기며 <3>설정 > 계정</3>을 사용하여 다시 표시할 수 있습니다.",
         "confirm" : "토큰 숨기기"
-      },
-      "hideNFTCollectionCTA" : "컬렉션 숨기기",
-      "hideNFTCollectionModal" : {
-        "title" : "컬렉션을 숨기시겠습니까?",
-        "desc" : "설정 옵션에서 이 컬렉션을 숨김 해제할 수 있습니다."
       },
       "cryptoAssets" : {
         "header" : "암호화폐",
@@ -3692,7 +3683,8 @@
         "empty" : {
           "title" : "과거 스왑 내역이 여기에 표시됩니다",
           "desc" : "아직 스왑을 하지 않았거나 그동안 Ledger Live가 리셋되었습니다."
-        }
+        },
+        "feedback" : "피드백을 보내주세요"
       }
     },
     "swap2" : {
@@ -4021,10 +4013,7 @@
       "summary" : "요약",
       "selectDevice" : "장치 선택",
       "connectDevice" : "장치 연결",
-      "stepRange" : "{{totalSteps}} 중 {{currentStep}} 단계",
-      "quantity" : "수량",
-      "selectCollection" : "컬렉션",
-      "selectNft" : "NFT"
+      "stepRange" : "{{totalSteps}} 중 {{currentStep}} 단계"
     },
     "recipient" : {
       "scan" : "QR 코드 스캔",
@@ -4429,7 +4418,7 @@
         "default" : "Ledger 장치에서 스왑 상세 정보를 확인한 후 전송하세요.",
         "provider" : "장치에서 스왑 세부사항을 확인한 후 전송하세요. 일부 트랜잭션에서 {{providerName}}의 추가 확인 단계가 필요할 수 있어 지연이 발생할 수 있습니다."
       },
-      "acceptTerms" : "본인은 이 트랜잭션을 확인함으로써 \n<0><0>{{provider}}</0>의 이용약관</0>을 수락합니다.",
+      "acceptTerms" : "본 트랜잭션에 서명하면 <0><0>{{provider}}</0>의 이용약관</0>을 수락하는 것으로 간주합니다.",
       "notice" : "장치에서 스왑 세부사항을 확인한 후 전송하세요. 주소가 안전하게 교환되어 주소를 따로 인증할 필요 없습니다."
     },
     "swap2" : {
@@ -7127,47 +7116,6 @@
       }
     }
   },
-  "nft" : {
-    "account" : {
-      "seeAllNfts" : "모든 NFT 보기",
-      "seeFewerNfts" : "적은 NFT 보기"
-    },
-    "gallery" : {
-      "allNft" : "모든 NFT",
-      "addNew" : "새로 추가"
-    },
-    "designedForStax" : {
-      "title" : "<0>Ledger</0><1>Stax</1>을 위한 <2>디자인</2>",
-      "drawer" : {
-        "description" : "이 NFT에는 Ledger Stax의 E 잉크 스크린에 맞게 특별히 디자인한 추가 NFT 이미지가 포함되어 있습니다.\n\n  해당 NFT를 잠금 화면으로 설정하면 이 이미지가 사용됩니다.",
-        "cta" : "알겠습니다"
-      }
-    },
-    "viewer" : {
-      "properties" : "속성",
-      "description" : "설명",
-      "tokenContract" : "토큰 주소",
-      "tokenContractCopied" : "토큰 주소 복사됨 !",
-      "tokenId" : "토큰 ID",
-      "tokenIdCopied" : "토큰 ID가 복사되었습니다!",
-      "quantity" : "수량",
-      "attributes" : {
-        "floorPrice" : "가격 하한선"
-      }
-    },
-    "viewerModal" : {
-      "viewOn" : "다음에서 보기:",
-      "viewInExplorer" : "탐색기에서 보기",
-      "hide" : "NFT 컬렉션 숨기기",
-      "txDetails" : "트랜잭션 세부 사항"
-    },
-    "modalDisabled" : {
-      "title" : "iOS에서 전송 기능을 사용할 수 없습니다",
-      "body" : "애플 앱스토어 최신 업데이트 사항 준수를 위해 NFT 전송 기능을 일시적으로 사용하실 수 없습니다. 여전히 데스크탑에서는 Ledger Live로 NFT 전송이 가능합니다.",
-      "learnMore" : "자세히 알아보기",
-      "continue" : "알겠습니다!"
-    }
-  },
   "ApplicationVersion" : "v{{version}}",
   "analytics" : {
     "title" : "애널리틱스",
@@ -7251,7 +7199,6 @@
     "drawer" : {
       "options" : {
         "uploadFromPhone" : "내 사진 갤러리에서 선택",
-        "selectFromNFTGallery" : "NFT 갤러리에서 선택",
         "remove" : "현재 사진 삭제"
       }
     },
@@ -7282,9 +7229,6 @@
       "setPicture" : "잠금화면으로 설정하세요",
       "editPicture" : "사진 편집",
       "pickDeviceModel" : "장치 선택하기"
-    },
-    "nftGallery" : {
-      "title" : "내 NFT"
     }
   },
   "postOnboarding" : {
@@ -7329,50 +7273,7 @@
   "wallet" : {
     "tabs" : {
       "crypto" : "암호화폐",
-      "nft" : "NFT",
       "market" : "마켓"
-    },
-    "nftGallery" : {
-      "filters" : {
-        "select" : "선택",
-        "filter" : "필터",
-        "blockchain" : "블록체인",
-        "seeAll" : "모두 보기",
-        "selectAndHide" : "선택 및 숨기기",
-        "hide" : "{{count}}개의 컬렉션 숨기기",
-        "hiddenCollections" : "숨겨진 컬렉션",
-        "hide_plural" : "{{count}}개의 컬렉션 숨기기",
-        "empty" : "숨겨진 컬렉션이 없습니다.",
-        "alertHide" : "1개의 컬렉션을 숨겼습니다. 갤러리 필터에서 언제든지 숨김을 해제할 수 있습니다.",
-        "alertHide_plural" : "{{count}}개의 컬렉션을 숨겼습니다. 갤러리 필터에서 언제든지 숨김을 해제할 수 있습니다."
-      },
-      "emptyFiltered" : {
-        "title" : "기준에 맞는 NFT가 없습니다.",
-        "button" : "필터 재설정"
-      },
-      "empty" : {
-        "title" : "아직 표시할 NFT가 없습니다",
-        "subtitle" : "지갑에 NFT를 추가하고 시작하세요.",
-        "receive" : "NFT 수령",
-        "supportLink" : "다른 지갑에서 NFT를 받는 방법은 무엇인가요?"
-      },
-      "receiveModal" : {
-        "title" : "다른 암호화폐와 동일한 방법으로 NFT를 수령하세요",
-        "bullets" : {
-          "0" : "• 해당 NFT의 암호화 블록체인을 선택합니다.",
-          "1" : "• 해당 NFT를 수령할 계정을 선택합니다"
-        },
-        "cta" : "알겠습니다",
-        "info" : "조금 더 자세히 알고 싶습니다"
-      },
-      "hideNftModal" : {
-        "title" : "NFT 컬렉션 숨기기",
-        "desc" : "이 작업은 {{collectionName}}에서 모든 NFT를 숨김 처리합니다. 갤러리 필터에서 숨김 해제하여 다시 표시할 수 있습니다",
-        "cta" : "이 NFT 숨기기"
-      },
-      "media" : {
-        "tag" : "{{count}}개의 NFT"
-      }
     },
     "referralProgram" : "$20"
   },
@@ -8025,6 +7926,10 @@
     "signatureVerificationFail" : {
       "title" : "서명 검증 실패",
       "description" : "재시도하거나, 잘 모르겠다면 Ledger 지원팀에 문의하세요."
+    },
+    "transactionCannotBeCreated" : {
+      "title" : "서비스 제공 업체 이용 불가",
+      "description" : "Changelly에서 처리할 수 없는 트랜잭션입니다. 오류 코드 8HBB{{errorCode}}"
     },
     "default" : {
       "title" : "문제가 발생했습니다",
