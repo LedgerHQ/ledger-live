@@ -169,6 +169,6 @@ describe("AccountsList Screen", () => {
       getByText(/looks like you haven’t added an account yet. get started now/i),
     ).toBeVisible();
     expect(getByText("Add an account")).toBeVisible();
-    expect(getByText(/need help\? learn how to add an account to ledger live./i)).toBeVisible();
+    expect(getByText(/need help\? learn how to add an account to ledger wallet./i)).toBeVisible();
   });
 });
