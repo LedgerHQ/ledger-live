@@ -1094,4 +1094,13 @@ export const expectedCurrencyList = [
     color: "#CE6533",
     decimals: 6,
   },
+  {
+    color: "#70C7BA",
+    decimals: 8,
+    family: "kaspa",
+    id: "kaspa",
+    name: "KASPA",
+    ticker: "KAS",
+    type: "CryptoCurrency",
+  },
 ];
