@@ -132,8 +132,6 @@ const buildTransaction = async (account: CeloAccount, transaction: Transaction) 
       from: account.freshAddress,
       to: transaction.recipient,
       data: token.transfer(transaction.recipient, value.toFixed()).txo.encodeABI(),
-      maxFeePerGas: maxFeePerGas.toString(),
-      maxPriorityFeePerGas: await kit.connection.getMaxPriorityFeePerGas(),
       value: value.toFixed(),
     };
   } else {
