@@ -22,7 +22,7 @@ const ModularDrawerFlowManager = ({
   onAssetSelected,
   onAccountSelected,
 }: ModularDrawerFlowManagerProps) => {
-  const currencyIds = useMemo(() => (currencies || []).map(currency => currency.id), [currencies]);
+  const currencyIds = useMemo(() => currencies, [currencies]);
   const dispatch = useDispatch();
   const { currentStep, navigationDirection, goToStep } = useModularDrawerNavigation();
 
