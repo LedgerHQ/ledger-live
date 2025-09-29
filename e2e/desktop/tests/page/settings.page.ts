@@ -11,9 +11,7 @@ export class SettingsPage extends AppPage {
   private clearCacheButton = this.page.getByRole("button", { name: "Clear" });
   private confirmButton = this.page.getByRole("button", { name: "Confirm" });
   private accountsTab = this.page.getByTestId("settings-accounts-tab");
-  private aboutTab = this.page.getByTestId("settings-about-tab");
   private helpTab = this.page.getByTestId("settings-help-tab");
-  readonly experimentalTab = this.page.getByTestId("settings-experimental-tab");
   private ledgerSupport = this.page.getByTestId("ledgerSupport-link");
   private resetAppButton = this.page.getByTestId("reset-button");
   private viewUserDataButton = this.page.getByTestId("view-user-data-button");
@@ -37,19 +35,9 @@ export class SettingsPage extends AppPage {
     await this.accountsTab.click();
   }
 
-  @step("Go to Settings About tab")
-  async goToAboutTab() {
-    await this.aboutTab.click();
-  }
-
   @step("Go to Settings Help tab")
   async goToHelpTab() {
     await this.helpTab.click();
-  }
-
-  @step("Go to Settings Experimental tab")
-  async goToExperimentalTab() {
-    await this.experimentalTab.click();
   }
 
   @step("Change counter value to $0")

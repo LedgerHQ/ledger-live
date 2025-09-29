@@ -21,7 +21,9 @@ type HasConstructor = {
  }
  ```
  */
-export function step<This extends HasConstructor, Args extends unknown[], Return = unknown>(message?: string) {
+export function step<This extends HasConstructor, Args extends unknown[], Return = unknown>(
+  message?: string,
+) {
   return function actualDecorator(
     target: (this: This, ...args: Args) => Promise<Return>,
     context: ClassMethodDecoratorContext<This, (this: This, ...args: Args) => Promise<Return>>,
