@@ -1,42 +1,41 @@
-import React, { useCallback, useMemo, useState, useContext } from "react";
-import { useSelector } from "react-redux";
-import { LayoutChangeEvent, ListRenderItemInfo } from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
-import { useSharedValue } from "react-native-reanimated";
+import React, { useCallback, useContext, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { LayoutChangeEvent } from "react-native";
+import { useSharedValue } from "react-native-reanimated";
+import { useSelector } from "react-redux";
 
-import { Box, Flex, Button } from "@ledgerhq/native-ui";
+import { Box, Button, Flex } from "@ledgerhq/native-ui";
 
-import { useTheme } from "styled-components/native";
+import { useCurrenciesByMarketcap } from "@ledgerhq/live-common/currencies/hooks";
 import {
   isCurrencySupported,
-  listTokens,
   listSupportedCurrencies,
+  listTokens,
 } from "@ledgerhq/live-common/currencies/index";
-import { useCurrenciesByMarketcap } from "@ledgerhq/live-common/currencies/hooks";
-import { CryptoCurrency, Currency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { useRefreshAccountsOrdering } from "~/actions/general";
-import { counterValueCurrencySelector, hasOrderedNanoSelector } from "~/reducers/settings";
-import { usePortfolioAllAccounts } from "~/hooks/portfolio";
-
-import GraphCardContainer from "../GraphCardContainer";
-import TrackScreen from "~/analytics/TrackScreen";
-import { NavigatorName, ScreenName } from "~/const";
-import CheckLanguageAvailability from "~/components/CheckLanguageAvailability";
-import CheckTermOfUseUpdate from "~/components/CheckTermOfUseUpdate";
-import { TAB_BAR_SAFE_HEIGHT } from "~/components/TabBar/TabBarSafeAreaView";
-import SetupDeviceBanner from "LLM/features/Reborn/components/SetupDeviceBanner";
+import { Currency } from "@ledgerhq/types-cryptoassets";
+import FirmwareUpdateBanner from "LLM/features/FirmwareUpdate/components/UpdateBanner";
 import BuyDeviceBanner, {
   IMAGE_PROPS_BUY_DEVICE_FLEX,
 } from "LLM/features/Reborn/components/BuyDeviceBanner";
-import Assets from "../Assets";
+import SetupDeviceBanner from "LLM/features/Reborn/components/SetupDeviceBanner";
+import { useTheme } from "styled-components/native";
+import { useRefreshAccountsOrdering } from "~/actions/general";
 import { AnalyticsContext } from "~/analytics/AnalyticsContext";
+import TrackScreen from "~/analytics/TrackScreen";
+import CheckLanguageAvailability from "~/components/CheckLanguageAvailability";
+import CheckTermOfUseUpdate from "~/components/CheckTermOfUseUpdate";
 import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
-import FirmwareUpdateBanner from "LLM/features/FirmwareUpdate/components/UpdateBanner";
-import CollapsibleHeaderFlatList from "~/components/WalletTab/CollapsibleHeaderFlatList";
 import { WalletTabNavigatorStackParamList } from "~/components/RootNavigator/types/WalletTabNavigator";
-import { UpdateStep } from "../../FirmwareUpdate";
+import { TAB_BAR_SAFE_HEIGHT } from "~/components/TabBar/TabBarSafeAreaView";
+import CollapsibleHeaderFlatList from "~/components/WalletTab/CollapsibleHeaderFlatList";
+import { NavigatorName, ScreenName } from "~/const";
 import usePortfolioAnalyticsOptInPrompt from "~/hooks/analyticsOptInPrompt/usePorfolioAnalyticsOptInPrompt";
+import { usePortfolioAllAccounts } from "~/hooks/portfolio";
+import { counterValueCurrencySelector, hasOrderedNanoSelector } from "~/reducers/settings";
+import { UpdateStep } from "../../FirmwareUpdate";
+import Assets from "../Assets";
+import GraphCardContainer from "../GraphCardContainer";
 
 const maxAssetsToDisplay = 5;
 
@@ -70,16 +69,12 @@ function ReadOnlyPortfolio({ navigation }: NavigationProps) {
     });
   }, [navigation]);
 
-  const listSupportedTokens = useCallback(
-    () => listTokens().filter(t => isCurrencySupported(t.parentCurrency)),
-    [],
-  );
   const cryptoCurrencies = useMemo(
-    () =>
-      (listSupportedCurrencies() as (TokenCurrency | CryptoCurrency)[]).concat(
-        listSupportedTokens(),
-      ),
-    [listSupportedTokens],
+    () => [
+      ...listSupportedCurrencies(),
+      ...listTokens().filter(t => isCurrencySupported(t.parentCurrency)),
+    ],
+    [],
   );
   const sortedCryptoCurrencies = useCurrenciesByMarketcap(cryptoCurrencies);
   const topCryptoCurrencies = useMemo(
@@ -162,15 +157,12 @@ function ReadOnlyPortfolio({ navigation }: NavigationProps) {
     [navigation],
   );
 
-  useFocusEffect(
-    useCallback(() => {
-      setScreen && setScreen("Wallet");
+  const focusEffect = useCallback(() => {
+    setScreen && setScreen("Wallet");
+    return () => setSource("Wallet");
+  }, [setSource, setScreen]);
 
-      return () => {
-        setSource("Wallet");
-      };
-    }, [setSource, setScreen]),
-  );
+  useFocusEffect(focusEffect);
 
   return (
     <>
@@ -183,7 +175,7 @@ function ReadOnlyPortfolio({ navigation }: NavigationProps) {
       <CollapsibleHeaderFlatList<JSX.Element>
         data={data}
         contentContainerStyle={{ paddingBottom: TAB_BAR_SAFE_HEIGHT }}
-        renderItem={({ item }: ListRenderItemInfo<unknown>) => item as JSX.Element}
+        renderItem={({ item }) => item}
         keyExtractor={(_: unknown, index: number) => String(index)}
         showsVerticalScrollIndicator={false}
         testID="PortfolioReadOnlyItems"

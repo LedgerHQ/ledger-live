@@ -1,7 +1,7 @@
 import { Box, Flex, Text } from "@ledgerhq/native-ui";
 import styled, { BaseStyledProps } from "@ledgerhq/native-ui/components/styled";
 import { MaterialTopTabBarProps } from "@react-navigation/material-top-tabs";
-import React, { memo, useCallback, useContext } from "react";
+import React, { memo, useCallback, useContext, useMemo } from "react";
 import { Animated } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useSelector } from "react-redux";
@@ -41,23 +41,13 @@ function Tab({
   label,
   isActive,
   navigation,
-  index,
-  scrollX,
 }: {
   route: { name: string; key: string };
   label?: string;
   isActive: boolean;
   navigation: MaterialTopTabBarProps["navigation"];
-  index: number;
-  scrollX: MaterialTopTabBarProps["position"];
 }) {
   const { colors } = useTheme();
-
-  const opacity = scrollX.interpolate({
-    inputRange: [index - 1, index, index + 1],
-    outputRange: [0, 1, 0],
-    extrapolate: "clamp",
-  });
 
   const onPress = useCallback(() => {
     const event = navigation.emit({
@@ -74,17 +64,12 @@ function Tab({
     }
   }, [isActive, navigation, route]);
 
-  const backgroundColor = opacity.interpolate({
-    inputRange: [0, 1],
-    outputRange: [colors.opacityDefault.c10, colors.neutral.c100],
-  });
-
   return (
     <StyledTouchableOpacity onPress={onPress} testID={`wallet-tab-${route.name}`}>
       <StyledAnimatedView
         borderRadius={2}
         style={{
-          backgroundColor,
+          backgroundColor: isActive ? colors.neutral.c100 : colors.opacityDefault.c10,
           opacity: 1,
         }}
       />
@@ -118,17 +103,25 @@ function WalletTabNavigatorTabBar({
 
   const { scrollY, headerHeight, tabBarHeight } = useContext(WalletTabNavigatorScrollContext);
 
-  const y = scrollY.interpolate({
-    inputRange: [0, headerHeight],
-    outputRange: [headerHeight, 0],
-    extrapolateRight: "clamp",
-  });
+  const translateY = useMemo(
+    () =>
+      scrollY.interpolate({
+        inputRange: [0, headerHeight],
+        outputRange: [headerHeight, 0],
+        extrapolateRight: "clamp",
+      }),
+    [headerHeight, scrollY],
+  );
 
-  const opacity = scrollY.interpolate({
-    inputRange: [headerHeight, headerHeight + 1],
-    outputRange: [0, 1],
-    extrapolate: "clamp",
-  });
+  const opacity = useMemo(
+    () =>
+      scrollY.interpolate({
+        inputRange: [headerHeight, headerHeight + 1],
+        outputRange: [0, 1],
+        extrapolate: "clamp",
+      }),
+    [headerHeight, scrollY],
+  );
   const insets = useSafeAreaInsets();
 
   return (
@@ -142,7 +135,7 @@ function WalletTabNavigatorTabBar({
           top: insets.top,
           zIndex: 1,
           position: "absolute",
-          transform: [{ translateY: y }],
+          transform: [{ translateY }],
           width: "100%",
           height: tabBarHeight,
         }}
@@ -159,20 +152,15 @@ function WalletTabNavigatorTabBar({
         />
         <Flex px={6} py={2} justifyContent={"flex-end"}>
           <Flex flexDirection={"row"}>
-            {state.routes.map((route, index) => {
-              const { options } = descriptors[route.key];
-              return (
-                <MemoTab
-                  key={index}
-                  route={route}
-                  label={options.title}
-                  isActive={state.index === index}
-                  navigation={navigation}
-                  index={index}
-                  scrollX={position}
-                />
-              );
-            })}
+            {state.routes.map((route, index) => (
+              <MemoTab
+                key={route.key}
+                route={route}
+                label={descriptors[route.key]?.options.title}
+                isActive={state.index === index}
+                navigation={navigation}
+              />
+            ))}
           </Flex>
         </Flex>
       </AnimatedFlex>
