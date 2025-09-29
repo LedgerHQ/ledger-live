@@ -49,7 +49,7 @@
     "transactionDate" : "交易日期",
     "outdated" : "已过期",
     "satPerByte" : "聪/字节",
-    "sompiPerByte" : "聪米/字节",
+    "sompiPerByte" : "sompi/字节",
     "notAvailable" : "缺货",
     "import" : "导入",
     "bluetooth" : "蓝牙",
@@ -419,10 +419,6 @@
     "ETHAddressNonEIP" : {
       "title" : "无法自动验证。请仔细核对该地址。",
       "description" : null
-    },
-    "EthAppNftNotSupported" : {
-      "title" : "操作不可用于此设备",
-      "description" : "仅 Nano X 和 Nano S Plus 提供发送 NFT 功能。请访问我们的客服平台，了解如何使用 Nano S 发送 NFT。"
     },
     "Touch ID Error" : {
       "title" : "生物特征认证失败",
@@ -926,9 +922,6 @@
     "TaprootNotActivated" : {
       "title" : "Taproot 主网尚未激活"
     },
-    "NotEnoughNftOwned" : {
-      "title" : "您已超过可用代币的数量"
-    },
     "generic" : {
       "title" : "{{message}}",
       "description" : "出错了。请重试。如果问题依旧存在，请使用下面的按钮保存您的日志，并将其提供给 Ledger 客服。",
@@ -1052,10 +1045,6 @@
     "ImageDownloadError" : {
       "title" : "图片下载失败",
       "description" : "使用其他图片重试。"
-    },
-    "NFTMetadataLoadingError" : {
-      "title" : "NFT 元数据加载问题",
-      "description" : "使用其他 NFT 重试。"
     },
     "ImageSizeLoadingError" : {
       "title" : "未能检索图片尺寸",
@@ -2261,6 +2250,9 @@
         "continueCTA" : "继续",
         "contactSupportCTA" : "联系客服"
       }
+    },
+    "completionScreen" : {
+      "title" : "现在一切在您掌控之中"
     }
   },
   "blePairingFlow" : {
@@ -2391,6 +2383,8 @@
   },
   "syncOnboarding" : {
     "title" : "准备好您的 {{productName}}",
+    "twoStepTitle" : "开始操作",
+    "firstStepReadyTitle" : "您的 {{productName}} 已经就绪",
     "estimatedTimeFormat" : "{{estimatedTime}} 分钟",
     "deviceSelection" : {
       "title" : "选择您要设置的 Ledger 设备：",
@@ -2508,6 +2502,10 @@
       "newSeedContinueOnDevice" : "按照 {{productName}} 上的说明进行操作",
       "recovery" : "务必使用 Ledger 设备生成的秘密恢复短语，最大限度提高资产的安全性。\n\n还没有秘密恢复短语？请使用您的 {{productName}} 生成新的短语。"
     },
+    "secureCryptoStep" : {
+      "title" : "保护您的加密货币",
+      "doneSubTitle" : "您的区块链应用程序已安装完毕。"
+    },
     "backup" : {
       "title" : "秘密恢复短语备份",
       "description" : "利用数字加密备份，没有秘密恢复短语也能恢复钱包访问权限。\n\n选择是否需要数字备份：",
@@ -2535,6 +2533,14 @@
     },
     "completion" : {
       "title" : "现在一切尽在您的掌控。"
+    },
+    "successStep" : {
+      "title" : "您的 {{productName}} 已准备好保护您的数字资产"
+    },
+    "newSeed" : {
+      "subtitle" : "您可将加密货币从任一交易所或钱包转到您的 Ledger Live，以确保最大程度的安全性。",
+      "installCTA" : "保护我的加密货币",
+      "skipCTA" : "以后再说"
     }
   },
   "tabs" : {
@@ -2693,9 +2699,7 @@
   "operations" : {
     "types" : {
       "IN" : "已接收",
-      "NFT_IN" : "已收到的 NFT",
       "OUT" : "已发送",
-      "NFT_OUT" : "已发送的 NFT",
       "CREATE" : "已创建",
       "REVEAL" : "已显示",
       "DELEGATE" : "已委托",
@@ -2800,11 +2804,7 @@
       "stakedAmount" : "权益质押数额",
       "accountCreationFee" : "账户创建费"
     },
-    "multipleAddresses" : "为什么有多个地址？",
-    "tokenName" : "代币名称",
-    "collectionContract" : "代币合约",
-    "tokenId" : "代币（NFT）ID",
-    "quantity" : "数量"
+    "multipleAddresses" : "为什么有多个地址？"
   },
   "operationList" : {
     "noOperations" : "不作操作",
@@ -2973,10 +2973,6 @@
     },
     "undelegation" : {
       "sectionLabel" : "解除委托"
-    },
-    "nft" : {
-      "receiveNft" : "接收 NFT",
-      "howTo" : "要添加 NFT，您需要使用您的 <1>{{currency}} 地址</1><0>来接收</0>。"
     },
     "readOnly" : {
       "noTransaction" : {
@@ -3187,11 +3183,6 @@
         "title" : "隐藏代币",
         "desc" : "此操作将隐藏全部 <1><0>{tokenName}</0></1> 账户，您可以使用 <3>设置</3> 再次显示这些账户。",
         "confirm" : "隐藏代币"
-      },
-      "hideNFTCollectionCTA" : "隐藏收藏",
-      "hideNFTCollectionModal" : {
-        "title" : "隐藏收藏？",
-        "desc" : "您可以在设置选项中取消隐藏此收藏。"
       },
       "cryptoAssets" : {
         "header" : "加密资产",
@@ -3692,7 +3683,8 @@
         "empty" : {
           "title" : "您之前的互换会显示在这里",
           "desc" : "要么您还未进行过任何互换，亦或 Ledger Live 在此期间被重置了。"
-        }
+        },
+        "feedback" : "提供反馈意见"
       }
     },
     "swap2" : {
@@ -4021,10 +4013,7 @@
       "summary" : "概要",
       "selectDevice" : "选择设备",
       "connectDevice" : "连接设备",
-      "stepRange" : "步骤 {{currentStep}} 之 {{totalSteps}}",
-      "quantity" : "数量",
-      "selectCollection" : "收藏",
-      "selectNft" : "NFT"
+      "stepRange" : "步骤 {{currentStep}} 之 {{totalSteps}}"
     },
     "recipient" : {
       "scan" : "扫描二维码",
@@ -4429,7 +4418,7 @@
         "default" : "发送资金之前，请先在您的 Ledger 设备上核实互换详情。",
         "provider" : "发送资金之前，请先在您的设备上核实互换详情。{{providerName}} 可能需要对某些交易进行额外验证，因此导致延迟。"
       },
-      "acceptTerms" : "验证此交易，即表示我接受\n<0><0>{{provider}}</0>的使用条款</0>",
+      "acceptTerms" : "签署此交易，即表示您接受 <0><0>{{provider}}</0> 的使用条款</0>",
       "notice" : "发送之前请在您的设备上验证互换详情。地址会被安全地交换因此您不必对其进行验证。"
     },
     "swap2" : {
@@ -7127,47 +7116,6 @@
       }
     }
   },
-  "nft" : {
-    "account" : {
-      "seeAllNfts" : "查看所有 NFT",
-      "seeFewerNfts" : "看到更少 NFT"
-    },
-    "gallery" : {
-      "allNft" : "所有 NFT",
-      "addNew" : "添加新的"
-    },
-    "designedForStax" : {
-      "title" : "<0>专为</0> <1>Ledger</1> <2>Stax</2> 设计",
-      "drawer" : {
-        "description" : "此 NFT 包含 NFT 的附加图片，专为 Ledger Stax 的 E Ink 屏幕设计。\n\n当您将此 NFT 设置为锁屏时，将使用此图片。",
-        "cta" : "知道了"
-      }
-    },
-    "viewer" : {
-      "properties" : "属性",
-      "description" : "描述",
-      "tokenContract" : "代币地址",
-      "tokenContractCopied" : "代币地址已复制！",
-      "tokenId" : "代币 ID",
-      "tokenIdCopied" : "代币 ID 已复制！",
-      "quantity" : "数量",
-      "attributes" : {
-        "floorPrice" : "底价"
-      }
-    },
-    "viewerModal" : {
-      "viewOn" : "查看",
-      "viewInExplorer" : "在浏览器中查看",
-      "hide" : "隐藏 NFT 藏品",
-      "txDetails" : "交易详情"
-    },
-    "modalDisabled" : {
-      "title" : "iOS 上不能使用发送功能",
-      "body" : "为了遵守 Apple 对 App Store 的最新更新，暂时无法发送 NFT。您仍然可以在桌面设备上使用 Ledger Live 发送 NFT。",
-      "learnMore" : "了解更多",
-      "continue" : "知道了！"
-    }
-  },
   "ApplicationVersion" : "{{version}}版本",
   "analytics" : {
     "title" : "数据分析",
@@ -7251,7 +7199,6 @@
     "drawer" : {
       "options" : {
         "uploadFromPhone" : "从我的图片库中选择",
-        "selectFromNFTGallery" : "从 NFT 库中选择",
         "remove" : "移除当前图片"
       }
     },
@@ -7282,9 +7229,6 @@
       "setPicture" : "设置为锁屏界面",
       "editPicture" : "编辑图片",
       "pickDeviceModel" : "选择设备"
-    },
-    "nftGallery" : {
-      "title" : "我的 NFT"
     }
   },
   "postOnboarding" : {
@@ -7329,50 +7273,7 @@
   "wallet" : {
     "tabs" : {
       "crypto" : "加密货币",
-      "nft" : "NFT",
       "market" : "市场"
-    },
-    "nftGallery" : {
-      "filters" : {
-        "select" : "选择",
-        "filter" : "筛选",
-        "blockchain" : "区块链",
-        "seeAll" : "显示全部",
-        "selectAndHide" : "选择并隐藏",
-        "hide" : "隐藏 {{count}} 件藏品",
-        "hiddenCollections" : "隐藏藏品",
-        "hide_plural" : "隐藏 {{count}} 件藏品",
-        "empty" : "没有可显示的隐藏藏品",
-        "alertHide" : "已隐藏 1 件藏品。您可以随时在藏品库筛选条件中取消隐藏。",
-        "alertHide_plural" : "已隐藏 {{count}} 件藏品。您可以随时在藏品库筛选条件中取消隐藏。"
-      },
-      "emptyFiltered" : {
-        "title" : "没有符合您的条件的 NFT",
-        "button" : "重置筛选条件"
-      },
-      "empty" : {
-        "title" : "暂时没有 NFT 可显示",
-        "subtitle" : "首先将 NFT 添加到您的钱包",
-        "receive" : "接收 NFT",
-        "supportLink" : "如何从其他钱包获取 NFT？"
-      },
-      "receiveModal" : {
-        "title" : "以与任何其他加密货币相同的方式接收 NFT",
-        "bullets" : {
-          "0" : "• 选择 NFT 的加密货币区块链。",
-          "1" : "• 选择接收 NFT 的账户"
-        },
-        "cta" : "好，知道了",
-        "info" : "我想了解更多"
-      },
-      "hideNftModal" : {
-        "title" : "隐藏 NFT 藏品",
-        "desc" : "此操作将隐藏{{collectionName}}藏品中的所有 NFT，您可以在藏品库筛选条件中取消隐藏",
-        "cta" : "隐藏此 NFT"
-      },
-      "media" : {
-        "tag" : "{{count}} 个 NFT"
-      }
     },
     "referralProgram" : "$20"
   },
@@ -8025,6 +7926,10 @@
     "signatureVerificationFail" : {
       "title" : "签名验证失败",
       "description" : "请重试，如有疑问，请联系 Ledger 客服。"
+    },
+    "transactionCannotBeCreated" : {
+      "title" : "服务提供商不可用",
+      "description" : "Changelly 无法处理此交易。错误代码 8HBB{{errorCode}}"
     },
     "default" : {
       "title" : "出错了",
