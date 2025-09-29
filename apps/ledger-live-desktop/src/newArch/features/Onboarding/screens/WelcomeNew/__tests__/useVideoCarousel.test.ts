@@ -9,10 +9,10 @@ jest.mock("../assets/ledgerWalletBuySell.webm", () => "mock-buy-sell.webm");
 jest.mock("../assets/ledgerWalletThousandsCrypto.webm", () => "mock-thousands-crypto.webm");
 jest.mock("../assets/ledgerWalletSecureWallet.webm", () => "mock-secure-wallet.webm");
 
-// Mock translation
-const mockT = jest.fn((key: string) => key);
 jest.mock("react-i18next", () => ({
-  useTranslation: () => ({ t: mockT }),
+  useTranslation: () => ({
+    t: (key: string) => key,
+  }),
 }));
 
 describe("useVideoCarousel", () => {
