@@ -2250,6 +2250,9 @@
         "continueCTA" : "متابعة",
         "contactSupportCTA" : "تواصل مع الدعم"
       }
+    },
+    "completionScreen" : {
+      "title" : "الآن أنت المتحكم"
     }
   },
   "blePairingFlow" : {
@@ -2380,6 +2383,8 @@
   },
   "syncOnboarding" : {
     "title" : "جهّز {{productName}} الخاص بك",
+    "twoStepTitle" : "لنبدأ",
+    "firstStepReadyTitle" : "جهازك {{productName}} مُستعد",
     "estimatedTimeFormat" : "{{estimatedTime}} دقيقة",
     "deviceSelection" : {
       "title" : "اختر جهاز Ledger الذي تريد إعداده:",
@@ -2497,6 +2502,10 @@
       "newSeedContinueOnDevice" : "اتبع التعليمات على جهازك {{productName}}",
       "recovery" : "تأكد من استخدام عبارة استرداد سرية تم إنشاؤها عن طريق جهاز Ledger لأقصى درجات الأمان لأصولك. \n\nليس لديك عبارة استرداد؟ استخدم جهازك {{productName}} لإنشاء واحدة جديدة."
     },
+    "secureCryptoStep" : {
+      "title" : "تأمين أصولك المشفرة",
+      "doneSubTitle" : "تطبيقات سلسلة الكتل (بلوكتشين) الخاصة بك تم تثبيتها."
+    },
     "backup" : {
       "title" : "نسخة احتياطية لعبارة الاسترداد السرية الخاصة بك",
       "description" : "مع نسخة احتياطية رقمية مشفرة، استعدْ الوصول إلى محفظتك بدون عبارة الاسترداد السرية الخاصة بك.\n\nاختر إذا كنت ترغب في نسخة احتياطية رقمية:",
@@ -2524,6 +2533,14 @@
     },
     "completion" : {
       "title" : "أنت المتحكّم الآن"
+    },
+    "successStep" : {
+      "title" : "جهازك {{productName}} جاهز لتأمين أصولك الرقمية"
+    },
+    "newSeed" : {
+      "subtitle" : "يمكنك تحويل الأصول المشفرة من أي منصة تداول أو محفظة إلى Ledger Live خاصتك من أجل أقصى درجات الأمان.",
+      "installCTA" : "تأمين أصولي المشفرة",
+      "skipCTA" : "ربّما في وقت لاحق"
     }
   },
   "tabs" : {
@@ -3749,6 +3766,8 @@
         "apt_description" : "لمبادلة Aptos، استخدم أي جهاز Ledger متوافق آخر مثل ™Ledger Nano S Plus أو ™Ledger Nano X أو ™Ledger Flex أو ™Ledger Stax.",
         "cosmos_title" : "™Ledger Nano S لا تدعم مبادلة Cosmos",
         "cosmos_description" : "لمبادلة Cosmos، استخدم أي جهاز Ledger متوافق آخر مثل ™Ledger Nano S Plus أو ™Ledger Nano X أو ™Ledger Flex أو ™Ledger Stax.",
+        "hedera_title" : "™Ledger Nano S لا تدعم مبادلة Hedera",
+        "hedera_description" : "لمبادلة Hedera، استخدِم أي جهاز Ledger متوافق آخر مثل ™Ledger Nano S Plus أو ™Ledger Nano X أو ™Ledger Flex أو ™Ledger Stax.",
         "osmo_title" : "™Ledger Nano S لا تدعم مبادلة Osmosis",
         "osmo_description" : "لمبادلة Osmosis، استخدم أي جهاز Ledger متوافق آخر مثل ™Ledger Nano S Plus أو ™Ledger Nano X أو ™Ledger Flex أو ™Ledger Stax.",
         "dydx_title" : "™Ledger Nano S لا تدعم مبادلة dYdX",
@@ -4030,6 +4049,10 @@
       "solanaRawTransaction" : {
         "title" : "التوقيع بدون اطلاع مطلوب",
         "description" : "لا يمكنك تأكيد صحة تفاصيل المعاملة على جهازك Ledger. إذا قمت بتوقيعها، فقد تخسر كل أصولك. قم بالتوقيع فقط إذا كنت تثق في هذا الموقع الإلكتروني."
+      },
+      "bitcoinPsbtTransaction" : {
+        "title" : "التحقق على الجهاز",
+        "description" : "يمكك التحقق من مبلغ المعاملة والمستلم على الجهاز في الخطوة التالية."
       },
       "subaccountsWarning" : "ستحتاج إلى إعادة شحن هذا الحساب بعملة {{ currency }} لتستطيع إرسال رموز التوكن من هذا الحساب",
       "tag" : "علامة (اختيارية)",
@@ -4401,7 +4424,8 @@
         "default" : "تحقق من تفاصيل المبادلة على جهازك Ledger قبل إرسالها.",
         "provider" : "تحقق من تفاصيل المبادلة على جهازك قبل إرسالها. {{providerName}} قد يحتاج إلى إجراء تحقق إضافي لبعض المعاملات، ما يؤدي إلى تأخير."
       },
-      "acceptTerms" : "بتأكيد صحة هذه المعاملة، أنا أقبل\n<0><0>شروط استخدام</0> {{provider}}</0>",
+      "acceptTerms" : "By signing this transaction, you accept <0><0>{{provider}}</0>'s terms of use</0>",
+      "changellySimplifiedAcceptTerms" : "By validating this transaction, you accept Changelly's <0>Terms of Use</0> and its <1>AML/KYC policy</1>. Changelly may apply AML/KYC procedures which can, in limited cases, impact the completion of your transaction. Should that happen, you must contact Changelly’s <2>customer support.</2>",
       "notice" : "تحقق من تفاصيل المبادلة على جهازك قبل إرسالها. يتم تبادل العناوين بشكل آمن حتى لا تضطر إلى التحقق منهم."
     },
     "swap2" : {
@@ -7912,7 +7936,7 @@
     },
     "transactionCannotBeCreated" : {
       "title" : "المزود غير متاح",
-      "description" : "لا يمكننا إتمام مبادلتك عن طريق هذا المزود. يُرجى المحاولة من خلال مزود آخر. كود الخطأ 8HBB{{errorCode}}"
+      "description" : "Changelly لا يمكنها معالجة هذه المعاملة. كود الخطأ {{errorCode}}8HBB"
     },
     "default" : {
       "title" : "حدث خطأ ما",
