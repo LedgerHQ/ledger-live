@@ -48,6 +48,7 @@
 			<string>com.ledger.live</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
+				<string>ledgerwallet</string>
 				<string>ledgerlive</string>
 			</array>
 		</dict>
