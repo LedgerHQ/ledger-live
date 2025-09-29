@@ -124,6 +124,23 @@ describe("Sui Api", () => {
       expect(txs.some(t => t.type === "OUT")).toBeTruthy();
     });
 
+    it("should return 2 operations in case of a self send", async () => {
+      const [selfTxs] = await module.listOperations(
+        "0xb37b298c9164c28c8aaf989a49416e3c323b67bc2b96a54501b524419ebb4ead",
+        { minHeight: 0, order: "asc" },
+      );
+      expect(selfTxs.length).toBeGreaterThanOrEqual(4);
+      // https://suiscan.xyz/mainnet/tx/9vtfErSE4xpL89QAg6sppveJruNj6vY76AvmLhYNmx8R
+      const selfSend = selfTxs.filter(
+        tx => tx.id === "9vtfErSE4xpL89QAg6sppveJruNj6vY76AvmLhYNmx8R",
+      );
+      expect(selfSend.length).toBe(2);
+      expect(selfSend.filter(t => t.type === "IN")[0].value).toBe(5);
+      expect(selfSend.filter(t => t.type === "IN")[0].tx.fees).toBe(495000);
+      expect(selfSend.filter(t => t.type === "OUT")[0].value).toBe(-5);
+      expect(selfSend.filter(t => t.type === "OUT")[0].tx.fees).toBe(495000);
+    });
+
     it("uses the minHeight to filter", async () => {
       const minHeightTxs = await module.listOperations(SENDER, {
         minHeight: 154925948,
