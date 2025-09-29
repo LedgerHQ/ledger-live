@@ -153,6 +153,7 @@
     "@ledgerhq/pnpm-utils": "1.0.1"
   },
   "changesets": [
+    "angry-kangaroos-exist",
     "brave-ghosts-live",
     "brave-hornets-design",
     "clever-squids-sparkle",

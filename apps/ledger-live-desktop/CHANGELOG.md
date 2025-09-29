@@ -1,5 +1,11 @@
 # ledger-live-desktop
 
+## 2.130.0-next.2
+
+### Minor Changes
+
+- [#12024](https://github.com/LedgerHQ/ledger-live/pull/12024) [`d65dfe1`](https://github.com/LedgerHQ/ledger-live/commit/d65dfe1718735df78eb8bf6006f1d91c429a4cb5) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Force MacOS to exit on window close
+
 ## 2.130.0-next.1
 
 ### Minor Changes
