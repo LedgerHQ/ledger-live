@@ -53,7 +53,7 @@ const StepAuthorize = ({ accountName, authorizeStatus, device, onboardingResult 
                 textTransform="uppercase"
                 mb={3}
               >
-                <Trans i18nKey="canton.addAccount.auth.validator">Authorize</Trans>
+                <Trans i18nKey="canton.addAccount.auth.validator" />
               </Box>
 
               <ValidatorRow isSelected={true} disabled={false} />
@@ -61,15 +61,11 @@ const StepAuthorize = ({ accountName, authorizeStatus, device, onboardingResult 
 
             {status === AuthorizeStatus.ERROR ? (
               <Alert type="error">
-                <Trans i18nKey="canton.addAccount.auth.error">
-                  Failed to authorize preapproval. Please try again.
-                </Trans>
+                <Trans i18nKey="canton.addAccount.auth.error" />
               </Alert>
             ) : (
               <Alert>
-                <Trans i18nKey="canton.addAccount.auth.hint">
-                  Automaticaly accept incoming funds to this account.
-                </Trans>
+                <Trans i18nKey="canton.addAccount.auth.hint" />
                 <br />
                 <Link href="https://ledger.com" type="external">
                   <Trans i18nKey="common.learnMore" />
