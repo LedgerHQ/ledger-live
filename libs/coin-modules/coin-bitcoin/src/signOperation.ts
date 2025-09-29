@@ -88,8 +88,7 @@ export const buildSignOperation =
           const psbtResult = await signerContext(deviceId, currency, signer =>
             signer.signPsbtV2Buffer
               ? signer.signPsbtV2Buffer(psbtBuffer, {
-                  // @ts-expect-error: x
-                  finalizePsbt: transaction.finalizePsbt,
+                  finalizePsbt: Boolean(transaction.finalizePsbt),
                   accountPath: `${walletAccount.params.path}/${walletAccount.params.index}'`,
                   addressFormat: getAddressFormatDerivationMode(account.derivationMode),
                 })
