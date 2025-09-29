@@ -420,10 +420,6 @@
       "title" : "Vérification automatique indisponible : vérifiez l’adresse attentivement.",
       "description" : null
     },
-    "EthAppNftNotSupported" : {
-      "title" : "Opération indisponible sur cet appareil",
-      "description" : "La fonctionnalité Envoi de NFT n’est disponible que pour le Nano X et le Nano S Plus. Visitez notre centre d’aide pour découvrir comment envoyer un NFT avec un Nano S."
-    },
     "Touch ID Error" : {
       "title" : "Échec de l’authentification biométrique",
       "description" : "Utilisez votre mot de passe ou réinitialisez l’app."
@@ -656,9 +652,9 @@
       "twoCtas" : "<cta1>{{cta1Label}}</cta1> ou <cta2>{{cta2Label}}</cta2> des {{assetName}} pour approvisionner votre compte.",
       "threeCtas" : "<cta1>{{cta1Label}}</cta1>, <cta2>{{cta2Label}}</cta2> ou <cta3>{{cta3Label}}</cta3> des{{assetName}} pour approvisionner votre compte.",
       "ctas" : {
-        "buy" : "Achetez",
+        "buy" : "Acheter",
         "swap" : "Échanger",
-        "deposit" : "Déposez"
+        "deposit" : "Déposer"
       }
     },
     "NotEnoughBalanceSwap" : {
@@ -926,9 +922,6 @@
     "TaprootNotActivated" : {
       "title" : "Taproot n’est pas encore activé sur le réseau principal"
     },
-    "NotEnoughNftOwned" : {
-      "title" : "Nombre de tokens disponibles insuffisant"
-    },
     "generic" : {
       "title" : "{{message}}",
       "description" : "Une erreur est survenue. Veuillez réessayer. Si le problème persiste, enregistrez vos logs en utilisant le bouton ci-dessous et transmettez-les à l’Assistance Ledger.",
@@ -1052,10 +1045,6 @@
     "ImageDownloadError" : {
       "title" : "Échec du téléchargement de l’image",
       "description" : "Veuillez réessayer avec une autre image."
-    },
-    "NFTMetadataLoadingError" : {
-      "title" : "Problème de chargement des métadonnées du NFT",
-      "description" : "Veuillez réessayer avec un autre NFT."
     },
     "ImageSizeLoadingError" : {
       "title" : "Échec du chargement des dimensions de l’image",
@@ -1214,10 +1203,10 @@
       "description" : "Pour synchroniser vos applications, assurez-vous qu’elles sont toutes deux mises à jour avec la dernière version."
     },
     "AppManifestUnknownError" : {
-      "title" : "App Live Swap introuvable"
+      "title" : "App Swap introuvable"
     },
     "AppManifestNotFoundError" : {
-      "title" : "Échec du chargement de l’app Live Swap"
+      "title" : "Échec du chargement de l’app Swap"
     },
     "InvalidMemoMina" : {
       "title" : "Le mémo ne peut pas dépasser 32 caractères"
@@ -1381,7 +1370,7 @@
     "title" : "Désinstallez puis réinstallez Ledger Live",
     "description" : "Merci de désinstaller puis réinstaller l’app sur votre téléphone pour supprimer les données de Ledger Live, y compris de comptes et paramètres.",
     "button" : "Réinitialiser",
-    "warning" : "La réinitialisation de Ledger Live effacera l’historique des transactions de swap de tous vos comptes."
+    "warning" : "La réinitialisation de Ledger Live effacera l’historique des transactions Swap de tous vos comptes."
   },
   "graph" : {
     "week" : "1S",
@@ -1426,12 +1415,12 @@
       },
       "buyCrypto" : {
         "title" : "Acheter des cryptos",
-        "description" : "Achetez plus de 50 cryptos avec nos prestataires tiers.",
+        "description" : "Achetez plus de 50 cryptos avec nos prestataires.",
         "cta" : "Acheter maintenant"
       },
       "swap" : {
         "title" : "Échanger des cryptos",
-        "description" : "Échangez plus de 100 cryptos et gardez le contrôle avec nos prestataires tiers.",
+        "description" : "Échangez plus de 100 cryptos et gardez le contrôle avec nos prestataires.",
         "cta" : "Échanger maintenant"
       },
       "algorand" : {
@@ -2261,6 +2250,9 @@
         "continueCTA" : "Continuer",
         "contactSupportCTA" : "Contacter l’Assistance"
       }
+    },
+    "completionScreen" : {
+      "title" : "Vous avez le contrôle"
     }
   },
   "blePairingFlow" : {
@@ -2391,6 +2383,8 @@
   },
   "syncOnboarding" : {
     "title" : "Prenez votre {{productName}} en main",
+    "twoStepTitle" : "Commencez",
+    "firstStepReadyTitle" : "Votre {{productName}} est prêt",
     "estimatedTimeFormat" : "{{estimatedTime}} min",
     "deviceSelection" : {
       "title" : "Choisissez l’appareil que vous souhaitez configurer :",
@@ -2508,9 +2502,13 @@
       "newSeedContinueOnDevice" : "Suivez les instructions sur votre {{productName}}",
       "recovery" : "Pour une sécurité optimale de vos actifs, utilisez une phrase de récupération secrète générée par un appareil Ledger.\n\nVous n’en avez pas déjà une ? Générez une nouvelle phrase avec votre {{productName}}."
     },
+    "secureCryptoStep" : {
+      "title" : "Sécurisez vos cryptos",
+      "doneSubTitle" : "Vos apps blockchain sont installées."
+    },
     "backup" : {
       "title" : "Sauvegarde pour votre phrase de récupération",
-      "description" : "Avec une solution de sauvegarde numérique chiffrée, vous pouvez restaurer l’accès à votre wallet sans votre phrase de récupération secrète.\n\nChoisissez si vous voulez une sauvegarde numérique :",
+      "description" : "Avec une solution de sauvegarde numérique chiffrée, vous pouvez restaurer l’accès à vos actifs sans votre phrase de récupération secrète.\n\nChoisissez si vous voulez une sauvegarde numérique :",
       "backupChoice" : {
         "title" : "Je veux une sauvegarde numérique",
         "titleSelected" : "Ledger Recover",
@@ -2535,6 +2533,14 @@
     },
     "completion" : {
       "title" : "Vous avez maintenant le contrôle"
+    },
+    "successStep" : {
+      "title" : "Vous pouvez utiliser votre {{productName}} pour sécuriser vos actifs numériques."
+    },
+    "newSeed" : {
+      "subtitle" : "Pour une sécurité optimale, vous pouvez transférer vos cryptos depuis n’importe quelle plateforme ou wallet vers votre Ledger.",
+      "installCTA" : "Sécuriser mes cryptos",
+      "skipCTA" : "Plus tard"
     }
   },
   "tabs" : {
@@ -2572,7 +2578,7 @@
       "addAccounts" : {
         "addAccounts" : "Ajouter un actif",
         "title" : "Commencer",
-        "description" : "Vous pouvez acheter des cryptos auprès de nos prestataires ou configurer votre wallet."
+        "description" : "Vous pouvez acheter des cryptos avec nos prestataires ou configurer votre wallet."
       },
       "title" : "Commencez par ajouter vos actifs préférés à votre wallet",
       "subtitle" : "Ledger prend en charge plus de 6 000 cryptos.",
@@ -2619,10 +2625,10 @@
         "title" : "Rappel : finalisez votre abonnement à Ledger Recover"
       },
       "verifyIdentity" : {
-        "title" : "Vous n’avez pas encore sauvegardé l’accès à votre wallet"
+        "title" : "Vous n’avez pas encore sauvegardé l’accès à vos actifs"
       },
       "connectDevice" : {
-        "title" : "Vous n’avez pas encore sauvegardé l’accès à votre wallet"
+        "title" : "Vous n’avez pas encore sauvegardé l’accès à vos actifs"
       }
     }
   },
@@ -2693,9 +2699,7 @@
   "operations" : {
     "types" : {
       "IN" : "Reçu",
-      "NFT_IN" : "NFT reçu",
       "OUT" : "Envoyé",
-      "NFT_OUT" : "NFT envoyé",
       "CREATE" : "Créé",
       "REVEAL" : "Révélé",
       "DELEGATE" : "Délégué",
@@ -2800,11 +2804,7 @@
       "stakedAmount" : "Montant staké",
       "accountCreationFee" : "Frais de création de compte"
     },
-    "multipleAddresses" : "Pourquoi plusieurs adresses ?",
-    "tokenName" : "Nom du token",
-    "collectionContract" : "Contrat du token",
-    "tokenId" : "Identifiant token (NFT)",
-    "quantity" : "Montant"
+    "multipleAddresses" : "Pourquoi plusieurs adresses ?"
   },
   "operationList" : {
     "noOperations" : "Aucune opération",
@@ -2913,7 +2913,7 @@
         "desc" : "Les données enregistrées seront effacées.",
         "confirmationTitle" : "Êtes-vous sûr(e) ?",
         "confirmationDesc" : "Cela n’a pas d’effet sur vos crypto-actifs. Vous pourrez de nouveau ajouter vos comptes.",
-        "confirmationWarn" : "L’historique de vos transactions de swap en lien avec ce compte sera effacé."
+        "confirmationWarn" : "L’historique de vos transactions d’échange en lien avec ce compte sera effacé."
       },
       "archive" : {
         "title" : "Archiver le compte",
@@ -2973,10 +2973,6 @@
     },
     "undelegation" : {
       "sectionLabel" : "Délégation(s) interrompue(s)"
-    },
-    "nft" : {
-      "receiveNft" : "Recevoir NFT",
-      "howTo" : "Pour ajouter des NFT, il vous suffit de <0>les recevoir</0> sur votre <1>adresse {{currency}}</1>."
     },
     "readOnly" : {
       "noTransaction" : {
@@ -3188,11 +3184,6 @@
         "desc" : "Vous vous apprêtez à cacher tous vos comptes <1><0>{tokenName}</0></1>. Vous pouvez restaurer leur visibilité à tout moment dans <3>Paramètres > Comptes</3>.",
         "confirm" : "Masquer le token"
       },
-      "hideNFTCollectionCTA" : "Masquer la collection",
-      "hideNFTCollectionModal" : {
-        "title" : "Masquer cette collection ?",
-        "desc" : "Vous pouvez restaurer la visibilité de cette collection à tout moment à partir des Paramètres."
-      },
       "cryptoAssets" : {
         "header" : "Crypto-actifs",
         "title" : "Crypto-actifs",
@@ -3317,7 +3308,7 @@
         },
         "experimentalSwap" : {
           "title" : "Nouvelle interface de Swap",
-          "description" : "Utilisez la nouvelle interface expérimentale de swap."
+          "description" : "Utilisez la nouvelle interface expérimentale de Swap."
         },
         "experimentalEnableNetworkLogs" : {
           "title" : "Activer les logs réseau",
@@ -3575,9 +3566,9 @@
       },
       "pendingOperation" : {
         "description" : "Votre échange a été envoyé au réseau pour confirmation. Cela peut prendre jusqu’à une heure avant que vous ne receviez vos {{targetCurrency}}.",
-        "label" : "Identifiant de votre swap :",
+        "label" : "Identifiant de votre échange :",
         "title" : "Échange bien diffusé ",
-        "disclaimer" : "Notez bien l’identifiant de votre swap au cas où vous auriez besoin de contacter l’assistance de {{provider}}.",
+        "disclaimer" : "Notez bien l’identifiant de votre échange au cas où vous auriez besoin de contacter l’assistance de {{provider}}.",
         "cta" : "Voir les détails"
       },
       "tradeMethod" : {
@@ -3652,7 +3643,7 @@
         }
       },
       "operationDetails" : {
-        "swapId" : "Identifiant du swap",
+        "swapId" : "Identifiant de l’échange",
         "provider" : "Prestataire",
         "date" : "Date",
         "from" : "De",
@@ -3660,10 +3651,10 @@
         "to" : "À",
         "toAmount" : "Montant à recevoir",
         "statusTooltips" : {
-          "expired" : "Pour plus d’informations, contactez le prestataire du service Swap avec l’identifiant de votre swap.",
-          "refunded" : "Pour plus d’informations, contactez le prestataire du service Swap avec l’identifiant de votre swap.",
+          "expired" : "Pour plus d’informations, contactez le prestataire du service Swap avec l’identifiant de votre échange.",
+          "refunded" : "Pour plus d’informations, contactez le prestataire du service Swap avec l’identifiant de votre échange.",
           "pending" : "Merci de patienter pendant que le prestataire du service Swap traite votre transaction.",
-          "onhold" : "Pour résoudre votre problème, contactez le prestataire du service Swap avec l’identifiant de votre swap.",
+          "onhold" : "Pour résoudre votre problème, contactez le prestataire du service Swap avec l’identifiant de votre échange.",
           "finished" : "Votre échange a bien été réalisé.",
           "unknown" : "En attente des informations de la part du prestataire."
         }
@@ -3688,11 +3679,12 @@
         "tab" : "Historique",
         "disclaimer" : "Vos transactions Swap via Ledger Live pour le mobile ne sont pas synchronisées avec Ledger Live pour l’ordinateur.",
         "exportButton" : "Exporter les opérations",
-        "exportFilename" : "Opérations de swap",
+        "exportFilename" : "Opérations de Swap",
         "empty" : {
           "title" : "Les échanges que vous avez réalisés apparaîtront ici.",
           "desc" : "Vous n’avez pas encore effectué d’échanges, ou Ledger Live a été réinitialisé depuis votre dernier échange."
-        }
+        },
+        "feedback" : "Partager vos commentaires"
       }
     },
     "swap2" : {
@@ -3715,7 +3707,7 @@
           "accept" : "Accepter"
         },
         "notAvailable" : {
-          "title" : "Le swap n’est pas encore disponible pour votre territoire.",
+          "title" : "Le Swap n’est pas encore disponible pour votre territoire.",
           "content" : "Merci pour votre patience. Nous lancerons cette fonctionnalité très rapidement."
         },
         "amount" : {
@@ -4021,10 +4013,7 @@
       "summary" : "Récapitulatif",
       "selectDevice" : "Sélectionner votre appareil",
       "connectDevice" : "Connecter votre appareil",
-      "stepRange" : "Étape {{currentStep}} sur {{totalSteps}}",
-      "quantity" : "Montant",
-      "selectCollection" : "Collection",
-      "selectNft" : "NFT"
+      "stepRange" : "Étape {{currentStep}} sur {{totalSteps}}"
     },
     "recipient" : {
       "scan" : "Scanner le code QR",
@@ -4424,12 +4413,12 @@
       "description" : "Vérifiez que l’adresse {{currencyName}} affichée sur Ledger Live correspond à celle indiquée sur votre appareil."
     },
     "confirmSwap" : {
-      "title" : "Confirmer l’opération de swap sur l’appareil",
+      "title" : "Confirmer l’opération d’échange sur l’appareil",
       "alert" : {
         "default" : "Vérifiez les détails de l’échange sur votre appareil Ledger avant de le valider.",
         "provider" : "Vérifiez les détails de l’échange sur votre appareil Ledger avant de le valider. Une vérification supplémentaire peut être effectuée par {{providerName}} pour certaines transactions, entraînant un temps d’attente."
       },
-      "acceptTerms" : "En validant cette transaction, j’accepte\n<0>les Conditions d’utilisation de <0>{{provider}}</0></0>.",
+      "acceptTerms" : "En signant cette transaction, vous acceptez les <0>Conditions d’utilisation de <0>{{provider}}</0></0>.",
       "notice" : "Vérifiez les détails de l’échange sur votre appareil Ledger avant de le valider. Les adresses sont échangées de manière sécurisée afin que vous n’ayez pas à les vérifier."
     },
     "swap2" : {
@@ -4481,7 +4470,7 @@
         }
       },
       "genuineCheck" : {
-        "title" : "Activer le \"Ledger Manager\" (Gestionnaire Ledger) sur le {{productName}}",
+        "title" : "Autoriser la connexion sécurisée sur votre {{productName}}",
         "accept" : "N’éteignez pas votre Ledger Nano X. Veuillez autoriser la <1>connexion sécurisée</1>."
       },
       "genuineCheckPending" : {
@@ -4903,7 +4892,7 @@
   },
   "FirmwareUpdateReleaseNotes" : {
     "introTitle" : "Mise à jour du {{deviceName}} vers la version {{version}}",
-    "recoveryPhraseBackupInstructions" : "Assurez-vous par précaution que votre phrase de récupération secrète de 24 mots est accessible et bien écrite sur votre feuille de récupération.\n\nVous pouvez également utiliser Ledger Recover comme accès de secours à votre wallet, pour plus de sérénité.",
+    "recoveryPhraseBackupInstructions" : "Assurez-vous par précaution que votre phrase de récupération secrète de 24 mots est accessible et bien écrite sur votre feuille de récupération.\n\nVous pouvez également utiliser Ledger Recover comme accès de secours à vos actifs, pour plus de sérénité.",
     "confirmRecoveryPhrase" : "J’ai ma phrase de récupération.",
     "introDescription1" : "Toutes les apps sur votre appareil seront supprimées. Vous pouvez réinstaller vos apps après la mise à jour du micrologiciel.",
     "introDescription2" : "Cela n’a pas d’effet sur vos crypto-actifs.",
@@ -4918,7 +4907,7 @@
     "switchButton" : "Basculer en {{language}}",
     "no" : "Non, merci",
     "languages" : {
-      "en" : "Anglais",
+      "en" : "English",
       "fr" : "Français",
       "ru" : "Русский",
       "es" : "Español",
@@ -6847,8 +6836,8 @@
       "selectAccount" : "Sélectionner un compte",
       "wantToBuy" : "Je souhaite acheter",
       "connectDevice" : "Connecter votre appareil",
-      "title" : "Acheter des cryptos via nos prestataires tiers",
-      "coinifyTitle" : "Acheter des cryptos via nos prestataires tiers",
+      "title" : "Acheter des cryptos avec nos prestataires",
+      "coinifyTitle" : "Acheter des cryptos avec nos prestataires",
       "description" : "Achetez des crypto-actifs via Coinify et recevez-les directement dans votre compte Ledger.",
       "CTAButton" : "Acheter maintenant",
       "emptyState" : {
@@ -6875,7 +6864,7 @@
       "selectAccount" : "Sélectionner un compte",
       "wantToSell" : "Je souhaite vendre",
       "connectDevice" : "Connecter votre appareil",
-      "title" : "Vendre des cryptos via notre prestataire tiers",
+      "title" : "Vendre des cryptos avec nos prestataires",
       "description" : "Vendez des crypto-actifs directement depuis votre compte Ledger via Coinify et recevez des monnaies fiduciaires sur votre compte bancaire.",
       "CTAButton" : "Vendre maintenant",
       "emptyState" : {
@@ -6898,7 +6887,7 @@
     },
     "swap" : {
       "title" : "ÉCHANGER DES CRYPTOS",
-      "description" : "Échangez des crypto-actifs directement depuis vos comptes Ledger avec notre prestataire tiers."
+      "description" : "Échangez des crypto-actifs directement depuis vos comptes Ledger avec nos prestataires."
     }
   },
   "walletconnect" : {
@@ -7127,47 +7116,6 @@
       }
     }
   },
-  "nft" : {
-    "account" : {
-      "seeAllNfts" : "Voir tous les NFT",
-      "seeFewerNfts" : "Voir moins de NFT"
-    },
-    "gallery" : {
-      "allNft" : "Tous les NFT",
-      "addNew" : "Ajouter"
-    },
-    "designedForStax" : {
-      "title" : "<0>Conçu pour le</0><1>Ledger</1><2>Stax</2>",
-      "drawer" : {
-        "description" : "Ce NFT contient une image supplémentaire qui a été spécialement conçue pour l’écran E Ink du Ledger Stax.\n\nCette image est utilisée si vous définissez ce NFT comme fond d’écran.",
-        "cta" : "Compris"
-      }
-    },
-    "viewer" : {
-      "properties" : "Attributs",
-      "description" : "Description",
-      "tokenContract" : "Adresse du token",
-      "tokenContractCopied" : "Adresse du token copiée",
-      "tokenId" : "Identifiant du token",
-      "tokenIdCopied" : "Identifiant du token copié",
-      "quantity" : "Nombre",
-      "attributes" : {
-        "floorPrice" : "Prix plancher"
-      }
-    },
-    "viewerModal" : {
-      "viewOn" : "Voir sur",
-      "viewInExplorer" : "Voir dans l’explorateur",
-      "hide" : "Masquer la collection de NFT",
-      "txDetails" : "Détails de la transaction"
-    },
-    "modalDisabled" : {
-      "title" : "Envoi indisponible sur iOS",
-      "body" : "Afin de se conformer aux récentes mises à jour d’Apple sur l’App Store, l’envoi de NFT est temporairement indisponible. Vous pouvez utiliser Ledger Live pour l’ordinateur pour envoyer des NFT.",
-      "learnMore" : "En savoir plus",
-      "continue" : "Compris"
-    }
-  },
   "ApplicationVersion" : "v. {{version}}",
   "analytics" : {
     "title" : "Statistiques",
@@ -7251,7 +7199,6 @@
     "drawer" : {
       "options" : {
         "uploadFromPhone" : "Choisir dans ma galerie d’images",
-        "selectFromNFTGallery" : "Choisir dans ma galerie de NFT",
         "remove" : "Retirer l’image actuelle"
       }
     },
@@ -7282,9 +7229,6 @@
       "setPicture" : "Définir comme fond d’écran",
       "editPicture" : "Retoucher l’image",
       "pickDeviceModel" : "Choisissez votre appareil"
-    },
-    "nftGallery" : {
-      "title" : "Mes NFT"
     }
   },
   "postOnboarding" : {
@@ -7321,7 +7265,7 @@
       "recover" : {
         "title" : "Vous abonner à Ledger Recover",
         "titleCompleted" : "Abonné(e) à Ledger Recover",
-        "description" : "Restaurez l’accès à votre wallet sans votre phrase de récupération secrète.",
+        "description" : "Restaurez l’accès à vos actifs sans votre phrase de récupération secrète.",
         "popupLabel" : "Vous êtes abonné(e) à Ledger Recover"
       }
     }
@@ -7329,50 +7273,7 @@
   "wallet" : {
     "tabs" : {
       "crypto" : "Crypto",
-      "nft" : "NFT",
       "market" : "Marché"
-    },
-    "nftGallery" : {
-      "filters" : {
-        "select" : "Sélectionner",
-        "filter" : "Filtrer",
-        "blockchain" : "Blockchain",
-        "seeAll" : "Afficher tout",
-        "selectAndHide" : "Sélectionner et masquer",
-        "hide" : "Masquer {{count}} collection",
-        "hiddenCollections" : "Collections masquées",
-        "hide_plural" : "Masquer {{count}} collections",
-        "empty" : "Aucune collection masquée",
-        "alertHide" : "1 collection masquée. Vous pouvez restaurer sa visibilité à tout moment à partir des filtres de la galerie.",
-        "alertHide_plural" : "{{count}} collections masquées. Vous pouvez restaurer leur visibilité à tout moment à partir des filtres de la galerie."
-      },
-      "emptyFiltered" : {
-        "title" : "Aucun NFT ne correspond à ces critères",
-        "button" : "Réinitialiser les filtres"
-      },
-      "empty" : {
-        "title" : "Pas (encore) de NFT",
-        "subtitle" : "Commencez par ajouter des NFT à votre wallet.",
-        "receive" : "Recevoir des NFT",
-        "supportLink" : "Comment importer mes NFT d’un autre wallet ?"
-      },
-      "receiveModal" : {
-        "title" : "Recevez un NFT comme n’importe quelle autre crypto",
-        "bullets" : {
-          "0" : "• Sélectionnez la blockchain du NFT.",
-          "1" : "• Choisissez le compte qui recevra le NFT."
-        },
-        "cta" : "Compris",
-        "info" : "J’aimerais en savoir plus"
-      },
-      "hideNftModal" : {
-        "title" : "Masquer la collection de NFT",
-        "desc" : "Tous les NFT de {{collectionName}} vont être masqués. Vous pouvez restaurer leur visibilité à partir des filtres de la galerie.",
-        "cta" : "Masquer ce NFT"
-      },
-      "media" : {
-        "tag" : "{{count}} NFT"
-      }
     },
     "referralProgram" : "20 USD"
   },
@@ -7389,7 +7290,7 @@
       "status" : {
         "new" : {
           "title" : "Nouveau",
-          "desc" : "Retrouvez l’accès à votre wallet sans votre phrase de récupération secrète.",
+          "desc" : "Restaurez l’accès à vos actifs sans votre phrase de récupération secrète.",
           "actions" : {
             "learnMore" : "Découvrir Ledger Recover",
             "alreadySubscribed" : "Déjà abonné(e) ? <LinkAccount>Voir mon abonnement</LinkAccount>"
@@ -8025,6 +7926,10 @@
     "signatureVerificationFail" : {
       "title" : "Échec de la vérification de la signature",
       "description" : "Veuillez réessayer ou contacter l’Assistance Ledger."
+    },
+    "transactionCannotBeCreated" : {
+      "title" : "Prestataire non disponible",
+      "description" : "Changelly ne peut pas traiter cette transaction. Code d’erreur : 8HBB{{errorCode}}"
     },
     "default" : {
       "title" : "Une erreur est survenue",
