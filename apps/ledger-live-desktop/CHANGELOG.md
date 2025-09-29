@@ -1,5 +1,11 @@
 # ledger-live-desktop
 
+## 2.130.0-next.3
+
+### Minor Changes
+
+- [#12053](https://github.com/LedgerHQ/ledger-live/pull/12053) [`9cf69b5`](https://github.com/LedgerHQ/ledger-live/commit/9cf69b596c0dbc730842c80faa00edd38ed6d5a7) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Restore MacOS behavior to close the app on window close.
+
 ## 2.130.0-next.2
 
 ### Minor Changes
