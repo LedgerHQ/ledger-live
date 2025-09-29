@@ -172,6 +172,7 @@
       "REDELEGATE" : "재위임됨",
       "UNDELEGATE" : "위임 해제됨",
       "APPROVE" : "승인됨",
+      "PRE_APPROVAL" : "사전 승인",
       "VOTE" : "투표 완료",
       "FREEZE" : "동결됨",
       "UNFREEZE" : "동결 해제",
@@ -463,12 +464,16 @@
       "apt_description" : "Aptos 스왑 거래를 실행하려면 Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ 또는 Ledger Stax™와 같은 다른 Ledger 장치를 사용하세요.",
       "cosmos_title" : "Ledger Nano S™는 Cosmos 스왑을 지원하지 않습니다.",
       "cosmos_description" : "Cosmos 스왑 거래를 실행하려면 Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ 또는 Ledger Stax™와 같은 다른 Ledger 장치를 사용하세요.",
+      "hedera_title" : "Ledger Nano S™는 헤데라 스왑을 지원하지 않습니다.",
+      "hedera_description" : "헤데라를 스왑하려면 Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ 또는 Ledger Stax™와 같은 호환 가능한 다른 Ledger 장치를 사용하세요.",
       "osmo_title" : "Ledger Nano S™는 Osmosis 스왑을 지원하지 않습니다.",
       "osmo_description" : "Osmosis 스왑 거래를 실행하려면 Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ 또는 Ledger Stax™와 같은 다른 Ledger 장치를 사용하세요.",
       "dydx_title" : "Ledger Nano S™는 dYdX 스왑을 지원하지 않습니다.",
       "dydx_description" : "dYdX 스왑 거래를 실행하려면 Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ 또는 Ledger Stax™와 같은 다른 Ledger 장치를 사용하세요.",
       "sui_title" : "Ledger Nano S™는 Sui 스왑을 지원하지 않습니다",
-      "sui_description" : "Sui 스왑 거래를 수행하려면 Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ 또는 Ledger Stax™와 같은 다른 호환 Ledger 장치를 사용하세요."
+      "sui_description" : "Sui 스왑 거래를 수행하려면 Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ 또는 Ledger Stax™와 같은 다른 호환 Ledger 장치를 사용하세요.",
+      "kaspa_title" : "Ledger Nano S™ does not support swapping Kaspa",
+      "kaspa_description" : "To swap Kaspa, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™."
     },
     "providers" : {
       "title" : "암호화폐를 스왑할 공급자를 선택하세요",
@@ -1874,7 +1879,12 @@
         "default" : "장치에서 스왑 세부사항을 확인한 후 전송하세요. 주소가 안전하게 교환되어 주소를 따로 인증할 필요 없습니다.",
         "provider" : "장치에서 스왑 세부사항을 확인한 후 전송하세요. 일부 트랜잭션에서 {{providerName}}의 추가 확인 단계가 필요할 수 있어 지연이 발생할 수 있습니다."
       },
+      "simpleViewNotice" : {
+        "default" : "Ledger 장치에서 스왑 상세 정보를 확인한 후 전송하세요.",
+        "provider" : "장치에서 스왑 상세 정보를 확인한 후 전송하세요."
+      },
       "confirm" : "스왑 트랜잭션을 검증하세요",
+      "confirmSwap" : "장치에서 스왑 거래를 확인하세요",
       "amountSent" : "전송 금액",
       "amountReceived" : "수신 금액",
       "amountReceivedFloat" : "서비스 수수료 부과 전 수신 금액",
@@ -1885,6 +1895,7 @@
       "acceptTerms" : "본인은 이 트랜잭션을 확인함으로써 \n<0>{{provider}}의 이용약관</0>을 수락합니다.",
       "exodusAcceptTerms" : "Exodus는 제 3자를 통해 스왑 서비스를 제공합니다.\n본인은 이 트랜잭션을 확인함으로써 <0>Exodus 이용 약관</0>을 수락합니다.",
       "changellyAcceptTerms" : "\"Changelly로 스왑\"을 클릭하면 Changelly의<0>이용 약관</0> 및\n<1>AML/KYC 정책</1>에 동의하는 것으로 간주됩니다. Changelly는 AML/KYC 절차를 적용할 수 있으며,\n이는 제한적으로 트랜잭션 완료에 영향을 미칠 수 있습니다. 이 경우\n, Changelly <2>고객 지원</2>으로 문의해 주세요.",
+      "changellySimplifiedAcceptTerms" : "트랜잭션 승인 시 Changelly의 <0>이용 약관</0> 및 <1>AML/KYC 정책</1>에 동의하는 것으로 \n간주됩니다. Changelly는 AML/KYC 절차를 적용할 수 있으며, \n이는 드물게 트랜잭션 완료에 영향을 미칠 수 있습니다. 이 경우\n, Changelly <2>고객 지원</2>으로 직접 문의해야 합니다.",
       "cicAcceptTerms" : "\"CIC를 통해 스왑 서비스 이용 시\" CIC의 <0>이용 약관</0> 및 <1>AML/KYC 정책</1>에 동의하는 것으로 간주됩니다. CIC는 AML/KYC 절차를 적용할 수 있으며, 드물게 트랜잭션 완료에 영향을 미칠 수 있습니다. 이 경우, CIC <2>고객 지원</2>으로 문의해 주세요."
     },
     "swap2" : {
@@ -2240,6 +2251,16 @@
     "title" : "수령",
     "successTitle" : "주소가 안전하게 공유되었습니다",
     "steps" : {
+      "options" : {
+        "fromBank" : {
+          "title" : "은행 계좌에서",
+          "description" : "USD 또는 EUR 입금"
+        },
+        "fromCrypto" : {
+          "title" : "암호화폐 주소에서",
+          "description" : "암호화폐 받기"
+        }
+      },
       "chooseAccount" : {
         "title" : "계정",
         "label" : "입금할 계정",
@@ -4514,11 +4535,11 @@
         "title" : "모의 계좌 생성",
         "description" : "테스트용 모의 계좌를 생성합니다. 이 도구를 사용하면 다양한 통화와 구성으로 테스트 계좌를 만들 수 있습니다.",
         "customGenerate" : {
-          "title" : "Custom generation",
-          "desc" : "Select currencies and add tokens"
+          "title" : "맞춤 생성",
+          "desc" : "통화를 선택하고 토큰을 추가합니다"
         },
         "quickGenerate" : {
-          "title" : "Quick generation",
+          "title" : "빠른 생성",
           "desc" : "무작위 통화로 구성된 계좌 10개를 자동 생성합니다."
         },
         "currencySelector" : {
@@ -4540,7 +4561,7 @@
         },
         "alerts" : {
           "selectCurrency" : "통화를 1개 이상 선택하세요.",
-          "confirmErase" : "Existing accounts will be erased. Continue?",
+          "confirmErase" : "기존 계정이 지워집니다. 그래도 계속하시겠습니까?",
           "generateError" : "모의 계좌 생성에 실패했습니다. 다시 시도해 주세요."
         }
       },
@@ -6439,6 +6460,9 @@
     },
     "EthAppPleaseEnableContractData" : {
       "title" : "이더리움 앱 설정에서 블라인드 서명 또는 컨트랙트 데이터를 활성화하세요"
+    },
+    "CeloAppPleaseEnableContractData" : {
+      "title" : "Celo 앱 설정에서 컨트랙트 데이터를 활성화하세요"
     },
     "InvalidXRPTag" : {
       "title" : "유효하지 않은 XRP 데스티네이션 태그"
