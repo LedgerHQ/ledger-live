@@ -172,6 +172,7 @@
       "REDELEGATE" : "Erneut delegiert",
       "UNDELEGATE" : "Nicht delegiert",
       "APPROVE" : "Genehmigt",
+      "PRE_APPROVAL" : "Vorabgenehmigung",
       "VOTE" : "Abgestimmt",
       "FREEZE" : "Eingefroren",
       "UNFREEZE" : "Einfrieren aufgehoben",
@@ -463,6 +464,8 @@
       "apt_description" : "Zum Swappen von Aptos müsstest du ein anderes kompatibles Ledger-Gerät verwenden, z. B. eine Ledger Nano S Plus™, eine Ledger Nano X™, eine Ledger Flex™ oder eine Ledger Stax™.",
       "cosmos_title" : "Ledger Nano S™ unterstützt das Swappen von Cosmos nicht",
       "cosmos_description" : "Zum Swappen von Cosmos müsstest du ein anderes kompatibles Ledger-Gerät verwenden, z. B. eine Ledger Nano S Plus™, eine Ledger Nano X™, eine Ledger Flex™ oder eine Ledger Stax™.",
+      "hedera_title" : "Ledger Nano S™ unterstützt das Swappen von Hedera nicht",
+      "hedera_description" : "Zum Swappen von Hedera musst du ein anderes kompatibles Ledger-Gerät verwenden, z. B. eine Ledger Nano S Plus™, eine Ledger Nano X™, eine Ledger Flex™ oder eine Ledger Stax™.",
       "osmo_title" : "Ledger Nano S™ unterstützt das Swappen von Osmosis nicht",
       "osmo_description" : "Zum Swappen von Osmosis musst du ein anderes kompatibles Ledger-Gerät verwenden, z. B. eine Ledger Nano S Plus™, eine Ledger Nano X™, eine Ledger Flex™ oder eine Ledger Stax™.",
       "dydx_title" : "Ledger Nano S™ unterstützt das Swappen von dYdX nicht",
@@ -1874,7 +1877,12 @@
         "default" : "Vor dem Senden der Swapping-Details musst du diese auf deinem Gerät verifizieren. Die Adressen musst du nicht verifizieren, da diese sicher ausgetauscht werden.",
         "provider" : "Verifiziere die Swap-Details auf deinem Gerät, bevor du sie sendest. {{providerName}} muss möglicherweise eine zusätzliche Überprüfung für einige Transaktionen durchführen, was zu einer Verzögerung führen kann."
       },
+      "simpleViewNotice" : {
+        "default" : "Verifiziere die Swap-Details auf deiner Ledger, bevor du sie sendest.",
+        "provider" : "Verifiziere die Swap-Details auf deinem Gerät, bevor du sie sendest."
+      },
       "confirm" : "Swap-Transaktion bestätigen",
+      "confirmSwap" : "Swap-Vorgang auf dem Gerät bestätigen",
       "amountSent" : "Zu sendender Betrag",
       "amountReceived" : "Zu erhaltender Betrag",
       "amountReceivedFloat" : "Zu erhaltender Betrag vor Servicegebühren",
@@ -1885,6 +1893,7 @@
       "acceptTerms" : "Durch Validieren dieser Transaktion stimme ich den\n<0>Nutzungsbedingungen von {{provider}}</0> zu.",
       "exodusAcceptTerms" : "Exodus greift bei der Abwicklung von Swaps auf Drittanbieter zurück.\nDurch Validieren dieser Transaktion stimme ich den <0>Nutzungsbedingungen von Exodus</0> zu.",
       "changellyAcceptTerms" : "Durch Klicken auf „Mit Changelly swappen“ stimmst du den <0>Nutzungsbedingungen</0> von Changelly sowie \nder <1>AML-/KYC-Richtlinie</1> zu. Changelly ist zur Anwendung von AML-/KYC-Verfahren berechtigt, \ndie in seltenen Fällen den Abschluss deiner Transaktion beeinträchtigen können. In einem solchen Fall\n musst du dich mit dem <2>Kundenservice</2> von Changelly in Verbindung setzen.",
+      "changellySimplifiedAcceptTerms" : "By validating this transaction, you accept Changelly's <0>Terms of Use</0> and\nits <1>AML/KYC policy</1>. Changelly may apply AML/KYC procedures which\ncan, in limited cases, impact the completion of your transaction. Should\nthat happen, you must contact Changelly’s <2>customer support.</2>",
       "cicAcceptTerms" : "„Mit CIC swappen“ stimmst du den <0>Nutzungsbedingungen</0> von CIC sowie der <1>AML-/KYC-Richtlinie</1> zu. CIC ist zur Anwendung von AML-/KYC-Verfahren berechtigt, die in seltenen Fällen den Abschluss deiner Transaktion beeinträchtigen können. In einem solchen Fall musst du dich mit dem <2>Kundenservice</2> von CIC in Verbindung setzen."
     },
     "swap2" : {
@@ -2240,6 +2249,16 @@
     "title" : "Empfangen",
     "successTitle" : "Adresse sicher freigegeben",
     "steps" : {
+      "options" : {
+        "fromBank" : {
+          "title" : "Von einem Bankkonto",
+          "description" : "USD oder EUR einzahlen"
+        },
+        "fromCrypto" : {
+          "title" : "Von einer Kryptoadresse",
+          "description" : "Krypto empfangen"
+        }
+      },
       "chooseAccount" : {
         "title" : "Konto",
         "label" : "Zu belastendes Konto",
@@ -2343,6 +2362,10 @@
         "solanaRawTransaction" : {
           "title" : "Blindsignatur erforderlich",
           "description" : "Du kannst die Transaktionsdetails nicht auf deinem Ledger-Gerät bestätigen. Wenn du sie signierst, könntest du alle deine Assets verlieren. Signiere nur, wenn du dieser Website wirklich vertraust."
+        },
+        "bitcoinPsbtTransaction" : {
+          "title" : "Auf Gerät bestätigen",
+          "description" : "Im nächsten Schritt kannst du den Transaktionsbetrag und den Empfänger auf dem Gerät bestätigen."
         },
         "utxoLag" : "Die Verifizierung und Unterzeichnung dieser Transaktion kann lange dauern, da das Konto eine beträchtliche Anzahl von Coins enthält.",
         "subaccountsWarning" : "Du musst dieses Konto mit {{ currency }} auffüllen, um die Token dieses Kontos zu versenden",
@@ -4511,37 +4534,37 @@
         }
       },
       "mockAccounts" : {
-        "title" : "Generate mock accounts",
-        "description" : "Generate mock accounts for testing purposes. These tools allow you to create test accounts with various currencies and configurations.",
+        "title" : "Pseudokonten generieren",
+        "description" : "Du kannst zu Testzwecken Pseudokonten erstellen. Mit diesen Tools kannst du Testkonten mit verschiedenen Währungen und Konfigurationen erstellen.",
         "customGenerate" : {
-          "title" : "Custom generation",
-          "desc" : "Select currencies and add tokens"
+          "title" : "Benutzerdefinierte Generierung",
+          "desc" : "Währungen auswählen und Token hinzufügen"
         },
         "quickGenerate" : {
-          "title" : "Quick generation",
-          "desc" : "Generate 10 random accounts with random currencies"
+          "title" : "Schnellgenerierung",
+          "desc" : "Generiert 10 Zufallskonten mit zufälligen Währungen"
         },
         "currencySelector" : {
-          "placeholder" : "Choose currencies...",
-          "searchPlaceholder" : "Search",
-          "noCurrenciesFound" : "No currencies found",
-          "noCurrenciesAvailable" : "No currencies available",
-          "selectedCount" : "{{count}} currency selected",
-          "selectedCount_other" : "{{count}} currencies selected"
+          "placeholder" : "Währungen auswählen…",
+          "searchPlaceholder" : "Suche",
+          "noCurrenciesFound" : "Keine Währungen gefunden",
+          "noCurrenciesAvailable" : "Keine Währungen verfügbar",
+          "selectedCount" : "{{count}} Währung ausgewählt",
+          "selectedCount_other" : "{{count}} Währungen ausgewählt"
         },
         "tokenIds" : {
-          "label" : "Token IDs (optional)",
+          "label" : "Token-IDs (optional)",
           "placeholder" : "token1, token2, token3"
         },
         "buttons" : {
-          "generateAccounts" : "Generate {{count}} account",
-          "generateAccounts_other" : "Generate {{count}} accounts",
-          "generateAccountsQuick" : "Generate {{count}} accounts"
+          "generateAccounts" : "{{count}} Konto generieren",
+          "generateAccounts_other" : "{{count}} Konten generieren",
+          "generateAccountsQuick" : "{{count}} Konten generieren"
         },
         "alerts" : {
-          "selectCurrency" : "Please select at least one currency",
-          "confirmErase" : "Existing accounts will be erased. Continue?",
-          "generateError" : "Failed to generate mock accounts. Please try again."
+          "selectCurrency" : "Bitte mindestens eine Währung auswählen",
+          "confirmErase" : "Bestehende Konten werden gelöscht. Vorgang fortsetzen?",
+          "generateError" : "Pseudokonten konnten nicht generiert werden. Bitte versuche es noch einmal."
         }
       },
       "debugWalletSync" : {
@@ -6439,6 +6462,9 @@
     },
     "EthAppPleaseEnableContractData" : {
       "title" : "Bitte aktiviere die Blindsignatur oder die Vertragsdaten in den Einstellungen der Ethereum-App"
+    },
+    "CeloAppPleaseEnableContractData" : {
+      "title" : "Bitte Vertragsdaten in den Einstellungen der Celo-App aktivieren"
     },
     "InvalidXRPTag" : {
       "title" : "Ungültiges XRP-Ziel-Tag"
