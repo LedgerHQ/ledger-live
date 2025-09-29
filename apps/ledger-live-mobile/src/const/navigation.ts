@@ -135,7 +135,6 @@ export enum ScreenName {
   SignSelectDevice = "SignSelectDevice",
   SignSummary = "SignSummary",
   SignValidationError = "SignValidationError",
-  SignValidationSuccess = "SignValidationSuccess",
   Swap = "Swap",
   SwapCustomError = "SwapCustomError",
   SwapForm = "SwapForm",
