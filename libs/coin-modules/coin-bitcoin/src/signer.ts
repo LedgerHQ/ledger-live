@@ -34,6 +34,7 @@ export interface BitcoinSigner {
   signPsbtV2Buffer?(
     psbtBuffer: Buffer,
     options?: {
+      finalizePsbt?: boolean;
       accountPath?: string;
       addressFormat?: string;
     },
