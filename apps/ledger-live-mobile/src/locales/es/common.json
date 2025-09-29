@@ -420,10 +420,6 @@
       "title" : "Verificación automática no disponible: verifica cuidadosamente la dirección.",
       "description" : null
     },
-    "EthAppNftNotSupported" : {
-      "title" : "Operación no disponible en este dispositivo",
-      "description" : "La función Enviar NFT sólo está disponible en el Nano X y el Nano S+. Visita nuestra plataforma de soporte al cliente para saber cómo enviar NFTs con un Nano S."
-    },
     "Touch ID Error" : {
       "title" : "La autenticación biométrica ha fallado",
       "description" : "Utiliza tu contraseña o restablece la aplicación."
@@ -926,9 +922,6 @@
     "TaprootNotActivated" : {
       "title" : "La red principal de Taproot no está activada aún"
     },
-    "NotEnoughNftOwned" : {
-      "title" : "Has superado la cantidad de tokens disponibles"
-    },
     "generic" : {
       "title" : "{{message}}",
       "description" : "Algo ha salido mal. Inténtalo de nuevo. Si el problema persiste, guarda los registros con el botón que aparece a continuación y envíalos al Soporte de Ledger.",
@@ -1052,10 +1045,6 @@
     "ImageDownloadError" : {
       "title" : "Error de descarga de imagen",
       "description" : "Inténtalo de nuevo con otra imagen."
-    },
-    "NFTMetadataLoadingError" : {
-      "title" : "Problema de carga de los metadatos del NFT",
-      "description" : "Inténtalo de nuevo con otro NFT."
     },
     "ImageSizeLoadingError" : {
       "title" : "No fue posible recuperar las dimensiones de la imagen",
@@ -2261,6 +2250,9 @@
         "continueCTA" : "Continuar",
         "contactSupportCTA" : "Ponte en contacto con Soporte"
       }
+    },
+    "completionScreen" : {
+      "title" : "Ya lo tienes todo bajo control"
     }
   },
   "blePairingFlow" : {
@@ -2391,6 +2383,8 @@
   },
   "syncOnboarding" : {
     "title" : "Prepara tu {{productName}}",
+    "twoStepTitle" : "Comencemos",
+    "firstStepReadyTitle" : "Tu {{productName}} está listo",
     "estimatedTimeFormat" : "{{estimatedTime}} min",
     "deviceSelection" : {
       "title" : "Selecciona el Ledger que quieres configurar:",
@@ -2508,6 +2502,10 @@
       "newSeedContinueOnDevice" : "Sigue las instrucciones que se muestran en tu {{productName}}",
       "recovery" : "Para que tus activos estén lo más seguros posible, utiliza una Frase de Recuperación Secreta generada por un dispositivo Ledger. \n\n¿No tienes una? Usa tu {{productName}} para generar una Frase nueva."
     },
+    "secureCryptoStep" : {
+      "title" : "Protege tus cripto",
+      "doneSubTitle" : "Tus aplicaciones de blockchain están instaladas."
+    },
     "backup" : {
       "title" : "Copia de respaldo para tu Frase de Recuperación Secreta",
       "description" : "Restaura el acceso a tu billetera sin tu Frase de Recuperación Secreta con una copia de respaldo cifrada digital.\n\nElige si quieres tener una copia de respaldo digital:",
@@ -2535,6 +2533,14 @@
     },
     "completion" : {
       "title" : "Ahora tienes el control"
+    },
+    "successStep" : {
+      "title" : "Tu {{productName}} está listo para proteger tus activos digitales"
+    },
+    "newSeed" : {
+      "subtitle" : "Puedes transferir cripto desde cualquier exchange o wallet a tu Ledger Live para garantizar la máxima seguridad.",
+      "installCTA" : "Proteger mis cripto",
+      "skipCTA" : "Quizás más tarde"
     }
   },
   "tabs" : {
@@ -2693,9 +2699,7 @@
   "operations" : {
     "types" : {
       "IN" : "Recibido",
-      "NFT_IN" : "NFT Recibido",
       "OUT" : "Enviado",
-      "NFT_OUT" : "NFT Enviado",
       "CREATE" : "Creado",
       "REVEAL" : "Revelado",
       "DELEGATE" : "Delegado",
@@ -2800,11 +2804,7 @@
       "stakedAmount" : "Cantidad en participación",
       "accountCreationFee" : "Tarifa de creación de cuenta"
     },
-    "multipleAddresses" : "¿Por qué hay múltiples direcciones?",
-    "tokenName" : "Nombre del token",
-    "collectionContract" : "Contrato del token",
-    "tokenId" : "ID del token (NFT)",
-    "quantity" : "Cantidad"
+    "multipleAddresses" : "¿Por qué hay múltiples direcciones?"
   },
   "operationList" : {
     "noOperations" : "Sin operaciones",
@@ -2973,10 +2973,6 @@
     },
     "undelegation" : {
       "sectionLabel" : "Desdelegaciones"
-    },
-    "nft" : {
-      "receiveNft" : "Recibir NFT",
-      "howTo" : "Para agregar NFTs, debes <0>recibirlos</0> utilizando tu <1>dirección de {{currency}}</1>."
     },
     "readOnly" : {
       "noTransaction" : {
@@ -3187,11 +3183,6 @@
         "title" : "Ocultar token",
         "desc" : "Esta acción ocultará todas las cuentas de <1><0>{tokenName}</0></1>. Puedes volver a mostrarlas desde <3>Ajustes > Cuentas</3>.",
         "confirm" : "Ocultar token"
-      },
-      "hideNFTCollectionCTA" : "Ocultar Colección",
-      "hideNFTCollectionModal" : {
-        "title" : "¿Ocultar Colección?",
-        "desc" : "Puedes elegir mostrar esta colección en las opciones de ajustes."
       },
       "cryptoAssets" : {
         "header" : "Activos cripto",
@@ -3692,7 +3683,8 @@
         "empty" : {
           "title" : "Tus permutas anteriores aparecerán aquí",
           "desc" : "No has hecho ninguna permuta todavía o Ledger Live ha sido restablecido en el interín."
-        }
+        },
+        "feedback" : "Envíanos tus comentarios"
       }
     },
     "swap2" : {
@@ -4021,10 +4013,7 @@
       "summary" : "Resumen",
       "selectDevice" : "Seleccionar dispositivo",
       "connectDevice" : "Conectar dispositivo",
-      "stepRange" : "Paso {{currentStep}} de {{totalSteps}}",
-      "quantity" : "Cantidad",
-      "selectCollection" : "Colección",
-      "selectNft" : "NFT"
+      "stepRange" : "Paso {{currentStep}} de {{totalSteps}}"
     },
     "recipient" : {
       "scan" : "Escanear código QR",
@@ -4361,7 +4350,7 @@
       "title" : "Selecciona las cuentas que quieres agregar",
       "ctaStopScan" : "Detener escaneo",
       "confirm" : "Confirmar",
-      "scanningTitle" : "Checking the blockchain...",
+      "scanningTitle" : "Comprobando la blockchain...",
       "whichAddressType" : "Descubre cómo elegir el tipo de dirección",
       "sections" : {
         "importable" : {
@@ -4426,10 +4415,10 @@
     "confirmSwap" : {
       "title" : "Confirma la operación de permuta en tu dispositivo",
       "alert" : {
-        "default" : "Verify the swap details on your Ledger before sending it.",
+        "default" : "Verifica la información de permuta en tu Ledger antes de enviar la transacción.",
         "provider" : "Verifica la información de permuta en tu dispositivo antes de enviar la transacción. {{providerName}} tal vez requiera una verificación adicional para algunas transacciones, lo que puede provocar retrasos."
       },
-      "acceptTerms" : "Al validar esta transacción, acepto los <0>términos de uso de\n<0> {{provider}}</0>",
+      "acceptTerms" : "By signing this transaction, you accept <0><0>{{provider}}</0>'s terms of use</0>",
       "notice" : "Verifica los detalles de la permuta en tu dispositivo antes de enviarla. Las direcciones se intercambian de forma segura por lo que no es necesario verificarlas."
     },
     "swap2" : {
@@ -7127,47 +7116,6 @@
       }
     }
   },
-  "nft" : {
-    "account" : {
-      "seeAllNfts" : "Ver todos los NFTs",
-      "seeFewerNfts" : "Ver menos NFTs"
-    },
-    "gallery" : {
-      "allNft" : "Todos los NFTs",
-      "addNew" : "Agregar nueva"
-    },
-    "designedForStax" : {
-      "title" : "<0>Diseñado para</0><1>Ledger</1><2>Stax</2>",
-      "drawer" : {
-        "description" : "Este NFT contiene una imagen adicional del NFT, diseñada específicamente para la pantalla E Ink del Ledger Stax.\n\nEsta imagen se utilizará cuando definas este NFT como tu pantalla de bloqueo.",
-        "cta" : "Entendido"
-      }
-    },
-    "viewer" : {
-      "properties" : "Propiedades",
-      "description" : "Descripción",
-      "tokenContract" : "Dirección del token",
-      "tokenContractCopied" : "¡Dirección de token copiada!",
-      "tokenId" : "ID de token",
-      "tokenIdCopied" : "¡ID de token copiado!",
-      "quantity" : "Cantidad",
-      "attributes" : {
-        "floorPrice" : "Precio base"
-      }
-    },
-    "viewerModal" : {
-      "viewOn" : "Ver en",
-      "viewInExplorer" : "Ver en el explorador",
-      "hide" : "Ocultar colección de NFTs",
-      "txDetails" : "Detalles de las transacciones"
-    },
-    "modalDisabled" : {
-      "title" : "La función de envío no está disponible en iOS",
-      "body" : "Para cumplir con actualizaciones recientes de la App Store de Apple, el envío de NFTs no está disponible temporalmente. Puedes seguir utilizando Ledger Live Desktop para enviar NFTs.",
-      "learnMore" : "Más información",
-      "continue" : "¡Entendido!"
-    }
-  },
   "ApplicationVersion" : "v. {{version}}",
   "analytics" : {
     "title" : "Análisis",
@@ -7251,7 +7199,6 @@
     "drawer" : {
       "options" : {
         "uploadFromPhone" : "Elegir de la galería de imágenes",
-        "selectFromNFTGallery" : "Elegir de la galería de NFTs",
         "remove" : "Eliminar imagen actual"
       }
     },
@@ -7282,9 +7229,6 @@
       "setPicture" : "Establecer como pantalla de bloqueo",
       "editPicture" : "Editar imagen",
       "pickDeviceModel" : "Selecciona un dispositivo"
-    },
-    "nftGallery" : {
-      "title" : "Mis NFTs"
     }
   },
   "postOnboarding" : {
@@ -7329,50 +7273,7 @@
   "wallet" : {
     "tabs" : {
       "crypto" : "Cripto",
-      "nft" : "NFTs",
       "market" : "Mercado"
-    },
-    "nftGallery" : {
-      "filters" : {
-        "select" : "Seleccionar",
-        "filter" : "Filtrar",
-        "blockchain" : "Cadena de bloques",
-        "seeAll" : "Ver todo",
-        "selectAndHide" : "Seleccionar y ocultar",
-        "hide" : "Ocultar {{count}} colección",
-        "hiddenCollections" : "Colecciones ocultas",
-        "hide_plural" : "Ocultar {{count}} colecciones",
-        "empty" : "No hay colecciones ocultas que mostrar",
-        "alertHide" : "1 colección oculta. Puedes volver a mostrarla desde el filtro de la galería.",
-        "alertHide_plural" : "{{count}} colecciones ocultas. Puedes volver a mostrarlas desde el filtro de la galería."
-      },
-      "emptyFiltered" : {
-        "title" : "No hay ningún NFT que cumpla tus criterios",
-        "button" : "Restablecer filtros"
-      },
-      "empty" : {
-        "title" : "Todavía no hay NFTs para mostrar",
-        "subtitle" : "Empieza agregando NFTs a tu billetera.",
-        "receive" : "Recibir NFTs",
-        "supportLink" : "¿Cómo recibir NFTs de otras billeteras?"
-      },
-      "receiveModal" : {
-        "title" : "Recibe NFTs del mismo modo que cualquier otra cripto",
-        "bullets" : {
-          "0" : "• Selecciona la cadena de bloques de cripto del NFT",
-          "1" : "• Selecciona la cuenta en la que recibirás el NFT"
-        },
-        "cta" : "Entendido",
-        "info" : "Quiero recibir más información"
-      },
-      "hideNftModal" : {
-        "title" : "Ocultar colección de NFTs",
-        "desc" : "Esta acción ocultará todos los NFTs de la colección {{collectionName}}. Puedes volver a mostrarlos desde el filtro de la galería.",
-        "cta" : "Ocultar este NFT"
-      },
-      "media" : {
-        "tag" : "{{count}} NFTs"
-      }
     },
     "referralProgram" : "$20 USD"
   },
@@ -8025,6 +7926,10 @@
     "signatureVerificationFail" : {
       "title" : "La verificación de la firma ha fallado",
       "description" : "Inténtalo de nuevo o contacta al Soporte de Ledger si tienes dudas"
+    },
+    "transactionCannotBeCreated" : {
+      "title" : "Proveedor no disponible",
+      "description" : "Changelly no puede procesar esta transacción. Código de error 8HBB{{errorCode}}"
     },
     "default" : {
       "title" : "Algo ha salido mal",
