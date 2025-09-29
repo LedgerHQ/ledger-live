@@ -84,6 +84,15 @@ export default class DummyWalletApp {
     await expect(getWebElementByTestId("data-input")).toHaveText(data);
   }
 
+  async setMessage(message: string) {
+    await typeTextByWebTestId("message-input", message);
+    await expect(getWebElementByTestId("message-input")).toHaveText(message);
+  }
+
+  async messageSign() {
+    await tapWebElementByTestId("message-sign");
+  }
+
   async getResOutput() {
     const res = await getWebElementText("res-output");
     return JSON.parse(res);

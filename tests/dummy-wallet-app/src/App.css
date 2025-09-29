@@ -52,7 +52,8 @@ pre {
 .recipient-input,
 .currency-ids-input,
 .amount-input,
-.data-input {
+.data-input,
+.message-input {
   margin-bottom: 12px;
   width: 320px;
 }

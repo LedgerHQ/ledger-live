@@ -16,6 +16,7 @@ export default function App() {
   const [recipient, setRecipient] = useState("");
   const [amount, setAmount] = useState("");
   const [data, setData] = useState("");
+  const [message, setMessage] = useState("");
 
   const params = useMemo(
     () => Array.from(new URLSearchParams(window.location.search).entries()),
@@ -176,6 +177,16 @@ export default function App() {
     }
   };
 
+  const handleMessageSign = async () => {
+    try {
+      const messageBuffer = Buffer.from(message, "utf8");
+      const result = await client?.message.sign(accountId, messageBuffer);
+      setRes(result?.toString() || "empty response");
+    } catch (err) {
+      setRes(err);
+    }
+  };
+
   const handleWalletCapabilities = async () => {
     try {
       const result = await client?.wallet.capabilities();
@@ -210,6 +221,7 @@ export default function App() {
     setRecipient("");
     setAmount("");
     setData("");
+    setMessage("");
   };
 
   return (
@@ -292,6 +304,18 @@ export default function App() {
           />
         </div>
         <div>
+          <label htmlFor="message-input">Message (for signing): </label>
+          <input
+            id="message-input"
+            data-testid="message-input"
+            type="text"
+            value={message}
+            onChange={e => setMessage(e.target.value)}
+            placeholder="e.g. Hello World"
+            className="message-input"
+          />
+        </div>
+        <div>
           <button onClick={testLogger} data-testid="test-logger">
             Test logger
           </button>
@@ -339,6 +363,9 @@ export default function App() {
           </button>
           <button onClick={handleWalletInfo} data-testid="wallet-info">
             wallet.info
+          </button>
+          <button onClick={handleMessageSign} data-testid="message-sign">
+            message.sign
           </button>
           <button onClick={clearStates} data-testid="clear-states">
             Clear States
