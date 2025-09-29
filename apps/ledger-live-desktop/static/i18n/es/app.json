@@ -172,6 +172,7 @@
       "REDELEGATE" : "Redelegado",
       "UNDELEGATE" : "Desdelegado",
       "APPROVE" : "Aprobado",
+      "PRE_APPROVAL" : "Preaprobación",
       "VOTE" : "Votado",
       "FREEZE" : "Inmovilizado",
       "UNFREEZE" : "Desinmovilizado",
@@ -463,6 +464,8 @@
       "apt_description" : "Para permutar Aptos, usa cualquier otro dispositivo Ledger compatible, como el Ledger Nano S Plus™, el Ledger Nano X™, el Ledger Flex™ o el Ledger Stax™.",
       "cosmos_title" : "No es posible usar el Ledger Nano S™ para permutar Cosmos",
       "cosmos_description" : "Para permutar Cosmos, usa cualquier otro dispositivo Ledger compatible, como el Ledger Nano S Plus™, el Ledger Nano X™, el Ledger Flex™ o el Ledger Stax™.",
+      "hedera_title" : "No es posible usar el Ledger Nano S™ para permutar Hedera",
+      "hedera_description" : "Para permutar Hedera, usa cualquier otro dispositivo Ledger compatible, como el Ledger Nano S Plus™, el Ledger Nano X™, el Ledger Flex™ o el Ledger Stax™.",
       "osmo_title" : "No es posible usar el Ledger Nano S™ para permutar Osmosis",
       "osmo_description" : "Para permutar Osmosis, usa cualquier otro dispositivo Ledger compatible, como el Ledger Nano S Plus™, el Ledger Nano X™, el Ledger Flex™ o el Ledger Stax™.",
       "dydx_title" : "No es posible usar el Ledger Nano S™ para permutar dYdX",
@@ -1874,7 +1877,12 @@
         "default" : "Verifica los detalles de la permuta en tu dispositivo antes de enviarla. Las direcciones se intercambian de forma segura por lo que no es necesario verificarlas.",
         "provider" : "Verifica la información de permuta en tu dispositivo antes de enviar la transacción. {{providerName}} tal vez requiera una verificación adicional para algunas transacciones, lo que puede provocar retrasos."
       },
+      "simpleViewNotice" : {
+        "default" : "Verifica la información de permuta en tu Ledger antes de enviar la transacción.",
+        "provider" : "Verifica la información de permuta en tu dispositivo antes de enviar la transacción."
+      },
       "confirm" : "Confirmar transacción de permuta",
+      "confirmSwap" : "Confirma la operación de permuta en tu dispositivo",
       "amountSent" : "Importe a enviar",
       "amountReceived" : "Importe a recibir",
       "amountReceivedFloat" : "Importe a recibir antes de aplicar las tarifas de servicios",
@@ -1885,6 +1893,7 @@
       "acceptTerms" : "Al validar esta transacción, acepto\nlos <0>términos de uso de {{provider}}</0>",
       "exodusAcceptTerms" : "Exodus depende de terceros para realizar las permutas.\nAl validar esta transacción, acepto los <0>términos de uso de Exodus</0>",
       "changellyAcceptTerms" : "Al hacer clic en “Permutar con Changelly”, aceptas los <0>Términos de uso</0> de Changelly y\nsu <1>política de AML/KYC</1>. Es posible que Changelly aplique procedimientos de AML/KYC que,\nen determinados casos, pueden afectar a la finalización de tu transacción. En caso\nde darse esta situación, debes contactar con el <2>soporte al cliente</2> de Changelly.",
+      "changellySimplifiedAcceptTerms" : "By validating this transaction, you accept Changelly's <0>Terms of Use</0> and\nits <1>AML/KYC policy</1>. Changelly may apply AML/KYC procedures which\ncan, in limited cases, impact the completion of your transaction. Should\nthat happen, you must contact Changelly’s <2>customer support.</2>",
       "cicAcceptTerms" : "Al hacer clic en \"Permutar con CIC\", aceptas los <0>Términos de uso</0> de CIC y su <1>política de AML/KYC</1>. Es posible que CIC aplique procedimientos de AML/KYC que, en determinados casos, pueden afectar a la finalización de tu transacción. En caso de darse esta situación, debes contactar al <2>servicio de soporte al cliente</2> de CIC."
     },
     "swap2" : {
@@ -2240,6 +2249,16 @@
     "title" : "Recibir",
     "successTitle" : "Dirección compartida de forma segura",
     "steps" : {
+      "options" : {
+        "fromBank" : {
+          "title" : "Desde una cuenta bancaria",
+          "description" : "Depositar USD o EUR"
+        },
+        "fromCrypto" : {
+          "title" : "Desde una dirección cripto",
+          "description" : "Recibir cripto"
+        }
+      },
       "chooseAccount" : {
         "title" : "Cuenta",
         "label" : "Cuenta receptora",
@@ -2343,6 +2362,10 @@
         "solanaRawTransaction" : {
           "title" : "Firma a ciegas requerida",
           "description" : "No puedes verificar los detalles de la transacción en tu dispositivo Ledger. Si la firmas, podrías perder todos tus activos. Firma la transacción sólo si confías en este sitio web."
+        },
+        "bitcoinPsbtTransaction" : {
+          "title" : "Verifícala en el dispositivo",
+          "description" : "En el siguiente paso, puedes verificar la cantidad y el destinatario de la transacción en el dispositivo."
         },
         "utxoLag" : "La firma y verificación de esta transacción puede llevar un tiempo prolongado porque la cuenta presenta una cantidad significativa de monedas.",
         "subaccountsWarning" : "Necesitarás enviar de nuevo {{ currency }} a esta cuenta para enviar tokens desde esta cuenta",
@@ -6439,6 +6462,9 @@
     },
     "EthAppPleaseEnableContractData" : {
       "title" : "Habilita la firma a ciegas o los datos de contrato en los ajustes de la aplicación Ethereum"
+    },
+    "CeloAppPleaseEnableContractData" : {
+      "title" : "Habilita los datos de contrato en los ajustes de la aplicación Celo"
     },
     "InvalidXRPTag" : {
       "title" : "Etiqueta de destino XRP no válida"
