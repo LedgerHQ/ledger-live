@@ -483,7 +483,7 @@ function ReceiveConfirmationInner({ navigation, route, account, parentAccount }:
         backgroundColor="background.main"
         paddingBottom={insets.bottom}
       >
-        <Flex my={4}>
+        <Flex>
           <Button type="main" size="large" onPress={onRetry} testID="button-receive-confirmation">
             {t("transfer.receive.receiveConfirmation.verifyAddress")}
           </Button>

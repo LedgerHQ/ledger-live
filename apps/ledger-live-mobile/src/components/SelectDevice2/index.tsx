@@ -38,7 +38,6 @@ import getBLETransport from "../../react-native-hw-transport-ble";
 import { useBleDevicesScanning as useLegacyBleDevicesScanning } from "@ledgerhq/live-common/ble/hooks/useBleDevicesScanning";
 import styled from "styled-components/native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { TAB_BAR_HEIGHT } from "../TabBar/shared";
 
 export type { SetHeaderOptionsRequest };
 
@@ -461,7 +460,7 @@ export default function SelectDevice({
                 {children}
               </Flex>
             </Flex>
-            <Flex alignItems="center" my={8} mb={bottom + TAB_BAR_HEIGHT + 8}>
+            <Flex alignItems="center" my={8} mb={bottom}>
               <BuyDeviceCTA />
             </Flex>
           </ScrollContainer>

@@ -74,7 +74,7 @@ function View({
   const priceChangePercentage = currency?.priceChangePercentage[range as KeysPriceChange];
 
   return (
-    <SafeAreaView edges={["top", "left", "right"]} isFlex>
+    <SafeAreaView edges={["top", "left", "right", "bottom"]} isFlex>
       <ScrollContainerHeader
         TopLeftSection={<BackButton />}
         MiddleSection={
