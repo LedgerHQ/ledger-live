@@ -67,7 +67,8 @@ describe("testing estimateMaxSpendable", () => {
     );
   });
 
-  it.skip("should estimate max spendable correctly with utxo rbf set to true", async () => {
+  it("should estimate max spendable correctly with utxo rbf set to true", async () => {
+    // TODO: fix a more stable account, as this one had some activity recently
     await wallet.syncAccount(account);
     let maxSpendable = await wallet.estimateAccountMaxSpendable(account, 0, []);
     const balance = 12835640;
@@ -85,7 +86,7 @@ describe("testing estimateMaxSpendable", () => {
     expect(maxSpendable.toNumber()).toEqual(
       balance -
         feesPerByte *
-          utils.maxTxSizeCeil(28, [], true, account.xpub.crypto, account.xpub.derivationMode),
+          utils.maxTxSizeCeil(24, [], true, account.xpub.crypto, account.xpub.derivationMode),
     );
     feesPerByte = 10000;
     maxSpendable = await wallet.estimateAccountMaxSpendable(account, feesPerByte, []);
