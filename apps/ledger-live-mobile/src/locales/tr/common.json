@@ -1980,17 +1980,17 @@
     "stepProtect" : {
       "bullets" : {
         "0" : {
-          "title" : "“Restore” (Geri Yükle) seçimini yapın",
+          "title" : "“Geri Yükle” seçimini yapın",
           "label" : "Seçmek için iki tuşa aynı anda basın."
         },
         "1" : {
-          "title" : "“Restore using Ledger Recover” (Ledger Recover ile geri yükleyin) seçimini yapın",
+          "title" : "“Ledger Recover ile geri yükleyin” seçimini yapın",
           "label" : "Seçmek için iki tuşa aynı anda basın."
         }
       },
       "nextStep" : "Devam",
       "extraInfo" : {
-        "tooltip" : "“Restore using Ledger Recover” (Ledger Recover ile geri yükleyin) seçeneği yok",
+        "tooltip" : "“Ledger Recover ile geri yükleyin” seçeneği yok",
         "title" : "Ledger Nano X cihazındaki işletim sisteminin güncellenmesi gerekiyor",
         "desc" : "İşletim sistemini güncellemeyi deneyebilir veya yardım almak için Ledger Destek ile iletişime geçebilirsiniz.",
         "cta" : "Güncelleme yönergeleri",
@@ -2250,6 +2250,9 @@
         "continueCTA" : "Devam",
         "contactSupportCTA" : "Destek al"
       }
+    },
+    "completionScreen" : {
+      "title" : "Artık kontrol sizde"
     }
   },
   "blePairingFlow" : {
@@ -2380,6 +2383,8 @@
   },
   "syncOnboarding" : {
     "title" : "{{productName}} cihazınızı hazırlayın",
+    "twoStepTitle" : "Hadi başlayalım",
+    "firstStepReadyTitle" : "{{productName}} cihazınız hazır",
     "estimatedTimeFormat" : "{{estimatedTime}} dk.",
     "deviceSelection" : {
       "title" : "Kurmak istediğiniz Ledger'ı seçin:",
@@ -2497,6 +2502,10 @@
       "newSeedContinueOnDevice" : "{{productName}} cihazınızdaki yönergeleri izleyin",
       "recovery" : "Varlıklarınızın azami düzeyde güvenliği için Ledger cihazı tarafından oluşturulan bir Gizli Kurtarma İfadesi kullandığınızdan emin olun. \n\nGizli Kurtarma İfadeniz yok mu? Yeni bir İfade oluşturmak için {{productName}} cihazınızı kullanın."
     },
+    "secureCryptoStep" : {
+      "title" : "Kriptolarınızı güvende tutun",
+      "doneSubTitle" : "Blok zinciri uygulamalarınız yüklendi."
+    },
     "backup" : {
       "title" : "Gizli Kurtarma İfadenizin yedeklemesi",
       "description" : "Dijital olarak şifrelenmiş bir yedekleme ile, Gizli Kurtarma İfadeniz gerekmeden cüzdanınıza erişimi geri kazanın.\n\nDijital yedekleme isteyip istemediğinizi seçin:",
@@ -2524,6 +2533,14 @@
     },
     "completion" : {
       "title" : "Artık kontrol sizde"
+    },
+    "successStep" : {
+      "title" : "{{productName}} cihazınız dijital varlıklarınızı güvende tutmaya hazır"
+    },
+    "newSeed" : {
+      "subtitle" : "Maksimum güvenlik için kriptolarınızı herhangi bir borsadan veya cüzdandan Ledger Live uygulamanıza aktarabilirsiniz.",
+      "installCTA" : "Kriptolarınızı güvende tutun",
+      "skipCTA" : "Belki sonra"
     }
   },
   "tabs" : {
@@ -3749,12 +3766,16 @@
         "apt_description" : "Aptos takas etmek için Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ veya Ledger Stax™ gibi başka bir uyumlu Ledger cihazı kullanın.",
         "cosmos_title" : "Ledger Nano S™, Cosmos takasını desteklemez",
         "cosmos_description" : "Cosmos takas etmek için Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ veya Ledger Stax™ gibi başka bir uyumlu Ledger cihazı kullanın.",
+        "hedera_title" : "Ledger Nano S™, Hedera takasını desteklemez",
+        "hedera_description" : "Hedera takas etmek için Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ veya Ledger Stax™ gibi başka bir uyumlu Ledger cihazını kullanın.",
         "osmo_title" : "Ledger Nano S™, Osmosis takasını desteklemez",
         "osmo_description" : "Osmosis takas etmek için Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ veya Ledger Stax™ gibi başka bir uyumlu Ledger cihazını kullanın.",
         "dydx_title" : "Ledger Nano S™, dYdX takasını desteklemez",
         "dydx_description" : "dYdX takas etmek için Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ veya Ledger Stax™ gibi başka bir uyumlu Ledger cihazını kullanın.",
         "sui_title" : "Ledger Nano S™, Sui takasını desteklemez",
-        "sui_description" : "Sui takas etmek için Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ veya Ledger Stax™ gibi diğer herhangi bir uyumlu Ledger cihazını kullanın."
+        "sui_description" : "Sui takas etmek için Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ veya Ledger Stax™ gibi diğer herhangi bir uyumlu Ledger cihazını kullanın.",
+        "kaspa_title" : "Ledger Nano S™ does not support swapping Kaspa",
+        "kaspa_description" : "To swap Kaspa, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™."
       }
     },
     "lending" : {
@@ -4401,7 +4422,8 @@
         "default" : "Göndermeden önce Ledger cihazınızdaki takas bilgilerini doğrulayın.",
         "provider" : "Göndermeden önce cihazınızdaki Takas bilgilerini doğrulayın. {{providerName}} bazı işlemler için ek doğrulama adımları gerçekleştirmek zorunda kalabilir ve bu, gecikmeye neden olabilir."
       },
-      "acceptTerms" : "Bu işlemi onaylayarak,\n<0><0>{{provider}}</0> Kullanım Koşullarını</0> kabul ediyorum.",
+      "acceptTerms" : "Bu işlemi imzaladığınızda <0><0>{{provider}}</0> sağlayıcısının kullanım koşullarını</0> kabul etmiş olursunuz",
+      "changellySimplifiedAcceptTerms" : "Bu işlemi doğruladığınızda Changelly'nin <0>Kullanım Koşullarını</0> ve\n<1>Kara Paranın Aklanmasının Önlenmesi/KYC politikasını</1> kabul etmiş olursunuz. Changelly, bazı durumlarda işleminizin tamamlanmasını etkileyebilecek olan\nKara Paranın Aklanmasının Önlenmesi/KYC prosedürleri uygulayabilir. Böyle bir durumda Changelly'nin <2>müşteri destek</2> ekibi ile iletişime geçmeniz gerekir.",
       "notice" : "Göndermeden önce cihazınızdaki takas bilgilerini doğrulayın. Adresler güvenli bir şekilde aktarılır, böylece onları doğrulamak zorunda kalmazsınız."
     },
     "swap2" : {
@@ -7180,9 +7202,10 @@
     "title" : "Kilit ekranı resmi",
     "change" : "Değiştir",
     "drawer" : {
+      "title" : "Özel kilitli ekran",
       "options" : {
-        "uploadFromPhone" : "Resim galerimden seç",
-        "remove" : "Mevcut resmi kaldır"
+        "uploadFromPhone" : "Resmi değiştir",
+        "remove" : "Kilitli ekranı sil"
       }
     },
     "toastRemove" : "Kilitli ekran resmi kaldırıldı",
@@ -7912,7 +7935,7 @@
     },
     "transactionCannotBeCreated" : {
       "title" : "Sağlayıcı kullanılamıyor",
-      "description" : "Takas işleminizi bu sağlayıcı ile tamamlayamıyoruz. Lütfen başka bir sağlayıcıyla deneyin. Hata kodu 8HBB{{errorCode}}"
+      "description" : "Changelly bu işlemi gerçekleştiremiyor. Hata kodu 8HBB{{errorCode}}"
     },
     "default" : {
       "title" : "Bir hata oluştu",
