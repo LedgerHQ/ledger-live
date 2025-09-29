@@ -2250,6 +2250,9 @@
         "continueCTA" : "続行",
         "contactSupportCTA" : "サポートへお問い合わせ"
       }
+    },
+    "completionScreen" : {
+      "title" : "資産を完全にコントロール"
     }
   },
   "blePairingFlow" : {
@@ -2380,6 +2383,8 @@
   },
   "syncOnboarding" : {
     "title" : "{{productName}}を準備",
+    "twoStepTitle" : "セットアップ",
+    "firstStepReadyTitle" : "{{productName}}、準備完了",
     "estimatedTimeFormat" : "{{estimatedTime}}分",
     "deviceSelection" : {
       "title" : "設定したいLedgerを選択：",
@@ -2497,6 +2502,10 @@
       "newSeedContinueOnDevice" : "{{productName}}の指示に従う",
       "recovery" : "資産のセキュリティを最大限に高めるために、Ledgerデバイスによって生成されたシークレットリカバリーフレーズを必ず使用してください。 \n\nリカバリーフレーズをお持ちではありませんか？{{productName}}を使用して、新しいフレーズを生成してください。"
     },
+    "secureCryptoStep" : {
+      "title" : "暗号資産を保護",
+      "doneSubTitle" : "ブロックチェーンアプリのインストールが完了しました。"
+    },
     "backup" : {
       "title" : "シークレットリカバリーフレーズのバックアップ",
       "description" : "デジタル暗号化バックアップを使用すると、シークレットリカバリーフレーズなしでウォレットへのアクセスを復元できます。\n\nデジタルバックアップが必要かどうかを選択してください：",
@@ -2524,6 +2533,14 @@
     },
     "completion" : {
       "title" : "コントロール可能です"
+    },
+    "successStep" : {
+      "title" : "{{productName}}で、暗号資産を保護する準備が整いました"
+    },
+    "newSeed" : {
+      "subtitle" : "どの取引所やウォレットからでも、Ledger Liveに暗号資産を移して、最大限のセキュリティを確保できます。",
+      "installCTA" : "暗号資産を守る",
+      "skipCTA" : "後で"
     }
   },
   "tabs" : {
@@ -3236,7 +3253,7 @@
       "supportDesc" : "問題がある場合は、ハードウェアウォレットでLedger Liveを使用するためのヘルプを参照してください。",
       "configureDevice" : "デバイスのセットアップ",
       "configureDeviceDesc" : "新しいデバイスとしてセットアップするか、既存のデバイスを復元する。アカウントと設定は保持されます。",
-      "clearCache" : "Cacheを削除",
+      "clearCache" : "キャッシュを削除",
       "clearCacheDesc" : "ネットワーク上のトランザクションがスキャンされ、アカウントは再計算されます。",
       "clearCacheModal" : "本当によろしいですか？",
       "clearCacheModalDesc" : "ネットワーク上のトランザクションの完全なスキャンが新たに実行されます。アカウントの履歴が再構築され、残高は再計算されます。",
@@ -3749,6 +3766,8 @@
         "apt_description" : "Aptosをスワップするには、Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™、Ledger Stax™など、対応する他のLedgerデバイスをご使用ください。",
         "cosmos_title" : "Ledger Nano S™はCosmosのスワップに対応していません",
         "cosmos_description" : "Cosmosをスワップするには、Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™、Ledger Stax™など、対応する他のLedgerデバイスをご使用ください。",
+        "hedera_title" : "Ledger Nano S™は、Hederaのスワップに対応していません",
+        "hedera_description" : "Hederaをスワップするには、Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™、Ledger Stax™など、対応する他のLedgerデバイスをご使用ください。",
         "osmo_title" : "Ledger Nano S™は、Osmosisのスワップに対応していません",
         "osmo_description" : "Osmosisをスワップするには、Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™、Ledger Stax™など、対応する他のLedgerデバイスをご使用ください。",
         "dydx_title" : "Ledger Nano S™は、dYdXのスワップに対応していません",
@@ -4030,6 +4049,10 @@
       "solanaRawTransaction" : {
         "title" : "ブラインド署名が必要です",
         "description" : "お使いのLedgerデバイスでトランザクションの詳細を認証することはできません。署名すると、すべての資産を失う可能性があります。このウェブサイトを信頼する場合のみ署名してください。"
+      },
+      "bitcoinPsbtTransaction" : {
+        "title" : "デバイス上で確認",
+        "description" : "次のステップで、デバイス上で取引数量と受取人をご確認いただけます。"
       },
       "subaccountsWarning" : "このアカウントのトークンを送付するには、このアカウントに{{ currency }}を追加する必要があります。",
       "tag" : "タグ（任意）",
@@ -4401,7 +4424,8 @@
         "default" : "送付前に、スワップの詳細をLedger上で確認してください。",
         "provider" : "送付前に、スワップの詳細をデバイス上で確認してください。{{providerName}}では、一部のトランザクションに対して追加の検証を実行する必要があり、遅延が発生する場合があります。"
       },
-      "acceptTerms" : "このトランザクションを検証することにより、私は\n<0><0>{{provider}}</0>の利用規約</0>に同意します",
+      "acceptTerms" : "By signing this transaction, you accept <0><0>{{provider}}</0>'s terms of use</0>",
+      "changellySimplifiedAcceptTerms" : "By validating this transaction, you accept Changelly's <0>Terms of Use</0> and its <1>AML/KYC policy</1>. Changelly may apply AML/KYC procedures which can, in limited cases, impact the completion of your transaction. Should that happen, you must contact Changelly’s <2>customer support.</2>",
       "notice" : "送付する前に、スワップの詳細をデバイス上で確認してください。アドレスは安全にやりとりされるため、確認の必要はありません。"
     },
     "swap2" : {
@@ -7912,7 +7936,7 @@
     },
     "transactionCannotBeCreated" : {
       "title" : "スワッププロバイダー利用不可",
-      "description" : "このプロバイダーでは、スワップを完了することができません。他のプロバイダーをお試しください。エラーコード 8HBB{{errorCode}}"
+      "description" : "Changelly cannot process this transaction. Error code 8HBB{{errorCode}}"
     },
     "default" : {
       "title" : "問題が発生しました。",
