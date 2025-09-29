@@ -77,6 +77,7 @@ jobs:
     secrets: inherit
     with:
       macos-specificity-runner-label: "performance-pool"
+      skip-pod-checks: "false"
 
   # Tests
   test-libraries:
