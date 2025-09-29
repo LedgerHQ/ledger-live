@@ -6106,9 +6106,6 @@ importers:
       invariant:
         specifier: ^2.2.4
         version: 2.2.4
-      ripemd160:
-        specifier: '2'
-        version: 2.0.2
       semver:
         specifier: ^7.3.5
         version: 7.5.4
@@ -52901,7 +52898,7 @@ snapshots:
 
   agent-base@6.0.2:
     dependencies:
-      debug: 4.4.1
+      debug: 4.3.4
     transitivePeerDependencies:
       - supports-color
 
