@@ -420,10 +420,6 @@
       "title" : "Otomatik doğrulama mevcut değil; adresi dikkatle doğrulayın.",
       "description" : null
     },
-    "EthAppNftNotSupported" : {
-      "title" : "Bu işlem bu cihaz için mevcut değil",
-      "description" : "NFT Gönder özelliği yalnızca Nano X ve Nano S+ ile kullanılabilir. Nano S ile nasıl NFT gönderebileceğinizi öğrenmek için lütfen müşteri destek platformumuzu ziyaret edin."
-    },
     "Touch ID Error" : {
       "title" : "Biyometrik kimlik doğrulaması başarısız oldu",
       "description" : "Lütfen parolanızı kullanın veya uygulamayı sıfırlayın."
@@ -926,9 +922,6 @@
     "TaprootNotActivated" : {
       "title" : "Taproot ana ağı henüz etkinleştirilmedi"
     },
-    "NotEnoughNftOwned" : {
-      "title" : "Mevcut token sayısını aştınız"
-    },
     "generic" : {
       "title" : "{{message}}",
       "description" : "Bir hata oluştu. Lütfen tekrar deneyin. Sorun devam ederse, lütfen aşağıdaki butonu kullanarak loglarınızı kaydedin ve Ledger Destek'e gönderin.",
@@ -1052,10 +1045,6 @@
     "ImageDownloadError" : {
       "title" : "Resim indirilemedi",
       "description" : "Farklı bir resimle tekrar deneyin."
-    },
-    "NFTMetadataLoadingError" : {
-      "title" : "NFT metaverileri yüklenirken sorun oluştu",
-      "description" : "Farklı bir NFT ile tekrar deneyin."
     },
     "ImageSizeLoadingError" : {
       "title" : "Resim boyutları alınamadı",
@@ -1991,17 +1980,17 @@
     "stepProtect" : {
       "bullets" : {
         "0" : {
-          "title" : "“Restore” (Geri Yükle) seçimini yapın",
+          "title" : "“Geri Yükle” seçimini yapın",
           "label" : "Seçmek için iki tuşa aynı anda basın."
         },
         "1" : {
-          "title" : "“Restore using Ledger Recover” (Ledger Recover ile geri yükleyin) seçimini yapın",
+          "title" : "“Ledger Recover ile geri yükleyin” seçimini yapın",
           "label" : "Seçmek için iki tuşa aynı anda basın."
         }
       },
       "nextStep" : "Devam",
       "extraInfo" : {
-        "tooltip" : "“Restore using Ledger Recover” (Ledger Recover ile geri yükleyin) seçeneği yok",
+        "tooltip" : "“Ledger Recover ile geri yükleyin” seçeneği yok",
         "title" : "Ledger Nano X cihazındaki işletim sisteminin güncellenmesi gerekiyor",
         "desc" : "İşletim sistemini güncellemeyi deneyebilir veya yardım almak için Ledger Destek ile iletişime geçebilirsiniz.",
         "cta" : "Güncelleme yönergeleri",
@@ -2261,6 +2250,9 @@
         "continueCTA" : "Devam",
         "contactSupportCTA" : "Destek al"
       }
+    },
+    "completionScreen" : {
+      "title" : "Artık kontrol sizde"
     }
   },
   "blePairingFlow" : {
@@ -2391,6 +2383,8 @@
   },
   "syncOnboarding" : {
     "title" : "{{productName}} cihazınızı hazırlayın",
+    "twoStepTitle" : "Hadi başlayalım",
+    "firstStepReadyTitle" : "{{productName}} cihazınız hazır",
     "estimatedTimeFormat" : "{{estimatedTime}} dk.",
     "deviceSelection" : {
       "title" : "Kurmak istediğiniz Ledger'ı seçin:",
@@ -2508,6 +2502,10 @@
       "newSeedContinueOnDevice" : "{{productName}} cihazınızdaki yönergeleri izleyin",
       "recovery" : "Varlıklarınızın azami düzeyde güvenliği için Ledger cihazı tarafından oluşturulan bir Gizli Kurtarma İfadesi kullandığınızdan emin olun. \n\nGizli Kurtarma İfadeniz yok mu? Yeni bir İfade oluşturmak için {{productName}} cihazınızı kullanın."
     },
+    "secureCryptoStep" : {
+      "title" : "Kriptolarınızı güvende tutun",
+      "doneSubTitle" : "Blok zinciri uygulamalarınız yüklendi."
+    },
     "backup" : {
       "title" : "Gizli Kurtarma İfadenizin yedeklemesi",
       "description" : "Dijital olarak şifrelenmiş bir yedekleme ile, Gizli Kurtarma İfadeniz gerekmeden cüzdanınıza erişimi geri kazanın.\n\nDijital yedekleme isteyip istemediğinizi seçin:",
@@ -2535,6 +2533,14 @@
     },
     "completion" : {
       "title" : "Artık kontrol sizde"
+    },
+    "successStep" : {
+      "title" : "{{productName}} cihazınız dijital varlıklarınızı güvende tutmaya hazır"
+    },
+    "newSeed" : {
+      "subtitle" : "Maksimum güvenlik için kriptolarınızı herhangi bir borsadan veya cüzdandan Ledger Live uygulamanıza aktarabilirsiniz.",
+      "installCTA" : "Kriptolarınızı güvende tutun",
+      "skipCTA" : "Belki sonra"
     }
   },
   "tabs" : {
@@ -2693,9 +2699,7 @@
   "operations" : {
     "types" : {
       "IN" : "Alındı",
-      "NFT_IN" : "NFT Alındı",
       "OUT" : "Gönderildi",
-      "NFT_OUT" : "NFT Gönderildi",
       "CREATE" : "Oluşturuldu",
       "REVEAL" : "Adres gösterildi",
       "DELEGATE" : "Yetki devredildi",
@@ -2800,11 +2804,7 @@
       "stakedAmount" : "Stake edilen miktar",
       "accountCreationFee" : "Hesap Oluşturma Ücreti"
     },
-    "multipleAddresses" : "Neden birden fazla adres var?",
-    "tokenName" : "Token Adı",
-    "collectionContract" : "Token Sözleşmesi",
-    "tokenId" : "Token (NFT) Kimliği",
-    "quantity" : "Miktar"
+    "multipleAddresses" : "Neden birden fazla adres var?"
   },
   "operationList" : {
     "noOperations" : "İşlem Yok",
@@ -2973,10 +2973,6 @@
     },
     "undelegation" : {
       "sectionLabel" : "Yetki İptalleri"
-    },
-    "nft" : {
-      "receiveNft" : "NFT alın",
-      "howTo" : "NFT'ler eklemek için onları <1>{{currency}} adresinizi</1> kullanarak <0>hesabınıza almanız</0> gerekir."
     },
     "readOnly" : {
       "noTransaction" : {
@@ -3187,11 +3183,6 @@
         "title" : "Token'ı gizle",
         "desc" : "Bu eylem tüm <1><0>{tokenName}</0></1> hesaplarını gizleyecek; <3>Ayarlar > Hesaplar</3> adımlarını kullanarak onları tekrar görünür hale getirebilirsiniz",
         "confirm" : "Token'ı gizle"
-      },
-      "hideNFTCollectionCTA" : "Koleksiyonu gizle",
-      "hideNFTCollectionModal" : {
-        "title" : "Koleksiyon gizlensin mi?",
-        "desc" : "Bu koleksiyonu ayarlardan yeniden görünür hale getirebilirsiniz."
       },
       "cryptoAssets" : {
         "header" : "Kripto varlıklar",
@@ -3692,7 +3683,8 @@
         "empty" : {
           "title" : "Önceki takas işlemleriniz burada görünecek",
           "desc" : "Henüz herhangi bir takas işlemi yapmadınız ya da Ledger Live sıfırlandı."
-        }
+        },
+        "feedback" : "Geri bildirim paylaşın"
       }
     },
     "swap2" : {
@@ -4021,10 +4013,7 @@
       "summary" : "Özet",
       "selectDevice" : "Cihaz seçin",
       "connectDevice" : "Cihazı bağlayın",
-      "stepRange" : "Adım {{currentStep}} / {{totalSteps}}",
-      "quantity" : "Miktar",
-      "selectCollection" : "Koleksiyon",
-      "selectNft" : "NFT"
+      "stepRange" : "Adım {{currentStep}} / {{totalSteps}}"
     },
     "recipient" : {
       "scan" : "Karekodu okutun",
@@ -4429,7 +4418,7 @@
         "default" : "Göndermeden önce Ledger cihazınızdaki takas bilgilerini doğrulayın.",
         "provider" : "Göndermeden önce cihazınızdaki Takas bilgilerini doğrulayın. {{providerName}} bazı işlemler için ek doğrulama adımları gerçekleştirmek zorunda kalabilir ve bu, gecikmeye neden olabilir."
       },
-      "acceptTerms" : "Bu işlemi onaylayarak,\n<0><0>{{provider}}</0> Kullanım Koşullarını</0> kabul ediyorum.",
+      "acceptTerms" : "Bu işlemi imzaladığınızda <0><0>{{provider}}</0> sağlayıcısının kullanım koşullarını</0> kabul etmiş olursunuz",
       "notice" : "Göndermeden önce cihazınızdaki takas bilgilerini doğrulayın. Adresler güvenli bir şekilde aktarılır, böylece onları doğrulamak zorunda kalmazsınız."
     },
     "swap2" : {
@@ -7127,47 +7116,6 @@
       }
     }
   },
-  "nft" : {
-    "account" : {
-      "seeAllNfts" : "Tüm NFT'leri gör",
-      "seeFewerNfts" : "Daha az NFT gör"
-    },
-    "gallery" : {
-      "allNft" : "Tüm NFT'ler",
-      "addNew" : "Yeni ekle"
-    },
-    "designedForStax" : {
-      "title" : "<1>Ledger</1><2>Stax</2><0>için tasarlandı</0>",
-      "drawer" : {
-        "description" : "Bu NFT, Ledger Stax'in E Ink Ekranı için özel olarak tasarlanmış ek bir resim içermektedir.\n\nBu resim, bu NFT'yi kilitli ekran olarak ayarladığınızda kullanılacaktır.",
-        "cta" : "Anladım"
-      }
-    },
-    "viewer" : {
-      "properties" : "Özellikler",
-      "description" : "Açıklama",
-      "tokenContract" : "Token Adresi",
-      "tokenContractCopied" : "Token Adresi kopyalandı!",
-      "tokenId" : "Token Kimliği (Token ID)",
-      "tokenIdCopied" : "Token Kimliği kopyalandı!",
-      "quantity" : "Miktar",
-      "attributes" : {
-        "floorPrice" : "Taban Fiyat"
-      }
-    },
-    "viewerModal" : {
-      "viewOn" : "Burada görüntüle:",
-      "viewInExplorer" : "Tarayıcıda görüntüle",
-      "hide" : "NFT koleksiyonunu gizleyin",
-      "txDetails" : "İşlem bilgileri"
-    },
-    "modalDisabled" : {
-      "title" : "Gönderme işlevi iOS'ta mevcut değil",
-      "body" : "Apple'ın App Store için gerçekleştirdiği son güncellemeler uyarınca, NFT gönderme işlevi geçici olarak devre dışı bırakıldı. Ledger Live Desktop sürümünü kullanarak NFT göndermeye devam edebilirsiniz.",
-      "learnMore" : "Daha fazla bilgi",
-      "continue" : "Anladım!"
-    }
-  },
   "ApplicationVersion" : "v{{version}}",
   "analytics" : {
     "title" : "Analiz",
@@ -7251,7 +7199,6 @@
     "drawer" : {
       "options" : {
         "uploadFromPhone" : "Resim galerimden seç",
-        "selectFromNFTGallery" : "NFT galerisinden seç",
         "remove" : "Mevcut resmi kaldır"
       }
     },
@@ -7282,9 +7229,6 @@
       "setPicture" : "Kilit ekranı olarak belirle",
       "editPicture" : "Resmi düzenle",
       "pickDeviceModel" : "Bir cihaz seçin"
-    },
-    "nftGallery" : {
-      "title" : "NFT'lerim"
     }
   },
   "postOnboarding" : {
@@ -7329,50 +7273,7 @@
   "wallet" : {
     "tabs" : {
       "crypto" : "Kripto",
-      "nft" : "NFT'ler",
       "market" : "Piyasa"
-    },
-    "nftGallery" : {
-      "filters" : {
-        "select" : "Seç",
-        "filter" : "Filtre",
-        "blockchain" : "Blok zinciri",
-        "seeAll" : "Tümünü gör",
-        "selectAndHide" : "Seç ve gizle",
-        "hide" : "{{count}} koleksiyonu gizle",
-        "hiddenCollections" : "Gizli koleksiyonlar",
-        "hide_plural" : "{{count}} koleksiyonu gizle",
-        "empty" : "Gösterilecek hiçbir Gizli koleksiyon yok",
-        "alertHide" : "1 koleksiyon gizlendi. Dilediğiniz zaman galeri filtresinden tekrar görünür yapabilirsiniz.",
-        "alertHide_plural" : "{{count}} koleksiyon gizlendi. Dilediğiniz zaman galeri filtresinden tekrar görünür yapabilirsiniz."
-      },
-      "emptyFiltered" : {
-        "title" : "Kriterlerinize uyan NFT yok",
-        "button" : "Filtreleri Sıfırla"
-      },
-      "empty" : {
-        "title" : "Gösterilecek NFT yok",
-        "subtitle" : "Öncelikle cüzdanınıza NFT ekleyin.",
-        "receive" : "NFT al",
-        "supportLink" : "Diğer cüzdanlardaki NFT'ler nasıl alınır?"
-      },
-      "receiveModal" : {
-        "title" : "NFT'leri kriptoları aldığınız gibi alırsınız",
-        "bullets" : {
-          "0" : "• NFT'nin kripto blok zincirini seçin.",
-          "1" : "• NFT'nin geleceği hesabı seçin"
-        },
-        "cta" : "Tamam, anladım",
-        "info" : "Daha fazla bilgi istiyorum"
-      },
-      "hideNftModal" : {
-        "title" : "NFT koleksiyonunu gizleyin",
-        "desc" : "Bu eylem {{collectionName}} koleksiyonundaki tüm NFT'leri gizleyecektir. Onları galeri filtresinden tekrar görünür yapabilirsiniz",
-        "cta" : "Bu NFT'yi gizle"
-      },
-      "media" : {
-        "tag" : "{{count}} NFT"
-      }
     },
     "referralProgram" : "$20"
   },
@@ -8025,6 +7926,10 @@
     "signatureVerificationFail" : {
       "title" : "İmza doğrulanamadı",
       "description" : "Lütfen tekrar deneyin veya bir şüpheniz varsa Ledger Destek ile iletişime geçin"
+    },
+    "transactionCannotBeCreated" : {
+      "title" : "Sağlayıcı kullanılamıyor",
+      "description" : "Changelly bu işlemi gerçekleştiremiyor. Hata kodu 8HBB{{errorCode}}"
     },
     "default" : {
       "title" : "Bir hata oluştu",
