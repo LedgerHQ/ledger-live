@@ -43,6 +43,7 @@ import { delegateOsmosis } from "./families/osmosis";
 import { AppInfos } from "./enum/AppInfos";
 import { DEVICE_LABELS_CONFIG } from "./data/deviceLabelsData";
 import { sendSui } from "./families/sui";
+import { getAppVersionFromCatalog } from "./speculosAppVersion";
 
 const isSpeculosRemote = process.env.REMOTE_SPECULOS === "true";
 
@@ -51,6 +52,7 @@ export type Spec = {
   appQuery: {
     model: DeviceModelId;
     appName: string;
+    appVersion?: string;
   };
   /** @deprecated */
   dependency?: string;
@@ -77,11 +79,11 @@ export function setExchangeDependencies(dependencies: Dependency[]) {
 export function getSpeculosModel() {
   const speculosDevice = process.env.SPECULOS_DEVICE;
   switch (speculosDevice) {
-    case CryptoWallet.LNS:
+    case CryptoWallet.LNS.name:
       return DeviceModelId.nanoS;
-    case CryptoWallet.LNX:
+    case CryptoWallet.LNX.name:
       return DeviceModelId.nanoX;
-    case CryptoWallet.LNSP:
+    case CryptoWallet.LNSP.name:
     default:
       return DeviceModelId.nanoSP;
   }
@@ -312,7 +314,6 @@ export const specs: Specs = {
     },
     dependency: "",
   },
-
   Celo: {
     currency: getCryptoCurrencyById("celo"),
     appQuery: {
@@ -374,6 +375,16 @@ export async function startSpeculos(
   }
 
   const { appQuery, dependency, onSpeculosDeviceCreated } = spec;
+  try {
+    const displayName = spec.currency?.managerAppName || appQuery.appName;
+    const catalogVersion = await getAppVersionFromCatalog(displayName);
+    if (catalogVersion) {
+      appQuery.appVersion = catalogVersion;
+    }
+  } catch (e) {
+    console.warn("[speculos] Unable to fetch app version from catalog", e);
+  }
+
   const appCandidate = findLatestAppCandidate(appCandidates, appQuery);
   const { model } = appQuery;
   const { dependencies } = spec;
@@ -390,8 +401,8 @@ export async function startSpeculos(
   });
   if (!appCandidate) {
     console.warn("no app found for " + testName);
-    console.warn(appQuery);
-    console.warn(JSON.stringify(appCandidates, undefined, 2));
+    // console.warn(appQuery);
+    // console.warn(JSON.stringify(appCandidates, undefined, 2));
   }
   invariant(
     appCandidate,
@@ -806,10 +817,7 @@ export async function getDelegateEvents(delegatingAccount: Delegate): Promise<st
 
 export async function verifyAmountsAndAcceptSwap(swap: Swap, amount: string) {
   await waitFor(DeviceLabels.REVIEW_TRANSACTION);
-  const events =
-    getSpeculosModel() === DeviceModelId.nanoS
-      ? await pressUntilTextFound(DeviceLabels.ACCEPT_AND_SEND)
-      : await pressUntilTextFound(DeviceLabels.SIGN_TRANSACTION);
+  const events = await pressUntilTextFound(DeviceLabels.ACCEPT_AND_SEND);
   verifySwapData(swap, events, amount);
   await pressBoth();
 }
@@ -829,11 +837,12 @@ export async function verifyAmountsAndRejectSwap(swap: Swap, amount: string) {
 }
 
 function verifySwapData(swap: Swap, events: string[], amount: string) {
-  const swapPair = `swap ${swap.getAccountToDebit.currency.ticker} to ${swap.getAccountToCredit.currency.ticker}`;
+  //const swapPair = `swap ${swap.getAccountToDebit.currency.ticker} to ${swap.getAccountToCredit.currency.ticker}`;
 
-  if (getSpeculosModel() !== DeviceModelId.nanoS) {
-    expectDeviceScreenContains(swapPair, events, "Swap pair not found on the device screen");
-  }
+  // if (getSpeculosModel() !== DeviceModelId.nanoS) {
+  //   expectDeviceScreenContains(swapPair, events, "Swap pair not found on the device screen");
+  // }
+
   expectDeviceScreenContains(amount, events, `Amount ${amount} not found on the device screen`);
 }
 

@@ -4,6 +4,7 @@ import { exec } from "child_process";
 import { device, log } from "detox";
 import { allure } from "jest-allure2-reporter/api";
 import { Device } from "@ledgerhq/live-common/e2e/enum/Device";
+import { getSpeculosModel } from "@ledgerhq/live-common/e2e/speculos";
 
 const BASE_DEEPLINK = "ledgerlive://";
 
@@ -28,7 +29,7 @@ export async function openDeeplink(path?: string) {
 }
 
 export const describeIfNotNanoS = (...args: Parameters<typeof describe>) =>
-  process.env.SPECULOS_DEVICE !== Device.LNS
+  process.env.SPECULOS_DEVICE !== Device.LNS.name
     ? describe(...args)
     : describe.skip("[not available on LNS] " + args[0], args[1]);
 
@@ -85,7 +86,7 @@ export function setupEnvironment() {
   setEnv("MOCK", "");
   process.env.MOCK = "";
   setEnv("DETOX", "1");
-  process.env.SPECULOS_DEVICE = process.env.SPECULOS_DEVICE || Device.LNX;
+  process.env.SPECULOS_DEVICE = getSpeculosModel();
 
   const disableBroadcastEnv = process.env.DISABLE_TRANSACTION_BROADCAST;
   const shouldBroadcast = disableBroadcastEnv === "0";

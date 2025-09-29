@@ -24,7 +24,7 @@ export async function sendSolana(tx: Transaction) {
       : await pressUntilTextFound(DeviceLabels.APPROVE);
   const isAmountCorrect = containsSubstringInEvent(tx.amount, events);
   expect(isAmountCorrect).toBeTruthy();
-  if (process.env.SPECULOS_DEVICE !== Device.LNS) {
+  if (process.env.SPECULOS_DEVICE !== Device.LNS.name) {
     const isAddressCorrect = containsSubstringInEvent(
       tx.accountToCredit.parentAccount?.address ?? tx.accountToCredit.address,
       events,

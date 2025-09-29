@@ -11,7 +11,7 @@ import { DeviceLabels } from "../enum/DeviceLabels";
 import { Device } from "../enum/Device";
 
 export async function sendCardano(tx: Transaction) {
-  const isNanoS = process.env.SPECULOS_DEVICE === Device.LNS;
+  const isNanoS = process.env.SPECULOS_DEVICE === Device.LNS.name;
   await waitFor(DeviceLabels.NEW_ORDINARY);
   await (isNanoS ? pressRightButton() : pressBoth());
   if (isNanoS) {
@@ -66,7 +66,7 @@ export async function delegateCardano() {
     [DeviceLabels.CONFIRM, "right"],
   ] as const;
 
-  const steps = process.env.SPECULOS_DEVICE === Device.LNS ? LNSSpecificSteps : commonSteps;
+  const steps = process.env.SPECULOS_DEVICE === Device.LNS.name ? LNSSpecificSteps : commonSteps;
 
   for (const [label, action] of steps) {
     try {
