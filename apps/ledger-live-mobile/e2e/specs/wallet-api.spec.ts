@@ -1,11 +1,21 @@
+import DeviceAction from "../models/DeviceAction";
+import { knownDevices } from "../models/devices";
+
 describe("Wallet API methods", () => {
+  const knownDevice = knownDevices.nanoX;
+  let deviceAction: DeviceAction;
+
   beforeAll(async () => {
-    await app.init({ userdata: "1AccountBTC1AccountETHReadOnlyFalse" });
+    await app.init({
+      userdata: "1AccountBTC1AccountETHReadOnlyFalse",
+      knownDevices: [knownDevice],
+    });
     await app.dummyWalletApp.startApp();
 
     await app.portfolio.waitForPortfolioPageToLoad();
     await app.dummyWalletApp.openApp();
     await app.dummyWalletApp.expectApp();
+    deviceAction = new DeviceAction(knownDevice);
   });
 
   afterAll(async () => {
@@ -42,6 +52,23 @@ describe("Wallet API methods", () => {
 
     const res = await app.dummyWalletApp.getResOutput();
     expect(res).toBe("1xeyL26EKAAR3pStd7wEveajk4MQcrYezeJ");
+  });
+
+  it("message.sign", async () => {
+    const account = "Ethereum 1";
+    const message = "Hello World! This is a test message for signing.";
+
+    await app.dummyWalletApp.setAccountId("e86e3bc1-49e1-53fd-a329-96ba6f1b06d3");
+    await app.dummyWalletApp.setMessage(message);
+    await app.dummyWalletApp.messageSign();
+
+    await app.walletAPISignMessage.expectSummary(account, message);
+    await app.walletAPISignMessage.summaryContinue();
+    await deviceAction.selectMockDevice();
+    await deviceAction.silentSign();
+
+    const res = await app.dummyWalletApp.getResOutput();
+    expect(res).toBe("mockedSignature");
   });
 
   xit("transaction.sign", async () => {
