@@ -2250,6 +2250,9 @@
         "continueCTA" : "Continuar",
         "contactSupportCTA" : "Ponte en contacto con Soporte"
       }
+    },
+    "completionScreen" : {
+      "title" : "Ya lo tienes todo bajo control"
     }
   },
   "blePairingFlow" : {
@@ -2380,6 +2383,8 @@
   },
   "syncOnboarding" : {
     "title" : "Prepara tu {{productName}}",
+    "twoStepTitle" : "Comencemos",
+    "firstStepReadyTitle" : "Tu {{productName}} está listo",
     "estimatedTimeFormat" : "{{estimatedTime}} min",
     "deviceSelection" : {
       "title" : "Selecciona el Ledger que quieres configurar:",
@@ -2497,6 +2502,10 @@
       "newSeedContinueOnDevice" : "Sigue las instrucciones que se muestran en tu {{productName}}",
       "recovery" : "Para que tus activos estén lo más seguros posible, utiliza una Frase de Recuperación Secreta generada por un dispositivo Ledger. \n\n¿No tienes una? Usa tu {{productName}} para generar una Frase nueva."
     },
+    "secureCryptoStep" : {
+      "title" : "Protege tus cripto",
+      "doneSubTitle" : "Tus aplicaciones de blockchain están instaladas."
+    },
     "backup" : {
       "title" : "Copia de respaldo para tu Frase de Recuperación Secreta",
       "description" : "Restaura el acceso a tu billetera sin tu Frase de Recuperación Secreta con una copia de respaldo cifrada digital.\n\nElige si quieres tener una copia de respaldo digital:",
@@ -2524,6 +2533,14 @@
     },
     "completion" : {
       "title" : "Ahora tienes el control"
+    },
+    "successStep" : {
+      "title" : "Tu {{productName}} está listo para proteger tus activos digitales"
+    },
+    "newSeed" : {
+      "subtitle" : "Puedes transferir cripto desde cualquier exchange o wallet a tu Ledger Live para garantizar la máxima seguridad.",
+      "installCTA" : "Proteger mis cripto",
+      "skipCTA" : "Quizás más tarde"
     }
   },
   "tabs" : {
@@ -3749,12 +3766,16 @@
         "apt_description" : "Para permutar Aptos, usa cualquier otro dispositivo Ledger compatible, como el Ledger Nano S Plus™, el Ledger Nano X™, el Ledger Flex™ o el Ledger Stax™.",
         "cosmos_title" : "No es posible usar el Ledger Nano S™ para permutar Cosmos",
         "cosmos_description" : "Para permutar Cosmos, usa cualquier otro dispositivo Ledger compatible, como el Ledger Nano S Plus™, el Ledger Nano X™, el Ledger Flex™ o el Ledger Stax™.",
+        "hedera_title" : "No es posible usar el Ledger Nano S™ para permutar Hedera",
+        "hedera_description" : "Para permutar Hedera, usa cualquier otro dispositivo Ledger compatible, como el Ledger Nano S Plus™, el Ledger Nano X™, el Ledger Flex™ o el Ledger Stax™.",
         "osmo_title" : "No es posible usar el Ledger Nano S™ para permutar Osmosis",
         "osmo_description" : "Para permutar Osmosis, usa cualquier otro dispositivo Ledger compatible, como el Ledger Nano S Plus™, el Ledger Nano X™, el Ledger Flex™ o el Ledger Stax™.",
         "dydx_title" : "No es posible usar el Ledger Nano S™ para permutar dYdX",
         "dydx_description" : "Para permutar dYdX, usa cualquier otro dispositivo Ledger compatible, como el Ledger Nano S Plus™, el Ledger Nano X™, el Ledger Flex™ o el Ledger Stax™.",
         "sui_title" : "No es posible utilizar el Ledger Nano S™ para permutar Sui",
-        "sui_description" : "Para permutar Sui, usa cualquier otro dispositivo Ledger compatible, como el Ledger Nano S Plus™, el Ledger Nano X™, el Ledger Flex™ o el Ledger Stax™."
+        "sui_description" : "Para permutar Sui, usa cualquier otro dispositivo Ledger compatible, como el Ledger Nano S Plus™, el Ledger Nano X™, el Ledger Flex™ o el Ledger Stax™.",
+        "kaspa_title" : "Ledger Nano S™ does not support swapping Kaspa",
+        "kaspa_description" : "To swap Kaspa, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™."
       }
     },
     "lending" : {
@@ -4401,7 +4422,8 @@
         "default" : "Verifica la información de permuta en tu Ledger antes de enviar la transacción.",
         "provider" : "Verifica la información de permuta en tu dispositivo antes de enviar la transacción. {{providerName}} tal vez requiera una verificación adicional para algunas transacciones, lo que puede provocar retrasos."
       },
-      "acceptTerms" : "Al validar esta transacción, acepto los <0>términos de uso de\n<0> {{provider}}</0>",
+      "acceptTerms" : "Al firmar esta transacción, aceptas los <0>términos de uso de <0>{{provider}}</0></0>",
+      "changellySimplifiedAcceptTerms" : "Al validar esta transacción, aceptas los <0>Términos de uso</0> de Changelly y su <1>política de AML/KYC</1>. Es posible que Changelly aplique procedimientos de AML/KYC que, en determinados casos, pueden afectar a la finalización de tu transacción. En caso de darse esta situación, debes contactar con el <2>soporte al cliente</2> de Changelly.",
       "notice" : "Verifica los detalles de la permuta en tu dispositivo antes de enviarla. Las direcciones se intercambian de forma segura por lo que no es necesario verificarlas."
     },
     "swap2" : {
@@ -7180,9 +7202,10 @@
     "title" : "Imagen de pantalla de bloqueo",
     "change" : "Cambiar",
     "drawer" : {
+      "title" : "Pantalla de bloqueo personalizada",
       "options" : {
-        "uploadFromPhone" : "Elegir de la galería de imágenes",
-        "remove" : "Eliminar imagen actual"
+        "uploadFromPhone" : "Cambiar imagen",
+        "remove" : "Eliminar pantalla de bloqueo"
       }
     },
     "toastRemove" : "Imagen de pantalla de bloqueo eliminada",
@@ -7912,7 +7935,7 @@
     },
     "transactionCannotBeCreated" : {
       "title" : "Proveedor no disponible",
-      "description" : "No podemos completar tu permuta con este proveedor. Inténtalo con otro. Código de error 8HBB{{errorCode}}"
+      "description" : "Changelly no puede procesar esta transacción. Código de error 8HBB{{errorCode}}"
     },
     "default" : {
       "title" : "Algo ha salido mal",
