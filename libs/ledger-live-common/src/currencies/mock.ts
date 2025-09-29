@@ -44,6 +44,7 @@ export const IDS = [
   "xion",
   "zenrock",
   "babylon",
+  "canton_network",
 ];
 
 export const CURRENCIES_LIST: CryptoCurrency[] = [
@@ -655,5 +656,18 @@ export const CURRENCIES_LIST: CryptoCurrency[] = [
         address: "https://www.mintscan.io/babylon/validators/$address",
       },
     ],
+  },
+  {
+    id: "canton_network",
+    name: "Canton",
+    type: "CryptoCurrency",
+    family: "canton",
+    units: [{ name: "Canton", code: "CANTON", magnitude: 38 }],
+    ticker: "CANTON",
+    scheme: "canton",
+    color: "#000000",
+    managerAppName: "Canton",
+    coinType: 6767,
+    explorerViews: [],
   },
 ];

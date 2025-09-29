@@ -59,11 +59,11 @@ describe("StepOnboard", () => {
       const { container } = render(<StepOnboard {...props} />);
 
       if (expectImportable) {
-        expect(screen.getByText("Onboarded accounts")).toBeInTheDocument();
+        expect(screen.getByText("canton.addAccount.onboard.onboarded")).toBeInTheDocument();
       } else {
-        expect(screen.queryByText("Onboarded accounts")).not.toBeInTheDocument();
+        expect(screen.queryByText("canton.addAccount.onboard.onboarded")).not.toBeInTheDocument();
       }
-      expect(screen.getByText("New account")).toBeInTheDocument();
+      expect(screen.getByText("canton.addAccount.onboard.newAccount")).toBeInTheDocument();
       container.remove();
     });
   });
