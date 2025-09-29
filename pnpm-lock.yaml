@@ -1214,9 +1214,6 @@ importers:
       react-native-easy-markdown:
         specifier: 2.0.0
         version: 2.0.0(prop-types@15.8.1)(react-native@0.77.3(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1))
-      react-native-extra-dimensions-android:
-        specifier: 1.2.5
-        version: 1.2.5
       react-native-fast-crypto:
         specifier: 2.2.0
         version: 2.2.0(patch_hash=bmot5xcuajv3pdpobflt4ufvae)(react-native@0.77.3(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1))
@@ -30824,9 +30821,6 @@ packages:
       prop-types:
         optional: true
 
-  react-native-extra-dimensions-android@1.2.5:
-    resolution: {integrity: sha512-eorFo9X1vEqAWUkgcZ300yKBG1wtgNeE7tdWAH2CE+P50FGTniJg5Sr6l1iPWG8ZskQOuF+KeiSTFlDa4vLfMw==}
-
   react-native-fast-crypto@2.2.0:
     resolution: {integrity: sha512-JXQmnXGH3HpJYZrBsR7sL6cO/W3k1pHqTYbwnwTsJ8VUYXIsIEf1T0nMk6Z+XkQNI8RIQOeWJ9AuZLai4onHZg==}
     peerDependencies:
@@ -52846,7 +52840,7 @@ snapshots:
 
   agent-base@6.0.2:
     dependencies:
-      debug: 4.4.1
+      debug: 4.3.4
     transitivePeerDependencies:
       - supports-color
 
@@ -68334,8 +68328,6 @@ snapshots:
       simple-markdown: 0.4.4
     optionalDependencies:
       prop-types: 15.8.1
-
-  react-native-extra-dimensions-android@1.2.5: {}
 
   react-native-fast-crypto@2.2.0(patch_hash=bmot5xcuajv3pdpobflt4ufvae)(react-native@0.77.3(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1)):
     dependencies:
