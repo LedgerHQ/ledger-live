@@ -2250,6 +2250,9 @@
         "continueCTA" : "Weiter",
         "contactSupportCTA" : "Support kontaktieren"
       }
+    },
+    "completionScreen" : {
+      "title" : "Jetzt hast du die volle Kontrolle"
     }
   },
   "blePairingFlow" : {
@@ -2380,6 +2383,8 @@
   },
   "syncOnboarding" : {
     "title" : "{{productName}} bereithalten",
+    "twoStepTitle" : "Los geht's!",
+    "firstStepReadyTitle" : "{{productName}} ist bereit",
     "estimatedTimeFormat" : "{{estimatedTime}} Min.",
     "deviceSelection" : {
       "title" : "Wähle das Ledger-Gerät aus, das du einrichten möchtest:",
@@ -2497,6 +2502,10 @@
       "newSeedContinueOnDevice" : "Befolge die Anweisungen auf deiner {{productName}}",
       "recovery" : "Schütze deine Vermögenswerte optimal mithilfe einer von einem Ledger-Gerät generierten geheimen Wiederherstellungsphrase. \n\nDu hast keine solche Phrase? Dann kannst du mit deinem {{productName}}-Gerät eine neue Phrase generieren."
     },
+    "secureCryptoStep" : {
+      "title" : "Deine Kryptos schützen",
+      "doneSubTitle" : "Deine Blockchain-Apps sind installiert."
+    },
     "backup" : {
       "title" : "Sicherheitskopie für deine geheime Wiederherstellungsphrase",
       "description" : "Mit einer digital verschlüsselten Sicherheitskopie kannst du den Zugang zu deiner Wallet wiederherstellen – auch ohne deine geheime Wiederherstellungsphrase.\n\nWähl aus, ob du eine digitale Sicherheitskopie möchtest:",
@@ -2524,6 +2533,14 @@
     },
     "completion" : {
       "title" : "Jetzt haben Sie alles unter Kontrolle"
+    },
+    "successStep" : {
+      "title" : "Deine {{productName}} ist nun einsatzbereit, um deine digitalen Assets zu schützen"
+    },
+    "newSeed" : {
+      "subtitle" : "Du kannst Krypto von jeder Börse oder Wallet nach Ledger Live übertragen, um maximale Sicherheit zu garantieren.",
+      "installCTA" : "Meine Kryptos schützen",
+      "skipCTA" : "Vielleicht später"
     }
   },
   "tabs" : {
@@ -3749,6 +3766,8 @@
         "apt_description" : "Zum Swappen von Aptos müsstest du ein anderes kompatibles Ledger-Gerät verwenden, z. B. eine Ledger Nano S Plus™, eine Ledger Nano X™, eine Ledger Flex™ oder eine Ledger Stax™.",
         "cosmos_title" : "Ledger Nano S™ unterstützt das Swappen von Cosmos nicht",
         "cosmos_description" : "Zum Swappen von Cosmos müsstest du ein anderes kompatibles Ledger-Gerät verwenden, z. B. eine Ledger Nano S Plus™, eine Ledger Nano X™, eine Ledger Flex™ oder eine Ledger Stax™.",
+        "hedera_title" : "Ledger Nano S™ unterstützt das Swappen von Hedera nicht",
+        "hedera_description" : "Zum Swappen von Hedera musst du ein anderes kompatibles Ledger-Gerät verwenden, z. B. eine Ledger Nano S Plus™, eine Ledger Nano X™, eine Ledger Flex™ oder eine Ledger Stax™.",
         "osmo_title" : "Ledger Nano S™ unterstützt das Swappen von Osmosis nicht",
         "osmo_description" : "Zum Swappen von Osmosis musst du ein anderes kompatibles Ledger-Gerät verwenden, z. B. eine Ledger Nano S Plus™, eine Ledger Nano X™, eine Ledger Flex™ oder eine Ledger Stax™.",
         "dydx_title" : "Ledger Nano S™ unterstützt das Swappen von dYdX nicht",
@@ -4030,6 +4049,10 @@
       "solanaRawTransaction" : {
         "title" : "Blindsignatur erforderlich",
         "description" : "Du kannst die Transaktionsdetails nicht auf deinem Ledger-Gerät bestätigen. Wenn du sie signierst, könntest du alle deine Assets verlieren. Signiere nur, wenn du dieser Website wirklich vertraust."
+      },
+      "bitcoinPsbtTransaction" : {
+        "title" : "Auf Gerät bestätigen",
+        "description" : "Im nächsten Schritt kannst du den Transaktionsbetrag und den Empfänger auf dem Gerät bestätigen."
       },
       "subaccountsWarning" : "Sie müssen dieses Konto mit {{ currency }} auffüllen, um die Token dieses Kontos zu senden",
       "tag" : "Markierung (optional)",
@@ -4401,7 +4424,8 @@
         "default" : "Verifiziere die Swap-Details auf deiner Ledger, bevor du sie sendest.",
         "provider" : "Verifizieren Sie die Swap-Details auf Ihrem Gerät, bevor Sie diese senden. {{providerName}} muss möglicherweise eine zusätzliche Überprüfung für einige Transaktionen durchführen, was zu einer Verzögerung führen kann."
       },
-      "acceptTerms" : "Durch Validieren dieser Transaktion stimme ich den\n<0>Nutzungsbedingungen von <0>{{provider}}</0> zu</0>",
+      "acceptTerms" : "By signing this transaction, you accept <0><0>{{provider}}</0>'s terms of use</0>",
+      "changellySimplifiedAcceptTerms" : "By validating this transaction, you accept Changelly's <0>Terms of Use</0> and its <1>AML/KYC policy</1>. Changelly may apply AML/KYC procedures which can, in limited cases, impact the completion of your transaction. Should that happen, you must contact Changelly’s <2>customer support.</2>",
       "notice" : "Überprüfen Sie die Details des Tauschs auf Ihrem Gerät, bevor Sie sie senden. Die Adressen werden sicher ausgetauscht, sodass Sie diese nicht verifizieren müssen."
     },
     "swap2" : {
@@ -7912,7 +7936,7 @@
     },
     "transactionCannotBeCreated" : {
       "title" : "Anbieter nicht verfügbar",
-      "description" : "Wir können deinen Swap bei diesem Anbieter nicht durchführen. Bitte probiere es mit einem anderen. Fehlercode: 8HBB{{errorCode}}"
+      "description" : "Changelly kann diese Transaktion nicht verarbeiten. Fehlercode: 8HBB{{errorCode}}"
     },
     "default" : {
       "title" : "Etwas ist schief gelaufen",
