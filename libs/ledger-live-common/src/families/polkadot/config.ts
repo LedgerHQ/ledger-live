@@ -27,6 +27,7 @@ export const polkadotConfig: Record<string, ConfigInfo> = {
       },
       metadataHash: {
         url: "https://polkadot-metadata-shortener.api.live.ledger.com/node/metadata/hash",
+        id: "dot",
       },
     },
   },
@@ -42,8 +43,11 @@ export const polkadotConfig: Record<string, ConfigInfo> = {
       node: {
         url: "https://polkadot-asset-hub-fullnodes.api.live.ledger.com",
       },
+      staking: {
+        electionStatusThreshold: getEnv("POLKADOT_ELECTION_STATUS_THRESHOLD"),
+      },
       indexer: {
-        url: "https://explorers.api.live.ledger.com/blockchain/dot_asset_hub", // TO VERIFY
+        url: "https://explorers.api.live.ledger.com/blockchain/dot_asset_hub",
       },
       metadataShortener: {
         url: "https://polkadot-metadata-shortener.api.live.ledger.com/transaction/metadata",
@@ -53,6 +57,7 @@ export const polkadotConfig: Record<string, ConfigInfo> = {
         url: "https://polkadot-metadata-shortener.api.live.ledger.com/node/metadata/hash",
         id: "dot-hub",
       },
+      hasBeenMigrated: false,
     },
   },
   config_currency_westend: {
@@ -62,21 +67,21 @@ export const polkadotConfig: Record<string, ConfigInfo> = {
         type: "active",
       },
       sidecar: {
-        url: "https://polkadot-westend-sidecar.coin.ledger.com",
+        url: "https://polkadot-westend-sidecar.coin.ledger.com/rc",
       },
       node: {
         url: "https://polkadot-westend-fullnodes.api.live.ledger.com",
       },
       indexer: {
-        url: "https://explorers.api.live.ledger.com/blockchain/dot_westend", // TO VERIFY
+        url: "https://explorers.api.live.ledger.com/blockchain/dot_westend",
       },
       metadataShortener: {
         url: "https://polkadot-westend-metadata-shortener.api.live.ledger.com/transaction/metadata",
-        id: "dot",
+        id: "dot-hub",
       },
       metadataHash: {
         url: "https://polkadot-westend-metadata-shortener.api.live.ledger.com/node/metadata/hash",
-        id: "dot",
+        id: "dot-hub",
       },
     },
   },
@@ -93,7 +98,7 @@ export const polkadotConfig: Record<string, ConfigInfo> = {
         url: "https://polkadot-westend-asset-hub-fullnodes.api.live.ledger.com",
       },
       indexer: {
-        url: "https://explorers.api.live.ledger.com/blockchain/dot_asset_hub_westend", // TO VERIFY
+        url: "https://explorers.api.live.ledger.com/blockchain/dot_asset_hub_westend",
       },
       metadataShortener: {
         url: "https://polkadot-westend-metadata-shortener.api.live.ledger.com/transaction/metadata",

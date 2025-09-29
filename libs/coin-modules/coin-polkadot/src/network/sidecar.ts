@@ -37,7 +37,20 @@ import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
  * @returns {string}
  */
 const getSidecarUrl = (route: string, currency?: CryptoCurrency): string => {
-  const sidecarUrl = coinConfig.getCoinConfig(currency).sidecar.url;
+  const config = coinConfig.getCoinConfig(currency);
+  const sidecarUrl = config.sidecar.url;
+
+  if (
+    currency?.id === "assethub_polkadot" &&
+    route.startsWith("/pallets/staking") &&
+    !config.hasBeenMigrated
+  ) {
+    route = `/rc${route}`;
+  } else if (currency?.id === "westend" && route.startsWith("/rc/pallets/staking")) {
+    // Staking does not work on Relay Chain (remove /rc)
+    route = `${route.slice(3)}`;
+  }
+
   return `${sidecarUrl}${route || ""}`;
 };
 

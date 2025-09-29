@@ -2353,26 +2353,32 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     type: "CryptoCurrency",
     id: "assethub_polkadot",
     coinType: CoinType.POLKADOT,
-    name: "Assethub Polkadot",
+    name: "Polkadot",
     managerAppName: "Polkadot",
     ticker: "DOT",
     deviceTicker: "DOT",
     scheme: "assethub_polkadot",
     color: "#E6007A",
+    family: "polkadot",
     units: [
       {
         name: "DOT",
         code: "DOT",
         magnitude: 10,
       },
+      {
+        name: "planck",
+        code: "PLANCK",
+        magnitude: 0,
+      },
     ],
-    family: "polkadot",
     explorerViews: [
       {
         address: "https://assethub-polkadot.subscan.io/account/$address",
         tx: "https://assethub-polkadot.subscan.io/extrinsic/$hash",
       },
     ],
+    keywords: ["dot", "polkadot"],
   },
   polygon: {
     type: "CryptoCurrency",
@@ -3442,7 +3448,6 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
         magnitude: 12,
       },
     ],
-    isTestnetFor: "polkadot",
     family: "polkadot",
     explorerViews: [
       {

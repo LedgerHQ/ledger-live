@@ -347,7 +347,7 @@ export const getOperations = async (
   startAt = 0,
   limit = LIMIT,
 ) => {
-  if (currency?.id === "westend") {
+  if (currency && ["westend", "assethub_westend"].includes(currency.id)) {
     const encodeAddr = encodeAddress(addr, 42);
     return await fetchOperationList(accountId, encodeAddr, startAt, currency, limit);
   } else {
