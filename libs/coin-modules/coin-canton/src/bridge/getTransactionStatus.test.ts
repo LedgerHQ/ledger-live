@@ -84,6 +84,7 @@ describe("getTransactionStatus", () => {
       minReserve: 100, // 100 units minimum reserve
       networkType: "mainnet",
       status: { type: "active" },
+      nativeInstrumentId: "Amulet",
     });
   });
 
@@ -94,6 +95,7 @@ describe("getTransactionStatus", () => {
         amount: new BigNumber(100),
         recipient: "valid::123",
         fee: null,
+        tokenId: "",
       };
 
       const result = await getTransactionStatus(mockAccount, transaction);
@@ -108,6 +110,7 @@ describe("getTransactionStatus", () => {
         amount: new BigNumber(100),
         recipient: "valid::123",
         fee: new BigNumber(0),
+        tokenId: "",
       };
 
       const result = await getTransactionStatus(mockAccount, transaction);
@@ -122,6 +125,7 @@ describe("getTransactionStatus", () => {
         amount: new BigNumber(100), // Use larger amount to avoid balance issues
         recipient: "valid::123",
         fee: new BigNumber(1500), // 15x the amount
+        tokenId: "",
       };
 
       const result = await getTransactionStatus(mockAccount, transaction);
@@ -136,6 +140,7 @@ describe("getTransactionStatus", () => {
         amount: new BigNumber(100),
         recipient: "valid::123",
         fee: new BigNumber(10), // 0.1x the amount
+        tokenId: "",
       };
 
       const result = await getTransactionStatus(mockAccount, transaction);
@@ -152,6 +157,7 @@ describe("getTransactionStatus", () => {
         amount: new BigNumber(950), // 950 + 10 fee = 960, but balance is 1000 and reserve is 100
         recipient: "valid::123",
         fee: new BigNumber(10),
+        tokenId: "",
       };
 
       const result = await getTransactionStatus(mockAccount, transaction);
@@ -165,6 +171,7 @@ describe("getTransactionStatus", () => {
         amount: new BigNumber(50), // Below reserve amount of 100
         recipient: "valid::123",
         fee: new BigNumber(10),
+        tokenId: "",
       };
 
       const result = await getTransactionStatus(mockAccount, transaction);
@@ -178,6 +185,7 @@ describe("getTransactionStatus", () => {
         amount: new BigNumber(800), // 800 + 10 fee = 810, balance is 1000, reserve is 100, so 900 available
         recipient: "valid::123",
         fee: new BigNumber(10),
+        tokenId: "",
       };
 
       const result = await getTransactionStatus(mockAccount, transaction);
@@ -193,6 +201,7 @@ describe("getTransactionStatus", () => {
         amount: new BigNumber(100),
         recipient: "",
         fee: new BigNumber(10),
+        tokenId: "",
       };
 
       const result = await getTransactionStatus(mockAccount, transaction);
@@ -206,6 +215,7 @@ describe("getTransactionStatus", () => {
         amount: new BigNumber(100),
         recipient: "test::123", // Same as account.freshAddress
         fee: new BigNumber(10),
+        tokenId: "",
       };
 
       const result = await getTransactionStatus(mockAccount, transaction);
@@ -219,6 +229,7 @@ describe("getTransactionStatus", () => {
         amount: new BigNumber(100),
         recipient: "invalid-address",
         fee: new BigNumber(10),
+        tokenId: "",
       };
 
       const result = await getTransactionStatus(mockAccount, transaction);
@@ -232,6 +243,7 @@ describe("getTransactionStatus", () => {
         amount: new BigNumber(100),
         recipient: "valid::456",
         fee: new BigNumber(10),
+        tokenId: "",
       };
 
       const result = await getTransactionStatus(mockAccount, transaction);
@@ -254,6 +266,7 @@ describe("getTransactionStatus", () => {
         minReserve: 0, // Set reserve to 0 to avoid reserve-related errors
         networkType: "mainnet",
         status: { type: "active" },
+        nativeInstrumentId: "Amulet",
       });
 
       const transaction: Transaction = {
@@ -261,6 +274,7 @@ describe("getTransactionStatus", () => {
         amount: new BigNumber(0),
         recipient: "valid::123",
         fee: new BigNumber(10),
+        tokenId: "",
       };
 
       const result = await getTransactionStatus(accountWithHighBalance, transaction);
@@ -274,6 +288,7 @@ describe("getTransactionStatus", () => {
         amount: new BigNumber(100),
         recipient: "valid::123",
         fee: new BigNumber(10),
+        tokenId: "",
       };
 
       const result = await getTransactionStatus(mockAccount, transaction);
@@ -289,6 +304,7 @@ describe("getTransactionStatus", () => {
         amount: new BigNumber(100),
         recipient: "valid::123",
         fee: new BigNumber(10),
+        tokenId: "",
       };
 
       const result = await getTransactionStatus(mockAccount, transaction);
@@ -304,6 +320,7 @@ describe("getTransactionStatus", () => {
         amount: new BigNumber(100),
         recipient: "valid::123",
         fee: new BigNumber(10),
+        tokenId: "",
       };
 
       const result = await getTransactionStatus(mockAccount, transaction);
@@ -325,6 +342,7 @@ describe("getTransactionStatus", () => {
         amount: new BigNumber(50),
         recipient: "valid::123",
         fee: new BigNumber(10),
+        tokenId: "",
       };
 
       const result = await getTransactionStatus(accountWithZeroBalance, transaction);
@@ -343,6 +361,7 @@ describe("getTransactionStatus", () => {
         amount: new BigNumber(50),
         recipient: "valid::123",
         fee: new BigNumber(10),
+        tokenId: "",
       };
 
       const result = await getTransactionStatus(accountWithReserveBalance, transaction);
@@ -355,6 +374,7 @@ describe("getTransactionStatus", () => {
         minReserve: 0,
         networkType: "mainnet",
         status: { type: "active" },
+        nativeInstrumentId: "Amulet",
       });
 
       const transaction: Transaction = {
@@ -362,6 +382,7 @@ describe("getTransactionStatus", () => {
         amount: new BigNumber(50),
         recipient: "valid::123",
         fee: new BigNumber(10),
+        tokenId: "",
       };
 
       const result = await getTransactionStatus(mockAccount, transaction);
@@ -373,6 +394,7 @@ describe("getTransactionStatus", () => {
       mockCoinConfig.getCoinConfig.mockReturnValue({
         networkType: "mainnet",
         status: { type: "active" },
+        nativeInstrumentId: "Amulet",
       });
 
       const transaction: Transaction = {
@@ -380,6 +402,7 @@ describe("getTransactionStatus", () => {
         amount: new BigNumber(50),
         recipient: "valid::123",
         fee: new BigNumber(10),
+        tokenId: "",
       };
 
       const result = await getTransactionStatus(mockAccount, transaction);
@@ -395,6 +418,7 @@ describe("getTransactionStatus", () => {
         amount: new BigNumber(0), // AmountRequired
         recipient: "", // RecipientRequired
         fee: null, // FeeNotLoaded
+        tokenId: "",
       };
 
       const result = await getTransactionStatus(mockAccount, transaction);
@@ -410,6 +434,7 @@ describe("getTransactionStatus", () => {
         amount: new BigNumber(5), // Small amount
         recipient: "valid::123",
         fee: new BigNumber(100), // High fee relative to amount
+        tokenId: "",
       };
 
       const result = await getTransactionStatus(mockAccount, transaction);
