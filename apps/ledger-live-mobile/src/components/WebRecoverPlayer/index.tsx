@@ -1,6 +1,6 @@
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { StyleSheet, SafeAreaView, BackHandler, Platform } from "react-native";
+import { StyleSheet, BackHandler, Platform } from "react-native";
 import { useDispatch } from "react-redux";
 import { ScopeProvider } from "jotai-scope";
 
@@ -16,9 +16,8 @@ import { initialWebviewState } from "../Web3AppWebview/helpers";
 import HeaderTitle from "../HeaderTitle";
 import { InfoPanel } from "../WebPlatformPlayer/InfoPanel";
 import { RightHeader } from "../WebPlatformPlayer/RightHeader";
-import extraStatusBarPadding from "~/logic/extraStatusBarPadding";
-
 import { completeOnboarding, setHasOrderedNano, setReadOnlyMode } from "~/actions/settings";
+import SafeAreaView from "../SafeAreaView";
 
 type Props = {
   manifest: LiveAppManifest;
@@ -105,7 +104,7 @@ const WebRecoverPlayer = ({ manifest, inputs }: Props) => {
 
   return (
     <ScopeProvider atoms={[currentAccountAtom]}>
-      <SafeAreaView style={[styles.root, { paddingTop: !headerShown ? extraStatusBarPadding : 0 }]}>
+      <SafeAreaView style={[styles.root]} isFlex>
         <Web3AppWebview
           ref={webviewAPIRef}
           manifest={manifest}
@@ -131,7 +130,7 @@ export default WebRecoverPlayer;
 
 const styles = StyleSheet.create({
   root: {
-    flex: 1,
+    flexGrow: 1,
   },
   headerRight: {
     display: "flex",
