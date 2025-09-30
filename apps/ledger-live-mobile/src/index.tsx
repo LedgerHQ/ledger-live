@@ -3,7 +3,7 @@ import "./live-common-setup";
 import "./iosWebsocketFix";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import React, { Component, useCallback, useMemo, useEffect } from "react";
-import { StyleSheet, LogBox, Appearance, AppState } from "react-native";
+import { StyleSheet, LogBox, Appearance, AppState, View } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { I18nextProvider } from "react-i18next";
 import Transport from "@ledgerhq/hw-transport";
@@ -229,13 +229,12 @@ function App() {
       <ConfigureDBSaveEffects />
       <SyncNewAccounts priority={5} />
       <TransactionsAlerts />
-      <ExperimentalHeader />
       {datadogFF?.enabled ? (
         <DatadogProvider configuration={datadogAutoInstrumentation}>
-          <RootNavigator />
+          <AppView />
         </DatadogProvider>
       ) : (
-        <RootNavigator />
+        <AppView />
       )}
 
       <AnalyticsConsole />
@@ -247,6 +246,32 @@ function App() {
         <StoragePerformanceOverlay />
       </FeatureToggle>
     </>
+  );
+}
+
+/**
+ * AppView is used to wrap the experimental header and the root navigator.
+ * Both the experimental header and the root navigator must be taken into
+ * account when calculating screen offsets or insets (e.g. KeyboardView or
+ * SafeAreaView).
+ */
+function AppView() {
+  // TODO: Normally, we should use a SafeAreaView as root view to avoid
+  // importing it everywhere and recalculating the insets.
+  return (
+    <View
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        flex: 1,
+        height: "100%",
+      }}
+    >
+      <ExperimentalHeader />
+      <View style={{ flex: 1 }}>
+        <RootNavigator />
+      </View>
+    </View>
   );
 }
 

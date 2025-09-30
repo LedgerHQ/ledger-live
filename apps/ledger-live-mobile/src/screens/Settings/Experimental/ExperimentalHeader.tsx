@@ -87,8 +87,6 @@ function ExperimentalHeader() {
       style={[
         styles.root,
         {
-          zIndex: !isExperimental && !areFeatureFlagsOverridden && !Config.MOCK ? 0 : 1,
-          marginBottom: isExperimental || Config.MOCK ? -top + 20 : 0,
           backgroundColor: colors.lightLiveBg,
         },
         heightStyle,
@@ -137,16 +135,10 @@ export default ExperimentalHeader;
 
 const styles = StyleSheet.create({
   root: {
-    width: "100%",
-    position: "relative",
     overflow: "visible",
   },
   container: {
-    position: "absolute",
-    left: 0,
-    width: "100%",
     height: 38,
-    zIndex: 1,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
