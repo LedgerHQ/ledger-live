@@ -1,5 +1,4 @@
 import { AppPage } from "./abstractClasses";
-import { waitFor } from "../utils/waitFor";
 import { step } from "../misc/reporters/step";
 import { ElectronApplication, expect } from "@playwright/test";
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
@@ -22,15 +21,9 @@ export class SwapPage extends AppPage {
   private specificQuoteCardProviderName = (provider: string) =>
     `compact-quote-card-provider-name-${provider}`;
   private numberOfQuotes = "number-of-quotes";
-  private destinationCurrencyDropdown = this.page.getByTestId("destination-currency-dropdown");
-  private destinationCurrencyAmount = this.page.getByTestId("destination-currency-amount");
-  private feesValue = this.page.getByTestId("fees-value");
   private switchButton = "to-account-switch-accounts";
   private swapMaxToggle = "from-account-max-toggle";
   private quoteInfosFeesSelector = "QuoteCard-info-fees-selector";
-
-  // Exchange Button Component
-  private exchangeButton = this.page.getByTestId("exchange-button");
 
   // Exchange Drawer Components
   readonly swapId = this.page.getByTestId("swap-id");
@@ -243,11 +236,6 @@ export class SwapPage extends AppPage {
     expect(bestOffer?.quote).toMatch(quoteContainers[0]);
   }
 
-  @step("Wait for exchange to be available")
-  async waitForExchangeToBeAvailable() {
-    return waitFor(() => this.exchangeButton.isEnabled(), 250, 10000);
-  }
-
   @step("Check exchange button is visible and enabled")
   async checkExchangeButton(electronApp: ElectronApplication, provider: string) {
     const [, webview] = electronApp.windows();
@@ -283,40 +271,10 @@ export class SwapPage extends AppPage {
     await continueButton.click();
   }
 
-  @step("Select currency to swap to: $0")
-  async selectCurrencyToSwapTo(currencyToSwapTo: string) {
-    await this.waitForPageDomContentLoadedState();
-    await expect(this.destinationCurrencyDropdown).toBeEnabled();
-    await this.destinationCurrencyDropdown.click();
-    await this.page.keyboard.type(currencyToSwapTo);
-    await this.dropdownOptions.locator(this.optionWithText(currencyToSwapTo)).first().click();
-    const selectedCurrencyTo = this.destinationCurrencyDropdown.locator(this.dropdownSelectedValue);
-    await expect(selectedCurrencyTo).toHaveText(currencyToSwapTo);
-  }
-
-  @step("Retrieve destination currency amount value")
-  async getDestinationCurrencyAmountValue() {
-    return await this.destinationCurrencyAmount.inputValue();
-  }
-
   @step("Retrieve send currency amount value")
   async getAmountToSend(electronApp: ElectronApplication) {
     const [, webview] = electronApp.windows();
     return await webview.getByTestId(this.fromAccountAmountInput).inputValue();
-  }
-
-  @step("Retrieve fees amount value")
-  async getFeesValue() {
-    const text = await this.feesValue.textContent();
-    return text ? text?.split(" ")[0] : "";
-  }
-
-  @step("Select currency to swap from")
-  async selectAssetFrom(electronApp: ElectronApplication, accountToSwapFrom: Account) {
-    const [, webview] = electronApp.windows();
-    await webview.getByTestId(this.fromAccountCoinSelector).click();
-    const networkName = accountToSwapFrom.parentAccount?.currency.name;
-    await this.chooseAssetDrawer.chooseFromAsset(accountToSwapFrom.currency.name, networkName);
   }
 
   @step("Check currency to swap from is $0")

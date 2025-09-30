@@ -1,10 +1,20 @@
-import { expect } from "detox";
 import { startLiveApp, stopServer } from "../../models/liveApps";
 import DiscoverPage from "../discover/discover.page";
 
 const port = 52619;
 
 export default class DummyWalletApp {
+  /**
+   * Helper function to type text into an input field and verify it was set correctly
+   * @param testId - The test ID of the input element
+   * @param value - The value to type and verify
+   */
+  private async typeAndVerifyInput(testId: string, value: string) {
+    await typeTextByWebTestId(testId, value);
+    const text = await getWebElementValue(testId);
+    jestExpect(text).toBe(value);
+  }
+
   async startApp() {
     const continueTest = await startLiveApp("dummy-wallet-app", port);
     // Check that dummy app in tests/dummy-app-build has been started successfully
@@ -30,12 +40,12 @@ export default class DummyWalletApp {
   }
 
   async sendRequest() {
-    await typeTextByWebTestId("currency-ids-input", "ethereum,bitcoin");
+    await this.typeAndVerifyInput("currency-ids-input", "ethereum,bitcoin");
     await tapWebElementByTestId("account-request");
   }
 
   async sendAccountReceive() {
-    await typeTextByWebTestId("account-id-input", "2d23ca2a-069e-579f-b13d-05bc706c7583");
+    await this.typeAndVerifyInput("account-id-input", "2d23ca2a-069e-579f-b13d-05bc706c7583");
     await tapWebElementByTestId("account-receive");
   }
 
@@ -45,10 +55,10 @@ export default class DummyWalletApp {
     amount: string,
     recipientAddress: string,
   ) {
-    await typeTextByWebTestId("account-id-input", accountId);
-    await typeTextByWebTestId("currency-ids-input", currencyIds.join(","));
-    await typeTextByWebTestId("amount-input", amount);
-    await typeTextByWebTestId("recipient-input", recipientAddress);
+    await this.typeAndVerifyInput("account-id-input", accountId);
+    await this.typeAndVerifyInput("currency-ids-input", currencyIds.join(","));
+    await this.typeAndVerifyInput("amount-input", amount);
+    await this.typeAndVerifyInput("recipient-input", recipientAddress);
     await tapWebElementByTestId("transaction-sign");
   }
 
@@ -65,23 +75,27 @@ export default class DummyWalletApp {
   }
 
   async setAccountId(accountId: string) {
-    await typeTextByWebTestId("account-id-input", accountId);
-    await expect(getWebElementByTestId("account-id-input")).toHaveText(accountId);
+    await this.typeAndVerifyInput("account-id-input", accountId);
   }
 
   async setRecipient(recipient: string) {
-    await typeTextByWebTestId("recipient-input", recipient);
-    await expect(getWebElementByTestId("recipient-input")).toHaveText(recipient);
+    await this.typeAndVerifyInput("recipient-input", recipient);
   }
 
   async setAmount(amount: string) {
-    await typeTextByWebTestId("amount-input", amount);
-    await expect(getWebElementByTestId("amount-input")).toHaveText(amount);
+    await this.typeAndVerifyInput("amount-input", amount);
   }
 
   async setData(data: string) {
-    await typeTextByWebTestId("data-input", data);
-    await expect(getWebElementByTestId("data-input")).toHaveText(data);
+    await this.typeAndVerifyInput("data-input", data);
+  }
+
+  async setMessage(message: string) {
+    await this.typeAndVerifyInput("message-input", message);
+  }
+
+  async messageSign() {
+    await tapWebElementByTestId("message-sign");
   }
 
   async getResOutput() {

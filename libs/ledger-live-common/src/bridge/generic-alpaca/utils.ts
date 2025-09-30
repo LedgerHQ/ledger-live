@@ -194,7 +194,7 @@ export const buildOptimisticOperation = (
       type = "OUT";
       break;
   }
-  const fees = BigInt(transaction["fees"]?.toString() || "0");
+  const fees = BigInt(transaction.fees?.toString() || "0");
   const { subAccountId } = transaction;
   const { subAccounts } = account;
 

@@ -20,16 +20,7 @@ import {
 
 export const ModularDrawerDevToolContent = (props: ModularDrawerDevToolContentProps) => {
   const { t } = useTranslation();
-  const {
-    includeTokens,
-    setIncludeTokens,
-    openModal,
-    setOpenModal,
-    location,
-    setLocation,
-    liveApp,
-    setLiveApp,
-  } = useDevToolState();
+  const { openModal, setOpenModal, location, setLocation, liveApp, setLiveApp } = useDevToolState();
   const dispatch = useDispatch();
 
   const {
@@ -54,19 +45,18 @@ export const ModularDrawerDevToolContent = (props: ModularDrawerDevToolContentPr
 
   const debugDuplicates = () => {
     dispatch(setIsDebuggingDuplicates(true));
-    openAssetFlow(true, {
+    openAssetFlow({
       assets: { leftElement: "undefined", rightElement: "undefined" },
       networks: { leftElement: "undefined", rightElement: "undefined" },
     });
   };
 
   const openDrawerFunctions: Record<ModularDrawerLocation, () => void> = {
-    [ModularDrawerLocation.ADD_ACCOUNT]: () => openAssetFlow(includeTokens, drawerConfiguration),
+    [ModularDrawerLocation.ADD_ACCOUNT]: () => openAssetFlow(drawerConfiguration),
     [ModularDrawerLocation.LIVE_APP]: () => {
       dispatch(setFlowValue("Dev Tool"));
       dispatch(setSourceValue("Dev Tool"));
       openAssetAndAccountDrawer({
-        includeTokens,
         drawerConfiguration,
       });
     },
@@ -85,8 +75,6 @@ export const ModularDrawerDevToolContent = (props: ModularDrawerDevToolContentPr
             setLocation={setLocation}
             liveApp={liveApp}
             setLiveApp={setLiveApp}
-            includeTokens={includeTokens}
-            setIncludeTokens={setIncludeTokens}
             openModal={openModal}
             setOpenModal={setOpenModal}
           />

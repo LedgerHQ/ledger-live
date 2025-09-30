@@ -8,6 +8,7 @@ import { INITIAL_STATE } from "~/renderer/reducers/settings";
 import {
   ARB_ACCOUNT,
   BASE_ACCOUNT,
+  BTC_ACCOUNT,
   ETH_ACCOUNT,
   ETH_ACCOUNT_WITH_USDC,
 } from "../../__mocks__/accounts.mock";
@@ -27,11 +28,21 @@ import {
 } from "../../__tests__/shared";
 import ModularDrawerFlowManager from "../ModularDrawerFlowManager";
 
+jest.mock("@ledgerhq/live-common/modularDrawer/hooks/useCurrenciesUnderFeatureFlag", () => ({
+  useCurrenciesUnderFeatureFlag: () => mockUseCurrenciesUnderFeatureFlag(),
+}));
+
+const mockUseCurrenciesUnderFeatureFlag = jest.fn(() => ({
+  deactivatedCurrencyIds: new Set(),
+}));
+
 const MAD_BACK_BUTTON_TEST_ID = "mad-back-button";
 
 beforeEach(() => {
   mockDomMeasurements();
 });
+
+const mockCurrencies = currencies.map(currency => currency.id);
 
 describe("ModularDrawerFlowManager - Select Account Flow", () => {
   beforeEach(() => {
@@ -40,7 +51,7 @@ describe("ModularDrawerFlowManager - Select Account Flow", () => {
   it("should render AssetSelection step with correct props", async () => {
     render(
       <ModularDrawerFlowManager
-        currencies={currencies}
+        currencies={mockCurrencies}
         onAccountSelected={mockOnAccountSelected}
       />,
     );
@@ -53,7 +64,7 @@ describe("ModularDrawerFlowManager - Select Account Flow", () => {
   it("should navigate to NetworkSelection step after asset selection", async () => {
     const { user } = render(
       <ModularDrawerFlowManager
-        currencies={currencies}
+        currencies={mockCurrencies}
         onAccountSelected={mockOnAccountSelected}
       />,
     );
@@ -71,7 +82,7 @@ describe("ModularDrawerFlowManager - Select Account Flow", () => {
   it("should navigate to AccountSelection step after network selection", async () => {
     const { user } = render(
       <ModularDrawerFlowManager
-        currencies={currencies}
+        currencies={mockCurrencies}
         onAccountSelected={mockOnAccountSelected}
       />,
       {
@@ -98,7 +109,7 @@ describe("ModularDrawerFlowManager - Select Account Flow", () => {
   it("should call onSelectAccount after accountSelection", async () => {
     const { user } = render(
       <ModularDrawerFlowManager
-        currencies={currencies}
+        currencies={mockCurrencies}
         onAccountSelected={mockOnAccountSelected}
       />,
       {
@@ -125,7 +136,7 @@ describe("ModularDrawerFlowManager - Select Account Flow", () => {
   it("should navigate directly to accountSelection step", async () => {
     render(
       <ModularDrawerFlowManager
-        currencies={[ethereumCurrency]}
+        currencies={[ethereumCurrency.id]}
         onAccountSelected={mockOnAccountSelected}
         areCurrenciesFiltered
       />,
@@ -143,7 +154,7 @@ describe("ModularDrawerFlowManager - Select Account Flow", () => {
   it("should navigate directly to networkSelection step", async () => {
     render(
       <ModularDrawerFlowManager
-        currencies={[ethereumCurrency, arbitrumCurrency]}
+        currencies={[ethereumCurrency.id, arbitrumCurrency.id]}
         onAccountSelected={mockOnAccountSelected}
         areCurrenciesFiltered
       />,
@@ -157,8 +168,9 @@ describe("ModularDrawerFlowManager - Select Account Flow", () => {
   it("should display empty screen if there is no account", async () => {
     render(
       <ModularDrawerFlowManager
-        currencies={[bitcoinCurrency]}
+        currencies={[bitcoinCurrency.id]}
         onAccountSelected={mockOnAccountSelected}
+        areCurrenciesFiltered
       />,
     );
 
@@ -172,8 +184,9 @@ describe("ModularDrawerFlowManager - Select Account Flow", () => {
     const bitcoinCurrencyResult = getCryptoCurrencyById("bitcoin");
     const { user } = render(
       <ModularDrawerFlowManager
-        currencies={[bitcoinCurrency]}
+        currencies={[bitcoinCurrency.id]}
         onAccountSelected={mockOnAccountSelected}
+        areCurrenciesFiltered
       />,
     );
 
@@ -196,7 +209,7 @@ describe("ModularDrawerFlowManager - Select Account Flow", () => {
   it("should go back to AssetSelection step when clicking on back button", async () => {
     const { user } = render(
       <ModularDrawerFlowManager
-        currencies={currencies}
+        currencies={mockCurrencies}
         onAccountSelected={mockOnAccountSelected}
       />,
     );
@@ -219,7 +232,7 @@ describe("ModularDrawerFlowManager - Select Account Flow", () => {
   it("should go back to NetworkSelection step when clicking on back button", async () => {
     const { user } = render(
       <ModularDrawerFlowManager
-        currencies={currencies}
+        currencies={mockCurrencies}
         onAccountSelected={mockOnAccountSelected}
       />,
       {
@@ -248,8 +261,9 @@ describe("ModularDrawerFlowManager - Select Account Flow", () => {
   it("should not display back button on AccountSelection step if only one account", async () => {
     render(
       <ModularDrawerFlowManager
-        currencies={[ethereumCurrency]}
+        currencies={[ethereumCurrency.id]}
         onAccountSelected={mockOnAccountSelected}
+        areCurrenciesFiltered
       />,
     );
 
@@ -260,7 +274,7 @@ describe("ModularDrawerFlowManager - Select Account Flow", () => {
   it("should not display back button on AccountSelection step if only one currency", async () => {
     render(
       <ModularDrawerFlowManager
-        currencies={[ethereumCurrency, arbitrumCurrency]}
+        currencies={[ethereumCurrency.id, arbitrumCurrency.id]}
         onAccountSelected={mockOnAccountSelected}
         areCurrenciesFiltered
       />,
@@ -273,7 +287,7 @@ describe("ModularDrawerFlowManager - Select Account Flow", () => {
   it("should not re trigger page tracking on asset search", async () => {
     const { user } = render(
       <ModularDrawerFlowManager
-        currencies={currencies}
+        currencies={mockCurrencies}
         onAccountSelected={mockOnAccountSelected}
       />,
       { initialState: { modularDrawer: { flow: "flowTest", source: "sourceTest" } } },
@@ -328,7 +342,7 @@ describe("ModularDrawerFlowManager - Select Account Flow", () => {
   it("should navigate normaly doing a complex flow", async () => {
     const { user } = render(
       <ModularDrawerFlowManager
-        currencies={currencies}
+        currencies={mockCurrencies}
         onAccountSelected={mockOnAccountSelected}
       />,
     );
@@ -368,7 +382,7 @@ describe("ModularDrawerFlowManager - Select Account Flow", () => {
   it("should navigate to usdc account selection step", async () => {
     const { user } = render(
       <ModularDrawerFlowManager
-        currencies={[usdcToken]}
+        currencies={[usdcToken.id]}
         onAccountSelected={mockOnAccountSelected}
         areCurrenciesFiltered
       />,
@@ -385,29 +399,25 @@ describe("ModularDrawerFlowManager - Select Account Flow", () => {
     expect(screen.getByText(/select account/i)).toBeVisible();
   });
 
-  it("should navigate to base account selection step", async () => {
+  it("should navigate to bitcoin account selection step", async () => {
     const { user } = render(
       <ModularDrawerFlowManager
-        currencies={[baseCurrency, scrollCurrency, bitcoinCurrency]}
+        currencies={[baseCurrency.id, scrollCurrency.id, bitcoinCurrency.id]}
         onAccountSelected={mockOnAccountSelected}
         areCurrenciesFiltered
       />,
       {
         ...INITIAL_STATE,
         initialState: {
-          accounts: [BASE_ACCOUNT, ARB_ACCOUNT],
+          accounts: [BASE_ACCOUNT, ARB_ACCOUNT, BTC_ACCOUNT],
         },
       },
     );
 
-    await waitFor(() => expect(screen.getByText(/base/i)).toBeVisible());
-    await user.click(screen.getByText(/base/i));
-    expect(screen.getByText(/select network/i)).toBeVisible();
-
-    await user.click(screen.getByText(/base/i));
+    await waitFor(() => expect(screen.getByText(/bitcoin/i)).toBeVisible());
+    await user.click(screen.getByText(/bitcoin/i));
     expect(screen.getByText(/select account/i)).toBeVisible();
-
-    expect(screen.getByText(/base 2/i)).toBeVisible();
+    expect(screen.getByText(/bitcoin 2/i)).toBeVisible();
   });
 
   it("should keep the MAD opened during add account flow", async () => {
@@ -415,7 +425,7 @@ describe("ModularDrawerFlowManager - Select Account Flow", () => {
       <>
         <div id="modals" />
         <ModularDrawerFlowManager
-          currencies={[baseCurrency, scrollCurrency, bitcoinCurrency]}
+          currencies={[baseCurrency.id, scrollCurrency.id, bitcoinCurrency.id]}
           onAccountSelected={mockOnAccountSelected}
           areCurrenciesFiltered
         />
@@ -424,27 +434,24 @@ describe("ModularDrawerFlowManager - Select Account Flow", () => {
       {
         ...INITIAL_STATE,
         initialState: {
-          accounts: [BASE_ACCOUNT, ARB_ACCOUNT],
+          accounts: [BASE_ACCOUNT, ARB_ACCOUNT, BTC_ACCOUNT],
         },
       },
     );
 
-    await waitFor(() => expect(screen.getByText(/base/i)).toBeVisible());
-    await user.click(screen.getByText(/base/i));
-    expect(screen.getByText(/select network/i)).toBeVisible();
-
-    await user.click(screen.getByText(/base/i));
+    await waitFor(() => expect(screen.getByText(/bitcoin/i)).toBeVisible());
+    await user.click(screen.getByText(/bitcoin/i));
     expect(screen.getByText(/select account/i)).toBeVisible();
 
     await user.click(screen.getByText(/add new or existing account/i));
-    expect(screen.getByText(/base 2/i)).toBeVisible();
+    expect(screen.getByText(/bitcoin 2/i)).toBeVisible();
     expect(screen.getByText(/add accounts/i)).toBeVisible();
   });
 
   it("should auto focus on search input when autoFocus is true", async () => {
     render(
       <ModularDrawerFlowManager
-        currencies={currencies}
+        currencies={mockCurrencies}
         onAccountSelected={mockOnAccountSelected}
       />,
     );

@@ -2,17 +2,7 @@ import { validatePublicKey, ValidationResult, b58Encode, PrefixV2 } from "@taqui
 import { DerivationType } from "@taquito/ledger-signer";
 import { compressPublicKey } from "@taquito/ledger-signer/dist/lib/utils";
 import type { APIAccount } from "./network/types";
-
-/**
- * Default limits and fees for Tezos operations
- */
-// Safe fallback values aligned with Taquito estimation defaults for a simple transfer
-// These are used when network estimation is unavailable (e.g., signer not configured)
-const DEFAULT_LIMITS = {
-  GAS: 2169n,
-  STORAGE: 277n,
-  BASE_FEE: 491n,
-};
+import coinConfig from "./config";
 
 /**
  * Dust margin in mutez to prevent transaction failures on send max operations
@@ -107,11 +97,12 @@ export function normalizePublicKeyForAddress(
  * Creates default fallback estimation values
  */
 export function createFallbackEstimation() {
+  const config = coinConfig.getCoinConfig();
   return {
-    fees: DEFAULT_LIMITS.BASE_FEE,
-    gasLimit: DEFAULT_LIMITS.GAS,
-    storageLimit: DEFAULT_LIMITS.STORAGE,
-    estimatedFees: DEFAULT_LIMITS.BASE_FEE,
+    fees: BigInt(config.fees.minEstimatedFees),
+    gasLimit: BigInt(config.fees.minGasLimit),
+    storageLimit: BigInt(config.fees.minStorageLimit),
+    estimatedFees: BigInt(config.fees.minEstimatedFees),
   };
 }
 

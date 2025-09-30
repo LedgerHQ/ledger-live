@@ -6,6 +6,7 @@ import { App } from "@ledgerhq/types-live";
 import Image from "~/renderer/components/Image";
 import { getCryptoCurrencyIcon } from "@ledgerhq/live-common/react";
 import ManagerAppIconPlaceholder from "~/renderer/icons/ManagerAppIcon";
+import { rbgToLuminance, hexToRgb } from "~/renderer/utils/rgb";
 
 const size = 40;
 // trick to format size for certain type of icons
@@ -56,9 +57,12 @@ function AppIcon({ app }: Props) {
   const currency = currencyId && findCryptoCurrencyById(currencyId);
   const currencyColor = currency && getCurrencyColor(currency);
   const IconCurrency = currency && getCryptoCurrencyIcon(currency);
+  const { r, g, b } = hexToRgb(currencyColor ?? "#000000");
+  const brightness = rbgToLuminance(r, g, b);
+  const iconColor = brightness > 125 ? "#000" : "#FFF";
   return IconCurrency ? (
     <Container color={currencyColor ?? undefined}>
-      <IconCurrency size={size} color="#FFF" />
+      <IconCurrency size={size} color={iconColor} />
     </Container>
   ) : (
     <IconContainer loading={loading} size={size}>

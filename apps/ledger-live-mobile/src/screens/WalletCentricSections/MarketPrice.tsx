@@ -12,6 +12,7 @@ import { useSettings } from "~/hooks";
 import { CurrencyData, KeysPriceChange } from "@ledgerhq/live-common/market/utils/types";
 import { useTimeRange } from "~/actions/settings";
 import { PortfolioRange } from "@ledgerhq/types-live";
+import { resolveMarketId } from "LLM/features/Market/utils/marketIdResolver";
 
 type Props = {
   currency: CryptoOrTokenCurrency;
@@ -28,7 +29,7 @@ const MarketPrice = ({ currency, selectedCoinData, counterCurrency }: Props) => 
 
   const goToMarketPage = useCallback(() => {
     navigation.navigate(ScreenName.MarketDetail, {
-      currencyId: currency.id,
+      currencyId: resolveMarketId(currency.id),
     });
   }, [currency, navigation]);
 

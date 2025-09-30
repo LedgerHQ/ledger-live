@@ -283,7 +283,7 @@ export type LLDCoinFamily<
     footer: React.ComponentType<SendStepProps>;
   };
 
-  shouldUseReceiveOptions?: (accountCurrencyId: string | undefined) => boolean;
+  shouldUseReceiveOptions?: (currencyId: string | undefined) => boolean;
 
   /**
    * One time modal that is trigger only one time on a account that never send

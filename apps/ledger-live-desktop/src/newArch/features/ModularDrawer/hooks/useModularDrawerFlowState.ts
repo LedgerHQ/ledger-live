@@ -10,6 +10,7 @@ import { isCorrespondingCurrency } from "@ledgerhq/live-common/modularDrawer/uti
 import { useSelector } from "react-redux";
 import { modularDrawerSearchedSelector } from "~/renderer/reducers/modularDrawer";
 import { AssetData } from "@ledgerhq/live-common/modularDrawer/utils/type";
+import { useCurrenciesUnderFeatureFlag } from "@ledgerhq/live-common/modularDrawer/hooks/useCurrenciesUnderFeatureFlag";
 
 type Props = {
   assets: AssetData[] | undefined;
@@ -19,7 +20,6 @@ type Props = {
   goToStep: (nextStep: ModularDrawerStep) => void;
   isSelectAccountFlow?: boolean;
   onAssetSelected?: (asset: CryptoOrTokenCurrency) => void;
-  hasOneCurrency: boolean;
 };
 
 export function useModularDrawerFlowState({
@@ -30,8 +30,8 @@ export function useModularDrawerFlowState({
   goToStep,
   isSelectAccountFlow,
   onAssetSelected,
-  hasOneCurrency,
 }: Props) {
+  const { deactivatedCurrencyIds } = useCurrenciesUnderFeatureFlag();
   const { trackModularDrawerEvent } = useModularDrawerAnalytics();
   const searchedValue = useSelector(modularDrawerSearchedSelector);
 
@@ -90,11 +90,16 @@ export function useModularDrawerFlowState({
 
   const getNetworksFromProvider = useCallback(
     (provider: AssetData) => {
-      return provider.networks.filter(currencyByNetwork =>
-        currencyIds.includes(currencyByNetwork.id),
-      );
+      return provider.networks.filter(elem => {
+        const currencyId = elem.type === "CryptoCurrency" ? elem.id : elem.parentCurrency.id;
+
+        const isDeactivated = deactivatedCurrencyIds.has(currencyId);
+        const isAllowedByFilter = currencyIds.length === 0 || currencyIds.includes(elem.id);
+
+        return !isDeactivated && isAllowedByFilter;
+      });
     },
-    [currencyIds],
+    [deactivatedCurrencyIds, currencyIds],
   );
 
   const handleNoProvider = useCallback(
@@ -138,7 +143,6 @@ export function useModularDrawerFlowState({
 
       const networks = getNetworksFromProvider(currentProvider);
       const hasMultipleNetworks = networks && networks.length > 1;
-
       if (hasMultipleNetworks) {
         handleMultipleNetworks(currency, networks);
       } else {
@@ -155,7 +159,7 @@ export function useModularDrawerFlowState({
   );
 
   useEffect(() => {
-    if (hasOneCurrency && searchedValue === undefined && !selectedAsset && assets) {
+    if (assets?.length === 1 && searchedValue === undefined && !selectedAsset) {
       const assetItem = assets[0];
 
       if (assetItem.networks.length > 0) {
@@ -171,7 +175,6 @@ export function useModularDrawerFlowState({
     handleAssetSelected,
     selectedAsset,
     currencyIds,
-    hasOneCurrency,
     searchedValue,
     assets,
   ]);

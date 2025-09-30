@@ -1,5 +1,5 @@
 import { log } from "@ledgerhq/logs";
-import network from "@ledgerhq/live-network/network";
+import network from "@ledgerhq/live-network";
 import { BigNumber } from "bignumber.js";
 import * as nearAPI from "near-api-js";
 import { canUnstake, canWithdraw, getYoctoThreshold } from "../logic";
@@ -19,7 +19,7 @@ import { getCoinConfig } from "../config";
 
 export const fetchAccountDetails = async (address: string): Promise<NearAccountDetails> => {
   const currencyConfig = getCoinConfig();
-  const { data } = await network({
+  const { data } = await network<{ result: NearAccountDetails }>({
     method: "POST",
     url: currencyConfig.infra.API_NEAR_PRIVATE_NODE,
     data: {
@@ -83,7 +83,7 @@ export const getAccount = async (
 
 export const getProtocolConfig = async (): Promise<NearProtocolConfig> => {
   const currencyConfig = getCoinConfig();
-  const { data } = await network({
+  const { data } = await network<{ result: NearProtocolConfig }>({
     method: "POST",
     url: currencyConfig.infra.API_NEAR_PRIVATE_NODE,
     data: {
@@ -101,7 +101,7 @@ export const getProtocolConfig = async (): Promise<NearProtocolConfig> => {
 
 export const getGasPrice = async (): Promise<string> => {
   const currencyConfig = getCoinConfig();
-  const { data } = await network({
+  const { data } = await network<{ result: { gas_price: string } }>({
     method: "POST",
     url: currencyConfig.infra.API_NEAR_PRIVATE_NODE,
     data: {
@@ -123,7 +123,7 @@ export const getAccessKey = async ({
   publicKey: string;
 }): Promise<NearAccessKey> => {
   const currencyConfig = getCoinConfig();
-  const { data } = await network({
+  const { data } = await network<{ result: NearAccessKey }>({
     method: "POST",
     url: currencyConfig.infra.API_NEAR_PRIVATE_NODE,
     data: {
@@ -150,7 +150,10 @@ export const getAccessKey = async ({
  */
 export const broadcastTransaction = async (transaction: string, retries = 6): Promise<string> => {
   const currencyConfig = getCoinConfig();
-  const { data } = await network({
+  const { data } = await network<{
+    result: { transaction: { hash: string } };
+    error: { cause: { name: string }; message: string };
+  }>({
     method: "POST",
     url: currencyConfig.infra.API_NEAR_PRIVATE_NODE,
     data: {
@@ -287,7 +290,7 @@ export const getStakingPositions = async (
 export const getValidators = makeLRUCache(
   async (): Promise<NearRawValidator[]> => {
     const currencyConfig = getCoinConfig();
-    const { data } = await network({
+    const { data } = await network<{ result: { current_validators: NearRawValidator[] } }>({
       method: "POST",
       url: currencyConfig.infra.API_NEAR_PRIVATE_NODE,
       data: {
@@ -307,7 +310,7 @@ export const getValidators = makeLRUCache(
 export const getCommission = makeLRUCache(
   async (validatorAddress: string): Promise<number | null> => {
     const currencyConfig = getCoinConfig();
-    const { data } = await network({
+    const { data } = await network<{ result: { result: [] } }>({
       method: "POST",
       url: currencyConfig.infra.API_NEAR_PRIVATE_NODE,
       data: {

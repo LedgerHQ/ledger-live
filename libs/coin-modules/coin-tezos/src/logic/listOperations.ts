@@ -48,7 +48,7 @@ export async function listOperations(
   const filteredOperations = limitedOperations
     .filter(op => isAPITransactionType(op) || isAPIDelegationType(op) || isAPIRevealType(op))
     .filter(op => {
-      // Filter out failed incoming transactions as they don't affect the account balance
+      // Filter out failed incoming tx
       const hasFailed = op.status !== "applied";
       if (hasFailed && isAPITransactionType(op)) {
         const isIn = op.target?.address === address;

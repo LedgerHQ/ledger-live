@@ -124,7 +124,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pnpm i --filter="live-mobile..." --filter="ledger-live" --filter="live-cli*..." --filter="@ledgerhq/dummy-*-app..." --no-frozen-lockfile --unsafe-perm
+          pnpm i --filter="live-mobile..." --filter="ledger-live" --filter="live-cli*..." --filter="@ledgerhq/dummy-*-app..." --unsafe-perm
 
       - name: Build dependencies
         uses: LedgerHQ/ledger-live/tools/actions/composites/turbo-step@develop
@@ -202,8 +202,8 @@ jobs:
         with:
           max_attempts: 2
           timeout_minutes: 15
-          command: pnpm i --filter="live-mobile..." --filter="ledger-live" --filter="@ledgerhq/dummy-*-app..." --no-frozen-lockfile --unsafe-perm
-          new_command_on_retry: rm -rf ~/.cocoapods/ && pnpm clean && pnpm i --filter="live-mobile..." --filter="ledger-live" --filter="@ledgerhq/dummy-*-app..." --no-frozen-lockfile --unsafe-perm
+          command: pnpm i --filter="live-mobile..." --filter="ledger-live" --filter="@ledgerhq/dummy-*-app..." --unsafe-perm
+          new_command_on_retry: rm -rf ~/.cocoapods/ && pnpm clean && pnpm i --filter="live-mobile..." --filter="ledger-live" --filter="@ledgerhq/dummy-*-app..." --unsafe-perm
 
       - name: Build dependencies
         uses: LedgerHQ/ledger-live/tools/actions/composites/turbo-step@develop

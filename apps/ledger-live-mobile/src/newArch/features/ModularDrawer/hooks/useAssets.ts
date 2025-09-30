@@ -5,6 +5,8 @@ import { useAssetsData } from "@ledgerhq/live-common/modularDrawer/hooks/useAsse
 import VersionNumber from "react-native-version-number";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { AssetData } from "@ledgerhq/live-common/modularDrawer/utils/type";
+import { useCurrenciesUnderFeatureFlag } from "@ledgerhq/live-common/modularDrawer/hooks/useCurrenciesUnderFeatureFlag";
+import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 
 interface AssetsProps {
   currencyIds?: string[];
@@ -19,6 +21,7 @@ export function useAssets({
   useCase,
   areCurrenciesFiltered,
 }: AssetsProps) {
+  const { deactivatedCurrencyIds } = useCurrenciesUnderFeatureFlag();
   const modularDrawerFeature = useFeature("llmModularDrawer");
 
   const isStaging = useMemo(
@@ -59,13 +62,22 @@ export function useAssets({
 
   const loadingStatus: LoadingStatus = getLoadingStatus({ isLoading, isSuccess, error });
 
-  const sortedCryptoCurrencies = useMemo(() => {
+  const assetsToDisplay = useMemo(() => {
     if (!assetsSorted || !data) return [];
 
-    return assetsSorted
-      .map(assetData => data.cryptoOrTokenCurrencies[assetData.asset.id])
-      .filter(currency => currency !== undefined);
-  }, [assetsSorted, data]);
+    return assetsSorted.reduce<CryptoOrTokenCurrency[]>((acc, { asset }) => {
+      const currency = data.cryptoOrTokenCurrencies[asset.id];
+      if (!currency) return acc;
+
+      const isActive =
+        (currency.type === "CryptoCurrency" && !deactivatedCurrencyIds.has(currency.id)) ||
+        (currency.type === "TokenCurrency" &&
+          !deactivatedCurrencyIds.has(currency.parentCurrency?.id));
+
+      if (isActive) acc.push(currency);
+      return acc;
+    }, []);
+  }, [assetsSorted, data, deactivatedCurrencyIds]);
 
   return {
     data,
@@ -75,7 +87,7 @@ export function useAssets({
     error,
     loadingStatus,
     assetsSorted,
-    sortedCryptoCurrencies,
+    sortedCryptoCurrencies: assetsToDisplay,
     refetch,
     loadNext,
   };

@@ -24,6 +24,7 @@ import {
   validateIntent,
   getStakes,
 } from "../logic";
+import { getTezosToolkit } from "../logic/tezosToolkit";
 import api from "../network/tzkt";
 import type { TezosApi, TezosFeeEstimation } from "./types";
 import type { FeeEstimation, TransactionIntent } from "@ledgerhq/coin-framework/api/types";
@@ -152,7 +153,7 @@ async function craft(
 
   let txFee: number;
   if (customFees) {
-    txFee = totalFee;
+    txFee = needsReveal ? Math.max(totalFee - getRevealFee(transactionIntent.sender), 0) : totalFee;
   } else if (estimation.parameters?.txFee !== undefined) {
     txFee = Number(estimation.parameters.txFee);
   } else {
@@ -202,6 +203,7 @@ async function craft(
 
 async function estimate(transactionIntent: TransactionIntent): Promise<TezosFeeEstimation> {
   // avoid taquito error when estimating a 0-amount transfer during input
+  const config = coinConfig.getCoinConfig();
   if (
     transactionIntent.type === "send" &&
     transactionIntent.amount === 0n &&
@@ -278,7 +280,26 @@ async function estimate(transactionIntent: TransactionIntent): Promise<TezosFeeE
       // Check if account needs reveal for proper fee calculation
       const senderApiAcc = await api.getAccountByAddress(transactionIntent.sender);
       const needsReveal = senderApiAcc.type === "user" && !senderApiAcc.revealed;
-      const baseTxFee = 388n; // Match legacy production value to get 722 total (388+334)
+
+      // Production-calibrated fallback fee when Taquito estimation fails (~388 mutez observed)
+      const DEFAULT_TX_FEE_FALLBACK = 388;
+      let baseTxFee: bigint;
+
+      try {
+        const toolkit = getTezosToolkit();
+        const simpleEstimate = await toolkit.estimate.transfer({
+          to: transactionIntent.recipient,
+          amount: Number(transactionIntent.amount),
+          mutez: true,
+          source: transactionIntent.sender,
+        });
+        // Use Taquito estimation, respecting minFees from config
+        baseTxFee = BigInt(Math.max(config.fees.minFees, simpleEstimate.suggestedFeeMutez));
+      } catch {
+        // Fallback to production-calibrated default if estimation fails
+        baseTxFee = BigInt(Math.max(DEFAULT_TX_FEE_FALLBACK, config.fees.minFees));
+      }
+
       const revealFee = needsReveal ? BigInt(getRevealFee(transactionIntent.sender)) : 0n;
       const totalFee = baseTxFee + revealFee;
 
