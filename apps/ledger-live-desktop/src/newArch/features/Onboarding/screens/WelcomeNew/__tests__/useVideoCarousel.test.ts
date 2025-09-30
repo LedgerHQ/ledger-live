@@ -9,12 +9,6 @@ jest.mock("../assets/ledgerWalletBuySell.webm", () => "mock-buy-sell.webm");
 jest.mock("../assets/ledgerWalletThousandsCrypto.webm", () => "mock-thousands-crypto.webm");
 jest.mock("../assets/ledgerWalletSecureWallet.webm", () => "mock-secure-wallet.webm");
 
-jest.mock("react-i18next", () => ({
-  useTranslation: () => ({
-    t: (key: string) => key,
-  }),
-}));
-
 describe("useVideoCarousel", () => {
   beforeEach(() => {
     jest.clearAllMocks();
