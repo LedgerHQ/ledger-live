@@ -15,7 +15,7 @@ const applicationIdVar = Config.DATADOG_APPLICATION_ID_VAR;
 const clientToken = process.env[`${clientTokenVar}`] || Config[`${clientTokenVar}`] || "";
 const applicationId = process.env[`${applicationIdVar}`] || Config[`${applicationIdVar}`] || "";
 
-const isDatadogEnabled = !!clientToken && !!applicationId;
+const isDatadogEnabled = !!clientToken && !!applicationId && !(Config.MOCK || Config.DETOX);
 
 const baseConfig: PartialInitializationConfiguration = {
   clientToken,
@@ -40,6 +40,7 @@ export const initializeDatadogProvider = async (
   remoteConfig: Partial<PartialInitializationConfiguration>,
   trackingConsent: TrackingConsent,
 ) => {
+  return;
   if (!isDatadogEnabled) {
     return;
   }
