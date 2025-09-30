@@ -4,7 +4,7 @@ import { Text } from "@ledgerhq/react-ui/index";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import BigNumber from "bignumber.js";
 import CounterValue from "~/renderer/components/CounterValue";
-import CurrencyUnitValue from "~/renderer/components/CurrencyUnitValue";
+import FormattedVal from "~/renderer/components/FormattedVal";
 
 const BalanceContainer = styled.div`
   display: flex;
@@ -47,7 +47,12 @@ export const balanceItem = ({
         color="var(--colors-content-subdued-default-default)"
       >
         {currency && balance ? (
-          <CurrencyUnitValue unit={currency.units[0]} value={balance} showCode />
+          <FormattedVal
+            unit={currency.units[0]}
+            val={balance}
+            showCode
+            color="var(--colors-content-subdued-default-default)"
+          />
         ) : (
           "-"
         )}
