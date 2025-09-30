@@ -185,7 +185,7 @@ const mockTransaction = {
   ],
   timestampMs: "1742294454878",
   checkpoint: "313024",
-};
+} as SuiTransactionBlockResponse;
 
 const mockApi = new SuiClient({ url: "mock" }) as jest.Mocked<SuiClient>;
 
@@ -254,16 +254,12 @@ describe("SDK Functions", () => {
 
   test("getOperationType should return IN for incoming tx", () => {
     const address = "0x33444cf803c690db96527cec67e3c9ab512596f4ba2d4eace43f0b4f716e0164";
-    expect(sdk.getOperationType(address, mockTransaction as SuiTransactionBlockResponse)).toBe(
-      "IN",
-    );
+    expect(sdk.getOperationType(address, mockTransaction)).toBe("IN");
   });
 
   test("getOperationType should return OUT for outgoing tx", () => {
     const address = "0x65449f57946938c84c512732f1d69405d1fce417d9c9894696ddf4522f479e24";
-    expect(sdk.getOperationType(address, mockTransaction as SuiTransactionBlockResponse)).toBe(
-      "OUT",
-    );
+    expect(sdk.getOperationType(address, mockTransaction)).toBe("OUT");
   });
 
   test("getOperationSenders should return sender address", () => {
@@ -278,36 +274,12 @@ describe("SDK Functions", () => {
     ).toEqual(["0x6e143fe0a8ca010a86580dafac44298e5b1b7d73efc345356a59a15f0d7824f0"]);
   });
 
-  test("getOperationAmount should calculate amount correctly for SUI", () => {
-    const address = "0x6e143fe0a8ca010a86580dafac44298e5b1b7d73efc345356a59a15f0d7824f0";
-    expect(
-      sdk.getOperationAmount(
-        address,
-        mockTransaction as SuiTransactionBlockResponse,
-        sdk.DEFAULT_COIN_TYPE,
-      ),
-    ).toEqual(new BigNumber("9998990120"));
-  });
-
-  test("getOperationAmount should calculate amount correctly for tokens", () => {
-    const address = "0x6e143fe0a8ca010a86580dafac44298e5b1b7d73efc345356a59a15f0d7824f0";
-    expect(
-      sdk.getOperationAmount(
-        address,
-        mockTransaction as SuiTransactionBlockResponse,
-        "0x123::test::TOKEN",
-      ),
-    ).toEqual(new BigNumber("500000"));
-  });
-
   test("getOperationFee should calculate fee correctly", () => {
-    expect(sdk.getOperationFee(mockTransaction as SuiTransactionBlockResponse)).toEqual(
-      new BigNumber(1009880),
-    );
+    expect(sdk.getOperationFee(mockTransaction)).toEqual(new BigNumber(1009880));
   });
 
   test("getOperationDate should return correct date", () => {
-    const date = sdk.getOperationDate(mockTransaction as SuiTransactionBlockResponse);
+    const date = sdk.getOperationDate(mockTransaction);
     expect(date).toBeDefined();
     expect(date).toBeInstanceOf(Date);
   });
@@ -477,7 +449,7 @@ describe("SDK Functions", () => {
       ],
     };
 
-    const operation = sdk.transactionToOp(address, tokenTx as SuiTransactionBlockResponse);
+    const operation = sdk.alpacaTransactionToOp(address, tokenTx as SuiTransactionBlockResponse);
     expect(operation.id).toEqual("DhKLpX5kwuKuyRa71RGqpX5EY2M8Efw535ZVXYXsRiDt");
     expect(operation.type).toEqual("IN");
     expect(operation.senders).toEqual([
@@ -643,41 +615,34 @@ describe("Staking Operations", () => {
   });
 
   describe("Operation Amount Calculation", () => {
-    test("getOperationAmount should calculate staking amount correctly", () => {
-      const address = "0x65449f57946938c84c512732f1d69405d1fce417d9c9894696ddf4522f479e24";
+    const address = "0x6e143fe0a8ca010a86580dafac44298e5b1b7d73efc345356a59a15f0d7824f0";
 
-      const mockStakingTx = {
-        transaction: {
-          data: {
-            transaction: {
-              kind: "ProgrammableTransaction",
-              transactions: [
-                {
-                  MoveCall: {
-                    function: "request_add_stake",
-                  },
+    const mockStakingTx = {
+      transaction: {
+        data: {
+          transaction: {
+            kind: "ProgrammableTransaction",
+            transactions: [
+              {
+                MoveCall: {
+                  function: "request_add_stake",
                 },
-              ],
-            },
+              },
+            ],
           },
         },
-        balanceChanges: [
-          {
-            owner: { AddressOwner: address },
-            coinType: "0x2::sui::SUI",
-            amount: "-1000000000",
-          },
-        ],
-      } as unknown as SuiTransactionBlockResponse;
+      },
+      balanceChanges: [
+        {
+          owner: { AddressOwner: address },
+          coinType: "0x2::sui::SUI",
+          amount: "-1000000000",
+        },
+      ],
+    } as SuiTransactionBlockResponse;
 
-      const amount = sdk.getOperationAmount(address, mockStakingTx, sdk.DEFAULT_COIN_TYPE);
-      expect(amount).toEqual(new BigNumber("1000000000")); // The function returns minus of the balance change
-    });
-
-    test("getOperationAmount should calculate unstaking amount correctly", () => {
-      const address = "0x65449f57946938c84c512732f1d69405d1fce417d9c9894696ddf4522f479e24";
-
-      const mockUnstakingTx = {
+    function mockUnstakingTx(amount: string) {
+      return {
         transaction: {
           data: {
             transaction: {
@@ -696,14 +661,59 @@ describe("Staking Operations", () => {
           {
             owner: { AddressOwner: address },
             coinType: "0x2::sui::SUI",
-            amount: "0",
+            amount: amount,
           },
         ],
-      } as unknown as SuiTransactionBlockResponse;
+      } as SuiTransactionBlockResponse;
+    }
 
-      const amount = sdk.getOperationAmount(address, mockUnstakingTx, sdk.DEFAULT_COIN_TYPE);
-      expect(amount).toEqual(new BigNumber("0"));
-    });
+    function bridgeOperationAmount(
+      mock: SuiTransactionBlockResponse,
+      coinType: string = sdk.DEFAULT_COIN_TYPE,
+    ) {
+      return sdk.getOperationAmount(address, mock, coinType);
+    }
+
+    test("getOperationAmount should calculate staking amount", () =>
+      expect(bridgeOperationAmount(mockStakingTx)).toEqual(new BigNumber("1000000000")));
+
+    test("getOperationAmount should calculate unstaking amount of 1000", () =>
+      expect(bridgeOperationAmount(mockUnstakingTx("1000"))).toEqual(new BigNumber("-1000")));
+
+    test("getOperationAmount should calculate unstaking amount of 0", () =>
+      expect(bridgeOperationAmount(mockUnstakingTx("0"))).toEqual(new BigNumber("0")));
+
+    test("getOperationAmount should calculate amount correctly for SUI", () =>
+      expect(bridgeOperationAmount(mockTransaction)).toEqual(new BigNumber("9998990120")));
+
+    test("getOperationAmount should calculate amount correctly for tokens", () =>
+      expect(bridgeOperationAmount(mockTransaction, "0x123::test::TOKEN")).toEqual(
+        new BigNumber("500000"),
+      ));
+
+    function alpacaOperationAmount(
+      mock: SuiTransactionBlockResponse,
+      coinType: string = sdk.DEFAULT_COIN_TYPE,
+    ) {
+      return sdk.alpacaGetOperationAmount(address, mock, coinType);
+    }
+
+    test("alpaca getOperationAmount should calculate staking amount", () =>
+      expect(alpacaOperationAmount(mockStakingTx)).toEqual(new BigNumber("1000000000")));
+
+    test("alpaca getOperationAmount should calculate unstaking amount of 1000", () =>
+      expect(alpacaOperationAmount(mockUnstakingTx("1000"))).toEqual(new BigNumber("1000")));
+
+    test("alpaca getOperationAmount should calculate unstaking amount of 0", () =>
+      expect(alpacaOperationAmount(mockUnstakingTx("0"))).toEqual(new BigNumber("0")));
+
+    test("alpaca getOperationAmount should calculate amount correctly for SUI", () =>
+      expect(alpacaOperationAmount(mockTransaction)).toEqual(new BigNumber("9998990120")));
+
+    test("alpaca getOperationAmount should calculate amount correctly for tokens", () =>
+      expect(alpacaOperationAmount(mockTransaction, "0x123::test::TOKEN")).toEqual(
+        new BigNumber("500000"),
+      ));
   });
 
   describe("Operation Recipients", () => {
@@ -984,7 +994,7 @@ describe("Staking Operations", () => {
         checkpoint: "313024",
       } as unknown as SuiTransactionBlockResponse;
 
-      const operation = sdk.transactionToOp(address, mockStakingTx);
+      const operation = sdk.alpacaTransactionToOp(address, mockStakingTx);
 
       expect(operation.id).toEqual("delegate_tx_digest_123");
       expect(operation.type).toEqual("DELEGATE");
@@ -1035,7 +1045,7 @@ describe("Staking Operations", () => {
         checkpoint: "313024",
       } as unknown as SuiTransactionBlockResponse;
 
-      const operation = sdk.transactionToOp(address, mockUnstakingTx);
+      const operation = sdk.alpacaTransactionToOp(address, mockUnstakingTx);
 
       expect(operation.id).toEqual("undelegate_tx_digest_456");
       expect(operation.type).toEqual("UNDELEGATE");
