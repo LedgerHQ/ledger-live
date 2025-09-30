@@ -82,13 +82,22 @@ export const ElementHelpers = {
   async typeTextByWebTestId(id: string, text: string) {
     await getWebElementByTestId(id).runScript(
       (el, text) => {
+        const lastValue = el.value;
         const setValue = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, "value")?.set;
         if (setValue) {
           setValue.call(el, text);
         } else {
           el.value = text;
         }
-        el.dispatchEvent(new Event("input", { bubbles: true }));
+        // Update React's internal value tracker
+        const event = new Event("input", { bubbles: true });
+        // @ts-expect-error: simulated doesn't exist on Event
+        event.simulated = true;
+        const tracker = el._valueTracker;
+        if (tracker) {
+          tracker.setValue(lastValue);
+        }
+        el.dispatchEvent(event);
       },
       [text],
     );
