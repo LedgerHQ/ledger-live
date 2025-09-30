@@ -108,32 +108,31 @@ export const getAllBalancesCached = makeLRUCache(
   (owner: string) => owner,
   minutes(1),
 );
-function isStaking(block?: SuiTransactionBlockKind): block is {
+
+type ProgrammableTransaction = {
   inputs: SuiCallArg[];
   kind: "ProgrammableTransaction";
   transactions: SuiTransaction[];
-} {
+};
+
+function isMoveCallWithFunction(
+  functionName: string,
+  block?: SuiTransactionBlockKind,
+): block is ProgrammableTransaction {
   if (!block) return false;
   if (block.kind === "ProgrammableTransaction") {
     const move = block.transactions.find(item => "MoveCall" in item) as any;
-    return move?.MoveCall.function === "request_add_stake";
+    return move?.MoveCall.function === functionName;
   }
   return false;
 }
 
-function isUnstaking(block?: SuiTransactionBlockKind): block is {
-  inputs: SuiCallArg[];
-  kind: "ProgrammableTransaction";
-  transactions: SuiTransaction[];
-} {
-  if (!block) return false;
-  if (block.kind === "ProgrammableTransaction") {
-    const move = block.transactions.find(
-      item => "MoveCall" in item && item["MoveCall"].function === "request_withdraw_stake",
-    ) as any;
-    return Boolean(move);
-  }
-  return false;
+function isStaking(block?: SuiTransactionBlockKind): block is ProgrammableTransaction {
+  return isMoveCallWithFunction("request_add_stake", block);
+}
+
+function isUnstaking(block?: SuiTransactionBlockKind): block is ProgrammableTransaction {
+  return isMoveCallWithFunction("request_withdraw_stake", block);
 }
 
 /**
@@ -342,11 +341,48 @@ export function transactionToOperation(
   };
 }
 
+// This function is only used by alpaca code path
+// Logic is similar to getOperationAmount, but we guarantee to return a positive amount in any case
+// If there is need to display negative amount for staking or unstaking, the view can handle it based on the type of the operation
+export const alpacaGetOperationAmount = (
+  address: string,
+  transaction: SuiTransactionBlockResponse,
+  coinType: string,
+): BigNumber => {
+  const absoluteAmount = (balanceChange: BalanceChange | undefined) =>
+    new BigNumber(balanceChange?.amount || 0).abs();
+
+  const zero = BigNumber(0);
+
+  const tx = transaction.transaction?.data.transaction;
+
+  if (isStaking(tx) || isUnstaking(tx)) return absoluteAmount(transaction.balanceChanges?.[0]);
+  else {
+    return (
+      transaction.balanceChanges
+        ?.filter(
+          balanceChange =>
+            typeof balanceChange.owner !== "string" &&
+            "AddressOwner" in balanceChange.owner &&
+            balanceChange.owner.AddressOwner === address &&
+            balanceChange.coinType === coinType,
+        )
+        .map(absoluteAmount)
+        .reduce((acc, curr) => acc.plus(curr), zero) || zero
+    );
+  }
+};
+
 /**
+ * This function is only used by alpaca code path
+ *
  * @returns the operation converted. Note that if param `transaction` was retrieved as an "IN" operations, the type may be converted to "OUT".
  *    It happens for most "OUT" operations because the sender receive a new version of the coin objects.
  */
-export function transactionToOp(address: string, transaction: SuiTransactionBlockResponse): Op {
+export function alpacaTransactionToOp(
+  address: string,
+  transaction: SuiTransactionBlockResponse,
+): Op {
   const type = getOperationType(address, transaction);
   const coinType = getOperationCoinType(transaction);
   const hash = transaction.digest;
@@ -365,7 +401,7 @@ export function transactionToOp(address: string, transaction: SuiTransactionBloc
     recipients: getOperationRecipients(transaction.transaction?.data),
     senders: getOperationSenders(transaction.transaction?.data),
     type,
-    value: BigInt(getOperationAmount(address, transaction, coinType).toString()),
+    value: BigInt(alpacaGetOperationAmount(address, transaction, coinType).toString()),
   };
 }
 
@@ -576,7 +612,7 @@ export const getListOperations = async (
 
     const operations = ops.operations
       .sort((a, b) => Number(b.timestampMs) - Number(a.timestampMs))
-      .map(t => transactionToOp(addr, t));
+      .map(t => alpacaTransactionToOp(addr, t));
 
     return {
       items: operations,
