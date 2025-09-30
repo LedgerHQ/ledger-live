@@ -1,6 +1,6 @@
 import { Direction, NativeElement } from "detox/detox";
 import { delay, isAndroid } from "./commonHelpers";
-import { by, element, waitFor, web } from "detox";
+import { by, element, waitFor, web, expect } from "detox";
 
 const DEFAULT_TIMEOUT = 60000; // 60s !!
 const startPositionY = 0.8; // Needed on Android to scroll views : https://github.com/wix/Detox/issues/3918
@@ -58,6 +58,12 @@ export const ElementHelpers = {
 
   async getWebElementText(id: string, index = 0) {
     return await getWebElementByTestId(id).atIndex(index).getText();
+  },
+
+  async getWebElementValue(id: string, index = 0) {
+    const element = getWebElementByTestId(id).atIndex(index);
+    await expect(element).toExist();
+    return await element.runScript(el => el.value);
   },
 
   async waitWebElementByTestId(id: string, timeout = DEFAULT_TIMEOUT) {
