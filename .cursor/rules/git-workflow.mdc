@@ -1,0 +1,143 @@
+---
+alwaysApply: true
+description: Git workflow and commit conventions for Ledger Live
+---
+
+# Git Workflow & Commit Conventions
+
+## Branch Naming
+
+All branches must be prefixed based on their purpose:
+
+- **`feat/`** - New features for applications or libraries
+- **`bugfix/`** - Fixing existing bugs
+- **`support/`** - Other changes (refactor, tests, improvements, CI)
+
+Examples:
+
+- `feat/add-ethereum-staking`
+- `bugfix/fix-transaction-signing`
+- `support/update-dependencies`
+
+## Commit Message Format
+
+Use [Conventional Commits](https://www.conventionalcommits.org/) specification:
+
+```
+<type>[optional scope]: <description>
+
+[optional body]
+
+[optional footer(s)]
+```
+
+### Commit Types
+
+- **feat**: New feature
+- **fix**: Bug fix
+- **docs**: Documentation changes
+- **style**: Code style changes (formatting, etc.)
+- **refactor**: Code refactoring
+- **test**: Adding or updating tests
+- **chore**: Maintenance tasks
+- **perf**: Performance improvements
+- **ci**: CI/CD changes
+
+### Examples
+
+```
+feat(desktop): add dark mode toggle
+fix(mobile): resolve transaction signing issue
+docs(common): update API documentation
+test(coin): add bitcoin integration tests
+```
+
+## Workflow Rules
+
+### Branch Management
+
+- Always create branches from `develop`
+- Use descriptive branch names
+- Keep branches focused on single features
+- Rebase frequently to avoid conflicts
+
+### Merge Strategy
+
+- **Prefer rebasing** over merging when possible
+- Only merge when branches contain merge commits
+- Squash small commits before merging
+
+### Pull Request Process
+
+1. Fork repository and create feature branch
+2. Make changes with atomic commits
+3. Add tests for new functionality
+4. Update documentation if needed
+5. Run `pnpm lint:fix` and `pnpm typecheck`
+6. Run `pnpm test` to ensure all tests pass
+7. Add changelog entry with `pnpm changeset`
+8. Create pull request with detailed description
+
+## Changelog Management
+
+### Changesets
+
+- Use `pnpm changeset` to add changelog entries
+- Describe changes clearly for users
+- Categorize changes (major, minor, patch)
+- Include breaking changes information
+
+### Release Process
+
+- Libraries are published to npm automatically
+- Apps are built and distributed through appropriate channels
+- Nightly releases are created automatically from `develop` branch
+
+## Code Quality
+
+### Pre-commit Checks
+
+- Run `pnpm lint:fix` to fix formatting issues
+- Run `pnpm typecheck` to verify TypeScript
+- Run `pnpm test` to ensure tests pass
+- Use `pnpm commit` for guided commit messages
+
+### Translation Guidelines
+
+- **Only edit English translation files**
+- Desktop: `apps/ledger-live-desktop/static/i18n/en/app.json`
+- Mobile: `apps/ledger-live-mobile/src/locales/en/common.json`
+- Other languages are managed by Smartling service
+
+## Collaboration
+
+### Pull Request Guidelines
+
+- Fill out PR template completely
+- Include screenshots/videos for UI changes
+- Link to related issues (JIRA for Ledger employees)
+- Ensure CI checks pass
+- Request reviews from appropriate team members
+
+### Review Process
+
+- Address review feedback promptly
+- Keep PRs focused and reasonably sized
+- Use draft PRs for work in progress
+- Clean up commit history before final review
+
+## Release Management
+
+### Versioning
+
+- Use semantic versioning (semver)
+- Libraries follow independent versioning
+- Apps use their own versioning scheme
+- Breaking changes require major version bumps
+
+### Nightly Releases
+
+- Automatic nightly builds from `develop` branch
+- Available for testing and internal use
+- Libraries published with `@nightly` tag
+- Apps distributed through appropriate channels

@@ -1,0 +1,166 @@
+---
+globs: **/src/**/*.tsx,**/src/**/*.ts,**/src/**/*.jsx,**/src/**/*.js
+description: Enforce newArch structure for new features and components
+---
+
+# New Architecture Enforcement
+
+## 🚨 CRITICAL: New Feature Development Rules
+
+### MANDATORY: All New Features Must Use newArch Structure
+
+**EVERY new feature, component, or screen MUST be created under `src/newArch/` following the strict architectural patterns.**
+
+### File Location Enforcement
+
+#### ✅ CORRECT - New Features
+
+```
+src/newArch/features/FeatureName/
+├── __integrations__/
+├── components/
+├── screens/
+├── hooks/
+└── utils/
+```
+
+#### ❌ FORBIDDEN - Old Structure
+
+```
+src/screens/NewFeature/     # ❌ NEVER create here
+src/components/NewFeature/   # ❌ NEVER create here
+src/features/NewFeature/     # ❌ NEVER create here
+```
+
+### Enforcement Rules
+
+#### 1. New Component Creation
+
+- **MUST** be created under `src/newArch/features/FeatureName/components/`
+- **MUST** follow the `ComponentName/index.tsx` pattern
+- **MUST** use `useComponentNameViewModel` pattern if needed
+
+#### 2. New Screen Creation
+
+- **MUST** be created under `src/newArch/features/FeatureName/screens/`
+- **MUST** follow the `ScreenName/index.tsx` pattern
+- **MUST** use `useScreenNameViewModel` pattern
+- **MUST** follow List/Detail naming conventions
+
+#### 3. New Feature Creation
+
+- **MUST** create the complete newArch folder structure
+- **MUST** include all required subdirectories
+- **MUST** follow the feature organization patterns
+
+### File Path Validation
+
+When creating new files, ALWAYS verify the path follows newArch structure:
+
+```typescript
+// ✅ CORRECT paths
+src / newArch / features / Market / screens / MarketList / index.tsx;
+src / newArch / features / Market / components / MarketRowItem / index.tsx;
+src / newArch / features / Market / hooks / useMarketData.ts;
+src / newArch / features / Market / utils / formatPrice.ts;
+
+// ❌ FORBIDDEN paths
+src / screens / MarketList.tsx;
+src / components / MarketRowItem.tsx;
+src / features / Market / index.tsx;
+```
+
+### Migration Context
+
+- **Current State**: All new development MUST use newArch structure
+- **Future State**: Once migration is complete, `src/newArch` will be moved to `src/`
+- **Legacy Code**: Existing code outside newArch can remain but should not be extended
+
+### Enforcement Checklist
+
+Before creating any new file, verify:
+
+- [ ] File is under `src/newArch/` path
+- [ ] Follows feature-based organization
+- [ ] Uses proper folder structure (components, screens, hooks, utils)
+- [ ] Follows naming conventions (List/Detail, ViewModel pattern)
+- [ ] Uses index.tsx pattern for components
+- [ ] Follows import guidelines (relative vs absolute)
+
+### Common Violations to Avoid
+
+#### ❌ Creating in Old Locations
+
+```typescript
+// DON'T create here
+src / screens / NewScreen.tsx;
+src / components / NewComponent.tsx;
+src / features / NewFeature.tsx;
+```
+
+#### ❌ Wrong Folder Structure
+
+```typescript
+// DON'T create flat structures
+src / newArch / NewFeature.tsx;
+src / newArch / components / NewComponent.tsx;
+```
+
+#### ❌ Missing Required Patterns
+
+```typescript
+// DON'T skip the required patterns
+src / newArch / features / Market / MarketList.tsx; // Missing index.tsx
+src / newArch / features / Market / useMarket.ts; // Missing ViewModel suffix
+```
+
+### Correct Implementation Examples
+
+#### ✅ Proper Feature Structure
+
+```
+src/newArch/features/Portfolio/
+├── __integrations__/
+│   └── portfolio.integration.test.tsx
+├── components/
+│   └── PortfolioRowItem/
+│       ├── index.tsx
+│       └── usePortfolioRowItemViewModel.ts
+├── screens/
+│   ├── PortfolioList/
+│   │   ├── components/
+│   │   │   └── PortfolioStats/
+│   │   │       └── index.tsx
+│   │   ├── index.tsx
+│   │   └── usePortfolioListViewModel.ts
+│   └── PortfolioDetail/
+│       ├── index.tsx
+│       └── usePortfolioDetailViewModel.ts
+├── hooks/
+│   └── usePortfolioData.ts
+└── utils/
+    └── formatPortfolioValue.ts
+```
+
+### AI Assistant Guidelines
+
+When asked to create new features, components, or screens:
+
+1. **ALWAYS** check if the request is for new functionality
+2. **ALWAYS** create under `src/newArch/features/`
+3. **ALWAYS** follow the complete newArch structure
+4. **ALWAYS** apply the mandatory patterns (ViewModel, List/Detail, etc.)
+5. **NEVER** create in old locations (`src/screens/`, `src/components/`, etc.)
+
+### Code Review Checklist
+
+When reviewing code, ensure:
+
+- [ ] New files are under `src/newArch/`
+- [ ] Proper folder structure is followed
+- [ ] Naming conventions are applied
+- [ ] ViewModel pattern is used where appropriate
+- [ ] Import guidelines are followed
+- [ ] No violations of newArch patterns
+
+## Remember: This is MANDATORY for all new development!

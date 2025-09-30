@@ -1,0 +1,189 @@
+---
+alwaysApply: true
+description: Monorepo and package management patterns for Ledger Live
+---
+
+# Monorepo & Package Management
+
+## Package Management with PNPM
+
+### Workspace Structure
+
+- Use `pnpm` for all package operations
+- Workspaces defined in [pnpm-workspace.yaml](mdc:pnpm-workspace.yaml)
+- All commands run from monorepo root
+- Use workspace aliases for common operations
+
+### Common Commands
+
+```bash
+# Install dependencies
+pnpm i
+
+# Build all libraries
+pnpm build:libs
+
+# Build specific app
+pnpm build:lld
+pnpm build:llm
+
+# Development mode
+pnpm dev:lld
+pnpm dev:llm
+
+# Testing
+pnpm test
+pnpm test:llm:ios:e2e
+pnpm e2e:desktop
+
+# Linting and type checking
+pnpm lint:fix
+pnpm typecheck
+```
+
+## Workspace Aliases
+
+### Application Aliases
+
+- `pnpm desktop` - Ledger Live Desktop
+- `pnpm mobile` - Ledger Live Mobile
+- `pnpm cli` - Command Line Interface
+- `pnpm web-tools` - Web Development Tools
+
+### Library Aliases
+
+- `pnpm common` - ledger-live-common
+- `pnpm ui` - UI components
+- `pnpm coin` - Coin framework
+- `pnpm ljs` - LedgerJS packages
+
+### Coin Module Aliases
+
+- `pnpm coin:bitcoin` - Bitcoin module
+- `pnpm coin:ethereum` - Ethereum module
+- `pnpm coin:polkadot` - Polkadot module
+- And many more...
+
+## Build System (Turborepo)
+
+### Build Orchestration
+
+- Uses [turborepo](https://turborepo.org/) for build coordination
+- Remote caching for CI/CD optimization
+- Parallel builds where possible
+- Dependency-aware build ordering
+
+### Build Commands
+
+```bash
+# Build with dependencies
+pnpm build:lld:deps
+
+# Build specific package
+pnpm turbo build --filter=ledger-live-desktop
+
+# Build with filtering
+pnpm turbo build --filter="./libs/**"
+```
+
+## Package Dependencies
+
+### Internal Dependencies
+
+- Use `workspace:*` for internal packages
+- Avoid circular dependencies
+- Use proper dependency ordering
+- Keep dependencies minimal
+
+### External Dependencies
+
+- Pin versions for stability
+- Use overrides for conflicting dependencies
+- Apply patches for necessary fixes
+- Monitor for security vulnerabilities
+
+## Development Workflow
+
+### Local Development
+
+1. Clone repository and install dependencies
+2. Build required libraries first
+3. Start development servers
+4. Use watch mode for live updates
+
+### CI/CD Integration
+
+- Use GitHub Actions for automation
+- Leverage remote caching
+- Run tests in parallel
+- Build and distribute artifacts
+
+## Package Publishing
+
+### Library Publishing
+
+- Libraries published to npm under `@ledgerhq` scope
+- Use [changesets](https://github.com/changesets/changesets) for versioning
+- Nightly releases with `@nightly` tag
+- Independent versioning per package
+
+### App Distribution
+
+- Desktop: Built for multiple platforms
+- Mobile: iOS App Store and Google Play
+- CLI: Published to npm
+- Web Tools: Deployed to appropriate hosting
+
+## Dependency Management
+
+### Version Constraints
+
+- Use `^` for compatible updates
+- Pin critical dependencies
+- Use `resolutions` for conflict resolution
+- Apply patches for necessary fixes
+
+### Security
+
+- Regular dependency audits
+- Automated security updates
+- Vulnerability monitoring
+- Patch management
+
+## Performance Optimization
+
+### Build Performance
+
+- Use remote caching
+- Parallel builds
+- Incremental builds
+- Selective builds with filtering
+
+### Runtime Performance
+
+- Tree shaking for smaller bundles
+- Code splitting for apps
+- Lazy loading where appropriate
+- Optimize asset loading
+
+## Troubleshooting
+
+### Common Issues
+
+- Clear cache: `pnpm clean && pnpm store prune`
+- Rebuild dependencies: `pnpm build:libs:force`
+- Update dependencies: `pnpm update`
+- Check for conflicts: `pnpm audit`
+
+### Debug Commands
+
+```bash
+# Check workspace structure
+pnpm list --depth=0
+
+# Check for unused dependencies
+pnpm unimported
+
+# Check for circular dependencies
+pnpm knip-check
+```

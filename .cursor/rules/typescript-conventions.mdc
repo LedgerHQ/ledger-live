@@ -1,0 +1,111 @@
+---
+globs: *.ts,*.tsx
+description: TypeScript coding conventions and patterns for Ledger Live
+---
+
+# TypeScript Conventions
+
+## Code Style
+
+- **Strict TypeScript**: Use strict mode with `noImplicitAny`
+- **ES6+ features**: Use modern JavaScript/TypeScript features
+- **Prettier formatting**: All code must be formatted with Prettier
+- **ESLint rules**: Follow the project's ESLint configuration
+
+## Type Definitions
+
+### Interface Naming
+
+- Use PascalCase for interfaces and types
+- Prefix interfaces with descriptive names
+- Use generic constraints when appropriate
+
+```typescript
+interface AccountBridge<Transaction> {
+  // ...
+}
+
+type TransactionStatus = "pending" | "confirmed" | "failed";
+```
+
+### Type Organization
+
+- Define types in dedicated `types.ts` files
+- Use Zod schemas for runtime validation
+- Export types from index files for easy importing
+
+## Import/Export Patterns
+
+### Import Rules
+
+- Use named imports over default imports when possible
+- Group imports: external libraries, then internal modules
+- Use `lodash/fp` instead of full lodash import
+
+```typescript
+// ✅ Good
+import { Account, Transaction } from "@ledgerhq/types-live";
+import { map, filter } from "lodash/fp";
+
+// ❌ Avoid
+import _ from "lodash";
+```
+
+### Export Patterns
+
+- Use named exports over default exports
+- Export types and interfaces separately
+- Use barrel exports in index files
+
+## Error Handling
+
+- Use custom error classes that extend `Error`
+- Include error codes and context information
+- Use `Result<T, E>` pattern for operations that can fail
+
+```typescript
+class LedgerError extends Error {
+  constructor(
+    public code: string,
+    message: string,
+    public context?: Record<string, unknown>,
+  ) {
+    super(message);
+    this.name = "LedgerError";
+  }
+}
+```
+
+## Async/Await Patterns
+
+- Prefer async/await over Promises
+- Use proper error handling with try/catch
+- Consider using Result types for operations that can fail
+
+## Generic Constraints
+
+- Use generic constraints to ensure type safety
+- Document generic parameters with JSDoc comments
+
+```typescript
+/**
+ * @template T - The transaction type
+ * @template U - The account type
+ */
+interface Bridge<T extends TransactionCommon, U extends Account> {
+  // ...
+}
+```
+
+## Testing Types
+
+- Use `@testing-library` types for component testing
+- Define test-specific types in test files
+- Use type assertions sparingly and document why
+
+## Performance Considerations
+
+- Use `readonly` for immutable data structures
+- Prefer `const` assertions for literal types
+- Use mapped types for transformations
+- Avoid `any` type - use `unknown` when necessary

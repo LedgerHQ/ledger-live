@@ -1,0 +1,366 @@
+---
+globs: *.test.*,*.spec.*,**/tests/**,**/__tests__/**
+description: Testing patterns and conventions for Ledger Live
+---
+
+# Testing Patterns
+
+## Testing Tools
+
+### Core Testing Stack
+
+- **Jest**: JavaScript test runner with DOM access via jsdom
+- **React Testing Library**: Test React components without implementation details
+- **React Native Testing Library**: For mobile app testing (LLM)
+- **Mock Service Worker (MSW)**: API mocking library
+- **Playwright**: Desktop app E2E testing
+- **Detox**: Mobile app E2E testing
+
+### Installation
+
+```bash
+# Install testing tools
+pnpm mobile test:jest:coverage  # Run with coverage
+```
+
+## Test Structure
+
+### File Organization
+
+- Place tests next to the code they test
+- Use `.test.ts` or `.spec.ts` extensions
+- Group related tests in `__tests__` directories
+- Use descriptive test names that explain the behavior
+- Integration tests in `__integrations__` folders
+
+### Test Categories
+
+- **Unit tests**: Test individual functions and components
+- **Integration tests**: Test module interactions and user stories
+- **E2E tests**: Test complete user workflows
+- **Coin module tests**: Use coin-tester for blockchain operations
+
+## Testing Frameworks
+
+### Jest Configuration
+
+- Use Jest for unit and integration tests
+- Configure with TypeScript support
+- Use custom matchers for domain-specific assertions
+- Access DOM via jsdom
+
+### React Testing Library
+
+- Focus on user behavior, not implementation details
+- Use queries that reflect how users interact with components
+- Follow query priority: ByRole > ByLabelText > ByText > ByTestId
+- Add aria attributes when it makes sense
+
+### React Native Testing Library
+
+- Use for mobile app component testing
+- Follow React Native specific query patterns
+- Test native components and interactions
+
+### Mock Service Worker (MSW)
+
+- Mock API calls for consistent testing
+- Use dedicated mock files in `__mocks__/api/*`
+- Register handlers in `__tests__/handlers`
+- Override handlers for specific test cases
+
+## Test Patterns
+
+### Integration Testing (Recommended)
+
+For complex features with multiple components, favor integration tests over unit tests:
+
+```typescript
+import * as React from "react";
+import { screen, waitForElementToBeRemoved } from "@testing-library/react-native";
+import { render } from "@tests/test-renderer";
+import { MarketPages } from "./shared";
+import { State } from "~/reducers/types";
+
+describe("Market integration test", () => {
+  it("Should search for a coin and navigate to detail page", async () => {
+    const { user } = render(<MarketPages />, {
+      overrideInitialState: (state: State) => ({
+        ...state,
+        settings: {
+          ...state.settings,
+          featureFlags: { llmMarketNewArch: { enabled: true } },
+        },
+      }),
+    });
+
+    expect(await screen.findByText("Bitcoin (BTC)")).toBeOnTheScreen();
+    expect(await screen.findByText("Ethereum (ETH)")).toBeOnTheScreen();
+
+    const searchInput = await screen.findByTestId("search-box");
+    await user.type(searchInput, "BTC");
+    await waitForElementToBeRemoved(() => screen.queryByText("Ethereum (ETH)"));
+
+    expect(await screen.findByText("Bitcoin (BTC)")).toBeOnTheScreen();
+    await user.press(screen.getByText("Bitcoin (BTC)"));
+    expect(await screen.findByText("Price Statistics")).toBeOnTheScreen();
+  });
+});
+```
+
+### Component Testing
+
+Test generic components with different inputs to ensure they work as expected:
+
+```typescript
+import Button from './Button';
+
+describe('Button component', () => {
+  it('should be disabled', () => {
+    render(
+      <Button disabled type="submit" name="hello" className="mySuperClass">
+        Hello
+      </Button>
+    );
+    expect(screen.getByRole('button')).toBeDisabled();
+  });
+
+  it('should dispatch onClick event', () => {
+    const mockFn = jest.fn();
+    render(<Button onClick={mockFn}>Hello</Button>);
+    userEvent.click(screen.getByRole('button'));
+    expect(mockFn).toHaveBeenCalledTimes(1);
+  });
+});
+```
+
+### Helper Function Testing
+
+Target 100% coverage for utility functions:
+
+```typescript
+// Test date formatting, number parsing, etc.
+describe("formatCurrency", () => {
+  it("should format USD currency correctly", () => {
+    expect(formatCurrency(1234.56, "USD")).toBe("$1,234.56");
+  });
+
+  it("should handle zero values", () => {
+    expect(formatCurrency(0, "USD")).toBe("$0.00");
+  });
+});
+```
+
+### Redux Testing
+
+Follow Redux testing patterns for actions and reducers:
+
+```typescript
+// Test Redux actions and reducers
+describe("accountReducer", () => {
+  it("should handle ADD_ACCOUNT action", () => {
+    const initialState = { accounts: [] };
+    const action = { type: "ADD_ACCOUNT", payload: mockAccount };
+    const newState = accountReducer(initialState, action);
+
+    expect(newState.accounts).toHaveLength(1);
+    expect(newState.accounts[0]).toEqual(mockAccount);
+  });
+});
+```
+
+### API Mocking with MSW
+
+Mock API calls using MSW handlers:
+
+```typescript
+// __tests__/handlers.ts
+import { http, HttpResponse } from "msw";
+import marketsMock from "@mocks/api/market/markets.json";
+
+const handlers = [
+  http.get("https://proxycg.api.live.ledger.com/api/v3/coins/:coin/market_chart", ({ params }) => {
+    return HttpResponse.json(marketsMock.find(({ id }) => id === params.coin));
+  }),
+];
+
+export default handlers;
+```
+
+### Custom MSW Handlers for Edge Cases
+
+Override default handlers for specific test scenarios:
+
+```typescript
+import { server, http, HttpResponse } from "@tests/server";
+
+describe('Market page', () => {
+  it('should handle empty market data', async () => {
+    server.use(
+      http.get('https://proxycg.api.live.ledger.com/api/v3/coins/markets', () =>
+        HttpResponse.json({ data: [] })
+      )
+    );
+
+    const { user } = render(<MarketPages />);
+    expect(await screen.findByText("No markets available")).toBeOnTheScreen();
+  });
+});
+```
+
+### Async Testing
+
+```typescript
+// Use proper async/await patterns
+it("should handle async operations", async () => {
+  const result = await asyncFunction();
+  expect(result).toBeDefined();
+});
+```
+
+### Query Priority
+
+Follow query priority for better tests:
+
+1. **ByRole** (preferred) - `getByRole('button')`
+2. **ByLabelText** - `getByLabelText('Username')`
+3. **ByText** - `getByText('Submit')`
+4. **ByTestId** (last resort) - `getByTestId('submit-button')`
+
+```typescript
+// ✅ Good - uses role
+expect(screen.getByRole("button", { name: "Submit" })).toBeInTheDocument();
+
+// ✅ Good - uses label
+expect(screen.getByLabelText("Email address")).toBeInTheDocument();
+
+// ❌ Avoid - uses test id when role is available
+expect(screen.getByTestId("submit-button")).toBeInTheDocument();
+```
+
+## Test Data
+
+### Fixtures
+
+- Create reusable test data in `__fixtures__` directories
+- Use factories for generating test objects
+- Keep test data minimal and focused
+
+### Mock Data
+
+- Use realistic but minimal mock data
+- Avoid hardcoded values in tests
+- Use builders for complex test objects
+
+## E2E Testing
+
+### Desktop (Playwright)
+
+- Use data-testid attributes for element selection
+- Follow the pattern: `<context>-<purpose>-<element-type>`
+- Record tests for initial development, then refactor
+- Use page objects for complex interactions
+
+### Mobile (Detox)
+
+- Use accessibility labels for element selection
+- Test on both iOS and Android
+- Use detox matchers for assertions
+
+## Coin Module Testing
+
+### Test Structure
+
+```typescript
+// Use coin-tester framework
+import { CoinTester } from "@ledgerhq/coin-tester";
+
+describe("Bitcoin Module", () => {
+  let tester: CoinTester;
+
+  beforeAll(async () => {
+    tester = await CoinTester.setup("bitcoin");
+  });
+
+  it("should create and sign transactions", async () => {
+    const transaction = await tester.createTransaction();
+    const signed = await tester.signTransaction(transaction);
+    expect(signed).toBeDefined();
+  });
+});
+```
+
+### Scenario Testing
+
+- Create deterministic test scenarios
+- Test complete transaction flows
+- Verify blockchain state changes
+- Use local test nodes when possible
+
+## Coverage Guidelines
+
+### Coverage Targets
+
+- **Integration tests**: 80% coverage for complex features
+- **Generic components**: 90% coverage for reusable components
+- **Helper functions**: 100% coverage for utility functions
+- **Redux actions/reducers**: 100% coverage
+
+### Coverage Commands
+
+```bash
+# Run coverage for mobile
+pnpm mobile test:jest:coverage
+
+# View coverage report
+open apps/ledger-live-mobile/coverage/lcov-report/index.html
+```
+
+### Coverage Best Practices
+
+- Don't focus on coverage score alone
+- Use coverage as a tool to identify untested code
+- Focus on business logic and critical paths
+- Test user interactions, not implementation details
+
+### Test Maintenance
+
+- Keep tests simple and focused
+- Avoid testing external library behavior
+- Refactor tests when code changes
+- Remove obsolete tests
+
+### Common Mistakes to Avoid
+
+- Don't test external components from libraries
+- Don't test implementation details
+- Don't write tests that are too specific to implementation
+- Don't ignore edge cases and error conditions
+
+## Performance Testing
+
+### Load Testing
+
+- Test with large datasets
+- Measure performance metrics
+- Use performance budgets
+
+### Memory Testing
+
+- Test for memory leaks
+- Monitor memory usage patterns
+- Clean up resources properly
+
+## Debugging Tests
+
+### Test Debugging
+
+- Use `console.log` sparingly
+- Use debugger statements for complex issues
+- Use test-specific logging
+
+### E2E Debugging
+
+- Use screenshots for visual debugging
+- Use video recording for complex flows
+- Use browser dev tools for web testing

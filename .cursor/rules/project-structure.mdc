@@ -1,0 +1,76 @@
+---
+alwaysApply: true
+description: Ledger Live project structure and architecture guidelines
+---
+
+# Ledger Live Project Structure
+
+## Monorepo Architecture
+
+Ledger Live is a **monorepository** using [pnpm workspaces](https://pnpm.io/) and [turborepo](https://turborepo.org/) for package management and build orchestration.
+
+### Main Directories
+
+- **`/apps`** - User-facing applications (Desktop, Mobile, CLI, Web Tools)
+- **`/libs`** - Shared libraries and packages published to npm under `@ledgerhq`
+- **`/tools`** - Internal tools, GitHub actions, and build scripts
+- **`/e2e`** - End-to-end tests for desktop and mobile apps
+- **`/tests`** - Dummy applications for testing
+
+### Key Applications
+
+- [ledger-live-desktop](mdc:apps/ledger-live-desktop) - Electron desktop app
+- [ledger-live-mobile](mdc:apps/ledger-live-mobile) - React Native mobile app
+- [live-cli](mdc:apps/cli) - Command line interface
+- [web-tools](mdc:apps/web-tools) - Web development tools
+
+### Core Libraries
+
+- [ledger-live-common](mdc:libs/ledger-live-common) - Shared business logic
+- [coin-framework](mdc:libs/coin-framework) - Blockchain integration framework
+- [coin-modules](mdc:libs/coin-modules) - Individual blockchain implementations
+- [ledgerjs](mdc:libs/ledgerjs) - Hardware wallet communication
+- [ui](mdc:libs/ui) - Shared UI components
+
+## Development Environment
+
+### Proto Toolchain Manager
+
+- Use [proto](https://moonrepo.dev/proto) to manage Node.js, npm, and pnpm versions
+- Ensures consistent development environment across team members
+- Automatically downloads and installs supported tool versions
+
+```bash
+# Install proto (if not already installed)
+# Follow instructions at https://moonrepo.dev/proto
+
+# Install supported tool versions
+proto use
+
+# This will download and install:
+# - Node.js (LTS version)
+# - npm (compatible version)
+# - pnpm (specified version)
+```
+
+### Package Management
+
+- Use `pnpm` for all package management operations
+- All commands should be run from the monorepo root
+- Use workspace aliases (e.g., `pnpm desktop`, `pnpm mobile`, `pnpm common`)
+- Use `--filter` flag for scoped operations
+
+## Build System
+
+- Uses [turborepo](https://turborepo.org/) for build orchestration
+- Remote caching enabled for CI/CD optimization
+- TypeScript compilation with strict settings
+- ESLint + Prettier for code quality
+
+## Development Workflow
+
+1. Always run commands from the monorepo root
+2. Use `pnpm build:libs` to build all dependencies
+3. Use `pnpm dev:lld` or `pnpm dev:llm` for development
+4. Use `pnpm test` for running tests
+5. Use `pnpm lint:fix` and `pnpm typecheck` before commits

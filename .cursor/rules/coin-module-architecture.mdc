@@ -1,0 +1,223 @@
+---
+globs: libs/coin-*/**/*.ts,libs/coin-*/**/*.tsx
+description: Coin module architecture and development patterns
+---
+
+# Coin Module Architecture
+
+## Alpaca Compliance
+
+Coin modules must follow the **Alpaca compatibility** architecture for consistency and maintainability.
+
+### Directory Structure
+
+Each coin module must have these directories:
+
+```
+libs/coin-{blockchain}/
+├── api/           # Interface for backend services (Alpaca)
+├── bridge/        # Bridge implementation for Ledger Live
+├── logic/         # Core blockchain logic (agnostic)
+├── network/       # Explorer/node communication
+├── signer/        # Hardware app interface
+└── types/         # Type definitions
+```
+
+## Type Organization Rules
+
+### Network Types
+
+- **Location**: Defined in `network/` module
+- **Scope**: Only used within network module
+- **Purpose**: External API communication
+
+### Logic Types
+
+- **Location**: Defined in `types/` module
+- **Scope**: Used across all modules except network
+- **Purpose**: Core business logic
+
+### Bridge Types
+
+- **Location**: Defined in `types/` module
+- **Scope**: Only used within bridge module
+- **Purpose**: Ledger Live integration
+
+### API Types
+
+- **Location**: Defined in `types/` module
+- **Scope**: Only used within api module
+- **Purpose**: Backend service integration
+
+## Module Communication
+
+### Network Access
+
+- Network functions accessed **only** through logic module
+- No direct network calls from bridge or api
+- Logic module acts as abstraction layer
+
+### Data Flow
+
+```
+Network → Logic → Bridge/API
+```
+
+## Implementation Patterns
+
+### Logic Module
+
+```typescript
+// Core logic should be framework-agnostic
+export class BlockchainLogic {
+  async getAccount(address: string): Promise<Account> {
+    // Implementation using network module
+  }
+
+  async createTransaction(params: TransactionParams): Promise<Transaction> {
+    // Pure business logic
+  }
+}
+```
+
+### Bridge Module
+
+```typescript
+// Bridge implements Ledger Live interfaces
+export const currencyBridge: CurrencyBridge = {
+  scanAccounts: async (currency, deviceId) => {
+    // Use logic module for core operations
+    return logic.getAccounts(currency, deviceId);
+  },
+};
+```
+
+### Network Module
+
+```typescript
+// Network handles external communication
+export class NetworkClient {
+  async getAccountInfo(address: string): Promise<AccountInfo> {
+    // Direct API calls to blockchain
+  }
+}
+```
+
+## Testing Patterns
+
+### Coin Tester Integration
+
+- Use [coin-tester](mdc:libs/coin-tester) framework
+- Create deterministic test scenarios
+- Test complete transaction flows
+- Mock external dependencies
+
+### Test Structure
+
+```typescript
+import { CoinTester } from "@ledgerhq/coin-tester";
+
+describe("Bitcoin Module", () => {
+  let tester: CoinTester;
+
+  beforeAll(async () => {
+    tester = await CoinTester.setup("bitcoin");
+  });
+
+  it("should create valid transactions", async () => {
+    const tx = await tester.createTransaction({
+      recipient: "1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa",
+      amount: "0.001",
+    });
+    expect(tx).toBeValid();
+  });
+});
+```
+
+## Configuration Management
+
+### Coin Configuration
+
+- Implement `setConfiguration` function
+- Use `getConfiguration` in implementations
+- Support different network environments
+- Handle configuration changes gracefully
+
+### Example
+
+```typescript
+let config: CoinConfig = defaultConfig;
+
+export const setConfiguration = (newConfig: CoinConfig) => {
+  config = { ...config, ...newConfig };
+};
+
+export const getConfiguration = (): CoinConfig => config;
+```
+
+## Error Handling
+
+### Error Types
+
+- Use specific error classes for different failure modes
+- Include error codes and context
+- Provide recovery suggestions
+
+### Example
+
+```typescript
+export class InsufficientFundsError extends Error {
+  constructor(required: string, available: string) {
+    super(`Insufficient funds: need ${required}, have ${available}`);
+    this.name = "InsufficientFundsError";
+  }
+}
+```
+
+## Performance Considerations
+
+### Caching
+
+- Implement appropriate caching strategies
+- Cache expensive operations (derivation, validation)
+- Use TTL for time-sensitive data
+- Clear cache on configuration changes
+
+### Optimization
+
+- Minimize network calls
+- Use batch operations where possible
+- Implement connection pooling
+- Handle rate limiting gracefully
+
+## Security Best Practices
+
+### Key Management
+
+- Never store private keys
+- Use hardware wallet for signing
+- Implement proper key derivation
+- Validate all inputs
+
+### Transaction Security
+
+- Validate all transaction parameters
+- Implement proper fee estimation
+- Use secure random number generation
+- Handle edge cases gracefully
+
+## Documentation
+
+### API Documentation
+
+- Document all public interfaces
+- Include usage examples
+- Specify error conditions
+- Provide migration guides
+
+### Architecture Documentation
+
+- Document module responsibilities
+- Explain data flow
+- Include integration examples
+- Maintain changelog

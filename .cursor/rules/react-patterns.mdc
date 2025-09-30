@@ -1,0 +1,514 @@
+---
+globs: *.tsx,*.jsx,**/src/**/*.tsx,**/src/**/*.jsx
+description: React and React Native development patterns for Ledger Live
+---
+
+# React & React Native Patterns
+
+## New Architecture (newArch)
+
+> **⚠️ IMPORTANT**: The following rules are **MANDATORY** for all files under `src/newArch/` folders. For files outside `newArch`, follow the general React patterns below.
+
+### Migration Guidelines
+
+- All new components/features following these rules are under `src/newArch`
+- Once migration is complete, `src/newArch` will be moved to `src/`
+- These patterns apply to both mobile and desktop applications
+- **STRICT ENFORCEMENT**: All newArch files must follow these patterns exactly
+
+### Folder Organization
+
+```
+src/newArch/
+├── features/           # Top-level feature folders
+│   └── FeatureName/
+│       ├── __integrations__/
+│       ├── components/     # Shared components
+│       ├── screens/       # Screen components
+│       ├── hooks/         # Shared hooks
+│       └── utils/         # Shared utilities
+├── hooks/             # Global shared hooks
+├── components/        # Global shared components
+└── utils/            # Global utilities
+```
+
+### Feature Structure
+
+```
+FeatureName/
+├── __integrations__/
+├── components/           # Shared across multiple screens
+│   └── ComponentName/
+│       ├── index.tsx
+│       └── useComponentNameViewModel.ts
+├── screens/
+│   ├── ScreenName/
+│   │   ├── components/   # Screen-specific components
+│   │   │   └── ComponentName/
+│   │   │       └── index.tsx
+│   │   ├── index.tsx
+│   │   └── useScreenNameViewModel.ts
+│   └── AnotherScreen/
+├── hooks/               # Feature-specific hooks
+└── utils/               # Feature-specific utilities
+```
+
+### Screens/Components Pattern
+
+> **🚨 MANDATORY for newArch**: These rules are strictly enforced for all files under `src/newArch/`
+
+- Folders inside screens cannot have their own screens subfolders
+- Components folder contains React components reused across different screens
+- Screen-specific components go in `components/` subfolder inside the screen folder
+
+### Imports Guidelines
+
+> **🚨 MANDATORY for newArch**: These import rules are strictly enforced for all files under `src/newArch/`
+
+- Favor relative imports when not moving above more than one folder
+- Favor TypeScript aliases over absolute imports
+- Add TS aliases when it makes sense
+
+```typescript
+// ✅ DO
+import MarketDetail from "LLM/features/Market/screens/MarketDetail";
+import MarketDetail from "../MarketDetail";
+import MarketDetail from "./MarketDetail";
+
+// ❌ DON'T
+import MarketDetail from "src/newArch/features/Market/screens/MarketDetail";
+import MarketDetail from "../../../MarketDetail";
+import MarketDetail from "./MarketDetail/index.tsx";
+```
+
+### List/Detail Pattern
+
+> **🚨 MANDATORY for newArch**: These naming patterns are strictly enforced for all files under `src/newArch/`
+
+- List components: suffix with `List` (always singular)
+- Detail components: suffix with `Detail`
+- List components display collections, Detail components display individual items
+
+```typescript
+// ✅ DO
+Market/
+└── screens/
+   ├── MarketList
+   └── MarketDetail
+
+// ❌ DON'T
+Market/
+└── screens/
+   ├── ListOfMarketItem
+   └── MarketItemPage
+```
+
+### Index.ts Pattern
+
+> **🚨 MANDATORY for newArch**: These file organization patterns are strictly enforced for all files under `src/newArch/`
+
+- Create dedicated folder by component and name the component `index.tsx`
+- Keep component files in their own folders
+
+```typescript
+// ✅ DO
+Market/
+└── components/
+   └── MarketRowItem/
+      ├── index.tsx
+      └── useMarketRowItemViewModel.tsx
+
+// ❌ DON'T
+Market/
+└── components/
+   ├── MarketRowItem/
+   │  └── index.tsx
+   └── useMarketRowItemViewModel.tsx
+```
+
+### Component Naming
+
+> **🚨 MANDATORY for newArch**: These naming conventions are strictly enforced for all files under `src/newArch/`
+
+- Don't keep context in component names (tree structure provides context)
+- Respect List/Detail pattern when it makes sense
+- Keep names concise and descriptive
+
+```typescript
+// ✅ DO
+import SelectNetworkCont from "LLM/features/Deposit/screens/SelectNetwork/useSelectNetworkViewModel.tsx";
+
+// ❌ DON'T
+import SelectNetworkCont from "LLM/features/Deposit/screens/DepositFlowSelectNetwork/useDepositFlowSelectNetworkViewModel.tsx";
+```
+
+### Utils Files
+
+> **🚨 MANDATORY for newArch**: These utils organization patterns are strictly enforced for all files under `src/newArch/`
+
+- Don't collocate utils files with components
+- Create `utils/` folder at the top level of components importing it
+- Utils folder can include multiple utils files
+
+```typescript
+// ✅ DO
+Market/
+├── screens/
+│  └── MarketDetail/
+│     ├── utils/
+│     │ └── index.tsx
+│     ├── MarketDetail.tsx
+│     └── useMarketDetailViewModel.tsx
+└── utils/
+   └── index.tsx
+
+// ❌ DON'T
+Market/
+└── components/
+   └── Header/
+      ├── index.tsx
+      └── utils.tsx
+```
+
+### Components Nesting
+
+> **🚨 MANDATORY for newArch**: These nesting patterns are strictly enforced for all files under `src/newArch/`
+
+- Create components next to parent if not reused elsewhere
+- Don't flatten components inside a component folder if they are nested
+- Create `components/` folder for screens that rely on dedicated components
+
+```typescript
+// ✅ DO
+Market/
+└── screens/
+   └── MarketDetail/
+      ├── components/
+      │  ├── Stats/
+      │  │  ├── Price/
+      │  │  │  └── index.tsx
+      │  │  └── Supply/
+      │  │     └── index.tsx
+      │  └── index.tsx
+      └── index.tsx
+
+// ❌ DON'T
+Market/
+└── screens/
+   └── MarketDetail/
+      ├── Stats/
+      │  └── index.tsx
+      ├── Price/
+      │  └── index.tsx
+      ├── Supply/
+      │  └── index.tsx
+      └── index.tsx
+```
+
+### Constants
+
+> **🚨 MANDATORY for newArch**: These constants organization patterns are strictly enforced for all files under `src/newArch/`
+
+- Collocate constants to their component
+- If shared between components, declare under `utils/constants/` folder
+
+```typescript
+// ✅ DO
+Market/
+├── screens/
+│  ├── MarketDetail/
+│  │  └── index.ts // import Coins from 'Utils/constants/coins'
+│  └── MarketList/
+│     └── index.ts // import Coins from 'Utils/constants/coins'
+└── utils/
+   └── constants/
+      └── coins.ts
+```
+
+### useComponentViewModel Pattern
+
+> **🚨 MANDATORY for newArch**: These ViewModel patterns are strictly enforced for all files under `src/newArch/`
+
+- Create dedicated hook called `use{ComponentName}ViewModel` for components needing outer layer connections
+- ViewModel suffix identifies component-specific hooks
+- Don't use the hook directly in the component, inject result as props
+
+```typescript
+// ✅ DO
+// MarketList.tsx
+function View(props) {
+  // Component implementation
+}
+
+const MarketList = () => <View {...useMarketListViewModel()} />;
+export default MarketList;
+
+// ❌ DON'T
+function MarketList() {
+  const props = useMarketListViewModel();
+  // Component implementation
+}
+export default MarketList;
+```
+
+---
+
+## General React Patterns (Non-newArch)
+
+> **Note**: The following patterns apply to files **outside** the `src/newArch/` folder. For newArch files, follow the strict guidelines above.
+
+## Component Architecture
+
+### Component Structure
+
+- Keep components under 200 lines of code
+- Split large components into smaller, focused components
+- Use functional components with hooks
+- Prefer composition over inheritance
+
+### File Organization
+
+```typescript
+// Component file structure
+ComponentName/
+├── index.tsx          # Main component
+├── ComponentName.tsx  # Implementation
+├── types.ts          # Type definitions
+├── styles.ts         # Styling (if needed)
+└── __tests__/        # Component tests
+```
+
+## State Management
+
+### Redux Patterns
+
+- Use Redux for global state management
+- Keep local state in components when possible
+- Use `connect()` at the lowest level to avoid re-renders
+- Implement proper selectors for performance
+
+### Hook Patterns
+
+```typescript
+// Custom hooks for reusable logic
+export const useAccountData = (accountId: string) => {
+  const [account, setAccount] = useState<Account | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    // Fetch account data
+  }, [accountId]);
+
+  return { account, loading };
+};
+```
+
+## Styling Guidelines
+
+### React Native Styling
+
+- Use `StyleSheet.create()` for styles
+- Use `LText` instead of React Native's `Text` component
+- Keep styles close to components
+- Use theme system for consistent styling
+
+### Desktop Styling
+
+- Use CSS modules or styled-components
+- Follow design system guidelines
+- Use responsive design patterns
+- Implement dark/light mode support
+
+## Performance Optimization
+
+### React Native Performance
+
+- Use `Animated` API for animations
+- Avoid `setState` at high rates
+- Use `useMemo` and `useCallback` appropriately
+- Implement proper list virtualization
+
+### Desktop Performance
+
+- Use React.memo for expensive components
+- Implement proper code splitting
+- Use lazy loading for large components
+- Optimize bundle size
+
+## Navigation Patterns
+
+### React Native Navigation
+
+- Use React Navigation for mobile
+- Implement proper deep linking
+- Handle navigation state properly
+- Use navigation hooks for type safety
+
+### Desktop Navigation
+
+- Use React Router for desktop
+- Implement proper routing guards
+- Handle browser history correctly
+- Use navigation state management
+
+## Data Fetching
+
+### API Integration
+
+- Use React Query for server state
+- Implement proper error handling
+- Use optimistic updates where appropriate
+- Handle loading states gracefully
+
+### Caching Strategies
+
+```typescript
+// Use React Query for caching
+const { data, isLoading, error } = useQuery({
+  queryKey: ["account", accountId],
+  queryFn: () => fetchAccount(accountId),
+  staleTime: 5 * 60 * 1000, // 5 minutes
+});
+```
+
+## Testing Patterns
+
+### Component Testing
+
+```typescript
+import { render, screen, fireEvent } from "@testing-library/react";
+import { Component } from "./Component";
+
+describe("Component", () => {
+  it("should render correctly", () => {
+    render(<Component title="Test" />);
+    expect(screen.getByText("Test")).toBeInTheDocument();
+  });
+
+  it("should handle user interactions", () => {
+    const mockOnClick = jest.fn();
+    render(<Component onClick={mockOnClick} />);
+
+    fireEvent.click(screen.getByRole("button"));
+    expect(mockOnClick).toHaveBeenCalled();
+  });
+});
+```
+
+### Hook Testing
+
+```typescript
+import { renderHook, act } from "@testing-library/react";
+import { useCustomHook } from "./useCustomHook";
+
+describe("useCustomHook", () => {
+  it("should return initial state", () => {
+    const { result } = renderHook(() => useCustomHook());
+    expect(result.current.value).toBe(initialValue);
+  });
+});
+```
+
+## Accessibility
+
+### Mobile Accessibility
+
+- Use proper accessibility labels
+- Implement screen reader support
+- Handle focus management
+- Test with accessibility tools
+
+### Desktop Accessibility
+
+- Use semantic HTML elements
+- Implement keyboard navigation
+- Provide proper ARIA labels
+- Test with screen readers
+
+## Error Boundaries
+
+### Error Handling
+
+```typescript
+class ErrorBoundary extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { hasError: false };
+  }
+
+  static getDerivedStateFromError(error) {
+    return { hasError: true };
+  }
+
+  componentDidCatch(error, errorInfo) {
+    // Log error to monitoring service
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return <ErrorFallback />;
+    }
+
+    return this.props.children;
+  }
+}
+```
+
+## Platform-Specific Code
+
+### React Native Platform Detection
+
+```typescript
+import { Platform } from "react-native";
+
+const styles = StyleSheet.create({
+  container: {
+    ...Platform.select({
+      ios: { paddingTop: 20 },
+      android: { paddingTop: 25 },
+      default: { paddingTop: 0 },
+    }),
+  },
+});
+```
+
+### Desktop Platform Detection
+
+```typescript
+const isElectron = process.env.REACT_APP_ELECTRON === "true";
+const isDevelopment = process.env.NODE_ENV === "development";
+```
+
+## Animation Patterns
+
+### React Native Animations
+
+- Use `Animated` API for smooth animations
+- Implement native driver when possible
+- Use `LayoutAnimation` for layout changes
+- Avoid JavaScript-driven animations for performance
+
+### Desktop Animations
+
+- Use CSS transitions for simple animations
+- Use Framer Motion for complex animations
+- Implement proper animation timing
+- Consider reduced motion preferences
+
+## Internationalization
+
+### Translation Integration
+
+- Use react-i18next for translations
+- Implement proper pluralization
+- Handle RTL languages
+- Test with different locales
+
+### Translation Keys
+
+```typescript
+// Use descriptive translation keys
+const t = useTranslation();
+const title = t("account.details.title");
+const description = t("account.details.description", { count: 5 });
+```
