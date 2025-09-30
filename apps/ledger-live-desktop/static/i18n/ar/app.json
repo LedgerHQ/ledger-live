@@ -172,6 +172,7 @@
       "REDELEGATE" : "تمت إعادة التفويض",
       "UNDELEGATE" : "غير مفوّض",
       "APPROVE" : "مُعتمد",
+      "PRE_APPROVAL" : "موافقة مسبقة",
       "VOTE" : "تم التصويت",
       "FREEZE" : "مُجمد",
       "UNFREEZE" : "تمت إزالة التجميد",
@@ -463,6 +464,8 @@
       "apt_description" : "لمبادلة Aptos، استخدم أي جهاز Ledger متوافق آخر مثل ™Ledger Nano S Plus أو ™Ledger Nano X أو ™Ledger Flex أو ™Ledger Stax.",
       "cosmos_title" : "™Ledger Nano S لا تدعم مبادلة Cosmos",
       "cosmos_description" : "لمبادلة Cosmos، استخدم أي جهاز Ledger متوافق آخر مثل ™Ledger Nano S Plus أو ™Ledger Nano X أو ™Ledger Flex أو ™Ledger Stax.",
+      "hedera_title" : "™Ledger Nano S لا تدعم مبادلة Hedera",
+      "hedera_description" : "لمبادلة Hedera، استخدِم أي جهاز Ledger متوافق آخر مثل ™Ledger Nano S Plus أو ™Ledger Nano X أو ™Ledger Flex أو ™Ledger Stax.",
       "osmo_title" : "™Ledger Nano S لا تدعم مبادلة Osmosis",
       "osmo_description" : "لمبادلة Osmosis، استخدم أي جهاز Ledger متوافق آخر مثل ™Ledger Nano S Plus أو ™Ledger Nano X أو ™Ledger Flex أو ™Ledger Stax.",
       "dydx_title" : "™Ledger Nano S لا تدعم مبادلة dYdX",
@@ -1874,7 +1877,12 @@
         "default" : "تحقق من تفاصيل المبادلة على جهازك قبل إرسالها. يتم تبادل العناوين بشكل آمن حتى لا تضطر إلى التحقق منهم.",
         "provider" : "تحقق من تفاصيل المبادلة على جهازك قبل إرسالها. {{providerName}} قد يحتاج إلى إجراء تحقق إضافي لبعض المعاملات، ما يؤدي إلى تأخير."
       },
+      "simpleViewNotice" : {
+        "default" : "تحقق من تفاصيل المبادلة على جهازك Ledger قبل إرسالها.",
+        "provider" : "تحقق من تفاصيل المبادلة على جهازك قبل إرسالها."
+      },
       "confirm" : "تأكيد معاملة المبادلة",
+      "confirmSwap" : "تأكيد عملية المبادلة على الجهاز",
       "amountSent" : "المبلغ المطلوب إرساله",
       "amountReceived" : "المبلغ المطلوب تلقيه",
       "amountReceivedFloat" : "المبلغ المطلوب تلقيه قبل رسوم الخدمة",
@@ -1885,6 +1893,7 @@
       "acceptTerms" : "بتأكيد صحة هذه المعاملة، أنا أقبل\n<0>شروط استخدام {{provider}}</0>",
       "exodusAcceptTerms" : "Exodus تعتمد على أطراف ثالثة لإجراء المبادلات.\nبتأكيد صحة هذه المعاملة، أنا أقبل <0>شروط استخدام Exodus</0>",
       "changellyAcceptTerms" : "بالنقر على ”Swap with Changelly (المبادلة بواسطة Changelly)“ أنت تقبل <0>شروط استخدام</0> Changelly و\n<1>سياسة مكافحة غسل الأموال/KYC (اعرف عميلك)</1> الخاصة بها. Changelly قد تطبق إجراءات مكافحة غسل الأموال/KYC (اعرف عميلك) والتي\nيمكن، في حالات محدودة، أن تؤثر على إتمام معاملتك. إذا\nحدث هذا، يجب عليك التواصل مع <2>دعم عملاء</2> Changelly.",
+      "changellySimplifiedAcceptTerms" : "بالتحقق من صحة هذه المعاملة، أنت تقبل <0>شروط استخدام</0> Changelly و\n<1>سياسة مكافحة غسل الأموال/KYC (اعرف عميلك)</1> الخاصة بها. Changelly قد تطبق إجراءات مكافحة غسل الأموال/KYC (اعرف عميلك) والتي\nيمكن، في حالات محدودة، أن تؤثر على إتمام معاملتك. إذا\nحدث هذا، يجب عليك التواصل مع <2>دعم عملاء</2> Changelly.",
       "cicAcceptTerms" : "”Swap with CIC (المبادلة بواسطة CIC)“ أنت تقبل <0>شروط استخدام</0> CIC و<1>سياسة مكافحة غسل الأموال/KYC (اعرف عميلك)</1> الخاصة بها. CIC قد تطبق إجراءات مكافحة غسل الأموال/KYC (اعرف عميلك) والتي يمكن، في حالات محدودة، أن تؤثر على إتمام معاملتك. إذا حدث هذا، يجب عليك التواصل مع <2>دعم عملاء</2> CIC."
     },
     "swap2" : {
@@ -2240,6 +2249,16 @@
     "title" : "تلقي",
     "successTitle" : "تمت مشاركة العنوان بشكل آمن",
     "steps" : {
+      "options" : {
+        "fromBank" : {
+          "title" : "من حساب بنكي",
+          "description" : "إيداع دولار أمريكي أو يورو"
+        },
+        "fromCrypto" : {
+          "title" : "من عنوان أصول مشفرة",
+          "description" : "تلقي الأصول المشفرة"
+        }
+      },
       "chooseAccount" : {
         "title" : "حساب",
         "label" : "الحساب للإيداع",
@@ -5006,6 +5025,12 @@
     },
     "screens" : {
       "welcome" : {
+        "videos" : {
+          "buySell" : "محفظة تحمي وتجعلك أنت المتحكم",
+          "thousandsCrypto" : "إرسال وتلقي ومبادلة وتكديس آلاف الأصول المشفرة",
+          "secureWallet" : "تحقق من كل معاملاتك براحة بال"
+        },
+        "notice" : "بالمتابعة، أنت توافق على <Link1>شروط وأحكام</Link1> و<Link2>سياسة خصوصية</Link2> Ledger. لا تُقدم Ledger أي نصيحة مالية.\nخدمات المبادلة والتكديس مُقدَّمة من أطراف ثالثة.",
         "title" : "محفظة العملات المشفرة والرموز غير القابلة للاستبدال الأكثر أماناً",
         "description" : "إدارة وشراء وتنمية أصولك المشفرة رموزك غير القابلة للاستبدال بأمان على Ledger Live.",
         "nextButton" : "بدء الاستخدام",
@@ -6439,6 +6464,9 @@
     },
     "EthAppPleaseEnableContractData" : {
       "title" : "يرجى تمكين Blind signing (التوقيع بدون اطلاع) أو بيانات العقد (Contract data) في إعدادات (Settings) تطبيق إيثريوم"
+    },
+    "CeloAppPleaseEnableContractData" : {
+      "title" : "يُرجى تمكين بيانات العقد (Contract data) في إعدادات (Settings) تطبيق Celo"
     },
     "InvalidXRPTag" : {
       "title" : "علامة وجهة XRP غير صالحة"
