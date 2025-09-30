@@ -294,6 +294,7 @@ describe("Testing craftTransaction function", () => {
 
     // WHEN
     const { transaction: result } = await craftTransaction({
+      intentType: "transaction",
       asset: { type: "native" },
       type: "send",
       sender,

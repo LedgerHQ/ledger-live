@@ -342,6 +342,7 @@ export type TransactionIntent<
   feesStrategy?: FeesStrategy;
   senderPublicKey?: string;
   sequence?: number;
+  expiration?: number;
 } & MaybeMemo<MemoType> &
   MaybeTxData<TxDataType>;
 
@@ -356,7 +357,6 @@ export type SendTransactionIntent<
   TxDataType extends TxData = TxDataNotSupported,
 > = TransactionIntent & {
   intentType: "transaction";
-  expiration?: number;
 } & MaybeMemo<MemoType> &
   MaybeTxData<TxDataType>;
 
