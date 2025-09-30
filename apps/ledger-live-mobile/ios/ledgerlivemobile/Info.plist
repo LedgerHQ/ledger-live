@@ -16,6 +16,8 @@
 	<key>CFBundleIdentifier</key>
 	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
 	<key>CFBundleInfoDictionaryVersion</key>
+	<key>UIDesignRequiresCompatibility</key>
+	<true />
 	<string>6.0</string>
 	<key>CFBundleLocalizations</key>
 	<array>
