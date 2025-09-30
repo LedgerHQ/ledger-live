@@ -1,6 +1,5 @@
 import { type ReactNode } from "react";
 import type { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { compareByBalanceThenFiat } from "../utils/sortByBalance";
 import { UseBalanceDeps } from "../utils/type";
 import { getBalanceAndFiatValueByAssets } from "../utils/getBalanceAndFiatValueByAssets";
 
@@ -28,21 +27,13 @@ export function createUseRightBalanceNetwork({ useBalanceDeps, balanceItem }: Ne
 
     const balanceMap = new Map(networkBalanceData.map(b => [b.id, b]));
 
-    const networksWithBalance = networks.map(network => {
+    return networks.map(network => {
       const balanceData = balanceMap.get(network.id) || {};
       return {
-        network,
-        balanceData,
+        ...network,
+        rightElement: balanceItem(balanceData),
+        balanceData: balanceData,
       };
     });
-
-    networksWithBalance.sort((a, b) =>
-      compareByBalanceThenFiat(a.balanceData, b.balanceData, discreet),
-    );
-
-    return networksWithBalance.map(({ network, balanceData }) => ({
-      ...network,
-      rightElement: balanceItem(balanceData),
-    }));
   };
 }
