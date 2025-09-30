@@ -7,7 +7,10 @@
     "lib": ["es2020", "dom"],
     "outDir": "lib",
     "exactOptionalPropertyTypes": true,
-    "typeRoots": ["./types", "./node_modules/@types"]
+    "typeRoots": ["./types", "./node_modules/@types"],
+    "paths": {
+      "@ledgerhq/hw-app-btc/*": ["../../ledgerjs/packages/hw-app-btc/src/*"]
+    }
   },
-  "include": ["src/**/*", "types.d.ts"],
+  "include": ["src/**/*", "types.d.ts"]
 }
