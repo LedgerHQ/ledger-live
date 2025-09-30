@@ -27,7 +27,6 @@ import OnboardingPreQuizModal from "~/screens/Onboarding/steps/setupDevice/drawe
 import OnboardingQuiz from "~/screens/Onboarding/OnboardingQuiz";
 import OnboardingQuizFinal from "~/screens/Onboarding/OnboardingQuizFinal";
 import NavigationHeader from "../NavigationHeader";
-// import NavigationOverlay from "../NavigationOverlay";
 import NavigationModalContainer from "../NavigationModalContainer";
 import OnboardingSetupDeviceInformation from "~/screens/Onboarding/steps/setupDevice/drawers/SecurePinCode";
 import OnboardingSetupDeviceRecoveryPhrase from "~/screens/Onboarding/steps/setupDevice/drawers/SecureRecoveryPhrase";
