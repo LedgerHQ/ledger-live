@@ -20,18 +20,13 @@ import {
 import { rnHidTransportIdentifier } from "@ledgerhq/device-transport-kit-react-native-hid";
 import { LocalTracer } from "@ledgerhq/logs";
 import { distinctUntilChanged, first, map, retry, timeout } from "rxjs/operators";
+import { isDmkError } from "../errors";
 
 const isDeviceSessionNotFoundError = (error: unknown): error is { _tag: "DeviceSessionNotFound" } =>
-  typeof error === "object" &&
-  error !== null &&
-  "_tag" in error &&
-  error._tag === "DeviceSessionNotFound";
+  isDmkError(error) && error._tag === "DeviceSessionNotFound";
 
 const isConnectionOpeningError = (error: unknown): error is { _tag: "ConnectionOpeningError" } =>
-  typeof error === "object" &&
-  error !== null &&
-  "_tag" in error &&
-  error._tag === "ConnectionOpeningError";
+  isDmkError(error) && error._tag === "ConnectionOpeningError";
 
 type DMKTransport = Transport & {
   sessionId: string;
@@ -105,20 +100,7 @@ export class DeviceManagementKitHIDTransport extends Transport {
 
     let transport: DeviceManagementKitHIDTransport | undefined = undefined;
     try {
-      if (!activeDeviceSession) {
-        const sessionId = await dmk.connect({
-          device: {
-            id: deviceId,
-            transport: rnHidTransportIdentifier,
-          } as DiscoveredDevice,
-          sessionRefresherOptions: { isRefresherDisabled: true },
-        });
-        transport = new DeviceManagementKitHIDTransport(dmk, sessionId);
-        activeDeviceSessionSubject.next({
-          sessionId,
-          transport,
-        });
-      } else {
+      if (activeDeviceSession) {
         const deviceSessionState = await firstValueFrom(
           activeDeviceSession.transport.dmk.getDeviceSessionState({
             sessionId: activeDeviceSession.sessionId,
@@ -142,6 +124,19 @@ export class DeviceManagementKitHIDTransport extends Transport {
           transport = new DeviceManagementKitHIDTransport(dmk, sessionId);
           activeDeviceSessionSubject.next({ transport, sessionId });
         }
+      } else {
+        const sessionId = await dmk.connect({
+          device: {
+            id: deviceId,
+            transport: rnHidTransportIdentifier,
+          } as DiscoveredDevice,
+          sessionRefresherOptions: { isRefresherDisabled: true },
+        });
+        transport = new DeviceManagementKitHIDTransport(dmk, sessionId);
+        activeDeviceSessionSubject.next({
+          sessionId,
+          transport,
+        });
       }
     } catch (err) {
       if (isConnectionOpeningError(err)) {

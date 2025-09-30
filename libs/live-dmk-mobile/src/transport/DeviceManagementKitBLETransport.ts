@@ -7,7 +7,10 @@ import {
   DiscoveredDevice,
   OpeningConnectionError,
 } from "@ledgerhq/device-management-kit";
-import { PairingRefusedError } from "@ledgerhq/device-transport-kit-react-native-ble";
+import {
+  PairingRefusedError,
+  rnBleTransportIdentifier,
+} from "@ledgerhq/device-transport-kit-react-native-ble";
 import { activeDeviceSessionSubject, dmkToLedgerDeviceIdMap } from "@ledgerhq/live-dmk-shared";
 import { LocalTracer, TraceContext } from "@ledgerhq/logs";
 import {
@@ -29,7 +32,6 @@ import type {
 import { HwTransportError, PairingFailed, PeerRemovedPairing } from "@ledgerhq/errors";
 import { getDeviceManagementKit } from "../hooks/useDeviceManagementKit";
 import { BlePlxManager } from "./BlePlxManager";
-import { rnBleTransportIdentifier } from "@ledgerhq/device-transport-kit-react-native-ble";
 import { isPeerRemovedPairingError } from "../errors";
 import { getDeviceModel } from "@ledgerhq/devices";
 
