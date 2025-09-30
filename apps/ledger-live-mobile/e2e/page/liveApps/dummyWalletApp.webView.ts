@@ -30,13 +30,11 @@ export default class DummyWalletApp {
   }
 
   async sendRequest() {
-    await tapWebElementByTestId("currency-ids-input");
     await typeTextByWebTestId("currency-ids-input", "ethereum,bitcoin");
     await tapWebElementByTestId("account-request");
   }
 
   async sendAccountReceive() {
-    await tapWebElementByTestId("account-id-input");
     await typeTextByWebTestId("account-id-input", "2d23ca2a-069e-579f-b13d-05bc706c7583");
     await tapWebElementByTestId("account-receive");
   }
@@ -47,13 +45,9 @@ export default class DummyWalletApp {
     amount: string,
     recipientAddress: string,
   ) {
-    await tapWebElementByTestId("account-id-input");
     await typeTextByWebTestId("account-id-input", accountId);
-    await tapWebElementByTestId("currency-ids-input");
     await typeTextByWebTestId("currency-ids-input", currencyIds.join(","));
-    await tapWebElementByTestId("amount-input");
     await typeTextByWebTestId("amount-input", amount);
-    await tapWebElementByTestId("recipient-input");
     await typeTextByWebTestId("recipient-input", recipientAddress);
     await tapWebElementByTestId("transaction-sign");
   }
@@ -71,31 +65,26 @@ export default class DummyWalletApp {
   }
 
   async setAccountId(accountId: string) {
-    await tapWebElementByTestId("account-id-input");
     await typeTextByWebTestId("account-id-input", accountId);
     await expect(getWebElementByTestId("account-id-input")).toHaveText(accountId);
   }
 
   async setRecipient(recipient: string) {
-    await tapWebElementByTestId("recipient-input");
     await typeTextByWebTestId("recipient-input", recipient);
     await expect(getWebElementByTestId("recipient-input")).toHaveText(recipient);
   }
 
   async setAmount(amount: string) {
-    await tapWebElementByTestId("amount-input");
     await typeTextByWebTestId("amount-input", amount);
     await expect(getWebElementByTestId("amount-input")).toHaveText(amount);
   }
 
   async setData(data: string) {
-    await tapWebElementByTestId("data-input");
     await typeTextByWebTestId("data-input", data);
     await expect(getWebElementByTestId("data-input")).toHaveText(data);
   }
 
   async setMessage(message: string) {
-    await tapWebElementByTestId("message-input");
     await typeTextByWebTestId("message-input", message);
     await expect(getWebElementByTestId("message-input")).toHaveText(message);
   }
