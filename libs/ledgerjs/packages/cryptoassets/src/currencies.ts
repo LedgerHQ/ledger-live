@@ -2378,7 +2378,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
         tx: "https://assethub-polkadot.subscan.io/extrinsic/$hash",
       },
     ],
-    keywords: ["dot", "polkadot"],
+    keywords: ["assethub"],
   },
   polygon: {
     type: "CryptoCurrency",
