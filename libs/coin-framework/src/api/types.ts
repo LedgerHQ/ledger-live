@@ -321,27 +321,18 @@ type MaybeTxData<TxDataType extends TxData> = TxDataType extends TxDataNotSuppor
 
 export type FeesStrategy = "slow" | "medium" | "fast";
 
-type StakingIntent = {
-  intentType: "staking";
-};
-
-export type StakingTransactionIntent<T extends StakingIntent> = TransactionIntent & T;
-
-type StakingIntent = {
-  intentType: "staking";
-};
-
-export type StakingTransactionIntent<T extends StakingIntent> = Omit<
-  TransactionIntent,
-  "intentType"
-> &
-  T;
+export type StakingOperation =
+  | "delegate"
+  | "undelegate"
+  | "redelegate"
+  | "getStakedBalance"
+  | "getUnstakedBalance";
 
 export type TransactionIntent<
   MemoType extends Memo = MemoNotSupported,
   TxDataType extends TxData = TxDataNotSupported,
 > = {
-  intentType: "transaction";
+  intentType: string;
   type: string;
   sender: string;
   recipient: string;
@@ -349,34 +340,25 @@ export type TransactionIntent<
   asset: AssetInfo;
   useAllAmount?: boolean;
   feesStrategy?: FeesStrategy;
+  senderPublicKey?: string;
+  sequence?: number;
 } & MaybeMemo<MemoType> &
   MaybeTxData<TxDataType>;
 
-  export type AnyIntent =
-  | TransactionIntent<MemoNotSupported>
-  | StakingTransactionIntent<StakingIntent>
-
 export type StakingTransactionIntent = TransactionIntent & {
   intentType: "staking";
   mode: StakingOperation;
   sourceValidatorAddress?: string;
 };
 
-export type SendTransactionIntent<MemoType extends Memo = MemoNotSupported> = TransactionIntent & {
-  intentType?: "transaction";
-  expiration?: number;
-} & MaybeMemo<MemoType>;
-
-export type StakingTransactionIntent = TransactionIntent & {
-  intentType: "staking";
-  mode: StakingOperation;
-  sourceValidatorAddress?: string;
-};
-
-export type SendTransactionIntent<MemoType extends Memo = MemoNotSupported> = TransactionIntent & {
+export type SendTransactionIntent<
+  MemoType extends Memo = MemoNotSupported,
+  TxDataType extends TxData = TxDataNotSupported,
+> = TransactionIntent & {
   intentType: "transaction";
   expiration?: number;
-} & MaybeMemo<MemoType>;
+} & MaybeMemo<MemoType> &
+  MaybeTxData<TxDataType>;
 
 export type TransactionValidation = {
   errors: Record<string, Error>;

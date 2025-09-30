@@ -16,10 +16,6 @@ import {
   TransactionLikeWithPreparedParams,
 } from "../types";
 import { getNodeApi } from "../network/node";
-import { STAKING_CONTRACTS } from "../staking";
-import { StakingOperation } from "../types/staking";
-import { encodeStakingData } from "../staking/encoder";
-import { isStakingIntent } from "../utils";
 import { buildStakingTransactionParams } from "../staking";
 
 export function isApiGasOptions(options: unknown): options is ApiGasOptions {
@@ -105,18 +101,6 @@ function getCallData(intent: TransactionIntent<MemoNotSupported, BufferTxData>):
   return isNative(intent.asset) ? Buffer.from([]) : getErc20Data(intent.recipient, intent.amount);
 }
 
-const stakingOperations = [
-  "delegate",
-  "undelegate",
-  "redelegate",
-  "getStakedBalance",
-  "getUnstakedBalance",
-] as const;
-
-function isStakingOperation(value: string): value is StakingOperation {
-  return (stakingOperations as readonly string[]).includes(value);
-}
-
 export async function prepareUnsignedTxParams(
   currency: CryptoCurrency,
   transactionIntent: TransactionIntent<MemoNotSupported, BufferTxData>,
@@ -126,19 +110,14 @@ export async function prepareUnsignedTxParams(
   const transactionType = getTransactionType(type);
   const node = getNodeApi(currency);
 
-  const feeData = await node.getFeeData(currency, {
-    type: transactionType,
-    feesStrategy: transactionIntent.feesStrategy,
-  });
-
   // Build transaction parameters based on type
   const { to, data, value } = type.startsWith("staking-")
     ? buildStakingTransactionParams(currency, transactionIntent)
     : ((): { to: string; data: Buffer; value: bigint } => {
         const { amount, asset, recipient } = transactionIntent;
         return {
-          to: isNative(asset) ? recipient : asset.assetReference || "",
-          data: isNative(asset) ? Buffer.from([]) : getErc20Data(recipient, amount),
+          to: isNative(asset) ? recipient : (asset.assetReference as string),
+          data: getCallData(transactionIntent),
           value: isNative(asset) ? amount : 0n,
         };
       })();
@@ -147,6 +126,11 @@ export async function prepareUnsignedTxParams(
     { currency, freshAddress: sender },
     { amount: BigNumber(value.toString()), recipient: to, data },
   );
+
+  const feeData = await node.getFeeData(currency, {
+    type: transactionType,
+    feesStrategy: transactionIntent.feesStrategy,
+  });
 
   return {
     type: transactionType,

@@ -1,4 +1,4 @@
-import type { Api, FeeEstimation, TransactionIntent } from "@ledgerhq/coin-framework/api/types";
+import type { Api, FeeEstimation } from "@ledgerhq/coin-framework/api/types";
 
 export type TezosFeeParameters = {
   gasLimit: bigint;

@@ -32,6 +32,7 @@ describe("craftTransaction", () => {
     expect(mockCreateTransaction).toHaveBeenCalledWith(
       sender,
       {
+        intentType,
         amount: new BigNumber(amount.toString()),
         recipient,
         mode: type,
@@ -61,6 +62,7 @@ describe("craftTransaction", () => {
     expect(mockCreateTransaction).toHaveBeenCalledWith(
       sender,
       {
+        intentType,
         amount: new BigNumber(amount.toString()),
         recipient,
         mode: type,
@@ -90,6 +92,7 @@ describe("craftTransaction", () => {
     expect(mockCreateTransaction).toHaveBeenCalledWith(
       sender,
       {
+        intentType,
         amount: new BigNumber(amount.toString()),
         recipient,
         mode: type,
@@ -119,6 +122,7 @@ describe("craftTransaction", () => {
     expect(mockCreateTransaction).toHaveBeenCalledWith(
       sender,
       {
+        intentType,
         amount: new BigNumber(amount.toString()),
         recipient,
         mode: type,

@@ -107,11 +107,12 @@ describe("Testing craftTransaction function", () => {
       storageLimit: DEFAULT_STORAGE_LIMIT,
     });
     await api.craftTransaction({
+      intentType: "transaction",
       type: "send",
       sender: "tz1test",
       recipient: "tz1recipient",
       amount: 1000n,
-    } as TezosTransactionIntent);
+    } as TransactionIntent);
     expect(logicEstimateFees).toHaveBeenCalledTimes(1);
     expect(logicCraftTransactionMock).toHaveBeenCalledWith(
       expect.objectContaining({ address: "tz1test" }),
@@ -139,11 +140,12 @@ describe("Testing craftTransaction function", () => {
       });
       await api.craftTransaction(
         {
+          intentType: "transaction",
           type: "send",
           sender: "tz1test",
           recipient: "tz1recipient",
           amount: 1000n,
-        } as TezosTransactionIntent,
+        } as TransactionIntent,
         {
           value: customFees,
         },
@@ -173,11 +175,12 @@ describe("Testing estimateFees function", () => {
       storageLimit: DEFAULT_STORAGE_LIMIT,
     });
     const result = await api.estimateFees({
+      intentType: "transaction",
       type: "send",
       sender: "tz1test",
       recipient: "tz1recipient",
       amount: 1000n,
-    } as TezosTransactionIntent);
+    } as TransactionIntent);
     expect(result).toEqual({
       value: DEFAULT_ESTIMATED_FEES,
       parameters: {
@@ -196,11 +199,12 @@ describe("Testing estimateFees function", () => {
     });
     await expect(
       api.estimateFees({
+        intentType: "transaction",
         type: "send",
         sender: "tz1test",
         recipient: "tz1recipient",
         amount: 1000n,
-      } as TezosTransactionIntent),
+      } as TransactionIntent),
     ).rejects.toThrow("Fees estimation failed: test");
   });
 
@@ -212,11 +216,12 @@ describe("Testing estimateFees function", () => {
       taquitoError: "proto.022-PsRiotum.delegate.unchanged",
     });
     const result = await api.estimateFees({
+      intentType: "staking",
       type: "delegate",
       sender: "tz1test",
       recipient: "tz1validator",
       amount: 0n,
-    } as TezosTransactionIntent);
+    } as TransactionIntent);
 
     expect(result).toEqual({
       value: DEFAULT_ESTIMATED_FEES,
