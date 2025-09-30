@@ -1,11 +1,11 @@
 import { useMemo } from "react";
-import { CurrenciesByProviderId, LoadingStatus } from "@ledgerhq/live-common/deposit/type";
+import { LoadingStatus } from "@ledgerhq/live-common/deposit/type";
 import { getLoadingStatus } from "@ledgerhq/live-common/modularDrawer/utils/getLoadingStatus";
-import { findCryptoCurrencyById, findTokenById } from "@ledgerhq/cryptoassets";
 import { useAssetsData } from "@ledgerhq/live-common/modularDrawer/hooks/useAssetsData";
 import { modularDrawerSearchedSelector } from "~/renderer/reducers/modularDrawer";
 import { useSelector } from "react-redux";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { AssetData } from "@ledgerhq/live-common/modularDrawer/utils/type";
 
 interface UseModularDrawerDataProps {
   currencyIds?: string[];
@@ -36,7 +36,7 @@ export function useModularDrawerData({
     isStaging,
   });
 
-  const assetsSorted = useMemo(() => {
+  const assetsSorted: AssetData[] | undefined = useMemo(() => {
     if (!data?.currenciesOrder.metaCurrencyIds) return undefined;
 
     return data.currenciesOrder.metaCurrencyIds
@@ -60,18 +60,6 @@ export function useModularDrawerData({
 
   const loadingStatus: LoadingStatus = getLoadingStatus({ isLoading, isSuccess, error });
 
-  const currenciesByProvider: CurrenciesByProviderId[] = useMemo(() => {
-    if (!assetsSorted || !data) return [];
-
-    return assetsSorted.map(assetData => ({
-      currenciesByNetwork: assetData.networks
-        .map(network => findCryptoCurrencyById(network.id) ?? findTokenById(network.id))
-        .filter((currency): currency is NonNullable<typeof currency> => currency !== undefined),
-      providerId: assetData.asset.id,
-      metaCurrencyId: assetData.asset.metaCurrencyId,
-    }));
-  }, [assetsSorted, data]);
-
   const sortedCryptoCurrencies = useMemo(() => {
     if (!assetsSorted || !data) return [];
 
@@ -83,12 +71,10 @@ export function useModularDrawerData({
   return {
     data,
     isLoading,
-    isSuccess,
     error,
     refetch,
     loadingStatus,
     assetsSorted,
-    currenciesByProvider,
     sortedCryptoCurrencies,
     loadNext,
   };

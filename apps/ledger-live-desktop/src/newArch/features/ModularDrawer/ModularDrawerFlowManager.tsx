@@ -22,7 +22,7 @@ const ModularDrawerFlowManager = ({
   onAssetSelected,
   onAccountSelected,
 }: ModularDrawerFlowManagerProps) => {
-  const currencyIds = useMemo(() => (currencies || []).map(currency => currency.id), [currencies]);
+  const currencyIds = useMemo(() => currencies, [currencies]);
   const dispatch = useDispatch();
   const { currentStep, navigationDirection, goToStep } = useModularDrawerNavigation();
 
@@ -36,16 +36,15 @@ const ModularDrawerFlowManager = ({
     error,
     refetch,
     loadingStatus,
-    currenciesByProvider,
     assetsToDisplay,
     networksToDisplay,
     selectedAsset,
     selectedNetwork,
-    hasOneCurrency,
     handleAssetSelected,
     handleNetworkSelected,
     handleBack,
     loadNext,
+    assetsSorted,
   } = useModularDrawerRemoteData({
     currentStep,
     currencyIds,
@@ -69,12 +68,11 @@ const ModularDrawerFlowManager = ({
             assetsToDisplay={assetsToDisplay}
             providersLoadingStatus={loadingStatus}
             assetsConfiguration={assetsConfiguration}
-            currenciesByProvider={currenciesByProvider}
             onAssetSelected={handleAssetSelected}
-            hasOneCurrency={hasOneCurrency}
             loadNext={loadNext}
             error={!!error}
             refetch={refetch}
+            assetsSorted={assetsSorted}
           />
         );
       case MODULAR_DRAWER_STEP.NETWORK_SELECTION:
@@ -82,7 +80,6 @@ const ModularDrawerFlowManager = ({
           <NetworkSelection
             networks={networksToDisplay}
             networksConfiguration={networkConfiguration}
-            currenciesByProvider={currenciesByProvider}
             onNetworkSelected={handleNetworkSelected}
             selectedAssetId={selectedAsset?.id}
             accounts$={accounts$}

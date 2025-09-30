@@ -36,6 +36,7 @@ describe("sync (devnet)", () => {
       gatewayUrl: "https://canton-gateway.api.live.ledger-test.com",
       useGateway: true,
       networkType: "devnet",
+      nativeInstrumentId: "Amulet",
       status: {
         type: "active",
       },

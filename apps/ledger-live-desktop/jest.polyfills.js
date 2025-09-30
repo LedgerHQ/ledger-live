@@ -10,6 +10,28 @@ Object.defineProperties(globalThis, {
 });
 
 const { Blob, File } = require("node:buffer");
+
+const performanceMock = {
+  markResourceTiming: () => {},
+  clearResourceTimings: () => {},
+  getEntriesByType: () => [],
+  getEntriesByName: () => [],
+  getEntries: () => [],
+  mark: () => {},
+  measure: () => {},
+  clearMarks: () => {},
+  clearMeasures: () => {},
+  now: () => Date.now(),
+  timeOrigin: Date.now(),
+  toJSON: () => ({}),
+};
+
+Object.defineProperty(globalThis, "performance", {
+  value: performanceMock,
+  writable: true,
+  configurable: true,
+});
+
 const { fetch, Headers, FormData, Request, Response } = require("undici");
 
 Object.defineProperties(globalThis, {

@@ -2,7 +2,9 @@ import BigNumber from "bignumber.js";
 import type {
   AssetInfo,
   Balance,
+  BufferTxData,
   FeeEstimation,
+  MemoNotSupported,
   TransactionIntent,
   TransactionValidation,
 } from "@ledgerhq/coin-framework/api/types";
@@ -246,7 +248,7 @@ function computeAmount(
 
 export async function validateIntent(
   currency: CryptoCurrency,
-  intent: TransactionIntent,
+  intent: TransactionIntent<MemoNotSupported, BufferTxData>,
   customFees?: FeeEstimation,
 ): Promise<TransactionValidation> {
   const estimatedFees = customFees ?? (await estimateFees(currency, intent));

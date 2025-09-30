@@ -5,10 +5,8 @@ import { StellarMemo } from "../types";
 
 /**
  * Testnet scan: https://testnet.lumenscan.io/
- *
- * Tests are skipped for the moment due to TooManyRequest errors
  */
-describe.skip("Stellar Api", () => {
+describe("Stellar Api", () => {
   let module: AlpacaApi<StellarMemo>;
   const ADDRESS = "GBAUZBDXMVV7HII4JWBGFMLVKVJ6OLQAKOCGXM5E2FM4TAZB6C7JO2L7";
 
@@ -36,7 +34,7 @@ describe.skip("Stellar Api", () => {
       });
 
       // Then
-      expect(result).toEqual(BigInt(100));
+      expect(result).toEqual({ value: BigInt(100) });
     });
   });
 
@@ -64,7 +62,7 @@ describe.skip("Stellar Api", () => {
 
     it("returns all operations from the latest, but in asc order", async () => {
       const [txsDesc] = await module.listOperations(ADDRESS, { minHeight: 0, order: "desc" });
-      expect(txsDesc[0]).toBe(txs[0]);
+      expect(txsDesc[0]).toStrictEqual(txs[0]);
     });
   });
 
@@ -86,7 +84,16 @@ describe.skip("Stellar Api", () => {
       const result = await module.getBalance(ADDRESS);
 
       // Then
-      expect(result).toBeGreaterThan(0);
+      expect(result).toBeInstanceOf(Array);
+      expect(result[0]).toMatchObject({
+        value: expect.any(BigInt),
+        asset: { type: "native" },
+      });
+      expect(result[0].value).toBeGreaterThan(0);
+      result.slice(1).forEach(balance => {
+        expect(balance.asset.type).not.toEqual("native");
+        expect(balance.value).toBeGreaterThanOrEqual(0);
+      });
     });
   });
 

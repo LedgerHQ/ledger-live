@@ -3457,6 +3457,32 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     ],
     explorerId: "eth_holesky",
   },
+  ethereum_hoodi: {
+    type: "CryptoCurrency",
+    id: "ethereum_hoodi",
+    coinType: CoinType.ETH,
+    name: "Ethereum Hoodi",
+    managerAppName: "Ethereum",
+    ticker: "ETH",
+    deviceTicker: "ETH",
+    scheme: "eth_hoodi",
+    color: "#0ebdcd",
+    units: ethereumUnits("ether", "ETH"),
+    isTestnetFor: "ethereum",
+    disableCountervalue: true,
+    family: "evm",
+    blockAvgTime: 15,
+    ethereumLikeInfo: {
+      chainId: 560048,
+    },
+    explorerViews: [
+      {
+        tx: "https://hoodi.etherscan.io/tx/$hash",
+        address: "https://hoodi.etherscan.io/address/$address",
+      },
+    ],
+    explorerId: "eth_hoodi",
+  },
   stacks: {
     type: "CryptoCurrency",
     id: "stacks",
@@ -3824,6 +3850,29 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
       },
     ],
     explorerViews: [blockscoutExplorerView("https://cronos.org/explorer")],
+  },
+  core: {
+    type: "CryptoCurrency",
+    id: "core",
+    coinType: CoinType.ETH,
+    name: "Core",
+    managerAppName: "Ethereum",
+    ticker: "CORE",
+    scheme: "core",
+    color: "#FF962B",
+    family: "evm",
+    units: ethereumUnits("CORE", "CORE"),
+    ethereumLikeInfo: {
+      chainId: 1116,
+    },
+    explorerViews: [
+      {
+        tx: "https://scan.coredao.org/tx/$hash",
+        address: "https://scan.coredao.org/address/$address",
+        token: "https://scan.coredao.org/token/$address",
+      },
+    ],
+    tokenTypes: ["erc20"],
   },
   fantom: {
     type: "CryptoCurrency",

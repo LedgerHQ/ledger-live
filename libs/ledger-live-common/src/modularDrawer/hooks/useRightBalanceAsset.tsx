@@ -1,24 +1,23 @@
-import { useMemo } from "react";
-import type { ReactNode } from "react";
+import { useMemo, type ReactNode } from "react";
 import type { CryptoOrTokenCurrency, Currency } from "@ledgerhq/types-cryptoassets";
 import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/formatCurrencyUnit";
 import BigNumber from "bignumber.js";
 import { counterValueFormatter } from "../utils/counterValueFormatter";
 import { compareByBalanceThenFiat } from "../utils/sortByBalance";
 import { UseBalanceDeps } from "../utils/type";
-import { buildProviderCurrenciesMap } from "../utils/buildProviderCurrenciesMap";
-import { CurrenciesByProviderId } from "../../deposit/type";
 import { calculateProviderTotals } from "../utils/calculateProviderTotal";
-import { getProviderCurrency } from "../utils/getProviderCurrency";
-import { getBalanceAndFiatValueByAssets } from "../utils/getBalanceAndFiatValueByAssets";
 import { groupAccountsByAsset } from "../utils/groupAccountsByAsset";
 
 export type AssetDeps = {
   useBalanceDeps: UseBalanceDeps;
   balanceItem: (asset: { fiatValue?: string; balance?: string }) => ReactNode;
+  assetsMap: Map<
+    string,
+    { mainCurrency: CryptoOrTokenCurrency; currencies: CryptoOrTokenCurrency[] }
+  >;
 };
 
-export function createUseRightBalanceAsset({ useBalanceDeps, balanceItem }: AssetDeps) {
+export function createUseRightBalanceAsset({ useBalanceDeps, balanceItem, assetsMap }: AssetDeps) {
   const formatProviderResult = (
     providerCurrency: CryptoOrTokenCurrency,
     totalBalance: BigNumber,
@@ -40,10 +39,7 @@ export function createUseRightBalanceAsset({ useBalanceDeps, balanceItem }: Asse
     return { balance, fiatValue };
   };
 
-  return function useRightBalanceAsset(
-    assets: CryptoOrTokenCurrency[],
-    currenciesByProvider: CurrenciesByProviderId[],
-  ) {
+  return function useRightBalanceAsset(assets: CryptoOrTokenCurrency[]) {
     const { flattenedAccounts, discreet, state, counterValueCurrency, locale } = useBalanceDeps();
 
     const grouped = useMemo(
@@ -51,90 +47,39 @@ export function createUseRightBalanceAsset({ useBalanceDeps, balanceItem }: Asse
       [flattenedAccounts, state, counterValueCurrency, discreet],
     );
 
-    const providerMap = useMemo(
-      () => buildProviderCurrenciesMap(currenciesByProvider),
-      [currenciesByProvider],
-    );
-
     return useMemo(() => {
-      if (!providerMap) {
-        const allBalance = getBalanceAndFiatValueByAssets(
-          flattenedAccounts,
-          assets,
-          state,
-          counterValueCurrency,
-          discreet,
-          locale,
-        );
-        const balanceMap = new Map(allBalance.map(b => [b.id, b]));
-        const assetsWithBalanceData = assets.map(asset => {
-          const balanceData = balanceMap.get(asset.id) || {};
-          return {
-            asset,
-            balanceData,
-          };
-        });
+      const balanceMap = new Map();
 
-        assetsWithBalanceData.sort((a, b) =>
-          compareByBalanceThenFiat(a.balanceData, b.balanceData, discreet),
-        );
-
-        return assetsWithBalanceData.map(({ asset, balanceData }) => ({
-          ...asset,
-          rightElement: balanceItem(balanceData),
-        }));
-      }
-
-      const assetsSet = new Set(assets.map(a => a.id));
-      const providerResultsMap = new Map<string, { balance?: string; fiatValue?: string }>();
-
-      for (const [, { currencies, mainCurrency }] of providerMap) {
-        if (!assetsSet.has(mainCurrency.id)) continue;
-        const providerCurrency = getProviderCurrency(mainCurrency, currencies);
-        if (!providerCurrency) continue;
-
-        const { totalBalance, totalFiatValue, hasAccounts } = calculateProviderTotals(
-          currencies,
-          grouped,
-        );
-        if (!hasAccounts) continue;
+      for (const [, { currencies, mainCurrency }] of assetsMap) {
+        const { totalBalance, totalFiatValue } = calculateProviderTotals(currencies, grouped);
 
         const { balance, fiatValue } = formatProviderResult(
-          providerCurrency,
+          mainCurrency,
           totalBalance,
           totalFiatValue,
           counterValueCurrency,
           locale,
           discreet,
         );
-        providerResultsMap.set(mainCurrency.id, { balance, fiatValue });
+
+        balanceMap.set(mainCurrency.id, {
+          balance: balance,
+          fiatValue: fiatValue,
+        });
       }
 
       const assetsWithBalanceData = assets.map(asset => {
-        const balanceData = providerResultsMap.get(asset.id) || {};
+        const balanceData = balanceMap.get(asset.id) || {};
         return {
-          asset,
+          ...asset,
           balanceData,
+          rightElement: balanceItem(balanceData),
         };
       });
 
-      assetsWithBalanceData.sort((a, b) =>
+      return assetsWithBalanceData.sort((a, b) =>
         compareByBalanceThenFiat(a.balanceData, b.balanceData, discreet),
       );
-
-      return assetsWithBalanceData.map(({ asset, balanceData }) => ({
-        ...asset,
-        rightElement: balanceItem(balanceData),
-      }));
-    }, [
-      assets,
-      providerMap,
-      flattenedAccounts,
-      state,
-      counterValueCurrency,
-      discreet,
-      locale,
-      grouped,
-    ]);
+    }, [assets, grouped, counterValueCurrency, locale, discreet]);
   };
 }

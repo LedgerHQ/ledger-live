@@ -1,5 +1,19 @@
 # @ledgerhq/hw-transport-http
 
+## 6.30.11
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport@6.31.11
+
+## 6.30.11-next.0
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport@6.31.11-next.0
+
 ## 6.30.10
 
 ### Patch Changes

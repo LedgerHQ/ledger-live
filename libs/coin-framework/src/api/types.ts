@@ -260,6 +260,30 @@ export type Reward = {
   details?: Record<string, unknown>;
 };
 
+/**
+ * Computational payload processed by Blockchains, such as
+ * calldata on EVM or instruction data on Solana
+ */
+export interface TxData {
+  type: string;
+}
+
+/**
+ * Default implementation when no computational payload is supported
+ * by the underlying Blockchain
+ */
+export interface TxDataNotSupported extends TxData {
+  type: "none";
+}
+
+/**
+ * Implementation with bufferized computational payload
+ */
+export interface BufferTxData extends TxData {
+  type: "buffer";
+  value: Buffer;
+}
+
 export interface Memo {
   type: string;
 }
@@ -290,9 +314,17 @@ export interface TypedMapMemo<KindToValueMap extends Record<string, unknown>> ex
 // eslint-disable-next-line @typescript-eslint/ban-types
 type MaybeMemo<MemoType extends Memo> = MemoType extends MemoNotSupported ? {} : { memo: MemoType };
 
+type MaybeTxData<TxDataType extends TxData> = TxDataType extends TxDataNotSupported
+  ? // eslint-disable-next-line @typescript-eslint/ban-types
+    {}
+  : { data: TxDataType };
+
 export type FeesStrategy = "slow" | "medium" | "fast";
 
-export type TransactionIntent<MemoType extends Memo = MemoNotSupported> = {
+export type TransactionIntent<
+  MemoType extends Memo = MemoNotSupported,
+  TxDataType extends TxData = TxDataNotSupported,
+> = {
   type: string;
   sender: string;
   senderPublicKey?: string;
@@ -303,7 +335,8 @@ export type TransactionIntent<MemoType extends Memo = MemoNotSupported> = {
   asset: AssetInfo;
   sequence?: number;
   feesStrategy?: FeesStrategy;
-} & MaybeMemo<MemoType>;
+} & MaybeMemo<MemoType> &
+  MaybeTxData<TxDataType>;
 
 export type TransactionValidation = {
   errors: Record<string, Error>;
@@ -358,12 +391,17 @@ export type AccountInfo = {
 };
 // NOTE: future proof export type Pagination = Record<string, unknown>;
 
-export type AlpacaApi<MemoType extends Memo = MemoNotSupported> = {
+export type AlpacaApi<
+  MemoType extends Memo = MemoNotSupported,
+  TxDataType extends TxData = TxDataNotSupported,
+> = {
   broadcast: (tx: string, broadcastConfig?: BroadcastConfig) => Promise<string>;
   combine: (tx: string, signature: string, pubkey?: string) => string | Promise<string>;
-  estimateFees: (transactionIntent: TransactionIntent<MemoType>) => Promise<FeeEstimation>;
+  estimateFees: (
+    transactionIntent: TransactionIntent<MemoType, TxDataType>,
+  ) => Promise<FeeEstimation>;
   craftTransaction: (
-    transactionIntent: TransactionIntent<MemoType>,
+    transactionIntent: TransactionIntent<MemoType, TxDataType>,
     customFees?: FeeEstimation,
   ) => Promise<CraftedTransaction>;
   getBalance: (address: string) => Promise<Balance[]>;
@@ -422,16 +460,22 @@ export type ChainSpecificRules = {
   };
 };
 
-export type BridgeApi<MemoType extends Memo = MemoNotSupported> = {
+export type BridgeApi<
+  MemoType extends Memo = MemoNotSupported,
+  TxDataType extends TxData = TxDataNotSupported,
+> = {
   validateIntent: (
-    transactionIntent: TransactionIntent<MemoType>,
+    transactionIntent: TransactionIntent<MemoType, TxDataType>,
     customFees?: FeeEstimation,
   ) => Promise<TransactionValidation>;
   getSequence: (address: string) => Promise<number>;
   getChainSpecificRules?: () => ChainSpecificRules;
-  getTokenFromAsset?: (asset: AssetInfo) => TokenCurrency | undefined;
+  getTokenFromAsset?: (asset: AssetInfo) => Promise<TokenCurrency | undefined>;
   getAssetFromToken?: (token: TokenCurrency, owner: string) => AssetInfo;
+  computeIntentType?: (transaction: Record<string, unknown>) => string;
 };
 
-export type Api<MemoType extends Memo = MemoNotSupported> = AlpacaApi<MemoType> &
-  BridgeApi<MemoType>;
+export type Api<
+  MemoType extends Memo = MemoNotSupported,
+  TxDataType extends TxData = TxDataNotSupported,
+> = AlpacaApi<MemoType, TxDataType> & BridgeApi<MemoType, TxDataType>;

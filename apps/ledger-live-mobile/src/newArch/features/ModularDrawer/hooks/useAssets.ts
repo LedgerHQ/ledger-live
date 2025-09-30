@@ -1,12 +1,12 @@
 import { useMemo } from "react";
 import { LoadingStatus } from "@ledgerhq/live-common/deposit/type";
 import { getLoadingStatus } from "@ledgerhq/live-common/modularDrawer/utils/getLoadingStatus";
-import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { useAssetsData } from "@ledgerhq/live-common/modularDrawer/hooks/useAssetsData";
-import { MarketItemResponse } from "@ledgerhq/live-common/market/utils/types";
-import { InterestRate } from "@ledgerhq/live-common/modularDrawer/data/entities/index";
 import VersionNumber from "react-native-version-number";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { AssetData } from "@ledgerhq/live-common/modularDrawer/utils/type";
+import { useCurrenciesUnderFeatureFlag } from "@ledgerhq/live-common/modularDrawer/hooks/useCurrenciesUnderFeatureFlag";
+import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 
 interface AssetsProps {
   currencyIds?: string[];
@@ -15,26 +15,13 @@ interface AssetsProps {
   areCurrenciesFiltered?: boolean;
 }
 
-export type AssetsData =
-  | {
-      asset: {
-        id: string;
-        ticker: string;
-        name: string;
-        assetsIds: Record<string, string>;
-      };
-      networks: CryptoOrTokenCurrency[];
-      interestRates?: InterestRate;
-      market?: Partial<MarketItemResponse>;
-    }[]
-  | undefined;
-
 export function useAssets({
   currencyIds,
   searchedValue,
   useCase,
   areCurrenciesFiltered,
 }: AssetsProps) {
+  const { deactivatedCurrencyIds } = useCurrenciesUnderFeatureFlag();
   const modularDrawerFeature = useFeature("llmModularDrawer");
 
   const isStaging = useMemo(
@@ -52,7 +39,7 @@ export function useAssets({
     isStaging,
   });
 
-  const assetsSorted: AssetsData = useMemo(() => {
+  const assetsSorted: AssetData[] | undefined = useMemo(() => {
     if (!data?.currenciesOrder.metaCurrencyIds) return undefined;
 
     return data.currenciesOrder.metaCurrencyIds
@@ -75,13 +62,22 @@ export function useAssets({
 
   const loadingStatus: LoadingStatus = getLoadingStatus({ isLoading, isSuccess, error });
 
-  const sortedCryptoCurrencies = useMemo(() => {
+  const assetsToDisplay = useMemo(() => {
     if (!assetsSorted || !data) return [];
 
-    return assetsSorted
-      .map(assetData => data.cryptoOrTokenCurrencies[assetData.asset.id])
-      .filter(currency => currency !== undefined);
-  }, [assetsSorted, data]);
+    return assetsSorted.reduce<CryptoOrTokenCurrency[]>((acc, { asset }) => {
+      const currency = data.cryptoOrTokenCurrencies[asset.id];
+      if (!currency) return acc;
+
+      const isActive =
+        (currency.type === "CryptoCurrency" && !deactivatedCurrencyIds.has(currency.id)) ||
+        (currency.type === "TokenCurrency" &&
+          !deactivatedCurrencyIds.has(currency.parentCurrency?.id));
+
+      if (isActive) acc.push(currency);
+      return acc;
+    }, []);
+  }, [assetsSorted, data, deactivatedCurrencyIds]);
 
   return {
     data,
@@ -91,7 +87,7 @@ export function useAssets({
     error,
     loadingStatus,
     assetsSorted,
-    sortedCryptoCurrencies,
+    sortedCryptoCurrencies: assetsToDisplay,
     refetch,
     loadNext,
   };

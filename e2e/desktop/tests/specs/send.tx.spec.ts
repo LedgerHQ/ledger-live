@@ -1,12 +1,10 @@
 import { test } from "../fixtures/common";
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { Fee } from "@ledgerhq/live-common/e2e/enum/Fee";
-import { TransactionStatus } from "@ledgerhq/live-common/e2e/enum/TransactionStatus";
 import { Transaction } from "@ledgerhq/live-common/e2e/models/Transaction";
 import { addTmsLink } from "../utils/allureUtils";
 import { getDescription } from "../utils/customJsonReporter";
 import { CLI } from "../utils/cliUtils";
-import { getEnv } from "@ledgerhq/live-env";
 
 //Warning 🚨: XRP Tests may fail due to API HTTP 429 issue - Jira: LIVE-14237
 
@@ -202,12 +200,16 @@ const transactionE2E = [
     xrayTicket: "B2CQA-3925",
   },
   {
-    transaction: new Transaction(Account.ETH_1, Account.ETH_2, "0.0001", Fee.SLOW),
+    transaction: new Transaction(Account.ETH_1, Account.ETH_3, "0.0001", Fee.SLOW),
     xrayTicket: "B2CQA-3924",
   },
   {
     transaction: new Transaction(Account.KASPA_1, Account.KASPA_2, "1"),
     xrayTicket: "B2CQA-3840",
+  },
+  {
+    transaction: new Transaction(Account.SUI_1, Account.SUI_2, "0.0001", undefined),
+    xrayTicket: "B2CQA-3802",
   },
 ];
 
@@ -217,20 +219,9 @@ test.describe("Send flows", () => {
   for (const transaction of transactionE2E) {
     test.describe("Send from 1 account to another", () => {
       test.use({
-        userdata:
-          transaction.transaction.accountToDebit === Account.APTOS_1
-            ? "speculos-aptos"
-            : "skip-onboarding",
+        userdata: "skip-onboarding",
         speculosApp: transaction.transaction.accountToDebit.currency.speculosApp,
         cliCommands: [
-          (appjsonPath: string) => {
-            return CLI.liveData({
-              currency: transaction.transaction.accountToCredit.currency.id,
-              index: transaction.transaction.accountToCredit.index,
-              add: true,
-              appjson: appjsonPath,
-            });
-          },
           (appjsonPath: string) => {
             return CLI.liveData({
               currency: transaction.transaction.accountToDebit.currency.id,
@@ -268,18 +259,6 @@ test.describe("Send flows", () => {
           await app.sendDrawer.addressValueIsVisible(
             transaction.transaction.accountToCredit.address,
           );
-          await app.drawer.closeDrawer();
-          if (!getEnv("DISABLE_TRANSACTION_BROADCAST")) {
-            await app.layout.goToAccounts();
-            await app.accounts.clickSyncBtnForAccount(
-              transaction.transaction.accountToCredit.accountName,
-            );
-            await app.accounts.navigateToAccountByName(
-              transaction.transaction.accountToCredit.accountName,
-            );
-            await app.account.selectAndClickOnLastOperation(TransactionStatus.RECEIVED);
-            await app.sendDrawer.expectReceiverInfos(transaction.transaction);
-          }
         },
       );
     });
@@ -480,14 +459,6 @@ test.describe("Send flows", () => {
       userdata: "skip-onboarding",
       speculosApp: transactionEnsAddress.accountToDebit.currency.speculosApp,
       cliCommands: [
-        (appjsonPath: string) => {
-          return CLI.liveData({
-            currency: transactionEnsAddress.accountToCredit.currency.id,
-            index: transactionEnsAddress.accountToCredit.index,
-            add: true,
-            appjson: appjsonPath,
-          });
-        },
         (appjsonPath: string) => {
           return CLI.liveData({
             currency: transactionEnsAddress.accountToDebit.currency.id,

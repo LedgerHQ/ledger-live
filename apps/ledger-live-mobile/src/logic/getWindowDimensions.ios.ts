@@ -7,4 +7,3 @@ export default () => {
     height,
   };
 };
-export const softMenuBarHeight = () => 0;

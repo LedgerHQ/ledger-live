@@ -3,7 +3,7 @@ import { getFullnodeUrl } from "@mysten/sui/client";
 import coinConfig from "../config";
 import { estimateFees } from "./estimateFees";
 
-const SENDER = "0x6e143fe0a8ca010a86580dafac44298e5b1b7d73efc345356a59a15f0d7824f0";
+const SENDER = "0xad79719ac7edb44f6e253f1f771e8291e281a6aaf1e4789b52bf85336f525e8e";
 const RECIPIENT = "0x33444cf803c690db96527cec67e3c9ab512596f4ba2d4eace43f0b4f716e0164";
 
 describe("estimateFees", () => {

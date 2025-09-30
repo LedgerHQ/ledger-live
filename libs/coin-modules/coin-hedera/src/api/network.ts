@@ -34,13 +34,18 @@ async function buildUnsignedCoinTransaction({
   const accountId = account.freshAddress;
   const hbarAmount = Hbar.fromTinybars(transaction.amount);
 
-  return new TransferTransaction()
+  const tx = new TransferTransaction()
     .setNodeAccountIds(nodeAccountIds)
     .setTransactionId(TransactionId.generate(accountId))
     .setTransactionMemo(transaction.memo ?? "")
     .addHbarTransfer(accountId, hbarAmount.negated())
-    .addHbarTransfer(transaction.recipient, hbarAmount)
-    .freeze();
+    .addHbarTransfer(transaction.recipient, hbarAmount);
+
+  if (transaction.maxFee) {
+    tx.setMaxTransactionFee(Hbar.fromTinybars(transaction.maxFee.toNumber()));
+  }
+
+  return tx.freeze();
 }
 
 async function buildUnsignedTokenTransaction({
@@ -55,13 +60,18 @@ async function buildUnsignedTokenTransaction({
   const accountId = account.freshAddress;
   const tokenId = tokenAccount.token.contractAddress;
 
-  return new TransferTransaction()
+  const tx = new TransferTransaction()
     .setNodeAccountIds(nodeAccountIds)
     .setTransactionId(TransactionId.generate(accountId))
     .setTransactionMemo(transaction.memo ?? "")
     .addTokenTransfer(tokenId, accountId, transaction.amount.negated().toNumber())
-    .addTokenTransfer(tokenId, transaction.recipient, transaction.amount.toNumber())
-    .freeze();
+    .addTokenTransfer(tokenId, transaction.recipient, transaction.amount.toNumber());
+
+  if (transaction.maxFee) {
+    tx.setMaxTransactionFee(Hbar.fromTinybars(transaction.maxFee.toNumber()));
+  }
+
+  return tx.freeze();
 }
 
 async function buildTokenAssociateTransaction({
@@ -75,13 +85,18 @@ async function buildTokenAssociateTransaction({
 
   const accountId = account.freshAddress;
 
-  return new TokenAssociateTransaction()
+  const tx = new TokenAssociateTransaction()
     .setNodeAccountIds(nodeAccountIds)
     .setTransactionId(TransactionId.generate(accountId))
     .setTransactionMemo(transaction.memo ?? "")
     .setAccountId(accountId)
-    .setTokenIds([transaction.properties.token.contractAddress])
-    .freeze();
+    .setTokenIds([transaction.properties.token.contractAddress]);
+
+  if (transaction.maxFee) {
+    tx.setMaxTransactionFee(Hbar.fromTinybars(transaction.maxFee.toNumber()));
+  }
+
+  return tx.freeze();
 }
 
 export async function buildUnsignedTransaction({

@@ -12,22 +12,24 @@ import { ListWrapper } from "LLD/features/ModularDrawer/components/ListWrapper";
 import SkeletonList from "LLD/features/ModularDrawer/components/SkeletonList";
 import createAssetConfigurationHook from "@ledgerhq/live-common/modularDrawer/modules/createAssetConfiguration";
 import { EnhancedModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/types";
-import { CurrenciesByProviderId, LoadingStatus } from "@ledgerhq/live-common/deposit/type";
+import { LoadingStatus } from "@ledgerhq/live-common/deposit/type";
 import GenericEmptyList from "LLD/components/GenericEmptyList";
 import { balanceItem } from "LLD/features/ModularDrawer/components/Balance";
 import { useBalanceDeps } from "LLD/features/ModularDrawer/hooks/useBalanceDeps";
 import { useSelector } from "react-redux";
 import { modularDrawerIsDebuggingDuplicatesSelector } from "~/renderer/reducers/modularDrawer";
+import { AssetData } from "@ledgerhq/live-common/modularDrawer/utils/type";
+import { groupCurrenciesByProvider } from "@ledgerhq/live-common/modularDrawer/utils/groupCurrenciesByProvider";
 
 export type SelectAssetProps = {
   assetsToDisplay: CryptoOrTokenCurrency[];
   scrollToTop: boolean;
   assetsConfiguration: EnhancedModularDrawerConfiguration["assets"];
-  currenciesByProvider: CurrenciesByProviderId[];
   providersLoadingStatus: LoadingStatus;
   onAssetSelected: (asset: CryptoOrTokenCurrency) => void;
   onScrolledToTop?: () => void;
   loadNext?: () => void;
+  assetsSorted?: AssetData[];
 };
 
 const CURRENT_PAGE = "Modular Asset Selection";
@@ -41,18 +43,21 @@ export const SelectAssetList = ({
   assetsToDisplay,
   scrollToTop,
   assetsConfiguration,
-  currenciesByProvider,
   providersLoadingStatus,
   onAssetSelected,
   onScrolledToTop,
   loadNext,
+  assetsSorted,
 }: SelectAssetProps) => {
+  const assetsMap = groupCurrenciesByProvider(assetsSorted || []);
+
   const assetConfigurationDeps = {
     ApyIndicator,
     MarketPriceIndicator,
     MarketPercentIndicator,
     useBalanceDeps,
     balanceItem,
+    assetsMap,
   };
   const isDebuggingDuplicates = useSelector(modularDrawerIsDebuggingDuplicatesSelector);
 
@@ -60,22 +65,20 @@ export const SelectAssetList = ({
 
   const transformAssets = makeAssetConfigurationHook({
     assetsConfiguration,
-    currenciesByProvider,
   });
 
   const assetsTransformed = transformAssets(assetsToDisplay);
   const formattedAssets = useMemo(() => {
     return assetsTransformed.map(asset => {
-      const currencyByProvider = currenciesByProvider.find(
-        c => c.currenciesByNetwork[0]?.id === asset.id,
-      );
+      const assetWithNetworks = assetsSorted?.find(c => c.networks[0]?.id === asset.id);
+
       return {
         ...asset,
-        numberOfNetworks: currencyByProvider?.currenciesByNetwork?.length,
-        assetId: currencyByProvider?.metaCurrencyId,
+        numberOfNetworks: assetWithNetworks?.networks?.length,
+        assetId: assetWithNetworks?.asset.metaCurrencyId,
       };
     });
-  }, [assetsTransformed, currenciesByProvider]);
+  }, [assetsTransformed, assetsSorted]);
 
   const isLoading = [LoadingStatus.Pending, LoadingStatus.Idle].includes(providersLoadingStatus);
   const shouldDisplayEmptyState =

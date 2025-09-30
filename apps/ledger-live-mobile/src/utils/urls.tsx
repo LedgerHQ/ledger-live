@@ -118,11 +118,45 @@ export const urls = {
       changelly: {
         main: "https://changelly.com/",
         tos: "https://changelly.com/terms-of-use",
+        amlKyc: "https://changelly.com/aml-kyc",
+        support: "https://support.changelly.com/en/support/tickets/new",
       },
       cic: {
         main: "https://criptointercambio.com/",
         support: "https://criptointercambio.com/en/about",
         tos: "https://criptointercambio.com/terms-of-use",
+      },
+      exodus: {
+        main: "https://www.exodus.com/",
+        tos: "https://www.exodus.com/terms/",
+      },
+      lifi: {
+        main: "https://lifi.io/",
+        tos: "https://li.fi/legal/terms-and-conditions/",
+      },
+      uniswap: {
+        main: "https://uniswap.org/",
+        tos: "https://support.uniswap.org/hc/en-us/articles/30935100859661-Uniswap-Labs-Terms-of-Service",
+      },
+      velora: {
+        main: "https://www.velora.xyz/",
+        tos: "https://files.paraswap.io/tos_v4.pdf",
+      },
+      thorswap: {
+        main: "https://www.thorswap.finance/",
+        tos: "https://docs.thorswap.finance/thorswap/resources/terms-of-service",
+      },
+      oneinch: {
+        main: "https://1inch.io/",
+        tos: "https://1inch.io/assets/1inch_network_terms_of_use.pdf",
+      },
+      moonpay: {
+        main: "https://www.moonpay.com/",
+        tos: "https://www.moonpay.com/legal/terms_of_use_row",
+      },
+      paraswap: {
+        main: "https://www.paraswap.io/",
+        tos: "https://files.paraswap.io/tos_v4.pdf",
       },
     },
   },

@@ -2,7 +2,6 @@ import { log } from "@ledgerhq/logs";
 import BigNumber from "bignumber.js";
 import {
   decodeAccountId,
-  decodeTokenAccountId,
   emptyHistoryCache,
   encodeAccountId,
   encodeTokenAccountId,
@@ -15,7 +14,7 @@ import {
   mergeNfts,
 } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { Account, Operation, TokenAccount } from "@ledgerhq/types-live";
-import { decodeOperationId } from "@ledgerhq/coin-framework/operation";
+import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { nftsFromOperations } from "@ledgerhq/coin-framework/nft/helpers";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { ExplorerApi } from "../network/explorer/types";
@@ -23,6 +22,8 @@ import { getExplorerApi } from "../network/explorer";
 import { getNodeApi } from "../network/node/index";
 import { attachOperations, getSyncHash, mergeSubAccounts, createSwapHistoryMap } from "../logic";
 import { lastBlock } from "../logic/lastBlock";
+import { getCoinConfig } from "../config";
+import { getCryptoAssetsStore } from "../cryptoAssetsStore";
 
 /**
  * Number of blocks that are considered "unsafe" due to a potential reorg.
@@ -49,6 +50,8 @@ export const getAccountShape: GetAccountShape<Account> = async (infos, { blackli
     xpubOrAddress: address,
     derivationMode,
   });
+  const findToken = async (contractAddress: string): Promise<TokenCurrency | undefined> =>
+    getCryptoAssetsStore().findTokenByAddressInCurrency(contractAddress, currency.id);
   const syncHash = getSyncHash(currency, blacklistedTokenIds);
   // Due to some changes (as of now: new/updated tokens) we could need to force a sync from 0
   const shouldSyncFromScratch =
@@ -84,6 +87,7 @@ export const getAccountShape: GetAccountShape<Account> = async (infos, { blackli
     lastTokenOperations,
     blacklistedTokenIds,
     swapHistoryMap,
+    findToken,
   );
   const subAccounts = shouldSyncFromScratch
     ? newSubAccounts
@@ -98,12 +102,13 @@ export const getAccountShape: GetAccountShape<Account> = async (infos, { blackli
   );
 
   // Coin operations with children ops like token & nft ops attached to it
-  const lastCoinOperationsWithAttachements = attachOperations(
+  const lastCoinOperationsWithAttachements = await attachOperations(
+    accountId,
     lastCoinOperations,
     lastTokenOperations,
     lastNftOperations,
     lastInternalOperations,
-    { blacklistedTokenIds },
+    { blacklistedTokenIds, findToken },
   );
   const newOperations = [...confirmedOperations, ...lastCoinOperationsWithAttachements];
   const operations =
@@ -147,34 +152,55 @@ export const getSubAccounts = async (
   lastTokenOperations: Operation[],
   blacklistedTokenIds: string[] = [],
   swapHistoryMap: Map<TokenCurrency, TokenAccount["swapHistory"]>,
+  findToken: (contractAddress: string) => Promise<TokenCurrency | undefined>,
 ): Promise<Partial<TokenAccount>[]> => {
   const { currency } = infos;
+  const config = getCoinConfig(currency).info;
+  const isLedgerNode = config?.node?.type === "ledger";
 
   // Creating a Map of Operations by TokenCurrencies in order to know which TokenAccounts should be synced as well
-  const erc20OperationsByToken = lastTokenOperations.reduce<Map<TokenCurrency, Operation[]>>(
-    (acc, operation) => {
-      const { accountId } = decodeOperationId(operation.id);
-      const { token } = decodeTokenAccountId(accountId);
-      if (!token || blacklistedTokenIds.includes(token.id)) return acc;
+  const erc20OperationsByToken = await lastTokenOperations.reduce(async (accPromise, operation) => {
+    const acc = await accPromise;
+    const token = operation.contract && (await findToken(operation.contract));
+    if (!token || blacklistedTokenIds.includes(token.id)) return acc;
 
-      if (!acc.has(token)) {
-        acc.set(token, []);
-      }
-      acc.get(token)?.push(operation);
+    const tokenAccountId = encodeTokenAccountId(accountId, token);
+    const operationId = encodeOperationId(tokenAccountId, operation.hash, operation.type);
 
-      return acc;
-    },
-    new Map<TokenCurrency, Operation[]>(),
-  );
+    if (!acc.has(token)) {
+      acc.set(token, []);
+    }
+    acc.get(token)?.push({ ...operation, id: operationId, accountId: tokenAccountId });
 
-  // Fetching all TokenAccounts possible and providing already filtered operations
-  const subAccountsPromises: Promise<Partial<TokenAccount>>[] = [];
-  for (const [token, ops] of erc20OperationsByToken.entries()) {
-    const swapHistory = swapHistoryMap.get(token) || [];
-    subAccountsPromises.push(getSubAccountShape(currency, accountId, token, ops, swapHistory));
+    return acc;
+  }, Promise.resolve(new Map<TokenCurrency, Operation[]>()));
+
+  const tokenEntries = Array.from(erc20OperationsByToken.entries());
+
+  // 🔁 Ledger node → execute all at once
+  if (isLedgerNode) {
+    return Promise.all(
+      tokenEntries.map(([token, ops]) =>
+        getSubAccountShape(currency, accountId, token, ops, swapHistoryMap.get(token) || []),
+      ),
+    );
   }
 
-  return Promise.all(subAccountsPromises);
+  // 🔁 Non-ledger → chunked execution
+  const chunkSize = 9;
+  const result: Partial<TokenAccount>[] = [];
+
+  for (let i = 0; i < tokenEntries.length; i += chunkSize) {
+    const chunk = tokenEntries.slice(i, i + chunkSize);
+    const chunkResults = await Promise.all(
+      chunk.map(([token, ops]) =>
+        getSubAccountShape(currency, accountId, token, ops, swapHistoryMap.get(token) || []),
+      ),
+    );
+    result.push(...chunkResults);
+  }
+
+  return result;
 };
 
 /**

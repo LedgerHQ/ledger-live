@@ -95,7 +95,6 @@ export function ModularDrawer({
     shouldShowBackButton,
     hasOneCurrency,
     onAddNewAccount,
-    asset,
   } = useModularDrawerState({
     assetsSorted,
     currencyIds: currencies ?? [],
@@ -126,12 +125,12 @@ export function ModularDrawer({
           hasError: isError,
           refetch,
           loadNext,
+          assetsSorted,
         }}
         networksViewModel={{
           onNetworkSelected: handleNetwork,
           availableNetworks,
           networksConfiguration: networkConfigurationSanitized,
-          asset,
         }}
         accountsViewModel={{
           accounts$,

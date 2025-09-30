@@ -1,6 +1,5 @@
 import type { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { AssetType, CreateAssetConfigurationHook, AssetConfigurationDeps } from "../utils/type";
-import { CurrenciesByProviderId } from "../../deposit/type";
 import { composeHooks } from "../../utils/composeHooks";
 import { useLeftApyModule } from "../hooks/modules/useLeftApyModule";
 import { createUseRightBalanceAsset } from "../hooks/useRightBalanceAsset";
@@ -24,6 +23,7 @@ const getRightElement =
         return createUseRightBalanceAsset({
           useBalanceDeps: AssetConfigurationDeps.useBalanceDeps,
           balanceItem: AssetConfigurationDeps.balanceItem,
+          assetsMap: AssetConfigurationDeps.assetsMap,
         });
     }
   };
@@ -45,7 +45,7 @@ const getLeftElement =
 
 const createAssetConfigurationHook: CreateAssetConfigurationHook =
   deps =>
-  ({ assetsConfiguration, currenciesByProvider }) => {
+  ({ assetsConfiguration }) => {
     const { rightElement, leftElement } = assetsConfiguration ?? {};
 
     const rightHook = getRightElement(deps)(rightElement);
@@ -53,18 +53,11 @@ const createAssetConfigurationHook: CreateAssetConfigurationHook =
 
     // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
     const hooks = [rightHook, leftHook].filter(Boolean) as Array<
-      (
-        assets: CryptoOrTokenCurrency[],
-        currenciesByProvider?: CurrenciesByProviderId[],
-      ) => AssetType[]
+      (assets: CryptoOrTokenCurrency[]) => AssetType[]
     >;
 
     return (assets: CryptoOrTokenCurrency[]) => {
-      const composedHook = composeHooks<CryptoOrTokenCurrency, AssetType>(
-        ...hooks.map(
-          hook => (assets: CryptoOrTokenCurrency[]) => hook(assets, currenciesByProvider),
-        ),
-      );
+      const composedHook = composeHooks<CryptoOrTokenCurrency, AssetType>(...hooks);
       return composedHook(assets);
     };
   };

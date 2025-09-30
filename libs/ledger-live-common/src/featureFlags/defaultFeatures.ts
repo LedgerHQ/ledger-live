@@ -97,6 +97,8 @@ export const CURRENCY_DEFAULT_FEATURES = {
   currencyHyperevm: DEFAULT_FEATURE,
   currencyCantonNetwork: DEFAULT_FEATURE,
   currencyKaspa: DEFAULT_FEATURE,
+  currencyEthereumHoodi: DEFAULT_FEATURE,
+  currencyCore: DEFAULT_FEATURE,
 };
 
 /**
@@ -111,7 +113,7 @@ export const DEFAULT_FEATURES: Features = {
   ptxServiceCtaExchangeDrawer: DEFAULT_FEATURE,
   ptxServiceCtaScreens: DEFAULT_FEATURE,
   ptxSwapReceiveTRC20WithoutTrx: DEFAULT_FEATURE,
-  ptxSwapconfirmSwapOnDevice: DEFAULT_FEATURE,
+  ptxSwapDetailedView: DEFAULT_FEATURE,
   disableNftLedgerMarket: DEFAULT_FEATURE,
   disableNftRaribleOpensea: DEFAULT_FEATURE,
   disableNftSend: DEFAULT_FEATURE,

@@ -7,7 +7,6 @@ import {
 } from "@ledgerhq/errors";
 import { isSyncOnboardingSupported } from "@ledgerhq/live-common/device/use-cases/screenSpecs";
 import { ExchangeRate, ExchangeSwap } from "@ledgerhq/live-common/exchange/swap/types";
-import { getNoticeType, getProviderName } from "@ledgerhq/live-common/exchange/swap/utils/index";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
 import { AppRequest } from "@ledgerhq/live-common/hw/actions/app";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
@@ -238,19 +237,10 @@ export function renderConfirmSwap({
   walletState: WalletState;
   settingsState: SettingsState;
 }) {
-  const providerName = getProviderName(provider);
-  const noticeType = getNoticeType(provider);
-  const alertProperties = noticeType.learnMore ? { learnMoreUrl: urls.swap.learnMore } : {};
-
   return (
     <ScrollView testID="confirm-swap-on-device">
-      <Wrapper width="100%">
-        <Alert type="primary" {...alertProperties}>
-          {t(`DeviceAction.confirmSwap.alert.${noticeType.message}`, {
-            providerName,
-          })}
-        </Alert>
-        <Wrapper rowGap={16}>
+      <Wrapper width="100%" mt="40%" mb="30%">
+        <Wrapper rowGap={16} mr="16px" ml="16px">
           <AnimationContainer marginTop="16px">
             <Animation
               source={getDeviceAnimation({ modelId: device.modelId, key: "sign", theme })}
@@ -258,12 +248,13 @@ export function renderConfirmSwap({
             />
           </AnimationContainer>
           <TitleText>{t("DeviceAction.confirmSwap.title")}</TitleText>
-          <Text textAlign="center" color={"neutral.c70"} fontSize={14} fontWeight="medium">
+          <Text textAlign="center" color={"neutral.c70"} fontSize={14} fontWeight="medium" px={16}>
             {t(`DeviceAction.confirmSwap.alert.default`)}
           </Text>
-          <TermsFooter provider={provider} />
         </Wrapper>
       </Wrapper>
+      <TermsFooter provider={provider} />
+      <ModalLock />
     </ScrollView>
   );
 }
@@ -354,14 +345,14 @@ export const renderAllowRemoveCustomLockscreen = ({
   return (
     <Wrapper>
       <TrackScreen category={`Allow CLS removal on ${productName}`} />
-      <Text variant="h4" textAlign="center">
-        {t("DeviceAction.allowRemoveCustomLockscreen", { productName })}
-      </Text>
       <AnimationContainer>
         <Animation
           source={getDeviceAnimation({ modelId: device.modelId, key, theme })}
           style={getDeviceAnimationStyles(device.modelId)}
         />
+        <Text variant="h3Inter" fontWeight="semiBold" fontSize="24px" textAlign="center" mt={8}>
+          {t("DeviceAction.allowRemoveCustomLockscreen", { productName })}
+        </Text>
       </AnimationContainer>
     </Wrapper>
   );

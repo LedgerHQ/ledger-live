@@ -7,6 +7,7 @@ export enum Network {
   DOGECOIN = "Dogecoin",
   ETHEREUM = "Ethereum",
   ETHEREUM_HOLESKY = "Ethereum Holesky",
+  ETHEREUM_HOODI = "Ethereum Hoodi",
   ETHEREUM_SEPOLIA = "Ethereum Sepolia",
   ETHEREUM_CLASSIC = "Ethereum Classic",
   SOLANA = "Solana",
@@ -15,6 +16,7 @@ export enum Network {
   XRP = "XRP",
   CARDANO = "Cardano",
   STELLAR = "Stellar",
+  SUI = "Sui",
   BITCOIN_CASH = "Bitcoin Cash",
   ALGORAND = "Algorand",
   COSMOS = "Cosmos",
@@ -31,4 +33,5 @@ export enum Network {
   MULTIVERS_X = "MultiversX",
   LITECOIN = "Litecoin",
   KASPA = "Kaspa",
+  HEDERA = "Hedera",
 }

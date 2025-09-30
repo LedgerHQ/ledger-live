@@ -26,6 +26,13 @@ import ModularDrawerFlowManager from "../ModularDrawerFlowManager";
 jest.mock("@ledgerhq/live-common/deposit/useGroupedCurrenciesByProvider.hook", () => ({
   useGroupedCurrenciesByProvider: () => useGroupedCurrenciesByProvider(),
 }));
+jest.mock("@ledgerhq/live-common/modularDrawer/hooks/useCurrenciesUnderFeatureFlag", () => ({
+  useCurrenciesUnderFeatureFlag: () => mockUseCurrenciesUnderFeatureFlag(),
+}));
+
+const mockUseCurrenciesUnderFeatureFlag = jest.fn(() => ({
+  deactivatedCurrencyIds: new Set(),
+}));
 
 beforeEach(async () => {
   mockDomMeasurements();
@@ -56,7 +63,7 @@ const mockedInitialState = {
   },
 };
 
-const mockCurrencies = [ethereumCurrency, bitcoinCurrency, arbitrumCurrency];
+const mockCurrencies = [ethereumCurrency, bitcoinCurrency, arbitrumCurrency].map(c => c.id);
 
 describe("ModularDrawerFlowManager - Modules configuration", () => {
   // This is tempory as in the future balance will be displayed by default for all assets but right now it's not the case
@@ -70,7 +77,7 @@ describe("ModularDrawerFlowManager - Modules configuration", () => {
     ];
     renderWithMockedCounterValuesProvider(
       <ModularDrawerFlowManager
-        currencies={mixedCurrencies}
+        currencies={mixedCurrencies.map(c => c.id)}
         onAssetSelected={mockOnAssetSelected}
       />,
       mockedInitialState,
@@ -99,9 +106,9 @@ describe("ModularDrawerFlowManager - Modules configuration", () => {
     );
 
     await waitFor(() => expect(screen.getByText(/ethereum/i)).toBeVisible());
-    const ethereumBalance = screen.getByText(/23.4663 eth/i);
+    const ethereumBalance = screen.getByText(/34,478.4 eth/i);
     expect(ethereumBalance).toBeVisible();
-    const usdBalance = screen.getByText(/\$65,081.79/i);
+    const usdBalance = screen.getByText(/\$95,622,923.34/i);
     expect(usdBalance).toBeVisible();
 
     const apyTags = screen.queryAllByText(/% APY/i);
@@ -199,9 +206,9 @@ describe("ModularDrawerFlowManager - Modules configuration", () => {
     );
 
     await waitFor(() => expect(screen.getByText(/ethereum/i)).toBeVisible());
-    const ethereumBalance = screen.queryByText(/23.4663 eth/i);
+    const ethereumBalance = screen.queryByText(/34,478.4 eth/i);
     expect(ethereumBalance).toBeNull();
-    const usdBalance = screen.queryByText(/\$65,081.79/i);
+    const usdBalance = screen.queryByText(/\$95,622,923.34/i);
     expect(usdBalance).toBeNull();
   });
 
@@ -279,10 +286,9 @@ describe("ModularDrawerFlowManager - Modules configuration", () => {
   // this is logically failing because we are not able to retrieve the wanted data consistantly because it depends on the providerId that can be wrongly set in mapping services
   // Skipping because flaky, test to be rewritten in refactor from LIVE-21033
   it.skip("render the eth balance of scroll base and arbitrum as ethereum", async () => {
-    const mixedCurrencies = [baseCurrency, arbitrumCurrency, scrollCurrency, bitcoinCurrency];
     renderWithMockedCounterValuesProvider(
       <ModularDrawerFlowManager
-        currencies={mixedCurrencies}
+        currencies={mockCurrencies}
         onAssetSelected={mockOnAssetSelected}
         drawerConfiguration={{ assets: { rightElement: "balance" } }}
       />,
@@ -308,7 +314,7 @@ describe("ModularDrawerFlowManager - Modules configuration", () => {
       scrollCurrency,
       ethereumCurrency,
       bitcoinCurrency,
-    ];
+    ].map(c => c.id);
     renderWithMockedCounterValuesProvider(
       <ModularDrawerFlowManager
         currencies={mixedCurrencies}

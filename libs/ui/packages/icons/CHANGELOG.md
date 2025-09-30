@@ -1,5 +1,17 @@
 # @ledgerhq/icons-ui
 
+## 0.14.0
+
+### Minor Changes
+
+- [#11714](https://github.com/LedgerHQ/ledger-live/pull/11714) [`aade218`](https://github.com/LedgerHQ/ledger-live/commit/aade21864a36bce4b81dcce7ae46fe73894f9d33) Thanks [@jiyuzhuang](https://github.com/jiyuzhuang)! - Add two new icons
+
+## 0.14.0-next.0
+
+### Minor Changes
+
+- [#11714](https://github.com/LedgerHQ/ledger-live/pull/11714) [`aade218`](https://github.com/LedgerHQ/ledger-live/commit/aade21864a36bce4b81dcce7ae46fe73894f9d33) Thanks [@jiyuzhuang](https://github.com/jiyuzhuang)! - Add two new icons
+
 ## 0.13.0
 
 ### Minor Changes
