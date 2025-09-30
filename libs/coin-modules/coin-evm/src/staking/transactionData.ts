@@ -89,7 +89,7 @@ export function buildStakingTransactionParams(
 
   const stakingParams = buildTransactionParams(
     currency.id,
-    mode as StakingOperation,
+    mode,
     recipient,
     amount,
     sourceValidatorAddress, // sourceValidator for redelegate
@@ -100,7 +100,7 @@ export function buildStakingTransactionParams(
   const data = Buffer.from(
     encodeStakingData({
       currencyId: currency.id,
-      operation: mode as StakingOperation,
+      operation: mode,
       config,
       params: stakingParams,
     }).slice(2),

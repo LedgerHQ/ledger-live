@@ -8,19 +8,13 @@ import { craftStandardTransaction, craftTrc20Transaction } from "../network";
 import { decode58Check } from "../network/format";
 import { TronMemo } from "../types";
 import { feesToNumber } from "./utils";
-import { isSendTransactionIntent } from "@ledgerhq/coin-framework/lib/utils";
 
 export async function craftTransaction(
   transactionIntent: TransactionIntent<TronMemo>,
   customFees?: FeeEstimation,
 ): Promise<CraftedTransaction> {
-  if (isSendTransactionIntent(transactionIntent) === false) {
-    throw new Error("Only send transaction intents are supported");
-  }
   const { asset, recipient, sender, amount, expiration } = transactionIntent;
-  const rawMemo = ("memo" in transactionIntent ? transactionIntent.memo : undefined) as
-    | TronMemo
-    | undefined;
+  const rawMemo = "memo" in transactionIntent ? transactionIntent.memo : undefined;
 
   const memo = rawMemo?.type === "string" && rawMemo.kind === "memo" ? rawMemo.value : undefined;
   const recipientAddress = decode58Check(recipient);

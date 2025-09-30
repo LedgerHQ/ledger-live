@@ -11,4 +11,4 @@
 "@ledgerhq/coin-framework": minor
 ---
 
-feat: craftTransaction for evm staking and new Intent type
+feat: estimateFees and craftTransaction for evm staking and new Intent type
