@@ -1,3 +1,5 @@
+import fs from "fs";
+import path from "path";
 import "./starts-console";
 import "./setup"; // Needs to be imported first
 import {
@@ -34,6 +36,8 @@ import { setupTransportHandlers, cleanupTransports } from "./transportHandler";
 // End import timing, start initialization
 console.timeEnd("T-imports");
 console.time("T-init");
+
+setUserDataPath();
 
 Store.initRenderer();
 
@@ -306,6 +310,26 @@ ipcMain.on("ready-to-show", () => {
     }
   }
 });
+
+// Keep using "Ledger Live" in the userData path for backward compatibility.
+// This way users could even rollback to older versions and keep their data.
+// While a migration would only work for future versions.
+function setUserDataPath() {
+  const currentName = app.getName();
+  const defaultPath = app.getPath("userData");
+
+  if (
+    process.env.LEDGER_CONFIG_DIRECTORY ||
+    !app.getPath("userData").endsWith(currentName) ||
+    fs.existsSync(path.resolve(defaultPath, "app.json")) // Don't change if the default path already exists this could allow a migration later
+  ) {
+    return;
+  }
+
+  const legacyName = currentName.replace("Ledger Wallet", "Ledger Live");
+  app.setPath("userData", `${defaultPath.slice(0, -currentName.length)}${legacyName}`);
+}
+
 async function installExtensions() {
   // https://github.com/MarshallOfSound/electron-devtools-installer#usage
   app.whenReady().then(() => {

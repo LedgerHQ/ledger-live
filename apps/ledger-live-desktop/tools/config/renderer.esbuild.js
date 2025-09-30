@@ -41,7 +41,7 @@ module.exports = {
           entryPoints: ["src/renderer/index.ts", "renderer.bundle.css"],
           htmlTemplate: "src/renderer/index.html",
           filename: "index.html",
-          title: "Ledger Live",
+          title: "Ledger Wallet",
         },
       ],
     }),
