@@ -75,7 +75,9 @@ export type NetworkHookParams = {
   networks: CryptoOrTokenCurrency[];
   accounts$?: Observable<WalletAPIAccount[]>;
 };
-export type NetworkHook = (params: NetworkHookParams) => Array<CryptoOrTokenCurrency & Network>;
+export type NetworkHook = (
+  params: NetworkHookParams,
+) => Array<CryptoOrTokenCurrency & Network & { balanceData?: BalanceUI; count?: number }>;
 
 export type NetworkConfigurationDeps = {
   useAccountData: UseAccountData;
