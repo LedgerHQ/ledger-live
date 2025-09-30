@@ -1,4 +1,4 @@
-import { by, element, expect } from "detox";
+import { expect } from "detox";
 import { currencyParam, openDeeplink } from "../../helpers/commonHelpers";
 
 export default class ReceivePage {
@@ -99,12 +99,7 @@ export default class ReceivePage {
     const accountCountID = this.currencySubtitleId(accountCount);
     // expect accountCountID is visible and is child of networkRowID
     await expect(
-      element(
-        by
-          .id(networkRowID)
-          .withDescendant(by.id(accountnameID))
-          .withDescendant(by.id(accountCountID)),
-      ),
+      getElementByIdWithDescendants(networkRowID, [accountnameID, accountCountID]),
     ).toBeVisible();
   }
 

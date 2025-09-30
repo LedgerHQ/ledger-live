@@ -33,6 +33,15 @@ export const ElementHelpers = {
     return element(by.id(id)).atIndex(index);
   },
 
+  getElementByIdWithDescendants(id: string | RegExp, descendants: (string | RegExp)[], index = 0) {
+    if (!isAndroid()) sync_delay(200); // Issue with RN75 : QAA-370
+    let query = by.id(id);
+    for (const descendant of descendants) {
+      query = query.withDescendant(by.id(descendant));
+    }
+    return element(query).atIndex(index);
+  },
+
   getElementByText(text: string | RegExp, index = 0) {
     if (!isAndroid()) sync_delay(200); // Issue with RN75 : QAA-370
     return element(by.text(text)).atIndex(index);

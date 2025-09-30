@@ -49,6 +49,7 @@ declare global {
   var waitForElementById: typeof ElementHelpers.waitForElementById;
   var waitForElementByText: typeof ElementHelpers.waitForElementByText;
   var getElementById: typeof ElementHelpers.getElementById;
+  var getElementByIdWithDescendants: typeof ElementHelpers.getElementByIdWithDescendants;
   var getElementsById: typeof ElementHelpers.getElementsById;
   var getElementByText: typeof ElementHelpers.getElementByText;
   var getWebElementById: typeof ElementHelpers.getWebElementById;
@@ -98,6 +99,7 @@ export default async () => {
   global.waitForElementById = ElementHelpers.waitForElementById;
   global.waitForElementByText = ElementHelpers.waitForElementByText;
   global.getElementById = ElementHelpers.getElementById;
+  global.getElementByIdWithDescendants = ElementHelpers.getElementByIdWithDescendants;
   global.getElementsById = ElementHelpers.getElementsById;
   global.getElementByText = ElementHelpers.getElementByText;
   global.getWebElementById = ElementHelpers.getWebElementById;
