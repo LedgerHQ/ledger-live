@@ -1,4 +1,4 @@
-import { InterestRate } from "../entities";
+import { InterestRate } from ".";
 import { createCurrencyDataSelector, ApiState } from "./selectorUtils";
 
 export const selectInterestRateByCurrency: (

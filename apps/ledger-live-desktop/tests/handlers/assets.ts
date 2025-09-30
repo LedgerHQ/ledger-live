@@ -1,6 +1,6 @@
 import { http, HttpResponse } from "msw";
 import jsonResponse from "./fixtures/assets/getAssets.json";
-import { RawApiResponse } from "@ledgerhq/live-common/lib-es/modularDrawer/data/entities/index";
+import { RawApiResponse } from "@ledgerhq/live-common/dada-client/entities/index";
 
 const handleEthereumAssets = (
   name: "ethereum" | "arbitrum" | "base" | "scroll",

@@ -1,5 +1,5 @@
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { ApyType } from "./type";
+import { ApyType } from "../../dada-client/types/trend";
 
 type InterestRate = { value: number; type: ApyType };
 type InterestRateResult = {

@@ -1,6 +1,6 @@
 import { useMemo } from "react";
-import { useGetAssetsDataInfiniteQuery } from "../data/state-manager/api";
-import { AssetsDataWithPagination } from "../data/state-manager/types";
+import { useGetAssetsDataInfiniteQuery } from "../state-manager/api";
+import { AssetsDataWithPagination } from "../state-manager/types";
 
 const emptyData = () => ({
   cryptoAssets: {},

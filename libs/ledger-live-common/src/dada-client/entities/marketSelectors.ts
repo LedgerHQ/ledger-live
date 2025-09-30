@@ -1,4 +1,4 @@
-import { PartialMarketItemResponse } from "../../../market/utils/types";
+import { PartialMarketItemResponse } from "../../market/utils/types";
 import { createCurrencyDataSelector, ApiState } from "./selectorUtils";
 
 export const selectMarketByCurrency: (

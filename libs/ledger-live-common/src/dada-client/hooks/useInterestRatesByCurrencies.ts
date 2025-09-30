@@ -1,7 +1,7 @@
 import { useSelector } from "react-redux";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { selectInterestRateByCurrency } from "../data/entities/interestRateSelectors";
-import { ApyType } from "../utils/type";
+import { selectInterestRateByCurrency } from "../entities/interestRateSelectors";
+import { ApyType } from "../types/trend";
 
 const isValidApyType = (type: string): type is ApyType =>
   type === "NRR" || type === "APY" || type === "APR";
@@ -9,7 +9,7 @@ const isValidApyType = (type: string): type is ApyType =>
 export const useInterestRatesByCurrencies = (currencies: CryptoOrTokenCurrency[]) => {
   return useSelector(state => {
     const rates: Record<string, { value: number; type: ApyType } | undefined> = {};
-    currencies.forEach(currency => {
+    for (const currency of currencies) {
       const apiRate = selectInterestRateByCurrency(state, currency.id);
       if (apiRate && isValidApyType(apiRate.type)) {
         rates[currency.id] = {
@@ -17,7 +17,7 @@ export const useInterestRatesByCurrencies = (currencies: CryptoOrTokenCurrency[]
           type: apiRate.type,
         };
       }
-    });
+    }
     return rates;
   });
 };
