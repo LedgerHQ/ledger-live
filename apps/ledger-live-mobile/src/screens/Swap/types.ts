@@ -9,11 +9,6 @@ import type { SwapNavigatorParamList } from "~/components/RootNavigator/types/Sw
 import type { SwapWebviewAllowedPageNames } from "~/components/Web3AppWebview/types";
 import type { ScreenName } from "~/const";
 
-export type SwapFormParamList = MaterialTopTabScreenProps<
-  SwapFormNavParamList,
-  ScreenName.SwapForm
->;
-
 export type SelectAccountParamList = NativeStackScreenProps<
   SwapNavigatorParamList,
   ScreenName.SwapSelectAccount

@@ -11,8 +11,6 @@ export const updateTransactionAction = createAction<Transaction | null | undefin
 );
 export const updateRateAction = createAction<ExchangeRate | null | undefined>("SWAP/UPDATE_RATE");
 
-export type SwapAccount = AccountLike & { disabled: boolean };
-
 /* SELECTORS */
 export const rateSelector = (state: State) => state.swap.exchangeRate;
 export const rateExpirationSelector = (state: State) => state.swap.exchangeRateExpiration;
