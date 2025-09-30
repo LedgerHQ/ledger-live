@@ -91,42 +91,41 @@ const CustomImageBottomModal: React.FC<Props> = props => {
   }, [navigation, device, referral, setDeviceHasImage]);
 
   return (
-    <QueuedDrawer
-      isRequestingToBeOpened={!!isOpened}
-      onClose={onClose}
-      CustomHeader={loading ? () => null : Header}
-    >
+    <QueuedDrawer isRequestingToBeOpened={!!isOpened} onClose={onClose}>
       <TrackScreen category={analyticsDrawerName} type="drawer" refreshSource={false} />
       {loading ? (
         <Flex m={10}>
           <InfiniteLoader />
         </Flex>
       ) : (
-        <ButtonContainer>
-          <Button
-            onPress={handleUploadFromPhone}
-            type="main"
-            iconPosition="left"
-            size="large"
-            Icon={() => <Icons.DoublePicture size="M" color="neutral.c00" />}
-            event="button_clicked"
-            eventProperties={analyticsButtonChoosePhoneGalleryEventProps}
-          >
-            {t("customImage.drawer.options.uploadFromPhone")}
-          </Button>
-          {deviceHasImage ? (
+        <>
+          <Header />
+          <ButtonContainer>
             <Button
-              type="error"
+              onPress={handleUploadFromPhone}
+              type="main"
               iconPosition="left"
-              outline
               size="large"
-              Icon={() => <Icons.Trash size="M" color="error.c60" />}
-              onPress={handleRemoveImage}
+              Icon={() => <Icons.DoublePicture size="M" color="neutral.c00" />}
+              event="button_clicked"
+              eventProperties={analyticsButtonChoosePhoneGalleryEventProps}
             >
-              {t("customImage.drawer.options.remove")}
+              {t("customImage.drawer.options.uploadFromPhone")}
             </Button>
-          ) : null}
-        </ButtonContainer>
+            {deviceHasImage ? (
+              <Button
+                type="error"
+                iconPosition="left"
+                outline
+                size="large"
+                Icon={() => <Icons.Trash size="M" color="error.c60" />}
+                onPress={handleRemoveImage}
+              >
+                {t("customImage.drawer.options.remove")}
+              </Button>
+            ) : null}
+          </ButtonContainer>
+        </>
       )}
     </QueuedDrawer>
   );

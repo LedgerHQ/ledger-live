@@ -26,11 +26,7 @@ export function MemoTypeDrawer({ isOpen, closeModal, value, onChange }: Props) {
   const { t } = useTranslation();
   return (
     <QueuedDrawer
-      title={
-        <Text variant="h4" textTransform="none">
-          {t("send.summary.memo.type")}
-        </Text>
-      }
+      title={t("send.summary.memo.type")}
       isRequestingToBeOpened={isOpen}
       onClose={closeModal}
     >

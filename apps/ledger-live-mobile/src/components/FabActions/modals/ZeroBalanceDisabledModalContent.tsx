@@ -1,5 +1,5 @@
 import React, { useCallback } from "react";
-import { Flex } from "@ledgerhq/native-ui";
+import { Flex, Text } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { useNavigation } from "@react-navigation/native";
@@ -100,12 +100,16 @@ function ZeroBalanceDisabledModalContent({
       title={t("account.modals.zeroBalanceDisabledAction.title", {
         currencyTicker: actionCurrency?.ticker,
       })}
-      description={t("account.modals.zeroBalanceDisabledAction.description", {
-        currencyTicker: actionCurrency?.ticker,
-        actionName: action.label,
-      })}
-      Icon={<ParentCurrencyIcon size={48} currency={actionCurrency as Currency} />}
     >
+      <Flex alignItems="center" mb={6}>
+        <ParentCurrencyIcon size={48} currency={actionCurrency as Currency} />
+        <Text mt={4} textAlign="center" variant="bodyLineHeight" color="neutral.c70">
+          {t("account.modals.zeroBalanceDisabledAction.description", {
+            currencyTicker: actionCurrency?.ticker,
+            actionName: action.label,
+          })}
+        </Text>
+      </Flex>
       <Flex mx={16} flexDirection={"row"}>
         <Button onPress={goToBuy} type="main" size={"large"} outline flex={1} mr={3}>
           {t("account.buy")}

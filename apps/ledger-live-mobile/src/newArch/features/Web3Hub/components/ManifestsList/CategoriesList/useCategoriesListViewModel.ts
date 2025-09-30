@@ -11,8 +11,6 @@ export type useCategoriesListViewModelProps = {
   selectCategory: (category: string) => void;
 };
 
-export const queryKey = ["web3hub/categories"];
-
 const isInTest = process.env.NODE_ENV === "test" || !!process.env.MOCK_WEB3HUB;
 const queryFn = isInTest ? fetchCategoriesMock : fetchCategories;
 

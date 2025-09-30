@@ -19,10 +19,6 @@ export const REFETCH_TIME_ONE_MINUTE = 60 * 1000;
 
 export const BASIC_REFETCH = 3; // nb minutes
 
-export const viewabilityConfig = {
-  viewAreaCoveragePercentThreshold: 72,
-};
-
 function useMarketListViewModel() {
   const llmRefreshMarketDataFeature = useFeature("llmRefreshMarketData");
   const { params } = useRoute<NavigationProps["route"]>();

@@ -45,7 +45,6 @@ export default function AccountSubHeaderDrawer({ isOpen, onClose, family, team, 
       isRequestingToBeOpened={isOpen}
       onClose={onClose}
       title={t("account.subHeader.drawer.title", { family })}
-      description={t("account.subHeader.drawer.subTitle", { family, team })}
     >
       <Box alignItems="center">
         <Text variant={"paragraph"} color={"neutral.c100"} textAlign="center">

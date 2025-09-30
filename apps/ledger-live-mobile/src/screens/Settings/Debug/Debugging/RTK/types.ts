@@ -1,8 +1,3 @@
-import { TypedUseSelectorHook, useSelector as useReduxSelector } from "react-redux";
-import { State } from "~/reducers/types";
-
-export const useSelector: TypedUseSelectorHook<State> = useReduxSelector;
-
 type RtkQuerySubState = {
   endpointName?: string;
   status?: string;

@@ -95,8 +95,6 @@ export const isDebugMenuVisible = (state: State) => state.appstate.debugMenuVisi
 export const isModalLockedSelector = (state: State) => state.appstate.modalLock;
 export const hasConnectedDeviceSelector = (state: State) => state.appstate.hasConnectedDevice;
 
-export const backgroundEventsSelector = (state: State) => state.appstate.backgroundEvents;
-
 export const nextBackgroundEventSelector = (state: State) => state.appstate.backgroundEvents[0];
 
 export const isMainNavigatorVisibleSelector = (state: State) =>

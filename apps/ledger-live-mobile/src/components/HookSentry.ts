@@ -4,8 +4,7 @@ import { createStructuredSelector } from "reselect";
 import { reportErrorsEnabledSelector } from "../reducers/settings";
 import { State } from "../reducers/types";
 
-let enabled = false;
-export const getEnabled = (): boolean => enabled;
+let _enabled = false;
 
 class HookSentry extends PureComponent<{
   enabled: boolean;
@@ -19,7 +18,7 @@ class HookSentry extends PureComponent<{
   }
 
   sync() {
-    enabled = this.props.enabled;
+    _enabled = this.props.enabled;
   }
 
   render() {

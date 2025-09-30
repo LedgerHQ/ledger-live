@@ -6,7 +6,7 @@ import { Account, TokenAccount } from "@ledgerhq/types-live";
 import useAccountQuickActionDrawerViewModel from "./useAccountQuickActionDrawerViewModel";
 import TransferButton from "~/components/TransferButton";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
-import CustomHeader from "./CustomHeader";
+import AccountItem from "../AccountsListView/components/AccountItem";
 import { useTheme } from "styled-components/native";
 import { TrackScreen } from "~/analytics";
 import useAnalytics from "LLM/hooks/useAnalytics";
@@ -31,7 +31,7 @@ const AccountQuickActionsDrawer = ({
     account,
     currency,
   });
-  const { colors, space } = useTheme();
+  const { space } = useTheme();
   const { analyticsMetadata } = useAnalytics(AnalyticContexts.AddAccounts, sourceScreenName);
   const pageTrackingEvent = analyticsMetadata.AddFunds?.onQuickActionOpen;
 
@@ -40,18 +40,20 @@ const AccountQuickActionsDrawer = ({
       {isOpen && (
         <TrackScreen name={pageTrackingEvent?.eventName} {...pageTrackingEvent?.payload} />
       )}
-      <QueuedDrawer
-        isRequestingToBeOpened={isOpen}
-        onClose={onClose}
-        CustomHeader={() => (
-          <CustomHeader
-            account={account}
-            onClose={onClose}
-            backgroundColor={colors.neutral.c30}
-            iconColor={colors.neutral.c100}
-          />
+      <QueuedDrawer isRequestingToBeOpened={isOpen} onClose={onClose}>
+        {account && (
+          <Flex
+            flexDirection="row"
+            width="100%"
+            p={16}
+            borderBottom={5}
+            borderBottomColor="opacityDefault.c10"
+            borderBottomWidth={1}
+            mb={space[8]}
+          >
+            <AccountItem account={account} balance={account.balance} hideBalanceInfo />
+          </Flex>
         )}
-      >
         <Flex width="100%" rowGap={space[8]} pb={space[8]}>
           {actions.map(button => (
             <Box key={button?.title}>

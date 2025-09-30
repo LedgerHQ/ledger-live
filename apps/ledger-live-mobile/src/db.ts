@@ -24,10 +24,6 @@ const ACCOUNTS_KEY = "accounts";
 const ACCOUNTS_KEY_SORT = "accounts.sort";
 const ACCOUNTS_DB_PREFIX = "accounts.active.";
 const COUNTERVALUES_DB_PREFIX = "countervalues.";
-export async function clearDb() {
-  const list = await storage.keys();
-  await storage.delete(list.filter(k => k !== "user"));
-}
 export async function getUser(): Promise<User> {
   const user = (await storage.get("user")) as User;
   return user;
