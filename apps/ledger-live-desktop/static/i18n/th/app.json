@@ -172,6 +172,7 @@
       "REDELEGATE" : "Redelegate เรียบร้อยแล้ว",
       "UNDELEGATE" : "Undelegate แล้ว",
       "APPROVE" : "อนุมัติแล้ว",
+      "PRE_APPROVAL" : "การอนุมัติเบื้องต้น",
       "VOTE" : "โหวตแล้ว",
       "FREEZE" : "ถูกระงับ",
       "UNFREEZE" : "ไม่ได้ถูกระงับ",
@@ -373,10 +374,10 @@
       }
     },
     "history" : {
-      "disclaimer" : "ธุรกรรมอาจยังไม่แสดงในประวัติการ Swap แต่กำลังประมวลผลอย่างปลอดภัย ตรวจสอบ 'รายละเอียดการดำเนินการล่าสุด' ในบัญชีของคุณเพื่อเช็คธุรกรรมทั้งหมด",
+      "disclaimer" : "ธุรกรรมอาจยังไม่แสดงในประวัติการสวอป แต่กำลังประมวลผลอย่างปลอดภัย ตรวจสอบ 'รายละเอียดการดำเนินการล่าสุด' ในบัญชีของคุณเพื่อเช็คธุรกรรมทั้งหมด",
       "empty" : {
         "title" : "ประวัติการ Swap ที่ผ่านมาจะปรากฏที่นี่",
-        "description" : "คุณยังไม่ได้ทำการ Swap หรือ Ledger Live กำลังทำการรีเซ็ตอยู่ในขณะนี้"
+        "description" : "คุณยังไม่ได้ทำการสวอป หรือแอป Ledger Live กำลังทำการรีเซ็ตอยู่ในขณะนี้"
       },
       "export" : "ส่งออกการดำเนินการ",
       "exporting" : "กำลังส่งออก...",
@@ -422,7 +423,7 @@
       "disclaimer" : "ธุรกรรม Swap ของคุณบนเดสก์ท็อปไม่ได้มีการซิงโครไนซ์กับแอปพลิเคชัน Ledger Live บนมือถือ",
       "empty" : {
         "title" : "ประวัติการ Swap ที่ผ่านมาจะปรากฏที่นี่",
-        "description" : "คุณยังไม่ได้ทำการ Swap หรือ Ledger Live กำลังถูกรีเซ็ตอยู่ในขณะนี้"
+        "description" : "คุณยังไม่ได้ทำการสวอป หรือแอป Ledger Live กำลังถูกรีเซ็ตอยู่ในขณะนี้"
       }
     },
     "landing" : {
@@ -463,12 +464,16 @@
       "apt_description" : "เพื่อ Swap Aptos ให้ใช้อุปกรณ์ Ledger ที่เข้ากันอื่น ๆ เช่น Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ หรือ Ledger Stax™",
       "cosmos_title" : "Ledger Nano S™ ไม่รองรับการ Swap Cosmos",
       "cosmos_description" : "เพื่อ Swap Cosmos ให้ใช้อุปกรณ์ Ledger ที่เข้ากันอื่น ๆ เช่น Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ หรือ Ledger Stax™",
+      "hedera_title" : "Ledger Nano S™ ไม่รองรับการสวอป Hedera",
+      "hedera_description" : "เพื่อสวอป Hedera ให้ทำธุรกรรมผ่านอุปกรณ์ Ledger รุ่นอื่น ๆ ที่ใช้ได้ เช่น Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ หรือ Ledger Stax™",
       "osmo_title" : "Ledger Nano S™ ไม่รองรับการ Swap Osmosis",
       "osmo_description" : "เพื่อ Swap Osmosis ให้ทำธุรกรรมผ่านอุปกรณ์ Ledger รุ่นอื่นที่ใช้ได้ เช่น Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ หรือ Ledger Stax™",
       "dydx_title" : "Ledger Nano S™ ไม่รองรับการ Swap dYdX",
       "dydx_description" : "เพื่อ Swap dYdX ให้ทำธุรกรรมผ่านอุปกรณ์ Ledger รุ่นอื่นที่ใช้ได้ เช่น Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ หรือ Ledger Stax™",
       "sui_title" : "Ledger Nano S™ ไม่รองรับการ Swap Sui",
-      "sui_description" : "ในการ Swap Sui ให้ทำธุรกรรมผ่านอุปกรณ์ Ledger รุ่นอื่นที่ใช้ได้ เช่น Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ หรือ Ledger Stax™"
+      "sui_description" : "ในการ Swap Sui ให้ทำธุรกรรมผ่านอุปกรณ์ Ledger รุ่นอื่นที่ใช้ได้ เช่น Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ หรือ Ledger Stax™",
+      "kaspa_title" : "Ledger Nano S™ does not support swapping Kaspa",
+      "kaspa_description" : "To swap Kaspa, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™."
     },
     "providers" : {
       "title" : "เลือกผู้ให้บริการเพื่อ Swap คริปโต",
@@ -1567,8 +1572,8 @@
       "title" : "แนวโน้ม {{time}}",
       "buy" : "ซื้อ",
       "swap" : "สวอป",
-      "gainers" : "Gainers",
-      "losers" : "Losers",
+      "gainers" : "สินทรัพย์ที่ปรับตัวขึ้น",
+      "losers" : "สินทรัพย์ที่ปรับตัวลง",
       "error" : {
         "title" : "ขออภัย เราไม่สามารถโหลดแนวโน้มได้",
         "description" : "โปรดลองอีกครั้งในภายหลัง"
@@ -1874,7 +1879,12 @@
         "default" : "ตรวจสอบรายละเอียด Swap บนอุปกรณ์ของคุณก่อนส่ง มีการแลกเปลี่ยน Address อย่างปลอดภัย ดังนั้นคุณไม่จำเป็นต้องตรวจสอบรายการเหล่านั้น",
         "provider" : "ตรวจสอบรายละเอียด Swap บนอุปกรณ์ของคุณก่อนส่ง {{providerName}} อาจต้องดำเนินการตรวจสอบเพิ่มเติมสำหรับบางธุรกรรม ส่งผลให้เกิดความล่าช้า"
       },
+      "simpleViewNotice" : {
+        "default" : "ตรวจสอบรายละเอียดการสวอป (Swap) บนอุปกรณ์ Ledger ของคุณก่อนส่งธุรกรรม",
+        "provider" : "ตรวจสอบรายละเอียดการสวอป (Swap) บนอุปกรณ์ของคุณก่อนส่งธุรกรรม"
+      },
       "confirm" : "ยืนยันธุรกรรม Swap",
+      "confirmSwap" : "ยืนยันการดำเนินการสวอป (Swap) บนอุปกรณ์",
       "amountSent" : "จำนวนที่จะส่ง",
       "amountReceived" : "จำนวนที่จะได้รับ",
       "amountReceivedFloat" : "จำนวนที่จะได้รับก่อนคิดค่าบริการ",
@@ -1885,6 +1895,7 @@
       "acceptTerms" : "ในการตรวจสอบธุรกรรมนี้ ฉันยอมรับ\n<0>เงื่อนไขการใช้งานของ {{provider}}</0>",
       "exodusAcceptTerms" : "Exodus อาศัยบุคคลที่สามในการดำเนินการ Swap\nในการตรวจสอบธุรกรรมนี้ ฉันยอมรับ\n<0>เงื่อนไขการใช้งานของ Exodus</0>",
       "changellyAcceptTerms" : "การคลิก “สวอปด้วย Changelly” จะถือว่าคุณยอมรับ<0>ข้อกำหนดการใช้งาน</0>ของ Changelly และ\n<1>นโยบาย AML/KYC</1> โดย Changelly อาจบังคับใช้มาตรการ AML/KYC ซึ่งสามารถ\nส่งผลกระทบต่อการทำธุรกรรมของคุณให้เสร็จสมบูรณ์ได้ในบางกรณี หาก\nเกิดเหตุการณ์ดังกล่าวขึ้น คุณต้องติดต่อ<2>ฝ่ายสนับสนุนลูกค้า</2>ของ Changelly",
+      "changellySimplifiedAcceptTerms" : "การตรวจสอบธุรกรรมนี้จะถือว่าคุณยอมรับ<0>เงื่อนไขการใช้งาน</0>และ\n<1>นโยบาย AML/KYC</1> ของ Changelly Changelly อาจใช้กระบวนการ AML/KYC \nซึ่งอาจส่งผลกระทบต่อการทำธุรกรรมของคุณในบางกรณี หาก\nเกิดเหตุการณ์ดังกล่าวขึ้น คุณต้องติดต่อ<2>ฝ่ายสนับสนุนลูกค้า</2>ของ Changelly",
       "cicAcceptTerms" : "เมื่อคุณทำการ “สวอปกับ CIC” จะถือว่าคุณยอมรับ<0>ข้อกำหนดการใช้งาน</0>และ<1>นโยบาย AML/KYC</1>  โดย CIC อาจดำเนินขั้นตอน AML/KYC ซึ่งในบางกรณีอาจส่งผลต่อการดำเนินธุรกรรมของคุณ หากเกิดเหตุการณ์ดังกล่าวขึ้น  กรุณาติดต่อ<2>ฝ่ายสนับสนุนลูกค้า</2>ของ CIC"
     },
     "swap2" : {
@@ -2240,6 +2251,16 @@
     "title" : "รับ",
     "successTitle" : "แชร์ Address อย่างปลอดภัย",
     "steps" : {
+      "options" : {
+        "fromBank" : {
+          "title" : "จากบัญชีธนาคาร",
+          "description" : "ฝาก USD หรือ EUR"
+        },
+        "fromCrypto" : {
+          "title" : "จาก Crypto Address",
+          "description" : "รับคริปโต"
+        }
+      },
       "chooseAccount" : {
         "title" : "บัญชี",
         "label" : "บัญชีที่จะเครดิต",
@@ -2480,7 +2501,7 @@
   "distribution" : {
     "asset" : "สินทรัพย์",
     "price" : "ราคา",
-    "distribution" : "การจัดสรร",
+    "distribution" : "สัดส่วน",
     "amount" : "จำนวน",
     "value" : "มูลค่า",
     "showAll" : "แสดงทั้งหมด",
@@ -2489,7 +2510,7 @@
   },
   "accountDistribution" : {
     "account" : "บัญชี",
-    "distribution" : "การจัดสรร",
+    "distribution" : "สัดส่วน",
     "amount" : "จำนวน",
     "value" : "มูลค่า",
     "header" : "การจัดสรรบัญชี ({{count}})"
@@ -4514,11 +4535,11 @@
         "title" : "สร้างบัญชีจำลอง",
         "description" : "สร้างบัญชีจำลองเพื่อทำการทดสอบ เครื่องมือเหล่านี้ช่วยให้คุณสามารถสร้างบัญชีทดสอบของสกุลเงินต่าง ๆ และลองทดสอบกำหนดค่าต่าง ๆ",
         "customGenerate" : {
-          "title" : "Custom generation",
-          "desc" : "Select currencies and add tokens"
+          "title" : "การสร้างแบบกำหนดเอง",
+          "desc" : "เลือกสกุลเงินและเพิ่มโทเคน"
         },
         "quickGenerate" : {
-          "title" : "Quick generation",
+          "title" : "การสร้างแบบด่วน",
           "desc" : "สร้างบัญชีสุ่ม 10 บัญชีพร้อมสกุลเงินแบบสุ่ม"
         },
         "currencySelector" : {
@@ -4540,7 +4561,7 @@
         },
         "alerts" : {
           "selectCurrency" : "โปรดเลือกอย่างน้อยหนึ่งสกุลเงิน",
-          "confirmErase" : "Existing accounts will be erased. Continue?",
+          "confirmErase" : "บัญชีที่มีอยู่จะถูกลบ ต้องการดำเนินการต่อหรือไม่?",
           "generateError" : "ไม่สามารถสร้างบัญชีจำลองได้ โปรดลองอีกครั้ง"
         }
       },
@@ -5006,6 +5027,12 @@
     },
     "screens" : {
       "welcome" : {
+        "videos" : {
+          "buySell" : "วอลเล็ตที่ปกป้องคุณและให้คุณควบคุมทุกอย่างได้เอง",
+          "thousandsCrypto" : "ส่ง, รับ, สวอป และสเตคคริปโตได้นับพัน*",
+          "secureWallet" : "ตรวจสอบธุรกรรมของคุณทั้งหมดได้อย่างสบายใจ"
+        },
+        "notice" : "การดำเนินการต่อจะถือว่าคุณยอมรับ<Link1>ข้อกำหนดและเงื่อนไข</Link1> รวมถึง<Link2>นโยบายความเป็นส่วนตัว</Link2>ของ Ledger Ledger ไม่ให้คำแนะนำหรือคำปรึกษาเกี่ยวกับการลงทุน\nบริการสวอป (Swap) และสเตคกิ้ง (Staking) เป็นบริการที่ให้บริการโดยบุคคลที่สาม",
         "title" : "เป็น Wallet สำหรับคริปโตและ NFT ที่ปลอดภัยที่สุด",
         "description" : "จัดการ ซื้อ และเพิ่มมูลค่าคริปโต ตลอดจน NFT ของคุณบน Ledger Live ได้อย่างปลอดภัย",
         "nextButton" : "เริ่มต้นกันเลย",
@@ -6439,6 +6466,9 @@
     },
     "EthAppPleaseEnableContractData" : {
       "title" : "โปรดเปิดใช้งาน Blind Signing หรือ Contract Data ในการตั้งค่าแอป Ethereum"
+    },
+    "CeloAppPleaseEnableContractData" : {
+      "title" : "โปรดเปิดใช้งาน Contract Data ในการตั้งค่าแอป Celo"
     },
     "InvalidXRPTag" : {
       "title" : "Tag XRP ปลายทางไม่ถูกต้อง"
