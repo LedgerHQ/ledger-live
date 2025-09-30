@@ -47,7 +47,19 @@ export async function listOperations(
   const nextToken = lastOperation ? JSON.stringify(lastOperation?.id) : "";
   const filteredOperations = limitedOperations
     .filter(op => isAPITransactionType(op) || isAPIDelegationType(op) || isAPIRevealType(op))
-    .reduce((acc, op) => acc.concat(convertOperation(address, op)), [] as Operation[]);
+    .filter(op => {
+      // Filter out failed incoming tx
+      const hasFailed = op.status !== "applied";
+      if (hasFailed && isAPITransactionType(op)) {
+        const isIn = op.target?.address === address;
+        if (isIn) {
+          return false;
+        }
+      }
+      return true;
+    })
+    .map(op => convertOperation(address, op))
+    .flat();
   const sortedOperations = filteredOperations.sort(
     (a, b) => b.tx.date.getTime() - a.tx.date.getTime(),
   );
