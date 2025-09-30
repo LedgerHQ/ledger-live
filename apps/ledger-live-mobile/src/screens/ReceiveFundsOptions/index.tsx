@@ -83,7 +83,7 @@ function typesafeNavigation({ route, navigation }: EntryScreenProps) {
         return;
       }
       navigation.navigate(ScreenName.ReceiveSelectCrypto, {
-        ...(route.params ?? {}),
+        ...route.params,
         fromMenu: true,
       });
       break;

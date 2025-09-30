@@ -6,7 +6,7 @@ export type NoahRouteProp = RouteProp<{
   params: {
     params?: {
       fromMenu?: boolean;
-      currency?: string | CryptoCurrency | TokenCurrency | undefined;
+      currency?: string | CryptoCurrency | TokenCurrency;
     };
   };
 }>;
