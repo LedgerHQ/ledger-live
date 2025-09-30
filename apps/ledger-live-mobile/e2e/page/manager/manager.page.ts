@@ -1,4 +1,4 @@
-import { expect, element, by } from "detox";
+import { expect, element, by, log } from "detox";
 import { openDeeplink } from "../../helpers/commonHelpers";
 
 export default class ManagerPage {
@@ -60,8 +60,25 @@ export default class ManagerPage {
           ? "canUpdate"
           : "notInstalled";
 
-      await scrollToId(this.appRow(app), this.deviceInfoScrollView);
-      await expect(element(by.id(this.appRow(app)))).toBeVisible();
+      try {
+        await scrollToId(this.appRow(app), this.deviceInfoScrollView);
+      } catch (e) {
+        // iOS workaround for RN 0.77 NewArch + Detox (coordinate system bug)
+        log.warn(`✗ Failed to scroll to ${app}`);
+      }
+
+      try {
+        await expect(element(by.id(this.appRow(app)))).toBeVisible();
+      } catch (e) {
+        // iOS workaround for RN 0.77 NewArch + Detox (coordinate system bug)
+        const rowAttrs = await element(by.id(this.appRow(app))).getAttributes();
+        if ("hittable" in rowAttrs && rowAttrs.hittable === true) {
+          await expect(element(by.id(this.appRow(app)))).toExist();
+        } else {
+          throw e;
+        }
+      }
+
       await expect(element(by.id(this.appState(app, status)))).toBeVisible();
     }
   }

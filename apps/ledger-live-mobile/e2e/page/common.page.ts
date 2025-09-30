@@ -54,7 +54,7 @@ export default class CommonPage {
   async addDeviceViaBluetooth(device = knownDevices.nanoX) {
     const deviceAction = new DeviceAction(device);
     await addDevicesBT(device);
-    await waitForElementById(this.scannedDeviceRow(device.id));
+    await expect(getElementById(this.scannedDeviceRow(device.id))).toBeVisible();
     await tapById(this.scannedDeviceRow(device.id));
     await waitForElementById(this.blePairingLoadingId);
     await open();
