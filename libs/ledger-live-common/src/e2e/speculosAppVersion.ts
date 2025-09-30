@@ -1,4 +1,4 @@
-import { HttpManagerApiRepository } from "@ledgerhq/device-core";
+import { HttpManagerApiRepository, ApplicationV2Entity } from "@ledgerhq/device-core";
 import { version } from "@ledgerhq/device-core/package.json";
 import { getEnv } from "@ledgerhq/live-env";
 import { DeviceModelId } from "@ledgerhq/devices";
@@ -6,7 +6,7 @@ import { Device as CryptoWallet } from "./enum/Device";
 import * as fs from "fs";
 import * as path from "path";
 
-function getSpeculosModel(): DeviceModelId {
+export function getSpeculosModel(): DeviceModelId {
   const speculosDevice = process.env.SPECULOS_DEVICE;
   switch (speculosDevice) {
     case CryptoWallet.LNS.name:
@@ -19,7 +19,7 @@ function getSpeculosModel(): DeviceModelId {
   }
 }
 
-export async function getNanoAppCatalog() {
+export async function getNanoAppCatalog(): Promise<ApplicationV2Entity[]> {
   const repository = new HttpManagerApiRepository(getEnv("MANAGER_API_BASE"), version);
   const speculosModel = getSpeculosModel();
   const modelToTargetIdMap = {
@@ -28,22 +28,19 @@ export async function getNanoAppCatalog() {
     [DeviceModelId.nanoSP]: CryptoWallet.LNSP.targetId,
   };
   const targetId = modelToTargetIdMap[speculosModel];
-  const catalogForDevices = await repository.catalogForDevice({
+  return await repository.catalogForDevice({
     provider: 1,
     targetId: targetId,
     firmwareVersion: process.env.SPECULOS_FIRMWARE_VERSION || "",
   });
-  return catalogForDevices;
 }
 
-export async function createNanoAppJsonFile() {
+export async function createNanoAppJsonFile(): Promise<void> {
   try {
     const appCatalog = await getNanoAppCatalog();
     const rootDir = process.cwd();
-    const filePath = rootDir.includes("mobile")
-      ? "artifacts/appVersion/nano-app-catalog.json"
-      : "tests/artifacts/appVersion/nano-app-catalog.json";
-    const jsonFilePath = path.join(rootDir, filePath);
+    const nanoAppFilePath = getEnv("E2E_NANO_APP_VERSION_PATH");
+    const jsonFilePath = path.join(rootDir, nanoAppFilePath);
     const dirPath = path.dirname(jsonFilePath);
     if (!fs.existsSync(dirPath)) {
       fs.mkdirSync(dirPath, { recursive: true });
@@ -54,14 +51,12 @@ export async function createNanoAppJsonFile() {
   }
 }
 
-export async function getAppVersionFromCatalog(currency: string) {
+export async function getAppVersionFromCatalog(currency: string): Promise<string | undefined> {
   try {
     await createNanoAppJsonFile();
     const rootDir = process.cwd();
-    const filepPath = rootDir.includes("mobile")
-      ? "artifacts/appVersion/nano-app-catalog.json"
-      : "tests/artifacts/appVersion/nano-app-catalog.json";
-    const jsonFilePath = path.join(rootDir, filepPath);
+    const nanoAppFilePath = getEnv("E2E_NANO_APP_VERSION_PATH");
+    const jsonFilePath = path.join(rootDir, nanoAppFilePath);
     type CatalogApp = { versionDisplayName: string; version: string };
     const raw = fs.readFileSync(jsonFilePath, "utf8");
     const catalog: CatalogApp[] = JSON.parse(raw);

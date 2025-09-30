@@ -402,6 +402,11 @@ const envDefinitions = {
     parser: stringParser,
     desc: "switch the app into a DETOX mode for test purpose. Avoid falsy values.",
   },
+  E2E_NANO_APP_VERSION_PATH: {
+    def: "",
+    parser: stringParser,
+    desc: "Path for e2e nanoApp version artifacts (LLD and LLM)",
+  },
   EIP1559_MINIMUM_FEES_GATE: {
     def: true,
     parser: boolParser,

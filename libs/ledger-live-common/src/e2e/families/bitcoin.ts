@@ -1,12 +1,7 @@
 import expect from "expect";
 import { Transaction } from "../models/Transaction";
-import {
-  pressBoth,
-  pressUntilTextFound,
-  waitFor,
-  containsSubstringInEvent,
-  getSpeculosModel,
-} from "../speculos";
+import { pressBoth, pressUntilTextFound, waitFor, containsSubstringInEvent } from "../speculos";
+import { getSpeculosModel } from "../speculosAppVersion";
 import { DeviceLabels } from "../enum/DeviceLabels";
 import { Device } from "../enum/Device";
 import invariant from "invariant";

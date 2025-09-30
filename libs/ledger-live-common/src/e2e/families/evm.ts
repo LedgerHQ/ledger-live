@@ -1,12 +1,7 @@
 import expect from "expect";
 import { NFTTransaction, Transaction } from "../models/Transaction";
-import {
-  pressBoth,
-  pressUntilTextFound,
-  containsSubstringInEvent,
-  waitFor,
-  getSpeculosModel,
-} from "../speculos";
+import { pressBoth, pressUntilTextFound, containsSubstringInEvent, waitFor } from "../speculos";
+import { getSpeculosModel } from "../speculosAppVersion";
 import { DeviceLabels } from "../enum/DeviceLabels";
 import { Device } from "../enum/Device";
 import { DeviceModelId } from "@ledgerhq/types-devices";

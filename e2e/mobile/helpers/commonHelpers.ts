@@ -4,7 +4,7 @@ import { exec } from "child_process";
 import { device, log } from "detox";
 import { allure } from "jest-allure2-reporter/api";
 import { Device } from "@ledgerhq/live-common/e2e/enum/Device";
-import { getSpeculosModel } from "@ledgerhq/live-common/e2e/speculos";
+import { getSpeculosModel } from "@ledgerhq/live-common/e2e/speculosAppVersion";
 
 const BASE_DEEPLINK = "ledgerlive://";
 
@@ -86,6 +86,7 @@ export function setupEnvironment() {
   setEnv("MOCK", "");
   process.env.MOCK = "";
   setEnv("DETOX", "1");
+  setEnv("E2E_NANO_APP_VERSION_PATH", "artifacts/appVersion/nano-app-catalog.json");
   process.env.SPECULOS_DEVICE = getSpeculosModel();
 
   const disableBroadcastEnv = process.env.DISABLE_TRANSACTION_BROADCAST;

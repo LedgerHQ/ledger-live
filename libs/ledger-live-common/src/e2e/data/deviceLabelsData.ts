@@ -75,7 +75,6 @@ export const DEVICE_LABELS_CONFIG: DeviceLabelsConfig = {
       [AppInfos.ETHEREUM.name]: DeviceLabels.CONFIRM,
       [AppInfos.POLKADOT.name]: DeviceLabels.CAPS_APPROVE,
       [AppInfos.POLYGON.name]: DeviceLabels.CONFIRM,
-      [AppInfos.SOLANA.name]: DeviceLabels.APPROVE,
       default: DeviceLabels.APPROVE,
     },
     delegateVerify: {
@@ -92,7 +91,6 @@ export const DEVICE_LABELS_CONFIG: DeviceLabelsConfig = {
       [AppInfos.INJECTIVE.name]: DeviceLabels.CAPS_APPROVE,
       [AppInfos.MULTIVERS_X.name]: DeviceLabels.SIGN,
       [AppInfos.NEAR.name]: DeviceLabels.CONTINUE_TO_ACTION,
-      [AppInfos.SOLANA.name]: DeviceLabels.APPROVE,
       [AppInfos.OSMOSIS.name]: DeviceLabels.CAPS_APPROVE,
       default: DeviceLabels.APPROVE,
     },

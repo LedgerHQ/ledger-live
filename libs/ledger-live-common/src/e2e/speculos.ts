@@ -16,7 +16,6 @@ import { getEnv } from "@ledgerhq/live-env";
 import { getCryptoCurrencyById } from "../currencies";
 import { DeviceLabels } from "./enum/DeviceLabels";
 import { Account } from "./enum/Account";
-import { Device as CryptoWallet } from "./enum/Device";
 import { Currency } from "./enum/Currency";
 import expect from "expect";
 import { sendBTC, sendBTCBasedCoin } from "./families/bitcoin";
@@ -43,7 +42,7 @@ import { delegateOsmosis } from "./families/osmosis";
 import { AppInfos } from "./enum/AppInfos";
 import { DEVICE_LABELS_CONFIG } from "./data/deviceLabelsData";
 import { sendSui } from "./families/sui";
-import { getAppVersionFromCatalog } from "./speculosAppVersion";
+import { getAppVersionFromCatalog, getSpeculosModel } from "./speculosAppVersion";
 
 const isSpeculosRemote = process.env.REMOTE_SPECULOS === "true";
 
@@ -74,19 +73,6 @@ export function setExchangeDependencies(dependencies: Dependency[]) {
     }
   }
   specs["Exchange"].dependencies = Array.from(map.values());
-}
-
-export function getSpeculosModel() {
-  const speculosDevice = process.env.SPECULOS_DEVICE;
-  switch (speculosDevice) {
-    case CryptoWallet.LNS.name:
-      return DeviceModelId.nanoS;
-    case CryptoWallet.LNX.name:
-      return DeviceModelId.nanoX;
-    case CryptoWallet.LNSP.name:
-    default:
-      return DeviceModelId.nanoSP;
-  }
 }
 
 type Specs = {
@@ -368,11 +354,7 @@ export async function startSpeculos(
   invariant(seed, "SEED is not set");
   const coinapps = COINAPPS;
   invariant(coinapps, "COINAPPS is not set");
-  let appCandidates;
-
-  if (!appCandidates) {
-    appCandidates = await listAppCandidates(coinapps);
-  }
+  const appCandidates = await listAppCandidates(coinapps);
 
   const { appQuery, dependency, onSpeculosDeviceCreated } = spec;
   try {
@@ -401,8 +383,8 @@ export async function startSpeculos(
   });
   if (!appCandidate) {
     console.warn("no app found for " + testName);
-    // console.warn(appQuery);
-    // console.warn(JSON.stringify(appCandidates, undefined, 2));
+    console.warn(appQuery);
+    console.warn(JSON.stringify(appCandidates, undefined, 2));
   }
   invariant(
     appCandidate,
@@ -837,7 +819,9 @@ export async function verifyAmountsAndRejectSwap(swap: Swap, amount: string) {
 }
 
 function verifySwapData(swap: Swap, events: string[], amount: string) {
-  //const swapPair = `swap ${swap.getAccountToDebit.currency.ticker} to ${swap.getAccountToCredit.currency.ticker}`;
+  // Uncoment when new exchange nanoApp is in prod
+
+  // const swapPair = `swap ${swap.getAccountToDebit.currency.ticker} to ${swap.getAccountToCredit.currency.ticker}`;
 
   // if (getSpeculosModel() !== DeviceModelId.nanoS) {
   //   expectDeviceScreenContains(swapPair, events, "Swap pair not found on the device screen");

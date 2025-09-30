@@ -4,8 +4,8 @@ import {
   pressUntilTextFound,
   containsSubstringInEvent,
   getDelegateEvents,
-  getSpeculosModel,
 } from "../speculos";
+import { getSpeculosModel } from "../speculosAppVersion";
 import { DeviceLabels } from "../enum/DeviceLabels";
 import { Device } from "../enum/Device";
 import { Transaction } from "../models/Transaction";
