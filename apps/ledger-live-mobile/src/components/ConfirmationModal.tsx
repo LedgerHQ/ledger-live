@@ -86,7 +86,15 @@ class ConfirmationModal extends PureComponent<Props> {
           </View>
         )}
         {confirmationTitle && (
-          <LText secondary semiBold style={[styles.confirmationTitle, customTitleStyle]}>
+          <LText
+            secondary
+            semiBold
+            style={[
+              styles.confirmationTitle,
+              !Icon && !image && styles.confirmationTitleWithCloseButton,
+              customTitleStyle,
+            ]}
+          >
             {confirmationTitle}
           </LText>
         )}
@@ -131,6 +139,9 @@ const styles = StyleSheet.create({
   confirmationTitle: {
     textAlign: "center",
     fontSize: 18,
+  },
+  confirmationTitleWithCloseButton: {
+    width: "90%",
   },
   confirmationDesc: {
     marginVertical: 24,
