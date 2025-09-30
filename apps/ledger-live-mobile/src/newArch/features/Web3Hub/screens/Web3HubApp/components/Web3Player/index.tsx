@@ -9,9 +9,11 @@ import { AppManifest, WalletAPICustomHandlers } from "@ledgerhq/live-common/wall
 import { currentAccountAtom } from "@ledgerhq/live-common/wallet-api/useDappLogic";
 import { WebviewAPI, WebviewState } from "~/components/Web3AppWebview/types";
 import { Web3AppWebview } from "~/components/Web3AppWebview";
-import { useACRECustomHandlers } from "~/components/WebPlatformPlayer/CustomHandlers";
+import {
+  useACRECustomHandlers,
+  useDeeplinkCustomHandlers,
+} from "~/components/WebPlatformPlayer/CustomHandlers";
 import { usePTXCustomHandlers } from "~/components/WebPTXPlayer/CustomHandlers";
-import { useDeeplinkCustomHandlers } from "~/components/WebPlatformPlayer/CustomHandlers";
 import { useCurrentAccountHistDB } from "~/screens/Platform/v2/hooks";
 import { flattenAccountsSelector } from "~/reducers/accounts";
 import { BottomBar } from "./BottomBar";

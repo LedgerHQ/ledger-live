@@ -23,8 +23,7 @@ import { usePTXCustomHandlers } from "../WebPTXPlayer/CustomHandlers";
 import { WalletAPICustomHandlers } from "@ledgerhq/live-common/wallet-api/types";
 import { useCurrentAccountHistDB } from "~/screens/Platform/v2/hooks";
 import { flattenAccountsSelector } from "~/reducers/accounts";
-import { useACRECustomHandlers } from "./CustomHandlers";
-import { useDeeplinkCustomHandlers } from "./CustomHandlers";
+import { useACRECustomHandlers, useDeeplinkCustomHandlers } from "./CustomHandlers";
 
 type Props = {
   manifest: LiveAppManifest;

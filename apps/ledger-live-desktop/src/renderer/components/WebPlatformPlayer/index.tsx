@@ -13,8 +13,7 @@ import { usePTXCustomHandlers } from "../WebPTXPlayer/CustomHandlers";
 import { useCurrentAccountHistDB } from "~/renderer/screens/platform/v2/hooks";
 import { useMobileView, WebViewWrapperProps } from "~/renderer/hooks/useMobileView";
 import { flattenAccountsSelector } from "~/renderer/reducers/accounts";
-import { useACRECustomHandlers } from "./CustomHandlers";
-import { useDeeplinkCustomHandlers } from "./CustomHandlers";
+import { useACRECustomHandlers, useDeeplinkCustomHandlers } from "./CustomHandlers";
 
 export const Container = styled.div`
   display: flex;
