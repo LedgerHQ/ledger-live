@@ -3227,15 +3227,6 @@ importers:
 
   libs/coin-modules/coin-internet_computer:
     dependencies:
-      '@dfinity/agent':
-        specifier: ^0.21.0
-        version: 0.21.4(@dfinity/candid@0.21.4(@dfinity/principal@0.15.7(typescript@5.4.3)))(@dfinity/principal@0.15.7(typescript@5.4.3))
-      '@dfinity/candid':
-        specifier: ^0.21.0
-        version: 0.21.4(@dfinity/principal@0.15.7(typescript@5.4.3))
-      '@dfinity/principal':
-        specifier: ^0.15.6
-        version: 0.15.7(typescript@5.4.3)
       '@ledgerhq/coin-framework':
         specifier: workspace:^
         version: link:../../coin-framework
@@ -3248,27 +3239,15 @@ importers:
       '@ledgerhq/errors':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/errors
-      '@ledgerhq/live-env':
-        specifier: workspace:^
-        version: link:../../env
-      '@ledgerhq/live-network':
-        specifier: workspace:^
-        version: link:../../live-network
       '@ledgerhq/logs':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/logs
-      '@ledgerhq/types-cryptoassets':
-        specifier: workspace:^
-        version: link:../../ledgerjs/packages/types-cryptoassets
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/types-live
       '@zondax/ledger-live-icp':
         specifier: 1.2.2
         version: 1.2.2
-      big-integer:
-        specifier: ^1.6.51
-        version: 1.6.52
       bignumber.js:
         specifier: ^9.1.2
         version: 9.1.2
@@ -3284,9 +3263,6 @@ importers:
       rxjs:
         specifier: ^7.8.1
         version: 7.8.1
-      simple-cbor:
-        specifier: ^0.4.1
-        version: 0.4.1
     devDependencies:
       '@types/invariant':
         specifier: ^2.2.2
@@ -5182,15 +5158,6 @@ importers:
       '@cardano-foundation/ledgerjs-hw-app-cardano':
         specifier: ^7.1.2
         version: 7.1.2
-      '@dfinity/agent':
-        specifier: ^0.21.0
-        version: 0.21.4(@dfinity/candid@0.21.4(@dfinity/principal@0.15.7(@swc/core@1.4.11)(@types/node@22.10.10)(typescript@5.1.3)))(@dfinity/principal@0.15.7(@swc/core@1.4.11)(@types/node@22.10.10)(typescript@5.1.3))
-      '@dfinity/candid':
-        specifier: ^0.21.0
-        version: 0.21.4(@dfinity/principal@0.15.7(@swc/core@1.4.11)(@types/node@22.10.10)(typescript@5.1.3))
-      '@dfinity/principal':
-        specifier: ^0.15.6
-        version: 0.15.7(@swc/core@1.4.11)(@types/node@22.10.10)(typescript@5.1.3)
       '@ledgerhq/coin-algorand':
         specifier: workspace:^
         version: link:../coin-modules/coin-algorand
@@ -12149,22 +12116,11 @@ packages:
     resolution: {integrity: sha512-0cp4PsWQ/9avqTVMCtZ+GirikIA36ikvjtHweU4/j8yLtgObI0+JUPhYFScgwlteveGB1rt3Cm8UhN04XayDig==}
     engines: {node: '>= 8.9.0'}
 
-  '@dfinity/agent@0.21.4':
-    resolution: {integrity: sha512-k5k8v1BmDE8RStC22FtuqbFzMLaQAQL3cE/wF45ZMKP4WmBBmCPss75RDgIVGiFwLGEKKKXE1muHQDy9g+m5yQ==}
-    peerDependencies:
-      '@dfinity/candid': ^0.21.4
-      '@dfinity/principal': ^0.21.4
-
   '@dfinity/agent@2.4.1':
     resolution: {integrity: sha512-IczFFOUDGfMTdQ83yiCvGtvHr1IIB80lWBP0ZYRLogs6NVt8t6HYcMlu1sgT+9VivhT7iwX4pktPFxxOkO3COw==}
     peerDependencies:
       '@dfinity/candid': ^2.4.1
       '@dfinity/principal': ^2.4.1
-
-  '@dfinity/candid@0.21.4':
-    resolution: {integrity: sha512-BRdgLQjPbqEZDRIR985jpy92uwhdBn4mN2D8StMKyOXQLmR6hKSD0p/P2b632Sh7zPUY8HuiA8njpMZ67JEyAg==}
-    peerDependencies:
-      '@dfinity/principal': ^0.21.4
 
   '@dfinity/candid@2.4.1':
     resolution: {integrity: sha512-kOaIKfhR2PYN8vD4M0Pc4s/7wb1nKjlTJUw+5E9jh26T03fITIZmaafIuwlX+wmdxwIT9Xoy7PlsxOEpzv203A==}
@@ -12190,9 +12146,6 @@ packages:
       '@dfinity/ledger-icp': ^3
       '@dfinity/principal': ^2.0.0
       '@dfinity/utils': ^2.13.0
-
-  '@dfinity/principal@0.15.7':
-    resolution: {integrity: sha512-6/AkYzpGEH6Jw/0+B/EeeQn+5u2GDDvRLt1kQPhIG4txQYFnOy04H3VvyrymmfAj6/CXUgrOrux6OxgYSLYVJg==}
 
   '@dfinity/principal@2.4.1':
     resolution: {integrity: sha512-Cz6XQVOwq0TXDBClPbcidDd4SqK1lfr1/Kn34ruDD13xVQ4iaP1iCntzS9O97+vGpY/6jwDtKd32Gn5YJ9BQNw==}
@@ -39941,28 +39894,6 @@ snapshots:
       ajv: 6.12.6
       ajv-keywords: 3.5.2(ajv@6.12.6)
 
-  '@dfinity/agent@0.21.4(@dfinity/candid@0.21.4(@dfinity/principal@0.15.7(@swc/core@1.4.11)(@types/node@22.10.10)(typescript@5.1.3)))(@dfinity/principal@0.15.7(@swc/core@1.4.11)(@types/node@22.10.10)(typescript@5.1.3))':
-    dependencies:
-      '@dfinity/candid': 0.21.4(@dfinity/principal@0.15.7(@swc/core@1.4.11)(@types/node@22.10.10)(typescript@5.1.3))
-      '@dfinity/principal': 0.15.7(@swc/core@1.4.11)(@types/node@22.10.10)(typescript@5.1.3)
-      '@noble/curves': 1.9.7
-      '@noble/hashes': 1.8.0
-      base64-arraybuffer: 0.2.0
-      borc: 2.1.2
-      buffer: 6.0.3(patch_hash=2xnca52oxhztvr7iaoovwclcze)
-      simple-cbor: 0.4.1
-
-  '@dfinity/agent@0.21.4(@dfinity/candid@0.21.4(@dfinity/principal@0.15.7(typescript@5.4.3)))(@dfinity/principal@0.15.7(typescript@5.4.3))':
-    dependencies:
-      '@dfinity/candid': 0.21.4(@dfinity/principal@0.15.7(typescript@5.4.3))
-      '@dfinity/principal': 0.15.7(typescript@5.4.3)
-      '@noble/curves': 1.9.7
-      '@noble/hashes': 1.8.0
-      base64-arraybuffer: 0.2.0
-      borc: 2.1.2
-      buffer: 6.0.3(patch_hash=2xnca52oxhztvr7iaoovwclcze)
-      simple-cbor: 0.4.1
-
   '@dfinity/agent@2.4.1(@dfinity/candid@2.4.1(@dfinity/principal@2.4.1))(@dfinity/principal@2.4.1)':
     dependencies:
       '@dfinity/candid': 2.4.1(@dfinity/principal@2.4.1)
@@ -39973,14 +39904,6 @@ snapshots:
       borc: 2.1.2
       buffer: 6.0.3(patch_hash=2xnca52oxhztvr7iaoovwclcze)
       simple-cbor: 0.4.1
-
-  '@dfinity/candid@0.21.4(@dfinity/principal@0.15.7(@swc/core@1.4.11)(@types/node@22.10.10)(typescript@5.1.3))':
-    dependencies:
-      '@dfinity/principal': 0.15.7(@swc/core@1.4.11)(@types/node@22.10.10)(typescript@5.1.3)
-
-  '@dfinity/candid@0.21.4(@dfinity/principal@0.15.7(typescript@5.4.3))':
-    dependencies:
-      '@dfinity/principal': 0.15.7(typescript@5.4.3)
 
   '@dfinity/candid@2.4.1(@dfinity/principal@2.4.1)':
     dependencies:
@@ -40015,28 +39938,6 @@ snapshots:
       '@dfinity/utils': 2.14.0(@dfinity/agent@2.4.1(@dfinity/candid@2.4.1(@dfinity/principal@2.4.1))(@dfinity/principal@2.4.1))(@dfinity/candid@2.4.1(@dfinity/principal@2.4.1))(@dfinity/principal@2.4.1)
       '@noble/hashes': 1.8.0
       randombytes: 2.1.0
-
-  '@dfinity/principal@0.15.7(@swc/core@1.4.11)(@types/node@22.10.10)(typescript@5.1.3)':
-    dependencies:
-      js-sha256: 0.9.0
-      ts-node: 10.9.2(@swc/core@1.4.11)(@types/node@22.10.10)(typescript@5.1.3)
-    transitivePeerDependencies:
-      - '@swc/core'
-      - '@swc/wasm'
-      - '@types/node'
-      - source-map-support
-      - typescript
-
-  '@dfinity/principal@0.15.7(typescript@5.4.3)':
-    dependencies:
-      js-sha256: 0.9.0
-      ts-node: 10.9.2(typescript@5.4.3)
-    transitivePeerDependencies:
-      - '@swc/core'
-      - '@swc/wasm'
-      - '@types/node'
-      - source-map-support
-      - typescript
 
   '@dfinity/principal@2.4.1':
     dependencies:
