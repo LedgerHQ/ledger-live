@@ -172,6 +172,7 @@
       "REDELEGATE" : "Redélégué",
       "UNDELEGATE" : "Délégation arrêtée",
       "APPROVE" : "Approuvé",
+      "PRE_APPROVAL" : "Pré-approbation",
       "VOTE" : "Voté",
       "FREEZE" : "Gelé",
       "UNFREEZE" : "Dégelé",
@@ -332,11 +333,11 @@
         },
         "rate" : {
           "title" : "Taux de change",
-          "tooltip" : "Un <0>taux variable</0> fluctue en fonction des conditions du marché. Vous pourriez donc recevoir plus ou moins que ce qui est estimé.<br/><br/>Un <0>taux fixe</0> correspond au montant affiché au début du swap."
+          "tooltip" : "Un <0>taux variable</0> fluctue en fonction des conditions du marché. Vous pourriez donc recevoir plus ou moins que ce qui est estimé.<br/><br/>Un <0>taux fixe</0> correspond au montant affiché au début de l’échange."
         },
         "receive" : {
           "title" : "Recevez",
-          "tooltip" : "Montant estimé que vous recevrez après le swap."
+          "tooltip" : "Montant estimé que vous recevrez après l’échange."
         }
       },
       "details" : {
@@ -359,13 +360,13 @@
         "title" : "De",
         "max" : "Max",
         "accountPlaceholder" : "Choisir la source",
-        "currencyDisabledTooltip" : "Pas encore disponible au swap"
+        "currencyDisabledTooltip" : "Pas encore disponible au Swap"
       },
       "to" : {
         "title" : "À"
       },
       "notAvailable" : {
-        "title" : "Le swap n’est pas encore disponible pour votre territoire.",
+        "title" : "Le Swap n’est pas encore disponible pour votre territoire.",
         "content" : "Merci pour votre patience.<br/>Nous lancerons cette fonctionnalité très rapidement."
       },
       "timeout" : {
@@ -393,7 +394,7 @@
       "title" : "Confirmer l’échange",
       "completed" : {
         "title" : "Transaction bien émise",
-        "description" : "Votre opération de swap a été envoyée au réseau pour confirmation. Veuillez attendre que votre transaction soit confirmée, puis que le prestataire traite et vous envoie vos {{targetCurrency}}.",
+        "description" : "Votre échange a été envoyé au réseau pour confirmation. Veuillez attendre que votre transaction soit confirmée, puis que le prestataire traite et vous envoie vos {{targetCurrency}}.",
         "disclaimer" : "Notez bien l’identifiant de votre échange au cas où vous auriez besoin de contacter <0>l’assistance de <0>{{provider}}</0></0>.",
         "tellAboutYourExperience" : "Faites-nous part de votre expérience",
         "seeDetails" : "Voir les détails"
@@ -463,6 +464,8 @@
       "apt_description" : "Pour échanger des Aptos, utilisez un autre appareil Ledger compatible, tel que le Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™.",
       "cosmos_title" : "Le Ledger Nano S™ ne prend pas en charge l’échange de Cosmos",
       "cosmos_description" : "Pour échanger des Cosmos, utilisez un autre appareil Ledger compatible, tel que le Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™.",
+      "hedera_title" : "Le Ledger Nano S™ ne prend pas en charge l’échange d’Hedera",
+      "hedera_description" : "Pour échanger des Hedera, utilisez un autre appareil Ledger compatible, tel que le Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™.",
       "osmo_title" : "Le Ledger Nano S™ ne prend pas en charge l’échange d’Osmosis",
       "osmo_description" : "Pour échanger des Osmosis, utilisez un autre appareil Ledger compatible, tel que le Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™.",
       "dydx_title" : "Le Ledger Nano S™ ne prend pas en charge l’échange de dYdX",
@@ -471,7 +474,7 @@
       "sui_description" : "Pour échanger des Sui, utilisez un autre appareil Ledger compatible, tel que le Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™."
     },
     "providers" : {
-      "title" : "Choisir un prestataire pour le swap",
+      "title" : "Choisir un prestataire pour le Swap",
       "learnMore" : "Qu’est-ce que le Swap ?",
       "cta" : "Continuer",
       "filter" : {
@@ -554,7 +557,7 @@
         "finished" : {
           "title" : "En attente",
           "subtitle" : "Échange bien diffusé ",
-          "swap" : "Identifiant de votre swap :",
+          "swap" : "Identifiant de votre échange :",
           "seeDetails" : "Voir les détails",
           "disclaimer" : "Notez bien l’identifiant de votre échange au cas où vous auriez besoin de contacter <0>l’assistance de <0>{{provider}}</0></0>.",
           "description" : "Votre échange a été envoyé au réseau pour confirmation. Cela peut prendre jusqu’à une heure avant que vous ne receviez vos {{targetCurrency}}."
@@ -564,13 +567,13 @@
     "operationDetailsModal" : {
       "title" : "Swap",
       "provider" : "Prestataire",
-      "txid" : "Identifiant du swap",
+      "txid" : "Identifiant de l’échange",
       "status" : "Statut",
       "statusTooltips" : {
-        "expired" : "Pour plus d’informations, contactez le prestataire du service Swap avec l’identifiant de votre swap.",
-        "refunded" : "Pour plus d’informations, contactez le prestataire du service Swap avec l’identifiant de votre swap.",
+        "expired" : "Pour plus d’informations, contactez le prestataire du service Swap avec l’identifiant de votre échange.",
+        "refunded" : "Pour plus d’informations, contactez le prestataire du service Swap avec l’identifiant de votre échange.",
         "pending" : "Merci de patienter pendant que le prestataire du service Swap traite votre transaction.",
-        "onhold" : "Pour résoudre votre problème, contactez le prestataire du service Swap avec l’identifiant de votre swap.",
+        "onhold" : "Pour résoudre votre problème, contactez le prestataire du service Swap avec l’identifiant de votre échange.",
         "finished" : "Votre échange a bien été réalisé.",
         "unknown" : "En attente des informations de la part du prestataire."
       },
@@ -897,7 +900,7 @@
     "verifyAddress" : "Merci de confirmer que l’adresse affichée est identique à celle sur votre appareil",
     "connectingTo" : "Connexion à {{provider}}",
     "buy" : {
-      "header" : "Acheter des cryptos avec nos prestataires tiers",
+      "header" : "Acheter des cryptos avec nos prestataires",
       "title" : "Choisir un prestataire pour acheter des cryptos",
       "buyFrom" : "Achetez de là où vous vous trouvez",
       "cryptoSupported" : "cryptos prises en charge",
@@ -913,7 +916,7 @@
       }
     },
     "sell" : {
-      "header" : "Vendre des cryptos avec nos prestataires tiers",
+      "header" : "Vendre des cryptos avec nos prestataires",
       "title" : "Vendez des cryptos avec <0>{{provider}}</0>.",
       "tab" : "Vendre",
       "selectCrypto" : "Choisir un crypto-actif",
@@ -1292,7 +1295,7 @@
       },
       "backup" : {
         "title" : "Sauvegarde pour votre phrase de récupération",
-        "description" : "Avec une solution de sauvegarde numérique chiffrée, vous pouvez restaurer l’accès à votre wallet sans votre phrase de récupération secrète.\n\nChoisissez si vous voulez une sauvegarde numérique :",
+        "description" : "Avec une solution de sauvegarde numérique chiffrée, vous pouvez restaurer l’accès à vos actifs sans votre phrase de récupération secrète.\n\nChoisissez si vous voulez une sauvegarde numérique :",
         "backupChoice" : {
           "title" : "Je veux une sauvegarde numérique",
           "titleSelected" : "Ledger Recover",
@@ -1431,7 +1434,7 @@
       },
       "recover" : {
         "title" : "Vous abonner à Ledger Recover",
-        "description" : "Restaurez l’accès à votre wallet sans votre phrase de récupération secrète.",
+        "description" : "Restaurez l’accès à vos actifs sans votre phrase de récupération secrète.",
         "actionCompletedPopupLabel" : "Vous êtes abonné(e) à Ledger Recover"
       }
     }
@@ -1459,7 +1462,7 @@
     },
     "buyCrypto" : {
       "title" : "Acheter des cryptos",
-      "description" : "Achetez des crypto-actifs via nos prestataires tiers et recevez-les directement dans votre compte Ledger.",
+      "description" : "Achetez des crypto-actifs avec nos prestataires et recevez-les directement dans votre compte Ledger.",
       "cta" : "Acheter maintenant"
     },
     "familyPack" : {
@@ -1473,7 +1476,7 @@
     },
     "sell" : {
       "title" : "Vendre des cryptos",
-      "description" : "Vendez vos bitcoins via notre prestataire tiers sans sortir de Ledger Live."
+      "description" : "Vendez vos bitcoins avec nos prestataires sans sortir de Ledger Live."
     },
     "stakeAlgorand" : {
       "title" : "Les récompenses avec Algorand",
@@ -1481,7 +1484,7 @@
     },
     "swap" : {
       "title" : "Échanger des cryptos",
-      "description" : "Échangez une crypto contre une autre via Ledger Live grâce à nos prestataires tiers."
+      "description" : "Échangez une crypto contre une autre via Ledger Live grâce à nos prestataires."
     },
     "lending" : {
       "title" : "Prêter",
@@ -1551,14 +1554,14 @@
         "secondaryCta" : "Plus tard"
       },
       "verifyIdentity" : {
-        "title" : "Vous n’avez pas encore sauvegardé l’accès à votre wallet",
-        "description" : "Vérifiez votre identité pour sécuriser l’accès à votre wallet",
+        "title" : "Vous n’avez pas encore sauvegardé l’accès à vos actifs",
+        "description" : "Vérifiez votre identité pour sécuriser l’accès à vos actifs",
         "primaryCta" : "Vérifier mon identité",
         "secondaryCta" : "Plus tard"
       },
       "connectDevice" : {
-        "title" : "Vous n’avez pas encore sauvegardé l’accès à votre wallet",
-        "description" : "Connectez votre appareil pour sécuriser l’accès à votre wallet",
+        "title" : "Vous n’avez pas encore sauvegardé l’accès à vos actifs",
+        "description" : "Connectez votre appareil pour sécuriser l’accès à vos actifs",
         "primaryCta" : "Connecter mon appareil",
         "secondaryCta" : "Plus tard"
       }
@@ -1874,7 +1877,12 @@
         "default" : "Vérifiez les détails de l’échange sur votre appareil Ledger avant de le valider. Les adresses sont échangées de manière sécurisée afin que vous n’ayez pas à les vérifier.",
         "provider" : "Vérifiez les détails de l’échange sur votre appareil Ledger avant de le valider. Une vérification supplémentaire peut être effectuée par {{providerName}} pour certaines transactions, entraînant un temps d’attente."
       },
+      "simpleViewNotice" : {
+        "default" : "Vérifiez les détails de l’échange sur votre appareil Ledger avant de le valider.",
+        "provider" : "Vérifiez les détails de l’échange sur votre appareil Ledger avant de le valider."
+      },
       "confirm" : "Confirmer l’échange",
+      "confirmSwap" : "Confirmer l’opération d’échange sur l’appareil",
       "amountSent" : "Montant à envoyer",
       "amountReceived" : "Montant à recevoir",
       "amountReceivedFloat" : "Montant à recevoir sans les frais de service",
@@ -1885,6 +1893,7 @@
       "acceptTerms" : "En validant cette transaction, j’accepte\n<0>les Conditions d’utilisation de {{provider}}</0>.",
       "exodusAcceptTerms" : "Pour traiter les échanges, Exodus fait appel à des tiers.\nEn validant cette transaction, j’accepte <0>les Conditions d’utilisation d’Exodus</0>.",
       "changellyAcceptTerms" : "En cliquant sur Échanger avec Changelly, vous acceptez les <0>Conditions d’utilisation</0>\nde Changelly et sa <1>Politique LCB-FT/KYC</1>. Changelly peut mettre en place\ndes procédures LCB-FT/KYC qui, dans certains cas,\npeuvent avoir un impact sur l’aboutissement de votre transaction. Le cas échéant, vous devez contacter l’<2>assistance clientèle</2> de Changelly.",
+      "changellySimplifiedAcceptTerms" : "En validant cette transaction, vous acceptez les <0>Conditions d’utilisation</0> de Changelly et\nsa <1>Politique LCB-FT/KYC</1>. Changelly peut mettre en place\ndes procédures LCB-FT/KYC qui, dans certains cas, peuvent avoir un impact sur l’aboutissement de votre transaction. Le cas échéant,\nvous devez contacter l’<2>assistance clientèle</2> de Changelly.",
       "cicAcceptTerms" : "En cliquant sur Échanger avec CIC, vous acceptez les <0>Conditions d’utilisation</0> de CIC et sa <1>Politique LCB-FT/KYC</1>. CIC peut mettre en place des procédures LCB-FT/KYC qui, dans certains cas, peuvent avoir un impact sur l’aboutissement de votre transaction. Le cas échéant, vous devez contacter l’<2>assistance clientèle</2> de CIC."
     },
     "swap2" : {
@@ -2033,7 +2042,7 @@
       "contactSupport" : "Contacter l’Assistance",
       "deprecated" : "La version du micrologiciel de l’appareil est trop ancienne pour être mise à jour. Contactez l’Assistance Ledger pour le remplacer.",
       "prepareSeed" : "Assurez-vous par précaution que votre phrase de récupération secrète de 24 mots est accessible et bien écrite sur votre feuille de récupération.",
-      "prepareSeedRecover" : "Vous pouvez également utiliser Ledger Recover comme accès de secours à votre wallet, pour plus de sérénité.",
+      "prepareSeedRecover" : "Vous pouvez également utiliser Ledger Recover comme accès de secours à vos actifs, pour plus de sérénité.",
       "disclaimerTitle" : "Vous êtes sur le point d’installer la <1>version {{version}} du micrologiciel</1>.",
       "cancelUpdate" : "Annuler la mise à jour",
       "continueUpdate" : "Continuer la mise à jour",
@@ -2240,6 +2249,16 @@
     "title" : "Recevoir",
     "successTitle" : "Adresse partagée en toute sécurité",
     "steps" : {
+      "options" : {
+        "fromBank" : {
+          "title" : "À partir d’un compte bancaire",
+          "description" : "Déposez des USD ou des EUR"
+        },
+        "fromCrypto" : {
+          "title" : "À partir d’une adresse crypto",
+          "description" : "Recevez des cryptos"
+        }
+      },
       "chooseAccount" : {
         "title" : "Compte",
         "label" : "Compte à créditer",
@@ -4514,11 +4533,11 @@
         "title" : "Générer des comptes de simulation",
         "description" : "Générez des comptes de simulation à des fins de test. Ces outils vous permettent de créer des comptes test, avec diverses monnaies et configurations.",
         "customGenerate" : {
-          "title" : "Custom generation",
-          "desc" : "Select currencies and add tokens"
+          "title" : "Génération personnalisée",
+          "desc" : "Sélectionnez des monnaies et ajoutez des tokens."
         },
         "quickGenerate" : {
-          "title" : "Quick generation",
+          "title" : "Génération rapide",
           "desc" : "Générez 10 comptes aléatoires avec des monnaies aléatoires"
         },
         "currencySelector" : {
@@ -4540,7 +4559,7 @@
         },
         "alerts" : {
           "selectCurrency" : "Veuillez sélectionner au moins une monnaie",
-          "confirmErase" : "Existing accounts will be erased. Continue?",
+          "confirmErase" : "Les comptes existants seront supprimés. Continuer ?",
           "generateError" : "Impossible de générer les comptes de simulation. Veuillez réessayer."
         }
       },
@@ -4890,11 +4909,11 @@
       "fr" : "Français",
       "ru" : "Русский",
       "es" : "Español",
-      "zh" : "中文（简体）",
+      "zh" : "简体中文",
       "de" : "Deutsch",
-      "tr" : "Turc",
-      "ja" : "Japonais",
-      "ko" : "Coréen",
+      "tr" : "Türkçe",
+      "ja" : "日本語",
+      "ko" : "한국어",
       "pt" : "Português (Brasil)"
     }
   },
@@ -5006,6 +5025,12 @@
     },
     "screens" : {
       "welcome" : {
+        "videos" : {
+          "buySell" : "Le wallet qui vous protège et vous donne le contrôle",
+          "thousandsCrypto" : "Envoyez, recevez, échangez, stakez des milliers de cryptos",
+          "secureWallet" : "Vérifiez toutes vos opérations en toute sérénité"
+        },
+        "notice" : "En continuant, vous acceptez les <Link1>Conditions d’utilisation</Link1> et la <Link2>Politique de confidentialité</Link2> de Ledger. Ledger ne fournit aucun conseil financier.\nLes services d’échange et de staking sont fournis par des tiers.",
         "title" : "Le wallet ultra-sécurisé pour vos cryptos et NFT",
         "description" : "Gérez, achetez et faites fructifier vos cryptos et NFT en toute sécurité via Ledger Live.",
         "nextButton" : "Commencer",
@@ -6440,6 +6465,9 @@
     "EthAppPleaseEnableContractData" : {
       "title" : "Activez la signature aveugle dans l’app Ethereum (\"Settings\" > \"Blind signing\"/\"Contract Data\")."
     },
+    "CeloAppPleaseEnableContractData" : {
+      "title" : "Activez les données du contrat dans l’app Celo (\"Settings\" > \"Contract Data\")"
+    },
     "InvalidXRPTag" : {
       "title" : "Tag de destination XRP invalide"
     },
@@ -6793,7 +6821,7 @@
       "twoCtas" : "<cta1>{{cta1Label}}</cta1> ou <cta2>{{cta2Label}}</cta2> des {{assetName}} pour approvisionner votre compte.",
       "threeCtas" : "<cta1>{{cta1Label}}</cta1>, <cta2>{{cta2Label}}</cta2> ou <cta3>{{cta3Label}}</cta3> des{{assetName}} pour approvisionner votre compte.",
       "ctas" : {
-        "buy" : "Achetez",
+        "buy" : "Acheter",
         "swap" : "Échanger",
         "deposit" : "Déposer"
       }
