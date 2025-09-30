@@ -15,7 +15,7 @@ export class SendDrawer extends Drawer {
   private operationFromAccount = this.page.getByTestId("operation-from");
   private operationToAccount = this.page.getByTestId("operation-to");
 
-  @step("Verify address is visible")
+  @step("Verify address is visible!")
   async addressValueIsVisible(address: string) {
     await expect(this.addressValue(address)).toBeVisible();
   }
