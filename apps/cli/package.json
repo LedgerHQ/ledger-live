@@ -71,7 +71,8 @@
     "rxjs": "7.8.1",
     "usb": "*",
     "winston": "3.13.0",
-    "ws": "8.17.1"
+    "ws": "8.17.1",
+    "@zondax/ledger-live-icp": "1.2.2"
   },
   "devDependencies": {
     "@ledgerhq/types-cryptoassets": "workspace:^",

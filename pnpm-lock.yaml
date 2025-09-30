@@ -21,7 +21,7 @@ overrides:
 
 packageExtensionsChecksum: 505470d279d34dbf557b1005424e3d1d
 
-pnpmfileChecksum: icbum5fm2zpmtctr4exqaodaui
+pnpmfileChecksum: sniaadfbqum3mg42eqxteliwpm
 
 patchedDependencies:
   '@changesets/get-github-info@0.6.0':
@@ -236,6 +236,9 @@ importers:
       '@ledgerhq/types-devices':
         specifier: workspace:^
         version: link:../../libs/ledgerjs/packages/types-devices
+      '@zondax/ledger-live-icp':
+        specifier: 1.2.2
+        version: 1.2.2
       asciichart:
         specifier: 1.5.25
         version: 1.5.25
@@ -3224,15 +3227,6 @@ importers:
 
   libs/coin-modules/coin-internet_computer:
     dependencies:
-      '@dfinity/agent':
-        specifier: ^0.21.0
-        version: 0.21.4(@dfinity/candid@0.21.4(@dfinity/principal@0.15.7(typescript@5.4.3)))(@dfinity/principal@0.15.7(typescript@5.4.3))
-      '@dfinity/candid':
-        specifier: ^0.21.0
-        version: 0.21.4(@dfinity/principal@0.15.7(typescript@5.4.3))
-      '@dfinity/principal':
-        specifier: ^0.15.6
-        version: 0.15.7(typescript@5.4.3)
       '@ledgerhq/coin-framework':
         specifier: workspace:^
         version: link:../../coin-framework
@@ -3245,27 +3239,15 @@ importers:
       '@ledgerhq/errors':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/errors
-      '@ledgerhq/live-env':
-        specifier: workspace:^
-        version: link:../../env
-      '@ledgerhq/live-network':
-        specifier: workspace:^
-        version: link:../../live-network
       '@ledgerhq/logs':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/logs
-      '@ledgerhq/types-cryptoassets':
-        specifier: workspace:^
-        version: link:../../ledgerjs/packages/types-cryptoassets
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/types-live
       '@zondax/ledger-live-icp':
-        specifier: 1.2.0
-        version: 1.2.0
-      big-integer:
-        specifier: ^1.6.51
-        version: 1.6.52
+        specifier: 1.2.2
+        version: 1.2.2
       bignumber.js:
         specifier: ^9.1.2
         version: 9.1.2
@@ -3281,9 +3263,6 @@ importers:
       rxjs:
         specifier: ^7.8.1
         version: 7.8.1
-      simple-cbor:
-        specifier: ^0.4.1
-        version: 0.4.1
     devDependencies:
       '@types/invariant':
         specifier: ^2.2.2
@@ -5179,15 +5158,6 @@ importers:
       '@cardano-foundation/ledgerjs-hw-app-cardano':
         specifier: ^7.1.2
         version: 7.1.2
-      '@dfinity/agent':
-        specifier: ^0.21.0
-        version: 0.21.4(@dfinity/candid@0.21.4(@dfinity/principal@0.15.7(@swc/core@1.4.11)(@types/node@22.10.10)(typescript@5.1.3)))(@dfinity/principal@0.15.7(@swc/core@1.4.11)(@types/node@22.10.10)(typescript@5.1.3))
-      '@dfinity/candid':
-        specifier: ^0.21.0
-        version: 0.21.4(@dfinity/principal@0.15.7(@swc/core@1.4.11)(@types/node@22.10.10)(typescript@5.1.3))
-      '@dfinity/principal':
-        specifier: ^0.15.6
-        version: 0.15.7(@swc/core@1.4.11)(@types/node@22.10.10)(typescript@5.1.3)
       '@ledgerhq/coin-algorand':
         specifier: workspace:^
         version: link:../coin-modules/coin-algorand
@@ -12146,22 +12116,11 @@ packages:
     resolution: {integrity: sha512-0cp4PsWQ/9avqTVMCtZ+GirikIA36ikvjtHweU4/j8yLtgObI0+JUPhYFScgwlteveGB1rt3Cm8UhN04XayDig==}
     engines: {node: '>= 8.9.0'}
 
-  '@dfinity/agent@0.21.4':
-    resolution: {integrity: sha512-k5k8v1BmDE8RStC22FtuqbFzMLaQAQL3cE/wF45ZMKP4WmBBmCPss75RDgIVGiFwLGEKKKXE1muHQDy9g+m5yQ==}
-    peerDependencies:
-      '@dfinity/candid': ^0.21.4
-      '@dfinity/principal': ^0.21.4
-
   '@dfinity/agent@2.4.1':
     resolution: {integrity: sha512-IczFFOUDGfMTdQ83yiCvGtvHr1IIB80lWBP0ZYRLogs6NVt8t6HYcMlu1sgT+9VivhT7iwX4pktPFxxOkO3COw==}
     peerDependencies:
       '@dfinity/candid': ^2.4.1
       '@dfinity/principal': ^2.4.1
-
-  '@dfinity/candid@0.21.4':
-    resolution: {integrity: sha512-BRdgLQjPbqEZDRIR985jpy92uwhdBn4mN2D8StMKyOXQLmR6hKSD0p/P2b632Sh7zPUY8HuiA8njpMZ67JEyAg==}
-    peerDependencies:
-      '@dfinity/principal': ^0.21.4
 
   '@dfinity/candid@2.4.1':
     resolution: {integrity: sha512-kOaIKfhR2PYN8vD4M0Pc4s/7wb1nKjlTJUw+5E9jh26T03fITIZmaafIuwlX+wmdxwIT9Xoy7PlsxOEpzv203A==}
@@ -12187,9 +12146,6 @@ packages:
       '@dfinity/ledger-icp': ^3
       '@dfinity/principal': ^2.0.0
       '@dfinity/utils': ^2.13.0
-
-  '@dfinity/principal@0.15.7':
-    resolution: {integrity: sha512-6/AkYzpGEH6Jw/0+B/EeeQn+5u2GDDvRLt1kQPhIG4txQYFnOy04H3VvyrymmfAj6/CXUgrOrux6OxgYSLYVJg==}
 
   '@dfinity/principal@2.4.1':
     resolution: {integrity: sha512-Cz6XQVOwq0TXDBClPbcidDd4SqK1lfr1/Kn34ruDD13xVQ4iaP1iCntzS9O97+vGpY/6jwDtKd32Gn5YJ9BQNw==}
@@ -14393,6 +14349,9 @@ packages:
   '@jsdoc/salty@0.2.8':
     resolution: {integrity: sha512-5e+SFVavj1ORKlKaKr2BmTOekmXbelU7dC0cDkQLqag7xfuTPuGMUFx7KWJuv4bYZrTsoL2Z18VVCOKYxzoHcg==}
     engines: {node: '>=v12.0.0'}
+
+  '@jspm/core@2.1.0':
+    resolution: {integrity: sha512-3sRl+pkyFY/kLmHl0cgHiFp2xEqErA8N3ECjMs7serSUBmoJ70lBa0PG5t0IM6WJgdZNyyI0R8YFfi5wM8+mzg==}
 
   '@juggle/resize-observer@3.4.0':
     resolution: {integrity: sha512-dfLbk+PwWvFzSxwk3n5ySL0hfBog779o8h68wK/7/APo/7cgyWp5jcXockbxdk5kFRkbeXWm4Fbi9FrdN381sA==}
@@ -20457,8 +20416,8 @@ packages:
   '@zondax/ledger-js@1.2.0':
     resolution: {integrity: sha512-HGvDU0s4zg0scu8ebGenFHFB6g5SLDqmrctncZUY9ie5pGibOU8C0VdjZSHbttSOCyh+IloLi/a4jyMPOEQGuQ==}
 
-  '@zondax/ledger-live-icp@1.2.0':
-    resolution: {integrity: sha512-5KNop2maeaT9HHj7hhV9xQ/ym5G6rw2oKJdkrDfljwDV4O33Yg8mZdnNP+mKo62K5MTs2i2bs4Od2vx2rldcOw==}
+  '@zondax/ledger-live-icp@1.2.2':
+    resolution: {integrity: sha512-5qJhgD/vySuHqWysSSiZ2arP8cN24+spRK9xASE1vsLPSBOeqekobxGMvfB+aaVO3M9rAwpKBuV1THjQ45ATsg==}
 
   '@zondax/ledger-mina-js@0.0.2':
     resolution: {integrity: sha512-6tB4voId5NOfn1XzYivyQnjq8A7eoz/2D+Ay0IDCimkF4wX2dWC0KKzatRnJmC80z8b37Hsi5/roSvkZUQ/bgw==}
@@ -23849,6 +23808,11 @@ packages:
   esbuild-plugin-import-glob@0.1.1:
     resolution: {integrity: sha512-yAFH+9AoIcsQkODSx0KUPRv1FeJUN6Tef8vkPQMcuVkc2vXYneYKsHhOiFS/yIsg5bQ70HHtAlXVA1uTjgoJXg==}
 
+  esbuild-plugin-polyfill-node@0.3.0:
+    resolution: {integrity: sha512-SHG6CKUfWfYyYXGpW143NEZtcVVn8S/WHcEOxk62LuDXnY4Zpmc+WmxJKN6GMTgTClXJXhEM5KQlxKY6YjbucQ==}
+    peerDependencies:
+      esbuild: '*'
+
   esbuild-register@3.5.0:
     resolution: {integrity: sha512-+4G/XmakeBAsvJuDugJvtyF1x+XJT4FMocynNpxrvEBViirpfUn2PgNpCHedfWhF4WokNsO/OvMKrmJOIJsI5A==}
     peerDependencies:
@@ -25950,6 +25914,9 @@ packages:
     resolution: {integrity: sha512-ASB07uLtnDs1o6EHjKpX34BKYDSqnFerfTOJL2HvMqF70LnxpjkzDB8J44oT9pu4AMPkQwf8jl6szgvNd2tRIg==}
     engines: {node: '>=8'}
     hasBin: true
+
+  import-meta-resolve@3.1.1:
+    resolution: {integrity: sha512-qeywsE/KC3w9Fd2ORrRDUw6nS/nLwZpXgfrOc2IILvZYnCaEMd+D56Vfg9k4G29gIeVi3XKql1RQatME8iYsiw==}
 
   imurmurhash@0.1.4:
     resolution: {integrity: sha512-JmXMZ6wuvDmLiHEml9ykzqO6lwFbof0GG4IkcGaENdCRDDmMVnny7s5HsIgHCbaq0w2MyPhDqkhTUgS2LU2PHA==}
@@ -39927,28 +39894,6 @@ snapshots:
       ajv: 6.12.6
       ajv-keywords: 3.5.2(ajv@6.12.6)
 
-  '@dfinity/agent@0.21.4(@dfinity/candid@0.21.4(@dfinity/principal@0.15.7(@swc/core@1.4.11)(@types/node@22.10.10)(typescript@5.1.3)))(@dfinity/principal@0.15.7(@swc/core@1.4.11)(@types/node@22.10.10)(typescript@5.1.3))':
-    dependencies:
-      '@dfinity/candid': 0.21.4(@dfinity/principal@0.15.7(@swc/core@1.4.11)(@types/node@22.10.10)(typescript@5.1.3))
-      '@dfinity/principal': 0.15.7(@swc/core@1.4.11)(@types/node@22.10.10)(typescript@5.1.3)
-      '@noble/curves': 1.9.7
-      '@noble/hashes': 1.8.0
-      base64-arraybuffer: 0.2.0
-      borc: 2.1.2
-      buffer: 6.0.3(patch_hash=2xnca52oxhztvr7iaoovwclcze)
-      simple-cbor: 0.4.1
-
-  '@dfinity/agent@0.21.4(@dfinity/candid@0.21.4(@dfinity/principal@0.15.7(typescript@5.4.3)))(@dfinity/principal@0.15.7(typescript@5.4.3))':
-    dependencies:
-      '@dfinity/candid': 0.21.4(@dfinity/principal@0.15.7(typescript@5.4.3))
-      '@dfinity/principal': 0.15.7(typescript@5.4.3)
-      '@noble/curves': 1.9.7
-      '@noble/hashes': 1.8.0
-      base64-arraybuffer: 0.2.0
-      borc: 2.1.2
-      buffer: 6.0.3(patch_hash=2xnca52oxhztvr7iaoovwclcze)
-      simple-cbor: 0.4.1
-
   '@dfinity/agent@2.4.1(@dfinity/candid@2.4.1(@dfinity/principal@2.4.1))(@dfinity/principal@2.4.1)':
     dependencies:
       '@dfinity/candid': 2.4.1(@dfinity/principal@2.4.1)
@@ -39959,14 +39904,6 @@ snapshots:
       borc: 2.1.2
       buffer: 6.0.3(patch_hash=2xnca52oxhztvr7iaoovwclcze)
       simple-cbor: 0.4.1
-
-  '@dfinity/candid@0.21.4(@dfinity/principal@0.15.7(@swc/core@1.4.11)(@types/node@22.10.10)(typescript@5.1.3))':
-    dependencies:
-      '@dfinity/principal': 0.15.7(@swc/core@1.4.11)(@types/node@22.10.10)(typescript@5.1.3)
-
-  '@dfinity/candid@0.21.4(@dfinity/principal@0.15.7(typescript@5.4.3))':
-    dependencies:
-      '@dfinity/principal': 0.15.7(typescript@5.4.3)
 
   '@dfinity/candid@2.4.1(@dfinity/principal@2.4.1)':
     dependencies:
@@ -40001,28 +39938,6 @@ snapshots:
       '@dfinity/utils': 2.14.0(@dfinity/agent@2.4.1(@dfinity/candid@2.4.1(@dfinity/principal@2.4.1))(@dfinity/principal@2.4.1))(@dfinity/candid@2.4.1(@dfinity/principal@2.4.1))(@dfinity/principal@2.4.1)
       '@noble/hashes': 1.8.0
       randombytes: 2.1.0
-
-  '@dfinity/principal@0.15.7(@swc/core@1.4.11)(@types/node@22.10.10)(typescript@5.1.3)':
-    dependencies:
-      js-sha256: 0.9.0
-      ts-node: 10.9.2(@swc/core@1.4.11)(@types/node@22.10.10)(typescript@5.1.3)
-    transitivePeerDependencies:
-      - '@swc/core'
-      - '@swc/wasm'
-      - '@types/node'
-      - source-map-support
-      - typescript
-
-  '@dfinity/principal@0.15.7(typescript@5.4.3)':
-    dependencies:
-      js-sha256: 0.9.0
-      ts-node: 10.9.2(typescript@5.4.3)
-    transitivePeerDependencies:
-      - '@swc/core'
-      - '@swc/wasm'
-      - '@types/node'
-      - source-map-support
-      - typescript
 
   '@dfinity/principal@2.4.1':
     dependencies:
@@ -43529,6 +43444,8 @@ snapshots:
   '@jsdoc/salty@0.2.8':
     dependencies:
       lodash: 4.17.21
+
+  '@jspm/core@2.1.0': {}
 
   '@juggle/resize-observer@3.4.0': {}
 
@@ -50005,7 +49922,7 @@ snapshots:
 
   '@storybook/react-docgen-typescript-plugin@1.0.6--canary.9.0c3f3b7.0(typescript@5.4.3)(webpack@5.94.0(esbuild@0.19.12))':
     dependencies:
-      debug: 4.4.1
+      debug: 4.3.4
       endent: 2.1.0
       find-cache-dir: 3.3.2
       flat-cache: 3.2.0
@@ -52919,7 +52836,7 @@ snapshots:
     dependencies:
       '@ledgerhq/hw-transport': link:libs/ledgerjs/packages/hw-transport
 
-  '@zondax/ledger-live-icp@1.2.0':
+  '@zondax/ledger-live-icp@1.2.2':
     dependencies:
       '@dfinity/agent': 2.4.1(@dfinity/candid@2.4.1(@dfinity/principal@2.4.1))(@dfinity/principal@2.4.1)
       '@dfinity/candid': 2.4.1(@dfinity/principal@2.4.1)
@@ -52932,9 +52849,11 @@ snapshots:
       bignumber.js: 9.1.2
       browser-env: 3.3.0
       cbor: 10.0.11
+      esbuild-plugin-polyfill-node: 0.3.0
       invariant: 2.2.4
     transitivePeerDependencies:
       - bufferutil
+      - esbuild
       - utf-8-validate
 
   '@zondax/ledger-mina-js@0.0.2':
@@ -53007,14 +52926,18 @@ snapshots:
       acorn: 8.13.0
       acorn-walk: 8.3.2
 
-  acorn-import-assertions@1.9.0(acorn@8.13.0):
+  acorn-import-assertions@1.9.0(acorn@8.15.0):
     dependencies:
-      acorn: 8.13.0
+      acorn: 8.15.0
     optional: true
 
   acorn-import-attributes@1.9.5(acorn@8.13.0):
     dependencies:
       acorn: 8.13.0
+
+  acorn-import-attributes@1.9.5(acorn@8.15.0):
+    dependencies:
+      acorn: 8.15.0
 
   acorn-jsx@5.3.2(acorn@7.4.1):
     dependencies:
@@ -57322,6 +57245,11 @@ snapshots:
     dependencies:
       fast-glob: 3.3.2
 
+  esbuild-plugin-polyfill-node@0.3.0:
+    dependencies:
+      '@jspm/core': 2.1.0
+      import-meta-resolve: 3.1.1
+
   esbuild-register@3.5.0(esbuild@0.18.20):
     dependencies:
       debug: 4.3.4
@@ -60391,15 +60319,15 @@ snapshots:
 
   import-in-the-middle@1.10.0:
     dependencies:
-      acorn: 8.13.0
-      acorn-import-attributes: 1.9.5(acorn@8.13.0)
+      acorn: 8.15.0
+      acorn-import-attributes: 1.9.5(acorn@8.15.0)
       cjs-module-lexer: 1.2.3
       module-details-from-path: 1.0.3
 
   import-in-the-middle@1.4.2:
     dependencies:
-      acorn: 8.13.0
-      acorn-import-assertions: 1.9.0(acorn@8.13.0)
+      acorn: 8.15.0
+      acorn-import-assertions: 1.9.0(acorn@8.15.0)
       cjs-module-lexer: 1.2.3
       module-details-from-path: 1.0.3
     optional: true
@@ -60410,6 +60338,8 @@ snapshots:
     dependencies:
       pkg-dir: 4.2.0
       resolve-cwd: 3.0.0
+
+  import-meta-resolve@3.1.1: {}
 
   imurmurhash@0.1.4: {}
 
@@ -73316,7 +73246,7 @@ snapshots:
 
   unplugin@1.10.0:
     dependencies:
-      acorn: 8.13.0
+      acorn: 8.15.0
       chokidar: 3.6.0
       webpack-sources: 3.2.3
       webpack-virtual-modules: 0.6.1
