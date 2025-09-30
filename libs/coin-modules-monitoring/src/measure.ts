@@ -3,9 +3,11 @@ import { http, passthrough } from "msw";
 
 export type Dist = {
   min: number;
-  median: number;
+  average: number;
   max: number;
+  p50: number;
   p90: number;
+  p95: number;
   p99: number;
 };
 
@@ -17,27 +19,31 @@ type MeasureResult<T> = {
   memory: Dist;
 };
 
+function average(values: number[]): number {
+  return values.reduce((previous, current) => previous + current) / values.length;
+}
+
 function computeStats(values: number[]): Dist {
   if (values.length === 0) {
-    return { min: 0, median: 0, max: 0, p90: 0, p99: 0 };
+    return { min: 0, average: 0, max: 0, p90: 0, p99: 0, p50: 0, p95: 0 };
   }
 
-  const arr = values.slice().sort((a, b) => a - b);
-  const n = arr.length;
+  const sortedValues = values.slice().sort((a, b) => a - b);
+  const valuesCount = sortedValues.length;
 
   const quantile = (p: number) => {
-    const rank = Math.ceil((p / 100) * n);
-    const idx = Math.min(Math.max(rank - 1, 0), n - 1);
-    return arr[idx];
+    const rank = Math.ceil((p / 100) * valuesCount);
+    const index = Math.min(Math.max(rank - 1, 0), valuesCount - 1);
+    return sortedValues[index];
   };
 
-  const median = n % 2 === 1 ? arr[(n - 1) / 2] : (arr[n / 2 - 1] + arr[n / 2]) / 2;
-
   return {
-    min: arr[0],
-    median,
-    max: arr[n - 1],
+    min: sortedValues[0],
+    average: average(values),
+    max: sortedValues[valuesCount - 1],
+    p50: quantile(50),
     p90: quantile(90),
+    p95: quantile(95),
     p99: quantile(99),
   };
 }
