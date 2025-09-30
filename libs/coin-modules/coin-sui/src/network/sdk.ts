@@ -119,12 +119,12 @@ function isMoveCallWithFunction(
   functionName: string,
   block?: SuiTransactionBlockKind,
 ): block is ProgrammableTransaction {
-  if (!block) return false;
-  if (block.kind === "ProgrammableTransaction") {
+  if (block?.kind === "ProgrammableTransaction") {
     const move = block.transactions.find(item => "MoveCall" in item) as any;
     return move?.MoveCall.function === functionName;
+  } else {
+    return false;
   }
-  return false;
 }
 
 function isStaking(block?: SuiTransactionBlockKind): block is ProgrammableTransaction {
