@@ -16,6 +16,7 @@ import { AddAccountButton, AccountItem } from "@ledgerhq/native-ui/pre-ldls/comp
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 import { modularDrawerFlowSelector, modularDrawerSourceSelector } from "~/reducers/modularDrawer";
+import { withDiscreetMode } from "~/context/DiscreetModeContext";
 
 export type AccountSelectionStepProps = {
   accounts$?: Observable<WalletAPIAccount[]>;
@@ -117,4 +118,4 @@ const AccountSelection = (props: AccountSelectionStepProps) => {
   return <AccountSelectionContent {...props} asset={props.asset} />;
 };
 
-export default React.memo(AccountSelection);
+export default withDiscreetMode(React.memo(AccountSelection));
