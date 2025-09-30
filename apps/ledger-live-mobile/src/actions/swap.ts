@@ -1,3 +1,4 @@
+import type { AccountLike } from "@ledgerhq/types-live";
 import { createAction } from "redux-actions";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
 import { ExchangeRate } from "@ledgerhq/live-common/exchange/swap/types";

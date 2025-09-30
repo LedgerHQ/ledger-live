@@ -769,6 +769,8 @@ export const languageSelector = (state: State) =>
 export const languageIsSetByUserSelector = (state: State) => state.settings.languageIsSetByUser;
 export const localeSelector = (state: State) => state.settings.locale || getDefaultLocale();
 
+export const swapSelectableCurrenciesSelector = (state: State) =>
+  state.settings.swap.selectableCurrencies;
 export const swapAcceptedProvidersSelector = (state: State) =>
   state.settings.swap.acceptedProviders;
 export const knownDeviceModelIdsSelector = (state: State) => state.settings.knownDeviceModelIds;

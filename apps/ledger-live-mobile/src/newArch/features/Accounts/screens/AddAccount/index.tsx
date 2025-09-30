@@ -38,10 +38,10 @@ function View({
     <QueuedDrawer
       isRequestingToBeOpened={isAddAccountDrawerVisible}
       onClose={onCloseAddAccountDrawer}
+      CustomHeader={currentStep === Steps.QrCodeMethod ? CustomDrawerHeader : undefined}
       hasBackButton={currentStep === Steps.ChooseSyncMethod}
       onBack={onGoBack}
     >
-      {currentStep === Steps.QrCodeMethod && <CustomDrawerHeader />}
       <Flex maxHeight={"90%"}>
         <StepFlow
           doesNotHaveAccount={doesNotHaveAccount}

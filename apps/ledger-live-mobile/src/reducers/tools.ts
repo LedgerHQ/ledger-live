@@ -9,6 +9,7 @@ export const INITIAL_STATE: ToolsState = {
   rtkDevPanel: false,
 };
 
+export const toolsStateSelector = (state: State) => state.tools;
 export const rtkDevPanelSelector = (state: State) => state.tools.rtkDevPanel;
 
 const toolsSlice = createSlice({

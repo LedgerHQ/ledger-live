@@ -4,6 +4,8 @@ import { Flex } from "@ledgerhq/native-ui";
 import { FlatList, ListRenderItemInfo, TouchableOpacity, View } from "react-native";
 import { Account, TokenAccount } from "@ledgerhq/types-live";
 import AccountItem from "../AccountsListView/components/AccountItem";
+import CustomHeader from "./CustomHeader";
+import { useTheme } from "styled-components/native";
 import getAccountListKeyExtractor from "../../utils/getAccountListKeyExtractor";
 import AccountListEmpty from "../AccountListEmpty";
 import { useTranslation } from "react-i18next";
@@ -26,6 +28,7 @@ const AccountListDrawer = ({
   onPressAccount,
   sourceScreenName,
 }: AccountListDrawerProps) => {
+  const { colors } = useTheme();
   const { t } = useTranslation();
   const { analyticsMetadata } = useAnalytics(AnalyticContexts.AddAccounts, sourceScreenName);
 
@@ -54,7 +57,14 @@ const AccountListDrawer = ({
       <QueuedDrawer
         isRequestingToBeOpened={isOpen}
         onClose={onClose}
-        title={t("addAccounts.chooseAccountToFund")}
+        CustomHeader={() => (
+          <CustomHeader
+            onClose={onClose}
+            backgroundColor={colors.opacityDefault.c10}
+            iconColor={colors.neutral.c100}
+            title={t("addAccounts.chooseAccountToFund")}
+          />
+        )}
       >
         <Flex justifyContent="center" alignItems="centers" width="100%">
           <FlatList
