@@ -8,6 +8,7 @@
 /* eslint-disable no-console */
 
 const { withRozenite } = require("@rozenite/metro");
+const { withRozeniteExpoAtlasPlugin } = require("@rozenite/expo-atlas-plugin");
 const path = require("path");
 const tsconfig = require("./tsconfig.json");
 
@@ -108,5 +109,9 @@ const metroConfig = {
 
 module.exports = withRozenite(
   withSentryConfig(mergeConfig(getDefaultConfig(__dirname), metroConfig)),
-  { enabled: process.env.WITH_ROZENITE === "true", include: ["@rozenite/network-activity-plugin"] },
+  {
+    enabled: process.env.WITH_ROZENITE === "true",
+    include: ["@rozenite/network-activity-plugin", "@rozenite/expo-atlas-plugin"],
+    enhanceMetroConfig: config => withRozeniteExpoAtlasPlugin(config),
+  },
 );

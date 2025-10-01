@@ -1443,6 +1443,9 @@ importers:
       '@react-native/dev-middleware':
         specifier: 0.77.3
         version: 0.77.3
+      '@rozenite/expo-atlas-plugin':
+        specifier: 1.0.0-alpha.15
+        version: 1.0.0-alpha.15(expo-modules-core@2.2.3(react-native@0.77.3(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1))(react@18.3.1))(expo@52.0.46(uysekgyrq3rh5u5kokaefcfxai))(react-native@0.77.3(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1))(react@18.3.1)
       '@rozenite/metro':
         specifier: 1.0.0-alpha.15
         version: 1.0.0-alpha.15
@@ -13408,6 +13411,9 @@ packages:
   '@expo/sdk-runtime-versions@1.0.0':
     resolution: {integrity: sha512-Doz2bfiPndXYFPMRwPyGa1k5QaKDVpY806UJj570epIiMzWaYyCtobasyfC++qfIXVb5Ocy7r3tP9d62hAQ7IQ==}
 
+  '@expo/server@0.5.3':
+    resolution: {integrity: sha512-WXsWzeBs5v/h0PUfHyNLLz07rwwO5myQ1A5DGYewyyGLmsyl61yVCe8AgAlp1wkiMsqhj2hZqI2u3K10QnCMrQ==}
+
   '@expo/spawn-async@1.5.0':
     resolution: {integrity: sha512-LB7jWkqrHo+5fJHNrLAFdimuSXQ2MQ4lA7SQW5bf/HbsXuV2VrT/jN/M8f/KoWt0uJMGN4k/j7Opx4AvOOxSew==}
     engines: {node: '>=4'}
@@ -16521,6 +16527,12 @@ packages:
     resolution: {integrity: sha512-J8o22LuF0kTe7m+8PvW9wk3/bRq5+mRo5Dqo6+vXb7otCm3TPhYOJqOaQtGU9YMWQSL3krMnoOxMr0+9E6F3Ug==}
     cpu: [x64]
     os: [win32]
+
+  '@rozenite/expo-atlas-plugin@1.0.0-alpha.15':
+    resolution: {integrity: sha512-BQSYELx5N7E5K6LD1bX2YfURHeqdgACgyHGeIt43kVBhl9cQgs91p0GLfeB1P6lYwW7tEtRebcyR+Vbn1G9Emg==}
+    peerDependencies:
+      react: '*'
+      react-native: '*'
 
   '@rozenite/metro@1.0.0-alpha.15':
     resolution: {integrity: sha512-D+n5Rv6mEwiGQ8I4FHVUf9OUY4jyaKFkfNp9kLzNdWjHoPjcLVpd+fc50OhDHPlUg2b9EtYnBWG3WWEP8hFh0w==}
@@ -24358,6 +24370,25 @@ packages:
   expo-asset@8.10.1:
     resolution: {integrity: sha512-5VMTESxgY9GBsspO/esY25SKEa7RyascVkLe/OcL1WgblNFm7xCCEEUIW8VWS1nHJQGYxpMZPr3bEfjMpdWdyA==}
     peerDependencies:
+      expo-constants: '*'
+      expo-modules-core: '*'
+      react: '*'
+      react-native: '*'
+    peerDependenciesMeta:
+      expo-constants:
+        optional: true
+      expo-modules-core:
+        optional: true
+      react:
+        optional: true
+      react-native:
+        optional: true
+
+  expo-atlas@0.4.3:
+    resolution: {integrity: sha512-nN2bouxFvMsqZqLl0ka+eI9Ofida0PcuoE4v+7fHlgyp95X2cCL8Acf0nRKXmmIBEYazdw0d7BAOZfC0b41oxA==}
+    hasBin: true
+    peerDependencies:
+      expo: '*'
       expo-constants: '*'
       expo-modules-core: '*'
       react: '*'
@@ -41451,6 +41482,15 @@ snapshots:
 
   '@expo/sdk-runtime-versions@1.0.0': {}
 
+  '@expo/server@0.5.3':
+    dependencies:
+      abort-controller: 3.0.0
+      debug: 4.4.1
+      source-map-support: 0.5.21
+      undici: 6.19.2
+    transitivePeerDependencies:
+      - supports-color
+
   '@expo/spawn-async@1.5.0':
     dependencies:
       cross-spawn: 6.0.5
@@ -46709,6 +46749,19 @@ snapshots:
 
   '@rollup/rollup-win32-x64-msvc@4.44.1':
     optional: true
+
+  '@rozenite/expo-atlas-plugin@1.0.0-alpha.15(expo-modules-core@2.2.3(react-native@0.77.3(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1))(react@18.3.1))(expo@52.0.46(uysekgyrq3rh5u5kokaefcfxai))(react-native@0.77.3(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1))(react@18.3.1)':
+    dependencies:
+      '@rozenite/plugin-bridge': 1.0.0-alpha.15(react@18.3.1)
+      connect: 3.7.0
+      expo-atlas: 0.4.3(expo-modules-core@2.2.3(react-native@0.77.3(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1))(react@18.3.1))(expo@52.0.46(uysekgyrq3rh5u5kokaefcfxai))(react-native@0.77.3(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1))(react@18.3.1)
+      react: 18.3.1
+      react-native: 0.77.3(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1)
+    transitivePeerDependencies:
+      - expo
+      - expo-constants
+      - expo-modules-core
+      - supports-color
 
   '@rozenite/metro@1.0.0-alpha.15':
     dependencies:
@@ -58452,6 +58505,28 @@ snapshots:
       react-native: 0.77.2(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(metro-transform-worker@0.81.5)(metro@0.81.5)(react@18.3.1)
     transitivePeerDependencies:
       - expo
+
+  expo-atlas@0.4.3(expo-modules-core@2.2.3(react-native@0.77.3(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1))(react@18.3.1))(expo@52.0.46(uysekgyrq3rh5u5kokaefcfxai))(react-native@0.77.3(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1))(react@18.3.1):
+    dependencies:
+      '@expo/server': 0.5.3
+      arg: 5.0.2
+      chalk: 4.1.2
+      compression: 1.7.4
+      connect: 3.7.0
+      expo: 52.0.46(uysekgyrq3rh5u5kokaefcfxai)
+      express: 4.19.2
+      freeport-async: 2.0.0
+      getenv: 2.0.0
+      morgan: 1.10.0
+      open: 8.4.2
+      serve-static: 1.16.2
+      stream-json: 1.8.0
+    optionalDependencies:
+      expo-modules-core: 2.2.3(react-native@0.77.3(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1))(react@18.3.1)
+      react: 18.3.1
+      react-native: 0.77.3(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1)
+    transitivePeerDependencies:
+      - supports-color
 
   expo-camera@16.0.15(expo-modules-core@2.2.3(react-native@0.77.3(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1))(react@18.3.1))(expo@52.0.46(uysekgyrq3rh5u5kokaefcfxai))(react-native@0.77.3(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1))(react@18.3.1):
     dependencies:
