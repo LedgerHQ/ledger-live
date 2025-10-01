@@ -101,10 +101,7 @@ import { FIRST_PARTY_MAIN_HOST_DOMAIN } from "./utils/constants";
 import useNativeStartupInfo from "./hooks/useNativeStartupInfo";
 import { ConfigureDBSaveEffects } from "./components/DBSave";
 import { useRef } from "react";
-
-import { useNetworkActivityDevTools } from "@rozenite/network-activity-plugin";
-import { useReactNavigationDevTools } from "@rozenite/react-navigation-plugin";
-import { navigationRef } from "./rootnavigation";
+import HookDevTools from "./devTools/useDevTools";
 
 if (Config.DISABLE_YELLOW_BOX) {
   LogBox.ignoreAllLogs();
@@ -229,16 +226,6 @@ function App() {
   useListenToHidDevices();
   useAutoDismissPostOnboardingEntryPoint();
 
-  // Enable Network Activity DevTools in development
-  useNetworkActivityDevTools({
-    inspectors: {
-      http: true, // Monitor HTTP/HTTPS requests
-      websocket: false, // Disable WebSocket monitoring (can be noisy)
-      sse: false, // Disable Server-Sent Events monitoring
-    },
-  });
-  useReactNavigationDevTools({ ref: navigationRef });
-
   return (
     <>
       <ConfigureDBSaveEffects />
@@ -328,6 +315,7 @@ export default class Root extends Component {
               <SegmentSetup />
               <HookNotifications />
               <HookDynamicContentCards />
+              <HookDevTools />
               <TermsAndConditionMigrateLegacyData />
               <QueuedDrawersContextProvider>
                 <FirebaseRemoteConfigProvider>
