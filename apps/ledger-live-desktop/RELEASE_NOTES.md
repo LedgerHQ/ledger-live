@@ -1,3 +1,9 @@
+# 2.130
+
+### 🌷 Improvements
+
+This release comes with improved My Ledger page look & feel and Custom Lock Screen UX for our Secure Touchscreen devices.
+
 # 2.128.1
 
 This release includes small security improvements, UI tweaks, and minor bug fixes.
