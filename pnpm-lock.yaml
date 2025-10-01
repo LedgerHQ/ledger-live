@@ -33,7 +33,7 @@ overrides:
 
 packageExtensionsChecksum: 505470d279d34dbf557b1005424e3d1d
 
-pnpmfileChecksum: icbum5fm2zpmtctr4exqaodaui
+pnpmfileChecksum: 3y3zkc5ois7zfcvbct5s2rrau4
 
 patchedDependencies:
   '@changesets/get-github-info@0.6.0':
@@ -1452,6 +1452,9 @@ importers:
       '@rozenite/network-activity-plugin':
         specifier: 1.0.0-alpha.15
         version: 1.0.0-alpha.15(react@18.3.1)
+      '@rozenite/performance-monitor-plugin':
+        specifier: 1.0.0-alpha.15
+        version: 1.0.0-alpha.15(react-native-performance@5.1.2(react-native@0.77.3(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1)))(react-native@0.77.3(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1))(react@18.3.1)
       '@rozenite/react-navigation-plugin':
         specifier: 1.0.0-alpha.15
         version: 1.0.0-alpha.15(@react-navigation/core@7.12.3(react@18.3.1))(react@18.3.1)
@@ -16552,6 +16555,13 @@ packages:
     peerDependenciesMeta:
       react-native-sse:
         optional: true
+
+  '@rozenite/performance-monitor-plugin@1.0.0-alpha.15':
+    resolution: {integrity: sha512-8Ki4yFbjztexAc4MG1dLhA6iyapW3OUEiO139CtYEqKnLEYXA0JiD01uOGlyU6pvXXPOm7dVnDi+ObQosNrx9A==}
+    peerDependencies:
+      react: '*'
+      react-native: '*'
+      react-native-performance: '*'
 
   '@rozenite/plugin-bridge@1.0.0-alpha.15':
     resolution: {integrity: sha512-QvRJaB3RItV1JqcfFpeGqaz3vg3fapKO2crprj+Wz04kMSeD7pP41T0nl4CIiJUMDbKfEyDYsB+icYypQlBEfA==}
@@ -38969,6 +38979,17 @@ snapshots:
       '@babel/template': 7.27.2
       '@babel/types': 7.28.4
       debug: 4.3.4
+<<<<<<< HEAD
+=======
+=======
+      '@babel/types': 7.28.2
+<<<<<<< HEAD
+      debug: 4.4.1
+>>>>>>> 147befac80 (chore: init rozenite + Network pluggin)
+=======
+      debug: 4.3.4
+>>>>>>> a57929cfd6 (chore: add perf monitor pluggin)
+>>>>>>> e2d218e648 (chore: add perf monitor pluggin)
     transitivePeerDependencies:
       - supports-color
 
@@ -41493,7 +41514,7 @@ snapshots:
   '@expo/server@0.5.3':
     dependencies:
       abort-controller: 3.0.0
-      debug: 4.4.1
+      debug: 4.3.4
       source-map-support: 0.5.21
       undici: 6.19.2
     transitivePeerDependencies:
@@ -46796,6 +46817,13 @@ snapshots:
       nanoevents: 9.1.0
     transitivePeerDependencies:
       - react
+
+  '@rozenite/performance-monitor-plugin@1.0.0-alpha.15(react-native-performance@5.1.2(react-native@0.77.3(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1)))(react-native@0.77.3(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1))(react@18.3.1)':
+    dependencies:
+      '@rozenite/plugin-bridge': 1.0.0-alpha.15(react@18.3.1)
+      react: 18.3.1
+      react-native: 0.77.3(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1)
+      react-native-performance: 5.1.2(react-native@0.77.3(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1))
 
   '@rozenite/plugin-bridge@1.0.0-alpha.15(react@18.3.1)':
     dependencies:

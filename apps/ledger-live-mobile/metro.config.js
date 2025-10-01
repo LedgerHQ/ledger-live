@@ -115,6 +115,7 @@ module.exports = withRozenite(
       "@rozenite/network-activity-plugin",
       "@rozenite/expo-atlas-plugin",
       "@rozenite/react-navigation-plugin",
+      "@rozenite/performance-monitor-plugin",
     ],
     enhanceMetroConfig: config => withRozeniteExpoAtlasPlugin(config),
   },
