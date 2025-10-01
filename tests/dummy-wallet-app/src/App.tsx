@@ -327,7 +327,7 @@ export default function App() {
           />
         </div>
         <div>
-        <label htmlFor="deeplink-url-input">Deeplink URL: </label>
+          <label htmlFor="deeplink-url-input">Deeplink URL: </label>
           <input
             id="deeplink-url-input"
             data-testid="deeplink-url-input"
@@ -389,6 +389,7 @@ export default function App() {
           </button>
           <button onClick={handleMessageSign} data-testid="message-sign">
             message.sign
+          </button>
           <button onClick={handleDeeplinkOpen} data-testid="deeplink-open">
             custom.deeplink.open
           </button>
