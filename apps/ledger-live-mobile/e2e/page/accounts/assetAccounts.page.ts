@@ -17,8 +17,8 @@ export default class AssetAccountsPage {
   }
 
   async waitForAccountAssetsToLoad(assetName: string) {
-    await waitForElementById(this.titleId(assetName));
-    await waitForElementById(this.accountAssetId(assetName));
+    await expect(getElementById(this.titleId(assetName))).toBeVisible();
+    await expect(getElementById(this.accountAssetId(assetName))).toBeVisible(65);
   }
 
   async openViaDeeplink(currencyLong?: string) {
