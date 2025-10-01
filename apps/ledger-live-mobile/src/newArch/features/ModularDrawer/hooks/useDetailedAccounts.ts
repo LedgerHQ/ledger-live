@@ -9,7 +9,7 @@ import { useCountervaluesState } from "@ledgerhq/live-countervalues-react";
 import orderBy from "lodash/orderBy";
 import keyBy from "lodash/keyBy";
 import { accountsSelector } from "~/reducers/accounts";
-import { counterValueCurrencySelector } from "~/reducers/settings";
+import { counterValueCurrencySelector, discreetModeSelector } from "~/reducers/settings";
 import { useModularDrawerAnalytics, MODULAR_DRAWER_PAGE_NAME } from "../analytics";
 import { isTokenCurrency } from "@ledgerhq/live-common/currencies/helpers";
 import { useBatchMaybeAccountName } from "~/reducers/wallet";
@@ -19,6 +19,9 @@ import {
 } from "@ledgerhq/live-common/utils/getAccountTuplesForCurrency";
 import { AccountLike } from "@ledgerhq/types-live";
 import { calculate } from "@ledgerhq/live-countervalues/logic";
+import { formatCurrencyUnit } from "@ledgerhq/coin-framework/lib-es/currencies/formatCurrencyUnit";
+import BigNumber from "bignumber.js";
+import { formatAddress } from "../../Accounts/utils/formatAddress";
 
 // Extended account type that includes raw data for UI formatting
 export type RawDetailedAccount = {
@@ -29,6 +32,10 @@ export type RawDetailedAccount = {
   parentAccount?: AccountLike;
   protocol?: string;
   parentId?: string;
+  fiatValue: string;
+  balance: string;
+  address: string;
+  cryptoId: string;
 };
 
 export const useDetailedAccounts = (
@@ -43,6 +50,7 @@ export const useDetailedAccounts = (
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
   const accountIds = useGetAccountIds(accounts$);
   const nestedAccounts = useSelector(accountsSelector);
+  const discreet = useSelector(discreetModeSelector);
 
   const isATokenCurrency = useMemo(() => isTokenCurrency(asset), [asset]);
 
@@ -79,29 +87,66 @@ export const useDetailedAccounts = (
     );
 
     const rawAccounts = accounts.map(tuple => {
-      const account = tuple.account;
+      const { account, subAccount } = tuple;
       const protocol = getTagDerivationMode(account.currency, account.derivationMode) ?? "";
+      const address = formatAddress(account.freshAddress);
 
-      if (isATokenCurrency && tuple.subAccount) {
+      if (isATokenCurrency && subAccount) {
         const parentAccountName = accountNameMap[account.id]?.name;
-        const details = tuple.subAccount.token;
+        const details = subAccount.token;
+
+        const fiatValue = formatCurrencyUnit(
+          counterValueCurrency.units[0],
+          BigNumber(calculateFiatValue(subAccount)),
+          { showCode: true, discreet },
+        );
+
+        const balance = formatCurrencyUnit(subAccount.token.units[0], subAccount.balance, {
+          showCode: true,
+          discreet,
+        });
+
+        const cryptoId = subAccount.token.id;
+
         return {
-          id: tuple.subAccount.id,
+          id: subAccount.id,
           name: parentAccountName ?? details.name,
           ticker: details.ticker,
-          account: tuple.subAccount,
+          account: subAccount,
           parentAccount: account,
           parentId: details.parentCurrency.id,
+          fiatValue,
+          balance,
+          address,
+          cryptoId,
         };
       } else {
         const accountName = accountNameMap[account.id]?.name;
         const details = account.currency;
+
+        const fiatValue = formatCurrencyUnit(
+          counterValueCurrency.units[0],
+          BigNumber(calculateFiatValue(account)),
+          { showCode: true, discreet },
+        );
+
+        const balance = formatCurrencyUnit(account.currency.units[0], account.balance, {
+          showCode: true,
+          discreet,
+        });
+
+        const cryptoId = account.currency.id;
+
         return {
           id: account.id,
           name: accountName ?? details.name,
           ticker: details.ticker,
           account,
           protocol,
+          fiatValue,
+          balance,
+          address,
+          cryptoId,
         };
       }
     });
@@ -112,7 +157,14 @@ export const useDetailedAccounts = (
       const fiatValueB = calculateFiatValue(b.account);
       return fiatValueB - fiatValueA; // Descending order
     });
-  }, [accounts, isATokenCurrency, overridedAccountName, calculateFiatValue]);
+  }, [
+    accounts,
+    overridedAccountName,
+    isATokenCurrency,
+    counterValueCurrency.units,
+    calculateFiatValue,
+    discreet,
+  ]);
 
   const handleAccountSelected = useCallback(
     (rawAccount: RawDetailedAccount) => {

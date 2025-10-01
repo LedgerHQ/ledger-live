@@ -49,22 +49,9 @@ const AccountSelectionContent = ({
 
   const renderItem = useCallback(
     ({ item }: { item: RawDetailedAccount }) => {
-      const accountUI = {
-        address: item.account.type === "Account" ? item.account.freshAddress : "",
-        balance: "",
-        cryptoId:
-          item.account.type === "Account" ? item.account.currency.id : item.account.token.id,
-        fiatValue: "",
-        id: item.id,
-        name: item.name,
-        parentId: item.parentId,
-        protocol: item.protocol,
-        ticker: item.ticker,
-      };
-
       return (
         <AccountItem
-          account={accountUI}
+          account={item}
           onClick={() => handleAccountSelected(item)}
           cryptoIconBackgroundColor="transparent"
         />
