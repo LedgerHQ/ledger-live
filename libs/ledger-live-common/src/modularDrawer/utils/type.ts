@@ -5,10 +5,9 @@ import { ReactNode } from "react";
 import { Observable } from "rxjs";
 import { WalletAPIAccount } from "../../wallet-api/types";
 import { EnhancedModularDrawerConfiguration } from "../../wallet-api/ModularDrawer/types";
-import { InterestRate } from "../data/entities";
+import { InterestRate } from "../../dada-client/entities";
 import { MarketItemResponse } from "../../market/utils/types";
-
-export type ApyType = "NRR" | "APY" | "APR";
+import { ApyType } from "../../dada-client/types/trend";
 
 export type AssetType = {
   name: string;

@@ -73,7 +73,28 @@ export const assetsDataApi = createApi({
         },
       },
     }),
+    getAssetData: build.query<AssetsDataWithPagination, GetAssetsDataParams>({
+      query: queryArg => {
+        const params = {
+          pageSize: 1,
+          ...(queryArg?.currencyIds &&
+            queryArg?.currencyIds.length > 0 && { currencyIds: queryArg.currencyIds }),
+          product: queryArg.product,
+          minVersion: queryArg.version,
+          additionalData: [AssetsAdditionalData.Apy, AssetsAdditionalData.MarketTrend],
+        };
+
+        const baseUrl = queryArg.isStaging ? getEnv("DADA_API_STAGING") : getEnv("DADA_API_PROD");
+
+        return {
+          url: `${baseUrl}assets`,
+          params,
+        };
+      },
+      providesTags: [AssetsDataTags.Assets],
+      transformResponse: transformAssetsResponse,
+    }),
   }),
 });
 
-export const { useGetAssetsDataInfiniteQuery } = assetsDataApi;
+export const { useGetAssetsDataInfiniteQuery, useGetAssetDataQuery } = assetsDataApi;

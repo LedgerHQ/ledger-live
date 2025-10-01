@@ -4,9 +4,9 @@
 
 import { renderHook } from "@testing-library/react";
 import { useAssetsData } from "../useAssetsData";
-import { useGetAssetsDataInfiniteQuery } from "../../data/state-manager/api";
+import { useGetAssetsDataInfiniteQuery } from "../../state-manager/api";
 
-jest.mock("../../data/state-manager/api", () => ({
+jest.mock("../../state-manager/api", () => ({
   useGetAssetsDataInfiniteQuery: jest.fn(),
 }));
 
