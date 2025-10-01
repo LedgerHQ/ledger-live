@@ -250,6 +250,7 @@
     "@react-native/babel-preset": "0.77.3",
     "@react-native/codegen": "0.77.3",
     "@react-native/dev-middleware": "0.77.3",
+    "@rozenite/expo-atlas-plugin": "1.0.0-alpha.15",
     "@rozenite/metro": "1.0.0-alpha.15",
     "@rozenite/network-activity-plugin": "1.0.0-alpha.15",
     "@sentry/cli": "2.42.2",
