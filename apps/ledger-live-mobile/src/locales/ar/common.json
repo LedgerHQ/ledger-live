@@ -818,7 +818,7 @@
     },
     "UserRefusedFirmwareUpdate" : {
       "title" : "تم إلغاء تحديث البرنامج الثابت على الجهاز",
-      "description" : "قمت بإلغاء تحديث البرنامج الثابت. يرجى إعادة المحاولة. إذا استمرت المشكلة، يرجى إعادة المحاولة مرة أخرى. إذا استمرت المشكلة، يرجى حفظ سجلاتك باستخدام الزر أدناه وتقديمها إلى فريق دعم Ledger."
+      "description" : "قمت بإلغاء تحديث البرنامج الثابت. يرجى إعادة المحاولة. إذا استمرت المشكلة، يرجى حفظ سجلاتك باستخدام الزر أدناه وتقديمها إلى فريق دعم Ledger."
     },
     "UserRefusedOnDevice" : {
       "title" : "تم إلغاء العملية على الجهاز",
@@ -2250,6 +2250,9 @@
         "continueCTA" : "متابعة",
         "contactSupportCTA" : "تواصل مع الدعم"
       }
+    },
+    "completionScreen" : {
+      "title" : "الآن أنت المتحكم"
     }
   },
   "blePairingFlow" : {
@@ -2380,6 +2383,8 @@
   },
   "syncOnboarding" : {
     "title" : "جهّز {{productName}} الخاص بك",
+    "twoStepTitle" : "لنبدأ",
+    "firstStepReadyTitle" : "جهازك {{productName}} مُستعد",
     "estimatedTimeFormat" : "{{estimatedTime}} دقيقة",
     "deviceSelection" : {
       "title" : "اختر جهاز Ledger الذي تريد إعداده:",
@@ -2497,6 +2502,10 @@
       "newSeedContinueOnDevice" : "اتبع التعليمات على جهازك {{productName}}",
       "recovery" : "تأكد من استخدام عبارة استرداد سرية تم إنشاؤها عن طريق جهاز Ledger لأقصى درجات الأمان لأصولك. \n\nليس لديك عبارة استرداد؟ استخدم جهازك {{productName}} لإنشاء واحدة جديدة."
     },
+    "secureCryptoStep" : {
+      "title" : "تأمين أصولك المشفرة",
+      "doneSubTitle" : "تطبيقات سلسلة الكتل (بلوكتشين) الخاصة بك تم تثبيتها."
+    },
     "backup" : {
       "title" : "نسخة احتياطية لعبارة الاسترداد السرية الخاصة بك",
       "description" : "مع نسخة احتياطية رقمية مشفرة، استعدْ الوصول إلى محفظتك بدون عبارة الاسترداد السرية الخاصة بك.\n\nاختر إذا كنت ترغب في نسخة احتياطية رقمية:",
@@ -2524,6 +2533,14 @@
     },
     "completion" : {
       "title" : "أنت المتحكّم الآن"
+    },
+    "successStep" : {
+      "title" : "جهازك {{productName}} جاهز لتأمين أصولك الرقمية"
+    },
+    "newSeed" : {
+      "subtitle" : "يمكنك تحويل الأصول المشفرة من أي منصة تداول أو محفظة إلى Ledger Live خاصتك من أجل أقصى درجات الأمان.",
+      "installCTA" : "تأمين أصولي المشفرة",
+      "skipCTA" : "ربّما في وقت لاحق"
     }
   },
   "tabs" : {
@@ -3416,6 +3433,16 @@
       "shareAddress" : "عنوان المشاركة",
       "addressCopied" : "تم نسخ العنوان إلى ذاكرة النصوص",
       "taprootWarning" : "تأكد أن المُرسل يدعم taproot",
+      "menu" : {
+        "crypto" : {
+          "title" : "من عنوان أصول مشفرة",
+          "description" : "أضف رصيد إلى محفظتك بأي أصل مشفر."
+        },
+        "fiat" : {
+          "title" : "من حساب بنكي",
+          "description" : "أضف رصيد USDC من خلال تحويل بنكي بالدولار الأمريكي أو اليورو. مطلوب اعرف عميلك (KYC)."
+        }
+      },
       "memoTag" : {
         "link" : "تحتاج إلى علامة/ملاحظة (تسمية الوجهة)؟",
         "title" : "تحتاج إلى علامة/ملاحظة (تسمية الوجهة)؟",
@@ -3749,12 +3776,16 @@
         "apt_description" : "لمبادلة Aptos، استخدم أي جهاز Ledger متوافق آخر مثل ™Ledger Nano S Plus أو ™Ledger Nano X أو ™Ledger Flex أو ™Ledger Stax.",
         "cosmos_title" : "™Ledger Nano S لا تدعم مبادلة Cosmos",
         "cosmos_description" : "لمبادلة Cosmos، استخدم أي جهاز Ledger متوافق آخر مثل ™Ledger Nano S Plus أو ™Ledger Nano X أو ™Ledger Flex أو ™Ledger Stax.",
+        "hedera_title" : "™Ledger Nano S لا تدعم مبادلة Hedera",
+        "hedera_description" : "لمبادلة Hedera، استخدِم أي جهاز Ledger متوافق آخر مثل ™Ledger Nano S Plus أو ™Ledger Nano X أو ™Ledger Flex أو ™Ledger Stax.",
         "osmo_title" : "™Ledger Nano S لا تدعم مبادلة Osmosis",
         "osmo_description" : "لمبادلة Osmosis، استخدم أي جهاز Ledger متوافق آخر مثل ™Ledger Nano S Plus أو ™Ledger Nano X أو ™Ledger Flex أو ™Ledger Stax.",
         "dydx_title" : "™Ledger Nano S لا تدعم مبادلة dYdX",
         "dydx_description" : "لمبادلة dYdX، استخدم أي جهاز Ledger متوافق آخر مثل ™Ledger Nano S Plus أو ™Ledger Nano X أو ™Ledger Flex أو ™Ledger Stax.",
         "sui_title" : "™Ledger Nano S لا تدعم مبادلة Sui",
-        "sui_description" : "لمبادلة Sui، استخدِم أي جهاز Ledger آخر متوافق مثل ™Ledger Nano S Plus أو ™Ledger Nano X أو ™Ledger Flex أو ™Ledger Stax."
+        "sui_description" : "لمبادلة Sui، استخدِم أي جهاز Ledger آخر متوافق مثل ™Ledger Nano S Plus أو ™Ledger Nano X أو ™Ledger Flex أو ™Ledger Stax.",
+        "kaspa_title" : "Ledger Nano S™ does not support swapping Kaspa",
+        "kaspa_description" : "To swap Kaspa, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™."
       }
     },
     "lending" : {
@@ -4401,7 +4432,8 @@
         "default" : "تحقق من تفاصيل المبادلة على جهازك Ledger قبل إرسالها.",
         "provider" : "تحقق من تفاصيل المبادلة على جهازك قبل إرسالها. {{providerName}} قد يحتاج إلى إجراء تحقق إضافي لبعض المعاملات، ما يؤدي إلى تأخير."
       },
-      "acceptTerms" : "بتأكيد صحة هذه المعاملة، أنا أقبل\n<0><0>شروط استخدام</0> {{provider}}</0>",
+      "acceptTerms" : "بتوقيع هذه المعاملة، أنت تقبل </0>شروط استخدام</0> {{provider}}<0><0>",
+      "changellySimplifiedAcceptTerms" : "بالتحقق من صحة هذه المعاملة، أنت تقبل <0>شروط استخدام</0> Changelly و<1>سياسة مكافحة غسل الأموال/KYC (اعرف عميلك)</1> الخاصة بها. Changelly قد تطبق إجراءات مكافحة غسل الأموال/KYC (اعرف عميلك) والتي يمكن، في حالات محدودة، أن تؤثر على إتمام معاملتك. إذا حدث هذا، يجب عليك التواصل مع <2>دعم عملاء</2> Changelly.",
       "notice" : "تحقق من تفاصيل المبادلة على جهازك قبل إرسالها. يتم تبادل العناوين بشكل آمن حتى لا تضطر إلى التحقق منهم."
     },
     "swap2" : {
@@ -7180,9 +7212,10 @@
     "title" : "صورة شاشة القَفل",
     "change" : "تغيير",
     "drawer" : {
+      "title" : "شاشة قَفل مُخصّصة",
       "options" : {
-        "uploadFromPhone" : "اختر من معرض الصور خاصتي",
-        "remove" : "إزالة الصورة الحالية"
+        "uploadFromPhone" : "تغيير الصورة",
+        "remove" : "حذف شاشة القَفل"
       }
     },
     "toastRemove" : "تم إزالة صورة شاشة القفل",
@@ -7912,7 +7945,7 @@
     },
     "transactionCannotBeCreated" : {
       "title" : "المزود غير متاح",
-      "description" : "لا يمكننا إتمام مبادلتك عن طريق هذا المزود. يُرجى المحاولة من خلال مزود آخر. كود الخطأ 8HBB{{errorCode}}"
+      "description" : "Changelly لا يمكنها معالجة هذه المعاملة. كود الخطأ {{errorCode}}8HBB"
     },
     "default" : {
       "title" : "حدث خطأ ما",
