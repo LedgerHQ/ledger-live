@@ -1,12 +1,11 @@
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import type { TransactionIntent, MemoNotSupported } from "@ledgerhq/coin-framework/api/index";
 import type { StakingOperation } from "../types/staking";
-import { isNative } from "../types";
 import { isStakingIntent } from "../utils";
 import { STAKING_CONTRACTS } from "./contracts";
 import { encodeStakingData } from "./encoder";
 import { isStakingOperation } from "./detectOperationType";
-import { ethers } from "ethers";
+import { isPayable } from "./abis";
 
 type OperationFn = (
   valAddress: string,
@@ -76,7 +75,7 @@ export function buildStakingTransactionParams(
     throw new Error("Intent must be a staking intent");
   }
 
-  const { amount, asset, sender, mode, valAddress, dstValAddress } = intent;
+  const { amount, sender, mode, valAddress, dstValAddress } = intent;
 
   const config = STAKING_CONTRACTS[currency.id];
   if (!config) {
@@ -106,7 +105,13 @@ export function buildStakingTransactionParams(
     }).slice(2),
     "hex",
   );
-  const value = isNative(asset) ? amount : 0n;
+
+  const functionName = config.functions[mode];
+  if (!functionName) {
+    throw new Error(`No function mapping found for the operation: ${mode}`);
+  }
+
+  const value = isPayable(currency.id, functionName) ? amount : 0n;
 
   return { to, data, value };
 }
