@@ -124,7 +124,7 @@ describe.each([
       });
       expectTransactionForMode(ethers.Transaction.from(result));
     });
-    it("crafts a staking transaction", async () => {
+    it("crafts a delegate transaction", async () => {
       config = {
         node: {
           type: "external",
@@ -139,11 +139,11 @@ describe.each([
       const { transaction: result } = await module.craftTransaction({
         type: `staking-${mode}`,
         intentType: "staking",
-        amount: 10n,
+        amount: 1000000000000000000n,
         mode: "delegate",
         sender: "0x66c4371aE8FFeD2ec1c2EBbbcCfb7E494181E1E3",
-        recipient: "0x0000000000000000000000000000000000000105",
-        valAddress: "seivaloper1hxxnad3c86q3d8ggsyu24j7r0y5k3ef4uhh9e2",
+        recipient: "0x0000000000000000000000000000000000001005",
+        valAddress: "seivaloper1ummny4p645xraxc4m7nphf7vxawfzt3p5hn47t",
         data: { type: "buffer", value: Buffer.from([]) },
         asset: {
           type: "native",
@@ -152,8 +152,42 @@ describe.each([
 
       expect(result).toMatch(/^0x[A-Fa-f0-9]+$/);
       expect(ethers.Transaction.from(result)).toMatchObject({
-        value: 10n,
-        to: "0x7b2C7232f9E38F30E2868f0E5Bf311Cd83554b5A",
+        value: 1000000000000000000n,
+        to: "0x0000000000000000000000000000000000001005",
+      });
+      expectTransactionForMode(ethers.Transaction.from(result));
+    });
+    it.only("crafts an undelegate transaction", async () => {
+      config = {
+        node: {
+          type: "external",
+          uri: "https://sei-evm-rpc.publicnode.com",
+        },
+        explorer: {
+          type: "etherscan",
+          uri: "https://proxyetherscan.api.live.ledger.com/v2/api/1329",
+        },
+      };
+      module = createApi(config as EvmConfig, "sei_network_evm");
+      const { transaction: result } = await module.craftTransaction({
+        type: `staking-${mode}`,
+        intentType: "staking",
+        amount: 1000000000000000000n,
+        mode: "delegate",
+        sender: "0x66c4371aE8FFeD2ec1c2EBbbcCfb7E494181E1E3",
+        recipient: "0x0000000000000000000000000000000000001005",
+        valAddress: "seivaloper1ummny4p645xraxc4m7nphf7vxawfzt3p5hn47t",
+        dstValAddress: "seivaloper18tpdet22kpvswxayekwn55ry0r5acx4kaauupk",
+        data: { type: "buffer", value: Buffer.from([]) },
+        asset: {
+          type: "native",
+        },
+      });
+
+      expect(result).toMatch(/^0x[A-Fa-f0-9]+$/);
+      expect(ethers.Transaction.from(result)).toMatchObject({
+        value: 1000000000000000000n,
+        to: "0x0000000000000000000000000000000000001005",
       });
       expectTransactionForMode(ethers.Transaction.from(result));
     });
@@ -303,11 +337,11 @@ describe.each([
       const result = await module.estimateFees({
         type: `staking-${mode}`,
         intentType: "staking",
-        amount: 1n, // 1 USDC (6 decimals)
+        amount: 1000000000000000000n,
         mode: "delegate",
-        sender: "0x66c4371aE8FFeD2ec1c2EBbbcCfb7E494181E1E3",
-        recipient: "0x0000000000000000000000000000000000000105",
-        valAddress: "sei1wcpnkdcumxhgm9ar0jw0gxd529xgvkpq3ad8h8",
+        sender: "0x66c4371ae8ffed2ec1c2ebbbccfb7e494181e1e3",
+        recipient: "0x0000000000000000000000000000000000001005",
+        valAddress: "seivaloper1ummny4p645xraxc4m7nphf7vxawfzt3p5hn47t",
         data: { type: "buffer", value: Buffer.from([]) },
         asset: {
           type: "native",
