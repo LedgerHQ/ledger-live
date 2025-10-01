@@ -11,10 +11,15 @@ import type { NavigatorName, ScreenName } from "~/const";
 import { DeviceSelectionNavigatorParamsList } from "LLM/features/DeviceSelection/types";
 
 export type ReceiveFundsStackParamList = {
+  [ScreenName.ReceiveProvider]: {
+    manifestId: string;
+    fromMenu?: boolean;
+  };
   [ScreenName.ReceiveSelectCrypto]:
     | {
         filterCurrencyIds?: string[];
         currency?: string;
+        fromMenu?: boolean;
       }
     | undefined;
   [ScreenName.DepositSelectNetwork]:
@@ -29,6 +34,7 @@ export type ReceiveFundsStackParamList = {
   [ScreenName.ReceiveSelectAccount]: {
     currency: CryptoCurrency | TokenCurrency;
     createTokenAccount?: boolean;
+    fromMenu?: boolean;
   };
   [ScreenName.ReceiveAddAccountSelectDevice]: {
     accountId?: string;
@@ -77,6 +83,7 @@ export type ReceiveFundsStackParamList = {
     createTokenAccount?: boolean;
     onSuccess?: (_?: string) => void;
     onError?: () => void;
+    fromMenu?: boolean;
   };
   [NavigatorName.DeviceSelection]?: Partial<
     NavigatorScreenParams<DeviceSelectionNavigatorParamsList>

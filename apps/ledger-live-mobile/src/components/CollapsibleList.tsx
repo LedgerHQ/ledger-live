@@ -40,8 +40,8 @@ const CollapsibleList = <T,>({
   title,
   containerStyle,
   data,
-  itemHeight,
-  renderItem,
+  itemHeight = 46,
+  renderItem = renderListItem as ListRenderItem<T>,
   ...props
 }: Props<T>) => {
   const { colors } = useTheme();
@@ -135,10 +135,6 @@ const CollapsibleList = <T,>({
   );
 };
 
-CollapsibleList.defaultProps = {
-  itemHeight: 46,
-  renderItem: renderListItem,
-};
 const styles = StyleSheet.create({
   root: {
     borderRadius: 3,

@@ -57,7 +57,7 @@ export function FontProvider({
 // container for stories hosted on expo
 export default function CenterView({
   waitFonts,
-  children,
+  children = null,
 }: {
   waitFonts?: boolean;
   children: React.ReactNode;
@@ -75,10 +75,6 @@ export default function CenterView({
     </StyleProvider>
   );
 }
-
-CenterView.defaultProps = {
-  children: null,
-};
 
 CenterView.propTypes = {
   children: PropTypes.node,

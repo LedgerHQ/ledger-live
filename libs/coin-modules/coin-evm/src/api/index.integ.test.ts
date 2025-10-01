@@ -124,73 +124,6 @@ describe.each([
       });
       expectTransactionForMode(ethers.Transaction.from(result));
     });
-    it("crafts a delegate transaction", async () => {
-      config = {
-        node: {
-          type: "external",
-          uri: "https://sei-evm-rpc.publicnode.com",
-        },
-        explorer: {
-          type: "etherscan",
-          uri: "https://proxyetherscan.api.live.ledger.com/v2/api/1329",
-        },
-      };
-      module = createApi(config as EvmConfig, "sei_network_evm");
-      const { transaction: result } = await module.craftTransaction({
-        type: `staking-${mode}`,
-        intentType: "staking",
-        amount: 1000000000000000000n,
-        mode: "delegate",
-        sender: "0x66c4371aE8FFeD2ec1c2EBbbcCfb7E494181E1E3",
-        recipient: "0x0000000000000000000000000000000000001005",
-        valAddress: "seivaloper1ummny4p645xraxc4m7nphf7vxawfzt3p5hn47t",
-        data: { type: "buffer", value: Buffer.from([]) },
-        asset: {
-          type: "native",
-        },
-      });
-
-      expect(result).toMatch(/^0x[A-Fa-f0-9]+$/);
-      expect(ethers.Transaction.from(result)).toMatchObject({
-        value: 1000000000000000000n,
-        to: "0x0000000000000000000000000000000000001005",
-      });
-      expectTransactionForMode(ethers.Transaction.from(result));
-    });
-    it("crafts an undelegate transaction", async () => {
-      config = {
-        node: {
-          type: "external",
-          uri: "https://sei-evm-rpc.publicnode.com",
-        },
-        explorer: {
-          type: "etherscan",
-          uri: "https://proxyetherscan.api.live.ledger.com/v2/api/1329",
-        },
-      };
-      module = createApi(config as EvmConfig, "sei_network_evm");
-      const { transaction: result } = await module.craftTransaction({
-        type: `staking-${mode}`,
-        intentType: "staking",
-        amount: 1000000000000000000n,
-        mode: "delegate",
-        sender: "0x66c4371aE8FFeD2ec1c2EBbbcCfb7E494181E1E3",
-        recipient: "0x0000000000000000000000000000000000001005",
-        valAddress: "seivaloper1ummny4p645xraxc4m7nphf7vxawfzt3p5hn47t",
-        dstValAddress: "seivaloper18tpdet22kpvswxayekwn55ry0r5acx4kaauupk",
-        data: { type: "buffer", value: Buffer.from([]) },
-        asset: {
-          type: "native",
-        },
-      });
-
-      expect(result).toMatch(/^0x[A-Fa-f0-9]+$/);
-      expect(ethers.Transaction.from(result)).toMatchObject({
-        value: 1000000000000000000n,
-        to: "0x0000000000000000000000000000000000001005",
-      });
-      expectTransactionForMode(ethers.Transaction.from(result));
-    });
   });
 
   describe("getBalance", () => {
@@ -322,24 +255,117 @@ describe.each([
 
       expectEstimationForMode(result);
     });
+  });
+});
+
+describe("EVM Api (SEI Network)", () => {
+  let module: Api<MemoNotSupported, BufferTxData>;
+
+  beforeAll(() => {
+    setCryptoAssetsStoreGetter(() => legacy);
+    const config = {
+      node: {
+        type: "external",
+        uri: "https://sei-evm-rpc.publicnode.com",
+      },
+      explorer: {
+        type: "etherscan",
+        uri: "https://proxyetherscan.api.live.ledger.com/v2/api/1329",
+      },
+    };
+    module = createApi(config as EvmConfig, "sei_network_evm");
+  });
+
+  describe.each([
+    [
+      "legacy",
+      (transaction: ethers.Transaction): void => {
+        expect(transaction.type).toBe(0);
+        expect(typeof transaction.gasPrice).toBe("bigint");
+        expect(transaction.gasPrice).toBeGreaterThan(0);
+      },
+    ],
+    [
+      "eip1559",
+      (transaction: ethers.Transaction): void => {
+        expect(transaction.type).toBe(2);
+        expect(transaction.gasPrice).toBeNull();
+        expect(typeof transaction.maxFeePerGas).toBe("bigint");
+        expect(typeof transaction.maxPriorityFeePerGas).toBe("bigint");
+        expect(transaction.maxFeePerGas).toBeGreaterThan(0n);
+        expect(transaction.maxPriorityFeePerGas).toBeGreaterThan(0n);
+      },
+    ],
+  ])("craftTransaction", (mode, expectTransactionForMode) => {
+    it("crafts a delegate transaction", async () => {
+      const { transaction: result } = await module.craftTransaction({
+        type: `staking-${mode}`,
+        intentType: "staking",
+        amount: 1000000000000000000n, // 1 SEI
+        mode: "delegate",
+        sender: "0x66c4371aE8FFeD2ec1c2EBbbcCfb7E494181E1E3",
+        recipient: "0x0000000000000000000000000000000000001005",
+        valAddress: "seivaloper1ummny4p645xraxc4m7nphf7vxawfzt3p5hn47t",
+        data: { type: "buffer", value: Buffer.from([]) },
+        asset: {
+          type: "native",
+        },
+      });
+
+      expect(result).toMatch(/^0x[A-Fa-f0-9]+$/);
+      expect(ethers.Transaction.from(result)).toMatchObject({
+        value: 1000000000000000000n,
+        to: "0x0000000000000000000000000000000000001005",
+      });
+      expectTransactionForMode(ethers.Transaction.from(result));
+    });
+  });
+
+  describe.each([
+    [
+      "legacy",
+      (estimation: FeeEstimation): void => {
+        expect(estimation).toEqual({
+          value: expect.any(BigInt),
+          parameters: {
+            gasPrice: expect.any(BigInt),
+            gasLimit: expect.any(BigInt),
+            maxFeePerGas: null,
+            maxPriorityFeePerGas: null,
+            nextBaseFee: null,
+          },
+        });
+        expect(estimation.value).toBeGreaterThan(0);
+        expect(estimation.parameters?.gasPrice).toBeGreaterThan(0);
+      },
+    ],
+    [
+      "eip1559",
+      (estimation: FeeEstimation): void => {
+        expect(estimation).toEqual({
+          value: expect.any(BigInt),
+          parameters: {
+            gasPrice: null,
+            gasLimit: expect.any(BigInt),
+            maxFeePerGas: expect.any(BigInt),
+            maxPriorityFeePerGas: expect.any(BigInt),
+            nextBaseFee: expect.any(BigInt),
+          },
+        });
+        expect(estimation.value).toBeGreaterThan(0);
+        expect(estimation.parameters?.maxFeePerGas).toBeGreaterThan(0);
+        expect(estimation.parameters?.maxPriorityFeePerGas).toBeGreaterThan(0);
+        expect(estimation.parameters?.nextBaseFee).toBeGreaterThan(0);
+      },
+    ],
+  ])("estimateFees for %s transaction", (mode, expectEstimationForMode) => {
     it("estimates fees for staking delegation", async () => {
-      config = {
-        node: {
-          type: "external",
-          uri: "https://sei-evm-rpc.publicnode.com",
-        },
-        explorer: {
-          type: "etherscan",
-          uri: "https://proxyetherscan.api.live.ledger.com/v2/api/1329",
-        },
-      };
-      module = createApi(config as EvmConfig, "sei_network_evm");
       const result = await module.estimateFees({
         type: `staking-${mode}`,
         intentType: "staking",
-        amount: 1000000000000000000n,
+        amount: 1000000000000000000n, // 1 SEI
         mode: "delegate",
-        sender: "0x66c4371ae8ffed2ec1c2ebbbccfb7e494181e1e3",
+        sender: "0x66c4371aE8FFeD2ec1c2EBbbcCfb7E494181E1E3",
         recipient: "0x0000000000000000000000000000000000001005",
         valAddress: "seivaloper1ummny4p645xraxc4m7nphf7vxawfzt3p5hn47t",
         data: { type: "buffer", value: Buffer.from([]) },

@@ -9,26 +9,26 @@ import type {
   TransactionStatusCommon,
   TransactionStatusCommonRaw,
 } from "@ledgerhq/types-live";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import type {
   CantonOnboardProgress,
   CantonOnboardResult,
-  CantonPreApprovalProgress,
-  CantonPreApprovalResult,
+  CantonAuthorizeProgress,
+  CantonAuthorizeResult,
 } from "./onboard";
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 
 export interface CantonCurrencyBridge extends CurrencyBridge {
   onboardAccount: (
     currency: CryptoCurrency,
     deviceId: string,
-    derivationPath: string,
+    creatableAccount: Account,
   ) => Observable<CantonOnboardProgress | CantonOnboardResult>;
   authorizePreapproval: (
     currency: CryptoCurrency,
     deviceId: string,
-    derivationPath: string,
+    creatableAccount: Account,
     partyId: string,
-  ) => Observable<CantonPreApprovalProgress | CantonPreApprovalResult>;
+  ) => Observable<CantonAuthorizeProgress | CantonAuthorizeResult>;
 }
 
 export type NetworkInfo = {
@@ -60,16 +60,5 @@ export type TransactionRaw = TransactionCommonRaw & {
 export type TransactionStatus = TransactionStatusCommon;
 export type TransactionStatusRaw = TransactionStatusCommonRaw;
 
-export type CantonResources = {
-  partyId: string;
-};
-export type CantonResourcesRaw = {
-  partyId: string;
-};
-
-export type CantonAccount = Account & {
-  cantonResources?: CantonResources;
-};
-export type CantonAccountRaw = AccountRaw & {
-  cantonResources: CantonResourcesRaw;
-};
+export type CantonAccount = Account;
+export type CantonAccountRaw = AccountRaw;

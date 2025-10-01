@@ -18,7 +18,7 @@ interface RunResult {
 
 function formatDist(dist: Dist, unit = "", decimals = 3) {
   const round = (v: number) => Math.round(v * Math.pow(10, decimals)) / Math.pow(10, decimals);
-  return `min=${round(dist.min)}${unit}, median=${round(dist.median)}${unit}, max=${round(dist.max)}${unit}, p90=${round(dist.p90)}${unit}, p99=${round(dist.p99)}${unit}`;
+  return `min=${round(dist.min)}${unit}, average=${round(dist.average)}${unit}, max=${round(dist.max)}${unit}, p90=${round(dist.p90)}${unit}, p99=${round(dist.p99)}${unit}`;
 }
 
 function formatCalls(total: number, calls: Record<string, number>) {
