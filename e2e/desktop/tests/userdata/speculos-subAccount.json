@@ -20851,48 +20851,7 @@
           "starred": false
         },
         "version": 1
-      },
-        {
-            "data": {
-                "id": "js:2:sui:0xc6169bcce8718609e43d179b087e6c1e2ac28e5325660af34d22fb5ce284031e:sui",
-                "seedIdentifier": "f90d60d74022f1ba8a5ec81a43d8b3905f94bdb4057f1593e7339a8d211138d1",
-                "used": true,
-                "derivationMode": "sui",
-                "index": 0,
-                "freshAddress": "0xc6169bcce8718609e43d179b087e6c1e2ac28e5325660af34d22fb5ce284031e",
-                "freshAddressPath": "44'/784'/0'/0'/0'",
-                "blockHeight": 5,
-                "syncHash": "H5WfMj6L9rT9yqa67qxDqqTDUopYSSdcC6c1exoVqGUd",
-                "creationDate": "2025-09-08T15:06:19.635Z",
-                "operationsCount": 0,
-                "operations": [],
-                "pendingOperations": [],
-                "currencyId": "sui",
-                "lastSyncDate": "2025-09-08T15:06:19.635Z",
-                "balance": "3048628000",
-                "spendableBalance": "3048628000",
-                "balanceHistoryCache": {
-                    "HOUR": {
-                        "balances": [],
-                        "latestDate": 1757343600000
-                    },
-                    "DAY": {
-                        "balances": [],
-                        "latestDate": 1757282400000
-                    },
-                    "WEEK": {
-                        "balances": [],
-                        "latestDate": 1757196000000
-                    }
-                },
-                "subAccounts": [],
-                "suiResources": {},
-                "swapHistory": [],
-                "name": "Sui 1",
-                "starred": false
-            },
-            "version": 1
-        }
+      }
     ],
     "postOnboarding": {
       "deviceModelId": "nanoX",
