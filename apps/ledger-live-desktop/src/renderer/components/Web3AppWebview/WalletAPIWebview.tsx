@@ -49,6 +49,7 @@ import {
   ModularDrawerLocation,
   openAssetAndAccountDrawer,
 } from "LLD/features/ModularDrawer";
+import { setFlowValue, setSourceValue } from "~/renderer/reducers/modularDrawer";
 
 const wallet = { name: "ledger-live-desktop", version: __APP_VERSION__ };
 
@@ -86,38 +87,40 @@ function useUiHook(manifest: AppManifest, tracking: TrackingAPI): UiHook {
       }) => {
         ipcRenderer.send("show-app", {});
 
-        modularDrawerVisible
-          ? openAssetAndAccountDrawer({
+        if (modularDrawerVisible) {
+          dispatch(setFlowValue(flow));
+          dispatch(setSourceValue(source));
+
+          openAssetAndAccountDrawer({
+            accounts$,
+            drawerConfiguration,
+            currencies: areCurrenciesFiltered && !useCase ? currencies : undefined,
+            areCurrenciesFiltered,
+            useCase,
+            onSuccess,
+            onCancel,
+            includeTokens: true,
+          });
+        } else {
+          setDrawer(
+            SelectAccountAndCurrencyDrawer,
+            {
+              currencies,
+              onAccountSelected: (account, parentAccount) => {
+                setDrawer();
+                onSuccess(account, parentAccount);
+              },
               accounts$,
-              drawerConfiguration,
-              currencies: areCurrenciesFiltered && !useCase ? currencies : undefined,
-              areCurrenciesFiltered,
-              useCase,
-              onSuccess,
-              onCancel,
               flow,
-              source,
-              includeTokens: true,
-            })
-          : setDrawer(
-              SelectAccountAndCurrencyDrawer,
-              {
-                currencies,
-                onAccountSelected: (account, parentAccount) => {
-                  setDrawer();
-                  onSuccess(account, parentAccount);
-                },
-                accounts$,
-                flow,
-                source,
+            },
+            {
+              onRequestClose: () => {
+                setDrawer();
+                onCancel();
               },
-              {
-                onRequestClose: () => {
-                  setDrawer();
-                  onCancel();
-                },
-              },
-            );
+            },
+          );
+        }
       },
       "account.receive": ({
         account,
@@ -261,7 +264,7 @@ function useUiHook(manifest: AppManifest, tracking: TrackingAPI): UiHook {
         );
       },
     }),
-    [modularDrawerVisible, flow, source, dispatch, manifest, pushToast, t, tracking],
+    [modularDrawerVisible, flow, dispatch, manifest, pushToast, t, tracking, source],
   );
 }
 

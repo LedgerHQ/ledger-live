@@ -5,18 +5,13 @@ import { track } from "~/renderer/analytics/segment";
 import { jest } from "@jest/globals";
 
 describe("useSearch", () => {
-  const defaultProps = {
-    source: "test",
-    flow: "testing",
-  };
-
   beforeEach(() => {
     jest.clearAllMocks();
     jest.clearAllTimers();
   });
 
   it("should initialize with store value", () => {
-    const { result } = renderHook(() => useSearch(defaultProps), {
+    const { result } = renderHook(() => useSearch(), {
       initialState: {
         modularDrawer: {
           searchedValue: "BTC",
@@ -28,13 +23,13 @@ describe("useSearch", () => {
   });
 
   it("should initialize with undefined value when no searchedValue provided", () => {
-    const { result } = renderHook(() => useSearch(defaultProps));
+    const { result } = renderHook(() => useSearch());
 
     expect(result.current.displayedValue).toBeUndefined();
   });
 
   it("should handle search input changes", () => {
-    const { result } = renderHook(() => useSearch(defaultProps));
+    const { result } = renderHook(() => useSearch());
 
     act(() => {
       result.current.handleSearch("Bitcoin");
@@ -44,7 +39,7 @@ describe("useSearch", () => {
   });
 
   it("should handle search input changes with string", () => {
-    const { result } = renderHook(() => useSearch(defaultProps));
+    const { result } = renderHook(() => useSearch());
 
     act(() => {
       result.current.handleSearch("Ethereum");
@@ -54,7 +49,7 @@ describe("useSearch", () => {
   });
 
   it("should set redux value when handleDebouncedChange is called", () => {
-    const { result, store } = renderHook(() => useSearch(defaultProps));
+    const { result, store } = renderHook(() => useSearch());
 
     act(() => {
       result.current.handleDebouncedChange("Bitcoin", "");
@@ -64,7 +59,7 @@ describe("useSearch", () => {
   });
 
   it("should track search query when manually calling handleDebouncedChange", () => {
-    const { result } = renderHook(() => useSearch(defaultProps));
+    const { result } = renderHook(() => useSearch());
     const previousQuery = "";
     const currentQuery = "Bit";
 
@@ -74,9 +69,9 @@ describe("useSearch", () => {
 
     expect(track).toHaveBeenCalledWith("asset_searched", {
       searched_value: "Bit",
-      source: "test",
+      source: "",
       page: "Asset Selection",
-      flow: "testing",
+      flow: "",
       asset_component_features: {
         apy: false,
         balance: false,
@@ -87,7 +82,7 @@ describe("useSearch", () => {
   });
 
   it("should not track search if current and previous queries are the same", () => {
-    const { result } = renderHook(() => useSearch(defaultProps));
+    const { result } = renderHook(() => useSearch());
     const sameQuery = "Bit";
 
     act(() => {
@@ -98,7 +93,7 @@ describe("useSearch", () => {
   });
 
   it("should handle the workflow of typing and tracking", () => {
-    const { result, store } = renderHook(() => useSearch(defaultProps));
+    const { result, store } = renderHook(() => useSearch());
 
     act(() => {
       result.current.handleSearch("ET");
@@ -115,8 +110,8 @@ describe("useSearch", () => {
     expect(track).toHaveBeenCalledWith("asset_searched", {
       page: "Asset Selection",
       searched_value: "ET",
-      flow: "testing",
-      source: "test",
+      flow: "",
+      source: "",
       asset_component_features: {
         apy: false,
         balance: false,

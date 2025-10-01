@@ -13,6 +13,7 @@ import inView from "./inView";
 import largeMover from "./largeMover";
 import market from "./market";
 import modularDrawer from "./modularDrawer";
+import tools from "./tools";
 import notifications from "./notifications";
 import protect from "./protect";
 import ratings from "./ratings";
@@ -40,6 +41,7 @@ const appReducer = combineReducers({
   largeMover,
   market,
   modularDrawer,
+  tools,
   notifications,
   postOnboarding,
   protect,

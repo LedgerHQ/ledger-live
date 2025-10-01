@@ -20,7 +20,6 @@ import {
   getMainWindowAsync,
   loadWindow,
 } from "./window-lifecycle";
-import { getSentryEnabled, setUserId } from "./internal-lifecycle";
 import db from "./db";
 import debounce from "lodash/debounce";
 import sentry from "~/sentry/main";
@@ -31,6 +30,7 @@ import {
   REDUX_DEVTOOLS,
   REACT_DEVELOPER_TOOLS,
 } from "electron-devtools-installer";
+import { setupTransportHandlers, cleanupTransports } from "./transportHandler";
 // End import timing, start initialization
 console.timeEnd("T-imports");
 console.time("T-init");
@@ -113,13 +113,11 @@ app.on("ready", async () => {
   console.timeEnd("T-db");
   const userId = user?.id;
   if (userId) {
-    setUserId(userId);
-    sentry(() => {
-      const value = getSentryEnabled();
-      if (value === undefined) return settings?.sentryLogs;
-      return value;
-    }, userId);
+    sentry(() => settings?.sentryLogs, userId);
   }
+
+  // Set up transport handlers for Speculos and HTTP proxy in main process
+  setupTransportHandlers();
 
   /**
    * Clears the session’s HTTP cache
@@ -180,6 +178,7 @@ app.on("ready", async () => {
   });
   Menu.setApplicationMenu(menu);
 
+  // Apply window parameters now that we have DB data
   const windowParams = (await db.getKey("windowParams", "MainWindow", {})) as Parameters<
     typeof applyWindowParams
   >[0];
@@ -230,6 +229,17 @@ app.on("ready", async () => {
   }
 
   await clearSessionCache(window.webContents.session);
+});
+
+// Cleanup transports on app shutdown
+app.on("before-quit", () => {
+  console.log("App shutting down, cleaning up transports...");
+  cleanupTransports();
+});
+
+app.on("window-all-closed", () => {
+  cleanupTransports();
+  app.quit();
 });
 
 ipcMain.on("set-background-color", (_, color) => {

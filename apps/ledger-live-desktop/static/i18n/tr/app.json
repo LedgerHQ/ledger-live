@@ -172,6 +172,7 @@
       "REDELEGATE" : "Yetki yeniden devredildi",
       "UNDELEGATE" : "Yetki devri iptal edildi",
       "APPROVE" : "Onaylandı",
+      "PRE_APPROVAL" : "Ön onay",
       "VOTE" : "Oylandı",
       "FREEZE" : "Donduruldu",
       "UNFREEZE" : "Çözüldü",
@@ -1874,7 +1875,12 @@
         "default" : "Göndermeden önce cihazınızdaki takas bilgilerini doğrulayın. Adresler güvenli bir şekilde aktarılır, böylece onları doğrulamak zorunda kalmazsınız.",
         "provider" : "Göndermeden önce cihazınızdaki Takas bilgilerini doğrulayın. {{providerName}} bazı işlemler için ek doğrulama adımları gerçekleştirmek zorunda kalabilir ve bu, gecikmeye neden olabilir."
       },
+      "simpleViewNotice" : {
+        "default" : "Göndermeden önce Ledger cihazınızdaki takas bilgilerini doğrulayın.",
+        "provider" : "Göndermeden önce cihazınızdaki Takas bilgilerini doğrulayın."
+      },
       "confirm" : "Takas işlemini onayla",
+      "confirmSwap" : "Takas işlemini cihazdan onaylayın",
       "amountSent" : "Gönderilecek tutar",
       "amountReceived" : "Alınacak tutar",
       "amountReceivedFloat" : "Hizmet ücretleri hariç alınacak tutar",
@@ -1885,6 +1891,7 @@
       "acceptTerms" : "Bu işlemi onaylayarak,\n<0>{{provider}} kullanım koşullarını</0> kabul ediyorum.",
       "exodusAcceptTerms" : "Exodus, takas işlemlerini gerçekleştirmek için üçüncü tarafları kullanır.\nBu işlemi onaylayarak, <0>Exodus'un kullanım koşullarını</0> kabul ediyorum.",
       "changellyAcceptTerms" : "“Changelly ile Takas Edin” seçeneğine tıkladığınızda Changelly'nin <0>Kullanım Koşulları</0>'nı\nve <1>Kara Paranın Aklanmasının Önlenmesi/KYC politikasını</1> kabul etmiş olursunuz. Changelly, işleminizin tamamlanmasını\nbazı durumlarda etkileyebilecek olan, Kara Paranın Aklanmasının Önlenmesi/KYC prosedürleri uygulayabilir. \nBöyle bir durumda Changelly'nin <2>müşteri destek</2> ekibi ile iletişime geçmeniz gerekir.",
+      "changellySimplifiedAcceptTerms" : "Bu işlemi doğruladığınızda Changelly'nin <0>Kullanım Koşullarını</0> ve\n<1>Kara Paranın Aklanmasının Önlenmesi/KYC politikasını</1> kabul etmiş olursunuz. Changelly, bazı durumlarda işleminizin tamamlanmasını etkileyebilecek olan\nKara Paranın Aklanmasının Önlenmesi/KYC prosedürleri uygulayabilir. \nBöyle bir durumda Changelly'nin <2>müşteri destek</2> ekibi ile iletişime geçmeniz gerekir.",
       "cicAcceptTerms" : "“CIC ile Takas Edin” seçeneğine tıkladığınızda CIC’nin <0>Kullanım Koşulları</0>’nı ve <1>Kara Paranın Aklanmasının Önlenmesi/KYC politikasını</1> kabul etmiş olursunuz. CIC, bazı durumlarda işleminizin tamamlanmasını etkileyebilecek olan, Kara Paranın Aklanmasının Önlenmesi/KYC prosedürleri uygulayabilir. Böyle bir durumda CIC’nin <2>müşteri destek</2> ekibi ile iletişime geçmeniz gerekir."
     },
     "swap2" : {
@@ -2240,6 +2247,16 @@
     "title" : "Al",
     "successTitle" : "Adres güvenli şekilde paylaşıldı",
     "steps" : {
+      "options" : {
+        "fromBank" : {
+          "title" : "Bir banka hesabından",
+          "description" : "USD veya EUR yatırın"
+        },
+        "fromCrypto" : {
+          "title" : "Bir kripto adresinden",
+          "description" : "Kripto alın"
+        }
+      },
       "chooseAccount" : {
         "title" : "Hesap",
         "label" : "Alacak hesap",
@@ -4514,11 +4531,11 @@
         "title" : "Test Hesapları Oluşturun",
         "description" : "Test etmek amacıyla test hesapları oluşturun. Bu araçlar, çeşitli para birimlerine ve yapılandırmalara sahip test hesapları oluşturmanıza olanak tanır.",
         "customGenerate" : {
-          "title" : "Custom generation",
-          "desc" : "Select currencies and add tokens"
+          "title" : "Özel oluşturma",
+          "desc" : "Para birimlerini seçin ve token ekleyin"
         },
         "quickGenerate" : {
-          "title" : "Quick generation",
+          "title" : "Hızlı oluşturma",
           "desc" : "Rastgele para birimlerinin yer aldığı rastgele 10 hesap oluşturun"
         },
         "currencySelector" : {
@@ -4540,7 +4557,7 @@
         },
         "alerts" : {
           "selectCurrency" : "Lütfen en az bir para birimi seçin",
-          "confirmErase" : "Existing accounts will be erased. Continue?",
+          "confirmErase" : "Mevcut hesaplar silinecektir. Devam etmek istiyor musunuz?",
           "generateError" : "Test hesapları oluşturulamadı. Lütfen tekrar deneyin."
         }
       },
@@ -5209,16 +5226,16 @@
             }
           },
           "recoverHowTo" : {
-            "title" : "“Restore using Ledger Recover” (Ledger Recover ile geri yükleyin) seçimini yapın",
+            "title" : "“Ledger Recover ile geri yükleyin” seçimini yapın",
             "1" : {
-              "title" : "“Restore” seçimini yapın",
+              "title" : "“Geri yükle” seçimini yapın",
               "descr" : "Seçmek için iki tuşa aynı anda basın."
             },
             "2" : {
-              "title" : "“Restore using Ledger Recover” (Ledger Recover ile geri yükleyin) seçimini yapın"
+              "title" : "“Ledger Recover ile geri yükleyin” seçimini yapın"
             },
             "help" : {
-              "iDontSee" : "“Restore using Ledger Recover” (Ledger Recover ile geri yükleyin) seçeneği yok",
+              "iDontSee" : "“Ledger Recover ile geri yükleyin” seçeneği yok",
               "modal" : {
                 "title" : "Ledger Nano X cihazındaki işletim sisteminin güncellenmesi gerekiyor",
                 "subtitle" : " İşletim sistemini güncellemeyi deneyebilir veya yardım almak için Ledger Destek ile iletişime geçebilirsiniz.",
@@ -6439,6 +6456,9 @@
     },
     "EthAppPleaseEnableContractData" : {
       "title" : "Lütfen Ethereum uygulamasının Ayarlar bölümünden Kör İmzalamayı veya Sözleşme Verilerini etkinleştirin"
+    },
+    "CeloAppPleaseEnableContractData" : {
+      "title" : "Celo uygulaması ayarlarında Sözleşme Verilerini lütfen etkinleştirin"
     },
     "InvalidXRPTag" : {
       "title" : "Geçersiz XRP Hedef etiketi (Destination tag)"

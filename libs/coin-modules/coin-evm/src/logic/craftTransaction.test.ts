@@ -1,5 +1,9 @@
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { TransactionIntent } from "@ledgerhq/coin-framework/lib/api/types";
+import {
+  BufferTxData,
+  MemoNotSupported,
+  TransactionIntent,
+} from "@ledgerhq/coin-framework/api/types";
 import BigNumber from "bignumber.js";
 import { ethers } from "ethers";
 import * as externalNode from "../network/node/rpc.common";
@@ -62,7 +66,7 @@ describe("craftTransaction", () => {
             recipient: "0x7b2c7232f9e38f30e2868f0e5bf311cd83554b5a",
             amount: 10n,
             asset: { type: "native" },
-          } as TransactionIntent,
+          } as TransactionIntent<MemoNotSupported, BufferTxData>,
           customFees: {
             value: 0n,
             parameters: {
@@ -103,7 +107,7 @@ describe("craftTransaction", () => {
             recipient: "0x7b2c7232f9e38f30e2868f0e5bf311cd83554b5a",
             amount: 10n,
             asset: { type: "erc20", assetReference: "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48" },
-          } as TransactionIntent,
+          } as TransactionIntent<MemoNotSupported, BufferTxData>,
           customFees: {
             value: 0n,
             parameters: {
@@ -135,5 +139,43 @@ describe("craftTransaction", () => {
         }).unsignedSerialized,
       );
     });
+  });
+
+  it("preserves passed calldata", async () => {
+    setCoinConfig(() => ({ info: { node: { type: "external" } } }) as unknown as EvmCoinConfig);
+    jest.spyOn(externalNode, "getTransactionCount").mockResolvedValue(18);
+    jest.spyOn(externalNode, "getGasEstimation").mockResolvedValue(new BigNumber(2300));
+    jest.spyOn(externalNode, "getFeeData").mockResolvedValue({
+      gasPrice: new BigNumber(5),
+      maxFeePerGas: null,
+      maxPriorityFeePerGas: null,
+      nextBaseFee: null,
+    });
+
+    const { transaction } = await craftTransaction(
+      { ethereumLikeInfo: { chainId: 42 } } as CryptoCurrency,
+      {
+        transactionIntent: {
+          type: "send-legacy",
+          recipient: "0x7b2c7232f9e38f30e2868f0e5bf311cd83554b5a",
+          amount: 10n,
+          data: { type: "buffer", value: Buffer.from([0xca, 0xfe]) },
+          asset: { type: "native" },
+        } as TransactionIntent<MemoNotSupported, BufferTxData>,
+      },
+    );
+
+    expect(transaction).toEqual(
+      ethers.Transaction.from({
+        type: 0,
+        to: "0x7b2c7232f9e38f30e2868f0e5bf311cd83554b5a",
+        nonce: 18,
+        gasLimit: 2300,
+        data: "0xcafe",
+        value: 10,
+        chainId: 42,
+        gasPrice: 5,
+      }).unsignedSerialized,
+    );
   });
 });

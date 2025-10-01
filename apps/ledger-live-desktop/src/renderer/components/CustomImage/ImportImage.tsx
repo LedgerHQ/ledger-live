@@ -87,7 +87,7 @@ const ImportImage: React.FC<Props> = ({ setLoading, onResult, onError, onClick }
       iconPosition="left"
       width="fit-content"
       alignSelf="center"
-      Icon={() => <Icons.UploadCenterArrow size="S" />}
+      Icon={<Icons.UploadCenterArrow size="S" />}
       data-testid="custom-image-import-image-button"
       onClick={onClick}
     >

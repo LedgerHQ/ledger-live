@@ -89,6 +89,7 @@ const canton: DatasetTest<Transaction> = {
                 family: "canton",
                 recipient: mockCantonAddresses.sender,
                 amount: "10000000",
+                tokenId: "Amulet",
                 fee: "1000",
               }),
               expectedStatus: {
@@ -108,6 +109,7 @@ const canton: DatasetTest<Transaction> = {
                 recipient: mockCantonAddresses.recipient1,
                 amount: "10000000", // 10 CANTON
                 fee: "1000",
+                tokenId: "Amulet",
               }),
               expectedStatus: {
                 amount: new BigNumber("10000000"),
@@ -124,6 +126,7 @@ const canton: DatasetTest<Transaction> = {
                 recipient: mockCantonAddresses.recipient1,
                 amount: "2000000000", // 2000 CANTON (more than balance)
                 fee: "1000",
+                tokenId: "Amulet",
               }),
               expectedStatus: {
                 amount: new BigNumber("2000000000"),
@@ -141,6 +144,7 @@ const canton: DatasetTest<Transaction> = {
                 family: "canton",
                 recipient: mockCantonAddresses.invalid,
                 amount: "10000000",
+                tokenId: "Amulet",
                 fee: "1000",
               }),
               expectedStatus: {
@@ -159,6 +163,7 @@ const canton: DatasetTest<Transaction> = {
                 family: "canton",
                 recipient: mockCantonAddresses.recipient1,
                 amount: "0",
+                tokenId: "Amulet",
                 fee: "1000",
               }),
               expectedStatus: {
@@ -177,6 +182,7 @@ const canton: DatasetTest<Transaction> = {
                 family: "canton",
                 recipient: "",
                 amount: "10000000",
+                tokenId: "Amulet",
                 fee: "1000",
               }),
               expectedStatus: {
@@ -195,6 +201,7 @@ const canton: DatasetTest<Transaction> = {
                 family: "canton",
                 recipient: mockCantonAddresses.recipient1,
                 amount: "10000000",
+                tokenId: "Amulet",
                 fee: "50000", // 50 CANTON fee
               }),
               expectedStatus: {

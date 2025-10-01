@@ -248,6 +248,13 @@ export class Account {
     "0xa1baa625c5E6A9304cB7AcD86d2fee6B710eC3eB",
     1,
     undefined,
+  );
+  static readonly ETH_2_WITH_ENS = new Account(
+    Currency.ETH,
+    "Ethereum 2",
+    "0xa1baa625c5E6A9304cB7AcD86d2fee6B710eC3eB",
+    1,
+    undefined,
     "speculos.eth",
   );
   static readonly ETH_2_LOWER_CASE = new Account(
@@ -384,6 +391,12 @@ export class Account {
     "Solana 3",
     "JC2dR4QRMt68r2h7Sjs5wshx1RdmDVrSbdL2jWBuVf2t",
     2,
+  );
+  static readonly SOL_4 = new Account(
+    Currency.SOL,
+    "Solana 4",
+    "FKFMRmTEJ6wHMWviuDocuhsZoTi3DnypoPQXBUjCCTXM",
+    3,
   );
 
   static readonly tBTC_1 = new Account(

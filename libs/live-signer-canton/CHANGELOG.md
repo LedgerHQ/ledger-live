@@ -1,5 +1,27 @@
 # @ledgerhq/live-signer-canton
 
+## 0.4.1
+
+### Patch Changes
+
+- Updated dependencies [[`2abaa52`](https://github.com/LedgerHQ/ledger-live/commit/2abaa522471e8247d274c4b22cb4e297969ebe9a), [`e04d493`](https://github.com/LedgerHQ/ledger-live/commit/e04d49340c65c8b4608a37bb726d21350fdd32f1), [`c2d8d86`](https://github.com/LedgerHQ/ledger-live/commit/c2d8d8670f848989836c46ea08ae88c88086fdd6), [`49a8534`](https://github.com/LedgerHQ/ledger-live/commit/49a85340a9c4e5dd8dd07db87028fe48f307d1f6)]:
+  - @ledgerhq/coin-canton@0.7.0
+  - @ledgerhq/errors@6.26.0
+  - @ledgerhq/devices@8.6.1
+  - @ledgerhq/hw-app-canton@0.5.1
+  - @ledgerhq/hw-transport@6.31.12
+
+## 0.4.1-next.0
+
+### Patch Changes
+
+- Updated dependencies [[`2abaa52`](https://github.com/LedgerHQ/ledger-live/commit/2abaa522471e8247d274c4b22cb4e297969ebe9a), [`e04d493`](https://github.com/LedgerHQ/ledger-live/commit/e04d49340c65c8b4608a37bb726d21350fdd32f1), [`c2d8d86`](https://github.com/LedgerHQ/ledger-live/commit/c2d8d8670f848989836c46ea08ae88c88086fdd6), [`49a8534`](https://github.com/LedgerHQ/ledger-live/commit/49a85340a9c4e5dd8dd07db87028fe48f307d1f6)]:
+  - @ledgerhq/coin-canton@0.7.0-next.0
+  - @ledgerhq/errors@6.26.0-next.0
+  - @ledgerhq/devices@8.6.1-next.0
+  - @ledgerhq/hw-app-canton@0.5.1-next.0
+  - @ledgerhq/hw-transport@6.31.12-next.0
+
 ## 0.4.0
 
 ### Minor Changes

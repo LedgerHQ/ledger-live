@@ -27,6 +27,7 @@ export function ModularDrawerDeepLinkHandler({ route }: ModularDrawerDeepLinkHan
       currencies: currencyToAdd ? [currencyToAdd.id] : undefined,
       flow: "add-account",
       source: "deeplink",
+      areCurrenciesFiltered: currencyToAdd ? true : false,
     });
   }, [currencyToAdd, navigation, openDrawer]);
 

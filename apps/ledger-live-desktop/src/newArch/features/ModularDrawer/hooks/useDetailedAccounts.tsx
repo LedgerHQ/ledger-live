@@ -24,17 +24,17 @@ import { Account } from "@ledgerhq/types-live";
 import { useBatchMaybeAccountName } from "~/renderer/reducers/wallet";
 import orderBy from "lodash/orderBy";
 import keyBy from "lodash/keyBy";
+import { modularDrawerSourceSelector } from "~/renderer/reducers/modularDrawer";
 
 export const useDetailedAccounts = (
   asset: CryptoOrTokenCurrency,
-  flow: string,
-  source: string,
   accounts$?: Observable<WalletAPIAccount[]>,
   onAccountSelected?: (account: Account) => void,
 ) => {
   const discreet = useDiscreetMode();
   const state = useCountervaluesState();
   const { trackModularDrawerEvent } = useModularDrawerAnalytics();
+  const source = useSelector(modularDrawerSourceSelector);
   const { openAddAccountFlow } = useOpenAssetFlow(
     { location: ModularDrawerLocation.ADD_ACCOUNT },
     source,
@@ -105,11 +105,9 @@ export const useDetailedAccounts = (
     trackModularDrawerEvent("button_clicked", {
       button: "Add a new account",
       page: MODULAR_DRAWER_PAGE_NAME.MODULAR_ACCOUNT_SELECTION,
-      flow,
-      source,
     });
     openAddAccountFlow(asset, false, onAccountSelected);
-  }, [asset, flow, openAddAccountFlow, source, trackModularDrawerEvent, onAccountSelected]);
+  }, [asset, openAddAccountFlow, trackModularDrawerEvent, onAccountSelected]);
 
   return { detailedAccounts, accounts, onAddAccountClick };
 };

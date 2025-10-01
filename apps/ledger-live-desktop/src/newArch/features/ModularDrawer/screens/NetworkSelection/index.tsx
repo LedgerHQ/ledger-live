@@ -11,8 +11,6 @@ import { WalletAPIAccount } from "@ledgerhq/live-common/wallet-api/types";
 export type NetworkSelectionStepProps = {
   networks?: CryptoOrTokenCurrency[];
   networksConfiguration: EnhancedModularDrawerConfiguration["networks"];
-  source: string;
-  flow: string;
   currenciesByProvider: CurrenciesByProviderId[];
   onNetworkSelected: (network: CryptoOrTokenCurrency) => void;
   selectedAssetId?: string;
@@ -22,8 +20,6 @@ export type NetworkSelectionStepProps = {
 export function NetworkSelection({
   networks,
   onNetworkSelected,
-  source,
-  flow,
   networksConfiguration,
   currenciesByProvider,
   selectedAssetId,
@@ -33,16 +29,12 @@ export function NetworkSelection({
     <>
       <TrackDrawerScreen
         page={MODULAR_DRAWER_PAGE_NAME.MODULAR_NETWORK_SELECTION}
-        source={source}
-        flow={flow}
         networksConfig={networksConfiguration}
         formatNetworkConfig
       />
       <NetworksList
         networks={networks}
         onNetworkSelected={onNetworkSelected}
-        flow={flow}
-        source={source}
         networksConfig={networksConfiguration}
         currenciesByProvider={currenciesByProvider}
         selectedAssetId={selectedAssetId}

@@ -547,6 +547,15 @@ export const expectedCurrencyList = [
   },
   {
     type: "CryptoCurrency",
+    id: "ethereum_hoodi",
+    ticker: "ETH",
+    name: "Ethereum Hoodi",
+    family: "ethereum",
+    color: "#0ebdcd",
+    decimals: 18,
+  },
+  {
+    type: "CryptoCurrency",
     id: "hedera",
     ticker: "HBAR",
     name: "Hedera",
@@ -589,6 +598,15 @@ export const expectedCurrencyList = [
     family: "ethereum",
     color: "#1969ff",
     decimals: 18,
+  },
+  {
+    color: "#FF962B",
+    decimals: 18,
+    family: "ethereum",
+    id: "core",
+    name: "Core",
+    ticker: "CORE",
+    type: "CryptoCurrency",
   },
   {
     type: "CryptoCurrency",

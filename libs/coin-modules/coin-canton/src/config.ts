@@ -9,7 +9,7 @@ export type CantonConfig = {
   minReserve?: number;
   networkType: "mainnet" | "devnet" | "localnet";
   useGateway?: boolean;
-  nativeInstrumentId?: string;
+  nativeInstrumentId: string;
   fee?: number;
 };
 

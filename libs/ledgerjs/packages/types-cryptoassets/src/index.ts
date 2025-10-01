@@ -128,6 +128,7 @@ export type CryptoCurrencyId =
   | "bitcoin_testnet"
   | "ethereum_sepolia"
   | "ethereum_holesky"
+  | "ethereum_hoodi"
   | "stacks"
   | "crypto_org_croeseid"
   | "solana_testnet"
@@ -135,6 +136,7 @@ export type CryptoCurrencyId =
   | "filecoin"
   | "arbitrum"
   | "arbitrum_sepolia"
+  | "core"
   | "cronos"
   | "fantom"
   | "flare"
@@ -207,6 +209,7 @@ export type LedgerExplorerId =
   | "eth"
   | "eth_sepolia"
   | "eth_holesky"
+  | "eth_hoodi"
   | "etc"
   | "matic"
   | "bnb";
@@ -328,6 +331,7 @@ export type CryptoCurrency = CurrencyCommon & {
   deviceTicker?: string;
   // Used to connect to the right endpoint url since it is different from currencyId and ticker
   explorerId?: LedgerExplorerId;
+  tokenTypes?: string[];
 };
 
 /**

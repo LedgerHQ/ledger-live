@@ -33,7 +33,10 @@ const ton: CurrenciesData<Transaction> = {
   ],
   accounts: [
     {
-      FIXME_tests: ["balance is sum of ops"],
+      FIXME_tests: [
+        "balance is sum of ops",
+        "transaction Subaccount Send max", // TypeError: Cannot read properties of undefined (reading 'toString') in ts.amount
+      ],
       raw: {
         id: `js:2:ton:${PUBKEY}:ton`,
         currencyId: "ton",

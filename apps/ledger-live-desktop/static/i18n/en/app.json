@@ -172,6 +172,7 @@
       "REDELEGATE": "Redelegated",
       "UNDELEGATE": "Undelegated",
       "APPROVE": "Approved",
+      "PRE_APPROVAL": "Pre-approval",
       "VOTE": "Voted",
       "FREEZE": "Frozen",
       "UNFREEZE": "Unfrozen",
@@ -1874,7 +1875,12 @@
         "default": "Verify the Swap details on your device before sending it. The addresses are exchanged securely so you don’t have to verify them.",
         "provider": "Verify the Swap details on your device before sending it. {{providerName}} may need to perform additional verification for some transactions, resulting in a delay."
       },
+      "simpleViewNotice": {
+        "default": "Verify the swap details on your Ledger before sending it.",
+        "provider": "Verify the Swap details on your device before sending it."
+      },
       "confirm": "Confirm Swap transaction",
+      "confirmSwap": "Confirm swap operation on device",
       "amountSent": "Amount to send",
       "amountReceived": "Amount to receive",
       "amountReceivedFloat": "Amount to receive before service fees",
@@ -1885,6 +1891,7 @@
       "acceptTerms": "By validating this transaction, I accept\n<0>{{provider}}'s terms of use</0>",
       "exodusAcceptTerms": "Exodus relies on third parties to conduct swaps.\nBy validating this transaction, I accept <0>Exodus's terms of use</0>",
       "changellyAcceptTerms": "By clicking “Swap with Changelly” you accept Changelly’s <0>Terms of Use</0> and\nits <1>AML/KYC policy</1> Changelly may apply AML/KYC procedures which\ncan, in limited cases, impact the completion of your transaction. Should\nthat happen, you must contact Changelly’s <2>customer support.</2>",
+      "changellySimplifiedAcceptTerms": "By validating this transaction, you accept Changelly's <0>Terms of Use</0> and\nits <1>AML/KYC policy</1>. Changelly may apply AML/KYC procedures which\ncan, in limited cases, impact the completion of your transaction. Should\nthat happen, you must contact Changelly’s <2>customer support.</2>",
       "cicAcceptTerms": "“Swap with CIC” you accept CIC’s <0>Terms of Use</0> and its <1>AML/KYC policy</1> CIC may apply AML/KYC procedures which can, in limited cases, impact the completion of your transaction. Should that happen, you must contact CIC’s <2>customer support.</2>"
     },
     "swap2": {
@@ -2240,6 +2247,16 @@
     "title": "Receive",
     "successTitle": "Address shared securely",
     "steps": {
+      "options": {
+        "fromBank": {
+          "title": "From a bank account",
+          "description": "Deposit USD or EUR"
+        },
+        "fromCrypto": {
+          "title": "From a crypto address",
+          "description": "Receive crypto"
+        }
+      },
       "chooseAccount": {
         "title": "Account",
         "label": "Account to credit",
@@ -6467,6 +6484,9 @@
     },
     "EthAppPleaseEnableContractData": {
       "title": "Please enable Blind signing or Contract data in the Ethereum app Settings"
+    },
+    "CeloAppPleaseEnableContractData": {
+      "title": "Please enable Contract data in the Celo app Settings"
     },
     "InvalidXRPTag": {
       "title": "Invalid XRP Destination tag"

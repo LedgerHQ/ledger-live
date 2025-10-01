@@ -172,6 +172,7 @@
       "REDELEGATE" : "已重新委托",
       "UNDELEGATE" : "已解除委托",
       "APPROVE" : "已批准",
+      "PRE_APPROVAL" : "预先批准",
       "VOTE" : "已投票",
       "FREEZE" : "已冻结",
       "UNFREEZE" : "已解冻",
@@ -1874,7 +1875,12 @@
         "default" : "发送之前请在您的设备上验证互换详情。地址会被安全地交换因此您不必对其进行验证。",
         "provider" : "发送资金之前，请先在您的设备上核实互换详情。{{providerName}} 可能需要对某些交易进行额外验证，因此导致延迟。"
       },
+      "simpleViewNotice" : {
+        "default" : "发送资金之前，请先在您的 Ledger 设备上核实互换详情。",
+        "provider" : "发送资金之前，请先在您的设备上核实互换详情。"
+      },
       "confirm" : "确认互换交易",
+      "confirmSwap" : "在设备上确认互换操作",
       "amountSent" : "发送数额",
       "amountReceived" : "待收数额",
       "amountReceivedFloat" : "服务费之前收到的数额",
@@ -1885,6 +1891,7 @@
       "acceptTerms" : "验证此交易，即表示我接受\n<0>{{provider}} 的使用条款</0>",
       "exodusAcceptTerms" : "Exodus 依赖第三方来进行互换。\n验证此交易，即表示我接受 <0>Exodus 的使用条款</0>",
       "changellyAcceptTerms" : "点击“使用 Changelly 互换”即表示您接受 Changelly 的<0>使用条款</0>及其\n<1>反洗钱 (AML)/客户身份核实 (KYC) 政策</1>。Changelly 可能会采用 AML/KYC 程序，\n这可能在少数情况下影响您完成交易。如果发生这种情况，\n您需要联系 Changelly <2>客服</2>。",
+      "changellySimplifiedAcceptTerms" : "验证此交易，即表示您接受 Changelly 的<0>使用条款</0>及其\n<1>反洗钱 (AML)/客户身份核实 (KYC) 政策</1>。Changelly 可能会采用 AML/KYC 程序，\n在少数情况下，这可能会影响您完成交易。如果发生这种情况，\n您需要联系 Changelly <2>客服。</2>",
       "cicAcceptTerms" : "“使用 CIC 互换”即表示您接受 CIC 的<0>使用条款</0>及其<1>反洗钱 (AML)/客户身份核实 (KYC) 政策</1>。CIC 可能会采用 AML/KYC 程序，这可能在少数情况下影响您完成交易。如果发生这种情况，您需要联系 CIC <2>客服</2>。"
     },
     "swap2" : {
@@ -2240,6 +2247,16 @@
     "title" : "接收",
     "successTitle" : "地址已安全共享",
     "steps" : {
+      "options" : {
+        "fromBank" : {
+          "title" : "从银行账户",
+          "description" : "存入美元或欧元"
+        },
+        "fromCrypto" : {
+          "title" : "从加密货币地址",
+          "description" : "接收加密货币"
+        }
+      },
       "chooseAccount" : {
         "title" : "账户",
         "label" : "信贷账户",
@@ -4511,37 +4528,37 @@
         }
       },
       "mockAccounts" : {
-        "title" : "Generate mock accounts",
-        "description" : "Generate mock accounts for testing purposes. These tools allow you to create test accounts with various currencies and configurations.",
+        "title" : "生成 Mock（模拟）账户",
+        "description" : "生成模拟账户用于测试目的。这些工具支持您创建各种货币和配置的测试账户。",
         "customGenerate" : {
-          "title" : "Custom generation",
-          "desc" : "Select currencies and add tokens"
+          "title" : "自定义生成",
+          "desc" : "选择货币并添加代币"
         },
         "quickGenerate" : {
-          "title" : "Quick generation",
-          "desc" : "Generate 10 random accounts with random currencies"
+          "title" : "快速生成",
+          "desc" : "生成 10 个随机账户，币种随机"
         },
         "currencySelector" : {
-          "placeholder" : "Choose currencies...",
-          "searchPlaceholder" : "Search",
-          "noCurrenciesFound" : "No currencies found",
-          "noCurrenciesAvailable" : "No currencies available",
-          "selectedCount" : "{{count}} currency selected",
-          "selectedCount_other" : "{{count}} currencies selected"
+          "placeholder" : "选择货币...",
+          "searchPlaceholder" : "搜索",
+          "noCurrenciesFound" : "未找到货币",
+          "noCurrenciesAvailable" : "无可用货币",
+          "selectedCount" : "已选择 {{count}} 种货币",
+          "selectedCount_other" : "已选择 {{count}} 种货币"
         },
         "tokenIds" : {
-          "label" : "Token IDs (optional)",
+          "label" : "代币 ID（可选）",
           "placeholder" : "token1, token2, token3"
         },
         "buttons" : {
-          "generateAccounts" : "Generate {{count}} account",
-          "generateAccounts_other" : "Generate {{count}} accounts",
-          "generateAccountsQuick" : "Generate {{count}} accounts"
+          "generateAccounts" : "生成 {{count}} 个账户",
+          "generateAccounts_other" : "生成 {{count}} 个账户",
+          "generateAccountsQuick" : "生成 {{count}} 个账户"
         },
         "alerts" : {
-          "selectCurrency" : "Please select at least one currency",
-          "confirmErase" : "Existing accounts will be erased. Continue?",
-          "generateError" : "Failed to generate mock accounts. Please try again."
+          "selectCurrency" : "请至少选择一种货币",
+          "confirmErase" : "现有账户将被删除。继续？",
+          "generateError" : "未能生成模拟账户。请重试。"
         }
       },
       "debugWalletSync" : {
@@ -6439,6 +6456,9 @@
     },
     "EthAppPleaseEnableContractData" : {
       "title" : "请在以太坊应用程序设置中启用盲签名或合约数据"
+    },
+    "CeloAppPleaseEnableContractData" : {
+      "title" : "请在 Celo 应用程序设置中启用合约数据"
     },
     "InvalidXRPTag" : {
       "title" : "无效的 XRP 目的地标签"

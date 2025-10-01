@@ -10,7 +10,7 @@ describe("TrackDrawerScreen", () => {
     const page = MODULAR_DRAWER_PAGE_NAME.MODULAR_ASSET_SELECTION;
     const params = { flow: "flowtest", source: "sourcetest" };
 
-    render(<TrackDrawerScreen page={page} source={params.source} flow={params.flow} />);
+    render(<TrackDrawerScreen page={page} />, { initialState: { modularDrawer: params } });
 
     expect(trackPage).toHaveBeenCalledWith(
       "Asset Selection",
@@ -28,15 +28,9 @@ describe("TrackDrawerScreen", () => {
       filter: "topNetworks",
     };
 
-    render(
-      <TrackDrawerScreen
-        page={page}
-        source={params.source}
-        flow={params.flow}
-        formatAssetConfig
-        assetsConfig={assetsConfig}
-      />,
-    );
+    render(<TrackDrawerScreen page={page} formatAssetConfig assetsConfig={assetsConfig} />, {
+      initialState: { modularDrawer: params },
+    });
 
     expect(trackPage).toHaveBeenCalledWith(
       "Asset Selection",
@@ -58,15 +52,9 @@ describe("TrackDrawerScreen", () => {
       leftElement: "numberOfAccounts",
     };
 
-    render(
-      <TrackDrawerScreen
-        page={page}
-        source={params.source}
-        flow={params.flow}
-        formatNetworkConfig
-        networksConfig={networksConfig}
-      />,
-    );
+    render(<TrackDrawerScreen page={page} formatNetworkConfig networksConfig={networksConfig} />, {
+      initialState: { modularDrawer: params },
+    });
 
     expect(trackPage).toHaveBeenCalledWith(
       "Network Selection",

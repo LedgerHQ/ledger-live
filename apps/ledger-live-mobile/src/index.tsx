@@ -24,6 +24,7 @@ import {
   hasCompletedOnboardingSelector,
   trackingEnabledSelector,
   reportErrorsEnabledSelector,
+  isOnboardingFlowSelector,
 } from "~/reducers/settings";
 import { accountsSelector } from "~/reducers/accounts";
 import { rebootIdSelector } from "~/reducers/appstate";
@@ -34,6 +35,7 @@ import { store } from "~/context/store";
 import LoadingApp from "~/components/LoadingApp";
 import StyledStatusBar from "~/components/StyledStatusBar";
 import AnalyticsConsole from "~/components/AnalyticsConsole";
+import RtkQueryDevPanel from "~/screens/Settings/Debug/Debugging/RTK";
 import DebugTheme from "~/components/DebugTheme";
 import SyncNewAccounts from "~/bridge/SyncNewAccounts";
 import SegmentSetup from "~/analytics/SegmentSetup";
@@ -54,7 +56,12 @@ import { useListenToHidDevices } from "~/hooks/useListenToHidDevices";
 import { DeeplinksProvider } from "~/navigation/DeeplinksProvider";
 import StyleProvider from "./StyleProvider";
 
-import { setAnalytics, setOsTheme, setPersonalizedRecommendations } from "~/actions/settings";
+import {
+  setAnalytics,
+  setOsTheme,
+  setPersonalizedRecommendations,
+  setIsOnboardingFlow,
+} from "~/actions/settings";
 import TransactionsAlerts from "~/components/TransactionsAlerts";
 import {
   useFetchCurrencyAll,
@@ -93,6 +100,7 @@ import getOrCreateUser from "./user";
 import { FIRST_PARTY_MAIN_HOST_DOMAIN } from "./utils/constants";
 import useNativeStartupInfo from "./hooks/useNativeStartupInfo";
 import { ConfigureDBSaveEffects } from "./components/DBSave";
+import { useRef } from "react";
 
 if (Config.DISABLE_YELLOW_BOX) {
   LogBox.ignoreAllLogs();
@@ -124,6 +132,8 @@ function App() {
   const providerNumber = useEnv("FORCE_PROVIDER");
   const hasSeenAnalyticsOptInPrompt = useSelector(hasSeenAnalyticsOptInPromptSelector);
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
+  const isOnboardingFlow = useSelector(isOnboardingFlowSelector);
+  const initiatedIsOnboardingFlow = useRef<boolean>(isOnboardingFlow);
   const dmk = useDeviceManagementKit();
   const dispatch = useDispatch();
   const isTrackingEnabled = useSelector(trackingEnabledSelector);
@@ -176,6 +186,12 @@ function App() {
   ]);
 
   useEffect(() => {
+    if (initiatedIsOnboardingFlow.current) {
+      dispatch(setIsOnboardingFlow(false));
+    }
+  }, [dispatch]);
+
+  useEffect(() => {
     if (!datadogFF?.enabled) return;
     const setUserEquipmentId = async () => {
       const { user } = await getOrCreateUser();
@@ -224,6 +240,7 @@ function App() {
       )}
 
       <AnalyticsConsole />
+      <RtkQueryDevPanel />
 
       <DebugTheme />
       <Modals />

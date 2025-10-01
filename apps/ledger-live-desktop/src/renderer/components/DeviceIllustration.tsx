@@ -9,7 +9,7 @@ import nanoSP from "~/renderer/images/nanoSP.svg";
 import { registerAssets } from "~/renderer/components/Onboarding/preloadAssets";
 import { DeviceModelId } from "@ledgerhq/devices";
 
-registerAssets([nanoX, nanoS, nanoSP, stax, europa]);
+registerAssets([nanoX, nanoS, nanoSP, stax, europa, apex]);
 
 const NanoS = styled.div`
   // prettier-ignore

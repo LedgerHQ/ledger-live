@@ -348,6 +348,22 @@ const evmConfig: CurrencyLiveConfigDefinition = {
       showNfts: false,
     },
   },
+  config_currency_core: {
+    type: "object",
+    default: {
+      status: {
+        type: "active",
+      },
+      node: {
+        type: "external",
+        uri: "https://rpc.ankr.com/core",
+      },
+      explorer: {
+        type: "none",
+      },
+      showNfts: false,
+    },
+  },
   config_currency_fantom: {
     type: "object",
     default: {
@@ -783,6 +799,16 @@ const evmConfig: CurrencyLiveConfigDefinition = {
       node: { type: "ledger", explorerId: "eth_holesky" },
       explorer: { type: "ledger", explorerId: "eth_holesky" },
       gasTracker: { type: "ledger", explorerId: "eth_holesky" },
+      showNfts: false,
+    },
+  },
+  config_currency_ethereum_hoodi: {
+    type: "object",
+    default: {
+      status: { type: "active" },
+      node: { type: "ledger", explorerId: "eth_hoodi" },
+      explorer: { type: "ledger", explorerId: "eth_hoodi" },
+      gasTracker: { type: "ledger", explorerId: "eth_hoodi" },
       showNfts: false,
     },
   },

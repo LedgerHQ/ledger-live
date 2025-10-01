@@ -1,22 +1,33 @@
 import Animation from "~/components/Animation";
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Dimensions, Image } from "react-native";
 import { Flex } from "@ledgerhq/native-ui";
 import OnboardingSuccessAnimation from "~/animations/onboardingSuccess.json";
+import { useIsFocused } from "@react-navigation/core";
 
 type Props = {
-  onAnimationFinish: () => void;
+  onAnimationFinish?: () => void;
+  loop: boolean;
 };
 
 const redirectDelay = 2500;
 
-const EuropaCompletionView: React.FC<Props> = ({ onAnimationFinish }) => {
+const EuropaCompletionView: React.FC<Props> = ({ onAnimationFinish, loop }) => {
   const { height: screenHeight, width: screenWidth } = Dimensions.get("screen");
-
+  const isFocused = useIsFocused();
   const delayRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [hasBeenFocused, setHasBeenFocused] = useState<boolean>(false);
 
   useEffect(() => {
-    delayRef.current = setTimeout(onAnimationFinish, redirectDelay);
+    if (!hasBeenFocused && isFocused) {
+      setHasBeenFocused(true);
+    }
+  }, [hasBeenFocused, isFocused, setHasBeenFocused]);
+
+  useEffect(() => {
+    if (onAnimationFinish) {
+      delayRef.current = setTimeout(onAnimationFinish, redirectDelay);
+    }
 
     return () => {
       if (delayRef.current) {
@@ -28,20 +39,22 @@ const EuropaCompletionView: React.FC<Props> = ({ onAnimationFinish }) => {
 
   return (
     <Flex height="100%" width="100%">
-      <Animation
-        source={OnboardingSuccessAnimation}
-        loop={false}
-        style={{
-          position: "absolute",
-          zIndex: 0,
-          top: -screenHeight / 2,
-          left: -screenWidth / 2,
-          right: 0,
-          bottom: 0,
-          height: screenHeight * 2,
-          width: screenWidth * 2,
-        }}
-      />
+      {hasBeenFocused && (
+        <Animation
+          source={OnboardingSuccessAnimation}
+          loop={loop}
+          style={{
+            position: "absolute",
+            zIndex: 0,
+            top: -screenHeight / 2,
+            left: -screenWidth / 2,
+            right: 0,
+            bottom: 0,
+            height: screenHeight * 2,
+            width: screenWidth * 2,
+          }}
+        />
+      )}
       <Flex flex={1} alignItems="center" justifyContent="center">
         <Image
           source={require("./assets/europa-success.webp")}
