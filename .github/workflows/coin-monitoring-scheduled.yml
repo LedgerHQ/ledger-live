@@ -15,7 +15,7 @@ jobs:
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-caches@develop
         with:
           install-proto: true
-      - uses: LedgerHQ/ledger-live/tools/actions/composites/monitor
+      - uses: LedgerHQ/ledger-live/tools/actions/composites/monitor@develop
         id: monitoring
         timeout-minutes: 120
         with:

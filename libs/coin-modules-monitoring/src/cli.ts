@@ -2,20 +2,24 @@ import { Command } from "commander";
 import currencies, { type AccountType } from "./currencies";
 import run from "./run";
 
-const VALID_ACCOUNT_TYPES: string[] = ["pristine", "average", "big"] as const;
+const VALID_ACCOUNT_TYPES = ["pristine", "average", "big"] as const;
 const VALID_CURRENCIES = Object.keys(currencies);
+
+function isValidAccountType(value: string): value is AccountType {
+  return VALID_ACCOUNT_TYPES.includes(value as AccountType);
+}
 
 function validateAccountTypes(value: string): AccountType[] {
   const types = value.split(",").map(t => t.trim());
-  const invalidTypes = types.filter(t => !VALID_ACCOUNT_TYPES.includes(t));
+  const invalidTypes = types.filter(t => !isValidAccountType(t));
 
-  if (invalidTypes.length > 0) {
+  if (types.some(t => !isValidAccountType(t))) {
     throw new Error(
       `Invalid account types: ${invalidTypes.join(", ")}. Valid types are: ${VALID_ACCOUNT_TYPES.join(", ")}`,
     );
   }
 
-  return types as AccountType[];
+  return types.filter(isValidAccountType);
 }
 
 function validateCurrencies(value: string): string[] {
@@ -35,7 +39,7 @@ const program = new Command();
 program
   .name("coin-modules-monitoring")
   .description("Monitor cryptocurrency modules and push metrics to Datadog")
-  .version("2.3.1");
+  .version("2.4.0");
 
 program
   .command("monitor")
@@ -68,31 +72,30 @@ program
       process.exit(0);
     }
 
-    run(monitoredCurrencies, accountTypes)
-      .then(result => {
-        if (!result.entries.length) {
-          console.log("No resulted entries. Exit now.");
-        } else {
-          console.log("========== SUMMARY ========== \n");
-          console.table(
-            result.entries.map(log => ({
-              address: log.accountAddressOrXpub,
-              type: log.accountType,
-              transactions: log.transactions,
-              currency: log.currencyName,
-              module: log.coinModuleName,
-              operation: log.operationType,
-              "duration (ms)": log.duration,
-              "network calls": log.totalNetworkCalls,
-            })),
-          );
-        }
-        process.exit(result.failed ? 1 : 0);
-      })
-      .catch(error => {
-        console.error(error);
-        process.exit(1);
-      });
+    try {
+      const result = await run(monitoredCurrencies, accountTypes);
+      if (!result.entries.length) {
+        console.log("No resulted entries. Exit now.");
+      } else {
+        console.log("========== SUMMARY ========== \n");
+        console.table(
+          result.entries.map(log => ({
+            address: log.accountAddressOrXpub,
+            type: log.accountType,
+            transactions: log.transactions,
+            currency: log.currencyName,
+            module: log.coinModuleName,
+            operation: log.operationType,
+            "duration (ms)": log.duration,
+            "network calls": log.totalNetworkCalls,
+          })),
+        );
+      }
+      process.exit(result.failed ? 1 : 0);
+    } catch (error) {
+      console.error(error);
+      process.exit(1);
+    }
   });
 
 program.parse();
