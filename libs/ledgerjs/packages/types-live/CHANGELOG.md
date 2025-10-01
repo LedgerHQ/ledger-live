@@ -1,5 +1,21 @@
 # @ledgerhq/types-live
 
+## 6.86.0
+
+### Minor Changes
+
+- [#11852](https://github.com/LedgerHQ/ledger-live/pull/11852) [`e04d493`](https://github.com/LedgerHQ/ledger-live/commit/e04d49340c65c8b4608a37bb726d21350fdd32f1) Thanks [@jonezque](https://github.com/jonezque)! - feat: added new tx type for canton, removed hardcoded instrumentId, parse operations with new tx types
+
+- [#11982](https://github.com/LedgerHQ/ledger-live/pull/11982) [`a37c06f`](https://github.com/LedgerHQ/ledger-live/commit/a37c06f97b061a5db0dad3632bb5c3e8f293677c) Thanks [@ooke-ledger](https://github.com/ooke-ledger)! - rename confirmation screen FF
+
+- [#11581](https://github.com/LedgerHQ/ledger-live/pull/11581) [`4d60b7e`](https://github.com/LedgerHQ/ledger-live/commit/4d60b7e0984f0f8ef75c1483e0cfaf5784fbc5ed) Thanks [@Canestin](https://github.com/Canestin)! - feature (lld,llm): integrate Core DAO Mainnet
+
+- [#11889](https://github.com/LedgerHQ/ledger-live/pull/11889) [`e3b568d`](https://github.com/LedgerHQ/ledger-live/commit/e3b568d2cbeee6dcf19a7047ce9fa11a04b0ae2a) Thanks [@Canestin](https://github.com/Canestin)! - feat: ethereum hoodi testnet integration
+
+- [#11750](https://github.com/LedgerHQ/ledger-live/pull/11750) [`f015ef3`](https://github.com/LedgerHQ/ledger-live/commit/f015ef32660905d00f55a45f451f38bc12aec9ba) Thanks [@hhumphrey-ledger](https://github.com/hhumphrey-ledger)! - Add entry points for iban in LLD
+
+- [#11894](https://github.com/LedgerHQ/ledger-live/pull/11894) [`e3bcefb`](https://github.com/LedgerHQ/ledger-live/commit/e3bcefbf8a46c91388d6f936fd31d6ffcdc24756) Thanks [@ooke-ledger](https://github.com/ooke-ledger)! - Add simplified view for swap tx confirmation
+
 ## 6.86.0-next.0
 
 ### Minor Changes

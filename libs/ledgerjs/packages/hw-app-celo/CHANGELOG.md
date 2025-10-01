@@ -1,5 +1,18 @@
 # @ledgerhq/hw-app-polkadot
 
+## 6.35.0
+
+### Minor Changes
+
+- [#11838](https://github.com/LedgerHQ/ledger-live/pull/11838) [`c2d8d86`](https://github.com/LedgerHQ/ledger-live/commit/c2d8d8670f848989836c46ea08ae88c88086fdd6) Thanks [@semeano](https://github.com/semeano)! - Enable Celo tokens
+
+### Patch Changes
+
+- Updated dependencies [[`c2d8d86`](https://github.com/LedgerHQ/ledger-live/commit/c2d8d8670f848989836c46ea08ae88c88086fdd6)]:
+  - @ledgerhq/hw-app-eth@6.46.0
+  - @ledgerhq/errors@6.26.0
+  - @ledgerhq/hw-transport@6.31.12
+
 ## 6.35.0-next.0
 
 ### Minor Changes

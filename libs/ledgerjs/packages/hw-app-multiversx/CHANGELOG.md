@@ -1,5 +1,12 @@
 # @ledgerhq/hw-app-elrond
 
+## 6.25.3
+
+### Patch Changes
+
+- Updated dependencies []:
+  - @ledgerhq/hw-transport@6.31.12
+
 ## 6.25.3-next.0
 
 ### Patch Changes

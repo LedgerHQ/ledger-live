@@ -1,5 +1,17 @@
 # @ledgerhq/hw-app-exchange
 
+## 0.15.0
+
+### Minor Changes
+
+- [#11960](https://github.com/LedgerHQ/ledger-live/pull/11960) [`a0da1ef`](https://github.com/LedgerHQ/ledger-live/commit/a0da1efb84783a68127ba28e79c8dec5294d4543) Thanks [@adammino-ledger](https://github.com/adammino-ledger)! - Add inExtraId for sell payload to proto generation structure
+
+### Patch Changes
+
+- Updated dependencies [[`c2d8d86`](https://github.com/LedgerHQ/ledger-live/commit/c2d8d8670f848989836c46ea08ae88c88086fdd6)]:
+  - @ledgerhq/errors@6.26.0
+  - @ledgerhq/hw-transport@6.31.12
+
 ## 0.15.0-next.0
 
 ### Minor Changes

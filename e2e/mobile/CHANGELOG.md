@@ -1,5 +1,11 @@
 # ledger-live-mobile-e2e-tests
 
+## 0.5.0
+
+### Minor Changes
+
+- [#11944](https://github.com/LedgerHQ/ledger-live/pull/11944) [`12d86b2`](https://github.com/LedgerHQ/ledger-live/commit/12d86b226c89ec24ce956d18c6301a4dc415c719) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Update B2CQA-650 test
+
 ## 0.5.0-next.0
 
 ### Minor Changes

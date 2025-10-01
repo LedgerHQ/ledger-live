@@ -1,5 +1,15 @@
 # @ledgerhq/types-cryptoassets
 
+## 7.28.0
+
+### Minor Changes
+
+- [#11948](https://github.com/LedgerHQ/ledger-live/pull/11948) [`ab0e1bc`](https://github.com/LedgerHQ/ledger-live/commit/ab0e1bcc97b66b750b6c29e618eb03ce6f25bb7b) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Simplify implementation of listTokenTypesForCryptoCurrency to not depend on bundled tokens.
+
+- [#11581](https://github.com/LedgerHQ/ledger-live/pull/11581) [`4d60b7e`](https://github.com/LedgerHQ/ledger-live/commit/4d60b7e0984f0f8ef75c1483e0cfaf5784fbc5ed) Thanks [@Canestin](https://github.com/Canestin)! - feature (lld,llm): integrate Core DAO Mainnet
+
+- [#11889](https://github.com/LedgerHQ/ledger-live/pull/11889) [`e3b568d`](https://github.com/LedgerHQ/ledger-live/commit/e3b568d2cbeee6dcf19a7047ce9fa11a04b0ae2a) Thanks [@Canestin](https://github.com/Canestin)! - feat: ethereum hoodi testnet integration
+
 ## 7.28.0-next.0
 
 ### Minor Changes

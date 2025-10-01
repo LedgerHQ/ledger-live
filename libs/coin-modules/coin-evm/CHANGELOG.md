@@ -1,5 +1,33 @@
 # @ledgerhq/coin-evm
 
+## 2.32.0
+
+### Minor Changes
+
+- [#11822](https://github.com/LedgerHQ/ledger-live/pull/11822) [`7ec652c`](https://github.com/LedgerHQ/ledger-live/commit/7ec652c31d8d634385919478386fe560a62be3a5) Thanks [@dilaouid](https://github.com/dilaouid)! - feat: getBalance returns staking positions
+
+- [#11581](https://github.com/LedgerHQ/ledger-live/pull/11581) [`4d60b7e`](https://github.com/LedgerHQ/ledger-live/commit/4d60b7e0984f0f8ef75c1483e0cfaf5784fbc5ed) Thanks [@Canestin](https://github.com/Canestin)! - feature (lld,llm): integrate Core DAO Mainnet
+
+- [#11889](https://github.com/LedgerHQ/ledger-live/pull/11889) [`e3b568d`](https://github.com/LedgerHQ/ledger-live/commit/e3b568d2cbeee6dcf19a7047ce9fa11a04b0ae2a) Thanks [@Canestin](https://github.com/Canestin)! - feat: ethereum hoodi testnet integration
+
+- [#11929](https://github.com/LedgerHQ/ledger-live/pull/11929) [`0d368f0`](https://github.com/LedgerHQ/ledger-live/commit/0d368f0e682b3bd3daafa6af5b396648a95b1488) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - feature(coin-evm): pass calldata to intent
+
+- [#11547](https://github.com/LedgerHQ/ledger-live/pull/11547) [`f4fa9d5`](https://github.com/LedgerHQ/ledger-live/commit/f4fa9d57e494db378bb00b114870b164a57c7039) Thanks [@dilaouid](https://github.com/dilaouid)! - feat: add getStakes method + contracts lists and methods
+
+- [#11892](https://github.com/LedgerHQ/ledger-live/pull/11892) [`e56c3a8`](https://github.com/LedgerHQ/ledger-live/commit/e56c3a855d038cac74bdef225b9d057653c9ca18) Thanks [@jnicoulaud-ledger](https://github.com/jnicoulaud-ledger)! - tech(evm): parallelize balance fetching
+
+### Patch Changes
+
+- Updated dependencies [[`ab0e1bc`](https://github.com/LedgerHQ/ledger-live/commit/ab0e1bcc97b66b750b6c29e618eb03ce6f25bb7b), [`c2d8d86`](https://github.com/LedgerHQ/ledger-live/commit/c2d8d8670f848989836c46ea08ae88c88086fdd6), [`4d60b7e`](https://github.com/LedgerHQ/ledger-live/commit/4d60b7e0984f0f8ef75c1483e0cfaf5784fbc5ed), [`e3b568d`](https://github.com/LedgerHQ/ledger-live/commit/e3b568d2cbeee6dcf19a7047ce9fa11a04b0ae2a), [`0d368f0`](https://github.com/LedgerHQ/ledger-live/commit/0d368f0e682b3bd3daafa6af5b396648a95b1488), [`fe1abf6`](https://github.com/LedgerHQ/ledger-live/commit/fe1abf640cc1a30b2e78bf7aa4a12e983a068f2e)]:
+  - @ledgerhq/cryptoassets@13.30.0
+  - @ledgerhq/errors@6.26.0
+  - @ledgerhq/live-env@2.18.0
+  - @ledgerhq/coin-framework@6.6.0
+  - @ledgerhq/domain-service@1.2.45
+  - @ledgerhq/evm-tools@1.7.8
+  - @ledgerhq/devices@8.6.1
+  - @ledgerhq/live-network@2.0.19
+
 ## 2.32.0-next.0
 
 ### Minor Changes
