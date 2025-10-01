@@ -14,7 +14,12 @@ export const calculateProviderTotals = (
   for (const currency of currencies) {
     const assetGroup = groupedAccountsByAsset[currency.id];
     if (assetGroup?.accounts.length > 0) {
-      totalBalance = totalBalance.plus(assetGroup.totalBalance);
+      const refCurrency = referenceCurrency ?? assetGroup.referenceCurrency;
+      const magnitudeDiff =
+        refCurrency.units[0].magnitude - assetGroup.referenceCurrency.units[0].magnitude;
+      const normalizedBalance = assetGroup.totalBalance.shiftedBy(magnitudeDiff);
+
+      totalBalance = totalBalance.plus(normalizedBalance);
       totalFiatValue = totalFiatValue.plus(assetGroup.totalFiatValue);
       hasAccounts = true;
 

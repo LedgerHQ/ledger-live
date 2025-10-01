@@ -83,11 +83,18 @@ export const createNetworkConfigurationHook =
 
       const result = composedHook(assets);
 
-      if (leftElement === "numberOfAccounts" || leftElement === "numberOfAccountsAndApy") {
+      if (
+        leftElement === "numberOfAccounts" ||
+        leftElement === "numberOfAccountsAndApy" ||
+        leftElement === undefined // default
+      ) {
         result.sort((a, b) => (b?.count || 0) - (a?.count || 0));
       }
 
-      if (rightElement === "balance") {
+      if (
+        rightElement === "balance" ||
+        rightElement === undefined // default
+      ) {
         result.sort((a, b) => compareByBalanceThenFiat(a?.balanceData, b?.balanceData));
       }
 
