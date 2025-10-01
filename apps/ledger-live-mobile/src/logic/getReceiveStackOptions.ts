@@ -1,5 +1,5 @@
 import { RouteProp } from "@react-navigation/core";
-import { CardStyleInterpolators, StackNavigationOptions } from "@react-navigation/stack";
+import { NativeStackNavigationOptions } from "@react-navigation/native-stack";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import { NavigatorName } from "~/const";
 import { NoahRouteProp, shouldShowNoahMenu } from "~/logic/shouldShowNoahMenu";
@@ -10,7 +10,7 @@ export const getReceiveStackOptions = ({
 }: {
   route: RouteProp<BaseNavigatorStackParamList, NavigatorName.ReceiveFunds>;
   noahEnabled: boolean | undefined;
-}): StackNavigationOptions => {
+}): NativeStackNavigationOptions => {
   const showMenu = shouldShowNoahMenu(route as unknown as NoahRouteProp, noahEnabled ?? false);
 
   if (!showMenu) {
@@ -20,13 +20,10 @@ export const getReceiveStackOptions = ({
   return {
     headerShown: false,
     presentation: "transparentModal",
-    headerMode: undefined,
-    cardStyle: { opacity: 1 },
     gestureEnabled: true,
     headerTitle: "",
     headerRight: () => null,
     headerBackButtonDisplayMode: "minimal",
     title: "",
-    cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS,
   };
 };
