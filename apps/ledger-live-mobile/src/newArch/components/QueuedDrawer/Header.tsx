@@ -5,7 +5,7 @@ import Animated, { useAnimatedStyle, useSharedValue, withTiming } from "react-na
 import { useTheme } from "styled-components/native";
 
 type HeaderProps = {
-  title?: string;
+  title?: string | React.ReactNode;
   hookOnBack?: () => void;
   hasBackButton?: boolean;
   noCloseButton?: boolean;
@@ -96,9 +96,13 @@ const Header = ({
 
       {title && (
         <Flex alignItems="center" pb={32}>
-          <Text variant="h4" numberOfLines={1}>
-            {title}
-          </Text>
+          {typeof title === "string" ? (
+            <Text variant="h4" numberOfLines={1}>
+              {title}
+            </Text>
+          ) : (
+            title
+          )}
         </Flex>
       )}
     </Flex>

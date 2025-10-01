@@ -12,7 +12,6 @@ import { RouteProp } from "@react-navigation/core";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { mockCurrencyData } from "../../fixtures/currency";
 import { INITIAL_STATE } from "~/reducers/settings";
-import { mockNavigation } from "../../fixtures/navigation";
 
 jest.mock("~/newArch/components/Swiper/components/Swiper", () => ({
   SwiperComponent: function MockSwiperComponent(props: React.PropsWithChildren<object>) {
@@ -66,6 +65,7 @@ const mockRoute = {
   },
 } as RouteProp<LandingPagesNavigatorParamList, ScreenName.LargeMoverLandingPage>;
 
+// eslint-disable-next-line @typescript-eslint/consistent-type-assertions
 const mockNavigation = {
   navigate: jest.fn(),
   goBack: jest.fn(),

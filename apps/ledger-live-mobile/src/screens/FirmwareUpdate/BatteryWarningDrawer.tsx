@@ -5,7 +5,7 @@ import { useTranslation } from "react-i18next";
 import { GetBatteryStatusesActionState } from "@ledgerhq/live-common/deviceSDK/actions/getBatteryStatuses";
 import { Device } from "@ledgerhq/types-devices";
 
-type Props = QueuedDrawerProps & {
+type Props = Omit<QueuedDrawerProps, "children"> & {
   state: GetBatteryStatusesActionState;
   lowBatteryPercentage: number;
   device: Device;

@@ -16,7 +16,7 @@ import Header from "./Header";
 export type Props = {
   isRequestingToBeOpened?: boolean;
   isForcingToBeOpened?: boolean;
-  title?: string;
+  title?: string | React.ReactNode;
   noCloseButton?: boolean;
   hasBackButton?: boolean;
   onBack?: () => void;
@@ -25,7 +25,26 @@ export type Props = {
   preventBackdropClick?: boolean;
   style?: StyleProp<ViewStyle>;
   containerStyle?: StyleProp<ViewStyle>;
-  children: React.ReactNode;
+  children?: React.ReactNode;
+
+  /** @deprecated This prop is deprecated and will be removed in future versions */
+  description?: string | React.ReactNode;
+  /** @deprecated This prop is deprecated and will be removed in future versions */
+  CustomHeader?: React.ComponentType;
+  /** @deprecated This prop is deprecated and will be removed in future versions */
+  Icon?: React.ComponentType | React.ReactNode;
+  /** @deprecated This prop is deprecated and will be removed in future versions */
+  iconColor?: string;
+  /** @deprecated This prop is deprecated and will be removed in future versions */
+  subtitle?: string;
+  /** @deprecated This prop is deprecated and will be removed in future versions */
+  onBackdropPress?: () => void;
+  /** @deprecated This prop is deprecated and will be removed in future versions */
+  onBackButtonPress?: () => void;
+  /** @deprecated This prop is deprecated and will be removed in future versions */
+  onSwipeComplete?: () => void;
+  /** @deprecated This prop is deprecated and will be removed in future versions */
+  propagateSwipe?: boolean;
 };
 
 const ANIMATION_DURATION = 250;
@@ -43,6 +62,16 @@ const QueuedDrawerNative = ({
   containerStyle,
   children,
   title,
+  // Deprecated props - ignored but accepted for backward compatibility
+  description: _description,
+  CustomHeader: _CustomHeader,
+  Icon: _Icon,
+  iconColor: _iconColor,
+  subtitle: _subtitle,
+  onBackdropPress: _onBackdropPress,
+  onBackButtonPress: _onBackButtonPress,
+  onSwipeComplete: _onSwipeComplete,
+  propagateSwipe: _propagateSwipe,
 }: Props) => {
   const { colors } = useTheme();
   const insets = useSafeAreaInsets();
@@ -177,9 +206,11 @@ const QueuedDrawerNative = ({
             />
           ) : null}
 
-          <View style={style || undefined}>
-            <IsInDrawerProvider>{children}</IsInDrawerProvider>
-          </View>
+          {children && (
+            <View style={style || undefined}>
+              <IsInDrawerProvider>{children}</IsInDrawerProvider>
+            </View>
+          )}
         </Animated.View>
       </View>
     </Modal>
