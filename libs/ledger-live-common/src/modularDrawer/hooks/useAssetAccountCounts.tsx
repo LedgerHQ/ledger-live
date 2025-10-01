@@ -24,13 +24,11 @@ export const useAssetAccountCounts = ({
   accountIds,
   formatLabel,
 }: AccountModuleParams): AssetCountItem[] =>
-  assets
-    .map(asset => {
-      const { length } = getAccountTuplesForCurrency(asset, nestedAccounts, accountIds);
-      return {
-        asset,
-        label: formatLabel(length),
-        count: length,
-      };
-    })
-    .sort((a, b) => b.count - a.count);
+  assets.map(asset => {
+    const { length } = getAccountTuplesForCurrency(asset, nestedAccounts, accountIds);
+    return {
+      asset,
+      label: formatLabel(length),
+      count: length,
+    };
+  });
