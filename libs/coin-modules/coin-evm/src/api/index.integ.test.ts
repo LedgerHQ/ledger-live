@@ -157,7 +157,7 @@ describe.each([
       });
       expectTransactionForMode(ethers.Transaction.from(result));
     });
-    it.only("crafts an undelegate transaction", async () => {
+    it("crafts an undelegate transaction", async () => {
       config = {
         node: {
           type: "external",
