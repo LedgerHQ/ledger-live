@@ -11,7 +11,11 @@ export function useCompletePostOnboarding() {
 
   const closePostOnboarding = useCallback(() => {
     dispatch(postOnboardingSetFinished());
-    navigation.navigate(NavigatorName.Main);
+
+    navigation.navigate(NavigatorName.Main, {
+      screen: NavigatorName.Portfolio,
+      params: { screen: NavigatorName.WalletTab },
+    });
   }, [dispatch, navigation]);
 
   return closePostOnboarding;
