@@ -253,6 +253,7 @@
     "@rozenite/expo-atlas-plugin": "1.0.0-alpha.15",
     "@rozenite/metro": "1.0.0-alpha.15",
     "@rozenite/network-activity-plugin": "1.0.0-alpha.15",
+    "@rozenite/react-navigation-plugin": "1.0.0-alpha.15",
     "@sentry/cli": "2.42.2",
     "@swc/core": "1.4.11",
     "@swc/jest": "0.2.36",
