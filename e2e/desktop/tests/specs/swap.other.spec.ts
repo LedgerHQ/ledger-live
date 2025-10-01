@@ -374,15 +374,15 @@ const swapWithDifferentSeed: SwapTestCase[] = [
   },
 ];
 
-test.describe("Swap - Using different seed", () => {
-  setupEnv(true);
+for (const { swap, xrayTicket, errorMessage, expectedErrorPerDevice } of swapWithDifferentSeed) {
+  test.describe("Swap - Using different seed", () => {
+    setupEnv(true);
 
-  test.use({
-    userdata: "speculos-x-other-account",
-    speculosApp: app,
-  });
+    test.use({
+      userdata: "speculos-x-other-account",
+      speculosApp: app,
+    });
 
-  for (const { swap, xrayTicket, errorMessage, expectedErrorPerDevice } of swapWithDifferentSeed) {
     test.beforeEach(async () => {
       const accountPair = [swap.accountToDebit, swap.accountToCredit].map(acc =>
         acc.currency.speculosApp.name.replaceAll(" ", "_"),
@@ -417,8 +417,8 @@ test.describe("Swap - Using different seed", () => {
         );
       },
     );
-  }
-});
+  });
+}
 
 const swapWithoutAccount = [
   {
