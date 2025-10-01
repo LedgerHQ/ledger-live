@@ -31,7 +31,7 @@ describe("useOpenAssetFlow", () => {
       },
     );
 
-    result.current.openAssetFlow(true);
+    result.current.openAssetFlow();
 
     expect(store.getState().modals.MODAL_ADD_ACCOUNTS).toEqual({
       isOpened: true,
