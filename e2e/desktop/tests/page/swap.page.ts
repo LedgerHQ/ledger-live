@@ -501,8 +501,8 @@ export class SwapPage extends AppPage {
   }
 
   async getMinimumAmount(accountFrom: Account, accountTo: Account) {
-    const amount = (await getMinimumSwapAmount(accountFrom, accountTo))?.toFixed(6) ?? "";
-    return amount ? parseFloat(amount).toString() : "";
+    const amount = await getMinimumSwapAmount(accountFrom, accountTo);
+    return amount ? parseFloat(amount.toFixed(6)).toString() : "";
   }
 
   @step("Click on swap max")

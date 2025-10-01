@@ -318,6 +318,11 @@ test.describe("Swap - Landing page", () => {
       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
       const minAmount = await app.swap.getMinimumAmount(fromAccount, toAccount);
+
+      if (!minAmount) {
+        throw new Error("Test failed: No quotes retrieved from swap API.");
+      }
+
       const swap = new Swap(fromAccount, toAccount, minAmount);
 
       await performSwapUntilQuoteSelectionStep(app, electronApp, swap, minAmount);
