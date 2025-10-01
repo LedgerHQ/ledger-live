@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from "react";
+import React from "react";
 import { View, StyleSheet, Animated } from "react-native";
 import { LoadingState, LoadingConfig, DEFAULT_LOADING_CONFIG } from "./LoadingStates";
 import LottieLauncher from "./components/LottieLauncher";
@@ -20,44 +20,34 @@ export const AppLoadingManager: React.FC<AppLoadingManagerProps> = ({
   const { loadingState, appIsReady, handleLottieFinish, appOpacity, lottieOpacity } =
     useAppLoadingManager({ isNavigationReady, config, onAppReady });
 
-  const showLottie = useMemo(
-    () => loadingState === LoadingState.LOTTIE_LOADING || appIsReady,
-    [loadingState, appIsReady],
-  );
+  const showLottie = loadingState === LoadingState.LOTTIE_LOADING || appIsReady;
 
-  const renderContent = useCallback(() => {
-    return (
-      <View style={styles.container}>
+  return (
+    <View style={styles.container}>
+      <Animated.View
+        style={[
+          styles.absoluteFill,
+          {
+            opacity: appOpacity,
+            pointerEvents: loadingState === LoadingState.APP_READY ? "auto" : "none",
+          },
+        ]}
+      >
+        {children}
+      </Animated.View>
+
+      {showLottie && (
         <Animated.View
           style={[
             styles.absoluteFill,
-            {
-              opacity: appOpacity,
-              pointerEvents: loadingState === LoadingState.APP_READY ? "auto" : "none",
-            },
+            { opacity: lottieOpacity, zIndex: loadingState === LoadingState.APP_READY ? -1 : 1 },
           ]}
         >
-          {children}
+          <LottieLauncher onFinish={handleLottieFinish} />
         </Animated.View>
-
-        {showLottie && (
-          <Animated.View
-            style={[
-              styles.absoluteFill,
-              {
-                opacity: lottieOpacity,
-                zIndex: loadingState === LoadingState.APP_READY ? -1 : 1,
-              },
-            ]}
-          >
-            <LottieLauncher onFinish={handleLottieFinish} />
-          </Animated.View>
-        )}
-      </View>
-    );
-  }, [appOpacity, loadingState, children, showLottie, lottieOpacity, handleLottieFinish]);
-
-  return renderContent();
+      )}
+    </View>
+  );
 };
 
 const styles = StyleSheet.create({

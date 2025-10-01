@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Animated, Easing } from "react-native";
 import SplashScreen from "react-native-splash-screen";
 import { LoadingConfig, LoadingState, DEFAULT_LOADING_CONFIG } from "../LoadingStates";
@@ -107,14 +107,11 @@ export function useAppLoadingManager({
     setLottieFinished(true);
   }, []);
 
-  return useMemo(
-    () => ({
-      loadingState,
-      appIsReady,
-      handleLottieFinish,
-      appOpacity,
-      lottieOpacity,
-    }),
-    [loadingState, appIsReady, handleLottieFinish, appOpacity, lottieOpacity],
-  );
+  return {
+    loadingState,
+    appIsReady,
+    handleLottieFinish,
+    appOpacity,
+    lottieOpacity,
+  };
 }
