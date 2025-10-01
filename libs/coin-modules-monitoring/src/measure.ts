@@ -69,7 +69,7 @@ function setImmediateInterval(fn: () => unknown, ms: number) {
 
 async function measureDuring<T>(fn: () => Promise<T>) {
   const cpuSamples: number[] = [];
-  const memSamples: Set<number> = new Set();
+  const memSamples: number[] = [];
 
   let prevCpu = process.cpuUsage();
   let prevTs = Date.now();
@@ -88,7 +88,7 @@ async function measureDuring<T>(fn: () => Promise<T>) {
     cpuSamples.push(cpu);
 
     const { rss } = process.memoryUsage();
-    memSamples.add(bytesToMB(Math.max(rss - previousMemory, 0)));
+    memSamples.push(bytesToMB(Math.max(rss - previousMemory, 0)));
 
     prevCpu = curCpu;
     prevTs = now;
@@ -100,7 +100,7 @@ async function measureDuring<T>(fn: () => Promise<T>) {
     const result = await fn();
     clearInterval(timer);
 
-    return { result, cpuSamples, memSamples: [...memSamples] };
+    return { result, cpuSamples, memSamples };
   } catch (err) {
     clearInterval(timer);
     throw err;
