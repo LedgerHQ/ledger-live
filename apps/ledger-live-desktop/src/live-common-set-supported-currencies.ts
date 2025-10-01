@@ -91,7 +91,7 @@ setSupportedCurrencies([
   "hyperevm",
   "canton_network",
   "canton_network_devnet",
-  "canton_network_localnet",
+  "canton_network_testnet",
   "coreum",
   "injective",
   "casper",

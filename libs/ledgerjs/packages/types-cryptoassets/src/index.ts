@@ -22,7 +22,7 @@ export type CryptoCurrencyId =
   | "callisto"
   | "canton_network"
   | "canton_network_devnet"
-  | "canton_network_localnet"
+  | "canton_network_testnet"
   | "cardano"
   | "cardano_testnet"
   | "celo"
