@@ -2250,6 +2250,9 @@
         "continueCTA" : "계속",
         "contactSupportCTA" : "지원 부서 연락"
       }
+    },
+    "completionScreen" : {
+      "title" : "이제 모든 것은 내 손끝에서 시작됩니다"
     }
   },
   "blePairingFlow" : {
@@ -2380,6 +2383,8 @@
   },
   "syncOnboarding" : {
     "title" : "{{productName}}의 준비를 완료합니다",
+    "twoStepTitle" : "시작하기",
+    "firstStepReadyTitle" : "{{productName}} 장치가 준비되었습니다",
     "estimatedTimeFormat" : "{{estimatedTime}}분",
     "deviceSelection" : {
       "title" : "아래와 같이 설정하려는 Ledger 장치를 선택합니다.",
@@ -2497,6 +2502,10 @@
       "newSeedContinueOnDevice" : "{{productName}}에 표시되는 안내를 따라주세요.",
       "recovery" : "Ledger 장치에서 생성된 비밀 복구 문구를 사용해 자산에 대한 보안을 극대화하세요.\n\n복구 문구가 없으신가요? {{productName}}을 사용해 새로운 복구 문구를 생성하세요."
     },
+    "secureCryptoStep" : {
+      "title" : "소중한 암호화폐를 안전하게",
+      "doneSubTitle" : "블록체인 앱이 설치되었습니다."
+    },
     "backup" : {
       "title" : "비밀 복구 문구 백업",
       "description" : "디지털 암호화 백업을 사용하면 비밀 복구 문구 없이 지갑에 대한 액세스를 복원할 수 있습니다.\n\n다음에서 원하는 디지털 백업을 선택하세요.",
@@ -2524,6 +2533,14 @@
     },
     "completion" : {
       "title" : "이제 통제권은 귀하에게 있습니다"
+    },
+    "successStep" : {
+      "title" : "{{productName}} 장치에서 디지털 자산을 안전하게 보호하세요"
+    },
+    "newSeed" : {
+      "subtitle" : "이제 Ledger Live로 모든 거래소와 지갑에서 암호화폐를 안전하게 전송하고 최고 수준의 보안을 누려보세요.",
+      "installCTA" : "자산 보호 시작하기",
+      "skipCTA" : "다음에 결정하기"
     }
   },
   "tabs" : {
@@ -3416,6 +3433,16 @@
       "shareAddress" : "주소 공유",
       "addressCopied" : "클립보드에 주소 복사됨",
       "taprootWarning" : "발송자가 탭루트를 지원하는지 확인해 주세요",
+      "menu" : {
+        "crypto" : {
+          "title" : "암호화폐 주소에서",
+          "description" : "원하는 암호화폐를 충전하세요"
+        },
+        "fiat" : {
+          "title" : "은행 계좌에서",
+          "description" : "EUR 또는 USD 은행 이체로 USDC를 충전하세요. KYC 승인이 필요합니다."
+        }
+      },
       "memoTag" : {
         "link" : "태그/메모가 필요하세요?",
         "title" : "태그/메모가 필요하세요?",
@@ -3749,12 +3776,16 @@
         "apt_description" : "Aptos 스왑 거래를 실행하려면 Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ 또는 Ledger Stax™와 같은 다른 Ledger 장치를 사용하세요.",
         "cosmos_title" : "Ledger Nano S™는 Cosmos 스왑을 지원하지 않습니다.",
         "cosmos_description" : "Cosmos 스왑 거래를 실행하려면 Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ 또는 Ledger Stax™와 같은 다른 Ledger 장치를 사용하세요.",
+        "hedera_title" : "Ledger Nano S™는 헤데라 스왑을 지원하지 않습니다.",
+        "hedera_description" : "헤데라를 스왑하려면 Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ 또는 Ledger Stax™와 같은 호환 가능한 다른 Ledger 장치를 사용하세요.",
         "osmo_title" : "Ledger Nano S™는 Osmosis 스왑을 지원하지 않습니다.",
         "osmo_description" : "Osmosis 스왑 거래를 실행하려면 Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ 또는 Ledger Stax™와 같은 다른 Ledger 장치를 사용하세요.",
         "dydx_title" : "Ledger Nano S™는 dYdX 스왑을 지원하지 않습니다.",
         "dydx_description" : "dYdX 스왑 거래를 실행하려면 Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ 또는 Ledger Stax™와 같은 다른 Ledger 장치를 사용하세요.",
         "sui_title" : "Ledger Nano S™는 Sui 스왑을 지원하지 않습니다",
-        "sui_description" : "Sui 스왑 거래를 수행하려면 Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ 또는 Ledger Stax™와 같은 다른 호환 Ledger 장치를 사용하세요."
+        "sui_description" : "Sui 스왑 거래를 수행하려면 Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ 또는 Ledger Stax™와 같은 다른 호환 Ledger 장치를 사용하세요.",
+        "kaspa_title" : "Ledger Nano S™ does not support swapping Kaspa",
+        "kaspa_description" : "To swap Kaspa, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™."
       }
     },
     "lending" : {
@@ -4401,7 +4432,8 @@
         "default" : "Ledger 장치에서 스왑 상세 정보를 확인한 후 전송하세요.",
         "provider" : "장치에서 스왑 세부사항을 확인한 후 전송하세요. 일부 트랜잭션에서 {{providerName}}의 추가 확인 단계가 필요할 수 있어 지연이 발생할 수 있습니다."
       },
-      "acceptTerms" : "본인은 이 트랜잭션을 확인함으로써 \n<0><0>{{provider}}</0>의 이용약관</0>을 수락합니다.",
+      "acceptTerms" : "본 트랜잭션에 서명하면 <0><0>{{provider}}</0>의 이용약관</0>을 수락하는 것으로 간주합니다.",
+      "changellySimplifiedAcceptTerms" : "트랜잭션 확인 시 Changelly의 <0>이용 약관</0> 및 <1>AML/KYC 정책</1>에 동의하는 것으로 간주됩니다. Changelly는 AML/KYC 절차를 적용할 수 있으며, 이는 드물게 트랜잭션 완료에 영향을 미칠 수 있습니다. 이 경우, Changelly <2>고객 지원</2>으로 문의해 주세요.",
       "notice" : "장치에서 스왑 세부사항을 확인한 후 전송하세요. 주소가 안전하게 교환되어 주소를 따로 인증할 필요 없습니다."
     },
     "swap2" : {
@@ -6902,8 +6934,8 @@
     "news" : {
       "title" : "알림",
       "emptyState" : {
-        "title" : "이제 마음의 평화와 고요를 즐기세요",
-        "desc" : "무슨 일이 생기면 알려 드리겠습니다."
+        "title" : "지금은 새로운 알림이 없어요",
+        "desc" : "새로운 소식이 있으면 알려드릴게요"
       },
       "time" : {
         "second" : "1초 전",
@@ -7180,9 +7212,10 @@
     "title" : "잠금 화면 사진",
     "change" : "변경",
     "drawer" : {
+      "title" : "커스텀 가능한 잠금 화면",
       "options" : {
-        "uploadFromPhone" : "내 사진 갤러리에서 선택",
-        "remove" : "현재 사진 삭제"
+        "uploadFromPhone" : "사진 변경",
+        "remove" : "잠금 화면 삭제"
       }
     },
     "toastRemove" : "잠금 화면 사진이 삭제됨",
@@ -7912,7 +7945,7 @@
     },
     "transactionCannotBeCreated" : {
       "title" : "서비스 제공 업체 이용 불가",
-      "description" : "이 서비스 제공업체에서는 스왑을 완료할 수 없습니다. 다른 업체를 이용해 보세요. 오류 코드 8HBB{{errorCode}}"
+      "description" : "Changelly에서 처리할 수 없는 트랜잭션입니다. 오류 코드 8HBB{{errorCode}}"
     },
     "default" : {
       "title" : "문제가 발생했습니다",
