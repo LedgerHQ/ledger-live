@@ -349,7 +349,8 @@ export type TransactionIntent<
 export type StakingTransactionIntent = TransactionIntent & {
   intentType: "staking";
   mode: StakingOperation;
-  sourceValidatorAddress?: string;
+  valAddress: string;
+  dstValAddress?: string;
 };
 
 export type SendTransactionIntent<
@@ -419,11 +420,11 @@ export type AlpacaApi<
 > = {
   broadcast: (tx: string, broadcastConfig?: BroadcastConfig) => Promise<string>;
   combine: (tx: string, signature: string, pubkey?: string) => string | Promise<string>;
-  estimateFees: (
-    transactionIntent: TransactionIntent<MemoType, TxDataType>,
+  estimateFees: <T extends TransactionIntent<MemoType, TxDataType>>(
+    transactionIntent: T,
   ) => Promise<FeeEstimation>;
-  craftTransaction: (
-    transactionIntent: TransactionIntent<MemoType, TxDataType>,
+  craftTransaction: <T extends TransactionIntent<MemoType, TxDataType>>(
+    transactionIntent: T,
     customFees?: FeeEstimation,
   ) => Promise<CraftedTransaction>;
   getBalance: (address: string) => Promise<Balance[]>;

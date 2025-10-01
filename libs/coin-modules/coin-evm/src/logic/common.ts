@@ -7,6 +7,7 @@ import type {
   MemoNotSupported,
   TransactionIntent,
 } from "@ledgerhq/coin-framework/api/index";
+import { isSendTransactionIntent } from "@ledgerhq/coin-framework/utils";
 import ERC20ABI from "../abis/erc20.abi.json";
 import {
   ApiFeeData,
@@ -111,17 +112,16 @@ export async function prepareUnsignedTxParams(
   const node = getNodeApi(currency);
 
   // Build transaction parameters based on type
-  const { to, data, value } = type.startsWith("staking-")
-    ? buildStakingTransactionParams(currency, transactionIntent)
-    : ((): { to: string; data: Buffer; value: bigint } => {
+  const { to, data, value } = isSendTransactionIntent(transactionIntent)
+    ? ((): { to: string; data: Buffer; value: bigint } => {
         const { amount, asset, recipient } = transactionIntent;
         return {
           to: isNative(asset) ? recipient : (asset.assetReference as string),
           data: getCallData(transactionIntent),
           value: isNative(asset) ? amount : 0n,
         };
-      })();
-
+      })()
+    : buildStakingTransactionParams(currency, transactionIntent);
   const gasLimit = await node.getGasEstimation(
     { currency, freshAddress: sender },
     { amount: BigNumber(value.toString()), recipient: to, data },

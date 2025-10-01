@@ -124,6 +124,39 @@ describe.each([
       });
       expectTransactionForMode(ethers.Transaction.from(result));
     });
+    it("crafts a staking transaction", async () => {
+      config = {
+        node: {
+          type: "external",
+          uri: "https://sei-evm-rpc.publicnode.com",
+        },
+        explorer: {
+          type: "etherscan",
+          uri: "https://proxyetherscan.api.live.ledger.com/v2/api/1329",
+        },
+      };
+      module = createApi(config as EvmConfig, "sei_network_evm");
+      const { transaction: result } = await module.craftTransaction({
+        type: `staking-${mode}`,
+        intentType: "staking",
+        amount: 10n,
+        mode: "delegate",
+        sender: "0x66c4371aE8FFeD2ec1c2EBbbcCfb7E494181E1E3",
+        recipient: "0x0000000000000000000000000000000000000105",
+        valAddress: "seivaloper1hxxnad3c86q3d8ggsyu24j7r0y5k3ef4uhh9e2",
+        data: { type: "buffer", value: Buffer.from([]) },
+        asset: {
+          type: "native",
+        },
+      });
+
+      expect(result).toMatch(/^0x[A-Fa-f0-9]+$/);
+      expect(ethers.Transaction.from(result)).toMatchObject({
+        value: 10n,
+        to: "0x7b2C7232f9E38F30E2868f0E5Bf311Cd83554b5A",
+      });
+      expectTransactionForMode(ethers.Transaction.from(result));
+    });
   });
 
   describe("getBalance", () => {
@@ -250,6 +283,34 @@ describe.each([
         asset: {
           type: "erc20",
           assetReference: "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+        },
+      });
+
+      expectEstimationForMode(result);
+    });
+    it("estimates fees for staking delegation", async () => {
+      config = {
+        node: {
+          type: "external",
+          uri: "https://sei-evm-rpc.publicnode.com",
+        },
+        explorer: {
+          type: "etherscan",
+          uri: "https://proxyetherscan.api.live.ledger.com/v2/api/1329",
+        },
+      };
+      module = createApi(config as EvmConfig, "sei_network_evm");
+      const result = await module.estimateFees({
+        type: `staking-${mode}`,
+        intentType: "staking",
+        amount: 1n, // 1 USDC (6 decimals)
+        mode: "delegate",
+        sender: "0x66c4371aE8FFeD2ec1c2EBbbcCfb7E494181E1E3",
+        recipient: "0x0000000000000000000000000000000000000105",
+        valAddress: "sei1wcpnkdcumxhgm9ar0jw0gxd529xgvkpq3ad8h8",
+        data: { type: "buffer", value: Buffer.from([]) },
+        asset: {
+          type: "native",
         },
       });
 

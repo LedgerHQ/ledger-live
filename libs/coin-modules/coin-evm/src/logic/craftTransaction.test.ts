@@ -64,6 +64,7 @@ describe("craftTransaction", () => {
         { ethereumLikeInfo: { chainId: 42 } } as CryptoCurrency,
         {
           transactionIntent: {
+            intentType: "transaction",
             type: `send-${transactionType}`,
             recipient: "0x7b2c7232f9e38f30e2868f0e5bf311cd83554b5a",
             amount: 10n,
@@ -105,6 +106,7 @@ describe("craftTransaction", () => {
         { ethereumLikeInfo: { chainId: 42 } } as CryptoCurrency,
         {
           transactionIntent: {
+            intentType: "transaction",
             type: `send-${transactionType}`,
             recipient: "0x7b2c7232f9e38f30e2868f0e5bf311cd83554b5a",
             amount: 10n,
@@ -158,6 +160,7 @@ describe("craftTransaction", () => {
       { ethereumLikeInfo: { chainId: 42 } } as CryptoCurrency,
       {
         transactionIntent: {
+          intentType: "transaction",
           type: "send-legacy",
           recipient: "0x7b2c7232f9e38f30e2868f0e5bf311cd83554b5a",
           amount: 10n,
@@ -233,7 +236,8 @@ describe("craftTransaction", () => {
                 intentType: "staking",
                 type: `staking-${transactionType}`,
                 sender: "0x1234567890abcdef1234567890abcdef12345678",
-                recipient: "seivaloper1234567890abcdef1234567890abcdef12345678",
+                recipient: "0x000000000000000000000000000000000001005",
+                valAddress: "seivaloper1234567890abcdef1234567890abcdef12345678",
                 amount: 1000000000000000000n, // 1 SEI
                 asset: { type: "native" },
                 mode: "delegate",
@@ -273,7 +277,8 @@ describe("craftTransaction", () => {
                 intentType: "staking",
                 type: `staking-${transactionType}`,
                 sender: "0x1234567890abcdef1234567890abcdef12345678",
-                recipient: "seivaloper1234567890abcdef1234567890abcdef12345678",
+                recipient: "0x000000000000000000000000000000000001005",
+                valAddress: "seivaloper1234567890abcdef1234567890abcdef12345678",
                 amount: 500000000000000000n, // 0.5 SEI
                 asset: { type: "native" },
                 mode: "undelegate",
@@ -313,7 +318,8 @@ describe("craftTransaction", () => {
                 intentType: "staking",
                 type: `staking-${transactionType}`,
                 sender: "0x1234567890abcdef1234567890abcdef12345678",
-                recipient: "0xabcdef1234567890abcdef1234567890abcdef12",
+                recipient: "0x55E1A0C8f376964bd339167476063bFED7f213d5",
+                valAddress: "0xabcdef1234567890abcdef1234567890abcdef12",
                 amount: 100000000000000000000n, // 100 CELO
                 asset: { type: "native" },
                 mode: "delegate",
@@ -349,14 +355,17 @@ describe("craftTransaction", () => {
             transactionIntent: {
               type: "staking",
               sender: "0x1234567890abcdef1234567890abcdef12345678",
-              recipient: "validator123",
+              recipient: "0x000000000000000000000000000000000001005",
+              valAddress: "validator123",
               amount: 1000000000000000000n,
               asset: { type: "native" },
               mode: "delegate",
             } as any,
           },
         ),
-      ).rejects.toThrow(); // Can throw GasEstimationError due to unsupported currency
+      ).rejects.toThrow(
+        "Unsupported intent type 'staking'. Must be 'send-legacy', 'send-eip1559', 'staking-legacy', or 'staking-eip1559'",
+      ); // Can throw GasEstimationError due to unsupported currency
     });
 
     it("fails to craft staking transaction with unsupported operation", async () => {
@@ -372,7 +381,8 @@ describe("craftTransaction", () => {
             transactionIntent: {
               type: "staking",
               sender: "0x1234567890abcdef1234567890abcdef12345678",
-              recipient: "validator123",
+              recipient: "0x000000000000000000000000000000000001005",
+              valAddress: "validator123",
               amount: 1000000000000000000n,
               asset: { type: "native" },
               mode: "unsupported_operation",

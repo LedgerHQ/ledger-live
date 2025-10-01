@@ -6,46 +6,47 @@ import { isStakingIntent } from "../utils";
 import { STAKING_CONTRACTS } from "./contracts";
 import { encodeStakingData } from "./encoder";
 import { isStakingOperation } from "./detectOperationType";
+import { ethers } from "ethers";
 
 type OperationFn = (
-  recipient: string,
+  valAddress: string,
   amount: bigint,
-  sourceValidator?: string,
+  dstValAddress?: string,
   delegator?: string,
 ) => unknown[];
 
 const STAKING_PROTOCOLS: Record<string, Record<string, OperationFn>> = {
   sei_network_evm: {
-    delegate: recipient => [recipient],
-    undelegate: (recipient, amount) => [recipient, amount],
-    redelegate: (recipient, amount, sourceValidator) => {
-      if (!sourceValidator) throw new Error("SEI redelegate requires sourceValidator");
-      return [sourceValidator, recipient, amount];
+    delegate: valAddress => [valAddress],
+    undelegate: (valAddress, amount) => [valAddress, amount],
+    redelegate: (valAddress, amount, dstValAddress) => {
+      if (!dstValAddress) throw new Error("SEI redelegate requires dstValAddress");
+      return [valAddress, dstValAddress, amount];
     },
-    getStakedBalance: (_recipient, _amount, sourceValidator, delegator) => {
-      if (!delegator || !sourceValidator) {
-        throw new Error("SEI getStakedBalance requires delegator and validator");
+    getStakedBalance: (_recipient, _amount, dstValAddress, delegator) => {
+      if (!delegator || !dstValAddress) {
+        throw new Error("SEI getStakedBalance requires delegator and dstValAddress");
       }
-      return [delegator, sourceValidator];
+      return [delegator, dstValAddress];
     },
   },
   celo: {
-    delegate: (recipient, amount) => [recipient, amount],
-    undelegate: (recipient, amount) => [recipient, amount],
+    delegate: (valAddress, amount) => [valAddress, amount],
+    undelegate: (valAddress, amount) => [valAddress, amount],
     redelegate: () => {
       throw new Error("Celo does not support redelegate");
     },
-    getStakedBalance: recipient => [recipient],
-    getUnstakedBalance: recipient => [recipient],
+    getStakedBalance: valAddress => [valAddress],
+    getUnstakedBalance: valAddress => [valAddress],
   },
 };
 
 export const buildTransactionParams = (
   currencyId: string,
   transactionType: StakingOperation,
-  recipient: string,
+  valAddress: string,
   amount: bigint,
-  sourceValidator?: string,
+  dstValAddress?: string,
   delegator?: string,
 ): unknown[] => {
   const protocol = STAKING_PROTOCOLS[currencyId];
@@ -57,8 +58,7 @@ export const buildTransactionParams = (
   if (!operation) {
     throw new Error(`Unsupported transaction type for ${currencyId}: ${transactionType}`);
   }
-
-  return operation(recipient, amount, sourceValidator, delegator);
+  return operation(valAddress, amount, dstValAddress, delegator);
 };
 
 /**
@@ -76,7 +76,7 @@ export function buildStakingTransactionParams(
     throw new Error("Intent must be a staking intent");
   }
 
-  const { amount, asset, recipient, sender, mode, sourceValidatorAddress } = intent;
+  const { amount, asset, sender, mode, valAddress, dstValAddress } = intent;
 
   const config = STAKING_CONTRACTS[currency.id];
   if (!config) {
@@ -90,9 +90,9 @@ export function buildStakingTransactionParams(
   const stakingParams = buildTransactionParams(
     currency.id,
     mode,
-    recipient,
+    valAddress,
     amount,
-    sourceValidatorAddress, // sourceValidator for redelegate
+    dstValAddress, // dstValAddress for redelegate
     sender, // delegator address
   );
 

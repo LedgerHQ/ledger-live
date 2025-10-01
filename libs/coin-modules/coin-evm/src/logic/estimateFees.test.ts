@@ -222,9 +222,11 @@ describe("estimateFees", () => {
   it("should estimate fees for delegate", async () => {
     const tokenIntent = {
       ...mockIntent,
+      intentType: "staking",
       mode: "delegate",
       recipient: "0x0000000000000000000000000000000000001005",
-      parameters: ["seivaloper1y82m5y3wevjneamzg0pmx87dzanyxzht0kepvn"],
+      valAddress: "seivaloper1y82m5y3wevjneamzg0pmx87dzanyxzht0kepvn",
+      amount: 1000000n,
     };
     const result = await estimateFees(
       { ...mockCurrency, id: "sei_network_evm", ethereumLikeInfo: { chainId: 1329 } },
@@ -264,13 +266,12 @@ describe("estimateFees", () => {
   it("should estimate fees for redelegate", async () => {
     const tokenIntent = {
       ...mockIntent,
+      intentType: "staking",
       mode: "redelegate",
       recipient: "0x0000000000000000000000000000000000001005",
-      parameters: [
-        "seivaloper1y82m5y3wevjneamzg0pmx87dzanyxzht0kepvn",
-        "selfvaloper1uvdqeduxvtchfphueyxraag9qkf8zfznzxs30y",
-        "1000000",
-      ],
+      valAddress: "seivaloper1y82m5y3wevjneamzg0pmx87dzanyxzht0kepvn",
+      dstValAddress: "selfvaloper1uvdqeduxvtchfphueyxraag9qkf8zfznzxs30y",
+      amount: 1000000n,
     };
     const result = await estimateFees(
       { ...mockCurrency, id: "sei_network_evm", ethereumLikeInfo: { chainId: 1329 } },
