@@ -36,7 +36,7 @@ const SectionAccounts = memo(
               mb={3}
             >
               <Trans
-                i18nKey="canton.addAccount.onboard.onboarded"
+                i18nKey="families.canton.addAccount.onboard.onboarded"
                 count={importableAccounts?.length}
               />
             </Box>
@@ -67,7 +67,7 @@ const SectionAccounts = memo(
             textTransform="uppercase"
             mb={3}
           >
-            <Trans i18nKey="canton.addAccount.onboard.newAccount" />
+            <Trans i18nKey="families.canton.addAccount.onboard.newAccount" />
           </Box>
           {creatableAccount && (
             <AccountRow
@@ -89,11 +89,11 @@ SectionAccounts.displayName = "SectionAccounts";
 const getStatusMessage = (status?: OnboardStatus): string => {
   switch (status) {
     case OnboardStatus.PREPARE:
-      return "canton.addAccount.onboard.status.prepare";
+      return "families.canton.addAccount.onboard.status.prepare";
     case OnboardStatus.SUBMIT:
-      return "canton.addAccount.onboard.status.submit";
+      return "families.canton.addAccount.onboard.status.submit";
     default:
-      return "canton.addAccount.onboard.status.default";
+      return "families.canton.addAccount.onboard.status.default";
   }
 };
 
@@ -121,7 +121,7 @@ export default function StepOnboard({
 
             <Box>
               <Alert type="hint">
-                <Trans i18nKey="canton.addAccount.onboard.init" />
+                <Trans i18nKey="families.canton.addAccount.onboard.init" />
               </Alert>
             </Box>
           </Box>
@@ -143,7 +143,7 @@ export default function StepOnboard({
 
             <Box>
               <Alert type="success">
-                <Trans i18nKey="canton.addAccount.onboard.success" />
+                <Trans i18nKey="families.canton.addAccount.onboard.success" />
               </Alert>
             </Box>
           </Box>
@@ -162,7 +162,7 @@ export default function StepOnboard({
 
             <Box>
               <Alert type="error">
-                <Trans i18nKey="canton.addAccount.onboard.error" />
+                <Trans i18nKey="families.canton.addAccount.onboard.error" />
               </Alert>
             </Box>
           </Box>
