@@ -17,7 +17,7 @@ const PortfolioEmptyState = ({ openAddAccountModal }: { openAddAccountModal: () 
 
   const goToReceiveFunds = useCallback(() => {
     track("button_clicked", { button: "Receive" });
-    navigation.navigate(NavigatorName.ReceiveFunds);
+    navigation.navigate(NavigatorName.ReceiveFunds, { screen: ScreenName.ReceiveSelectCrypto });
   }, [navigation]);
 
   const goToBuyCrypto = useCallback(() => {
