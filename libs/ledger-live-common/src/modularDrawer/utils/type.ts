@@ -35,7 +35,6 @@ export type AssetWithBalance = AssetType & {
 
 export type UseBalanceDeps = () => {
   flattenedAccounts: AccountLike[];
-  discreet: boolean;
   state: CounterValuesState;
   counterValueCurrency: Currency;
   locale: string;
