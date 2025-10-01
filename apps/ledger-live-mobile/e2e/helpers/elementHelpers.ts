@@ -1,6 +1,6 @@
 import { Direction, NativeElement } from "detox/detox";
 import { delay, isAndroid } from "./commonHelpers";
-import { by, element, waitFor, web } from "detox";
+import { by, element, waitFor, web, expect } from "detox";
 
 const DEFAULT_TIMEOUT = 60000; // 60s !!
 const startPositionY = 0.8; // Needed on Android to scroll views : https://github.com/wix/Detox/issues/3918
@@ -60,6 +60,12 @@ export const ElementHelpers = {
     return await getWebElementByTestId(id).atIndex(index).getText();
   },
 
+  async getWebElementValue(id: string, index = 0) {
+    const element = getWebElementByTestId(id).atIndex(index);
+    await expect(element).toExist();
+    return await element.runScript(el => el.value);
+  },
+
   async waitWebElementByTestId(id: string, timeout = DEFAULT_TIMEOUT) {
     const startTime = Date.now();
     const element = web.element(by.web.cssSelector(`[data-testid="${id}"]`));
@@ -82,13 +88,22 @@ export const ElementHelpers = {
   async typeTextByWebTestId(id: string, text: string) {
     await getWebElementByTestId(id).runScript(
       (el, text) => {
+        const lastValue = el.value;
         const setValue = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, "value")?.set;
         if (setValue) {
           setValue.call(el, text);
         } else {
           el.value = text;
         }
-        el.dispatchEvent(new Event("input", { bubbles: true }));
+        // Update React's internal value tracker
+        const event = new Event("input", { bubbles: true });
+        // @ts-expect-error: simulated doesn't exist on Event
+        event.simulated = true;
+        const tracker = el._valueTracker;
+        if (tracker) {
+          tracker.setValue(lastValue);
+        }
+        el.dispatchEvent(event);
       },
       [text],
     );

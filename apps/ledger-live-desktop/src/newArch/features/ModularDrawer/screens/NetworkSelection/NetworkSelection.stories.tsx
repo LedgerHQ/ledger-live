@@ -1,4 +1,3 @@
-import { res } from "../../__mocks__/useGroupedCurrenciesByProvider.mock";
 import type { Meta, StoryObj } from "@storybook/react";
 import { fn } from "@storybook/test";
 import React from "react";
@@ -44,7 +43,6 @@ const meta: Meta<typeof NetworkSelection> = {
     networksConfiguration: mockNetworksConfiguration,
     onNetworkSelected: onNetworkSelected,
     selectedAssetId: ethereumCurrency.id,
-    currenciesByProvider: res.result.currenciesByProvider,
   },
   decorators: [
     Story => (

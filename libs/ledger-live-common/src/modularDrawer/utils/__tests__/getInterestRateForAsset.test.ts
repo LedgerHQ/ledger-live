@@ -4,7 +4,7 @@ import {
   mockScrollCryptoCurrency,
   usdcToken,
 } from "../../__mocks__/currencies.mock";
-import { ApyType } from "../type";
+import { ApyType } from "../../../dada-client/types/trend";
 
 describe("getInterestRateForAsset", () => {
   const networks = [mockEthCryptoCurrency, usdcToken];

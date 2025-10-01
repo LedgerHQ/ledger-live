@@ -1,7 +1,6 @@
 import { useModularDrawerData } from "../useModularDrawerData";
 import { LoadingStatus } from "@ledgerhq/live-common/deposit/type";
 import { renderHook, waitFor } from "tests/testSetup";
-import { expectedCurrenciesByProvider } from "../../__mocks__/useModularDrawerData.mock";
 import { expectedAssetsSorted } from "@ledgerhq/live-common/modularDrawer/__mocks__/dada.mock";
 
 describe("useModularDrawerData", () => {
@@ -10,7 +9,6 @@ describe("useModularDrawerData", () => {
 
     expect(result.current.isLoading).toBe(true);
     expect(result.current.data).toBeUndefined();
-    expect(result.current.isSuccess).toBe(false);
     expect(result.current.error).toBeUndefined();
     expect(result.current.loadingStatus).toBe(LoadingStatus.Pending);
 
@@ -22,7 +20,6 @@ describe("useModularDrawerData", () => {
     );
 
     expect(result.current.data).toBeDefined();
-    expect(result.current.isSuccess).toBe(true);
     expect(result.current.error).toBeUndefined();
     expect(result.current.loadingStatus).toBe(LoadingStatus.Success);
   });
@@ -39,23 +36,12 @@ describe("useModularDrawerData", () => {
       { timeout: 5000 },
     );
 
-    const { assetsSorted, currenciesByProvider, sortedCryptoCurrencies } = result.current;
+    const { assetsSorted, sortedCryptoCurrencies } = result.current;
 
     expect(assetsSorted).toBeDefined();
     expect(assetsSorted).toHaveLength(10);
     const assets = assetsSorted?.map(assetData => assetData.asset);
     expect(assets).toEqual(expectedAssetsSorted);
-
-    expect(currenciesByProvider).toBeDefined();
-    expect(currenciesByProvider).toHaveLength(10);
-    for (let i = 0; i < currenciesByProvider.length; i++) {
-      const currencyByProvider = currenciesByProvider[i];
-      const expectedCurrencyByProvider = expectedCurrenciesByProvider[i];
-      expect(currencyByProvider.providerId).toBe(expectedCurrencyByProvider.providerId);
-      expect(currencyByProvider.currenciesByNetwork).toHaveLength(
-        expectedCurrencyByProvider.nbCurrenciesByNetwork,
-      );
-    }
 
     expect(sortedCryptoCurrencies).toBeDefined();
     expect(Array.isArray(sortedCryptoCurrencies)).toBe(true);

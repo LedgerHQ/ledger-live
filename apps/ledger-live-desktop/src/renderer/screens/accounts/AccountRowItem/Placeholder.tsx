@@ -41,7 +41,7 @@ const Placeholder = () => {
       button: "Add account list",
       page: "Accounts",
     });
-    openAssetFlow(true);
+    openAssetFlow();
   };
 
   return (

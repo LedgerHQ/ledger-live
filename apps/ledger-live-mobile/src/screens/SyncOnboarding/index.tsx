@@ -112,7 +112,7 @@ export const SyncOnboarding = ({ navigation, route }: SyncOnboardingScreenProps)
   } = useOnboardingStatePolling({
     device,
     pollingPeriodMs: POLLING_PERIOD_MS,
-    stopPolling: !isPollingOn,
+    stopPolling: !isPollingOn || !isFocused,
   });
 
   const { state: toggleOnboardingEarlyCheckState } = useToggleOnboardingEarlyCheck({

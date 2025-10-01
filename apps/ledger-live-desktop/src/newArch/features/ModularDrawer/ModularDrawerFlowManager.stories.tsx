@@ -22,7 +22,7 @@ import {
   bitcoinCurrency,
   ethereumCurrency,
 } from "../__mocks__/useSelectAssetFlow.mock";
-import { assetsDataApi } from "@ledgerhq/live-common/modularDrawer/data/state-manager/api";
+import { assetsDataApi } from "@ledgerhq/live-common/dada-client/state-manager/api";
 import ModularDrawerFlowManager from "./ModularDrawerFlowManager";
 import { ModularDrawerFlowManagerProps } from "./types";
 
@@ -93,11 +93,15 @@ type ExtraStoryArgs = {
 
 type StoryArgs = ModularDrawerFlowManagerProps & ExtraStoryArgs;
 
+const mockCurrencies = [ethereumCurrency, arbitrumCurrency, arbitrumToken, bitcoinCurrency].map(
+  currency => currency.id,
+);
+
 const meta: Meta<StoryArgs> = {
   title: "ModularDrawer/ModularDrawerFlowManager",
   component: ModularDrawerFlowManager,
   args: {
-    currencies: [ethereumCurrency, arbitrumCurrency, arbitrumToken, bitcoinCurrency],
+    currencies: mockCurrencies,
     onAssetSelected: () => null,
     onAccountSelected: () => null,
   },
@@ -233,7 +237,7 @@ export const CustomDrawerConfig: StoryObj<StoryArgs> = {
           }}
         >
           <ModularDrawerFlowManager
-            currencies={[ethereumCurrency, arbitrumCurrency, arbitrumToken, bitcoinCurrency]}
+            currencies={mockCurrencies}
             onAssetSelected={() => null}
             onAccountSelected={() => null}
             drawerConfiguration={drawerConfiguration}

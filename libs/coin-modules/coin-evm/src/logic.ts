@@ -11,7 +11,7 @@ import { getEnv } from "@ledgerhq/live-env";
 import { isNFTActive } from "@ledgerhq/coin-framework/nft/support";
 import { mergeOps } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
-import { decodeTokenAccountId } from "@ledgerhq/coin-framework/account/index";
+import { decodeTokenAccountId, encodeTokenAccountId } from "@ledgerhq/coin-framework/account/index";
 import { CryptoCurrency, TokenCurrency, Unit } from "@ledgerhq/types-cryptoassets";
 import { getEIP712FieldsDisplayedOnNano } from "@ledgerhq/evm-tools/message/EIP712/index";
 import { getNodeApi } from "./network/node/index";
@@ -216,14 +216,18 @@ export const getSyncHash = (
  * creating a duplicate that will cause issues.
  * (Incorrect NFT balance & React key dup)
  */
-export const attachOperations = (
+export const attachOperations = async (
+  accountId: string,
   _coinOperations: Operation[],
   _tokenOperations: Operation[],
   _nftOperations: Operation[],
   _internalOperations: Operation[],
-  filters: { blacklistedTokenIds: string[] | undefined } = { blacklistedTokenIds: [] },
-): Operation[] => {
-  const { blacklistedTokenIds } = filters;
+  filters: {
+    blacklistedTokenIds: string[] | undefined;
+    findToken: (contractAddress: string) => Promise<TokenCurrency | undefined>;
+  },
+): Promise<Operation[]> => {
+  const { blacklistedTokenIds, findToken } = filters;
 
   // Creating deep copies of each Operation[] to prevent mutating the originals
   const coinOperations = _coinOperations.map(op => ({ ...op }));
@@ -277,8 +281,13 @@ export const attachOperations = (
 
   // Looping through token operations to potentially copy them as a child operation of a coin operation
   for (const tokenOperation of tokenOperations) {
-    const { token } = decodeTokenAccountId(tokenOperation.accountId);
+    const token = tokenOperation.contract && (await findToken(tokenOperation.contract));
     if (!token || blacklistedTokenIds?.includes(token.id)) continue;
+
+    const tokenAccountId = encodeTokenAccountId(accountId, token);
+    const operationId = encodeOperationId(tokenAccountId, tokenOperation.hash, tokenOperation.type);
+    tokenOperation.id = operationId;
+    tokenOperation.accountId = tokenAccountId;
 
     let mainOperations = coinOperationsByHash[tokenOperation.hash];
     if (!mainOperations?.length) {

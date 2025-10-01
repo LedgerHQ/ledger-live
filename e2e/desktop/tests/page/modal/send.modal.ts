@@ -1,7 +1,7 @@
 import { expect } from "@playwright/test";
 import { Modal } from "../../component/modal.component";
 import { step } from "../../misc/reporters/step";
-import { NFTTransaction, Transaction } from "@ledgerhq/live-common/e2e/models/Transaction";
+import { Transaction } from "@ledgerhq/live-common/e2e/models/Transaction";
 
 export class SendModal extends Modal {
   private accountDebitPlaceholder = this.page.locator("#account-debit-placeholder input");
@@ -14,7 +14,6 @@ export class SendModal extends Modal {
   private recipientAddressDisplayedValue = this.page.getByTestId("recipient-address");
   private recipientEnsDisplayed = this.page.getByTestId("transaction-recipient-ens");
   private amountDisplayedValue = this.page.getByTestId("transaction-amount");
-  private nftNameDisplayed = this.page.getByTestId("transaction-nft-name");
   private feeStrategy = (fee: string) => this.page.getByText(fee);
   private noTagButton = this.page.getByRole("button", { name: "Don’t add Tag" });
   private ENSAddressLabel = this.page.getByTestId("ens-address-sendModal");
@@ -59,16 +58,6 @@ export class SendModal extends Modal {
     }
   }
 
-  @step("Craft NFT tx")
-  async craftNFTTx(tx: NFTTransaction) {
-    await this.fillRecipient(tx.accountToCredit.ensName || tx.accountToCredit.address);
-    const displayedAddress = await this.ENSAddressLabel.innerText();
-    expect(displayedAddress).toEqual(tx.accountToCredit.address);
-    await this.continue();
-    await this.chooseFeeStrategy(tx.speed);
-    await this.continue();
-  }
-
   @step("Fill tx information")
   async craftTx(tx: Transaction) {
     await this.fillRecipientInfo(tx);
@@ -83,19 +72,6 @@ export class SendModal extends Modal {
     if (tx.speed !== undefined) {
       await this.chooseFeeStrategy(tx.speed);
     }
-  }
-
-  @step("Verify tx information before confirming")
-  async expectNFTTxInfoValidity(tx: NFTTransaction) {
-    const displayedEns = await this.recipientEnsDisplayed.innerText();
-    expect(displayedEns).toEqual(tx.accountToCredit.ensName);
-
-    const displayedReceiveAddress = await this.recipientAddressDisplayedValue.innerText();
-    expect(displayedReceiveAddress).toEqual(tx.accountToCredit.address);
-
-    const displayedNftName = await this.nftNameDisplayed.innerText();
-    expect(displayedNftName).toEqual(expect.stringContaining(tx.nft.nftName));
-    await this.continue();
   }
 
   @step("Verify tx information before confirming")

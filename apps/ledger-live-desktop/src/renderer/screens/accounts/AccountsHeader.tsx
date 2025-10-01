@@ -25,7 +25,7 @@ const AccountsHeader = () => {
       button: "Add account",
       page: "Accounts",
     });
-    openAssetFlow(true);
+    openAssetFlow();
   };
   return (
     <Box

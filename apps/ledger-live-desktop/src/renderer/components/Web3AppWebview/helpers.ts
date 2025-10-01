@@ -345,7 +345,7 @@ export function useSelectAccount({
       dispatch(setSourceValue(source));
 
       openAssetAndAccountDrawer({
-        currencies,
+        currencies: currencies.map(currency => currency.id),
         onSuccess,
         onCancel,
         areCurrenciesFiltered: manifest.currencies !== "*",

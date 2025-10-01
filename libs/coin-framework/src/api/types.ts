@@ -470,7 +470,7 @@ export type BridgeApi<
   ) => Promise<TransactionValidation>;
   getSequence: (address: string) => Promise<number>;
   getChainSpecificRules?: () => ChainSpecificRules;
-  getTokenFromAsset?: (asset: AssetInfo) => TokenCurrency | undefined;
+  getTokenFromAsset?: (asset: AssetInfo) => Promise<TokenCurrency | undefined>;
   getAssetFromToken?: (token: TokenCurrency, owner: string) => AssetInfo;
   computeIntentType?: (transaction: Record<string, unknown>) => string;
 };

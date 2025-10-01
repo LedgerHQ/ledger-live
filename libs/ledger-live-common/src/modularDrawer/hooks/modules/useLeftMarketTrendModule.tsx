@@ -1,6 +1,6 @@
 import React, { useMemo } from "react";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { useMarketByCurrencies } from "../useMarketByCurrencies";
+import { useMarketByCurrencies } from "../../../dada-client/hooks/useMarketByCurrencies";
 
 const createMarketTrendItem = ({
   percent,

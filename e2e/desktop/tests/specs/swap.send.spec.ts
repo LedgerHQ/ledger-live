@@ -32,27 +32,9 @@ const swaps = [
     tag: ["@NanoSP", "@LNS", "@NanoX"],
   },
   {
-    fromAccount: TokenAccount.ETH_USDT_1,
-    toAccount: TokenAccount.ETH_1,
-    xrayTicket: "B2CQA-2752, B2CQA-2048, B2CQA-3450",
-    tag: ["@NanoSP", "@LNS", "@NanoX"],
-  },
-  {
-    fromAccount: Account.ETH_1,
-    toAccount: Account.SOL_1,
-    xrayTicket: "B2CQA-2748, B2CQA-3450",
-    tag: ["@NanoSP", "@LNS", "@NanoX"],
-  },
-  {
     fromAccount: Account.ETH_1,
     toAccount: TokenAccount.ETH_USDT_1,
     xrayTicket: "B2CQA-2749, B2CQA-3450",
-    tag: ["@NanoSP", "@LNS", "@NanoX"],
-  },
-  {
-    fromAccount: Account.BTC_NATIVE_SEGWIT_1,
-    toAccount: Account.SOL_1,
-    xrayTicket: "B2CQA-2747, B2CQA-3450",
     tag: ["@NanoSP", "@LNS", "@NanoX"],
   },
   {
@@ -68,12 +50,6 @@ const swaps = [
     tag: ["@NanoSP", "@LNS", "@NanoX"],
   },
   {
-    fromAccount: TokenAccount.ETH_USDT_1,
-    toAccount: Account.SOL_1,
-    xrayTicket: "B2CQA-2751, B2CQA-3450",
-    tag: ["@NanoSP", "@LNS", "@NanoX"],
-  },
-  {
     fromAccount: Account.SOL_1,
     toAccount: Account.ETH_1,
     xrayTicket: "B2CQA-2775, B2CQA-3450",
@@ -86,57 +62,15 @@ const swaps = [
     tag: ["@NanoSP", "@LNS", "@NanoX"],
   },
   {
-    fromAccount: Account.SOL_1,
-    toAccount: TokenAccount.ETH_USDT_1,
-    xrayTicket: "B2CQA-2777, B2CQA-3450, B2CQA-3281",
-    tag: ["@NanoSP", "@LNS", "@NanoX"],
-  },
-  {
-    fromAccount: TokenAccount.ETH_USDC_1,
-    toAccount: Account.ETH_1,
-    xrayTicket: "B2CQA-2830, B2CQA-3450, B2CQA-3281",
-    tag: ["@NanoSP", "@LNS", "@NanoX"],
-  },
-  {
-    fromAccount: TokenAccount.ETH_USDC_1,
-    toAccount: Account.SOL_1,
-    xrayTicket: "B2CQA-2831, B2CQA-3450, B2CQA-3281",
-    tag: ["@NanoSP", "@LNS", "@NanoX"],
-  },
-  {
     fromAccount: TokenAccount.ETH_USDC_1,
     toAccount: Account.BTC_NATIVE_SEGWIT_1,
     xrayTicket: "B2CQA-2832, B2CQA-3450, B2CQA-3281",
     tag: ["@NanoSP", "@LNS", "@NanoX"],
   },
   {
-    fromAccount: Account.ETH_1,
-    toAccount: Account.DOT_1,
-    xrayTicket: "B2CQA-3017, B2CQA-3450, B2CQA-3281",
-    tag: ["@NanoSP", "@LNS", "@NanoX"],
-  },
-  {
-    fromAccount: Account.XRP_1,
-    toAccount: TokenAccount.ETH_USDC_1,
-    xrayTicket: "B2CQA-3075, B2CQA-3450, B2CQA-3281",
-    tag: ["@NanoSP", "@LNS", "@NanoX"],
-  },
-  {
-    fromAccount: Account.ETH_1,
-    toAccount: Account.XRP_1,
-    xrayTicket: "B2CQA-3076, B2CQA-3450, B2CQA-3281",
-    tag: ["@NanoSP", "@LNS", "@NanoX"],
-  },
-  {
     fromAccount: Account.XRP_1,
     toAccount: Account.BTC_NATIVE_SEGWIT_1,
     xrayTicket: "B2CQA-3077, B2CQA-3450, B2CQA-3281",
-    tag: ["@NanoSP", "@LNS", "@NanoX"],
-  },
-  {
-    fromAccount: Account.BTC_NATIVE_SEGWIT_1,
-    toAccount: Account.LTC_1,
-    xrayTicket: "B2CQA-3078, B2CQA-3450, B2CQA-3282",
     tag: ["@NanoSP", "@LNS", "@NanoX"],
   },
   //ToDo: enable once it's back in prod
@@ -146,6 +80,14 @@ const swaps = [
   //   xrayTicket: "B2CQA-3081, B2CQA-3450, B2CQA-3281",
   //   tag: ["@NanoSP", "@NanoX"],
   // },
+  //ToDo: enable once Hedera Swap E2E test issue fixed
+  // Task https://ledgerhq.atlassian.net/browse/LIVE-21744
+  //{
+  //  fromAccount: Account.HEDERA_1,
+  //  toAccount: Account.XRP_1,
+  //  xrayTicket: "B2CQA-3753",
+  //  tag: ["@NanoSP", "@NanoX"],
+  //},
 ];
 
 for (const { fromAccount, toAccount, xrayTicket, tag } of swaps) {

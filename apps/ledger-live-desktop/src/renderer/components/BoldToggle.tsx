@@ -7,8 +7,7 @@ type Props = {
   isBold: boolean;
   children: React.ReactNode;
 };
-function BoldToggle(props: Props) {
-  const { ff, ffBold, isBold, children } = props;
+function BoldToggle({ ff = "Inter", ffBold = "Inter|SemiBold", isBold, children }: Props) {
   return (
     <Box relative>
       <Text
@@ -27,8 +26,4 @@ function BoldToggle(props: Props) {
     </Box>
   );
 }
-BoldToggle.defaultProps = {
-  ff: "Inter",
-  ffBold: "Inter|SemiBold",
-};
 export default BoldToggle;

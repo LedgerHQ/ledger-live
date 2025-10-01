@@ -31,9 +31,7 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
     const balanceRes = await alpacaApi.getBalance(address);
     const nativeAsset = extractBalance(balanceRes, "native");
 
-    const assetsBalance = balanceRes
-      .filter(b => b.asset.type !== "native")
-      .filter(b => alpacaApi.getTokenFromAsset && alpacaApi.getTokenFromAsset(b.asset));
+    const allTokenAssetsBalances = balanceRes.filter(b => b.asset.type !== "native");
     const nativeBalance = BigInt(nativeAsset?.value ?? "0");
 
     const spendableBalance = BigInt(nativeBalance - BigInt(nativeAsset?.locked ?? "0"));
@@ -64,15 +62,14 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
       }
     });
 
-    const subAccounts =
-      buildSubAccounts({
-        currency,
-        accountId,
-        assetsBalance,
-        syncConfig,
-        operations: assetOperations,
-        getTokenFromAsset: alpacaApi.getTokenFromAsset,
-      }) || [];
+    const subAccounts = await buildSubAccounts({
+      currency,
+      accountId,
+      allTokenAssetsBalances,
+      syncConfig,
+      operations: assetOperations,
+      getTokenFromAsset: alpacaApi.getTokenFromAsset,
+    });
 
     const operations = mergedOps.map(op => {
       const subOperations = inferSubOperations(op.hash, subAccounts);

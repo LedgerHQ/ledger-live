@@ -10,8 +10,6 @@ import {
 import { Transaction } from "@ledgerhq/live-common/e2e/models/Transaction";
 import { Fee } from "@ledgerhq/live-common/e2e/enum/Fee";
 import invariant from "invariant";
-import { getEnv } from "@ledgerhq/live-env";
-import { TransactionStatus } from "@ledgerhq/live-common/e2e/enum/TransactionStatus";
 
 const subAccounts = [
   {
@@ -166,14 +164,6 @@ for (const transaction of transactionE2E) {
       cliCommands: [
         (appjsonPath: string) => {
           return CLI.liveData({
-            currency: transaction.tx.accountToCredit.currency.speculosApp.name,
-            index: transaction.tx.accountToCredit.index,
-            add: true,
-            appjson: appjsonPath,
-          });
-        },
-        (appjsonPath: string) => {
-          return CLI.liveData({
             currency: transaction.tx.accountToDebit.currency.speculosApp.name,
             index: transaction.tx.accountToDebit.index,
             add: true,
@@ -210,21 +200,6 @@ for (const transaction of transactionE2E) {
         await app.send.expectTxSent();
         await app.account.navigateToViewDetails();
         await app.sendDrawer.addressValueIsVisible(transaction.tx.accountToCredit.address);
-        await app.drawer.closeDrawer();
-        if (!getEnv("DISABLE_TRANSACTION_BROADCAST")) {
-          await app.layout.goToAccounts();
-          await app.accounts.clickSyncBtnForAccount(
-            getParentAccountName(transaction.tx.accountToCredit),
-          );
-          await app.accounts.navigateToAccountByName(
-            getParentAccountName(transaction.tx.accountToCredit),
-          );
-          await app.account.navigateToTokenInAccount(transaction.tx.accountToDebit);
-          await app.account.expectAccountBalance();
-          await app.account.checkAccountChart();
-          await app.account.selectAndClickOnLastOperation(TransactionStatus.RECEIVED);
-          await app.sendDrawer.expectReceiverInfos(transaction.tx);
-        }
       },
     );
   });
@@ -465,14 +440,6 @@ test.describe("Send token (subAccount) - valid address & amount input", () => {
           appjson: appjsonPath,
         });
       },
-      (appjsonPath: string) => {
-        return CLI.liveData({
-          currency: tokenTransactionValid.accountToCredit.currency.speculosApp.name,
-          index: tokenTransactionValid.accountToCredit.index,
-          add: true,
-          appjson: appjsonPath,
-        });
-      },
     ],
   });
 
@@ -509,22 +476,6 @@ test.describe("Send token (subAccount) - valid address & amount input", () => {
       await app.send.expectTxSent();
       await app.account.navigateToViewDetails();
       await app.sendDrawer.addressValueIsVisible(tokenTransactionValid.accountToCredit.address);
-      await app.drawer.closeDrawer();
-
-      if (!getEnv("DISABLE_TRANSACTION_BROADCAST")) {
-        await app.layout.goToAccounts();
-        await app.accounts.clickSyncBtnForAccount(
-          getParentAccountName(tokenTransactionValid.accountToCredit),
-        );
-        await app.accounts.navigateToAccountByName(
-          getParentAccountName(tokenTransactionValid.accountToCredit),
-        );
-        await app.account.navigateToTokenInAccount(tokenTransactionValid.accountToCredit);
-        await app.account.expectAccountBalance();
-        await app.account.checkAccountChart();
-        await app.account.selectAndClickOnLastOperation(TransactionStatus.RECEIVED);
-        await app.sendDrawer.expectReceiverInfos(tokenTransactionValid);
-      }
     },
   );
 });

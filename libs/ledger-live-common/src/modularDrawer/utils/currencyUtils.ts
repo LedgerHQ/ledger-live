@@ -4,7 +4,6 @@ import { isTokenCurrency } from "../../currencies";
 import { CurrenciesByProviderId } from "../../deposit/type";
 
 export type ProviderCoverageMap = Map<string, Set<string>>;
-
 export const safeCurrencyLookup = (id: string): CryptoOrTokenCurrency | null => {
   try {
     return getTokenOrCryptoCurrencyById(id);

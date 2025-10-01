@@ -151,10 +151,13 @@ apps/cli/src/commands/devices                                      @ledgerhq/liv
 **/OnboardingAppInstall/**																				 @ledgerhq/live-devices
 **/UpdateFirmwareModal/**																					 @ledgerhq/live-devices
 apps/**/components/DeviceAction/                                   @ledgerhq/live-devices
-apps/ledger-live-mobile/src/components/ValidateMessageOnDevice.tsx   @ledgerhq/live-devices
+apps/ledger-live-mobile/src/components/ValidateMessageOnDevice.tsx @ledgerhq/live-devices
 apps/ledger-live-mobile/android/**/LocationHelperModule.kt         @ledgerhq/live-devices
-apps/ledger-live-mobile/components/RequiresBLE/                    @ledgerhq/live-devices
-apps/ledger-live-mobile/components/RequiresLocation/               @ledgerhq/live-devices
+apps/ledger-live-mobile/src/components/RequiresBLE/                @ledgerhq/live-devices
+apps/ledger-live-mobile/src/components/RequiresLocation/           @ledgerhq/live-devices
+apps/ledger-live-mobile/src/components/SelectDevice2/              @ledgerhq/live-devices
+apps/ledger-live-mobile/src/components/BleDevicePairingFlow/       @ledgerhq/live-devices
+apps/ledger-live-mobile/src/screens/FirmwareUpdate/                @ledgerhq/live-devices
 apps/ledger-live-mobile/src/screens/MyLedger*/             	       @ledgerhq/live-devices
 apps/ledger-live-mobile/src/newArch/features/FirmwareUpdate/       @ledgerhq/live-devices
 apps/web-tools/repl/                                               @ledgerhq/live-devices
@@ -177,6 +180,7 @@ libs/live-dmk-desktop/                                             @ledgerhq/liv
 libs/live-dmk-shared/                                              @ledgerhq/live-devices
 libs/live-signer-evm/                                              @ledgerhq/live-devices
 
+
 # Recover team
 apps/ledger-live-desktop/src/renderer/components/RecoverBanner/         @ledgerhq/recover-software
 apps/ledger-live-desktop/src/renderer/components/RecoverRestore/        @ledgerhq/recover-software
@@ -195,8 +199,8 @@ apps/ledger-live-mobile/src/screens/SyncOnboarding/TwoStepStepper/      @ledgerh
 apps/web-tools/trustchain/                               @ledgerhq/live-hub
 
 # UI tests
-apps/ledger-live-desktop/tests/                          @ledgerhq/live-hub @ledgerhq/qaa
-apps/ledger-live-mobile/e2e/                             @ledgerhq/live-hub @ledgerhq/qaa
+apps/ledger-live-desktop/tests/                                             @ledgerhq/live-hub
+apps/ledger-live-mobile/e2e/                                                @ledgerhq/live-hub
 e2e/                                                                        @ledgerhq/qaa
 
 # Cross-team generic files can be opted out (no strict ownership when it concerns everyone)
