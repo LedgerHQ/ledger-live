@@ -102,6 +102,8 @@ import useNativeStartupInfo from "./hooks/useNativeStartupInfo";
 import { ConfigureDBSaveEffects } from "./components/DBSave";
 import { useRef } from "react";
 
+import { useNetworkActivityDevTools } from "@rozenite/network-activity-plugin";
+
 if (Config.DISABLE_YELLOW_BOX) {
   LogBox.ignoreAllLogs();
 }
@@ -224,6 +226,15 @@ function App() {
   useFetchCurrencyFrom();
   useListenToHidDevices();
   useAutoDismissPostOnboardingEntryPoint();
+
+  // Enable Network Activity DevTools in development
+  useNetworkActivityDevTools({
+    inspectors: {
+      http: true, // Monitor HTTP/HTTPS requests
+      websocket: false, // Disable WebSocket monitoring (can be noisy)
+      sse: false, // Disable Server-Sent Events monitoring
+    },
+  });
 
   return (
     <>
