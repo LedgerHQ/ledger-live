@@ -111,7 +111,11 @@ module.exports = withRozenite(
   withSentryConfig(mergeConfig(getDefaultConfig(__dirname), metroConfig)),
   {
     enabled: process.env.WITH_ROZENITE === "true",
-    include: ["@rozenite/network-activity-plugin", "@rozenite/expo-atlas-plugin"],
+    include: [
+      "@rozenite/network-activity-plugin",
+      "@rozenite/expo-atlas-plugin",
+      "@rozenite/react-navigation-plugin",
+    ],
     enhanceMetroConfig: config => withRozeniteExpoAtlasPlugin(config),
   },
 );

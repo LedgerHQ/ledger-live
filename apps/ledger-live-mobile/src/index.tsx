@@ -103,6 +103,8 @@ import { ConfigureDBSaveEffects } from "./components/DBSave";
 import { useRef } from "react";
 
 import { useNetworkActivityDevTools } from "@rozenite/network-activity-plugin";
+import { useReactNavigationDevTools } from "@rozenite/react-navigation-plugin";
+import { navigationRef } from "./rootnavigation";
 
 if (Config.DISABLE_YELLOW_BOX) {
   LogBox.ignoreAllLogs();
@@ -235,6 +237,7 @@ function App() {
       sse: false, // Disable Server-Sent Events monitoring
     },
   });
+  useReactNavigationDevTools({ ref: navigationRef });
 
   return (
     <>
