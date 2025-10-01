@@ -567,9 +567,9 @@ export const handlers = ({
               targetCurrencyId: toCurrency?.id,
               hardwareWalletType: deviceInfo?.modelId as DeviceModelId,
               swapAppVersion,
-              fromAccountId: fromAccount.id,
-              toAccountId: toAccount?.id,
-              amount: amountExpectedTo.toString(),
+              fromAccountAddress,
+              toAccountAddress,
+              amount: fromAmount,
             });
 
             resolve({ operationHash, swapId });
@@ -586,11 +586,11 @@ export const handlers = ({
               hardwareWalletType: deviceInfo?.modelId as DeviceModelId,
               swapType: quoteId ? "fixed" : "float",
               swapAppVersion,
-              fromAccountId: fromAccount.id,
-              toAccountId: toAccount?.id,
+              fromAccountAddress,
+              toAccountAddress,
               refundAddress,
               payoutAddress,
-              amount: amountExpectedTo.toString(),
+              amount: fromAmount,
               seedIdFrom: mainFromAccount.seedIdentifier,
               seedIdTo: toParentAccount?.seedIdentifier || (toAccount as Account)?.seedIdentifier,
             });

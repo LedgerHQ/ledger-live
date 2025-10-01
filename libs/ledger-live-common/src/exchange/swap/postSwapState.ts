@@ -7,13 +7,13 @@ import { getSwapAPIBaseURL, getSwapUserIP } from ".";
 
 function createSwapIntentHashes({
   provider,
-  fromAccountId,
-  toAccountId,
+  fromAccountAddress,
+  toAccountAddress,
   amount,
 }: {
   provider: string;
-  fromAccountId?: string;
-  toAccountId?: string;
+  fromAccountAddress?: string;
+  toAccountAddress?: string;
   amount?: string;
 }) {
   // for example '2025-08-01' used to add a one day unique nonce to the swap intent hash
@@ -24,8 +24,8 @@ function createSwapIntentHashes({
     .update(
       JSON.stringify({
         provider,
-        fromAccountId,
-        toAccountId,
+        fromAccountAddress,
+        toAccountAddress,
         amount,
         currentday,
       }),
@@ -36,8 +36,8 @@ function createSwapIntentHashes({
     .createHash("sha256")
     .update(
       JSON.stringify({
-        fromAccountId,
-        toAccountId,
+        fromAccountAddress,
+        toAccountAddress,
         amount,
         currentday,
       }),
@@ -52,8 +52,8 @@ export const postSwapAccepted: PostSwapAccepted = async ({
   swapId = "",
   transactionId,
   swapAppVersion,
-  fromAccountId,
-  toAccountId,
+  fromAccountAddress,
+  toAccountAddress,
   amount,
   ...rest
 }) => {
@@ -70,8 +70,8 @@ export const postSwapAccepted: PostSwapAccepted = async ({
 
   const { swapIntentWithProvider, swapIntentWithoutProvider } = createSwapIntentHashes({
     provider,
-    fromAccountId,
-    toAccountId,
+    fromAccountAddress,
+    toAccountAddress,
     amount,
   });
 
@@ -99,8 +99,8 @@ export const postSwapCancelled: PostSwapCancelled = async ({
   provider,
   swapId = "",
   swapAppVersion,
-  fromAccountId,
-  toAccountId,
+  fromAccountAddress,
+  toAccountAddress,
   amount,
   seedIdFrom,
   seedIdTo,
@@ -120,19 +120,14 @@ export const postSwapCancelled: PostSwapCancelled = async ({
 
   const { swapIntentWithProvider, swapIntentWithoutProvider } = createSwapIntentHashes({
     provider,
-    fromAccountId,
-    toAccountId,
+    fromAccountAddress,
+    toAccountAddress,
     amount,
   });
 
   // Check if the refundAddress and payoutAddress match the account addresses, just to eliminate this supposition
   const payloadAddressMatchAccountAddress =
-    fromAccountId &&
-    toAccountId &&
-    refundAddress &&
-    payoutAddress &&
-    fromAccountId.includes(refundAddress) &&
-    toAccountId.includes(payoutAddress);
+    fromAccountAddress === refundAddress && toAccountAddress === payoutAddress;
 
   try {
     const ipHeader = getSwapUserIP();
@@ -151,8 +146,9 @@ export const postSwapCancelled: PostSwapCancelled = async ({
       swapIntentWithProvider,
       swapIntentWithoutProvider,
       payloadAddressMatchAccountAddress,
-      fromAccountId: shouldIncludeAddresses ? fromAccountId : undefined,
-      toAccountId: shouldIncludeAddresses ? toAccountId : undefined,
+      amount,
+      fromAccountAddress: shouldIncludeAddresses ? fromAccountAddress : undefined,
+      toAccountAddress: shouldIncludeAddresses ? toAccountAddress : undefined,
       payloadRefundAddress: shouldIncludeAddresses ? refundAddress : undefined,
       payloadPayoutAddress: shouldIncludeAddresses ? payoutAddress : undefined,
       maybeSeedMatch: seedIdFrom === seedIdTo, // Only true if both accounts are from the same seed and from the same chain type
