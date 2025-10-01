@@ -151,10 +151,13 @@ apps/cli/src/commands/devices                                      @ledgerhq/liv
 **/OnboardingAppInstall/**																				 @ledgerhq/live-devices
 **/UpdateFirmwareModal/**																					 @ledgerhq/live-devices
 apps/**/components/DeviceAction/                                   @ledgerhq/live-devices
-apps/ledger-live-mobile/src/components/ValidateMessageOnDevice.tsx   @ledgerhq/live-devices
+apps/ledger-live-mobile/src/components/ValidateMessageOnDevice.tsx @ledgerhq/live-devices
 apps/ledger-live-mobile/android/**/LocationHelperModule.kt         @ledgerhq/live-devices
-apps/ledger-live-mobile/components/RequiresBLE/                    @ledgerhq/live-devices
-apps/ledger-live-mobile/components/RequiresLocation/               @ledgerhq/live-devices
+apps/ledger-live-mobile/src/components/RequiresBLE/                @ledgerhq/live-devices
+apps/ledger-live-mobile/src/components/RequiresLocation/           @ledgerhq/live-devices
+apps/ledger-live-mobile/src/components/SelectDevice2/              @ledgerhq/live-devices
+apps/ledger-live-mobile/src/components/BleDevicePairingFlow/       @ledgerhq/live-devices
+apps/ledger-live-mobile/src/screens/FirmwareUpdate/                @ledgerhq/live-devices
 apps/ledger-live-mobile/src/screens/MyLedger*/             	       @ledgerhq/live-devices
 apps/ledger-live-mobile/src/newArch/features/FirmwareUpdate/       @ledgerhq/live-devices
 apps/web-tools/repl/                                               @ledgerhq/live-devices
@@ -176,6 +179,7 @@ libs/live-dmk-mobile/                                              @ledgerhq/liv
 libs/live-dmk-desktop/                                             @ledgerhq/live-devices
 libs/live-dmk-shared/                                              @ledgerhq/live-devices
 libs/live-signer-evm/                                              @ledgerhq/live-devices
+
 
 # Recover team
 apps/ledger-live-desktop/src/renderer/components/RecoverBanner/         @ledgerhq/recover-software
