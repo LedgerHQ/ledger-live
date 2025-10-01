@@ -9,12 +9,12 @@ function createSwapIntentHashes({
   provider,
   fromAccountAddress,
   toAccountAddress,
-  amount,
+  fromAmount,
 }: {
   provider: string;
   fromAccountAddress?: string;
   toAccountAddress?: string;
-  amount?: string;
+  fromAmount?: string;
 }) {
   // for example '2025-08-01' used to add a one day unique nonce to the swap intent hash
   const currentday = new Date().toISOString().split("T")[0];
@@ -26,7 +26,7 @@ function createSwapIntentHashes({
         provider,
         fromAccountAddress,
         toAccountAddress,
-        amount,
+        fromAmount,
         currentday,
       }),
     )
@@ -38,7 +38,7 @@ function createSwapIntentHashes({
       JSON.stringify({
         fromAccountAddress,
         toAccountAddress,
-        amount,
+        fromAmount,
         currentday,
       }),
     )
@@ -54,7 +54,7 @@ export const postSwapAccepted: PostSwapAccepted = async ({
   swapAppVersion,
   fromAccountAddress,
   toAccountAddress,
-  amount,
+  fromAmount,
   ...rest
 }) => {
   if (isIntegrationTestEnv())
@@ -72,7 +72,7 @@ export const postSwapAccepted: PostSwapAccepted = async ({
     provider,
     fromAccountAddress,
     toAccountAddress,
-    amount,
+    fromAmount,
   });
 
   try {
@@ -101,7 +101,7 @@ export const postSwapCancelled: PostSwapCancelled = async ({
   swapAppVersion,
   fromAccountAddress,
   toAccountAddress,
-  amount,
+  fromAmount,
   seedIdFrom,
   seedIdTo,
   refundAddress,
@@ -122,7 +122,7 @@ export const postSwapCancelled: PostSwapCancelled = async ({
     provider,
     fromAccountAddress,
     toAccountAddress,
-    amount,
+    fromAmount,
   });
 
   // Check if the refundAddress and payoutAddress match the account addresses, just to eliminate this supposition
@@ -146,7 +146,7 @@ export const postSwapCancelled: PostSwapCancelled = async ({
       swapIntentWithProvider,
       swapIntentWithoutProvider,
       payloadAddressMatchAccountAddress,
-      amount,
+      fromAmount,
       fromAccountAddress: shouldIncludeAddresses ? fromAccountAddress : undefined,
       toAccountAddress: shouldIncludeAddresses ? toAccountAddress : undefined,
       payloadRefundAddress: shouldIncludeAddresses ? refundAddress : undefined,

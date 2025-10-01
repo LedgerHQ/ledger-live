@@ -14,7 +14,7 @@ export const setBroadcastTransaction = ({
   swapAppVersion,
   fromAccountAddress,
   toAccountAddress,
-  amount,
+  fromAmount,
 }: {
   result: { operation: Operation | string; swapId: string };
   provider: string;
@@ -25,7 +25,7 @@ export const setBroadcastTransaction = ({
   swapAppVersion?: string;
   fromAccountAddress?: string;
   toAccountAddress?: string;
-  amount?: string;
+  fromAmount?: string;
 }) => {
   const { operation, swapId } = result;
 
@@ -47,7 +47,7 @@ export const setBroadcastTransaction = ({
       swapAppVersion,
       fromAccountAddress,
       toAccountAddress,
-      amount,
+      fromAmount,
     });
   } else {
     postSwapAccepted({
@@ -61,7 +61,7 @@ export const setBroadcastTransaction = ({
       swapAppVersion,
       fromAccountAddress,
       toAccountAddress,
-      amount,
+      fromAmount,
     });
   }
 };

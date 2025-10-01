@@ -569,7 +569,7 @@ export const handlers = ({
               swapAppVersion,
               fromAccountAddress,
               toAccountAddress,
-              amount: fromAmount,
+              fromAmount,
             });
 
             resolve({ operationHash, swapId });
@@ -590,7 +590,7 @@ export const handlers = ({
               toAccountAddress,
               refundAddress,
               payoutAddress,
-              amount: fromAmount,
+              fromAmount,
               seedIdFrom: mainFromAccount.seedIdentifier,
               seedIdTo: toParentAccount?.seedIdentifier || (toAccount as Account)?.seedIdentifier,
             });

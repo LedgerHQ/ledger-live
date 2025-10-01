@@ -202,7 +202,7 @@ type SwapStateRequest = {
   swapAppVersion?: string;
   fromAccountAddress?: string;
   toAccountAddress?: string;
-  amount?: string;
+  fromAmount?: string;
   seedIdFrom?: string;
   seedIdTo?: string;
   refundAddress?: string;
