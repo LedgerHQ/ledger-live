@@ -1,3 +1,4 @@
+import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import { INITIAL_STATE as TRUSTCHAIN_INITIAL_STATE } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { initialState as POST_ONBOARDING_INITIAL_STATE } from "@ledgerhq/live-common/postOnboarding/reducer";
 import { CountervaluesBridge, CountervaluesProvider } from "@ledgerhq/live-countervalues-react";
@@ -45,7 +46,6 @@ import CustomLiveAppProvider from "./CustomLiveAppProvider";
 import { getFeature } from "./featureFlags";
 import { assetsDataApi } from "@ledgerhq/live-common/dada-client/state-manager/api";
 import { INITIAL_STATE as TOOLS_INITIAL_STATE } from "~/reducers/tools";
-import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 
 const INITIAL_STATE: State = {
   accounts: ACCOUNTS_INITIAL_STATE,

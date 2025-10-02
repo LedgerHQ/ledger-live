@@ -3,11 +3,11 @@ import { renderWithReactQuery } from "@tests/test-renderer";
 import { MarketQuickActions } from "./";
 import { getCryptoCurrencyById, getTokenById } from "@ledgerhq/live-common/currencies/index";
 import { ScreenName } from "~/const";
-import { createStackNavigator } from "@react-navigation/stack";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { genAccount } from "@ledgerhq/coin-framework/mocks/account";
 import { State } from "~/reducers/types";
 
-const Stack = createStackNavigator();
+const Stack = createNativeStackNavigator();
 
 const usdcCurrency = getTokenById("ethereum/erc20/usd__coin");
 const moneroCurrency = getCryptoCurrencyById("monero");
