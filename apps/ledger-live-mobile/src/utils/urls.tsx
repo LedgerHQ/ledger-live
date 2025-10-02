@@ -146,9 +146,13 @@ export const urls = {
         main: "https://www.thorswap.finance/",
         tos: "https://docs.thorswap.finance/thorswap/resources/terms-of-service",
       },
+      nearintents: {
+        main: "https://www.near.org/intents",
+        tos: "https://swapkit.dev/terms-of-service/",
+      },
       oneinch: {
-        main: "https://1inch.io/",
-        tos: "https://1inch.io/assets/1inch_network_terms_of_use.pdf",
+        main: "https://1inch.com/",
+        tos: "https://1inch.com/assets/Widget_1inch.com_Terms_of_Use.pdf",
       },
       moonpay: {
         main: "https://www.moonpay.com/",

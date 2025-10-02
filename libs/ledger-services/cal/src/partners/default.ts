@@ -80,7 +80,7 @@ export const SWAP_DATA_CDN: Record<string, AdditionalProviderConfig> = {
     needsKYC: false,
     useInExchangeApp: false,
     displayName: "1inch",
-    termsOfUseUrl: "https://1inch.com/assets/1inch_network_terms_of_use.pdf",
+    termsOfUseUrl: "https://1inch.com/assets/Widget_1inch.com_Terms_of_Use.pdf",
     supportUrl: "https://help.1inch.com/en/",
     mainUrl: "https://1inch.com/",
   },
