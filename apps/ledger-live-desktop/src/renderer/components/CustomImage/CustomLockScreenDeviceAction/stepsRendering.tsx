@@ -69,18 +69,16 @@ export const RenderLoadingImage = ({
       <AnimationWrapper>
         <FramedPicture deviceModelId={deviceModelId} source={source} loadingProgress={progress} />
       </AnimationWrapper>
-      <Flex justifyContent="center" mt={2}>
-        <Text variant="h4Inter" whiteSpace="pre-wrap" textAlign="center" pt="40px">
-          {t(
-            progress && progress > 0.9
-              ? "customImage.steps.transfer.voila"
-              : "customImage.steps.transfer.loadingPicture",
-            {
-              productName: device.deviceName || getDeviceModel(device.modelId)?.productName,
-            },
-          )}
-        </Text>
-      </Flex>
+      <Text variant="h4Inter" whiteSpace="pre-wrap" textAlign="center" pt="40px">
+        {`${t(
+          progress && progress > 0.9
+            ? "customImage.steps.transfer.voila"
+            : "customImage.steps.transfer.loadingPicture",
+          {
+            productName: device.deviceName || getDeviceModel(device.modelId)?.productName,
+          },
+        )}\n `}
+      </Text>
     </Flex>
   );
 };
