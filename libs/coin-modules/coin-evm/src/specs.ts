@@ -42,6 +42,7 @@ const minBalancePerCurrencyId: Partial<Record<CryptoCurrency["id"], number>> = {
   ethereum: 0.001,
   ethereum_sepolia: 0.001,
   ethereum_holesky: 0.001,
+  ethereum_hoodi: 0.001,
   ethereum_classic: 0.05,
   lukso: 0.01,
   linea: 0.001,

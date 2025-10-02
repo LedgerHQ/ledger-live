@@ -31,6 +31,9 @@ import { balanceItem } from "../../components/Balance";
 import { useBalanceDeps } from "../../hooks/useBalanceDeps";
 import { useSelector } from "react-redux";
 import { modularDrawerFlowSelector, modularDrawerSourceSelector } from "~/reducers/modularDrawer";
+import { AssetData } from "@ledgerhq/live-common/modularDrawer/utils/type";
+import { groupCurrenciesByProvider } from "@ledgerhq/live-common/modularDrawer/utils/groupCurrenciesByProvider";
+import { withDiscreetMode } from "~/context/DiscreetModeContext";
 
 export type AssetSelectionStepProps = {
   isOpen: boolean;
@@ -41,6 +44,7 @@ export type AssetSelectionStepProps = {
   hasError?: boolean;
   refetch?: () => void;
   loadNext?: () => void;
+  assetsSorted?: AssetData[];
 };
 
 const SAFE_MARGIN_BOTTOM = 48;
@@ -54,6 +58,7 @@ const AssetSelection = ({
   hasError,
   refetch,
   loadNext,
+  assetsSorted,
 }: Readonly<AssetSelectionStepProps>) => {
   const { isConnected } = useNetInfo();
 
@@ -65,12 +70,15 @@ const AssetSelection = ({
   const { collapse } = useBottomSheet();
   const listRef = useRef<FlatList>(null);
 
+  const assetsMap = groupCurrenciesByProvider(assetsSorted || []);
+
   const assetConfigurationDeps = {
     ApyIndicator,
     MarketPriceIndicator,
     MarketPercentIndicator,
     useBalanceDeps,
     balanceItem,
+    assetsMap,
   };
 
   const makeAssetConfigurationHook = createAssetConfigurationHook(assetConfigurationDeps);
@@ -182,4 +190,4 @@ const AssetSelection = ({
   );
 };
 
-export default React.memo(AssetSelection);
+export default withDiscreetMode(React.memo(AssetSelection));

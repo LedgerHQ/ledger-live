@@ -8,6 +8,9 @@ export const validateTag = (tag: BigNumber) => {
   );
 };
 
+const CANTON_ADDRESS_REGEX = /^.+::[a-zA-Z0-9]+$/;
+
 export function isRecipientValid(recipient: string): boolean {
-  return recipient.length > 0;
+  // Canton address format: at least 1 character :: at least 1 alphanumeric character
+  return CANTON_ADDRESS_REGEX.test(recipient);
 }

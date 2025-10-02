@@ -7,13 +7,11 @@ import { ModularDrawer } from "./drawer/modular.drawer";
 
 export class EarnPage extends WebViewAppPage {
   private earnMoreRewardTabButton = "tab-earn-more";
-  private earnAppContainer = this.page.getByTestId("earn-app-container");
   private stakeCryptoAssetsButton = "stake-crypto-assets-button";
   private potentialRewardsBalanceCard = "Rewards you could earn-balance-card";
   private amountAvailableBalanceCard = "Amount available to earn-balance-card";
   private amountAvailableAssetsText = "  Amount available to earn";
   private rewardsPotentialText = "Rewards you could earn";
-  private availableAssetsText = "Available assets";
   private totalRewardsText = "Total rewards";
   private totalDepositedBalanceCard = "Total deposited-balance-card";
   private totalRewardsBalanceCard = "Total rewards-balance-card";
@@ -59,13 +57,6 @@ export class EarnPage extends WebViewAppPage {
     const webview = await this.getWebView();
     const row = webview.locator("tr", { hasText: `${account}` });
     await row.getByRole("button", { name: "Earn" }).first().click();
-  }
-
-  @step("Expect live App to be visible")
-  async expectLiveAppToBeVisible() {
-    const webview = await this.getWebView();
-    await expect(this.earnAppContainer).toBeVisible();
-    await expect(webview.locator(`[data-test-id="${this.stakeCryptoAssetsButton}"]`)).toBeVisible();
   }
 
   @step("Verify rewards potential is visible")

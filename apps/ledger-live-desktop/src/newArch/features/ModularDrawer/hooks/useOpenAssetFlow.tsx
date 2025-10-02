@@ -1,5 +1,5 @@
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
-import { listAndFilterCurrencies } from "@ledgerhq/live-common/platform/helpers";
+
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { Account } from "@ledgerhq/types-live";
 import { ModularDrawerVisibleParams, useModularDrawerVisibility } from "LLD/features/ModularDrawer";
@@ -18,12 +18,11 @@ import { setFlowValue, setSourceValue } from "~/renderer/reducers/modularDrawer"
 
 function selectCurrency(
   onAssetSelected: (currency: CryptoOrTokenCurrency) => void,
-  includeTokens?: boolean,
   currencies?: CryptoOrTokenCurrency[],
   onClose?: () => void,
   drawerConfiguration?: EnhancedModularDrawerConfiguration,
 ): void {
-  const filteredCurrencies = currencies ?? listAndFilterCurrencies({ includeTokens });
+  const filteredCurrencies = currencies?.map(currency => currency.id) ?? [];
 
   setDrawer(
     ModularDrawerFlowManager,
@@ -118,17 +117,11 @@ export function useOpenAssetFlow(
   );
 
   const openAssetFlow = useCallback(
-    (includeTokens: boolean, drawerConfiguration?: EnhancedModularDrawerConfiguration) => {
+    (drawerConfiguration?: EnhancedModularDrawerConfiguration) => {
       if (isModularDrawerVisible(modularDrawerVisibleParams)) {
         dispatch(setFlowValue(modularDrawerVisibleParams.location));
         dispatch(setSourceValue(source));
-        selectCurrency(
-          openAddAccountFlow,
-          includeTokens,
-          undefined,
-          handleClose,
-          drawerConfiguration,
-        );
+        selectCurrency(openAddAccountFlow, undefined, handleClose, drawerConfiguration);
       } else {
         dispatch(
           openModal("MODAL_ADD_ACCOUNTS", {

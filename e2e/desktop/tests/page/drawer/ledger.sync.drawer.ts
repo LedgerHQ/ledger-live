@@ -1,7 +1,6 @@
 import { step } from "../../misc/reporters/step";
 import { expect } from "@playwright/test";
 import { Drawer } from "../../component/drawer.component";
-import { extractNumberFromText } from "../../utils/textParserUtils";
 
 export class LedgerSyncDrawer extends Drawer {
   private syncAccountsButton = this.page.getByRole("button", { name: "Turn on Ledger Sync" });
@@ -63,13 +62,6 @@ export class LedgerSyncDrawer extends Drawer {
   @step("Check if synchronization was successful")
   async expectSynchronizationSuccess() {
     await expect(this.successTextElement).toBeVisible();
-  }
-
-  @step("Validate number of synchronized instances")
-  async expectNbSyncedInstances(nb: number) {
-    const countInstancesText = await this.page.getByText("Synchronized instance").textContent();
-    const nbInstances = await extractNumberFromText(countInstancesText || "");
-    expect(nbInstances).toBe(nb);
   }
 
   @step("Check if the backup deletion was successful")

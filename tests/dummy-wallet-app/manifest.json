@@ -36,7 +36,8 @@
     "storage.get",
     "storage.set",
     "event.custom.test",
-    "bitcoin.getXPub"
+    "bitcoin.getXPub",
+    "custom.deeplink.open"
   ],
   "domains": ["http://*", "https://*"]
 }

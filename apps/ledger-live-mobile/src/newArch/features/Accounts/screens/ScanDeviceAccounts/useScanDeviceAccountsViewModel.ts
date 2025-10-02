@@ -289,6 +289,7 @@ export default function useScanDeviceAccountsViewModel({
           emptyAccountName: alreadyEmptyAccountName,
           currency,
           context,
+          onCloseNavigation,
         });
       } else if (noImportableAccounts && CustomNoAssociatedAccounts) {
         navigation.replace(ScreenName.NoAssociatedAccounts, {
@@ -308,6 +309,7 @@ export default function useScanDeviceAccountsViewModel({
     CustomNoAssociatedAccounts,
     noImportableAccounts,
     context,
+    onCloseNavigation,
   ]);
   return {
     alreadyEmptyAccount,

@@ -7,6 +7,7 @@ import CustomLockscreenPage from "./stax/customLockscreen.page";
 import DiscoverPage from "./discover/discover.page";
 import DummyWalletApp from "./liveApps/dummyWalletApp.webView";
 import WalletAPIReceivePage from "./liveApps/walletAPIReceive";
+import WalletAPISignMessage from "./liveApps/walletAPISignMessage";
 import ManagerPage from "./manager/manager.page";
 import MarketPage from "./market/market.page";
 import OnboardingStepsPage from "./onboarding/onboardingSteps.page";
@@ -55,6 +56,7 @@ export class Application {
   private discoverPageInstance = lazyInit(DiscoverPage);
   private dummyWalletAppInstance = lazyInit(DummyWalletApp);
   private walletAPIReceivePageInstance = lazyInit(WalletAPIReceivePage);
+  private walletAPISignMessagePageInstance = lazyInit(WalletAPISignMessage);
   private managerPageInstance = lazyInit(ManagerPage);
   private marketPageInstance = lazyInit(MarketPage);
   private onboardingPageInstance = lazyInit(OnboardingStepsPage);
@@ -114,6 +116,10 @@ export class Application {
 
   public get walletAPIReceive() {
     return this.walletAPIReceivePageInstance();
+  }
+
+  public get walletAPISignMessage() {
+    return this.walletAPISignMessagePageInstance();
   }
 
   public get manager() {

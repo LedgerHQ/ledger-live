@@ -59,6 +59,10 @@ const INCOMPATIBLE_NANO_S_CURRENCY_KEYS: Keys = {
     title: "swap.incompatibility.cosmos_title",
     description: "swap.incompatibility.cosmos_description",
   },
+  hedera: {
+    title: "swap.incompatibility.hedera_title",
+    description: "swap.incompatibility.hedera_description",
+  },
   osmo: {
     title: "swap.incompatibility.osmo_title",
     description: "swap.incompatibility.osmo_description",
@@ -70,6 +74,10 @@ const INCOMPATIBLE_NANO_S_CURRENCY_KEYS: Keys = {
   sui: {
     title: "swap.incompatibility.sui_title",
     description: "swap.incompatibility.sui_description",
+  },
+  kaspa: {
+    title: "swap.incompatibility.kaspa_title",
+    description: "swap.incompatibility.kaspa_description",
   },
 };
 

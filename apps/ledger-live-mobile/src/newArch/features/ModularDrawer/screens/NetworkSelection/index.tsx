@@ -22,10 +22,10 @@ import { useAccountData } from "../../hooks/useAccountData";
 import { useBalanceDeps } from "../../hooks/useBalanceDeps";
 import { useSelector } from "react-redux";
 import { modularDrawerFlowSelector, modularDrawerSourceSelector } from "~/reducers/modularDrawer";
+import { withDiscreetMode } from "~/context/DiscreetModeContext";
 
 export type NetworkSelectionStepProps = {
   availableNetworks: CryptoOrTokenCurrency[];
-  asset?: CryptoOrTokenCurrency;
   onNetworkSelected: (asset: CryptoOrTokenCurrency) => void;
   networksConfiguration?: EnhancedModularDrawerConfiguration["networks"];
 };
@@ -36,7 +36,6 @@ const NetworkSelection = ({
   availableNetworks,
   onNetworkSelected,
   networksConfiguration,
-  asset,
 }: Readonly<NetworkSelectionStepProps>) => {
   const flow = useSelector(modularDrawerFlowSelector);
   const source = useSelector(modularDrawerSourceSelector);
@@ -81,7 +80,6 @@ const NetworkSelection = ({
   const transformNetworks = makeNetworkConfigurationHook({
     networksConfig: networksConfiguration,
     accounts$: undefined,
-    selectedAssetId: asset ? asset.id : "",
   });
 
   const formattedNetworks = transformNetworks(networks, availableNetworks);
@@ -113,4 +111,4 @@ const NetworkSelection = ({
   );
 };
 
-export default React.memo(NetworkSelection);
+export default withDiscreetMode(React.memo(NetworkSelection));

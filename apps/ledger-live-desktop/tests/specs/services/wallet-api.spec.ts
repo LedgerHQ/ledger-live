@@ -67,7 +67,7 @@ test.beforeAll(async () => {
         en: "App to test the Wallet API with Playwright",
       },
     },
-    permissions: methods,
+    permissions: [...methods, "custom.deeplink.open"],
   });
 
   if (!testServerIsRunning) {
@@ -796,5 +796,10 @@ test("Wallet API methods @smoke", async ({ page, electronApp }) => {
     });
 
     await resetWebview();
+  });
+
+  await test.step("custom.deeplink.open", async () => {
+    await liveAppWebview.customDeeplinkOpen("ledgerlive://discover");
+    await discoverPage.waitForDiscoverVisible();
   });
 });

@@ -38,7 +38,7 @@ import {
 import { getEstimatedFees, getGasLimit, padHexString, safeEncodeEIP55 } from "../../utils";
 import usdCoinTokenData from "../../__fixtures__/ethereum-erc20-usd__coin.json";
 import wethTokenData from "../../__fixtures__/ethereum-erc20-weth.json";
-import { setCryptoAssetsStoreGetter } from "../../cryptoAssetsStore";
+import { getCryptoAssetsStore, setCryptoAssetsStoreGetter } from "../../cryptoAssetsStore";
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
 const USD_COIN_TOKEN = usdCoinTokenData as unknown as TokenCurrency;
@@ -646,19 +646,18 @@ describe("EVM Family", () => {
     });
 
     describe("attachOperations", () => {
-      it("should attach token & nft operations to coin operations and create 'NONE' coin operations in case of orphans child operations", () => {
+      it("should attach token & nft operations to coin operations and create 'NONE' coin operations in case of orphans child operations", async () => {
         setCryptoAssetsStoreGetter(
           () =>
             // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
             ({
-              findTokenById: (id: string) => {
-                if (id === "ethereum/erc20/usd__coin") {
-                  return USD_COIN_TOKEN;
-                }
-
+              findTokenByAddressInCurrency: (address: string, currencyId: string) => {
+                if (address === "0xTokenContract" && currencyId === "ethereum")
+                  return { id: "ethereum/erc20/usd__coin" };
+                if (address === "0xOtherTokenContract" && currencyId === "ethereum")
+                  return { id: "ethereum/erc20/usd__coin" };
                 return undefined;
               },
-              findTokenByAddressInCurrency: (_: string, __: string) => undefined,
             }) as CryptoAssetsStore,
         );
         const coinOperation = makeOperation({
@@ -719,7 +718,18 @@ describe("EVM Family", () => {
         ];
 
         expect(
-          attachOperations([coinOperation], tokenOperations, nftOperations, internalOperations),
+          await attachOperations(
+            "js:2:ethereum:0xkvn:",
+            [coinOperation],
+            tokenOperations,
+            nftOperations,
+            internalOperations,
+            {
+              blacklistedTokenIds: [],
+              findToken: async (contractAddress: string) =>
+                getCryptoAssetsStore().findTokenByAddressInCurrency(contractAddress, "ethereum"),
+            },
+          ),
         ).toEqual([
           {
             ...coinOperation,
@@ -786,12 +796,23 @@ describe("EVM Family", () => {
           }),
         ]);
         expect(() =>
-          // @ts-expect-error purposely ignore readonly ts issue for this
-          attachOperations(coinOperations, tokenOperations, nftOperations, internalOperations),
+          attachOperations(
+            "",
+            // @ts-expect-error purposely ignore readonly ts issue for this
+            coinOperations,
+            tokenOperations,
+            nftOperations,
+            internalOperations,
+            {
+              blacklistedTokenIds: [],
+              findToken: (contractAddress: string) =>
+                getCryptoAssetsStore().findTokenByAddressInCurrency(contractAddress, "ethereum"),
+            },
+          ),
         ).not.toThrow(); // mutation prevented by deepFreeze method
       });
 
-      it("should filter blacklisted tokens", () => {
+      it("should filter blacklisted tokens", async () => {
         const coinOperation = makeOperation({
           hash: "0xCoinOp3Hash",
         });
@@ -850,9 +871,18 @@ describe("EVM Family", () => {
         ];
 
         expect(
-          attachOperations([coinOperation], tokenOperations, nftOperations, internalOperations, {
-            blacklistedTokenIds: [USD_COIN_TOKEN.id],
-          }),
+          await attachOperations(
+            "",
+            [coinOperation],
+            tokenOperations,
+            nftOperations,
+            internalOperations,
+            {
+              blacklistedTokenIds: [USD_COIN_TOKEN.id],
+              findToken: async (contractAddress: string) =>
+                getCryptoAssetsStore().findTokenByAddressInCurrency(contractAddress, "ethereum"),
+            },
+          ),
         ).toEqual([
           {
             ...coinOperation,

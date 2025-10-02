@@ -73,7 +73,7 @@ jest.mock("../../network/sdk", () => {
         estimateGasWithInflationFactor: jest.fn().mockReturnValue(3),
         gasPrice: jest.fn(async () => BigNumber(2)),
         web3: { eth: { getBlock: jest.fn().mockResolvedValue({ baseFeePerGas: 10 }) } },
-        getMaxPriorityFeePerGas: jest.fn().mockResolvedValue(1),
+        getMaxPriorityFeePerGas: jest.fn().mockReturnValue(1),
       },
     })),
   };
@@ -195,8 +195,6 @@ describe("prepareTransaction", () => {
       index: 0,
       fees: BigNumber(24),
       subAccountId: "subAccountId",
-      maxFeePerGas: "1000000010",
-      maxPriorityFeePerGas: 1,
       data: Buffer.from("0x73656E645F746F6B656E5F64617461"),
     });
   });
@@ -223,8 +221,6 @@ describe("prepareTransaction", () => {
       index: 0,
       fees: BigNumber(24),
       subAccountId: "subAccountId",
-      maxFeePerGas: "1000000010",
-      maxPriorityFeePerGas: 1,
       data: Buffer.from("0x73656E645F65726332305F746F6B656E5F64617461"),
     });
   });
@@ -253,8 +249,6 @@ describe("prepareTransaction", () => {
       index: 0,
       fees: BigNumber(24),
       subAccountId: "subAccountId",
-      maxFeePerGas: "1000000010",
-      maxPriorityFeePerGas: 1,
       data: Buffer.from("0x73656E645F65726332305F746F6B656E5F64617461"),
     });
   });

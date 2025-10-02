@@ -97,6 +97,7 @@ export const CURRENCY_DEFAULT_FEATURES = {
   currencyHyperevm: DEFAULT_FEATURE,
   currencyCantonNetwork: DEFAULT_FEATURE,
   currencyKaspa: DEFAULT_FEATURE,
+  currencyEthereumHoodi: DEFAULT_FEATURE,
   currencyCore: DEFAULT_FEATURE,
 };
 

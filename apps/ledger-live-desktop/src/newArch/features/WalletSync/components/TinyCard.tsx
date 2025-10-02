@@ -34,7 +34,7 @@ export const TinyCard = ({ text, cta, onClick, testId, currentInstance = false }
       </Flex>
       <ButtonContainer>
         <Text
-          data-testId="walletSync-manage-instances-remove"
+          data-testid="walletSync-manage-instances-remove"
           fontSize={14}
           variant="body"
           fontWeight="semiBold"

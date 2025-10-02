@@ -2,7 +2,7 @@ import Config from "react-native-config";
 import { configureStore, Tuple } from "@reduxjs/toolkit";
 import reducers from "~/reducers";
 import Rectotron from "~/ReactotronConfig";
-import { assetsDataApi } from "@ledgerhq/live-common/modularDrawer/data/state-manager/api";
+import { assetsDataApi } from "@ledgerhq/live-common/dada-client/state-manager/api";
 import { rebootMiddleware } from "~/middleware/rebootMiddleware";
 
 // === STORE CONFIGURATION ===

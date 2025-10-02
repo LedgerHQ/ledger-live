@@ -48,6 +48,7 @@ setSupportedCurrencies([
   "bitcoin_testnet",
   "ethereum_sepolia",
   "ethereum_holesky",
+  "ethereum_hoodi",
   "crypto_org_croeseid",
   "crypto_org",
   "filecoin",
@@ -119,7 +120,7 @@ setSupportedCurrencies([
   "babylon",
   "canton_network",
   "canton_network_devnet",
-  "canton_network_localnet",
+  "canton_network_testnet",
   "kaspa",
 ]);
 LiveConfig.setConfig(liveConfig);

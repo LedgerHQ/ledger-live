@@ -9,6 +9,14 @@ import {
 import { INITIAL_STATE } from "~/reducers/settings";
 import { State } from "~/reducers/types";
 
+jest.mock("@ledgerhq/live-common/modularDrawer/hooks/useCurrenciesUnderFeatureFlag", () => ({
+  useCurrenciesUnderFeatureFlag: () => mockUseCurrenciesUnderFeatureFlag(),
+}));
+
+const mockUseCurrenciesUnderFeatureFlag = jest.fn(() => ({
+  deactivatedCurrencyIds: new Set(),
+}));
+
 const advanceTimers = () => {
   act(() => {
     jest.advanceTimersByTime(500);
@@ -193,7 +201,7 @@ describe("ModularDrawer modules integration", () => {
     await user.press(getByText(WITHOUT_ACCOUNT_SELECTION));
     advanceTimers();
     expect(getByText(/ethereum/i)).toBeVisible();
-    expect(getByText(/23.4663 eth/i)).toBeVisible();
+    expect(getByText(/34,478.4 ETH/i)).toBeVisible();
   });
 
   it("should display balance on the right at networkSelection step", async () => {
@@ -223,6 +231,6 @@ describe("ModularDrawer modules integration", () => {
     const ethereumElements = getAllByText(/ethereum/i);
     await user.press(ethereumElements[0]);
     advanceTimers();
-    expect(getByText(/23.4663 eth/i)).toBeVisible();
+    expect(getByText(/23.4663 ETH/i)).toBeVisible();
   });
 });

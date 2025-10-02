@@ -40,6 +40,7 @@ setSupportedCurrencies([
   "bitcoin_testnet",
   "ethereum_sepolia",
   "ethereum_holesky",
+  "ethereum_hoodi",
   "crypto_org",
   "crypto_org_croeseid",
   "celo",
@@ -119,7 +120,7 @@ setSupportedCurrencies([
   "babylon",
   "canton_network",
   "canton_network_devnet",
-  "canton_network_localnet",
+  "canton_network_testnet",
   "kaspa",
 ]);
 

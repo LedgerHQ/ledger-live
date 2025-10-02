@@ -153,6 +153,7 @@ export async function handleSwapErrorOrSuccess(
       "This receiving account does not belong to the device you have connected. Please change and retry",
     );
   } else {
+    await app.swap.waitForPageDomContentLoadedState();
     await app.speculos.verifyAmountsAndAcceptSwapForDifferentSeed(swap, minAmount);
     await app.swapDrawer.verifyExchangeCompletedTextContent(swap.accountToCredit.currency.name);
   }

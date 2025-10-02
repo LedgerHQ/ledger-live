@@ -1,13 +1,14 @@
 import { CounterValuesState } from "@ledgerhq/live-countervalues/lib/types";
-import { CryptoOrTokenCurrency, Currency } from "@ledgerhq/types-cryptoassets";
+import { CryptoOrTokenCurrency, Currency, Unit } from "@ledgerhq/types-cryptoassets";
 import { AccountLike } from "@ledgerhq/types-live";
 import { ReactNode } from "react";
 import { Observable } from "rxjs";
 import { WalletAPIAccount } from "../../wallet-api/types";
-import { CurrenciesByProviderId } from "../../deposit/type";
 import { EnhancedModularDrawerConfiguration } from "../../wallet-api/ModularDrawer/types";
-
-export type ApyType = "NRR" | "APY" | "APR";
+import { InterestRate } from "../../dada-client/entities";
+import { MarketItemResponse } from "../../market/utils/types";
+import BigNumber from "bignumber.js";
+import { ApyType } from "../../dada-client/types/trend";
 
 export type AssetType = {
   name: string;
@@ -34,13 +35,21 @@ export type AssetWithBalance = AssetType & {
 
 export type UseBalanceDeps = () => {
   flattenedAccounts: AccountLike[];
-  discreet: boolean;
   state: CounterValuesState;
   counterValueCurrency: Currency;
   locale: string;
 };
 
-export type BalanceUI = { balance?: string; fiatValue?: string };
+export type BalanceUI = {
+  // Raw values
+  balance?: BigNumber;
+  fiatValue?: number;
+  fiatUnit?: Unit;
+  currency?: CryptoOrTokenCurrency;
+  // Formatting parameters
+  locale?: string;
+  discreet?: boolean;
+};
 export type CreateBalanceItem = (x: BalanceUI) => React.ReactNode;
 
 export type CreateAccountsCountAndApy = (args: {
@@ -72,11 +81,11 @@ export type UseAccountData = (params: AccountModuleParams) => AccountDataItem[];
 export type NetworkHookParams = {
   assets: CryptoOrTokenCurrency[];
   networks: CryptoOrTokenCurrency[];
-  selectedAssetId: string;
-  currenciesByProvider: CurrenciesByProviderId[];
   accounts$?: Observable<WalletAPIAccount[]>;
 };
-export type NetworkHook = (params: NetworkHookParams) => Array<CryptoOrTokenCurrency & Network>;
+export type NetworkHook = (
+  params: NetworkHookParams,
+) => Array<CryptoOrTokenCurrency & Network & { balanceData?: BalanceUI; count?: number }>;
 
 export type NetworkConfigurationDeps = {
   useAccountData: UseAccountData;
@@ -99,14 +108,11 @@ export type Network = {
 
 export type CreateNetworkConfigurationHookProps = {
   networksConfig: EnhancedModularDrawerConfiguration["networks"];
-  currenciesByProvider?: CurrenciesByProviderId[];
-  selectedAssetId: string;
   accounts$?: Observable<WalletAPIAccount[]>;
 };
 
 type Props = {
   assetsConfiguration: EnhancedModularDrawerConfiguration["assets"];
-  currenciesByProvider?: CurrenciesByProviderId[];
 };
 
 export type AssetConfigurationDeps = {
@@ -114,9 +120,26 @@ export type AssetConfigurationDeps = {
   MarketPercentIndicator: (args: { percent: number }) => ReactNode;
   MarketPriceIndicator: (args: { price: string; percent: number }) => ReactNode;
   useBalanceDeps: UseBalanceDeps;
-  balanceItem: (asset: { fiatValue?: string; balance?: string }) => ReactNode;
+  balanceItem: CreateBalanceItem;
+  assetsMap: Map<
+    string,
+    { mainCurrency: CryptoOrTokenCurrency; currencies: CryptoOrTokenCurrency[] }
+  >;
 };
 
 export type CreateAssetConfigurationHook = (
   AssetConfigurationDeps: AssetConfigurationDeps,
 ) => (props: Props) => (assets: CryptoOrTokenCurrency[]) => (CryptoOrTokenCurrency & AssetType)[];
+
+export type AssetData = {
+  asset: {
+    id: string;
+    ticker: string;
+    name: string;
+    assetsIds: Record<string, string>;
+    metaCurrencyId?: string;
+  };
+  networks: CryptoOrTokenCurrency[];
+  interestRates?: InterestRate;
+  market?: Partial<MarketItemResponse>;
+};

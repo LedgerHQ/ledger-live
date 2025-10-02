@@ -14,7 +14,7 @@ const SearchInputContainer = () => {
   return (
     <Box flex={1} paddingRight="8px" paddingLeft="8px" marginBottom="24px">
       <Search
-        value={displayedValue}
+        value={displayedValue ?? ""}
         debounceTime={modularDrawer?.params?.searchDebounceTime}
         placeholder={t("modularAssetDrawer.searchPlaceholder")}
         onDebouncedChange={handleDebouncedChange}

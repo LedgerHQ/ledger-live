@@ -1,21 +1,17 @@
-import BigNumber from "bignumber.js";
-import { Account as DetailedAccount } from "@ledgerhq/react-ui/pre-ldls/index";
+import { RawDetailedAccount } from "./formatDetailedAccount";
 
 /**
  *
- * @param accounts - List of DetailedAccount to sort
- * @returns Sorted list of DetailedAccount by fiat value balance in descending order
+ * @param accounts - List of RawDetailedAccount to sort
+ * @returns Sorted list of RawDetailedAccount by fiat value balance in descending order
  *
  * This function sorts the accounts based on their fiat value balance in descending order.
  */
-export const sortAccountsByFiatValue = (accounts: DetailedAccount[]) => {
+export const sortAccountsByFiatValue = (accounts: RawDetailedAccount[]) => {
   return [...accounts].sort((a, b) => {
-    const numericBalanceA = a.fiatValue?.replace(/[^0-9.-]+/g, "") ?? "0";
-    const numericBalanceB = b.fiatValue?.replace(/[^0-9.-]+/g, "") ?? "0";
+    const balanceA = a.fiatValue ?? 0;
+    const balanceB = b.fiatValue ?? 0;
 
-    const balanceA = BigNumber(numericBalanceA);
-    const balanceB = BigNumber(numericBalanceB);
-
-    return balanceB.minus(balanceA).toNumber();
+    return balanceB - balanceA;
   });
 };

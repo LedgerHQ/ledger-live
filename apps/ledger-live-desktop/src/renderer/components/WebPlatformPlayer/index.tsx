@@ -13,7 +13,7 @@ import { usePTXCustomHandlers } from "../WebPTXPlayer/CustomHandlers";
 import { useCurrentAccountHistDB } from "~/renderer/screens/platform/v2/hooks";
 import { useMobileView, WebViewWrapperProps } from "~/renderer/hooks/useMobileView";
 import { flattenAccountsSelector } from "~/renderer/reducers/accounts";
-import { useACRECustomHandlers } from "./CustomHandlers";
+import { useACRECustomHandlers, useDeeplinkCustomHandlers } from "./CustomHandlers";
 
 export const Container = styled.div`
   display: flex;
@@ -53,6 +53,7 @@ export default function WebPlatformPlayer({ manifest, inputs, onClose, config, .
   const accounts = useSelector(flattenAccountsSelector);
   const customACREHandlers = useACRECustomHandlers(manifest, accounts);
   const customPTXHandlers = usePTXCustomHandlers(manifest, accounts);
+  const customDeeplinkHandlers = useDeeplinkCustomHandlers();
   const { mobileView, setMobileView } = useMobileView();
 
   const customHandlers = useMemo<WalletAPICustomHandlers>(() => {
@@ -60,9 +61,10 @@ export default function WebPlatformPlayer({ manifest, inputs, onClose, config, .
       ...loggerHandlers,
       ...customACREHandlers,
       ...customPTXHandlers,
+      ...customDeeplinkHandlers,
       ...props.customHandlers,
     };
-  }, [customACREHandlers, customPTXHandlers, props.customHandlers]);
+  }, [customACREHandlers, customPTXHandlers, props.customHandlers, customDeeplinkHandlers]);
 
   const onStateChange: WebviewProps["onStateChange"] = state => {
     setWebviewState(state);
