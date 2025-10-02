@@ -5,18 +5,19 @@ import {
   AmountRequired,
   NotEnoughBalance,
 } from "@ledgerhq/errors";
+import { HEDERA_TRANSACTION_MODES } from "../constants";
 import {
   HederaRecipientInvalidChecksum,
   HederaInsufficientFundsForAssociation,
   HederaRecipientTokenAssociationRequired,
   HederaRecipientTokenAssociationUnverified,
 } from "../errors";
+import { getTransactionStatus } from "./getTransactionStatus";
+import * as estimateFees from "../logic/estimateFees";
+import * as logicUtils from "../logic/utils";
 import { getMockedAccount, getMockedTokenAccount } from "../test/fixtures/account.fixture";
 import { getMockedTokenCurrency } from "../test/fixtures/currency.fixture";
 import { getMockedTransaction } from "../test/fixtures/transaction.fixture";
-import { getTransactionStatus } from "./getTransactionStatus";
-import * as utils from "./utils";
-import { HEDERA_TRANSACTION_KINDS } from "../constants";
 
 describe("getTransactionStatus", () => {
   const mockedEstimatedFee = new BigNumber(1);
@@ -27,8 +28,8 @@ describe("getTransactionStatus", () => {
   beforeEach(() => {
     jest.clearAllMocks();
 
-    jest.spyOn(utils, "getCurrencyToUSDRate").mockResolvedValueOnce(mockedUsdRate);
-    jest.spyOn(utils, "getEstimatedFees").mockResolvedValueOnce(mockedEstimatedFee);
+    jest.spyOn(logicUtils, "getCurrencyToUSDRate").mockResolvedValueOnce(mockedUsdRate);
+    jest.spyOn(estimateFees, "estimateFees").mockResolvedValueOnce(mockedEstimatedFee);
   });
 
   test("coin transfer with valid recipient and sufficient balance completes successfully", async () => {
@@ -47,7 +48,7 @@ describe("getTransactionStatus", () => {
   });
 
   test("token transfer with valid recipient and sufficient balance completes successfully", async () => {
-    jest.spyOn(utils, "checkAccountTokenAssociationStatus").mockResolvedValueOnce(true);
+    jest.spyOn(logicUtils, "checkAccountTokenAssociationStatus").mockResolvedValueOnce(true);
 
     const tokenCurrency = getMockedTokenCurrency();
     const tokenAccount = getMockedTokenAccount(tokenCurrency, { balance: new BigNumber(500) });
@@ -69,8 +70,8 @@ describe("getTransactionStatus", () => {
     const mockedTokenCurrency = getMockedTokenCurrency();
     const mockedAccount = getMockedAccount();
     const mockedTransaction = getMockedTransaction({
+      mode: HEDERA_TRANSACTION_MODES.TokenAssociate,
       properties: {
-        name: HEDERA_TRANSACTION_KINDS.TokenAssociate.name,
         token: mockedTokenCurrency,
       },
     });
@@ -139,8 +140,8 @@ describe("getTransactionStatus", () => {
     const mockedTokenCurrency = getMockedTokenCurrency();
     const mockedAccount = getMockedAccount({ balance: new BigNumber(0) });
     const mockedTransaction = getMockedTransaction({
+      mode: HEDERA_TRANSACTION_MODES.TokenAssociate,
       properties: {
-        name: HEDERA_TRANSACTION_KINDS.TokenAssociate.name,
         token: mockedTokenCurrency,
       },
     });
@@ -153,7 +154,7 @@ describe("getTransactionStatus", () => {
   });
 
   test("adds warning during token transfer if recipient has no token associated", async () => {
-    jest.spyOn(utils, "checkAccountTokenAssociationStatus").mockResolvedValueOnce(false);
+    jest.spyOn(logicUtils, "checkAccountTokenAssociationStatus").mockResolvedValueOnce(false);
 
     const mockedTokenCurrency = getMockedTokenCurrency();
     const mockedTokenAccount = getMockedTokenAccount(mockedTokenCurrency);
@@ -172,7 +173,7 @@ describe("getTransactionStatus", () => {
 
   test("adds warning if token association status can't be verified", async () => {
     jest
-      .spyOn(utils, "checkAccountTokenAssociationStatus")
+      .spyOn(logicUtils, "checkAccountTokenAssociationStatus")
       .mockRejectedValueOnce(new HederaRecipientTokenAssociationUnverified());
 
     const mockedTokenCurrency = getMockedTokenCurrency();

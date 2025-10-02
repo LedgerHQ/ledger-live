@@ -6,7 +6,7 @@ import type { AccountLike } from "@ledgerhq/types-live";
 import {
   isTokenAssociationRequired,
   isAutoTokenAssociationEnabled,
-} from "@ledgerhq/live-common/families/hedera/logic";
+} from "@ledgerhq/live-common/families/hedera/utils";
 import { isTokenAccount } from "@ledgerhq/coin-framework/account/helpers";
 import { Link } from "@ledgerhq/react-ui";
 import { urls } from "~/config/urls";
