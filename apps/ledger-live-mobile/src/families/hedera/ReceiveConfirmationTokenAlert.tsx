@@ -8,7 +8,7 @@ import { isTokenAccount, getAccountCurrency } from "@ledgerhq/live-common/accoun
 import {
   isAutoTokenAssociationEnabled,
   isTokenAssociationRequired,
-} from "@ledgerhq/live-common/families/hedera/logic";
+} from "@ledgerhq/live-common/families/hedera/utils";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { track } from "~/analytics";
 import Alert from "~/components/Alert";

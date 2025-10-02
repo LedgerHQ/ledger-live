@@ -3,7 +3,7 @@ import { StyleSheet } from "react-native";
 import { Trans, useTranslation } from "react-i18next";
 import { useNavigation } from "@react-navigation/native";
 import { findTokenByAddressInCurrency } from "@ledgerhq/live-common/currencies/index";
-import { getTransactionExplorer, isValidExtra } from "@ledgerhq/live-common/families/hedera/logic";
+import { getTransactionExplorer, isValidExtra } from "@ledgerhq/live-common/families/hedera/utils";
 import type { HederaAccount, HederaOperation } from "@ledgerhq/live-common/families/hedera/types";
 import { Text } from "@ledgerhq/native-ui";
 import Alert from "~/components/Alert";
