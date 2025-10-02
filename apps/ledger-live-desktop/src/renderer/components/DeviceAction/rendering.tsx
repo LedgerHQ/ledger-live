@@ -6,6 +6,7 @@ import { connect, useDispatch } from "react-redux";
 import { useHistory } from "react-router-dom";
 import styled from "styled-components";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { ABTestingVariants } from "@ledgerhq/types-live";
 import ProviderIcon from "~/renderer/components/ProviderIcon";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
 import { ExchangeRate, ExchangeSwap } from "@ledgerhq/live-common/exchange/swap/types";
@@ -1170,9 +1171,19 @@ const SwapDeviceConfirmation: React.FC<SwapConfirmationProps> = ({
   stateSettings,
   walletState,
 }) => {
-  const isDetailedViewEnabled = useFeature("ptxSwapDetailedView")?.enabled;
+  const ptxSwapDetailedView = useFeature("ptxSwapDetailedView");
+  const isDetailedViewEnabled = !!ptxSwapDetailedView?.enabled;
+  const variant = ptxSwapDetailedView?.params?.variant ?? ABTestingVariants.variantA;
   const sourceAccountCurrency = exchange.fromCurrency;
   const targetAccountCurrency = exchange.toCurrency;
+
+  useEffect(() => {
+    track("PTX Swap Confirmation Viewed", {
+      ptxSwapDetailedViewVariant: isDetailedViewEnabled ? variant : null,
+      view: isDetailedViewEnabled ? "ptxdrawerdetails" : "ptxnodrawerdetails",
+    });
+  }, [variant, isDetailedViewEnabled]);
+
   const sourceAccountName =
     accountNameSelector(walletState, {
       accountId:
