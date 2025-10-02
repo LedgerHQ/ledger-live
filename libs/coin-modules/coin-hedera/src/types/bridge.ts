@@ -9,7 +9,7 @@ import type {
   TransactionStatusCommon,
   TransactionStatusCommonRaw,
 } from "@ledgerhq/types-live";
-import { HEDERA_TRANSACTION_KINDS } from "../constants";
+import { HEDERA_TRANSACTION_MODES } from "../constants";
 
 export type NetworkInfo = {
   family: "hedera";
@@ -19,24 +19,48 @@ export type NetworkInfoRaw = {
   family: "hedera";
 };
 
-export type TokenAssociateProperties = {
-  name: typeof HEDERA_TRANSACTION_KINDS.TokenAssociate.name;
-  token: TokenCurrency;
-};
-
 export type Transaction = TransactionCommon & {
   family: "hedera";
   memo?: string | undefined;
   maxFee?: BigNumber;
-  properties?: TokenAssociateProperties;
-};
+} & (
+    | {
+        mode: HEDERA_TRANSACTION_MODES.Send;
+        properties?: never;
+      }
+    | {
+        mode: HEDERA_TRANSACTION_MODES.TokenAssociate;
+        assetReference: string;
+        assetOwner: string;
+        properties: {
+          token: TokenCurrency;
+        };
+      }
+  );
 
 export type TransactionRaw = TransactionCommonRaw & {
   family: "hedera";
   memo?: string | undefined;
   maxFee?: string;
-  properties?: TokenAssociateProperties;
-};
+} & (
+    | {
+        mode: HEDERA_TRANSACTION_MODES.Send;
+        properties?: never;
+      }
+    | {
+        mode: HEDERA_TRANSACTION_MODES.TokenAssociate;
+        assetReference: string;
+        assetOwner: string;
+        properties: {
+          token: TokenCurrency;
+        };
+      }
+  );
+
+export type TransactionTokenAssociate = Extract<
+  Transaction,
+  { mode: typeof HEDERA_TRANSACTION_MODES.TokenAssociate }
+>;
 
 export type TransactionStatus = TransactionStatusCommon;
 
@@ -64,6 +88,8 @@ export type HederaOperationExtra = {
   consensusTimestamp?: string;
   transactionId?: string;
   associatedTokenId?: string;
+  pagingToken?: string;
+  memo?: string | null;
 };
 
 export type HederaOperation = Operation<HederaOperationExtra>;

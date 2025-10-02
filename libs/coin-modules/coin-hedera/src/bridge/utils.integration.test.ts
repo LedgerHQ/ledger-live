@@ -1,37 +1,26 @@
 import BigNumber from "bignumber.js";
-import cvsApi from "@ledgerhq/live-countervalues/api/index";
 import { encodeTokenAccountId } from "@ledgerhq/coin-framework/account";
+import { HEDERA_OPERATION_TYPES, HEDERA_TRANSACTION_MODES } from "../constants";
+import { estimateFees } from "../logic/estimateFees";
 import { getMockedAccount, getMockedTokenAccount } from "../test/fixtures/account.fixture";
+import {
+  getMockedCurrency,
+  getMockedTokenCurrency,
+  getTokenCurrencyFromCAL,
+} from "../test/fixtures/currency.fixture";
 import { getMockedTransaction } from "../test/fixtures/transaction.fixture";
+import { getMockedOperation } from "../test/fixtures/operation.fixture";
+import { getMockedMirrorToken } from "../test/fixtures/mirror.fixture";
+import type { HederaOperationExtra } from "../types";
 import {
   applyPendingExtras,
   calculateAmount,
-  checkAccountTokenAssociationStatus,
-  getCurrencyToUSDRate,
-  getEstimatedFees,
   getSubAccounts,
   getSyncHash,
   mergeSubAccounts,
   patchOperationWithExtra,
   prepareOperations,
 } from "./utils";
-import {
-  getMockedCurrency,
-  getMockedTokenCurrency,
-  getTokenCurrencyFromCAL,
-} from "../test/fixtures/currency.fixture";
-import { getMockedOperation } from "../test/fixtures/operation.fixture";
-import { HederaOperationExtra } from "../types";
-import { getAccount } from "../api/mirror";
-import { isValidExtra } from "../logic";
-import { getMockedMirrorToken } from "../test/fixtures/mirror.fixture";
-import { HEDERA_OPERATION_TYPES, HEDERA_TRANSACTION_KINDS } from "../constants";
-
-jest.mock("../api/mirror");
-jest.mock("@ledgerhq/live-countervalues/api/index");
-
-const mockedFetchLatest = cvsApi.fetchLatest as jest.MockedFunction<typeof cvsApi.fetchLatest>;
-const mockedGetAccount = getAccount as jest.MockedFunction<typeof getAccount>;
 
 describe("utils", () => {
   describe("calculateAmount", () => {
@@ -40,8 +29,8 @@ describe("utils", () => {
     beforeAll(async () => {
       const mockedAccount = getMockedAccount();
       const [crypto, associate] = await Promise.all([
-        getEstimatedFees(mockedAccount, HEDERA_OPERATION_TYPES.CryptoTransfer),
-        getEstimatedFees(mockedAccount, HEDERA_OPERATION_TYPES.TokenAssociate),
+        estimateFees(mockedAccount.currency, HEDERA_OPERATION_TYPES.CryptoTransfer),
+        estimateFees(mockedAccount.currency, HEDERA_OPERATION_TYPES.TokenAssociate),
       ]);
 
       estimatedFees = { crypto, associate };
@@ -128,8 +117,8 @@ describe("utils", () => {
       const mockedTransaction = getMockedTransaction({
         useAllAmount: false,
         amount: new BigNumber(1),
+        mode: HEDERA_TRANSACTION_MODES.TokenAssociate,
         properties: {
-          name: HEDERA_TRANSACTION_KINDS.TokenAssociate.name,
           token: mockedTokenCurrency,
         },
       });
@@ -143,83 +132,6 @@ describe("utils", () => {
       });
 
       expect(result).toEqual({ amount, totalSpent });
-    });
-  });
-
-  describe("getEstimatedFees", () => {
-    const mockedAccount = getMockedAccount();
-
-    beforeEach(() => {
-      jest.clearAllMocks();
-      // reset LRU cache to make sure all tests receive correct mocks from mockedFetchLatest
-      getCurrencyToUSDRate.clear(mockedAccount.currency.ticker);
-    });
-
-    test("returns estimated fee based on USD rate for CryptoTransfer", async () => {
-      // 1 HBAR = 1 USD
-      const usdRate = 1;
-      mockedFetchLatest.mockResolvedValueOnce([usdRate]);
-
-      const result = await getEstimatedFees(mockedAccount, HEDERA_OPERATION_TYPES.CryptoTransfer);
-
-      const baseFeeTinybar = 0.0001 * 10 ** 8;
-      const expectedFee = new BigNumber(baseFeeTinybar)
-        .div(usdRate)
-        .integerValue(BigNumber.ROUND_CEIL)
-        .multipliedBy(2); // safety rate
-
-      expect(result.toFixed()).toBe(expectedFee.toFixed());
-    });
-
-    test("returns estimated fee based on USD rate for TokenTransfer", async () => {
-      // 1 HBAR = 0.5 USD
-      const usdRate = 0.5;
-      mockedFetchLatest.mockResolvedValueOnce([usdRate]);
-
-      const result = await getEstimatedFees(mockedAccount, HEDERA_OPERATION_TYPES.TokenTransfer);
-
-      const baseFeeTinybar = 0.001 * 10 ** 8;
-      const expectedFee = new BigNumber(baseFeeTinybar)
-        .div(usdRate)
-        .integerValue(BigNumber.ROUND_CEIL)
-        .multipliedBy(2);
-
-      expect(result.toFixed()).toBe(expectedFee.toFixed());
-    });
-
-    test("returns estimated fee based on USD rate for TokenAssociate", async () => {
-      // 1 HBAR = 2 USD
-      const usdRate = 2;
-      mockedFetchLatest.mockResolvedValueOnce([usdRate]);
-
-      const result = await getEstimatedFees(mockedAccount, HEDERA_OPERATION_TYPES.TokenAssociate);
-
-      const baseFeeTinybar = 0.05 * 10 ** 8;
-      const expectedFee = new BigNumber(baseFeeTinybar)
-        .div(usdRate)
-        .integerValue(BigNumber.ROUND_CEIL)
-        .multipliedBy(2);
-
-      expect(result.toFixed()).toBe(expectedFee.toFixed());
-    });
-
-    test("falls back to default estimate when cvs api returns null", async () => {
-      const usdRate = null;
-      mockedFetchLatest.mockResolvedValueOnce([usdRate]);
-
-      const result = await getEstimatedFees(mockedAccount, HEDERA_OPERATION_TYPES.CryptoTransfer);
-
-      const expected = new BigNumber("150200").multipliedBy(2);
-      expect(result.toFixed()).toBe(expected.toFixed());
-    });
-
-    test("falls back to default estimate on cvs api failure", async () => {
-      mockedFetchLatest.mockRejectedValueOnce(new Error("Network error"));
-
-      const result = await getEstimatedFees(mockedAccount, HEDERA_OPERATION_TYPES.CryptoTransfer);
-
-      const expected = new BigNumber("150200").multipliedBy(2);
-      expect(result.toFixed()).toBe(expected.toFixed());
     });
   });
 
@@ -319,7 +231,7 @@ describe("utils", () => {
         accountId: encodeTokenAccountId(mockedTokenAccount.parentId, tokenCurrencyFromCAL),
       });
 
-      const result = prepareOperations([mockedCoinOperation], [mockedTokenOperation], []);
+      const result = prepareOperations([mockedCoinOperation], [mockedTokenOperation]);
 
       expect(result).toHaveLength(1);
       expect(result[0].subOperations).toEqual([mockedTokenOperation]);
@@ -332,49 +244,13 @@ describe("utils", () => {
         accountId: encodeTokenAccountId(mockedTokenAccount.parentId, tokenCurrencyFromCAL),
       });
 
-      const result = prepareOperations([], [mockedOrphanTokenOperation], []);
+      const result = prepareOperations([], [mockedOrphanTokenOperation]);
       const noneOp = result.find(op => op.type === "NONE");
 
       expect(typeof noneOp).toBe("object");
       expect(noneOp).not.toBeNull();
       expect(noneOp?.subOperations?.[0]).toEqual(mockedOrphanTokenOperation);
       expect(noneOp?.hash).toBe("unknown-hash");
-    });
-
-    test("adds associatedTokenId to ASSOCIATE_TOKEN coin operation based on consensusTimestamp", () => {
-      const mockedCoinOperation = getMockedOperation({
-        type: "ASSOCIATE_TOKEN",
-        extra: { consensusTimestamp: "123" },
-      });
-      const mockedMirrorToken = getMockedMirrorToken({
-        token_id: "0.0.1001",
-        created_timestamp: "123",
-      });
-
-      const result = prepareOperations([mockedCoinOperation], [], [mockedMirrorToken]);
-      const extra = isValidExtra(result[0].extra) ? result[0].extra : null;
-
-      expect(typeof extra).toBe("object");
-      expect(extra).not.toBeNull();
-      expect(extra?.associatedTokenId).toBe("0.0.1001");
-    });
-
-    test("ignores enrichment of ASSOCIATE_TOKEN operation if consensusTimestamp mismatches", () => {
-      const mockedCoinOperation = getMockedOperation({
-        type: "ASSOCIATE_TOKEN",
-        extra: { consensusTimestamp: "123" },
-      });
-      const mockedMirrorToken = getMockedMirrorToken({
-        token_id: "0.0.1001",
-        created_timestamp: "999",
-      });
-
-      const result = prepareOperations([mockedCoinOperation], [], [mockedMirrorToken]);
-      const extra = isValidExtra(result[0].extra) ? result[0].extra : null;
-
-      expect(typeof extra).toBe("object");
-      expect(extra).not.toBeNull();
-      expect(extra?.associatedTokenId).toBeUndefined();
     });
   });
 
@@ -482,62 +358,6 @@ describe("utils", () => {
 
       expect(patched.extra).toEqual(extra);
       expect(patched.subOperations?.[0].extra).toEqual(extra);
-    });
-  });
-
-  describe("checkAccountTokenAssociationStatus", () => {
-    const accountId = "0.0.1234";
-    const tokenId = "0.0.5678";
-
-    beforeEach(() => {
-      jest.clearAllMocks();
-      // reset LRU cache to make sure all tests receive correct mocks from mockedGetAccount
-      checkAccountTokenAssociationStatus.clear(`${accountId}-${tokenId}`);
-    });
-
-    test("returns true if max_automatic_token_associations === -1", async () => {
-      mockedGetAccount.mockResolvedValueOnce({
-        account: accountId,
-        max_automatic_token_associations: -1,
-        balance: {
-          balance: 0,
-          timestamp: "",
-          tokens: [],
-        },
-      });
-
-      const result = await checkAccountTokenAssociationStatus(accountId, tokenId);
-      expect(result).toBe(true);
-    });
-
-    test("returns true if token is already associated", async () => {
-      mockedGetAccount.mockResolvedValueOnce({
-        account: accountId,
-        max_automatic_token_associations: 0,
-        balance: {
-          balance: 1,
-          timestamp: "",
-          tokens: [{ token_id: tokenId, balance: 1 }],
-        },
-      });
-
-      const result = await checkAccountTokenAssociationStatus(accountId, tokenId);
-      expect(result).toBe(true);
-    });
-
-    test("returns false if token is not associated", async () => {
-      mockedGetAccount.mockResolvedValueOnce({
-        account: accountId,
-        max_automatic_token_associations: 0,
-        balance: {
-          balance: 1,
-          timestamp: "",
-          tokens: [{ token_id: "0.0.9999", balance: 1 }],
-        },
-      });
-
-      const result = await checkAccountTokenAssociationStatus(accountId, tokenId);
-      expect(result).toBe(false);
     });
   });
 });
