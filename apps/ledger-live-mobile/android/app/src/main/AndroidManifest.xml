@@ -60,6 +60,7 @@
         android:configChanges="keyboard|keyboardHidden|orientation|screenSize|uiMode"
         android:windowSoftInputMode="adjustResize"
         android:screenOrientation="portrait"
+        android:theme="@style/AppTheme.Splash"
         android:exported="true"
         >
         <intent-filter>
