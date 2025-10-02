@@ -1,6 +1,8 @@
 import { usePerformanceMonitorDevTools } from "@rozenite/performance-monitor-plugin";
 import { useNetworkActivityDevTools } from "@rozenite/network-activity-plugin";
 import { useReactNavigationDevTools } from "@rozenite/react-navigation-plugin";
+import { useMMKVDevTools } from "@rozenite/mmkv-plugin";
+import { mmkv } from "LLM/storage/mmkvStorageWrapper";
 import { navigationRef } from "~/rootnavigation";
 
 const config = {
@@ -19,6 +21,10 @@ const HookDevTools = () => {
   useReactNavigationDevTools({ ref: navigationRef });
 
   usePerformanceMonitorDevTools();
+
+  useMMKVDevTools({
+    storages: [mmkv],
+  });
 
   return null;
 };
