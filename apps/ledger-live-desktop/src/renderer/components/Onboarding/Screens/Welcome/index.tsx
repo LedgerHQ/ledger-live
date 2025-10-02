@@ -1,5 +1,5 @@
 import React from "react";
-import { WelcomeNew as WelcomeNewArch } from "~/newArch/features/Onboarding/screens/WelcomeNew";
+import { WelcomeNew as WelcomeNewArch } from "LLD/features/Onboarding/screens/WelcomeNew";
 import { WelcomeOld } from "./WelcomeOld";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 
