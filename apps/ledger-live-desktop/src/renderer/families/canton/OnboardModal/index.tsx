@@ -88,19 +88,19 @@ class OnboardModal extends PureComponent<Props, State> {
   STEPS = [
     {
       id: StepId.ONBOARD,
-      label: <Trans i18nKey="canton.addAccount.onboard.title" />,
+      label: <Trans i18nKey="families.canton.addAccount.onboard.title" />,
       component: StepOnboard,
       footer: StepOnboardFooter,
     },
     {
       id: StepId.AUTHORIZE,
-      label: <Trans i18nKey="canton.addAccount.auth.title" />,
+      label: <Trans i18nKey="families.canton.addAccount.auth.title" />,
       component: StepAuthorize,
       footer: StepAuthorizeFooter,
     },
     {
       id: StepId.FINISH,
-      label: <Trans i18nKey="canton.addAccount.finish.title" />,
+      label: <Trans i18nKey="families.canton.addAccount.finish.title" />,
       component: StepFinish,
       footer: StepFinishFooter,
     },
@@ -295,7 +295,7 @@ class OnboardModal extends PureComponent<Props, State> {
         preventBackdropClick={stepId === StepId.ONBOARD}
         render={({ onClose }) => (
           <Stepper
-            title={<Trans i18nKey="canton.addAccount.title" />}
+            title={<Trans i18nKey="families.canton.addAccount.title" />}
             stepId={stepId}
             onStepChange={this.handleStepChange}
             onClose={onClose}

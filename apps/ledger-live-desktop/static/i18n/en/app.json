@@ -5742,7 +5742,34 @@
     },
     "canton": {
       "commentPlaceholder": "Optional",
-      "comment": "Comment"
+      "comment": "Comment",
+      "addAccount": {
+        "title": "Add Canton Account",
+        "onboard": {
+          "title": "Onboarding",
+          "newAccount": "New Account",
+          "init": "Set up your new Canton account by clicking Continue",
+          "onboarded": "Onboarded accounts",
+          "success": "Your new Canton account has been created and onboarded.",
+          "error": "Failed to onboard new account. Please try again.",
+          "status": {
+            "prepare": "Preparing account onboarding...",
+            "submit": "Onboarding account...",
+            "default": "Processing..."
+          }
+        },
+        "auth": {
+          "title": "Authorization",
+          "validator": "Authorize",
+          "hint": "Automaticaly accept incoming funds to this account.",
+          "error": "Authorization failed. Please try again.",
+          "validatorLabel": "Ledger Validator",
+          "validatorDescription": "Automated fund acceptance"
+        },
+        "finish": {
+          "title": "Confirmation"
+        }
+      }
     },
     "stellar": {
       "memo": "Memo",
