@@ -17,11 +17,12 @@ import { track } from "~/analytics";
 import UnlockDeviceDrawer from "~/components/UnlockDeviceDrawer";
 import AutoRepairDrawer from "./AutoRepairDrawer";
 import { type SyncOnboardingScreenProps } from "./SyncOnboardingScreenProps";
-import { useIsFocused } from "@react-navigation/core";
+import { useIsFocused, useNavigation } from "@react-navigation/core";
 import { TwoStepSyncOnboardingCompanion } from "./TwoStepStepper/TwoStepSyncOnboardingCompanion";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { NavigationHeaderBackButton } from "~/components/NavigationHeaderBackButton";
 import { NavigatorName, ScreenName } from "~/const";
+import { RootNavigation } from "~/components/RootNavigator/types/helpers";
 
 const POLLING_PERIOD_MS = 1000;
 const DESYNC_TIMEOUT_MS = 20000;
@@ -33,7 +34,9 @@ const DESYNC_TIMEOUT_MS = 20000;
  * - toggle the onboarding early checks (enter/exit) on the device if needed
  * - know which steps it should display
  */
-export const SyncOnboarding = ({ navigation, route }: SyncOnboardingScreenProps) => {
+export const SyncOnboarding = ({ route }: SyncOnboardingScreenProps) => {
+  const navigation = useNavigation<RootNavigation>();
+
   const { device } = route.params;
   const [currentStep, setCurrentStep] = useState<"loading" | "early-security-check" | "companion">(
     "loading",
@@ -71,14 +74,33 @@ export const SyncOnboarding = ({ navigation, route }: SyncOnboardingScreenProps)
     if (currentStep === "early-security-check") {
       setIsESCMandatoryDrawerOpen(true);
     } else {
-      // The navigation must be popped to to avoid returning to this screen when pressing back on device selection
-      navigation.popToTop();
-      // The navigation goes to an intermediary blank screen if not directly navigated to correct screen after pop
-      navigation.navigate(NavigatorName.BaseOnboarding, {
-        screen: NavigatorName.Onboarding,
-        params: {
-          screen: ScreenName.OnboardingDeviceSelection,
-        },
+      navigation.reset({
+        index: 0,
+        routes: [
+          {
+            name: NavigatorName.BaseOnboarding,
+            state: {
+              routes: [
+                {
+                  name: NavigatorName.Onboarding,
+                  state: {
+                    routes: [
+                      {
+                        name: ScreenName.OnboardingWelcome,
+                      },
+                      {
+                        name: ScreenName.OnboardingPostWelcomeSelection,
+                      },
+                      {
+                        name: ScreenName.OnboardingDeviceSelection,
+                      },
+                    ],
+                  },
+                },
+              ],
+            },
+          },
+        ],
       });
     }
   }, [currentStep, navigation]);
