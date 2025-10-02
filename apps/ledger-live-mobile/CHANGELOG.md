@@ -1,5 +1,16 @@
 # live-mobile
 
+## 3.94.1-hotfix.0
+
+### Patch Changes
+
+- [#12120](https://github.com/LedgerHQ/ledger-live/pull/12120) [`afd1b88`](https://github.com/LedgerHQ/ledger-live/commit/afd1b8835be6d3ed1b4aa3df03fa50ef6869e1c6) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Fix BLE scanning issues
+
+- [#12120](https://github.com/LedgerHQ/ledger-live/pull/12120) [`9aa3dd1`](https://github.com/LedgerHQ/ledger-live/commit/9aa3dd1974d330fc9fcbf851a3b862ed6ed6f084) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Fix disconnection at the end of OS update in sync onboarding
+
+- Updated dependencies [[`afd1b88`](https://github.com/LedgerHQ/ledger-live/commit/afd1b8835be6d3ed1b4aa3df03fa50ef6869e1c6)]:
+  - @ledgerhq/live-dmk-mobile@0.12.1-hotfix.0
+
 ## 3.94.0
 
 ### Minor Changes

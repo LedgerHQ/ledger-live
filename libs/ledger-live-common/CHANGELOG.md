@@ -1,5 +1,11 @@
 # @ledgerhq/live-common
 
+## 34.49.1-hotfix.0
+
+### Patch Changes
+
+- [#12120](https://github.com/LedgerHQ/ledger-live/pull/12120) [`afd1b88`](https://github.com/LedgerHQ/ledger-live/commit/afd1b8835be6d3ed1b4aa3df03fa50ef6869e1c6) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Fix BLE scanning issues
+
 ## 34.49.0
 
 ### Minor Changes
