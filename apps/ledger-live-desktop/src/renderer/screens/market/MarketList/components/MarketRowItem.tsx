@@ -1,7 +1,7 @@
 import React, { useCallback, memo } from "react";
 import { useHistory } from "react-router-dom";
 import styled from "styled-components";
-import { Flex, Text, Icon } from "@ledgerhq/react-ui";
+import { Flex, Text, Icon, Tooltip, Box } from "@ledgerhq/react-ui";
 import FormattedVal from "~/renderer/components/FormattedVal";
 import { setTrackingSource } from "~/renderer/analytics/TrackPage";
 import counterValueFormatter from "@ledgerhq/live-common/market/utils/countervalueFormatter";
@@ -122,19 +122,26 @@ export const MarketRow = memo<Props>(function MarketRowItem({
                 <img width="32px" height="32px" src={currency.image} alt={"currency logo"} />
               )}
             </CryptoCurrencyIconWrapper>
-            <Flex
-              pl={3}
-              {...(hasActions ? { width: 86 } : {})}
-              overflow="hidden"
-              flexDirection="column"
-              alignItems="left"
-              pr={2}
+            <Tooltip
+              content={<TooltipContainer>{currency.name}</TooltipContainer>}
+              placement="top"
+              arrow={false}
             >
-              <EllipsisText variant="body">{currency.name}</EllipsisText>
-              <EllipsisText variant="small" color="neutral.c60">
-                {currency.ticker.toUpperCase()}
-              </EllipsisText>
-            </Flex>
+              <Flex
+                alignItems="left"
+                justifyContent="center"
+                flexDirection="column"
+                mr={2}
+                pl={3}
+                {...(hasActions ? { width: 86 } : {})}
+                overflow="hidden"
+              >
+                <EllipsisText variant="body">{currency.name}</EllipsisText>
+                <EllipsisText variant="small" color="neutral.c60">
+                  {currency.ticker.toUpperCase()}
+                </EllipsisText>
+              </Flex>
+            </Tooltip>
             {hasActions ? (
               <Flex flex={1}>
                 {availableOnBuy && (
@@ -261,3 +268,11 @@ export const CurrencyRow = memo(function CurrencyRowItem({
     />
   );
 });
+
+const TooltipContainer = styled(Box)`
+  background-color: ${({ theme }) => theme.colors.palette.neutral.c100};
+  padding: 10px;
+  border-radius: 4px;
+  display: flex;
+  gap: 8px;
+`;
