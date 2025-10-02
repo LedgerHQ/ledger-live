@@ -118,6 +118,7 @@ module.exports = withRozenite(
       "@rozenite/react-navigation-plugin",
       "@rozenite/performance-monitor-plugin",
       "@rozenite/redux-devtools-plugin",
+      "@rozenite/mmkv-plugin",
     ],
     enhanceMetroConfig: config =>
       withRozeniteExpoAtlasPlugin(config).then(config => withRozeniteReduxDevTools(config)),

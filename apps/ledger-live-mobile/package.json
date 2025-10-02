@@ -252,6 +252,7 @@
     "@react-native/dev-middleware": "0.77.3",
     "@rozenite/expo-atlas-plugin": "1.0.0-alpha.15",
     "@rozenite/metro": "1.0.0-alpha.15",
+    "@rozenite/mmkv-plugin": "1.0.0-alpha.15",
     "@rozenite/network-activity-plugin": "1.0.0-alpha.15",
     "@rozenite/performance-monitor-plugin": "1.0.0-alpha.15",
     "@rozenite/react-navigation-plugin": "1.0.0-alpha.15",
