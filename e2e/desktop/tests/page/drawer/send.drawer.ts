@@ -11,7 +11,7 @@ export class SendDrawer extends Drawer {
   private transactionMessageStatus = this.page.getByTestId("success-message-label");
   private amountValue = this.page.getByTestId("amountReceived-drawer").first();
   private transactionStatus = this.page.getByTestId("status-drawer");
-  private drawerOperationtype = this.page.getByTestId("operation-type");
+  private drawerOperationType = this.page.getByTestId("operation-type");
   private operationFromAccount = this.page.getByTestId("operation-from");
   private operationToAccount = this.page.getByTestId("operation-to");
 
@@ -50,7 +50,7 @@ export class SendDrawer extends Drawer {
 
   @step("Verify drawer operation type")
   async expectDrawerOperationType(operationType: string) {
-    const displayedOperationType = await this.drawerOperationtype.innerText();
+    const displayedOperationType = await this.drawerOperationType.innerText();
     expect(displayedOperationType).toEqual(operationType);
   }
 
