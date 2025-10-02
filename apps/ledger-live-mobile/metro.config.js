@@ -9,6 +9,7 @@
 
 const { withRozenite } = require("@rozenite/metro");
 const { withRozeniteExpoAtlasPlugin } = require("@rozenite/expo-atlas-plugin");
+const { withRozeniteReduxDevTools } = require("@rozenite/redux-devtools-plugin/metro");
 const path = require("path");
 const tsconfig = require("./tsconfig.json");
 
@@ -116,7 +117,9 @@ module.exports = withRozenite(
       "@rozenite/expo-atlas-plugin",
       "@rozenite/react-navigation-plugin",
       "@rozenite/performance-monitor-plugin",
+      "@rozenite/redux-devtools-plugin",
     ],
-    enhanceMetroConfig: config => withRozeniteExpoAtlasPlugin(config),
+    enhanceMetroConfig: config =>
+      withRozeniteExpoAtlasPlugin(config).then(config => withRozeniteReduxDevTools(config)),
   },
 );
