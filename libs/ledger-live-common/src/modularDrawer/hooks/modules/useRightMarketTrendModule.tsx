@@ -1,7 +1,7 @@
 import React, { useMemo } from "react";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { useMarketByCurrencies } from "../../../dada-client/hooks/useMarketByCurrencies";
-import { counterValueFormatter } from "../../utils/counterValueFormatter";
+import counterValueFormatter from "../../../market/utils/countervalueFormatter";
 import { UseBalanceDeps } from "../../utils/type";
 
 const createMarketPriceItem = ({

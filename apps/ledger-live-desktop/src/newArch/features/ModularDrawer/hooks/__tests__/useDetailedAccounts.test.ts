@@ -1,4 +1,5 @@
 import * as reactRedux from "react-redux";
+import BigNumber from "bignumber.js";
 import { renderHook } from "tests/testSetup";
 import { INITIAL_STATE } from "~/renderer/reducers/settings";
 import { ETH_ACCOUNT } from "../../../__mocks__/accounts.mock";
@@ -23,12 +24,15 @@ describe("useDetailedAccounts", () => {
       {
         id: ETH_ACCOUNT.id,
         name: "Ethereum 2",
-        address: "0x42D...339ED",
-        balance: "12.7161 ETH",
+        address: "0x42D9B73CC5087B49B0DB4E505D9C26D1126339ED",
+        balance: new BigNumber("12716111724790910655"),
+        balanceUnit: {
+          code: "ETH",
+          magnitude: 18,
+          name: "ether",
+        },
         cryptoId: "ethereum",
-        fiatValue: undefined,
-        parentId: undefined,
-        protocol: "",
+        fiatValue: 0,
         ticker: "ETH",
       },
     ]);

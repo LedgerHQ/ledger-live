@@ -22,6 +22,7 @@ import { useAccountData } from "../../hooks/useAccountData";
 import { useBalanceDeps } from "../../hooks/useBalanceDeps";
 import { useSelector } from "react-redux";
 import { modularDrawerFlowSelector, modularDrawerSourceSelector } from "~/reducers/modularDrawer";
+import { withDiscreetMode } from "~/context/DiscreetModeContext";
 
 export type NetworkSelectionStepProps = {
   availableNetworks: CryptoOrTokenCurrency[];
@@ -110,4 +111,4 @@ const NetworkSelection = ({
   );
 };
 
-export default React.memo(NetworkSelection);
+export default withDiscreetMode(React.memo(NetworkSelection));
