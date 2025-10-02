@@ -62,7 +62,7 @@ export const genericSignRawOperation =
         );
         const operation = buildOptimisticOperation(
           account,
-          { amount: new BigNumber(0), recipient: "" },
+          { family: account.currency.family, amount: new BigNumber(0), recipient: "" },
           signedInfo.sequence,
         );
         if (!operation.id) {
