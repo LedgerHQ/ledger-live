@@ -140,9 +140,9 @@ const DEFAULT_SWAP_PROVIDERS: Record<string, ProviderConfig & Partial<Additional
     type: "DEX",
     needsKYC: false,
     needsBearerToken: false,
-    termsOfUseUrl: "https://1inch.io/assets/1inch_network_terms_of_use.pdf",
-    supportUrl: "https://help.1inch.io/en/",
-    mainUrl: "https://1inch.io/",
+    termsOfUseUrl: "https://1inch.com/assets/1inch_network_terms_of_use.pdf",
+    supportUrl: "https://help.1inch.com/en/",
+    mainUrl: "https://1inch.com/",
   },
   paraswap: {
     type: "DEX",
@@ -232,7 +232,7 @@ export const dexProvidersContractAddress: { [key: string]: string } = {
 
 export const termsOfUse: { [key: string]: string } = {
   paraswap: "https://paraswap.io/tos",
-  "1inch": "https://1inch.io/assets/1inch_network_terms_of_use.pdf",
+  "1inch": "https://1inch.com/assets/1inch_network_terms_of_use.pdf",
   Uniswap: "https://uniswap.org/terms-of-service",
 };
 
