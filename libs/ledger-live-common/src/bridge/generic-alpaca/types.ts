@@ -18,8 +18,16 @@ export type GenericTransaction = TransactionCommon & {
   memoType?: string | null;
   memoValue?: string | null;
   data?: Buffer;
+  mode?:
+    | "send"
+    | "changeTrust"
+    | "send-legacy"
+    | "send-eip1559"
+    | "delegate"
+    | "stake"
+    | "undelegate"
+    | "unstake";
   type?: number;
-  mode?: "send" | "changeTrust" | "send-legacy" | "send-eip1559";
   assetReference?: string;
   assetOwner?: string;
   networkInfo?: NetworkInfo | null;

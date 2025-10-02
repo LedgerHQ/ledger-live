@@ -128,15 +128,18 @@ export function transactionToIntent(
   data?: { type: string; value?: unknown };
 } {
   const intentType = (computeIntentType ?? defaultComputeIntentType)(transaction);
+  const isStaking = ["stake", "unstake"].includes(intentType);
+  const amount = isStaking ? 0n : fromBigNumberToBigInt(transaction.amount, 0n);
+  const useAllAmount = isStaking || !!transaction.useAllAmount;
   const res: TransactionIntent & { memo?: { type: string; value?: string } } & {
     data?: { type: string; value?: unknown };
   } = {
     type: intentType,
     sender: account.freshAddress,
     recipient: transaction.recipient,
-    amount: fromBigNumberToBigInt(transaction.amount, BigInt(0)),
+    amount,
     asset: { type: "native", name: account.currency.name, unit: account.currency.units[0] },
-    useAllAmount: !!transaction.useAllAmount,
+    useAllAmount,
     feesStrategy:
       transaction.feesStrategy === "custom" ? undefined : transaction.feesStrategy ?? undefined,
     data: Buffer.isBuffer(transaction.data)
