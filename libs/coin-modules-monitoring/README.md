@@ -47,12 +47,19 @@ or
 pnpm start monitor --currencies all --account-types pristine,average,big
 ```
 
+Run monitoring in `isolated` mode
+
+```bash
+pnpm start monitor --currencies algorand --isolated
+```
+
 ### Command Options
 
-| Option                          | Description                                              | Default                | Example                   |
-| ------------------------------- | -------------------------------------------------------- | ---------------------- | ------------------------- |
-| `-c, --currencies <currencies>` | (Optional) Comma-separated list of currencies to monitor | `all`                  | `bitcoin,ethereum,solana` |
-| `-t, --account-types <types>`   | (Optional) Comma-separated account types to test         | `pristine,average,big` | `pristine,big`            |
+| Option                          | Description                                                                    | Default                   | Example                   |
+| ------------------------------- | ------------------------------------------------------------------------------ | ------------------------- | ------------------------- |
+| `-c, --currencies <currencies>` | (Optional) Comma-separated list of currencies to monitor                       | `all`                     | `bitcoin,ethereum,solana` |
+| `-t, --account-types <types>`   | (Optional) Comma-separated account types to test                               | `pristine,average,big`    | `pristine,big`            |
+| `-i, --isolated`                | (Optional) Flag to run each currency/account combination in isolated processes | `false` (meaning no flag) | `--isolated` (for true)   |
 
 ### Account Types
 

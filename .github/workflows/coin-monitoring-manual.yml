@@ -8,9 +8,15 @@ on:
       account_types:
         description: comma-separated account types, separated with commas (,) (pristine, average, big)
         required: false
+        default: "pristine,average,big"
       currencies:
         description: Currencies to monitor, separated with commas (,), or "all" (default)
         required: false
+        default: "all"
+      isolated:
+        description: Run each currency/account combination in isolated processes, true or false (default)
+        required: false
+        default: false
 
 jobs:
   run-monitoring:
@@ -25,5 +31,6 @@ jobs:
         id: monitoring
         timeout-minutes: 120
         with:
-          MONITOR_FILTER_CURRENCIES: ${{ inputs.currencies || "all" }}
-          MONITOR_FILTER_ACCOUNT_TYPES: ${{ inputs.account_types || "pristine,average,big" }}
+          MONITOR_FILTER_CURRENCIES: ${{ inputs.currencies }}
+          MONITOR_FILTER_ACCOUNT_TYPES: ${{ inputs.account_types }}
+          MONITOR_FILTER_ISOLATED: ${{ inputs.isolated }}
