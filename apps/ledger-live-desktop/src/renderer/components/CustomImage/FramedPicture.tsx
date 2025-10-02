@@ -42,7 +42,7 @@ function scaleFrameConfig(frameConfig: FramedPictureConfig, scale: number): Fram
   } as FramedPictureConfig;
 }
 
-const DEFAULT_SCALE_COEFFICIENT = 0.8;
+const DEFAULT_SCALE_COEFFICIENT = 0.65;
 /* The height of the confirmation button, could vary per device model later */
 const BUTTON_HEIGHT = 40;
 
