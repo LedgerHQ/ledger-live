@@ -47,7 +47,6 @@ export function createFixtureAccount(account?: Partial<TezosAccount>): TezosAcco
     swapHistory: [],
 
     tezosResources,
-    stakingPositions: account?.stakingPositions || [],
   };
 }
 

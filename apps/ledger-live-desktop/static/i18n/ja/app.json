@@ -172,6 +172,7 @@
       "REDELEGATE" : "再デリゲート済み",
       "UNDELEGATE" : "デリゲート解除済み",
       "APPROVE" : "承認済み",
+      "PRE_APPROVAL" : "事前承認",
       "VOTE" : "投票済み",
       "FREEZE" : "凍結中",
       "UNFREEZE" : "凍結解除済み",
@@ -1438,8 +1439,8 @@
   },
   "banners" : {
     "cleanCache" : {
-      "title" : "試験的設定の変更にはCacheの削除が必要です",
-      "cta" : "Cacheを削除する"
+      "title" : "試験的設定の変更にはキャッシュの削除が必要です",
+      "cta" : "キャッシュを削除する"
     },
     "migrate" : "Ledger Liveアカウントのアップデートが利用可能です。",
     "genericTerminatedCrypto" : "{{coinName}} には対応していません。",
@@ -1874,7 +1875,12 @@
         "default" : "送付する前に、スワップの詳細をデバイス上で確認してください。アドレスは安全にやりとりされるため、確認の必要はありません。",
         "provider" : "送付前に、スワップの詳細をデバイス上で確認してください。{{providerName}}では、一部のトランザクションに対して追加の検証を実行する必要があり、遅延が発生する場合があります。"
       },
+      "simpleViewNotice" : {
+        "default" : "送付前に、スワップの詳細をLedger上で確認してください。",
+        "provider" : "送付前に、スワップの詳細をデバイス上で確認してください。"
+      },
       "confirm" : "スワップ取引を確定",
+      "confirmSwap" : "スワップ処理をデバイス上で確認する",
       "amountSent" : "送付額",
       "amountReceived" : "受取額",
       "amountReceivedFloat" : "サービス手数料を含まない受け取り額",
@@ -1885,6 +1891,7 @@
       "acceptTerms" : "このトランザクションを検証することにより、私は\n<0>{{provider}}の利用規約</0>に同意します",
       "exodusAcceptTerms" : "Exodusは、スワップの実行をサードパーティに依存しています。\nこのトランザクションを承認することにより、私は<0>Exodusの利用規約</0>に同意します",
       "changellyAcceptTerms" : "「Swap with Changelly（Changellyでスワップ）」をクリックすると、Changellyの<0>利用規約</0>およびその\n<1>AML/KYC</1>ポリシーに同意したことになります。ChangellyはAML/KYC（本人確認手続き）を適用する場合があり、\n稀にトランザクションの完了に影響する可能性があります。そのような場合は、\nChangellyの<2>カスタマーサポート</2>に連絡する必要があります。",
+      "changellySimplifiedAcceptTerms" : "このトランザクションを承認すると、Changellyの<0>利用規約</0>および\n<1>AML/KYC</1>ポリシーに同意したことになります。ChangellyはAML/KYC手続きを適用する場合があり、\n取引の完了に影響する可能性があります。そのような場合は、\nChangellyの<2>カスタマーサポート</2>に連絡する必要があります。",
       "cicAcceptTerms" : "「Swap with CIC（CICでスワップ）」を選択すると、CICの<0>利用規約</0>およびその<1>AML/KYC</1>ポリシーに同意したことになります。CICはAML/KYC（本人確認手続き）を適用する場合があり、特定の状況下で、トランザクションの完了に影響する可能性があります。万が一、当該事象が発生した際には、CICの<2>カスタマーサポート</2>までお問い合わせください。"
     },
     "swap2" : {
@@ -2240,6 +2247,16 @@
     "title" : "受け取る",
     "successTitle" : "安全に共有されたアドレス",
     "steps" : {
+      "options" : {
+        "fromBank" : {
+          "title" : "銀行口座から",
+          "description" : "USDまたはEURを入金"
+        },
+        "fromCrypto" : {
+          "title" : "暗号資産アドレスから",
+          "description" : "暗号資産を受け取る"
+        }
+      },
       "chooseAccount" : {
         "title" : "アカウント",
         "label" : "受取アカウント",
@@ -4511,37 +4528,37 @@
         }
       },
       "mockAccounts" : {
-        "title" : "Generate mock accounts",
-        "description" : "Generate mock accounts for testing purposes. These tools allow you to create test accounts with various currencies and configurations.",
+        "title" : "モックアカウントの生成",
+        "description" : "テスト目的でモック（模擬）アカウントを生成します。これらのツールを使用すると、さまざまな通貨と構成でテストアカウントを作成できます。",
         "customGenerate" : {
-          "title" : "Custom generation",
-          "desc" : "Select currencies and add tokens"
+          "title" : "カスタム生成",
+          "desc" : "通貨を選択してトークンを追加"
         },
         "quickGenerate" : {
-          "title" : "Quick generation",
-          "desc" : "Generate 10 random accounts with random currencies"
+          "title" : "クイック生成",
+          "desc" : "ランダムな通貨を持つランダムなアカウントを10個生成します"
         },
         "currencySelector" : {
-          "placeholder" : "Choose currencies...",
-          "searchPlaceholder" : "Search",
-          "noCurrenciesFound" : "No currencies found",
-          "noCurrenciesAvailable" : "No currencies available",
-          "selectedCount" : "{{count}} currency selected",
-          "selectedCount_other" : "{{count}} currencies selected"
+          "placeholder" : "通貨を選択...",
+          "searchPlaceholder" : "検索",
+          "noCurrenciesFound" : "通貨が見つかりません",
+          "noCurrenciesAvailable" : "利用可能な通貨がありません",
+          "selectedCount" : "{{count}}個の通貨が選択されました",
+          "selectedCount_other" : "{{count}}個の通貨が選択されました"
         },
         "tokenIds" : {
-          "label" : "Token IDs (optional)",
-          "placeholder" : "token1, token2, token3"
+          "label" : "トークンID（オプション）",
+          "placeholder" : "トークン1、トークン2、トークン3"
         },
         "buttons" : {
-          "generateAccounts" : "Generate {{count}} account",
-          "generateAccounts_other" : "Generate {{count}} accounts",
-          "generateAccountsQuick" : "Generate {{count}} accounts"
+          "generateAccounts" : "{{count}}個のアカウントを生成",
+          "generateAccounts_other" : "{{count}}個のアカウントを生成",
+          "generateAccountsQuick" : "{{count}}個のアカウントを生成"
         },
         "alerts" : {
-          "selectCurrency" : "Please select at least one currency",
-          "confirmErase" : "Existing accounts will be erased. Continue?",
-          "generateError" : "Failed to generate mock accounts. Please try again."
+          "selectCurrency" : "少なくとも1つの通貨を選択してください",
+          "confirmErase" : "既存のアカウントは消去されます。続行しますか？",
+          "generateError" : "モックアカウントの生成に失敗しました。もう一度お試しください。"
         }
       },
       "debugWalletSync" : {
@@ -4641,8 +4658,8 @@
       "passwordAutoLock" : "オートロック",
       "passwordAutoLockDesc" : "非アクティブ時にLedger Liveを自動的にロックします。",
       "changePassword" : "パスワードの変更",
-      "softResetTitle" : "Cacheを削除する",
-      "softResetDesc" : "Ledger LiveのCacheを削除し、ブロックチェーンと再同期する。",
+      "softResetTitle" : "キャッシュを削除する",
+      "softResetDesc" : "Ledger Liveのキャッシュを削除し、ブロックチェーンと再同期する。",
       "softReset" : "クリア",
       "resetThirdPartyData" : "サードパーティーのデータをリセット",
       "resetThirdPartyDataDesc" : "サードパーティーのトランザクションプロバイダーへのアクセスに使用される、ローカルのサードパーティーのデータをすべて消去します。",
@@ -4757,12 +4774,12 @@
       "warning" : "Ledger Liveをリセットすると、すべてのアカウントのスワップ取引履歴が消去されます。"
     },
     "softResetModal" : {
-      "title" : "Cacheを削除する",
-      "desc" : "Cacheデータを削除すると、ネットワークが強制的に再同期されます。設定とアカウントは保存されます。暗号資産にアクセスするためのプライベートキーは、Ledgerデバイスとリカバリーシートに安全に保管されます。"
+      "title" : "キャッシュを削除する",
+      "desc" : "キャッシュデータを削除すると、ネットワークが強制的に再同期されます。設定とアカウントは保存されます。暗号資産にアクセスするためのプライベートキーは、Ledgerデバイスとリカバリーシートに安全に保管されます。"
     },
     "resetFallbackModal" : {
       "title" : "必要なユーザーアクション",
-      "part1" : "Cacheフォルダを削除できませんでした。手動でフォルダを削除してください。",
+      "part1" : "キャッシュフォルダを削除できませんでした。手動でフォルダを削除してください。",
       "part2" : "フォルダを開くボタンをクリックして ",
       "part3" : "アプリを終了",
       "part4" : "\"sqlite\"フォルダを手動で削除します。",
@@ -4776,7 +4793,7 @@
     },
     "openUserDataDirectory" : {
       "title" : "ユーザーデータを表示",
-      "desc" : "コンピューターに保存されたアカウントやCache、設定といったユーザーデータを表示する。",
+      "desc" : "コンピューターに保存されたアカウントやキャッシュ、設定といったユーザーデータを表示する。",
       "btn" : "表示"
     },
     "repairDevice" : {
@@ -5008,7 +5025,7 @@
       "welcome" : {
         "title" : "暗号資産とNFTの最も安全なウォレット",
         "description" : "Ledger Liveで、暗号資産とNFTを安全に管理・購入・運用しましょう。",
-        "nextButton" : "はじめに",
+        "nextButton" : "はじめる",
         "noDevice" : "デバイスをお持ちでない場合",
         "buyLink" : "デバイスをお持ちでない場合Ledgerを購入する",
         "byTapping" : "「はじめる」をタップすることで、お客様が同意したことになります。",
@@ -5066,7 +5083,7 @@
       },
       "tutorial" : {
         "steps" : {
-          "getStarted" : "はじめに",
+          "getStarted" : "はじめる",
           "pinCode" : "PINコード",
           "recoveryPhrase" : "リカバリーフレーズ",
           "hideRecoveryPhrase" : "リカバリーフレーズを非表示にする",
@@ -6439,6 +6456,9 @@
     },
     "EthAppPleaseEnableContractData" : {
       "title" : "Ethereumアプリの設定からブラインド署名またはコントラクトデータを有効にしてください"
+    },
+    "CeloAppPleaseEnableContractData" : {
+      "title" : "Celoアプリの設定でコントラクトデータを有効にしてください"
     },
     "InvalidXRPTag" : {
       "title" : "無効なXRP宛先タグ"

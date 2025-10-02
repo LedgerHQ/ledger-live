@@ -10,6 +10,7 @@ import {
   isAPITransactionType,
 } from "../network/types";
 import { Operation } from "@ledgerhq/coin-framework/api/types";
+// import { TezosAsset } from "../api/types";
 
 /**
  * Returns list of "Transfer", "Delegate" and "Undelegate" Operations associated to an account.
@@ -37,15 +38,11 @@ export async function listOperations(
     options = { ...options, lastId: JSON.parse(token) };
   }
   const operations = await tzkt.getAccountOperations(address, options);
-
-  // Apply limit after fetching since tzkt API might not respect the limit parameter
-  const limitedOperations = limit ? operations.slice(0, limit) : operations;
-
-  const lastOperation = limitedOperations.at(-1);
+  const lastOperation = operations.slice(-1)[0];
   // it's important to get the last id from the **unfiltered** operation list
   // otherwise we might miss operations
   const nextToken = lastOperation ? JSON.stringify(lastOperation?.id) : "";
-  const filteredOperations = limitedOperations
+  const filteredOperations = operations
     .filter(op => isAPITransactionType(op) || isAPIDelegationType(op) || isAPIRevealType(op))
     .filter(op => {
       // Filter out failed incoming tx
@@ -66,29 +63,12 @@ export async function listOperations(
   return [sortedOperations, nextToken];
 }
 
-/**
- * Helper function to get the ledgerOpType for an operation
- */
-function getLedgerOpType(
-  operation: APITransactionType | APIDelegationType | APIRevealType,
-  normalizedType: Operation["type"],
-): string | undefined {
-  if (isAPIDelegationType(operation)) {
-    return operation.newDelegate?.address ? "DELEGATE" : "UNDELEGATE";
-  } else if (isAPIRevealType(operation)) {
-    return "REVEAL";
-  } else if (normalizedType === "FEES") {
-    return "FEES";
-  }
-  return undefined;
-}
-
 // note that "initiator" of APITransactionType is never used in the conversion
 function convertOperation(
   address: string,
   operation: APITransactionType | APIDelegationType | APIRevealType,
 ): Operation {
-  const { hash, sender, id } = operation;
+  const { hash, sender, type, id } = operation;
 
   let targetAddress = undefined;
   if (isAPITransactionType(operation)) {
@@ -98,47 +78,21 @@ function convertOperation(
     targetAddress = operation?.newDelegate?.address || operation?.prevDelegate?.address;
   }
 
-  const recipients = targetAddress ? [targetAddress] : [];
+  const recipients = [];
   if (!targetAddress) {
     log("coin:tezos", "(logic/operations): No target address found for operation", operation);
+  } else {
+    recipients.push(targetAddress);
   }
 
   const senders = sender?.address ? [sender.address] : [];
 
-  const amount = isAPIRevealType(operation) ? 0n : BigInt(operation.amount);
+  const amount = isAPIRevealType(operation) ? BigInt(0) : BigInt(operation.amount);
 
   const fee =
     BigInt(operation.storageFee ?? 0) +
     BigInt(operation.bakerFee ?? 0) +
     BigInt(operation.allocationFee ?? 0);
-
-  // Determine operation type inline
-  let normalizedType: Operation["type"];
-  if (isAPIDelegationType(operation)) {
-    normalizedType = operation.newDelegate?.address ? "DELEGATE" : "UNDELEGATE";
-  } else if (isAPITransactionType(operation)) {
-    const isOut = sender?.address === address;
-    const isIn = targetAddress === address;
-
-    if ((isOut && isIn) || amount === 0n) {
-      normalizedType = "FEES";
-    } else if (isOut) {
-      normalizedType = "OUT";
-    } else if (isIn) {
-      normalizedType = "IN";
-    } else {
-      normalizedType = "OUT"; // fallback
-    }
-  } else if (isAPIRevealType(operation)) {
-    normalizedType = "REVEAL";
-  } else {
-    // fallback for unknown types
-    log("coin:tezos", "(logic/operations): Unknown operation type, defaulting to OUT");
-    normalizedType = "OUT";
-  }
-
-  // Tezos uses "applied" for every sucess operation (something else=failed )
-  const hasFailed = operation.status && operation.status !== "applied";
 
   return {
     id: `${hash ?? ""}-${id}`,
@@ -155,7 +109,7 @@ function convertOperation(
       },
       date: new Date(operation.timestamp),
     },
-    type: normalizedType,
+    type: type,
     value: amount,
     senders: senders,
     recipients: recipients,
@@ -163,8 +117,6 @@ function convertOperation(
       counter: operation.counter,
       gasLimit: operation.gasLimit,
       storageLimit: operation.storageLimit,
-      status: hasFailed ? "failed" : operation.status,
-      ledgerOpType: getLedgerOpType(operation, normalizedType),
     },
   };
 }

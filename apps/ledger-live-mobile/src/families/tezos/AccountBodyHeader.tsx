@@ -4,7 +4,7 @@ import { differenceInCalendarDays } from "date-fns";
 import { StyleSheet, Platform, View } from "react-native";
 import { AccountLike, Account } from "@ledgerhq/types-live";
 import { shortAddressPreview, getAccountCurrency } from "@ledgerhq/live-common/account/index";
-import { useDelegation, useStakingPositions } from "@ledgerhq/live-common/families/tezos/react";
+import { useDelegation } from "@ledgerhq/live-common/families/tezos/react";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import LText from "~/components/LText";
 import CurrencyUnitValue from "~/components/CurrencyUnitValue";
@@ -98,28 +98,17 @@ export default function TezosAccountBodyHeader({
   }, []);
 
   const delegation = useDelegation(account);
-  const stakingPositions = useStakingPositions(account);
 
   const unit = useAccountUnit(account);
 
-  if (!delegation && stakingPositions.length === 0) {
+  if (!delegation) {
     return null;
   }
 
-  const getDelegationName = () => {
-    if (delegation) {
-      if (delegation.baker) {
-        return delegation.baker.name;
-      }
-      return shortAddressPreview(delegation.address);
-    }
-    return shortAddressPreview(stakingPositions[0].delegate!);
-  };
-
-  const name = getDelegationName();
+  const name = delegation.baker ? delegation.baker.name : shortAddressPreview(delegation.address);
   const amount = account.balance;
   const currency = getAccountCurrency(account);
-  const days = delegation ? differenceInCalendarDays(Date.now(), delegation.operation.date) : 0;
+  const days = differenceInCalendarDays(Date.now(), delegation.operation.date);
 
   return (
     <View style={styles.root}>
@@ -134,11 +123,11 @@ export default function TezosAccountBodyHeader({
           py={6}
           style={[
             {
-              opacity: delegation?.isPending ? 0.5 : 1,
+              opacity: delegation.isPending ? 0.5 : 1,
             },
           ]}
         >
-          <BakerImage size={40} baker={delegation?.baker} />
+          <BakerImage size={40} baker={delegation.baker} />
           <View style={styles.cardHeadBody}>
             <View style={styles.row}>
               <Text variant={"body"} fontWeight={"semiBold"} numberOfLines={1}>
@@ -150,16 +139,11 @@ export default function TezosAccountBodyHeader({
             </View>
             <View style={styles.row}>
               <LText style={styles.subtitle} color="grey">
-                {delegation &&
-                  (days ? (
-                    <Trans
-                      i18nKey="delegation.durationDays"
-                      count={days}
-                      values={{ count: days }}
-                    />
-                  ) : (
-                    <Trans i18nKey="delegation.durationDays0" />
-                  ))}
+                {days ? (
+                  <Trans i18nKey="delegation.durationDays" count={days} values={{ count: days }} />
+                ) : (
+                  <Trans i18nKey="delegation.durationDays0" />
+                )}
               </LText>
 
               <CounterValue
@@ -173,29 +157,25 @@ export default function TezosAccountBodyHeader({
             </View>
           </View>
         </Flex>
-        {delegation && (
-          <Button
-            event="ViewDelegationDetails"
-            size={"small"}
-            type="shade"
-            outline
-            onPress={onViewDetails}
-            mt={2}
-          >
-            <Trans i18nKey="delegation.viewDetails" />
-          </Button>
-        )}
+        <Button
+          event="ViewDelegationDetails"
+          size={"small"}
+          type="shade"
+          outline
+          onPress={onViewDetails}
+          mt={2}
+        >
+          <Trans i18nKey="delegation.viewDetails" />
+        </Button>
       </View>
 
-      {delegation && (
-        <DelegationDetailsModal
-          isOpened={openedModal}
-          onClose={onModalClose}
-          delegation={delegation}
-          account={account}
-          parentAccount={parentAccount}
-        />
-      )}
+      <DelegationDetailsModal
+        isOpened={openedModal}
+        onClose={onModalClose}
+        delegation={delegation}
+        account={account}
+        parentAccount={parentAccount}
+      />
     </View>
   );
 }

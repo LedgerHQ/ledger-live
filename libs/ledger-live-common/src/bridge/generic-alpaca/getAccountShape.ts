@@ -1,6 +1,5 @@
 import { encodeAccountId } from "@ledgerhq/coin-framework/account/index";
 import { GetAccountShape, mergeOps } from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import BigNumber from "bignumber.js";
 import { getAlpacaApi } from "./alpaca";
 import { adaptCoreOperationToLiveOperation, extractBalance } from "./utils";
@@ -37,20 +36,11 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
 
     const spendableBalance = BigInt(nativeBalance - BigInt(nativeAsset?.locked ?? "0"));
 
-    // Normalize pre-alpaca operations to the new accountId to keep UI rendering consistent
-    const oldOps = ((initialAccount?.operations || []) as OperationCommon[]).map(op =>
-      op.accountId === accountId
-        ? op
-        : { ...op, accountId, id: encodeOperationId(accountId, op.hash, op.type) },
-    );
+    const oldOps = (initialAccount?.operations || []) as OperationCommon[];
     const lastPagingToken = oldOps[0]?.extra?.pagingToken || "";
 
-    // Calculate minHeight for pagination
-    let minHeight: number = 0;
-    if (oldOps.length > 0 && initialAccount?.blockHeight !== 0) {
-      minHeight = (oldOps[0].blockHeight ?? 0) + 1;
-    }
-    const paginationParams: Pagination = { minHeight, order: "asc" };
+    const blockHeight = oldOps.length ? (oldOps[0].blockHeight ?? 0) + 1 : 0;
+    const paginationParams: Pagination = { minHeight: blockHeight, order: "asc" };
     if (lastPagingToken) {
       paginationParams.lastPagingToken = lastPagingToken;
     }

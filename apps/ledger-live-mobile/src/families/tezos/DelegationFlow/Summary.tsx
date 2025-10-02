@@ -10,12 +10,7 @@ import { getAccountCurrency, shortAddressPreview } from "@ledgerhq/live-common/a
 import { getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
 import type { Transaction as TezosTransaction } from "@ledgerhq/live-common/families/tezos/types";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
-import {
-  useDelegation,
-  useBaker,
-  useBakers,
-  useStakingPositions,
-} from "@ledgerhq/live-common/families/tezos/react";
+import { useDelegation, useBaker, useBakers } from "@ledgerhq/live-common/families/tezos/react";
 import { whitelist } from "@ledgerhq/live-common/families/tezos/staking";
 import type { AccountLike } from "@ledgerhq/types-live";
 import { useTheme } from "@react-navigation/native";
@@ -194,11 +189,8 @@ export default function DelegationSummary({ navigation, route }: Props) {
   }, [rotateAnim, navigation, route.params, transaction, status]);
 
   const delegation = useDelegation(account);
-  const stakingPositions = useStakingPositions(account);
   const addr =
-    transaction.mode === "undelegate"
-      ? delegation?.address || stakingPositions[0]?.delegate || ""
-      : transaction.recipient;
+    transaction.mode === "undelegate" ? delegation?.address || "" : transaction.recipient;
 
   const baker = useBaker(addr);
   const bakerName = baker ? baker.name : shortAddressPreview(addr);
