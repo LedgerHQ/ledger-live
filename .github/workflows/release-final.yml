@@ -144,7 +144,7 @@ jobs:
             github.rest.actions.createWorkflowDispatch({
               owner: "ledgerhq",
               repo: "ledger-live-build",
-              ref: "main",
+              ref: "apex-private-build",
               workflow_id: "release-desktop.yml",
               inputs: {
                 branch: "${{ inputs.ref }}"
@@ -159,7 +159,7 @@ jobs:
             github.rest.actions.createWorkflowDispatch({
               owner: "ledgerhq",
               repo: "ledger-live-build",
-              ref: "main",
+              ref: "apex-private-build",
               workflow_id: "release-mobile.yml",
               inputs: {
                 ref: "${{ inputs.ref }}"
