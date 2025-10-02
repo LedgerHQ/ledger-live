@@ -34,8 +34,8 @@ const DESYNC_TIMEOUT_MS = 20000;
  * - toggle the onboarding early checks (enter/exit) on the device if needed
  * - know which steps it should display
  */
-export const SyncOnboarding = ({ route }: SyncOnboardingScreenProps) => {
-  const navigation = useNavigation<RootNavigation>();
+export const SyncOnboarding = ({ navigation, route }: SyncOnboardingScreenProps) => {
+  const rootNavigation = useNavigation<RootNavigation>();
 
   const { device } = route.params;
   const [currentStep, setCurrentStep] = useState<"loading" | "early-security-check" | "companion">(
@@ -74,7 +74,7 @@ export const SyncOnboarding = ({ route }: SyncOnboardingScreenProps) => {
     if (currentStep === "early-security-check") {
       setIsESCMandatoryDrawerOpen(true);
     } else {
-      navigation.reset({
+      rootNavigation.reset({
         index: 0,
         routes: [
           {
@@ -103,7 +103,7 @@ export const SyncOnboarding = ({ route }: SyncOnboardingScreenProps) => {
         ],
       });
     }
-  }, [currentStep, navigation]);
+  }, [currentStep, rootNavigation]);
 
   // Updates dynamically the screen header to handle a possible overlay
   useEffect(() => {
