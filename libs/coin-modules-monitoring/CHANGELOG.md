@@ -1,5 +1,29 @@
 # @ledgerhq/coin-modules-monitoring
 
+## 2.5.0
+
+### Minor Changes
+
+- [#11754](https://github.com/LedgerHQ/ledger-live/pull/11754) [`d2695fc`](https://github.com/LedgerHQ/ledger-live/commit/d2695fc17c69ce52f9a8147722cc97ae23c0a63b) Thanks [@Antoine-bls83](https://github.com/Antoine-bls83)! - add cpu, mem and number of calls during a sync
+
+### Patch Changes
+
+- Updated dependencies [[`5d3b6c0`](https://github.com/LedgerHQ/ledger-live/commit/5d3b6c01904d50e700e480150b64e9c6d8bcbc98), [`1efc340`](https://github.com/LedgerHQ/ledger-live/commit/1efc340299242edd73512d1931976458fc6b8201), [`e04d493`](https://github.com/LedgerHQ/ledger-live/commit/e04d49340c65c8b4608a37bb726d21350fdd32f1), [`a37c06f`](https://github.com/LedgerHQ/ledger-live/commit/a37c06f97b061a5db0dad3632bb5c3e8f293677c), [`777bf68`](https://github.com/LedgerHQ/ledger-live/commit/777bf6884e89bcbec9523fe17a7bc94ec0e5e624), [`ab0e1bc`](https://github.com/LedgerHQ/ledger-live/commit/ab0e1bcc97b66b750b6c29e618eb03ce6f25bb7b), [`980450f`](https://github.com/LedgerHQ/ledger-live/commit/980450ff9e57e1a150e137c7dea39ce5bcb36549), [`4d60b7e`](https://github.com/LedgerHQ/ledger-live/commit/4d60b7e0984f0f8ef75c1483e0cfaf5784fbc5ed), [`e3b568d`](https://github.com/LedgerHQ/ledger-live/commit/e3b568d2cbeee6dcf19a7047ce9fa11a04b0ae2a), [`0d368f0`](https://github.com/LedgerHQ/ledger-live/commit/0d368f0e682b3bd3daafa6af5b396648a95b1488), [`f015ef3`](https://github.com/LedgerHQ/ledger-live/commit/f015ef32660905d00f55a45f451f38bc12aec9ba), [`72e4a96`](https://github.com/LedgerHQ/ledger-live/commit/72e4a96f7d5b6ce224bd369508e2b5686c126e30), [`321e514`](https://github.com/LedgerHQ/ledger-live/commit/321e5145e94a34c4a348855deb1acce14cb90b18), [`c1c2539`](https://github.com/LedgerHQ/ledger-live/commit/c1c25396cfc4dbcd742cd9872f7b837becb1dfef), [`e3bcefb`](https://github.com/LedgerHQ/ledger-live/commit/e3bcefbf8a46c91388d6f936fd31d6ffcdc24756), [`49a8534`](https://github.com/LedgerHQ/ledger-live/commit/49a85340a9c4e5dd8dd07db87028fe48f307d1f6), [`42f2449`](https://github.com/LedgerHQ/ledger-live/commit/42f244956720dfe13cf16334ef79064f651c67d0)]:
+  - @ledgerhq/live-common@34.50.0
+  - @ledgerhq/cryptoassets@13.30.0
+
+## 2.5.0-next.0
+
+### Minor Changes
+
+- [#11754](https://github.com/LedgerHQ/ledger-live/pull/11754) [`d2695fc`](https://github.com/LedgerHQ/ledger-live/commit/d2695fc17c69ce52f9a8147722cc97ae23c0a63b) Thanks [@Antoine-bls83](https://github.com/Antoine-bls83)! - add cpu, mem and number of calls during a sync
+
+### Patch Changes
+
+- Updated dependencies [[`5d3b6c0`](https://github.com/LedgerHQ/ledger-live/commit/5d3b6c01904d50e700e480150b64e9c6d8bcbc98), [`1efc340`](https://github.com/LedgerHQ/ledger-live/commit/1efc340299242edd73512d1931976458fc6b8201), [`e04d493`](https://github.com/LedgerHQ/ledger-live/commit/e04d49340c65c8b4608a37bb726d21350fdd32f1), [`a37c06f`](https://github.com/LedgerHQ/ledger-live/commit/a37c06f97b061a5db0dad3632bb5c3e8f293677c), [`777bf68`](https://github.com/LedgerHQ/ledger-live/commit/777bf6884e89bcbec9523fe17a7bc94ec0e5e624), [`ab0e1bc`](https://github.com/LedgerHQ/ledger-live/commit/ab0e1bcc97b66b750b6c29e618eb03ce6f25bb7b), [`980450f`](https://github.com/LedgerHQ/ledger-live/commit/980450ff9e57e1a150e137c7dea39ce5bcb36549), [`4d60b7e`](https://github.com/LedgerHQ/ledger-live/commit/4d60b7e0984f0f8ef75c1483e0cfaf5784fbc5ed), [`e3b568d`](https://github.com/LedgerHQ/ledger-live/commit/e3b568d2cbeee6dcf19a7047ce9fa11a04b0ae2a), [`0d368f0`](https://github.com/LedgerHQ/ledger-live/commit/0d368f0e682b3bd3daafa6af5b396648a95b1488), [`f015ef3`](https://github.com/LedgerHQ/ledger-live/commit/f015ef32660905d00f55a45f451f38bc12aec9ba), [`72e4a96`](https://github.com/LedgerHQ/ledger-live/commit/72e4a96f7d5b6ce224bd369508e2b5686c126e30), [`321e514`](https://github.com/LedgerHQ/ledger-live/commit/321e5145e94a34c4a348855deb1acce14cb90b18), [`c1c2539`](https://github.com/LedgerHQ/ledger-live/commit/c1c25396cfc4dbcd742cd9872f7b837becb1dfef), [`e3bcefb`](https://github.com/LedgerHQ/ledger-live/commit/e3bcefbf8a46c91388d6f936fd31d6ffcdc24756), [`49a8534`](https://github.com/LedgerHQ/ledger-live/commit/49a85340a9c4e5dd8dd07db87028fe48f307d1f6), [`42f2449`](https://github.com/LedgerHQ/ledger-live/commit/42f244956720dfe13cf16334ef79064f651c67d0), [`77ffab2`](https://github.com/LedgerHQ/ledger-live/commit/77ffab2f5d08fb45449b6b8316b0947dd46286b1)]:
+  - @ledgerhq/live-common@34.50.0-next.0
+  - @ledgerhq/cryptoassets@13.30.0-next.0
+
 ## 2.4.0
 
 ### Minor Changes

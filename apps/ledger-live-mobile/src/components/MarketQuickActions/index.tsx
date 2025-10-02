@@ -4,10 +4,11 @@ import React, { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { Flex, QuickActionButtonProps, QuickActionList } from "@ledgerhq/native-ui";
 import { track } from "~/analytics";
-import { EntryOf } from "~/types/helpers";
 import useQuickActions, { QuickActionProps } from "../../hooks/useQuickActions";
 import { BaseNavigatorStackParamList } from "../RootNavigator/types/BaseNavigator";
 import { getStakeLabelLocaleBased } from "~/helpers/getStakeLabelLocaleBased";
+import { listSupportedCurrencies } from "@ledgerhq/coin-framework/currencies/support";
+import { useCurrenciesUnderFeatureFlag } from "@ledgerhq/live-common/modularDrawer/hooks/useCurrenciesUnderFeatureFlag";
 
 const stakeLabel = getStakeLabelLocaleBased();
 export const MarketQuickActions = (quickActionsProps: Required<QuickActionProps>) => {
@@ -15,12 +16,25 @@ export const MarketQuickActions = (quickActionsProps: Required<QuickActionProps>
   const navigation = useNavigation<StackNavigationProp<BaseNavigatorStackParamList>>();
   const router = useRoute();
   const { quickActionsList } = useQuickActions(quickActionsProps);
+  const supportedCurrencies = listSupportedCurrencies();
+  const { deactivatedCurrencyIds } = useCurrenciesUnderFeatureFlag();
+
+  const baseCurrencyId =
+    quickActionsProps.currency.type === "TokenCurrency"
+      ? quickActionsProps.currency.parentCurrency.id
+      : quickActionsProps.currency.id;
+  const isCurrencySupported =
+    !deactivatedCurrencyIds.has(baseCurrencyId) &&
+    supportedCurrencies.some(currency => currency.id === baseCurrencyId);
+  const hideQuickActions = !isCurrencySupported;
 
   const quickActionsData: QuickActionButtonProps[] = useMemo(
     () =>
-      (Object.entries(QUICK_ACTIONS) as EntryOf<typeof QUICK_ACTIONS>[]).flatMap(([key, prop]) => {
+      QUICK_ACTION_KEYS.flatMap(key => {
+        const prop = QUICK_ACTIONS[key];
         const quickActionsItem = quickActionsList[key];
-        if (!quickActionsItem) return [];
+
+        if (!quickActionsItem || hideQuickActions) return [];
 
         return {
           variant: "small",
@@ -34,8 +48,10 @@ export const MarketQuickActions = (quickActionsProps: Required<QuickActionProps>
           disabled: quickActionsItem.disabled,
         };
       }),
-    [quickActionsList, t, navigation, router.name],
+    [quickActionsList, hideQuickActions, t, router.name, navigation],
   );
+
+  if (quickActionsData.length === 0) return null;
 
   return (
     <Flex m={16}>
@@ -76,3 +92,5 @@ const QUICK_ACTIONS = {
     analytics: "quick_action_stake",
   },
 } as const;
+
+const QUICK_ACTION_KEYS = ["SEND", "RECEIVE", "BUY", "SELL", "SWAP", "STAKE"] as const;

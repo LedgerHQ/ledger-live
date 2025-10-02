@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-bitcoin",
-  "version": "0.22.1",
+  "version": "0.22.2",
   "description": "Ledger Bitcoin Coin integration",
   "keywords": [
     "Ledger",
@@ -105,6 +105,7 @@
     "lint:fix": "pnpm lint --fix",
     "test": "jest",
     "test:debug": "node --inspect-brk ./node_modules/jest/bin/jest.js --runInBand",
+    "test-integ": "jest --config=jest.integ.config.js",
     "typecheck": "tsc --noEmit",
     "unimported": "unimported"
   }

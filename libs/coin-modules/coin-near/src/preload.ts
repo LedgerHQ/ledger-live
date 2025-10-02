@@ -95,9 +95,18 @@ export const preload = async (): Promise<NearPreloadedData> => {
     getGasPrice(),
   ]);
 
+  const defautCommission: number = 10;
+
   const validators = await Promise.all(
     rawValidators.map(async ({ account_id: validatorAddress, stake }) => {
-      const commission = await getCommission(validatorAddress);
+      let commission = defautCommission;
+      try {
+        commission = (await getCommission(validatorAddress)) || defautCommission;
+      } catch (error) {
+        //nope
+        // there are more then 300 call to get the commission
+        // so if one fail we just use the default value
+      }
 
       return {
         validatorAddress,

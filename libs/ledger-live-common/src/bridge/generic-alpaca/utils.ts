@@ -1,5 +1,5 @@
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
-import { Account, Operation, OperationType, TransactionCommon } from "@ledgerhq/types-live";
+import { Account, Operation, OperationType } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { fromBigNumberToBigInt } from "@ledgerhq/coin-framework/utils";
 import {
@@ -174,11 +174,27 @@ export function transactionToIntent(
 
 export const buildOptimisticOperation = (
   account: Account,
-  transaction: TransactionCommon,
+  transaction: GenericTransaction,
   sequenceNumber?: number,
 ): Operation => {
-  const type = transaction["mode"] === "changeTrust" ? "OPT_IN" : "OUT";
-  const fees = BigInt(transaction["fees"]?.toString() || "0");
+  let type: OperationType;
+  switch (transaction.mode) {
+    case "changeTrust":
+      type = "OPT_IN";
+      break;
+    case "delegate":
+    case "stake":
+      type = "DELEGATE";
+      break;
+    case "undelegate":
+    case "unstake":
+      type = "UNDELEGATE";
+      break;
+    default:
+      type = "OUT";
+      break;
+  }
+  const fees = BigInt(transaction.fees?.toString() || "0");
   const { subAccountId } = transaction;
   const { subAccounts } = account;
 

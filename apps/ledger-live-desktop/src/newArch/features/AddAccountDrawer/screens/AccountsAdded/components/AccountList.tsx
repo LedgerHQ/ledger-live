@@ -2,7 +2,7 @@ import React, { useCallback, useMemo } from "react";
 import { useHistory } from "react-router-dom";
 import { useTheme } from "styled-components";
 import { Box, Flex } from "@ledgerhq/react-ui";
-import { AccountItem } from "@ledgerhq/react-ui/pre-ldls/index";
+import { FormattedAccountItem } from "../../../components/FormattedAccountItem";
 import { Account } from "@ledgerhq/types-live";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import { AccountListProps } from "../types";
@@ -35,7 +35,7 @@ export const AccountList = ({
 
         return (
           <Box mb={16} key={account.id}>
-            <AccountItem
+            <FormattedAccountItem
               aria-label={`account item ${account.id}`}
               account={formattedAccount}
               backgroundColor={colors.opacityDefault.c05}

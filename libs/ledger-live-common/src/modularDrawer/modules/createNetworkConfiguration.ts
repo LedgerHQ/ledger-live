@@ -10,8 +10,10 @@ import {
   NetworkHook,
   RightElementKind,
   AccountModuleParams,
+  BalanceUI,
 } from "../utils/type";
 import { composeHooks } from "../../utils/composeHooks";
+import { compareByBalanceThenFiat } from "../utils/sortByBalance";
 
 export const getLeftElement =
   (NetworkConfigurationDeps: NetworkConfigurationDeps) =>
@@ -65,7 +67,10 @@ export const createNetworkConfigurationHook =
       assets: CryptoOrTokenCurrency[],
       networks: CryptoOrTokenCurrency[],
     ): Array<CryptoOrTokenCurrency & Network> => {
-      const composedHook = composeHooks<CryptoOrTokenCurrency, Network>(
+      const composedHook = composeHooks<
+        CryptoOrTokenCurrency,
+        Network & { balanceData?: BalanceUI; count?: number }
+      >(
         ...hooks.map(
           hook => () =>
             hook({
@@ -75,6 +80,24 @@ export const createNetworkConfigurationHook =
             }),
         ),
       );
-      return composedHook(assets);
+
+      const result = composedHook(assets);
+
+      if (
+        leftElement === "numberOfAccounts" ||
+        leftElement === "numberOfAccountsAndApy" ||
+        leftElement === undefined // default
+      ) {
+        result.sort((a, b) => (b?.count || 0) - (a?.count || 0));
+      }
+
+      if (
+        rightElement === "balance" ||
+        rightElement === undefined // default
+      ) {
+        result.sort((a, b) => compareByBalanceThenFiat(a?.balanceData, b?.balanceData));
+      }
+
+      return result;
     };
   };

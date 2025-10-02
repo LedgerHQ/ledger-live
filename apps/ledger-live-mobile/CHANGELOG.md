@@ -1,5 +1,187 @@
 # live-mobile
 
+## 3.95.0
+
+### Minor Changes
+
+- [#11988](https://github.com/LedgerHQ/ledger-live/pull/11988) [`5d3b6c0`](https://github.com/LedgerHQ/ledger-live/commit/5d3b6c01904d50e700e480150b64e9c6d8bcbc98) Thanks [@ejaycoleman](https://github.com/ejaycoleman)! - Aggregate balances across networks
+
+- [#11980](https://github.com/LedgerHQ/ledger-live/pull/11980) [`bb63e1a`](https://github.com/LedgerHQ/ledger-live/commit/bb63e1a8d1bcaf2bae38610875878dc6f682953c) Thanks [@ooke-ledger](https://github.com/ooke-ledger)! - Update changelly error wording
+
+- [#12006](https://github.com/LedgerHQ/ledger-live/pull/12006) [`3fb6ee3`](https://github.com/LedgerHQ/ledger-live/commit/3fb6ee381f8f9373271877480997d869eb71d564) Thanks [@LucasWerey](https://github.com/LucasWerey)! - MAD - Swap - Add account - fix redirection via AddAccountWarning screen when there is an empty account
+
+- [#11979](https://github.com/LedgerHQ/ledger-live/pull/11979) [`3b4dfe6`](https://github.com/LedgerHQ/ledger-live/commit/3b4dfe6fa227dabdd2603be890e2cea5c89c050d) Thanks [@semeano](https://github.com/semeano)! - Import and enable Kaspa custom fees for LLM. Add caching for KaspaBIP32 address generation.
+
+- [#11920](https://github.com/LedgerHQ/ledger-live/pull/11920) [`33b5855`](https://github.com/LedgerHQ/ledger-live/commit/33b5855ff26dfea7d4b3c6844cd567c50c27ad62) Thanks [@mitchellv-ledger](https://github.com/mitchellv-ledger)! - Add direct redirect to receive when onboarding flow in add funds button
+
+- [#11954](https://github.com/LedgerHQ/ledger-live/pull/11954) [`5c09b61`](https://github.com/LedgerHQ/ledger-live/commit/5c09b618a42fd38022c90af6455993ea3c1c41a8) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Fix HBAR add account LLM
+
+- [#11862](https://github.com/LedgerHQ/ledger-live/pull/11862) [`a129d7d`](https://github.com/LedgerHQ/ledger-live/commit/a129d7dd4e5b65f3d927103180fc205e4323f2f0) Thanks [@jiyuzhuang](https://github.com/jiyuzhuang)! - Update device images in My Ledger
+
+- [#11947](https://github.com/LedgerHQ/ledger-live/pull/11947) [`6dbc1ee`](https://github.com/LedgerHQ/ledger-live/commit/6dbc1ee06f80517fefcfa2c0b357f8ed29f3119c) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add RTK debug tool
+
+- [#11838](https://github.com/LedgerHQ/ledger-live/pull/11838) [`c2d8d86`](https://github.com/LedgerHQ/ledger-live/commit/c2d8d8670f848989836c46ea08ae88c88086fdd6) Thanks [@semeano](https://github.com/semeano)! - Enable Celo tokens
+
+- [#11918](https://github.com/LedgerHQ/ledger-live/pull/11918) [`1b444f2`](https://github.com/LedgerHQ/ledger-live/commit/1b444f2970bd37e32776365a5850d381dbb378ef) Thanks [@mitchellv-ledger](https://github.com/mitchellv-ledger)! - Add two step sync onboarding companion. Update onboarding completion screen. Loop animations in completion screen with no exit on animation finish.
+
+- [#11962](https://github.com/LedgerHQ/ledger-live/pull/11962) [`ecdd27d`](https://github.com/LedgerHQ/ledger-live/commit/ecdd27d452381aa306bd128e5ea0aa010f7f7141) Thanks [@lpaquet-ledger](https://github.com/lpaquet-ledger)! - fit the drawer to whole screen for confirmation of swap on device
+
+- [#11985](https://github.com/LedgerHQ/ledger-live/pull/11985) [`8b33df5`](https://github.com/LedgerHQ/ledger-live/commit/8b33df56ec3937a3e469e80fb183e23eb02709c2) Thanks [@mitchellv-ledger](https://github.com/mitchellv-ledger)! - Add onboarding flow field for onboarding tracking. Add popToTop for close on receive funds confirmation screen.
+
+- [#11933](https://github.com/LedgerHQ/ledger-live/pull/11933) [`bb25ec4`](https://github.com/LedgerHQ/ledger-live/commit/bb25ec472bf24e308ae062a75fda8672c7dac596) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Fix android crash caused by unexpected string style property
+
+- [#11581](https://github.com/LedgerHQ/ledger-live/pull/11581) [`4d60b7e`](https://github.com/LedgerHQ/ledger-live/commit/4d60b7e0984f0f8ef75c1483e0cfaf5784fbc5ed) Thanks [@Canestin](https://github.com/Canestin)! - feature (lld,llm): integrate Core DAO Mainnet
+
+- [#11944](https://github.com/LedgerHQ/ledger-live/pull/11944) [`12d86b2`](https://github.com/LedgerHQ/ledger-live/commit/12d86b226c89ec24ce956d18c6301a4dc415c719) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Update B2CQA-650 test
+
+- [#11930](https://github.com/LedgerHQ/ledger-live/pull/11930) [`4be1b10`](https://github.com/LedgerHQ/ledger-live/commit/4be1b10c779dcf6b31660b58c3a2bd292aa398eb) Thanks [@jiyuzhuang](https://github.com/jiyuzhuang)! - Cleanup and fix a remove CLS modal icon
+
+- [#11977](https://github.com/LedgerHQ/ledger-live/pull/11977) [`b49729a`](https://github.com/LedgerHQ/ledger-live/commit/b49729a43f0701d30b23fa8213efbbc901c3a741) Thanks [@ooke-ledger](https://github.com/ooke-ledger)! - Add changelly specific footer message
+
+- [#11889](https://github.com/LedgerHQ/ledger-live/pull/11889) [`e3b568d`](https://github.com/LedgerHQ/ledger-live/commit/e3b568d2cbeee6dcf19a7047ce9fa11a04b0ae2a) Thanks [@Canestin](https://github.com/Canestin)! - feat: ethereum hoodi testnet integration
+
+- [#11854](https://github.com/LedgerHQ/ledger-live/pull/11854) [`72e9122`](https://github.com/LedgerHQ/ledger-live/commit/72e91227fb38e3f858d2f63b3e3a988480579308) Thanks [@CremaFR](https://github.com/CremaFR)! - feat: no backdrop and no close button
+
+- [#12002](https://github.com/LedgerHQ/ledger-live/pull/12002) [`38f1c9a`](https://github.com/LedgerHQ/ledger-live/commit/38f1c9a5304ec6e7eef0c61c3084b77ace41cf9e) Thanks [@mitchellv-ledger](https://github.com/mitchellv-ledger)! - Add llmSyncOnboardingIncr1 feature flag tracking
+
+- [#11914](https://github.com/LedgerHQ/ledger-live/pull/11914) [`626f4e3`](https://github.com/LedgerHQ/ledger-live/commit/626f4e3d4a6d251171d38135d0dbfc8fe6a15956) Thanks [@mitchellv-ledger](https://github.com/mitchellv-ledger)! - Add default apps install when empty ledger restored. Add onboarding flow field and seed configuration to tracking in InstallSetOfApps.
+
+- [#11928](https://github.com/LedgerHQ/ledger-live/pull/11928) [`fc99a35`](https://github.com/LedgerHQ/ledger-live/commit/fc99a359ef8d49b602533bc352d5c0aa0e9a6570) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Fix navigation inside the GeneralSettings Navigator
+
+- [#11798](https://github.com/LedgerHQ/ledger-live/pull/11798) [`fe1abf6`](https://github.com/LedgerHQ/ledger-live/commit/fe1abf640cc1a30b2e78bf7aa4a12e983a068f2e) Thanks [@Antoine-bls83](https://github.com/Antoine-bls83)! - add generic not translated banner
+
+- [#11924](https://github.com/LedgerHQ/ledger-live/pull/11924) [`ab5483f`](https://github.com/LedgerHQ/ledger-live/commit/ab5483faa2ecbdf6b7ec188cc8c41348c63bfe99) Thanks [@mitchellv-ledger](https://github.com/mitchellv-ledger)! - Add receive fund navigators to onboarding navigation. Make close button in receive flow go to completion screen when in onboarding flow
+
+- [#11903](https://github.com/LedgerHQ/ledger-live/pull/11903) [`321e514`](https://github.com/LedgerHQ/ledger-live/commit/321e5145e94a34c4a348855deb1acce14cb90b18) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Fix incidents & filtering display
+
+- [#11968](https://github.com/LedgerHQ/ledger-live/pull/11968) [`1662f8b`](https://github.com/LedgerHQ/ledger-live/commit/1662f8b723f349157487a9f00a3a60d1b7c17470) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - RTK Slice for tooling
+
+- [#11930](https://github.com/LedgerHQ/ledger-live/pull/11930) [`7167bb6`](https://github.com/LedgerHQ/ledger-live/commit/7167bb6c3206cd5d58892424e2acd6a972c4375d) Thanks [@jiyuzhuang](https://github.com/jiyuzhuang)! - Adjust framed picture config
+
+- [#11991](https://github.com/LedgerHQ/ledger-live/pull/11991) [`614b3bb`](https://github.com/LedgerHQ/ledger-live/commit/614b3bbe55b88896e6ebfd476750bc53b697cfd1) Thanks [@mitchellv-ledger](https://github.com/mitchellv-ledger)! - Redirect add funds to receive confirmation in onboarding
+
+- [#11939](https://github.com/LedgerHQ/ledger-live/pull/11939) [`239abc7`](https://github.com/LedgerHQ/ledger-live/commit/239abc702d5752e978902eac7e99f0af56a91ab8) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - fix Add account link unresponsive on asset details screen
+
+### Patch Changes
+
+- Updated dependencies [[`e04d493`](https://github.com/LedgerHQ/ledger-live/commit/e04d49340c65c8b4608a37bb726d21350fdd32f1), [`a37c06f`](https://github.com/LedgerHQ/ledger-live/commit/a37c06f97b061a5db0dad3632bb5c3e8f293677c), [`ab0e1bc`](https://github.com/LedgerHQ/ledger-live/commit/ab0e1bcc97b66b750b6c29e618eb03ce6f25bb7b), [`7ec652c`](https://github.com/LedgerHQ/ledger-live/commit/7ec652c31d8d634385919478386fe560a62be3a5), [`c2d8d86`](https://github.com/LedgerHQ/ledger-live/commit/c2d8d8670f848989836c46ea08ae88c88086fdd6), [`bb25ec4`](https://github.com/LedgerHQ/ledger-live/commit/bb25ec472bf24e308ae062a75fda8672c7dac596), [`4d60b7e`](https://github.com/LedgerHQ/ledger-live/commit/4d60b7e0984f0f8ef75c1483e0cfaf5784fbc5ed), [`e3b568d`](https://github.com/LedgerHQ/ledger-live/commit/e3b568d2cbeee6dcf19a7047ce9fa11a04b0ae2a), [`0d368f0`](https://github.com/LedgerHQ/ledger-live/commit/0d368f0e682b3bd3daafa6af5b396648a95b1488), [`f015ef3`](https://github.com/LedgerHQ/ledger-live/commit/f015ef32660905d00f55a45f451f38bc12aec9ba), [`f4fa9d5`](https://github.com/LedgerHQ/ledger-live/commit/f4fa9d57e494db378bb00b114870b164a57c7039), [`fe1abf6`](https://github.com/LedgerHQ/ledger-live/commit/fe1abf640cc1a30b2e78bf7aa4a12e983a068f2e), [`e3bcefb`](https://github.com/LedgerHQ/ledger-live/commit/e3bcefbf8a46c91388d6f936fd31d6ffcdc24756), [`e56c3a8`](https://github.com/LedgerHQ/ledger-live/commit/e56c3a855d038cac74bdef225b9d057653c9ca18)]:
+  - @ledgerhq/types-live@6.86.0
+  - @ledgerhq/types-cryptoassets@7.28.0
+  - @ledgerhq/coin-evm@2.32.0
+  - @ledgerhq/errors@6.26.0
+  - @ledgerhq/live-env@2.18.0
+  - @ledgerhq/native-ui@0.47.0
+  - @ledgerhq/coin-framework@6.6.0
+  - @ledgerhq/coin-cosmos@0.17.3
+  - @ledgerhq/coin-filecoin@1.12.2
+  - @ledgerhq/coin-multiversx@0.5.3
+  - @ledgerhq/coin-stacks@0.9.3
+  - @ledgerhq/domain-service@1.2.45
+  - @ledgerhq/live-countervalues@0.7.3
+  - @ledgerhq/live-countervalues-react@0.6.2
+  - @ledgerhq/live-wallet@0.14.2
+  - @ledgerhq/ledger-key-ring-protocol@0.6.7
+  - @ledgerhq/devices@8.6.1
+  - @ledgerhq/hw-transport@6.31.12
+  - @ledgerhq/hw-transport-http@6.30.12
+  - @ledgerhq/react-native-hid@6.32.12
+  - @ledgerhq/react-native-hw-transport-ble@6.35.5
+  - @ledgerhq/live-dmk-mobile@0.12.1
+  - @ledgerhq/live-network@2.0.19
+  - @ledgerhq/hw-ledger-key-ring-protocol@0.5.1
+
+## 3.95.0-next.0
+
+### Minor Changes
+
+- [#11988](https://github.com/LedgerHQ/ledger-live/pull/11988) [`5d3b6c0`](https://github.com/LedgerHQ/ledger-live/commit/5d3b6c01904d50e700e480150b64e9c6d8bcbc98) Thanks [@ejaycoleman](https://github.com/ejaycoleman)! - Aggregate balances across networks
+
+- [#11980](https://github.com/LedgerHQ/ledger-live/pull/11980) [`bb63e1a`](https://github.com/LedgerHQ/ledger-live/commit/bb63e1a8d1bcaf2bae38610875878dc6f682953c) Thanks [@ooke-ledger](https://github.com/ooke-ledger)! - Update changelly error wording
+
+- [#12006](https://github.com/LedgerHQ/ledger-live/pull/12006) [`3fb6ee3`](https://github.com/LedgerHQ/ledger-live/commit/3fb6ee381f8f9373271877480997d869eb71d564) Thanks [@LucasWerey](https://github.com/LucasWerey)! - MAD - Swap - Add account - fix redirection via AddAccountWarning screen when there is an empty account
+
+- [#11979](https://github.com/LedgerHQ/ledger-live/pull/11979) [`3b4dfe6`](https://github.com/LedgerHQ/ledger-live/commit/3b4dfe6fa227dabdd2603be890e2cea5c89c050d) Thanks [@semeano](https://github.com/semeano)! - Import and enable Kaspa custom fees for LLM. Add caching for KaspaBIP32 address generation.
+
+- [#11920](https://github.com/LedgerHQ/ledger-live/pull/11920) [`33b5855`](https://github.com/LedgerHQ/ledger-live/commit/33b5855ff26dfea7d4b3c6844cd567c50c27ad62) Thanks [@mitchellv-ledger](https://github.com/mitchellv-ledger)! - Add direct redirect to receive when onboarding flow in add funds button
+
+- [#11954](https://github.com/LedgerHQ/ledger-live/pull/11954) [`5c09b61`](https://github.com/LedgerHQ/ledger-live/commit/5c09b618a42fd38022c90af6455993ea3c1c41a8) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Fix HBAR add account LLM
+
+- [#11862](https://github.com/LedgerHQ/ledger-live/pull/11862) [`a129d7d`](https://github.com/LedgerHQ/ledger-live/commit/a129d7dd4e5b65f3d927103180fc205e4323f2f0) Thanks [@jiyuzhuang](https://github.com/jiyuzhuang)! - Update device images in My Ledger
+
+- [#11947](https://github.com/LedgerHQ/ledger-live/pull/11947) [`6dbc1ee`](https://github.com/LedgerHQ/ledger-live/commit/6dbc1ee06f80517fefcfa2c0b357f8ed29f3119c) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Add RTK debug tool
+
+- [#11838](https://github.com/LedgerHQ/ledger-live/pull/11838) [`c2d8d86`](https://github.com/LedgerHQ/ledger-live/commit/c2d8d8670f848989836c46ea08ae88c88086fdd6) Thanks [@semeano](https://github.com/semeano)! - Enable Celo tokens
+
+- [#11918](https://github.com/LedgerHQ/ledger-live/pull/11918) [`1b444f2`](https://github.com/LedgerHQ/ledger-live/commit/1b444f2970bd37e32776365a5850d381dbb378ef) Thanks [@mitchellv-ledger](https://github.com/mitchellv-ledger)! - Add two step sync onboarding companion. Update onboarding completion screen. Loop animations in completion screen with no exit on animation finish.
+
+- [#11962](https://github.com/LedgerHQ/ledger-live/pull/11962) [`ecdd27d`](https://github.com/LedgerHQ/ledger-live/commit/ecdd27d452381aa306bd128e5ea0aa010f7f7141) Thanks [@lpaquet-ledger](https://github.com/lpaquet-ledger)! - fit the drawer to whole screen for confirmation of swap on device
+
+- [#11985](https://github.com/LedgerHQ/ledger-live/pull/11985) [`8b33df5`](https://github.com/LedgerHQ/ledger-live/commit/8b33df56ec3937a3e469e80fb183e23eb02709c2) Thanks [@mitchellv-ledger](https://github.com/mitchellv-ledger)! - Add onboarding flow field for onboarding tracking. Add popToTop for close on receive funds confirmation screen.
+
+- [#11933](https://github.com/LedgerHQ/ledger-live/pull/11933) [`bb25ec4`](https://github.com/LedgerHQ/ledger-live/commit/bb25ec472bf24e308ae062a75fda8672c7dac596) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Fix android crash caused by unexpected string style property
+
+- [#11581](https://github.com/LedgerHQ/ledger-live/pull/11581) [`4d60b7e`](https://github.com/LedgerHQ/ledger-live/commit/4d60b7e0984f0f8ef75c1483e0cfaf5784fbc5ed) Thanks [@Canestin](https://github.com/Canestin)! - feature (lld,llm): integrate Core DAO Mainnet
+
+- [#11944](https://github.com/LedgerHQ/ledger-live/pull/11944) [`12d86b2`](https://github.com/LedgerHQ/ledger-live/commit/12d86b226c89ec24ce956d18c6301a4dc415c719) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Update B2CQA-650 test
+
+- [#11930](https://github.com/LedgerHQ/ledger-live/pull/11930) [`4be1b10`](https://github.com/LedgerHQ/ledger-live/commit/4be1b10c779dcf6b31660b58c3a2bd292aa398eb) Thanks [@jiyuzhuang](https://github.com/jiyuzhuang)! - Cleanup and fix a remove CLS modal icon
+
+- [#11977](https://github.com/LedgerHQ/ledger-live/pull/11977) [`b49729a`](https://github.com/LedgerHQ/ledger-live/commit/b49729a43f0701d30b23fa8213efbbc901c3a741) Thanks [@ooke-ledger](https://github.com/ooke-ledger)! - Add changelly specific footer message
+
+- [#11889](https://github.com/LedgerHQ/ledger-live/pull/11889) [`e3b568d`](https://github.com/LedgerHQ/ledger-live/commit/e3b568d2cbeee6dcf19a7047ce9fa11a04b0ae2a) Thanks [@Canestin](https://github.com/Canestin)! - feat: ethereum hoodi testnet integration
+
+- [#11854](https://github.com/LedgerHQ/ledger-live/pull/11854) [`72e9122`](https://github.com/LedgerHQ/ledger-live/commit/72e91227fb38e3f858d2f63b3e3a988480579308) Thanks [@CremaFR](https://github.com/CremaFR)! - feat: no backdrop and no close button
+
+- [#12002](https://github.com/LedgerHQ/ledger-live/pull/12002) [`38f1c9a`](https://github.com/LedgerHQ/ledger-live/commit/38f1c9a5304ec6e7eef0c61c3084b77ace41cf9e) Thanks [@mitchellv-ledger](https://github.com/mitchellv-ledger)! - Add llmSyncOnboardingIncr1 feature flag tracking
+
+- [#11914](https://github.com/LedgerHQ/ledger-live/pull/11914) [`626f4e3`](https://github.com/LedgerHQ/ledger-live/commit/626f4e3d4a6d251171d38135d0dbfc8fe6a15956) Thanks [@mitchellv-ledger](https://github.com/mitchellv-ledger)! - Add default apps install when empty ledger restored. Add onboarding flow field and seed configuration to tracking in InstallSetOfApps.
+
+- [#11928](https://github.com/LedgerHQ/ledger-live/pull/11928) [`fc99a35`](https://github.com/LedgerHQ/ledger-live/commit/fc99a359ef8d49b602533bc352d5c0aa0e9a6570) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Fix navigation inside the GeneralSettings Navigator
+
+- [#11798](https://github.com/LedgerHQ/ledger-live/pull/11798) [`fe1abf6`](https://github.com/LedgerHQ/ledger-live/commit/fe1abf640cc1a30b2e78bf7aa4a12e983a068f2e) Thanks [@Antoine-bls83](https://github.com/Antoine-bls83)! - add generic not translated banner
+
+- [#11924](https://github.com/LedgerHQ/ledger-live/pull/11924) [`ab5483f`](https://github.com/LedgerHQ/ledger-live/commit/ab5483faa2ecbdf6b7ec188cc8c41348c63bfe99) Thanks [@mitchellv-ledger](https://github.com/mitchellv-ledger)! - Add receive fund navigators to onboarding navigation. Make close button in receive flow go to completion screen when in onboarding flow
+
+- [#11903](https://github.com/LedgerHQ/ledger-live/pull/11903) [`321e514`](https://github.com/LedgerHQ/ledger-live/commit/321e5145e94a34c4a348855deb1acce14cb90b18) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - Fix incidents & filtering display
+
+- [#11968](https://github.com/LedgerHQ/ledger-live/pull/11968) [`1662f8b`](https://github.com/LedgerHQ/ledger-live/commit/1662f8b723f349157487a9f00a3a60d1b7c17470) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - RTK Slice for tooling
+
+- [#11930](https://github.com/LedgerHQ/ledger-live/pull/11930) [`7167bb6`](https://github.com/LedgerHQ/ledger-live/commit/7167bb6c3206cd5d58892424e2acd6a972c4375d) Thanks [@jiyuzhuang](https://github.com/jiyuzhuang)! - Adjust framed picture config
+
+- [#11991](https://github.com/LedgerHQ/ledger-live/pull/11991) [`614b3bb`](https://github.com/LedgerHQ/ledger-live/commit/614b3bbe55b88896e6ebfd476750bc53b697cfd1) Thanks [@mitchellv-ledger](https://github.com/mitchellv-ledger)! - Redirect add funds to receive confirmation in onboarding
+
+- [#11340](https://github.com/LedgerHQ/ledger-live/pull/11340) [`77ffab2`](https://github.com/LedgerHQ/ledger-live/commit/77ffab2f5d08fb45449b6b8316b0947dd46286b1) Thanks [@dilaouid](https://github.com/dilaouid)! - feat: staking generic bridge support (tezos)
+
+- [#11939](https://github.com/LedgerHQ/ledger-live/pull/11939) [`239abc7`](https://github.com/LedgerHQ/ledger-live/commit/239abc702d5752e978902eac7e99f0af56a91ab8) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - fix Add account link unresponsive on asset details screen
+
+### Patch Changes
+
+- Updated dependencies [[`e04d493`](https://github.com/LedgerHQ/ledger-live/commit/e04d49340c65c8b4608a37bb726d21350fdd32f1), [`a37c06f`](https://github.com/LedgerHQ/ledger-live/commit/a37c06f97b061a5db0dad3632bb5c3e8f293677c), [`ab0e1bc`](https://github.com/LedgerHQ/ledger-live/commit/ab0e1bcc97b66b750b6c29e618eb03ce6f25bb7b), [`7ec652c`](https://github.com/LedgerHQ/ledger-live/commit/7ec652c31d8d634385919478386fe560a62be3a5), [`c2d8d86`](https://github.com/LedgerHQ/ledger-live/commit/c2d8d8670f848989836c46ea08ae88c88086fdd6), [`bb25ec4`](https://github.com/LedgerHQ/ledger-live/commit/bb25ec472bf24e308ae062a75fda8672c7dac596), [`4d60b7e`](https://github.com/LedgerHQ/ledger-live/commit/4d60b7e0984f0f8ef75c1483e0cfaf5784fbc5ed), [`e3b568d`](https://github.com/LedgerHQ/ledger-live/commit/e3b568d2cbeee6dcf19a7047ce9fa11a04b0ae2a), [`0d368f0`](https://github.com/LedgerHQ/ledger-live/commit/0d368f0e682b3bd3daafa6af5b396648a95b1488), [`f015ef3`](https://github.com/LedgerHQ/ledger-live/commit/f015ef32660905d00f55a45f451f38bc12aec9ba), [`f4fa9d5`](https://github.com/LedgerHQ/ledger-live/commit/f4fa9d57e494db378bb00b114870b164a57c7039), [`fe1abf6`](https://github.com/LedgerHQ/ledger-live/commit/fe1abf640cc1a30b2e78bf7aa4a12e983a068f2e), [`e3bcefb`](https://github.com/LedgerHQ/ledger-live/commit/e3bcefbf8a46c91388d6f936fd31d6ffcdc24756), [`e56c3a8`](https://github.com/LedgerHQ/ledger-live/commit/e56c3a855d038cac74bdef225b9d057653c9ca18)]:
+  - @ledgerhq/types-live@6.86.0-next.0
+  - @ledgerhq/types-cryptoassets@7.28.0-next.0
+  - @ledgerhq/coin-evm@2.32.0-next.0
+  - @ledgerhq/errors@6.26.0-next.0
+  - @ledgerhq/live-env@2.18.0-next.0
+  - @ledgerhq/native-ui@0.47.0-next.0
+  - @ledgerhq/coin-framework@6.6.0-next.0
+  - @ledgerhq/coin-cosmos@0.17.3-next.0
+  - @ledgerhq/coin-filecoin@1.12.2-next.0
+  - @ledgerhq/coin-multiversx@0.5.3-next.0
+  - @ledgerhq/coin-stacks@0.9.3-next.0
+  - @ledgerhq/domain-service@1.2.45-next.0
+  - @ledgerhq/live-countervalues@0.7.3-next.0
+  - @ledgerhq/live-countervalues-react@0.6.2-next.0
+  - @ledgerhq/live-wallet@0.14.2-next.0
+  - @ledgerhq/ledger-key-ring-protocol@0.6.7-next.0
+  - @ledgerhq/devices@8.6.1-next.0
+  - @ledgerhq/hw-transport@6.31.12-next.0
+  - @ledgerhq/hw-transport-http@6.30.12-next.0
+  - @ledgerhq/react-native-hid@6.32.12-next.0
+  - @ledgerhq/react-native-hw-transport-ble@6.35.5-next.0
+  - @ledgerhq/live-dmk-mobile@0.12.1-next.0
+  - @ledgerhq/live-network@2.0.19-next.0
+  - @ledgerhq/hw-ledger-key-ring-protocol@0.5.1-next.0
+
 ## 3.94.0
 
 ### Minor Changes

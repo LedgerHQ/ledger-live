@@ -11,7 +11,6 @@ import { Transaction } from "@ledgerhq/live-common/generated/types";
 import { AppRequest } from "@ledgerhq/live-common/hw/actions/app";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import firmwareUpdateRepair from "@ledgerhq/live-common/hw/firmwareUpdate-repair";
-import isFirmwareUpdateVersionSupported from "@ledgerhq/live-common/hw/isFirmwareUpdateVersionSupported";
 import { WalletState } from "@ledgerhq/live-wallet/store";
 import {
   BoxedIcon,
@@ -31,11 +30,11 @@ import { ParamListBase, T } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import React, { useEffect, useState } from "react";
 import { TFunction } from "react-i18next";
-import { Image, Linking, Platform, ScrollView } from "react-native";
+import { Image, Linking, ScrollView } from "react-native";
 import Config from "react-native-config";
 import { useSelector } from "react-redux";
 import styled from "styled-components/native";
-import { TrackScreen, track } from "~/analytics";
+import { TrackScreen, track, useTrack } from "~/analytics";
 import { NavigatorName, ScreenName } from "~/const";
 import { MANAGER_TABS } from "~/const/manager";
 import { getDeviceAnimation, getDeviceAnimationStyles } from "~/helpers/getDeviceAnimation";
@@ -598,21 +597,50 @@ export function RequiredFirmwareUpdate({
 }) {
   const lastSeenDevice: DeviceModelInfo | null | undefined = useSelector(lastSeenDeviceSelector);
 
-  const isUsbFwVersionUpdateSupported =
-    lastSeenDevice && isFirmwareUpdateVersionSupported(lastSeenDevice.deviceInfo, device.modelId);
-
-  const usbFwUpdateActivated = Platform.OS === "android" && isUsbFwVersionUpdateSupported;
+  const usbFwUpdateActivated = !!lastSeenDevice;
 
   const deviceName = getDeviceModel(device.modelId).productName;
 
   const isDeviceConnectedViaUSB = device.wired;
 
+  const track = useTrack();
+
   // Goes to the manager if a firmware update is available, but only automatically
   // displays the firmware update drawer if the device is already connected via USB
   const onPress = () => {
-    navigation.navigate(NavigatorName.MyLedger, {
-      screen: ScreenName.MyLedgerChooseDevice,
-      params: { device, firmwareUpdate: isDeviceConnectedViaUSB },
+    track("button_clicked", {
+      button: "OpenMyLedger",
+      page: "Update_OS_To_Continue",
+    });
+    navigation.reset({
+      index: 0,
+      routes: [
+        {
+          name: NavigatorName.Base,
+          state: {
+            routes: [
+              {
+                name: NavigatorName.Main,
+                state: {
+                  routes: [
+                    {
+                      name: NavigatorName.MyLedger,
+                      state: {
+                        routes: [
+                          {
+                            name: ScreenName.MyLedgerChooseDevice,
+                            params: { device, firmwareUpdate: isDeviceConnectedViaUSB },
+                          },
+                        ],
+                      },
+                    },
+                  ],
+                },
+              },
+            ],
+          },
+        },
+      ],
     });
   };
 

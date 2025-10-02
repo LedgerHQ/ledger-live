@@ -30,16 +30,16 @@ export async function getMinimumSwapAmount(AccountFrom: Account, AccountTo: Acco
 
     const minimumAmounts = data
       .filter((item: any) => item.parameter?.minAmount !== undefined)
-      .map((item: any) => parseFloat(item.parameter.minAmount));
+      .map((item: any) => parseFloat(item.parameter.minAmount))
+      .filter((amount: number) => !isNaN(amount));
 
-    const validMinimumAmounts = minimumAmounts.filter((amount: number) => !isNaN(amount));
-
-    if (validMinimumAmounts.length === 0) {
+    if (minimumAmounts.length === 0) {
       throw new Error("No valid minimum amounts returned from swap quote API.");
     }
 
-    return Math.max(...validMinimumAmounts);
+    return Math.max(...minimumAmounts);
   } catch (error) {
-    console.error(error);
+    console.error("Error fetching swap minimum amount:", error);
+    throw error;
   }
 }

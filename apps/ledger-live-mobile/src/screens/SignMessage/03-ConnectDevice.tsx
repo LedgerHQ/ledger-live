@@ -9,9 +9,13 @@ import DeviceAction from "~/components/DeviceAction";
 import { TrackScreen } from "~/analytics";
 import { ScreenName } from "~/const";
 import { SignMessageNavigatorStackParamList } from "~/components/RootNavigator/types/SignMessageNavigator";
-import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
+import {
+  StackNavigatorNavigation,
+  StackNavigatorProps,
+} from "~/components/RootNavigator/types/helpers";
 import { useSignMessageDeviceAction } from "~/hooks/deviceActions";
 import { dependenciesToAppRequests } from "@ledgerhq/live-common/hw/actions/app";
+import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 
 export default function ConnectDevice({
   route,
@@ -34,10 +38,9 @@ export default function ConnectDevice({
         error: result.error,
       });
     } else if (result.signature) {
-      navigation.navigate(ScreenName.SignValidationSuccess, {
-        ...route.params,
-        signature: result.signature,
-      });
+      route.params.onConfirmationHandler?.(result.signature);
+
+      navigation.getParent<StackNavigatorNavigation<BaseNavigatorStackParamList>>().pop();
     }
   };
 

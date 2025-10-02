@@ -29,6 +29,7 @@ export type AddAccountEventParams = {
   [ADD_ACCOUNT_EVENTS_NAME.ACCOUNT_ADDED]: {
     currency: string;
     amount: number;
+    isTokenAdd?: boolean;
   };
   [ADD_ACCOUNT_EVENTS_NAME.LOOKING_FOR_ACCOUNTS]: {
     source: string;

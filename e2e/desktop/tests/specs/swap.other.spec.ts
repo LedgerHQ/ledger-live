@@ -318,6 +318,11 @@ test.describe("Swap - Landing page", () => {
       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
 
       const minAmount = await app.swap.getMinimumAmount(fromAccount, toAccount);
+
+      if (!minAmount) {
+        throw new Error("Test failed: No quotes retrieved from swap API.");
+      }
+
       const swap = new Swap(fromAccount, toAccount, minAmount);
 
       await performSwapUntilQuoteSelectionStep(app, electronApp, swap, minAmount);
@@ -369,15 +374,15 @@ const swapWithDifferentSeed: SwapTestCase[] = [
   },
 ];
 
-test.describe("Swap - Using different seed", () => {
-  setupEnv(true);
+for (const { swap, xrayTicket, errorMessage, expectedErrorPerDevice } of swapWithDifferentSeed) {
+  test.describe("Swap - Using different seed", () => {
+    setupEnv(true);
 
-  test.use({
-    userdata: "speculos-x-other-account",
-    speculosApp: app,
-  });
+    test.use({
+      userdata: "speculos-x-other-account",
+      speculosApp: app,
+    });
 
-  for (const { swap, xrayTicket, errorMessage, expectedErrorPerDevice } of swapWithDifferentSeed) {
     test.beforeEach(async () => {
       const accountPair = [swap.accountToDebit, swap.accountToCredit].map(acc =>
         acc.currency.speculosApp.name.replaceAll(" ", "_"),
@@ -412,8 +417,8 @@ test.describe("Swap - Using different seed", () => {
         );
       },
     );
-  }
-});
+  });
+}
 
 const swapWithoutAccount = [
   {

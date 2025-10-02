@@ -44,7 +44,7 @@ import { INITIAL_STATE as AUTH_INITIAL_STATE } from "~/reducers/auth";
 import StyleProvider from "~/StyleProvider";
 import CustomLiveAppProvider from "./CustomLiveAppProvider";
 import { getFeature } from "./featureFlags";
-import { assetsDataApi } from "@ledgerhq/live-common/modularDrawer/data/state-manager/api";
+import { assetsDataApi } from "@ledgerhq/live-common/dada-client/state-manager/api";
 import { INITIAL_STATE as TOOLS_INITIAL_STATE } from "~/reducers/tools";
 
 const INITIAL_STATE: State = {

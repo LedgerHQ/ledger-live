@@ -496,7 +496,7 @@ const OperationD = (props: Props) => {
           horizontal
           flow={1}
         >
-          <Box data-testid="status-drawer">
+          <Box>
             {hasFailed
               ? t("operationDetails.failed")
               : isConfirmed
@@ -642,7 +642,7 @@ const OperationD = (props: Props) => {
         </OpDetailsData>
       </OpDetailsSection>
       {uniqueSenders.length ? (
-        <OpDetailsSection data-testid="operation-from">
+        <OpDetailsSection>
           <OpDetailsTitle>{t("operationDetails.from")}</OpDetailsTitle>
           <DataList lines={uniqueSenders} t={t} />
         </OpDetailsSection>
@@ -650,7 +650,7 @@ const OperationD = (props: Props) => {
       {recipients.length ? (
         <OpDetailsSection>
           <OpDetailsTitle>{t("operationDetails.to")}</OpDetailsTitle>
-          <Box data-testid="operation-to" alignItems="flex-end" flex="1">
+          <Box alignItems="flex-end" flex="1">
             {recipients.length > 1 ? (
               <Link>
                 <FakeLink

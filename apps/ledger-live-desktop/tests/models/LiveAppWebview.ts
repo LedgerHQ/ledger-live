@@ -171,6 +171,11 @@ export class LiveAppWebview {
     return webview.getByTestId("data-input").fill(data);
   }
 
+  async setDeeplinkUrl(url: string) {
+    const webview = await this.getWebView();
+    return webview.getByTestId("deeplink-url-input").fill(url);
+  }
+
   async accountRequest() {
     return this.clickByTestId("account-request");
   }
@@ -221,6 +226,11 @@ export class LiveAppWebview {
 
   async walletInfo() {
     return this.clickByTestId("wallet-info");
+  }
+
+  async customDeeplinkOpen(url: string) {
+    await this.setDeeplinkUrl(url);
+    return this.clickByTestId("deeplink-open");
   }
 
   async clearStates() {

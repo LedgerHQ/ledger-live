@@ -1,5 +1,5 @@
 import { Icons } from "@ledgerhq/react-ui";
-import { AccountItem } from "@ledgerhq/react-ui/pre-ldls/index";
+import { FormattedAccountItem } from "../../components/FormattedAccountItem";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { Account } from "@ledgerhq/types-live";
 import React, { useCallback } from "react";
@@ -54,7 +54,7 @@ export const useWarningConfig = (
     }),
     accountRow:
       formattedAccount && emptyAccount ? (
-        <AccountItem
+        <FormattedAccountItem
           account={formattedAccount}
           onClick={() => handleAccountClick(formattedAccount.id)}
           backgroundColor={colors.opacityDefault.c05}

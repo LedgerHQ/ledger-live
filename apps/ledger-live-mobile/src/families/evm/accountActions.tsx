@@ -180,6 +180,10 @@ const getMainActions = ({
   return [];
 };
 
+const getShouldShowReceiveOptions = (currencyId: string) =>
+  ["ethereum/erc20/usd__coin", "ethereum"].includes(currencyId);
+
 export default {
   getMainActions,
+  getShouldShowReceiveOptions,
 };

@@ -85,9 +85,9 @@ export default function SendAmountCoin({ navigation, route }: Props) {
     [setTransaction, account, parentAccount, transaction],
   );
   const toggleUseAllAmount = useCallback(() => {
-    if (!account || !transaction) return;
+    if (!account) return;
     const bridge = getAccountBridge(account, parentAccount);
-
+    if (!transaction) return;
     setTransaction(
       bridge.updateTransaction(transaction, {
         amount: new BigNumber(0),

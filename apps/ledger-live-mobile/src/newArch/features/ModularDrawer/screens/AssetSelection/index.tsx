@@ -33,6 +33,7 @@ import { useSelector } from "react-redux";
 import { modularDrawerFlowSelector, modularDrawerSourceSelector } from "~/reducers/modularDrawer";
 import { AssetData } from "@ledgerhq/live-common/modularDrawer/utils/type";
 import { groupCurrenciesByProvider } from "@ledgerhq/live-common/modularDrawer/utils/groupCurrenciesByProvider";
+import { withDiscreetMode } from "~/context/DiscreetModeContext";
 
 export type AssetSelectionStepProps = {
   isOpen: boolean;
@@ -189,4 +190,4 @@ const AssetSelection = ({
   );
 };
 
-export default React.memo(AssetSelection);
+export default withDiscreetMode(React.memo(AssetSelection));
