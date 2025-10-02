@@ -46,7 +46,14 @@ export const WebViewWrapper = styled.div<WebViewWrapperProps>`
     mobileView.display ? `width: ${mobileView.width ?? 355}px;` : "width: 100%;"}
 `;
 
-export default function WebPlatformPlayer({ manifest, inputs, onClose, config, ...props }: Props) {
+export default function WebPlatformPlayer({
+  manifest,
+  inputs,
+  onClose,
+  config,
+  Loader,
+  ...props
+}: Props) {
   const webviewAPIRef = useRef<WebviewAPI>(null);
   const [webviewState, setWebviewState] = useState<WebviewState>(initialWebviewState);
 
@@ -92,6 +99,7 @@ export default function WebPlatformPlayer({ manifest, inputs, onClose, config, .
             ref={webviewAPIRef}
             customHandlers={customHandlers}
             currentAccountHistDb={currentAccountHistDb}
+            Loader={Loader}
           />
         </WebViewWrapper>
       </Wrapper>
