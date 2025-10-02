@@ -1,12 +1,11 @@
 /**
- * Internal types used to distinguish custom Hedera transaction behaviors.
- * These can be stored in transaction.properties.name and used to route specific preparation logic.
+ * Internal types to distinguish custom Hedera transaction behaviors.
+ * These can be used in transaction.mode and used to route specific preparation logic.
  */
-export const HEDERA_TRANSACTION_KINDS = {
-  TokenAssociate: {
-    name: "tokenAssociate",
-  },
-} as const satisfies Record<string, Record<string, unknown> & { name: string }>;
+export enum HEDERA_TRANSACTION_MODES {
+  Send = "send",
+  TokenAssociate = "token-associate",
+}
 
 /**
  * Enum representing the supported Hedera operation types for fee estimation
@@ -17,7 +16,9 @@ export enum HEDERA_OPERATION_TYPES {
   TokenAssociate = "TokenAssociate",
 }
 
-const TINYBAR_SCALE = 8;
+export const TINYBAR_SCALE = 8;
+
+export const ESTIMATED_FEE_SAFETY_RATE = 2;
 
 /**
  * https://docs.hedera.com/hedera/networks/mainnet/fees
@@ -25,7 +26,7 @@ const TINYBAR_SCALE = 8;
  * These are Hedera's estimated fee costs in USD, scaled to tinybars (1 HBAR = 10^8 tinybars),
  * so they can be converted into actual HBAR amounts based on current USD/crypto rates.
  *
- * Used in fee estimation logic (getEstimatedFees function) to determine whether an account
+ * Used in fee estimation logic (estimateFees function) to determine whether an account
  * has sufficient balance to cover the cost of a transaction (e.g. token association).
  */
 export const BASE_USD_FEE_BY_OPERATION_TYPE = {
