@@ -309,9 +309,15 @@ export async function validateIntent(
     ...feeRatioWarn,
   };
 
+  const additionalFees =
+    typeof estimatedFees.parameters?.additionalFees === "bigint"
+      ? estimatedFees.parameters.additionalFees
+      : 0n;
+
   return {
     errors,
     warnings,
+    totalFees: estimatedFees.value + additionalFees,
     estimatedFees: estimatedFees.value,
     totalSpent,
     amount,

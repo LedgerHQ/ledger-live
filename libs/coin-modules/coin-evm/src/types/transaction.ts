@@ -193,5 +193,4 @@ export type TransactionLikeWithPreparedParams = {
   data: string;
   value: bigint | null;
   gasLimit: BigNumber;
-  feeData: FeeData;
 };
