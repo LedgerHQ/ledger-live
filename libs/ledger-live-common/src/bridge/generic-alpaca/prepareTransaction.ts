@@ -26,15 +26,15 @@ export function genericPrepareTransaction(
   kind,
 ): AccountBridge<GenericTransaction, Account>["prepareTransaction"] {
   return async (account, transaction: GenericTransaction) => {
-    const { getAssetFromToken, computeIntentType, estimateFees } = getAlpacaApi(
+    const { getAssetFromToken, computeIntentType, estimateFees, validateIntent } = getAlpacaApi(
       account.currency.id,
       kind,
     );
     const { assetReference, assetOwner } = getAssetFromToken
       ? getAssetInfos(transaction, account.freshAddress, getAssetFromToken)
       : assetInfosFallback(transaction);
-
-    let fees: BigNumber | bigint | null = transaction.customFees?.parameters?.fees || null;
+    const customParametersFees = transaction.customFees?.parameters?.fees;
+    let fees: BigNumber | bigint | null = customParametersFees || null;
     if (fees === null) {
       fees = (
         await estimateFees(
@@ -50,17 +50,59 @@ export function genericPrepareTransaction(
     }
 
     if (!bnEq(transaction.fees, new BigNumber(fees.toString()))) {
-      return {
+      const next: GenericTransaction = {
         ...transaction,
         fees: new BigNumber(fees.toString()),
         assetReference,
         assetOwner,
         customFees: {
           parameters: {
-            fees: new BigNumber(fees.toString()),
+            fees: customParametersFees ? new BigNumber(customParametersFees.toString()) : undefined,
           },
         },
       };
+
+      // propagate storageLimit fee parameter when present (ex: tezos)
+      const feeEstimation = await estimateFees(
+        transactionToIntent(
+          account,
+          {
+            ...transaction,
+          },
+          computeIntentType,
+        ),
+      );
+      const params = feeEstimation?.parameters;
+      if (params) {
+        const storageLimit = params["storageLimit"];
+        if (
+          storageLimit !== undefined &&
+          (typeof storageLimit === "bigint" ||
+            typeof storageLimit === "number" ||
+            typeof storageLimit === "string")
+        ) {
+          next.storageLimit = new BigNumber(storageLimit.toString());
+        }
+      }
+
+      // align with stellar/xrp: when send max (or staking intents), reflect validated amount in UI
+      if (
+        transaction.useAllAmount ||
+        transaction["mode"] === "stake" ||
+        transaction["mode"] === "unstake"
+      ) {
+        const { amount } = await validateIntent(
+          transactionToIntent(
+            account,
+            {
+              ...transaction,
+            },
+            computeIntentType,
+          ),
+        );
+        next.amount = new BigNumber(amount.toString());
+      }
+      return next;
     }
 
     return transaction;
