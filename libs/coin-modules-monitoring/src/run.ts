@@ -136,6 +136,7 @@ export default async function (currencyIds: string[], accountTypes: AccountType[
 
     for (const accountType of accountTypes) {
       const info = monitored.accounts[accountType as AccountType]!;
+
       if (!info) {
         console.log(`\nSkipping currency = "${currencyId}", no account = "${accountType}"`);
         continue;

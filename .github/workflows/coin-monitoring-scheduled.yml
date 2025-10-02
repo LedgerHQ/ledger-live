@@ -22,8 +22,7 @@ jobs:
           DD_API_KEY: ${{ secrets.DD_API_KEY }}
           DD_APP_KEY: ${{ secrets.DD_APP_KEY }}
           DD_DOMAIN: datadoghq.eu
-          MONITOR_FILTER_CURRENCIES: "bitcoin,ethereum,solana,sui,polkadot,elrond,filecoin,mina,hedera,aptos,celo,algorand,near,cosmos,vechain,icon,stellar,tezos,tron,ripple,casper,internet_computer"
-          MONITOR_FILTER_ACCOUNT_TYPES: "pristine,average,big"
+          MONITOR_FILTER_ISOLATED: true
           SUBMIT_LOGS: true
 
   monitoring-fail:

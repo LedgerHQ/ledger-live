@@ -20,6 +20,10 @@ inputs:
     description: "Currencies to filter on"
     required: false
     default: all
+  MONITOR_FILTER_ISOLATED:
+    description: "Run each currency/account combination in isolated processes"
+    required: false
+    default: false
 
 runs:
   using: "composite"
@@ -48,12 +52,13 @@ runs:
         DD_DOMAIN: ${{ inputs.DD_DOMAIN }}
         SUBMIT_LOGS: ${{ inputs.SUBMIT_LOGS }}
       run: |
-        IFS=',' read -ra CURRENCIES <<< "${{ inputs.MONITOR_FILTER_CURRENCIES }}"
-        IFS=',' read -ra ACCOUNT_TYPES <<< "${{ inputs.MONITOR_FILTER_ACCOUNT_TYPES }}"
-        for currency in "${CURRENCIES[@]}"; do
-          for account_type in "${ACCOUNT_TYPES[@]}"; do
-            echo "Running monitoring for $currency with $account_type accounts"
-            pnpm coin:modules:monitoring start monitor --currencies $currency  --account-types $account_type
-          done
-        done
+        ISOLATED_FLAG=""
+        if [ "${{ inputs.MONITOR_FILTER_ISOLATED }}" = "true" ]; then
+          ISOLATED_FLAG="--isolated"
+        fi
+
+        pnpm coin:modules:monitoring start monitor \
+        --currencies "${{ inputs.MONITOR_FILTER_CURRENCIES }}"  \
+        --account-types "${{ inputs.MONITOR_FILTER_ACCOUNT_TYPES }}" \
+        $ISOLATED_FLAG
       shell: bash
