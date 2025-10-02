@@ -26,8 +26,9 @@ export function createUseRightBalanceNetwork({ useBalanceDeps, balanceItem }: Ne
 
     return networks.map(network => {
       const balanceData = balanceMap.get(network.id) || {};
+      const details = network.type === "TokenCurrency" ? network.parentCurrency : network;
       return {
-        ...network,
+        ...details,
         rightElement: balanceItem(balanceData),
         balanceData: balanceData,
       };
