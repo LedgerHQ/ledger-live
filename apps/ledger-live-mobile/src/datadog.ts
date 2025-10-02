@@ -40,7 +40,6 @@ export const initializeDatadogProvider = async (
   remoteConfig: Partial<PartialInitializationConfiguration>,
   trackingConsent: TrackingConsent,
 ) => {
-  return;
   if (!isDatadogEnabled) {
     return;
   }
