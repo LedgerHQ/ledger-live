@@ -47,7 +47,7 @@ export const getDefaultFeeUnit = (currency: CryptoCurrency): Unit =>
  */
 export const getAdditionalLayer2Fees = async (
   currency: CryptoCurrency,
-  transaction: EvmTransaction,
+  transaction: EvmTransaction | string,
 ): Promise<BigNumber | undefined> => {
   switch (currency.id) {
     case "optimism":

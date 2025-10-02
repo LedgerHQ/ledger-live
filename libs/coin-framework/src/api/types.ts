@@ -319,7 +319,7 @@ type MaybeTxData<TxDataType extends TxData> = TxDataType extends TxDataNotSuppor
     {}
   : { data: TxDataType };
 
-export type FeesStrategy = "slow" | "medium" | "fast";
+export type FeesStrategy = "slow" | "medium" | "fast" | "custom";
 
 export type StakingOperation = "delegate" | "undelegate" | "redelegate";
 
@@ -364,6 +364,7 @@ export type TransactionValidation = {
   errors: Record<string, Error>;
   warnings: Record<string, Error>;
   estimatedFees: bigint;
+  totalFees?: bigint;
   amount: bigint;
   totalSpent: bigint;
 };
@@ -421,6 +422,7 @@ export type AlpacaApi<
   combine: (tx: string, signature: string, pubkey?: string) => string | Promise<string>;
   estimateFees: (
     transactionIntent: TransactionIntent<MemoType, TxDataType>,
+    customFeesParameters?: FeeEstimation["parameters"],
   ) => Promise<FeeEstimation>;
   craftTransaction: (
     transactionIntent: TransactionIntent<MemoType, TxDataType>,

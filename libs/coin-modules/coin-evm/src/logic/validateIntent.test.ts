@@ -211,6 +211,8 @@ describe("validateIntent", () => {
     });
 
     it("detects an intent for token asset sending without amount with an error", async () => {
+      jest.spyOn(ledgerNode, "getTransactionCount").mockResolvedValue(10);
+
       const res = await validateIntent(
         {} as CryptoCurrency,
         eip1559Intent({
@@ -245,11 +247,14 @@ describe("validateIntent", () => {
     });
 
     it("detects token asset sending intent with an error", async () => {
+      jest.spyOn(ledgerNode, "getTransactionCount").mockResolvedValue(10);
       jest.spyOn(ledgerExplorer, "getLastOperations").mockResolvedValue({
         lastCoinOperations: [],
         lastInternalOperations: [],
         lastNftOperations: [],
-        lastTokenOperations: [{ contract: "contract-address" } as Operation],
+        lastTokenOperations: [
+          { contract: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48" } as Operation,
+        ],
       });
       const getTokenBalance = jest
         .spyOn(ledgerNode, "getTokenBalance")
@@ -261,7 +266,7 @@ describe("validateIntent", () => {
           sender: "sender-address",
           recipient: "0xe2ca7390e76c5A992749bB622087310d2e63ca29",
           amount: 20n,
-          asset: { type: "erc20", assetReference: "contract-adress" },
+          asset: { type: "erc20", assetReference: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48" },
         }),
       );
 
@@ -270,7 +275,11 @@ describe("validateIntent", () => {
           amount: new NotEnoughBalance(),
         }),
       );
-      expect(getTokenBalance).toHaveBeenCalledWith({}, "sender-address", "contract-address");
+      expect(getTokenBalance).toHaveBeenCalledWith(
+        {},
+        "sender-address",
+        "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+      );
     });
   });
 
@@ -629,6 +638,7 @@ describe("validateIntent", () => {
 
       expect(res).toEqual({
         estimatedFees: 105000n,
+        totalFees: 105000n,
         totalSpent: expectedTotalSpent,
         amount: expectedAmount,
         errors: {},
@@ -681,6 +691,7 @@ describe("validateIntent", () => {
 
       expect(res).toEqual({
         estimatedFees: 105000n,
+        totalFees: 105000n,
         totalSpent: expectedTotalSpent,
         amount: expectedAmount,
         errors: {},
@@ -729,6 +740,7 @@ describe("validateIntent", () => {
           value: 105000n,
           parameters: {
             gasLimit: 21000n,
+            additionalFees: 4000n,
             maxPriorityFeePerGas: 3n,
             maxFeePerGas: 5n,
             gasOptions: {
@@ -757,6 +769,7 @@ describe("validateIntent", () => {
 
       expect(res).toEqual({
         estimatedFees: 105000n,
+        totalFees: 109000n,
         totalSpent: expectedTotalSpent,
         amount: expectedAmount,
         errors: {},

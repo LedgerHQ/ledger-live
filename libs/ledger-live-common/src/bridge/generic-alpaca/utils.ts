@@ -141,8 +141,7 @@ export function transactionToIntent(
     amount,
     asset: { type: "native", name: account.currency.name, unit: account.currency.units[0] },
     useAllAmount,
-    feesStrategy:
-      transaction.feesStrategy === "custom" ? undefined : transaction.feesStrategy ?? undefined,
+    feesStrategy: transaction.feesStrategy ?? undefined,
     data: Buffer.isBuffer(transaction.data)
       ? { type: "buffer", value: transaction.data }
       : { type: "none" },
