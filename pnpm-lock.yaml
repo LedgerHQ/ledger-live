@@ -3246,8 +3246,8 @@ importers:
         specifier: workspace:^
         version: link:../../ledgerjs/packages/types-live
       '@zondax/ledger-live-icp':
-        specifier: 1.2.2
-        version: 1.2.2
+        specifier: 1.3.1
+        version: 1.3.1
       bignumber.js:
         specifier: ^9.1.2
         version: 9.1.2
@@ -14084,6 +14084,14 @@ packages:
     resolution: {integrity: sha512-nyY48yE7r3dnJVlxrdaimrbloh4RokQaNRdI//btfTkcTEZbpmSrbYcBQ4VKTf8ZxXAOUJy4VsRpkJo+y9RTnA==}
     engines: {node: '>=16.0.0', npm: '>=7.0.0'}
 
+  '@isaacs/balanced-match@4.0.1':
+    resolution: {integrity: sha512-yzMTt9lEb8Gv7zRioUilSglI0c0smZ9k5D65677DLWLtWJaXIS3CqcGyUFByYKlnUj6TkjLVs54fBl6+TiGQDQ==}
+    engines: {node: 20 || >=22}
+
+  '@isaacs/brace-expansion@5.0.0':
+    resolution: {integrity: sha512-ZT55BDLV0yv0RBm2czMiZ+SqCGO7AvmOM3G/w2xhVPH+te0aKgFjmBvGlL1dH+ql2tgGO3MVrbb3jCKyvpgnxA==}
+    engines: {node: 20 || >=22}
+
   '@isaacs/cliui@8.0.2':
     resolution: {integrity: sha512-O8jcjabXaleOG9DQ0+ARXWZBTfnP4WNAqzuiJK7ll44AmxGKv/J2M4TPjxjY3znBCfvBXFzucm1twdyFybFqEA==}
     engines: {node: '>=12'}
@@ -20419,6 +20427,9 @@ packages:
   '@zondax/ledger-live-icp@1.2.2':
     resolution: {integrity: sha512-5qJhgD/vySuHqWysSSiZ2arP8cN24+spRK9xASE1vsLPSBOeqekobxGMvfB+aaVO3M9rAwpKBuV1THjQ45ATsg==}
 
+  '@zondax/ledger-live-icp@1.3.1':
+    resolution: {integrity: sha512-CzfkH7NYaGjaIQVL4DQA/xePLajQhV3g+SlNYH8ZAdear1s4ZE1EqkdlQtsUsCDdgYia6XofyL2ilesmY5Ftjg==}
+
   '@zondax/ledger-mina-js@0.0.2':
     resolution: {integrity: sha512-6tB4voId5NOfn1XzYivyQnjq8A7eoz/2D+Ay0IDCimkF4wX2dWC0KKzatRnJmC80z8b37Hsi5/roSvkZUQ/bgw==}
 
@@ -23808,6 +23819,9 @@ packages:
   esbuild-plugin-import-glob@0.1.1:
     resolution: {integrity: sha512-yAFH+9AoIcsQkODSx0KUPRv1FeJUN6Tef8vkPQMcuVkc2vXYneYKsHhOiFS/yIsg5bQ70HHtAlXVA1uTjgoJXg==}
 
+  esbuild-plugin-import-pattern@0.1.0:
+    resolution: {integrity: sha512-BEOCNItVUIY1bdOvAed9QjdHpXIWCr8UT9CaBjYbim40A1GD6rxFOjIJj9UFyFv31ui7g/Euwzan+/EdfdfvZw==}
+
   esbuild-plugin-polyfill-node@0.3.0:
     resolution: {integrity: sha512-SHG6CKUfWfYyYXGpW143NEZtcVVn8S/WHcEOxk62LuDXnY4Zpmc+WmxJKN6GMTgTClXJXhEM5KQlxKY6YjbucQ==}
     peerDependencies:
@@ -24962,6 +24976,10 @@ packages:
     resolution: {integrity: sha512-TMKDUnIte6bfb5nWv7V/caI169OHgvwjb7V4WkeUvbQQdjr5rWKqHFiKWb/fcOwB+CzBT+qbWjvj+DVwRskpIg==}
     engines: {node: '>=14'}
 
+  foreground-child@3.3.1:
+    resolution: {integrity: sha512-gIXjKqtFuWEgzFRJA9WCQeSJLZDjgJUOMCMzxtvFq/37KojM1BFGufqsCy0r4qSQmYLsZYMeyRqzIWOMup03sw==}
+    engines: {node: '>=14'}
+
   forever-agent@0.6.1:
     resolution: {integrity: sha512-j0KLYPhm6zeac4lz3oJ3o65qvgQCcPubiyotZrXqEaG4hNagNYO8qdlUrX5vwqv9ohqeT/Z3j6+yW067yWWdUw==}
 
@@ -25309,6 +25327,11 @@ packages:
 
   glob@11.0.2:
     resolution: {integrity: sha512-YT7U7Vye+t5fZ/QMkBFrTJ7ZQxInIUjwyAjVj84CYXqgBdv30MFUPGnBR6sQaVq6Is15wYJUsnzTuWaGRBhBAQ==}
+    engines: {node: 20 || >=22}
+    hasBin: true
+
+  glob@11.0.3:
+    resolution: {integrity: sha512-2Nim7dha1KVkaiF4q6Dj+ngPPMdfvLJEOpZk/jKiUAkqKebpGAWQXAq9z1xu9HKu5lWfqw/FASuccEjyznjPaA==}
     engines: {node: 20 || >=22}
     hasBin: true
 
@@ -26528,6 +26551,10 @@ packages:
 
   jackspeak@4.1.0:
     resolution: {integrity: sha512-9DDdhb5j6cpeitCbvLO7n7J4IxnbM6hoF6O1g4HQ5TfhvvKN8ywDM7668ZhMHRqVmxqhps/F6syWK2KcPxYlkw==}
+    engines: {node: 20 || >=22}
+
+  jackspeak@4.1.1:
+    resolution: {integrity: sha512-zptv57P3GpL+O0I7VdMJNBZCu+BPHVQUk55Ft8/QCJjTVxrnJHuVuX/0Bl2A6/+2oyR/ZMEuFKwmzqqZ/U5nPQ==}
     engines: {node: 20 || >=22}
 
   jake@10.8.7:
@@ -28599,6 +28626,10 @@ packages:
 
   minimatch@10.0.1:
     resolution: {integrity: sha512-ethXTt3SGGR+95gudmqJ1eNhRO7eGEGIgYA9vnPatK4/etz2MEVDno5GMCibdMTuBMyElzIlgxMna3K94XDIDQ==}
+    engines: {node: 20 || >=22}
+
+  minimatch@10.0.3:
+    resolution: {integrity: sha512-IPZ167aShDZZUMdRk66cyQAW3qr0WzbHkPdMYa8bzZhlHhO3jALbKdxcaak7W9FfT2rZNpQuUu4Od7ILEpXSaw==}
     engines: {node: 20 || >=22}
 
   minimatch@3.1.2:
@@ -42445,6 +42476,12 @@ snapshots:
       cborg: 4.1.4
       multiformats: 13.1.0
 
+  '@isaacs/balanced-match@4.0.1': {}
+
+  '@isaacs/brace-expansion@5.0.0':
+    dependencies:
+      '@isaacs/balanced-match': 4.0.1
+
   '@isaacs/cliui@8.0.2':
     dependencies:
       string-width: 5.1.2
@@ -49492,7 +49529,7 @@ snapshots:
       '@storybook/node-logger': 7.6.20
       '@storybook/types': 7.6.20
       '@types/cross-spawn': 6.0.6
-      cross-spawn: 7.0.3
+      cross-spawn: 7.0.6
       globby: 11.1.0
       jscodeshift: 0.15.2(@babel/preset-env@7.27.1(@babel/core@7.27.1))
       lodash: 4.17.21
@@ -52856,6 +52893,28 @@ snapshots:
       - esbuild
       - utf-8-validate
 
+  '@zondax/ledger-live-icp@1.3.1':
+    dependencies:
+      '@dfinity/agent': 2.4.1(@dfinity/candid@2.4.1(@dfinity/principal@2.4.1))(@dfinity/principal@2.4.1)
+      '@dfinity/candid': 2.4.1(@dfinity/principal@2.4.1)
+      '@dfinity/identity-secp256k1': 2.4.1(@dfinity/candid@2.4.1(@dfinity/principal@2.4.1))(@dfinity/principal@2.4.1)
+      '@dfinity/ledger-icp': 2.6.13(@dfinity/agent@2.4.1(@dfinity/candid@2.4.1(@dfinity/principal@2.4.1))(@dfinity/principal@2.4.1))(@dfinity/candid@2.4.1(@dfinity/principal@2.4.1))(@dfinity/principal@2.4.1)(@dfinity/utils@2.14.0(@dfinity/agent@2.4.1(@dfinity/candid@2.4.1(@dfinity/principal@2.4.1))(@dfinity/principal@2.4.1))(@dfinity/candid@2.4.1(@dfinity/principal@2.4.1))(@dfinity/principal@2.4.1))
+      '@dfinity/nns': 8.5.0(@dfinity/agent@2.4.1(@dfinity/candid@2.4.1(@dfinity/principal@2.4.1))(@dfinity/principal@2.4.1))(@dfinity/candid@2.4.1(@dfinity/principal@2.4.1))(@dfinity/ledger-icp@2.6.13(@dfinity/agent@2.4.1(@dfinity/candid@2.4.1(@dfinity/principal@2.4.1))(@dfinity/principal@2.4.1))(@dfinity/candid@2.4.1(@dfinity/principal@2.4.1))(@dfinity/principal@2.4.1)(@dfinity/utils@2.14.0(@dfinity/agent@2.4.1(@dfinity/candid@2.4.1(@dfinity/principal@2.4.1))(@dfinity/principal@2.4.1))(@dfinity/candid@2.4.1(@dfinity/principal@2.4.1))(@dfinity/principal@2.4.1)))(@dfinity/principal@2.4.1)(@dfinity/utils@2.14.0(@dfinity/agent@2.4.1(@dfinity/candid@2.4.1(@dfinity/principal@2.4.1))(@dfinity/principal@2.4.1))(@dfinity/candid@2.4.1(@dfinity/principal@2.4.1))(@dfinity/principal@2.4.1))
+      '@dfinity/principal': 2.4.1
+      '@dfinity/utils': 2.14.0(@dfinity/agent@2.4.1(@dfinity/candid@2.4.1(@dfinity/principal@2.4.1))(@dfinity/principal@2.4.1))(@dfinity/candid@2.4.1(@dfinity/principal@2.4.1))(@dfinity/principal@2.4.1)
+      '@noble/hashes': 1.8.0
+      bignumber.js: 9.1.2
+      browser-env: 3.3.0
+      cbor: 10.0.11
+      esbuild-plugin-import-pattern: 0.1.0
+      esbuild-plugin-polyfill-node: 0.3.0
+      glob: 11.0.3
+      invariant: 2.2.4
+    transitivePeerDependencies:
+      - bufferutil
+      - esbuild
+      - utf-8-validate
+
   '@zondax/ledger-mina-js@0.0.2':
     dependencies:
       '@zondax/ledger-js': 1.2.0
@@ -52923,7 +52982,7 @@ snapshots:
 
   acorn-globals@7.0.1:
     dependencies:
-      acorn: 8.13.0
+      acorn: 8.15.0
       acorn-walk: 8.3.2
 
   acorn-import-assertions@1.9.0(acorn@8.15.0):
@@ -57245,6 +57304,10 @@ snapshots:
     dependencies:
       fast-glob: 3.3.2
 
+  esbuild-plugin-import-pattern@0.1.0:
+    dependencies:
+      fast-glob: 3.3.2
+
   esbuild-plugin-polyfill-node@0.3.0:
     dependencies:
       '@jspm/core': 2.1.0
@@ -59057,12 +59120,17 @@ snapshots:
 
   foreground-child@2.0.0:
     dependencies:
-      cross-spawn: 7.0.3
+      cross-spawn: 7.0.6
       signal-exit: 3.0.7
 
   foreground-child@3.1.1:
     dependencies:
       cross-spawn: 7.0.3
+      signal-exit: 4.1.0
+
+  foreground-child@3.3.1:
+    dependencies:
+      cross-spawn: 7.0.6
       signal-exit: 4.1.0
 
   forever-agent@0.6.1: {}
@@ -59499,6 +59567,15 @@ snapshots:
       foreground-child: 3.1.1
       jackspeak: 4.1.0
       minimatch: 10.0.1
+      minipass: 7.1.2
+      package-json-from-dist: 1.0.1
+      path-scurry: 2.0.0
+
+  glob@11.0.3:
+    dependencies:
+      foreground-child: 3.3.1
+      jackspeak: 4.1.1
+      minimatch: 10.0.3
       minipass: 7.1.2
       package-json-from-dist: 1.0.1
       path-scurry: 2.0.0
@@ -60886,7 +60963,7 @@ snapshots:
   istanbul-lib-processinfo@2.0.3:
     dependencies:
       archy: 1.0.0
-      cross-spawn: 7.0.3
+      cross-spawn: 7.0.6
       istanbul-lib-coverage: 3.2.2
       p-map: 3.0.0
       rimraf: 3.0.2
@@ -60934,6 +61011,10 @@ snapshots:
       '@pkgjs/parseargs': 0.11.0
 
   jackspeak@4.1.0:
+    dependencies:
+      '@isaacs/cliui': 8.0.2
+
+  jackspeak@4.1.1:
     dependencies:
       '@isaacs/cliui': 8.0.2
 
@@ -63639,7 +63720,7 @@ snapshots:
   jsdom@17.0.0:
     dependencies:
       abab: 2.0.6
-      acorn: 8.13.0
+      acorn: 8.15.0
       acorn-globals: 6.0.0
       cssom: 0.5.0
       cssstyle: 2.3.0
@@ -65636,6 +65717,10 @@ snapshots:
     dependencies:
       brace-expansion: 2.0.1
 
+  minimatch@10.0.3:
+    dependencies:
+      '@isaacs/brace-expansion': 5.0.0
+
   minimatch@3.1.2:
     dependencies:
       brace-expansion: 1.1.11
@@ -66837,7 +66922,7 @@ snapshots:
   password-prompt@1.1.3:
     dependencies:
       ansi-escapes: 4.3.2
-      cross-spawn: 7.0.3
+      cross-spawn: 7.0.6
 
   path-browserify@0.0.0: {}
 
@@ -71770,7 +71855,7 @@ snapshots:
   terser@5.36.0:
     dependencies:
       '@jridgewell/source-map': 0.3.6
-      acorn: 8.13.0
+      acorn: 8.15.0
       commander: 2.20.3
       source-map-support: 0.5.21
 
@@ -74069,7 +74154,7 @@ snapshots:
   webpack-bundle-analyzer@4.10.2:
     dependencies:
       '@discoveryjs/json-ext': 0.5.7
-      acorn: 8.13.0
+      acorn: 8.15.0
       acorn-walk: 8.3.2
       commander: 7.2.0
       debounce: 1.2.1
