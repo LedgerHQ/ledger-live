@@ -1174,15 +1174,10 @@ const SwapDeviceConfirmation: React.FC<SwapConfirmationProps> = ({
   const ptxSwapDetailedView = useFeature("ptxSwapDetailedView");
   const isDetailedViewEnabled = !!ptxSwapDetailedView?.enabled;
   const variant = ptxSwapDetailedView?.params?.variant ?? ABTestingVariants.variantA;
+  const variantViewName =
+    variant === ABTestingVariants.variantA ? "ptxDrawerDetails" : "ptxNoDrawerDetails";
   const sourceAccountCurrency = exchange.fromCurrency;
   const targetAccountCurrency = exchange.toCurrency;
-
-  useEffect(() => {
-    track("PTX Swap Confirmation Viewed", {
-      ptxSwapDetailedViewVariant: isDetailedViewEnabled ? variant : null,
-      view: isDetailedViewEnabled ? "ptxdrawerdetails" : "ptxnodrawerdetails",
-    });
-  }, [variant, isDetailedViewEnabled]);
 
   const sourceAccountName =
     accountNameSelector(walletState, {
@@ -1294,6 +1289,7 @@ const SwapDeviceConfirmation: React.FC<SwapConfirmationProps> = ({
           sourcecurrency={sourceAccountCurrency?.name}
           targetcurrency={targetAccountCurrency?.name}
           provider={exchangeRate.provider}
+          ptxSwapDetailedViewVariant={variantViewName}
           {...swapDefaultTrack}
         />
         {isDetailedViewEnabled ? (
