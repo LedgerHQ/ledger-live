@@ -5869,9 +5869,6 @@ importers:
       '@types/node':
         specifier: ^22.10.10
         version: 22.10.10
-      documentation:
-        specifier: 14.0.2
-        version: 14.0.2
       jest:
         specifier: ^29.7.0
         version: 29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3))
