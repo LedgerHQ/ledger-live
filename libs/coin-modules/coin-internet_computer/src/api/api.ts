@@ -55,7 +55,7 @@ export const broadcastTxn = async (
   type: "call" | "read_state",
 ) => {
   log("debug", `[ICP] Broadcasting ${type} to ${canisterId}, body: ${payload.toString("hex")}`);
-  const res = await fetch(`${ICP_NETWORK_URL}/api/v2/canister/${canisterId}/${type}`, {
+  const res = await fetch(`${ICP_NETWORK_URL}/api/v3/canister/${canisterId}/${type}`, {
     body: payload,
     method: "POST",
     headers: {
@@ -64,11 +64,11 @@ export const broadcastTxn = async (
   });
 
   // If the status is not 2XX, throw an error
-  if (res.status >= 400) {
-    throw new Error(`Failed to broadcast transaction: ${res.text()}`);
+  if (res.status === 200) {
+    return await res.arrayBuffer();
   }
 
-  return await res.arrayBuffer();
+  throw new Error(`Failed to broadcast transaction: ${res.text()}`);
 };
 
 export const fetchBalance = async (address: string): Promise<BigNumber> => {
