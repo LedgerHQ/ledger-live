@@ -1,7 +1,6 @@
-import { createFixtureOperation } from "../types/bridge.fixture";
+import { createFixtureAccount, createFixtureOperation } from "../types/bridge.fixture";
 import { broadcast } from "./broadcast";
-import { Account, Operation } from "@ledgerhq/types-live";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { Operation } from "@ledgerhq/types-live";
 
 const mockSubmitExtrinsic = jest.fn();
 
@@ -27,38 +26,7 @@ jest.mock("@ledgerhq/coin-framework/operation", () => {
   };
 });
 
-const account = toAccount({
-  currency: {
-    id: "polkadot",
-  },
-});
-
-function toAccount(account: unknown): Account {
-  if (isAccount(account)) {
-    return account;
-  }
-
-  throw new Error(`Object is not an Account ${account}`);
-}
-
-function isAccount(account: unknown): account is Account {
-  return (
-    account !== null &&
-    account !== undefined &&
-    typeof account === "object" &&
-    "currency" in account &&
-    isCryptoCurrency(account.currency)
-  );
-}
-
-function isCryptoCurrency(cryptoCurrency: unknown): cryptoCurrency is CryptoCurrency {
-  return (
-    cryptoCurrency !== null &&
-    cryptoCurrency !== undefined &&
-    typeof cryptoCurrency === "object" &&
-    "id" in cryptoCurrency
-  );
-}
+const account = createFixtureAccount();
 
 describe("broadcast", () => {
   it("it should broadcast the signed operation and return an operation with the hash", async () => {
