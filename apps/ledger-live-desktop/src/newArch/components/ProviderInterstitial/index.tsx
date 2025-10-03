@@ -78,8 +78,8 @@ const EllipsisLoader = () => (
   </Ellipsis>
 );
 
-/** Custom loader for transition between Buy/Sell and providers */
-export const ProviderInterstitial: WebviewLoader = ({ manifest, isLoading }) => {
+/** Custom loader for transition between LL and providers */
+export const ProviderInterstitial: WebviewLoader = ({ manifest, isLoading, description }) => {
   const { t } = useTranslation();
   const showProviderLoadingTransition = useShowProviderLoadingTransition({ manifest, isLoading });
 
@@ -99,7 +99,7 @@ export const ProviderInterstitial: WebviewLoader = ({ manifest, isLoading }) => 
         </IconContainer>
       </VisualWrapper>
       <Text variant="body" color="palette.opacityDefault.c60" textAlign="center">
-        {t("exchange.connectingTo", { provider: manifest.name })}
+        {description ?? t("exchange.connectingTo", { provider: manifest.name })}
       </Text>
     </Loader>
   );

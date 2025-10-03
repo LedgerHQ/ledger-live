@@ -86,7 +86,7 @@ const AnimatedCircle = ({ delay }: { delay: number }) => {
 };
 
 /** Custom loader for transition between Buy/Sell and providers */
-export const ProviderInterstitial: InterstitialType = ({ manifest, isLoading }) => {
+export const ProviderInterstitial: InterstitialType = ({ manifest, isLoading, description }) => {
   const { t } = useTranslation();
   const showProviderLoadingTransition = useShowProviderLoadingTransition({ manifest, isLoading });
 
@@ -119,8 +119,8 @@ export const ProviderInterstitial: InterstitialType = ({ manifest, isLoading }) 
           />
         </IconContainer>
       </VisualWrapper>
-      <Text variant="body" color="opacityDefault.c60" textAlign="center">
-        {t("transfer.exchange.connectingTo", { provider: manifest.name })}
+      <Text variant="body" color="opacityDefault.c60" textAlign="center" style={{ padding: 16 }}>
+        {description ?? t("transfer.exchange.connectingTo", { provider: manifest.name })}
       </Text>
     </Loader>
   );
