@@ -46,11 +46,13 @@ const getSidecarUrl = (route: string, currency?: CryptoCurrency): string => {
     !config.hasBeenMigrated
   ) {
     route = `/rc${route}`;
-  } else if (currency?.id === "westend" && route.startsWith("/rc/pallets/staking")) {
-    // Staking does not work on Relay Chain (remove /rc)
-    route = `${route.slice(3)}`;
+  } else if (
+    currency?.id === "westend" &&
+    (route.startsWith("/pallets/staking") || route.startsWith("/transaction/material"))
+  ) {
+    // Fetch Staking Info from Westend AssetHub (remove /rc)
+    sidecarUrl = `${sidecarUrl.slice(0, -3)}`;
   }
-
   return `${sidecarUrl}${route || ""}`;
 };
 
@@ -385,9 +387,11 @@ export const getStakingInfo = async (addr: string, currency?: CryptoCurrency) =>
     };
   }
 
-  const stakingInfo = await fetchStakingInfo(addr, currency);
-
-  const [activeEra, consts] = await Promise.all([fetchActiveEra(currency), getConstants(currency)]);
+  const [stakingInfo, activeEra, consts] = await Promise.all([
+    fetchStakingInfo(addr, currency),
+    fetchActiveEra(currency),
+    getConstants(currency),
+  ]);
 
   const activeEraIndex = Number(activeEra.value?.index || 0);
   const activeEraStart = Number(activeEra.value?.start || 0);
