@@ -1,5 +1,13 @@
 # ledger-live-desktop
 
+## 2.130.1-hotfix.0
+
+### Patch Changes
+
+- [#12164](https://github.com/LedgerHQ/ledger-live/pull/12164) [`b9bf6fe`](https://github.com/LedgerHQ/ledger-live/commit/b9bf6fe4c39ef627859a8b654a1041399de7823b) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Handle sentry set-tags
+
+- [#12163](https://github.com/LedgerHQ/ledger-live/pull/12163) [`f41b4bf`](https://github.com/LedgerHQ/ledger-live/commit/f41b4bfa74c6ed30bdf7f1ea60df2c9e0c9cd22f) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - fix(lld): do not skip send flow amount step
+
 ## 2.130.0
 
 ### Minor Changes
