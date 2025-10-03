@@ -22,6 +22,15 @@ export const fetchStakingInfo = async (
   const hash = await api.rpc.chain.getFinalizedHead();
   const historicApi = await api.at(hash);
 
+  if (currency?.id === "assethub_polkadot" && !historicApi.query.staking) {
+    return {
+      staking: {
+        unlocking: [],
+      },
+      numSlashingSpans: 0,
+    };
+  }
+
   const controllerOption = await historicApi.query.staking.bonded(addr); // Option<AccountId> representing the controller
 
   if (controllerOption.isNone) {

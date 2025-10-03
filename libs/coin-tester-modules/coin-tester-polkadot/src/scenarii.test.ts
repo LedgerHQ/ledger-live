@@ -21,11 +21,8 @@ describe("Polkadot Deterministic Tester", () => {
       }
     }
   });
-});
 
-// to unskip hen Westend MetadataShortner is fixed
-describe.skip("Westend Deterministic Tester", () => {
-  it("scenario Westend", async () => {
+  it.skip("scenario Westend", async () => {
     try {
       await executeScenario(WestendScenario);
     } catch (e) {
