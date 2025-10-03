@@ -1,10 +1,20 @@
-import network from "../network";
 import { PolkadotOperation, PolkadotOperationExtra } from "../types";
 import { BigNumber } from "bignumber.js"; // Assuming BigNumber is used for value and fee
 import { listOperations } from "./listOperations";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 
-jest.mock("../network");
-const mockGetOperations = network.getOperations as jest.Mock;
+const mockGetOperations = jest.fn();
+jest.mock("../network", () => {
+  return {
+    getOperations: (
+      accountId: string,
+      addr: string,
+      currency?: CryptoCurrency,
+      startAt = 0,
+      limit = 200,
+    ) => mockGetOperations(accountId, addr, currency, startAt, limit),
+  };
+});
 
 describe("listOperations", () => {
   const fakeAddress = "iamamockaddressanddontmatteratall";
@@ -51,6 +61,9 @@ describe("listOperations", () => {
     mockGetOperations.mockResolvedValue(mockOperations);
 
     const result = await listOperations(fakeAddress, { limit, startAt });
+
+    expect(mockGetOperations).toHaveBeenCalledTimes(1);
+    expect(mockGetOperations.mock.lastCall[2]).toEqual(undefined);
 
     expect(result).toEqual([
       [
@@ -101,6 +114,8 @@ describe("listOperations", () => {
 
     const result = await listOperations(fakeAddress, { limit, startAt });
 
+    expect(mockGetOperations).toHaveBeenCalledTimes(1);
+    expect(mockGetOperations.mock.lastCall[2]).toEqual(undefined);
     expect(result).toEqual([[], 0]);
   });
 
@@ -128,6 +143,9 @@ describe("listOperations", () => {
     mockGetOperations.mockResolvedValue(mockOperations);
 
     const result = await listOperations(fakeAddress, { limit, startAt });
+
+    expect(mockGetOperations).toHaveBeenCalledTimes(1);
+    expect(mockGetOperations.mock.lastCall[2]).toEqual(undefined);
 
     expect(result).toEqual([
       [
@@ -176,6 +194,9 @@ describe("listOperations", () => {
     mockGetOperations.mockResolvedValue(mockOperations);
 
     const result = await listOperations(fakeAddress, { limit });
+
+    expect(mockGetOperations).toHaveBeenCalledTimes(1);
+    expect(mockGetOperations.mock.lastCall[2]).toEqual(undefined);
 
     expect(result).toEqual([
       [
