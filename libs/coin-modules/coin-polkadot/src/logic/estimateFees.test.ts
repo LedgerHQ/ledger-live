@@ -9,6 +9,7 @@ import { createRegistryAndExtrinsics } from "../network/common";
 import { createFixtureAccount } from "../types/bridge.fixture";
 import { craftEstimationTransaction } from "./craftTransaction";
 import coinConfig from "../config";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 
 jest.mock("./polkadot-crypto");
 
@@ -24,7 +25,8 @@ const mockTransactionParams = jest.fn().mockResolvedValue(fixtureTransactionPara
 
 jest.mock("../network/sidecar", () => ({
   getRegistry: () => mockRegistry(),
-  paymentInfo: (args: any) => mockPaymentInfo(args),
+  paymentInfo: (signedTx: string, currency: CryptoCurrency | undefined) =>
+    mockPaymentInfo(signedTx, currency),
   getTransactionParams: () => mockTransactionParams(),
 }));
 
@@ -71,6 +73,8 @@ describe("estimatedFees", () => {
     // Then
     // Test to comply with existing code. Should be 1 time only.
     expect(mockLoadPolkadotCrypto).toHaveBeenCalledTimes(2);
+    expect(mockPaymentInfo).toHaveBeenCalledTimes(1);
+    expect(mockPaymentInfo.mock.lastCall[1]).toEqual(undefined);
   });
 
   it("returns estimation from Polkadot explorer", async () => {
@@ -92,5 +96,8 @@ describe("estimatedFees", () => {
     // Receive hex signature computed by Polkadot lib
     expect(mockPaymentInfo.mock.lastCall).not.toBeNull();
     expect(result).toEqual(BigInt(partialFee));
+
+    expect(mockPaymentInfo).toHaveBeenCalledTimes(1);
+    expect(mockPaymentInfo.mock.lastCall[1]).toEqual(undefined);
   });
 });
