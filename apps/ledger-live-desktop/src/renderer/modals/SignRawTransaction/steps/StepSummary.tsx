@@ -94,11 +94,9 @@ export const StepSummaryFooter = (props: StepProps) => {
   }
 
   return (
-    <>
-      <Button id={"sign-summary-continue-button"} primary onClick={onNext}>
-        <Trans i18nKey="common.continue" />
-      </Button>
-    </>
+    <Button id={"sign-summary-continue-button"} primary onClick={onNext}>
+      <Trans i18nKey="common.continue" />
+    </Button>
   );
 };
 

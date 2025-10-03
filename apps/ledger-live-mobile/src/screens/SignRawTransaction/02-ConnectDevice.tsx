@@ -76,12 +76,10 @@ function ConnectDevice({ navigation, route }: SignRawTransactionConnectDevicePro
   );
 
   const onSelectDeviceLink = useCallback(() => {
-    () => {
-      navigation.navigate(ScreenName.SignRawTransactionSelectDevice, {
-        ...route.params,
-        forceSelectDevice: true,
-      });
-    };
+    navigation.navigate(ScreenName.SignRawTransactionSelectDevice, {
+      ...route.params,
+      forceSelectDevice: true,
+    });
   }, [navigation, route.params]);
 
   return transaction ? (
