@@ -34,19 +34,17 @@ function StepConfirmation({ account, error }: StepProps) {
   return null;
 }
 export function StepConfirmationFooter({ transitionTo, onRetry, error }: StepProps) {
+  if (!error) return null;
+
   return (
-    <>
-      {error ? (
-        <RetryButton
-          ml={2}
-          primary
-          onClick={() => {
-            onRetry();
-            transitionTo("summary");
-          }}
-        />
-      ) : null}
-    </>
+    <RetryButton
+      ml={2}
+      primary
+      onClick={() => {
+        onRetry();
+        transitionTo("summary");
+      }}
+    />
   );
 }
 export default StepConfirmation;
