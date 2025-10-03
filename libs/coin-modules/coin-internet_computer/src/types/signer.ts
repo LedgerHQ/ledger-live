@@ -6,15 +6,6 @@ export type ICPSignature = {
   signatureDER?: Buffer;
 };
 
-export type ICPSignUpdateCall = {
-  returnCode: number;
-  errorMessage?: string;
-  RequestHash?: Buffer;
-  RequestSignatureRS?: Buffer;
-  StatusReadHash?: Buffer;
-  StatusReadSignatureRS?: Buffer;
-};
-
 export type ICPGetAddrResponse = {
   returnCode: number;
   errorMessage: string;
