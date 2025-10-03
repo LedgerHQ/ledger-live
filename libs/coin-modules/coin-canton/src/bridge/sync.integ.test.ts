@@ -130,7 +130,7 @@ describe("sync (devnet)", () => {
         {
           instrument_id: "Amulet",
           amount: "500",
-          locked: true,
+          locked: false,
         },
         {
           instrument_id: "LockedAmulet",
