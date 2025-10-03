@@ -8,9 +8,9 @@ export class SettingsModal extends Modal {
 
   @step("Check Reset Modal")
   async checkResetModal() {
-    await expect(this.title).toHaveText("Reset Ledger Live");
+    await expect(this.title).toHaveText("Reset Ledger Wallet");
     await expect(this.warningMessage).toHaveText(
-      "Resetting Ledger Live will erase your swap transaction history for all your accounts.",
+      "Resetting Ledger Wallet will erase your swap transaction history for all your accounts.",
     );
   }
 

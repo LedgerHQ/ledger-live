@@ -12,10 +12,10 @@ export class LedgerSyncDrawer extends Drawer {
     .or(this.page.locator("span", { hasText: "Sync successful!" }))
     .first();
   private backupDeletionSuccessText = this.page.getByText(
-    "Your Ledger Live apps are no longer synched",
+    "Your Ledger Wallet apps are no longer synched",
   );
   private removeMemberSuccessText = this.page.getByText(
-    "Your Ledger Live app on CLI is no longer connected to Ledger Sync",
+    "Your Ledger Wallet app on CLI is no longer connected to Ledger Sync",
   );
   private displayInstances = this.page.getByTestId("walletSync-manage-instances-label");
   private removeCLI = this.page.getByTestId("walletSync-manage-instance-CLI").getByText("Remove");
