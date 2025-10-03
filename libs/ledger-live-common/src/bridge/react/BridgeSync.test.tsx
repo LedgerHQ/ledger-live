@@ -4,7 +4,10 @@
 import "../../__tests__/test-helpers/dom-polyfill";
 import React, { useEffect } from "react";
 import { render, screen } from "@testing-library/react";
+import type { Account } from "@ledgerhq/types-live";
+import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { Observable } from "rxjs";
+import type { Observer } from "rxjs";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import { genAccount } from "../../mock/account";
 import { BridgeSync, resetStates } from "./BridgeSync";
@@ -27,20 +30,71 @@ const defaultsBridgeSyncOpts = {
 
 setSupportedCurrencies(["bitcoin", "ethereum"]);
 
+const bitcoin = getCryptoCurrencyById("bitcoin");
+const ethereum = getCryptoCurrencyById("ethereum");
+
+const createAccount = (
+  id: string,
+  currency: CryptoCurrency,
+  options: Parameters<typeof genAccount>[1] = {},
+) => genAccount(id, { ...options, currency });
+
+type BridgeSyncRenderProps = Partial<Omit<React.ComponentProps<typeof BridgeSync>, "children">>;
+
+const renderBridgeSync = (props: BridgeSyncRenderProps = {}, children: React.ReactNode = null) =>
+  render(
+    <BridgeSync {...defaultsBridgeSyncOpts} {...props}>
+      {children}
+    </BridgeSync>,
+  );
+
+type AccountUpdater = (arg0: Account) => Account;
+
+const baseGetAccountBridge = Bridge.getAccountBridge;
+
+const withMockedAccountBridge = (
+  account: Account,
+  syncFactory: () => Observable<AccountUpdater>,
+) => {
+  const originalBridge = baseGetAccountBridge(account);
+  const mockBridge = {
+    ...originalBridge,
+    sync: syncFactory,
+  };
+  return jest.spyOn(Bridge, "getAccountBridge").mockImplementation(acc => {
+    if (acc.id === account.id) {
+      return mockBridge;
+    }
+    return baseGetAccountBridge(acc);
+  });
+};
+
+const mockBridgeSync = (
+  account: Account,
+  producer: (observer: Observer<AccountUpdater>) => void | (() => void),
+) =>
+  withMockedAccountBridge(
+    account,
+    () =>
+      new Observable<AccountUpdater>(observer => {
+        const cleanup = producer(observer);
+        return typeof cleanup === "function" ? cleanup : undefined;
+      }),
+  );
+
 describe("BridgeSync", () => {
   afterEach(() => {
-    jest.clearAllMocks();
+    jest.restoreAllMocks();
     resetStates();
   });
 
   test("initialize without an error", async () => {
-    render(<BridgeSync {...defaultsBridgeSyncOpts}>LOADED</BridgeSync>);
+    renderBridgeSync({}, "LOADED");
     expect(screen.getByText("LOADED")).not.toBeNull();
   });
 
   test("executes a sync at start tracked as reason=initial", done => {
-    const BTC = getCryptoCurrencyById("bitcoin");
-    const account = genAccount("btc1", { currency: BTC });
+    const account = createAccount("btc1", bitcoin);
     const futureOpLength = account.operations.length;
     // we remove the first operation to feed it back as a broadcasted one, the mock impl will make it go back to operations
     const lastOp = account.operations.splice(0, 1)[0];
@@ -64,20 +118,14 @@ describe("BridgeSync", () => {
         done();
       }
     }
-    render(
-      <BridgeSync {...defaultsBridgeSyncOpts} accounts={accounts} trackAnalytics={track}>
-        {null}
-      </BridgeSync>,
-    );
+    renderBridgeSync({ accounts, trackAnalytics: track });
   });
 
   test("sync all accounts in parallel at start tracked as reason=initial", done => {
-    const BTC = getCryptoCurrencyById("bitcoin");
-    const ETH = getCryptoCurrencyById("ethereum");
     const accounts = [
-      genAccount("2btc1", { currency: BTC }),
-      genAccount("2btc2", { currency: BTC }),
-      genAccount("2eth1", { currency: ETH }),
+      createAccount("2btc1", bitcoin),
+      createAccount("2btc2", bitcoin),
+      createAccount("2eth1", ethereum),
     ];
     const synced: Array<Record<string, unknown>> = [];
     let resolveFirst;
@@ -109,21 +157,15 @@ describe("BridgeSync", () => {
         if (synced.length === accounts.length) done();
       }
     }
-    render(
-      <BridgeSync
-        {...defaultsBridgeSyncOpts}
-        prepareCurrency={prepareCurrency}
-        accounts={accounts}
-        trackAnalytics={track}
-      >
-        {null}
-      </BridgeSync>,
-    );
+    renderBridgeSync({
+      accounts,
+      prepareCurrency,
+      trackAnalytics: track,
+    });
   });
 
   test("provides context values correctly", () => {
-    const BTC = getCryptoCurrencyById("bitcoin");
-    const account = genAccount("btc1", { currency: BTC });
+    const account = createAccount("btc1", bitcoin);
     const accounts = [account];
 
     let syncFunction: Sync | undefined;
@@ -135,11 +177,7 @@ describe("BridgeSync", () => {
       return <div data-testid="test-component">Test</div>;
     }
 
-    render(
-      <BridgeSync {...defaultsBridgeSyncOpts} accounts={accounts}>
-        <TestComponent />
-      </BridgeSync>,
-    );
+    renderBridgeSync({ accounts }, <TestComponent />);
 
     expect(syncFunction).toBeDefined();
     expect(typeof syncFunction).toBe("function");
@@ -148,8 +186,7 @@ describe("BridgeSync", () => {
   });
 
   test("handles sync errors with recoverError function", done => {
-    const BTC = getCryptoCurrencyById("bitcoin");
-    const account = genAccount("btc1", { currency: BTC });
+    const account = createAccount("btc1", bitcoin);
     const accounts = [account];
 
     const mockError = new Error("Sync failed");
@@ -159,18 +196,10 @@ describe("BridgeSync", () => {
     });
 
     // Mock the account bridge to return an Observable that emits an error
-    const originalBridge = Bridge.getAccountBridge(account);
-    const mockBridge = {
-      ...originalBridge,
-      sync: () => {
-        // Return an Observable that immediately emits an error
-        return new Observable<(acc: typeof account) => typeof account>(observer => {
-          setTimeout(() => observer.error(mockError), 100);
-        });
-      },
-    };
-
-    jest.spyOn(Bridge, "getAccountBridge").mockReturnValue(mockBridge);
+    mockBridgeSync(account, observer => {
+      const timeout = setTimeout(() => observer.error(mockError), 100);
+      return () => clearTimeout(timeout);
+    });
 
     let syncStateChecked = false;
     let syncStateRef: BridgeSyncState;
@@ -191,33 +220,21 @@ describe("BridgeSync", () => {
       return <div>Test</div>;
     }
 
-    render(
-      <BridgeSync {...defaultsBridgeSyncOpts} accounts={accounts} recoverError={recoverError}>
-        <TestComponent />
-      </BridgeSync>,
-    );
+    renderBridgeSync({ accounts, recoverError }, <TestComponent />);
   });
 
   test("silences errors when recoverError returns null", done => {
-    const BTC = getCryptoCurrencyById("bitcoin");
-    const account = genAccount("btc1", { currency: BTC });
+    const account = createAccount("btc1", bitcoin);
     const accounts = [account];
 
     const mockError = new Error("Sync failed but should be silenced");
     const recoverError = jest.fn(() => null); // Return null to silence the error
 
     // Mock the account bridge to return an Observable that emits an error
-    const originalBridge = Bridge.getAccountBridge(account);
-    const mockBridge = {
-      ...originalBridge,
-      sync: () => {
-        return new Observable<(acc: typeof account) => typeof account>(observer => {
-          setTimeout(() => observer.error(mockError), 100);
-        });
-      },
-    };
-
-    jest.spyOn(Bridge, "getAccountBridge").mockReturnValue(mockBridge);
+    mockBridgeSync(account, observer => {
+      const timeout = setTimeout(() => observer.error(mockError), 100);
+      return () => clearTimeout(timeout);
+    });
 
     let syncStateChecked = false;
     let syncStateRef: BridgeSyncState;
@@ -238,37 +255,22 @@ describe("BridgeSync", () => {
       return <div>Test</div>;
     }
 
-    render(
-      <BridgeSync {...defaultsBridgeSyncOpts} accounts={accounts} recoverError={recoverError}>
-        <TestComponent />
-      </BridgeSync>,
-    );
+    renderBridgeSync({ accounts, recoverError }, <TestComponent />);
   });
 
   test("handles blacklisted token IDs in sync config", () => {
-    const BTC = getCryptoCurrencyById("bitcoin");
-    const account = genAccount("btc1", { currency: BTC });
+    const account = createAccount("btc1", bitcoin);
     const blacklistedTokenIds = ["token1", "token2"];
 
-    render(
-      <BridgeSync
-        {...defaultsBridgeSyncOpts}
-        accounts={[account]}
-        blacklistedTokenIds={blacklistedTokenIds}
-      >
-        {null}
-      </BridgeSync>,
-    );
+    renderBridgeSync({ accounts: [account], blacklistedTokenIds });
 
     // Test passes if component renders without errors with blacklisted tokens
     expect(blacklistedTokenIds).toHaveLength(2);
   });
 
   test("handles sync actions correctly", () => {
-    const BTC = getCryptoCurrencyById("bitcoin");
-    const ETH = getCryptoCurrencyById("ethereum");
-    const account1 = genAccount("btc1", { currency: BTC });
-    const account2 = genAccount("eth1", { currency: ETH });
+    const account1 = createAccount("btc1", bitcoin);
+    const account2 = createAccount("eth1", ethereum);
     const accounts = [account1, account2];
 
     let sync: Sync | undefined;
@@ -278,11 +280,7 @@ describe("BridgeSync", () => {
       return <div>Test</div>;
     }
 
-    render(
-      <BridgeSync {...defaultsBridgeSyncOpts} accounts={accounts}>
-        <TestComponent />
-      </BridgeSync>,
-    );
+    renderBridgeSync({ accounts }, <TestComponent />);
 
     expect(sync).toBeDefined();
 
@@ -314,8 +312,7 @@ describe("BridgeSync", () => {
   });
 
   test("handles pending operations sync", () => {
-    const BTC = getCryptoCurrencyById("bitcoin");
-    const account = genAccount("btc1", { currency: BTC });
+    const account = createAccount("btc1", bitcoin);
 
     // Create account with pending operations
     const accountWithPending = {
@@ -347,11 +344,7 @@ describe("BridgeSync", () => {
       return <div>Test</div>;
     }
 
-    render(
-      <BridgeSync {...defaultsBridgeSyncOpts} accounts={accounts}>
-        <TestComponent />
-      </BridgeSync>,
-    );
+    renderBridgeSync({ accounts }, <TestComponent />);
 
     expect(sync).toBeDefined();
 
@@ -362,33 +355,26 @@ describe("BridgeSync", () => {
   });
 
   test("hydrates currencies only once", async () => {
-    const BTC = getCryptoCurrencyById("bitcoin");
-    const ETH = getCryptoCurrencyById("ethereum");
-    const account1 = genAccount("btc1", { currency: BTC });
-    const account2 = genAccount("btc2", { currency: BTC }); // Same currency
-    const account3 = genAccount("eth1", { currency: ETH });
+    const account1 = createAccount("btc1", bitcoin);
+    const account2 = createAccount("btc2", bitcoin); // Same currency
+    const account3 = createAccount("eth1", ethereum);
     const accounts = [account1, account2, account3];
 
     const hydrateCurrency = jest.fn(() => Promise.resolve());
 
-    render(
-      <BridgeSync {...defaultsBridgeSyncOpts} accounts={accounts} hydrateCurrency={hydrateCurrency}>
-        {null}
-      </BridgeSync>,
-    );
+    renderBridgeSync({ accounts, hydrateCurrency });
 
     // Wait for hydration to complete
     await new Promise(resolve => setTimeout(resolve, 50));
 
     // Should only hydrate each currency once, not once per account
     expect(hydrateCurrency).toHaveBeenCalledTimes(2); // BTC and ETH
-    expect(hydrateCurrency).toHaveBeenCalledWith(BTC);
-    expect(hydrateCurrency).toHaveBeenCalledWith(ETH);
+    expect(hydrateCurrency).toHaveBeenCalledWith(bitcoin);
+    expect(hydrateCurrency).toHaveBeenCalledWith(ethereum);
   });
 
   test("handles different sync actions", () => {
-    const BTC = getCryptoCurrencyById("bitcoin");
-    const account = genAccount("btc1", { currency: BTC });
+    const account = createAccount("btc1", bitcoin);
     const accounts = [account];
 
     let sync: Sync | undefined;
@@ -398,11 +384,7 @@ describe("BridgeSync", () => {
       return <div>Test</div>;
     }
 
-    render(
-      <BridgeSync {...defaultsBridgeSyncOpts} accounts={accounts}>
-        <TestComponent />
-      </BridgeSync>,
-    );
+    renderBridgeSync({ accounts }, <TestComponent />);
 
     expect(sync).toBeDefined();
 
@@ -421,19 +403,13 @@ describe("BridgeSync", () => {
   });
 
   test("tracks session analytics when all accounts complete", async () => {
-    const BTC = getCryptoCurrencyById("bitcoin");
-    const ETH = getCryptoCurrencyById("ethereum");
-    const account1 = genAccount("btc1", { currency: BTC, operationsSize: 3 });
-    const account2 = genAccount("eth1", { currency: ETH, operationsSize: 5 });
+    const account1 = createAccount("btc1", bitcoin, { operationsSize: 3 });
+    const account2 = createAccount("eth1", ethereum, { operationsSize: 5 });
     const accounts = [account1, account2];
 
     const trackAnalytics = jest.fn();
 
-    render(
-      <BridgeSync {...defaultsBridgeSyncOpts} accounts={accounts} trackAnalytics={trackAnalytics}>
-        {null}
-      </BridgeSync>,
-    );
+    renderBridgeSync({ accounts, trackAnalytics });
 
     // Wait for potential analytics calls
     await new Promise(resolve => setTimeout(resolve, 100));
@@ -443,8 +419,7 @@ describe("BridgeSync", () => {
   });
 
   test("handles non-existent account sync gracefully", () => {
-    const BTC = getCryptoCurrencyById("bitcoin");
-    const account = genAccount("btc1", { currency: BTC });
+    const account = createAccount("btc1", bitcoin);
     const accounts = [account];
 
     let sync: Sync | undefined;
@@ -454,11 +429,7 @@ describe("BridgeSync", () => {
       return <div>Test</div>;
     }
 
-    render(
-      <BridgeSync {...defaultsBridgeSyncOpts} accounts={accounts}>
-        <TestComponent />
-      </BridgeSync>,
-    );
+    renderBridgeSync({ accounts }, <TestComponent />);
 
     // Try to sync an account that doesn't exist - should not throw
     expect(sync).toBeDefined();
@@ -475,26 +446,16 @@ describe("BridgeSync", () => {
   });
 
   test("does not send analytics for background sync reason", done => {
-    const BTC = getCryptoCurrencyById("bitcoin");
-    const account = genAccount("btc1", { currency: BTC });
+    const account = createAccount("btc1", bitcoin);
     const accounts = [account];
 
     const trackAnalytics = jest.fn();
 
     // Mock the account bridge to complete successfully
-    const originalBridge = Bridge.getAccountBridge(account);
-    const mockBridge = {
-      ...originalBridge,
-      sync: () => {
-        return new Observable<(acc: typeof account) => typeof account>(observer => {
-          // Emit a successful account update
-          observer.next((acc: typeof account) => acc);
-          observer.complete();
-        });
-      },
-    };
-
-    jest.spyOn(Bridge, "getAccountBridge").mockReturnValue(mockBridge);
+    mockBridgeSync(account, observer => {
+      observer.next((acc: typeof account) => acc);
+      observer.complete();
+    });
 
     function TestComponent() {
       const sync = useBridgeSync();
@@ -511,11 +472,7 @@ describe("BridgeSync", () => {
       return <div>Test</div>;
     }
 
-    render(
-      <BridgeSync {...defaultsBridgeSyncOpts} accounts={accounts} trackAnalytics={trackAnalytics}>
-        <TestComponent />
-      </BridgeSync>,
-    );
+    renderBridgeSync({ accounts, trackAnalytics }, <TestComponent />);
 
     // Wait for sync to complete and verify no analytics were sent
     setTimeout(() => {
@@ -531,26 +488,16 @@ describe("BridgeSync", () => {
   });
 
   test("sends analytics for non-background sync reason", done => {
-    const BTC = getCryptoCurrencyById("bitcoin");
-    const account = genAccount("btc1", { currency: BTC });
+    const account = createAccount("btc1", bitcoin);
     const accounts = [account];
 
     const trackAnalytics = jest.fn();
 
     // Mock the account bridge to complete successfully
-    const originalBridge = Bridge.getAccountBridge(account);
-    const mockBridge = {
-      ...originalBridge,
-      sync: () => {
-        return new Observable<(acc: typeof account) => typeof account>(observer => {
-          // Emit a successful account update
-          observer.next((acc: typeof account) => acc);
-          observer.complete();
-        });
-      },
-    };
-
-    jest.spyOn(Bridge, "getAccountBridge").mockReturnValue(mockBridge);
+    mockBridgeSync(account, observer => {
+      observer.next((acc: typeof account) => acc);
+      observer.complete();
+    });
 
     function TestComponent() {
       const sync = useBridgeSync();
@@ -567,11 +514,7 @@ describe("BridgeSync", () => {
       return <div>Test</div>;
     }
 
-    render(
-      <BridgeSync {...defaultsBridgeSyncOpts} accounts={accounts} trackAnalytics={trackAnalytics}>
-        <TestComponent />
-      </BridgeSync>,
-    );
+    renderBridgeSync({ accounts, trackAnalytics }, <TestComponent />);
 
     // Wait for sync to complete and verify analytics were sent
     setTimeout(() => {
@@ -589,8 +532,7 @@ describe("BridgeSync", () => {
   });
 
   test("provides sync state context", () => {
-    const BTC = getCryptoCurrencyById("bitcoin");
-    const account = genAccount("btc1", { currency: BTC });
+    const account = createAccount("btc1", bitcoin);
     const accounts = [account];
 
     let syncState: BridgeSyncState | undefined;
@@ -600,11 +542,7 @@ describe("BridgeSync", () => {
       return <div>Test</div>;
     }
 
-    render(
-      <BridgeSync {...defaultsBridgeSyncOpts} accounts={accounts}>
-        <TestComponent />
-      </BridgeSync>,
-    );
+    renderBridgeSync({ accounts }, <TestComponent />);
 
     expect(syncState).toBeDefined();
     expect(typeof syncState).toBe("object");
