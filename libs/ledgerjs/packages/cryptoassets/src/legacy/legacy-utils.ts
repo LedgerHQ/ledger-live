@@ -180,7 +180,6 @@ export function convertMultiversXESDTTokens([
   name,
 ]: MultiversXESDTToken): TokenCurrency {
   const MULTIVERSX_ESDT_CONTRACT = "erd1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqzllls8a5w6u";
-  // const parentCurrency = getCryptoCurrencyById("multiversx");
   const parentCurrency = getCryptoCurrencyById("elrond");
 
   return {
@@ -383,7 +382,6 @@ export function convertStellarTokens([
 ]: StellarToken): TokenCurrency {
   const parentCurrency = getCryptoCurrencyById("stellar");
 
-  // FIXME: to be discussed with CAL service as values are Uppercase IRL
   return {
     type: "TokenCurrency",
     id: `stellar/asset/${assetCode.toUpperCase()}:${assetIssuer.toUpperCase()}`,
