@@ -195,6 +195,7 @@ export type Features = CurrencyFeatures & {
   ptxSwapLiveApp: Feature_PtxSwapLiveApp;
   ptxSwapDetailedView: Feature_PtxSwapDetailedView;
   ptxEarnLiveApp: Feature_PtxEarnLiveApp;
+  ptxEarnDrawerApy: Feature_PtxEarnDrawerApy;
   ptxSwapReceiveTRC20WithoutTrx: Feature_PtxSwapReceiveTRC20WithoutTrx;
   flexibleContentCards: Feature_FlexibleContentCards;
   llmAnalyticsOptInPrompt: Feature_LlmAnalyticsOptInPrompt;
@@ -678,6 +679,7 @@ export type Feature_LlmChatbotSupport = DefaultFeature;
 export type Feature_EnableAppsBackup = DefaultFeature;
 export type Feature_web3hub = DefaultFeature;
 export type Feature_MemoTag = DefaultFeature;
+export type Feature_PtxEarnDrawerApy = DefaultFeature;
 export type Feature_PtxSwapMoonpayProvider = DefaultFeature;
 export type Feature_PtxSwapExodusProvider = DefaultFeature;
 
