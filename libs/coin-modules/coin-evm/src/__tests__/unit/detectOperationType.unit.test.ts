@@ -39,14 +39,14 @@ describe("detectEvmStakingOperationType", () => {
   const contractAddress = "0x0000000000000000000000000000000000001005"; // Example contract address for sei_network_evm
 
   it("should return correct OperationType for delegate", () => {
-    const fn = "delegate";
+    const fn = "delegate(string)";
     const methodId = ethers.id(fn).slice(0, 10).toLowerCase();
     const result = detectEvmStakingOperationType("sei_network_evm", contractAddress, methodId);
     expect(result).toBe("DELEGATE");
   });
 
   it("should return correct OperationType for redelegate", () => {
-    const fn = "redelegate";
+    const fn = "redelegate(string,string,uint256)";
     const methodId = ethers.id(fn).slice(0, 10).toLowerCase();
     const result = detectEvmStakingOperationType("sei_network_evm", contractAddress, methodId);
     expect(result).toBe("REDELEGATE");
