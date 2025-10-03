@@ -38,7 +38,7 @@ import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
  */
 const getSidecarUrl = (route: string, currency?: CryptoCurrency): string => {
   const config = coinConfig.getCoinConfig(currency);
-  const sidecarUrl = config.sidecar.url;
+  let sidecarUrl = config.sidecar.url;
 
   if (
     currency?.id === "assethub_polkadot" &&
