@@ -28,6 +28,7 @@ for (const account of accounts) {
     test(
       `[${account.account.currency.name}] Rename Account`,
       {
+        tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax"],
         annotation: {
           type: "TMS",
           description: account.xrayTicket,
