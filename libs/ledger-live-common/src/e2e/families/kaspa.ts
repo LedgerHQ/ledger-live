@@ -17,8 +17,8 @@ export async function sendKaspa(tx: Transaction) {
 }
 
 export async function delegateKaspa(delegatingAccount: Delegate) {
-  await waitFor(DeviceLabels.REVIEW_OPERATION);
-  const events = await pressUntilTextFound(DeviceLabels.APPROVE);
+  await waitFor(DeviceLabels.REVIEW_OPERATION.name);
+  const events = await pressUntilTextFound(DeviceLabels.APPROVE.name);
   const isAmountCorrect = containsSubstringInEvent(delegatingAccount.amount, events);
   expect(isAmountCorrect).toBeTruthy();
   await pressBoth();
