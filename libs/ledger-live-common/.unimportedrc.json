@@ -173,6 +173,7 @@
     "src/hooks/useLatestFirmware.ts",
     "src/hooks/useLdmkFeatureFlagInitiallyEnabled.ts",
     "src/hooks/useLocalizedUrl.ts",
+    "src/hooks/useManifestWithSessionId.ts",
     "src/hooks/useSearch.ts",
     "src/hooks/useTimer.ts",
     "src/hooks/useOFACGeoBlockCheck.ts",
