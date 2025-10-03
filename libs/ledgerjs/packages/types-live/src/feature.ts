@@ -188,7 +188,7 @@ export type Features = CurrencyFeatures & {
   ptxSwapLiveAppMobile: Feature_PtxSwapLiveApp;
   ptxSwapLiveAppKycWarning: DefaultFeature;
   ptxSwapLiveApp: Feature_PtxSwapLiveApp;
-  ptxSwapDetailedView: DefaultFeature;
+  ptxSwapDetailedView: Feature_PtxSwapDetailedView;
   ptxEarnLiveApp: Feature_PtxEarnLiveApp;
   ptxSwapReceiveTRC20WithoutTrx: Feature_PtxSwapReceiveTRC20WithoutTrx;
   flexibleContentCards: Feature_FlexibleContentCards;
@@ -675,6 +675,10 @@ export type Feature_web3hub = DefaultFeature;
 export type Feature_MemoTag = DefaultFeature;
 export type Feature_PtxSwapMoonpayProvider = DefaultFeature;
 export type Feature_PtxSwapExodusProvider = DefaultFeature;
+
+export type Feature_PtxSwapDetailedView = Feature<{
+  variant: ABTestingVariants;
+}>;
 
 export type Feature_LlmRebornLP = Feature<{
   variant: ABTestingVariants;
