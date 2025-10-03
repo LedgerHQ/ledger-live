@@ -1,3 +1,4 @@
+import { SendTransactionIntent } from "@ledgerhq/coin-framework/api/types";
 import coinConfig from "../config";
 import { DEFAULT_TRC20_FEES_LIMIT } from "../network";
 import { decode58Check } from "../network/format";
@@ -23,6 +24,7 @@ describe("Testing craftTransaction function", () => {
 
     // WHEN
     const { transaction: result } = await craftTransaction({
+      intentType: "transaction",
       type: "send",
       asset: {
         type: "trc10",
@@ -64,6 +66,7 @@ describe("Testing craftTransaction function", () => {
 
     // WHEN
     const { transaction: result } = await craftTransaction({
+      intentType: "transaction",
       type: "send",
       asset: {
         type: "trc20",
@@ -103,6 +106,7 @@ describe("Testing craftTransaction function", () => {
     const recipient = "TPswDDCAWhJAZGdHPidFg5nEf8TkNToDX1";
 
     const { transaction: result } = await craftTransaction({
+      intentType: "transaction",
       type: "send",
       asset: {
         type: "trc20",
@@ -131,6 +135,7 @@ describe("Testing craftTransaction function", () => {
     const customFees = 99n;
     const { transaction: result } = await craftTransaction(
       {
+        intentType: "transaction",
         type: "send",
         asset: {
           type: "trc20",
@@ -160,6 +165,7 @@ describe("Testing craftTransaction function", () => {
 
     // WHEN
     const { transaction: result } = await craftTransaction({
+      intentType: "transaction",
       asset: { type: "native" },
       type: "send",
       sender,
@@ -197,6 +203,7 @@ describe("Testing craftTransaction function", () => {
 
     // WHEN
     const { transaction: result } = await craftTransaction({
+      intentType: "transaction",
       asset: { type: "native" },
       type: "send",
       sender,
@@ -227,6 +234,7 @@ describe("Testing craftTransaction function", () => {
 
     await expect(
       craftTransaction({
+        intentType: "transaction",
         type: "send",
         asset: {
           type: "trc20",
@@ -253,6 +261,7 @@ describe("Testing craftTransaction function", () => {
 
     // WHEN
     const { transaction: result } = await craftTransaction({
+      intentType: "transaction",
       asset: { type: "native" },
       type: "send",
       sender,
@@ -285,13 +294,14 @@ describe("Testing craftTransaction function", () => {
 
     // WHEN
     const { transaction: result } = await craftTransaction({
+      intentType: "transaction",
       asset: { type: "native" },
       type: "send",
       sender,
       recipient,
       amount,
       expiration,
-    });
+    } as SendTransactionIntent);
 
     const after = Date.now();
 

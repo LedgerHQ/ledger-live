@@ -58,6 +58,7 @@ describe("validateIntent", () => {
   describe("recipient validation", () => {
     it("should return RecipientRequired error when recipient is missing", async () => {
       const result = await validateIntent({
+        intentType: "transaction",
         asset: { type: "native" },
         type: "send",
         sender: senderAddress,
@@ -70,6 +71,7 @@ describe("validateIntent", () => {
 
     it("should return InvalidAddress error for invalid recipient", async () => {
       const result = await validateIntent({
+        intentType: "transaction",
         asset: { type: "native" },
         type: "send",
         sender: senderAddress,
@@ -82,6 +84,7 @@ describe("validateIntent", () => {
 
     it("should return InvalidAddressBecauseDestinationIsAlsoSource when sender equals recipient", async () => {
       const result = await validateIntent({
+        intentType: "transaction",
         asset: { type: "native" },
         type: "send",
         sender: senderAddress,
@@ -96,6 +99,7 @@ describe("validateIntent", () => {
   describe("amount validation", () => {
     it("should return AmountRequired error when amount is zero and not useAllAmount", async () => {
       const result = await validateIntent({
+        intentType: "transaction",
         asset: { type: "native" },
         type: "send",
         sender: senderAddress,
@@ -109,6 +113,7 @@ describe("validateIntent", () => {
 
     it("should not return AmountRequired error when useAllAmount is true", async () => {
       const result = await validateIntent({
+        intentType: "transaction",
         asset: { type: "native" },
         type: "send",
         sender: senderAddress,
@@ -140,6 +145,7 @@ describe("validateIntent", () => {
       });
 
       const result = await validateIntent({
+        intentType: "transaction",
         asset: { type: "native" },
         type: "send",
         sender: senderAddress,
@@ -168,6 +174,7 @@ describe("validateIntent", () => {
       });
 
       const result = await validateIntent({
+        intentType: "transaction",
         asset: { type: "native" },
         type: "send",
         sender: senderAddress,
@@ -183,6 +190,7 @@ describe("validateIntent", () => {
   describe("transaction types", () => {
     it("should pass validation for delegate transaction", async () => {
       const result = await validateIntent({
+        intentType: "staking",
         asset: { type: "native" },
         type: "delegate",
         sender: senderAddress,
@@ -195,6 +203,7 @@ describe("validateIntent", () => {
 
     it("should pass validation for undelegate transaction", async () => {
       const result = await validateIntent({
+        intentType: "staking",
         asset: { type: "native" },
         type: "undelegate",
         sender: senderAddress,
@@ -207,6 +216,7 @@ describe("validateIntent", () => {
 
     it("should handle stake intent (mapped to delegate)", async () => {
       const result = await validateIntent({
+        intentType: "staking",
         asset: { type: "native" },
         type: "stake",
         sender: senderAddress,
@@ -219,6 +229,7 @@ describe("validateIntent", () => {
 
     it("should handle unstake intent (mapped to undelegate)", async () => {
       const result = await validateIntent({
+        intentType: "staking",
         asset: { type: "native" },
         type: "unstake",
         sender: senderAddress,
@@ -243,6 +254,7 @@ describe("validateIntent", () => {
       });
 
       const result = await validateIntent({
+        intentType: "transaction",
         asset: { type: "native" },
         type: "send",
         sender: senderAddress,
