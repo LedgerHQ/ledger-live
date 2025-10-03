@@ -23,7 +23,7 @@ import { ExtendedRawDetailedAccount } from "@ledgerhq/live-common/modularDrawer/
 import { useDetailedAccountsCore } from "@ledgerhq/live-common/modularDrawer/hooks/useDetailedAccountsCore";
 
 // Mobile-specific detailed account type that includes formatted strings for UI
-export type RawDetailedAccount = ExtendedRawDetailedAccount & {
+export type RawDetailedAccount = Omit<ExtendedRawDetailedAccount, "fiatValue" | "balance"> & {
   fiatValue: string; // Formatted fiat value string
   balance: string; // Formatted balance string
 };
@@ -75,7 +75,7 @@ export const useDetailedAccounts = (
     });
 
     // Add mobile-specific formatting for fiat value and balance
-    return extendedAccounts.map(extendedAccount => {
+    return extendedAccounts.map((extendedAccount): RawDetailedAccount => {
       const { account, parentAccount } = extendedAccount;
       // Get address from account, fallback to extendedAccount address
       const accountAddress =
@@ -106,7 +106,7 @@ export const useDetailedAccounts = (
         account,
         parentAccount,
         protocol: extendedAccount.protocol,
-      } as RawDetailedAccount;
+      };
     });
   }, [
     accounts,

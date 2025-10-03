@@ -4,4 +4,4 @@
 "@ledgerhq/live-common": minor
 ---
 
-Improve code quality of Modular Assets Drawer around DetailedAccount logic
+Improve code quality of Modular Assets Drawer around DetailedAccount logic and fix pricing display for 0 values.

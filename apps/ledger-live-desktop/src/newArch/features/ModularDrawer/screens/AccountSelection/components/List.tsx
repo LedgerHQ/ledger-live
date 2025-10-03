@@ -34,7 +34,7 @@ export const SelectAccountList = ({
     return detailedAccounts.map(account => ({
       ...account,
       balance:
-        account.balance && account.balanceUnit
+        account.balance !== undefined && account.balance !== null && account.balanceUnit
           ? formatCurrencyUnit(account.balanceUnit, account.balance, {
               showCode: true,
               discreet,

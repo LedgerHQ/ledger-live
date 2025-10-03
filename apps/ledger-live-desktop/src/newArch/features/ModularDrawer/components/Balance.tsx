@@ -1,10 +1,9 @@
 import React from "react";
 import styled from "styled-components";
 import { Text } from "@ledgerhq/react-ui/index";
-import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
-import BigNumber from "bignumber.js";
 import CounterValue from "~/renderer/components/CounterValue";
 import FormattedVal from "~/renderer/components/FormattedVal";
+import { BalanceUI } from "@ledgerhq/live-common/modularDrawer/utils/type";
 
 const BalanceContainer = styled.div`
   display: flex;
@@ -13,13 +12,8 @@ const BalanceContainer = styled.div`
   gap: 4px;
 `;
 
-export const balanceItem = ({
-  currency,
-  balance,
-}: {
-  currency?: CryptoOrTokenCurrency;
-  balance?: BigNumber;
-}) => {
+export const balanceItem = (balanceUI: BalanceUI) => {
+  const { currency, balance } = balanceUI;
   return (
     <BalanceContainer>
       <Text
@@ -28,16 +22,12 @@ export const balanceItem = ({
         fontWeight="semiBold"
         color="var(--colors-content-default-default)"
       >
-        {currency && balance ? (
-          <CounterValue
-            currency={currency}
-            value={balance}
-            placeholder="-"
-            color="var(--colors-content-default-default)"
-          />
-        ) : (
-          "-"
-        )}
+        <CounterValue
+          currency={currency}
+          value={balance}
+          placeholder="-"
+          color="var(--colors-content-default-default)"
+        />
       </Text>
       <Text
         fontSize="12px"
@@ -46,16 +36,12 @@ export const balanceItem = ({
         fontWeight="medium"
         color="var(--colors-content-subdued-default-default)"
       >
-        {currency && balance ? (
-          <FormattedVal
-            unit={currency.units[0]}
-            val={balance}
-            showCode
-            color="var(--colors-content-subdued-default-default)"
-          />
-        ) : (
-          "-"
-        )}
+        <FormattedVal
+          unit={currency.units[0]}
+          val={balance}
+          showCode
+          color="var(--colors-content-subdued-default-default)"
+        />
       </Text>
     </BalanceContainer>
   );
