@@ -31,7 +31,19 @@ const AccountHeaderManageActions = ({ account, parentAccount, source = "Account 
   if (!polkadotResources || parentAccount) return null;
 
   const onClick = () => {
-    if (mainAccount.currency.id === "westend") {
+    if (["polkadot", "assethub_polkadot"].includes(mainAccount.currency.id)) {
+      history.push({
+        pathname: "/platform/stakekit",
+        state: {
+          yieldId: "polkadot-dot-validator-staking",
+          accountId: account.id,
+          returnTo:
+            account.type === "TokenAccount"
+              ? `/account/${account.parentId}/${account.id}`
+              : `/account/${account.id}`,
+        },
+      });
+    } else {
       if (isAccountEmpty(mainAccount)) {
         dispatch(
           openModal("MODAL_NO_FUNDS_STAKE", {
@@ -52,18 +64,6 @@ const AccountHeaderManageActions = ({ account, parentAccount, source = "Account 
           }),
         );
       }
-    } else {
-      history.push({
-        pathname: "/platform/stakekit",
-        state: {
-          yieldId: "polkadot-dot-validator-staking",
-          accountId: account.id,
-          returnTo:
-            account.type === "TokenAccount"
-              ? `/account/${account.parentId}/${account.id}`
-              : `/account/${account.id}`,
-        },
-      });
     }
   };
 
