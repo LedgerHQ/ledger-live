@@ -12,6 +12,9 @@ catalogs:
     react-dom:
       specifier: 18.3.1
       version: 18.3.1
+    react-test-renderer:
+      specifier: 18.3.1
+      version: 18.3.1
 
 overrides:
   node-abi: ^4.9.0
@@ -888,7 +891,7 @@ importers:
         specifier: 0.14.0
         version: 0.14.0
       react-test-renderer:
-        specifier: 18.3.1
+        specifier: 'catalog:'
         version: 18.3.1(react@18.3.1)
       serve-handler:
         specifier: 6.1.5
@@ -1615,7 +1618,7 @@ importers:
         specifier: 5.1.2
         version: 5.1.2(react-native@0.77.3(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1))
       react-test-renderer:
-        specifier: 18.3.1
+        specifier: 'catalog:'
         version: 18.3.1(react@18.3.1)
       reactotron-core-client:
         specifier: 2.9.7
@@ -4983,7 +4986,7 @@ importers:
         specifier: ^29.7.0
         version: 29.7.0
       react-test-renderer:
-        specifier: ^18.2.0
+        specifier: 'catalog:'
         version: 18.3.1(react@18.3.1)
       ts-jest:
         specifier: ^29.1.1
@@ -5731,7 +5734,7 @@ importers:
         specifier: ^7.2.9
         version: 7.2.9(@types/react@18.2.73)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       react-test-renderer:
-        specifier: ^18.2.0
+        specifier: 'catalog:'
         version: 18.3.1(react@18.3.1)
       redux-actions:
         specifier: 2.6.5
@@ -67250,12 +67253,12 @@ snapshots:
   postcss-load-config@4.0.2:
     dependencies:
       lilconfig: 3.1.1
-      yaml: 2.4.1
+      yaml: 2.8.1
 
   postcss-load-config@4.0.2(postcss@8.5.1):
     dependencies:
       lilconfig: 3.1.1
-      yaml: 2.4.1
+      yaml: 2.8.1
     optionalDependencies:
       postcss: 8.5.1
 
