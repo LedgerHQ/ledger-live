@@ -56,7 +56,7 @@ export const test = base.extend<TestFixtures>({
   lang: "en-US",
   theme: "dark",
   userdata: undefined,
-  settings: { shareAnalytics: true, hasSeenAnalyticsOptInPrompt: true },
+  settings: { shareAnalytics: false, hasSeenAnalyticsOptInPrompt: true },
   featureFlags: undefined,
   simulateCamera: undefined,
   speculosApp: undefined,
