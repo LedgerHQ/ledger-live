@@ -6,8 +6,8 @@ import {
   __clearAllLists,
   findTokenById,
   listTokensForCryptoCurrency,
-  createTokenHash,
 } from "./tokens";
+import { createTokenHash } from "./legacy/legacy-utils";
 import { ERC20Token } from "./types";
 
 const initMainToken: ERC20Token[] = [
