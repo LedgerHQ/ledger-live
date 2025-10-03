@@ -1,5 +1,13 @@
 # live-mobile
 
+## 3.94.1
+
+### Patch Changes
+
+- [#12135](https://github.com/LedgerHQ/ledger-live/pull/12135) [`f896c3d`](https://github.com/LedgerHQ/ledger-live/commit/f896c3daeeccb79442407f49df59e348b094b70f) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Fix BLE scanning issues
+
+- [#12135](https://github.com/LedgerHQ/ledger-live/pull/12135) [`5c1f38d`](https://github.com/LedgerHQ/ledger-live/commit/5c1f38d7d17437d0537a037493d2af2c019e97ec) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Fix disconnection at the end of OS update in sync onboarding
+
 ## 3.94.1-hotfix.0
 
 ### Patch Changes
