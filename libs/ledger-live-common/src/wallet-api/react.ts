@@ -616,7 +616,7 @@ export function useWalletAPIServer({
 
         return {
           signedTransactionHex: signedOperation.signature,
-          hash,
+          transactionHash: hash,
         };
       },
     );
