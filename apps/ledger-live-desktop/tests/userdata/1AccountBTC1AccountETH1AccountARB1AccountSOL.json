@@ -21389,6 +21389,32 @@
       },
       {
         "data": {
+          "id": "mock:1:ripple:rN7n7otQDd6FczFgLdSqtcsAUxDkw6fzRH:",
+          "seedIdentifier": "mock",
+          "name": "XRP 1",
+          "starred": false,
+          "derivationMode": "",
+          "index": 0,
+          "freshAddress": "rN7n7otQDd6FczFgLdSqtcsAUxDkw6fzRH",
+          "freshAddressPath": "44'/501'/0'",
+          "blockHeight": 349298484,
+          "creationDate": "2020-02-29T00:58:50.328Z",
+          "operationsCount": 0,
+          "operations": [],
+          "pendingOperations": [],
+          "currencyId": "ripple",
+          "unitMagnitude": 6,
+          "lastSyncDate": "2020-03-14T17:34:42.000Z",
+          "balance": "25000000",
+          "spendableBalance": "25000000",
+          "xpub": "",
+          "subAccounts": [],
+          "swapHistory": []
+        },
+        "version": 1
+      },
+      {
+        "data": {
           "id": "js:2:ethereum:0x04DBA1194ee10112fE6C3207C0687DEf0e78baCf:",
           "seedIdentifier": "js",
           "name": "Sanctioned Ethereum",

@@ -1,6 +1,7 @@
 import BigNumber from "bignumber.js";
-import { isValidClassicAddress } from "ripple-address-codec";
+import { decodeAccountID, isValidClassicAddress } from "ripple-address-codec";
 import { getAccountInfo } from "../network";
+import { SignerEntry } from "../types";
 
 export const UINT32_MAX = new BigNumber(2).pow(32).minus(1);
 
@@ -54,3 +55,21 @@ export const cachedRecipientIsNew = async (recipient: string): Promise<boolean> 
 
   return isNew;
 };
+
+/**
+ * Sorts the Signers array by the numeric value of each Signer.Account address.
+ * The numeric value is the big-endian integer of the 20-byte account ID.
+ */
+export function sortSignersByNumericAddress(signers: SignerEntry[]): SignerEntry[] {
+  return signers.slice().sort((a, b) => {
+    const aBytes = decodeAccountID(a.Signer.Account);
+    const bBytes = decodeAccountID(b.Signer.Account);
+
+    const aInt = BigInt("0x" + Buffer.from(aBytes).toString("hex"));
+    const bInt = BigInt("0x" + Buffer.from(bBytes).toString("hex"));
+
+    if (aInt > bInt) return 1;
+    if (aInt < bInt) return -1;
+    return 0;
+  });
+}

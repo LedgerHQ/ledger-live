@@ -28,7 +28,7 @@
   "dependencies": {
     "@ledgerhq/cryptoassets": "workspace:^",
     "@ledgerhq/errors": "workspace:^",
-    "@ledgerhq/hw-transport": "workspace:^",
+    "@ledgerhq/hw-transport": "workspace:*",
     "@ledgerhq/hw-transport-mocker": "workspace:^",
     "@ledgerhq/logs": "workspace:^",
     "@vechain/sdk-core": "2.0.0"

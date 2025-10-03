@@ -426,6 +426,12 @@ export type AlpacaApi<
     transactionIntent: TransactionIntent<MemoType, TxDataType>,
     customFees?: FeeEstimation,
   ) => Promise<CraftedTransaction>;
+  craftRawTransaction: (
+    transaction: string,
+    sender: string,
+    publicKey: string,
+    sequence: number,
+  ) => Promise<CraftedTransaction>;
   getBalance: (address: string) => Promise<Balance[]>;
   lastBlock: () => Promise<BlockInfo>;
   getBlockInfo: (height: number) => Promise<BlockInfo>;

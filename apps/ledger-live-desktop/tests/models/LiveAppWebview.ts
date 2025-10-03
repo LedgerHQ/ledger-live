@@ -212,6 +212,10 @@ export class LiveAppWebview {
     return this.clickByTestId("transaction-sign-raw-solana");
   }
 
+  async transactionSignRaw() {
+    return this.clickByTestId("transaction-sign-raw");
+  }
+
   async transactionSignAndBroadcast() {
     return this.clickByTestId("transaction-signAndBroadcast");
   }

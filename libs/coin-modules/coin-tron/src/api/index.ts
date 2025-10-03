@@ -10,6 +10,7 @@ import {
   Reward,
   Stake,
   TransactionIntent,
+  CraftedTransaction,
 } from "@ledgerhq/coin-framework/api/index";
 import coinConfig, { type TronConfig } from "../config";
 import {
@@ -31,6 +32,14 @@ export function createApi(config: TronConfig): AlpacaApi<TronMemo> {
     broadcast,
     combine,
     craftTransaction,
+    craftRawTransaction: (
+      _transaction: string,
+      _sender: string,
+      _publicKey: string,
+      _sequence: number,
+    ): Promise<CraftedTransaction> => {
+      throw new Error("craftRawTransaction is not supported");
+    },
     estimateFees: estimate,
     getBalance,
     lastBlock,

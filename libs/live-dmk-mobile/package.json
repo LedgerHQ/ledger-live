@@ -33,9 +33,9 @@
   "dependencies": {
     "@ledgerhq/device-management-kit": "0.9.0",
     "@ledgerhq/device-transport-kit-react-native-ble": "1.1.1",
-    "@ledgerhq/devices": "workspace:^",
+    "@ledgerhq/devices": "workspace:*",
     "@ledgerhq/errors": "workspace:^",
-    "@ledgerhq/hw-transport": "workspace:^",
+    "@ledgerhq/hw-transport": "workspace:*",
     "@ledgerhq/live-dmk-shared": "workspace:^",
     "@ledgerhq/logs": "workspace:^",
     "@ledgerhq/types-devices": "workspace:^"
