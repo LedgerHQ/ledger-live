@@ -59,6 +59,42 @@ describe("testing prepareTransaction", () => {
     );
   });
 
+  it("does not fail on unknown SPL 2022 extensions", async () => {
+    const preparedTransaction = prepareTransaction(
+      {
+        currency: { units: [{ magnitude: 2 }] },
+        subAccounts: [
+          {
+            id: "subAccountId",
+            type: "TokenAccount",
+            token: { contractAddress: "mintAddress", units: [{ magnitude: 2 }] },
+          },
+        ],
+      } as unknown as SolanaAccount,
+      transaction({ kind: "token.transfer", subAccountId: "subAccountId" }),
+      {
+        getAccountInfo: () => ({
+          data: {
+            parsed: {
+              type: "mint",
+              info: {
+                extensions: [{ extension: "defaultAccountState" }],
+                mintAuthority: null,
+                supply: "",
+                decimals: 2,
+                isInitialized: true,
+                freezeAuthority: null,
+              },
+            },
+            program: "spl-token-2022",
+          },
+        }),
+      } as unknown as ChainAPI,
+    );
+
+    await expect(() => preparedTransaction).not.toThrow();
+  });
+
   it("should return a new transaction from the raw transaction when user provide it", async () => {
     // Given
     const estimatedFees = 0.00005;
