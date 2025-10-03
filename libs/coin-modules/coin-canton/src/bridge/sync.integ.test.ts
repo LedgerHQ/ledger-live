@@ -129,7 +129,12 @@ describe("sync (devnet)", () => {
       mockGetBalance.mockResolvedValue([
         {
           instrument_id: "Amulet",
-          amount: 1000000,
+          amount: "500",
+          locked: true,
+        },
+        {
+          instrument_id: "LockedAmulet",
+          amount: "1000000",
           locked: true,
         },
       ]);
@@ -137,8 +142,8 @@ describe("sync (devnet)", () => {
       const getAccountShape = makeGetAccountShape(mockSignerContext);
       const result = await getAccountShape(ACCOUNT_SHAPE_INFO, { paginationConfig: {} });
 
-      expect(result.balance?.toNumber()).toBe(1000000);
-      expect(result.spendableBalance?.toNumber()).toBe(0);
+      expect(result.balance?.toNumber()).toBe(1000500);
+      expect(result.spendableBalance?.toNumber()).toBe(500);
 
       mockGetBalance.mockRestore();
     });
