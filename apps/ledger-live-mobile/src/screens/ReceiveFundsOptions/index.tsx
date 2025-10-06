@@ -7,9 +7,9 @@ import { TrackScreen } from "~/analytics";
 import { OptionButton } from "./OptionButton";
 import { ReceiveFundsStackParamList } from "~/components/RootNavigator/types/ReceiveFundsNavigator";
 import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
-import { isCryptoOrTokenCurrency } from "~/newArch/utils/isCryptoOrTokenCurrency";
-import { isObject } from "~/newArch/utils/isObject";
-import QueuedDrawerGorhom from "~/newArch/components/QueuedDrawer/temp/QueuedDrawerGorhom";
+import { isCryptoOrTokenCurrency } from "LLM/utils/isCryptoOrTokenCurrency";
+import { isObject } from "LLM/utils/isObject";
+import QueuedDrawerGorhom from "LLM/components/QueuedDrawer/temp/QueuedDrawerGorhom";
 
 type EntryScreens =
   | ScreenName.ReceiveSelectCrypto
