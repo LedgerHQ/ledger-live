@@ -14,7 +14,6 @@ describe("Testing CryptoAssetStore", () => {
 
     const store = getCryptoAssetsStore();
     expect(store).toEqual({
-      findTokenByAddress: legacy.findTokenByAddress,
       getTokenById: legacy.getTokenById,
       findTokenById: legacy.findTokenById,
       findTokenByAddressInCurrency: legacy.findTokenByAddressInCurrency,
@@ -31,7 +30,6 @@ describe("Testing CryptoAssetStore", () => {
 
     const store = getCryptoAssetsStore();
     expect(store).toEqual({
-      findTokenByAddress: legacy.findTokenByAddress,
       getTokenById: legacy.getTokenById,
       findTokenById: legacy.findTokenById,
       findTokenByAddressInCurrency: legacy.findTokenByAddressInCurrency,

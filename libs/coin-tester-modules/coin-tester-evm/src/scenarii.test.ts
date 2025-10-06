@@ -17,7 +17,6 @@ jest.setTimeout(100_000);
 //TODO mock call to CAL when available
 // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
 setCryptoAssetsStoreForCoinFramework({
-  findTokenByAddress: legacy.findTokenByAddress,
   getTokenById: legacy.getTokenById,
   findTokenById: legacy.findTokenById,
   findTokenByAddressInCurrency: legacy.findTokenByAddressInCurrency,

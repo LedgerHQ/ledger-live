@@ -15,7 +15,7 @@ export {
   listTokensForCryptoCurrency,
   listTokenTypesForCryptoCurrency,
   findTokenById,
-  findTokenByAddress,
+  findTokenByAddressInCurrency,
   hasTokenId,
   getAbandonSeedAddress,
   getTokenById,

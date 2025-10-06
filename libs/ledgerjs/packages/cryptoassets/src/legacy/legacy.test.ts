@@ -22,7 +22,6 @@ import {
 import { initializeLegacyTokens } from "./legacy-data";
 import { getEnv } from "@ledgerhq/live-env";
 import {
-  tokensByAddress,
   tokensArray,
   tokensArrayWithDelisted,
   tokensByCryptoCurrency,
@@ -281,7 +280,6 @@ describe("Legacy Utils", () => {
       expect(tokensArray).toContain(token);
       expect(tokensArrayWithDelisted).toContain(token);
       expect(tokensById[token.id]).toBe(token);
-      expect(tokensByAddress["0x123"]).toBe(token);
       expect(tokensByCurrencyAddress["ethereum:0x123"]).toBe(token);
       expect(tokensByCryptoCurrency["ethereum"]).toContain(token);
     });
@@ -513,7 +511,6 @@ describe("Legacy Utils", () => {
       expect(Object.keys(tokensByCryptoCurrency).length).toBe(0);
       expect(Object.keys(tokensByCryptoCurrencyWithDelisted).length).toBe(0);
       expect(Object.keys(tokensById).length).toBe(0);
-      expect(Object.keys(tokensByAddress).length).toBe(0);
       expect(Object.keys(tokensByCurrencyAddress).length).toBe(0);
       expect(tokenListHashes.size).toBe(0);
     });
@@ -572,7 +569,6 @@ describe("Legacy Data", () => {
 
 describe("Legacy State", () => {
   it("should export all state objects", () => {
-    expect(tokensByAddress).toBeDefined();
     expect(tokensArray).toBeDefined();
     expect(tokensArrayWithDelisted).toBeDefined();
     expect(tokensByCryptoCurrency).toBeDefined();

@@ -154,7 +154,6 @@ export function closeAllDevices() {
 
 //TODO update when CAL is avalaible
 const legacyStore: CryptoAssetsStore = {
-  findTokenByAddress: legacy.findTokenByAddress,
   getTokenById: legacy.getTokenById,
   findTokenById: legacy.findTokenById,
   findTokenByAddressInCurrency: legacy.findTokenByAddressInCurrency,

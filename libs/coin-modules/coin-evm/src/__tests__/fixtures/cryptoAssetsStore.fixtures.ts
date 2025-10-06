@@ -19,6 +19,6 @@ setCryptoAssetsStoreGetter(
     ({
       findTokenById: legacyTokens.findTokenById,
       findTokenByAddressInCurrency: legacyTokens.findTokenByAddressInCurrency,
-      findTokenByAddress: legacyTokens.findTokenByAddress,
+      getTokenById: legacyTokens.getTokenById,
     }) as CryptoAssetsStore,
 );
