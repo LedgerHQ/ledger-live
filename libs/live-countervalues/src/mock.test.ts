@@ -41,9 +41,7 @@ test("mock load with nothing to track", async () => {
 });
 test("mock fetchIdsSortedByMarketcap", async () => {
   // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-  jest.spyOn(cryptoAssets, "getCryptoAssetsStore").mockReturnValue({
-    findTokenByTicker: (_: string) => undefined,
-  } as CryptoAssetsStore);
+  jest.spyOn(cryptoAssets, "getCryptoAssetsStore").mockReturnValue({} as CryptoAssetsStore);
 
   expect(await CountervaluesAPI.fetchIdsSortedByMarketcap()).toBeDefined();
 });
@@ -250,9 +248,9 @@ test("missing rate in mock is filled by autofillGaps", async () => {
 
 test("fetchIdsSortedByMarketcap", async () => {
   // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-  jest.spyOn(cryptoAssets, "getCryptoAssetsStore").mockReturnValue({
-    findTokenByTicker: (_: string) => undefined,
-  } as unknown as CryptoAssetsStore);
+  jest
+    .spyOn(cryptoAssets, "getCryptoAssetsStore")
+    .mockReturnValue({} as unknown as CryptoAssetsStore);
 
   const ids = await api.fetchIdsSortedByMarketcap();
   expect(ids).toContain("bitcoin");
