@@ -7,7 +7,6 @@ import {
   tokensByCryptoCurrencyWithDelisted,
   tokensById,
   tokensByCurrencyAddress,
-  tokensByTicker,
   tokensByAddress,
   tokenListHashes,
 } from "./legacy-state";
@@ -469,7 +468,6 @@ export function __clearAllLists(): void {
   __clearObject(tokensByCryptoCurrency);
   __clearObject(tokensByCryptoCurrencyWithDelisted);
   __clearObject(tokensById);
-  __clearObject(tokensByTicker);
   __clearObject(tokensByAddress);
   __clearObject(tokensByCurrencyAddress);
   tokenListHashes.clear();
@@ -493,13 +491,12 @@ function removeTokenFromRecord(record: Record<string, TokenCurrency>, key: strin
  * @param token
  */
 function removeTokenFromAllLists(token: TokenCurrency) {
-  const { id, contractAddress, parentCurrency, ticker } = token;
+  const { id, contractAddress, parentCurrency } = token;
   const lowCaseContract = contractAddress.toLowerCase();
 
   removeTokenFromRecord(tokensById, id);
   removeTokenFromRecord(tokensByCurrencyAddress, parentCurrency.id + ":" + lowCaseContract);
   removeTokenFromRecord(tokensByAddress, lowCaseContract);
-  removeTokenFromRecord(tokensByTicker, ticker);
   removeTokenFromArray(tokensArray, id);
   removeTokenFromArray(tokensArrayWithDelisted, id);
   removeTokenFromArray(tokensByCryptoCurrency[parentCurrency.id], id);
@@ -520,17 +517,13 @@ export function addTokens(list: (TokenCurrency | undefined)[]): void {
      * Like this we can update any change from a already added token coming from Dynamic CAL
      * and maintain it up to date without having to release a new version of LLD or LLM
      */
-    const { id, contractAddress, parentCurrency, delisted, ticker } = token;
+    const { id, contractAddress, parentCurrency, delisted } = token;
     if (tokensById[id]) removeTokenFromAllLists(token);
     const lowCaseContract = contractAddress.toLowerCase();
 
     if (!delisted) tokensArray.push(token);
     tokensArrayWithDelisted.push(token);
     tokensById[id] = token;
-
-    if (!tokensByTicker[ticker]) {
-      tokensByTicker[ticker] = token;
-    }
 
     tokensByAddress[lowCaseContract] = token;
     tokensByCurrencyAddress[parentCurrency.id + ":" + lowCaseContract] = token;

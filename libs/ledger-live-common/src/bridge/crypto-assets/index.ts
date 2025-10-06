@@ -7,7 +7,6 @@ const legacyStore: CryptoAssetsStore = {
   getTokenById: legacy.getTokenById,
   findTokenById: legacy.findTokenById,
   findTokenByAddressInCurrency: legacy.findTokenByAddressInCurrency,
-  findTokenByTicker: legacy.findTokenByTicker,
 };
 
 let cryptoAssetsStore: CryptoAssetsStore | undefined = undefined;

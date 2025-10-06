@@ -94,9 +94,7 @@ function inferTransactions(
           throw new Error("expected main account");
         }
 
-        const tokenCurrency =
-          getCryptoAssetsStore().findTokenByTicker(token) ??
-          getCryptoAssetsStore().findTokenById(token);
+        const tokenCurrency = getCryptoAssetsStore().findTokenById(token);
 
         if (!tokenCurrency) {
           throw new Error(`token <${token}> not found`);

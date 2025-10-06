@@ -86,20 +86,6 @@ export type CryptoAssetsStore = {
    * ```
    */
   findTokenByAddressInCurrency(address: string, currencyId: string): TokenCurrency | undefined;
-
-  /**
-   * Finds a token by its ticker symbol.
-   *
-   * ⚠️ DEPRECATED: This method will be removed as ticker-based lookup can be ambiguous
-   * when multiple tokens share the same ticker across different blockchains.
-   *
-   * 🔮 FUTURE: Will be removed - use findTokenById or findTokenByAddressInCurrency instead
-   *
-   * @param ticker - The ticker symbol of the token (e.g., "USDC")
-   * @returns The TokenCurrency if found, undefined otherwise
-   * @deprecated Use findTokenById or findTokenByAddressInCurrency for more precise lookup
-   */
-  findTokenByTicker(ticker: string): TokenCurrency | undefined;
 };
 
 export type CryptoAssetsStoreGetter = () => CryptoAssetsStore;
