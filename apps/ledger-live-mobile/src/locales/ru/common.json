@@ -55,7 +55,7 @@
     "bluetooth" : "Bluetooth",
     "usb" : "USB",
     "add" : "Добавить",
-    "token" : "Токен",
+    "token" : "Токены",
     "token_plural" : "Токены",
     "subaccount" : "Субсчёт",
     "subaccount_plural" : "Субсчета",
@@ -1645,11 +1645,11 @@
       },
       "setupLedger" : {
         "title" : "Настроить Ledger",
-        "subtitle" : "Ваш Ledger — новый или сброшенный?"
+        "subtitle" : "Ваше устройство Ledger — новое или сброшенное?"
       },
       "accessWallet" : {
         "title" : "Перейти к кошельку",
-        "subtitle" : "Ваш Ledger уже настроен?"
+        "subtitle" : "Есть уже настроенное устройство Ledger?"
       },
       "buyNano" : {
         "title" : "Купите Ledger Nano X",
@@ -1667,7 +1667,7 @@
     "welcomeBackStep" : {
       "title" : "С возвращением",
       "subtitle" : "Выберите способ доступа к кошельку:",
-      "connect" : "Подключение Ledger",
+      "connect" : "Подключить Ledger",
       "sync" : "Синхронизация с Ledger Live для ПК",
       "walletSync" : "Ledger Sync"
     },
@@ -3379,7 +3379,7 @@
   },
   "notifications" : {
     "prompt" : {
-      "title" : "Активация уведомлений",
+      "title" : "Включите уведомления",
       "desc" : "Будьте в курсе последних новостей о Ledger Live, устройствах Ledger и рынке криптовалют, а также получайте подходящие рекомендации. Отписаться можно в любой момент в настройках.",
       "allow" : "Разрешить уведомления",
       "later" : "Не сейчас"
@@ -3433,6 +3433,17 @@
       "shareAddress" : "Поделиться",
       "addressCopied" : "Адрес скопирован",
       "taprootWarning" : "Убедитесь, что у отправителя есть поддержка Taproot",
+      "connectToNoah" : "Connecting you to Noah",
+      "menu" : {
+        "crypto" : {
+          "title" : "С криптовалютного адреса",
+          "description" : "Пополняйте кошелёк любой криптовалютой."
+        },
+        "fiat" : {
+          "title" : "Через банк",
+          "description" : "Пополняйте в USDC через банковский перевод EUR и USD. Требуется KYC."
+        }
+      },
       "memoTag" : {
         "link" : "Нужен тег примечания/Memo?",
         "title" : "Нужен тег примечания/Memo?",
@@ -3766,12 +3777,16 @@
         "apt_description" : "Для обмена Aptos используйте любое другое устройство Ledger. Это может быть Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ или Ledger Stax™.",
         "cosmos_title" : "Ledger Nano S™ не поддерживает обмен Cosmos",
         "cosmos_description" : "Для обмена Cosmos используйте любое другое устройство Ledger. Это может быть Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ или Ledger Stax™.",
+        "hedera_title" : "Ledger Nano S™ не поддерживает обмен Hedera",
+        "hedera_description" : "Используйте другие совместимые устройства Ledger для обмена Hedera. Это Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ и Ledger Stax™.",
         "osmo_title" : "Ledger Nano S™ не поддерживает обмен Osmosis",
         "osmo_description" : "Используйте другие совместимые устройства Ledger для обмена Osmosis. Это Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ и Ledger Stax™.",
         "dydx_title" : "Ledger Nano S™ не поддерживает обмен dYdX",
         "dydx_description" : "Используйте другие совместимые устройства Ledger для обмена dYdX. Это Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ и Ledger Stax™.",
         "sui_title" : "Ledger Nano S™ не поддерживает обмен Sui",
-        "sui_description" : "Используйте другие совместимые устройства Ledger для обмена Sui. Это Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ и Ledger Stax™."
+        "sui_description" : "Используйте другие совместимые устройства Ledger для обмена Sui. Это Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ и Ledger Stax™.",
+        "kaspa_title" : "Ledger Nano S™ не поддерживает обмен Kaspa",
+        "kaspa_description" : "Для обмена Kaspa используйте совместимые устройства Ledger. Это Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ и Ledger Stax™."
       }
     },
     "lending" : {
@@ -4287,7 +4302,7 @@
       }
     },
     "imported" : "Актив успешно добавлен",
-    "added" : "Счёт добавлен в Портфель",
+    "added" : "Добавили в Портфель!",
     "added_plural" : "Добавлено счетов в Портфель: {{count}}",
     "sections" : {
       "importable" : {
@@ -4354,7 +4369,7 @@
       "whichAddressType" : "Как определить подходящий тип адреса",
       "sections" : {
         "importable" : {
-          "title" : "Мы нашли {{count}} счёт",
+          "title" : "Нашли счета ({{count}})",
           "title_plural" : "Найдено счетов: {{count}}"
         },
         "creatable" : {
@@ -4401,7 +4416,7 @@
     "appNotInstalled_plural" : "Пожалуйста, установите приложения {{appName}}",
     "useAnotherDevice" : "Использовать другое устройство",
     "deviceNotOnboarded" : {
-      "title" : "Ваш Ledger ещё не готов к использованию",
+      "title" : "Устройство Ledger ещё не готово к использованию",
       "description" : "Сначала {{deviceName}} необходимо настроить. Мы поможем вам с этим"
     },
     "deviceInBootloader" : {
@@ -4572,10 +4587,10 @@
       "connectExistingLedgerDescription" : "Если Ledger уже настроен",
       "setUpNewLedger" : "Настроить новый Ledger",
       "setUpNewLedgerDescription" : "Если Ledger ещё не настроен",
-      "buyDeviceCTA" : "<0>Нужен новый Ledger? </0><1>Приобретите его</1>",
+      "buyDeviceCTA" : "<0>Хотите новое устройство Ledger? </0><1>Купите его</1>",
       "item" : {
         "usb" : "Подключен через USB",
-        "available" : "Доступен. Нажмите, чтобы подключиться",
+        "available" : "Поблизости. Коснитесь для подключения",
         "unavailable" : "Не подключено"
       }
     },
@@ -4770,7 +4785,7 @@
     "pleaseWaitUpdate" : "Дождитесь завершения обновления",
     "viewUpdateChangelog" : "Открыть список изменений обновления",
     "waitForFirmwareUpdate" : "Дождитесь обновления ОС на устройстве",
-    "waitForInstallationToFinish" : "Дождитесь завершения установки на {{deviceName}}",
+    "waitForInstallationToFinish" : "Дождитесь завершения установки на {{deviceName}}.",
     "batteryLow" : "Слишком низкий заряд батареи {{productName}}",
     "batteryLowDescription" : "Для обновления ОС ваш {{productName}} должен быть заряжен минимум до {{lowBatteryPercentage}}% или подключён к сети.",
     "updateCancelled" : "Обновление ОС отменено на {{deviceName}}",
@@ -4811,7 +4826,7 @@
         },
         "titleBackingUp" : "Подготовка обновления к установке",
         "titleTransferring" : "Перенос обновления",
-        "description" : "Сохраняем настройки и приложения. Перенос обновления на {{deviceName}}."
+        "description" : "Сохраняем настройки и приложения... Переносим обновление на {{deviceName}}..."
       },
       "installUpdate" : {
         "titleInactive" : "Установка",
@@ -7198,9 +7213,10 @@
     "title" : "Картинка экрана блокировки",
     "change" : "Сменить",
     "drawer" : {
+      "title" : "Экран блокировки",
       "options" : {
-        "uploadFromPhone" : "Выбрать из галереи",
-        "remove" : "Удалить изображение"
+        "uploadFromPhone" : "Сменить картинку",
+        "remove" : "Убрать картинку"
       }
     },
     "toastRemove" : "Картинка удалена",
@@ -7476,7 +7492,7 @@
           "notNow" : "Позже",
           "accept" : "Принять",
           "acceptAll" : "Принять",
-          "confirm" : "Подтверждение"
+          "confirm" : "Подтвердить"
         },
         "infoText" : {
           "info" : "Отозвать согласие можно в любой момент в Настройках.",
