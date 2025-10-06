@@ -15,22 +15,26 @@ export async function listOperations({
   address,
   mirrorTokens,
   pagination,
+  fetchAllPages,
 }: {
   currency: CryptoCurrency;
   address: string;
   mirrorTokens: HederaMirrorToken[];
   pagination: Pagination;
+  fetchAllPages: boolean;
 }): Promise<{
   coinOperations: Operation<HederaOperationExtra>[];
   tokenOperations: Operation<HederaOperationExtra>[];
+  nextCursor: string | null;
 }> {
   const coinOperations: Operation<HederaOperationExtra>[] = [];
   const tokenOperations: Operation<HederaOperationExtra>[] = [];
-  const mirrorTransactions = await hederaMirrorNode.getAccountTransactions({
+  const mirrorResult = await hederaMirrorNode.getAccountTransactions({
     address,
-    since: pagination.lastPagingToken ?? null,
+    pagingToken: pagination.lastPagingToken ?? null,
     order: pagination.order,
     limit: pagination.limit,
+    fetchAllPages,
   });
   const ledgerAccountId = encodeAccountId({
     type: "js",
@@ -40,7 +44,7 @@ export async function listOperations({
     derivationMode: "hederaBip44",
   });
 
-  for (const rawTx of mirrorTransactions) {
+  for (const rawTx of mirrorResult.transactions) {
     const timestamp = new Date(parseInt(rawTx.consensus_timestamp.split(".")[0], 10) * 1000);
     const hash = base64ToUrlSafeBase64(rawTx.transaction_hash);
     const fee = new BigNumber(rawTx.charged_tx_fee);
@@ -137,5 +141,9 @@ export async function listOperations({
     }
   }
 
-  return { coinOperations, tokenOperations };
+  return {
+    coinOperations,
+    tokenOperations,
+    nextCursor: mirrorResult.nextCursor,
+  };
 }

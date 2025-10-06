@@ -7,7 +7,7 @@ const mockedNetwork = jest.mocked(network);
 
 describe("getAccountTransactions", () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    jest.resetAllMocks();
   });
 
   test("should include 'account.id', 'limit=100' and 'order=desc' query params", async () => {
@@ -15,7 +15,11 @@ describe("getAccountTransactions", () => {
       getMockResponse({ transactions: [], links: { next: null } }),
     );
 
-    await hederaMirrorNode.getAccountTransactions({ address: "0.0.1234", since: null });
+    await hederaMirrorNode.getAccountTransactions({
+      address: "0.0.1234",
+      pagingToken: null,
+      fetchAllPages: true,
+    });
 
     const requestUrl = mockedNetwork.mock.calls[0][0].url;
     expect(requestUrl).toContain("account.id=0.0.1234");
@@ -23,7 +27,7 @@ describe("getAccountTransactions", () => {
     expect(requestUrl).toContain("order=desc");
   });
 
-  test("should keep fetching if links.next is present", async () => {
+  test("should keep fetching if fetchAllPages is set and links.next is present", async () => {
     mockedNetwork
       .mockResolvedValueOnce(
         getMockResponse({
@@ -45,7 +49,7 @@ describe("getAccountTransactions", () => {
       )
       .mockResolvedValueOnce(
         getMockResponse({
-          transactions: [],
+          transactions: [{ consensus_timestamp: "4" }],
           links: { next: "/next-4" },
         }),
       )
@@ -58,18 +62,66 @@ describe("getAccountTransactions", () => {
 
     const result = await hederaMirrorNode.getAccountTransactions({
       address: "0.0.1234",
-      since: null,
+      pagingToken: null,
+      fetchAllPages: true,
     });
 
-    expect(result).toHaveLength(2);
-    expect(result.map(tx => tx.consensus_timestamp)).toEqual(["1", "3"]);
+    expect(result.transactions).toHaveLength(3);
+    expect(result.transactions.map(tx => tx.consensus_timestamp)).toEqual(["1", "3", "4"]);
+    expect(result.nextCursor).toBeNull();
     expect(mockedNetwork).toHaveBeenCalledTimes(5);
+  });
+
+  test("should paginate if fetchAllPages is not set", async () => {
+    mockedNetwork
+      .mockResolvedValueOnce(
+        getMockResponse({
+          transactions: [{ consensus_timestamp: "1" }],
+          links: { next: "/next-1" },
+        }),
+      )
+      .mockResolvedValueOnce(
+        getMockResponse({
+          transactions: [],
+          links: { next: "/next-2" },
+        }),
+      )
+      .mockResolvedValueOnce(
+        getMockResponse({
+          transactions: [{ consensus_timestamp: "3" }],
+          links: { next: "/next-3" },
+        }),
+      )
+      .mockResolvedValueOnce(
+        getMockResponse({
+          transactions: [{ consensus_timestamp: "4" }],
+          links: { next: "/next-4" },
+        }),
+      )
+      .mockResolvedValueOnce(
+        getMockResponse({
+          transactions: [],
+          links: { next: null },
+        }),
+      );
+
+    const result = await hederaMirrorNode.getAccountTransactions({
+      address: "0.0.1234",
+      pagingToken: null,
+      limit: 2,
+      fetchAllPages: false,
+    });
+
+    expect(result.transactions).toHaveLength(2);
+    expect(result.transactions.map(tx => tx.consensus_timestamp)).toEqual(["1", "3"]);
+    expect(result.nextCursor).toBe("3");
+    expect(mockedNetwork).toHaveBeenCalledTimes(3);
   });
 });
 
 describe("getAccount", () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    jest.resetAllMocks();
   });
 
   it("should call the correct endpoint and return account data", async () => {
@@ -96,7 +148,7 @@ describe("getAccount", () => {
 
 describe("getAccountTokens", () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    jest.resetAllMocks();
   });
 
   it("should return all tokens if only one page is needed", async () => {
