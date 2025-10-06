@@ -98,12 +98,10 @@ function ConnectDevice({ navigation, route }: SignTransactionConnectDeviceProps)
   );
 
   const onSelectDeviceLink = useCallback(() => {
-    () => {
-      navigation.navigate(ScreenName.SignTransactionSelectDevice, {
-        ...route.params,
-        forceSelectDevice: true,
-      });
-    };
+    navigation.navigate(ScreenName.SignTransactionSelectDevice, {
+      ...route.params,
+      forceSelectDevice: true,
+    });
   }, [navigation, route.params]);
 
   return transaction ? (

@@ -27,7 +27,7 @@
   "types": "lib/Near.d.ts",
   "license": "Apache-2.0",
   "dependencies": {
-    "@ledgerhq/hw-transport": "workspace:^",
+    "@ledgerhq/hw-transport": "workspace:*",
     "near-api-js": "^3.0.2"
   },
   "devDependencies": {

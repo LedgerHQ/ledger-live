@@ -48,6 +48,7 @@ jest.mock("../buildSubAccounts", () => ({
 const chains = [
   { currency: { id: "stellar", name: "Stellar" }, network: "testnet" },
   { currency: { id: "ripple", name: "XRP" }, network: "mainnet" },
+  { currency: { id: "tezos", name: "Tezos" }, network: "mainnet" },
 ];
 
 describe("genericGetAccountShape (stellar & xrp)", () => {

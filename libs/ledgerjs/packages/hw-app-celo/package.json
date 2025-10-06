@@ -34,7 +34,7 @@
     "@celo/wallet-ledger": "^8.0.0",
     "@ledgerhq/errors": "workspace:^",
     "@ledgerhq/hw-app-eth": "workspace:^",
-    "@ledgerhq/hw-transport": "workspace:^",
+    "@ledgerhq/hw-transport": "workspace:*",
     "bip32-path": "^0.4.2",
     "rlp": "^3.0.0",
     "semver": "^7.3.5"

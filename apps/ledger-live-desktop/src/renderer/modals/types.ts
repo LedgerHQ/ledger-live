@@ -10,6 +10,7 @@ import { Data as PlatformExchangeStartData } from "./Platform/Exchange/StartExch
 import { Data as PlatformExchangeCompleteData } from "./Platform/Exchange/CompleteExchange/Body";
 import { Data as ConnectDeviceData } from "./ConnectDevice/index";
 import { Params as SignTransactionData } from "./SignTransaction/Body";
+import { Params as SignRawTransactionData } from "./SignRawTransaction/Body";
 import { Props as ConfirmProps } from "./ConfirmModal";
 import { Props as ErrorProps } from "./ErrorModal";
 import { UserProps as AddAccountProps } from "./AddAccounts";
@@ -62,6 +63,7 @@ export type GlobalModalData = {
   MODAL_EXPORT_OPERATIONS: undefined;
   MODAL_START_STAKE: ModalStartStakeProps;
   MODAL_SIGN_TRANSACTION: SignTransactionData;
+  MODAL_SIGN_RAW_TRANSACTION: SignRawTransactionData;
   MODAL_SIGN_MESSAGE: SignMessageData;
   MODAL_TROUBLESHOOT_NETWORK: undefined;
   MODAL_NO_FUNDS_STAKE: {

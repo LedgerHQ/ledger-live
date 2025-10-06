@@ -10,6 +10,7 @@ import {
 } from "@ledgerhq/live-common/platform/providers/RemoteLiveAppProvider/index";
 
 import { accountToWalletAPIAccount } from "@ledgerhq/live-common/wallet-api/converters";
+import { useProviderInterstitalEnabled } from "@ledgerhq/live-common/hooks/useShowProviderLoadingTransition";
 import { useTheme } from "styled-components/native";
 import { Flex, InfiniteLoader } from "@ledgerhq/native-ui";
 import TrackScreen from "~/analytics/TrackScreen";
@@ -25,8 +26,7 @@ import { walletSelector } from "~/reducers/wallet";
 import useEnv from "@ledgerhq/live-common/hooks/useEnv";
 import { counterValueCurrencySelector, discreetModeSelector } from "~/reducers/settings";
 import { useSettings } from "~/hooks";
-import { ProviderInterstitial } from "./BuySell/ProviderInterstitial";
-import { useProviderInterstitalEnabled } from "@ledgerhq/live-common/hooks/useShowProviderLoadingTransition";
+import { ProviderInterstitial } from "LLM/components/ProviderInterstitial";
 
 export type Props = StackNavigatorProps<
   PtxNavigatorParamList,

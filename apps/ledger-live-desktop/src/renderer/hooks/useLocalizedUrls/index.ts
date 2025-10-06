@@ -14,7 +14,7 @@ const languages: LanguageMap = {
   pt: "pt-br",
   ja: "ja",
   ko: "ko",
-  th: "",
+  th: "th",
 };
 
 export const useLocalizedUrl = (url: string) => {

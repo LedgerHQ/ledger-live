@@ -13,10 +13,14 @@ describe("Polkadot Api", () => {
       sidecar: {
         url: "https://polkadot-sidecar.coin.ledger.com",
       },
+      indexer: {
+        url: "https://polkadot.coin.ledger.com",
+      },
       staking: {
         electionStatusThreshold: 25,
       },
       metadataShortener: {
+        id: "dot",
         url: "https://polkadot-metadata-shortener.api.live.ledger.com/transaction/metadata",
       },
       metadataHash: {
@@ -32,6 +36,7 @@ describe("Polkadot Api", () => {
 
       // When
       const { value } = await module.estimateFees({
+        intentType: "transaction",
         asset: { type: "native" },
         type: "send",
         sender: address,
@@ -94,6 +99,7 @@ describe("Polkadot Api", () => {
     it("returns a raw transaction", async () => {
       // When
       const result = await module.craftTransaction({
+        intentType: "transaction",
         asset: { type: "native" },
         type: "send",
         sender: address,

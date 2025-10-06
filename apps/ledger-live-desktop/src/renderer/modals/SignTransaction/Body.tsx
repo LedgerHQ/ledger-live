@@ -37,7 +37,6 @@ export type Params = {
   onResult: (signedOperation: SignedOperation) => void;
   onCancel: (error: Error) => void;
   parentAccount: Account | undefined | null;
-  startWithWarning?: boolean;
   recipient?: string;
   amount?: BigNumber;
   manifestId?: string;
@@ -123,7 +122,6 @@ export default function Body({ onChangeStepId, onClose, setError, stepId, params
   const dispatch = useDispatch();
   const { t } = useTranslation();
   const { canEditFees, transactionData } = params;
-  const openedFromAccount = !!params.account;
   const {
     transaction,
     setTransaction,
@@ -232,7 +230,6 @@ export default function Body({ onChangeStepId, onClose, setError, stepId, params
     steps,
     errorSteps,
     device,
-    openedFromAccount,
     account,
     parentAccount,
     transaction,

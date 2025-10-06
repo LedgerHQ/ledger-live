@@ -42,10 +42,10 @@ export type UseBalanceDeps = () => {
 
 export type BalanceUI = {
   // Raw values
-  balance?: BigNumber;
+  balance: BigNumber;
   fiatValue?: number;
   fiatUnit?: Unit;
-  currency?: CryptoOrTokenCurrency;
+  currency: CryptoOrTokenCurrency;
   // Formatting parameters
   locale?: string;
   discreet?: boolean;
@@ -83,6 +83,7 @@ export type NetworkHookParams = {
   networks: CryptoOrTokenCurrency[];
   accounts$?: Observable<WalletAPIAccount[]>;
 };
+// Network hook type that returns currency properties spread at top level
 export type NetworkHook = (
   params: NetworkHookParams,
 ) => Array<CryptoOrTokenCurrency & Network & { balanceData?: BalanceUI; count?: number }>;

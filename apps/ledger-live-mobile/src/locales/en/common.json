@@ -3433,6 +3433,7 @@
       "shareAddress": "Share address",
       "addressCopied": "Address copied in clipboard",
       "taprootWarning": "Make sure the sender supports taproot",
+      "connectToNoah": "Connecting you to Noah",
       "menu": {
         "crypto": {
           "title": "From a crypto address",

@@ -3,6 +3,7 @@ import {
   BufferTxData,
   FeeEstimation,
   MemoNotSupported,
+  StakingTransactionIntent,
 } from "@ledgerhq/coin-framework/api/types";
 import { ethers } from "ethers";
 import * as legacy from "@ledgerhq/cryptoassets/tokens";
@@ -85,6 +86,7 @@ describe.each([
     it("crafts a transaction with the native asset", async () => {
       const { transaction: result } = await module.craftTransaction({
         type: `send-${mode}`,
+        intentType: "transaction",
         amount: 10n,
         sender: "0x9bcd841436ef4f85dacefb1aec772af71619024e",
         recipient: "0x7b2c7232f9e38f30e2868f0e5bf311cd83554b5a",
@@ -105,6 +107,7 @@ describe.each([
     it("crafts a transaction with the USDC asset", async () => {
       const { transaction: result } = await module.craftTransaction({
         type: `send-${mode}`,
+        intentType: "transaction",
         amount: 10n,
         sender: "0x9bcd841436ef4f85dacefb1aec772af71619024e",
         recipient: "0x7b2c7232f9e38f30e2868f0e5bf311cd83554b5a",
@@ -224,6 +227,7 @@ describe.each([
     it("estimates fees for native asset transfer", async () => {
       const result = await module.estimateFees({
         type: `send-${mode}`,
+        intentType: "transaction",
         amount: 100000000000000n, // 0.0001 ETH (smaller amount)
         sender: "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045",
         recipient: "0x7b2C7232f9E38F30E2868f0E5Bf311Cd83554b5A",
@@ -239,6 +243,7 @@ describe.each([
     it("estimates fees for USDC token transfer", async () => {
       const result = await module.estimateFees({
         type: `send-${mode}`,
+        intentType: "transaction",
         amount: 1000000n, // 1 USDC (6 decimals)
         sender: "0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045",
         recipient: "0x7b2C7232f9E38F30E2868f0E5Bf311Cd83554b5A",
@@ -248,6 +253,127 @@ describe.each([
           assetReference: "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
         },
       });
+
+      expectEstimationForMode(result);
+    });
+  });
+});
+
+describe("EVM Api (SEI Network)", () => {
+  let module: Api<MemoNotSupported, BufferTxData>;
+
+  beforeAll(() => {
+    setCryptoAssetsStoreGetter(() => legacy);
+    const config = {
+      node: {
+        type: "external",
+        uri: "https://sei-evm-rpc.publicnode.com",
+      },
+      explorer: {
+        type: "etherscan",
+        uri: "https://proxyetherscan.api.live.ledger.com/v2/api/1329",
+      },
+    };
+    module = createApi(config as EvmConfig, "sei_network_evm");
+  });
+
+  describe.each([
+    [
+      "legacy",
+      (transaction: ethers.Transaction): void => {
+        expect(transaction.type).toBe(0);
+        expect(typeof transaction.gasPrice).toBe("bigint");
+        expect(transaction.gasPrice).toBeGreaterThan(0);
+      },
+    ],
+    [
+      "eip1559",
+      (transaction: ethers.Transaction): void => {
+        expect(transaction.type).toBe(2);
+        expect(transaction.gasPrice).toBeNull();
+        expect(typeof transaction.maxFeePerGas).toBe("bigint");
+        expect(typeof transaction.maxPriorityFeePerGas).toBe("bigint");
+        expect(transaction.maxFeePerGas).toBeGreaterThan(0n);
+        expect(transaction.maxPriorityFeePerGas).toBeGreaterThan(0n);
+      },
+    ],
+  ])("craftTransaction", (mode, expectTransactionForMode) => {
+    it("crafts a delegate transaction", async () => {
+      const { transaction: result } = await module.craftTransaction({
+        type: `staking-${mode}`,
+        intentType: "staking" as const,
+        amount: 1000000000000000000n, // 1 SEI
+        mode: "delegate",
+        sender: "0x66c4371aE8FFeD2ec1c2EBbbcCfb7E494181E1E3",
+        recipient: "0x0000000000000000000000000000000000001005",
+        valAddress: "seivaloper1ummny4p645xraxc4m7nphf7vxawfzt3p5hn47t",
+        data: { type: "buffer", value: Buffer.from([]) },
+        asset: {
+          type: "native",
+        },
+      } as StakingTransactionIntent<MemoNotSupported, BufferTxData>);
+
+      expect(result).toMatch(/^0x[A-Fa-f0-9]+$/);
+      expect(ethers.Transaction.from(result)).toMatchObject({
+        value: 1000000000000000000n,
+        to: "0x0000000000000000000000000000000000001005",
+      });
+      expectTransactionForMode(ethers.Transaction.from(result));
+    });
+  });
+
+  describe.each([
+    [
+      "legacy",
+      (estimation: FeeEstimation): void => {
+        expect(estimation).toEqual({
+          value: expect.any(BigInt),
+          parameters: {
+            gasPrice: expect.any(BigInt),
+            gasLimit: expect.any(BigInt),
+            maxFeePerGas: null,
+            maxPriorityFeePerGas: null,
+            nextBaseFee: null,
+          },
+        });
+        expect(estimation.value).toBeGreaterThan(0);
+        expect(estimation.parameters?.gasPrice).toBeGreaterThan(0);
+      },
+    ],
+    [
+      "eip1559",
+      (estimation: FeeEstimation): void => {
+        expect(estimation).toEqual({
+          value: expect.any(BigInt),
+          parameters: {
+            gasPrice: null,
+            gasLimit: expect.any(BigInt),
+            maxFeePerGas: expect.any(BigInt),
+            maxPriorityFeePerGas: expect.any(BigInt),
+            nextBaseFee: expect.any(BigInt),
+          },
+        });
+        expect(estimation.value).toBeGreaterThan(0);
+        expect(estimation.parameters?.maxFeePerGas).toBeGreaterThan(0);
+        expect(estimation.parameters?.maxPriorityFeePerGas).toBeGreaterThan(0);
+        expect(estimation.parameters?.nextBaseFee).toBeGreaterThan(0);
+      },
+    ],
+  ])("estimateFees for %s transaction", (mode, expectEstimationForMode) => {
+    it("estimates fees for staking delegation", async () => {
+      const result = await module.estimateFees({
+        type: `staking-${mode}`,
+        intentType: "staking" as const,
+        amount: 1000000000000000000n, // 1 SEI
+        mode: "delegate",
+        sender: "0x66c4371aE8FFeD2ec1c2EBbbcCfb7E494181E1E3",
+        recipient: "0x0000000000000000000000000000000000001005",
+        valAddress: "seivaloper1ummny4p645xraxc4m7nphf7vxawfzt3p5hn47t",
+        data: { type: "buffer", value: Buffer.from([]) },
+        asset: {
+          type: "native",
+        },
+      } as StakingTransactionIntent<MemoNotSupported, BufferTxData>);
 
       expectEstimationForMode(result);
     });

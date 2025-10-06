@@ -11,19 +11,17 @@ import {
 } from "@ledgerhq/live-common/utils/getAccountTuplesForCurrency";
 import { accountsSelector } from "~/renderer/reducers/accounts";
 import { counterValueCurrencySelector } from "~/renderer/reducers/settings";
-import { sortAccountsByFiatValue } from "../utils/sortAccountsByFiatValue";
-import { RawDetailedAccount } from "../utils/formatDetailedAccount";
+import { BaseRawDetailedAccount } from "@ledgerhq/live-common/modularDrawer/types/detailedAccount";
+import { useDetailedAccountsCore } from "@ledgerhq/live-common/modularDrawer/hooks/useDetailedAccountsCore";
 import { isTokenCurrency } from "@ledgerhq/live-common/currencies/helpers";
 import { useModularDrawerAnalytics } from "../analytics/useModularDrawerAnalytics";
 import { MODULAR_DRAWER_PAGE_NAME } from "../analytics/modularDrawer.types";
 import { useOpenAssetFlow } from "./useOpenAssetFlow";
 import { ModularDrawerLocation } from "LLD/features/ModularDrawer";
-import { Account, AccountLike } from "@ledgerhq/types-live";
+import { Account } from "@ledgerhq/types-live";
 import { useBatchMaybeAccountName } from "~/renderer/reducers/wallet";
 import orderBy from "lodash/orderBy";
-import keyBy from "lodash/keyBy";
 import { modularDrawerSourceSelector } from "~/renderer/reducers/modularDrawer";
-import { calculate } from "@ledgerhq/live-countervalues/logic";
 
 export const useDetailedAccounts = (
   asset: CryptoOrTokenCurrency,
@@ -31,7 +29,7 @@ export const useDetailedAccounts = (
   onAccountSelected?: (account: Account) => void,
 ) => {
   const { trackModularDrawerEvent } = useModularDrawerAnalytics();
-  const state = useCountervaluesState();
+  const counterValuesState = useCountervaluesState();
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
   const source = useSelector(modularDrawerSourceSelector);
   const { openAddAccountFlow } = useOpenAssetFlow(
@@ -51,66 +49,28 @@ export const useDetailedAccounts = (
 
   const overridedAccountName = useBatchMaybeAccountName(accounts.map(({ account }) => account));
 
-  // Helper function to calculate fiat value for an account
-  const calculateFiatValue = useCallback(
-    (account: AccountLike): number => {
-      const currency = account.type === "Account" ? account.currency : account.token;
-      const fiatValue = calculate(state, {
-        from: currency,
-        to: counterValueCurrency,
-        value: account.balance.toNumber(),
-      });
-      return fiatValue || 0;
-    },
-    [state, counterValueCurrency],
+  // Use the shared core hook for detailed accounts logic
+  const { createBaseDetailedAccounts } = useDetailedAccountsCore(
+    counterValuesState,
+    counterValueCurrency,
   );
 
-  const detailedAccounts: RawDetailedAccount[] = useMemo(() => {
-    const accountNameMap = keyBy(
-      accounts
-        .map(({ account }, index) => ({
-          id: account.id,
-          name: overridedAccountName[index],
-        }))
-        .filter(item => item.name),
-      "id",
-    );
-
-    const formattedAccounts = accounts.map(tuple => {
-      const account = tuple.account;
-
-      if (isATokenCurrency && tuple.subAccount) {
-        const parentAccountName = accountNameMap[account.id]?.name;
-        const details = tuple.subAccount.token;
-        return {
-          name: parentAccountName ?? details.name,
-          id: tuple.subAccount.id,
-          ticker: details.ticker,
-          balance: tuple.subAccount.balance,
-          balanceUnit: tuple.subAccount.token.units[0],
-          address: account.freshAddress,
-          cryptoId: details.id,
-          parentId: details.parentCurrency.id,
-          fiatValue: calculateFiatValue(tuple.subAccount),
-        };
-      } else {
-        const accountName = accountNameMap[account.id]?.name;
-        const details = account.currency;
-        return {
-          name: accountName ?? details.name,
-          id: account.id,
-          ticker: details.ticker,
-          balance: account.balance,
-          balanceUnit: account.currency.units[0],
-          address: account.freshAddress,
-          cryptoId: details.id,
-          fiatValue: calculateFiatValue(account),
-        };
+  const detailedAccounts: BaseRawDetailedAccount[] = useMemo(() => {
+    const accountNameMap: Record<string, string> = {};
+    for (const [index, { account }] of accounts.entries()) {
+      const name = overridedAccountName[index];
+      if (name) {
+        accountNameMap[account.id] = name;
       }
-    });
+    }
 
-    return sortAccountsByFiatValue(formattedAccounts);
-  }, [accounts, isATokenCurrency, overridedAccountName, calculateFiatValue]);
+    return createBaseDetailedAccounts({
+      asset,
+      accountTuples: accounts,
+      accountNameMap,
+      isTokenCurrency: isATokenCurrency,
+    });
+  }, [accounts, isATokenCurrency, overridedAccountName, createBaseDetailedAccounts, asset]);
 
   const onAddAccountClick = useCallback(() => {
     trackModularDrawerEvent("button_clicked", {

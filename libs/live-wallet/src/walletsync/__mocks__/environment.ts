@@ -34,6 +34,9 @@ export const contextWithSyncFailures = (shouldFailOnAccount: (_: Account) => boo
     signOperation: () => {
       throw new Error("not implemented");
     },
+    signRawOperation: () => {
+      throw new Error("not implemented");
+    },
     broadcast: () => {
       throw new Error("not implemented");
     },

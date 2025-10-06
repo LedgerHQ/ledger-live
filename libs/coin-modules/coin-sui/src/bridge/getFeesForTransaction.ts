@@ -38,12 +38,15 @@ export default async function getEstimatedFees({
   const asset = toSuiAsset(subAccount?.token.contractAddress ?? DEFAULT_COIN_TYPE);
 
   let transactionType: "send" | "delegate" | "undelegate";
+  let intentType: "transaction" | "staking" = "transaction";
   switch (transaction.mode) {
     case "delegate":
       transactionType = "delegate";
+      intentType = "staking";
       break;
     case "undelegate":
       transactionType = "undelegate";
+      intentType = "staking";
       break;
     default:
       transactionType = "send";
@@ -51,6 +54,7 @@ export default async function getEstimatedFees({
   }
 
   const fees = await estimateFees({
+    intentType,
     recipient: getAbandonSeedAddress(account.currency.id),
     sender: account.freshAddress,
     amount: BigInt(t.amount.toString()),

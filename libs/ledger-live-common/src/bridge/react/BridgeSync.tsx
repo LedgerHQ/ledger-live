@@ -100,12 +100,20 @@ function useHydrate({ accounts, hydrateCurrency }) {
   }, [accounts, hydrateCurrency]);
 }
 
-const lastTimeAnalyticsTrackPerAccountId: Record<string, number> = {};
-const lastTimeSuccessSyncPerAccountId: Record<string, number> = {};
-const nothingState = {
+let lastTimeAnalyticsTrackPerAccountId: Record<string, number> = {};
+let nothingState = {
   pending: false,
   error: null,
 };
+
+// Only used for tests
+export function resetStates() {
+  lastTimeAnalyticsTrackPerAccountId = {};
+  nothingState = {
+    pending: false,
+    error: null,
+  };
+}
 
 // useHydrate: returns a sync queue and bridge sync state
 function useSyncQueue({
@@ -159,11 +167,10 @@ function useSyncQueue({
           if (!account) return;
           const subAccounts: TokenAccount[] = account.subAccounts || [];
 
-          // Nb Only emit SyncSuccess/SyncSuccessToken event once per launch
-          if (lastTimeSuccessSyncPerAccountId[accountId]) {
+          if (reason === "background") {
+            // don't track background syncs
             return;
           }
-          lastTimeSuccessSyncPerAccountId[accountId] = startSyncTime;
 
           trackAnalytics("SyncSuccess", {
             duration: (Date.now() - startSyncTime) / 1000,
@@ -173,22 +180,16 @@ function useSyncQueue({
             operationsLength: account.operationsCount,
             accountsCountForCurrency: accounts.filter(a => a.currency === account.currency).length,
             tokensLength: subAccounts.length,
-            votesCount: getVotesCount(account),
-            reason,
-          });
-
-          subAccounts.forEach(a => {
-            const tokenId =
-              a.type === "TokenAccount" ? getAccountCurrency(a).id : account.currency.name;
-            trackAnalytics("SyncSuccessToken", {
-              tokenId,
+            tokens: subAccounts.map(a => ({
+              tokenId: a.type === "TokenAccount" ? getAccountCurrency(a).id : account.currency.name,
               tokenTicker: getAccountCurrency(a).ticker,
               operationsLength: a.operationsCount,
               parentCurrencyName: account.currency.name,
               parentDerivationMode: account.derivationMode,
               votesCount: getVotesCount(a, account),
-              reason,
-            });
+            })),
+            votesCount: getVotesCount(account),
+            reason,
           });
         };
 

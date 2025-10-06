@@ -33,4 +33,5 @@ export enum Network {
   LITECOIN = "Litecoin",
   KASPA = "Kaspa",
   HEDERA = "Hedera",
+  SUI = "Sui",
 }

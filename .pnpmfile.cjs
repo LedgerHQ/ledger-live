@@ -200,12 +200,6 @@ function readPackage(pkg, context) {
       removeDependencies("follow-redirects", ["debug"], {
         kind: "peerDependencies",
       }),
-      addDependencies("@shopify/react-native-performance", {
-        tslib: "*",
-      }),
-      addDependencies("@shopify/react-native-performance-navigation", {
-        tslib: "*",
-      }),
       addPeerDependencies("react-native-easy-markdown", {
         "prop-types": "*",
       }),

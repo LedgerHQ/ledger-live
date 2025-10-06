@@ -1,0 +1,1 @@
+export { useDetailedAccountsCore } from "./useDetailedAccountsCore";

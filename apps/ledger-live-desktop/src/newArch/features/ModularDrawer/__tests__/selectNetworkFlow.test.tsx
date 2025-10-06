@@ -141,14 +141,16 @@ describe("ModularDrawerFlowManager - Select Network Flow", () => {
     await waitFor(() => expect(screen.getByText(/ethereum/i)).toBeVisible());
     expect(screen.queryByText(/scroll/i)).toBeNull();
     expect(screen.getByText(/bitcoin/i)).toBeVisible();
-    expect(screen.getByText(/ethereum/i)).toBeVisible();
 
     const input = screen.getByRole("textbox");
     await user.type(input, "ethereum");
 
-    await waitFor(() => {
-      expect(screen.queryByText(/bitcoin/i)).not.toBeInTheDocument();
-    });
+    await waitFor(
+      () => {
+        expect(screen.queryByText(/bitcoin/i)).not.toBeInTheDocument();
+      },
+      { timeout: 2000 },
+    );
     await waitFor(() => expect(screen.getByText(/ethereum/i)).toBeVisible());
 
     await user.clear(screen.getByRole("textbox"));

@@ -1,11 +1,7 @@
 import { verifyAppValidationSendInfo } from "../../models/send";
 import { device } from "detox";
 import { TransactionType } from "@ledgerhq/live-common/e2e/models/Transaction";
-import {
-  AccountType,
-  getParentAccountName,
-  TokenAccount,
-} from "@ledgerhq/live-common/e2e/enum/Account";
+import { AccountType, getParentAccountName } from "@ledgerhq/live-common/e2e/enum/Account";
 import { getEnv } from "@ledgerhq/live-env";
 import { TransactionStatus } from "@ledgerhq/live-common/e2e/enum/TransactionStatus";
 import invariant from "invariant";
@@ -145,7 +141,7 @@ export function runSendSPLAddressInvalid(
 }
 
 export function runAddSubAccountTest(
-  asset: AccountType | TokenAccount,
+  asset: AccountType,
   tmslinks: string[],
   tags: string[],
   withParentAccount: boolean,
@@ -179,7 +175,11 @@ export function runAddSubAccountTest(
           await app.common.performSearch(
             asset?.parentAccount === undefined ? asset.currency.id : asset.currency.name,
           );
-          await app.receive.selectCurrency(asset.currency.id);
+          if (asset.tokenType) {
+            await app.receive.selectCurrencyByType(asset.tokenType);
+          } else {
+            await app.receive.selectCurrency(asset.currency.id);
+          }
 
           const networkId =
             asset?.parentAccount === undefined

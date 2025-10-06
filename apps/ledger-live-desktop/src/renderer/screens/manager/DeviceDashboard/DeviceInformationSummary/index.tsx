@@ -87,9 +87,9 @@ const DeviceInformationSummary = ({
   const navigationLocked = useSelector(isNavigationLocked);
 
   return (
-    <Card p={20} mb={4} data-testid="device-storage-card">
+    <Card px={22} py={24} mb={4} data-testid="device-storage-card">
       <Flex flexDirection="row">
-        <Box position="relative" flex="0 0 140px" mr={20}>
+        <Box position="relative" flex="0 0 140px" mr={24}>
           <DeviceIllustration deviceModel={deviceModel} />
         </Box>
         <Flex flexDirection="column" flex={1}>

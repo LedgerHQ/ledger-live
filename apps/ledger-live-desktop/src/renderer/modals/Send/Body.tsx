@@ -1,4 +1,4 @@
-import React, { useMemo, useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { BigNumber } from "bignumber.js";
 import { connect } from "react-redux";
 import { compose } from "redux";
@@ -28,7 +28,6 @@ import StepSummary, { StepSummaryFooter } from "./steps/StepSummary";
 import StepConfirmation, { StepConfirmationFooter } from "./steps/StepConfirmation";
 import StepWarning, { StepWarningFooter } from "./steps/StepWarning";
 import { St, StepId } from "./types";
-import { getCurrencyConfiguration } from "@ledgerhq/live-common/config/index";
 
 export type Data = {
   account?: AccountLike | undefined | null;
@@ -59,7 +58,7 @@ type StateProps = {
   updateAccountWithUpdater: (b: string, a: (a: Account) => Account) => void;
 };
 type Props = {} & OwnProps & StateProps;
-const createSteps = (disableBacks: string[] = [], shouldSkipAmount = false): St[] => {
+const createSteps = (disableBacks: string[] = []): St[] => {
   const steps: Array<St | undefined> = [
     {
       id: "warning",
@@ -73,17 +72,15 @@ const createSteps = (disableBacks: string[] = [], shouldSkipAmount = false): St[
       component: StepRecipient,
       footer: StepRecipientFooter,
     },
-    shouldSkipAmount
-      ? undefined
-      : {
-          id: "amount",
-          label: <Trans i18nKey="send.steps.amount.title" />,
-          component: StepAmount,
-          footer: StepAmountFooter,
-          onBack: !disableBacks.includes("amount")
-            ? ({ transitionTo }) => transitionTo("recipient")
-            : null,
-        },
+    {
+      id: "amount",
+      label: <Trans i18nKey="send.steps.amount.title" />,
+      component: StepAmount,
+      footer: StepAmountFooter,
+      onBack: !disableBacks.includes("amount")
+        ? ({ transitionTo }) => transitionTo("recipient")
+        : null,
+    },
     {
       id: "summary",
       label: <Trans i18nKey="send.steps.summary.title" />,
@@ -148,29 +145,7 @@ const Body = ({
     setMaybeRecipient(null);
   }, [setMaybeRecipient]);
 
-  // if it's an ERC721 transfer, it has no amount and since the
-  // "amount" step is also showing the gas selection options,
-  // having no quantity + no gas options should mean
-  // skipping the amount step completely
-  const shouldSkipAmount = useMemo(() => {
-    const parentAccount = params?.parentAccount;
-    const account = params?.account || accounts[0];
-
-    const mainAccount = getMainAccount(account, parentAccount);
-    const { currency } = mainAccount;
-
-    // FIXME to remove after ethereum -> evm migration
-    if (currency.family !== "evm") return false;
-
-    try {
-      const config = getCurrencyConfiguration(currency);
-      return !config?.gasTracker;
-    } catch (err) {
-      console.warn(err);
-    }
-  }, [params?.parentAccount, params?.account, accounts]);
-
-  const [steps] = useState(() => createSteps(params.disableBacks, shouldSkipAmount));
+  const [steps] = useState(() => createSteps(params.disableBacks));
 
   const {
     transaction,
@@ -285,7 +260,6 @@ const Body = ({
     walletConnectProxy,
     onConfirmationHandler: params.onConfirmationHandler,
     onFailHandler: params.onFailHandler,
-    shouldSkipAmount,
   };
 
   if (!status) {

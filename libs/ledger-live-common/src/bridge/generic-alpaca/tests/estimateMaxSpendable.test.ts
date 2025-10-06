@@ -35,9 +35,23 @@ const dummyAccounts = [
     freshAddress: "s123",
     pendingOperations: [],
   },
+  {
+    id: "js:2:tezos:t123",
+    type: "Account",
+    spendableBalance: new BigNumber(50000000),
+    balance: new BigNumber(60000000),
+    currency: {
+      id: "tezos",
+      family: "tezos",
+      name: "Tezos",
+      units: [{ name: "XTZ", magnitude: 6 }],
+    },
+    freshAddress: "t123",
+    pendingOperations: [],
+  },
 ] as unknown as Account[];
 
-["xrp", "stellar"].forEach((currencyName, idx) => {
+["xrp", "stellar", "tezos"].forEach((currencyName, idx) => {
   describe(`genericEstimateMaxSpendable for ${currencyName}`, () => {
     const dummyAccount = dummyAccounts[idx];
 
