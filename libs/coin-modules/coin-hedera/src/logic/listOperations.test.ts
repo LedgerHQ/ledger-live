@@ -35,18 +35,23 @@ describe("listOperations", () => {
       order: "asc",
     };
 
-    (hederaMirrorNode.getAccountTransactions as jest.Mock).mockResolvedValue([]);
+    (hederaMirrorNode.getAccountTransactions as jest.Mock).mockResolvedValue({
+      transactions: [],
+      nextCursor: null,
+    });
 
     const result = await listOperations({
       currency: mockCurrency,
       address,
       pagination,
       mirrorTokens: [],
+      fetchAllPages: true,
     });
 
     expect(hederaMirrorNode.getAccountTransactions).toHaveBeenCalledWith({
       address,
-      since: null,
+      fetchAllPages: true,
+      pagingToken: null,
       order: "asc",
       limit: 10,
     });
@@ -79,13 +84,17 @@ describe("listOperations", () => {
       },
     ];
 
-    (hederaMirrorNode.getAccountTransactions as jest.Mock).mockResolvedValue(mockTransactions);
+    (hederaMirrorNode.getAccountTransactions as jest.Mock).mockResolvedValue({
+      transactions: mockTransactions,
+      nextCursor: null,
+    });
 
     const result = await listOperations({
       currency: mockCurrency,
       address,
       pagination,
       mirrorTokens: [],
+      fetchAllPages: true,
     });
 
     expect(result.coinOperations).toHaveLength(1);
@@ -140,7 +149,10 @@ describe("listOperations", () => {
       },
     ];
 
-    (hederaMirrorNode.getAccountTransactions as jest.Mock).mockResolvedValue(mockTransactions);
+    (hederaMirrorNode.getAccountTransactions as jest.Mock).mockResolvedValue({
+      transactions: mockTransactions,
+      nextCursor: null,
+    });
     (findTokenByAddressInCurrency as jest.Mock).mockReturnValue(mockToken);
 
     const result = await listOperations({
@@ -148,6 +160,7 @@ describe("listOperations", () => {
       address,
       pagination,
       mirrorTokens: [],
+      fetchAllPages: true,
     });
 
     expect(result.coinOperations).toHaveLength(1);
@@ -195,13 +208,17 @@ describe("listOperations", () => {
       },
     ];
 
-    (hederaMirrorNode.getAccountTransactions as jest.Mock).mockResolvedValue(mockTransactions);
+    (hederaMirrorNode.getAccountTransactions as jest.Mock).mockResolvedValue({
+      transactions: mockTransactions,
+      nextCursor: null,
+    });
 
     const result = await listOperations({
       currency: mockCurrency,
       address,
       pagination,
       mirrorTokens: [],
+      fetchAllPages: true,
     });
 
     expect(result.coinOperations).toHaveLength(1);
@@ -247,7 +264,10 @@ describe("listOperations", () => {
       },
     ];
 
-    (hederaMirrorNode.getAccountTransactions as jest.Mock).mockResolvedValue(mockTransactions);
+    (hederaMirrorNode.getAccountTransactions as jest.Mock).mockResolvedValue({
+      transactions: mockTransactions,
+      nextCursor: null,
+    });
     (findTokenByAddressInCurrency as jest.Mock).mockReturnValue(null);
 
     const result = await listOperations({
@@ -255,6 +275,7 @@ describe("listOperations", () => {
       address,
       pagination,
       mirrorTokens: [],
+      fetchAllPages: true,
     });
 
     expect(result.coinOperations).toHaveLength(0);
@@ -271,18 +292,23 @@ describe("listOperations", () => {
       lastPagingToken: "1625097500.000000000",
     };
 
-    (hederaMirrorNode.getAccountTransactions as jest.Mock).mockResolvedValue([]);
+    (hederaMirrorNode.getAccountTransactions as jest.Mock).mockResolvedValue({
+      transactions: [],
+      nextCursor: null,
+    });
 
     await listOperations({
       currency: mockCurrency,
       address,
       pagination,
       mirrorTokens: [],
+      fetchAllPages: true,
     });
 
     expect(hederaMirrorNode.getAccountTransactions).toHaveBeenCalledWith({
       address,
-      since: "1625097500.000000000",
+      fetchAllPages: true,
+      pagingToken: "1625097500.000000000",
       order: "asc",
       limit: 20,
     });
@@ -313,13 +339,17 @@ describe("listOperations", () => {
       },
     ];
 
-    (hederaMirrorNode.getAccountTransactions as jest.Mock).mockResolvedValue(mockTransactions);
+    (hederaMirrorNode.getAccountTransactions as jest.Mock).mockResolvedValue({
+      transactions: mockTransactions,
+      nextCursor: null,
+    });
 
     const result = await listOperations({
       currency: mockCurrency,
       address,
       pagination,
       mirrorTokens: [],
+      fetchAllPages: true,
     });
 
     expect(result.coinOperations[0].hasFailed).toBe(true);

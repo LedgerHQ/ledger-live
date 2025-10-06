@@ -62,6 +62,7 @@ export function createApi(config: HederaConfig): Api<HederaMemo> {
         address,
         pagination,
         mirrorTokens,
+        fetchAllPages: false,
       });
 
       const liveOperations = [
@@ -108,10 +109,7 @@ export function createApi(config: HederaConfig): Api<HederaMemo> {
         } satisfies Operation;
       });
 
-      const lastOperation = alpacaOperations[alpacaOperations.length - 1];
-      const next = lastOperation?.details?.consensusTimestamp ?? "";
-
-      return [alpacaOperations, next];
+      return [alpacaOperations, latestAccountOperations.nextCursor ?? ""];
     },
     getTokenFromAsset: asset => getTokenFromAsset(currency, asset),
     getAssetFromToken,
