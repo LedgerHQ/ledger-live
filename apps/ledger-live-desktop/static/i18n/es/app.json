@@ -464,12 +464,16 @@
       "apt_description" : "Para permutar Aptos, usa cualquier otro dispositivo Ledger compatible, como el Ledger Nano S Plus™, el Ledger Nano X™, el Ledger Flex™ o el Ledger Stax™.",
       "cosmos_title" : "No es posible usar el Ledger Nano S™ para permutar Cosmos",
       "cosmos_description" : "Para permutar Cosmos, usa cualquier otro dispositivo Ledger compatible, como el Ledger Nano S Plus™, el Ledger Nano X™, el Ledger Flex™ o el Ledger Stax™.",
+      "hedera_title" : "No es posible usar el Ledger Nano S™ para permutar Hedera",
+      "hedera_description" : "Para permutar Hedera, usa cualquier otro dispositivo Ledger compatible, como el Ledger Nano S Plus™, el Ledger Nano X™, el Ledger Flex™ o el Ledger Stax™.",
       "osmo_title" : "No es posible usar el Ledger Nano S™ para permutar Osmosis",
       "osmo_description" : "Para permutar Osmosis, usa cualquier otro dispositivo Ledger compatible, como el Ledger Nano S Plus™, el Ledger Nano X™, el Ledger Flex™ o el Ledger Stax™.",
       "dydx_title" : "No es posible usar el Ledger Nano S™ para permutar dYdX",
       "dydx_description" : "Para permutar dYdX, usa cualquier otro dispositivo Ledger compatible, como el Ledger Nano S Plus™, el Ledger Nano X™, el Ledger Flex™ o el Ledger Stax™.",
       "sui_title" : "No es posible utilizar el Ledger Nano S™ para permutar Sui",
-      "sui_description" : "Para permutar Sui, usa cualquier otro dispositivo Ledger compatible, como el Ledger Nano S Plus™, el Ledger Nano X™, el Ledger Flex™ o el Ledger Stax™."
+      "sui_description" : "Para permutar Sui, usa cualquier otro dispositivo Ledger compatible, como el Ledger Nano S Plus™, el Ledger Nano X™, el Ledger Flex™ o el Ledger Stax™.",
+      "kaspa_title" : "No es posible usar el Ledger Nano S™ para permutar Kaspa",
+      "kaspa_description" : "Para permutar Kaspa, usa cualquier otro dispositivo Ledger compatible, como el Ledger Nano S Plus™, el Ledger Nano X™, el Ledger Flex™ o el Ledger Stax™."
     },
     "providers" : {
       "title" : "Elige un proveedor para permutar cripto",
@@ -2246,6 +2250,7 @@
   "receive" : {
     "title" : "Recibir",
     "successTitle" : "Dirección compartida de forma segura",
+    "connectToNoah" : "Connecting you to Noah",
     "steps" : {
       "options" : {
         "fromBank" : {
@@ -5023,6 +5028,12 @@
     },
     "screens" : {
       "welcome" : {
+        "videos" : {
+          "buySell" : "Una wallet que te protege y te da todo el control",
+          "thousandsCrypto" : "Envía, recibe, permuta y pon en participación miles de cripto",
+          "secureWallet" : "Verifica todas tus transacciones con tranquilidad"
+        },
+        "notice" : "Al continuar, aceptas los <Link1>Términos y Condiciones</Link1> y la <Link2>Política de Privacidad</Link2> de Ledger. Ledger no proporciona asesoramiento financiero.\nLos servicios de permuta y puesta en participación los proporcionan terceros.",
         "title" : "La billetera más segura para tus criptomonedas y NFTs",
         "description" : "Gestiona, compra y rentabiliza tus cripto y NFTs con seguridad desde Ledger Live",
         "nextButton" : "Comenzar",
@@ -5710,7 +5721,34 @@
     },
     "canton" : {
       "commentPlaceholder" : "Opcional",
-      "comment" : "Comentario"
+      "comment" : "Comentario",
+      "addAccount" : {
+        "title" : "Add Canton Account",
+        "onboard" : {
+          "title" : "Onboarding",
+          "newAccount" : "Nueva cuenta",
+          "init" : "Set up your new Canton account by clicking Continue",
+          "onboarded" : "Onboarded accounts",
+          "success" : "Your new Canton account has been created and onboarded.",
+          "error" : "Failed to onboard new account. Please try again.",
+          "status" : {
+            "prepare" : "Preparing account onboarding...",
+            "submit" : "Onboarding account...",
+            "default" : "Processing..."
+          }
+        },
+        "auth" : {
+          "title" : "Authorization",
+          "validator" : "Autorizar",
+          "hint" : "Automaticaly accept incoming funds to this account.",
+          "error" : "Authorization failed. Please try again.",
+          "validatorLabel" : "Ledger Validator",
+          "validatorDescription" : "Automated fund acceptance"
+        },
+        "finish" : {
+          "title" : "Confirmación"
+        }
+      }
     },
     "stellar" : {
       "memo" : "Memo",
