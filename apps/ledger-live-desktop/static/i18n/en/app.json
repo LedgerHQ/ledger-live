@@ -2250,7 +2250,7 @@
   "receive": {
     "title": "Receive",
     "successTitle": "Address shared securely",
-    "connectToNoah": "Re-directing you to Noah, our partner, to create your cash-to-stable account",
+    "connectToNoah": "Connecting you to Noah",
     "steps": {
       "options": {
         "fromBank": {
