@@ -3433,6 +3433,17 @@
       "shareAddress" : "عنوان المشاركة",
       "addressCopied" : "تم نسخ العنوان إلى ذاكرة النصوص",
       "taprootWarning" : "تأكد أن المُرسل يدعم taproot",
+      "connectToNoah" : "Connecting you to Noah",
+      "menu" : {
+        "crypto" : {
+          "title" : "من عنوان أصول مشفرة",
+          "description" : "أضف رصيد إلى محفظتك بأي أصل مشفر."
+        },
+        "fiat" : {
+          "title" : "من حساب بنكي",
+          "description" : "أضف رصيد USDC من خلال تحويل بنكي بالدولار الأمريكي أو اليورو. مطلوب اعرف عميلك (KYC)."
+        }
+      },
       "memoTag" : {
         "link" : "تحتاج إلى علامة/ملاحظة (تسمية الوجهة)؟",
         "title" : "تحتاج إلى علامة/ملاحظة (تسمية الوجهة)؟",
@@ -3766,12 +3777,16 @@
         "apt_description" : "لمبادلة Aptos، استخدم أي جهاز Ledger متوافق آخر مثل ™Ledger Nano S Plus أو ™Ledger Nano X أو ™Ledger Flex أو ™Ledger Stax.",
         "cosmos_title" : "™Ledger Nano S لا تدعم مبادلة Cosmos",
         "cosmos_description" : "لمبادلة Cosmos، استخدم أي جهاز Ledger متوافق آخر مثل ™Ledger Nano S Plus أو ™Ledger Nano X أو ™Ledger Flex أو ™Ledger Stax.",
+        "hedera_title" : "™Ledger Nano S لا تدعم مبادلة Hedera",
+        "hedera_description" : "لمبادلة Hedera، استخدِم أي جهاز Ledger متوافق آخر مثل ™Ledger Nano S Plus أو ™Ledger Nano X أو ™Ledger Flex أو ™Ledger Stax.",
         "osmo_title" : "™Ledger Nano S لا تدعم مبادلة Osmosis",
         "osmo_description" : "لمبادلة Osmosis، استخدم أي جهاز Ledger متوافق آخر مثل ™Ledger Nano S Plus أو ™Ledger Nano X أو ™Ledger Flex أو ™Ledger Stax.",
         "dydx_title" : "™Ledger Nano S لا تدعم مبادلة dYdX",
         "dydx_description" : "لمبادلة dYdX، استخدم أي جهاز Ledger متوافق آخر مثل ™Ledger Nano S Plus أو ™Ledger Nano X أو ™Ledger Flex أو ™Ledger Stax.",
         "sui_title" : "™Ledger Nano S لا تدعم مبادلة Sui",
-        "sui_description" : "لمبادلة Sui، استخدِم أي جهاز Ledger آخر متوافق مثل ™Ledger Nano S Plus أو ™Ledger Nano X أو ™Ledger Flex أو ™Ledger Stax."
+        "sui_description" : "لمبادلة Sui، استخدِم أي جهاز Ledger آخر متوافق مثل ™Ledger Nano S Plus أو ™Ledger Nano X أو ™Ledger Flex أو ™Ledger Stax.",
+        "kaspa_title" : "™Ledger Nano S لا تدعم مبادلة Kaspa",
+        "kaspa_description" : "لمبادلة Kaspa، استخدِم أي جهاز Ledger متوافق آخر مثل ™Ledger Nano S Plus أو ™Ledger Nano X أو ™Ledger Flex أو ™Ledger Stax."
       }
     },
     "lending" : {
@@ -7198,9 +7213,10 @@
     "title" : "صورة شاشة القَفل",
     "change" : "تغيير",
     "drawer" : {
+      "title" : "شاشة قَفل مُخصّصة",
       "options" : {
-        "uploadFromPhone" : "اختر من معرض الصور خاصتي",
-        "remove" : "إزالة الصورة الحالية"
+        "uploadFromPhone" : "تغيير الصورة",
+        "remove" : "حذف شاشة القَفل"
       }
     },
     "toastRemove" : "تم إزالة صورة شاشة القفل",
