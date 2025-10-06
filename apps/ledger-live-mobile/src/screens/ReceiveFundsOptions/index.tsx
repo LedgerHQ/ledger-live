@@ -1,9 +1,6 @@
-import React from "react";
-import { Text, Box } from "@ledgerhq/native-ui";
-import { SafeAreaView } from "react-native-safe-area-context";
+import React, { useRef } from "react";
+import { Text } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
-import { Pressable, StyleSheet } from "react-native";
-import { ModalHeaderCloseButton } from "@ledgerhq/native-ui/components/Layout/Modals/BaseModal/index";
 import { Icons } from "@ledgerhq/native-ui/index";
 import { ScreenName } from "~/const";
 import { TrackScreen } from "~/analytics";
@@ -12,6 +9,7 @@ import { ReceiveFundsStackParamList } from "~/components/RootNavigator/types/Rec
 import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { isCryptoOrTokenCurrency } from "~/newArch/utils/isCryptoOrTokenCurrency";
 import { isObject } from "~/newArch/utils/isObject";
+import QueuedDrawerGorhom from "~/newArch/components/QueuedDrawer/temp/QueuedDrawerGorhom";
 
 type EntryScreens =
   | ScreenName.ReceiveSelectCrypto
@@ -25,54 +23,43 @@ type EntryScreenProps = {
 export default function ReceiveFundsOptions(props: EntryScreenProps) {
   const { t } = useTranslation();
   const { navigation } = props;
+  const isNavigatingRef = useRef(false);
 
   function handleGoToFiat() {
+    isNavigatingRef.current = true;
     navigation.replace(ScreenName.ReceiveProvider, { manifestId: "noah", fromMenu: true });
   }
 
   function handleGoToCrypto() {
+    isNavigatingRef.current = true;
     typesafeNavigation(props);
   }
 
+  function handleClose() {
+    if (!isNavigatingRef.current) {
+      navigation.goBack();
+    }
+  }
+
   return (
-    <SafeAreaView
-      style={{
-        flex: 1,
-        alignItems: "center",
-        justifyContent: "flex-end",
-      }}
-    >
+    <QueuedDrawerGorhom isForcingToBeOpened snapPoints={["35%", "55%"]} onClose={handleClose}>
       <TrackScreen category="Deposit" name="Options" />
-      <Pressable
-        style={[StyleSheet.absoluteFill, { backgroundColor: "rgba(0, 0, 0, 0.5)" }]}
-        onPress={navigation.goBack}
+      <Text textAlign="center" fontSize={24} mb={5}>
+        {t("transfer.receive.title")}
+      </Text>
+      <OptionButton
+        onPress={handleGoToCrypto}
+        title={t("transfer.receive.menu.crypto.title")}
+        subtitle={t("transfer.receive.menu.crypto.description")}
+        Icon={Icons.CoinsCrypto}
       />
-      <Box
-        bg={"background.drawer"}
-        width={"100%"}
-        borderTopLeftRadius={24}
-        borderTopRightRadius={24}
-        py={6}
-        px={6}
-      >
-        <ModalHeaderCloseButton onClose={navigation.goBack} />
-        <Text textAlign="center" fontSize={24} mb={5}>
-          {t("transfer.receive.title")}
-        </Text>
-        <OptionButton
-          onPress={handleGoToCrypto}
-          title={t("transfer.receive.menu.crypto.title")}
-          subtitle={t("transfer.receive.menu.crypto.description")}
-          Icon={Icons.CoinsCrypto}
-        />
-        <OptionButton
-          onPress={handleGoToFiat}
-          title={t("transfer.receive.menu.fiat.title")}
-          subtitle={t("transfer.receive.menu.fiat.description")}
-          Icon={Icons.Bank}
-        />
-      </Box>
-    </SafeAreaView>
+      <OptionButton
+        onPress={handleGoToFiat}
+        title={t("transfer.receive.menu.fiat.title")}
+        subtitle={t("transfer.receive.menu.fiat.description")}
+        Icon={Icons.Bank}
+      />
+    </QueuedDrawerGorhom>
   );
 }
 
