@@ -464,12 +464,16 @@
       "apt_description" : "Aptos takas etmek için Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ veya Ledger Stax™ gibi başka bir uyumlu Ledger cihazı kullanın.",
       "cosmos_title" : "Ledger Nano S™, Cosmos takasını desteklemez",
       "cosmos_description" : "Cosmos takas etmek için Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ veya Ledger Stax™ gibi başka bir uyumlu Ledger cihazı kullanın.",
+      "hedera_title" : "Ledger Nano S™, Hedera takasını desteklemez",
+      "hedera_description" : "Hedera takas etmek için Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ veya Ledger Stax™ gibi başka bir uyumlu Ledger cihazını kullanın.",
       "osmo_title" : "Ledger Nano S™, Osmosis takasını desteklemez",
       "osmo_description" : "Osmosis takas etmek için Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ veya Ledger Stax™ gibi başka bir uyumlu Ledger cihazını kullanın.",
       "dydx_title" : "Ledger Nano S™, dYdX takasını desteklemez",
       "dydx_description" : "dYdX takas etmek için Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ veya Ledger Stax™ gibi başka bir uyumlu Ledger cihazını kullanın.",
       "sui_title" : "Ledger Nano S™, Sui takasını desteklemez",
-      "sui_description" : "Sui takas etmek için Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ veya Ledger Stax™ gibi diğer herhangi bir uyumlu Ledger cihazını kullanın."
+      "sui_description" : "Sui takas etmek için Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ veya Ledger Stax™ gibi diğer herhangi bir uyumlu Ledger cihazını kullanın.",
+      "kaspa_title" : "Ledger Nano S™, Kaspa takasını desteklemez",
+      "kaspa_description" : "Kaspa takas etmek için Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ veya Ledger Stax™ gibi başka bir uyumlu Ledger cihazını kullanın."
     },
     "providers" : {
       "title" : "Kripto takası işlemleri için bir sağlayıcı seçin",
@@ -2246,6 +2250,7 @@
   "receive" : {
     "title" : "Al",
     "successTitle" : "Adres güvenli şekilde paylaşıldı",
+    "connectToNoah" : "Connecting you to Noah",
     "steps" : {
       "options" : {
         "fromBank" : {
@@ -5023,6 +5028,12 @@
     },
     "screens" : {
       "welcome" : {
+        "videos" : {
+          "buySell" : "Koruyan ve kontrolün sizde olmasını sağlayan bir cüzdan",
+          "thousandsCrypto" : "Binlerce kriptoyu gönderin, alın, takas ve stake edin",
+          "secureWallet" : "Tüm işlemlerinizi gönül rahatlığıyla doğrulayın"
+        },
+        "notice" : "Devam ettiğinizde Ledger’ın <Link1>Hüküm ve Koşullarını</Link1> ve <Link2>Gizlilik Politikasını</Link2> kabul etmiş olursunuz. Ledger hiçbir finansal tavsiyede bulunmaz.\nTakas ve staking hizmetleri üçüncü taraflarca sağlanmaktadır.",
         "title" : "En güvenli kripto para ve NFT cüzdanı",
         "description" : "Ledger Live ile güvenle kripto ve NFT satın alın, varlıklarınızı yönetin ve bakiyenizi artırın.",
         "nextButton" : "Devam",
@@ -5126,7 +5137,7 @@
               "descr" : "Ekrandaki yönergeleri okuyarak cihazınızı nasıl kullanacağınızı öğrenin."
             },
             "select" : {
-              "title" : "“Set up as new device” (Yeni cihaz olarak kur) seçeneğini onaylayın",
+              "title" : "“Yeni cihaz olarak kur” seçeneğini onaylayın",
               "descr" : "Seçimi onaylamak için her iki tuşa da aynı anda basın."
             },
             "follow" : {
@@ -5710,7 +5721,34 @@
     },
     "canton" : {
       "commentPlaceholder" : "Tercihe bağlı",
-      "comment" : "Yorum"
+      "comment" : "Yorum",
+      "addAccount" : {
+        "title" : "Canton Hesabı Ekleyin",
+        "onboard" : {
+          "title" : "Kurulum",
+          "newAccount" : "Yeni Hesap",
+          "init" : "Devam tuşuna tıklayarak yeni Canton hesabınızı oluşturun",
+          "onboarded" : "Kurulumu yapılmış hesaplar",
+          "success" : "Yeni Canton hesabınız oluşturuldu ve kurulumu yapıldı.",
+          "error" : "Failed to onboard new account. Please try again.",
+          "status" : {
+            "prepare" : "Preparing account onboarding...",
+            "submit" : "Hesabın kurulumu yapılıyor...",
+            "default" : "İşleniyor..."
+          }
+        },
+        "auth" : {
+          "title" : "Yetkilendirme",
+          "validator" : "İzin ver",
+          "hint" : "Automaticaly accept incoming funds to this account.",
+          "error" : "Authorization failed. Please try again.",
+          "validatorLabel" : "Ledger Validator",
+          "validatorDescription" : "Automated fund acceptance"
+        },
+        "finish" : {
+          "title" : "Onaylayın"
+        }
+      }
     },
     "stellar" : {
       "memo" : "Memo",
@@ -7300,8 +7338,8 @@
         "mobile" : {
           "description" : "Başka bir telefondaki Ledger Live uygulamasıyla senkronize edin",
           "steps" : {
-            "step1" : "Ledger Sync'in uygulamalarınızdan birinde etkinleştirildiğinden emin olun.",
-            "step2" : "Senkronize etmek istediğiniz Ledger Live uygulamasını açın.",
+            "step1" : "Ledger Sync, diğer uygulamada da etkinleştirilmelidir.",
+            "step2" : "Senkronize edilecek Ledger Live'ı açın.",
             "step3" : "<0>Ayarlar</0> > <0>Genel</0> > <0>Ledger Sync</0> > <0>Zaten açtım</0> > <0>Karekodu göster</0> adımlarını izleyin",
             "step4" : "Karekodu okutun."
           }
@@ -7309,8 +7347,8 @@
         "desktop" : {
           "description" : "Hesaplarınızı başka bir Ledger Live uygulamasıyla senkronize edin",
           "steps" : {
-            "step1" : "Ledger Sync'in uygulamalarınızdan birinde etkinleştirildiğinden emin olun.",
-            "step2" : "Senkronize etmek istediğiniz Ledger Live uygulamasını açın.",
+            "step1" : "Ledger Sync, diğer uygulamada da etkinleştirilmelidir.",
+            "step2" : "Senkronize edilecek Ledger Live'ı açın.",
             "step3" : "<0>Ayarlar</0> > <0>Genel</0> > <0>Ledger Sync</0> > <0>Zaten açtım</0> > <0>Ledger cihazınızı kullanın</0> adımlarını izleyin",
             "step4" : "Ledger cihazınızı bağlayın."
           }
