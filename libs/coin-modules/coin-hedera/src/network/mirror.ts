@@ -54,15 +54,17 @@ async function getAccount(address: string): Promise<HederaMirrorAccount> {
 
 async function getAccountTransactions({
   address,
-  since,
+  pagingToken,
   limit = 100,
   order = "desc",
+  fetchAllPages,
 }: {
   address: string;
-  since: string | null;
+  pagingToken: string | null;
   limit?: number | undefined;
   order?: "asc" | "desc" | undefined;
-}): Promise<HederaMirrorTransaction[]> {
+  fetchAllPages: boolean;
+}): Promise<{ transactions: HederaMirrorTransaction[]; nextCursor: string | null }> {
   const transactions: HederaMirrorTransaction[] = [];
   const params = new URLSearchParams({
     "account.id": address,
@@ -70,10 +72,17 @@ async function getAccountTransactions({
     order,
   });
 
-  if (since) {
-    params.append("timestamp", `gt:${since}`);
+  // keeps old behavior when all pages are fetched
+  const getTimestampDirection = () => {
+    if (fetchAllPages) return "gt";
+    return order === "asc" ? "gt" : "lt";
+  };
+
+  if (pagingToken) {
+    params.append("timestamp", `${getTimestampDirection()}:${pagingToken}`);
   }
 
+  let nextCursor: string | null = null;
   let nextUrl: string | null = `/api/v1/transactions?${params.toString()}`;
 
   // WARNING: don't break the loop when `transactions` array is empty but `links.next` is present
@@ -84,9 +93,25 @@ async function getAccountTransactions({
     const newTransactions = res.data.transactions;
     transactions.push(...newTransactions);
     nextUrl = res.data.links.next;
+
+    // stop fetching if pagination mode is used and we reached the limit
+    if (!fetchAllPages && transactions.length >= limit) {
+      break;
+    }
   }
 
-  return transactions;
+  // ensure we don't exceed the limit in pagination mode
+  if (!fetchAllPages && transactions.length > limit) {
+    transactions.splice(limit);
+  }
+
+  // set the next cursor only if we have more transactions to fetch
+  if (!fetchAllPages && nextUrl) {
+    const lastTx = transactions[transactions.length - 1];
+    nextCursor = lastTx?.consensus_timestamp ?? null;
+  }
+
+  return { transactions, nextCursor };
 }
 
 async function getAccountTokens(address: string): Promise<HederaMirrorToken[]> {

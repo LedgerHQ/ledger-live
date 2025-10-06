@@ -1,6 +1,6 @@
 import invariant from "invariant";
 import { TokenAssociateTransaction, TransferTransaction } from "@hashgraph/sdk";
-import { FeeEstimation, Operation } from "@ledgerhq/coin-framework/api/types";
+import { FeeEstimation, Operation, Pagination } from "@ledgerhq/coin-framework/api/types";
 import { createApi } from "../api";
 import { HEDERA_TRANSACTION_MODES, TINYBAR_SCALE } from "../constants";
 import { base64ToUrlSafeBase64 } from "../logic/utils";
@@ -276,10 +276,12 @@ describe("createApi", () => {
       const [operations] = await api.listOperations(MAINNET_TEST_ACCOUNTS.withTokens.accountId, {
         minHeight: block.height,
         order: "desc",
+        limit: 100,
+        lastPagingToken: "1753099264.927988000",
       });
 
       const ops = operations as unknown as Operation<HederaMemo>[];
-      const memoTxHash = "foj/AjHdDiKpQyOjzqhmKlWsKenGm9UKdy6K4BHcv3OhfSWEollyYsHv4MWKsjQE";
+      const memoTxHash = "WvMcFERtxRsGJqxqGVDYa6JR5PqLgFeJxiSVoimayaWra/AMEJMzC09LhdRLTZ/M";
       const operationWithMemo = ops.find(op => op.tx.hash === base64ToUrlSafeBase64(memoTxHash));
       const firstTokenAssociateOperations = ops.find(op => op.type === "ASSOCIATE_TOKEN");
       const firstSendTokenOperation = ops.find(o => o.type === "OUT" && o.asset.type !== "native");
@@ -317,5 +319,45 @@ describe("createApi", () => {
         associatedTokenId: expect.any(String),
       });
     });
+
+    it.each(["desc", "asc"] as const)(
+      "returns paginated operations for account with high activity (%s)",
+      async order => {
+        const commonPagination = {
+          minHeight: 0,
+          limit: 10,
+          order,
+        } satisfies Pagination;
+
+        const [page1, pagingToken1] = await api.listOperations(
+          MAINNET_TEST_ACCOUNTS.withTokens.accountId,
+          commonPagination,
+        );
+
+        const [page2, pagingToken2] = await api.listOperations(
+          MAINNET_TEST_ACCOUNTS.withTokens.accountId,
+          {
+            ...commonPagination,
+            lastPagingToken: pagingToken1,
+          },
+        );
+
+        const firstPage1Timestamp = page1[0]?.tx?.date;
+        const firstPage2Timestamp = page2[0]?.tx?.date;
+        const page1Hashes = new Set(page1.map(op => op.tx.hash));
+        const page2Hashes = new Set(page2.map(op => op.tx.hash));
+        const hasOverlap = [...page2Hashes].some(hash => page1Hashes.has(hash));
+
+        // NOTE: this won't be equal to limit, because single Hedera transaction can generate multiple operations
+        expect(page1.length).toBeGreaterThanOrEqual(commonPagination.limit);
+        expect(page2.length).toBeGreaterThanOrEqual(commonPagination.limit);
+        expect(pagingToken1).not.toBeNull();
+        expect(pagingToken2).not.toBeNull();
+        expect(hasOverlap).toBe(false);
+        expect(firstPage1Timestamp).toBeInstanceOf(Date);
+        expect(firstPage2Timestamp).toBeInstanceOf(Date);
+        expect(firstPage1Timestamp > firstPage2Timestamp).toBe(order === "desc");
+      },
+    );
   });
 });

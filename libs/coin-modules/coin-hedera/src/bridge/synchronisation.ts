@@ -66,6 +66,7 @@ export const getAccountShape: GetAccountShape<HederaAccount> = async (
       minHeight: 0,
       ...(latestOperationTimestamp && { lastPagingToken: latestOperationTimestamp.toString() }),
     },
+    fetchAllPages: true,
   });
 
   const newSubAccounts = await getSubAccounts(
