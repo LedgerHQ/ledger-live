@@ -22,7 +22,6 @@ import {
 import { initializeLegacyTokens } from "./legacy-data";
 import { getEnv } from "@ledgerhq/live-env";
 import {
-  tokensByTicker,
   tokensByAddress,
   tokensArray,
   tokensArrayWithDelisted,
@@ -282,7 +281,6 @@ describe("Legacy Utils", () => {
       expect(tokensArray).toContain(token);
       expect(tokensArrayWithDelisted).toContain(token);
       expect(tokensById[token.id]).toBe(token);
-      expect(tokensByTicker["TEST"]).toBe(token);
       expect(tokensByAddress["0x123"]).toBe(token);
       expect(tokensByCurrencyAddress["ethereum:0x123"]).toBe(token);
       expect(tokensByCryptoCurrency["ethereum"]).toContain(token);
@@ -352,7 +350,9 @@ describe("Legacy Utils", () => {
 
       addTokens([token1, token2]);
 
-      expect(tokensByTicker["TEST"]).toBe(token1); // First one wins
+      // Both tokens should be added successfully
+      expect(tokensById[token1.id]).toBe(token1);
+      expect(tokensById[token2.id]).toBe(token2);
     });
 
     it("should handle undefined tokens", () => {
@@ -513,7 +513,6 @@ describe("Legacy Utils", () => {
       expect(Object.keys(tokensByCryptoCurrency).length).toBe(0);
       expect(Object.keys(tokensByCryptoCurrencyWithDelisted).length).toBe(0);
       expect(Object.keys(tokensById).length).toBe(0);
-      expect(Object.keys(tokensByTicker).length).toBe(0);
       expect(Object.keys(tokensByAddress).length).toBe(0);
       expect(Object.keys(tokensByCurrencyAddress).length).toBe(0);
       expect(tokenListHashes.size).toBe(0);
@@ -573,7 +572,6 @@ describe("Legacy Data", () => {
 
 describe("Legacy State", () => {
   it("should export all state objects", () => {
-    expect(tokensByTicker).toBeDefined();
     expect(tokensByAddress).toBeDefined();
     expect(tokensArray).toBeDefined();
     expect(tokensArrayWithDelisted).toBeDefined();

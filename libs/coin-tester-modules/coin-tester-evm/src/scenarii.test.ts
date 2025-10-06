@@ -21,7 +21,6 @@ setCryptoAssetsStoreForCoinFramework({
   getTokenById: legacy.getTokenById,
   findTokenById: legacy.findTokenById,
   findTokenByAddressInCurrency: legacy.findTokenByAddressInCurrency,
-  findTokenByTicker: legacy.findTokenByTicker,
 } as CryptoAssetsStore);
 
 // Note this config runs with NanoX

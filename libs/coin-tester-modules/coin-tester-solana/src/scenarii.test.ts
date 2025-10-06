@@ -18,7 +18,6 @@ setCryptoAssetsStoreGetter(() => ({
   getTokenById: legacy.getTokenById,
   findTokenById: legacy.findTokenById,
   findTokenByAddressInCurrency: legacy.findTokenByAddressInCurrency,
-  findTokenByTicker: legacy.findTokenByTicker,
 }));
 
 describe("Solana Deterministic Tester", () => {

@@ -23,12 +23,7 @@ import {
   convertAptFaTokens,
   convertHederaTokens,
 } from "./legacy/legacy-utils";
-import {
-  tokensByAddress,
-  tokensByCurrencyAddress,
-  tokensById,
-  tokensByTicker,
-} from "./legacy/legacy-state";
+import { tokensByAddress, tokensByCurrencyAddress, tokensById } from "./legacy/legacy-state";
 import { initializeLegacyTokens } from "./legacy/legacy-data";
 
 export {
@@ -50,13 +45,6 @@ export {
 };
 
 initializeLegacyTokens(addTokens);
-
-/**
- * @deprecated this function must not be used and will be replaced by `getCryptoAssetsStore().findTokenById(id)` in https://github.com/LedgerHQ/ledger-live/pull/11905
- */
-export function findTokenByTicker(ticker: string): TokenCurrency | undefined {
-  return tokensByTicker[ticker];
-}
 
 /**
  * @deprecated Please do `await getCryptoAssetsStore().findTokenById(id)` instead to anticipate https://github.com/LedgerHQ/ledger-live/pull/11905
