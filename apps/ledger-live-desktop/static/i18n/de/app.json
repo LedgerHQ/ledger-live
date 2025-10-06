@@ -464,12 +464,16 @@
       "apt_description" : "Zum Swappen von Aptos müsstest du ein anderes kompatibles Ledger-Gerät verwenden, z. B. eine Ledger Nano S Plus™, eine Ledger Nano X™, eine Ledger Flex™ oder eine Ledger Stax™.",
       "cosmos_title" : "Ledger Nano S™ unterstützt das Swappen von Cosmos nicht",
       "cosmos_description" : "Zum Swappen von Cosmos müsstest du ein anderes kompatibles Ledger-Gerät verwenden, z. B. eine Ledger Nano S Plus™, eine Ledger Nano X™, eine Ledger Flex™ oder eine Ledger Stax™.",
+      "hedera_title" : "Ledger Nano S™ unterstützt das Swappen von Hedera nicht",
+      "hedera_description" : "Zum Swappen von Hedera musst du ein anderes kompatibles Ledger-Gerät verwenden, z. B. eine Ledger Nano S Plus™, eine Ledger Nano X™, eine Ledger Flex™ oder eine Ledger Stax™.",
       "osmo_title" : "Ledger Nano S™ unterstützt das Swappen von Osmosis nicht",
       "osmo_description" : "Zum Swappen von Osmosis musst du ein anderes kompatibles Ledger-Gerät verwenden, z. B. eine Ledger Nano S Plus™, eine Ledger Nano X™, eine Ledger Flex™ oder eine Ledger Stax™.",
       "dydx_title" : "Ledger Nano S™ unterstützt das Swappen von dYdX nicht",
       "dydx_description" : "Zum Swappen von dYdX musst du ein anderes kompatibles Ledger-Gerät verwenden, z. B. eine Ledger Nano S Plus™, eine Ledger Nano X™, eine Ledger Flex™ oder eine Ledger Stax™.",
       "sui_title" : "Die Ledger Nano S™ unterstützt das Swappen von Sui nicht",
-      "sui_description" : "Zum Swappen von Sui kannst du jedes sonstige kompatible Ledger-Gerät nutzen, z. B. eine Ledger Nano S Plus™, eine Ledger Nano X™, eine Ledger Flex™ oder eine Ledger Stax™."
+      "sui_description" : "Zum Swappen von Sui kannst du jedes sonstige kompatible Ledger-Gerät nutzen, z. B. eine Ledger Nano S Plus™, eine Ledger Nano X™, eine Ledger Flex™ oder eine Ledger Stax™.",
+      "kaspa_title" : "Ledger Nano S™ unterstützt das Swappen von Kaspa nicht",
+      "kaspa_description" : "Zum Swappen von Kaspa musst du ein anderes kompatibles Ledger-Gerät verwenden, z. B. eine Ledger Nano S Plus™, eine Ledger Nano X™, eine Ledger Flex™ oder eine Ledger Stax™."
     },
     "providers" : {
       "title" : "Wähle einen Anbieter für das Swappen von Kryptowährungen",
@@ -2246,6 +2250,7 @@
   "receive" : {
     "title" : "Empfangen",
     "successTitle" : "Adresse sicher freigegeben",
+    "connectToNoah" : "Connecting you to Noah",
     "steps" : {
       "options" : {
         "fromBank" : {
@@ -5023,6 +5028,12 @@
     },
     "screens" : {
       "welcome" : {
+        "videos" : {
+          "buySell" : "Eine Wallet, die dich schützt und dir die Kontrolle gibt",
+          "thousandsCrypto" : "Tausende Krypto-Assets senden, empfangen, swappen und staken",
+          "secureWallet" : "Alle Transaktionen zweifelsfrei bestätigen"
+        },
+        "notice" : "Wenn du fortfährst, stimmst du den <Link1>Allgemeinen Geschäftsbedingungen</Link1> und der <Link2>Datenschutzrichtlinie</Link2> von Ledger zu. Ledger bietet keinerlei finanzielle Beratung an.\nSwap- und Staking-Leistungen werden von Dritten erbracht.",
         "title" : "Die sicherste Wallet für Kryptowährungen & NFTs",
         "description" : "Verwalten, kaufen und vermehren Sie Ihre Krypto und NFTs auf Ledger Live.",
         "nextButton" : "Erste Schritte",
@@ -5710,7 +5721,34 @@
     },
     "canton" : {
       "commentPlaceholder" : "Optional",
-      "comment" : "Kommentar"
+      "comment" : "Kommentar",
+      "addAccount" : {
+        "title" : "Add Canton Account",
+        "onboard" : {
+          "title" : "Onboarding",
+          "newAccount" : "New Account",
+          "init" : "Set up your new Canton account by clicking Continue",
+          "onboarded" : "Onboarded accounts",
+          "success" : "Your new Canton account has been created and onboarded.",
+          "error" : "Failed to onboard new account. Please try again.",
+          "status" : {
+            "prepare" : "Preparing account onboarding...",
+            "submit" : "Onboarding account...",
+            "default" : "Processing..."
+          }
+        },
+        "auth" : {
+          "title" : "Authorization",
+          "validator" : "Authorize",
+          "hint" : "Automaticaly accept incoming funds to this account.",
+          "error" : "Authorization failed. Please try again.",
+          "validatorLabel" : "Ledger Validator",
+          "validatorDescription" : "Automated fund acceptance"
+        },
+        "finish" : {
+          "title" : "Confirmation"
+        }
+      }
     },
     "stellar" : {
       "memo" : "Memo",
