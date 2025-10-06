@@ -57,7 +57,6 @@ describe("StepRecipient", () => {
         signed={false}
         updateTransaction={() => {}}
         currencyName={null}
-        shouldSkipAmount={false}
       />,
     );
 
@@ -109,7 +108,6 @@ describe("StepRecipient", () => {
         signed={false}
         updateTransaction={() => {}}
         currencyName={null}
-        shouldSkipAmount={false}
       />,
     );
 
