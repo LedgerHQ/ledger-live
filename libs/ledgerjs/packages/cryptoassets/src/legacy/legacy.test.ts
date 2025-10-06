@@ -179,7 +179,7 @@ describe("Legacy Utils", () => {
     });
 
     it("should convert Sui token", () => {
-      const suiToken: SuiToken = ["sui/test", "Test Token", "TEST", "0x123", 9];
+      const suiToken: SuiToken = ["sui/test", "Test Token", "TEST", "0x123", 9, "signature"];
       const result = convertSuiTokens(suiToken);
       expect(result.type).toBe("TokenCurrency");
       expect(result.tokenType).toBe("sui");

@@ -1,9 +1,10 @@
 export type SuiToken = [
-  string, // CAL id
+  string, // id
   string, // name
   string, // ticker
   string, // address
   number, // decimals
+  string, // live_signature
 ];
 
 import tokens from "./sui.json";

@@ -276,13 +276,21 @@ export function convertAptFaTokens(token: AptosFAToken): TokenCurrency {
 /**
  * @deprecated
  */
-export function convertSuiTokens([id, name, ticker, address, decimals]: SuiToken): TokenCurrency {
+export function convertSuiTokens([
+  id,
+  name,
+  ticker,
+  address,
+  decimals,
+  ledgerSignature,
+]: SuiToken): TokenCurrency {
   return {
     type: "TokenCurrency",
     id,
     contractAddress: address,
     parentCurrency: getCryptoCurrencyById("sui"),
     name,
+    ledgerSignature,
     tokenType: "sui",
     ticker,
     disableCountervalue: false,
