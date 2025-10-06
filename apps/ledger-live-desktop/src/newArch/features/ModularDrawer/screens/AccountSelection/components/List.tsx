@@ -5,7 +5,7 @@ import { ListWrapper } from "../../../components/ListWrapper";
 import { useModularDrawerAnalytics } from "../../../analytics/useModularDrawerAnalytics";
 import { MODULAR_DRAWER_PAGE_NAME } from "../../../analytics/modularDrawer.types";
 import { AccountTuple } from "@ledgerhq/live-common/utils/getAccountTuplesForCurrency";
-import { RawDetailedAccount } from "../../../utils/formatDetailedAccount";
+import { BaseRawDetailedAccount } from "@ledgerhq/live-common/modularDrawer/types/detailedAccount";
 import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/formatCurrencyUnit";
 import { useSelector } from "react-redux";
 import { localeSelector, discreetModeSelector } from "~/renderer/reducers/settings";
@@ -13,7 +13,7 @@ import { localeSelector, discreetModeSelector } from "~/renderer/reducers/settin
 type SelectAccountProps = {
   onAccountSelected: (account: AccountLike, parentAccount?: Account) => void;
   accounts: AccountTuple[];
-  detailedAccounts: RawDetailedAccount[];
+  detailedAccounts: BaseRawDetailedAccount[];
   bottomComponent: React.ReactNode;
 };
 
@@ -34,7 +34,7 @@ export const SelectAccountList = ({
     return detailedAccounts.map(account => ({
       ...account,
       balance:
-        account.balance && account.balanceUnit
+        account.balance !== undefined && account.balance !== null && account.balanceUnit
           ? formatCurrencyUnit(account.balanceUnit, account.balance, {
               showCode: true,
               discreet,

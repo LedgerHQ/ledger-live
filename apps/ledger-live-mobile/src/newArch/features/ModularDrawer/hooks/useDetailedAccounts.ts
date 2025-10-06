@@ -4,10 +4,8 @@ import { Observable } from "rxjs";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { WalletAPIAccount } from "@ledgerhq/live-common/wallet-api/types";
 import { useGetAccountIds } from "@ledgerhq/live-common/wallet-api/react";
-import { getTagDerivationMode } from "@ledgerhq/coin-framework/derivation";
 import { useCountervaluesState } from "@ledgerhq/live-countervalues-react";
 import orderBy from "lodash/orderBy";
-import keyBy from "lodash/keyBy";
 import { accountsSelector } from "~/reducers/accounts";
 import { counterValueCurrencySelector, discreetModeSelector } from "~/reducers/settings";
 import { useModularDrawerAnalytics, MODULAR_DRAWER_PAGE_NAME } from "../analytics";
@@ -18,24 +16,16 @@ import {
   AccountTuple,
 } from "@ledgerhq/live-common/utils/getAccountTuplesForCurrency";
 import { AccountLike } from "@ledgerhq/types-live";
-import { calculate } from "@ledgerhq/live-countervalues/logic";
 import { formatCurrencyUnit } from "@ledgerhq/coin-framework/lib-es/currencies/formatCurrencyUnit";
 import BigNumber from "bignumber.js";
 import { formatAddress } from "../../Accounts/utils/formatAddress";
+import { ExtendedRawDetailedAccount } from "@ledgerhq/live-common/modularDrawer/types/detailedAccount";
+import { useDetailedAccountsCore } from "@ledgerhq/live-common/modularDrawer/hooks/useDetailedAccountsCore";
 
-// Extended account type that includes raw data for UI formatting
-export type RawDetailedAccount = {
-  id: string;
-  name: string;
-  ticker: string;
-  account: AccountLike;
-  parentAccount?: AccountLike;
-  protocol?: string;
-  parentId?: string;
-  fiatValue: string;
-  balance: string;
-  address: string;
-  cryptoId: string;
+// Mobile-specific detailed account type that includes formatted strings for UI
+export type RawDetailedAccount = Omit<ExtendedRawDetailedAccount, "fiatValue" | "balance"> & {
+  fiatValue: string; // Formatted fiat value string
+  balance: string; // Formatted balance string
 };
 
 export const useDetailedAccounts = (
@@ -46,7 +36,7 @@ export const useDetailedAccounts = (
   accounts$?: Observable<WalletAPIAccount[]>,
 ) => {
   const { trackModularDrawerEvent } = useModularDrawerAnalytics();
-  const state = useCountervaluesState();
+  const counterValuesState = useCountervaluesState();
   const counterValueCurrency = useSelector(counterValueCurrencySelector);
   const accountIds = useGetAccountIds(accounts$);
   const nestedAccounts = useSelector(accountsSelector);
@@ -61,109 +51,71 @@ export const useDetailedAccounts = (
 
   const overridedAccountName = useBatchMaybeAccountName(accounts.map(({ account }) => account));
 
-  // Helper function to calculate fiat value for an account
-  const calculateFiatValue = useCallback(
-    (account: AccountLike): number => {
-      const currency = account.type === "Account" ? account.currency : account.token;
-      const fiatValue = calculate(state, {
-        from: currency,
-        to: counterValueCurrency,
-        value: account.balance.toNumber(),
-      });
-      return fiatValue || 0;
-    },
-    [state, counterValueCurrency],
+  // Use the shared core hook for detailed accounts logic
+  const { createExtendedDetailedAccounts } = useDetailedAccountsCore(
+    counterValuesState,
+    counterValueCurrency,
   );
 
   const detailedAccounts = useMemo((): RawDetailedAccount[] => {
-    const accountNameMap = keyBy(
-      accounts
-        .map(({ account }, index) => ({
-          id: account.id,
-          name: overridedAccountName[index],
-        }))
-        .filter(item => item.name),
-      "id",
-    );
-
-    const rawAccounts = accounts.map(tuple => {
-      const { account, subAccount } = tuple;
-      const protocol = getTagDerivationMode(account.currency, account.derivationMode) ?? "";
-      const address = formatAddress(account.freshAddress);
-
-      if (isATokenCurrency && subAccount) {
-        const parentAccountName = accountNameMap[account.id]?.name;
-        const details = subAccount.token;
-
-        const fiatValue = formatCurrencyUnit(
-          counterValueCurrency.units[0],
-          BigNumber(calculateFiatValue(subAccount)),
-          { showCode: true, discreet },
-        );
-
-        const balance = formatCurrencyUnit(subAccount.token.units[0], subAccount.balance, {
-          showCode: true,
-          discreet,
-        });
-
-        const cryptoId = subAccount.token.id;
-
-        return {
-          id: subAccount.id,
-          name: parentAccountName ?? details.name,
-          ticker: details.ticker,
-          account: subAccount,
-          parentAccount: account,
-          parentId: details.parentCurrency.id,
-          fiatValue,
-          balance,
-          address,
-          cryptoId,
-        };
-      } else {
-        const accountName = accountNameMap[account.id]?.name;
-        const details = account.currency;
-
-        const fiatValue = formatCurrencyUnit(
-          counterValueCurrency.units[0],
-          BigNumber(calculateFiatValue(account)),
-          { showCode: true, discreet },
-        );
-
-        const balance = formatCurrencyUnit(account.currency.units[0], account.balance, {
-          showCode: true,
-          discreet,
-        });
-
-        const cryptoId = account.currency.id;
-
-        return {
-          id: account.id,
-          name: accountName ?? details.name,
-          ticker: details.ticker,
-          account,
-          protocol,
-          fiatValue,
-          balance,
-          address,
-          cryptoId,
-        };
+    const accountNameMap: Record<string, string> = {};
+    for (const [index, { account }] of accounts.entries()) {
+      const name = overridedAccountName[index];
+      if (name) {
+        accountNameMap[account.id] = name;
       }
+    }
+
+    // Get the base extended detailed accounts from shared logic
+    const extendedAccounts = createExtendedDetailedAccounts({
+      asset,
+      accountTuples: accounts,
+      accountNameMap,
+      isTokenCurrency: isATokenCurrency,
     });
 
-    // Sort by fiat value instead of balance
-    return rawAccounts.sort((a, b) => {
-      const fiatValueA = calculateFiatValue(a.account);
-      const fiatValueB = calculateFiatValue(b.account);
-      return fiatValueB - fiatValueA; // Descending order
+    // Add mobile-specific formatting for fiat value and balance
+    return extendedAccounts.map((extendedAccount): RawDetailedAccount => {
+      const { account, parentAccount } = extendedAccount;
+      // Get address from account, fallback to extendedAccount address
+      const accountAddress =
+        account.type === "Account" ? account.freshAddress : extendedAccount.address;
+      const address = formatAddress(accountAddress);
+
+      const fiatValue = formatCurrencyUnit(
+        counterValueCurrency.units[0],
+        BigNumber(extendedAccount.fiatValue),
+        { showCode: true, discreet },
+      );
+
+      const balance = formatCurrencyUnit(extendedAccount.balanceUnit, extendedAccount.balance, {
+        showCode: true,
+        discreet,
+      });
+
+      return {
+        id: extendedAccount.id,
+        name: extendedAccount.name,
+        ticker: extendedAccount.ticker,
+        balance: balance, // Formatted string for mobile UI
+        balanceUnit: extendedAccount.balanceUnit,
+        fiatValue: fiatValue, // Formatted string for mobile UI
+        address,
+        cryptoId: extendedAccount.cryptoId,
+        parentId: extendedAccount.parentId,
+        account,
+        parentAccount,
+        protocol: extendedAccount.protocol,
+      };
     });
   }, [
     accounts,
     overridedAccountName,
     isATokenCurrency,
     counterValueCurrency.units,
-    calculateFiatValue,
     discreet,
+    createExtendedDetailedAccounts,
+    asset,
   ]);
 
   const handleAccountSelected = useCallback(
