@@ -3433,6 +3433,17 @@
       "shareAddress" : "Compartilhar Endereço",
       "addressCopied" : "Endereço copiado para a área de transferência",
       "taprootWarning" : "Certifique-se de que o remetente é compatível com taproot",
+      "connectToNoah" : "Connecting you to Noah",
+      "menu" : {
+        "crypto" : {
+          "title" : "De um endereço cripto",
+          "description" : "Recarregue sua carteira com qualquer criptomoeda."
+        },
+        "fiat" : {
+          "title" : "De uma conta bancária",
+          "description" : "Recarregue com USDC por uma transferência bancária em EUR ou USD. Requer KYC."
+        }
+      },
       "memoTag" : {
         "link" : "Precisa de uma tag ou memo?",
         "title" : "Precisa de uma tag ou memo?",
@@ -3766,12 +3777,16 @@
         "apt_description" : "Para trocar o ativo APTOS, use qualquer outro dispositivo Ledger compatível, como a Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™.",
         "cosmos_title" : "A Ledger Nano S™ não é compatível com a troca de Cosmos",
         "cosmos_description" : "Para trocar Cosmos, use qualquer outro dispositivo Ledger compatível, como a Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™.",
+        "hedera_title" : "A Ledger Nano S™ não é compatível com trocas de Hedera",
+        "hedera_description" : "Para trocar o ativo Hedera, use qualquer outro dispositivo Ledger compatível, como a Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™.",
         "osmo_title" : "A Ledger Nano S™ não é compatível com a troca de Osmosis",
         "osmo_description" : "Para trocar Osmosis, use qualquer outro dispositivo Ledger compatível, como a Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™.",
         "dydx_title" : "A Ledger Nano S™ não é compatível com trocas de dYdX",
         "dydx_description" : "Para trocar o ativo dYdX, use qualquer outro dispositivo Ledger compatível, como a Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™.",
         "sui_title" : "A Ledger Nano S™ não é compatível com a troca de Sui",
-        "sui_description" : "Para trocar Sui, use qualquer outro dispositivo Ledger compatível, como a Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™."
+        "sui_description" : "Para trocar Sui, use qualquer outro dispositivo Ledger compatível, como a Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™.",
+        "kaspa_title" : "A Ledger Nano S™ não é compatível com a troca de Kaspa",
+        "kaspa_description" : "Para trocar Kaspa, use qualquer outro dispositivo Ledger compatível, como a Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™."
       }
     },
     "lending" : {
@@ -7198,9 +7213,10 @@
     "title" : "Imagem da tela de bloqueio",
     "change" : "Variação",
     "drawer" : {
+      "title" : "Tela de bloqueio personalizada",
       "options" : {
-        "uploadFromPhone" : "Escolher na minha galeria de imagens",
-        "remove" : "Remover a imagem atual"
+        "uploadFromPhone" : "Alterar foto",
+        "remove" : "Excluir tela de bloqueio"
       }
     },
     "toastRemove" : "Imagem da tela de bloqueio removida",
