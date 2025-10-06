@@ -3433,6 +3433,17 @@
       "shareAddress" : "Adresse teilen",
       "addressCopied" : "Adresse in Zwischenablage kopiert",
       "taprootWarning" : "Stellen Sie sicher, dass der Absender taproot unterstützt",
+      "connectToNoah" : "Connecting you to Noah",
+      "menu" : {
+        "crypto" : {
+          "title" : "Von einer Kryptoadresse",
+          "description" : "Lade deine Wallet mit beliebigen Kryptos auf."
+        },
+        "fiat" : {
+          "title" : "Von einem Bankkonto",
+          "description" : "Lade USDC per EUR- oder USD-Banküberweisung auf. Erfordert KYC-Verfahren."
+        }
+      },
       "memoTag" : {
         "link" : "Brauchst du ein Tag/Memo?",
         "title" : "Brauchst du ein Tag/Memo?",
@@ -3766,12 +3777,16 @@
         "apt_description" : "Zum Swappen von Aptos müsstest du ein anderes kompatibles Ledger-Gerät verwenden, z. B. eine Ledger Nano S Plus™, eine Ledger Nano X™, eine Ledger Flex™ oder eine Ledger Stax™.",
         "cosmos_title" : "Ledger Nano S™ unterstützt das Swappen von Cosmos nicht",
         "cosmos_description" : "Zum Swappen von Cosmos müsstest du ein anderes kompatibles Ledger-Gerät verwenden, z. B. eine Ledger Nano S Plus™, eine Ledger Nano X™, eine Ledger Flex™ oder eine Ledger Stax™.",
+        "hedera_title" : "Ledger Nano S™ unterstützt das Swappen von Hedera nicht",
+        "hedera_description" : "Zum Swappen von Hedera musst du ein anderes kompatibles Ledger-Gerät verwenden, z. B. eine Ledger Nano S Plus™, eine Ledger Nano X™, eine Ledger Flex™ oder eine Ledger Stax™.",
         "osmo_title" : "Ledger Nano S™ unterstützt das Swappen von Osmosis nicht",
         "osmo_description" : "Zum Swappen von Osmosis musst du ein anderes kompatibles Ledger-Gerät verwenden, z. B. eine Ledger Nano S Plus™, eine Ledger Nano X™, eine Ledger Flex™ oder eine Ledger Stax™.",
         "dydx_title" : "Ledger Nano S™ unterstützt das Swappen von dYdX nicht",
         "dydx_description" : "Zum Swappen von dYdX musst du ein anderes kompatibles Ledger-Gerät verwenden, z. B. eine Ledger Nano S Plus™, eine Ledger Nano X™, eine Ledger Flex™ oder eine Ledger Stax™.",
         "sui_title" : "Die Ledger Nano S™ unterstützt das Swappen von Sui nicht",
-        "sui_description" : "Zum Swappen von Sui kannst du jedes sonstige kompatible Ledger-Gerät nutzen, z. B. eine Ledger Nano S Plus™, eine Ledger Nano X™, eine Ledger Flex™ oder eine Ledger Stax™."
+        "sui_description" : "Zum Swappen von Sui kannst du jedes sonstige kompatible Ledger-Gerät nutzen, z. B. eine Ledger Nano S Plus™, eine Ledger Nano X™, eine Ledger Flex™ oder eine Ledger Stax™.",
+        "kaspa_title" : "Ledger Nano S™ unterstützt das Swappen von Kaspa nicht",
+        "kaspa_description" : "Zum Swappen von Kaspa musst du ein anderes kompatibles Ledger-Gerät verwenden, z. B. eine Ledger Nano S Plus™, eine Ledger Nano X™, eine Ledger Flex™ oder eine Ledger Stax™."
       }
     },
     "lending" : {
@@ -7198,9 +7213,10 @@
     "title" : "Bild für Bildschirmsperre",
     "change" : "Ändern",
     "drawer" : {
+      "title" : "Individueller Sperrbildschirm",
       "options" : {
-        "uploadFromPhone" : "Aus meiner Bildergalerie auswählen",
-        "remove" : "Aktuelles Bild entfernen"
+        "uploadFromPhone" : "Bild wechseln",
+        "remove" : "Sperrbildschirm löschen"
       }
     },
     "toastRemove" : "Bild für Sperrbildschirm entfernt",
