@@ -9,7 +9,7 @@ import { findCurrencyByTicker } from "./findCurrencyByTicker";
 import {
   getFiatCurrencyByTicker,
   getCryptoCurrencyById,
-  getTokenById,
+  findTokenById,
 } from "@ledgerhq/cryptoassets";
 import { getBTCValues } from "./mock";
 import { Currency } from "@ledgerhq/types-cryptoassets";
@@ -160,7 +160,8 @@ describe("extreme cases", () => {
 describe("WETH rules", () => {
   // this test is created to confirm the recent removal of weth/eth specific management is still functional in v3 context
   test("ethereum WETH have countervalues", async () => {
-    const weth = getTokenById("ethereum/erc20/weth");
+    const weth = findTokenById("ethereum/erc20/weth");
+    if (!weth) throw new Error("WETH token not found");
     const state = await loadCountervalues(initialState, {
       trackingPairs: [
         {
@@ -188,7 +189,8 @@ describe("HTTP 422 management of unsupported rates", () => {
   // context of this test: https://ledgerhq.atlassian.net/browse/LIVE-11339
   test("a cache that was accumulated needs to be cleared when a coin becomes disabled", async () => {
     // for this test, we start with weth
-    const weth = getTokenById("ethereum/erc20/weth");
+    const weth = findTokenById("ethereum/erc20/weth");
+    if (!weth) throw new Error("WETH token not found");
     let state = await loadCountervalues(initialState, {
       trackingPairs: [
         {
@@ -209,7 +211,8 @@ describe("HTTP 422 management of unsupported rates", () => {
     });
     expect(value).toBeGreaterThan(0);
     // we will now alter the state to replace the weth token to sether that we know has been disabled by the api
-    const sether = getTokenById("ethereum/erc20/sether");
+    const sether = findTokenById("ethereum/erc20/sether");
+    if (!sether) throw new Error("sETHER token not found");
     const prevKey = pairId({ from: weth, to: usd });
     const nextKey = pairId({ from: sether, to: usd });
     function mutateVisit(o: any) {

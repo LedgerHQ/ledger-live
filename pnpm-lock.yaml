@@ -5883,6 +5883,9 @@ importers:
       '@ledgerhq/live-env':
         specifier: workspace:^
         version: link:../../../env
+      '@ledgerhq/types-live':
+        specifier: workspace:^
+        version: link:../types-live
       axios:
         specifier: 1.11.0
         version: 1.11.0
