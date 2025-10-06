@@ -160,11 +160,16 @@ async function runMonitorCommand(options: CommandLineOptions) {
   }
 
   if (options.isolated) {
+    let atLeastOneProcessFailed = false;
     for (const currency of monitoredCurrencies) {
       for (const accountType of accountTypes) {
         try {
           await runIsolatedMonitor(currency, accountType);
         } catch (error) {
+          if (!atLeastOneProcessFailed) {
+            atLeastOneProcessFailed = true;
+          }
+
           console.error(
             `Process failed for currency ${currency} and account type ${accountType} with error ${error}`,
           );
@@ -173,7 +178,7 @@ async function runMonitorCommand(options: CommandLineOptions) {
       }
     }
 
-    process.exit(0);
+    process.exit(atLeastOneProcessFailed ? 1 : 0);
   }
 
   try {
