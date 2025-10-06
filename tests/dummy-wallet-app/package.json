@@ -13,8 +13,8 @@
     "@solana/web3.js": "1.95.4",
     "bignumber.js": "^9.1.2",
     "buffer": "^6.0.3",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react": "catalog:",
+    "react-dom": "catalog:"
   },
   "scripts": {
     "start": "vite",

@@ -4,6 +4,18 @@ settings:
   autoInstallPeers: false
   excludeLinksFromLockfile: false
 
+catalogs:
+  default:
+    react:
+      specifier: 18.3.1
+      version: 18.3.1
+    react-dom:
+      specifier: 18.3.1
+      version: 18.3.1
+    react-test-renderer:
+      specifier: 18.3.1
+      version: 18.3.1
+
 overrides:
   node-abi: ^4.9.0
   stellar-base>sodium-native: ^3.2.1
@@ -285,10 +297,10 @@ importers:
         specifier: 0.12.0
         version: 0.12.0
       react:
-        specifier: 18.3.1
+        specifier: 'catalog:'
         version: 18.3.1
       react-dom:
-        specifier: 18.3.1
+        specifier: 'catalog:'
         version: 18.3.1(react@18.3.1)
       rxjs:
         specifier: 7.8.1
@@ -354,6 +366,9 @@ importers:
       tsup:
         specifier: 7.3.0
         version: 7.3.0(ts-node@10.9.2(@types/node@22.10.10)(typescript@5.4.3))(typescript@5.4.3)
+      yaml:
+        specifier: 2.8.1
+        version: 2.8.1
     publishDirectory: dist
 
   apps/ledger-live-desktop:
@@ -545,10 +560,10 @@ importers:
         specifier: 1.5.3
         version: 1.5.3
       react:
-        specifier: 18.3.1
+        specifier: 'catalog:'
         version: 18.3.1
       react-dom:
-        specifier: 18.3.1
+        specifier: 'catalog:'
         version: 18.3.1(react@18.3.1)
       react-easy-crop:
         specifier: 4.7.5
@@ -876,7 +891,7 @@ importers:
         specifier: 0.14.0
         version: 0.14.0
       react-test-renderer:
-        specifier: 18.3.1
+        specifier: 'catalog:'
         version: 18.3.1(react@18.3.1)
       serve-handler:
         specifier: 6.1.5
@@ -1182,7 +1197,7 @@ importers:
         specifier: 15.8.1
         version: 15.8.1
       react:
-        specifier: 18.3.1
+        specifier: 'catalog:'
         version: 18.3.1
       react-i18next:
         specifier: 11.18.6
@@ -1603,7 +1618,7 @@ importers:
         specifier: 5.1.2
         version: 5.1.2(react-native@0.77.3(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1))
       react-test-renderer:
-        specifier: 18.3.1
+        specifier: 'catalog:'
         version: 18.3.1(react@18.3.1)
       reactotron-core-client:
         specifier: 2.9.7
@@ -1729,10 +1744,10 @@ importers:
         specifier: ^6.9.11
         version: 6.9.11(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       react:
-        specifier: ^18.3.1
+        specifier: 'catalog:'
         version: 18.3.1
       react-dom:
-        specifier: ^18.3.1
+        specifier: 'catalog:'
         version: 18.3.1(react@18.3.1)
       react-dropzone:
         specifier: '14'
@@ -2321,7 +2336,7 @@ importers:
         specifier: ^29.7.0
         version: 29.7.0
       react:
-        specifier: ^18.3.1
+        specifier: 'catalog:'
         version: 18.3.1
       ts-jest:
         specifier: ^29.2.5
@@ -4883,10 +4898,10 @@ importers:
         specifier: ^29.7.0
         version: 29.7.0
       react:
-        specifier: ^18.2.0
+        specifier: 'catalog:'
         version: 18.3.1
       react-dom:
-        specifier: ^18.2.0
+        specifier: 'catalog:'
         version: 18.3.1(react@18.3.1)
       ts-jest:
         specifier: ^29.1.1
@@ -4934,10 +4949,10 @@ importers:
         specifier: ^2.1.1
         version: 2.1.1
       react:
-        specifier: ^18.2.0
+        specifier: 'catalog:'
         version: 18.3.1
       react-dom:
-        specifier: ^18.2.0
+        specifier: 'catalog:'
         version: 18.3.1(react@18.3.1)
     devDependencies:
       '@ledgerhq/types-cryptoassets':
@@ -4971,7 +4986,7 @@ importers:
         specifier: ^29.7.0
         version: 29.7.0
       react-test-renderer:
-        specifier: ^18.2.0
+        specifier: 'catalog:'
         version: 18.3.1(react@18.3.1)
       ts-jest:
         specifier: ^29.1.1
@@ -5704,10 +5719,10 @@ importers:
         specifier: ^13.0.5
         version: 13.5.4
       react:
-        specifier: 18.3.1
+        specifier: 'catalog:'
         version: 18.3.1
       react-dom:
-        specifier: 18.3.1
+        specifier: 'catalog:'
         version: 18.3.1(react@18.3.1)
       react-native:
         specifier: 0.77.2
@@ -5719,7 +5734,7 @@ importers:
         specifier: ^7.2.9
         version: 7.2.9(@types/react@18.2.73)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       react-test-renderer:
-        specifier: ^18.2.0
+        specifier: 'catalog:'
         version: 18.3.1(react@18.3.1)
       redux-actions:
         specifier: 2.6.5
@@ -7998,10 +8013,10 @@ importers:
         specifier: ^29.7.0
         version: 29.7.0
       react:
-        specifier: ^18.2.0
+        specifier: 'catalog:'
         version: 18.3.1
       react-dom:
-        specifier: ^18.2.0
+        specifier: 'catalog:'
         version: 18.3.1(react@18.3.1)
       ts-jest:
         specifier: ^29.1.1
@@ -8053,10 +8068,10 @@ importers:
         specifier: 25.0.1
         version: 25.0.1
       react:
-        specifier: ^18.3.1
+        specifier: 'catalog:'
         version: 18.3.1
       react-dom:
-        specifier: ^18.3.1
+        specifier: 'catalog:'
         version: 18.3.1(react@18.3.1)
       rxjs:
         specifier: ^7.8.1
@@ -8120,10 +8135,10 @@ importers:
         specifier: 25.0.1
         version: 25.0.1
       react:
-        specifier: ^18.3.1
+        specifier: 'catalog:'
         version: 18.3.1
       react-dom:
-        specifier: ^18.3.1
+        specifier: 'catalog:'
         version: 18.3.1(react@18.3.1)
       react-native:
         specifier: 0.77.2
@@ -8193,10 +8208,10 @@ importers:
         specifier: 25.0.1
         version: 25.0.1
       react:
-        specifier: ^18.3.1
+        specifier: 'catalog:'
         version: 18.3.1
       react-dom:
-        specifier: ^18.3.1
+        specifier: 'catalog:'
         version: 18.3.1(react@18.3.1)
       rxjs:
         specifier: ^7.8.1
@@ -8226,10 +8241,10 @@ importers:
         specifier: ^29.7.0
         version: 29.7.0
       react:
-        specifier: ^18.2.0
+        specifier: 'catalog:'
         version: 18.3.1
       react-dom:
-        specifier: ^18.2.0
+        specifier: 'catalog:'
         version: 18.3.1(react@18.3.1)
       ts-jest:
         specifier: ^29.1.1
@@ -8609,10 +8624,10 @@ importers:
         specifier: 13.2.4
         version: 13.2.4(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       react:
-        specifier: 18.3.1
+        specifier: 'catalog:'
         version: 18.3.1
       react-dom:
-        specifier: 18.3.1
+        specifier: 'catalog:'
         version: 18.3.1(react@18.3.1)
       react-is:
         specifier: '*'
@@ -8631,10 +8646,10 @@ importers:
         specifier: workspace:^
         version: link:../../packages/react
       react:
-        specifier: ^18.2.0
+        specifier: 'catalog:'
         version: 18.3.1
       react-dom:
-        specifier: ^18.2.0
+        specifier: 'catalog:'
         version: 18.3.1(react@18.3.1)
       react-is:
         specifier: '*'
@@ -8716,7 +8731,7 @@ importers:
         specifier: ^7.2.0
         version: 7.2.3
       react:
-        specifier: ^18.2.0
+        specifier: 'catalog:'
         version: 18.3.1
       react-native-svg:
         specifier: 15.11.2
@@ -8764,7 +8779,7 @@ importers:
         specifier: ^7.2.0
         version: 7.2.3
       react:
-        specifier: ^18.2.0
+        specifier: 'catalog:'
         version: 18.3.1
       react-native-svg:
         specifier: 15.11.2
@@ -9071,10 +9086,10 @@ importers:
         specifier: ^15.8.1
         version: 15.8.1
       react:
-        specifier: ^18.2.0
+        specifier: 'catalog:'
         version: 18.3.1
       react-dom:
-        specifier: ^18.2.0
+        specifier: 'catalog:'
         version: 18.3.1(react@18.3.1)
       react-is:
         specifier: ^18
@@ -9315,10 +9330,10 @@ importers:
         specifier: 0.3.0
         version: 0.3.0
       react:
-        specifier: ^18.2.0
+        specifier: 'catalog:'
         version: 18.3.1
       react-dom:
-        specifier: ^18.2.0
+        specifier: 'catalog:'
         version: 18.3.1(react@18.3.1)
       rimraf:
         specifier: ^4.4.1
@@ -9387,10 +9402,10 @@ importers:
         specifier: ^0.8.0
         version: 0.8.2
       react:
-        specifier: ^18.2.0
+        specifier: 'catalog:'
         version: 18.3.1
       react-dom:
-        specifier: ^18.2.0
+        specifier: 'catalog:'
         version: 18.3.1(react@18.3.1)
       react-scripts:
         specifier: 5.0.1
@@ -9454,10 +9469,10 @@ importers:
         specifier: ^6.0.3
         version: 6.0.3(patch_hash=2xnca52oxhztvr7iaoovwclcze)
       react:
-        specifier: ^18.2.0
+        specifier: 'catalog:'
         version: 18.3.1
       react-dom:
-        specifier: ^18.2.0
+        specifier: 'catalog:'
         version: 18.3.1(react@18.3.1)
     devDependencies:
       '@types/jest':
@@ -35258,6 +35273,11 @@ packages:
   yaml@2.4.1:
     resolution: {integrity: sha512-pIXzoImaqmfOrL7teGUBt/T7ZDnyeGBWyXQBvOVhLkWLN37GXv8NMLK406UY6dS51JfcQHsmcW5cJ441bHg6Lg==}
     engines: {node: '>= 14'}
+    hasBin: true
+
+  yaml@2.8.1:
+    resolution: {integrity: sha512-lcYcMxX2PO9XMGvAJkJ3OsNMw+/7FKes7/hgerGUYWIoWu5j/+YQqcZr5JnPZWzOsEBgMbSbiSTn/dv/69Mkpw==}
+    engines: {node: '>= 14.6'}
     hasBin: true
 
   yamux-js@0.1.2:
@@ -67233,19 +67253,19 @@ snapshots:
   postcss-load-config@4.0.2:
     dependencies:
       lilconfig: 3.1.1
-      yaml: 2.4.1
+      yaml: 2.8.1
 
   postcss-load-config@4.0.2(postcss@8.5.1):
     dependencies:
       lilconfig: 3.1.1
-      yaml: 2.4.1
+      yaml: 2.8.1
     optionalDependencies:
       postcss: 8.5.1
 
   postcss-load-config@4.0.2(ts-node@10.9.2(@types/node@22.10.10)(typescript@5.4.3)):
     dependencies:
       lilconfig: 3.1.1
-      yaml: 2.4.1
+      yaml: 2.8.1
     optionalDependencies:
       ts-node: 10.9.2(@types/node@22.10.10)(typescript@5.4.3)
 
@@ -74902,6 +74922,8 @@ snapshots:
   yaml@2.3.1: {}
 
   yaml@2.4.1: {}
+
+  yaml@2.8.1: {}
 
   yamux-js@0.1.2: {}
 

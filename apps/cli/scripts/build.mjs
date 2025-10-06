@@ -3,6 +3,7 @@ import { $ } from "zx";
 import fs from "node:fs";
 import { createExportableManifest } from "@pnpm/exportable-manifest";
 import { readProjectManifestOnly } from "@pnpm/read-project-manifest";
+import yaml from "yaml";
 
 $.verbose = true; // everything works like in v7
 
@@ -22,6 +23,10 @@ fs.cpSync("lib", "dist/lib", {
 
 echo(chalk.green("Creating package.json with ledger dependencies removed"));
 
+// Read the workspace configuration to get catalog entries
+const workspaceConfig = yaml.parse(fs.readFileSync("../../pnpm-workspace.yaml", "utf8"));
+const catalogs = workspaceConfig.catalog || {};
+
 const manifest = await readProjectManifestOnly("./");
 Object.entries(manifest.dependencies).forEach(([packageName]) => {
   if (packageName.startsWith("@ledgerhq")) {
@@ -29,7 +34,9 @@ Object.entries(manifest.dependencies).forEach(([packageName]) => {
   }
 });
 
-const exportable = await createExportableManifest("./", manifest, { catalogs: [] });
+const exportable = await createExportableManifest("./", manifest, {
+  catalogs: { default: catalogs },
+});
 fs.writeFileSync("dist/package.json", JSON.stringify(exportable));
 
 echo(chalk.green("Copy the .md's to the publication folder"));
