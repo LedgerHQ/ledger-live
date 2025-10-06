@@ -9,14 +9,14 @@ const VALID_ACCOUNT_TYPES = ["pristine", "average", "big"] as const;
 const VALID_CURRENCIES = Object.keys(currencies);
 
 function isValidAccountType(value: string): value is AccountType {
-  return VALID_ACCOUNT_TYPES.includes(value as AccountType);
+  return VALID_ACCOUNT_TYPES.some(type => type === value);
 }
 
 function validateAccountTypes(value: string): AccountType[] {
   const types = value.split(",").map(t => t.trim());
   const invalidTypes = types.filter(t => !isValidAccountType(t));
 
-  if (types.some(t => !isValidAccountType(t))) {
+  if (invalidTypes.length > 0) {
     throw new Error(
       `Invalid account types: ${invalidTypes.join(", ")}. Valid types are: ${VALID_ACCOUNT_TYPES.join(", ")}`,
     );
@@ -159,10 +159,17 @@ async function runMonitorCommand(options: CommandLineOptions) {
     process.exit(0);
   }
 
-  if (options.isolated === true) {
+  if (options.isolated) {
     for (const currency of monitoredCurrencies) {
       for (const accountType of accountTypes) {
-        await runIsolatedMonitor(currency, accountType);
+        try {
+          await runIsolatedMonitor(currency, accountType);
+        } catch (error) {
+          console.error(
+            `Process failed for currency ${currency} and account type ${accountType} with error ${error}`,
+          );
+          console.log("Global process will continue...");
+        }
       }
     }
 

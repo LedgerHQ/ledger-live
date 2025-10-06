@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
     inputs:
       account_types:
-        description: comma-separated account types, separated with commas (,) (pristine, average, big)
+        description: Account types to monitor, separated with commas (,), or "pristine,average,big" (default)
         required: false
         default: "pristine,average,big"
       currencies:

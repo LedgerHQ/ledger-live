@@ -124,7 +124,7 @@ export default async function (currencyIds: string[], accountTypes: AccountType[
 
   const nbOfAccounts = currencyIds
     .flatMap(currencyId => Object.keys(currencies[currencyId].accounts))
-    .filter(type => accountTypes.includes(type as AccountType)).length;
+    .filter(currencyAccountType => accountTypes.some(type => type === currencyAccountType)).length;
   let i = 0;
   console.log(`Monitoring ${nbOfAccounts} account(s) within ${currencyIds.join(", ")}`);
 
@@ -135,7 +135,7 @@ export default async function (currencyIds: string[], accountTypes: AccountType[
     const sync = getSync(currency);
 
     for (const accountType of accountTypes) {
-      const info = monitored.accounts[accountType as AccountType]!;
+      const info = monitored.accounts[accountType];
 
       if (!info) {
         console.log(`\nSkipping currency = "${currencyId}", no account = "${accountType}"`);
