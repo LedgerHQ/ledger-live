@@ -23,7 +23,7 @@ import {
   convertAptFaTokens,
   convertHederaTokens,
 } from "./legacy/legacy-utils";
-import { tokensByAddress, tokensByCurrencyAddress, tokensById } from "./legacy/legacy-state";
+import { tokensByCurrencyAddress, tokensById } from "./legacy/legacy-state";
 import { initializeLegacyTokens } from "./legacy/legacy-data";
 
 export {
@@ -51,18 +51,6 @@ initializeLegacyTokens(addTokens);
  */
 export function findTokenById(id: string): TokenCurrency | undefined {
   return tokensById[id];
-}
-
-let deprecatedDisplayed = false;
-/**
- * @deprecated This function will be removed when https://github.com/LedgerHQ/ledger-live/pull/11905 lands
- */
-export function findTokenByAddress(address: string): TokenCurrency | undefined {
-  if (!deprecatedDisplayed) {
-    deprecatedDisplayed = true;
-    console.warn("findTokenByAddress is deprecated. use findTokenByAddressInCurrency");
-  }
-  return tokensByAddress[address.toLowerCase()];
 }
 
 /**

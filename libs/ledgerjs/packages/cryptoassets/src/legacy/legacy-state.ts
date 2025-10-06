@@ -1,7 +1,6 @@
 import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 
 // Legacy state variables that are used for the legacy implementation of CryptoAssetsStore contract
-export const tokensByAddress: Record<string, TokenCurrency> = {};
 export const tokensArray: TokenCurrency[] = [];
 export const tokensArrayWithDelisted: TokenCurrency[] = [];
 export const tokensByCryptoCurrency: Record<string, TokenCurrency[]> = {};

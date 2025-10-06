@@ -7,7 +7,6 @@ import {
   tokensByCryptoCurrencyWithDelisted,
   tokensById,
   tokensByCurrencyAddress,
-  tokensByAddress,
   tokenListHashes,
 } from "./legacy-state";
 import {
@@ -468,7 +467,6 @@ export function __clearAllLists(): void {
   __clearObject(tokensByCryptoCurrency);
   __clearObject(tokensByCryptoCurrencyWithDelisted);
   __clearObject(tokensById);
-  __clearObject(tokensByAddress);
   __clearObject(tokensByCurrencyAddress);
   tokenListHashes.clear();
 }
@@ -496,7 +494,6 @@ function removeTokenFromAllLists(token: TokenCurrency) {
 
   removeTokenFromRecord(tokensById, id);
   removeTokenFromRecord(tokensByCurrencyAddress, parentCurrency.id + ":" + lowCaseContract);
-  removeTokenFromRecord(tokensByAddress, lowCaseContract);
   removeTokenFromArray(tokensArray, id);
   removeTokenFromArray(tokensArrayWithDelisted, id);
   removeTokenFromArray(tokensByCryptoCurrency[parentCurrency.id], id);
@@ -525,7 +522,6 @@ export function addTokens(list: (TokenCurrency | undefined)[]): void {
     tokensArrayWithDelisted.push(token);
     tokensById[id] = token;
 
-    tokensByAddress[lowCaseContract] = token;
     tokensByCurrencyAddress[parentCurrency.id + ":" + lowCaseContract] = token;
 
     if (!(parentCurrency.id in tokensByCryptoCurrency)) {
