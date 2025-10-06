@@ -1829,7 +1829,7 @@
             "label" : "Ekrandaki yönergeleri okuyarak cihazınızı nasıl kullanacağınızı öğrenin."
           },
           "2" : {
-            "title" : "“Set up as new device” (Yeni cihaz olarak kur) seçeneğini onaylayın",
+            "title" : "“Yeni cihaz olarak kur” seçeneğini onaylayın",
             "label" : "Seçimi onaylamak için her iki tuşa da aynı anda basın."
           },
           "3" : {
@@ -3433,6 +3433,17 @@
       "shareAddress" : "Adresi paylaş",
       "addressCopied" : "Adres panoya kopyalandı",
       "taprootWarning" : "Gönderenin Taproot'u desteklediğinden emin olun",
+      "connectToNoah" : "Connecting you to Noah",
+      "menu" : {
+        "crypto" : {
+          "title" : "Bir kripto adresinden",
+          "description" : "Cüzdanınıza herhangi bir kripto bakiyesi ekleyin."
+        },
+        "fiat" : {
+          "title" : "Bir banka hesabından",
+          "description" : "EUR veya USD banka transferi yoluyla USDC bakiyesi ekleyin. KYC gereklidir."
+        }
+      },
       "memoTag" : {
         "link" : "Etikete/Memo'ya mı ihtiyacınız var?",
         "title" : "Etikete/Memo'ya mı ihtiyacınız var?",
@@ -3766,12 +3777,16 @@
         "apt_description" : "Aptos takas etmek için Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ veya Ledger Stax™ gibi başka bir uyumlu Ledger cihazı kullanın.",
         "cosmos_title" : "Ledger Nano S™, Cosmos takasını desteklemez",
         "cosmos_description" : "Cosmos takas etmek için Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ veya Ledger Stax™ gibi başka bir uyumlu Ledger cihazı kullanın.",
+        "hedera_title" : "Ledger Nano S™, Hedera takasını desteklemez",
+        "hedera_description" : "Hedera takas etmek için Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ veya Ledger Stax™ gibi başka bir uyumlu Ledger cihazını kullanın.",
         "osmo_title" : "Ledger Nano S™, Osmosis takasını desteklemez",
         "osmo_description" : "Osmosis takas etmek için Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ veya Ledger Stax™ gibi başka bir uyumlu Ledger cihazını kullanın.",
         "dydx_title" : "Ledger Nano S™, dYdX takasını desteklemez",
         "dydx_description" : "dYdX takas etmek için Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ veya Ledger Stax™ gibi başka bir uyumlu Ledger cihazını kullanın.",
         "sui_title" : "Ledger Nano S™, Sui takasını desteklemez",
-        "sui_description" : "Sui takas etmek için Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ veya Ledger Stax™ gibi diğer herhangi bir uyumlu Ledger cihazını kullanın."
+        "sui_description" : "Sui takas etmek için Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ veya Ledger Stax™ gibi diğer herhangi bir uyumlu Ledger cihazını kullanın.",
+        "kaspa_title" : "Ledger Nano S™, Kaspa takasını desteklemez",
+        "kaspa_description" : "Kaspa takas etmek için Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ veya Ledger Stax™ gibi başka bir uyumlu Ledger cihazını kullanın."
       }
     },
     "lending" : {
@@ -7198,9 +7213,10 @@
     "title" : "Kilit ekranı resmi",
     "change" : "Değiştir",
     "drawer" : {
+      "title" : "Özel kilitli ekran",
       "options" : {
-        "uploadFromPhone" : "Resim galerimden seç",
-        "remove" : "Mevcut resmi kaldır"
+        "uploadFromPhone" : "Resmi değiştir",
+        "remove" : "Kilitli ekranı sil"
       }
     },
     "toastRemove" : "Kilitli ekran resmi kaldırıldı",
@@ -7635,8 +7651,8 @@
           "explanation" : {
             "title" : "Tarayın ve hesaplarınızı başka bir Ledger Live uygulamasını kullanarak senkronize edin",
             "steps" : {
-              "step1" : "Ledger Sync'in uygulamalarınızdan birinde etkinleştirildiğinden emin olun.",
-              "step2" : "Senkronize etmek istediğiniz Ledger Live uygulamasını açın.",
+              "step1" : "Ledger Sync, diğer uygulamada da etkinleştirilmelidir.",
+              "step2" : "Senkronize edilecek Ledger Live'ı açın.",
               "step3" : "<0>Ayarlar</0> <1>></1> <0>Genel</0> <1>></1> <0>Ledger Sync</0> <1>></1> <0>Zaten açtım</0> <1>></1> <0>Karekodu okut</0> adımlarını izleyin",
               "step4" : "Karekodu okutun."
             }
@@ -7648,8 +7664,8 @@
           "explanation" : {
             "title" : "Başka bir telefonda veya bilgisayardaki Ledger Live ile senkronize etmek için...",
             "steps" : {
-              "step1" : "Ledger Sync'in uygulamalarınızdan birinde etkinleştirildiğinden emin olun.",
-              "step2" : "Senkronize etmek istediğiniz Ledger Live'ı açın.",
+              "step1" : "Ledger Sync, diğer uygulamada da etkinleştirilmelidir.",
+              "step2" : "Senkronize edilecek Ledger Live'ı açın.",
               "step3" : "<0>Ayarlar</0> <1>></1> <0>Genel</0> <1>></1> <0>Ledger Sync</0> <1>></1> <0>Zaten açtım</0> <1>></1> <0>Karekodu göster</0> adımlarını izleyin",
               "step4" : "Karekodu okutun."
             }
