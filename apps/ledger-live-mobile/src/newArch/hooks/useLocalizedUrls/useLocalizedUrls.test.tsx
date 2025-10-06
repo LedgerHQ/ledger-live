@@ -59,7 +59,7 @@ describe("useLocalizedUrl", () => {
 
     setLocaleMockWithURL("th", urls.resources.ledgerAcademy);
     expect(localizedUrl).toEqual(
-      "https://www.ledger.com/academy/?utm_source=ledger_live&utm_medium=self_referral&utm_content=help_mobile",
+      "https://www.ledger.com/th/academy/?utm_source=ledger_live&utm_medium=self_referral&utm_content=help_mobile",
     );
   });
 
@@ -74,7 +74,7 @@ describe("useLocalizedUrl", () => {
     expect(localizedUrl).toEqual("https://support.ledger.com/zh-cn/article/360025864773-zd");
 
     setLocaleMockWithURL("th", urls.pairingIssues);
-    expect(localizedUrl).toEqual("https://support.ledger.com/article/360025864773-zd");
+    expect(localizedUrl).toEqual("https://support.ledger.com/th/article/360025864773-zd");
 
     setLocaleMockWithURL("en", urls.pairingIssues);
     expect(localizedUrl).toEqual("https://support.ledger.com/article/360025864773-zd");
@@ -98,7 +98,7 @@ describe("useLocalizedUrl", () => {
 
     setLocaleMockWithURL("th", urls.banners.blackfriday);
     expect(localizedUrl).toEqual(
-      "https://shop.ledger.com/pages/black-friday?utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=banner_carousel",
+      "https://shop.ledger.com/th/pages/black-friday?utm_source=ledger_live_mobile&utm_medium=self_referral&utm_content=banner_carousel",
     );
 
     setLocaleMockWithURL("en", urls.banners.blackfriday);
