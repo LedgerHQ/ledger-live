@@ -11,20 +11,6 @@ import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
  */
 export type CryptoAssetsStore = {
   /**
-   * Finds a token by its contract address.
-   *
-   * ⚠️ DEPRECATED: This method will be removed in favor of findTokenByAddressInCurrency
-   * which provides better scoping to avoid conflicts across different blockchains.
-   *
-   * 🔮 FUTURE: Will become async and return Promise<TokenCurrency | undefined>
-   *
-   * @param address - The contract address of the token
-   * @returns The TokenCurrency if found, undefined otherwise
-   * @deprecated Use findTokenByAddressInCurrency instead for better precision
-   */
-  findTokenByAddress(address: string): TokenCurrency | undefined;
-
-  /**
    * Gets a token by its unique identifier, throwing an error if not found.
    *
    * ⚠️ DEPRECATED: This method will be removed in favor of findTokenById

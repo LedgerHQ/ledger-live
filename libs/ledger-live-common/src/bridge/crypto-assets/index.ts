@@ -3,7 +3,6 @@ import * as legacy from "@ledgerhq/cryptoassets/tokens";
 import type { CryptoAssetsStore } from "@ledgerhq/types-live";
 
 const legacyStore: CryptoAssetsStore = {
-  findTokenByAddress: legacy.findTokenByAddress,
   getTokenById: legacy.getTokenById,
   findTokenById: legacy.findTokenById,
   findTokenByAddressInCurrency: legacy.findTokenByAddressInCurrency,
