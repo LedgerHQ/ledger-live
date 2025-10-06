@@ -7207,7 +7207,7 @@
         "title": "Personalization",
         "description": "To receive personalized recommendations and content that match your preferences and to help us measure the performance of our marketing campaigns, we share app usage data, including clicks, page visits, and conversion data."
       },
-      "share": "Share"
+      "validate": "Validate"
     },
     "variantB": {
       "accept": "Accept",
