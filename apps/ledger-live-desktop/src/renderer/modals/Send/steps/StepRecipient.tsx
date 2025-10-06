@@ -142,7 +142,6 @@ export const StepRecipientFooter = ({
   status,
   bridgePending,
   transitionTo,
-  shouldSkipAmount,
   transaction,
 }: StepProps) => {
   const dispatch = useDispatch();
@@ -180,11 +179,7 @@ export const StepRecipientFooter = ({
       );
       return;
     }
-    if (shouldSkipAmount) {
-      transitionTo("summary");
-    } else {
-      transitionTo("amount");
-    }
+    transitionTo("amount");
   };
 
   const handleOnRefuseAddTag = () => {
