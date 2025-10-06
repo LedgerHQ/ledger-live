@@ -464,12 +464,16 @@
       "apt_description" : "Aptosをスワップするには、Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™、Ledger Stax™など、対応する他のLedgerデバイスをご使用ください。",
       "cosmos_title" : "Ledger Nano S™はCosmosのスワップに対応していません",
       "cosmos_description" : "Cosmosをスワップするには、Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™、Ledger Stax™など、対応する他のLedgerデバイスをご使用ください。",
+      "hedera_title" : "Ledger Nano S™は、Hederaのスワップに対応していません",
+      "hedera_description" : "Hederaをスワップするには、Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™、Ledger Stax™など、対応する他のLedgerデバイスをご使用ください。",
       "osmo_title" : "Ledger Nano S™は、Osmosisのスワップに対応していません",
       "osmo_description" : "Osmosisをスワップするには、Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™、Ledger Stax™など、対応する他のLedgerデバイスをご使用ください。",
       "dydx_title" : "Ledger Nano S™は、dYdXのスワップに対応していません",
       "dydx_description" : "dYdXをスワップするには、Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™、Ledger Stax™など、対応する他のLedgerデバイスをご使用ください。",
       "sui_title" : "Ledger Nano S™は、Suiのスワップに対応していません",
-      "sui_description" : "Suiをスワップするには、Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™、またはLedger Stax™など、他の対応するLedgerデバイスをご使用ください。"
+      "sui_description" : "Suiをスワップするには、Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™、またはLedger Stax™など、他の対応するLedgerデバイスをご使用ください。",
+      "kaspa_title" : "Ledger Nano S™はKaspaのスワップに対応していません",
+      "kaspa_description" : "Kaspaをスワップするには、Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™、Ledger Stax™など、対応する他のLedgerデバイスをご使用ください。"
     },
     "providers" : {
       "title" : "暗号資産のスワップに利用するプロバイダーを選択",
@@ -2246,6 +2250,7 @@
   "receive" : {
     "title" : "受け取る",
     "successTitle" : "安全に共有されたアドレス",
+    "connectToNoah" : "Connecting you to Noah",
     "steps" : {
       "options" : {
         "fromBank" : {
@@ -5023,6 +5028,12 @@
     },
     "screens" : {
       "welcome" : {
+        "videos" : {
+          "buySell" : "資産を守り、コントロールするためのウォレット",
+          "thousandsCrypto" : "何千種類もの暗号資産を送付・受け取り・スワップ・ステーキング",
+          "secureWallet" : "安心してすべての取引を確認"
+        },
+        "notice" : "続行すると、Ledgerの<Link1>利用規約</Link1>および<Link2>プライバシーポリシー</Link2>に同意したものとみなされます。Ledgerは投資や財務に関する助言を行いません。\nスワップおよびステーキングサービスはサードパーティによって提供されます。",
         "title" : "暗号資産とNFTの最も安全なウォレット",
         "description" : "Ledger Liveで、暗号資産とNFTを安全に管理・購入・運用しましょう。",
         "nextButton" : "はじめる",
@@ -5710,7 +5721,34 @@
     },
     "canton" : {
       "commentPlaceholder" : "任意",
-      "comment" : "コメント"
+      "comment" : "コメント",
+      "addAccount" : {
+        "title" : "Add Canton Account",
+        "onboard" : {
+          "title" : "Onboarding",
+          "newAccount" : "New Account",
+          "init" : "Set up your new Canton account by clicking Continue",
+          "onboarded" : "Onboarded accounts",
+          "success" : "Your new Canton account has been created and onboarded.",
+          "error" : "Failed to onboard new account. Please try again.",
+          "status" : {
+            "prepare" : "Preparing account onboarding...",
+            "submit" : "Onboarding account...",
+            "default" : "Processing..."
+          }
+        },
+        "auth" : {
+          "title" : "Authorization",
+          "validator" : "Authorize",
+          "hint" : "Automaticaly accept incoming funds to this account.",
+          "error" : "Authorization failed. Please try again.",
+          "validatorLabel" : "Ledger Validator",
+          "validatorDescription" : "Automated fund acceptance"
+        },
+        "finish" : {
+          "title" : "Confirmation"
+        }
+      }
     },
     "stellar" : {
       "memo" : "メモ",
