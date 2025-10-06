@@ -33,7 +33,11 @@ const txInfoToOperationAdapter =
     } else if (txInfo.type === "Initialize") {
       type = "PRE_APPROVAL";
     }
-    const value = new BigNumber(transferValue);
+    let value = new BigNumber(transferValue);
+    if (type === "OUT" || type === "FEES") {
+      // We add fees when it's an outgoing transaction or a fees-only transaction
+      value = value.plus(fee);
+    }
     const feeValue = new BigNumber(fee);
     const memo = details.metadata.reason;
 
