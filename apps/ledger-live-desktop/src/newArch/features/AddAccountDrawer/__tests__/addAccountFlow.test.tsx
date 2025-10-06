@@ -276,10 +276,10 @@ describe("ModularDrawerAddAccountFlowManager", () => {
     expect(screen.getByText(/2 accounts added to your portfolio/i)).toBeInTheDocument();
 
     await userEvent.click(screen.getByRole("button", { name: "Add funds to my account" }));
-    expect(screen.getByText(ARB_ACCOUNT.freshAddress)).toBeInTheDocument();
-    expect(screen.getByText(NEW_ARB_ACCOUNT.freshAddress)).toBeInTheDocument();
+    expect(screen.getByText(/0x10D...868BD/i)).toBeInTheDocument();
+    expect(screen.getByText(/0xf97...93921/i)).toBeInTheDocument();
 
-    await userEvent.click(screen.getByText(ARB_ACCOUNT.freshAddress));
+    await userEvent.click(screen.getByText(/0xf97...93921/i));
     expect(screen.getByText(/buy crypto securely with cash/i)).toBeInTheDocument();
   });
 

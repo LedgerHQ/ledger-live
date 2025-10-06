@@ -55,6 +55,22 @@ jobs:
           turbo-server-token: ${{ secrets.TURBOREPO_SERVER_TOKEN }}
       - name: Install dependencies
         run: pnpm i --filter="./libs/ui/**"
+      - name: Run unit tests
+        run: pnpm --filter="./libs/ui/**" test:jest:coverage
+      - name: Upload unit test coverage (react)
+        id: generate_coverage_react
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-ui-react
+          path: ${{ github.workspace }}/libs/ui/packages/react/coverage
+      - name: Upload unit test coverage (native)
+        id: generate_coverage_native
+        if: ${{ !cancelled() && hashFiles('libs/ui/packages/native/coverage/**') != '' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-ui-native
+          path: ${{ github.workspace }}/libs/ui/packages/native/coverage
       - name: Build and Test affected libraries
         id: test-ui
         run: pnpm run test --continue --filter="./libs/ui/**" --filter="!./e2e/mobile/**" --filter="!./apps/ledger-live*...[${{ inputs.since_branch && format('origin/{0}', inputs.since_branch) || 'HEAD^1' }}]" --api="http://127.0.0.1:${{ steps.setup-caches.outputs.port }}" --token="${{ secrets.TURBOREPO_SERVER_TOKEN }}" --team="foo"
