@@ -1,12 +1,11 @@
-import * as tokenModule from "@ledgerhq/cryptoassets/tokens";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import * as legacy from "@ledgerhq/cryptoassets/tokens";
+import { legacyCryptoAssetsStore } from "@ledgerhq/cryptoassets/tokens";
 import { setCryptoAssetsStoreGetter } from "../cryptoAssetsStore";
 import { getAssetFromToken, getTokenFromAsset } from "./getTokenFromAsset";
 
 describe("getTokenFromAsset", () => {
   beforeAll(() => {
-    setCryptoAssetsStoreGetter(() => legacy);
+    setCryptoAssetsStoreGetter(() => legacyCryptoAssetsStore);
   });
 
   afterEach(() => {
@@ -14,7 +13,10 @@ describe("getTokenFromAsset", () => {
   });
 
   it("computes the token of the USDC asset, trusting the CAL", async () => {
-    const findTokenByAddressInCurrency = jest.spyOn(tokenModule, "findTokenByAddressInCurrency");
+    const findTokenByAddressInCurrency = jest.spyOn(
+      legacyCryptoAssetsStore,
+      "findTokenByAddressInCurrency",
+    );
 
     expect(
       await getTokenFromAsset({ id: "ethereum" } as CryptoCurrency, {
@@ -47,7 +49,10 @@ describe("getTokenFromAsset", () => {
   });
 
   it("does not compute the token of an unknown asset, trusting the CAL", async () => {
-    const findTokenByAddressInCurrency = jest.spyOn(tokenModule, "findTokenByAddressInCurrency");
+    const findTokenByAddressInCurrency = jest.spyOn(
+      legacyCryptoAssetsStore,
+      "findTokenByAddressInCurrency",
+    );
 
     expect(
       await getTokenFromAsset({ id: "ethereum" } as CryptoCurrency, {

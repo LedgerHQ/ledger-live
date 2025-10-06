@@ -1,5 +1,5 @@
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import * as store from "@ledgerhq/cryptoassets/tokens";
+import { legacyCryptoAssetsStore } from "@ledgerhq/cryptoassets/tokens";
 import type { Account } from "@ledgerhq/types-live";
 import { getAccountBridgeByFamily, setup } from "@ledgerhq/live-common/bridge/impl";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
@@ -116,7 +116,7 @@ function getSync(currency: CryptoCurrency) {
 
 export default async function (currencyIds: string[], accountTypes: AccountType[]) {
   LiveConfig.setConfig(liveConfig);
-  setup(store);
+  setup(legacyCryptoAssetsStore);
   const result: RunResult = {
     entries: [],
     failed: false,

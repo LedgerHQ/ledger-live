@@ -25,6 +25,7 @@ import {
 } from "./legacy/legacy-utils";
 import { tokensByCurrencyAddress, tokensById } from "./legacy/legacy-state";
 import { initializeLegacyTokens } from "./legacy/legacy-data";
+import { legacyCryptoAssetsStore } from "./legacy/legacy-store";
 
 export {
   addTokens,
@@ -42,6 +43,7 @@ export {
   convertAptFaTokens,
   convertHederaTokens,
   __clearAllLists,
+  legacyCryptoAssetsStore,
 };
 
 initializeLegacyTokens(addTokens);
@@ -61,24 +63,6 @@ export function findTokenByAddressInCurrency(
   currencyId: string,
 ): TokenCurrency | undefined {
   return tokensByCurrencyAddress[currencyId + ":" + address.toLowerCase()];
-}
-
-/**
- * @deprecated This function will be removed when https://github.com/LedgerHQ/ledger-live/pull/11905 lands
- */
-export const hasTokenId = (id: string): boolean => id in tokensById;
-
-/**
- * @deprecated Please use `await getCryptoAssetsStore().findTokenById(id)` instead to anticipate https://github.com/LedgerHQ/ledger-live/pull/11905
- */
-export function getTokenById(id: string): TokenCurrency {
-  const currency = findTokenById(id);
-
-  if (!currency) {
-    throw new Error(`token with id "${id}" not found`);
-  }
-
-  return currency;
 }
 
 /**
