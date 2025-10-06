@@ -3433,6 +3433,17 @@
       "shareAddress" : "Partager l’adresse",
       "addressCopied" : "Adresse copiée dans le presse-papiers",
       "taprootWarning" : "Vérifiez que l’émetteur prend en charge Taproot",
+      "connectToNoah" : "Connecting you to Noah",
+      "menu" : {
+        "crypto" : {
+          "title" : "À partir d’une adresse crypto",
+          "description" : "Approvisionnez votre portefeuille avec la crypto de votre choix."
+        },
+        "fiat" : {
+          "title" : "À partir d’un compte bancaire",
+          "description" : "Approvisionnez votre portefeuille en USDC via un virement bancaire en EUR ou USD. Votre identité sera vérifiée."
+        }
+      },
       "memoTag" : {
         "link" : "Besoin d’un tag/mémo ?",
         "title" : "Besoin d’un tag/mémo ?",
@@ -3766,12 +3777,16 @@
         "apt_description" : "Pour échanger des Aptos, utilisez un autre appareil Ledger compatible, tel que le Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™.",
         "cosmos_title" : "Le Ledger Nano S™ ne prend pas en charge l’échange de Cosmos",
         "cosmos_description" : "Pour échanger des Cosmos, utilisez un autre appareil Ledger compatible, tel que le Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™.",
+        "hedera_title" : "Le Ledger Nano S™ ne prend pas en charge l’échange d’Hedera",
+        "hedera_description" : "Pour échanger des Hedera, utilisez un autre appareil Ledger compatible, tel que le Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™.",
         "osmo_title" : "Le Ledger Nano S™ ne prend pas en charge l’échange d’Osmosis",
         "osmo_description" : "Pour échanger des Osmosis, utilisez un autre appareil Ledger compatible, tel que le Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™.",
         "dydx_title" : "Le Ledger Nano S™ ne prend pas en charge l’échange de dYdX",
         "dydx_description" : "Pour échanger des dYdX, utilisez un autre appareil Ledger compatible, tel que le Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™.",
         "sui_title" : "Le Ledger Nano S™ ne prend pas en charge l’échange de Sui",
-        "sui_description" : "Pour échanger des Sui, utilisez un autre appareil Ledger compatible, tel que le Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™."
+        "sui_description" : "Pour échanger des Sui, utilisez un autre appareil Ledger compatible, tel que le Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™.",
+        "kaspa_title" : "Le Ledger Nano S™ ne prend pas en charge l’échange de Kaspa",
+        "kaspa_description" : "Pour échanger des Kaspa, utilisez un autre appareil Ledger compatible, tel que le Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™."
       }
     },
     "lending" : {
@@ -4770,7 +4785,7 @@
     "pleaseWaitUpdate" : "Veuillez attendre que la mise à jour soit terminée.",
     "viewUpdateChangelog" : "Voir le changelog de la mise à jour",
     "waitForFirmwareUpdate" : "Attendez la fin de la mise à jour du micrologiciel sur votre appareil",
-    "waitForInstallationToFinish" : "Attendez la fin de l’installation sur votre {{deviceName}}",
+    "waitForInstallationToFinish" : "Attendez la fin de l’installation sur votre {{deviceName}}.",
     "batteryLow" : "Batterie de votre {{productName}} trop faible pour la mise à jour",
     "batteryLowDescription" : "Avant de lancer la mise à jour du système d’exploitation, votre {{productName}} doit être chargé à au moins {{lowBatteryPercentage}} % ou être en cours de chargement.",
     "updateCancelled" : "Installation de la mise à jour annulée sur votre {{deviceName}}",
@@ -7198,9 +7213,10 @@
     "title" : "Fond d’écran",
     "change" : "Modifier",
     "drawer" : {
+      "title" : "Fond d’écran personnalisé",
       "options" : {
-        "uploadFromPhone" : "Choisir dans ma galerie d’images",
-        "remove" : "Retirer l’image actuelle"
+        "uploadFromPhone" : "Changer l’image",
+        "remove" : "Supprimer le fond d’écran"
       }
     },
     "toastRemove" : "Image de fond d’écran retirée",
@@ -7451,7 +7467,7 @@
             "balance" : "Votre portefeuille.",
             "personnalInfos" : "Vos données à caractère personnel (telle que votre nom ou votre adresse email)."
           },
-          "moreOptions" : "Gérer vos préférences",
+          "moreOptions" : "Gérer mes préférences",
           "ctas" : {
             "refuse" : "Tout refuser",
             "accept" : "Tout accepter"
