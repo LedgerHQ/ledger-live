@@ -19,28 +19,42 @@ export function getSpeculosModel(): DeviceModelId {
   }
 }
 
-export async function getNanoAppCatalog(): Promise<ApplicationV2Entity[]> {
-  const repository = new HttpManagerApiRepository(getEnv("MANAGER_API_BASE"), version);
-  const speculosModel = getSpeculosModel();
+function getDeviceTargetId(device: DeviceModelId): number {
   const modelToTargetIdMap = {
     [DeviceModelId.nanoS]: CryptoWallet.LNS.targetId,
     [DeviceModelId.nanoX]: CryptoWallet.LNX.targetId,
     [DeviceModelId.nanoSP]: CryptoWallet.LNSP.targetId,
   };
-  const targetId = modelToTargetIdMap[speculosModel];
+  return modelToTargetIdMap[device];
+}
+
+export async function getNanoAppCatalog(
+  device: DeviceModelId,
+  deviceFirmware: string,
+): Promise<ApplicationV2Entity[]> {
+  const repository = new HttpManagerApiRepository(getEnv("MANAGER_API_BASE"), version);
+  const targetId = getDeviceTargetId(device);
   return await repository.catalogForDevice({
     provider: 1,
     targetId: targetId,
-    firmwareVersion: process.env.SPECULOS_FIRMWARE_VERSION || "",
+    firmwareVersion: deviceFirmware,
   });
 }
 
-export async function createNanoAppJsonFile(): Promise<void> {
+function getDeviceFirmwareVersion(): string {
+  const firmwareVersion = process.env.SPECULOS_FIRMWARE_VERSION;
+  if (!firmwareVersion) {
+    throw new Error("SPECULOS_FIRMWARE_VERSION environment variable is not set");
+  }
+  return firmwareVersion;
+}
+
+export async function createNanoAppJsonFile(nanoAppFilePath: string): Promise<void> {
   try {
-    const appCatalog = await getNanoAppCatalog();
-    const rootDir = process.cwd();
-    const nanoAppFilePath = getEnv("E2E_NANO_APP_VERSION_PATH");
-    const jsonFilePath = path.join(rootDir, nanoAppFilePath);
+    const device = getSpeculosModel();
+    const firmware = getDeviceFirmwareVersion();
+    const appCatalog = await getNanoAppCatalog(device, firmware);
+    const jsonFilePath = path.join(process.cwd(), nanoAppFilePath);
     const dirPath = path.dirname(jsonFilePath);
     if (!fs.existsSync(dirPath)) {
       fs.mkdirSync(dirPath, { recursive: true });
@@ -51,11 +65,13 @@ export async function createNanoAppJsonFile(): Promise<void> {
   }
 }
 
-export async function getAppVersionFromCatalog(currency: string): Promise<string | undefined> {
+export async function getAppVersionFromCatalog(
+  currency: string,
+  nanoAppFilePath: string,
+): Promise<string | undefined> {
   try {
-    await createNanoAppJsonFile();
+    await createNanoAppJsonFile(nanoAppFilePath);
     const rootDir = process.cwd();
-    const nanoAppFilePath = getEnv("E2E_NANO_APP_VERSION_PATH");
     const jsonFilePath = path.join(rootDir, nanoAppFilePath);
     type CatalogApp = { versionDisplayName: string; version: string };
     const raw = fs.readFileSync(jsonFilePath, "utf8");

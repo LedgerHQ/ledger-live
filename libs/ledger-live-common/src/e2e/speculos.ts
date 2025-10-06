@@ -356,10 +356,12 @@ export async function startSpeculos(
   invariant(coinapps, "COINAPPS is not set");
   const appCandidates = await listAppCandidates(coinapps);
 
+  const nanoAppCatalogPath = getEnv("E2E_NANO_APP_VERSION_PATH");
+
   const { appQuery, dependency, onSpeculosDeviceCreated } = spec;
   try {
     const displayName = spec.currency?.managerAppName || appQuery.appName;
-    const catalogVersion = await getAppVersionFromCatalog(displayName);
+    const catalogVersion = await getAppVersionFromCatalog(displayName, nanoAppCatalogPath);
     if (catalogVersion) {
       appQuery.appVersion = catalogVersion;
     }
