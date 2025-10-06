@@ -1542,7 +1542,7 @@
       "url" : {
         "title" : "iframe URL 업데이트",
         "subtitle" : "디버그 설정",
-        "cta" : "Ledger Nano S를"
+        "cta" : "저장"
       },
       "message" : {
         "successTitle" : "트랜잭션 완료",
@@ -3257,7 +3257,7 @@
       "clearCacheDesc" : "네트워크의 트랜잭션을 스캔하고 사용자 계정을 다시 계산합니다.",
       "clearCacheModal" : "확실합니까?",
       "clearCacheModalDesc" : "네트워크에서 신규 및 완전한 트랜잭션 스캔이 수행됩니다. 계정 내역이 다시 구성되고 잔금을 재산출합니다.",
-      "clearCacheButton" : "제거",
+      "clearCacheButton" : "삭제",
       "exportLogs" : "로그 저장",
       "exportLogsDesc" : "문제 해결을 위해 Ledger Live 로그가 필요할 수 있습니다.",
       "hardReset" : "Ledger Live 리셋",
@@ -3433,6 +3433,17 @@
       "shareAddress" : "주소 공유",
       "addressCopied" : "클립보드에 주소 복사됨",
       "taprootWarning" : "발송자가 탭루트를 지원하는지 확인해 주세요",
+      "connectToNoah" : "Connecting you to Noah",
+      "menu" : {
+        "crypto" : {
+          "title" : "암호화폐 주소에서",
+          "description" : "원하는 암호화폐를 충전하세요"
+        },
+        "fiat" : {
+          "title" : "은행 계좌에서",
+          "description" : "EUR 또는 USD 은행 이체로 USDC를 충전하세요. KYC 승인이 필요합니다."
+        }
+      },
       "memoTag" : {
         "link" : "태그/메모가 필요하세요?",
         "title" : "태그/메모가 필요하세요?",
@@ -3766,12 +3777,16 @@
         "apt_description" : "Aptos 스왑 거래를 실행하려면 Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ 또는 Ledger Stax™와 같은 다른 Ledger 장치를 사용하세요.",
         "cosmos_title" : "Ledger Nano S™는 Cosmos 스왑을 지원하지 않습니다.",
         "cosmos_description" : "Cosmos 스왑 거래를 실행하려면 Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ 또는 Ledger Stax™와 같은 다른 Ledger 장치를 사용하세요.",
+        "hedera_title" : "Ledger Nano S™는 헤데라 스왑을 지원하지 않습니다.",
+        "hedera_description" : "헤데라를 스왑하려면 Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ 또는 Ledger Stax™와 같은 호환 가능한 다른 Ledger 장치를 사용하세요.",
         "osmo_title" : "Ledger Nano S™는 Osmosis 스왑을 지원하지 않습니다.",
         "osmo_description" : "Osmosis 스왑 거래를 실행하려면 Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ 또는 Ledger Stax™와 같은 다른 Ledger 장치를 사용하세요.",
         "dydx_title" : "Ledger Nano S™는 dYdX 스왑을 지원하지 않습니다.",
         "dydx_description" : "dYdX 스왑 거래를 실행하려면 Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ 또는 Ledger Stax™와 같은 다른 Ledger 장치를 사용하세요.",
         "sui_title" : "Ledger Nano S™는 Sui 스왑을 지원하지 않습니다",
-        "sui_description" : "Sui 스왑 거래를 수행하려면 Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ 또는 Ledger Stax™와 같은 다른 호환 Ledger 장치를 사용하세요."
+        "sui_description" : "Sui 스왑 거래를 수행하려면 Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ 또는 Ledger Stax™와 같은 다른 호환 Ledger 장치를 사용하세요.",
+        "kaspa_title" : "Ledger Nano S™는 카스파 스왑을 지원하지 않습니다.",
+        "kaspa_description" : "카스파를 스왑하려면 Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ 또는 Ledger Stax™와 같은 호환 가능한 다른 Ledger 장치를 사용하세요."
       }
     },
     "lending" : {
@@ -6102,7 +6117,7 @@
           "noResultsFound" : "<0>{{search}}</0>에 대한 검증인이 없습니다",
           "selected" : "총 {{total}} 중 {{selected}} 선택됨",
           "notValidatorsRemoved" : "지명한 주소{{count}}는 더 이상 검증인이 아닙니다. 지명 트랜잭션에서 주소가 자동으로 삭제됩니다.",
-          "maybeChill" : "대신, 지명을 제거하세요"
+          "maybeChill" : "대신, 지명을 삭제하세요"
         },
         "validation" : {
           "success" : {
@@ -7198,9 +7213,10 @@
     "title" : "잠금 화면 사진",
     "change" : "변경",
     "drawer" : {
+      "title" : "커스텀 가능한 잠금 화면",
       "options" : {
-        "uploadFromPhone" : "내 사진 갤러리에서 선택",
-        "remove" : "현재 사진 삭제"
+        "uploadFromPhone" : "사진 변경",
+        "remove" : "잠금 화면 삭제"
       }
     },
     "toastRemove" : "잠금 화면 사진이 삭제됨",
