@@ -7,8 +7,8 @@ import {
 } from "../consts";
 
 import {
-  ledgerIdlFactory as ledgerIdlFactory,
-  indexIdlFactory as indexIdlFactory,
+  ledgerIdlFactory,
+  indexIdlFactory,
   getCanisterIdlFunc,
   Principal,
   encodeCanisterIdlFunc,
@@ -63,7 +63,6 @@ export const broadcastTxn = async (
     },
   });
 
-  // If the status is not 2XX, throw an error
   if (res.status === 200) {
     return await res.arrayBuffer();
   }
