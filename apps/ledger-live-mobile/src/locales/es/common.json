@@ -1360,7 +1360,7 @@
     },
     "enableBiometrics" : {
       "title" : "{{biometricsType}}",
-      "desc" : "Para activar y ajustar {{biometricsType}}, activa “Bloqueo de aplicaciones”.",
+      "desc" : "Para activar y ajustar {{biometricsType}}, activa \"Bloqueo de aplicaciones\".",
       "touchid" : "Touch ID",
       "faceid" : "Face ID",
       "fingerprint" : "Huella dactilar"
@@ -3433,6 +3433,17 @@
       "shareAddress" : "Compartir dirección",
       "addressCopied" : "Dirección copiada en el portapapeles",
       "taprootWarning" : "Asegúrate de que el remitente soporta Taproot",
+      "connectToNoah" : "Connecting you to Noah",
+      "menu" : {
+        "crypto" : {
+          "title" : "Desde una dirección cripto",
+          "description" : "Recarga tu wallet con la cripto que quieras."
+        },
+        "fiat" : {
+          "title" : "Desde una cuenta bancaria",
+          "description" : "Recarga con USDC mediante una transferencia bancaria de EUR o USD. Tienes que haber completado el KYC."
+        }
+      },
       "memoTag" : {
         "link" : "¿Necesitas una etiqueta o memo?",
         "title" : "¿Necesitas una etiqueta o memo?",
@@ -3766,12 +3777,16 @@
         "apt_description" : "Para permutar Aptos, usa cualquier otro dispositivo Ledger compatible, como el Ledger Nano S Plus™, el Ledger Nano X™, el Ledger Flex™ o el Ledger Stax™.",
         "cosmos_title" : "No es posible usar el Ledger Nano S™ para permutar Cosmos",
         "cosmos_description" : "Para permutar Cosmos, usa cualquier otro dispositivo Ledger compatible, como el Ledger Nano S Plus™, el Ledger Nano X™, el Ledger Flex™ o el Ledger Stax™.",
+        "hedera_title" : "No es posible usar el Ledger Nano S™ para permutar Hedera",
+        "hedera_description" : "Para permutar Hedera, usa cualquier otro dispositivo Ledger compatible, como el Ledger Nano S Plus™, el Ledger Nano X™, el Ledger Flex™ o el Ledger Stax™.",
         "osmo_title" : "No es posible usar el Ledger Nano S™ para permutar Osmosis",
         "osmo_description" : "Para permutar Osmosis, usa cualquier otro dispositivo Ledger compatible, como el Ledger Nano S Plus™, el Ledger Nano X™, el Ledger Flex™ o el Ledger Stax™.",
         "dydx_title" : "No es posible usar el Ledger Nano S™ para permutar dYdX",
         "dydx_description" : "Para permutar dYdX, usa cualquier otro dispositivo Ledger compatible, como el Ledger Nano S Plus™, el Ledger Nano X™, el Ledger Flex™ o el Ledger Stax™.",
         "sui_title" : "No es posible utilizar el Ledger Nano S™ para permutar Sui",
-        "sui_description" : "Para permutar Sui, usa cualquier otro dispositivo Ledger compatible, como el Ledger Nano S Plus™, el Ledger Nano X™, el Ledger Flex™ o el Ledger Stax™."
+        "sui_description" : "Para permutar Sui, usa cualquier otro dispositivo Ledger compatible, como el Ledger Nano S Plus™, el Ledger Nano X™, el Ledger Flex™ o el Ledger Stax™.",
+        "kaspa_title" : "No es posible usar el Ledger Nano S™ para permutar Kaspa",
+        "kaspa_description" : "Para permutar Kaspa, usa cualquier otro dispositivo Ledger compatible, como el Ledger Nano S Plus™, el Ledger Nano X™, el Ledger Flex™ o el Ledger Stax™."
       }
     },
     "lending" : {
@@ -7198,9 +7213,10 @@
     "title" : "Imagen de pantalla de bloqueo",
     "change" : "Cambiar",
     "drawer" : {
+      "title" : "Pantalla de bloqueo personalizada",
       "options" : {
-        "uploadFromPhone" : "Elegir de la galería de imágenes",
-        "remove" : "Eliminar imagen actual"
+        "uploadFromPhone" : "Cambiar imagen",
+        "remove" : "Eliminar pantalla de bloqueo"
       }
     },
     "toastRemove" : "Imagen de pantalla de bloqueo eliminada",
