@@ -21,6 +21,11 @@ describe("DeepLinks Tests", () => {
           });
         },
       ],
+      featureFlags: {
+        currencyZkSync: { enabled: true },
+        currencyScroll: { enabled: true },
+        noah: { enabled: false },
+      },
     });
     await app.portfolio.waitForPortfolioPageToLoad();
   });

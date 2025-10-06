@@ -17,6 +17,10 @@ async function beforeAllFunction(options: ApplicationOptions) {
     userdata: options.userdata,
     speculosApp: options.speculosApp,
     cliCommands: options.cliCommands,
+    featureFlags: {
+      currencyZkSync: { enabled: true },
+      currencyScroll: { enabled: true },
+    },
   });
 
   await app.portfolio.waitForPortfolioPageToLoad();
