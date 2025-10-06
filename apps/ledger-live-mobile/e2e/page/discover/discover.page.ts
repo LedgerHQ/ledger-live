@@ -52,7 +52,7 @@ export default class DiscoverPage {
     jestExpect(title).toBe("Ledger Platform Apps");
 
     const url = await getWebElementById("__next").getCurrentUrl();
-    jestExpect(url).toContain("1inch.com/swap");
+    jestExpect(url).toContain("1inch.com/swap/");
     jestExpect(url).toContain("usdt");
     jestExpect(url).toContain("sourceTokenAmount%3D");
     jestExpect(url).toContain("currency%22%3A%22ethereum");
