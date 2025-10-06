@@ -1,5 +1,5 @@
 ---
-"@ledgerhq/coin-internet_computer": major
+"@ledgerhq/coin-internet_computer": minor
 "@ledgerhq/live-env": patch
 ---
 
