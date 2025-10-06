@@ -93,6 +93,8 @@ import AssetSelectionNavigator from "LLM/features/AssetSelection/Navigator";
 import AssetsListNavigator from "LLM/features/Assets/Navigator";
 import FeesNavigator from "./FeesNavigator";
 import { getStakeLabelLocaleBased } from "~/helpers/getStakeLabelLocaleBased";
+import { getReceiveStackOptions } from "~/logic/getReceiveStackOptions";
+import SignRawTransactionNavigator from "./SignRawTransactionNavigator";
 
 const Stack = createStackNavigator<BaseNavigatorStackParamList>();
 
@@ -112,6 +114,7 @@ export default function BaseNavigator() {
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector) && isAccountsEmpty;
   const web3hub = useFeature("web3hub");
   const llmAccountListUI = useFeature("llmAccountListUI");
+  const noah = useFeature("noah");
 
   return (
     <>
@@ -184,7 +187,12 @@ export default function BaseNavigator() {
         <Stack.Screen
           name={NavigatorName.ReceiveFunds}
           component={ReceiveFundsNavigator}
-          options={{ headerShown: false }}
+          options={({ route }) =>
+            getReceiveStackOptions({
+              route,
+              noahEnabled: noah?.enabled,
+            })
+          }
           {...noNanoBuyNanoWallScreenOptions}
         />
         <Stack.Screen
@@ -230,6 +238,16 @@ export default function BaseNavigator() {
         <Stack.Screen
           name={NavigatorName.SignTransaction}
           component={SignTransactionNavigator}
+          options={{ headerShown: false }}
+          listeners={({ route }) => ({
+            beforeRemove: () => {
+              route.params.onError(new Error("Signature interrupted by user"));
+            },
+          })}
+        />
+        <Stack.Screen
+          name={NavigatorName.SignRawTransaction}
+          component={SignRawTransactionNavigator}
           options={{ headerShown: false }}
           listeners={({ route }) => ({
             beforeRemove: () => {

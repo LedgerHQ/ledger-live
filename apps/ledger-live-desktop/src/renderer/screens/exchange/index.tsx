@@ -30,8 +30,8 @@ import { useLocalLiveAppManifest } from "@ledgerhq/live-common/wallet-api/LocalL
 import { useProviderInterstitalEnabled } from "@ledgerhq/live-common/hooks/useShowProviderLoadingTransition";
 import { walletSelector } from "~/renderer/reducers/wallet";
 import { useDiscreetMode } from "~/renderer/components/Discreet";
-import { ProviderInterstitial } from "./BuySell/ProviderInterstitial";
 import { NetworkErrorScreen } from "~/renderer/components/Web3AppWebview/NetworkError";
+import { ProviderInterstitial } from "LLD/components/ProviderInterstitial";
 
 type ExchangeState = { account?: string } | undefined;
 

@@ -3433,6 +3433,17 @@
       "shareAddress": "Share address",
       "addressCopied": "Address copied in clipboard",
       "taprootWarning": "Make sure the sender supports taproot",
+      "connectToNoah": "Re-directing you to Noah, our partner, to create your cash-to-stable account",
+      "menu": {
+        "crypto": {
+          "title": "From a crypto address",
+          "description": "Top up your wallet with any crypto."
+        },
+        "fiat": {
+          "title": "From a bank account",
+          "description": "Top up with USDC through a EUR or USD bank transfer. KYC needed."
+        }
+      },
       "memoTag": {
         "link": "Need a Tag/Memo?",
         "title": "Need a Tag/Memo?",
@@ -3766,12 +3777,16 @@
         "apt_description": "To swap Aptos, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™.",
         "cosmos_title": "Ledger Nano S™ does not support swapping Cosmos",
         "cosmos_description": "To swap Cosmos, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™.",
+        "hedera_title": "Ledger Nano S™ does not support swapping Hedera",
+        "hedera_description": "To swap Hedera, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™.",
         "osmo_title": "Ledger Nano S™ does not support swapping Osmosis",
         "osmo_description": "To swap Osmosis, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™.",
         "dydx_title": "Ledger Nano S™ does not support swapping dYdX",
         "dydx_description": "To swap dYdX, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™.",
         "sui_title": "Ledger Nano S™ does not support swapping Sui",
-        "sui_description": "To swap Sui, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™."
+        "sui_description": "To swap Sui, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™.",
+        "kaspa_title": "Ledger Nano S™ does not support swapping Kaspa",
+        "kaspa_description": "To swap Kaspa, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™."
       }
     },
     "lending": {
@@ -7204,9 +7219,10 @@
     "title": "Lock screen picture",
     "change": "Change",
     "drawer": {
+      "title": "Custom lock screen",
       "options": {
-        "uploadFromPhone": "Choose from my picture gallery",
-        "remove": "Remove current picture"
+        "uploadFromPhone": "Change picture",
+        "remove": "Delete lock screen"
       }
     },
     "toastRemove": "Lock screen picture removed",

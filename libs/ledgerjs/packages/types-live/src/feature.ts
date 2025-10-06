@@ -142,6 +142,9 @@ export type CurrencyFeatures = {
   currencyKaspa: DefaultFeature;
   currencyEthereumHoodi: DefaultFeature;
   currencyCore: DefaultFeature;
+  currencyWestend: DefaultFeature;
+  currencyAssetHubWestend: DefaultFeature;
+  currencyAssetHubPolkadot: DefaultFeature;
 };
 
 /**
@@ -150,6 +153,7 @@ export type CurrencyFeatures = {
  * @dev Add features here.
  */
 export type Features = CurrencyFeatures & {
+  welcomeScreenVideoCarousel: DefaultFeature;
   brazePushNotifications: Feature_BrazePushNotifications;
   ratingsPrompt: Feature_RatingsPrompt;
   npsRatingsPrompt: Feature_NpsRatingsPrompt;
@@ -188,7 +192,7 @@ export type Features = CurrencyFeatures & {
   ptxSwapLiveAppMobile: Feature_PtxSwapLiveApp;
   ptxSwapLiveAppKycWarning: DefaultFeature;
   ptxSwapLiveApp: Feature_PtxSwapLiveApp;
-  ptxSwapDetailedView: DefaultFeature;
+  ptxSwapDetailedView: Feature_PtxSwapDetailedView;
   ptxEarnLiveApp: Feature_PtxEarnLiveApp;
   ptxSwapReceiveTRC20WithoutTrx: Feature_PtxSwapReceiveTRC20WithoutTrx;
   flexibleContentCards: Feature_FlexibleContentCards;
@@ -675,6 +679,10 @@ export type Feature_web3hub = DefaultFeature;
 export type Feature_MemoTag = DefaultFeature;
 export type Feature_PtxSwapMoonpayProvider = DefaultFeature;
 export type Feature_PtxSwapExodusProvider = DefaultFeature;
+
+export type Feature_PtxSwapDetailedView = Feature<{
+  variant: ABTestingVariants;
+}>;
 
 export type Feature_LlmRebornLP = Feature<{
   variant: ABTestingVariants;

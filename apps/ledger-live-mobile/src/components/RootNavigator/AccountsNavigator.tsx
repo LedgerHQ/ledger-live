@@ -37,6 +37,11 @@ type ParamsType = {
   params?: { specificAccounts?: object[] };
 };
 
+const isParamsType = (value: unknown): value is ParamsType =>
+  typeof value === "object" &&
+  value !== null &&
+  Object.prototype.hasOwnProperty.call(value, "params");
+
 export default function AccountsNavigator() {
   const { colors } = useTheme();
   const stackNavConfig = useMemo(() => getStackNavigatorConfig(colors), [colors]);
@@ -50,8 +55,10 @@ export default function AccountsNavigator() {
   const onPressBack = useCallback(
     (nav: NavType) => {
       // Needed since we use the same screen for different purposes
-      const params: ParamsType = navigation.getState()?.routes[1].params || {};
-      const screenName = params?.params?.specificAccounts
+      const maybeParams = navigation.getState()?.routes?.[1]?.params;
+      const hasSpecificAccounts =
+        isParamsType(maybeParams) && Boolean(maybeParams.params?.specificAccounts);
+      const screenName = hasSpecificAccounts
         ? TrackingEvent.AccountListSummary
         : TrackingEvent.AccountsList;
       track("button_clicked", {

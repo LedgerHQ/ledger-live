@@ -464,12 +464,16 @@
       "apt_description": "To swap Aptos, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™.",
       "cosmos_title": "Ledger Nano S™ does not support swapping Cosmos",
       "cosmos_description": "To swap Cosmos, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™.",
+      "hedera_title": "Ledger Nano S™ does not support swapping Hedera",
+      "hedera_description": "To swap Hedera, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™.",
       "osmo_title": "Ledger Nano S™ does not support swapping Osmosis",
       "osmo_description": "To swap Osmosis, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™.",
       "dydx_title": "Ledger Nano S™ does not support swapping dYdX",
       "dydx_description": "To swap dYdX, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™.",
       "sui_title": "Ledger Nano S™ does not support swapping Sui",
-      "sui_description": "To swap Sui, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™."
+      "sui_description": "To swap Sui, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™.",
+      "kaspa_title": "Ledger Nano S™ does not support swapping Kaspa",
+      "kaspa_description": "To swap Kaspa, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™."
     },
     "providers": {
       "title": "Choose a provider to swap crypto",
@@ -2246,6 +2250,7 @@
   "receive": {
     "title": "Receive",
     "successTitle": "Address shared securely",
+    "connectToNoah": "Re-directing you to Noah, our partner, to create your cash-to-stable account",
     "steps": {
       "options": {
         "fromBank": {
@@ -5048,6 +5053,12 @@
     },
     "screens": {
       "welcome": {
+        "videos": {
+          "buySell": "A wallet that protects and puts you in control",
+          "thousandsCrypto": "Send, receive, swap and stake thousands of crypto",
+          "secureWallet": "Verify all your transactions with peace of mind"
+        },
+        "notice": "By continuing, you agree to Ledger's <Link1>Terms & Conditions</Link1> and <Link2>Privacy Policy</Link2>. Ledger provides no financial advice.\nSwap and staking services are provided by third parties.",
         "title": "The most secure cryptocurrency & NFT wallet",
         "description": "Securely manage, buy and grow your crypto and NFTs on Ledger Live.",
         "nextButton": "Get started",
@@ -5738,7 +5749,34 @@
     },
     "canton": {
       "commentPlaceholder": "Optional",
-      "comment": "Comment"
+      "comment": "Comment",
+      "addAccount": {
+        "title": "Add Canton Account",
+        "onboard": {
+          "title": "Onboarding",
+          "newAccount": "New Account",
+          "init": "Set up your new Canton account by clicking Continue",
+          "onboarded": "Onboarded accounts",
+          "success": "Your new Canton account has been created and onboarded.",
+          "error": "Failed to onboard new account. Please try again.",
+          "status": {
+            "prepare": "Preparing account onboarding...",
+            "submit": "Onboarding account...",
+            "default": "Processing..."
+          }
+        },
+        "auth": {
+          "title": "Authorization",
+          "validator": "Authorize",
+          "hint": "Automaticaly accept incoming funds to this account.",
+          "error": "Authorization failed. Please try again.",
+          "validatorLabel": "Ledger Validator",
+          "validatorDescription": "Automated fund acceptance"
+        },
+        "finish": {
+          "title": "Confirmation"
+        }
+      }
     },
     "stellar": {
       "memo": "Memo",

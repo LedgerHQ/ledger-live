@@ -518,6 +518,28 @@ function useUiHook({ isModularDrawerVisible, openModularDrawer, manifest }: Prop
           onError,
         });
       },
+      "transaction.signRaw": ({
+        account,
+        parentAccount,
+        transaction,
+        options,
+        onSuccess,
+        onError,
+      }) => {
+        navigation.navigate(NavigatorName.SignRawTransaction, {
+          screen: ScreenName.SignRawTransactionSelectDevice,
+          params: {
+            transaction,
+            accountId: account.id,
+            parentId: parentAccount ? parentAccount.id : undefined,
+            appName: options?.hwAppId,
+            dependencies: options?.dependencies,
+            onSuccess,
+            onError,
+          },
+          onError,
+        });
+      },
       "transaction.broadcast": () => {},
       "device.transport": ({ appName, onSuccess, onCancel }) => {
         navigation.navigate(ScreenName.DeviceConnect, {

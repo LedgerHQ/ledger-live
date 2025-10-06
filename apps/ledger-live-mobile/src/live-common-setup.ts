@@ -41,6 +41,9 @@ setSupportedCurrencies([
   "ethereum",
   "bsc",
   "polkadot",
+  "westend",
+  "assethub_westend",
+  "assethub_polkadot",
   "solana",
   "solana_testnet",
   "solana_devnet",
@@ -136,7 +139,7 @@ setSupportedCurrencies([
   "babylon",
   "canton_network",
   "canton_network_devnet",
-  "canton_network_localnet",
+  "canton_network_testnet",
   "kaspa",
 ]);
 

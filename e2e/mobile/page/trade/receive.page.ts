@@ -1,5 +1,6 @@
 import { by, element } from "detox";
 import { currencyParam, openDeeplink } from "../../helpers/commonHelpers";
+import { TokenType } from "@ledgerhq/live-common/lib/e2e/enum/TokenType";
 
 export default class ReceivePage {
   baseLink = "receive";
@@ -18,6 +19,7 @@ export default class ReceivePage {
 
   currencyRowId = (t: string) => `big-currency-row-${t}`;
   currencyNameId = (t: string) => `big-currency-name-${t}`;
+  currencyNameIdByRegex = (type: string) => new RegExp(`big-currency-name-.*\\/${type}\\/.*`);
   currencySubtitleId = (t: string) => `big-currency-subtitle-${t}`;
   step1HeaderTitle = () => getElementById("receive-header-step1-title");
   step2HeaderTitle = () => getElementById(this.step2HeaderTitleId);
@@ -54,6 +56,15 @@ export default class ReceivePage {
   @Step("Select currency in receive list")
   async selectCurrency(currencyName: string): Promise<void> {
     const id = this.currencyNameId(currencyName.toLowerCase());
+    if (!(await IsIdVisible(id))) {
+      await scrollToId(id, this.selectCryptoScrollViewId);
+    }
+    await tapById(id);
+  }
+
+  @Step("Select currency in receive list")
+  async selectCurrencyByType(currencyType: TokenType): Promise<void> {
+    const id = this.currencyNameIdByRegex(currencyType.toLowerCase());
     if (!(await IsIdVisible(id))) {
       await scrollToId(id, this.selectCryptoScrollViewId);
     }

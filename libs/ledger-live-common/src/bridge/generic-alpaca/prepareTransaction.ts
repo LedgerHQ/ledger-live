@@ -7,10 +7,6 @@ import { decodeTokenAccountId } from "@ledgerhq/coin-framework/account/index";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { GenericTransaction } from "./types";
 
-function bnEq(a: BigNumber | null | undefined, b: BigNumber | null | undefined): boolean {
-  return !a && !b ? true : !a || !b ? false : a.eq(b);
-}
-
 function assetInfosFallback(transaction: GenericTransaction): {
   assetReference: string;
   assetOwner: string;
@@ -34,36 +30,59 @@ export function genericPrepareTransaction(
       ? getAssetInfos(transaction, account.freshAddress, getAssetFromToken)
       : assetInfosFallback(transaction);
 
-    let fees: BigNumber | bigint | null = transaction.customFees?.parameters?.fees || null;
-    if (fees === null) {
-      fees = (
-        await estimateFees(
-          transactionToIntent(
-            account,
-            {
-              ...transaction,
-            },
-            computeIntentType,
-          ),
-        )
-      ).value;
+    const next: GenericTransaction = {
+      ...transaction,
+      assetOwner,
+      assetReference,
+    };
+
+    const useAllAmount = !!next.useAllAmount || ["stake", "unstake"].includes(next.mode ?? "");
+
+    // Anticipate use cases where token amounts impact fee calculuses
+    if (useAllAmount && next.subAccountId) {
+      const subAccount = account.subAccounts?.find(sub => sub.id === next.subAccountId);
+
+      next.amount = subAccount?.spendableBalance ?? new BigNumber(0);
     }
 
-    if (!bnEq(transaction.fees, new BigNumber(fees.toString()))) {
-      return {
-        ...transaction,
-        fees: new BigNumber(fees.toString()),
-        assetReference,
-        assetOwner,
-        customFees: {
-          parameters: {
-            fees: new BigNumber(fees.toString()),
-          },
-        },
-      };
+    const intent = transactionToIntent(account, next, computeIntentType);
+    const estimation = await estimateFees(intent);
+    const customFeesValue = next.customFees?.parameters?.fees; // e.g. Stellar
+
+    next.fees = customFeesValue ?? new BigNumber(estimation.value.toString());
+
+    const fieldsToPropagate = ["storageLimit"] as const;
+
+    for (const field of fieldsToPropagate) {
+      const parameter = estimation.parameters?.[field];
+
+      if (
+        typeof parameter === "bigint" ||
+        typeof parameter === "number" ||
+        typeof parameter === "string"
+      ) {
+        next[field] = new BigNumber(parameter.toString());
+      }
     }
 
-    return transaction;
+    // Fees are now fixed, compute max spendable native
+    if (useAllAmount && !next.subAccountId) {
+      // Check if the estimation has been done for a custom amount
+      const estimatedAmount = estimation.parameters?.amount;
+      if (
+        typeof estimatedAmount === "bigint" ||
+        typeof estimatedAmount === "number" ||
+        typeof estimatedAmount === "string"
+      ) {
+        next.amount = new BigNumber(estimatedAmount.toString());
+      } else {
+        next.amount = account.spendableBalance.gt(next.fees)
+          ? account.spendableBalance.minus(next.fees)
+          : new BigNumber(0);
+      }
+    }
+
+    return next;
   };
 }
 

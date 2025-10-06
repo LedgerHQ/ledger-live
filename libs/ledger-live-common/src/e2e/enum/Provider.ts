@@ -20,6 +20,7 @@ export class Provider {
   static readonly STADER_LABS = new Provider("stader-eth", "Stader Labs", false, true, true);
   static readonly LIDO = new Provider("lido", "Lido", false, true, true);
   static readonly TRANSAK = new Provider("transak", "Transak", false, true, true);
+  static readonly NEAR_INTENTS = new Provider("nearintents", "NEAR Intents", false, true, true);
 
   static getNameByUiName(uiName: string): string {
     const provider = Object.values(Provider).find(p => p.uiName === uiName);

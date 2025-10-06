@@ -1,44 +1,51 @@
+import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import type { TransactionIntent, MemoNotSupported } from "@ledgerhq/coin-framework/api/index";
 import type { StakingOperation } from "../types/staking";
+import { isStakingIntent } from "../utils";
+import { STAKING_CONTRACTS } from "./contracts";
+import { encodeStakingData } from "./encoder";
+import { isStakingOperation } from "./detectOperationType";
+import { isPayable } from "./abis";
 
 type OperationFn = (
-  recipient: string,
+  valAddress: string,
   amount: bigint,
-  sourceValidator?: string,
+  dstValAddress?: string,
   delegator?: string,
 ) => unknown[];
 
 const STAKING_PROTOCOLS: Record<string, Record<string, OperationFn>> = {
   sei_network_evm: {
-    delegate: recipient => [recipient],
-    undelegate: (recipient, amount) => [recipient, amount],
-    redelegate: (recipient, amount, sourceValidator) => {
-      if (!sourceValidator) throw new Error("SEI redelegate requires sourceValidator");
-      return [sourceValidator, recipient, amount];
+    delegate: valAddress => [valAddress],
+    undelegate: (valAddress, amount) => [valAddress, amount],
+    redelegate: (valAddress, amount, dstValAddress) => {
+      if (!dstValAddress) throw new Error("SEI redelegate requires dstValAddress");
+      return [valAddress, dstValAddress, amount];
     },
-    getStakedBalance: (_recipient, _amount, sourceValidator, delegator) => {
-      if (!delegator || !sourceValidator) {
-        throw new Error("SEI getStakedBalance requires delegator and validator");
+    getStakedBalance: (_recipient, _amount, dstValAddress, delegator) => {
+      if (!delegator || !dstValAddress) {
+        throw new Error("SEI getStakedBalance requires delegator and dstValAddress");
       }
-      return [delegator, sourceValidator];
+      return [delegator, dstValAddress];
     },
   },
   celo: {
-    delegate: (recipient, amount) => [recipient, amount],
-    undelegate: (recipient, amount) => [recipient, amount],
+    delegate: (valAddress, amount) => [valAddress, amount],
+    undelegate: (valAddress, amount) => [valAddress, amount],
     redelegate: () => {
       throw new Error("Celo does not support redelegate");
     },
-    getStakedBalance: recipient => [recipient],
-    getUnstakedBalance: recipient => [recipient],
+    getStakedBalance: valAddress => [valAddress],
+    getUnstakedBalance: valAddress => [valAddress],
   },
 };
 
 export const buildTransactionParams = (
   currencyId: string,
   transactionType: StakingOperation,
-  recipient: string,
+  valAddress: string,
   amount: bigint,
-  sourceValidator?: string,
+  dstValAddress?: string,
   delegator?: string,
 ): unknown[] => {
   const protocol = STAKING_PROTOCOLS[currencyId];
@@ -50,6 +57,61 @@ export const buildTransactionParams = (
   if (!operation) {
     throw new Error(`Unsupported transaction type for ${currencyId}: ${transactionType}`);
   }
-
-  return operation(recipient, amount, sourceValidator, delegator);
+  return operation(valAddress, amount, dstValAddress, delegator);
 };
+
+/**
+ * Builds transaction parameters for staking transactions
+ */
+export function buildStakingTransactionParams(
+  currency: CryptoCurrency,
+  intent: TransactionIntent<MemoNotSupported>,
+): {
+  to: string;
+  data: Buffer;
+  value: bigint;
+} {
+  if (!isStakingIntent(intent)) {
+    throw new Error("Intent must be a staking intent");
+  }
+
+  const { amount, sender, mode, valAddress, dstValAddress } = intent;
+
+  const config = STAKING_CONTRACTS[currency.id];
+  if (!config) {
+    throw new Error(`Unsupported staking currency: ${currency.id}`);
+  }
+
+  if (!mode || !isStakingOperation(mode)) {
+    throw new Error(`Invalid staking operation: ${mode}`);
+  }
+
+  const stakingParams = buildTransactionParams(
+    currency.id,
+    mode,
+    valAddress,
+    amount,
+    dstValAddress, // dstValAddress for redelegate
+    sender, // delegator address
+  );
+
+  const to = config.contractAddress;
+  const data = Buffer.from(
+    encodeStakingData({
+      currencyId: currency.id,
+      operation: mode,
+      config,
+      params: stakingParams,
+    }).slice(2),
+    "hex",
+  );
+
+  const functionName = config.functions[mode];
+  if (!functionName) {
+    throw new Error(`No function mapping found for the operation: ${mode}`);
+  }
+
+  const value = isPayable(currency.id, functionName) ? amount : 0n;
+
+  return { to, data, value };
+}

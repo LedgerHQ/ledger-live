@@ -94,12 +94,11 @@ function useUiHook(manifest: AppManifest, tracking: TrackingAPI): UiHook {
           openAssetAndAccountDrawer({
             accounts$,
             drawerConfiguration,
-            currencies: areCurrenciesFiltered && !useCase ? currencies : undefined,
+            currencies: areCurrenciesFiltered && !useCase ? currencies.map(c => c.id) : undefined,
             areCurrenciesFiltered,
             useCase,
             onSuccess,
             onCancel,
-            includeTokens: true,
           });
         } else {
           setDrawer(
@@ -187,6 +186,30 @@ function useUiHook(manifest: AppManifest, tracking: TrackingAPI): UiHook {
             manifestId: manifest.id,
             manifestName: manifest.name,
             location: HOOKS_TRACKING_LOCATIONS.genericDAppTransactionSend,
+          }),
+        );
+      },
+      "transaction.signRaw": ({
+        account,
+        parentAccount,
+        transaction,
+        options,
+        onSuccess,
+        onError,
+      }) => {
+        ipcRenderer.send("show-app", {});
+        dispatch(
+          openModal("MODAL_SIGN_RAW_TRANSACTION", {
+            transaction,
+            useApp: options?.hwAppId,
+            dependencies: options?.dependencies,
+            account,
+            parentAccount,
+            onResult: onSuccess,
+            onCancel: onError,
+            manifestId: manifest.id,
+            manifestName: manifest.name,
+            location: HOOKS_TRACKING_LOCATIONS.wapiRawTransactionSend,
           }),
         );
       },

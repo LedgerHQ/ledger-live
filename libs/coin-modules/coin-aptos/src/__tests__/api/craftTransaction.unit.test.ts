@@ -45,6 +45,7 @@ describe("craftTransaction", () => {
     });
 
     const txArg: TransactionIntent = {
+      intentType: "transaction",
       type: "send",
       sender: SENDER_ADDR,
       senderPublicKey: "public-key",
@@ -86,6 +87,7 @@ describe("craftTransaction", () => {
     });
 
     const txArg: TransactionIntent = {
+      intentType: "transaction",
       type: "send",
       sender: SENDER_ADDR,
       senderPublicKey: "public-key",
@@ -127,6 +129,7 @@ describe("craftTransaction", () => {
     });
 
     const txArg: TransactionIntent = {
+      intentType: "transaction",
       type: "send",
       sender: SENDER_ADDR,
       senderPublicKey: "public-key",
@@ -168,6 +171,7 @@ describe("craftTransaction", () => {
     });
 
     const txArg: TransactionIntent = {
+      intentType: "transaction",
       type: "send",
       sender: SENDER_ADDR,
       senderPublicKey: "public-key",
@@ -209,6 +213,7 @@ describe("craftTransaction", () => {
     });
 
     const txArg: TransactionIntent = {
+      intentType: "transaction",
       type: "send",
       sender: SENDER_ADDR,
       senderPublicKey: "public-key",

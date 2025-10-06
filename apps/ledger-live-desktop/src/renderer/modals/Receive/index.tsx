@@ -98,7 +98,7 @@ const ReceiveModal = (props: GlobalModalData["MODAL_RECEIVE"]) => {
   const dispatch = useDispatch();
 
   const openAddAccounts = useCallback(() => {
-    openAssetFlow(true);
+    openAssetFlow();
     dispatch(closeModal("MODAL_RECEIVE"));
   }, [dispatch, openAssetFlow]);
 

@@ -5,56 +5,49 @@ import Button from "~/renderer/components/Button";
 import { CurrencyCircleIcon } from "~/renderer/components/CurrencyBadge";
 import { StepProps } from "../types";
 
-export default function StepFinish({ t, currency, selectedAccounts }: StepProps) {
+const StepFinish = ({ t, currency, creatableAccount, importableAccounts }: StepProps) => {
+  const accounts = [...importableAccounts, creatableAccount];
+
   return (
-    <Box alignItems="center" py={6}>
-      {currency ? <CurrencyCircleIcon currency={currency} size={50} showCheckmark /> : null}
+    <Box alignItems="center" py={6} role="status" aria-live="polite">
+      <CurrencyCircleIcon
+        currency={currency}
+        size={50}
+        showCheckmark
+        aria-label={`${currency.name} account created successfully`}
+      />
       <Title>
         {t("addAccounts.success", {
-          count: selectedAccounts.length,
+          count: accounts.length,
         })}
       </Title>
       <Text>
         {t("addAccounts.successDescription", {
-          count: selectedAccounts.length,
+          count: accounts.length,
         })}
       </Text>
     </Box>
   );
-}
+};
 
-export const StepFinishFooter = ({
-  t,
-  currency: _currency,
-  closeModal: _closeModal,
-  onAccountCreated,
-  onboardingData,
-}: StepProps) => {
-  const onGoStep1 = () => {
-    console.log("[StepFinish] Add Account clicked, calling onAccountCreated");
-    const completedAccount = onboardingData?.completedAccount;
-    if (completedAccount) {
-      onAccountCreated(completedAccount);
-    } else {
-      console.error("[StepFinish] No completed account found in modal state");
-    }
-  };
-
+export const StepFinishFooter = ({ t, onAddAccounts, onAddMore }: StepProps) => {
   return (
     <Box horizontal alignItems="center" justifyContent="space-between" grow>
       <Button
         event="Page AddAccounts Step 4 AddMore"
-        data-testid={"add-accounts-finish-add-more-button"}
+        data-testid="add-accounts-finish-add-more-button"
         outlineGrey
-        onClick={onGoStep1}
+        onClick={onAddMore}
+        aria-label="Add more Canton accounts"
       >
         {t("addAccounts.cta.addMore")}
       </Button>
       <Button
-        event="Page AddAccounts Step 4 AddMore"
-        data-testid={"add-accounts-finish-close-button"}
+        event="Page AddAccounts Step 4 Close"
+        data-testid="add-accounts-finish-close-button"
         primary
-        onClick={onAccountCreated}
+        onClick={onAddAccounts}
+        aria-label="Complete Canton account setup"
       >
         {t("common.done")}
       </Button>
@@ -78,3 +71,5 @@ const Text = styled(Box).attrs(() => ({
 }))`
   text-align: center;
 `;
+
+export default StepFinish;

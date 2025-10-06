@@ -17,7 +17,11 @@ export default () => {
       startPostOnboarding({
         deviceModelId: deviceId,
         mock,
-        fallbackIfNoAction: () => navigation.navigate(NavigatorName.Main),
+        fallbackIfNoAction: () =>
+          navigation.navigate(NavigatorName.Main, {
+            screen: NavigatorName.Portfolio,
+            params: { screen: NavigatorName.WalletTab },
+          }),
       }),
     [navigation, startPostOnboarding],
   );

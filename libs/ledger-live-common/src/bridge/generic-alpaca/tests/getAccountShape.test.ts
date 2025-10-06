@@ -48,6 +48,7 @@ jest.mock("../buildSubAccounts", () => ({
 const chains = [
   { currency: { id: "stellar", name: "Stellar" }, network: "testnet" },
   { currency: { id: "ripple", name: "XRP" }, network: "mainnet" },
+  { currency: { id: "tezos", name: "Tezos" }, network: "mainnet" },
 ];
 
 describe("genericGetAccountShape (stellar & xrp)", () => {
@@ -117,9 +118,11 @@ describe("genericGetAccountShape (stellar & xrp)", () => {
         lastPagingToken: "pt1",
       });
 
-      const assetsBalancePassed = buildSubAccountsMock.mock.calls[0][0].assetsBalance;
-      expect(assetsBalancePassed).toHaveLength(1);
-      expect(assetsBalancePassed[0].asset.symbol).toBe("TOK1");
+      const assetsBalancePassed = buildSubAccountsMock.mock.calls[0][0].allTokenAssetsBalances;
+      expect(assetsBalancePassed).toEqual([
+        { asset: { symbol: "TOK1", type: "token" }, value: "42" },
+        { asset: { symbol: "TOK_IGNORE", type: "token" }, value: "5" },
+      ]);
 
       const assetOpsPassed = buildSubAccountsMock.mock.calls[0][0].operations;
       expect(assetOpsPassed).toHaveLength(1);

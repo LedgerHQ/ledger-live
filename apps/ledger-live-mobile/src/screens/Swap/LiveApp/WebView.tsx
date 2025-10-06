@@ -23,7 +23,9 @@ import { useDispatch } from "react-redux";
 import { useTranslateToSwapAccount } from "./hooks/useTranslateToSwapAccount";
 import { flattenAccountsSelector } from "~/reducers/accounts";
 import { useSwapCustomHandlers } from "./customHandlers";
+import { useDeeplinkCustomHandlers } from "~/components/WebPlatformPlayer/CustomHandlers";
 import { currentRouteNameRef } from "~/analytics/screenRefs";
+import { WalletAPICustomHandlers } from "@ledgerhq/live-common/wallet-api/types";
 
 type Props = {
   manifest: LiveAppManifest;
@@ -37,7 +39,14 @@ export const WebView = forwardRef<WebviewAPI, Props>(
     // to avoid complexifying the logic in the shared custom handlers.
     const accounts = useSelector(flattenAccountsSelector);
     const dispatch = useDispatch();
-    const customHandlers = useSwapCustomHandlers(manifest, accounts, dispatch);
+    const customSwapHandlers = useSwapCustomHandlers(manifest, accounts, dispatch);
+    const customDeeplinkHandlers = useDeeplinkCustomHandlers();
+    const customHandlers = useMemo<WalletAPICustomHandlers>(() => {
+      return {
+        ...customSwapHandlers,
+        ...customDeeplinkHandlers,
+      };
+    }, [customSwapHandlers, customDeeplinkHandlers]);
     const { theme } = useTheme();
     const { language } = useSettings();
     const { ticker: currencyTicker } = useSelector(counterValueCurrencySelector);

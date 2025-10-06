@@ -22,6 +22,16 @@ on:
         required: false
         type: boolean
         default: false
+      max-shards:
+        description: Max number of shards to use for detox tests (both ios and android)
+        required: false
+        type: number
+        default: 2
+      skip-pod-checks:
+        description: Whether to skip the pod lockfile checks
+        required: false
+        type: string
+        default: 'true'
 
   workflow_dispatch:
     inputs:
@@ -46,6 +56,16 @@ on:
         required: false
         type: boolean
         default: false
+      max-shards:
+        description: Max number of shards to use for detox tests (both ios and android)
+        required: false
+        type: number
+        default: 2
+      skip-pod-checks:
+        description: Whether to skip the pod lockfile checks
+        required: false
+        type: string
+        default: 'true'
 
 permissions:
   id-token: write
@@ -75,6 +95,7 @@ jobs:
       android_js_key: ${{ steps.cache-keys.outputs.android_js_key }}
       android_timing_cache_key: ${{ steps.cache-keys.outputs.android_timing_cache_key }}
       ios_timing_cache_key: ${{ steps.cache-keys.outputs.ios_timing_cache_key }}
+      shard_matrix: ${{ steps.generate-shard-matrix.outputs.matrix }}
     steps:
 
       - uses: actions/checkout@v4
@@ -153,6 +174,13 @@ jobs:
           use-fallback: false
           lookup-only: true
 
+      - name: Generate shard matrix
+        id: generate-shard-matrix
+        run: |
+          max_shards=${{ inputs.max-shards || 2 }}
+          shard_indices=$(seq -s ',' 1 $max_shards)
+          echo "matrix={\"shardIndex\":[$shard_indices],\"shardTotal\":[$max_shards]}" >> $GITHUB_OUTPUT
+
   build-ios:
     name: "iOS Build"
     needs: [ determine-builds ]
@@ -186,9 +214,7 @@ jobs:
     runs-on: ["${{ inputs.macos-specificity-runner-label }}", macOS, ARM64]
     strategy:
       fail-fast: false
-      matrix:
-        shardIndex: [1, 2]
-        shardTotal: [2]
+      matrix: ${{ fromJson(needs.determine-builds.outputs.shard_matrix) }}
     env:
       NODE_OPTIONS: "--max-old-space-size=7168"
       LANG: en_US.UTF-8
@@ -261,8 +287,8 @@ jobs:
         with:
           max_attempts: 2
           timeout_minutes: 15
-          command: pnpm i --filter="live-mobile..." --filter="ledger-live" --filter="@ledgerhq/dummy-*-app..." --no-frozen-lockfile --unsafe-perm --ignore-scripts
-          new_command_on_retry: rm -rf ~/.cocoapods/ && pnpm clean && pnpm i --filter="live-mobile..." --filter="ledger-live" --filter="@ledgerhq/dummy-*-app..." --no-frozen-lockfile --unsafe-perm
+          command: pnpm i --filter="live-mobile..." --filter="ledger-live" --filter="@ledgerhq/dummy-*-app..." --unsafe-perm --ignore-scripts
+          new_command_on_retry: rm -rf ~/.cocoapods/ && pnpm clean && pnpm i --filter="live-mobile..." --filter="ledger-live" --filter="@ledgerhq/dummy-*-app..." --unsafe-perm
 
       - name: Detox Post Install
         run: node apps/ledger-live-mobile/node_modules/detox/scripts/postinstall.js
@@ -360,9 +386,7 @@ jobs:
       artifact: ${{ steps.test-artifacts.outputs.artifact-id }}
     strategy:
       fail-fast: false
-      matrix:
-        shardIndex: [ 1, 2 ]
-        shardTotal: [ 2 ]
+      matrix: ${{ fromJson(needs.determine-builds.outputs.shard_matrix) }}
 
     steps:
       - uses: actions/checkout@v4
@@ -479,7 +503,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pnpm i --filter="live-mobile..." --filter="ledger-live" --filter="live-cli*..." --filter="@ledgerhq/dummy-*-app..." --no-frozen-lockfile --unsafe-perm --ignore-scripts
+          pnpm i --filter="live-mobile..." --filter="ledger-live" --filter="live-cli*..." --filter="@ledgerhq/dummy-*-app..." --unsafe-perm --ignore-scripts
 
       - name: Detox Post Install
         run: node apps/ledger-live-mobile/node_modules/detox/scripts/postinstall.js
@@ -608,7 +632,7 @@ jobs:
     name: Merge iOS Timing Files
     needs: [ determine-builds, detox-tests-ios ]
     runs-on: ubuntu-24.04
-    if: ${{ !cancelled() && (needs.detox-tests-ios.result == 'success' || needs.detox-tests-ios.result == 'failure') }}
+    if: ${{ !cancelled() && (needs.detox-tests-ios.result == 'success' || needs.detox-tests-ios.result == 'failure')  && inputs.max-shards > 1 }}
     steps:
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
@@ -636,7 +660,7 @@ jobs:
     name: Merge Android Timing Files
     needs: [ determine-builds, detox-tests-android ]
     runs-on: ubuntu-24.04
-    if: ${{ !cancelled() && (needs.detox-tests-android.result == 'success' || needs.detox-tests-android.result == 'failure') }}
+    if: ${{ !cancelled() && (needs.detox-tests-android.result == 'success' || needs.detox-tests-android.result == 'failure') && inputs.max-shards > 1 }}
     steps:
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
@@ -664,7 +688,7 @@ jobs:
     name: "Test Pod Lockfile"
     runs-on: [ macOS, ARM64 ]
     needs: [ determine-builds ]
-    if: needs.determine-builds.outputs.ios_native_exists == 'true'
+    if: needs.determine-builds.outputs.ios_native_exists == 'true' && inputs.skip-pod-checks != 'true'
     steps:
       - uses: actions/checkout@v4
         with:
@@ -684,7 +708,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pnpm i --filter="live-mobile..." --no-frozen-lockfile --unsafe-perm --ignore-scripts
+          pnpm i --filter="live-mobile..." --unsafe-perm --ignore-scripts
 
       - name: Test Pod Lockfile
         run: |

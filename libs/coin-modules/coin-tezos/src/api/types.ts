@@ -1,11 +1,15 @@
-import { AlpacaApi, FeeEstimation, TransactionIntent } from "@ledgerhq/coin-framework/api/types";
+import type { Api, FeeEstimation } from "@ledgerhq/coin-framework/api/types";
 
-export type TezosFeeParameters = { gasLimit: bigint; storageLimit: bigint };
-export type TezosFeeEstimation = FeeEstimation;
+export type TezosFeeParameters = {
+  gasLimit: bigint;
+  storageLimit: bigint;
+  amount?: bigint;
+  txFee?: bigint;
+};
+export type TezosFeeEstimation = FeeEstimation & {
+  parameters?: TezosFeeParameters & Record<string, unknown>;
+};
 
 export type TezosSender = { address: string; xpub?: string };
-export type TezosTransactionIntent = TransactionIntent;
 
-export type TezosApi = AlpacaApi & {
-  estimateFees: (transactionIntent: TezosTransactionIntent) => Promise<TezosFeeEstimation>;
-};
+export type TezosApi = Api;
