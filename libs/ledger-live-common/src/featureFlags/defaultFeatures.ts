@@ -439,6 +439,11 @@ export const DEFAULT_FEATURES: Features = {
     },
   },
 
+  ptxEarnDrawerApy: {
+    enabled: false,
+    params: {},
+  },
+
   ptxSwapLiveAppMobile: {
     enabled: false,
     params: {
