@@ -3433,6 +3433,17 @@
       "shareAddress" : "アドレスを共有",
       "addressCopied" : "アドレスがクリップボードにコピーされました",
       "taprootWarning" : "送付元がtaprootに対応しているか確認してください",
+      "connectToNoah" : "Connecting you to Noah",
+      "menu" : {
+        "crypto" : {
+          "title" : "暗号資産アドレスから",
+          "description" : "お好きな暗号資産でウォレットをチャージ。"
+        },
+        "fiat" : {
+          "title" : "銀行口座から",
+          "description" : "銀行送金でEURまたはUSDからUSDCをチャージ。KYC必須。"
+        }
+      },
       "memoTag" : {
         "link" : "タグ/メモが必要ですか？",
         "title" : "タグ/メモが必要ですか？",
@@ -3766,12 +3777,16 @@
         "apt_description" : "Aptosをスワップするには、Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™、Ledger Stax™など、対応する他のLedgerデバイスをご使用ください。",
         "cosmos_title" : "Ledger Nano S™はCosmosのスワップに対応していません",
         "cosmos_description" : "Cosmosをスワップするには、Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™、Ledger Stax™など、対応する他のLedgerデバイスをご使用ください。",
+        "hedera_title" : "Ledger Nano S™は、Hederaのスワップに対応していません",
+        "hedera_description" : "Hederaをスワップするには、Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™、Ledger Stax™など、対応する他のLedgerデバイスをご使用ください。",
         "osmo_title" : "Ledger Nano S™は、Osmosisのスワップに対応していません",
         "osmo_description" : "Osmosisをスワップするには、Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™、Ledger Stax™など、対応する他のLedgerデバイスをご使用ください。",
         "dydx_title" : "Ledger Nano S™は、dYdXのスワップに対応していません",
         "dydx_description" : "dYdXをスワップするには、Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™、Ledger Stax™など、対応する他のLedgerデバイスをご使用ください。",
         "sui_title" : "Ledger Nano S™は、Suiのスワップに対応していません",
-        "sui_description" : "Suiをスワップするには、Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™、またはLedger Stax™など、他の対応するLedgerデバイスをご使用ください。"
+        "sui_description" : "Suiをスワップするには、Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™、またはLedger Stax™など、他の対応するLedgerデバイスをご使用ください。",
+        "kaspa_title" : "Ledger Nano S™はKaspaのスワップに対応していません",
+        "kaspa_description" : "Kaspaをスワップするには、Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™、Ledger Stax™など、対応する他のLedgerデバイスをご使用ください。"
       }
     },
     "lending" : {
@@ -7198,9 +7213,10 @@
     "title" : "画面写真をロック",
     "change" : "変更",
     "drawer" : {
+      "title" : "カスタムロック画面",
       "options" : {
-        "uploadFromPhone" : "画像ギャラリーから選択",
-        "remove" : "現在の画像を削除する"
+        "uploadFromPhone" : "画像を変更",
+        "remove" : "ロック画面を削除"
       }
     },
     "toastRemove" : "ロック画面の画像が削除されました",
