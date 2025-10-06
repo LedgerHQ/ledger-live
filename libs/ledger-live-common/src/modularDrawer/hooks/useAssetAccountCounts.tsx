@@ -5,7 +5,7 @@ import type { Account } from "@ledgerhq/types-live";
 import { WalletAPIAccount } from "../../wallet-api/types";
 
 type AccountModuleParams = {
-  assets: CryptoOrTokenCurrency[];
+  networks: CryptoOrTokenCurrency[];
   nestedAccounts: Account[];
   accountIds: Map<string, boolean> | undefined;
   formatLabel: (count: number) => string;
@@ -19,12 +19,13 @@ export type AssetCountItem = {
 };
 
 export const useAssetAccountCounts = ({
-  assets,
+  networks,
   nestedAccounts,
   accountIds,
   formatLabel,
 }: AccountModuleParams): AssetCountItem[] =>
-  assets.map(asset => {
+  networks.map(network => {
+    const asset = network.type === "TokenCurrency" ? network.parentCurrency : network;
     const { length } = getAccountTuplesForCurrency(asset, nestedAccounts, accountIds);
     return {
       asset,

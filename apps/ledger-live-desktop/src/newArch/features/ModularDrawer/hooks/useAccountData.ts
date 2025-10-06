@@ -8,12 +8,12 @@ import { useSelector } from "react-redux";
 import { accountsSelector } from "~/renderer/reducers/accounts";
 import { useGetAccountIds } from "@ledgerhq/live-common/wallet-api/react";
 
-export const useAccountData = ({ assets, accounts$ }: AccountModuleParams): AssetCountItem[] => {
+export const useAccountData = ({ networks, accounts$ }: AccountModuleParams): AssetCountItem[] => {
   const { t } = useTranslation();
   const nestedAccounts = useSelector(accountsSelector);
   const accountIds = useGetAccountIds(accounts$);
   return useAssetAccountCounts({
-    assets,
+    networks,
     nestedAccounts,
     accountIds,
     formatLabel: (count: number) => t("modularAssetDrawer.accountCount", { count }),

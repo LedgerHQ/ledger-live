@@ -11,16 +11,16 @@ import { Observable } from "rxjs";
 import { accountsSelector } from "~/reducers/accounts";
 
 type AccountModuleParams = {
-  assets: CryptoOrTokenCurrency[];
+  networks: CryptoOrTokenCurrency[];
   accounts$?: Observable<WalletAPIAccount[]>;
 };
 
-export const useAccountData = ({ assets, accounts$ }: AccountModuleParams): AssetCountItem[] => {
+export const useAccountData = ({ networks, accounts$ }: AccountModuleParams): AssetCountItem[] => {
   const { t } = useTranslation();
   const nestedAccounts = useSelector(accountsSelector);
   const accountIds = useGetAccountIds(accounts$);
   return useAssetAccountCounts({
-    assets,
+    networks,
     nestedAccounts,
     accountIds,
     formatLabel: (count: number) => t("modularDrawer.accountCount", { count }),
