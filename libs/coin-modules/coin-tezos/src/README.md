@@ -14,16 +14,18 @@ Here is a quick summary of how this integration is made:
 
 ## Account ID, public key and addresses
 
-The account id have the shape `{impl}:{version}:{currency}:{pubkey}:{derivation}`
+The account id have the shape `{impl}:{version}:{currency}:{address}:{derivation}`
 
-For instance: `js:2:tezos:02e9d3749ffd715be88b9bc9f1afd0470e66b867042d2862c61f335a76e4d37af0:tezbox`
+For instance: `js:2:tezos:tz1UPWKtm7n7q76jFcXPdUcfTTdAUMnFiuDm:tezbox`
 
-The public key is the account main identifier, expressed as uncompress hex: `02e9d3749ffd715be88b9bc9f1afd0470e66b867042d2862c61f335a76e4d37af0`.
+The address is the account main identifier: `tz1UPWKtm7n7q76jFcXPdUcfTTdAUMnFiuDm`.
 
-This public key is needed for making transaction and also is used to hash the account address. (`tz1PTxfn1fge2tJwGGpW9zNuYf6BseM3GJXt` in this case)
+This address is used for all blockchain API calls (balance, operations, etc.) and is derived from the public key.
 
-The Account type as defined in https://github.com/LedgerHQ/ledger-live/wiki/LLC:account will be used with:
+## Generic Bridge (Alpaca)
 
-- `.id` to be the id explained as above
-- `.xpub` to be the public key
-- `.freshAddress` to be the tezos account address
+Tezos now uses the generic bridge (Alpaca) implementation. The Account structure is defined by the generic bridge's `getAccountShape` function.
+
+See: [jsHelpers.ts](https://github.com/LedgerHQ/ledger-live/blob/develop/libs/coin-framework/src/bridge/jsHelpers.ts) and `libs/ledger-live-common/src/bridge/generic-alpaca/getAccountShape.ts`
+
+The generic bridge handles account synchronization, transaction preparation, signing, and broadcasting through a unified interface that leverages the Tezos coin module API.
