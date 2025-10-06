@@ -148,7 +148,14 @@ export class LiveAppWebview {
 
   async setCurrencyIds(currencies: string[]) {
     const webview = await this.getWebView();
-    return webview.getByTestId("currency-ids-input").fill(currencies.join(","));
+
+    // Wait for the input to be ready
+    const input = webview.getByTestId("currency-ids-input");
+    await input.waitFor({ state: "visible", timeout: 10000 });
+
+    // Set currency IDs using click + keyboard (more reliable than fill())
+    await input.click();
+    await webview.keyboard.type(currencies.join(","));
   }
 
   async setAccountId(accountId: string) {
