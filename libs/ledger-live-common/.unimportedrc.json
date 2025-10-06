@@ -305,7 +305,11 @@
     "src/wallet-api/utils/deriveAccountIdForManifest.ts",
     "src/wallet-api/version.ts",
     "src/walletConnect/index.ts",
-    "src/wallet-api/ModularDrawer/utils.ts"
+    "src/wallet-api/ModularDrawer/utils.ts",
+    "src/modularDrawer/hooks/useDetailedAccountsCore.ts",
+    "src/modularDrawer/types/detailedAccount.ts",
+    "src/modularDrawer/utils/sortAccountsByFiatValue.ts",
+    "src/modularDrawer/index.ts"
   ],
   "extensions": [".ts", ".js", ".jsx", ".tsx"],
   "ignorePatterns": [
@@ -442,6 +446,8 @@
     "src/modularDrawer/utils/parseToBigNumber.ts",
     "src/modularDrawer/utils/sortByBalance.tsx",
     "src/modularDrawer/utils/type.ts",
+    "src/modularDrawer/hooks/index.ts",
+    "src/modularDrawer/types/index.ts",
     "src/notifications/AnnouncementProvider/helpers.ts",
     "src/reactNativeSvg.d.ts",
     "src/rxjs/operators/throwIf.ts",

@@ -53,7 +53,11 @@ export function createUseRightBalanceAsset({ useBalanceDeps, balanceItem, assets
       }
 
       const assetsWithBalanceData = assets.map(asset => {
-        const balanceData = balanceMap.get(asset.id) || {};
+        const balanceData = balanceMap.get(asset.id) || {
+          currency: asset,
+          balance: new BigNumber(0),
+          fiatValue: 0,
+        };
         return {
           ...asset,
           balanceData,

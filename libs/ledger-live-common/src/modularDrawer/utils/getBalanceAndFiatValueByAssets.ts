@@ -5,9 +5,9 @@ import { AccountLike } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import type { CounterValuesState } from "@ledgerhq/live-countervalues/types";
 
-interface ExtendedAssetType extends AssetType {
-  currency?: CryptoOrTokenCurrency;
-  balance?: BigNumber;
+export interface ExtendedAssetType extends AssetType {
+  currency: CryptoOrTokenCurrency;
+  balance: BigNumber;
   fiatValue?: number;
 }
 
@@ -30,6 +30,9 @@ export const getBalanceAndFiatValueByAssets = (
       id: asset.id,
       name: asset.name,
       ticker: asset.ticker,
+      currency: asset,
+      balance: new BigNumber(0),
+      fiatValue: 0,
     };
   });
 };
