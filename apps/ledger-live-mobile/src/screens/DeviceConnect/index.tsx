@@ -1,7 +1,8 @@
 import React, { useCallback, useMemo, useState } from "react";
 import { StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { TFunction, useTranslation } from "react-i18next";
+import type { TFunction } from "i18next";
+import { useTranslation } from "react-i18next";
 import { useTheme } from "@react-navigation/native";
 import type { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { AppResult } from "@ledgerhq/live-common/hw/actions/app";

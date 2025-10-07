@@ -55,10 +55,10 @@
     "bluetooth": "Bluetooth",
     "usb": "USB",
     "add": "Add",
-    "token": "Token",
-    "token_plural": "Tokens",
-    "subaccount": "Subaccount",
-    "subaccount_plural": "Subaccounts",
+    "token_one": "Token",
+    "token_other": "Tokens",
+    "subaccount_one": "Subaccount",
+    "subaccount_other": "Subaccounts",
     "forgetDevice": "Remove device",
     "help": "Help",
     "saveLogs": "Save logs",
@@ -71,24 +71,24 @@
     "installed": "Installed",
     "uninstall": "Uninstall",
     "fromNow": {
-      "seconds": "in one second",
-      "seconds_plural": "in {{time}} seconds",
-      "minutes": "in one minute",
-      "minutes_plural": "in {{time}} minutes",
-      "hours": "in one hour",
-      "hours_plural": "in {{time}} hours",
-      "days": "in one day",
-      "days_plural": "in {{time}} days"
+      "seconds_one": "in one second",
+      "seconds_other": "in {{time}} seconds",
+      "minutes_one": "in one minute",
+      "minutes_other": "in {{time}} minutes",
+      "hours_one": "in one hour",
+      "hours_other": "in {{time}} hours",
+      "days_one": "in one day",
+      "days_other": "in {{time}} days"
     },
     "timeAgo": {
-      "seconds": "one second ago",
-      "seconds_plural": "{{time}} seconds ago",
-      "minutes": "one minute ago",
-      "minutes_plural": "{{time}} minutes ago",
-      "hours": "one hour ago",
-      "hours_plural": "{{time}} hours ago",
-      "days": "yesterday",
-      "days_plural": "{{time}} days ago"
+      "seconds_one": "one second ago",
+      "seconds_other": "{{time}} seconds ago",
+      "minutes_one": "one minute ago",
+      "minutes_other": "{{time}} minutes ago",
+      "hours_one": "one hour ago",
+      "hours_other": "{{time}} hours ago",
+      "days_one": "yesterday",
+      "days_other": "{{time}} days ago"
     },
     "seeMore": "See more",
     "moreInfo": "More info",
@@ -2813,10 +2813,10 @@
   "selectableAccountsList": {
     "deselectAll": "Deselect all",
     "selectAll": "Select all",
-    "tokenCount": "+1 token",
-    "tokenCount_plural": "+{{count}} tokens",
-    "subaccountCount": "+1 subaccount",
-    "subaccountCount_plural": "+{{count}} subaccounts"
+    "tokenCount_one": "+1 token",
+    "tokenCount_other": "+{{count}} tokens",
+    "subaccountCount_one": "+1 subaccount",
+    "subaccountCount_other": "+{{count}} subaccounts"
   },
   "account": {
     "subHeader": {
@@ -3015,25 +3015,25 @@
       "upToDate": "Synchronized",
       "error": "Error",
       "queued": "Awaiting",
-      "showTokens": "Show {{length}} token",
-      "showTokens_plural": "Show {{length}} tokens",
-      "showSubAccounts": "Show {{length}} subaccount",
-      "showSubAccounts_plural": "Show {{length}} subaccounts",
-      "hideTokens": "Hide token",
-      "hideTokens_plural": "Hide tokens",
-      "hideSubAccounts": "Hide subaccount",
-      "hideSubAccounts_plural": "Hide subaccounts",
+      "showTokens_one": "Show {{length}} token",
+      "showTokens_other": "Show {{length}} tokens",
+      "showSubAccounts_one": "Show {{length}} subaccount",
+      "showSubAccounts_other": "Show {{length}} subaccounts",
+      "hideTokens_one": "Hide token",
+      "hideTokens_other": "Hide tokens",
+      "hideSubAccounts_one": "Hide subaccount",
+      "hideSubAccounts_other": "Hide subaccounts",
       "algorand": {
-        "showTokens": "Show {{length}} ASA",
-        "showTokens_plural": "Show {{length}} ASA",
-        "hideTokens": "Hide ASA",
-        "hideTokens_plural": "Hide ASA"
+        "showTokens_one": "Show {{length}} ASA",
+        "showTokens_other": "Show {{length}} ASA",
+        "hideTokens_one": "Hide ASA",
+        "hideTokens_other": "Hide ASA"
       },
       "stellar": {
-        "showTokens": "Show {{length}} asset",
-        "showTokens_plural": "Show {{length}} assets",
-        "hideTokens": "Hide asset",
-        "hideTokens_plural": "Hide assets"
+        "showTokens_one": "Show {{length}} asset",
+        "showTokens_other": "Show {{length}} assets",
+        "hideTokens_one": "Hide asset",
+        "hideTokens_other": "Hide assets"
       }
     },
     "noResultsFound": "No asset found",
@@ -3048,8 +3048,8 @@
   "distribution": {
     "header": "Asset allocation",
     "list": "Asset allocation ({{count}})",
-    "assets": "asset",
-    "assets_plural": "assets",
+    "assets_one": "asset",
+    "assets_other": "assets",
     "total": "Total balance:",
     "listAccount": "Asset allocation ({{count}})",
     "title": "Assets",
@@ -3456,8 +3456,8 @@
       },
       "selectNetwork": {
         "title": "Select the network for the chosen crypto",
-        "account": "{{count}} account",
-        "account_plural": "{{count}} accounts",
+        "account_one": "{{count}} account",
+        "account_other": "{{count}} accounts",
         "subtitle": "This must match the network chosen on the wallet or exchange transferring the crypto.",
         "bannerTitle": "Make sure to select the right network. Learn how.",
         "depositFromCexBannerTitle": "Deposit crypto from your Coinbase account"
@@ -3474,8 +3474,8 @@
       "addAccount": {
         "title": "Checking for an account...",
         "subtitle": "Checking if you already have an account for {{currencyName}} on the blockchain.",
-        "foundAccount": "{{count}} account found",
-        "foundAccount_plural": "{{count}} accounts found",
+        "foundAccount_one": "{{count}} account found",
+        "foundAccount_other": "{{count}} accounts found",
         "stopSynchronization": "Stop synchronization",
         "addingAccount": "No accounts found. Creating a new account for {{currencyName}}..."
       },
@@ -3908,10 +3908,10 @@
           "stepRange": "Step {{currentStep}} of {{totalSteps}}"
         },
         "selectAccount": {
-          "enabledAccountsAmount": "You have {{number}} account that approved {{amount}}",
-          "enabledAccountsAmount_plural": "You have {{number}} accounts that approved {{amount}}",
-          "enabledAccountsNoLimit": "You have {{number}} account that approved an unlimited amount of {{ currency }}",
-          "enabledAccountsNoLimit_plural": "You have {{number}} accounts that approved an unlimited amount of {{ currency }}",
+          "enabledAccountsAmount_one": "You have {{number}} account that approved {{amount}}",
+          "enabledAccountsAmount_other": "You have {{number}} accounts that approved {{amount}}",
+          "enabledAccountsNoLimit_one": "You have {{number}} account that approved an unlimited amount of {{ currency }}",
+          "enabledAccountsNoLimit_other": "You have {{number}} accounts that approved an unlimited amount of {{ currency }}",
           "noEnabledAccounts": "You need to approve an account before you can lend."
         },
         "enable": {
@@ -4300,8 +4300,8 @@
       }
     },
     "imported": "Asset added successfully",
-    "added": "Account added to your portfolio",
-    "added_plural": "{{count}} Accounts added to your portfolio",
+    "added_one": "Account added to your portfolio",
+    "added_other": "{{count}} Accounts added to your portfolio",
     "sections": {
       "importable": {
         "title": "Add existing account"
@@ -4367,8 +4367,8 @@
       "whichAddressType": "Learn how to choose an address type",
       "sections": {
         "importable": {
-          "title": "We found {{count}} account",
-          "title_plural": "We found {{count}} accounts"
+          "title_one": "We found {{count}} account",
+          "title_other": "We found {{count}} accounts"
         },
         "creatable": {
           "title": "New account"
@@ -4410,8 +4410,8 @@
     "outdated": "App version outdated",
     "outdatedDesc": "An important update is available for the {{appName}} application on your device. Please go to My Ledger to update it.",
     "quitApp": "Quit the application on your device",
-    "appNotInstalled": "Please install the {{appName}} app",
-    "appNotInstalled_plural": "Please install the {{appName}} apps",
+    "appNotInstalled_one": "Please install the {{appName}} app",
+    "appNotInstalled_other": "Please install the {{appName}} apps",
     "useAnotherDevice": "Use another device",
     "deviceNotOnboarded": {
       "title": "Your Ledger is not ready to use yet",
@@ -4566,8 +4566,8 @@
   },
   "RemoveDevice": {
     "button": {
-      "title": "Remove {{nbDevices}} device",
-      "title_plural": "Remove {{nbDevices}} devices"
+      "title_one": "Remove {{nbDevices}} device",
+      "title_other": "Remove {{nbDevices}} devices"
     }
   },
   "manager": {
@@ -4636,16 +4636,16 @@
       "title": "Storage",
       "used": "Used",
       "genuine": "Your device is genuine",
-      "appsInstalled": "<0>{{number}}</0> app",
-      "appsInstalled_plural": "<0>{{number}}</0> apps",
+      "appsInstalled_one": "<0>{{number}}</0> app",
+      "appsInstalled_other": "<0>{{number}}</0> apps",
       "storageAvailable": "available",
       "noFreeSpace": "No storage left",
       "appsToUpdate": "<0>{{number}}</0> update",
-      "appsToUpdate_plural": "<0>{{number}}</0> updates"
+      "appsToUpdate_other": "<0>{{number}}</0> updates"
     },
     "installSuccess": {
       "title": "App successfully installed",
-      "title_plural": "Apps successfully installed",
+      "title_other": "Apps successfully installed",
       "notSupported": "App installed successfully, find out more about the installed apps on our website.",
       "manageAccount": "Add accounts",
       "learnMore": "Learn more",
@@ -4678,7 +4678,7 @@
         "desc": "Please wait for the {{appName}} app to be installed",
         "button": "Installing...",
         "queued": "Queued",
-        "button_plural": "Installing... {{progressPercentage}}%"
+        "button_other": "Installing... {{progressPercentage}}%"
       },
       "done": {
         "title": "App Successfully installed",
@@ -4693,8 +4693,8 @@
       "continueInstall": "Install apps"
     },
     "update": {
-      "title": "{{number}} app update",
-      "title_plural": "{{number}} app updates",
+      "title_one": "{{number}} app update",
+      "title_other": "{{number}} app updates",
       "step": "Update step {{step}}:",
       "updateWarn": "Do not quit My Ledger during the update.",
       "progress": "Updating all...",
@@ -4714,7 +4714,7 @@
         "title": "Successfully uninstalled {{appName}} on your {{productName}}"
       },
       "dependency": {
-        "title": "Other apps need the {{app}} app",
+        "title_one": "Other apps need the {{app}} app",
         "showAll": "Show apps to uninstall",
         "description": "Apps on your device that need the {{app}} app will be uninstalled too.",
         "description_one": "Some apps are dependent of the {{app}} app.",
@@ -6733,11 +6733,11 @@
     "changeValidator": "Change validator",
     "endDelegation": "End delegation",
     "durationForDays0": "Just now",
-    "durationForDays": "For a day",
-    "durationForDays_plural": "For {{count}} days",
+    "durationForDays_one": "For a day",
+    "durationForDays_other": "For {{count}} days",
     "durationDays0": "Just now",
-    "durationDays": "1 day",
-    "durationDays_plural": "{{count}} days",
+    "durationDays_one": "1 day",
+    "durationDays_other": "{{count}} days",
     "selectValidatorTitle": "Select validator",
     "started": {
       "title": "Earn rewards",
@@ -6945,20 +6945,20 @@
         "desc": "We’ll let you know if anything comes up."
       },
       "time": {
-        "second": "1 second ago",
-        "second_plural": "{{count}} seconds ago",
-        "minute": "1 minute ago",
-        "minute_plural": "{{count}} minutes ago",
-        "hour": "1 hour ago",
-        "hour_plural": "{{count}} hours ago",
-        "day": "1 day ago",
-        "day_plural": "{{count}} days ago",
-        "week": "1 week ago",
-        "week_plural": "{{count}} weeks ago",
-        "month": "1 month ago",
-        "month_plural": "{{count}} months ago",
-        "year": "1 year ago",
-        "year_plural": "{{count}} years ago"
+        "second_one": "1 second ago",
+        "second_other": "{{count}} seconds ago",
+        "minute_one": "1 minute ago",
+        "minute_other": "{{count}} minutes ago",
+        "hour_one": "1 hour ago",
+        "hour_other": "{{count}} hours ago",
+        "day_one": "1 day ago",
+        "day_other": "{{count}} days ago",
+        "week_one": "1 week ago",
+        "week_other": "{{count}} weeks ago",
+        "month_one": "1 month ago",
+        "month_other": "{{count}} months ago",
+        "year_one": "1 year ago",
+        "year_other": "{{count}} years ago"
       }
     },
     "status": {
@@ -7212,7 +7212,8 @@
   "asset": {
     "title": "Your {{assetName}}",
     "accountsSection": {
-      "title": "Your {{currencyName}} accounts"
+      "title_one": "Your {{currencyName}} account",
+      "title_other": "Your {{currencyName}} accounts"
     }
   },
   "customImage": {
@@ -7617,8 +7618,8 @@
       },
       "synchronizedInstances": {
         "cta": "Manage",
-        "title": "{{count}} Ledger Live app synched",
-        "title_plural": "{{count}} Ledger Live apps synched",
+        "title_one": "{{count}} Ledger Live app synched",
+        "title_other": "{{count}} Ledger Live apps synched",
         "error": "Instances",
         "unsecuredError": {
           "title": "Connect the same Ledger device you used for enabling Ledger Sync",
@@ -7789,8 +7790,8 @@
     },
     "selectNetwork": {
       "title": "Select the blockchain network the asset belongs to",
-      "detectedAccounts": "{{count}} account (detected)",
-      "detectedAccounts_plural": "{{count}} accounts (detected)"
+      "detectedAccounts_one": "{{count}} account (detected)",
+      "detectedAccounts_other": "{{count}} accounts (detected)"
     }
   },
   "emptyList": {
@@ -7822,18 +7823,18 @@
     "ath": "All-time high",
     "atl": "All-time low",
     "timeAgo": {
-      "years": "({{count}} year ago)",
-      "years_plural": "({{count}} years ago)",
-      "months": "({{count}} month ago)",
-      "months_plural": "({{count}} months ago)",
-      "days": "({{count}} day ago)",
-      "days_plural": "({{count}} days ago)",
-      "hours": "({{count}} hour ago)",
-      "hours_plural": "({{count}} hours ago)",
-      "minutes": "({{count}} minute ago)",
-      "minutes_plural": "({{count}} minutes ago)",
-      "seconds": "({{count}} second ago)",
-      "seconds_plural": "({{count}} seconds ago)"
+      "years_one": "({{count}} year ago)",
+      "years_other": "({{count}} years ago)",
+      "months_one": "({{count}} month ago)",
+      "months_other": "({{count}} months ago)",
+      "days_one": "({{count}} day ago)",
+      "days_other": "({{count}} days ago)",
+      "hours_one": "({{count}} hour ago)",
+      "hours_other": "({{count}} hours ago)",
+      "minutes_one": "({{count}} minute ago)",
+      "minutes_other": "({{count}} minutes ago)",
+      "seconds_one": "({{count}} second ago)",
+      "seconds_other": "({{count}} seconds ago)"
     },
     "performance": "Performance",
     "low": "Low",
@@ -7868,8 +7869,8 @@
     "selectAccount": "Select account",
     "searchPlaceholder": "Search",
     "emptyAssetList": "No assets found",
-    "accountCount": "{{count}} account",
-    "accountCount_plural": "{{count}} accounts",
+    "accountCount_one": "{{count}} account",
+    "accountCount_other": "{{count}} accounts",
     "errors": {
       "title": "Connection failed",
       "backend": "Something went wrong on our end. Please try again later",
