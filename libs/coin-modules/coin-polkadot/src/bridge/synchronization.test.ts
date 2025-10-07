@@ -20,6 +20,7 @@ jest.mock("../network", () => ({
 }));
 
 const CURRENCY = getCryptoCurrencyById("polkadot");
+const EXPECTED_CURRENCY = getCryptoCurrencyById("assethub_polkadot");
 
 describe("getAccountShape", () => {
   beforeEach(() => {
@@ -49,9 +50,9 @@ describe("getAccountShape", () => {
 
     // THEN
     expect(mockGetAccount).toHaveBeenCalledTimes(1);
-    expect(mockGetAccount.mock.lastCall[1]).toEqual(CURRENCY);
+    expect(mockGetAccount.mock.lastCall[1]).toEqual(EXPECTED_CURRENCY);
     expect(mockGetOperations).toHaveBeenCalledTimes(1);
-    expect(mockGetOperations.mock.lastCall[2]).toEqual(CURRENCY);
+    expect(mockGetOperations.mock.lastCall[2]).toEqual(EXPECTED_CURRENCY);
   });
 
   it("returns an AccountShapeInfo based on getAccount API", async () => {
@@ -76,9 +77,9 @@ describe("getAccountShape", () => {
 
     // THEN
     expect(mockGetAccount).toHaveBeenCalledTimes(1);
-    expect(mockGetAccount.mock.lastCall[1]).toEqual(CURRENCY);
+    expect(mockGetAccount.mock.lastCall[1]).toEqual(EXPECTED_CURRENCY);
     expect(mockGetOperations).toHaveBeenCalledTimes(1);
-    expect(mockGetOperations.mock.lastCall[2]).toEqual(CURRENCY);
+    expect(mockGetOperations.mock.lastCall[2]).toEqual(EXPECTED_CURRENCY);
 
     expect(shape).toEqual(
       expect.objectContaining({
@@ -123,9 +124,9 @@ describe("getAccountShape", () => {
 
     // THEN
     expect(mockGetAccount).toHaveBeenCalledTimes(1);
-    expect(mockGetAccount.mock.lastCall[1]).toEqual(CURRENCY);
+    expect(mockGetAccount.mock.lastCall[1]).toEqual(EXPECTED_CURRENCY);
     expect(mockGetOperations).toHaveBeenCalledTimes(1);
-    expect(mockGetOperations.mock.lastCall[2]).toEqual(CURRENCY);
+    expect(mockGetOperations.mock.lastCall[2]).toEqual(EXPECTED_CURRENCY);
 
     expect(shape.operationsCount).toEqual(1);
     expect(shape.operations).toEqual(expect.arrayContaining(initialOperations));
@@ -157,9 +158,9 @@ describe("getAccountShape", () => {
 
     // THEN
     expect(mockGetAccount).toHaveBeenCalledTimes(1);
-    expect(mockGetAccount.mock.lastCall[1]).toEqual(CURRENCY);
+    expect(mockGetAccount.mock.lastCall[1]).toEqual(EXPECTED_CURRENCY);
     expect(mockGetOperations).toHaveBeenCalledTimes(1);
-    expect(mockGetOperations.mock.lastCall[2]).toEqual(CURRENCY);
+    expect(mockGetOperations.mock.lastCall[2]).toEqual(EXPECTED_CURRENCY);
 
     expect(shape.operationsCount).toEqual(2);
     expect(shape.operations).toEqual(expect.arrayContaining(apiOperations));
