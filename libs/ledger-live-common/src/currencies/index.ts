@@ -16,9 +16,7 @@ export {
   listTokenTypesForCryptoCurrency,
   findTokenById,
   findTokenByAddressInCurrency,
-  hasTokenId,
   getAbandonSeedAddress,
-  getTokenById,
   addTokens,
 } from "@ledgerhq/cryptoassets";
 export {

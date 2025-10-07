@@ -8,7 +8,7 @@ import {
 } from "@ledgerhq/coin-framework/account/index";
 
 import { getAccount, getLastBlockHeight, getOperations, getTokenOperations } from "../network";
-import { findTokenById, getTokenById } from "@ledgerhq/cryptoassets/tokens";
+import { findTokenById } from "@ledgerhq/cryptoassets/tokens";
 import { GetAccountShape, mergeOps } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { Account } from "@ledgerhq/types-live";
 import { isAccountEmpty } from "./helpers";
@@ -52,6 +52,11 @@ export const getAccountShape: GetAccountShape<Account> = async info => {
     minDate = Math.min(...operationsDates);
   }
 
+  const vthoToken = findTokenById("vechain/vip180/vtho");
+  if (!vthoToken) {
+    throw new Error('token with id "vechain/vip180/vtho" not found');
+  }
+
   const shape = {
     id: accountId,
     balance: new BigNumber(balance),
@@ -60,13 +65,13 @@ export const getAccountShape: GetAccountShape<Account> = async info => {
     operationsCount: operations.length,
     operations,
     blockHeight,
-    feesCurrency: getTokenById("vechain/vip180/vtho"),
+    feesCurrency: vthoToken,
     subAccounts: [
       {
         type: "TokenAccount" as const,
         id: vthoAccountId,
         parentId: accountId,
-        token: getTokenById("vechain/vip180/vtho"),
+        token: vthoToken,
         balance: new BigNumber(energy),
         spendableBalance: new BigNumber(energy),
         creationDate: minDate !== -1 ? new Date(minDate) : new Date(),

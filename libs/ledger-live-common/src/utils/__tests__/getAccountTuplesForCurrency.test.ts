@@ -1,4 +1,4 @@
-import { getCryptoCurrencyById, getTokenById } from "@ledgerhq/cryptoassets";
+import { getCryptoCurrencyById, findTokenById } from "@ledgerhq/cryptoassets";
 import { genAccount } from "../../mock/account";
 import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import type { Account, TokenAccount } from "@ledgerhq/types-live";
@@ -66,7 +66,9 @@ describe("getAccountTuplesForCurrency", () => {
   });
 
   describe("TokenCurrency", () => {
-    const aaveToken = getTokenById("ethereum/erc20/aave");
+    const token = findTokenById("ethereum/erc20/aave");
+    if (!token) throw new Error("AAVE token not found");
+    const aaveToken = token;
 
     test("returns correct parent accounts including a new subAccount when a TokenCurrency is provided", () => {
       const ethAccounts = [

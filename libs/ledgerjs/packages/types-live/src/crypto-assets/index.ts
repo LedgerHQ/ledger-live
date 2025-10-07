@@ -11,21 +11,6 @@ import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
  */
 export type CryptoAssetsStore = {
   /**
-   * Gets a token by its unique identifier, throwing an error if not found.
-   *
-   * ⚠️ DEPRECATED: This method will be removed in favor of findTokenById
-   * which gracefully handles missing tokens without throwing.
-   *
-   * 🔮 FUTURE: Will be removed - use findTokenById instead
-   *
-   * @param id - The unique identifier of the token (e.g., "ethereum/erc20/usd_coin")
-   * @returns The TokenCurrency
-   * @throws Error if the token is not found
-   * @deprecated Use findTokenById instead for graceful error handling
-   */
-  getTokenById(id: string): TokenCurrency;
-
-  /**
    * Finds a token by its unique identifier.
    * This is the preferred method for token lookup as it gracefully handles missing tokens.
    *

@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 import "../../../__tests__/test-helpers/dom-polyfill";
-import { getCryptoCurrencyById, getTokenById } from "@ledgerhq/cryptoassets";
+import { getCryptoCurrencyById, findTokenById } from "@ledgerhq/cryptoassets";
 import type { Account } from "@ledgerhq/types-live";
 import { renderHook, act } from "@testing-library/react";
 import { genTokenAccount } from "@ledgerhq/coin-framework/mocks/account";
@@ -11,7 +11,9 @@ import { useReverseAccounts } from "./useReverseAccounts";
 
 const BTC = getCryptoCurrencyById("bitcoin");
 const ETH = getCryptoCurrencyById("ethereum");
-const USDT = getTokenById("ethereum/erc20/usd_tether__erc20_");
+const usdtToken = findTokenById("ethereum/erc20/usd_tether__erc20_");
+if (!usdtToken) throw new Error("USDT token not found");
+const USDT = usdtToken;
 
 const fromParentAccount = genAccount("mocked-account-2", {
   currency: ETH,
