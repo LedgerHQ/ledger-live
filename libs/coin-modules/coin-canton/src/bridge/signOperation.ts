@@ -6,6 +6,7 @@ import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { decodeAccountId } from "@ledgerhq/coin-framework/account";
 import { combine, craftTransaction } from "../common-logic";
+import { signTransaction } from "../common-logic/transaction/sign";
 import { Transaction, CantonSigner } from "../types";
 
 export const buildSignOperation =
@@ -41,14 +42,19 @@ export const buildSignOperation =
               params.memo = transaction.memo;
             }
 
-            const { hash, serializedTransaction } = await craftTransaction(
+            const { nativeTransaction, serializedTransaction, hash } = await craftTransaction(
               account.currency,
               {
                 address,
               },
               params,
             );
-            const transactionSignature = await signer.signTransaction(derivationPath, hash);
+
+            const transactionSignature = await signTransaction(signer, derivationPath, {
+              json: nativeTransaction,
+              serialized: serializedTransaction,
+              hash: hash,
+            });
 
             return combine(serializedTransaction, `${transactionSignature}__PARTY__${address}`);
           });
@@ -83,9 +89,10 @@ export const buildSignOperation =
           });
         } catch (e) {
           if (e instanceof Error) {
-            throw new Error(
-              (e as Error & { data?: { resultMessage?: string } })?.data?.resultMessage,
-            );
+            const errorMessage =
+              (e as Error & { data?: { resultMessage?: string } })?.data?.resultMessage ||
+              e.message;
+            throw new Error(errorMessage);
           }
 
           throw e;

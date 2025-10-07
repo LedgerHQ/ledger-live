@@ -1,19 +1,17 @@
 import type Transport from "@ledgerhq/hw-transport";
-import { UserRefusedAddress, UserRefusedOnDevice } from "@ledgerhq/errors";
+import { UserRefusedAddress, UserRefusedOnDevice, TransportStatusError } from "@ledgerhq/errors";
 import BIPPath from "bip32-path";
 
 const CLA = 0xe0;
 
 const P1_NON_CONFIRM = 0x00;
 const P1_CONFIRM = 0x01;
+const P1_SIGN_UNTYPED_VERSIONED_MESSAGE = 0x01;
+const P1_SIGN_PREPARED_TRANSACTION = 0x02;
 
-// P2 indicating no information.
 const P2_NONE = 0x00;
-// P2 indicating first APDU in a large request.
 const P2_FIRST = 0x01;
-// P2 indicating that this is not the last APDU in a large request.
 const P2_MORE = 0x02;
-// P2 indicating that this is the last APDU of a message in a multi message request.
 const P2_MSG_END = 0x04;
 
 const INS = {
@@ -30,6 +28,7 @@ const STATUS = {
 
 const ED25519_SIGNATURE_HEX_LENGTH = 128; // hex characters (64 bytes)
 const CANTON_SIGNATURE_HEX_LENGTH = 132; // hex characters (66 bytes with framing)
+const MAX_APDU_DATA_LENGTH = 255;
 
 export type AppConfig = {
   version: string;
@@ -38,10 +37,21 @@ export type AppConfig = {
 export type CantonAddress = {
   publicKey: string;
   address: string;
-  path: string; // TODO: check if necessary
+  path: string;
 };
 
 export type CantonSignature = string;
+
+export type CantonPreparedTransaction = {
+  damlTransaction: Uint8Array;
+  nodes: Uint8Array[];
+  metadata: Uint8Array;
+  inputContracts: Uint8Array[];
+};
+
+export type CantonUntypedVersionedMessage = {
+  transactions: string[];
+};
 
 /**
  * Canton BOLOS API
@@ -71,55 +81,245 @@ export default class Canton {
     const serializedPath = this.serializePath(bipPath);
 
     const p1 = display ? P1_CONFIRM : P1_NON_CONFIRM;
-    const response = await this.transport.send(CLA, INS.GET_ADDR, p1, P2_NONE, serializedPath);
 
-    const responseData = this.handleTransportResponse(response, "address");
-    const { publicKey } = this.extractPublicKeyAndChainCode(responseData);
+    try {
+      const response = await this.transport.send(CLA, INS.GET_ADDR, p1, P2_NONE, serializedPath);
+      this.checkTransportResponse(response);
+      const responseData = this.extractResponseData(response);
+      const { publicKey } = this.extractPublicKeyAndChainCode(responseData);
 
-    const address = "canton_" + this.publicKeyToAddress(publicKey);
+      const address = "canton_" + this.publicKeyToAddress(publicKey);
 
-    return {
-      publicKey,
-      address,
-      path,
-    };
+      return {
+        publicKey,
+        address,
+        path,
+      };
+    } catch (error) {
+      if (error instanceof TransportStatusError && error.statusCode === STATUS.USER_CANCEL) {
+        throw new UserRefusedAddress();
+      }
+      throw error;
+    }
   }
 
   /**
-   * Sign a Canton transaction.
+   * Sign a Canton transaction
+   * using the appropriate signing method based on transaction type.
    *
    * @param path a path in BIP-32 format
-   * @param txHash the transaction hash to sign
+   * @param data either prepared transaction components, untyped versioned message, or txHash string (backwards compatibility)
    * @return the signature
    */
-  async signTransaction(path: string, txHash: string): Promise<CantonSignature> {
+  async signTransaction(
+    path: string,
+    data: CantonPreparedTransaction | CantonUntypedVersionedMessage | string,
+  ): Promise<CantonSignature> {
+    // Backwards compatibility: handle txHash string format
+    if (typeof data === "string") {
+      return this.signTxHash(path, data);
+    }
+
+    if ("damlTransaction" in data) {
+      return this.signPreparedTransaction(path, data);
+    } else {
+      return this.signUntypedVersionedMessage(path, data);
+    }
+  }
+
+  /**
+   * Sign a transaction hash (backwards compatibility)
+   * @private
+   */
+  private async signTxHash(path: string, txHash: string): Promise<CantonSignature> {
     // 1. Send the derivation path
     const bipPath = BIPPath.fromString(path).toPathArray();
     const serializedPath = this.serializePath(bipPath);
 
-    const pathResponse = await this.transport.send(
-      CLA,
-      INS.SIGN,
-      P1_NON_CONFIRM,
-      P2_FIRST | P2_MORE,
-      serializedPath,
-    );
+    try {
+      const pathResponse = await this.transport.send(
+        CLA,
+        INS.SIGN,
+        P1_SIGN_UNTYPED_VERSIONED_MESSAGE,
+        P2_FIRST | P2_MORE,
+        serializedPath,
+      );
 
-    this.handleTransportResponse(pathResponse, "transaction");
+      this.checkTransportResponse(pathResponse);
+    } catch (error) {
+      if (error instanceof TransportStatusError && error.statusCode === STATUS.USER_CANCEL) {
+        throw new UserRefusedOnDevice();
+      }
+      throw error;
+    }
 
-    // 2. Send the transaction hash
+    // 2. Send the transaction hash as a single transaction
+    const transactionBuffer = Buffer.from(txHash, "hex");
     const response = await this.transport.send(
       CLA,
       INS.SIGN,
-      P1_NON_CONFIRM,
+      P1_SIGN_UNTYPED_VERSIONED_MESSAGE,
       P2_MSG_END,
-      Buffer.from(txHash, "hex"),
+      transactionBuffer,
     );
 
-    const responseData = this.handleTransportResponse(response, "transaction");
+    this.checkTransportResponse(response);
+    const responseData = this.extractResponseData(response);
+    return this.cleanSignatureFormat(responseData.toString("hex"));
+  }
+
+  /**
+   * Sign a prepared Canton transaction
+   * @private
+   */
+  private async signPreparedTransaction(
+    path: string,
+    components: CantonPreparedTransaction,
+  ): Promise<CantonSignature> {
+    let responseData: Buffer | null = null;
+
+    // 1. Send the derivation path
+    const bipPath = BIPPath.fromString(path).toPathArray();
+    const serializedPath = this.serializePath(bipPath);
+
+    try {
+      const pathResponse = await this.transport.send(
+        CLA,
+        INS.SIGN,
+        P1_SIGN_PREPARED_TRANSACTION,
+        P2_FIRST | P2_MORE,
+        serializedPath,
+      );
+
+      this.checkTransportResponse(pathResponse);
+    } catch (error) {
+      if (error instanceof TransportStatusError && error.statusCode === STATUS.USER_CANCEL) {
+        throw new UserRefusedOnDevice();
+      }
+      throw error;
+    }
+
+    // 2. Send the DAML transaction
+    await this.sendChunkedData({
+      ins: INS.SIGN,
+      p1: P1_SIGN_PREPARED_TRANSACTION,
+      payload: Buffer.from(components.damlTransaction),
+      isFinal: false,
+    });
+
+    // 3. Send each node
+    for (const [i, node] of components.nodes.entries()) {
+      this.validateUint8Array(node, `Node at index ${i}`);
+      await this.sendChunkedData({
+        ins: INS.SIGN,
+        p1: P1_SIGN_PREPARED_TRANSACTION,
+        payload: Buffer.from(node),
+        isFinal: false,
+      });
+    }
+
+    // 4. Send the metadata
+    const isFinal = components.inputContracts.length === 0;
+    const result = await this.sendChunkedData({
+      ins: INS.SIGN,
+      p1: P1_SIGN_PREPARED_TRANSACTION,
+      payload: Buffer.from(components.metadata),
+      isFinal,
+    });
+
+    if (isFinal) {
+      responseData = result;
+    }
+
+    // 5. Send each input contract - last one should return data
+    for (const [i, inputContract] of components.inputContracts.entries()) {
+      this.validateUint8Array(inputContract, `Input contract at index ${i}`);
+
+      const isFinal = i === components.inputContracts.length - 1;
+      const result = await this.sendChunkedData({
+        ins: INS.SIGN,
+        p1: P1_SIGN_PREPARED_TRANSACTION,
+        payload: Buffer.from(inputContract),
+        isFinal,
+      });
+
+      if (isFinal) {
+        responseData = result;
+      }
+    }
+
+    if (!responseData) {
+      throw new Error("No response data received from device");
+    }
+
     const rawSignature = responseData.toString("hex");
 
     return this.cleanSignatureFormat(rawSignature);
+  }
+
+  /**
+   * Sign topology transactions for Canton onboarding
+   * @private
+   */
+  private async signUntypedVersionedMessage(
+    path: string,
+    data: CantonUntypedVersionedMessage,
+  ): Promise<CantonSignature> {
+    const { transactions } = data;
+
+    if (!transactions || transactions.length === 0) {
+      throw new Error("At least one transaction is required");
+    }
+
+    // 1. Send the derivation path
+    const bipPath = BIPPath.fromString(path).toPathArray();
+    const serializedPath = this.serializePath(bipPath);
+
+    try {
+      const pathResponse = await this.transport.send(
+        CLA,
+        INS.SIGN,
+        P1_SIGN_UNTYPED_VERSIONED_MESSAGE,
+        P2_FIRST | P2_MORE,
+        serializedPath,
+      );
+
+      this.checkTransportResponse(pathResponse);
+    } catch (error) {
+      if (error instanceof TransportStatusError && error.statusCode === STATUS.USER_CANCEL) {
+        throw new UserRefusedOnDevice();
+      }
+      throw error;
+    }
+
+    // 2. Send each transaction
+    for (const [i, transaction] of transactions.entries()) {
+      if (!transaction) {
+        throw new Error(`Transaction at index ${i} is undefined or null`);
+      }
+
+      const transactionBuffer = Buffer.from(transaction, "hex");
+      const isLastTransaction = i === transactions.length - 1;
+      const p2 = isLastTransaction ? P2_MSG_END : P2_MORE | P2_MSG_END;
+
+      const response = await this.transport.send(
+        CLA,
+        INS.SIGN,
+        P1_SIGN_UNTYPED_VERSIONED_MESSAGE,
+        p2,
+        transactionBuffer,
+      );
+
+      if (isLastTransaction) {
+        this.checkTransportResponse(response);
+        const responseData = this.extractResponseData(response);
+        return this.cleanSignatureFormat(responseData.toString("hex"));
+      } else {
+        this.checkTransportResponse(response);
+      }
+    }
+
+    throw new Error("No transactions provided");
   }
 
   /**
@@ -135,12 +335,87 @@ export default class Canton {
       Buffer.alloc(0),
     );
 
-    const responseData = this.handleTransportResponse(response, "version");
+    this.checkTransportResponse(response);
+    const responseData = this.extractResponseData(response);
     const { major, minor, patch } = this.extractVersion(responseData);
 
     return {
       version: `${major}.${minor}.${patch}`,
     };
+  }
+
+  /**
+   * Validate Uint8Array with descriptive error message
+   * @private
+   */
+  private validateUint8Array(value: any, context: string): void {
+    if (!value) {
+      throw new Error(`${context} is undefined or null`);
+    }
+    if (!(value instanceof Uint8Array)) {
+      throw new Error(`${context} is not a Uint8Array: ${typeof value}`);
+    }
+  }
+
+  /**
+   * Unified chunking strategy for sending data to device
+   * @private
+   */
+  private async sendChunkedData({
+    ins,
+    p1,
+    payload,
+    isFinal = false,
+  }: {
+    ins: number;
+    p1: number;
+    payload: Buffer;
+    isFinal?: boolean;
+  }): Promise<Buffer | null> {
+    const chunks = this.createChunks(payload);
+    let responseData: Buffer | null = null;
+
+    for (let i = 0; i < chunks.length; i++) {
+      const isLastChunk = i === chunks.length - 1;
+      let p2 = P2_MORE;
+
+      if (isLastChunk) {
+        p2 = isFinal ? P2_MSG_END : P2_MORE | P2_MSG_END;
+      }
+
+      const response = await this.transport.send(CLA, ins, p1, p2, chunks[i]);
+
+      if (isFinal && isLastChunk) {
+        this.checkTransportResponse(response);
+        responseData = this.extractResponseData(response);
+      } else {
+        this.checkTransportResponse(response);
+      }
+    }
+
+    return responseData;
+  }
+
+  /**
+   * Create optimized chunks from payload
+   * @private
+   */
+  private createChunks(payload: Buffer): Buffer[] {
+    if (payload.length <= MAX_APDU_DATA_LENGTH) {
+      return [payload];
+    }
+
+    const totalChunks = Math.ceil(payload.length / MAX_APDU_DATA_LENGTH);
+    const chunks: Buffer[] = new Array(totalChunks);
+    let offset = 0;
+
+    for (let i = 0; i < totalChunks; i++) {
+      const chunkSize = Math.min(MAX_APDU_DATA_LENGTH, payload.length - offset);
+      chunks[i] = payload.slice(offset, offset + chunkSize);
+      offset += chunkSize;
+    }
+
+    return chunks;
   }
 
   /**
@@ -158,33 +433,28 @@ export default class Canton {
       return cleanedSignature;
     }
 
-    console.warn(`[Canton]: Unknown signature format (${signature.length} chars)`);
     return signature;
   }
 
   /**
-   * Helper method to handle transport response and check for errors
+   * Check transport response for errors and throw appropriate exceptions
    * @private
    */
-  private handleTransportResponse(
-    response: Buffer,
-    errorType: "address" | "transaction" | "version",
-  ): Buffer {
+  private checkTransportResponse(response: Buffer): void {
     const statusCode = response.readUInt16BE(response.length - 2);
-    const responseData = response.slice(0, response.length - 2);
 
-    if (statusCode === STATUS.USER_CANCEL) {
-      switch (errorType) {
-        case "address":
-          throw new UserRefusedAddress();
-        case "transaction":
-          throw new UserRefusedOnDevice();
-        default:
-          throw new Error();
-      }
+    if (statusCode !== STATUS.OK) {
+      throw new TransportStatusError(statusCode);
     }
+  }
 
-    return responseData;
+  /**
+   * Extract response data from transport response
+   * APDU responses have format: [data][status_code(2_bytes)]
+   * @private
+   */
+  private extractResponseData(response: Buffer): Buffer {
+    return response.slice(0, response.length - 2);
   }
 
   /**

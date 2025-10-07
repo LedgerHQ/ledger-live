@@ -1,5 +1,8 @@
 import { openTransportReplayer, RecordStore } from "@ledgerhq/hw-transport-mocker";
+import { UserRefusedAddress, UserRefusedOnDevice } from "@ledgerhq/errors";
 import Canton from "./Canton";
+
+const PATH = "44'/6767'/0'/0'/0'";
 
 describe("Canton", () => {
   describe("decorateAppAPIMethods", () => {
@@ -30,12 +33,12 @@ describe("Canton", () => {
       const canton = new Canton(transport);
 
       // WHEN
-      const result = await canton.getAddress("44'/6767'/0'/0'/0'");
+      const result = await canton.getAddress(PATH);
 
       // THEN
       expect(result).toEqual({
         address: "canton_402f2e68",
-        path: "44'/6767'/0'/0'/0'",
+        path: PATH,
         publicKey: "c59f7f29374d24506dd6490a5db472cf00958e195e146f3dc9c97f96d5c51097",
       });
     });
@@ -51,12 +54,12 @@ describe("Canton", () => {
       const canton = new Canton(transport);
 
       // WHEN
-      const result = await canton.getAddress("44'/6767'/0'/0'/0'", true);
+      const result = await canton.getAddress(PATH, true);
 
       // THEN
       expect(result).toEqual({
         address: "canton_402f2e68",
-        path: "44'/6767'/0'/0'/0'",
+        path: PATH,
         publicKey: "c59f7f29374d24506dd6490a5db472cf00958e195e146f3dc9c97f96d5c51097",
       });
     });
@@ -67,55 +70,42 @@ describe("Canton", () => {
       const canton = new Canton(transport);
 
       // WHEN & THEN
-      return expect(canton.getAddress("invalid path")).rejects.toThrow();
+      await expect(canton.getAddress("invalid-path")).rejects.toThrow();
     });
 
-    it("should handle various derivation paths", async () => {
+    it("should handle user refused address", async () => {
       // GIVEN
       const transport = await openTransportReplayer(
         RecordStore.fromString(`
-          => e005000015058000002c80001a6f800000008000000080000001
-          <= 205e66a10773c0860e73bb6015947806555765df5f9b5b4636df4255a57c57d702205e66a10773c0860e73bb6015947806555765df5f9b5b4636df4255a57c57d7029000
+          => e005010015058000002c80001a6f800000008000000080000000
+          <= 6985
         `),
       );
       const canton = new Canton(transport);
 
-      // WHEN
-      const result = await canton.getAddress("44'/6767'/0'/0'/1'");
-
-      // THEN
-      expect(result).toBeDefined();
-      expect(result.address).toBeDefined();
-      expect(result.publicKey).toBeDefined();
+      // WHEN & THEN
+      await expect(canton.getAddress(PATH, true)).rejects.toThrow(UserRefusedAddress);
     });
-
-    // should handle user refused address
   });
 
   describe("signTransaction", () => {
-    // should sign transaction
-
-    // should handle large transaction payloads
-
-    // should handle empty transaction
-
-    // should request blind signature when required
-
-    it("should sign transaction hash", async () => {
+    it("should sign untyped versioned message", async () => {
       // GIVEN
       const transport = await openTransportReplayer(
         RecordStore.fromString(`
-          => e006000315058000002c80001a6f800000008000000080000000
-          <= 9000
-          => e006000420d1e98829444207b0e170346b2e80b58a2ffc602b01e190fb742016d407c84efd
-          <= 40a65f53c3657bc04efefb67a425ba093a5cb5391d18142f148bb2c48daacf316114cff920a58d5996ca828c7ce265f537f1d7fca8fa82c3c73bd944a96e701a00009000
-        `),
+            => e006010315058000002c80001a6f800000008000000080000000
+            <= 9000
+            => e006010420d1e98829444207b0e170346b2e80b58a2ffc602b01e190fb742016d407c84efd
+            <= 40a65f53c3657bc04efefb67a425ba093a5cb5391d18142f148bb2c48daacf316114cff920a58d5996ca828c7ce265f537f1d7fca8fa82c3c73bd944a96e701a00009000
+          `),
       );
       const canton = new Canton(transport);
-      const txHash = "d1e98829444207b0e170346b2e80b58a2ffc602b01e190fb742016d407c84efd";
+      const data = {
+        transactions: ["d1e98829444207b0e170346b2e80b58a2ffc602b01e190fb742016d407c84efd"],
+      };
 
       // WHEN
-      const result = await canton.signTransaction("44'/6767'/0'/0'/0'", txHash);
+      const result = await canton.signTransaction(PATH, data);
 
       // THEN
       expect(result).toEqual(
@@ -123,18 +113,75 @@ describe("Canton", () => {
       );
     });
 
-    it("should handle user refused transaction", async () => {
+    it("should sign prepared transaction", async () => {
       // GIVEN
       const transport = await openTransportReplayer(
         RecordStore.fromString(`
-          => e006010015058000002c80001a6f800000008000000080000000
-          <= 6985
+          => e006020315058000002c80001a6f800000008000000080000000
+          <= 9000
+          => e0060202ff${"1234567890abcdef".repeat(31)}1234567890abcd
+          <= 9000
+          => e006020608ef1234567890abcd
+          <= 9000
+          => e0060202ff${"1234567890abcdef".repeat(31)}1234567890abcd
+          <= 9000
+          => e006020608ef1234567890abcd
+          <= 9000
+          => e0060202ff${"1234567890abcdef".repeat(31)}1234567890abcd
+          <= 9000
+          => e006020608ef1234567890abcd
+          <= 9000
+          => e0060202ff${"1234567890abcdef".repeat(31)}1234567890abcd
+          <= 9000
+          => e006020408ef1234567890abcd
+          <= 40a65f53c3657bc04efefb67a425ba093a5cb5391d18142f148bb2c48daacf316114cff920a58d5996ca828c7ce265f537f1d7fca8fa82c3c73bd944a96e701a009000
         `),
       );
       const canton = new Canton(transport);
 
-      // WHEN & THEN
-      return expect(canton.signTransaction("44'/6767'/0'/0'/0'", "test")).rejects.toThrow();
+      const testData = "1234567890abcdef".repeat(31) + "1234567890abcdef1234567890abcd";
+      const components = {
+        damlTransaction: Buffer.from(testData, "hex"),
+        nodes: [Buffer.from(testData, "hex")],
+        metadata: Buffer.from(testData, "hex"),
+        inputContracts: [Buffer.from(testData, "hex")],
+      };
+
+      // WHEN
+      const result = await canton.signTransaction(PATH, components);
+
+      // THEN
+      expect(result).toEqual(
+        "40a65f53c3657bc04efefb67a425ba093a5cb5391d18142f148bb2c48daacf316114cff920a58d5996ca828c7ce265f537f1d7fca8fa82c3c73bd944a96e701a00",
+      );
+    });
+
+    describe("error handling", () => {
+      it("should handle user refused transaction", async () => {
+        // GIVEN
+        const transport = await openTransportReplayer(
+          RecordStore.fromString(`
+            => e006010315058000002c80001a6f800000008000000080000000
+            <= 6985
+          `),
+        );
+        const canton = new Canton(transport);
+        const data = {
+          transactions: ["test"],
+        };
+
+        // WHEN & THEN
+        await expect(canton.signTransaction(PATH, data)).rejects.toThrow(UserRefusedOnDevice);
+      });
+
+      it("should handle invalid transaction data", async () => {
+        // GIVEN
+        const transport = await openTransportReplayer(new RecordStore());
+        const canton = new Canton(transport);
+
+        // WHEN & THEN
+        await expect(canton.signTransaction(PATH, null as any)).rejects.toThrow();
+      });
     });
   });
 
@@ -144,7 +191,7 @@ describe("Canton", () => {
       const transport = await openTransportReplayer(
         RecordStore.fromString(`
           => e003000000
-          <= 0202029000
+          <= 0101009000
         `),
       );
       const canton = new Canton(transport);
@@ -154,10 +201,8 @@ describe("Canton", () => {
 
       // THEN
       expect(result).toEqual({
-        version: "2.2.2",
+        version: "1.1.0",
       });
     });
-
-    // should handle configuration error
   });
 });

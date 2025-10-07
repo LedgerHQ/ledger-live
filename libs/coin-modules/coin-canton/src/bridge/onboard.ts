@@ -10,10 +10,9 @@ import {
   getPartyByPubKey,
   preparePreApprovalTransaction,
   submitPreApprovalTransaction,
-  prepareTapRequest,
-  submitTapRequest,
   getTransferPreApproval,
 } from "../network/gateway";
+import { signTransaction } from "../common-logic/transaction/sign";
 import {
   OnboardStatus,
   AuthorizeStatus,
@@ -96,12 +95,9 @@ export const buildOnboardAccount =
 
         o.next({ status: OnboardStatus.SIGN });
 
-        const signature = await signerContext(deviceId, signer =>
-          signer.signTransaction(
-            account.freshAddressPath,
-            preparedTransaction.transactions.combined_hash,
-          ),
-        );
+        const signature = await signerContext(deviceId, async signer => {
+          return await signTransaction(signer, account.freshAddressPath, preparedTransaction);
+        });
 
         o.next({ status: OnboardStatus.SUBMIT });
 
@@ -141,41 +137,15 @@ export const buildAuthorizePreapproval =
 
           o.next({ status: AuthorizeStatus.SIGN });
 
-          const signature = await signerContext(deviceId, signer =>
-            signer.signTransaction(account.freshAddressPath, preparedTransaction.hash),
-          );
-
+          const signature = await signerContext(deviceId, async signer => {
+            return await signTransaction(signer, account.freshAddressPath, preparedTransaction);
+          });
           o.next({ status: AuthorizeStatus.SUBMIT });
 
           await submitPreApprovalTransaction(currency, partyId, preparedTransaction, signature);
         }
 
         o.next({ isApproved: true }); // success
-
-        const handleTapRequest = async () => {
-          try {
-            const { serialized, hash } = await prepareTapRequest(currency, { partyId });
-
-            if (serialized && hash) {
-              o.next({ status: AuthorizeStatus.SIGN });
-
-              const signature = await signerContext(deviceId, signer =>
-                signer.signTransaction(account.freshAddressPath, hash),
-              );
-
-              o.next({ status: AuthorizeStatus.SUBMIT });
-
-              await submitTapRequest(currency, {
-                partyId,
-                serialized,
-                signature,
-              });
-            }
-          } catch (err) {
-            // Tap request failure should not break the pre-approval flow
-          }
-        };
-        await handleTapRequest();
       }
 
       main().then(

@@ -6,6 +6,7 @@
  */
 
 import crypto from "crypto";
+import { CantonPreparedTransaction, CantonUntypedVersionedMessage } from "../types/signer";
 
 export interface CantonTestKeyPair {
   publicKeyHex: string; // Ready for Canton Gateway API
@@ -76,7 +77,7 @@ export function verifySignature(
   publicKeyHex: string,
   signatureHex: string,
   messageHashHex: string,
-): { isValid: boolean; error?: string; details: any } {
+): { isValid: boolean; error?: string; details: Record<string, string | number> } {
   try {
     // Clean inputs - remove 0x prefixes if present
     const cleanPublicKey = publicKeyHex.startsWith("0x") ? publicKeyHex.slice(2) : publicKeyHex;
@@ -85,7 +86,7 @@ export function verifySignature(
       ? messageHashHex.slice(2)
       : messageHashHex;
 
-    const details: any = {
+    const details: Record<string, string | number> = {
       publicKeyLength: cleanPublicKey.length,
       signatureLength: cleanSignature.length,
       messageHashLength: cleanMessageHash.length,
@@ -168,12 +169,37 @@ export function verifySignature(
 
 export function createMockSigner(keyPair: CantonTestKeyPair) {
   return {
-    getAddress: async (derivationPath: string) => ({
+    getAddress: async (_derivationPath: string) => ({
       address: `canton_test_${keyPair.fingerprint.slice(-8)}`,
       publicKey: keyPair.publicKeyHex,
     }),
 
-    signTransaction: async (derivationPath: string, hashToSign: string) => {
+    signTransaction: async (
+      _derivationPath: string,
+      data: CantonPreparedTransaction | CantonUntypedVersionedMessage,
+    ) => {
+      // Handle both CantonPreparedTransaction and CantonUntypedVersionedMessage
+      let hashToSign: string;
+
+      if (data && typeof data === "object") {
+        if ("transactions" in data && Array.isArray(data.transactions)) {
+          // CantonUntypedVersionedMessage - use first transaction
+          hashToSign = data.transactions[0] || "";
+        } else if ("damlTransaction" in data) {
+          // CantonPreparedTransaction - convert to hex string
+          const damlTx = data.damlTransaction;
+          if (damlTx instanceof Uint8Array) {
+            hashToSign = Buffer.from(damlTx).toString("hex");
+          } else {
+            hashToSign = String(damlTx);
+          }
+        } else {
+          hashToSign = String(data);
+        }
+      } else {
+        hashToSign = String(data);
+      }
+
       const cleanHash = hashToSign.startsWith("0x") ? hashToSign.slice(2) : hashToSign;
       return keyPair.sign(cleanHash);
     },
