@@ -21,7 +21,7 @@ import { PageHolder } from "./abstractClasses";
 import { PasswordlockModal } from "./modal/passwordlock.modal";
 import { PortfolioPage } from "./portfolio.page";
 import { ReceiveModal } from "./modal/receive.modal";
-import { Redux } from "tests/utils/redux";
+import { Redux } from "../utils/redux";
 import { SendDrawer } from "./drawer/send.drawer";
 import { SendModal } from "./modal/send.modal";
 import { SettingsModal } from "./modal/settings.modal";
@@ -29,6 +29,7 @@ import { SettingsPage } from "./settings.page";
 import { SpeculosPage } from "./speculos.page";
 import { SwapConfirmationDrawer } from "./drawer/swap.confirmation.drawer";
 import { SwapPage } from "./swap.page";
+import { ModularScanAccountsDrawer } from "./drawer/modular.scan.accounts.drawer";
 
 export class Application extends PageHolder {
   public account = new AccountPage(this.page);
@@ -48,6 +49,7 @@ export class Application extends PageHolder {
   public market = new MarketPage(this.page);
   public modal = new Modal(this.page);
   public modularDrawer = new ModularDrawer(this.page);
+  public scanAccountsDrawer = new ModularScanAccountsDrawer(this.page);
   public onboarding = new OnboardingPage(this.page);
   public operationDrawer = new OperationDrawer(this.page);
   public password = new PasswordlockModal(this.page);
