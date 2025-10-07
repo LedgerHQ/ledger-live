@@ -50,6 +50,7 @@ import {
   openAssetAndAccountDrawer,
 } from "LLD/features/ModularDrawer";
 import { setFlowValue, setSourceValue } from "~/renderer/reducers/modularDrawer";
+import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 
 const wallet = { name: "ledger-live-desktop", version: __APP_VERSION__ };
 
@@ -57,6 +58,7 @@ function useUiHook(manifest: AppManifest, tracking: TrackingAPI): UiHook {
   const { pushToast } = useToasts();
   const { t } = useTranslation();
   const dispatch = useDispatch();
+  const earnDrawerApyFlag = useFeature("ptxEarnDrawerApy");
 
   const { isModularDrawerVisible } = useModularDrawerVisibility({
     modularDrawerFeatureFlagKey: "lldModularDrawer",
@@ -93,10 +95,23 @@ function useUiHook(manifest: AppManifest, tracking: TrackingAPI): UiHook {
 
           // We agree that for useCase, we should send max 25 currencies if provided else use only useCase (e.g. buy)
           const shouldUseCurrencies = (useCase && currencies.length <= 25) || !useCase;
+          // Auto-append APY configuration for earn app requests
+          const earnAppDrawerConfig = earnDrawerApyFlag?.enabled ? earnDrawerApyFlag.params : {};
+
+          const finalDrawerConfiguration = {
+            assets: {
+              ...(earnAppDrawerConfig?.assets || {}),
+              ...(drawerConfiguration?.assets || {}),
+            },
+            networks: {
+              ...(earnAppDrawerConfig?.networks || {}),
+              ...(drawerConfiguration?.networks || {}),
+            },
+          };
 
           openAssetAndAccountDrawer({
             accounts$,
-            drawerConfiguration,
+            drawerConfiguration: finalDrawerConfiguration,
             currencies:
               areCurrenciesFiltered && shouldUseCurrencies ? currencies.map(c => c.id) : undefined,
             areCurrenciesFiltered,
@@ -291,7 +306,17 @@ function useUiHook(manifest: AppManifest, tracking: TrackingAPI): UiHook {
         );
       },
     }),
-    [modularDrawerVisible, flow, dispatch, manifest, pushToast, t, tracking, source],
+    [
+      modularDrawerVisible,
+      dispatch,
+      flow,
+      source,
+      earnDrawerApyFlag,
+      manifest,
+      pushToast,
+      t,
+      tracking,
+    ],
   );
 }
 
