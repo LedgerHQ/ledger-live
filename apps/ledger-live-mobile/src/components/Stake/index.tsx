@@ -52,7 +52,7 @@ const StakeFlow = ({ route }: Props) => {
     entryPoint: route.params.entryPoint,
   });
 
-  const requestAccountRef = useRef(() => { });
+  const requestAccountRef = useRef(() => {});
 
   requestAccountRef.current = () => {
     if (modularDrawerVisible) {
