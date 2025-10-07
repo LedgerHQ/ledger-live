@@ -195,6 +195,7 @@ export function useCustomExchangeHandlers({
                   signature: exchangeParams.signature,
                   feesStrategy: exchangeParams.feesStrategy,
                   amountExpectedTo: exchangeParams.amountExpectedTo,
+                  sponsored: exchangeParams.sponsored,
                 },
                 device,
                 onResult: result => {
@@ -261,6 +262,7 @@ export function useCustomExchangeHandlers({
                   signature: exchangeParams.signature,
                   feesStrategy: exchangeParams.feesStrategy,
                   amountExpectedTo: exchangeParams.amountExpectedTo,
+                  sponsored: exchangeParams.sponsored,
                 },
                 device: currentDevice,
                 onResult: result => {

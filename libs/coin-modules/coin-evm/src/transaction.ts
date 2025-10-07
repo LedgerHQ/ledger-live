@@ -136,6 +136,10 @@ export const fromTransactionRaw = (rawTx: EvmTransactionRaw): EvmTransaction => 
     tx.gasOptions = fromGasOptionsRaw(rawTx.gasOptions);
   }
 
+  if (rawTx.sponsored !== undefined) {
+    tx.sponsored = rawTx.sponsored;
+  }
+
   return tx as EvmTransaction;
 };
 
@@ -190,6 +194,10 @@ export const toTransactionRaw = (tx: EvmTransaction): EvmTransactionRaw => {
 
   if (tx.gasOptions) {
     txRaw.gasOptions = toGasOptionsRaw(tx.gasOptions);
+  }
+
+  if (tx.sponsored !== undefined) {
+    txRaw.sponsored = tx.sponsored;
   }
 
   return txRaw as EvmTransactionRaw;

@@ -37,6 +37,12 @@ const convertToLiveTransaction: ConvertToLiveTransaction<
     liveTx.data = walletApiTransaction.data;
   }
 
+  // Propagate sponsored flag if provided by the Wallet API transaction
+  // This enables fee validation logic to skip NotEnoughGas for sponsored txs
+  if ("sponsored" in walletApiTransaction) {
+    liveTx.sponsored = walletApiTransaction.sponsored;
+  }
+
   if (walletApiTransaction.gasLimit) {
     liveTx.gasLimit = walletApiTransaction.gasLimit;
     liveTx.customGasLimit = walletApiTransaction.gasLimit;
