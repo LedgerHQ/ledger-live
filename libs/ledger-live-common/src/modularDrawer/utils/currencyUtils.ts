@@ -1,33 +1,21 @@
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { getTokenOrCryptoCurrencyById } from "../../deposit/helper";
-import { isTokenCurrency } from "../../currencies";
 import { CurrenciesByProviderId } from "../../deposit/type";
 
 export type ProviderCoverageMap = Map<string, Set<string>>;
-export const safeCurrencyLookup = (id: string): CryptoOrTokenCurrency | null => {
-  try {
-    return getTokenOrCryptoCurrencyById(id);
-  } catch {
-    return null;
-  }
-};
-
-export const isProviderToken = (currency: CryptoOrTokenCurrency, providerId: string): boolean => {
-  return isTokenCurrency(currency) && currency.id.toLowerCase().includes(providerId.toLowerCase());
-};
 
 export const getProviderCurrency = (
   provider: CurrenciesByProviderId,
 ): CryptoOrTokenCurrency | null => {
-  const providerToken = provider.currenciesByNetwork.find(currency => {
-    return isProviderToken(currency, provider.providerId);
-  });
-
-  if (providerToken) {
-    return providerToken;
+  // First, try to find a currency that matches the providerId exactly
+  const exactMatch = provider.currenciesByNetwork.find(
+    currency => currency.id === provider.providerId,
+  );
+  if (exactMatch) {
+    return exactMatch;
   }
-
-  return safeCurrencyLookup(provider.providerId) ?? provider.currenciesByNetwork[0];
+  console.warn("MAD: no exact match found for provider", provider.providerId);
+  // fall back to the first currency in the network
+  return provider.currenciesByNetwork[0];
 };
 
 export const buildProviderCoverageMap = (
@@ -89,6 +77,6 @@ export const extractProviderCurrencies = (
   providers: CurrenciesByProviderId[],
 ): CryptoOrTokenCurrency[] => {
   return providers
-    .map(provider => getProviderCurrency(provider))
+    .map(getProviderCurrency)
     .filter((currency): currency is CryptoOrTokenCurrency => currency !== null);
 };

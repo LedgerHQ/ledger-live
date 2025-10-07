@@ -1,58 +1,12 @@
 import { useGroupedCurrenciesByProvider } from "../../__mocks__/useGroupedCurrenciesByProvider.mock";
-import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 
 import {
   buildProviderCoverageMap,
   extractProviderCurrencies,
   filterProvidersByIds,
   getProviderCurrency,
-  isProviderToken,
-  safeCurrencyLookup,
 } from "../currencyUtils";
-import {
-  mockBaseCryptoCurrency,
-  mockBtcCryptoCurrency,
-  mockEthCryptoCurrency,
-  usdcToken,
-} from "../../__mocks__/currencies.mock";
-
-describe("safeCurrencyLookup", () => {
-  it("should return the currency if it is found", () => {
-    const currency = safeCurrencyLookup("ethereum");
-    expect(currency).toBeDefined();
-  });
-  it("should return null if the currency is not found", () => {
-    const currency = safeCurrencyLookup("not-a-currency");
-    expect(currency).toBeNull();
-  });
-});
-
-describe("isProviderToken", () => {
-  it("should return true if the currency is a provider token", () => {
-    const baseToken: TokenCurrency = {
-      type: "TokenCurrency",
-      id: "base/erc20/base",
-      contractAddress: "0x0000000000000000000000000000000000000000",
-      parentCurrency: mockBaseCryptoCurrency,
-      tokenType: "erc20",
-      name: "Base",
-      ticker: "BASE",
-      units: [
-        {
-          name: "Base",
-          code: "BASE",
-          magnitude: 18,
-        },
-      ],
-    };
-    const currency = isProviderToken(baseToken, "base");
-    expect(currency).toBe(true);
-  });
-  it("should return false if the currency is not a provider token", () => {
-    const currency = isProviderToken(mockEthCryptoCurrency, "ethereum");
-    expect(currency).toBe(false);
-  });
-});
+import { mockBtcCryptoCurrency, usdcToken } from "../../__mocks__/currencies.mock";
 
 describe("getProviderCurrency", () => {
   it("should return the currency if it is a provider currency", () => {
