@@ -679,7 +679,17 @@ export type Feature_LlmChatbotSupport = DefaultFeature;
 export type Feature_EnableAppsBackup = DefaultFeature;
 export type Feature_web3hub = DefaultFeature;
 export type Feature_MemoTag = DefaultFeature;
-export type Feature_PtxEarnDrawerApy = DefaultFeature;
+export type Feature_PtxEarnDrawerApy = Feature<{
+  assets?: {
+    filter?: "topNetworks" | "undefined";
+    leftElement?: "apy" | "marketTrend" | "undefined";
+    rightElement?: "balance" | "marketTrend" | "undefined";
+  };
+  networks?: {
+    leftElement?: "numberOfAccounts" | "numberOfAccountsAndApy" | "undefined";
+    rightElement?: "balance" | "undefined";
+  };
+}>;
 export type Feature_PtxSwapMoonpayProvider = DefaultFeature;
 export type Feature_PtxSwapExodusProvider = DefaultFeature;
 
