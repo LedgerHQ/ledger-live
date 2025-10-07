@@ -133,7 +133,7 @@ export function makeGetAccountShape(
       operations = mergeOps(oldOperations, newOperations);
     }
 
-    const isAuthorized = await isAccountAuthorized(operations, xpubOrAddress);
+    const isAuthorized = await isAccountAuthorized(currency, xpubOrAddress);
     const used = isAuthorized && totalBalance.gt(0);
 
     const blockHeight = await getLedgerEnd(currency);
