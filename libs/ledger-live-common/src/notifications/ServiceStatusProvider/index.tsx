@@ -58,7 +58,7 @@ function sanitizeName(name: string): string {
  */
 
 export function filterServiceStatusIncidents(
-  incidents: Incident[],
+  incidents: Incident[] = [],
   tickers: string[] = [],
   entryPoint?: EntryPoint,
 ): Incident[] {
