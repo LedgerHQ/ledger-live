@@ -61,6 +61,7 @@ export const buildSignOperation =
           const signedTx = await signerContext(deviceId, async signer => {
             const { tx } = await craftTransaction(
               {
+                intentType: "transaction",
                 type,
                 asset,
                 amount: BigInt(transaction.amount.toString()),

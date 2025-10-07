@@ -13,6 +13,7 @@ describe("createApi", () => {
   describe("craftTransaction", () => {
     it("returns serialized native coin TransferTransaction", async () => {
       const { transaction: hex } = await api.craftTransaction({
+        intentType: "transaction",
         asset: {
           type: "native",
         },
@@ -46,6 +47,7 @@ describe("createApi", () => {
 
     it("returns serialized HTS token TransferTransaction", async () => {
       const { transaction: hex } = await api.craftTransaction({
+        intentType: "transaction",
         asset: {
           type: "hts",
           assetReference: "0.0.5022567",
@@ -79,6 +81,7 @@ describe("createApi", () => {
 
     it("returns serialized HTS token association transaction", async () => {
       const { transaction: hex } = await api.craftTransaction({
+        intentType: "transaction",
         asset: {
           type: "hts",
           assetReference: "0.0.5022567",
@@ -112,6 +115,7 @@ describe("createApi", () => {
 
       const { transaction: hex } = await api.craftTransaction(
         {
+          intentType: "transaction",
           asset: {
             type: "native",
           },
@@ -141,6 +145,7 @@ describe("createApi", () => {
   describe("estimateFees", () => {
     it("returns fee for coin transfer transaction", async () => {
       const fees = await api.estimateFees({
+        intentType: "transaction",
         asset: {
           type: "native",
         },
@@ -161,6 +166,7 @@ describe("createApi", () => {
 
     it("returns fee for token transfer transaction", async () => {
       const fees = await api.estimateFees({
+        intentType: "transaction",
         asset: {
           type: "hts",
           assetReference: "0.0.5022567",
@@ -182,6 +188,7 @@ describe("createApi", () => {
 
     it("returns fee for token association transaction", async () => {
       const fees = await api.estimateFees({
+        intentType: "transaction",
         asset: {
           type: "hts",
           assetReference: "0.0.5022567",
