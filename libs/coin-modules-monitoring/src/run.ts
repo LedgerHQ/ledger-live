@@ -114,7 +114,7 @@ function getSync(currency: CryptoCurrency) {
     );
 }
 
-export default async function (currencyIds: string[]) {
+export default async function (currencyIds: string[], accountTypes: AccountType[]) {
   LiveConfig.setConfig(liveConfig);
   setup(store);
   const result: RunResult = {
@@ -123,8 +123,8 @@ export default async function (currencyIds: string[]) {
   };
 
   const nbOfAccounts = currencyIds
-    .map(currencyId => Object.keys(currencies[currencyId].accounts).length)
-    .reduce((previous, current) => previous + current, 0);
+    .flatMap(currencyId => Object.keys(currencies[currencyId].accounts))
+    .filter(currencyAccountType => accountTypes.some(type => type === currencyAccountType)).length;
   let i = 0;
   console.log(`Monitoring ${nbOfAccounts} account(s) within ${currencyIds.join(", ")}`);
 
@@ -134,7 +134,14 @@ export default async function (currencyIds: string[]) {
     const currency = getCryptoCurrencyById(currencyId);
     const sync = getSync(currency);
 
-    for (const [accountType, info] of Object.entries(monitored.accounts)) {
+    for (const accountType of accountTypes) {
+      const info = monitored.accounts[accountType];
+
+      if (!info) {
+        console.log(`\nSkipping currency = "${currencyId}", no account = "${accountType}"`);
+        continue;
+      }
+
       console.log(
         `\n[${++i} / ${nbOfAccounts}] Start (currency = "${currencyId}" account = "${accountType}")`,
       );
