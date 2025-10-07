@@ -1,10 +1,12 @@
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { IUnlocking, SidecarStakingInfo } from "../types";
 import getApiPromise from "./apiPromise";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 
 // Required to leverage PolkadotJS *type augmentation*
 // (https://polkadot.js.org/docs/api/FAQ#since-upgrading-to-the-7x-series-typescript-augmentation-is-missing)
 import "@polkadot/api-augment";
+import coinConfig from "../../config";
 
 /**
  * Fetch the staking info for an account.
@@ -18,11 +20,17 @@ export const fetchStakingInfo = async (
   addr: string,
   currency?: CryptoCurrency,
 ): Promise<SidecarStakingInfo> => {
-  const api = await getApiPromise(currency);
+  const assethubCurrency = getCryptoCurrencyById("assethub_polkadot");
+  const assethubConfig = coinConfig.getCoinConfig(assethubCurrency);
+
+  const currencyToUse =
+    currency?.id === "polkadot" && !assethubConfig.hasBeenMigrated ? assethubCurrency : currency;
+
+  const api = await getApiPromise(currencyToUse);
   const hash = await api.rpc.chain.getFinalizedHead();
   const historicApi = await api.at(hash);
 
-  if (currency?.id === "assethub_polkadot" && !historicApi.query.staking) {
+  if (currencyToUse?.id === "assethub_polkadot" && !historicApi.query.staking) {
     return {
       staking: {
         unlocking: [],
