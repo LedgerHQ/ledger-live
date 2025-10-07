@@ -1,5 +1,5 @@
 import { Flex } from "@ledgerhq/react-ui/index";
-import { AccountItem } from "@ledgerhq/react-ui/pre-ldls/index";
+import { FormattedAccountItem } from "../../components/FormattedAccountItem";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { Account } from "@ledgerhq/types-live";
 import React from "react";
@@ -27,7 +27,7 @@ const FundAccount = ({ account, currency }: Props) => {
         source={source}
       />
       <Flex width="100%" alignItems="center" marginBottom={24}>
-        <AccountItem account={formattedAccount} />
+        <FormattedAccountItem account={formattedAccount} />
       </Flex>
       <ActionsContainer account={account} currencyId={currency.id} />
     </>

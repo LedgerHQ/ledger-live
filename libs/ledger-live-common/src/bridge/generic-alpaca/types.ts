@@ -11,7 +11,7 @@ export type GenericTransaction = TransactionCommon & {
   fees?: BigNumber | null;
   storageLimit?: BigNumber | null;
   customFees?: {
-    parameters: { fees?: BigNumber | null; storageLimit?: BigNumber | null };
+    parameters: { fees?: BigNumber | null };
   };
   tag?: number | null | undefined;
   feeCustomUnit?: Unit | null | undefined;

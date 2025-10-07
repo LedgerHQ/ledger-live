@@ -33,8 +33,6 @@ export class AppInfos {
 
   static readonly STELLAR = new AppInfos("Stellar");
 
-  static readonly SUI = new AppInfos("Sui");
-
   static readonly BITCOIN_CASH = new AppInfos("Bitcoin Cash");
 
   static readonly ALGORAND = new AppInfos("Algorand");
@@ -66,4 +64,6 @@ export class AppInfos {
   static readonly KASPA = new AppInfos("Kaspa");
 
   static readonly HEDERA = new AppInfos("Hedera");
+
+  static readonly SUI = new AppInfos("Sui");
 }

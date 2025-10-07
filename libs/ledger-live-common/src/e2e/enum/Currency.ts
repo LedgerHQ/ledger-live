@@ -83,7 +83,6 @@ export class Currency {
   static readonly XLM = new Currency("Stellar", "XLM", "stellar", AppInfos.STELLAR, [
     Network.STELLAR,
   ]);
-  static readonly SUI = new Currency("Sui", "SUI", "sui", AppInfos.SUI, [Network.SUI]);
   static readonly BCH = new Currency("Bitcoin Cash", "BCH", "bitcoin_cash", AppInfos.BITCOIN_CASH, [
     Network.BITCOIN_CASH,
   ]);
@@ -208,6 +207,8 @@ export class Currency {
   static readonly OP = new Currency("OP Mainnet", "OP", "optimism", AppInfos.ETHEREUM, [
     Network.OPTIMISM,
   ]);
+
+  static readonly SUI = new Currency("Sui", "SUI", "sui", AppInfos.SUI, [Network.SUI]);
 
   static readonly SUI_USDC = new Currency(
     "USDC",

@@ -25,9 +25,6 @@ export type SignMessageNavigatorStackParamList = {
     transaction: Transaction;
     status?: TransactionStatus;
   } & CommonParams;
-  [ScreenName.SignValidationSuccess]: {
-    signature?: string;
-  } & CommonParams;
   [ScreenName.SignValidationError]: {
     error?: Error;
   } & CommonParams;

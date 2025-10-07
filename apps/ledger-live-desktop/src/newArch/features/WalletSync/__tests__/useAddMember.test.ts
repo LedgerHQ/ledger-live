@@ -117,7 +117,8 @@ describe("useAddMember", () => {
     Mocks.memberCredentialsSelector.mockReturnValue(null);
     const { result } = renderHook(() => useAddMember({ device }));
 
-    expect(result.current.error).toBeInstanceOf(Error);
+    await waitFor(() => expect(result.current.error).toBeInstanceOf(Error)); // Wait for the setError
+
     expect(Mocks.sdk.getOrCreateTrustchain).not.toHaveBeenCalled();
     expect(Mocks.setTrustchain).not.toHaveBeenCalledWith(trustchain);
     expect(Mocks.setFlow).not.toHaveBeenCalled();
@@ -129,8 +130,8 @@ describe("useAddMember", () => {
     const { result } = renderHook(() => useAddMember({ device }));
 
     await waitFor(() => expect(Mocks.sdk.getOrCreateTrustchain).toHaveBeenCalled());
+    await waitFor(() => expect(result.current.error).toBeInstanceOf(Error)); // Wait for the setError
 
-    expect(result.current.error).toBeInstanceOf(Error);
     expect(result.current.error?.message).toBe("Random error");
     expect(Mocks.setTrustchain).not.toHaveBeenCalled();
     expect(Mocks.setFlow).not.toHaveBeenCalled();

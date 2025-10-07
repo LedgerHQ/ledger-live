@@ -2219,7 +2219,7 @@
       "privateKey" : {
         "title" : "Cuando conecto mi Ledger Nano a la aplicación Ledger Live, mi clave privada...",
         "answers" : {
-          "correct" : "Sigue sin conectarse a Internet",
+          "correct" : "…sigue sin conectarse a Internet",
           "wrong" : "…se conecta brevemente a Internet"
         },
         "modal" : {
@@ -2250,6 +2250,9 @@
         "continueCTA" : "Continuar",
         "contactSupportCTA" : "Ponte en contacto con Soporte"
       }
+    },
+    "completionScreen" : {
+      "title" : "Ya lo tienes todo bajo control"
     }
   },
   "blePairingFlow" : {
@@ -2380,6 +2383,8 @@
   },
   "syncOnboarding" : {
     "title" : "Prepara tu {{productName}}",
+    "twoStepTitle" : "Comencemos",
+    "firstStepReadyTitle" : "Tu {{productName}} está listo",
     "estimatedTimeFormat" : "{{estimatedTime}} min",
     "deviceSelection" : {
       "title" : "Selecciona el Ledger que quieres configurar:",
@@ -2497,6 +2502,10 @@
       "newSeedContinueOnDevice" : "Sigue las instrucciones que se muestran en tu {{productName}}",
       "recovery" : "Para que tus activos estén lo más seguros posible, utiliza una Frase de Recuperación Secreta generada por un dispositivo Ledger. \n\n¿No tienes una? Usa tu {{productName}} para generar una Frase nueva."
     },
+    "secureCryptoStep" : {
+      "title" : "Protege tus cripto",
+      "doneSubTitle" : "Tus aplicaciones de blockchain están instaladas."
+    },
     "backup" : {
       "title" : "Copia de respaldo para tu Frase de Recuperación Secreta",
       "description" : "Restaura el acceso a tu billetera sin tu Frase de Recuperación Secreta con una copia de respaldo cifrada digital.\n\nElige si quieres tener una copia de respaldo digital:",
@@ -2524,6 +2533,14 @@
     },
     "completion" : {
       "title" : "Ahora tienes el control"
+    },
+    "successStep" : {
+      "title" : "Tu {{productName}} está listo para proteger tus activos digitales"
+    },
+    "newSeed" : {
+      "subtitle" : "Puedes transferir cripto desde cualquier exchange o wallet a tu Ledger Live para garantizar la máxima seguridad.",
+      "installCTA" : "Proteger mis cripto",
+      "skipCTA" : "Quizás más tarde"
     }
   },
   "tabs" : {
@@ -4401,7 +4418,8 @@
         "default" : "Verifica la información de permuta en tu Ledger antes de enviar la transacción.",
         "provider" : "Verifica la información de permuta en tu dispositivo antes de enviar la transacción. {{providerName}} tal vez requiera una verificación adicional para algunas transacciones, lo que puede provocar retrasos."
       },
-      "acceptTerms" : "Al validar esta transacción, acepto los <0>términos de uso de\n<0> {{provider}}</0>",
+      "acceptTerms" : "Al firmar esta transacción, aceptas los <0>términos de uso de <0>{{provider}}</0></0>",
+      "changellySimplifiedAcceptTerms" : "Al validar esta transacción, aceptas los <0>Términos de uso</0> de Changelly y su <1>política de AML/KYC</1>. Es posible que Changelly aplique procedimientos de AML/KYC que, en determinados casos, pueden afectar a la finalización de tu transacción. En caso de darse esta situación, debes contactar con el <2>soporte al cliente</2> de Changelly.",
       "notice" : "Verifica los detalles de la permuta en tu dispositivo antes de enviarla. Las direcciones se intercambian de forma segura por lo que no es necesario verificarlas."
     },
     "swap2" : {
@@ -7539,12 +7557,12 @@
       "sync" : "Sincronización correcta",
       "syncDesc" : "Los cambios que se produzcan en tus cuentas de cripto ahora aparecerán automáticamente en las aplicaciones Ledger Live en los teléfonos y PCs sincronizados.",
       "activation" : "Ledger Sync activado para este teléfono",
-      "syncAnother" : "Sincronizar con otra aplicación Ledger Live",
+      "syncAnother" : "Sincronizar con otra aplicación Ledger Live",
       "close" : "Cerrar"
     },
     "walletSyncActivated" : {
       "synchronize" : {
-        "title" : "Sincronizar con otra aplicación Ledger Live",
+        "title" : "Sincronizar con otra aplicación Ledger Live",
         "description" : "Sincroniza tus cuentas de cripto de Ledger Live entre distintos teléfonos y PCs."
       },
       "unauthorizeMember" : {
@@ -7912,7 +7930,7 @@
     },
     "transactionCannotBeCreated" : {
       "title" : "Proveedor no disponible",
-      "description" : "No podemos completar tu permuta con este proveedor. Inténtalo con otro. Código de error 8HBB{{errorCode}}"
+      "description" : "Changelly no puede procesar esta transacción. Código de error 8HBB{{errorCode}}"
     },
     "default" : {
       "title" : "Algo ha salido mal",

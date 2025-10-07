@@ -32,7 +32,8 @@ export function DrawerFooter({ provider }: { provider: string }) {
   const ptxSwapLiveAppKycWarning = useFeature("ptxSwapLiveAppKycWarning");
   const url = providerData?.termsOfUseUrl;
   const providerName = getProviderName(provider);
-  const isDetailedViewEnabled = useFeature("ptxSwapDetailedView");
+  const ptxSwapDetailedView = useFeature("ptxSwapDetailedView");
+  const isDetailedViewEnabled = !!ptxSwapDetailedView?.enabled;
 
   const { acceptTerms, urls } = useMemo(() => {
     if (!ptxSwapLiveAppKycWarning?.enabled) {
@@ -51,7 +52,7 @@ export function DrawerFooter({ provider }: { provider: string }) {
           urls: [url],
         };
       case "Changelly": {
-        if (isDetailedViewEnabled?.enabled) {
+        if (isDetailedViewEnabled) {
           return {
             acceptTerms: "DeviceAction.swap.changellyAcceptTerms",
             urls: providerData?.usefulUrls,
@@ -79,7 +80,7 @@ export function DrawerFooter({ provider }: { provider: string }) {
     providerName,
     ptxSwapLiveAppKycWarning?.enabled,
     url,
-    isDetailedViewEnabled?.enabled,
+    isDetailedViewEnabled,
   ]);
 
   if (!url) {

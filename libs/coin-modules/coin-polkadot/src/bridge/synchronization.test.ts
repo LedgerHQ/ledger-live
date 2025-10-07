@@ -4,13 +4,22 @@ import { faker } from "@faker-js/faker";
 import { createFixtureAccount, createFixtureOperation } from "../types/bridge.fixture";
 import { PolkadotOperation } from "../types";
 import getAccountShape from "./synchronization";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 
 const mockGetAccount = jest.fn();
 const mockGetOperations = jest.fn();
 jest.mock("../network", () => ({
-  getAccount: () => mockGetAccount(),
-  getOperations: () => mockGetOperations(),
+  getAccount: (address: string, currency?: CryptoCurrency) => mockGetAccount(address, currency),
+  getOperations: (
+    accountId: string,
+    addr: string,
+    currency?: CryptoCurrency,
+    startAt = 0,
+    limit = 200,
+  ) => mockGetOperations(accountId, addr, currency, startAt, limit),
 }));
+
+const CURRENCY = getCryptoCurrencyById("polkadot");
 
 describe("getAccountShape", () => {
   beforeEach(() => {
@@ -30,7 +39,7 @@ describe("getAccountShape", () => {
       {
         index: -1, // not used but mandatory
         derivationPath: "not used",
-        currency: getCryptoCurrencyById("polkadot"),
+        currency: CURRENCY,
         address: "5D4yQHKfqCQYThhHmTfN1JEDi47uyDJc1xg9eZfAG1R7FC7J",
         initialAccount,
         derivationMode: "polkadotbip44",
@@ -40,7 +49,9 @@ describe("getAccountShape", () => {
 
     // THEN
     expect(mockGetAccount).toHaveBeenCalledTimes(1);
+    expect(mockGetAccount.mock.lastCall[1]).toEqual(CURRENCY);
     expect(mockGetOperations).toHaveBeenCalledTimes(1);
+    expect(mockGetOperations.mock.lastCall[2]).toEqual(CURRENCY);
   });
 
   it("returns an AccountShapeInfo based on getAccount API", async () => {
@@ -55,7 +66,7 @@ describe("getAccountShape", () => {
       {
         index: -1, // not used but mandatory
         derivationPath: "not used",
-        currency: getCryptoCurrencyById("polkadot"),
+        currency: CURRENCY,
         address: "5D4yQHKfqCQYThhHmTfN1JEDi47uyDJc1xg9eZfAG1R7FC7J",
         initialAccount,
         derivationMode: "polkadotbip44",
@@ -64,6 +75,11 @@ describe("getAccountShape", () => {
     );
 
     // THEN
+    expect(mockGetAccount).toHaveBeenCalledTimes(1);
+    expect(mockGetAccount.mock.lastCall[1]).toEqual(CURRENCY);
+    expect(mockGetOperations).toHaveBeenCalledTimes(1);
+    expect(mockGetOperations.mock.lastCall[2]).toEqual(CURRENCY);
+
     expect(shape).toEqual(
       expect.objectContaining({
         balance: accountInfo.balance,
@@ -97,7 +113,7 @@ describe("getAccountShape", () => {
       {
         index: -1, // not used but mandatory
         derivationPath: "not used",
-        currency: getCryptoCurrencyById("polkadot"),
+        currency: CURRENCY,
         address: "5D4yQHKfqCQYThhHmTfN1JEDi47uyDJc1xg9eZfAG1R7FC7J",
         initialAccount,
         derivationMode: "polkadotbip44",
@@ -106,6 +122,11 @@ describe("getAccountShape", () => {
     );
 
     // THEN
+    expect(mockGetAccount).toHaveBeenCalledTimes(1);
+    expect(mockGetAccount.mock.lastCall[1]).toEqual(CURRENCY);
+    expect(mockGetOperations).toHaveBeenCalledTimes(1);
+    expect(mockGetOperations.mock.lastCall[2]).toEqual(CURRENCY);
+
     expect(shape.operationsCount).toEqual(1);
     expect(shape.operations).toEqual(expect.arrayContaining(initialOperations));
   });
@@ -126,7 +147,7 @@ describe("getAccountShape", () => {
       {
         index: -1, // not used but mandatory
         derivationPath: "not used",
-        currency: getCryptoCurrencyById("polkadot"),
+        currency: CURRENCY,
         address: "5D4yQHKfqCQYThhHmTfN1JEDi47uyDJc1xg9eZfAG1R7FC7J",
         initialAccount,
         derivationMode: "polkadotbip44",
@@ -135,6 +156,11 @@ describe("getAccountShape", () => {
     );
 
     // THEN
+    expect(mockGetAccount).toHaveBeenCalledTimes(1);
+    expect(mockGetAccount.mock.lastCall[1]).toEqual(CURRENCY);
+    expect(mockGetOperations).toHaveBeenCalledTimes(1);
+    expect(mockGetOperations.mock.lastCall[2]).toEqual(CURRENCY);
+
     expect(shape.operationsCount).toEqual(2);
     expect(shape.operations).toEqual(expect.arrayContaining(apiOperations));
   });

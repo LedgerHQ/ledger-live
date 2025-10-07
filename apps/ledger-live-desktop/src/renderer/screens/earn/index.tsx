@@ -32,6 +32,7 @@ const Earn = () => {
   const locale = useSelector(localeSelector);
   const fiatCurrency = useSelector(counterValueCurrencySelector);
   const earnFlag = useFeature("ptxEarnLiveApp");
+  const earnDrawerApyFlag = useFeature("ptxEarnDrawerApy");
   const earnManifestId = earnFlag?.enabled ? earnFlag.params?.manifest_id : DEFAULT_MANIFEST_ID;
   const localManifest = useLocalLiveAppManifest(earnManifestId);
   const remoteManifest = useRemoteLiveAppManifest(earnManifestId);
@@ -78,6 +79,7 @@ const Earn = () => {
           stakeCurrenciesParam: stakeCurrenciesParam
             ? JSON.stringify(stakeCurrenciesParam)
             : undefined,
+          earnDrawerApyFlag: earnDrawerApyFlag ? JSON.stringify(earnDrawerApyFlag) : undefined,
         }}
       />
     </Card>

@@ -14,11 +14,9 @@ import { setCryptoAssetsStoreGetter } from "@ledgerhq/coin-solana/cryptoAssetsSt
 //TODO coin tester should not call external endpoints (avoid the error Failed to fetch Figment APY LedgerAPI5xx: Unhandled request)
 //TODO mock call to CAL when available
 setCryptoAssetsStoreGetter(() => ({
-  findTokenByAddress: legacy.findTokenByAddress,
   getTokenById: legacy.getTokenById,
   findTokenById: legacy.findTokenById,
   findTokenByAddressInCurrency: legacy.findTokenByAddressInCurrency,
-  findTokenByTicker: legacy.findTokenByTicker,
 }));
 
 describe("Solana Deterministic Tester", () => {

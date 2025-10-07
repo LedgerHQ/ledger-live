@@ -22,7 +22,7 @@ const ManagePreferencesFooter = ({ onShareClick }: ManagePreferencesFooterProps)
           borderRadius={48}
           onClick={handleShareClick}
         >
-          {t("analyticsOptInPrompt.variantA.share")}
+          {t("analyticsOptInPrompt.variantA.validate")}
         </Button>
       </Flex>
     </Footer>

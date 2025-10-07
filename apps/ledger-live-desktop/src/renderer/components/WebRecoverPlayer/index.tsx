@@ -8,6 +8,7 @@ import Box from "../Box";
 import { WebviewAPI, WebviewProps, WebviewState } from "../Web3AppWebview/types";
 import { initialWebviewState } from "../Web3AppWebview/helpers";
 import { TopBar } from "./TopBar";
+import { useDeeplinkCustomHandlers } from "../WebPlatformPlayer/CustomHandlers";
 
 type RecoverWebviewProps = WebviewProps & {
   onClose: () => void;
@@ -41,6 +42,7 @@ export default function WebRecoverPlayer({ manifest, inputs, onClose }: RecoverW
   const recoverServices = useFeature("protectServicesDesktop");
   const openWithDevTools = recoverServices?.params?.openWithDevTools;
   const [hasOpenedDevTools, setHasOpenedDevTools] = useState<boolean>(false);
+  const customDeeplinkHandlers = useDeeplinkCustomHandlers();
 
   useEffect(() => {
     if (!openWithDevTools || !webviewAPIRef || hasOpenedDevTools || !webviewState.url) return;
@@ -66,6 +68,7 @@ export default function WebRecoverPlayer({ manifest, inputs, onClose }: RecoverW
           inputs={inputs}
           onStateChange={setWebviewState}
           ref={webviewAPIRef}
+          customHandlers={customDeeplinkHandlers}
         />
       </Wrapper>
     </Container>

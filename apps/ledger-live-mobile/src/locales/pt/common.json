@@ -2250,6 +2250,9 @@
         "continueCTA" : "Continuar",
         "contactSupportCTA" : "Falar com o suporte"
       }
+    },
+    "completionScreen" : {
+      "title" : "Agora você está no controle"
     }
   },
   "blePairingFlow" : {
@@ -2380,6 +2383,8 @@
   },
   "syncOnboarding" : {
     "title" : "Deixe sua {{productName}} pronta",
+    "twoStepTitle" : "Vamos começar",
+    "firstStepReadyTitle" : "Sua {{productName}} está pronta",
     "estimatedTimeFormat" : "{{estimatedTime}} min",
     "deviceSelection" : {
       "title" : "Selecione a Ledger que deseja configurar:",
@@ -2497,6 +2502,10 @@
       "newSeedContinueOnDevice" : "Siga as instruções em sua {{productName}}",
       "recovery" : "Certifique-se de usar uma Frase de Recuperação Secreta gerada por um dispositivo Ledger para guardar seus ativos com o máximo de segurança. \n\nNão tem uma? Use a sua {{productName}} para gerar uma nova Frase."
     },
+    "secureCryptoStep" : {
+      "title" : "Proteja sua cripto",
+      "doneSubTitle" : "Seus aplicativos blockchain estão instalados."
+    },
     "backup" : {
       "title" : "Backup para sua Frase de Recuperação Secreta",
       "description" : "Com um backup digital criptografado, você pode restaurar o acesso aos seus ativos sem a sua Frase de Recuperação Secreta.\n\nEscolha se você deseja um backup digital:",
@@ -2524,6 +2533,14 @@
     },
     "completion" : {
       "title" : "Agora você está no controle"
+    },
+    "successStep" : {
+      "title" : "Sua {{productName}} está pronta para proteger seus ativos digitais"
+    },
+    "newSeed" : {
+      "subtitle" : "Você pode transferir cripto de qualquer corretora ou carteira para o seu Ledger Live para ter segurança máxima.",
+      "installCTA" : "Proteger minha cripto",
+      "skipCTA" : "Talvez mais tarde"
     }
   },
   "tabs" : {
@@ -4401,7 +4418,8 @@
         "default" : "Verifique os detalhes da troca na sua Ledger antes de confirmá-la.",
         "provider" : "Verifique os detalhes da troca no seu dispositivo antes de enviá-la. {{providerName}} pode precisar fazer verificações adicionais para algumas transações, resultando em demora."
       },
-      "acceptTerms" : "Ao validar esta transação, eu aceito\nos termos de uso da <0><0>{{provider}}</0></0>",
+      "acceptTerms" : "Ao assinar esta transação, você aceita os <0>termos de uso</0> da <0>{{provider}}</0>",
+      "changellySimplifiedAcceptTerms" : "Ao validar esta transação, você aceita os <0>Termos de uso</0> e a <1>Política de AML/KYC</1> da Changelly. A Changelly pode aplicar procedimentos de AML/KYC que podem, em alguns casos, afetar a conclusão da sua transação. Caso isso aconteça, você deve entrar em contato com o <2>suporte ao cliente</2> da Changelly.",
       "notice" : "Verifique os detalhes da troca no seu dispositivo antes de enviá-la. Os endereços são comunicados com segurança para que você não precise verificá-los."
     },
     "swap2" : {
@@ -7228,7 +7246,7 @@
     },
     "actions" : {
       "assetsTransfer" : {
-        "title" : "Transfira seus ativos para a Ledger",
+        "title" : "Transferir seus ativos para a Ledger",
         "titleCompleted" : "Ativos transferidos para a Ledger",
         "description" : "De qualquer corretora ou carteira, diretamente para a sua Ledger.",
         "popupLabel" : "Ativos transferidos"
@@ -7912,7 +7930,7 @@
     },
     "transactionCannotBeCreated" : {
       "title" : "Provedor indisponível",
-      "description" : "Não podemos concluir sua troca com este provedor. Tente novamente com outro provedor. Código do erro 8HBB{{errorCode}}"
+      "description" : "A Changelly não pode processar esta transação. Código do erro 8HBB{{errorCode}}"
     },
     "default" : {
       "title" : "Algo deu errado",

@@ -34,7 +34,7 @@ import { CountervaluesState } from "./countervalues";
 import { ToastState } from "./toast";
 import { ModularDrawerState } from "./modularDrawer";
 import { ToolsState } from "./tools";
-import { assetsDataApi } from "@ledgerhq/live-common/modularDrawer/data/state-manager/api";
+import { assetsDataApi } from "@ledgerhq/live-common/dada-client/state-manager/api";
 
 // === ACCOUNT STATE ===
 

@@ -10,6 +10,7 @@ import {
 import { Transaction } from "@ledgerhq/live-common/e2e/models/Transaction";
 import { Fee } from "@ledgerhq/live-common/e2e/enum/Fee";
 import invariant from "invariant";
+import { TransactionStatus } from "@ledgerhq/live-common/e2e/enum/TransactionStatus";
 
 const subAccounts = [
   {
@@ -444,6 +445,7 @@ test.describe("Send token (subAccount) - valid address & amount input", () => {
       },
     ],
   });
+
   test(
     `Send from ${tokenTransactionValid.accountToDebit.accountName} to ${tokenTransactionValid.accountToCredit.accountName} - valid address & amount input`,
     {
@@ -455,6 +457,7 @@ test.describe("Send token (subAccount) - valid address & amount input", () => {
     },
     async ({ app }) => {
       await addTmsLink(getDescription(test.info().annotations, "TMS").split(", "));
+
       await app.layout.goToAccounts();
       await app.accounts.navigateToAccountByName(
         getParentAccountName(tokenTransactionValid.accountToDebit),

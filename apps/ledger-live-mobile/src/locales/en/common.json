@@ -3433,6 +3433,17 @@
       "shareAddress": "Share address",
       "addressCopied": "Address copied in clipboard",
       "taprootWarning": "Make sure the sender supports taproot",
+      "connectToNoah": "Connecting you to Noah",
+      "menu": {
+        "crypto": {
+          "title": "From a crypto address",
+          "description": "Top up your wallet with any crypto."
+        },
+        "fiat": {
+          "title": "From a bank account",
+          "description": "Top up with USDC through a EUR or USD bank transfer. KYC needed."
+        }
+      },
       "memoTag": {
         "link": "Need a Tag/Memo?",
         "title": "Need a Tag/Memo?",

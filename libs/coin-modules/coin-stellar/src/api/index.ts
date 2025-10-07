@@ -40,6 +40,14 @@ export function createApi(config: StellarConfig): Api<StellarMemo> {
     broadcast,
     combine: compose,
     craftTransaction: craft,
+    craftRawTransaction: (
+      _transaction: string,
+      _sender: string,
+      _publicKey: string,
+      _sequence: number,
+    ): Promise<CraftedTransaction> => {
+      throw new Error("craftRawTransaction is not supported");
+    },
     estimateFees: estimate,
     getBalance,
     lastBlock,

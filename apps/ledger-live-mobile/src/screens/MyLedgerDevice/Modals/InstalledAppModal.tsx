@@ -18,6 +18,11 @@ import QueuedDrawer from "~/components/QueuedDrawer";
 import type { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { MyLedgerNavigatorStackParamList } from "~/components/RootNavigator/types/MyLedgerNavigator";
 import { AddAccountContexts } from "LLM/features/Accounts/screens/AddAccount/enums";
+import {
+  ModularDrawerLocation,
+  useModularDrawerController,
+  useModularDrawerVisibility,
+} from "LLM/features/ModularDrawer";
 
 type NavigationProps = BaseComposite<
   StackNavigatorProps<MyLedgerNavigatorStackParamList, ScreenName.MyLedgerDevice>
@@ -50,14 +55,29 @@ const ButtonsContainer = styled(Flex).attrs({
 const InstallSuccessBar = ({ state, navigation, disable }: Props) => {
   const [hasBeenShown, setHasBeenShown] = useState(disable);
   const { installQueue, uninstallQueue, recentlyInstalledApps, appByName, installed } = state;
+
+  const { isModularDrawerVisible } = useModularDrawerVisibility({
+    modularDrawerFeatureFlagKey: "llmModularDrawer",
+  });
+
+  const { openDrawer } = useModularDrawerController();
+
   const onAddAccount = useCallback(() => {
-    navigation.navigate(NavigatorName.AssetSelection, {
-      context: AddAccountContexts.AddAccounts,
-      sourceScreenName: "InstalleAppModal",
-    });
+    if (isModularDrawerVisible({ location: ModularDrawerLocation.ADD_ACCOUNT })) {
+      openDrawer({
+        enableAccountSelection: false,
+        flow: "add_account",
+        source: "InstalleAppModal",
+      });
+    } else {
+      navigation.navigate(NavigatorName.AssetSelection, {
+        context: AddAccountContexts.AddAccounts,
+        sourceScreenName: "InstalleAppModal",
+      });
+    }
 
     setHasBeenShown(true);
-  }, [navigation]);
+  }, [isModularDrawerVisible, navigation, openDrawer]);
 
   const successInstalls = useMemo(
     () =>

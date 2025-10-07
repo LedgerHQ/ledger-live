@@ -15,6 +15,7 @@ describe("Xrp Api (testnet)", () => {
 
       // When
       const result = await api.estimateFees({
+        intentType: "transaction",
         asset: { type: "native" },
         type: "send",
         sender: SENDER,
@@ -125,6 +126,7 @@ describe("Xrp Api (testnet)", () => {
     it("returns a raw transaction", async () => {
       // When
       const { transaction: result } = await api.craftTransaction({
+        intentType: "transaction",
         asset: { type: "native" },
         type: "send",
         sender: SENDER,
@@ -141,6 +143,7 @@ describe("Xrp Api (testnet)", () => {
 
     it("should use default fees when user does not provide them for crafting a transaction", async () => {
       const { transaction: result } = await api.craftTransaction({
+        intentType: "transaction",
         asset: { type: "native" },
         type: "send",
         sender: SENDER,
@@ -161,6 +164,7 @@ describe("Xrp Api (testnet)", () => {
       const customFees = 99n;
       const { transaction: result } = await api.craftTransaction(
         {
+          intentType: "transaction",
           asset: { type: "native" },
           type: "send",
           sender: SENDER,
@@ -192,6 +196,7 @@ describe("Xrp Api (mainnet)", () => {
 
       // When
       const result = await api.estimateFees({
+        intentType: "transaction",
         asset: { type: "native" },
         type: "send",
         sender: SENDER,
@@ -289,6 +294,7 @@ describe("Xrp Api (mainnet)", () => {
 
     it("returns a raw transaction", async () => {
       const { transaction: result } = await api.craftTransaction({
+        intentType: "transaction",
         asset: { type: "native" },
         type: "send",
         sender: SENDER,
@@ -304,6 +310,7 @@ describe("Xrp Api (mainnet)", () => {
 
     it("should use default fees when user does not provide them for crafting a transaction", async () => {
       const { transaction: result } = await api.craftTransaction({
+        intentType: "transaction",
         asset: { type: "native" },
         type: "send",
         sender: SENDER,
@@ -324,6 +331,7 @@ describe("Xrp Api (mainnet)", () => {
       const customFees = 99n;
       const { transaction: result } = await api.craftTransaction(
         {
+          intentType: "transaction",
           asset: { type: "native" },
           type: "send",
           sender: SENDER,

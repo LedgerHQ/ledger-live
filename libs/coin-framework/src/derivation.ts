@@ -193,7 +193,6 @@ const modes: Readonly<Record<DerivationMode, ModeSpec>> = Object.freeze({
   },
   canton: {
     overridesDerivation: "44'/6767'/<account>'/0'/0'",
-    mandatoryEmptyAccountSkip: 10,
     tag: "canton",
   },
 });
@@ -214,6 +213,9 @@ const legacyDerivations: Partial<Record<CryptoCurrency["id"], DerivationMode[]>>
   tezos: ["galleonL", "tezboxL", "tezosbip44h", "tezbox"],
   stellar: ["sep5"],
   polkadot: ["polkadotbip44"],
+  westend: ["polkadotbip44"],
+  assethub_polkadot: ["polkadotbip44"],
+  assethub_westend: ["polkadotbip44"],
   hedera: ["hederaBip44"],
   filecoin: ["glifLegacy", "filecoinBIP44", "glif"],
   internet_computer: ["internet_computer"],
@@ -235,7 +237,7 @@ const legacyDerivations: Partial<Record<CryptoCurrency["id"], DerivationMode[]>>
   aptos: ["aptos"],
   canton_network: ["canton"],
   canton_network_devnet: ["canton"],
-  canton_network_localnet: ["canton"],
+  canton_network_testnet: ["canton"],
 };
 
 export function isDerivationMode(mode: string): mode is DerivationMode {
@@ -360,6 +362,9 @@ const disableBIP44: Record<string, boolean> = {
   // current workaround, device app does not seem to support bip44
   stellar: true,
   polkadot: true,
+  assethub_polkadot: true,
+  westend: true,
+  assethub_westend: true,
   solana: true,
   hedera: true,
   cardano: true,
@@ -375,7 +380,7 @@ const disableBIP44: Record<string, boolean> = {
   sui: true,
   canton_network: true,
   canton_network_devnet: true,
-  canton_network_localnet: true,
+  canton_network_testnet: true,
 };
 type SeedInfo = {
   purpose: number;
@@ -405,7 +410,7 @@ const seedIdentifierPath = (currencyId: string): SeedPathFn => {
       return ({ purpose, coinType }) => `${purpose}'/${coinType}'/0'/0'/0'/0'`;
     case "canton_network":
     case "canton_network_devnet":
-    case "canton_network_localnet":
+    case "canton_network_testnet":
       return ({ purpose, coinType }) => `${purpose}'/${coinType}'/0'/0'/0'`;
     default:
       return ({ purpose, coinType }) => `${purpose}'/${coinType}'/0'`;

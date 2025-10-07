@@ -1,32 +1,19 @@
 import { BalanceUI } from "./type";
 
-export const parseFiatValue = (value?: string, discreet?: boolean) => {
-  if (!value || discreet) return -1;
-  return parseFloat(value.replace(/[^0-9.-]+/g, "")) || -1;
-};
-
-export function toFiatString(x?: BalanceUI): string | undefined {
-  return x && "fiatValue" in x ? String(x.fiatValue) : undefined;
-}
-
 export function hasBalance(balanceData?: BalanceUI): boolean {
-  return (
-    !!balanceData &&
-    (("fiatValue" in balanceData && !!balanceData.fiatValue) ||
-      ("balance" in balanceData && !!balanceData.balance))
-  );
+  return !!balanceData && balanceData.balance !== undefined && balanceData.balance.gt(0);
 }
 
 export function compareByBalanceThenFiat(
   a: BalanceUI | undefined,
   b: BalanceUI | undefined,
-  discreet: boolean,
 ): number {
   const ah = hasBalance(a);
   const bh = hasBalance(b);
   if (ah && !bh) return -1;
   if (!ah && bh) return 1;
-  const af = parseFiatValue(toFiatString(a), discreet);
-  const bf = parseFiatValue(toFiatString(b), discreet);
-  return bf - af;
+
+  const aFiat = a?.fiatValue ?? 0;
+  const bFiat = b?.fiatValue ?? 0;
+  return bFiat - aFiat;
 }

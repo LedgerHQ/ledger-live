@@ -16,6 +16,7 @@ const methods = [
   "storage.get",
   "storage.set",
   "transaction.sign",
+  "transaction.signRaw",
   "transaction.signAndBroadcast",
   "device.transport",
   "device.select",
@@ -67,7 +68,7 @@ test.beforeAll(async () => {
         en: "App to test the Wallet API with Playwright",
       },
     },
-    permissions: methods,
+    permissions: [...methods, "custom.deeplink.open"],
   });
 
   if (!testServerIsRunning) {
@@ -703,6 +704,33 @@ test("Wallet API methods @smoke", async ({ page, electronApp }) => {
     await resetWebview();
   });
 
+  await test.step("transaction.signRaw xrp", async () => {
+    const rawTx =
+      "12000022800000002400000002201B0077BE23614000000000989680684000000000000064732102F89EAEC7667B30F33D0687BBA86C3FE2A08CCA40A9186C5BDE2DAA6FA97A37D8D474463044022070C6E721D336797021A471757637E52C84D59096E37D6443ABF9C6464F37AA0C02207861D7FC5A68816017F54394B5F8D8ECEC33CEACC7F89929E7D6D2270286176A811450184ACDE08D7AB336301FBA85314C7776C6D0347F8314DF1C2708A3B92EBC42071CCBDE708722078BCE50";
+
+    await liveAppWebview.setAccountId("426a054c-7938-52bb-830a-4e620782038f");
+    await liveAppWebview.setData(rawTx);
+    await liveAppWebview.transactionSignRaw();
+
+    await modal.waitForModalToAppear();
+
+    // Step Summary
+    await expect(page.getByText("XRP 1")).toBeVisible();
+    await modal.continueToSignTransaction();
+
+    // Step Device
+    await deviceAction.silentSign();
+
+    await modal.waitForModalToDisappear();
+
+    const res = await liveAppWebview.getResOutput();
+    expect(res).toMatchObject({
+      signedTransactionHex: "",
+    });
+
+    await resetWebview();
+  });
+
   await test.step("transaction.sign should block sanctioned address", async () => {
     const recipient = "0x04DBA1194ee10112fE6C3207C0687DEf0e78baCf"; // Sanctioned address
     const amount = "500000000000000"; // 0.0005 ETH in wei
@@ -796,5 +824,10 @@ test("Wallet API methods @smoke", async ({ page, electronApp }) => {
     });
 
     await resetWebview();
+  });
+
+  await test.step("custom.deeplink.open", async () => {
+    await liveAppWebview.customDeeplinkOpen("ledgerlive://discover");
+    await discoverPage.waitForDiscoverVisible();
   });
 });

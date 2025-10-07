@@ -224,14 +224,6 @@ export const specs: Specs = {
     },
     dependency: "",
   },
-  Sui: {
-    currency: getCryptoCurrencyById("sui"),
-    appQuery: {
-      model: getSpeculosModel(),
-      appName: "Sui",
-    },
-    dependency: "",
-  },
   Bitcoin_Cash: {
     currency: getCryptoCurrencyById("bitcoin_cash"),
     appQuery: {
@@ -350,6 +342,14 @@ export const specs: Specs = {
     appQuery: {
       model: getSpeculosModel(),
       appName: "Hedera",
+    },
+    dependency: "",
+  },
+  Sui: {
+    currency: getCryptoCurrencyById("sui"),
+    appQuery: {
+      model: getSpeculosModel(),
+      appName: "Sui",
     },
     dependency: "",
   },
@@ -676,6 +676,7 @@ export async function expectValidAddressDevice(account: Account, addressDisplaye
   if (account.currency === Currency.SUI_USDC) {
     providePublicKey();
   }
+
   const { receiveVerifyLabel, receiveConfirmLabel } = getDeviceLabels(account.currency.speculosApp);
 
   await waitFor(receiveVerifyLabel);

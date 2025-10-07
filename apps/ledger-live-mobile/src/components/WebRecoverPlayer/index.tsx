@@ -18,6 +18,7 @@ import { InfoPanel } from "../WebPlatformPlayer/InfoPanel";
 import { RightHeader } from "../WebPlatformPlayer/RightHeader";
 import { completeOnboarding, setHasOrderedNano, setReadOnlyMode } from "~/actions/settings";
 import SafeAreaView from "../SafeAreaView";
+import { useDeeplinkCustomHandlers } from "../WebPlatformPlayer/CustomHandlers";
 
 type Props = {
   manifest: LiveAppManifest;
@@ -37,7 +38,7 @@ const WebRecoverPlayer = ({ manifest, inputs }: Props) => {
   const [webviewState, setWebviewState] = useState<WebviewState>(initialWebviewState);
   const [isInfoPanelOpened, setIsInfoPanelOpened] = useState(false);
   const dispatch = useDispatch();
-
+  const customDeeplinkHandlers = useDeeplinkCustomHandlers();
   const navigation =
     useNavigation<RootNavigationComposite<StackNavigatorNavigation<BaseNavigatorStackParamList>>>();
 
@@ -111,6 +112,7 @@ const WebRecoverPlayer = ({ manifest, inputs }: Props) => {
           inputs={inputs}
           onStateChange={setWebviewState}
           allowsBackForwardNavigationGestures={false}
+          customHandlers={customDeeplinkHandlers}
         />
         <InfoPanel
           name={manifest.name}

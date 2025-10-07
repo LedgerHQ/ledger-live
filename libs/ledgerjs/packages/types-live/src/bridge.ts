@@ -67,11 +67,23 @@ export type SignOperationArg0<T extends TransactionCommon, A extends Account> = 
   certificateSignatureKind?: "prod" | "test";
 };
 
+export type SignRawOperationArg0<A extends Account> = {
+  account: A;
+  transaction: string; // encoded raw transaction
+  deviceId: DeviceId;
+  deviceModelId?: DeviceModelId;
+  certificateSignatureKind?: "prod" | "test";
+};
+
 /**
  *
  */
 export type SignOperationFnSignature<T extends TransactionCommon, A extends Account> = (
   arg0: SignOperationArg0<T, A>,
+) => Observable<SignOperationEvent>;
+
+export type SignRawOperationFnSignature<A extends Account> = (
+  arg0: SignRawOperationArg0<A>,
 ) => Observable<SignOperationEvent>;
 
 export type BroadcastFnSignature<A extends Account = Account> = (
@@ -192,6 +204,10 @@ interface SendReceiveAccountBridge<
   // This results of a "signed" event with a signedOperation
   // than can be locally saved and later broadcasted
   signOperation: SignOperationFnSignature<T, A>;
+  // signing a raw transaction it with the ledger device
+  // This results of a "signed" event with a signedOperation
+  // than can be locally saved and later broadcasted
+  signRawOperation: SignRawOperationFnSignature<A>;
   // broadcasting a signed transaction to network
   // returns an optimistic Operation that this transaction is likely to create in the future
   broadcast: BroadcastFnSignature<A>;

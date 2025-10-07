@@ -101,13 +101,10 @@ import { FIRST_PARTY_MAIN_HOST_DOMAIN } from "./utils/constants";
 import useNativeStartupInfo from "./hooks/useNativeStartupInfo";
 import { ConfigureDBSaveEffects } from "./components/DBSave";
 import { useRef } from "react";
+import HookDevTools from "./devTools/useDevTools";
 
 if (Config.DISABLE_YELLOW_BOX) {
   LogBox.ignoreAllLogs();
-}
-
-if (__DEV__) {
-  require("./ReactotronConfig");
 }
 
 checkLibs({
@@ -314,6 +311,7 @@ export default class Root extends Component {
               <SegmentSetup />
               <HookNotifications />
               <HookDynamicContentCards />
+              <HookDevTools />
               <TermsAndConditionMigrateLegacyData />
               <QueuedDrawersContextProvider>
                 <FirebaseRemoteConfigProvider>

@@ -37,6 +37,7 @@ import {
   signTransactionLogic,
   bitcoinFamilyAccountGetAddressLogic,
   bitcoinFamilyAccountGetPublicKeyLogic,
+  signRawTransactionLogic,
 } from "./logic";
 import { getAccountBridge } from "../bridge";
 import { getEnv } from "@ledgerhq/live-env";
@@ -154,6 +155,14 @@ export interface UiHook {
   }) => void;
   "storage.get": WalletHandlers["storage.get"];
   "storage.set": WalletHandlers["storage.set"];
+  "transaction.signRaw": (params: {
+    account: AccountLike;
+    parentAccount: Account | undefined;
+    transaction: string;
+    options: Parameters<WalletHandlers["transaction.sign"]>[0]["options"];
+    onSuccess: (signedOperation: SignedOperation) => void;
+    onError: (error: Error) => void;
+  }) => void;
   "transaction.sign": (params: {
     account: AccountLike;
     parentAccount: Account | undefined;
@@ -320,6 +329,7 @@ export function useWalletAPIServer({
     "storage.get": uiStorageGet,
     "storage.set": uiStorageSet,
     "transaction.sign": uiTxSign,
+    "transaction.signRaw": uiTxSignRaw,
     "transaction.broadcast": uiTxBroadcast,
     "device.transport": uiDeviceTransport,
     "device.select": uiDeviceSelect,
@@ -537,6 +547,82 @@ export function useWalletAPIServer({
   }, [accounts, manifest, server, tracking, uiTxSign]);
 
   useEffect(() => {
+    if (!uiTxSignRaw) return;
+
+    server.setHandler(
+      "transaction.signRaw",
+      async ({ account, transaction, broadcast, options }) => {
+        const signedOperation = await signRawTransactionLogic(
+          { manifest, accounts, tracking },
+          account.id,
+          transaction,
+          (account, parentAccount, tx) =>
+            new Promise((resolve, reject) => {
+              let done = false;
+              return uiTxSignRaw({
+                account,
+                parentAccount,
+                transaction: tx,
+                options,
+                onSuccess: signedOperation => {
+                  if (done) return;
+                  done = true;
+                  tracking.signRawTransactionSuccess(manifest);
+                  resolve(signedOperation);
+                },
+                onError: error => {
+                  if (done) return;
+                  done = true;
+                  tracking.signRawTransactionFail(manifest);
+                  reject(error);
+                },
+              });
+            }),
+        );
+
+        let hash: string | undefined;
+        if (broadcast) {
+          hash = await broadcastTransactionLogic(
+            { manifest, accounts, tracking },
+            account.id,
+            signedOperation,
+            async (account, parentAccount, signedOperation) => {
+              const bridge = getAccountBridge(account, parentAccount);
+              const mainAccount = getMainAccount(account, parentAccount);
+
+              let optimisticOperation: Operation = signedOperation.operation;
+
+              if (!getEnv("DISABLE_TRANSACTION_BROADCAST")) {
+                try {
+                  optimisticOperation = await bridge.broadcast({
+                    account: mainAccount,
+                    signedOperation,
+                    broadcastConfig: { mevProtected: !!config.mevProtected },
+                  });
+                  tracking.broadcastSuccess(manifest);
+                } catch (error) {
+                  tracking.broadcastFail(manifest);
+                  throw error;
+                }
+              }
+
+              uiTxBroadcast &&
+                uiTxBroadcast(account, parentAccount, mainAccount, optimisticOperation);
+
+              return optimisticOperation.hash;
+            },
+          );
+        }
+
+        return {
+          signedTransactionHex: signedOperation.signature,
+          transactionHash: hash,
+        };
+      },
+    );
+  }, [accounts, config.mevProtected, manifest, server, tracking, uiTxBroadcast, uiTxSignRaw]);
+
+  useEffect(() => {
     if (!uiTxSign) return;
 
     server.setHandler(
@@ -604,7 +690,7 @@ export function useWalletAPIServer({
         );
       },
     );
-  }, [accounts, manifest, server, tracking, uiTxBroadcast, uiTxSign]);
+  }, [accounts, config.mevProtected, manifest, server, tracking, uiTxBroadcast, uiTxSign]);
 
   const onLoad = useCallback(() => {
     tracking.loadSuccess(manifest);

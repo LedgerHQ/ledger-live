@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/hw-app-algorand",
-  "version": "6.31.7",
+  "version": "6.31.8",
   "description": "Ledger Hardware Wallet Algorand Application API",
   "keywords": [
     "Ledger",
@@ -28,7 +28,7 @@
   "license": "Apache-2.0",
   "dependencies": {
     "@ledgerhq/errors": "workspace:^",
-    "@ledgerhq/hw-transport": "workspace:^",
+    "@ledgerhq/hw-transport": "workspace:*",
     "bip32-path": "^0.4.2",
     "hi-base32": "^0.5.1",
     "js-sha512": "^0.8.0",

@@ -614,7 +614,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     managerAppName: "Canton",
     ticker: "CC",
     scheme: "canton_network",
-    color: "#F8FFAE",
+    color: "#F3FF97",
     family: "canton",
     blockAvgTime: 100,
     units: [
@@ -637,15 +637,15 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     ],
     keywords: ["canton_network"],
   },
-  canton_network_localnet: {
+  canton_network_testnet: {
     type: "CryptoCurrency",
-    id: "canton_network_localnet",
+    id: "canton_network_testnet",
     coinType: CoinType.CANTON_NETWORK,
-    name: "Canton Network (Localnet)",
+    name: "Canton Network (Testnet)",
     managerAppName: "Canton",
     ticker: "CC",
-    scheme: "canton_network_localnet",
-    color: "#F8FFAE",
+    scheme: "canton_network_testnet",
+    color: "#F3FF97",
     family: "canton",
     blockAvgTime: 100,
     isTestnetFor: "canton_network",
@@ -663,11 +663,11 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     ],
     explorerViews: [
       {
-        tx: "https://explorer-to-define.io/transaction/$hash",
-        address: "https://explorer-to-define.io/address/$address",
+        tx: "https://lighthouse.testnet.cantonloop.com/transactions/$hash",
+        address: "https://lighthouse.testnet.cantonloop.com/party/$address",
       },
     ],
-    keywords: ["canton_network_localnet"],
+    keywords: ["canton_network_testnet"],
   },
   canton_network_devnet: {
     type: "CryptoCurrency",
@@ -677,7 +677,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     managerAppName: "Canton",
     ticker: "CC",
     scheme: "canton_network_devnet",
-    color: "#F8FFAE",
+    color: "#F3FF97",
     family: "canton",
     blockAvgTime: 100,
     isTestnetFor: "canton_network",
@@ -2349,6 +2349,37 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     ],
     keywords: ["dot", "polkadot"],
   },
+  assethub_polkadot: {
+    type: "CryptoCurrency",
+    id: "assethub_polkadot",
+    coinType: CoinType.POLKADOT,
+    name: "Polkadot",
+    managerAppName: "Polkadot",
+    ticker: "DOT",
+    deviceTicker: "DOT",
+    scheme: "assethub_polkadot",
+    color: "#E6007A",
+    family: "polkadot",
+    units: [
+      {
+        name: "DOT",
+        code: "DOT",
+        magnitude: 10,
+      },
+      {
+        name: "planck",
+        code: "PLANCK",
+        magnitude: 0,
+      },
+    ],
+    explorerViews: [
+      {
+        address: "https://assethub-polkadot.subscan.io/account/$address",
+        tx: "https://assethub-polkadot.subscan.io/extrinsic/$hash",
+      },
+    ],
+    keywords: ["assethub"],
+  },
   polygon: {
     type: "CryptoCurrency",
     id: "polygon",
@@ -3374,6 +3405,57 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     ],
   },
   // Testnets
+  westend: {
+    type: "CryptoCurrency",
+    id: "westend",
+    coinType: CoinType.POLKADOT,
+    name: "Westend",
+    managerAppName: "Polkadot",
+    ticker: "WND",
+    deviceTicker: "DOT",
+    scheme: "westend",
+    color: "#00ff00",
+    units: [
+      {
+        code: "WND",
+        name: "WND",
+        magnitude: 12,
+      },
+    ],
+    isTestnetFor: "polkadot",
+    family: "polkadot",
+    explorerViews: [
+      {
+        address: "https://westend.subscan.io/account/$address",
+        tx: "https://westend.subscan.io/extrinsic/$hash",
+      },
+    ],
+  },
+  assethub_westend: {
+    type: "CryptoCurrency",
+    id: "assethub_westend",
+    coinType: CoinType.POLKADOT,
+    name: "Assethub Westend",
+    managerAppName: "Polkadot",
+    ticker: "WND",
+    deviceTicker: "DOT",
+    scheme: "assethub_westend",
+    color: "#00ff00",
+    units: [
+      {
+        code: "WND",
+        name: "WND",
+        magnitude: 12,
+      },
+    ],
+    family: "polkadot",
+    explorerViews: [
+      {
+        address: "https://assethub-westend.subscan.io/account/$address",
+        tx: "https://assethub-westend.subscan.io/extrinsic/$hash",
+      },
+    ],
+  },
   bitcoin_testnet: {
     type: "CryptoCurrency",
     id: "bitcoin_testnet",

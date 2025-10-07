@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/hw-app-trx",
-  "version": "6.31.7",
+  "version": "6.31.8",
   "description": "Ledger Hardware Wallet Tron Application API",
   "keywords": [
     "Ledger",
@@ -27,7 +27,7 @@
   "types": "lib/Trx.d.ts",
   "license": "Apache-2.0",
   "dependencies": {
-    "@ledgerhq/hw-transport": "workspace:^"
+    "@ledgerhq/hw-transport": "workspace:*"
   },
   "devDependencies": {
     "@ledgerhq/hw-transport-mocker": "workspace:^",

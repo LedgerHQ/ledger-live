@@ -78,6 +78,7 @@ import type { WalletConnectLiveAppNavigatorParamList } from "./WalletConnectLive
 import type { ModularDrawerNavigatorStackParamList } from "./ModularDrawerNavigator";
 import type { WalletSyncNavigatorStackParamList } from "./WalletSyncNavigator";
 import type { WalletTabNavigatorStackParamList } from "./WalletTabNavigator";
+import { SignRawTransactionNavigatorParamList } from "./SignRawTransactionNavigator";
 
 export type CommonAddAccountNavigatorParamsList = {
   currency?: CryptoCurrency | TokenCurrency | null;
@@ -209,6 +210,9 @@ export type BaseNavigatorStackParamList = {
     onClose?: () => void;
   };
   [NavigatorName.SignTransaction]: NavigatorScreenParams<SignTransactionNavigatorParamList> & {
+    onError: (err: Error) => void;
+  };
+  [NavigatorName.SignRawTransaction]: NavigatorScreenParams<SignRawTransactionNavigatorParamList> & {
     onError: (err: Error) => void;
   };
   [NavigatorName.Swap]?: NavigatorScreenParams<SwapNavigatorParamList>;

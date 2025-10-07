@@ -1,14 +1,14 @@
 import { CounterValuesState } from "@ledgerhq/live-countervalues/lib/types";
-import { CryptoOrTokenCurrency, Currency } from "@ledgerhq/types-cryptoassets";
+import { CryptoOrTokenCurrency, Currency, Unit } from "@ledgerhq/types-cryptoassets";
 import { AccountLike } from "@ledgerhq/types-live";
 import { ReactNode } from "react";
 import { Observable } from "rxjs";
 import { WalletAPIAccount } from "../../wallet-api/types";
 import { EnhancedModularDrawerConfiguration } from "../../wallet-api/ModularDrawer/types";
-import { InterestRate } from "../data/entities";
+import { InterestRate } from "../../dada-client/entities";
 import { MarketItemResponse } from "../../market/utils/types";
-
-export type ApyType = "NRR" | "APY" | "APR";
+import BigNumber from "bignumber.js";
+import { ApyType } from "../../dada-client/types/trend";
 
 export type AssetType = {
   name: string;
@@ -35,13 +35,21 @@ export type AssetWithBalance = AssetType & {
 
 export type UseBalanceDeps = () => {
   flattenedAccounts: AccountLike[];
-  discreet: boolean;
   state: CounterValuesState;
   counterValueCurrency: Currency;
   locale: string;
 };
 
-export type BalanceUI = { balance?: string; fiatValue?: string };
+export type BalanceUI = {
+  // Raw values
+  balance: BigNumber;
+  fiatValue?: number;
+  fiatUnit?: Unit;
+  currency: CryptoOrTokenCurrency;
+  // Formatting parameters
+  locale?: string;
+  discreet?: boolean;
+};
 export type CreateBalanceItem = (x: BalanceUI) => React.ReactNode;
 
 export type CreateAccountsCountAndApy = (args: {
@@ -75,7 +83,10 @@ export type NetworkHookParams = {
   networks: CryptoOrTokenCurrency[];
   accounts$?: Observable<WalletAPIAccount[]>;
 };
-export type NetworkHook = (params: NetworkHookParams) => Array<CryptoOrTokenCurrency & Network>;
+// Network hook type that returns currency properties spread at top level
+export type NetworkHook = (
+  params: NetworkHookParams,
+) => Array<CryptoOrTokenCurrency & Network & { balanceData?: BalanceUI; count?: number }>;
 
 export type NetworkConfigurationDeps = {
   useAccountData: UseAccountData;
@@ -110,7 +121,7 @@ export type AssetConfigurationDeps = {
   MarketPercentIndicator: (args: { percent: number }) => ReactNode;
   MarketPriceIndicator: (args: { price: string; percent: number }) => ReactNode;
   useBalanceDeps: UseBalanceDeps;
-  balanceItem: (asset: { fiatValue?: string; balance?: string }) => ReactNode;
+  balanceItem: CreateBalanceItem;
   assetsMap: Map<
     string,
     { mainCurrency: CryptoOrTokenCurrency; currencies: CryptoOrTokenCurrency[] }

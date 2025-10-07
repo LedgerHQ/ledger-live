@@ -4,7 +4,7 @@ import {
   CreateAccountsCountAndApy,
   NetworkWithCount,
 } from "../utils/type";
-import { useInterestRatesByCurrencies } from "../hooks/useInterestRatesByCurrencies";
+import { useInterestRatesByCurrencies } from "../../dada-client/hooks/useInterestRatesByCurrencies";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { getInterestRateForAsset } from "../utils/getInterestRateForAsset";
 

@@ -13,6 +13,7 @@ import type { ConnectAppEvent, Input as ConnectAppInput } from "../connectApp";
 import { withDevice } from "../deviceAccess";
 import type { SignMessage, Result } from "./types";
 import { messageSigner as ACREMessageSigner } from "../../families/bitcoin/ACRESetup";
+import { decodeAccountId } from "../../account";
 
 export const prepareMessageToSign = (account: Account, message: string): AnyMessage => {
   const utf8Message = Buffer.from(message, "hex").toString();
@@ -89,6 +90,15 @@ export type Input = {
 export const signMessageExec = ({ request, deviceId }: Input): Observable<Result> => {
   if (!request.account) {
     throw new Error("account is required");
+  }
+
+  const { type } = decodeAccountId(request.account.id);
+  if (type === "mock") {
+    return from(
+      Promise.resolve({
+        signature: "mockedSignature",
+      }),
+    );
   }
 
   const result: Observable<Result> = withDevice(deviceId)(transport =>

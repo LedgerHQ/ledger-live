@@ -1,15 +1,19 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { Account, AccountLike } from "@ledgerhq/types-live";
-import { AccountList, Account as DetailedAccount } from "@ledgerhq/react-ui/pre-ldls/index";
+import { AccountList } from "@ledgerhq/react-ui/pre-ldls/index";
 import { ListWrapper } from "../../../components/ListWrapper";
 import { useModularDrawerAnalytics } from "../../../analytics/useModularDrawerAnalytics";
 import { MODULAR_DRAWER_PAGE_NAME } from "../../../analytics/modularDrawer.types";
 import { AccountTuple } from "@ledgerhq/live-common/utils/getAccountTuplesForCurrency";
+import { BaseRawDetailedAccount } from "@ledgerhq/live-common/modularDrawer/types/detailedAccount";
+import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/formatCurrencyUnit";
+import { useSelector } from "react-redux";
+import { localeSelector, discreetModeSelector } from "~/renderer/reducers/settings";
 
 type SelectAccountProps = {
   onAccountSelected: (account: AccountLike, parentAccount?: Account) => void;
   accounts: AccountTuple[];
-  detailedAccounts: DetailedAccount[];
+  detailedAccounts: BaseRawDetailedAccount[];
   bottomComponent: React.ReactNode;
 };
 
@@ -23,6 +27,23 @@ export const SelectAccountList = ({
   bottomComponent,
 }: SelectAccountProps) => {
   const { trackModularDrawerEvent } = useModularDrawerAnalytics();
+  const locale = useSelector(localeSelector);
+  const discreet = useSelector(discreetModeSelector);
+
+  const formattedAccounts = useMemo(() => {
+    return detailedAccounts.map(account => ({
+      ...account,
+      balance:
+        account.balance !== undefined && account.balance !== null && account.balanceUnit
+          ? formatCurrencyUnit(account.balanceUnit, account.balance, {
+              showCode: true,
+              discreet,
+              locale,
+            })
+          : "",
+      fiatValue: "",
+    }));
+  }, [detailedAccounts, locale, discreet]);
 
   const trackAccountClick = (name: string) => {
     trackModularDrawerEvent("account_clicked", {
@@ -52,7 +73,7 @@ export const SelectAccountList = ({
     <ListWrapper customHeight={LIST_HEIGHT}>
       <AccountList
         bottomComponent={bottomComponent}
-        accounts={detailedAccounts}
+        accounts={formattedAccounts}
         onClick={onAccountClick}
       />
     </ListWrapper>
