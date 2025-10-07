@@ -61,17 +61,7 @@ function createDrawerConfiguration(
     string,
     { assets?: Record<string, unknown>; networks?: Record<string, unknown> }
   >,
-): {
-  assets?: {
-    filter?: "topNetworks" | "undefined";
-    leftElement?: "apy" | "marketTrend" | "undefined";
-    rightElement?: "balance" | "marketTrend" | "undefined";
-  };
-  networks?: {
-    leftElement?: "numberOfAccounts" | "numberOfAccountsAndApy" | "undefined";
-    rightElement?: "balance" | "undefined";
-  };
-} {
+) {
   const config:
     | { assets?: Record<string, unknown>; networks?: Record<string, unknown> }
     | undefined = drawerConfiguration!;
@@ -128,12 +118,19 @@ function useUiHook(manifest: AppManifest, tracking: TrackingAPI): UiHook {
         if (modularDrawerVisible) {
           dispatch(setFlowValue(flow));
           dispatch(setSourceValue(source));
-          const earnAppDrawerConfig = earnDrawerConfigurationFlag?.enabled
-            ? earnDrawerConfigurationFlag.params
-            : {};
+          const earnAppDrawerConfig: {
+            assets?: Record<string, unknown>;
+            networks?: Record<string, unknown>;
+          } =
+            earnDrawerConfigurationFlag?.enabled && earnDrawerConfigurationFlag.params
+              ? earnDrawerConfigurationFlag.params
+              : {};
 
           // Auto-append APY configuration for earn app requests
-          const useCaseConfigs = {
+          const useCaseConfigs: Record<
+            string,
+            { assets?: Record<string, unknown>; networks?: Record<string, unknown> }
+          > = {
             earn: earnAppDrawerConfig,
           };
 
