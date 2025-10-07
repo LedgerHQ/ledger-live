@@ -1,8 +1,8 @@
 import { test } from "../fixtures/common";
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { CLI } from "../utils/cliUtils";
-import { addTmsLink } from "tests/utils/allureUtils";
-import { getDescription } from "tests/utils/customJsonReporter";
+import { addTmsLink } from "../utils/allureUtils";
+import { getDescription } from "../utils/customJsonReporter";
 import { Provider } from "@ledgerhq/live-common/e2e/enum/Provider";
 
 function setupEnv(disableBroadcast?: boolean) {
@@ -107,18 +107,15 @@ test.describe("Inline Add Account", () => {
       const modularDrawerVisible = await app.modularDrawer.isModularAccountDrawerVisible();
       if (modularDrawerVisible) {
         await app.modularDrawer.clickOnAddAndExistingAccountButton();
+        await app.scanAccountsDrawer.selectFirstAccount();
+        await app.scanAccountsDrawer.clickContinueButton();
       } else {
         await app.delegateDrawer.clickOnAddAccountButton();
-      }
-
-      await app.addAccount.addAccounts();
-      await app.addAccount.done();
-
-      if (modularDrawerVisible) {
-        await app.modularDrawer.selectAccountByName(account);
-      } else {
+        await app.addAccount.addAccounts();
+        await app.addAccount.done();
         await app.delegateDrawer.selectAccountByName(account);
       }
+
       await app.addAccount.close();
       await app.layout.goToAccounts();
       await app.accounts.expectAccountsCountToBeNotNull();
