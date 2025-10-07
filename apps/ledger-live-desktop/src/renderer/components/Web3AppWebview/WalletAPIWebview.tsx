@@ -50,41 +50,15 @@ import {
   openAssetAndAccountDrawer,
 } from "LLD/features/ModularDrawer";
 import { setFlowValue, setSourceValue } from "~/renderer/reducers/modularDrawer";
-import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
+import { useDrawerConfiguration } from "@ledgerhq/live-common/dada-client/hooks/useDrawerConfiguration";
 
 const wallet = { name: "ledger-live-desktop", version: __APP_VERSION__ };
-
-function createDrawerConfiguration(
-  drawerConfiguration: unknown,
-  useCase: string | undefined,
-  useCaseConfigs: Record<
-    string,
-    { assets?: Record<string, unknown>; networks?: Record<string, unknown> }
-  >,
-) {
-  const config:
-    | { assets?: Record<string, unknown>; networks?: Record<string, unknown> }
-    | undefined = drawerConfiguration!;
-
-  const useCaseConfig = useCase ? useCaseConfigs[useCase] : undefined;
-
-  return {
-    assets: {
-      ...(useCaseConfig?.assets || {}),
-      ...(config?.assets || {}),
-    },
-    networks: {
-      ...(useCaseConfig?.networks || {}),
-      ...(config?.networks || {}),
-    },
-  };
-}
 
 function useUiHook(manifest: AppManifest, tracking: TrackingAPI): UiHook {
   const { pushToast } = useToasts();
   const { t } = useTranslation();
   const dispatch = useDispatch();
-  const earnDrawerConfigurationFlag = useFeature("ptxEarnDrawerConfiguration");
+  const { createDrawerConfiguration } = useDrawerConfiguration();
 
   const { isModularDrawerVisible } = useModularDrawerVisibility({
     modularDrawerFeatureFlagKey: "lldModularDrawer",
@@ -118,27 +92,8 @@ function useUiHook(manifest: AppManifest, tracking: TrackingAPI): UiHook {
         if (modularDrawerVisible) {
           dispatch(setFlowValue(flow));
           dispatch(setSourceValue(source));
-          const earnAppDrawerConfig: {
-            assets?: Record<string, unknown>;
-            networks?: Record<string, unknown>;
-          } =
-            earnDrawerConfigurationFlag?.enabled && earnDrawerConfigurationFlag.params
-              ? earnDrawerConfigurationFlag.params
-              : {};
 
-          // Auto-append APY configuration for earn app requests
-          const useCaseConfigs: Record<
-            string,
-            { assets?: Record<string, unknown>; networks?: Record<string, unknown> }
-          > = {
-            earn: earnAppDrawerConfig,
-          };
-
-          const finalDrawerConfiguration = createDrawerConfiguration(
-            drawerConfiguration,
-            useCase,
-            useCaseConfigs,
-          );
+          const finalDrawerConfiguration = createDrawerConfiguration(drawerConfiguration, useCase);
 
           openAssetAndAccountDrawer({
             accounts$,
@@ -341,7 +296,7 @@ function useUiHook(manifest: AppManifest, tracking: TrackingAPI): UiHook {
       dispatch,
       flow,
       source,
-      earnDrawerConfigurationFlag,
+      createDrawerConfiguration,
       manifest,
       pushToast,
       t,
