@@ -16,6 +16,7 @@ inputs:
   MONITOR_FILTER_ACCOUNT_TYPES:
     description: "Account types to filter on"
     required: false
+    default: "pristine,average,big"
   MONITOR_FILTER_CURRENCIES:
     description: "Currencies to filter on"
     required: false
