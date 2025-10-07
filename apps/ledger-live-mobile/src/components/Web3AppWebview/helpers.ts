@@ -395,7 +395,20 @@ export interface Props {
   isModularDrawerVisible: boolean;
   openModularDrawer?: OpenDrawer;
   manifest: LiveAppManifest;
-  earnDrawerApyFlag?: { enabled: boolean; params?: any } | null;
+  earnDrawerApyFlag?: {
+    enabled: boolean;
+    params?: {
+      assets?: {
+        filter?: "topNetworks" | "undefined";
+        leftElement?: "apy" | "marketTrend" | "undefined";
+        rightElement?: "balance" | "marketTrend" | "undefined";
+      };
+      networks?: {
+        leftElement?: "numberOfAccounts" | "numberOfAccountsAndApy" | "undefined";
+        rightElement?: "balance" | "undefined";
+      };
+    };
+  } | null;
 }
 
 function useUiHook({
@@ -427,7 +440,12 @@ function useUiHook({
       }) => {
         if (isModularDrawerVisible) {
           const earnDrawerConfiguration =
-            useCase === "earn" && earnDrawerApyFlag?.enabled ? earnDrawerApyFlag.params : {};
+            useCase === "earn" && earnDrawerApyFlag?.enabled && earnDrawerApyFlag.params
+              ? {
+                  assetsConfiguration: earnDrawerApyFlag.params?.assets,
+                  networksConfiguration: earnDrawerApyFlag.params?.networks,
+                }
+              : {};
           openModularDrawer?.({
             source: source,
             flow: flow,

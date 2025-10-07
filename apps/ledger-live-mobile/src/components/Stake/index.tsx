@@ -52,11 +52,16 @@ const StakeFlow = ({ route }: Props) => {
     entryPoint: route.params.entryPoint,
   });
 
-  const requestAccountRef = useRef(() => {});
+  const requestAccountRef = useRef(() => { });
 
   requestAccountRef.current = () => {
     if (modularDrawerVisible) {
-      const earnDrawerConfiguration = earnDrawerApyFlag?.enabled ? earnDrawerApyFlag.params : {};
+      const earnDrawerConfiguration = earnDrawerApyFlag?.enabled
+        ? {
+            assetsConfiguration: earnDrawerApyFlag.params?.assets,
+            networksConfiguration: earnDrawerApyFlag.params?.networks,
+          }
+        : {};
       openDrawer({
         currencies: cryptoCurrencies.map(c => c.id),
         flow: "stake",
