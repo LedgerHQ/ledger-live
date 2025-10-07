@@ -92,17 +92,17 @@ function useUiHook(manifest: AppManifest, tracking: TrackingAPI): UiHook {
         if (modularDrawerVisible) {
           dispatch(setFlowValue(flow));
           dispatch(setSourceValue(source));
-
           // Auto-append APY configuration for earn app requests
           const earnAppDrawerConfig = earnDrawerApyFlag?.enabled ? earnDrawerApyFlag.params : {};
+          const isEarn = useCase === "earn";
 
           const finalDrawerConfiguration = {
             assets: {
-              ...(earnAppDrawerConfig?.assets || {}),
+              ...(isEarn && (earnAppDrawerConfig?.assets || {})),
               ...(drawerConfiguration?.assets || {}),
             },
             networks: {
-              ...(earnAppDrawerConfig?.networks || {}),
+              ...(isEarn && (earnAppDrawerConfig?.networks || {})),
               ...(drawerConfiguration?.networks || {}),
             },
           };
