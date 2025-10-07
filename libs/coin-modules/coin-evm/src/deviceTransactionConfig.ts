@@ -31,7 +31,10 @@ const inferDeviceTransactionConfigWalletApi = (
     nft => nft.contract.toLowerCase() === transaction.recipient.toLowerCase(),
   );
 
-  const token = getCryptoAssetsStore().findTokenByAddress(transaction.recipient);
+  const token = getCryptoAssetsStore().findTokenByAddressInCurrency(
+    transaction.recipient,
+    mainAccount.currency.id,
+  );
 
   // ERC20 fields
   if (token && Object.values<string>(ERC20_CLEAR_SIGNED_SELECTORS).includes(selector)) {

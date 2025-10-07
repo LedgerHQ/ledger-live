@@ -4,7 +4,7 @@ import CountervaluesAPI from "./api";
 import { setEnv } from "@ledgerhq/live-env";
 import {
   getFiatCurrencyByTicker,
-  getTokenById,
+  findTokenById,
   getCryptoCurrencyById,
 } from "@ledgerhq/cryptoassets";
 import { formatCounterValueDay, formatCounterValueHour, parseFormattedDate } from "./helpers";
@@ -41,9 +41,7 @@ test("mock load with nothing to track", async () => {
 });
 test("mock fetchIdsSortedByMarketcap", async () => {
   // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-  jest.spyOn(cryptoAssets, "getCryptoAssetsStore").mockReturnValue({
-    findTokenByTicker: (_: string) => undefined,
-  } as CryptoAssetsStore);
+  jest.spyOn(cryptoAssets, "getCryptoAssetsStore").mockReturnValue({} as CryptoAssetsStore);
 
   expect(await CountervaluesAPI.fetchIdsSortedByMarketcap()).toBeDefined();
 });
@@ -143,10 +141,12 @@ test("mock load with btc-eth to track", async () => {
   ).toBe(1.4890024626718706e21);
 });
 test("DAI EUR latest price", async () => {
+  const dai = findTokenById("ethereum/erc20/dai_stablecoin_v2_0");
+  if (!dai) throw new Error("DAI token not found");
   const state = await loadCountervalues(initialState, {
     trackingPairs: [
       {
-        from: getTokenById("ethereum/erc20/dai_stablecoin_v2_0"),
+        from: dai,
         to: getFiatCurrencyByTicker("EUR"),
         startDate: new Date(),
       },
@@ -159,16 +159,18 @@ test("DAI EUR latest price", async () => {
   expect(
     calculate(state, {
       value: 100000000,
-      from: getTokenById("ethereum/erc20/dai_stablecoin_v2_0"),
+      from: dai,
       to: getFiatCurrencyByTicker("EUR"),
     }),
   ).toBeUndefined();
 });
 test("calculate(now()) is calculate(null)", async () => {
+  const dai = findTokenById("ethereum/erc20/dai_stablecoin_v2_0");
+  if (!dai) throw new Error("DAI token not found");
   const state = await loadCountervalues(initialState, {
     trackingPairs: [
       {
-        from: getTokenById("ethereum/erc20/dai_stablecoin_v2_0"),
+        from: dai,
         to: getFiatCurrencyByTicker("EUR"),
         startDate: new Date(),
       },
@@ -181,13 +183,13 @@ test("calculate(now()) is calculate(null)", async () => {
   expect(
     calculate(state, {
       value: 100000000,
-      from: getTokenById("ethereum/erc20/dai_stablecoin_v2_0"),
+      from: dai,
       to: getFiatCurrencyByTicker("EUR"),
     }),
   ).toEqual(
     calculate(state, {
       value: 100000000,
-      from: getTokenById("ethereum/erc20/dai_stablecoin_v2_0"),
+      from: dai,
       to: getFiatCurrencyByTicker("EUR"),
       date: new Date(),
     }),
@@ -250,9 +252,9 @@ test("missing rate in mock is filled by autofillGaps", async () => {
 
 test("fetchIdsSortedByMarketcap", async () => {
   // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-  jest.spyOn(cryptoAssets, "getCryptoAssetsStore").mockReturnValue({
-    findTokenByTicker: (_: string) => undefined,
-  } as unknown as CryptoAssetsStore);
+  jest
+    .spyOn(cryptoAssets, "getCryptoAssetsStore")
+    .mockReturnValue({} as unknown as CryptoAssetsStore);
 
   const ids = await api.fetchIdsSortedByMarketcap();
   expect(ids).toContain("bitcoin");

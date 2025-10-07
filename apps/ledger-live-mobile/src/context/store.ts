@@ -1,9 +1,9 @@
 import Config from "react-native-config";
-import { configureStore, Tuple } from "@reduxjs/toolkit";
+import { configureStore, StoreEnhancer } from "@reduxjs/toolkit";
 import reducers from "~/reducers";
-import Rectotron from "~/ReactotronConfig";
 import { assetsDataApi } from "@ledgerhq/live-common/dada-client/state-manager/api";
 import { rebootMiddleware } from "~/middleware/rebootMiddleware";
+import { rozeniteDevToolsEnhancer } from "@rozenite/redux-devtools-plugin";
 
 // === STORE CONFIGURATION ===
 export const store = configureStore({
@@ -14,8 +14,12 @@ export const store = configureStore({
       .concat(assetsDataApi.middleware)
       .concat(rebootMiddleware),
 
-  enhancers: getDefaultEnhancers =>
-    new Tuple(...(__DEV__ ? [Rectotron.createEnhancer()] : []), ...getDefaultEnhancers()),
+  enhancers: getDefaultEnhancers => {
+    const enhancers = getDefaultEnhancers();
+    // Type assertion needed due to Redux version compatibility types between v4 and v5
+    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+    return enhancers.concat(rozeniteDevToolsEnhancer() as StoreEnhancer);
+  },
 });
 
 export type StoreType = typeof store;

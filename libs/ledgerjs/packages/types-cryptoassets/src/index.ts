@@ -185,6 +185,9 @@ export type CryptoCurrencyId =
   | "zenrock"
   | "sonic"
   | "sonic_blaze"
+  | "westend"
+  | "assethub_westend"
+  | "assethub_polkadot"
   | "mina";
 
 export type LedgerExplorerId =

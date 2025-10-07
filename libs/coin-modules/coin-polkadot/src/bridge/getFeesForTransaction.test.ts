@@ -8,6 +8,8 @@ import {
 import { createFixtureAccount, createFixtureTransaction } from "../types/bridge.fixture";
 import { createRegistryAndExtrinsics } from "../network/common";
 import coinConfig from "../config";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 
 const mockPaymentInfo = jest.fn();
 const mockRegistry = jest
@@ -16,7 +18,8 @@ const mockRegistry = jest
 const mockTransactionParams = jest.fn().mockResolvedValue(fixtureTransactionParams);
 jest.mock("../network/sidecar", () => ({
   getRegistry: () => mockRegistry(),
-  paymentInfo: (args: any) => mockPaymentInfo(args),
+  paymentInfo: (signedTx: string, currency: CryptoCurrency | undefined) =>
+    mockPaymentInfo(signedTx, currency),
   getTransactionParams: () => mockTransactionParams(),
 }));
 
@@ -40,6 +43,7 @@ describe("getEstimatedFees", () => {
         },
         metadataShortener: {
           url: "https://polkadot-metadata-shortener.api.live.ledger.com/transaction/metadata",
+          id: "dot",
         },
         metadataHash: {
           url: "https://polkadot-metadata-shortener.api.live.ledger.com/node/metadata/hash",
@@ -55,6 +59,7 @@ describe("getEstimatedFees", () => {
   it("returns estimation from Polkadot explorer", async () => {
     // Given
     const account = createFixtureAccount();
+
     const partialFee = "155099812";
     mockPaymentInfo.mockResolvedValue({
       weight: "WHATEVER",
@@ -70,8 +75,11 @@ describe("getEstimatedFees", () => {
 
     // Then
     expect(mockPaymentInfo).toHaveBeenCalledTimes(1);
-    // Receive hex signature computed by Polkadot lib
     expect(mockPaymentInfo.mock.lastCall).not.toBeNull();
+
+    const currency = getCryptoCurrencyById(account.currency.id);
+    expect(mockPaymentInfo.mock.lastCall[1]).toEqual(currency);
+
     expect(result).toEqual(new BigNumber(partialFee));
   });
 });

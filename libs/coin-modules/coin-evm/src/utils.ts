@@ -1,8 +1,12 @@
 import { log } from "@ledgerhq/logs";
 import BigNumber from "bignumber.js";
 import eip55 from "eip55";
-import { Transaction as EvmTransaction } from "./types";
-import { SeiDelegation } from "./types/staking";
+import type {
+  StakingTransactionIntent,
+  TransactionIntent,
+} from "@ledgerhq/coin-framework/api/types";
+import type { Transaction as EvmTransaction } from "./types";
+import type { SeiDelegation } from "./types/staking";
 
 /**
  * Some addresses returned by the explorers are not 40 characters hex addresses
@@ -143,3 +147,10 @@ export const getCeloAmount = (decoded: unknown): bigint => {
   }
   return 0n;
 };
+
+/**
+ * Checks if a transaction intent is a staking intent
+ */
+export function isStakingIntent(intent: TransactionIntent): intent is StakingTransactionIntent {
+  return intent.intentType === "staking";
+}

@@ -32,6 +32,7 @@ function legacyIntent(
 ): TransactionIntent<MemoNotSupported, BufferTxData> {
   return {
     type: "send-legacy",
+    intentType: "transaction",
     sender: "",
     recipient: "",
     amount: 0n,
@@ -46,6 +47,7 @@ function eip1559Intent(
 ): TransactionIntent<MemoNotSupported, BufferTxData> {
   return {
     type: "send-eip1559",
+    intentType: "transaction",
     sender: "",
     recipient: "",
     amount: 0n,

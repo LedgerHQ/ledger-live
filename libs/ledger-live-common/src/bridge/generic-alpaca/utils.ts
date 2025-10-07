@@ -134,6 +134,7 @@ export function transactionToIntent(
   const res: TransactionIntent & { memo?: { type: string; value?: string } } & {
     data?: { type: string; value?: unknown };
   } = {
+    intentType: isStaking ? "staking" : "transaction",
     type: intentType,
     sender: account.freshAddress,
     recipient: transaction.recipient,

@@ -1,4 +1,4 @@
-import { getTokenById } from "@ledgerhq/cryptoassets";
+import { findTokenById } from "@ledgerhq/cryptoassets";
 import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import type { Account, TokenAccount } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
@@ -87,7 +87,9 @@ describe("swap/utils/getAccountTuplesForCurrency", () => {
   });
 
   describe("TokenCurrency", () => {
-    const aaveToken = Object.freeze(getTokenById("ethereum/erc20/aave"));
+    const token = findTokenById("ethereum/erc20/aave");
+    if (!token) throw new Error("AAVE token not found");
+    const aaveToken = Object.freeze(token);
 
     test("returns correct parent accounts including a new subAccount when a TokenCurrency is provided", () => {
       const ethAccounts = [

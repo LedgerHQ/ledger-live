@@ -8,7 +8,6 @@ import { Result } from "@ledgerhq/coin-framework/derivation";
 import { MapMemo, TransactionIntent } from "@ledgerhq/coin-framework/api/types";
 import { StellarMemo } from "@ledgerhq/coin-stellar/types/bridge";
 import { log } from "@ledgerhq/logs";
-import BigNumber from "bignumber.js";
 import { GenericTransaction } from "./types";
 
 /**
@@ -86,25 +85,6 @@ export const genericSignOperation =
         const alpacaApi = getAlpacaApi(account.currency.id, kind);
         if (!transaction.fees) throw new FeeNotLoaded();
         const fees = BigInt(transaction.fees?.toString() || "0");
-        if (transaction.useAllAmount) {
-          const draftTransaction = {
-            mode: transaction.mode,
-            recipient: transaction.recipient,
-            amount: transaction.amount ?? 0,
-            useAllAmount: !!transaction.useAllAmount,
-            assetReference: transaction?.assetReference || "",
-            assetOwner: transaction?.assetOwner || "",
-            subAccountId: transaction.subAccountId || "",
-            family: transaction.family,
-            feesStrategy: transaction.feesStrategy,
-            data: transaction.data,
-          };
-          const { amount } = await alpacaApi.validateIntent(
-            transactionToIntent(account, draftTransaction, alpacaApi.computeIntentType),
-            { value: fees },
-          );
-          transaction.amount = new BigNumber(amount.toString());
-        }
         const signedInfo = await signerContext(deviceId, async signer => {
           const derivationPath = account.freshAddressPath;
           const { publicKey } = (await signer.getAddress(derivationPath)) as Result;

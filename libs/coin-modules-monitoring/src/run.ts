@@ -1,5 +1,5 @@
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import * as store from "@ledgerhq/cryptoassets/tokens";
+import { legacyCryptoAssetsStore } from "@ledgerhq/cryptoassets/tokens";
 import type { Account } from "@ledgerhq/types-live";
 import { getAccountBridgeByFamily, setup } from "@ledgerhq/live-common/bridge/impl";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
@@ -114,17 +114,17 @@ function getSync(currency: CryptoCurrency) {
     );
 }
 
-export default async function (currencyIds: string[]) {
+export default async function (currencyIds: string[], accountTypes: AccountType[]) {
   LiveConfig.setConfig(liveConfig);
-  setup(store);
+  setup(legacyCryptoAssetsStore);
   const result: RunResult = {
     entries: [],
     failed: false,
   };
 
   const nbOfAccounts = currencyIds
-    .map(currencyId => Object.keys(currencies[currencyId].accounts).length)
-    .reduce((previous, current) => previous + current, 0);
+    .flatMap(currencyId => Object.keys(currencies[currencyId].accounts))
+    .filter(currencyAccountType => accountTypes.some(type => type === currencyAccountType)).length;
   let i = 0;
   console.log(`Monitoring ${nbOfAccounts} account(s) within ${currencyIds.join(", ")}`);
 
@@ -134,7 +134,14 @@ export default async function (currencyIds: string[]) {
     const currency = getCryptoCurrencyById(currencyId);
     const sync = getSync(currency);
 
-    for (const [accountType, info] of Object.entries(monitored.accounts)) {
+    for (const accountType of accountTypes) {
+      const info = monitored.accounts[accountType];
+
+      if (!info) {
+        console.log(`\nSkipping currency = "${currencyId}", no account = "${accountType}"`);
+        continue;
+      }
+
       console.log(
         `\n[${++i} / ${nbOfAccounts}] Start (currency = "${currencyId}" account = "${accountType}")`,
       );

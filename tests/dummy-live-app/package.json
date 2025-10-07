@@ -4,8 +4,8 @@
   "private": true,
   "dependencies": {
     "@ledgerhq/live-app-sdk": "^0.8.0",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
+    "react": "catalog:",
+    "react-dom": "catalog:",
     "react-scripts": "5.0.1"
   },
   "scripts": {

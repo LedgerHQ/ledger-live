@@ -1,7 +1,7 @@
 import React from "react";
 import { renderWithReactQuery } from "@tests/test-renderer";
 import { MarketQuickActions } from "./";
-import { getCryptoCurrencyById, getTokenById } from "@ledgerhq/live-common/currencies/index";
+import { getCryptoCurrencyById, findTokenById } from "@ledgerhq/live-common/currencies/index";
 import { ScreenName } from "~/const";
 import { createStackNavigator } from "@react-navigation/stack";
 import { genAccount } from "@ledgerhq/coin-framework/mocks/account";
@@ -9,7 +9,8 @@ import { State } from "~/reducers/types";
 
 const Stack = createStackNavigator();
 
-const usdcCurrency = getTokenById("ethereum/erc20/usd__coin");
+const usdcCurrency = findTokenById("ethereum/erc20/usd__coin");
+if (!usdcCurrency) throw new Error("USDC token not found");
 const moneroCurrency = getCryptoCurrencyById("monero");
 const kaspaCurrency = getCryptoCurrencyById("kaspa");
 const bitcoinCurrency = getCryptoCurrencyById("bitcoin");

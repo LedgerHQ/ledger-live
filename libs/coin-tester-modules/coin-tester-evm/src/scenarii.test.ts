@@ -8,21 +8,13 @@ import { scenarioBlast } from "./scenarii/blast";
 import { scenarioSonic } from "./scenarii/sonic";
 import { scenarioCore } from "./scenarii/core";
 import { setCryptoAssetsStore as setCryptoAssetsStoreForCoinFramework } from "@ledgerhq/coin-framework/crypto-assets/index";
-import type { CryptoAssetsStore } from "@ledgerhq/types-live";
-import * as legacy from "@ledgerhq/cryptoassets/tokens";
+import { legacyCryptoAssetsStore } from "@ledgerhq/cryptoassets/tokens";
 
 global.console = require("console");
 jest.setTimeout(100_000);
 
 //TODO mock call to CAL when available
-// eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-setCryptoAssetsStoreForCoinFramework({
-  findTokenByAddress: legacy.findTokenByAddress,
-  getTokenById: legacy.getTokenById,
-  findTokenById: legacy.findTokenById,
-  findTokenByAddressInCurrency: legacy.findTokenByAddressInCurrency,
-  findTokenByTicker: legacy.findTokenByTicker,
-} as CryptoAssetsStore);
+setCryptoAssetsStoreForCoinFramework(legacyCryptoAssetsStore);
 
 // Note this config runs with NanoX
 // https://github.com/LedgerHQ/ledger-live/blob/develop/libs/coin-tester/docker-compose.yml

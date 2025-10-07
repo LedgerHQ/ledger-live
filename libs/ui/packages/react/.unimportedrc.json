@@ -10,7 +10,7 @@
     "src/components/form/SelectInput/VirtualMenuList.tsx"
   ],
   "extensions": [".ts", ".js", ".jsx", ".tsx"],
-  "ignorePatterns": ["**/node_modules/**", "**/*.stories.*"],
+  "ignorePatterns": ["**/node_modules/**", "**/*.stories.*", "**/*.test.*"],
   "ignoreUnimported": [
     "src/assets/images/images.d.ts",
     "src/components/Table/stories.helper.tsx",

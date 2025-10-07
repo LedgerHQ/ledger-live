@@ -35,6 +35,5 @@ export type StepProps = {
   onFailHandler: Function;
   currencyName: string | undefined | null;
   walletConnectProxy?: boolean;
-  shouldSkipAmount: boolean;
 };
 export type St = Step<StepId, StepProps>;

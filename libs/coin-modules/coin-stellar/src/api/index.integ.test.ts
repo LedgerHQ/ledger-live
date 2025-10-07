@@ -25,6 +25,7 @@ describe("Stellar Api", () => {
 
       // When
       const result = await module.estimateFees({
+        intentType: "transaction",
         asset: { type: "native" },
         type: "send",
         sender: ADDRESS,
@@ -114,6 +115,7 @@ describe("Stellar Api", () => {
 
     it("returns a raw transaction", async () => {
       const { transaction: result } = await module.craftTransaction({
+        intentType: "transaction",
         asset: { type: "native" },
         type: TYPE,
         sender: ADDRESS,
@@ -129,6 +131,7 @@ describe("Stellar Api", () => {
 
     it("should use estimated fees when user does not provide them for crafting a transaction", async () => {
       const { transaction: transactionXdr } = await module.craftTransaction({
+        intentType: "transaction",
         asset: { type: "native" },
         type: TYPE,
         sender: ADDRESS,
@@ -145,6 +148,7 @@ describe("Stellar Api", () => {
       const customFees = 99n;
       const { transaction: transactionXdr } = await module.craftTransaction(
         {
+          intentType: "transaction",
           asset: { type: "native" },
           type: TYPE,
           sender: ADDRESS,
@@ -161,6 +165,7 @@ describe("Stellar Api", () => {
 
     it("should have no memo when not provided by user", async () => {
       const { transaction: transactionXdr } = await module.craftTransaction({
+        intentType: "transaction",
         asset: { type: "native" },
         type: TYPE,
         sender: ADDRESS,
@@ -173,6 +178,7 @@ describe("Stellar Api", () => {
 
     it("should have a memo when provided by user", async () => {
       const { transaction: transactionXdr } = await module.craftTransaction({
+        intentType: "transaction",
         asset: { type: "native" },
         type: TYPE,
         sender: ADDRESS,

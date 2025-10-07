@@ -61,4 +61,5 @@ export const DeviceIllustration = styled.img.attrs<{
   transform: translateX(-50%);
   user-select: none;
   pointer-events: none;
+  object-fit: contain;
 `;

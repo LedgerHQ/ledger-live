@@ -13,6 +13,8 @@ const suiTokens = [
     delisted: false,
     name: "Sui",
     ticker: "SUI",
+    live_signature:
+      "304402207b5a1b965bdf6409ef7adcd6bca3bb086a55aa6b3a2e5e18aa1c51baeb94cca502203234283b2e8af84ef83ff2cabf52c76190b90f2f6dfb6113e336c47f5dcbbd8b",
   },
 ];
 
@@ -34,11 +36,12 @@ describe("import Sui tokens", () => {
 
   it("should output the file in the correct format", async () => {
     const expectedFile = `export type SuiToken = [
-  string, // CAL id
+  string, // id
   string, // name
   string, // ticker
   string, // address
   number, // decimals
+  string, // live_signature
 ];
 
 import tokens from "./sui.json";
@@ -58,7 +61,7 @@ export default tokens as SuiToken[];
         params: {
           blockchain_name: "sui",
           chain_id: undefined,
-          output: "id,name,ticker,contract_address,decimals",
+          output: "id,name,ticker,contract_address,decimals,live_signature",
           standard: undefined,
         },
       },
@@ -66,7 +69,16 @@ export default tokens as SuiToken[];
     expect(mockedFs).toHaveBeenNthCalledWith(
       1,
       "sui.json",
-      JSON.stringify([["sui/sui/0x2::sui::SUI", "Sui", "SUI", "0x2::sui::SUI", 9]]),
+      JSON.stringify([
+        [
+          "sui/sui/0x2::sui::SUI",
+          "Sui",
+          "SUI",
+          "0x2::sui::SUI",
+          9,
+          "304402207b5a1b965bdf6409ef7adcd6bca3bb086a55aa6b3a2e5e18aa1c51baeb94cca502203234283b2e8af84ef83ff2cabf52c76190b90f2f6dfb6113e336c47f5dcbbd8b",
+        ],
+      ]),
     );
     expect(mockedFs).toHaveBeenNthCalledWith(2, "sui-hash.json", JSON.stringify("commitHash"));
     expect(mockedFs).toHaveBeenNthCalledWith(3, "sui.ts", expectedFile);

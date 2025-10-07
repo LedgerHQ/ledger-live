@@ -116,6 +116,7 @@ function HeaderRight({ softExit }: { softExit: boolean }) {
 export type InterstitialType = React.ComponentType<{
   manifest: LiveAppManifest;
   isLoading: boolean;
+  description?: string;
 }>;
 
 type Props = {

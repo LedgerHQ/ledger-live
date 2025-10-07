@@ -74,6 +74,8 @@ async function measureDuring<T>(fn: () => Promise<T>) {
   let prevCpu = process.cpuUsage();
   let prevTs = Date.now();
 
+  const { rss: previousMemory } = process.memoryUsage();
+
   const tick = () => {
     const now = Date.now();
     const elapsed = now - prevTs;
@@ -83,16 +85,16 @@ async function measureDuring<T>(fn: () => Promise<T>) {
     const diffSys = curCpu.system - prevCpu.system;
 
     const cpu = cpuPercentDelta(diffUser, diffSys, elapsed);
-    const { rss } = process.memoryUsage();
-
     cpuSamples.push(cpu);
-    memSamples.push(bytesToMB(rss));
+
+    const { rss } = process.memoryUsage();
+    memSamples.push(bytesToMB(Math.max(rss - previousMemory, 0)));
 
     prevCpu = curCpu;
     prevTs = now;
   };
 
-  const timer = setImmediateInterval(tick, 100);
+  const timer = setImmediateInterval(tick, 30);
 
   try {
     const result = await fn();

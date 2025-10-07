@@ -42,6 +42,7 @@ import { Swap } from "./models/Swap";
 import { delegateOsmosis } from "./families/osmosis";
 import { AppInfos } from "./enum/AppInfos";
 import { DEVICE_LABELS_CONFIG } from "./data/deviceLabelsData";
+import { sendSui } from "./families/sui";
 
 const isSpeculosRemote = process.env.REMOTE_SPECULOS === "true";
 
@@ -344,6 +345,14 @@ export const specs: Specs = {
     },
     dependency: "",
   },
+  Sui: {
+    currency: getCryptoCurrencyById("sui"),
+    appQuery: {
+      model: getSpeculosModel(),
+      appName: "Sui",
+    },
+    dependency: "",
+  },
 };
 
 export async function startSpeculos(
@@ -632,6 +641,10 @@ export async function goToSettings() {
   await pressBoth();
 }
 
+export async function providePublicKey() {
+  await pressRightButton();
+}
+
 type DeviceLabelsReturn = {
   delegateConfirmLabel: string;
   delegateVerifyLabel: string;
@@ -660,6 +673,10 @@ export function getDeviceLabels(appInfo: AppInfos): DeviceLabelsReturn {
 }
 
 export async function expectValidAddressDevice(account: Account, addressDisplayed: string) {
+  if (account.currency === Currency.SUI_USDC) {
+    providePublicKey();
+  }
+
   const { receiveVerifyLabel, receiveConfirmLabel } = getDeviceLabels(account.currency.speculosApp);
 
   await waitFor(receiveVerifyLabel);
@@ -720,6 +737,12 @@ export async function signSendTransaction(tx: Transaction) {
       break;
     case Currency.HBAR:
       await sendHedera();
+      break;
+    case Currency.SUI:
+      await sendSui();
+      break;
+    case Currency.SUI_USDC:
+      await sendSui();
       break;
     default:
       throw new Error(`Unsupported currency: ${currencyName.ticker}`);

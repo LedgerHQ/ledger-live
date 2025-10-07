@@ -1,6 +1,8 @@
 import BigNumber from "bignumber.js";
 import { createFixtureAccount, createFixtureTransaction } from "../types/bridge.fixture";
 import getTransactionStatus from "./getTransactionStatus";
+import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 
 const stubIsNewAccount = jest.fn();
 const stubIsElectionClosed = jest.fn();
@@ -9,9 +11,11 @@ const stubVerifyValidatorAddresses = jest.fn();
 
 jest.mock("../network", () => {
   return {
-    isNewAccount: () => stubIsNewAccount(),
+    isNewAccount: (addr: string, currency: CryptoCurrency | undefined) =>
+      stubIsNewAccount(addr, currency),
     isElectionClosed: () => stubIsElectionClosed(),
-    isControllerAddress: () => stubIsControllerAddress(),
+    isControllerAddress: (address: string, currency: CryptoCurrency | undefined) =>
+      stubIsControllerAddress(address, currency),
     verifyValidatorAddresses: () => stubVerifyValidatorAddresses(),
   };
 });
@@ -35,6 +39,10 @@ describe("getTransactionStatus", () => {
       await getTransactionStatus(account, transaction);
 
       expect(stubIsNewAccount).toHaveBeenCalledTimes(1);
+      expect(stubIsNewAccount.mock.lastCall[0]).toEqual(transaction.recipient);
+      const currency = getCryptoCurrencyById(account.currency.id);
+      expect(stubIsNewAccount.mock.lastCall[1]).toEqual(currency);
+
       expect(stubIsElectionClosed).not.toHaveBeenCalled();
       expect(stubIsControllerAddress).not.toHaveBeenCalled();
       expect(stubVerifyValidatorAddresses).not.toHaveBeenCalled();

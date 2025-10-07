@@ -646,6 +646,11 @@ const envDefinitions = {
     parser: stringParser,
     desc: "(dev feature) seed to be used by speculos (device simulator)",
   },
+  PROVIDER_SESSION_ID_ENDPOINT: {
+    def: "https://buy.api.live.ledger.com/session",
+    parser: stringParser,
+    desc: "Request provider session id",
+  },
   SHOW_LEGACY_NEW_ACCOUNT: {
     def: false,
     parser: boolParser,

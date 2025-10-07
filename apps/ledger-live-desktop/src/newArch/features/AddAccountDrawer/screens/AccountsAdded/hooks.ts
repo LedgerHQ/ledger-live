@@ -1,6 +1,5 @@
 import { accountNameWithDefaultSelector } from "@ledgerhq/live-wallet/store";
 import { Account } from "@ledgerhq/types-live";
-import { formatAddress } from "LLD/utils/formatAddress";
 import { useCallback } from "react";
 import { useSelector } from "react-redux";
 import { discreetModeSelector, localeSelector } from "~/renderer/reducers/settings";
@@ -28,7 +27,7 @@ export const useAccountFormatter = () => {
       const accountName = accountNameWithDefaultSelector(walletState, account);
 
       return {
-        address: formatAddress(account.freshAddress),
+        address: account.freshAddress,
         cryptoId: account.currency.id,
         // Raw values for UI formatting
         balance: account.balance,

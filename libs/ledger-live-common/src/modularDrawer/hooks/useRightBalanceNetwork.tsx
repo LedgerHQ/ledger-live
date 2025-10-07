@@ -1,6 +1,7 @@
 import type { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { UseBalanceDeps, CreateBalanceItem } from "../utils/type";
 import { getBalanceAndFiatValueByAssets } from "../utils/getBalanceAndFiatValueByAssets";
+import BigNumber from "bignumber.js";
 
 export type NetworkDeps = {
   balanceItem: CreateBalanceItem;
@@ -25,12 +26,17 @@ export function createUseRightBalanceNetwork({ useBalanceDeps, balanceItem }: Ne
     const balanceMap = new Map(networkBalanceData.map(b => [b.id, b]));
 
     return networks.map(network => {
-      const balanceData = balanceMap.get(network.id) || {};
-      const details = network.type === "TokenCurrency" ? network.parentCurrency : network;
+      const currency = network.type === "TokenCurrency" ? network.parentCurrency : network;
+      const balanceData = balanceMap.get(network.id) || {
+        currency,
+        balance: new BigNumber(0),
+        fiatValue: 0,
+      };
+
       return {
-        ...details,
+        ...currency,
         rightElement: balanceItem(balanceData),
-        balanceData: balanceData,
+        balanceData,
       };
     });
   };
