@@ -115,24 +115,26 @@ type ProgrammableTransaction = {
   transactions: SuiTransaction[];
 };
 
-function isMoveCallWithFunction(
+function hasMoveCallWithFunction(
   functionName: string,
   block?: SuiTransactionBlockKind,
 ): block is ProgrammableTransaction {
   if (block?.kind === "ProgrammableTransaction") {
-    const move = block.transactions.find(item => "MoveCall" in item) as any;
-    return move?.MoveCall.function === functionName;
+    const move = block.transactions.find(
+      item => "MoveCall" in item && item["MoveCall"].function === functionName,
+    ) as any;
+    return Boolean(move);
   } else {
     return false;
   }
 }
 
 function isStaking(block?: SuiTransactionBlockKind): block is ProgrammableTransaction {
-  return isMoveCallWithFunction("request_add_stake", block);
+  return hasMoveCallWithFunction("request_add_stake", block);
 }
 
 function isUnstaking(block?: SuiTransactionBlockKind): block is ProgrammableTransaction {
-  return isMoveCallWithFunction("request_withdraw_stake", block);
+  return hasMoveCallWithFunction("request_withdraw_stake", block);
 }
 
 /**
