@@ -82,7 +82,6 @@ export function createDataModel<R, M>(schema: DataSchema<R, M>): DataModel<R, M>
         data.currencyId = "assethub_polkadot";
         data.id.replace("polkadot", "assethub_polkadot");
 
-        // Preserve existing operations and balances during migration
         if (data.operations) {
           data.operations = data.operations.map(op => ({
             ...op,
