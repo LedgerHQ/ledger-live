@@ -16,6 +16,7 @@ describe("craftTransaction", () => {
 
   it("should craft a native HBAR transfer transaction", async () => {
     const txIntent = {
+      intentType: "transaction",
       type: HEDERA_TRANSACTION_MODES.Send,
       amount: BigInt(1 * 10 ** TINYBAR_SCALE),
       recipient: "0.0.12345",
@@ -50,6 +51,7 @@ describe("craftTransaction", () => {
 
   it("should craft a token transfer transaction", async () => {
     const txIntent = {
+      intentType: "transaction",
       type: HEDERA_TRANSACTION_MODES.Send,
       amount: BigInt(1000),
       recipient: "0.0.12345",
@@ -86,6 +88,7 @@ describe("craftTransaction", () => {
 
   it("should craft a token associate transaction", async () => {
     const txIntent = {
+      intentType: "transaction",
       type: HEDERA_TRANSACTION_MODES.TokenAssociate,
       amount: BigInt(0),
       recipient: "",
@@ -127,6 +130,7 @@ describe("craftTransaction", () => {
 
     const result = await craftTransaction(
       {
+        intentType: "transaction",
         type: HEDERA_TRANSACTION_MODES.Send,
         amount: BigInt(1000000),
         recipient: "0.0.12345",
@@ -150,6 +154,7 @@ describe("craftTransaction", () => {
 
   it("should throw error when token associate transaction has invalid asset type", async () => {
     const txIntent = {
+      intentType: "transaction",
       type: HEDERA_TRANSACTION_MODES.TokenAssociate,
       amount: BigInt(0),
       recipient: "",
@@ -169,6 +174,7 @@ describe("craftTransaction", () => {
 
   it("should throw error when token associate transaction has missing assetReference", async () => {
     const txIntent = {
+      intentType: "transaction",
       type: HEDERA_TRANSACTION_MODES.TokenAssociate,
       amount: BigInt(0),
       recipient: "",
@@ -188,6 +194,7 @@ describe("craftTransaction", () => {
 
   it("should throw error when token transfer transaction has missing assetReference", async () => {
     const txIntent = {
+      intentType: "transaction",
       type: HEDERA_TRANSACTION_MODES.Send,
       amount: BigInt(1000),
       recipient: "0.0.12345",
