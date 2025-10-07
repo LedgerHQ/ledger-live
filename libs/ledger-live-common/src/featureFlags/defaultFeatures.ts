@@ -439,7 +439,7 @@ export const DEFAULT_FEATURES: Features = {
     },
   },
 
-  ptxEarnDrawerApy: {
+  ptxEarnDrawerConfiguration: {
     enabled: false,
     params: {},
   },
