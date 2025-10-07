@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React from "react";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { Flex, Icons, IconsLegacy, Text } from "@ledgerhq/native-ui";
 import { ChevronRightMedium } from "@ledgerhq/native-ui/assets/icons";
@@ -16,21 +16,23 @@ type Props = {
   onSelect: () => void;
 };
 
+const DeviceIcon = ({ deviceModelId }: { deviceModelId: DeviceModelId }) => {
+  switch (deviceModelId) {
+    case DeviceModelId.stax:
+      return <Icons.Stax size="S" />;
+    case DeviceModelId.europa:
+      return <Icons.Flex size="S" />;
+    case DeviceModelId.apex:
+      return <Icons.Flex size="S" />;
+    case DeviceModelId.nanoX:
+    default:
+      return <IconsLegacy.NanoXFoldedMedium size={20} />;
+  }
+};
+
 const BleDeviceItem = ({ deviceMeta, onSelect, areKnownDevicesPairable }: Props) => {
   const { t } = useTranslation();
   const { deviceName, isAlreadyKnown } = deviceMeta;
-
-  const deviceIcon = useMemo(() => {
-    switch (deviceMeta.modelId) {
-      case DeviceModelId.stax:
-        return <IconsLegacy.StaxMedium size={20} />;
-      case DeviceModelId.europa:
-        return <Icons.Flex size="S" />;
-      case DeviceModelId.nanoX:
-      default:
-        return <IconsLegacy.NanoXFoldedMedium size={20} />;
-    }
-  }, [deviceMeta.modelId]);
 
   if (isAlreadyKnown && !areKnownDevicesPairable) {
     return (
@@ -42,7 +44,7 @@ const BleDeviceItem = ({ deviceMeta, onSelect, areKnownDevicesPairable }: Props)
           borderRadius={8}
           padding={6}
         >
-          {deviceIcon}
+          <DeviceIcon deviceModelId={deviceMeta.modelId} />
           <Flex flexDirection="column">
             <Text flex={1} ml={4} variant="large" fontWeight="semiBold">
               {deviceName}
@@ -66,7 +68,7 @@ const BleDeviceItem = ({ deviceMeta, onSelect, areKnownDevicesPairable }: Props)
           borderRadius={8}
           padding={6}
         >
-          {deviceIcon}
+          <DeviceIcon deviceModelId={deviceMeta.modelId} />
           <Text flex={1} ml={4} variant="large" fontWeight="semiBold">
             {deviceName}
           </Text>

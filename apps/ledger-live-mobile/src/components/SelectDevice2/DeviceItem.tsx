@@ -17,6 +17,7 @@ function DeviceIcon({ deviceModelId }: { deviceModelId: DeviceModelId }) {
     case DeviceModelId.stax:
       return <Icons.Stax size="M" />;
     case DeviceModelId.europa:
+      return <Icons.Flex size="M" />;
     case DeviceModelId.apex:
       return <Icons.Flex size="M" />;
     case DeviceModelId.nanoS:
