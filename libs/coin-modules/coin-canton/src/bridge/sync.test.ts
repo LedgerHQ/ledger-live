@@ -110,7 +110,7 @@ describe("makeGetAccountShape", () => {
   it("should handle locked balances correctly", async () => {
     mockedGetBalance.mockResolvedValue([
       {
-        instrument_id: "Native",
+        instrument_id: "LockedNative",
         amount: "1000",
         locked: true,
       },
