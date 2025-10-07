@@ -58,7 +58,7 @@ export default function ReceiveFundsNavigator() {
       headerRight: () => (
         <NavigationHeaderCloseButtonAdvanced
           onClose={onClose}
-          isOnboardingFlow={isOnboardingFlow}
+          disablePostOnboardingRedirect={isOnboardingFlow}
         />
       ),
     }),
@@ -114,7 +114,7 @@ export default function ReceiveFundsNavigator() {
           headerRight: () => (
             <NavigationHeaderCloseButtonAdvanced
               onClose={onClose}
-              isOnboardingFlow={isOnboardingFlow}
+              disablePostOnboardingRedirect={isOnboardingFlow}
             />
           ),
         }}
@@ -134,7 +134,7 @@ export default function ReceiveFundsNavigator() {
               )}
               <NavigationHeaderCloseButtonAdvanced
                 onClose={onClose}
-                isOnboardingFlow={isOnboardingFlow}
+                disablePostOnboardingRedirect={isOnboardingFlow}
               />
             </Flex>
           ),
@@ -222,7 +222,7 @@ export default function ReceiveFundsNavigator() {
                 onClose={
                   route.params.verified ? onVerificationConfirmationClose : onConfirmationClose
                 }
-                isOnboardingFlow={isOnboardingFlow}
+                disablePostOnboardingRedirect={isOnboardingFlow}
                 popToTop={isOnboardingFlow}
               />
             </Flex>
