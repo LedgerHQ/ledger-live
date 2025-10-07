@@ -54,6 +54,32 @@ import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 
 const wallet = { name: "ledger-live-desktop", version: __APP_VERSION__ };
 
+function createDrawerConfiguration(
+  drawerConfiguration: unknown,
+  useCase: string | undefined,
+  useCaseConfigs: Record<
+    string,
+    { assets?: Record<string, unknown>; networks?: Record<string, unknown> }
+  >,
+) {
+  const config:
+    | { assets?: Record<string, unknown>; networks?: Record<string, unknown> }
+    | undefined = drawerConfiguration!;
+
+  const useCaseConfig = useCase ? useCaseConfigs[useCase] : undefined;
+
+  return {
+    assets: {
+      ...(useCaseConfig?.assets || {}),
+      ...(config?.assets || {}),
+    },
+    networks: {
+      ...(useCaseConfig?.networks || {}),
+      ...(config?.networks || {}),
+    },
+  };
+}
+
 function useUiHook(manifest: AppManifest, tracking: TrackingAPI): UiHook {
   const { pushToast } = useToasts();
   const { t } = useTranslation();
@@ -92,22 +118,20 @@ function useUiHook(manifest: AppManifest, tracking: TrackingAPI): UiHook {
         if (modularDrawerVisible) {
           dispatch(setFlowValue(flow));
           dispatch(setSourceValue(source));
-          // Auto-append APY configuration for earn app requests
           const earnAppDrawerConfig = earnDrawerConfigurationFlag?.enabled
             ? earnDrawerConfigurationFlag.params
             : {};
-          const isEarn = useCase === "earn";
 
-          const finalDrawerConfiguration = {
-            assets: {
-              ...(isEarn && (earnAppDrawerConfig?.assets || {})),
-              ...(drawerConfiguration?.assets || {}),
-            },
-            networks: {
-              ...(isEarn && (earnAppDrawerConfig?.networks || {})),
-              ...(drawerConfiguration?.networks || {}),
-            },
+          // Auto-append APY configuration for earn app requests
+          const useCaseConfigs = {
+            earn: earnAppDrawerConfig,
           };
+
+          const finalDrawerConfiguration = createDrawerConfiguration(
+            drawerConfiguration,
+            useCase,
+            useCaseConfigs,
+          );
 
           openAssetAndAccountDrawer({
             accounts$,
