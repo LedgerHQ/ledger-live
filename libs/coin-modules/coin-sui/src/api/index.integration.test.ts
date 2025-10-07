@@ -93,6 +93,21 @@ describe("Sui Api", () => {
     });
   });
 
+  describe.only("listOperations (staking)", () => {
+    let txs: Operation[];
+
+    beforeAll(async () => {
+      [txs] = await module.listOperations("0x13d73cab19d2cf14e39289b122ed93fb0f9edd00e4c829e0cefb1f0611c54a8f", { minHeight: 0, order: "asc" });
+    });
+
+    it("should map undelegate operations", async () => {
+      const tx1 = txs.find(t => t.id === "4UtCqCH3oNEdaprZR9UjaMGg6HgLn3V3q3FEcvs5vieM");
+      expect(tx1?.type).toBe("UNDELEGATE");
+      const tx2 = txs.find(t => t.id === "JEGnHCx2mtpDin216kbUBXm7V5rdMSPSUmgYbP3yxTEf");
+      expect(tx2?.type).toBe("UNDELEGATE");
+    });
+  });
+
   describe("listOperations", () => {
     let txs: Operation[];
 
