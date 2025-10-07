@@ -93,7 +93,9 @@ function useUiHook(manifest: AppManifest, tracking: TrackingAPI): UiHook {
           dispatch(setFlowValue(flow));
           dispatch(setSourceValue(source));
           // Auto-append APY configuration for earn app requests
-          const earnAppDrawerConfig = earnDrawerConfigurationFlag?.enabled ? earnDrawerConfigurationFlag.params : {};
+          const earnAppDrawerConfig = earnDrawerConfigurationFlag?.enabled
+            ? earnDrawerConfigurationFlag.params
+            : {};
           const isEarn = useCase === "earn";
 
           const finalDrawerConfiguration = {

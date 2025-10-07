@@ -154,7 +154,9 @@ const useStakeFlow = () => {
 
       if (modularDrawerVisible) {
         // Add APY configuration for earn/stake functionality
-        const earnDrawerConfiguration = earnDrawerConfigurationFlag?.enabled ? earnDrawerConfigurationFlag.params : {};
+        const earnDrawerConfiguration = earnDrawerConfigurationFlag?.enabled
+          ? earnDrawerConfigurationFlag.params
+          : {};
         openAssetAndAccountDrawer({
           currencies: cryptoCurrencies.map(c => c.id),
           useCase: "earn",
