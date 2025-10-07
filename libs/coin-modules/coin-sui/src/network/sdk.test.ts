@@ -6,9 +6,7 @@ import { SuiClient } from "@mysten/sui/client";
 import type {
   TransactionBlockData,
   SuiTransactionBlockResponse,
-  SuiTransaction,
   SuiTransactionBlockKind,
-  SuiCallArg,
 } from "@mysten/sui/client";
 import assert, { fail } from "assert";
 
