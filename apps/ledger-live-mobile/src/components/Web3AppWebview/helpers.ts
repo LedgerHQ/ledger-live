@@ -45,6 +45,7 @@ import {
 } from "LLM/features/ModularDrawer";
 import { OpenDrawer } from "LLM/features/ModularDrawer/types";
 import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
+import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 
 export function useWebView(
   {
@@ -95,10 +96,13 @@ export function useWebView(
 
   const { openDrawer: openModularDrawer } = useModularDrawerController();
 
+  const earnDrawerApyFlag = useFeature("ptxEarnDrawerApy");
+
   const uiHook = useUiHook({
     isModularDrawerVisible: modularDrawerVisible,
     openModularDrawer,
     manifest,
+    earnDrawerApyFlag,
   });
   const trackingEnabled = useSelector(trackingEnabledSelector);
   const userId = useGetUserId();
@@ -391,9 +395,15 @@ export interface Props {
   isModularDrawerVisible: boolean;
   openModularDrawer?: OpenDrawer;
   manifest: LiveAppManifest;
+  earnDrawerApyFlag?: { enabled: boolean; params?: any } | null;
 }
 
-function useUiHook({ isModularDrawerVisible, openModularDrawer, manifest }: Props): UiHook {
+function useUiHook({
+  isModularDrawerVisible,
+  openModularDrawer,
+  manifest,
+  earnDrawerApyFlag,
+}: Props): UiHook {
   const navigation = useNavigation();
   const [device, setDevice] = useState<Device>();
 
@@ -416,6 +426,8 @@ function useUiHook({ isModularDrawerVisible, openModularDrawer, manifest }: Prop
         drawerConfiguration,
       }) => {
         if (isModularDrawerVisible) {
+          const earnDrawerConfiguration =
+            useCase === "earn" && earnDrawerApyFlag?.enabled ? earnDrawerApyFlag.params : {};
           openModularDrawer?.({
             source: source,
             flow: flow,
@@ -427,6 +439,7 @@ function useUiHook({ isModularDrawerVisible, openModularDrawer, manifest }: Prop
             areCurrenciesFiltered,
             useCase,
             ...drawerConfiguration,
+            ...earnDrawerConfiguration,
           });
         } else {
           if (currencies.length === 1) {
@@ -611,7 +624,15 @@ function useUiHook({ isModularDrawerVisible, openModularDrawer, manifest }: Prop
         });
       },
     }),
-    [isModularDrawerVisible, openModularDrawer, source, flow, navigation, device],
+    [
+      isModularDrawerVisible,
+      openModularDrawer,
+      source,
+      flow,
+      navigation,
+      device,
+      earnDrawerApyFlag,
+    ],
   );
 }
 
