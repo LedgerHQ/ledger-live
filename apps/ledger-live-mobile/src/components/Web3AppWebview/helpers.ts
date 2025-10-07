@@ -456,8 +456,8 @@ function useUiHook({
             currencies: areCurrenciesFiltered && !useCase ? currencies.map(c => c.id) : undefined,
             areCurrenciesFiltered,
             useCase,
-            ...drawerConfiguration,
             ...earnDrawerConfiguration,
+            ...drawerConfiguration,
           });
         } else {
           if (currencies.length === 1) {
