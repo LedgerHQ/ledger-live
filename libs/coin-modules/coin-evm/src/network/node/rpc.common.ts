@@ -276,18 +276,23 @@ export const getOptimismAdditionalFees: NodeApi["getOptimismAdditionalFees"] = m
       }
 
       // Fake signature is added to get the best approximation possible for the gas on L1
-      const serializedTransaction = ((): string | null => {
-        try {
-          return getSerializedTransaction(transaction, {
-            r: "0xffffffffffffffffffffffffffffffffffffffff",
-            s: "0xffffffffffffffffffffffffffffffffffffffff",
-            v: 27,
-          });
-        } catch (error) /* istanbul ignore next: just logs */ {
-          log("coin-evm", "getOptimismAdditionalFees: Transaction serializing failed", { error });
-          return null;
-        }
-      })();
+      const serializedTransaction =
+        typeof transaction === "string"
+          ? transaction
+          : ((): string | null => {
+              try {
+                return getSerializedTransaction(transaction, {
+                  r: "0xffffffffffffffffffffffffffffffffffffffff",
+                  s: "0xffffffffffffffffffffffffffffffffffffffff",
+                  v: 27,
+                });
+              } catch (error) /* istanbul ignore next: just logs */ {
+                log("coin-evm", "getOptimismAdditionalFees: Transaction serializing failed", {
+                  error,
+                });
+                return null;
+              }
+            })();
 
       if (!serializedTransaction) {
         return new BigNumber(0);
@@ -304,13 +309,16 @@ export const getOptimismAdditionalFees: NodeApi["getOptimismAdditionalFees"] = m
       return new BigNumber(additionalL1Fees.toString());
     }),
   (currency, transaction) => {
-    const serializedTransaction = ((): string | null => {
-      try {
-        return getSerializedTransaction(transaction);
-      } catch (e) {
-        return null;
-      }
-    })();
+    const serializedTransaction =
+      typeof transaction === "string"
+        ? transaction
+        : ((): string | null => {
+            try {
+              return getSerializedTransaction(transaction);
+            } catch (e) {
+              return null;
+            }
+          })();
 
     return "getOptimismL1BaseFee_" + currency.id + "_" + serializedTransaction;
   },
@@ -336,18 +344,21 @@ export const getScrollAdditionalFees: NodeApi["getScrollAdditionalFees"] = (
     }
 
     // Fake signature is added to get the best approximation possible for the gas on L1
-    const serializedTransaction = ((): string | null => {
-      try {
-        return getSerializedTransaction(transaction, {
-          r: "0xffffffffffffffffffffffffffffffffffffffff",
-          s: "0xffffffffffffffffffffffffffffffffffffffff",
-          v: 27,
-        });
-      } catch (error) /* istanbul ignore next: just logs */ {
-        log("coin-evm", "getScrollAdditionalFees: Transaction serializing failed", { error });
-        return null;
-      }
-    })();
+    const serializedTransaction =
+      typeof transaction === "string"
+        ? transaction
+        : ((): string | null => {
+            try {
+              return getSerializedTransaction(transaction, {
+                r: "0xffffffffffffffffffffffffffffffffffffffff",
+                s: "0xffffffffffffffffffffffffffffffffffffffff",
+                v: 27,
+              });
+            } catch (error) /* istanbul ignore next: just logs */ {
+              log("coin-evm", "getScrollAdditionalFees: Transaction serializing failed", { error });
+              return null;
+            }
+          })();
 
     if (!serializedTransaction) {
       return new BigNumber(0);

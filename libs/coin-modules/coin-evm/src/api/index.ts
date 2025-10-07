@@ -61,7 +61,8 @@ export function createApi(
     },
     estimateFees: (
       transactionIntent: TransactionIntent<MemoNotSupported, BufferTxData>,
-    ): Promise<FeeEstimation> => estimateFees(currency, transactionIntent),
+      customFeesParameters?: FeeEstimation["parameters"],
+    ): Promise<FeeEstimation> => estimateFees(currency, transactionIntent, customFeesParameters),
     getBalance: (address: string): Promise<Balance[]> => getBalance(currency, address),
     lastBlock: (): Promise<BlockInfo> => lastBlock(currency),
     listOperations: (
