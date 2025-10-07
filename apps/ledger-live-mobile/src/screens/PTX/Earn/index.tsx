@@ -49,7 +49,7 @@ function Earn({ route }: Props) {
   );
 
   const earnFlag = useFeature("ptxEarnLiveApp");
-  const earnDrawerApyFlag = useFeature("ptxEarnDrawerApy");
+  const earnDrawerConfigurationFlag = useFeature("ptxEarnDrawerConfiguration");
   const earnManifestId = earnFlag?.enabled ? earnFlag.params?.manifest_id : DEFAULT_MANIFEST_ID;
   const localManifest: LiveAppManifest | undefined = useLocalLiveAppManifest(earnManifestId);
   const remoteManifest: LiveAppManifest | undefined = useRemoteLiveAppManifest(earnManifestId);
@@ -89,7 +89,7 @@ function Earn({ route }: Props) {
             ? JSON.stringify(stakeCurrenciesParam)
             : undefined,
           OS: Platform.OS,
-          earnDrawerApyFlag: earnDrawerApyFlag ? JSON.stringify(earnDrawerApyFlag) : undefined,
+          earnDrawerApyFlag: earnDrawerConfigurationFlag ? JSON.stringify(earnDrawerConfigurationFlag) : undefined,
           ...params,
           ...Object.fromEntries(searchParams.entries()),
         }}
