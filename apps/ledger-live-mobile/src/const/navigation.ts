@@ -332,6 +332,9 @@ export enum ScreenName {
   StellarAddAssetValidation = "StellarAddAssetValidation",
   StellarAddAssetValidationError = "StellarAddAssetValidationError",
   StellarAddAssetValidationSuccess = "StellarAddAssetValidationSuccess",
+  // Canton
+  CantonOnboardAccount = "CantonOnboardAccount",
+
   OnboardingWelcome = "OnboardingWelcome",
   OnboardingPostWelcomeSelection = "OnboardingPostWelcomeSelection",
   OnboardingWelcomeBack = "OnboardingWelcomeBack",
@@ -621,6 +624,8 @@ export enum NavigatorName {
   // SUI
   SuiDelegateFlow = "SuiDelegationFlow",
   SuiUndelegateFlow = "SuiUndelegateFlow",
+
+  CantonOnboard = "CantonOnboard",
 
   // Tab
   Main = "Main",
