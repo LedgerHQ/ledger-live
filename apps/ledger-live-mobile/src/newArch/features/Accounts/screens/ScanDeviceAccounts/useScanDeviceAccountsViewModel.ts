@@ -151,8 +151,15 @@ export default function useScanDeviceAccountsViewModel({
     [selectedIds],
   );
   const importAccounts = useCallback(() => {
-    setIsAddinAccounts(true);
     const accountsToAdd = scannedAccounts.filter(a => selectedIds.includes(a.id));
+    if (currency.id.includes("canton_network")) {
+      navigation.replace(NavigatorName.CantonOnboard, {
+        screen: ScreenName.CantonOnboardAccount,
+        params: { accountsToAdd, currency },
+      });
+      return;
+    }
+    setIsAddinAccounts(true);
 
     dispatch(
       addAccountsAction({
