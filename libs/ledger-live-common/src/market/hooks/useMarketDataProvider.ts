@@ -7,7 +7,6 @@ import {
   supportedCounterCurrencies,
 } from "../api";
 import { listCryptoCurrencies } from "@ledgerhq/cryptoassets/currencies";
-import { listTokens } from "@ledgerhq/cryptoassets/tokens";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 
 import { useMemo } from "react";
@@ -25,7 +24,7 @@ import {
   Order,
 } from "../utils/types";
 
-const cryptoCurrenciesList = [...listCryptoCurrencies(), ...listTokens()];
+const cryptoCurrenciesList = listCryptoCurrencies();
 
 export function useMarketDataProvider() {
   const supportedCurrenciesInLIve = listSupportedCurrencies();

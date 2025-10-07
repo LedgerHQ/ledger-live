@@ -27,6 +27,8 @@ export function listCurrencies(includeTokens: boolean): CryptoOrTokenCurrency[] 
     return currencies;
   }
 
+  // Warning. cannot be deleted as swap live app is using it
+  // to get information about the token currencies
   const allTokens = listTokens();
 
   return [...currencies, ...allTokens];

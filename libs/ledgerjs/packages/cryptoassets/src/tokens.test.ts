@@ -2,7 +2,6 @@ import { getCryptoCurrencyById } from "./currencies";
 import {
   addTokens,
   convertERC20,
-  listTokens,
   __clearAllLists,
   findTokenById,
   listTokensForCryptoCurrency,
@@ -65,13 +64,13 @@ describe("tokens", () => {
   });
   describe("addTokens", () => {
     it("Should list token to be empty", () => {
-      expect(listTokens().length).toBe(0);
+      expect(listTokensForCryptoCurrency(ethereumCurrency).length).toBe(0);
     });
 
     it("Add tokens normally and check if delisted work correclty", () => {
       addTokens(initMainToken.map(convertERC20));
-      expect(listTokens().length).toBe(2);
-      expect(listTokens({ withDelisted: true }).length).toBe(4);
+      expect(listTokensForCryptoCurrency(ethereumCurrency).length).toBe(2);
+      expect(listTokensForCryptoCurrency(ethereumCurrency, { withDelisted: true }).length).toBe(4);
       expect(listTokensForCryptoCurrency(ethereumCurrency).length).toBe(2);
       expect(listTokensForCryptoCurrency(ethereumCurrency, { withDelisted: true }).length).toBe(4);
     });
@@ -92,12 +91,16 @@ describe("tokens", () => {
         ],
       ];
       const tokenHash = createTokenHash(convertERC20(changeToken[0])!);
-      const existingToken = listTokens().find(t => t.ticker === "KIBA");
+      const existingToken = listTokensForCryptoCurrency(ethereumCurrency).find(
+        t => t.ticker === "KIBA",
+      );
       if (!existingToken) throw new Error("Should not be empty");
       expect(tokenHash).toBe(createTokenHash(existingToken));
 
       addTokens(changeToken.map(convertERC20));
-      const tokenAfterChange = listTokens().find(t => t.ticker === "KIBA");
+      const tokenAfterChange = listTokensForCryptoCurrency(ethereumCurrency).find(
+        t => t.ticker === "KIBA",
+      );
       if (!tokenAfterChange) throw new Error("Should not be empty");
       expect(tokenHash).toBe(createTokenHash(tokenAfterChange));
     });
@@ -118,9 +121,9 @@ describe("tokens", () => {
         ],
       ];
       addTokens(changeToken.map(convertERC20));
-      expect(listTokens().length).toBe(1);
+      expect(listTokensForCryptoCurrency(ethereumCurrency).length).toBe(1);
       findTokenById("kiba_inu");
-      expect(listTokens({ withDelisted: true }).length).toBe(4);
+      expect(listTokensForCryptoCurrency(ethereumCurrency, { withDelisted: true }).length).toBe(4);
 
       expect(listTokensForCryptoCurrency(ethereumCurrency).length).toBe(1);
       expect(listTokensForCryptoCurrency(ethereumCurrency, { withDelisted: true }).length).toBe(4);

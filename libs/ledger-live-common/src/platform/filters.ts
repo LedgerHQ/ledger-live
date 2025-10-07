@@ -47,6 +47,12 @@ export function filterPlatformCurrencies(
     ? filters.currencies.map(filter => makeRe(filter))
     : null;
 
+  console.log(
+    "QQQ filterPlatformCurrencies filters",
+    currencies.length,
+    filters.currencies?.length,
+  );
+
   return currencies.filter(currency => {
     if (!filters.includeTokens && isPlatformTokenCurrency(currency)) {
       return false;

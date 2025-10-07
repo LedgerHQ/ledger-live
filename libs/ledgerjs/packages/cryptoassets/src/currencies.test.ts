@@ -1,6 +1,6 @@
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { listFiatCurrencies, getFiatCurrencyByTicker, hasFiatCurrencyTicker } from "./fiats";
-import { listTokens, findTokenByAddressInCurrency } from "./tokens";
+import { findTokenByAddressInCurrency } from "./tokens";
 import {
   listCryptoCurrencies,
   hasCryptoCurrencyId,
@@ -156,33 +156,6 @@ test("fiats list elements are correct", () => {
   }
 });
 
-test("tokens are correct", () => {
-  expect(listTokens().length).toBeGreaterThan(0);
-
-  for (const token of listTokens()) {
-    expect(token.ticker).toBeTruthy();
-    expect(typeof token.id).toBe("string");
-    expect(typeof token.name).toBe("string");
-
-    if (token.ledgerSignature) {
-      expect(typeof token.ledgerSignature).toBe("string");
-    }
-
-    expect(typeof token.tokenType).toBe("string");
-    expect(typeof token.parentCurrency).toBe("object");
-    expect(hasCryptoCurrencyId(token.parentCurrency.id)).toBe(true);
-    expect(typeof token.ticker).toBe("string");
-    expect(token.units.length).toBeGreaterThan(0);
-    const unit = token.units[0];
-    expect(unit.code).toBeTruthy();
-    expect(typeof unit.code).toBe("string");
-    expect(unit.name).toBeTruthy();
-    expect(typeof unit.name).toBe("string");
-    expect(unit.magnitude).toBeGreaterThan(-1);
-    expect(typeof unit.magnitude).toBe("number");
-  }
-});
-
 test("findTokenByAddressInCurrency", () => {
   expect(
     findTokenByAddressInCurrency("0x111111111117dC0aa78b770fA6A738034120C302", "bsc"),
@@ -224,11 +197,6 @@ test("can get fiat by coin type", () => {
   expect(() => getFiatCurrencyByTicker("USDT").units[0]).toThrow();
   expect(hasFiatCurrencyTicker("USD")).toBe(true);
   expect(hasFiatCurrencyTicker("USDT")).toBe(false);
-});
-
-test("all USDT are countervalue enabled", () => {
-  const tokens = listTokens().filter(t => t.ticker === "USDT" && !t.parentCurrency.isTestnetFor);
-  expect(tokens.map(t => t.id).sort()).toMatchSnapshot();
 });
 
 test("Evm family convention: all evm testnet coins must derivate on the same cointype as the testnet it's for (e.g. ethereum ropsten is on 60)", () => {

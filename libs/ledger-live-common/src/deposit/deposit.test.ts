@@ -13,12 +13,10 @@ import {
   setSupportedCurrencies,
   sortCurrenciesByIds,
 } from "../currencies/index";
-import { isCurrencySupported, listSupportedCurrencies, listTokens } from "../currencies";
+import { listSupportedCurrencies } from "../currencies";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 
 const TOKEN_ONLY_ASSETS = MOCK_TOKENS_ONLY as MappedAsset[];
-
-const listSupportedTokens = () => listTokens().filter(t => isCurrencySupported(t.parentCurrency));
 
 describe("Deposit logic", () => {
   afterEach(() => {
@@ -261,7 +259,7 @@ describe("Deposit logic", () => {
     it("should return Arbitrum and not Optimism in the sortedCryptoCurrencies", () => {
       setSupportedCurrencies(["arbitrum", "arbitrum_sepolia"]);
       const currencies = sortCurrenciesByIds(
-        (listSupportedCurrencies() as CryptoOrTokenCurrency[]).concat(listSupportedTokens()),
+        listSupportedCurrencies() as CryptoOrTokenCurrency[],
         MOCK_IDS,
       );
 
@@ -275,7 +273,7 @@ describe("Deposit logic", () => {
     it("should return Optimism only in the sortedCryptoCurrencies", () => {
       setSupportedCurrencies(["optimism", "optimism_sepolia"]);
       const currencies = sortCurrenciesByIds(
-        (listSupportedCurrencies() as CryptoOrTokenCurrency[]).concat(listSupportedTokens()),
+        listSupportedCurrencies() as CryptoOrTokenCurrency[],
         MOCK_IDS,
       );
 
@@ -289,7 +287,7 @@ describe("Deposit logic", () => {
     it("should return currencies based on what's actually supported and available in mock data", () => {
       setSupportedCurrencies(["optimism", "optimism_sepolia", "arbitrum", "arbitrum_sepolia"]);
       const currencies = sortCurrenciesByIds(
-        (listSupportedCurrencies() as CryptoOrTokenCurrency[]).concat(listSupportedTokens()),
+        listSupportedCurrencies() as CryptoOrTokenCurrency[],
         MOCK_IDS,
       );
 
@@ -312,7 +310,7 @@ describe("Deposit logic", () => {
       setSupportedCurrencies(["polygon"]);
 
       const currencies = sortCurrenciesByIds(
-        (listSupportedCurrencies() as CryptoOrTokenCurrency[]).concat(listSupportedTokens()),
+        listSupportedCurrencies() as CryptoOrTokenCurrency[],
         MOCK_IDS,
       );
       const { sortedCryptoCurrencies } = groupCurrenciesByProvider(
@@ -326,7 +324,7 @@ describe("Deposit logic", () => {
       setSupportedCurrencies(["bsc"]);
 
       const currencies = sortCurrenciesByIds(
-        (listSupportedCurrencies() as CryptoOrTokenCurrency[]).concat(listSupportedTokens()),
+        listSupportedCurrencies() as CryptoOrTokenCurrency[],
         MOCK_IDS,
       );
       const { sortedCryptoCurrencies } = groupCurrenciesByProvider(
@@ -340,7 +338,7 @@ describe("Deposit logic", () => {
       setSupportedCurrencies(["ethereum", "bsc", "polygon"]);
 
       const currencies = sortCurrenciesByIds(
-        (listSupportedCurrencies() as CryptoOrTokenCurrency[]).concat(listSupportedTokens()),
+        listSupportedCurrencies() as CryptoOrTokenCurrency[],
         MOCK_IDS,
       );
       const { sortedCryptoCurrencies } = groupCurrenciesByProvider(
@@ -363,7 +361,7 @@ describe("Deposit logic", () => {
       setSupportedCurrencies(["ethereum", "polygon"]);
 
       const currencies = sortCurrenciesByIds(
-        (listSupportedCurrencies() as CryptoOrTokenCurrency[]).concat(listSupportedTokens()),
+        listSupportedCurrencies() as CryptoOrTokenCurrency[],
         MOCK_IDS,
       );
 
@@ -389,7 +387,7 @@ describe("Deposit logic", () => {
       setSupportedCurrencies(["ethereum", "bsc", "polygon"]);
 
       const currencies = sortCurrenciesByIds(
-        (listSupportedCurrencies() as CryptoOrTokenCurrency[]).concat(listSupportedTokens()),
+        listSupportedCurrencies() as CryptoOrTokenCurrency[],
         MOCK_IDS,
       );
       const { sortedCryptoCurrencies } = groupCurrenciesByProvider(
@@ -417,7 +415,7 @@ describe("Deposit logic", () => {
     it("should return empty array when no supported currencies", () => {
       setSupportedCurrencies([]);
       const currencies = sortCurrenciesByIds(
-        (listSupportedCurrencies() as CryptoOrTokenCurrency[]).concat(listSupportedTokens()),
+        listSupportedCurrencies() as CryptoOrTokenCurrency[],
         MOCK_IDS,
       );
 
@@ -452,12 +450,9 @@ describe("Deposit logic", () => {
       ]);
 
       const allSupportedCurrencies = listSupportedCurrencies() as CryptoOrTokenCurrency[];
-      const allSupportedTokens = listSupportedTokens();
 
       // Test the full loadCurrenciesByProvider functionality
-      const result = await loadCurrenciesByProvider(
-        allSupportedCurrencies.concat(allSupportedTokens),
-      );
+      const result = await loadCurrenciesByProvider(allSupportedCurrencies);
 
       // Comprehensive validation
       expect(result).toBeDefined();
@@ -519,7 +514,7 @@ describe("Deposit logic", () => {
       ]);
 
       const currencies = sortCurrenciesByIds(
-        (listSupportedCurrencies() as CryptoOrTokenCurrency[]).concat(listSupportedTokens()),
+        listSupportedCurrencies() as CryptoOrTokenCurrency[],
         MOCK_IDS,
       );
 
@@ -559,7 +554,7 @@ describe("Deposit logic", () => {
       setSupportedCurrencies(["ethereum", "polygon", "arbitrum", "optimism"]);
 
       const currencies = sortCurrenciesByIds(
-        (listSupportedCurrencies() as CryptoOrTokenCurrency[]).concat(listSupportedTokens()),
+        listSupportedCurrencies() as CryptoOrTokenCurrency[],
         MOCK_IDS,
       );
 

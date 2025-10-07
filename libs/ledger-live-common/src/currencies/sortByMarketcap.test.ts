@@ -1,5 +1,5 @@
 import { sortCurrenciesByIds } from "./sortByMarketcap";
-import { listCryptoCurrencies, listTokens } from ".";
+import { listCryptoCurrencies } from ".";
 import { getBTCValues } from "@ledgerhq/live-countervalues/mock";
 import { CURRENCIES_LIST, IDS } from "./mock";
 import { setCryptoAssetsStore as setCryptoAssetsStoreForCoinFramework } from "@ledgerhq/coin-framework/crypto-assets/index";
@@ -10,7 +10,7 @@ import { findCurrencyByTicker } from "@ledgerhq/live-countervalues/findCurrencyB
 setCryptoAssetsStoreForCoinFramework({} as CryptoAssetsStore);
 
 test("sortCurrenciesByIds snapshot", () => {
-  const list = [...listCryptoCurrencies(), ...listTokens()];
+  const list = listCryptoCurrencies();
   const ids: string[] = [];
   for (const k in getBTCValues()) {
     const c = findCurrencyByTicker(k);

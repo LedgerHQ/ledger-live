@@ -1,10 +1,6 @@
 import React, { useMemo, useCallback } from "react";
 import { Trans, useTranslation } from "react-i18next";
-import {
-  listSupportedCurrencies,
-  listTokens,
-  isCurrencySupported,
-} from "@ledgerhq/live-common/currencies/index";
+import { listSupportedCurrencies } from "@ledgerhq/live-common/currencies/index";
 import { findTokenAccountByCurrency } from "@ledgerhq/live-common/account/index";
 import { supportLinkByTokenType } from "~/config/urls";
 import TrackPage from "~/renderer/analytics/TrackPage";
@@ -29,16 +25,13 @@ import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 
 import { useCurrenciesUnderFeatureFlag } from "@ledgerhq/live-common/modularDrawer/hooks/useCurrenciesUnderFeatureFlag";
 
-const listSupportedTokens = () =>
-  listTokens().filter(token => isCurrencySupported(token.parentCurrency));
-
 const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
   const { deactivatedCurrencyIds } = useCurrenciesUnderFeatureFlag();
 
   const currencies = useMemo(() => {
     const supportedCurrenciesAndTokens =
       // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-      (listSupportedCurrencies() as CryptoOrTokenCurrency[]).concat(listSupportedTokens());
+      listSupportedCurrencies() as CryptoOrTokenCurrency[];
 
     return supportedCurrenciesAndTokens.filter(
       c =>

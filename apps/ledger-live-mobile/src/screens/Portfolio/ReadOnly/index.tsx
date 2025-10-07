@@ -8,11 +8,7 @@ import { useTranslation } from "react-i18next";
 import { Box, Flex, Button } from "@ledgerhq/native-ui";
 
 import { useTheme } from "styled-components/native";
-import {
-  isCurrencySupported,
-  listTokens,
-  listSupportedCurrencies,
-} from "@ledgerhq/live-common/currencies/index";
+import { listSupportedCurrencies } from "@ledgerhq/live-common/currencies/index";
 import { useCurrenciesByMarketcap } from "@ledgerhq/live-common/currencies/hooks";
 import { CryptoCurrency, Currency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { useRefreshAccountsOrdering } from "~/actions/general";
@@ -70,16 +66,9 @@ function ReadOnlyPortfolio({ navigation }: NavigationProps) {
     });
   }, [navigation]);
 
-  const listSupportedTokens = useCallback(
-    () => listTokens().filter(t => isCurrencySupported(t.parentCurrency)),
-    [],
-  );
   const cryptoCurrencies = useMemo(
-    () =>
-      (listSupportedCurrencies() as (TokenCurrency | CryptoCurrency)[]).concat(
-        listSupportedTokens(),
-      ),
-    [listSupportedTokens],
+    (): (TokenCurrency | CryptoCurrency)[] => listSupportedCurrencies(),
+    [],
   );
   const sortedCryptoCurrencies = useCurrenciesByMarketcap(cryptoCurrencies);
   const topCryptoCurrencies = useMemo(

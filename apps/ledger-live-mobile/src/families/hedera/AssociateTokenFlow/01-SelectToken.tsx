@@ -1,11 +1,10 @@
-import React, { useCallback, useMemo } from "react";
+import React, { useCallback } from "react";
 import { FlatList } from "react-native";
 import { useSelector } from "react-redux";
 import { Trans, useTranslation } from "react-i18next";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import type { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { getEnv } from "@ledgerhq/live-env";
-import { listTokens } from "@ledgerhq/live-common/currencies/index";
 import { getMainAccount } from "@ledgerhq/coin-framework/account/helpers";
 import invariant from "invariant";
 
@@ -37,7 +36,7 @@ const renderEmptyList = () => (
 export default function SelectToken({ navigation, route }: Props) {
   const { t } = useTranslation();
   const { account, parentAccount } = useSelector(accountScreenSelector(route));
-  const list = useMemo(() => listTokens().filter(t => t.parentCurrency.id === "hedera"), []);
+  const list: CryptoOrTokenCurrency[] = [];
 
   const mainAccount = account ? getMainAccount(account, parentAccount) : null;
 

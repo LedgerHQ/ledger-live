@@ -18,7 +18,6 @@ import { useFetchCurrencyAll } from "@ledgerhq/live-common/exchange/swap/hooks/i
 import { MarketItemPerformer } from "@ledgerhq/live-common/market/utils/types";
 
 import { listCryptoCurrencies } from "@ledgerhq/cryptoassets/currencies";
-import { listTokens } from "@ledgerhq/cryptoassets/tokens";
 
 const LIMIT_TO_DISPLAY = 5;
 
@@ -26,7 +25,7 @@ export function useMarketPerformanceWidget() {
   const { isCurrencyAvailable } = useRampCatalog();
   const { data: currenciesForSwapAll } = useFetchCurrencyAll();
 
-  const cryptoCurrenciesList = useMemo(() => [...listCryptoCurrencies(), ...listTokens()], []);
+  const cryptoCurrenciesList = useMemo(() => listCryptoCurrencies(), []);
   const cryptoCurrenciesSet = useMemo(
     () => new Set(cryptoCurrenciesList.map(({ id }) => id.toLowerCase())),
     [cryptoCurrenciesList],

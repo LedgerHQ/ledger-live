@@ -3,13 +3,8 @@ import { FlatList } from "react-native";
 import { Flex, Text } from "@ledgerhq/native-ui";
 
 import { useTranslation } from "react-i18next";
-import {
-  isCurrencySupported,
-  listSupportedCurrencies,
-  listTokens,
-} from "@ledgerhq/live-common/currencies/index";
+import { listSupportedCurrencies } from "@ledgerhq/live-common/currencies/index";
 import { useCurrenciesByMarketcap } from "@ledgerhq/live-common/currencies/hooks";
-import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import TrackScreen from "~/analytics/TrackScreen";
 import { withDiscreetMode } from "~/context/DiscreetModeContext";
 
@@ -22,17 +17,7 @@ import { Asset } from "~/types/asset";
 const maxReadOnlyCryptoCurrencies = 10;
 
 function ReadOnlyAssets({ navigation }: { navigation: NavigationProp }) {
-  const listSupportedTokens = useCallback(
-    () => listTokens().filter(t => isCurrencySupported(t.parentCurrency)),
-    [],
-  );
-  const cryptoCurrencies = useMemo(
-    () =>
-      (listSupportedCurrencies() as (CryptoCurrency | TokenCurrency)[]).concat(
-        listSupportedTokens(),
-      ),
-    [listSupportedTokens],
-  );
+  const cryptoCurrencies = useMemo(() => listSupportedCurrencies(), []);
   const sortedCryptoCurrencies = useCurrenciesByMarketcap(cryptoCurrencies);
   const assets: Asset[] = useMemo(
     () =>
