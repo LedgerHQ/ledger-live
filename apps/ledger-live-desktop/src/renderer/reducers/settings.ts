@@ -598,7 +598,6 @@ export const userThemeSelector = (state: State): "dark" | "light" | undefined | 
 
 type LanguageAndUseSystemLanguage = {
   language: Language;
-  useSystemLanguage: boolean;
 };
 
 const languageAndUseSystemLangSelector = (state: State): LanguageAndUseSystemLanguage => {
@@ -606,22 +605,17 @@ const languageAndUseSystemLangSelector = (state: State): LanguageAndUseSystemLan
   if (language && LanguageIds.includes(language)) {
     return {
       language,
-      useSystemLanguage: false,
     };
   } else {
     return {
       language: getInitialLanguageAndLocale().language,
-      useSystemLanguage: true,
     };
   }
 };
 
 /** Use this for translations */
 export const languageSelector = createSelector(languageAndUseSystemLangSelector, o => o.language);
-export const useSystemLanguageSelector = createSelector(
-  languageAndUseSystemLangSelector,
-  o => o.useSystemLanguage,
-);
+
 const isValidRegionLocale = (locale: string) => {
   return regionsByKey.hasOwnProperty(locale);
 };
