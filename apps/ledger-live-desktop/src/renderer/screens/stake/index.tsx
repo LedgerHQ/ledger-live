@@ -188,6 +188,7 @@ const useStakeFlow = () => {
     },
     [
       dispatch,
+      earnDrawerApyFlag,
       handleAccountSelected,
       handleRequestClose,
       history.location.pathname,
