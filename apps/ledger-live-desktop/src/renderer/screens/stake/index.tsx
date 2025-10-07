@@ -37,7 +37,7 @@ const useStakeFlow = () => {
   const walletState = useSelector(walletSelector);
   const { enabledCurrencies, partnerSupportedAssets, getRouteToPlatformApp } = useStake();
   const list = enabledCurrencies.concat(partnerSupportedAssets);
-  const earnDrawerApyFlag = useFeature("ptxEarnDrawerApy");
+  const earnDrawerConfigurationFlag = useFeature("ptxEarnDrawerConfiguration");
 
   const { isModularDrawerVisible } = useModularDrawerVisibility({
     modularDrawerFeatureFlagKey: "lldModularDrawer",
@@ -154,7 +154,7 @@ const useStakeFlow = () => {
 
       if (modularDrawerVisible) {
         // Add APY configuration for earn/stake functionality
-        const earnDrawerConfiguration = earnDrawerApyFlag?.enabled ? earnDrawerApyFlag.params : {};
+        const earnDrawerConfiguration = earnDrawerConfigurationFlag?.enabled ? earnDrawerConfigurationFlag.params : {};
         openAssetAndAccountDrawer({
           currencies: cryptoCurrencies.map(c => c.id),
           useCase: "earn",
@@ -189,7 +189,7 @@ const useStakeFlow = () => {
     },
     [
       dispatch,
-      earnDrawerApyFlag,
+      earnDrawerConfigurationFlag,
       handleAccountSelected,
       handleRequestClose,
       history.location.pathname,

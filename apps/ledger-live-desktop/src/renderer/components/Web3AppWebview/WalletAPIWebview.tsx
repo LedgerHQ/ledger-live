@@ -58,7 +58,7 @@ function useUiHook(manifest: AppManifest, tracking: TrackingAPI): UiHook {
   const { pushToast } = useToasts();
   const { t } = useTranslation();
   const dispatch = useDispatch();
-  const earnDrawerApyFlag = useFeature("ptxEarnDrawerApy");
+  const earnDrawerConfigurationFlag = useFeature("ptxEarnDrawerConfiguration");
 
   const { isModularDrawerVisible } = useModularDrawerVisibility({
     modularDrawerFeatureFlagKey: "lldModularDrawer",
@@ -96,7 +96,7 @@ function useUiHook(manifest: AppManifest, tracking: TrackingAPI): UiHook {
           // We agree that for useCase, we should send max 25 currencies if provided else use only useCase (e.g. buy)
           const shouldUseCurrencies = (useCase && currencies.length <= 25) || !useCase;
           // Auto-append APY configuration for earn app requests
-          const earnAppDrawerConfig = earnDrawerApyFlag?.enabled ? earnDrawerApyFlag.params : {};
+          const earnAppDrawerConfig = earnDrawerConfigurationFlag?.enabled ? earnDrawerConfigurationFlag.params : {};
           const isEarn = useCase === "earn";
 
           const finalDrawerConfiguration = {
@@ -312,7 +312,7 @@ function useUiHook(manifest: AppManifest, tracking: TrackingAPI): UiHook {
       dispatch,
       flow,
       source,
-      earnDrawerApyFlag,
+      earnDrawerConfigurationFlag,
       manifest,
       pushToast,
       t,
