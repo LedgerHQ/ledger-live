@@ -2,7 +2,7 @@ import React from "react";
 import styled, { DefaultTheme, StyledComponent } from "styled-components";
 import stax from "~/renderer/images/stax.svg";
 import europa from "~/renderer/images/europa.svg";
-import apex from "~/renderer/images/apex.svg";
+import apex from "~/renderer/images/apex.png";
 import nanoX from "~/renderer/images/nanoX.svg";
 import nanoS from "~/renderer/images/nanoS.svg";
 import nanoSP from "~/renderer/images/nanoSP.svg";
