@@ -2713,6 +2713,7 @@
       "LEGACYUNFREEZE": "Unfrozen",
       "REWARD": "Claimed reward",
       "FEES": "Fees",
+      "PRE_APPROVAL": "Pre-approval",
       "OPT_IN": "Opt in",
       "OPT_OUT": "Opt out",
       "CLOSE_ACCOUNT": "Close account",
@@ -7957,6 +7958,15 @@
     "default": {
       "title": "Something went wrong",
       "description": "Please retry or contact Ledger Support if in doubt"
+    }
+  },
+  "canton": {
+    "onboard": {
+      "account": "Account",
+      "authorize": "Authorize",
+      "preapprove": "Successfully added account",
+      "validator": "Ledger Validator",
+      "title": "Automatically accept incoming funds"
     }
   }
 }
