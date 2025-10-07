@@ -1,5 +1,5 @@
 /* eslint-disable consistent-return */
-import { useMemo, useLayoutEffect, useCallback } from "react";
+import { useMemo, useLayoutEffect, useRef } from "react";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { useNavigation } from "@react-navigation/native";
 import { listCurrencies, filterCurrencies } from "@ledgerhq/live-common/currencies/helpers";
@@ -11,6 +11,12 @@ import { useStakingDrawer } from "./useStakingDrawer";
 import { useStake } from "LLM/hooks/useStake/useStake";
 
 type Props = BaseComposite<StackNavigatorProps<StakeNavigatorParamList, ScreenName.Stake>>;
+import {
+  ModularDrawerLocation,
+  useModularDrawerController,
+  useModularDrawerVisibility,
+} from "LLM/features/ModularDrawer";
+import { useDrawerConfiguration } from "@ledgerhq/live-common/dada-client/hooks/useDrawerConfiguration";
 
 const StakeFlow = ({ route }: Props) => {
   const { enabledCurrencies, partnerSupportedAssets } = useStake();
@@ -19,6 +25,15 @@ const StakeFlow = ({ route }: Props) => {
   const parentRoute = route?.params?.parentRoute;
   const account = route?.params?.account;
   const alwaysShowNoFunds = route?.params?.alwaysShowNoFunds;
+  const { isModularDrawerVisible } = useModularDrawerVisibility({
+    modularDrawerFeatureFlagKey: "llmModularDrawer",
+  });
+  const modularDrawerVisible = isModularDrawerVisible({
+    location: ModularDrawerLocation.LIVE_APP,
+    liveAppId: "earn",
+  });
+  const { openDrawer } = useModularDrawerController();
+  const { createDrawerConfiguration } = useDrawerConfiguration();
 
   const cryptoCurrencies = useMemo(() => {
     return filterCurrencies(listCurrencies(true), {
@@ -33,36 +48,57 @@ const StakeFlow = ({ route }: Props) => {
     entryPoint: route.params.entryPoint,
   });
 
-  const requestAccount = useCallback(() => {
-    if (cryptoCurrencies.length === 1) {
-      // Navigate to the second screen when there is only one currency
-      navigation.replace(NavigatorName.RequestAccount, {
-        screen: ScreenName.RequestAccountsSelectAccount,
-        params: {
-          currency: cryptoCurrencies[0],
-          onSuccess: goToAccountStakeFlow,
-          allowAddAccount: true, // if no account, need to be able to add one to get funds.
-        },
+  const requestAccountRef = useRef(() => {});
+
+  requestAccountRef.current = () => {
+    if (modularDrawerVisible) {
+      const finalDrawerConfiguration = createDrawerConfiguration(undefined, "earn");
+      openDrawer({
+        currencies: cryptoCurrencies.map(c => c.id),
+        flow: "stake",
+        source: "stake_flow",
+        enableAccountSelection: true,
+        onAccountSelected: goToAccountStakeFlow,
+        useCase: "earn",
+        ...(finalDrawerConfiguration.assets && {
+          assetsConfiguration: finalDrawerConfiguration.assets,
+        }),
+        ...(finalDrawerConfiguration.networks && {
+          networksConfiguration: finalDrawerConfiguration.networks,
+        }),
       });
     } else {
-      navigation.replace(NavigatorName.RequestAccount, {
-        screen: ScreenName.RequestAccountsSelectCrypto,
-        params: {
-          currencies: cryptoCurrencies,
-          allowAddAccount: true,
-          onSuccess: goToAccountStakeFlow,
-        },
-      });
+      // Fallback to traditional navigation
+      if (cryptoCurrencies.length === 1) {
+        // Navigate to the second screen when there is only one currency
+        navigation.replace(NavigatorName.RequestAccount, {
+          screen: ScreenName.RequestAccountsSelectAccount,
+          params: {
+            currency: cryptoCurrencies[0],
+            onSuccess: goToAccountStakeFlow,
+            allowAddAccount: true, // if no account, need to be able to add one to get funds.
+          },
+        });
+      } else {
+        navigation.replace(NavigatorName.RequestAccount, {
+          screen: ScreenName.RequestAccountsSelectCrypto,
+          params: {
+            currencies: cryptoCurrencies,
+            allowAddAccount: true,
+            onSuccess: goToAccountStakeFlow,
+          },
+        });
+      }
     }
-  }, [cryptoCurrencies, navigation, goToAccountStakeFlow]);
+  };
 
   useLayoutEffect(() => {
     if (account) {
       goToAccountStakeFlow(account);
     } else {
-      requestAccount();
+      requestAccountRef.current();
     }
-  }, [requestAccount, goToAccountStakeFlow, account]);
+  }, [goToAccountStakeFlow, account]);
 
   return null;
 };
