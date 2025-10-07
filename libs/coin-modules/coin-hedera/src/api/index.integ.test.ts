@@ -351,6 +351,8 @@ describe("createApi", () => {
 
         const firstPage1Timestamp = page1[0]?.tx?.date;
         const firstPage2Timestamp = page2[0]?.tx?.date;
+        const lastPage1Timestamp = page1[page1.length - 1]?.tx?.date;
+        const lastPage2Timestamp = page2[page2.length - 1]?.tx?.date;
         const page1Hashes = new Set(page1.map(op => op.tx.hash));
         const page2Hashes = new Set(page2.map(op => op.tx.hash));
         const hasOverlap = [...page2Hashes].some(hash => page1Hashes.has(hash));
@@ -363,7 +365,10 @@ describe("createApi", () => {
         expect(hasOverlap).toBe(false);
         expect(firstPage1Timestamp).toBeInstanceOf(Date);
         expect(firstPage2Timestamp).toBeInstanceOf(Date);
-        expect(firstPage1Timestamp > firstPage2Timestamp).toBe(order === "desc");
+        expect(lastPage1Timestamp).toBeInstanceOf(Date);
+        expect(lastPage2Timestamp).toBeInstanceOf(Date);
+        expect(lastPage1Timestamp > firstPage2Timestamp).toBe(order === "desc");
+        expect(firstPage1Timestamp < lastPage2Timestamp).toBe(order === "asc");
       },
     );
   });
