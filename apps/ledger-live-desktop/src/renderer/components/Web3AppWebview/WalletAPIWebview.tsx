@@ -61,7 +61,17 @@ function createDrawerConfiguration(
     string,
     { assets?: Record<string, unknown>; networks?: Record<string, unknown> }
   >,
-) {
+): {
+  assets?: {
+    filter?: "topNetworks" | "undefined";
+    leftElement?: "apy" | "marketTrend" | "undefined";
+    rightElement?: "balance" | "marketTrend" | "undefined";
+  };
+  networks?: {
+    leftElement?: "numberOfAccounts" | "numberOfAccountsAndApy" | "undefined";
+    rightElement?: "balance" | "undefined";
+  };
+} {
   const config:
     | { assets?: Record<string, unknown>; networks?: Record<string, unknown> }
     | undefined = drawerConfiguration!;
