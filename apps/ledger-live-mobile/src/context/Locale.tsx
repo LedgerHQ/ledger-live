@@ -1,7 +1,7 @@
 import React, { useMemo, useContext, useCallback, useEffect, useState } from "react";
 import i18next from "i18next";
 import { initReactI18next } from "react-i18next";
-import type { TFunction } from "react-i18next";
+import type { TFunction } from "i18next";
 import { getTimeZone } from "react-native-localize";
 import storage from "LLM/storage";
 import { I18nManager } from "react-native";
@@ -31,7 +31,7 @@ try {
 i18next.use(initReactI18next).init({
   fallbackLng: DEFAULT_LANGUAGE_LOCALE,
   resources: locales,
-  whitelist: Object.keys(locales),
+  supportedLngs: Object.keys(locales),
   ns: ["common"],
   defaultNS: "common",
   interpolation: {

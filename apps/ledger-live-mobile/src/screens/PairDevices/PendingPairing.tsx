@@ -8,7 +8,7 @@ import { TrackScreen } from "~/analytics";
 const PendingPairing = () => {
   const { t } = useTranslation();
 
-  const deviceWording = getDeviceModel("nanoX" as DeviceModelId);
+  const deviceWording = getDeviceModel(DeviceModelId.nanoX);
   return (
     <Box padding={6}>
       <TrackScreen category="PairDevices" name="PendingPairing" />
@@ -16,11 +16,11 @@ const PendingPairing = () => {
         items={[
           {
             title: t("PairDevices.Pairing.title1"),
-            description: t("PairDevices.Pairing.step1", deviceWording),
+            description: t("PairDevices.Pairing.step1", { ...deviceWording }),
           },
           {
             title: t("PairDevices.Pairing.title2"),
-            description: t("PairDevices.Pairing.step2", deviceWording),
+            description: t("PairDevices.Pairing.step2", { ...deviceWording }),
           },
         ]}
       />

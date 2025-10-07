@@ -175,6 +175,7 @@ const AssetScreen = ({ route }: NavigationProps) => {
         <SectionTitle
           title={t("asset.accountsSection.title", {
             currencyName: currency.ticker,
+            count: cryptoAccounts.length,
           })}
           seeMoreText={t("addAccounts.addNew")}
           onSeeAllPress={onAddAccount}
