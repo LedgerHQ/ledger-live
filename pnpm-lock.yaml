@@ -71568,7 +71568,7 @@ snapshots:
 
   terser-webpack-plugin@5.3.10(@swc/core@1.4.11)(metro@0.81.5)(webpack@5.94.0(metro@0.81.5)):
     dependencies:
-      '@jridgewell/trace-mapping': 0.3.30
+      '@jridgewell/trace-mapping': 0.3.31
       jest-worker: 27.5.1(metro@0.81.5)
       schema-utils: 3.3.0
       serialize-javascript: 6.0.2
@@ -71581,7 +71581,7 @@ snapshots:
 
   terser-webpack-plugin@5.3.10(@swc/core@1.4.11)(webpack@5.94.0(@swc/core@1.4.11)):
     dependencies:
-      '@jridgewell/trace-mapping': 0.3.30
+      '@jridgewell/trace-mapping': 0.3.31
       jest-worker: 27.5.1
       schema-utils: 3.3.0
       serialize-javascript: 6.0.2
@@ -71594,7 +71594,7 @@ snapshots:
 
   terser-webpack-plugin@5.3.10(esbuild@0.19.12)(webpack@5.94.0(esbuild@0.19.12)):
     dependencies:
-      '@jridgewell/trace-mapping': 0.3.30
+      '@jridgewell/trace-mapping': 0.3.31
       jest-worker: 27.5.1
       schema-utils: 3.3.0
       serialize-javascript: 6.0.2
@@ -71607,7 +71607,7 @@ snapshots:
 
   terser-webpack-plugin@5.3.10(metro@0.81.5)(webpack@5.94.0(metro@0.81.5)):
     dependencies:
-      '@jridgewell/trace-mapping': 0.3.30
+      '@jridgewell/trace-mapping': 0.3.31
       jest-worker: 27.5.1(metro@0.81.5)
       schema-utils: 3.3.0
       serialize-javascript: 6.0.2
@@ -71618,7 +71618,7 @@ snapshots:
 
   terser-webpack-plugin@5.3.10(webpack@5.94.0):
     dependencies:
-      '@jridgewell/trace-mapping': 0.3.30
+      '@jridgewell/trace-mapping': 0.3.31
       jest-worker: 27.5.1
       schema-utils: 3.3.0
       serialize-javascript: 6.0.2
