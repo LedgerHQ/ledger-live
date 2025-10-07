@@ -141,7 +141,7 @@ export type DynamicContentState = {
   categoriesCards: CategoryContentCard[];
   /** Dynamic content cards displayed in the landing page as sticky CTA */
   landingPageStickyCtaCards: LandingPageStickyCtaContentCard[];
-  /** Dynamic content cards for Ledger Live Mobile */
+  /** Dynamic content cards for Ledger Wallet Mobile */
   mobileCards: BrazeContentCard[];
   /** Check if CC are loading */
   isLoading: boolean;
