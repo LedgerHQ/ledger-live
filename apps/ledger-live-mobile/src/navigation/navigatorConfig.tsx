@@ -22,7 +22,6 @@ export const getStackNavigatorConfig = (
   c: ColorV2 | ColorV3,
   closable = false,
   onClose?: () => void,
-  isOnboarding?: boolean,
 ) => ({
   ...defaultNavigationOptions,
   cardStyle: {
@@ -39,12 +38,7 @@ export const getStackNavigatorConfig = (
   headerTitleStyle: {
     color: (c as ColorV3).neutral?.c100 || (c as ColorV2).darkBlue,
   },
-  headerRight:
-    closable && !isOnboarding
-      ? () => <NavigationHeaderCloseButtonAdvanced onClose={onClose} />
-      : undefined,
-  headerLeft:
-    closable && isOnboarding
-      ? () => <NavigationHeaderCloseButtonAdvanced onClose={onClose} isOnboarding />
-      : undefined,
+  headerRight: closable
+    ? () => <NavigationHeaderCloseButtonAdvanced onClose={onClose} />
+    : undefined,
 });
