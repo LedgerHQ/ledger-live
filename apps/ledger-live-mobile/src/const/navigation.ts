@@ -68,6 +68,7 @@ export enum ScreenName {
   DebugStoryly = "DebugStoryly",
   DebugSwap = "DebugSwap",
   DebugCameraPermissions = "DebugCameraPermissions",
+  DebugTooltip = "DebugTooltip",
   DelegationConnectDevice = "DelegationConnectDevice",
   DelegationSelectDevice = "DelegationSelectDevice",
   DelegationSelectValidator = "DelegationSelectValidator",

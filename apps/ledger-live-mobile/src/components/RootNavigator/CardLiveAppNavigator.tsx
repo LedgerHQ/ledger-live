@@ -1,5 +1,5 @@
 import React, { useMemo } from "react";
-import { createStackNavigator } from "@react-navigation/stack";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useTheme } from "styled-components/native";
 import { CARD_APP_ID } from "@ledgerhq/live-common/wallet-api/constants";
 import { NavigatorName, ScreenName } from "~/const";
@@ -11,7 +11,7 @@ import { PtxScreen } from "~/screens/PTX";
 import { useTranslation } from "react-i18next";
 import { PtxNavigatorParamList } from "~/components/RootNavigator/types/PtxNavigator";
 
-const Stack = createStackNavigator<PtxNavigatorParamList>();
+const Stack = createNativeStackNavigator<PtxNavigatorParamList>();
 
 const Card = (props: StackNavigatorProps<PtxNavigatorParamList, ScreenName.Card>) => {
   const { t } = useTranslation();

@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo } from "react";
-import { createStackNavigator } from "@react-navigation/stack";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useTheme } from "styled-components/native";
 import { useSelector } from "react-redux";
 import { readOnlyModeEnabledSelector } from "~/reducers/settings";
@@ -27,7 +27,7 @@ import { TrackingEvent } from "LLM/features/Accounts/enums";
 import LedgerSyncEntryPoint from "LLM/features/LedgerSyncEntryPoint";
 import { EntryPoint } from "LLM/features/LedgerSyncEntryPoint/types";
 
-const Stack = createStackNavigator<AccountsNavigatorParamList>();
+const Stack = createNativeStackNavigator<AccountsNavigatorParamList>();
 
 type NavType = Omit<NavigationProp<ReactNavigation.RootParamList>, "getState"> & {
   getState(): NavigationState | undefined;

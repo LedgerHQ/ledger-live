@@ -2,13 +2,13 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import { View } from "react-native";
 import { Flex, Text } from "@ledgerhq/native-ui";
-import { StackHeaderProps } from "@react-navigation/stack";
+import { NativeStackHeaderProps } from "@react-navigation/native-stack";
 import { getHeaderTitle } from "@react-navigation/elements";
 import { FlexBoxProps } from "@ledgerhq/native-ui/components/Layout/Flex/index";
 import { NavigationHeaderBackButton } from "./NavigationHeaderBackButton";
 import { NavigationHeaderCloseButtonAdvanced } from "./NavigationHeaderCloseButton";
 
-type NavigationHeaderProps = StackHeaderProps & {
+type NavigationHeaderProps = NativeStackHeaderProps & {
   containerProps?: FlexBoxProps;
   hideBack?: boolean;
   onPressClose?: () => void;

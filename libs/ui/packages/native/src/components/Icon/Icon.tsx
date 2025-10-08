@@ -8,16 +8,6 @@ export type Props = {
   color?: string;
 };
 
-export const iconNames = Array.from(
-  Object.keys(icons).reduce((set, rawKey) => {
-    const key = rawKey
-      .replace(/(.+)(Regular|Light|UltraLight|Thin|Medium)+$/g, "$1")
-      .replace(/(.+)(Ultra)+$/g, "$1");
-    if (!set.has(key)) set.add(key);
-    return set;
-  }, new Set<string>()),
-);
-
 const Icon = ({
   name,
   size = 16,

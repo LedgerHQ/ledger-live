@@ -1,4 +1,3 @@
-import type { AccountLike } from "@ledgerhq/types-live";
 import { createAction } from "redux-actions";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
 import { ExchangeRate } from "@ledgerhq/live-common/exchange/swap/types";
@@ -10,8 +9,6 @@ export const updateTransactionAction = createAction<Transaction | null | undefin
   "SWAP/UPDATE_TRANSACTION",
 );
 export const updateRateAction = createAction<ExchangeRate | null | undefined>("SWAP/UPDATE_RATE");
-
-export type SwapAccount = AccountLike & { disabled: boolean };
 
 /* SELECTORS */
 export const rateSelector = (state: State) => state.swap.exchangeRate;

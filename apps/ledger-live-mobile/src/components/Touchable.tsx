@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { GestureResponderEvent, TouchableOpacity, TouchableOpacityProps } from "react-native";
+import { GestureResponderEvent, Pressable, PressableProps } from "react-native";
 import { track } from "~/analytics";
 
 const defaultHitSlop = {
@@ -19,9 +19,9 @@ export type Props = {
   children: React.ReactNode;
   event?: string;
   eventProperties?: Record<string, unknown>;
-  style?: TouchableOpacityProps["style"];
+  style?: PressableProps["style"];
   touchableTestID?: string;
-} & TouchableOpacityProps;
+} & PressableProps;
 export default class Touchable extends Component<
   Props,
   {
@@ -91,16 +91,17 @@ export default class Touchable extends Component<
     const disabled = !onPress || pending;
 
     return (
-      <TouchableOpacity
-        delayPressIn={50}
+      <Pressable
+        unstable_pressDelay={50}
         onPress={this.onPress}
         disabled={disabled}
         hitSlop={defaultHitSlop}
+        accessible={true}
         testID={touchableTestID ?? event}
         {...rest}
       >
         {children}
-      </TouchableOpacity>
+      </Pressable>
     );
   }
 }

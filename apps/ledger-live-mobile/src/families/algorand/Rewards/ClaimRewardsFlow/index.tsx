@@ -1,7 +1,7 @@
 import React, { useMemo } from "react";
 import { Platform } from "react-native";
 import { useTranslation } from "react-i18next";
-import { createStackNavigator } from "@react-navigation/stack";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useTheme } from "@react-navigation/native";
 import {
   getStackNavigatorConfig,
@@ -43,12 +43,7 @@ function ClaimRewardsFlow() {
             />
           ),
           headerLeft: () => null,
-          headerStyle: {
-            ...defaultNavigationOptions.headerStyle,
-            elevation: 0,
-            shadowOpacity: 0,
-            borderBottomWidth: 0,
-          },
+          headerStyle: defaultNavigationOptions.headerStyle,
           gestureEnabled: false,
         }}
       />
@@ -122,12 +117,7 @@ function ClaimRewardsFlow() {
         options={{
           headerTitle: () => <StepHeader title={t("algorand.claimRewards.stepperHeader.info")} />,
           headerLeft: () => null,
-          headerStyle: {
-            ...defaultNavigationOptions.headerStyle,
-            elevation: 0,
-            shadowOpacity: 0,
-            borderBottomWidth: 0,
-          },
+          headerStyle: defaultNavigationOptions.headerStyle,
           gestureEnabled: false,
         }}
       />
@@ -139,4 +129,4 @@ const options = {
   headerShown: false,
 };
 export { ClaimRewardsFlow as component, options };
-const Stack = createStackNavigator<AlgorandClaimRewardsFlowParamList>();
+const Stack = createNativeStackNavigator<AlgorandClaimRewardsFlowParamList>();

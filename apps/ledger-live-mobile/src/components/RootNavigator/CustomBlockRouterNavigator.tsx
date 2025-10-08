@@ -1,5 +1,5 @@
 import { ParamListBase } from "@react-navigation/native";
-import { StackNavigationProp } from "@react-navigation/stack";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useEffect, useState } from "react";
 import { BehaviorSubject } from "rxjs";
 
@@ -58,7 +58,7 @@ export const useLockNavigation = (
   }) => void = () => {
     /* ignore */
   },
-  navigation: StackNavigationProp<ParamListBase>,
+  navigation: NativeStackNavigationProp<ParamListBase>,
 ) => {
   useEffect(() => {
     exposedManagerNavLockCallback.next(when ? callback : undefined);

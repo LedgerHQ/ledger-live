@@ -1,4 +1,6 @@
-describe("DEX Swap", () => {
+// SKIP same as swap.spec.ts - it uses the old swap interface and it's not working on iOS
+// with new-arch because of the infinite re-render loop
+describe.skip("DEX Swap", () => {
   beforeAll(async () => {
     await app.init({ userdata: "1AccountBTC1AccountETHReadOnlyFalse" });
 

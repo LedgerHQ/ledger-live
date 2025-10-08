@@ -1,7 +1,7 @@
 import React, { useMemo } from "react";
 import { Platform } from "react-native";
 import { useTranslation } from "react-i18next";
-import { createStackNavigator } from "@react-navigation/stack";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useTheme } from "@react-navigation/native";
 
 import SelectToken from "./01-SelectToken";
@@ -88,4 +88,4 @@ const options = {
 
 export { AssociateTokenFlow as component, options };
 
-const Stack = createStackNavigator<HederaAssociateTokenFlowParamList>();
+const Stack = createNativeStackNavigator<HederaAssociateTokenFlowParamList>();

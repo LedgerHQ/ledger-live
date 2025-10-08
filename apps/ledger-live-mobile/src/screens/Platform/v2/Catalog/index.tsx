@@ -1,5 +1,6 @@
 import React from "react";
-import * as Animatable from "react-native-animatable";
+import { View } from "react-native";
+import Animated, { FadeInUp } from "react-native-reanimated";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
 import TabBarSafeAreaView from "~/components/TabBar/TabBarSafeAreaView";
@@ -13,8 +14,6 @@ import { CatalogSection } from "./CatalogSection";
 import { DAppDisclaimer } from "./DAppDisclaimer";
 import { LocalLiveApp } from "./LocalLiveApp";
 import { useRoute } from "@react-navigation/native";
-
-const AnimatedView = Animatable.View;
 
 export function Catalog() {
   const { t } = useTranslation();
@@ -32,7 +31,9 @@ export function Catalog() {
     <TabBarSafeAreaView edges={["top", "bottom", "left", "right"]}>
       {/* TODO: put under the animation header and style  */}
       <TrackScreen category="Platform" name="Catalog" />
-      <DAppDisclaimer disclaimer={disclaimer} />
+      <View>
+        <DAppDisclaimer disclaimer={disclaimer} />
+      </View>
 
       {search.isActive ? (
         <Search title={title} disclaimer={disclaimer} search={search} />
@@ -60,11 +61,11 @@ export function Catalog() {
             disableStyleSubBottomHeader
             subBottomHeaderContent={<CatalogSection categories={categories} />}
             bodyContent={
-              <AnimatedView animation="fadeInUp" delay={50} duration={300}>
+              <Animated.View entering={FadeInUp.delay(50).duration(300)}>
                 <Flex paddingTop={4}>
                   <ManifestList manifests={search.result} onSelect={disclaimer.onSelect} />
                 </Flex>
-              </AnimatedView>
+              </Animated.View>
             }
           />
         </>

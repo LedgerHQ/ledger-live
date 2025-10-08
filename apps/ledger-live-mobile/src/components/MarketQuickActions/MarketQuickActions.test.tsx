@@ -3,12 +3,12 @@ import { renderWithReactQuery } from "@tests/test-renderer";
 import { MarketQuickActions } from "./";
 import { getCryptoCurrencyById, findTokenById } from "@ledgerhq/live-common/currencies/index";
 import { ScreenName } from "~/const";
-import { createStackNavigator } from "@react-navigation/stack";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { genAccount } from "@ledgerhq/coin-framework/mocks/account";
 import { State } from "~/reducers/types";
 import { isCurrencySupported } from "@ledgerhq/coin-framework/currencies/support";
 
-const Stack = createStackNavigator();
+const Stack = createNativeStackNavigator();
 
 const usdcCurrency = findTokenById("ethereum/erc20/usd__coin");
 if (!usdcCurrency) throw new Error("USDC token not found");

@@ -1,6 +1,6 @@
 import React, { useMemo } from "react";
 import { useTheme } from "@react-navigation/native";
-import { createStackNavigator } from "@react-navigation/stack";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
 import styles from "~/navigation/styles";
 import { ScreenName } from "~/const";
@@ -25,4 +25,4 @@ export default function CustomErrorNavigator() {
   );
 }
 
-const Stack = createStackNavigator<CustomErrorNavigatorParamList>();
+const Stack = createNativeStackNavigator<CustomErrorNavigatorParamList>();

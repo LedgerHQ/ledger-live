@@ -1,12 +1,12 @@
 import React, { useMemo } from "react";
-import { createStackNavigator } from "@react-navigation/stack";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useTheme } from "styled-components/native";
 import { ScreenName } from "~/const";
 import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
 import { ModularDrawerNavigatorStackParamList } from "../../../components/RootNavigator/types/ModularDrawerNavigator";
 import { ModularDrawerDeepLinkHandler } from "./screens/ModularDrawerDeepLinkHandler";
 
-const Stack = createStackNavigator<ModularDrawerNavigatorStackParamList>();
+const Stack = createNativeStackNavigator<ModularDrawerNavigatorStackParamList>();
 
 export default function ModularDrawerNavigator() {
   const { colors } = useTheme();

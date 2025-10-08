@@ -1,7 +1,7 @@
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { isWalletConnectSupported } from "@ledgerhq/live-common/walletConnect/index";
 import { useNavigation } from "@react-navigation/core";
-import { StackNavigationProp } from "@react-navigation/stack";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useCallback } from "react";
 import { track } from "../../../analytics";
 import { NavigatorName, ScreenName } from "~/const";
@@ -16,7 +16,7 @@ export function useWalletConnectAction({ currency, event }: Props) {
 
   const onNavigate = useCallback(
     (name: string, options?: object) => {
-      (navigation as StackNavigationProp<{ [key: string]: object | undefined }>).navigate(
+      (navigation as NativeStackNavigationProp<{ [key: string]: object | undefined }>).navigate(
         name,
         options,
       );

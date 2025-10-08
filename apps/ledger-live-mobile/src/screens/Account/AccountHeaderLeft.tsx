@@ -1,12 +1,11 @@
 import React, { useCallback } from "react";
 import { NavigationProp, useNavigation } from "@react-navigation/native";
-import { ArrowLeftMedium } from "@ledgerhq/native-ui/assets/icons";
 import { ScreenName } from "~/const";
 import Touchable from "~/components/Touchable";
 import type { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import type { AccountsNavigatorParamList } from "~/components/RootNavigator/types/AccountsNavigator";
 
-import { Flex } from "@ledgerhq/native-ui";
+import { Flex, Icons } from "@ledgerhq/native-ui";
 import { track } from "~/analytics";
 import { isWalletConnectSupported } from "@ledgerhq/live-common/walletConnect/index";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
@@ -33,7 +32,7 @@ export default function AccountHeaderLeft({ currency }: Props) {
   return (
     <Flex flexDirection={"row"}>
       <Touchable onPress={onBackButtonPress}>
-        <ArrowLeftMedium size={24} />
+        <Icons.ArrowLeft />
       </Touchable>
       {isWalletConnectActionDisplayable && <Flex ml={7} width={24} />}
     </Flex>

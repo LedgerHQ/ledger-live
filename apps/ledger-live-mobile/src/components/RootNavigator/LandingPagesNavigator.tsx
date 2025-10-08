@@ -1,5 +1,5 @@
 import React, { useMemo } from "react";
-import { createStackNavigator } from "@react-navigation/stack";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useTheme } from "styled-components/native";
 import { ScreenName } from "~/const";
 import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
@@ -9,7 +9,7 @@ import { NavigationHeaderCloseButton } from "../NavigationHeaderCloseButton";
 import { LargeMoverLandingPage } from "LLM/features/LandingPages/screens/LargeMoverLandingPage";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 
-const Stack = createStackNavigator<LandingPagesNavigatorParamList>();
+const Stack = createNativeStackNavigator<LandingPagesNavigatorParamList>();
 
 export default function LandingPagesNavigator() {
   const { colors } = useTheme();

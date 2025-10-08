@@ -1,0 +1,41 @@
+diff --git a/Libraries/Pressability/Pressability.js b/Libraries/Pressability/Pressability.js
+index f2355b8bb916d7efbaf3dd32c4c796e9f77e40a7..cfee7900d8699223d68dc3daaf5f138677485f8a 100644
+--- a/Libraries/Pressability/Pressability.js
++++ b/Libraries/Pressability/Pressability.js
+@@ -23,6 +23,7 @@ import {type RectOrSize, normalizeRect} from '../StyleSheet/Rect';
+ import {type PointerEvent} from '../Types/CoreEventTypes';
+ import Platform from '../Utilities/Platform';
+ import {isHoverEnabled} from './HoverState';
++import {NativeModules} from 'react-native';
+ import PressabilityPerformanceEventEmitter from './PressabilityPerformanceEventEmitter.js';
+ import {type PressabilityTouchSignal as TouchSignal} from './PressabilityTypes.js';
+ import invariant from 'invariant';
+@@ -805,7 +806,27 @@ export default class Pressability {
+     if (typeof this._responderID === 'number') {
+       UIManager.measure(this._responderID, this._measureCallback);
+     } else {
+-      this._responderID.measure(this._measureCallback);
++      const MeasureTransform = NativeModules.MeasureTransform;
++      
++      if (MeasureTransform && typeof this._responderID.__nativeTag === 'number') {
++        const reactTag = this._responderID.__nativeTag;
++        let surfaceId = reactTag;
++        
++        try {
++          const internalHandle = this._responderID.__internalInstanceHandle;
++          if (internalHandle && typeof internalHandle.rootTag === 'number') {
++            surfaceId = internalHandle.rootTag;
++          }
++        } catch (e) {}
++        
++        MeasureTransform.measureWithTransform(
++          surfaceId,
++          reactTag,
++          this._measureCallback,
++        );
++      } else {
++        this._responderID.measure(this._measureCallback);
++      }
+     }
+   }
+ 

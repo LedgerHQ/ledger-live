@@ -1,6 +1,6 @@
 import React, { useCallback, memo } from "react";
 import { useNavigation, useRoute } from "@react-navigation/native";
-import { Flex, IconsLegacy } from "@ledgerhq/native-ui";
+import { Flex, Icons } from "@ledgerhq/native-ui";
 import { useDispatch, useSelector } from "react-redux";
 import { NavigatorName, ScreenName } from "~/const";
 import { ConnectDevice } from "./setupDevice/scenes";
@@ -44,6 +44,15 @@ const StyledSafeAreaView = styled(SafeAreaView)`
 
 const ImageHeader = () => {
   const navigation = useNavigation<NavigationProps["navigation"]>();
+
+  function renderArrowLeft() {
+    return <Icons.ArrowLeft />;
+  }
+
+  function renderInformation() {
+    return <Icons.Information />;
+  }
+
   return (
     <Flex
       flexDirection="row"
@@ -52,13 +61,10 @@ const ImageHeader = () => {
       width="100%"
       height={48}
     >
-      <Button
-        Icon={() => <IconsLegacy.ArrowLeftMedium size={24} />}
-        onPress={() => navigation.goBack()}
-      />
+      <Button Icon={renderArrowLeft} onPress={() => navigation.goBack()} />
       <Flex width={48}>
         <Button
-          Icon={IconsLegacy.InfoMedium}
+          Icon={renderInformation}
           onPress={() => navigation.navigate(ScreenName.OnboardingBluetoothInformation)}
         />
       </Flex>

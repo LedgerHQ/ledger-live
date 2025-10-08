@@ -19,6 +19,7 @@ const forcedDependencies = [
   "react-native-svg",
   "styled-components",
   "react-native-reanimated",
+  "react-native-safe-area-context",
   "@tanstack/react-query",
   "react-native-linear-gradient",
 ];
@@ -116,7 +117,6 @@ module.exports = withRozenite(
       "@rozenite/network-activity-plugin",
       "@rozenite/expo-atlas-plugin",
       "@rozenite/react-navigation-plugin",
-      "@rozenite/performance-monitor-plugin",
       "@rozenite/redux-devtools-plugin",
       "@rozenite/mmkv-plugin",
     ],

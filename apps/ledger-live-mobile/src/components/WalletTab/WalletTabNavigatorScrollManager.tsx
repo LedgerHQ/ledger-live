@@ -4,7 +4,7 @@ import { Animated, FlatList, ScrollView } from "react-native";
 const tabBarHeight = 56;
 const headerHeight = 48;
 
-type WalletTabNavigatorScrollContextData = {
+interface WalletTabNavigatorScrollContextData {
   scrollY: Animated.Value;
   scrollableRefArray: React.MutableRefObject<{ key: string; value: ScrollView | FlatList }[]>;
   scrollableOffsetMap: React.MutableRefObject<{ [key: string]: number }>;
@@ -12,7 +12,7 @@ type WalletTabNavigatorScrollContextData = {
   syncScrollOffset: (key: string) => void;
   tabBarHeight: number;
   headerHeight: number;
-};
+}
 
 export const WalletTabNavigatorScrollContext = createContext<WalletTabNavigatorScrollContextData>(
   {} as WalletTabNavigatorScrollContextData,

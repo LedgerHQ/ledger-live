@@ -2,12 +2,12 @@ import React, { useCallback } from "react";
 import { StyleSheet, SafeAreaView } from "react-native";
 import { useTheme } from "@react-navigation/native";
 import { Transaction } from "@ledgerhq/live-common/generated/types";
-import { StackNavigationProp } from "@react-navigation/stack";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { TrackScreen } from "~/analytics";
 import ValidateError from "~/components/ValidateError";
 
 type Props = {
-  navigation: StackNavigationProp<Record<string, object | undefined>>;
+  navigation: NativeStackNavigationProp<Record<string, object | undefined>>;
   route: {
     params: RouteParams;
   };
@@ -21,7 +21,7 @@ type RouteParams = {
 export default function ValidationError({ navigation, route }: Props) {
   const { colors } = useTheme();
   const onClose = useCallback(() => {
-    navigation.getParent<StackNavigationProp<Record<string, object | undefined>>>().pop();
+    navigation.getParent<NativeStackNavigationProp<Record<string, object | undefined>>>().pop();
   }, [navigation]);
   const retry = useCallback(() => {
     navigation.goBack();

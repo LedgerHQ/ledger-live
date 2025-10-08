@@ -90,4 +90,5 @@ export type SettingsNavigatorStackParamList = {
   };
   [ScreenName.DebugSwipe]: undefined;
   [ScreenName.DebugModularAssetDrawer]: undefined;
+  [ScreenName.DebugTooltip]: undefined;
 };
