@@ -6,21 +6,21 @@ import {
   ParamListBase,
   RouteProp,
 } from "@react-navigation/native";
-import { StackNavigationProp, StackScreenProps } from "@react-navigation/stack";
+import { NativeStackNavigationProp, NativeStackScreenProps } from "@react-navigation/native-stack";
 import { BaseNavigatorStackParamList } from "./BaseNavigator";
 import { RootStackParamList } from "./RootNavigator";
 import { MainNavigatorParamList } from "./MainNavigator";
 
-export type RootNavigation = StackNavigationProp<RootStackParamList>;
+export type RootNavigation = NativeStackNavigationProp<RootStackParamList>;
 export type BaseNavigation = CompositeNavigationProp<
-  StackNavigationProp<BaseNavigatorStackParamList>,
-  StackNavigationProp<RootStackParamList>
+  NativeStackNavigationProp<BaseNavigatorStackParamList>,
+  NativeStackNavigationProp<RootStackParamList>
 >;
 
 export type StackNavigatorProps<
   ParamList extends ParamListBase,
   RouteName = never,
-> = StackScreenProps<
+> = NativeStackScreenProps<
   ParamList,
   RouteName extends never ? keyof ParamList : RouteName extends keyof ParamList ? RouteName : never
 >;
@@ -28,7 +28,7 @@ export type StackNavigatorProps<
 export type StackNavigatorNavigation<
   ParamList extends ParamListBase,
   RouteName = never,
-> = StackNavigationProp<
+> = NativeStackNavigationProp<
   ParamList,
   RouteName extends never ? keyof ParamList : RouteName extends keyof ParamList ? RouteName : never
 >;
@@ -63,10 +63,10 @@ export type MainComposite<
 > = CompositeScreenProps<
   A,
   CompositeScreenProps<
-    StackScreenProps<MainNavigatorParamList>,
+    NativeStackScreenProps<MainNavigatorParamList>,
     CompositeScreenProps<
-      StackScreenProps<BaseNavigatorStackParamList>,
-      StackScreenProps<RootStackParamList>
+      NativeStackScreenProps<BaseNavigatorStackParamList>,
+      NativeStackScreenProps<RootStackParamList>
     >
   >
 >;
@@ -89,8 +89,8 @@ export type BaseComposite<
 > = CompositeScreenProps<
   A,
   CompositeScreenProps<
-    StackScreenProps<BaseNavigatorStackParamList>,
-    StackScreenProps<RootStackParamList>
+    NativeStackScreenProps<BaseNavigatorStackParamList>,
+    NativeStackScreenProps<RootStackParamList>
   >
 >;
 
@@ -109,8 +109,8 @@ export type BaseNavigationComposite<
 > = CompositeNavigationProp<
   A,
   CompositeNavigationProp<
-    StackNavigationProp<BaseNavigatorStackParamList>,
-    StackNavigationProp<RootStackParamList>
+    NativeStackNavigationProp<BaseNavigatorStackParamList>,
+    NativeStackNavigationProp<RootStackParamList>
   >
 >;
 
@@ -129,7 +129,7 @@ export type RootComposite<
     >;
     route: RouteProp<ParamListBase>;
   },
-> = CompositeScreenProps<A, StackScreenProps<RootStackParamList>>;
+> = CompositeScreenProps<A, NativeStackScreenProps<RootStackParamList>>;
 
 export type RootNavigationComposite<
   A extends NavigationProp<
@@ -143,7 +143,7 @@ export type RootNavigationComposite<
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     any
   >,
-> = CompositeNavigationProp<A, StackNavigationProp<RootStackParamList>>;
+> = CompositeNavigationProp<A, NativeStackNavigationProp<RootStackParamList>>;
 
 // Represents the header part of the react-navigation options
 // Could be expanded to add `headerTitle` and/or `header` if needed one day
@@ -152,4 +152,5 @@ export type ReactNavigationHeaderOptions = {
   headerShown?: boolean;
   headerLeft?: () => React.ReactElement | null;
   headerRight?: () => React.ReactElement | null;
+  headerBackVisible?: boolean;
 };

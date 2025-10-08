@@ -198,7 +198,7 @@ const FilterModalComponent = ({
 
       return (
         <FilterLine
-          activeOpacity={0.5}
+          style={({ pressed }) => (pressed ? { opacity: 0.5 } : {})}
           onPress={onPress}
           event="ManagerAppFilterClick"
           eventProperties={{

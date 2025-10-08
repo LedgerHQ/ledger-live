@@ -3,7 +3,7 @@ import { renderWithReactQuery } from "@tests/test-renderer";
 import { MarketQuickActions } from "./";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import { ScreenName } from "~/const";
-import { createStackNavigator } from "@react-navigation/stack";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { genAccount } from "@ledgerhq/coin-framework/mocks/account";
 import { State } from "~/reducers/types";
 import { isCurrencySupported } from "@ledgerhq/coin-framework/currencies/support";
@@ -14,7 +14,7 @@ import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 
 initializeLegacyTokens(addTokens);
 
-const Stack = createStackNavigator();
+const Stack = createNativeStackNavigator();
 
 let usdcCurrency: TokenCurrency;
 const moneroCurrency = getCryptoCurrencyById("monero");

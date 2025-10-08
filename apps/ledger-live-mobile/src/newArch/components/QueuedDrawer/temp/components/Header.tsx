@@ -44,48 +44,63 @@ const Header = ({
   }, [hasBackButton, backButtonOpacity, backButtonScale]);
 
   return (
-    <Flex flexDirection="row" alignItems="center" justifyContent="space-between" paddingBottom={4}>
-      <Flex flexDirection="row" alignItems="center" flex={1}>
-        <Animated.View style={backButtonAnimatedStyle}>
-          {hookOnBack && (
+    <Flex>
+      <Flex
+        flexDirection="row"
+        alignItems="center"
+        justifyContent="space-between"
+        paddingBottom={4}
+      >
+        <Flex width={32} height={32} alignItems="center" justifyContent="center">
+          <Animated.View style={backButtonAnimatedStyle}>
+            {hookOnBack && (
+              <Pressable
+                testID="drawer-back-button"
+                onPress={hookOnBack}
+                hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  borderRadius: 999,
+                  width: 32,
+                  height: 32,
+                }}
+              >
+                <Icons.ArrowLeft size="M" />
+              </Pressable>
+            )}
+          </Animated.View>
+        </Flex>
+
+        <Flex width={32} height={32} alignItems="center" justifyContent="center">
+          {!noCloseButton && !areDrawersLocked && (
             <Pressable
-              testID="drawer-back-button"
-              onPress={hookOnBack}
-              hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-              style={{
+              onPress={handleCloseUserEvent}
+              testID="drawer-close-button"
+              style={({ pressed }: { pressed: boolean }) => ({
+                borderRadius: 999,
+                backgroundColor: pressed ? colors.opacityDefault.c10 : colors.opacityDefault.c05,
+                padding: 2,
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
-                borderRadius: 999,
-              }}
+                width: 32,
+                height: 32,
+              })}
             >
-              <Icons.ArrowLeft size="M" />
+              <Icons.Close size="XS" />
             </Pressable>
           )}
-        </Animated.View>
-        {title && (
-          <Text variant="h4" numberOfLines={1} flex={1}>
+        </Flex>
+      </Flex>
+
+      {title && (
+        <Flex alignItems="center" pb={32}>
+          <Text variant="h4" numberOfLines={1}>
             {title}
           </Text>
-        )}
-      </Flex>
-      {!noCloseButton && !areDrawersLocked && (
-        <Pressable
-          testID="drawer-close-button"
-          onPress={handleCloseUserEvent}
-          style={({ pressed }: { pressed: boolean }) => ({
-            borderRadius: 999,
-            backgroundColor: pressed ? colors.opacityDefault.c10 : colors.opacityDefault.c05,
-            padding: 2,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            width: 32,
-            height: 32,
-          })}
-        >
-          <Icons.Close size="XS" />
-        </Pressable>
+        </Flex>
       )}
     </Flex>
   );
