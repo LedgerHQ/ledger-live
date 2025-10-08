@@ -22,7 +22,7 @@ describe("Polkadot Deterministic Tester", () => {
     }
   });
 
-  it.skip("scenario Westend", async () => {
+  it("scenario Westend", async () => {
     try {
       await executeScenario(WestendScenario);
     } catch (e) {
