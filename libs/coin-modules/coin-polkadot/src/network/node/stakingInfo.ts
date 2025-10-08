@@ -5,6 +5,7 @@ import getApiPromise from "./apiPromise";
 // Required to leverage PolkadotJS *type augmentation*
 // (https://polkadot.js.org/docs/api/FAQ#since-upgrading-to-the-7x-series-typescript-augmentation-is-missing)
 import "@polkadot/api-augment";
+import coinConfig from "../../config";
 
 /**
  * Fetch the staking info for an account.
@@ -18,12 +19,32 @@ export const fetchStakingInfo = async (
   addr: string,
   currency?: CryptoCurrency,
 ): Promise<SidecarStakingInfo> => {
+  if (currency?.id == "assethub_westend") {
+    return {
+      staking: {
+        unlocking: [],
+      },
+      numSlashingSpans: 0,
+    };
+  }
+
   const api = await getApiPromise(currency);
   const hash = await api.rpc.chain.getFinalizedHead();
   const historicApi = await api.at(hash);
 
   if (currency?.id === "assethub_polkadot" && !historicApi.query.staking) {
-    throw new Error("AssetHub does not support staking operations. Controller address");
+    const assethubConfig = coinConfig.getCoinConfig(currency);
+
+    if (assethubConfig.hasBeenMigrated) {
+      throw new Error("AssetHub staking error");
+    } else {
+      return {
+        staking: {
+          unlocking: [],
+        },
+        numSlashingSpans: 0,
+      };
+    }
   }
 
   const controllerOption = await historicApi.query.staking.bonded(addr); // Option<AccountId> representing the controller
