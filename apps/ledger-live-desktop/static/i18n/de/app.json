@@ -464,12 +464,16 @@
       "apt_description" : "Zum Swappen von Aptos müsstest du ein anderes kompatibles Ledger-Gerät verwenden, z. B. eine Ledger Nano S Plus™, eine Ledger Nano X™, eine Ledger Flex™ oder eine Ledger Stax™.",
       "cosmos_title" : "Ledger Nano S™ unterstützt das Swappen von Cosmos nicht",
       "cosmos_description" : "Zum Swappen von Cosmos müsstest du ein anderes kompatibles Ledger-Gerät verwenden, z. B. eine Ledger Nano S Plus™, eine Ledger Nano X™, eine Ledger Flex™ oder eine Ledger Stax™.",
+      "hedera_title" : "Ledger Nano S™ unterstützt das Swappen von Hedera nicht",
+      "hedera_description" : "Zum Swappen von Hedera musst du ein anderes kompatibles Ledger-Gerät verwenden, z. B. eine Ledger Nano S Plus™, eine Ledger Nano X™, eine Ledger Flex™ oder eine Ledger Stax™.",
       "osmo_title" : "Ledger Nano S™ unterstützt das Swappen von Osmosis nicht",
       "osmo_description" : "Zum Swappen von Osmosis musst du ein anderes kompatibles Ledger-Gerät verwenden, z. B. eine Ledger Nano S Plus™, eine Ledger Nano X™, eine Ledger Flex™ oder eine Ledger Stax™.",
       "dydx_title" : "Ledger Nano S™ unterstützt das Swappen von dYdX nicht",
       "dydx_description" : "Zum Swappen von dYdX musst du ein anderes kompatibles Ledger-Gerät verwenden, z. B. eine Ledger Nano S Plus™, eine Ledger Nano X™, eine Ledger Flex™ oder eine Ledger Stax™.",
       "sui_title" : "Die Ledger Nano S™ unterstützt das Swappen von Sui nicht",
-      "sui_description" : "Zum Swappen von Sui kannst du jedes sonstige kompatible Ledger-Gerät nutzen, z. B. eine Ledger Nano S Plus™, eine Ledger Nano X™, eine Ledger Flex™ oder eine Ledger Stax™."
+      "sui_description" : "Zum Swappen von Sui kannst du jedes sonstige kompatible Ledger-Gerät nutzen, z. B. eine Ledger Nano S Plus™, eine Ledger Nano X™, eine Ledger Flex™ oder eine Ledger Stax™.",
+      "kaspa_title" : "Ledger Nano S™ unterstützt das Swappen von Kaspa nicht",
+      "kaspa_description" : "Zum Swappen von Kaspa musst du ein anderes kompatibles Ledger-Gerät verwenden, z. B. eine Ledger Nano S Plus™, eine Ledger Nano X™, eine Ledger Flex™ oder eine Ledger Stax™."
     },
     "providers" : {
       "title" : "Wähle einen Anbieter für das Swappen von Kryptowährungen",
@@ -2246,6 +2250,7 @@
   "receive" : {
     "title" : "Empfangen",
     "successTitle" : "Adresse sicher freigegeben",
+    "connectToNoah" : "Du wirst mit Noah verbunden",
     "steps" : {
       "options" : {
         "fromBank" : {
@@ -5006,7 +5011,7 @@
         "continueCTA" : "Weiter",
         "title" : "Bitte überprüfen Sie den Inhalt der Box",
         "description" : "Wenn Ihre {{device}} mit einem PIN-Code oder einer Wiederherstellungsphrase geliefert wurde, ist die Verwendung des Geräts nicht sicher und Sie sollten sich an den Ledger Support wenden.",
-        "alert" : "Verwenden Sie nur eine Wiederherstellungsphrase, die Ihr Gerät angezeigt hat, wenn es eingerichtet wurde"
+        "alert" : "Verwende nur eine Wiederherstellungsphrase, die dein Gerät angezeigt hat, wenn es eingerichtet wurde"
       }
     },
     "alerts" : {
@@ -5023,6 +5028,12 @@
     },
     "screens" : {
       "welcome" : {
+        "videos" : {
+          "buySell" : "Eine Wallet, die dich schützt und dir die Kontrolle gibt",
+          "thousandsCrypto" : "Tausende Krypto-Assets senden, empfangen, swappen und staken",
+          "secureWallet" : "Alle Transaktionen zweifelsfrei bestätigen"
+        },
+        "notice" : "Wenn du fortfährst, stimmst du den <Link1>Allgemeinen Geschäftsbedingungen</Link1> und der <Link2>Datenschutzrichtlinie</Link2> von Ledger zu. Ledger bietet keinerlei finanzielle Beratung an.\nSwap- und Staking-Leistungen werden von Dritten erbracht.",
         "title" : "Die sicherste Wallet für Kryptowährungen & NFTs",
         "description" : "Verwalten, kaufen und vermehren Sie Ihre Krypto und NFTs auf Ledger Live.",
         "nextButton" : "Erste Schritte",
@@ -5173,7 +5184,7 @@
           },
           "pinCode" : {
             "title" : "PIN-Code",
-            "paragraph" : "Ihr PIN-Code ist die erste Sicherheitsebene. Er sichert physisch den Zugang zu Ihrem privaten Schlüssel und Ihrer Nano. Ihr PIN-Code muss 4 bis 8 Ziffern lang sein.",
+            "paragraph" : "Dein PIN-Code ist die erste Sicherheitsebene. Er sichert physisch den Zugang zu deinem privaten Schlüssel und deiner Nano. Dein PIN-Code muss 4 bis 8 Ziffern lang sein.",
             "disclaimer" : "Ich verstehe, dass ich meinen PIN-Code selbst wählen und ihn geheim halten muss.",
             "buttons" : {
               "next" : "PIN-Code einrichten",
@@ -5710,7 +5721,34 @@
     },
     "canton" : {
       "commentPlaceholder" : "Optional",
-      "comment" : "Kommentar"
+      "comment" : "Kommentar",
+      "addAccount" : {
+        "title" : "Canton-Konto hinzufügen",
+        "onboard" : {
+          "title" : "Einrichtung",
+          "newAccount" : "Neues Konto",
+          "init" : "Klicke auf „Continue“ (Weiter), um dein neues Canton-Konto einzurichten",
+          "onboarded" : "Eingerichtete Konten",
+          "success" : "Dein neues Canton-Konto wurde erstellt und eingerichtet.",
+          "error" : "Das Einrichten des neuen Kontos ist fehlgeschlagen. Bitte versuche es noch einmal.",
+          "status" : {
+            "prepare" : "Die Kontoeinrichtung wird vorbereitet …",
+            "submit" : "Konto wird eingerichtet …",
+            "default" : "In Bearbeitung …"
+          }
+        },
+        "auth" : {
+          "title" : "Autorisierung",
+          "validator" : "Autorisieren",
+          "hint" : "Eingehende Zahlungen auf dieses Konto automatisch akzeptieren.",
+          "error" : "Autorisierung fehlgeschlagen. Bitte versuche es noch einmal.",
+          "validatorLabel" : "Ledger Validator",
+          "validatorDescription" : "Automatisierte Zahlungsannahme"
+        },
+        "finish" : {
+          "title" : "Bestätigung"
+        }
+      }
     },
     "stellar" : {
       "memo" : "Memo",
@@ -7141,7 +7179,7 @@
         "title" : "Personalisierung",
         "description" : "Damit wir dir personalisierte Empfehlungen und Inhalte anzeigen können, die deinen Vorlieben entsprechen, und um die Leistung unserer Marketingkampagnen zu messen, geben wir Daten zur App-Nutzung (Klicks, Seitenbesuche und Konversionsdaten) weiter."
       },
-      "share" : "Freigeben"
+      "validate" : "Validieren"
     },
     "variantB" : {
       "accept" : "Akzeptieren",
