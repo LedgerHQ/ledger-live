@@ -55,10 +55,10 @@
     "bluetooth" : "블루투스",
     "usb" : "USB",
     "add" : "추가",
-    "token" : "토큰",
-    "token_plural" : "토큰",
-    "subaccount" : "서브 계정",
-    "subaccount_plural" : "부계정",
+    "token_one" : "Token",
+    "token_other" : "Tokens",
+    "subaccount_one" : "Subaccount",
+    "subaccount_other" : "Subaccounts",
     "forgetDevice" : "장치 제거",
     "help" : "도움말",
     "saveLogs" : "로그 저장",
@@ -71,24 +71,24 @@
     "installed" : "설치됨",
     "uninstall" : "제거",
     "fromNow" : {
-      "seconds" : "1초 후",
-      "seconds_plural" : "{{time}}초 후",
-      "minutes" : "1분 후",
-      "minutes_plural" : "{{time}}분 후",
-      "hours" : "1시간 후",
-      "hours_plural" : "{{time}}시간 후",
-      "days" : "1일 후",
-      "days_plural" : "{{time}}일 후"
+      "seconds_one" : "in one second",
+      "seconds_other" : "in {{time}} seconds",
+      "minutes_one" : "in one minute",
+      "minutes_other" : "in {{time}} minutes",
+      "hours_one" : "in one hour",
+      "hours_other" : "in {{time}} hours",
+      "days_one" : "in one day",
+      "days_other" : "in {{time}} days"
     },
     "timeAgo" : {
-      "seconds" : "1초 전",
-      "seconds_plural" : "{{time}}초 전",
-      "minutes" : "1분 전",
-      "minutes_plural" : "{{time}}분 전",
-      "hours" : "1시간 전",
-      "hours_plural" : "{{time}}시간 전",
-      "days" : "어제",
-      "days_plural" : "{{time}}일 전"
+      "seconds_one" : "one second ago",
+      "seconds_other" : "{{time}} seconds ago",
+      "minutes_one" : "one minute ago",
+      "minutes_other" : "{{time}} minutes ago",
+      "hours_one" : "one hour ago",
+      "hours_other" : "{{time}} hours ago",
+      "days_one" : "yesterday",
+      "days_other" : "{{time}} days ago"
     },
     "seeMore" : "더 보기",
     "moreInfo" : "자세한 정보",
@@ -1542,7 +1542,7 @@
       "url" : {
         "title" : "iframe URL 업데이트",
         "subtitle" : "디버그 설정",
-        "cta" : "Ledger Nano S를"
+        "cta" : "저장"
       },
       "message" : {
         "successTitle" : "트랜잭션 완료",
@@ -1632,7 +1632,13 @@
       "terms" : "계속 진행하면 Ledger의 다음 약관에 동의하는 것입니다",
       "termsLink" : "이용약관",
       "privacyLink" : "개인 정보 보호 정책",
-      "and" : "및"
+      "and" : "및",
+      "videoTitles" : {
+        "0" : "A wallet that protects and puts you in control",
+        "1" : "Send, receive, swap and stake thousands of crypto",
+        "2" : "Verify all your transactions with peace of mind"
+      },
+      "disclaimer" : "By continuing, you agree to Ledger's <TermsAndConditions>Terms & Conditions</TermsAndConditions> and <PrivacyPolicy>Privacy Policy</PrivacyPolicy>. Ledger provides no financial advice. Swap and staking services are provided by third parties."
     },
     "postWelcomeStep" : {
       "title" : "시작해봅시다",
@@ -2713,6 +2719,7 @@
       "LEGACYUNFREEZE" : "동결 해제",
       "REWARD" : "보상 수령됨",
       "FEES" : "수수료",
+      "PRE_APPROVAL" : "사전 승인",
       "OPT_IN" : "참여",
       "OPT_OUT" : "참여하지 않음",
       "CLOSE_ACCOUNT" : "계정 닫기",
@@ -2813,10 +2820,10 @@
   "selectableAccountsList" : {
     "deselectAll" : "모두 선택 취소",
     "selectAll" : "모두 선택",
-    "tokenCount" : "1개 이상의 토큰",
-    "tokenCount_plural" : "+{{count}} 토큰",
-    "subaccountCount" : "1개 이상의 부계정",
-    "subaccountCount_plural" : "+{{count}} 서브 계정"
+    "tokenCount_one" : "+1 token",
+    "tokenCount_other" : "+{{count}} tokens",
+    "subaccountCount_one" : "+1 subaccount",
+    "subaccountCount_other" : "+{{count}} subaccounts"
   },
   "account" : {
     "subHeader" : {
@@ -3015,25 +3022,25 @@
       "upToDate" : "동기화됨",
       "error" : "오류",
       "queued" : "대기 중",
-      "showTokens" : "{{length}} 토큰 보기",
-      "showTokens_plural" : "{{length}} 토큰 보기",
-      "showSubAccounts" : "{{length}} 부계정 보기",
-      "showSubAccounts_plural" : "{{length}} 부계정 보기",
-      "hideTokens" : "토큰 숨기기",
-      "hideTokens_plural" : "토큰 숨기기",
-      "hideSubAccounts" : "부계정 숨기기",
-      "hideSubAccounts_plural" : "부계정 숨기기",
+      "showTokens_one" : "Show {{length}} token",
+      "showTokens_other" : "Show {{length}} tokens",
+      "showSubAccounts_one" : "Show {{length}} subaccount",
+      "showSubAccounts_other" : "Show {{length}} subaccounts",
+      "hideTokens_one" : "Hide token",
+      "hideTokens_other" : "Hide tokens",
+      "hideSubAccounts_one" : "Hide subaccount",
+      "hideSubAccounts_other" : "Hide subaccounts",
       "algorand" : {
-        "showTokens" : "{{length}} ASA 보기",
-        "showTokens_plural" : "{{length}} ASA 보기",
-        "hideTokens" : "ASA 숨기기",
-        "hideTokens_plural" : "ASA 숨기기"
+        "showTokens_one" : "Show {{length}} ASA",
+        "showTokens_other" : "Show {{length}} ASA",
+        "hideTokens_one" : "Hide ASA",
+        "hideTokens_other" : "Hide ASA"
       },
       "stellar" : {
-        "showTokens" : "{{length}} 자산 표시",
-        "showTokens_plural" : "{{length}} 자산 표시",
-        "hideTokens" : "자산 숨기기",
-        "hideTokens_plural" : "자산 숨기기"
+        "showTokens_one" : "Show {{length}} asset",
+        "showTokens_other" : "Show {{length}} assets",
+        "hideTokens_one" : "Hide asset",
+        "hideTokens_other" : "Hide assets"
       }
     },
     "noResultsFound" : "발견된 자산 없음",
@@ -3048,8 +3055,8 @@
   "distribution" : {
     "header" : "자산 배분",
     "list" : "자산 배분 ({{count}})",
-    "assets" : "자산",
-    "assets_plural" : "자산을 보호하세요",
+    "assets_one" : "asset",
+    "assets_other" : "assets",
     "total" : "총 잔액",
     "listAccount" : "자산 배분 ({{count}})",
     "title" : "자산",
@@ -3257,7 +3264,7 @@
       "clearCacheDesc" : "네트워크의 트랜잭션을 스캔하고 사용자 계정을 다시 계산합니다.",
       "clearCacheModal" : "확실합니까?",
       "clearCacheModalDesc" : "네트워크에서 신규 및 완전한 트랜잭션 스캔이 수행됩니다. 계정 내역이 다시 구성되고 잔금을 재산출합니다.",
-      "clearCacheButton" : "제거",
+      "clearCacheButton" : "삭제",
       "exportLogs" : "로그 저장",
       "exportLogsDesc" : "문제 해결을 위해 Ledger Live 로그가 필요할 수 있습니다.",
       "hardReset" : "Ledger Live 리셋",
@@ -3433,6 +3440,17 @@
       "shareAddress" : "주소 공유",
       "addressCopied" : "클립보드에 주소 복사됨",
       "taprootWarning" : "발송자가 탭루트를 지원하는지 확인해 주세요",
+      "connectToNoah" : "Connecting you to Noah",
+      "menu" : {
+        "crypto" : {
+          "title" : "암호화폐 주소에서",
+          "description" : "원하는 암호화폐를 충전하세요"
+        },
+        "fiat" : {
+          "title" : "은행 계좌에서",
+          "description" : "EUR 또는 USD 은행 이체로 USDC를 충전하세요. KYC 승인이 필요합니다."
+        }
+      },
       "memoTag" : {
         "link" : "태그/메모가 필요하세요?",
         "title" : "태그/메모가 필요하세요?",
@@ -3445,8 +3463,8 @@
       },
       "selectNetwork" : {
         "title" : "선택한 암호화폐용 네트워크를 선택하세요",
-        "account" : "{{count}}개 계정",
-        "account_plural" : "{{count}} 계정",
+        "account_one" : "{{count}} account",
+        "account_other" : "{{count}} accounts",
         "subtitle" : "암호화폐를 전송하는 지갑이나 거래소에서 선택한 네트워크와 일치해야 합니다.",
         "bannerTitle" : "올바른 네트워크를 선택했는지 확인하세요. 그 방법을 알아보세요.",
         "depositFromCexBannerTitle" : "코인베이스 계정의 암호화폐를 예치하세요"
@@ -3463,8 +3481,8 @@
       "addAccount" : {
         "title" : "계정 확인 중...",
         "subtitle" : "블록체인에 {{currencyName}}에 대한 계정이 이미 있는지 확인합니다.",
-        "foundAccount" : "{{count}}개의 계정을 찾았습니다",
-        "foundAccount_plural" : "{{count}}개의 계정 발견",
+        "foundAccount_one" : "{{count}} account found",
+        "foundAccount_other" : "{{count}} accounts found",
         "stopSynchronization" : "동기화 중지",
         "addingAccount" : "계정이 발견되지 않습니다. {{currencyName}}에 대한 새 계정 생성 중..."
       },
@@ -3766,12 +3784,16 @@
         "apt_description" : "Aptos 스왑 거래를 실행하려면 Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ 또는 Ledger Stax™와 같은 다른 Ledger 장치를 사용하세요.",
         "cosmos_title" : "Ledger Nano S™는 Cosmos 스왑을 지원하지 않습니다.",
         "cosmos_description" : "Cosmos 스왑 거래를 실행하려면 Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ 또는 Ledger Stax™와 같은 다른 Ledger 장치를 사용하세요.",
+        "hedera_title" : "Ledger Nano S™는 헤데라 스왑을 지원하지 않습니다.",
+        "hedera_description" : "헤데라를 스왑하려면 Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ 또는 Ledger Stax™와 같은 호환 가능한 다른 Ledger 장치를 사용하세요.",
         "osmo_title" : "Ledger Nano S™는 Osmosis 스왑을 지원하지 않습니다.",
         "osmo_description" : "Osmosis 스왑 거래를 실행하려면 Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ 또는 Ledger Stax™와 같은 다른 Ledger 장치를 사용하세요.",
         "dydx_title" : "Ledger Nano S™는 dYdX 스왑을 지원하지 않습니다.",
         "dydx_description" : "dYdX 스왑 거래를 실행하려면 Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ 또는 Ledger Stax™와 같은 다른 Ledger 장치를 사용하세요.",
         "sui_title" : "Ledger Nano S™는 Sui 스왑을 지원하지 않습니다",
-        "sui_description" : "Sui 스왑 거래를 수행하려면 Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ 또는 Ledger Stax™와 같은 다른 호환 Ledger 장치를 사용하세요."
+        "sui_description" : "Sui 스왑 거래를 수행하려면 Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ 또는 Ledger Stax™와 같은 다른 호환 Ledger 장치를 사용하세요.",
+        "kaspa_title" : "Ledger Nano S™는 카스파 스왑을 지원하지 않습니다.",
+        "kaspa_description" : "카스파를 스왑하려면 Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ 또는 Ledger Stax™와 같은 호환 가능한 다른 Ledger 장치를 사용하세요."
       }
     },
     "lending" : {
@@ -3893,10 +3915,10 @@
           "stepRange" : "{{totalSteps}} 중 {{currentStep}} 단계"
         },
         "selectAccount" : {
-          "enabledAccountsAmount" : "{{amount}}를 승인한 계정이 {{number}}개 있습니다",
-          "enabledAccountsAmount_plural" : "{{amount}}를 승인한 계정이 {{number}}개 있습니다",
-          "enabledAccountsNoLimit" : "{{ currency }}의 무제한 금액을 승인한 {{number}}개의 계정이 있습니다",
-          "enabledAccountsNoLimit_plural" : "{{ currency }}의 무제한 금액을 승인한 {{number}}개의 계정이 있습니다",
+          "enabledAccountsAmount_one" : "You have {{number}} account that approved {{amount}}",
+          "enabledAccountsAmount_other" : "You have {{number}} accounts that approved {{amount}}",
+          "enabledAccountsNoLimit_one" : "You have {{number}} account that approved an unlimited amount of {{ currency }}",
+          "enabledAccountsNoLimit_other" : "You have {{number}} accounts that approved an unlimited amount of {{ currency }}",
           "noEnabledAccounts" : "대출해 주려면, 우선 계정 하나를 승인해야 합니다."
         },
         "enable" : {
@@ -4287,8 +4309,8 @@
       }
     },
     "imported" : "자산이 성공적으로 추가되었습니다",
-    "added" : "포트폴리오에 계정이 추가되었습니다",
-    "added_plural" : "{{count}}개의 계정이 포트폴리오에 추가되었습니다",
+    "added_one" : "Account added to your portfolio",
+    "added_other" : "{{count}} Accounts added to your portfolio",
     "sections" : {
       "importable" : {
         "title" : "기존 계정 추가"
@@ -4354,8 +4376,8 @@
       "whichAddressType" : "주소 유형 선택 방법 알아보기",
       "sections" : {
         "importable" : {
-          "title" : "{{count}}개의 계정을 찾았습니다",
-          "title_plural" : "{{count}}개의 계정을 찾았습니다"
+          "title_one" : "We found {{count}} account",
+          "title_other" : "We found {{count}} accounts"
         },
         "creatable" : {
           "title" : "새 계정"
@@ -4397,8 +4419,8 @@
     "outdated" : "앱 버전이 오래됨",
     "outdatedDesc" : "장치의 {{appName}} 앱에 중요한 업데이트가 있습니다. 내 Ledger로 이동하여 업데이트하세요.",
     "quitApp" : "장치에서 앱을 중단하세요",
-    "appNotInstalled" : "{{appName}} 앱을 설치하세요",
-    "appNotInstalled_plural" : "{{appName}} 앱을 설치하세요",
+    "appNotInstalled_one" : "Please install the {{appName}} app",
+    "appNotInstalled_other" : "Please install the {{appName}} apps",
     "useAnotherDevice" : "다른 장치 사용",
     "deviceNotOnboarded" : {
       "title" : "귀하의 Ledger 장치는 아직 사용 준비가 되지 않았습니다",
@@ -4553,8 +4575,8 @@
   },
   "RemoveDevice" : {
     "button" : {
-      "title" : "{{nbDevices}} 장치 제거하기",
-      "title_plural" : "{{nbDevices}} 장치 제거하기"
+      "title_one" : "Remove {{nbDevices}} device",
+      "title_other" : "Remove {{nbDevices}} devices"
     }
   },
   "manager" : {
@@ -4623,16 +4645,16 @@
       "title" : "스토리지",
       "used" : "사용됨",
       "genuine" : "귀하의 장치는 정품입니다",
-      "appsInstalled" : "<0>{{number}}</0>개의 앱",
-      "appsInstalled_plural" : "<0>{{number}}</0>개의 앱",
+      "appsInstalled_one" : "<0>{{number}}</0> app",
+      "appsInstalled_other" : "<0>{{number}}</0> apps",
       "storageAvailable" : "이용 가능",
       "noFreeSpace" : "남은 저장 공간 없음",
       "appsToUpdate" : "<0>{{number}}</0>개의 업데이트",
-      "appsToUpdate_plural" : "<0>{{number}}</0>개의 업데이트"
+      "appsToUpdate_other" : "<0>{{number}}</0> updates"
     },
     "installSuccess" : {
       "title" : "앱이 성공적으로 설치되었습니다",
-      "title_plural" : "앱이 성공적으로 설치되었습니다",
+      "title_other" : "Apps successfully installed",
       "notSupported" : "앱이 성공적으로 설치되었습니다. 웹사이트에서 설치된 앱에 대해 자세히 알아보세요.",
       "manageAccount" : "계정 추가",
       "learnMore" : "자세히 알아보기",
@@ -4665,7 +4687,7 @@
         "desc" : "{{appName}} 앱이 설치될 때까지 기다려 주세요",
         "button" : "설치 중...",
         "queued" : "대기",
-        "button_plural" : "설치 중... {{progressPercentage}}%"
+        "button_other" : "Installing... {{progressPercentage}}%"
       },
       "done" : {
         "title" : "앱이 성공적으로 설치되었습니다",
@@ -4680,8 +4702,8 @@
       "continueInstall" : "앱 설치하기"
     },
     "update" : {
-      "title" : "{{number}}개 앱 업데이트",
-      "title_plural" : "{{number}}개 앱 업데이트",
+      "title_one" : "{{number}} app update",
+      "title_other" : "{{number}} app updates",
       "step" : "업데이트 단계 {{step}}:",
       "updateWarn" : "업데이트 중에 My Ledger를 중단하지 마세요.",
       "progress" : "모두 업데이트 중...",
@@ -4701,7 +4723,7 @@
         "title" : "귀하의 {{productName}}에서 {{appName}}가 성공적으로 제거되었습니다"
       },
       "dependency" : {
-        "title" : "다른 앱에는 {{app}} 앱이 필요합니다",
+        "title_one" : "Other apps need the {{app}} app",
         "showAll" : "삭제할 모든 앱을 보여줍니다",
         "description" : "{{app}} 앱을 필요로 하는 앱도 귀하의 장치에서 삭제될 것입니다.",
         "description_one" : "일부 앱은 {{app}} 앱에 종속됩니다.",
@@ -6102,7 +6124,7 @@
           "noResultsFound" : "<0>{{search}}</0>에 대한 검증인이 없습니다",
           "selected" : "총 {{total}} 중 {{selected}} 선택됨",
           "notValidatorsRemoved" : "지명한 주소{{count}}는 더 이상 검증인이 아닙니다. 지명 트랜잭션에서 주소가 자동으로 삭제됩니다.",
-          "maybeChill" : "대신, 지명을 제거하세요"
+          "maybeChill" : "대신, 지명을 삭제하세요"
         },
         "validation" : {
           "success" : {
@@ -6716,11 +6738,11 @@
     "changeValidator" : "검증인 변경",
     "endDelegation" : "위임 종료",
     "durationForDays0" : "오늘만",
-    "durationForDays" : "하루간",
-    "durationForDays_plural" : "({{count}})일간",
+    "durationForDays_one" : "For a day",
+    "durationForDays_other" : "For {{count}} days",
     "durationDays0" : "오늘만",
-    "durationDays" : "1일",
-    "durationDays_plural" : "({{count}})일",
+    "durationDays_one" : "1 day",
+    "durationDays_other" : "{{count}}일",
     "selectValidatorTitle" : "검증인 선택",
     "started" : {
       "title" : "보상 받기",
@@ -6924,20 +6946,20 @@
         "desc" : "새로운 소식이 있으면 알려드릴게요"
       },
       "time" : {
-        "second" : "1초 전",
-        "second_plural" : "{{count}}초 전",
-        "minute" : "1분 전",
-        "minute_plural" : "{{count}}분 전",
-        "hour" : "1시간 전",
-        "hour_plural" : "{{count}}시간 전",
-        "day" : "1일 전",
-        "day_plural" : "{{count}}일 전",
-        "week" : "1주일 전",
-        "week_plural" : "{{count}}주 전",
-        "month" : "1달 전",
-        "month_plural" : "{{count}}달 전",
-        "year" : "1년 전",
-        "year_plural" : "{{count}}년 전"
+        "second_one" : "1 second ago",
+        "second_other" : "{{count}} seconds ago",
+        "minute_one" : "1 minute ago",
+        "minute_other" : "{{count}} minutes ago",
+        "hour_one" : "1 hour ago",
+        "hour_other" : "{{count}} hours ago",
+        "day_one" : "1 day ago",
+        "day_other" : "{{count}} days ago",
+        "week_one" : "1 week ago",
+        "week_other" : "{{count}} weeks ago",
+        "month_one" : "1 month ago",
+        "month_other" : "{{count}} months ago",
+        "year_one" : "1 year ago",
+        "year_other" : "{{count}} years ago"
       }
     },
     "status" : {
@@ -7191,16 +7213,18 @@
   "asset" : {
     "title" : "내 {{assetName}}",
     "accountsSection" : {
-      "title" : "내 {{currencyName}} 계정"
+      "title_one" : "Your {{currencyName}} account",
+      "title_other" : "Your {{currencyName}} accounts"
     }
   },
   "customImage" : {
     "title" : "잠금 화면 사진",
     "change" : "변경",
     "drawer" : {
+      "title" : "커스텀 가능한 잠금 화면",
       "options" : {
-        "uploadFromPhone" : "내 사진 갤러리에서 선택",
-        "remove" : "현재 사진 삭제"
+        "uploadFromPhone" : "사진 변경",
+        "remove" : "잠금 화면 삭제"
       }
     },
     "toastRemove" : "잠금 화면 사진이 삭제됨",
@@ -7595,8 +7619,8 @@
       },
       "synchronizedInstances" : {
         "cta" : "관리",
-        "title" : "{{count}} Ledger Live 앱 동기화 완료",
-        "title_plural" : "{{count}} Ledger Live 앱 동기화 완료",
+        "title_one" : "{{count}} Ledger Live app synched",
+        "title_other" : "{{count}} Ledger Live apps synched",
         "error" : "인스턴스",
         "unsecuredError" : {
           "title" : "Ledger 동기화 활성화에 사용한 것과 동일한 Ledger 장치를 연결합니다.",
@@ -7767,8 +7791,8 @@
     },
     "selectNetwork" : {
       "title" : "자산이 속한 블록체인 네트워크를 선택하세요",
-      "detectedAccounts" : "{{count}}개의 계정이 (감지됨)",
-      "detectedAccounts_plural" : "{{count}}개의 계정이 (감지됨)"
+      "detectedAccounts_one" : "{{count}} account (detected)",
+      "detectedAccounts_other" : "{{count}} accounts (detected)"
     }
   },
   "emptyList" : {
@@ -7800,18 +7824,18 @@
     "ath" : "사상 최고치",
     "atl" : "사상 최저치",
     "timeAgo" : {
-      "years" : "({{count}}년 전)",
-      "years_plural" : "({{count}}년 전)",
-      "months" : "({{count}}개월 전)",
-      "months_plural" : "({{count}}개월 전)",
-      "days" : "({{count}}일 전)",
-      "days_plural" : "({{count}}일 전)",
-      "hours" : "({{count}}시간 전)",
-      "hours_plural" : "({{count}}시간 전)",
-      "minutes" : "({{count}}분 전)",
-      "minutes_plural" : "({{count}}분 전)",
-      "seconds" : "({{count}}초 전)",
-      "seconds_plural" : "({{count}}초 전)"
+      "years_one" : "({{count}} year ago)",
+      "years_other" : "({{count}} years ago)",
+      "months_one" : "({{count}} month ago)",
+      "months_other" : "({{count}} months ago)",
+      "days_one" : "({{count}} day ago)",
+      "days_other" : "({{count}} days ago)",
+      "hours_one" : "({{count}} hour ago)",
+      "hours_other" : "({{count}} hours ago)",
+      "minutes_one" : "({{count}} minute ago)",
+      "minutes_other" : "({{count}} minutes ago)",
+      "seconds_one" : "({{count}} second ago)",
+      "seconds_other" : "({{count}} seconds ago)"
     },
     "performance" : "가격 추이",
     "low" : "낮음",
@@ -7846,8 +7870,8 @@
     "selectAccount" : "계정 선택",
     "searchPlaceholder" : "검색",
     "emptyAssetList" : "자산을 찾을 수 없습니다",
-    "accountCount" : "{{count}}개 계정",
-    "accountCount_plural" : "{{count}}개 계정",
+    "accountCount_one" : "{{count}} account",
+    "accountCount_other" : "{{count}} accounts",
     "errors" : {
       "title" : "연결에 실패했습니다",
       "backend" : "문제가 발생했습니다. 나중에 다시 시도해 주세요",
@@ -7935,6 +7959,15 @@
     "default" : {
       "title" : "문제가 발생했습니다",
       "description" : "재시도하거나, 잘 모르겠다면 Ledger 지원팀에 문의하세요."
+    }
+  },
+  "canton" : {
+    "onboard" : {
+      "account" : "계정",
+      "authorize" : "승인",
+      "preapprove" : "Successfully added account",
+      "validator" : "Ledger Validator",
+      "title" : "Automatically accept incoming funds"
     }
   }
 }
