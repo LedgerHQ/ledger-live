@@ -5,14 +5,18 @@ import { loadPolkadotCrypto } from "../logic/polkadot-crypto";
 import { PolkadotAccount } from "../types";
 import polkadotAPI from "../network";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
+import coinConfig from "../config";
 
 export const getAccountShape: GetAccountShape<PolkadotAccount> = async info => {
   await loadPolkadotCrypto();
 
   const { address, initialAccount, currency, derivationMode } = info;
 
-  const shouldMigrate = currency.id === "polkadot";
-  const currencyToUse = shouldMigrate ? getCryptoCurrencyById("assethub_polkadot") : currency;
+  const assethubCurrency = getCryptoCurrencyById("assethub_polkadot");
+  const assethubConfig = coinConfig.getCoinConfig(assethubCurrency);
+
+  const shouldMigrate = currency.id === "polkadot" && assethubConfig.hasBeenMigrated;
+  const currencyToUse = shouldMigrate ? assethubCurrency : currency;
 
   const {
     blockHeight,
@@ -44,6 +48,7 @@ export const getAccountShape: GetAccountShape<PolkadotAccount> = async info => {
   return {
     id: accountId,
     balance,
+    currency: currencyToUse,
     spendableBalance,
     operations,
     operationsCount: operations.length,
