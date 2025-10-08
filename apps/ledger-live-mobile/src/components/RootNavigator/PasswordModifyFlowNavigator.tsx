@@ -1,5 +1,5 @@
 import React, { useMemo } from "react";
-import { createStackNavigator } from "@react-navigation/stack";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "styled-components/native";
 import { ScreenName } from "~/const";
@@ -7,7 +7,7 @@ import PasswordRemove from "~/screens/Settings/General/PasswordRemove";
 import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
 import { PasswordModifyFlowParamList } from "./types/PasswordModifyFlowNavigator";
 
-const Stack = createStackNavigator<PasswordModifyFlowParamList>();
+const Stack = createNativeStackNavigator<PasswordModifyFlowParamList>();
 
 export default function PasswordModifyFlowNavigator() {
   const { t } = useTranslation();

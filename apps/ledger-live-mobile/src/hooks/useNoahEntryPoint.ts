@@ -1,4 +1,4 @@
-import { CardStyleInterpolators, StackNavigationOptions } from "@react-navigation/stack";
+import { NativeStackNavigationOptions } from "@react-navigation/native-stack";
 import ReceiveFundsOptions from "~/screens/ReceiveFundsOptions";
 import { useRoute } from "@react-navigation/core";
 import { shouldShowNoahMenu, NoahRouteProp } from "~/logic/shouldShowNoahMenu";
@@ -11,7 +11,7 @@ import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 export const useReceiveNoahEntry = ():
   | {
       component: () => JSX.Element;
-      options: StackNavigationOptions;
+      options: NativeStackNavigationOptions;
     }
   | object => {
   const noah = useFeature("noah");
@@ -28,14 +28,14 @@ export const useReceiveNoahEntry = ():
     options: {
       headerShown: false,
       presentation: "transparentModal",
-      headerMode: "screen",
-      cardStyle: { opacity: 1 },
       gestureEnabled: true,
       headerTitle: () => null,
       headerRight: () => null,
       headerBackButtonDisplayMode: "minimal",
-      title: undefined,
-      cardStyleInterpolator: CardStyleInterpolators.forFadeFromBottomAndroid,
+      title: "",
+      contentStyle: {
+        opacity: 0.5,
+      },
     },
   };
 };

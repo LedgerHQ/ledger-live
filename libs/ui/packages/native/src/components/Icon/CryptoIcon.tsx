@@ -25,14 +25,6 @@ type FallbackProps = {
   name: string;
 };
 
-export const iconNames = Array.from(
-  Object.keys(icons).reduce((set, rawKey) => {
-    const key = rawKey;
-    if (!set.has(key)) set.add(key);
-    return set;
-  }, new Set<string>()),
-);
-
 const Container = styled(Flex).attrs((p: { size: number }) => ({
   heigth: p.size,
   width: p.size,

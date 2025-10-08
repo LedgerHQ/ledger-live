@@ -15,7 +15,7 @@ describe("Wallet Page", () => {
   testConfig.tags.forEach(tag => $Tag(tag));
   it("Portfolio Add Account - LLM", async () => {
     await app.portfolio.tapTabSelector("Accounts");
-    await app.addAccount.tapAddNewOrExistingAccountButton();
+    await app.portfolio.tapAddNewOrExistingAccountButton();
     await app.addAccount.importWithYourLedger();
     const isModularDrawer = await app.modularDrawer.isFlowEnabled("add_account");
     if (isModularDrawer) {

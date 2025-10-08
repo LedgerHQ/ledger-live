@@ -39,7 +39,7 @@ export function LiveApp({ route }: Props) {
 
   const dappUrl = customDappURL || customDappUrl;
 
-  if (dappUrl && manifest && manifest.params && "dappUrl" in manifest.params) {
+  if (dappUrl && manifest?.params && "dappUrl" in manifest.params) {
     manifest = {
       ...manifest,
       params: {
@@ -49,7 +49,7 @@ export function LiveApp({ route }: Props) {
     };
   }
 
-  if (dappUrl && manifest && manifest.dapp) {
+  if (dappUrl && manifest?.dapp) {
     manifest = {
       ...manifest,
       url: dappUrl,

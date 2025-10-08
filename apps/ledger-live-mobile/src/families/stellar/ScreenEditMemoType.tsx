@@ -7,7 +7,7 @@ import { StellarMemoType } from "@ledgerhq/live-common/families/stellar/types";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import LText from "~/components/LText";
 import type { State } from "~/reducers/types";
-import { ScreenName } from "~/const";
+import { NavigatorName, ScreenName } from "~/const";
 import makeGenericSelectScreen from "~/screens/makeGenericSelectScreen";
 import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { SendFundsNavigatorStackParamList } from "~/components/RootNavigator/types/SendFundsNavigator";
@@ -37,13 +37,16 @@ const mapStateToProps = (_state: State, props: NavigationProps) => ({
 
     if (value === "NO_MEMO") {
       const bridge = getAccountBridge(account);
-      // @ts-expect-error FIXME: No current / next navigation params?
-      navigation.navigate(ScreenName.SendSummary, {
-        accountId: account.id,
-        transaction: bridge.updateTransaction(transaction, {
-          memoType: value,
-          memoValue: null,
-        }),
+      // @ts-expect-error Unable to type navigate properly here
+      navigation.navigate(NavigatorName.SendFunds, {
+        screen: ScreenName.SendSummary,
+        params: {
+          accountId: account.id,
+          transaction: bridge.updateTransaction(transaction, {
+            memoType: value,
+            memoValue: null,
+          }),
+        },
       });
     } else {
       // @ts-expect-error FIXME: No current / next navigation params?

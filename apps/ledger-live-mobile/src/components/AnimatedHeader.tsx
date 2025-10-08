@@ -3,7 +3,6 @@ import {
   View,
   StyleSheet,
   Platform,
-  FlatList,
   StyleProp,
   ViewStyle,
   TextStyle,
@@ -14,20 +13,18 @@ import { useIsFocused } from "@react-navigation/native";
 import { useTheme } from "styled-components/native";
 import Animated, {
   interpolate,
-  Extrapolate,
+  Extrapolation,
   useSharedValue,
   useAnimatedScrollHandler,
   useAnimatedStyle,
+  FadeInUp,
 } from "react-native-reanimated";
-import * as Animatable from "react-native-animatable";
 import { space } from "@ledgerhq/native-ui/styles/theme";
 import Styles from "~/navigation/styles";
 import LText from "./LText";
 import { width } from "~/helpers/normalizeSize";
 import { NavigationHeaderBackButton } from "./NavigationHeaderBackButton";
 import { NavigationHeaderCloseButton } from "./NavigationHeaderCloseButton";
-
-const AnimatedView = Animatable.View;
 
 type Props = {
   title: React.ReactNode;
@@ -41,7 +38,7 @@ type Props = {
   titleStyle?: StyleProp<TextStyle>;
   edges?: ("top" | "right" | "left" | "bottom")[];
 };
-const AnimatedFlatList = Animated.createAnimatedComponent(FlatList);
+
 export default function AnimatedHeaderView({
   title,
   hasBackButton,
@@ -73,18 +70,18 @@ export default function AnimatedHeaderView({
     () => ({
       transform: [
         {
-          translateY: interpolate(scrollY.value, [0, 76], [0, -45], Extrapolate.CLAMP),
+          translateY: interpolate(scrollY.value, [0, 76], [0, -45], Extrapolation.CLAMP),
         },
         {
           translateX: interpolate(
             scrollY.value,
             [0, 76],
             [space[6], space[6] + (hasBackButton ? -5 : -40)],
-            Extrapolate.CLAMP,
+            Extrapolation.CLAMP,
           ),
         },
         {
-          scale: interpolate(scrollY.value, [0, 76], [1, 0.8], Extrapolate.CLAMP),
+          scale: interpolate(scrollY.value, [0, 76], [1, 0.8], Extrapolation.CLAMP),
         },
       ],
     }),
@@ -123,8 +120,8 @@ export default function AnimatedHeaderView({
         </Animated.View>
       </Animated.View>
       {children && isReady && (
-        <AnimatedView animation="fadeInUp" delay={50} duration={300}>
-          <AnimatedFlatList
+        <Animated.View entering={FadeInUp.delay(50).duration(300)}>
+          <Animated.FlatList
             onScroll={scrollHandler}
             scrollEventThrottle={10}
             contentContainerStyle={[styles.scrollArea]}
@@ -132,7 +129,7 @@ export default function AnimatedHeaderView({
             data={[children]}
             renderItem={({ item, index }) => <View key={index}>{item as React.ReactNode}</View>}
           />
-        </AnimatedView>
+        </Animated.View>
       )}
       {footer}
     </SafeAreaView>

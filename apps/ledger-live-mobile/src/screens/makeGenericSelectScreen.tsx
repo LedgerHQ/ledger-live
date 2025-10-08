@@ -1,7 +1,7 @@
 import React, { Component, useCallback } from "react";
 import { FlatList, StyleSheet } from "react-native";
 import { Box } from "@ledgerhq/native-ui";
-import { StackNavigationProp } from "@react-navigation/stack";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { track } from "~/analytics";
 import SettingsRow from "~/components/SettingsRow";
 
@@ -19,6 +19,7 @@ type Opts<Item> = {
   formatItem?: (_: Item) => React.ReactNode;
   Entry?: EntryComponent<Item>;
   ListHeaderComponent?: React.ComponentType;
+  flatListTestID?: string;
   // TODO in future: searchable: boolean
 };
 
@@ -59,14 +60,14 @@ type GenericScreenProps<Item> = {
   selectedKey?: string;
   items: Item[];
   onValueChange: (items: Item, props: GenericScreenProps<Item>) => void;
-  navigation: StackNavigationProp<{ [key: string]: object }>;
+  navigation: NativeStackNavigationProp<{ [key: string]: object }>;
   cancelNavigateBack?: boolean;
 };
 
 export default function makeGenericSelectScreen<Item extends { value: string; label: string }>(
   opts: Opts<Item>,
 ) {
-  const { id, itemEventProperties, keyExtractor } = opts;
+  const { id, itemEventProperties, keyExtractor, flatListTestID } = opts;
   const Entry: EntryComponent<Item> = getEntryFromOptions(opts);
 
   return class GenericSelectScreen extends Component<GenericScreenProps<Item>> {
@@ -97,6 +98,7 @@ export default function makeGenericSelectScreen<Item extends { value: string; la
             keyExtractor={keyExtractor}
             contentContainerStyle={styles.root}
             scrollIndicatorInsets={{ right: 1 }}
+            testID={flatListTestID}
           />
         </Box>
       );

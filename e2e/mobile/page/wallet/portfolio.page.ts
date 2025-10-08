@@ -1,6 +1,7 @@
 import { openDeeplink } from "../../helpers/commonHelpers";
 
 export default class PortfolioPage {
+  addNewOrExistingAccount = "add-new-account-button";
   baseLink = "portfolio";
   baseAssetItem = "assetItem-";
   zeroBalance = "$0.00";
@@ -32,6 +33,7 @@ export default class PortfolioPage {
   bigCurrencyRowRegex = new RegExp(`^${this.baseBigCurrency}-row-.*$`);
   graphCardBalanceDiffId = "graphCard-balance-delta";
   tabBarEarnButton = "tab-bar-earn";
+  portfolioOperationHistorySection = "portfolio-operation-history-section";
 
   portfolioSettingsButton = async () => getElementById(this.portfolioSettingsButtonId);
   assetItemId = (currencyName: string) => `${this.baseAssetItem}${currencyName}`;
@@ -91,7 +93,7 @@ export default class PortfolioPage {
 
   @Step("Expect operation row to be visible")
   async expectOperationRowToBeVisible() {
-    await scrollToId(this.operationRowCounterValue);
+    await scrollToId(this.operationRowCounterValue, this.accountsListView);
     await detoxExpect(getElementById(this.operationRowCounterValue)).toBeVisible();
   }
 
@@ -127,7 +129,7 @@ export default class PortfolioPage {
       await tapById(this.assetItemId(currencyName));
     } else {
       await tapById(this.showAllAssetsButton);
-      await scrollToId(this.assetItemId(currencyName));
+      await scrollToId(this.assetItemId(currencyName), this.accountsListView);
       await tapById(this.assetItemId(currencyName));
     }
   }
@@ -148,7 +150,7 @@ export default class PortfolioPage {
 
   @Step("Check asset allocation section")
   async checkAssetAllocationSection() {
-    await scrollToId(this.showAllAssetsButton);
+    await scrollToId(this.showAllAssetsButton, this.accountsListView);
     const assetsCount = await countElementsById(this.assetItemRegExp);
     jestExpect(assetsCount).toBeLessThanOrEqual(5);
     await detoxExpect(getElementById(this.showAllAssetsButton)).toBeVisible();
@@ -159,11 +161,11 @@ export default class PortfolioPage {
   @Step("Check accounts section")
   async checkAccountsSection() {
     await this.tapTabSelector("Accounts");
-    await scrollToId(this.showAllAccountsButton, undefined, 400);
+    await scrollToId(this.showAllAccountsButton, this.accountsListView, 400);
     jestExpect(await countElementsById(app.common.accountItemNameRegExp)).toBeLessThanOrEqual(5);
     await this.tapShowAllAccountsButton();
     jestExpect(await countElementsById(app.common.accountItemNameRegExp)).toBeGreaterThan(5);
-    await app.addAccount.tapAddNewOrExistingAccountButton();
+    await this.tapAddNewOrExistingAccountButton();
     await app.addAccount.importWithYourLedger();
   }
 
@@ -179,20 +181,25 @@ export default class PortfolioPage {
 
   @Step("Navigate asset Page")
   async goToSpecificAsset(currencyName: string) {
-    await scrollToId(this.allocationSectionTitleId);
+    await scrollToId(this.allocationSectionTitleId, this.accountsListView);
     if (await IsIdVisible(this.showAllAssetsButton)) {
       await tapById(this.showAllAssetsButton);
-      await scrollToId(this.assetItemId(currencyName));
+      await scrollToId(this.assetItemId(currencyName), this.accountsListView);
     }
     await tapById(this.assetItemId(currencyName));
   }
 
   @Step("Check asset transaction history")
   async checkTransactionAllocationSection() {
-    await scrollToId(this.transactionHistorySectionTitleId);
+    await scrollToId(this.transactionHistorySectionTitleId, this.accountsListView, 400);
     await detoxExpect(getElementById(this.transactionHistorySectionTitleId)).toBeVisible();
     jestExpect(await countElementsById(this.operationRowDate)).toBeLessThanOrEqual(3);
-    await scrollToId(this.seeAllTransactionsButton, undefined, 300, "bottom");
+    await scrollToId(
+      this.seeAllTransactionsButton,
+      this.portfolioOperationHistorySection,
+      300,
+      "bottom",
+    );
     await detoxExpect(getElementById(this.seeAllTransactionsButton)).toBeVisible();
     await tapById(this.seeAllTransactionsButton);
     jestExpect(await countElementsById(this.operationRowDate)).toBeGreaterThan(3);
@@ -215,7 +222,7 @@ export default class PortfolioPage {
 
   @Step("Tap on (Show All Accounts) button")
   async tapShowAllAccountsButton() {
-    await scrollToId(this.showAllAccountsButton);
+    await scrollToId(this.showAllAccountsButton, this.accountsListView);
     await tapById(this.showAllAccountsButton);
   }
 
@@ -230,5 +237,13 @@ export default class PortfolioPage {
   @Step("Open Earn tab from navigation bar")
   async openEarnTab() {
     await tapById(this.tabBarEarnButton);
+  }
+
+  @Step("Tap on (Add new or existing account) button")
+  async tapAddNewOrExistingAccountButton() {
+    if (!(await IsIdVisible(this.addNewOrExistingAccount))) {
+      await scrollToId(this.addNewOrExistingAccount, app.portfolio.accountsListView, 400);
+    }
+    await tapById(this.addNewOrExistingAccount);
   }
 }

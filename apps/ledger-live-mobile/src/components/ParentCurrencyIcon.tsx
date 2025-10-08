@@ -38,7 +38,7 @@ const ParentCurrencyIcon = ({
 
   const iconSize = size * 0.625;
   const parentIconBorderWidth = 2;
-  const parentIconCircleSize = size * 0.375 + parentIconBorderWidth * 2;
+  const parentIconCircleSize = size * 0.38 + parentIconBorderWidth * 2;
   const parentIconSize = size * 0.25;
 
   return (

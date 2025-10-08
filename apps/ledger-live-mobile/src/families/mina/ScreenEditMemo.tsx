@@ -9,7 +9,7 @@ import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { useIsFocused, useTheme } from "@react-navigation/native";
 import KeyboardView from "~/components/KeyboardView";
 import Button from "~/components/Button";
-import { ScreenName } from "~/const";
+import { NavigatorName, ScreenName } from "~/const";
 import { accountScreenSelector } from "~/reducers/accounts";
 import TextInput from "~/components/FocusedTextInput";
 import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
@@ -32,13 +32,16 @@ function MinaEditMemo({ navigation, route }: NavigationProps) {
   const onValidateText = useCallback(() => {
     const bridge = getAccountBridge(account);
     const { transaction } = route.params;
-    navigation.navigate(ScreenName.SendSummary, {
-      accountId: account.id,
-      transaction: bridge.updateTransaction(transaction, {
-        memo: memo && memo.toString(),
-      }),
-      currentNavigation: ScreenName.SendSummary,
-      nextNavigation: ScreenName.SendSelectDevice,
+    navigation.navigate(NavigatorName.SendFunds, {
+      screen: ScreenName.SendSummary,
+      params: {
+        accountId: account.id,
+        transaction: bridge.updateTransaction(transaction, {
+          memo: memo && memo.toString(),
+        }),
+        currentNavigation: ScreenName.SendSummary,
+        nextNavigation: ScreenName.SendSelectDevice,
+      },
     });
   }, [navigation, route.params, account, memo]);
   return (
