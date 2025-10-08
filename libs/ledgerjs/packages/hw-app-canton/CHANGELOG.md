@@ -1,5 +1,11 @@
 # @ledgerhq/hw-app-canton
 
+## 0.6.0-next.0
+
+### Minor Changes
+
+- [#11913](https://github.com/LedgerHQ/ledger-live/pull/11913) [`c8dbf40`](https://github.com/LedgerHQ/ledger-live/commit/c8dbf402268359e225a94782420111e786f875fa) Thanks [@ishaba](https://github.com/ishaba)! - add canton multiple accounts deployment
+
 ## 0.5.1
 
 ### Patch Changes

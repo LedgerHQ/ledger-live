@@ -1,5 +1,20 @@
 # @ledgerhq/live-dmk-mobile
 
+## 0.13.0-next.0
+
+### Minor Changes
+
+- [#12126](https://github.com/LedgerHQ/ledger-live/pull/12126) [`4cac377`](https://github.com/LedgerHQ/ledger-live/commit/4cac377401fac788e2bbedf7aee1ee57b82f4d18) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - use pnpm catalog for react & react-dom
+
+- [#11984](https://github.com/LedgerHQ/ledger-live/pull/11984) [`0c7d867`](https://github.com/LedgerHQ/ledger-live/commit/0c7d8673ac49a90d0a491e7236731a74dcb4d7e1) Thanks [@ofreyssinet-ledger](https://github.com/ofreyssinet-ledger)! - Fix BLE scanning issues
+
+- [#12204](https://github.com/LedgerHQ/ledger-live/pull/12204) [`7e0dfed`](https://github.com/LedgerHQ/ledger-live/commit/7e0dfedc7c06af31763bb7216cd89b94a395c304) Thanks [@aussedatlo](https://github.com/aussedatlo)! - update dmk versions
+
+### Patch Changes
+
+- Updated dependencies [[`4cac377`](https://github.com/LedgerHQ/ledger-live/commit/4cac377401fac788e2bbedf7aee1ee57b82f4d18), [`7e0dfed`](https://github.com/LedgerHQ/ledger-live/commit/7e0dfedc7c06af31763bb7216cd89b94a395c304)]:
+  - @ledgerhq/live-dmk-shared@0.14.0-next.0
+
 ## 0.12.1
 
 ### Patch Changes

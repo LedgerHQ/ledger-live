@@ -1,5 +1,19 @@
 # @ledgerhq/native-ui
 
+## 0.48.0-next.0
+
+### Minor Changes
+
+- [#12126](https://github.com/LedgerHQ/ledger-live/pull/12126) [`4cac377`](https://github.com/LedgerHQ/ledger-live/commit/4cac377401fac788e2bbedf7aee1ee57b82f4d18) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - use pnpm catalog for react & react-dom
+
+- [#12065](https://github.com/LedgerHQ/ledger-live/pull/12065) [`2a894ed`](https://github.com/LedgerHQ/ledger-live/commit/2a894ed2ba5300758cf1647921b00e1be0d469a7) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - : replace defaultProps with default parameters
+
+### Patch Changes
+
+- Updated dependencies [[`4cac377`](https://github.com/LedgerHQ/ledger-live/commit/4cac377401fac788e2bbedf7aee1ee57b82f4d18), [`1d9860c`](https://github.com/LedgerHQ/ledger-live/commit/1d9860cd1688131d391579955b40c6710b667db8), [`cab7d97`](https://github.com/LedgerHQ/ledger-live/commit/cab7d9794e7babb8220c6d339fb08e618e3d4202)]:
+  - @ledgerhq/crypto-icons-ui@1.21.0-next.0
+  - @ledgerhq/icons-ui@0.15.0-next.0
+
 ## 0.47.0
 
 ### Minor Changes

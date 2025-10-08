@@ -1,5 +1,38 @@
 # @ledgerhq/cryptoassets
 
+## 13.31.0-next.0
+
+### Minor Changes
+
+- [#12051](https://github.com/LedgerHQ/ledger-live/pull/12051) [`ea16f59`](https://github.com/LedgerHQ/ledger-live/commit/ea16f592e85019a1b77287a7f2b975c6fcffc74c) Thanks [@semeano](https://github.com/semeano)! - Fetch SUI tokens from dynamic CAL
+
+- [#12143](https://github.com/LedgerHQ/ledger-live/pull/12143) [`cfe65ca`](https://github.com/LedgerHQ/ledger-live/commit/cfe65cafa268be4e53197ee163ce78f28ed72592) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Deprecate cryptoassets function to anticipate Removal CAL initiative.
+
+- [#12186](https://github.com/LedgerHQ/ledger-live/pull/12186) [`a9aacdb`](https://github.com/LedgerHQ/ledger-live/commit/a9aacdb330700f0a294833f7d77de17f179229b2) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Remove deprecated `findTokenByTicker` function and related internal state. This function was ambiguous when multiple tokens shared the same ticker across different blockchains. Use `findTokenById` or `findTokenByAddressInCurrency` instead for more precise token lookup.
+
+- [#12185](https://github.com/LedgerHQ/ledger-live/pull/12185) [`89ac0ed`](https://github.com/LedgerHQ/ledger-live/commit/89ac0eddc145dcf5c7cf240aa8be4301372c8f33) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Remove deprecated findTokenByAddress in favor of findTokenByAddressInCurrency
+
+  Removed the deprecated `findTokenByAddress` function which had ambiguous behavior when multiple tokens shared the same contract address across different blockchains. The function has been fully replaced with `findTokenByAddressInCurrency` which requires both the token address and parent currency ID, providing more precise token lookup.
+
+  This includes:
+
+  - Removal of `findTokenByAddress` function from cryptoassets package
+  - Removal of `tokensByAddress` state dictionary
+  - Update all usages to `findTokenByAddressInCurrency` across the codebase
+  - Update CryptoAssetsStore interface to remove the deprecated method
+
+- [#12196](https://github.com/LedgerHQ/ledger-live/pull/12196) [`565da80`](https://github.com/LedgerHQ/ledger-live/commit/565da807b1ebbfc830fd0e47b3d8856f88d410a6) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Remove deprecated getTokenById and hasTokenId functions
+
+- [#12014](https://github.com/LedgerHQ/ledger-live/pull/12014) [`1d9860c`](https://github.com/LedgerHQ/ledger-live/commit/1d9860cd1688131d391579955b40c6710b667db8) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Canton testnet + logo update
+
+- [#11660](https://github.com/LedgerHQ/ledger-live/pull/11660) [`cab7d97`](https://github.com/LedgerHQ/ledger-live/commit/cab7d9794e7babb8220c6d339fb08e618e3d4202) Thanks [@Antoine-bls83](https://github.com/Antoine-bls83)! - Support Westend on LL
+
+### Patch Changes
+
+- Updated dependencies [[`cfe65ca`](https://github.com/LedgerHQ/ledger-live/commit/cfe65cafa268be4e53197ee163ce78f28ed72592), [`a9aacdb`](https://github.com/LedgerHQ/ledger-live/commit/a9aacdb330700f0a294833f7d77de17f179229b2), [`f1f3845`](https://github.com/LedgerHQ/ledger-live/commit/f1f3845942e4cbce9c585dc65f6170ddbc319f19), [`89ac0ed`](https://github.com/LedgerHQ/ledger-live/commit/89ac0eddc145dcf5c7cf240aa8be4301372c8f33), [`8645f01`](https://github.com/LedgerHQ/ledger-live/commit/8645f016191d29a55f6b0ca6e4b1d1909fd35445), [`db25e21`](https://github.com/LedgerHQ/ledger-live/commit/db25e212b87dea426b153c6f1d988cead63c8c46), [`cab7d97`](https://github.com/LedgerHQ/ledger-live/commit/cab7d9794e7babb8220c6d339fb08e618e3d4202)]:
+  - @ledgerhq/types-live@6.87.0-next.0
+  - @ledgerhq/live-env@2.19.0-next.0
+
 ## 13.30.0
 
 ### Minor Changes

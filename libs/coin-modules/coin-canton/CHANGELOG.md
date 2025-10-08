@@ -1,5 +1,34 @@
 # @ledgerhq/coin-canton
 
+## 0.8.0-next.0
+
+### Minor Changes
+
+- [#12099](https://github.com/LedgerHQ/ledger-live/pull/12099) [`5c72898`](https://github.com/LedgerHQ/ledger-live/commit/5c72898041dd7241e2c46798828fd0954f3adc07) Thanks [@jonezque](https://github.com/jonezque)! - allow alphanumeric after ::
+
+- [#12174](https://github.com/LedgerHQ/ledger-live/pull/12174) [`ece7245`](https://github.com/LedgerHQ/ledger-live/commit/ece7245975aa8f0bb93f22d555e99e6a558c4695) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Fix transfer value canton outgoing txs
+
+- [#12146](https://github.com/LedgerHQ/ledger-live/pull/12146) [`d850767`](https://github.com/LedgerHQ/ledger-live/commit/d850767ad021f879c4a08d321211426be7fe37b5) Thanks [@ishaba](https://github.com/ishaba)! - fix canton balance calculation
+
+- [#11913](https://github.com/LedgerHQ/ledger-live/pull/11913) [`c8dbf40`](https://github.com/LedgerHQ/ledger-live/commit/c8dbf402268359e225a94782420111e786f875fa) Thanks [@ishaba](https://github.com/ishaba)! - add canton multiple accounts deployment
+
+- [#11995](https://github.com/LedgerHQ/ledger-live/pull/11995) [`cd084da`](https://github.com/LedgerHQ/ledger-live/commit/cd084da9fb7b108b44cc86641d7a541bb290a08c) Thanks [@jonezque](https://github.com/jonezque)! - feat: changed recipient validation
+
+- [#12217](https://github.com/LedgerHQ/ledger-live/pull/12217) [`3344ce2`](https://github.com/LedgerHQ/ledger-live/commit/3344ce29ee60dee8262bb1d1f7a1f62d6bde6437) Thanks [@ishaba](https://github.com/ishaba)! - add account pre-approval check from api
+
+- [#12015](https://github.com/LedgerHQ/ledger-live/pull/12015) [`03af552`](https://github.com/LedgerHQ/ledger-live/commit/03af552b621e19e31747a65b1870dfe8d3bb005b) Thanks [@Justkant](https://github.com/Justkant)! - feat: new signRawTransaction to support any XRP transaction with wallet-api
+
+- [#12014](https://github.com/LedgerHQ/ledger-live/pull/12014) [`1d9860c`](https://github.com/LedgerHQ/ledger-live/commit/1d9860cd1688131d391579955b40c6710b667db8) Thanks [@hedi-edelbloute](https://github.com/hedi-edelbloute)! - Canton testnet + logo update
+
+### Patch Changes
+
+- Updated dependencies [[`ea16f59`](https://github.com/LedgerHQ/ledger-live/commit/ea16f592e85019a1b77287a7f2b975c6fcffc74c), [`cfe65ca`](https://github.com/LedgerHQ/ledger-live/commit/cfe65cafa268be4e53197ee163ce78f28ed72592), [`a9aacdb`](https://github.com/LedgerHQ/ledger-live/commit/a9aacdb330700f0a294833f7d77de17f179229b2), [`3979c07`](https://github.com/LedgerHQ/ledger-live/commit/3979c0715e4f54165c89d00ebe1441e064e1a110), [`f1f3845`](https://github.com/LedgerHQ/ledger-live/commit/f1f3845942e4cbce9c585dc65f6170ddbc319f19), [`c6a676f`](https://github.com/LedgerHQ/ledger-live/commit/c6a676ff80581ac19b896adf44d54812983b72da), [`b5fc1bd`](https://github.com/LedgerHQ/ledger-live/commit/b5fc1bd28fff091241905fec5ff8dc8af4c99b79), [`03af552`](https://github.com/LedgerHQ/ledger-live/commit/03af552b621e19e31747a65b1870dfe8d3bb005b), [`89ac0ed`](https://github.com/LedgerHQ/ledger-live/commit/89ac0eddc145dcf5c7cf240aa8be4301372c8f33), [`565da80`](https://github.com/LedgerHQ/ledger-live/commit/565da807b1ebbfc830fd0e47b3d8856f88d410a6), [`8645f01`](https://github.com/LedgerHQ/ledger-live/commit/8645f016191d29a55f6b0ca6e4b1d1909fd35445), [`1d9860c`](https://github.com/LedgerHQ/ledger-live/commit/1d9860cd1688131d391579955b40c6710b667db8), [`d2b12e7`](https://github.com/LedgerHQ/ledger-live/commit/d2b12e70bba9e772d078d1fe4d9c537b8d316a87), [`db25e21`](https://github.com/LedgerHQ/ledger-live/commit/db25e212b87dea426b153c6f1d988cead63c8c46), [`c8dbf40`](https://github.com/LedgerHQ/ledger-live/commit/c8dbf402268359e225a94782420111e786f875fa), [`cab7d97`](https://github.com/LedgerHQ/ledger-live/commit/cab7d9794e7babb8220c6d339fb08e618e3d4202)]:
+  - @ledgerhq/cryptoassets@13.31.0-next.0
+  - @ledgerhq/types-live@6.87.0-next.0
+  - @ledgerhq/coin-framework@6.7.0-next.0
+  - @ledgerhq/live-env@2.19.0-next.0
+  - @ledgerhq/live-network@2.0.20-next.0
+
 ## 0.7.0
 
 ### Minor Changes

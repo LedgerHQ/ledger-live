@@ -1,5 +1,19 @@
 # @ledgerhq/react-ui
 
+## 0.40.0-next.0
+
+### Minor Changes
+
+- [#12126](https://github.com/LedgerHQ/ledger-live/pull/12126) [`4cac377`](https://github.com/LedgerHQ/ledger-live/commit/4cac377401fac788e2bbedf7aee1ee57b82f4d18) Thanks [@mcayuelas-ledger](https://github.com/mcayuelas-ledger)! - use pnpm catalog for react & react-dom
+
+- [#12194](https://github.com/LedgerHQ/ledger-live/pull/12194) [`759b6c3`](https://github.com/LedgerHQ/ledger-live/commit/759b6c3c0ea39bef84ff340f8a3ee0dc8c48f9b4) Thanks [@LucasWerey](https://github.com/LucasWerey)! - LLD MAD fix address display
+
+### Patch Changes
+
+- Updated dependencies [[`4cac377`](https://github.com/LedgerHQ/ledger-live/commit/4cac377401fac788e2bbedf7aee1ee57b82f4d18), [`1d9860c`](https://github.com/LedgerHQ/ledger-live/commit/1d9860cd1688131d391579955b40c6710b667db8), [`cab7d97`](https://github.com/LedgerHQ/ledger-live/commit/cab7d9794e7babb8220c6d339fb08e618e3d4202)]:
+  - @ledgerhq/crypto-icons-ui@1.21.0-next.0
+  - @ledgerhq/icons-ui@0.15.0-next.0
+
 ## 0.39.0
 
 ### Minor Changes
