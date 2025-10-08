@@ -8,16 +8,13 @@ import { SyncOnboardingStackParamList } from "./types/SyncOnboardingNavigator";
 import { SyncOnboarding } from "~/screens/SyncOnboarding";
 import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
 import FirmwareUpdateScreen from "~/screens/FirmwareUpdate";
-import { NavigationHeaderBackButton } from "../NavigationHeaderBackButton";
+import { Button, IconsLegacy } from "@ledgerhq/native-ui";
 
 const Stack = createStackNavigator<SyncOnboardingStackParamList>();
 
 export const SyncOnboardingNavigator = () => {
   const { colors } = useTheme();
-  const stackNavigatorConfig = useMemo(
-    () => getStackNavigatorConfig(colors, undefined, undefined, true),
-    [colors],
-  );
+  const stackNavigatorConfig = useMemo(() => getStackNavigatorConfig(colors), [colors]);
 
   return (
     <Stack.Navigator
@@ -35,8 +32,8 @@ export const SyncOnboardingNavigator = () => {
           gestureEnabled: false,
           headerShown: true,
           headerTitle: () => null,
-          headerLeft: () => <NavigationHeaderBackButton />,
-          headerRight: () => null,
+          headerLeft: () => null,
+          headerRight: () => <Button Icon={IconsLegacy.CloseMedium} />,
         }}
       />
     </Stack.Navigator>
