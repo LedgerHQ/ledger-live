@@ -464,12 +464,16 @@
       "apt_description" : "لمبادلة Aptos، استخدم أي جهاز Ledger متوافق آخر مثل ™Ledger Nano S Plus أو ™Ledger Nano X أو ™Ledger Flex أو ™Ledger Stax.",
       "cosmos_title" : "™Ledger Nano S لا تدعم مبادلة Cosmos",
       "cosmos_description" : "لمبادلة Cosmos، استخدم أي جهاز Ledger متوافق آخر مثل ™Ledger Nano S Plus أو ™Ledger Nano X أو ™Ledger Flex أو ™Ledger Stax.",
+      "hedera_title" : "™Ledger Nano S لا تدعم مبادلة Hedera",
+      "hedera_description" : "لمبادلة Hedera، استخدِم أي جهاز Ledger متوافق آخر مثل ™Ledger Nano S Plus أو ™Ledger Nano X أو ™Ledger Flex أو ™Ledger Stax.",
       "osmo_title" : "™Ledger Nano S لا تدعم مبادلة Osmosis",
       "osmo_description" : "لمبادلة Osmosis، استخدم أي جهاز Ledger متوافق آخر مثل ™Ledger Nano S Plus أو ™Ledger Nano X أو ™Ledger Flex أو ™Ledger Stax.",
       "dydx_title" : "™Ledger Nano S لا تدعم مبادلة dYdX",
       "dydx_description" : "لمبادلة dYdX، استخدم أي جهاز Ledger متوافق آخر مثل ™Ledger Nano S Plus أو ™Ledger Nano X أو ™Ledger Flex أو ™Ledger Stax.",
       "sui_title" : "™Ledger Nano S لا تدعم مبادلة Sui",
-      "sui_description" : "لمبادلة Sui، استخدم أي جهاز Ledger آخر متوافق مثل ™Ledger Nano S Plus أو ™Ledger Nano X أو ™Ledger Flex أو ™Ledger Stax."
+      "sui_description" : "لمبادلة Sui، استخدم أي جهاز Ledger آخر متوافق مثل ™Ledger Nano S Plus أو ™Ledger Nano X أو ™Ledger Flex أو ™Ledger Stax.",
+      "kaspa_title" : "™Ledger Nano S لا تدعم مبادلة Kaspa",
+      "kaspa_description" : "لمبادلة Kaspa، استخدِم أي جهاز Ledger متوافق آخر مثل ™Ledger Nano S Plus أو ™Ledger Nano X أو ™Ledger Flex أو ™Ledger Stax."
     },
     "providers" : {
       "title" : "اختر أحد المزودين لمبادلة الأصول المشفرة",
@@ -2246,6 +2250,7 @@
   "receive" : {
     "title" : "تلقي",
     "successTitle" : "تمت مشاركة العنوان بشكل آمن",
+    "connectToNoah" : "Connecting you to Noah",
     "steps" : {
       "options" : {
         "fromBank" : {
@@ -5023,6 +5028,12 @@
     },
     "screens" : {
       "welcome" : {
+        "videos" : {
+          "buySell" : "محفظة تحمي وتجعلك أنت المتحكم",
+          "thousandsCrypto" : "إرسال وتلقي ومبادلة وتكديس آلاف الأصول المشفرة",
+          "secureWallet" : "تحقق من كل معاملاتك براحة بال"
+        },
+        "notice" : "بالمتابعة، أنت توافق على <Link1>شروط وأحكام</Link1> و<Link2>سياسة خصوصية</Link2> Ledger. لا تُقدم Ledger أي نصيحة مالية.\nخدمات المبادلة والتكديس مُقدَّمة من أطراف ثالثة.",
         "title" : "محفظة العملات المشفرة والرموز غير القابلة للاستبدال الأكثر أماناً",
         "description" : "إدارة وشراء وتنمية أصولك المشفرة رموزك غير القابلة للاستبدال بأمان على Ledger Live.",
         "nextButton" : "بدء الاستخدام",
@@ -5710,7 +5721,34 @@
     },
     "canton" : {
       "commentPlaceholder" : "اختياري",
-      "comment" : "تعليق"
+      "comment" : "تعليق",
+      "addAccount" : {
+        "title" : "Add Canton Account",
+        "onboard" : {
+          "title" : "Onboarding",
+          "newAccount" : "حساب جديد",
+          "init" : "Set up your new Canton account by clicking Continue",
+          "onboarded" : "Onboarded accounts",
+          "success" : "Your new Canton account has been created and onboarded.",
+          "error" : "Failed to onboard new account. Please try again.",
+          "status" : {
+            "prepare" : "Preparing account onboarding...",
+            "submit" : "Onboarding account...",
+            "default" : "Processing..."
+          }
+        },
+        "auth" : {
+          "title" : "Authorization",
+          "validator" : "تصريح",
+          "hint" : "Automaticaly accept incoming funds to this account.",
+          "error" : "Authorization failed. Please try again.",
+          "validatorLabel" : "Ledger Validator",
+          "validatorDescription" : "Automated fund acceptance"
+        },
+        "finish" : {
+          "title" : "تأكيد"
+        }
+      }
     },
     "stellar" : {
       "memo" : "ملاحظة (تسمية الوجهة)",
@@ -7141,7 +7179,7 @@
         "title" : "التخصيص",
         "description" : "لتلقي توصيات مخصصة ومحتوى يطابق تفضيلاتك ولمساعدتنا على قياس أداء حملاتنا التسويقية، نحن نشارك بيانات استخدام التطبيق، بما في ذلك النقرات وزيارات الصفحات وبيانات التحويل."
       },
-      "share" : "مشاركة"
+      "validate" : "تأكيد"
     },
     "variantB" : {
       "accept" : "قبول",
