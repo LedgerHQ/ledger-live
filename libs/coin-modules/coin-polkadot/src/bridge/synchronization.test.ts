@@ -6,6 +6,11 @@ import { PolkadotOperation } from "../types";
 import getAccountShape from "./synchronization";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 
+// Mock the coin config
+jest.mock("../config", () => ({
+  getCoinConfig: jest.fn(),
+}));
+
 const mockGetAccount = jest.fn();
 const mockGetOperations = jest.fn();
 jest.mock("../network", () => ({
@@ -22,10 +27,25 @@ jest.mock("../network", () => ({
 const CURRENCY = getCryptoCurrencyById("polkadot");
 const EXPECTED_CURRENCY = getCryptoCurrencyById("assethub_polkadot");
 
+// Import the mocked config
+import coinConfig from "../config";
+const mockGetCoinConfig = coinConfig.getCoinConfig as jest.MockedFunction<
+  typeof coinConfig.getCoinConfig
+>;
+
 describe("getAccountShape", () => {
   beforeEach(() => {
     mockGetAccount.mockClear();
     mockGetOperations.mockClear();
+    mockGetCoinConfig.mockClear();
+
+    mockGetCoinConfig.mockImplementation((currency?: CryptoCurrency): any => {
+      if (currency?.id === "assethub_polkadot") {
+        return {
+          hasBeenMigrated: true,
+        };
+      }
+    });
   });
 
   it("calls 2 apis", async () => {
