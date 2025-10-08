@@ -5,7 +5,12 @@ import { Linking } from "react-native";
 import React, { useCallback, useMemo, useRef, useState } from "react";
 import { ScrollView, StyleProp, ViewStyle } from "react-native";
 import Animated, { Easing, Layout } from "react-native-reanimated";
-import { Storyly } from "storyly-react-native";
+import type {
+  StoryGroup,
+  StoryEvent,
+  StoryLoadEvent,
+  StorylyMethods,
+} from "storyly-react-native-fabric";
 import styled from "styled-components/native";
 import StoryGroupItem, { type Props as StoryGroupItemProps } from "./StoryGroupItem";
 import StorylyLocalizedWrapper, { type Props as StorylyWrapperProps } from "./StorylyWrapper";
@@ -82,12 +87,12 @@ const defaultScrollContainerStyle: StyleProp<ViewStyle> = {
   flexGrow: 1,
 };
 
-const updateStoryGroupSeen = (storyGroupList: Storyly.StoryGroup) =>
+const updateStoryGroupSeen = (storyGroupList: StoryGroup) =>
   storyGroupList.stories.every(story => story.seen)
     ? { ...storyGroupList, seen: true }
     : storyGroupList;
 
-const computeNewStoryGroupList = (storyGroupList: StoryGroupInfo[], event: Storyly.StoryEvent) =>
+const computeNewStoryGroupList = (storyGroupList: StoryGroupInfo[], event: StoryEvent) =>
   storyGroupList.map(group =>
     group.id === event.storyGroup?.id && event.storyGroup
       ? updateStoryGroupSeen(event.storyGroup)
@@ -107,7 +112,7 @@ const Stories: React.FC<Props> = props => {
     noLoadingPlaceholder,
   } = props;
 
-  const storylyRef = useRef<Storyly>(null);
+  const storylyRef = useRef<StorylyMethods>(null);
   const [storyGroupList, setStoryGroupList] = useState<StoryGroupInfo[]>(
     noLoadingPlaceholder ? [] : placeholderContent,
   );
@@ -117,7 +122,7 @@ const Stories: React.FC<Props> = props => {
   }, [setStoryGroupList]);
 
   const handleLoad = useCallback(
-    (event: Storyly.StoryLoadEvent) => {
+    (event: StoryLoadEvent) => {
       if (!isEqual(storyGroupList, event.storyGroupList)) setStoryGroupList(event.storyGroupList);
     },
     [storyGroupList, setStoryGroupList],
@@ -129,7 +134,7 @@ const Stories: React.FC<Props> = props => {
   }, []);
 
   const handleEvent = useCallback(
-    (event: Storyly.StoryEvent) => {
+    (event: StoryEvent) => {
       if (["StoryGroupClosed", "StoryGroupCompleted"].includes(event.event)) {
         const newStoryGroupList = computeNewStoryGroupList(storyGroupList, event);
         if (!isEqual(storyGroupList, newStoryGroupList)) setStoryGroupList(newStoryGroupList);

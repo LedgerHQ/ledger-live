@@ -50,8 +50,9 @@ describe("Device Selection feature integration test", () => {
     render(<DeviceSelectionNavigator />);
 
     const screenTitle = screen.getByText(/Connect device/i);
-    const listHeader = screen.getByText(/Devices/i);
     const stepIndicator = screen.getByText(/Step 2 of 3/i);
+    const listHeader = screen.getByText(/Devices/i);
+
     const addDeviceCTA = screen.getByText(/Add a Ledger/i);
     const bottomText = screen.getByText(/Need a new Ledger?/i);
     const buyNowCTA = screen.getByText(/Buy now?/i);

@@ -1,14 +1,23 @@
+import { delay } from "../../helpers/commonHelpers";
+
 export class TradePageUtil {
   accountId = (t: string) => `test-id-account-${t}`;
 
   static async selectAccount(account: string) {
-    const CurrencyRowId = `test-id-account-${account}`;
-    const AccountListId = "account-list";
-    await scrollToId(CurrencyRowId, AccountListId);
+    const accountRowId = `test-id-account-${account}`;
+    const accountListId = "account-list";
 
-    // account row may be partially hidden by the bottom bar
-    await getElementById(AccountListId).scroll(25, "down");
-    await waitForElementById(CurrencyRowId);
-    await tapById(CurrencyRowId);
+    await waitForElementById(accountListId);
+    await delay(500);
+
+    // Check if account is already visible
+    const isVisible = await IsIdVisible(accountRowId);
+
+    if (!isVisible) {
+      await getElementById(accountListId).scroll(50, "down");
+    }
+
+    await scrollToId(accountRowId, accountListId);
+    await tapById(accountRowId);
   }
 }

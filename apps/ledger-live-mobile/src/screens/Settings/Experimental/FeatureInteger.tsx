@@ -102,7 +102,7 @@ const FeatureInteger = ({
           if (inputRef.current) {
             inputRef.current.focus();
           }
-        }, 16);
+        }, 100);
         onChange(name, constraintValue(value));
       } else {
         onChange(name, getEnvDefault(name));
@@ -132,6 +132,9 @@ const FeatureInteger = ({
           keyboardType="numeric"
           value={enabled ? inputValue : ""}
           onChangeText={onInputChange}
+          editable={enabled}
+          showSoftInputOnFocus={enabled}
+          autoFocus={false}
         />
       </Flex>
     </>

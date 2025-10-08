@@ -44,6 +44,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { DisplayedDevice } from "./DisplayedDevice";
 import BleDeviceNotAvailableDrawer from "./BleDeviceNotAvailableDrawer";
 import { mapLegacyScannedDeviceToScannedDevice } from "./mapLegacyScannedDeviceToScannedDevice";
+import { TAB_BAR_HEIGHT } from "../TabBar/shared";
 
 export type { SetHeaderOptionsRequest };
 
@@ -535,7 +536,7 @@ export default function SelectDevice({
                 {children}
               </Flex>
             </Flex>
-            <Flex alignItems="center" my={8} mb={bottom}>
+            <Flex alignItems="center" my={8} mb={bottom + TAB_BAR_HEIGHT + 8}>
               <BuyDeviceCTA />
             </Flex>
           </ScrollContainer>

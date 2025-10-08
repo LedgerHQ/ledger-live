@@ -1,6 +1,6 @@
 import React from "react";
 import { CurrencyConfig } from "@ledgerhq/coin-framework/config";
-import { View } from "react-native-animatable";
+import { View } from "react-native";
 import Alert from "~/components/Alert";
 
 type Props = {

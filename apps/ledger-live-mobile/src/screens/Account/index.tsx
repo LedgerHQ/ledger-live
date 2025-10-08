@@ -11,7 +11,7 @@ import { useTranslation } from "react-i18next";
 import { getCurrencyColor } from "@ledgerhq/live-common/currencies/index";
 import { useTheme } from "styled-components/native";
 import { getMainAccount, isAccountEmpty } from "@ledgerhq/live-common/account/helpers";
-import { StackNavigationProp } from "@react-navigation/stack";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { switchCountervalueFirst } from "~/actions/settings";
 import { useBalanceHistoryWithCountervalue } from "~/hooks/portfolio";
 import {
@@ -84,7 +84,7 @@ const AccountScreenInner = ({
 }) => {
   const { t } = useTranslation();
   const { colors } = useTheme();
-  const navigation = useNavigation<StackNavigationProp<AccountsNavigatorParamList>>();
+  const navigation = useNavigation<NativeStackNavigationProp<AccountsNavigatorParamList>>();
   const dispatch = useDispatch();
   const range = useSelector(selectedTimeRangeSelector);
   const { countervalueAvailable, countervalueChange, cryptoChange, history } =

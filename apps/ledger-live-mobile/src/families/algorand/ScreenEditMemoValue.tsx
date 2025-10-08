@@ -7,7 +7,7 @@ import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { useTheme } from "@react-navigation/native";
 import KeyboardView from "~/components/KeyboardView";
 import Button from "~/components/Button";
-import { ScreenName } from "~/const";
+import { NavigatorName, ScreenName } from "~/const";
 import TextInput from "~/components/FocusedTextInput";
 import type { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { SendFundsNavigatorStackParamList } from "~/components/RootNavigator/types/SendFundsNavigator";

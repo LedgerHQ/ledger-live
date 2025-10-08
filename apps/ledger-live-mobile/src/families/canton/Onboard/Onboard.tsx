@@ -1,6 +1,6 @@
 import React, { useMemo } from "react";
 import { Platform } from "react-native";
-import { createStackNavigator } from "@react-navigation/stack";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useTheme } from "@react-navigation/native";
 import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
 import { ScreenName } from "~/const";
@@ -37,4 +37,4 @@ const options = {
   headerShown: false,
 };
 export { Onboard as component, options };
-const Stack = createStackNavigator<CantonOnboardAccountParamList>();
+const Stack = createNativeStackNavigator<CantonOnboardAccountParamList>();

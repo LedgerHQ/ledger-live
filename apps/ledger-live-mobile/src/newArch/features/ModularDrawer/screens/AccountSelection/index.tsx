@@ -1,6 +1,3 @@
-import React, { useCallback, useRef } from "react";
-import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { AccountLike } from "@ledgerhq/types-live";
 import { FlatList } from "react-native";
 import { BottomSheetVirtualizedList } from "@gorhom/bottom-sheet";
 import {
@@ -15,6 +12,9 @@ import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 import { modularDrawerFlowSelector, modularDrawerSourceSelector } from "~/reducers/modularDrawer";
 import { withDiscreetMode } from "~/context/DiscreetModeContext";
+import React, { useCallback, useRef } from "react";
+import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { AccountLike } from "@ledgerhq/types-live";
 
 export type AccountSelectionStepProps = {
   onAccountSelected?: (account: AccountLike, parentAccount?: AccountLike) => void;

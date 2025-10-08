@@ -164,7 +164,7 @@ export const ElementHelpers = {
   ) {
     const scrollViewMatcher = scrollViewId
       ? by.id(scrollViewId)
-      : by.type(isAndroid() ? "android.widget.ScrollView" : "RCTScrollView");
+      : by.type(isAndroid() ? "android.widget.ScrollView" : "RCTEnhancedScrollView");
     if (!isAndroid()) sync_delay(200); // Issue with RN75 : QAA-370
     await waitFor(element(elementMatcher))
       .toBeVisible()
