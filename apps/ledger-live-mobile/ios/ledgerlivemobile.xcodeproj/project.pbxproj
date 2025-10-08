@@ -576,7 +576,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "APP_PATH=\"${TARGET_BUILD_DIR}/${WRAPPER_NAME}\"\n\n# This script loops through the frameworks embedded in the application and\n# removes unused architectures.\nfind \"$APP_PATH\" -name '*.framework' -type d | while read -r FRAMEWORK\ndo\n    FRAMEWORK_EXECUTABLE_NAME=$(defaults read \"$FRAMEWORK/Info.plist\" CFBundleExecutable)\n    FRAMEWORK_EXECUTABLE_PATH=\"$FRAMEWORK/$FRAMEWORK_EXECUTABLE_NAME\"\n    echo \"Executable is $FRAMEWORK_EXECUTABLE_PATH\"\n\n    EXTRACTED_ARCHS=()\n\n    for ARCH in $ARCHS\n    do\n        echo \"Extracting $ARCH from $FRAMEWORK_EXECUTABLE_NAME\"\n        lipo -extract \"$ARCH\" \"$FRAMEWORK_EXECUTABLE_PATH\" -o \"$FRAMEWORK_EXECUTABLE_PATH-$ARCH\"\n        EXTRACTED_ARCHS+=(\"$FRAMEWORK_EXECUTABLE_PATH-$ARCH\")\n    done\n\n    echo \"Merging extracted architectures: ${ARCHS}\"\n    lipo -o \"$FRAMEWORK_EXECUTABLE_PATH-merged\" -create \"${EXTRACTED_ARCHS[@]}\"\n    rm \"${EXTRACTED_ARCHS[@]}\"\n\n    echo \"Replacing original executable with thinned version\"\n    rm \"$FRAMEWORK_EXECUTABLE_PATH\"\n    mv \"$FRAMEWORK_EXECUTABLE_PATH-merged\" \"$FRAMEWORK_EXECUTABLE_PATH\"\n\ndone\n";
+			shellScript = "APP_PATH=\"${TARGET_BUILD_DIR}/${WRAPPER_NAME}\"\n\n# This script loops through the frameworks embedded in the application and\n# removes unused architectures.\nfind \"$APP_PATH\" -name '*.framework' -type d | while read -r FRAMEWORK\ndo\n    FRAMEWORK_EXECUTABLE_NAME=$(defaults read \"$FRAMEWORK/Info.plist\" CFBundleExecutable 2>/dev/null)\n    if [ -z \"$FRAMEWORK_EXECUTABLE_NAME\" ]; then\n        echo \"Skipping $FRAMEWORK (no executable)\"\n        continue\n    fi\n    \n    FRAMEWORK_EXECUTABLE_PATH=\"$FRAMEWORK/$FRAMEWORK_EXECUTABLE_NAME\"\n    if [ ! -f \"$FRAMEWORK_EXECUTABLE_PATH\" ]; then\n        echo \"Skipping $FRAMEWORK (executable not found)\"\n        continue\n    fi\n    \n    echo \"Processing: $FRAMEWORK_EXECUTABLE_PATH\"\n    \n    # Check if the binary is fat or thin\n    LIPO_INFO=$(lipo -info \"$FRAMEWORK_EXECUTABLE_PATH\" 2>/dev/null)\n    \n    if echo \"$LIPO_INFO\" | grep -q \"Non-fat\"; then\n        echo \"  Already thin binary, skipping extraction\"\n        continue\n    fi\n    \n    echo \"  Fat binary detected, extracting architectures\"\n    EXTRACTED_ARCHS=()\n\n    for ARCH in $ARCHS\n    do\n        echo \"  Extracting $ARCH from $FRAMEWORK_EXECUTABLE_NAME\"\n        if lipo -extract \"$ARCH\" \"$FRAMEWORK_EXECUTABLE_PATH\" -o \"$FRAMEWORK_EXECUTABLE_PATH-$ARCH\" 2>/dev/null; then\n            EXTRACTED_ARCHS+=(\"$FRAMEWORK_EXECUTABLE_PATH-$ARCH\")\n        else\n            echo \"  Warning: Could not extract $ARCH (may not be present in binary)\"\n        fi\n    done\n    \n    if [ ${#EXTRACTED_ARCHS[@]} -eq 0 ]; then\n        echo \"  No architectures extracted, skipping\"\n        continue\n    fi\n\n    echo \"  Merging extracted architectures: ${ARCHS}\"\n    lipo -o \"$FRAMEWORK_EXECUTABLE_PATH-merged\" -create \"${EXTRACTED_ARCHS[@]}\"\n    rm \"${EXTRACTED_ARCHS[@]}\"\n\n    echo \"  Replacing original executable with thinned version\"\n    rm \"$FRAMEWORK_EXECUTABLE_PATH\"\n    mv \"$FRAMEWORK_EXECUTABLE_PATH-merged\" \"$FRAMEWORK_EXECUTABLE_PATH\"\n\ndone\n";
 		};
 		7707F4C7A182655B8C8EE1E6 /* [Expo] Configure project */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -868,7 +868,7 @@
 					" ",
 				);
 				OTHER_LDFLAGS = "$(inherited)";
-				REACT_NATIVE_PATH = "${PODS_ROOT}/../../../../node_modules/.pnpm/react-native@0.77.3_@babel+core@7.27.1_@babel+preset-env@7.27.1_@babel+core@7.27.1__@react-na_iudnv3opqrvtatz53lek2dkvwu/node_modules/react-native";
+				REACT_NATIVE_PATH = "${PODS_ROOT}/../../../../node_modules/.pnpm/react-native@0.77.3_patch_hash=hcyge4gdiiwuwax5k7xvija4ca_@babel+core@7.27.1_@babel+preset-en_ftejaai4dnohq47ak4aakg4mj4/node_modules/react-native";
 				SDKROOT = iphoneos;
 				SWIFT_VERSION = 5.0;
 				USE_HERMES = true;
@@ -1013,7 +1013,7 @@
 					" ",
 				);
 				OTHER_LDFLAGS = "$(inherited)";
-				REACT_NATIVE_PATH = "${PODS_ROOT}/../../../../node_modules/.pnpm/react-native@0.77.3_@babel+core@7.27.1_@babel+preset-env@7.27.1_@babel+core@7.27.1__@react-na_iudnv3opqrvtatz53lek2dkvwu/node_modules/react-native";
+				REACT_NATIVE_PATH = "${PODS_ROOT}/../../../../node_modules/.pnpm/react-native@0.77.3_patch_hash=hcyge4gdiiwuwax5k7xvija4ca_@babel+core@7.27.1_@babel+preset-en_ftejaai4dnohq47ak4aakg4mj4/node_modules/react-native";
 				SDKROOT = iphoneos;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) DEBUG";
 				SWIFT_VERSION = 5.0;
@@ -1102,7 +1102,7 @@
 					" ",
 				);
 				OTHER_LDFLAGS = "$(inherited)";
-				REACT_NATIVE_PATH = "${PODS_ROOT}/../../../../node_modules/.pnpm/react-native@0.77.3_@babel+core@7.27.1_@babel+preset-env@7.27.1_@babel+core@7.27.1__@react-na_iudnv3opqrvtatz53lek2dkvwu/node_modules/react-native";
+				REACT_NATIVE_PATH = "${PODS_ROOT}/../../../../node_modules/.pnpm/react-native@0.77.3_patch_hash=hcyge4gdiiwuwax5k7xvija4ca_@babel+core@7.27.1_@babel+preset-en_ftejaai4dnohq47ak4aakg4mj4/node_modules/react-native";
 				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_VERSION = 5.0;
@@ -1192,7 +1192,7 @@
 					" ",
 				);
 				OTHER_LDFLAGS = "$(inherited)";
-				REACT_NATIVE_PATH = "${PODS_ROOT}/../../../../node_modules/.pnpm/react-native@0.77.3_@babel+core@7.27.1_@babel+preset-env@7.27.1_@babel+core@7.27.1__@react-na_iudnv3opqrvtatz53lek2dkvwu/node_modules/react-native";
+				REACT_NATIVE_PATH = "${PODS_ROOT}/../../../../node_modules/.pnpm/react-native@0.77.3_patch_hash=hcyge4gdiiwuwax5k7xvija4ca_@babel+core@7.27.1_@babel+preset-en_ftejaai4dnohq47ak4aakg4mj4/node_modules/react-native";
 				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_VERSION = 5.0;
@@ -1332,7 +1332,7 @@
 					" ",
 				);
 				OTHER_LDFLAGS = "$(inherited)";
-				REACT_NATIVE_PATH = "${PODS_ROOT}/../../../../node_modules/.pnpm/react-native@0.77.3_@babel+core@7.27.1_@babel+preset-env@7.27.1_@babel+core@7.27.1__@react-na_iudnv3opqrvtatz53lek2dkvwu/node_modules/react-native";
+				REACT_NATIVE_PATH = "${PODS_ROOT}/../../../../node_modules/.pnpm/react-native@0.77.3_patch_hash=hcyge4gdiiwuwax5k7xvija4ca_@babel+core@7.27.1_@babel+preset-en_ftejaai4dnohq47ak4aakg4mj4/node_modules/react-native";
 				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_VERSION = 5.0;

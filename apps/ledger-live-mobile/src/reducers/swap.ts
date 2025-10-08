@@ -24,10 +24,6 @@ export const flattenPairs = (acc: Array<Pair>, value: AvailableProviderV3): Pair
   ...value.pairs,
 ];
 
-export type UPDATE_PROVIDERS_TYPE = {
-  payload: SwapStateType["providers"];
-};
-
 const handlers: ReducerMap<SwapStateType, SwapPayload> = {
   [SwapActionTypes.UPDATE_PROVIDERS]: (_state, action) => {
     const providers = (action as Action<UpdateProvidersPayload>).payload;

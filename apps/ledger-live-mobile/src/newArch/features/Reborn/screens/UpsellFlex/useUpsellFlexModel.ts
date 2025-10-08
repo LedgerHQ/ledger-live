@@ -51,6 +51,7 @@ const useUpsellFlexModel = () => {
         screen: ScreenName.OnboardingDeviceSelection,
       },
     });
+
     if (readOnlyModeEnabled) {
       track("message_clicked", {
         message: "I already have a device, set it up now",

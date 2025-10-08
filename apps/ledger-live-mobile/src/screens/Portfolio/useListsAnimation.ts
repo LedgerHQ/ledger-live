@@ -88,21 +88,42 @@ const useListsAnimation = (initialTab: TabListType) => {
   );
 
   useEffect(() => {
-    if (selectedTab === TAB_OPTIONS.Assets) {
-      // Assets tab is selected so here is the default position
-      assetsTranslateX.value = withTiming(0, { duration: ANIMATION_DURATION });
-      assetsOpacity.value = withTiming(1, { duration: ANIMATION_DURATION });
-      // Accounts tab is not selected so here is the end position
-      accountsTranslateX.value = withTiming(containerWidth / 3, { duration: ANIMATION_DURATION });
-      accountsOpacity.value = withTiming(0, { duration: ANIMATION_DURATION });
-    } else {
-      // Assets tab is not selected so here is the end position
-      assetsTranslateX.value = withTiming(-containerWidth / 3, { duration: ANIMATION_DURATION });
-      assetsOpacity.value = withTiming(0, { duration: ANIMATION_DURATION });
-      // Accounts tab is selected so here is the default position
-      accountsTranslateX.value = withTiming(-containerWidth / 2, { duration: ANIMATION_DURATION });
-      accountsOpacity.value = withTiming(1, { duration: ANIMATION_DURATION });
-    }
+    // Use requestAnimationFrame to ensure layout is complete before starting animations
+    const rafId = requestAnimationFrame(() => {
+      if (selectedTab === TAB_OPTIONS.Assets) {
+        // Assets tab is selected so here is the default position
+        assetsTranslateX.value = withTiming(0, {
+          duration: ANIMATION_DURATION,
+        });
+        assetsOpacity.value = withTiming(1, {
+          duration: ANIMATION_DURATION,
+        });
+        // Accounts tab is not selected so here is the end position
+        accountsTranslateX.value = withTiming(containerWidth / 3, {
+          duration: ANIMATION_DURATION,
+        });
+        accountsOpacity.value = withTiming(0, {
+          duration: ANIMATION_DURATION,
+        });
+      } else {
+        // Assets tab is not selected so here is the end position
+        assetsTranslateX.value = withTiming(-containerWidth / 3, {
+          duration: ANIMATION_DURATION,
+        });
+        assetsOpacity.value = withTiming(0, {
+          duration: ANIMATION_DURATION,
+        });
+        // Accounts tab is selected so here is the default position
+        accountsTranslateX.value = withTiming(-containerWidth / 2, {
+          duration: ANIMATION_DURATION,
+        });
+        accountsOpacity.value = withTiming(1, {
+          duration: ANIMATION_DURATION,
+        });
+      }
+    });
+
+    return () => cancelAnimationFrame(rafId);
   }, [
     selectedTab,
     containerWidth,

@@ -6,7 +6,7 @@ import { ScrollView } from "react-native-gesture-handler";
 import { Flex, Text, Box } from "@ledgerhq/native-ui";
 import { Linking, StyleProp, ViewStyle } from "react-native";
 import snakeCase from "lodash/snakeCase";
-import { StackNavigationProp } from "@react-navigation/stack";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { IconType } from "@ledgerhq/native-ui/components/Icon/type";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { NavigatorName } from "~/const";
@@ -40,7 +40,7 @@ type ButtonItem = {
 };
 
 export default function TransferDrawer({ onClose }: Omit<ModalProps, "isRequestingToBeOpened">) {
-  const navigation = useNavigation<StackNavigationProp<BaseNavigatorStackParamList>>();
+  const navigation = useNavigation<NativeStackNavigationProp<BaseNavigatorStackParamList>>();
   const { quickActionsList } = useQuickActions();
   const { SEND, RECEIVE, BUY, SELL, SWAP, STAKE, RECOVER } = quickActionsList;
   const stakeLabel = getStakeLabelLocaleBased();

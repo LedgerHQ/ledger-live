@@ -1,5 +1,5 @@
 import * as React from "react";
-import { createStackNavigator } from "@react-navigation/stack";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { ScreenName } from "~/const";
 import { Button, IconsLegacy } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
@@ -63,7 +63,7 @@ const MockComponent = () => {
   );
 };
 
-const Stack = createStackNavigator<BaseNavigatorStackParamList>();
+const Stack = createNativeStackNavigator<BaseNavigatorStackParamList>();
 
 export function TestButtonPage() {
   return (

@@ -12,8 +12,10 @@ import Animated, {
 import getWindowDimensions from "~/logic/getWindowDimensions";
 import CurrencyGradient from "./CurrencyGradient";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useExperimental } from "~/experimental";
 
-const windowsWidth = getWindowDimensions().width;
+const WINDOW_WIDTH = getWindowDimensions().width;
+const NAVIGATION_HEADER_HEIGHT = 50;
 
 function CurrencyHeaderLayout({
   currentPositionY,
@@ -33,7 +35,9 @@ function CurrencyHeaderLayout({
   currencyColor: string;
 }) {
   const insets = useSafeAreaInsets();
-  const headerHeight = insets.top + 50;
+  const hasExperimentalHeader = useExperimental();
+  const insetsTop = hasExperimentalHeader ? 4 : insets.top;
+  const adjustedNavigationHeaderHeight = insetsTop + NAVIGATION_HEADER_HEIGHT;
   const BeforeScrollAnimation = useAnimatedStyle(() => {
     const opacity =
       currentPositionY.value === 0
@@ -48,7 +52,7 @@ function CurrencyHeaderLayout({
     return {
       opacity,
     };
-  }, [currentPositionY.value, graphCardEndPosition]);
+  }, [currentPositionY, graphCardEndPosition]);
 
   const AfterScrollAnimation = useAnimatedStyle(() => {
     const opacity = interpolate(
@@ -61,7 +65,7 @@ function CurrencyHeaderLayout({
     return {
       opacity,
     };
-  }, [currentPositionY.value, graphCardEndPosition]);
+  }, [currentPositionY, graphCardEndPosition]);
 
   const BackgroundOpacity = useAnimatedStyle(() => {
     const opacity = interpolate(
@@ -74,7 +78,7 @@ function CurrencyHeaderLayout({
     return {
       opacity,
     };
-  }, [currentPositionY.value, graphCardEndPosition]);
+  }, [currentPositionY, graphCardEndPosition]);
 
   return (
     <Header
@@ -83,34 +87,34 @@ function CurrencyHeaderLayout({
       px={6}
       py={4}
       justifyContent="space-between"
-      width={windowsWidth}
-      height={headerHeight}
-      pt={insets.top}
+      width={WINDOW_WIDTH}
+      height={adjustedNavigationHeaderHeight}
+      pt={insetsTop}
     >
       <Animated.View
         style={[
           {
             position: "absolute",
-            width: windowsWidth,
-            height: headerHeight,
+            width: WINDOW_WIDTH,
+            height: adjustedNavigationHeaderHeight,
             overflow: "hidden",
           },
           BackgroundOpacity,
         ]}
       >
-        <Box height={"100%"} width={windowsWidth}>
+        <Box height={"100%"} width={WINDOW_WIDTH}>
           <CurrencyGradient gradientColor={currencyColor} />
         </Box>
       </Animated.View>
       <Box>{leftElement}</Box>
-      <Flex flexDirection={"row"} alignItems={"center"}>
-        <CenteredElement width={windowsWidth}>
-          <Animated.View style={[AfterScrollAnimation]}>{centerAfterScrollElement}</Animated.View>
-        </CenteredElement>
-        <CenteredElement width={windowsWidth}>
-          <Animated.View style={[BeforeScrollAnimation]}>{centerBeforeScrollElement}</Animated.View>
-        </CenteredElement>
-      </Flex>
+      <CenteredElement>
+        <Animated.View style={[{ position: "absolute" }, AfterScrollAnimation]}>
+          {centerAfterScrollElement}
+        </Animated.View>
+        <Animated.View style={[{ position: "absolute" }, BeforeScrollAnimation]}>
+          {centerBeforeScrollElement}
+        </Animated.View>
+      </CenteredElement>
       <Box>{rightElement}</Box>
     </Header>
   );
@@ -120,15 +124,16 @@ export default CurrencyHeaderLayout;
 
 const Header = styled(Flex)`
   position: absolute;
+  display: flex;
+  flex-direction: row;
+  width: 100%;
 `;
 
-const CenteredElement = styled(Flex).attrs((p: { width: number }) => ({
-  flexDirection: "row",
-  justifyContent: "center",
-  alignItems: "center",
-  height: 48,
-  left: -p.width / 2 + p.width * 0.15,
-  width: p.width * 0.7,
-}))`
-  position: absolute;
+const CenteredElement = styled(Flex)`
+  position: relative;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  height: 48px;
+  flex: 1;
 `;

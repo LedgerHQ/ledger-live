@@ -62,7 +62,7 @@ export class PageScroller {
     if (scrollViewId) {
       return element(by.id(scrollViewId));
     }
-    const type = isAndroid() ? "android.widget.ScrollView" : "RCTScrollView";
+    const type = isAndroid() ? "android.widget.ScrollView" : "RCTEnhancedScrollView";
     return element(by.type(type)).atIndex(0);
   }
 

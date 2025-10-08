@@ -172,7 +172,7 @@ describe("<UpdateBanner />", () => {
   });
 
   it("should open the unsupported drawer if there is an update but it's iOS", async () => {
-    PlatformSpy.mockReturnValue({ OS: "ios" } as typeof ReactNative.Platform);
+    PlatformSpy.mockReturnValue({ ...ReactNative.Platform, OS: "ios" });
     useLatestFirmware.mockReturnValue({
       final: {
         name: "mockVersion",
@@ -216,7 +216,7 @@ describe("<UpdateBanner />", () => {
 
   it("should open the unsupported drawer if there is a bluetooth update on Android on Nano X with version < 2.4.0", async () => {
     const { fwVersion, ...nanoX } = OUTDATED_NANOX_BLE_UPDATE;
-    PlatformSpy.mockReturnValue({ OS: "android" } as typeof ReactNative.Platform);
+    PlatformSpy.mockReturnValue({ ...ReactNative.Platform, OS: "android" });
     useLatestFirmware.mockReturnValue({
       final: {
         name: "mockVersion",
@@ -254,7 +254,7 @@ describe("<UpdateBanner />", () => {
 
   it("should open the unsupported drawer if there is a bluetooth update on iOS on Nano X with version < 2.4.0", async () => {
     const { fwVersion, ...nanoX } = OUTDATED_NANOX_BLE_UPDATE;
-    PlatformSpy.mockReturnValue({ OS: "ios" } as typeof ReactNative.Platform);
+    PlatformSpy.mockReturnValue({ ...ReactNative.Platform, OS: "ios" });
     useLatestFirmware.mockReturnValue({
       final: {
         name: "mockVersion",
@@ -291,7 +291,7 @@ describe("<UpdateBanner />", () => {
   });
 
   it("should open the unsupported drawer if there is an update and it's Android but the device has to be wired", async () => {
-    PlatformSpy.mockReturnValue({ OS: "android" } as typeof ReactNative.Platform);
+    PlatformSpy.mockReturnValue({ ...ReactNative.Platform, OS: "android" });
     useLatestFirmware.mockReturnValue({
       final: {
         name: "mockVersion",
@@ -334,7 +334,7 @@ describe("<UpdateBanner />", () => {
 
   oldUpdateFlowNotSupportedDataSet.forEach(({ deviceModelId, version, productName, fwVersion }) => {
     it(`should open the unsupported drawer if there is an update and it's Android but the update is not supported for this device version (${version} ${deviceModelId})`, async () => {
-      PlatformSpy.mockReturnValue({ OS: "android" } as typeof ReactNative.Platform);
+      PlatformSpy.mockReturnValue({ ...ReactNative.Platform, OS: "android" });
       useLatestFirmware.mockReturnValue({
         final: {
           name: "mockVersion",
@@ -377,7 +377,7 @@ describe("<UpdateBanner />", () => {
 
   oldUpdateFlowSupportedDataSet.forEach(({ deviceModelId, version, productName, fwVersion }) => {
     it(`should redirect to the OLD firmware update flow if the device is supported (${version} ${deviceModelId})`, async () => {
-      PlatformSpy.mockReturnValue({ OS: "android" } as typeof ReactNative.Platform);
+      PlatformSpy.mockReturnValue({ ...ReactNative.Platform, OS: "android" });
       useLatestFirmware.mockReturnValue({
         final: {
           name: "mockVersion",
@@ -410,7 +410,7 @@ describe("<UpdateBanner />", () => {
 
   newUpdateFlowSupportedDataSet.forEach(({ deviceModelId, version, productName, fwVersion }) => {
     it(`should redirect to the NEW firmware update flow if the device is supported (${version} ${deviceModelId})`, async () => {
-      PlatformSpy.mockReturnValue({ OS: "android" } as typeof ReactNative.Platform);
+      PlatformSpy.mockReturnValue({ ...ReactNative.Platform, OS: "android" });
       useLatestFirmware.mockReturnValue({
         final: {
           name: "mockVersion",

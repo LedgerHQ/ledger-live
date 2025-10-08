@@ -1,6 +1,6 @@
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { useTheme } from "@react-navigation/native";
-import { StackScreenProps } from "@react-navigation/stack";
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import i18next from "i18next";
 import React, { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -16,7 +16,7 @@ import { isModelSupported } from "./SendRowsCustom";
 import { popToScreen } from "~/helpers/navigationHelpers";
 
 type NavigationProps = BaseComposite<
-  StackScreenProps<SendFundsNavigatorStackParamList, ScreenName.SolanaEditMemo>
+  NativeStackScreenProps<SendFundsNavigatorStackParamList, ScreenName.SolanaEditMemo>
 >;
 
 function SolanaEditMemo({ navigation, route }: NavigationProps) {

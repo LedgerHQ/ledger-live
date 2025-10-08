@@ -543,7 +543,7 @@ export const PlatformAPIWebview = forwardRef<WebviewAPI, WebviewProps>(
       <RNWebView
         ref={webviewRef}
         onScroll={onScroll}
-        decelerationRate="normal"
+        decelerationRate={Platform.OS === "ios" ? "normal" : 0.998}
         allowsBackForwardNavigationGestures
         startInLoadingState={true}
         showsHorizontalScrollIndicator={false}
