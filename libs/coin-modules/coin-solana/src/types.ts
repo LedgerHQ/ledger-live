@@ -94,6 +94,7 @@ export type TokenRecipientDescriptor = {
   walletAddress: string;
   tokenAccAddress: string;
   shouldCreateAsAssociatedTokenAccount: boolean;
+  userInputType: "sol" | "ata";
 };
 
 export type TransferFeeCalculated = {

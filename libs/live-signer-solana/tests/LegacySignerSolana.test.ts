@@ -64,7 +64,7 @@ describe("LegacySignerSolana", () => {
       expect(await signer.signTransaction("path", Buffer.from("transaction"))).toEqual({
         signature: Buffer.from("0102", "hex"),
       });
-      expect(signTransaction).toHaveBeenCalledWith("path", Buffer.from("transaction"));
+      expect(signTransaction).toHaveBeenCalledWith("path", Buffer.from("transaction"), undefined);
     });
 
     it("fails to sign a transaction with a resolution and missing device model id", async () => {
@@ -164,7 +164,7 @@ describe("LegacySignerSolana", () => {
         );
         expect(getOwnerAddress).toHaveBeenCalledWith("tokenAddress", "challenge");
         expect(provideTrustedName).toHaveBeenCalledWith("signedDescriptor");
-        expect(signTransaction).toHaveBeenCalledWith("path", Buffer.from("transaction"));
+        expect(signTransaction).toHaveBeenCalledWith("path", Buffer.from("transaction"), undefined);
       },
     );
 
@@ -225,7 +225,7 @@ describe("LegacySignerSolana", () => {
         );
         expect(computedTokenAddress).toHaveBeenCalledWith("address", "mintAddress", "challenge");
         expect(provideTrustedName).toHaveBeenCalledWith("signedDescriptor");
-        expect(signTransaction).toHaveBeenCalledWith("path", Buffer.from("transaction"));
+        expect(signTransaction).toHaveBeenCalledWith("path", Buffer.from("transaction"), undefined);
       },
     );
 
@@ -281,7 +281,7 @@ describe("LegacySignerSolana", () => {
           data: Buffer.from("0304", "hex"),
           signature: Buffer.from("0506", "hex"),
         });
-        expect(signTransaction).toHaveBeenCalledWith("path", Buffer.from("transaction"));
+        expect(signTransaction).toHaveBeenCalledWith("path", Buffer.from("transaction"), undefined);
       },
     );
 
@@ -313,7 +313,7 @@ describe("LegacySignerSolana", () => {
       });
       expect(getCertificate).not.toHaveBeenCalled();
       expect(provideTrustedDynamicDescriptor).not.toHaveBeenCalled();
-      expect(signTransaction).toHaveBeenCalledWith("path", Buffer.from("transaction"));
+      expect(signTransaction).toHaveBeenCalledWith("path", Buffer.from("transaction"), undefined);
     });
   });
 
