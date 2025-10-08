@@ -63,9 +63,11 @@ export default function VerticalTimeline({
       {header}
       <Flex {...props} onLayout={onStepsContainerLayout} flexDirection="column">
         {steps?.map((step, index) => (
-          <View onLayout={autoScroll && step.status === "active" ? onActiveStepLayout : undefined}>
+          <View
+            key={step.title}
+            onLayout={autoScroll && step.status === "active" ? onActiveStepLayout : undefined}
+          >
             <TimelineItem
-              key={step.title}
               item={step}
               formatEstimatedTime={formatEstimatedTime}
               isFirstItem={index === 0}

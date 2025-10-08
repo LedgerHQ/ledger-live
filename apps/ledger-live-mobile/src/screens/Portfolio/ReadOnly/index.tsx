@@ -1,18 +1,15 @@
-import React, { useCallback, useMemo, useState, useContext } from "react";
-import { useSelector } from "react-redux";
-import { LayoutChangeEvent, ListRenderItemInfo } from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
-import { useSharedValue } from "react-native-reanimated";
+import React, { useCallback, useContext, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-
-import { Box, Flex, Button } from "@ledgerhq/native-ui";
-
+import { LayoutChangeEvent } from "react-native";
+import { useSharedValue } from "react-native-reanimated";
+import { useSelector } from "react-redux";
+import { Box, Button, Flex } from "@ledgerhq/native-ui";
 import { useTheme } from "styled-components/native";
 import { Currency } from "@ledgerhq/types-cryptoassets";
 import { useRefreshAccountsOrdering } from "~/actions/general";
 import { counterValueCurrencySelector, hasOrderedNanoSelector } from "~/reducers/settings";
 import { usePortfolioAllAccounts } from "~/hooks/portfolio";
-
 import GraphCardContainer from "../GraphCardContainer";
 import TrackScreen from "~/analytics/TrackScreen";
 import { NavigatorName, ScreenName } from "~/const";
@@ -23,16 +20,16 @@ import SetupDeviceBanner from "LLM/features/Reborn/components/SetupDeviceBanner"
 import BuyDeviceBanner, {
   IMAGE_PROPS_BUY_DEVICE_FLEX,
 } from "LLM/features/Reborn/components/BuyDeviceBanner";
-import Assets from "../Assets";
 import { AnalyticsContext } from "~/analytics/AnalyticsContext";
 import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
-import FirmwareUpdateBanner from "LLM/features/FirmwareUpdate/components/UpdateBanner";
-import CollapsibleHeaderFlatList from "~/components/WalletTab/CollapsibleHeaderFlatList";
 import { WalletTabNavigatorStackParamList } from "~/components/RootNavigator/types/WalletTabNavigator";
-import { UpdateStep } from "../../FirmwareUpdate";
+import CollapsibleHeaderFlatList from "~/components/WalletTab/CollapsibleHeaderFlatList";
 import usePortfolioAnalyticsOptInPrompt from "~/hooks/analyticsOptInPrompt/usePorfolioAnalyticsOptInPrompt";
 import { Asset } from "~/types/asset";
 import { useReadOnlyCoins } from "~/hooks/useReadOnlyCoins";
+import Assets from "../Assets";
+import { UpdateStep } from "~/screens/FirmwareUpdate";
+import FirmwareUpdateBanner from "LLM/features/FirmwareUpdate/components/UpdateBanner";
 
 const maxAssetsToDisplay = 5;
 
@@ -144,15 +141,12 @@ function ReadOnlyPortfolio({ navigation }: NavigationProps) {
     [navigation],
   );
 
-  useFocusEffect(
-    useCallback(() => {
-      setScreen && setScreen("Wallet");
+  const focusEffect = useCallback(() => {
+    setScreen && setScreen("Wallet");
+    return () => setSource("Wallet");
+  }, [setSource, setScreen]);
 
-      return () => {
-        setSource("Wallet");
-      };
-    }, [setSource, setScreen]),
-  );
+  useFocusEffect(focusEffect);
 
   return (
     <>
@@ -165,7 +159,7 @@ function ReadOnlyPortfolio({ navigation }: NavigationProps) {
       <CollapsibleHeaderFlatList<JSX.Element>
         data={data}
         contentContainerStyle={{ paddingBottom: TAB_BAR_SAFE_HEIGHT }}
-        renderItem={({ item }: ListRenderItemInfo<unknown>) => item as JSX.Element}
+        renderItem={({ item }) => item}
         keyExtractor={(_: unknown, index: number) => String(index)}
         showsVerticalScrollIndicator={false}
         testID="PortfolioReadOnlyItems"

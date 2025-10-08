@@ -36,6 +36,7 @@ export type MarketListRequestResult = {
   isPending: boolean;
   isLoading: boolean;
   isError: boolean;
+  isFetching: boolean;
   cachedMetadataMap: Map<string, HashMapBody>;
 };
 

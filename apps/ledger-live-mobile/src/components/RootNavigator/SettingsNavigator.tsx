@@ -1,5 +1,5 @@
 import React, { useMemo } from "react";
-import { createStackNavigator, TransitionPresets } from "@react-navigation/stack";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "styled-components/native";
 import { ScreenName } from "~/const";
@@ -40,7 +40,7 @@ import DebugStore from "~/screens/Settings/Debug/Debugging/Store";
 import DebugStoryly from "~/screens/Settings/Debug/Features/Storyly";
 import DebugSwap from "~/screens/Settings/Debug/Features/Swap";
 import DebugVideos from "~/screens/Settings/Debug/Features/Videos";
-
+import TooltipDemo from "~/screens/Settings/Debug/Features/TooltipDemo";
 import Settings from "~/screens/Settings";
 import AccountsSettings from "~/screens/Settings/Accounts";
 import AboutSettings from "~/screens/Settings/About";
@@ -82,7 +82,7 @@ import CustomCALRefInput from "~/screens/Settings/Developer/CustomCALRefInput";
 import ModularDrawerScreenDebug from "LLM/features/ModularDrawer/Debug";
 import { UnmountOnBlur } from "./utils/UnmountOnBlur";
 
-const Stack = createStackNavigator<SettingsNavigatorStackParamList>();
+const Stack = createNativeStackNavigator<SettingsNavigatorStackParamList>();
 
 const unmountOnBlur = ({ children }: { children: React.ReactNode }) => (
   <UnmountOnBlur>{children}</UnmountOnBlur>
@@ -202,9 +202,7 @@ export default function SettingsNavigator() {
         component={DeveloperCustomManifest}
         options={{
           title: t("settings.developer.customManifest.title"),
-          headerTitleStyle: {
-            width: "80%",
-          },
+          // headerTitleStyle width not supported in native-stack; rely on default layout
         }}
       />
       <Stack.Screen
@@ -212,9 +210,7 @@ export default function SettingsNavigator() {
         component={ExchangeDeveloperMode}
         options={{
           title: t("settings.developer.exchangeDeveloperMode.title"),
-          headerTitleStyle: {
-            width: "80%",
-          },
+          // headerTitleStyle width not supported in native-stack; rely on default layout
         }}
       />
       <Stack.Screen
@@ -418,6 +414,13 @@ export default function SettingsNavigator() {
         }}
       />
       <Stack.Screen
+        name={ScreenName.DebugTooltip}
+        component={TooltipDemo}
+        options={{
+          title: "Debug Tooltip",
+        }}
+      />
+      <Stack.Screen
         name={ScreenName.DebugFetchCustomImage}
         component={DebugFetchCustomImage}
         options={debugFetchCustomImageHeaderOptions}
@@ -475,7 +478,8 @@ export default function SettingsNavigator() {
         name={ScreenName.OnboardingLanguage}
         component={OnboardingStepLanguage}
         options={{
-          ...TransitionPresets.ModalTransition,
+          presentation: "transparentModal",
+          animation: "slide_from_bottom",
           headerShown: true,
           headerTitle: t("onboarding.stepLanguage.title"),
         }}

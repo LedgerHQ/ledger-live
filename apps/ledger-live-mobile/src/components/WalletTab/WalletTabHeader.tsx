@@ -3,7 +3,8 @@ import React, { useContext } from "react";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Animated } from "react-native";
 import { WalletTabNavigatorScrollContext } from "./WalletTabNavigatorScrollManager";
-import Header from "~/screens/Portfolio/Header";
+import PortfolioHeader from "~/screens/Portfolio/Header";
+import { useExperimental } from "~/experimental";
 
 const AnimatedFlex = Animated.createAnimatedComponent(Flex);
 
@@ -31,13 +32,14 @@ function WalletTabHeader({
       });
 
   const insets = useSafeAreaInsets();
+  const hasExperimentalHeader = useExperimental();
 
   return (
     <>
       <AnimatedFlex
         style={[
           {
-            top: insets.top,
+            top: hasExperimentalHeader ? 0 : insets.top,
             height: headerHeight,
             width: "100%",
             position: "absolute",
@@ -47,8 +49,8 @@ function WalletTabHeader({
         ]}
         mode={"margin"}
       >
-        <Box flex={1} px={6} pb={0} justifyContent={"flex-end"}>
-          <Header hidePortfolio={hidePortfolio} />
+        <Box flex={1} px={6} justifyContent={"flex-end"}>
+          <PortfolioHeader hidePortfolio={hidePortfolio} />
         </Box>
       </AnimatedFlex>
     </>

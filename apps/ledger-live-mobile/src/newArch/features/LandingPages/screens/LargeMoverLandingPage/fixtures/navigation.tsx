@@ -1,4 +1,4 @@
-import { StackNavigationProp } from "@react-navigation/stack";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { LandingPagesNavigatorParamList } from "~/components/RootNavigator/types/LandingPagesNavigator";
 import { ScreenName } from "~/const";
 
@@ -27,7 +27,7 @@ export const mockNavigation = {
   pop: jest.fn(),
   popToTop: jest.fn(),
   closeDrawer: jest.fn(),
-} as unknown as StackNavigationProp<
+} as unknown as NativeStackNavigationProp<
   LandingPagesNavigatorParamList,
   ScreenName.LargeMoverLandingPage
 >;

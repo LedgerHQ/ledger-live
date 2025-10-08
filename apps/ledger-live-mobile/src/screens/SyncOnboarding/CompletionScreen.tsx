@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useRef } from "react";
 import { Box, Flex } from "@ledgerhq/native-ui";
-import { StackScreenProps } from "@react-navigation/stack";
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { TouchableWithoutFeedback } from "react-native-gesture-handler";
 
 import { NavigatorName, ScreenName } from "~/const";
@@ -50,7 +50,7 @@ const CTAWrapper = styled(Box)`
 `;
 
 type Props = BaseComposite<
-  StackScreenProps<SyncOnboardingStackParamList, ScreenName.SyncOnboardingCompletion>
+  NativeStackScreenProps<SyncOnboardingStackParamList, ScreenName.SyncOnboardingCompletion>
 >;
 
 const CompletionScreen = ({ route }: Props) => {

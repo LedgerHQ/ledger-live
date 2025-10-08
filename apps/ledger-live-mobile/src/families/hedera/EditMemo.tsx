@@ -7,7 +7,7 @@ import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { useTheme } from "@react-navigation/native";
 import KeyboardView from "~/components/KeyboardView";
 import Button from "~/components/Button";
-import { ScreenName } from "~/const";
+import { NavigatorName, ScreenName } from "~/const";
 import TextInput from "~/components/FocusedTextInput";
 import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { SendFundsNavigatorStackParamList } from "~/components/RootNavigator/types/SendFundsNavigator";
@@ -25,11 +25,14 @@ function HederaEditMemo({ navigation, route }: NavigationProps) {
     const bridge = getAccountBridge(account);
     const { transaction } = route.params;
     // @ts-expect-error FIXME: No current/next navigation provided?
-    navigation.navigate(ScreenName.SendSummary, {
-      accountId: account.id,
-      transaction: bridge.updateTransaction(transaction, {
-        memo,
-      }),
+    navigation.navigate(NavigatorName.SendFunds, {
+      screen: ScreenName.SendSummary,
+      params: {
+        accountId: account.id,
+        transaction: bridge.updateTransaction(transaction, {
+          memo,
+        }),
+      },
     });
   }, [navigation, route.params, account, memo]);
   return (

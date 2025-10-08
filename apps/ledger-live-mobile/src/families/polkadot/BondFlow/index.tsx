@@ -1,6 +1,6 @@
 import React, { useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { createStackNavigator } from "@react-navigation/stack";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useTheme } from "@react-navigation/native";
 import { ScreenName } from "~/const";
 import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
@@ -99,4 +99,4 @@ const options = {
   headerShown: false,
 };
 export { BondFlow as component, options };
-const Stack = createStackNavigator<PolkadotBondFlowParamList>();
+const Stack = createNativeStackNavigator<PolkadotBondFlowParamList>();

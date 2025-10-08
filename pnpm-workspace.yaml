@@ -24,6 +24,19 @@ catalog:
   ethers: 6.15.0
   "@reduxjs/toolkit": 2.8.2
   electron: 38.2.0
+  # React Native
+  react-native: 0.77.3
+  "@react-native/assets-registry": 0.77.3
+  "@react-native/babel-plugin-codegen": 0.77.3
+  "@react-native/babel-preset": 0.77.3
+  "@react-native/codegen": 0.77.3
+  "@react-native/dev-middleware": 0.77.3
+  "@react-native/gradle-plugin": 0.77.3
+  "@react-native/metro-config": 0.77.3
+  react-native-config: 1.5.3
+  react-native-reanimated: 3.16.7
+  react-native-safe-area-context: 5.6.1
+  react-native-svg: 15.12.1
   # Signers
   "@ledgerhq/context-module": 1.10.0
   "@ledgerhq/device-signer-kit-ethereum": 1.9.1

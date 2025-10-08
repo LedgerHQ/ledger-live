@@ -11,6 +11,7 @@ export default class OnboardingStepsPage {
   languageSelectButtonId = "language-select-button";
   languageSelectDrawerTitleId = "language-select-drawer-title";
   deviceCardBaseId = "onboarding-device-selection";
+  scrollListContainerId = "onboarding-view-scroll-list-container";
 
   languageSelectElementId = (language: string) => `language-select-${language}`;
   deviceCardId = (title: string) => `${this.deviceCardBaseId}-${title}`;
@@ -84,7 +85,7 @@ export default class OnboardingStepsPage {
     ];
     for (const device of devices) {
       if (device.id === "nanoS") {
-        await scrollToId(this.deviceCardId(device.id), undefined, 100, "down");
+        await scrollToId(this.deviceCardId(device.id), this.scrollListContainerId, 100, "down");
       }
       await detoxExpect(getElementById(this.deviceCardId(device.id))).toBeVisible();
       await detoxExpect(this.deviceCardHeader(device.id)).toHaveText("Ledger");
@@ -123,12 +124,13 @@ export default class OnboardingStepsPage {
 
   @Step("Choose to explore app")
   async chooseToExploreApp(): Promise<void> {
-    const exploreBtn = this.exploreAppButton();
-    await tapByElement(exploreBtn);
-    for (let i = 0; i < 4; i++) {
-      const titleId = this.discoverLiveTitle(i);
-      await tapById(titleId);
-    }
+    await tapByElement(this.exploreAppButton());
+    // In test mode, the carousel is skipped and only the last slide
+    // is shown. This avoids all carousel animation/clipping issues
+    // with the new React Native New Architecture. Just wait for the
+    // final slide and tap the explore button.
+    await waitForElementById(this.discoverLiveTitle(3));
+    await waitForElementById(this.exploreWithoutDeviceButtonId);
     await tapById(this.exploreWithoutDeviceButtonId);
   }
 }
