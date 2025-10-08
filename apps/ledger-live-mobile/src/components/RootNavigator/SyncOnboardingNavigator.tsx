@@ -1,6 +1,6 @@
 import React, { useMemo } from "react";
 import { useTheme } from "styled-components/native";
-import { createStackNavigator } from "@react-navigation/stack";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
 import { ScreenName } from "~/const";
 import CompletionScreen from "~/screens/SyncOnboarding/CompletionScreen";
@@ -10,7 +10,7 @@ import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
 import FirmwareUpdateScreen from "~/screens/FirmwareUpdate";
 import { Button, IconsLegacy } from "@ledgerhq/native-ui";
 
-const Stack = createStackNavigator<SyncOnboardingStackParamList>();
+const Stack = createNativeStackNavigator<SyncOnboardingStackParamList>();
 
 export const SyncOnboardingNavigator = () => {
   const { colors } = useTheme();
@@ -32,6 +32,7 @@ export const SyncOnboardingNavigator = () => {
           gestureEnabled: false,
           headerShown: true,
           headerTitle: () => null,
+          title: "",
           headerLeft: () => null,
           headerRight: () => <Button Icon={IconsLegacy.CloseMedium} />,
         }}

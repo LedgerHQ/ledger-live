@@ -4,6 +4,12 @@ import "@shopify/flash-list/jestSetup";
 import "@mocks/console";
 import { server } from "./server";
 import { NativeModules } from "react-native";
+import mockSafeAreaContext from "react-native-safe-area-context/jest/mock";
+import mockRNCNetInfo from "@react-native-community/netinfo/jest/netinfo-mock.js";
+import mockGorhomBottomSheet from "@gorhom/bottom-sheet/mock";
+import mockAsyncStorage from "@react-native-async-storage/async-storage/jest/async-storage-mock";
+import mockLocalize from "react-native-localize/mock";
+
 // Needed for react-reanimated https://docs.swmansion.com/react-native-reanimated/docs/3.x/guides/testing#timers
 jest.useFakeTimers();
 jest.runAllTimers();
@@ -24,9 +30,14 @@ const mockAnalytics = jest.genMockFromModule("@segment/analytics-react-native");
 // to replace TouchableNativeFeedback with TouchableOpacity
 // as the former breaks tests trying to press buttons
 jest.mock("react-native-gesture-handler", () => {
-  const TouchableOpacity = require("react-native").TouchableOpacity;
+  const RN = require("react-native");
+  const TouchableOpacity = RN.TouchableOpacity;
+  const ScrollView = RN.ScrollView;
+
   return {
-    ...require("react-native-gesture-handler/lib/commonjs/mocks").default,
+    TouchableOpacity: TouchableOpacity,
+    TouchableWithoutFeedback: TouchableOpacity,
+    ScrollView: ScrollView,
     RawButton: TouchableOpacity,
     BaseButton: TouchableOpacity,
     RectButton: TouchableOpacity,
@@ -90,23 +101,11 @@ jest.mock("~/analytics/segment", () => ({
 }));
 
 // Mock of Native Modules
-jest.mock("react-native-localize", () => ({
-  getTimeZone: jest.fn(),
-  getLocales: jest.fn(),
-  getNumberFormatSettings: jest.fn(),
-  getCalendar: jest.fn(),
-  getCountry: jest.fn(),
-  getTemperatureUnit: jest.fn(),
-  getFirstWeekDay: jest.fn(),
-  uses24HourClock: jest.fn(),
-  findBestAvailableLanguage: jest.fn(),
-}));
+jest.mock("react-native-localize", () => mockLocalize);
 
-jest.mock("@react-native-async-storage/async-storage", () =>
-  require("@react-native-async-storage/async-storage/jest/async-storage-mock"),
-);
+jest.mock("@react-native-async-storage/async-storage", () => mockAsyncStorage);
 
-jest.mock("@gorhom/bottom-sheet", () => require("@gorhom/bottom-sheet/mock"));
+jest.mock("@gorhom/bottom-sheet", () => mockGorhomBottomSheet);
 
 jest.mock("react-native-version-number", () => ({
   appVersion: "1.0.0",
@@ -117,11 +116,11 @@ jest.mock("react-native-startup-time", () => ({
   getStartupTime: jest.fn(),
 }));
 
-jest.mock("@react-native-community/netinfo", () => ({ useNetInfo: () => ({ isConnected: true }) }));
+jest.mock("@react-native-community/netinfo", () => mockRNCNetInfo);
+
+jest.mock("react-native-safe-area-context", () => mockSafeAreaContext);
 
 require("react-native-reanimated").setUpTests();
-
-// Silence the warning: Animated: `useNativeDriver` is not supported because the native animated module is missing
 
 jest.mock("~/analytics", () => ({
   ...jest.requireActual("~/analytics"),

@@ -1,7 +1,8 @@
 import { BigNumber } from "bignumber.js";
 import invariant from "invariant";
 import React, { useState, useCallback } from "react";
-import { useTranslation, Trans } from "react-i18next";
+import { useTranslation } from "react-i18next";
+import i18next from "i18next";
 import { Keyboard, StyleSheet, View, SafeAreaView, ScrollView } from "react-native";
 import { useTheme } from "@react-navigation/native";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
@@ -21,7 +22,7 @@ import { useAccountUnit } from "~/hooks/useAccountUnit";
 import { popToScreen } from "~/helpers/navigationHelpers";
 
 const options = {
-  title: <Trans i18nKey="send.summary.fees" />,
+  title: i18next.t("send.summary.fees"),
   headerLeft: undefined,
 };
 

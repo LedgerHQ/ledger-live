@@ -55,7 +55,7 @@ const ReceiveSecurityModal = ({
     () => ({
       height: sharedHeight.value,
     }),
-    [sharedHeight.value],
+    [sharedHeight],
   );
 
   const closeModal = useCallback(() => {
@@ -81,6 +81,7 @@ const ReceiveSecurityModal = ({
       ),
     };
 
+    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
     return components[step as keyof typeof components];
   }, [closeModal, onVerify, step]);
 

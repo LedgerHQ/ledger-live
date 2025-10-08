@@ -1,7 +1,7 @@
 import React from "react";
 import { render } from "@tests/test-renderer";
 import ReceiveFundsOptions from "./";
-import { ScreenName } from "~/const";
+import { NavigatorName, ScreenName } from "~/const";
 import { ParamListBase, RouteProp } from "@react-navigation/core";
 import { useOpenReceiveDrawer } from "LLM/features/Receive";
 
@@ -9,6 +9,8 @@ const mockNavigate = jest.fn();
 const mockGoBack = jest.fn();
 const mockReplace = jest.fn();
 const mockHandleOpenReceiveDrawer = jest.fn();
+const mockParentNavigate = jest.fn();
+const mockGetParent = jest.fn(() => ({ navigate: mockParentNavigate }));
 
 // needed because the screen only uses the drawer that needs the safe area insets
 jest.mock("react-native-safe-area-context", () => ({
@@ -31,8 +33,13 @@ function renderComponent(
 ) {
   return render(
     <ReceiveFundsOptions
-      // @ts-expect-error typing
-      navigation={{ navigate: mockNavigate, goBack: mockGoBack, replace: mockReplace }}
+      navigation={{
+        navigate: mockNavigate,
+        goBack: mockGoBack,
+        replace: mockReplace,
+        // @ts-expect-error typing
+        getParent: mockGetParent,
+      }}
       // @ts-expect-error typing
       route={route}
     />,
@@ -46,6 +53,12 @@ describe("ReceiveFundsOptions", () => {
       handleOpenReceiveDrawer: mockHandleOpenReceiveDrawer,
       isModularDrawerEnabled: false,
     });
+    jest.useFakeTimers();
+  });
+
+  afterEach(() => {
+    jest.runOnlyPendingTimers();
+    jest.useRealTimers();
   });
 
   it("renders title and buttons", () => {
@@ -56,17 +69,23 @@ describe("ReceiveFundsOptions", () => {
     expect(getByText("Via bank transfer")).toBeVisible();
   });
 
-  it("navigates to ReceiveProvider with fromMenu when fiat button pressed", async () => {
+  it("closes modal then navigates to ReceiveProvider when fiat button pressed", async () => {
     const { getByText, user } = renderComponent();
     await user.press(getByText("Via bank transfer"));
-    expect(mockReplace).toHaveBeenCalledWith(ScreenName.ReceiveProvider, {
-      manifestId: "noah",
-      fromMenu: true,
+
+    expect(mockGoBack).toHaveBeenCalled();
+    jest.runAllTimers();
+    expect(mockParentNavigate).toHaveBeenCalledWith(NavigatorName.ReceiveFunds, {
+      screen: ScreenName.ReceiveProvider,
+      params: {
+        manifestId: "noah",
+        fromMenu: true,
+      },
     });
   });
 
   describe("Crypto navigation", () => {
-    it("navigates to ReceiveSelectCrypto when params are valid", async () => {
+    it("closes modal then navigates to ReceiveSelectCrypto when params are valid", async () => {
       const route = {
         key: "",
         name: ScreenName.ReceiveSelectCrypto,
@@ -76,9 +95,15 @@ describe("ReceiveFundsOptions", () => {
       const { getByText, user } = renderComponent(route);
       await user.press(getByText("Via crypto address"));
 
-      expect(mockNavigate).toHaveBeenCalledWith(ScreenName.ReceiveSelectCrypto, {
-        ...route.params,
-        fromMenu: true,
+      expect(mockGoBack).toHaveBeenCalled();
+      jest.runAllTimers();
+      expect(mockParentNavigate).toHaveBeenCalledWith(NavigatorName.ReceiveFunds, {
+        screen: ScreenName.ReceiveSelectCrypto,
+        params: {
+          filterCurrencyIds: ["eth"],
+          currency: "bitcoin",
+          fromMenu: true,
+        },
       });
     });
 
@@ -92,10 +117,12 @@ describe("ReceiveFundsOptions", () => {
       const { getByText, user } = renderComponent(route);
       await user.press(getByText("Via crypto address"));
 
-      expect(mockNavigate).not.toHaveBeenCalled();
+      expect(mockGoBack).toHaveBeenCalled();
+      jest.runAllTimers();
+      expect(mockParentNavigate).not.toHaveBeenCalled();
     });
 
-    it("navigates to ReceiveSelectAccount when params valid", async () => {
+    it("closes modal then navigates to ReceiveSelectAccount when params valid", async () => {
       const route = {
         key: "",
         name: ScreenName.ReceiveSelectAccount,
@@ -105,9 +132,14 @@ describe("ReceiveFundsOptions", () => {
       const { getByText, user } = renderComponent(route);
       await user.press(getByText("Via crypto address"));
 
-      expect(mockNavigate).toHaveBeenCalledWith(ScreenName.ReceiveSelectAccount, {
-        ...route.params,
-        fromMenu: true,
+      expect(mockGoBack).toHaveBeenCalled();
+      jest.runAllTimers();
+      expect(mockParentNavigate).toHaveBeenCalledWith(NavigatorName.ReceiveFunds, {
+        screen: ScreenName.ReceiveSelectAccount,
+        params: {
+          currency: { id: "ethereum" },
+          fromMenu: true,
+        },
       });
     });
 
@@ -121,7 +153,9 @@ describe("ReceiveFundsOptions", () => {
       const { getByText, user } = renderComponent(route);
       await user.press(getByText("Via crypto address"));
 
-      expect(mockNavigate).not.toHaveBeenCalled();
+      expect(mockGoBack).toHaveBeenCalled();
+      jest.runAllTimers();
+      expect(mockParentNavigate).not.toHaveBeenCalled();
     });
   });
 

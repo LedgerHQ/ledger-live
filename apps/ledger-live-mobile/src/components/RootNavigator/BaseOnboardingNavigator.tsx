@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo } from "react";
-import { createStackNavigator } from "@react-navigation/stack";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "styled-components/native";
 import { TouchableOpacity } from "react-native";
@@ -139,4 +139,4 @@ export default function BaseOnboardingNavigator() {
     </Stack.Navigator>
   );
 }
-const Stack = createStackNavigator<BaseOnboardingNavigatorParamList>();
+const Stack = createNativeStackNavigator<BaseOnboardingNavigatorParamList>();
