@@ -1,11 +1,11 @@
 ---
-"@ledgerhq/hw-app-exchange": patch
-"live-mobile": patch
-"@ledgerhq/live-common": patch
-"@ledgerhq/live-dmk-desktop": patch
-"@ledgerhq/live-dmk-mobile": patch
-"@ledgerhq/live-dmk-shared": patch
-"@ledgerhq/live-signer-evm": patch
+"@ledgerhq/hw-app-exchange": minor
+"live-mobile": minor
+"@ledgerhq/live-common": minor
+"@ledgerhq/live-dmk-desktop": minor
+"@ledgerhq/live-dmk-mobile": minor
+"@ledgerhq/live-dmk-shared": minor
+"@ledgerhq/live-signer-evm": minor
 ---
 
 update dmk versions

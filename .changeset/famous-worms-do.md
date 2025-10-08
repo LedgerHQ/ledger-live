@@ -1,7 +1,7 @@
 ---
-"live-mobile": patch
-"@ledgerhq/live-common": patch
-"@ledgerhq/live-dmk-mobile": patch
+"live-mobile": minor
+"@ledgerhq/live-common": minor
+"@ledgerhq/live-dmk-mobile": minor
 ---
 
 Fix BLE scanning issues
