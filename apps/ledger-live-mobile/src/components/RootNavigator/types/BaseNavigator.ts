@@ -44,6 +44,7 @@ import type { StellarAddAssetFlowParamList } from "../../../families/stellar/Add
 import type { TezosDelegationFlowParamList } from "../../../families/tezos/DelegationFlow/types";
 import type { TronVoteFlowParamList } from "../../../families/tron/VoteFlow/types";
 import type { HederaAssociateTokenFlowParamList } from "../../../families/hedera/AssociateTokenFlow/types";
+import type { CantonOnboardAccountParamList } from "../../../families/canton/Onboard/types";
 import type { AccountSettingsNavigatorParamList } from "./AccountSettingsNavigator";
 import type { AccountsNavigatorParamList } from "./AccountsNavigator";
 import type { AddAccountsNavigatorParamList } from "./AddAccountsNavigator";
@@ -292,6 +293,9 @@ export type BaseNavigatorStackParamList = {
 
   // Hedera
   [NavigatorName.HederaAssociateTokenFlow]: NavigatorScreenParams<HederaAssociateTokenFlowParamList>;
+
+  // Canton
+  [NavigatorName.CantonOnboard]: NavigatorScreenParams<CantonOnboardAccountParamList>;
 
   [ScreenName.DeviceConnect]: {
     appName?: string;

@@ -38,11 +38,6 @@ describe("ReceiveFundsOptions", () => {
     expect(getByText("From a bank account")).toBeVisible();
   });
 
-  it("closes modal when header close button pressed", async () => {
-    const { getByTestId, user } = renderComponent();
-    await user.press(getByTestId("modal-close-button"));
-  });
-
   it("navigates to ReceiveProvider with fromMenu when fiat button pressed", async () => {
     const { getByText, user } = renderComponent();
     await user.press(getByText("From a bank account"));

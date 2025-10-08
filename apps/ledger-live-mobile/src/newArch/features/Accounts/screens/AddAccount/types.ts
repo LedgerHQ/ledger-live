@@ -4,6 +4,7 @@ import { Device } from "@ledgerhq/types-devices";
 import { Account } from "@ledgerhq/types-live";
 import { Props as TouchableProps } from "~/components/Touchable";
 import { AddAccountContexts } from "./enums";
+import { CantonOnboardAccountParamList } from "~/families/canton/Onboard/types";
 
 export type AddAccountContextType = `${AddAccountContexts}`;
 
@@ -40,4 +41,5 @@ export type NetworkBasedAddAccountNavigator = {
       };
     }) => JSX.Element;
   };
+  [ScreenName.CantonOnboardAccount]: CantonOnboardAccountParamList[ScreenName.CantonOnboardAccount];
 };

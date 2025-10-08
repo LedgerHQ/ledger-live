@@ -1,6 +1,6 @@
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { getCryptoAssetsStore, setCryptoAssetsStore } from ".";
-import * as legacy from "@ledgerhq/cryptoassets/tokens";
+import { legacyCryptoAssetsStore } from "@ledgerhq/cryptoassets/tokens";
 import type { CryptoAssetsStore } from "@ledgerhq/types-live";
 
 describe("Testing CryptoAssetStore", () => {
@@ -13,11 +13,10 @@ describe("Testing CryptoAssetStore", () => {
     });
 
     const store = getCryptoAssetsStore();
-    expect(store).toEqual({
-      getTokenById: legacy.getTokenById,
-      findTokenById: legacy.findTokenById,
-      findTokenByAddressInCurrency: legacy.findTokenByAddressInCurrency,
-    });
+    expect(store.findTokenById).toBe(legacyCryptoAssetsStore.findTokenById);
+    expect(store.findTokenByAddressInCurrency).toBe(
+      legacyCryptoAssetsStore.findTokenByAddressInCurrency,
+    );
   });
 
   it("should return the default methods from cryptoassets libs when feature flag is disabled", () => {
@@ -29,11 +28,10 @@ describe("Testing CryptoAssetStore", () => {
     });
 
     const store = getCryptoAssetsStore();
-    expect(store).toEqual({
-      getTokenById: legacy.getTokenById,
-      findTokenById: legacy.findTokenById,
-      findTokenByAddressInCurrency: legacy.findTokenByAddressInCurrency,
-    });
+    expect(store.findTokenById).toBe(legacyCryptoAssetsStore.findTokenById);
+    expect(store.findTokenByAddressInCurrency).toBe(
+      legacyCryptoAssetsStore.findTokenByAddressInCurrency,
+    );
   });
 
   it("should throw an error when no store is set and feature flag is enabled", () => {

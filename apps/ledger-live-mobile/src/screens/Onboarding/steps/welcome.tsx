@@ -126,8 +126,6 @@ function OnboardingStepWelcome({ navigation }: NavigationProps) {
     };
   }, [dispatch]);
 
-  const videoSource = videoSources.welcomeScreen;
-
   return (
     <ForceTheme selectedPalette={"dark"}>
       <Flex flex={1} position="relative" bg="constant.purple">
@@ -135,7 +133,7 @@ function OnboardingStepWelcome({ navigation }: NavigationProps) {
         {videoMounted && (
           <Video
             disableFocus
-            source={videoSource}
+            source={videoSources.welcomeScreen}
             style={absoluteStyle}
             muted
             repeat

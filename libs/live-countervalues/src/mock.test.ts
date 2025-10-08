@@ -4,7 +4,7 @@ import CountervaluesAPI from "./api";
 import { setEnv } from "@ledgerhq/live-env";
 import {
   getFiatCurrencyByTicker,
-  getTokenById,
+  findTokenById,
   getCryptoCurrencyById,
 } from "@ledgerhq/cryptoassets";
 import { formatCounterValueDay, formatCounterValueHour, parseFormattedDate } from "./helpers";
@@ -141,10 +141,12 @@ test("mock load with btc-eth to track", async () => {
   ).toBe(1.4890024626718706e21);
 });
 test("DAI EUR latest price", async () => {
+  const dai = findTokenById("ethereum/erc20/dai_stablecoin_v2_0");
+  if (!dai) throw new Error("DAI token not found");
   const state = await loadCountervalues(initialState, {
     trackingPairs: [
       {
-        from: getTokenById("ethereum/erc20/dai_stablecoin_v2_0"),
+        from: dai,
         to: getFiatCurrencyByTicker("EUR"),
         startDate: new Date(),
       },
@@ -157,16 +159,18 @@ test("DAI EUR latest price", async () => {
   expect(
     calculate(state, {
       value: 100000000,
-      from: getTokenById("ethereum/erc20/dai_stablecoin_v2_0"),
+      from: dai,
       to: getFiatCurrencyByTicker("EUR"),
     }),
   ).toBeUndefined();
 });
 test("calculate(now()) is calculate(null)", async () => {
+  const dai = findTokenById("ethereum/erc20/dai_stablecoin_v2_0");
+  if (!dai) throw new Error("DAI token not found");
   const state = await loadCountervalues(initialState, {
     trackingPairs: [
       {
-        from: getTokenById("ethereum/erc20/dai_stablecoin_v2_0"),
+        from: dai,
         to: getFiatCurrencyByTicker("EUR"),
         startDate: new Date(),
       },
@@ -179,13 +183,13 @@ test("calculate(now()) is calculate(null)", async () => {
   expect(
     calculate(state, {
       value: 100000000,
-      from: getTokenById("ethereum/erc20/dai_stablecoin_v2_0"),
+      from: dai,
       to: getFiatCurrencyByTicker("EUR"),
     }),
   ).toEqual(
     calculate(state, {
       value: 100000000,
-      from: getTokenById("ethereum/erc20/dai_stablecoin_v2_0"),
+      from: dai,
       to: getFiatCurrencyByTicker("EUR"),
       date: new Date(),
     }),

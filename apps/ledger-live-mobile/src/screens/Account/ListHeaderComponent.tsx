@@ -10,7 +10,7 @@ import {
 } from "@ledgerhq/types-live";
 import { CryptoCurrency, Currency } from "@ledgerhq/types-cryptoassets";
 import { Box, ColorPalette } from "@ledgerhq/native-ui";
-import { TFunction } from "react-i18next";
+import type { TFunction } from "i18next";
 import { AptosAccount } from "@ledgerhq/live-common/families/aptos/types";
 import { CeloAccount } from "@ledgerhq/live-common/families/celo/types";
 import { CosmosAccount } from "@ledgerhq/live-common/families/cosmos/types";

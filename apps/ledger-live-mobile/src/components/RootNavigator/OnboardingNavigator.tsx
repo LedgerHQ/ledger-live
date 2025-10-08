@@ -12,7 +12,8 @@ import { useTranslation } from "react-i18next";
 import { useTheme } from "styled-components/native";
 import { ScreenName, NavigatorName } from "~/const";
 import PasswordAddFlowNavigator from "./PasswordAddFlowNavigator";
-import OnboardingWelcome from "~/screens/Onboarding/steps/welcome";
+import LegacyOnboardingWelcome from "~/screens/Onboarding/steps/welcome";
+import OnboardingWelcome from "LLM/features/WelcomePage";
 import OnboardingLanguage from "~/screens/Onboarding/steps/language";
 import OnboardingTerms from "~/screens/Onboarding/steps/terms";
 import OnboardingDeviceSelection from "~/screens/Onboarding/steps/deviceSelection";
@@ -49,6 +50,7 @@ import { NavigationHeaderBackButton } from "../NavigationHeaderBackButton";
 import AccessExistingWallet from "~/screens/Onboarding/steps/accessExistingWallet";
 import AnalyticsOptInPromptNavigator from "./AnalyticsOptInPromptNavigator";
 import LandingPagesNavigator from "./LandingPagesNavigator";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 
 const Stack = createStackNavigator<OnboardingNavigatorParamList>();
 const OnboardingPreQuizModalStack =
@@ -101,6 +103,7 @@ const infoModalOptions = ({ theme }: { theme: Theme }): Partial<StackNavigationO
 export default function OnboardingNavigator() {
   const { t } = useTranslation();
   const theme = useTheme();
+  const llmHomescreenEnabled = useFeature("llmHomescreen")?.enabled ?? false;
 
   return (
     <Stack.Navigator
@@ -112,7 +115,10 @@ export default function OnboardingNavigator() {
         cardStyle: { backgroundColor: theme.colors.background.main },
       }}
     >
-      <Stack.Screen name={ScreenName.OnboardingWelcome} component={OnboardingWelcome} />
+      <Stack.Screen
+        name={ScreenName.OnboardingWelcome}
+        component={llmHomescreenEnabled ? OnboardingWelcome : LegacyOnboardingWelcome}
+      />
       <Stack.Screen
         name={ScreenName.OnboardingPostWelcomeSelection}
         component={PostWelcomeSelection}

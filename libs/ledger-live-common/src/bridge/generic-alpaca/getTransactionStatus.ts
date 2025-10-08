@@ -36,14 +36,16 @@ export function genericGetTransactionStatus(
       }
     }
 
-    const { errors, warnings, estimatedFees, amount, totalSpent } = await alpacaApi.validateIntent(
-      transactionToIntent(account, draftTransaction, alpacaApi.computeIntentType),
-      { value: transaction.fees ? BigInt(transaction.fees.toString()) : 0n },
-    );
+    const { errors, warnings, estimatedFees, amount, totalSpent, totalFees } =
+      await alpacaApi.validateIntent(
+        transactionToIntent(account, draftTransaction, alpacaApi.computeIntentType),
+        { value: transaction.fees ? BigInt(transaction.fees.toString()) : 0n },
+      );
 
     return {
       errors,
       warnings,
+      totalFees: typeof totalFees === "bigint" ? new BigNumber(totalFees.toString()) : undefined,
       estimatedFees:
         !transaction.fees || transaction.fees.isZero()
           ? new BigNumber(estimatedFees.toString())

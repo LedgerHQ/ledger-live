@@ -1,6 +1,6 @@
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { inferCryptoCurrencyIcon } from "./cryptoIcons";
-import { getTokenById } from "@ledgerhq/cryptoassets/tokens";
+import { findTokenById } from "@ledgerhq/cryptoassets/tokens";
 
 describe("inferCryptoCurrencyIcon", () => {
   const registryMock = {
@@ -23,8 +23,8 @@ describe("inferCryptoCurrencyIcon", () => {
   });
 
   test("USDT is inferred properly", () => {
-    expect(
-      inferCryptoCurrencyIcon(registryMock, getTokenById("ethereum/erc20/usd_tether__erc20_")),
-    ).toBe(4);
+    const usdt = findTokenById("ethereum/erc20/usd_tether__erc20_");
+    if (!usdt) throw new Error("USDT token not found");
+    expect(inferCryptoCurrencyIcon(registryMock, usdt)).toBe(4);
   });
 });

@@ -407,7 +407,7 @@ export const StepImportFooter = ({
   const isHandledError = err && err.name === "SatStackDescriptorNotImported";
 
   const hasCantonCreatableAccounts = scannedAccounts.some(
-    a => checkedAccountsIds.includes(a.id) && isAccountEmpty(a) && a.currency?.family === "canton",
+    a => checkedAccountsIds.includes(a.id) && !a.used && a.currency?.family === "canton",
   );
 
   const goCantonOnboard = () => {

@@ -356,17 +356,20 @@ export const getOptimismAdditionalFees: NodeApi["getOptimismAdditionalFees"] = a
   }
 
   // Fake signature is added to get the best approximation possible for the gas on L1
-  const serializedTransaction = ((): string | null => {
-    try {
-      return getSerializedTransaction(transaction, {
-        r: "0xffffffffffffffffffffffffffffffffffffffff",
-        s: "0xffffffffffffffffffffffffffffffffffffffff",
-        v: 27,
-      });
-    } catch (e) {
-      return null;
-    }
-  })();
+  const serializedTransaction =
+    typeof transaction === "string"
+      ? transaction
+      : ((): string | null => {
+          try {
+            return getSerializedTransaction(transaction, {
+              r: "0xffffffffffffffffffffffffffffffffffffffff",
+              s: "0xffffffffffffffffffffffffffffffffffffffff",
+              v: 27,
+            });
+          } catch (e) {
+            return null;
+          }
+        })();
   if (!serializedTransaction) {
     return new BigNumber(0);
   }
@@ -422,17 +425,20 @@ export const getScrollAdditionalFees: NodeApi["getScrollAdditionalFees"] = async
   }
 
   // Fake signature is added to get the best approximation possible for the gas on L1
-  const serializedTransaction = ((): string | null => {
-    try {
-      return getSerializedTransaction(transaction, {
-        r: "0xffffffffffffffffffffffffffffffffffffffff",
-        s: "0xffffffffffffffffffffffffffffffffffffffff",
-        v: 27,
-      });
-    } catch (e) {
-      return null;
-    }
-  })();
+  const serializedTransaction =
+    typeof transaction === "string"
+      ? transaction
+      : ((): string | null => {
+          try {
+            return getSerializedTransaction(transaction, {
+              r: "0xffffffffffffffffffffffffffffffffffffffff",
+              s: "0xffffffffffffffffffffffffffffffffffffffff",
+              v: 27,
+            });
+          } catch (e) {
+            return null;
+          }
+        })();
   if (!serializedTransaction) {
     return new BigNumber(0);
   }

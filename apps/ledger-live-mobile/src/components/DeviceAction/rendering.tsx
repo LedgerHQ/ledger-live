@@ -29,7 +29,7 @@ import type { DeviceModelInfo } from "@ledgerhq/types-live";
 import { ParamListBase, T } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import React, { useEffect, useState } from "react";
-import { TFunction } from "react-i18next";
+import type { TFunction } from "i18next";
 import { Image, Linking, ScrollView } from "react-native";
 import Config from "react-native-config";
 import { useSelector } from "react-redux";

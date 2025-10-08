@@ -2,7 +2,7 @@ import eip55 from "eip55";
 import BigNumber from "bignumber.js";
 import { encodeNftId } from "@ledgerhq/coin-framework/nft/nftId";
 import { Account, ProtoNFT } from "@ledgerhq/types-live";
-import { getCryptoCurrencyById, getTokenById } from "@ledgerhq/cryptoassets";
+import { getCryptoCurrencyById, findTokenById } from "@ledgerhq/cryptoassets";
 import { makeAccount, makeTokenAccount } from "../fixtures/common.fixtures";
 import getDeviceTransactionConfig from "../../deviceTransactionConfig";
 import getTransactionStatus from "../../bridge/getTransactionStatus";
@@ -15,7 +15,8 @@ enum NFT_CONTRACTS {
 }
 
 const currency = getCryptoCurrencyById("ethereum");
-const tokenCurrency = getTokenById("ethereum/erc20/usd__coin");
+const tokenCurrency = findTokenById("ethereum/erc20/usd__coin");
+if (!tokenCurrency) throw new Error("USDC token not found");
 const tokenAccount = makeTokenAccount("0xkvn", tokenCurrency);
 const account = makeAccount("0xkvn", currency, [tokenAccount]);
 const accountWithNfts: Account = Object.freeze({

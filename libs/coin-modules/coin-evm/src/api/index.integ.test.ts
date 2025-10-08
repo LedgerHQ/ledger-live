@@ -6,7 +6,7 @@ import {
   StakingTransactionIntent,
 } from "@ledgerhq/coin-framework/api/types";
 import { ethers } from "ethers";
-import * as legacy from "@ledgerhq/cryptoassets/tokens";
+import { legacyCryptoAssetsStore } from "@ledgerhq/cryptoassets/tokens";
 import { EvmConfig } from "../config";
 import { setCryptoAssetsStoreGetter } from "../cryptoAssetsStore";
 import { createApi } from "./index";
@@ -36,7 +36,7 @@ describe.each([
   let module: Api<MemoNotSupported, BufferTxData>;
 
   beforeAll(() => {
-    setCryptoAssetsStoreGetter(() => legacy);
+    setCryptoAssetsStoreGetter(() => legacyCryptoAssetsStore);
     module = createApi(config as EvmConfig, "ethereum");
   });
 
@@ -263,7 +263,7 @@ describe("EVM Api (SEI Network)", () => {
   let module: Api<MemoNotSupported, BufferTxData>;
 
   beforeAll(() => {
-    setCryptoAssetsStoreGetter(() => legacy);
+    setCryptoAssetsStoreGetter(() => legacyCryptoAssetsStore);
     const config = {
       node: {
         type: "external",

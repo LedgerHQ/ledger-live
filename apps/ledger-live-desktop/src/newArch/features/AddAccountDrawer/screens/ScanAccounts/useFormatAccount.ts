@@ -2,7 +2,6 @@ import { getTagDerivationMode } from "@ledgerhq/coin-framework/derivation";
 import { accountNameWithDefaultSelector } from "@ledgerhq/live-wallet/store";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { Account } from "@ledgerhq/types-live";
-import { formatAddress } from "LLD/utils/formatAddress";
 import { useCallback } from "react";
 import { useSelector } from "react-redux";
 import { discreetModeSelector, localeSelector } from "~/renderer/reducers/settings";
@@ -17,7 +16,7 @@ export const useFormatAccount = (currency: CryptoCurrency) => {
   return useCallback(
     (account: Account): FormattedAccount => {
       return {
-        address: formatAddress(account.freshAddress),
+        address: account.freshAddress,
         balance: account.balance,
         balanceUnit: account.currency.units[0],
         cryptoId: account.currency.id,

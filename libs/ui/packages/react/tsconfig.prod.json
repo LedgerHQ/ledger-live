@@ -3,7 +3,7 @@
   "compilerOptions": {
     "composite": false,
     "incremental": false,
-    "declaration": true,
+    "declaration": true
   },
   "exclude": [
     "node_modules",
@@ -12,6 +12,8 @@
     "jest.config.js",
     "./scripts",
     "./lib",
-    "**/*.stories.tsx"
+    "**/*.stories.tsx",
+    "**/*.test.ts",
+    "**/*.test.tsx"
   ]
 }
