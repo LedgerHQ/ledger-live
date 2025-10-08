@@ -5,7 +5,6 @@ import getApiPromise from "./apiPromise";
 // Required to leverage PolkadotJS *type augmentation*
 // (https://polkadot.js.org/docs/api/FAQ#since-upgrading-to-the-7x-series-typescript-augmentation-is-missing)
 import "@polkadot/api-augment";
-import coinConfig from "../../config";
 
 /**
  * Fetch the staking info for an account.
