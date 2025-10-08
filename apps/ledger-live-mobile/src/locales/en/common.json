@@ -1632,7 +1632,13 @@
       "terms": "By continuing, you agree to Ledger's",
       "termsLink": "Terms & Conditions",
       "privacyLink": "Privacy Policy",
-      "and": "and"
+      "and": "and",
+      "videoTitles": {
+        "0": "A wallet that protects and puts you in control",
+        "1": "Send, receive, swap and stake thousands of crypto",
+        "2": "Verify all your transactions with peace of mind"
+      },
+      "disclaimer": "By continuing, you agree to Ledger's <TermsAndConditions>Terms & Conditions</TermsAndConditions> and <PrivacyPolicy>Privacy Policy</PrivacyPolicy>. Ledger provides no financial advice. Swap and staking services are provided by third parties."
     },
     "postWelcomeStep": {
       "title": "Let’s get started",
