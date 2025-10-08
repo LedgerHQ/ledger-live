@@ -1947,7 +1947,7 @@
       "filter": {
         "title": "Show",
         "all": "All",
-        "supported": "Supported in Live",
+        "supported": "Ledger Wallet supported",
         "installed": "Installed",
         "not_installed": "Not installed"
       },
@@ -6313,7 +6313,7 @@
     },
     "WrongDeviceForAccount": {
       "title": "Something went wrong",
-      "description": "Please check that your Ledger is set up with the recovery phrase or passphrase associated to the selected account."
+      "description": "Please check that your Ledger device is set up with the recovery phrase or passphrase associated to the selected account."
     },
     "WrongDeviceForAccountPayout": {
       "title": "Something went wrong",

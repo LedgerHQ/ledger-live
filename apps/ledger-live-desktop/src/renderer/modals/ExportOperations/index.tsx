@@ -63,7 +63,7 @@ function ExportOperations({ accounts, closeModal, countervalueCurrency }: Props)
   const exportCsv = useCallback(async () => {
     const path = await ipcRenderer.invoke("show-save-dialog", {
       title: "Exported account transactions",
-      defaultPath: `ledgerlive-operations-${getDateTxt()}.csv`,
+      defaultPath: `ledgerwallet-operations-${getDateTxt()}.csv`,
       filters: [
         {
           name: "All Files",
