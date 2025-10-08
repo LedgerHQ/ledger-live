@@ -68,20 +68,12 @@ on:
       tests_type:
         description: "Which tests to run"
         required: true
-        type: choice
+        type: string
         default: "iOS & Android"
-        options:
-          - "Android Only"
-          - "iOS Only"
-          - "iOS & Android"
       speculos_device:
         description: "Speculos device to use"
         required: true
-        type: choice
-        options:
-          - nanoS
-          - nanoSP
-          - nanoX
+        type: string
         default: nanoX
       production_firebase:
         description: "Target Firebase Production env"
