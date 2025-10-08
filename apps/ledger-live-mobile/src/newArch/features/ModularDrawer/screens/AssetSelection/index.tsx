@@ -17,11 +17,7 @@ import {
   MODULAR_DRAWER_PAGE_NAME,
 } from "../../analytics";
 import { FlatList } from "react-native";
-import {
-  BottomSheetVirtualizedList,
-  useBottomSheetInternal,
-  useBottomSheet,
-} from "@gorhom/bottom-sheet";
+import { BottomSheetVirtualizedList, useBottomSheet } from "@gorhom/bottom-sheet";
 import { AssetsEmptyList } from "LLM/components/EmptyList/AssetsEmptyList";
 import { GenericError } from "../../components/GenericError";
 import { useNetInfo } from "@react-native-community/netinfo";
@@ -67,9 +63,13 @@ const AssetSelection = ({
   const source = useSelector(modularDrawerSourceSelector);
 
   const { trackModularDrawerEvent } = useModularDrawerAnalytics();
-  const { shouldHandleKeyboardEvents } = useBottomSheetInternal();
-  const { collapse } = useBottomSheet();
+  const { collapse, snapToIndex } = useBottomSheet();
   const listRef = useRef<FlatList>(null);
+
+  const expandToFullHeight = () => {
+    snapToIndex(1);
+    listRef.current?.scrollToIndex({ index: 0 });
+  };
 
   const assetsMap = groupCurrenciesByProvider(assetsSorted || []);
 
@@ -121,17 +121,9 @@ const AssetSelection = ({
     ],
   );
 
-  const handleSearchPressIn = () => {
-    listRef.current?.scrollToOffset({ offset: 0, animated: true });
-  };
+  const handleSearchFocus = () => {};
 
-  const handleSearchFocus = () => {
-    shouldHandleKeyboardEvents.value = true;
-  };
-
-  const handleSearchBlur = () => {
-    shouldHandleKeyboardEvents.value = false;
-  };
+  const handleSearchBlur = () => {};
 
   const renderItem = useCallback(
     ({ item }: { item: AssetType }) => <AssetItem {...item} onClick={handleAssetClick} />,
@@ -190,7 +182,7 @@ const AssetSelection = ({
         flow={flow}
         onFocus={handleSearchFocus}
         onBlur={handleSearchBlur}
-        onPressIn={handleSearchPressIn}
+        onPressIn={expandToFullHeight}
       />
       {renderContent()}
     </>

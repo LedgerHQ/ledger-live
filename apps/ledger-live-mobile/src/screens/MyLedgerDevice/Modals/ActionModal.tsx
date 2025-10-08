@@ -3,7 +3,7 @@ import { StyleSheet, View } from "react-native";
 import type { BaseButtonProps } from "~/components/Button";
 import Button from "~/components/Button";
 import getWindowDimensions from "~/logic/getWindowDimensions";
-import QueuedDrawerGorhom from "LLM/components/QueuedDrawer/temp/QueuedDrawerGorhom";
+import QueuedDrawerGorhom from "LLM/components/QueuedDrawer";
 
 const { height } = getWindowDimensions();
 type Props = {

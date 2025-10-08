@@ -28,7 +28,7 @@ import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import type { DeviceModelInfo } from "@ledgerhq/types-live";
 import { ParamListBase, T } from "@react-navigation/native";
-import { StackNavigationProp } from "@react-navigation/stack";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import React, { useEffect, useState } from "react";
 import type { TFunction } from "i18next";
 import { Image, Linking, ScrollView } from "react-native";
@@ -149,7 +149,7 @@ export function renderRequiresAppInstallation({
   navigation,
   appNames,
 }: RawProps & {
-  navigation: StackNavigationProp<ParamListBase>;
+  navigation: NativeStackNavigationProp<ParamListBase>;
   appNames: string[];
 }) {
   const appNamesCSV = appNames.join(", ");
@@ -369,7 +369,7 @@ const AllowOpeningApp = ({
   device,
   theme,
 }: RawProps & {
-  navigation: StackNavigationProp<ParamListBase>;
+  navigation: NativeStackNavigationProp<ParamListBase>;
   wording: string;
   tokenContext?: TokenCurrency | null | undefined;
   isDeviceBlocker?: boolean;
@@ -418,7 +418,7 @@ export function renderAllowOpeningApp({
   device,
   theme,
 }: RawProps & {
-  navigation: StackNavigationProp<ParamListBase>;
+  navigation: NativeStackNavigationProp<ParamListBase>;
   wording: string;
   tokenContext?: TokenCurrency | undefined | null;
   isDeviceBlocker?: boolean;
@@ -521,7 +521,7 @@ export function renderError({
   device,
   hasExportLogButton,
 }: RawProps & {
-  navigation?: StackNavigationProp<RootStackParamList>;
+  navigation?: NativeStackNavigationProp<RootStackParamList>;
   error: Error;
   onRetry?: (() => void) | null;
   managerAppName?: string;
@@ -642,7 +642,7 @@ export function RequiredFirmwareUpdate({
   device,
   navigation,
 }: RawProps & {
-  navigation: StackNavigationProp<ParamListBase>;
+  navigation: NativeStackNavigationProp<ParamListBase>;
   device: Device;
 }) {
   const lastSeenDevice: DeviceModelInfo | null | undefined = useSelector(lastSeenDeviceSelector);
@@ -741,7 +741,7 @@ export function renderDeviceNotOnboarded({
 }: {
   t: TFunction;
   device: Device;
-  navigation: StackNavigationProp<ParamListBase>;
+  navigation: NativeStackNavigationProp<ParamListBase>;
 }) {
   const navigateToOnboarding = () => {
     if (isSyncOnboardingSupported(device.modelId)) {
@@ -967,7 +967,7 @@ export function LoadingAppInstall({
 
 type WarningOutdatedProps = RawProps & {
   colors: Theme["colors"];
-  navigation: StackNavigationProp<ParamListBase>;
+  navigation: NativeStackNavigationProp<ParamListBase>;
   appName: string;
   passWarning: () => void;
 };
@@ -1042,7 +1042,7 @@ export const AutoRepair = ({
 }: RawProps & {
   onDone: () => void;
   device: Device;
-  navigation: StackNavigationProp<ParamListBase>;
+  navigation: NativeStackNavigationProp<ParamListBase>;
 }) => {
   const [error, setError] = useState<Error | null>(null);
   const [progress, setProgress] = useState<number>(0);

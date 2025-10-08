@@ -1,7 +1,8 @@
 import { BigNumber } from "bignumber.js";
 import invariant from "invariant";
 import React, { useCallback, useState } from "react";
-import { Trans, useTranslation } from "react-i18next";
+import { useTranslation } from "react-i18next";
+import i18next from "i18next";
 import { Keyboard, SafeAreaView, StyleSheet, View } from "react-native";
 import { CompositeScreenProps, useTheme } from "@react-navigation/native";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
@@ -20,7 +21,7 @@ import { SignTransactionNavigatorParamList } from "~/components/RootNavigator/ty
 import { SwapNavigatorParamList } from "~/components/RootNavigator/types/SwapNavigator";
 
 const options = {
-  title: <Trans i18nKey="send.summary.fees" />,
+  title: i18next.t("send.summary.fees"),
   headerLeft: undefined,
 };
 
@@ -113,7 +114,7 @@ function KaspaEditCustomFees({ navigation, route }: Props) {
                 },
               ]}
             >
-              <Trans i18nKey="common.sompiPerByte" />
+              {t("common.sompiPerByte")}
             </LText>
           </View>
           <View style={styles.flex}>

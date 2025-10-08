@@ -19,7 +19,7 @@ const StyledTouchableOpacity = styled(TouchableOpacity)<BaseStyledProps>`
   align-items: center;
   width: 100%;
   height: auto;
-  padding: ${({ theme }) => theme.space[6]}px 0px ${({ theme }) => theme.space[6]}px
+  padding: ${({ theme }) => theme.space[4]}px 0px ${({ theme }) => theme.space[4]}px
     ${({ theme }) => theme.space[6]}px;
 `;
 

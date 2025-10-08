@@ -15,10 +15,6 @@ const SafeContainer = styled(SafeAreaView)`
   background-color: ${p => p.theme.colors.background.main};
 `;
 
-const StyledWebview = styled(WebView)`
-  background-color: transparent; // avoids white background before page loads
-`;
-
 export type Props = {
   uri: string;
   screenName: string;
@@ -87,9 +83,10 @@ const WebViewScreen = ({
       <Flex flex={1}>
         {hasNetwork ? (
           <>
-            <StyledWebview
+            <WebView
               ref={ref}
               source={{ uri }}
+              style={{ backgroundColor: "transparent" }}
               onMessage={onMessage}
               onLoadEnd={handleOnLoad}
               renderError={renderError || defaultRenderError}

@@ -9,7 +9,7 @@ import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { useIsFocused, useTheme } from "@react-navigation/native";
 import KeyboardView from "~/components/KeyboardView";
 import Button from "~/components/Button";
-import { ScreenName } from "~/const";
+import { NavigatorName, ScreenName } from "~/const";
 import { accountScreenSelector } from "~/reducers/accounts";
 import TextInput from "~/components/FocusedTextInput";
 import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
@@ -37,12 +37,15 @@ function StellarEditMemoValue({ navigation, route }: NavigationProps) {
     const bridge = getAccountBridge(account);
     const { transaction, memoType } = route.params;
     // @ts-expect-error FIXME: No current / next navigation params?
-    navigation.navigate(ScreenName.SendSummary, {
-      accountId: account.id,
-      transaction: bridge.updateTransaction(transaction, {
-        memoValue: memoValue && memoValue.toString(),
-        memoType: memoType && memoType.toString(),
-      }),
+    navigation.navigate(NavigatorName.SendFunds, {
+      screen: ScreenName.SendSummary,
+      params: {
+        accountId: account.id,
+        transaction: bridge.updateTransaction(transaction, {
+          memoValue: memoValue && memoValue.toString(),
+          memoType: memoType && memoType.toString(),
+        }),
+      },
     });
   }, [navigation, route.params, account, memoValue]);
   return (

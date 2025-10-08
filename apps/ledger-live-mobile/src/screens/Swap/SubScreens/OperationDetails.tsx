@@ -66,7 +66,11 @@ export function OperationDetails({ route }: OperationDetailsParamList) {
 
   return (
     <View style={[styles.root, { backgroundColor: colors.background }]}>
-      <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollViewContent}>
+      <ScrollView
+        style={styles.scrollView}
+        contentContainerStyle={styles.scrollViewContent}
+        testID="swap-operation-details-scroll-view"
+      >
         {status ? <SwapStatusIndicator status={status} /> : null}
         {fromAccount && unitFrom && (
           <LText style={styles.fromAmount} color="grey">

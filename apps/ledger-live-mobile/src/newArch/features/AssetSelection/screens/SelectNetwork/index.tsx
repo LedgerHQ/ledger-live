@@ -14,6 +14,7 @@ import { LoadingStatus } from "@ledgerhq/live-common/deposit/type";
 import useAnalytics from "../../../../hooks/useAnalytics";
 import Animated from "react-native-reanimated";
 import useBannerAnimation from "./useBannerAnimation";
+import SafeAreaView from "~/components/SafeAreaView";
 
 const keyExtractor = (elem: CryptoWithAccounts) => elem.crypto.id;
 
@@ -66,7 +67,7 @@ export default function SelectNetwork({
   const pageTrackingEvent = analyticsMetadata.SelectNetwork?.onAccessScreen;
 
   return (
-    <>
+    <SafeAreaView isFlex>
       <TrackScreen
         name={pageTrackingEvent?.eventName}
         {...pageTrackingEvent?.payload}
@@ -107,7 +108,7 @@ export default function SelectNetwork({
       <Animated.View style={[animatedStyle]}>
         <NetworkBanner hideBanner={hideBanner} onLayout={onBannerLayout} onPress={clickLearn} />
       </Animated.View>
-    </>
+    </SafeAreaView>
   );
 }
 

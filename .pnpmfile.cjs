@@ -157,10 +157,6 @@ function readPackage(pkg, context) {
         "react-native": "*",
         "prop-types": "*",
       }),
-      addPeerDependencies("react-native-animatable", {
-        react: "*",
-        "react-native": "*",
-      }),
 
       addDependencies("expo-pwa", {
         "@expo/config": "*",

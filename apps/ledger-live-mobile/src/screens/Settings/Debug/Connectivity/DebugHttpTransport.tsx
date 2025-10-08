@@ -5,7 +5,7 @@ import { useDispatch } from "react-redux";
 import { useNavigation } from "@react-navigation/native";
 
 import { DeviceModelId } from "@ledgerhq/types-devices";
-import { StackNavigationProp } from "@react-navigation/stack";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { addKnownDevice } from "~/actions/ble";
 import TextInput from "~/components/TextInput";
 import Button from "~/components/Button";
@@ -19,7 +19,7 @@ const DebugHttpTransport = () => {
     DeviceModelId.stax,
     DeviceModelId.europa,
   ];
-  const navigation = useNavigation<StackNavigationProp<Record<string, object | undefined>>>();
+  const navigation = useNavigation<NativeStackNavigationProp<Record<string, object | undefined>>>();
   const dispatch = useDispatch();
   const [address, setAddress] = useState("");
   const [name, setName] = useState("");
