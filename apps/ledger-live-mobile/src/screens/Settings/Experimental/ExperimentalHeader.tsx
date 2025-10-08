@@ -158,6 +158,7 @@ function ExperimentalHeader() {
         {isExperimental && (
           <>
             <ExperimentalIcon size={16} color={colors.live} />
+
             <TouchableOpacity onPress={onPressExperimental}>
               <LText bold style={styles.label} py={4}>
                 <Trans i18nKey="settings.experimental.title" />

@@ -33,7 +33,6 @@ jest.mock("react-native-gesture-handler", () => {
   const RN = require("react-native");
   const TouchableOpacity = RN.TouchableOpacity;
   const ScrollView = RN.ScrollView;
-
   return {
     TouchableOpacity: TouchableOpacity,
     TouchableWithoutFeedback: TouchableOpacity,
@@ -42,6 +41,38 @@ jest.mock("react-native-gesture-handler", () => {
     BaseButton: TouchableOpacity,
     RectButton: TouchableOpacity,
     BorderlessButton: TouchableOpacity,
+    Gesture: {
+      Tap: jest.fn(),
+      Pan: jest.fn(),
+      Pinch: jest.fn(),
+      Rotation: jest.fn(),
+      Fling: jest.fn(),
+      LongPress: jest.fn(),
+      ForceTouch: jest.fn(),
+      Native: jest.fn(),
+      Manual: jest.fn(),
+      Race: jest.fn(),
+      Simultaneous: jest.fn(),
+      Exclusive: jest.fn(),
+      requireNativeViewManager: jest.fn(),
+    },
+    GestureDetector: View,
+    GestureHandlerRootView: View,
+    createNativeWrapper: jest.fn(),
+    Directions: {
+      RIGHT: 1,
+      LEFT: 2,
+      UP: 4,
+      DOWN: 8,
+    },
+    State: {
+      UNDETERMINED: 0,
+      FAILED: 1,
+      BEGAN: 2,
+      CANCELLED: 3,
+      ACTIVE: 4,
+      END: 5,
+    },
   };
 });
 
@@ -117,6 +148,8 @@ jest.mock("react-native-startup-time", () => ({
 }));
 
 jest.mock("@react-native-community/netinfo", () => mockRNCNetInfo);
+
+jest.mock("react-native-safe-area-context", () => mockSafeAreaContext);
 
 jest.mock("react-native-safe-area-context", () => mockSafeAreaContext);
 
