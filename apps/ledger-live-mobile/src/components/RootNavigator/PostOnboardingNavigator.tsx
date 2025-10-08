@@ -1,5 +1,5 @@
 import React, { useMemo } from "react";
-import { createStackNavigator } from "@react-navigation/stack";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useTheme } from "styled-components/native";
 
 import { ScreenName } from "~/const";
@@ -14,7 +14,7 @@ import { NavigationHeaderCloseButton } from "../NavigationHeaderCloseButton";
 import { useCompletePostOnboarding } from "~/logic/postOnboarding/useCompletePostOnboarding";
 import PostOnboardingDeeplinkHandler from "~/screens/PostOnboarding/PostOnboardingDeeplinkHandler";
 
-const Stack = createStackNavigator<PostOnboardingNavigatorParamList>();
+const Stack = createNativeStackNavigator<PostOnboardingNavigatorParamList>();
 
 const PostOnboardingNavigator = () => {
   const { colors } = useTheme();
@@ -36,6 +36,7 @@ const PostOnboardingNavigator = () => {
           headerShown: true,
           headerLeft: () => null,
           headerTitle: () => null,
+          title: "",
           headerRight: () => <NavigationHeaderCloseButton onPress={closePostOnboarding} />,
         }}
       />

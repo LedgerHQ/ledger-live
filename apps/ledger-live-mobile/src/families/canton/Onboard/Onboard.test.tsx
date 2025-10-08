@@ -1,7 +1,7 @@
 import React from "react";
 import { Platform } from "react-native";
 import { render } from "@tests/test-renderer";
-import { createStackNavigator } from "@react-navigation/stack";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { CantonOnboard } from "../index";
 import { ScreenName } from "~/const";
 import type { CantonOnboardAccountParamList } from "./types";
@@ -114,7 +114,7 @@ describe("Canton Onboard Component", () => {
   };
 
   const TestNavigator = () => {
-    const Stack = createStackNavigator<CantonOnboardAccountParamList>();
+    const Stack = createNativeStackNavigator<CantonOnboardAccountParamList>();
 
     return (
       <Stack.Navigator>

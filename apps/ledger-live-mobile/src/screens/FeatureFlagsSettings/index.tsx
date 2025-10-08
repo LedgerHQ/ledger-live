@@ -159,7 +159,9 @@ export default function DebugFeatureFlags() {
             {project}
           </Tag>
           <Flex flexDirection="row" justifyContent="space-between">
-            <Text mt={3}>{t("settings.debug.showBannerDesc")}</Text>
+            <Text flexShrink={1} mt={3}>
+              {t("settings.debug.showBannerDesc")}
+            </Text>
             <Switch checked={featureFlagsBannerVisible} onChange={setFeatureFlagBannerVisible} />
           </Flex>
           <Divider />

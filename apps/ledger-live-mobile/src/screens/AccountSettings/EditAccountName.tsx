@@ -68,7 +68,7 @@ const EditAccountName = ({ navigation, route }: NavigationProps) => {
   useEffect(() => {
     if (Platform.OS !== "ios") return;
 
-    const unsubscribe = navigation.addListener("gestureEnd", () => {
+    const unsubscribe = navigation.addListener("beforeRemove", () => {
       Keyboard.dismiss();
     });
 

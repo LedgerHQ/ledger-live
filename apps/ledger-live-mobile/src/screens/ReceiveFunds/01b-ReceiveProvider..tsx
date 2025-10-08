@@ -19,21 +19,15 @@ import { analyticsEnabledSelector } from "~/reducers/settings";
 export default function ReceiveProvider(
   props: StackNavigatorProps<ReceiveFundsStackParamList, ScreenName.ReceiveProvider>,
 ) {
-  // 1. grab the manifestId from the route params
   const { manifestId } = props?.route?.params ?? {};
-
-  // 2. get the manifest
   const localManifest = useLocalLiveAppManifest(manifestId);
   const remoteManifest = useRemoteLiveAppManifest(manifestId);
   const manifest = localManifest || remoteManifest;
-
   const shareAnalytics = useSelector(analyticsEnabledSelector);
   const { manifest: manifestWithSessionId, loading: sessionIdLoading } = useManifestWithSessionId({
     manifest,
     shareAnalytics,
   });
-
-  // Below can be used for loading
   const { state: remoteLiveAppState } = useRemoteLiveAppContext();
 
   return manifestWithSessionId ? (

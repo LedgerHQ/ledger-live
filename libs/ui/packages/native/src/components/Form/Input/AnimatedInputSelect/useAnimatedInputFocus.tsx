@@ -18,12 +18,12 @@ export const useAnimatedInputFocus = ({
 
   const onFocus = (e: NativeSyntheticEvent<TextInputFocusEventData>) => {
     setFocused(true);
-    onFocusCallback && onFocusCallback(e);
+    onFocusCallback?.(e);
   };
 
   const onBlur = (e: NativeSyntheticEvent<TextInputFocusEventData>) => {
     setFocused(false);
-    onBlurCallback && onBlurCallback(e);
+    onBlurCallback?.(e);
   };
 
   return { onFocus, onBlur, focused };

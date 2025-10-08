@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { shallowEqual, useSelector } from "react-redux";
 import { Platform } from "react-native";
 import { useTranslation } from "react-i18next";
-import { useFocusEffect } from "@react-navigation/native";
+import { useFocusEffect, useIsFocused } from "@react-navigation/native";
 import { Box, Flex } from "@ledgerhq/native-ui";
 import { useTheme } from "styled-components/native";
 import useEnv from "@ledgerhq/live-common/hooks/useEnv";
@@ -71,6 +71,7 @@ function PortfolioScreen({ navigation }: NavigationProps) {
   const isAccountListUIEnabled = accountListFF?.enabled;
   const llmDatadog = useFeature("llmDatadog");
   const allAccounts = useSelector(flattenAccountsSelector, shallowEqual);
+  const isFocused = useIsFocused();
 
   const mmkvMigrationFF = useFeature("llmMmkvMigration");
 
@@ -135,10 +136,10 @@ function PortfolioScreen({ navigation }: NavigationProps) {
 
   const handleHeightChange = useCallback(
     (newHeight: number) => {
-      if (newHeight === 0) return;
+      if (newHeight === 0 || !isFocused) return;
       animatedHeight.value = newHeight;
     },
-    [animatedHeight],
+    [animatedHeight, isFocused],
   );
 
   const isLNSUpsellBannerShown = useLNSUpsellBannerState("wallet").isShown;

@@ -7,7 +7,7 @@ import useAnalytics from "LLM/hooks/useAnalytics";
 import { AnalyticContexts } from "LLM/hooks/useAnalytics/enums";
 import { useNavigation } from "@react-navigation/core";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
-import { StackNavigationProp } from "@react-navigation/stack";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { NavigatorName, ScreenName } from "~/const";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 
@@ -30,7 +30,7 @@ export default function useAddFundsButtonViewModel({
   );
   const { analyticsMetadata } = useAnalytics(AnalyticContexts.AddAccounts);
 
-  const navigation = useNavigation<StackNavigationProp<BaseNavigatorStackParamList>>();
+  const navigation = useNavigation<NativeStackNavigationProp<BaseNavigatorStackParamList>>();
 
   const shouldOnboardingRedirectToReceive = !!useFeature("llmSyncOnboardingIncr1")?.enabled;
 

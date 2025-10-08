@@ -49,7 +49,7 @@ const i18nKeyDeveloper = (key: string, prop: string) =>
 
 export const experimentalFeatures: Feature[] = [
   ...(experimentalCurrencies.length
-    ? [
+    ? ([
         {
           type: "toggle",
           name: "EXPERIMENTAL_CURRENCIES",
@@ -58,7 +58,7 @@ export const experimentalFeatures: Feature[] = [
           valueOn: experimentalCurrencies,
           valueOff: "",
         },
-      ]
+      ] satisfies Feature[])
     : []),
   {
     type: "toggle",
@@ -110,16 +110,16 @@ export const experimentalFeatures: Feature[] = [
     description: i18nKey("experimentalEnableNetworkLogs", "description"),
   },
   ...(__DEV__
-    ? [
+    ? ([
         {
           type: "toggle",
           name: "EXPERIMENTAL_SWAP",
           title: i18nKey("experimentalSwap", "title"),
           description: i18nKey("experimentalSwap", "description"),
         },
-      ]
+      ] satisfies Feature[])
     : []),
-] as Feature[];
+];
 
 export const developerFeatures: Feature[] = [
   {
@@ -171,7 +171,7 @@ export const setStorageEnvs = async (key: EnvName, val: string) => {
   }
 };
 
-export const isReadOnly = (key: EnvName) => key in Config;
+export const isReadOnly = (key: EnvName) => Object.keys(Config).includes(key);
 
 export const enabledExperimentalFeatures = (): string[] =>
   [...experimentalFeatures, ...developerFeatures].map(e => e.name).filter(k => !isEnvDefault(k));

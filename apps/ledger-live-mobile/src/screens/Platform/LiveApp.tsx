@@ -1,4 +1,5 @@
 import React, { useEffect } from "react";
+import { SafeAreaView } from "react-native";
 import { useLocalLiveAppManifest } from "@ledgerhq/live-common/wallet-api/LocalLiveAppProvider/index";
 import {
   useRemoteLiveAppContext,
@@ -14,7 +15,6 @@ import { useLocale } from "~/context/Locale";
 import { ScreenName } from "~/const";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
-import SafeAreaViewFixed from "~/components/SafeAreaView";
 
 const appManifestNotFoundError = new Error("App not found"); // FIXME move this elsewhere.
 
@@ -39,7 +39,7 @@ export function LiveApp({ route }: Props) {
 
   const dappUrl = customDappURL || customDappUrl;
 
-  if (dappUrl && manifest && manifest.params && "dappUrl" in manifest.params) {
+  if (dappUrl && manifest?.params && "dappUrl" in manifest.params) {
     manifest = {
       ...manifest,
       params: {
@@ -49,14 +49,14 @@ export function LiveApp({ route }: Props) {
     };
   }
 
-  if (dappUrl && manifest && manifest.dapp) {
+  if (dappUrl && manifest?.dapp) {
     manifest = {
       ...manifest,
       url: dappUrl,
     };
   }
   return manifest ? (
-    <SafeAreaViewFixed edges={["top", "bottom", "left", "right"]} isFlex>
+    <SafeAreaView style={{ flex: 1 }}>
       <TrackScreen category="Platform" name="App" />
       <WebPlatformPlayer
         manifest={manifest}
@@ -66,7 +66,7 @@ export function LiveApp({ route }: Props) {
           ...params,
         }}
       />
-    </SafeAreaViewFixed>
+    </SafeAreaView>
   ) : (
     <Flex flex={1} p={10} justifyContent="center" alignItems="center">
       {remoteLiveAppState.isLoading ? (

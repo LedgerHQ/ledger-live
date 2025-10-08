@@ -36,7 +36,7 @@ const RatingsModal = () => {
     () => ({
       height: sharedHeight.value ?? 0,
     }),
-    [sharedHeight.value],
+    [sharedHeight],
   );
 
   const closeModal = useCallback(() => {

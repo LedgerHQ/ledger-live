@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo } from "react";
 import { Platform } from "react-native";
-import { createStackNavigator } from "@react-navigation/stack";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useTheme } from "styled-components/native";
 import { useTranslation } from "react-i18next";
 import { NavigationProp, useRoute } from "@react-navigation/native";
@@ -233,4 +233,4 @@ export default function ReceiveFundsNavigator() {
   );
 }
 
-const Stack = createStackNavigator<ReceiveFundsStackParamList>();
+const Stack = createNativeStackNavigator<ReceiveFundsStackParamList>();
