@@ -200,7 +200,9 @@ export default function SendAmountCoin({ navigation, route }: Props) {
                 </View>
                 <View style={styles.continueWrapper}>
                   <Button
-                    testID="amount-continue-button"
+                    testID={
+                      bridgePending ? "amount-continue-button-loading" : "amount-continue-button"
+                    }
                     event="SendAmountCoinContinue"
                     type="primary"
                     title={

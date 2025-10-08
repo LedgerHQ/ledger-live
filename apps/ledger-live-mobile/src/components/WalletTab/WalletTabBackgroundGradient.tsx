@@ -1,6 +1,5 @@
 import React, { memo, useContext, useMemo, useState } from "react";
 import { Animated, ImageBackground } from "react-native";
-import { MaterialTopTabBarProps } from "@react-navigation/material-top-tabs";
 import { useTheme } from "styled-components/native";
 import { WalletTabNavigatorScrollContext } from "./WalletTabNavigatorScrollManager";
 import LinearGradient from "react-native-linear-gradient";
@@ -8,30 +7,23 @@ import LinearGradient from "react-native-linear-gradient";
 const AnimatedImageBackground = Animated.createAnimatedComponent(ImageBackground);
 
 type Props = {
-  scrollX: MaterialTopTabBarProps["position"];
+  visible?: boolean;
   color?: string;
 };
 
-function WalletTabBackgroundGradient({ color, scrollX }: Props) {
+function WalletTabBackgroundGradient({ color, visible = true }: Readonly<Props>) {
   const { theme, colors } = useTheme();
   const { scrollY, headerHeight } = useContext(WalletTabNavigatorScrollContext);
   const [imageLoaded, setImageLoaded] = useState(false);
 
   const opacity = useMemo(
     () =>
-      Animated.multiply(
-        scrollY.interpolate({
-          inputRange: [0, headerHeight],
-          outputRange: [1, 0],
-          extrapolate: "clamp",
-        }),
-        scrollX.interpolate({
-          inputRange: [0, 1],
-          outputRange: [1, 0],
-          extrapolate: "clamp",
-        }),
-      ),
-    [scrollY, headerHeight, scrollX],
+      scrollY.interpolate({
+        inputRange: [0, headerHeight],
+        outputRange: [1, 0],
+        extrapolate: "clamp",
+      }),
+    [scrollY, headerHeight],
   );
 
   const gradientOpacity = useMemo(
@@ -62,7 +54,7 @@ function WalletTabBackgroundGradient({ color, scrollX }: Props) {
 
   if (color) {
     return (
-      <Animated.View style={containerStyle}>
+      <Animated.View style={[...containerStyle, { opacity: visible ? opacity : 0 }]}>
         <LinearGradient
           colors={[color, colors.background.main]}
           locations={[0, 1]}

@@ -1,5 +1,5 @@
 import React, { useMemo } from "react";
-import { createStackNavigator } from "@react-navigation/stack";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useTheme } from "styled-components/native";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { ScreenName } from "~/const";
@@ -36,4 +36,4 @@ export default function DiscoverNavigator() {
   );
 }
 
-const Stack = createStackNavigator<DiscoverNavigatorStackParamList>();
+const Stack = createNativeStackNavigator<DiscoverNavigatorStackParamList>();

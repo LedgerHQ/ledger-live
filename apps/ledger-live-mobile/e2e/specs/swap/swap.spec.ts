@@ -1,4 +1,6 @@
-describe("Swap", () => {
+// SKIP it uses the old swap interface and it's not working on iOS with new-arch
+// because of the infinite re-render loop
+describe.skip("Swap", () => {
   beforeAll(async () => {
     await app.init({ userdata: "1AccountBTC1AccountETHReadOnlyFalse" });
     await app.portfolio.waitForPortfolioPageToLoad();

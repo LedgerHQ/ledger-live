@@ -1,5 +1,5 @@
 import React, { useMemo } from "react";
-import { createStackNavigator } from "@react-navigation/stack";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "styled-components/native";
 import { DomainServiceProvider } from "@ledgerhq/domain-service/hooks/index";
@@ -21,7 +21,7 @@ import SendWorkflow from "LLM/features/Send";
 
 const totalSteps = "5";
 
-const Stack = createStackNavigator<SendFundsNavigatorStackParamList>();
+const Stack = createNativeStackNavigator<SendFundsNavigatorStackParamList>();
 
 export default function SendFundsNavigator() {
   const { t } = useTranslation();

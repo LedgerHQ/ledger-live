@@ -5,7 +5,7 @@ import { MockedAccounts } from "../../Accounts/__integrations__/mockedAccounts";
 import AccountsList from "../../Accounts/screens/AccountsList";
 import { AccountsListNavigator } from "../../Accounts/screens/AccountsList/types";
 import { ScreenName } from "~/const";
-import { createStackNavigator } from "@react-navigation/stack";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { DeviceModelInfo } from "@ledgerhq/types-live";
 import { EntryPoint } from "../types";
@@ -47,7 +47,7 @@ const getInitialState = (state: State) => ({
 
 describe("Ledger Sync Entry Point on Accounts screen", () => {
   it("entry point should be displayed and open ledger sync activation flow", async () => {
-    const Stack = createStackNavigator<AccountsListNavigator>();
+    const Stack = createNativeStackNavigator<AccountsListNavigator>();
 
     const { getByText, findByText, findByRole, user } = renderWithReactQuery(
       <Stack.Navigator>
@@ -76,7 +76,7 @@ describe("Ledger Sync Entry Point on Accounts screen", () => {
   });
 
   it("entry point should not be displayed when the entry point is disabled in the ff", async () => {
-    const Stack = createStackNavigator<AccountsListNavigator>();
+    const Stack = createNativeStackNavigator<AccountsListNavigator>();
 
     const { queryByText } = renderWithReactQuery(
       <Stack.Navigator>

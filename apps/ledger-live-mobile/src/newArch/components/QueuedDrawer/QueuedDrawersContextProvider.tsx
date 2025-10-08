@@ -33,9 +33,22 @@ const QueuedDrawersContextProvider: React.FC<{ children: React.ReactNode }> = ({
         setDrawerOpenedCallback(true);
       } else if (force) {
         logDrawer("addDrawerToQueue -> force close opened & queued drawers, and clear queue", id);
-        queueRef.current.forEach(queueItem => queueItem.setDrawerOpenedCallback(false));
-        queueRef.current = [{ ...queueRef.current[0], markedForClose: true }, newQueueItem];
-        // not opening the drawer here, it will be opened when the first item of the queue clears
+        // 1. Store current queue before modifying
+        const previousQueue = queueRef.current;
+        // 2. Close the currently opened drawer (first in queue)
+        if (previousQueue.length > 0) {
+          previousQueue[0].setDrawerOpenedCallback(false);
+        }
+        // 3. Clear the queue except for the first item (which is closing)
+        queueRef.current =
+          previousQueue.length > 0
+            ? [{ ...previousQueue[0], markedForClose: true }, newQueueItem]
+            : [newQueueItem];
+        // 4. Close all other queued drawers (which removes them from queue and resets their state)
+        //    The forced drawer will open when the first (marked-for-close) item is removed from queue
+        for (const queueItem of previousQueue.slice(1)) {
+          queueItem.setDrawerOpenedCallback(false);
+        }
       } else {
         logDrawer("addDrawerToQueue -> add to queue", { id });
         queueRef.current = [...queueRef.current, newQueueItem];
@@ -47,16 +60,20 @@ const QueuedDrawersContextProvider: React.FC<{ children: React.ReactNode }> = ({
           id,
           previousQueueLength: queueRef.current.length,
         });
-        // remove from queue
+        // 1. Remove from queue
         queueRef.current = queueRef.current.filter(queueItem => queueItem.id !== id);
-        const nextInQueueNotMarkedForClose = queueRef.current.find(
-          queueItem => !queueItem.markedForClose,
-        );
-        if (nextInQueueNotMarkedForClose) {
+        // 2. Clean up any remaining marked-for-close items first
+        queueRef.current = queueRef.current.filter(queueItem => !queueItem.markedForClose);
+        // 3. Find next drawer to open
+        const nextInQueue = queueRef.current[0];
+
+        if (nextInQueue) {
           logDrawer("removeDrawerFromQueue -> post close: open next in queue", {
-            id: nextInQueueNotMarkedForClose.id,
+            id: nextInQueue.id,
           });
-          nextInQueueNotMarkedForClose.setDrawerOpenedCallback(true);
+          nextInQueue.setDrawerOpenedCallback(true);
+        } else {
+          logDrawer("removeDrawerFromQueue -> queue is now empty");
         }
         logQueueLength();
       }

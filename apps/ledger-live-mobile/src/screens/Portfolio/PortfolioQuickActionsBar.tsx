@@ -1,6 +1,6 @@
 import React, { useCallback } from "react";
 import { useNavigation } from "@react-navigation/native";
-import { StackNavigationProp } from "@react-navigation/stack";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useTranslation } from "react-i18next";
 import useQuickActions, { QuickAction } from "~/hooks/useQuickActions";
 import { QuickActionList, type QuickActionButtonProps } from "@ledgerhq/native-ui";
@@ -14,7 +14,7 @@ const SHARED_CONFIG = {
   textVariant: "small" as const,
 };
 function PortfolioQuickActionsBar() {
-  const navigation = useNavigation<StackNavigationProp<BaseNavigatorStackParamList>>();
+  const navigation = useNavigation<NativeStackNavigationProp<BaseNavigatorStackParamList>>();
   const router = useRoute();
   const stakeLabel = getStakeLabelLocaleBased();
   const { t } = useTranslation();

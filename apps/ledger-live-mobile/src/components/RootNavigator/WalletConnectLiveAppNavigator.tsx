@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo } from "react";
-import { createStackNavigator } from "@react-navigation/stack";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useTheme } from "styled-components/native";
 import { useDispatch, useSelector } from "react-redux";
 import { Flex, IconsLegacy } from "@ledgerhq/native-ui";
@@ -20,6 +20,7 @@ const options = {
   ),
   headerStyle: styles.headerNoShadow,
   headerTitle: () => null,
+  title: "",
 };
 
 export default function WalletConnectLiveAppNavigator() {
@@ -61,4 +62,4 @@ export default function WalletConnectLiveAppNavigator() {
   );
 }
 
-const Stack = createStackNavigator<WalletConnectLiveAppNavigatorParamList>();
+const Stack = createNativeStackNavigator<WalletConnectLiveAppNavigatorParamList>();

@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { ScrollView, FlatList, SectionList } from "react-native";
 import { Subject } from "rxjs";
 import { useIsFocused, useScrollToTop as useNativeScrollToTop } from "@react-navigation/native";
+import { NavigatorName, ScreenName } from "~/const";
 
 export type Animated<T> = T & {
   getNode: () => T;
@@ -74,4 +75,34 @@ function scrollSectionListToTop(compRef: SectionList | Animated<SectionList>): v
 
 export function scrollToTop(): void {
   scrollSubject.next(null);
+}
+
+/**
+ * Maps a screen name to its parent navigator. This is used when navigating
+ * back from edit screens that can be accessed from multiple navigators
+ * (SendFunds, SignTransaction, or Swap).
+ *
+ * @param screen
+ * The current navigation screen name
+ *
+ * @returns
+ * The parent navigator name for the given screen
+ */
+export function getParentNavigatorForEditScreen(
+  screen:
+    | ScreenName.SendSummary
+    | ScreenName.SignTransactionSummary
+    | ScreenName.SwapForm
+    | undefined,
+): NavigatorName {
+  switch (screen) {
+    case ScreenName.SendSummary:
+      return NavigatorName.SendFunds;
+    case ScreenName.SignTransactionSummary:
+      return NavigatorName.SignTransaction;
+    case ScreenName.SwapForm:
+      return NavigatorName.Swap;
+    default:
+      throw new Error(`Unknown screen: ${screen}`);
+  }
 }

@@ -5,7 +5,7 @@ import { Row } from "./components/Row";
 import { track } from "~/analytics";
 import { NavigatorName, ScreenName } from "~/const";
 import { ParamListBase, useNavigation } from "@react-navigation/native";
-import { StackNavigationProp } from "@react-navigation/stack";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useTranslation } from "react-i18next";
 import { entryPointConfig } from "./config";
 type Props = {
@@ -16,7 +16,7 @@ type Props = {
 export default function useNftsEntryPointViewModel({ accountId, currencyId }: Props) {
   const { t } = useTranslation();
   const featureNftEntryPoint = useFeature("llNftEntryPoint");
-  const navigation = useNavigation<StackNavigationProp<ParamListBase>>();
+  const navigation = useNavigation<NativeStackNavigationProp<ParamListBase>>();
 
   const chains =
     featureNftEntryPoint?.params?.chains?.map((chain: string) => chain.toLowerCase()) ?? [];

@@ -1,5 +1,5 @@
 import React, { useMemo } from "react";
-import { createStackNavigator } from "@react-navigation/stack";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useTheme } from "styled-components/native";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { ScreenName } from "~/const";
@@ -8,7 +8,7 @@ import GetFlex from "LLM/features/Reborn/screens/UpsellFlex";
 import PurchaseDevice from "~/screens/PurchaseDevice";
 import { BuyDeviceNavigatorParamList } from "./types/BuyDeviceNavigator";
 
-const Stack = createStackNavigator<BuyDeviceNavigatorParamList>();
+const Stack = createNativeStackNavigator<BuyDeviceNavigatorParamList>();
 
 const BuyDeviceNavigator = () => {
   const { colors } = useTheme();
