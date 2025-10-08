@@ -124,6 +124,8 @@ type HeaderProps = {
 };
 
 const StyledHeader = styled(Flex)`
+  position: relative;
+  overflow: hidden;
   border-top-left-radius: 24px;
   border-top-right-radius: 24px;
   padding: ${p => p.theme.space[6]}px;
@@ -132,9 +134,9 @@ const StyledHeader = styled(Flex)`
 
 const StyledImageContainer = styled(Flex)`
   transform: rotate(-20deg);
-  position: static;
-  top: -100px;
-  left: -50px;
+  position: absolute;
+  top: -130px;
+  left: -130px;
   align-items: center;
   justify-content: center;
 `;

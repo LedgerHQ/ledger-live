@@ -13,7 +13,7 @@ type Props = {
 export default function StepHeader({ title, subtitle, testID, adjustFontSize }: Props) {
   return (
     <TouchableWithoutFeedback onPress={scrollToTop}>
-      <Flex flexDirection={"column"} justifyContent={"center"} flex={1} py={3}>
+      <Flex flexDirection="column" justifyContent="center" py={3}>
         {subtitle && (
           <Text
             variant={"small"}

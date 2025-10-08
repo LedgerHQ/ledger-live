@@ -1,5 +1,5 @@
 import React from "react";
-import { createStackNavigator } from "@react-navigation/stack";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 import { NavigatorName, ScreenName } from "~/const";
 import { MockedAccounts } from "./mockedAccount";
@@ -8,7 +8,7 @@ import AccountsNavigator from "LLM/features/Accounts/Navigator";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import AssetsNavigator from "LLM/features/Assets/Navigator";
 
-const Stack = createStackNavigator<BaseNavigatorStackParamList>();
+const Stack = createNativeStackNavigator<BaseNavigatorStackParamList>();
 
 const TestNavigator = ({ children }: { children: React.ReactNode }) => (
   <QueryClientProvider client={new QueryClient()}>

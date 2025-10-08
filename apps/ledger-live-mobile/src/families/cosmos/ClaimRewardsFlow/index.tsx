@@ -1,7 +1,7 @@
 import React, { useMemo } from "react";
 import { Platform } from "react-native";
 import { useTranslation } from "react-i18next";
-import { createStackNavigator } from "@react-navigation/stack";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useTheme } from "@react-navigation/native";
 import { getStackNavigatorConfig, defaultNavigationOptions } from "~/navigation/navigatorConfig";
 import StepHeader from "~/components/StepHeader";
@@ -45,12 +45,7 @@ function ClaimRewardsFlow() {
             </Flex>
           ),
           headerLeft: () => null,
-          headerStyle: {
-            ...defaultNavigationOptions.headerStyle,
-            elevation: 0,
-            shadowOpacity: 0,
-            borderBottomWidth: 0,
-          },
+          headerStyle: defaultNavigationOptions.headerStyle,
           gestureEnabled: false,
         }}
       />
@@ -119,4 +114,4 @@ const options = {
   headerShown: false,
 };
 export { ClaimRewardsFlow as component, options };
-const Stack = createStackNavigator<CosmosClaimRewardsFlowParamList>();
+const Stack = createNativeStackNavigator<CosmosClaimRewardsFlowParamList>();

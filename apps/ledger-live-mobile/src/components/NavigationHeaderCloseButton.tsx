@@ -1,6 +1,6 @@
 import { Button, Flex, Icons, IconsLegacy } from "@ledgerhq/native-ui";
 import { ParamListBase, useNavigation } from "@react-navigation/native";
-import { StackNavigationProp } from "@react-navigation/stack";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import React, { useCallback, useState } from "react";
 import ConfirmationModal from "./ConfirmationModal";
 import type { Props as BottomModalProps } from "./QueuedDrawer";
@@ -30,7 +30,7 @@ type Props = {
  * use `NavigationHeaderCloseButtonAdvanced` defined below.
  */
 export const NavigationHeaderCloseButton: React.FC<Props> = React.memo(({ onPress, color }) => {
-  const navigation = useNavigation<StackNavigationProp<ParamListBase>>();
+  const navigation = useNavigation<NativeStackNavigationProp<ParamListBase>>();
   return (
     <Touchable
       touchableTestID="NavigationHeaderCloseButton"
@@ -45,7 +45,7 @@ export const NavigationHeaderCloseButton: React.FC<Props> = React.memo(({ onPres
 });
 
 export const NavigationHeaderCloseButtonRounded: React.FC<Props> = React.memo(({ onPress }) => {
-  const navigation = useNavigation<StackNavigationProp<ParamListBase>>();
+  const navigation = useNavigation<NativeStackNavigationProp<ParamListBase>>();
   return (
     <Touchable
       onPress={() => (onPress ? onPress() : navigation.popToTop())}

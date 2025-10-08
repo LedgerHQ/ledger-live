@@ -74,7 +74,7 @@ function AssetCentricGraphCard({
       return { value: 0, countervalue: 0 };
     }
     return { value: currencyBalance, countervalue: currencyUnitValue.value };
-  }, [hoveredItem, accountsEmpty, currencyBalance, currencyUnitValue.value]);
+  }, [hoveredItem, accountsEmpty, currencyBalance, currencyUnitValue]);
 
   const items = [
     {
@@ -118,7 +118,7 @@ function AssetCentricGraphCard({
     return {
       opacity,
     };
-  }, [currentPositionY.value, graphCardEndPosition]);
+  }, [currentPositionY, graphCardEndPosition]);
 
   const graphColor = ensureContrast(getCurrencyColor(currency), colors.background.main);
 

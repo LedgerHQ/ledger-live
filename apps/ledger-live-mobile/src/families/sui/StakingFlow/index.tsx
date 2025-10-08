@@ -1,6 +1,6 @@
 import { SuiValidator } from "@ledgerhq/live-common/families/sui/types";
 import { useTheme } from "@react-navigation/native";
-import { createStackNavigator } from "@react-navigation/stack";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import React, { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { Platform } from "react-native";
@@ -126,4 +126,4 @@ const options = {
 
 export { StakingFlow as component, options };
 
-const Stack = createStackNavigator<SuiStakingFlowParamList>();
+const Stack = createNativeStackNavigator<SuiStakingFlowParamList>();

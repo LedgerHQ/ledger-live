@@ -50,30 +50,53 @@ const ProgressBar = styled.View`
 
 const AnimatedProgressBar = Animated.createAnimatedComponent(ProgressBar);
 
-function ActiveProgressBar({ duration }: StoryBarProps) {
-  const width = useSharedValue(0);
+function ActiveProgressBar({
+  duration,
+  containerWidth = 0,
+}: StoryBarProps & { containerWidth?: number }) {
+  const animatedWidth = useSharedValue(0);
 
   useEffect(() => {
-    width.value = 100;
-  }, [width]);
-
-  const animatedStyles = useAnimatedStyle(
-    () => ({
-      width: withTiming(`${width.value}%`, {
+    animatedWidth.value = 0;
+    if (containerWidth > 0) {
+      animatedWidth.value = withTiming(containerWidth, {
         duration: duration || 200,
         easing: Easing.linear,
-      }),
-    }),
-    [width, duration],
-  );
+      });
+    }
+  }, [containerWidth, duration, animatedWidth]);
+
+  const animatedStyles = useAnimatedStyle(() => ({
+    width: animatedWidth.value,
+  }));
 
   return <AnimatedProgressBar style={animatedStyles} />;
 }
 
 function StoryBar({ full = false, isActive, duration }: StoryBarProps) {
+  const [containerWidth, setContainerWidth] = React.useState(0);
+
+  function renderProgressBar() {
+    if (isActive) {
+      return <ActiveProgressBar duration={duration} containerWidth={containerWidth} />;
+    }
+    if (full) {
+      return <ProgressBar />;
+    }
+    return null;
+  }
+
   return (
-    <Flex height={4} backgroundColor="neutral.c50" margin={"auto"} borderRadius={2} flex={1} mx={1}>
-      {isActive ? <ActiveProgressBar duration={duration} /> : full ? <ProgressBar /> : null}
+    <Flex
+      height={4}
+      backgroundColor="neutral.c50"
+      margin={"auto"}
+      borderRadius={2}
+      flex={1}
+      mx={1}
+      onLayout={(e) => setContainerWidth(e.nativeEvent.layout.width)}
+    >
+      {renderProgressBar()}
     </Flex>
   );
 }
@@ -85,6 +108,7 @@ function StoriesIndicator({ activeIndex, slidesLength, duration }: StoriesIndica
       flexDirection={"row"}
       alignItems={"stretch"}
       width={"100%"}
+      pointerEvents="none"
       style={
         I18nManager.isRTL
           ? {

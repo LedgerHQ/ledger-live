@@ -1,6 +1,6 @@
 import React, { useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { createStackNavigator } from "@react-navigation/stack";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useTheme } from "styled-components/native";
 import { ScreenName } from "~/const";
 import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
@@ -13,7 +13,7 @@ import ValidationError from "~/screens/FreezeFunds/04-ValidationError";
 import StepHeader from "../StepHeader";
 import { FreezeNavigatorParamList } from "./types/FreezeNavigator";
 
-const Stack = createStackNavigator<FreezeNavigatorParamList>();
+const Stack = createNativeStackNavigator<FreezeNavigatorParamList>();
 
 const totalSteps = "3";
 export default function FreezeNavigator() {

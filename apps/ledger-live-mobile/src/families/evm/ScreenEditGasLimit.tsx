@@ -1,6 +1,7 @@
 import { BigNumber } from "bignumber.js";
 import React, { useState, useCallback } from "react";
-import { useTranslation, Trans } from "react-i18next";
+import { useTranslation } from "react-i18next";
+import i18next from "i18next";
 import { Keyboard, StyleSheet, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useTheme } from "@react-navigation/native";
@@ -16,7 +17,7 @@ import { ScreenName } from "~/const";
 import { DEFAULT_GAS_LIMIT } from "@ledgerhq/coin-evm/lib/utils";
 
 const options = {
-  title: <Trans i18nKey="send.summary.gasLimit" />,
+  title: i18next.t("send.summary.gasLimit"),
   headerLeft: undefined,
 };
 

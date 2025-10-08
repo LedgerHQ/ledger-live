@@ -5,7 +5,7 @@ import { ParamListBase, useNavigation } from "@react-navigation/native";
 import QueuedDrawer from "~/components/QueuedDrawer";
 import { TrackScreen } from "~/analytics";
 import { AutoRepair } from "~/components/DeviceAction/rendering";
-import { StackNavigationProp } from "@react-navigation/stack";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { Flex } from "@ledgerhq/native-ui";
 
 export type Props = {
@@ -19,7 +19,7 @@ export type Props = {
  */
 const AutoRepairDrawer = ({ isOpen, onDone, device }: Props) => {
   const { t } = useTranslation();
-  const navigation = useNavigation<StackNavigationProp<ParamListBase>>();
+  const navigation = useNavigation<NativeStackNavigationProp<ParamListBase>>();
 
   return (
     <QueuedDrawer isRequestingToBeOpened={isOpen} preventBackdropClick noCloseButton>

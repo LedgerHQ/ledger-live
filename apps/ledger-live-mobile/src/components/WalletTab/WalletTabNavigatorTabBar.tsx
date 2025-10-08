@@ -1,17 +1,18 @@
-import { MaterialTopTabBarProps } from "@react-navigation/material-top-tabs";
-import { useTheme } from "styled-components/native";
-import React, { memo, useCallback, useContext } from "react";
-import styled, { BaseStyledProps } from "@ledgerhq/native-ui/components/styled";
 import { Box, Flex, Text } from "@ledgerhq/native-ui";
+import styled, { BaseStyledProps } from "@ledgerhq/native-ui/components/styled";
+import { MaterialTopTabBarProps } from "@react-navigation/material-top-tabs";
+import React, { memo, useCallback, useContext, useMemo } from "react";
 import { Animated } from "react-native";
-import { useSelector } from "react-redux";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useSelector } from "react-redux";
+import { useTheme } from "styled-components/native";
 import { track } from "~/analytics";
-import { WalletTabNavigatorScrollContext } from "./WalletTabNavigatorScrollManager";
-import WalletTabBackgroundGradient from "./WalletTabBackgroundGradient";
-import { readOnlyModeEnabledSelector } from "~/reducers/settings";
-import { hasNoAccountsSelector } from "~/reducers/accounts";
 import { NavigatorName, ScreenName } from "~/const";
+import { hasNoAccountsSelector } from "~/reducers/accounts";
+import { readOnlyModeEnabledSelector } from "~/reducers/settings";
+import WalletTabBackgroundGradient from "./WalletTabBackgroundGradient";
+import { WalletTabNavigatorScrollContext } from "./WalletTabNavigatorScrollManager";
+import { useExperimental } from "~/experimental";
 
 const StyledTouchableOpacity = styled.TouchableOpacity`
   height: 32px;
@@ -19,7 +20,7 @@ const StyledTouchableOpacity = styled.TouchableOpacity`
   margin-right: ${p => p.theme.space[4]}px;
 `;
 
-const StyledAnimatedView = styled(Animated.View)<BaseStyledProps>`
+const StyledAnimatedView = styled(Animated.View).attrs({ pointerEvents: "none" })<BaseStyledProps>`
   position: absolute;
   top: 0;
   height: 100%;
@@ -41,23 +42,13 @@ function Tab({
   label,
   isActive,
   navigation,
-  index,
-  scrollX,
 }: {
   route: { name: string; key: string };
   label?: string;
   isActive: boolean;
   navigation: MaterialTopTabBarProps["navigation"];
-  index: number;
-  scrollX: MaterialTopTabBarProps["position"];
 }) {
   const { colors } = useTheme();
-
-  const opacity = scrollX.interpolate({
-    inputRange: [index - 1, index, index + 1],
-    outputRange: [0, 1, 0],
-    extrapolate: "clamp",
-  });
 
   const onPress = useCallback(() => {
     const event = navigation.emit({
@@ -74,17 +65,12 @@ function Tab({
     }
   }, [isActive, navigation, route]);
 
-  const backgroundColor = opacity.interpolate({
-    inputRange: [0, 1],
-    outputRange: [colors.opacityDefault.c10, colors.neutral.c100],
-  });
-
   return (
     <StyledTouchableOpacity onPress={onPress} testID={`wallet-tab-${route.name}`}>
       <StyledAnimatedView
         borderRadius={2}
         style={{
-          backgroundColor,
+          backgroundColor: isActive ? colors.neutral.c100 : colors.opacityDefault.c10,
           opacity: 1,
         }}
       />
@@ -105,12 +91,7 @@ const MemoTab = memo(Tab);
 
 const AnimatedFlex = Animated.createAnimatedComponent(Flex);
 
-function WalletTabNavigatorTabBar({
-  state,
-  descriptors,
-  navigation,
-  position,
-}: MaterialTopTabBarProps) {
+function WalletTabNavigatorTabBar({ state, descriptors, navigation }: MaterialTopTabBarProps) {
   const { colors } = useTheme();
 
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
@@ -118,31 +99,39 @@ function WalletTabNavigatorTabBar({
 
   const { scrollY, headerHeight, tabBarHeight } = useContext(WalletTabNavigatorScrollContext);
 
-  const y = scrollY.interpolate({
-    inputRange: [0, headerHeight],
-    outputRange: [headerHeight, 0],
-    extrapolateRight: "clamp",
-  });
+  const translateY = useMemo(
+    () =>
+      scrollY.interpolate({
+        inputRange: [0, headerHeight],
+        outputRange: [headerHeight, 0],
+        extrapolateRight: "clamp",
+      }),
+    [headerHeight, scrollY],
+  );
 
-  const opacity = scrollY.interpolate({
-    inputRange: [headerHeight, headerHeight + 1],
-    outputRange: [0, 1],
-    extrapolate: "clamp",
-  });
+  const opacity = useMemo(
+    () =>
+      scrollY.interpolate({
+        inputRange: [headerHeight, headerHeight + 1],
+        outputRange: [0, 1],
+        extrapolate: "clamp",
+      }),
+    [headerHeight, scrollY],
+  );
   const insets = useSafeAreaInsets();
+  const hasExperimentalHeader = useExperimental();
 
   return (
     <>
       <WalletTabBackgroundGradient
-        scrollX={position}
         color={readOnlyModeEnabled && hasNoAccounts ? colors.neutral.c30 : undefined}
       />
       <AnimatedFlex
         style={{
-          top: insets.top,
+          top: hasExperimentalHeader ? 0 : insets.top,
           zIndex: 1,
           position: "absolute",
-          transform: [{ translateY: y }],
+          transform: [{ translateY }],
           width: "100%",
           height: tabBarHeight,
         }}
@@ -157,22 +146,17 @@ function WalletTabNavigatorTabBar({
             opacity,
           }}
         />
-        <Flex px={6} py={2} justifyContent={"flex-end"}>
+        <Flex px={6} py={4} justifyContent={"flex-end"}>
           <Flex flexDirection={"row"}>
-            {state.routes.map((route, index) => {
-              const { options } = descriptors[route.key];
-              return (
-                <MemoTab
-                  key={index}
-                  route={route}
-                  label={options.title}
-                  isActive={state.index === index}
-                  navigation={navigation}
-                  index={index}
-                  scrollX={position}
-                />
-              );
-            })}
+            {state.routes.map((route, index) => (
+              <MemoTab
+                key={route.key}
+                route={route}
+                label={descriptors[route.key]?.options.title}
+                isActive={state.index === index}
+                navigation={navigation}
+              />
+            ))}
           </Flex>
         </Flex>
       </AnimatedFlex>

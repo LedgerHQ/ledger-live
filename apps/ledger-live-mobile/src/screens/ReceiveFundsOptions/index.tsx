@@ -2,7 +2,7 @@ import React, { useRef, useState } from "react";
 import { Text } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
 import { Icons } from "@ledgerhq/native-ui/index";
-import { ScreenName } from "~/const";
+import { NavigatorName, ScreenName } from "~/const";
 import { TrackScreen } from "~/analytics";
 import { OptionButton } from "./OptionButton";
 import { ReceiveFundsStackParamList } from "~/components/RootNavigator/types/ReceiveFundsNavigator";
@@ -10,6 +10,7 @@ import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { isCryptoOrTokenCurrency } from "LLM/utils/isCryptoOrTokenCurrency";
 import { isObject } from "LLM/utils/isObject";
 import QueuedDrawerGorhom from "LLM/components/QueuedDrawer/temp/QueuedDrawerGorhom";
+import { NavigationProp, ParamListBase } from "@react-navigation/native";
 import { useOpenReceiveDrawer } from "LLM/features/Receive";
 
 // Fiat provider manifest ID for Noah integration
@@ -38,9 +39,14 @@ export default function ReceiveFundsOptions(props: EntryScreenProps) {
 
   function handleGoToFiat() {
     isNavigatingRef.current = true;
-    navigation.replace(ScreenName.ReceiveProvider, {
-      manifestId: FIAT_PROVIDER_MANIFEST_ID,
-      fromMenu: true,
+    // Close modal first to prevent layout issues on Android
+    navigation.goBack();
+    requestAnimationFrame(() => {
+      const parent = navigation.getParent();
+      parent?.navigate(NavigatorName.ReceiveFunds, {
+        screen: ScreenName.ReceiveProvider,
+        params: { manifestId: FIAT_PROVIDER_MANIFEST_ID, fromMenu: true },
+      });
     });
   }
 
@@ -52,7 +58,14 @@ export default function ReceiveFundsOptions(props: EntryScreenProps) {
     }
 
     isNavigatingRef.current = true;
-    typesafeNavigation(props);
+    // Close modal first to prevent layout issues on Android
+    navigation.goBack();
+    requestAnimationFrame(() => {
+      const parent = navigation.getParent();
+      if (parent) {
+        typesafeNavigation(props, parent);
+      }
+    });
   }
 
   function handleClose() {
@@ -85,37 +98,40 @@ export default function ReceiveFundsOptions(props: EntryScreenProps) {
   );
 }
 
-function typesafeNavigation({ route, navigation }: EntryScreenProps) {
+function typesafeNavigation({ route }: EntryScreenProps, parent: NavigationProp<ParamListBase>) {
   switch (route.name) {
     case ScreenName.ReceiveSelectCrypto: {
-      if (!isReceiveSelectCryptoParams(route.params)) {
-        return;
-      }
-      navigation.navigate(ScreenName.ReceiveSelectCrypto, {
-        ...route.params,
-        fromMenu: true,
+      if (!isReceiveSelectCryptoParams(route.params)) return;
+      parent.navigate(NavigatorName.ReceiveFunds, {
+        screen: ScreenName.ReceiveSelectCrypto,
+        params: {
+          ...route.params,
+          fromMenu: true,
+        },
       });
       break;
     }
 
     case ScreenName.ReceiveSelectAccount: {
-      if (!isReceiveSelectAccountParams(route.params)) {
-        return;
-      }
-      navigation.navigate(ScreenName.ReceiveSelectAccount, {
-        ...route.params,
-        fromMenu: true,
+      if (!isReceiveSelectAccountParams(route.params)) return;
+      parent.navigate(NavigatorName.ReceiveFunds, {
+        screen: ScreenName.ReceiveSelectAccount,
+        params: {
+          ...route.params,
+          fromMenu: true,
+        },
       });
       break;
     }
 
     case ScreenName.ReceiveConfirmation: {
-      if (!isReceiveConfirmationParams(route.params)) {
-        return;
-      }
-      navigation.navigate(ScreenName.ReceiveConfirmation, {
-        ...route.params,
-        fromMenu: true,
+      if (!isReceiveConfirmationParams(route.params)) return;
+      parent.navigate(NavigatorName.ReceiveFunds, {
+        screen: ScreenName.ReceiveConfirmation,
+        params: {
+          ...route.params,
+          fromMenu: true,
+        },
       });
       break;
     }

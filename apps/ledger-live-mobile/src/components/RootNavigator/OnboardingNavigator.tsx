@@ -1,10 +1,8 @@
 import React from "react";
 import {
-  createStackNavigator,
-  CardStyleInterpolators,
-  TransitionPresets,
-  StackNavigationOptions,
-} from "@react-navigation/stack";
+  createNativeStackNavigator,
+  NativeStackNavigationOptions,
+} from "@react-navigation/native-stack";
 import { Flex } from "@ledgerhq/native-ui";
 import { Theme } from "@ledgerhq/native-ui/styles/theme";
 
@@ -30,7 +28,6 @@ import OnboardingPreQuizModal from "~/screens/Onboarding/steps/setupDevice/drawe
 import OnboardingQuiz from "~/screens/Onboarding/OnboardingQuiz";
 import OnboardingQuizFinal from "~/screens/Onboarding/OnboardingQuizFinal";
 import NavigationHeader from "../NavigationHeader";
-import NavigationOverlay from "../NavigationOverlay";
 import NavigationModalContainer from "../NavigationModalContainer";
 import OnboardingSetupDeviceInformation from "~/screens/Onboarding/steps/setupDevice/drawers/SecurePinCode";
 import OnboardingSetupDeviceRecoveryPhrase from "~/screens/Onboarding/steps/setupDevice/drawers/SecureRecoveryPhrase";
@@ -51,14 +48,14 @@ import AnalyticsOptInPromptNavigator from "./AnalyticsOptInPromptNavigator";
 import LandingPagesNavigator from "./LandingPagesNavigator";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 
-const Stack = createStackNavigator<OnboardingNavigatorParamList>();
+const Stack = createNativeStackNavigator<OnboardingNavigatorParamList>();
 const OnboardingPreQuizModalStack =
-  createStackNavigator<OnboardingPreQuizModalNavigatorParamList>();
+  createNativeStackNavigator<OnboardingPreQuizModalNavigatorParamList>();
 
 function OnboardingPreQuizModalNavigator(
   props: StackNavigatorProps<OnboardingNavigatorParamList, NavigatorName.OnboardingPreQuiz>,
 ) {
-  const options: Partial<StackNavigationOptions> = {
+  const options: Partial<NativeStackNavigationOptions> = {
     header: props => (
       // TODO: Replace this value with constant.purple as soon as the value is fixed in the theme
       <Flex bg="constant.purple">
@@ -83,20 +80,18 @@ function OnboardingPreQuizModalNavigator(
   );
 }
 
-const modalOptions: Partial<StackNavigationOptions> = {
+const modalOptions: Partial<NativeStackNavigationOptions> = {
   presentation: "transparentModal",
-  cardOverlayEnabled: true,
-  cardOverlay: () => <NavigationOverlay />,
   headerShown: false,
-  ...TransitionPresets.ModalTransition,
+  animation: "slide_from_bottom",
 };
 
-const infoModalOptions = ({ theme }: { theme: Theme }): Partial<StackNavigationOptions> => ({
-  ...TransitionPresets.ModalTransition,
+const infoModalOptions = ({ theme }: { theme: Theme }): Partial<NativeStackNavigationOptions> => ({
   headerStyle: {
     backgroundColor: theme.colors.background.drawer,
   },
   headerShown: true,
+  presentation: "transparentModal",
 });
 
 export default function OnboardingNavigator() {
@@ -111,7 +106,6 @@ export default function OnboardingNavigator() {
         headerTitle: "",
         headerShadowVisible: false,
         headerStyle: { backgroundColor: theme.colors.background.main },
-        cardStyle: { backgroundColor: theme.colors.background.main },
       }}
     >
       <Stack.Screen
@@ -215,9 +209,7 @@ export default function OnboardingNavigator() {
       <Stack.Screen
         name={ScreenName.OnboardingInfoModal}
         component={OnboardingInfoModal}
-        options={{
-          cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS,
-        }}
+        options={{ presentation: "transparentModal", animation: "slide_from_bottom" }}
       />
 
       <Stack.Screen name={ScreenName.OnboardingPairNew} component={OnboardingPairNew} />

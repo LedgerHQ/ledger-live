@@ -41,7 +41,9 @@ function OnboardingView({ title, subTitle, children, analytics, footer }: Onboar
         )}
       </Box>
 
-      <ScrollListContainer>{children}</ScrollListContainer>
+      <ScrollListContainer testID="onboarding-view-scroll-list-container">
+        {children}
+      </ScrollListContainer>
 
       {footer}
     </StyleSafeAreaView>

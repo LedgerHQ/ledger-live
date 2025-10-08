@@ -48,7 +48,7 @@ function CurrencyHeaderLayout({
     return {
       opacity,
     };
-  }, [currentPositionY.value, graphCardEndPosition]);
+  }, [currentPositionY, graphCardEndPosition]);
 
   const AfterScrollAnimation = useAnimatedStyle(() => {
     const opacity = interpolate(
@@ -61,7 +61,7 @@ function CurrencyHeaderLayout({
     return {
       opacity,
     };
-  }, [currentPositionY.value, graphCardEndPosition]);
+  }, [currentPositionY, graphCardEndPosition]);
 
   const BackgroundOpacity = useAnimatedStyle(() => {
     const opacity = interpolate(
@@ -74,7 +74,7 @@ function CurrencyHeaderLayout({
     return {
       opacity,
     };
-  }, [currentPositionY.value, graphCardEndPosition]);
+  }, [currentPositionY, graphCardEndPosition]);
 
   return (
     <Header
@@ -103,14 +103,14 @@ function CurrencyHeaderLayout({
         </Box>
       </Animated.View>
       <Box>{leftElement}</Box>
-      <Flex flexDirection={"row"} alignItems={"center"}>
-        <CenteredElement width={windowsWidth}>
-          <Animated.View style={[AfterScrollAnimation]}>{centerAfterScrollElement}</Animated.View>
-        </CenteredElement>
-        <CenteredElement width={windowsWidth}>
-          <Animated.View style={[BeforeScrollAnimation]}>{centerBeforeScrollElement}</Animated.View>
-        </CenteredElement>
-      </Flex>
+      <CenteredElement>
+        <Animated.View style={[{ position: "absolute" }, AfterScrollAnimation]}>
+          {centerAfterScrollElement}
+        </Animated.View>
+        <Animated.View style={[{ position: "absolute" }, BeforeScrollAnimation]}>
+          {centerBeforeScrollElement}
+        </Animated.View>
+      </CenteredElement>
       <Box>{rightElement}</Box>
     </Header>
   );
@@ -120,15 +120,16 @@ export default CurrencyHeaderLayout;
 
 const Header = styled(Flex)`
   position: absolute;
+  display: flex;
+  flex-direction: row;
+  width: 100%;
 `;
 
-const CenteredElement = styled(Flex).attrs((p: { width: number }) => ({
-  flexDirection: "row",
-  justifyContent: "center",
-  alignItems: "center",
-  height: 48,
-  left: -p.width / 2 + p.width * 0.15,
-  width: p.width * 0.7,
-}))`
-  position: absolute;
+const CenteredElement = styled(Flex)`
+  position: relative;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  height: 48px;
+  flex: 1;
 `;
