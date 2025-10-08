@@ -55,10 +55,10 @@
     "bluetooth" : "Bluetooth",
     "usb" : "USB",
     "add" : "Добавить",
-    "token" : "Токен",
-    "token_plural" : "Токены",
-    "subaccount" : "Субсчёт",
-    "subaccount_plural" : "Субсчета",
+    "token_one" : "Token",
+    "token_other" : "Tokens",
+    "subaccount_one" : "Subaccount",
+    "subaccount_other" : "Subaccounts",
     "forgetDevice" : "Удалить устройство",
     "help" : "Помощь",
     "saveLogs" : "Сохранить логи",
@@ -71,24 +71,24 @@
     "installed" : "Установлено",
     "uninstall" : "Удалить",
     "fromNow" : {
-      "seconds" : "через секунду",
-      "seconds_plural" : "через {{time}} сек.",
-      "minutes" : "через минуту",
-      "minutes_plural" : "через {{time}} мин.",
-      "hours" : "через час",
-      "hours_plural" : "через {{time}} ч.",
-      "days" : "через 1 день",
-      "days_plural" : "через {{time}} дн."
+      "seconds_one" : "in one second",
+      "seconds_other" : "in {{time}} seconds",
+      "minutes_one" : "in one minute",
+      "minutes_other" : "in {{time}} minutes",
+      "hours_one" : "in one hour",
+      "hours_other" : "in {{time}} hours",
+      "days_one" : "in one day",
+      "days_other" : "in {{time}} days"
     },
     "timeAgo" : {
-      "seconds" : "секунду назад",
-      "seconds_plural" : "{{time}} сек. назад",
-      "minutes" : "минуту назад",
-      "minutes_plural" : "{{time}} мин. назад",
-      "hours" : "час назад",
-      "hours_plural" : "{{time}} ч. назад",
-      "days" : "вчера",
-      "days_plural" : "{{time}} дн. назад"
+      "seconds_one" : "one second ago",
+      "seconds_other" : "{{time}} seconds ago",
+      "minutes_one" : "one minute ago",
+      "minutes_other" : "{{time}} minutes ago",
+      "hours_one" : "one hour ago",
+      "hours_other" : "{{time}} hours ago",
+      "days_one" : "yesterday",
+      "days_other" : "{{time}} days ago"
     },
     "seeMore" : "Показать больше",
     "moreInfo" : "Подробнее",
@@ -1632,7 +1632,13 @@
       "terms" : "Продолжение означает ваше согласие с",
       "termsLink" : "Условиями и положениями",
       "privacyLink" : "Политика конфиденциальности",
-      "and" : "и"
+      "and" : "и",
+      "videoTitles" : {
+        "0" : "Кошелёк защищает вас и позволяет контролировать происходящее",
+        "1" : "Отправляйте, получайте, обменивайте и стейкайте тысячи криптовалют",
+        "2" : "Подписывайте транзакции, сохраняя спокойствие"
+      },
+      "disclaimer" : "Продолжение означает ваше согласие с <TermsAndConditions>Условиями использования</TermsAndConditions> и <PrivacyPolicy>Политикой конфиденциальности</PrivacyPolicy> Ledger. Ledger не даёт никаких финансовых советов. Услуги по обмену и стейкингу оказываются сторонними операторами."
     },
     "postWelcomeStep" : {
       "title" : "Давайте приступим",
@@ -1645,11 +1651,11 @@
       },
       "setupLedger" : {
         "title" : "Настроить Ledger",
-        "subtitle" : "Ваш Ledger — новый или сброшенный?"
+        "subtitle" : "Ваше устройство Ledger — новое или сброшенное?"
       },
       "accessWallet" : {
         "title" : "Перейти к кошельку",
-        "subtitle" : "Ваш Ledger уже настроен?"
+        "subtitle" : "Есть уже настроенное устройство Ledger?"
       },
       "buyNano" : {
         "title" : "Купите Ledger Nano X",
@@ -1667,7 +1673,7 @@
     "welcomeBackStep" : {
       "title" : "С возвращением",
       "subtitle" : "Выберите способ доступа к кошельку:",
-      "connect" : "Подключение Ledger",
+      "connect" : "Подключить Ledger",
       "sync" : "Синхронизация с Ledger Live для ПК",
       "walletSync" : "Ledger Sync"
     },
@@ -2713,6 +2719,7 @@
       "LEGACYUNFREEZE" : "Разморозка",
       "REWARD" : "Вознаграждение",
       "FEES" : "Комиссия",
+      "PRE_APPROVAL" : "Предварительное одобрение",
       "OPT_IN" : "Вход",
       "OPT_OUT" : "Выход",
       "CLOSE_ACCOUNT" : "Закрытие счета",
@@ -2813,10 +2820,10 @@
   "selectableAccountsList" : {
     "deselectAll" : "Отменить все",
     "selectAll" : "Выделить все",
-    "tokenCount" : "+1 токен",
-    "tokenCount_plural" : "+другие токены ({{count}})",
-    "subaccountCount" : "+1 субсчёт",
-    "subaccountCount_plural" : "+субсчета ({{count}})"
+    "tokenCount_one" : "+1 token",
+    "tokenCount_other" : "+{{count}} tokens",
+    "subaccountCount_one" : "+1 subaccount",
+    "subaccountCount_other" : "+{{count}} subaccounts"
   },
   "account" : {
     "subHeader" : {
@@ -3015,25 +3022,25 @@
       "upToDate" : "Синхронизировано",
       "error" : "Ошибка",
       "queued" : "В ожидании",
-      "showTokens" : "Показать {{length}} токен",
-      "showTokens_plural" : "Показать {{length}} токен(-ов)",
-      "showSubAccounts" : "Показать {{length}} субсчёт",
-      "showSubAccounts_plural" : "Показать {{length}} субсчёт(-ов)",
-      "hideTokens" : "Скрыть токен",
-      "hideTokens_plural" : "Скрыть токены",
-      "hideSubAccounts" : "Скрыть субсчёт",
-      "hideSubAccounts_plural" : "Скрыть субсчета",
+      "showTokens_one" : "Show {{length}} token",
+      "showTokens_other" : "Show {{length}} tokens",
+      "showSubAccounts_one" : "Show {{length}} subaccount",
+      "showSubAccounts_other" : "Show {{length}} subaccounts",
+      "hideTokens_one" : "Hide token",
+      "hideTokens_other" : "Hide tokens",
+      "hideSubAccounts_one" : "Hide subaccount",
+      "hideSubAccounts_other" : "Hide subaccounts",
       "algorand" : {
-        "showTokens" : "Показать {{length}} ASA",
-        "showTokens_plural" : "Показать {{length}} ASA",
-        "hideTokens" : "Скрыть ASA",
-        "hideTokens_plural" : "Скрыть ASA"
+        "showTokens_one" : "Show {{length}} ASA",
+        "showTokens_other" : "Show {{length}} ASA",
+        "hideTokens_one" : "Hide ASA",
+        "hideTokens_other" : "Hide ASA"
       },
       "stellar" : {
-        "showTokens" : "Показать {{length}} актив",
-        "showTokens_plural" : "Показать {{length}} актив(-ов)",
-        "hideTokens" : "Скрыть актив",
-        "hideTokens_plural" : "Скрыть активы"
+        "showTokens_one" : "Show {{length}} asset",
+        "showTokens_other" : "Show {{length}} assets",
+        "hideTokens_one" : "Hide asset",
+        "hideTokens_other" : "Hide assets"
       }
     },
     "noResultsFound" : "Активы не найдены",
@@ -3048,8 +3055,8 @@
   "distribution" : {
     "header" : "Распределение активов",
     "list" : "Распределение активов ({{count}})",
-    "assets" : "(активов)",
-    "assets_plural" : "(активов)",
+    "assets_one" : "asset",
+    "assets_other" : "assets",
     "total" : "Общий баланс:",
     "listAccount" : "Распределение активов ({{count}})",
     "title" : "Активы",
@@ -3379,7 +3386,7 @@
   },
   "notifications" : {
     "prompt" : {
-      "title" : "Активация уведомлений",
+      "title" : "Включите уведомления",
       "desc" : "Будьте в курсе последних новостей о Ledger Live, устройствах Ledger и рынке криптовалют, а также получайте подходящие рекомендации. Отписаться можно в любой момент в настройках.",
       "allow" : "Разрешить уведомления",
       "later" : "Не сейчас"
@@ -3433,6 +3440,17 @@
       "shareAddress" : "Поделиться",
       "addressCopied" : "Адрес скопирован",
       "taprootWarning" : "Убедитесь, что у отправителя есть поддержка Taproot",
+      "connectToNoah" : "Подключаемся к Noah",
+      "menu" : {
+        "crypto" : {
+          "title" : "С криптовалютного адреса",
+          "description" : "Пополняйте кошелёк любой криптовалютой."
+        },
+        "fiat" : {
+          "title" : "Через банк",
+          "description" : "Пополняйте в USDC через банковский перевод EUR и USD. Требуется KYC."
+        }
+      },
       "memoTag" : {
         "link" : "Нужен тег примечания/Memo?",
         "title" : "Нужен тег примечания/Memo?",
@@ -3445,8 +3463,8 @@
       },
       "selectNetwork" : {
         "title" : "Выбор сети для криптоактива",
-        "account" : "Счёт: {{count}}",
-        "account_plural" : "Счета: {{count}}",
+        "account_one" : "{{count}} account",
+        "account_other" : "{{count}} accounts",
         "subtitle" : "Она должна соответствовать выбранной сети в кошельке или на бирже, куда отправляются криптоактивы.",
         "bannerTitle" : "Обязательно выберите правильную сеть. Подробнее...",
         "depositFromCexBannerTitle" : "Перенесите криптоактивы с учётной записи Coinbase"
@@ -3463,8 +3481,8 @@
       "addAccount" : {
         "title" : "Проверка счёта...",
         "subtitle" : "Идёт проверка наличия у вас счёта {{currencyName}} в блокчейне.",
-        "foundAccount" : "Найдено счетов: {{count}}",
-        "foundAccount_plural" : "Найдено счетов: {{count}}",
+        "foundAccount_one" : "{{count}} account found",
+        "foundAccount_other" : "{{count}} accounts found",
         "stopSynchronization" : "Остановить синхронизацию",
         "addingAccount" : "Тут пока ничего нет. Создание нового счёта для {{currencyName}}..."
       },
@@ -3766,12 +3784,16 @@
         "apt_description" : "Для обмена Aptos используйте любое другое устройство Ledger. Это может быть Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ или Ledger Stax™.",
         "cosmos_title" : "Ledger Nano S™ не поддерживает обмен Cosmos",
         "cosmos_description" : "Для обмена Cosmos используйте любое другое устройство Ledger. Это может быть Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ или Ledger Stax™.",
+        "hedera_title" : "Ledger Nano S™ не поддерживает обмен Hedera",
+        "hedera_description" : "Используйте другие совместимые устройства Ledger для обмена Hedera. Это Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ и Ledger Stax™.",
         "osmo_title" : "Ledger Nano S™ не поддерживает обмен Osmosis",
         "osmo_description" : "Используйте другие совместимые устройства Ledger для обмена Osmosis. Это Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ и Ledger Stax™.",
         "dydx_title" : "Ledger Nano S™ не поддерживает обмен dYdX",
         "dydx_description" : "Используйте другие совместимые устройства Ledger для обмена dYdX. Это Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ и Ledger Stax™.",
         "sui_title" : "Ledger Nano S™ не поддерживает обмен Sui",
-        "sui_description" : "Используйте другие совместимые устройства Ledger для обмена Sui. Это Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ и Ledger Stax™."
+        "sui_description" : "Используйте другие совместимые устройства Ledger для обмена Sui. Это Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ и Ledger Stax™.",
+        "kaspa_title" : "Ledger Nano S™ не поддерживает обмен Kaspa",
+        "kaspa_description" : "Для обмена Kaspa используйте совместимые устройства Ledger. Это Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ и Ledger Stax™."
       }
     },
     "lending" : {
@@ -3893,10 +3915,10 @@
           "stepRange" : "Шаг {{currentStep}} из {{totalSteps}}"
         },
         "selectAccount" : {
-          "enabledAccountsAmount" : "У вас {{number}} счёт с утверждённой суммой {{amount}}",
-          "enabledAccountsAmount_plural" : "Количество счетов с утверждённой суммой {{amount}}: {{number}}",
-          "enabledAccountsNoLimit" : "У вас {{number}} счёт с утверждённой неограниченной суммой в {{ currency }}",
-          "enabledAccountsNoLimit_plural" : "Количество счетов с утверждённой неограниченной суммой в {{ currency }}: {{number}}",
+          "enabledAccountsAmount_one" : "You have {{number}} account that approved {{amount}}",
+          "enabledAccountsAmount_other" : "You have {{number}} accounts that approved {{amount}}",
+          "enabledAccountsNoLimit_one" : "You have {{number}} account that approved an unlimited amount of {{ currency }}",
+          "enabledAccountsNoLimit_other" : "You have {{number}} accounts that approved an unlimited amount of {{ currency }}",
           "noEnabledAccounts" : "Чтобы предоставить заём, необходимо утвердить счёт."
         },
         "enable" : {
@@ -4277,18 +4299,18 @@
       "segwit_or_native_segwit" : "SegWit или Native SegWit?"
     },
     "quitConfirmation" : {
-      "title" : "Отменить добавление счёта",
+      "title" : "Не добавлять счёт?",
       "desc" : "Уверены, что не хотите добавлять счета?",
       "v2" : {
-        "title" : "Отменить добавление счёта?",
+        "title" : "Не добавлять счёт?",
         "desc" : "Новые счета не будут добавлены в Ledger Live.",
         "continue" : "Продолжить",
         "cancel" : "Отменить"
       }
     },
     "imported" : "Актив успешно добавлен",
-    "added" : "Счёт добавлен в Портфель",
-    "added_plural" : "Добавлено счетов в Портфель: {{count}}",
+    "added_one" : "Account added to your portfolio",
+    "added_other" : "{{count}} Accounts added to your portfolio",
     "sections" : {
       "importable" : {
         "title" : "Добавить существующий счёт"
@@ -4354,8 +4376,8 @@
       "whichAddressType" : "Как определить подходящий тип адреса",
       "sections" : {
         "importable" : {
-          "title" : "Мы нашли {{count}} счёт",
-          "title_plural" : "Найдено счетов: {{count}}"
+          "title_one" : "We found {{count}} account",
+          "title_other" : "We found {{count}} accounts"
         },
         "creatable" : {
           "title" : "Новый счёт"
@@ -4397,11 +4419,11 @@
     "outdated" : "Версия приложения устарела",
     "outdatedDesc" : "Для приложения {{appName}} появилось важное обновление. Чтобы установить его, перейдите в «Мой Ledger».",
     "quitApp" : "Выйдите из приложения на устройстве",
-    "appNotInstalled" : "Установите приложение {{appName}}",
-    "appNotInstalled_plural" : "Пожалуйста, установите приложения {{appName}}",
+    "appNotInstalled_one" : "Please install the {{appName}} app",
+    "appNotInstalled_other" : "Please install the {{appName}} apps",
     "useAnotherDevice" : "Использовать другое устройство",
     "deviceNotOnboarded" : {
-      "title" : "Ваш Ledger ещё не готов к использованию",
+      "title" : "Устройство Ledger ещё не готово к использованию",
       "description" : "Сначала {{deviceName}} необходимо настроить. Мы поможем вам с этим"
     },
     "deviceInBootloader" : {
@@ -4553,8 +4575,8 @@
   },
   "RemoveDevice" : {
     "button" : {
-      "title" : "Удалить {{nbDevices}}",
-      "title_plural" : "Удалить {{nbDevices}}"
+      "title_one" : "Remove {{nbDevices}} device",
+      "title_other" : "Remove {{nbDevices}} devices"
     }
   },
   "manager" : {
@@ -4572,10 +4594,10 @@
       "connectExistingLedgerDescription" : "Если Ledger уже настроен",
       "setUpNewLedger" : "Настроить новый Ledger",
       "setUpNewLedgerDescription" : "Если Ledger ещё не настроен",
-      "buyDeviceCTA" : "<0>Нужен новый Ledger? </0><1>Приобретите его</1>",
+      "buyDeviceCTA" : "<0>Хотите новое устройство Ledger? </0><1>Купите его</1>",
       "item" : {
         "usb" : "Подключен через USB",
-        "available" : "Доступен. Нажмите, чтобы подключиться",
+        "available" : "Поблизости. Коснитесь для подключения",
         "unavailable" : "Не подключено"
       }
     },
@@ -4623,16 +4645,16 @@
       "title" : "Хранилище",
       "used" : "Использовано",
       "genuine" : "Устройство подлинное",
-      "appsInstalled" : "Приложений: <0>{{number}}</0>",
-      "appsInstalled_plural" : "Приложений: <0>{{number}}</0>",
+      "appsInstalled_one" : "<0>{{number}}</0> app",
+      "appsInstalled_other" : "<0>{{number}}</0> apps",
       "storageAvailable" : "доступно",
       "noFreeSpace" : "Не хватает свободного места",
       "appsToUpdate" : "<0>{{number}}</0> обновление",
-      "appsToUpdate_plural" : "Обновлений: <0>{{number}}</0>"
+      "appsToUpdate_other" : "<0>{{number}}</0> updates"
     },
     "installSuccess" : {
       "title" : "Приложение установлено",
-      "title_plural" : "Приложения установлены",
+      "title_other" : "Apps successfully installed",
       "notSupported" : "Приложение установлено, дополнительная информация об этих приложениях доступна на нашем сайте.",
       "manageAccount" : "Добавить счета",
       "learnMore" : "Подробнее",
@@ -4665,7 +4687,7 @@
         "desc" : "Устанавливаем {{appName}}. Пожалуйста, подождите...",
         "button" : "Устанавливаем...",
         "queued" : "В очереди",
-        "button_plural" : "Устанавливаем... {{progressPercentage}}%"
+        "button_other" : "Installing... {{progressPercentage}}%"
       },
       "done" : {
         "title" : "Приложение установлено",
@@ -4680,8 +4702,8 @@
       "continueInstall" : "Установить приложения"
     },
     "update" : {
-      "title" : "Обновление приложений: {{number}}",
-      "title_plural" : "Обновления приложений: {{number}}",
+      "title_one" : "{{number}} app update",
+      "title_other" : "{{number}} app updates",
       "step" : "Этап обновления {{step}}:",
       "updateWarn" : "Не закрывайте «Мой Ledger», пока идёт обновление.",
       "progress" : "Обновляем всё...",
@@ -4701,7 +4723,7 @@
         "title" : "Приложение {{appName}} удалено с {{productName}}"
       },
       "dependency" : {
-        "title" : "Другим приложениям необходимо приложение {{app}}",
+        "title_one" : "Other apps need the {{app}} app",
         "showAll" : "Показать приложения для удаления",
         "description" : "Приложения, которые установлены на устройстве и зависят от {{app}}, также будут удалены.",
         "description_one" : "Некоторые приложения зависят от {{app}}.",
@@ -4770,7 +4792,7 @@
     "pleaseWaitUpdate" : "Дождитесь завершения обновления",
     "viewUpdateChangelog" : "Открыть список изменений обновления",
     "waitForFirmwareUpdate" : "Дождитесь обновления ОС на устройстве",
-    "waitForInstallationToFinish" : "Дождитесь завершения установки на {{deviceName}}",
+    "waitForInstallationToFinish" : "Дождитесь завершения установки на {{deviceName}}.",
     "batteryLow" : "Слишком низкий заряд батареи {{productName}}",
     "batteryLowDescription" : "Для обновления ОС ваш {{productName}} должен быть заряжен минимум до {{lowBatteryPercentage}}% или подключён к сети.",
     "updateCancelled" : "Обновление ОС отменено на {{deviceName}}",
@@ -4811,7 +4833,7 @@
         },
         "titleBackingUp" : "Подготовка обновления к установке",
         "titleTransferring" : "Перенос обновления",
-        "description" : "Сохраняем настройки и приложения. Перенос обновления на {{deviceName}}."
+        "description" : "Сохраняем настройки и приложения... Переносим обновление на {{deviceName}}..."
       },
       "installUpdate" : {
         "titleInactive" : "Установка",
@@ -6716,11 +6738,11 @@
     "changeValidator" : "Изм. валидатора",
     "endDelegation" : "Завершить",
     "durationForDays0" : "Только что",
-    "durationForDays" : "На день",
-    "durationForDays_plural" : "На {{count}} дн.",
+    "durationForDays_one" : "For a day",
+    "durationForDays_other" : "For {{count}} days",
     "durationDays0" : "Только что",
-    "durationDays" : "1 день",
-    "durationDays_plural" : "{{count}} дн.",
+    "durationDays_one" : "1 day",
+    "durationDays_other" : "{{count}} дн.",
     "selectValidatorTitle" : "Выбор валидатора",
     "started" : {
       "title" : "Получение вознаграждений",
@@ -6924,20 +6946,20 @@
         "desc" : "Мы сообщим как что-то появится"
       },
       "time" : {
-        "second" : "секунду назад",
-        "second_plural" : "{{count}} сек. назад",
-        "minute" : "минуту назад",
-        "minute_plural" : "{{count}} мин. назад",
-        "hour" : "час назад",
-        "hour_plural" : "{{count}} ч. назад",
-        "day" : "день назад",
-        "day_plural" : "{{count}} дн. назад",
-        "week" : "неделю назад",
-        "week_plural" : "{{count}} недели назад",
-        "month" : "месяц назад",
-        "month_plural" : "{{count}} месяца назад",
-        "year" : "год назад",
-        "year_plural" : "{{count}} года назад"
+        "second_one" : "1 second ago",
+        "second_other" : "{{count}} seconds ago",
+        "minute_one" : "1 minute ago",
+        "minute_other" : "{{count}} minutes ago",
+        "hour_one" : "1 hour ago",
+        "hour_other" : "{{count}} hours ago",
+        "day_one" : "1 day ago",
+        "day_other" : "{{count}} days ago",
+        "week_one" : "1 week ago",
+        "week_other" : "{{count}} weeks ago",
+        "month_one" : "1 month ago",
+        "month_other" : "{{count}} months ago",
+        "year_one" : "1 year ago",
+        "year_other" : "{{count}} years ago"
       }
     },
     "status" : {
@@ -7191,16 +7213,18 @@
   "asset" : {
     "title" : "Ваши {{assetName}}",
     "accountsSection" : {
-      "title" : "Ваши счета {{currencyName}}"
+      "title_one" : "Your {{currencyName}} account",
+      "title_other" : "Your {{currencyName}} accounts"
     }
   },
   "customImage" : {
     "title" : "Картинка экрана блокировки",
     "change" : "Сменить",
     "drawer" : {
+      "title" : "Экран блокировки",
       "options" : {
-        "uploadFromPhone" : "Выбрать из галереи",
-        "remove" : "Удалить изображение"
+        "uploadFromPhone" : "Сменить картинку",
+        "remove" : "Убрать картинку"
       }
     },
     "toastRemove" : "Картинка удалена",
@@ -7476,7 +7500,7 @@
           "notNow" : "Позже",
           "accept" : "Принять",
           "acceptAll" : "Принять",
-          "confirm" : "Подтверждение"
+          "confirm" : "Подтвердить"
         },
         "infoText" : {
           "info" : "Отозвать согласие можно в любой момент в Настройках.",
@@ -7595,8 +7619,8 @@
       },
       "synchronizedInstances" : {
         "cta" : "Настроить",
-        "title" : "Синхронизировано приложений Ledger Live: {{count}}",
-        "title_plural" : "Синхронизировано приложений Ledger Live: {{count}}",
+        "title_one" : "{{count}} Ledger Live app synched",
+        "title_other" : "{{count}} Ledger Live apps synched",
         "error" : "Элементы",
         "unsecuredError" : {
           "title" : "Подключите устройство Ledger, которое использовалось для активации Ledger Sync",
@@ -7767,8 +7791,8 @@
     },
     "selectNetwork" : {
       "title" : "Укажите сеть криптоактива",
-      "detectedAccounts" : "Найден {{count}} счёт",
-      "detectedAccounts_plural" : "Счетов найдено: {{count}}"
+      "detectedAccounts_one" : "{{count}} account (detected)",
+      "detectedAccounts_other" : "{{count}} accounts (detected)"
     }
   },
   "emptyList" : {
@@ -7800,18 +7824,18 @@
     "ath" : "Исторический макс.",
     "atl" : "Исторический мин.",
     "timeAgo" : {
-      "years" : "({{count}} г. назад)",
-      "years_plural" : "({{count}} лет назад)",
-      "months" : "({{count}} мес. назад)",
-      "months_plural" : "({{count}} мес. назад)",
-      "days" : "({{count}} дн. назад)",
-      "days_plural" : "({{count}} дн. назад)",
-      "hours" : "({{count}} ч. назад)",
-      "hours_plural" : "({{count}} ч. назад)",
-      "minutes" : "({{count}} мин. назад)",
-      "minutes_plural" : "({{count}} мин. назад)",
-      "seconds" : "({{count}} сек. назад)",
-      "seconds_plural" : "({{count}} сек. назад)"
+      "years_one" : "({{count}} year ago)",
+      "years_other" : "({{count}} years ago)",
+      "months_one" : "({{count}} month ago)",
+      "months_other" : "({{count}} months ago)",
+      "days_one" : "({{count}} day ago)",
+      "days_other" : "({{count}} days ago)",
+      "hours_one" : "({{count}} hour ago)",
+      "hours_other" : "({{count}} hours ago)",
+      "minutes_one" : "({{count}} minute ago)",
+      "minutes_other" : "({{count}} minutes ago)",
+      "seconds_one" : "({{count}} second ago)",
+      "seconds_other" : "({{count}} seconds ago)"
     },
     "performance" : "Изменение цены",
     "low" : "Мин.",
@@ -7846,8 +7870,8 @@
     "selectAccount" : "Выберите счёт",
     "searchPlaceholder" : "Поиск...",
     "emptyAssetList" : "Ничего не нашли :(",
-    "accountCount" : "Счёт: {{count}}",
-    "accountCount_plural" : "Счета: {{count}}",
+    "accountCount_one" : "{{count}} account",
+    "accountCount_other" : "{{count}} accounts",
     "errors" : {
       "title" : "Сбой подключения",
       "backend" : "Что-то пошло не так на нашей стороне. Повторите попытку позже",
@@ -7935,6 +7959,15 @@
     "default" : {
       "title" : "Что-то пошло не так",
       "description" : "Повторите попытку или обратитесь в Поддержку Ledger"
+    }
+  },
+  "canton" : {
+    "onboard" : {
+      "account" : "Счёт",
+      "authorize" : "Разрешить",
+      "preapprove" : "Счёт добавлен",
+      "validator" : "Валидатор Ledger",
+      "title" : "Автоматически принимать активы"
     }
   }
 }
