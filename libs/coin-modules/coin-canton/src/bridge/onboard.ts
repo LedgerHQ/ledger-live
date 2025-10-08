@@ -38,13 +38,13 @@ export const isAccountOnboarded = async (currency: CryptoCurrency, publicKey: st
   }
 };
 
-export const isAccountAuthorized = async (currency: CryptoCurrency, partyId: string) => {
+export const isCantonCoinPreapproved = async (currency: CryptoCurrency, partyId: string) => {
   const { expires_at, receiver } = await getTransferPreApproval(currency, partyId);
   const isReceiver = receiver === partyId;
   const isExpired = new Date(expires_at) < new Date();
 
-  const isAuthorized = !isExpired && isReceiver;
-  return isAuthorized;
+  const isPreapproved = !isExpired && isReceiver;
+  return isPreapproved;
 };
 
 export const buildOnboardAccount =
@@ -113,9 +113,9 @@ export const buildAuthorizePreapproval =
       async function main() {
         o.next({ status: AuthorizeStatus.INIT });
 
-        const isAuthorized = await isAccountAuthorized(currency, partyId);
+        const isPreapproved = await isCantonCoinPreapproved(currency, partyId);
 
-        if (!isAuthorized) {
+        if (!isPreapproved) {
           o.next({ status: AuthorizeStatus.PREPARE });
 
           const preparedTransaction = await preparePreApprovalTransaction(currency, partyId);
