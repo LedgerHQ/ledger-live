@@ -2,7 +2,7 @@ import React, { useCallback } from "react";
 import { Link as UiLink } from "@ledgerhq/native-ui";
 import { LinkProps } from "@ledgerhq/native-ui/components/cta/Link/index";
 import { track } from "~/analytics";
-import { GestureResponderEvent } from "react-native-modal";
+import { GestureResponderEvent } from "react-native";
 
 export type WrappedLinkProps = LinkProps & {
   event?: string;

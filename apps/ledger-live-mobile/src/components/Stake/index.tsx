@@ -1,6 +1,6 @@
 /* eslint-disable consistent-return */
 import { useMemo, useLayoutEffect, useRef } from "react";
-import { StackNavigationProp } from "@react-navigation/stack";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useNavigation } from "@react-navigation/native";
 import { listCurrencies, filterCurrencies } from "@ledgerhq/live-common/currencies/helpers";
 import { NavigatorName, ScreenName } from "~/const";
@@ -16,7 +16,8 @@ type Props = BaseComposite<StackNavigatorProps<StakeNavigatorParamList, ScreenNa
 const StakeFlow = ({ route }: Props) => {
   const { enabledCurrencies, partnerSupportedAssets } = useStake();
   const currencies = route?.params?.currencies || enabledCurrencies.concat(partnerSupportedAssets);
-  const navigation = useNavigation<StackNavigationProp<{ [key: string]: object | undefined }>>();
+  const navigation =
+    useNavigation<NativeStackNavigationProp<{ [key: string]: object | undefined }>>();
   const parentRoute = route?.params?.parentRoute;
   const account = route?.params?.account;
   const alwaysShowNoFunds = route?.params?.alwaysShowNoFunds;

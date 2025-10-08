@@ -2,10 +2,10 @@ import React, { useCallback } from "react";
 import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import CircleCurrencyIcon from "./CircleCurrencyIcon";
-import { TouchableOpacity } from "react-native-gesture-handler";
 import styled from "styled-components/native";
+import { Pressable } from "react-native";
 
-const RowContainer = styled(TouchableOpacity)`
+const RowContainer = styled(Pressable)`
   flex-direction: row;
   justify-content: center;
   padding-top: 12px;
@@ -25,7 +25,13 @@ const BigCurrencyRow = ({ currency, iconSize = 48, onPress, subTitle }: Props) =
   }, [onPress, currency]);
 
   return (
-    <RowContainer onPress={onPressAction} testID={`big-currency-row-${currency.id}`}>
+    <RowContainer
+      onPress={onPressAction}
+      hitSlop={16}
+      pointerEvents="box-only"
+      accessible={true}
+      testID={`big-currency-row-${currency.id}`}
+    >
       <CircleCurrencyIcon
         size={iconSize}
         sizeRatio={0.7}

@@ -1,5 +1,5 @@
 import React, { useMemo } from "react";
-import { createStackNavigator } from "@react-navigation/stack";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "styled-components/native";
 import { DomainServiceProvider } from "@ledgerhq/domain-service/hooks/index";
@@ -12,7 +12,7 @@ import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
 import StepHeader from "../StepHeader";
 import { SignTransactionNavigatorParamList } from "./types/SignTransactionNavigator";
 
-const Stack = createStackNavigator<SignTransactionNavigatorParamList>();
+const Stack = createNativeStackNavigator<SignTransactionNavigatorParamList>();
 
 const totalSteps = "3";
 export default function SignTransactionNavigator() {

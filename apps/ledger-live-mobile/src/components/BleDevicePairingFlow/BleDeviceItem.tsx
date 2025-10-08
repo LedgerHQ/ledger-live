@@ -2,9 +2,9 @@ import React from "react";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { Flex, Icons, IconsLegacy, Text } from "@ledgerhq/native-ui";
 import { ChevronRightMedium } from "@ledgerhq/native-ui/assets/icons";
-import { TouchableOpacity } from "react-native-gesture-handler";
 import { useTranslation } from "react-i18next";
 import { DeviceModelId } from "@ledgerhq/types-devices";
+import { Pressable } from "react-native";
 
 export type RenderedDevice = Device & {
   isAlreadyKnown: boolean;
@@ -64,7 +64,13 @@ const BleDeviceItem = ({ deviceMeta, onSelect, areKnownDevicesPairable }: Props)
 
   return (
     <Flex mb={3}>
-      <TouchableOpacity onPress={onSelect} testID={`device-scanned-${deviceMeta.deviceId}`}>
+      <Pressable
+        onPress={onSelect}
+        hitSlop={16}
+        pointerEvents="box-only"
+        accessible={true}
+        testID={`device-scanned-${deviceMeta.deviceId}`}
+      >
         <Flex
           alignItems="center"
           flexDirection="row"
@@ -78,7 +84,7 @@ const BleDeviceItem = ({ deviceMeta, onSelect, areKnownDevicesPairable }: Props)
           </Text>
           <ChevronRightMedium size={20} color="neutral.c70" />
         </Flex>
-      </TouchableOpacity>
+      </Pressable>
     </Flex>
   );
 };

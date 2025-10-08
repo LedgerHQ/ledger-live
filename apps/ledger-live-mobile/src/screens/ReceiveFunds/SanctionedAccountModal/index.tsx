@@ -26,7 +26,7 @@ const SanctionedAccountModal = ({
     () => ({
       height: sharedHeight.value,
     }),
-    [sharedHeight.value],
+    [sharedHeight],
   );
 
   const closeModal = useCallback(() => {

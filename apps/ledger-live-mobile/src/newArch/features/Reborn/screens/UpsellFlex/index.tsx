@@ -32,7 +32,7 @@ const StyledSafeAreaView = styled(Box)`
 `;
 
 const CloseButton = styled(TouchableOpacity)`
-  background-color: ${p => p.theme.colors.neutral.c30};
+  background-color: ${p => p.theme.colors.neutral.c40};
   padding: 8px;
   border-radius: 32px;
 `;

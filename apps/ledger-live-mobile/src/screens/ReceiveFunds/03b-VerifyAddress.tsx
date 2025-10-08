@@ -151,7 +151,7 @@ export default function ReceiveVerifyAddress({ navigation, route }: Props) {
   if (!account || !currency || !mainAccount || !device) return null;
 
   return (
-    <SafeAreaViewFixed isFlex edges={["bottom"]}>
+    <SafeAreaViewFixed isFlex edges={["left", "right", "bottom"]}>
       <PreventNativeBack />
       <SkipLock />
       <SyncSkipUnderPriority priority={100} />

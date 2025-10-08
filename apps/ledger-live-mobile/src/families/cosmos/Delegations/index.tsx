@@ -30,7 +30,7 @@ import cryptoFactory from "@ledgerhq/coin-cosmos/chain/chain";
 import useBridgeTransaction from "@ledgerhq/live-common/bridge/useBridgeTransaction";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { AccountLike } from "@ledgerhq/types-live";
-import { StackNavigationProp } from "@react-navigation/stack";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import AccountDelegationInfo from "~/components/AccountDelegationInfo";
 import IlluRewards from "~/icons/images/Rewards";
 import { urls } from "~/utils/urls";
@@ -127,7 +127,7 @@ function Delegations({ account }: Props) {
     }) => {
       setDelegation(undefined);
       // This is complicated (even impossible?) to type properly…
-      (navigation as StackNavigationProp<{ [key: string]: object }>).navigate(route, {
+      (navigation as NativeStackNavigationProp<{ [key: string]: object }>).navigate(route, {
         screen,
         params: { ...params, accountId: account.id },
       });
@@ -383,9 +383,7 @@ function Delegations({ account }: Props) {
   }, [delegation, t, account, accountName, onOpenExplorer, undelegation]);
 
   const actions = useMemo<DelegationDrawerActions>(() => {
-    const rewardsDisabled =
-      !delegation || !delegation.pendingRewards || delegation.pendingRewards.isZero();
-
+    const rewardsDisabled = !delegation?.pendingRewards || delegation.pendingRewards.isZero();
     const redelegateEnabled = delegation && canRedelegate(account, delegation);
 
     const undelegationEnabled = canUndelegate(account);

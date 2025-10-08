@@ -35,7 +35,6 @@ export default function BottomDrawer({
       modalStyle={modalStyleOverrides.modal}
       safeContainerStyle={modalStyleOverrides.safeContainer}
       containerStyle={[modalStyleOverrides.container, restProps.containerStyle]}
-      propagateSwipe={true}
     >
       {children}
     </BaseModal>

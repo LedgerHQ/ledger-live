@@ -1,7 +1,7 @@
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { Flex, Icons } from "@ledgerhq/native-ui";
 import { useNavigation } from "@react-navigation/core";
-import { createStackNavigator } from "@react-navigation/stack";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import React, { useCallback, useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import SwapHistory from "~/screens/Swap/History";
@@ -44,7 +44,7 @@ const getTrackingSource = (routeName: string) => {
   return Object.entries(TRACKING_SOURCES).find(([key]) => routeName.startsWith(key))?.[1];
 };
 
-const Stack = createStackNavigator<SwapNavigatorParamList>();
+const Stack = createNativeStackNavigator<SwapNavigatorParamList>();
 
 export default function SwapNavigator(
   props: StackNavigatorProps<BaseNavigatorStackParamList, NavigatorName.Swap> | undefined,

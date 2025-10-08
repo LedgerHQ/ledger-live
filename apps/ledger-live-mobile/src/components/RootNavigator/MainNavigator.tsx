@@ -21,7 +21,6 @@ import { isMainNavigatorVisibleSelector } from "~/reducers/appstate";
 import EarnLiveAppNavigator from "./EarnLiveAppNavigator";
 import { getStakeLabelLocaleBased } from "~/helpers/getStakeLabelLocaleBased";
 import { useRebornFlow } from "LLM/features/Reborn/hooks/useRebornFlow";
-import { UnmountOnBlur } from "./utils/UnmountOnBlur";
 
 const Tab = createBottomTabNavigator<MainNavigatorParamList>();
 
@@ -62,10 +61,6 @@ export default function MainNavigator() {
     [managerNavLockCallback],
   );
 
-  const unmountOnBlur = ({ children }: { children: React.ReactNode }) => (
-    <UnmountOnBlur>{children}</UnmountOnBlur>
-  );
-
   return (
     <Tab.Navigator
       tabBar={tabBar}
@@ -85,16 +80,12 @@ export default function MainNavigator() {
         tabBarActiveTintColor: colors.palette.primary.c80,
         tabBarInactiveTintColor: colors.palette.neutral.c70,
         headerShown: false,
+        popToTopOnBlur: true,
       }}
-      screenLayout={unmountOnBlur}
     >
       <Tab.Screen
         name={NavigatorName.Portfolio}
         component={PortfolioNavigator}
-        layout={({ children }) => (
-          // never unmount Portfolio on navigation
-          <>{children}</>
-        )}
         options={{
           headerShown: false,
           tabBarIcon: props => <PortfolioTabIcon {...props} />,
@@ -113,10 +104,6 @@ export default function MainNavigator() {
       <Tab.Screen
         name={NavigatorName.Earn}
         component={EarnLiveAppNavigator}
-        layout={({ children }) => (
-          // dont unmount Earn on navigation
-          <>{children}</>
-        )}
         options={{
           freezeOnBlur: true,
           headerShown: false,
@@ -205,9 +192,6 @@ export default function MainNavigator() {
         options={{
           tabBarIcon: props => <ManagerTabIcon {...props} />,
           tabBarButtonTestID: "TabBarManager",
-        }}
-        layout={({ children }) => {
-          return <>{children}</>;
         }}
         listeners={({ navigation }) => ({
           tabPress: e => {

@@ -2,6 +2,7 @@ local.properties
 .idea
 *.iml
 *.bat
+android/.settings
 android/build
 android/.gradle
 android/gradle

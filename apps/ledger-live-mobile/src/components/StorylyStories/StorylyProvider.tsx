@@ -3,7 +3,7 @@ import { Flex } from "@ledgerhq/native-ui";
 import { Linking } from "react-native";
 import { Feature_Storyly, StorylyInstanceType } from "@ledgerhq/types-live";
 import React, { createContext, useState, useContext, ReactNode, useRef, useEffect } from "react";
-import { Storyly } from "storyly-react-native";
+import Storyly, { type StorylyMethods, type StoryEvent } from "storyly-react-native-fabric";
 import { useSettings } from "~/hooks";
 
 interface StorylyProviderProps {
@@ -30,7 +30,7 @@ const StorylyProvider: React.FC<StorylyProviderProps> = ({ children }) => {
   const [token, setToken] = useState<string | null>(null);
   const { language } = useSettings();
 
-  const storylyRef = useRef<Storyly>(null);
+  const storylyRef = useRef<StorylyMethods>(null);
 
   const { params } = useFeature("storyly") || {};
   const stories = params?.stories;
@@ -62,7 +62,7 @@ const StorylyProvider: React.FC<StorylyProviderProps> = ({ children }) => {
     setToken(null);
   };
 
-  const handleEvent = (e: Storyly.StoryEvent) => {
+  const handleEvent = (e: StoryEvent) => {
     if (
       (e.event === "StoryPreviousClicked" && e.story?.index === 0) ||
       ["StoryGroupClosed", "StoryGroupCompleted"].includes(e.event)

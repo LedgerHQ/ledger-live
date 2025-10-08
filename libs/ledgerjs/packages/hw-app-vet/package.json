@@ -26,6 +26,7 @@
   "main": "lib/Vet.js",
   "module": "lib-es/Vet.js",
   "dependencies": {
+    "@ledgerhq/cryptoassets": "workspace:^",
     "@ledgerhq/errors": "workspace:^",
     "@ledgerhq/hw-transport": "workspace:*",
     "@ledgerhq/hw-transport-mocker": "workspace:^",

@@ -1,9 +1,13 @@
 import React, { ReactNode, useCallback } from "react";
-import ReactNativeModal, { ModalProps } from "react-native-modal";
+import {
+  Modal as RNModal,
+  ModalProps as RNModalProps,
+  Pressable,
+  StyleProp,
+  TouchableOpacity,
+  ViewStyle,
+} from "react-native";
 import styled from "styled-components/native";
-import { StyleProp, TouchableOpacity, ViewStyle } from "react-native";
-
-import sizes from "../../../../helpers/getDeviceSize";
 import Text from "../../../Text";
 import { IconOrElementType } from "../../../Icon/type";
 import { BoxedIcon } from "../../../Icon";
@@ -11,8 +15,6 @@ import { Flex } from "../../index";
 import { space } from "styled-system";
 import { Close, ArrowLeft } from "@ledgerhq/icons-ui/native";
 import { useTheme } from "styled-components/native";
-
-const { width, height } = sizes;
 
 export type BaseModalProps = {
   isOpen?: boolean;
@@ -31,7 +33,8 @@ export type BaseModalProps = {
   noCloseButton?: boolean;
   hasBackButton?: boolean;
   CustomHeader?: React.ComponentType<{ children?: ReactNode }>;
-} & Partial<ModalProps>;
+  onModalHide?: () => void;
+} & Partial<RNModalProps>;
 
 const SafeContainer = styled.SafeAreaView`
   background-color: ${(p) => p.theme.colors.background.drawer};
@@ -170,13 +173,7 @@ export default function BaseModal({
   CustomHeader,
   ...rest
 }: BaseModalProps): React.ReactElement {
-  const backDropProps = preventBackdropClick
-    ? {}
-    : {
-        onBackdropPress: onClose,
-        onBackButtonPress: onClose,
-        onSwipeComplete: onClose,
-      };
+  const canCloseViaBackdropOrBack = !preventBackdropClick;
 
   // Workaround: until this, onModalHide={onClose}, making onClose being called twice and onModalHide being never called
   // The real fix would be to have onModalHide={onModalHide} and make sure every usage on onClose in the consumers of this component
@@ -186,52 +183,57 @@ export default function BaseModal({
   }, [onModalHide]);
 
   return (
-    <ReactNativeModal
-      {...backDropProps}
+    <RNModal
       {...rest}
-      isVisible={!!isOpen}
-      deviceWidth={width}
-      deviceHeight={height}
-      useNativeDriver
-      useNativeDriverForBackdrop
-      hideModalContentWhileAnimating
-      onModalHide={onModalHideWithClose}
-      style={[defaultModalStyle, modalStyle]}
+      visible={!!isOpen}
+      transparent
+      animationType="fade"
+      onDismiss={onModalHideWithClose}
+      onRequestClose={() => {
+        if (canCloseViaBackdropOrBack) onClose?.();
+      }}
     >
-      <SafeContainer style={safeContainerStyle}>
-        {CustomHeader && (
-          <CustomHeader>
-            {!noCloseButton && <ModalHeaderCloseButton onClose={onClose} />}
-          </CustomHeader>
-        )}
-        <Container style={containerStyle}>
-          <Flex
-            flexDirection={"row"}
-            justifyContent={"space-between"}
-            width={"100%"}
-            alignItems={"center"}
-          >
-            {!CustomHeader && onBack && hasBackButton && (
-              <Flex flex={1} justifyContent={"flex-start"}>
-                <ModalHeaderBackButton onBack={onBack} />
-              </Flex>
+      <Pressable
+        onPress={canCloseViaBackdropOrBack ? onClose : undefined}
+        style={{ flex: 1, backgroundColor: "rgba(0,0,0,0.7)" }}
+      >
+        <Pressable onPress={() => {}} style={[defaultModalStyle, modalStyle]}>
+          <SafeContainer style={safeContainerStyle}>
+            {CustomHeader && (
+              <CustomHeader>
+                {!noCloseButton && <ModalHeaderCloseButton onClose={onClose} />}
+              </CustomHeader>
             )}
-            {!CustomHeader && !noCloseButton && (
-              <Flex flex={1} justifyContent={"flex-end"}>
-                <ModalHeaderCloseButton onClose={onClose} />
+            <Container style={containerStyle}>
+              <Flex
+                flexDirection={"row"}
+                justifyContent={"space-between"}
+                width={"100%"}
+                alignItems={"center"}
+              >
+                {!CustomHeader && onBack && hasBackButton && (
+                  <Flex flex={1} justifyContent={"flex-start"}>
+                    <ModalHeaderBackButton onBack={onBack} />
+                  </Flex>
+                )}
+                {!CustomHeader && !noCloseButton && (
+                  <Flex flex={1} justifyContent={"flex-end"}>
+                    <ModalHeaderCloseButton onClose={onClose} />
+                  </Flex>
+                )}
               </Flex>
-            )}
-          </Flex>
-          <ModalHeader
-            Icon={Icon}
-            iconColor={iconColor}
-            title={title}
-            description={description}
-            subtitle={subtitle}
-          />
-          <ContentContainer>{children}</ContentContainer>
-        </Container>
-      </SafeContainer>
-    </ReactNativeModal>
+              <ModalHeader
+                Icon={Icon}
+                iconColor={iconColor}
+                title={title}
+                description={description}
+                subtitle={subtitle}
+              />
+              <ContentContainer>{children}</ContentContainer>
+            </Container>
+          </SafeContainer>
+        </Pressable>
+      </Pressable>
+    </RNModal>
   );
 }

@@ -4,7 +4,7 @@ import { Flex, Text } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
 import { useNavigation, useFocusEffect } from "@react-navigation/native";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
-import { StackNavigationProp } from "@react-navigation/stack";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import TabBarSafeAreaView from "~/components/TabBar/TabBarSafeAreaView";
 import Illustration from "~/images/illustration/Illustration";
 import { NavigatorName, ScreenName } from "~/const";
@@ -35,7 +35,9 @@ const images = {
 function Discover() {
   const { t } = useTranslation();
   const navigation =
-    useNavigation<StackNavigationProp<BaseNavigatorStackParamList & MainNavigatorParamList>>();
+    useNavigation<
+      NativeStackNavigationProp<BaseNavigatorStackParamList & MainNavigatorParamList>
+    >();
 
   const isNFTDisabled = useFeature("disableNftLedgerMarket")?.enabled && Platform.OS === "ios";
 

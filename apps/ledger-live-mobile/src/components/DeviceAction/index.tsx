@@ -18,7 +18,7 @@ import { Flex, Icons, Text } from "@ledgerhq/native-ui";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import type { AccountLike, AnyMessage, DeviceInfo } from "@ledgerhq/types-live";
 import { useNavigation, useTheme } from "@react-navigation/native";
-import { StackNavigationProp } from "@react-navigation/stack";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
@@ -191,7 +191,7 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
   const dispatch = useDispatch();
   const theme: "dark" | "light" = dark ? "dark" : "light";
   const { t } = useTranslation();
-  const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const {
     appAndVersion,
     device,

@@ -3,7 +3,7 @@ import { renderWithReactQuery } from "@tests/test-renderer";
 import CompletionScreen from "../CompletionScreen";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { DeviceModelId } from "@ledgerhq/types-devices";
-import { createStackNavigator } from "@react-navigation/stack";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import { ScreenName } from "~/const";
 import { State } from "~/reducers/types";
@@ -15,7 +15,7 @@ const mockedDevice: Device = {
   modelId: DeviceModelId.europa,
 };
 
-const Stack = createStackNavigator<BaseNavigatorStackParamList>();
+const Stack = createNativeStackNavigator<BaseNavigatorStackParamList>();
 
 const mockNavigation = {
   navigate: jest.fn(),
