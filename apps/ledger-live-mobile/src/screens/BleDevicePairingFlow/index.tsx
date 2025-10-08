@@ -24,6 +24,7 @@ export type Props = RootComposite<
 export const bleDevicePairingFlowHeaderOptions: ReactNavigationHeaderOptions = {
   headerShown: true,
   headerLeft: () => <NavigationHeaderBackButton />,
+  headerBackVisible: false,
   title: "",
   headerRight: () => null,
 };

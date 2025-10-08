@@ -1,7 +1,8 @@
 import { BigNumber } from "bignumber.js";
 import invariant from "invariant";
 import React, { useState, useCallback } from "react";
-import { useTranslation, Trans } from "react-i18next";
+import { useTranslation } from "react-i18next";
+import i18next from "i18next";
 import { Keyboard, StyleSheet, View, SafeAreaView, ScrollView } from "react-native";
 import { useTheme } from "@react-navigation/native";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
@@ -18,9 +19,10 @@ import { ScreenName } from "~/const";
 import { SignTransactionNavigatorParamList } from "~/components/RootNavigator/types/SignTransactionNavigator";
 import { SwapNavigatorParamList } from "~/components/RootNavigator/types/SwapNavigator";
 import { useAccountUnit } from "~/hooks/useAccountUnit";
+import { getParentNavigatorForEditScreen } from "~/navigation/utils";
 
 const options = {
-  title: <Trans i18nKey="send.summary.fees" />,
+  title: i18next.t("send.summary.fees"),
   headerLeft: undefined,
 };
 
@@ -52,14 +54,19 @@ function StellarEditCustomFees({ navigation, route }: NavigationProps) {
     setCustomFee(BigNumber(customFee || 0));
     const bridge = getAccountBridge(account, parentAccount);
     const { currentNavigation } = route.params;
+    const targetNavigator = getParentNavigatorForEditScreen(currentNavigation);
+
     // @ts-expect-error: Type mismatch due to dynamic navigation params
-    navigation.navigate(currentNavigation, {
-      ...route.params,
-      accountId: account.id,
-      transaction: bridge.updateTransaction(transaction, {
-        fees: BigNumber(customFee || 0),
-        customFees: { parameters: { fees: BigNumber(customFee || 0) } },
-      }),
+    navigation.navigate(targetNavigator, {
+      screen: currentNavigation,
+      params: {
+        ...route.params,
+        accountId: account.id,
+        transaction: bridge.updateTransaction(transaction, {
+          fees: BigNumber(customFee || 0),
+          customFees: { parameters: { fees: BigNumber(customFee || 0) } },
+        }),
+      },
     });
   }, [customFee, account, parentAccount, route.params, navigation, transaction]);
   return (

@@ -2,13 +2,13 @@ import React, { useCallback } from "react";
 import { RectButton } from "react-native-gesture-handler";
 import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { useTheme } from "@react-navigation/native";
-
 import styled from "styled-components/native";
 import { Flex, Tag } from "@ledgerhq/native-ui";
 import LText from "./LText";
 import CircleCurrencyIcon from "./CircleCurrencyIcon";
+import { Pressable } from "react-native";
 
-const StyledRectButton = styled(RectButton)`
+const StyledPressable = styled(Pressable)`
   flex-direction: row;
   align-items: center;
   padding: 16px;
@@ -30,10 +30,13 @@ const CurrencyRow = ({ currency, style, isOK = true, iconSize = 32, onPress }: P
   const { colors } = useTheme();
 
   return (
-    <StyledRectButton
-      testID={"currency-row-" + currency.id}
+    <StyledPressable
       style={[style]}
       onPress={onPressAction}
+      hitSlop={16}
+      pointerEvents="box-only"
+      accessible={true}
+      testID={"currency-row-" + currency.id}
     >
       <CircleCurrencyIcon
         size={iconSize}
@@ -63,7 +66,7 @@ const CurrencyRow = ({ currency, style, isOK = true, iconSize = 32, onPress }: P
       {currency.type === "TokenCurrency" && currency.parentCurrency ? (
         <Tag>{currency.parentCurrency.name}</Tag>
       ) : null}
-    </StyledRectButton>
+    </StyledPressable>
   );
 };
 

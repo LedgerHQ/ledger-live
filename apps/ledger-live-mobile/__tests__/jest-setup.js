@@ -4,6 +4,8 @@ import "@shopify/flash-list/jestSetup";
 import "@mocks/console";
 import { server } from "./server";
 import { NativeModules } from "react-native";
+import mockSafeAreaContext from "react-native-safe-area-context/jest/mock";
+
 // Needed for react-reanimated https://docs.swmansion.com/react-native-reanimated/docs/3.x/guides/testing#timers
 jest.useFakeTimers();
 jest.runAllTimers();
@@ -24,13 +26,50 @@ const mockAnalytics = jest.genMockFromModule("@segment/analytics-react-native");
 // to replace TouchableNativeFeedback with TouchableOpacity
 // as the former breaks tests trying to press buttons
 jest.mock("react-native-gesture-handler", () => {
-  const TouchableOpacity = require("react-native").TouchableOpacity;
+  const RN = require("react-native");
+  const TouchableOpacity = RN.TouchableOpacity;
+  const ScrollView = RN.ScrollView;
+  const View = RN.View;
   return {
-    ...require("react-native-gesture-handler/lib/commonjs/mocks").default,
+    TouchableOpacity: TouchableOpacity,
+    TouchableWithoutFeedback: TouchableOpacity,
+    ScrollView: ScrollView,
     RawButton: TouchableOpacity,
     BaseButton: TouchableOpacity,
     RectButton: TouchableOpacity,
     BorderlessButton: TouchableOpacity,
+    Gesture: {
+      Tap: jest.fn(),
+      Pan: jest.fn(),
+      Pinch: jest.fn(),
+      Rotation: jest.fn(),
+      Fling: jest.fn(),
+      LongPress: jest.fn(),
+      ForceTouch: jest.fn(),
+      Native: jest.fn(),
+      Manual: jest.fn(),
+      Race: jest.fn(),
+      Simultaneous: jest.fn(),
+      Exclusive: jest.fn(),
+      requireNativeViewManager: jest.fn(),
+    },
+    GestureDetector: View,
+    GestureHandlerRootView: View,
+    createNativeWrapper: jest.fn(),
+    Directions: {
+      RIGHT: 1,
+      LEFT: 2,
+      UP: 4,
+      DOWN: 8,
+    },
+    State: {
+      UNDETERMINED: 0,
+      FAILED: 1,
+      BEGAN: 2,
+      CANCELLED: 3,
+      ACTIVE: 4,
+      END: 5,
+    },
   };
 });
 
@@ -118,6 +157,8 @@ jest.mock("react-native-startup-time", () => ({
 }));
 
 jest.mock("@react-native-community/netinfo", () => ({ useNetInfo: () => ({ isConnected: true }) }));
+
+jest.mock("react-native-safe-area-context", () => mockSafeAreaContext);
 
 require("react-native-reanimated").setUpTests();
 

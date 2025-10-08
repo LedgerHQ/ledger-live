@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo } from "react";
 import { useNavigation } from "@react-navigation/core";
-import { StackNavigationProp } from "@react-navigation/stack";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useSelector } from "react-redux";
 import { Trans, useTranslation } from "react-i18next";
 import { Alert, Box, Flex, Text } from "@ledgerhq/native-ui";
@@ -20,7 +20,7 @@ type Props = {
   account: AccountLike;
 };
 
-type Navigation = StackNavigationProp<BaseNavigatorStackParamList>;
+type Navigation = NativeStackNavigationProp<BaseNavigatorStackParamList>;
 type Route = EntryOf<BaseNavigatorStackParamList>;
 
 const NotEnoughFundFeesAlert: React.FC<Props> = ({ account }) => {

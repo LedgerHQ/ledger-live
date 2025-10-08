@@ -1,9 +1,10 @@
 import React, { useMemo } from "react";
 import { Platform } from "react-native";
 import { useTranslation } from "react-i18next";
-import { createStackNavigator } from "@react-navigation/stack";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useTheme } from "@react-navigation/native";
-import { getStackNavigatorConfig, defaultNavigationOptions } from "~/navigation/navigatorConfig";
+import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
+import styles from "~/navigation/styles";
 import StepHeader from "~/components/StepHeader";
 import { ScreenName } from "~/const";
 import SelectAsset from "./01-SelectAsset";
@@ -39,12 +40,7 @@ function AddAssetFlow() {
             />
           ),
           headerLeft: () => null,
-          headerStyle: {
-            ...defaultNavigationOptions.headerStyle,
-            elevation: 0,
-            shadowOpacity: 0,
-            borderBottomWidth: 0,
-          },
+          headerStyle: styles.headerNoShadow,
           gestureEnabled: false,
         }}
       />
@@ -120,4 +116,4 @@ const options = {
   headerShown: false,
 };
 export { AddAssetFlow as component, options };
-const Stack = createStackNavigator<StellarAddAssetFlowParamList>();
+const Stack = createNativeStackNavigator<StellarAddAssetFlowParamList>();
