@@ -1829,7 +1829,7 @@
             "label" : "Ekrandaki yönergeleri okuyarak cihazınızı nasıl kullanacağınızı öğrenin."
           },
           "2" : {
-            "title" : "“Set up as new device” (Yeni cihaz olarak kur) seçeneğini onaylayın",
+            "title" : "“Yeni cihaz olarak kur” seçeneğini onaylayın",
             "label" : "Seçimi onaylamak için her iki tuşa da aynı anda basın."
           },
           "3" : {
@@ -1980,17 +1980,17 @@
     "stepProtect" : {
       "bullets" : {
         "0" : {
-          "title" : "“Restore” (Geri Yükle) seçimini yapın",
+          "title" : "“Geri Yükle” seçimini yapın",
           "label" : "Seçmek için iki tuşa aynı anda basın."
         },
         "1" : {
-          "title" : "“Restore using Ledger Recover” (Ledger Recover ile geri yükleyin) seçimini yapın",
+          "title" : "“Ledger Recover ile geri yükleyin” seçimini yapın",
           "label" : "Seçmek için iki tuşa aynı anda basın."
         }
       },
       "nextStep" : "Devam",
       "extraInfo" : {
-        "tooltip" : "“Restore using Ledger Recover” (Ledger Recover ile geri yükleyin) seçeneği yok",
+        "tooltip" : "“Ledger Recover ile geri yükleyin” seçeneği yok",
         "title" : "Ledger Nano X cihazındaki işletim sisteminin güncellenmesi gerekiyor",
         "desc" : "İşletim sistemini güncellemeyi deneyebilir veya yardım almak için Ledger Destek ile iletişime geçebilirsiniz.",
         "cta" : "Güncelleme yönergeleri",
@@ -2250,6 +2250,9 @@
         "continueCTA" : "Devam",
         "contactSupportCTA" : "Destek al"
       }
+    },
+    "completionScreen" : {
+      "title" : "Artık kontrol sizde"
     }
   },
   "blePairingFlow" : {
@@ -2262,14 +2265,14 @@
         "title" : "Cihazlar aranıyor"
       },
       "description" : "Ledger cihazınızın kilidinin açık ve eşleştirmek istediğiniz cep telefonuna yakın bir yerde olduğundan emin olun.",
-      "alreadyPaired" : "Zaten eşleştirilmiş"
+      "alreadyPaired" : "Zaten eşlenmiş"
     },
     "pairing" : {
       "success" : {
         "title" : "{{deviceName}} ile eşlendi"
       },
       "loading" : {
-        "title" : "{{deviceName}} ile eşleştiriliyor...",
+        "title" : "{{deviceName}} ile eşleniyor...",
         "subtitle" : "İstenirse {{productName}} cihazınızda kodu onaylayın"
       },
       "error" : {
@@ -2380,6 +2383,8 @@
   },
   "syncOnboarding" : {
     "title" : "{{productName}} cihazınızı hazırlayın",
+    "twoStepTitle" : "Hadi başlayalım",
+    "firstStepReadyTitle" : "{{productName}} cihazınız hazır",
     "estimatedTimeFormat" : "{{estimatedTime}} dk.",
     "deviceSelection" : {
       "title" : "Kurmak istediğiniz Ledger'ı seçin:",
@@ -2400,7 +2405,7 @@
         "title" : "{{deviceName}} ile eşlendi"
       },
       "loading" : {
-        "title" : "{{deviceName}} ile eşleştiriliyor",
+        "title" : "{{deviceName}} ile eşleniyor",
         "subtitle" : "İstenirse {{productName}} cihazınızda kodu onaylayın"
       },
       "error" : {
@@ -2497,6 +2502,10 @@
       "newSeedContinueOnDevice" : "{{productName}} cihazınızdaki yönergeleri izleyin",
       "recovery" : "Varlıklarınızın azami düzeyde güvenliği için Ledger cihazı tarafından oluşturulan bir Gizli Kurtarma İfadesi kullandığınızdan emin olun. \n\nGizli Kurtarma İfadeniz yok mu? Yeni bir İfade oluşturmak için {{productName}} cihazınızı kullanın."
     },
+    "secureCryptoStep" : {
+      "title" : "Kriptolarınızı güvende tutun",
+      "doneSubTitle" : "Blok zinciri uygulamalarınız yüklendi."
+    },
     "backup" : {
       "title" : "Gizli Kurtarma İfadenizin yedeklemesi",
       "description" : "Dijital olarak şifrelenmiş bir yedekleme ile, Gizli Kurtarma İfadeniz gerekmeden cüzdanınıza erişimi geri kazanın.\n\nDijital yedekleme isteyip istemediğinizi seçin:",
@@ -2524,6 +2533,14 @@
     },
     "completion" : {
       "title" : "Artık kontrol sizde"
+    },
+    "successStep" : {
+      "title" : "{{productName}} cihazınız dijital varlıklarınızı güvende tutmaya hazır"
+    },
+    "newSeed" : {
+      "subtitle" : "Maksimum güvenlik için kriptolarınızı herhangi bir borsadan veya cüzdandan Ledger Live uygulamanıza aktarabilirsiniz.",
+      "installCTA" : "Kriptolarınızı güvende tutun",
+      "skipCTA" : "Belki sonra"
     }
   },
   "tabs" : {
@@ -3416,6 +3433,16 @@
       "shareAddress" : "Adresi paylaş",
       "addressCopied" : "Adres panoya kopyalandı",
       "taprootWarning" : "Gönderenin Taproot'u desteklediğinden emin olun",
+      "menu" : {
+        "crypto" : {
+          "title" : "Bir kripto adresinden",
+          "description" : "Cüzdanınıza herhangi bir kripto bakiyesi ekleyin."
+        },
+        "fiat" : {
+          "title" : "Bir banka hesabından",
+          "description" : "EUR veya USD banka transferi yoluyla USDC bakiyesi ekleyin. KYC gereklidir."
+        }
+      },
       "memoTag" : {
         "link" : "Etikete/Memo'ya mı ihtiyacınız var?",
         "title" : "Etikete/Memo'ya mı ihtiyacınız var?",
@@ -3732,6 +3759,10 @@
       "history" : {
         "title" : "Takas geçmişi"
       },
+      "wrongDevice" : {
+        "title" : "Ledger Nano S™, {{provider}} ile uyumlu değildir",
+        "description" : "Ledger Nano S™, {{provider}} ile uyumlu değildir. Ledger Live üzerinden {{provider}} aracılığıyla zincirler arası takas işlemleri yapmak için Ledger Nano S Plus™, Ledger Nano X™, Ledger Stax™ veya Ledger Flex™ cihazlarını kullanabilirsiniz"
+      },
       "incompatibility" : {
         "explore_compatible_devices" : "Uyumlu cihazları keşfedin",
         "contact_support" : "Müşteri destek ekibiyle iletişime geç",
@@ -3749,12 +3780,16 @@
         "apt_description" : "Aptos takas etmek için Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ veya Ledger Stax™ gibi başka bir uyumlu Ledger cihazı kullanın.",
         "cosmos_title" : "Ledger Nano S™, Cosmos takasını desteklemez",
         "cosmos_description" : "Cosmos takas etmek için Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ veya Ledger Stax™ gibi başka bir uyumlu Ledger cihazı kullanın.",
+        "hedera_title" : "Ledger Nano S™, Hedera takasını desteklemez",
+        "hedera_description" : "Hedera takas etmek için Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ veya Ledger Stax™ gibi başka bir uyumlu Ledger cihazını kullanın.",
         "osmo_title" : "Ledger Nano S™, Osmosis takasını desteklemez",
         "osmo_description" : "Osmosis takas etmek için Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ veya Ledger Stax™ gibi başka bir uyumlu Ledger cihazını kullanın.",
         "dydx_title" : "Ledger Nano S™, dYdX takasını desteklemez",
         "dydx_description" : "dYdX takas etmek için Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ veya Ledger Stax™ gibi başka bir uyumlu Ledger cihazını kullanın.",
         "sui_title" : "Ledger Nano S™, Sui takasını desteklemez",
-        "sui_description" : "Sui takas etmek için Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ veya Ledger Stax™ gibi diğer herhangi bir uyumlu Ledger cihazını kullanın."
+        "sui_description" : "Sui takas etmek için Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ veya Ledger Stax™ gibi diğer herhangi bir uyumlu Ledger cihazını kullanın.",
+        "kaspa_title" : "Ledger Nano S™, Kaspa takasını desteklemez",
+        "kaspa_description" : "Kaspa takas etmek için Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ veya Ledger Stax™ gibi başka bir uyumlu Ledger cihazını kullanın."
       }
     },
     "lending" : {
@@ -4401,7 +4436,8 @@
         "default" : "Göndermeden önce Ledger cihazınızdaki takas bilgilerini doğrulayın.",
         "provider" : "Göndermeden önce cihazınızdaki Takas bilgilerini doğrulayın. {{providerName}} bazı işlemler için ek doğrulama adımları gerçekleştirmek zorunda kalabilir ve bu, gecikmeye neden olabilir."
       },
-      "acceptTerms" : "Bu işlemi onaylayarak,\n<0><0>{{provider}}</0> Kullanım Koşullarını</0> kabul ediyorum.",
+      "acceptTerms" : "Bu işlemi imzaladığınızda <0><0>{{provider}}</0> sağlayıcısının kullanım koşullarını</0> kabul etmiş olursunuz",
+      "changellySimplifiedAcceptTerms" : "Bu işlemi doğruladığınızda Changelly'nin <0>Kullanım Koşullarını</0> ve\n<1>Kara Paranın Aklanmasının Önlenmesi/KYC politikasını</1> kabul etmiş olursunuz. Changelly, bazı durumlarda işleminizin tamamlanmasını etkileyebilecek olan\nKara Paranın Aklanmasının Önlenmesi/KYC prosedürleri uygulayabilir. Böyle bir durumda Changelly'nin <2>müşteri destek</2> ekibi ile iletişime geçmeniz gerekir.",
       "notice" : "Göndermeden önce cihazınızdaki takas bilgilerini doğrulayın. Adresler güvenli bir şekilde aktarılır, böylece onları doğrulamak zorunda kalmazsınız."
     },
     "swap2" : {
@@ -4523,7 +4559,7 @@
       "desc" : "{{productName}} cihazınızın kilidinin açıldığından ve Bluetooth'un etkin olduğundan emin olun."
     },
     "bypassGenuine" : "Yine de kullan",
-    "alreadyPaired" : "Zaten eşleştirilmiş"
+    "alreadyPaired" : "Zaten eşlenmiş"
   },
   "DeviceItemSummary" : {
     "genuine" : "Cihazınız orijinal",
@@ -7180,9 +7216,10 @@
     "title" : "Kilit ekranı resmi",
     "change" : "Değiştir",
     "drawer" : {
+      "title" : "Özel kilitli ekran",
       "options" : {
-        "uploadFromPhone" : "Resim galerimden seç",
-        "remove" : "Mevcut resmi kaldır"
+        "uploadFromPhone" : "Resmi değiştir",
+        "remove" : "Kilitli ekranı sil"
       }
     },
     "toastRemove" : "Kilitli ekran resmi kaldırıldı",
@@ -7617,8 +7654,8 @@
           "explanation" : {
             "title" : "Tarayın ve hesaplarınızı başka bir Ledger Live uygulamasını kullanarak senkronize edin",
             "steps" : {
-              "step1" : "Ledger Sync'in uygulamalarınızdan birinde etkinleştirildiğinden emin olun.",
-              "step2" : "Senkronize etmek istediğiniz Ledger Live uygulamasını açın.",
+              "step1" : "Ledger Sync, diğer uygulamada da etkinleştirilmelidir.",
+              "step2" : "Senkronize edilecek Ledger Live'ı açın.",
               "step3" : "<0>Ayarlar</0> <1>></1> <0>Genel</0> <1>></1> <0>Ledger Sync</0> <1>></1> <0>Zaten açtım</0> <1>></1> <0>Karekodu okut</0> adımlarını izleyin",
               "step4" : "Karekodu okutun."
             }
@@ -7630,8 +7667,8 @@
           "explanation" : {
             "title" : "Başka bir telefonda veya bilgisayardaki Ledger Live ile senkronize etmek için...",
             "steps" : {
-              "step1" : "Ledger Sync'in uygulamalarınızdan birinde etkinleştirildiğinden emin olun.",
-              "step2" : "Senkronize etmek istediğiniz Ledger Live'ı açın.",
+              "step1" : "Ledger Sync, diğer uygulamada da etkinleştirilmelidir.",
+              "step2" : "Senkronize edilecek Ledger Live'ı açın.",
               "step3" : "<0>Ayarlar</0> <1>></1> <0>Genel</0> <1>></1> <0>Ledger Sync</0> <1>></1> <0>Zaten açtım</0> <1>></1> <0>Karekodu göster</0> adımlarını izleyin",
               "step4" : "Karekodu okutun."
             }
@@ -7912,7 +7949,7 @@
     },
     "transactionCannotBeCreated" : {
       "title" : "Sağlayıcı kullanılamıyor",
-      "description" : "Takas işleminizi bu sağlayıcı ile tamamlayamıyoruz. Lütfen başka bir sağlayıcıyla deneyin. Hata kodu 8HBB{{errorCode}}"
+      "description" : "Changelly bu işlemi gerçekleştiremiyor. Hata kodu 8HBB{{errorCode}}"
     },
     "default" : {
       "title" : "Bir hata oluştu",
