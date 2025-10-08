@@ -1,5 +1,13 @@
 # live-mobile
 
+## 3.96.0-next.1
+
+### Minor Changes
+
+- [#12233](https://github.com/LedgerHQ/ledger-live/pull/12233) [`37c2773`](https://github.com/LedgerHQ/ledger-live/commit/37c2773e0e0ac9afd37394cca9ffbc7bf302afeb) Thanks [@LucasWerey](https://github.com/LucasWerey)! - Fix undefined translation
+
+- [#12232](https://github.com/LedgerHQ/ledger-live/pull/12232) [`4c674b2`](https://github.com/LedgerHQ/ledger-live/commit/4c674b2ef622e7892619912253933180d17c2ef4) Thanks [@aussedatlo](https://github.com/aussedatlo)! - Update ContextModule version
+
 ## 3.96.0-next.0
 
 ### Minor Changes

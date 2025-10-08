@@ -1,5 +1,11 @@
 # ledger-live-desktop
 
+## 2.131.0-next.1
+
+### Minor Changes
+
+- [#12232](https://github.com/LedgerHQ/ledger-live/pull/12232) [`4c674b2`](https://github.com/LedgerHQ/ledger-live/commit/4c674b2ef622e7892619912253933180d17c2ef4) Thanks [@aussedatlo](https://github.com/aussedatlo)! - Update ContextModule version
+
 ## 2.131.0-next.0
 
 ### Minor Changes
