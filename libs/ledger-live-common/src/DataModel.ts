@@ -1,7 +1,7 @@
 import BigNumber from "bignumber.js";
 import { APTOS_NON_HARDENED_DERIVATION_PATH_REGEX } from "@ledgerhq/coin-aptos/constants";
 import { getCurrencyConfiguration } from "./config";
-import { findCryptoCurrencyById, getCryptoCurrencyById } from "./currencies";
+import { findCryptoCurrencyById } from "./currencies";
 
 /**
  * Interface for the end user.
@@ -70,27 +70,6 @@ export function createDataModel<R, M>(schema: DataSchema<R, M>): DataModel<R, M>
       if (Array.isArray(data.operations)) {
         data.operations = data.operations.filter(tx => !("nftOperations" in tx));
       }
-    }
-
-    if (currencyId === "polkadot") {
-      const assethubCurrency = getCryptoCurrencyById("assethub_polkadot");
-      const assethubConfig = getCurrencyConfiguration(assethubCurrency);
-
-      data.name = "Polkadot";
-
-      if (assethubConfig.hasBeenMigrated) {
-        data.currencyId = "assethub_polkadot";
-        data.id.replace("polkadot", "assethub_polkadot");
-
-        if (data.operations) {
-          data.operations = data.operations.map(op => ({
-            ...op,
-            currencyId: "assethub_polkadot",
-          }));
-        }
-      }
-
-      console.log("Polkadot data migration to AssetHub", data);
     }
 
     for (let i = raw.version; i < version; i++) {
