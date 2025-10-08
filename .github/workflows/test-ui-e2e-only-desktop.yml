@@ -66,11 +66,6 @@ on:
         required: false
         type: boolean
         default: false
-      test_execution:
-        description: "Test Execution ticket ID"
-        required: false
-        type: string
-        default: "B2CQA-2461"
       enable_broadcast:
         description: "Enable transaction broadcast"
         required: false
