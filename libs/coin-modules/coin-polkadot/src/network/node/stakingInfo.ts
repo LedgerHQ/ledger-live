@@ -19,15 +19,6 @@ export const fetchStakingInfo = async (
   addr: string,
   currency?: CryptoCurrency,
 ): Promise<SidecarStakingInfo> => {
-  if (currency?.id == "assethub_westend") {
-    return {
-      staking: {
-        unlocking: [],
-      },
-      numSlashingSpans: 0,
-    };
-  }
-
   const api = await getApiPromise(currency);
   const hash = await api.rpc.chain.getFinalizedHead();
   const historicApi = await api.at(hash);
@@ -35,16 +26,13 @@ export const fetchStakingInfo = async (
   if (currency?.id === "assethub_polkadot" && !historicApi.query.staking) {
     const assethubConfig = coinConfig.getCoinConfig(currency);
 
-    if (assethubConfig.hasBeenMigrated) {
-      throw new Error("AssetHub staking error");
-    } else {
-      return {
-        staking: {
-          unlocking: [],
-        },
-        numSlashingSpans: 0,
-      };
-    }
+    if (assethubConfig.hasBeenMigrated)
+      throw new Error("Staking info not available for assethub_polkadot");
+
+    return {
+      staking: { unlocking: [] },
+      numSlashingSpans: 0,
+    };
   }
 
   const controllerOption = await historicApi.query.staking.bonded(addr); // Option<AccountId> representing the controller
@@ -55,10 +43,7 @@ export const fetchStakingInfo = async (
 
   const controller = controllerOption.unwrap();
 
-  const [stakingLedgerOption, slashingSpansOption] = await Promise.all([
-    historicApi.query.staking.ledger(controller),
-    historicApi.query.staking.slashingSpans(addr),
-  ]);
+  const stakingLedgerOption = await historicApi.query.staking.ledger(controller);
 
   const stakingLedger = stakingLedgerOption.unwrapOr(null);
 
@@ -69,9 +54,12 @@ export const fetchStakingInfo = async (
     );
   }
 
-  const numSlashingSpans = slashingSpansOption.isSome
-    ? slashingSpansOption.unwrap().prior.length + 1
-    : 0;
+  const slashingSpansOption = await historicApi.query.staking.slashingSpans?.(addr);
+
+  const numSlashingSpans =
+    slashingSpansOption && slashingSpansOption.isSome
+      ? slashingSpansOption.unwrap().prior.length + 1
+      : 0;
 
   const unlocking = stakingLedger.unlocking.map<IUnlocking>(lock => ({
     value: lock.value.toString(),
