@@ -8375,14 +8375,14 @@ importers:
         specifier: workspace:^
         version: link:../coin-modules/coin-evm
       '@ledgerhq/context-module':
-        specifier: 1.8.0
-        version: 1.8.0(@ledgerhq/device-management-kit@0.9.1(rxjs@7.8.1))
+        specifier: 1.8.1
+        version: 1.8.1(@ledgerhq/device-management-kit@0.9.1(rxjs@7.8.1))
       '@ledgerhq/device-management-kit':
         specifier: 0.9.1
         version: 0.9.1(rxjs@7.8.1)
       '@ledgerhq/device-signer-kit-ethereum':
         specifier: 1.8.0
-        version: 1.8.0(@ledgerhq/context-module@1.8.0(@ledgerhq/device-management-kit@0.9.1(rxjs@7.8.1)))(@ledgerhq/device-management-kit@0.9.1(rxjs@7.8.1))
+        version: 1.8.0(@ledgerhq/context-module@1.8.1(@ledgerhq/device-management-kit@0.9.1(rxjs@7.8.1)))(@ledgerhq/device-management-kit@0.9.1(rxjs@7.8.1))
       '@ledgerhq/errors':
         specifier: workspace:^
         version: link:../ledgerjs/packages/errors
@@ -14665,10 +14665,10 @@ packages:
   '@kwsites/promise-deferred@1.1.1':
     resolution: {integrity: sha512-GaHYm+c0O9MjZRu0ongGBRbinu8gVAMd2UZjji6jVmqKtZluZnptXGWhz1E8j8D2HJ3f/yMxKAUC0b+57wncIw==}
 
-  '@ledgerhq/context-module@1.8.0':
-    resolution: {integrity: sha512-lsKjhGbSQbyRGhGpoj9QrBM9WEzbFhuMvZirEIBqHBpAfv7GXUECfOsVgaPPnrUa/cDJhvudmCHQlHWId7unMw==}
+  '@ledgerhq/context-module@1.8.1':
+    resolution: {integrity: sha512-uYr4eAecsKk7cbO2o2yaPiCRkqQEKOcpBpkEYkjCE1qrV6SQcxhS70k+gJiwZj9F12pKzanWkzHE2udi10MxAg==}
     peerDependencies:
-      '@ledgerhq/device-management-kit': ^0.9.0
+      '@ledgerhq/device-management-kit': ^0.9.1
 
   '@ledgerhq/crypto-icons-ui@file:libs/ui/packages/crypto-icons':
     resolution: {directory: libs/ui/packages/crypto-icons, type: directory}
@@ -45008,7 +45008,7 @@ snapshots:
 
   '@kwsites/promise-deferred@1.1.1': {}
 
-  '@ledgerhq/context-module@1.8.0(@ledgerhq/device-management-kit@0.9.1(rxjs@7.8.1))':
+  '@ledgerhq/context-module@1.8.1(@ledgerhq/device-management-kit@0.9.1(rxjs@7.8.1))':
     dependencies:
       '@ledgerhq/device-management-kit': 0.9.1(rxjs@7.8.1)
       axios: 1.8.2
@@ -45089,9 +45089,9 @@ snapshots:
       - bufferutil
       - utf-8-validate
 
-  '@ledgerhq/device-signer-kit-ethereum@1.8.0(@ledgerhq/context-module@1.8.0(@ledgerhq/device-management-kit@0.9.1(rxjs@7.8.1)))(@ledgerhq/device-management-kit@0.9.1(rxjs@7.8.1))':
+  '@ledgerhq/device-signer-kit-ethereum@1.8.0(@ledgerhq/context-module@1.8.1(@ledgerhq/device-management-kit@0.9.1(rxjs@7.8.1)))(@ledgerhq/device-management-kit@0.9.1(rxjs@7.8.1))':
     dependencies:
-      '@ledgerhq/context-module': 1.8.0(@ledgerhq/device-management-kit@0.9.1(rxjs@7.8.1))
+      '@ledgerhq/context-module': 1.8.1(@ledgerhq/device-management-kit@0.9.1(rxjs@7.8.1))
       '@ledgerhq/device-management-kit': 0.9.1(rxjs@7.8.1)
       '@ledgerhq/signer-utils': 1.1.0(@ledgerhq/device-management-kit@0.9.1(rxjs@7.8.1))
       ethers: 6.14.1
