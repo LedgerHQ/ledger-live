@@ -464,12 +464,16 @@
       "apt_description" : "Pour échanger des Aptos, utilisez un autre appareil Ledger compatible, tel que le Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™.",
       "cosmos_title" : "Le Ledger Nano S™ ne prend pas en charge l’échange de Cosmos",
       "cosmos_description" : "Pour échanger des Cosmos, utilisez un autre appareil Ledger compatible, tel que le Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™.",
+      "hedera_title" : "Le Ledger Nano S™ ne prend pas en charge l’échange d’Hedera",
+      "hedera_description" : "Pour échanger des Hedera, utilisez un autre appareil Ledger compatible, tel que le Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™.",
       "osmo_title" : "Le Ledger Nano S™ ne prend pas en charge l’échange d’Osmosis",
       "osmo_description" : "Pour échanger des Osmosis, utilisez un autre appareil Ledger compatible, tel que le Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™.",
       "dydx_title" : "Le Ledger Nano S™ ne prend pas en charge l’échange de dYdX",
       "dydx_description" : "Pour échanger des dYdX, utilisez un autre appareil Ledger compatible, tel que le Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™.",
       "sui_title" : "Le Ledger Nano S™ ne prend pas en charge l’échange de Sui",
-      "sui_description" : "Pour échanger des Sui, utilisez un autre appareil Ledger compatible, tel que le Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™."
+      "sui_description" : "Pour échanger des Sui, utilisez un autre appareil Ledger compatible, tel que le Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™.",
+      "kaspa_title" : "Le Ledger Nano S™ ne prend pas en charge l’échange de Kaspa",
+      "kaspa_description" : "Pour échanger des Kaspa, utilisez un autre appareil Ledger compatible, tel que le Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™."
     },
     "providers" : {
       "title" : "Choisir un prestataire pour le Swap",
@@ -2246,6 +2250,7 @@
   "receive" : {
     "title" : "Recevoir",
     "successTitle" : "Adresse partagée en toute sécurité",
+    "connectToNoah" : "Connexion à Noah",
     "steps" : {
       "options" : {
         "fromBank" : {
@@ -5023,6 +5028,12 @@
     },
     "screens" : {
       "welcome" : {
+        "videos" : {
+          "buySell" : "Le wallet qui vous protège et vous donne le contrôle",
+          "thousandsCrypto" : "Envoyez, recevez, échangez, stakez des milliers de cryptos",
+          "secureWallet" : "Vérifiez toutes vos opérations en toute sérénité"
+        },
+        "notice" : "En continuant, vous acceptez les <Link1>Conditions d’utilisation</Link1> et la <Link2>Politique de confidentialité</Link2> de Ledger. Ledger ne fournit aucun conseil financier.\nLes services d’échange et de staking sont fournis par des tiers.",
         "title" : "Le wallet ultra-sécurisé pour vos cryptos et NFT",
         "description" : "Gérez, achetez et faites fructifier vos cryptos et NFT en toute sécurité via Ledger Live.",
         "nextButton" : "Commencer",
@@ -5710,7 +5721,34 @@
     },
     "canton" : {
       "commentPlaceholder" : "Facultatif",
-      "comment" : "Commentaire"
+      "comment" : "Commentaire",
+      "addAccount" : {
+        "title" : "Ajouter un compte Canton",
+        "onboard" : {
+          "title" : "Ajout",
+          "newAccount" : "Nouveau compte",
+          "init" : "Pour configurer votre nouveau compte Canton, cliquez sur Continuer",
+          "onboarded" : "Comptes ajoutés",
+          "success" : "Votre nouveau compte Canton a bien été créé et ajouté.",
+          "error" : "Échec de l’ajout du nouveau compte. Veuillez réessayer.",
+          "status" : {
+            "prepare" : "Préparation de l’ajout du compte...",
+            "submit" : "Ajout du compte...",
+            "default" : "Traitement..."
+          }
+        },
+        "auth" : {
+          "title" : "Autorisation",
+          "validator" : "Autoriser",
+          "hint" : "Accepter automatiquement les actifs versés sur ce compte.",
+          "error" : "Échec de l’autorisation. Veuillez réessayer.",
+          "validatorLabel" : "Validateur Ledger",
+          "validatorDescription" : "Acceptation automatique des actifs"
+        },
+        "finish" : {
+          "title" : "Confirmation"
+        }
+      }
     },
     "stellar" : {
       "memo" : "Mémo",
@@ -7130,7 +7168,7 @@
         "2" : "Votre portefeuille.",
         "3" : "Vos données personnelles."
       },
-      "managePreferences" : "Gérer vos préférences",
+      "managePreferences" : "Gérer mes préférences",
       "refuse" : "Tout refuser",
       "accept" : "Tout accepter",
       "analyticsData" : {
@@ -7141,7 +7179,7 @@
         "title" : "Personnalisation",
         "description" : "Le partage des données sur l’utilisation de l’application (y compris les clics, visites de pages et données de conversion) nous permet de vous proposer des recommandations personnalisées, des contenus adaptés à vos préférences et de mesurer l’efficacité de nos campagnes marketing."
       },
-      "share" : "Partager"
+      "validate" : "Valider"
     },
     "variantB" : {
       "accept" : "Accepter",
