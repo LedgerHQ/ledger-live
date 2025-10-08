@@ -28,7 +28,6 @@ import { createRegistryAndExtrinsics } from "./common";
 import node from "./node";
 import { log } from "@ledgerhq/logs";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 
 /**
  * Returns the full indexer url for en route endpoint.
@@ -40,13 +39,6 @@ import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 const getSidecarUrl = (route: string, currency?: CryptoCurrency): string => {
   const config = coinConfig.getCoinConfig(currency);
   let sidecarUrl = config.sidecar.url;
-
-  const assethubCurrency = getCryptoCurrencyById("assethub_polkadot");
-  const assethubConfig = coinConfig.getCoinConfig(assethubCurrency);
-
-  if (currency?.id === "polkadot" && assethubConfig.hasBeenMigrated) {
-    sidecarUrl = assethubConfig.sidecar.url;
-  }
 
   if (
     currency?.id === "assethub_polkadot" &&

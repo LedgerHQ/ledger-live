@@ -33,7 +33,7 @@ export default async function getEstimatedFees({
   };
   const currency: CryptoCurrency = getCryptoCurrencyById(account.currency.id);
 
-  const tx = await buildTransaction(account, t);
+  const tx = await buildTransaction(account, t, currency.id === "polkadot");
   const fees = await estimateFees(tx, currency);
   return new BigNumber(fees.toString());
 }
