@@ -51,6 +51,47 @@ on:
           - nanoSP
           - nanoX
         default: nanoSP
+  workflow_call:
+    inputs:
+      test_filter:
+        description: Filter test pattern to execute only tests suites named according to pattern(s) separated by '|' (e.g. to execute accounts and settings describe blocks "Accounts @smoke" or "Accounts @smoke|Settings")
+        required: false
+      invert_filter:
+        description: Ignore test having name pattern (entered in the previous field)
+        type: boolean
+        default: false
+      slack_notif:
+        description: "Send notification to Slack?"
+        required: false
+        type: boolean
+        default: false   
+        description: "Test Execution ticket ID"
+        required: false
+        type: string
+        default: "B2CQA-2461"
+      enable_broadcast:
+        description: "Enable transaction broadcast"
+        required: false
+        type: boolean
+        default: false
+      build_type:
+        description: "Firebase env to target (pick js for release testing)"
+        required: false
+        type: choice
+        options:
+          - js
+          - staging
+          - testing
+        default: testing
+      speculos_device:
+        description: "Device to be used"
+        required: false
+        type: choice
+        options:
+          - nanoS
+          - nanoSP
+          - nanoX
+        default: nanoSP
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref_name != 'develop' && github.ref || github.run_id }}

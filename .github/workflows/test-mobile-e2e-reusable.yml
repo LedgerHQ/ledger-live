@@ -55,6 +55,44 @@ on:
         description: "Xray execution key for iOS (optional)"
         required: false
         type: string
+  workflow_call:
+    inputs:
+      ref:
+        description: "The branch which triggered this workflow"
+        required: false
+        type: string
+      test_filter:
+        description: "Filter to execute only test suite spec files according to pattern(s)"
+        required: false
+        type: string
+      tests_type:
+        description: "Which tests to run"
+        required: true
+        type: choice
+        default: "iOS & Android"
+        options:
+          - "Android Only"
+          - "iOS Only"
+          - "iOS & Android"
+      speculos_device:
+        description: "Speculos device to use"
+        required: true
+        type: choice
+        options:
+          - nanoS
+          - nanoSP
+          - nanoX
+        default: nanoX
+      production_firebase:
+        description: "Target Firebase Production env"
+        required: false
+        type: boolean
+        default: false
+      enable_broadcast:
+        description: "Enable transaction broadcast"
+        required: false
+        type: boolean
+        default: false
 
 permissions:
   id-token: write
