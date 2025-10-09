@@ -26,7 +26,6 @@ import {
 } from "./utils";
 import { HederaRecipientInvalidChecksum } from "../errors";
 
-jest.mock("@hashgraph/sdk");
 jest.mock("../network/mirror");
 
 describe("utils", () => {
@@ -51,6 +50,14 @@ describe("utils", () => {
   });
 
   describe("transaction serialization", () => {
+    beforeEach(() => {
+      jest.spyOn(Transaction, "fromBytes");
+    });
+
+    afterEach(() => {
+      jest.restoreAllMocks();
+    });
+
     it("should serialize a transaction to hex", () => {
       const mockTransaction = {
         toBytes: jest.fn().mockReturnValue(Buffer.from([10, 20, 30, 40, 50])),

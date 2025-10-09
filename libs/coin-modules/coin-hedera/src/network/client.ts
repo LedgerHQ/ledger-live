@@ -2,12 +2,12 @@ import type { Transaction as HederaTransaction, TransactionResponse } from "@has
 import { Client } from "@hashgraph/sdk";
 
 function broadcastTransaction(transaction: HederaTransaction): Promise<TransactionResponse> {
-  return transaction.execute(getClient());
+  return transaction.execute(getInstance());
 }
 
 let _hederaClient: Client | null = null;
 
-function getClient(): Client {
+function getInstance(): Client {
   _hederaClient ??= Client.forMainnet().setMaxNodesPerTransaction(1);
 
   return _hederaClient;
@@ -19,6 +19,7 @@ function _resetClient() {
 }
 
 export const hederaClient = {
+  getInstance,
   broadcastTransaction,
   _resetClient,
 };

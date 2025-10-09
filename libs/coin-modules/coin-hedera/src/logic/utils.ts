@@ -18,7 +18,7 @@ import type {
   TransactionStatus,
   TransactionTokenAssociate,
 } from "../types";
-import { getHederaClient } from "../api/network";
+import { hederaClient } from "../network/client";
 import { HederaRecipientInvalidChecksum } from "../errors";
 
 export const serializeSignature = (signature: Uint8Array) => {
@@ -203,7 +203,7 @@ export const safeParseAccountId = (
     // https://github.com/hiero-ledger/hiero-sdk-js/blob/main/src/EntityIdHelper.js#L446
     const checksum: string | null = address.split("-")[1] ?? null;
     if (checksum) {
-      const client = getHederaClient();
+      const client = hederaClient.getInstance();
       const recipientWithChecksum = accountId.toStringWithChecksum(client);
       const expectedChecksum = recipientWithChecksum.split("-")[1];
 

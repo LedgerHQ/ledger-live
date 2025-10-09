@@ -111,6 +111,7 @@ export async function listOperations({
 
       // try to enrich ASSOCIATE_TOKEN operation with extra.associatedTokenId
       // this value is used by custom OperationDetails components in Hedera family
+      // accounts or contracts must first associate with an HTS token before they can receive or send that token; without association, token transfers fail
       if (rawTx.name === "TOKENASSOCIATE") {
         operationType = "ASSOCIATE_TOKEN";
 
