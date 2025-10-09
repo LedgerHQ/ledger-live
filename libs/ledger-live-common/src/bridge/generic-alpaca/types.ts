@@ -27,10 +27,15 @@ export type GenericTransaction = TransactionCommon & {
     | "stake"
     | "undelegate"
     | "unstake";
-  type?: number;
+  type?: number | null;
   assetReference?: string;
   assetOwner?: string;
   networkInfo?: NetworkInfo | null;
+  chainId?: number;
+  gasLimit?: BigNumber | null;
+  gasPrice?: BigNumber | null;
+  maxFeePerGas?: BigNumber | null;
+  maxPriorityFeePerGas?: BigNumber | null;
 };
 
 export interface OperationCommon extends Operation {

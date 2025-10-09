@@ -43,12 +43,17 @@ export function createTransaction(account: Account | TokenAccount): GenericTrans
       };
     case "evm": {
       return {
-        mode: "send-eip1559",
+        mode: "send",
+        type: 2,
         family: currency.family,
         amount: new BigNumber(0),
         recipient: "",
         useAllAmount: false,
         feesStrategy: "medium",
+        chainId: currency.ethereumLikeInfo?.chainId ?? 0,
+        gasLimit: new BigNumber(21000),
+        maxFeePerGas: new BigNumber(0),
+        maxPriorityFeePerGas: new BigNumber(0),
       };
     }
     default:
