@@ -81,8 +81,12 @@ export const acceptTokenTransfer: DeviceAction<Transaction, any> = deviceActionF
         invariant(subAccount, "subAccount not found");
 
         const token = findTokenById(subAccount.token.id);
-        const formattedAmount = formatCurrencyUnit(token?.units[0], status.amount);
-        return `${formattedAmount} (${token?.ticker})`;
+        if (!token) {
+          throw new Error("Token not found");
+        }
+
+        const formattedAmount = formatCurrencyUnit(token.units[0], status.amount);
+        return `${formattedAmount} (${token.ticker})`;
       },
     },
     {

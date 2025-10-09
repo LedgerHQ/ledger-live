@@ -233,7 +233,7 @@ export const broadcastTx = async (
 ): Promise<BroadcastTransactionResponse> => {
   let response = await sendRaw<BroadcastTransactionResponse>(`/v2/transactions`, message);
 
-  if (response != "") response = `0x${response}`;
+  if (response !== "") response = `0x${response}`;
   return response;
 };
 
