@@ -39,8 +39,8 @@ describe("craftTransaction", () => {
     const senderTransfer = result.tx.hbarTransfers?.get(txIntent.sender);
     const recipientTransfer = result.tx.hbarTransfers?.get(txIntent.recipient);
 
-    expect(senderTransfer).toEqual(sdk.Hbar.fromTinybars(-txIntent.amount));
-    expect(recipientTransfer).toEqual(sdk.Hbar.fromTinybars(txIntent.amount));
+    expect(senderTransfer).toEqual(sdk.Hbar.fromTinybars(-txIntent.amount.toString()));
+    expect(recipientTransfer).toEqual(sdk.Hbar.fromTinybars(txIntent.amount.toString()));
     expect(result.tx.transactionMemo).toBe(txIntent.memo.value);
     expect(serializeTransaction).toHaveBeenCalled();
     expect(result).toEqual({
