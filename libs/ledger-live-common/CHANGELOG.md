@@ -1,5 +1,54 @@
 # @ledgerhq/live-common
 
+## 34.51.0-next.1
+
+### Minor Changes
+
+- [#12213](https://github.com/LedgerHQ/ledger-live/pull/12213) [`b88faa1`](https://github.com/LedgerHQ/ledger-live/commit/b88faa18e2f5cd309b54fc3157a44db606846cc5) Thanks [@Canestin](https://github.com/Canestin)! - feat: Asset Hub auto migration logic
+
+### Patch Changes
+
+- Updated dependencies [[`b88faa1`](https://github.com/LedgerHQ/ledger-live/commit/b88faa18e2f5cd309b54fc3157a44db606846cc5)]:
+  - @ledgerhq/coin-polkadot@6.11.0-next.1
+  - @ledgerhq/live-countervalues@0.8.0-next.1
+  - @ledgerhq/coin-framework@6.7.0-next.1
+  - @ledgerhq/coin-algorand@0.11.0-next.1
+  - @ledgerhq/coin-aptos@3.4.0-next.1
+  - @ledgerhq/coin-bitcoin@0.23.0-next.1
+  - @ledgerhq/coin-canton@0.8.0-next.1
+  - @ledgerhq/coin-cardano@0.13.0-next.1
+  - @ledgerhq/coin-casper@2.2.0-next.1
+  - @ledgerhq/coin-celo@1.6.0-next.1
+  - @ledgerhq/coin-cosmos@0.18.0-next.1
+  - @ledgerhq/coin-evm@2.33.0-next.1
+  - @ledgerhq/coin-filecoin@1.13.0-next.1
+  - @ledgerhq/coin-hedera@1.12.0-next.1
+  - @ledgerhq/coin-icon@0.13.0-next.1
+  - @ledgerhq/coin-internet_computer@1.9.0-next.1
+  - @ledgerhq/coin-kaspa@1.3.0-next.1
+  - @ledgerhq/coin-mina@1.3.0-next.1
+  - @ledgerhq/coin-multiversx@0.6.0-next.1
+  - @ledgerhq/coin-near@0.14.0-next.1
+  - @ledgerhq/coin-solana@0.35.0-next.1
+  - @ledgerhq/coin-stacks@0.10.0-next.1
+  - @ledgerhq/coin-stellar@6.5.0-next.1
+  - @ledgerhq/coin-sui@0.16.0-next.1
+  - @ledgerhq/coin-tezos@6.7.0-next.1
+  - @ledgerhq/coin-ton@0.15.0-next.1
+  - @ledgerhq/coin-tron@5.5.0-next.1
+  - @ledgerhq/coin-vechain@2.11.0-next.1
+  - @ledgerhq/coin-xrp@7.6.0-next.1
+  - @ledgerhq/device-core@0.6.6-next.1
+  - @ledgerhq/cryptoassets@13.31.0-next.1
+  - @ledgerhq/hw-app-eth@6.46.1-next.1
+  - @ledgerhq/live-countervalues-react@0.7.0-next.1
+  - @ledgerhq/live-signer-canton@0.4.2-next.1
+  - @ledgerhq/live-signer-evm@0.9.0-next.1
+  - @ledgerhq/live-signer-solana@0.5.8-next.1
+  - @ledgerhq/live-wallet@0.14.3-next.1
+  - @ledgerhq/hw-app-vet@0.6.2-next.1
+  - @ledgerhq/hw-app-celo@6.35.1-next.1
+
 ## 34.51.0-next.0
 
 ### Minor Changes

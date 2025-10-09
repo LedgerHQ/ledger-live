@@ -1,5 +1,11 @@
 # @ledgerhq/types-live
 
+## 6.87.0-next.1
+
+### Minor Changes
+
+- [#12213](https://github.com/LedgerHQ/ledger-live/pull/12213) [`b88faa1`](https://github.com/LedgerHQ/ledger-live/commit/b88faa18e2f5cd309b54fc3157a44db606846cc5) Thanks [@Canestin](https://github.com/Canestin)! - feat: Asset Hub auto migration logic
+
 ## 6.87.0-next.0
 
 ### Minor Changes

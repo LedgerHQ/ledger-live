@@ -1,5 +1,15 @@
 # @ledgerhq/coin-hedera
 
+## 1.12.0-next.1
+
+### Patch Changes
+
+- Updated dependencies [[`b88faa1`](https://github.com/LedgerHQ/ledger-live/commit/b88faa18e2f5cd309b54fc3157a44db606846cc5)]:
+  - @ledgerhq/types-live@6.87.0-next.1
+  - @ledgerhq/live-countervalues@0.8.0-next.1
+  - @ledgerhq/coin-framework@6.7.0-next.1
+  - @ledgerhq/cryptoassets@13.31.0-next.1
+
 ## 1.12.0-next.0
 
 ### Minor Changes
