@@ -18,7 +18,7 @@ const mockedGetLedgerEnd = gateway.getLedgerEnd as jest.Mock;
 const mockedGetOperations = gateway.getOperations as jest.Mock;
 const mockedResolver = resolver as jest.Mock;
 const mockedIsOnboarded = onboard.isAccountOnboarded as jest.Mock;
-const mockedIsAuthorized = onboard.isAccountAuthorized as jest.Mock;
+const mockedIsAuthorized = onboard.isCantonCoinPreapproved as jest.Mock;
 const mockedCoinConfig = config.default.getCoinConfig as jest.Mock;
 
 const sampleCurrency = {
