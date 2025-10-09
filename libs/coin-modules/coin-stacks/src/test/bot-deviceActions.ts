@@ -3,7 +3,7 @@ import type { Transaction } from "../types";
 import { deviceActionFlow, SpeculosButton } from "@ledgerhq/coin-framework/bot/specs";
 import { getSubAccount } from "../bridge/utils/token";
 import { formatCurrencyUnit } from "@ledgerhq/coin-framework/lib/currencies/formatCurrencyUnit";
-import { getTokenById } from "@ledgerhq/cryptoassets/tokens";
+import { findTokenById } from "@ledgerhq/cryptoassets/tokens";
 import invariant from "invariant";
 
 export const acceptTransaction: DeviceAction<Transaction, any> = deviceActionFlow({
@@ -80,9 +80,9 @@ export const acceptTokenTransfer: DeviceAction<Transaction, any> = deviceActionF
         const subAccount = getSubAccount(account, transaction);
         invariant(subAccount, "subAccount not found");
 
-        const token = getTokenById(subAccount.token.id);
-        const formattedAmount = formatCurrencyUnit(token.units[0], status.amount);
-        return `${formattedAmount} (${token.ticker})`;
+        const token = findTokenById(subAccount.token.id);
+        const formattedAmount = formatCurrencyUnit(token?.units[0], status.amount);
+        return `${formattedAmount} (${token?.ticker})`;
       },
     },
     {
