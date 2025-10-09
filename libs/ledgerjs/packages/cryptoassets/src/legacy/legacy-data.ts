@@ -24,6 +24,7 @@ import spltokens from "../data/spl";
 import aptCoinTokens from "../data/apt_coin";
 import aptFATokens from "../data/apt_fungible_asset";
 import suitokens from "../data/sui";
+import stacksTokens from "../data/stacks-sip010";
 import {
   convertERC20,
   convertAlgorandASATokens,
@@ -38,6 +39,7 @@ import {
   convertAptCoinTokens,
   convertAptFaTokens,
   convertHederaTokens,
+  convertStacksSip010Token,
 } from "./legacy-utils";
 
 // Export the legacy token data for use by initializeLegacyTokens in legacy-utils.ts
@@ -63,6 +65,7 @@ export {
   suitokens,
   aptCoinTokens,
   aptFATokens,
+  stacksTokens,
 };
 
 // Function to initialize legacy tokens (using the actual data imports)
@@ -104,6 +107,8 @@ export function initializeLegacyTokens(
   addTokens(coreTokens.map(convertERC20));
   // Celo
   addTokens(celoTokens.map(convertERC20));
+  // Stacks
+  addTokens(stacksTokens.map(convertStacksSip010Token));
 
   if (getEnv("SUI_ENABLE_TOKENS")) {
     // Sui tokens

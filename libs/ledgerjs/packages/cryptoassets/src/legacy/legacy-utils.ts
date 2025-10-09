@@ -25,6 +25,7 @@ import type { SPLToken } from "../data/spl";
 import type { AptosToken as AptosCoinToken } from "../data/apt_coin";
 import type { AptosToken as AptosFAToken } from "../data/apt_fungible_asset";
 import type { SuiToken } from "../data/sui";
+import type { StacksSip010Token } from "../data/stacks-sip010";
 
 // Export types for compatibility
 export interface TokensListOptions {
@@ -434,6 +435,44 @@ export function convertJettonToken([address, name, ticker, magnitude, delisted]:
         name,
         code: ticker,
         magnitude,
+      },
+    ],
+  };
+}
+
+/**
+ * @deprecated
+ */
+export function convertStacksSip010Token([
+  address,
+  name,
+  assetName,
+  displayName,
+  ticker,
+  decimals,
+  delisted,
+]: StacksSip010Token): TokenCurrency | undefined {
+  const parentCurrency = findCryptoCurrencyById("stacks");
+
+  if (!parentCurrency) {
+    return;
+  }
+
+  return {
+    type: "TokenCurrency",
+    id: `stacks/sip010/${address}.${name}::${assetName}`,
+    contractAddress: address,
+    parentCurrency,
+    tokenType: "sip010",
+    name: displayName,
+    ticker,
+    delisted,
+    disableCountervalue: false,
+    units: [
+      {
+        name,
+        code: ticker,
+        magnitude: decimals,
       },
     ],
   };

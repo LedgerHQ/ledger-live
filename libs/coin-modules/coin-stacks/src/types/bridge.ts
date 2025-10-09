@@ -11,7 +11,7 @@ import {
 
 import { StacksNetwork } from "../network/api.types";
 
-type FamilyType = "stacks";
+export type FamilyType = "stacks";
 
 export type NetworkInfo = {
   family: FamilyType;
