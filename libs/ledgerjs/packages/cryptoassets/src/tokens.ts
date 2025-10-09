@@ -22,6 +22,7 @@ import {
   convertAptCoinTokens,
   convertAptFaTokens,
   convertHederaTokens,
+  convertStacksSip010Token,
 } from "./legacy/legacy-utils";
 import { tokensByCurrencyAddress, tokensById } from "./legacy/legacy-state";
 import { initializeLegacyTokens } from "./legacy/legacy-data";
@@ -42,6 +43,7 @@ export {
   convertAptCoinTokens,
   convertAptFaTokens,
   convertHederaTokens,
+  convertStacksSip010Token,
   __clearAllLists,
   legacyCryptoAssetsStore,
 };

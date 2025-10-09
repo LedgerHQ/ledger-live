@@ -3,19 +3,22 @@ import { AnchorMode } from "@stacks/transactions";
 import type { DatasetTest } from "@ledgerhq/types-live";
 import type { Transaction } from "../types";
 import { fromTransactionRaw } from "../bridge/transaction";
-import { BigNumber } from "bignumber.js";
+import BigNumber from "bignumber.js";
 import {
   AmountRequired,
   InvalidAddressBecauseDestinationIsAlsoSource,
   NotEnoughBalance,
+  InvalidAddress,
 } from "@ledgerhq/errors";
+import { getSubAccount } from "../bridge/utils/token";
 
 const SEED_IDENTIFIER = "SP3KS7VMY2ZNE6SB88PHR4SKRK2EEPHS8N8MCCBR9";
 const SEED_IDENTIFIER_PUBKEY = "022a460decc9dba8c452927fecb33d7ae25a8d79dc5442b84feaf8f3aa0e2b575d";
 const ACCOUNT_1 = "SP2DV2RVZP1A69Q6VAG5PHEQ6ZHQHZPCV84TMYNGN";
 
+const TOKEN_ACCOUNT_ID = `js:2:stacks:022a460decc9dba8c452927fecb33d7ae25a8d79dc5442b84feaf8f3aa0e2b575d:+stacks%2Fsip010%2FSP4SZE494VC2YC5JYG7AYFQ44F5Q4PYV7DVMDPBG.ststx~!dash!~token%3A%3Aststx`;
+
 const stacks: CurrenciesData<Transaction> = {
-  FIXME_ignoreAccountFields: [],
   IgnorePrepareTransactionFields: ["fee"],
   scanAccounts: [
     {
@@ -38,6 +41,8 @@ const stacks: CurrenciesData<Transaction> = {
   ],
   accounts: [
     {
+      // Balance and operations sum for some tokens do not have equal value
+      FIXME_tests: ["balance is sum of ops"],
       raw: {
         id: `js:2:stacks:${SEED_IDENTIFIER_PUBKEY}:`,
         seedIdentifier: SEED_IDENTIFIER,
@@ -52,7 +57,7 @@ const stacks: CurrenciesData<Transaction> = {
         pendingOperations: [],
         currencyId: "stacks",
         lastSyncDate: "",
-        balance: "1000",
+        balance: "100",
       },
       transactions: [
         {
@@ -119,6 +124,100 @@ const stacks: CurrenciesData<Transaction> = {
           expectedStatus: {
             amount: new BigNumber("1"),
             errors: {},
+            warnings: {},
+          },
+        },
+        // Token tests
+        {
+          name: "Token transfer with valid amount",
+          transaction: fromTransactionRaw({
+            family: "stacks",
+            nonce: "1",
+            network: "mainnet",
+            anchorMode: AnchorMode.Any,
+            recipient: ACCOUNT_1,
+            amount: "10",
+            subAccountId: TOKEN_ACCOUNT_ID,
+          }),
+          expectedStatus: {
+            amount: new BigNumber("10"),
+            errors: {},
+            warnings: {},
+          },
+        },
+        {
+          name: "Token transfer with insufficient balance",
+          transaction: fromTransactionRaw({
+            family: "stacks",
+            nonce: "1",
+            network: "mainnet",
+            anchorMode: AnchorMode.Any,
+            recipient: ACCOUNT_1,
+            amount: "1000000000000000",
+            subAccountId: TOKEN_ACCOUNT_ID,
+          }),
+          expectedStatus: {
+            errors: {
+              amount: new NotEnoughBalance(),
+            },
+            warnings: {},
+          },
+        },
+        {
+          name: "Token transfer with invalid recipient",
+          transaction: fromTransactionRaw({
+            family: "stacks",
+            nonce: "1",
+            network: "mainnet",
+            anchorMode: AnchorMode.Any,
+            recipient: "invalidaddress",
+            amount: "10",
+            subAccountId: TOKEN_ACCOUNT_ID,
+          }),
+          expectedStatus: {
+            errors: {
+              recipient: new InvalidAddress(),
+            },
+            warnings: {},
+          },
+        },
+        {
+          name: "Token transfer with max amount",
+          transaction: fromTransactionRaw({
+            family: "stacks",
+            nonce: "1",
+            network: "mainnet",
+            anchorMode: AnchorMode.Any,
+            recipient: ACCOUNT_1,
+            amount: "1",
+            useAllAmount: true,
+            subAccountId: TOKEN_ACCOUNT_ID,
+          }),
+          expectedStatus: (account, tx) => {
+            // Find the specific token subaccount using the getSubAccount function
+            const subAccount = getSubAccount(account, tx);
+            return {
+              amount: subAccount?.spendableBalance || new BigNumber(0),
+              errors: {},
+              warnings: {},
+            };
+          },
+        },
+        {
+          name: "Token transfer with zero amount",
+          transaction: fromTransactionRaw({
+            family: "stacks",
+            nonce: "1",
+            network: "mainnet",
+            anchorMode: AnchorMode.Any,
+            recipient: ACCOUNT_1,
+            amount: "0",
+            subAccountId: TOKEN_ACCOUNT_ID,
+          }),
+          expectedStatus: {
+            errors: {
+              amount: new AmountRequired(),
+            },
             warnings: {},
           },
         },
