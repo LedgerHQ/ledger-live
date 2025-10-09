@@ -10,7 +10,7 @@ import {
   type GetAccountShape,
 } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { type Operation } from "@ledgerhq/types-live";
-import { listTokensForCryptoCurrency } from "@ledgerhq/cryptoassets/tokens";
+import { findTokenById } from "@ledgerhq/cryptoassets/tokens";
 import { getAccountBalances, getOperations, getStakesRaw } from "../network";
 import { DEFAULT_COIN_TYPE } from "../network/sdk";
 import { SuiOperationExtra, SuiAccount } from "../types";
@@ -53,18 +53,10 @@ export const getAccountShape: GetAccountShape<SuiAccount> = async (info, syncCon
   );
 
   const accountBalances = await getAccountBalances(address);
-  const tokensCurrencies = listTokensForCryptoCurrency(currency);
-  const tokensCurrenciesMap = tokensCurrencies.reduce(
-    (acc, token) => {
-      acc[token.contractAddress] = token;
-      return acc;
-    },
-    {} as Record<string, (typeof tokensCurrencies)[0]>,
-  );
   const balance =
     accountBalances.find(({ coinType }) => coinType === DEFAULT_COIN_TYPE)?.balance ?? BigNumber(0);
   const subAccountsBalances = accountBalances.filter(
-    ({ coinType }) => tokensCurrenciesMap[coinType],
+    ({ coinType }) => coinType !== DEFAULT_COIN_TYPE,
   );
 
   const subAccounts =
@@ -74,7 +66,6 @@ export const getAccountShape: GetAccountShape<SuiAccount> = async (info, syncCon
       operations,
       subAccountsBalances,
       syncConfig,
-      tokensCurrenciesMap,
     })) || [];
 
   return {
@@ -106,16 +97,14 @@ async function buildSubAccounts({
   operations,
   subAccountsBalances,
   syncConfig,
-  tokensCurrenciesMap,
 }: {
   accountId: string;
   initialAccount?: SuiAccount | null | undefined;
   operations: Operation[];
   subAccountsBalances: { coinType: string; blockHeight: number; balance: BigNumber }[];
   syncConfig: SyncConfig;
-  tokensCurrenciesMap: Record<string, TokenCurrency>;
 }) {
-  if (Object.keys(tokensCurrenciesMap).length === 0) return undefined;
+  if (subAccountsBalances.length === 0) return undefined;
   const { blacklistedTokenIds = [] } = syncConfig;
   const tokenAccounts: TokenAccount[] = [];
   const existingAccountByTicker: { [ticker: string]: TokenAccount } = {}; // used for fast lookup
@@ -134,7 +123,7 @@ async function buildSubAccounts({
   }
 
   await promiseAllBatched(3, subAccountsBalances, async accountBalance => {
-    const token = tokensCurrenciesMap[accountBalance.coinType];
+    const token = findTokenById(`sui/coin/${accountBalance.coinType}`);
     if (token && !blacklistedTokenIds.includes(token.id)) {
       const initialTokenAccount = existingAccountByTicker[token.ticker];
       const tokenAccount = await buildSubAccount({

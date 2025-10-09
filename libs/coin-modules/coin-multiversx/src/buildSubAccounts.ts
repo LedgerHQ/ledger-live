@@ -1,4 +1,4 @@
-import { findTokenById, listTokensForCryptoCurrency } from "@ledgerhq/cryptoassets";
+import { findTokenById } from "@ledgerhq/cryptoassets";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { Account, SyncConfig, TokenAccount } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
@@ -65,7 +65,6 @@ async function syncESDTTokenAccountOperations(
 }
 
 async function MultiversXBuildESDTTokenAccounts({
-  currency,
   accountId,
   accountAddress,
   existingAccount,
@@ -78,10 +77,6 @@ async function MultiversXBuildESDTTokenAccounts({
   syncConfig: SyncConfig;
 }): Promise<TokenAccount[] | undefined> {
   const { blacklistedTokenIds = [] } = syncConfig;
-  if (listTokensForCryptoCurrency(currency).length === 0) {
-    return undefined;
-  }
-
   const tokenAccounts: TokenAccount[] = [];
 
   const existingAccountByTicker: { [key: string]: TokenAccount } = {}; // used for fast lookup
