@@ -3701,7 +3701,8 @@
         "empty": {
           "title": "Your previous swaps will appear here",
           "desc": "Either you have not made any swaps yet, or Ledger Wallet has been reset in the meantime."
-        }
+        },
+        "feedback": "Give your feedback"
       }
     },
     "swap2": {
@@ -4733,7 +4734,7 @@
       "all": "All",
       "installed": "Apps",
       "not_installed": "Not installed",
-      "supported": "Live supported",
+      "supported": "Ledger Wallet supported",
       "updatable": "Updatable",
       "apply": "Apply"
     },
