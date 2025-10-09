@@ -6,12 +6,18 @@ settings:
 
 catalogs:
   default:
+    i18next:
+      specifier: 23.10.1
+      version: 23.10.1
     react:
       specifier: 18.3.1
       version: 18.3.1
     react-dom:
       specifier: 18.3.1
       version: 18.3.1
+    react-i18next:
+      specifier: 13.5.0
+      version: 13.5.0
     react-test-renderer:
       specifier: 18.3.1
       version: 18.3.1
@@ -539,7 +545,7 @@ importers:
         specifier: 6.6.2
         version: 6.6.2
       i18next:
-        specifier: 23.10.1
+        specifier: 'catalog:'
         version: 23.10.1
       invariant:
         specifier: 2.2.4
@@ -572,7 +578,7 @@ importers:
         specifier: 4.7.5
         version: 4.7.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       react-i18next:
-        specifier: 13.5.0
+        specifier: 'catalog:'
         version: 13.5.0(i18next@23.10.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       react-is:
         specifier: 17.0.2
@@ -1173,8 +1179,8 @@ importers:
         specifier: 3.3.2
         version: 3.3.2
       i18next:
-        specifier: 20.6.1
-        version: 20.6.1
+        specifier: 'catalog:'
+        version: 23.10.1
       invariant:
         specifier: 2.2.4
         version: 2.2.4
@@ -1206,8 +1212,8 @@ importers:
         specifier: 'catalog:'
         version: 18.3.1
       react-i18next:
-        specifier: 11.18.6
-        version: 11.18.6(i18next@20.6.1)(react-native@0.77.3(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1))(react@18.3.1)
+        specifier: 'catalog:'
+        version: 13.5.0(i18next@23.10.1)(react-native@0.77.3(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1))(react@18.3.1)
       react-is:
         specifier: 18.3.1
         version: 18.3.1
@@ -4823,11 +4829,11 @@ importers:
   libs/deeplink-module:
     dependencies:
       '@ledgerhq/wallet-api-client':
-        specifier: ^1.10.0
-        version: 1.12.0(@ton/crypto@3.3.0)
+        specifier: ^1.12.2
+        version: 1.12.2(@ton/crypto@3.3.0)
       '@ledgerhq/wallet-api-core':
-        specifier: ^1.22.0
-        version: 1.24.0(@ton/crypto@3.3.0)
+        specifier: ^1.24.2
+        version: 1.24.2(@ton/crypto@3.3.0)
     devDependencies:
       '@types/node':
         specifier: ^22.10.10
@@ -5091,10 +5097,10 @@ importers:
   libs/exchange-module:
     dependencies:
       '@ledgerhq/wallet-api-client':
-        specifier: ^1.12.1
+        specifier: ^1.12.2
         version: 1.12.2(@ton/crypto@3.3.0)
       '@ledgerhq/wallet-api-core':
-        specifier: ^1.24.1
+        specifier: ^1.24.2
         version: 1.24.2(@ton/crypto@3.3.0)
       bignumber.js:
         specifier: 9.1.2
@@ -5436,16 +5442,16 @@ importers:
         specifier: workspace:^
         version: link:../wallet-api-acre-module
       '@ledgerhq/wallet-api-client':
-        specifier: ^1.12.1
+        specifier: ^1.12.2
         version: 1.12.2(@ton/crypto@3.3.0)
       '@ledgerhq/wallet-api-core':
-        specifier: ^1.24.1
+        specifier: ^1.24.2
         version: 1.24.2(@ton/crypto@3.3.0)
       '@ledgerhq/wallet-api-exchange-module':
         specifier: workspace:^
         version: link:../exchange-module
       '@ledgerhq/wallet-api-server':
-        specifier: ^1.13.1
+        specifier: ^1.13.2
         version: 1.13.2(@ton/crypto@3.3.0)(react@18.3.1)(rxjs@7.8.1)
       '@noble/curves':
         specifier: ^1.9.7
@@ -6962,9 +6968,6 @@ importers:
 
   libs/ledgerjs/packages/hw-app-vet:
     dependencies:
-      '@ledgerhq/cryptoassets':
-        specifier: workspace:^
-        version: link:../cryptoassets
       '@ledgerhq/errors':
         specifier: workspace:^
         version: link:../errors
@@ -9395,10 +9398,10 @@ importers:
   libs/wallet-api-acre-module:
     dependencies:
       '@ledgerhq/wallet-api-client':
-        specifier: ^1.12.1
+        specifier: ^1.12.2
         version: 1.12.2(@ton/crypto@3.3.0)
       '@ledgerhq/wallet-api-core':
-        specifier: ^1.24.1
+        specifier: ^1.24.2
         version: 1.24.2(@ton/crypto@3.3.0)
     devDependencies:
       '@types/node':
@@ -9457,10 +9460,10 @@ importers:
         specifier: workspace:*
         version: link:../../libs/ledger-live-common
       '@ledgerhq/wallet-api-client':
-        specifier: ^1.12.1
+        specifier: ^1.12.2
         version: 1.12.2(@ton/crypto@3.3.0)
       '@ledgerhq/wallet-api-client-react':
-        specifier: ^1.4.17
+        specifier: ^1.4.18
         version: 1.4.18(@ton/crypto@3.3.0)(react@18.3.1)
       '@ledgerhq/wallet-api-deeplink-module':
         specifier: workspace:*
@@ -14767,14 +14770,8 @@ packages:
     peerDependencies:
       react: ^16.8.0 || ^17 || ^18 || ^19
 
-  '@ledgerhq/wallet-api-client@1.12.0':
-    resolution: {integrity: sha512-8SH/8yc2SFWfNbJT8wnBPm11+IdI/2mdWPibR+nhdIjQ/e6cBnCdXP9v3mBjzYZxB4cCxfGFXsDgeWWYXiga2w==}
-
   '@ledgerhq/wallet-api-client@1.12.2':
     resolution: {integrity: sha512-jW9GqSUFvegE2gvG2692i5ICLsCP4rd55p/MP9UHrAs+wPoWpIwZSSASpO1W6Pp4FEB73xDjGaFIldyvdcZEkA==}
-
-  '@ledgerhq/wallet-api-core@1.24.0':
-    resolution: {integrity: sha512-AMimfYo9lEWgokTJ60y3zy+RunLqspLKJJAbU6t6e2tWEWT1i7lE+67ICpJsBVZyJMefubxX5JxWKsqJFb0fSw==}
 
   '@ledgerhq/wallet-api-core@1.24.2':
     resolution: {integrity: sha512-VMxSpEVQWXEUkLbEJKvmik/6c1fEy5Cds4Q3zrXtD7cDi7OR6lrcZp1kIflklZB1vz/RJzN+5Qs1S59THgj11Q==}
@@ -31824,19 +31821,6 @@ packages:
     peerDependencies:
       react: '>=17.0.0'
 
-  react-i18next@11.18.6:
-    resolution: {integrity: sha512-yHb2F9BiT0lqoQDt8loZ5gWP331GwctHz9tYQ8A2EIEUu+CcEdjBLQWli1USG3RdWQt3W+jqQLg/d4rrQR96LA==}
-    peerDependencies:
-      i18next: '>= 19.0.0'
-      react: '>= 16.8.0'
-      react-dom: '*'
-      react-native: '*'
-    peerDependenciesMeta:
-      react-dom:
-        optional: true
-      react-native:
-        optional: true
-
   react-i18next@13.5.0:
     resolution: {integrity: sha512-CFJ5NDGJ2MUyBohEHxljOq/39NQ972rh1ajnadG9BjTk+UXbHLq4z5DKEbEQBDoIhUmmbuS/fIMJKo6VOax1HA==}
     peerDependencies:
@@ -45162,33 +45146,11 @@ snapshots:
       - '@ton/crypto'
       - encoding
 
-  '@ledgerhq/wallet-api-client@1.12.0(@ton/crypto@3.3.0)':
-    dependencies:
-      '@ledgerhq/hw-transport': link:libs/ledgerjs/packages/hw-transport
-      '@ledgerhq/wallet-api-core': 1.24.0(@ton/crypto@3.3.0)
-      bignumber.js: 9.1.2
-    transitivePeerDependencies:
-      - '@ton/crypto'
-      - encoding
-
   '@ledgerhq/wallet-api-client@1.12.2(@ton/crypto@3.3.0)':
     dependencies:
       '@ledgerhq/hw-transport': link:libs/ledgerjs/packages/hw-transport
       '@ledgerhq/wallet-api-core': 1.24.2(@ton/crypto@3.3.0)
       bignumber.js: 9.1.2
-    transitivePeerDependencies:
-      - '@ton/crypto'
-      - encoding
-
-  '@ledgerhq/wallet-api-core@1.24.0(@ton/crypto@3.3.0)':
-    dependencies:
-      '@ledgerhq/errors': 6.19.1
-      '@stacks/transactions': 6.17.0
-      '@ton/core': 0.60.1(patch_hash=lboaji3braahojqczblp7nlo7m)(@ton/crypto@3.3.0)
-      bignumber.js: 9.1.2
-      thor-devkit: 2.1.1
-      uuid: 9.0.1
-      zod: 3.24.2
     transitivePeerDependencies:
       - '@ton/crypto'
       - encoding
@@ -71060,23 +71022,23 @@ snapshots:
     dependencies:
       react: 18.3.1
 
-  react-i18next@11.18.6(i18next@20.6.1)(react-native@0.77.3(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1))(react@18.3.1):
-    dependencies:
-      '@babel/runtime': 7.27.1
-      html-parse-stringify: 3.0.1
-      i18next: 20.6.1
-      react: 18.3.1
-    optionalDependencies:
-      react-native: 0.77.3(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1)
-
   react-i18next@13.5.0(i18next@23.10.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
     dependencies:
-      '@babel/runtime': 7.24.1
+      '@babel/runtime': 7.27.1
       html-parse-stringify: 3.0.1
       i18next: 23.10.1
       react: 18.3.1
     optionalDependencies:
       react-dom: 18.3.1(react@18.3.1)
+
+  react-i18next@13.5.0(i18next@23.10.1)(react-native@0.77.3(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1))(react@18.3.1):
+    dependencies:
+      '@babel/runtime': 7.27.1
+      html-parse-stringify: 3.0.1
+      i18next: 23.10.1
+      react: 18.3.1
+    optionalDependencies:
+      react-native: 0.77.3(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1)
 
   react-icons@5.5.0(react@19.2.0):
     dependencies:
