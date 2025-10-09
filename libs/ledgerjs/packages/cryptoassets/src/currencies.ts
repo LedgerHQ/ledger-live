@@ -3624,6 +3624,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
         address: "https://explorer.stacks.co/address/$address",
       },
     ],
+    tokenTypes: ["sip010"],
   },
   // Cronos POS Chain Croeseid (formerly Crypto.org Croeseid)
   crypto_org_croeseid: {

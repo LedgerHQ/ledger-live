@@ -6,6 +6,17 @@ import {
   createMessageSignature,
   deserializeCV,
   cvToJSON,
+  uintCV,
+  standardPrincipalCV,
+  stringAsciiCV,
+  someCV,
+  noneCV,
+  makeUnsignedContractCall,
+  StacksMessageType,
+  PostConditionType,
+  createStandardPrincipal,
+  FungibleConditionCode,
+  createAssetInfo,
 } from "@stacks/transactions";
 
 import { decodeAccountId } from "@ledgerhq/coin-framework/account/index";
@@ -21,6 +32,16 @@ import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { encodeOperationId, encodeSubOperationId } from "@ledgerhq/coin-framework/operation";
 import { StacksOperation } from "../../types";
 import { log } from "@ledgerhq/logs";
+import invariant from "invariant";
+import { bufferMemoToString, hexMemoToString } from "./memoUtils";
+
+type ContractCallArg = {
+  hex: string;
+  repr: string;
+  name: string;
+  type: string;
+};
+type Sip010ContractCallArgs = [ContractCallArg, ContractCallArg, ContractCallArg, ContractCallArg];
 
 export const getTxToBroadcast = async (
   operation: StacksOperation,
@@ -30,32 +51,69 @@ export const getTxToBroadcast = async (
   const {
     value,
     recipients,
+    senders,
     fee,
     extra: { memo },
   } = operation;
 
-  const { anchorMode, network, xpub } = rawData;
+  const { anchorMode, network, xpub, contractAddress, contractName, assetName } = rawData;
 
-  const options: UnsignedTokenTransferOptions = {
-    amount: BigNumber(value).minus(fee).toFixed(),
-    recipient: recipients[0],
-    anchorMode,
-    memo,
-    network: StacksNetwork[network],
-    publicKey: xpub,
-    fee: BigNumber(fee).toFixed(),
-    nonce: operation.transactionSequenceNumber
-      ? BigInt(operation.transactionSequenceNumber.toString())
-      : 0n,
-  };
+  if (contractAddress && contractName && assetName) {
+    // Create the function arguments for the SIP-010 transfer function
+    const functionArgs = [
+      uintCV(value.toFixed()), // Amount
+      standardPrincipalCV(senders[0]), // Sender
+      standardPrincipalCV(recipients[0]), // Recipient
+      memo ? someCV(stringAsciiCV(memo)) : noneCV(), // Memo (optional)
+    ];
 
-  const tx = await makeUnsignedSTXTokenTransfer(options);
+    const tx = await makeUnsignedContractCall({
+      contractAddress,
+      contractName,
+      functionName: "transfer",
+      functionArgs,
+      anchorMode,
+      network: StacksNetwork[network],
+      publicKey: xpub,
+      fee: fee.toFixed(),
+      nonce: operation.transactionSequenceNumber ?? 0,
+      postConditions: [
+        {
+          type: StacksMessageType.PostCondition,
+          conditionType: PostConditionType.Fungible,
+          principal: createStandardPrincipal(senders[0]),
+          conditionCode: FungibleConditionCode.Equal,
+          amount: BigInt(value.toFixed()),
+          assetInfo: createAssetInfo(contractAddress, contractName, assetName),
+        },
+      ],
+    });
 
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore need to ignore the TS error here
-  tx.auth.spendingCondition.signature = createMessageSignature(signature);
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore need to ignore the TS error here
+    tx.auth.spendingCondition.signature = createMessageSignature(signature);
 
-  return Buffer.from(tx.serialize());
+    return Buffer.from(tx.serialize());
+  } else {
+    const options: UnsignedTokenTransferOptions = {
+      amount: BigNumber(value).minus(fee).toFixed(),
+      recipient: recipients[0],
+      anchorMode,
+      memo,
+      network: StacksNetwork[network],
+      publicKey: xpub,
+      fee: BigNumber(fee).toFixed(),
+      nonce: operation.transactionSequenceNumber ?? 0,
+    };
+
+    const tx = await makeUnsignedSTXTokenTransfer(options);
+
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore need to ignore the TS error here
+    tx.auth.spendingCondition.signature = createMessageSignature(signature);
+
+    return Buffer.from(tx.serialize());
+  }
 };
 
 export const getUnit = () => getCryptoCurrencyById("stacks").units[0];
@@ -67,16 +125,6 @@ export const getAddress = (
   derivationPath: string;
 } => ({ address: account.freshAddress, derivationPath: account.freshAddressPath });
 
-const getMemo = (memoHex?: string): string => {
-  if (memoHex?.substring(0, 2) === "0x") {
-    // eslint-disable-next-line no-control-regex
-    return Buffer.from(memoHex.substring(2), "hex").toString().replace(/\x00/g, "");
-    // NOTE: couldn't use replaceAll because it's not supported in node 14
-  }
-
-  return "";
-};
-
 export const mapPendingTxToOps =
   (accountID: string, address: string) =>
   (tx: MempoolTransaction): StacksOperation[] => {
@@ -85,7 +133,7 @@ export const mapPendingTxToOps =
       return [];
     }
 
-    const memo = getMemo(token_transfer.memo);
+    const memo = hexMemoToString(token_transfer.memo);
     const feeToUse = new BigNumber(fee_rate || "0");
 
     const date = new Date(receipt_time * 1000);
@@ -150,7 +198,7 @@ export const mapTxToOps =
       }
 
       const memoHex = tx.tx.token_transfer?.memo;
-      const memo: string = getMemo(memoHex ?? "");
+      const memo: string = hexMemoToString(memoHex ?? "");
 
       const ops: StacksOperation[] = [];
 
@@ -192,7 +240,7 @@ export const mapTxToOps =
               senders: [sender_address],
               recipients: [t.value.to.value],
               extra: {
-                memo: getMemo(t.value.memo?.value ?? ""),
+                memo: hexMemoToString(t.value.memo?.value ?? ""),
               },
             });
           }
@@ -225,6 +273,84 @@ export const mapTxToOps =
       return [];
     }
   };
+
+export const sip010TxnToOperation = (
+  tx: TransactionResponse,
+  address: string,
+  accountId: string,
+): StacksOperation[] => {
+  try {
+    const { tx_id, fee_rate, nonce, block_height, burn_block_time, block_hash: blockHash } = tx.tx;
+    if (!tx.tx.contract_call) {
+      log("error", "contract_call is not defined", tx);
+      return [];
+    }
+    const contractCallData = tx.tx.contract_call;
+    const contractCallArgs = contractCallData.function_args;
+
+    if (contractCallArgs.length !== 4) {
+      log("error", "contractCallArgs len is not sip010 token transfer", tx);
+      return [];
+    }
+
+    const [valueArg, senderArg, receiverArg, memoArg] = contractCallArgs as Sip010ContractCallArgs;
+
+    const sender = cvToJSON(deserializeCV(senderArg.hex)).value;
+    const receiver = cvToJSON(deserializeCV(receiverArg.hex)).value;
+    const valueStr = cvToJSON(deserializeCV(valueArg.hex)).value;
+    const memoJson = cvToJSON(deserializeCV(memoArg.hex)).value;
+
+    const memo = bufferMemoToString(memoJson);
+
+    log("debug", "decoded sender", sender);
+    log("debug", "decoded receiver", receiver);
+    log("debug", "decoded value", valueStr);
+    log("debug", "decoded memo", memo);
+
+    const value = new BigNumber(valueStr);
+
+    const recipients: string[] = [receiver];
+    const senders: string[] = [sender];
+
+    const ops: StacksOperation[] = [];
+
+    const date = new Date(burn_block_time * 1000);
+    const fee = new BigNumber(fee_rate || "0");
+
+    const hasFailed = tx.tx.tx_status !== "success";
+    const type = address === sender ? "OUT" : address === receiver ? "IN" : "";
+    if (type === "") {
+      log("error", "op type is not known", tx);
+      return [];
+    }
+
+    ops.push({
+      hash: tx_id,
+      blockHeight: block_height,
+      blockHash,
+      fee,
+      accountId,
+      senders,
+      recipients,
+      transactionSequenceNumber: nonce,
+      date,
+      value,
+      hasFailed,
+      extra: {
+        memo,
+      },
+      type,
+      id: encodeOperationId(accountId, tx_id, type),
+    });
+
+    invariant(ops, "stacks operation is not defined");
+
+    return ops;
+  } catch (e) {
+    log("error", "stacks error converting sip010 transaction to operation", e);
+    return [];
+  }
+};
 
 export function reconciliatePublicKey(
   publicKey: string | undefined,
