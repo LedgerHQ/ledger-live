@@ -145,12 +145,19 @@ export async function estimateFees(
     return { finalFeeData: feeData };
   })();
 
+  // Recompute the transaction type from the fee data, since
+  // the one in input may not be supported by the Blockchain
+  const finalType =
+    finalFeeData.maxFeePerGas && finalFeeData.maxPriorityFeePerGas
+      ? TransactionTypes.eip1559
+      : TransactionTypes.legacy;
+
   const gasPrice =
-    type === TransactionTypes.legacy ? finalFeeData.gasPrice : finalFeeData.maxFeePerGas;
+    finalType === TransactionTypes.legacy ? finalFeeData.gasPrice : finalFeeData.maxFeePerGas;
   const fee = gasPrice?.multipliedBy(gasLimit) || new BigNumber(0);
 
   const unsignedTransaction: TransactionLike = {
-    type,
+    type: finalType,
     to,
     nonce,
     gasLimit: BigInt(gasLimit.toFixed(0)),
@@ -164,6 +171,7 @@ export async function estimateFees(
     value: BigInt(fee.toString()),
     parameters: {
       ...toApiFeeData(finalFeeData),
+      type: finalType,
       additionalFees: additionalFees && BigInt(additionalFees.toFixed()),
       gasLimit: BigInt(gasLimit.toFixed()),
       gasOptions: finalGasOptions && toApiGasOptions(finalGasOptions),

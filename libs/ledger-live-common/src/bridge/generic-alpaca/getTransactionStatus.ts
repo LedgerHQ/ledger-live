@@ -25,6 +25,7 @@ export function genericGetTransactionStatus(
       family: transaction.family,
       feesStrategy: transaction.feesStrategy,
       data: transaction.data,
+      type: transaction.type,
     };
 
     if (alpacaApi.getChainSpecificRules) {
