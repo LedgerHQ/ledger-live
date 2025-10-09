@@ -8,7 +8,7 @@ import { getBalance, getLedgerEnd, getOperations, type OperationInfo } from "../
 import coinConfig from "../config";
 import resolver from "../signer";
 import { CantonAccount, CantonSigner } from "../types";
-import { isAccountOnboarded, isAccountAuthorized } from "./onboard";
+import { isAccountOnboarded, isCantonCoinPreapproved } from "./onboard";
 
 const txInfoToOperationAdapter =
   (accountId: string, partyId: string) =>
@@ -133,8 +133,10 @@ export function makeGetAccountShape(
       operations = mergeOps(oldOperations, newOperations);
     }
 
-    const isAuthorized = await isAccountAuthorized(operations, xpubOrAddress);
-    const used = isAuthorized && totalBalance.gt(0);
+    const isPreapproved = xpubOrAddress
+      ? await isCantonCoinPreapproved(currency, xpubOrAddress)
+      : false;
+    const used = isPreapproved && totalBalance.gt(0);
 
     const blockHeight = await getLedgerEnd(currency);
 

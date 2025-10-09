@@ -3,13 +3,6 @@ import { FlatList } from "react-native";
 import { Flex, Text } from "@ledgerhq/native-ui";
 
 import { useTranslation } from "react-i18next";
-import {
-  isCurrencySupported,
-  listSupportedCurrencies,
-  listTokens,
-} from "@ledgerhq/live-common/currencies/index";
-import { useCurrenciesByMarketcap } from "@ledgerhq/live-common/currencies/hooks";
-import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import TrackScreen from "~/analytics/TrackScreen";
 import { withDiscreetMode } from "~/context/DiscreetModeContext";
 
@@ -18,25 +11,18 @@ import TabBarSafeAreaView, { TAB_BAR_SAFE_HEIGHT } from "~/components/TabBar/Tab
 import AssetRow, { NavigationProp } from "../WalletCentricAsset/AssetRow";
 import AssetsNavigationHeader from "../Assets/AssetsNavigationHeader";
 import { Asset } from "~/types/asset";
+import { useReadOnlyCoins } from "~/hooks/useReadOnlyCoins";
 
 const maxReadOnlyCryptoCurrencies = 10;
 
 function ReadOnlyAssets({ navigation }: { navigation: NavigationProp }) {
-  const listSupportedTokens = useCallback(
-    () => listTokens().filter(t => isCurrencySupported(t.parentCurrency)),
-    [],
-  );
-  const cryptoCurrencies = useMemo(
-    () =>
-      (listSupportedCurrencies() as (CryptoCurrency | TokenCurrency)[]).concat(
-        listSupportedTokens(),
-      ),
-    [listSupportedTokens],
-  );
-  const sortedCryptoCurrencies = useCurrenciesByMarketcap(cryptoCurrencies);
+  const { sortedCryptoCurrencies } = useReadOnlyCoins({
+    maxDisplayed: maxReadOnlyCryptoCurrencies,
+  });
+
   const assets: Asset[] = useMemo(
     () =>
-      sortedCryptoCurrencies.slice(0, maxReadOnlyCryptoCurrencies).map(currency => ({
+      sortedCryptoCurrencies?.map(currency => ({
         amount: 0,
         accounts: [],
         currency,

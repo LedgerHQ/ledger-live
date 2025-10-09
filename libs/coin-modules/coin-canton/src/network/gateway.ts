@@ -549,3 +549,20 @@ export async function submitPreApprovalTransaction(
     updateId: data.update_id,
   } satisfies PreApprovalResult;
 }
+
+type GetTransferPreApprovalResponse = {
+  contract_id: string;
+  receiver: string;
+  provider: string;
+  valid_from: string; // ISO 8601 date string
+  last_renewed_at: string; // ISO 8601 date
+  expires_at: string; // ISO 8601 date string
+};
+
+export async function getTransferPreApproval(currency: CryptoCurrency, partyId: string) {
+  const { data } = await gatewayNetwork<GetTransferPreApprovalResponse>({
+    method: "GET",
+    url: `${getGatewayUrl(currency)}/v1/node/${getNodeId(currency)}/party/${partyId}/transfer-preapproval`,
+  });
+  return data;
+}

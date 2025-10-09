@@ -127,17 +127,11 @@ export async function prepareUnsignedTxParams(
     { amount: BigNumber(value.toString()), recipient: to, data },
   );
 
-  const feeData = await node.getFeeData(currency, {
-    type: transactionType,
-    feesStrategy: transactionIntent.feesStrategy,
-  });
-
   return {
     type: transactionType,
     to,
     data: "0x" + data.toString("hex"),
     value,
     gasLimit,
-    feeData,
   };
 }

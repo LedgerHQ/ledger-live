@@ -11,6 +11,7 @@ const P1_CONFIRM = 0x01;
 const P2_INIT = 0x00;
 const P2_EXTEND = 0x01;
 const P2_MORE = 0x02;
+const P2_USER_INPUT_ATA = 0x08;
 
 const MAX_PAYLOAD = 255;
 
@@ -118,6 +119,7 @@ export default class Solana {
    *
    * @param path a BIP32 path
    * @param txBuffer serialized transaction
+   * @param userInputType optional user input type (ata or sol, for the case of token transfers)
    *
    * @returns an object with the signature field
    *
@@ -127,6 +129,7 @@ export default class Solana {
   async signTransaction(
     path: string,
     txBuffer: Buffer,
+    userInputType?: "ata" | "sol",
   ): Promise<{
     signature: Buffer;
   }> {
@@ -137,7 +140,8 @@ export default class Solana {
 
     const payload = Buffer.concat([pathsCountBuffer, pathBuffer, txBuffer]);
 
-    const signatureBuffer = await this.sendToDevice(INS.SIGN, P1_CONFIRM, payload);
+    const p2Flag = userInputType === "ata" ? P2_USER_INPUT_ATA : undefined;
+    const signatureBuffer = await this.sendToDevice(INS.SIGN, P1_CONFIRM, payload, p2Flag);
 
     return {
       signature: signatureBuffer,
@@ -253,7 +257,7 @@ export default class Solana {
   }
 
   // send chunked if payload size exceeds maximum for a call
-  private async sendToDevice(instruction: number, p1: number, payload: Buffer) {
+  private async sendToDevice(instruction: number, p1: number, payload: Buffer, p2 = P2_INIT) {
     /*
      * By default transport will throw if status code is not OK.
      * For some payloads we need to enable blind sign in the app settings
@@ -261,8 +265,6 @@ export default class Solana {
      * so we handle it and show a user friendly error message.
      */
     const acceptStatusList = [StatusCodes.OK, EXTRA_STATUS_CODES.BLIND_SIGNATURE_REQUIRED];
-
-    let p2 = P2_INIT;
     let payload_offset = 0;
 
     if (payload.length > MAX_PAYLOAD) {

@@ -113,6 +113,7 @@ Sign a Solana transaction.
 
 *   `path` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** a BIP32 path
 *   `txBuffer` **[Buffer](https://nodejs.org/api/buffer.html)** serialized transaction
+*   `userInputType` **(`"ata"` | `"sol"`)?** optional user input type (ata or sol, for the case of token transfers)
 
 ##### Examples
 

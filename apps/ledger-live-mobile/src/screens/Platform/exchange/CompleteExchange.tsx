@@ -32,7 +32,11 @@ const PlatformCompleteExchange: React.FC<Props> = ({
 
   if (account.type === "TokenAccount") tokenCurrency = account.token;
 
-  const broadcast = useBroadcast({ account, parentAccount, broadcastConfig: { mevProtected } });
+  const broadcast = useBroadcast({
+    account,
+    parentAccount,
+    broadcastConfig: { mevProtected, sponsored: request.sponsored },
+  });
   const [transaction, setTransaction] = useState<Transaction>();
   const [signedOperation, setSignedOperation] = useState<SignedOperation>();
   const [error, setError] = useState<Error>();

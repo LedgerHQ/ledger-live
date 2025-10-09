@@ -262,6 +262,7 @@ export type Features = CurrencyFeatures & {
   };
   llmSentry: DefaultFeature;
   onboardingIgnoredOsUpdates: Feature_OnboardingIgnoredOSUpdates;
+  llmHomescreen: DefaultFeature;
   supportDeviceApex: DefaultFeature;
   llmSyncOnboardingIncr1: DefaultFeature;
   noah: DefaultFeature;
@@ -700,6 +701,7 @@ export type Feature_LlmNanoSUpsellBanners = Feature<{
   opted_out: LlmNanoSUpsellBannersConfig;
 }>;
 
+export type Feature_LlmHomescreen = DefaultFeature;
 export type Feature_SupportDeviceApex = DefaultFeature;
 
 /**

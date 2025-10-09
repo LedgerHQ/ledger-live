@@ -1,6 +1,6 @@
 import { Observable } from "rxjs";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
-import type { Account, Operation } from "@ledgerhq/types-live";
+import type { Account } from "@ledgerhq/types-live";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { log } from "@ledgerhq/logs";
 import {
@@ -11,6 +11,7 @@ import {
   submitPreApprovalTransaction,
   prepareTapRequest,
   submitTapRequest,
+  getTransferPreApproval,
 } from "../network/gateway";
 import {
   OnboardStatus,
@@ -37,9 +38,13 @@ export const isAccountOnboarded = async (currency: CryptoCurrency, publicKey: st
   }
 };
 
-export const isAccountAuthorized = async (operations: Operation[], partyId: string) => {
-  // temporary solution to check if the account is authorized
-  return operations.some(operation => operation.senders.includes(partyId));
+export const isCantonCoinPreapproved = async (currency: CryptoCurrency, partyId: string) => {
+  const { expires_at, receiver } = await getTransferPreApproval(currency, partyId);
+  const isReceiver = receiver === partyId;
+  const isExpired = new Date(expires_at) < new Date();
+
+  const isPreapproved = !isExpired && isReceiver;
+  return isPreapproved;
 };
 
 export const buildOnboardAccount =
@@ -108,9 +113,9 @@ export const buildAuthorizePreapproval =
       async function main() {
         o.next({ status: AuthorizeStatus.INIT });
 
-        const isAuthorized = await isAccountAuthorized(account.operations, partyId);
+        const isPreapproved = await isCantonCoinPreapproved(currency, partyId);
 
-        if (!isAuthorized) {
+        if (!isPreapproved) {
           o.next({ status: AuthorizeStatus.PREPARE });
 
           const preparedTransaction = await preparePreApprovalTransaction(currency, partyId);
