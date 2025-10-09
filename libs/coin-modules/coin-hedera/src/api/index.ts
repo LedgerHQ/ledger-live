@@ -2,6 +2,7 @@ import type {
   Api,
   Block,
   BlockInfo,
+  CraftedTransaction,
   Operation,
   Page,
   Reward,
@@ -44,6 +45,14 @@ export function createApi(config: HederaConfig): Api<HederaMemo> {
       return {
         transaction: serializedTx,
       };
+    },
+    craftRawTransaction: (
+      _transaction: string,
+      _sender: string,
+      _publicKey: string,
+      _sequence: number,
+    ): Promise<CraftedTransaction> => {
+      throw new Error("craftRawTransaction is not supported");
     },
     estimateFees: async transactionIntent => {
       const operationType = mapIntentToSDKOperation(transactionIntent);
