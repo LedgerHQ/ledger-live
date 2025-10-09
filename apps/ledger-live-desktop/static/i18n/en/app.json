@@ -2255,11 +2255,11 @@
       "options": {
         "fromBank": {
           "title": "From a bank account",
-          "description": "Deposit USD or EUR"
+          "description": "Top up with stablecoin through a EUR or USD bank transfer. KYC needed."
         },
         "fromCrypto": {
           "title": "From a crypto address",
-          "description": "Receive crypto"
+          "description": "Top up your wallet with any crypto."
         }
       },
       "chooseAccount": {
