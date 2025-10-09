@@ -16,6 +16,7 @@ export type NodeApi = {
     gasUsed: string;
     gasPrice: string;
     value: string;
+    status: number | null;
   }>;
   getCoinBalance: (currency: CryptoCurrency, address: string) => Promise<BigNumber>;
   getTokenBalance: (
