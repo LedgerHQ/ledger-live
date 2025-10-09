@@ -26,7 +26,6 @@ jest.mock("../network", () => ({
 const CURRENCY = getCryptoCurrencyById("polkadot");
 const EXPECTED_CURRENCY = getCryptoCurrencyById("assethub_polkadot");
 
-// Import the mocked config
 import coinConfig from "../config";
 const mockGetCoinConfig = coinConfig.getCoinConfig as jest.MockedFunction<
   typeof coinConfig.getCoinConfig

@@ -6992,6 +6992,9 @@ importers:
 
   libs/ledgerjs/packages/hw-app-vet:
     dependencies:
+      '@ledgerhq/cryptoassets':
+        specifier: workspace:^
+        version: link:../cryptoassets
       '@ledgerhq/errors':
         specifier: workspace:^
         version: link:../errors
