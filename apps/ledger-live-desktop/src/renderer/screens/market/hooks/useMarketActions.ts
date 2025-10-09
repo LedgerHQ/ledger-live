@@ -1,4 +1,3 @@
-import { CurrencyData } from "@ledgerhq/live-common/market/utils/types";
 import { useCallback, useMemo } from "react";
 import { useSelector } from "react-redux";
 import { useHistory } from "react-router-dom";
@@ -18,6 +17,8 @@ import { useOpenAssetFlow } from "LLD/features/ModularDrawer/hooks/useOpenAssetF
 import { Account } from "@ledgerhq/types-live";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import { useFetchCurrencyAll } from "@ledgerhq/live-common/exchange/swap/hooks/index";
+import { useCurrenciesUnderFeatureFlag } from "@ledgerhq/live-common/modularDrawer/hooks/useCurrenciesUnderFeatureFlag";
+import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 
 export enum Page {
   Market = "Page Market",
@@ -25,7 +26,7 @@ export enum Page {
 }
 
 type MarketActionsProps = {
-  currency?: CurrencyData | null;
+  currency?: CryptoOrTokenCurrency | null;
   page?: Page;
 };
 
@@ -43,7 +44,7 @@ export const useMarketActions = ({ currency, page }: MarketActionsProps) => {
 
   const currenciesForSwapAllSet = useMemo(() => new Set(currenciesAll), [currenciesAll]);
 
-  const internalCurrency = currency?.internalCurrency;
+  const internalCurrency = currency;
 
   const onAccountSelected = useCallback(
     (account: Account) => {
@@ -76,19 +77,16 @@ export const useMarketActions = ({ currency, page }: MarketActionsProps) => {
 
       history.push({
         pathname: "/exchange",
-        state: internalCurrency
-          ? {
-              currency: internalCurrency?.id,
-              mode: "buy", // buy or sell
-            }
-          : {
-              mode: "onRamp",
-              defaultTicker:
-                currency && currency.ticker ? currency.ticker.toUpperCase() : undefined,
-            },
+        state: {
+          mode: "onRamp",
+          defaultTicker:
+            internalCurrency && internalCurrency.ticker
+              ? internalCurrency.ticker.toUpperCase()
+              : undefined,
+        },
       });
     },
-    [currency, history, internalCurrency, page],
+    [history, internalCurrency, page],
   );
 
   const onSwap = useCallback(
@@ -98,7 +96,7 @@ export const useMarketActions = ({ currency, page }: MarketActionsProps) => {
         e.stopPropagation();
         track("button_clicked2", {
           button: "swap",
-          currency: currency?.ticker,
+          currency: internalCurrency.ticker,
           page,
           ...swapDefaultTrack,
         });
@@ -127,15 +125,7 @@ export const useMarketActions = ({ currency, page }: MarketActionsProps) => {
         });
       }
     },
-    [
-      internalCurrency,
-      currency?.ticker,
-      page,
-      swapDefaultTrack,
-      flattenedAccounts,
-      openAddAccounts,
-      history,
-    ],
+    [internalCurrency, page, swapDefaultTrack, flattenedAccounts, openAddAccounts, history],
   );
 
   const onStake = useCallback(
@@ -145,7 +135,7 @@ export const useMarketActions = ({ currency, page }: MarketActionsProps) => {
 
       track("button_clicked2", {
         button: "stake",
-        currency: internalCurrency ? internalCurrency.ticker : currency?.ticker,
+        currency: internalCurrency?.ticker,
         page,
         ...stakeDefaultTrack,
       });
@@ -156,8 +146,9 @@ export const useMarketActions = ({ currency, page }: MarketActionsProps) => {
         returnTo: history.location.pathname,
       });
     },
-    [internalCurrency, currency?.ticker, page, startStakeFlow, history.location.pathname],
+    [internalCurrency, page, startStakeFlow, history.location.pathname],
   );
+  const { deactivatedCurrencyIds } = useCurrenciesUnderFeatureFlag();
 
   const availableOnBuy = useMemo(
     () => isAvailableOnBuy(currency, isCurrencyAvailable),

@@ -33,11 +33,13 @@ export const assetsDataApi = createApi({
     baseUrl: "", // Will be overridden in query
   }),
   tagTypes: [AssetsDataTags.Assets],
+  // Add cache invalidation strategy for order changes
+  keepUnusedDataFor: 60, // Keep data for 60 seconds
   endpoints: build => ({
     getAssetsData: build.infiniteQuery<AssetsDataWithPagination, GetAssetsDataParams, PageParam>({
       query: ({ pageParam, queryArg }) => {
         const params = {
-          pageSize: 100,
+          pageSize: queryArg.pageSize || 100,
           ...(pageParam?.cursor && { cursor: pageParam.cursor }),
           ...(queryArg?.useCase && { transaction: queryArg.useCase }),
           ...(queryArg?.currencyIds &&
@@ -73,6 +75,8 @@ export const assetsDataApi = createApi({
             return undefined;
           }
         },
+        // Limit cache to 5 pages to prevent memory issues and handle order changes
+        maxPages: 5,
       },
     }),
     getAssetData: build.query<AssetsDataWithPagination, GetAssetsDataParams>({

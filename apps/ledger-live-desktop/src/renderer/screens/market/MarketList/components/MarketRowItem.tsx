@@ -2,28 +2,21 @@ import React, { useCallback, memo } from "react";
 import { useHistory } from "react-router-dom";
 import styled from "styled-components";
 import { Flex, Text, Icon, Tooltip, Box } from "@ledgerhq/react-ui";
-import FormattedVal from "~/renderer/components/FormattedVal";
 import { setTrackingSource } from "~/renderer/analytics/TrackPage";
 import counterValueFormatter from "@ledgerhq/live-common/market/utils/countervalueFormatter";
-import { SmallMarketItemChart } from "./MarketItemChart";
-import { CurrencyData, KeysPriceChange } from "@ledgerhq/live-common/market/utils/types";
+
+import { MarketItemResponse } from "@ledgerhq/live-common/market/utils/types";
 import { Button } from "../..";
 import { useTranslation } from "react-i18next";
 import { TableRow, TableCell } from "../../components/Table";
-import { Page, useMarketActions } from "../../hooks/useMarketActions";
 import { formatPercentage, formatPrice } from "../../utils";
-import { useGetStakeLabelLocaleBased } from "~/renderer/hooks/useGetStakeLabelLocaleBased";
+import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 
-const CryptoCurrencyIconWrapper = styled.div`
-  height: 32px;
-  width: 32px;
-  position: relative;
-  border-radius: 32px;
-  overflow: hidden;
-  img {
-    object-fit: cover;
-  }
-`;
+import { CryptoIcon } from "@ledgerhq/react-ui/pre-ldls";
+import FormattedVal from "~/renderer/components/FormattedVal";
+import { useGetStakeLabelLocaleBased } from "~/renderer/hooks/useGetStakeLabelLocaleBased";
+import { useMarketActions, Page } from "../../hooks/useMarketActions";
+import { SimpleSparkline } from "./SimpleSparkline";
 
 const EllipsisText = styled(Text)`
   width: 100%;
@@ -33,7 +26,17 @@ const EllipsisText = styled(Text)`
 `;
 
 type Props = {
-  currency?: CurrencyData | null;
+  item: {
+    currency: CryptoOrTokenCurrency;
+    market: Partial<MarketItemResponse>;
+    asset: {
+      id: string;
+      ticker: string;
+      name: string;
+      assetsIds: Record<string, string>;
+      metaCurrencyId?: string;
+    };
+  } | null;
   counterCurrency?: string;
   style: React.CSSProperties;
   loading: boolean;
@@ -45,7 +48,7 @@ type Props = {
 
 export const MarketRow = memo<Props>(function MarketRowItem({
   style,
-  currency,
+  item,
   counterCurrency,
   locale,
   loading,
@@ -57,18 +60,18 @@ export const MarketRow = memo<Props>(function MarketRowItem({
   const { t } = useTranslation();
 
   const { onBuy, onStake, onSwap, availableOnBuy, availableOnSwap, availableOnStake } =
-    useMarketActions({ currency, page: Page.Market });
+    useMarketActions({ currency: item?.currency, page: Page.Market });
   const earnStakeLabelCoin = useGetStakeLabelLocaleBased();
 
   const onCurrencyClick = useCallback(() => {
-    if (currency) {
+    if (item) {
       setTrackingSource("Page Market");
       history.push({
-        pathname: `/market/${currency.id}`,
-        state: currency,
+        pathname: `/market/${item.currency.id}`,
+        state: item.currency,
       });
     }
-  }, [currency, history]);
+  }, [item, history]);
 
   const onStarClick = useCallback(
     (e: React.MouseEvent<HTMLDivElement>) => {
@@ -79,11 +82,15 @@ export const MarketRow = memo<Props>(function MarketRowItem({
     [toggleStar],
   );
 
-  const hasActions =
-    currency?.internalCurrency && (availableOnBuy || availableOnSwap || availableOnStake);
+  const hasActions = availableOnBuy || availableOnSwap || availableOnStake;
+
+  const { currency, market } = item ?? {};
 
   // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-  const currentPriceChangePercentage = currency?.priceChangePercentage[range as KeysPriceChange];
+  const currentPriceChangePercentage = market?.[
+    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+    `priceChangePercentage${range}` as keyof MarketItemResponse
+  ] as number;
 
   return (
     <div style={{ ...style }}>
@@ -103,13 +110,12 @@ export const MarketRow = memo<Props>(function MarketRowItem({
           onClick={onCurrencyClick}
           role="row"
         >
-          <TableCell>{currency?.marketcapRank ?? "-"}</TableCell>
+          <TableCell>{market?.marketCapRank ?? "-"}</TableCell>
           <TableCell mr={3}>
-            <CryptoCurrencyIconWrapper>
-              <img width="32px" height="32px" src={currency.image} alt={"currency logo"} />
-            </CryptoCurrencyIconWrapper>
+            <CryptoIcon size="48px" ledgerId={currency?.id} ticker={currency?.ticker} />
+
             <Tooltip
-              content={<TooltipContainer>{currency.name}</TooltipContainer>}
+              content={<TooltipContainer>{currency?.name}</TooltipContainer>}
               placement="top"
               arrow={false}
             >
@@ -122,9 +128,9 @@ export const MarketRow = memo<Props>(function MarketRowItem({
                 {...(hasActions ? { width: 86 } : {})}
                 overflow="hidden"
               >
-                <EllipsisText variant="body">{currency.name}</EllipsisText>
+                <EllipsisText variant="body">{currency?.name}</EllipsisText>
                 <EllipsisText variant="small" color="neutral.c60">
-                  {currency.ticker.toUpperCase()}
+                  {currency?.ticker.toUpperCase()}
                 </EllipsisText>
               </Flex>
             </Tooltip>
@@ -165,7 +171,7 @@ export const MarketRow = memo<Props>(function MarketRowItem({
           <TableCell data-testid={"market-coin-price"}>
             <Text variant="body">
               {counterValueFormatter({
-                value: formatPrice(currency.price ?? 0),
+                value: formatPrice(market?.price ?? 0),
                 currency: counterCurrency,
                 locale,
               })}
@@ -190,15 +196,13 @@ export const MarketRow = memo<Props>(function MarketRowItem({
               {counterValueFormatter({
                 shorten: true,
                 currency: counterCurrency,
-                value: currency.marketcap,
+                value: market?.marketCap,
                 locale,
               })}
             </Text>
           </TableCell>
           <TableCell data-testid={"market-small-graph"}>
-            {currency.sparklineIn7d && (
-              <SmallMarketItemChart sparklineIn7d={currency.sparklineIn7d} />
-            )}
+            {market?.sparkline && <SimpleSparkline data={market.sparkline} />}
           </TableCell>
 
           <TableCell data-testid={`market-${currency?.ticker}-star-button`} onClick={onStarClick}>
@@ -211,7 +215,17 @@ export const MarketRow = memo<Props>(function MarketRowItem({
 });
 
 type CurrencyRowProps = {
-  data: CurrencyData[]; // NB: CurrencyData.id is different to Currency.id
+  data: {
+    currency: CryptoOrTokenCurrency;
+    market: Partial<MarketItemResponse>;
+    asset: {
+      id: string;
+      ticker: string;
+      name: string;
+      assetsIds: Record<string, string>;
+      metaCurrencyId?: string;
+    };
+  }[]; // NB: CurrencyData.id is different to Currency.id
   index: number;
   counterCurrency?: string;
   loading: boolean;
@@ -234,15 +248,15 @@ export const CurrencyRow = memo(function CurrencyRowItem({
   range,
 }: CurrencyRowProps) {
   const currency = data ? data[index] : null;
-  const isStarred = currency && starredMarketCoins.includes(currency.id);
+  const isStarred = currency && starredMarketCoins.includes(currency.asset.id);
 
   return (
     <MarketRow
       loading={!currency || (index === data.length && index > 50 && loading)}
-      currency={currency}
+      item={currency}
       counterCurrency={counterCurrency}
       isStarred={!!isStarred}
-      toggleStar={() => currency?.id && toggleStar(currency.id, !!isStarred)}
+      toggleStar={() => currency?.asset.id && toggleStar(currency.asset.id, !!isStarred)}
       key={index}
       locale={locale}
       style={{ ...style }}

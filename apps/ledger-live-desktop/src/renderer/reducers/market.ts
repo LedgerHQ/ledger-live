@@ -4,7 +4,6 @@ import { MarketListRequestParams, Order } from "@ledgerhq/live-common/market/uti
 
 export type MarketState = {
   marketParams: MarketListRequestParams;
-  currentPage: number;
 };
 
 const initialState: MarketState = {
@@ -15,17 +14,13 @@ const initialState: MarketState = {
     order: Order.MarketCapDesc,
     search: "",
     liveCompatible: false,
-    page: 1,
     counterCurrency: "USD",
   },
-  currentPage: 1,
 };
 
 type HandlersPayloads = {
   MARKET_IMPORT_STATE: MarketState;
-
   MARKET_SET_VALUES: MarketListRequestParams;
-  MARKET_SET_CURRENT_PAGE: number;
 };
 
 type MarketHandlers<PreciseKey = true> = Handlers<MarketState, HandlersPayloads, PreciseKey>;
@@ -37,10 +32,6 @@ const handlers: MarketHandlers = {
       ...state.marketParams,
       ...payload,
     },
-  }),
-  MARKET_SET_CURRENT_PAGE: (state: MarketState, { payload }: { payload: number }) => ({
-    ...state,
-    currentPage: payload,
   }),
 
   MARKET_IMPORT_STATE: (state, { payload }: { payload: MarketState }) => ({
@@ -57,8 +48,6 @@ const handlers: MarketHandlers = {
 // Selectors
 
 export const marketParamsSelector = (state: { market: MarketState }) => state.market.marketParams;
-export const marketCurrentPageSelector = (state: { market: MarketState }) =>
-  state.market.currentPage;
 
 export const marketStoreSelector = (state: { market: MarketState }) => state.market;
 

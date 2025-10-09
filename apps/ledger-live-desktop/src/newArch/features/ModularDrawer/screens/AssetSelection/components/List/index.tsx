@@ -85,6 +85,8 @@ export const SelectAssetList = ({
     (!assetsTransformed || assetsTransformed.length === 0) && !isLoading;
   const { trackModularDrawerEvent } = useModularDrawerAnalytics();
 
+  console.log("asstets initial", assetsToDisplay);
+  console.log("asstets transformed", formattedAssets);
   const onClick = useCallback(
     (asset: AssetType) => {
       const selectedAsset = assetsToDisplay.find(({ id }) => id === asset.id);

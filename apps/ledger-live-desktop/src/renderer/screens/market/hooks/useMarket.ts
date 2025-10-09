@@ -1,26 +1,23 @@
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { MarketListRequestParams, Order } from "@ledgerhq/live-common/market/utils/types";
 import { rangeDataTable } from "@ledgerhq/live-common/market/utils/rangeDataTable";
-import {
-  useMarketDataProvider,
-  useMarketData as useMarketDataHook,
-} from "@ledgerhq/live-common/market/hooks/useMarketDataProvider";
+import { useMarketDataProvider } from "@ledgerhq/live-common/market/hooks/useMarketDataProvider";
 import { useCallback, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
-import { setMarketCurrentPage, setMarketOptions } from "~/renderer/actions/market";
+import { setMarketOptions } from "~/renderer/actions/market";
 import { useInitSupportedCounterValues } from "~/renderer/hooks/useInitSupportedCounterValues";
-import { marketCurrentPageSelector, marketParamsSelector } from "~/renderer/reducers/market";
+import { marketParamsSelector } from "~/renderer/reducers/market";
 import { localeSelector, starredMarketCoinsSelector } from "~/renderer/reducers/settings";
-import { BASIC_REFETCH, REFETCH_TIME_ONE_MINUTE, getCurrentPage, isDataStale } from "../utils";
+import { BASIC_REFETCH, REFETCH_TIME_ONE_MINUTE } from "../utils";
 import { addStarredMarketCoins, removeStarredMarketCoins } from "~/renderer/actions/settings";
+import { useModularDrawerData } from "LLD/features/ModularDrawer/hooks/useModularDrawerData";
 
 export function useMarket() {
   const lldRefreshMarketDataFeature = useFeature("lldRefreshMarketData");
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const marketParams = useSelector(marketParamsSelector);
-  const marketCurrentPage = useSelector(marketCurrentPageSelector);
   const starredMarketCoins: string[] = useSelector(starredMarketCoinsSelector);
   const locale = useSelector(localeSelector);
 
@@ -35,17 +32,17 @@ export function useMarket() {
 
   useInitSupportedCounterValues();
 
-  const { liveCoinsList, supportedCounterCurrencies } = useMarketDataProvider();
-
-  const marketResult = useMarketDataHook({
-    ...marketParams,
-    liveCoinsList: liveCompatible ? liveCoinsList : [],
+  const { supportedCounterCurrencies } = useMarketDataProvider();
+  const { sortedCryptoCurrenciesMarket, loadNext, isLoading } = useModularDrawerData({
+    searchedValueMarket: search,
+    context: "MARKET",
+    pageSize: marketParams.limit,
+    pollingInterval: REFRESH_RATE,
   });
 
   const timeRanges = useMemo(
     () =>
       Object.keys(rangeDataTable)
-        .filter(k => k !== "1h")
         .map(key => ({ value: key, label: t(`market.range.${rangeDataTable[key].label}`) }))
         .reverse(),
     [t],
@@ -53,8 +50,8 @@ export function useMarket() {
 
   const timeRangeValue = timeRanges.find(({ value }) => value === range);
 
-  const currenciesLength = marketResult.data.length;
-  const loading = marketResult.isLoading;
+  const currenciesLength = sortedCryptoCurrenciesMarket?.length || 0;
+  const loading = isLoading;
   const freshLoading = loading && !currenciesLength;
   const itemCount =
     starred.length > 0 || search.length > 0 ? currenciesLength : currenciesLength + 1;
@@ -84,13 +81,12 @@ export function useMarket() {
   const resetMarketPageToInital = (page: number) => {
     if (page > 1) {
       dispatch(setMarketOptions({ page: 1 }));
-      dispatch(setMarketCurrentPage(1));
     }
   };
 
   const onLoadNextPage = useCallback(() => {
-    dispatch(setMarketOptions({ page: (marketParams?.page || 1) + 1 }));
-  }, [dispatch, marketParams?.page]);
+    loadNext?.();
+  }, [loadNext]);
 
   const updateSearch = useCallback(
     (value: string) => {
@@ -137,8 +133,8 @@ export function useMarket() {
   }, [order, refresh]);
 
   const isItemLoaded = useCallback(
-    (index: number) => !!marketResult.data[index],
-    [marketResult.data],
+    (index: number) => !!sortedCryptoCurrenciesMarket?.[index],
+    [sortedCryptoCurrenciesMarket],
   );
 
   /**
@@ -146,29 +142,13 @@ export function useMarket() {
    * Refresh mechanism ----------------------------------------------
    */
 
-  const refetchData = useCallback(
-    (pageToRefetch: number) => {
-      const page = pageToRefetch - 1 || 0;
-      const elem = marketResult.cachedMetadataMap.get(String(page));
-      if (elem && isDataStale(elem.updatedAt, REFRESH_RATE)) {
-        elem.refetch();
-      }
-    },
-    [marketResult.cachedMetadataMap, REFRESH_RATE],
-  );
+  const refetchData = useCallback((_pageToRefetch: number) => {
+    // Use RTK refetch from useModularDrawerData
+  }, []);
 
-  const checkIfDataIsStaleAndRefetch = useCallback(
-    (scrollPosition: number) => {
-      const newCurrentPage = getCurrentPage(scrollPosition, marketParams.limit || 50);
-
-      if (marketCurrentPage !== newCurrentPage) {
-        dispatch(setMarketCurrentPage(newCurrentPage));
-      }
-
-      refetchData(newCurrentPage);
-    },
-    [marketParams.limit, marketCurrentPage, refetchData, dispatch],
-  );
+  const checkIfDataIsStaleAndRefetch = useCallback((_scrollPosition: number) => {
+    // Use RTK refetch from useModularDrawerData for data refresh
+  }, []);
 
   /**
    *
@@ -195,11 +175,10 @@ export function useMarket() {
     t,
     liveCompatible,
     starFilterOn,
-    marketData: marketResult.data,
+    marketData: sortedCryptoCurrenciesMarket ?? [],
     starredMarketCoins,
     timeRanges,
     marketParams,
-    marketCurrentPage,
     timeRangeValue,
     itemCount,
     locale,

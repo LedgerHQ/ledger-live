@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { Flex, Button as BaseButton, Text, Dropdown } from "@ledgerhq/react-ui";
 import styled from "styled-components";
 import CounterValueSelect from "./components/CountervalueSelect";
@@ -56,34 +56,14 @@ export default function Market() {
     updateTimeRange,
     toggleFilterByStarredAccounts,
     toggleLiveCompatible,
-    resetMarketPage,
-    refetchData,
     marketParams,
     supportedCounterCurrencies,
     timeRangeValue,
     starFilterOn,
     starredMarketCoins,
     timeRanges,
-    refreshRate,
-    marketCurrentPage,
     t,
   } = marketData;
-
-  /**
-   * Reset the page to 1 when the component mounts to only refetch first page
-   * */
-  useEffect(() => {
-    resetMarketPage(marketParams.page ?? 1);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  /**
-   * Try to Refetch data every REFRESH_RATE time
-   */
-  useEffect(() => {
-    const intervalId = setInterval(() => refetchData(marketCurrentPage ?? 1), refreshRate);
-    return () => clearInterval(intervalId);
-  }, [marketCurrentPage, refetchData, refreshRate]);
 
   const { order, range, counterCurrency, search = "", liveCompatible } = marketParams;
 

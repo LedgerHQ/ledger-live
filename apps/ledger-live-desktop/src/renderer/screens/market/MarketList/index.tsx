@@ -1,15 +1,19 @@
-import React, { memo } from "react";
+import React, { memo, useCallback, useMemo } from "react";
 import { Flex, Icon } from "@ledgerhq/react-ui";
 import { TFunction } from "i18next";
 import { FixedSizeList as List } from "react-window";
 import InfiniteLoader from "react-window-infinite-loader";
 import AutoSizer from "react-virtualized-auto-sizer";
-import { CurrencyData, MarketListRequestParams } from "@ledgerhq/live-common/market/utils/types";
+import {
+  MarketItemResponse,
+  MarketListRequestParams,
+} from "@ledgerhq/live-common/market/utils/types";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import { SortTableCell } from "../components/SortTableCell";
 import { TableCell, TableRow, listItemHeight } from "../components/Table";
 import { NoCryptoPlaceholder } from "./components/NoCryptoPlaceholder";
 import { CurrencyRow } from "./components/MarketRowItem";
+import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 
 type MarketListProps = {
   starredMarketCoins: string[];
@@ -19,7 +23,17 @@ type MarketListProps = {
   marketParams: MarketListRequestParams;
   itemCount: number;
   locale: string;
-  marketData: CurrencyData[];
+  marketData: {
+    currency: CryptoOrTokenCurrency;
+    market: Partial<MarketItemResponse>;
+    asset: {
+      id: string;
+      ticker: string;
+      name: string;
+      assetsIds: Record<string, string>;
+      metaCurrencyId?: string;
+    };
+  }[];
   resetSearch: () => void;
   toggleFilterByStarredAccounts: () => void;
   toggleSortBy: () => void;
@@ -50,6 +64,50 @@ function MarketList({
 }: MarketListProps) {
   const { order, search, starred, range, counterCurrency } = marketParams;
 
+  // Memoize the row renderer to prevent unnecessary re-renders
+  const RowRenderer = useCallback(
+    (props: {
+      data: {
+        currency: CryptoOrTokenCurrency;
+        market: Partial<MarketItemResponse>;
+        asset: {
+          id: string;
+          ticker: string;
+          name: string;
+          assetsIds: Record<string, string>;
+          metaCurrencyId?: string;
+        };
+      }[];
+      index: number;
+      style: React.CSSProperties;
+    }) => (
+      <CurrencyRow
+        {...props}
+        counterCurrency={counterCurrency}
+        loading={loading}
+        toggleStar={toggleStar}
+        starredMarketCoins={starredMarketCoins}
+        locale={locale}
+        range={range}
+      />
+    ),
+    [counterCurrency, loading, toggleStar, starredMarketCoins, locale, range],
+  );
+
+  // Memoize the scroll handler
+  const handleScroll = useCallback(
+    ({ scrollOffset }: { scrollOffset: number }) => {
+      checkIfDataIsStaleAndRefetch(scrollOffset);
+    },
+    [checkIfDataIsStaleAndRefetch],
+  );
+
+  // Memoize the loading skeleton count
+  const skeletonCount = useMemo(
+    () => Math.floor(400 / 60), // Assuming 400px height and 60px item height
+    [],
+  );
+
   return (
     <Flex flex="1" flexDirection="column">
       {!currenciesLength && !loading ? (
@@ -57,16 +115,14 @@ function MarketList({
       ) : (
         <>
           {search && currenciesLength > 0 && <TrackPage category="Market Search" success={true} />}
-          <TableRow header>
+          <TableRow header role="row">
             <SortTableCell data-testid="market-sort-button" onClick={toggleSortBy} order={order}>
               #
             </SortTableCell>
             <TableCell disabled>{t("market.marketList.crypto")}</TableCell>
             <TableCell disabled>{t("market.marketList.price")}</TableCell>
             <TableCell disabled>{t("market.marketList.change")}</TableCell>
-
             <TableCell disabled>{t("market.marketList.marketCap")}</TableCell>
-
             <TableCell disabled>{t("market.marketList.last7d")}</TableCell>
             <TableCell
               data-testid="market-star-button"
@@ -83,22 +139,12 @@ function MarketList({
                   <List
                     height={height}
                     width="100%"
-                    itemCount={Math.floor(height / listItemHeight)}
+                    itemCount={skeletonCount}
                     itemData={[]}
                     itemSize={listItemHeight}
                     style={{ overflowY: "hidden" }}
                   >
-                    {props => (
-                      <CurrencyRow
-                        {...props}
-                        counterCurrency={counterCurrency}
-                        loading={loading}
-                        toggleStar={toggleStar}
-                        starredMarketCoins={starredMarketCoins}
-                        locale={locale}
-                        range={range}
-                      />
-                    )}
+                    {RowRenderer}
                   </List>
                 ) : currenciesLength ? (
                   <InfiniteLoader
@@ -124,21 +170,9 @@ function MarketList({
                         style={{ overflowX: "hidden" }}
                         ref={ref}
                         overscanCount={10}
-                        onScroll={({ scrollOffset }) => {
-                          checkIfDataIsStaleAndRefetch(scrollOffset);
-                        }}
+                        onScroll={handleScroll}
                       >
-                        {props => (
-                          <CurrencyRow
-                            {...props}
-                            counterCurrency={counterCurrency}
-                            loading={loading}
-                            toggleStar={toggleStar}
-                            starredMarketCoins={starredMarketCoins}
-                            locale={locale}
-                            range={range}
-                          />
-                        )}
+                        {RowRenderer}
                       </List>
                     )}
                   </InfiniteLoader>

@@ -17,6 +17,8 @@ export interface GetAssetsDataParams {
   version: string;
   isStaging?: boolean;
   additionalData?: AssetsAdditionalData[];
+  pageSize?: number;
+  pollingInterval?: number;
 }
 
 export interface PageParam {
