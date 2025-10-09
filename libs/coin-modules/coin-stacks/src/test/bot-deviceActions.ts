@@ -3,7 +3,7 @@ import type { Transaction } from "../types";
 import { deviceActionFlow, SpeculosButton } from "@ledgerhq/coin-framework/bot/specs";
 import { getSubAccount } from "../bridge/utils/token";
 import { formatCurrencyUnit } from "@ledgerhq/coin-framework/lib/currencies/formatCurrencyUnit";
-import { getTokenById } from "@ledgerhq/live-common/currencies/index";
+import { getTokenById } from "@ledgerhq/cryptoassets/tokens";
 import invariant from "invariant";
 
 export const acceptTransaction: DeviceAction<Transaction, any> = deviceActionFlow({
