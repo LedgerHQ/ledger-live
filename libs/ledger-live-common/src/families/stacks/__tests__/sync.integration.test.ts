@@ -16,7 +16,7 @@ describe("sync for token transfers", () => {
   });
 
   test("sync build operations only for transfer type txn", async () => {
-    const [transfers, _] = await fetchFullTxs(address);
+    const [transfers] = await fetchFullTxs(address);
 
     // Contains operations for txn of type token_transfer
     const operations = flatMap(transfers, mapTxToOps(accountId, address));
