@@ -45,11 +45,8 @@ export const getTransactionStatus: AccountBridge<Transaction>["getTransactionSta
 
   // Handle token transactions (subAccount exists)
   if (subAccount) {
-    // For token transactions, fees are paid from the main account
-    totalSpent = estimatedFees;
-
     // Check if main account has enough balance to pay fees
-    if (totalSpent.gt(spendableBalance)) {
+    if (estimatedFees.gt(spendableBalance)) {
       errors.amount = new NotEnoughBalance();
     }
 
