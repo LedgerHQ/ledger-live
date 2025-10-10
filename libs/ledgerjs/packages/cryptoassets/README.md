@@ -4,17 +4,7 @@
 
 Ledger's material for crypto currencies, tokens and fiats. Also includes signatures required by Nano devices for these tokens.
 
-**DO NOT EDIT because this library is generated.**
+This library focuses on dynamic RTK Query-based token lookup capabilities. The previously included static crypto asset data is deprecated and will be removed soon.
 
-## Usage
+> **NB: @ledgerhq/cryptoassets library will soon move to the top level `libs/` as it is no longer needed among ledgerjs libraries.**
 
-There are two modes of usage of this library.
-
-*   The all-in way: you want to have all the data available (ERC20 token loaded,...). To do this, you simply import `@ledgerhq/cryptoassets`
-*   The custom way: you can import individual data piece from `@ledgerhq/cryptoassets/data/*`. For instance, importing the ERC20 signatures can be done with `@ledgerhq/cryptoassets/data/erc20-signatures` sub module.
-
-## Importing CAL tokens in cryptoassets data
-
-```bash
-pnpm import:cal-tokens
-```
