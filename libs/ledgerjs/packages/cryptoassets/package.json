@@ -39,8 +39,8 @@
     "axios": "catalog:",
     "bs58check": "^2.1.2",
     "invariant": "2",
-    "zod": "^3.22.4",
-    "@reduxjs/toolkit": "catalog:"
+    "@reduxjs/toolkit": "catalog:",
+    "zod": "^3.22.4"
   },
   "devDependencies": {
     "@ledgerhq/types-cryptoassets": "workspace:^",
@@ -80,13 +80,9 @@
     "./lib/*.js": "./lib/*.js",
     "./lib-es/*": "./lib-es/*.js",
     "./lib-es/*.js": "./lib-es/*.js",
-    "./rtk-store": {
-      "require": "./lib/rtk-store/index.js",
-      "default": "./lib-es/rtk-store/index.js"
-    },
-    "./rtk-store/*": {
-      "require": "./lib/rtk-store/*.js",
-      "default": "./lib-es/rtk-store/*.js"
+    "./cal-client": {
+      "require": "./lib/cal-client/index.js",
+      "default": "./lib-es/cal-client/index.js"
     },
     "./*": {
       "require": "./lib/*.js",
