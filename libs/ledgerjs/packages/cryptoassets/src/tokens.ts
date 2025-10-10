@@ -3,23 +3,17 @@
  */
 
 import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { initializeLegacyTokens } from "./legacy/legacy-data";
 import {
   addTokens as addTokensLegacy,
   listTokensLegacy,
   listTokensForCryptoCurrencyLegacy,
   type TokensListOptions,
 } from "./legacy/legacy-utils";
-import { legacyCryptoAssetsStore } from "./legacy/legacy-store";
 import { tokensById } from "./legacy/legacy-state";
-// Initialize legacy tokens
-initializeLegacyTokens(addTokensLegacy);
-
-// Re-export from legacy module
-export { legacyCryptoAssetsStore, tokensById };
 
 // Re-export from legacy for compatibility
 export type { TokensListOptions };
+export { tokensById };
 
 /**
  * @deprecated This function is deprecated since tokens will no longer be listable as we moved to DaDa API everywhere

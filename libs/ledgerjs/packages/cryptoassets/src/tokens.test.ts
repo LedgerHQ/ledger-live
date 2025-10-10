@@ -1,8 +1,12 @@
 import { getCryptoCurrencyById } from "./currencies";
 import { listTokens, listTokensForCryptoCurrency } from "./tokens";
 import { addTokens, __clearAllLists, createTokenHash, convertERC20 } from "./legacy/legacy-utils";
+import { initializeLegacyTokens } from "./legacy/legacy-data";
 import { ERC20Token } from "./types";
 import { legacyCryptoAssetsStore } from "./legacy/legacy-store";
+
+// Initialize legacy tokens for tests
+initializeLegacyTokens(addTokens);
 
 const initMainToken: ERC20Token[] = [
   [
