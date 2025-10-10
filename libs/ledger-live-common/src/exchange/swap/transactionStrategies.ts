@@ -283,4 +283,5 @@ export const transactionStrategy: {
   vechain: defaultTransaction,
   kaspa: defaultTransaction,
   xrp: rippleTransaction,
+  kadena: defaultTransaction,
 };

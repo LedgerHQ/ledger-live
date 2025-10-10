@@ -55,6 +55,9 @@ export function buildAccountBridge(
     signOperation,
     broadcast,
     getSerializedAddressParameters,
+    signRawOperation: () => {
+      throw new Error("signRawOperation is not supported");
+    },
   };
 }
 

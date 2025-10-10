@@ -25,8 +25,7 @@ import { tezosConfig } from "../families/tezos/config";
 import { tonConfig } from "../families/ton/config";
 import { tronConfig } from "../families/tron/config";
 import { vechainConfig } from "../families/vechain/config";
-import { iconConfig } from "../families/icon/config";
-import { suiConfig } from "../families/sui/config";
+import { xrpConfig } from "../families/xrp/config";
 import { cantonConfig } from "../families/canton/config";
 
 const countervaluesConfig: ConfigSchema = {
