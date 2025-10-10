@@ -251,4 +251,68 @@ describe("genericPrepareTransaction", () => {
       useAllAmount: true,
     });
   });
+
+  describe("reference preservation", () => {
+    it("does not preserve references if the prepared transaction has changed", async () => {
+      (getAlpacaApi as jest.Mock).mockReturnValue({
+        estimateFees: jest.fn().mockResolvedValue({ value: 700n }),
+      });
+
+      const prepareTransaction = genericPrepareTransaction(network, kind);
+      const baseTransaction = {
+        amount: new BigNumber(100_000),
+        fees: new BigNumber(500),
+        recipient: "0xrecipient",
+        family: "family",
+        customFees: { parameters: { fees: new BigNumber(600) } },
+      };
+      const result = await prepareTransaction(
+        { currency: { id: "ethereum", units: [{}] } } as Account,
+        baseTransaction,
+      );
+
+      expect(result).toEqual({
+        assetOwner: "",
+        assetReference: "",
+        amount: new BigNumber(100_000),
+        fees: new BigNumber(600),
+        recipient: "0xrecipient",
+        family: "family",
+        customFees: { parameters: { fees: new BigNumber(600) } },
+      });
+      expect(result).not.toBe(baseTransaction);
+    });
+
+    it("preserves references if the prepared transaction has not changed", async () => {
+      (getAlpacaApi as jest.Mock).mockReturnValue({
+        estimateFees: jest.fn().mockResolvedValue({ value: 700n }),
+      });
+
+      const prepareTransaction = genericPrepareTransaction(network, kind);
+      const baseTransaction = {
+        assetOwner: "",
+        assetReference: "",
+        amount: new BigNumber(100_000),
+        fees: new BigNumber(500),
+        recipient: "0xrecipient",
+        family: "family",
+        customFees: { parameters: { fees: new BigNumber(500) } },
+      };
+      const result = await prepareTransaction(
+        { currency: { id: "ethereum", units: [{}] } } as Account,
+        baseTransaction,
+      );
+
+      expect(result).toEqual({
+        assetOwner: "",
+        assetReference: "",
+        amount: new BigNumber(100_000),
+        fees: new BigNumber(500),
+        recipient: "0xrecipient",
+        family: "family",
+        customFees: { parameters: { fees: new BigNumber(500) } },
+      });
+      expect(result).toBe(baseTransaction);
+    });
+  });
 });

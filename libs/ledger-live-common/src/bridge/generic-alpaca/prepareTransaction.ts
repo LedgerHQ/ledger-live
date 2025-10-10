@@ -6,6 +6,7 @@ import { AssetInfo } from "@ledgerhq/coin-framework/api/types";
 import { decodeTokenAccountId } from "@ledgerhq/coin-framework/account/index";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { GenericTransaction } from "./types";
+import isEqual from "lodash/isEqual";
 
 function assetInfosFallback(transaction: GenericTransaction): {
   assetReference: string;
@@ -82,7 +83,13 @@ export function genericPrepareTransaction(
       }
     }
 
-    return next;
+    // Maintain reference if the transaction hasn't change.
+    // Not keeping the object reference results in our various `useEffect`s to detect
+    // changes and trigger their effect callback, even if objects stay deeply equal.
+    // More specifically in `libs/ledger-live-common/src/hw/actions/transaction.ts`:
+    // returning different references implies calling `signOperation` and the device
+    // several times, which negatively affects the UI and prompts for multiple signatures.
+    return isEqual(transaction, next) ? transaction : next;
   };
 }
 
