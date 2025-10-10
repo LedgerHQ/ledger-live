@@ -8,8 +8,6 @@ import { WestendScenario } from "./scenarii/Westend";
 global.console = console;
 jest.setTimeout(300_000);
 
-export const defaultNanoApp = { firmware: "2.3.0" as const, version: "100.0.5" as const };
-
 describe("Polkadot Deterministic Tester", () => {
   it("scenario Polkadot", async () => {
     try {
