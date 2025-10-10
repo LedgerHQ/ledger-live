@@ -16,8 +16,9 @@ jest.mock("./utils");
 describe("listOperations", () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    (utils.base64ToUrlSafeBase64 as jest.Mock).mockImplementation(hash => `safe-${hash}`);
-    (utils.getMemoFromBase64 as jest.Mock).mockImplementation(memo => `decoded-${memo}`);
+    (utils.getMemoFromBase64 as jest.Mock).mockImplementation(memo =>
+      memo ? `decoded-${memo}` : null,
+    );
     (encodeOperationId as jest.Mock).mockImplementation(
       (accountId, hash, type) => `${accountId}-${hash}-${type}`,
     );
@@ -46,6 +47,8 @@ describe("listOperations", () => {
       pagination,
       mirrorTokens: [],
       fetchAllPages: true,
+      skipFeesForTokenOperations: false,
+      useEncodedHash: false,
     });
 
     expect(hederaMirrorNode.getAccountTransactions).toHaveBeenCalledWith({
@@ -95,6 +98,8 @@ describe("listOperations", () => {
       pagination,
       mirrorTokens: [],
       fetchAllPages: true,
+      skipFeesForTokenOperations: false,
+      useEncodedHash: false,
     });
 
     expect(result.coinOperations).toHaveLength(1);
@@ -103,7 +108,7 @@ describe("listOperations", () => {
     expect(result.coinOperations[0]).toMatchObject({
       type: "OUT",
       value: expect.any(Object),
-      hash: "safe-hash1",
+      hash: "hash1",
       fee: expect.any(Object),
       date: expect.any(Date),
       senders: [address],
@@ -161,6 +166,8 @@ describe("listOperations", () => {
       pagination,
       mirrorTokens: [],
       fetchAllPages: true,
+      skipFeesForTokenOperations: false,
+      useEncodedHash: false,
     });
 
     expect(result.coinOperations).toHaveLength(1);
@@ -174,7 +181,7 @@ describe("listOperations", () => {
     expect(result.tokenOperations[0]).toMatchObject({
       type: "OUT",
       value: expect.any(Object),
-      hash: "safe-hash1",
+      hash: "hash1",
       contract: tokenId,
       standard: "hts",
       senders: [address],
@@ -182,7 +189,6 @@ describe("listOperations", () => {
       extra: {
         pagingToken: "1625097600.000000000",
         consensusTimestamp: "1625097600.000000000",
-        memo: null,
       },
     });
   });
@@ -219,6 +225,8 @@ describe("listOperations", () => {
       pagination,
       mirrorTokens: [],
       fetchAllPages: true,
+      skipFeesForTokenOperations: false,
+      useEncodedHash: false,
     });
 
     expect(result.coinOperations).toHaveLength(1);
@@ -227,14 +235,13 @@ describe("listOperations", () => {
     expect(result.coinOperations[0]).toMatchObject({
       type: "ASSOCIATE_TOKEN",
       value: expect.any(Object),
-      hash: "safe-hash1",
+      hash: "hash1",
       fee: expect.any(Object),
       senders: [address],
       recipients: [],
       extra: {
         pagingToken: "1625097600.000000000",
         consensusTimestamp: "1625097600.000000000",
-        memo: null,
       },
     });
   });
@@ -276,6 +283,8 @@ describe("listOperations", () => {
       pagination,
       mirrorTokens: [],
       fetchAllPages: true,
+      skipFeesForTokenOperations: false,
+      useEncodedHash: false,
     });
 
     expect(result.coinOperations).toHaveLength(0);
@@ -303,6 +312,8 @@ describe("listOperations", () => {
       pagination,
       mirrorTokens: [],
       fetchAllPages: true,
+      skipFeesForTokenOperations: false,
+      useEncodedHash: false,
     });
 
     expect(hederaMirrorNode.getAccountTransactions).toHaveBeenCalledWith({
@@ -350,6 +361,8 @@ describe("listOperations", () => {
       pagination,
       mirrorTokens: [],
       fetchAllPages: true,
+      skipFeesForTokenOperations: false,
+      useEncodedHash: false,
     });
 
     expect(result.coinOperations[0].hasFailed).toBe(true);

@@ -144,6 +144,13 @@ describe("getOperationValue", () => {
       const input = Buffer.from("😀✨", "utf-8").toString("base64");
       expect(getMemoFromBase64(input)).toBe("😀✨");
     });
+
+    it("returns null for bad input", () => {
+      expect(getMemoFromBase64(undefined)).toBeNull();
+      expect(getMemoFromBase64(null as unknown as string)).toBeNull();
+      expect(getMemoFromBase64({} as unknown as string)).toBeNull();
+      expect(getMemoFromBase64(10 as unknown as string)).toBeNull();
+    });
   });
 
   describe("getTransactionExplorer", () => {

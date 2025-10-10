@@ -77,8 +77,10 @@ export const mapIntentToSDKOperation = (txIntent: TransactionIntent) => {
   return HEDERA_OPERATION_TYPES.CryptoTransfer;
 };
 
-export const getMemoFromBase64 = (memoBase64: string): string | null => {
+export const getMemoFromBase64 = (memoBase64: string | undefined): string | null => {
   try {
+    if (typeof memoBase64 !== "string") return null;
+
     return Buffer.from(memoBase64, "base64").toString("utf-8");
   } catch {
     return null;

@@ -16,12 +16,17 @@ export async function listOperations({
   mirrorTokens,
   pagination,
   fetchAllPages,
+  skipFeesForTokenOperations,
+  useEncodedHash,
 }: {
   currency: CryptoCurrency;
   address: string;
   mirrorTokens: HederaMirrorToken[];
   pagination: Pagination;
+  // options for compatibility with old bridge
   fetchAllPages: boolean;
+  skipFeesForTokenOperations: boolean;
+  useEncodedHash: boolean;
 }): Promise<{
   coinOperations: Operation<HederaOperationExtra>[];
   tokenOperations: Operation<HederaOperationExtra>[];
@@ -46,17 +51,20 @@ export async function listOperations({
 
   for (const rawTx of mirrorResult.transactions) {
     const timestamp = new Date(parseInt(rawTx.consensus_timestamp.split(".")[0], 10) * 1000);
-    const hash = base64ToUrlSafeBase64(rawTx.transaction_hash);
+    const hash = useEncodedHash
+      ? base64ToUrlSafeBase64(rawTx.transaction_hash)
+      : rawTx.transaction_hash;
     const fee = new BigNumber(rawTx.charged_tx_fee);
     const tokenTransfers = rawTx.token_transfers ?? [];
     const transfers = rawTx.transfers ?? [];
     const hasFailed = rawTx.result !== "SUCCESS";
     const blockHeight = 10;
     const blockHash = null;
+    const memo = getMemoFromBase64(rawTx.memo_base64);
     const commonExtra: HederaOperationExtra = {
       pagingToken: rawTx.consensus_timestamp,
       consensusTimestamp: rawTx.consensus_timestamp,
-      memo: rawTx.memo_base64 ? getMemoFromBase64(rawTx.memo_base64) : null,
+      ...(memo && { memo }),
     };
 
     if (tokenTransfers.length > 0) {
@@ -69,7 +77,7 @@ export async function listOperations({
       const extra = { ...commonExtra };
 
       // add main FEES coin operation for send token transfer
-      if (type === "OUT") {
+      if (type === "OUT" && !skipFeesForTokenOperations) {
         coinOperations.push({
           id: encodeOperationId(ledgerAccountId, hash, "FEES"),
           accountId: ledgerAccountId,
