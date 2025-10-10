@@ -1,4 +1,4 @@
-import { makeAccount } from "@ledgerhq/coin-evm/__tests__/fixtures/common.fixtures";
+import { makeAccount } from "../fixtures";
 import { buildAccountBridge, buildCurrencyBridge } from "@ledgerhq/coin-evm/bridge/js";
 import { getCoinConfig, setCoinConfig } from "@ledgerhq/coin-evm/config";
 import resolver from "@ledgerhq/coin-evm/hw-getAddress";
@@ -17,7 +17,7 @@ import { ethers } from "ethers";
 import { killAnvil, spawnAnvil } from "../anvil";
 import { VITALIK, core } from "../helpers";
 import { indexBlocks, initMswHandlers, resetIndexer, setBlock } from "../indexer";
-import { defaultNanoApp } from "../scenarii.test";
+import { defaultNanoApp } from "../constants";
 
 type CoreScenarioTransaction = ScenarioTransaction<EvmTransaction, Account>;
 
