@@ -42,7 +42,7 @@ const TokensList = () => {
 ### Desktop Integration (Redux)
 
 ```typescript
-import { cryptoAssetsApi } from "@ledgerhq/cryptoassets/cal-client/state-manager/api";
+import { cryptoAssetsApi } from "@ledgerhq/cryptoassets/cal-client";
 
 // Configure Redux store
 const store = configureStore({
@@ -53,6 +53,12 @@ const store = configureStore({
   middleware: getDefaultMiddleware => getDefaultMiddleware().concat(cryptoAssetsApi.middleware),
 });
 ```
+
+The `cryptoAssetsApi` instance is pre-configured and environment-aware. It automatically uses `getEnv()` to fetch:
+- `CAL_SERVICE_URL` - Base URL for the CAL API
+- `LEDGER_CLIENT_VERSION` - Client version for request headers
+
+No manual configuration is needed!
 
 ### Advanced Usage with Pagination
 
@@ -81,6 +87,28 @@ const InfiniteTokensList = () => {
     </div>
   );
 };
+```
+
+### Direct API Endpoints
+
+For more granular control, use the RTK Query hooks directly:
+
+```typescript
+import { cryptoAssetsApi } from "@ledgerhq/cryptoassets/cal-client";
+
+// Find a specific token by ID
+const { data: token, isLoading } = cryptoAssetsApi.useFindTokenByIdQuery({
+  id: "ethereum/erc20/usdt"
+});
+
+// Find token by contract address and network
+const { data: token } = cryptoAssetsApi.useFindTokenByAddressInCurrencyQuery({
+  contract_address: "0xdac17f958d2ee523a2206206994597c13d831ec7",
+  network: "ethereum"
+});
+
+// Get sync hash for a currency (useful for cache invalidation)
+const { data: hash } = cryptoAssetsApi.useGetTokensSyncHashQuery("ethereum");
 ```
 
 ## API Reference

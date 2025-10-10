@@ -122,9 +122,16 @@ describe("Hooks Factory", () => {
     expect(hooks.useCurrencyById).toBeInstanceOf(Function);
   });
 
-  it("should throw an error when useCALBackend is true", () => {
-    // @ts-expect-error useCALBackend is not supported yet
-    expect(() => createCryptoAssetsHooks({ useCALBackend: true })).toThrow();
+  it("should support useCALBackend with api", () => {
+    const mockApi = {
+      useFindTokenByIdQuery: jest.fn(),
+      useFindTokenByAddressInCurrencyQuery: jest.fn(),
+    } as any;
+
+    const hooks = createCryptoAssetsHooks({ useCALBackend: true, api: mockApi });
+    expect(hooks.useTokenById).toBeInstanceOf(Function);
+    expect(hooks.useTokenByAddressInCurrency).toBeInstanceOf(Function);
+    expect(hooks.useCurrencyById).toBeInstanceOf(Function);
   });
 });
 
