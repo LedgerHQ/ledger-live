@@ -30,6 +30,7 @@ libs/live-hooks/                                         @ledgerhq/live-hub
 libs/promise/                                            @ledgerhq/live-hub
 libs/ui/                                                 @ledgerhq/live-hub
 libs/live-wallet/                                        @ledgerhq/live-hub
+libs/live-persistence/                                   @ledgerhq/live-hub
 libs/ledger-key-ring-protocol/                           @ledgerhq/live-hub
 libs/hw-ledger-key-ring-protocol/                        @ledgerhq/live-hub
 
