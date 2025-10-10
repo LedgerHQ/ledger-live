@@ -19,6 +19,9 @@ import {
 } from "@ledgerhq/ledger-key-ring-protocol/store";
 
 import { marketStoreSelector } from "../reducers/market";
+import { cryptoAssetsApi } from "@ledgerhq/cryptoassets/cal-client/state-manager/api";
+import { createRtkQueryStateSelector, shouldPersist } from "@ledgerhq/live-persistence";
+import { saveRtkQueryStateToIndexedDB } from "@ledgerhq/live-persistence/implementations/redux-state-indexeddb";
 
 let DB_MIDDLEWARE_ENABLED = true;
 
@@ -38,6 +41,16 @@ function accountsExportSelector(state: State) {
   }
   return all;
 }
+
+// Create selector for crypto assets cache state
+// Only cache token lookup queries, not sync hash or infinite queries
+const cryptoAssetsStateSelector = createRtkQueryStateSelector(cryptoAssetsApi, undefined, [
+  "findTokenById",
+  "findTokenByAddressInCurrency",
+]);
+
+// Track last persisted state to avoid unnecessary writes
+let lastPersistedCryptoAssetsState: ReturnType<typeof cryptoAssetsStateSelector> = null;
 
 const DBMiddleware: Middleware<{}, State> = store => next => action => {
   if (!isActionWithType(action)) {
@@ -65,6 +78,21 @@ const DBMiddleware: Middleware<{}, State> = store => next => action => {
     next(action);
     const state = store.getState();
     setKey("app", "market", marketStoreSelector(state));
+  } else if (DB_MIDDLEWARE_ENABLED && action.type.startsWith(cryptoAssetsApi.reducerPath + "/")) {
+    // Handle cryptoAssetsApi actions - persist RTK Query state to IndexedDB
+    next(action);
+    const state = store.getState();
+    const cryptoAssetsState = cryptoAssetsStateSelector(state);
+
+    // Only persist if state has actually changed
+    if (shouldPersist(lastPersistedCryptoAssetsState, cryptoAssetsState)) {
+      lastPersistedCryptoAssetsState = cryptoAssetsState;
+      // Save to IndexedDB directly (non-blocking)
+      saveRtkQueryStateToIndexedDB(cryptoAssetsState).catch(error => {
+        console.error("Failed to persist crypto assets state to IndexedDB:", error);
+      });
+    }
+    return;
   } else {
     const oldState = store.getState();
     const res = next(action);

@@ -7,6 +7,7 @@ import { findCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import {
   getAccounts,
   getCountervalues,
+  getCryptoAssetsCacheState,
   getSettings,
   getBle,
   getPostOnboardingState,
@@ -27,6 +28,8 @@ import { importMarket } from "~/actions/market";
 import { importTrustchainStoreState } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { importWalletState } from "@ledgerhq/live-wallet/store";
 import { importLargeMoverState } from "~/actions/largeMoverLandingPage";
+import { cryptoAssetsApi } from "@ledgerhq/cryptoassets/cal-client/state-manager/api";
+import { hydrateRtkQueryCache } from "@ledgerhq/live-persistence";
 
 interface Props {
   onInitFinished: () => void;
@@ -71,6 +74,7 @@ const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store 
         protect,
         initialCountervalues,
         largeMoverState,
+        cryptoAssetsCache,
       ] = await Promise.all([
         retry(getBle, MAX_RETRIES, RETRY_DELAY),
         retry(getSettings, MAX_RETRIES, RETRY_DELAY),
@@ -84,6 +88,7 @@ const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store 
         retry(getProtect, MAX_RETRIES, RETRY_DELAY),
         retry(getCountervalues, MAX_RETRIES, RETRY_DELAY),
         retry(getLargeMoverState, MAX_RETRIES, RETRY_DELAY),
+        retry(getCryptoAssetsCacheState, MAX_RETRIES, RETRY_DELAY),
       ]);
 
       store.dispatch(importBle(bleData));
@@ -161,6 +166,10 @@ const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store 
       if (largeMoverState) {
         store.dispatch(importLargeMoverState(largeMoverState));
       }
+
+      // Hydrate persisted crypto assets cache
+      // Cross-caching is automatic: tokens are cached under both ID and address lookups
+      hydrateRtkQueryCache(cryptoAssetsApi, store.dispatch, cryptoAssetsCache);
 
       setInitialCountervalues(initialCountervalues);
       setReady(true);

@@ -25,6 +25,9 @@ import {
   getCryptoCurrencyById,
   findCryptoCurrencyById,
 } from "@ledgerhq/live-common/currencies/index";
+import { cryptoAssetsApi } from "@ledgerhq/cryptoassets/cal-client/state-manager/api";
+import { hydrateRtkQueryCache } from "@ledgerhq/live-persistence";
+import { loadRtkQueryStateFromIndexedDB } from "@ledgerhq/live-persistence/implementations/redux-state-indexeddb";
 import logger, { enableDebugLogger } from "./logger";
 import { enableGlobalTab, disableGlobalTab, isGlobalTabEnabled } from "~/config/global-tab";
 import sentry from "~/sentry/renderer";
@@ -120,7 +123,17 @@ async function init() {
 
   setupCryptoAssetsStore(store);
 
+  // Hydrate persisted crypto assets cache from IndexedDB
+  // Cross-caching is automatic: tokens are cached under both ID and address lookups
+  try {
+    const cryptoAssetsCache = await loadRtkQueryStateFromIndexedDB();
+    hydrateRtkQueryCache(cryptoAssetsApi, store.dispatch, cryptoAssetsCache);
+  } catch (error) {
+    logger.error("Failed to load crypto assets cache from IndexedDB:", error);
+  }
+
   if (getEnv("PLAYWRIGHT_RUN")) {
+    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
     (window as Window & { __STORE__?: ReduxStore }).__STORE__ = store;
   }
   sentry(() => sentryLogsSelector(store.getState()));

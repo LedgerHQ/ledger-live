@@ -90,6 +90,7 @@
     "@ledgerhq/coin-multiversx": "workspace:^",
     "@ledgerhq/coin-stacks": "workspace:^",
     "@ledgerhq/cryptoassets": "workspace:^",
+    "@ledgerhq/live-persistence": "workspace:^",
     "@ledgerhq/device-management-kit": "catalog:",
     "@ledgerhq/devices": "workspace:*",
     "@ledgerhq/domain-service": "workspace:^",
