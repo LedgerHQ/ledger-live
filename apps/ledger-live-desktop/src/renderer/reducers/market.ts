@@ -13,7 +13,6 @@ const initialState: MarketState = {
     starred: [],
     order: Order.MarketCapDesc,
     search: "",
-    liveCompatible: false,
     counterCurrency: "USD",
   },
 };

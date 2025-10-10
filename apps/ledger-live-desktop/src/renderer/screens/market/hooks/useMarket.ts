@@ -8,7 +8,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { setMarketOptions } from "~/renderer/actions/market";
 import { useInitSupportedCounterValues } from "~/renderer/hooks/useInitSupportedCounterValues";
 import { marketParamsSelector } from "~/renderer/reducers/market";
-import { localeSelector, starredMarketCoinsSelector } from "~/renderer/reducers/settings";
+import { starredMarketCoinsSelector } from "~/renderer/reducers/settings";
 import { BASIC_REFETCH, REFETCH_TIME_ONE_MINUTE } from "../utils";
 import { addStarredMarketCoins, removeStarredMarketCoins } from "~/renderer/actions/settings";
 import { useModularDrawerData } from "LLD/features/ModularDrawer/hooks/useModularDrawerData";
@@ -19,7 +19,6 @@ export function useMarket() {
   const dispatch = useDispatch();
   const marketParams = useSelector(marketParamsSelector);
   const starredMarketCoins: string[] = useSelector(starredMarketCoinsSelector);
-  const locale = useSelector(localeSelector);
 
   const REFRESH_RATE =
     Number(lldRefreshMarketDataFeature?.params?.refreshTime) > 0
@@ -32,10 +31,13 @@ export function useMarket() {
 
   useInitSupportedCounterValues();
 
+  console.log("starred", starred);
+
   const { supportedCounterCurrencies } = useMarketDataProvider();
   const { sortedCryptoCurrenciesMarket, loadNext, isLoading } = useModularDrawerData({
     searchedValueMarket: search,
-    context: "MARKET",
+    currencyIds: starred.length > 0 ? starred : undefined,
+    areCurrenciesFiltered: starred.length > 0,
     pageSize: marketParams.limit,
     pollingInterval: REFRESH_RATE,
   });
@@ -78,12 +80,6 @@ export function useMarket() {
 
   const resetSearch = useCallback(() => refresh({ search: "" }), [refresh]);
 
-  const resetMarketPageToInital = (page: number) => {
-    if (page > 1) {
-      dispatch(setMarketOptions({ page: 1 }));
-    }
-  };
-
   const onLoadNextPage = useCallback(() => {
     loadNext?.();
   }, [loadNext]);
@@ -107,7 +103,7 @@ export function useMarket() {
   const toggleFilterByStarredAccounts = useCallback(() => {
     if (starredMarketCoins.length > 0 || starFilterOn) {
       const starred = starFilterOn ? [] : starredMarketCoins;
-      refresh({ starred, page: 1 });
+      refresh({ starred });
     }
   }, [refresh, starFilterOn, starredMarketCoins]);
 
@@ -142,13 +138,7 @@ export function useMarket() {
    * Refresh mechanism ----------------------------------------------
    */
 
-  const refetchData = useCallback((_pageToRefetch: number) => {
-    // Use RTK refetch from useModularDrawerData
-  }, []);
-
-  const checkIfDataIsStaleAndRefetch = useCallback((_scrollPosition: number) => {
-    // Use RTK refetch from useModularDrawerData for data refresh
-  }, []);
+  // TODO: Re-implement this
 
   /**
    *
@@ -167,9 +157,6 @@ export function useMarket() {
     refresh,
     resetSearch,
     setCounterCurrency,
-    checkIfDataIsStaleAndRefetch,
-    resetMarketPage: resetMarketPageToInital,
-    refetchData,
     freshLoading,
     supportedCounterCurrencies,
     t,
@@ -181,7 +168,6 @@ export function useMarket() {
     marketParams,
     timeRangeValue,
     itemCount,
-    locale,
     loading,
     currenciesLength,
     refreshRate: REFRESH_RATE,

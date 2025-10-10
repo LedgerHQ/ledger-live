@@ -7,14 +7,11 @@ import { useSelector } from "react-redux";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { AssetData } from "@ledgerhq/live-common/modularDrawer/utils/type";
 
-type Context = "MAD" | "MARKET";
-
 interface UseModularDrawerDataProps {
   currencyIds?: string[];
   useCase?: string;
   areCurrenciesFiltered?: boolean;
   searchedValueMarket?: string;
-  context?: Context;
   pageSize?: number;
   pollingInterval?: number;
 }
@@ -24,7 +21,6 @@ export function useModularDrawerData({
   useCase,
   areCurrenciesFiltered,
   searchedValueMarket,
-  context = "MAD",
   pageSize,
   pollingInterval,
 }: UseModularDrawerDataProps) {
@@ -74,15 +70,15 @@ export function useModularDrawerData({
 
   // Calcul conditionnel selon le contexte
   const sortedCryptoCurrencies = useMemo(() => {
-    if (context !== "MAD" || !assetsSorted || !data) return [];
+    if (!assetsSorted || !data) return [];
 
     return assetsSorted
       .map(assetData => data.cryptoOrTokenCurrencies[assetData.asset.id])
       .filter(currency => currency !== undefined);
-  }, [assetsSorted, data, context]);
+  }, [assetsSorted, data]);
 
   const sortedCryptoCurrenciesMarket = useMemo(() => {
-    if (context !== "MARKET" || !assetsSorted || !data) return [];
+    if (!assetsSorted || !data) return [];
 
     return assetsSorted
       .map(assetData => ({
@@ -91,7 +87,7 @@ export function useModularDrawerData({
         asset: assetData.asset,
       }))
       .filter(el => el.currency !== undefined);
-  }, [assetsSorted, data, context]);
+  }, [assetsSorted, data]);
 
   return {
     data,

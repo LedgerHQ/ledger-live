@@ -17,6 +17,8 @@ import FormattedVal from "~/renderer/components/FormattedVal";
 import { useGetStakeLabelLocaleBased } from "~/renderer/hooks/useGetStakeLabelLocaleBased";
 import { useMarketActions, Page } from "../../hooks/useMarketActions";
 import { SimpleSparkline } from "./SimpleSparkline";
+import { useSelector } from "react-redux";
+import { localeSelector } from "~/renderer/reducers/settings";
 
 const EllipsisText = styled(Text)`
   width: 100%;
@@ -40,7 +42,6 @@ type Props = {
   counterCurrency?: string;
   style: React.CSSProperties;
   loading: boolean;
-  locale: string;
   isStarred: boolean;
   toggleStar: () => void;
   range?: string;
@@ -50,7 +51,6 @@ export const MarketRow = memo<Props>(function MarketRowItem({
   style,
   item,
   counterCurrency,
-  locale,
   loading,
   isStarred,
   toggleStar,
@@ -58,6 +58,7 @@ export const MarketRow = memo<Props>(function MarketRowItem({
 }: Props) {
   const history = useHistory();
   const { t } = useTranslation();
+  const locale = useSelector(localeSelector);
 
   const { onBuy, onStake, onSwap, availableOnBuy, availableOnSwap, availableOnStake } =
     useMarketActions({ currency: item?.currency, page: Page.Market });
@@ -231,7 +232,6 @@ type CurrencyRowProps = {
   loading: boolean;
   toggleStar: (id: string, isStarred: boolean) => void;
   starredMarketCoins: string[];
-  locale: string;
   range?: string;
   style: React.CSSProperties;
 };
@@ -243,7 +243,6 @@ export const CurrencyRow = memo(function CurrencyRowItem({
   loading,
   toggleStar,
   starredMarketCoins,
-  locale,
   style,
   range,
 }: CurrencyRowProps) {
@@ -258,7 +257,6 @@ export const CurrencyRow = memo(function CurrencyRowItem({
       isStarred={!!isStarred}
       toggleStar={() => currency?.asset.id && toggleStar(currency.asset.id, !!isStarred)}
       key={index}
-      locale={locale}
       style={{ ...style }}
       range={range}
     />

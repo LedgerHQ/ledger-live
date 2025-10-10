@@ -62,42 +62,21 @@ export function useAssetsData({
     },
     {
       pollingInterval: pollingInterval || 0,
-      skipPollingIfUnfocused: false,
+      skipPollingIfUnfocused: true,
     },
   );
 
-  // Optimized merge with deduplication using Set for performance
   const joinedPages = useMemo(() => {
-    if (!data?.pages?.length) return emptyData();
-
-    return data.pages.reduce<AssetsDataWithPagination>((acc, page) => {
-      // Merge objects (Object.assign handles duplicates by overwriting)
+    return data?.pages.reduce<AssetsDataWithPagination>((acc, page) => {
       Object.assign(acc.cryptoAssets, page.cryptoAssets);
       Object.assign(acc.networks, page.networks);
       Object.assign(acc.cryptoOrTokenCurrencies, page.cryptoOrTokenCurrencies);
       Object.assign(acc.interestRates, page.interestRates);
       Object.assign(acc.markets, page.markets);
 
-      // Efficient deduplication using Set for arrays
-      const existingCurrenciesIds = new Set(acc.currenciesOrder.currenciesIds);
-      const existingMetaCurrencyIds = new Set(acc.currenciesOrder.metaCurrencyIds);
+      acc.currenciesOrder.currenciesIds.push(...page.currenciesOrder.currenciesIds);
+      acc.currenciesOrder.metaCurrencyIds.push(...page.currenciesOrder.metaCurrencyIds);
 
-      // Add only new items to prevent duplicates
-      page.currenciesOrder.currenciesIds.forEach(id => {
-        if (!existingCurrenciesIds.has(id)) {
-          acc.currenciesOrder.currenciesIds.push(id);
-          existingCurrenciesIds.add(id);
-        }
-      });
-
-      page.currenciesOrder.metaCurrencyIds.forEach(id => {
-        if (!existingMetaCurrencyIds.has(id)) {
-          acc.currenciesOrder.metaCurrencyIds.push(id);
-          existingMetaCurrencyIds.add(id);
-        }
-      });
-
-      // Update order metadata from the latest page
       acc.currenciesOrder.key = page.currenciesOrder.key;
       acc.currenciesOrder.order = page.currenciesOrder.order;
       acc.pagination.nextCursor = page.pagination.nextCursor;
@@ -105,9 +84,6 @@ export function useAssetsData({
       return acc;
     }, emptyData());
   }, [data]);
-
-  // With mergePages function, RTK Query handles order changes automatically
-  // No need for manual order detection and refetching
 
   const hasMore = Boolean(joinedPages?.pagination.nextCursor);
 

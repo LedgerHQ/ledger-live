@@ -75,8 +75,6 @@ export const assetsDataApi = createApi({
             return undefined;
           }
         },
-        // Limit cache to 5 pages to prevent memory issues and handle order changes
-        maxPages: 5,
       },
     }),
     getAssetData: build.query<AssetsDataWithPagination, GetAssetsDataParams>({

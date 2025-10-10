@@ -22,7 +22,6 @@ type MarketListProps = {
   currenciesLength: number;
   marketParams: MarketListRequestParams;
   itemCount: number;
-  locale: string;
   marketData: {
     currency: CryptoOrTokenCurrency;
     market: Partial<MarketItemResponse>;
@@ -41,7 +40,6 @@ type MarketListProps = {
   t: TFunction;
   isItemLoaded: (index: number) => boolean;
   onLoadNextPage: (startIndex: number, stopIndex: number) => void;
-  checkIfDataIsStaleAndRefetch: (scrollOffset: number) => void;
 };
 
 function MarketList({
@@ -51,7 +49,6 @@ function MarketList({
   freshLoading,
   itemCount,
   currenciesLength,
-  locale,
   marketData,
   resetSearch,
   isItemLoaded,
@@ -59,7 +56,6 @@ function MarketList({
   toggleSortBy,
   toggleStar,
   onLoadNextPage,
-  checkIfDataIsStaleAndRefetch,
   t,
 }: MarketListProps) {
   const { order, search, starred, range, counterCurrency } = marketParams;
@@ -87,19 +83,10 @@ function MarketList({
         loading={loading}
         toggleStar={toggleStar}
         starredMarketCoins={starredMarketCoins}
-        locale={locale}
         range={range}
       />
     ),
-    [counterCurrency, loading, toggleStar, starredMarketCoins, locale, range],
-  );
-
-  // Memoize the scroll handler
-  const handleScroll = useCallback(
-    ({ scrollOffset }: { scrollOffset: number }) => {
-      checkIfDataIsStaleAndRefetch(scrollOffset);
-    },
-    [checkIfDataIsStaleAndRefetch],
+    [counterCurrency, loading, toggleStar, starredMarketCoins, range],
   );
 
   // Memoize the loading skeleton count
@@ -170,7 +157,6 @@ function MarketList({
                         style={{ overflowX: "hidden" }}
                         ref={ref}
                         overscanCount={10}
-                        onScroll={handleScroll}
                       >
                         {RowRenderer}
                       </List>
