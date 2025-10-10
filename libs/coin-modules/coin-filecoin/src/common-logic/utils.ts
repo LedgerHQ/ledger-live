@@ -18,13 +18,12 @@ import { buildTokenAccounts } from "../erc20/tokenAccounts";
 export const mapTxToOps =
   (accountId: string, { address }: AccountShapeInfo) =>
   (tx: TransactionResponse): Operation[] => {
-    const { to, from, hash, timestamp, amount, fee_data: feeDataRaw, status } = tx;
-    const feeData: FeeData | undefined = feeDataRaw ? JSON.parse(feeDataRaw) : undefined;
+    const { to, from, hash, timestamp, amount, fee_data, status } = tx;
 
     const ops: Operation[] = [];
     const date = new Date(timestamp * 1000);
     const value = new BigNumber(amount);
-    const feeToUse = new BigNumber(feeData?.TotalCost || 0);
+    const feeToUse = new BigNumber(fee_data?.TotalCost || 0);
 
     const isSending = address === from;
     const isReceiving = address === to;

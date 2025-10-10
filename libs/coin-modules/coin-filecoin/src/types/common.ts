@@ -35,7 +35,7 @@ export interface TransactionResponse {
   amount: string;
   to: string;
   from: string;
-  fee_data?: string;
+  fee_data?: FeeData;
   status: string;
   type: string;
   hash: string;
