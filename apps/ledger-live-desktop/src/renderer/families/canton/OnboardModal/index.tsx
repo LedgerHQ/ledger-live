@@ -160,11 +160,25 @@ class OnboardModal extends PureComponent<Props, State> {
     if (completedAccount) {
       accounts.push(completedAccount);
     }
+
+    // on previous step we don’t have a partyId yet for onboarding account
+    // so editedNames use a temporary account ID
+    // since only one account is onboarded at a time, we cane filter out importableAccounts renamings
+    // what is left belongs to the onboarded account
+    const importableAccountIds = new Set(importableAccounts.map(acc => acc.id));
+    const [, completedAccountName] =
+      Object.entries(editedNames).find(([accountId]) => !importableAccountIds.has(accountId)) || [];
+
     const renamings = Object.fromEntries(
-      accounts.map(account => [
-        account.id,
-        editedNames[account.id] || getDefaultAccountName(account),
-      ]),
+      accounts.map(account => {
+        let accountName = editedNames[account.id];
+
+        if (completedAccount && account.id === completedAccount.id && completedAccountName) {
+          accountName = completedAccountName;
+        }
+
+        return [account.id, accountName || getDefaultAccountName(account)];
+      }),
     );
 
     addAccountsAction({
