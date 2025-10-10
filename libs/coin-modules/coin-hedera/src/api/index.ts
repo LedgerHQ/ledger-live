@@ -22,7 +22,7 @@ import {
   getTokenFromAsset,
   lastBlock,
 } from "../logic/index";
-import { base64ToUrlSafeBase64, mapIntentToSDKOperation, getOperationValue } from "../logic/utils";
+import { mapIntentToSDKOperation, getOperationValue } from "../logic/utils";
 import { hederaMirrorNode } from "../network/mirror";
 import type { HederaMemo } from "../types";
 
@@ -34,9 +34,8 @@ export function createApi(config: HederaConfig): Api<HederaMemo> {
     broadcast: async tx => {
       const response = await logicBroadcast(tx);
       const base64Hash = Buffer.from(response.transactionHash).toString("base64");
-      const base64HashUrlSafe = base64ToUrlSafeBase64(base64Hash);
 
-      return base64HashUrlSafe;
+      return base64Hash;
     },
     combine,
     craftTransaction: async (txIntent, customFees) => {
@@ -72,6 +71,8 @@ export function createApi(config: HederaConfig): Api<HederaMemo> {
         pagination,
         mirrorTokens,
         fetchAllPages: false,
+        skipFeesForTokenOperations: true,
+        useEncodedHash: false,
       });
 
       const liveOperations = [

@@ -67,6 +67,8 @@ export const getAccountShape: GetAccountShape<HederaAccount> = async (
       ...(latestOperationTimestamp && { lastPagingToken: latestOperationTimestamp.toString() }),
     },
     fetchAllPages: true,
+    skipFeesForTokenOperations: false,
+    useEncodedHash: true,
   });
 
   const newSubAccounts = await getSubAccounts(
@@ -122,7 +124,7 @@ export const buildIterateResult: IterateResultBuilder = async ({ result: rootRes
           address: addresses[index],
           publicKey: addresses[index],
           path: freshAddressPath,
-        } as Result)
+        } satisfies Result)
       : null;
   };
 };

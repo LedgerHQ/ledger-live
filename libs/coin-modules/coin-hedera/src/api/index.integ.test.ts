@@ -3,7 +3,6 @@ import { TokenAssociateTransaction, TransferTransaction } from "@hashgraph/sdk";
 import { FeeEstimation, Operation, Pagination } from "@ledgerhq/coin-framework/api/types";
 import { createApi } from "../api";
 import { HEDERA_TRANSACTION_MODES, TINYBAR_SCALE } from "../constants";
-import { base64ToUrlSafeBase64 } from "../logic/utils";
 import { MAINNET_TEST_ACCOUNTS } from "../test/fixtures/account.fixture";
 import type { HederaMemo } from "../types";
 
@@ -289,7 +288,7 @@ describe("createApi", () => {
 
       const ops = operations as unknown as Operation<HederaMemo>[];
       const memoTxHash = "WvMcFERtxRsGJqxqGVDYa6JR5PqLgFeJxiSVoimayaWra/AMEJMzC09LhdRLTZ/M";
-      const operationWithMemo = ops.find(op => op.tx.hash === base64ToUrlSafeBase64(memoTxHash));
+      const operationWithMemo = ops.find(op => op.tx.hash === memoTxHash);
       const firstTokenAssociateOperations = ops.find(op => op.type === "ASSOCIATE_TOKEN");
       const firstSendTokenOperation = ops.find(o => o.type === "OUT" && o.asset.type !== "native");
 
@@ -298,7 +297,7 @@ describe("createApi", () => {
       const hasReceiveTokenOperations = ops.some(o => o.type === "IN" && o.asset.type !== "native");
       const hasSendTokenOperations = !!firstSendTokenOperation;
       const hasTokenAssociateOperations = !!firstTokenAssociateOperations;
-      const hasCorrectFeesOperation = ops.some(
+      const hasFeesOperationForSendToken = ops.some(
         o =>
           o.type === "FEES" &&
           o.asset.type === "native" &&
@@ -311,8 +310,8 @@ describe("createApi", () => {
       expect(hasSendHbarOperations).toBe(true);
       expect(hasReceiveTokenOperations).toBe(true);
       expect(hasSendTokenOperations).toBe(true);
+      expect(hasFeesOperationForSendToken).toBe(false);
       expect(hasTokenAssociateOperations).toBe(true);
-      expect(hasCorrectFeesOperation).toBe(true);
       expect(operationWithMemo?.details).toMatchObject({
         pagingToken: expect.any(String),
         consensusTimestamp: expect.any(String),
