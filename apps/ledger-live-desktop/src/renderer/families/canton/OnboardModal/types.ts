@@ -31,6 +31,7 @@ export type StepProps = {
   onAddMore: () => void;
   onAuthorizePreapproval: () => void;
   onOnboardAccount: () => void;
-  onRetry: () => void;
+  onRetryOnboardAccount: () => void;
+  onRetryPreapproval: () => void;
   transitionTo: (stepId: StepId) => void;
 };

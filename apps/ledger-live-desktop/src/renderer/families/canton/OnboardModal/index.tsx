@@ -119,9 +119,18 @@ class OnboardModal extends PureComponent<Props, State> {
     }
   };
 
-  handleRetry = () => {
+  handleRetryOnboardAccount = () => {
     this.handleUnsubscribe();
     this.setState({ ...INITIAL_STATE });
+  };
+
+  handleRetryPreapproval = () => {
+    this.handleUnsubscribe();
+    this.setState({
+      authorizeStatus: AuthorizeStatus.INIT,
+      isProcessing: false,
+      error: null,
+    });
   };
 
   handleStepChange = ({ id }: Step<StepId, StepProps>) => {
@@ -182,6 +191,10 @@ class OnboardModal extends PureComponent<Props, State> {
       error: null,
     });
 
+    if (this.onboardingSubscription) {
+      this.onboardingSubscription.unsubscribe();
+    }
+
     this.onboardingSubscription = this.cantonBridge
       ?.onboardAccount(currency, device.deviceId, creatableAccount)
       .subscribe({
@@ -228,6 +241,10 @@ class OnboardModal extends PureComponent<Props, State> {
     });
 
     const { completedAccount, partyId } = onboardingResult;
+
+    if (this.authorizeSubscription) {
+      this.authorizeSubscription.unsubscribe();
+    }
 
     this.authorizeSubscription = this.cantonBridge
       ?.authorizePreapproval(currency, device.deviceId, completedAccount, partyId)
@@ -284,7 +301,8 @@ class OnboardModal extends PureComponent<Props, State> {
       onAddMore: this.handleAddMore,
       onAuthorizePreapproval: this.handleAuthorizePreapproval,
       onOnboardAccount: this.handleOnboardAccount,
-      onRetry: this.handleRetry,
+      onRetryOnboardAccount: this.handleRetryOnboardAccount,
+      onRetryPreapproval: this.handleRetryPreapproval,
       transitionTo: this.transitionTo,
     };
 

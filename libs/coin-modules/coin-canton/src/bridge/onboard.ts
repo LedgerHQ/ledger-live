@@ -3,6 +3,7 @@ import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import type { Account } from "@ledgerhq/types-live";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { log } from "@ledgerhq/logs";
+import { encodeAccountId } from "@ledgerhq/coin-framework/account/accountId";
 import {
   prepareOnboarding,
   submitOnboarding,
@@ -47,6 +48,22 @@ export const isCantonCoinPreapproved = async (currency: CryptoCurrency, partyId:
   return isPreapproved;
 };
 
+const createOnboardedAccount = (
+  account: Account,
+  partyId: string,
+  currency: CryptoCurrency,
+): Account => ({
+  ...account,
+  xpub: partyId,
+  id: encodeAccountId({
+    type: "js",
+    version: "2",
+    currencyId: currency.id,
+    xpubOrAddress: partyId,
+    derivationMode: account.derivationMode,
+  }),
+});
+
 export const buildOnboardAccount =
   (signerContext: SignerContext<CantonSigner>) =>
   (
@@ -69,7 +86,8 @@ export const buildOnboardAccount =
 
         let { partyId } = await isAccountOnboarded(currency, publicKey);
         if (partyId) {
-          o.next({ partyId, account }); // success
+          const onboardedAccount = createOnboardedAccount(account, partyId, currency);
+          o.next({ partyId, account: onboardedAccount }); // success
           return;
         }
 
@@ -89,7 +107,8 @@ export const buildOnboardAccount =
 
         await submitOnboarding(currency, publicKey, preparedTransaction, signature);
 
-        o.next({ partyId, account }); // success
+        const onboardedAccount = createOnboardedAccount(account, partyId, currency);
+        o.next({ partyId, account: onboardedAccount }); // success
       }
 
       main().then(
