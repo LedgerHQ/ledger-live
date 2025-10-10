@@ -100,7 +100,7 @@ setSupportedCurrencies([
   "linea",
   "ton",
   "mina",
-  "kadena"
+  "kadena",
 ]);
 
 LiveConfig.setConfig(liveConfig);
