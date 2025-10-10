@@ -4,17 +4,43 @@
 
 Ledger's material for crypto currencies, tokens and fiats. Also includes signatures required by Nano devices for these tokens.
 
-**DO NOT EDIT because this library is generated.**
+This library provides dynamic RTK Query-based token lookup capabilities through the **CAL (Crypto Assets List) Client**. The previously included static crypto asset data is deprecated and will be removed soon.
 
-## Usage
+> **NB: @ledgerhq/cryptoassets library will soon move to the top level `libs/` as it is no longer needed among ledgerjs libraries.**
 
-There are two modes of usage of this library.
+## CAL Client
 
-*   The all-in way: you want to have all the data available (ERC20 token loaded,...). To do this, you simply import `@ledgerhq/cryptoassets`
-*   The custom way: you can import individual data piece from `@ledgerhq/cryptoassets/data/*`. For instance, importing the ERC20 signatures can be done with `@ledgerhq/cryptoassets/data/erc20-signatures` sub module.
+The **CAL (Crypto Assets List) Client** is the main interface for fetching and managing token data dynamically via API.
 
-## Importing CAL tokens in cryptoassets data
+**Key features:**
+- 🚀 Dynamic token data fetching via CAL API
+- 📦 RTK Query integration for efficient caching and state management
+- 🔄 Infinite scroll pagination support
+- ⚡ Environment-aware with `getEnv()` integration
+- 🔍 Multiple lookup methods (by ID, address, network)
 
-```bash
-pnpm import:cal-tokens
+**📚 [See the complete CAL Client documentation →](./src/cal-client/README.md)**
+
+### Quick Example
+
+```typescript
+import { cryptoAssetsApi } from "@ledgerhq/cryptoassets/cal-client";
+import { useTokensData } from "@ledgerhq/cryptoassets/cal-client/hooks/useTokensData";
+
+// Setup Redux store
+const store = configureStore({
+  reducer: {
+    [cryptoAssetsApi.reducerPath]: cryptoAssetsApi.reducer,
+  },
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware().concat(cryptoAssetsApi.middleware),
+});
+
+// Use in components
+function TokensList() {
+  const { data, isLoading, loadNext } = useTokensData({
+    networkFamily: ["ethereum"],
+  });
+  // ... render tokens
+}
 ```
