@@ -10,7 +10,7 @@ const BodyBox = styled(Box)`
   flex-direction: column;
   gap: 32px;
   overflow-y: auto;
-  max-height: calc(100vh - 26%);
+  max-height: calc(100vh - 30%);
 `;
 
 interface MainBodyProps {
