@@ -17,6 +17,7 @@ import { TrustchainStore } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { getEnv } from "@ledgerhq/live-env";
 import countervalues, { CountervaluesState } from "./countervalues";
 import { assetsDataApi } from "@ledgerhq/live-common/dada-client/state-manager/api";
+import { cryptoAssetsApi } from "../store/cryptoAssetsStoreSetup";
 import modularDrawer, { ModularDrawerState } from "./modularDrawer";
 
 export type State = {
@@ -24,6 +25,7 @@ export type State = {
   application: ApplicationState;
   assetsDataApi: ReturnType<typeof assetsDataApi.reducer>;
   countervalues: CountervaluesState;
+  cryptoAssetsApi: ReturnType<typeof cryptoAssetsApi.reducer>;
   devices: DevicesState;
   dynamicContent: DynamicContentState;
   market: MarketState;
@@ -42,6 +44,7 @@ export default combineReducers({
   application,
   assetsDataApi: assetsDataApi.reducer,
   countervalues,
+  cryptoAssetsApi: cryptoAssetsApi.reducer,
   devices,
   dynamicContent,
   modals,

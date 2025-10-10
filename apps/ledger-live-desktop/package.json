@@ -79,6 +79,7 @@
     "@ledgerhq/live-countervalues-react": "workspace:^",
     "@ledgerhq/live-dmk-desktop": "workspace:^",
     "@ledgerhq/live-env": "workspace:^",
+    "@ledgerhq/live-persistence": "workspace:^",
     "@ledgerhq/live-network": "workspace:^",
     "@ledgerhq/live-wallet": "workspace:^",
     "@ledgerhq/logs": "workspace:^",
