@@ -1,7 +1,7 @@
 import { valid, gte } from "semver";
 import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { getEnv } from "@ledgerhq/live-env";
-import { findExchangeCurrencyConfig as findProdExchangeCurrencyConfig } from "@ledgerhq/cryptoassets";
+// import { findExchangeCurrencyConfig as findProdExchangeCurrencyConfig } from "@ledgerhq/cryptoassets";
 import calService from "@ledgerhq/ledger-cal-service";
 // Minimum version of a currency app which has exchange capabilities, meaning it can be used
 // for sell/swap, and do silent signing.
@@ -50,7 +50,7 @@ export const getCurrencyExchangeConfig = async (
     }
   } catch (error) {
     // Fallback to old production config if the primary fetch fails, should be removed when we have a HA CAL
-    res = await findProdExchangeCurrencyConfig(currency.id);
+    // res = await findProdExchangeCurrencyConfig(currency.id);
 
     if (!res) {
       throw new Error(`Exchange, missing configuration for ${currency.id}`);

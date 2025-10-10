@@ -11,12 +11,14 @@ import {
   ledgerFirstValidators,
 } from "./utils";
 import { getValidators, ValidatorsAppValidator } from "./network/validator-app";
-import spltokensList, { hash as embeddedHash, SPLToken } from "@ledgerhq/cryptoassets/data/spl";
+// disabled in context of the PoC
+// import spltokensList, { hash as embeddedHash, SPLToken } from "@ledgerhq/cryptoassets/data/spl";
+import type { SPLToken } from "@ledgerhq/cryptoassets/data/spl";
 import { fetchTokensFromCALService } from "@ledgerhq/cryptoassets/crypto-assets-importer/fetch/index";
 import { getCALHash, setCALHash } from "./logic";
 import { addTokens } from "@ledgerhq/cryptoassets/tokens";
 import { convertSplTokens } from "@ledgerhq/cryptoassets/legacy/legacy-utils";
-import { AxiosError } from "axios";
+// import { AxiosError } from "axios";
 
 let shouldSkipTokenLoading = false;
 
@@ -30,7 +32,7 @@ export const fetchSPLTokens: (
   currency: CryptoCurrency,
 ) => Promise<SPLToken[] | null> = async currency => {
   const latestCALHash = getCALHash(currency);
-  const calHash = latestCALHash || embeddedHash;
+  const calHash = latestCALHash; // || embeddedHash;
 
   try {
     const { tokens, hash } = await fetchTokensFromCALService(
@@ -57,6 +59,7 @@ export const fetchSPLTokens: (
 
     return splTokens;
   } catch (e) {
+    /*
     if (e instanceof AxiosError && e.response?.status === 304) {
       log(
         "solana/preload",
@@ -72,6 +75,7 @@ export const fetchSPLTokens: (
       }
       return null;
     }
+      */
 
     log("solana/preload", `failure to retrieve tokens for solana`, e);
     return null;
@@ -147,10 +151,12 @@ function hydrateV1(data: SolanaPreloadDataV1, currency: CryptoCurrency) {
     return;
   }
 
+  /*
   if (!shouldSkipTokenLoading) {
     addTokens(spltokensList.map(convertSplTokens));
   }
-
   log("solana/preload", `hydrate fallback ${spltokensList.length} embedded tokens`);
+    */
+
   setPreloadData(data, currency);
 }

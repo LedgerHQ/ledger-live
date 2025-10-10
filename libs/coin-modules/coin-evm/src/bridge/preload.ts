@@ -1,11 +1,14 @@
-import { AxiosError } from "axios";
 import { log } from "@ledgerhq/logs";
 import { addTokens } from "@ledgerhq/cryptoassets/tokens";
 import { convertERC20 } from "@ledgerhq/cryptoassets/legacy/legacy-utils";
+// Disabled in context of the PoC
+/*
+import { AxiosError } from "axios";
 import {
   tokens as tokensByChainId,
   hashes as embeddedHashesByChainId,
 } from "@ledgerhq/cryptoassets/data/evm/index";
+ */
 import { ERC20Token } from "@ledgerhq/cryptoassets/types";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { fetchTokensFromCALService } from "@ledgerhq/cryptoassets/crypto-assets-importer/fetch/index";
@@ -24,7 +27,7 @@ export const fetchERC20Tokens: (
 
   if (!chainId) return null;
 
-  const embeddedHash = embeddedHashesByChainId[chainId as keyof typeof embeddedHashesByChainId];
+  // const embeddedHash = embeddedHashesByChainId[chainId as keyof typeof embeddedHashesByChainId];
   const latestCALHash = getCALHash(currency);
   try {
     const { tokens, hash } = await fetchTokensFromCALService(
@@ -42,7 +45,7 @@ export const fetchERC20Tokens: (
         "contract_address",
         "delisted",
       ],
-      latestCALHash || embeddedHash,
+      latestCALHash, // || embeddedHash,
     );
     setCALHash(currency, hash || "");
 
@@ -65,6 +68,7 @@ export const fetchERC20Tokens: (
       ];
     });
   } catch (e) {
+    /*
     if (e instanceof AxiosError && e.response?.status === 304) {
       log(
         "evm/preload",
@@ -79,6 +83,7 @@ export const fetchERC20Tokens: (
     }
 
     log("evm/preload", `failure to retrieve tokens for ${chainId}`, e);
+    */
     return null;
   }
 };
@@ -94,13 +99,15 @@ export async function preload(currency: CryptoCurrency): Promise<ERC20Token[] | 
   return erc20;
 }
 
-export function hydrate(value: unknown, currency: CryptoCurrency): void {
+export function hydrate(value: unknown, _currency: CryptoCurrency): void {
   if (shouldSkipTokenLoading) return;
   if (!Array.isArray(value)) {
+    /*
     const { chainId } = currency.ethereumLikeInfo || {};
     const tokens = tokensByChainId[chainId as keyof typeof tokensByChainId] || [];
     addTokens(tokens.map(convertERC20));
     log("evm/preload", `hydrate fallback ${tokens.length} embedded tokens`);
+    */
     return;
   }
 
