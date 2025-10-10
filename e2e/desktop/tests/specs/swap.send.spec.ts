@@ -97,7 +97,7 @@ const swaps = [
   {
     fromAccount: TokenAccount.CELO_1,
     toAccount: Account.SOL_1,
-    xrayTicket: "B2CQA-3907",
+    xrayTicket: "B2CQA-4011",
     tag: ["@NanoSP", "@NanoX"],
   },
 ];
