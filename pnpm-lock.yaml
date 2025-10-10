@@ -57,9 +57,9 @@ patchedDependencies:
   '@taquito/http-utils':
     hash: aiot5euhizbymrbw2f4jjw7j2i
     path: patches/@taquito__http-utils.patch
-  '@ton/core@0.60.1':
+  '@ton/core':
     hash: lboaji3braahojqczblp7nlo7m
-    path: patches/@ton__core@0.60.1.patch
+    path: patches/@ton__core.patch
   asyncstorage-down@4.2.0:
     hash: 2npkndps6fxdasqj3xzcrnnfbe
     path: patches/asyncstorage-down@4.2.0.patch
@@ -4302,14 +4302,14 @@ importers:
         specifier: workspace:^
         version: link:../../ledgerjs/packages/types-live
       '@ton/core':
-        specifier: ^0.60.1
-        version: 0.60.1(patch_hash=lboaji3braahojqczblp7nlo7m)(@ton/crypto@3.3.0)
+        specifier: ^0.62.0
+        version: 0.62.0(patch_hash=lboaji3braahojqczblp7nlo7m)(@ton/crypto@3.3.0)
       '@ton/crypto':
         specifier: ^3.3.0
         version: 3.3.0
       '@ton/ton':
-        specifier: ^15.2.1
-        version: 15.2.1(@ton/core@0.60.1(patch_hash=lboaji3braahojqczblp7nlo7m)(@ton/crypto@3.3.0))(@ton/crypto@3.3.0)
+        specifier: ^15.4.0
+        version: 15.4.0(@ton/core@0.62.0(patch_hash=lboaji3braahojqczblp7nlo7m)(@ton/crypto@3.3.0))(@ton/crypto@3.3.0)
       bignumber.js:
         specifier: ^9.1.2
         version: 9.1.2
@@ -4844,11 +4844,11 @@ importers:
   libs/deeplink-module:
     dependencies:
       '@ledgerhq/wallet-api-client':
-        specifier: ^1.12.2
-        version: 1.12.2(@ton/crypto@3.3.0)
+        specifier: ^1.12.3
+        version: 1.12.3(@ton/crypto@3.3.0)
       '@ledgerhq/wallet-api-core':
-        specifier: ^1.24.2
-        version: 1.24.2(@ton/crypto@3.3.0)
+        specifier: ^1.25.0
+        version: 1.25.0(@ton/crypto@3.3.0)
     devDependencies:
       '@types/node':
         specifier: ^22.10.10
@@ -5112,11 +5112,11 @@ importers:
   libs/exchange-module:
     dependencies:
       '@ledgerhq/wallet-api-client':
-        specifier: ^1.12.2
-        version: 1.12.2(@ton/crypto@3.3.0)
+        specifier: ^1.12.3
+        version: 1.12.3(@ton/crypto@3.3.0)
       '@ledgerhq/wallet-api-core':
-        specifier: ^1.24.2
-        version: 1.24.2(@ton/crypto@3.3.0)
+        specifier: ^1.25.0
+        version: 1.25.0(@ton/crypto@3.3.0)
       bignumber.js:
         specifier: 9.1.2
         version: 9.1.2
@@ -5466,17 +5466,17 @@ importers:
         specifier: workspace:^
         version: link:../wallet-api-acre-module
       '@ledgerhq/wallet-api-client':
-        specifier: ^1.12.2
-        version: 1.12.2(@ton/crypto@3.3.0)
+        specifier: ^1.12.3
+        version: 1.12.3(@ton/crypto@3.3.0)
       '@ledgerhq/wallet-api-core':
-        specifier: ^1.24.2
-        version: 1.24.2(@ton/crypto@3.3.0)
+        specifier: ^1.25.0
+        version: 1.25.0(@ton/crypto@3.3.0)
       '@ledgerhq/wallet-api-exchange-module':
         specifier: workspace:^
         version: link:../exchange-module
       '@ledgerhq/wallet-api-server':
-        specifier: ^1.13.2
-        version: 1.13.2(@ton/crypto@3.3.0)(react@18.3.1)(rxjs@7.8.1)
+        specifier: ^1.13.3
+        version: 1.13.3(@ton/crypto@3.3.0)(react@18.3.1)(rxjs@7.8.1)
       '@noble/curves':
         specifier: ^1.9.7
         version: 1.9.7
@@ -5496,11 +5496,11 @@ importers:
         specifier: ^23.0.0-RC.0
         version: 23.0.0-beta.1
       '@ton-community/ton-ledger':
-        specifier: ^7.2.0
-        version: 7.2.0(@ton/core@0.60.1(patch_hash=lboaji3braahojqczblp7nlo7m)(@ton/crypto@3.3.0))
+        specifier: ^7.3.0
+        version: 7.3.0(@ton/core@0.62.0(patch_hash=lboaji3braahojqczblp7nlo7m)(@ton/crypto@3.3.0))
       '@ton/core':
-        specifier: ^0.60.1
-        version: 0.60.1(patch_hash=lboaji3braahojqczblp7nlo7m)(@ton/crypto@3.3.0)
+        specifier: ^0.62.0
+        version: 0.62.0(patch_hash=lboaji3braahojqczblp7nlo7m)(@ton/crypto@3.3.0)
       '@ton/crypto':
         specifier: ^3.3.0
         version: 3.3.0
@@ -9422,11 +9422,11 @@ importers:
   libs/wallet-api-acre-module:
     dependencies:
       '@ledgerhq/wallet-api-client':
-        specifier: ^1.12.2
-        version: 1.12.2(@ton/crypto@3.3.0)
+        specifier: ^1.12.3
+        version: 1.12.3(@ton/crypto@3.3.0)
       '@ledgerhq/wallet-api-core':
-        specifier: ^1.24.2
-        version: 1.24.2(@ton/crypto@3.3.0)
+        specifier: ^1.25.0
+        version: 1.25.0(@ton/crypto@3.3.0)
     devDependencies:
       '@types/node':
         specifier: ^22.10.10
@@ -9484,17 +9484,17 @@ importers:
         specifier: workspace:*
         version: link:../../libs/ledger-live-common
       '@ledgerhq/wallet-api-client':
-        specifier: ^1.12.2
-        version: 1.12.2(@ton/crypto@3.3.0)
+        specifier: ^1.12.3
+        version: 1.12.3(@ton/crypto@3.3.0)
       '@ledgerhq/wallet-api-client-react':
-        specifier: ^1.4.18
-        version: 1.4.18(@ton/crypto@3.3.0)(react@18.3.1)
+        specifier: ^1.4.19
+        version: 1.4.19(@ton/crypto@3.3.0)(react@18.3.1)
       '@ledgerhq/wallet-api-deeplink-module':
         specifier: workspace:*
         version: link:../../libs/deeplink-module
       '@ledgerhq/wallet-api-simulator':
-        specifier: ^1.2.17
-        version: 1.2.17(@ton/crypto@3.3.0)(react@18.3.1)
+        specifier: ^1.2.19
+        version: 1.2.19(@ton/crypto@3.3.0)(react@18.3.1)
       '@solana/web3.js':
         specifier: 1.95.4
         version: 1.95.4
@@ -14741,8 +14741,8 @@ packages:
   '@ledgerhq/errors@6.19.1':
     resolution: {integrity: sha512-75yK7Nnit/Gp7gdrJAz0ipp31CCgncRp+evWt6QawQEtQKYEDfGo10QywgrrBBixeRxwnMy1DP6g2oCWRf1bjw==}
 
-  '@ledgerhq/errors@6.25.0':
-    resolution: {integrity: sha512-9cU0dgUyq3Adb1bHAjJnbwl+r+4WBjuPq0k+/DbBNpuYHwcz2xKtRIjLimUJyACjHti3iWwRt1sFcbQDDdI08w==}
+  '@ledgerhq/errors@6.26.0':
+    resolution: {integrity: sha512-4OlisaDBafkn7KN5emue08lCGMVREX6T+nxj47C7W30EBA/leLAEDaVvUw5/gFOWrv8Q2A9Scb8aMM3uokyt0w==}
 
   '@ledgerhq/evm-tools@1.3.0':
     resolution: {integrity: sha512-NeMhQlcEJRkgM4Yaap+Xngm2wIib3wUoXJTvIbBt8L/yJu5A0fN8v84pprh50JC7e1X0sL4r8do8XqdxXb9Gpg==}
@@ -14795,25 +14795,19 @@ packages:
   '@ledgerhq/ui-shared@0.2.2':
     resolution: {integrity: sha512-3ASYnyqnZFMRnySADZziM3IIJ2SRQ7lKrRPwpihhf+SsyP7TIo6o4UXMY8eYOupdTARlElS4Qpk4nRL/Ln62Ng==}
 
-  '@ledgerhq/wallet-api-client-react@1.4.18':
-    resolution: {integrity: sha512-dBzcxti7wpNfsqV7rch7sxv4Shg/TnCCQuWoa08vsqBaJilQneno0+NNemf9xogk1qMQaoELuDy+tlzL7SOweA==}
+  '@ledgerhq/wallet-api-client-react@1.4.19':
+    resolution: {integrity: sha512-rAwaOSLvnMSu4KN380NdiW4dc2zdzyp05KAPj/b+UITjkOltXPQs5vePxsJ+fBkcuzDQ6egxF37czhj6ulhQ1w==}
     peerDependencies:
       react: ^16.8.0 || ^17 || ^18 || ^19
 
-  '@ledgerhq/wallet-api-client@1.12.1':
-    resolution: {integrity: sha512-WELyZCy5cyUntgqHmU/i8UbQAvUczyCk4s8YhkaFwKwEVrjPEvgXZaT16p0ZguFQa64GwTJHWcKaINI7IsYUvg==}
+  '@ledgerhq/wallet-api-client@1.12.3':
+    resolution: {integrity: sha512-/aRfuhQM0PYura1DTz12TOC7Mf4JpGIk9M8RWSFl/tOlbfjF/J9ewqrHHcsT1NMbuBVriQxbA20mlwjMtpNBcg==}
 
-  '@ledgerhq/wallet-api-client@1.12.2':
-    resolution: {integrity: sha512-jW9GqSUFvegE2gvG2692i5ICLsCP4rd55p/MP9UHrAs+wPoWpIwZSSASpO1W6Pp4FEB73xDjGaFIldyvdcZEkA==}
+  '@ledgerhq/wallet-api-core@1.25.0':
+    resolution: {integrity: sha512-9kQ6dBQZNJVKUvi0/BhoI1blnQpye9TeyeVBjyC/wsCUDzjRSVx4y816XwZMHkm9osBI2/BvgYDtRN/J9pVlHg==}
 
-  '@ledgerhq/wallet-api-core@1.24.1':
-    resolution: {integrity: sha512-SIG8HTzLXdFKSEQUHTpBSLmCSR7kBpSUItvB79N+UeArFqu6G/NIAZdHGUU2nnYWDiO4HeA1VIHCyAIuNpanjg==}
-
-  '@ledgerhq/wallet-api-core@1.24.2':
-    resolution: {integrity: sha512-VMxSpEVQWXEUkLbEJKvmik/6c1fEy5Cds4Q3zrXtD7cDi7OR6lrcZp1kIflklZB1vz/RJzN+5Qs1S59THgj11Q==}
-
-  '@ledgerhq/wallet-api-server@1.13.1':
-    resolution: {integrity: sha512-svfwRpfpXBMccTSE5tbgqVclTK4LTnaE8/Q6ePuSEIxoMTyvxBH6nIFWapbstRa64VrV4yK362o3oaeIYbAQkA==}
+  '@ledgerhq/wallet-api-server@1.13.3':
+    resolution: {integrity: sha512-5YhR/aQSMCQRoc9/B6XUbi8pyFTaDDlm2YFApfp4gqgNeukKSD2sxldbw02Jj3cS68pfWhlpWEWCzDF/jyXwkw==}
     peerDependencies:
       react: ^17.x || ^18.x
       rxjs: ^7.x
@@ -14821,17 +14815,8 @@ packages:
       react:
         optional: true
 
-  '@ledgerhq/wallet-api-server@1.13.2':
-    resolution: {integrity: sha512-5i54nAwVxu9Eh4PE41Ea++1e6280oUs6CCMNfUPg5XtWNoy9yQNeVQDtxTDScTZxBrDY0hvtIOsHgs4fIyZBgQ==}
-    peerDependencies:
-      react: ^17.x || ^18.x
-      rxjs: ^7.x
-    peerDependenciesMeta:
-      react:
-        optional: true
-
-  '@ledgerhq/wallet-api-simulator@1.2.17':
-    resolution: {integrity: sha512-ALqhD7pomcztxPfd7CgjKb0hL6y775WPFHRc1ybkYX8mEQShPZINIzewc5niXMNJDnavOJljDEUcMNgw27BHcQ==}
+  '@ledgerhq/wallet-api-simulator@1.2.19':
+    resolution: {integrity: sha512-uxqN2C7DDZdqA9VkFQ9sjpY4KEd1SVcJwK4eDRfuR7H0f+JagzFxIZy5huM1ZsSODmVc3cMndnMQGJebu0TpqA==}
 
   '@leichtgewicht/ip-codec@2.0.5':
     resolution: {integrity: sha512-Vo+PSpZG2/fmgmiNzYK9qWRh8h/CHrwD0mo1h1DzL4yzHNSfWYujGTYsWGreD000gcgmZ7K4Ys6Tx9TxtsKdDw==}
@@ -19578,13 +19563,13 @@ packages:
       react: '>=16.8'
       react-dom: '>=16.8'
 
-  '@ton-community/ton-ledger@7.2.0':
-    resolution: {integrity: sha512-y3bb+l3RqN5muISVBLNBc3NbfU8FFcSjuB6rJcvP2K/YAKFtEIREpXsobQtI5NhTmRV7WwWuio4labc+QJwozg==}
+  '@ton-community/ton-ledger@7.3.0':
+    resolution: {integrity: sha512-eG4KqQaQoUgdVzedUlt8ZkwHDw7JiXnPqZOO+1fUKISwjU2OdiRIeo+TB0yKK3X3fm/0hgQbFBEZAbGSCKvzTw==}
     peerDependencies:
       '@ton/core': '>=0.52.2'
 
-  '@ton/core@0.60.1':
-    resolution: {integrity: sha512-8FwybYbfkk57C3l9gvnlRhRBHbLYmeu0LbB1z9N+dhDz0Z+FJW8w0TJlks8CgHrAFxsT3FlR2LsqFnsauMp38w==}
+  '@ton/core@0.62.0':
+    resolution: {integrity: sha512-GCYlzzx11rSESKkiHvNy9tL8zWth+ZtUbvV29WH478FvBp8xTw24AyoigwXWNV+OLCAcnwlGhZpTpxjD3wzCwA==}
     peerDependencies:
       '@ton/crypto': '>=3.2.0'
 
@@ -19594,10 +19579,10 @@ packages:
   '@ton/crypto@3.3.0':
     resolution: {integrity: sha512-/A6CYGgA/H36OZ9BbTaGerKtzWp50rg67ZCH2oIjV1NcrBaCK9Z343M+CxedvM7Haf3f/Ee9EhxyeTp0GKMUpA==}
 
-  '@ton/ton@15.2.1':
-    resolution: {integrity: sha512-ICzozzATRfymkVfFVZrfVpKnCc5PLxAVeaB62mx/HsgllsjnR64UuoLuE6hqWHcA3/Hft9YLGdk2/rOHGZM6qA==}
+  '@ton/ton@15.4.0':
+    resolution: {integrity: sha512-f19y2Rez88KZK+lv3CT3ghXi07LcToJtJhlgRSfK+3GzjdIcoW/wbmXG1ffi6fkc8W2LO5z6Q3gZaIEvNGnz6w==}
     peerDependencies:
-      '@ton/core': '>=0.60.0'
+      '@ton/core': '>=0.62.0 <1.0.0'
       '@ton/crypto': '>=3.2.0'
 
   '@tootallnate/once@1.1.2':
@@ -21676,6 +21661,9 @@ packages:
 
   axios@1.11.0:
     resolution: {integrity: sha512-1Lx3WLFQWm3ooKDYZD1eXmoGO9fxYQjrycfHFC8P0sCfQVXyROp0p9PFWBehewBOdCwHc+f/b8I0fMto5eSfwA==}
+
+  axios@1.12.2:
+    resolution: {integrity: sha512-vMJzPewAlRyOgxV2dU0Cuz2O8zzzx9VYtbJOaBgXFeLc4IV/Eg50n4LowmehOOR61S8ZMpc2K5Sa7g6A4jfkUw==}
 
   axios@1.7.7:
     resolution: {integrity: sha512-S4kL7XrjgBmvdGut0sN3yJxqYzrDOnivkBiN0OFs6hLiUam3UPvswUo0kqGyhqUZGEOytHyumEdXsAkgCOUf3Q==}
@@ -23831,8 +23819,8 @@ packages:
   dataloader@1.4.0:
     resolution: {integrity: sha512-68s5jYdlvasItOJnCuI2Q9s4q98g0pCyL3HrcKJu8KNugUl8ahgmZYg38ysLTgQjjXX3H8CJLkAvWrclWfcalw==}
 
-  dataloader@2.2.2:
-    resolution: {integrity: sha512-8YnDaaf7N3k/q5HnTJVuzSyLETjoZjVmHc4AeKAzOvKHEFQKcn64OKBfzHYtE9zGjctNM7V9I0MfnUVLpi7M5g==}
+  dataloader@2.2.3:
+    resolution: {integrity: sha512-y2krtASINtPFS1rSDjacrFgn1dcUuoREVabwlOGOe4SdxenREqwjwjElAdwvbGM7kgZz9a3KVicWR7vcz8rnzA==}
 
   date-fns@1.30.1:
     resolution: {integrity: sha512-hBSVCvSmWC+QypYObzwGOd9wqdDpOt+0wl0KbU+R+uuZBS1jN8VsD1ss3irQDknRj5NvxiTF6oj/nDRnN/UQNw==}
@@ -38815,7 +38803,7 @@ snapshots:
       '@babel/core': 7.27.1
       '@babel/helper-compilation-targets': 7.27.2
       '@babel/helper-plugin-utils': 7.27.1
-      debug: 4.3.4
+      debug: 4.4.3
       lodash.debounce: 4.0.8
       resolve: 1.22.8
     transitivePeerDependencies:
@@ -38826,13 +38814,13 @@ snapshots:
   '@babel/helper-function-name@7.23.0':
     dependencies:
       '@babel/template': 7.27.2
-      '@babel/types': 7.28.4
+      '@babel/types': 7.27.0
 
   '@babel/helper-globals@7.28.0': {}
 
   '@babel/helper-hoist-variables@7.22.5':
     dependencies:
-      '@babel/types': 7.28.4
+      '@babel/types': 7.27.0
 
   '@babel/helper-member-expression-to-functions@7.25.9':
     dependencies:
@@ -38862,7 +38850,7 @@ snapshots:
   '@babel/helper-module-imports@7.27.1':
     dependencies:
       '@babel/traverse': 7.28.4
-      '@babel/types': 7.28.4
+      '@babel/types': 7.27.6
     transitivePeerDependencies:
       - supports-color
 
@@ -38968,7 +38956,7 @@ snapshots:
 
   '@babel/helper-split-export-declaration@7.22.6':
     dependencies:
-      '@babel/types': 7.28.4
+      '@babel/types': 7.27.0
 
   '@babel/helper-string-parser@7.25.9': {}
 
@@ -38986,7 +38974,7 @@ snapshots:
 
   '@babel/helper-wrap-function@7.25.9':
     dependencies:
-      '@babel/template': 7.27.2
+      '@babel/template': 7.27.0
       '@babel/traverse': 7.28.4
       '@babel/types': 7.28.4
     transitivePeerDependencies:
@@ -39002,9 +38990,9 @@ snapshots:
 
   '@babel/helpers@7.24.1':
     dependencies:
-      '@babel/template': 7.27.2
+      '@babel/template': 7.24.0
       '@babel/traverse': 7.28.4
-      '@babel/types': 7.28.4
+      '@babel/types': 7.24.0
     transitivePeerDependencies:
       - supports-color
 
@@ -40084,9 +40072,9 @@ snapshots:
 
   '@babel/template@7.24.0':
     dependencies:
-      '@babel/code-frame': 7.27.1
-      '@babel/parser': 7.28.4
-      '@babel/types': 7.28.4
+      '@babel/code-frame': 7.24.6
+      '@babel/parser': 7.24.1
+      '@babel/types': 7.24.0
 
   '@babel/template@7.27.0':
     dependencies:
@@ -40162,7 +40150,7 @@ snapshots:
       '@babel/parser': 7.28.4
       '@babel/template': 7.27.2
       '@babel/types': 7.28.4
-      debug: 4.3.4
+      debug: 4.4.3
     transitivePeerDependencies:
       - supports-color
 
@@ -40174,7 +40162,7 @@ snapshots:
       '@babel/parser': 7.28.4
       '@babel/template': 7.27.2
       '@babel/types': 7.28.4
-      debug: 4.3.4
+      debug: 4.4.3
     transitivePeerDependencies:
       - supports-color
 
@@ -42816,7 +42804,7 @@ snapshots:
   '@expo/server@0.5.3':
     dependencies:
       abort-controller: 3.0.0
-      debug: 4.3.4
+      debug: 4.4.3
       source-map-support: 0.5.21
       undici: 6.19.2
     transitivePeerDependencies:
@@ -45014,7 +45002,7 @@ snapshots:
 
   '@kwsites/file-exists@1.1.1':
     dependencies:
-      debug: 4.3.4
+      debug: 4.4.3
     transitivePeerDependencies:
       - supports-color
 
@@ -45149,7 +45137,7 @@ snapshots:
 
   '@ledgerhq/errors@6.19.1': {}
 
-  '@ledgerhq/errors@6.25.0': {}
+  '@ledgerhq/errors@6.26.0': {}
 
   '@ledgerhq/evm-tools@1.3.0':
     dependencies:
@@ -45220,38 +45208,29 @@ snapshots:
 
   '@ledgerhq/ui-shared@0.2.2': {}
 
-  '@ledgerhq/wallet-api-client-react@1.4.18(@ton/crypto@3.3.0)(react@18.3.1)':
+  '@ledgerhq/wallet-api-client-react@1.4.19(@ton/crypto@3.3.0)(react@18.3.1)':
     dependencies:
-      '@ledgerhq/wallet-api-client': 1.12.2(@ton/crypto@3.3.0)
+      '@ledgerhq/wallet-api-client': 1.12.3(@ton/crypto@3.3.0)
       react: 18.3.1
     transitivePeerDependencies:
       - '@ton/crypto'
       - encoding
 
-  '@ledgerhq/wallet-api-client@1.12.1(@ton/crypto@3.3.0)':
+  '@ledgerhq/wallet-api-client@1.12.3(@ton/crypto@3.3.0)':
     dependencies:
       '@ledgerhq/hw-transport': link:libs/ledgerjs/packages/hw-transport
-      '@ledgerhq/wallet-api-core': 1.24.1(@ton/crypto@3.3.0)
-      bignumber.js: 9.1.2
+      '@ledgerhq/wallet-api-core': 1.25.0(@ton/crypto@3.3.0)
+      bignumber.js: 9.3.1
     transitivePeerDependencies:
       - '@ton/crypto'
       - encoding
 
-  '@ledgerhq/wallet-api-client@1.12.2(@ton/crypto@3.3.0)':
+  '@ledgerhq/wallet-api-core@1.25.0(@ton/crypto@3.3.0)':
     dependencies:
-      '@ledgerhq/hw-transport': link:libs/ledgerjs/packages/hw-transport
-      '@ledgerhq/wallet-api-core': 1.24.2(@ton/crypto@3.3.0)
-      bignumber.js: 9.1.2
-    transitivePeerDependencies:
-      - '@ton/crypto'
-      - encoding
-
-  '@ledgerhq/wallet-api-core@1.24.1(@ton/crypto@3.3.0)':
-    dependencies:
-      '@ledgerhq/errors': 6.25.0
+      '@ledgerhq/errors': 6.26.0
       '@stacks/transactions': 6.17.0
-      '@ton/core': 0.60.1(patch_hash=lboaji3braahojqczblp7nlo7m)(@ton/crypto@3.3.0)
-      bignumber.js: 9.1.2
+      '@ton/core': 0.62.0(patch_hash=lboaji3braahojqczblp7nlo7m)(@ton/crypto@3.3.0)
+      bignumber.js: 9.3.1
       thor-devkit: 2.1.1
       uuid: 9.0.1
       zod: 3.25.76
@@ -45259,22 +45238,21 @@ snapshots:
       - '@ton/crypto'
       - encoding
 
-  '@ledgerhq/wallet-api-core@1.24.2(@ton/crypto@3.3.0)':
+  '@ledgerhq/wallet-api-server@1.13.3(@ton/crypto@3.3.0)(react@18.3.1)(rxjs@7.8.1)':
     dependencies:
-      '@ledgerhq/errors': 6.19.1
-      '@stacks/transactions': 6.17.0
-      '@ton/core': 0.60.1(patch_hash=lboaji3braahojqczblp7nlo7m)(@ton/crypto@3.3.0)
+      '@ledgerhq/wallet-api-core': 1.25.0(@ton/crypto@3.3.0)
       bignumber.js: 9.1.2
-      thor-devkit: 2.1.1
-      uuid: 9.0.1
-      zod: 3.24.2
+      picomatch: 4.0.3
+      rxjs: 7.8.1
+    optionalDependencies:
+      react: 18.3.1
     transitivePeerDependencies:
       - '@ton/crypto'
       - encoding
 
-  '@ledgerhq/wallet-api-server@1.13.1(@ton/crypto@3.3.0)(react@18.3.1)(rxjs@7.8.2)':
+  '@ledgerhq/wallet-api-server@1.13.3(@ton/crypto@3.3.0)(react@18.3.1)(rxjs@7.8.2)':
     dependencies:
-      '@ledgerhq/wallet-api-core': 1.24.1(@ton/crypto@3.3.0)
+      '@ledgerhq/wallet-api-core': 1.25.0(@ton/crypto@3.3.0)
       bignumber.js: 9.1.2
       picomatch: 4.0.3
       rxjs: 7.8.2
@@ -45284,24 +45262,12 @@ snapshots:
       - '@ton/crypto'
       - encoding
 
-  '@ledgerhq/wallet-api-server@1.13.2(@ton/crypto@3.3.0)(react@18.3.1)(rxjs@7.8.1)':
-    dependencies:
-      '@ledgerhq/wallet-api-core': 1.24.2(@ton/crypto@3.3.0)
-      bignumber.js: 9.1.2
-      picomatch: 4.0.2
-      rxjs: 7.8.1
-    optionalDependencies:
-      react: 18.3.1
-    transitivePeerDependencies:
-      - '@ton/crypto'
-      - encoding
-
-  '@ledgerhq/wallet-api-simulator@1.2.17(@ton/crypto@3.3.0)(react@18.3.1)':
+  '@ledgerhq/wallet-api-simulator@1.2.19(@ton/crypto@3.3.0)(react@18.3.1)':
     dependencies:
       '@ledgerhq/hw-transport': link:libs/ledgerjs/packages/hw-transport
-      '@ledgerhq/wallet-api-client': 1.12.1(@ton/crypto@3.3.0)
-      '@ledgerhq/wallet-api-core': 1.24.1(@ton/crypto@3.3.0)
-      '@ledgerhq/wallet-api-server': 1.13.1(@ton/crypto@3.3.0)(react@18.3.1)(rxjs@7.8.2)
+      '@ledgerhq/wallet-api-client': 1.12.3(@ton/crypto@3.3.0)
+      '@ledgerhq/wallet-api-core': 1.25.0(@ton/crypto@3.3.0)
+      '@ledgerhq/wallet-api-server': 1.13.3(@ton/crypto@3.3.0)(react@18.3.1)(rxjs@7.8.2)
       rxjs: 7.8.2
       ws: 8.18.3
     transitivePeerDependencies:
@@ -51489,7 +51455,7 @@ snapshots:
     dependencies:
       '@babel/core': 7.27.1
       '@babel/preset-env': 7.27.1(@babel/core@7.27.1)
-      '@babel/types': 7.28.4
+      '@babel/types': 7.27.6
       '@storybook/csf': 0.1.3
       '@storybook/csf-tools': 7.6.20
       '@storybook/node-logger': 7.6.20
@@ -51925,7 +51891,7 @@ snapshots:
 
   '@storybook/react-docgen-typescript-plugin@1.0.6--canary.9.0c3f3b7.0(typescript@5.4.3)(webpack@5.94.0(esbuild@0.19.12))':
     dependencies:
-      debug: 4.3.4
+      debug: 4.4.3
       endent: 2.1.0
       find-cache-dir: 3.3.2
       flat-cache: 3.2.0
@@ -51939,7 +51905,7 @@ snapshots:
 
   '@storybook/react-docgen-typescript-plugin@1.0.6--canary.9.0c3f3b7.0(typescript@5.4.3)(webpack@5.94.0(metro@0.81.5))':
     dependencies:
-      debug: 4.3.4
+      debug: 4.4.3
       endent: 2.1.0
       find-cache-dir: 3.3.2
       flat-cache: 3.2.0
@@ -52769,14 +52735,14 @@ snapshots:
       react-dom: 18.3.1(react@18.3.1)
       tippy.js: 6.3.7
 
-  '@ton-community/ton-ledger@7.2.0(@ton/core@0.60.1(patch_hash=lboaji3braahojqczblp7nlo7m)(@ton/crypto@3.3.0))':
+  '@ton-community/ton-ledger@7.3.0(@ton/core@0.62.0(patch_hash=lboaji3braahojqczblp7nlo7m)(@ton/crypto@3.3.0))':
     dependencies:
       '@ledgerhq/hw-transport': link:libs/ledgerjs/packages/hw-transport
-      '@ton/core': 0.60.1(patch_hash=lboaji3braahojqczblp7nlo7m)(@ton/crypto@3.3.0)
+      '@ton/core': 0.62.0(patch_hash=lboaji3braahojqczblp7nlo7m)(@ton/crypto@3.3.0)
       '@ton/crypto': 3.3.0
       teslabot: 1.5.0
 
-  '@ton/core@0.60.1(patch_hash=lboaji3braahojqczblp7nlo7m)(@ton/crypto@3.3.0)':
+  '@ton/core@0.62.0(patch_hash=lboaji3braahojqczblp7nlo7m)(@ton/crypto@3.3.0)':
     dependencies:
       '@ton/crypto': 3.3.0
       symbol.inspect: 1.0.1
@@ -52791,15 +52757,15 @@ snapshots:
       jssha: 3.2.0
       tweetnacl: 1.0.3
 
-  '@ton/ton@15.2.1(@ton/core@0.60.1(patch_hash=lboaji3braahojqczblp7nlo7m)(@ton/crypto@3.3.0))(@ton/crypto@3.3.0)':
+  '@ton/ton@15.4.0(@ton/core@0.62.0(patch_hash=lboaji3braahojqczblp7nlo7m)(@ton/crypto@3.3.0))(@ton/crypto@3.3.0)':
     dependencies:
-      '@ton/core': 0.60.1(patch_hash=lboaji3braahojqczblp7nlo7m)(@ton/crypto@3.3.0)
+      '@ton/core': 0.62.0(patch_hash=lboaji3braahojqczblp7nlo7m)(@ton/crypto@3.3.0)
       '@ton/crypto': 3.3.0
-      axios: 1.11.0
-      dataloader: 2.2.2
+      axios: 1.12.2
+      dataloader: 2.2.3
       symbol.inspect: 1.0.1
       teslabot: 1.5.0
-      zod: 3.23.8
+      zod: 3.25.76
 
   '@tootallnate/once@1.1.2': {}
 
@@ -52851,7 +52817,7 @@ snapshots:
 
   '@types/babel__template@7.4.4':
     dependencies:
-      '@babel/parser': 7.28.4
+      '@babel/parser': 7.28.3
       '@babel/types': 7.28.4
 
   '@types/babel__traverse@7.20.5':
@@ -53752,7 +53718,7 @@ snapshots:
       '@typescript-eslint/scope-manager': 5.62.0
       '@typescript-eslint/type-utils': 5.62.0(eslint@8.57.0)(typescript@5.4.3)
       '@typescript-eslint/utils': 5.62.0(eslint@8.57.0)(typescript@5.4.3)
-      debug: 4.3.4
+      debug: 4.4.3
       eslint: 8.57.0
       graphemer: 1.4.0
       ignore: 5.3.1
@@ -53894,7 +53860,7 @@ snapshots:
     dependencies:
       '@typescript-eslint/typescript-estree': 5.62.0(typescript@5.4.3)
       '@typescript-eslint/utils': 5.62.0(eslint@8.57.0)(typescript@5.4.3)
-      debug: 4.3.4
+      debug: 4.4.3
       eslint: 8.57.0
       tsutils: 3.21.0(typescript@5.4.3)
     optionalDependencies:
@@ -54023,7 +53989,7 @@ snapshots:
     dependencies:
       '@typescript-eslint/types': 8.30.1
       '@typescript-eslint/visitor-keys': 8.30.1
-      debug: 4.3.4
+      debug: 4.4.3
       fast-glob: 3.3.2
       is-glob: 4.0.3
       minimatch: 9.0.4
@@ -54572,7 +54538,7 @@ snapshots:
 
   '@vue/compiler-core@3.4.21':
     dependencies:
-      '@babel/parser': 7.28.4
+      '@babel/parser': 7.28.3
       '@vue/shared': 3.4.21
       entities: 4.5.0
       estree-walker: 2.0.2
@@ -55118,7 +55084,7 @@ snapshots:
 
   agent-base@6.0.2:
     dependencies:
-      debug: 4.3.4
+      debug: 4.4.0
     transitivePeerDependencies:
       - supports-color
 
@@ -55643,6 +55609,12 @@ snapshots:
       follow-redirects: 1.15.11
 
   axios@1.11.0:
+    dependencies:
+      follow-redirects: 1.15.11
+      form-data: 4.0.4
+      proxy-from-env: 1.1.0
+
+  axios@1.12.2:
     dependencies:
       follow-redirects: 1.15.11
       form-data: 4.0.4
@@ -58562,7 +58534,7 @@ snapshots:
 
   dataloader@1.4.0: {}
 
-  dataloader@2.2.2: {}
+  dataloader@2.2.3: {}
 
   date-fns@1.30.1: {}
 
@@ -58842,7 +58814,7 @@ snapshots:
   detect-port@1.5.1:
     dependencies:
       address: 1.2.2
-      debug: 4.3.4
+      debug: 4.4.3
     transitivePeerDependencies:
       - supports-color
 
@@ -61982,7 +61954,7 @@ snapshots:
     dependencies:
       basic-ftp: 5.0.5
       data-uri-to-buffer: 6.0.2
-      debug: 4.3.4
+      debug: 4.4.3
     transitivePeerDependencies:
       - supports-color
 
@@ -62686,7 +62658,7 @@ snapshots:
     dependencies:
       '@tootallnate/once': 1.1.2
       agent-base: 6.0.2
-      debug: 4.3.4
+      debug: 4.4.3
     transitivePeerDependencies:
       - supports-color
 
@@ -62760,7 +62732,7 @@ snapshots:
   https-proxy-agent@4.0.0:
     dependencies:
       agent-base: 5.1.1
-      debug: 4.3.4
+      debug: 4.4.3
     transitivePeerDependencies:
       - supports-color
 
@@ -63020,7 +62992,7 @@ snapshots:
     dependencies:
       '@ioredis/commands': 1.2.0
       cluster-key-slot: 1.1.2
-      debug: 4.3.4
+      debug: 4.4.3
       denque: 2.1.0
       lodash.defaults: 4.2.0
       lodash.isarguments: 3.1.0
@@ -65494,7 +65466,7 @@ snapshots:
   jest-snapshot@27.5.1:
     dependencies:
       '@babel/core': 7.27.1
-      '@babel/generator': 7.27.1
+      '@babel/generator': 7.28.3
       '@babel/plugin-syntax-typescript': 7.27.1(@babel/core@7.27.1)
       '@babel/traverse': 7.28.4
       '@babel/types': 7.28.4
@@ -65522,7 +65494,7 @@ snapshots:
   jest-snapshot@28.1.3:
     dependencies:
       '@babel/core': 7.27.1
-      '@babel/generator': 7.27.1
+      '@babel/generator': 7.28.3
       '@babel/plugin-syntax-typescript': 7.27.1(@babel/core@7.27.1)
       '@babel/traverse': 7.28.4
       '@babel/types': 7.28.4
@@ -66565,7 +66537,7 @@ snapshots:
 
   koa-route@3.2.0:
     dependencies:
-      debug: 4.3.4
+      debug: 4.4.3
       methods: 1.1.2
       path-to-regexp: 1.8.0
     transitivePeerDependencies:
@@ -66573,7 +66545,7 @@ snapshots:
 
   koa-send@5.0.1:
     dependencies:
-      debug: 4.3.4
+      debug: 4.4.3
       http-errors: 1.8.1
       resolve-path: 1.4.0
     transitivePeerDependencies:
@@ -66593,7 +66565,7 @@ snapshots:
       content-disposition: 0.5.4
       content-type: 1.0.5
       cookies: 0.9.1
-      debug: 4.3.4
+      debug: 4.4.3
       delegates: 1.0.0
       depd: 2.0.0
       destroy: 1.2.0
@@ -68139,7 +68111,7 @@ snapshots:
   micromark@3.2.0:
     dependencies:
       '@types/debug': 4.1.12
-      debug: 4.3.4
+      debug: 4.4.3
       decode-named-character-reference: 1.0.2
       micromark-core-commonmark: 1.1.0
       micromark-factory-space: 1.1.0
@@ -69410,7 +69382,7 @@ snapshots:
     dependencies:
       '@tootallnate/quickjs-emscripten': 0.23.0
       agent-base: 7.1.3
-      debug: 4.3.4
+      debug: 4.4.3
       get-uri: 6.0.4
       http-proxy-agent: 7.0.2
       https-proxy-agent: 7.0.6
@@ -70792,7 +70764,7 @@ snapshots:
   proxy-agent@6.5.0:
     dependencies:
       agent-base: 7.1.3
-      debug: 4.3.4
+      debug: 4.4.3
       http-proxy-agent: 7.0.2
       https-proxy-agent: 7.0.6
       lru-cache: 7.18.3
@@ -70860,7 +70832,7 @@ snapshots:
   puppeteer-core@2.1.1:
     dependencies:
       '@types/mime-types': 2.1.4
-      debug: 4.3.4
+      debug: 4.4.3
       extract-zip: 1.7.0
       https-proxy-agent: 4.0.0
       mime: 2.6.0
@@ -73329,7 +73301,7 @@ snapshots:
     dependencies:
       '@kwsites/file-exists': 1.1.1
       '@kwsites/promise-deferred': 1.1.1
-      debug: 4.3.4
+      debug: 4.4.3
     transitivePeerDependencies:
       - supports-color
 
@@ -73468,7 +73440,7 @@ snapshots:
   socks-proxy-agent@6.2.1:
     dependencies:
       agent-base: 6.0.2
-      debug: 4.3.4
+      debug: 4.4.3
       socks: 2.8.7
     transitivePeerDependencies:
       - supports-color
@@ -73485,7 +73457,7 @@ snapshots:
   socks-proxy-agent@8.0.5:
     dependencies:
       agent-base: 7.1.3
-      debug: 4.3.4
+      debug: 4.4.3
       socks: 2.8.7
     transitivePeerDependencies:
       - supports-color
@@ -74296,7 +74268,7 @@ snapshots:
     dependencies:
       component-emitter: 1.3.1
       cookiejar: 2.1.4
-      debug: 4.3.4
+      debug: 4.4.3
       fast-safe-stringify: 2.1.1
       form-data: 4.0.4
       formidable: 2.1.2
