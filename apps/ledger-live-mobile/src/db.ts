@@ -19,6 +19,7 @@ import type {
 } from "./reducers/types";
 import { TrustchainStore } from "@ledgerhq/ledger-key-ring-protocol/store";
 import { ExportedWalletState } from "@ledgerhq/live-wallet/store";
+import type { PersistedRtkQueryState } from "@ledgerhq/live-persistence";
 
 const ACCOUNTS_KEY = "accounts";
 const ACCOUNTS_KEY_SORT = "accounts.sort";
@@ -301,4 +302,15 @@ export function getLargeMoverState(): Promise<LargeMoverState> {
 }
 export async function saveLargeMoverState(state: LargeMoverState): Promise<void> {
   await storage.save("largeMover", state);
+}
+
+export function getCryptoAssetsCacheState(): Promise<PersistedRtkQueryState | null> {
+  return storage.get("cryptoAssetsCache") as Promise<PersistedRtkQueryState | null>;
+}
+export async function saveCryptoAssetsCacheState(
+  state: PersistedRtkQueryState | null,
+): Promise<void> {
+  if (state) {
+    await storage.save("cryptoAssetsCache", state);
+  }
 }

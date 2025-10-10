@@ -12,6 +12,7 @@ import {
   saveAccounts,
   saveBle,
   saveCountervalues,
+  saveCryptoAssetsCacheState,
   saveLargeMoverState,
   saveMarketState,
   savePostOnboardingState,
@@ -28,6 +29,8 @@ import { settingsStoreSelector } from "~/reducers/settings";
 import type { State } from "~/reducers/types";
 import { walletSelector } from "~/reducers/wallet";
 import { Maybe } from "../types/helpers";
+import { cryptoAssetsApi } from "@ledgerhq/cryptoassets/cal-client/state-manager/api";
+import { createRtkQueryStateSelector, shouldPersist } from "@ledgerhq/live-persistence";
 
 type MaybeState = Maybe<State>;
 
@@ -127,6 +130,19 @@ const compareWalletState = (a: State, b: State) =>
   walletStateExportShouldDiffer(a.wallet, b.wallet);
 const largeMoverNotEquals = (a: State, b: State) => a.largeMover !== b.largeMover;
 
+// Create selector for crypto assets cache state
+// Only cache token lookup queries, not sync hash or infinite queries
+const cryptoAssetsStateSelector = createRtkQueryStateSelector(
+  cryptoAssetsApi,
+  undefined,
+  ["findTokenById", "findTokenByAddressInCurrency"],
+);
+const cryptoAssetsNotEquals = (a: State, b: State) => {
+  const oldState = cryptoAssetsStateSelector(a);
+  const newState = cryptoAssetsStateSelector(b);
+  return shouldPersist(oldState, newState);
+};
+
 export const ConfigureDBSaveEffects = () => {
   const getPostOnboardingStateChanged = useCallback(
     (a: State, b: State) => !isEqual(a.postOnboarding, b.postOnboarding),
@@ -202,6 +218,13 @@ export const ConfigureDBSaveEffects = () => {
     throttle: 500,
     getChangesStats: largeMoverNotEquals,
     lense: exportLargeMoverSelector,
+  });
+
+  useDBSaveEffect({
+    save: saveCryptoAssetsCacheState,
+    throttle: 1000,
+    getChangesStats: cryptoAssetsNotEquals,
+    lense: cryptoAssetsStateSelector,
   });
 
   return null;
