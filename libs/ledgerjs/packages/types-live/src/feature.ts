@@ -145,6 +145,7 @@ export type CurrencyFeatures = {
   currencyWestend: DefaultFeature;
   currencyAssetHubWestend: DefaultFeature;
   currencyAssetHubPolkadot: DefaultFeature;
+  currencyKadena: DefaultFeature;
 };
 
 /**

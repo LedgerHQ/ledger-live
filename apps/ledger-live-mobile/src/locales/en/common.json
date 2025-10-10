@@ -1224,6 +1224,9 @@
     "AddressesSanctionedError": {
       "title": "Keeping you safe",
       "description": "This transaction involves a sanctioned wallet address and cannot be processed.\n-- {{addresses}}"
+    },
+    "KadenaCrossChainTransfer": {
+      "title": "As this is a cross-chain transfer, the transaction may take several minutes to complete."
     }
   },
   "crash": {
@@ -2813,7 +2816,9 @@
       "id": "Id",
       "autoClaimedRewards": "Auto Claimed Rewards",
       "stakedAmount": "Staked amount",
-      "accountCreationFee": "Account Creation Fee"
+      "accountCreationFee": "Account Creation Fee",
+      "senderChainId": "Sender Chain ID",
+      "receiverChainId": "Receiver Chain ID"
     },
     "multipleAddresses": "Why multiple addresses?"
   },
@@ -4106,6 +4111,7 @@
       "validateMemo": "Validate memo",
       "comment": "Comment",
       "validateComment": "Validate comment",
+      "validateChainId": "Validate chain ID",
       "quantity": "Quantity"
     },
     "validation": {

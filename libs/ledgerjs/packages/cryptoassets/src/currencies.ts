@@ -4612,6 +4612,30 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     },
     explorerViews: [blockscoutExplorerView("https://zksync-sepolia.blockscout.com")],
   },
+  kadena: {
+    type: "CryptoCurrency",
+    id: "kadena",
+    coinType: CoinType.KDA,
+    name: "Kadena",
+    managerAppName: "Kadena",
+    ticker: "KDA",
+    scheme: "kadena",
+    color: "#4A9079",
+    family: "kadena",
+    units: [
+      {
+        name: "KDA",
+        code: "KDA",
+        magnitude: 12,
+      },
+    ],
+    explorerViews: [
+      {
+        tx: "https://explorer.chainweb.com/mainnet/txdetail/$hash",
+        address: "https://explorer.chainweb.com/mainnet/account/$address?token=coin",
+      },
+    ],
+  },
   // Keep it at the bottom
   // Tickers dup
   binance_beacon_chain: {

@@ -1,0 +1,71 @@
+import getAddressWrapper from "@ledgerhq/coin-framework/bridge/getAddressWrapper";
+import {
+  updateTransaction as defaultUpdateTransaction,
+  getSerializedAddressParameters,
+  makeAccountBridgeReceive,
+  makeScanAccounts,
+  makeSync,
+} from "@ledgerhq/coin-framework/bridge/jsHelpers";
+import { SignerContext } from "@ledgerhq/coin-framework/signer";
+import type { AccountBridge, CurrencyBridge } from "@ledgerhq/types-live";
+import broadcast from "../broadcast";
+import estimateMaxSpendable from "../estimateMaxSpendable";
+import getTransactionStatus from "../getTransactionStatus";
+import resolver from "../hw-getAddress";
+import { createTransaction, prepareTransaction } from "../prepareTransaction";
+import { buildSignOperation } from "../signOperation";
+import { getAccountShape } from "../synchronisation";
+import type { Transaction } from "../types";
+
+import { KadenaCoinConfig, setCoinConfig } from "../config";
+import { KadenaSigner } from "../signer";
+
+export function buildCurrencyBridge(signerContext: SignerContext<KadenaSigner>): CurrencyBridge {
+  const getAddress = resolver(signerContext);
+
+  const scanAccounts = makeScanAccounts({
+    getAccountShape,
+    getAddressFn: getAddress,
+  });
+
+  return {
+    preload: async () => Promise.resolve({}),
+    hydrate: () => Promise.resolve({}),
+    scanAccounts,
+  };
+}
+
+export function buildAccountBridge(
+  signerContext: SignerContext<KadenaSigner>,
+): AccountBridge<Transaction> {
+  const getAddress = resolver(signerContext);
+  const sync = makeSync({ getAccountShape });
+
+  const receive = makeAccountBridgeReceive(getAddressWrapper(getAddress));
+  const signOperation = buildSignOperation(signerContext);
+
+  return {
+    estimateMaxSpendable,
+    createTransaction,
+    updateTransaction: defaultUpdateTransaction,
+    getTransactionStatus,
+    prepareTransaction,
+    sync,
+    receive,
+    signOperation,
+    broadcast,
+    getSerializedAddressParameters,
+  };
+}
+
+export function createBridges(
+  signerContext: SignerContext<KadenaSigner>,
+  coinConfig: KadenaCoinConfig,
+) {
+  setCoinConfig(coinConfig);
+
+  return {
+    currencyBridge: buildCurrencyBridge(signerContext),
+    accountBridge: buildAccountBridge(signerContext),
+  };
+}

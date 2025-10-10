@@ -21,3 +21,4 @@ export * from "./tron";
 export * from "./ton";
 export * from "./sui";
 export * from "./canton";
+export * from "./kadena";

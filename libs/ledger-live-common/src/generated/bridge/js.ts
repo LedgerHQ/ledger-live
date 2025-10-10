@@ -22,6 +22,7 @@ import { bridge as tron } from "../../families/tron/setup";
 import { bridge as vechain } from "../../families/vechain/setup";
 import { bridge as sui } from "../../families/sui/setup";
 import { bridge as mina } from "../../families/mina/setup";
+import { bridge as kadena } from "../../families/kadena/setup";
 
 export default {
   algorand,
@@ -48,4 +49,5 @@ export default {
   vechain,
   sui,
   mina,
+  kadena,
 };

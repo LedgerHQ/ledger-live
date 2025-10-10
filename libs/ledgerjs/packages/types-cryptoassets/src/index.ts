@@ -188,7 +188,8 @@ export type CryptoCurrencyId =
   | "westend"
   | "assethub_westend"
   | "assethub_polkadot"
-  | "mina";
+  | "mina"
+  | "kadena";
 
 export type LedgerExplorerId =
   | "btc"

@@ -102,6 +102,7 @@ export const CURRENCY_DEFAULT_FEATURES = {
   currencyWestend: DEFAULT_FEATURE,
   currencyAssetHubPolkadot: DEFAULT_FEATURE,
   currencyAssetHubWestend: DEFAULT_FEATURE,
+  currencyKadena: DEFAULT_FEATURE,
 };
 
 /**
