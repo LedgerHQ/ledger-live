@@ -416,6 +416,9 @@ function useUiHook({ isModularDrawerVisible, openModularDrawer, manifest }: Prop
         drawerConfiguration,
       }) => {
         if (isModularDrawerVisible) {
+          // We agree that for useCase, we should send max 25 currencies if provided else use only useCase (e.g. buy)
+          const shouldUseCurrencies = (useCase && currencies.length <= 25) || !useCase;
+
           openModularDrawer?.({
             source: source,
             flow: flow,
@@ -423,7 +426,8 @@ function useUiHook({ isModularDrawerVisible, openModularDrawer, manifest }: Prop
             onAccountSelected: (account: AccountLike, parentAccount?: Account | undefined) =>
               onSuccess(account, parentAccount),
             accounts$,
-            currencies: areCurrenciesFiltered && !useCase ? currencies.map(c => c.id) : undefined,
+            currencies:
+              areCurrenciesFiltered && shouldUseCurrencies ? currencies.map(c => c.id) : undefined,
             areCurrenciesFiltered,
             useCase,
             ...drawerConfiguration,
