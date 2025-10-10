@@ -52,6 +52,7 @@ const familiesWPackage = [
   "xrp",
   "sui",
   "mina",
+  "kadena"
 ];
 
 const alpacaized = {

@@ -1845,7 +1845,9 @@
       "transferAmount": "Transfer Amount",
       "validatorsCount": "Validators ({{number}})",
       "version": "Version",
-      "accountCreationFee": "Account Creation Fee"
+      "accountCreationFee": "Account Creation Fee",
+      "senderChainId": "Sender Chain ID",
+      "receiverChainId": "Receiver Chain ID"
     }
   },
   "operationList": {
@@ -2388,8 +2390,12 @@
         "nextBlock": "Next block",
         "suggested": "Suggested",
         "unitVByte": "{{unit}}/vbyte",
+        "nft": "NFT",
+        "nftQuantity": "Quantity",
         "unitPerByte": "{{unit}}/byte",
-        "splExtensionsWarning": "You are interacting with a token that is part of the Token-2022 program, also known as Token Extensions. This token comes with specific risks. <0>Click here</0> to learn more."
+        "splExtensionsWarning": "You are interacting with a token that is part of the Token-2022 program, also known as Token Extensions. This token comes with specific risks. <0>Click here</0> to learn more.",
+        "senderChainId": "Sender Chain ID",
+        "receiverChainId": "Receiver Chain ID"
       },
       "verification": {
         "streaming": {
@@ -7012,6 +7018,11 @@
     "UnknownDeviceExchangeError": {
       "title": "Communication error",
       "description": "There was a problem exchanging information with your device. Please try again or contact Ledger Support if the issue persists."
+    "RecipientAddressSanctionedError": {
+      "title": "This transaction involves a sanctioned wallet address and cannot be processed."
+    },
+    "KadenaCrossChainTransfer": {
+      "title": "As this is a cross-chain transfer, the transaction may take several minutes to complete."
     }
   },
   "cryptoOrg": {

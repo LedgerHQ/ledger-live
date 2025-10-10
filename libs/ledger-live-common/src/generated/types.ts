@@ -83,6 +83,12 @@ import type {
   TransactionStatusRaw as kaspaTransactionStatusRaw,
 } from "@ledgerhq/coin-kaspa/types/index";
 import type {
+  Transaction as kadenaTransaction,
+  TransactionRaw as kadenaTransactionRaw,
+  TransactionStatus as kadenaTransactionStatus,
+  TransactionStatusRaw as kadenaTransactionStatusRaw,
+} from "@ledgerhq/coin-kadena/types";
+import type {
   Transaction as minaTransaction,
   TransactionRaw as minaTransactionRaw,
   TransactionStatus as minaTransactionStatus,
@@ -176,6 +182,7 @@ export type Transaction =
   | iconTransaction
   | internet_computerTransaction
   | kaspaTransaction
+  | kadenaTransaction
   | minaTransaction
   | multiversxTransaction
   | nearTransaction
@@ -205,6 +212,7 @@ export type TransactionRaw =
   | iconTransactionRaw
   | internet_computerTransactionRaw
   | kaspaTransactionRaw
+  | kadenaTransactionRaw
   | minaTransactionRaw
   | multiversxTransactionRaw
   | nearTransactionRaw
@@ -234,6 +242,7 @@ export type TransactionStatus =
   | iconTransactionStatus
   | internet_computerTransactionStatus
   | kaspaTransactionStatus
+  | kadenaTransactionStatus
   | minaTransactionStatus
   | multiversxTransactionStatus
   | nearTransactionStatus
@@ -263,6 +272,7 @@ export type TransactionStatusRaw =
   | iconTransactionStatusRaw
   | internet_computerTransactionStatusRaw
   | kaspaTransactionStatusRaw
+  | kadenaTransactionStatusRaw
   | minaTransactionStatusRaw
   | multiversxTransactionStatusRaw
   | nearTransactionStatusRaw

@@ -25,6 +25,7 @@ import { resolver as vechain } from "../families/vechain/setup";
 import { resolver as xrp } from "../families/xrp/setup";
 import { resolver as sui } from "../families/sui/setup";
 import { resolver as mina } from "../families/mina/setup";
+import { resolver as kadena } from "../families/kadena/setup";
 
 export default {
   algorand,
@@ -54,4 +55,5 @@ export default {
   xrp,
   sui,
   mina,
+  kadena,
 };

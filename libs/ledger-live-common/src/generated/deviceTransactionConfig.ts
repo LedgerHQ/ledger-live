@@ -23,6 +23,7 @@ import ton from "@ledgerhq/coin-ton/deviceTransactionConfig";
 import tron from "@ledgerhq/coin-tron/deviceTransactionConfig";
 import xrp from "@ledgerhq/coin-xrp/deviceTransactionConfig";
 import mina from "@ledgerhq/coin-mina/deviceTransactionConfig";
+import kadena from "@ledgerhq/coin-kadena/deviceTransactionConfig";
 
 export default {
   algorand,
@@ -50,6 +51,7 @@ export default {
   tron,
   xrp,
   mina,
+  kadena,
 };
 import { ExtraDeviceTransactionField as ExtraDeviceTransactionField_casper } from "@ledgerhq/coin-casper/bridge/deviceTransactionConfig";
 import { ExtraDeviceTransactionField as ExtraDeviceTransactionField_filecoin } from "@ledgerhq/coin-filecoin/bridge/deviceTransactionConfig";
