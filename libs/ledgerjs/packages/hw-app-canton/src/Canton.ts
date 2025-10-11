@@ -268,7 +268,7 @@ export default class Canton {
     const { transactions } = data;
 
     if (!transactions || transactions.length === 0) {
-      throw new Error("At least one transaction is required");
+      throw new TypeError("At least one transaction is required");
     }
 
     // 1. Send the derivation path
@@ -295,7 +295,7 @@ export default class Canton {
     // 2. Send each transaction
     for (const [i, transaction] of transactions.entries()) {
       if (!transaction) {
-        throw new Error(`Transaction at index ${i} is undefined or null`);
+        throw new TypeError(`Transaction at index ${i} is undefined or null`);
       }
 
       const transactionBuffer = Buffer.from(transaction, "hex");
@@ -319,7 +319,7 @@ export default class Canton {
       }
     }
 
-    throw new Error("No transactions provided");
+    throw new TypeError("No transactions provided");
   }
 
   /**
@@ -350,10 +350,10 @@ export default class Canton {
    */
   private validateUint8Array(value: any, context: string): void {
     if (!value) {
-      throw new Error(`${context} is undefined or null`);
+      throw new TypeError(`${context} is undefined or null`);
     }
     if (!(value instanceof Uint8Array)) {
-      throw new Error(`${context} is not a Uint8Array: ${typeof value}`);
+      throw new TypeError(`${context} is not a Uint8Array: ${typeof value}`);
     }
   }
 
@@ -454,7 +454,7 @@ export default class Canton {
    * @private
    */
   private extractResponseData(response: Buffer): Buffer {
-    return response.slice(0, response.length - 2);
+    return response.slice(0, -2);
   }
 
   /**
@@ -521,9 +521,9 @@ export default class Canton {
    */
   private extractVersion(data: Buffer): { major: number; minor: number; patch: number } {
     return {
-      major: parseInt(data.subarray(0, 1).toString("hex"), 16),
-      minor: parseInt(data.subarray(1, 2).toString("hex"), 16),
-      patch: parseInt(data.subarray(2, 3).toString("hex"), 16),
+      major: Number.parseInt(data.subarray(0, 1).toString("hex"), 16),
+      minor: Number.parseInt(data.subarray(1, 2).toString("hex"), 16),
+      patch: Number.parseInt(data.subarray(2, 3).toString("hex"), 16),
     };
   }
 }

@@ -69,8 +69,6 @@ describe("AppCanton", () => {
       expect(result).toEqual(
         "40a65f53c3657bc04efefb67a425ba093a5cb5391d18142f148bb2c48daacf316114cff920a58d5996ca828c7ce265f537f1d7fca8fa82c3c73bd944a96e701a0000",
       );
-      // THEN
-      expect(true).toEqual(true);
     });
   });
 });

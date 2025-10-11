@@ -67,13 +67,13 @@ export function splitTransaction(
     synchronizerId: metadata.synchronizerId,
     mediatorGroup: metadata.mediatorGroup || 0,
     transactionUuid: metadata.transactionUuid,
-    submissionTime: parseInt(metadata.submissionTime || metadata.preparation_time, 10),
+    submissionTime: Number.parseInt(metadata.submissionTime || metadata.preparation_time, 10),
     inputContractsCount: metadata.inputContracts?.length || 0,
     ...(metadata.minLedgerEffectiveTime && {
-      minLedgerEffectiveTime: parseInt(metadata.minLedgerEffectiveTime, 10),
+      minLedgerEffectiveTime: Number.parseInt(metadata.minLedgerEffectiveTime, 10),
     }),
     ...(metadata.maxLedgerEffectiveTime && {
-      maxLedgerEffectiveTime: parseInt(metadata.maxLedgerEffectiveTime, 10),
+      maxLedgerEffectiveTime: Number.parseInt(metadata.maxLedgerEffectiveTime, 10),
     }),
   };
 
@@ -85,7 +85,7 @@ export function splitTransaction(
   const nodes = new Array(nodesArray.length);
 
   for (const node of nodesArray) {
-    const nodeId = parseInt(node.nodeId || "0", 10);
+    const nodeId = Number.parseInt(node.nodeId || "0", 10);
     const Node = root.lookupType("com.daml.ledger.api.v2.interactive.DeviceDamlTransaction.Node");
     const nodePb = Node.fromObject(replaceReservedWords(node));
     const pos = nodesArray.length - 1 - nodeId;

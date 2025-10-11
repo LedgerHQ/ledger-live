@@ -1,9 +1,10 @@
 #!/usr/bin/env node
-
-const fs = require("fs");
-const path = require("path");
-const { execSync } = require("child_process");
-const https = require("https");
+/* eslint @typescript-eslint/no-var-requires: off */
+/* eslint no-console: off */
+const fs = require("node:fs");
+const path = require("node:path");
+const { execSync } = require("node:child_process");
+const https = require("node:https");
 
 const outputFile = path.join(__dirname, "../src/types/transaction-proto.json");
 const tempDir = path.join(__dirname, "temp-proto");
@@ -22,33 +23,135 @@ const RESERVED_WORDS = [
   { pattern: /\bstring constructor = (\d+);/g, replacement: "string constructor_ = $1;" },
 ];
 
+function handleFileFinish(file, resolve) {
+  file.close();
+  resolve();
+}
+
+function handleFileError(filePath, reject) {
+  return err => {
+    fs.unlink(filePath, () => {
+      /* empty function */
+    });
+    reject(err);
+  };
+}
+
+function handleHttpResponse(url, file, filePath, resolve, reject) {
+  return response => {
+    if (response.statusCode !== 200) {
+      reject(new Error(`Failed to download ${url}: ${response.statusCode}`));
+      return;
+    }
+
+    response.pipe(file);
+
+    file.on("finish", () => handleFileFinish(file, resolve));
+    file.on("error", handleFileError(filePath, reject));
+  };
+}
+
 function downloadFile(url, filePath) {
   return new Promise((resolve, reject) => {
     const file = fs.createWriteStream(filePath);
 
-    https
-      .get(url, response => {
-        if (response.statusCode !== 200) {
-          reject(new Error(`Failed to download ${url}: ${response.statusCode}`));
-          return;
-        }
-
-        response.pipe(file);
-
-        file.on("finish", () => {
-          file.close();
-          resolve();
-        });
-
-        file.on("error", err => {
-          fs.unlink(filePath, () => { });
-          reject(err);
-        });
-      })
-      .on("error", err => {
-        reject(err);
-      });
+    https.get(url, handleHttpResponse(url, file, filePath, resolve, reject)).on("error", err => {
+      reject(err);
+    });
   });
+}
+
+const PROTO_FILES = [
+  {
+    repoPath: "proto/device.proto",
+    localPath: "device.proto",
+    source: "app-canton",
+  },
+  {
+    repoPath: "proto/com/daml/ledger/api/v2/value.proto",
+    localPath: "com/daml/ledger/api/v2/value.proto",
+    source: "app-canton",
+  },
+  {
+    repoPath: "proto/com/daml/ledger/api/v2/value_cb.proto",
+    localPath: "com/daml/ledger/api/v2/value_cb.proto",
+    source: "app-canton",
+  },
+  {
+    repoPath:
+      "sdk/canton/community/ledger-api/src/main/protobuf/com/daml/ledger/api/v2/interactive/interactive_submission_common_data.proto",
+    localPath: "com/daml/ledger/api/v2/interactive/interactive_submission_common_data.proto",
+    source: "daml",
+  },
+  {
+    repoPath:
+      "sdk/canton/community/ledger-api/src/main/protobuf/com/daml/ledger/api/v2/interactive/transaction/v1/interactive_submission_data.proto",
+    localPath:
+      "com/daml/ledger/api/v2/interactive/transaction/v1/interactive_submission_data.proto",
+    source: "daml",
+  },
+  {
+    repoPath: "proto/interactive_submission_data_cb.proto",
+    localPath:
+      "com/daml/ledger/api/v2/interactive/transaction/v1/interactive_submission_data_cb.proto",
+    source: "app-canton",
+  },
+  {
+    repoPath: "proto/google/protobuf/any.proto",
+    localPath: "google/protobuf/any.proto",
+    source: "app-canton",
+  },
+  {
+    repoPath: "proto/google/protobuf/duration.proto",
+    localPath: "google/protobuf/duration.proto",
+    source: "app-canton",
+  },
+  {
+    repoPath: "proto/google/protobuf/empty.proto",
+    localPath: "google/protobuf/empty.proto",
+    source: "app-canton",
+  },
+  {
+    repoPath: "proto/google/protobuf/timestamp.proto",
+    localPath: "google/protobuf/timestamp.proto",
+    source: "app-canton",
+  },
+  {
+    repoPath: "proto/google/rpc/error_details.proto",
+    localPath: "google/rpc/error_details.proto",
+    source: "app-canton",
+  },
+  {
+    repoPath: "proto/google/rpc/status.proto",
+    localPath: "google/rpc/status.proto",
+    source: "app-canton",
+  },
+];
+
+function ensureDirectoryExists(dirPath) {
+  if (!fs.existsSync(dirPath)) {
+    fs.mkdirSync(dirPath, { recursive: true });
+  }
+}
+
+function getDownloadUrl(protoFile) {
+  const baseUrl = protoFile.source === "daml" ? DAML_BASE_URL : APP_CANTON_BASE_URL;
+  return `${baseUrl}/${protoFile.repoPath}`;
+}
+
+async function downloadProtoFile(protoFile) {
+  const url = getDownloadUrl(protoFile);
+  const localPath = path.join(tempDir, protoFile.localPath);
+
+  ensureDirectoryExists(path.dirname(localPath));
+
+  try {
+    await downloadFile(url, localPath);
+    console.log(`Downloaded: ${protoFile.localPath}`);
+  } catch (error) {
+    console.error(`Failed to download ${protoFile.localPath}:`, error.message);
+    throw error;
+  }
 }
 
 async function downloadProtoFiles() {
@@ -58,91 +161,8 @@ async function downloadProtoFiles() {
     fs.mkdirSync(tempDir, { recursive: true });
   }
 
-  const protoFiles = [
-    {
-      repoPath: "proto/device.proto",
-      localPath: "device.proto",
-      source: "app-canton",
-    },
-    {
-      repoPath: "proto/com/daml/ledger/api/v2/value.proto",
-      localPath: "com/daml/ledger/api/v2/value.proto",
-      source: "app-canton",
-    },
-    {
-      repoPath: "proto/com/daml/ledger/api/v2/value_cb.proto",
-      localPath: "com/daml/ledger/api/v2/value_cb.proto",
-      source: "app-canton",
-    },
-    {
-      repoPath: "sdk/canton/community/ledger-api/src/main/protobuf/com/daml/ledger/api/v2/interactive/interactive_submission_common_data.proto",
-      localPath: "com/daml/ledger/api/v2/interactive/interactive_submission_common_data.proto",
-      source: "daml",
-    },
-    {
-      repoPath:
-        "sdk/canton/community/ledger-api/src/main/protobuf/com/daml/ledger/api/v2/interactive/transaction/v1/interactive_submission_data.proto",
-      localPath:
-        "com/daml/ledger/api/v2/interactive/transaction/v1/interactive_submission_data.proto",
-      source: "daml",
-    },
-    {
-      repoPath: "proto/interactive_submission_data_cb.proto",
-      localPath:
-        "com/daml/ledger/api/v2/interactive/transaction/v1/interactive_submission_data_cb.proto",
-      source: "app-canton",
-    },
-    {
-      repoPath: "proto/google/protobuf/any.proto",
-      localPath: "google/protobuf/any.proto",
-      source: "app-canton",
-    },
-    {
-      repoPath: "proto/google/protobuf/duration.proto",
-      localPath: "google/protobuf/duration.proto",
-      source: "app-canton",
-    },
-    {
-      repoPath: "proto/google/protobuf/empty.proto",
-      localPath: "google/protobuf/empty.proto",
-      source: "app-canton",
-    },
-    {
-      repoPath: "proto/google/protobuf/timestamp.proto",
-      localPath: "google/protobuf/timestamp.proto",
-      source: "app-canton",
-    },
-    {
-      repoPath: "proto/google/rpc/error_details.proto",
-      localPath: "google/rpc/error_details.proto",
-      source: "app-canton",
-    },
-    {
-      repoPath: "proto/google/rpc/status.proto",
-      localPath: "google/rpc/status.proto",
-      source: "app-canton",
-    },
-  ];
-
-  // Download each proto file
-  for (const protoFile of protoFiles) {
-    const baseUrl = protoFile.source === "daml" ? DAML_BASE_URL : APP_CANTON_BASE_URL;
-    const url = `${baseUrl}/${protoFile.repoPath}`;
-    const localPath = path.join(tempDir, protoFile.localPath);
-
-    // Create directory structure
-    const dir = path.dirname(localPath);
-    if (!fs.existsSync(dir)) {
-      fs.mkdirSync(dir, { recursive: true });
-    }
-
-    try {
-      await downloadFile(url, localPath);
-      console.log(`Downloaded: ${protoFile.localPath}`);
-    } catch (error) {
-      console.error(`Failed to download ${protoFile.localPath}:`, error.message);
-      throw error;
-    }
+  for (const protoFile of PROTO_FILES) {
+    await downloadProtoFile(protoFile);
   }
 
   console.log("All proto files downloaded successfully!");
@@ -155,9 +175,9 @@ function replaceReservedWords(filePath) {
 
   let content = fs.readFileSync(filePath, "utf8");
 
-  RESERVED_WORDS.forEach(({ pattern, replacement }) => {
+  for (const { pattern, replacement } of RESERVED_WORDS) {
     content = content.replace(pattern, replacement);
-  });
+  }
 
   fs.writeFileSync(filePath, content);
   console.log(`Updated field names in ${path.basename(filePath)}`);
@@ -171,27 +191,27 @@ function cleanup() {
   }
 }
 
-async function main() {
-  try {
-    console.log("Generating protobuf bindings...");
-
-    await downloadProtoFiles();
-
-    // Replace field names in proto files
-    replaceReservedWords(path.join(tempDir, "com/daml/ledger/api/v2/value.proto"));
-    replaceReservedWords(path.join(tempDir, "com/daml/ledger/api/v2/value_cb.proto"));
-
-    // Generate protobuf bindings
-    execSync(`npx pbjs -t json -w es6 --path ${tempDir} -o ${outputFile} ${tempDir}/device.proto`);
-
-    console.log("Protobuf bindings generated successfully!");
-  } catch (error) {
-    console.error("Error generating protobuf bindings:", error.message);
-    process.exit(1);
-  } finally {
-    // Clean up temporary files
-    cleanup();
-  }
+function processProtoFiles() {
+  // Replace field names in proto files
+  replaceReservedWords(path.join(tempDir, "com/daml/ledger/api/v2/value.proto"));
+  replaceReservedWords(path.join(tempDir, "com/daml/ledger/api/v2/value_cb.proto"));
 }
 
-main();
+function generateProtobufBindings() {
+  execSync(`npx pbjs -t json -w es6 --path ${tempDir} -o ${outputFile} ${tempDir}/device.proto`);
+}
+
+try {
+  console.log("Generating protobuf bindings...");
+
+  await downloadProtoFiles();
+  processProtoFiles();
+  generateProtobufBindings();
+
+  console.log("Protobuf bindings generated successfully!");
+} catch (error) {
+  console.error("Error generating protobuf bindings:", error.message);
+  process.exit(1);
+} finally {
+  cleanup();
+}
