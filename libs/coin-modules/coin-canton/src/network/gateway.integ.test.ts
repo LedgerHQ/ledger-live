@@ -105,6 +105,8 @@ describe("gateway (devnet)", () => {
     testIfPrepared(
       "should not throw when already onboarded",
       async () => {
+        // Add delay to ensure previous operations are complete
+        await new Promise(resolve => setTimeout(resolve, 10000));
         // GIVEN
         const { keyPair } = getOnboardedAccount();
         const signature = keyPair.sign(prepareResponse!.transactions.combined_hash);

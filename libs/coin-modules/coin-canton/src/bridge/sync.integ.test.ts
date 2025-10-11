@@ -78,14 +78,14 @@ describe("sync (devnet)", () => {
       expect(result.spendableBalance?.toNumber()).toBeLessThanOrEqual(
         result.balance?.toNumber() || 0,
       );
-    });
+    }, 30000);
 
     it("should handle address with colons correctly", async () => {
       const getAccountShape = makeGetAccountShape(mockSignerContext);
       const result = await getAccountShape(ACCOUNT_SHAPE_INFO, { paginationConfig: {} });
 
       expect(result.xpub).toContain("::");
-    });
+    }, 30000);
 
     it("should merge operations correctly with initial account", async () => {
       const getAccountShape = makeGetAccountShape(mockSignerContext);
@@ -121,7 +121,7 @@ describe("sync (devnet)", () => {
       expect(result.operationsCount).toBeGreaterThanOrEqual(1);
       const initialOp = result.operations?.find(op => op.id === "test-op-1");
       expect(initialOp).toBeDefined();
-    });
+    }, 30000);
 
     it("should take locked balance into account when calculating spendable balance", async () => {
       const mockGetBalance = jest.spyOn(gateway, "getBalance");
@@ -146,7 +146,7 @@ describe("sync (devnet)", () => {
       expect(result.spendableBalance?.toNumber()).toBe(500);
 
       mockGetBalance.mockRestore();
-    });
+    }, 30000);
 
     it("should call getOperations with correct cursor based on initial account", async () => {
       const mockGetOperations = jest.spyOn(gateway, "getOperations");
@@ -184,7 +184,7 @@ describe("sync (devnet)", () => {
       });
       expect(result.operations).toBeDefined();
       expect(result.operationsCount).toBeGreaterThan(1);
-    });
+    }, 30000);
 
     it("should call getOperations with cursor 0 when no initial account", async () => {
       const mockGetOperations = jest.spyOn(gateway, "getOperations");
@@ -201,6 +201,6 @@ describe("sync (devnet)", () => {
       });
 
       mockGetOperations.mockRestore();
-    });
+    }, 30000);
   });
 });

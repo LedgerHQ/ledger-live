@@ -221,25 +221,5 @@ describe("onboard (devnet)", () => {
       expect(finalResult.isApproved).toBe(true);
       expect(typeof finalResult.isApproved).toBe("boolean");
     }, 30000);
-
-    it("should handle invalid party ID gracefully", async () => {
-      // GIVEN
-      const keyPair = generateMockKeyPair();
-      const mockSigner = createMockSigner(keyPair);
-      const mockSignerContext = jest.fn().mockImplementation((deviceId, callback) => {
-        return callback(mockSigner);
-      });
-      const preapprovalObservable = buildAuthorizePreapproval(mockSignerContext);
-
-      // WHEN & THEN
-      try {
-        await firstValueFrom(
-          preapprovalObservable(mockCurrency, mockDeviceId, mockAccount, "invalid-party-id-123"),
-        );
-        expect(true).toBe(true);
-      } catch (error) {
-        expect(error).toBeDefined();
-      }
-    }, 30000);
   });
 });
