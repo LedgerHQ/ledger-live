@@ -198,7 +198,43 @@ function processProtoFiles() {
 }
 
 function generateProtobufBindings() {
-  execSync(`npx pbjs -t json -w es6 --path ${tempDir} -o ${outputFile} ${tempDir}/device.proto`);
+  // Sanitize paths to prevent command injection
+  const sanitizedTempDir = path.resolve(tempDir);
+  const sanitizedOutputFile = path.resolve(outputFile);
+  const deviceProtoPath = path.join(sanitizedTempDir, "device.proto");
+
+  // Validate that paths exist and are within expected directories
+  if (!fs.existsSync(deviceProtoPath)) {
+    throw new Error(`Device proto file not found: ${deviceProtoPath}`);
+  }
+
+  if (!sanitizedTempDir.startsWith(path.resolve(__dirname))) {
+    throw new Error("Invalid temp directory path");
+  }
+
+  if (!sanitizedOutputFile.startsWith(path.resolve(__dirname, ".."))) {
+    throw new Error("Invalid output file path");
+  }
+
+  execSync(
+    "npx",
+    [
+      "pbjs",
+      "-t",
+      "json",
+      "-w",
+      "es6",
+      "--path",
+      sanitizedTempDir,
+      "-o",
+      sanitizedOutputFile,
+      deviceProtoPath,
+    ],
+    {
+      stdio: "inherit",
+      cwd: __dirname,
+    },
+  );
 }
 
 try {
