@@ -14,7 +14,13 @@ import { TransactionConfirm } from "../components/TransactionConfirm";
 import { ValidatorRow } from "../components/ValidatorRow";
 import { StepProps } from "../types";
 
-const StepAuthorize = ({ accountName, authorizeStatus, device, onboardingResult }: StepProps) => {
+const StepAuthorize = ({
+  accountName,
+  authorizeStatus,
+  device,
+  onboardingResult,
+  error,
+}: StepProps) => {
   invariant(onboardingResult?.completedAccount, "canton: completed account is required");
 
   const renderContent = (status: AuthorizeStatus) => {
@@ -61,7 +67,13 @@ const StepAuthorize = ({ accountName, authorizeStatus, device, onboardingResult 
 
             {status === AuthorizeStatus.ERROR ? (
               <Alert type="error">
-                <Trans i18nKey="families.canton.addAccount.auth.error" />
+                {error?.name === "DeviceLockedError" ? (
+                  <Trans i18nKey={error.message} />
+                ) : error?.name === "UserRefusedOnDevice" ? (
+                  <Trans i18nKey={error.message} />
+                ) : (
+                  <Trans i18nKey="families.canton.addAccount.auth.error" />
+                )}
               </Alert>
             ) : (
               <Alert>

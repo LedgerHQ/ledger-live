@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 /**
  * Canton Testing Utilities for Ed25519 Key Generation
  *
@@ -298,16 +300,14 @@ function hashTransaction(damlTx: any): Buffer {
  */
 function hashNodes(damlTx: any, nodes: Uint8Array[]): Buffer {
   const hash = crypto.createHash("sha256");
-  const nodeHashes = new Map<string, Buffer>();
 
   // Process each node
-  for (let i = 0; i < nodes.length; i++) {
-    const nodeBytes = nodes[i];
+  for (const nodeBytes of nodes) {
     const Node = root.lookupType("com.daml.ledger.api.v2.interactive.DeviceDamlTransaction.Node");
     const node = Node.decode(nodeBytes);
 
     // Check if this is a root node
-    const isRootNode = damlTx.roots && damlTx.roots.includes(node.nodeId);
+    const isRootNode = damlTx.roots?.includes(node.nodeId);
 
     // Hash the node (encode_node_id_hash)
     const nodeHash = hashNodeId(node, isRootNode, damlTx.nodeSeeds || []);
@@ -315,10 +315,8 @@ function hashNodes(damlTx: any, nodes: Uint8Array[]): Buffer {
     if (isRootNode) {
       // For root nodes, add directly to the hash
       hash.update(nodeHash);
-    } else {
-      // For non-root nodes, store for later reference
-      nodeHashes.set(node.nodeId, nodeHash);
     }
+    // Non-root nodes are ignored in this implementation
   }
 
   return hash.digest();
@@ -517,7 +515,7 @@ function encodeRollbackNode(hash: crypto.Hash, rollback: any): void {
  * Find node seed for a given node ID
  */
 function findNodeSeed(nodeId: string, nodeSeeds: any[]): Buffer | null {
-  const nodeIdNum = parseInt(nodeId, 10);
+  const nodeIdNum = Number.parseInt(nodeId, 10);
   for (const seed of nodeSeeds) {
     if (seed.nodeId === nodeIdNum) {
       return Buffer.from(seed.seed);
@@ -592,22 +590,22 @@ function hashMetadata(metadata: any, inputContracts: Uint8Array[]): Buffer {
   encodeString(hash, metadata.synchronizerId || "");
 
   // Encode optional time fields
-  if (metadata.minLedgerEffectiveTime !== undefined) {
+  if (metadata.minLedgerEffectiveTime === undefined) {
+    // Optional not present
+    hash.update(Buffer.from([0x00]));
+  } else {
     // Optional present
     hash.update(Buffer.from([0x01]));
     encodeInt64(hash, metadata.minLedgerEffectiveTime);
-  } else {
-    // Optional not present
-    hash.update(Buffer.from([0x00]));
   }
 
-  if (metadata.maxLedgerEffectiveTime !== undefined) {
+  if (metadata.maxLedgerEffectiveTime === undefined) {
+    // Optional not present
+    hash.update(Buffer.from([0x00]));
+  } else {
     // Optional present
     hash.update(Buffer.from([0x01]));
     encodeInt64(hash, metadata.maxLedgerEffectiveTime);
-  } else {
-    // Optional not present
-    hash.update(Buffer.from([0x00]));
   }
 
   // Encode submission time and input contracts count
@@ -797,13 +795,13 @@ function encodeValue(hash: crypto.Hash, value: any): void {
   } else if (value.optional !== undefined) {
     // VALUE_OPTIONAL_TAG = 0x09
     hash.update(Buffer.from([0x09]));
-    if (value.optional.value !== undefined) {
+    if (value.optional.value === undefined) {
+      // Optional not present
+      hash.update(Buffer.from([0x00]));
+    } else {
       // Optional present
       hash.update(Buffer.from([0x01]));
       encodeValue(hash, value.optional.value);
-    } else {
-      // Optional not present
-      hash.update(Buffer.from([0x00]));
     }
   } else if (value.list !== undefined) {
     // VALUE_LIST_TAG = 0x0A
@@ -864,7 +862,10 @@ function encodeValue(hash: crypto.Hash, value: any): void {
       hash.update(Buffer.from([0x00]));
     }
     encodeString(hash, value.enum.constructor || "");
-  } else if (value.genMap !== undefined) {
+  } else if (value.genMap === undefined) {
+    // Fallback for unknown value types
+    hash.update(Buffer.from([0x00]));
+  } else {
     // VALUE_GEN_MAP_TAG = 0x0F
     hash.update(Buffer.from([0x0f]));
     if (value.genMap.entries) {
@@ -872,9 +873,6 @@ function encodeValue(hash: crypto.Hash, value: any): void {
     } else {
       encodeInt32(hash, 0);
     }
-  } else {
-    // Fallback for unknown value types
-    hash.update(Buffer.from([0x00]));
   }
 }
 

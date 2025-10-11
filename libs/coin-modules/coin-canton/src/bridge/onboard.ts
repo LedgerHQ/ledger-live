@@ -3,7 +3,9 @@ import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import type { Account } from "@ledgerhq/types-live";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { log } from "@ledgerhq/logs";
+import { LockedDeviceError, UserRefusedOnDevice } from "@ledgerhq/errors";
 import { encodeAccountId } from "@ledgerhq/coin-framework/account/accountId";
+
 import {
   prepareOnboarding,
   submitOnboarding,
@@ -111,7 +113,9 @@ export const buildOnboardAccount =
         () => o.complete(),
         error => {
           log("[canton:onboard] onboardAccount failed:", error);
-          o.error(error);
+
+          const handledError = handleDeviceErrors(error);
+          o.error(handledError || error);
         },
       );
     });
@@ -152,7 +156,28 @@ export const buildAuthorizePreapproval =
         () => o.complete(),
         error => {
           log("[canton:onboard] authorizePreapproval failed:", error);
-          o.error(error);
+
+          const handledError = handleDeviceErrors(error);
+          o.error(handledError || error);
         },
       );
     });
+
+/**
+ * Check if an error is a LockedDeviceError or UserRefusedOnDevice and create user-friendly error messages
+ */
+const handleDeviceErrors = (error: Error): Error | null => {
+  if (error instanceof LockedDeviceError) {
+    const lockedDeviceError = new Error("errors.DeviceLockedError.description");
+    lockedDeviceError.name = "DeviceLockedError";
+    return lockedDeviceError;
+  }
+
+  if (error instanceof UserRefusedOnDevice) {
+    const userRefusedError = new Error("errors.UserRefusedOnDevice.description");
+    userRefusedError.name = "UserRefusedOnDevice";
+    return userRefusedError;
+  }
+
+  return null;
+};

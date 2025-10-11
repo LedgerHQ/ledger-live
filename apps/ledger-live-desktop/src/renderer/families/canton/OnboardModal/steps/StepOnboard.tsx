@@ -105,6 +105,7 @@ export default function StepOnboard({
   creatableAccount,
   importableAccounts,
   onboardingStatus,
+  error,
 }: StepProps) {
   const renderContent = (onboardingStatus?: OnboardStatus) => {
     switch (onboardingStatus) {
@@ -162,7 +163,13 @@ export default function StepOnboard({
 
             <Box>
               <Alert type="error">
-                <Trans i18nKey="families.canton.addAccount.onboard.error" />
+                {error?.name === "DeviceLockedError" ? (
+                  <Trans i18nKey={error.message} />
+                ) : error?.name === "UserRefusedOnDevice" ? (
+                  <Trans i18nKey={error.message} />
+                ) : (
+                  <Trans i18nKey="families.canton.addAccount.onboard.error" />
+                )}
               </Alert>
             </Box>
           </Box>
