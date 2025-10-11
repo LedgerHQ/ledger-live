@@ -155,6 +155,7 @@ export default class Canton {
 
     // 2. Send the transaction hash as a single transaction
     const transactionBuffer = Buffer.from(txHash, "hex");
+
     const response = await this.transport.send(
       CLA,
       INS.SIGN,
@@ -165,7 +166,7 @@ export default class Canton {
 
     this.checkTransportResponse(response);
     const responseData = this.extractResponseData(response);
-    return this.cleanSignatureFormat(responseData.toString("hex"));
+    return this.cleanSignatureFormat(responseData);
   }
 
   /**
@@ -252,9 +253,7 @@ export default class Canton {
       throw new Error("No response data received from device");
     }
 
-    const rawSignature = responseData.toString("hex");
-
-    return this.cleanSignatureFormat(rawSignature);
+    return this.cleanSignatureFormat(responseData);
   }
 
   /**
@@ -292,7 +291,7 @@ export default class Canton {
       throw error;
     }
 
-    // 2. Send each transaction
+    // 2. Send each transaction using chunking for large data
     for (const [i, transaction] of transactions.entries()) {
       if (!transaction) {
         throw new TypeError(`Transaction at index ${i} is undefined or null`);
@@ -300,22 +299,38 @@ export default class Canton {
 
       const transactionBuffer = Buffer.from(transaction, "hex");
       const isLastTransaction = i === transactions.length - 1;
-      const p2 = isLastTransaction ? P2_MSG_END : P2_MORE | P2_MSG_END;
 
-      const response = await this.transport.send(
-        CLA,
-        INS.SIGN,
-        P1_SIGN_UNTYPED_VERSIONED_MESSAGE,
-        p2,
-        transactionBuffer,
-      );
+      if (transactionBuffer.length <= MAX_APDU_DATA_LENGTH) {
+        // Small transaction - send directly
+        const p2 = isLastTransaction ? P2_MSG_END : P2_MORE | P2_MSG_END;
 
-      if (isLastTransaction) {
-        this.checkTransportResponse(response);
-        const responseData = this.extractResponseData(response);
-        return this.cleanSignatureFormat(responseData.toString("hex"));
+        const response = await this.transport.send(
+          CLA,
+          INS.SIGN,
+          P1_SIGN_UNTYPED_VERSIONED_MESSAGE,
+          p2,
+          transactionBuffer,
+        );
+
+        if (isLastTransaction) {
+          this.checkTransportResponse(response);
+          const responseData = this.extractResponseData(response);
+          return this.cleanSignatureFormat(responseData);
+        } else {
+          this.checkTransportResponse(response);
+        }
       } else {
-        this.checkTransportResponse(response);
+        // Large transaction - use chunking
+        const responseData = await this.sendChunkedData({
+          ins: INS.SIGN,
+          p1: P1_SIGN_UNTYPED_VERSIONED_MESSAGE,
+          payload: transactionBuffer,
+          isFinal: isLastTransaction,
+        });
+
+        if (isLastTransaction && responseData) {
+          return this.cleanSignatureFormat(responseData);
+        }
       }
     }
 
@@ -423,17 +438,19 @@ export default class Canton {
    * [40][64_bytes_signature][00] (132 hex chars)
    * @private
    */
-  private cleanSignatureFormat(signature: string): CantonSignature {
-    if (signature.length === ED25519_SIGNATURE_HEX_LENGTH) {
-      return signature;
+  private cleanSignatureFormat(signature: Buffer): CantonSignature {
+    const signatureHex = signature.toString("hex");
+
+    if (signatureHex.length === ED25519_SIGNATURE_HEX_LENGTH) {
+      return signatureHex;
     }
 
-    if (signature.length === CANTON_SIGNATURE_HEX_LENGTH) {
-      const cleanedSignature = signature.slice(2, -2);
+    if (signatureHex.length === CANTON_SIGNATURE_HEX_LENGTH) {
+      const cleanedSignature = signatureHex.slice(2, -2);
       return cleanedSignature;
     }
 
-    return signature;
+    return signatureHex;
   }
 
   /**

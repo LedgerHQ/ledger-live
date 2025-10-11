@@ -113,6 +113,38 @@ describe("Canton", () => {
       );
     });
 
+    it("should sign large untyped versioned message with chunking", async () => {
+      // GIVEN
+      const largeTransaction =
+        "d1e98829444207b0e170346b2e80b58a2ffc602b01e190fb742016d407c84efd".repeat(10);
+
+      const firstChunk = largeTransaction.substring(0, 510);
+      const secondChunk = largeTransaction.substring(510, 640);
+
+      const transport = await openTransportReplayer(
+        RecordStore.fromString(`
+            => e006010315058000002c80001a6f800000008000000080000000
+            <= 9000
+            => e0060102ff${firstChunk}
+            <= 9000
+            => e006010441${secondChunk}
+            <= 40a65f53c3657bc04efefb67a425ba093a5cb5391d18142f148bb2c48daacf316114cff920a58d5996ca828c7ce265f537f1d7fca8fa82c3c73bd944a96e701a00009000
+          `),
+      );
+      const canton = new Canton(transport);
+      const data = {
+        transactions: [largeTransaction],
+      };
+
+      // WHEN
+      const result = await canton.signTransaction(PATH, data);
+
+      // THEN
+      expect(result).toEqual(
+        "a65f53c3657bc04efefb67a425ba093a5cb5391d18142f148bb2c48daacf316114cff920a58d5996ca828c7ce265f537f1d7fca8fa82c3c73bd944a96e701a00",
+      );
+    });
+
     it("should sign prepared transaction", async () => {
       // GIVEN
       const transport = await openTransportReplayer(
