@@ -97,6 +97,16 @@ const getStatusMessage = (status?: OnboardStatus): string => {
   }
 };
 
+const getErrorMessage = (error: Error | null) => {
+  if (error?.name === "DeviceLockedError") {
+    return <Trans i18nKey={error.message} />;
+  }
+  if (error?.name === "UserRefusedOnDevice") {
+    return <Trans i18nKey={error.message} />;
+  }
+  return <Trans i18nKey="families.canton.addAccount.onboard.error" />;
+};
+
 export default function StepOnboard({
   device,
   currency,
@@ -162,15 +172,7 @@ export default function StepOnboard({
             />
 
             <Box>
-              <Alert type="error">
-                {error?.name === "DeviceLockedError" ? (
-                  <Trans i18nKey={error.message} />
-                ) : error?.name === "UserRefusedOnDevice" ? (
-                  <Trans i18nKey={error.message} />
-                ) : (
-                  <Trans i18nKey="families.canton.addAccount.onboard.error" />
-                )}
-              </Alert>
+              <Alert type="error">{getErrorMessage(error)}</Alert>
             </Box>
           </Box>
         );

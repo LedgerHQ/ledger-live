@@ -23,6 +23,16 @@ const StepAuthorize = ({
 }: StepProps) => {
   invariant(onboardingResult?.completedAccount, "canton: completed account is required");
 
+  const getErrorMessage = (error: Error | null) => {
+    if (error?.name === "DeviceLockedError") {
+      return <Trans i18nKey={error.message} />;
+    }
+    if (error?.name === "UserRefusedOnDevice") {
+      return <Trans i18nKey={error.message} />;
+    }
+    return <Trans i18nKey="families.canton.addAccount.auth.error" />;
+  };
+
   const renderContent = (status: AuthorizeStatus) => {
     switch (status) {
       case AuthorizeStatus.SIGN:
@@ -66,15 +76,7 @@ const StepAuthorize = ({
             </Box>
 
             {status === AuthorizeStatus.ERROR ? (
-              <Alert type="error">
-                {error?.name === "DeviceLockedError" ? (
-                  <Trans i18nKey={error.message} />
-                ) : error?.name === "UserRefusedOnDevice" ? (
-                  <Trans i18nKey={error.message} />
-                ) : (
-                  <Trans i18nKey="families.canton.addAccount.auth.error" />
-                )}
-              </Alert>
+              <Alert type="error">{getErrorMessage(error)}</Alert>
             ) : (
               <Alert>
                 <Trans i18nKey="families.canton.addAccount.auth.hint" />

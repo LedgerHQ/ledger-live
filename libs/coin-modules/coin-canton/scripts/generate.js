@@ -1,10 +1,14 @@
 #!/usr/bin/env node
 /* eslint @typescript-eslint/no-var-requires: off */
 /* eslint no-console: off */
-const fs = require("node:fs");
-const path = require("node:path");
-const { execSync } = require("node:child_process");
-const https = require("node:https");
+import fs from "node:fs";
+import path from "node:path";
+import { execSync } from "node:child_process";
+import https from "node:https";
+import { fileURLToPath } from "node:url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const outputFile = path.join(__dirname, "../src/types/transaction-proto.json");
 const tempDir = path.join(__dirname, "temp-proto");
@@ -216,8 +220,12 @@ function generateProtobufBindings() {
     throw new Error("Invalid output file path");
   }
 
+  // Use npx from the same Node.js installation directory to avoid PATH manipulation
+  const npxPath = path.join(process.execPath, "..", "npx");
+  const absoluteNpxPath = path.resolve(npxPath);
+
   execSync(
-    "npx",
+    absoluteNpxPath,
     [
       "pbjs",
       "-t",

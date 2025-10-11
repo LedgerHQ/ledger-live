@@ -3,7 +3,7 @@ import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import type { Account } from "@ledgerhq/types-live";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { log } from "@ledgerhq/logs";
-import { LockedDeviceError, UserRefusedOnDevice, TransportStatusError } from "@ledgerhq/errors";
+import { TransportStatusError } from "@ledgerhq/errors";
 import { encodeAccountId } from "@ledgerhq/coin-framework/account/accountId";
 
 import {
