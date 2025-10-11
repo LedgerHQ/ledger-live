@@ -56,7 +56,7 @@ function downloadFile(url, filePath) {
     const file = fs.createWriteStream(filePath);
 
     https.get(url, handleHttpResponse(url, file, filePath, resolve, reject)).on("error", err => {
-      reject(err);
+      reject(err instanceof Error ? err : new Error(err));
     });
   });
 }

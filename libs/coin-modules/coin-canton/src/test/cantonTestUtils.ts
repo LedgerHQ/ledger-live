@@ -190,6 +190,13 @@ export function createMockSigner(keyPair: CantonTestKeyPair) {
           const damlTx = data.damlTransaction;
           if (damlTx instanceof Uint8Array) {
             hashToSign = Buffer.from(damlTx).toString("hex");
+          } else if (typeof damlTx === "string") {
+            hashToSign = damlTx;
+          } else if (damlTx && typeof damlTx === "object") {
+            // For objects, try to extract meaningful data or throw an error
+            throw new Error(
+              `Cannot convert damlTransaction object to string for signing: ${JSON.stringify(damlTx)}`,
+            );
           } else {
             hashToSign = String(damlTx);
           }
