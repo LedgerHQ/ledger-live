@@ -1,5 +1,5 @@
 import type Transport from "@ledgerhq/hw-transport";
-import { UserRefusedAddress, UserRefusedOnDevice, TransportStatusError } from "@ledgerhq/errors";
+import { TransportStatusError } from "@ledgerhq/errors";
 import BIPPath from "bip32-path";
 
 const CLA = 0xe0;
@@ -82,25 +82,18 @@ export default class Canton {
 
     const p1 = display ? P1_CONFIRM : P1_NON_CONFIRM;
 
-    try {
-      const response = await this.transport.send(CLA, INS.GET_ADDR, p1, P2_NONE, serializedPath);
-      this.checkTransportResponse(response);
-      const responseData = this.extractResponseData(response);
-      const { publicKey } = this.extractPublicKeyAndChainCode(responseData);
+    const response = await this.transport.send(CLA, INS.GET_ADDR, p1, P2_NONE, serializedPath);
+    this.checkTransportResponse(response);
+    const responseData = this.extractResponseData(response);
+    const { publicKey } = this.extractPublicKeyAndChainCode(responseData);
 
-      const address = "canton_" + this.publicKeyToAddress(publicKey);
+    const address = "canton_" + this.publicKeyToAddress(publicKey);
 
-      return {
-        publicKey,
-        address,
-        path,
-      };
-    } catch (error) {
-      if (error instanceof TransportStatusError && error.statusCode === STATUS.USER_CANCEL) {
-        throw new UserRefusedAddress();
-      }
-      throw error;
-    }
+    return {
+      publicKey,
+      address,
+      path,
+    };
   }
 
   /**
@@ -136,22 +129,15 @@ export default class Canton {
     const bipPath = BIPPath.fromString(path).toPathArray();
     const serializedPath = this.serializePath(bipPath);
 
-    try {
-      const pathResponse = await this.transport.send(
-        CLA,
-        INS.SIGN,
-        P1_SIGN_UNTYPED_VERSIONED_MESSAGE,
-        P2_FIRST | P2_MORE,
-        serializedPath,
-      );
+    const pathResponse = await this.transport.send(
+      CLA,
+      INS.SIGN,
+      P1_SIGN_UNTYPED_VERSIONED_MESSAGE,
+      P2_FIRST | P2_MORE,
+      serializedPath,
+    );
 
-      this.checkTransportResponse(pathResponse);
-    } catch (error) {
-      if (error instanceof TransportStatusError && error.statusCode === STATUS.USER_CANCEL) {
-        throw new UserRefusedOnDevice();
-      }
-      throw error;
-    }
+    this.checkTransportResponse(pathResponse);
 
     // 2. Send the transaction hash as a single transaction
     const transactionBuffer = Buffer.from(txHash, "hex");
@@ -183,22 +169,15 @@ export default class Canton {
     const bipPath = BIPPath.fromString(path).toPathArray();
     const serializedPath = this.serializePath(bipPath);
 
-    try {
-      const pathResponse = await this.transport.send(
-        CLA,
-        INS.SIGN,
-        P1_SIGN_PREPARED_TRANSACTION,
-        P2_FIRST | P2_MORE,
-        serializedPath,
-      );
+    const pathResponse = await this.transport.send(
+      CLA,
+      INS.SIGN,
+      P1_SIGN_PREPARED_TRANSACTION,
+      P2_FIRST | P2_MORE,
+      serializedPath,
+    );
 
-      this.checkTransportResponse(pathResponse);
-    } catch (error) {
-      if (error instanceof TransportStatusError && error.statusCode === STATUS.USER_CANCEL) {
-        throw new UserRefusedOnDevice();
-      }
-      throw error;
-    }
+    this.checkTransportResponse(pathResponse);
 
     // 2. Send the DAML transaction
     await this.sendChunkedData({
@@ -274,22 +253,15 @@ export default class Canton {
     const bipPath = BIPPath.fromString(path).toPathArray();
     const serializedPath = this.serializePath(bipPath);
 
-    try {
-      const pathResponse = await this.transport.send(
-        CLA,
-        INS.SIGN,
-        P1_SIGN_UNTYPED_VERSIONED_MESSAGE,
-        P2_FIRST | P2_MORE,
-        serializedPath,
-      );
+    const pathResponse = await this.transport.send(
+      CLA,
+      INS.SIGN,
+      P1_SIGN_UNTYPED_VERSIONED_MESSAGE,
+      P2_FIRST | P2_MORE,
+      serializedPath,
+    );
 
-      this.checkTransportResponse(pathResponse);
-    } catch (error) {
-      if (error instanceof TransportStatusError && error.statusCode === STATUS.USER_CANCEL) {
-        throw new UserRefusedOnDevice();
-      }
-      throw error;
-    }
+    this.checkTransportResponse(pathResponse);
 
     // 2. Send each transaction using chunking for large data
     for (const [i, transaction] of transactions.entries()) {

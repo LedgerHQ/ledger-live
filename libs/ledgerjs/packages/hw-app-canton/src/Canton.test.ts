@@ -1,5 +1,5 @@
 import { openTransportReplayer, RecordStore } from "@ledgerhq/hw-transport-mocker";
-import { UserRefusedAddress, UserRefusedOnDevice } from "@ledgerhq/errors";
+import { TransportStatusError } from "@ledgerhq/errors";
 import Canton from "./Canton";
 
 const PATH = "44'/6767'/0'/0'/0'";
@@ -84,7 +84,7 @@ describe("Canton", () => {
       const canton = new Canton(transport);
 
       // WHEN & THEN
-      await expect(canton.getAddress(PATH, true)).rejects.toThrow(UserRefusedAddress);
+      await expect(canton.getAddress(PATH, true)).rejects.toThrow(new TransportStatusError(0x6985));
     });
   });
 
@@ -203,7 +203,9 @@ describe("Canton", () => {
         };
 
         // WHEN & THEN
-        await expect(canton.signTransaction(PATH, data)).rejects.toThrow(UserRefusedOnDevice);
+        await expect(canton.signTransaction(PATH, data)).rejects.toThrow(
+          new TransportStatusError(0x6985),
+        );
       });
 
       it("should handle invalid transaction data", async () => {

@@ -3,7 +3,7 @@ import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import type { Account } from "@ledgerhq/types-live";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { log } from "@ledgerhq/logs";
-import { LockedDeviceError, UserRefusedOnDevice } from "@ledgerhq/errors";
+import { LockedDeviceError, UserRefusedOnDevice, TransportStatusError } from "@ledgerhq/errors";
 import { encodeAccountId } from "@ledgerhq/coin-framework/account/accountId";
 
 import {
@@ -167,16 +167,17 @@ export const buildAuthorizePreapproval =
  * Check if an error is a LockedDeviceError or UserRefusedOnDevice and create user-friendly error messages
  */
 const handleDeviceErrors = (error: Error): Error | null => {
-  if (error instanceof LockedDeviceError) {
-    const lockedDeviceError = new Error("errors.DeviceLockedError.description");
-    lockedDeviceError.name = "DeviceLockedError";
-    return lockedDeviceError;
-  }
-
-  if (error instanceof UserRefusedOnDevice) {
-    const userRefusedError = new Error("errors.UserRefusedOnDevice.description");
-    userRefusedError.name = "UserRefusedOnDevice";
-    return userRefusedError;
+  if (error instanceof TransportStatusError) {
+    if (error.statusCode === 0x6985) {
+      const userRefusedError = new Error("errors.UserRefusedOnDevice.description");
+      userRefusedError.name = "UserRefusedOnDevice";
+      return userRefusedError;
+    }
+    if (error.statusCode === 0x5515) {
+      const lockedDeviceError = new Error("errors.DeviceLockedError.description");
+      lockedDeviceError.name = "DeviceLockedError";
+      return lockedDeviceError;
+    }
   }
 
   return null;
