@@ -133,9 +133,9 @@ export function runSwapWithDifferentSeedTest(
       await app.common.disableSynchronizationForiOS();
       await app.common.selectKnownDevice();
       if (errorMessage) {
+        await app.common.enableSynchronization();
         await app.swapLiveApp.checkErrorMessage(errorMessage);
       } else {
-        await app.common.selectKnownDevice();
         await app.swap.verifyAmountsAndAcceptSwapForDifferentSeed(swap, minAmount);
         await app.swap.verifyDeviceActionLoadingNotVisible();
         await app.swap.waitForSuccessAndContinue();

@@ -801,7 +801,7 @@ export async function getDelegateEvents(delegatingAccount: Delegate): Promise<st
 
 export async function verifyAmountsAndAcceptSwap(swap: Swap, amount: string) {
   await waitFor(DeviceLabels.REVIEW_TRANSACTION);
-  const events = await pressUntilTextFound(DeviceLabels.ACCEPT_AND_SEND);
+  const events = await pressUntilTextFound(DeviceLabels.SIGN_TRANSACTION);
   verifySwapData(swap, events, amount);
   await pressBoth();
 }

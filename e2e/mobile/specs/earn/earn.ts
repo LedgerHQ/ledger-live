@@ -109,6 +109,7 @@ export async function runCorrectEarnPageIsLoadedDependingOnUserStakingSituationT
       await app.portfolio.openEarnTab();
       await earnReady;
       if (staking) {
+        await app.earnDashboard.goToTab("My Rewards");
         await app.earnDashboard.verifyTotalDeposited();
         await app.earnDashboard.verifyTotalRewardsEarned();
         await app.earnDashboard.verifyDepositedAssets(account);
