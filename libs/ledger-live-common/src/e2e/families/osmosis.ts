@@ -13,7 +13,7 @@ export async function delegateOsmosis(delegatingAccount: Delegate) {
   const isAmountCorrect = containsSubstringInEvent(amountInUosmo, events);
   expect(isAmountCorrect).toBeTruthy();
   if (getSpeculosModel() === DeviceModelId.stax) {
-    await pressUntilTextFound(DeviceLabels.HOLD_TO_SIGN.name);
+    await pressUntilTextFound(DeviceLabels.HOLD_TO_SIGN);
     await longPressAndRelease(DeviceLabels.HOLD_TO_SIGN, 3);
   } else {
     await pressBoth();

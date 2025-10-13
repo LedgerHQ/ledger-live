@@ -12,7 +12,7 @@ export async function delegateCelo(delegatingAccount: Delegate) {
   const isAmountCorrect = containsSubstringInEvent(delegatingAccount.amount, events);
   expect(isAmountCorrect).toBeTruthy();
   if (getSpeculosModel() === DeviceModelId.stax) {
-    await pressUntilTextFound(DeviceLabels.HOLD_TO_SIGN.name);
+    await pressUntilTextFound(DeviceLabels.HOLD_TO_SIGN);
     await longPressAndRelease(DeviceLabels.HOLD_TO_SIGN, 3);
   } else {
     await pressBoth();

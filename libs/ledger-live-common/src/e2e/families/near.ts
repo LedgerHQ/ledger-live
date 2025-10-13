@@ -18,13 +18,13 @@ export async function delegateNear(delegatingAccount: Delegate) {
   expect(isProviderCorrect).toBeTruthy();
   if (getSpeculosModel() === DeviceModelId.stax) {
     await pressAndRelease(DeviceLabels.CONFIRM_HEADER);
-    await waitFor(DeviceLabels.VIEW_ACTION.name);
-    await pressUntilTextFound(DeviceLabels.HOLD_TO_SIGN.name);
+    await waitFor(DeviceLabels.VIEW_ACTION);
+    await pressUntilTextFound(DeviceLabels.HOLD_TO_SIGN);
     await longPressAndRelease(DeviceLabels.HOLD_TO_SIGN, 3);
   } else {
     await pressBoth();
-    await waitFor(DeviceLabels.VIEW_ACTION.name);
-    await pressUntilTextFound(DeviceLabels.SIGN.name);
+    await waitFor(DeviceLabels.VIEW_ACTION);
+    await pressUntilTextFound(DeviceLabels.SIGN);
     await pressBoth();
   }
 }

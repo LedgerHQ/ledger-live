@@ -9,7 +9,7 @@ import { DeviceModelId } from "@ledgerhq/types-devices";
 export async function delegateMultiversX(delegatingAccount: Delegate) {
   await getDelegateEvents(delegatingAccount);
   if (getSpeculosModel() === DeviceModelId.stax) {
-    await pressUntilTextFound(DeviceLabels.HOLD_TO_SIGN.name);
+    await pressUntilTextFound(DeviceLabels.HOLD_TO_SIGN);
     await longPressAndRelease(DeviceLabels.HOLD_TO_SIGN, 3);
   } else {
     await pressBoth();

@@ -13,11 +13,11 @@ export async function sendEVM(tx: Transaction) {
   const speculosModel = getSpeculosModel();
 
   if (speculosModel === DeviceModelId.stax) {
-    events = await pressUntilTextFound(DeviceLabels.HOLD_TO_SIGN.name);
+    events = await pressUntilTextFound(DeviceLabels.HOLD_TO_SIGN);
   } else if (speculosModel === DeviceModelId.nanoS) {
-    events = await pressUntilTextFound(DeviceLabels.ACCEPT.name);
+    events = await pressUntilTextFound(DeviceLabels.ACCEPT);
   } else {
-    events = await pressUntilTextFound(DeviceLabels.SIGN_TRANSACTION.name);
+    events = await pressUntilTextFound(DeviceLabels.SIGN_TRANSACTION);
   }
 
   const isAmountCorrect = containsSubstringInEvent(tx.amount, events);
@@ -38,8 +38,8 @@ export async function sendEVM(tx: Transaction) {
 }
 
 export async function sendEvmNFT(tx: NFTTransaction) {
-  await waitFor(DeviceLabels.REVIEW_OPERATION.name);
-  const events = await pressUntilTextFound(DeviceLabels.ACCEPT.name);
+  await waitFor(DeviceLabels.REVIEW_OPERATION);
+  const events = await pressUntilTextFound(DeviceLabels.ACCEPT);
   const isAddressCorrect = containsSubstringInEvent(tx.accountToCredit.address, events);
   expect(isAddressCorrect).toBeTruthy();
   await pressBoth();

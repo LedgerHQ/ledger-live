@@ -18,8 +18,8 @@ export async function sendBTCBasedCoin(tx: Transaction) {
     await longPressAndRelease(DeviceLabels.HOLD_TO_SIGN, 3);
   } else {
     await pressBoth();
-    await waitFor(DeviceLabels.CONFIRM.name);
-    await pressUntilTextFound(DeviceLabels.ACCEPT.name);
+    await waitFor(DeviceLabels.CONFIRM);
+    await pressUntilTextFound(DeviceLabels.ACCEPT);
     await pressBoth();
   }
 }
@@ -37,11 +37,11 @@ export async function sendBTC(tx: Transaction) {
     } else {
       await pressBoth();
       if (speculosDevice === DeviceModelId.nanoS) {
-        await pressUntilTextFound(DeviceLabels.SIGN.name);
+        await pressUntilTextFound(DeviceLabels.SIGN);
         await pressBoth();
-        await waitFor(DeviceLabels.BITCOIN_IS_READY.name);
+        await waitFor(DeviceLabels.BITCOIN_IS_READY);
       } else {
-        await waitFor(DeviceLabels.TRANSACTION_SIGNED.name);
+        await waitFor(DeviceLabels.TRANSACTION_SIGNED);
       }
     }
   } catch (e) {

@@ -12,14 +12,14 @@ export async function delegateTezos(delegatingAccount: Delegate) {
   await getDelegateEvents(delegatingAccount);
   await pressUntilTextFound(delegateConfirmLabel);
   if (getSpeculosModel() === DeviceModelId.stax) {
-    await pressUntilTextFound(DeviceLabels.HOLD_TO_SIGN.name);
+    await pressUntilTextFound(DeviceLabels.HOLD_TO_SIGN);
     await longPressAndRelease(DeviceLabels.HOLD_TO_SIGN, 3);
   } else {
     await pressBoth();
   }
 
   if (getSpeculosModel() == DeviceModelId.nanoS) {
-    await pressUntilTextFound(DeviceLabels.ACCEPT_AND_SEND.name);
+    await pressUntilTextFound(DeviceLabels.ACCEPT_AND_SEND);
     await pressBoth();
   }
 }

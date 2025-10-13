@@ -1,7 +1,6 @@
 import { retryAxiosRequest, getSpeculosAddress, getDeviceLabelCoordinates } from "../speculos";
 import axios from "axios";
 import { getEnv } from "@ledgerhq/live-env";
-import { DeviceLabels } from "../enum/DeviceLabels";
 
 function getSpeculosInfo(): {
   speculosApiPort: number;
@@ -11,7 +10,7 @@ function getSpeculosInfo(): {
   const speculosAddress = getSpeculosAddress();
   return { speculosApiPort, speculosAddress };
 }
-export async function pressAndRelease(deviceLabel: DeviceLabels, x?: number, y?: number) {
+export async function pressAndRelease(deviceLabel: string, x?: number, y?: number) {
   const { speculosApiPort, speculosAddress } = getSpeculosInfo();
   const { x: coordX, y: coordY } = await getDeviceLabelCoordinates(deviceLabel, speculosApiPort);
   x = x === undefined ? coordX : x;
@@ -25,7 +24,7 @@ export async function pressAndRelease(deviceLabel: DeviceLabels, x?: number, y?:
   );
 }
 
-export async function longPressAndRelease(deviceLabel: DeviceLabels, delay: number) {
+export async function longPressAndRelease(deviceLabel: string, delay: number) {
   const { speculosApiPort, speculosAddress } = getSpeculosInfo();
   const deviceLabelCoordinates = await getDeviceLabelCoordinates(deviceLabel, speculosApiPort);
   await retryAxiosRequest(() =>
