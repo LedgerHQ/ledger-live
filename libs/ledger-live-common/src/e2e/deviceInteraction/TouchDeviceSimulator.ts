@@ -10,7 +10,6 @@ function getSpeculosInfo(): {
   const speculosAddress = getSpeculosAddress();
   return { speculosApiPort, speculosAddress };
 }
-
 export async function pressAndRelease(deviceLabel: string, x?: number, y?: number) {
   const { speculosApiPort, speculosAddress } = getSpeculosInfo();
   let xCoord: number;
