@@ -77,8 +77,8 @@ describe("Hooks Factory", () => {
 
     expect(hooks.useTokenById).toBeDefined();
     expect(hooks.useTokenByAddressInCurrency).toBeDefined();
-    expect(typeof hooks.useTokenById).toBe("function");
-    expect(typeof hooks.useTokenByAddressInCurrency).toBe("function");
+    expect(hooks.useTokenById).toBeInstanceOf(Function);
+    expect(hooks.useTokenByAddressInCurrency).toBeInstanceOf(Function);
   });
 
   it("should throw an error when useCALBackend is true", () => {
