@@ -1,5 +1,11 @@
 # @ledgerhq/coin-tester-evm
 
+## 1.9.0-next.2
+
+### Minor Changes
+
+- [#12269](https://github.com/LedgerHQ/ledger-live/pull/12269) [`7593ade`](https://github.com/LedgerHQ/ledger-live/commit/7593ade7fcaa06779673b5f563d96174ecdf6e78) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - doc(coin-tester-evm): add missing dependency in README
+
 ## 1.9.0-next.1
 
 ### Patch Changes
