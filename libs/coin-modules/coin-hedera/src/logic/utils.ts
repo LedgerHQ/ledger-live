@@ -10,7 +10,7 @@ import { makeLRUCache, seconds } from "@ledgerhq/live-network/cache";
 import type { Currency, ExplorerView, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import type { AccountLike, Operation as LiveOperation } from "@ledgerhq/types-live";
 import { HEDERA_OPERATION_TYPES, HEDERA_TRANSACTION_MODES } from "../constants";
-import { hederaMirrorNode } from "../network/mirror";
+import { apiClient } from "../network/api";
 import type {
   HederaAccount,
   HederaOperationExtra,
@@ -18,7 +18,7 @@ import type {
   TransactionStatus,
   TransactionTokenAssociate,
 } from "../types";
-import { hederaClient } from "../network/client";
+import { rpcClient } from "../network/rpc";
 import { HederaRecipientInvalidChecksum } from "../errors";
 
 export const serializeSignature = (signature: Uint8Array) => {
@@ -173,7 +173,7 @@ export const checkAccountTokenAssociationStatus = makeLRUCache(
     }
 
     const addressWithoutChecksum = parsingResult.accountId;
-    const mirrorAccount = await hederaMirrorNode.getAccount(addressWithoutChecksum);
+    const mirrorAccount = await apiClient.getAccount(addressWithoutChecksum);
 
     // auto association is enabled
     if (mirrorAccount.max_automatic_token_associations === -1) {
@@ -205,7 +205,7 @@ export const safeParseAccountId = (
     // https://github.com/hiero-ledger/hiero-sdk-js/blob/main/src/EntityIdHelper.js#L446
     const checksum: string | null = address.split("-")[1] ?? null;
     if (checksum) {
-      const client = hederaClient.getInstance();
+      const client = rpcClient.getInstance();
       const recipientWithChecksum = accountId.toStringWithChecksum(client);
       const expectedChecksum = recipientWithChecksum.split("-")[1];
 

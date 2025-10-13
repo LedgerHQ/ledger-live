@@ -1,12 +1,12 @@
 import type { Balance } from "@ledgerhq/coin-framework/api/types";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { findTokenByAddressInCurrency } from "@ledgerhq/cryptoassets/tokens";
-import { hederaMirrorNode } from "../network/mirror";
+import { apiClient } from "../network/api";
 
 export async function getBalance(currency: CryptoCurrency, address: string): Promise<Balance[]> {
   const [mirrorAccount, mirrorTokens] = await Promise.all([
-    hederaMirrorNode.getAccount(address),
-    hederaMirrorNode.getAccountTokens(address),
+    apiClient.getAccount(address),
+    apiClient.getAccountTokens(address),
   ]);
 
   const balance: Balance[] = [

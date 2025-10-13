@@ -23,7 +23,7 @@ import {
   lastBlock,
 } from "../logic/index";
 import { mapIntentToSDKOperation, getOperationValue } from "../logic/utils";
-import { hederaMirrorNode } from "../network/mirror";
+import { apiClient } from "../network/api";
 import type { HederaMemo } from "../types";
 
 export function createApi(config: HederaConfig): Api<HederaMemo> {
@@ -64,7 +64,7 @@ export function createApi(config: HederaConfig): Api<HederaMemo> {
     getBalance: address => getBalance(currency, address),
     lastBlock,
     listOperations: async (address, pagination) => {
-      const mirrorTokens = await hederaMirrorNode.getAccountTokens(address);
+      const mirrorTokens = await apiClient.getAccountTokens(address);
       const latestAccountOperations = await logicListOperations({
         currency,
         address,

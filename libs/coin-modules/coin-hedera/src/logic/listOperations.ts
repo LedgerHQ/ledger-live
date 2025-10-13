@@ -5,7 +5,7 @@ import type { Pagination } from "@ledgerhq/coin-framework/api/types";
 import { findTokenByAddressInCurrency } from "@ledgerhq/cryptoassets/tokens";
 import { encodeAccountId, encodeTokenAccountId } from "@ledgerhq/coin-framework/account/accountId";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
-import { hederaMirrorNode } from "../network/mirror";
+import { apiClient } from "../network/api";
 import { parseTransfers } from "../network/utils";
 import type { HederaMirrorToken, HederaOperationExtra } from "../types";
 import { base64ToUrlSafeBase64, getMemoFromBase64 } from "./utils";
@@ -34,7 +34,7 @@ export async function listOperations({
 }> {
   const coinOperations: Operation<HederaOperationExtra>[] = [];
   const tokenOperations: Operation<HederaOperationExtra>[] = [];
-  const mirrorResult = await hederaMirrorNode.getAccountTransactions({
+  const mirrorResult = await apiClient.getAccountTransactions({
     address,
     pagingToken: pagination.lastPagingToken ?? null,
     order: pagination.order,

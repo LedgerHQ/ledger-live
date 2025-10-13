@@ -1,6 +1,7 @@
 {
   "entry": [
     "src/account.ts",
+    "src/api/index.ts",
     "src/bridge/index.ts",
     "src/test/cli.ts",
     "src/deviceTransactionConfig.ts",
@@ -18,7 +19,6 @@
   "ignoreUnresolved": [],
   "ignoreUnimported": [
     "src/index.ts",
-    "src/logic.ts",
     "src/test/bot-specs.ts",
     "src/test/bridgeDatasetTest.ts",
     "src/test/cli.ts",
