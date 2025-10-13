@@ -9,34 +9,7 @@ import { createNetworkConfigurationHook } from "../createNetworkConfiguration";
 import { renderHook } from "@testing-library/react";
 import { CounterValuesState } from "@ledgerhq/live-countervalues/lib/types";
 import { FiatCurrency, TokenCurrency, CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-
-const makeUsdcToken = (
-  parentCurrency: CryptoCurrency,
-  contractAddress: string,
-  tokenType: string = "erc20",
-  magnitude: number = 6,
-  name: string = "USD Coin",
-  unitName: string = "USD Coin",
-  explicitId?: string,
-) => {
-  const id = explicitId ?? `${parentCurrency.id}/${tokenType}/usdc`;
-  return {
-    type: "TokenCurrency" as const,
-    parentCurrency,
-    tokenType,
-    id,
-    contractAddress,
-    ticker: "USDC",
-    name,
-    units: [
-      {
-        name: unitName,
-        code: "USDC",
-        magnitude,
-      },
-    ],
-  };
-};
+import { makeUsdcToken } from "./createAssetConfiguration.test";
 
 const bscCurrency = createFixtureCryptoCurrency("bsc");
 const bscAccount = genAccount("bsc-account", { currency: bscCurrency });
@@ -44,9 +17,7 @@ const bscUsdcToken: TokenCurrency = makeUsdcToken(
   bscCurrency,
   "0x8AC76a51cc950d9822D68b83fE1Ad97B32Cd580d",
   "bep20",
-  18,
   "USD Coin",
-  "Binance-Peg USD Coin",
   "bsc/erc20/usdc",
 );
 const bscUsdcTokenAccount = genTokenAccount(0, bscAccount, bscUsdcToken);
@@ -58,8 +29,6 @@ const baseUsdcToken: TokenCurrency = makeUsdcToken(
   baseCurrency,
   "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
   "erc20",
-  6,
-  "USD Coin",
   "USD Coin",
   "base/erc20/usd_coin",
 );
@@ -78,8 +47,7 @@ const ethereumUsdcToken: TokenCurrency = makeUsdcToken(
   ethereumCurrency,
   "0xA0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
   "erc20",
-  6,
-  "USD Coin",
+
   "USD Coin",
 );
 const ethereumUsdcTokenAccount = genTokenAccount(0, ethereumAccountHigh, ethereumUsdcToken);
@@ -108,8 +76,6 @@ const polygonUsdcToken: TokenCurrency = makeUsdcToken(
   polygonCurrency,
   "0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174",
   "erc20",
-  6,
-  "USD Coin",
   "USD Coin",
 );
 const polygonUsdcTokenAccount = genTokenAccount(0, polygonAccountMedium, polygonUsdcToken);
