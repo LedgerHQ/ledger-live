@@ -27,7 +27,7 @@
     "@ledgerhq/disable-network-setup": "workspace:^",
     "@ledgerhq/types-cryptoassets": "workspace:^",
     "@ledgerhq/types-live": "workspace:^",
-    "@swc/core": "1.4.11",
+    "@swc/core": "1.13.5",
     "@swc/jest": "0.2.36",
     "@types/command-line-args": "5.2.3",
     "@types/jest": "^29.5.10",

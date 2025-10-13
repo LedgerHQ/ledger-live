@@ -11,6 +11,8 @@ module.exports = {
   plugins: [
     "@babel/plugin-transform-named-capturing-groups-regex",
     "@babel/plugin-transform-export-namespace-from",
+    "babel-plugin-syntax-hermes-parser",
+    "@react-native/babel-plugin-codegen",
     "@babel/plugin-transform-class-static-block",
     "@babel/plugin-transform-flow-strip-types",
     ["@babel/plugin-transform-private-methods", { loose: true }],

@@ -266,7 +266,7 @@
     "@ledgerhq/types-live": "workspace:^",
     "@solana/web3.js": "1.95.4",
     "@svgr/core": "^5.5.0",
-    "@swc/core": "1.4.11",
+    "@swc/core": "1.13.5",
     "@swc/jest": "0.2.36",
     "@tanstack/react-query": "^5.28.9",
     "@testing-library/react": "^14.1.2",

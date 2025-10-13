@@ -69,7 +69,7 @@
   "devDependencies": {
     "@faker-js/faker": "^8.4.1",
     "@ledgerhq/disable-network-setup": "workspace:^",
-    "@swc/core": "1.4.11",
+    "@swc/core": "1.13.5",
     "@swc/jest": "0.2.36",
     "@types/bs58": "^4.0.1",
     "@types/invariant": "^2.2.2",
