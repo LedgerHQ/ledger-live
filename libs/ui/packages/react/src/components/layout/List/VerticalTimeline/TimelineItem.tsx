@@ -88,7 +88,7 @@ function TimelineItem({ item, isFirstItem, isLastItem, onClick, isNeutral }: Pro
               variant="body"
               fontWeight={item.status === "active" ? "semiBold" : "medium"}
               color={
-                item.status !== "inactive" && isLastItem
+                item.status !== "inactive" && isLastItem && !isNeutral
                   ? "success.c70"
                   : item.status === "active"
                     ? "primary.c80"
