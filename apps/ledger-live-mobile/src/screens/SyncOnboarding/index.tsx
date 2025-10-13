@@ -14,15 +14,13 @@ import DesyncDrawer from "./DesyncDrawer";
 import EarlySecurityCheckMandatoryDrawer from "./EarlySecurityCheckMandatoryDrawer";
 import { PlainOverlay } from "./DesyncOverlay";
 import { track } from "~/analytics";
+import { NavigationHeaderCloseButton } from "~/components/NavigationHeaderCloseButton";
 import UnlockDeviceDrawer from "~/components/UnlockDeviceDrawer";
 import AutoRepairDrawer from "./AutoRepairDrawer";
 import { type SyncOnboardingScreenProps } from "./SyncOnboardingScreenProps";
-import { useIsFocused, useNavigation } from "@react-navigation/core";
+import { useIsFocused } from "@react-navigation/core";
 import { TwoStepSyncOnboardingCompanion } from "./TwoStepStepper/TwoStepSyncOnboardingCompanion";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
-import { NavigationHeaderBackButton } from "~/components/NavigationHeaderBackButton";
-import { NavigatorName, ScreenName } from "~/const";
-import { RootNavigation } from "~/components/RootNavigator/types/helpers";
 
 const POLLING_PERIOD_MS = 1000;
 const DESYNC_TIMEOUT_MS = 20000;
@@ -35,8 +33,6 @@ const DESYNC_TIMEOUT_MS = 20000;
  * - know which steps it should display
  */
 export const SyncOnboarding = ({ navigation, route }: SyncOnboardingScreenProps) => {
-  const rootNavigation = useNavigation<RootNavigation>();
-
   const { device } = route.params;
   const [currentStep, setCurrentStep] = useState<"loading" | "early-security-check" | "companion">(
     "loading",
@@ -74,36 +70,9 @@ export const SyncOnboarding = ({ navigation, route }: SyncOnboardingScreenProps)
     if (currentStep === "early-security-check") {
       setIsESCMandatoryDrawerOpen(true);
     } else {
-      rootNavigation.reset({
-        index: 0,
-        routes: [
-          {
-            name: NavigatorName.BaseOnboarding,
-            state: {
-              routes: [
-                {
-                  name: NavigatorName.Onboarding,
-                  state: {
-                    routes: [
-                      {
-                        name: ScreenName.OnboardingWelcome,
-                      },
-                      {
-                        name: ScreenName.OnboardingPostWelcomeSelection,
-                      },
-                      {
-                        name: ScreenName.OnboardingDeviceSelection,
-                      },
-                    ],
-                  },
-                },
-              ],
-            },
-          },
-        ],
-      });
+      navigation.popToTop();
     }
-  }, [currentStep, rootNavigation]);
+  }, [currentStep, navigation]);
 
   // Updates dynamically the screen header to handle a possible overlay
   useEffect(() => {
@@ -115,10 +84,10 @@ export const SyncOnboarding = ({ navigation, route }: SyncOnboardingScreenProps)
             <Flex
               my={isSyncIncr1Enabled ? 0 : 5}
               flexDirection="row"
-              justifyContent="flex-start"
+              justifyContent="flex-end"
               alignItems="center"
             >
-              <NavigationHeaderBackButton onPress={onCloseButtonPress} />
+              <NavigationHeaderCloseButton onPress={onCloseButtonPress} />
             </Flex>
           </SafeAreaView>
           <PlainOverlay isOpen={isHeaderOverlayOpen} delay={headerOverlayDelayMs} />

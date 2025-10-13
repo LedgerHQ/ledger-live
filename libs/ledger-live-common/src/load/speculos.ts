@@ -128,6 +128,7 @@ export const findLatestAppCandidate = (
   appCandidates: AppCandidate[],
   search: AppSearch,
 ): AppCandidate | null => {
+  search.firmware = process.env.SPECULOS_FIRMWARE_VERSION;
   let apps = appCandidates.filter(c => appCandidatesMatches(c, search));
   if (apps.length === 0) {
     return null;
