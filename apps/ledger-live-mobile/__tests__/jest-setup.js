@@ -187,3 +187,12 @@ console.log = (...args) => {
   }
   originalLog.call(console, ...args);
 };
+
+// Mock isCurrencySupported globally for tests
+jest.mock("@ledgerhq/coin-framework/currencies/support", () => {
+  const actual = jest.requireActual("@ledgerhq/coin-framework/currencies/support");
+  return {
+    ...actual,
+    isCurrencySupported: jest.fn(() => true),
+  };
+});

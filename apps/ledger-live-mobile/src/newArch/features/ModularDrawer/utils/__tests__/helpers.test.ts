@@ -7,8 +7,12 @@ import {
   usdcToken,
   mockScrollCryptoCurrency,
 } from "@ledgerhq/live-common/modularDrawer/__mocks__/currencies.mock";
+import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 
 describe("helpers", () => {
+  const acceptAll = () => true;
+  const rejectScroll = (currency: CryptoOrTokenCurrency) => currency.id !== "scroll";
+
   describe("getNetworksForAsset", () => {
     it("should return an empty array if the asset id does not exist", () => {
       const assets: AssetData[] = [
@@ -17,7 +21,7 @@ describe("helpers", () => {
           networks: [mockEthCryptoCurrency],
         },
       ];
-      expect(getNetworksForAsset(assets, "unknown", new Set())).toEqual([]);
+      expect(getNetworksForAsset(assets, "unknown", acceptAll)).toEqual([]);
     });
 
     it("should return the networks for a matching asset id", () => {
@@ -28,7 +32,7 @@ describe("helpers", () => {
           networks,
         },
       ];
-      expect(getNetworksForAsset(assets, "btc", new Set())).toEqual(networks);
+      expect(getNetworksForAsset(assets, "btc", acceptAll)).toEqual(networks);
     });
     it("should not return scroll network (when deactivated) for asset", () => {
       const networks = [mockEthCryptoCurrency];
@@ -38,7 +42,7 @@ describe("helpers", () => {
           networks: [mockEthCryptoCurrency, mockScrollCryptoCurrency],
         },
       ];
-      expect(getNetworksForAsset(assets, "eth", new Set(["scroll"]))).toEqual(networks);
+      expect(getNetworksForAsset(assets, "eth", rejectScroll)).toEqual(networks);
     });
   });
 
@@ -59,23 +63,23 @@ describe("helpers", () => {
     ];
 
     it("should return undefined if no asset is selected", () => {
-      expect(resolveCurrency(assets, new Set(), undefined, undefined)).toBeUndefined();
+      expect(resolveCurrency(assets, acceptAll, undefined, undefined)).toBeUndefined();
     });
 
     it("should return the selected asset if no network is selected", () => {
-      expect(resolveCurrency(assets, new Set(), eth, undefined)).toBe(eth);
+      expect(resolveCurrency(assets, acceptAll, eth, undefined)).toBe(eth);
     });
 
     it("should return the selected asset when the selected network is the same currency", () => {
-      expect(resolveCurrency(assets, new Set(), eth, eth)).toBe(eth);
+      expect(resolveCurrency(assets, acceptAll, eth, eth)).toBe(eth);
     });
 
     it("should return the token correctly for both parent and other networks", () => {
       // Token selected with its parent network
-      expect(resolveCurrency(assets, new Set(), usdc, eth)).toBe(usdc);
+      expect(resolveCurrency(assets, acceptAll, usdc, eth)).toBe(usdc);
 
       // Token selected with a different network
-      expect(resolveCurrency(assets, new Set(), usdc, base)).toBe(usdc);
+      expect(resolveCurrency(assets, acceptAll, usdc, base)).toBe(usdc);
     });
   });
 });
