@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.96.0-next.3
+
+### Minor Changes
+
+- [#12267](https://github.com/LedgerHQ/ledger-live/pull/12267) [`4d2270a`](https://github.com/LedgerHQ/ledger-live/commit/4d2270a057f7ba642a1142f40b7666b26a2e2134) Thanks [@hhumphrey-ledger](https://github.com/hhumphrey-ledger)! - Updated noah copy and button order
+
 ## 3.96.0-next.2
 
 ### Patch Changes
