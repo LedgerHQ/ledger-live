@@ -1,11 +1,5 @@
 # @ledgerhq/live-common
 
-## 34.51.0-next.2
-
-### Minor Changes
-
-- [#12219](https://github.com/LedgerHQ/ledger-live/pull/12219) [`34ddc5b`](https://github.com/LedgerHQ/ledger-live/commit/34ddc5b98f79ed8057363a08e359d8558fff12b0) Thanks [@live-github-bot](https://github.com/apps/live-github-bot)! - Revert "refactor(llc): rewrite generic prepare transaction"
-
 ## 34.51.0-next.1
 
 ### Minor Changes
