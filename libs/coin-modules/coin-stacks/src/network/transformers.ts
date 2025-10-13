@@ -93,7 +93,7 @@ export const findFinalTokenId = async (
     // Check if this result matches our criteria:
     // 1. It exists in the token registry
     // 2. The asset name matches what we're looking for
-    const isRegistered = findTokenById(tokenRegistryPrefix + result.asset_identifier);
+    const isRegistered = findTokenById(TokenPrefix + result.asset_identifier);
     const isMatchingAsset = resultAssetName === assetName;
 
     if (isRegistered && isMatchingAsset) {
