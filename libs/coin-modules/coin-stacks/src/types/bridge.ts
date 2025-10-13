@@ -12,6 +12,7 @@ import {
 import { StacksNetwork } from "../network/api.types";
 
 export type FamilyType = "stacks";
+export const TokenPrefix = "stacks/sip010/";
 
 export type NetworkInfo = {
   family: FamilyType;

@@ -1,6 +1,7 @@
 import { TransactionResponse } from "./api.types";
 import { fetchFungibleTokenMetadataCached } from "./api";
 import { findTokenById } from "@ledgerhq/cryptoassets/tokens";
+import { TokenPrefix } from "../types";
 
 /**
  * Extracts token transfer transactions from a transaction list
@@ -37,7 +38,7 @@ const getAssetIdFromContractId = async (contractId: string): Promise<string | un
     } else if (metadata.results.length > 1) {
       // If multiple results, find which one exists in the token registry
       for (const result of metadata.results) {
-        const token = findTokenById("stacks/sip010/" + result.asset_identifier);
+        const token = findTokenById(TokenPrefix + result.asset_identifier);
         if (token) {
           return result.asset_identifier;
         }
@@ -67,8 +68,7 @@ export const findFinalTokenId = async (
   }
 
   // Check if token exists in the local registry
-  const tokenRegistryPrefix = "stacks/sip010/";
-  const registeredToken = findTokenById(tokenRegistryPrefix + tokenId);
+  const registeredToken = findTokenById(TokenPrefix + tokenId);
 
   if (registeredToken) {
     return tokenId;

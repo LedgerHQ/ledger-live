@@ -24,6 +24,7 @@ import {
 import { log } from "@ledgerhq/logs";
 import { findTokenById } from "@ledgerhq/cryptoassets/tokens";
 import { TransactionResponse } from "../network";
+import { TokenPrefix } from "../types";
 
 /**
  * Calculates the spendable balance by subtracting pending transactions from the total balance
@@ -55,7 +56,7 @@ export function createTokenAccount(
   initialAccount?: Account,
 ): TokenAccount | null {
   try {
-    const token = findTokenById("stacks/sip010/" + tokenId);
+    const token = findTokenById(TokenPrefix + tokenId);
     if (!tokenId || !token) {
       log("error", `stacks token not found, addr: ${tokenId}`);
       return null;
