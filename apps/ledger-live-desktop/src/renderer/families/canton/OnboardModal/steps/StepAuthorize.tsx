@@ -84,7 +84,7 @@ export const StepAuthorizeFooter = ({
   authorizeStatus,
   isProcessing,
   onAuthorizePreapproval,
-  onRetry,
+  onRetryPreapproval,
 }: StepProps) => {
   if (authorizeStatus === AuthorizeStatus.SIGN) {
     return <></>;
@@ -94,7 +94,7 @@ export const StepAuthorizeFooter = ({
     switch (authorizeStatus) {
       case AuthorizeStatus.ERROR:
         return (
-          <Button primary onClick={onRetry}>
+          <Button primary onClick={onRetryPreapproval}>
             <Trans i18nKey="common.tryAgain" />
           </Button>
         );
@@ -110,6 +110,11 @@ export const StepAuthorizeFooter = ({
       default:
         return (
           <Button primary onClick={onAuthorizePreapproval} disabled={isProcessing}>
+            {isProcessing && (
+              <Box mr={2}>
+                <Spinner size={20} />
+              </Box>
+            )}
             <Trans i18nKey="common.confirm" />
           </Button>
         );

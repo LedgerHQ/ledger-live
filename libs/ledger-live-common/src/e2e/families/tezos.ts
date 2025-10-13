@@ -1,10 +1,5 @@
-import {
-  getDelegateEvents,
-  getDeviceLabels,
-  getSpeculosModel,
-  pressBoth,
-  pressUntilTextFound,
-} from "../speculos";
+import { getDelegateEvents, getDeviceLabels, pressBoth, pressUntilTextFound } from "../speculos";
+import { getSpeculosModel } from "../speculosAppVersion";
 import { Delegate } from "../models/Delegate";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import { DeviceLabels } from "../enum/DeviceLabels";

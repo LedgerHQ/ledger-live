@@ -1,12 +1,7 @@
 import expect from "expect";
 import { Transaction } from "../models/Transaction";
-import {
-  pressBoth,
-  pressUntilTextFound,
-  waitFor,
-  containsSubstringInEvent,
-  getSpeculosModel,
-} from "../speculos";
+import { pressBoth, pressUntilTextFound, waitFor, containsSubstringInEvent } from "../speculos";
+import { getSpeculosModel } from "../speculosAppVersion";
 import { DeviceLabels } from "../enum/DeviceLabels";
 import { Device } from "../enum/Device";
 import invariant from "invariant";
@@ -27,7 +22,7 @@ export async function sendBTC(tx: Transaction) {
   const speculosDevice = getSpeculosModel();
   try {
     const events =
-      speculosDevice === Device.LNS
+      speculosDevice === Device.LNS.name
         ? await pressUntilTextFound(DeviceLabels.CONTINUE)
         : await pressUntilTextFound(DeviceLabels.SIGN_TRANSACTION);
     const isAmountCorrect = containsSubstringInEvent(tx.amount, events);
@@ -35,7 +30,7 @@ export async function sendBTC(tx: Transaction) {
     const isAddressCorrect = containsSubstringInEvent(tx.accountToCredit.address, events);
     expect(isAddressCorrect).toBeTruthy();
     await pressBoth();
-    if (speculosDevice === Device.LNS) {
+    if (speculosDevice === Device.LNS.name) {
       await pressUntilTextFound(DeviceLabels.SIGN);
       await pressBoth();
       await waitFor(DeviceLabels.BITCOIN_IS_READY);

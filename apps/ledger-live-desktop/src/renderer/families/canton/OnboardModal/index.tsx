@@ -119,9 +119,18 @@ class OnboardModal extends PureComponent<Props, State> {
     }
   };
 
-  handleRetry = () => {
+  handleRetryOnboardAccount = () => {
     this.handleUnsubscribe();
     this.setState({ ...INITIAL_STATE });
+  };
+
+  handleRetryPreapproval = () => {
+    this.handleUnsubscribe();
+    this.setState({
+      authorizeStatus: AuthorizeStatus.INIT,
+      isProcessing: false,
+      error: null,
+    });
   };
 
   handleStepChange = ({ id }: Step<StepId, StepProps>) => {
@@ -151,11 +160,25 @@ class OnboardModal extends PureComponent<Props, State> {
     if (completedAccount) {
       accounts.push(completedAccount);
     }
+
+    // on previous step we don’t have a partyId yet for onboarding account
+    // so editedNames use a temporary account ID
+    // since only one account is onboarded at a time, we cane filter out importableAccounts renamings
+    // what is left belongs to the onboarded account
+    const importableAccountIds = new Set(importableAccounts.map(acc => acc.id));
+    const [, completedAccountName] =
+      Object.entries(editedNames).find(([accountId]) => !importableAccountIds.has(accountId)) || [];
+
     const renamings = Object.fromEntries(
-      accounts.map(account => [
-        account.id,
-        editedNames[account.id] || getDefaultAccountName(account),
-      ]),
+      accounts.map(account => {
+        let accountName = editedNames[account.id];
+
+        if (completedAccount && account.id === completedAccount.id && completedAccountName) {
+          accountName = completedAccountName;
+        }
+
+        return [account.id, accountName || getDefaultAccountName(account)];
+      }),
     );
 
     addAccountsAction({
@@ -181,6 +204,10 @@ class OnboardModal extends PureComponent<Props, State> {
       onboardingStatus: OnboardStatus.PREPARE,
       error: null,
     });
+
+    if (this.onboardingSubscription) {
+      this.onboardingSubscription.unsubscribe();
+    }
 
     this.onboardingSubscription = this.cantonBridge
       ?.onboardAccount(currency, device.deviceId, creatableAccount)
@@ -228,6 +255,10 @@ class OnboardModal extends PureComponent<Props, State> {
     });
 
     const { completedAccount, partyId } = onboardingResult;
+
+    if (this.authorizeSubscription) {
+      this.authorizeSubscription.unsubscribe();
+    }
 
     this.authorizeSubscription = this.cantonBridge
       ?.authorizePreapproval(currency, device.deviceId, completedAccount, partyId)
@@ -284,7 +315,8 @@ class OnboardModal extends PureComponent<Props, State> {
       onAddMore: this.handleAddMore,
       onAuthorizePreapproval: this.handleAuthorizePreapproval,
       onOnboardAccount: this.handleOnboardAccount,
-      onRetry: this.handleRetry,
+      onRetryOnboardAccount: this.handleRetryOnboardAccount,
+      onRetryPreapproval: this.handleRetryPreapproval,
       transitionTo: this.transitionTo,
     };
 

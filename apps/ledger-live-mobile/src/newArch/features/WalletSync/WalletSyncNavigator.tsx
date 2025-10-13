@@ -19,13 +19,10 @@ import { useClose } from "./hooks/useClose";
 import { track } from "~/analytics";
 import { AnalyticsPage } from "./hooks/useLedgerSyncAnalytics";
 import { NavigationHeaderBackButton } from "~/components/NavigationHeaderBackButton";
-import { hasCompletedOnboardingSelector } from "~/reducers/settings";
-import { useSelector } from "react-redux";
 
 const Stack = createStackNavigator<WalletSyncNavigatorStackParamList>();
 
 export default function WalletSyncNavigator() {
-  const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);
   const { colors } = useTheme();
   const stackNavConfig = useMemo(() => getStackNavigatorConfig(colors), [colors]);
   const { t } = useTranslation();
@@ -63,12 +60,8 @@ export default function WalletSyncNavigator() {
         component={ActivationLoading}
         options={{
           title: "",
-          headerLeft: hasCompletedOnboarding
-            ? () => <NavigationHeaderBackButton onPress={close} />
-            : () => null,
-          headerRight: hasCompletedOnboarding
-            ? () => null
-            : () => <NavigationHeaderCloseButton onPress={close} />,
+          headerLeft: () => null,
+          headerRight: () => <NavigationHeaderCloseButton onPress={close} />,
         }}
       />
 

@@ -166,16 +166,14 @@ export default function ValidateOnDevice({
       : t("ValidateOnDevice.recipientWording.send");
 
   const deviceModel = getDeviceModel(device.modelId);
-  const deviceModelName = deviceModel.productName;
 
-  const transTitleWording = t(
-    `ValidateOnDevice.title.${transaction.mode || "send"}`,
-    deviceModelName,
-  );
+  const transTitleWording = t(`ValidateOnDevice.title.${transaction.mode || "send"}`, {
+    ...deviceModel,
+  });
   const titleWording =
     transTitleWording !== `ValidateOnDevice.title.${transaction.mode || "send"}`
       ? transTitleWording
-      : t("ValidateOnDevice.title.send", deviceModelName);
+      : t("ValidateOnDevice.title.send", { ...deviceModel });
 
   return (
     <Flex flex={1}>
