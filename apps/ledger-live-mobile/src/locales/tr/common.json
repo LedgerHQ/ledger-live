@@ -55,10 +55,10 @@
     "bluetooth" : "Bluetooth",
     "usb" : "USB",
     "add" : "Ekle",
-    "token" : "Token",
-    "token_plural" : "Token'lar",
-    "subaccount" : "Alt Hesap",
-    "subaccount_plural" : "Alt Hesaplar",
+    "token_one" : "Token",
+    "token_other" : "Token'lar",
+    "subaccount_one" : "Alt Hesap",
+    "subaccount_other" : "Alt Hesaplar",
     "forgetDevice" : "Cihazı kaldır",
     "help" : "Yardım",
     "saveLogs" : "Logları kaydedin",
@@ -71,24 +71,24 @@
     "installed" : "Yüklendi",
     "uninstall" : "Kaldır",
     "fromNow" : {
-      "seconds" : "bir saniye içinde",
-      "seconds_plural" : "{{time}} saniye içinde",
-      "minutes" : "bir dakika içinde",
-      "minutes_plural" : "{{time}} dakika içinde",
-      "hours" : "bir saat içinde",
-      "hours_plural" : "{{time}} saat içinde",
-      "days" : "bir günde",
-      "days_plural" : "{{time}} gün içinde"
+      "seconds_one" : "bir saniye içinde",
+      "seconds_other" : "{{time}} saniye içinde",
+      "minutes_one" : "bir dakika içinde",
+      "minutes_other" : "{{time}} dakika içinde",
+      "hours_one" : "bir saat içinde",
+      "hours_other" : "{{time}} saat içinde",
+      "days_one" : "bir günde",
+      "days_other" : "{{time}} gün içinde"
     },
     "timeAgo" : {
-      "seconds" : "bir saniye önce",
-      "seconds_plural" : "{{time}} saniye önce",
-      "minutes" : "bir dakika önce",
-      "minutes_plural" : "{{time}} dakika önce",
-      "hours" : "bir saat önce",
-      "hours_plural" : "{{time}} saat önce",
-      "days" : "dün",
-      "days_plural" : "{{time}} gün önce"
+      "seconds_one" : "bir saniye önce",
+      "seconds_other" : "{{time}} saniye önce",
+      "minutes_one" : "bir dakika önce",
+      "minutes_other" : "{{time}} dakika önce",
+      "hours_one" : "bir saat önce",
+      "hours_other" : "{{time}} saat önce",
+      "days_one" : "dün",
+      "days_other" : "{{time}} gün önce"
     },
     "seeMore" : "Daha fazla gör",
     "moreInfo" : "Daha fazla bilgi",
@@ -1632,7 +1632,13 @@
       "terms" : "Devam ettiğinizde şunu kabul etmiş olursunuz: Ledger",
       "termsLink" : "Hüküm ve Koşullar",
       "privacyLink" : "Gizlilik Politikası",
-      "and" : "ve"
+      "and" : "ve",
+      "videoTitles" : {
+        "0" : "Koruyan ve kontrolün sizde olmasını sağlayan bir cüzdan",
+        "1" : "Binlerce kriptoyu gönderin, alın, takas ve stake edin",
+        "2" : "Tüm işlemlerinizi gönül rahatlığıyla doğrulayın"
+      },
+      "disclaimer" : "Devam ettiğinizde Ledger’ın <TermsAndConditions>Hüküm ve Koşullarını</TermsAndConditions> ve <PrivacyPolicy>Gizlilik Politikasını</PrivacyPolicy> kabul etmiş olursunuz. Ledger hiçbir finansal tavsiyede bulunmaz. Takas ve staking hizmetleri üçüncü taraflarca sağlanmaktadır."
     },
     "postWelcomeStep" : {
       "title" : "Hadi başlayalım",
@@ -1829,7 +1835,7 @@
             "label" : "Ekrandaki yönergeleri okuyarak cihazınızı nasıl kullanacağınızı öğrenin."
           },
           "2" : {
-            "title" : "“Set up as new device” (Yeni cihaz olarak kur) seçeneğini onaylayın",
+            "title" : "“Yeni cihaz olarak kur” seçeneğini onaylayın",
             "label" : "Seçimi onaylamak için her iki tuşa da aynı anda basın."
           },
           "3" : {
@@ -2265,14 +2271,14 @@
         "title" : "Cihazlar aranıyor"
       },
       "description" : "Ledger cihazınızın kilidinin açık ve eşleştirmek istediğiniz cep telefonuna yakın bir yerde olduğundan emin olun.",
-      "alreadyPaired" : "Zaten eşleştirilmiş"
+      "alreadyPaired" : "Zaten eşlenmiş"
     },
     "pairing" : {
       "success" : {
         "title" : "{{deviceName}} ile eşlendi"
       },
       "loading" : {
-        "title" : "{{deviceName}} ile eşleştiriliyor...",
+        "title" : "{{deviceName}} ile eşleniyor...",
         "subtitle" : "İstenirse {{productName}} cihazınızda kodu onaylayın"
       },
       "error" : {
@@ -2405,7 +2411,7 @@
         "title" : "{{deviceName}} ile eşlendi"
       },
       "loading" : {
-        "title" : "{{deviceName}} ile eşleştiriliyor",
+        "title" : "{{deviceName}} ile eşleniyor",
         "subtitle" : "İstenirse {{productName}} cihazınızda kodu onaylayın"
       },
       "error" : {
@@ -2713,6 +2719,7 @@
       "LEGACYUNFREEZE" : "Çözüldü",
       "REWARD" : "Ödül alındı",
       "FEES" : "Ücretler",
+      "PRE_APPROVAL" : "Ön onay",
       "OPT_IN" : "Onaylama",
       "OPT_OUT" : "Reddetme",
       "CLOSE_ACCOUNT" : "Hesabı kapama",
@@ -2813,10 +2820,10 @@
   "selectableAccountsList" : {
     "deselectAll" : "Tüm seçimi kaldır",
     "selectAll" : "Tümünü seç",
-    "tokenCount" : "+1 token",
-    "tokenCount_plural" : "+{{count}} token",
-    "subaccountCount" : "1 alt hesap",
-    "subaccountCount_plural" : "+{{count}} alt hesap"
+    "tokenCount_one" : "+1 token",
+    "tokenCount_other" : "+{{count}} token",
+    "subaccountCount_one" : "+1 alt hesap",
+    "subaccountCount_other" : "+{{count}} alt hesap"
   },
   "account" : {
     "subHeader" : {
@@ -3015,25 +3022,25 @@
       "upToDate" : "Senkronize edildi",
       "error" : "Hata",
       "queued" : "Bekleniyor",
-      "showTokens" : "{{length}} token göster",
-      "showTokens_plural" : "{{length}} token göster",
-      "showSubAccounts" : "{{length}} alt hesap göster",
-      "showSubAccounts_plural" : "{{length}} alt hesap göster",
-      "hideTokens" : "Token'ı gizle",
-      "hideTokens_plural" : "Token'ı gizle",
-      "hideSubAccounts" : "Alt hesabı gizle",
-      "hideSubAccounts_plural" : "Alt hesapları gizle",
+      "showTokens_one" : "{{length}} token göster",
+      "showTokens_other" : "{{length}} token göster",
+      "showSubAccounts_one" : "{{length}} alt hesap göster",
+      "showSubAccounts_other" : "{{length}} alt hesap göster",
+      "hideTokens_one" : "Token'ı gizle",
+      "hideTokens_other" : "Token'ı gizle",
+      "hideSubAccounts_one" : "Alt hesabı gizle",
+      "hideSubAccounts_other" : "Alt hesapları gizle",
       "algorand" : {
-        "showTokens" : "{{length}} ASA göster",
-        "showTokens_plural" : "{{length}} ASA göster",
-        "hideTokens" : "ASA'yı Gizle",
-        "hideTokens_plural" : "ASA'yı Gizle"
+        "showTokens_one" : "{{length}} ASA göster",
+        "showTokens_other" : "{{length}} ASA göster",
+        "hideTokens_one" : "ASA'yı Gizle",
+        "hideTokens_other" : "ASA'yı Gizle"
       },
       "stellar" : {
-        "showTokens" : "{{length}} varlığı göster",
-        "showTokens_plural" : "{{length}} varlığı göster",
-        "hideTokens" : "Varlığı gizle",
-        "hideTokens_plural" : "Varlıkları gizle"
+        "showTokens_one" : "{{length}} varlığı göster",
+        "showTokens_other" : "{{length}} varlığı göster",
+        "hideTokens_one" : "Varlığı gizle",
+        "hideTokens_other" : "Varlıkları gizle"
       }
     },
     "noResultsFound" : "Varlık bulunamadı",
@@ -3048,8 +3055,8 @@
   "distribution" : {
     "header" : "Varlık dağılımı",
     "list" : "Varlık dağılımı ({{count}})",
-    "assets" : "varlık",
-    "assets_plural" : "varlık",
+    "assets_one" : "varlık",
+    "assets_other" : "varlık",
     "total" : "Toplam bakiye:",
     "listAccount" : "Varlık dağılımı ({{count}})",
     "title" : "Varlıklar",
@@ -3420,6 +3427,7 @@
     "receive" : {
       "title" : "Al",
       "description" : "Başka bir cüzdandan kripto alın.",
+      "description_v2" : "Receive stablecoin via bank transfer or deposit crypto from another wallet",
       "titleReadOnly" : "Doğrulanmamış adres",
       "headerTitle" : "Kripto varlık",
       "titleDevice" : "Cihazı bağlayın",
@@ -3433,6 +3441,17 @@
       "shareAddress" : "Adresi paylaş",
       "addressCopied" : "Adres panoya kopyalandı",
       "taprootWarning" : "Gönderenin Taproot'u desteklediğinden emin olun",
+      "connectToNoah" : "Noah’a bağlanıyorsunuz",
+      "menu" : {
+        "crypto" : {
+          "title" : "Via crypto address",
+          "description" : "Deposit crypto from another wallet."
+        },
+        "fiat" : {
+          "title" : "Via bank transfer",
+          "description" : "Receive stablecoin via Cash-to-Stablecoin account. Registration needed."
+        }
+      },
       "memoTag" : {
         "link" : "Etikete/Memo'ya mı ihtiyacınız var?",
         "title" : "Etikete/Memo'ya mı ihtiyacınız var?",
@@ -3445,8 +3464,8 @@
       },
       "selectNetwork" : {
         "title" : "Seçilen kripto için ağ seçin",
-        "account" : "{{count}} hesap",
-        "account_plural" : "{{count}} hesapları",
+        "account_one" : "{{count}} hesap",
+        "account_other" : "{{count}} hesap",
         "subtitle" : "Seçeceğiniz ağ, kriptoyu aktaran cüzdan veya borsada seçilmiş ağ ile aynı olmalıdır.",
         "bannerTitle" : "Doğru ağı seçtiğinizden emin olun. Daha fazla bilgi.",
         "depositFromCexBannerTitle" : "Coinbase hesabınızdan kripto yatırın"
@@ -3463,8 +3482,8 @@
       "addAccount" : {
         "title" : "Hesap kontrol ediliyor...",
         "subtitle" : "Blok zincirinde {{currencyName}} için bir hesabınızın olup olmadığı kontrol ediliyor.",
-        "foundAccount" : "{{count}} hesap bulundu",
-        "foundAccount_plural" : "{{count}} hesap bulundu",
+        "foundAccount_one" : "{{count}} hesap bulundu",
+        "foundAccount_other" : "{{count}} hesap bulundu",
         "stopSynchronization" : "Senkronizasyonu durdur",
         "addingAccount" : "Hesap bulunamadı. {{currencyName}} için yeni bir hesap oluşturuluyor..."
       },
@@ -3766,12 +3785,16 @@
         "apt_description" : "Aptos takas etmek için Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ veya Ledger Stax™ gibi başka bir uyumlu Ledger cihazı kullanın.",
         "cosmos_title" : "Ledger Nano S™, Cosmos takasını desteklemez",
         "cosmos_description" : "Cosmos takas etmek için Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ veya Ledger Stax™ gibi başka bir uyumlu Ledger cihazı kullanın.",
+        "hedera_title" : "Ledger Nano S™, Hedera takasını desteklemez",
+        "hedera_description" : "Hedera takas etmek için Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ veya Ledger Stax™ gibi başka bir uyumlu Ledger cihazını kullanın.",
         "osmo_title" : "Ledger Nano S™, Osmosis takasını desteklemez",
         "osmo_description" : "Osmosis takas etmek için Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ veya Ledger Stax™ gibi başka bir uyumlu Ledger cihazını kullanın.",
         "dydx_title" : "Ledger Nano S™, dYdX takasını desteklemez",
         "dydx_description" : "dYdX takas etmek için Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ veya Ledger Stax™ gibi başka bir uyumlu Ledger cihazını kullanın.",
         "sui_title" : "Ledger Nano S™, Sui takasını desteklemez",
-        "sui_description" : "Sui takas etmek için Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ veya Ledger Stax™ gibi diğer herhangi bir uyumlu Ledger cihazını kullanın."
+        "sui_description" : "Sui takas etmek için Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ veya Ledger Stax™ gibi diğer herhangi bir uyumlu Ledger cihazını kullanın.",
+        "kaspa_title" : "Ledger Nano S™, Kaspa takasını desteklemez",
+        "kaspa_description" : "Kaspa takas etmek için Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ veya Ledger Stax™ gibi başka bir uyumlu Ledger cihazını kullanın."
       }
     },
     "lending" : {
@@ -3893,10 +3916,10 @@
           "stepRange" : "Adım {{currentStep}} / {{totalSteps}}"
         },
         "selectAccount" : {
-          "enabledAccountsAmount" : "{{amount}} tutarını onaylamış {{number}} hesabınız bulunuyor",
-          "enabledAccountsAmount_plural" : "{{amount}} tutarını onaylamış {{number}} hesabınız bulunuyor",
-          "enabledAccountsNoLimit" : "Sınırsız {{ currency }} tutarını onaylamış {{number}} hesabınız bulunuyor",
-          "enabledAccountsNoLimit_plural" : "Sınırsız {{ currency }} tutarını onaylamış {{number}} hesabınız bulunuyor",
+          "enabledAccountsAmount_one" : "{{amount}} tutarını onaylamış {{number}} hesabınız bulunuyor",
+          "enabledAccountsAmount_other" : "{{amount}} tutarını onaylamış {{number}} hesabınız bulunuyor",
+          "enabledAccountsNoLimit_one" : "Sınırsız {{ currency }} tutarını onaylamış {{number}} hesabınız bulunuyor",
+          "enabledAccountsNoLimit_other" : "Sınırsız {{ currency }} tutarını onaylamış {{number}} hesabınız bulunuyor",
           "noEnabledAccounts" : "Borç vermeden önce bir hesabı onaylamanız gerekir."
         },
         "enable" : {
@@ -4287,8 +4310,8 @@
       }
     },
     "imported" : "Varlık başarıyla eklendi",
-    "added" : "Hesap, portföyünüze eklendi",
-    "added_plural" : "Portföyünüze {{count}} hesap eklendi",
+    "added_one" : "Hesap, portföyünüze eklendi",
+    "added_other" : "Portföyünüze {{count}} hesap eklendi",
     "sections" : {
       "importable" : {
         "title" : "Mevcut bir hesabı ekle"
@@ -4354,8 +4377,8 @@
       "whichAddressType" : "Adres türünün nasıl seçileceğini öğrenin",
       "sections" : {
         "importable" : {
-          "title" : "{{count}} hesap bulundu",
-          "title_plural" : "{{count}} hesap bulundu"
+          "title_one" : "{{count}} hesap bulundu",
+          "title_other" : "{{count}} hesap bulundu"
         },
         "creatable" : {
           "title" : "Yeni hesap"
@@ -4397,8 +4420,8 @@
     "outdated" : "Uygulama sürümü eski",
     "outdatedDesc" : "Cihazınızdaki {{appName}} uygulaması için önemli bir güncelleme mevcut. Güncellemek için lütfen My Ledger'a gidin.",
     "quitApp" : "Cihazınızdaki uygulamadan çıkın",
-    "appNotInstalled" : "Lütfen {{appName}} uygulamasını yükleyin",
-    "appNotInstalled_plural" : "Lütfen {{appName}} uygulamasını yükleyin",
+    "appNotInstalled_one" : "Lütfen {{appName}} uygulamasını yükleyin",
+    "appNotInstalled_other" : "Lütfen {{appName}} uygulamasını yükleyin",
     "useAnotherDevice" : "Başka bir cihaz kullanın",
     "deviceNotOnboarded" : {
       "title" : "Ledger'ınız henüz kullanılmaya hazır değil",
@@ -4541,7 +4564,7 @@
       "desc" : "{{productName}} cihazınızın kilidinin açıldığından ve Bluetooth'un etkin olduğundan emin olun."
     },
     "bypassGenuine" : "Yine de kullan",
-    "alreadyPaired" : "Zaten eşleştirilmiş"
+    "alreadyPaired" : "Zaten eşlenmiş"
   },
   "DeviceItemSummary" : {
     "genuine" : "Cihazınız orijinal",
@@ -4553,8 +4576,8 @@
   },
   "RemoveDevice" : {
     "button" : {
-      "title" : "{{nbDevices}} cihazı kaldır",
-      "title_plural" : "{{nbDevices}} cihazı kaldır"
+      "title_one" : "{{nbDevices}} cihazı kaldır",
+      "title_other" : "{{nbDevices}} cihazı kaldır"
     }
   },
   "manager" : {
@@ -4623,16 +4646,16 @@
       "title" : "Depolama",
       "used" : "Kullanılan",
       "genuine" : "Cihazınız orijinal",
-      "appsInstalled" : "<0>{{number}}</0> uygulama",
-      "appsInstalled_plural" : "<0>{{number}}</0> uygulama",
+      "appsInstalled_one" : "<0>{{number}}</0> uygulama",
+      "appsInstalled_other" : "<0>{{number}}</0> uygulama",
       "storageAvailable" : "kullanılabilir",
       "noFreeSpace" : "Depolama alanı kalmadı",
       "appsToUpdate" : "<0>{{number}}</0> güncelleme",
-      "appsToUpdate_plural" : "<0>{{number}}</0> güncelleme"
+      "appsToUpdate_other" : "<0>{{number}}</0> güncelleme"
     },
     "installSuccess" : {
       "title" : "Uygulama başarıyla yüklendi",
-      "title_plural" : "Uygulamalar başarıyla yüklendi",
+      "title_other" : "Uygulamalar başarıyla yüklendi",
       "notSupported" : "Uygulama başarıyla yüklendi; yüklü uygulamalarla ilgili daha fazla bilgiye web sitemizden ulaşabilirsiniz.",
       "manageAccount" : "Hesap ekle",
       "learnMore" : "Daha fazla bilgi",
@@ -4665,7 +4688,7 @@
         "desc" : "Lütfen {{appName}} uygulamasının yüklenmesini bekleyin",
         "button" : "Yükleniyor...",
         "queued" : "Sıraya Alındı",
-        "button_plural" : "Yükleniyor... %{{progressPercentage}}"
+        "button_other" : "Yükleniyor... %{{progressPercentage}}"
       },
       "done" : {
         "title" : "Uygulama başarıyla yüklendi",
@@ -4680,8 +4703,8 @@
       "continueInstall" : "Uygulama yükleyin"
     },
     "update" : {
-      "title" : "{{number}} uygulama güncellemesi",
-      "title_plural" : "{{number}} uygulama güncellemesi",
+      "title_one" : "{{number}} uygulama güncellemesi",
+      "title_other" : "{{number}} uygulama güncellemesi",
       "step" : "Güncelleme adımı {{step}}:",
       "updateWarn" : "Güncelleme sırasında My Ledger'dan çıkmayın.",
       "progress" : "Hepsi güncelleniyor...",
@@ -4701,7 +4724,7 @@
         "title" : "{{productName}} cihazınızdaki {{appName}} başarıyla kaldırıldı"
       },
       "dependency" : {
-        "title" : "Diğer uygulamaların {{app}} uygulamasına ihtiyacı var",
+        "title_one" : "Diğer uygulamaların {{app}} uygulamasına ihtiyacı var",
         "showAll" : "Kaldırılacak uygulamaları göster",
         "description" : "Cihazınızdaki {{app}} uygulamasına ihtiyaç duyan uygulamalar da kaldırılacak.",
         "description_one" : "Bazı uygulamalar {{app}} uygulamasına bağlı.",
@@ -6716,11 +6739,11 @@
     "changeValidator" : "Doğrulayıcıyı değiştir",
     "endDelegation" : "Yetki devrini sonlandır",
     "durationForDays0" : "Yalnızca şimdilik",
-    "durationForDays" : "Bir günlüğüne",
-    "durationForDays_plural" : "{{count}} gün için",
+    "durationForDays_one" : "Bir günlüğüne",
+    "durationForDays_other" : "{{count}} gün için",
     "durationDays0" : "Yalnızca şimdilik",
-    "durationDays" : "1 gün",
-    "durationDays_plural" : "{{count}} gün",
+    "durationDays_one" : "1 gün",
+    "durationDays_other" : "{{count}} gün",
     "selectValidatorTitle" : "Doğrulayıcı seçin",
     "started" : {
       "title" : "Ödüller kazanın",
@@ -6924,20 +6947,20 @@
         "desc" : "Herhangi bir gelişme olduğunda sizi bilgilendireceğiz."
       },
       "time" : {
-        "second" : "1 saniye önce",
-        "second_plural" : "{{count}} saniye önce",
-        "minute" : "1 dakika önce",
-        "minute_plural" : "{{count}} dakika önce",
-        "hour" : "1 saat önce",
-        "hour_plural" : "{{count}} saat önce",
-        "day" : "1 gün önce",
-        "day_plural" : "{{count}} gün önce",
-        "week" : "1 hafta önce",
-        "week_plural" : "{{count}} hafta önce",
-        "month" : "1 ay önce",
-        "month_plural" : "{{count}} ay önce",
-        "year" : "1 yıl önce",
-        "year_plural" : "{{count}} yıl önce"
+        "second_one" : "1 saniye önce",
+        "second_other" : "{{count}} saniye önce",
+        "minute_one" : "1 dakika önce",
+        "minute_other" : "{{count}} dakika önce",
+        "hour_one" : "1 saat önce",
+        "hour_other" : "{{count}} saat önce",
+        "day_one" : "1 gün önce",
+        "day_other" : "{{count}} gün önce",
+        "week_one" : "1 hafta önce",
+        "week_other" : "{{count}} hafta önce",
+        "month_one" : "1 ay önce",
+        "month_other" : "{{count}} ay önce",
+        "year_one" : "1 yıl önce",
+        "year_other" : "{{count}} yıl önce"
       }
     },
     "status" : {
@@ -7191,16 +7214,18 @@
   "asset" : {
     "title" : "{{assetName}} varlığınız",
     "accountsSection" : {
-      "title" : "{{currencyName}} hesaplarınız"
+      "title_one" : "Your {{currencyName}} account",
+      "title_other" : "{{currencyName}} hesaplarınız"
     }
   },
   "customImage" : {
     "title" : "Kilit ekranı resmi",
     "change" : "Değiştir",
     "drawer" : {
+      "title" : "Özel kilitli ekran",
       "options" : {
-        "uploadFromPhone" : "Resim galerimden seç",
-        "remove" : "Mevcut resmi kaldır"
+        "uploadFromPhone" : "Resmi değiştir",
+        "remove" : "Kilitli ekranı sil"
       }
     },
     "toastRemove" : "Kilitli ekran resmi kaldırıldı",
@@ -7595,8 +7620,8 @@
       },
       "synchronizedInstances" : {
         "cta" : "Yönet",
-        "title" : "{{count}} Ledger Live uygulaması senkronize edildi",
-        "title_plural" : "{{count}} Ledger Live uygulaması senkronize edildi",
+        "title_one" : "{{count}} Ledger Live uygulaması senkronize edildi",
+        "title_other" : "{{count}} Ledger Live uygulamaları senkronize edildi",
         "error" : "Oturumlar",
         "unsecuredError" : {
           "title" : "Ledger Sync'i etkinleştirmek için kullandığınız Ledger cihazını bağlayın",
@@ -7635,8 +7660,8 @@
           "explanation" : {
             "title" : "Tarayın ve hesaplarınızı başka bir Ledger Live uygulamasını kullanarak senkronize edin",
             "steps" : {
-              "step1" : "Ledger Sync'in uygulamalarınızdan birinde etkinleştirildiğinden emin olun.",
-              "step2" : "Senkronize etmek istediğiniz Ledger Live uygulamasını açın.",
+              "step1" : "Ledger Sync, diğer uygulamada da etkinleştirilmelidir.",
+              "step2" : "Senkronize edilecek Ledger Live'ı açın.",
               "step3" : "<0>Ayarlar</0> <1>></1> <0>Genel</0> <1>></1> <0>Ledger Sync</0> <1>></1> <0>Zaten açtım</0> <1>></1> <0>Karekodu okut</0> adımlarını izleyin",
               "step4" : "Karekodu okutun."
             }
@@ -7648,8 +7673,8 @@
           "explanation" : {
             "title" : "Başka bir telefonda veya bilgisayardaki Ledger Live ile senkronize etmek için...",
             "steps" : {
-              "step1" : "Ledger Sync'in uygulamalarınızdan birinde etkinleştirildiğinden emin olun.",
-              "step2" : "Senkronize etmek istediğiniz Ledger Live'ı açın.",
+              "step1" : "Ledger Sync, diğer uygulamada da etkinleştirilmelidir.",
+              "step2" : "Senkronize edilecek Ledger Live'ı açın.",
               "step3" : "<0>Ayarlar</0> <1>></1> <0>Genel</0> <1>></1> <0>Ledger Sync</0> <1>></1> <0>Zaten açtım</0> <1>></1> <0>Karekodu göster</0> adımlarını izleyin",
               "step4" : "Karekodu okutun."
             }
@@ -7767,8 +7792,8 @@
     },
     "selectNetwork" : {
       "title" : "Varlığın ait olduğu blok zinciri ağını seçin",
-      "detectedAccounts" : "{{count}} hesap (algılanan)",
-      "detectedAccounts_plural" : "{{count}} hesap (algılanan)"
+      "detectedAccounts_one" : "{{count}} hesap (algılanan)",
+      "detectedAccounts_other" : "{{count}} hesap (algılanan)"
     }
   },
   "emptyList" : {
@@ -7800,18 +7825,18 @@
     "ath" : "Tüm zamanlar en yüksek",
     "atl" : "Tüm zamanlar en düşük",
     "timeAgo" : {
-      "years" : "({{count}} yıl önce)",
-      "years_plural" : "({{count}} yıl önce)",
-      "months" : "({{count}} ay önce)",
-      "months_plural" : "({{count}} ay önce)",
-      "days" : "({{count}} gün önce)",
-      "days_plural" : "({{count}} gün önce)",
-      "hours" : "({{count}} saat önce)",
-      "hours_plural" : "({{count}} saat önce)",
-      "minutes" : "({{count}} dakika önce)",
-      "minutes_plural" : "({{count}} dakika önce)",
-      "seconds" : "({{count}} saniye önce)",
-      "seconds_plural" : "({{count}} saniye önce)"
+      "years_one" : "({{count}} yıl önce)",
+      "years_other" : "({{count}} yıl önce)",
+      "months_one" : "({{count}} ay önce)",
+      "months_other" : "({{count}} ay önce)",
+      "days_one" : "({{count}} gün önce)",
+      "days_other" : "({{count}} gün önce)",
+      "hours_one" : "({{count}} saat önce)",
+      "hours_other" : "({{count}} saat önce)",
+      "minutes_one" : "({{count}} dakika önce)",
+      "minutes_other" : "({{count}} dakika önce)",
+      "seconds_one" : "({{count}} saniye önce)",
+      "seconds_other" : "({{count}} saniye önce)"
     },
     "performance" : "Performans",
     "low" : "Düşük",
@@ -7846,8 +7871,8 @@
     "selectAccount" : "Hesap seçin",
     "searchPlaceholder" : "Ara",
     "emptyAssetList" : "Hiçbir varlık bulunamadı",
-    "accountCount" : "{{count}} hesap",
-    "accountCount_plural" : "{{count}} hesap",
+    "accountCount_one" : "{{count}} hesap",
+    "accountCount_other" : "{{count}} hesap",
     "errors" : {
       "title" : "Bağlantı başarısız oldu",
       "backend" : "Bizim tarafımızda bir sorun oluştu. Lütfen daha sonra tekrar deneyin.",
@@ -7935,6 +7960,15 @@
     "default" : {
       "title" : "Bir hata oluştu",
       "description" : "Lütfen tekrar deneyin veya bir şüpheniz varsa Ledger Destek ile iletişime geçin"
+    }
+  },
+  "canton" : {
+    "onboard" : {
+      "account" : "Hesap",
+      "authorize" : "İzin ver",
+      "preapprove" : "Hesap başarıyla eklendi",
+      "validator" : "Ledger Doğrulayıcı",
+      "title" : "Gelen fonları otomatik olarak kabul edin"
     }
   }
 }
