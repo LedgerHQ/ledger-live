@@ -12,18 +12,18 @@ type AccountModuleParams = {
   accounts$?: Observable<WalletAPIAccount[]>;
 };
 
-export type AssetCountItem = {
+export type NetworkCountItem = {
   asset: CryptoOrTokenCurrency;
   label: string;
   count: number;
 };
 
-export const useAssetAccountCounts = ({
+export const useNetworkAccountCounts = ({
   networks,
   nestedAccounts,
   accountIds,
   formatLabel,
-}: AccountModuleParams): AssetCountItem[] =>
+}: AccountModuleParams): NetworkCountItem[] =>
   networks.map(network => {
     const asset = network.type === "TokenCurrency" ? network.parentCurrency : network;
     const { length } = getAccountTuplesForCurrency(asset, nestedAccounts, accountIds);
