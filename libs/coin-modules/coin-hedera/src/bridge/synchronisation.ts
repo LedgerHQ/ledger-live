@@ -9,7 +9,7 @@ import type {
 import { mergeOps } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { encodeAccountId } from "@ledgerhq/coin-framework/account";
 import { listOperations } from "../logic/listOperations";
-import { hederaMirrorNode } from "../network/mirror";
+import { apiClient } from "../network/api";
 import type { HederaAccount } from "../types";
 import {
   getSubAccounts,
@@ -39,8 +39,8 @@ export const getAccountShape: GetAccountShape<HederaAccount> = async (
   // tokens are fetched with separate requests to get "created_timestamp" for each token
   // based on this, ASSOCIATE_TOKEN operations can be connected with tokens
   const [mirrorAccount, mirrorTokens] = await Promise.all([
-    hederaMirrorNode.getAccount(address),
-    hederaMirrorNode.getAccountTokens(address),
+    apiClient.getAccount(address),
+    apiClient.getAccountTokens(address),
   ]);
 
   const accountBalance = new BigNumber(mirrorAccount.balance.balance);
@@ -107,7 +107,7 @@ export const getAccountShape: GetAccountShape<HederaAccount> = async (
 };
 
 export const buildIterateResult: IterateResultBuilder = async ({ result: rootResult }) => {
-  const mirrorAccounts = await hederaMirrorNode.getAccountsForPublicKey(rootResult.publicKey);
+  const mirrorAccounts = await apiClient.getAccountsForPublicKey(rootResult.publicKey);
   const addresses = mirrorAccounts.map(a => a.account);
 
   return async ({ currency, derivationMode, index }) => {

@@ -1,5 +1,5 @@
 import network from "@ledgerhq/live-network";
-import { hederaMirrorNode } from "./mirror";
+import { apiClient } from "./api";
 import { getMockResponse } from "../test/fixtures/network.fixture";
 
 jest.mock("@ledgerhq/live-network");
@@ -15,7 +15,7 @@ describe("getAccountTransactions", () => {
       getMockResponse({ transactions: [], links: { next: null } }),
     );
 
-    await hederaMirrorNode.getAccountTransactions({
+    await apiClient.getAccountTransactions({
       address: "0.0.1234",
       pagingToken: null,
       fetchAllPages: true,
@@ -60,7 +60,7 @@ describe("getAccountTransactions", () => {
         }),
       );
 
-    const result = await hederaMirrorNode.getAccountTransactions({
+    const result = await apiClient.getAccountTransactions({
       address: "0.0.1234",
       pagingToken: null,
       fetchAllPages: true,
@@ -105,7 +105,7 @@ describe("getAccountTransactions", () => {
         }),
       );
 
-    const result = await hederaMirrorNode.getAccountTransactions({
+    const result = await apiClient.getAccountTransactions({
       address: "0.0.1234",
       pagingToken: null,
       limit: 2,
@@ -137,7 +137,7 @@ describe("getAccount", () => {
       }),
     );
 
-    const result = await hederaMirrorNode.getAccount("0.0.1234");
+    const result = await apiClient.getAccount("0.0.1234");
     const requestUrl = mockedNetwork.mock.calls[0][0].url;
 
     expect(result.account).toEqual("0.0.1234");
@@ -162,7 +162,7 @@ describe("getAccountTokens", () => {
       }),
     );
 
-    const result = await hederaMirrorNode.getAccountTokens("0.0.1234");
+    const result = await apiClient.getAccountTokens("0.0.1234");
     const requestUrl = mockedNetwork.mock.calls[0][0].url;
 
     expect(result.map(t => t.token_id)).toEqual(["0.0.1001", "0.0.1002"]);
@@ -186,7 +186,7 @@ describe("getAccountTokens", () => {
         }),
       );
 
-    const result = await hederaMirrorNode.getAccountTokens("0.0.1234");
+    const result = await apiClient.getAccountTokens("0.0.1234");
 
     expect(result.map(t => t.token_id)).toEqual(["0.0.1001", "0.0.1002"]);
     expect(mockedNetwork).toHaveBeenCalledTimes(2);

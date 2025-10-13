@@ -1,5 +1,5 @@
 import { Client, Transaction, TransactionResponse } from "@hashgraph/sdk";
-import { hederaClient } from "./client";
+import { rpcClient } from "./rpc";
 
 jest.mock("@hashgraph/sdk", () => {
   const mockClients: Record<string, Client> = {};
@@ -27,7 +27,7 @@ jest.mock("@hashgraph/sdk", () => {
 describe("getClient", () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    hederaClient._resetClient();
+    rpcClient._resetClient();
   });
 
   it("reuses the same client instance for multiple calls", async () => {
@@ -38,8 +38,8 @@ describe("getClient", () => {
       execute: jest.fn().mockResolvedValue({ transactionId: "test-id-2" }),
     } as unknown as Transaction;
 
-    await hederaClient.broadcastTransaction(mockTransaction1);
-    await hederaClient.broadcastTransaction(mockTransaction2);
+    await rpcClient.broadcastTransaction(mockTransaction1);
+    await rpcClient.broadcastTransaction(mockTransaction2);
 
     expect(Client.forMainnet).toHaveBeenCalledTimes(1);
   });
@@ -48,7 +48,7 @@ describe("getClient", () => {
 describe("broadcastTransaction", () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    hederaClient._resetClient();
+    rpcClient._resetClient();
   });
 
   it("executes the transaction using the client", async () => {
@@ -57,7 +57,7 @@ describe("broadcastTransaction", () => {
       execute: jest.fn().mockResolvedValue(expectedResponse),
     } as unknown as Transaction;
 
-    const response = await hederaClient.broadcastTransaction(mockTransaction);
+    const response = await rpcClient.broadcastTransaction(mockTransaction);
 
     expect(mockTransaction.execute).toHaveBeenCalled();
     expect(response).toEqual(expectedResponse);

@@ -3,14 +3,14 @@ import { encodeTokenAccountId } from "@ledgerhq/coin-framework/account/accountId
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import type { Pagination } from "@ledgerhq/coin-framework/api/types";
 import { listOperations } from "./listOperations";
-import { hederaMirrorNode } from "../network/mirror";
+import { apiClient } from "../network/api";
 import { getMockedCurrency } from "../test/fixtures/currency.fixture";
 import * as utils from "./utils";
 
 jest.mock("@ledgerhq/cryptoassets/tokens");
 jest.mock("@ledgerhq/coin-framework/account/accountId");
 jest.mock("@ledgerhq/coin-framework/operation");
-jest.mock("../network/mirror");
+jest.mock("../network/api");
 jest.mock("./utils");
 
 describe("listOperations", () => {
@@ -36,7 +36,7 @@ describe("listOperations", () => {
       order: "asc",
     };
 
-    (hederaMirrorNode.getAccountTransactions as jest.Mock).mockResolvedValue({
+    (apiClient.getAccountTransactions as jest.Mock).mockResolvedValue({
       transactions: [],
       nextCursor: null,
     });
@@ -51,7 +51,7 @@ describe("listOperations", () => {
       useEncodedHash: false,
     });
 
-    expect(hederaMirrorNode.getAccountTransactions).toHaveBeenCalledWith({
+    expect(apiClient.getAccountTransactions).toHaveBeenCalledWith({
       address,
       fetchAllPages: true,
       pagingToken: null,
@@ -87,7 +87,7 @@ describe("listOperations", () => {
       },
     ];
 
-    (hederaMirrorNode.getAccountTransactions as jest.Mock).mockResolvedValue({
+    (apiClient.getAccountTransactions as jest.Mock).mockResolvedValue({
       transactions: mockTransactions,
       nextCursor: null,
     });
@@ -154,7 +154,7 @@ describe("listOperations", () => {
       },
     ];
 
-    (hederaMirrorNode.getAccountTransactions as jest.Mock).mockResolvedValue({
+    (apiClient.getAccountTransactions as jest.Mock).mockResolvedValue({
       transactions: mockTransactions,
       nextCursor: null,
     });
@@ -214,7 +214,7 @@ describe("listOperations", () => {
       },
     ];
 
-    (hederaMirrorNode.getAccountTransactions as jest.Mock).mockResolvedValue({
+    (apiClient.getAccountTransactions as jest.Mock).mockResolvedValue({
       transactions: mockTransactions,
       nextCursor: null,
     });
@@ -271,7 +271,7 @@ describe("listOperations", () => {
       },
     ];
 
-    (hederaMirrorNode.getAccountTransactions as jest.Mock).mockResolvedValue({
+    (apiClient.getAccountTransactions as jest.Mock).mockResolvedValue({
       transactions: mockTransactions,
       nextCursor: null,
     });
@@ -301,7 +301,7 @@ describe("listOperations", () => {
       lastPagingToken: "1625097500.000000000",
     };
 
-    (hederaMirrorNode.getAccountTransactions as jest.Mock).mockResolvedValue({
+    (apiClient.getAccountTransactions as jest.Mock).mockResolvedValue({
       transactions: [],
       nextCursor: null,
     });
@@ -316,7 +316,7 @@ describe("listOperations", () => {
       useEncodedHash: false,
     });
 
-    expect(hederaMirrorNode.getAccountTransactions).toHaveBeenCalledWith({
+    expect(apiClient.getAccountTransactions).toHaveBeenCalledWith({
       address,
       fetchAllPages: true,
       pagingToken: "1625097500.000000000",
@@ -350,7 +350,7 @@ describe("listOperations", () => {
       },
     ];
 
-    (hederaMirrorNode.getAccountTransactions as jest.Mock).mockResolvedValue({
+    (apiClient.getAccountTransactions as jest.Mock).mockResolvedValue({
       transactions: mockTransactions,
       nextCursor: null,
     });
