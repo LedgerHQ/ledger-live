@@ -1,5 +1,11 @@
 # ledger-live-desktop
 
+## 2.131.0-next.3
+
+### Minor Changes
+
+- [#12273](https://github.com/LedgerHQ/ledger-live/pull/12273) [`d0a50e0`](https://github.com/LedgerHQ/ledger-live/commit/d0a50e04796a06d151e7b78bca0f4849d6958fd2) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - ci(lld): force recreating build for LLD
+
 ## 2.131.0-next.2
 
 ### Patch Changes
