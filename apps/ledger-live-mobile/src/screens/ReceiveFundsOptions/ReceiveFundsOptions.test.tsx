@@ -34,7 +34,7 @@ describe("ReceiveFundsOptions", () => {
     const { getByText } = renderComponent();
 
     expect(getByText("Receive")).toBeVisible();
-    expect(getByText("Via a crypto address")).toBeVisible();
+    expect(getByText("Via crypto address")).toBeVisible();
     expect(getByText("Via bank transfer")).toBeVisible();
   });
 
@@ -56,7 +56,7 @@ describe("ReceiveFundsOptions", () => {
       };
 
       const { getByText, user } = renderComponent(route);
-      await user.press(getByText("Via a crypto address"));
+      await user.press(getByText("Via crypto address"));
 
       expect(mockNavigate).toHaveBeenCalledWith(ScreenName.ReceiveSelectCrypto, {
         ...route.params,
@@ -72,7 +72,7 @@ describe("ReceiveFundsOptions", () => {
       };
 
       const { getByText, user } = renderComponent(route);
-      await user.press(getByText("Via a crypto address"));
+      await user.press(getByText("Via crypto address"));
 
       expect(mockNavigate).not.toHaveBeenCalled();
     });
@@ -85,7 +85,7 @@ describe("ReceiveFundsOptions", () => {
       };
 
       const { getByText, user } = renderComponent(route);
-      await user.press(getByText("Via a crypto address"));
+      await user.press(getByText("Via crypto address"));
 
       expect(mockNavigate).toHaveBeenCalledWith(ScreenName.ReceiveSelectAccount, {
         ...route.params,
@@ -101,7 +101,7 @@ describe("ReceiveFundsOptions", () => {
       };
 
       const { getByText, user } = renderComponent(route);
-      await user.press(getByText("Via a crypto address"));
+      await user.press(getByText("Via crypto address"));
 
       expect(mockNavigate).not.toHaveBeenCalled();
     });

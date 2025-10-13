@@ -2258,7 +2258,7 @@
           "description": "Receive stablecoin via Cash-to-Stablecoin account. Registration needed."
         },
         "fromCrypto": {
-          "title": "Via a crypto address",
+          "title": "Via crypto address",
           "description": "Receive crypto from another wallet."
         }
       },
