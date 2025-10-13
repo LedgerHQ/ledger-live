@@ -3431,6 +3431,7 @@
     "receive": {
       "title": "Receive",
       "description": "Receive crypto from another wallet.",
+      "description_v2": "Receive stablecoin via bank transfer or deposit crypto from another wallet",
       "titleReadOnly": "Unverified address",
       "headerTitle": "Crypto asset",
       "titleDevice": "Connect device",
@@ -3447,12 +3448,12 @@
       "connectToNoah": "Connecting you to Noah",
       "menu": {
         "crypto": {
-          "title": "From a crypto address",
-          "description": "Top up your wallet with any crypto."
+          "title": "Via crypto address",
+          "description": "Deposit crypto from another wallet."
         },
         "fiat": {
-          "title": "From a bank account",
-          "description": "Top up with USDC through a EUR or USD bank transfer. KYC needed."
+          "title": "Via bank transfer",
+          "description": "Receive stablecoin via Cash-to-Stablecoin account. Registration needed."
         }
       },
       "memoTag": {
