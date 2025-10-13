@@ -2254,12 +2254,12 @@
     "steps": {
       "options": {
         "fromBank": {
-          "title": "From a bank account",
-          "description": "Deposit USD or EUR"
+          "title": "Via bank transfer",
+          "description": "Receive stablecoin via Cash-to-Stablecoin account. Registration needed."
         },
         "fromCrypto": {
-          "title": "From a crypto address",
-          "description": "Receive crypto"
+          "title": "Via crypto address",
+          "description": "Receive crypto from another wallet."
         }
       },
       "chooseAccount": {
