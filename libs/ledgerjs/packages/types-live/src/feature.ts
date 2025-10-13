@@ -634,6 +634,7 @@ export type Feature_LldLedgerSyncEntryPoints = Feature<{
   accounts: boolean;
   settings: boolean;
   onboarding: boolean;
+  postOnboarding: boolean;
 }>;
 
 export type Feature_LlNftEntryPoint = Feature<{

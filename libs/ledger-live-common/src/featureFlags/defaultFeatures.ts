@@ -568,6 +568,7 @@ export const DEFAULT_FEATURES: Features = {
       accounts: true,
       settings: true,
       onboarding: true,
+      postOnboarding: true,
     },
   },
   lldNanoSUpsellBanners: {

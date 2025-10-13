@@ -1446,6 +1446,12 @@
         "description": "From any exchange or wallet, directly to your Ledger.",
         "actionCompletedPopupLabel": "Assets transferred"
       },
+      "syncAccounts": {
+        "title": "Sync your crypto accounts",
+        "titleCompleted": "Your accounts are synchronized",
+        "description": "Activate Ledger Sync to sync your crypto accounts",
+        "actionCompletedPopupLabel": "Accounts synced"
+      },
       "recover": {
         "title": "Subscribe to Ledger Recover",
         "description": "Restore access to your wallet without needing your Secret Recovery Phrase.",
