@@ -10,10 +10,10 @@
     "test:playwright:setup": "playwright install chromium"
   },
   "dependencies": {
-    "@ledgerhq/hw-transport-node-speculos-http": "workspace:^",
     "@ledgerhq/ledger-key-ring-protocol": "workspace:^",
     "@ledgerhq/live-cli": "workspace:^",
     "@ledgerhq/live-common": "workspace:^",
+    "@ledgerhq/live-dmk-speculos": "workspace:^",
     "@ledgerhq/live-env": "workspace:^",
     "@ledgerhq/live-wallet": "workspace:^",
     "@ledgerhq/types-devices": "6.27.0",

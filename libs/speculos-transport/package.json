@@ -20,7 +20,7 @@
   "dependencies": {
     "@ledgerhq/devices": "workspace:*",
     "@ledgerhq/hw-transport-node-speculos": "workspace:*",
-    "@ledgerhq/hw-transport-node-speculos-http": "workspace:*",
+    "@ledgerhq/live-dmk-speculos": "workspace:*",
     "@ledgerhq/live-env": "workspace:*",
     "@ledgerhq/live-promise": "workspace:*",
     "@ledgerhq/logs": "workspace:*"

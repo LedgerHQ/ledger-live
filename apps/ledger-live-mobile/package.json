@@ -239,7 +239,6 @@
     "@babel/preset-react": "7.27.1",
     "@babel/runtime": "7.27.1",
     "@jest/reporters": "29.7.0",
-    "@ledgerhq/hw-transport-node-speculos-http": "workspace:^",
     "@ledgerhq/live-common": "workspace:^",
     "@ledgerhq/speculos-transport": "workspace:^",
     "@ledgerhq/test-utils": "workspace:^",

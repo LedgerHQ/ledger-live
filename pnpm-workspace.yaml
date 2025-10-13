@@ -47,6 +47,8 @@ catalog:
   "@ledgerhq/device-transport-kit-react-native-ble": 1.3.0
   "@ledgerhq/device-transport-kit-react-native-hid": 1.0.1
   "@ledgerhq/device-transport-kit-web-hid": 1.2.1
+  "@ledgerhq/device-transport-kit-speculos": 1.1.0
+  "@ledgerhq/speculos-device-controller": 0.1.0
 
 overrides:
   node-abi: ^4.9.0
