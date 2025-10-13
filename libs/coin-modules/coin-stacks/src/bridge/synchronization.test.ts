@@ -2,7 +2,7 @@
 import { Account } from "@ledgerhq/types-live";
 import { findTokenById } from "@ledgerhq/cryptoassets/tokens";
 import BigNumber from "bignumber.js";
-import { buildTokenAccounts } from "./synchronization";
+import { buildTokenAccounts, createTokenAccount } from "./synchronization";
 import { TransactionResponse } from "../network";
 import { TokenPrefix } from "../types";
 import { log } from "@ledgerhq/logs";
@@ -592,6 +592,291 @@ describe("buildTokenAccounts", () => {
       expect(result).toHaveLength(3);
       // First two should be from tokenTxs (mockTokenId1, mockTokenId2)
       // Last should be from tokenBalances only (mockTokenId3)
+    });
+  });
+});
+
+describe("createTokenAccount", () => {
+  const mockAddress = "SP26AZ1JSFZQ82VH5W2NJSB2QW15EW5YKT6WMD69J";
+  const mockParentAccountId = "js:2:stacks:mock-pubkey:";
+  const mockTokenId = "SP3K8BC0PPEVCV7NZ6QSRWPQ2JE9E5B6N3PA0KBR9.alex-token";
+
+  const mockToken = {
+    id: TokenPrefix + mockTokenId,
+    contractAddress: "SP3K8BC0PPEVCV7NZ6QSRWPQ2JE9E5B6N3PA0KBR9",
+    name: "ALEX Token",
+    ticker: "ALEX",
+    decimals: 8,
+    type: "TokenCurrency" as const,
+  };
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+    (accountIndex.encodeTokenAccountId as jest.Mock).mockImplementation(
+      (parentId: string, token: any) => `${parentId}+${token.id}`,
+    );
+  });
+
+  describe("successful token account creation", () => {
+    it("should create token account with transactions and balance", () => {
+      mockFindTokenById.mockReturnValue(mockToken as any);
+
+      const transactions: TransactionResponse[] = [];
+      const balance = "1000000";
+
+      const result = createTokenAccount(
+        mockAddress,
+        mockParentAccountId,
+        mockTokenId,
+        balance,
+        transactions,
+      );
+
+      expect(result).not.toBeNull();
+      expect(result?.balance.toString()).toBe(balance);
+      expect(result?.type).toBe("TokenAccount");
+      expect(result?.parentId).toBe(mockParentAccountId);
+    });
+
+    it("should create token account with zero balance but returns null when no operations", () => {
+      mockFindTokenById.mockReturnValue(mockToken as any);
+
+      const transactions: TransactionResponse[] = [];
+      const balance = "0";
+
+      const result = createTokenAccount(
+        mockAddress,
+        mockParentAccountId,
+        mockTokenId,
+        balance,
+        transactions,
+      );
+
+      // Should return null when both balance and operations are empty
+      expect(result).toBeNull();
+    });
+
+    it("should preserve pending operations from initialAccount", () => {
+      mockFindTokenById.mockReturnValue(mockToken as any);
+
+      const tokenAccountId = `${mockParentAccountId}+${mockToken.id}`;
+      const mockPendingOp = {
+        id: "pending-op-1",
+        type: "OUT" as const,
+        value: new BigNumber(100),
+        date: new Date(),
+      };
+
+      const initialAccount = {
+        id: mockParentAccountId,
+        subAccounts: [
+          {
+            id: tokenAccountId,
+            type: "TokenAccount" as const,
+            token: mockToken,
+            pendingOperations: [mockPendingOp],
+            swapHistory: [{ id: "swap-1" }],
+          },
+        ],
+      } as any;
+
+      const result = createTokenAccount(
+        mockAddress,
+        mockParentAccountId,
+        mockTokenId,
+        "1000000",
+        [],
+        initialAccount,
+      );
+
+      expect(result).not.toBeNull();
+      expect(result?.pendingOperations).toHaveLength(1);
+      expect(result?.pendingOperations[0].id).toBe("pending-op-1");
+      expect(result?.swapHistory).toHaveLength(1);
+    });
+
+    it("should use empty arrays when no matching initialAccount subaccount", () => {
+      mockFindTokenById.mockReturnValue(mockToken as any);
+
+      const initialAccount = {
+        id: mockParentAccountId,
+        subAccounts: [],
+      } as any;
+
+      const result = createTokenAccount(
+        mockAddress,
+        mockParentAccountId,
+        mockTokenId,
+        "1000000",
+        [],
+        initialAccount,
+      );
+
+      expect(result).not.toBeNull();
+      expect(result?.pendingOperations).toHaveLength(0);
+      expect(result?.swapHistory).toHaveLength(0);
+    });
+  });
+
+  describe("error handling", () => {
+    it("should return null when token is not found in registry", () => {
+      mockFindTokenById.mockReturnValue(undefined);
+
+      const result = createTokenAccount(
+        mockAddress,
+        mockParentAccountId,
+        mockTokenId,
+        "1000000",
+        [],
+      );
+
+      expect(result).toBeNull();
+      expect(mockLog).toHaveBeenCalledWith("error", `stacks token not found, addr: ${mockTokenId}`);
+    });
+
+    it("should return null when tokenId is empty", () => {
+      const result = createTokenAccount(mockAddress, mockParentAccountId, "", "1000000", []);
+
+      expect(result).toBeNull();
+    });
+
+    it("should return null and log error on exception", () => {
+      mockFindTokenById.mockImplementation(() => {
+        throw new Error("Token lookup failed");
+      });
+
+      const result = createTokenAccount(
+        mockAddress,
+        mockParentAccountId,
+        mockTokenId,
+        "1000000",
+        [],
+      );
+
+      expect(result).toBeNull();
+      expect(mockLog).toHaveBeenCalledWith(
+        "error",
+        "stacks error creating token account",
+        expect.any(Error),
+      );
+    });
+  });
+
+  describe("balance handling", () => {
+    it("should handle undefined balance as zero", () => {
+      mockFindTokenById.mockReturnValue(mockToken as any);
+
+      const result = createTokenAccount(
+        mockAddress,
+        mockParentAccountId,
+        mockTokenId,
+        undefined as any,
+        [],
+      );
+
+      // Should return null because balance is zero and no operations
+      expect(result).toBeNull();
+    });
+
+    it("should handle very large balance values", () => {
+      mockFindTokenById.mockReturnValue(mockToken as any);
+
+      const largeBalance = "999999999999999999999999";
+      const result = createTokenAccount(
+        mockAddress,
+        mockParentAccountId,
+        mockTokenId,
+        largeBalance,
+        [],
+      );
+
+      expect(result).not.toBeNull();
+      // BigNumber may use scientific notation for very large numbers
+      expect(result?.balance.isEqualTo(new BigNumber(largeBalance))).toBe(true);
+    });
+
+    it("should set spendableBalance equal to balance", () => {
+      mockFindTokenById.mockReturnValue(mockToken as any);
+
+      const balance = "5000000";
+      const result = createTokenAccount(mockAddress, mockParentAccountId, mockTokenId, balance, []);
+
+      expect(result).not.toBeNull();
+      expect(result?.spendableBalance.toString()).toBe(balance);
+    });
+  });
+
+  describe("operations processing", () => {
+    it("should set operationsCount correctly", () => {
+      mockFindTokenById.mockReturnValue(mockToken as any);
+
+      const result = createTokenAccount(
+        mockAddress,
+        mockParentAccountId,
+        mockTokenId,
+        "1000000",
+        [], // Empty transactions, will result in 0 operations
+      );
+
+      expect(result).not.toBeNull();
+      expect(result?.operationsCount).toBe(0);
+    });
+
+    it("should set creationDate from current time when no operations exist", () => {
+      mockFindTokenById.mockReturnValue(mockToken as any);
+
+      const result = createTokenAccount(
+        mockAddress,
+        mockParentAccountId,
+        mockTokenId,
+        "1000000",
+        [],
+      );
+
+      expect(result).not.toBeNull();
+      expect(result?.creationDate).toBeInstanceOf(Date);
+    });
+  });
+
+  describe("token ID format handling", () => {
+    it("should handle token ID with :: in format", () => {
+      const tokenIdWithAsset = "SP3K8BC0PPEVCV7NZ6QSRWPQ2JE9E5B6N3PA0KBR9.alex-token::alex";
+      const mockTokenWithAsset = {
+        ...mockToken,
+        id: TokenPrefix + tokenIdWithAsset,
+      };
+
+      mockFindTokenById.mockReturnValue(mockTokenWithAsset as any);
+
+      const result = createTokenAccount(
+        mockAddress,
+        mockParentAccountId,
+        tokenIdWithAsset,
+        "1000000",
+        [],
+      );
+
+      expect(result).not.toBeNull();
+    });
+
+    it("should handle token ID with special characters", () => {
+      const specialTokenId = "SP123.token-with_special.chars::asset-name";
+      const mockSpecialToken = {
+        ...mockToken,
+        id: TokenPrefix + specialTokenId,
+      };
+
+      mockFindTokenById.mockReturnValue(mockSpecialToken as any);
+
+      const result = createTokenAccount(
+        mockAddress,
+        mockParentAccountId,
+        specialTokenId,
+        "1000000",
+        [],
+      );
+
+      expect(result).not.toBeNull();
     });
   });
 });
