@@ -1,0 +1,1 @@
+# @ledgerhq/live-dmk-speculos
