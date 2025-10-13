@@ -464,12 +464,16 @@
       "apt_description" : "لمبادلة Aptos، استخدم أي جهاز Ledger متوافق آخر مثل ™Ledger Nano S Plus أو ™Ledger Nano X أو ™Ledger Flex أو ™Ledger Stax.",
       "cosmos_title" : "™Ledger Nano S لا تدعم مبادلة Cosmos",
       "cosmos_description" : "لمبادلة Cosmos، استخدم أي جهاز Ledger متوافق آخر مثل ™Ledger Nano S Plus أو ™Ledger Nano X أو ™Ledger Flex أو ™Ledger Stax.",
+      "hedera_title" : "™Ledger Nano S لا تدعم مبادلة Hedera",
+      "hedera_description" : "لمبادلة Hedera، استخدِم أي جهاز Ledger متوافق آخر مثل ™Ledger Nano S Plus أو ™Ledger Nano X أو ™Ledger Flex أو ™Ledger Stax.",
       "osmo_title" : "™Ledger Nano S لا تدعم مبادلة Osmosis",
       "osmo_description" : "لمبادلة Osmosis، استخدم أي جهاز Ledger متوافق آخر مثل ™Ledger Nano S Plus أو ™Ledger Nano X أو ™Ledger Flex أو ™Ledger Stax.",
       "dydx_title" : "™Ledger Nano S لا تدعم مبادلة dYdX",
       "dydx_description" : "لمبادلة dYdX، استخدم أي جهاز Ledger متوافق آخر مثل ™Ledger Nano S Plus أو ™Ledger Nano X أو ™Ledger Flex أو ™Ledger Stax.",
       "sui_title" : "™Ledger Nano S لا تدعم مبادلة Sui",
-      "sui_description" : "لمبادلة Sui، استخدم أي جهاز Ledger آخر متوافق مثل ™Ledger Nano S Plus أو ™Ledger Nano X أو ™Ledger Flex أو ™Ledger Stax."
+      "sui_description" : "لمبادلة Sui، استخدم أي جهاز Ledger آخر متوافق مثل ™Ledger Nano S Plus أو ™Ledger Nano X أو ™Ledger Flex أو ™Ledger Stax.",
+      "kaspa_title" : "™Ledger Nano S لا تدعم مبادلة Kaspa",
+      "kaspa_description" : "لمبادلة Kaspa، استخدِم أي جهاز Ledger متوافق آخر مثل ™Ledger Nano S Plus أو ™Ledger Nano X أو ™Ledger Flex أو ™Ledger Stax."
     },
     "providers" : {
       "title" : "اختر أحد المزودين لمبادلة الأصول المشفرة",
@@ -2246,15 +2250,16 @@
   "receive" : {
     "title" : "تلقي",
     "successTitle" : "تمت مشاركة العنوان بشكل آمن",
+    "connectToNoah" : "جارٍ توصيلك بـ Noah",
     "steps" : {
       "options" : {
         "fromBank" : {
-          "title" : "من حساب بنكي",
-          "description" : "إيداع دولار أمريكي أو يورو"
+          "title" : "Via bank transfer",
+          "description" : "Receive stablecoin via Cash-to-Stablecoin account. Registration needed."
         },
         "fromCrypto" : {
-          "title" : "من عنوان أصول مشفرة",
-          "description" : "تلقي الأصول المشفرة"
+          "title" : "Via crypto address",
+          "description" : "Receive crypto from another wallet."
         }
       },
       "chooseAccount" : {
@@ -5023,6 +5028,12 @@
     },
     "screens" : {
       "welcome" : {
+        "videos" : {
+          "buySell" : "محفظة تحمي وتجعلك أنت المتحكم",
+          "thousandsCrypto" : "إرسال وتلقي ومبادلة وتكديس آلاف الأصول المشفرة",
+          "secureWallet" : "تحقق من كل معاملاتك براحة بال"
+        },
+        "notice" : "بالمتابعة، أنت توافق على <Link1>شروط وأحكام</Link1> و<Link2>سياسة خصوصية</Link2> Ledger. لا تُقدم Ledger أي نصيحة مالية.\nخدمات المبادلة والتكديس مُقدَّمة من أطراف ثالثة.",
         "title" : "محفظة العملات المشفرة والرموز غير القابلة للاستبدال الأكثر أماناً",
         "description" : "إدارة وشراء وتنمية أصولك المشفرة رموزك غير القابلة للاستبدال بأمان على Ledger Live.",
         "nextButton" : "بدء الاستخدام",
@@ -5710,7 +5721,34 @@
     },
     "canton" : {
       "commentPlaceholder" : "اختياري",
-      "comment" : "تعليق"
+      "comment" : "تعليق",
+      "addAccount" : {
+        "title" : "إضافة حساب Canton",
+        "onboard" : {
+          "title" : "التهيئة",
+          "newAccount" : "حساب جديد",
+          "init" : "قم بإعداد حساب Canton الجديد الخاص بك بالنقر على Continue (متابعة)",
+          "onboarded" : "حسابات مُهيّأة",
+          "success" : "تم إنشاء وتهيئة حساب Canton الجديد الخاص بك.",
+          "error" : "فشلت تهيئة الحساب الجديد. يُرجى إعادة المحاولة.",
+          "status" : {
+            "prepare" : "جارٍ إعداد تهيئة الحساب...",
+            "submit" : "جارٍ تهيئة الحساب...",
+            "default" : "جارٍ المعالجة..."
+          }
+        },
+        "auth" : {
+          "title" : "التصريح",
+          "validator" : "تصريح",
+          "hint" : "اقبل تلقائياً الأموال الواردة إلى هذا الحساب.",
+          "error" : "فشل التصريح. يُرجى إعادة المحاولة.",
+          "validatorLabel" : "مُدقِّق Ledger",
+          "validatorDescription" : "قبول أموال تلقائي"
+        },
+        "finish" : {
+          "title" : "تأكيد"
+        }
+      }
     },
     "stellar" : {
       "memo" : "ملاحظة (تسمية الوجهة)",
@@ -7141,7 +7179,7 @@
         "title" : "التخصيص",
         "description" : "لتلقي توصيات مخصصة ومحتوى يطابق تفضيلاتك ولمساعدتنا على قياس أداء حملاتنا التسويقية، نحن نشارك بيانات استخدام التطبيق، بما في ذلك النقرات وزيارات الصفحات وبيانات التحويل."
       },
-      "share" : "مشاركة"
+      "validate" : "تأكيد"
     },
     "variantB" : {
       "accept" : "قبول",
