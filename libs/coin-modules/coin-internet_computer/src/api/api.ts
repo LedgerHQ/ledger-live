@@ -1,92 +1,147 @@
 import { log } from "@ledgerhq/logs";
-import { AxiosRequestConfig, AxiosResponse } from "axios";
-import { getEnv } from "@ledgerhq/live-env";
-import network from "@ledgerhq/live-network/network";
-import { ICP_BLK_NAME_ROSETTA, ICP_NET_ID_ROSETTA } from "../consts";
 import {
-  ICPRosettaBlockHeightResponse,
-  ICPRosettaGetBalancesResponse,
-  ICPRosettaGetTxnsHistoryResponse,
-} from "../bridge/bridgeHelpers/icpRosetta/types";
+  FETCH_TXNS_LIMIT,
+  MAINNET_INDEX_CANISTER_ID,
+  MAINNET_LEDGER_CANISTER_ID,
+  ICP_NETWORK_URL,
+} from "../consts";
 
-const getICPURL = (path?: string): string => {
-  const baseUrl = getEnv("API_ICP_ENDPOINT");
-  if (!baseUrl) throw new Error("API base URL not available");
+import {
+  ledgerIdlFactory,
+  indexIdlFactory,
+  getCanisterIdlFunc,
+  Principal,
+  encodeCanisterIdlFunc,
+  decodeCanisterIdlFunc,
+  GetAccountIdentifierTransactionsResponse,
+  TransactionWithId,
+} from "@zondax/ledger-live-icp";
+import BigNumber from "bignumber.js";
+import { fromNullable } from "@zondax/ledger-live-icp/utils";
+import { getAgent } from "@zondax/ledger-live-icp/agent";
+import invariant from "invariant";
 
-  return `${baseUrl}${path ? path : ""}`;
+export const fetchBlockHeight = async (): Promise<BigNumber> => {
+  const canisterId = Principal.fromText(MAINNET_LEDGER_CANISTER_ID);
+  const queryBlocksRawRequest = {
+    start: BigInt(0),
+    length: BigInt(1),
+  };
+
+  const queryBlocksIdlFunc = getCanisterIdlFunc(ledgerIdlFactory, "query_blocks");
+  const queryBlocksargs = encodeCanisterIdlFunc(queryBlocksIdlFunc, [queryBlocksRawRequest]);
+
+  const agent = await getAgent(ICP_NETWORK_URL);
+  const blockHeightRes = await agent.query(canisterId, {
+    arg: queryBlocksargs,
+    methodName: "query_blocks",
+  });
+
+  invariant(blockHeightRes.status === "replied", "[ICP](fetchBlockHeight) Query failed");
+
+  const decodedIdl = decodeCanisterIdlFunc<[{ chain_length: bigint }]>(
+    queryBlocksIdlFunc,
+    blockHeightRes.reply.arg,
+  );
+  const decoded = fromNullable(decodedIdl);
+  invariant(decoded, "[ICP](fetchBlockHeight) Decoding failed");
+
+  return BigNumber(decoded.chain_length.toString());
 };
 
-const ICPFetchWrapper = async <T>(path: string, body: any) => {
-  const url = getICPURL(path);
-
-  // We force data to this way as network func is not using the correct param type. Changing that func will generate errors in other implementations
-  const opts: AxiosRequestConfig = {
+export const broadcastTxn = async (
+  payload: Buffer,
+  canisterId: string,
+  type: "call" | "read_state",
+) => {
+  log("debug", `[ICP] Broadcasting ${type} to ${canisterId}, body: ${payload.toString("hex")}`);
+  const res = await fetch(`${ICP_NETWORK_URL}/api/v3/canister/${canisterId}/${type}`, {
+    body: payload,
     method: "POST",
-    data: body,
-    url,
-  };
-  const rawResponse = await network(opts);
-  if (rawResponse && rawResponse.data && rawResponse.data.details?.error_message) {
-    log("error", rawResponse.data.details?.error_message);
+    headers: {
+      "Content-Type": "application/cbor",
+    },
+  });
+
+  if (res.status === 200) {
+    return await res.arrayBuffer();
   }
 
-  // We force data to this way as network func is not using the correct param type. Changing that func will generate errors in other implementations
-  const { data } = rawResponse as AxiosResponse<T>;
-
-  log("http", url);
-  return data;
+  throw new Error(`Failed to broadcast transaction: ${res.text()}`);
 };
 
-export const getICPRosettaNetworkIdentifier = () => {
-  return {
-    network_identifier: {
-      blockchain: ICP_BLK_NAME_ROSETTA,
-      network: ICP_NET_ID_ROSETTA,
-    },
+export const fetchBalance = async (address: string): Promise<BigNumber> => {
+  const agent = await getAgent(ICP_NETWORK_URL);
+  const indexCanister = Principal.fromText(MAINNET_INDEX_CANISTER_ID);
+  const getBalanceIdlFunc = getCanisterIdlFunc(indexIdlFactory, "get_account_identifier_balance");
+  const getBalanceArgs = encodeCanisterIdlFunc(getBalanceIdlFunc, [address]);
+
+  const balanceRes = await agent.query(indexCanister, {
+    arg: getBalanceArgs,
+    methodName: "get_account_identifier_balance",
+  });
+
+  if (balanceRes.status !== "replied") {
+    log("debug", `[ICP](fetchBalance) Query failed: ${balanceRes.status}`);
+    return BigNumber(0);
+  }
+
+  const decodedBalance = decodeCanisterIdlFunc<[bigint]>(getBalanceIdlFunc, balanceRes.reply.arg);
+  const balance: bigint | undefined = fromNullable(decodedBalance);
+  if (!balance) {
+    return BigNumber(0);
+  }
+
+  return BigNumber(balance.toString());
+};
+
+export const fetchTxns = async (
+  address: string,
+  startBlockHeight: bigint,
+  stopBlockHeight = BigInt(0),
+): Promise<TransactionWithId[]> => {
+  if (startBlockHeight <= stopBlockHeight) {
+    return [];
+  }
+
+  const agent = await getAgent(ICP_NETWORK_URL);
+  const canisterId = Principal.fromText(MAINNET_INDEX_CANISTER_ID);
+  const transactionsRawRequest = {
+    account_identifier: address,
+    start: [startBlockHeight],
+    max_results: BigInt(FETCH_TXNS_LIMIT),
   };
-};
 
-export const fetchBlockHeight = async (): Promise<ICPRosettaBlockHeightResponse> => {
-  const data = await ICPFetchWrapper<ICPRosettaBlockHeightResponse>(
-    "network/status",
-    getICPRosettaNetworkIdentifier(),
+  const getTransactionsIdlFunc = getCanisterIdlFunc(
+    indexIdlFactory,
+    "get_account_identifier_transactions",
   );
-  return data;
-};
+  const getTransactionsArgs = encodeCanisterIdlFunc(getTransactionsIdlFunc, [
+    transactionsRawRequest,
+  ]);
 
-export const fetchBalances = async (accountId: string): Promise<ICPRosettaGetBalancesResponse> => {
-  const body = {
-    ...getICPRosettaNetworkIdentifier(),
-    account_identifier: {
-      address: accountId,
-      metadata: {},
-    },
-  };
-  const data = await ICPFetchWrapper<ICPRosettaGetBalancesResponse>("account/balance", body);
-  return data;
-};
+  const transactionsRes = await agent.query(canisterId, {
+    arg: getTransactionsArgs,
+    methodName: "get_account_identifier_transactions",
+  });
 
-export const fetchTxns = async (accountId: string): Promise<ICPRosettaGetTxnsHistoryResponse> => {
-  const body = {
-    ...getICPRosettaNetworkIdentifier(),
-    account_identifier: {
-      address: accountId,
-      metadata: {},
-    },
-  };
-  const data = await ICPFetchWrapper<ICPRosettaGetTxnsHistoryResponse>("search/transactions", body);
-  return data;
-};
+  invariant(transactionsRes.status === "replied", "[ICP](fetchTxns) Query failed");
+  const decodedTransactions = decodeCanisterIdlFunc<
+    [{ Ok: GetAccountIdentifierTransactionsResponse }]
+  >(getTransactionsIdlFunc, transactionsRes.reply.arg);
 
-export const constructionInvoke = async <TRequest, TResponse>(
-  opts: TRequest,
-  method: string,
-): Promise<TResponse> => {
-  const body: TRequest = {
-    ...opts,
-  };
+  const response = fromNullable(decodedTransactions);
+  invariant(response, "[ICP](fetchTxns) Decoding failed");
 
-  const data = await ICPFetchWrapper<TResponse>(`construction/${method}`, body);
+  if (response.Ok.transactions.length === 0) {
+    return [];
+  }
 
-  return data;
+  const nextTxns = await fetchTxns(
+    address,
+    response.Ok.transactions.at(-1)?.id ?? BigInt(0),
+    stopBlockHeight,
+  );
+
+  return [...response.Ok.transactions, ...nextTxns];
 };

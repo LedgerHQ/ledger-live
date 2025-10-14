@@ -18,5 +18,5 @@ export type ICPGetAddrResponse = {
 export interface ICPSigner {
   showAddressAndPubKey(path: string): Promise<ICPGetAddrResponse>;
   getAddressAndPubKey(path: string): Promise<ICPGetAddrResponse>;
-  sign(path: string, message: Buffer, txtype: number): Promise<ICPSignature>;
+  sign(path: string, message: Buffer): Promise<ICPSignature>;
 }
