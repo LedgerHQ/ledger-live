@@ -21,20 +21,42 @@ export interface EstimatedFeesResponse {
   nonce: number;
 }
 
+export interface Metadata {
+  limit: number;
+  offset: number;
+}
+
 export interface TransactionsResponse {
   txs: TransactionResponse[];
+  metadata: Metadata;
 }
 
 export interface TransactionResponse {
-  amount: number;
+  amount: string;
   to: string;
   from: string;
+  fee_data?: FeeData;
   status: string;
   type: string;
   hash: string;
   timestamp: number;
   height: number;
-  fee?: number;
+}
+
+export interface FeeData {
+  MinerFee: {
+    MinerAddress: string;
+    Amount: string;
+  };
+  OverEstimationBurnFee: {
+    BurnAddress: string;
+    Amount: string;
+  };
+  BurnFee: {
+    BurnAddress: string;
+    Amount: string;
+  };
+  TotalCost: string;
 }
 
 export interface BalanceResponse {

@@ -20,15 +20,19 @@ import {
 } from "../types";
 import { FilecoinFeeEstimationFailed } from "../errors";
 
-const getFilecoinURL = (path?: string): string => {
+const txsPerPageLimit = 1000;
+const currentVersion = "/v2";
+const fromHeightQueryParam = "from_height";
+
+const getFilecoinURL = (version?: string, path?: string): string => {
   const baseUrl = getEnv("API_FILECOIN_ENDPOINT");
   if (!baseUrl) throw new Error("API base URL not available");
 
-  return `${baseUrl}${path ? path : ""}`;
+  return `${baseUrl}${version ? version : ""}${path ? path : ""}`;
 };
 
-const fetch = async <T>(path: string) => {
-  const url = getFilecoinURL(path);
+const fetch = async <T>(version: string, path: string) => {
+  const url = getFilecoinURL(version, path);
 
   // We force data to this way as network func is not using the correct param type. Changing that func will generate errors in other implementations
   const opts: AxiosRequestConfig = {
@@ -45,8 +49,8 @@ const fetch = async <T>(path: string) => {
   return data;
 };
 
-const send = async <T>(path: string, data: Record<string, any>) => {
-  const url = getFilecoinURL(path);
+const send = async <T>(version: string, path: string, data: Record<string, any>) => {
+  const url = getFilecoinURL(version, path);
 
   const opts: AxiosRequestConfig = {
     method: "POST",
@@ -65,14 +69,14 @@ const send = async <T>(path: string, data: Record<string, any>) => {
 };
 
 export const fetchBalances = async (addr: string): Promise<BalanceResponse> => {
-  const data = await fetch<BalanceResponse>(`/addresses/${addr}/balance`);
+  const data = await fetch<BalanceResponse>(currentVersion, `/addresses/${addr}/balance`);
   return data; // TODO Validate if the response fits this interface
 };
 
 export const fetchEstimatedFees = makeLRUCache(
   async (request: EstimatedFeesRequest): Promise<EstimatedFeesResponse> => {
     try {
-      const data = await send<EstimatedFeesResponse>(`/fees/estimate`, request);
+      const data = await send<EstimatedFeesResponse>(currentVersion, `/fees/estimate`, request);
       return data; // TODO Validate if the response fits this interface
     } catch (e: any) {
       log("error", "filecoin fetchEstimatedFees", e);
@@ -86,19 +90,50 @@ export const fetchEstimatedFees = makeLRUCache(
 );
 
 export const fetchBlockHeight = async (): Promise<NetworkStatusResponse> => {
-  const data = await fetch<NetworkStatusResponse>("/network/status");
+  const data = await fetch<NetworkStatusResponse>(currentVersion, "/network/status");
   return data as NetworkStatusResponse; // TODO Validate if the response fits this interface
 };
 
-export const fetchTxs = async (addr: string): Promise<TransactionResponse[]> => {
-  const response = await fetch<TransactionsResponse>(`/addresses/${addr}/transactions`);
-  return response.txs; // TODO Validate if the response fits this interface
+export const fetchTxs = async (
+  addr: string,
+  lastHeight: number,
+  offset: number,
+  limit: number,
+): Promise<TransactionsResponse> => {
+  const response = await fetch<TransactionsResponse>(
+    currentVersion,
+    `/addresses/${addr}/transactions?${fromHeightQueryParam}=${lastHeight}&offset=${offset}&limit=${limit}`,
+  );
+  return response; // TODO Validate if the response fits this interface
+};
+
+export const fetchTxsWithPages = async (
+  addr: string,
+  lastHeight: number,
+): Promise<TransactionResponse[]> => {
+  let result: TransactionResponse[] = [];
+  let offset = 0;
+  let txsLen = txsPerPageLimit;
+
+  while (txsLen === txsPerPageLimit) {
+    const { txs } = await fetchTxs(addr, lastHeight, offset, txsPerPageLimit);
+    result = [...result, ...txs];
+
+    txsLen = txs.length;
+    offset += txsLen;
+  }
+
+  return result;
 };
 
 export const broadcastTx = async (
   message: BroadcastTransactionRequest,
 ): Promise<BroadcastTransactionResponse> => {
-  const response = await send<BroadcastTransactionResponse>(`/transaction/broadcast`, message);
+  const response = await send<BroadcastTransactionResponse>(
+    currentVersion,
+    `/transaction/broadcast`,
+    message,
+  );
   return response; // TODO Validate if the response fits this interface
 };
 
@@ -107,6 +142,7 @@ export const fetchERC20TokenBalance = async (
   contractAddr: string,
 ): Promise<string> => {
   const res = await fetch<ERC20BalanceResponse>(
+    currentVersion,
     `/contract/${contractAddr}/address/${ethAddr}/balance/erc20`,
   );
 
@@ -117,9 +153,34 @@ export const fetchERC20TokenBalance = async (
   return "0";
 };
 
-export const fetchERC20Transactions = async (ethAddr: string): Promise<ERC20Transfer[]> => {
+export const fetchERC20Transactions = async (
+  ethAddr: string,
+  lastHeight: number,
+  offset: number,
+  limit: number,
+): Promise<FetchERC20TransactionsResponse> => {
   const res = await fetch<FetchERC20TransactionsResponse>(
-    `/addresses/${ethAddr}/transactions/erc20`,
+    currentVersion,
+    `/addresses/${ethAddr}/transactions/erc20?${fromHeightQueryParam}=${lastHeight}&offset=${offset}&limit=${limit}`,
   );
-  return res.txs.sort((a, b) => b.timestamp - a.timestamp);
+  return res;
+};
+
+export const fetchERC20TransactionsWithPages = async (
+  addr: string,
+  lastHeight: number,
+): Promise<ERC20Transfer[]> => {
+  let result: ERC20Transfer[] = [];
+  let offset = 0;
+  let txsLen = txsPerPageLimit;
+
+  while (txsLen === txsPerPageLimit) {
+    const { txs } = await fetchERC20Transactions(addr, lastHeight, offset, txsPerPageLimit);
+    result = [...result, ...txs];
+
+    txsLen = txs.length;
+    offset += txsLen;
+  }
+
+  return result.sort((a, b) => b.timestamp - a.timestamp);
 };
