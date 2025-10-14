@@ -97,7 +97,7 @@
     "selectValidatorNoOption" : "'{{accountName}}'와/과 일치하는 검증인이 없습니다",
     "selectNoResults" : "{{query}}와 일치하는 결과를 찾을 수 없습니다",
     "sortBy" : "정렬 기준",
-    "save" : "Ledger Nano S를",
+    "save" : "저장",
     "lock" : "잠금",
     "showMore" : "자세히 표시",
     "backToMatchingURL" : "{{appName}} 앱으로 돌아가기",
@@ -464,12 +464,16 @@
       "apt_description" : "Aptos 스왑 거래를 실행하려면 Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ 또는 Ledger Stax™와 같은 다른 Ledger 장치를 사용하세요.",
       "cosmos_title" : "Ledger Nano S™는 Cosmos 스왑을 지원하지 않습니다.",
       "cosmos_description" : "Cosmos 스왑 거래를 실행하려면 Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ 또는 Ledger Stax™와 같은 다른 Ledger 장치를 사용하세요.",
+      "hedera_title" : "Ledger Nano S™는 헤데라 스왑을 지원하지 않습니다.",
+      "hedera_description" : "헤데라를 스왑하려면 Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ 또는 Ledger Stax™와 같은 호환 가능한 다른 Ledger 장치를 사용하세요.",
       "osmo_title" : "Ledger Nano S™는 Osmosis 스왑을 지원하지 않습니다.",
       "osmo_description" : "Osmosis 스왑 거래를 실행하려면 Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ 또는 Ledger Stax™와 같은 다른 Ledger 장치를 사용하세요.",
       "dydx_title" : "Ledger Nano S™는 dYdX 스왑을 지원하지 않습니다.",
       "dydx_description" : "dYdX 스왑 거래를 실행하려면 Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ 또는 Ledger Stax™와 같은 다른 Ledger 장치를 사용하세요.",
       "sui_title" : "Ledger Nano S™는 Sui 스왑을 지원하지 않습니다",
-      "sui_description" : "Sui 스왑 거래를 수행하려면 Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ 또는 Ledger Stax™와 같은 다른 호환 Ledger 장치를 사용하세요."
+      "sui_description" : "Sui 스왑 거래를 수행하려면 Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ 또는 Ledger Stax™와 같은 다른 호환 Ledger 장치를 사용하세요.",
+      "kaspa_title" : "Ledger Nano S™는 카스파 스왑을 지원하지 않습니다.",
+      "kaspa_description" : "카스파를 스왑하려면 Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ 또는 Ledger Stax™와 같은 호환 가능한 다른 Ledger 장치를 사용하세요."
     },
     "providers" : {
       "title" : "암호화폐를 스왑할 공급자를 선택하세요",
@@ -2246,15 +2250,16 @@
   "receive" : {
     "title" : "수령",
     "successTitle" : "주소가 안전하게 공유되었습니다",
+    "connectToNoah" : "Noah에 연결 중",
     "steps" : {
       "options" : {
         "fromBank" : {
-          "title" : "은행 계좌에서",
-          "description" : "USD 또는 EUR 입금"
+          "title" : "은행 이체로 받기",
+          "description" : "Cash-to-Stablecoin 계정을 통해 스테이블코인을 받습니다. 등록이 필요합니다."
         },
         "fromCrypto" : {
-          "title" : "암호화폐 주소에서",
-          "description" : "암호화폐 받기"
+          "title" : "암호화폐 주소로 받기",
+          "description" : "다른 지갑에서 암호화폐를 받습니다."
         }
       },
       "chooseAccount" : {
@@ -3446,7 +3451,7 @@
         "validators" : {
           "title" : "검증인",
           "notValidatorsRemoved" : "지명한 주소{{count}}는 더 이상 검증인이 아닙니다. 지명 트랜잭션에서 주소가 자동으로 삭제됩니다.",
-          "maybeChill" : "대신, 지명을 제거하세요"
+          "maybeChill" : "대신, 지명을 삭제하세요"
         },
         "connectDevice" : {
           "title" : "장치"
@@ -4660,7 +4665,7 @@
       "changePassword" : "암호 변경",
       "softResetTitle" : "캐시 삭제",
       "softResetDesc" : "블록 체인과 강제로 동기화하려면 Ledger Live 캐시를 지우세요.",
-      "softReset" : "제거",
+      "softReset" : "삭제",
       "resetThirdPartyData" : "타사 데이터 재설정",
       "resetThirdPartyDataDesc" : "타사 트랜잭션 공급자에 액세스하는 데 사용되는 모든 타사 로컬 데이터를 삭제합니다.",
       "hardResetTitle" : "Ledger Live 리셋",
@@ -4805,7 +4810,7 @@
     "exportLogs" : {
       "title" : "로그 저장",
       "desc" : "문제 해결을 위해 Ledger Live 로그가 필요할 수 있습니다.",
-      "btn" : "Ledger Nano S를"
+      "btn" : "저장"
     },
     "troubleshootNetwork" : {
       "title" : "네트워크 문제 해결",
@@ -4893,7 +4898,7 @@
     "desc" : "거래 내역을 저장하려는 계정을 선택하세요",
     "descSuccess" : "거래 내역 CSV 파일이 선택된 폴더에 저장되었습니다",
     "titleSuccess" : "거래 내역이 성공적으로 저장되었습니다",
-    "cta" : "Ledger Nano S를",
+    "cta" : "저장",
     "ctaSuccess" : "완료",
     "noAccounts" : "내보낼 계정 없음",
     "selectedAccounts" : "포함할 계정",
@@ -5023,6 +5028,12 @@
     },
     "screens" : {
       "welcome" : {
+        "videos" : {
+          "buySell" : "사용자에게 온전한 통제권을 돌려주는 안전한 암호화폐 지갑",
+          "thousandsCrypto" : "보내기, 받기, 스왑, 스테이킹까지, 수천 가지의 암호화폐를 자유롭게 거래하세요",
+          "secureWallet" : "안심하고 모든 트랜잭션을 직접 확인하세요"
+        },
+        "notice" : "계속 진행하는 것으로 Ledger의 <Link1>이용약관</Link1> 및 <Link2>개인 정보 보호 정책</Link2>에 동의하게 됩니다. Ledger는 재정 자문을 제공하지 않습니다.\n스왑 및 스테이킹 서비스는 제3자 공급업체에서 제공합니다.",
         "title" : "가장 안전한 암호화폐 및 NFT 지갑",
         "description" : "Ledger Live에서 암호화폐 및 NFT를 안전하게 관리, 구매 및 성장시키세요.",
         "nextButton" : "시작하기",
@@ -5710,7 +5721,34 @@
     },
     "canton" : {
       "commentPlaceholder" : "선택 사항",
-      "comment" : "코멘트"
+      "comment" : "코멘트",
+      "addAccount" : {
+        "title" : "Canton 계정 추가",
+        "onboard" : {
+          "title" : "온보딩",
+          "newAccount" : "새 계정",
+          "init" : "계속을 클릭해 새 Canton 계정을 설정합니다",
+          "onboarded" : "온보딩한 계정",
+          "success" : "새 Canton 계정을 생성하여 온보딩했습니다.",
+          "error" : "새로운 계정 온보딩에 실패했습니다. 다시 시도해 주세요.",
+          "status" : {
+            "prepare" : "계정 온보딩 준비 중...",
+            "submit" : "계정 온보딩 중...",
+            "default" : "처리 중..."
+          }
+        },
+        "auth" : {
+          "title" : "승인",
+          "validator" : "승인",
+          "hint" : "이 계정으로 자금을 받으면 자동으로 승인합니다.",
+          "error" : "승인에 실패했습니다. 다시 시도해 주세요.",
+          "validatorLabel" : "Ledger 검증인",
+          "validatorDescription" : "자동 자금 수락"
+        },
+        "finish" : {
+          "title" : "확인"
+        }
+      }
     },
     "stellar" : {
       "memo" : "메모",
@@ -6653,6 +6691,10 @@
     "HederaAddAccountError" : {
       "title" : "귀하의 계정이 추가되지 않았습니다. 다시 시도해 주세요."
     },
+    "HederaRecipientInvalidChecksum" : {
+      "title" : "Invalid address checksum",
+      "description" : "The provided address has an invalid checksum."
+    },
     "HederaInsufficientFundsForAssociation" : {
       "title" : "보유 수량 부족",
       "description" : "토큰 연동에 필요한 HBAR가 충분하지 않습니다. 최소 ${{requiredWorthInUSD}} 상당의 HBAR가 필요합니다."
@@ -7141,7 +7183,7 @@
         "title" : "개인 맞춤화",
         "description" : "사용자의 선호도에 맞는 맞춤형 추천과 콘텐츠를 제공받고 마케팅 캠페인 성과를 측정하기 위해 당사는 클릭수, 페이지 방문, 전환 데이터를 포함한 앱 사용 데이터를 공유합니다."
       },
-      "share" : "공유"
+      "validate" : "승인"
     },
     "variantB" : {
       "accept" : "수락",
