@@ -1,7 +1,7 @@
 import expect from "expect";
 import { Transaction } from "../models/Transaction";
 import { waitFor, containsSubstringInEvent, pressUntilTextFound, getSendEvents } from "../speculos";
-import { getSpeculosModel } from "../speculosAppVersion";
+import { getSpeculosModel, isTouchDevice } from "../speculosAppVersion";
 import { pressBoth } from "../deviceInteraction/ButtonDeviceSimulator";
 import { DeviceLabels } from "../enum/DeviceLabels";
 import invariant from "invariant";
@@ -14,7 +14,7 @@ export async function sendBTCBasedCoin(tx: Transaction) {
   expect(isAmountCorrect).toBeTruthy();
   const isAddressCorrect = containsSubstringInEvent(tx.accountToCredit.address, events);
   expect(isAddressCorrect).toBeTruthy();
-  if (getSpeculosModel() === DeviceModelId.stax) {
+  if (isTouchDevice()) {
     await longPressAndRelease(DeviceLabels.HOLD_TO_SIGN, 3);
   } else {
     await pressBoth();

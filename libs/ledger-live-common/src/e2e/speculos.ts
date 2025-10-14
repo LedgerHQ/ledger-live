@@ -19,7 +19,7 @@ import { Account } from "./enum/Account";
 import { Currency } from "./enum/Currency";
 import expect from "expect";
 import { sendBTC, sendBTCBasedCoin } from "./families/bitcoin";
-import { sendEVM, sendEvmNFT } from "./families/evm";
+import { sendEVM } from "./families/evm";
 import { sendPolkadot } from "./families/polkadot";
 import { sendAlgorand } from "./families/algorand";
 import { sendTron } from "./families/tron";
@@ -35,14 +35,14 @@ import { delegateSolana, sendSolana } from "./families/solana";
 import { delegateTezos } from "./families/tezos";
 import { delegateCelo } from "./families/celo";
 import { delegateMultiversX } from "./families/multiversX";
-import { NFTTransaction, Transaction } from "./models/Transaction";
+import { Transaction } from "./models/Transaction";
 import { Delegate } from "./models/Delegate";
 import { Swap } from "./models/Swap";
 import { delegateOsmosis } from "./families/osmosis";
 import { AppInfos } from "./enum/AppInfos";
 import { DEVICE_LABELS_CONFIG } from "./data/deviceLabelsData";
 import { sendSui } from "./families/sui";
-import { getAppVersionFromCatalog, getSpeculosModel } from "./speculosAppVersion";
+import { getAppVersionFromCatalog, getSpeculosModel, isTouchDevice } from "./speculosAppVersion";
 import {
   pressAndRelease,
   longPressAndRelease,
@@ -562,7 +562,7 @@ export async function pressUntilTextFound(
     ) {
       return await fetchAllEvents(speculosApiPort);
     }
-    if (getSpeculosModel() === DeviceModelId.stax) {
+    if (isTouchDevice()) {
       await swipeRight();
     } else {
       await pressRightButton();
@@ -609,8 +609,8 @@ export async function waitForTimeOut(ms: number) {
 }
 
 export async function removeMemberLedgerSync() {
-  await waitFor(DeviceLabels.CONNECT_TO);
-  if (getSpeculosModel() === DeviceModelId.stax) {
+  await waitFor(DeviceLabels.CONNECT_WITH);
+  if (isTouchDevice()) {
     await pressAndRelease(DeviceLabels.CONNECT);
     await waitFor(DeviceLabels.REMOVE_FROM_LEDGER_SYNC);
     await pressAndRelease(DeviceLabels.REMOVE);
@@ -618,41 +618,41 @@ export async function removeMemberLedgerSync() {
     await pressAndRelease(DeviceLabels.TAP_TO_CONTINUE);
     await waitFor(DeviceLabels.TURN_ON_SYNC);
     await pressUntilTextFound(DeviceLabels.LEDGER_LIVE_WILL_BE);
-    await pressUntilTextFound(DeviceLabels.TURN_ON_SYNC2);
-    await pressAndRelease(DeviceLabels.TURN_ON_SYNC2);
+    await pressUntilTextFound(DeviceLabels.TURN_ON_SYNC);
+    await pressAndRelease(DeviceLabels.TURN_ON_SYNC);
   } else {
-    await pressUntilTextFound(DeviceLabels.CONNECT, true);
+    await pressUntilTextFound(DeviceLabels.CONNECT_WITH_LEDGER_SYNC, true);
     await pressBoth();
-    await waitFor(DeviceLabels.REMOVE_FROM_LEDGER_SYNC);
-    await pressUntilTextFound(DeviceLabels.REMOVE, true);
+    await waitFor(DeviceLabels.REMOVE_PHONE_OR_COMPUTER);
+    await pressUntilTextFound(DeviceLabels.REMOVE_PHONE_OR_COMPUTER, true);
     await pressBoth();
     await waitFor(DeviceLabels.TURN_ON_SYNC);
     await pressUntilTextFound(DeviceLabels.LEDGER_LIVE_WILL_BE);
-    await pressUntilTextFound(DeviceLabels.TURN_ON_SYNC2);
+    await pressUntilTextFound(DeviceLabels.TURN_ON_SYNC);
     await pressBoth();
   }
 }
 
 export async function activateLedgerSync() {
-  await waitFor(DeviceLabels.CONNECT_TO);
-  if (getSpeculosModel() === DeviceModelId.stax) {
-    await pressAndRelease(DeviceLabels.CONNECT);
+  await waitFor(DeviceLabels.CONNECT_WITH);
+  if (isTouchDevice()) {
+    await pressAndRelease(DeviceLabels.CONNECT_WITH_LEDGER_SYNC);
   } else {
-    await pressUntilTextFound(DeviceLabels.CONNECT, true);
+    await pressUntilTextFound(DeviceLabels.CONNECT_WITH_LEDGER_SYNC, true);
     await pressBoth();
   }
   await waitFor(DeviceLabels.TURN_ON_SYNC);
-  if (getSpeculosModel() === DeviceModelId.stax) {
-    await pressAndRelease(DeviceLabels.TURN_ON_SYNC2);
+  if (isTouchDevice()) {
+    await pressAndRelease(DeviceLabels.TURN_ON_SYNC);
   } else {
     await pressUntilTextFound(DeviceLabels.LEDGER_LIVE_WILL_BE);
-    await pressUntilTextFound(DeviceLabels.TURN_ON_SYNC2);
+    await pressUntilTextFound(DeviceLabels.TURN_ON_SYNC);
     await pressBoth();
   }
 }
 
 export async function activateExpertMode() {
-  if (getSpeculosModel() === DeviceModelId.stax) {
+  if (isTouchDevice()) {
     await goToSettings();
     await pressAndRelease(DeviceLabels.SETTINGS_TOGGLE_1);
   } else {
@@ -669,7 +669,7 @@ export async function activateContractData() {
 }
 
 export async function goToSettings() {
-  if (getSpeculosModel() === DeviceModelId.stax) {
+  if (isTouchDevice()) {
     await pressAndRelease(DeviceLabels.SETTINGS);
   } else {
     await pressUntilTextFound(DeviceLabels.SETTINGS);
@@ -728,7 +728,7 @@ export async function expectValidAddressDevice(account: Account, addressDisplaye
       account.currency.speculosApp,
     );
     await waitFor(receiveVerifyLabel);
-    if (getSpeculosModel() === DeviceModelId.stax) {
+    if (isTouchDevice()) {
       const events = await pressUntilTextFound(receiveConfirmLabel);
       const isAddressCorrect = containsSubstringInEvent(addressDisplayed, events);
       expect(isAddressCorrect).toBeTruthy();
@@ -807,21 +807,12 @@ export async function signSendTransaction(tx: Transaction) {
   }
 }
 
-export async function getSendEvents(sendingAccount: Transaction): Promise<string[]> {
+export async function getSendEvents(tx: Transaction): Promise<string[]> {
   const { sendVerifyLabel, sendConfirmLabel } = getDeviceLabels(
-    sendingAccount.accountToDebit.currency.speculosApp,
+    tx.accountToDebit.currency.speculosApp,
   );
   await waitFor(sendVerifyLabel);
   return await pressUntilTextFound(sendConfirmLabel);
-}
-
-export async function signSendNFTTransaction(tx: NFTTransaction) {
-  const currencyName = tx.accountToDebit.currency;
-  if (currencyName === Currency.ETH) {
-    await sendEvmNFT(tx);
-  } else {
-    throw new Error(`Unsupported currency: ${currencyName.ticker}`);
-  }
 }
 
 export async function signDelegationTransaction(delegatingAccount: Delegate) {
@@ -875,7 +866,7 @@ export async function verifyAmountsAndAcceptSwap(swap: Swap, amount: string) {
       ? await pressUntilTextFound(DeviceLabels.ACCEPT_AND_SEND)
       : await pressUntilTextFound(DeviceLabels.SIGN_TRANSACTION);
   verifySwapData(swap, events, amount);
-  if (getSpeculosModel() === DeviceModelId.stax) {
+  if (isTouchDevice()) {
     await longPressAndRelease(DeviceLabels.HOLD_TO_SIGN, 3);
   } else {
     await pressBoth();
@@ -893,7 +884,7 @@ export async function verifyAmountsAndRejectSwap(swap: Swap, amount: string) {
   await waitFor(DeviceLabels.REVIEW_TRANSACTION);
   const events = await pressUntilTextFound(DeviceLabels.REJECT);
   verifySwapData(swap, events, amount);
-  if (getSpeculosModel() === DeviceModelId.stax) {
+  if (isTouchDevice()) {
     await longPressAndRelease(DeviceLabels.HOLD_TO_SIGN, 3);
   } else {
     await pressBoth();

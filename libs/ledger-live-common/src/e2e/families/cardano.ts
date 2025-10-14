@@ -11,66 +11,77 @@ import {
 import { DeviceLabels } from "../enum/DeviceLabels";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 
-export async function sendCardano(tx: Transaction) {
-  const speculosModel = getSpeculosModel();
-  let events;
-  if (speculosModel === DeviceModelId.stax) {
-    await waitFor(DeviceLabels.REVIEW_TRANSACTION);
-    events = await pressUntilTextFound(DeviceLabels.TO);
-    const isAddressCorrect = containsSubstringInEvent(tx.accountToCredit.address, events);
-    expect(isAddressCorrect).toBeTruthy();
-    const isAmountCorrect = containsSubstringInEvent(tx.amount, events);
-    expect(isAmountCorrect).toBeTruthy();
-    await pressAndRelease(DeviceLabels.TAP_TO_CONTINUE);
-    await waitFor(DeviceLabels.FEES);
-    await pressAndRelease(DeviceLabels.TAP_TO_CONTINUE);
-    await waitFor(DeviceLabels.SIGN_TRANSACTION);
-    await longPressAndRelease(DeviceLabels.HOLD_TO_SIGN, 3);
-  } else {
-    const isNanoS = process.env.SPECULOS_DEVICE === DeviceModelId.nanoS;
-    await waitFor(DeviceLabels.NEW_ORDINARY);
-    await (isNanoS ? pressRightButton() : pressBoth());
-    if (isNanoS) {
-      await waitFor(DeviceLabels.SEND_TO_ADDRESS);
-      await pressBoth();
-    } else {
-      await pressUntilTextFound(DeviceLabels.SEND_TO_ADDRESS_2);
-      await pressBoth();
-    }
-    events = await pressUntilTextFound(DeviceLabels.SEND);
-    if (!isNanoS) {
-      const isAmountCorrect = containsSubstringInEvent(tx.amount, events);
-      expect(isAmountCorrect).toBeTruthy();
-    }
-    await pressBoth();
-    await waitFor(DeviceLabels.TRANSACTION_FEE);
-    await pressBoth();
-    await waitFor(DeviceLabels.CONFIRM);
-    if (isNanoS) {
-      await pressRightButton();
-    } else {
-      await pressBoth();
-      const isAddressCorrect = containsSubstringInEvent(tx.accountToCredit.address, events);
-      expect(isAddressCorrect).toBeTruthy();
-    }
-  }
+type ActionType = "both" | "right" | "tap" | "swipe" | "confirm" | "hold";
+
+function validateTransactionData(tx: Transaction, events: string[]) {
+  const isAddressCorrect = containsSubstringInEvent(tx.accountToCredit.address, events);
+  expect(isAddressCorrect).toBeTruthy();
+  const isAmountCorrect = containsSubstringInEvent(tx.amount, events);
+  expect(isAmountCorrect).toBeTruthy();
 }
 
-export async function delegateCardano() {
-  const commonSteps = [
-    [DeviceLabels.NEW_ORDINARY, "both"],
-    [DeviceLabels.TRANSACTION_FEE, "both"],
-    [DeviceLabels.REGISTER, "both"],
-    [DeviceLabels.STAKE_KEY, "both"],
-    [DeviceLabels.DEPOSIT, "both"],
-    [DeviceLabels.CONFIRM, "both"],
-    [DeviceLabels.DELEGATE_STAKE, "both"],
-    [DeviceLabels.STAKE_KEY, "both"],
-    [DeviceLabels.CONFIRM, "both"],
-    [DeviceLabels.CONFIRM, "both"],
-  ] as const;
+async function sendCardanoStax(tx: Transaction) {
+  await waitFor(DeviceLabels.REVIEW_TRANSACTION);
+  const events = await pressUntilTextFound(DeviceLabels.TO);
+  validateTransactionData(tx, events);
+  await pressAndRelease(DeviceLabels.TAP_TO_CONTINUE);
+  await waitFor(DeviceLabels.FEES);
+  await pressAndRelease(DeviceLabels.TAP_TO_CONTINUE);
+  await waitFor(DeviceLabels.SIGN_TRANSACTION);
+  await longPressAndRelease(DeviceLabels.HOLD_TO_SIGN, 3);
+}
 
-  const LNSSpecificSteps = [
+async function sendCardanoNanoS(_tx: Transaction) {
+  await waitFor(DeviceLabels.NEW_ORDINARY);
+  await pressRightButton();
+  await waitFor(DeviceLabels.SEND_TO_ADDRESS);
+  await pressBoth();
+  await pressUntilTextFound(DeviceLabels.SEND);
+  await pressBoth();
+  await waitFor(DeviceLabels.TRANSACTION_FEE);
+  await pressBoth();
+  await waitFor(DeviceLabels.CONFIRM);
+  await pressRightButton();
+}
+
+async function sendCardanoButtonDevice(tx: Transaction) {
+  await waitFor(DeviceLabels.NEW_ORDINARY);
+  await pressBoth();
+  await pressUntilTextFound(DeviceLabels.SEND_TO_ADDRESS_2);
+  await pressBoth();
+  const events = await pressUntilTextFound(DeviceLabels.SEND);
+  validateTransactionData(tx, events);
+  await pressBoth();
+  await waitFor(DeviceLabels.TRANSACTION_FEE);
+  await pressBoth();
+  await waitFor(DeviceLabels.CONFIRM);
+  await pressBoth();
+}
+
+export async function sendCardano(tx: Transaction) {
+  const speculosModel = getSpeculosModel();
+  if (speculosModel === DeviceModelId.stax) {
+    return sendCardanoStax(tx);
+  }
+  if (speculosModel === DeviceModelId.nanoS) {
+    return sendCardanoNanoS(tx);
+  }
+  return sendCardanoButtonDevice(tx);
+}
+
+const DELEGATE_STEPS_CONFIG = {
+  [DeviceModelId.stax]: [
+    [DeviceLabels.REVIEW_TRANSACTION, "swipe"],
+    [DeviceLabels.TAP_TO_CONTINUE, "tap"],
+    [DeviceLabels.REGISTER, "swipe"],
+    [DeviceLabels.TAP_TO_CONTINUE, "tap"],
+    [DeviceLabels.CONFIRM, "confirm"],
+    [DeviceLabels.DELEGATE_STAKE, "swipe"],
+    [DeviceLabels.TAP_TO_CONTINUE, "tap"],
+    [DeviceLabels.CONFIRM, "confirm"],
+    [DeviceLabels.HOLD_TO_SIGN, "hold"],
+  ] as const,
+  [DeviceModelId.nanoS]: [
     [DeviceLabels.NEW_ORDINARY, "right"],
     [DeviceLabels.TRANSACTION_FEE, "both"],
     [DeviceLabels.REGISTER, "both"],
@@ -81,55 +92,77 @@ export async function delegateCardano() {
     [DeviceLabels.STAKE_KEY, "both"],
     [DeviceLabels.CONFIRM, "right"],
     [DeviceLabels.CONFIRM, "right"],
-  ] as const;
+  ] as const,
+  default: [
+    [DeviceLabels.NEW_ORDINARY, "both"],
+    [DeviceLabels.TRANSACTION_FEE, "both"],
+    [DeviceLabels.REGISTER, "both"],
+    [DeviceLabels.STAKE_KEY, "both"],
+    [DeviceLabels.DEPOSIT, "both"],
+    [DeviceLabels.CONFIRM, "both"],
+    [DeviceLabels.DELEGATE_STAKE, "both"],
+    [DeviceLabels.STAKE_KEY, "both"],
+    [DeviceLabels.CONFIRM, "both"],
+    [DeviceLabels.CONFIRM, "both"],
+  ] as const,
+};
 
-  const STAXSpecificSteps = [
-    [DeviceLabels.REVIEW_TRANSACTION, "swipe"],
-    [DeviceLabels.TAP_TO_CONTINUE, "tap"],
-    [DeviceLabels.REGISTER, "swipe"],
-    [DeviceLabels.TAP_TO_CONTINUE, "tap"],
-    [DeviceLabels.CONFIRM, "confirm"],
-    [DeviceLabels.DELEGATE_STAKE, "swipe"],
-    [DeviceLabels.TAP_TO_CONTINUE, "tap"],
-    [DeviceLabels.CONFIRM, "confirm"],
-    [DeviceLabels.HOLD_TO_SIGN, "hold"],
-  ];
-
-  const speculosModel = getSpeculosModel();
-  let steps;
-  if (speculosModel === DeviceModelId.stax) {
-    steps = STAXSpecificSteps;
-  } else if (speculosModel === DeviceModelId.nanoS) {
-    steps = LNSSpecificSteps;
-  } else {
-    steps = commonSteps;
-  }
-  for (const [label, action] of steps) {
-    try {
-      if (speculosModel === DeviceModelId.stax) {
-        await waitFor(label);
-        switch (label) {
-          case DeviceLabels.TAP_TO_CONTINUE:
-            await pressAndRelease(DeviceLabels.TAP_TO_CONTINUE);
-            break;
-          case DeviceLabels.CONFIRM:
-            await pressAndRelease(DeviceLabels.CONFIRM, 139, 532);
-            break;
-          case DeviceLabels.HOLD_TO_SIGN:
-            await longPressAndRelease(DeviceLabels.HOLD_TO_SIGN, 3);
-            break;
-          default:
-            await swipeRight();
-            break;
-        }
-      } else {
-        await waitFor(label);
-        action === "both" ? await pressBoth() : await pressRightButton();
-      }
-    } catch (error) {
-      const message = error instanceof Error ? error.message : String(error);
-      console.error(`Error while waiting for "${label}":`, message);
+async function delegateStaxAction(label: DeviceLabels) {
+  const CONFIRM_BUTTON_COORDS = { x: 139, y: 532 };
+  await waitFor(label);
+  switch (label) {
+    case DeviceLabels.TAP_TO_CONTINUE:
+      await pressAndRelease(DeviceLabels.TAP_TO_CONTINUE);
       break;
+    case DeviceLabels.CONFIRM:
+      await pressAndRelease(DeviceLabels.CONFIRM, CONFIRM_BUTTON_COORDS.x, CONFIRM_BUTTON_COORDS.y);
+      break;
+    case DeviceLabels.HOLD_TO_SIGN:
+      await longPressAndRelease(DeviceLabels.HOLD_TO_SIGN, 3);
+      break;
+    default:
+      await swipeRight();
+      break;
+  }
+}
+
+async function delegateNanoAction(label: DeviceLabels, action: ActionType) {
+  await waitFor(label);
+  if (action === "both") {
+    await pressBoth();
+  } else {
+    await pressRightButton();
+  }
+}
+
+async function executeDelegateStep(
+  label: DeviceLabels,
+  action: ActionType,
+  speculosModel: DeviceModelId,
+) {
+  try {
+    if (speculosModel === DeviceModelId.stax) {
+      await delegateStaxAction(label);
+    } else {
+      await delegateNanoAction(label, action);
     }
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    console.error(`Error while waiting for "${label}":`, message);
+    throw error;
+  }
+}
+
+export async function delegateCardano() {
+  const speculosModel = getSpeculosModel();
+  const steps =
+    speculosModel === DeviceModelId.stax
+      ? DELEGATE_STEPS_CONFIG[DeviceModelId.stax]
+      : speculosModel === DeviceModelId.nanoS
+        ? DELEGATE_STEPS_CONFIG[DeviceModelId.nanoS]
+        : DELEGATE_STEPS_CONFIG.default;
+
+  for (const [label, action] of steps) {
+    await executeDelegateStep(label, action, speculosModel);
   }
 }

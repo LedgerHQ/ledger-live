@@ -21,6 +21,11 @@ export function getSpeculosModel(): DeviceModelId {
   }
 }
 
+export function isTouchDevice(): boolean {
+  const model = getSpeculosModel();
+  return model === DeviceModelId.stax;
+}
+
 function getDeviceTargetId(device: DeviceModelId): number {
   const modelToTargetIdMap = {
     [DeviceModelId.nanoS]: CryptoWallet.LNS.targetId,

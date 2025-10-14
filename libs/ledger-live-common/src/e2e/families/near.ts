@@ -6,17 +6,16 @@ import {
   getDelegateEvents,
   pressUntilTextFound,
 } from "../speculos";
-import { getSpeculosModel } from "../speculosAppVersion";
+import { isTouchDevice } from "../speculosAppVersion";
 import { pressBoth } from "../deviceInteraction/ButtonDeviceSimulator";
 import { DeviceLabels } from "../enum/DeviceLabels";
 import { longPressAndRelease, pressAndRelease } from "../deviceInteraction/TouchDeviceSimulator";
-import { DeviceModelId } from "@ledgerhq/types-devices";
 
 export async function delegateNear(delegatingAccount: Delegate) {
   const events = await getDelegateEvents(delegatingAccount);
   const isProviderCorrect = containsSubstringInEvent(delegatingAccount.provider, events);
   expect(isProviderCorrect).toBeTruthy();
-  if (getSpeculosModel() === DeviceModelId.stax) {
+  if (isTouchDevice()) {
     await pressAndRelease(DeviceLabels.CONFIRM_HEADER);
     await waitFor(DeviceLabels.VIEW_ACTION);
     await pressUntilTextFound(DeviceLabels.HOLD_TO_SIGN);

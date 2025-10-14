@@ -1,16 +1,15 @@
 import expect from "expect";
 import { Transaction } from "../models/Transaction";
 import { waitFor, pressUntilTextFound, containsSubstringInEvent, getSendEvents } from "../speculos";
-import { getSpeculosModel } from "../speculosAppVersion";
+import { isTouchDevice } from "../speculosAppVersion";
 import { pressBoth } from "../deviceInteraction/ButtonDeviceSimulator";
 import { DeviceLabels } from "../enum/DeviceLabels";
 import { Delegate } from "../models/Delegate";
-import { DeviceModelId } from "@ledgerhq/types-devices";
 import { longPressAndRelease } from "../deviceInteraction/TouchDeviceSimulator";
 
 export async function sendAptos(tx: Transaction) {
   await getSendEvents(tx);
-  if (getSpeculosModel() === DeviceModelId.stax) {
+  if (isTouchDevice()) {
     await longPressAndRelease(DeviceLabels.HOLD_TO_SIGN, 3);
   } else {
     await pressBoth();

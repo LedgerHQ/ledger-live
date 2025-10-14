@@ -1,16 +1,15 @@
 import expect from "expect";
 import { waitFor, containsSubstringInEvent, pressUntilTextFound, getSendEvents } from "../speculos";
-import { getSpeculosModel } from "../speculosAppVersion";
+import { isTouchDevice } from "../speculosAppVersion";
 import { pressBoth } from "../deviceInteraction/ButtonDeviceSimulator";
 import { DeviceLabels } from "../enum/DeviceLabels";
 import { Delegate } from "../models/Delegate";
 import { longPressAndRelease } from "../deviceInteraction/TouchDeviceSimulator";
-import { DeviceModelId } from "@ledgerhq/types-devices";
 import { Transaction } from "../models/Transaction";
 
 export async function sendKaspa(tx: Transaction) {
   await getSendEvents(tx);
-  if (getSpeculosModel() === DeviceModelId.stax) {
+  if (isTouchDevice()) {
     await longPressAndRelease(DeviceLabels.HOLD_TO_SIGN, 3);
   } else {
     await pressBoth();
