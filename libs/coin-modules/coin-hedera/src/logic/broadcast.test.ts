@@ -1,8 +1,8 @@
 import { broadcast } from "./broadcast";
-import { hederaClient } from "../network/client";
+import { rpcClient } from "../network/rpc";
 import { deserializeTransaction } from "./utils";
 
-jest.mock("../network/client");
+jest.mock("../network/rpc");
 jest.mock("./utils");
 
 describe("broadcast", () => {
@@ -16,12 +16,12 @@ describe("broadcast", () => {
     const mockResponse = { transactionId: "mock-transaction-id" } as any;
 
     (deserializeTransaction as jest.Mock).mockReturnValue(mockDeserializedTx);
-    (hederaClient.broadcastTransaction as jest.Mock).mockResolvedValue(mockResponse);
+    (rpcClient.broadcastTransaction as jest.Mock).mockResolvedValue(mockResponse);
 
     const result = await broadcast(txWithSignature);
 
     expect(deserializeTransaction).toHaveBeenCalledWith(txWithSignature);
-    expect(hederaClient.broadcastTransaction).toHaveBeenCalledWith(mockDeserializedTx);
+    expect(rpcClient.broadcastTransaction).toHaveBeenCalledWith(mockDeserializedTx);
     expect(result).toBe(mockResponse);
   });
 
@@ -35,7 +35,7 @@ describe("broadcast", () => {
 
     await expect(broadcast(txWithSignature)).rejects.toThrow(error);
     expect(deserializeTransaction).toHaveBeenCalledWith(txWithSignature);
-    expect(hederaClient.broadcastTransaction).not.toHaveBeenCalled();
+    expect(rpcClient.broadcastTransaction).not.toHaveBeenCalled();
   });
 
   it("should propagate errors from broadcastTransaction", async () => {
@@ -44,10 +44,10 @@ describe("broadcast", () => {
     const error = new Error("Network error");
 
     (deserializeTransaction as jest.Mock).mockReturnValue(mockDeserializedTx);
-    (hederaClient.broadcastTransaction as jest.Mock).mockRejectedValue(error);
+    (rpcClient.broadcastTransaction as jest.Mock).mockRejectedValue(error);
 
     await expect(broadcast(txWithSignature)).rejects.toThrow(error);
     expect(deserializeTransaction).toHaveBeenCalledWith(txWithSignature);
-    expect(hederaClient.broadcastTransaction).toHaveBeenCalledWith(mockDeserializedTx);
+    expect(rpcClient.broadcastTransaction).toHaveBeenCalledWith(mockDeserializedTx);
   });
 });

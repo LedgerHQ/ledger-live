@@ -22,9 +22,9 @@ const fetch = <Result>(path: string) => {
 };
 
 async function getAccountsForPublicKey(publicKey: string): Promise<HederaMirrorAccount[]> {
-  let r;
+  let res;
   try {
-    r = await fetch<HederaMirrorAccountsResponse>(
+    res = await fetch<HederaMirrorAccountsResponse>(
       `/api/v1/accounts?account.publicKey=${publicKey}&balance=true&limit=100`,
     );
   } catch (e: unknown) {
@@ -32,7 +32,7 @@ async function getAccountsForPublicKey(publicKey: string): Promise<HederaMirrorA
     throw e;
   }
 
-  const accounts = r.data.accounts;
+  const accounts = res.data.accounts;
 
   return accounts;
 }
@@ -132,7 +132,7 @@ async function getAccountTokens(address: string): Promise<HederaMirrorToken[]> {
   return tokens;
 }
 
-export const hederaMirrorNode = {
+export const apiClient = {
   getAccountsForPublicKey,
   getAccount,
   getAccountTokens,

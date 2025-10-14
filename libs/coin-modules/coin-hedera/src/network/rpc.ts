@@ -18,7 +18,7 @@ function _resetClient() {
   _hederaClient = null;
 }
 
-export const hederaClient = {
+export const rpcClient = {
   getInstance,
   broadcastTransaction,
   _resetClient,

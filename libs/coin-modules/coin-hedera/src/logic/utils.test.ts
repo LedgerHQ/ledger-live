@@ -4,7 +4,7 @@ import type { AssetInfo } from "@ledgerhq/coin-framework/api/types";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { InvalidAddress } from "@ledgerhq/errors";
 import { HEDERA_TRANSACTION_MODES } from "../constants";
-import { hederaMirrorNode } from "../network/mirror";
+import { apiClient } from "../network/api";
 import { getMockedOperation } from "../test/fixtures/operation.fixture";
 import { getMockedTokenCurrency } from "../test/fixtures/currency.fixture";
 import { getMockedAccount, getMockedTokenAccount } from "../test/fixtures/account.fixture";
@@ -26,7 +26,7 @@ import {
 } from "./utils";
 import { HederaRecipientInvalidChecksum } from "../errors";
 
-jest.mock("../network/mirror");
+jest.mock("../network/api");
 
 describe("utils", () => {
   beforeEach(() => {
@@ -295,7 +295,7 @@ describe("getOperationValue", () => {
     });
 
     test("returns true if max_automatic_token_associations === -1", async () => {
-      (hederaMirrorNode.getAccount as jest.Mock).mockResolvedValueOnce({
+      (apiClient.getAccount as jest.Mock).mockResolvedValueOnce({
         account: accountId,
         max_automatic_token_associations: -1,
         balance: {
@@ -310,7 +310,7 @@ describe("getOperationValue", () => {
     });
 
     test("returns true if token is already associated", async () => {
-      (hederaMirrorNode.getAccount as jest.Mock).mockResolvedValueOnce({
+      (apiClient.getAccount as jest.Mock).mockResolvedValueOnce({
         account: accountId,
         max_automatic_token_associations: 0,
         balance: {
@@ -325,7 +325,7 @@ describe("getOperationValue", () => {
     });
 
     test("returns false if token is not associated", async () => {
-      (hederaMirrorNode.getAccount as jest.Mock).mockResolvedValueOnce({
+      (apiClient.getAccount as jest.Mock).mockResolvedValueOnce({
         account: accountId,
         max_automatic_token_associations: 0,
         balance: {
@@ -342,7 +342,7 @@ describe("getOperationValue", () => {
     test("supports addresses with checksum", async () => {
       const addressWithChecksum = "0.0.9124531-xrxlv";
 
-      (hederaMirrorNode.getAccount as jest.Mock).mockResolvedValueOnce({
+      (apiClient.getAccount as jest.Mock).mockResolvedValueOnce({
         account: accountId,
         max_automatic_token_associations: 0,
         balance: {
@@ -353,7 +353,7 @@ describe("getOperationValue", () => {
       });
 
       await checkAccountTokenAssociationStatus(addressWithChecksum, tokenId);
-      expect(hederaMirrorNode.getAccount).toHaveBeenCalledWith("0.0.9124531");
+      expect(apiClient.getAccount).toHaveBeenCalledWith("0.0.9124531");
     });
   });
 

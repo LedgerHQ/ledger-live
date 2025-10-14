@@ -1,9 +1,9 @@
 import { findTokenByAddressInCurrency } from "@ledgerhq/cryptoassets/tokens";
 import { getBalance } from "./getBalance";
-import { hederaMirrorNode } from "../network/mirror";
+import { apiClient } from "../network/api";
 import { getMockedCurrency } from "../test/fixtures/currency.fixture";
 
-jest.mock("../network/mirror");
+jest.mock("../network/api");
 jest.mock("@ledgerhq/cryptoassets/tokens");
 
 describe("getBalance", () => {
@@ -20,13 +20,13 @@ describe("getBalance", () => {
       },
     };
 
-    (hederaMirrorNode.getAccount as jest.Mock).mockResolvedValue(mockMirrorAccount);
-    (hederaMirrorNode.getAccountTokens as jest.Mock).mockResolvedValue([]);
+    (apiClient.getAccount as jest.Mock).mockResolvedValue(mockMirrorAccount);
+    (apiClient.getAccountTokens as jest.Mock).mockResolvedValue([]);
 
     const result = await getBalance(mockCurrency, address);
 
-    expect(hederaMirrorNode.getAccount).toHaveBeenCalledWith(address);
-    expect(hederaMirrorNode.getAccountTokens).toHaveBeenCalledWith(address);
+    expect(apiClient.getAccount).toHaveBeenCalledWith(address);
+    expect(apiClient.getAccountTokens).toHaveBeenCalledWith(address);
     expect(result).toHaveLength(1);
     expect(result[0]).toEqual({
       asset: { type: "native" },
@@ -67,8 +67,8 @@ describe("getBalance", () => {
       units: [{ name: "TT2", code: "tt2", magnitude: 8 }],
     };
 
-    (hederaMirrorNode.getAccount as jest.Mock).mockResolvedValue(mockMirrorAccount);
-    (hederaMirrorNode.getAccountTokens as jest.Mock).mockResolvedValue(mockMirrorTokens);
+    (apiClient.getAccount as jest.Mock).mockResolvedValue(mockMirrorAccount);
+    (apiClient.getAccountTokens as jest.Mock).mockResolvedValue(mockMirrorTokens);
     (findTokenByAddressInCurrency as jest.Mock).mockImplementation(tokenId => {
       if (tokenId === "0.0.7890") return mockToken1;
       if (tokenId === "0.0.9876") return mockToken2;
@@ -77,8 +77,8 @@ describe("getBalance", () => {
 
     const result = await getBalance(mockCurrency, address);
 
-    expect(hederaMirrorNode.getAccount).toHaveBeenCalledWith(address);
-    expect(hederaMirrorNode.getAccountTokens).toHaveBeenCalledWith(address);
+    expect(apiClient.getAccount).toHaveBeenCalledWith(address);
+    expect(apiClient.getAccountTokens).toHaveBeenCalledWith(address);
     expect(findTokenByAddressInCurrency).toHaveBeenCalledTimes(2);
     expect(findTokenByAddressInCurrency).toHaveBeenCalledWith("0.0.7890", "hedera");
     expect(findTokenByAddressInCurrency).toHaveBeenCalledWith("0.0.9876", "hedera");
@@ -135,8 +135,8 @@ describe("getBalance", () => {
       units: [{ name: "TT1", code: "tt1", magnitude: 6 }],
     };
 
-    (hederaMirrorNode.getAccount as jest.Mock).mockResolvedValue(mockMirrorAccount);
-    (hederaMirrorNode.getAccountTokens as jest.Mock).mockResolvedValue(mockMirrorTokens);
+    (apiClient.getAccount as jest.Mock).mockResolvedValue(mockMirrorAccount);
+    (apiClient.getAccountTokens as jest.Mock).mockResolvedValue(mockMirrorTokens);
     (findTokenByAddressInCurrency as jest.Mock).mockImplementation(tokenId => {
       if (tokenId === "0.0.7890") return mockToken1;
       return null;
@@ -161,18 +161,18 @@ describe("getBalance", () => {
     });
   });
 
-  it("should handle errors from hederaMirrorNode.getAccount", async () => {
+  it("should handle errors from apiClient.getAccount", async () => {
     const address = "0.0.12345";
     const mockCurrency = getMockedCurrency();
     const error = new Error("Network error");
 
-    (hederaMirrorNode.getAccount as jest.Mock).mockRejectedValue(error);
-    (hederaMirrorNode.getAccountTokens as jest.Mock).mockResolvedValue([]);
+    (apiClient.getAccount as jest.Mock).mockRejectedValue(error);
+    (apiClient.getAccountTokens as jest.Mock).mockResolvedValue([]);
 
     await expect(getBalance(mockCurrency, address)).rejects.toThrow(error);
   });
 
-  it("should handle errors from hederaMirrorNode.getAccountTokens", async () => {
+  it("should handle errors from apiClient.getAccountTokens", async () => {
     const address = "0.0.12345";
     const mockCurrency = getMockedCurrency();
     const error = new Error("Network error");
@@ -182,8 +182,8 @@ describe("getBalance", () => {
       },
     };
 
-    (hederaMirrorNode.getAccount as jest.Mock).mockResolvedValue(mockMirrorAccount);
-    (hederaMirrorNode.getAccountTokens as jest.Mock).mockRejectedValue(error);
+    (apiClient.getAccount as jest.Mock).mockResolvedValue(mockMirrorAccount);
+    (apiClient.getAccountTokens as jest.Mock).mockRejectedValue(error);
 
     await expect(getBalance(mockCurrency, address)).rejects.toThrow(error);
   });

@@ -1,10 +1,10 @@
 import type { TransactionResponse } from "@hashgraph/sdk";
-import { hederaClient } from "../network/client";
+import { rpcClient } from "../network/rpc";
 import { deserializeTransaction } from "./utils";
 
 export const broadcast = async (txWithSignature: string): Promise<TransactionResponse> => {
   const hederaTransaction = deserializeTransaction(txWithSignature);
-  const response = await hederaClient.broadcastTransaction(hederaTransaction);
+  const response = await rpcClient.broadcastTransaction(hederaTransaction);
 
   return response;
 };
