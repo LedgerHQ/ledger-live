@@ -1,6 +1,6 @@
 import { renderHook, waitFor } from "@testing-library/react";
 import { createCryptoAssetsHooks } from "./hooks";
-import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { TokenCurrency, CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 
 // Mock the legacy store
 jest.mock("./legacy/legacy-store", () => ({
@@ -10,7 +10,34 @@ jest.mock("./legacy/legacy-store", () => ({
   },
 }));
 
+// Mock the currencies module
+jest.mock("./currencies", () => ({
+  findCryptoCurrencyById: jest.fn(),
+}));
+
 import { legacyCryptoAssetsStore } from "./legacy/legacy-store";
+import { findCryptoCurrencyById } from "./currencies";
+
+// Mock crypto currency data
+const mockCryptoCurrency: CryptoCurrency = {
+  type: "CryptoCurrency",
+  id: "bitcoin",
+  name: "Bitcoin",
+  ticker: "BTC",
+  units: [
+    {
+      code: "BTC",
+      name: "Bitcoin",
+      magnitude: 8,
+    },
+  ],
+  family: "bitcoin",
+  managerAppName: "Bitcoin",
+  coinType: 0,
+  scheme: "bitcoin",
+  color: "#FF9900",
+  explorerViews: [],
+};
 
 // Mock token data
 const mockToken: TokenCurrency = {
@@ -51,6 +78,9 @@ const mockFindTokenByAddressInCurrency =
   legacyCryptoAssetsStore.findTokenByAddressInCurrency as jest.MockedFunction<
     typeof legacyCryptoAssetsStore.findTokenByAddressInCurrency
   >;
+const mockFindCryptoCurrencyById = findCryptoCurrencyById as jest.MockedFunction<
+  typeof findCryptoCurrencyById
+>;
 
 beforeEach(() => {
   jest.clearAllMocks();
@@ -69,6 +99,13 @@ beforeEach(() => {
     }
     return undefined;
   });
+
+  mockFindCryptoCurrencyById.mockImplementation((id: string) => {
+    if (id === "bitcoin") {
+      return mockCryptoCurrency;
+    }
+    return undefined;
+  });
 });
 
 describe("Hooks Factory", () => {
@@ -77,8 +114,10 @@ describe("Hooks Factory", () => {
 
     expect(hooks.useTokenById).toBeDefined();
     expect(hooks.useTokenByAddressInCurrency).toBeDefined();
+    expect(hooks.useCurrencyById).toBeDefined();
     expect(hooks.useTokenById).toBeInstanceOf(Function);
     expect(hooks.useTokenByAddressInCurrency).toBeInstanceOf(Function);
+    expect(hooks.useCurrencyById).toBeInstanceOf(Function);
   });
 
   it("should throw an error when useCALBackend is true", () => {
@@ -273,6 +312,100 @@ describe("Legacy hooks", () => {
 
       // Should have no token for the new address
       expect(result.current.token).toBeUndefined();
+    });
+  });
+
+  describe("useCurrencyById", () => {
+    it("should return crypto currency when found", async () => {
+      const hooks = createCryptoAssetsHooks({ useCALBackend: false });
+      const { result } = renderHook(() => hooks.useCurrencyById("bitcoin"));
+
+      // Initial loading state
+      expect(result.current.loading).toBe(true);
+      expect(result.current.currency).toBeUndefined();
+      expect(result.current.error).toBeUndefined();
+
+      // Wait for the async operation to complete
+      await waitFor(() => {
+        expect(result.current.loading).toBe(false);
+      });
+
+      // Settled state with crypto currency
+      expect(result.current.currency).toBe(mockCryptoCurrency);
+      expect(result.current.error).toBeUndefined();
+    });
+
+    it("should fallback to token when crypto currency not found", async () => {
+      const hooks = createCryptoAssetsHooks({ useCALBackend: false });
+      const { result } = renderHook(() => hooks.useCurrencyById("ethereum/erc20/usd_coin"));
+
+      // Initial loading state
+      expect(result.current.loading).toBe(true);
+
+      // Wait for the async operation to complete
+      await waitFor(() => {
+        expect(result.current.loading).toBe(false);
+      });
+
+      // Settled state with token
+      expect(result.current.currency).toBe(mockToken);
+      expect(result.current.error).toBeUndefined();
+      expect(mockFindCryptoCurrencyById).toHaveBeenCalledWith("ethereum/erc20/usd_coin");
+      expect(mockFindTokenById).toHaveBeenCalledWith("ethereum/erc20/usd_coin");
+    });
+
+    it("should handle empty id parameter", async () => {
+      const hooks = createCryptoAssetsHooks({ useCALBackend: false });
+      const { result } = renderHook(() => hooks.useCurrencyById(""));
+
+      // Should immediately settle with no currency
+      expect(result.current.loading).toBe(false);
+      expect(result.current.currency).toBeUndefined();
+      expect(result.current.error).toBeUndefined();
+    });
+
+    it("should handle non-existent currency id", async () => {
+      const hooks = createCryptoAssetsHooks({ useCALBackend: false });
+      const { result } = renderHook(() => hooks.useCurrencyById("non-existent"));
+
+      // Initial loading state
+      expect(result.current.loading).toBe(true);
+
+      // Wait for the async operation to complete
+      await waitFor(() => {
+        expect(result.current.loading).toBe(false);
+      });
+
+      // Settled state with no currency
+      expect(result.current.currency).toBeUndefined();
+      expect(result.current.error).toBeUndefined();
+    });
+
+    it("should re-run when id changes", async () => {
+      const hooks = createCryptoAssetsHooks({ useCALBackend: false });
+      const { result, rerender } = renderHook(({ id }) => hooks.useCurrencyById(id), {
+        initialProps: { id: "bitcoin" },
+      });
+
+      // Wait for first currency to load
+      await waitFor(() => {
+        expect(result.current.loading).toBe(false);
+        expect(result.current.currency).toBe(mockCryptoCurrency);
+      });
+
+      // Change the id to a token
+      rerender({ id: "ethereum/erc20/usd_coin" });
+
+      // Should start loading again
+      expect(result.current.loading).toBe(true);
+
+      // Wait for new search to complete
+      await waitFor(() => {
+        expect(result.current.loading).toBe(false);
+      });
+
+      // Should have token for the new id
+      expect(result.current.currency).toBe(mockToken);
     });
   });
 });
