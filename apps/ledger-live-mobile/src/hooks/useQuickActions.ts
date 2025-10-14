@@ -17,6 +17,7 @@ import { walletSelector } from "~/reducers/wallet";
 import { getAccountCurrency, getParentAccount } from "@ledgerhq/coin-framework/lib/account/helpers";
 import { shallowAccountsSelector } from "~/reducers/accounts";
 import { useOpenStakeDrawer } from "LLM/features/Stake";
+import { useOpenReceiveDrawer } from "LLM/features/Receive";
 
 export type QuickAction = {
   disabled: boolean;
@@ -75,10 +76,17 @@ function useQuickActions({ currency, accounts }: QuickActionProps = {}) {
 
   const canBeRecovered = recoverEntryPoint?.enabled;
 
-  const { handleOpenStakeDrawer, isModularDrawerEnabled } = useOpenStakeDrawer({
-    currency,
-    sourceScreenName: "quick_action_stake",
-  });
+  const { handleOpenStakeDrawer, isModularDrawerEnabled: isModularDrawerEnabledStake } =
+    useOpenStakeDrawer({
+      currency,
+      sourceScreenName: route.name,
+    });
+
+  const { handleOpenReceiveDrawer, isModularDrawerEnabled: isModularDrawerEnabledReceive } =
+    useOpenReceiveDrawer({
+      currency,
+      sourceScreenName: route.name,
+    });
 
   const quickActionsList = useMemo(() => {
     const list: Partial<Record<Actions, QuickAction>> = {
@@ -108,6 +116,7 @@ function useQuickActions({ currency, accounts }: QuickActionProps = {}) {
                 },
               },
         ],
+        customHandler: isModularDrawerEnabledReceive ? handleOpenReceiveDrawer : undefined,
         icon: IconsLegacy.ArrowBottomMedium,
       },
       SWAP: {
@@ -175,7 +184,7 @@ function useQuickActions({ currency, accounts }: QuickActionProps = {}) {
             },
           },
         ],
-        customHandler: isModularDrawerEnabled ? handleOpenStakeDrawer : undefined,
+        customHandler: isModularDrawerEnabledStake ? handleOpenStakeDrawer : undefined,
         icon: IconsLegacy.CoinsMedium,
       };
     }
@@ -220,8 +229,10 @@ function useQuickActions({ currency, accounts }: QuickActionProps = {}) {
     partnerStakeRoute,
     canStakeCurrencyUsingLedgerLive,
     canBeRecovered,
-    isModularDrawerEnabled,
+    isModularDrawerEnabledStake,
+    isModularDrawerEnabledReceive,
     handleOpenStakeDrawer,
+    handleOpenReceiveDrawer,
   ]);
 
   return { quickActionsList };

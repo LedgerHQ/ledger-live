@@ -1,15 +1,18 @@
 /* eslint-disable @typescript-eslint/consistent-type-assertions */
 import React from "react";
-import { render, waitFor } from "@testing-library/react-native";
+import { render, waitFor } from "@tests/test-renderer";
 import {
   ModularDrawerDeepLinkHandler,
+  ReceiveDeepLinkHandler,
   AddAccountDeepLinkHandler,
   ModularDrawerDeepLinkHandlerProps,
+  ReceiveDeepLinkHandlerProps,
   AddAccountDeepLinkHandlerProps,
 } from "../screens/ModularDrawerDeepLinkHandler";
 import { ScreenName } from "~/const";
 
 const mockOpenDrawer = jest.fn();
+const mockHandleOpenReceiveDrawer = jest.fn();
 const mockNavigationDispatch = jest.fn();
 
 type MockNavigation = {
@@ -31,6 +34,10 @@ jest.mock("LLM/features/ModularDrawer/hooks/useModularDrawerController", () => (
   useModularDrawerController: () => ({ openDrawer: mockOpenDrawer }),
 }));
 
+jest.mock("LLM/features/Receive", () => ({
+  useOpenReceiveDrawer: jest.fn(() => ({ handleOpenReceiveDrawer: mockHandleOpenReceiveDrawer })),
+}));
+
 jest.mock("@ledgerhq/live-common/currencies/index", () => ({
   findCryptoCurrencyByKeyword: jest.fn((keyword: string) => {
     if (keyword === "bitcoin") return { id: "bitcoin", name: "Bitcoin" };
@@ -45,6 +52,26 @@ describe("ModularDrawerDeepLinkHandler", () => {
   });
 
   describe("ModularDrawerDeepLinkHandler", () => {
+    it("should call handleOpenReceiveDrawer for receive flow", async () => {
+      const route: ModularDrawerDeepLinkHandlerProps["route"] = {
+        key: "test",
+        name: ScreenName.ModularDrawerDeepLinkHandler,
+        params: { flow: "receive" as const },
+      };
+
+      render(
+        <ModularDrawerDeepLinkHandler
+          route={route}
+          navigation={mockNavigation as unknown as ModularDrawerDeepLinkHandlerProps["navigation"]}
+        />,
+      );
+
+      await waitFor(() => {
+        expect(mockHandleOpenReceiveDrawer).toHaveBeenCalled();
+        expect(mockNavigationDispatch).toHaveBeenCalled();
+      });
+    });
+
     it("should call openDrawer for add-account flow", async () => {
       const route: ModularDrawerDeepLinkHandlerProps["route"] = {
         key: "test",
@@ -67,6 +94,25 @@ describe("ModularDrawerDeepLinkHandler", () => {
           areCurrenciesFiltered: false,
         });
         expect(mockNavigationDispatch).toHaveBeenCalled();
+      });
+    });
+
+    it("should handle receive flow with currency", async () => {
+      const route: ModularDrawerDeepLinkHandlerProps["route"] = {
+        key: "test",
+        name: ScreenName.ModularDrawerDeepLinkHandler,
+        params: { flow: "receive" as const, currency: "bitcoin" },
+      };
+
+      render(
+        <ModularDrawerDeepLinkHandler
+          route={route}
+          navigation={mockNavigation as unknown as ModularDrawerDeepLinkHandlerProps["navigation"]}
+        />,
+      );
+
+      await waitFor(() => {
+        expect(mockHandleOpenReceiveDrawer).toHaveBeenCalled();
       });
     });
 
@@ -119,6 +165,47 @@ describe("ModularDrawerDeepLinkHandler", () => {
     });
   });
 
+  describe("ReceiveDeepLinkHandler", () => {
+    it("should always trigger receive flow", async () => {
+      const route: ReceiveDeepLinkHandlerProps["route"] = {
+        key: "test",
+        name: ScreenName.ReceiveDeepLinkHandler,
+        params: {},
+      };
+
+      render(
+        <ReceiveDeepLinkHandler
+          route={route}
+          navigation={mockNavigation as unknown as ReceiveDeepLinkHandlerProps["navigation"]}
+        />,
+      );
+
+      await waitFor(() => {
+        expect(mockHandleOpenReceiveDrawer).toHaveBeenCalled();
+        expect(mockOpenDrawer).not.toHaveBeenCalled();
+      });
+    });
+
+    it("should handle receive flow with currency parameter", async () => {
+      const route: ReceiveDeepLinkHandlerProps["route"] = {
+        key: "test",
+        name: ScreenName.ReceiveDeepLinkHandler,
+        params: { currency: "bitcoin" },
+      };
+
+      render(
+        <ReceiveDeepLinkHandler
+          route={route}
+          navigation={mockNavigation as unknown as ReceiveDeepLinkHandlerProps["navigation"]}
+        />,
+      );
+
+      await waitFor(() => {
+        expect(mockHandleOpenReceiveDrawer).toHaveBeenCalled();
+      });
+    });
+  });
+
   describe("AddAccountDeepLinkHandler", () => {
     it("should always trigger add-account flow", async () => {
       const route: AddAccountDeepLinkHandlerProps["route"] = {
@@ -141,6 +228,7 @@ describe("ModularDrawerDeepLinkHandler", () => {
           source: "deeplink",
           areCurrenciesFiltered: false,
         });
+        expect(mockHandleOpenReceiveDrawer).not.toHaveBeenCalled();
       });
     });
 

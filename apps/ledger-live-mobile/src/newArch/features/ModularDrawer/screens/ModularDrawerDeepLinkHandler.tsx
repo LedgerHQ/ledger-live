@@ -5,6 +5,7 @@ import { useModularDrawerController } from "LLM/features/ModularDrawer/hooks/use
 import { ModularDrawerNavigatorStackParamList } from "~/components/RootNavigator/types/ModularDrawerNavigator";
 import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { findCryptoCurrencyByKeyword } from "@ledgerhq/live-common/currencies/index";
+import { useOpenReceiveDrawer } from "LLM/features/Receive";
 
 export type ModularDrawerDeepLinkHandlerProps = StackNavigatorProps<
   ModularDrawerNavigatorStackParamList,
@@ -31,11 +32,16 @@ function ModularDrawerDeepLinkHandlerCore({
   const navigation = useNavigation();
   const { openDrawer } = useModularDrawerController();
 
-  const currencyToAdd = currency ? findCryptoCurrencyByKeyword(currency) : undefined;
+  const currencyToAdd = currency ? findCryptoCurrencyByKeyword(currency) ?? undefined : undefined;
+
+  const { handleOpenReceiveDrawer } = useOpenReceiveDrawer({
+    currency: currencyToAdd,
+    sourceScreenName: "deeplink",
+  });
 
   const openFlow = useCallback(() => {
     if (flow === "receive") {
-      //  Implement receive flow in PR https://github.com/LedgerHQ/ledger-live/pull/12312
+      handleOpenReceiveDrawer();
     } else {
       openDrawer({
         currencies: currencyToAdd ? [currencyToAdd.id] : undefined,
@@ -44,7 +50,7 @@ function ModularDrawerDeepLinkHandlerCore({
         areCurrenciesFiltered: !!currencyToAdd,
       });
     }
-  }, [currencyToAdd, flow, openDrawer]);
+  }, [currencyToAdd, flow, handleOpenReceiveDrawer, openDrawer]);
 
   useEffect(() => {
     // Navigate to Portfolio first to ensure we have a base screen
