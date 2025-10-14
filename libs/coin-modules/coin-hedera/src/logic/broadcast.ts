@@ -4,7 +4,5 @@ import { deserializeTransaction } from "./utils";
 
 export const broadcast = async (txWithSignature: string): Promise<TransactionResponse> => {
   const hederaTransaction = deserializeTransaction(txWithSignature);
-  const response = await rpcClient.broadcastTransaction(hederaTransaction);
-
-  return response;
+  return await rpcClient.broadcastTransaction(hederaTransaction);
 };

@@ -1,6 +1,11 @@
 import BigNumber from "bignumber.js";
 import cvsApi from "@ledgerhq/live-countervalues/api/index";
-import { ESTIMATED_FEE_SAFETY_RATE, HEDERA_OPERATION_TYPES, TINYBAR_SCALE } from "../constants";
+import {
+  DEFAULT_TINYBAR_FEE,
+  ESTIMATED_FEE_SAFETY_RATE,
+  HEDERA_OPERATION_TYPES,
+  TINYBAR_SCALE,
+} from "../constants";
 import { estimateFees } from "./estimateFees";
 import { getMockedAccount } from "../test/fixtures/account.fixture";
 import { getCurrencyToUSDRate } from "./utils";
@@ -31,7 +36,7 @@ describe("getEstimatedFees", () => {
       .integerValue(BigNumber.ROUND_CEIL)
       .multipliedBy(ESTIMATED_FEE_SAFETY_RATE);
 
-    expect(result.toFixed()).toBe(expectedFee.toFixed());
+    expect(result.isEqualTo(expectedFee)).toBe(true);
   });
 
   test("returns estimated fee based on USD rate for TokenTransfer", async () => {
@@ -46,7 +51,7 @@ describe("getEstimatedFees", () => {
       .integerValue(BigNumber.ROUND_CEIL)
       .multipliedBy(ESTIMATED_FEE_SAFETY_RATE);
 
-    expect(result.toFixed()).toBe(expectedFee.toFixed());
+    expect(result.isEqualTo(expectedFee)).toBe(true);
   });
 
   test("returns estimated fee based on USD rate for TokenAssociate", async () => {
@@ -64,7 +69,7 @@ describe("getEstimatedFees", () => {
       .integerValue(BigNumber.ROUND_CEIL)
       .multipliedBy(ESTIMATED_FEE_SAFETY_RATE);
 
-    expect(result.toFixed()).toBe(expectedFee.toFixed());
+    expect(result.isEqualTo(expectedFee)).toBe(true);
   });
 
   test("falls back to default estimate when cvs api returns null", async () => {
@@ -76,8 +81,8 @@ describe("getEstimatedFees", () => {
       HEDERA_OPERATION_TYPES.CryptoTransfer,
     );
 
-    const expected = new BigNumber("150200").multipliedBy(2);
-    expect(result.toFixed()).toBe(expected.toFixed());
+    const expected = new BigNumber(DEFAULT_TINYBAR_FEE).multipliedBy(ESTIMATED_FEE_SAFETY_RATE);
+    expect(result.isEqualTo(expected)).toBe(true);
   });
 
   test("falls back to default estimate on cvs api failure", async () => {
@@ -88,7 +93,7 @@ describe("getEstimatedFees", () => {
       HEDERA_OPERATION_TYPES.CryptoTransfer,
     );
 
-    const expected = new BigNumber("150200").multipliedBy(2);
-    expect(result.toFixed()).toBe(expected.toFixed());
+    const expected = new BigNumber(DEFAULT_TINYBAR_FEE).multipliedBy(ESTIMATED_FEE_SAFETY_RATE);
+    expect(result.isEqualTo(expected)).toBe(true);
   });
 });

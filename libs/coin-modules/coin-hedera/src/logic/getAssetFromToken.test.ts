@@ -17,15 +17,11 @@ describe("getAssetFromToken", () => {
     });
 
     expect(getAssetFromToken(token, owner)).toEqual({
-      assetReference: "0.0.1234567",
-      assetOwner: "owner",
-      name: "TEST",
-      type: "hts",
-      unit: {
-        code: "TEST",
-        magnitude: 8,
-        name: "Test",
-      },
+      assetReference: token.contractAddress,
+      assetOwner: owner,
+      name: token.name,
+      type: token.tokenType,
+      unit: token.units[0],
     });
   });
 });

@@ -14,12 +14,12 @@ function getInstance(): Client {
 }
 
 // for testing purposes only, used to reset singleton client instance
-function _resetClient() {
+function _resetInstance() {
   _hederaClient = null;
 }
 
 export const rpcClient = {
   getInstance,
   broadcastTransaction,
-  _resetClient,
+  _resetInstance,
 };

@@ -20,6 +20,9 @@ export const TINYBAR_SCALE = 8;
 
 export const ESTIMATED_FEE_SAFETY_RATE = 2;
 
+// old value moved from https://github.com/LedgerHQ/ledger-live/blob/8447b68b7c6f1e7ccd4aa9db4da0e6c8de36a88e/libs/coin-modules/coin-hedera/src/bridge/utils.ts#L77
+export const DEFAULT_TINYBAR_FEE = 150200;
+
 /**
  * https://docs.hedera.com/hedera/networks/mainnet/fees
  *

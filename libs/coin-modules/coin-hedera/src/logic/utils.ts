@@ -79,7 +79,7 @@ export const mapIntentToSDKOperation = (txIntent: TransactionIntent) => {
 
 export const getMemoFromBase64 = (memoBase64: string | undefined): string | null => {
   try {
-    if (typeof memoBase64 !== "string") return null;
+    if (memoBase64 === undefined) return null;
 
     return Buffer.from(memoBase64, "base64").toString("utf-8");
   } catch {

@@ -33,9 +33,7 @@ export function createApi(config: Record<string, never>): Api<HederaMemo> {
   return {
     broadcast: async tx => {
       const response = await logicBroadcast(tx);
-      const base64Hash = Buffer.from(response.transactionHash).toString("base64");
-
-      return base64Hash;
+      return Buffer.from(response.transactionHash).toString("base64");
     },
     combine,
     craftTransaction: async (txIntent, customFees) => {

@@ -77,6 +77,7 @@ describe("utils", () => {
       const deserialized = deserializeTransaction(hexTransaction);
 
       const hexTransactionBuffer = Buffer.from([10, 20, 30, 40, 50]);
+      expect(Transaction.fromBytes).toHaveBeenCalledTimes(1);
       expect(Transaction.fromBytes).toHaveBeenCalledWith(hexTransactionBuffer);
       expect(deserialized).toBe(mockTransaction);
     });
@@ -353,6 +354,7 @@ describe("getOperationValue", () => {
       });
 
       await checkAccountTokenAssociationStatus(addressWithChecksum, tokenId);
+      expect(apiClient.getAccount).toHaveBeenCalledTimes(1);
       expect(apiClient.getAccount).toHaveBeenCalledWith("0.0.9124531");
     });
   });

@@ -20,7 +20,9 @@ describe("broadcast", () => {
 
     const result = await broadcast(txWithSignature);
 
+    expect(deserializeTransaction).toHaveBeenCalledTimes(1);
     expect(deserializeTransaction).toHaveBeenCalledWith(txWithSignature);
+    expect(rpcClient.broadcastTransaction).toHaveBeenCalledTimes(1);
     expect(rpcClient.broadcastTransaction).toHaveBeenCalledWith(mockDeserializedTx);
     expect(result).toBe(mockResponse);
   });
@@ -34,6 +36,7 @@ describe("broadcast", () => {
     });
 
     await expect(broadcast(txWithSignature)).rejects.toThrow(error);
+    expect(deserializeTransaction).toHaveBeenCalledTimes(1);
     expect(deserializeTransaction).toHaveBeenCalledWith(txWithSignature);
     expect(rpcClient.broadcastTransaction).not.toHaveBeenCalled();
   });
@@ -47,7 +50,9 @@ describe("broadcast", () => {
     (rpcClient.broadcastTransaction as jest.Mock).mockRejectedValue(error);
 
     await expect(broadcast(txWithSignature)).rejects.toThrow(error);
+    expect(deserializeTransaction).toHaveBeenCalledTimes(1);
     expect(deserializeTransaction).toHaveBeenCalledWith(txWithSignature);
+    expect(rpcClient.broadcastTransaction).toHaveBeenCalledTimes(1);
     expect(rpcClient.broadcastTransaction).toHaveBeenCalledWith(mockDeserializedTx);
   });
 });

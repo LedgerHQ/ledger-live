@@ -2,6 +2,7 @@ import BigNumber from "bignumber.js";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import {
   BASE_USD_FEE_BY_OPERATION_TYPE,
+  DEFAULT_TINYBAR_FEE,
   ESTIMATED_FEE_SAFETY_RATE,
   HEDERA_OPERATION_TYPES,
 } from "../constants";
@@ -20,7 +21,7 @@ export const estimateFees = async (
       .integerValue(BigNumber.ROUND_CEIL)
       .multipliedBy(ESTIMATED_FEE_SAFETY_RATE);
   } else {
-    fee = new BigNumber("150200").multipliedBy(ESTIMATED_FEE_SAFETY_RATE);
+    fee = new BigNumber(DEFAULT_TINYBAR_FEE).multipliedBy(ESTIMATED_FEE_SAFETY_RATE);
   }
 
   return fee;
