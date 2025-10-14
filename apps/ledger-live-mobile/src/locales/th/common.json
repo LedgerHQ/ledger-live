@@ -55,10 +55,10 @@
     "bluetooth" : "Bluetooth",
     "usb" : "USB",
     "add" : "เพิ่ม",
-    "token" : "โทเคน",
-    "token_plural" : "โทเคน",
-    "subaccount" : "บัญชีย่อย",
-    "subaccount_plural" : "บัญชีย่อย",
+    "token_one" : "โทเคน",
+    "token_other" : "โทเคน",
+    "subaccount_one" : "บัญชีย่อย",
+    "subaccount_other" : "บัญชีย่อย",
     "forgetDevice" : "ถอดอุปกรณ์ออก",
     "help" : "ช่วยเหลือ",
     "saveLogs" : "บันทึก Log",
@@ -71,24 +71,24 @@
     "installed" : "ติดตั้งแล้ว",
     "uninstall" : "ถอนการติดตั้ง",
     "fromNow" : {
-      "seconds" : "ในหนึ่งวินาที",
-      "seconds_plural" : "ใน {{time}} วินาที",
-      "minutes" : "ในหนึ่งนาที",
-      "minutes_plural" : "ใน {{time}} นาที",
-      "hours" : "ในหนึ่งชั่วโมง",
-      "hours_plural" : "ใน {{time}} ชั่วโมง",
-      "days" : "ในหนึ่งวัน",
-      "days_plural" : "ใน {{time}} วัน"
+      "seconds_one" : "ใน 1 วินาที",
+      "seconds_other" : "ใน {{time}} วินาที",
+      "minutes_one" : "ใน 1 นาที",
+      "minutes_other" : "ใน {{time}} นาที",
+      "hours_one" : "ใน 1 ชั่วโมง",
+      "hours_other" : "ใน {{time}} ชั่วโมง",
+      "days_one" : "ใน 1 วัน",
+      "days_other" : "ใน {{time}} วัน"
     },
     "timeAgo" : {
-      "seconds" : "หนึ่งวินาทีที่แล้ว",
-      "seconds_plural" : "{{time}} วินาทีที่แล้ว",
-      "minutes" : "หนึ่งนาทีที่แล้ว",
-      "minutes_plural" : "{{time}} นาทีที่แล้ว",
-      "hours" : "หนึ่งชั่วโมงที่แล้ว",
-      "hours_plural" : "{{time}} ชั่วโมงที่แล้ว",
-      "days" : "เมื่อวาน",
-      "days_plural" : "{{time}} วันที่แล้ว"
+      "seconds_one" : "1 วินาทีที่แล้ว",
+      "seconds_other" : "{{time}} วินาทีที่แล้ว",
+      "minutes_one" : "1 นาทีที่แล้ว",
+      "minutes_other" : "{{time}} นาทีที่แล้ว",
+      "hours_one" : "1 ชั่วโมงที่แล้ว",
+      "hours_other" : "{{time}} ชั่วโมงที่แล้ว",
+      "days_one" : "เมื่อวาน",
+      "days_other" : "{{time}} วันที่แล้ว"
     },
     "seeMore" : "ดูเพิ่มเติม",
     "moreInfo" : "ข้อมูลเพิ่มเติม",
@@ -1073,6 +1073,10 @@
     "HederaAddAccountError" : {
       "title" : "ยังไม่ได้เพิ่มบัญชีของคุณ โปรดลองอีกครั้ง"
     },
+    "HederaRecipientInvalidChecksum" : {
+      "title" : "Invalid address checksum",
+      "description" : "The provided address has an invalid checksum."
+    },
     "HederaInsufficientFundsForAssociation" : {
       "title" : "ยอดคงเหลือในบัญชีไม่เพียงพอ",
       "description" : "ยอด HBAR ในบัญชีไม่พอสำหรับการดำเนินการเชื่อมโยงโทเคน ต้องมี HBAR มูลค่าอย่างน้อย ${{requiredWorthInUSD}}"
@@ -1632,7 +1636,13 @@
       "terms" : "การดำเนินการต่อจะถือว่าคุณตกลงกับ Ledger ในส่วน",
       "termsLink" : "ข้อกำหนดและเงื่อนไข",
       "privacyLink" : "นโยบายความเป็นส่วนตัว",
-      "and" : "และ"
+      "and" : "และ",
+      "videoTitles" : {
+        "0" : "วอลเล็ตที่ปลอดภัย พร้อมอำนาจการควบคุมในมือคุณ",
+        "1" : "ส่ง, รับ, สวอป และสเตคคริปโตได้นับพัน*",
+        "2" : "ตรวจสอบทุกธุรกรรมได้อย่างมั่นใจ"
+      },
+      "disclaimer" : "การดำเนินการต่อจะถือว่าคุณยอมรับ<TermsAndConditions>ข้อกำหนดและเงื่อนไข</TermsAndConditions> รวมถึง<PrivacyPolicy>นโยบายความเป็นส่วนตัว</PrivacyPolicy>ของ Ledger Ledger ไม่ให้คำแนะนำหรือคำปรึกษาเกี่ยวกับการลงทุน บริการสวอป (Swap) และสเตคกิ้ง (Staking) เป็นบริการที่ให้บริการโดยบุคคลที่สาม"
     },
     "postWelcomeStep" : {
       "title" : "มาเริ่มกันเลย",
@@ -2713,6 +2723,7 @@
       "LEGACYUNFREEZE" : "Unfreeze แล้ว",
       "REWARD" : "Reward ที่เคลมแล้ว",
       "FEES" : "ค่าธรรมเนียม",
+      "PRE_APPROVAL" : "การอนุมัติเบื้องต้น",
       "OPT_IN" : "เลือกเข้าร่วม",
       "OPT_OUT" : "เลือกไม่เข้าร่วม",
       "CLOSE_ACCOUNT" : "ปิดบัญชี",
@@ -2813,10 +2824,10 @@
   "selectableAccountsList" : {
     "deselectAll" : "ยกเลิกการเลือกทั้งหมด",
     "selectAll" : "เลือกทั้งหมด",
-    "tokenCount" : "+1 โทเคน",
-    "tokenCount_plural" : "+{{count}} โทเคน",
-    "subaccountCount" : "+1 บัญชีย่อย",
-    "subaccountCount_plural" : "+{{count}} บัญชีย่อย"
+    "tokenCount_one" : "+1 โทเคน",
+    "tokenCount_other" : "+{{count}} โทเคน",
+    "subaccountCount_one" : "+1 บัญชีย่อย",
+    "subaccountCount_other" : "+{{count}} บัญชีย่อย"
   },
   "account" : {
     "subHeader" : {
@@ -3015,25 +3026,25 @@
       "upToDate" : "ซิงโครไนซ์แล้ว",
       "error" : "ข้อผิดพลาด",
       "queued" : "กำลังรอ",
-      "showTokens" : "แสดง {{length}} โทเคน",
-      "showTokens_plural" : "แสดง {{length}} โทเคน",
-      "showSubAccounts" : "แสดง {{length}} บัญชีย่อย",
-      "showSubAccounts_plural" : "แสดง {{length}} บัญชีย่อย",
-      "hideTokens" : "ซ่อนโทเคน",
-      "hideTokens_plural" : "ซ่อนโทเคน",
-      "hideSubAccounts" : "ซ่อนบัญชีย่อย",
-      "hideSubAccounts_plural" : "ซ่อนบัญชีย่อย",
+      "showTokens_one" : "แสดง {{length}} โทเคน",
+      "showTokens_other" : "แสดง {{length}} โทเคน",
+      "showSubAccounts_one" : "แสดง {{length}} บัญชีย่อย",
+      "showSubAccounts_other" : "แสดง {{length}} บัญชีย่อย",
+      "hideTokens_one" : "ซ่อนโทเคน",
+      "hideTokens_other" : "ซ่อนโทเคน",
+      "hideSubAccounts_one" : "ซ่อนบัญชีย่อย",
+      "hideSubAccounts_other" : "ซ่อนบัญชีย่อย",
       "algorand" : {
-        "showTokens" : "แสดง {{length}} ASA",
-        "showTokens_plural" : "แสดง {{length}} ASA",
-        "hideTokens" : "ซ่อน ASA",
-        "hideTokens_plural" : "ซ่อน ASA"
+        "showTokens_one" : "แสดง {{length}} ASA",
+        "showTokens_other" : "แสดง {{length}} ASA",
+        "hideTokens_one" : "ซ่อน ASA",
+        "hideTokens_other" : "ซ่อน ASA"
       },
       "stellar" : {
-        "showTokens" : "แสดง {{length}} สินทรัพย์",
-        "showTokens_plural" : "แสดง {{length}} สินทรัพย์",
-        "hideTokens" : "ซ่อนสินทรัพย์",
-        "hideTokens_plural" : "ซ่อนสินทรัพย์"
+        "showTokens_one" : "แสดง {{length}} สินทรัพย์",
+        "showTokens_other" : "แสดง {{length}} สินทรัพย์",
+        "hideTokens_one" : "ซ่อนสินทรัพย์",
+        "hideTokens_other" : "ซ่อนสินทรัพย์"
       }
     },
     "noResultsFound" : "ไม่พบสินทรัพย์",
@@ -3048,8 +3059,8 @@
   "distribution" : {
     "header" : "การจัดสรรสินทรัพย์",
     "list" : "การจัดสรร ({{count}}) สินทรัพย์",
-    "assets" : "สินทรัพย์",
-    "assets_plural" : "สินทรัพย์",
+    "assets_one" : "สินทรัพย์",
+    "assets_other" : "สินทรัพย์",
     "total" : "ยอดคงเหลือทั้งหมด:",
     "listAccount" : "การจัดสรร ({{count}}) สินทรัพย์",
     "title" : "สินทรัพย์",
@@ -3420,6 +3431,7 @@
     "receive" : {
       "title" : "รับ",
       "description" : "รับคริปโตจาก Wallet อื่น",
+      "description_v2" : "แปลงเป็นสเตเบิลคอยน์ด้วยการโอนเงินจากบัญชีธนาคารหรือการส่งคริปโตมาจากวอลเล็ตอื่น",
       "titleReadOnly" : "Address ที่ไม่ได้รับยืนยัน",
       "headerTitle" : "สินทรัพย์คริปโต",
       "titleDevice" : "เชื่อมต่ออุปกรณ์",
@@ -3433,6 +3445,17 @@
       "shareAddress" : "แชร์ Address",
       "addressCopied" : "คัดลอก Address ในคลิปบอร์ดแล้ว",
       "taprootWarning" : "ตรวจสอบให้แน่ใจว่าผู้ส่งรองรับ Taproot",
+      "connectToNoah" : "กำลังเชื่อมต่อคุณกับ Noah",
+      "menu" : {
+        "crypto" : {
+          "title" : "โดยการโอนเงินจาก Address ของคริปโต",
+          "description" : "ส่งคริปโตมาจากวอลเล็ตอื่น"
+        },
+        "fiat" : {
+          "title" : "โดยการโอนเงินจากบัญชีธนาคาร",
+          "description" : "แปลงเป็นสเตเบิลคอยน์ผ่านบัญชี Cash-to-Stablecoin ต้องมีการลงทะเบียนก่อนใช้งาน"
+        }
+      },
       "memoTag" : {
         "link" : "ต้องการ Tag/Memo?",
         "title" : "ต้องการ Tag/Memo?",
@@ -3445,8 +3468,8 @@
       },
       "selectNetwork" : {
         "title" : "เลือกเครือข่ายสำหรับคริปโตที่เลือก",
-        "account" : "{{count}} บัญชี",
-        "account_plural" : "{{count}} บัญชี",
+        "account_one" : "{{count}} บัญชี",
+        "account_other" : "{{count}} บัญชี",
         "subtitle" : "จะต้องตรงกับเครือข่ายที่เลือกใน Wallet หรือ Exchange ที่โอนคริปโต",
         "bannerTitle" : "ต้องแน่ใจว่าเลือกเครือข่ายที่ถูกต้อง เรียนรู้วิธี",
         "depositFromCexBannerTitle" : "ฝากคริปโตจากบัญชี Coinbase ของคุณ"
@@ -3463,8 +3486,8 @@
       "addAccount" : {
         "title" : "กำลังตรวจสอบบัญชี...",
         "subtitle" : "กำลังตรวจสอบว่าคุณมีบัญชีสำหรับ {{currencyName}} บนบล็อกเชนอยู่แล้วหรือไม่",
-        "foundAccount" : "พบ {{count}} บัญชี",
-        "foundAccount_plural" : "พบ {{count}} บัญชี",
+        "foundAccount_one" : "พบ {{count}} บัญชี",
+        "foundAccount_other" : "พบ {{count}} บัญชี",
         "stopSynchronization" : "หยุดการซิงโครไนซ์",
         "addingAccount" : "ไม่พบบัญชี กำลังสร้างบัญชีใหม่สำหรับ {{currencyName}}..."
       },
@@ -3766,12 +3789,16 @@
         "apt_description" : "เพื่อ Swap Aptos ให้ใช้อุปกรณ์ Ledger ที่เข้ากันอื่น ๆ เช่น Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ หรือ Ledger Stax™",
         "cosmos_title" : "Ledger Nano S™ ไม่รองรับการ Swap Cosmos",
         "cosmos_description" : "เพื่อ Swap Cosmos ให้ใช้อุปกรณ์ Ledger ที่เข้ากันอื่น ๆ เช่น Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ หรือ Ledger Stax™",
+        "hedera_title" : "Ledger Nano S™ ไม่รองรับการสวอป Hedera",
+        "hedera_description" : "เพื่อสวอป Hedera ให้ทำธุรกรรมผ่านอุปกรณ์ Ledger รุ่นอื่น ๆ ที่ใช้ได้ เช่น Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ หรือ Ledger Stax™",
         "osmo_title" : "Ledger Nano S™ ไม่รองรับการ Swap Osmosis",
         "osmo_description" : "เพื่อ Swap Osmosis ให้ทำธุรกรรมผ่านอุปกรณ์ Ledger รุ่นอื่นที่ใช้ได้ เช่น Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ หรือ Ledger Stax™",
         "dydx_title" : "Ledger Nano S™ ไม่รองรับการ Swap dYdX",
         "dydx_description" : "เพื่อ Swap dYdX ให้ทำธุรกรรมผ่านอุปกรณ์ Ledger รุ่นอื่นที่ใช้ได้ เช่น Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ หรือ Ledger Stax™",
         "sui_title" : "Ledger Nano S™ ไม่รองรับการ Swap Sui",
-        "sui_description" : "ในการ Swap Sui ให้ทำธุรกรรมผ่านอุปกรณ์ Ledger รุ่นอื่นที่ใช้ได้ เช่น Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ หรือ Ledger Stax™"
+        "sui_description" : "ในการ Swap Sui ให้ทำธุรกรรมผ่านอุปกรณ์ Ledger รุ่นอื่นที่ใช้ได้ เช่น Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ หรือ Ledger Stax™",
+        "kaspa_title" : "Ledger Nano S™ ไม่รองรับการสวอป Kaspa",
+        "kaspa_description" : "เพื่อสวอป Kaspa ให้ทำธุรกรรมผ่านอุปกรณ์ Ledger รุ่นอื่น ๆ ที่ใช้ได้ เช่น Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ หรือ Ledger Stax™"
       }
     },
     "lending" : {
@@ -3893,10 +3920,10 @@
           "stepRange" : "ขั้นตอนที่ {{currentStep}} จาก {{totalSteps}}"
         },
         "selectAccount" : {
-          "enabledAccountsAmount" : "คุณมี {{number}} บัญชีที่ได้อนุมัติจำนวน {{amount}}",
-          "enabledAccountsAmount_plural" : "คุณมี {{number}} บัญชีที่ได้อนุมัติจำนวน {{amount}}",
-          "enabledAccountsNoLimit" : "คุณมี {{number}} บัญชีที่ได้อนุมัติจำนวน {{ currency }} แบบไม่จำกัด",
-          "enabledAccountsNoLimit_plural" : "คุณมี {{number}} บัญชีที่ได้อนุมัติจำนวน {{ currency }} แบบไม่จำกัด",
+          "enabledAccountsAmount_one" : "คุณมี {{number}} บัญชีที่ได้อนุมัติจำนวน {{amount}} ไว้",
+          "enabledAccountsAmount_other" : "คุณมี {{number}} บัญชีที่ได้อนุมัติจำนวน {{amount}}",
+          "enabledAccountsNoLimit_one" : "คุณมี {{number}} บัญชีที่อนุมัติการใช้ {{ currency }} ได้ไม่จำกัด",
+          "enabledAccountsNoLimit_other" : "คุณมี {{number}} บัญชีที่ได้อนุมัติจำนวน {{ currency }} ไว้แบบไม่จำกัด",
           "noEnabledAccounts" : "คุณต้องอนุมัติบัญชีก่อนจึงสามารถให้ยืมได้"
         },
         "enable" : {
@@ -4287,8 +4314,8 @@
       }
     },
     "imported" : "เพิ่มสินทรัพย์เรียบร้อยแล้ว",
-    "added" : "เพิ่มบัญชีในพอร์ตโฟลิโอของคุณแล้ว",
-    "added_plural" : "เพิ่ม {{count}} บัญชีในพอร์ตโฟลิโอของคุณแล้ว",
+    "added_one" : "เพิ่มบัญชีในพอร์ตโฟลิโอของคุณแล้ว",
+    "added_other" : "เพิ่ม {{count}} บัญชีในพอร์ตโฟลิโอของคุณแล้ว",
     "sections" : {
       "importable" : {
         "title" : "เพิ่มบัญชีที่มีอยู่"
@@ -4354,8 +4381,8 @@
       "whichAddressType" : "เรียนรู้วิธีการเลือกประเภท Address",
       "sections" : {
         "importable" : {
-          "title" : "เราพบ {{count}} บัญชี",
-          "title_plural" : "เราพบ {{count}} บัญชี"
+          "title_one" : "เราพบ {{count}} บัญชี",
+          "title_other" : "เราพบ {{count}} บัญชี"
         },
         "creatable" : {
           "title" : "บัญชีใหม่"
@@ -4397,8 +4424,8 @@
     "outdated" : "เวอร์ชันแอปล้าสมัยแล้ว",
     "outdatedDesc" : "มีการอัปเดตที่สำคัญสำหรับแอปพลิเคชัน {{appName}} บนอุปกรณ์ของคุณ โปรดไปที่ Ledger ของฉันเพื่ออัปเดต",
     "quitApp" : "ออกจากแอปพลิเคชันบนอุปกรณ์ของคุณ",
-    "appNotInstalled" : "โปรดติดตั้งแอป {{appName}}",
-    "appNotInstalled_plural" : "โปรดติดตั้งแอป {{appName}}",
+    "appNotInstalled_one" : "โปรดติดตั้งแอป {{appName}}",
+    "appNotInstalled_other" : "โปรดติดตั้งแอป {{appName}}",
     "useAnotherDevice" : "ใช้อุปกรณ์อื่น",
     "deviceNotOnboarded" : {
       "title" : "Ledger ของคุณยังไม่พร้อมใช้งาน",
@@ -4553,8 +4580,8 @@
   },
   "RemoveDevice" : {
     "button" : {
-      "title" : "นำอุปกรณ์ {{nbDevices}} ออก",
-      "title_plural" : "นำอุปกรณ์ {{nbDevices}} ออก"
+      "title_one" : "นำอุปกรณ์ {{nbDevices}} ออก",
+      "title_other" : "นำอุปกรณ์ {{nbDevices}} ออก"
     }
   },
   "manager" : {
@@ -4623,16 +4650,16 @@
       "title" : "พื้นที่เก็บข้อมูล",
       "used" : "ใช้ไป",
       "genuine" : "อุปกรณ์ของคุณเป็นของแท้",
-      "appsInstalled" : "<0>{{number}}</0> แอป",
-      "appsInstalled_plural" : "<0>{{number}}</0> แอป",
+      "appsInstalled_one" : "<0>{{number}}</0> แอป",
+      "appsInstalled_other" : "<0>{{number}}</0> แอป",
       "storageAvailable" : "ใช้ได้",
       "noFreeSpace" : "ไม่มีพื้นที่เก็บข้อมูลเหลืออยู่",
       "appsToUpdate" : "<0>{{number}}</0> การอัปเดต",
-      "appsToUpdate_plural" : "<0>{{number}}</0> การอัปเดต"
+      "appsToUpdate_other" : "<0>{{number}}</0> อัปเดต"
     },
     "installSuccess" : {
       "title" : "ติดตั้งแอปเรียบร้อยแล้ว",
-      "title_plural" : "ติดตั้งแอปเรียบร้อยแล้ว",
+      "title_other" : "ติดตั้งแอปเรียบร้อยแล้ว",
       "notSupported" : "ติดตั้งแอปเรียบร้อยแล้ว ดูข้อมูลเพิ่มเติมเกี่ยวกับแอปที่ติดตั้งได้บนเว็บไซต์ของเรา",
       "manageAccount" : "เพิ่มบัญชี",
       "learnMore" : "เรียนรู้เพิ่มเติม",
@@ -4665,7 +4692,7 @@
         "desc" : "โปรดรอให้แอป {{appName}} ติดตั้งแล้วเสร็จ",
         "button" : "กำลังติดตั้ง...",
         "queued" : "อยู่ในคิว",
-        "button_plural" : "กำลังติดตั้ง... {{progressPercentage}}%"
+        "button_other" : "กำลังติดตั้ง... {{progressPercentage}}%"
       },
       "done" : {
         "title" : "ติดตั้งแอปเรียบร้อยแล้ว",
@@ -4680,8 +4707,8 @@
       "continueInstall" : "ติดตั้งแอป"
     },
     "update" : {
-      "title" : "มีการอัปเดตแอป {{number}} รายการ",
-      "title_plural" : "มีการอัปเดตแอป {{number}} รายการ",
+      "title_one" : "มีการอัปเดตแอป {{number}} รายการ",
+      "title_other" : "มีการอัปเดตแอป {{number}} รายการ",
       "step" : "อัปเดตขั้นตอนที่ {{step}}:",
       "updateWarn" : "อย่าออกจาก My Ledger ในระหว่างการอัปเดต",
       "progress" : "กำลังอัปเดตทั้งหมด...",
@@ -4701,7 +4728,7 @@
         "title" : "ถอนการติดตั้ง {{appName}} บน {{productName}} ของคุณเรียบร้อยแล้ว"
       },
       "dependency" : {
-        "title" : "แอปอื่น ๆ ต้องใช้แอป {{app}}",
+        "title_one" : "แอปอื่น ๆ ต้องใช้แอป {{app}}",
         "showAll" : "แสดงแอปเพื่อถอนการติดตั้ง",
         "description" : "แอปบนอุปกรณ์ของคุณที่ต้องการแอป {{app}} จะถูกถอนการติดตั้งด้วย",
         "description_one" : "บางแอปต้องใช้แอป {{app}}้",
@@ -6716,11 +6743,11 @@
     "changeValidator" : "เปลี่ยนผู้ตรวจสอบ",
     "endDelegation" : "ยุติการ Delegate",
     "durationForDays0" : "ตอนนี้",
-    "durationForDays" : "เป็นเวลาหนึ่งวัน",
-    "durationForDays_plural" : "เป็นเวลา {{count}} วัน",
+    "durationForDays_one" : "เป็นเวลา 1 วัน",
+    "durationForDays_other" : "เป็นเวลา {{count}} วัน",
     "durationDays0" : "ตอนนี้",
-    "durationDays" : "1 วัน",
-    "durationDays_plural" : "{{count}} วัน",
+    "durationDays_one" : "1 วัน",
+    "durationDays_other" : "{{count}} วัน",
     "selectValidatorTitle" : "เลือกผู้ตรวจสอบ",
     "started" : {
       "title" : "รับ Reward",
@@ -6924,20 +6951,20 @@
         "desc" : "เราจะแจ้งให้คุณทราบหากมีอะไรเกิดขึ้น"
       },
       "time" : {
-        "second" : "1 วินาทีที่แล้ว",
-        "second_plural" : "{{count}} วินาทีที่แล้ว",
-        "minute" : "1 นาทีที่แล้ว",
-        "minute_plural" : "{{count}} นาทีที่แล้ว",
-        "hour" : "1 ชั่วโมงที่แล้ว",
-        "hour_plural" : "{{count}} ชั่วโมงที่แล้ว",
-        "day" : "1 วันที่แล้ว",
-        "day_plural" : "{{count}} วันที่แล้ว",
-        "week" : "1 สัปดาห์ที่แล้ว",
-        "week_plural" : "{{count}} สัปดาห์ที่แล้ว",
-        "month" : "1 เดือนที่แล้ว",
-        "month_plural" : "{{count}} เดือนที่แล้ว",
-        "year" : "1 ปีที่แล้ว",
-        "year_plural" : "{{count}} ปีที่แล้ว"
+        "second_one" : "1 วินาทีที่แล้ว",
+        "second_other" : "{{count}} วินาทีที่แล้ว",
+        "minute_one" : "1 นาทีที่แล้ว",
+        "minute_other" : "{{count}} นาทีที่แล้ว",
+        "hour_one" : "1 ชั่วโมงที่แล้ว",
+        "hour_other" : "{{count}} ชั่วโมงที่แล้ว",
+        "day_one" : "1 วันที่แล้ว",
+        "day_other" : "{{count}} วันที่แล้ว",
+        "week_one" : "1 สัปดาห์ที่แล้ว",
+        "week_other" : "{{count}} สัปดาห์ที่แล้ว",
+        "month_one" : "1 เดือนที่แล้ว",
+        "month_other" : "{{count}} เดือนที่แล้ว",
+        "year_one" : "1 ปีที่แล้ว",
+        "year_other" : "{{count}} ปีที่แล้ว"
       }
     },
     "status" : {
@@ -7191,16 +7218,18 @@
   "asset" : {
     "title" : "{{assetName}} ของคุณ",
     "accountsSection" : {
-      "title" : "บัญชี {{currencyName}} ของคุณ"
+      "title_one" : "Your {{currencyName}} account",
+      "title_other" : "บัญชี {{currencyName}} ของคุณ"
     }
   },
   "customImage" : {
     "title" : "ภาพล็อกสกรีน",
     "change" : "เปลี่ยน",
     "drawer" : {
+      "title" : "หน้าจอล็อคแบบกำหนดเอง",
       "options" : {
-        "uploadFromPhone" : "เลือกจากแกลเลอรีรูปภาพของฉัน",
-        "remove" : "นำภาพปัจจุบันออก"
+        "uploadFromPhone" : "เปลี่ยนภาพ",
+        "remove" : "ลบล็อกสกรีน"
       }
     },
     "toastRemove" : "ลบภาพล็อกสกรีนแล้ว",
@@ -7595,8 +7624,8 @@
       },
       "synchronizedInstances" : {
         "cta" : "จัดการ",
-        "title" : "ซิงค์แอป Ledger Live แล้ว {{count}} แอป",
-        "title_plural" : "ซิงค์แอป Ledger Live แล้ว {{count}} แอป",
+        "title_one" : "ซิงค์แอป Ledger Live แล้ว {{count}} แอป",
+        "title_other" : "ซิงค์แอปใน Ledger Live แล้ว {{count}} แอป",
         "error" : "อินสแตนซ์",
         "unsecuredError" : {
           "title" : "เชื่อมต่ออุปกรณ์ Ledger เดียวกันกับที่คุณใช้ เพื่อเปิดใช้งาน Ledger Sync",
@@ -7767,8 +7796,8 @@
     },
     "selectNetwork" : {
       "title" : "เลือกเครือข่ายบล็อกเชนของสินทรัพย์",
-      "detectedAccounts" : "{{count}} บัญชี (ตรวจพบ)",
-      "detectedAccounts_plural" : "{{count}} บัญชี (ตรวจพบ)"
+      "detectedAccounts_one" : "{{count}} บัญชี (ตรวจพบ)",
+      "detectedAccounts_other" : "{{count}} บัญชี (ตรวจพบ)"
     }
   },
   "emptyList" : {
@@ -7800,18 +7829,18 @@
     "ath" : "สูงสุดตลอดกาล",
     "atl" : "ต่ำสุดตลอดกาล",
     "timeAgo" : {
-      "years" : "({{count}} ปีที่แล้ว)",
-      "years_plural" : "({{count}} ปีที่แล้ว)",
-      "months" : "({{count}} เดือนที่แล้ว)",
-      "months_plural" : "({{count}} เดือนที่แล้ว)",
-      "days" : "({{count}} วันที่แล้ว)",
-      "days_plural" : "({{count}} วันที่แล้ว)",
-      "hours" : "({{count}} ชั่วโมงที่แล้ว)",
-      "hours_plural" : "({{count}} ชั่วโมงที่แล้ว)",
-      "minutes" : "({{count}} นาทีที่แล้ว)",
-      "minutes_plural" : "({{count}} นาทีที่แล้ว)",
-      "seconds" : "({{count}} วินาทีที่แล้ว)",
-      "seconds_plural" : "({{count}} วินาทีที่แล้ว)"
+      "years_one" : "({{count}} ปีที่แล้ว)",
+      "years_other" : "({{count}} ปีที่แล้ว)",
+      "months_one" : "({{count}} เดือนที่แล้ว)",
+      "months_other" : "({{count}} เดือนที่แล้ว)",
+      "days_one" : "({{count}} วันที่แล้ว)",
+      "days_other" : "({{count}} วันที่แล้ว)",
+      "hours_one" : "({{count}} ชั่วโมงที่แล้ว)",
+      "hours_other" : "({{count}} ชั่วโมงที่แล้ว)",
+      "minutes_one" : "({{count}} นาทีที่แล้ว)",
+      "minutes_other" : "({{count}} นาทีที่แล้ว)",
+      "seconds_one" : "({{count}} วินาทีที่แล้ว)",
+      "seconds_other" : "({{count}} วินาทีที่แล้ว)"
     },
     "performance" : "ประสิทธิภาพ",
     "low" : "ต่ำ",
@@ -7846,8 +7875,8 @@
     "selectAccount" : "เลือกบัญชี",
     "searchPlaceholder" : "ค้นหา",
     "emptyAssetList" : "ไม่พบสินทรัพย์",
-    "accountCount" : "{{count}} บัญชี",
-    "accountCount_plural" : "{{count}} บัญชี",
+    "accountCount_one" : "{{count}} บัญชี",
+    "accountCount_other" : "{{count}} บัญชี",
     "errors" : {
       "title" : "การเชื่อมต่อล้มเหลว",
       "backend" : "เกิดข้อผิดพลาดในระบบของเรา โปรดลองอีกครั้งในภายหลัง",
@@ -7935,6 +7964,15 @@
     "default" : {
       "title" : "มีบางอย่างผิดปกติ",
       "description" : "โปรดลองอีกครั้งหรือติดต่อ Ledger Support หากมีข้อสงสัย"
+    }
+  },
+  "canton" : {
+    "onboard" : {
+      "account" : "บัญชี",
+      "authorize" : "อนุญาต",
+      "preapprove" : "เพิ่มบัญชีสำเร็จ",
+      "validator" : "ผู้ตรวจสอบ Ledger",
+      "title" : "รับเงินทุนโดยอัตโนมัติ"
     }
   }
 }
