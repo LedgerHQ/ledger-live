@@ -11,6 +11,7 @@ import { DeviceModelId } from "@ledgerhq/types-devices";
 import { useCompleteActionCallback } from "~/logic/postOnboarding/useCompleteAction";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { HOOKS_TRACKING_LOCATIONS } from "~/analytics/hooks/variables";
+import { usePostOnboardingActionHandlers } from "~/logic/postOnboarding/usePostOnboardingActionHandlers";
 
 export type Props = PostOnboardingAction &
   PostOnboardingActionState & { deviceModelId: DeviceModelId; productName: string };
@@ -50,21 +51,34 @@ const PostOnboardingActionRow: React.FC<Props> = props => {
     initIsActionCompleted();
   }, [initIsActionCompleted]);
 
+  const customActionHandlers = usePostOnboardingActionHandlers();
+
+  const trackAction = () => {
+    buttonLabelForAnalyticsEvent &&
+      track("button_clicked", {
+        button: buttonLabelForAnalyticsEvent,
+        deviceModelId,
+        flow: "post-onboarding",
+      });
+  };
+
   const handlePress = () => {
-    if ("getNavigationParams" in props) {
+    // Execute custom handler if it exists
+    const customHandler = customActionHandlers[id];
+    if (customHandler) {
+      customHandler();
+    } else if ("getNavigationParams" in props) {
+      // Continue with standard navigation flow
+
       const navigationArgs = props.getNavigationParams({
         deviceModelId,
         protectId,
         referral: HOOKS_TRACKING_LOCATIONS.onboardingFlow,
       });
       navigation.navigate(navigationArgs[0], navigationArgs[1]);
-      buttonLabelForAnalyticsEvent &&
-        track("button_clicked", {
-          button: buttonLabelForAnalyticsEvent,
-          deviceModelId,
-          flow: "post-onboarding",
-        });
     }
+
+    trackAction();
     shouldCompleteOnStart && completeAction(id);
   };
 
