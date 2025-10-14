@@ -4,7 +4,6 @@ import { StackNavigationProp } from "@react-navigation/stack";
 import { useTranslation } from "react-i18next";
 import useQuickActions, { QuickAction } from "~/hooks/useQuickActions";
 import { QuickActionList, type QuickActionButtonProps } from "@ledgerhq/native-ui";
-import { TextVariants } from "@ledgerhq/native-ui/styles/theme";
 import { track } from "~/analytics";
 import { useRoute } from "@react-navigation/native";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
@@ -12,23 +11,23 @@ import { getStakeLabelLocaleBased } from "~/helpers/getStakeLabelLocaleBased";
 
 const SHARED_CONFIG = {
   variant: "small" as const,
-  textVariant: "small" as TextVariants,
+  textVariant: "small" as const,
 };
 function PortfolioQuickActionsBar() {
   const navigation = useNavigation<StackNavigationProp<BaseNavigatorStackParamList>>();
   const router = useRoute();
   const stakeLabel = getStakeLabelLocaleBased();
   const { t } = useTranslation();
-  const {
-    quickActionsList: { SEND, RECEIVE, BUY, SWAP, STAKE },
-  } = useQuickActions();
+  const { quickActionsList } = useQuickActions();
+
+  const { SEND, RECEIVE, BUY, SWAP, STAKE } = quickActionsList;
 
   const onPress = useCallback(
     (action: QuickAction, eventButton: string) => {
       track("button_clicked", { button: eventButton, page: router.name });
       if (action.customHandler) {
         action.customHandler();
-      } else if (action.route) {
+      } else {
         navigation.navigate<keyof BaseNavigatorStackParamList>(...action.route);
       }
     },
