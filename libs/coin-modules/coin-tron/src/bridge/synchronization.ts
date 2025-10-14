@@ -197,7 +197,7 @@ export const getAccountShape: GetAccountShape<TronAccount> = async (
   };
 };
 
-const postSync = (initial: TronAccount, parent: TronAccount): TronAccount => {
+export const postSync = (initial: TronAccount, parent: TronAccount): TronAccount => {
   function evictRecentOpsIfPending(a: Account | TokenAccount) {
     a.pendingOperations.forEach(pending => {
       const i = a.operations.findIndex(o => o.id === pending.id);
