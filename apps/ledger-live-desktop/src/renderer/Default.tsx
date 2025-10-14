@@ -39,7 +39,6 @@ import UpdateBanner from "~/renderer/components/Updater/Banner";
 import FirmwareUpdateBanner from "~/renderer/components/FirmwareUpdateBanner";
 import VaultSignerBanner from "~/renderer/components/VaultSignerBanner";
 import { updateIdentify } from "./analytics/segment";
-import { initMixpanel } from "./analytics/mixpanel";
 import { useFeature, FeatureToggle } from "@ledgerhq/live-common/featureFlags/index";
 import {
   useFetchCurrencyAll,
@@ -209,7 +208,6 @@ export default function Default() {
 
   const analyticsFF = useFeature("lldAnalyticsOptInPrompt");
   const hasSeenAnalyticsOptInPrompt = useSelector(hasSeenAnalyticsOptInPromptSelector);
-  const mixpanelFF = useFeature("lldSessionReplay");
   const isLocked = useSelector(isLockedSelector);
   const dispatch = useDispatch();
 
@@ -221,12 +219,6 @@ export default function Default() {
     // setting provider only at initialisation
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dmk]);
-
-  useEffect(() => {
-    if (mixpanelFF?.enabled) {
-      initMixpanel(mixpanelFF?.params?.sampling);
-    }
-  }, [mixpanelFF]);
 
   useEffect(() => {
     if (

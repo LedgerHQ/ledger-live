@@ -58,7 +58,6 @@ import WebviewErrorDrawer from "./WebviewErrorDrawer/index";
 import { currentRouteNameRef } from "~/renderer/analytics/screenRefs";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { useDeeplinkCustomHandlers } from "~/renderer/components/WebPlatformPlayer/CustomHandlers";
-import { getMixpanelDistinctId } from "~/renderer/analytics/mixpanel";
 
 export class UnableToLoadSwapLiveError extends Error {
   constructor(message: string) {
@@ -152,7 +151,6 @@ const SwapWebView = ({ manifest }: SwapWebProps) => {
   const isOffline = networkStatus === NetworkStatus.OFFLINE;
   // Remove after KYC AB Testing
   const ptxSwapLiveAppKycWarning = useFeature("ptxSwapLiveAppKycWarning")?.enabled;
-  const distinctId = getMixpanelDistinctId() || "";
 
   const customPTXHandlers = usePTXCustomHandlers(manifest, accounts);
   const customDeeplinkHandlers = useDeeplinkCustomHandlers();
@@ -536,7 +534,6 @@ const SwapWebView = ({ manifest }: SwapWebProps) => {
             shareAnalytics,
             hasSeenAnalyticsOptInPrompt,
             ptxSwapLiveAppKycWarning,
-            distinctId: distinctId,
           }}
           onStateChange={onStateChange}
           ref={webviewAPIRef}
