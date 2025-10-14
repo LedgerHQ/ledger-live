@@ -821,13 +821,11 @@ export async function verifyAmountsAndRejectSwap(swap: Swap, amount: string) {
 }
 
 function verifySwapData(swap: Swap, events: string[], amount: string) {
-  // Uncoment when new exchange nanoApp is in prod
+  const swapPair = `swap ${swap.getAccountToDebit.currency.ticker} to ${swap.getAccountToCredit.currency.ticker}`;
 
-  // const swapPair = `swap ${swap.getAccountToDebit.currency.ticker} to ${swap.getAccountToCredit.currency.ticker}`;
-
-  // if (getSpeculosModel() !== DeviceModelId.nanoS) {
-  //   expectDeviceScreenContains(swapPair, events, "Swap pair not found on the device screen");
-  // }
+  if (getSpeculosModel() !== DeviceModelId.nanoS) {
+    expectDeviceScreenContains(swapPair, events, "Swap pair not found on the device screen");
+  }
 
   expectDeviceScreenContains(amount, events, `Amount ${amount} not found on the device screen`);
 }
