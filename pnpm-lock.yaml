@@ -974,6 +974,9 @@ importers:
       '@ledgerhq/coin-stacks':
         specifier: workspace:^
         version: link:../../libs/coin-modules/coin-stacks
+      '@ledgerhq/cryptoassets':
+        specifier: workspace:^
+        version: link:../../libs/ledgerjs/packages/cryptoassets
       '@ledgerhq/device-management-kit':
         specifier: 0.9.1
         version: 0.9.1(rxjs@7.8.1)
@@ -5911,6 +5914,9 @@ importers:
       '@ledgerhq/types-cryptoassets':
         specifier: workspace:^
         version: link:../types-cryptoassets
+      '@testing-library/react':
+        specifier: 14.2.2
+        version: 14.2.2(@types/react@18.2.73)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@types/bs58check':
         specifier: ^2.1.0
         version: 2.1.2
@@ -5920,9 +5926,21 @@ importers:
       '@types/node':
         specifier: ^22.10.10
         version: 22.10.10
+      '@types/react':
+        specifier: ^18.0.0
+        version: 18.2.73
       jest:
         specifier: ^29.7.0
         version: 29.7.0(@types/node@22.10.10)(ts-node@10.9.2(@types/node@22.10.10)(source-map-support@0.5.21)(typescript@5.4.3))
+      jest-environment-jsdom:
+        specifier: ^29.7.0
+        version: 29.7.0
+      react:
+        specifier: ^18.0.0
+        version: 18.3.1
+      react-dom:
+        specifier: ^18.0.0
+        version: 18.3.1(react@18.3.1)
       rimraf:
         specifier: ^4.4.1
         version: 4.4.1
@@ -30266,9 +30284,6 @@ packages:
   nwsapi@2.2.16:
     resolution: {integrity: sha512-F1I/bimDpj3ncaNDhfyMWuFqmQDBwDB0Fogc2qpL3BWvkQteFD/8BzWuIRl83rq0DXfm8SGt/HFhLXZyljTXcQ==}
 
-  nwsapi@2.2.7:
-    resolution: {integrity: sha512-ub5E4+FBPKwAZx0UwIQOjYWGHTEq5sPqHQNRN8Z9e4A7u3Tj1weLJsL59yH9vmvqEtBHaOmT6cYQKIZOxp35FQ==}
-
   nyc@15.1.0:
     resolution: {integrity: sha512-jMW04n9SxKdKi1ZMGhvUTHBN0EICCRkHemEoE5jm6mTYcqcdas0ATzgUgejlQUHMvpnOZqGB5Xxsv9KxJW1j8A==}
     engines: {node: '>=8.9'}
@@ -45350,11 +45365,11 @@ snapshots:
     optionalDependencies:
       '@types/react': 18.2.73
 
-  '@mdx-js/react@3.1.0(@types/react@18.2.73)(react@19.2.0)':
+  '@mdx-js/react@3.1.0(@types/react@18.2.73)(react@18.3.1)':
     dependencies:
       '@types/mdx': 2.0.12
       '@types/react': 18.2.73
-      react: 19.2.0
+      react: 18.3.1
 
   '@mixpanel/rrdom@2.0.0-alpha.18.1':
     dependencies:
@@ -51028,12 +51043,12 @@ snapshots:
 
   '@storybook/addon-docs@8.6.12(@types/react@18.2.73)(storybook@8.6.12(prettier@3.2.5))':
     dependencies:
-      '@mdx-js/react': 3.1.0(@types/react@18.2.73)(react@19.2.0)
-      '@storybook/blocks': 8.6.12(react-dom@19.2.0(react@19.2.0))(react@19.2.0)(storybook@8.6.12(prettier@3.2.5))
+      '@mdx-js/react': 3.1.0(@types/react@18.2.73)(react@18.3.1)
+      '@storybook/blocks': 8.6.12(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(storybook@8.6.12(prettier@3.2.5))
       '@storybook/csf-plugin': 8.6.12(storybook@8.6.12(prettier@3.2.5))
-      '@storybook/react-dom-shim': 8.6.12(react-dom@19.2.0(react@19.2.0))(react@19.2.0)(storybook@8.6.12(prettier@3.2.5))
-      react: 19.2.0
-      react-dom: 19.2.0(react@19.2.0)
+      '@storybook/react-dom-shim': 8.6.12(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(storybook@8.6.12(prettier@3.2.5))
+      react: 18.3.1
+      react-dom: 18.3.1(react@18.3.1)
       storybook: 8.6.12(prettier@3.2.5)
       ts-dedent: 2.2.0
     transitivePeerDependencies:
@@ -51278,14 +51293,14 @@ snapshots:
       - encoding
       - supports-color
 
-  '@storybook/blocks@8.6.12(react-dom@19.2.0(react@19.2.0))(react@19.2.0)(storybook@8.6.12(prettier@3.2.5))':
+  '@storybook/blocks@8.6.12(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(storybook@8.6.12(prettier@3.2.5))':
     dependencies:
-      '@storybook/icons': 1.4.0(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
+      '@storybook/icons': 1.4.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       storybook: 8.6.12(prettier@3.2.5)
       ts-dedent: 2.2.0
     optionalDependencies:
-      react: 19.2.0
-      react-dom: 19.2.0(react@19.2.0)
+      react: 18.3.1
+      react-dom: 18.3.1(react@18.3.1)
 
   '@storybook/builder-manager@7.6.20':
     dependencies:
@@ -51720,10 +51735,10 @@ snapshots:
 
   '@storybook/global@5.0.0': {}
 
-  '@storybook/icons@1.4.0(react-dom@19.2.0(react@19.2.0))(react@19.2.0)':
+  '@storybook/icons@1.4.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
     dependencies:
-      react: 19.2.0
-      react-dom: 19.2.0(react@19.2.0)
+      react: 18.3.1
+      react-dom: 18.3.1(react@18.3.1)
 
   '@storybook/instrumenter@7.6.20':
     dependencies:
@@ -51968,12 +51983,6 @@ snapshots:
     dependencies:
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
-      storybook: 8.6.12(prettier@3.2.5)
-
-  '@storybook/react-dom-shim@8.6.12(react-dom@19.2.0(react@19.2.0))(react@19.2.0)(storybook@8.6.12(prettier@3.2.5))':
-    dependencies:
-      react: 19.2.0
-      react-dom: 19.2.0(react@19.2.0)
       storybook: 8.6.12(prettier@3.2.5)
 
   '@storybook/react-native-theming@7.6.20(react-native@0.77.2(@babel/core@7.27.1)(@babel/preset-env@7.27.1(@babel/core@7.27.1))(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(metro-transform-worker@0.81.5)(metro@0.81.5)(react@18.3.1))(react@18.3.1)':
@@ -52716,7 +52725,7 @@ snapshots:
 
   '@testing-library/react@14.2.2':
     dependencies:
-      '@babel/runtime': 7.24.1
+      '@babel/runtime': 7.27.1
       '@testing-library/dom': 9.3.4
       '@types/react-dom': 18.3.0
     transitivePeerDependencies:
@@ -52724,7 +52733,7 @@ snapshots:
 
   '@testing-library/react@14.2.2(@types/react@18.2.73)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
     dependencies:
-      '@babel/runtime': 7.24.1
+      '@babel/runtime': 7.27.1
       '@testing-library/dom': 9.3.4
       '@types/react-dom': 18.3.0(@types/react@18.2.73)
       react: 18.3.1
@@ -52734,7 +52743,7 @@ snapshots:
 
   '@testing-library/react@14.2.2(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
     dependencies:
-      '@babel/runtime': 7.24.1
+      '@babel/runtime': 7.27.1
       '@testing-library/dom': 9.3.4
       '@types/react-dom': 18.3.0
       react: 18.3.1
@@ -53242,7 +53251,7 @@ snapshots:
     dependencies:
       '@types/node': 20.12.12
       '@types/tough-cookie': 4.0.5
-      parse5: 7.1.2
+      parse5: 7.2.1
 
   '@types/json-schema@7.0.15': {}
 
@@ -54446,7 +54455,7 @@ snapshots:
       '@vue/component-compiler-utils': 3.3.0(lodash@4.17.21)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@vue/vue-loader-v15': vue-loader@15.11.1(css-loader@6.10.0(webpack@5.94.0(@swc/core@1.4.11)))(lodash@4.17.21)(prettier@3.2.5)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(vue-template-compiler@2.7.16)(webpack@5.94.0(@swc/core@1.4.11))
       '@vue/web-component-wrapper': 1.3.0
-      acorn: 8.13.0
+      acorn: 8.15.0
       acorn-walk: 8.3.2
       address: 1.2.2
       autoprefixer: 10.4.19(postcss@8.5.1)
@@ -55062,17 +55071,21 @@ snapshots:
 
   acorn-globals@7.0.1:
     dependencies:
-      acorn: 8.13.0
+      acorn: 8.15.0
       acorn-walk: 8.3.2
 
-  acorn-import-assertions@1.9.0(acorn@8.13.0):
+  acorn-import-assertions@1.9.0(acorn@8.15.0):
     dependencies:
-      acorn: 8.13.0
+      acorn: 8.15.0
     optional: true
 
   acorn-import-attributes@1.9.5(acorn@8.13.0):
     dependencies:
       acorn: 8.13.0
+
+  acorn-import-attributes@1.9.5(acorn@8.15.0):
+    dependencies:
+      acorn: 8.15.0
 
   acorn-jsx@5.3.2(acorn@7.4.1):
     dependencies:
@@ -62903,15 +62916,15 @@ snapshots:
 
   import-in-the-middle@1.10.0:
     dependencies:
-      acorn: 8.13.0
-      acorn-import-attributes: 1.9.5(acorn@8.13.0)
+      acorn: 8.15.0
+      acorn-import-attributes: 1.9.5(acorn@8.15.0)
       cjs-module-lexer: 1.2.3
       module-details-from-path: 1.0.3
 
   import-in-the-middle@1.4.2:
     dependencies:
-      acorn: 8.13.0
-      acorn-import-assertions: 1.9.0(acorn@8.13.0)
+      acorn: 8.15.0
+      acorn-import-assertions: 1.9.0(acorn@8.15.0)
       cjs-module-lexer: 1.2.3
       module-details-from-path: 1.0.3
     optional: true
@@ -64972,7 +64985,7 @@ snapshots:
       '@jest/fake-timers': 29.7.0
       '@jest/types': 29.6.3
       '@types/jsdom': 20.0.1
-      '@types/node': 22.10.10
+      '@types/node': 20.12.12
       jest-mock: 29.7.0
       jest-util: 29.7.0
       jsdom: 20.0.3
@@ -66158,7 +66171,7 @@ snapshots:
   jsdom@16.7.0:
     dependencies:
       abab: 2.0.6
-      acorn: 8.13.0
+      acorn: 8.15.0
       acorn-globals: 6.0.0
       cssom: 0.4.4
       cssstyle: 2.3.0
@@ -66192,7 +66205,7 @@ snapshots:
   jsdom@17.0.0:
     dependencies:
       abab: 2.0.6
-      acorn: 8.13.0
+      acorn: 8.15.0
       acorn-globals: 6.0.0
       cssom: 0.5.0
       cssstyle: 2.3.0
@@ -66226,7 +66239,7 @@ snapshots:
   jsdom@20.0.3:
     dependencies:
       abab: 2.0.6
-      acorn: 8.13.0
+      acorn: 8.15.0
       acorn-globals: 7.0.1
       cssom: 0.5.0
       cssstyle: 2.3.0
@@ -66239,8 +66252,8 @@ snapshots:
       http-proxy-agent: 5.0.0
       https-proxy-agent: 5.0.1
       is-potential-custom-element-name: 1.0.1
-      nwsapi: 2.2.7
-      parse5: 7.1.2
+      nwsapi: 2.2.16
+      parse5: 7.2.1
       saxes: 6.0.0
       symbol-tree: 3.2.4
       tough-cookie: 4.1.4
@@ -69074,8 +69087,6 @@ snapshots:
   numeral@2.0.6: {}
 
   nwsapi@2.2.16: {}
-
-  nwsapi@2.2.7: {}
 
   nyc@15.1.0:
     dependencies:
@@ -74666,7 +74677,7 @@ snapshots:
   terser@5.36.0:
     dependencies:
       '@jridgewell/source-map': 0.3.6
-      acorn: 8.13.0
+      acorn: 8.15.0
       commander: 2.20.3
       source-map-support: 0.5.21
 
@@ -76158,7 +76169,7 @@ snapshots:
 
   unplugin@1.10.0:
     dependencies:
-      acorn: 8.13.0
+      acorn: 8.15.0
       chokidar: 3.6.0
       webpack-sources: 3.2.3
       webpack-virtual-modules: 0.6.1
@@ -77009,7 +77020,7 @@ snapshots:
   webpack-bundle-analyzer@4.10.2:
     dependencies:
       '@discoveryjs/json-ext': 0.5.7
-      acorn: 8.13.0
+      acorn: 8.15.0
       acorn-walk: 8.3.2
       commander: 7.2.0
       debounce: 1.2.1
