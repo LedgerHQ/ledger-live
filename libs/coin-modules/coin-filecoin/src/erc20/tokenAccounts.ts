@@ -22,7 +22,7 @@ export const erc20TxnToOperation = (
 ): Operation[] => {
   try {
     const { to, from, timestamp, tx_hash, tx_cid, amount, height, status } = tx;
-    const value = new BigNumber(amount);
+    const txAmount = new BigNumber(amount);
 
     const isSending = address.toLowerCase() === from.toLowerCase();
     const isReceiving = address.toLowerCase() === to.toLowerCase();
@@ -39,7 +39,7 @@ export const erc20TxnToOperation = (
         id: encodeOperationId(accountId, hash, "OUT"),
         hash,
         type: "OUT",
-        value,
+        value: txAmount,
         fee,
         blockHeight: height,
         blockHash: "",
@@ -57,7 +57,7 @@ export const erc20TxnToOperation = (
         id: encodeOperationId(accountId, hash, "IN"),
         hash,
         type: "IN",
-        value,
+        value: txAmount,
         fee,
         blockHeight: height,
         blockHash: "",
