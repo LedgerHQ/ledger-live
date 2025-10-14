@@ -39,7 +39,7 @@ describe("buildOptimisticOperation", () => {
     expect(op.type).toBe("ASSOCIATE_TOKEN");
     expect(op.extra).toEqual({ associatedTokenId: mockedToken.contractAddress });
     expect(op.fee).toEqual(estimatedFees.associate);
-    expect(op.senders).toContain(mockedAccount.freshAddress.toString());
+    expect(op.senders).toContain(mockedAccount.freshAddress);
     expect(op.recipients).toContain("0.0.1234");
   });
 
@@ -58,7 +58,7 @@ describe("buildOptimisticOperation", () => {
     expect(op.type).toBe("OUT");
     expect(op.fee).toEqual(estimatedFees.crypto);
     expect(op.value).toEqual(new BigNumber(123));
-    expect(op.senders).toContain(mockedAccount.freshAddress.toString());
+    expect(op.senders).toContain(mockedAccount.freshAddress);
     expect(op.recipients).toContain("0.0.5678");
   });
 

@@ -25,13 +25,17 @@ describe("getBalance", () => {
 
     const result = await getBalance(mockCurrency, address);
 
+    expect(apiClient.getAccount).toHaveBeenCalledTimes(1);
     expect(apiClient.getAccount).toHaveBeenCalledWith(address);
+    expect(apiClient.getAccountTokens).toHaveBeenCalledTimes(1);
     expect(apiClient.getAccountTokens).toHaveBeenCalledWith(address);
     expect(result).toHaveLength(1);
-    expect(result[0]).toEqual({
-      asset: { type: "native" },
-      value: BigInt("1000000000"),
-    });
+    expect(result).toEqual([
+      {
+        asset: { type: "native" },
+        value: BigInt("1000000000"),
+      },
+    ]);
   });
 
   it("should return native balance and token balances", async () => {
@@ -77,36 +81,42 @@ describe("getBalance", () => {
 
     const result = await getBalance(mockCurrency, address);
 
+    expect(apiClient.getAccount).toHaveBeenCalledTimes(1);
     expect(apiClient.getAccount).toHaveBeenCalledWith(address);
+    expect(apiClient.getAccountTokens).toHaveBeenCalledTimes(1);
     expect(apiClient.getAccountTokens).toHaveBeenCalledWith(address);
     expect(findTokenByAddressInCurrency).toHaveBeenCalledTimes(2);
     expect(findTokenByAddressInCurrency).toHaveBeenCalledWith("0.0.7890", "hedera");
     expect(findTokenByAddressInCurrency).toHaveBeenCalledWith("0.0.9876", "hedera");
     expect(result).toHaveLength(3);
-    expect(result[0]).toEqual({
-      asset: { type: "native" },
-      value: BigInt("1000000000"),
-    });
-    expect(result[1]).toEqual({
-      value: BigInt("5000"),
-      asset: {
-        type: "hts",
-        assetReference: "0.0.7890",
-        assetOwner: address,
-        name: "Test Token 1",
-        unit: { name: "TT1", code: "tt1", magnitude: 6 },
-      },
-    });
-    expect(result[2]).toEqual({
-      value: BigInt("10000"),
-      asset: {
-        type: "hts",
-        assetReference: "0.0.9876",
-        assetOwner: address,
-        name: "Test Token 2",
-        unit: { name: "TT2", code: "tt2", magnitude: 8 },
-      },
-    });
+    expect(result).toEqual(
+      expect.arrayContaining([
+        {
+          asset: { type: "native" },
+          value: BigInt("1000000000"),
+        },
+        {
+          value: BigInt("5000"),
+          asset: {
+            type: mockToken1.tokenType,
+            assetReference: mockToken1.contractAddress,
+            assetOwner: address,
+            name: mockToken1.name,
+            unit: mockToken1.units[0],
+          },
+        },
+        {
+          value: BigInt("10000"),
+          asset: {
+            type: mockToken2.tokenType,
+            assetReference: mockToken2.contractAddress,
+            assetOwner: address,
+            name: mockToken2.name,
+            unit: mockToken2.units[0],
+          },
+        },
+      ]),
+    );
   });
 
   it("should skip tokens not found in CAL", async () => {
@@ -152,16 +162,16 @@ describe("getBalance", () => {
     expect(result[1]).toEqual({
       value: BigInt("5000"),
       asset: {
-        type: "hts",
-        assetReference: "0.0.7890",
+        type: mockToken1.tokenType,
+        assetReference: mockToken1.contractAddress,
         assetOwner: address,
-        name: "Test Token 1",
-        unit: { name: "TT1", code: "tt1", magnitude: 6 },
+        name: mockToken1.name,
+        unit: mockToken1.units[0],
       },
     });
   });
 
-  it("should handle errors from apiClient.getAccount", async () => {
+  it("should throw an error when getAccount throws an error", async () => {
     const address = "0.0.12345";
     const mockCurrency = getMockedCurrency();
     const error = new Error("Network error");
@@ -172,7 +182,7 @@ describe("getBalance", () => {
     await expect(getBalance(mockCurrency, address)).rejects.toThrow(error);
   });
 
-  it("should handle errors from apiClient.getAccountTokens", async () => {
+  it("should throw an error when getAccountTokens throws an error", async () => {
     const address = "0.0.12345";
     const mockCurrency = getMockedCurrency();
     const error = new Error("Network error");

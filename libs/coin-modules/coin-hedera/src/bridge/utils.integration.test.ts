@@ -216,7 +216,7 @@ describe("utils", () => {
       expect(result).toHaveLength(1);
       expect(result[0].token).toEqual(tokenCurrencyFromCAL);
       expect(result[0].operations).toHaveLength(0);
-      expect(result[0].balance.toString()).toBe("42");
+      expect(result[0].balance.isEqualTo(new BigNumber(42))).toBe(true);
     });
   });
 

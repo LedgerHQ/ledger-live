@@ -51,6 +51,7 @@ describe("listOperations", () => {
       useEncodedHash: false,
     });
 
+    expect(apiClient.getAccountTransactions).toHaveBeenCalledTimes(1);
     expect(apiClient.getAccountTransactions).toHaveBeenCalledWith({
       address,
       fetchAllPages: true,
@@ -63,7 +64,7 @@ describe("listOperations", () => {
   });
 
   it("should parse HBAR transfer transactions correctly", async () => {
-    const address = "0.0.12345";
+    const address = "0.0.1234567";
     const mockCurrency = getMockedCurrency();
     const pagination: Pagination = {
       minHeight: 0,
@@ -103,22 +104,24 @@ describe("listOperations", () => {
     });
 
     expect(result.coinOperations).toHaveLength(1);
-    expect(result.tokenOperations).toHaveLength(0);
+    expect(result.tokenOperations).toEqual([]);
 
-    expect(result.coinOperations[0]).toMatchObject({
-      type: "OUT",
-      value: expect.any(Object),
-      hash: "hash1",
-      fee: expect.any(Object),
-      date: expect.any(Date),
-      senders: [address],
-      recipients: ["0.0.67890"],
-      extra: {
-        pagingToken: "1625097600.000000000",
-        consensusTimestamp: "1625097600.000000000",
-        memo: "decoded-test-memo",
+    expect(result.coinOperations).toMatchObject([
+      {
+        type: "OUT",
+        value: expect.any(Object),
+        hash: "hash1",
+        fee: expect.any(Object),
+        date: expect.any(Date),
+        senders: [address],
+        recipients: ["0.0.67890"],
+        extra: {
+          pagingToken: "1625097600.000000000",
+          consensusTimestamp: "1625097600.000000000",
+          memo: "decoded-test-memo",
+        },
       },
-    });
+    ]);
   });
 
   it("should parse token transfer transactions correctly", async () => {
@@ -173,24 +176,28 @@ describe("listOperations", () => {
     expect(result.coinOperations).toHaveLength(1);
     expect(result.tokenOperations).toHaveLength(1);
 
-    expect(result.coinOperations[0]).toMatchObject({
-      type: "FEES",
-      fee: expect.any(Object),
-    });
-
-    expect(result.tokenOperations[0]).toMatchObject({
-      type: "OUT",
-      value: expect.any(Object),
-      hash: "hash1",
-      contract: tokenId,
-      standard: "hts",
-      senders: [address],
-      recipients: ["0.0.67890"],
-      extra: {
-        pagingToken: "1625097600.000000000",
-        consensusTimestamp: "1625097600.000000000",
+    expect(result.coinOperations).toMatchObject([
+      {
+        type: "FEES",
+        fee: expect.any(Object),
       },
-    });
+    ]);
+
+    expect(result.tokenOperations).toMatchObject([
+      {
+        type: "OUT",
+        value: expect.any(Object),
+        hash: "hash1",
+        contract: tokenId,
+        standard: "hts",
+        senders: [address],
+        recipients: ["0.0.67890"],
+        extra: {
+          pagingToken: "1625097600.000000000",
+          consensusTimestamp: "1625097600.000000000",
+        },
+      },
+    ]);
   });
 
   it("should parse token associate transactions correctly", async () => {
@@ -232,18 +239,20 @@ describe("listOperations", () => {
     expect(result.coinOperations).toHaveLength(1);
     expect(result.tokenOperations).toHaveLength(0);
 
-    expect(result.coinOperations[0]).toMatchObject({
-      type: "ASSOCIATE_TOKEN",
-      value: expect.any(Object),
-      hash: "hash1",
-      fee: expect.any(Object),
-      senders: [address],
-      recipients: [],
-      extra: {
-        pagingToken: "1625097600.000000000",
-        consensusTimestamp: "1625097600.000000000",
+    expect(result.coinOperations).toMatchObject([
+      {
+        type: "ASSOCIATE_TOKEN",
+        value: expect.any(Object),
+        hash: "hash1",
+        fee: expect.any(Object),
+        senders: [address],
+        recipients: [],
+        extra: {
+          pagingToken: "1625097600.000000000",
+          consensusTimestamp: "1625097600.000000000",
+        },
       },
-    });
+    ]);
   });
 
   it("should skip token operations when token is not found in cryptoassets", async () => {
@@ -316,6 +325,7 @@ describe("listOperations", () => {
       useEncodedHash: false,
     });
 
+    expect(apiClient.getAccountTransactions).toHaveBeenCalledTimes(1);
     expect(apiClient.getAccountTransactions).toHaveBeenCalledWith({
       address,
       fetchAllPages: true,

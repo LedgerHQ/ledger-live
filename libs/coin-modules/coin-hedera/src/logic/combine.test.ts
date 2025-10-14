@@ -27,13 +27,18 @@ describe("combine", () => {
 
     const result = combine(tx, signature, publicKey);
 
+    expect(deserializeTransaction).toHaveBeenCalledTimes(1);
     expect(deserializeTransaction).toHaveBeenCalledWith(tx);
+    expect(deserializeSignature).toHaveBeenCalledTimes(1);
     expect(deserializeSignature).toHaveBeenCalledWith(signature);
+    expect(PublicKey.fromString).toHaveBeenCalledTimes(1);
     expect(PublicKey.fromString).toHaveBeenCalledWith(publicKey);
+    expect(mockDeserializedTx.addSignature).toHaveBeenCalledTimes(1);
     expect(mockDeserializedTx.addSignature).toHaveBeenCalledWith(
       mockBufferPublicKey,
       mockBufferSignature,
     );
+    expect(serializeTransaction).toHaveBeenCalledTimes(1);
     expect(serializeTransaction).toHaveBeenCalledWith(mockDeserializedTx);
     expect(result).toBe(mockSerializedTxWithSignature);
   });
@@ -60,6 +65,7 @@ describe("combine", () => {
     });
 
     expect(() => combine(tx, signature, publicKey)).toThrow(error);
+    expect(deserializeTransaction).toHaveBeenCalledTimes(1);
     expect(deserializeTransaction).toHaveBeenCalledWith(tx);
     expect(deserializeSignature).not.toHaveBeenCalled();
     expect(PublicKey.fromString).not.toHaveBeenCalled();
@@ -79,7 +85,9 @@ describe("combine", () => {
     });
 
     expect(() => combine(tx, signature, publicKey)).toThrow(error);
+    expect(deserializeTransaction).toHaveBeenCalledTimes(1);
     expect(deserializeTransaction).toHaveBeenCalledWith(tx);
+    expect(deserializeSignature).toHaveBeenCalledTimes(1);
     expect(deserializeSignature).toHaveBeenCalledWith(signature);
     expect(PublicKey.fromString).not.toHaveBeenCalled();
     expect(serializeTransaction).not.toHaveBeenCalled();
@@ -100,8 +108,11 @@ describe("combine", () => {
     });
 
     expect(() => combine(tx, signature, publicKey)).toThrow(error);
+    expect(deserializeTransaction).toHaveBeenCalledTimes(1);
     expect(deserializeTransaction).toHaveBeenCalledWith(tx);
+    expect(deserializeSignature).toHaveBeenCalledTimes(1);
     expect(deserializeSignature).toHaveBeenCalledWith(signature);
+    expect(PublicKey.fromString).toHaveBeenCalledTimes(1);
     expect(PublicKey.fromString).toHaveBeenCalledWith(publicKey);
     expect(serializeTransaction).not.toHaveBeenCalled();
   });

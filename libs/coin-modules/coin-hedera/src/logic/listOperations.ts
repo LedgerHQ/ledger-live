@@ -64,7 +64,8 @@ function processTokenTransfers({
 
   const encodedTokenId = encodeTokenAccountId(ledgerAccountId, token);
   const { type, value, senders, recipients } = parseTransfers(tokenTransfers, address);
-  const { hash, fee, timestamp, blockHeight, blockHash, hasFailed, extra } = commonData;
+  const { hash, fee, timestamp, blockHeight, blockHash, hasFailed } = commonData;
+  const extra = { ...commonData.extra };
 
   let coinOperation: Operation<HederaOperationExtra> | undefined;
 
@@ -128,7 +129,8 @@ function processTransfers({
   if (transfers.length === 0) return null;
 
   const { type, value, senders, recipients } = parseTransfers(transfers, address);
-  const { hash, fee, timestamp, blockHeight, blockHash, hasFailed, extra } = commonData;
+  const { hash, fee, timestamp, blockHeight, blockHash, hasFailed } = commonData;
+  const extra = { ...commonData.extra };
   let operationType = type;
 
   // try to enrich ASSOCIATE_TOKEN operation with extra.associatedTokenId
