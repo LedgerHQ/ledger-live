@@ -37,15 +37,11 @@ const modelMapPriority: Record<string, number> = {
 };
 const defaultFirmware: Record<string, string> = {};
 
-function hackBadSemver(str) {
+function hackBadSemver(str: string): string {
   const split = str.split(".");
   const [x, y, , ...rest] = split;
   let [, , z] = split;
-
-  if (rest.length) {
-    z += "-" + rest.join("-");
-  }
-
+  if (rest.length) z += "-" + rest.join("-");
   return [x, y, z].filter(Boolean).join(".");
 }
 
@@ -61,36 +57,44 @@ export async function listAppCandidates(cwd: string): Promise<AppCandidate[]> {
   for (const modelName of models) {
     const model = modelMap[modelName.toLowerCase()];
     const p1 = path.join(cwd, modelName);
-    const firmwares = await fsp.readdir(p1);
-    firmwares.sort((a, b) => semver.compare(hackBadSemver(a), hackBadSemver(b)));
+
+    // ⬇️ Filter out dotfiles and entries that can't be coerced to a SemVer
+    const firmwares = (await fsp.readdir(p1))
+      .filter(name => !name.startsWith("."))
+      .filter(name => !!semver.coerce(hackBadSemver(name)));
+
+    // sort by coerced semver (safe) then reverse
+    firmwares.sort((a, b) =>
+      semver.compare(semver.coerce(hackBadSemver(a))!, semver.coerce(hackBadSemver(b))!),
+    );
     firmwares.reverse();
 
     for (const firmware of firmwares) {
       const p2 = path.join(p1, firmware);
-      const appNames = await fsp.readdir(p2);
+
+      // also ignore dotfiles under firmware dir
+      const appNames = (await fsp.readdir(p2)).filter(n => !n.startsWith("."));
 
       for (const appName of appNames) {
         const p3 = path.join(p2, appName);
-        const elfs = await fsp.readdir(p3);
+
+        // ignore dotfiles and keep only .elf files we expect
+        const elfs = (await fsp.readdir(p3))
+          .filter(n => !n.startsWith("."))
+          .filter(n => n.startsWith("app_") && n.endsWith(".elf"));
+
         const c: AppCandidate[] = [];
 
         for (const elf of elfs) {
-          if (elf.startsWith("app_") && elf.endsWith(".elf")) {
-            const p4 = path.join(p3, elf);
-            const appVersion = elf.slice(4, elf.length - 4);
-            if (
-              semver.valid(appVersion) &&
-              !shouldUpgrade(appName, appVersion) &&
-              !mustUpgrade(appName, appVersion)
-            ) {
-              c.push({
-                path: p4,
-                model,
-                firmware,
-                appName,
-                appVersion,
-              });
-            }
+          const p4 = path.join(p3, elf);
+          const appVersion = elf.slice(4, elf.length - 4); // between "app_" and ".elf"
+
+          if (
+            semver.valid(appVersion) &&
+            !shouldUpgrade(appName, appVersion) &&
+            !mustUpgrade(appName, appVersion)
+          ) {
+            c.push({ path: p4, model, firmware, appName, appVersion });
           }
         }
 
