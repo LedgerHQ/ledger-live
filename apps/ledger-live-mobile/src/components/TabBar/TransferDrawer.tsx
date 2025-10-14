@@ -41,9 +41,8 @@ type ButtonItem = {
 
 export default function TransferDrawer({ onClose }: Omit<ModalProps, "isRequestingToBeOpened">) {
   const navigation = useNavigation<StackNavigationProp<BaseNavigatorStackParamList>>();
-  const {
-    quickActionsList: { SEND, RECEIVE, BUY, SELL, SWAP, STAKE, RECOVER },
-  } = useQuickActions();
+  const { quickActionsList } = useQuickActions();
+  const { SEND, RECEIVE, BUY, SELL, SWAP, STAKE, RECOVER } = quickActionsList;
   const stakeLabel = getStakeLabelLocaleBased();
   const { t } = useTranslation();
   const { pushToast, dismissToast } = useToastsActions();
@@ -66,11 +65,11 @@ export default function TransferDrawer({ onClose }: Omit<ModalProps, "isRequesti
   const quickAccessURI = useQuickAccessURI(recoverConfig);
 
   const onPress = useCallback(
-    (actionState: QuickAction) => {
-      if (actionState.customHandler) {
-        actionState.customHandler();
-      } else if (actionState.route) {
-        navigation.navigate<keyof BaseNavigatorStackParamList>(...actionState.route);
+    (action: QuickAction) => {
+      if (action.customHandler) {
+        action.customHandler();
+      } else if (action.route) {
+        navigation.navigate<keyof BaseNavigatorStackParamList>(...action.route);
       }
       onClose?.();
     },
