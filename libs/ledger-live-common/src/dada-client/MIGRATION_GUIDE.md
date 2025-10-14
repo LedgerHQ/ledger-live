@@ -9,7 +9,7 @@ Migrate from `listTokens()` and `listTokensForCryptoCurrency()` to the DaDa Clie
 ### useAssetsData
 
 ```typescript
-const { data, isLoading, loadNext, error, refetch } = useAssetsData({
+const { data, isLoading, isSuccess, isError, loadNext, error, refetch } = useAssetsData({
   product: "lld" | "llm", // app identifier
   version: string, // app version
   search?: string, // server-side search query
