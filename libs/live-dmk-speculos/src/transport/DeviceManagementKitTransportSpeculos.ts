@@ -30,9 +30,9 @@ export enum SpeculosButton {
 function resolveBaseFromEnv(opts: SpeculosHttpTransportOpts): string {
   const rawHost =
     opts.baseURL ??
-    process.env.SPECULOS_ADDRESS ??
-    process.env.LLD_SPECULOS_BASE_URL ??
-    process.env.SPECULOS_BASE_URL ??
+    (typeof process !== "undefined" ? process.env?.SPECULOS_ADDRESS : undefined) ??
+    (typeof process !== "undefined" ? process.env?.LLD_SPECULOS_BASE_URL : undefined) ??
+    (typeof process !== "undefined" ? process.env?.SPECULOS_BASE_URL : undefined) ??
     "http://127.0.0.1";
 
   const host = rawHost.replace(/\/+$/, "");
@@ -55,9 +55,9 @@ function resolveBaseFromEnv(opts: SpeculosHttpTransportOpts): string {
   const port =
     opts.apiPort ??
     safeGetEnv("SPECULOS_API_PORT") ??
-    process.env.SPECULOS_API_PORT ??
-    process.env.LLD_SPECULOS_HTTP_PORT ??
-    process.env.SPECULOS_HTTP_PORT ??
+    (typeof process !== "undefined" ? process.env?.SPECULOS_API_PORT : undefined) ??
+    (typeof process !== "undefined" ? process.env?.LLD_SPECULOS_HTTP_PORT : undefined) ??
+    (typeof process !== "undefined" ? process.env?.SPECULOS_HTTP_PORT : undefined) ??
     "5000";
 
   const base = `${host}:${port}`;
@@ -72,6 +72,9 @@ type DmkEntry = {
   sendChain: Promise<void>;
   timeout: number;
 };
+
+// Accept BOTH WHATWG and Node streams
+type AnyReadableStream = ReadableStream<Uint8Array> | NodeJS.ReadableStream;
 
 export default class SpeculosHttpTransport extends Transport {
   private static byBase = new Map<string, DmkEntry>();
@@ -119,7 +122,7 @@ export default class SpeculosHttpTransport extends Transport {
   private readonly base: string;
   private readonly ds: E2eHttpSpeculosDatasource;
 
-  private sseStream: NodeJS.ReadableStream | null = null;
+  private sseStream: AnyReadableStream | null = null;
   automationEvents: Subject<Record<string, unknown>> = new Subject();
 
   private constructor(opts: SpeculosHttpTransportOpts) {
@@ -150,7 +153,11 @@ export default class SpeculosHttpTransport extends Transport {
 
     this.ensureEntry(base, connectTimeout);
 
-    if (process.env.SPECULOS_TRANSPORT_SSE === "true") {
+    // Guard process access for browser builds
+    const sseEnvEnabled =
+      typeof process !== "undefined" && process.env?.SPECULOS_TRANSPORT_SSE === "true";
+
+    if (sseEnvEnabled) {
       t.sseStream = await t.ds.openEventStream(
         evt => {
           log("speculos-event", JSON.stringify(evt));
@@ -213,10 +220,23 @@ export default class SpeculosHttpTransport extends Transport {
 
   async close() {
     try {
-      this.sseStream && (this.sseStream as any).destroy?.();
+      const s = this.sseStream;
+      if (!s) return;
+
+      // Prefer WHATWG stream cancel (browser/Node fetch)
+      if ("cancel" in s && typeof (s as ReadableStream<Uint8Array>).cancel === "function") {
+        await (s as ReadableStream<Uint8Array>).cancel();
+      } else {
+        // Fallback to Node stream destroy
+        const nodeStream = s as NodeJS.ReadableStream;
+        if ("destroy" in nodeStream && typeof nodeStream.destroy === "function") {
+          nodeStream.destroy();
+        }
+      }
     } catch {
-      //ignore
+      // ignore
+    } finally {
+      this.sseStream = null;
     }
-    this.sseStream = null;
   }
 }

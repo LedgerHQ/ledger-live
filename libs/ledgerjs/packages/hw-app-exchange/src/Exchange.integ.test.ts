@@ -1,5 +1,5 @@
 import bippath from "bip32-path";
-import SpeculosTransportHttp from "@ledgerhq/hw-transport-node-speculos-http";
+import { DeviceManagementKitTransportSpeculos } from "@ledgerhq/live-dmk-speculos";
 import Exchange, { ExchangeTypes, PartnerKeyInfo } from "./Exchange";
 import Transport from "@ledgerhq/hw-transport";
 import { randomBytes, subtle } from "crypto";
@@ -11,7 +11,7 @@ describe("Check Exchange until payload signature", () => {
   let transport: Transport;
 
   beforeAll(async () => {
-    transport = await SpeculosTransportHttp.open({});
+    transport = await DeviceManagementKitTransportSpeculos.open({});
   });
   afterAll(async () => {
     transport.close();
