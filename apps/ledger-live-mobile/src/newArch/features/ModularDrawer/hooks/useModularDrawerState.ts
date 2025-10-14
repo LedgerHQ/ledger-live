@@ -96,7 +96,8 @@ export function useModularDrawerState({
           selected,
           singleNetwork,
         );
-        proceedToNextStep(resolvedCurrency ?? selected, singleNetwork);
+        const currencyToUse = resolvedCurrency ?? selected;
+        proceedToNextStep(currencyToUse, singleNetwork);
       } else if (enableAccountSelection) {
         dispatch(setStep(ModularDrawerStep.Account));
       } else {
@@ -123,7 +124,9 @@ export function useModularDrawerState({
         asset,
         selectedNetwork,
       );
-      if (correspondingCurrency) proceedToNextStep(correspondingCurrency, selectedNetwork);
+      if (correspondingCurrency) {
+        proceedToNextStep(correspondingCurrency, selectedNetwork);
+      }
     },
     [asset, assetsSorted, proceedToNextStep, isAcceptedCurrency],
   );

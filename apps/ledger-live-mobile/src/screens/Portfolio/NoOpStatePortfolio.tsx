@@ -7,12 +7,21 @@ import LText from "~/components/LText";
 import Button from "~/components/Button";
 import IconReceive from "~/icons/Receive";
 import PortfolioNoOpIllustration from "~/icons/PortfolioNoOpIllustration";
+import { useOpenReceiveDrawer } from "LLM/features/Receive";
 
 export default function NoOpStatePortfolio() {
   const navigation = useNavigation();
 
+  const { handleOpenReceiveDrawer, isModularDrawerEnabled } = useOpenReceiveDrawer({
+    sourceScreenName: "portfolio",
+  });
+
   function navigateToReceive() {
-    navigation.navigate(NavigatorName.ReceiveFunds, { screen: ScreenName.ReceiveSelectCrypto });
+    if (isModularDrawerEnabled) {
+      handleOpenReceiveDrawer();
+    } else {
+      navigation.navigate(NavigatorName.ReceiveFunds, { screen: ScreenName.ReceiveSelectCrypto });
+    }
   }
 
   return (
