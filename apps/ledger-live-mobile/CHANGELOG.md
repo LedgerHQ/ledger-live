@@ -1,5 +1,11 @@
 # live-mobile
 
+## 3.96.0-next.4
+
+### Minor Changes
+
+- [#12275](https://github.com/LedgerHQ/ledger-live/pull/12275) [`73d3fbd`](https://github.com/LedgerHQ/ledger-live/commit/73d3fbdc4cc74fa1905efedff9709467d337021c) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - revert "refactor(llc): rewrite generic prepare transaction"
+
 ## 3.96.0-next.3
 
 ### Minor Changes
