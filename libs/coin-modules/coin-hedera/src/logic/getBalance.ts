@@ -16,11 +16,11 @@ export async function getBalance(currency: CryptoCurrency, address: string): Pro
     },
   ];
 
-  mirrorTokens.forEach(mirrorToken => {
+  for (const mirrorToken of mirrorTokens) {
     const calToken = findTokenByAddressInCurrency(mirrorToken.token_id, currency.id);
 
     if (!calToken) {
-      return;
+      continue;
     }
 
     balance.push({
@@ -33,7 +33,7 @@ export async function getBalance(currency: CryptoCurrency, address: string): Pro
         unit: calToken.units[0],
       },
     });
-  });
+  }
 
   return balance;
 }

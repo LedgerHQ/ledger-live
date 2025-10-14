@@ -107,7 +107,7 @@ async function getAccountTransactions({
 
   // set the next cursor only if we have more transactions to fetch
   if (!fetchAllPages && nextUrl) {
-    const lastTx = transactions[transactions.length - 1];
+    const lastTx = transactions.at(-1);
     nextCursor = lastTx?.consensus_timestamp ?? null;
   }
 

@@ -1,8 +1,6 @@
 import buildCoinConfig, { type CurrencyConfig } from "@ledgerhq/coin-framework/config";
 
-export interface HederaConfig {}
-
-export type HederaCoinConfig = CurrencyConfig & HederaConfig;
+export type HederaCoinConfig = CurrencyConfig;
 
 const coinConfig = buildCoinConfig<HederaCoinConfig>();
 

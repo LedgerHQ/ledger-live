@@ -10,7 +10,7 @@ import type {
   TransactionValidation,
 } from "@ledgerhq/coin-framework/api/index";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
-import coinConfig, { type HederaConfig } from "../config";
+import coinConfig from "../config";
 import {
   broadcast as logicBroadcast,
   combine,
@@ -26,7 +26,7 @@ import { mapIntentToSDKOperation, getOperationValue } from "../logic/utils";
 import { apiClient } from "../network/api";
 import type { HederaMemo } from "../types";
 
-export function createApi(config: HederaConfig): Api<HederaMemo> {
+export function createApi(config: Record<string, never>): Api<HederaMemo> {
   coinConfig.setCoinConfig(() => ({ ...config, status: { type: "active" } }));
   const currency = getCryptoCurrencyById("hedera");
 
