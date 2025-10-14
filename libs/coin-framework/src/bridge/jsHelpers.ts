@@ -398,6 +398,7 @@ export const makeScanAccounts =
           derivationsCache[account.freshAddressPath] = res;
         }
 
+        // Temporary: we're going to remove transformations in postSync that should be done in getAccountShape
         // Using the generic doesn't resolve correctly
         // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
         account = postSync(initialAccount as unknown as A, account as unknown as A);
