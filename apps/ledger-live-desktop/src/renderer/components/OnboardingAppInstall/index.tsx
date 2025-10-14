@@ -53,7 +53,7 @@ const OnboardingAppInstallStep = ({
     : deviceToRestore?.modelId;
 
   useEffect(() => {
-    if (deviceToRestore?.apps) {
+    if (deviceToRestore?.apps && deviceToRestore?.apps.length !== 0) {
       setDependencies(deviceToRestore.apps.map(app => app.name));
     } else if (deviceInitialApps?.params?.apps) {
       setDependencies(deviceInitialApps.params.apps);
