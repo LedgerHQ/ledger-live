@@ -1,5 +1,5 @@
 import { genAccount } from "@ledgerhq/coin-framework/lib/mocks/account";
-import { useAssetAccountCounts } from "../useAssetAccountCounts";
+import { useNetworkAccountCounts } from "../useNetworkAccountCounts";
 import { createFixtureCryptoCurrency } from "../../../mock/fixtures/cryptoCurrencies";
 
 const ethereumCurrency = createFixtureCryptoCurrency("ethereum");
@@ -7,10 +7,10 @@ const ethereumAccountHigh = genAccount("ethereum-account-high", {
   currency: ethereumCurrency,
 });
 
-describe("useAssetAccountCounts", () => {
+describe("useNetworkAccountCounts", () => {
   it("should return the count for one account", () => {
-    const assetAccountCounts = useAssetAccountCounts({
-      assets: [ethereumCurrency],
+    const assetAccountCounts = useNetworkAccountCounts({
+      networks: [ethereumCurrency],
       nestedAccounts: [ethereumAccountHigh],
       accountIds: new Map([[ethereumAccountHigh.id, true]]),
       formatLabel: (count: number) => `${count}`,
@@ -24,8 +24,8 @@ describe("useAssetAccountCounts", () => {
     const ethereumAccountLow = genAccount("ethereum-account-low", {
       currency: ethereumCurrency,
     });
-    const assetAccountCounts = useAssetAccountCounts({
-      assets: [ethereumCurrency],
+    const assetAccountCounts = useNetworkAccountCounts({
+      networks: [ethereumCurrency],
       nestedAccounts: [ethereumAccountHigh, ethereumAccountLow],
       accountIds: new Map([
         [ethereumAccountHigh.id, true],

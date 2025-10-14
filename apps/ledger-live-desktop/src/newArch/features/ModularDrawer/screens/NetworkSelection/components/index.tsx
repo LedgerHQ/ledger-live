@@ -49,14 +49,16 @@ export const SelectNetwork = ({
     networksConfig,
     accounts$,
   });
-  const networksCryptoCurrencies = networks.map(n =>
-    n.type === "CryptoCurrency" ? n : n.parentCurrency,
-  );
 
-  const formattedNetworks = transformNetworks(networksCryptoCurrencies, networks);
+  const formattedNetworks = transformNetworks(networks);
 
   const onClick = (networkId: string) => {
-    const network = networksCryptoCurrencies.find(({ id }) => id === networkId);
+    const network = formattedNetworks.find(network =>
+      network.type === "CryptoCurrency"
+        ? network.id === networkId
+        : network.parentCurrency.id === networkId,
+    );
+
     if (!network) return;
 
     trackModularDrawerEvent(

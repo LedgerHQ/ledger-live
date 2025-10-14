@@ -170,7 +170,7 @@ describe("createNetworkConfiguration", () => {
   it("should call balanceItem with correct BalanceUI objects for each network", () => {
     const { result } = renderHook(() => createNetworkConfigurationHook(networkConfigurationDeps));
     const res = result.current({ networksConfig: { rightElement: "balance" } });
-    res([baseCurrency, bscCurrency], [baseUsdcToken, bscUsdcToken]);
+    res([baseUsdcToken, bscUsdcToken]);
 
     expect(balanceItem).toHaveBeenCalledTimes(2);
     expect(balanceItem).toHaveBeenNthCalledWith(
@@ -186,7 +186,7 @@ describe("createNetworkConfiguration", () => {
   it("account count", () => {
     const { result } = renderHook(() => createNetworkConfigurationHook(networkConfigurationDeps));
     const res = result.current({ networksConfig: { leftElement: "numberOfAccounts" } });
-    res([baseCurrency, bscCurrency], [baseUsdcToken, bscUsdcToken]);
+    res([baseUsdcToken, bscUsdcToken]);
 
     expect(accountsCount).toHaveBeenCalledTimes(4);
     expect(accountsCount).toHaveBeenNthCalledWith(1, { label: "3 account" });
@@ -198,10 +198,7 @@ describe("createNetworkConfiguration", () => {
       networksConfig: { rightElement: "balance" },
     });
 
-    const orderedResult = res(
-      [ethereumCurrency, polygonCurrency, bscCurrency],
-      [ethereumUsdcToken, polygonUsdcToken, bscUsdcToken],
-    );
+    const orderedResult = res([ethereumUsdcToken, polygonUsdcToken, bscUsdcToken]);
 
     expect(orderedResult).toHaveLength(3);
 
@@ -217,10 +214,7 @@ describe("createNetworkConfiguration", () => {
       networksConfig: { leftElement: "numberOfAccounts" },
     });
 
-    const orderedResult = res(
-      [ethereumCurrency, polygonCurrency, bscCurrency],
-      [ethereumUsdcToken, polygonUsdcToken, bscUsdcToken],
-    );
+    const orderedResult = res([ethereumUsdcToken, polygonUsdcToken, bscUsdcToken]);
 
     expect(orderedResult).toHaveLength(3);
 
@@ -263,10 +257,7 @@ describe("createNetworkConfiguration", () => {
       networksConfig: { leftElement: "numberOfAccounts", rightElement: "balance" },
     });
 
-    const orderedResult = res(
-      [ethereumCurrency, polygonCurrency],
-      [ethereumUsdcToken, polygonUsdcToken],
-    );
+    const orderedResult = res([ethereumUsdcToken, polygonUsdcToken]);
 
     expect(orderedResult).toHaveLength(2);
 
@@ -336,10 +327,12 @@ describe("createNetworkConfiguration", () => {
       networksConfig: { leftElement: "numberOfAccounts", rightElement: "balance" },
     });
 
-    const orderedResult = res(
-      [testEthereumCurrency, testPolygonCurrency, testAvalancheCurrency, testArbitrumCurrency],
-      [testEthereumUsdcToken, testPolygonUsdcToken, testAvalancheUsdcToken, testArbitrumUsdcToken],
-    );
+    const orderedResult = res([
+      testEthereumUsdcToken,
+      testPolygonUsdcToken,
+      testAvalancheUsdcToken,
+      testArbitrumUsdcToken,
+    ]);
 
     expect(orderedResult[0].id).toBe(testEthereumCurrency.id); // 1000 ETH balance, 3 accounts
     expect(orderedResult[1].id).toBe(testPolygonCurrency.id); // 500 MATIC balance, 1 account
