@@ -39,8 +39,8 @@
     "test:coverage": "vitest run --coverage"
   },
   "dependencies": {
-    "@ledgerhq/device-management-kit": "0.0.0-connect-app-20250609094118",
-    "@ledgerhq/device-transport-kit-speculos": "0.0.0-e2e-speculos-20250908084414",
+    "@ledgerhq/device-management-kit": "0.9.1",
+    "@ledgerhq/device-transport-kit-speculos": "0.0.0-E2eHttpSpeculosTransport-20251014070742",
     "@ledgerhq/errors": "6.22.0",
     "@ledgerhq/hw-transport": "workspace:^",
     "@ledgerhq/logs": "workspace:^",

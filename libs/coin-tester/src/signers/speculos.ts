@@ -4,7 +4,7 @@ import fs from "fs/promises";
 import * as compose from "docker-compose";
 import axios, { AxiosError } from "axios";
 import { SignOperationEvent } from "@ledgerhq/types-live";
-import SpeculosTransportHttp from "@ledgerhq/hw-transport-node-speculos-http";
+import { DeviceManagementKitTransportSpeculos } from "@ledgerhq/live-dmk-speculos";
 import { ENV } from "../types";
 
 const { SPECULOS_API_PORT } = process.env as ENV;
@@ -48,7 +48,7 @@ export async function spawnSpeculos(
     libraries?: Array<{ name: string; endpoint: `/${string}` }>;
   },
 ): Promise<{
-  transport: SpeculosTransportHttp;
+  transport: DeviceManagementKitTransportSpeculos;
   getOnSpeculosConfirmation: (approvalText?: string) => () => Promise<void>;
 }> {
   ensureEnv();
@@ -89,12 +89,12 @@ export async function spawnSpeculos(
     },
   });
 
-  async function checkSpeculosLogs(): Promise<SpeculosTransportHttp> {
+  async function checkSpeculosLogs(): Promise<DeviceManagementKitTransportSpeculos> {
     const { out } = await compose.logs("speculos", { cwd, env: process.env });
 
     if (out.includes("Server started")) {
       console.log(chalk.bgYellowBright.black(" -  SPECULOS READY ✅  - "));
-      return SpeculosTransportHttp.open({
+      return DeviceManagementKitTransportSpeculos.open({
         apiPort: SPECULOS_API_PORT,
       });
     }
