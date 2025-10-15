@@ -464,12 +464,16 @@
       "apt_description" : "Para permutar Aptos, usa cualquier otro dispositivo Ledger compatible, como el Ledger Nano S Plus™, el Ledger Nano X™, el Ledger Flex™ o el Ledger Stax™.",
       "cosmos_title" : "No es posible usar el Ledger Nano S™ para permutar Cosmos",
       "cosmos_description" : "Para permutar Cosmos, usa cualquier otro dispositivo Ledger compatible, como el Ledger Nano S Plus™, el Ledger Nano X™, el Ledger Flex™ o el Ledger Stax™.",
+      "hedera_title" : "No es posible usar el Ledger Nano S™ para permutar Hedera",
+      "hedera_description" : "Para permutar Hedera, usa cualquier otro dispositivo Ledger compatible, como el Ledger Nano S Plus™, el Ledger Nano X™, el Ledger Flex™ o el Ledger Stax™.",
       "osmo_title" : "No es posible usar el Ledger Nano S™ para permutar Osmosis",
       "osmo_description" : "Para permutar Osmosis, usa cualquier otro dispositivo Ledger compatible, como el Ledger Nano S Plus™, el Ledger Nano X™, el Ledger Flex™ o el Ledger Stax™.",
       "dydx_title" : "No es posible usar el Ledger Nano S™ para permutar dYdX",
       "dydx_description" : "Para permutar dYdX, usa cualquier otro dispositivo Ledger compatible, como el Ledger Nano S Plus™, el Ledger Nano X™, el Ledger Flex™ o el Ledger Stax™.",
       "sui_title" : "No es posible utilizar el Ledger Nano S™ para permutar Sui",
-      "sui_description" : "Para permutar Sui, usa cualquier otro dispositivo Ledger compatible, como el Ledger Nano S Plus™, el Ledger Nano X™, el Ledger Flex™ o el Ledger Stax™."
+      "sui_description" : "Para permutar Sui, usa cualquier otro dispositivo Ledger compatible, como el Ledger Nano S Plus™, el Ledger Nano X™, el Ledger Flex™ o el Ledger Stax™.",
+      "kaspa_title" : "No es posible usar el Ledger Nano S™ para permutar Kaspa",
+      "kaspa_description" : "Para permutar Kaspa, usa cualquier otro dispositivo Ledger compatible, como el Ledger Nano S Plus™, el Ledger Nano X™, el Ledger Flex™ o el Ledger Stax™."
     },
     "providers" : {
       "title" : "Elige un proveedor para permutar cripto",
@@ -2042,9 +2046,9 @@
       "prepareSeed" : "Como precaución, asegúrate de que la Frase de Recuperación Secreta de 24 palabras esté escrita en la Hoja de Recuperación y de tener fácil acceso a ella.",
       "prepareSeedRecover" : "Considera la opción de usar Ledger Recover para realizar una copia de respaldo del acceso a tu billetera y asegurarte de que siempre esté a mano.",
       "disclaimerTitle" : "Estás a punto de instalar <1>la versión de firmware {{version}}</1>.",
-      "cancelUpdate" : "Cancelar actualización del SO",
-      "continueUpdate" : "Continuar con actualización del SO",
-      "restartUpdate" : "Reiniciar actualización de SO",
+      "cancelUpdate" : "Cancelar actualización",
+      "continueUpdate" : "Continuar actualización",
+      "restartUpdate" : "Reiniciar actualización",
       "skipRestore" : "Omitir restauración",
       "cancelUpdateWarning" : "Si cancelas la actualización ahora, tus ajustes y aplicaciones podrían no restaurarse correctamente.",
       "updateInProgress" : "Actualización del SO en curso"
@@ -2246,15 +2250,16 @@
   "receive" : {
     "title" : "Recibir",
     "successTitle" : "Dirección compartida de forma segura",
+    "connectToNoah" : "Conectándote a Noah",
     "steps" : {
       "options" : {
         "fromBank" : {
           "title" : "Desde una cuenta bancaria",
-          "description" : "Depositar USD o EUR"
+          "description" : "Recarga con monedas estables mediante una transferencia bancaria de EUR o USD. Tienes que haber completado el KYC."
         },
         "fromCrypto" : {
           "title" : "Desde una dirección cripto",
-          "description" : "Recibir cripto"
+          "description" : "Recarga tu wallet con la cripto que quieras."
         }
       },
       "chooseAccount" : {
@@ -5023,6 +5028,12 @@
     },
     "screens" : {
       "welcome" : {
+        "videos" : {
+          "buySell" : "Una wallet que te protege y te da todo el control",
+          "thousandsCrypto" : "Envía, recibe, permuta y pon en participación miles de cripto",
+          "secureWallet" : "Verifica todas tus transacciones con tranquilidad"
+        },
+        "notice" : "Al continuar, aceptas los <Link1>Términos y Condiciones</Link1> y la <Link2>Política de Privacidad</Link2> de Ledger. Ledger no proporciona asesoramiento financiero.\nLos servicios de permuta y puesta en participación los proporcionan terceros.",
         "title" : "La billetera más segura para tus criptomonedas y NFTs",
         "description" : "Gestiona, compra y rentabiliza tus cripto y NFTs con seguridad desde Ledger Live",
         "nextButton" : "Comenzar",
@@ -5710,7 +5721,34 @@
     },
     "canton" : {
       "commentPlaceholder" : "Opcional",
-      "comment" : "Comentario"
+      "comment" : "Comentario",
+      "addAccount" : {
+        "title" : "Agregar cuenta de Canton",
+        "onboard" : {
+          "title" : "Incorporación",
+          "newAccount" : "Nueva cuenta",
+          "init" : "Clic en Continuar para configurar tu nueva cuenta de Canton",
+          "onboarded" : "Cuentas incorporadas",
+          "success" : "Se ha creado e incorporado tu nueva cuenta de Canton.",
+          "error" : "Error al incorporar tu nueva cuenta. Inténtalo de nuevo.",
+          "status" : {
+            "prepare" : "Preparando incorporación de la cuenta...",
+            "submit" : "Incorporando cuenta...",
+            "default" : "Procesando..."
+          }
+        },
+        "auth" : {
+          "title" : "Autorización",
+          "validator" : "Autorizar",
+          "hint" : "Acepta automáticamente fondos ingresantes a esta cuenta.",
+          "error" : "La autorización ha fallado. Inténtalo de nuevo.",
+          "validatorLabel" : "Validador de Ledger",
+          "validatorDescription" : "Aceptación de fondos automatizada"
+        },
+        "finish" : {
+          "title" : "Confirmación"
+        }
+      }
     },
     "stellar" : {
       "memo" : "Memo",
@@ -7141,7 +7179,7 @@
         "title" : "Personalización",
         "description" : "Para que recibas recomendaciones personalizadas y contenido que se ajuste a tus preferencias y para ayudarnos a medir el rendimiento de nuestras campañas de marketing, compartimos datos de uso de la aplicación, incluidos clics, visitas a páginas y datos de conversión."
       },
-      "share" : "Compartir"
+      "validate" : "Validar"
     },
     "variantB" : {
       "accept" : "Aceptar",
