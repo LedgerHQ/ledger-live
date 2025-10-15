@@ -1895,7 +1895,9 @@
       "transferAmount" : "Transfer Tutarı",
       "validatorsCount" : "Doğrulayıcılar ({{number}})",
       "version" : "Sürüm",
-      "accountCreationFee" : "Hesap Oluşturma Ücreti"
+      "accountCreationFee" : "Hesap Oluşturma Ücreti",
+      "senderChainId" : "Gönderen Zincir Kimliği",
+      "receiverChainId" : "Alıcı Zincir Kimliği"
     }
   },
   "operationList" : {
@@ -2415,7 +2417,9 @@
         "unitVByte" : "{{unit}}/vbyte",
         "nft" : "NFT",
         "nftQuantity" : "Miktar",
-        "splExtensionsWarning" : "Token Uzantıları (Token Extensions) olarak da bilinen Token-2022 programı kapsamındaki bir token’la etkileşime geçiyorsunuz. Bu token’ın belirli riskleri bulunmaktadır. Daha fazla bilgi edinmek için <0>buraya tıklayın</0>."
+        "splExtensionsWarning" : "Token Uzantıları (Token Extensions) olarak da bilinen Token-2022 programı kapsamındaki bir token’la etkileşime geçiyorsunuz. Bu token’ın belirli riskleri bulunmaktadır. Daha fazla bilgi edinmek için <0>buraya tıklayın</0>.",
+        "senderChainId" : "Gönderen Zincir Kimliği",
+        "receiverChainId" : "Alıcı Zincir Kimliği"
       },
       "verification" : {
         "streaming" : {
@@ -5168,7 +5172,7 @@
               "descr" : "Ekrandaki yönergeleri okuyarak cihazınızı nasıl kullanacağınızı öğrenin."
             },
             "select" : {
-              "title" : "“Set up as new device” (Yeni cihaz olarak kur) seçeneğini onaylayın",
+              "title" : "“Yeni cihaz olarak kur” seçeneğini onaylayın",
               "descr" : "Seçimi onaylamak için her iki tuşa da aynı anda basın."
             },
             "follow" : {
@@ -5268,16 +5272,16 @@
             }
           },
           "recoverHowTo" : {
-            "title" : "“Restore using Ledger Recover” (Ledger Recover ile geri yükleyin) seçimini yapın",
+            "title" : "“Ledger Recover ile geri yükleyin” seçimini yapın",
             "1" : {
-              "title" : "“Restore” seçimini yapın",
+              "title" : "“Geri yükle” seçimini yapın",
               "descr" : "Seçmek için iki tuşa aynı anda basın."
             },
             "2" : {
-              "title" : "“Restore using Ledger Recover” (Ledger Recover ile geri yükleyin) seçimini yapın"
+              "title" : "“Ledger Recover ile geri yükleyin” seçimini yapın"
             },
             "help" : {
-              "iDontSee" : "“Restore using Ledger Recover” (Ledger Recover ile geri yükleyin) seçeneği yok",
+              "iDontSee" : "“Ledger Recover ile geri yükleyin” seçeneği yok",
               "modal" : {
                 "title" : "Ledger Nano X cihazındaki işletim sisteminin güncellenmesi gerekiyor",
                 "subtitle" : " İşletim sistemini güncellemeyi deneyebilir veya yardım almak için Ledger Destek ile iletişime geçebilirsiniz.",
@@ -6854,6 +6858,12 @@
       "title" : "Cihaz bağlantısı kesildi",
       "description" : "Ledger Live, cihazınıza bağlanamadı. Lütfen tekrar deneyin veya sorun sürerse Ledger Destek ile iletişime geçin."
     },
+    "RecipientAddressSanctionedError" : {
+      "title" : "Bu işlem, yaptırım uygulanan bir cüzdan adresi içerdiğinden işleme koyulamıyor."
+    },
+    "KadenaCrossChainTransfer" : {
+      "title" : "Bu, zincirler arası bir transfer olduğundan işlemin tamamlanması birkaç dakika sürebilir."
+    },
     "DisconnectError" : {
       "title" : "Cihaz bağlantısı kesildi",
       "description" : "Ledger Live, cihazınıza bağlanamadı. Lütfen tekrar deneyin veya sorun sürerse Ledger Destek ile iletişime geçin."
@@ -7277,8 +7287,8 @@
         "mobile" : {
           "description" : "Başka bir telefondaki Ledger Live uygulamasıyla senkronize edin",
           "steps" : {
-            "step1" : "Ledger Sync'in uygulamalarınızdan birinde etkinleştirildiğinden emin olun.",
-            "step2" : "Senkronize etmek istediğiniz Ledger Live uygulamasını açın.",
+            "step1" : "Ledger Sync, diğer uygulamada da etkinleştirilmelidir.",
+            "step2" : "Senkronize edilecek Ledger Live'ı açın.",
             "step3" : "<0>Ayarlar</0> > <0>Genel</0> > <0>Ledger Sync</0> > <0>Zaten açtım</0> > <0>Karekodu göster</0> adımlarını izleyin",
             "step4" : "Karekodu okutun."
           }
@@ -7286,8 +7296,8 @@
         "desktop" : {
           "description" : "Hesaplarınızı başka bir Ledger Live uygulamasıyla senkronize edin",
           "steps" : {
-            "step1" : "Ledger Sync'in uygulamalarınızdan birinde etkinleştirildiğinden emin olun.",
-            "step2" : "Senkronize etmek istediğiniz Ledger Live uygulamasını açın.",
+            "step1" : "Ledger Sync, diğer uygulamada da etkinleştirilmelidir.",
+            "step2" : "Senkronize edilecek Ledger Live'ı açın.",
             "step3" : "<0>Ayarlar</0> > <0>Genel</0> > <0>Ledger Sync</0> > <0>Zaten açtım</0> > <0>Ledger cihazınızı kullanın</0> adımlarını izleyin",
             "step4" : "Ledger cihazınızı bağlayın."
           }
