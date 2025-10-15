@@ -26,7 +26,7 @@ import { useSwapCustomHandlers } from "./customHandlers";
 import { useDeeplinkCustomHandlers } from "~/components/WebPlatformPlayer/CustomHandlers";
 import { currentRouteNameRef } from "~/analytics/screenRefs";
 import { WalletAPICustomHandlers } from "@ledgerhq/live-common/wallet-api/types";
-import { useFeature } from "@ledgerhq/live-common/lib-es/featureFlags/index";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 
 type Props = {
   manifest: LiveAppManifest;
