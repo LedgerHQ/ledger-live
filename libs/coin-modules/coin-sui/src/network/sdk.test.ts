@@ -1783,6 +1783,7 @@ describe("filterOperations", () => {
         {
           type: "transfer",
           address: "0x65449f57946938c84c5127",
+          peer: "0x65449f57946938c84c512732f1d69405d1fce417d9c9894696ddf4522f479e24",
           amount: -10000000000n,
           asset: { type: "native" },
         },
@@ -1853,6 +1854,7 @@ describe("filterOperations", () => {
         {
           type: "transfer",
           address: "0x65449f57946938c84c5127",
+          peer: "0x65449f57946938c84c512732f1d69405d1fce417d9c9894696ddf4522f479e24",
           amount: 8824n,
           asset: {
             type: "token",
@@ -1944,18 +1946,21 @@ describe("filterOperations", () => {
         operations: [
           {
             address: "0x65449f57946938c84c512732f1d69405d1fce417d9c9894696ddf4522f479e24",
+            peer: "0x6e143fe0a8ca010a86580dafac44298e5b1b7d73efc345356a59a15f0d7824f0",
             amount: -10000000000n,
             asset: { type: "native" },
             type: "transfer",
           },
           {
             address: "0x6e143fe0a8ca010a86580dafac44298e5b1b7d73efc345356a59a15f0d7824f0",
+            peer: "0x65449f57946938c84c512732f1d69405d1fce417d9c9894696ddf4522f479e24",
             amount: 9998990120n,
             asset: { type: "native" },
             type: "transfer",
           },
           {
             address: "0x6e143fe0a8ca010a86580dafac44298e5b1b7d73efc345356a59a15f0d7824f0",
+            peer: "0x65449f57946938c84c512732f1d69405d1fce417d9c9894696ddf4522f479e24",
             amount: 500000n,
             asset: { type: "token", assetReference: "0x123::test::TOKEN" },
             type: "transfer",
