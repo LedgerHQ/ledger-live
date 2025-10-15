@@ -465,17 +465,23 @@ export function toBlockOperation(
   if (typeof change.owner === "string" || !("AddressOwner" in change.owner)) return [];
   const address = change.owner.AddressOwner;
   const operationType = getOperationType(address, transaction);
+
+  function transferOp(peer: string | undefined): BlockOperation {
+    const op: BlockOperation = {
+      type: "transfer",
+      address: address,
+      asset: toSuiAsset(change.coinType),
+      amount: BigInt(change.amount),
+    };
+    if (peer) op.peer = peer;
+    return op;
+  }
+
   switch (operationType) {
     case "IN":
+      return [transferOp(getOperationSenders(transaction.transaction?.data).at(0))];
     case "OUT":
-      return [
-        {
-          type: "transfer",
-          address: change.owner.AddressOwner,
-          asset: toSuiAsset(change.coinType),
-          amount: BigInt(change.amount),
-        },
-      ];
+      return [transferOp(getOperationRecipients(transaction.transaction?.data).at(0))];
     case "DELEGATE":
     case "UNDELEGATE":
       return [
