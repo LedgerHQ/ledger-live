@@ -1895,7 +1895,9 @@
       "transferAmount" : "مبلغ التحويل",
       "validatorsCount" : "({{number}}) مدقق",
       "version" : "الإصدار",
-      "accountCreationFee" : "رسوم إنشاء الحساب"
+      "accountCreationFee" : "رسوم إنشاء الحساب",
+      "senderChainId" : "مُعرّف سلسلة المُرسل",
+      "receiverChainId" : "مُعرّف سلسلة المُتلقي"
     }
   },
   "operationList" : {
@@ -2415,7 +2417,9 @@
         "unitVByte" : "{{unit}}/بايت افتراضي (vbyte)",
         "nft" : "NFT",
         "nftQuantity" : "الكمية",
-        "splExtensionsWarning" : "أنت تتفاعل مع رمز توكن يشكل جزءاً من برنامج Token-2022، المعروف أيضاً باسم Token Extensions (ملحقات رموز التوكن). رمز التوكن هذا يأتي مع مخاطر محددة. <0>انقر هنا</0> لمعرفة المزيد."
+        "splExtensionsWarning" : "أنت تتفاعل مع رمز توكن يشكل جزءاً من برنامج Token-2022، المعروف أيضاً باسم Token Extensions (ملحقات رموز التوكن). رمز التوكن هذا يأتي مع مخاطر محددة. <0>انقر هنا</0> لمعرفة المزيد.",
+        "senderChainId" : "مُعرّف سلسلة المُرسل",
+        "receiverChainId" : "مُعرّف سلسلة المُتلقي"
       },
       "verification" : {
         "streaming" : {
@@ -6853,6 +6857,12 @@
     "DeviceDisconnectedWhileSendingError" : {
       "title" : "انقطع اتصال الجهاز",
       "description" : "Ledger Live لم يتمكن من الاتصال بجهازك. يُرجى المحاولة مرةً أخرى أو التواصل مع دعم Ledger إذا استمرت المشكلة."
+    },
+    "RecipientAddressSanctionedError" : {
+      "title" : "هذه المعاملة تتضمن عنوان محفظة خاضع لعقوبات ولا يمكن معالجتها."
+    },
+    "KadenaCrossChainTransfer" : {
+      "title" : "حيث إن هذه عملية تحويل عبر سلاسل الكتل المختلفة، فقد تستغرق المعاملة عدة دقائق حتى تتم."
     },
     "DisconnectError" : {
       "title" : "انقطع اتصال الجهاز",
