@@ -91,6 +91,7 @@ export const getTransaction: NodeApi["getTransaction"] = (currency, txHash) =>
       nonce: tx.nonce,
       gasUsed: receipt.gasUsed.toString(),
       gasPrice: receipt.gasPrice.toString(),
+      status: receipt.status,
       value: tx.value.toString(),
     };
   });

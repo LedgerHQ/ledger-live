@@ -80,6 +80,7 @@ export const getTransaction: NodeApi["getTransaction"] = async (currency, hash) 
     gasPrice: ledgerTransaction.gas_price,
     gasUsed: ledgerTransaction.gas_used,
     value: ledgerTransaction.value,
+    status: ledgerTransaction.status,
   };
 };
 
