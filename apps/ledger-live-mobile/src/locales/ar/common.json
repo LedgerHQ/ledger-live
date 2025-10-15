@@ -55,10 +55,10 @@
     "bluetooth" : "بلوتوث",
     "usb" : "USB",
     "add" : "إضافة",
-    "token" : "رمز توكن",
-    "token_plural" : "رموز التوكن",
-    "subaccount" : "حساب فرعي",
-    "subaccount_plural" : "حسابات فرعية",
+    "token_one" : "رمز توكن",
+    "token_other" : "رمز توكن",
+    "subaccount_one" : "حساب فرعي",
+    "subaccount_other" : "حساب فرعي",
     "forgetDevice" : "إزالة الجهاز",
     "help" : "مساعدة",
     "saveLogs" : "حفظ السجلات",
@@ -71,24 +71,24 @@
     "installed" : "تم التثبيت",
     "uninstall" : "إلغاء التثبيت",
     "fromNow" : {
-      "seconds" : "خلال ثانية واحدة",
-      "seconds_plural" : "خلال {{time}} ثواني",
-      "minutes" : "خلال دقيقة واحدة",
-      "minutes_plural" : "خلال {{time}} دقائق",
-      "hours" : "خلال ساعة واحدة",
-      "hours_plural" : "خلال {{time}} ساعات",
-      "days" : "خلال يوم واحد",
-      "days_plural" : "خلال {{time}} أيام"
+      "seconds_one" : "خلال ثانية واحدة",
+      "seconds_other" : "خلال {{time}} ثانية",
+      "minutes_one" : "خلال دقيقة واحدة",
+      "minutes_other" : "خلال {{time}} دقيقة",
+      "hours_one" : "خلال ساعة واحدة",
+      "hours_other" : "خلال {{time}} ساعة",
+      "days_one" : "خلال يوم واحد",
+      "days_other" : "خلال {{time}} يوم"
     },
     "timeAgo" : {
-      "seconds" : "منذ ثانية واحدة",
-      "seconds_plural" : "منذ {{time}} ثانية",
-      "minutes" : "منذ دقيقة",
-      "minutes_plural" : "منذ {{time}} دقائق",
-      "hours" : "منذ ساعة واحدة",
-      "hours_plural" : "منذ {{time}} ساعات",
-      "days" : "أمس",
-      "days_plural" : "منذ {{time}} أيام"
+      "seconds_one" : "منذ ثانية واحدة",
+      "seconds_other" : "منذ {{time}} ثانية",
+      "minutes_one" : "منذ دقيقة واحدة",
+      "minutes_other" : "منذ {{time}} دقيقة",
+      "hours_one" : "منذ ساعة واحدة",
+      "hours_other" : "منذ {{time}} ساعة",
+      "days_one" : "أمس",
+      "days_other" : "منذ {{time}} يوم"
     },
     "seeMore" : "رؤية المزيد",
     "moreInfo" : "مزيد من المعلومات",
@@ -1073,6 +1073,10 @@
     "HederaAddAccountError" : {
       "title" : "لم تتم إضافة حسابك. يرجى إعادة المحاولة."
     },
+    "HederaRecipientInvalidChecksum" : {
+      "title" : "مجموع اختباري غير صالح للعنوان",
+      "description" : "العنوان المقدم لديه مجموع اختباري غير صالح."
+    },
     "HederaInsufficientFundsForAssociation" : {
       "title" : "رصيد غير كافٍ",
       "description" : "لا يوجد HBAR كافٍ للدفع مقابل ربط رمز التوكن. مطلوب على الأقل ما يساوي {{requiredWorthInUSD}}$ من HBAR."
@@ -1220,6 +1224,9 @@
     "AddressesSanctionedError" : {
       "title" : "إبقاؤك آمناً",
       "description" : "هذه المعاملة تتضمن عنوان محفظة خاضع لعقوبات ولا يمكن معالجتها.\n-- {{addresses}}"
+    },
+    "KadenaCrossChainTransfer" : {
+      "title" : "حيث إن هذه عملية تحويل عبر سلاسل الكتل المختلفة، فقد تستغرق المعاملة عدة دقائق حتى تتم."
     }
   },
   "crash" : {
@@ -1632,7 +1639,13 @@
       "terms" : "بالمتابعة أنت توافق على ما يخص Ledger من",
       "termsLink" : "الشروط والأحكام",
       "privacyLink" : "سياسة الخصوصية",
-      "and" : "و"
+      "and" : "و",
+      "videoTitles" : {
+        "0" : "محفظة تحميك وتجعلك المتحكم",
+        "1" : "قم بإرسال وتلقي ومبادلة وتكديس آلاف الأصول المشفرة",
+        "2" : "تحقق من كل معاملاتك براحة بال"
+      },
+      "disclaimer" : "بالمتابعة، أنت توافق على <TermsAndConditions>شروط وأحكام</TermsAndConditions> و<PrivacyPolicy>سياسة خصوصية</PrivacyPolicy> Ledger. لا تُقدم Ledger أي نصائح مالية. خدمات المبادلة والتكديس مُقدَّمة من أطراف ثالثة."
     },
     "postWelcomeStep" : {
       "title" : "لنبدأ",
@@ -2713,6 +2726,7 @@
       "LEGACYUNFREEZE" : "تمت إزالة التجميد",
       "REWARD" : "المكافأة المُطالب بها",
       "FEES" : "رسوم",
+      "PRE_APPROVAL" : "موافقة مسبقة",
       "OPT_IN" : "الانضمام",
       "OPT_OUT" : "إلغاء الانضمام",
       "CLOSE_ACCOUNT" : "إغلاق الحساب",
@@ -2802,7 +2816,9 @@
       "id" : "المُعرّف",
       "autoClaimedRewards" : "المكافآت المطالب بها تلقائياً",
       "stakedAmount" : "المبلغ المُكدَّس",
-      "accountCreationFee" : "رسوم إنشاء الحساب"
+      "accountCreationFee" : "رسوم إنشاء الحساب",
+      "senderChainId" : "مُعرّف سلسلة المُرسل",
+      "receiverChainId" : "مُعرّف سلسلة المُتلقي"
     },
     "multipleAddresses" : "لماذا عناوين متعددة؟"
   },
@@ -2813,10 +2829,10 @@
   "selectableAccountsList" : {
     "deselectAll" : "إلغاء اختيار الكل",
     "selectAll" : "اختيار الكل",
-    "tokenCount" : "+1 رمز توكن",
-    "tokenCount_plural" : "+ {{count}} رموز توكن",
-    "subaccountCount" : "+1 حساب فرعي",
-    "subaccountCount_plural" : "+{{count}} حسابات فرعية"
+    "tokenCount_one" : "+1 رمز توكن",
+    "tokenCount_other" : "+ {{count}} رمز توكن",
+    "subaccountCount_one" : "+1 حساب فرعي",
+    "subaccountCount_other" : "+{{count}} حساب فرعي"
   },
   "account" : {
     "subHeader" : {
@@ -3015,25 +3031,25 @@
       "upToDate" : "متزامن",
       "error" : "خطأ",
       "queued" : "قيد الانتظار",
-      "showTokens" : "عرض {{length}} رمز توكن",
-      "showTokens_plural" : "عرض {{length}} رمز التوكن",
-      "showSubAccounts" : "عرض {{length}} حساب فرعي",
-      "showSubAccounts_plural" : "عرض {{length}} حساب فرعي",
-      "hideTokens" : "إخفاء رمز التوكن",
-      "hideTokens_plural" : "إخفاء رموز التوكن",
-      "hideSubAccounts" : "إخفاء الحساب الفرعي",
-      "hideSubAccounts_plural" : "إخفاء الحسابات الفرعية",
+      "showTokens_one" : "عرض {{length}} رمز توكن",
+      "showTokens_other" : "عرض {{length}} رمز توكن",
+      "showSubAccounts_one" : "عرض {{length}} حساب فرعي",
+      "showSubAccounts_other" : "عرض {{length}} حساب فرعي",
+      "hideTokens_one" : "إخفاء رمز التوكن",
+      "hideTokens_other" : "إخفاء رموز التوكن",
+      "hideSubAccounts_one" : "إخفاء الحساب الفرعي",
+      "hideSubAccounts_other" : "إخفاء الحسابات الفرعية",
       "algorand" : {
-        "showTokens" : "عرض {{length}} ASA",
-        "showTokens_plural" : "عرض {{length}} ASA",
-        "hideTokens" : "إخفاء ASA",
-        "hideTokens_plural" : "إخفاء ASA"
+        "showTokens_one" : "عرض {{length}} ASA",
+        "showTokens_other" : "عرض {{length}} ASA",
+        "hideTokens_one" : "إخفاء ASA",
+        "hideTokens_other" : "إخفاء ASA"
       },
       "stellar" : {
-        "showTokens" : "إظهار {{length}} أصل",
-        "showTokens_plural" : "إظهار {{length}} أصل",
-        "hideTokens" : "إخفاء الأصل",
-        "hideTokens_plural" : "إخفاء الأصول"
+        "showTokens_one" : "عرض {{length}} أصل",
+        "showTokens_other" : "عرض {{length}} أصل",
+        "hideTokens_one" : "إخفاء الأصل",
+        "hideTokens_other" : "إخفاء الأصول"
       }
     },
     "noResultsFound" : "لم يتم العثور على أصل",
@@ -3048,8 +3064,8 @@
   "distribution" : {
     "header" : "توزيع الأصول",
     "list" : "توزيع الأصول ({{count}})",
-    "assets" : "أصل",
-    "assets_plural" : "أصولك",
+    "assets_one" : "أصل",
+    "assets_other" : "أصولك",
     "total" : "الرصيد الإجمالي:",
     "listAccount" : "توزيع الأصول ({{count}})",
     "title" : "أصول",
@@ -3433,6 +3449,17 @@
       "shareAddress" : "عنوان المشاركة",
       "addressCopied" : "تم نسخ العنوان إلى ذاكرة النصوص",
       "taprootWarning" : "تأكد أن المُرسل يدعم taproot",
+      "connectToNoah" : "جارٍ توصيلك بـ Noah",
+      "menu" : {
+        "crypto" : {
+          "title" : "من عنوان أصول مشفرة",
+          "description" : "أضف رصيد إلى محفظتك بأي أصل مشفر."
+        },
+        "fiat" : {
+          "title" : "من حساب بنكي",
+          "description" : "أضف رصيد USDC من خلال تحويل بنكي بالدولار الأمريكي أو اليورو. مطلوب اعرف عميلك (KYC)."
+        }
+      },
       "memoTag" : {
         "link" : "تحتاج إلى علامة/ملاحظة (تسمية الوجهة)؟",
         "title" : "تحتاج إلى علامة/ملاحظة (تسمية الوجهة)؟",
@@ -3445,8 +3472,8 @@
       },
       "selectNetwork" : {
         "title" : "اختر شبكة الأصل المشفر الذي تم اختياره",
-        "account" : "{{count}} حساب",
-        "account_plural" : "{{count}} حساب",
+        "account_one" : "{{count}} حساب",
+        "account_other" : "{{count}} حساب",
         "subtitle" : "هذه الشبكة يجب أن تُطابق الشبكة المختارة في المحفظة أو منصة التداول التي تحوِّل الأصول المشفرة.",
         "bannerTitle" : "تأكد من اختيار الشبكة الصحيحة. تعلم كيف يمكنك فعل ذلك.",
         "depositFromCexBannerTitle" : "إيداع الأصول المشفرة من حسابك كوينباس (Coinbase)"
@@ -3463,8 +3490,8 @@
       "addAccount" : {
         "title" : "جارٍ البحث عن حساب...",
         "subtitle" : "جارٍ التحقق ممّا إذا كان لديك حساب {{currencyName}} بالفعل على سلسلة الكتل.",
-        "foundAccount" : "تم العثور على {{count}} حساب",
-        "foundAccount_plural" : "تم العثور على {{count}} حساب",
+        "foundAccount_one" : "تم العثور على {{count}} حساب",
+        "foundAccount_other" : "تم العثور على {{count}} حساب",
         "stopSynchronization" : "إيقاف المزامنة",
         "addingAccount" : "لم يتم العثور على حسابات. جارٍ إنشاء حساب {{currencyName}} جديد..."
       },
@@ -3766,12 +3793,16 @@
         "apt_description" : "لمبادلة Aptos، استخدم أي جهاز Ledger متوافق آخر مثل ™Ledger Nano S Plus أو ™Ledger Nano X أو ™Ledger Flex أو ™Ledger Stax.",
         "cosmos_title" : "™Ledger Nano S لا تدعم مبادلة Cosmos",
         "cosmos_description" : "لمبادلة Cosmos، استخدم أي جهاز Ledger متوافق آخر مثل ™Ledger Nano S Plus أو ™Ledger Nano X أو ™Ledger Flex أو ™Ledger Stax.",
+        "hedera_title" : "™Ledger Nano S لا تدعم مبادلة Hedera",
+        "hedera_description" : "لمبادلة Hedera، استخدِم أي جهاز Ledger متوافق آخر مثل ™Ledger Nano S Plus أو ™Ledger Nano X أو ™Ledger Flex أو ™Ledger Stax.",
         "osmo_title" : "™Ledger Nano S لا تدعم مبادلة Osmosis",
         "osmo_description" : "لمبادلة Osmosis، استخدم أي جهاز Ledger متوافق آخر مثل ™Ledger Nano S Plus أو ™Ledger Nano X أو ™Ledger Flex أو ™Ledger Stax.",
         "dydx_title" : "™Ledger Nano S لا تدعم مبادلة dYdX",
         "dydx_description" : "لمبادلة dYdX، استخدم أي جهاز Ledger متوافق آخر مثل ™Ledger Nano S Plus أو ™Ledger Nano X أو ™Ledger Flex أو ™Ledger Stax.",
         "sui_title" : "™Ledger Nano S لا تدعم مبادلة Sui",
-        "sui_description" : "لمبادلة Sui، استخدِم أي جهاز Ledger آخر متوافق مثل ™Ledger Nano S Plus أو ™Ledger Nano X أو ™Ledger Flex أو ™Ledger Stax."
+        "sui_description" : "لمبادلة Sui، استخدِم أي جهاز Ledger آخر متوافق مثل ™Ledger Nano S Plus أو ™Ledger Nano X أو ™Ledger Flex أو ™Ledger Stax.",
+        "kaspa_title" : "™Ledger Nano S لا تدعم مبادلة Kaspa",
+        "kaspa_description" : "لمبادلة Kaspa، استخدِم أي جهاز Ledger متوافق آخر مثل ™Ledger Nano S Plus أو ™Ledger Nano X أو ™Ledger Flex أو ™Ledger Stax."
       }
     },
     "lending" : {
@@ -3893,10 +3924,10 @@
           "stepRange" : "خطوة {{currentStep}} من {{totalSteps}}"
         },
         "selectAccount" : {
-          "enabledAccountsAmount" : "لديك {{number}} حساب قام بالموافقة على {{amount}}",
-          "enabledAccountsAmount_plural" : "لديك {{number}} حساب قام بالموافقة على {{amount}}",
-          "enabledAccountsNoLimit" : "لديك {{number}} حساب قام بالموافقة على كمية غير محدودة من {{ currency }}",
-          "enabledAccountsNoLimit_plural" : "لديك {{number}} حسابات قام بالموافقة على كمية غير محدودة من {{ currency }}",
+          "enabledAccountsAmount_one" : "لديك {{number}} حساب وافق على {{amount}}",
+          "enabledAccountsAmount_other" : "لديك {{number}} حساب وافق على {{amount}}",
+          "enabledAccountsNoLimit_one" : "لديك {{number}} حساب وافق على مبلغ غير محدود من {{ currency }}",
+          "enabledAccountsNoLimit_other" : "لديك {{number}} حساب وافق على مبلغ غير محدود من {{ currency }}",
           "noEnabledAccounts" : "تحتاج إلى الموافقة على حساب قبل أن تتمكن من الإقراض."
         },
         "enable" : {
@@ -4080,6 +4111,7 @@
       "validateMemo" : "تحقق من صحة الملاحظة",
       "comment" : "التعليق",
       "validateComment" : "تأكيد التعليق",
+      "validateChainId" : "تأكيد صحة مُعرّف السلسلة",
       "quantity" : "الكمية"
     },
     "validation" : {
@@ -4287,8 +4319,8 @@
       }
     },
     "imported" : "تمت إضافة الأصل بنجاح",
-    "added" : "تمت إضافة الحساب إلى محفظتك الاستثمارية",
-    "added_plural" : "تمت إضافة {{count}} حساب إلى محفظتك الاستثمارية",
+    "added_one" : "تمت إضافة الحساب إلى محفظتك الاستثمارية",
+    "added_other" : "تمت إضافة {{count}} حساب إلى محفظتك الاستثمارية",
     "sections" : {
       "importable" : {
         "title" : "إضافة حساب موجود"
@@ -4354,8 +4386,8 @@
       "whichAddressType" : "تعلّم كيفية اختيار نوع العنوان",
       "sections" : {
         "importable" : {
-          "title" : "وجدنا {{count}} حساب",
-          "title_plural" : "وجدنا {{count}} حساب"
+          "title_one" : "وجدنا {{count}} حساب",
+          "title_other" : "وجدنا {{count}} حساب"
         },
         "creatable" : {
           "title" : "حساب جديد"
@@ -4397,8 +4429,8 @@
     "outdated" : "إصدار التطبيق قديم",
     "outdatedDesc" : "هناك تحديث مهم متاح لتطبيق {{appName}} على جهازك. يُرجى الانتقال إلى My Ledger (جهازي Ledger) لتحديثه.",
     "quitApp" : "الخروج من التطبيق على جهازك",
-    "appNotInstalled" : "يُرجى تثبيت تطبيق {{appName}}",
-    "appNotInstalled_plural" : "الرجاء تثبيت تطبيقات {{appName}}",
+    "appNotInstalled_one" : "يُرجى تثبيت تطبيق {{appName}}",
+    "appNotInstalled_other" : "يرجى تثبيت تطبيقات {{appName}}",
     "useAnotherDevice" : "استخدام جهاز آخر",
     "deviceNotOnboarded" : {
       "title" : "Ledger خاصتك غير مُستعدة للاستخدام بعد",
@@ -4553,8 +4585,8 @@
   },
   "RemoveDevice" : {
     "button" : {
-      "title" : "قم بإزالة جهاز {{nbDevices}}",
-      "title_plural" : "قم بإزالة أجهزة {{nbDevices}}"
+      "title_one" : "قم بإزالة {{nbDevices}} جهاز",
+      "title_other" : "قم بإزالة {{nbDevices}} جهاز"
     }
   },
   "manager" : {
@@ -4623,16 +4655,16 @@
       "title" : "تخزين",
       "used" : "مُستَخدمة",
       "genuine" : "جهازك أصلي",
-      "appsInstalled" : "<0>{{number}}</0> تطبيق",
-      "appsInstalled_plural" : "<0>{{number}}</0> تطبيق",
+      "appsInstalled_one" : "<0>{{number}}</0> تطبيق",
+      "appsInstalled_other" : "<0>{{number}}</0> تطبيق",
       "storageAvailable" : "متاح",
       "noFreeSpace" : "لم تتبقى أي مساحة تخزين",
       "appsToUpdate" : "<0>{{number}}</0> تحديث",
-      "appsToUpdate_plural" : "<0>{{number}}</0> تحديث"
+      "appsToUpdate_other" : "<0>{{number}}</0> تحديث"
     },
     "installSuccess" : {
       "title" : "تم تثبيت التطبيق بنجاح",
-      "title_plural" : "تم تثبيت التطبيقات بنجاح",
+      "title_other" : "تم تثبيت التطبيقات بنجاح",
       "notSupported" : "تم تثبيت التطبيق بنجاح، تعرف على المزيد حول التطبيقات المثبتة على موقعنا الإلكتروني.",
       "manageAccount" : "إضافة حسابات",
       "learnMore" : "تعرّف على المزيد",
@@ -4665,7 +4697,7 @@
         "desc" : "يرجى الانتظار حتى يتم تثبيت تطبيق {{appName}}",
         "button" : "جاري التثبيت...",
         "queued" : "في قائمة الانتظار",
-        "button_plural" : "جاري التثبيت... %{{progressPercentage}}"
+        "button_other" : "جارٍ التثبيت... %{{progressPercentage}}"
       },
       "done" : {
         "title" : "تم تثبيت التطبيق بنجاح",
@@ -4680,8 +4712,8 @@
       "continueInstall" : "تثبيت التطبيقات"
     },
     "update" : {
-      "title" : "{{number}} تحديث تطبيق",
-      "title_plural" : "{{number}} تحديثات للتطبيق",
+      "title_one" : "{{number}} تحديث للتطبيق",
+      "title_other" : "{{number}} تحديث للتطبيق",
       "step" : "خطوة التحديث {{step}}:",
       "updateWarn" : "لا تغادر My Ledger (جهازي Ledger) أثناء التحديث.",
       "progress" : "جاري تحديث الكل...",
@@ -4701,7 +4733,7 @@
         "title" : "تم بنجاح إلغاء تثبيت {{appName}} على {{productName}} الخاصة بك"
       },
       "dependency" : {
-        "title" : "التطبيقات الأخرى تحتاج الى تطبيق {{app}}",
+        "title_one" : "التطبيقات الأخرى بحاجة الى تطبيق {{app}}",
         "showAll" : "عرض التطبيقات المراد إلغاء تثبيتها",
         "description" : "التطبيقات على جهازك التي تحتاج إلى تطبيق {{app}} سيتم إلغاء تثبيتها أيضاً.",
         "description_one" : "بعض التطبيقات تعتمد على تطبيق {{app}}.",
@@ -6716,11 +6748,11 @@
     "changeValidator" : "تغيير المدقق",
     "endDelegation" : "إنهاء التفويض",
     "durationForDays0" : "للتو",
-    "durationForDays" : "ليوم واحد",
-    "durationForDays_plural" : "لمدة {{count}} أيام",
+    "durationForDays_one" : "ليوم واحد",
+    "durationForDays_other" : "لمدة {{count}} يوم",
     "durationDays0" : "للتو",
-    "durationDays" : "1 يوم",
-    "durationDays_plural" : "{{count}} أيام",
+    "durationDays_one" : "1 يوم",
+    "durationDays_other" : "{{count}} أيام",
     "selectValidatorTitle" : "اختر المدقق",
     "started" : {
       "title" : "اكسب المكافآت",
@@ -6924,20 +6956,20 @@
         "desc" : "سنُخبرك إذا طرأ أي شيء."
       },
       "time" : {
-        "second" : "منذ 1 ثانية",
-        "second_plural" : "منذ {{count}} ثانية",
-        "minute" : "منذ 1 دقيقة",
-        "minute_plural" : "منذ {{count}} دقيقة",
-        "hour" : "منذ 1 ساعة",
-        "hour_plural" : "منذ {{count}} ساعة",
-        "day" : "منذ 1 يوم",
-        "day_plural" : "منذ {{count}} يوم",
-        "week" : "منذ 1 أسبوع",
-        "week_plural" : "منذ {{count}} أسبوع",
-        "month" : "منذ 1 شهر",
-        "month_plural" : "منذ {{count}} شهر",
-        "year" : "منذ 1 سنة",
-        "year_plural" : "منذ {{count}} سنة"
+        "second_one" : "منذ 1 ثانية",
+        "second_other" : "منذ {{count}} ثانية",
+        "minute_one" : "منذ 1 دقيقة",
+        "minute_other" : "منذ {{count}} دقيقة",
+        "hour_one" : "منذ 1 ساعة",
+        "hour_other" : "منذ {{count}} ساعة",
+        "day_one" : "منذ 1 يوم",
+        "day_other" : "منذ {{count}} يوم",
+        "week_one" : "منذ 1 أسبوع",
+        "week_other" : "منذ {{count}} أسبوع",
+        "month_one" : "منذ 1 شهر",
+        "month_other" : "منذ {{count}} شهر",
+        "year_one" : "منذ 1 سنة",
+        "year_other" : "منذ {{count}} سنة"
       }
     },
     "status" : {
@@ -7191,16 +7223,18 @@
   "asset" : {
     "title" : "{{assetName}} خاصتك",
     "accountsSection" : {
-      "title" : "حسابات {{currencyName}} خاصتك"
+      "title_one" : "حساب {{currencyName}} خاصتك",
+      "title_other" : "حسابات {{currencyName}} خاصتك"
     }
   },
   "customImage" : {
     "title" : "صورة شاشة القَفل",
     "change" : "تغيير",
     "drawer" : {
+      "title" : "شاشة قَفل مُخصّصة",
       "options" : {
-        "uploadFromPhone" : "اختر من معرض الصور خاصتي",
-        "remove" : "إزالة الصورة الحالية"
+        "uploadFromPhone" : "تغيير الصورة",
+        "remove" : "حذف شاشة القَفل"
       }
     },
     "toastRemove" : "تم إزالة صورة شاشة القفل",
@@ -7595,8 +7629,8 @@
       },
       "synchronizedInstances" : {
         "cta" : "إدارة",
-        "title" : "تمت مزامنة عدد {{count}} تطبيق Ledger Live",
-        "title_plural" : "تمت مزامنة عدد {{count}} تطبيق Ledger Live",
+        "title_one" : "تمت مزامنة {{count}} تطبيق Ledger Live",
+        "title_other" : "تمت مزامنة {{count}} تطبيق Ledger Live",
         "error" : "الحالات",
         "unsecuredError" : {
           "title" : "قم بتوصيل نفس جهاز Ledger الذي استخدمته لتمكين مزامنة Ledger",
@@ -7767,8 +7801,8 @@
     },
     "selectNetwork" : {
       "title" : "اختر شبكة سلسلة الكتل (blockchain) التي ينتمي الأصل إليها",
-      "detectedAccounts" : "{{count}} حساب (تم اكتشافه)",
-      "detectedAccounts_plural" : "{{count}} حساب (تم اكتشافه)"
+      "detectedAccounts_one" : "{{count}} حساب (تم اكتشافه)",
+      "detectedAccounts_other" : "{{count}} حساب (تم اكتشافه)"
     }
   },
   "emptyList" : {
@@ -7800,18 +7834,18 @@
     "ath" : "الحد الأقصى التاريخي",
     "atl" : "الحد الأدنى التاريخي",
     "timeAgo" : {
-      "years" : "(منذ {{count}} سنة)",
-      "years_plural" : "(منذ {{count}} سنة)",
-      "months" : "(منذ {{count}} شهر)",
-      "months_plural" : "(منذ {{count}} شهر)",
-      "days" : "(منذ {{count}} يوم)",
-      "days_plural" : "(منذ {{count}} يوم)",
-      "hours" : "(منذ {{count}} ساعة)",
-      "hours_plural" : "(منذ {{count}} ساعة)",
-      "minutes" : "(منذ {{count}} دقيقة)",
-      "minutes_plural" : "(منذ {{count}} دقيقة)",
-      "seconds" : "(منذ {{count}} ثانية)",
-      "seconds_plural" : "(منذ {{count}} ثانية)"
+      "years_one" : "(منذ {{count}} سنة)",
+      "years_other" : "(منذ {{count}} سنة)",
+      "months_one" : "(منذ {{count}} شهر)",
+      "months_other" : "(منذ {{count}} شهر)",
+      "days_one" : "(منذ {{count}} يوم)",
+      "days_other" : "(منذ {{count}} يوم)",
+      "hours_one" : "(منذ {{count}} ساعة)",
+      "hours_other" : "(منذ {{count}} ساعة)",
+      "minutes_one" : "(منذ {{count}} دقيقة)",
+      "minutes_other" : "(منذ {{count}} دقيقة)",
+      "seconds_one" : "(منذ {{count}} ثانية)",
+      "seconds_other" : "(منذ {{count}} ثانية)"
     },
     "performance" : "الأداء",
     "low" : "منخفض",
@@ -7846,8 +7880,8 @@
     "selectAccount" : "اختر حساب",
     "searchPlaceholder" : "بحث",
     "emptyAssetList" : "لم يتم العثور على أصول",
-    "accountCount" : "{{count}} حساب",
-    "accountCount_plural" : "{{count}} حساب",
+    "accountCount_one" : "{{count}} حساب",
+    "accountCount_other" : "{{count}} حساب",
     "errors" : {
       "title" : "فشل الاتصال",
       "backend" : "حدث خطأ ما من جانبنا. يُرجى إعادة المحاولة لاحقاً",
@@ -7935,6 +7969,15 @@
     "default" : {
       "title" : "حدث خطأ ما",
       "description" : "يرجى إعادة المحاولة أو التواصل مع دعم Ledger إذا كان لديك شك"
+    }
+  },
+  "canton" : {
+    "onboard" : {
+      "account" : "حساب",
+      "authorize" : "تصريح",
+      "preapprove" : "تمت إضافة الحساب بنجاح",
+      "validator" : "مُدقِّق Ledger",
+      "title" : "اقبل تلقائياً الأموال الواردة"
     }
   }
 }
