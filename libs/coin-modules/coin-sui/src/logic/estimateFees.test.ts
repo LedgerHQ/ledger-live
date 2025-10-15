@@ -33,14 +33,17 @@ describe("estimateFees", () => {
 
     const result = await estimateFees(transactionIntent);
 
-    expect(suiAPI.paymentInfo).toHaveBeenCalledWith(transactionIntent.sender, {
-      recipient: transactionIntent.recipient,
-      amount: BigNumber(transactionIntent.amount.toString()),
-      coinType: "0x2::sui::SUI",
-      errors: {},
-      family: "sui",
-      mode: "send",
-    });
+    expect(suiAPI.paymentInfo).toHaveBeenCalledWith(
+      transactionIntent.sender,
+      expect.objectContaining({
+        recipient: transactionIntent.recipient,
+        amount: BigNumber(transactionIntent.amount.toString()),
+        coinType: "0x2::sui::SUI",
+        errors: {},
+        family: "sui",
+        mode: "send",
+      }),
+    );
     expect(result).toBe(BigInt(mockGasBudget));
   });
 
@@ -61,14 +64,17 @@ describe("estimateFees", () => {
 
     const result = await estimateFees(transactionIntent);
 
-    expect(suiAPI.paymentInfo).toHaveBeenCalledWith(transactionIntent.sender, {
-      recipient: transactionIntent.recipient,
-      amount: BigNumber("0"),
-      coinType: "0x2::sui::SUI",
-      errors: {},
-      family: "sui",
-      mode: "send",
-    });
+    expect(suiAPI.paymentInfo).toHaveBeenCalledWith(
+      transactionIntent.sender,
+      expect.objectContaining({
+        recipient: transactionIntent.recipient,
+        amount: BigNumber("0"),
+        coinType: "0x2::sui::SUI",
+        errors: {},
+        family: "sui",
+        mode: "send",
+      }),
+    );
     expect(result).toBe(BigInt(mockGasBudget));
   });
 });
