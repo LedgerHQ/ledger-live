@@ -1443,8 +1443,8 @@
   },
   "banners" : {
     "cleanCache" : {
-      "title" : "試験的設定の変更にはCacheの削除が必要です",
-      "cta" : "Cacheを削除する"
+      "title" : "試験的設定の変更にはキャッシュの削除が必要です",
+      "cta" : "キャッシュを削除する"
     },
     "migrate" : "Ledger Liveアカウントのアップデートが利用可能です。",
     "genericTerminatedCrypto" : "{{coinName}} には対応していません。",
@@ -1895,7 +1895,9 @@
       "transferAmount" : "送付額",
       "validatorsCount" : "バリデータ（{{number}}）",
       "version" : "バージョン",
-      "accountCreationFee" : "アカウント作成手数料"
+      "accountCreationFee" : "アカウント作成手数料",
+      "senderChainId" : "送信元チェーンID",
+      "receiverChainId" : "受信先チェーンID"
     }
   },
   "operationList" : {
@@ -2415,7 +2417,9 @@
         "unitVByte" : "{{unit}}/vbyte",
         "nft" : "NFT",
         "nftQuantity" : "数量",
-        "splExtensionsWarning" : "お客様は、トークン拡張としても知られる、Token-2022プログラムの一部であるトークンを扱おうとしています。このトークンには特定のリスクが伴います。詳しくは<0>こちら</0>。"
+        "splExtensionsWarning" : "お客様は、トークン拡張としても知られる、Token-2022プログラムの一部であるトークンを扱おうとしています。このトークンには特定のリスクが伴います。詳しくは<0>こちら</0>。",
+        "senderChainId" : "送信元チェーンID",
+        "receiverChainId" : "受信先チェーンID"
       },
       "verification" : {
         "streaming" : {
@@ -4692,8 +4696,8 @@
       "passwordAutoLock" : "オートロック",
       "passwordAutoLockDesc" : "非アクティブ時にLedger Liveを自動的にロックします。",
       "changePassword" : "パスワードの変更",
-      "softResetTitle" : "Cacheを削除する",
-      "softResetDesc" : "Ledger LiveのCacheを削除し、ブロックチェーンと再同期する。",
+      "softResetTitle" : "キャッシュを削除する",
+      "softResetDesc" : "Ledger Liveのキャッシュを削除し、ブロックチェーンと再同期する。",
       "softReset" : "クリア",
       "resetThirdPartyData" : "サードパーティーのデータをリセット",
       "resetThirdPartyDataDesc" : "サードパーティーのトランザクションプロバイダーへのアクセスに使用される、ローカルのサードパーティーのデータをすべて消去します。",
@@ -4804,12 +4808,12 @@
       "warning" : "Ledger Liveをリセットすると、すべてのアカウントのスワップ取引履歴が消去されます。"
     },
     "softResetModal" : {
-      "title" : "Cacheを削除する",
-      "desc" : "Cacheデータを削除すると、ネットワークが強制的に再同期されます。設定とアカウントは保存されます。暗号資産にアクセスするためのプライベートキーは、Ledgerデバイスとリカバリーシートに安全に保管されます。"
+      "title" : "キャッシュを削除する",
+      "desc" : "キャッシュデータを削除すると、ネットワークが強制的に再同期されます。設定とアカウントは保存されます。暗号資産にアクセスするためのプライベートキーは、Ledgerデバイスとリカバリーシートに安全に保管されます。"
     },
     "resetFallbackModal" : {
       "title" : "必要なユーザーアクション",
-      "part1" : "Cacheフォルダを削除できませんでした。手動でフォルダを削除してください。",
+      "part1" : "キャッシュフォルダを削除できませんでした。手動でフォルダを削除してください。",
       "part2" : "フォルダを開くボタンをクリックして ",
       "part3" : "アプリを終了",
       "part4" : "\"sqlite\"フォルダを手動で削除します。",
@@ -4823,7 +4827,7 @@
     },
     "openUserDataDirectory" : {
       "title" : "ユーザーデータを表示",
-      "desc" : "コンピューターに保存されたアカウントやCache、設定といったユーザーデータを表示する。",
+      "desc" : "コンピューターに保存されたアカウントやキャッシュ、設定といったユーザーデータを表示する。",
       "btn" : "表示"
     },
     "repairDevice" : {
@@ -5067,7 +5071,7 @@
       "welcome" : {
         "title" : "暗号資産とNFTの最も安全なウォレット",
         "description" : "Ledger Liveで、暗号資産とNFTを安全に管理・購入・運用しましょう。",
-        "nextButton" : "はじめに",
+        "nextButton" : "はじめる",
         "noDevice" : "デバイスをお持ちでない場合",
         "buyLink" : "デバイスをお持ちでない場合Ledgerを購入する",
         "byTapping" : "「はじめる」をタップすることで、お客様が同意したことになります。",
@@ -5125,7 +5129,7 @@
       },
       "tutorial" : {
         "steps" : {
-          "getStarted" : "はじめに",
+          "getStarted" : "はじめる",
           "pinCode" : "PINコード",
           "recoveryPhrase" : "リカバリーフレーズ",
           "hideRecoveryPhrase" : "リカバリーフレーズを非表示にする",
@@ -6853,6 +6857,12 @@
     "DeviceDisconnectedWhileSendingError" : {
       "title" : "デバイスの接続が失われました",
       "description" : "Ledger Liveは、デバイスの接続に失敗しました。問題が解決しない場合は、再度お試しいただくか、Ledgerサポートにご連絡ください。"
+    },
+    "RecipientAddressSanctionedError" : {
+      "title" : "このトランザクションには制裁ウォレットアドレスが関係しており、処理できません。"
+    },
+    "KadenaCrossChainTransfer" : {
+      "title" : "この取引はクロスチェーン転送のため、完了に数分かかることがあります。"
     },
     "DisconnectError" : {
       "title" : "デバイスの接続が失われました",
