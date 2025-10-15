@@ -1,9 +1,10 @@
 import BigNumber from "bignumber.js";
+import { createHash } from "crypto";
 import { Transaction } from "@hashgraph/sdk";
 import type { AssetInfo } from "@ledgerhq/coin-framework/api/types";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { InvalidAddress } from "@ledgerhq/errors";
-import { HEDERA_TRANSACTION_MODES } from "../constants";
+import { HEDERA_TRANSACTION_MODES, SYNTHETIC_BLOCK_WINDOW_SECONDS } from "../constants";
 import { apiClient } from "../network/api";
 import { getMockedOperation } from "../test/fixtures/operation.fixture";
 import { getMockedTokenCurrency } from "../test/fixtures/currency.fixture";
@@ -23,6 +24,7 @@ import {
   getTransactionExplorer,
   checkAccountTokenAssociationStatus,
   safeParseAccountId,
+  getSyntheticBlock,
 } from "./utils";
 import { HederaRecipientInvalidChecksum } from "../errors";
 
@@ -388,6 +390,43 @@ describe("getOperationValue", () => {
 
       expect(error).toBeInstanceOf(InvalidAddress);
       expect(accountId).toBeNull();
+    });
+  });
+
+  describe("getSyntheticBlock", () => {
+    it("calculates correct blockHeight and blockHash for typical timestamp, with default block window", () => {
+      const consensusTimestamp = "1760523159.854347000";
+      const blockWindowSeconds = SYNTHETIC_BLOCK_WINDOW_SECONDS;
+      const expectedSeconds = Math.floor(Number(consensusTimestamp));
+      const expectedBlockHeight = Math.floor(expectedSeconds / blockWindowSeconds);
+      const expectedBlockHash = createHash("sha256")
+        .update(expectedBlockHeight.toString())
+        .digest("hex");
+
+      const result = getSyntheticBlock(consensusTimestamp);
+
+      expect(result.blockHeight).toBe(expectedBlockHeight);
+      expect(result.blockHash).toBe(expectedBlockHash);
+    });
+
+    it("supports custom blockWindowSeconds", () => {
+      const consensusTimestamp = "1760523159.854347000";
+      const blockWindowSeconds = 3600;
+      const expectedSeconds = Math.floor(Number(consensusTimestamp));
+      const expectedBlockHeight = Math.floor(expectedSeconds / blockWindowSeconds);
+      const expectedBlockHash = createHash("sha256")
+        .update(expectedBlockHeight.toString())
+        .digest("hex");
+
+      const result = getSyntheticBlock(consensusTimestamp, blockWindowSeconds);
+
+      expect(result.blockHeight).toBe(expectedBlockHeight);
+      expect(result.blockHash).toBe(expectedBlockHash);
+    });
+
+    it("throws error for invalid consensusTimestamp", () => {
+      expect(() => getSyntheticBlock("not_a_number")).toThrow();
+      expect(() => getSyntheticBlock("")).toThrow();
     });
   });
 });

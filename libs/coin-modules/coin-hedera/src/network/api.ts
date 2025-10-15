@@ -132,9 +132,28 @@ async function getAccountTokens(address: string): Promise<HederaMirrorToken[]> {
   return tokens;
 }
 
+async function getLatestTransaction(): Promise<HederaMirrorTransaction> {
+  const params = new URLSearchParams({
+    limit: "1",
+    order: "desc",
+  });
+
+  const res = await fetch<HederaMirrorTransactionsResponse>(
+    `/api/v1/transactions?${params.toString()}`,
+  );
+  const transaction = res.data.transactions[0];
+
+  if (!transaction) {
+    throw new Error("No transactions found on the Hedera network");
+  }
+
+  return transaction;
+}
+
 export const apiClient = {
   getAccountsForPublicKey,
   getAccount,
   getAccountTokens,
   getAccountTransactions,
+  getLatestTransaction,
 };

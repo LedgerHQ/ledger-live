@@ -8,17 +8,20 @@ import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { apiClient } from "../network/api";
 import { parseTransfers } from "../network/utils";
 import type { HederaMirrorToken, HederaMirrorTransaction, HederaOperationExtra } from "../types";
-import { base64ToUrlSafeBase64, getMemoFromBase64 } from "./utils";
+import { base64ToUrlSafeBase64, getMemoFromBase64, getSyntheticBlock } from "./utils";
 
-function getCommonOperationData(rawTx: HederaMirrorTransaction, useEncodedHash: boolean) {
+function getCommonOperationData(
+  rawTx: HederaMirrorTransaction,
+  useEncodedHash: boolean,
+  useSyntheticBlocks: boolean,
+) {
   const timestamp = new Date(Number.parseInt(rawTx.consensus_timestamp.split(".")[0], 10) * 1000);
   const hash = useEncodedHash
     ? base64ToUrlSafeBase64(rawTx.transaction_hash)
     : rawTx.transaction_hash;
   const fee = new BigNumber(rawTx.charged_tx_fee);
   const hasFailed = rawTx.result !== "SUCCESS";
-  const blockHeight = 10;
-  const blockHash = null;
+  const syntheticBlock = getSyntheticBlock(rawTx.consensus_timestamp);
   const memo = getMemoFromBase64(rawTx.memo_base64);
   const extra: HederaOperationExtra = {
     pagingToken: rawTx.consensus_timestamp,
@@ -31,8 +34,8 @@ function getCommonOperationData(rawTx: HederaMirrorTransaction, useEncodedHash: 
     hash,
     fee,
     hasFailed,
-    blockHeight,
-    blockHash,
+    blockHeight: useSyntheticBlocks ? syntheticBlock.blockHeight : 10,
+    blockHash: useSyntheticBlocks ? syntheticBlock.blockHash : null,
     extra,
   };
 }
@@ -173,6 +176,7 @@ export async function listOperations({
   fetchAllPages,
   skipFeesForTokenOperations,
   useEncodedHash,
+  useSyntheticBlocks,
 }: {
   currency: CryptoCurrency;
   address: string;
@@ -182,6 +186,7 @@ export async function listOperations({
   fetchAllPages: boolean;
   skipFeesForTokenOperations: boolean;
   useEncodedHash: boolean;
+  useSyntheticBlocks: boolean;
 }): Promise<{
   coinOperations: Operation<HederaOperationExtra>[];
   tokenOperations: Operation<HederaOperationExtra>[];
@@ -205,7 +210,7 @@ export async function listOperations({
   });
 
   for (const rawTx of mirrorResult.transactions) {
-    const commonData = getCommonOperationData(rawTx, useEncodedHash);
+    const commonData = getCommonOperationData(rawTx, useEncodedHash, useSyntheticBlocks);
 
     // process token transfers
     const tokenResult = processTokenTransfers({

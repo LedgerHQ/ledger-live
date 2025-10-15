@@ -1,4 +1,5 @@
 import BigNumber from "bignumber.js";
+import { createHash } from "crypto";
 import invariant from "invariant";
 import { AccountId, Transaction as HederaSDKTransaction } from "@hashgraph/sdk";
 import { AssetInfo, TransactionIntent } from "@ledgerhq/coin-framework/api/types";
@@ -9,7 +10,11 @@ import { InvalidAddress } from "@ledgerhq/errors";
 import { makeLRUCache, seconds } from "@ledgerhq/live-network/cache";
 import type { Currency, ExplorerView, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import type { AccountLike, Operation as LiveOperation } from "@ledgerhq/types-live";
-import { HEDERA_OPERATION_TYPES, HEDERA_TRANSACTION_MODES } from "../constants";
+import {
+  HEDERA_OPERATION_TYPES,
+  HEDERA_TRANSACTION_MODES,
+  SYNTHETIC_BLOCK_WINDOW_SECONDS,
+} from "../constants";
 import { apiClient } from "../network/api";
 import type {
   HederaAccount,
@@ -224,3 +229,27 @@ export const safeParseAccountId = (
     return [new InvalidAddress("", { currencyName }), null];
   }
 };
+
+/**
+ * Calculates a synthetic block height based on Hedera consensus timestamp.
+ *
+ * @param consensusTimestamp - Hedera consensus timestamp
+ * @param blockWindowSeconds - Duration of one synthetic block in seconds (default: 10)
+ * @returns Deterministic synthetic block (height and hash)
+ */
+export function getSyntheticBlock(
+  consensusTimestamp: string,
+  blockWindowSeconds = SYNTHETIC_BLOCK_WINDOW_SECONDS,
+) {
+  const seconds = Math.floor(Number(consensusTimestamp));
+
+  if (Number.isNaN(seconds) || seconds === 0) {
+    throw new Error(`Invalid consensus timestamp: ${consensusTimestamp}`);
+  }
+
+  const blockHeight = Math.floor(seconds / blockWindowSeconds);
+  const blockHash = createHash("sha256").update(blockHeight.toString()).digest("hex");
+  const blockTime = new Date(seconds * 1000);
+
+  return { blockHeight, blockHash, blockTime };
+}
