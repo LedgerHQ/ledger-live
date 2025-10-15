@@ -106,47 +106,6 @@ export const DEVICE_LABELS_CONFIG: DeviceLabelsConfig = {
     sendConfirm: {
       default: DeviceLabels.HOLD_TO_SIGN,
     },
-    sendVerify: {
-      default: DeviceLabels.REVIEW_OPERATION,
-    },
-    sendConfirm: {
-      [AppInfos.SOLANA.name]: DeviceLabels.SIGN_TRANSACTION,
-      [AppInfos.TRON.name]: DeviceLabels.SIGN,
-      [AppInfos.STELLAR.name]: DeviceLabels.SIGN,
-      [AppInfos.RIPPLE.name]: DeviceLabels.SIGN,
-      [AppInfos.APTOS.name]: DeviceLabels.APPROVE,
-      [AppInfos.SUI.name]: DeviceLabels.ACCEPT,
-      [AppInfos.BITCOIN.name]: DeviceLabels.CONTINUE,
-      default: DeviceLabels.CAPS_APPROVE,
-    },
-  },
-  [DeviceModelId.stax]: {
-    receiveVerify: {
-      [AppInfos.BNB_CHAIN.name]: DeviceLabels.VERIFY_BSC,
-      [AppInfos.COSMOS.name]: DeviceLabels.PLEASE_REVIEW,
-      [AppInfos.ETHEREUM.name]: DeviceLabels.VERIFY_ETHEREUM,
-      [AppInfos.POLKADOT.name]: DeviceLabels.PLEASE_REVIEW,
-      [AppInfos.POLYGON.name]: DeviceLabels.VERIFY_POLYGON,
-      [AppInfos.SOLANA.name]: DeviceLabels.VERIFY_SOLANA_ADDRESS,
-      default: DeviceLabels.ADDRESS,
-    },
-    receiveConfirm: {
-      default: DeviceLabels.CONFIRM,
-    },
-    delegateVerify: {
-      [AppInfos.NEAR.name]: DeviceLabels.VIEW_HEADER,
-      default: DeviceLabels.REVIEW_OPERATION,
-    },
-    delegateConfirm: {
-      [AppInfos.NEAR.name]: DeviceLabels.CONTINUE_TO_ACTION,
-      default: DeviceLabels.HOLD_TO_SIGN,
-    },
-    sendVerify: {
-      default: DeviceLabels.REVIEW_OPERATION,
-    },
-    sendConfirm: {
-      default: DeviceLabels.HOLD_TO_SIGN,
-    },
   },
   default: {
     receiveVerify: {

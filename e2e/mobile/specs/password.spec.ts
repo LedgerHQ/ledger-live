@@ -1,6 +1,6 @@
 import { device } from "detox";
 
-const tags: string[] = ["@NanoSP", "@LNS", "@NanoX"];
+const tags: string[] = ["@NanoSP", "@LNS", "@NanoX", "@Stax"];
 describe("Password Lock Screen", () => {
   const nanoApp = AppInfos.ETHEREUM;
   const CORRECT_PASSWORD = "passWORD$123!";

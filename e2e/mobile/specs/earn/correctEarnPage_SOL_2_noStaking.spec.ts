@@ -6,7 +6,7 @@ const testConfig = {
   earnButtonId: "7db7743d-3e2f-592b-b3f8-db5916290ec0",
   staking: false,
   tmsLinks: ["B2CQA-3680"],
-  tags: ["@NanoSP", "@LNS", "@NanoX"],
+  tags: ["@NanoSP", "@LNS", "@NanoX", "@Stax"],
 };
 
 runCorrectEarnPageIsLoadedDependingOnUserStakingSituationTest(

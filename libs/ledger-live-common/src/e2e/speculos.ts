@@ -654,7 +654,12 @@ export async function activateLedgerSync() {
 export async function activateExpertMode() {
   if (isTouchDevice()) {
     await goToSettings();
-    await pressAndRelease(DeviceLabels.SETTINGS_TOGGLE_1);
+    const SettingsToggle1Coordinates = { x: 344, y: 136 };
+    await pressAndRelease(
+      DeviceLabels.SETTINGS_TOGGLE_1,
+      SettingsToggle1Coordinates.x,
+      SettingsToggle1Coordinates.y,
+    );
   } else {
     await pressUntilTextFound(DeviceLabels.EXPERT_MODE);
     await pressBoth();
