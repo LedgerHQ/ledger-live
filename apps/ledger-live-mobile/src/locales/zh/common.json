@@ -1206,6 +1206,9 @@
     "AmountTooSmall" : {
       "title" : "此交易的最低数额要求为 {{amount}}"
     },
+    "KadenaCrossChainTransfer" : {
+      "title" : "这是跨链转移，可能需要几分钟才能完成交易。"
+    },
     "AddressesSanctionedError" : {
       "title" : "保障您的安全",
       "description" : "此交易涉及受制裁的钱包地址，无法处理。\n——{{addresses}}"
@@ -1305,7 +1308,8 @@
     "estimatedTime" : {
       "slow" : "约 2-3 分钟",
       "medium" : "约 30 秒",
-      "fast" : "约 15 秒"
+      "fast" : "约 15 秒",
+      "custom" : ""
     }
   },
   "signout" : {
@@ -2794,7 +2798,9 @@
       "id" : "Id",
       "autoClaimedRewards" : "自动领取的奖励",
       "stakedAmount" : "权益质押数额",
-      "accountCreationFee" : "账户创建费"
+      "accountCreationFee" : "账户创建费",
+      "senderChainId" : "发送者链 ID",
+      "receiverChainId" : "接收者链 ID"
     },
     "multipleAddresses" : "为什么有多个地址？",
     "tokenName" : "代币名称",
@@ -3242,7 +3248,7 @@
       },
       "transactionsAlerts" : {
         "title" : "交易提醒（测试版）",
-        "desc" : "获取以太坊、多边形、币安智能链、雪崩链和以太坊经典的交易通知"
+        "desc" : "获取以太坊、Polygon、BNB 链、雪崩链和以太坊经典的交易通知"
       },
       "price" : {
         "title" : "价格提醒",
@@ -4083,6 +4089,7 @@
       "validateMemo" : "验证 Memo",
       "comment" : "备注",
       "validateComment" : "验证备注",
+      "validateChainId" : "验证链 ID",
       "quantity" : "数量"
     },
     "validation" : {
