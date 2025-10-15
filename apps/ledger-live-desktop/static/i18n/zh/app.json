@@ -1895,7 +1895,9 @@
       "transferAmount" : "转移数额",
       "validatorsCount" : "验证者 ({{number}})",
       "version" : "版本",
-      "accountCreationFee" : "账户创建费"
+      "accountCreationFee" : "账户创建费",
+      "senderChainId" : "发送者链 ID",
+      "receiverChainId" : "接收者链 ID"
     }
   },
   "operationList" : {
@@ -2415,7 +2417,9 @@
         "unitVByte" : "{{unit}}/vbyte",
         "nft" : "NFT",
         "nftQuantity" : "数量",
-        "splExtensionsWarning" : "您正在交互的代币属于 Token-2022 程序（亦称代币扩展程序）。该代币具有特定风险。<0>点击此处</0>了解详情。"
+        "splExtensionsWarning" : "您正在交互的代币属于 Token-2022 程序（亦称代币扩展程序）。该代币具有特定风险。<0>点击此处</0>了解详情。",
+        "senderChainId" : "发送者链 ID",
+        "receiverChainId" : "接收者链 ID"
       },
       "verification" : {
         "streaming" : {
@@ -6853,6 +6857,12 @@
     "DeviceDisconnectedWhileSendingError" : {
       "title" : "设备连接中断",
       "description" : "Ledger Live 无法连接到您的设备。请重试，如果问题仍然存在，请联系 Ledger 客服。"
+    },
+    "RecipientAddressSanctionedError" : {
+      "title" : "此交易涉及受制裁的钱包地址，无法处理。"
+    },
+    "KadenaCrossChainTransfer" : {
+      "title" : "这是跨链转移，可能需要几分钟才能完成交易。"
     },
     "DisconnectError" : {
       "title" : "设备连接中断",
