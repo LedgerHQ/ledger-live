@@ -71,6 +71,7 @@ export function createApi(config: Record<string, never>): Api<HederaMemo> {
         fetchAllPages: false,
         skipFeesForTokenOperations: true,
         useEncodedHash: false,
+        useSyntheticBlocks: true,
       });
 
       const liveOperations = [

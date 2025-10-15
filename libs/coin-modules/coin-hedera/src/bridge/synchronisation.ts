@@ -69,6 +69,7 @@ export const getAccountShape: GetAccountShape<HederaAccount> = async (
     fetchAllPages: true,
     skipFeesForTokenOperations: false,
     useEncodedHash: true,
+    useSyntheticBlocks: false,
   });
 
   const newSubAccounts = await getSubAccounts(

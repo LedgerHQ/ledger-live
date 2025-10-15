@@ -6,11 +6,11 @@ import {
   TokenAssociateTransaction,
   TransferTransaction,
 } from "@hashgraph/sdk";
-import { FeeEstimation, Operation, Pagination } from "@ledgerhq/coin-framework/api/types";
+import type { FeeEstimation, Pagination } from "@ledgerhq/coin-framework/api/types";
 import { createApi } from "../api";
 import { HEDERA_TRANSACTION_MODES, TINYBAR_SCALE } from "../constants";
+import { getSyntheticBlock } from "../logic/utils";
 import { MAINNET_TEST_ACCOUNTS } from "../test/fixtures/account.fixture";
-import type { HederaMemo } from "../types";
 
 describe("createApi", () => {
   const api = createApi({});
@@ -269,9 +269,9 @@ describe("createApi", () => {
     it("returns the last block information", async () => {
       const lastBlock = await api.lastBlock();
 
-      expect(lastBlock).toMatchObject({
-        height: expect.any(Number),
-      });
+      expect(lastBlock.height).toBeGreaterThan(0);
+      expect(lastBlock.hash?.length).toBe(64);
+      expect(lastBlock.time?.getTime()).toBeGreaterThan(0);
     });
   });
 
@@ -287,16 +287,33 @@ describe("createApi", () => {
       expect(operations.length).toBe(0);
     });
 
-    it("returns operations for real account with tokens", async () => {
+    it("returns operations with valid synthetic block info", async () => {
+      const lastPagingToken = "1753099264.927988000";
       const block = await api.lastBlock();
-      const [operations] = await api.listOperations(MAINNET_TEST_ACCOUNTS.withTokens.accountId, {
+      const [ops] = await api.listOperations(MAINNET_TEST_ACCOUNTS.withTokens.accountId, {
+        minHeight: block.height,
+        order: "asc",
+        limit: 4,
+        lastPagingToken,
+      });
+
+      const expectedSyntheticBlock = getSyntheticBlock(lastPagingToken);
+      const blockHeights = ops.map(o => o.tx.block.height);
+
+      expect(blockHeights).toHaveLength(4);
+      expect(blockHeights.every(h => h >= expectedSyntheticBlock.blockHeight)).toBe(true);
+    });
+
+    it("returns operations for real account with tokens", async () => {
+      const lastPagingToken = "1753099264.927988000";
+      const block = await api.lastBlock();
+      const [ops] = await api.listOperations(MAINNET_TEST_ACCOUNTS.withTokens.accountId, {
         minHeight: block.height,
         order: "desc",
         limit: 100,
-        lastPagingToken: "1753099264.927988000",
+        lastPagingToken,
       });
 
-      const ops = operations as unknown as Operation<HederaMemo>[];
       const memoTxHash = "WvMcFERtxRsGJqxqGVDYa6JR5PqLgFeJxiSVoimayaWra/AMEJMzC09LhdRLTZ/M";
       const operationWithMemo = ops.find(op => op.tx.hash === memoTxHash);
       const firstTokenAssociateOperations = ops.find(op => op.type === "ASSOCIATE_TOKEN");

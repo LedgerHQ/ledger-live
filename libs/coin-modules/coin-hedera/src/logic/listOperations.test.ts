@@ -49,6 +49,7 @@ describe("listOperations", () => {
       fetchAllPages: true,
       skipFeesForTokenOperations: false,
       useEncodedHash: false,
+      useSyntheticBlocks: false,
     });
 
     expect(apiClient.getAccountTransactions).toHaveBeenCalledTimes(1);
@@ -101,6 +102,7 @@ describe("listOperations", () => {
       fetchAllPages: true,
       skipFeesForTokenOperations: false,
       useEncodedHash: false,
+      useSyntheticBlocks: false,
     });
 
     expect(result.coinOperations).toHaveLength(1);
@@ -171,6 +173,7 @@ describe("listOperations", () => {
       fetchAllPages: true,
       skipFeesForTokenOperations: false,
       useEncodedHash: false,
+      useSyntheticBlocks: false,
     });
 
     expect(result.coinOperations).toHaveLength(1);
@@ -234,6 +237,7 @@ describe("listOperations", () => {
       fetchAllPages: true,
       skipFeesForTokenOperations: false,
       useEncodedHash: false,
+      useSyntheticBlocks: false,
     });
 
     expect(result.coinOperations).toHaveLength(1);
@@ -294,6 +298,7 @@ describe("listOperations", () => {
       fetchAllPages: true,
       skipFeesForTokenOperations: false,
       useEncodedHash: false,
+      useSyntheticBlocks: false,
     });
 
     expect(result.coinOperations).toHaveLength(0);
@@ -323,6 +328,7 @@ describe("listOperations", () => {
       fetchAllPages: true,
       skipFeesForTokenOperations: false,
       useEncodedHash: false,
+      useSyntheticBlocks: false,
     });
 
     expect(apiClient.getAccountTransactions).toHaveBeenCalledTimes(1);
@@ -373,6 +379,7 @@ describe("listOperations", () => {
       fetchAllPages: true,
       skipFeesForTokenOperations: false,
       useEncodedHash: false,
+      useSyntheticBlocks: false,
     });
 
     expect(result.coinOperations).toHaveLength(1);
