@@ -171,7 +171,7 @@ describe("getBalance", () => {
     });
   });
 
-  it("should throw an error when getAccount throws an error", async () => {
+  it("should throw when failing to getAccount data", async () => {
     const address = "0.0.12345";
     const mockCurrency = getMockedCurrency();
     const error = new Error("Network error");
@@ -182,7 +182,7 @@ describe("getBalance", () => {
     await expect(getBalance(mockCurrency, address)).rejects.toThrow(error);
   });
 
-  it("should throw an error when getAccountTokens throws an error", async () => {
+  it("should throw when failing to getAccountTokens data", async () => {
     const address = "0.0.12345";
     const mockCurrency = getMockedCurrency();
     const error = new Error("Network error");

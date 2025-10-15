@@ -375,6 +375,7 @@ describe("listOperations", () => {
       useEncodedHash: false,
     });
 
+    expect(result.coinOperations).toHaveLength(1);
     expect(result.coinOperations[0].hasFailed).toBe(true);
   });
 });

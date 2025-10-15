@@ -112,7 +112,7 @@ describe("createApi", () => {
       );
       // .toString() is used because sdk.TokenId.fromString() sets `_checksum` to undefined,
       // but tokenIds elements from TokenAssociateTransaction.fromBytes have it set to null
-      expect(rawTx.tokenIds?.[0].toString()).toEqual("0.0.5022567");
+      expect(rawTx.tokenIds?.[0]?.toString()).toEqual("0.0.5022567");
       expect(rawTx.transactionMemo).toBe("token association");
     });
 
@@ -221,6 +221,7 @@ describe("createApi", () => {
     it("returns zero balance for pristine account", async () => {
       const balances = await api.getBalance(MAINNET_TEST_ACCOUNTS.pristine.accountId);
 
+      expect(balances.length).toBe(1);
       expect(balances[0].value).toBe(0n);
     });
 
