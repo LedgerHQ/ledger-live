@@ -464,12 +464,16 @@
       "apt_description" : "Pour échanger des Aptos, utilisez un autre appareil Ledger compatible, tel que le Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™.",
       "cosmos_title" : "Le Ledger Nano S™ ne prend pas en charge l’échange de Cosmos",
       "cosmos_description" : "Pour échanger des Cosmos, utilisez un autre appareil Ledger compatible, tel que le Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™.",
+      "hedera_title" : "Le Ledger Nano S™ ne prend pas en charge l’échange d’Hedera",
+      "hedera_description" : "Pour échanger des Hedera, utilisez un autre appareil Ledger compatible, tel que le Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™.",
       "osmo_title" : "Le Ledger Nano S™ ne prend pas en charge l’échange d’Osmosis",
       "osmo_description" : "Pour échanger des Osmosis, utilisez un autre appareil Ledger compatible, tel que le Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™.",
       "dydx_title" : "Le Ledger Nano S™ ne prend pas en charge l’échange de dYdX",
       "dydx_description" : "Pour échanger des dYdX, utilisez un autre appareil Ledger compatible, tel que le Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™.",
       "sui_title" : "Le Ledger Nano S™ ne prend pas en charge l’échange de Sui",
-      "sui_description" : "Pour échanger des Sui, utilisez un autre appareil Ledger compatible, tel que le Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™."
+      "sui_description" : "Pour échanger des Sui, utilisez un autre appareil Ledger compatible, tel que le Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™.",
+      "kaspa_title" : "Le Ledger Nano S™ ne prend pas en charge l’échange de Kaspa",
+      "kaspa_description" : "Pour échanger des Kaspa, utilisez un autre appareil Ledger compatible, tel que le Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™."
     },
     "providers" : {
       "title" : "Choisir un prestataire pour le Swap",
@@ -866,7 +870,7 @@
       },
       "delegation" : {
         "title" : "Bon à savoir",
-        "description" : "En stakant vos {{asset}} via le validateur Ledger, les frais de commission sont de {{commission}} %.",
+        "description" : "En stakant vos {{asset}} via le validateur Ledger, les frais de commission sont de {{commission}}%.",
         "cta" : "Staker avec Ledger",
         "linkText" : "En savoir plus",
         "ethereum" : {
@@ -1490,7 +1494,7 @@
     },
     "blackfriday" : {
       "title" : "BLACK FRIDAY ",
-      "description" : "Profitez de 40 % de réduction sur les wallets Ledger avec le code promo BLACKFRIDAY20"
+      "description" : "Profitez de 40% de réduction sur les wallets Ledger avec le code promo BLACKFRIDAY20"
     },
     "referralProgram" : {
       "title" : "Parrainez et gagnez 10 USD",
@@ -2246,6 +2250,7 @@
   "receive" : {
     "title" : "Recevoir",
     "successTitle" : "Adresse partagée en toute sécurité",
+    "connectToNoah" : "Connexion à Noah",
     "steps" : {
       "options" : {
         "fromBank" : {
@@ -2472,14 +2477,14 @@
     "deviceLanguage" : "Changer la langue de votre appareil",
     "changeLanguage" : "Changer la langue",
     "dontChangeLanguage" : "Ne pas modifier",
-    "changeDeviceLanguage" : "Voulez-vous changer la langue de votre Ledger ?",
+    "changeDeviceLanguage" : "Voulez-vous changer la langue de votre appareil Ledger ?",
     "changeDeviceLanguagePrompt" : {
       "title" : "Choisir le {{language}} comme langue sur votre {{deviceName}} ?",
       "description" : "Vous pouvez utiliser votre {{deviceName}} et Ledger Live dans la même langue."
     },
     "firmwareUpdatePrompt" : {
       "title" : "Utiliser votre {{deviceName}} en {{language}} ?",
-      "description" : "Une nouvelle langue est disponible pour votre {{deviceName}} : {{language}}. Vous pouvez changer la langue de votre Ledger maintenant ou à tout moment à partir de My Ledger."
+      "description" : "Une nouvelle langue est disponible pour votre {{deviceName}} : {{language}}. Vous pouvez changer la langue de votre appareil Ledger maintenant ou à tout moment à partir de My Ledger."
     },
     "allowLanguageInstallation" : "Appuyez sur \"Allow\" (Autoriser)\npour installer la langue",
     "languageInstalled" : "Votre appareil Ledger est maintenant en {{language}}.",
@@ -4262,6 +4267,8 @@
         "header" : "Position(s) de staking",
         "stake" : "Ajouter",
         "staked" : "Délégué",
+        "estimatedReward" : "Récompenses gagnées",
+        "rewardTooltip" : "Les récompenses en Sui sont distribuées à chaque epoch (24h). Elles sont automatiquement capitalisées et ajoutées au montant staké.",
         "pending" : "En attente de libération",
         "available" : "Disponible au retrait"
       },
@@ -4450,7 +4457,7 @@
         "listTitle" : "Sur l’application Ledger Live pour le mobile :",
         "step1" : "Sur l’onglet Wallet, appuyez sur <highlight>Ajouter un compte</highlight>, ou sur <highlight>Voir tous les actifs</highlight> puis sur le bouton <highlight><icon>+</icon></highlight>.",
         "step2" : "Appuyez sur <highlight>Importer les comptes de l’ordinateur</highlight>.",
-        "step3" : "Scannez <highlight>le code QR</highlight> jusqu’à ce que la barre soit à 100 %."
+        "step3" : "Scannez <highlight>le code QR</highlight> jusqu’à ce que la barre soit à 100%."
       }
     },
     "display" : {
@@ -4861,7 +4868,7 @@
   },
   "update" : {
     "downloadInProgress" : "Téléchargement de la mise à jour...",
-    "downloadProgress" : "{{progress}} % terminés",
+    "downloadProgress" : "{{progress}}% terminés",
     "checking" : "Vérification de la mise à jour...",
     "checkSuccess" : "Mise à jour de Ledger Live disponible. Elle s’installera et relancera Ledger Live à la fermeture de l’application.",
     "quitAndInstall" : "Installer maintenant et relancer",
@@ -5023,6 +5030,12 @@
     },
     "screens" : {
       "welcome" : {
+        "videos" : {
+          "buySell" : "Le wallet qui vous protège et vous donne le contrôle",
+          "thousandsCrypto" : "Envoyez, recevez, échangez, stakez des milliers de cryptos",
+          "secureWallet" : "Vérifiez toutes vos opérations en toute sérénité"
+        },
+        "notice" : "En continuant, vous acceptez les <Link1>Conditions d’utilisation</Link1> et la <Link2>Politique de confidentialité</Link2> de Ledger. Ledger ne fournit aucun conseil financier.\nLes services d’échange et de staking sont fournis par des tiers.",
         "title" : "Le wallet ultra-sécurisé pour vos cryptos et NFT",
         "description" : "Gérez, achetez et faites fructifier vos cryptos et NFT en toute sécurité via Ledger Live.",
         "nextButton" : "Commencer",
@@ -5237,7 +5250,7 @@
             "help" : {
               "iDontSee" : "Je ne vois pas \"Restore using Ledger Recover\"",
               "modal" : {
-                "title" : "Le système d’exploitation de votre Ledger doit être mis à jour",
+                "title" : "Le système d’exploitation de votre appareil Ledger doit être mis à jour",
                 "subtitle" : " Essayez de mettre à jour le système d’exploitation ou contactez l’Assistance Ledger pour obtenir de l’aide.",
                 "learnHowToUpdate" : "Comment mettre à jour",
                 "contactLedgerSupport" : "Contacter l’Assistance Ledger"
@@ -5710,7 +5723,34 @@
     },
     "canton" : {
       "commentPlaceholder" : "Facultatif",
-      "comment" : "Commentaire"
+      "comment" : "Commentaire",
+      "addAccount" : {
+        "title" : "Ajouter un compte Canton",
+        "onboard" : {
+          "title" : "Ajout",
+          "newAccount" : "Nouveau compte",
+          "init" : "Pour configurer votre nouveau compte Canton, cliquez sur Continuer",
+          "onboarded" : "Comptes ajoutés",
+          "success" : "Votre nouveau compte Canton a bien été créé et ajouté.",
+          "error" : "Échec de l’ajout du nouveau compte. Veuillez réessayer.",
+          "status" : {
+            "prepare" : "Préparation de l’ajout du compte...",
+            "submit" : "Ajout du compte...",
+            "default" : "Traitement..."
+          }
+        },
+        "auth" : {
+          "title" : "Autorisation",
+          "validator" : "Autoriser",
+          "hint" : "Accepter automatiquement les actifs versés sur ce compte.",
+          "error" : "Échec de l’autorisation. Veuillez réessayer.",
+          "validatorLabel" : "Validateur Ledger",
+          "validatorDescription" : "Acceptation automatique des actifs"
+        },
+        "finish" : {
+          "title" : "Confirmation"
+        }
+      }
     },
     "stellar" : {
       "memo" : "Mémo",
@@ -5880,7 +5920,7 @@
       "description" : "Veuillez connecter un appareil Ledger qui n’est pas configuré."
     },
     "DeviceNotGenuine" : {
-      "title" : "L’appareil peut ne pas être authentique.",
+      "title" : "L’appareil peut ne pas être authentique",
       "description" : "Demandez de l’aide à l’Assistance Ledger."
     },
     "DeviceGenuineSocketEarlyClose" : {
@@ -6653,6 +6693,10 @@
     "HederaAddAccountError" : {
       "title" : "Votre compte n’a pas été ajouté. Veuillez réessayer."
     },
+    "HederaRecipientInvalidChecksum" : {
+      "title" : "Checksum de l’adresse non valide",
+      "description" : "Le checksum de l’adresse saisie n’est pas valide."
+    },
     "HederaInsufficientFundsForAssociation" : {
       "title" : "Solde insuffisant",
       "description" : "Solde de HBAR insuffisant pour payer l’association du token. Vous devez disposez d’au moins {{requiredWorthInUSD}} USD en HBAR."
@@ -7130,7 +7174,7 @@
         "2" : "Votre portefeuille.",
         "3" : "Vos données personnelles."
       },
-      "managePreferences" : "Gérer vos préférences",
+      "managePreferences" : "Gérer mes préférences",
       "refuse" : "Tout refuser",
       "accept" : "Tout accepter",
       "analyticsData" : {
@@ -7141,7 +7185,7 @@
         "title" : "Personnalisation",
         "description" : "Le partage des données sur l’utilisation de l’application (y compris les clics, visites de pages et données de conversion) nous permet de vous proposer des recommandations personnalisées, des contenus adaptés à vos préférences et de mesurer l’efficacité de nos campagnes marketing."
       },
-      "share" : "Partager"
+      "validate" : "Valider"
     },
     "variantB" : {
       "accept" : "Accepter",
@@ -7292,7 +7336,7 @@
         }
       },
       "qrCode" : {
-        "title" : "Synchroniser vos applications Ledger Live",
+        "title" : "Synchroniser vos applications Ledger Live",
         "options" : {
           "mobile" : "Avec un téléphone",
           "desktop" : "Avec un ordinateur"
