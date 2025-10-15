@@ -5901,6 +5901,9 @@ importers:
       '@ledgerhq/live-persistence':
         specifier: workspace:^
         version: link:../../../live-persistence
+      '@ledgerhq/logs':
+        specifier: workspace:^
+        version: link:../logs
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../types-live
