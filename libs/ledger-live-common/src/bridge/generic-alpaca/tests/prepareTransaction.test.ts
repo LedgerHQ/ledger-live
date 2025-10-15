@@ -1,254 +1,172 @@
 import { genericPrepareTransaction } from "../prepareTransaction";
 import { getAlpacaApi } from "../alpaca";
+import { transactionToIntent } from "../utils";
 import BigNumber from "bignumber.js";
-import * as accountModule from "@ledgerhq/coin-framework/account/index";
-import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { Account } from "@ledgerhq/types-live";
 
 jest.mock("../alpaca", () => ({
   getAlpacaApi: jest.fn(),
+}));
+
+jest.mock("../utils", () => ({
+  transactionToIntent: jest.fn(),
 }));
 
 describe("genericPrepareTransaction", () => {
   const network = "testnet";
   const kind = "local";
 
+  const account = {
+    id: "test-account",
+    address: "0xabc",
+    currency: { id: "ethereum" },
+  } as any;
+
+  const baseTransaction = {
+    amount: new BigNumber(100_000),
+    fees: new BigNumber(500),
+    recipient: "0xrecipient",
+    family: "family",
+  };
+
+  const txIntent = { mock: "intent" };
+
   beforeEach(() => {
     jest.clearAllMocks();
+    (transactionToIntent as jest.Mock).mockReturnValue(txIntent);
   });
 
-  it("embeds assets info, if existing", async () => {
-    (getAlpacaApi as jest.Mock).mockReturnValue({
-      estimateFees: jest.fn().mockResolvedValue({ value: 500n }),
-      getAssetFromToken: jest.fn().mockImplementation((token, owner) => {
-        return {
-          assetOwner: owner,
-          assetReference: token.contractAddress,
-        };
-      }),
-    });
-    jest.spyOn(accountModule, "decodeTokenAccountId").mockImplementation(accountId => {
-      const token =
-        accountId === "ethereum_usdc_sub_account"
-          ? ({ contractAddress: "usdc_contract" } as TokenCurrency)
-          : undefined;
+  it("updates fees if they differ", async () => {
+    const newFee = new BigNumber(700);
 
-      return { accountId, token };
+    (getAlpacaApi as jest.Mock).mockReturnValue({
+      estimateFees: jest.fn().mockResolvedValue({ value: newFee }),
     });
 
     const prepareTransaction = genericPrepareTransaction(network, kind);
-    const resultUsdcToken = await prepareTransaction(
-      { currency: { id: "ethereum", units: [{}] }, freshAddress: "0xabc" } as Account,
-      {
-        amount: new BigNumber(100_000),
-        fees: new BigNumber(500),
-        recipient: "0xrecipient",
-        family: "family",
-        subAccountId: "ethereum_usdc_sub_account",
-      },
+    const result = await prepareTransaction(account, { ...baseTransaction });
+
+    expect((result as any).fees.toString()).toBe(newFee.toString());
+    expect(transactionToIntent).toHaveBeenCalledWith(
+      account,
+      expect.objectContaining(baseTransaction),
+      undefined,
     );
-
-    expect(resultUsdcToken).toEqual({
-      amount: new BigNumber(100_000),
-      fees: new BigNumber(500),
-      recipient: "0xrecipient",
-      family: "family",
-      assetReference: "usdc_contract",
-      assetOwner: "0xabc",
-      subAccountId: "ethereum_usdc_sub_account",
-    });
-
-    const resultUnknownToken = await prepareTransaction(
-      { currency: { id: "ethereum", units: [{}] } } as Account,
-      {
-        amount: new BigNumber(100_000),
-        fees: new BigNumber(500),
-        recipient: "0xrecipient",
-        family: "family",
-        subAccountId: "ethereum_unknown_sub_account",
-      },
-    );
-
-    expect(resultUnknownToken).toEqual({
-      amount: new BigNumber(100_000),
-      fees: new BigNumber(500),
-      recipient: "0xrecipient",
-      family: "family",
-      assetReference: "",
-      assetOwner: "",
-      subAccountId: "ethereum_unknown_sub_account",
-    });
   });
 
-  it.each([
-    ["all native amount", { useAllAmount: true }, new BigNumber(42)],
-    ["all native amount on staking scenarios", { mode: "stake" }, new BigNumber(42)],
-    ["all native amount on unstaking scenarios", { mode: "unstake" }, new BigNumber(42)],
-    [
-      "all token amount",
-      { subAccountId: "ethereum_usdc_sub_account", useAllAmount: true },
-      new BigNumber(5),
-    ],
-    [
-      "all token amount on staking scenarios",
-      { subAccountId: "ethereum_usdc_sub_account", mode: "stake" },
-      new BigNumber(5),
-    ],
-    [
-      "all token amount on unstaking scenarios",
-      { subAccountId: "ethereum_usdc_sub_account", mode: "unstake" },
-      new BigNumber(5),
-    ],
-  ] as const)("uses %s, updating the amount", async (_s, partialTransaction, expectedAmount) => {
-    (getAlpacaApi as jest.Mock).mockReturnValue({
-      estimateFees: jest.fn().mockResolvedValue({ value: 8n }),
-      getAssetFromToken: jest.fn().mockImplementation((token, owner) => {
-        return {
-          assetOwner: owner,
-          assetReference: token.contractAddress,
-        };
-      }),
-    });
-    jest.spyOn(accountModule, "decodeTokenAccountId").mockImplementation(accountId => {
-      const token =
-        accountId === "ethereum_usdc_sub_account"
-          ? ({ contractAddress: "usdc_contract" } as TokenCurrency)
-          : undefined;
+  it("returns original transaction if fees are the same", async () => {
+    const sameFee = baseTransaction.fees;
 
-      return { accountId, token };
+    (getAlpacaApi as jest.Mock).mockReturnValue({
+      estimateFees: jest.fn().mockResolvedValue({ value: sameFee }),
     });
 
     const prepareTransaction = genericPrepareTransaction(network, kind);
-    const result = await prepareTransaction(
-      {
-        currency: { id: "ethereum", units: [{}] },
-        spendableBalance: new BigNumber(50),
-        subAccounts: [{ id: "ethereum_usdc_sub_account", spendableBalance: new BigNumber(5) }],
-      } as Account,
-      {
-        amount: new BigNumber(0),
-        recipient: "0xrecipient",
-        family: "family",
-        ...partialTransaction,
-      },
-    );
+    const result = await prepareTransaction(account, baseTransaction);
 
-    expect(result).toMatchObject({
-      amount: expectedAmount,
-      fees: new BigNumber(8),
-      recipient: "0xrecipient",
-      family: "family",
-    });
+    expect(result).toBe(baseTransaction);
   });
 
-  it("updates fees from the estimation", async () => {
+  it("sets fee if original fees are undefined", async () => {
+    const newFee = new BigNumber(1234);
     (getAlpacaApi as jest.Mock).mockReturnValue({
-      estimateFees: jest.fn().mockResolvedValue({ value: 700n }),
+      estimateFees: jest.fn().mockResolvedValue({ value: newFee }),
+    });
+
+    const txWithoutFees = { ...baseTransaction, fees: undefined as any };
+    const prepareTransaction = genericPrepareTransaction(network, kind);
+    const result = await prepareTransaction(account, txWithoutFees);
+
+    expect((result as any).fees.toString()).toBe(newFee.toString());
+    expect(result).not.toBe(txWithoutFees);
+  });
+
+  it("returns original if fees are BigNumber-equal but different instance", async () => {
+    const sameValue = new BigNumber(baseTransaction.fees.toString()); // different instance
+    (getAlpacaApi as jest.Mock).mockReturnValue({
+      estimateFees: jest.fn().mockResolvedValue({ value: sameValue }),
     });
 
     const prepareTransaction = genericPrepareTransaction(network, kind);
-    const result = await prepareTransaction(
-      { currency: { id: "ethereum", units: [{}] } } as Account,
-      {
-        amount: new BigNumber(100_000),
-        fees: new BigNumber(500),
-        recipient: "0xrecipient",
-        family: "family",
-      },
-    );
+    const result = await prepareTransaction(account, baseTransaction);
 
-    expect(result).toEqual({
-      amount: new BigNumber(100_000),
-      fees: new BigNumber(700),
-      recipient: "0xrecipient",
-      family: "family",
-      assetReference: "",
-      assetOwner: "",
-    });
+    expect(result).toBe(baseTransaction); // still same reference
   });
 
-  it("updates fees from the existing custom", async () => {
-    (getAlpacaApi as jest.Mock).mockReturnValue({
-      estimateFees: jest.fn().mockResolvedValue({ value: 700n }),
+  it("propagates storageLimit from second estimation", async () => {
+    const estimatedFee = new BigNumber(491);
+
+    const estimateFeesFirstCall = jest.fn().mockResolvedValue({
+      value: estimatedFee,
+      parameters: { storageLimit: 300 },
     });
 
-    const prepareTransaction = genericPrepareTransaction(network, kind);
-    const result = await prepareTransaction(
-      { currency: { id: "ethereum", units: [{}] } } as Account,
-      {
-        amount: new BigNumber(100_000),
-        fees: new BigNumber(500),
-        recipient: "0xrecipient",
-        family: "family",
-        customFees: { parameters: { fees: new BigNumber(600) } },
-      },
-    );
-
-    expect(result).toEqual({
-      amount: new BigNumber(100_000),
-      fees: new BigNumber(600),
-      customFees: { parameters: { fees: new BigNumber(600) } },
-      recipient: "0xrecipient",
-      family: "family",
-      assetReference: "",
-      assetOwner: "",
+    const estimateFeesSecondCall = jest.fn().mockResolvedValue({
+      value: estimatedFee,
+      parameters: { storageLimit: 0 },
     });
-  });
 
-  it("propagates estimated 'storageLimit'", async () => {
     (getAlpacaApi as jest.Mock).mockReturnValue({
       estimateFees: jest
         .fn()
-        .mockResolvedValue({ value: 700n, parameters: { storageLimit: 277n } }),
+        .mockImplementationOnce(() => estimateFeesFirstCall())
+        .mockImplementationOnce(() => estimateFeesSecondCall()),
     });
 
+    const txWithoutCustomFees = { ...baseTransaction, customFees: undefined };
     const prepareTransaction = genericPrepareTransaction(network, kind);
-    const result = await prepareTransaction(
-      { currency: { id: "ethereum", units: [{}] } } as Account,
-      {
-        amount: new BigNumber(100_000),
-        fees: new BigNumber(500),
-        recipient: "0xrecipient",
-        family: "family",
-      },
+    const result = await prepareTransaction(account, txWithoutCustomFees);
+
+    expect(result).toEqual(
+      expect.objectContaining({
+        fees: estimatedFee,
+        storageLimit: new BigNumber(0),
+        customFees: {
+          parameters: {
+            fees: undefined,
+          },
+        },
+      }),
     );
 
-    expect(result).toEqual({
-      amount: new BigNumber(100_000),
-      fees: new BigNumber(700),
-      storageLimit: new BigNumber(277),
-      recipient: "0xrecipient",
-      family: "family",
-      assetReference: "",
-      assetOwner: "",
-    });
+    expect((getAlpacaApi as jest.Mock)().estimateFees).toHaveBeenCalledTimes(2);
   });
 
-  it("keeps the amount used during the estimation when using all native amount", async () => {
-    (getAlpacaApi as jest.Mock).mockReturnValue({
-      estimateFees: jest.fn().mockResolvedValue({ value: 700n, parameters: { amount: 1000n } }),
+  it("propagates storageLimit showing new account scenario", async () => {
+    const estimatedFee = new BigNumber(491);
+
+    const estimateFeesFirstCall = jest.fn().mockResolvedValue({
+      value: estimatedFee,
+      parameters: { storageLimit: 300 },
     });
 
+    const estimateFeesSecondCall = jest.fn().mockResolvedValue({
+      value: estimatedFee,
+      parameters: { storageLimit: 277 },
+    });
+
+    (getAlpacaApi as jest.Mock).mockReturnValue({
+      estimateFees: jest
+        .fn()
+        .mockImplementationOnce(() => estimateFeesFirstCall())
+        .mockImplementationOnce(() => estimateFeesSecondCall()),
+    });
+
+    const txWithoutCustomFees = { ...baseTransaction, customFees: undefined };
     const prepareTransaction = genericPrepareTransaction(network, kind);
-    const result = await prepareTransaction(
-      { currency: { id: "ethereum", units: [{}] } } as Account,
-      {
-        amount: new BigNumber(0),
-        fees: new BigNumber(500),
-        recipient: "0xrecipient",
-        family: "family",
-        useAllAmount: true,
-      },
+    const result = await prepareTransaction(account, txWithoutCustomFees);
+
+    expect(result).toEqual(
+      expect.objectContaining({
+        fees: estimatedFee,
+        storageLimit: new BigNumber(277),
+        customFees: {
+          parameters: {
+            fees: undefined,
+          },
+        },
+      }),
     );
 
-    expect(result).toEqual({
-      amount: new BigNumber(1000),
-      fees: new BigNumber(700),
-      recipient: "0xrecipient",
-      family: "family",
-      assetReference: "",
-      assetOwner: "",
-      useAllAmount: true,
-    });
+    expect((getAlpacaApi as jest.Mock)().estimateFees).toHaveBeenCalledTimes(2);
   });
 });
