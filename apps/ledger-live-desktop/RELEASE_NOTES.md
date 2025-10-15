@@ -1,3 +1,7 @@
+# 2.131.0
+
+Clarified wording when adding an account to make the process easier to understand.
+
 # 2.130.1
 
 This release includes small security improvements, UI tweaks, and minor bug fixes.
