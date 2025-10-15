@@ -28,7 +28,7 @@ describe("Receive Flow", () => {
     await app.transferMenu.open();
     await app.transferMenu.navigateToReceive();
     await app.common.performSearch("Bitcoin");
-    await app.receive.selectAsset("BTC");
+    await app.receive.selectAssetById(Currency.BTC.id);
     first && (await deviceAction.selectMockDevice(), (first = false));
     await deviceAction.openApp();
     await app.addAccount.addAccountAtIndex(Currency.BTC.name, Currency.BTC.id, 0);
@@ -45,7 +45,7 @@ describe("Receive Flow", () => {
   $TmsLink("B2CQA-1860");
   it("Should display the number of account existing per networks", async () => {
     await openReceive();
-    await app.receive.selectAsset("ETH");
+    await app.receive.selectAssetById(Currency.ETH.id);
     await app.receive.expectNumberOfAccountInListIsDisplayed("ethereum", 4);
     await app.receive.expectNumberOfAccountInListIsDisplayed("optimism", 1);
   });
@@ -55,7 +55,7 @@ describe("Receive Flow", () => {
   it("Should create an account on a network", async () => {
     const currency = Currency.OP;
     await openReceive();
-    await app.receive.selectAsset("ETH");
+    await app.receive.selectAssetById(Currency.ETH.id);
     await app.receive.selectNetwork(currency.id);
     await app.receive.createAccount();
     first && (await deviceAction.selectMockDevice(), (first = false));
@@ -82,7 +82,7 @@ describe("Receive Flow", () => {
   $TmsLink("B2CQA-1859");
   it("Should access to receive after selecting an existing account", async () => {
     await openReceive();
-    await app.receive.selectAsset("XRP");
+    await app.receive.selectAssetById(Currency.XRP.id);
     await app.receive.selectAccount("XRP 2");
     await app.receive.doNotVerifyAddress();
     await app.receive.expectReceivePageIsDisplayed("XRP", "XRP 2");

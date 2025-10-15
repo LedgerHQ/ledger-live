@@ -49,7 +49,7 @@ const BigCurrencyRow = ({ currency, iconSize = 48, onPress, subTitle }: Props) =
             numberOfLines={1}
             color="neutral.c70"
             mt={2}
-            testID={`big-currency-subtitle-${subTitle}`}
+            testID={`big-currency-subtitle-${currency.id}`}
           >
             {subTitle}
           </Text>

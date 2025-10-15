@@ -53,23 +53,54 @@ export default class ReceivePage {
     await expect(this.step2Accounts()).toBeVisible();
   }
 
-  @Step("Select currency in receive list")
-  async selectCurrency(currencyName: string) {
+  /**
+   * Select a currency by its name (e.g., "Bitcoin", "Ethereum")
+   * Uses the currency name testID
+   * @deprecated Prefer selectAssetById() for more reliable selection
+   */
+  async selectCurrencyByName(currencyName: string) {
     const id = this.currencyNameId(currencyName.toLowerCase());
     await waitForElementById(id);
     await tapById(id);
   }
 
-  async selectAsset(assetText: string) {
-    const id = this.currencySubtitleId(assetText);
-    await waitForElementById(id);
-    return tapById(id);
+  /**
+   * Select a currency by its ID (e.g., "bitcoin", "ethereum")
+   * Targets the row testID which is unique and reliable
+   */
+  @Step("Select currency in receive list")
+  async selectCurrency(currencyId: string) {
+    return this.selectAssetById(currencyId);
   }
 
+  /**
+   * Select an asset by ticker (e.g. "BTC", "ETH", "MATIC")
+   * Uses text matching - works for both cryptocurrencies and tokens
+   * Kept for backward compatibility—prefer selectAssetById()
+   */
+  async selectAsset(ticker: string) {
+    const tickerUpper = ticker.toUpperCase();
+    await waitForElementByText(tickerUpper);
+    await tapByText(tickerUpper);
+  }
+
+  /**
+   * Select an asset by currency ID (preferred method)
+   * @param currencyId - The currency.id (e.g., "bitcoin", "ethereum")
+   */
+  async selectAssetById(currencyId: string) {
+    const rowId = this.currencyRowId(currencyId);
+    await waitForElementById(rowId);
+    return tapById(rowId);
+  }
+
+  /**
+   * Select a network by its ID
+   */
   async selectNetwork(networkId: string) {
-    const id = this.currencyNameId(networkId);
-    await waitForElementById(id);
-    return tapById(id);
+    const rowId = this.currencyRowId(networkId);
+    await waitForElementById(rowId);
+    return tapById(rowId);
   }
 
   async selectAccount(account: string) {
@@ -94,21 +125,17 @@ export default class ReceivePage {
     jestExpect(await getTextOfElement(this.accountAddress)).toEqual(address);
   }
 
-  async expectNumberOfAccountInListIsDisplayed(currencyName: string, accountNumber: number) {
-    //set "account" in plural or not in fonction of number account
+  async expectNumberOfAccountInListIsDisplayed(currencyId: string, accountNumber: number) {
+    // Set "account" in plural or not depending on account number
     const accountCount: string = accountNumber + " account" + (accountNumber > 1 ? "s" : "");
-    const networkRowID = new RegExp(this.currencyRowId(".*"));
-    const accountnameID = this.currencyNameId(currencyName);
-    const accountCountID = this.currencySubtitleId(accountCount);
-    // expect accountCountID is visible and is child of networkRowID
-    await expect(
-      element(
-        by
-          .id(networkRowID)
-          .withDescendant(by.id(accountnameID))
-          .withDescendant(by.id(accountCountID)),
-      ),
-    ).toBeVisible();
+    const rowId = this.currencyRowId(currencyId);
+
+    // Wait for the currency row to be visible
+    await waitForElementById(rowId);
+
+    // Verify the row contains both the currency and the account count text
+    const rowWithCountMatcher = by.id(rowId).withDescendant(by.text(accountCount));
+    await expect(element(rowWithCountMatcher)).toBeVisible();
   }
 
   async createAccount() {
