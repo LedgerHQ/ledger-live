@@ -464,12 +464,16 @@
       "apt_description" : "Zum Swappen von Aptos müsstest du ein anderes kompatibles Ledger-Gerät verwenden, z. B. eine Ledger Nano S Plus™, eine Ledger Nano X™, eine Ledger Flex™ oder eine Ledger Stax™.",
       "cosmos_title" : "Ledger Nano S™ unterstützt das Swappen von Cosmos nicht",
       "cosmos_description" : "Zum Swappen von Cosmos müsstest du ein anderes kompatibles Ledger-Gerät verwenden, z. B. eine Ledger Nano S Plus™, eine Ledger Nano X™, eine Ledger Flex™ oder eine Ledger Stax™.",
+      "hedera_title" : "Ledger Nano S™ unterstützt das Swappen von Hedera nicht",
+      "hedera_description" : "Zum Swappen von Hedera musst du ein anderes kompatibles Ledger-Gerät verwenden, z. B. eine Ledger Nano S Plus™, eine Ledger Nano X™, eine Ledger Flex™ oder eine Ledger Stax™.",
       "osmo_title" : "Ledger Nano S™ unterstützt das Swappen von Osmosis nicht",
       "osmo_description" : "Zum Swappen von Osmosis musst du ein anderes kompatibles Ledger-Gerät verwenden, z. B. eine Ledger Nano S Plus™, eine Ledger Nano X™, eine Ledger Flex™ oder eine Ledger Stax™.",
       "dydx_title" : "Ledger Nano S™ unterstützt das Swappen von dYdX nicht",
       "dydx_description" : "Zum Swappen von dYdX musst du ein anderes kompatibles Ledger-Gerät verwenden, z. B. eine Ledger Nano S Plus™, eine Ledger Nano X™, eine Ledger Flex™ oder eine Ledger Stax™.",
       "sui_title" : "Die Ledger Nano S™ unterstützt das Swappen von Sui nicht",
-      "sui_description" : "Zum Swappen von Sui kannst du jedes sonstige kompatible Ledger-Gerät nutzen, z. B. eine Ledger Nano S Plus™, eine Ledger Nano X™, eine Ledger Flex™ oder eine Ledger Stax™."
+      "sui_description" : "Zum Swappen von Sui kannst du jedes sonstige kompatible Ledger-Gerät nutzen, z. B. eine Ledger Nano S Plus™, eine Ledger Nano X™, eine Ledger Flex™ oder eine Ledger Stax™.",
+      "kaspa_title" : "Ledger Nano S™ unterstützt das Swappen von Kaspa nicht",
+      "kaspa_description" : "Zum Swappen von Kaspa musst du ein anderes kompatibles Ledger-Gerät verwenden, z. B. eine Ledger Nano S Plus™, eine Ledger Nano X™, eine Ledger Flex™ oder eine Ledger Stax™."
     },
     "providers" : {
       "title" : "Wähle einen Anbieter für das Swappen von Kryptowährungen",
@@ -2246,15 +2250,16 @@
   "receive" : {
     "title" : "Empfangen",
     "successTitle" : "Adresse sicher freigegeben",
+    "connectToNoah" : "Du wirst mit Noah verbunden",
     "steps" : {
       "options" : {
         "fromBank" : {
           "title" : "Von einem Bankkonto",
-          "description" : "USD oder EUR einzahlen"
+          "description" : "Lade Stablecoin per EUR- oder USD-Banküberweisung auf. Erfordert KYC-Verfahren."
         },
         "fromCrypto" : {
           "title" : "Von einer Kryptoadresse",
-          "description" : "Krypto empfangen"
+          "description" : "Lade deine Wallet mit beliebigen Kryptos auf."
         }
       },
       "chooseAccount" : {
@@ -4690,7 +4695,7 @@
       "provider" : "Die experimentelle Einstellung „My Ledger provider ({{forcedProvider}})“ zeigt möglicherweise nicht freigegebene Betriebssysteme und Apps an, was zu Kompatibilitätsproblemen führen kann. Sie können sie in den Einstellungen deaktivieren.",
       "providerDevMode" : "Die experimentellen Einstellungen „My Ledger provider ({{forcedProvider}})“ und „Developer mode“ zeigen möglicherweise nicht freigegebene Betriebssysteme und Apps an, was zu Kompatibilitätsproblemen führen kann. Sie können sie daher in den Einstellungen deaktivieren.",
       "devMode" : "Die experimentelle Einstellung „Developer mode“ zeigt möglicherweise nicht freigegebene Betriebssysteme und Apps an, was zu Kompatibilitätsproblemen führen kann. Sie können sie daher in den Einstellungen deaktivieren.",
-      "providerCTA" : "Gehen Sie zu Einstellungen",
+      "providerCTA" : "Gehe zu Einstellungen",
       "features" : {
         "experimentalCurrencies" : {
           "title" : "Experimentelle Integrationen",
@@ -4770,8 +4775,8 @@
     },
     "hardResetModal" : {
       "title" : "Ledger Live zurücksetzen",
-      "desc" : "Setzen Sie Ledger Live zurück, um alle Einstellungen und Konten auf Ihrem Computer zu löschen. Sie können dann Ihr Passwort wählen und Ihre Konten wieder mit Ihrem Ledger-Gerät hinzufügen. Die privaten Schlüssel, die Zugang zu Ihren Krypto-Vermögenswerten geben, bleiben sicher auf Ihrem Ledger-Gerät und werden durch Ihren Wiederherstellungssatz gesichert.",
-      "warning" : "Das Zurücksetzen von Ledger Live löscht Ihren Swap-Transaktionsverlauf für alle Ihre Konten."
+      "desc" : "Setze Ledger Live zurück, um alle Einstellungen und Konten auf deinem Computer zu löschen. Du kannst dann dein Passwort wählen und deine Konten wieder mit deinem Ledger-Gerät hinzufügen. Die privaten Schlüssel, die Zugang zu deinen Krypto-Assets geben, bleiben sicher auf deinem Ledger-Gerät und werden durch deine Wiederherstellungsphrase gesichert.",
+      "warning" : "Das Zurücksetzen von Ledger Live löscht den Swap-Transaktionsverlauf für alle deine Konten."
     },
     "softResetModal" : {
       "title" : "Cache löschen",
@@ -5006,7 +5011,7 @@
         "continueCTA" : "Weiter",
         "title" : "Bitte überprüfen Sie den Inhalt der Box",
         "description" : "Wenn Ihre {{device}} mit einem PIN-Code oder einer Wiederherstellungsphrase geliefert wurde, ist die Verwendung des Geräts nicht sicher und Sie sollten sich an den Ledger Support wenden.",
-        "alert" : "Verwenden Sie nur eine Wiederherstellungsphrase, die Ihr Gerät angezeigt hat, wenn es eingerichtet wurde"
+        "alert" : "Verwende nur eine Wiederherstellungsphrase, die dein Gerät angezeigt hat, wenn es eingerichtet wurde"
       }
     },
     "alerts" : {
@@ -5023,14 +5028,20 @@
     },
     "screens" : {
       "welcome" : {
+        "videos" : {
+          "buySell" : "Eine Wallet, die dich schützt und dir die Kontrolle gibt",
+          "thousandsCrypto" : "Tausende Krypto-Assets senden, empfangen, swappen und staken",
+          "secureWallet" : "Alle Transaktionen zweifelsfrei bestätigen"
+        },
+        "notice" : "Wenn du fortfährst, stimmst du den <Link1>Allgemeinen Geschäftsbedingungen</Link1> und der <Link2>Datenschutzrichtlinie</Link2> von Ledger zu. Ledger bietet keinerlei finanzielle Beratung an.\nSwap- und Staking-Leistungen werden von Dritten erbracht.",
         "title" : "Die sicherste Wallet für Kryptowährungen & NFTs",
-        "description" : "Verwalten, kaufen und vermehren Sie Ihre Krypto und NFTs auf Ledger Live.",
+        "description" : "Verwalte, kaufe und vermehre deine Kryptos & NFTs mit Ledger Live.",
         "nextButton" : "Erste Schritte",
         "noDevice" : "Kein Gerät?",
         "buyLink" : "Kein Gerät? Ledger-Gerät kaufen",
-        "byTapping" : "Indem Sie auf \"Erste Schritte\" tippen, erklären Sie sich einverstanden mit unseren ",
-        "termsAndConditions" : "Allgemeine Geschäftsbedingungen",
-        "and" : "Hinzu kommt:",
+        "byTapping" : "Indem du auf \"Erste Schritte\" tippst, erklärst du dich einverstanden mit unseren ",
+        "termsAndConditions" : "AGBs",
+        "and" : "Außerdem gilt unsere ",
         "privacyPolicy" : "Datenschutzrichtlinie",
         "steps" : {
           "0" : {
@@ -5173,7 +5184,7 @@
           },
           "pinCode" : {
             "title" : "PIN-Code",
-            "paragraph" : "Ihr PIN-Code ist die erste Sicherheitsebene. Er sichert physisch den Zugang zu Ihrem privaten Schlüssel und Ihrer Nano. Ihr PIN-Code muss 4 bis 8 Ziffern lang sein.",
+            "paragraph" : "Dein PIN-Code ist die erste Sicherheitsebene. Er sichert physisch den Zugang zu deinem privaten Schlüssel und deiner Nano. Dein PIN-Code muss 4 bis 8 Ziffern lang sein.",
             "disclaimer" : "Ich verstehe, dass ich meinen PIN-Code selbst wählen und ihn geheim halten muss.",
             "buttons" : {
               "next" : "PIN-Code einrichten",
@@ -5296,19 +5307,19 @@
           },
           "recoveryHowTo" : {
             "grabRecovery" : {
-              "title" : "Schnappen Sie sich Ihre Wiederherstellungsphrase"
+              "title" : "Nimm deine Wiederherstellungsphrase"
             },
             "selectLength" : {
-              "title" : "Wählen Sie die Länge der Wiederherstellungsphrase",
-              "descr" : "Ihre Wiederherstellungsphrasen können 12, 18 oder 24 Wörter haben. Sie müssen alle Wörter eingeben, um auf Ihre Kryptos zuzugreifen."
+              "title" : "Wähle die Länge der Wiederherstellungsphrase",
+              "descr" : "Deine Wiederherstellungsphrasen können 12, 18 oder 24 Wörter haben. Du musst alle Wörter eingeben, um auf deine Kryptos zuzugreifen."
             },
             "enterWord" : {
               "title" : "Wort 1 eingeben ...",
-              "descr" : "Geben Sie die ersten Buchstaben von Wort #1 ein, indem Sie mit der rechten oder linken Taste auswählen. Drücken Sie beide Tasten, um jeden Buchstaben zu bestätigen."
+              "descr" : "Gib die ersten Buchstaben von Wort #1 ein, indem du mit der rechten oder linken Taste auswählst. Drücke beide Tasten, um jeden Buchstaben zu bestätigen."
             },
             "validateWord" : {
-              "title" : "Bestätigen Sie Wort 1 ...",
-              "descr" : "Wählen Sie Wort 1 aus den Vorschlägen. Drücken Sie zum Bestätigen beide Tasten."
+              "title" : "Bestätige Wort 1 ...",
+              "descr" : "Wähle Wort 1 aus den Vorschlägen. Drücke zum Bestätigen beide Tasten."
             },
             "andNext" : {
               "title" : "Wiederholen Sie dies für alle Wörter!"
@@ -5675,7 +5686,7 @@
   "Terms" : {
     "title" : "Nutzungsbedingungen",
     "description" : "Bitte nehmen Sie sich etwas Zeit, um unsere Nutzungsbedingungen und Datenschutzrichtlinien zu lesen",
-    "termsLabel" : "Allgemeine Geschäftsbedingungen",
+    "termsLabel" : "AGBs",
     "privacyLabel" : "Datenschutzrichtlinie",
     "switchLabel" : "Ich habe die Nutzungsbedingungen und Datenschutzrichtlinien gelesen und akzeptiere sie",
     "cta" : "Zur Ledger-App",
@@ -5710,7 +5721,34 @@
     },
     "canton" : {
       "commentPlaceholder" : "Optional",
-      "comment" : "Kommentar"
+      "comment" : "Kommentar",
+      "addAccount" : {
+        "title" : "Canton-Konto hinzufügen",
+        "onboard" : {
+          "title" : "Einrichtung",
+          "newAccount" : "Neues Konto",
+          "init" : "Klicke auf „Continue“ (Weiter), um dein neues Canton-Konto einzurichten",
+          "onboarded" : "Eingerichtete Konten",
+          "success" : "Dein neues Canton-Konto wurde erstellt und eingerichtet.",
+          "error" : "Das Einrichten des neuen Kontos ist fehlgeschlagen. Bitte versuche es noch einmal.",
+          "status" : {
+            "prepare" : "Die Kontoeinrichtung wird vorbereitet …",
+            "submit" : "Konto wird eingerichtet …",
+            "default" : "In Bearbeitung …"
+          }
+        },
+        "auth" : {
+          "title" : "Autorisierung",
+          "validator" : "Autorisieren",
+          "hint" : "Eingehende Zahlungen auf dieses Konto automatisch akzeptieren.",
+          "error" : "Autorisierung fehlgeschlagen. Bitte versuche es noch einmal.",
+          "validatorLabel" : "Ledger Validator",
+          "validatorDescription" : "Automatisierte Zahlungsannahme"
+        },
+        "finish" : {
+          "title" : "Bestätigung"
+        }
+      }
     },
     "stellar" : {
       "memo" : "Memo",
@@ -7130,7 +7168,7 @@
         "2" : "Dein Portfolio",
         "3" : "Deine personenbezogenen Daten"
       },
-      "managePreferences" : "Voreinstellungen verwalten",
+      "managePreferences" : "Einstellungen verwalten",
       "refuse" : "Alle ablehnen",
       "accept" : "Alle annehmen",
       "analyticsData" : {
@@ -7141,7 +7179,7 @@
         "title" : "Personalisierung",
         "description" : "Damit wir dir personalisierte Empfehlungen und Inhalte anzeigen können, die deinen Vorlieben entsprechen, und um die Leistung unserer Marketingkampagnen zu messen, geben wir Daten zur App-Nutzung (Klicks, Seitenbesuche und Konversionsdaten) weiter."
       },
-      "share" : "Freigeben"
+      "validate" : "Validieren"
     },
     "variantB" : {
       "accept" : "Akzeptieren",
