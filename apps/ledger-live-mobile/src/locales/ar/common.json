@@ -812,7 +812,7 @@
     },
     "UserRefusedFirmwareUpdate" : {
       "title" : "تم إلغاء تحديث البرنامج الثابت على الجهاز",
-      "description" : "قمت بإلغاء تحديث البرنامج الثابت. يرجى إعادة المحاولة. إذا استمرت المشكلة، يرجى إعادة المحاولة مرة أخرى. إذا استمرت المشكلة، يرجى حفظ سجلاتك باستخدام الزر أدناه وتقديمها إلى فريق دعم Ledger."
+      "description" : "قمت بإلغاء تحديث البرنامج الثابت. يرجى إعادة المحاولة. إذا استمرت المشكلة، يرجى حفظ سجلاتك باستخدام الزر أدناه وتقديمها إلى فريق دعم Ledger."
     },
     "UserRefusedOnDevice" : {
       "title" : "تم إلغاء العملية على الجهاز",
@@ -1206,6 +1206,9 @@
     "AmountTooSmall" : {
       "title" : "الحد الأدنى للمبلغ المطلوب لهذه المعاملة هو {{amount}}"
     },
+    "KadenaCrossChainTransfer" : {
+      "title" : "حيث إن هذه عملية تحويل عبر سلاسل الكتل المختلفة، فقد تستغرق المعاملة عدة دقائق حتى تتم."
+    },
     "AddressesSanctionedError" : {
       "title" : "إبقاؤك آمناً",
       "description" : "هذه المعاملة تتضمن عنوان محفظة خاضع لعقوبات ولا يمكن معالجتها.\n-- {{addresses}}"
@@ -1305,7 +1308,8 @@
     "estimatedTime" : {
       "slow" : "≈ 2-3 دقائق",
       "medium" : "≈ 30 ثانية",
-      "fast" : "≈ 15 ثانية"
+      "fast" : "≈ 15 ثانية",
+      "custom" : ""
     }
   },
   "signout" : {
@@ -2794,7 +2798,9 @@
       "id" : "المُعرّف",
       "autoClaimedRewards" : "المكافآت المطالب بها تلقائياً",
       "stakedAmount" : "المبلغ المُكدَّس",
-      "accountCreationFee" : "رسوم إنشاء الحساب"
+      "accountCreationFee" : "رسوم إنشاء الحساب",
+      "senderChainId" : "مُعرّف سلسلة المُرسل",
+      "receiverChainId" : "مُعرّف سلسلة المُتلقي"
     },
     "multipleAddresses" : "لماذا عناوين متعددة؟",
     "tokenName" : "اسم رمز التوكن",
@@ -3242,7 +3248,7 @@
       },
       "transactionsAlerts" : {
         "title" : "تنبيهات المعاملات (بيتا)",
-        "desc" : "تلقى إشعارات بخصوص معاملاتك من إيثريوم و Polygon وسلسلة بينانس الذكية و Avalanche و Ethereum Classic"
+        "desc" : "تلقى إشعارات بخصوص معاملاتك لإيثريوم و Polygon وسلسلة BNB و Avalanche و Ethereum Classic"
       },
       "price" : {
         "title" : "تنبيهات الأسعار",
@@ -4083,6 +4089,7 @@
       "validateMemo" : "تحقق من صحة الملاحظة",
       "comment" : "التعليق",
       "validateComment" : "تأكيد التعليق",
+      "validateChainId" : "تأكيد صحة مُعرّف السلسلة",
       "quantity" : "الكمية"
     },
     "validation" : {
