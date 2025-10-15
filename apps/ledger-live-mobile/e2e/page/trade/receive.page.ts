@@ -56,16 +56,19 @@ export default class ReceivePage {
   @Step("Select currency in receive list")
   async selectCurrency(currencyName: string) {
     const id = this.currencyNameId(currencyName.toLowerCase());
+    await waitForElementById(id);
     await tapById(id);
   }
 
   async selectAsset(assetText: string) {
     const id = this.currencySubtitleId(assetText);
+    await waitForElementById(id);
     return tapById(id);
   }
 
   async selectNetwork(networkId: string) {
     const id = this.currencyNameId(networkId);
+    await waitForElementById(id);
     return tapById(id);
   }
 
