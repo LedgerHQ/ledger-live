@@ -3,6 +3,15 @@ import { Trans } from "react-i18next";
 import styled from "styled-components";
 import Box from "~/renderer/components/Box/Box";
 import { HeaderWrapper } from "~/renderer/components/TableContainer";
+import ToolTip from "~/renderer/components/Tooltip";
+import InfoCircle from "~/renderer/icons/InfoCircle";
+
+const TitleWrapper = styled(Box).attrs(() => ({
+  horizontal: true,
+  alignItems: "center",
+  gap: "4px",
+  mb: 1,
+}))``;
 
 export const TableLine = styled(Box).attrs(() => ({
   ff: "Inter|SemiBold",
@@ -32,6 +41,14 @@ export const Header = () => (
     </TableLine>
     <TableLine>
       <Trans i18nKey="sui.stake.table.staked" />
+    </TableLine>
+    <TableLine>
+      <ToolTip content={<Trans i18nKey="sui.stake.table.rewardTooltip" />}>
+        <TitleWrapper>
+          <Trans i18nKey="sui.stake.table.estimatedReward" />
+          <InfoCircle size={13} />
+        </TitleWrapper>
+      </ToolTip>
     </TableLine>
     <TableLine />
   </HeaderWrapper>
