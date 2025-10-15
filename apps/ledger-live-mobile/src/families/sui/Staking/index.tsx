@@ -120,6 +120,20 @@ function StakingPositions({ account }: Props) {
             ),
           },
           {
+            label: t("sui.info.estimatedReward"),
+            Component: (
+              <LText
+                numberOfLines={1}
+                semiBold
+                ellipsizeMode="middle"
+                style={[styles.valueText]}
+                color="live"
+              >
+                {stakingPosition.formattedEstimatedReward}
+              </LText>
+            ),
+          },
+          {
             label: t("delegation.validatorAddress"),
             Component: (
               <Touchable
