@@ -28,6 +28,7 @@ function buildCurrencyBridge(signerContext: SignerContext) {
   const scanAccounts = makeScanAccounts<BitcoinAccount>({
     getAccountShape: makeGetAccountShape(signerContext),
     getAddressFn: getAddressWrapper(getAddress),
+    postSync,
   });
 
   return {
