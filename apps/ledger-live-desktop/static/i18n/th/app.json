@@ -2254,12 +2254,12 @@
     "steps" : {
       "options" : {
         "fromBank" : {
-          "title" : "Via bank transfer",
-          "description" : "Receive stablecoin via Cash-to-Stablecoin account. Registration needed."
+          "title" : "โดยการโอนเงินจากบัญชีธนาคาร",
+          "description" : "แปลงเป็นสเตเบิลคอยน์ผ่านบัญชี Cash-to-Stablecoin ต้องมีการลงทะเบียนก่อนใช้งาน"
         },
         "fromCrypto" : {
-          "title" : "Via crypto address",
-          "description" : "Receive crypto from another wallet."
+          "title" : "โดยการโอนเงินจาก Address ของคริปโต",
+          "description" : "รับคริปโตจากวอลเล็ตอื่น"
         }
       },
       "chooseAccount" : {
