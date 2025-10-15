@@ -1895,7 +1895,9 @@
       "transferAmount" : "Transferir importe",
       "validatorsCount" : "Validadores ({{number}})",
       "version" : "Versión",
-      "accountCreationFee" : "Tarifa de creación de cuenta"
+      "accountCreationFee" : "Tarifa de creación de cuenta",
+      "senderChainId" : "ID de cadena del remitente",
+      "receiverChainId" : "ID de cadena del receptor"
     }
   },
   "operationList" : {
@@ -1904,7 +1906,7 @@
   "DeviceAction" : {
     "allowAppPermission" : "Abre la aplicación {{wording}} en tu dispositivo",
     "allowAppPermissionSubtitleToken" : "para administrar los tokens {{token}}",
-    "allowManagerPermission" : "Permitir conexión segura",
+    "allowManagerPermission" : "Permitir (\"Allow\") conexión segura",
     "allowRenaming" : "Permitir renombrar en tu dispositivo",
     "loading" : "Cargando...",
     "connectAndUnlockDevice" : "Conecta y desbloquea tu dispositivo",
@@ -2089,9 +2091,9 @@
       "prepareSeed" : "Como precaución, asegúrate de que la Frase de Recuperación Secreta de 24 palabras esté escrita en la Hoja de Recuperación y de tener fácil acceso a ella.",
       "prepareSeedRecover" : "Considera la opción de usar Ledger Recover para realizar una copia de respaldo del acceso a tu billetera y asegurarte de que siempre esté a mano.",
       "disclaimerTitle" : "Estás a punto de instalar <1>la versión de firmware {{version}}</1>.",
-      "cancelUpdate" : "Cancelar actualización del SO",
-      "continueUpdate" : "Continuar con actualización del SO",
-      "restartUpdate" : "Reiniciar actualización de SO",
+      "cancelUpdate" : "Cancelar actualización",
+      "continueUpdate" : "Continuar actualización",
+      "restartUpdate" : "Reiniciar actualización",
       "skipRestore" : "Omitir restauración",
       "cancelUpdateWarning" : "Si cancelas la actualización ahora, tus ajustes y aplicaciones podrían no restaurarse correctamente.",
       "updateInProgress" : "Actualización del SO en curso"
@@ -2415,7 +2417,9 @@
         "unitVByte" : "{{unit}}/vbyte",
         "nft" : "NFT",
         "nftQuantity" : "Cantidad",
-        "splExtensionsWarning" : "Estás interactuando con un token incluido en el programa Token-2022, también conocido como Token Extensions. Este token conlleva riesgos concretos. <0>Haz clic aquí</0> para obtener más información."
+        "splExtensionsWarning" : "Estás interactuando con un token incluido en el programa Token-2022, también conocido como Token Extensions. Este token conlleva riesgos concretos. <0>Haz clic aquí</0> para obtener más información.",
+        "senderChainId" : "ID de cadena del remitente",
+        "receiverChainId" : "ID de cadena del receptor"
       },
       "verification" : {
         "streaming" : {
@@ -5069,7 +5073,7 @@
         "description" : "Gestiona, compra y rentabiliza tus cripto y NFTs con seguridad desde Ledger Live",
         "nextButton" : "Comenzar",
         "noDevice" : "¿No tienes un dispositivo?",
-        "buyLink" : "¿No tienes un dispositivo? Compra un Ledger",
+        "buyLink" : "¿No tienes un dispositivo?\nCompra un Ledger",
         "byTapping" : "Al tocar “Comenzar”, otorgas tu consentimiento y aceptas nuestros",
         "termsAndConditions" : "Términos y condiciones",
         "and" : "y",
@@ -5499,7 +5503,7 @@
         "3" : {
           "text" : "Cuando conecto mi Ledger Nano a la aplicación Ledger Live, mi clave privada...",
           "answers" : {
-            "1" : "Sigue sin conectarse a Internet",
+            "1" : "…sigue sin conectarse a Internet",
             "2" : "…se conecta brevemente a Internet"
           },
           "results" : {
@@ -6854,6 +6858,12 @@
       "title" : "Se ha perdido la conexión con el dispositivo",
       "description" : "Ledger Live no ha podido conectarse a tu dispositivo. Inténtalo de nuevo o contacta con el Soporte de Ledger si persiste el problema."
     },
+    "RecipientAddressSanctionedError" : {
+      "title" : "Esta transacción incluye una dirección de billetera sancionada y no se puede procesar."
+    },
+    "KadenaCrossChainTransfer" : {
+      "title" : "Como esta transferencia es intercadena, la transacción puede tardar varios minutos en completarse."
+    },
     "DisconnectError" : {
       "title" : "Se ha perdido la conexión con el dispositivo",
       "description" : "Ledger Live no ha podido conectarse a tu dispositivo. Inténtalo de nuevo o contacta con el Soporte de Ledger si persiste el problema."
@@ -7177,13 +7187,13 @@
         "cta" : "Activar Ledger Sync"
       },
       "onboarding" : {
-        "title" : "Sincronizar con otra aplicación Ledger Live"
+        "title" : "Sincronizar con otra aplicación Ledger Live"
       }
     },
     "manage" : {
       "cta" : "Administrar",
       "synchronize" : {
-        "label" : "Sincronizar con otra aplicación Ledger Live",
+        "label" : "Sincronizar con otra aplicación Ledger Live",
         "description" : "Sincroniza tus cuentas de cripto de Ledger Live entre distintos teléfonos y PCs."
       },
       "backup" : {
@@ -7237,7 +7247,7 @@
         "title" : "Sincronización correcta",
         "desc" : "Los cambios que se produzcan en tus cuentas de cripto ahora aparecerán automáticamente en las aplicaciones Ledger Live en los teléfonos y PCs sincronizados. "
       },
-      "synchAnother" : "Sincronizar con otra aplicación Ledger Live",
+      "synchAnother" : "Sincronizar con otra aplicación Ledger Live",
       "close" : "Cerrar"
     },
     "manageBackup" : {
@@ -7315,7 +7325,7 @@
     },
     "deviceAction" : {
       "title" : "Continúa en tu Ledger {{wording}}",
-      "description" : "Sigue la instrucción que aparece en la pantalla de confianza de tu Ledger."
+      "description" : "Sigue las instrucciones que aparecen\nen la pantalla de confianza de tu Ledger."
     }
   },
   "ordinals" : {
