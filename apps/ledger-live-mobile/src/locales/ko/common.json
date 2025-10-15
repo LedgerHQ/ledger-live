@@ -1634,11 +1634,11 @@
       "privacyLink" : "개인 정보 보호 정책",
       "and" : "및",
       "videoTitles" : {
-        "0" : "A wallet that protects and puts you in control",
-        "1" : "Send, receive, swap and stake thousands of crypto",
-        "2" : "Verify all your transactions with peace of mind"
+        "0" : "사용자에게 온전한 통제권을 돌려주는 안전한 암호화폐 지갑",
+        "1" : "보내기, 받기, 스왑, 스테이킹까지, 수천 가지의 암호화폐를 자유롭게 거래하세요",
+        "2" : "안심하고 모든 트랜잭션을 직접 확인하세요"
       },
-      "disclaimer" : "By continuing, you agree to Ledger's <TermsAndConditions>Terms & Conditions</TermsAndConditions> and <PrivacyPolicy>Privacy Policy</PrivacyPolicy>. Ledger provides no financial advice. Swap and staking services are provided by third parties."
+      "disclaimer" : "계속 진행하는 것으로 Ledger의 <TermsAndConditions>이용약관</TermsAndConditions> 및 <PrivacyPolicy>개인 정보 보호 정책</PrivacyPolicy>에 동의하게 됩니다. Ledger는 재정 자문을 제공하지 않습니다. 스왑 및 스테이킹 서비스는 제3자 공급업체에서 제공합니다."
     },
     "postWelcomeStep" : {
       "title" : "시작해봅시다",
@@ -3427,7 +3427,7 @@
     "receive" : {
       "title" : "수령",
       "description" : "다른 지갑에서 암호화폐를 수령합니다",
-      "description_v2" : "Receive stablecoin via bank transfer or deposit crypto from another wallet",
+      "description_v2" : "은행 이체 또는 다른 지갑에서 암호화폐를 예치하여 스테이블코인을 받습니다",
       "titleReadOnly" : "미인증 주소",
       "headerTitle" : "암호화폐",
       "titleDevice" : "장치 연결",
@@ -3444,12 +3444,12 @@
       "connectToNoah" : "Noah에 연결 중",
       "menu" : {
         "crypto" : {
-          "title" : "Via crypto address",
-          "description" : "Deposit crypto from another wallet."
+          "title" : "암호화폐 주소로 받기",
+          "description" : "다른 지갑에서 암호화폐를 예치합니다."
         },
         "fiat" : {
-          "title" : "Via bank transfer",
-          "description" : "Receive stablecoin via Cash-to-Stablecoin account. Registration needed."
+          "title" : "은행 이체로 받기",
+          "description" : "Cash-to-Stablecoin 계정을 통해 스테이블코인을 받습니다. 등록이 필요합니다."
         }
       },
       "memoTag" : {
