@@ -2250,16 +2250,16 @@
   "receive" : {
     "title" : "接收",
     "successTitle" : "地址已安全共享",
-    "connectToNoah" : "Connecting you to Noah",
+    "connectToNoah" : "正在连接到 Noah",
     "steps" : {
       "options" : {
         "fromBank" : {
-          "title" : "Via bank transfer",
-          "description" : "Receive stablecoin via Cash-to-Stablecoin account. Registration needed."
+          "title" : "通过银行转账",
+          "description" : "通过现金转稳定币账户接收稳定币需要注册"
         },
         "fromCrypto" : {
-          "title" : "Via crypto address",
-          "description" : "Receive crypto from another wallet."
+          "title" : "通过加密货币地址",
+          "description" : "从另一个钱包接收加密货币。"
         }
       },
       "chooseAccount" : {
