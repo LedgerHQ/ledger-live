@@ -1206,6 +1206,9 @@
     "AmountTooSmall" : {
       "title" : "Bu işlem için gerekli minimum tutar: {{amount}}"
     },
+    "KadenaCrossChainTransfer" : {
+      "title" : "Bu, zincirler arası bir transfer olduğundan işlemin tamamlanması birkaç dakika sürebilir."
+    },
     "AddressesSanctionedError" : {
       "title" : "Sizi güvende tutuyoruz",
       "description" : "Bu işlem, yaptırım uygulanan bir cüzdan adresi içerdiğinden işleme koyulamıyor.\n-- {{addresses}}"
@@ -1305,7 +1308,8 @@
     "estimatedTime" : {
       "slow" : "≈ 2-3 dk.",
       "medium" : "≈ 30 s.",
-      "fast" : "≈ 15 s."
+      "fast" : "≈ 15 s.",
+      "custom" : ""
     }
   },
   "signout" : {
@@ -1817,7 +1821,7 @@
             "label" : "Ekrandaki yönergeleri okuyarak cihazınızı nasıl kullanacağınızı öğrenin."
           },
           "2" : {
-            "title" : "“Set up as new device” (Yeni cihaz olarak kur) seçeneğini onaylayın",
+            "title" : "“Yeni cihaz olarak kur” seçeneğini onaylayın",
             "label" : "Seçimi onaylamak için her iki tuşa da aynı anda basın."
           },
           "3" : {
@@ -1968,17 +1972,17 @@
     "stepProtect" : {
       "bullets" : {
         "0" : {
-          "title" : "“Restore” (Geri Yükle) seçimini yapın",
+          "title" : "“Geri Yükle” seçimini yapın",
           "label" : "Seçmek için iki tuşa aynı anda basın."
         },
         "1" : {
-          "title" : "“Restore using Ledger Recover” (Ledger Recover ile geri yükleyin) seçimini yapın",
+          "title" : "“Ledger Recover ile geri yükleyin” seçimini yapın",
           "label" : "Seçmek için iki tuşa aynı anda basın."
         }
       },
       "nextStep" : "Devam",
       "extraInfo" : {
-        "tooltip" : "“Restore using Ledger Recover” (Ledger Recover ile geri yükleyin) seçeneği yok",
+        "tooltip" : "“Ledger Recover ile geri yükleyin” seçeneği yok",
         "title" : "Ledger Nano X cihazındaki işletim sisteminin güncellenmesi gerekiyor",
         "desc" : "İşletim sistemini güncellemeyi deneyebilir veya yardım almak için Ledger Destek ile iletişime geçebilirsiniz.",
         "cta" : "Güncelleme yönergeleri",
@@ -2271,14 +2275,14 @@
         "title" : "Cihazlar aranıyor"
       },
       "description" : "Ledger cihazınızın kilidinin açık ve eşleştirmek istediğiniz cep telefonuna yakın bir yerde olduğundan emin olun.",
-      "alreadyPaired" : "Zaten eşleştirilmiş"
+      "alreadyPaired" : "Zaten eşlenmiş"
     },
     "pairing" : {
       "success" : {
         "title" : "{{deviceName}} ile eşlendi"
       },
       "loading" : {
-        "title" : "{{deviceName}} ile eşleştiriliyor...",
+        "title" : "{{deviceName}} ile eşleniyor...",
         "subtitle" : "İstenirse {{productName}} cihazınızda kodu onaylayın"
       },
       "error" : {
@@ -2409,7 +2413,7 @@
         "title" : "{{deviceName}} ile eşlendi"
       },
       "loading" : {
-        "title" : "{{deviceName}} ile eşleştiriliyor",
+        "title" : "{{deviceName}} ile eşleniyor",
         "subtitle" : "İstenirse {{productName}} cihazınızda kodu onaylayın"
       },
       "error" : {
@@ -2794,7 +2798,9 @@
       "id" : "Kimlik (ID)",
       "autoClaimedRewards" : "Otomatik Alınan Ödüller",
       "stakedAmount" : "Stake edilen miktar",
-      "accountCreationFee" : "Hesap Oluşturma Ücreti"
+      "accountCreationFee" : "Hesap Oluşturma Ücreti",
+      "senderChainId" : "Gönderen Zincir Kimliği",
+      "receiverChainId" : "Alıcı Zincir Kimliği"
     },
     "multipleAddresses" : "Neden birden fazla adres var?",
     "tokenName" : "Token Adı",
@@ -3242,7 +3248,7 @@
       },
       "transactionsAlerts" : {
         "title" : "İşlem Uyarıları (Beta)",
-        "desc" : "Ethereum, Polygon, Binance Smart Chain, Avalanche ve Ethereum Classic işlemleriniz için bildirim alın"
+        "desc" : "Ethereum, Polygon, BNB Chain, Avalanche ve Ethereum Classic işlemleriniz için bildirim alın"
       },
       "price" : {
         "title" : "Fiyat Uyarıları",
@@ -4083,6 +4089,7 @@
       "validateMemo" : "Memo'yu onayla",
       "comment" : "Yorum",
       "validateComment" : "Yorumu onayla",
+      "validateChainId" : "Zincir kimliğini doğrulayın",
       "quantity" : "Miktar"
     },
     "validation" : {
@@ -4543,7 +4550,7 @@
       "desc" : "{{productName}} cihazınızın kilidinin açıldığından ve Bluetooth'un etkin olduğundan emin olun."
     },
     "bypassGenuine" : "Yine de kullan",
-    "alreadyPaired" : "Zaten eşleştirilmiş"
+    "alreadyPaired" : "Zaten eşlenmiş"
   },
   "DeviceItemSummary" : {
     "genuine" : "Cihazınız orijinal",
@@ -7574,8 +7581,8 @@
           "explanation" : {
             "title" : "Tarayın ve hesaplarınızı başka bir Ledger Live uygulamasını kullanarak senkronize edin",
             "steps" : {
-              "step1" : "Ledger Sync'in uygulamalarınızdan birinde etkinleştirildiğinden emin olun.",
-              "step2" : "Senkronize etmek istediğiniz Ledger Live uygulamasını açın.",
+              "step1" : "Ledger Sync, diğer uygulamada da etkinleştirilmelidir.",
+              "step2" : "Senkronize edilecek Ledger Live'ı açın.",
               "step3" : "<0>Ayarlar</0> <1>></1> <0>Genel</0> <1>></1> <0>Ledger Sync</0> <1>></1> <0>Zaten açtım</0> <1>></1> <0>Karekodu okut</0> adımlarını izleyin",
               "step4" : "Karekodu okutun."
             }
@@ -7587,8 +7594,8 @@
           "explanation" : {
             "title" : "Başka bir telefonda veya bilgisayardaki Ledger Live ile senkronize etmek için...",
             "steps" : {
-              "step1" : "Ledger Sync'in uygulamalarınızdan birinde etkinleştirildiğinden emin olun.",
-              "step2" : "Senkronize etmek istediğiniz Ledger Live'ı açın.",
+              "step1" : "Ledger Sync, diğer uygulamada da etkinleştirilmelidir.",
+              "step2" : "Senkronize edilecek Ledger Live'ı açın.",
               "step3" : "<0>Ayarlar</0> <1>></1> <0>Genel</0> <1>></1> <0>Ledger Sync</0> <1>></1> <0>Zaten açtım</0> <1>></1> <0>Karekodu göster</0> adımlarını izleyin",
               "step4" : "Karekodu okutun."
             }
