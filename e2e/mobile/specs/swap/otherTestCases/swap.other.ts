@@ -396,6 +396,7 @@ export function runSwapWithSendMaxTest(
 
       const swap = new Swap(fromAccount, toAccount, amountToSend);
       await app.common.selectKnownDevice();
+      await app.common.enableSynchronization();
       await app.swap.verifyAmountsAndAcceptSwap(swap, amountToSend);
       await app.swap.verifyDeviceActionLoadingNotVisible();
       await app.swap.waitForSuccessAndContinue();
