@@ -54,7 +54,7 @@
     "bluetooth" : "Bluetooth",
     "usb" : "USB",
     "add" : "Добавить",
-    "token" : "Токен",
+    "token" : "Токены",
     "token_plural" : "Токены",
     "subaccount" : "Субсчёт",
     "subaccount_plural" : "Субсчета",
@@ -1206,6 +1206,9 @@
     "AmountTooSmall" : {
       "title" : "Минимальная необходимая сумма для этой транзакции — {{amount}}"
     },
+    "KadenaCrossChainTransfer" : {
+      "title" : "На проведение транзакции может уйти несколько минут, поскольку это кроссчейн-операция."
+    },
     "AddressesSanctionedError" : {
       "title" : "Ради вашей безопасности",
       "description" : "Эта транзакция использует адрес кошелька из санкционных списков и не может быть проведена.\n{{addresses}}"
@@ -1305,7 +1308,8 @@
     "estimatedTime" : {
       "slow" : "≈ 2-3 мин.",
       "medium" : "≈ 30 сек.",
-      "fast" : "≈ 15 сек."
+      "fast" : "≈ 15 сек.",
+      "custom" : ""
     }
   },
   "signout" : {
@@ -1633,11 +1637,11 @@
       },
       "setupLedger" : {
         "title" : "Настроить Ledger",
-        "subtitle" : "Ваш Ledger — новый или сброшенный?"
+        "subtitle" : "Ваше устройство Ledger — новое или сброшенное?"
       },
       "accessWallet" : {
         "title" : "Перейти к кошельку",
-        "subtitle" : "Ваш Ledger уже настроен?"
+        "subtitle" : "Есть уже настроенное устройство Ledger?"
       },
       "buyNano" : {
         "title" : "Купите Ledger Nano X",
@@ -1655,7 +1659,7 @@
     "welcomeBackStep" : {
       "title" : "С возвращением",
       "subtitle" : "Выберите способ доступа к кошельку:",
-      "connect" : "Подключение Ledger",
+      "connect" : "Подключить Ledger",
       "sync" : "Синхронизация с Ledger Live для ПК",
       "walletSync" : "Ledger Sync"
     },
@@ -2334,11 +2338,11 @@
       "learnMore" : "Подробнее о проверке подлинности",
       "inactive" : {
         "title" : "Проверка подлинности Ledger",
-        "description" : "Она поможет подтвердить, что у вас оригинальный {{productName}}."
+        "description" : "Она поможет подтвердить, что у вас оригинальное устройство {{productName}}."
       },
       "active" : {
         "title" : "Проверка подлинности Ledger",
-        "description" : "Она поможет подтвердить, что у вас оригинальный {{productName}}."
+        "description" : "Она поможет подтвердить, что у вас оригинальное устройство {{productName}}."
       },
       "completed" : {
         "title" : "{{productName}} подлинный",
@@ -2351,7 +2355,7 @@
       },
       "error" : {
         "title" : "Проверка подлинности Ledger",
-        "description" : "Проверка подлинности поможет подтвердить, что у вас оригинальный {{productName}}."
+        "description" : "Проверка подлинности поможет подтвердить, что у вас оригинальное устройство {{productName}}."
       }
     },
     "firmwareUpdateCheckStep" : {
@@ -2388,7 +2392,7 @@
     }
   },
   "syncOnboarding" : {
-    "title" : "Подготовьте ваш {{productName}}",
+    "title" : "Давайте настроим {{productName}}",
     "estimatedTimeFormat" : "{{estimatedTime}} минут",
     "deviceSelection" : {
       "title" : "Выберите устройство Ledger для настройки:",
@@ -2464,7 +2468,7 @@
         "desc" : "Будет создана новая секретная фраза восстановления."
       },
       "selectionRestore" : {
-        "title" : "Восстановите доступ к активам",
+        "title" : "Восстановить доступ к активам",
         "desc" : "Функция позволяет добраться до монет с помощью резервной копии — секретной фразы восстановления или Ledger Recover.",
         "descWithCharon" : "Функция позволяет добраться до монет с помощью резервной копии — секретной фразы восстановления, Ledger Recover или Запасного ключа Ledger."
       },
@@ -2794,7 +2798,9 @@
       "id" : "ID",
       "autoClaimedRewards" : "Автоматически запрошенные вознаграждения",
       "stakedAmount" : "В стейкинге",
-      "accountCreationFee" : "Комиссия за создание счёта"
+      "accountCreationFee" : "Комиссия за создание счёта",
+      "senderChainId" : "ID цепочки отправителя",
+      "receiverChainId" : "ID цепочки получателя"
     },
     "multipleAddresses" : "Почему несколько адресов?",
     "tokenName" : "Название токена",
@@ -3242,7 +3248,7 @@
       },
       "transactionsAlerts" : {
         "title" : "Уведомления о транзакциях (бета)",
-        "desc" : "Будьте в курсе всех ваших транзакций в сетях Ethereum, Polygon, Binance Smart Chain, Avalanche и Ethereum Classic."
+        "desc" : "Будьте в курсе всех ваших транзакций в сетях Ethereum, Polygon, BNB Chain, Avalanche и Ethereum Classic."
       },
       "price" : {
         "title" : "Уведомления о курсах",
@@ -3384,7 +3390,7 @@
   },
   "notifications" : {
     "prompt" : {
-      "title" : "Активация уведомлений",
+      "title" : "Включите уведомления",
       "desc" : "Будьте в курсе последних новостей о Ledger Live, устройствах Ledger и рынке криптовалют, а также получайте подходящие рекомендации. Отписаться можно в любой момент в настройках.",
       "allow" : "Разрешить уведомления",
       "later" : "Не сейчас"
@@ -4083,6 +4089,7 @@
       "validateMemo" : "Подтвердить Memo",
       "comment" : "Комментарий",
       "validateComment" : "Подтвердить комментарий",
+      "validateChainId" : "Подтверждение ID цепочки",
       "quantity" : "Количество"
     },
     "validation" : {
@@ -4123,7 +4130,7 @@
     }
   },
   "editTransaction" : {
-    "cta" : "Ускорение или отмена",
+    "cta" : "Ускорить или отменить",
     "header" : "Изменение деталей транзакции",
     "learnMore" : "Подробнее...",
     "panel" : {
@@ -4138,7 +4145,7 @@
       "gasPrice" : "Цена Газа = {{amount}}"
     },
     "speedUp" : {
-      "title" : "Ускорение",
+      "title" : "Ускорить",
       "description" : "Повторная отправка транзакции с большей комиссией сети."
     },
     "cancel" : {
@@ -4280,17 +4287,17 @@
       "segwit_or_native_segwit" : "SegWit или Native SegWit?"
     },
     "quitConfirmation" : {
-      "title" : "Отменить добавление счёта",
+      "title" : "Не добавлять счёт?",
       "desc" : "Уверены, что не хотите добавлять счета?",
       "v2" : {
-        "title" : "Отменить добавление счёта?",
+        "title" : "Не добавлять счёт?",
         "desc" : "Новые счета не будут добавлены в Ledger Live.",
         "continue" : "Продолжить",
         "cancel" : "Отменить"
       }
     },
     "imported" : "Актив успешно добавлен",
-    "added" : "Счёт добавлен в Портфель",
+    "added" : "Добавили в Портфель!",
     "added_plural" : "Добавлено счетов в Портфель: {{count}}",
     "sections" : {
       "importable" : {
@@ -4357,7 +4364,7 @@
       "whichAddressType" : "Как определить подходящий тип адреса",
       "sections" : {
         "importable" : {
-          "title" : "Мы нашли {{count}} счёт",
+          "title" : "Нашли счета ({{count}})",
           "title_plural" : "Найдено счетов: {{count}}"
         },
         "creatable" : {
@@ -4404,7 +4411,7 @@
     "appNotInstalled_plural" : "Пожалуйста, установите приложения {{appName}}",
     "useAnotherDevice" : "Использовать другое устройство",
     "deviceNotOnboarded" : {
-      "title" : "Ваш Ledger ещё не готов к использованию",
+      "title" : "Устройство Ledger ещё не готово к использованию",
       "description" : "Сначала {{deviceName}} необходимо настроить. Мы поможем вам с этим"
     },
     "deviceInBootloader" : {
@@ -4574,10 +4581,10 @@
       "connectExistingLedgerDescription" : "Если Ledger уже настроен",
       "setUpNewLedger" : "Настроить новый Ledger",
       "setUpNewLedgerDescription" : "Если Ledger ещё не настроен",
-      "buyDeviceCTA" : "<0>Нужен новый Ledger? </0><1>Приобретите его</1>",
+      "buyDeviceCTA" : "<0>Хотите новое устройство Ledger? </0><1>Купите его</1>",
       "item" : {
         "usb" : "Подключен через USB",
-        "available" : "Доступен. Нажмите, чтобы подключиться",
+        "available" : "Поблизости. Коснитесь для подключения",
         "unavailable" : "Не подключено"
       }
     },
@@ -4772,7 +4779,7 @@
     "pleaseWaitUpdate" : "Дождитесь завершения обновления",
     "viewUpdateChangelog" : "Открыть список изменений обновления",
     "waitForFirmwareUpdate" : "Дождитесь обновления ОС на устройстве",
-    "waitForInstallationToFinish" : "Дождитесь завершения установки на {{deviceName}}",
+    "waitForInstallationToFinish" : "Дождитесь завершения установки на {{deviceName}}.",
     "batteryLow" : "Слишком низкий заряд батареи {{productName}}",
     "batteryLowDescription" : "Для обновления ОС ваш {{productName}} должен быть заряжен минимум до {{lowBatteryPercentage}}% или подключён к сети.",
     "updateCancelled" : "Обновление ОС отменено на {{deviceName}}",
@@ -4813,7 +4820,7 @@
         },
         "titleBackingUp" : "Подготовка обновления к установке",
         "titleTransferring" : "Перенос обновления",
-        "description" : "Сохраняем настройки и приложения. Перенос обновления на {{deviceName}}."
+        "description" : "Сохраняем настройки и приложения... Переносим обновление на {{deviceName}}..."
       },
       "installUpdate" : {
         "titleInactive" : "Установка",
@@ -7397,7 +7404,7 @@
           },
           "infoText" : {
             "info" : "Отозвать согласие можно в любой момент в Настройках.",
-            "link" : "Узнайте подробнее о том, как мы взаимодействуем с вашими данными"
+            "link" : "Подробнее о том, как мы используем ваши данные"
           }
         }
       },
@@ -7415,7 +7422,7 @@
           "notNow" : "Позже",
           "accept" : "Принять",
           "acceptAll" : "Принять",
-          "confirm" : "Подтверждение"
+          "confirm" : "Подтвердить"
         },
         "infoText" : {
           "info" : "Отозвать согласие можно в любой момент в Настройках.",
@@ -7434,7 +7441,7 @@
         },
         "ctas" : {
           "refuse" : "Отклонить",
-          "share" : "Поделиться"
+          "share" : "Применить"
         },
         "infoText" : {
           "info" : "Отозвать согласие можно в любой момент в Настройках.",
@@ -7467,7 +7474,7 @@
       },
       "card" : {
         "title" : "Ledger Sync",
-        "description" : "Синхронизируйте ваши счета в автоматическом режиме — даже при переходе на новый смартфон.",
+        "description" : "Автоматически синхронизируйте счета — даже при переходе на новый смартфон.",
         "cta" : "Включить Ledger Sync"
       }
     },
