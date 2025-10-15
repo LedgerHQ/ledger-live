@@ -19,7 +19,7 @@
     "@types/node": "22.10.10",
     "allure-js-commons": "^3.2.1",
     "allure-playwright": "^3.2.1",
-    "axios": "1.11.0",
+    "axios": "catalog:",
     "dotenv": "^16.4.7",
     "invariant": "^2.2.4",
     "lodash": "^4.17.21",

@@ -36,7 +36,7 @@
   "dependencies": {
     "@ledgerhq/live-env": "workspace:^",
     "@ledgerhq/types-live": "workspace:^",
-    "axios": "1.11.0",
+    "axios": "catalog:",
     "bs58check": "^2.1.2",
     "invariant": "2"
   },
