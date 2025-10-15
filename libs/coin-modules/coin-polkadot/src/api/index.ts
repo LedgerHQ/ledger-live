@@ -14,6 +14,7 @@ import {
 } from "@ledgerhq/coin-framework/api/index";
 import coinConfig, { type PolkadotConfig } from "../config";
 import {
+  broadcast,
   craftEstimationTransaction,
   craftTransaction,
   defaultExtrinsicArg,
@@ -22,14 +23,14 @@ import {
   lastBlock,
   listOperations,
 } from "../logic";
-
-const broadcast = (tx: string): Promise<string> => broadcast(tx);
+import { BroadcastConfig } from "@ledgerhq/types-live";
 
 export function createApi(config: PolkadotConfig): AlpacaApi {
   coinConfig.setCoinConfig(() => ({ ...config, status: { type: "active" } }));
 
   return {
-    broadcast,
+    broadcast: (transaction: string, _broadcastConfig?: BroadcastConfig) =>
+      broadcast(transaction, "polkadot"),
     combine: () => {
       throw new Error("UnsupportedMethod");
     },
