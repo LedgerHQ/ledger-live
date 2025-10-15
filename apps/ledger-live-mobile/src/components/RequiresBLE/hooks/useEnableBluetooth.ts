@@ -135,7 +135,7 @@ export function useEnableBluetooth(
 
   let bluetoothServicesState: BluetoothServicesState = "disabled";
 
-  if (__DEV__ || observedTransportState === "PoweredOn") {
+  if (observedTransportState === "PoweredOn") {
     bluetoothServicesState = "enabled";
   } else if (observedTransportState === "PoweredOff") {
     bluetoothServicesState = "disabled";
