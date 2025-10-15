@@ -1206,6 +1206,9 @@
     "AmountTooSmall" : {
       "title" : "このトランザクションに最低限必要な金額は、{{amount}}です"
     },
+    "KadenaCrossChainTransfer" : {
+      "title" : "この取引はクロスチェーン転送のため、完了に数分かかることがあります。"
+    },
     "AddressesSanctionedError" : {
       "title" : "お客様の安全を確保",
       "description" : "このトランザクションには制裁ウォレットアドレスが関係しており、処理できません。\n-- {{addresses}}"
@@ -1305,7 +1308,8 @@
     "estimatedTime" : {
       "slow" : "≈ 2-3分",
       "medium" : "≈ 30秒",
-      "fast" : "≈ 15秒"
+      "fast" : "≈ 15秒",
+      "custom" : ""
     }
   },
   "signout" : {
@@ -2794,7 +2798,9 @@
       "id" : "ID",
       "autoClaimedRewards" : "自動獲得報酬",
       "stakedAmount" : "ステーキング済み量",
-      "accountCreationFee" : "アカウント作成手数料"
+      "accountCreationFee" : "アカウント作成手数料",
+      "senderChainId" : "送信元チェーンID",
+      "receiverChainId" : "受信先チェーンID"
     },
     "multipleAddresses" : "なぜ複数のアドレスがあるのですか？",
     "tokenName" : "トークン名",
@@ -3242,7 +3248,7 @@
       },
       "transactionsAlerts" : {
         "title" : "トランザクション警告（ベータ）",
-        "desc" : "Ethereum、Polygon、Binance Smart Chain、Avalanche、Ethereum Classicのトランザクションに関する通知を受け取る"
+        "desc" : "Ethereum、Polygon、BNB Chain、Avalanche、Ethereum Classicのトランザクションに関する通知を受け取る"
       },
       "price" : {
         "title" : "価格アラート",
@@ -3258,7 +3264,7 @@
       "supportDesc" : "問題がある場合は、ハードウェアウォレットでLedger Liveを使用するためのヘルプを参照してください。",
       "configureDevice" : "デバイスのセットアップ",
       "configureDeviceDesc" : "新しいデバイスとしてセットアップするか、既存のデバイスを復元する。アカウントと設定は保持されます。",
-      "clearCache" : "Cacheを削除",
+      "clearCache" : "キャッシュを削除",
       "clearCacheDesc" : "ネットワーク上のトランザクションがスキャンされ、アカウントは再計算されます。",
       "clearCacheModal" : "本当によろしいですか？",
       "clearCacheModalDesc" : "ネットワーク上のトランザクションの完全なスキャンが新たに実行されます。アカウントの履歴が再構築され、残高は再計算されます。",
@@ -4083,6 +4089,7 @@
       "validateMemo" : "メモの確認",
       "comment" : "コメント",
       "validateComment" : "コメントを検証する",
+      "validateChainId" : "チェーンIDを確認",
       "quantity" : "数量"
     },
     "validation" : {
