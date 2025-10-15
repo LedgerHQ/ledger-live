@@ -1049,6 +1049,9 @@ importers:
       '@ledgerhq/live-network':
         specifier: workspace:^
         version: link:../../libs/live-network
+      '@ledgerhq/live-persistence':
+        specifier: workspace:^
+        version: link:../../libs/live-persistence
       '@ledgerhq/live-wallet':
         specifier: workspace:^
         version: link:../../libs/live-wallet
