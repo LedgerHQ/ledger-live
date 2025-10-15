@@ -6,7 +6,7 @@ import Sui from "@ledgerhq/hw-app-sui";
 import type { Bridge } from "@ledgerhq/types-live";
 import { SuiCoinConfig } from "@ledgerhq/coin-sui/config";
 import { type SuiSigner } from "@ledgerhq/coin-sui/types";
-import suiResolver from "@ledgerhq/coin-sui/signer/index";
+import { getAddress as suiResolver } from "@ledgerhq/coin-sui/signer/index";
 import makeCliTools, { type CliTools } from "@ledgerhq/coin-sui/test/cli";
 import { CreateSigner, createResolver, executeWithSigner } from "../../bridge/setup";
 import { Resolver } from "../../hw/getAddress/types";

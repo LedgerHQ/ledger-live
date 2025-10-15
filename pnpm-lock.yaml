@@ -4150,6 +4150,9 @@ importers:
       '@ledgerhq/cryptoassets':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/cryptoassets
+      '@ledgerhq/devices':
+        specifier: workspace:*
+        version: link:../../ledgerjs/packages/devices
       '@ledgerhq/errors':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/errors
@@ -4174,12 +4177,15 @@ importers:
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../../ledgerjs/packages/types-live
-      '@mysten/signers':
-        specifier: 0.5.0
-        version: 0.5.0(typescript@5.4.3)
       '@mysten/sui':
         specifier: 1.38.0
         version: 1.38.0(typescript@5.4.3)
+      '@semeano/ledgerjs-hw-app-sui':
+        specifier: 0.2.10
+        version: 0.2.10
+      '@semeano/signers':
+        specifier: 0.1.15
+        version: 0.1.15(typescript@5.4.3)
       axios:
         specifier: 'catalog:'
         version: 1.12.2
@@ -6979,9 +6985,9 @@ importers:
 
   libs/ledgerjs/packages/hw-app-sui:
     dependencies:
-      '@mysten/ledgerjs-hw-app-sui':
-        specifier: 0.6.0
-        version: 0.6.0
+      '@semeano/ledgerjs-hw-app-sui':
+        specifier: 0.2.10
+        version: 0.2.10
     devDependencies:
       '@ledgerhq/hw-transport-mocker':
         specifier: workspace:^
@@ -14359,11 +14365,6 @@ packages:
     engines: {node: '>=6'}
     hasBin: true
 
-  '@grpc/proto-loader@0.7.12':
-    resolution: {integrity: sha512-DCVwMxqYzpUCiDMl7hQ384FqP4T3DbNpXU8pt681l3UWCip1WUiD5JrkImUwCB9a7f2cq4CUTmi5r/xIMRPY1Q==}
-    engines: {node: '>=6'}
-    hasBin: true
-
   '@grpc/proto-loader@0.7.15':
     resolution: {integrity: sha512-tMXdRCfYVixjuFK+Hk0Q1s38gV9zDiDJfWL3h1rv4Qc39oILCu1TRTDt7+fGUI8K4G1Fj125Hx/ru3azECWTyQ==}
     engines: {node: '>=6'}
@@ -14874,11 +14875,17 @@ packages:
   '@ledgerhq/errors@6.25.0':
     resolution: {integrity: sha512-9cU0dgUyq3Adb1bHAjJnbwl+r+4WBjuPq0k+/DbBNpuYHwcz2xKtRIjLimUJyACjHti3iWwRt1sFcbQDDdI08w==}
 
+  '@ledgerhq/errors@6.26.0':
+    resolution: {integrity: sha512-4OlisaDBafkn7KN5emue08lCGMVREX6T+nxj47C7W30EBA/leLAEDaVvUw5/gFOWrv8Q2A9Scb8aMM3uokyt0w==}
+
   '@ledgerhq/evm-tools@1.3.0':
     resolution: {integrity: sha512-NeMhQlcEJRkgM4Yaap+Xngm2wIib3wUoXJTvIbBt8L/yJu5A0fN8v84pprh50JC7e1X0sL4r8do8XqdxXb9Gpg==}
 
   '@ledgerhq/hw-app-eth@6.29.7':
     resolution: {integrity: sha512-8ijfmsZdnaaWg5Ne+Zsu4y22Ba+VyGy1Nq7cuhM+1Uz1dpQDwrbbFlYqluqi17c4hRP0uaaPDLvyitxNelllNQ==}
+
+  '@ledgerhq/hw-bolos@6.32.8':
+    resolution: {integrity: sha512-4cxIB7RoV4CZEdi6SGocJcqNxYPsyUSauEaQlx8EKYzVvfhxfgih2vlfCCbykpRAiTW9xLHgO1FEwT1Dp60n2Q==}
 
   '@ledgerhq/hw-transport-mocker@6.29.4':
     resolution: {integrity: sha512-CLDIpQ/eqU8qrCYGY9MyHa+oMgqs6PuNkWtqbcaS4AzNx8L/9bv7y8CZwCjxX6oB/2ZEq42RlL6oZ6Ou3oHnoQ==}
@@ -14899,17 +14906,32 @@ packages:
       '@types/react':
         optional: true
 
+  '@ledgerhq/ledger-cal-service@1.6.0':
+    resolution: {integrity: sha512-PSE3/f557y+CxIOr0NBwAkp5Zwh49nibhiWIgKkvr2JrW2j0/s0nKt4VvfG5inWJ1hW8xH9opv45b2vUi93DiQ==}
+
+  '@ledgerhq/ledger-trust-service@0.3.14':
+    resolution: {integrity: sha512-Q83QXnLDFIDnm2Bv4WgWilurE1WGSX7gGaMEhVxb/BQXH1O78QlNgNRys8K35wnG7BxYKjBJGMoK9U6JdWwW2Q==}
+
   '@ledgerhq/live-app-sdk@0.8.2':
     resolution: {integrity: sha512-yD+L02pAwTfjeSyixWkfqlh6Xg3yAGFnFitrcHk2WWUtKg1TVmNpWNHLS22LKYYWJ7Lflj/pLLQ0nKm1OsJB9g==}
 
-  '@ledgerhq/live-env@2.4.1':
-    resolution: {integrity: sha512-ZiVUfN1F5rnj6g3IUqOsHvitiKd7rtGy7FY7VBOXbG9qN7XLeLfmJhnzh/5yjX14dXhVOeAlPd1UzmmpxkRU6A==}
+  '@ledgerhq/live-env@2.18.0':
+    resolution: {integrity: sha512-wasAK0IPyyX4ZAU0FLTZUsRzxJfdHlewyhkbz3HryYKbNofuMRwIWyaZ2xhpXXjEdP6qHb9HzewAZevjSn7DLQ==}
+
+  '@ledgerhq/live-network@2.0.19':
+    resolution: {integrity: sha512-KVdqFDQcqEUNoC/TnaOJeo/I7TY39lQhzcVlnkAt2jbp5Xfv5YNuazL9lId5+bBb28jNPAv5uNJSlgvzpSSNIg==}
+
+  '@ledgerhq/live-promise@0.1.1':
+    resolution: {integrity: sha512-oFo6KUZIdFEndp2uokSU9XE9UCT/7NLOOKa1nQUfHhAfyKxRWqBlZOGRuivM/BIwKm0IUFa3+HE7uxK497kYPg==}
 
   '@ledgerhq/logs@5.50.0':
     resolution: {integrity: sha512-swKHYCOZUGyVt4ge0u8a7AwNcA//h4nx5wIi0sruGye1IJ5Cva0GyK9L2/WdX+kWVTKp92ZiEo1df31lrWGPgA==}
 
   '@ledgerhq/logs@6.12.0':
     resolution: {integrity: sha512-ExDoj1QV5eC6TEbMdLUMMk9cfvNKhhv5gXol4SmULRVCx/3iyCPhJ74nsb3S0Vb+/f+XujBEj3vQn5+cwS0fNA==}
+
+  '@ledgerhq/logs@6.13.0':
+    resolution: {integrity: sha512-4+qRW2Pc8V+btL0QEmdB2X+uyx0kOWMWE1/LWsq5sZy3Q5tpi4eItJS6mB0XL3wGW59RQ+8bchNQQ1OW/va8Og==}
 
   '@ledgerhq/signer-utils@1.1.0':
     resolution: {integrity: sha512-zp8kyNF0sNMUG2VkgOL7rDu8W6U1P8yvTA3wIDjjlqoIOPanvodfezeub69fOuHJ2QG/JmnS8YZCGIoSWpQYkA==}
@@ -15038,13 +15060,6 @@ packages:
 
   '@mysten/bcs@1.8.0':
     resolution: {integrity: sha512-bDoLN1nN+XPONsvpNyNyqYHndM3PKWS419GLeRnbLoWyNm4bnyD1X4luEpJLLDq400hBuXiCan4RWjofvyTUIQ==}
-
-  '@mysten/ledgerjs-hw-app-sui@0.6.0':
-    resolution: {integrity: sha512-UopsSSI1gphfoh59feiPPhZUEybYIvYEcvmudGR2RAIN3IDJHkaA3Uu0HPH8BZQbQXhkgvFW4V2KNWIWj2IE2g==}
-
-  '@mysten/signers@0.5.0':
-    resolution: {integrity: sha512-BVbOJLTXLHzHSB/P2PHUSCEDnlQkkyQd8Xwl0ZTLEHMYWUeK9lMiKyijk+8dw8wF3hTJFfob7N8mBZ1PK3gJow==}
-    engines: {node: '>=20'}
 
   '@mysten/sui@1.38.0':
     resolution: {integrity: sha512-tH6V4BJsYi5d97MOiLoOhyldrYxkm/cu8dYV52asqh1i88HrSVMbPAJ9sVoeWN2Ju+QsJ/Go4ldSjdCkaBCyJQ==}
@@ -17219,6 +17234,13 @@ packages:
   '@segment/tsub@2.0.0':
     resolution: {integrity: sha512-NzkBK8GwPsyQ74AceLjENbUoaFrObnzEKOX4ko2wZDuIyK+DnDm3B//8xZYI2LCKt+wUD55l6ygfjCoVs8RMWw==}
     hasBin: true
+
+  '@semeano/ledgerjs-hw-app-sui@0.2.10':
+    resolution: {integrity: sha512-a0k/WU+4Dj+egtyCGysuqhoIDkDYHbcDujv2zv9P5rJJ6ZcuklmdEC8vFlcDoXZFwq0qJs+eHYPAM/DutBqCSA==}
+
+  '@semeano/signers@0.1.15':
+    resolution: {integrity: sha512-Ekoc5YTzWhxCDxaffhQINb3AmCSi0MiE/t4BPVMhBzvWOyuSrFySyKuMfgjoLF+0Uo2mzgC5XinPOSMMudgqpA==}
+    engines: {node: '>=20'}
 
   '@sentry-internal/browser-utils@8.16.0':
     resolution: {integrity: sha512-40lzNy5F6dUFCN85AGThBxHPQLSwoNhZM2hWqhAR5rZ3Yed0uBaKlm4aNJCeeUB9l4kd0sH0In+i9Nqu6TGKrw==}
@@ -21823,6 +21845,9 @@ packages:
   axios@0.26.1:
     resolution: {integrity: sha512-fPwcX4EvnSHuInCMItEhAGnaSEXRBjtzh9fOtsE6E1G6p7vl7edEeZe11QHf18+6+9gR5PbKV/sGKNaD8YaMeA==}
 
+  axios@1.11.0:
+    resolution: {integrity: sha512-1Lx3WLFQWm3ooKDYZD1eXmoGO9fxYQjrycfHFC8P0sCfQVXyROp0p9PFWBehewBOdCwHc+f/b8I0fMto5eSfwA==}
+
   axios@1.12.2:
     resolution: {integrity: sha512-vMJzPewAlRyOgxV2dU0Cuz2O8zzzx9VYtbJOaBgXFeLc4IV/Eg50n4LowmehOOR61S8ZMpc2K5Sa7g6A4jfkUw==}
 
@@ -24804,10 +24829,6 @@ packages:
 
   es-object-atoms@1.1.1:
     resolution: {integrity: sha512-FGgH2h8zKNim9ljj7dankFPcICIK9Cp5bm+c2gQSYePhpaG5+esrLODihIorn+Pe6FGJzWhXQotPv73jTaldXA==}
-    engines: {node: '>= 0.4'}
-
-  es-set-tostringtag@2.0.3:
-    resolution: {integrity: sha512-3T8uNMC3OQTHkFUsFq8r/BwAXLHvU/9O9mE0fBc/MY5iq/8H7ncvO947LmYA6ldWw9Uh8Yhf25zu6n7nML5QWQ==}
     engines: {node: '>= 0.4'}
 
   es-set-tostringtag@2.1.0:
@@ -40481,11 +40502,11 @@ snapshots:
       '@ethersproject/rlp': 5.7.0
       '@ledgerhq/cryptoassets-evm-signatures': 13.5.2
       '@ledgerhq/domain-service': 1.2.12
-      '@ledgerhq/errors': 6.25.0
+      '@ledgerhq/errors': 6.26.0
       '@ledgerhq/evm-tools': 1.3.0
       '@ledgerhq/hw-transport': link:libs/ledgerjs/packages/hw-transport
       '@ledgerhq/hw-transport-mocker': 6.29.4
-      '@ledgerhq/logs': 6.12.0
+      '@ledgerhq/logs': 6.13.0
       '@ledgerhq/types-live': 6.53.1
       axios: 1.7.7
       bignumber.js: 9.1.2
@@ -43388,7 +43409,7 @@ snapshots:
       '@firebase/util': 1.10.3
       '@firebase/webchannel-wrapper': 1.0.3
       '@grpc/grpc-js': 1.9.15
-      '@grpc/proto-loader': 0.7.12
+      '@grpc/proto-loader': 0.7.15
       tslib: 2.6.2
 
   '@firebase/functions-compat@0.3.19(@firebase/app-compat@0.2.50)(@firebase/app@0.11.1)':
@@ -43926,18 +43947,11 @@ snapshots:
       protobufjs: 6.11.4
       yargs: 16.2.0
 
-  '@grpc/proto-loader@0.7.12':
-    dependencies:
-      lodash.camelcase: 4.3.0
-      long: 5.2.3
-      protobufjs: 7.3.2
-      yargs: 17.7.2
-
   '@grpc/proto-loader@0.7.15':
     dependencies:
       lodash.camelcase: 4.3.0
       long: 5.2.3
-      protobufjs: 7.3.2
+      protobufjs: 7.5.4
       yargs: 17.7.2
 
   '@gwhitney/detect-indent@7.0.1': {}
@@ -45234,7 +45248,7 @@ snapshots:
 
   '@ledgerhq/cryptoassets-evm-signatures@13.5.2':
     dependencies:
-      '@ledgerhq/live-env': 2.4.1
+      '@ledgerhq/live-env': 2.18.0
       axios: 1.7.7
 
   '@ledgerhq/cryptoassets@6.37.0':
@@ -45312,8 +45326,8 @@ snapshots:
 
   '@ledgerhq/domain-service@1.2.12':
     dependencies:
-      '@ledgerhq/errors': 6.25.0
-      '@ledgerhq/logs': 6.12.0
+      '@ledgerhq/errors': 6.26.0
+      '@ledgerhq/logs': 6.13.0
       '@ledgerhq/types-live': 6.53.1
       axios: 1.7.7
       eip55: 2.1.1
@@ -45326,12 +45340,14 @@ snapshots:
 
   '@ledgerhq/errors@6.25.0': {}
 
+  '@ledgerhq/errors@6.26.0': {}
+
   '@ledgerhq/evm-tools@1.3.0':
     dependencies:
       '@ethersproject/constants': 5.7.0
       '@ethersproject/hash': 5.7.0
       '@ledgerhq/cryptoassets-evm-signatures': 13.5.2
-      '@ledgerhq/live-env': 2.4.1
+      '@ledgerhq/live-env': 2.18.0
       axios: 1.7.7
       crypto-js: 4.2.0
 
@@ -45340,17 +45356,21 @@ snapshots:
       '@ethersproject/abi': 5.7.0
       '@ethersproject/rlp': 5.7.0
       '@ledgerhq/cryptoassets': 6.37.0
-      '@ledgerhq/errors': 6.25.0
+      '@ledgerhq/errors': 6.26.0
       '@ledgerhq/hw-transport': link:libs/ledgerjs/packages/hw-transport
       '@ledgerhq/hw-transport-mocker': 6.29.4
-      '@ledgerhq/logs': 6.12.0
+      '@ledgerhq/logs': 6.13.0
       axios: 0.26.1
       bignumber.js: 9.1.2
+
+  '@ledgerhq/hw-bolos@6.32.8':
+    dependencies:
+      '@ledgerhq/hw-transport': link:libs/ledgerjs/packages/hw-transport
 
   '@ledgerhq/hw-transport-mocker@6.29.4':
     dependencies:
       '@ledgerhq/hw-transport': link:libs/ledgerjs/packages/hw-transport
-      '@ledgerhq/logs': 6.12.0
+      '@ledgerhq/logs': 6.13.0
       rxjs: 7.8.1
 
   '@ledgerhq/hw-transport-u2f@5.36.0-deprecated':
@@ -45368,19 +45388,44 @@ snapshots:
     optionalDependencies:
       '@types/react': 18.2.73
 
+  '@ledgerhq/ledger-cal-service@1.6.0':
+    dependencies:
+      '@ledgerhq/live-env': 2.18.0
+      '@ledgerhq/live-network': 2.0.19
+
+  '@ledgerhq/ledger-trust-service@0.3.14':
+    dependencies:
+      '@ledgerhq/live-env': 2.18.0
+      '@ledgerhq/live-network': 2.0.19
+
   '@ledgerhq/live-app-sdk@0.8.2':
     dependencies:
       bignumber.js: 9.1.2
       json-rpc-2.0: 1.7.0
 
-  '@ledgerhq/live-env@2.4.1':
+  '@ledgerhq/live-env@2.18.0':
     dependencies:
       rxjs: 7.8.1
       utility-types: 3.11.0
 
+  '@ledgerhq/live-network@2.0.19':
+    dependencies:
+      '@ledgerhq/errors': 6.26.0
+      '@ledgerhq/live-env': 2.18.0
+      '@ledgerhq/live-promise': 0.1.1
+      '@ledgerhq/logs': 6.13.0
+      axios: 1.11.0
+      lru-cache: 7.18.3
+
+  '@ledgerhq/live-promise@0.1.1':
+    dependencies:
+      '@ledgerhq/logs': 6.13.0
+
   '@ledgerhq/logs@5.50.0': {}
 
   '@ledgerhq/logs@6.12.0': {}
+
+  '@ledgerhq/logs@6.13.0': {}
 
   '@ledgerhq/signer-utils@1.1.0(@ledgerhq/device-management-kit@0.10.0(rxjs@7.8.1))':
     dependencies:
@@ -45616,26 +45661,6 @@ snapshots:
     dependencies:
       '@mysten/utils': 0.2.0
       '@scure/base': 1.2.6
-
-  '@mysten/ledgerjs-hw-app-sui@0.6.0':
-    dependencies:
-      '@ledgerhq/hw-transport': link:libs/ledgerjs/packages/hw-transport
-      fast-sha256: 1.3.0
-
-  '@mysten/signers@0.5.0(typescript@5.4.3)':
-    dependencies:
-      '@google-cloud/kms': 4.5.0
-      '@mysten/ledgerjs-hw-app-sui': 0.6.0
-      '@mysten/sui': 1.38.0(typescript@5.4.3)
-      '@noble/curves': 1.9.7
-      '@noble/hashes': 1.8.0
-      asn1-ts: 8.0.5
-    transitivePeerDependencies:
-      - '@gql.tada/svelte-support'
-      - '@gql.tada/vue-support'
-      - encoding
-      - supports-color
-      - typescript
 
   '@mysten/sui@1.38.0(typescript@5.4.3)':
     dependencies:
@@ -46546,7 +46571,7 @@ snapshots:
     dependencies:
       '@noble/hashes': 1.8.0
       '@polkadot-api/utils': 0.0.1
-      '@scure/base': 1.2.5
+      '@scure/base': 1.2.6
       scale-ts: 1.6.0
     optional: true
 
@@ -48838,6 +48863,33 @@ snapshots:
       tiny-hashes: 1.0.1
     transitivePeerDependencies:
       - supports-color
+
+  '@semeano/ledgerjs-hw-app-sui@0.2.10':
+    dependencies:
+      '@ledgerhq/devices': link:libs/ledgerjs/packages/devices
+      '@ledgerhq/errors': 6.26.0
+      '@ledgerhq/hw-bolos': 6.32.8
+      '@ledgerhq/hw-transport': link:libs/ledgerjs/packages/hw-transport
+      '@ledgerhq/ledger-cal-service': 1.6.0
+      '@ledgerhq/ledger-trust-service': 0.3.14
+      fast-sha256: 1.3.0
+      semver: 7.7.1
+
+  '@semeano/signers@0.1.15(typescript@5.4.3)':
+    dependencies:
+      '@google-cloud/kms': 4.5.0
+      '@ledgerhq/devices': link:libs/ledgerjs/packages/devices
+      '@mysten/sui': 1.38.0(typescript@5.4.3)
+      '@noble/curves': 1.9.7
+      '@noble/hashes': 1.8.0
+      '@semeano/ledgerjs-hw-app-sui': 0.2.10
+      asn1-ts: 8.0.5
+    transitivePeerDependencies:
+      - '@gql.tada/svelte-support'
+      - '@gql.tada/vue-support'
+      - encoding
+      - supports-color
+      - typescript
 
   '@sentry-internal/browser-utils@8.16.0':
     dependencies:
@@ -55830,6 +55882,12 @@ snapshots:
     dependencies:
       follow-redirects: 1.15.11
 
+  axios@1.11.0:
+    dependencies:
+      follow-redirects: 1.15.11
+      form-data: 4.0.4
+      proxy-from-env: 1.1.0
+
   axios@1.12.2:
     dependencies:
       follow-redirects: 1.15.11
@@ -59783,7 +59841,7 @@ snapshots:
       define-properties: 1.2.1
       es-abstract: 1.23.2
       es-errors: 1.3.0
-      es-set-tostringtag: 2.0.3
+      es-set-tostringtag: 2.1.0
       function-bind: 1.1.2
       get-intrinsic: 1.2.4
       globalthis: 1.0.4
@@ -59803,12 +59861,6 @@ snapshots:
   es-object-atoms@1.1.1:
     dependencies:
       es-errors: 1.3.0
-
-  es-set-tostringtag@2.0.3:
-    dependencies:
-      get-intrinsic: 1.3.0
-      has-tostringtag: 1.0.2
-      hasown: 2.0.2
 
   es-set-tostringtag@2.1.0:
     dependencies:
@@ -62389,7 +62441,7 @@ snapshots:
       node-fetch: 2.7.0
       object-hash: 3.0.0
       proto3-json-serializer: 2.0.2
-      protobufjs: 7.3.2
+      protobufjs: 7.5.4
       retry-request: 7.0.2
       uuid: 9.0.1
     transitivePeerDependencies:
@@ -70875,7 +70927,7 @@ snapshots:
 
   proto3-json-serializer@2.0.2:
     dependencies:
-      protobufjs: 7.3.2
+      protobufjs: 7.5.4
 
   protobufjs-cli@1.1.2(protobufjs@7.2.5):
     dependencies:

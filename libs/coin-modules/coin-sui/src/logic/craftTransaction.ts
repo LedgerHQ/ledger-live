@@ -3,6 +3,7 @@ import type { TransactionIntent } from "@ledgerhq/coin-framework/api/index";
 import type { SuiTransactionMode, CoreTransaction } from "../types";
 import suiAPI from "../network";
 import { DEFAULT_COIN_TYPE } from "../network/sdk";
+import { Resolution } from "../signer/getResolution";
 
 export async function craftTransaction(
   {
@@ -17,6 +18,7 @@ export async function craftTransaction(
     stakedSuiId?: string;
   },
   withObjects: boolean = false,
+  resolution?: Resolution,
 ): Promise<CoreTransaction> {
   let coinType = DEFAULT_COIN_TYPE;
   if (asset.type === "token" && asset.assetReference) {
@@ -32,5 +34,6 @@ export async function craftTransaction(
       ...extra,
     },
     withObjects,
+    resolution,
   );
 }

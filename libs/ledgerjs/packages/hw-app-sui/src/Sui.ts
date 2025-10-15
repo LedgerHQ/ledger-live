@@ -1,4 +1,4 @@
-import SuiAPI from "@mysten/ledgerjs-hw-app-sui";
+import SuiAPI from "@semeano/ledgerjs-hw-app-sui";
 
 /**
  * Sui App API

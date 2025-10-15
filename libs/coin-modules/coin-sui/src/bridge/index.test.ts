@@ -1,7 +1,7 @@
 import { BigNumber } from "bignumber.js";
 import { createBridges } from "./index";
 import suiConfig from "../config";
-import signerGetAddress from "../signer";
+import { getAddress as signerGetAddress } from "../signer";
 import { buildSignOperation } from "./signOperation";
 import { getAccountShape, sync } from "./synchronisation";
 import { broadcast } from "./broadcast";
