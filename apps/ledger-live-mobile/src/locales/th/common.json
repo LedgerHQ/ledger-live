@@ -1206,6 +1206,9 @@
     "AmountTooSmall" : {
       "title" : "จำนวนขั้นต่ำที่กำหนดสำหรับธุรกรรมนี้คือ {{amount}}"
     },
+    "KadenaCrossChainTransfer" : {
+      "title" : "การโอนข้ามเชนอาจใช้เวลาหลายนาที โปรดรอสักครู่"
+    },
     "AddressesSanctionedError" : {
       "title" : "ปกป้องคุณให้ปลอดภัย",
       "description" : "ธุรกรรมนี้เกี่ยวข้องกับ Address ของวอลเล็ตที่ถูกคว่ำบาตร และไม่สามารถดำเนินการได้\n-- {{addresses}}"
@@ -1305,7 +1308,8 @@
     "estimatedTime" : {
       "slow" : "≈ 2-3 นาที",
       "medium" : "≈ 30 วินาที",
-      "fast" : "≈ 15 วินาที"
+      "fast" : "≈ 15 วินาที",
+      "custom" : ""
     }
   },
   "signout" : {
@@ -2794,7 +2798,9 @@
       "id" : "Id",
       "autoClaimedRewards" : "Reward ที่เคลมโดยอัตโนมัติ",
       "stakedAmount" : "จำนวนที่ Stake แล้ว",
-      "accountCreationFee" : "ค่าธรรมเนียมการสร้างบัญชี"
+      "accountCreationFee" : "ค่าธรรมเนียมการสร้างบัญชี",
+      "senderChainId" : "Chain ID ของผู้ส่ง",
+      "receiverChainId" : "Chain ID ของผู้รับ"
     },
     "multipleAddresses" : "ทำไมต้องหลาย Address?",
     "tokenName" : "ชื่อโทเคน",
@@ -3242,7 +3248,7 @@
       },
       "transactionsAlerts" : {
         "title" : "การแจ้งเตือนธุรกรรม (เบต้า)",
-        "desc" : "รับการแจ้งเตือนเกี่ยวกับธุรกรรมของคุณสำหรับ Ethereum, Polygon, Binance Smart Chain, Avalanche และ Ethereum Classic"
+        "desc" : "รับการแจ้งเตือนเกี่ยวกับธุรกรรมของคุณสำหรับ Ethereum, Polygon, BNB Chain, Avalanche และ Ethereum Classic"
       },
       "price" : {
         "title" : "การแจ้งเตือนราคา",
@@ -3686,8 +3692,8 @@
         "exportButton" : "ส่งออกการดำเนินการ",
         "exportFilename" : "การดำเนินการ Swap",
         "empty" : {
-          "title" : "การ Swap ก่อนหน้านี้ของคุณจะปรากฏที่นี่",
-          "desc" : "คุณยังไม่ได้ทำการ Swap หรือ Ledger Live กำลังถูกรีเซ็ตอยู่ในขณะนี้"
+          "title" : "การสวอปก่อนหน้านี้ของคุณจะปรากฏที่นี่",
+          "desc" : "คุณยังไม่ได้ทำการสวอป หรือแอป Ledger Live กำลังถูกรีเซ็ตอยู่ในขณะนี้"
         }
       }
     },
@@ -4083,6 +4089,7 @@
       "validateMemo" : "ตรวจสอบ Memo",
       "comment" : "ความคิดเห็น",
       "validateComment" : "ตรวจสอบความคิดเห็น",
+      "validateChainId" : "ตรวจสอบ Chain ID",
       "quantity" : "ปริมาณ"
     },
     "validation" : {
@@ -7062,7 +7069,7 @@
   "analytics" : {
     "title" : "การวิเคราะห์",
     "allocation" : {
-      "title" : "การจัดสรร"
+      "title" : "สัดส่วน"
     },
     "operations" : {
       "title" : "ประวัติธุรกรรม"
