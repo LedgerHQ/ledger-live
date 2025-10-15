@@ -3427,7 +3427,7 @@
     "receive" : {
       "title" : "รับ",
       "description" : "รับคริปโตจาก Wallet อื่น",
-      "description_v2" : "Receive stablecoin via bank transfer or deposit crypto from another wallet",
+      "description_v2" : "แปลงเป็นสเตเบิลคอยน์ด้วยการโอนเงินจากบัญชีธนาคารหรือการส่งคริปโตมาจากวอลเล็ตอื่น",
       "titleReadOnly" : "Address ที่ไม่ได้รับยืนยัน",
       "headerTitle" : "สินทรัพย์คริปโต",
       "titleDevice" : "เชื่อมต่ออุปกรณ์",
@@ -3444,12 +3444,12 @@
       "connectToNoah" : "กำลังเชื่อมต่อคุณกับ Noah",
       "menu" : {
         "crypto" : {
-          "title" : "Via crypto address",
-          "description" : "Deposit crypto from another wallet."
+          "title" : "โดยการโอนเงินจาก Address ของคริปโต",
+          "description" : "ส่งคริปโตมาจากวอลเล็ตอื่น"
         },
         "fiat" : {
-          "title" : "Via bank transfer",
-          "description" : "Receive stablecoin via Cash-to-Stablecoin account. Registration needed."
+          "title" : "โดยการโอนเงินจากบัญชีธนาคาร",
+          "description" : "แปลงเป็นสเตเบิลคอยน์ผ่านบัญชี Cash-to-Stablecoin ต้องมีการลงทะเบียนก่อนใช้งาน"
         }
       },
       "memoTag" : {
