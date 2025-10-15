@@ -400,3 +400,15 @@ export const findNextNonce = async (
 
   return nextNonce;
 };
+
+export const sip010OpToParentOp = (tokenOps: Operation[], parentAccountId: string): Operation[] => {
+  return tokenOps.map(op => {
+    return {
+      ...op,
+      accountId: parentAccountId,
+      value: BigNumber(0),
+      subOperations: [op],
+      id: encodeOperationId(parentAccountId, op.hash, op.type),
+    };
+  });
+};
