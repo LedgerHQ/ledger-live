@@ -3427,7 +3427,7 @@
     "receive" : {
       "title" : "Receber",
       "description" : "Receba cripto de outra carteira.",
-      "description_v2" : "Receive stablecoin via bank transfer or deposit crypto from another wallet",
+      "description_v2" : "Receba stablecoin por meio de transferência bancária ou deposite criptomoedas de outra carteira",
       "titleReadOnly" : "Endereço não verificado",
       "headerTitle" : "Criptoativo",
       "titleDevice" : "Conectar dispositivo",
@@ -3444,12 +3444,12 @@
       "connectToNoah" : "Conectando você a Noah",
       "menu" : {
         "crypto" : {
-          "title" : "Via crypto address",
-          "description" : "Deposit crypto from another wallet."
+          "title" : "De um endereço cripto",
+          "description" : "Deposite cripto de outra carteira."
         },
         "fiat" : {
-          "title" : "Via bank transfer",
-          "description" : "Receive stablecoin via Cash-to-Stablecoin account. Registration needed."
+          "title" : "Via transferência bancária",
+          "description" : "Receba stablecoin através da conta Cash-to-Stablecoin. Cadastro necessário."
         }
       },
       "memoTag" : {
