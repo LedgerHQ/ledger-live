@@ -23,7 +23,7 @@ import {
   lastBlock,
   listOperations,
 } from "../logic";
-import { BroadcastConfig } from "@ledgerhq/types-live";
+import type { BroadcastConfig } from "@ledgerhq/types-live";
 
 export function createApi(config: PolkadotConfig): AlpacaApi {
   coinConfig.setCoinConfig(() => ({ ...config, status: { type: "active" } }));
