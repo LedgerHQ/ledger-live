@@ -3427,7 +3427,7 @@
     "receive" : {
       "title" : "受け取る",
       "description" : "暗号資産を別のウォレットから受け取る。",
-      "description_v2" : "Receive stablecoin via bank transfer or deposit crypto from another wallet",
+      "description_v2" : "銀行送金でステーブルコインを受け取る、または別のウォレットから暗号資産を入金する",
       "titleReadOnly" : "未確認のアドレス",
       "headerTitle" : "暗号資産",
       "titleDevice" : "デバイスを接続",
@@ -3444,12 +3444,12 @@
       "connectToNoah" : "Noahに接続中",
       "menu" : {
         "crypto" : {
-          "title" : "Via crypto address",
-          "description" : "Deposit crypto from another wallet."
+          "title" : "暗号資産アドレス経由",
+          "description" : "別のウォレットから暗号資産を入金する。"
         },
         "fiat" : {
-          "title" : "Via bank transfer",
-          "description" : "Receive stablecoin via Cash-to-Stablecoin account. Registration needed."
+          "title" : "銀行送金経由",
+          "description" : "Cash-to-Stablecoinアカウントでステーブルコインを受け取る。登録が必要です。"
         }
       },
       "memoTag" : {
