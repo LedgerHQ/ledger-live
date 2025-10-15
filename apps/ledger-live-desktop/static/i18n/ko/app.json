@@ -97,7 +97,7 @@
     "selectValidatorNoOption" : "'{{accountName}}'와/과 일치하는 검증인이 없습니다",
     "selectNoResults" : "{{query}}와 일치하는 결과를 찾을 수 없습니다",
     "sortBy" : "정렬 기준",
-    "save" : "Ledger Nano S를",
+    "save" : "저장",
     "lock" : "잠금",
     "showMore" : "자세히 표시",
     "backToMatchingURL" : "{{appName}} 앱으로 돌아가기",
@@ -1895,7 +1895,9 @@
       "transferAmount" : "이전 금액",
       "validatorsCount" : "검증인 ({{number}})",
       "version" : "버전",
-      "accountCreationFee" : "계정 생성 수수료"
+      "accountCreationFee" : "계정 생성 수수료",
+      "senderChainId" : "송신 체인 ID",
+      "receiverChainId" : "수신 체인 ID"
     }
   },
   "operationList" : {
@@ -2415,7 +2417,9 @@
         "unitVByte" : "{{unit}}/vbyte",
         "nft" : "NFT",
         "nftQuantity" : "수량",
-        "splExtensionsWarning" : "현재 사용 중인 토큰은 토큰 확장 프로그램(Token Extensions)으로도 알려진 토큰-2022 프로그램의 일부입니다. 이 토큰은 몇 가지 리스크가 수반됩니다. <0>여기</0>를 클릭하여 자세히 알아보세요."
+        "splExtensionsWarning" : "현재 사용 중인 토큰은 토큰 확장 프로그램(Token Extensions)으로도 알려진 토큰-2022 프로그램의 일부입니다. 이 토큰은 몇 가지 리스크가 수반됩니다. <0>여기</0>를 클릭하여 자세히 알아보세요.",
+        "senderChainId" : "송신 체인 ID",
+        "receiverChainId" : "수신 체인 ID"
       },
       "verification" : {
         "streaming" : {
@@ -3477,7 +3481,7 @@
         "validators" : {
           "title" : "검증인",
           "notValidatorsRemoved" : "지명한 주소{{count}}는 더 이상 검증인이 아닙니다. 지명 트랜잭션에서 주소가 자동으로 삭제됩니다.",
-          "maybeChill" : "대신, 지명을 제거하세요"
+          "maybeChill" : "대신, 지명을 삭제하세요"
         },
         "connectDevice" : {
           "title" : "장치"
@@ -4694,7 +4698,7 @@
       "changePassword" : "암호 변경",
       "softResetTitle" : "캐시 삭제",
       "softResetDesc" : "블록 체인과 강제로 동기화하려면 Ledger Live 캐시를 지우세요.",
-      "softReset" : "제거",
+      "softReset" : "삭제",
       "resetThirdPartyData" : "타사 데이터 재설정",
       "resetThirdPartyDataDesc" : "타사 트랜잭션 공급자에 액세스하는 데 사용되는 모든 타사 로컬 데이터를 삭제합니다.",
       "hardResetTitle" : "Ledger Live 리셋",
@@ -4835,7 +4839,7 @@
     "exportLogs" : {
       "title" : "로그 저장",
       "desc" : "문제 해결을 위해 Ledger Live 로그가 필요할 수 있습니다.",
-      "btn" : "Ledger Nano S를"
+      "btn" : "저장"
     },
     "troubleshootNetwork" : {
       "title" : "네트워크 문제 해결",
@@ -4935,7 +4939,7 @@
     "desc" : "거래 내역을 저장하려는 계정을 선택하세요",
     "descSuccess" : "거래 내역 CSV 파일이 선택된 폴더에 저장되었습니다",
     "titleSuccess" : "거래 내역이 성공적으로 저장되었습니다",
-    "cta" : "Ledger Nano S를",
+    "cta" : "저장",
     "ctaSuccess" : "완료",
     "noAccounts" : "내보낼 계정 없음",
     "selectedAccounts" : "포함할 계정",
@@ -6853,6 +6857,12 @@
     "DeviceDisconnectedWhileSendingError" : {
       "title" : "장치 연결 실패",
       "description" : "Ledger Live에서 장치와 연결할 수 없습니다. 다시 시도해 주세요. 문제가 계속되면 Ledger 지원팀에 문의하세요."
+    },
+    "RecipientAddressSanctionedError" : {
+      "title" : "이 트랜잭션에는 규제 대상인 지갑 주소가 포함되어 있어 처리가 불가능합니다."
+    },
+    "KadenaCrossChainTransfer" : {
+      "title" : "크로스체인 전송이므로 트랜잭션 완료까지 몇 분 정도 소요될 수 있습니다."
     },
     "DisconnectError" : {
       "title" : "장치 연결 실패",
