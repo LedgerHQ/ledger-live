@@ -12,6 +12,7 @@ import { setLanguage } from "~/actions/settings";
 import { useDispatch } from "react-redux";
 import { useSettings } from "~/hooks";
 import { useSupportedLocales } from "~/hooks/languages/useSupportedLocales";
+import { loadLocaleData } from "~/utils/localeLoader";
 
 try {
   if ("__setDefaultTimeZone" in Intl.DateTimeFormat) {
@@ -89,6 +90,7 @@ export default function LocaleProvider({ children }: Props) {
   }, [currentLanguage, dispatch, language]);
 
   useEffect(() => {
+    loadLocaleData(currentLanguage);
     i18next.changeLanguage(currentLanguage);
   }, [currentLanguage]);
 
