@@ -1,5 +1,16 @@
 # @ledgerhq/live-common
 
+## 34.51.0-next.3
+
+### Minor Changes
+
+- [#12291](https://github.com/LedgerHQ/ledger-live/pull/12291) [`5098fd4`](https://github.com/LedgerHQ/ledger-live/commit/5098fd44f8c8aa883cabefe691c090f83ca936d5) Thanks [@francois-guerin-ledger](https://github.com/francois-guerin-ledger)! - fix(coin-tezos): use 0 amount within delegate and undelegate operations
+
+### Patch Changes
+
+- Updated dependencies [[`5098fd4`](https://github.com/LedgerHQ/ledger-live/commit/5098fd44f8c8aa883cabefe691c090f83ca936d5)]:
+  - @ledgerhq/coin-tezos@6.7.0-next.2
+
 ## 34.51.0-next.2
 
 ### Minor Changes
