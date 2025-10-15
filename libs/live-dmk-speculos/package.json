@@ -40,7 +40,8 @@
   },
   "dependencies": {
     "@ledgerhq/device-management-kit": "0.9.1",
-    "@ledgerhq/device-transport-kit-speculos": "0.0.0-E2eHttpSpeculosTransport-20251014070742",
+    "@ledgerhq/speculos-device-controller": "0.0.0-speculos-transport-20251015135132",
+    "@ledgerhq/device-transport-kit-speculos": "0.0.0-speculos-transport-20251015135132",
     "@ledgerhq/errors": "6.22.0",
     "@ledgerhq/hw-transport": "workspace:^",
     "@ledgerhq/logs": "workspace:^",
