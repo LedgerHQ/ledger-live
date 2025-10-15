@@ -373,10 +373,10 @@
       }
     },
     "history" : {
-      "disclaimer" : "ธุรกรรมอาจยังไม่แสดงในประวัติการ Swap แต่กำลังประมวลผลอย่างปลอดภัย ตรวจสอบ 'รายละเอียดการดำเนินการล่าสุด' ในบัญชีของคุณเพื่อเช็คธุรกรรมทั้งหมด",
+      "disclaimer" : "ธุรกรรมอาจยังไม่แสดงในประวัติการสวอป แต่กำลังประมวลผลอย่างปลอดภัย ตรวจสอบ 'รายละเอียดการดำเนินการล่าสุด' ในบัญชีของคุณเพื่อเช็คธุรกรรมทั้งหมด",
       "empty" : {
         "title" : "ประวัติการ Swap ที่ผ่านมาจะปรากฏที่นี่",
-        "description" : "คุณยังไม่ได้ทำการ Swap หรือ Ledger Live กำลังทำการรีเซ็ตอยู่ในขณะนี้"
+        "description" : "คุณยังไม่ได้ทำการสวอป หรือแอป Ledger Live กำลังทำการรีเซ็ตอยู่ในขณะนี้"
       },
       "export" : "ส่งออกการดำเนินการ",
       "exporting" : "กำลังส่งออก...",
@@ -422,7 +422,7 @@
       "disclaimer" : "ธุรกรรม Swap ของคุณบนเดสก์ท็อปไม่ได้มีการซิงโครไนซ์กับแอปพลิเคชัน Ledger Live บนมือถือ",
       "empty" : {
         "title" : "ประวัติการ Swap ที่ผ่านมาจะปรากฏที่นี่",
-        "description" : "คุณยังไม่ได้ทำการ Swap หรือ Ledger Live กำลังถูกรีเซ็ตอยู่ในขณะนี้"
+        "description" : "คุณยังไม่ได้ทำการสวอป หรือแอป Ledger Live กำลังถูกรีเซ็ตอยู่ในขณะนี้"
       }
     },
     "landing" : {
@@ -1572,8 +1572,8 @@
       "title" : "แนวโน้ม {{time}}",
       "buy" : "ซื้อ",
       "swap" : "สวอป",
-      "gainers" : "Gainers",
-      "losers" : "Losers",
+      "gainers" : "สินทรัพย์ที่ปรับตัวขึ้น",
+      "losers" : "สินทรัพย์ที่ปรับตัวลง",
       "error" : {
         "title" : "ขออภัย เราไม่สามารถโหลดแนวโน้มได้",
         "description" : "โปรดลองอีกครั้งในภายหลัง"
@@ -1895,7 +1895,9 @@
       "transferAmount" : "จำนวนที่โอน",
       "validatorsCount" : "({{number}}) ผู้ตรวจสอบ ",
       "version" : "เวอร์ชัน",
-      "accountCreationFee" : "Account Creation Fee"
+      "accountCreationFee" : "Account Creation Fee",
+      "senderChainId" : "Chain ID ของผู้ส่ง",
+      "receiverChainId" : "Chain ID ของผู้รับ"
     }
   },
   "operationList" : {
@@ -2415,7 +2417,9 @@
         "unitVByte" : "{{unit}}/vbyte",
         "nft" : "NFT",
         "nftQuantity" : "ปริมาณ",
-        "splExtensionsWarning" : "คุณกำลังโต้ตอบกับโทเคนที่เป็นส่วนหนึ่งของโปรแกรม Token-2022 หรือที่เรียกว่า Token Extensions โทเคนนี้มาพร้อมกับความเสี่ยง <0>คลิกที่นี่</0>เพื่อเรียนรู้เพิ่มเติม"
+        "splExtensionsWarning" : "คุณกำลังโต้ตอบกับโทเคนที่เป็นส่วนหนึ่งของโปรแกรม Token-2022 หรือที่เรียกว่า Token Extensions โทเคนนี้มาพร้อมกับความเสี่ยง <0>คลิกที่นี่</0>เพื่อเรียนรู้เพิ่มเติม",
+        "senderChainId" : "Chain ID ของผู้ส่ง",
+        "receiverChainId" : "Chain ID ของผู้รับ"
       },
       "verification" : {
         "streaming" : {
@@ -2528,7 +2532,7 @@
   "distribution" : {
     "asset" : "สินทรัพย์",
     "price" : "ราคา",
-    "distribution" : "การจัดสรร",
+    "distribution" : "สัดส่วน",
     "amount" : "จำนวน",
     "value" : "มูลค่า",
     "showAll" : "แสดงทั้งหมด",
@@ -2537,7 +2541,7 @@
   },
   "accountDistribution" : {
     "account" : "บัญชี",
-    "distribution" : "การจัดสรร",
+    "distribution" : "สัดส่วน",
     "amount" : "จำนวน",
     "value" : "มูลค่า",
     "header" : "การจัดสรรบัญชี ({{count}})"
@@ -6853,6 +6857,12 @@
     "DeviceDisconnectedWhileSendingError" : {
       "title" : "ขาดการเชื่อมต่อกับอุปกรณ์",
       "description" : "แอป Ledger Live ไม่สามารถเชื่อมต่อกับอุปกรณ์ของคุณได้ โปรดลองอีกครั้ง หรือติดต่อ Ledger Support หากยังคงพบปัญหาอยู่"
+    },
+    "RecipientAddressSanctionedError" : {
+      "title" : "ธุรกรรมนี้เกี่ยวข้องกับ Address ของวอลเล็ตที่ถูกคว่ำบาตร และไม่สามารถดำเนินการได้<br/>"
+    },
+    "KadenaCrossChainTransfer" : {
+      "title" : "การโอนข้ามเชนอาจใช้เวลาหลายนาที โปรดรอสักครู่"
     },
     "DisconnectError" : {
       "title" : "ขาดการเชื่อมต่อกับอุปกรณ์",
