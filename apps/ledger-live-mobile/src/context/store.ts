@@ -4,6 +4,7 @@ import reducers from "~/reducers";
 import { assetsDataApi } from "@ledgerhq/live-common/dada-client/state-manager/api";
 import { rebootMiddleware } from "~/middleware/rebootMiddleware";
 import { rozeniteDevToolsEnhancer } from "@rozenite/redux-devtools-plugin";
+import { cryptoAssetsApi, setupCryptoAssetsStore } from "./cryptoAssetsStoreSetup";
 
 // === STORE CONFIGURATION ===
 export const store = configureStore({
@@ -12,6 +13,7 @@ export const store = configureStore({
   middleware: getDefaultMiddleware =>
     getDefaultMiddleware({ serializableCheck: false, immutableCheck: false })
       .concat(assetsDataApi.middleware)
+      .concat(cryptoAssetsApi.middleware)
       .concat(rebootMiddleware),
 
   enhancers: getDefaultEnhancers => {
@@ -23,3 +25,5 @@ export const store = configureStore({
 });
 
 export type StoreType = typeof store;
+
+setupCryptoAssetsStore(store);

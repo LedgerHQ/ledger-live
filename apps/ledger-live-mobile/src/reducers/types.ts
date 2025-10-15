@@ -35,6 +35,7 @@ import { ToastState } from "./toast";
 import { ModularDrawerState } from "./modularDrawer";
 import { ToolsState } from "./tools";
 import { assetsDataApi } from "@ledgerhq/live-common/dada-client/state-manager/api";
+import { cryptoAssetsApi } from "../context/cryptoAssetsStoreSetup";
 
 // === ACCOUNT STATE ===
 
@@ -384,6 +385,7 @@ export type State = {
   auth: AuthState;
   ble: BleState;
   countervalues: CountervaluesState;
+  cryptoAssetsApi: ReturnType<typeof cryptoAssetsApi.reducer>;
   dynamicContent: DynamicContentState;
   earn: EarnState;
   inView: InViewState;

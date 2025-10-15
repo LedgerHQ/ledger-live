@@ -1,5 +1,6 @@
 import postOnboarding from "@ledgerhq/live-common/postOnboarding/reducer";
 import { assetsDataApi } from "@ledgerhq/live-common/dada-client/state-manager/api";
+import { cryptoAssetsApi } from "../context/cryptoAssetsStoreSetup";
 import { combineReducers, Store } from "redux";
 import { ActionsPayload } from "../actions/types";
 import accounts from "./accounts";
@@ -35,6 +36,7 @@ const appReducer = combineReducers({
   auth,
   ble,
   countervalues,
+  cryptoAssetsApi: cryptoAssetsApi.reducer,
   dynamicContent,
   earn,
   inView,
