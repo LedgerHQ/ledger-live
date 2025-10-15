@@ -83,12 +83,12 @@ describe("listOperations", () => {
   };
 
   it.each([
-    ["undelegate", undelegate, "DELEGATE", "DELEGATE"],
-    ["delegate", delegate, "UNDELEGATE", "UNDELEGATE"],
-    ["transfer", transfer, "OUT", undefined],
+    ["undelegate", undelegate, "DELEGATE", "DELEGATE", 0n],
+    ["delegate", delegate, "UNDELEGATE", "UNDELEGATE", 0n],
+    ["transfer", transfer, "OUT", undefined, 724846n],
   ])(
     "should return %s operation with proper recipient list",
-    async (_label, operation, expectedType, expectedLedgerOpType) => {
+    async (_label, operation, expectedType, expectedLedgerOpType, expectedAmount) => {
       // Given
       mockNetworkGetTransactions.mockResolvedValue([operation]);
       // When
@@ -122,7 +122,7 @@ describe("listOperations", () => {
             ),
           },
           type: expectedType,
-          value: BigInt(operation.amount),
+          value: expectedAmount,
         },
       ]);
     },

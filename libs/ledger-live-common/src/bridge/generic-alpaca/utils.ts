@@ -61,7 +61,7 @@ export function adaptCoreOperationToLiveOperation(accountId: string, op: CoreOpe
     accountId,
     type: opType,
     value:
-      op.asset.type === "native" && ["OUT", "FEES"].includes(opType)
+      op.asset.type === "native" && ["OUT", "FEES", "DELEGATE", "UNDELEGATE"].includes(opType)
         ? new BigNumber(op.value.toString()).plus(bnFees)
         : new BigNumber(op.value.toString()),
     fee: bnFees,
