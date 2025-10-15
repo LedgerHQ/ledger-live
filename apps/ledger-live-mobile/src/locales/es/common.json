@@ -1206,6 +1206,9 @@
     "AmountTooSmall" : {
       "title" : "La cantidad mínima necesaria para esta transacción es de {{amount}}"
     },
+    "KadenaCrossChainTransfer" : {
+      "title" : "Como esta transferencia es intercadena, la transacción puede tardar varios minutos en completarse."
+    },
     "AddressesSanctionedError" : {
       "title" : "Queremos garantizar tu seguridad",
       "description" : "Esta transacción incluye una dirección de billetera sancionada y no se puede procesar.\n-- {{addresses}}"
@@ -1305,7 +1308,8 @@
     "estimatedTime" : {
       "slow" : "Aprox. 2-3 min",
       "medium" : "Aprox. 30 seg",
-      "fast" : "Aprox. 15 seg"
+      "fast" : "Aprox. 15 seg",
+      "custom" : ""
     }
   },
   "signout" : {
@@ -1348,7 +1352,7 @@
     },
     "enableBiometrics" : {
       "title" : "{{biometricsType}}",
-      "desc" : "Para activar y ajustar {{biometricsType}}, activa “Bloqueo de aplicaciones”.",
+      "desc" : "Para activar y ajustar {{biometricsType}}, activa \"Bloqueo de aplicaciones\".",
       "touchid" : "Touch ID",
       "faceid" : "Face ID",
       "fingerprint" : "Huella dactilar"
@@ -2228,7 +2232,7 @@
       "privateKey" : {
         "title" : "Cuando conecto mi Ledger Nano a la aplicación Ledger Live, mi clave privada...",
         "answers" : {
-          "correct" : "Sigue sin conectarse a Internet",
+          "correct" : "…sigue sin conectarse a Internet",
           "wrong" : "…se conecta brevemente a Internet"
         },
         "modal" : {
@@ -2794,7 +2798,9 @@
       "id" : "Id",
       "autoClaimedRewards" : "Recompensas Autoreclamadas",
       "stakedAmount" : "Cantidad en participación",
-      "accountCreationFee" : "Tarifa de creación de cuenta"
+      "accountCreationFee" : "Tarifa de creación de cuenta",
+      "senderChainId" : "ID de cadena del remitente",
+      "receiverChainId" : "ID de cadena del receptor"
     },
     "multipleAddresses" : "¿Por qué hay múltiples direcciones?",
     "tokenName" : "Nombre del token",
@@ -3242,7 +3248,7 @@
       },
       "transactionsAlerts" : {
         "title" : "Avisos sobre transacciones (Beta)",
-        "desc" : "Recibe notificaciones de tus transacciones en Ethereum, Polygon, Binance Smart Chain, Avalanche y Ethereum Classic"
+        "desc" : "Recibe notificaciones de tus transacciones en Ethereum, Polygon, BNB Chain, Avalanche y Ethereum Classic"
       },
       "price" : {
         "title" : "Alertas de precios",
@@ -4083,6 +4089,7 @@
       "validateMemo" : "Validar Memo",
       "comment" : "Comentario",
       "validateComment" : "Validar comentario",
+      "validateChainId" : "Validar ID de cadena",
       "quantity" : "Cantidad"
     },
     "validation" : {
@@ -4779,7 +4786,7 @@
     "updateCancelledDescription" : "Si se trata de un error, vuelve a iniciar la actualización.",
     "updateNotYetComplete" : "La actualización del SO está en curso",
     "updateNotYetCompleteDescription" : "Si cancelas la actualización ahora, tus ajustes y aplicaciones podrían no restaurarse correctamente.",
-    "restartUpdate" : "Reiniciar actualización de SO",
+    "restartUpdate" : "Reiniciar actualización",
     "quitUpdate" : "Cancelar actualización del SO",
     "continueUpdate" : "Continuar con actualización del SO",
     "unlockDeviceToComplete" : "Desbloquea {{deviceName}} con tu PIN para terminar la actualización.",
@@ -7496,12 +7503,12 @@
       "sync" : "Sincronización correcta",
       "syncDesc" : "Los cambios que se produzcan en tus cuentas de cripto ahora aparecerán automáticamente en las aplicaciones Ledger Live en los teléfonos y PCs sincronizados.",
       "activation" : "Ledger Sync activado para este teléfono",
-      "syncAnother" : "Sincronizar con otra aplicación Ledger Live",
+      "syncAnother" : "Sincronizar con otra aplicación Ledger Live",
       "close" : "Cerrar"
     },
     "walletSyncActivated" : {
       "synchronize" : {
-        "title" : "Sincronizar con otra aplicación Ledger Live",
+        "title" : "Sincronizar con otra aplicación Ledger Live",
         "description" : "Sincroniza tus cuentas de cripto de Ledger Live entre distintos teléfonos y PCs."
       },
       "unauthorizeMember" : {
