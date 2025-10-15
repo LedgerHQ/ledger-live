@@ -10,10 +10,11 @@ import {
   type DiscoveredDevice,
 } from "@ledgerhq/device-management-kit";
 import {
-  e2eSpeculosTransportFactory,
-  E2eHttpSpeculosDatasource,
+  speculosTransportFactory,
+  HttpSpeculosDatasource,
 } from "@ledgerhq/device-transport-kit-speculos";
 import { getEnv } from "@ledgerhq/live-env";
+import { DeviceController } from "@ledgerhq/speculos-device-controller";
 
 export type SpeculosHttpTransportOpts = {
   apiPort?: string;
@@ -73,7 +74,6 @@ type DmkEntry = {
   timeout: number;
 };
 
-// Accept BOTH WHATWG and Node streams
 type AnyReadableStream = ReadableStream<Uint8Array> | NodeJS.ReadableStream;
 
 export default class SpeculosHttpTransport extends Transport {
@@ -83,7 +83,7 @@ export default class SpeculosHttpTransport extends Transport {
     let entry = this.byBase.get(base);
     if (!entry) {
       const dmk = new DeviceManagementKitBuilder()
-        .addTransport(e2eSpeculosTransportFactory(base))
+        .addTransport(speculosTransportFactory(base, true))
         .addLogger(new ConsoleLogger())
         .build();
       entry = { dmk, sendChain: Promise.resolve(), timeout };
@@ -120,7 +120,7 @@ export default class SpeculosHttpTransport extends Transport {
 
   private readonly opts: SpeculosHttpTransportOpts;
   private readonly base: string;
-  private readonly ds: E2eHttpSpeculosDatasource;
+  private readonly ds: HttpSpeculosDatasource;
 
   private sseStream: AnyReadableStream | null = null;
   automationEvents: Subject<Record<string, unknown>> = new Subject();
@@ -129,11 +129,7 @@ export default class SpeculosHttpTransport extends Transport {
     super();
     this.opts = opts;
     this.base = resolveBaseFromEnv(opts);
-    this.ds = new E2eHttpSpeculosDatasource(
-      this.base,
-      opts.timeout ?? 10000,
-      "ldmk-transport-speculos",
-    );
+    this.ds = new HttpSpeculosDatasource(this.base, true, "ldmk-transport-speculos");
   }
 
   static isSupported = async () => true;
@@ -174,11 +170,12 @@ export default class SpeculosHttpTransport extends Transport {
   };
 
   button = (but: string): Promise<void> => {
+    const deviceController = new DeviceController(this.base);
     const input =
       (this.buttonTable as any)[but] ??
       (but === "Ll" ? "left" : but === "Rr" ? "right" : but === "LRlr" ? "both" : but);
     log("speculos-button", "press-and-release", input);
-    return this.ds.pressButton(input as any);
+    return deviceController.press(input as any);
   };
 
   async exchange(apdu: Buffer): Promise<Buffer> {
