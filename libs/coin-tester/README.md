@@ -65,6 +65,7 @@ SEED=chronic find success crew board merit elder life achieve scout gravity soul
 GH_TOKEN=
 SPECULOS_API_PORT=4040
 SPECULOS_IMAGE=speculos
+COIN_TESTER_ENV=on
 ```
 
 If you want you can generate a new seed using [this tool](https://iancoleman.io/bip39/)
@@ -84,6 +85,7 @@ pnpm coin:tester:<coin-tester-modules-name> start
 # pnpm coin:tester:evm start
 # pnpm coin:tester:polkadot start
 # pnpm coin:tester:solana start
+# pnpm coin:tester:bitcoin start
 ```
 
 ## Troubleshooting
