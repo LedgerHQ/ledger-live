@@ -1206,6 +1206,9 @@
     "AmountTooSmall" : {
       "title" : "Der Mindestbetrag für diese Transaktion beläuft sich auf {{amount}}"
     },
+    "KadenaCrossChainTransfer" : {
+      "title" : "Da dies eine blockchainübergreifende Übertragung ist, kann die Transaktion mehrere Minuten dauern."
+    },
     "AddressesSanctionedError" : {
       "title" : "Wir sorgen für deine Sicherheit",
       "description" : "Diese Transaktion bezieht sich auf eine gesperrte Wallet-Adresse und kann nicht verarbeitet werden.\n-- {{addresses}}"
@@ -1270,11 +1273,11 @@
     "open" : "App-Berechtigungen öffnen",
     "authorize" : "Autorisieren",
     "bluetooth" : {
-      "modalTitle" : "Für die Verbindung Ihres Ledgers über Bluetooth ist eine Genehmigung erforderlich",
+      "modalTitle" : "Für die Verbindung deiner Ledger über Bluetooth ist eine Genehmigung erforderlich",
       "modalDescriptionBase" : "Um Ihren Ledger über Bluetooth zu verbinden, müssen Sie Ledger Live autorisieren, nach Geräten in der Nähe zu suchen.",
       "modalDescriptionSettingsVariant" : "Um Ihren Ledger über Bluetooth zu verbinden, müssen Sie Ledger Live in den Einstellungen Ihres Telefons autorisieren, nach Geräten in der Nähe zu suchen.",
       "modalButtonLabelBase" : "Autorisieren",
-      "modalButtonLabelSettingsVariant" : "Gehen Sie zu Einstellungen",
+      "modalButtonLabelSettingsVariant" : "Gehe zu Einstellungen",
       "dontPair" : "Nicht verbinden"
     },
     "location" : {
@@ -1288,7 +1291,7 @@
       "authorizeDescription" : "Autorisieren Sie bitte die Kamera zum Scannen von QR-Codes.",
       "authorizeButtonTitle" : "Autorisieren",
       "goToSettingsDescription" : "Autorisieren Sie bitte die Kamera in den Einstellungen, um QR-Codes zu scannen.",
-      "goToSettingsButtonTitle" : "Gehen Sie zu Einstellungen"
+      "goToSettingsButtonTitle" : "Gehe zu Einstellungen"
     }
   },
   "fees" : {
@@ -1305,7 +1308,8 @@
     "estimatedTime" : {
       "slow" : "≈ 2–3 Min.",
       "medium" : "≈ 30 Sek.",
-      "fast" : "≈ 15 Sek."
+      "fast" : "≈ 15 Sek.",
+      "custom" : ""
     }
   },
   "signout" : {
@@ -1358,7 +1362,7 @@
     "title" : "Deinstallieren und Ledger Live erneut installieren",
     "description" : "Bitte deinstallieren Sie die App auf Ihrem Telefon und installieren Sie sie anschließend neu, um die Daten von Ledger Live, einschließlich Konten und Einstellungen, zu löschen.",
     "button" : "Zurücksetzen",
-    "warning" : "Das Zurücksetzen von Ledger Live löscht Ihren Swap-Transaktionsverlauf für alle Ihre Konten."
+    "warning" : "Das Zurücksetzen von Ledger Live löscht den Swap-Transaktionsverlauf für alle deine Konten."
   },
   "graph" : {
     "week" : "1W",
@@ -1455,7 +1459,7 @@
   },
   "ratings" : {
     "init" : {
-      "title" : "Wie gefällt Ihnen unsere App?",
+      "title" : "Wie gefällt dir unsere App?",
       "description" : "Ihr Feedback ist uns wichtig, um Ledger Live zu verbessern.",
       "cta" : {
         "enjoy" : "Ich bin begeistert",
@@ -1472,8 +1476,8 @@
       }
     },
     "disappointed" : {
-      "title" : "Helfen Sie uns, das Produkt für Sie noch besser zu machen",
-      "description" : "Wenn Sie weitere Hilfe benötigen oder möchten, dass wir uns mit Ihnen in Verbindung setzen, nutzen Sie bitte unseren Live-Chat",
+      "title" : "Hilf uns, das Produkt für dich noch besser zu machen",
+      "description" : "Wenn du weitere Hilfe benötigst oder möchtest, dass wir uns mit dir in Verbindung setzen, nutze bitte unseren Live-Chat",
       "here" : "Hier",
       "cta" : {
         "sendFeedback" : "Feedback senden",
@@ -1490,20 +1494,20 @@
   },
   "buyDevice" : {
     "0" : {
-      "title" : "Es ist Ihr Geld. Besitzen Sie es.",
-      "desc" : "Übernehmen Sie Verantwortung und erhalten Sie die Freiheit, Ihre Kryptos selbst zu verwalten."
+      "title" : "Es ist dein Geld. Besitze es.",
+      "desc" : "Übernimm Verantwortung und erhalte die Freiheit, deine Kryptos selbst zu verwalten."
     },
     "1" : {
       "title" : "Zugriff auf DeFi- und NFTs",
       "desc" : "Sichere Interaktion mit unseren bewährten DeFi-Anwendungen direkt über die App."
     },
     "2" : {
-      "title" : "Ihr Zugang zu Web3",
-      "desc" : "Mit Ihrem Ledger-Gerät können Sie die wichtigsten Kryptowährungen bei unseren Anbietern sicher kaufen, verkaufen und umtauschen."
+      "title" : "Dein Zugang zu Web3",
+      "desc" : "Mit deinem Ledger-Gerät kannst du die wichtigsten Kryptowährungen bei unseren Anbietern sicher kaufen, verkaufen und swappen."
     },
     "3" : {
       "title" : "Zertifizierte Sicherheit",
-      "desc" : "Unsere Produkte sind die einzigen von nationalen Cyber-Sicherheitsbehörden zertifizierten Hardware-Wallets - für Ihre Sicherheit."
+      "desc" : "Unsere Produkte sind die einzigen von nationalen Cyber-Sicherheitsbehörden zertifizierten Hardware-Wallets - für deine Sicherheit."
     },
     "title" : "Jeder sollte einen Ledger haben",
     "desc" : "Aus Sicherheitsgründen funktioniert\n Ledger Live nur mit einem Ledger-Gerät.",
@@ -1618,9 +1622,9 @@
       "noDevice" : "Kein Gerät?",
       "buy" : "Kaufen Sie ein {{fullDeviceName}}",
       "terms" : "Durch Fortfahren stimmst du den folgenden Ledger-Bedingungen zu:",
-      "termsLink" : "Allgemeine Geschäftsbedingungen",
+      "termsLink" : "AGBs",
       "privacyLink" : "Datenschutzrichtlinie",
-      "and" : "Hinzu kommt:"
+      "and" : "Außerdem gilt unsere "
     },
     "postWelcomeStep" : {
       "title" : "Los geht's!",
@@ -1683,7 +1687,7 @@
       "warning" : {
         "title" : "Erste Schritte auf Englisch",
         "cta" : "Verstanden!",
-        "desc" : "Wir führen zusätzliche Sprachen ein, um Ihnen das Onboarding mit Ledger zu erleichtern. Bitte beachten Sie, dass der Rest der Ledger-Erfahrung derzeit nur auf Englisch verfügbar ist."
+        "desc" : "Wir führen zusätzliche Sprachen ein, um dir das Onboarding mit Ledger zu erleichtern. Bitte beachte, dass der Rest der Ledger-Erfahrung derzeit nur auf Englisch verfügbar ist."
       },
       "RestartModal" : {
         "title" : "Neustart erforderlich",
@@ -1800,7 +1804,7 @@
           "0" : {
             "title" : "Nano einschalten",
             "nanoX" : {
-              "label" : "Schalten Sie Ihr Gerät ein, indem Sie die schwarze Taste 1 Sekunde lang drücken."
+              "label" : "Schalte dein Gerät ein, indem du die schwarze Taste 1 Sekunde lang drückst."
             },
             "nanoS" : {
               "label" : "Verbinde dein Gerät zum Einschalten mit dem USB-Anschluss deines Smartphones."
@@ -1829,7 +1833,7 @@
       },
       "pinCode" : {
         "title" : "PIN-Code",
-        "desc" : "Ihr PIN-Code ist die erste Ebene der Sicherheit. Er sichert physisch den Zugang zu Ihrer Nano und Ihren privaten Schlüsseln. Ihr PIN-Code muss 4 bis 8 Ziffern lang sein. Ihr PIN-Code muss 4 bis 8 Ziffern lang sein.",
+        "desc" : "Dein PIN-Code ist die erste Sicherheitsebene. Er sichert physisch den Zugang zu deinem privaten Schlüssel und deiner Nano. Dein PIN-Code muss 4 bis 8 Ziffern lang sein.",
         "checkboxDesc" : "Ich verstehe, dass ich meinen PIN-Code selbst wählen und ihn geheim halten muss.",
         "cta" : "PIN-Code einrichten"
       },
@@ -2002,7 +2006,7 @@
           "0" : {
             "title" : "Nano einschalten",
             "nanoX" : {
-              "label" : "Schalten Sie Ihr Gerät ein, indem Sie die schwarze Taste 1 Sekunde lang drücken."
+              "label" : "Schalte dein Gerät ein, indem du die schwarze Taste 1 Sekunde lang drückst."
             },
             "nanoS" : {
               "label" : "Verbinde dein Gerät zum Einschalten mit dem USB-Anschluss deines Smartphones."
@@ -2035,19 +2039,19 @@
         "checkboxDesc" : "Ich verstehe, dass ich bei Verlust der Wiederherstellungsphrase nicht mehr auf meine Kryptos zugreifen kann, falls ich den Zugang zu meinem Nano verliere.",
         "bullets" : {
           "0" : {
-            "title" : "Schnappen Sie sich Ihre Wiederherstellungsphrase"
+            "title" : "Nimm deine Wiederherstellungsphrase"
           },
           "1" : {
-            "title" : "Wählen Sie die Länge der Wiederherstellungsphrase",
-            "label" : "Ihre Wiederherstellungsphrasen können 12, 18 oder 24 Wörter haben. Sie müssen alle Wörter eingeben, um auf Ihre Kryptos zuzugreifen."
+            "title" : "Wähle die Länge der Wiederherstellungsphrase",
+            "label" : "Deine Wiederherstellungsphrasen können 12, 18 oder 24 Wörter haben. Du musst alle Wörter eingeben, um auf deine Kryptos zuzugreifen."
           },
           "2" : {
             "title" : "Wort 1 eingeben ...",
-            "label" : "Geben Sie die ersten Buchstaben von Wort #1 ein, indem Sie mit der rechten oder linken Taste auswählen. Drücken Sie beide Tasten, um jeden Buchstaben zu bestätigen."
+            "label" : "Gib die ersten Buchstaben von Wort #1 ein, indem du mit der rechten oder linken Taste auswählst. Drücke beide Tasten, um jeden Buchstaben zu bestätigen."
           },
           "3" : {
-            "title" : "Bestätigen Sie Wort 1 ...",
-            "label" : "Wählen Sie Wort 1 aus den Vorschlägen. Drücken Sie zum Bestätigen beide Tasten."
+            "title" : "Bestätige Wort 1 ...",
+            "label" : "Wähle Wort 1 aus den Vorschlägen. Drücke zum Bestätigen beide Tasten."
           },
           "4" : {
             "title" : "Wiederholen Sie dies für alle Wörter!"
@@ -2188,7 +2192,7 @@
       "modal" : {
         "step1" : "Bewahren Sie Ihr Passwort sicher auf. Du solltest es nicht an Andere weitergeben.",
         "step2" : "Bewahre dein Passwort sicher auf. Wenn du es verlierst, musst du Ledger Live zurücksetzen und die Konten noch einmal hinzufügen.",
-        "step3" : "Das Zurücksetzen von Ledger Live hat keine Auswirkungen auf Ihr Krypto-Vermögen."
+        "step3" : "Das Zurücksetzen von Ledger Live hat keine Auswirkungen auf dein Krypto-Guthaben."
       }
     },
     "stepFinish" : {
@@ -2210,7 +2214,7 @@
           "wrong" : "Auf meiner Ledger Nano"
         },
         "modal" : {
-          "text" : "Ihre Kryptos sind immer in der Blockchain gespeichert. Ihre Hardware-Wallet enthält nur Ihren privaten Schlüssel, der Ihnen Zugriff auf Ihre Kryptos gibt.",
+          "text" : "Deine Kryptos sind immer in der Blockchain gespeichert. Deine Hardware-Wallet enthält nur deinen privaten Schlüssel, der dir Zugriff auf deine Kryptos gibt.",
           "cta" : "Nächste Frage"
         }
       },
@@ -2249,13 +2253,13 @@
     "warning" : {
       "recoveryPhrase" : {
         "title" : "Verwenden Sie keinen Wiederherstellungssatz, den Sie nicht selbst erstellt haben.",
-        "desc" : "Der PIN-Code und der Wiederherstellungssatz Ihrer Ledger-Hardware-Wallet sollten von Ihnen und nur von Ihnen erstellt werden. Falls Sie ein Gerät mit einem bereits existierendem Seed-Wort oder einem bereits initialisierten PIN-Code erhalten haben, verwenden Sie das Produkt bitte nicht und kontaktieren Sie unseren Kundendienst.",
+        "desc" : "Der PIN-Code und der Wiederherstellungssatz deiner Ledger-Hardware-Wallet sollten von dir und nur von dir erstellt werden. Falls du ein Gerät mit einem bereits existierendem Seed-Wort oder einem bereits initialisierten PIN-Code erhalten hast, verwende das Produkt bitte nicht und kontaktiere unseren Kundendienst.",
         "supportLink" : "Kundensupport kontaktieren"
       },
       "seed" : {
         "title" : "Bitte überprüfen Sie den Inhalt der Box",
         "desc" : "Wenn Ihre {{deviceName}} mit einem PIN-Code oder einer Wiederherstellungsphrase geliefert wurde, ist die Verwendung des Geräts nicht sicher und Sie sollten sich an den Ledger Support wenden.",
-        "warning" : "Verwenden Sie nur eine Wiederherstellungsphrase, die Ihr Gerät angezeigt hat, wenn es eingerichtet wurde",
+        "warning" : "Verwende nur eine Wiederherstellungsphrase, die dein Gerät angezeigt hat, wenn es eingerichtet wurde",
         "continueCTA" : "Weiter",
         "contactSupportCTA" : "Support kontaktieren"
       }
@@ -2794,7 +2798,9 @@
       "id" : "ID",
       "autoClaimedRewards" : "Automatisch beanspruchte Prämien",
       "stakedAmount" : "Betrag gestaked",
-      "accountCreationFee" : "Kontoerstellungsgebühr"
+      "accountCreationFee" : "Kontoerstellungsgebühr",
+      "senderChainId" : "Chain-ID des Absenders",
+      "receiverChainId" : "Chain-ID des Empfängers"
     },
     "multipleAddresses" : "Warum mehrere Adressen?",
     "tokenName" : "Token-Name",
@@ -3093,15 +3099,15 @@
       "title" : "Allgemeines",
       "desc" : "Konfigurieren Sie die allgemeinen Ledger-Live-Einstellungen.",
       "carousel" : "Empfehlungen",
-      "carouselDesc" : "Wir zeigen Ihnen Karten mit personalisierten Tipps und unseren neuesten Angeboten nur für Sie.",
+      "carouselDesc" : "Wir zeigen dir Karten mit personalisierten Tipps und unseren neuesten Angeboten nur für dich.",
       "language" : "Sprache",
-      "languageDesc" : "Stellen Sie die in Ledger Live angezeigte Sprache ein.",
+      "languageDesc" : "Stelle die in Ledger Live angezeigte Sprache ein.",
       "dateFormat" : "Datumsformat",
       "dateFormatDesc" : "Legen Sie das Datumsformat für Ledger Live fest",
       "walletSync" : "Ledger Sync",
       "walletSyncDesc" : "Synchronisiere deine Ledger Live-Kryptokonten auf verschiedenen Smartphones und Computern.",
       "region" : "Region",
-      "regionDesc" : "Wählen Sie Ihre Region, um Datums-, Zeit- und Währungsformate zu aktualisieren.",
+      "regionDesc" : "Wähle deine Region, um Datums-, Zeit- und Währungsformate zu aktualisieren.",
       "password" : "App-Sperre",
       "passwordDesc" : "Legen Sie ein Passwort fest, um die Ledger Live-App zu sperren.",
       "passwordDescBioCompat" : "Legen Sie ein Passwort oder {{biometricsType}} fest, um die Ledger Live-App zu sperren.",
@@ -3192,7 +3198,7 @@
       "cryptoAssets" : {
         "header" : "Kryptowährungen",
         "title" : "Kryptowährungen",
-        "desc" : "Wählen Sie einen Krypto-Vermögenswert, um dessen Einstellungen zu bearbeiten."
+        "desc" : "Wähle ein Krypto-Asset, um dessen Einstellungen zu bearbeiten."
       }
     },
     "about" : {
@@ -3215,14 +3221,14 @@
       "title" : "Benachrichtigungen",
       "desc" : "Benachrichtigungen verwalten",
       "disabledNotifications" : {
-        "title" : "Ihre Benachrichtigungen sind deaktiviert",
-        "desc" : "{{platform}} blockiert Benachrichtigungen von Ledger Live. Um Benachrichtigungen auf Ihrem Smartphone zu erhalten, gehen Sie zu den Einstellungen Ihres Geräts, um Benachrichtigungen von Ledger Live zu aktivieren.",
+        "title" : "Deine Benachrichtigungen sind deaktiviert",
+        "desc" : "{{platform}} blockiert Benachrichtigungen von Ledger Live. Um Benachrichtigungen auf deinem Smartphone zu erhalten, gehe zu den Einstellungen deines Geräts, um Benachrichtigungen von Ledger Live zu aktivieren.",
         "turnOnNotif" : "Benachrichtigungen aktivieren",
         "goToSettings" : "Gehen Sie zu Systemeinstellungen"
       },
       "allowed" : {
         "title" : "Benachrichtigungen zulassen",
-        "desc" : "Erhalten Sie Benachrichtigungen über Ihre Krypto-Werte, Markttrends und mehr"
+        "desc" : "Erhalte Benachrichtigungen über deine Krypto-Werte, Markttrends und mehr"
       },
       "transactions" : {
         "title" : "Transaktionen",
@@ -3242,20 +3248,20 @@
       },
       "transactionsAlerts" : {
         "title" : "Transaktionsbenachrichtigungen (Beta)",
-        "desc" : "Erhalte Benachrichtigungen über deine Transaktionen für Ethereum, Polygon, Binance Smart Chain, Avalanche und Ethereum Classic"
+        "desc" : "Erhalte Benachrichtigungen über deine Transaktionen für Ethereum, Polygon, BNB Chain, Avalanche und Ethereum Classic"
       },
       "price" : {
         "title" : "Preisalarme",
         "desc" : "Legen Sie Preisalarme für Ihre Lieblingscoins fest, damit Sie keine Marktbewegung verpassen"
       },
-      "disclaimer" : "Ihre Daten und Ihr Datenschutz sind uns bei Ledger wichtig. Die gesammelten Daten werden niemals mit unseren Partnern geteilt"
+      "disclaimer" : "Deine Daten und dein Datenschutz sind uns bei Ledger wichtig. Die gesammelten Daten werden niemals mit unseren Partnern geteilt"
     },
     "help" : {
       "title" : "Hilfe",
       "header" : "Hilfe",
       "desc" : "Erfahren Sie mehr über Ledger Live oder wie Sie Hilfe erhalten können.",
       "support" : "Ledger Support",
-      "supportDesc" : "Falls Sie ein Problem haben, nutzen Sie Ledger Live mit Ihrer Hardware-Wallet.",
+      "supportDesc" : "Falls ein Problem auftritt, nutze Ledger Live mit deiner Hardware-Wallet.",
       "configureDevice" : "Ein Gerät einrichten",
       "configureDeviceDesc" : "Als neues Gerät einrichten oder ein vorhandenes Gerät wiederherstellen. Konten und Einstellungen bleiben erhalten.",
       "clearCache" : "Cache löschen",
@@ -3267,17 +3273,17 @@
       "exportLogsDesc" : "Das Speichern von Ledger Live-Logs kann für die Fehlerbehebung erforderlich sein.",
       "hardReset" : "Ledger Live zurücksetzen",
       "hardResetDesc" : "Dies hat keine Auswirkung auf Ihre Vermögenswerte. Löscht alle Daten in Ledger Live, einschließlich Kontodaten, Transaktionsverläufe und Einstellungen. Verwenden Sie Ihr Ledger-Gerät, um Ihre Krypto-Vermögenswerte auf einem leeren Ledger Live neu zu laden und zu verwalten.",
-      "repairDevice" : "Reparieren Sie Ihr Ledger-Gerät",
+      "repairDevice" : "Repariere dein Ledger-Gerät",
       "repairDeviceDesc" : "Wenn Sie ein Problem bei der Aktualisierung Ihres Geräts haben und die Updates nicht fortsetzen können, können Sie dies versuchen, um Ihr Gerät zu reparieren."
     },
     "experimental" : {
       "title" : "Experimentelle Funktionen",
       "desc" : "Probieren Sie die experimentellen Funktionen aus und lassen Sie uns wissen, was Sie davon halten.",
-      "disclaimer" : "Dies sind experimentelle Funktionen, die auf einer „wie besehen“-Basis für unsere Gemeinschaft von Technik-Enthusiasten bereitgestellt werden. Sie können jederzeit geändert, abgebrochen oder entfernt werden. Dadurch, dass Sie sie aktivieren, erklären Sie sich damit einverstanden, sie auf eigenes Risiko zu nutzen.",
+      "disclaimer" : "Dies sind experimentelle Funktionen, die auf einer „wie besehen“-Basis für unsere Gemeinschaft von Technik-Enthusiasten bereitgestellt werden. Sie können jederzeit geändert, abgebrochen oder entfernt werden. Dadurch, dass du sie aktivierst, erklärst du dich damit einverstanden, sie auf eigenes Risiko zu nutzen.",
       "provider" : "Die experimentelle Einstellung „My Ledger provider ({{forcedProvider}})“ zeigt möglicherweise nicht freigegebene Betriebssysteme und Apps an, was zu Kompatibilitätsproblemen führen kann. Sie können sie in den Einstellungen deaktivieren.",
       "providerDevMode" : "Die experimentellen Einstellungen „My Ledger provider ({{forcedProvider}})“ und „Developer mode“ zeigen möglicherweise nicht freigegebene Betriebssysteme und Apps an, was zu Kompatibilitätsproblemen führen kann. Sie können sie daher in den Einstellungen deaktivieren.",
       "devMode" : "Die experimentelle Einstellung „Developer mode“ zeigt möglicherweise nicht freigegebene Betriebssysteme und Apps an, was zu Kompatibilitätsproblemen führen kann. Sie können sie daher in den Einstellungen deaktivieren.",
-      "providerCTA" : "Gehen Sie zu Einstellungen",
+      "providerCTA" : "Gehe zu Einstellungen",
       "experimentalFeatures" : {
         "experimentalIntegrations" : {
           "title" : "Experimentelle Integrationen",
@@ -3285,11 +3291,11 @@
         },
         "developerMode" : {
           "title" : "Entwicklermodus",
-          "description" : "Zeigen Sie Entwickler- und Testnet-Apps in My Ledger an."
+          "description" : "Zeige Entwickler- und Testnet-Apps in My Ledger an."
         },
         "managerProvider" : {
           "title" : "Anbieter in My Ledger",
-          "description" : "Das Wechseln des App-Anbieters in My Ledger kann es unmöglich machen, Apps auf Ihrem Ledger-Gerät zu installieren oder zu deinstallieren."
+          "description" : "Das Wechseln des App-Anbieters in My Ledger kann es unmöglich machen, Apps auf deinem Ledger-Gerät zu installieren oder zu deinstallieren."
         },
         "experimentalExplorers" : {
           "title" : "Experimentelle Explorer-API",
@@ -3479,7 +3485,7 @@
         "cancel" : {
           "title" : "Sie haben gerade diese Adresse abgelehnt",
           "subtitle" : "Sollte dies versehentlich geschehen sein, kannst du es noch einmal versuchen. Klicke dazu auf die nachstehende Schaltfläche.",
-          "info" : "Wenn Sie sich sicher sind, dass die Adressen nicht übereinstimmen, kann Ihr Telefon gefährdet sein. Wir empfehlen Ihnen, <0>sich so schnell wie möglich mit uns in Verbindung zu setzen.</0>"
+          "info" : "Wenn du dir sicher bist, dass die Adressen nicht übereinstimmen, kann dein Telefon gefährdet sein. Wir empfehlen dir, <0>sich so schnell wie möglich mit uns in Verbindung zu setzen.</0>"
         }
       },
       "receiveConfirmation" : {
@@ -3641,7 +3647,7 @@
           "disclaimer" : {
             "title" : "Allgemeinen Geschäftsbedingungen",
             "desc" : "Indem ich auf \"Akzeptieren\" klicke, erkenne ich an und akzeptiere, dass für diesen Dienst ausschließlich die Allgemeinen Geschäftsbedingungen von <0>{{provider}}</0> gelten.",
-            "tos" : "Allgemeine Geschäftsbedingungen",
+            "tos" : "AGBs",
             "accept" : "Akzeptieren",
             "reject" : "Schließen"
           }
@@ -3705,9 +3711,9 @@
         "to" : "An",
         "loading" : "Lade Daten...",
         "disclaimer" : {
-          "title" : "Allgemeine Geschäftsbedingungen",
+          "title" : "AGBs",
           "desc" : "Indem ich auf „Akzeptieren“ klicke, erkenne ich an und akzeptiere, dass für diesen Dienst ausschließlich die Allgemeinen Geschäftsbedingungen von {{providerName}} gelten.",
-          "tos" : "Allgemeine Geschäftsbedingungen",
+          "tos" : "AGBs",
           "accept" : "Akzeptieren"
         },
         "notAvailable" : {
@@ -3844,7 +3850,7 @@
       "terms" : {
         "label" : "Kryptowährungen verleihen",
         "title" : "Verleihen von Vermögenswerten über das Compound-Protokoll",
-        "description" : "Das Compound-Protokoll ermöglicht es Ihnen, Vermögenswerte im Ethereum-Netzwerk zu leihen und zu verleihen. Sie können Vermögenswerte verleihen und Zinsen direkt von Ihrem Ledger-Konto erhalten.",
+        "description" : "Das Compound-Protokoll ermöglicht es dir, Assets im Ethereum-Netzwerk zu leihen und zu verleihen. Du kannst Assets verleihen und Zinsen direkt von deinem Ledger-Konto erhalten.",
         "switchLabel" : "Ich habe die <0><0>Nutzungsbedingungen</0></0> gelesen und bin damit einverstanden."
       },
       "info" : {
@@ -4003,7 +4009,7 @@
         "header" : "QR-Code scannen",
         "title" : "Kamera einschalten",
         "desc" : "Bitte aktivieren Sie die Kamera in den Einstellungen, um QR-Codes zu scannen.",
-        "buttonTitle" : "Gehen Sie zu Einstellungen"
+        "buttonTitle" : "Gehe zu Einstellungen"
       }
     },
     "stepperHeader" : {
@@ -4083,6 +4089,7 @@
       "validateMemo" : "Memo validieren",
       "comment" : "Kommentar",
       "validateComment" : "Kommentar validieren",
+      "validateChainId" : "Chain-ID validieren",
       "quantity" : "Menge"
     },
     "validation" : {
@@ -4190,7 +4197,7 @@
       "infoLabel" : "Bandbreite oder Energie"
     },
     "validation" : {
-      "message" : "Vergewissern Sie sich immer, dass Ihr Gerät die Adresse genau so anzeigt, wie sie Ihnen ursprünglich mitgeteilt wurde.",
+      "message" : "Vergewissere dich immer, dass dein Gerät die Adresse genau so anzeigt, wie sie dir ursprünglich mitgeteilt wurde.",
       "success" : "Vermögenswerte gesperrt",
       "amount" : "Betrag",
       "info" : "Sie beginnen damit, {{resource}} zu verdienen, sobald das Netzwerk das Sperren bestätigt hat. Sie können in Kürze für Super-Repräsentanten stimmen, um auch Prämien zu verdienen.",
@@ -4265,7 +4272,7 @@
       "removeVotes" : "Abstimmungen entfernen"
     },
     "validation" : {
-      "message" : "Vergewissern Sie sich immer, dass Ihr Gerät die Adresse genau so anzeigt, wie sie Ihnen ursprünglich mitgeteilt wurde.",
+      "message" : "Vergewissere dich immer, dass dein Gerät die Adresse genau so anzeigt, wie sie dir ursprünglich mitgeteilt wurde.",
       "success" : "Ihre Stimmen wurden erfolgreich abgegeben",
       "info" : "",
       "button" : {
@@ -4564,7 +4571,7 @@
     "title" : "My Ledger",
     "selectDevice" : {
       "title" : "Geräte",
-      "addALedger" : "Ein Ledger hinzufügen",
+      "addALedger" : "Eine Ledger hinzufügen",
       "addWithBluetooth" : "Mit Bluetooth hinzufügen",
       "addNewCTA" : "Neu hinzufügen",
       "showAllCTA" : "Alle {{count}} Ledger-Geräte anzeigen",
@@ -6715,7 +6722,7 @@
     "switchLabel" : "Ich habe die <1>Nutzungsbedingungen</1> gelesen und bin damit einverstanden",
     "switchLabelFull" : "Ich habe die Datenschutzrichtlinie gelesen und stimme ihr zu.",
     "cta" : "Zur Ledger-App",
-    "service" : "Allgemeine Geschäftsbedingungen",
+    "service" : "AGBs",
     "subTitle" : "Bitte nimm dir etwas Zeit, um unsere Nutzungsbedingungen und die Datenschutzrichtlinie zu lesen"
   },
   "updatedTerms" : {
@@ -7390,7 +7397,7 @@
             "balance" : "Dein Portfolio",
             "personnalInfos" : "Deine personenbezogenen Daten (z. B. deinen Namen oder deine E-Mail-Adresse)."
           },
-          "moreOptions" : "Voreinstellungen verwalten",
+          "moreOptions" : "Einstellungen verwalten",
           "ctas" : {
             "refuse" : "Alle ablehnen",
             "accept" : "Alle annehmen"
@@ -7402,7 +7409,7 @@
         }
       },
       "details" : {
-        "title" : "Voreinstellungen verwalten",
+        "title" : "Einstellungen verwalten",
         "analytics" : {
           "title" : "Analysen",
           "description" : "Zum Messen der Leistung von Ledger Live und zum Verbessern der App und des Nutzungserlebnisses stimme ich der Erfassung meiner Daten und insbesondere von Seitenbesuchen und Klicks zu"
