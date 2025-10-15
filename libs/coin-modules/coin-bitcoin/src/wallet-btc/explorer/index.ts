@@ -3,6 +3,7 @@ import network from "@ledgerhq/live-network/network";
 import { IExplorer, NetworkInfoResponse } from "./types";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { blockchainBaseURL } from "../../explorer";
+import { COIN_TESTER_BASE_URL } from "../../constants";
 
 type ExplorerParams = {
   batch_size?: number;
@@ -22,6 +23,15 @@ class BitcoinLikeExplorer implements IExplorer {
     forcedExplorerURI?: string;
   }) {
     this.baseUrl = forcedExplorerURI ? forcedExplorerURI : blockchainBaseURL(cryptoCurrency);
+    // NOTE: Only for CoinTester Bitcoin
+    if (cryptoCurrency.id === "bitcoin_testnet" && process.env.COIN_TESTER_ENV) {
+      this.baseUrl = COIN_TESTER_BASE_URL;
+    } else {
+      this.baseUrl =
+        forcedExplorerURI !== null && forcedExplorerURI !== undefined
+          ? forcedExplorerURI
+          : blockchainBaseURL(cryptoCurrency);
+    }
   }
 
   async broadcast(tx: string): Promise<{ data: { result: string } }> {
