@@ -216,7 +216,7 @@ describe("utils", () => {
       expect(result).toHaveLength(1);
       expect(result[0].token).toEqual(tokenCurrencyFromCAL);
       expect(result[0].operations).toHaveLength(0);
-      expect(result[0].balance.isEqualTo(new BigNumber(42))).toBe(true);
+      expect(result[0].balance).toEqual(new BigNumber(42));
     });
   });
 
@@ -323,6 +323,7 @@ describe("utils", () => {
 
       const result = applyPendingExtras([mockedOperation1], [mockedPendingOperation1]);
 
+      expect(result).toHaveLength(1);
       expect(result[0].extra).toEqual({
         ...mockedOperation1.extra,
         ...mockedPendingOperation1.extra,
@@ -337,6 +338,7 @@ describe("utils", () => {
       const mockedPendingOperation = getMockedOperation({ hash: "op1", extra: pendingExtra });
 
       const result = applyPendingExtras([mockedOperation], [mockedPendingOperation]);
+      expect(result).toHaveLength(1);
       expect(result[0].extra).toEqual(mockedOperation.extra);
     });
   });
@@ -357,6 +359,7 @@ describe("utils", () => {
       const patched = patchOperationWithExtra(mockedOperation, extra);
 
       expect(patched.extra).toEqual(extra);
+      expect(patched.subOperations).toHaveLength(1);
       expect(patched.subOperations?.[0].extra).toEqual(extra);
     });
   });

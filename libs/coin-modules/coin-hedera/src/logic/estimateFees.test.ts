@@ -36,7 +36,7 @@ describe("getEstimatedFees", () => {
       .integerValue(BigNumber.ROUND_CEIL)
       .multipliedBy(ESTIMATED_FEE_SAFETY_RATE);
 
-    expect(result.isEqualTo(expectedFee)).toBe(true);
+    expect(result).toEqual(expectedFee);
   });
 
   test("returns estimated fee based on USD rate for TokenTransfer", async () => {
@@ -51,7 +51,7 @@ describe("getEstimatedFees", () => {
       .integerValue(BigNumber.ROUND_CEIL)
       .multipliedBy(ESTIMATED_FEE_SAFETY_RATE);
 
-    expect(result.isEqualTo(expectedFee)).toBe(true);
+    expect(result).toEqual(expectedFee);
   });
 
   test("returns estimated fee based on USD rate for TokenAssociate", async () => {
@@ -69,7 +69,7 @@ describe("getEstimatedFees", () => {
       .integerValue(BigNumber.ROUND_CEIL)
       .multipliedBy(ESTIMATED_FEE_SAFETY_RATE);
 
-    expect(result.isEqualTo(expectedFee)).toBe(true);
+    expect(result).toEqual(expectedFee);
   });
 
   test("falls back to default estimate when cvs api returns null", async () => {
@@ -82,7 +82,7 @@ describe("getEstimatedFees", () => {
     );
 
     const expected = new BigNumber(DEFAULT_TINYBAR_FEE).multipliedBy(ESTIMATED_FEE_SAFETY_RATE);
-    expect(result.isEqualTo(expected)).toBe(true);
+    expect(result).toEqual(expected);
   });
 
   test("falls back to default estimate on cvs api failure", async () => {
@@ -94,6 +94,6 @@ describe("getEstimatedFees", () => {
     );
 
     const expected = new BigNumber(DEFAULT_TINYBAR_FEE).multipliedBy(ESTIMATED_FEE_SAFETY_RATE);
-    expect(result.isEqualTo(expected)).toBe(true);
+    expect(result).toEqual(expected);
   });
 });

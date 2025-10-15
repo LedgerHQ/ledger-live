@@ -28,7 +28,7 @@ describe("parseTransfers", () => {
     const result = parseTransfers(transfers, userAddress);
 
     expect(result.type).toBe("IN");
-    expect(result.value.isEqualTo(new BigNumber(100))).toBe(true);
+    expect(result.value).toEqual(new BigNumber(100));
     expect(result.senders).toEqual(["0.0.5678"]);
     expect(result.recipients).toEqual([userAddress]);
   });
@@ -43,7 +43,7 @@ describe("parseTransfers", () => {
     const result = parseTransfers(transfers, userAddress);
 
     expect(result.type).toBe("OUT");
-    expect(result.value.isEqualTo(new BigNumber(100))).toBe(true);
+    expect(result.value).toEqual(new BigNumber(100));
     expect(result.senders).toEqual([userAddress]);
     expect(result.recipients).toEqual(["0.0.5678"]);
   });
@@ -59,7 +59,7 @@ describe("parseTransfers", () => {
     const result = parseTransfers(transfers, userAddress);
 
     expect(result.type).toBe("OUT");
-    expect(result.value.isEqualTo(new BigNumber(50))).toBe(true);
+    expect(result.value).toEqual(new BigNumber(50));
     expect(result.senders).toEqual(["0.0.1234", "0.0.5678"]);
     expect(result.recipients).toEqual(["0.0.9999"]);
   });
@@ -75,7 +75,7 @@ describe("parseTransfers", () => {
     const result = parseTransfers(transfers, userAddress);
 
     expect(result.type).toBe("OUT");
-    expect(result.value.isEqualTo(new BigNumber(10))).toBe(true);
+    expect(result.value).toEqual(new BigNumber(10));
     expect(result.senders).toEqual([userAddress]);
     expect(result.recipients).toEqual(["0.0.5678"]);
   });
@@ -91,7 +91,7 @@ describe("parseTransfers", () => {
     const result = parseTransfers(transfers, userAddress);
 
     expect(result.type).toBe("OUT");
-    expect(result.value.isEqualTo(new BigNumber(100))).toBe(true);
+    expect(result.value).toEqual(new BigNumber(100));
     expect(result.senders).toEqual([userAddress]);
     expect(result.recipients).toEqual([]);
   });
@@ -107,7 +107,7 @@ describe("parseTransfers", () => {
     const result = parseTransfers(transfers, userAddress);
 
     expect(result.type).toBe("OUT");
-    expect(result.value.isEqualTo(new BigNumber(100))).toBe(true);
+    expect(result.value).toEqual(new BigNumber(100));
     expect(result.senders).toEqual([userAddress]);
     expect(result.recipients).toEqual([nodeAccount]);
   });
@@ -125,7 +125,7 @@ describe("parseTransfers", () => {
     const result = parseTransfers(transfers, userAddress);
 
     expect(result.type).toBe("OUT");
-    expect(result.value.isEqualTo(new BigNumber(100))).toBe(true);
+    expect(result.value).toEqual(new BigNumber(100));
     expect(result.senders).toEqual([userAddress]);
     expect(result.recipients).toEqual([normalAccount]);
   });
@@ -140,7 +140,7 @@ describe("parseTransfers", () => {
     const result = parseTransfers(transfers, userAddress);
 
     expect(result.type).toBe("NONE");
-    expect(result.value.isEqualTo(new BigNumber(0))).toBe(true);
+    expect(result.value).toEqual(new BigNumber(0));
     expect(result.senders).toEqual(["0.0.5678"]);
     expect(result.recipients).toEqual(["0.0.9999"]);
   });
@@ -152,7 +152,7 @@ describe("parseTransfers", () => {
     const result = parseTransfers(transfers, userAddress);
 
     expect(result.type).toBe("NONE");
-    expect(result.value.isEqualTo(new BigNumber(0))).toBe(true);
+    expect(result.value).toEqual(new BigNumber(0));
     expect(result.senders).toEqual([]);
     expect(result.recipients).toEqual([]);
   });
@@ -168,7 +168,7 @@ describe("parseTransfers", () => {
     const result = parseTransfers(transfers, userAddress);
 
     expect(result.type).toBe("IN");
-    expect(result.value.isEqualTo(new BigNumber(100))).toBe(true);
+    expect(result.value).toEqual(new BigNumber(100));
     expect(result.senders).toEqual(["0.0.5678", "0.0.900"]);
     expect(result.recipients).toEqual([userAddress]);
   });
