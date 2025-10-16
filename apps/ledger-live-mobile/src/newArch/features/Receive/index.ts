@@ -6,7 +6,8 @@ import { NavigatorName, ScreenName } from "~/const";
 import { useNavigation } from "@react-navigation/native";
 import { AccountLike, Account } from "@ledgerhq/types-live";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
-import { RootNavigation } from "~/components/RootNavigator/types/helpers";
+import { RootNavigation, StackNavigatorNavigation } from "~/components/RootNavigator/types/helpers";
+import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 
 type Props = {
   onClick?: () => void;
@@ -20,7 +21,7 @@ export function useOpenReceiveDrawer({
   onClick,
   navigationOverride,
 }: Props) {
-  const defaultNavigation = useNavigation();
+  const defaultNavigation = useNavigation<StackNavigatorNavigation<BaseNavigatorStackParamList>>();
   const { openDrawer } = useModularDrawerController();
   const { isModularDrawerVisible } = useModularDrawerVisibility({
     modularDrawerFeatureFlagKey: "llmModularDrawer",
@@ -52,7 +53,7 @@ export function useOpenReceiveDrawer({
           },
         });
       } else {
-        defaultNavigation.navigate(NavigatorName.ReceiveFunds, {
+        defaultNavigation.replace(NavigatorName.ReceiveFunds, {
           screen: ScreenName.ReceiveConfirmation,
           params: confirmationParams,
         });
