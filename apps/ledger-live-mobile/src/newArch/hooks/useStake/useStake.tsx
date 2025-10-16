@@ -37,7 +37,6 @@ export function useStake() {
     () => featureFlag?.params?.list || [],
     [featureFlag?.params?.list],
   );
-  enabledCurrencies.push("mina");
 
   const redirects = useMemo(
     () => new Map(Object.entries(featureFlag?.params?.redirects || {})),
