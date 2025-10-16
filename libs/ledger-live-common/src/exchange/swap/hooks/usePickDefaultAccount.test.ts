@@ -1,3 +1,4 @@
+import { toCryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 /**
  * @jest-environment jsdom
  */
@@ -12,7 +13,7 @@ import { genAccount } from "../../../mock/account";
 import { usePickDefaultAccount } from "./usePickDefaultAccount";
 import { Wrapper } from "./wrapper";
 
-setSupportedCurrencies(["ethereum"]);
+setSupportedCurrencies([toCryptoCurrencyId("ethereum")]);
 
 function* accountGenerator(currency: CryptoCurrency): Generator<Account> {
   let id = 0;

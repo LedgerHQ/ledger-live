@@ -6,6 +6,7 @@ import {
   getMainAccount,
 } from "@ledgerhq/live-common/account/index";
 import { getAbandonSeedAddress } from "@ledgerhq/cryptoassets";
+import { CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 import { getCryptoAssetsStore } from "@ledgerhq/live-common/bridge/crypto-assets/index";
 import { firstValueFrom, from } from "rxjs";
 import { BigNumber } from "bignumber.js";
@@ -143,7 +144,7 @@ const exec = async (opts: SwapJobOpts) => {
   let transaction = bridge.createTransaction(getMainAccount(fromAccount, fromParentAccount));
   transaction = bridge.updateTransaction(transaction, {
     recipient: getAbandonSeedAddress(
-      getAccountCurrency(getMainAccount(fromAccount, fromParentAccount)).id,
+      getAccountCurrency(getMainAccount(fromAccount, fromParentAccount)).id as CryptoCurrencyId,
     ),
     subAccountId: fromParentAccount ? fromAccount.id : undefined,
   });

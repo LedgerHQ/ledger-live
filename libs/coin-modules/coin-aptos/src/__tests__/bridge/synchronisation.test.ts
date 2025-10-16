@@ -1,3 +1,4 @@
+import { toCryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 import { AccountShapeInfo, mergeOps } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/index";
 import { Operation, SyncConfig, TokenAccount } from "@ledgerhq/types-live";
@@ -820,7 +821,7 @@ describe("getAccountShape", () => {
         contractAddress: "0xd111::staked_coin::StakedAptos",
         parentCurrency: {
           type: "CryptoCurrency",
-          id: "aptos",
+          id: toCryptoCurrencyId("aptos"),
           coinType: 637,
           name: "Aptos",
           managerAppName: "Aptos",
@@ -946,7 +947,7 @@ describe("getAccountShape", () => {
     const info = {
       currency: {
         type: "CryptoCurrency",
-        id: "aptos",
+        id: toCryptoCurrencyId("aptos"),
         coinType: 637,
         name: "Aptos",
         managerAppName: "Aptos",
@@ -984,7 +985,7 @@ describe("getAccountShape", () => {
         pendingOperations: [],
         currency: {
           type: "CryptoCurrency",
-          id: "aptos",
+          id: toCryptoCurrencyId("aptos"),
           coinType: 637,
           name: "Aptos",
           managerAppName: "Aptos",
@@ -1015,7 +1016,7 @@ describe("getAccountShape", () => {
               contractAddress: "0xd111::staked_coin::StakedAptos",
               parentCurrency: {
                 type: "CryptoCurrency",
-                id: "aptos",
+                id: toCryptoCurrencyId("aptos"),
                 coinType: 637,
                 name: "Aptos",
                 managerAppName: "Aptos",
@@ -1079,7 +1080,7 @@ describe("mergeSubAccounts", () => {
       contractAddress: "0xd111::staked_coin::StakedAptos",
       parentCurrency: {
         type: "CryptoCurrency",
-        id: "aptos",
+        id: toCryptoCurrencyId("aptos"),
         coinType: 637,
         name: "Aptos",
         managerAppName: "Aptos",
@@ -1147,7 +1148,7 @@ describe("mergeSubAccounts", () => {
         contractAddress: "0x2ebb",
         parentCurrency: {
           type: "CryptoCurrency",
-          id: "aptos",
+          id: toCryptoCurrencyId("aptos"),
           coinType: 637,
           name: "Aptos",
           managerAppName: "Aptos",
@@ -1215,7 +1216,7 @@ describe("getSubAccountShape", () => {
 
   const currency = {
     type: "CryptoCurrency",
-    id: "aptos",
+    id: toCryptoCurrencyId("aptos"),
     coinType: 637,
     name: "Aptos",
     managerAppName: "Aptos",
@@ -1245,7 +1246,7 @@ describe("getSubAccountShape", () => {
     contractAddress: "0xd111::staked_coin::StakedAptos",
     parentCurrency: {
       type: "CryptoCurrency",
-      id: "aptos",
+      id: toCryptoCurrencyId("aptos"),
       coinType: 637,
       name: "Aptos",
       managerAppName: "Aptos",
@@ -1367,7 +1368,7 @@ describe("getSubAccounts", () => {
   const infos = {
     currency: {
       type: "CryptoCurrency",
-      id: "aptos",
+      id: toCryptoCurrencyId("aptos"),
       coinType: 637,
       name: "Aptos",
       managerAppName: "Aptos",
@@ -1454,7 +1455,7 @@ describe("getSubAccounts", () => {
         contractAddress: "0xd111::staked_coin::StakedAptos",
         parentCurrency: {
           type: "CryptoCurrency",
-          id: "aptos",
+          id: toCryptoCurrencyId("aptos"),
           coinType: 637,
           name: "Aptos",
           managerAppName: "Aptos",
@@ -1505,7 +1506,7 @@ describe("getSubAccounts", () => {
           contractAddress: "0xd111::staked_coin::StakedAptos",
           parentCurrency: {
             type: "CryptoCurrency",
-            id: "aptos",
+            id: toCryptoCurrencyId("aptos"),
             coinType: 637,
             name: "Aptos",
             managerAppName: "Aptos",
@@ -2076,7 +2077,7 @@ describe("getStake", () => {
         contractAddress: "0xd111::staked_coin::StakedAptos",
         parentCurrency: {
           type: "CryptoCurrency",
-          id: "aptos",
+          id: toCryptoCurrencyId("aptos"),
           coinType: 637,
           name: "Aptos",
           managerAppName: "Aptos",
@@ -2212,7 +2213,7 @@ describe("getStake", () => {
     const info = {
       currency: {
         type: "CryptoCurrency",
-        id: "aptos",
+        id: toCryptoCurrencyId("aptos"),
         coinType: 637,
         name: "Aptos",
         managerAppName: "Aptos",
@@ -2250,7 +2251,7 @@ describe("getStake", () => {
         pendingOperations: [],
         currency: {
           type: "CryptoCurrency",
-          id: "aptos",
+          id: toCryptoCurrencyId("aptos"),
           coinType: 637,
           name: "Aptos",
           managerAppName: "Aptos",
@@ -2281,7 +2282,7 @@ describe("getStake", () => {
               contractAddress: "0xd111::staked_coin::StakedAptos",
               parentCurrency: {
                 type: "CryptoCurrency",
-                id: "aptos",
+                id: toCryptoCurrencyId("aptos"),
                 coinType: 637,
                 name: "Aptos",
                 managerAppName: "Aptos",

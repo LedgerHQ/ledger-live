@@ -1,3 +1,4 @@
+import { toCryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 import toPairs from "lodash/toPairs";
 import flatMap from "lodash/flatMap";
 import groupBy from "lodash/groupBy";
@@ -13,14 +14,14 @@ import { firstValueFrom } from "rxjs";
 jest.setTimeout(120000);
 
 const mockedCoins: CryptoCurrencyId[] = [
-  "bitcoin",
-  "zcash",
-  "ethereum",
-  "ethereum_classic",
-  "ripple",
-  "tezos",
-  "stellar",
-  "cosmos",
+  toCryptoCurrencyId("bitcoin"),
+  toCryptoCurrencyId("zcash"),
+  toCryptoCurrencyId("ethereum"),
+  toCryptoCurrencyId("ethereum_classic"),
+  toCryptoCurrencyId("ripple"),
+  toCryptoCurrencyId("tezos"),
+  toCryptoCurrencyId("stellar"),
+  toCryptoCurrencyId("cosmos"),
 ];
 
 mockedCoins.map(getCryptoCurrencyById).forEach(currency => {

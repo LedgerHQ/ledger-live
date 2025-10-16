@@ -1,3 +1,4 @@
+import { toCryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 import {
   groupCurrenciesByProvider,
   searchByNameOrTicker,
@@ -159,7 +160,7 @@ describe("Deposit logic", () => {
     });
 
     test("should handle currencies without corresponding assets", () => {
-      setSupportedCurrencies(["bitcoin"]);
+      setSupportedCurrencies([toCryptoCurrencyId("bitcoin")]);
       const btcCurrency = getCryptoCurrencyById("bitcoin");
       const { currenciesByProvider, sortedCryptoCurrencies } = groupCurrenciesByProvider(
         TOKEN_ONLY_ASSETS,
@@ -174,7 +175,7 @@ describe("Deposit logic", () => {
         { ...TOKEN_ONLY_ASSETS[0], providerId: "test-provider" },
       ] as MappedAsset[];
 
-      setSupportedCurrencies(["ethereum"]);
+      setSupportedCurrencies([toCryptoCurrencyId("ethereum")]);
       const ethCurrency = getCryptoCurrencyById("ethereum");
       const tokenCurrency = findTokenById(TOKEN_ONLY_ASSETS[0].ledgerId);
       if (!tokenCurrency) throw new Error("Token not found");
@@ -231,7 +232,7 @@ describe("Deposit logic", () => {
 
   describe("loadCurrenciesByProvider", () => {
     test("should load currencies by provider successfully", async () => {
-      setSupportedCurrencies(["ethereum", "bitcoin"]);
+      setSupportedCurrencies([toCryptoCurrencyId("ethereum"), toCryptoCurrencyId("bitcoin")]);
       const supportedCurrencies = listSupportedCurrencies() as CryptoOrTokenCurrency[];
 
       const result = await loadCurrenciesByProvider(supportedCurrencies);
@@ -252,7 +253,7 @@ describe("Deposit logic", () => {
     });
 
     test("should handle currencies with no corresponding assets", async () => {
-      setSupportedCurrencies(["bitcoin"]);
+      setSupportedCurrencies([toCryptoCurrencyId("bitcoin")]);
       const supportedCurrencies = [getCryptoCurrencyById("bitcoin")];
 
       const result = await loadCurrenciesByProvider(supportedCurrencies);
@@ -266,7 +267,10 @@ describe("Deposit logic", () => {
 
   describe("Currency support scenarios", () => {
     it("should return Arbitrum and not Optimism in the sortedCryptoCurrencies", () => {
-      setSupportedCurrencies(["arbitrum", "arbitrum_sepolia"]);
+      setSupportedCurrencies([
+        toCryptoCurrencyId("arbitrum"),
+        toCryptoCurrencyId("arbitrum_sepolia"),
+      ]);
       const currencies = sortCurrenciesByIds(
         (listSupportedCurrencies() as CryptoOrTokenCurrency[]).concat(listSupportedTokens()),
         MOCK_IDS,
@@ -280,7 +284,10 @@ describe("Deposit logic", () => {
     });
 
     it("should return Optimism only in the sortedCryptoCurrencies", () => {
-      setSupportedCurrencies(["optimism", "optimism_sepolia"]);
+      setSupportedCurrencies([
+        toCryptoCurrencyId("optimism"),
+        toCryptoCurrencyId("optimism_sepolia"),
+      ]);
       const currencies = sortCurrenciesByIds(
         (listSupportedCurrencies() as CryptoOrTokenCurrency[]).concat(listSupportedTokens()),
         MOCK_IDS,
@@ -294,7 +301,12 @@ describe("Deposit logic", () => {
     });
 
     it("should return currencies based on what's actually supported and available in mock data", () => {
-      setSupportedCurrencies(["optimism", "optimism_sepolia", "arbitrum", "arbitrum_sepolia"]);
+      setSupportedCurrencies([
+        toCryptoCurrencyId("optimism"),
+        toCryptoCurrencyId("optimism_sepolia"),
+        toCryptoCurrencyId("arbitrum"),
+        toCryptoCurrencyId("arbitrum_sepolia"),
+      ]);
       const currencies = sortCurrenciesByIds(
         (listSupportedCurrencies() as CryptoOrTokenCurrency[]).concat(listSupportedTokens()),
         MOCK_IDS,
@@ -316,7 +328,7 @@ describe("Deposit logic", () => {
 
   describe("Token-only scenarios", () => {
     it("should return only Polygon token while its currency is supported in the list", () => {
-      setSupportedCurrencies(["polygon"]);
+      setSupportedCurrencies([toCryptoCurrencyId("polygon")]);
 
       const currencies = sortCurrenciesByIds(
         (listSupportedCurrencies() as CryptoOrTokenCurrency[]).concat(listSupportedTokens()),
@@ -330,7 +342,7 @@ describe("Deposit logic", () => {
     });
 
     it("should return only BSC token while its currency is supported in the list", () => {
-      setSupportedCurrencies(["bsc"]);
+      setSupportedCurrencies([toCryptoCurrencyId("bsc")]);
 
       const currencies = sortCurrenciesByIds(
         (listSupportedCurrencies() as CryptoOrTokenCurrency[]).concat(listSupportedTokens()),
@@ -344,7 +356,11 @@ describe("Deposit logic", () => {
     });
 
     it("should return tokens that are actually supported based on mock data", () => {
-      setSupportedCurrencies(["ethereum", "bsc", "polygon"]);
+      setSupportedCurrencies([
+        toCryptoCurrencyId("ethereum"),
+        toCryptoCurrencyId("bsc"),
+        toCryptoCurrencyId("polygon"),
+      ]);
 
       const currencies = sortCurrenciesByIds(
         (listSupportedCurrencies() as CryptoOrTokenCurrency[]).concat(listSupportedTokens()),
@@ -367,7 +383,7 @@ describe("Deposit logic", () => {
     });
 
     it("should return specific Ethereum and Polygon USDT tokens when both currencies are supported", () => {
-      setSupportedCurrencies(["ethereum", "polygon"]);
+      setSupportedCurrencies([toCryptoCurrencyId("ethereum"), toCryptoCurrencyId("polygon")]);
 
       const currencies = sortCurrenciesByIds(
         (listSupportedCurrencies() as CryptoOrTokenCurrency[]).concat(listSupportedTokens()),
@@ -393,7 +409,11 @@ describe("Deposit logic", () => {
     });
 
     it("should return all supported USDT tokens when multiple currencies are enabled", () => {
-      setSupportedCurrencies(["ethereum", "bsc", "polygon"]);
+      setSupportedCurrencies([
+        toCryptoCurrencyId("ethereum"),
+        toCryptoCurrencyId("bsc"),
+        toCryptoCurrencyId("polygon"),
+      ]);
 
       const currencies = sortCurrenciesByIds(
         (listSupportedCurrencies() as CryptoOrTokenCurrency[]).concat(listSupportedTokens()),
@@ -440,22 +460,22 @@ describe("Deposit logic", () => {
     it("should handle all supported currencies and tokens in the system", async () => {
       // Set all major supported currencies from the live-common setup
       setSupportedCurrencies([
-        "bitcoin",
-        "ethereum",
-        "bsc",
-        "polygon",
-        "arbitrum",
-        "optimism",
-        "avalanche_c_chain",
-        "solana",
-        "cardano",
-        "polkadot",
-        "cosmos",
-        "tron",
-        "stellar",
-        "hedera",
-        "near",
-        "sui",
+        toCryptoCurrencyId("bitcoin"),
+        toCryptoCurrencyId("ethereum"),
+        toCryptoCurrencyId("bsc"),
+        toCryptoCurrencyId("polygon"),
+        toCryptoCurrencyId("arbitrum"),
+        toCryptoCurrencyId("optimism"),
+        toCryptoCurrencyId("avalanche_c_chain"),
+        toCryptoCurrencyId("solana"),
+        toCryptoCurrencyId("cardano"),
+        toCryptoCurrencyId("polkadot"),
+        toCryptoCurrencyId("cosmos"),
+        toCryptoCurrencyId("tron"),
+        toCryptoCurrencyId("stellar"),
+        toCryptoCurrencyId("hedera"),
+        toCryptoCurrencyId("near"),
+        toCryptoCurrencyId("sui"),
       ]);
 
       const allSupportedCurrencies = listSupportedCurrencies() as CryptoOrTokenCurrency[];
@@ -505,24 +525,24 @@ describe("Deposit logic", () => {
 
     it("should efficiently handle the intersection of all mock assets with all supported currencies", () => {
       setSupportedCurrencies([
-        "bitcoin",
-        "ethereum",
-        "bsc",
-        "polygon",
-        "arbitrum",
-        "optimism",
-        "avalanche_c_chain",
-        "solana",
-        "cardano",
-        "polkadot",
-        "cosmos",
-        "tron",
-        "stellar",
-        "hedera",
-        "near",
-        "sui",
-        "litecoin",
-        "dogecoin",
+        toCryptoCurrencyId("bitcoin"),
+        toCryptoCurrencyId("ethereum"),
+        toCryptoCurrencyId("bsc"),
+        toCryptoCurrencyId("polygon"),
+        toCryptoCurrencyId("arbitrum"),
+        toCryptoCurrencyId("optimism"),
+        toCryptoCurrencyId("avalanche_c_chain"),
+        toCryptoCurrencyId("solana"),
+        toCryptoCurrencyId("cardano"),
+        toCryptoCurrencyId("polkadot"),
+        toCryptoCurrencyId("cosmos"),
+        toCryptoCurrencyId("tron"),
+        toCryptoCurrencyId("stellar"),
+        toCryptoCurrencyId("hedera"),
+        toCryptoCurrencyId("near"),
+        toCryptoCurrencyId("sui"),
+        toCryptoCurrencyId("litecoin"),
+        toCryptoCurrencyId("dogecoin"),
       ]);
 
       const currencies = sortCurrenciesByIds(
@@ -563,7 +583,12 @@ describe("Deposit logic", () => {
     });
 
     it("should demonstrate provider grouping behavior with diverse mock data", () => {
-      setSupportedCurrencies(["ethereum", "polygon", "arbitrum", "optimism"]);
+      setSupportedCurrencies([
+        toCryptoCurrencyId("ethereum"),
+        toCryptoCurrencyId("polygon"),
+        toCryptoCurrencyId("arbitrum"),
+        toCryptoCurrencyId("optimism"),
+      ]);
 
       const currencies = sortCurrenciesByIds(
         (listSupportedCurrencies() as CryptoOrTokenCurrency[]).concat(listSupportedTokens()),

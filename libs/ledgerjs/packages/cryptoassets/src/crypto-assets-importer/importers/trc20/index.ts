@@ -1,6 +1,6 @@
 import fs from "fs";
 import path from "path";
-import { fetchTokensFromCALService } from "../../fetch";
+import { fetchTokensFromCALService, toCryptoCurrencyId } from "../../fetch";
 
 type TRC20Token = [
   string, // id
@@ -15,15 +15,10 @@ type TRC20Token = [
 export const importTRC20Tokens = async (outputDir: string) => {
   try {
     console.log("importing trc20 tokens...");
-    const { tokens, hash } = await fetchTokensFromCALService({ blockchain_name: "tron" }, [
-      "id",
-      "ticker",
-      "name",
-      "contract_address",
-      "decimals",
-      "delisted",
-      "live_signature",
-    ]);
+    const { tokens, hash } = await fetchTokensFromCALService(
+      { blockchain_name: toCryptoCurrencyId("tron") },
+      ["id", "ticker", "name", "contract_address", "decimals", "delisted", "live_signature"],
+    );
     const trc20tokens: TRC20Token[] = tokens.map(token => {
       const [, , tokenIdentifier] = token.id.split("/");
 

@@ -1,6 +1,6 @@
 import fs from "fs";
 import path from "path";
-import { fetchTokensFromCALService } from "../../fetch";
+import { fetchTokensFromCALService, toCryptoCurrencyId } from "../../fetch";
 
 type CardanoNativeToken = [
   "cardano", // parentCurrencyId
@@ -15,14 +15,10 @@ type CardanoNativeToken = [
 export const importCardanoNativeTokens = async (outputDir: string) => {
   try {
     console.log("importing cardanoNative tokens...");
-    const { tokens, hash } = await fetchTokensFromCALService({ blockchain_name: "cardano" }, [
-      "contract_address",
-      "name",
-      "token_identifier",
-      "ticker",
-      "decimals",
-      "delisted",
-    ]);
+    const { tokens, hash } = await fetchTokensFromCALService(
+      { blockchain_name: toCryptoCurrencyId("cardano") },
+      ["contract_address", "name", "token_identifier", "ticker", "decimals", "delisted"],
+    );
     const cardanoNativeTokens: CardanoNativeToken[] = tokens.map(token => [
       "cardano",
       token.contract_address,

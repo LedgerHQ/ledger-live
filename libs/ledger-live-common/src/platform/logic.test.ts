@@ -1,3 +1,4 @@
+import { toCryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 import { Transaction as EvmTransaction } from "@ledgerhq/coin-evm/types/index";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import {
@@ -123,7 +124,7 @@ describe("completeExchangeLogic", () => {
   const uiNavigation = jest.fn();
 
   beforeAll(() => {
-    setSupportedCurrencies(["bitcoin", "ethereum"]);
+    setSupportedCurrencies([toCryptoCurrencyId("bitcoin"), toCryptoCurrencyId("ethereum")]);
   });
   afterAll(() => {
     setSupportedCurrencies([]);

@@ -1,3 +1,4 @@
+import { toCryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 import BigNumber from "bignumber.js";
 import { AccountsState } from "~/reducers/types";
 
@@ -21,7 +22,7 @@ export const MockedAccounts: AccountsState = {
       pendingOperations: [],
       currency: {
         type: "CryptoCurrency",
-        id: "cronos",
+        id: toCryptoCurrencyId("cronos"),
         coinType: 60,
         name: "Cronos",
         managerAppName: "Ethereum",
@@ -105,7 +106,7 @@ export const MockedAccounts: AccountsState = {
       pendingOperations: [],
       currency: {
         type: "CryptoCurrency",
-        id: "dash",
+        id: toCryptoCurrencyId("dash"),
         coinType: 5,
         name: "Dash",
         managerAppName: "Dash",
@@ -197,7 +198,7 @@ export const MockedAccounts: AccountsState = {
       pendingOperations: [],
       currency: {
         type: "CryptoCurrency",
-        id: "dogecoin",
+        id: toCryptoCurrencyId("dogecoin"),
         coinType: 3,
         name: "Dogecoin",
         managerAppName: "Dogecoin",
@@ -304,7 +305,7 @@ export const MockedAccounts: AccountsState = {
       pendingOperations: [],
       currency: {
         type: "CryptoCurrency",
-        id: "energy_web",
+        id: toCryptoCurrencyId("energy_web"),
         coinType: 60,
         name: "Energy Web",
         managerAppName: "Ethereum",
@@ -393,7 +394,7 @@ export const MockedAccounts: AccountsState = {
       pendingOperations: [],
       currency: {
         type: "CryptoCurrency",
-        id: "ethereum_classic",
+        id: toCryptoCurrencyId("ethereum_classic"),
         coinType: 61,
         name: "Ethereum Classic",
         managerAppName: "Ethereum Classic",
@@ -532,7 +533,7 @@ export const MockedAccounts: AccountsState = {
               color: "#000000",
               explorerViews: [],
               family: "ethereum",
-              id: "ethereum_classic",
+              id: toCryptoCurrencyId("ethereum_classic"),
               keywords: ["eth"],
               managerAppName: "ethereumclassic",
               name: "Ethereum Classic",
@@ -597,7 +598,7 @@ export const MockedAccounts: AccountsState = {
       pendingOperations: [],
       currency: {
         type: "CryptoCurrency",
-        id: "linea",
+        id: toCryptoCurrencyId("linea"),
         coinType: 60,
         name: "Linea",
         managerAppName: "Ethereum",
@@ -689,7 +690,7 @@ export const MockedAccounts: AccountsState = {
       pendingOperations: [],
       currency: {
         type: "CryptoCurrency",
-        id: "near",
+        id: toCryptoCurrencyId("near"),
         coinType: 397,
         name: "NEAR",
         managerAppName: "NEAR",

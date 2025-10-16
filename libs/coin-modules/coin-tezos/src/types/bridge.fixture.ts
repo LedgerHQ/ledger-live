@@ -8,6 +8,7 @@ import type {
   Transaction,
 } from "./bridge";
 import { getAbandonSeedAddress } from "@ledgerhq/cryptoassets/abandonseed";
+import { toCryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 import { listCryptoCurrencies } from "@ledgerhq/cryptoassets/currencies";
 import { emptyHistoryCache } from "@ledgerhq/coin-framework/account/index";
 
@@ -54,7 +55,7 @@ export function createFixtureAccount(account?: Partial<TezosAccount>): TezosAcco
 export function createFixtureTransaction(tx?: Partial<Transaction>): Transaction {
   return {
     amount: tx?.amount || new BigNumber(0),
-    recipient: tx?.recipient || getAbandonSeedAddress("tezos"),
+    recipient: tx?.recipient || getAbandonSeedAddress(toCryptoCurrencyId("tezos")),
     useAllAmount: tx?.useAllAmount || false,
 
     family: "tezos",

@@ -1,3 +1,4 @@
+import { toCryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 import "./test-helpers/staticTime";
 import { setEnv } from "@ledgerhq/live-env";
 import { genAccount } from "../mock/account";
@@ -6,7 +7,7 @@ import { accountsOpToCSV } from "../csvExport";
 import { initialState, loadCountervalues } from "@ledgerhq/live-countervalues/logic";
 import { getFiatCurrencyByTicker, setSupportedCurrencies } from "../currencies";
 
-setSupportedCurrencies(["ethereum", "ripple"]);
+setSupportedCurrencies([toCryptoCurrencyId("ethereum"), toCryptoCurrencyId("ripple")]);
 setEnv("MOCK", "1");
 setEnv("MOCK_COUNTERVALUES", "1");
 test("export CSV", async () => {

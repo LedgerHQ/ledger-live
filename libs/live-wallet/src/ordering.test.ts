@@ -3,12 +3,13 @@
 import type { AccountRaw } from "@ledgerhq/types-live";
 import { sortAccountsComparatorFromOrder } from "./ordering";
 import { setSupportedCurrencies } from "@ledgerhq/coin-framework/currencies/index";
+import { toCryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 import { fromAccountRaw } from "@ledgerhq/coin-framework/serialization/account";
 import { WalletState, accountRawToAccountUserData } from "./store";
 import { setCryptoAssetsStore } from "@ledgerhq/coin-framework/crypto-assets/index";
 import type { CryptoAssetsStore } from "@ledgerhq/types-live";
 
-setSupportedCurrencies(["ethereum"]);
+setSupportedCurrencies([toCryptoCurrencyId("ethereum")]);
 
 const raws: AccountRaw[] = [
   <AccountRaw>{

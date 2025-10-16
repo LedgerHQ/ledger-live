@@ -1,9 +1,10 @@
+import { toCryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 /**
  * @jest-environment jsdom
  */
 import "../../__tests__/test-helpers/dom-polyfill";
 import { setSupportedCurrencies } from "../../currencies/index";
-setSupportedCurrencies(["tron"]);
+setSupportedCurrencies([toCryptoCurrencyId("tron")]);
 import { renderHook, act } from "@testing-library/react";
 import {
   useTronSuperRepresentatives,

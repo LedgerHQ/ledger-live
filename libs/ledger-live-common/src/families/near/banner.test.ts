@@ -1,3 +1,4 @@
+import { toCryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 import { getAccountBannerState } from "./banner";
 import * as preloadedData from "@ledgerhq/coin-near/preload";
 import * as logic from "@ledgerhq/coin-near/logic";
@@ -42,7 +43,7 @@ const account: NearAccount = {
   pendingOperations: [],
   currency: {
     type: "CryptoCurrency",
-    id: "near",
+    id: toCryptoCurrencyId("near"),
     coinType: 397,
     name: "NEAR",
     managerAppName: "NEAR",

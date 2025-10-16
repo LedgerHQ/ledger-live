@@ -1,9 +1,9 @@
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 import { ExchangeSwap } from "./types";
 
-type Keys = Partial<Record<CryptoCurrency["id"], { title: string; description: string }>>;
+type Keys = Partial<Record<CryptoCurrencyId, { title: string; description: string }>>;
 
-const INCOMPATIBLE_NANO_S_TOKENS_KEYS: Keys = {
+const INCOMPATIBLE_NANO_S_TOKENS_KEYS = {
   solana: {
     title: "swap.incompatibility.spl_tokens_title",
     description: "swap.incompatibility.spl_tokens_description",
@@ -24,9 +24,9 @@ const INCOMPATIBLE_NANO_S_TOKENS_KEYS: Keys = {
     title: "swap.incompatibility.ton_tokens_title",
     description: "swap.incompatibility.ton_tokens_description",
   },
-};
+} as Keys;
 
-const INCOMPATIBLE_NANO_S_CURRENCY_KEYS: Keys = {
+const INCOMPATIBLE_NANO_S_CURRENCY_KEYS = {
   ton: {
     title: "swap.incompatibility.ton_title",
     description: "swap.incompatibility.ton_description",
@@ -79,7 +79,7 @@ const INCOMPATIBLE_NANO_S_CURRENCY_KEYS: Keys = {
     title: "swap.incompatibility.kaspa_title",
     description: "swap.incompatibility.kaspa_description",
   },
-};
+} as Keys;
 
 export const getIncompatibleCurrencyKeys = (exchange: ExchangeSwap) => {
   const parentFrom =

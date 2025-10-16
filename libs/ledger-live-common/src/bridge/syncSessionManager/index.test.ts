@@ -1,3 +1,4 @@
+import { toCryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 import { createSyncSessionManager } from ".";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import { setSupportedCurrencies } from "../../currencies";
@@ -7,7 +8,7 @@ jest.mock("@ledgerhq/logs", () => ({
   log: jest.fn(),
 }));
 
-setSupportedCurrencies(["bitcoin", "ethereum"]);
+setSupportedCurrencies([toCryptoCurrencyId("bitcoin"), toCryptoCurrencyId("ethereum")]);
 
 describe("syncSessionManager", () => {
   afterEach(() => {

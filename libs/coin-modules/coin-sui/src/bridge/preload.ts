@@ -6,6 +6,7 @@ import suiTokens, { hash } from "@ledgerhq/cryptoassets/data/sui";
 import { fetchTokensFromCALService } from "@ledgerhq/cryptoassets/crypto-assets-importer/fetch/index";
 import { addTokens, convertSuiTokens } from "@ledgerhq/cryptoassets/tokens";
 import { AxiosError } from "axios";
+import { toCryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 
 const PRELOAD_MAX_AGE = 30 * 60 * 1000; // 30 minutes
 
@@ -19,7 +20,7 @@ export const fetchSuiTokens: () => Promise<SuiToken[]> = async () => {
   try {
     const { tokens, hash } = await fetchTokensFromCALService(
       {
-        blockchain_name: "sui",
+        blockchain_name: toCryptoCurrencyId("sui"),
       },
       ["id", "name", "ticker", "contract_address", "decimals", "live_signature"],
       latestCALHash || embeddedHash,

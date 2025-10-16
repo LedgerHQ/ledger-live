@@ -1,6 +1,6 @@
 import fs from "fs";
 import path from "path";
-import { fetchTokensFromCALService } from "../../fetch";
+import { fetchTokensFromCALService, toCryptoCurrencyId } from "../../fetch";
 
 type SuiToken = [
   string, // id
@@ -15,14 +15,10 @@ export const importSuiTokens = async (outputDir: string) => {
   try {
     console.log("importing sui tokens...");
 
-    const { tokens, hash } = await fetchTokensFromCALService({ blockchain_name: "sui" }, [
-      "id",
-      "name",
-      "ticker",
-      "contract_address",
-      "decimals",
-      "live_signature",
-    ]);
+    const { tokens, hash } = await fetchTokensFromCALService(
+      { blockchain_name: toCryptoCurrencyId("sui") },
+      ["id", "name", "ticker", "contract_address", "decimals", "live_signature"],
+    );
 
     const suiTokens: SuiToken[] = tokens.map(token => [
       token.id,

@@ -1,3 +1,4 @@
+import { toCryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 import {
   isValidHost,
   checkRPCNodeConfig,
@@ -21,7 +22,7 @@ import { setSupportedCurrencies } from "../../currencies";
 import { setCryptoAssetsStore as setCryptoAssetsStoreForCoinFramework } from "@ledgerhq/coin-framework/crypto-assets/index";
 import type { CryptoAssetsStore } from "@ledgerhq/types-live";
 
-setSupportedCurrencies(["bitcoin"]);
+setSupportedCurrencies([toCryptoCurrencyId("bitcoin")]);
 jest.setTimeout(10000);
 describe("validateRPCNodeConfig", () => {
   test("valid cases", () => {

@@ -1,6 +1,6 @@
 import BigNumber from "bignumber.js";
 import { Account } from "@ledgerhq/types-live";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency, toCryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 import {
   AmountRequired,
   FeeNotLoaded,
@@ -25,7 +25,7 @@ const mockCoinConfig = jest.mocked(coinConfig);
 
 describe("getTransactionStatus", () => {
   const mockCurrency: CryptoCurrency = {
-    id: "canton_network",
+    id: toCryptoCurrencyId("canton_network"),
     name: "Canton Network",
     family: "canton",
     units: [

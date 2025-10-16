@@ -1,6 +1,9 @@
 import { getEnv } from "@ledgerhq/live-env";
-import { CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
+import { toCryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 import axios, { AxiosError } from "axios";
+
+export { toCryptoCurrencyId };
 
 export const fetchTokensFromCDN = async <T>(filename: string): Promise<[T, string | undefined]> => {
   try {

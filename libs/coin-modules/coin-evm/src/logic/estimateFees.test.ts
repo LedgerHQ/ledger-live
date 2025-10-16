@@ -1,3 +1,4 @@
+import { toCryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 import BigNumber from "bignumber.js";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import type {
@@ -17,7 +18,7 @@ jest.mock("../network/node", () => ({ getNodeApi: jest.fn() }));
 
 describe("estimateFees", () => {
   const mockCurrency = {
-    id: "ethereum",
+    id: toCryptoCurrencyId("ethereum"),
     family: "evm",
     ethereumLikeInfo: { chainId: 1 },
   } as CryptoCurrency;
@@ -297,7 +298,7 @@ describe("estimateFees", () => {
     mockNodeApi.getOptimismAdditionalFees.mockResolvedValue(new BigNumber(8000));
 
     const result = await estimateFees(
-      { ...mockCurrency, id: "optimism", ethereumLikeInfo: { chainId: 10 } },
+      { ...mockCurrency, id: toCryptoCurrencyId("optimism"), ethereumLikeInfo: { chainId: 10 } },
       {
         intentType: "transaction",
         type: "send-legacy",
@@ -341,7 +342,11 @@ describe("estimateFees", () => {
       amount: 1000000n,
     };
     const result = await estimateFees(
-      { ...mockCurrency, id: "sei_network_evm", ethereumLikeInfo: { chainId: 1329 } },
+      {
+        ...mockCurrency,
+        id: toCryptoCurrencyId("sei_network_evm"),
+        ethereumLikeInfo: { chainId: 1329 },
+      },
       tokenIntent,
     );
     expect(result).toEqual({
@@ -377,7 +382,11 @@ describe("estimateFees", () => {
       amount: 1000000n,
     };
     const result = await estimateFees(
-      { ...mockCurrency, id: "sei_network_evm", ethereumLikeInfo: { chainId: 1329 } },
+      {
+        ...mockCurrency,
+        id: toCryptoCurrencyId("sei_network_evm"),
+        ethereumLikeInfo: { chainId: 1329 },
+      },
       tokenIntent,
     );
     expect(result).toEqual({

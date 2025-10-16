@@ -1,4 +1,5 @@
 import { AssertionError } from "assert";
+import { toCryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 import { getEnv, setEnv } from "@ledgerhq/live-env";
 import network from "@ledgerhq/live-network/network";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
@@ -12,7 +13,7 @@ jest.mock("@ledgerhq/live-network/network");
 const mockedNetwork = jest.mocked(network);
 
 const fakeCurrency: Partial<CryptoCurrency> = {
-  id: "ethereum",
+  id: toCryptoCurrencyId("ethereum"),
   ethereumLikeInfo: {
     chainId: 1,
   },

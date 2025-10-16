@@ -1,3 +1,4 @@
+import { toCryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 /* eslint-disable @typescript-eslint/no-var-requires */
 
 import { getAccountBannerState } from "./banner";
@@ -51,7 +52,7 @@ const account: CosmosAccount = {
   pendingOperations: [],
   currency: {
     type: "CryptoCurrency",
-    id: "cosmos",
+    id: toCryptoCurrencyId("cosmos"),
     coinType: 118,
     name: "Cosmos",
     managerAppName: "Cosmos",

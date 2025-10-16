@@ -1,3 +1,4 @@
+import { toCryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 import nock from "nock";
 import React from "react";
 import axios from "axios";
@@ -145,7 +146,7 @@ const setup = (
 
 describe("RecipientField", () => {
   beforeAll(() => {
-    setSupportedCurrencies(["polygon", "ethereum"]);
+    setSupportedCurrencies([toCryptoCurrencyId("polygon"), toCryptoCurrencyId("ethereum")]);
   });
 
   beforeEach(() => {

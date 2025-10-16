@@ -1,3 +1,4 @@
+import { toCryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 import { handlers } from "./server";
 import { Account } from "@ledgerhq/types-live";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
@@ -69,7 +70,7 @@ const mockManifest = {
 
 const mockEthereumCurrency: CryptoCurrency = {
   type: "CryptoCurrency",
-  id: "ethereum",
+  id: toCryptoCurrencyId("ethereum"),
   coinType: 60,
   name: "Ethereum",
   managerAppName: "Ethereum",

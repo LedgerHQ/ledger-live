@@ -1,3 +1,4 @@
+import { toCryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 /**
  * @jest-environment jsdom
  */
@@ -28,7 +29,7 @@ const defaultsBridgeSyncOpts = {
   blacklistedTokenIds: [],
 };
 
-setSupportedCurrencies(["bitcoin", "ethereum"]);
+setSupportedCurrencies([toCryptoCurrencyId("bitcoin"), toCryptoCurrencyId("ethereum")]);
 
 const bitcoin = getCryptoCurrencyById("bitcoin");
 const ethereum = getCryptoCurrencyById("ethereum");

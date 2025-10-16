@@ -1,3 +1,4 @@
+import { toCryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 import DeviceAction from "../../models/DeviceAction";
 import { knownDevices } from "../../models/devices";
 import { CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
@@ -8,18 +9,18 @@ describe("Send flow", () => {
   let deviceAction: DeviceAction;
   let first = true;
   const testedCurrencies: CryptoCurrencyId[] = [
-    "bitcoin",
-    "ethereum",
-    "bsc",
+    toCryptoCurrencyId("bitcoin"),
+    toCryptoCurrencyId("ethereum"),
+    toCryptoCurrencyId("bsc"),
     //"ripple", // TOFIX Error during flow
     //"solana", // TOFIX Error during flow
     //"cardano", // TOFIX Error during flow
-    "dogecoin",
+    toCryptoCurrencyId("dogecoin"),
     //"tron", // TOFIX Error during flow
     //"avalanche_c_chain", // TOFIX Error during flow
-    "polygon",
-    "polkadot",
-    "cosmos",
+    toCryptoCurrencyId("polygon"),
+    toCryptoCurrencyId("polkadot"),
+    toCryptoCurrencyId("cosmos"),
   ];
   const knownDevice = knownDevices.nanoX;
 

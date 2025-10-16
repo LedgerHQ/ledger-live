@@ -1,3 +1,4 @@
+import { toCryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 import React from "react";
 import { screen } from "@testing-library/react-native";
 import { render } from "@tests/test-renderer";
@@ -7,7 +8,7 @@ import WarningBannerStatus from "./WarningBannerStatus";
 
 describe("WarningBannerStatus", () => {
   const mockCurrency: CryptoCurrency = {
-    id: "fantom",
+    id: toCryptoCurrencyId("fantom"),
     name: "Fantom",
     ticker: "FTM",
     type: "CryptoCurrency",
@@ -30,7 +31,7 @@ describe("WarningBannerStatus", () => {
     const mockCurrencyConfig: CurrencyConfig = {
       status: {
         type: "migration",
-        chain: "fantom",
+        chain: toCryptoCurrencyId("fantom"),
         from: "OldCoin",
         to: "NewCoin",
         link: "https://migrationsupport.com",

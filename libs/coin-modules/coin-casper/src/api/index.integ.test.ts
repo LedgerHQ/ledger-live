@@ -1,10 +1,11 @@
 import { getAbandonSeedAddress } from "@ledgerhq/cryptoassets/abandonseed";
+import { toCryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 import { fetchAccountStateInfo, fetchBalance, fetchBlockHeight, fetchTxs } from ".";
 import { getCoinConfig } from "../config";
 import { CurrencyConfig } from "@ledgerhq/coin-framework/lib/config";
 
 const pubkey = "0202664e3958608cd8dc2b80d4c73f18f76ef197f1cccca2f4f817c70bb050b248bd";
-const pubkeyAbandon = getAbandonSeedAddress("casper");
+const pubkeyAbandon = getAbandonSeedAddress(toCryptoCurrencyId("casper"));
 
 jest.mock("../config");
 describe("Casper API", () => {

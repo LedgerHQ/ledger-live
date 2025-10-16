@@ -1,3 +1,4 @@
+import { toCryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 import { BigNumber } from "bignumber.js";
 import { buildTransaction } from "./buildTransaction";
 import type { SuiAccount, Transaction } from "../types";
@@ -18,7 +19,7 @@ describe("buildTransaction", () => {
     freshAddress: "0x1234567890abcdef",
     freshAddressPath: "m/44'/784'/0'/0'/0'",
     currency: {
-      id: "sui",
+      id: toCryptoCurrencyId("sui"),
       name: "Sui",
       family: "sui",
       units: [],

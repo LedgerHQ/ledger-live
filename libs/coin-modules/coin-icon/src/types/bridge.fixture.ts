@@ -2,6 +2,7 @@ import BigNumber from "bignumber.js";
 import { faker } from "@faker-js/faker";
 import { listCryptoCurrencies } from "@ledgerhq/cryptoassets/currencies";
 import { getAbandonSeedAddress } from "@ledgerhq/cryptoassets/abandonseed";
+import { toCryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 import { emptyHistoryCache } from "@ledgerhq/coin-framework/account/index";
 import { IconAccount, IconOperation, IconResources, Transaction } from "./index";
 
@@ -50,7 +51,7 @@ export function createFixtureAccount(account?: Partial<IconAccount>): IconAccoun
 export function createFixtureTransaction(tx?: Partial<Transaction>): Transaction {
   return {
     amount: tx?.amount || new BigNumber(0),
-    recipient: tx?.recipient || getAbandonSeedAddress("icon"),
+    recipient: tx?.recipient || getAbandonSeedAddress(toCryptoCurrencyId("icon")),
     mode: tx?.mode || "send",
     family: "icon",
     fees: tx?.fees || undefined,

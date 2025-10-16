@@ -2,6 +2,7 @@ import BigNumber from "bignumber.js";
 import { faker } from "@faker-js/faker";
 import { listCryptoCurrencies } from "@ledgerhq/cryptoassets/currencies";
 import { getAbandonSeedAddress } from "@ledgerhq/cryptoassets/abandonseed";
+import { toCryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 import { emptyHistoryCache } from "@ledgerhq/coin-framework/account/index";
 import {
   PalletMethod,
@@ -65,7 +66,7 @@ export function createFixtureAccount(account?: Partial<PolkadotAccount>): Polkad
 export function createFixtureTransaction(tx?: Partial<Transaction>): Transaction {
   return {
     amount: tx?.amount || new BigNumber(0),
-    recipient: tx?.recipient || getAbandonSeedAddress("polkadot"),
+    recipient: tx?.recipient || getAbandonSeedAddress(toCryptoCurrencyId("polkadot")),
 
     mode: tx?.mode || "send",
     family: "polkadot",

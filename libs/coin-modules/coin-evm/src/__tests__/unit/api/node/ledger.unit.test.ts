@@ -1,4 +1,5 @@
 import { AssertionError, fail } from "assert";
+import { toCryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 import axios from "axios";
 import BigNumber from "bignumber.js";
 import { delay } from "@ledgerhq/live-promise";
@@ -601,7 +602,10 @@ describe("EVM Family", () => {
         };
 
         expect(
-          await LEDGER_API.getOptimismAdditionalFees({ ...currency, id: "optimism" }, transaction),
+          await LEDGER_API.getOptimismAdditionalFees(
+            { ...currency, id: toCryptoCurrencyId("optimism") },
+            transaction,
+          ),
         ).toEqual(new BigNumber("0"));
       });
 
@@ -632,7 +636,10 @@ describe("EVM Family", () => {
         };
 
         expect(
-          await LEDGER_API.getOptimismAdditionalFees({ ...currency, id: "optimism" }, transaction),
+          await LEDGER_API.getOptimismAdditionalFees(
+            { ...currency, id: toCryptoCurrencyId("optimism") },
+            transaction,
+          ),
         ).toEqual(new BigNumber("100000000"));
       });
     });
@@ -670,7 +677,10 @@ describe("EVM Family", () => {
         };
 
         expect(
-          await LEDGER_API.getScrollAdditionalFees({ ...currency, id: "scroll" }, transaction),
+          await LEDGER_API.getScrollAdditionalFees(
+            { ...currency, id: toCryptoCurrencyId("scroll") },
+            transaction,
+          ),
         ).toEqual(new BigNumber("0"));
       });
 
@@ -701,7 +711,10 @@ describe("EVM Family", () => {
         };
 
         expect(
-          await LEDGER_API.getScrollAdditionalFees({ ...currency, id: "scroll" }, transaction),
+          await LEDGER_API.getScrollAdditionalFees(
+            { ...currency, id: toCryptoCurrencyId("scroll") },
+            transaction,
+          ),
         ).toEqual(new BigNumber("100000000"));
       });
     });

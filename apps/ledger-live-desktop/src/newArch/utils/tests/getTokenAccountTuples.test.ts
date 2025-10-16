@@ -1,3 +1,4 @@
+import { toCryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { getTokenAccountTuples } from "../getTokenAccountTuples";
 import { Account } from "@ledgerhq/types-live";
@@ -20,7 +21,7 @@ describe("getTokenAccountTuples", () => {
 
   it("should return an empty array if no matching token accounts are found", () => {
     const result = getTokenAccountTuples(
-      { ...mockedCurrency, id: "nonexistent" },
+      { ...mockedCurrency, id: toCryptoCurrencyId("nonexistent") },
       mockedNestedAccounts,
     );
     expect(result).toEqual([]);
@@ -45,7 +46,7 @@ const mockedCurrency = {
   contractAddress: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
   parentCurrency: {
     type: "CryptoCurrency",
-    id: "ethereum",
+    id: toCryptoCurrencyId("ethereum"),
     coinType: 60,
     name: "Ethereum",
     managerAppName: "Ethereum",

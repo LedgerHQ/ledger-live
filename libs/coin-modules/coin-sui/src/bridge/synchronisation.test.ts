@@ -1,4 +1,5 @@
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
+import { toCryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 import BigNumber from "bignumber.js";
 import { faker } from "@faker-js/faker";
 import { createFixtureAccount, createFixtureOperation } from "../types/bridge.fixture";
@@ -17,7 +18,7 @@ jest.mock("@ledgerhq/cryptoassets/tokens", () => ({
     countervalueTicker: "TEST",
     standard: "SUI-20",
     tokenType: "sui",
-    parentCurrency: { id: "sui" },
+    parentCurrency: { id: toCryptoCurrencyId("sui") },
     contract: "0x123",
   }),
   listTokensForCryptoCurrency: () => [{ id: "0x123::sui::TEST" }],

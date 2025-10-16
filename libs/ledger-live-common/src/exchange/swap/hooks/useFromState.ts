@@ -1,4 +1,5 @@
 import { getAbandonSeedAddress } from "@ledgerhq/cryptoassets";
+import { CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 import type { Account, AccountLike } from "@ledgerhq/types-live";
 import { useCallback, useMemo, useState } from "react";
 import { selectorStateDefaultValues } from ".";
@@ -54,7 +55,7 @@ export const useFromState = ({
       /* @DEV: That populates fake seed. This is required to use Transaction object */
       const mainAccount = getMainAccount(account as AccountLike, parentAccount);
       const mainCurrency = getAccountCurrency(mainAccount);
-      const recipient = getAbandonSeedAddress(mainCurrency.id);
+      const recipient = getAbandonSeedAddress(mainCurrency.id as CryptoCurrencyId);
       bridgeTransaction.updateTransaction(transaction => {
         return {
           ...transaction,

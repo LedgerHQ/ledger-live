@@ -1,3 +1,4 @@
+import { toCryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 import { GroupedCurrencies } from "@ledgerhq/live-common/deposit/type";
 
 const mockGroupedCurrenciesBySingleProviderData = {
@@ -7,7 +8,7 @@ const mockGroupedCurrenciesBySingleProviderData = {
       currenciesByNetwork: [
         {
           type: "CryptoCurrency" as const,
-          id: "bitcoin",
+          id: toCryptoCurrencyId("bitcoin"),
           coinType: 0,
           name: "Bitcoin",
           managerAppName: "Bitcoin",
@@ -45,7 +46,7 @@ const mockGroupedCurrenciesBySingleProviderData = {
   sortedCryptoCurrencies: [
     {
       type: "CryptoCurrency" as const,
-      id: "bitcoin",
+      id: toCryptoCurrencyId("bitcoin"),
       coinType: 0,
       name: "Bitcoin",
       managerAppName: "Bitcoin",
@@ -87,7 +88,7 @@ const mockGroupedCurrenciesWithMultipleProviderData = {
       currenciesByNetwork: [
         {
           type: "CryptoCurrency" as const,
-          id: "ethereum",
+          id: toCryptoCurrencyId("ethereum"),
           coinType: 60,
           name: "Ethereum",
           managerAppName: "Ethereum",
@@ -117,7 +118,7 @@ const mockGroupedCurrenciesWithMultipleProviderData = {
         },
         {
           type: "CryptoCurrency" as const,
-          id: "zksync",
+          id: toCryptoCurrencyId("zksync"),
           coinType: 60,
           name: "ZKsync",
           managerAppName: "Ethereum",
@@ -143,7 +144,7 @@ const mockGroupedCurrenciesWithMultipleProviderData = {
         },
         {
           type: "CryptoCurrency" as const,
-          id: "scroll",
+          id: toCryptoCurrencyId("scroll"),
           coinType: 60,
           name: "Scroll",
           managerAppName: "Ethereum",
@@ -170,7 +171,7 @@ const mockGroupedCurrenciesWithMultipleProviderData = {
         },
         {
           type: "CryptoCurrency" as const,
-          id: "optimism",
+          id: toCryptoCurrencyId("optimism"),
           coinType: 60,
           name: "OP Mainnet",
           managerAppName: "Ethereum",
@@ -197,7 +198,7 @@ const mockGroupedCurrenciesWithMultipleProviderData = {
         },
         {
           type: "CryptoCurrency" as const,
-          id: "linea",
+          id: toCryptoCurrencyId("linea"),
           coinType: 60,
           name: "Linea",
           managerAppName: "Ethereum",
@@ -224,7 +225,7 @@ const mockGroupedCurrenciesWithMultipleProviderData = {
         },
         {
           type: "CryptoCurrency" as const,
-          id: "base",
+          id: toCryptoCurrencyId("base"),
           coinType: 60,
           name: "Base",
           managerAppName: "Ethereum",
@@ -250,7 +251,7 @@ const mockGroupedCurrenciesWithMultipleProviderData = {
         },
         {
           type: "CryptoCurrency" as const,
-          id: "arbitrum",
+          id: toCryptoCurrencyId("arbitrum"),
           coinType: 60,
           name: "Arbitrum",
           managerAppName: "Ethereum",
@@ -276,7 +277,7 @@ const mockGroupedCurrenciesWithMultipleProviderData = {
         },
         {
           type: "CryptoCurrency" as const,
-          id: "blast",
+          id: toCryptoCurrencyId("blast"),
           coinType: 60,
           name: "Blast",
           managerAppName: "Ethereum",
@@ -303,7 +304,7 @@ const mockGroupedCurrenciesWithMultipleProviderData = {
         },
         {
           type: "CryptoCurrency",
-          id: "boba",
+          id: toCryptoCurrencyId("boba"),
           coinType: 60,
           name: "Boba",
           managerAppName: "Ethereum",
@@ -333,7 +334,7 @@ const mockGroupedCurrenciesWithMultipleProviderData = {
   sortedCryptoCurrencies: [
     {
       type: "CryptoCurrency" as const,
-      id: "ethereum",
+      id: toCryptoCurrencyId("ethereum"),
       coinType: 60,
       name: "Ethereum",
       managerAppName: "Ethereum",

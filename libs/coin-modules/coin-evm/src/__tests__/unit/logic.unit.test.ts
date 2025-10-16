@@ -1,13 +1,9 @@
+import { toCryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 import BigNumber from "bignumber.js";
 import { getEnv, setEnv } from "@ledgerhq/live-env";
 import * as EVM_TOOLS from "@ledgerhq/evm-tools/message/EIP712/index";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
-import {
-  CryptoCurrency,
-  CryptoCurrencyId,
-  TokenCurrency,
-  Unit,
-} from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency, TokenCurrency, Unit } from "@ledgerhq/types-cryptoassets";
 import type { CryptoAssetsStore } from "@ledgerhq/types-live";
 import * as RPC_API from "../../network/node/rpc.common";
 import { getCoinConfig } from "../../config";
@@ -591,22 +587,22 @@ describe("EVM Family", () => {
       it("should provide a new hash if currency is using a new node config", () => {
         const hash1 = getSyncHash({
           ...currency,
-          id: "ethereum",
+          id: toCryptoCurrencyId("ethereum"),
           ethereumLikeInfo: { chainId: 1 },
         });
         const hash2 = getSyncHash({
           ...currency,
-          id: "matic" as CryptoCurrencyId,
+          id: toCryptoCurrencyId("matic"),
           ethereumLikeInfo: { chainId: 1 },
         });
         const hash3 = getSyncHash({
           ...currency,
-          id: "anything" as CryptoCurrencyId,
+          id: toCryptoCurrencyId("anything"),
           ethereumLikeInfo: { chainId: 1 },
         });
         const hash4 = getSyncHash({
           ...currency,
-          id: "somethingelse" as CryptoCurrencyId,
+          id: toCryptoCurrencyId("somethingelse"),
           ethereumLikeInfo: { chainId: 1 },
         });
 
@@ -619,19 +615,19 @@ describe("EVM Family", () => {
       it("should provide a new hash if currency is using a new explorer config", () => {
         const hash1 = getSyncHash({
           ...currency,
-          id: "ethereum",
+          id: toCryptoCurrencyId("ethereum"),
         });
         const hash2 = getSyncHash({
           ...currency,
-          id: "matic" as CryptoCurrencyId,
+          id: toCryptoCurrencyId("matic"),
         });
         const hash3 = getSyncHash({
           ...currency,
-          id: "anything" as CryptoCurrencyId,
+          id: toCryptoCurrencyId("anything"),
         });
         const hash4 = getSyncHash({
           ...currency,
-          id: "somethingelse" as CryptoCurrencyId,
+          id: toCryptoCurrencyId("somethingelse"),
         });
 
         const hashes = [hash1, hash2, hash3, hash4];

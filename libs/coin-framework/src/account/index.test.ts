@@ -12,12 +12,16 @@ import { setSupportedCurrencies } from "../currencies";
 import { genAccount } from "../mocks/account";
 import "../test-helpers/staticTime";
 import tokenData from "./__fixtures__/ethereum-erc20-0x_project.json";
-import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { TokenCurrency, toCryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
 const TOKEN = tokenData as TokenCurrency;
 
-setSupportedCurrencies(["ethereum", "ethereum_classic", "tron"]);
+setSupportedCurrencies([
+  toCryptoCurrencyId("ethereum"),
+  toCryptoCurrencyId("ethereum_classic"),
+  toCryptoCurrencyId("tron"),
+]);
 
 describe("groupAccountOperationsByDay", () => {
   test("basic", () => {

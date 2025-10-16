@@ -1,3 +1,4 @@
+import { toCryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 import {
   bitcoinFamilyAccountGetAddressLogic,
   bitcoinFamilyAccountGetPublicKeyLogic,
@@ -165,7 +166,7 @@ describe("completeExchangeLogic", () => {
   );
 
   beforeAll(() => {
-    setSupportedCurrencies(["bitcoin", "ethereum"]);
+    setSupportedCurrencies([toCryptoCurrencyId("bitcoin"), toCryptoCurrencyId("ethereum")]);
   });
   afterAll(() => {
     setSupportedCurrencies([]);

@@ -1,3 +1,4 @@
+import { toCryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 /**
  * @jest-environment jsdom
  */
@@ -50,7 +51,7 @@ const fiatCurrencyMagnitude = 2;
 const fiatConversion = 4589;
 
 const ethereumCurrency = createFixtureCryptoCurrency("ethereum");
-ethereumCurrency.id = "ethereum";
+ethereumCurrency.id = toCryptoCurrencyId("ethereum");
 ethereumCurrency.units[0].magnitude = ethereumCurrencyMagnitude;
 const ethereumAccountHigh = genAccount("ethereum-account-high", {
   currency: ethereumCurrency,

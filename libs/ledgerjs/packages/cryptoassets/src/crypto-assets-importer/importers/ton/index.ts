@@ -1,6 +1,6 @@
 import fs from "fs";
 import path from "path";
-import { fetchTokensFromCALService } from "../../fetch";
+import { fetchTokensFromCALService, toCryptoCurrencyId } from "../../fetch";
 
 type TonJettonToken = [
   string, // contractAddress
@@ -13,13 +13,10 @@ type TonJettonToken = [
 export const importTonJettonTokens = async (outputDir: string) => {
   try {
     console.log("importing ton jetton tokens...");
-    const { tokens, hash } = await fetchTokensFromCALService({ blockchain_name: "ton" }, [
-      "contract_address",
-      "name",
-      "ticker",
-      "decimals",
-      "delisted",
-    ]);
+    const { tokens, hash } = await fetchTokensFromCALService(
+      { blockchain_name: toCryptoCurrencyId("ton") },
+      ["contract_address", "name", "ticker", "decimals", "delisted"],
+    );
     const jettonTokens: TonJettonToken[] = tokens.map(token => [
       token.contract_address,
       token.name,

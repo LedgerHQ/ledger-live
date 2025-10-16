@@ -1,6 +1,6 @@
 import fs from "fs";
 import path from "path";
-import { fetchTokensFromCALService } from "../../fetch";
+import { fetchTokensFromCALService, toCryptoCurrencyId } from "../../fetch";
 
 type SPLToken = [
   string, // CAL id
@@ -14,14 +14,10 @@ type SPLToken = [
 export const importSPLTokens = async (outputDir: string) => {
   try {
     console.log("importing spl tokens...");
-    const { tokens, hash } = await fetchTokensFromCALService({ blockchain_name: "solana" }, [
-      "id",
-      "network",
-      "name",
-      "ticker",
-      "contract_address",
-      "decimals",
-    ]);
+    const { tokens, hash } = await fetchTokensFromCALService(
+      { blockchain_name: toCryptoCurrencyId("solana") },
+      ["id", "network", "name", "ticker", "contract_address", "decimals"],
+    );
     const splTokens: SPLToken[] = tokens.map(token => [
       token.id,
       token.network,

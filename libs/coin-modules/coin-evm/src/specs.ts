@@ -13,7 +13,7 @@ import {
 import { DeviceModelId } from "@ledgerhq/devices";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/index";
 import { parseCurrencyUnit } from "@ledgerhq/coin-framework/currencies";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency, CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 import { cryptocurrenciesById } from "@ledgerhq/cryptoassets/currencies";
 import { findSubAccountById } from "@ledgerhq/coin-framework/account";
 import { botTest, genericTestDestination, pickSiblings } from "@ledgerhq/coin-framework/bot/specs";
@@ -23,7 +23,7 @@ import { getEstimatedFees } from "./utils";
 
 const testTimeout = 10 * 60 * 1000;
 
-const minBalancePerCurrencyId: Partial<Record<CryptoCurrency["id"], number>> = {
+const minBalancePerCurrencyId = {
   arbitrum: 0.001,
   arbitrum_sepolia: 0.001,
   optimism: 0.001,
@@ -52,7 +52,7 @@ const minBalancePerCurrencyId: Partial<Record<CryptoCurrency["id"], number>> = {
   hyperevm: 0.001,
   berachain: 0.001,
   sei_network_evm: 0.001,
-};
+} as Partial<Record<CryptoCurrencyId, number>>;
 
 /**
  * Method in charge of verifying that both the recipient and sender of a *coin* transaction

@@ -1,6 +1,17 @@
 import { CoinType } from "./slip44";
 
-export type CryptoCurrencyId = string;
+declare const cryptoCurrencyIdTag: unique symbol;
+/**
+ * Branded type for CryptoCurrencyId to prevent mixing with regular strings
+ * and ensure type safety across different ID types.
+ */
+export type CryptoCurrencyId = string & { [cryptoCurrencyIdTag]: "CryptoCurrencyId" };
+
+/**
+ * Helper function to create a CryptoCurrencyId from a string.
+ * Use this when you need to create or cast a string to CryptoCurrencyId.
+ */
+export const toCryptoCurrencyId = (id: string): CryptoCurrencyId => id as CryptoCurrencyId;
 
 export type LedgerExplorerId =
   | "btc"

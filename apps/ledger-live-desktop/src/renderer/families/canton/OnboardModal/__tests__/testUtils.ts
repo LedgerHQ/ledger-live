@@ -1,3 +1,4 @@
+import { toCryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 import BigNumber from "bignumber.js";
 import { Account } from "@ledgerhq/types-live";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
@@ -7,7 +8,7 @@ import { OnboardStatus, AuthorizeStatus } from "@ledgerhq/coin-canton/types";
 
 export const createMockCantonCurrency = (): CryptoCurrency => {
   const mockCurrency = {
-    id: "canton_network",
+    id: toCryptoCurrencyId("canton_network"),
     name: "Canton",
     type: "CryptoCurrency",
     family: "canton",

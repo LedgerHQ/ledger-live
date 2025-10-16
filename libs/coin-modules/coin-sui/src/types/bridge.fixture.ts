@@ -1,4 +1,5 @@
 import { BigNumber } from "bignumber.js";
+import { toCryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 import { SuiAccount } from "./bridge";
 import { DEFAULT_COIN_TYPE } from "../network/sdk";
 
@@ -21,7 +22,7 @@ export const createFixtureAccount = (overrides = {}) =>
     pendingOperations: [],
     currency: {
       type: "CryptoCurrency",
-      id: "sui",
+      id: toCryptoCurrencyId("sui"),
       coinType: 784,
       name: "Sui",
       managerAppName: "Sui",

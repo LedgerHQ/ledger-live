@@ -1,6 +1,6 @@
 import fs from "fs";
 import path from "path";
-import { fetchTokensFromCALService } from "../../fetch";
+import { fetchTokensFromCALService, toCryptoCurrencyId } from "../../fetch";
 
 type AptosToken = [
   string, // id
@@ -15,7 +15,7 @@ export const importAptosTokens = async (outputDir: string, standard: string) => 
   try {
     console.log(`importing aptos ${standard} tokens...`);
     const { tokens, hash } = await fetchTokensFromCALService(
-      { blockchain_name: "aptos", standard: standard },
+      { blockchain_name: toCryptoCurrencyId("aptos"), standard: standard },
       ["id", "ticker", "name", "contract_address", "decimals", "delisted"],
     );
     const aptosTokens: AptosToken[] = tokens.map(token => [

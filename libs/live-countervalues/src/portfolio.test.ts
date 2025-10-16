@@ -1,6 +1,7 @@
 import "@ledgerhq/coin-framework/test-helpers/staticTime";
 
 import { getFiatCurrencyByTicker, getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
+import { toCryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 import { initialState, loadCountervalues, inferTrackingPairForAccounts } from "./logic";
 import {
   getPortfolioCount,
@@ -23,7 +24,11 @@ import { getAccountCurrency } from "@ledgerhq/coin-framework/account/index";
 import type { Account, AccountLike, PortfolioRange } from "@ledgerhq/types-live";
 import { setSupportedCurrencies } from "@ledgerhq/coin-framework/currencies/support";
 
-setSupportedCurrencies(["ethereum", "ethereum_classic", "ripple"]);
+setSupportedCurrencies([
+  toCryptoCurrencyId("ethereum"),
+  toCryptoCurrencyId("ethereum_classic"),
+  toCryptoCurrencyId("ripple"),
+]);
 
 setEnv("MOCK", "1");
 setEnv("MOCK_COUNTERVALUES", "1");

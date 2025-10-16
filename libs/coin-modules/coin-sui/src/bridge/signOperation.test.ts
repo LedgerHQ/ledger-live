@@ -1,3 +1,4 @@
+import { toCryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 /* eslint-disable @typescript-eslint/no-var-requires */
 import { BigNumber } from "bignumber.js";
 import { take } from "rxjs/operators";
@@ -80,7 +81,7 @@ describe("buildSignOperation", () => {
     freshAddress: "0x1234567890abcdef",
     freshAddressPath: "m/44'/784'/0'/0'/0'",
     currency: {
-      id: "sui",
+      id: toCryptoCurrencyId("sui"),
       name: "Sui",
       family: "sui",
       units: [],

@@ -1,6 +1,7 @@
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { inferSubOperations } from "@ledgerhq/coin-framework/serialization/index";
 import { getAbandonSeedAddress } from "@ledgerhq/cryptoassets";
+import { toCryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 import { getEnv } from "@ledgerhq/live-env";
 import type { OperationType, SignedOperation, TokenAccount } from "@ledgerhq/types-live";
 import {
@@ -348,7 +349,7 @@ export const getFees = async (t: Transaction): Promise<BigNumber> => {
 
   const transaction = new MultiversXSdkTransaction({
     data: TransactionPayload.fromEncoded(t.data?.trim()),
-    receiver: new Address(getAbandonSeedAddress("elrond")),
+    receiver: new Address(getAbandonSeedAddress(toCryptoCurrencyId("elrond"))),
     chainID: CHAIN_ID,
     gasPrice: GAS_PRICE,
     gasLimit: t.gasLimit ?? networkConfig.MinGasLimit,

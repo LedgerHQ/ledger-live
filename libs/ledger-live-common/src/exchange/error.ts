@@ -1,6 +1,5 @@
 import { TransportStatusError } from "@ledgerhq/errors";
 import { getExchangeErrorMessage } from "@ledgerhq/hw-app-exchange";
-
 export type CompleteExchangeStep =
   | "INIT"
   | "SET_PARTNER_KEY"

@@ -1,3 +1,4 @@
+import { toCryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 import { BigNumber } from "bignumber.js";
 import { createBridges } from "./index";
 import suiConfig from "../config";
@@ -80,7 +81,7 @@ describe("bridge/index", () => {
 
     // Setup mock currency
     mockCurrency = {
-      id: "sui",
+      id: toCryptoCurrencyId("sui"),
       name: "Sui",
       family: "sui",
       units: [],

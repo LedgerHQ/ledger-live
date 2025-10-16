@@ -1,3 +1,4 @@
+import { toCryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 /**
  * @jest-environment jsdom
  */
@@ -15,7 +16,7 @@ import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 
 const BTC = getCryptoCurrencyById("bitcoin");
 
-setSupportedCurrencies(["bitcoin"]);
+setSupportedCurrencies([toCryptoCurrencyId("bitcoin")]);
 
 LiveConfig.setConfig({
   config_currency_bitcoin: {

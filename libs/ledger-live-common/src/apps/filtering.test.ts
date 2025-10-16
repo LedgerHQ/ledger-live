@@ -1,3 +1,4 @@
+import { toCryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 import { initState } from "./logic";
 import { deviceInfo155, mockListAppsResult } from "./mock";
 import type { FilterOptions, SortOptions } from "./filtering";
@@ -23,12 +24,12 @@ type FilteringScenario = {
   _filterOptions: FilterOptions;
 };
 setSupportedCurrencies([
-  "ethereum",
-  "bitcoin",
-  "dogecoin",
-  "ethereum_classic",
-  "ripple",
-  "litecoin",
+  toCryptoCurrencyId("ethereum"),
+  toCryptoCurrencyId("bitcoin"),
+  toCryptoCurrencyId("dogecoin"),
+  toCryptoCurrencyId("ethereum_classic"),
+  toCryptoCurrencyId("ripple"),
+  toCryptoCurrencyId("litecoin"),
 ]);
 const apps =
   "Bitcoin, Ethereum, Litecoin, Dogecoin, HODL, Password Manager, Ethereum Classic, XRP, Stellar ";
@@ -245,7 +246,7 @@ const scenarios: FilteringScenario[] = [
       order: "asc",
     },
     _filterOptions: {
-      query: "ethereum",
+      query: toCryptoCurrencyId("ethereum"),
       type: ["not_installed"],
       installedApps: [],
       ...mockedFeatureFlags,

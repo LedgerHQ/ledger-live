@@ -1,3 +1,4 @@
+import { toCryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 /**
  * @jest-environment jsdom
  */
@@ -23,7 +24,7 @@ const mockedGetCurrencyConfiguration = jest.mocked(getCurrencyConfiguration);
 
 describe("AccountWarningBanner", () => {
   const mockCurrency: CryptoCurrency = {
-    id: "fantom",
+    id: toCryptoCurrencyId("fantom"),
     name: "Fantom",
     ticker: "FTM",
     type: "CryptoCurrency",
@@ -44,7 +45,7 @@ describe("AccountWarningBanner", () => {
     mockedGetCurrencyConfiguration.mockReturnValue({
       status: {
         type: "migration",
-        chain: "fantom",
+        chain: toCryptoCurrencyId("fantom"),
         from: "OldCoin",
         to: "NewCoin",
         link: "https://migrationsupport.com",
@@ -98,7 +99,7 @@ describe("AccountWarningBanner", () => {
 
 describe("AccountWarningCustomBanner", () => {
   const mockCurrency: CryptoCurrency = {
-    id: "fantom",
+    id: toCryptoCurrencyId("fantom"),
     name: "Fantom",
     ticker: "FTM",
     type: "CryptoCurrency",

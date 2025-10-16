@@ -1,3 +1,4 @@
+import { toCryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 import broadcast from "../../bridge/broadcast";
 import { AptosAPI } from "../../network";
 import { patchOperationWithHash } from "@ledgerhq/coin-framework/operation";
@@ -15,7 +16,7 @@ describe("broadcast", () => {
     id: "mockAccountId",
     currency: {
       type: "CryptoCurrency",
-      id: "aptos",
+      id: toCryptoCurrencyId("aptos"),
       name: "Aptos",
       ticker: "APT",
       units: [{ name: "APT", code: "APT", magnitude: 6 }],

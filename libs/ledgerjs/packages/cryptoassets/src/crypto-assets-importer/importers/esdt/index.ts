@@ -1,6 +1,6 @@
 import fs from "fs";
 import path from "path";
-import { fetchTokensFromCALService } from "../../fetch";
+import { fetchTokensFromCALService, toCryptoCurrencyId } from "../../fetch";
 
 type MultiversXESDTToken = [
   string, // ticker
@@ -13,14 +13,11 @@ type MultiversXESDTToken = [
 export const importESDTTokens = async (outputDir: string) => {
   try {
     console.log("importing esdt tokens...");
-    // const { tokens, hash } = await fetchTokensFromCALService({ blockchain_name: "multiversx" }, [
-    const { tokens, hash } = await fetchTokensFromCALService({ blockchain_name: "elrond" }, [
-      "ticker",
-      "id",
-      "decimals",
-      "live_signature",
-      "name",
-    ]);
+    // const { tokens, hash } = await fetchTokensFromCALService({ blockchain_name: toCryptoCurrencyId("multiversx") }, [
+    const { tokens, hash } = await fetchTokensFromCALService(
+      { blockchain_name: toCryptoCurrencyId("elrond") },
+      ["ticker", "id", "decimals", "live_signature", "name"],
+    );
     const esdtTokens: MultiversXESDTToken[] = tokens.map(token => {
       // This shouldn't be necessary, we should consumme the ID directly
       // but for now, I'll keep this to maintain a compatibility layer

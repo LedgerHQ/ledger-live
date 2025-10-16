@@ -1,5 +1,6 @@
 import { mapTxToOperations, inferTransactionSequenceNumberFromInputs } from "./logic";
 import { TX } from "./wallet-btc";
+import { toCryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 
 describe("mapTxToOperations", () => {
   it("should filter out outputs that have unknown in their address", () => {
@@ -12,7 +13,7 @@ describe("mapTxToOperations", () => {
         ],
         inputs: [],
       } as unknown as TX,
-      "bitcoin",
+      toCryptoCurrencyId("bitcoin"),
       "accountId",
       new Set(["myAddress"]),
       new Set(["changeAddress"]),
@@ -26,7 +27,7 @@ describe("mapTxToOperations", () => {
         outputs: [{}],
         inputs: [],
       } as unknown as TX,
-      "bitcoin",
+      toCryptoCurrencyId("bitcoin"),
       "accountId",
       new Set(["myAddress"]),
       new Set(["changeAddress"]),
@@ -46,7 +47,7 @@ describe("mapTxToOperations", () => {
         inputs: [],
         received_at: new Date().toISOString(),
       } as unknown as TX,
-      "bitcoin",
+      toCryptoCurrencyId("bitcoin"),
       "accountId",
       new Set(["myAddress"]),
       new Set(["changeAddress"]),
@@ -70,7 +71,7 @@ describe("mapTxToOperations", () => {
         ],
         received_at: new Date().toISOString(),
       } as unknown as TX,
-      "bitcoin",
+      toCryptoCurrencyId("bitcoin"),
       "accountId",
       new Set(["inputAddr"]),
       new Set(),
@@ -95,7 +96,7 @@ describe("mapTxToOperations", () => {
         ],
         received_at: new Date().toISOString(),
       } as unknown as TX,
-      "bitcoin",
+      toCryptoCurrencyId("bitcoin"),
       "accountId",
       new Set(["inputAddr"]),
       new Set(),
@@ -120,7 +121,7 @@ describe("mapTxToOperations", () => {
         ],
         received_at: new Date().toISOString(),
       } as unknown as TX,
-      "bitcoin",
+      toCryptoCurrencyId("bitcoin"),
       "accountId",
       new Set(["inputAddr"]),
       new Set(),

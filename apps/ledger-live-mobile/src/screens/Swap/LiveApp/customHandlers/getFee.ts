@@ -1,3 +1,4 @@
+import { toCryptoCurrencyId, CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 import { reduce, firstValueFrom } from "rxjs";
 import { Strategy } from "@ledgerhq/coin-evm/lib/types/index";
 import { getMainAccount, getParentAccount } from "@ledgerhq/live-common/account/index";
@@ -13,7 +14,7 @@ import { NavigationType } from ".";
 import { convertToAtomicUnit, convertToNonAtomicUnit, getCustomFeesPerFamily } from "../utils";
 
 // Constants
-const CHAINS_WITH_FEE_DRAWER = ["evm"];
+const CHAINS_WITH_FEE_DRAWER = [toCryptoCurrencyId("evm")];
 const getSegWitAbandonSeedAddress = (): string => "bc1qed3mqr92zvq2s782aqkyx785u23723w02qfrgs";
 
 // Types
@@ -94,7 +95,7 @@ function createFeeData(
 /**
  * Gets the appropriate recipient address based on currency
  */
-function getRecipientAddress(currencyId: string): string {
+function getRecipientAddress(currencyId: CryptoCurrencyId): string {
   return currencyId === "bitcoin"
     ? getSegWitAbandonSeedAddress()
     : getAbandonSeedAddress(currencyId);

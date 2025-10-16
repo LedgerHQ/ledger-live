@@ -1,3 +1,4 @@
+import { toCryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 import { Account } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import React from "react";
@@ -75,7 +76,7 @@ const NEW_ARB_ACCOUNT: Account = {
   index: 1,
   currency: {
     type: "CryptoCurrency",
-    id: "arbitrum",
+    id: toCryptoCurrencyId("arbitrum"),
     coinType: 60,
     name: "Arbitrum",
     managerAppName: "Ethereum",

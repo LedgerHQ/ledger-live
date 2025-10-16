@@ -1,6 +1,8 @@
 import { getEnv } from "@ledgerhq/live-env";
-import { CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrencyId, toCryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 import axios, { AxiosError } from "axios";
+
+export { toCryptoCurrencyId };
 
 const LEDGER_COUNTERVALUES_API = getEnv("LEDGER_COUNTERVALUES_API");
 

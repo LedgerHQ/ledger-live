@@ -2,7 +2,7 @@ import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { TransportStatusError, UserRefusedAddress } from "@ledgerhq/errors";
 import { getEnv } from "@ledgerhq/live-env";
 import { log } from "@ledgerhq/logs";
-import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrency, CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 import { DerivationMode } from "@ledgerhq/types-live";
 import { Observable, defer, empty, of, range } from "rxjs";
 import { catchError, concatMap, map, switchMap, takeWhile } from "rxjs/operators";
@@ -207,7 +207,7 @@ const modes: Readonly<Record<DerivationMode, ModeSpec>> = Object.freeze({
 //   modes[mode] = spec;
 // }
 
-const legacyDerivations: Partial<Record<CryptoCurrency["id"], DerivationMode[]>> = {
+const legacyDerivations: Partial<Record<CryptoCurrencyId, DerivationMode[]>> = {
   aeternity: ["aeternity"],
   bitcoin_cash: [],
   tezos: ["galleonL", "tezboxL", "tezosbip44h", "tezbox"],
@@ -238,7 +238,7 @@ const legacyDerivations: Partial<Record<CryptoCurrency["id"], DerivationMode[]>>
   canton_network: ["canton"],
   canton_network_devnet: ["canton"],
   canton_network_testnet: ["canton"],
-};
+} as Partial<Record<CryptoCurrencyId, DerivationMode[]>>;
 
 export function isDerivationMode(mode: string): mode is DerivationMode {
   return mode in modes;

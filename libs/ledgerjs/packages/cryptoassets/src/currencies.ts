@@ -24,9 +24,9 @@
 import {
   CoinType,
   CryptoCurrency,
-  CryptoCurrencyId,
   ExplorerView,
   Unit,
+  toCryptoCurrencyId,
 } from "@ledgerhq/types-cryptoassets";
 
 /**
@@ -98,10 +98,10 @@ const ethereumUnits = (name, code) => [
 // FIXME: We must be aware that we don't handle correcly currencies that use the same `managerApp`
 // to fix that we should always have the 'main' currency of the managerapp first in this list
 // e.g for Ethereum manager Ethereum is first in the list and other coin are in the bottom of the list
-export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
+export const cryptocurrenciesById: Record<string, CryptoCurrency> = {
   aptos: {
     type: "CryptoCurrency",
-    id: "aptos",
+    id: toCryptoCurrencyId("aptos"),
     coinType: CoinType.APTOS,
     name: "Aptos",
     managerAppName: "Aptos",
@@ -125,7 +125,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   },
   aptos_testnet: {
     type: "CryptoCurrency",
-    id: "aptos_testnet",
+    id: toCryptoCurrencyId("aptos_testnet"),
     coinType: CoinType.APTOS,
     name: "Aptos (Testnet)",
     managerAppName: "Aptos",
@@ -150,7 +150,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   },
   near: {
     type: "CryptoCurrency",
-    id: "near",
+    id: toCryptoCurrencyId("near"),
     coinType: CoinType.NEAR,
     name: "NEAR",
     managerAppName: "NEAR",
@@ -180,7 +180,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   },
   aeternity: {
     type: "CryptoCurrency",
-    id: "aeternity",
+    id: toCryptoCurrencyId("aeternity"),
     coinType: CoinType.AE,
     name: "æternity",
     managerAppName: "Aeternity",
@@ -203,7 +203,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   },
   aion: {
     type: "CryptoCurrency",
-    id: "aion",
+    id: toCryptoCurrencyId("aion"),
     coinType: CoinType.AION,
     name: "Aion",
     managerAppName: "Aion",
@@ -222,7 +222,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   },
   akroma: {
     type: "CryptoCurrency",
-    id: "akroma",
+    id: toCryptoCurrencyId("akroma"),
     coinType: CoinType.AKA,
     name: "Akroma",
     managerAppName: "Akroma",
@@ -245,7 +245,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   },
   algorand: {
     type: "CryptoCurrency",
-    id: "algorand",
+    id: toCryptoCurrencyId("algorand"),
     coinType: CoinType.ALGO,
     name: "Algorand",
     managerAppName: "Algorand",
@@ -275,7 +275,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   },
   ark: {
     type: "CryptoCurrency",
-    id: "ark",
+    id: toCryptoCurrencyId("ark"),
     coinType: CoinType.ARK,
     name: "Ark",
     managerAppName: "Ark",
@@ -298,7 +298,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   },
   atheios: {
     type: "CryptoCurrency",
-    id: "atheios",
+    id: toCryptoCurrencyId("atheios"),
     coinType: CoinType.ATH,
     name: "Atheios",
     managerAppName: "Atheios",
@@ -317,7 +317,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   },
   avalanche_c_chain: {
     type: "CryptoCurrency",
-    id: "avalanche_c_chain",
+    id: toCryptoCurrencyId("avalanche_c_chain"),
     coinType: CoinType.ETH,
     name: "Avalanche C-Chain",
     managerAppName: "Avalanche",
@@ -347,7 +347,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   },
   axelar: {
     type: "CryptoCurrency",
-    id: "axelar",
+    id: toCryptoCurrencyId("axelar"),
     coinType: CoinType.ATOM,
     name: "Axelar",
     managerAppName: "Cosmos",
@@ -376,7 +376,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   },
   banano: {
     type: "CryptoCurrency",
-    id: "banano",
+    id: toCryptoCurrencyId("banano"),
     coinType: CoinType.BANANO,
     name: "Banano",
     managerAppName: "Banano",
@@ -395,7 +395,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   },
   bitcoin: {
     type: "CryptoCurrency",
-    id: "bitcoin",
+    id: toCryptoCurrencyId("bitcoin"),
     coinType: CoinType.BTC,
     name: "Bitcoin",
     managerAppName: "Bitcoin",
@@ -428,7 +428,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   },
   bitcoin_cash: {
     type: "CryptoCurrency",
-    id: "bitcoin_cash",
+    id: toCryptoCurrencyId("bitcoin_cash"),
     forkedFrom: "bitcoin",
     coinType: CoinType.BTC_CASH,
     name: "Bitcoin Cash",
@@ -475,7 +475,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   },
   bitcoin_gold: {
     type: "CryptoCurrency",
-    id: "bitcoin_gold",
+    id: toCryptoCurrencyId("bitcoin_gold"),
     forkedFrom: "bitcoin",
     coinType: CoinType.BTC_GOLD,
     name: "Bitcoin Gold",
@@ -523,7 +523,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   },
   bitcoin_private: {
     type: "CryptoCurrency",
-    id: "bitcoin_private",
+    id: toCryptoCurrencyId("bitcoin_private"),
     forkedFrom: "bitcoin",
     coinType: CoinType.BTC_PRIVATE,
     name: "Bitcoin Private",
@@ -564,7 +564,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   },
   bsc: {
     type: "CryptoCurrency",
-    id: "bsc",
+    id: toCryptoCurrencyId("bsc"),
     coinType: CoinType.ETH,
     name: "BNB Chain",
     managerAppName: "Ethereum",
@@ -589,7 +589,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   },
   callisto: {
     type: "CryptoCurrency",
-    id: "callisto",
+    id: toCryptoCurrencyId("callisto"),
     coinType: CoinType.CALLISTO,
     name: "Callisto",
     managerAppName: "Callisto",
@@ -608,7 +608,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   },
   canton_network: {
     type: "CryptoCurrency",
-    id: "canton_network",
+    id: toCryptoCurrencyId("canton_network"),
     coinType: CoinType.CANTON_NETWORK,
     name: "Canton Network",
     managerAppName: "Canton",
@@ -639,7 +639,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   },
   canton_network_testnet: {
     type: "CryptoCurrency",
-    id: "canton_network_testnet",
+    id: toCryptoCurrencyId("canton_network_testnet"),
     coinType: CoinType.CANTON_NETWORK,
     name: "Canton Network (Testnet)",
     managerAppName: "Canton",
@@ -671,7 +671,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   },
   canton_network_devnet: {
     type: "CryptoCurrency",
-    id: "canton_network_devnet",
+    id: toCryptoCurrencyId("canton_network_devnet"),
     coinType: CoinType.CANTON_NETWORK,
     name: "Canton Network (Devnet)",
     managerAppName: "Canton",
@@ -703,7 +703,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   },
   cardano: {
     type: "CryptoCurrency",
-    id: "cardano",
+    id: toCryptoCurrencyId("cardano"),
     coinType: CoinType.CARDANO,
     name: "Cardano",
     managerAppName: "Cardano ADA",
@@ -736,7 +736,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   },
   cardano_testnet: {
     type: "CryptoCurrency",
-    id: "cardano_testnet",
+    id: toCryptoCurrencyId("cardano_testnet"),
     coinType: CoinType.CARDANO,
     name: "Cardano (Testnet)",
     managerAppName: "Cardano ADA",
@@ -769,7 +769,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   },
   celo: {
     type: "CryptoCurrency",
-    id: "celo",
+    id: toCryptoCurrencyId("celo"),
     coinType: CoinType.CELO,
     name: "Celo",
     managerAppName: "Celo",
@@ -801,7 +801,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
       link: "https://support.ledger.com/",
     },
     type: "CryptoCurrency",
-    id: "clubcoin",
+    id: toCryptoCurrencyId("clubcoin"),
     coinType: CoinType.CLUB,
     name: "Clubcoin",
     managerAppName: "Clubcoin",
@@ -836,7 +836,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   },
   coreum: {
     type: "CryptoCurrency",
-    id: "coreum",
+    id: toCryptoCurrencyId("coreum"),
     coinType: CoinType.ATOM,
     name: "Coreum",
     managerAppName: "Cosmos",
@@ -865,7 +865,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   },
   cosmos: {
     type: "CryptoCurrency",
-    id: "cosmos",
+    id: toCryptoCurrencyId("cosmos"),
     coinType: CoinType.ATOM,
     name: "Cosmos",
     managerAppName: "Cosmos",
@@ -897,7 +897,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   },
   cosmos_testnet: {
     type: "CryptoCurrency",
-    id: "cosmos_testnet",
+    id: toCryptoCurrencyId("cosmos_testnet"),
     coinType: CoinType.ATOM,
     name: "Cosmos (Testnet)",
     managerAppName: "Cosmos",
@@ -930,7 +930,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   },
   dash: {
     type: "CryptoCurrency",
-    id: "dash",
+    id: toCryptoCurrencyId("dash"),
     coinType: CoinType.DASH,
     name: "Dash",
     managerAppName: "Dash",
@@ -966,7 +966,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   },
   decred: {
     type: "CryptoCurrency",
-    id: "decred",
+    id: toCryptoCurrencyId("decred"),
     coinType: CoinType.DECRED,
     name: "Decred",
     managerAppName: "Decred",
@@ -1007,7 +1007,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   },
   desmos: {
     type: "CryptoCurrency",
-    id: "desmos",
+    id: toCryptoCurrencyId("desmos"),
     coinType: CoinType.ATOM,
     name: "Desmos",
     managerAppName: "Cosmos",
@@ -1036,7 +1036,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   },
   dexon: {
     type: "CryptoCurrency",
-    id: "dexon",
+    id: toCryptoCurrencyId("dexon"),
     coinType: CoinType.DEXON,
     name: "DEXON",
     managerAppName: "DEXON",
@@ -1060,7 +1060,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   },
   digibyte: {
     type: "CryptoCurrency",
-    id: "digibyte",
+    id: toCryptoCurrencyId("digibyte"),
     coinType: CoinType.DIGIBYTE,
     name: "DigiByte",
     managerAppName: "Digibyte",
@@ -1098,7 +1098,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   },
   dogecoin: {
     type: "CryptoCurrency",
-    id: "dogecoin",
+    id: toCryptoCurrencyId("dogecoin"),
     coinType: CoinType.DOGE,
     name: "Dogecoin",
     managerAppName: "Dogecoin",
@@ -1136,7 +1136,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   },
   dydx: {
     type: "CryptoCurrency",
-    id: "dydx",
+    id: toCryptoCurrencyId("dydx"),
     coinType: CoinType.ATOM,
     name: "dYdX",
     managerAppName: "Cosmos",
@@ -1165,7 +1165,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   },
   elastos: {
     type: "CryptoCurrency",
-    id: "elastos",
+    id: toCryptoCurrencyId("elastos"),
     coinType: CoinType.ELASTOS,
     name: "Elastos",
     managerAppName: "Elastos",
@@ -1184,7 +1184,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   },
   ellaism: {
     type: "CryptoCurrency",
-    id: "ellaism",
+    id: toCryptoCurrencyId("ellaism"),
     coinType: CoinType.ELLAISM,
     name: "Ellaism",
     managerAppName: "Ellaism",
@@ -1203,7 +1203,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   },
   eos: {
     type: "CryptoCurrency",
-    id: "eos",
+    id: toCryptoCurrencyId("eos"),
     coinType: CoinType.EOS,
     name: "EOS",
     managerAppName: "Eos",
@@ -1222,7 +1222,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   },
   ethereum: {
     type: "CryptoCurrency",
-    id: "ethereum",
+    id: toCryptoCurrencyId("ethereum"),
     coinType: CoinType.ETH,
     name: "Ethereum",
     managerAppName: "Ethereum",
@@ -1249,7 +1249,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   },
   ethereum_classic: {
     type: "CryptoCurrency",
-    id: "ethereum_classic",
+    id: toCryptoCurrencyId("ethereum_classic"),
     coinType: CoinType.ETH_CLASSIC,
     name: "Ethereum Classic",
     managerAppName: "Ethereum Classic",
@@ -1273,7 +1273,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   },
   ether1: {
     type: "CryptoCurrency",
-    id: "ether1",
+    id: toCryptoCurrencyId("ether1"),
     coinType: CoinType.ETH_CLASSIC,
     name: "Ether1",
     managerAppName: "Ether-1",
@@ -1287,7 +1287,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   },
   ethergem: {
     type: "CryptoCurrency",
-    id: "ethergem",
+    id: toCryptoCurrencyId("ethergem"),
     coinType: CoinType.ETH_CLASSIC,
     name: "EtherGem",
     managerAppName: "EtherGem",
@@ -1301,7 +1301,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   },
   ethersocial: {
     type: "CryptoCurrency",
-    id: "ethersocial",
+    id: toCryptoCurrencyId("ethersocial"),
     coinType: CoinType.ETH_CLASSIC,
     name: "Ethersocial",
     managerAppName: "Ethersocial",
@@ -1315,7 +1315,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   },
   expanse: {
     type: "CryptoCurrency",
-    id: "expanse",
+    id: toCryptoCurrencyId("expanse"),
     coinType: CoinType.EXPANSE,
     name: "Expanse",
     managerAppName: "Expanse",
@@ -1338,7 +1338,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   },
   factom: {
     type: "CryptoCurrency",
-    id: "factom",
+    id: toCryptoCurrencyId("factom"),
     coinType: CoinType.FACTOM,
     name: "Factom",
     managerAppName: "Factom",
@@ -1357,7 +1357,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   },
   fic: {
     type: "CryptoCurrency",
-    id: "fic",
+    id: toCryptoCurrencyId("fic"),
     coinType: CoinType.FIC,
     name: "FIC",
     managerAppName: "FIC",
@@ -1376,7 +1376,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   },
   flow: {
     type: "CryptoCurrency",
-    id: "flow",
+    id: toCryptoCurrencyId("flow"),
     coinType: CoinType.FLOW,
     name: "Flow",
     managerAppName: "Flow",
@@ -1395,7 +1395,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   },
   game_credits: {
     type: "CryptoCurrency",
-    id: "game_credits",
+    id: toCryptoCurrencyId("game_credits"),
     coinType: CoinType.GAME,
     name: "GameCredits",
     managerAppName: "GameCredits",
@@ -1418,7 +1418,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   },
   gochain: {
     type: "CryptoCurrency",
-    id: "gochain",
+    id: toCryptoCurrencyId("gochain"),
     coinType: CoinType.GOCHAIN,
     name: "GoChain",
     managerAppName: "GoChain",
@@ -1437,7 +1437,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   },
   groestlcoin: {
     type: "CryptoCurrency",
-    id: "groestcoin",
+    id: toCryptoCurrencyId("groestcoin"),
     coinType: CoinType.GRS,
     name: "Groestlcoin",
     managerAppName: "Groestlcoin",
@@ -1461,7 +1461,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   },
   hcash: {
     type: "CryptoCurrency",
-    id: "hcash",
+    id: toCryptoCurrencyId("hcash"),
     coinType: CoinType.HCASH,
     name: "Hcash",
     managerAppName: "HCash",
@@ -1495,7 +1495,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   },
   hedera: {
     type: "CryptoCurrency",
-    id: "hedera",
+    id: toCryptoCurrencyId("hedera"),
     coinType: CoinType.HEDERA,
     name: "Hedera",
     managerAppName: "Hedera",
@@ -1520,7 +1520,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   },
   helium: {
     type: "CryptoCurrency",
-    id: "helium",
+    id: toCryptoCurrencyId("helium"),
     coinType: CoinType.HELIUM,
     name: "Helium",
     managerAppName: "Helium",
@@ -1549,7 +1549,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   },
   hpb: {
     type: "CryptoCurrency",
-    id: "hpb",
+    id: toCryptoCurrencyId("hpb"),
     coinType: CoinType.HPB,
     name: "High Performance Blockchain",
     managerAppName: "HPB",
@@ -1574,7 +1574,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   },
   hycon: {
     type: "CryptoCurrency",
-    id: "hycon",
+    id: toCryptoCurrencyId("hycon"),
     coinType: CoinType.HYCON,
     name: "Hycon",
     managerAppName: "Hycon",
@@ -1598,7 +1598,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   },
   icon: {
     type: "CryptoCurrency",
-    id: "icon",
+    id: toCryptoCurrencyId("icon"),
     coinType: CoinType.ICON,
     name: "ICON",
     managerAppName: "ICON",
@@ -1622,7 +1622,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   },
   icon_berlin_testnet: {
     type: "CryptoCurrency",
-    id: "icon_berlin_testnet",
+    id: toCryptoCurrencyId("icon_berlin_testnet"),
     coinType: CoinType.ICON,
     name: "ICON Berlin Testnet",
     managerAppName: "ICON",
@@ -1647,7 +1647,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   },
   iota: {
     type: "CryptoCurrency",
-    id: "iota",
+    id: toCryptoCurrencyId("iota"),
     coinType: CoinType.IOTA,
     name: "IOTA",
     managerAppName: "IOTA",
@@ -1666,7 +1666,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   },
   iov: {
     type: "CryptoCurrency",
-    id: "iov",
+    id: toCryptoCurrencyId("iov"),
     coinType: CoinType.IOV,
     name: "IOV",
     managerAppName: "IOV",
@@ -1685,7 +1685,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   },
   kaspa: {
     type: "CryptoCurrency",
-    id: "kaspa",
+    id: toCryptoCurrencyId("kaspa"),
     coinType: CoinType.KASPA,
     name: "KASPA",
     managerAppName: "Kaspa",
@@ -1715,7 +1715,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   },
   kin: {
     type: "CryptoCurrency",
-    id: "kin",
+    id: toCryptoCurrencyId("kin"),
     coinType: CoinType.KIN,
     name: "Kin",
     managerAppName: "Kin",
@@ -1740,7 +1740,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   },
   komodo: {
     type: "CryptoCurrency",
-    id: "komodo",
+    id: toCryptoCurrencyId("komodo"),
     coinType: CoinType.KOMODO,
     name: "Komodo",
     managerAppName: "Komodo",
@@ -1776,7 +1776,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   },
   kusama: {
     type: "CryptoCurrency",
-    id: "kusama",
+    id: toCryptoCurrencyId("kusama"),
     coinType: CoinType.KUSAMA,
     name: "Kusama",
     managerAppName: "Kusama",
@@ -1795,7 +1795,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   },
   lbry: {
     type: "CryptoCurrency",
-    id: "LBRY",
+    id: toCryptoCurrencyId("LBRY"),
     coinType: CoinType.LBRY,
     name: "LBRY",
     managerAppName: "LBRY",
@@ -1814,7 +1814,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   },
   litecoin: {
     type: "CryptoCurrency",
-    id: "litecoin",
+    id: toCryptoCurrencyId("litecoin"),
     coinType: CoinType.LITECOIN,
     name: "Litecoin",
     managerAppName: "Litecoin",
@@ -1859,7 +1859,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   },
   lisk: {
     type: "CryptoCurrency",
-    id: "lisk",
+    id: toCryptoCurrencyId("lisk"),
     coinType: CoinType.LISK,
     name: "lisk",
     managerAppName: "Lisk",
@@ -1878,7 +1878,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   },
   mix: {
     type: "CryptoCurrency",
-    id: "mix",
+    id: toCryptoCurrencyId("mix"),
     coinType: CoinType.MIX,
     name: "MIX Blockchain",
     managerAppName: "Mix",
@@ -1897,7 +1897,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   },
   monero: {
     type: "CryptoCurrency",
-    id: "monero",
+    id: toCryptoCurrencyId("monero"),
     coinType: CoinType.MONERO,
     name: "Monero",
     managerAppName: "Monero",
@@ -1922,7 +1922,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   elrond: {
     type: "CryptoCurrency",
     // id: "multiversx",
-    id: "elrond",
+    id: toCryptoCurrencyId("elrond"),
     coinType: CoinType.MULTIVERSX,
     name: "MultiversX",
     managerAppName: "MultiversX",
@@ -1950,7 +1950,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   },
   musicoin: {
     type: "CryptoCurrency",
-    id: "musicoin",
+    id: toCryptoCurrencyId("musicoin"),
     coinType: CoinType.MUSICOIN,
     name: "Musicoin",
     managerAppName: "Musicoin",
@@ -1969,7 +1969,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   },
   nano: {
     type: "CryptoCurrency",
-    id: "nano",
+    id: toCryptoCurrencyId("nano"),
     coinType: CoinType.NANO,
     name: "Nano",
     managerAppName: "Nano",
@@ -1996,7 +1996,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   },
   nem: {
     type: "CryptoCurrency",
-    id: "nem",
+    id: toCryptoCurrencyId("nem"),
     coinType: CoinType.NEM,
     name: "NEM",
     managerAppName: "NEM",
@@ -2015,7 +2015,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   },
   neo: {
     type: "CryptoCurrency",
-    id: "neo",
+    id: toCryptoCurrencyId("neo"),
     coinType: CoinType.NEO,
     name: "Neo",
     managerAppName: "NEO",
@@ -2038,7 +2038,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   },
   nervos: {
     type: "CryptoCurrency",
-    id: "nervos",
+    id: toCryptoCurrencyId("nervos"),
     coinType: CoinType.NERVOS,
     name: "Nervos",
     managerAppName: "Nervos",
@@ -2062,7 +2062,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   },
   nimiq: {
     type: "CryptoCurrency",
-    id: "nimiq",
+    id: toCryptoCurrencyId("nimiq"),
     coinType: CoinType.NIMIQ,
     name: "Nimiq",
     managerAppName: "Nimiq",
@@ -2085,7 +2085,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   },
   nix: {
     type: "CryptoCurrency",
-    id: "nix",
+    id: toCryptoCurrencyId("nix"),
     coinType: CoinType.NIX,
     name: "Nix",
     managerAppName: "NIX",
@@ -2119,7 +2119,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   },
   nos: {
     type: "CryptoCurrency",
-    id: "nos",
+    id: toCryptoCurrencyId("nos"),
     name: "NOS",
     coinType: CoinType.NOS,
     managerAppName: "NOS",
@@ -2138,7 +2138,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   },
   nyx: {
     type: "CryptoCurrency",
-    id: "nyx",
+    id: toCryptoCurrencyId("nyx"),
     coinType: CoinType.ATOM,
     name: "Nyx",
     managerAppName: "Cosmos",
@@ -2167,7 +2167,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   },
   onomy: {
     type: "CryptoCurrency",
-    id: "onomy",
+    id: toCryptoCurrencyId("onomy"),
     coinType: CoinType.ATOM,
     name: "Onomy",
     managerAppName: "Cosmos",
@@ -2196,7 +2196,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   },
   ontology: {
     type: "CryptoCurrency",
-    id: "ontology",
+    id: toCryptoCurrencyId("ontology"),
     coinType: CoinType.ONTOLOGY,
     name: "Ontology",
     managerAppName: "ONT",
@@ -2219,7 +2219,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   },
   particl: {
     type: "CryptoCurrency",
-    id: "particl",
+    id: toCryptoCurrencyId("particl"),
     coinType: CoinType.PARTICL,
     name: "Particl",
     managerAppName: "Particl",
@@ -2242,7 +2242,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   },
   persistence: {
     type: "CryptoCurrency",
-    id: "persistence",
+    id: toCryptoCurrencyId("persistence"),
     coinType: CoinType.ATOM,
     name: "Persistence",
     managerAppName: "Cosmos",
@@ -2271,7 +2271,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   },
   pirl: {
     type: "CryptoCurrency",
-    id: "pirl",
+    id: toCryptoCurrencyId("pirl"),
     coinType: CoinType.PIRL,
     name: "Pirl",
     managerAppName: "Pirl",
@@ -2294,7 +2294,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   },
   poa: {
     type: "CryptoCurrency",
-    id: "poa",
+    id: toCryptoCurrencyId("poa"),
     coinType: CoinType.POA,
     name: "POA",
     managerAppName: "POA",
@@ -2317,7 +2317,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   },
   polkadot: {
     type: "CryptoCurrency",
-    id: "polkadot",
+    id: toCryptoCurrencyId("polkadot"),
     coinType: CoinType.POLKADOT,
     name: "Polkadot",
     managerAppName: "Polkadot",
@@ -2351,7 +2351,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   },
   assethub_polkadot: {
     type: "CryptoCurrency",
-    id: "assethub_polkadot",
+    id: toCryptoCurrencyId("assethub_polkadot"),
     coinType: CoinType.POLKADOT,
     name: "Polkadot",
     managerAppName: "Polkadot",
@@ -2382,7 +2382,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   },
   polygon: {
     type: "CryptoCurrency",
-    id: "polygon",
+    id: toCryptoCurrencyId("polygon"),
     coinType: CoinType.ETH,
     name: "Polygon",
     managerAppName: "Ethereum",
@@ -2407,7 +2407,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   },
   poswallet: {
     type: "CryptoCurrency",
-    id: "poswallet",
+    id: toCryptoCurrencyId("poswallet"),
     coinType: CoinType.POSWALLET,
     name: "PosW",
     managerAppName: "PoSW",
@@ -2442,7 +2442,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   },
   qrl: {
     type: "CryptoCurrency",
-    id: "qrl",
+    id: toCryptoCurrencyId("qrl"),
     coinType: CoinType.QRL,
     name: "QRL",
     ticker: "QRL",
@@ -2467,7 +2467,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   },
   qtum: {
     type: "CryptoCurrency",
-    id: "qtum",
+    id: toCryptoCurrencyId("qtum"),
     coinType: CoinType.QTUM,
     name: "Qtum",
     managerAppName: "Qtum",
@@ -2504,7 +2504,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   },
   quicksilver: {
     type: "CryptoCurrency",
-    id: "quicksilver",
+    id: toCryptoCurrencyId("quicksilver"),
     coinType: CoinType.ATOM,
     name: "Quicksilver",
     managerAppName: "Cosmos",
@@ -2533,7 +2533,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   },
   ravencoin: {
     type: "CryptoCurrency",
-    id: "ravencoin",
+    id: toCryptoCurrencyId("ravencoin"),
     coinType: CoinType.RAVECOIN,
     name: "Ravencoin",
     managerAppName: "Ravencoin",
@@ -2552,7 +2552,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   },
   ripple: {
     type: "CryptoCurrency",
-    id: "ripple",
+    id: toCryptoCurrencyId("ripple"),
     coinType: CoinType.RIPPLE,
     name: "XRP",
     managerAppName: "XRP",
@@ -2582,7 +2582,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   },
   rise: {
     type: "CryptoCurrency",
-    id: "rise",
+    id: toCryptoCurrencyId("rise"),
     coinType: CoinType.RISE,
     name: "Rise",
     managerAppName: "Rise",
@@ -2607,7 +2607,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   },
   reosc: {
     type: "CryptoCurrency",
-    id: "reosc",
+    id: toCryptoCurrencyId("reosc"),
     coinType: CoinType.REOSC,
     name: "REOSC",
     managerAppName: "REOSC",
@@ -2631,7 +2631,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   },
   resistance: {
     type: "CryptoCurrency",
-    id: "resistance",
+    id: toCryptoCurrencyId("resistance"),
     coinType: CoinType.RESISTANCE,
     name: "Resistance",
     managerAppName: "Resistance",
@@ -2650,7 +2650,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   },
   secret_network: {
     type: "CryptoCurrency",
-    id: "secret_network",
+    id: toCryptoCurrencyId("secret_network"),
     coinType: CoinType.ATOM,
     name: "SecretNetwork",
     managerAppName: "Cosmos",
@@ -2679,7 +2679,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   },
   sei_network: {
     type: "CryptoCurrency",
-    id: "sei_network",
+    id: toCryptoCurrencyId("sei_network"),
     coinType: CoinType.ATOM,
     name: "SeiNetwork",
     managerAppName: "Cosmos",
@@ -2708,7 +2708,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   },
   solana: {
     type: "CryptoCurrency",
-    id: "solana",
+    id: toCryptoCurrencyId("solana"),
     coinType: CoinType.SOLANA,
     name: "Solana",
     managerAppName: "Solana",
@@ -2743,7 +2743,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   },
   stakenet: {
     type: "CryptoCurrency",
-    id: "stakenet",
+    id: toCryptoCurrencyId("stakenet"),
     coinType: CoinType.STAKENET,
     name: "Stakenet",
     managerAppName: "XSN",
@@ -2782,7 +2782,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   },
   stargaze: {
     type: "CryptoCurrency",
-    id: "stargaze",
+    id: toCryptoCurrencyId("stargaze"),
     coinType: CoinType.ATOM,
     name: "Stargaze",
     managerAppName: "Cosmos",
@@ -2814,7 +2814,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
       link: "https://support.ledger.com/",
     },
     type: "CryptoCurrency",
-    id: "stratis",
+    id: toCryptoCurrencyId("stratis"),
     coinType: CoinType.STRATIS,
     name: "Stratis",
     managerAppName: "Stratis",
@@ -2850,7 +2850,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   },
   stellar: {
     type: "CryptoCurrency",
-    id: "stellar",
+    id: toCryptoCurrencyId("stellar"),
     coinType: CoinType.STELLAR,
     name: "Stellar",
     managerAppName: "Stellar",
@@ -2880,7 +2880,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   },
   osmosis: {
     type: "CryptoCurrency",
-    id: "osmo",
+    id: toCryptoCurrencyId("osmo"),
     coinType: CoinType.ATOM,
     name: "Osmosis",
     managerAppName: "Cosmos",
@@ -2909,7 +2909,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   },
   shyft: {
     type: "CryptoCurrency",
-    id: "shyft",
+    id: toCryptoCurrencyId("shyft"),
     coinType: CoinType.SHYFT,
     name: "Shyft",
     managerAppName: "Shyft",
@@ -2934,7 +2934,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   },
   stride: {
     type: "CryptoCurrency",
-    id: "stride",
+    id: toCryptoCurrencyId("stride"),
     coinType: CoinType.ATOM,
     name: "Stride",
     managerAppName: "Cosmos",
@@ -2963,7 +2963,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   },
   tezos: {
     type: "CryptoCurrency",
-    id: "tezos",
+    id: toCryptoCurrencyId("tezos"),
     coinType: CoinType.TEZOS,
     name: "Tezos",
     managerAppName: "Tezos Wallet",
@@ -2988,7 +2988,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   },
   thundercore: {
     type: "CryptoCurrency",
-    id: "thundercore",
+    id: toCryptoCurrencyId("thundercore"),
     coinType: CoinType.THUNDERCORE,
     name: "Thundercore",
     managerAppName: "Thundercore",
@@ -3012,7 +3012,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   },
   tomo: {
     type: "CryptoCurrency",
-    id: "tomo",
+    id: toCryptoCurrencyId("tomo"),
     coinType: CoinType.TOMO,
     name: "TomoChain",
     managerAppName: "TomoChain",
@@ -3036,7 +3036,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   },
   ton: {
     type: "CryptoCurrency",
-    id: "ton",
+    id: toCryptoCurrencyId("ton"),
     coinType: CoinType.TON,
     name: "TON",
     managerAppName: "TON",
@@ -3061,7 +3061,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   },
   tron: {
     type: "CryptoCurrency",
-    id: "tron",
+    id: toCryptoCurrencyId("tron"),
     coinType: CoinType.TRON,
     name: "Tron",
     managerAppName: "Tron",
@@ -3088,7 +3088,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   },
   ubiq: {
     type: "CryptoCurrency",
-    id: "ubiq",
+    id: toCryptoCurrencyId("ubiq"),
     coinType: CoinType.UBIQ,
     name: "Ubiq",
     managerAppName: "Ubiq",
@@ -3132,7 +3132,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   },
   umee: {
     type: "CryptoCurrency",
-    id: "umee",
+    id: toCryptoCurrencyId("umee"),
     coinType: CoinType.ATOM,
     name: "Umee",
     managerAppName: "Cosmos",
@@ -3161,7 +3161,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   },
   vechain: {
     type: "CryptoCurrency",
-    id: "vechain",
+    id: toCryptoCurrencyId("vechain"),
     coinType: CoinType.VECHAIN,
     name: "Vechain",
     managerAppName: "VeChain",
@@ -3181,7 +3181,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   },
   wanchain: {
     type: "CryptoCurrency",
-    id: "wanchain",
+    id: toCryptoCurrencyId("wanchain"),
     coinType: CoinType.WANCHAIN,
     name: "Wanchain",
     managerAppName: "Wanchain",
@@ -3204,7 +3204,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   },
   waves: {
     type: "CryptoCurrency",
-    id: "waves",
+    id: toCryptoCurrencyId("waves"),
     coinType: CoinType.WAVES,
     name: "Waves",
     managerAppName: "Waves",
@@ -3223,7 +3223,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   },
   zcash: {
     type: "CryptoCurrency",
-    id: "zcash",
+    id: toCryptoCurrencyId("zcash"),
     coinType: CoinType.ZCASH,
     name: "Zcash",
     managerAppName: "Zcash",
@@ -3259,7 +3259,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   },
   zclassic: {
     type: "CryptoCurrency",
-    id: "zclassic",
+    id: toCryptoCurrencyId("zclassic"),
     coinType: CoinType.ZCLASSIC,
     name: "ZClassic",
     managerAppName: "ZClassic",
@@ -3293,7 +3293,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   },
   zcoin: {
     type: "CryptoCurrency",
-    id: "zcoin",
+    id: toCryptoCurrencyId("zcoin"),
     coinType: CoinType.ZCOIN,
     name: "ZCoin",
     managerAppName: "Zcoin",
@@ -3316,7 +3316,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   },
   zencash: {
     type: "CryptoCurrency",
-    id: "zencash",
+    id: toCryptoCurrencyId("zencash"),
     coinType: CoinType.ZEN,
     name: "Horizen",
     managerAppName: "Horizen",
@@ -3352,7 +3352,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   },
   zilliqa: {
     type: "CryptoCurrency",
-    id: "zilliqa",
+    id: toCryptoCurrencyId("zilliqa"),
     coinType: CoinType.ZILLIQA,
     name: "Zilliqa",
     managerAppName: "Zilliqa",
@@ -3377,7 +3377,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   // Cronos POS Chain (formerly Crypto.org)
   crypto_org: {
     type: "CryptoCurrency",
-    id: "crypto_org",
+    id: toCryptoCurrencyId("crypto_org"),
     coinType: CoinType.CRYPTO_ORG,
     name: "Cronos POS Chain",
     managerAppName: "Cronos POS Chain",
@@ -3407,7 +3407,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   // Testnets
   westend: {
     type: "CryptoCurrency",
-    id: "westend",
+    id: toCryptoCurrencyId("westend"),
     coinType: CoinType.POLKADOT,
     name: "Westend",
     managerAppName: "Polkadot",
@@ -3433,7 +3433,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   },
   assethub_westend: {
     type: "CryptoCurrency",
-    id: "assethub_westend",
+    id: toCryptoCurrencyId("assethub_westend"),
     coinType: CoinType.POLKADOT,
     name: "Assethub Westend",
     managerAppName: "Polkadot",
@@ -3458,7 +3458,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   },
   bitcoin_testnet: {
     type: "CryptoCurrency",
-    id: "bitcoin_testnet",
+    id: toCryptoCurrencyId("bitcoin_testnet"),
     coinType: CoinType.BTC_TESTNET,
     name: "Bitcoin Testnet",
     managerAppName: "Bitcoin Test",
@@ -3489,7 +3489,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   },
   ethereum_sepolia: {
     type: "CryptoCurrency",
-    id: "ethereum_sepolia",
+    id: toCryptoCurrencyId("ethereum_sepolia"),
     coinType: CoinType.ETH,
     name: "Ethereum Sepolia",
     managerAppName: "Ethereum",
@@ -3515,7 +3515,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   },
   ethereum_holesky: {
     type: "CryptoCurrency",
-    id: "ethereum_holesky",
+    id: toCryptoCurrencyId("ethereum_holesky"),
     coinType: CoinType.ETH,
     name: "Ethereum Holesky",
     managerAppName: "Ethereum",
@@ -3541,7 +3541,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   },
   ethereum_hoodi: {
     type: "CryptoCurrency",
-    id: "ethereum_hoodi",
+    id: toCryptoCurrencyId("ethereum_hoodi"),
     coinType: CoinType.ETH,
     name: "Ethereum Hoodi",
     managerAppName: "Ethereum",
@@ -3567,7 +3567,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   },
   stacks: {
     type: "CryptoCurrency",
-    id: "stacks",
+    id: toCryptoCurrencyId("stacks"),
     coinType: CoinType.STACKS,
     name: "Stacks",
     managerAppName: "Stacks",
@@ -3597,7 +3597,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   // Cronos POS Chain Croeseid (formerly Crypto.org Croeseid)
   crypto_org_croeseid: {
     type: "CryptoCurrency",
-    id: "crypto_org_croeseid",
+    id: toCryptoCurrencyId("crypto_org_croeseid"),
     coinType: CoinType.CRYPTO_ORG,
     name: "Cronos POS Chain Croeseid",
     managerAppName: "Cronos POS Chain Croeseid",
@@ -3628,7 +3628,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   },
   solana_testnet: {
     type: "CryptoCurrency",
-    id: "solana_testnet",
+    id: toCryptoCurrencyId("solana_testnet"),
     coinType: CoinType.SOLANA,
     name: "Solana testnet",
     managerAppName: "Solana",
@@ -3663,7 +3663,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   },
   solana_devnet: {
     type: "CryptoCurrency",
-    id: "solana_devnet",
+    id: toCryptoCurrencyId("solana_devnet"),
     coinType: CoinType.SOLANA,
     name: "Solana devnet",
     managerAppName: "Solana",
@@ -3698,7 +3698,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   },
   filecoin: {
     type: "CryptoCurrency",
-    id: "filecoin",
+    id: toCryptoCurrencyId("filecoin"),
     coinType: CoinType.FILECOIN,
     name: "Filecoin",
     managerAppName: "Filecoin",
@@ -3723,7 +3723,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   },
   internet_computer: {
     type: "CryptoCurrency",
-    id: "internet_computer",
+    id: toCryptoCurrencyId("internet_computer"),
     coinType: CoinType.ICP,
     name: "Internet Computer",
     managerAppName: "InternetComputer",
@@ -3747,7 +3747,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   },
   mina: {
     type: "CryptoCurrency",
-    id: "mina",
+    id: toCryptoCurrencyId("mina"),
     coinType: CoinType.MINA,
     name: "Mina",
     managerAppName: "Mina",
@@ -3771,7 +3771,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   },
   injective: {
     type: "CryptoCurrency",
-    id: "injective",
+    id: toCryptoCurrencyId("injective"),
     coinType: 60,
     name: "Injective",
     managerAppName: "Cosmos",
@@ -3804,7 +3804,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     coinType: CoinType.CSPR,
     color: "#000000",
     family: "casper",
-    id: "casper",
+    id: toCryptoCurrencyId("casper"),
     managerAppName: "Casper",
     scheme: "casper",
     type: "CryptoCurrency",
@@ -3831,7 +3831,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   // Light Integrations are at the end of the list until we figure out a way to fix the ticker/managerApp collisions
   sonic: {
     type: "CryptoCurrency",
-    id: "sonic",
+    id: toCryptoCurrencyId("sonic"),
     coinType: CoinType.ETH,
     name: "Sonic",
     managerAppName: "Sonic",
@@ -3854,7 +3854,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   },
   sonic_blaze: {
     type: "CryptoCurrency",
-    id: "sonic_blaze",
+    id: toCryptoCurrencyId("sonic_blaze"),
     isTestnetFor: "sonic",
     coinType: CoinType.ETH,
     name: "Sonic Blaze",
@@ -3877,7 +3877,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   },
   arbitrum: {
     type: "CryptoCurrency",
-    id: "arbitrum",
+    id: toCryptoCurrencyId("arbitrum"),
     coinType: CoinType.ETH,
     name: "Arbitrum",
     managerAppName: "Ethereum",
@@ -3893,7 +3893,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   },
   arbitrum_sepolia: {
     type: "CryptoCurrency",
-    id: "arbitrum_sepolia",
+    id: toCryptoCurrencyId("arbitrum_sepolia"),
     coinType: CoinType.ETH,
     name: "Arbitrum Sepolia",
     managerAppName: "Ethereum",
@@ -3913,7 +3913,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   // Cronos EVM blockchain
   cronos: {
     type: "CryptoCurrency",
-    id: "cronos",
+    id: toCryptoCurrencyId("cronos"),
     coinType: CoinType.ETH,
     name: "Cronos",
     managerAppName: "Ethereum",
@@ -3935,7 +3935,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   },
   core: {
     type: "CryptoCurrency",
-    id: "core",
+    id: toCryptoCurrencyId("core"),
     coinType: CoinType.ETH,
     name: "Core",
     managerAppName: "Ethereum",
@@ -3958,7 +3958,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   },
   fantom: {
     type: "CryptoCurrency",
-    id: "fantom",
+    id: toCryptoCurrencyId("fantom"),
     coinType: CoinType.ETH,
     name: "Fantom",
     managerAppName: "Ethereum",
@@ -3980,7 +3980,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   },
   flare: {
     type: "CryptoCurrency",
-    id: "flare",
+    id: toCryptoCurrencyId("flare"),
     coinType: CoinType.ETH,
     name: "Flare",
     managerAppName: "Ethereum",
@@ -3996,7 +3996,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   },
   songbird: {
     type: "CryptoCurrency",
-    id: "songbird",
+    id: toCryptoCurrencyId("songbird"),
     coinType: CoinType.ETH,
     name: "Songbird",
     managerAppName: "Ethereum",
@@ -4012,7 +4012,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   },
   moonbeam: {
     type: "CryptoCurrency",
-    id: "moonbeam",
+    id: toCryptoCurrencyId("moonbeam"),
     coinType: CoinType.ETH,
     name: "Moonbeam",
     managerAppName: "Ethereum",
@@ -4040,7 +4040,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   },
   rsk: {
     type: "CryptoCurrency",
-    id: "rsk",
+    id: toCryptoCurrencyId("rsk"),
     coinType: CoinType.ETH,
     name: "Rootstock",
     managerAppName: "Ethereum",
@@ -4056,7 +4056,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   },
   bittorrent: {
     type: "CryptoCurrency",
-    id: "bittorrent",
+    id: toCryptoCurrencyId("bittorrent"),
     coinType: CoinType.ETH,
     name: "Bittorent Chain",
     managerAppName: "Ethereum",
@@ -4078,7 +4078,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   },
   optimism: {
     type: "CryptoCurrency",
-    id: "optimism",
+    id: toCryptoCurrencyId("optimism"),
     coinType: CoinType.ETH,
     name: "OP Mainnet",
     managerAppName: "Ethereum",
@@ -4095,7 +4095,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   },
   optimism_sepolia: {
     type: "CryptoCurrency",
-    id: "optimism_sepolia",
+    id: toCryptoCurrencyId("optimism_sepolia"),
     coinType: CoinType.ETH,
     name: "OP Sepolia",
     managerAppName: "Ethereum",
@@ -4112,7 +4112,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   },
   energy_web: {
     type: "CryptoCurrency",
-    id: "energy_web",
+    id: toCryptoCurrencyId("energy_web"),
     coinType: CoinType.ETH,
     name: "Energy Web",
     managerAppName: "Ethereum",
@@ -4128,7 +4128,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   },
   astar: {
     type: "CryptoCurrency",
-    id: "astar",
+    id: toCryptoCurrencyId("astar"),
     coinType: CoinType.ETH,
     name: "Astar",
     managerAppName: "Ethereum",
@@ -4144,7 +4144,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   },
   metis: {
     type: "CryptoCurrency",
-    id: "metis",
+    id: toCryptoCurrencyId("metis"),
     coinType: CoinType.ETH,
     name: "Metis",
     managerAppName: "Ethereum",
@@ -4160,7 +4160,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   },
   boba: {
     type: "CryptoCurrency",
-    id: "boba",
+    id: toCryptoCurrencyId("boba"),
     coinType: CoinType.ETH,
     name: "Boba",
     managerAppName: "Ethereum",
@@ -4182,7 +4182,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   },
   moonriver: {
     type: "CryptoCurrency",
-    id: "moonriver",
+    id: toCryptoCurrencyId("moonriver"),
     coinType: CoinType.ETH,
     name: "Moonriver",
     managerAppName: "Ethereum",
@@ -4204,7 +4204,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   },
   velas_evm: {
     type: "CryptoCurrency",
-    id: "velas_evm",
+    id: toCryptoCurrencyId("velas_evm"),
     coinType: CoinType.ETH,
     name: "Velas EVM",
     managerAppName: "Ethereum",
@@ -4220,7 +4220,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   },
   syscoin: {
     type: "CryptoCurrency",
-    id: "syscoin",
+    id: toCryptoCurrencyId("syscoin"),
     coinType: CoinType.ETH,
     name: "Syscoin",
     managerAppName: "Ethereum",
@@ -4236,7 +4236,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   },
   telos_evm: {
     type: "CryptoCurrency",
-    id: "telos_evm",
+    id: toCryptoCurrencyId("telos_evm"),
     coinType: CoinType.ETH,
     name: "Telos",
     managerAppName: "Ethereum",
@@ -4258,7 +4258,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   },
   berachain: {
     type: "CryptoCurrency",
-    id: "berachain",
+    id: toCryptoCurrencyId("berachain"),
     coinType: CoinType.ETH,
     name: "Berachain",
     managerAppName: "Ethereum",
@@ -4280,7 +4280,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   },
   sei_network_evm: {
     type: "CryptoCurrency",
-    id: "sei_network_evm",
+    id: toCryptoCurrencyId("sei_network_evm"),
     coinType: CoinType.ETH,
     name: "SEI Network EVM",
     managerAppName: "Ethereum",
@@ -4302,7 +4302,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   },
   hyperevm: {
     type: "CryptoCurrency",
-    id: "hyperevm",
+    id: toCryptoCurrencyId("hyperevm"),
     coinType: CoinType.ETH,
     name: "HyperEVM",
     managerAppName: "Ethereum",
@@ -4324,7 +4324,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   },
   polygon_zk_evm: {
     type: "CryptoCurrency",
-    id: "polygon_zk_evm",
+    id: toCryptoCurrencyId("polygon_zk_evm"),
     coinType: CoinType.ETH,
     name: "Polygon zkEVM",
     managerAppName: "Ethereum",
@@ -4340,7 +4340,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   },
   polygon_zk_evm_testnet: {
     type: "CryptoCurrency",
-    id: "polygon_zk_evm_testnet",
+    id: toCryptoCurrencyId("polygon_zk_evm_testnet"),
     coinType: CoinType.ETH,
     name: "Polygon zkEVM Testnet",
     managerAppName: "Ethereum",
@@ -4359,7 +4359,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   },
   base: {
     type: "CryptoCurrency",
-    id: "base",
+    id: toCryptoCurrencyId("base"),
     coinType: CoinType.ETH,
     name: "Base",
     managerAppName: "Ethereum",
@@ -4375,7 +4375,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   },
   base_sepolia: {
     type: "CryptoCurrency",
-    id: "base_sepolia",
+    id: toCryptoCurrencyId("base_sepolia"),
     coinType: CoinType.ETH,
     name: "Base Sepolia",
     managerAppName: "Ethereum",
@@ -4394,7 +4394,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   },
   klaytn: {
     type: "CryptoCurrency",
-    id: "klaytn",
+    id: toCryptoCurrencyId("klaytn"),
     coinType: CoinType.ETH,
     name: "Klaytn",
     managerAppName: "Ethereum",
@@ -4416,7 +4416,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   },
   neon_evm: {
     type: "CryptoCurrency",
-    id: "neon_evm",
+    id: toCryptoCurrencyId("neon_evm"),
     coinType: CoinType.ETH,
     name: "Neon EVM",
     managerAppName: "Ethereum",
@@ -4432,7 +4432,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   },
   lukso: {
     type: "CryptoCurrency",
-    id: "lukso",
+    id: toCryptoCurrencyId("lukso"),
     coinType: CoinType.ETH,
     name: "Lukso",
     managerAppName: "Ethereum",
@@ -4449,7 +4449,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   },
   linea: {
     type: "CryptoCurrency",
-    id: "linea",
+    id: toCryptoCurrencyId("linea"),
     coinType: CoinType.ETH,
     name: "Linea",
     managerAppName: "Ethereum",
@@ -4472,7 +4472,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   },
   linea_sepolia: {
     type: "CryptoCurrency",
-    id: "linea_sepolia",
+    id: toCryptoCurrencyId("linea_sepolia"),
     coinType: CoinType.ETH,
     name: "Linea Sepolia",
     managerAppName: "Ethereum",
@@ -4496,7 +4496,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   },
   blast: {
     type: "CryptoCurrency",
-    id: "blast",
+    id: toCryptoCurrencyId("blast"),
     coinType: CoinType.ETH,
     name: "Blast",
     managerAppName: "Ethereum",
@@ -4513,7 +4513,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   },
   blast_sepolia: {
     type: "CryptoCurrency",
-    id: "blast_sepolia",
+    id: toCryptoCurrencyId("blast_sepolia"),
     coinType: CoinType.ETH,
     name: "Blast Sepolia",
     managerAppName: "Ethereum",
@@ -4531,7 +4531,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   },
   scroll: {
     type: "CryptoCurrency",
-    id: "scroll",
+    id: toCryptoCurrencyId("scroll"),
     coinType: CoinType.ETH,
     name: "Scroll",
     managerAppName: "Ethereum",
@@ -4548,7 +4548,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   },
   scroll_sepolia: {
     type: "CryptoCurrency",
-    id: "scroll_sepolia",
+    id: toCryptoCurrencyId("scroll_sepolia"),
     coinType: CoinType.ETH,
     name: "Scroll Sepolia",
     managerAppName: "Ethereum",
@@ -4566,7 +4566,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   },
   etherlink: {
     type: "CryptoCurrency",
-    id: "etherlink",
+    id: toCryptoCurrencyId("etherlink"),
     coinType: CoinType.ETH,
     name: "Etherlink",
     managerAppName: "Ethereum",
@@ -4582,7 +4582,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   },
   zksync: {
     type: "CryptoCurrency",
-    id: "zksync",
+    id: toCryptoCurrencyId("zksync"),
     coinType: CoinType.ETH,
     name: "ZKsync",
     managerAppName: "Ethereum",
@@ -4598,7 +4598,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   },
   zksync_sepolia: {
     type: "CryptoCurrency",
-    id: "zksync_sepolia",
+    id: toCryptoCurrencyId("zksync_sepolia"),
     coinType: CoinType.ETH,
     name: "ZKsync Sepolia",
     managerAppName: "Ethereum",
@@ -4616,7 +4616,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   // Tickers dup
   binance_beacon_chain: {
     type: "CryptoCurrency",
-    id: "binance_beacon_chain",
+    id: toCryptoCurrencyId("binance_beacon_chain"),
     coinType: CoinType.ATOM,
     name: "BinanceBeaconChain",
     managerAppName: "Cosmos",
@@ -4645,7 +4645,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   },
   mantra: {
     type: "CryptoCurrency",
-    id: "mantra",
+    id: toCryptoCurrencyId("mantra"),
     coinType: CoinType.ATOM,
     name: "Mantra",
     managerAppName: "Cosmos",
@@ -4674,7 +4674,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   },
   xion: {
     type: "CryptoCurrency",
-    id: "xion",
+    id: toCryptoCurrencyId("xion"),
     coinType: CoinType.ATOM,
     name: "Xion",
     managerAppName: "Cosmos",
@@ -4703,7 +4703,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   },
   zenrock: {
     type: "CryptoCurrency",
-    id: "zenrock",
+    id: toCryptoCurrencyId("zenrock"),
     coinType: CoinType.ATOM,
     name: "Zenrock",
     managerAppName: "Cosmos",
@@ -4732,7 +4732,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   },
   sui: {
     type: "CryptoCurrency",
-    id: "sui",
+    id: toCryptoCurrencyId("sui"),
     coinType: CoinType.SUI,
     name: "Sui",
     managerAppName: "Sui",
@@ -4761,7 +4761,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
   },
   babylon: {
     type: "CryptoCurrency",
-    id: "babylon",
+    id: toCryptoCurrencyId("babylon"),
     coinType: CoinType.ATOM,
     name: "Babylon",
     managerAppName: "Cosmos",

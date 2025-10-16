@@ -1,4 +1,5 @@
 import type { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { toCryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 import { findCryptoCurrencyById } from "./currencies";
 import { convertApiToken, type ApiTokenData } from "./api-token-converter";
 
@@ -55,7 +56,7 @@ function convertApiCryptoCurrency(apiCrypto: ApiCryptoCurrency): CryptoOrTokenCu
   // Create a dynamic CryptoCurrency object with placeholders for fields we can't infer
   return {
     type: "CryptoCurrency" as const,
-    id: apiCrypto.id,
+    id: toCryptoCurrencyId(apiCrypto.id),
     name: apiCrypto.name,
     ticker: apiCrypto.ticker,
     units: apiCrypto.units.map(unit => ({

@@ -1,4 +1,5 @@
 import { AssertionError, fail } from "assert";
+import { toCryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 import eip55 from "eip55";
 import axios from "axios";
 import BigNumber from "bignumber.js";
@@ -39,7 +40,7 @@ jest.mock("@ledgerhq/live-promise");
 );
 
 const fakeCurrency = Object.freeze<Partial<CryptoCurrency>>({
-  id: "ethereum",
+  id: toCryptoCurrencyId("ethereum"),
   ethereumLikeInfo: {
     chainId: 1,
   },
@@ -186,7 +187,7 @@ describe("EVM Family", () => {
         });
 
         const badCurrency = {
-          id: "ethereum",
+          id: toCryptoCurrencyId("ethereum"),
           ethereumLikeInfo: {
             chainId: 1,
           },

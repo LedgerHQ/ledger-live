@@ -1,9 +1,14 @@
+import { toCryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 import "../test-helpers/staticTime";
 import { genAccount } from "../../mock/account";
 import { getBalanceHistory } from "@ledgerhq/live-countervalues/portfolio";
 import { getEnv, setEnv } from "@ledgerhq/live-env";
 import { setSupportedCurrencies } from "../../currencies";
-setSupportedCurrencies(["ethereum", "ethereum_classic", "ripple"]);
+setSupportedCurrencies([
+  toCryptoCurrencyId("ethereum"),
+  toCryptoCurrencyId("ethereum_classic"),
+  toCryptoCurrencyId("ripple"),
+]);
 
 test("generate an account from seed", () => {
   const a = genAccount("seed");

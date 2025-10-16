@@ -1,6 +1,7 @@
 import invariant from "invariant";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/index";
 import { setSupportedCurrencies } from "@ledgerhq/coin-framework/currencies/index";
+import { toCryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 import { fromAccountRaw } from "@ledgerhq/coin-framework/serialization/index";
 import { inferDescriptorFromDeviceInfo, inferDescriptorFromAccount } from "./descriptor";
 import bitcoinDatasets from "./datasets/bitcoin";
@@ -11,7 +12,7 @@ import { setCryptoAssetsStore } from "@ledgerhq/coin-framework/crypto-assets/ind
 // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
 setCryptoAssetsStore({} as CryptoAssetsStore);
 
-setSupportedCurrencies(["bitcoin"]);
+setSupportedCurrencies([toCryptoCurrencyId("bitcoin")]);
 describe("inferDescriptorFromAccount", () => {
   invariant(bitcoinDatasets.accounts, "bitcoin datasets have accounts");
   // FIXME: migrate away from invariant for more type guard

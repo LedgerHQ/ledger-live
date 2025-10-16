@@ -1,3 +1,4 @@
+import { toCryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 import { addTestnetCurrencies, getTestnetCurrencies } from "../testnetCurrencies";
 import { CryptoCurrency, CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { listSupportedCurrencies } from "@ledgerhq/coin-framework/currencies/index";
@@ -13,7 +14,7 @@ const mockListSupportedCurrencies = listSupportedCurrencies as jest.MockedFuncti
 describe("testnetCurrencies", () => {
   const mockMainnetCurrency: CryptoCurrency = {
     type: "CryptoCurrency",
-    id: "ethereum",
+    id: toCryptoCurrencyId("ethereum"),
     name: "Ethereum",
     ticker: "ETH",
     managerAppName: "Ethereum",
@@ -34,7 +35,7 @@ describe("testnetCurrencies", () => {
 
   const mockTestnetCurrency: CryptoCurrency = {
     type: "CryptoCurrency",
-    id: "ethereum_sepolia",
+    id: toCryptoCurrencyId("ethereum_sepolia"),
     name: "Ethereum Sepolia",
     managerAppName: "Ethereum",
     coinType: 60,
@@ -56,7 +57,7 @@ describe("testnetCurrencies", () => {
 
   const mockBitcoinTestnetCurrency: CryptoCurrency = {
     type: "CryptoCurrency",
-    id: "bitcoin_testnet",
+    id: toCryptoCurrencyId("bitcoin_testnet"),
     name: "Bitcoin Testnet",
     ticker: "BTC",
     managerAppName: "Bitcoin",

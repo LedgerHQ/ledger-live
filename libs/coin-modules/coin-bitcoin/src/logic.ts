@@ -17,12 +17,12 @@ import type { CryptoCurrency, CryptoCurrencyId } from "@ledgerhq/types-cryptoass
 import type { Account, OperationType } from "@ledgerhq/types-live";
 
 // correspond ~ to min relay fees but determined empirically for a tx to be accepted by network
-const minFees: Partial<Record<CryptoCurrencyId | "LBRY" | "groestcoin" | "osmo", number>> = {
+const minFees = {
   bitcoin: 1000,
   bitcoin_gold: 1000,
   qtum: 4000,
   stratis: 2000,
-};
+} as Partial<Record<CryptoCurrencyId, number>>;
 export const getMinRelayFee = (currency: CryptoCurrency): number => minFees[currency.id] || 0;
 export const inferFeePerByte = (t: Transaction, networkInfo: NetworkInfo): BigNumber => {
   if (t.feesStrategy) {
@@ -118,9 +118,7 @@ type CoinLogic = {
 export const bchToCashaddrAddressWithoutPrefix = (recipient: string): string =>
   recipient ? recipient.substring(recipient.indexOf(":") + 1) : recipient;
 
-export const perCoinLogic: Partial<
-  Record<CryptoCurrencyId | "LBRY" | "groestcoin" | "osmo", CoinLogic>
-> = {
+export const perCoinLogic = {
   zencash: {
     hasExtraData: true, // FIXME (legacy) investigate why we need this here and drop
   },
@@ -141,7 +139,7 @@ export const perCoinLogic: Partial<
     getAdditionals: () => ["bip143"],
   },
   bitcoin_cash: {
-    getAdditionals: ({ transaction }) => {
+    getAdditionals: ({ transaction }: { transaction: Transaction }) => {
       const additionals = ["bip143"];
 
       if (bchExplicit(transaction.recipient).startsWith("bitcoincash:")) {
@@ -157,12 +155,12 @@ export const perCoinLogic: Partial<
       const prefix = "bitcoincash:";
       return str.startsWith(prefix) ? str.slice(prefix.length) : str;
     },
-    syncReplaceAddress: addr => bchToCashaddrAddressWithoutPrefix(addr),
+    syncReplaceAddress: (addr: string) => bchToCashaddrAddressWithoutPrefix(addr),
     injectGetAddressParams: () => ({
       forceFormat: "cashaddr",
     }),
   },
-};
+} as Partial<Record<CryptoCurrencyId, CoinLogic>>;
 
 /**
  * Derives a transaction sequence number (nonce) from a list of account inputs.
@@ -193,7 +191,7 @@ export function inferTransactionSequenceNumberFromInputs(
 
 export const mapTxToOperations = (
   tx: TX,
-  currencyId: CryptoCurrencyId | "LBRY" | "groestcoin" | "osmo",
+  currencyId: CryptoCurrencyId,
   accountId: string,
   accountAddresses: Set<string>,
   changeAddresses: Set<string>,

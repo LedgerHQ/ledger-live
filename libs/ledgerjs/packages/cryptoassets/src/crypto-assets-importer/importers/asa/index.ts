@@ -1,6 +1,6 @@
 import fs from "fs";
 import path from "path";
-import { fetchTokensFromCALService } from "../../fetch";
+import { fetchTokensFromCALService, toCryptoCurrencyId } from "../../fetch";
 
 type AlgorandASAToken = [
   string, // id
@@ -15,7 +15,7 @@ export const importAsaTokens = async (outputDir: string) => {
     console.log("importing asa tokens...");
     const { tokens, hash } = await fetchTokensFromCALService(
       {
-        blockchain_name: "algorand",
+        blockchain_name: toCryptoCurrencyId("algorand"),
       },
       ["contract_address", "token_identifier", "decimals", "name", "ticker", "live_signature"],
     );

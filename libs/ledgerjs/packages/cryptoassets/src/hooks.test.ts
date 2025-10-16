@@ -1,6 +1,6 @@
 import { renderHook, waitFor } from "@testing-library/react";
 import { createCryptoAssetsHooks } from "./hooks";
-import type { TokenCurrency, CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { CryptoCurrency, TokenCurrency, toCryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 
 // Mock the legacy store
 jest.mock("./legacy/legacy-store", () => ({
@@ -21,7 +21,7 @@ import { findCryptoCurrencyById } from "./currencies";
 // Mock crypto currency data
 const mockCryptoCurrency: CryptoCurrency = {
   type: "CryptoCurrency",
-  id: "bitcoin",
+  id: toCryptoCurrencyId("bitcoin"),
   name: "Bitcoin",
   ticker: "BTC",
   units: [
@@ -47,7 +47,7 @@ const mockToken: TokenCurrency = {
   contractAddress: "0xA0b86a33E6441b8c4C8C0e4b8b8c4C8C0e4b8b8c4",
   parentCurrency: {
     type: "CryptoCurrency",
-    id: "ethereum",
+    id: toCryptoCurrencyId("ethereum"),
     name: "Ethereum",
     ticker: "ETH",
     units: [],

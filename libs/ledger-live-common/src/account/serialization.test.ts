@@ -1,3 +1,4 @@
+import { toCryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 import { getCryptoCurrencyById, setSupportedCurrencies } from "../currencies";
 import { genAccount, genTokenAccount } from "@ledgerhq/coin-framework/mocks/account";
 import { toAccountRaw, fromAccountRaw } from "./serialization";
@@ -10,7 +11,7 @@ import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 
 setWalletAPIVersion(WALLET_API_VERSION);
 
-setSupportedCurrencies(["solana"]);
+setSupportedCurrencies([toCryptoCurrencyId("solana")]);
 const Solana = getCryptoCurrencyById("solana");
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-assertions

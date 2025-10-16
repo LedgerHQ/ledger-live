@@ -1,3 +1,4 @@
+import { toCryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 import BigNumber from "bignumber.js";
 import { Observable } from "rxjs";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
@@ -201,7 +202,7 @@ describe("buildSignOperation", () => {
               "0xd11107bdf0d6d7040c6c0bfbdecb6545191fdf13e8d8d259952f53e1713f61b5::staked_coin::StakedAptos",
             parentCurrency: {
               type: "CryptoCurrency",
-              id: "aptos",
+              id: toCryptoCurrencyId("aptos"),
               coinType: 637,
               name: "Aptos",
               managerAppName: "Aptos",

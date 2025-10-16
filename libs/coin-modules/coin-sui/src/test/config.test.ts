@@ -1,9 +1,10 @@
+import { toCryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 import coinConfig from "../config";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 
 describe("Configuration", () => {
   const mockCurrency: CryptoCurrency = {
-    id: "sui",
+    id: toCryptoCurrencyId("sui"),
     name: "sui",
     family: "sui",
     units: [],

@@ -1,4 +1,5 @@
 import { mapTxToOperations } from "./logic";
+import { toCryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 
 describe("testing transaction without output", () => {
   it("Parse zcash transaction without output", async () => {
@@ -24,7 +25,13 @@ describe("testing transaction without output", () => {
       address: "mwXTtHo8Yy3aNKUUZLkBDrTcKT9qG9TqLb",
       received_at: "2021-07-28T13:34:38Z",
     };
-    const out = mapTxToOperations(tx, "zcash", "zcash 1", new Set<string>(), new Set<string>());
+    const out = mapTxToOperations(
+      tx,
+      toCryptoCurrencyId("zcash"),
+      "zcash 1",
+      new Set<string>(),
+      new Set<string>(),
+    );
     expect(out.length).toEqual(0);
   }, 30000);
 });

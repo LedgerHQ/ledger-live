@@ -1,6 +1,6 @@
 import fs from "fs";
 import path from "path";
-import { fetchTokensFromCALService } from "../../fetch";
+import { fetchTokensFromCALService, toCryptoCurrencyId } from "../../fetch";
 
 type Vip180Token = [
   string, // token identifier
@@ -13,13 +13,10 @@ type Vip180Token = [
 export const importVip180Tokens = async (outputDir: string) => {
   try {
     console.log("importing Vechain tokens...");
-    const { tokens, hash } = await fetchTokensFromCALService({ blockchain_name: "vechain" }, [
-      "id",
-      "ticker",
-      "name",
-      "contract_address",
-      "decimals",
-    ]);
+    const { tokens, hash } = await fetchTokensFromCALService(
+      { blockchain_name: toCryptoCurrencyId("vechain") },
+      ["id", "ticker", "name", "contract_address", "decimals"],
+    );
     const vip180Tokens: Vip180Token[] = tokens.map(token => {
       // This shouldn't be necessary, we should consumme the ID directly
       // but for now, I'll keep this to maintain a compatibility layer

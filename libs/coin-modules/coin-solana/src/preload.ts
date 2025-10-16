@@ -13,6 +13,7 @@ import {
 import { getValidators, ValidatorsAppValidator } from "./network/validator-app";
 import spltokensList, { hash as embeddedHash, SPLToken } from "@ledgerhq/cryptoassets/data/spl";
 import { fetchTokensFromCALService } from "@ledgerhq/cryptoassets/crypto-assets-importer/fetch/index";
+import { toCryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 import { getCALHash, setCALHash } from "./logic";
 import { addTokens, convertSplTokens } from "@ledgerhq/cryptoassets/tokens";
 import { AxiosError } from "axios";
@@ -33,7 +34,7 @@ export const fetchSPLTokens: (
 
   try {
     const { tokens, hash } = await fetchTokensFromCALService(
-      { blockchain_name: "solana" },
+      { blockchain_name: toCryptoCurrencyId("solana") },
       ["id", "network", "name", "ticker", "contract_address", "decimals"],
       calHash,
     );

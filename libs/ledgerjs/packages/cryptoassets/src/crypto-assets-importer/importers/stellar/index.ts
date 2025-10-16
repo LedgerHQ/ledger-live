@@ -1,6 +1,6 @@
 import fs from "fs";
 import path from "path";
-import { fetchTokensFromCALService } from "../../fetch";
+import { fetchTokensFromCALService, toCryptoCurrencyId } from "../../fetch";
 
 type StellarToken = [
   string, // assetCode
@@ -13,12 +13,10 @@ type StellarToken = [
 export const importStellarTokens = async (outputDir: string) => {
   try {
     console.log("importing stellar tokens...");
-    const { tokens, hash } = await fetchTokensFromCALService({ blockchain_name: "stellar" }, [
-      "ticker",
-      "contract_address",
-      "name",
-      "decimals",
-    ]);
+    const { tokens, hash } = await fetchTokensFromCALService(
+      { blockchain_name: toCryptoCurrencyId("stellar") },
+      ["ticker", "contract_address", "name", "decimals"],
+    );
     const stellarTokens: StellarToken[] = tokens.map(token => [
       token.ticker.toLowerCase(),
       token.contract_address.toLowerCase(),

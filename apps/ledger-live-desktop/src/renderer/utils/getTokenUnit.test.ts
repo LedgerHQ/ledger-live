@@ -1,3 +1,4 @@
+import { toCryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 import { Account } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { getTokenUnit } from "./getTokenUnit";
@@ -20,7 +21,7 @@ const mockedAccount: Account = {
   pendingOperations: [],
   currency: {
     type: "CryptoCurrency",
-    id: "ethereum",
+    id: toCryptoCurrencyId("ethereum"),
     coinType: 60,
     name: "Ethereum",
     managerAppName: "Ethereum",
@@ -76,7 +77,7 @@ const mockedAccount: Account = {
         contractAddress: "0xContractAddress",
         parentCurrency: {
           type: "CryptoCurrency",
-          id: "ethereum",
+          id: toCryptoCurrencyId("ethereum"),
           coinType: 60,
           name: "Ethereum",
           managerAppName: "Ethereum",

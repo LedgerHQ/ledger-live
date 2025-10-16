@@ -1,4 +1,4 @@
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 import invariant from "invariant";
 
 const EVM_DEAD_ADDRESS = "0x000000000000000000000000000000000000dEaD";
@@ -12,7 +12,7 @@ const EVM_RAND_ADDRESS = "0x123000000000000000000000000000000000dEaD";
  * We use them for tests and also for dry-run estimations
  * DO NOT USE AS RECIPIENT OR SIGN TRANSACTIONS INTO THEM
  */
-const abandonSeedAddresses: Partial<Record<CryptoCurrency["id"], string>> = {
+const abandonSeedAddresses = {
   algorand: "PSHLIWQKDEETIIBQEOTLGCT5IF7BTTOKCUULONOGVGF2HYDT2IHW3H4CCI",
   // https://snowtrace.io/address/0x000000000000000000000000000000000000dead/tokens
   avalanche_c_chain: EVM_DEAD_ADDRESS,
@@ -140,7 +140,7 @@ const abandonSeedAddresses: Partial<Record<CryptoCurrency["id"], string>> = {
   canton_network: "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
   canton_network_devnet: "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
   canton_network_testnet: "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
-};
+} as Partial<Record<CryptoCurrencyId, string>>;
 
 /**
  * Returns a valid address for a given currency.
@@ -149,8 +149,7 @@ const abandonSeedAddresses: Partial<Record<CryptoCurrency["id"], string>> = {
  * DO NOT USE AS RECIPIENT OR SIGN TRANSACTIONS INTO THEM
  * @param {*} currencyId
  */
-// TODO: signature should be getAbandonSeedAddress(currencyId: CryptoCurrencyId)
-export const getAbandonSeedAddress = (currencyId: string): string => {
+export const getAbandonSeedAddress = (currencyId: CryptoCurrencyId): string => {
   invariant(
     abandonSeedAddresses[currencyId] !== undefined,
     `No abandonseed available for ${currencyId}`,

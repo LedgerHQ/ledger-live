@@ -1,6 +1,6 @@
 import fs from "fs";
 import path from "path";
-import { fetchTokensFromCALService } from "../../fetch";
+import { fetchTokensFromCALService, toCryptoCurrencyId } from "../../fetch";
 
 type HederaToken = [
   string, // id
@@ -15,15 +15,10 @@ type HederaToken = [
 export const importHederaTokens = async (outputDir: string) => {
   try {
     console.log("importing hedera tokens...");
-    const { tokens, hash } = await fetchTokensFromCALService({ blockchain_name: "hedera" }, [
-      "id",
-      "contract_address",
-      "name",
-      "ticker",
-      "network",
-      "decimals",
-      "delisted",
-    ]);
+    const { tokens, hash } = await fetchTokensFromCALService(
+      { blockchain_name: toCryptoCurrencyId("hedera") },
+      ["id", "contract_address", "name", "ticker", "network", "decimals", "delisted"],
+    );
     const hederaTokens: HederaToken[] = tokens.map(token => [
       token.id,
       token.contract_address,

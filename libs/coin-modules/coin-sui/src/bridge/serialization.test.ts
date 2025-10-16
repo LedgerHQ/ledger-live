@@ -1,3 +1,4 @@
+import { toCryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 import BigNumber from "bignumber.js";
 import {
   toSuiResourcesRaw,
@@ -40,7 +41,7 @@ const account = {
   pendingOperations: [],
   currency: {
     type: "CryptoCurrency" as const,
-    id: "sui" as const,
+    id: toCryptoCurrencyId("sui"),
     coinType: 784,
     name: "Sui",
     managerAppName: "Sui",
