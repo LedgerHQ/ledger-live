@@ -55,10 +55,10 @@
     "bluetooth" : "Bluetooth",
     "usb" : "USB",
     "add" : "Hinzufügen",
-    "token" : "Token",
-    "token_plural" : "Token",
-    "subaccount" : "Unterkonto",
-    "subaccount_plural" : "Unterkonten",
+    "token_one" : "Token",
+    "token_other" : "Token",
+    "subaccount_one" : "Unterkonto",
+    "subaccount_other" : "Unterkonten",
     "forgetDevice" : "Gerät entfernen",
     "help" : "Hilfe",
     "saveLogs" : "Protokolle speichern",
@@ -71,24 +71,24 @@
     "installed" : "Installiert",
     "uninstall" : "Deinstallieren",
     "fromNow" : {
-      "seconds" : "in einer Sekunde",
-      "seconds_plural" : "in {{time}} Sekunden",
-      "minutes" : "in einer Minute",
-      "minutes_plural" : "in {{time}} Minuten",
-      "hours" : "in einer Stunde",
-      "hours_plural" : "in {{time}} Stunden",
-      "days" : "in einem Tag",
-      "days_plural" : "in {{time}} Tagen"
+      "seconds_one" : "in einer Sekunde",
+      "seconds_other" : "in {{time}} Sekunden",
+      "minutes_one" : "in einer Minute",
+      "minutes_other" : "in {{time}} Minuten",
+      "hours_one" : "in einer Stunde",
+      "hours_other" : "in {{time}} Stunden",
+      "days_one" : "in einem Tag",
+      "days_other" : "in {{time}} Tagen"
     },
     "timeAgo" : {
-      "seconds" : "vor einer Sekunde",
-      "seconds_plural" : "vor {{time}} Sekunden",
-      "minutes" : "vor einer Minute",
-      "minutes_plural" : "Vor {{time}} Minuten",
-      "hours" : "vor einer Stunde",
-      "hours_plural" : "vor {{time}} Stunden",
-      "days" : "Gestern",
-      "days_plural" : "vor {{time}} Tagen"
+      "seconds_one" : "vor einer Sekunde",
+      "seconds_other" : "vor {{time}} Sekunden",
+      "minutes_one" : "vor einer Minute",
+      "minutes_other" : "Vor {{time}} Minuten",
+      "hours_one" : "vor einer Stunde",
+      "hours_other" : "vor {{time}} Stunden",
+      "days_one" : "Gestern",
+      "days_other" : "vor {{time}} Tagen"
     },
     "seeMore" : "Mehr anzeigen",
     "moreInfo" : "Mehr Infos",
@@ -1073,6 +1073,10 @@
     "HederaAddAccountError" : {
       "title" : "Dein Konto wurde nicht hinzugefügt. Bitte versuche es noch einmal."
     },
+    "HederaRecipientInvalidChecksum" : {
+      "title" : "Ungültige Adressprüfsumme",
+      "description" : "Die angegebene Adresse weist eine ungültige Prüfsumme auf."
+    },
     "HederaInsufficientFundsForAssociation" : {
       "title" : "Unzureichendes Guthaben",
       "description" : "Nicht ausreichend HBAR, um die Tokenzuordnung zu bezahlen. Es werden HBAR im Wert von mindestens {{requiredWorthInUSD}} benötigt."
@@ -1281,11 +1285,11 @@
     "open" : "App-Berechtigungen öffnen",
     "authorize" : "Autorisieren",
     "bluetooth" : {
-      "modalTitle" : "Für die Verbindung Ihres Ledgers über Bluetooth ist eine Genehmigung erforderlich",
+      "modalTitle" : "Für die Verbindung deiner Ledger über Bluetooth ist eine Genehmigung erforderlich",
       "modalDescriptionBase" : "Um Ihren Ledger über Bluetooth zu verbinden, müssen Sie Ledger Live autorisieren, nach Geräten in der Nähe zu suchen.",
       "modalDescriptionSettingsVariant" : "Um Ihren Ledger über Bluetooth zu verbinden, müssen Sie Ledger Live in den Einstellungen Ihres Telefons autorisieren, nach Geräten in der Nähe zu suchen.",
       "modalButtonLabelBase" : "Autorisieren",
-      "modalButtonLabelSettingsVariant" : "Gehen Sie zu Einstellungen",
+      "modalButtonLabelSettingsVariant" : "Gehe zu Einstellungen",
       "dontPair" : "Nicht verbinden"
     },
     "location" : {
@@ -1299,7 +1303,7 @@
       "authorizeDescription" : "Autorisieren Sie bitte die Kamera zum Scannen von QR-Codes.",
       "authorizeButtonTitle" : "Autorisieren",
       "goToSettingsDescription" : "Autorisieren Sie bitte die Kamera in den Einstellungen, um QR-Codes zu scannen.",
-      "goToSettingsButtonTitle" : "Gehen Sie zu Einstellungen"
+      "goToSettingsButtonTitle" : "Gehe zu Einstellungen"
     }
   },
   "fees" : {
@@ -1370,7 +1374,7 @@
     "title" : "Deinstallieren und Ledger Live erneut installieren",
     "description" : "Bitte deinstallieren Sie die App auf Ihrem Telefon und installieren Sie sie anschließend neu, um die Daten von Ledger Live, einschließlich Konten und Einstellungen, zu löschen.",
     "button" : "Zurücksetzen",
-    "warning" : "Das Zurücksetzen von Ledger Live löscht Ihren Swap-Transaktionsverlauf für alle Ihre Konten."
+    "warning" : "Das Zurücksetzen von Ledger Live löscht den Swap-Transaktionsverlauf für alle deine Konten."
   },
   "graph" : {
     "week" : "1W",
@@ -1502,20 +1506,20 @@
   },
   "buyDevice" : {
     "0" : {
-      "title" : "Es ist Ihr Geld. Besitzen Sie es.",
-      "desc" : "Übernehmen Sie Verantwortung und erhalten Sie die Freiheit, Ihre Kryptos selbst zu verwalten."
+      "title" : "Es ist dein Geld. Besitze es.",
+      "desc" : "Übernimm Verantwortung und erhalte die Freiheit, deine Kryptos selbst zu verwalten."
     },
     "1" : {
       "title" : "Zugriff auf DeFi- und NFTs",
       "desc" : "Sichere Interaktion mit unseren bewährten DeFi-Anwendungen direkt über die App."
     },
     "2" : {
-      "title" : "Ihr Zugang zu Web3",
-      "desc" : "Mit Ihrem Ledger-Gerät können Sie die wichtigsten Kryptowährungen bei unseren Anbietern sicher kaufen, verkaufen und umtauschen."
+      "title" : "Dein Zugang zu Web3",
+      "desc" : "Mit deinem Ledger-Gerät kannst du die wichtigsten Kryptowährungen bei unseren Anbietern sicher kaufen, verkaufen und swappen."
     },
     "3" : {
       "title" : "Zertifizierte Sicherheit",
-      "desc" : "Unsere Produkte sind die einzigen von nationalen Cyber-Sicherheitsbehörden zertifizierten Hardware-Wallets - für Ihre Sicherheit."
+      "desc" : "Unsere Produkte sind die einzigen von nationalen Cyber-Sicherheitsbehörden zertifizierten Hardware-Wallets - für deine Sicherheit."
     },
     "title" : "Jeder sollte einen Ledger haben",
     "desc" : "Aus Sicherheitsgründen funktioniert\n Ledger Live nur mit einem Ledger-Gerät.",
@@ -1630,9 +1634,15 @@
       "noDevice" : "Kein Gerät?",
       "buy" : "Kaufen Sie ein {{fullDeviceName}}",
       "terms" : "Durch Fortfahren stimmst du den folgenden Ledger-Bedingungen zu:",
-      "termsLink" : "Allgemeine Geschäftsbedingungen",
+      "termsLink" : "AGBs",
       "privacyLink" : "Datenschutzrichtlinie",
-      "and" : "Hinzu kommt:"
+      "and" : "Außerdem gilt unsere ",
+      "videoTitles" : {
+        "0" : "Eine Wallet, die dich schützt und dir die Kontrolle gibt",
+        "1" : "Tausende Krypto-Assets senden, empfangen, swappen und staken",
+        "2" : "Alle Transaktionen zweifelsfrei bestätigen"
+      },
+      "disclaimer" : "Wenn du fortfährst, stimmst du den <TermsAndConditions>Allgemeinen Geschäftsbedingungen</TermsAndConditions> und der <PrivacyPolicy>Datenschutzrichtlinie</PrivacyPolicy> von Ledger zu. Ledger bietet keinerlei finanzielle Beratung an. Swap- und Staking-Leistungen werden von Dritten erbracht."
     },
     "postWelcomeStep" : {
       "title" : "Los geht's!",
@@ -1812,7 +1822,7 @@
           "0" : {
             "title" : "Nano einschalten",
             "nanoX" : {
-              "label" : "Schalten Sie Ihr Gerät ein, indem Sie die schwarze Taste 1 Sekunde lang drücken."
+              "label" : "Schalte dein Gerät ein, indem du die schwarze Taste 1 Sekunde lang drückst."
             },
             "nanoS" : {
               "label" : "Verbinde dein Gerät zum Einschalten mit dem USB-Anschluss deines Smartphones."
@@ -1841,7 +1851,7 @@
       },
       "pinCode" : {
         "title" : "PIN-Code",
-        "desc" : "Ihr PIN-Code ist die erste Ebene der Sicherheit. Er sichert physisch den Zugang zu Ihrer Nano und Ihren privaten Schlüsseln. Ihr PIN-Code muss 4 bis 8 Ziffern lang sein. Ihr PIN-Code muss 4 bis 8 Ziffern lang sein.",
+        "desc" : "Dein PIN-Code ist die erste Sicherheitsebene. Er sichert physisch den Zugang zu deinem privaten Schlüssel und deiner Nano. Dein PIN-Code muss 4 bis 8 Ziffern lang sein.",
         "checkboxDesc" : "Ich verstehe, dass ich meinen PIN-Code selbst wählen und ihn geheim halten muss.",
         "cta" : "PIN-Code einrichten"
       },
@@ -2014,7 +2024,7 @@
           "0" : {
             "title" : "Nano einschalten",
             "nanoX" : {
-              "label" : "Schalten Sie Ihr Gerät ein, indem Sie die schwarze Taste 1 Sekunde lang drücken."
+              "label" : "Schalte dein Gerät ein, indem du die schwarze Taste 1 Sekunde lang drückst."
             },
             "nanoS" : {
               "label" : "Verbinde dein Gerät zum Einschalten mit dem USB-Anschluss deines Smartphones."
@@ -2047,19 +2057,19 @@
         "checkboxDesc" : "Ich verstehe, dass ich bei Verlust der Wiederherstellungsphrase nicht mehr auf meine Kryptos zugreifen kann, falls ich den Zugang zu meinem Nano verliere.",
         "bullets" : {
           "0" : {
-            "title" : "Schnappen Sie sich Ihre Wiederherstellungsphrase"
+            "title" : "Nimm deine Wiederherstellungsphrase"
           },
           "1" : {
-            "title" : "Wählen Sie die Länge der Wiederherstellungsphrase",
-            "label" : "Ihre Wiederherstellungsphrasen können 12, 18 oder 24 Wörter haben. Sie müssen alle Wörter eingeben, um auf Ihre Kryptos zuzugreifen."
+            "title" : "Wähle die Länge der Wiederherstellungsphrase",
+            "label" : "Deine Wiederherstellungsphrasen können 12, 18 oder 24 Wörter haben. Du musst alle Wörter eingeben, um auf deine Kryptos zuzugreifen."
           },
           "2" : {
             "title" : "Wort 1 eingeben ...",
-            "label" : "Geben Sie die ersten Buchstaben von Wort #1 ein, indem Sie mit der rechten oder linken Taste auswählen. Drücken Sie beide Tasten, um jeden Buchstaben zu bestätigen."
+            "label" : "Gib die ersten Buchstaben von Wort #1 ein, indem du mit der rechten oder linken Taste auswählst. Drücke beide Tasten, um jeden Buchstaben zu bestätigen."
           },
           "3" : {
-            "title" : "Bestätigen Sie Wort 1 ...",
-            "label" : "Wählen Sie Wort 1 aus den Vorschlägen. Drücken Sie zum Bestätigen beide Tasten."
+            "title" : "Bestätige Wort 1 ...",
+            "label" : "Wähle Wort 1 aus den Vorschlägen. Drücke zum Bestätigen beide Tasten."
           },
           "4" : {
             "title" : "Wiederholen Sie dies für alle Wörter!"
@@ -2179,7 +2189,7 @@
       "modal" : {
         "step1" : "Bewahren Sie Ihr Passwort sicher auf. Du solltest es nicht an Andere weitergeben.",
         "step2" : "Bewahre dein Passwort sicher auf. Wenn du es verlierst, musst du Ledger Live zurücksetzen und die Konten noch einmal hinzufügen.",
-        "step3" : "Das Zurücksetzen von Ledger Live hat keine Auswirkungen auf Ihr Krypto-Vermögen."
+        "step3" : "Das Zurücksetzen von Ledger Live hat keine Auswirkungen auf dein Krypto-Guthaben."
       }
     },
     "stepFinish" : {
@@ -2246,7 +2256,7 @@
       "seed" : {
         "title" : "Bitte überprüfen Sie den Inhalt der Box",
         "desc" : "Wenn Ihre {{deviceName}} mit einem PIN-Code oder einer Wiederherstellungsphrase geliefert wurde, ist die Verwendung des Geräts nicht sicher und Sie sollten sich an den Ledger Support wenden.",
-        "warning" : "Verwenden Sie nur eine Wiederherstellungsphrase, die Ihr Gerät angezeigt hat, wenn es eingerichtet wurde",
+        "warning" : "Verwende nur eine Wiederherstellungsphrase, die dein Gerät angezeigt hat, wenn es eingerichtet wurde",
         "continueCTA" : "Weiter",
         "contactSupportCTA" : "Support kontaktieren"
       }
@@ -2713,6 +2723,7 @@
       "LEGACYUNFREEZE" : "Einfrieren aufgehoben",
       "REWARD" : "Beanspruchte Prämie",
       "FEES" : "Gebühren",
+      "PRE_APPROVAL" : "Vorabgenehmigung",
       "OPT_IN" : "Zustimmen",
       "OPT_OUT" : "Ablehnen",
       "CLOSE_ACCOUNT" : "Konto schließen",
@@ -2813,10 +2824,10 @@
   "selectableAccountsList" : {
     "deselectAll" : "Auswahl aufheben",
     "selectAll" : "Alle auswählen",
-    "tokenCount" : "+1 Token",
-    "tokenCount_plural" : "+{{count}} Token",
-    "subaccountCount" : "+1 Unterkonto",
-    "subaccountCount_plural" : "+{{count}} Unterkonten"
+    "tokenCount_one" : "+1 Token",
+    "tokenCount_other" : "+{{count}} Token",
+    "subaccountCount_one" : "+1 Unterkonto",
+    "subaccountCount_other" : "+{{count}} Unterkonten"
   },
   "account" : {
     "subHeader" : {
@@ -3015,25 +3026,25 @@
       "upToDate" : "Synchronisiert",
       "error" : "Fehler",
       "queued" : "Warten auf",
-      "showTokens" : "Zeige {{length}} Token",
-      "showTokens_plural" : "Zeige {{length}} Token",
-      "showSubAccounts" : "{{length}} Unterkonto anzeigen",
-      "showSubAccounts_plural" : "{{length}} Unterkonten anzeigen",
-      "hideTokens" : "Token ausblenden",
-      "hideTokens_plural" : "Token verbergen",
-      "hideSubAccounts" : "Unterkonto ausblenden",
-      "hideSubAccounts_plural" : "Unterkonten ausblenden",
+      "showTokens_one" : "Zeige {{length}} Token",
+      "showTokens_other" : "Zeige {{length}} Token",
+      "showSubAccounts_one" : "{{length}} Unterkonto anzeigen",
+      "showSubAccounts_other" : "{{length}} Unterkonten anzeigen",
+      "hideTokens_one" : "Token ausblenden",
+      "hideTokens_other" : "Token verbergen",
+      "hideSubAccounts_one" : "Unterkonto ausblenden",
+      "hideSubAccounts_other" : "Unterkonten ausblenden",
       "algorand" : {
-        "showTokens" : "Zeige {{length}} ASA",
-        "showTokens_plural" : "Zeige {{length}} ASA",
-        "hideTokens" : "ASA ausblenden",
-        "hideTokens_plural" : "ASA ausblenden"
+        "showTokens_one" : "Zeige {{length}} ASA",
+        "showTokens_other" : "Zeige {{length}} ASA",
+        "hideTokens_one" : "ASA ausblenden",
+        "hideTokens_other" : "ASA ausblenden"
       },
       "stellar" : {
-        "showTokens" : "Vermögenswerte {{length}} anzeigen",
-        "showTokens_plural" : "Vermögenswerte {{length}} anzeigen",
-        "hideTokens" : "Vermögenswerte ausblenden",
-        "hideTokens_plural" : "Vermögenswerte ausblenden"
+        "showTokens_one" : "Vermögenswerte {{length}} anzeigen",
+        "showTokens_other" : "Assets {{length}} anzeigen",
+        "hideTokens_one" : "Vermögenswerte ausblenden",
+        "hideTokens_other" : "Assets ausblenden"
       }
     },
     "noResultsFound" : "Kein Wert gefunden",
@@ -3048,8 +3059,8 @@
   "distribution" : {
     "header" : "Vermögensaufteilung",
     "list" : "Vermögensverteilung ({{count}})",
-    "assets" : "Vermögenswert",
-    "assets_plural" : "Vermögenswerte",
+    "assets_one" : "Asset",
+    "assets_other" : "Assets",
     "total" : "Gesamtguthaben:",
     "listAccount" : "Vermögensverteilung ({{count}})",
     "title" : "Vermögenswerte",
@@ -3210,14 +3221,14 @@
       "title" : "Benachrichtigungen",
       "desc" : "Benachrichtigungen verwalten",
       "disabledNotifications" : {
-        "title" : "Ihre Benachrichtigungen sind deaktiviert",
-        "desc" : "{{platform}} blockiert Benachrichtigungen von Ledger Live. Um Benachrichtigungen auf Ihrem Smartphone zu erhalten, gehen Sie zu den Einstellungen Ihres Geräts, um Benachrichtigungen von Ledger Live zu aktivieren.",
+        "title" : "Deine Benachrichtigungen sind deaktiviert",
+        "desc" : "{{platform}} blockiert Benachrichtigungen von Ledger Live. Um Benachrichtigungen auf deinem Smartphone zu erhalten, gehe zu den Einstellungen deines Geräts, um Benachrichtigungen von Ledger Live zu aktivieren.",
         "turnOnNotif" : "Benachrichtigungen aktivieren",
         "goToSettings" : "Gehen Sie zu Systemeinstellungen"
       },
       "allowed" : {
         "title" : "Benachrichtigungen zulassen",
-        "desc" : "Erhalten Sie Benachrichtigungen über Ihre Krypto-Werte, Markttrends und mehr"
+        "desc" : "Erhalte Benachrichtigungen über deine Krypto-Werte, Markttrends und mehr"
       },
       "transactions" : {
         "title" : "Transaktionen",
@@ -3243,7 +3254,7 @@
         "title" : "Preisalarme",
         "desc" : "Legen Sie Preisalarme für Ihre Lieblingscoins fest, damit Sie keine Marktbewegung verpassen"
       },
-      "disclaimer" : "Ihre Daten und Ihr Datenschutz sind uns bei Ledger wichtig. Die gesammelten Daten werden niemals mit unseren Partnern geteilt"
+      "disclaimer" : "Deine Daten und dein Datenschutz sind uns bei Ledger wichtig. Die gesammelten Daten werden niemals mit unseren Partnern geteilt"
     },
     "help" : {
       "title" : "Hilfe",
@@ -3272,7 +3283,7 @@
       "provider" : "Die experimentelle Einstellung „My Ledger provider ({{forcedProvider}})“ zeigt möglicherweise nicht freigegebene Betriebssysteme und Apps an, was zu Kompatibilitätsproblemen führen kann. Sie können sie in den Einstellungen deaktivieren.",
       "providerDevMode" : "Die experimentellen Einstellungen „My Ledger provider ({{forcedProvider}})“ und „Developer mode“ zeigen möglicherweise nicht freigegebene Betriebssysteme und Apps an, was zu Kompatibilitätsproblemen führen kann. Sie können sie daher in den Einstellungen deaktivieren.",
       "devMode" : "Die experimentelle Einstellung „Developer mode“ zeigt möglicherweise nicht freigegebene Betriebssysteme und Apps an, was zu Kompatibilitätsproblemen führen kann. Sie können sie daher in den Einstellungen deaktivieren.",
-      "providerCTA" : "Gehen Sie zu Einstellungen",
+      "providerCTA" : "Gehe zu Einstellungen",
       "experimentalFeatures" : {
         "experimentalIntegrations" : {
           "title" : "Experimentelle Integrationen",
@@ -3433,6 +3444,17 @@
       "shareAddress" : "Adresse teilen",
       "addressCopied" : "Adresse in Zwischenablage kopiert",
       "taprootWarning" : "Stellen Sie sicher, dass der Absender taproot unterstützt",
+      "connectToNoah" : "Du wirst mit Noah verbunden",
+      "menu" : {
+        "crypto" : {
+          "title" : "Von einer Kryptoadresse",
+          "description" : "Lade deine Wallet mit beliebigen Kryptos auf."
+        },
+        "fiat" : {
+          "title" : "Von einem Bankkonto",
+          "description" : "Lade USDC per EUR- oder USD-Banküberweisung auf. Erfordert KYC-Verfahren."
+        }
+      },
       "memoTag" : {
         "link" : "Brauchst du ein Tag/Memo?",
         "title" : "Brauchst du ein Tag/Memo?",
@@ -3445,8 +3467,8 @@
       },
       "selectNetwork" : {
         "title" : "Wähle das Netzwerk für die gewählte Kryptowährung aus",
-        "account" : "{{count}} Konto",
-        "account_plural" : "{{count}} Konten",
+        "account_one" : "{{count}} Konto",
+        "account_other" : "{{count}} Konten",
         "subtitle" : "Dieses muss mit dem Netzwerk identisch sein, das auf der Wallet oder an der Börse für die Übertragung der Kryptowährung ausgewählt wurde.",
         "bannerTitle" : "Vergewissere dich, dass du das richtige Netzwerk auswählst. So funktioniert es.",
         "depositFromCexBannerTitle" : "Kryptos von deinem Coinbase-Konto einzahlen"
@@ -3463,8 +3485,8 @@
       "addAccount" : {
         "title" : "Auf vorhandenes Konto wird geprüft …",
         "subtitle" : "Es wird geprüft, ob du bereits ein Konto für {{currencyName}} auf der Blockchain hast.",
-        "foundAccount" : "{{count}} Konto gefunden",
-        "foundAccount_plural" : "{{count}} Konten gefunden",
+        "foundAccount_one" : "{{count}} Konto gefunden",
+        "foundAccount_other" : "{{count}} Konten gefunden",
         "stopSynchronization" : "Synchronisierung stoppen",
         "addingAccount" : "Keine Konten gefunden. Neues Konto für {{currencyName}} wird erstellt …"
       },
@@ -3636,7 +3658,7 @@
           "disclaimer" : {
             "title" : "Allgemeinen Geschäftsbedingungen",
             "desc" : "Indem ich auf \"Akzeptieren\" klicke, erkenne ich an und akzeptiere, dass für diesen Dienst ausschließlich die Allgemeinen Geschäftsbedingungen von <0>{{provider}}</0> gelten.",
-            "tos" : "Allgemeine Geschäftsbedingungen",
+            "tos" : "AGBs",
             "accept" : "Akzeptieren",
             "reject" : "Schließen"
           }
@@ -3701,9 +3723,9 @@
         "to" : "An",
         "loading" : "Lade Daten...",
         "disclaimer" : {
-          "title" : "Allgemeine Geschäftsbedingungen",
+          "title" : "AGBs",
           "desc" : "Indem ich auf „Akzeptieren“ klicke, erkenne ich an und akzeptiere, dass für diesen Dienst ausschließlich die Allgemeinen Geschäftsbedingungen von {{providerName}} gelten.",
-          "tos" : "Allgemeine Geschäftsbedingungen",
+          "tos" : "AGBs",
           "accept" : "Akzeptieren"
         },
         "notAvailable" : {
@@ -3766,12 +3788,16 @@
         "apt_description" : "Zum Swappen von Aptos müsstest du ein anderes kompatibles Ledger-Gerät verwenden, z. B. eine Ledger Nano S Plus™, eine Ledger Nano X™, eine Ledger Flex™ oder eine Ledger Stax™.",
         "cosmos_title" : "Ledger Nano S™ unterstützt das Swappen von Cosmos nicht",
         "cosmos_description" : "Zum Swappen von Cosmos müsstest du ein anderes kompatibles Ledger-Gerät verwenden, z. B. eine Ledger Nano S Plus™, eine Ledger Nano X™, eine Ledger Flex™ oder eine Ledger Stax™.",
+        "hedera_title" : "Ledger Nano S™ unterstützt das Swappen von Hedera nicht",
+        "hedera_description" : "Zum Swappen von Hedera musst du ein anderes kompatibles Ledger-Gerät verwenden, z. B. eine Ledger Nano S Plus™, eine Ledger Nano X™, eine Ledger Flex™ oder eine Ledger Stax™.",
         "osmo_title" : "Ledger Nano S™ unterstützt das Swappen von Osmosis nicht",
         "osmo_description" : "Zum Swappen von Osmosis musst du ein anderes kompatibles Ledger-Gerät verwenden, z. B. eine Ledger Nano S Plus™, eine Ledger Nano X™, eine Ledger Flex™ oder eine Ledger Stax™.",
         "dydx_title" : "Ledger Nano S™ unterstützt das Swappen von dYdX nicht",
         "dydx_description" : "Zum Swappen von dYdX musst du ein anderes kompatibles Ledger-Gerät verwenden, z. B. eine Ledger Nano S Plus™, eine Ledger Nano X™, eine Ledger Flex™ oder eine Ledger Stax™.",
         "sui_title" : "Die Ledger Nano S™ unterstützt das Swappen von Sui nicht",
-        "sui_description" : "Zum Swappen von Sui kannst du jedes sonstige kompatible Ledger-Gerät nutzen, z. B. eine Ledger Nano S Plus™, eine Ledger Nano X™, eine Ledger Flex™ oder eine Ledger Stax™."
+        "sui_description" : "Zum Swappen von Sui kannst du jedes sonstige kompatible Ledger-Gerät nutzen, z. B. eine Ledger Nano S Plus™, eine Ledger Nano X™, eine Ledger Flex™ oder eine Ledger Stax™.",
+        "kaspa_title" : "Ledger Nano S™ unterstützt das Swappen von Kaspa nicht",
+        "kaspa_description" : "Zum Swappen von Kaspa musst du ein anderes kompatibles Ledger-Gerät verwenden, z. B. eine Ledger Nano S Plus™, eine Ledger Nano X™, eine Ledger Flex™ oder eine Ledger Stax™."
       }
     },
     "lending" : {
@@ -3893,10 +3919,10 @@
           "stepRange" : "Schritt {{currentStep}} von {{totalSteps}}"
         },
         "selectAccount" : {
-          "enabledAccountsAmount" : "Sie haben {{number}} -Konto, das {{amount}} genehmigt hat",
-          "enabledAccountsAmount_plural" : "Sie haben {{number}} Konten, die {{amount}} genehmigt haben",
-          "enabledAccountsNoLimit" : "Sie haben {{number}} Konto, das eine unbegrenzte Menge von {{ currency }} genehmigt hat",
-          "enabledAccountsNoLimit_plural" : "Sie haben {{number}} Konten, die eine unbegrenzte Menge von {{ currency }} genehmigt haben",
+          "enabledAccountsAmount_one" : "Du hast {{number}} Konto mit freigegebenen {{amount}}.",
+          "enabledAccountsAmount_other" : "Du hast {{number}} Konten mit freigegebenen {{amount}}.",
+          "enabledAccountsNoLimit_one" : "Du hast {{number}} Konto mit einer unbegrenzten Menge freigegebener {{ currency }}.",
+          "enabledAccountsNoLimit_other" : "Du hast {{number}} Konten mit einer unbegrenzten Menge freigegebener {{ currency }}.",
           "noEnabledAccounts" : "Sie müssen ein Konto genehmigen, bevor Sie einen Kredit vergeben können."
         },
         "enable" : {
@@ -4003,7 +4029,7 @@
         "header" : "QR-Code scannen",
         "title" : "Kamera einschalten",
         "desc" : "Bitte aktivieren Sie die Kamera in den Einstellungen, um QR-Codes zu scannen.",
-        "buttonTitle" : "Gehen Sie zu Einstellungen"
+        "buttonTitle" : "Gehe zu Einstellungen"
       }
     },
     "stepperHeader" : {
@@ -4287,8 +4313,8 @@
       }
     },
     "imported" : "Vermögenswert erfolgreich hinzugefügt",
-    "added" : "Konto zu deinem Portfolio hinzugefügt",
-    "added_plural" : "{{count}} Konten wurden deinem Portfolio hinzugefügt",
+    "added_one" : "Konto zu deinem Portfolio hinzugefügt",
+    "added_other" : "{{count}} Konten wurden deinem Portfolio hinzugefügt",
     "sections" : {
       "importable" : {
         "title" : "Vorhandenes Konto hinzufügen"
@@ -4354,8 +4380,8 @@
       "whichAddressType" : "So wählst du einen Adresstyp aus",
       "sections" : {
         "importable" : {
-          "title" : "Wir haben {{count}} Konto gefunden",
-          "title_plural" : "Wir haben {{count}} Konten gefunden"
+          "title_one" : "Wir haben {{count}} Konto gefunden",
+          "title_other" : "Wir haben {{count}} Konten gefunden"
         },
         "creatable" : {
           "title" : "Neues Konto"
@@ -4397,8 +4423,8 @@
     "outdated" : "App-Version veraltet",
     "outdatedDesc" : "Für die {{appName}}-App auf Ihrem Gerät ist ein wichtiges Update verfügbar. Wechseln Sie zu My Ledger, um sie zu aktualisieren.",
     "quitApp" : "Beenden Sie die Anwendung auf Ihrem Gerät",
-    "appNotInstalled" : "Bitte installieren Sie die {{appName}} App",
-    "appNotInstalled_plural" : "Bitte installieren Sie die {{appName}} Apps",
+    "appNotInstalled_one" : "Bitte installiere die {{appName}}-App",
+    "appNotInstalled_other" : "Bitte installiere die {{appName}}-Apps",
     "useAnotherDevice" : "Anderes Gerät verwenden",
     "deviceNotOnboarded" : {
       "title" : "Ihr Ledger ist noch nicht einsatzbereit",
@@ -4553,8 +4579,8 @@
   },
   "RemoveDevice" : {
     "button" : {
-      "title" : "Gerät {{nbDevices}} entfernen",
-      "title_plural" : "Geräte {{nbDevices}} entfernen"
+      "title_one" : "Gerät {{nbDevices}} entfernen",
+      "title_other" : "Geräte {{nbDevices}} entfernen"
     }
   },
   "manager" : {
@@ -4562,7 +4588,7 @@
     "title" : "My Ledger",
     "selectDevice" : {
       "title" : "Geräte",
-      "addALedger" : "Ein Ledger hinzufügen",
+      "addALedger" : "Eine Ledger hinzufügen",
       "addWithBluetooth" : "Mit Bluetooth hinzufügen",
       "addNewCTA" : "Neu hinzufügen",
       "showAllCTA" : "Alle {{count}} Ledger-Geräte anzeigen",
@@ -4623,16 +4649,16 @@
       "title" : "Speicher",
       "used" : "Verwendet",
       "genuine" : "Ihr Gerät ist echt",
-      "appsInstalled" : "<0>{{number}}</0>App",
-      "appsInstalled_plural" : "<0>{{number}}</0>Apps",
+      "appsInstalled_one" : "<0>{{number}}</0>App",
+      "appsInstalled_other" : "<0>{{number}}</0>Apps",
       "storageAvailable" : "verfügbar",
       "noFreeSpace" : "Kein Speicher mehr frei",
       "appsToUpdate" : "{{number}} App-Update",
-      "appsToUpdate_plural" : "{{number}} App-Updates"
+      "appsToUpdate_other" : "<0>{{number}}<0> Updates"
     },
     "installSuccess" : {
       "title" : "App erfolgreich installiert",
-      "title_plural" : "Apps erfolgreich installiert",
+      "title_other" : "Apps erfolgreich installiert",
       "notSupported" : "App erfolgreich installiert, erfahren Sie mehr über die installierten Apps auf unserer Website.",
       "manageAccount" : "Konten hinzufügen",
       "learnMore" : "Weitere Informationen",
@@ -4665,7 +4691,7 @@
         "desc" : "Bitte warten Sie, bis die {{appName}} App installiert ist",
         "button" : "Installiere...",
         "queued" : "In der Warteschlange",
-        "button_plural" : "Installiere... {{progressPercentage}}%"
+        "button_other" : "Installiere... {{progressPercentage}}%"
       },
       "done" : {
         "title" : "App erfolgreich installiert",
@@ -4680,8 +4706,8 @@
       "continueInstall" : "Installieren Sie Apps"
     },
     "update" : {
-      "title" : "{{number}} App-Update",
-      "title_plural" : "{{number}} App-Updates",
+      "title_one" : "{{number}} App-Update",
+      "title_other" : "{{number}} App-Updates",
       "step" : "Aktualisiere Schritt {{step}}:",
       "updateWarn" : "Beenden Sie My Ledger nicht, solange die Aktualisierung noch läuft.",
       "progress" : "Alle aktualisieren ...",
@@ -4701,7 +4727,7 @@
         "title" : "{{appName}} auf Ihrem {{productName}} erfolgreich deinstalliert"
       },
       "dependency" : {
-        "title" : "Andere Apps benötigen die {{app}} App",
+        "title_one" : "Andere Apps benötigen die {{app}} App",
         "showAll" : "Zu deinstallierende Apps anzeigen",
         "description" : "Apps auf Ihrem Gerät, die die {{app}}-App benötigen, werden ebenfalls deinstalliert.",
         "description_one" : "Einige Apps sind von der {{app}} App abhängig.",
@@ -6716,11 +6742,11 @@
     "changeValidator" : "Validator ändern",
     "endDelegation" : "Delegierung beenden",
     "durationForDays0" : "Jetzt gerade",
-    "durationForDays" : "Für einen Tag",
-    "durationForDays_plural" : "Für {{count}} Tage",
+    "durationForDays_one" : "Für einen Tag",
+    "durationForDays_other" : "Für {{count}} Tage",
     "durationDays0" : "Jetzt gerade",
-    "durationDays" : "1 Tag",
-    "durationDays_plural" : "{{count}} Tage",
+    "durationDays_one" : "1 Tag",
+    "durationDays_other" : "{{count}} Tage",
     "selectValidatorTitle" : "Validator auswählen",
     "started" : {
       "title" : "Belohnungen verdienen",
@@ -6815,7 +6841,7 @@
     "switchLabel" : "Ich habe die <1>Nutzungsbedingungen</1> gelesen und bin damit einverstanden",
     "switchLabelFull" : "Ich habe die Datenschutzrichtlinie gelesen und stimme ihr zu.",
     "cta" : "Zur Ledger-App",
-    "service" : "Allgemeine Geschäftsbedingungen",
+    "service" : "AGBs",
     "subTitle" : "Bitte nimm dir etwas Zeit, um unsere Nutzungsbedingungen und die Datenschutzrichtlinie zu lesen"
   },
   "updatedTerms" : {
@@ -6924,20 +6950,20 @@
         "desc" : "Wir informieren dich, wenn sich etwas ergibt."
       },
       "time" : {
-        "second" : "Vor 1 Sekunde",
-        "second_plural" : "vor {{count}} Sekunden",
-        "minute" : "Vor 1 Minute",
-        "minute_plural" : "Vor {{count}} Minuten",
-        "hour" : "Vor 1 Stunde",
-        "hour_plural" : "vor {{count}} Stunden",
-        "day" : "Vor 1 Tag",
-        "day_plural" : "vor {{count}} Tagen",
-        "week" : "Vor 1 Woche",
-        "week_plural" : "Vor {{count}} Wochen",
-        "month" : "Vor 1 Monat",
-        "month_plural" : "Vor {{count}} Monaten",
-        "year" : "Vor 1 Jahr",
-        "year_plural" : "Vor {{count}} Jahren"
+        "second_one" : "Vor 1 Sekunde",
+        "second_other" : "vor {{count}} Sekunden",
+        "minute_one" : "Vor 1 Minute",
+        "minute_other" : "Vor {{count}} Minuten",
+        "hour_one" : "Vor 1 Stunde",
+        "hour_other" : "vor {{count}} Stunden",
+        "day_one" : "Vor 1 Tag",
+        "day_other" : "vor {{count}} Tagen",
+        "week_one" : "Vor 1 Woche",
+        "week_other" : "Vor {{count}} Wochen",
+        "month_one" : "Vor 1 Monat",
+        "month_other" : "Vor {{count}} Monaten",
+        "year_one" : "Vor 1 Jahr",
+        "year_other" : "Vor {{count}} Jahren"
       }
     },
     "status" : {
@@ -7191,16 +7217,18 @@
   "asset" : {
     "title" : "Ihre {{assetName}}",
     "accountsSection" : {
-      "title" : "Ihre {{currencyName}}-Konten"
+      "title_one" : "Dein {{currencyName}}-Konto",
+      "title_other" : "Deine {{currencyName}}-Konten"
     }
   },
   "customImage" : {
     "title" : "Bild für Bildschirmsperre",
     "change" : "Ändern",
     "drawer" : {
+      "title" : "Individueller Sperrbildschirm",
       "options" : {
-        "uploadFromPhone" : "Aus meiner Bildergalerie auswählen",
-        "remove" : "Aktuelles Bild entfernen"
+        "uploadFromPhone" : "Bild wechseln",
+        "remove" : "Sperrbildschirm löschen"
       }
     },
     "toastRemove" : "Bild für Sperrbildschirm entfernt",
@@ -7451,7 +7479,7 @@
             "balance" : "Dein Portfolio",
             "personnalInfos" : "Deine personenbezogenen Daten (z. B. deinen Namen oder deine E-Mail-Adresse)."
           },
-          "moreOptions" : "Voreinstellungen verwalten",
+          "moreOptions" : "Einstellungen verwalten",
           "ctas" : {
             "refuse" : "Alle ablehnen",
             "accept" : "Alle annehmen"
@@ -7463,7 +7491,7 @@
         }
       },
       "details" : {
-        "title" : "Voreinstellungen verwalten",
+        "title" : "Einstellungen verwalten",
         "analytics" : {
           "title" : "Analysen",
           "description" : "Zum Messen der Leistung von Ledger Live und zum Verbessern der App und des Nutzungserlebnisses stimme ich der Erfassung meiner Daten und insbesondere von Seitenbesuchen und Klicks zu"
@@ -7595,8 +7623,8 @@
       },
       "synchronizedInstances" : {
         "cta" : "Verwalten",
-        "title" : "{{count}} Ledger Live-App synchronisiert",
-        "title_plural" : "{{count}} Ledger Live-Apps synchronisiert",
+        "title_one" : "{{count}} Ledger Live-App synchronisiert",
+        "title_other" : "{{count}} Ledger Live-Apps synchronisiert",
         "error" : "Instanzen",
         "unsecuredError" : {
           "title" : "Verbinde dasselbe Ledger-Gerät, das du für die Aktivierung von Ledger Sync verwendet hast",
@@ -7767,8 +7795,8 @@
     },
     "selectNetwork" : {
       "title" : "Blockchain-Netzwerk auswählen, zu dem der Vermögenswert gehört",
-      "detectedAccounts" : "{{count}} Konto (erkannt)",
-      "detectedAccounts_plural" : "{{count}} Konten (erkannt)"
+      "detectedAccounts_one" : "{{count}} Konto (erkannt)",
+      "detectedAccounts_other" : "{{count}} Konten (erkannt)"
     }
   },
   "emptyList" : {
@@ -7800,18 +7828,18 @@
     "ath" : "Allzeithoch",
     "atl" : "Allzeittief",
     "timeAgo" : {
-      "years" : "(vor {{count}} Jahr)",
-      "years_plural" : "(vor {{count}} Jahren)",
-      "months" : "(vor {{count}} Monat)",
-      "months_plural" : "(vor {{count}} Monaten)",
-      "days" : "(vor {{count}} Tag)",
-      "days_plural" : "(vor {{count}} Tagen)",
-      "hours" : "(vor {{count}} Stunde)",
-      "hours_plural" : "(vor {{count}} Stunden)",
-      "minutes" : "(vor {{count}} Minute)",
-      "minutes_plural" : "(vor {{count}} Minuten)",
-      "seconds" : "(vor {{count}} Sekunde)",
-      "seconds_plural" : "(vor {{count}} Sekunden)"
+      "years_one" : "(vor {{count}} Jahr)",
+      "years_other" : "(vor {{count}} Jahren)",
+      "months_one" : "(vor {{count}} Monat)",
+      "months_other" : "(vor {{count}} Monaten)",
+      "days_one" : "(vor {{count}} Tag)",
+      "days_other" : "(vor {{count}} Tagen)",
+      "hours_one" : "(vor {{count}} Stunde)",
+      "hours_other" : "(vor {{count}} Stunden)",
+      "minutes_one" : "(vor {{count}} Minute)",
+      "minutes_other" : "(vor {{count}} Minuten)",
+      "seconds_one" : "(vor {{count}} Sekunde)",
+      "seconds_other" : "(vor {{count}} Sekunden)"
     },
     "performance" : "Performance",
     "low" : "Niedrig",
@@ -7846,8 +7874,8 @@
     "selectAccount" : "Konto auswählen",
     "searchPlaceholder" : "Suche",
     "emptyAssetList" : "Keine Assets gefunden",
-    "accountCount" : "{{count}} Konto",
-    "accountCount_plural" : "{{count}} Konten",
+    "accountCount_one" : "{{count}} Konto",
+    "accountCount_other" : "{{count}} Konten",
     "errors" : {
       "title" : "Verbindung fehlgeschlagen",
       "backend" : "Bei uns ist ein Problem aufgetreten. Versuche es bitte später noch einmal.",
@@ -7935,6 +7963,15 @@
     "default" : {
       "title" : "Etwas ist schief gelaufen",
       "description" : "Bitte versuche es noch einmal oder wende dich an im Zweifelsfall den Ledger-Kundenservice"
+    }
+  },
+  "canton" : {
+    "onboard" : {
+      "account" : "Konto",
+      "authorize" : "Autorisieren",
+      "preapprove" : "Konto erfolgreich hinzugefügt",
+      "validator" : "Ledger Validator",
+      "title" : "Eingehende Zahlungen automatisch akzeptieren"
     }
   }
 }
