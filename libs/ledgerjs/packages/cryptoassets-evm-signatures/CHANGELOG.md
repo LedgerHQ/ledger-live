@@ -1,5 +1,12 @@
 # @ledgerhq/cryptoassets-evm-signatures
 
+## 13.6.5
+
+### Patch Changes
+
+- Updated dependencies [[`f1f3845`](https://github.com/LedgerHQ/ledger-live/commit/f1f3845942e4cbce9c585dc65f6170ddbc319f19)]:
+  - @ledgerhq/live-env@2.19.0
+
 ## 13.6.5-next.0
 
 ### Patch Changes

@@ -1,5 +1,14 @@
 # @ledgerhq/live-signer-solana
 
+## 0.5.8
+
+### Patch Changes
+
+- Updated dependencies [[`3691bed`](https://github.com/LedgerHQ/ledger-live/commit/3691bed5f5706f010037f54e2396ad71e48cf208), [`a9aacdb`](https://github.com/LedgerHQ/ledger-live/commit/a9aacdb330700f0a294833f7d77de17f179229b2), [`03af552`](https://github.com/LedgerHQ/ledger-live/commit/03af552b621e19e31747a65b1870dfe8d3bb005b), [`565da80`](https://github.com/LedgerHQ/ledger-live/commit/565da807b1ebbfc830fd0e47b3d8856f88d410a6), [`f077f72`](https://github.com/LedgerHQ/ledger-live/commit/f077f7205667f4f7b82ae7584e80964c5ac7601a), [`bc6e500`](https://github.com/LedgerHQ/ledger-live/commit/bc6e500bfd0f47bfbee2fdbe65f9a42e02793255)]:
+  - @ledgerhq/ledger-cal-service@1.7.0
+  - @ledgerhq/coin-solana@0.35.0
+  - @ledgerhq/ledger-trust-service@0.4.0
+
 ## 0.5.8-next.1
 
 ### Patch Changes

@@ -1,5 +1,11 @@
 # @ledgerhq/live-env
 
+## 2.19.0
+
+### Minor Changes
+
+- [#12159](https://github.com/LedgerHQ/ledger-live/pull/12159) [`f1f3845`](https://github.com/LedgerHQ/ledger-live/commit/f1f3845942e4cbce9c585dc65f6170ddbc319f19) Thanks [@hhumphrey-ledger](https://github.com/hhumphrey-ledger)! - Add providerSessionId to noah manifest url
+
 ## 2.19.0-next.0
 
 ### Minor Changes
