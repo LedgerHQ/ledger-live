@@ -1,10 +1,9 @@
 import { BigNumber } from "bignumber.js";
 import { plot } from "asciichart";
 import invariant from "invariant";
-import { from } from "rxjs";
+import { from, Observable } from "rxjs";
 import { reduce, concatMap, map } from "rxjs/operators";
 import type { Account, AccountLike, PortfolioRange } from "@ledgerhq/types-live";
-import type { Currency } from "@ledgerhq/types-cryptoassets";
 import { flattenAccounts } from "@ledgerhq/live-common/account/index";
 import { getPortfolio, getRanges } from "@ledgerhq/live-countervalues/portfolio";
 import { formatCurrencyUnit } from "@ledgerhq/live-common/currencies/index";
@@ -16,7 +15,7 @@ import {
   inferTrackingPairForAccounts,
 } from "@ledgerhq/live-countervalues/logic";
 import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
-import { findCurrencyByTicker } from "@ledgerhq/live-countervalues/findCurrencyByTicker";
+import { findCryptoCurrencyByTicker, findFiatCurrencyByTicker } from "@ledgerhq/cryptoassets/index";
 
 function asPortfolioRange(period: string): PortfolioRange {
   const ranges = getRanges();
@@ -54,90 +53,119 @@ export default {
     },
   ],
   job: (opts: PortfolioJobOpts) => {
-    const countervalue = findCurrencyByTicker(opts.countervalue || "USD");
-    invariant(countervalue, "currency not found with ticker=" + opts.countervalue);
-    return scan(opts).pipe(
-      reduce((all, a) => all.concat(a), [] as Account[]),
-      concatMap(accounts =>
-        from(
-          loadCountervalues(initialState, {
-            trackingPairs: inferTrackingPairForAccounts(accounts, countervalue as Currency),
-            autofillGaps: !opts.disableAutofillGaps,
-            refreshRate: 60000,
-            marketCapBatchingAfterRank: 20,
-          }),
-        ).pipe(
-          map(state => {
-            const all = flattenAccounts(accounts);
-            const period = asPortfolioRange(opts.period || "month");
-            const unit = (countervalue as Currency).units[0];
+    return new Observable(observer => {
+      (async () => {
+        try {
+          const countervalueResult =
+            findCryptoCurrencyByTicker(opts.countervalue || "USD") ||
+            findFiatCurrencyByTicker(opts.countervalue || "USD");
+          invariant(countervalueResult, "currency not found with ticker=" + opts.countervalue);
+          if (!countervalueResult)
+            throw new Error("currency not found with ticker=" + opts.countervalue);
+          const countervalue = countervalueResult;
 
-            function render(title: string, accounts: AccountLike[]) {
-              const portfolio = getPortfolio(accounts, period, state, countervalue as Currency);
-              const balance = portfolio.balanceHistory[portfolio.balanceHistory.length - 1].value;
-              return (
-                title +
-                " " +
-                formatCurrencyUnit(unit, new BigNumber(balance), {
-                  showCode: true,
-                  disableRounding: true,
-                }) +
-                (portfolio.countervalueChange.percentage
-                  ? " ::: " +
-                    "on a " +
-                    period +
-                    " period: " +
-                    Math.round(portfolio.countervalueChange.percentage * 100).toString() +
-                    "% (" +
-                    formatCurrencyUnit(unit, new BigNumber(portfolio.countervalueChange.value), {
-                      showCode: true,
-                    }) +
-                    ")"
-                  : "") +
-                "\n" +
-                plot(
-                  portfolio.balanceHistory.map(h =>
-                    new BigNumber(h.value).div(new BigNumber(10).pow(unit.magnitude)).toNumber(),
-                  ),
-                  {
-                    height: 10,
-                    format: (value: BigNumber.Value) =>
-                      formatCurrencyUnit(
-                        unit,
-                        new BigNumber(value).times(new BigNumber(10).pow(unit.magnitude)),
-                        {
+          scan(opts)
+            .pipe(
+              reduce((all, a) => all.concat(a), [] as Account[]),
+              concatMap(accounts =>
+                from(
+                  loadCountervalues(initialState, {
+                    trackingPairs: inferTrackingPairForAccounts(accounts, countervalue),
+                    autofillGaps: !opts.disableAutofillGaps,
+                    refreshRate: 60000,
+                    marketCapBatchingAfterRank: 20,
+                  }),
+                ).pipe(
+                  map(state => {
+                    const all = flattenAccounts(accounts);
+                    const period = asPortfolioRange(opts.period || "month");
+                    const unit = countervalue.units[0];
+
+                    function render(title: string, accounts: AccountLike[]) {
+                      const portfolio = getPortfolio(accounts, period, state, countervalue);
+                      const balance =
+                        portfolio.balanceHistory[portfolio.balanceHistory.length - 1].value;
+                      return (
+                        title +
+                        " " +
+                        formatCurrencyUnit(unit, new BigNumber(balance), {
                           showCode: true,
                           disableRounding: true,
-                        },
-                      ).padStart(20),
-                  },
-                )
-              );
-            }
+                        }) +
+                        (portfolio.countervalueChange.percentage
+                          ? " ::: " +
+                            "on a " +
+                            period +
+                            " period: " +
+                            Math.round(portfolio.countervalueChange.percentage * 100).toString() +
+                            "% (" +
+                            formatCurrencyUnit(
+                              unit,
+                              new BigNumber(portfolio.countervalueChange.value),
+                              {
+                                showCode: true,
+                              },
+                            ) +
+                            ")"
+                          : "") +
+                        "\n" +
+                        plot(
+                          portfolio.balanceHistory.map(h =>
+                            new BigNumber(h.value)
+                              .div(new BigNumber(10).pow(unit.magnitude))
+                              .toNumber(),
+                          ),
+                          {
+                            height: 10,
+                            format: (value: BigNumber.Value) =>
+                              formatCurrencyUnit(
+                                unit,
+                                new BigNumber(value).times(new BigNumber(10).pow(unit.magnitude)),
+                                {
+                                  showCode: true,
+                                  disableRounding: true,
+                                },
+                              ).padStart(20),
+                          },
+                        )
+                      );
+                    }
 
-            let str = "";
-            accounts.forEach(top => {
-              str += render("Account " + getDefaultAccountName(top), [top]);
-              str += "\n";
+                    let str = "";
+                    accounts.forEach(top => {
+                      str += render("Account " + getDefaultAccountName(top), [top]);
+                      str += "\n";
 
-              if (top.subAccounts) {
-                top.subAccounts.forEach(sub => {
-                  str += render(
-                    "Account " + getDefaultAccountName(top) + " > " + getDefaultAccountName(sub),
-                    [sub],
-                  ).replace(/\n/s, "  \n");
-                  str += "\n";
-                });
-              }
+                      if (top.subAccounts) {
+                        top.subAccounts.forEach(sub => {
+                          str += render(
+                            "Account " +
+                              getDefaultAccountName(top) +
+                              " > " +
+                              getDefaultAccountName(sub),
+                            [sub],
+                          ).replace(/\n/s, "  \n");
+                          str += "\n";
+                        });
+                      }
 
-              str += "\n";
-            });
-            str += "\n";
-            str += render("SUMMARY OF PORTFOLIO: " + all.length + " accounts, total of ", accounts);
-            return str;
-          }),
-        ),
-      ),
-    );
+                      str += "\n";
+                    });
+                    str += "\n";
+                    str += render(
+                      "SUMMARY OF PORTFOLIO: " + all.length + " accounts, total of ",
+                      accounts,
+                    );
+                    return str;
+                  }),
+                ),
+              ),
+            )
+            .subscribe(observer);
+        } catch (error) {
+          observer.error(error);
+        }
+      })();
+    });
   },
 };
