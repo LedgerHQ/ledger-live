@@ -55,7 +55,6 @@ export default class ReceivePage {
 
   /**
    * Select a currency by its name (e.g., "Bitcoin", "Ethereum")
-   * Uses the currency name testID
    * @deprecated Prefer selectAssetById() for more reliable selection
    */
   async selectCurrencyByName(currencyName: string) {
@@ -66,7 +65,6 @@ export default class ReceivePage {
 
   /**
    * Select a currency by its ID (e.g., "bitcoin", "ethereum")
-   * Targets the row testID which is unique and reliable
    */
   @Step("Select currency in receive list")
   async selectCurrency(currencyId: string) {
@@ -74,29 +72,20 @@ export default class ReceivePage {
   }
 
   /**
-   * Select an asset by ticker (e.g. "BTC", "ETH", "MATIC")
-   * Uses text matching - works for both cryptocurrencies and tokens
-   * Kept for backward compatibility—prefer selectAssetById()
+   * @deprecated prefer selectAssetById()
    */
-  async selectAsset(ticker: string) {
+  async selectAssetByTicker(ticker: string) {
     const tickerUpper = ticker.toUpperCase();
     await waitForElementByText(tickerUpper);
     await tapByText(tickerUpper);
   }
 
-  /**
-   * Select an asset by currency ID (preferred method)
-   * @param currencyId - The currency.id (e.g., "bitcoin", "ethereum")
-   */
   async selectAssetById(currencyId: string) {
     const rowId = this.currencyRowId(currencyId);
     await waitForElementById(rowId);
     return tapById(rowId);
   }
 
-  /**
-   * Select a network by its ID
-   */
   async selectNetwork(networkId: string) {
     const rowId = this.currencyRowId(networkId);
     await waitForElementById(rowId);
