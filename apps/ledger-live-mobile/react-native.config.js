@@ -1,4 +1,5 @@
 module.exports = {
+  commands: require("@callstack/repack/commands/webpack"),
   assets: [
     "./assets/fonts/",
     "./assets/videos/",

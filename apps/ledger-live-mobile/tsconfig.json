@@ -5,6 +5,8 @@
     "module": "preserve",
     "allowJs": false,
     "checkJs": false,
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
     "jsx": "react-native",
     "lib": ["es2017", "DOM"],
     "types": [

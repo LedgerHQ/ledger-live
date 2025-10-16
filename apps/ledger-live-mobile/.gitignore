@@ -1,3 +1,7 @@
+# Webpack
+.webpack-cache/
+dist/
+
 # OSX
 .DS_Store
 
