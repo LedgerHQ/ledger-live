@@ -14,7 +14,7 @@ import {
   HttpSpeculosDatasource,
 } from "@ledgerhq/device-transport-kit-speculos";
 import { getEnv } from "@ledgerhq/live-env";
-import { DeviceController } from "@ledgerhq/speculos-device-controller";
+import { deviceControllerFactory } from "@ledgerhq/speculos-device-controller";
 
 export type SpeculosHttpTransportOpts = {
   apiPort?: string;
@@ -170,12 +170,12 @@ export default class SpeculosHttpTransport extends Transport {
   };
 
   button = (but: string): Promise<void> => {
-    const deviceController = new DeviceController(this.base);
+    const deviceController = deviceControllerFactory(this.base);
     const input =
       (this.buttonTable as any)[but] ??
       (but === "Ll" ? "left" : but === "Rr" ? "right" : but === "LRlr" ? "both" : but);
     log("speculos-button", "press-and-release", input);
-    return deviceController.press(input as any);
+    return deviceController.button.press(input);
   };
 
   async exchange(apdu: Buffer): Promise<Buffer> {
