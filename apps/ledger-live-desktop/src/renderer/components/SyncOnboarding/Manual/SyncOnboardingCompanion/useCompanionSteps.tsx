@@ -3,6 +3,7 @@ import { DeviceModelId } from "@ledgerhq/devices";
 import { ContinueOnDevice, Flex } from "@ledgerhq/react-ui";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
+import { SeedOriginType } from "@ledgerhq/types-live";
 
 import TrackPage from "~/renderer/analytics/TrackPage";
 import { lastSeenDeviceSelector } from "~/renderer/reducers/settings";
@@ -55,6 +56,7 @@ interface UseCompanionStepsProps {
   isTwoStep: boolean;
   charonSupported?: OnboardingState["charonSupported"];
   charonStatus?: OnboardingState["charonStatus"];
+  seedConfiguration?: SeedOriginType;
 }
 
 function nextStepKey(step: StepKey): StepKey {
@@ -74,6 +76,7 @@ const useCompanionSteps = ({
   charonSupported,
   charonStatus,
   isTwoStep,
+  seedConfiguration,
 }: UseCompanionStepsProps) => {
   const { t } = useTranslation();
   const theme = useTheme();
@@ -197,6 +200,7 @@ const useCompanionSteps = ({
                   }
                   setHeaderLoader={(hasLoader: boolean) => setHasAppLoader(hasLoader)}
                   onComplete={handleInstallRecommendedApplicationComplete}
+                  seedConfiguration={seedConfiguration}
                 />
               ),
             },
@@ -225,6 +229,7 @@ const useCompanionSteps = ({
       handleInstallRecommendedApplicationComplete,
       isTwoStep,
       activeBackground,
+      seedConfiguration,
     ],
   );
 
@@ -237,6 +242,7 @@ const useCompanionSteps = ({
         onComplete={(installedApps?: boolean) =>
           installedApps ? handleInstallRecommendedApplicationComplete() : handleAppStepComplete()
         }
+        seedConfiguration={seedConfiguration}
       />
     ),
     [
@@ -245,6 +251,7 @@ const useCompanionSteps = ({
       deviceToRestore,
       handleInstallRecommendedApplicationComplete,
       handleAppStepComplete,
+      seedConfiguration,
     ],
   );
 

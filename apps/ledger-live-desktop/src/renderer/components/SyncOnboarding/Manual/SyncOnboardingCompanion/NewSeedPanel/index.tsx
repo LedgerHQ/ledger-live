@@ -9,14 +9,28 @@ import {
   onboardingReceiveSuccessSelector,
   setIsOnboardingReceiveFlow,
 } from "~/renderer/reducers/onboarding";
+import { track } from "~/renderer/analytics/segment";
+import { analyticsFlowName } from "../../shared";
+import { SeedOriginType } from "@ledgerhq/types-live";
 
-const NewSeedPanel = ({ handleComplete }: { handleComplete: () => void }) => {
+const NewSeedPanel = ({
+  handleComplete,
+  seedConfiguration,
+}: {
+  handleComplete: () => void;
+  seedConfiguration?: SeedOriginType;
+}) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const isOnboardingReceiveFlow = useSelector(onboardingReceiveFlowSelector);
   const isOnboardingReceiveSuccess = useSelector(onboardingReceiveSuccessSelector);
 
   const handlePressFund = useCallback(() => {
+    track("button_clicked", {
+      button: "Secure my crypto",
+      flow: analyticsFlowName,
+      seedConfiguration,
+    });
     dispatch(
       setIsOnboardingReceiveFlow({
         isFlow: true,
@@ -24,7 +38,12 @@ const NewSeedPanel = ({ handleComplete }: { handleComplete: () => void }) => {
       }),
     );
     dispatch(openModal("MODAL_RECEIVE", {}));
-  }, [dispatch]);
+  }, [dispatch, seedConfiguration]);
+
+  const handleSkip = useCallback(() => {
+    track("button_clicked", { button: "Maybe later", flow: analyticsFlowName, seedConfiguration });
+    handleComplete();
+  }, [handleComplete, seedConfiguration]);
 
   useEffect(() => {
     if (!isOnboardingReceiveFlow && isOnboardingReceiveSuccess) {
@@ -41,20 +60,14 @@ const NewSeedPanel = ({ handleComplete }: { handleComplete: () => void }) => {
   return (
     <Flex flexDirection="column">
       <Flex justifyContent="center" alignItems="center" mb={6} mt={0}>
-        {<NewSeedIllustration />}
+        <NewSeedIllustration />
       </Flex>
 
       <Text variant="bodyLineHeight" color="neutral.c80" textAlign="center" mt={2}>
         {t("syncOnboarding.manual.secureCrypto.description")}
       </Text>
       <Flex pt={8} pb={2} justifyContent="space-between">
-        <Button
-          variant="shade"
-          outline
-          flex={1}
-          onClick={handleComplete}
-          data-testid="skip-cta-button"
-        >
+        <Button variant="shade" outline flex={1} onClick={handleSkip} data-testid="skip-cta-button">
           {t("syncOnboarding.manual.secureCrypto.skipButton")}
         </Button>
         <Flex px={2} />

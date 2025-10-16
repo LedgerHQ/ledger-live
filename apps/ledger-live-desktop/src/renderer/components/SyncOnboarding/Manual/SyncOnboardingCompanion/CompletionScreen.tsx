@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useHistory } from "react-router";
+import { useHistory, useLocation } from "react-router";
 import { Flex } from "@ledgerhq/react-ui";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 import {
@@ -15,6 +15,8 @@ import ApexCompletionView from "./ApexCompletionView";
 import { lastSeenDeviceSelector } from "~/renderer/reducers/settings";
 import { getCurrentDevice } from "~/renderer/reducers/devices";
 import { useRedirectToPostOnboardingCallback } from "~/renderer/hooks/useAutoRedirectToPostOnboarding";
+import TrackPage from "~/renderer/analytics/TrackPage";
+import { analyticsFlowName } from "../shared";
 
 const COMPLETION_SCREEN_TIMEOUT = 6000;
 
@@ -34,7 +36,7 @@ function OnboardingSuccessView({ deviceModelId }: Readonly<{ deviceModelId: Devi
 export default function CompletionScreen() {
   const dispatch = useDispatch();
   const history = useHistory();
-
+  const { state } = useLocation<{ seedConfiguration?: string }>();
   const currentDevice = useSelector(getCurrentDevice);
   const lastSeenDevice = useSelector(lastSeenDeviceSelector);
 
@@ -58,6 +60,11 @@ export default function CompletionScreen() {
 
   return (
     <Flex alignItems="center" justifyContent="center" width="100%">
+      <TrackPage
+        category={`End of onboarding`}
+        flow={analyticsFlowName}
+        seedConfiguration={state?.seedConfiguration}
+      />
       <OnboardingSuccessView deviceModelId={deviceModelId} />
     </Flex>
   );
