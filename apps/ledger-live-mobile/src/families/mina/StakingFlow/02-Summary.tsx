@@ -63,7 +63,7 @@ function StakingSummary({ navigation, route }: Props) {
           <SummaryRow title={t("delegation.validatorAddress")}>
             <CopyLink
               string={transaction.recipient || ""}
-              replacement="Address copied!"
+              replacement={t("mina.copyLinkCopied")}
               style={styles.addressCopy}
             >
               <Text variant="body" color="primary.c80" fontWeight="medium">
