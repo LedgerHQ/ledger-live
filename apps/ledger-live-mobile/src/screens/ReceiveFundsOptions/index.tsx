@@ -10,6 +10,10 @@ import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { isCryptoOrTokenCurrency } from "LLM/utils/isCryptoOrTokenCurrency";
 import { isObject } from "LLM/utils/isObject";
 import QueuedDrawerGorhom from "LLM/components/QueuedDrawer/temp/QueuedDrawerGorhom";
+import { useOpenReceiveDrawer } from "LLM/features/Receive";
+
+// Fiat provider manifest ID for Noah integration
+const FIAT_PROVIDER_MANIFEST_ID = "noah";
 
 type EntryScreens =
   | ScreenName.ReceiveSelectCrypto
@@ -24,13 +28,28 @@ export default function ReceiveFundsOptions(props: EntryScreenProps) {
   const { t } = useTranslation();
   const { navigation } = props;
   const isNavigatingRef = useRef(false);
+  const { handleOpenReceiveDrawer, isModularDrawerEnabled } = useOpenReceiveDrawer({
+    currency: isCryptoOrTokenCurrency(props.route.params?.currency)
+      ? props.route.params?.currency
+      : undefined,
+    sourceScreenName: props.route.name,
+  });
 
   function handleGoToFiat() {
     isNavigatingRef.current = true;
-    navigation.replace(ScreenName.ReceiveProvider, { manifestId: "noah", fromMenu: true });
+    navigation.replace(ScreenName.ReceiveProvider, {
+      manifestId: FIAT_PROVIDER_MANIFEST_ID,
+      fromMenu: true,
+    });
   }
 
   function handleGoToCrypto() {
+    if (isModularDrawerEnabled) {
+      handleClose();
+      handleOpenReceiveDrawer();
+      return;
+    }
+
     isNavigatingRef.current = true;
     typesafeNavigation(props);
   }

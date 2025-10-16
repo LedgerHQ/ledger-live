@@ -87,6 +87,7 @@ export default function useAssetActions({ currency, accounts }: useAssetActionsP
       sourceScreenName: "asset",
       currency,
     });
+  const noah = useFeature("noah");
 
   const actions = useMemo<ActionButtonEvent[]>(() => {
     const isPtxServiceCtaScreensDisabled = !(ptxServiceCtaScreens?.enabled ?? true);
@@ -209,7 +210,14 @@ export default function useAssetActions({ currency, accounts }: useAssetActionsP
                   },
                 },
               ] as const,
-              customHandler: isModularDrawerEnabledReceive ? handleOpenReceiveDrawer : undefined,
+              // We have two features getting enabled at the same time that change the entry point of receive funds
+              // if noah is active that takes precedence ReceiveFundsNavigator is where that gets used -> ReceiveFundsOptions is therefore where the MAD draw will be opened if active
+              // if modular drawer is enabled but noah is not then go there
+              // if neither is enabled we'll go through the old flow
+              customHandler:
+                isModularDrawerEnabledReceive && !noah?.enabled
+                  ? handleOpenReceiveDrawer
+                  : undefined,
             },
             {
               id: "send",
@@ -277,10 +285,11 @@ export default function useAssetActions({ currency, accounts }: useAssetActionsP
     stakeLabel,
     accountCurrency?.ticker,
     route,
-    handleOpenStakeDrawer,
-    handleOpenReceiveDrawer,
-    isModularDrawerEnabledReceive,
     isModularDrawerEnabledStake,
+    handleOpenStakeDrawer,
+    isModularDrawerEnabledReceive,
+    handleOpenReceiveDrawer,
+    noah,
   ]);
 
   return {
