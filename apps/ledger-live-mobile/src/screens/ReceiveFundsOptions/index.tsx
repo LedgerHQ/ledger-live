@@ -10,6 +10,7 @@ import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { isCryptoOrTokenCurrency } from "LLM/utils/isCryptoOrTokenCurrency";
 import { isObject } from "LLM/utils/isObject";
 import QueuedDrawerGorhom from "LLM/components/QueuedDrawer/temp/QueuedDrawerGorhom";
+import { useOpenReceiveDrawer } from "~/newArch/features/Receive";
 
 type EntryScreens =
   | ScreenName.ReceiveSelectCrypto
@@ -24,6 +25,10 @@ export default function ReceiveFundsOptions(props: EntryScreenProps) {
   const { t } = useTranslation();
   const { navigation } = props;
   const isNavigatingRef = useRef(false);
+  const { handleOpenReceiveDrawer, isModularDrawerEnabled } = useOpenReceiveDrawer({
+    currency: props.route.params?.currency,
+    sourceScreenName: props.route.name,
+  });
 
   function handleGoToFiat() {
     isNavigatingRef.current = true;
@@ -31,6 +36,11 @@ export default function ReceiveFundsOptions(props: EntryScreenProps) {
   }
 
   function handleGoToCrypto() {
+    if (isModularDrawerEnabled) {
+      handleOpenReceiveDrawer();
+      return;
+    }
+
     isNavigatingRef.current = true;
     typesafeNavigation(props);
   }
