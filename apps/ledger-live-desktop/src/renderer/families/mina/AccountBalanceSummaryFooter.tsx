@@ -10,7 +10,7 @@ import InfoCircle from "~/renderer/icons/InfoCircle";
 import ToolTip from "~/renderer/components/Tooltip";
 import { MinaFamily } from "./types";
 import { useAccountUnit } from "~/renderer/hooks/useAccountUnit";
-import { CopiableField } from "~/renderer/drawers/NFTViewerDrawer/CopiableField";
+import { CopiableField } from "./CopiableField";
 import { Trans, useTranslation } from "react-i18next";
 
 const Wrapper = styled(Box).attrs(() => ({
@@ -56,7 +56,7 @@ const AccountBalanceSummaryFooter: MinaFamily["AccountBalanceSummaryFooter"] = (
 
   if (account.type !== "Account") return null;
 
-  const hasDelegation = account.minaResources?.stakingActive;
+  const hasDelegation = account.resources?.stakingActive;
   if (!hasDelegation) return null;
 
   const stakedBalance = formatCurrencyUnit(unit, account.balance, {
@@ -77,7 +77,7 @@ const AccountBalanceSummaryFooter: MinaFamily["AccountBalanceSummaryFooter"] = (
               <InfoCircle size={13} />
             </TitleWrapper>
           </ToolTip>
-          <Text>{account.minaResources?.delegateInfo?.identityName}</Text>
+          <Text>{account.resources?.delegateInfo?.identityName}</Text>
         </BalanceDetail>
 
         <BalanceDetail>
@@ -103,8 +103,8 @@ const AccountBalanceSummaryFooter: MinaFamily["AccountBalanceSummaryFooter"] = (
               <InfoCircle size={13} />
             </TitleWrapper>
           </ToolTip>
-          <CopiableField value={account.minaResources?.delegateInfo?.address ?? ""}>
-            <Text>{account.minaResources?.delegateInfo?.address}</Text>
+          <CopiableField value={account.resources?.delegateInfo?.address ?? ""}>
+            <Text>{account.resources?.delegateInfo?.address}</Text>
           </CopiableField>
         </BalanceDetail>
       </DetailsWrapper>

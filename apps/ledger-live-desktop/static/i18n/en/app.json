@@ -7099,6 +7099,8 @@
     "memoWarningText": "When using a memo, carefully check the information with the recipient"
   },
   "mina": {
+    "percentageSymbol": "%",
+    "fee": "Fee",
     "accountHeaderManageActions": {
       "changeDelegation": "Change Delegation",
       "earn": "Earn"
@@ -7107,7 +7109,8 @@
       "title": "Earn rewards with MINA",
       "altTitle": "Manage your MINA delegation",
       "description": "Delegate your MINA to a Block Producer and earn rewards from block production. Rewards are distributed based on your delegation amount.",
-      "altDescription": "Change your delegation settings or undelegate your MINA tokens. "
+      "altDescription": "Change your delegation settings or undelegate your MINA tokens. ",
+      "changeCTA": "Change"
     },
     "summaryFooter": {
       "delegatedTo": "Delegated to",

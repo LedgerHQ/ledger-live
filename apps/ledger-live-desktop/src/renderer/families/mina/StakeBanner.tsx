@@ -17,7 +17,7 @@ const StakeBanner: React.FC<{ account: MinaAccount }> = ({ account }) => {
 
   if (!stakeAccountBanner?.enabled) return null;
 
-  const hasDelegation = account.minaResources?.stakingActive;
+  const hasDelegation = account.resources?.stakingActive;
 
   const title = hasDelegation ? t("mina.stakeBanner.altTitle") : t("mina.stakeBanner.title");
 
@@ -48,7 +48,7 @@ const StakeBanner: React.FC<{ account: MinaAccount }> = ({ account }) => {
     <AccountBanner
       title={title}
       description={description}
-      cta={!hasDelegation ? cta : "Change"}
+      cta={!hasDelegation ? cta : t("mina.stakeBanner.changeCTA")}
       onClick={onClick}
       display={true}
       linkText={linkText}

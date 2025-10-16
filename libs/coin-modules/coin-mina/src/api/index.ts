@@ -12,6 +12,7 @@ import { MINA_TOKEN_ID } from "../consts";
 import { isValidAddress } from "../common-logic";
 import { RosettaBlockInfoResponse, RosettaTransaction } from "./rosetta/types";
 import { log } from "@ledgerhq/logs";
+import { getDelegateAccount } from "./graphql";
 
 export const getAccount = async (address: string): Promise<MinaAPIAccount> => {
   const networkStatus = await fetchNetworkStatus();
@@ -126,4 +127,9 @@ export const getNonce = async (txn: Transaction, address: string): Promise<numbe
   );
 
   return parseInt(data.metadata.nonce);
+};
+
+export const getDelegateAddress = async (address: string): Promise<string | undefined> => {
+  const data = await getDelegateAccount(address);
+  return data.data.account?.delegateAccount?.publicKey;
 };

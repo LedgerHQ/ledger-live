@@ -17,7 +17,7 @@ const ACCOUNT_ADDRESS_1 = "B62qkWcHhoisWDCR7v3gvWzX6wXEVuGYLHXq3mSym4GEzfYXmSDv3
 const ACCOUNT_ABANDONED = getAbandonSeedAddress("mina");
 
 const mina: CurrenciesData<Transaction> = {
-  FIXME_ignoreAccountFields: ["blockHash", "minaResources"],
+  FIXME_ignoreAccountFields: ["blockHash", "resources"],
   scanAccounts: [
     {
       name: "mina seed 1",

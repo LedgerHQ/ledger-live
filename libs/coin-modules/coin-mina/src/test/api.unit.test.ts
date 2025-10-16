@@ -1,12 +1,12 @@
 import { getAccount, getTransactions } from "../api";
 
-test("get balance for an account", async () => {
-  const invalidAddress = [
-    "B62qkdFWJSW8zaTBZjTVtmeU3rVxyUkNxPhKKW8T2JBtpj5XfdywLJM",
-    "novalidaddress",
-  ];
-  const validAddress = ["B62qkdFWJSW8zaTBZjTVtmeU3rVxyUkNxPhKKW8T2JBtpj5XfdywLSM"];
+const invalidAddress = [
+  "B62qkdFWJSW8zaTBZjTVtmeU3rVxyUkNxPhKKW8T2JBtpj5XfdywLJM",
+  "novalidaddress",
+];
+const validAddress = ["B62qkdFWJSW8zaTBZjTVtmeU3rVxyUkNxPhKKW8T2JBtpj5XfdywLSM"];
 
+test("get balance for an account", async () => {
   for (const address of invalidAddress) {
     await expect(getAccount(address)).toBeDefined();
   }
@@ -21,12 +21,6 @@ test("get balance for an account", async () => {
 test(
   "get transaction",
   async () => {
-    const invalidAddress = [
-      "B62qkdFWJSW8zaTBZjTVtmeU3rVxyUkNxPhKKW8T2JBtpj5XfdywLJM",
-      "novalidaddress",
-    ];
-    const validAddress = ["B62qkdFWJSW8zaTBZjTVtmeU3rVxyUkNxPhKKW8T2JBtpj5XfdywLSM"];
-
     for (const address of invalidAddress) {
       const transactions = await getTransactions(address);
       expect(transactions).toBeDefined();

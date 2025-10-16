@@ -1,8 +1,8 @@
 import { encodeAccountId } from "@ledgerhq/coin-framework/account/accountId";
 import type { GetAccountShape } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { makeSync, mergeOps } from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import { getAccount, getBlockInfo, getTransactions } from "../api";
-import { getDelegateAccount, getEpochInfo } from "../api/graphql";
+import { getAccount, getBlockInfo, getDelegateAddress, getTransactions } from "../api";
+import { getEpochInfo } from "../api/graphql";
 import { MinaAccount, MinaAccountRaw, MinaOperation } from "../types";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import BigNumber from "bignumber.js";
@@ -10,7 +10,6 @@ import { log } from "@ledgerhq/logs";
 import invariant from "invariant";
 import { RosettaTransaction } from "../api/rosetta/types";
 import { fetchValidators } from "../api/fetchValidators";
-import { Account, AccountRaw } from "@ledgerhq/types-live";
 
 export const mapRosettaTxnToOperation = async (
   accountId: string,
@@ -156,8 +155,7 @@ export const getAccountShape: GetAccountShape<MinaAccount> = async info => {
   );
 
   const operations = mergeOps(oldOperations, newOperations.flat());
-  const delegateAccount = await getDelegateAccount(address);
-  const delegateAddress = delegateAccount.data.account?.delegateAccount?.publicKey ?? address;
+  const delegateAddress = (await getDelegateAddress(address)) || address;
   const epochInfo = await getEpochInfo();
   const validators = await fetchValidators();
 
@@ -167,7 +165,7 @@ export const getAccountShape: GetAccountShape<MinaAccount> = async info => {
     spendableBalance,
     operationsCount: operations.length,
     blockHeight,
-    minaResources: {
+    resources: {
       blockProducers: validators,
       delegateInfo: validators.find(v => v.address === delegateAddress) ?? undefined,
       stakingActive: address !== delegateAddress,
@@ -178,19 +176,16 @@ export const getAccountShape: GetAccountShape<MinaAccount> = async info => {
   return { ...shape, operations };
 };
 
-export function assignToAccountRaw(account: Account, accountRaw: AccountRaw): void {
-  const minaAccount = account as MinaAccount;
-  const minaAccountRaw = accountRaw as MinaAccountRaw;
-  if (minaAccount.minaResources) {
-    minaAccountRaw.minaResources = minaAccount.minaResources;
+export function assignToAccountRaw(account: MinaAccount, accountRaw: MinaAccountRaw): void {
+  if (account.resources) {
+    accountRaw.resources = account.resources;
   }
 }
 
-export function assignFromAccountRaw(accountRaw: AccountRaw, account: Account): void {
-  const minaResourcesRaw = (accountRaw as MinaAccountRaw).minaResources;
-  const minaAccount = account as MinaAccount;
-  if (minaResourcesRaw) {
-    minaAccount.minaResources = minaResourcesRaw;
+export function assignFromAccountRaw(accountRaw: MinaAccountRaw, account: MinaAccount): void {
+  const resourcesRaw = accountRaw.resources;
+  if (resourcesRaw) {
+    account.resources = resourcesRaw;
   }
 }
 

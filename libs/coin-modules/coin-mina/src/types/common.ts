@@ -33,7 +33,7 @@ export type TransactionRaw = TransactionCommonRaw & {
 };
 
 export interface MinaAccount extends Account {
-  minaResources?: {
+  resources?: {
     blockProducers: ValidatorInfo[];
     stakingActive: boolean;
     delegateInfo: ValidatorInfo | undefined;
@@ -54,7 +54,7 @@ export type MinaAPIAccount = {
 };
 
 export type MinaAccountRaw = AccountRaw & {
-  minaResources: {
+  resources: {
     blockProducers: ValidatorInfo[];
     stakingActive: boolean;
     delegateInfo: ValidatorInfo | undefined;

@@ -5976,6 +5976,7 @@
     }
   },
   "mina": {
+    "copyLinkCopied": "Address copied!",
     "accountHeaderManageActions": {
       "changeDelegation": "Redelegate",
       "earn": "Earn"

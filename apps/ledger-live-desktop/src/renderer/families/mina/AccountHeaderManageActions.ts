@@ -6,14 +6,14 @@ import IconCoins from "~/renderer/icons/Coins";
 import { MinaFamily } from "./types";
 import { useTranslation } from "react-i18next";
 
-const AccountHeaderActions: MinaFamily["accountHeaderManageActions"] = ({
+const AccountHeaderManageActions: MinaFamily["accountHeaderManageActions"] = ({
   account,
   parentAccount,
 }) => {
   const dispatch = useDispatch();
   const { t } = useTranslation();
   const mainAccount = getMainAccount(account, parentAccount);
-  const hasDelegation = mainAccount.minaResources?.stakingActive;
+  const hasDelegation = mainAccount.resources?.stakingActive;
 
   const onClick = useCallback(() => {
     dispatch(
@@ -41,4 +41,4 @@ const AccountHeaderActions: MinaFamily["accountHeaderManageActions"] = ({
   ];
 };
 
-export default AccountHeaderActions;
+export default AccountHeaderManageActions;

@@ -75,8 +75,8 @@ function StakingValidator({ navigation, route }: Props) {
   if (!account) return null;
 
   const mainAccount = getMainAccount<MinaAccount>(account, undefined);
-  const hasDelegation = mainAccount?.minaResources?.stakingActive;
-  const validators = mainAccount?.minaResources?.blockProducers || [];
+  const hasDelegation = mainAccount?.resources?.stakingActive;
+  const validators = mainAccount?.resources?.blockProducers || [];
 
   return (
     <SafeAreaView style={styles.root} edges={["bottom"]}>
@@ -116,7 +116,7 @@ function StakingValidator({ navigation, route }: Props) {
             onPress={onContinue}
             disabled={
               !transaction?.recipient ||
-              transaction?.recipient === mainAccount?.minaResources?.delegateInfo?.address
+              transaction?.recipient === mainAccount?.resources?.delegateInfo?.address
             }
           />
         </Box>

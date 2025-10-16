@@ -3,7 +3,8 @@ import { MinaAccount } from "@ledgerhq/live-common/families/mina/types";
 import { getCryptoCurrencyIcon } from "@ledgerhq/live-common/reactNative";
 import invariant from "invariant";
 import React, { useCallback, useMemo, useState } from "react";
-import { TFunction, useTranslation } from "react-i18next";
+import { useTranslation } from "react-i18next";
+import { TFunction } from "i18next";
 import { ScrollView } from "react-native";
 import InfoItem from "~/components/BalanceSummaryInfoItem";
 import CurrencyUnitValue from "~/components/CurrencyUnitValue";
@@ -15,58 +16,6 @@ type Props = {
   account: MinaAccount;
 };
 type InfoName = "delegatedTo" | "stakedBalance" | "producerAddress";
-
-function AccountBalanceSummaryFooter({ account }: Props) {
-  const { t } = useTranslation();
-  const [infoName, setInfoName] = useState<InfoName>();
-  const info = useMemo(() => getInfo(t), [t]);
-  const unit = useAccountUnit(account);
-  const onCloseModal = useCallback(() => {
-    setInfoName(undefined);
-  }, []);
-  const onPressInfoCreator = useCallback((infoName: InfoName) => () => setInfoName(infoName), []);
-
-  const hasDelegation = account.minaResources?.stakingActive;
-  if (!hasDelegation) return null;
-
-  return (
-    <ScrollView
-      horizontal
-      showsHorizontalScrollIndicator={false}
-      style={[
-        {
-          paddingHorizontal: 16,
-        },
-      ]}
-    >
-      <InfoModal
-        isOpened={!!infoName}
-        onClose={onCloseModal}
-        data={infoName ? info[infoName] : []}
-      />
-      <InfoItem
-        title={t("mina.summaryFooter.delegatedTo")}
-        onPress={onPressInfoCreator("delegatedTo")}
-        value={account.minaResources?.delegateInfo?.identityName || ""}
-      />
-      <InfoItem
-        title={t("mina.summaryFooter.stakedBalance")}
-        onPress={onPressInfoCreator("stakedBalance")}
-        value={<CurrencyUnitValue unit={unit} value={account.balance} disableRounding />}
-      />
-      <InfoItem
-        title={t("mina.summaryFooter.producerAddress")}
-        onPress={onPressInfoCreator("producerAddress")}
-        value={account.minaResources?.delegateInfo?.address || ""}
-      />
-    </ScrollView>
-  );
-}
-
-export default function AccountBalanceFooter({ account }: Props) {
-  if (account.type !== "Account") return null;
-  return <AccountBalanceSummaryFooter account={account} />;
-}
 
 function getInfo(t: TFunction<"translation">): Record<InfoName, ModalInfo[]> {
   const currency = getCryptoCurrencyById("mina");
@@ -93,4 +42,56 @@ function getInfo(t: TFunction<"translation">): Record<InfoName, ModalInfo[]> {
       },
     ],
   };
+}
+
+function AccountBalanceSummaryFooter({ account }: Props) {
+  const { t } = useTranslation();
+  const [infoName, setInfoName] = useState<InfoName>();
+  const info = useMemo(() => getInfo(t), [t]);
+  const unit = useAccountUnit(account);
+  const onCloseModal = useCallback(() => {
+    setInfoName(undefined);
+  }, []);
+  const onPressInfoCreator = useCallback((infoName: InfoName) => () => setInfoName(infoName), []);
+
+  const hasDelegation = account.resources?.stakingActive;
+  if (!hasDelegation) return null;
+
+  return (
+    <ScrollView
+      horizontal
+      showsHorizontalScrollIndicator={false}
+      style={[
+        {
+          paddingHorizontal: 16,
+        },
+      ]}
+    >
+      <InfoModal
+        isOpened={!!infoName}
+        onClose={onCloseModal}
+        data={infoName ? info[infoName] : []}
+      />
+      <InfoItem
+        title={t("mina.summaryFooter.delegatedTo")}
+        onPress={onPressInfoCreator("delegatedTo")}
+        value={account.resources?.delegateInfo?.identityName || ""}
+      />
+      <InfoItem
+        title={t("mina.summaryFooter.stakedBalance")}
+        onPress={onPressInfoCreator("stakedBalance")}
+        value={<CurrencyUnitValue unit={unit} value={account.balance} disableRounding />}
+      />
+      <InfoItem
+        title={t("mina.summaryFooter.producerAddress")}
+        onPress={onPressInfoCreator("producerAddress")}
+        value={account.resources?.delegateInfo?.address || ""}
+      />
+    </ScrollView>
+  );
+}
+
+export default function AccountBalanceFooter({ account }: Props) {
+  if (account.type !== "Account") return null;
+  return <AccountBalanceSummaryFooter account={account} />;
 }

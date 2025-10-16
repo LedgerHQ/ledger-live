@@ -40,16 +40,16 @@ const StepValidator = ({ account, transaction, onUpdateTransaction, error }: Ste
 };
 
 export function StepValidatorFooter({ transitionTo, onClose, transaction, account }: StepProps) {
+  const { t } = useTranslation();
   if (!account) return null;
 
   const canContinue =
-    transaction?.recipient &&
-    transaction.recipient !== account.minaResources?.delegateInfo?.address;
+    transaction?.recipient && transaction.recipient !== account.resources?.delegateInfo?.address;
 
   return (
     <Box horizontal>
       <Button mr={1} secondary onClick={onClose}>
-        Cancel
+        {t("common.cancel")}
       </Button>
       <Button
         id="stake-continue-button"
@@ -57,7 +57,7 @@ export function StepValidatorFooter({ transitionTo, onClose, transaction, accoun
         primary
         onClick={() => transitionTo("connectDevice")}
       >
-        Continue
+        {t("common.continue")}
       </Button>
     </Box>
   );
