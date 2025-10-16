@@ -57,8 +57,8 @@
     "add" : "Adicionar",
     "token_one" : "Token",
     "token_other" : "Tokens",
-    "subaccount_one" : "Subaccount",
-    "subaccount_other" : "Subaccounts",
+    "subaccount_one" : "Subconta",
+    "subaccount_other" : "Subcontas",
     "forgetDevice" : "Remover Dispositivo",
     "help" : "Ajuda",
     "saveLogs" : "Salvar Registros",
@@ -71,24 +71,24 @@
     "installed" : "Instalado",
     "uninstall" : "Desinstalar",
     "fromNow" : {
-      "seconds_one" : "in one second",
-      "seconds_other" : "in {{time}} seconds",
-      "minutes_one" : "in one minute",
-      "minutes_other" : "in {{time}} minutes",
-      "hours_one" : "in one hour",
-      "hours_other" : "in {{time}} hours",
-      "days_one" : "in one day",
-      "days_other" : "in {{time}} days"
+      "seconds_one" : "em um segundo",
+      "seconds_other" : "em {{time}} segundos",
+      "minutes_one" : "em um minuto",
+      "minutes_other" : "em {{time}} minutos",
+      "hours_one" : "em uma hora",
+      "hours_other" : "em {{time}} horas",
+      "days_one" : "em um dia",
+      "days_other" : "em {{time}} dias"
     },
     "timeAgo" : {
-      "seconds_one" : "one second ago",
-      "seconds_other" : "{{time}} seconds ago",
-      "minutes_one" : "one minute ago",
-      "minutes_other" : "{{time}} minutes ago",
-      "hours_one" : "one hour ago",
-      "hours_other" : "{{time}} hours ago",
-      "days_one" : "yesterday",
-      "days_other" : "{{time}} days ago"
+      "seconds_one" : "um segundo atrás",
+      "seconds_other" : "{{time}} segundos atrás",
+      "minutes_one" : "há um minuto",
+      "minutes_other" : "{{time}} minutos atrás",
+      "hours_one" : "uma hora atrás",
+      "hours_other" : "{{time}} horas atrás",
+      "days_one" : "ontem",
+      "days_other" : "há {{time}} dias"
     },
     "seeMore" : "Ver mais",
     "moreInfo" : "Mais Informações",
@@ -2822,8 +2822,8 @@
     "selectAll" : "Selecionar tudo",
     "tokenCount_one" : "+1 token",
     "tokenCount_other" : "+{{count}} tokens",
-    "subaccountCount_one" : "+1 subaccount",
-    "subaccountCount_other" : "+{{count}} subaccounts"
+    "subaccountCount_one" : "+1 subconta",
+    "subaccountCount_other" : "{{count}} subcontas"
   },
   "account" : {
     "subHeader" : {
@@ -3022,25 +3022,25 @@
       "upToDate" : "Sincronizado",
       "error" : "Erro",
       "queued" : "Aguardando",
-      "showTokens_one" : "Show {{length}} token",
-      "showTokens_other" : "Show {{length}} tokens",
-      "showSubAccounts_one" : "Show {{length}} subaccount",
-      "showSubAccounts_other" : "Show {{length}} subaccounts",
-      "hideTokens_one" : "Hide token",
-      "hideTokens_other" : "Hide tokens",
-      "hideSubAccounts_one" : "Hide subaccount",
-      "hideSubAccounts_other" : "Hide subaccounts",
+      "showTokens_one" : "Mostrar {{length}} token",
+      "showTokens_other" : "Mostrar {{length}} tokens",
+      "showSubAccounts_one" : "Mostrar {{length}} subconta",
+      "showSubAccounts_other" : "Mostrar {{length}} subcontas",
+      "hideTokens_one" : "Ocultar token",
+      "hideTokens_other" : "Ocultar tokens",
+      "hideSubAccounts_one" : "Ocultar Subconta",
+      "hideSubAccounts_other" : "Ocultar Subcontas",
       "algorand" : {
-        "showTokens_one" : "Show {{length}} ASA",
-        "showTokens_other" : "Show {{length}} ASA",
-        "hideTokens_one" : "Hide ASA",
-        "hideTokens_other" : "Hide ASA"
+        "showTokens_one" : "Mostrar {{length}} ASA",
+        "showTokens_other" : "Mostrar {{length}} ASA",
+        "hideTokens_one" : "Ocultar ASA",
+        "hideTokens_other" : "Ocultar ASA"
       },
       "stellar" : {
-        "showTokens_one" : "Show {{length}} asset",
-        "showTokens_other" : "Show {{length}} assets",
-        "hideTokens_one" : "Hide asset",
-        "hideTokens_other" : "Hide assets"
+        "showTokens_one" : "Mostrar {{length}} ativo",
+        "showTokens_other" : "Mostrar {{length}} ativos",
+        "hideTokens_one" : "Ocultar Ativo",
+        "hideTokens_other" : "Ocultar Ativos"
       }
     },
     "noResultsFound" : "Nenhum ativo encontrado",
@@ -3055,8 +3055,8 @@
   "distribution" : {
     "header" : "Alocação de ativos",
     "list" : "Alocação de ativos ({{count}})",
-    "assets_one" : "asset",
-    "assets_other" : "assets",
+    "assets_one" : "ativo",
+    "assets_other" : "ativos",
     "total" : "Saldo total:",
     "listAccount" : "Alocação de ativos ({{count}})",
     "title" : "Ativos",
@@ -3427,7 +3427,7 @@
     "receive" : {
       "title" : "Receber",
       "description" : "Receba cripto de outra carteira.",
-      "description_v2" : "Receive stablecoin via bank transfer or deposit crypto from another wallet",
+      "description_v2" : "Receba stablecoin por meio de transferência bancária ou deposite criptomoedas de outra carteira",
       "titleReadOnly" : "Endereço não verificado",
       "headerTitle" : "Criptoativo",
       "titleDevice" : "Conectar dispositivo",
@@ -3444,12 +3444,12 @@
       "connectToNoah" : "Conectando você a Noah",
       "menu" : {
         "crypto" : {
-          "title" : "Via crypto address",
-          "description" : "Deposit crypto from another wallet."
+          "title" : "De um endereço cripto",
+          "description" : "Deposite cripto de outra carteira."
         },
         "fiat" : {
-          "title" : "Via bank transfer",
-          "description" : "Receive stablecoin via Cash-to-Stablecoin account. Registration needed."
+          "title" : "Via transferência bancária",
+          "description" : "Receba stablecoin através da conta Cash-to-Stablecoin. Cadastro necessário."
         }
       },
       "memoTag" : {
@@ -3464,8 +3464,8 @@
       },
       "selectNetwork" : {
         "title" : "Selecione a rede para a cripto escolhida",
-        "account_one" : "{{count}} account",
-        "account_other" : "{{count}} accounts",
+        "account_one" : "{{count}} conta",
+        "account_other" : "{{count}} contas",
         "subtitle" : "Ela deve corresponder à rede escolhida na carteira ou na corretora que está transferindo a cripto.",
         "bannerTitle" : "Certifique-se de selecionar a rede correta. Saiba como.",
         "depositFromCexBannerTitle" : "Depositar criptomoedas da sua conta na Coinbase"
@@ -3482,8 +3482,8 @@
       "addAccount" : {
         "title" : "Buscando uma conta...",
         "subtitle" : "Verificando se você já tem uma conta {{currencyName}} na blockchain.",
-        "foundAccount_one" : "{{count}} account found",
-        "foundAccount_other" : "{{count}} accounts found",
+        "foundAccount_one" : "{{count}} conta encontrada",
+        "foundAccount_other" : "{{count}} contas encontradas",
         "stopSynchronization" : "Parar Sincronização",
         "addingAccount" : "Nenhuma conta encontrada. Criando uma nova conta {{currencyName}}..."
       },
@@ -3916,10 +3916,10 @@
           "stepRange" : "Etapa {{currentStep}} de {{totalSteps}}"
         },
         "selectAccount" : {
-          "enabledAccountsAmount_one" : "You have {{number}} account that approved {{amount}}",
-          "enabledAccountsAmount_other" : "You have {{number}} accounts that approved {{amount}}",
-          "enabledAccountsNoLimit_one" : "You have {{number}} account that approved an unlimited amount of {{ currency }}",
-          "enabledAccountsNoLimit_other" : "You have {{number}} accounts that approved an unlimited amount of {{ currency }}",
+          "enabledAccountsAmount_one" : "Você tem {{number}} conta que aprovou {{amount}}",
+          "enabledAccountsAmount_other" : "Você tem {{number}} contas que aprovaram {{amount}}",
+          "enabledAccountsNoLimit_one" : "Você tem {{number}} conta que aprovou um valor ilimitado de {{ currency }}",
+          "enabledAccountsNoLimit_other" : "Você tem {{number}} contas que aprovaram um valor ilimitado de {{ currency }}",
           "noEnabledAccounts" : "Você precisa aprovar uma conta antes de poder emprestar."
         },
         "enable" : {
@@ -4310,8 +4310,8 @@
       }
     },
     "imported" : "Ativos adicionados com sucesso",
-    "added_one" : "Account added to your portfolio",
-    "added_other" : "{{count}} Accounts added to your portfolio",
+    "added_one" : "Conta adicionada ao seu portfólio",
+    "added_other" : "{{count}} contas adicionadas ao seu portfólio",
     "sections" : {
       "importable" : {
         "title" : "Adicionar conta existente"
@@ -4377,8 +4377,8 @@
       "whichAddressType" : "Aprenda a escolher um tipo de endereço",
       "sections" : {
         "importable" : {
-          "title_one" : "We found {{count}} account",
-          "title_other" : "We found {{count}} accounts"
+          "title_one" : "Encontramos {{count}} conta",
+          "title_other" : "Encontramos {{count}} contas"
         },
         "creatable" : {
           "title" : "Nova conta"
@@ -4420,8 +4420,8 @@
     "outdated" : "Versão do aplicativo desatualizada",
     "outdatedDesc" : "Uma atualização importante está disponível para o aplicativo {{appName}} no seu dispositivo. Vá à Minha Ledger e o atualize.",
     "quitApp" : "Feche o aplicativo no seu dispositivo",
-    "appNotInstalled_one" : "Please install the {{appName}} app",
-    "appNotInstalled_other" : "Please install the {{appName}} apps",
+    "appNotInstalled_one" : "Por favor, instale o aplicativo {{appName}}.",
+    "appNotInstalled_other" : "Por favor, instale os aplicativos {{appName}}.",
     "useAnotherDevice" : "Use outro dispositivo",
     "deviceNotOnboarded" : {
       "title" : "Sua Ledger ainda não está pronta para ser usada",
@@ -4576,8 +4576,8 @@
   },
   "RemoveDevice" : {
     "button" : {
-      "title_one" : "Remove {{nbDevices}} device",
-      "title_other" : "Remove {{nbDevices}} devices"
+      "title_one" : "Remover {{nbDevices}} dispositivo.",
+      "title_other" : "Remover {{nbDevices}} dispositivos."
     }
   },
   "manager" : {
@@ -4646,16 +4646,16 @@
       "title" : "Armazenamento",
       "used" : "Usado",
       "genuine" : "Seu dispositivo é autêntico",
-      "appsInstalled_one" : "<0>{{number}}</0> app",
-      "appsInstalled_other" : "<0>{{number}}</0> apps",
+      "appsInstalled_one" : "<0>{{number}}</0> aplicativo",
+      "appsInstalled_other" : "<0>{{number}}</0> aplicativos",
       "storageAvailable" : "disponível",
       "noFreeSpace" : "Armazenamento esgotado",
       "appsToUpdate" : "<0>{{number}}</0> atualização",
-      "appsToUpdate_other" : "<0>{{number}}</0> updates"
+      "appsToUpdate_other" : "<0>{{number}}</0> atualizações"
     },
     "installSuccess" : {
       "title" : "Aplicativo instalado com sucesso",
-      "title_other" : "Apps successfully installed",
+      "title_other" : "Aplicativos instalados com sucesso",
       "notSupported" : "Aplicativo instalado com sucesso, saiba mais sobre os aplicativos instalados em nosso site.",
       "manageAccount" : "Adicionar Contas",
       "learnMore" : "Saiba Mais",
@@ -4688,7 +4688,7 @@
         "desc" : "Aguarde a instalação do aplicativo {{appName}}.",
         "button" : "Instalando...",
         "queued" : "Na fila",
-        "button_other" : "Installing... {{progressPercentage}}%"
+        "button_other" : "Instalando... {{progressPercentage}}%"
       },
       "done" : {
         "title" : "Aplicativo instalado com sucesso",
@@ -4703,8 +4703,8 @@
       "continueInstall" : "Instalar Aplicativos"
     },
     "update" : {
-      "title_one" : "{{number}} app update",
-      "title_other" : "{{number}} app updates",
+      "title_one" : "{{number}} atualização de aplicativo",
+      "title_other" : "{{number}} atualizações de aplicativo",
       "step" : "Etapa de atualização {{step}}:",
       "updateWarn" : "Não saia da Minha Ledger durante a atualização.",
       "progress" : "Atualizando Todos...",
@@ -4724,7 +4724,7 @@
         "title" : "{{appName}} desinstalado com sucesso em sua {{productName}}"
       },
       "dependency" : {
-        "title_one" : "Other apps need the {{app}} app",
+        "title_one" : "Outros aplicativos precisam do aplicativo {{app}}",
         "showAll" : "Mostrar aplicativos para desinstalar",
         "description" : "Os aplicativos em seu dispositivo que precisarem do aplicativo {{app}} também serão desinstalados.",
         "description_one" : "Alguns aplicativos dependem do aplicativo {{app}}.",
@@ -6739,10 +6739,10 @@
     "changeValidator" : "Mudar Validador",
     "endDelegation" : "Encerrar Delegação",
     "durationForDays0" : "Agora mesmo",
-    "durationForDays_one" : "For a day",
-    "durationForDays_other" : "For {{count}} days",
+    "durationForDays_one" : "Por um dia",
+    "durationForDays_other" : "Por {{count}} dias",
     "durationDays0" : "Agora mesmo",
-    "durationDays_one" : "1 day",
+    "durationDays_one" : "1 dia",
     "durationDays_other" : "{{count}} dias",
     "selectValidatorTitle" : "Selecionar Validador",
     "started" : {
@@ -6947,20 +6947,20 @@
         "desc" : "Avisaremos se algo acontecer."
       },
       "time" : {
-        "second_one" : "1 second ago",
-        "second_other" : "{{count}} seconds ago",
-        "minute_one" : "1 minute ago",
-        "minute_other" : "{{count}} minutes ago",
-        "hour_one" : "1 hour ago",
-        "hour_other" : "{{count}} hours ago",
-        "day_one" : "1 day ago",
-        "day_other" : "{{count}} days ago",
-        "week_one" : "1 week ago",
-        "week_other" : "{{count}} weeks ago",
-        "month_one" : "1 month ago",
-        "month_other" : "{{count}} months ago",
-        "year_one" : "1 year ago",
-        "year_other" : "{{count}} years ago"
+        "second_one" : "Há 1 segundo",
+        "second_other" : "{{count}} segundos atrás",
+        "minute_one" : "Há 1 minuto",
+        "minute_other" : "{{count}} minutos atrás",
+        "hour_one" : "Há 1 hora",
+        "hour_other" : "{{count}} horas atrás",
+        "day_one" : "Há 1 dia",
+        "day_other" : "há {{count}} dias",
+        "week_one" : "Há 1 semana",
+        "week_other" : "Há {{count}} semanas",
+        "month_one" : "Há 1 mês",
+        "month_other" : "Há {{count}} meses",
+        "year_one" : "Há 1 ano",
+        "year_other" : "Há {{count}} anos"
       }
     },
     "status" : {
@@ -7214,8 +7214,8 @@
   "asset" : {
     "title" : "Seu {{assetName}}",
     "accountsSection" : {
-      "title_one" : "Your {{currencyName}} account",
-      "title_other" : "Your {{currencyName}} accounts"
+      "title_one" : "Suas contas {{currencyName}}",
+      "title_other" : "Suas contas {{currencyName}}"
     }
   },
   "customImage" : {
@@ -7620,8 +7620,8 @@
       },
       "synchronizedInstances" : {
         "cta" : "Gerenciar",
-        "title_one" : "{{count}} Ledger Live app synched",
-        "title_other" : "{{count}} Ledger Live apps synched",
+        "title_one" : "{{count}} aplicativo Ledger Live sincronizado",
+        "title_other" : "{{count}} aplicativos Ledger Live sincronizados",
         "error" : "Instâncias",
         "unsecuredError" : {
           "title" : "Conecte o mesmo dispositivo Ledger que você usou para ativar o Ledger Sync",
@@ -7792,8 +7792,8 @@
     },
     "selectNetwork" : {
       "title" : "Selecione a rede blockchain à qual o ativo pertence",
-      "detectedAccounts_one" : "{{count}} account (detected)",
-      "detectedAccounts_other" : "{{count}} accounts (detected)"
+      "detectedAccounts_one" : "{{count}} conta (detectada)",
+      "detectedAccounts_other" : "{{count}} contas (detectadas)"
     }
   },
   "emptyList" : {
@@ -7825,18 +7825,18 @@
     "ath" : "Máxima Histórica",
     "atl" : "Mínima Histórica",
     "timeAgo" : {
-      "years_one" : "({{count}} year ago)",
-      "years_other" : "({{count}} years ago)",
-      "months_one" : "({{count}} month ago)",
-      "months_other" : "({{count}} months ago)",
-      "days_one" : "({{count}} day ago)",
-      "days_other" : "({{count}} days ago)",
-      "hours_one" : "({{count}} hour ago)",
-      "hours_other" : "({{count}} hours ago)",
-      "minutes_one" : "({{count}} minute ago)",
-      "minutes_other" : "({{count}} minutes ago)",
-      "seconds_one" : "({{count}} second ago)",
-      "seconds_other" : "({{count}} seconds ago)"
+      "years_one" : "(Há {{count}} ano)",
+      "years_other" : "(Há {{count}} anos)",
+      "months_one" : "(Há {{count}} mês)",
+      "months_other" : "(Há {{count}} meses)",
+      "days_one" : "(há {{count}} dia)",
+      "days_other" : "(há {{count}} dias)",
+      "hours_one" : "({{count}} hora atrás)",
+      "hours_other" : "({{count}} horas atrás)",
+      "minutes_one" : "({{count}} minuto atrás)",
+      "minutes_other" : "({{count}} minutos atrás)",
+      "seconds_one" : "({{count}} segundo atrás)",
+      "seconds_other" : "({{count}} segundos atrás)"
     },
     "performance" : "Desempenho",
     "low" : "Baixo",
@@ -7871,8 +7871,8 @@
     "selectAccount" : "Selecionar conta",
     "searchPlaceholder" : "Buscar",
     "emptyAssetList" : "Nenhum ativo encontrado",
-    "accountCount_one" : "{{count}} account",
-    "accountCount_other" : "{{count}} accounts",
+    "accountCount_one" : "{{count}} conta",
+    "accountCount_other" : "{{count}} contas",
     "errors" : {
       "title" : "Falha de conexão",
       "backend" : "Algo deu errado. Tente novamente mais tarde",
