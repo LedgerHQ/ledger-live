@@ -343,10 +343,6 @@ export function transactionToOperation(
   };
 }
 
-function absoluteAmount(balanceChange: BalanceChange | undefined): BigNumber {
-  return new BigNumber(balanceChange?.amount || 0).abs();
-}
-
 // This function is only used by alpaca code path
 // Logic is similar to getOperationAmount, but we guarantee to return a positive amount in any case
 // If there is need to display negative amount for staking or unstaking, the view can handle it based on the type of the operation

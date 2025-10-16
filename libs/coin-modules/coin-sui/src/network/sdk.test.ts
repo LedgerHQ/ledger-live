@@ -706,7 +706,9 @@ describe("Staking Operations", () => {
       ));
 
     test("alpaca getOperationAmount should calculate unstaking amount of 0", () =>
-      expect(alpacaOperationAmount(mockUnstakingTx(address, "-1050000"))).toEqual(new BigNumber("0")));
+      expect(alpacaOperationAmount(mockUnstakingTx(address, "-1050000"))).toEqual(
+        new BigNumber("0"),
+      ));
 
     test("alpaca getOperationAmount should calculate amount correctly for SUI", () =>
       expect(alpacaOperationAmount(mockTransaction)).toEqual(new BigNumber("9998990120")));
@@ -1772,13 +1774,17 @@ describe("filterOperations", () => {
   describe("conversion methods", () => {
     test("toBlockOperation should map native transfers correctly", () => {
       expect(
-        sdk.toBlockOperation(mockTransaction, {
-          owner: {
-            AddressOwner: "0x65449f57946938c84c5127",
+        sdk.toBlockOperation(
+          mockTransaction,
+          {
+            owner: {
+              AddressOwner: "0x65449f57946938c84c5127",
+            },
+            coinType: sdk.DEFAULT_COIN_TYPE,
+            amount: "-10000000000",
           },
-          coinType: sdk.DEFAULT_COIN_TYPE,
-          amount: "-10000000000",
-        }, BigNumber(0)),
+          BigNumber(0),
+        ),
       ).toEqual([
         {
           type: "transfer",
@@ -1792,64 +1798,84 @@ describe("filterOperations", () => {
 
     test("toBlockOperation should ignore transfers from shared owner", () => {
       expect(
-        sdk.toBlockOperation(mockTransaction, {
-          owner: {
-            Shared: {
-              initial_shared_version: "0",
+        sdk.toBlockOperation(
+          mockTransaction,
+          {
+            owner: {
+              Shared: {
+                initial_shared_version: "0",
+              },
             },
+            coinType: sdk.DEFAULT_COIN_TYPE,
+            amount: "-10000000000",
           },
-          coinType: sdk.DEFAULT_COIN_TYPE,
-          amount: "-10000000000",
-        }, BigNumber(0)),
+          BigNumber(0),
+        ),
       ).toEqual([]);
     });
 
     test("toBlockOperation should ignore transfers from object owner", () => {
       expect(
-        sdk.toBlockOperation(mockTransaction, {
-          owner: {
-            ObjectOwner: "test",
+        sdk.toBlockOperation(
+          mockTransaction,
+          {
+            owner: {
+              ObjectOwner: "test",
+            },
+            coinType: sdk.DEFAULT_COIN_TYPE,
+            amount: "-10000000000",
           },
-          coinType: sdk.DEFAULT_COIN_TYPE,
-          amount: "-10000000000",
-        }, BigNumber(0)),
+          BigNumber(0),
+        ),
       ).toEqual([]);
     });
 
     test("toBlockOperation should ignore transfers from immutable owner", () => {
       expect(
-        sdk.toBlockOperation(mockTransaction, {
-          owner: "Immutable",
-          coinType: sdk.DEFAULT_COIN_TYPE,
-          amount: "-10000000000",
-        }, BigNumber(0)),
+        sdk.toBlockOperation(
+          mockTransaction,
+          {
+            owner: "Immutable",
+            coinType: sdk.DEFAULT_COIN_TYPE,
+            amount: "-10000000000",
+          },
+          BigNumber(0),
+        ),
       ).toEqual([]);
     });
 
     test("toBlockOperation should ignore transfers from consensus owner", () => {
       expect(
-        sdk.toBlockOperation(mockTransaction, {
-          owner: {
-            ConsensusAddressOwner: {
-              owner: "test",
-              start_version: "1",
+        sdk.toBlockOperation(
+          mockTransaction,
+          {
+            owner: {
+              ConsensusAddressOwner: {
+                owner: "test",
+                start_version: "1",
+              },
             },
+            coinType: sdk.DEFAULT_COIN_TYPE,
+            amount: "-10000000000",
           },
-          coinType: sdk.DEFAULT_COIN_TYPE,
-          amount: "-10000000000",
-        }, BigNumber(0)),
+          BigNumber(0),
+        ),
       ).toEqual([]);
     });
 
     test("toBlockOperation should map token transfers correctly", () => {
       expect(
-        sdk.toBlockOperation(mockTransaction, {
-          owner: {
-            AddressOwner: "0x65449f57946938c84c5127",
+        sdk.toBlockOperation(
+          mockTransaction,
+          {
+            owner: {
+              AddressOwner: "0x65449f57946938c84c5127",
+            },
+            coinType: "0x168da5bf1f48dafc111b0a488fa454aca95e0b5e::usdc::USDC",
+            amount: "8824",
           },
-          coinType: "0x168da5bf1f48dafc111b0a488fa454aca95e0b5e::usdc::USDC",
-          amount: "8824",
-        }, BigNumber(0)),
+          BigNumber(0),
+        ),
       ).toEqual([
         {
           type: "transfer",
@@ -1867,11 +1893,15 @@ describe("filterOperations", () => {
     test("toBlockOperation should map staking operations correctly", () => {
       const address = "0x65449f57946938c84c512732f1d69405d1fce417d9c9894696ddf4522f479e24";
       expect(
-        sdk.toBlockOperation(mockStakingTx(address, "-1000000000"), {
-          owner: { AddressOwner: address },
-          coinType: sdk.DEFAULT_COIN_TYPE,
-          amount: "-10000000000",
-        }, BigNumber(0)),
+        sdk.toBlockOperation(
+          mockStakingTx(address, "-1000000000"),
+          {
+            owner: { AddressOwner: address },
+            coinType: sdk.DEFAULT_COIN_TYPE,
+            amount: "-10000000000",
+          },
+          BigNumber(0),
+        ),
       ).toEqual([
         {
           type: "other",
@@ -1886,11 +1916,15 @@ describe("filterOperations", () => {
     test("toBlockOperation should map unstaking operations correctly", () => {
       const address = "0x65449f57946938c84c512732f1d69405d1fce417d9c9894696ddf4522f479e24";
       expect(
-        sdk.toBlockOperation(mockUnstakingTx(address, "1000000000"), {
-          owner: { AddressOwner: address },
-          coinType: sdk.DEFAULT_COIN_TYPE,
-          amount: "10000000000",
-        }, BigNumber(0)),
+        sdk.toBlockOperation(
+          mockUnstakingTx(address, "1000000000"),
+          {
+            owner: { AddressOwner: address },
+            coinType: sdk.DEFAULT_COIN_TYPE,
+            amount: "10000000000",
+          },
+          BigNumber(0),
+        ),
       ).toEqual([
         {
           type: "other",
