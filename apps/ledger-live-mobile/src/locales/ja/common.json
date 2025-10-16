@@ -55,10 +55,10 @@
     "bluetooth" : "Bluetooth",
     "usb" : "USB",
     "add" : "追加",
-    "token_one" : "Token",
-    "token_other" : "Tokens",
-    "subaccount_one" : "Subaccount",
-    "subaccount_other" : "Subaccounts",
+    "token_one" : "トークン",
+    "token_other" : "トークン",
+    "subaccount_one" : "サブアカウント",
+    "subaccount_other" : "サブアカウント",
     "forgetDevice" : "デバイスの削除",
     "help" : "ヘルプ",
     "saveLogs" : "ログを保存",
@@ -71,24 +71,24 @@
     "installed" : "インストール済み",
     "uninstall" : "アンインストール",
     "fromNow" : {
-      "seconds_one" : "in one second",
-      "seconds_other" : "in {{time}} seconds",
-      "minutes_one" : "in one minute",
-      "minutes_other" : "in {{time}} minutes",
-      "hours_one" : "in one hour",
-      "hours_other" : "in {{time}} hours",
-      "days_one" : "in one day",
-      "days_other" : "in {{time}} days"
+      "seconds_one" : "1秒後",
+      "seconds_other" : "{{time}}秒後",
+      "minutes_one" : "1分後",
+      "minutes_other" : "{{time}}分後",
+      "hours_one" : "1時間後",
+      "hours_other" : "{{time}}時間後",
+      "days_one" : "1日後",
+      "days_other" : "{{time}}日後"
     },
     "timeAgo" : {
-      "seconds_one" : "one second ago",
-      "seconds_other" : "{{time}} seconds ago",
-      "minutes_one" : "one minute ago",
-      "minutes_other" : "{{time}} minutes ago",
-      "hours_one" : "one hour ago",
-      "hours_other" : "{{time}} hours ago",
-      "days_one" : "yesterday",
-      "days_other" : "{{time}} days ago"
+      "seconds_one" : "1秒前",
+      "seconds_other" : "{{time}}秒前",
+      "minutes_one" : "1分前",
+      "minutes_other" : "{{time}}分前",
+      "hours_one" : "1時間前",
+      "hours_other" : "{{time}}時間前",
+      "days_one" : "昨日",
+      "days_other" : "{{time}}日前"
     },
     "seeMore" : "詳細を表示",
     "moreInfo" : "詳細はこちら",
@@ -2820,10 +2820,10 @@
   "selectableAccountsList" : {
     "deselectAll" : "すべて選択解除",
     "selectAll" : "すべて選択",
-    "tokenCount_one" : "+1 token",
-    "tokenCount_other" : "+{{count}} tokens",
-    "subaccountCount_one" : "+1 subaccount",
-    "subaccountCount_other" : "+{{count}} subaccounts"
+    "tokenCount_one" : "+1トークン",
+    "tokenCount_other" : "+{{count}}個のトークン",
+    "subaccountCount_one" : "+1個のサブアカウント",
+    "subaccountCount_other" : "+{{count}}個のサブアカウント"
   },
   "account" : {
     "subHeader" : {
@@ -3022,25 +3022,25 @@
       "upToDate" : "同期済み",
       "error" : "エラー",
       "queued" : "待機中",
-      "showTokens_one" : "Show {{length}} token",
-      "showTokens_other" : "Show {{length}} tokens",
-      "showSubAccounts_one" : "Show {{length}} subaccount",
-      "showSubAccounts_other" : "Show {{length}} subaccounts",
-      "hideTokens_one" : "Hide token",
-      "hideTokens_other" : "Hide tokens",
-      "hideSubAccounts_one" : "Hide subaccount",
-      "hideSubAccounts_other" : "Hide subaccounts",
+      "showTokens_one" : "{{length}}トークンを表示",
+      "showTokens_other" : "{{length}}トークンを表示",
+      "showSubAccounts_one" : "{{length}}サブアカウントを表示",
+      "showSubAccounts_other" : "{{length}}サブアカウントを表示",
+      "hideTokens_one" : "トークンを非表示",
+      "hideTokens_other" : "トークンを非表示",
+      "hideSubAccounts_one" : "サブアカウントを非表示",
+      "hideSubAccounts_other" : "サブアカウントを非表示",
       "algorand" : {
-        "showTokens_one" : "Show {{length}} ASA",
-        "showTokens_other" : "Show {{length}} ASA",
-        "hideTokens_one" : "Hide ASA",
-        "hideTokens_other" : "Hide ASA"
+        "showTokens_one" : "{{length}}ASAを表示",
+        "showTokens_other" : "{{length}}ASAを表示",
+        "hideTokens_one" : "ASAを非表示",
+        "hideTokens_other" : "ASAを非表示"
       },
       "stellar" : {
-        "showTokens_one" : "Show {{length}} asset",
-        "showTokens_other" : "Show {{length}} assets",
-        "hideTokens_one" : "Hide asset",
-        "hideTokens_other" : "Hide assets"
+        "showTokens_one" : "{{length}}資産を表示",
+        "showTokens_other" : "{{length}}資産を表示",
+        "hideTokens_one" : "資産を非表示",
+        "hideTokens_other" : "資産を非表示"
       }
     },
     "noResultsFound" : "資産が見つかりません",
@@ -3055,8 +3055,8 @@
   "distribution" : {
     "header" : "資産配分",
     "list" : "資産配分（{{count}}）",
-    "assets_one" : "asset",
-    "assets_other" : "assets",
+    "assets_one" : "資産",
+    "assets_other" : "資産",
     "total" : "合計残高：",
     "listAccount" : "資産配分（{{count}}）",
     "title" : "資産",
@@ -3427,7 +3427,7 @@
     "receive" : {
       "title" : "受け取る",
       "description" : "暗号資産を別のウォレットから受け取る。",
-      "description_v2" : "Receive stablecoin via bank transfer or deposit crypto from another wallet",
+      "description_v2" : "銀行送金でステーブルコインを受け取る、または別のウォレットから暗号資産を入金する",
       "titleReadOnly" : "未確認のアドレス",
       "headerTitle" : "暗号資産",
       "titleDevice" : "デバイスを接続",
@@ -3444,12 +3444,12 @@
       "connectToNoah" : "Noahに接続中",
       "menu" : {
         "crypto" : {
-          "title" : "Via crypto address",
-          "description" : "Deposit crypto from another wallet."
+          "title" : "暗号資産アドレス経由",
+          "description" : "別のウォレットから暗号資産を入金する。"
         },
         "fiat" : {
-          "title" : "Via bank transfer",
-          "description" : "Receive stablecoin via Cash-to-Stablecoin account. Registration needed."
+          "title" : "銀行送金経由",
+          "description" : "Cash-to-Stablecoinアカウントでステーブルコインを受け取る。登録が必要です。"
         }
       },
       "memoTag" : {
@@ -3464,8 +3464,8 @@
       },
       "selectNetwork" : {
         "title" : "選択した暗号資産のネットワークを選択してください",
-        "account_one" : "{{count}} account",
-        "account_other" : "{{count}} accounts",
+        "account_one" : "{{count}}アカウント",
+        "account_other" : "{{count}}アカウント",
         "subtitle" : "これは暗号資産を転送するウォレット、もしくは取引所で選択されたネットワークと一致している必要があります。",
         "bannerTitle" : "必ず正しいネットワークを選択してください。手順を学びましょう。",
         "depositFromCexBannerTitle" : "Coinbaseアカウントから暗号資産を入金する"
@@ -3482,8 +3482,8 @@
       "addAccount" : {
         "title" : "アカウントを確認しています...",
         "subtitle" : "ブロックチェーン上に、お客様の{{currencyName}}のアカウントがすでにあるかどうかを確認しています。",
-        "foundAccount_one" : "{{count}} account found",
-        "foundAccount_other" : "{{count}} accounts found",
+        "foundAccount_one" : "{{count}}件のアカウントを検出",
+        "foundAccount_other" : "{{count}}件のアカウントを検出",
         "stopSynchronization" : "同期の停止",
         "addingAccount" : "アカウントが見つかりませんでした。{{currencyName}}の新しいアカウントを作成しています..."
       },
@@ -3916,10 +3916,10 @@
           "stepRange" : "ステップ{{currentStep}}/{{totalSteps}}"
         },
         "selectAccount" : {
-          "enabledAccountsAmount_one" : "You have {{number}} account that approved {{amount}}",
-          "enabledAccountsAmount_other" : "You have {{number}} accounts that approved {{amount}}",
-          "enabledAccountsNoLimit_one" : "You have {{number}} account that approved an unlimited amount of {{ currency }}",
-          "enabledAccountsNoLimit_other" : "You have {{number}} accounts that approved an unlimited amount of {{ currency }}",
+          "enabledAccountsAmount_one" : "{{number}}個のアカウントで{{amount}}を承認済みです。",
+          "enabledAccountsAmount_other" : "{{number}}個のアカウントで{{amount}}を承認済みです。",
+          "enabledAccountsNoLimit_one" : "無制限の{{ currency }}が承認されたアカウントが{{number}}個あります。",
+          "enabledAccountsNoLimit_other" : "無制限の{{ currency }}が承認されたアカウントが{{number}}個あります。",
           "noEnabledAccounts" : "資産のレンディング（貸し出し）には、アカウントを承認する必要があります。"
         },
         "enable" : {
@@ -4310,8 +4310,8 @@
       }
     },
     "imported" : "資産が正常に追加されました",
-    "added_one" : "Account added to your portfolio",
-    "added_other" : "{{count}} Accounts added to your portfolio",
+    "added_one" : "ポートフォリオにアカウントが追加されました",
+    "added_other" : "{{count}}個のアカウントがポートフォリオに追加されました",
     "sections" : {
       "importable" : {
         "title" : "既存のアカウントを追加"
@@ -4377,8 +4377,8 @@
       "whichAddressType" : "アドレスの種類の選び方を確認",
       "sections" : {
         "importable" : {
-          "title_one" : "We found {{count}} account",
-          "title_other" : "We found {{count}} accounts"
+          "title_one" : "{{count}}個のアカウントが見つかりました",
+          "title_other" : "{{count}}個のアカウントが見つかりました"
         },
         "creatable" : {
           "title" : "新しいアカウント"
@@ -4420,8 +4420,8 @@
     "outdated" : "アプリのバージョンが最新ではありません。",
     "outdatedDesc" : "デバイスの{{appName}}アプリに重要なアップデートがあります。My Ledgerに移動してアップデートしてください。",
     "quitApp" : "デバイスのアプリケーションを終了する",
-    "appNotInstalled_one" : "Please install the {{appName}} app",
-    "appNotInstalled_other" : "Please install the {{appName}} apps",
+    "appNotInstalled_one" : "{{appName}}アプリをインストールしてください。",
+    "appNotInstalled_other" : "{{appName}}アプリをインストールしてください",
     "useAnotherDevice" : "別のデバイスを使用",
     "deviceNotOnboarded" : {
       "title" : "お客様のLedgerはまだ使用する準備ができていません",
@@ -4576,8 +4576,8 @@
   },
   "RemoveDevice" : {
     "button" : {
-      "title_one" : "Remove {{nbDevices}} device",
-      "title_other" : "Remove {{nbDevices}} devices"
+      "title_one" : "{{nbDevices}}台のデバイスを削除",
+      "title_other" : "{{nbDevices}}台のデバイスを削除"
     }
   },
   "manager" : {
@@ -4646,16 +4646,16 @@
       "title" : "ストレージ",
       "used" : "使用中",
       "genuine" : "お使いのデバイスは正規品です。",
-      "appsInstalled_one" : "<0>{{number}}</0> app",
-      "appsInstalled_other" : "<0>{{number}}</0> apps",
+      "appsInstalled_one" : "<0>{{number}}</0>個のアプリ",
+      "appsInstalled_other" : "<0>{{number}}</0>個のアプリ",
       "storageAvailable" : "利用可能",
       "noFreeSpace" : "ストレージ容量に空きがありません。",
       "appsToUpdate" : "<0>{{number}}</0>アップデート",
-      "appsToUpdate_other" : "<0>{{number}}</0> updates"
+      "appsToUpdate_other" : "<0>{{number}}</0>アップデート"
     },
     "installSuccess" : {
       "title" : "アプリが正常にインストールされました",
-      "title_other" : "Apps successfully installed",
+      "title_other" : "アプリが正常にインストールされました",
       "notSupported" : "アプリが正常にインストールされました。インストールされたアプリの詳細については、Ledgerのウェブサイトをご覧ください。",
       "manageAccount" : "アカウントを追加",
       "learnMore" : "詳細はこちら",
@@ -4688,7 +4688,7 @@
         "desc" : "{{appName}}アプリのインストール完了まで、お待ちください。",
         "button" : "インストール中...",
         "queued" : "待機中",
-        "button_other" : "Installing... {{progressPercentage}}%"
+        "button_other" : "インストール中... {{progressPercentage}}%"
       },
       "done" : {
         "title" : "アプリは正常にインストールされました",
@@ -4703,8 +4703,8 @@
       "continueInstall" : "アプリをインストール"
     },
     "update" : {
-      "title_one" : "{{number}} app update",
-      "title_other" : "{{number}} app updates",
+      "title_one" : "{{number}}件のアプリアップデート",
+      "title_other" : "{{number}}件のアプリアップデート",
       "step" : "アップデートステップ{{step}}：",
       "updateWarn" : "アップデート中にMy Ledgerを終了しないでください。",
       "progress" : "全アプリをアップデート中…",
@@ -4724,7 +4724,7 @@
         "title" : "{{productName}}から{{appName}}を正常にアンインストールしました。"
       },
       "dependency" : {
-        "title_one" : "Other apps need the {{app}} app",
+        "title_one" : "他のアプリには、{{app}}アプリが必要です",
         "showAll" : "アンインストールするアプリを表示",
         "description" : "{{app}}アプリを必要とする他のアプリも、同時にアンインストールされます。",
         "description_one" : "一部のアプリは、{{app}}アプリに属します。",
@@ -6739,10 +6739,10 @@
     "changeValidator" : "バリデータを変更",
     "endDelegation" : "デリゲート終了",
     "durationForDays0" : "たった今",
-    "durationForDays_one" : "For a day",
-    "durationForDays_other" : "For {{count}} days",
+    "durationForDays_one" : "1日間",
+    "durationForDays_other" : "{{count}}日間",
     "durationDays0" : "たった今",
-    "durationDays_one" : "1 day",
+    "durationDays_one" : "1日間",
     "durationDays_other" : "{{count}}日間",
     "selectValidatorTitle" : "バリデーターを選択",
     "started" : {
@@ -6947,20 +6947,20 @@
         "desc" : "何かありましたらお知らせします。"
       },
       "time" : {
-        "second_one" : "1 second ago",
-        "second_other" : "{{count}} seconds ago",
-        "minute_one" : "1 minute ago",
-        "minute_other" : "{{count}} minutes ago",
-        "hour_one" : "1 hour ago",
-        "hour_other" : "{{count}} hours ago",
-        "day_one" : "1 day ago",
-        "day_other" : "{{count}} days ago",
-        "week_one" : "1 week ago",
-        "week_other" : "{{count}} weeks ago",
-        "month_one" : "1 month ago",
-        "month_other" : "{{count}} months ago",
-        "year_one" : "1 year ago",
-        "year_other" : "{{count}} years ago"
+        "second_one" : "1秒前",
+        "second_other" : "{{count}}秒前",
+        "minute_one" : "1分前",
+        "minute_other" : "{{count}}分前",
+        "hour_one" : "1時間前",
+        "hour_other" : "{{count}}時間前",
+        "day_one" : "1日前",
+        "day_other" : "{{count}}日前",
+        "week_one" : "1週間前",
+        "week_other" : "{{count}}週間前",
+        "month_one" : "1か月前",
+        "month_other" : "{{count}}か月前",
+        "year_one" : "1年前",
+        "year_other" : "{{count}}年前"
       }
     },
     "status" : {
@@ -7214,8 +7214,8 @@
   "asset" : {
     "title" : "あなたの{{assetName}}",
     "accountsSection" : {
-      "title_one" : "Your {{currencyName}} account",
-      "title_other" : "Your {{currencyName}} accounts"
+      "title_one" : "あなたの{{currencyName}}アカウント",
+      "title_other" : "あなたの{{currencyName}}アカウント"
     }
   },
   "customImage" : {
@@ -7620,8 +7620,8 @@
       },
       "synchronizedInstances" : {
         "cta" : "管理",
-        "title_one" : "{{count}} Ledger Live app synched",
-        "title_other" : "{{count}} Ledger Live apps synched",
+        "title_one" : "{{count}}個のLedger Liveアプリを同期済み",
+        "title_other" : "{{count}}個のLedger Liveアプリを同期済み",
         "error" : "インスタンス",
         "unsecuredError" : {
           "title" : "Ledger Syncを有効にするのに使用したのと同じLedgerデバイスを接続します",
@@ -7792,8 +7792,8 @@
     },
     "selectNetwork" : {
       "title" : "暗号資産が属するブロックチェーンネットワークを選択",
-      "detectedAccounts_one" : "{{count}} account (detected)",
-      "detectedAccounts_other" : "{{count}} accounts (detected)"
+      "detectedAccounts_one" : "{{count}}個のアカウント（検出済み）",
+      "detectedAccounts_other" : "{{count}}個のアカウント（検出済み）"
     }
   },
   "emptyList" : {
@@ -7825,18 +7825,18 @@
     "ath" : "最高値",
     "atl" : "最安値",
     "timeAgo" : {
-      "years_one" : "({{count}} year ago)",
-      "years_other" : "({{count}} years ago)",
-      "months_one" : "({{count}} month ago)",
-      "months_other" : "({{count}} months ago)",
-      "days_one" : "({{count}} day ago)",
-      "days_other" : "({{count}} days ago)",
-      "hours_one" : "({{count}} hour ago)",
-      "hours_other" : "({{count}} hours ago)",
-      "minutes_one" : "({{count}} minute ago)",
-      "minutes_other" : "({{count}} minutes ago)",
-      "seconds_one" : "({{count}} second ago)",
-      "seconds_other" : "({{count}} seconds ago)"
+      "years_one" : "（{{count}}年前）",
+      "years_other" : "（{{count}}年前）",
+      "months_one" : "（{{count}}か月前）",
+      "months_other" : "（{{count}}か月前）",
+      "days_one" : "（{{count}}日前）",
+      "days_other" : "（{{count}}日前）",
+      "hours_one" : "（{{count}}時間前）",
+      "hours_other" : "（{{count}}時間前）",
+      "minutes_one" : "（{{count}}分前）",
+      "minutes_other" : "（{{count}}分前）",
+      "seconds_one" : "（{{count}}秒前）",
+      "seconds_other" : "（{{count}}秒前）"
     },
     "performance" : "パフォーマンス",
     "low" : "低速",
@@ -7871,8 +7871,8 @@
     "selectAccount" : "アカウントを選択",
     "searchPlaceholder" : "検索",
     "emptyAssetList" : "資産が見つかりません",
-    "accountCount_one" : "{{count}} account",
-    "accountCount_other" : "{{count}} accounts",
+    "accountCount_one" : "{{count}}アカウント",
+    "accountCount_other" : "{{count}}アカウント",
     "errors" : {
       "title" : "接続に失敗しました。",
       "backend" : "システムでエラーが発生しました。後でもう一度お試しください。",
