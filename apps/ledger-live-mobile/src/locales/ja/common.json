@@ -55,10 +55,10 @@
     "bluetooth" : "Bluetooth",
     "usb" : "USB",
     "add" : "追加",
-    "token" : "トークン",
-    "token_plural" : "トークン",
-    "subaccount" : "サブアカウント",
-    "subaccount_plural" : "サブアカウント",
+    "token_one" : "トークン",
+    "token_other" : "トークン",
+    "subaccount_one" : "サブアカウント",
+    "subaccount_other" : "サブアカウント",
     "forgetDevice" : "デバイスの削除",
     "help" : "ヘルプ",
     "saveLogs" : "ログを保存",
@@ -71,24 +71,24 @@
     "installed" : "インストール済み",
     "uninstall" : "アンインストール",
     "fromNow" : {
-      "seconds" : "1秒後",
-      "seconds_plural" : "{{time}}秒後",
-      "minutes" : "1分後",
-      "minutes_plural" : "{{time}}分後",
-      "hours" : "1時間後",
-      "hours_plural" : "{{time}}時間後",
-      "days" : "1日後",
-      "days_plural" : "{{time}}日後"
+      "seconds_one" : "1秒後",
+      "seconds_other" : "{{time}}秒後",
+      "minutes_one" : "1分後",
+      "minutes_other" : "{{time}}分後",
+      "hours_one" : "1時間後",
+      "hours_other" : "{{time}}時間後",
+      "days_one" : "1日後",
+      "days_other" : "{{time}}日後"
     },
     "timeAgo" : {
-      "seconds" : "1秒前",
-      "seconds_plural" : "{{time}}秒前",
-      "minutes" : "1分前",
-      "minutes_plural" : "{{time}}分前",
-      "hours" : "1時間前",
-      "hours_plural" : "{{time}}時間前",
-      "days" : "昨日",
-      "days_plural" : "{{time}}日前"
+      "seconds_one" : "1秒前",
+      "seconds_other" : "{{time}}秒前",
+      "minutes_one" : "1分前",
+      "minutes_other" : "{{time}}分前",
+      "hours_one" : "1時間前",
+      "hours_other" : "{{time}}時間前",
+      "days_one" : "昨日",
+      "days_other" : "{{time}}日前"
     },
     "seeMore" : "詳細を表示",
     "moreInfo" : "詳細はこちら",
@@ -1073,6 +1073,10 @@
     "HederaAddAccountError" : {
       "title" : "アカウントが追加されていません。もう一度お試しください。"
     },
+    "HederaRecipientInvalidChecksum" : {
+      "title" : "アドレスのチェックサムが無効です",
+      "description" : "入力されたアドレスのチェックサムが無効です。"
+    },
     "HederaInsufficientFundsForAssociation" : {
       "title" : "残高不足",
       "description" : "トークンの関連付けに必要なHBARが不足しています。少なくとも${{requiredWorthInUSD}}相当のHBARが必要です。"
@@ -1632,7 +1636,13 @@
       "terms" : "続行した場合、Ledgerの",
       "termsLink" : "利用規約に同意したものとみなされます",
       "privacyLink" : "プライバシーポリシー",
-      "and" : "そして"
+      "and" : "そして",
+      "videoTitles" : {
+        "0" : "資産を守り、コントロールするためのウォレット",
+        "1" : "何千種類もの暗号資産を送付・受け取り・スワップ・ステーキング",
+        "2" : "安心してすべての取引を確認"
+      },
+      "disclaimer" : "続行すると、Ledgerの<TermsAndConditions>利用規約</TermsAndConditions>および<PrivacyPolicy>プライバシーポリシー</PrivacyPolicy>に同意したものとみなされます。Ledgerは投資や財務に関する助言を行いません。スワップおよびステーキングサービスはサードパーティによって提供されます。"
     },
     "postWelcomeStep" : {
       "title" : "セットアップ",
@@ -2713,6 +2723,7 @@
       "LEGACYUNFREEZE" : "凍結解除済み",
       "REWARD" : "獲得した報酬",
       "FEES" : "手数料",
+      "PRE_APPROVAL" : "事前承認",
       "OPT_IN" : "オプトイン",
       "OPT_OUT" : "オプトアウト",
       "CLOSE_ACCOUNT" : "アカウントを閉じる",
@@ -2813,10 +2824,10 @@
   "selectableAccountsList" : {
     "deselectAll" : "すべて選択解除",
     "selectAll" : "すべて選択",
-    "tokenCount" : "+1トークン",
-    "tokenCount_plural" : "+{{count}}個のトークン",
-    "subaccountCount" : "+1個のサブアカウント",
-    "subaccountCount_plural" : "+{{count}}個のサブアカウント"
+    "tokenCount_one" : "+1トークン",
+    "tokenCount_other" : "+{{count}}個のトークン",
+    "subaccountCount_one" : "+1個のサブアカウント",
+    "subaccountCount_other" : "+{{count}}個のサブアカウント"
   },
   "account" : {
     "subHeader" : {
@@ -3015,25 +3026,25 @@
       "upToDate" : "同期済み",
       "error" : "エラー",
       "queued" : "待機中",
-      "showTokens" : "{{length}}トークンを表示",
-      "showTokens_plural" : "{{length}}トークンを表示",
-      "showSubAccounts" : "{{length}}サブアカウントを表示",
-      "showSubAccounts_plural" : "{{length}}サブアカウントを表示",
-      "hideTokens" : "トークンを非表示",
-      "hideTokens_plural" : "トークンを非表示",
-      "hideSubAccounts" : "サブアカウントを非表示",
-      "hideSubAccounts_plural" : "サブアカウントを非表示",
+      "showTokens_one" : "{{length}}トークンを表示",
+      "showTokens_other" : "{{length}}トークンを表示",
+      "showSubAccounts_one" : "{{length}}サブアカウントを表示",
+      "showSubAccounts_other" : "{{length}}サブアカウントを表示",
+      "hideTokens_one" : "トークンを非表示",
+      "hideTokens_other" : "トークンを非表示",
+      "hideSubAccounts_one" : "サブアカウントを非表示",
+      "hideSubAccounts_other" : "サブアカウントを非表示",
       "algorand" : {
-        "showTokens" : "{{length}}ASAを表示",
-        "showTokens_plural" : "{{length}}ASAを表示",
-        "hideTokens" : "ASAを非表示",
-        "hideTokens_plural" : "ASAを非表示"
+        "showTokens_one" : "{{length}}ASAを表示",
+        "showTokens_other" : "{{length}}ASAを表示",
+        "hideTokens_one" : "ASAを非表示",
+        "hideTokens_other" : "ASAを非表示"
       },
       "stellar" : {
-        "showTokens" : "{{length}}資産を表示",
-        "showTokens_plural" : "{{length}}資産を表示",
-        "hideTokens" : "資産を非表示",
-        "hideTokens_plural" : "資産を非表示"
+        "showTokens_one" : "{{length}}資産を表示",
+        "showTokens_other" : "{{length}}資産を表示",
+        "hideTokens_one" : "資産を非表示",
+        "hideTokens_other" : "資産を非表示"
       }
     },
     "noResultsFound" : "資産が見つかりません",
@@ -3048,8 +3059,8 @@
   "distribution" : {
     "header" : "資産配分",
     "list" : "資産配分（{{count}}）",
-    "assets" : "資産",
-    "assets_plural" : "資産",
+    "assets_one" : "資産",
+    "assets_other" : "資産",
     "total" : "合計残高：",
     "listAccount" : "資産配分（{{count}}）",
     "title" : "資産",
@@ -3433,6 +3444,17 @@
       "shareAddress" : "アドレスを共有",
       "addressCopied" : "アドレスがクリップボードにコピーされました",
       "taprootWarning" : "送付元がtaprootに対応しているか確認してください",
+      "connectToNoah" : "Noahに接続中",
+      "menu" : {
+        "crypto" : {
+          "title" : "暗号資産アドレスから",
+          "description" : "お好きな暗号資産でウォレットをチャージ。"
+        },
+        "fiat" : {
+          "title" : "銀行口座から",
+          "description" : "銀行送金でEURまたはUSDからUSDCをチャージ。KYC必須。"
+        }
+      },
       "memoTag" : {
         "link" : "タグ/メモが必要ですか？",
         "title" : "タグ/メモが必要ですか？",
@@ -3445,8 +3467,8 @@
       },
       "selectNetwork" : {
         "title" : "選択した暗号資産のネットワークを選択してください",
-        "account" : "{{count}}アカウント",
-        "account_plural" : "{{count}}アカウント",
+        "account_one" : "{{count}}アカウント",
+        "account_other" : "{{count}}アカウント",
         "subtitle" : "これは暗号資産を転送するウォレット、もしくは取引所で選択されたネットワークと一致している必要があります。",
         "bannerTitle" : "必ず正しいネットワークを選択してください。手順を学びましょう。",
         "depositFromCexBannerTitle" : "Coinbaseアカウントから暗号資産を入金する"
@@ -3463,8 +3485,8 @@
       "addAccount" : {
         "title" : "アカウントを確認しています...",
         "subtitle" : "ブロックチェーン上に、お客様の{{currencyName}}のアカウントがすでにあるかどうかを確認しています。",
-        "foundAccount" : "{{count}}件のアカウントを検出",
-        "foundAccount_plural" : "{{count}}件のアカウントを検出",
+        "foundAccount_one" : "{{count}}件のアカウントを検出",
+        "foundAccount_other" : "{{count}}件のアカウントを検出",
         "stopSynchronization" : "同期の停止",
         "addingAccount" : "アカウントが見つかりませんでした。{{currencyName}}の新しいアカウントを作成しています..."
       },
@@ -3749,6 +3771,10 @@
       "history" : {
         "title" : "スワップ履歴"
       },
+      "wrongDevice" : {
+        "title" : "Ledger Nano S™は、{{provider}}に対応していません",
+        "description" : "Ledger Nano S™は、{{provider}}に対応していません。Ledger Nano S Plus™、Ledger Nano X™、Ledger Stax™、またはLedger Flex™を使用して、Ledger Liveから{{provider}}でのクロスチェーンスワップが可能です"
+      },
       "incompatibility" : {
         "explore_compatible_devices" : "対応デバイスを探す",
         "contact_support" : "カスタマーサポートに問い合わせる",
@@ -3766,12 +3792,16 @@
         "apt_description" : "Aptosをスワップするには、Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™、Ledger Stax™など、対応する他のLedgerデバイスをご使用ください。",
         "cosmos_title" : "Ledger Nano S™はCosmosのスワップに対応していません",
         "cosmos_description" : "Cosmosをスワップするには、Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™、Ledger Stax™など、対応する他のLedgerデバイスをご使用ください。",
+        "hedera_title" : "Ledger Nano S™は、Hederaのスワップに対応していません",
+        "hedera_description" : "Hederaをスワップするには、Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™、Ledger Stax™など、対応する他のLedgerデバイスをご使用ください。",
         "osmo_title" : "Ledger Nano S™は、Osmosisのスワップに対応していません",
         "osmo_description" : "Osmosisをスワップするには、Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™、Ledger Stax™など、対応する他のLedgerデバイスをご使用ください。",
         "dydx_title" : "Ledger Nano S™は、dYdXのスワップに対応していません",
         "dydx_description" : "dYdXをスワップするには、Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™、Ledger Stax™など、対応する他のLedgerデバイスをご使用ください。",
         "sui_title" : "Ledger Nano S™は、Suiのスワップに対応していません",
-        "sui_description" : "Suiをスワップするには、Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™、またはLedger Stax™など、他の対応するLedgerデバイスをご使用ください。"
+        "sui_description" : "Suiをスワップするには、Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™、またはLedger Stax™など、他の対応するLedgerデバイスをご使用ください。",
+        "kaspa_title" : "Ledger Nano S™はKaspaのスワップに対応していません",
+        "kaspa_description" : "Kaspaをスワップするには、Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™、Ledger Stax™など、対応する他のLedgerデバイスをご使用ください。"
       }
     },
     "lending" : {
@@ -3893,10 +3923,10 @@
           "stepRange" : "ステップ{{currentStep}}/{{totalSteps}}"
         },
         "selectAccount" : {
-          "enabledAccountsAmount" : "{{number}}個のアカウントで{{amount}}を承認済みです。",
-          "enabledAccountsAmount_plural" : "{{number}}個のアカウントで{{amount}}を承認済みです。",
-          "enabledAccountsNoLimit" : "無制限の{{ currency }}が承認されたアカウントが{{number}}個あります。",
-          "enabledAccountsNoLimit_plural" : "無制限の{{ currency }}が承認されたアカウントが{{number}}個あります。",
+          "enabledAccountsAmount_one" : "{{number}}個のアカウントで{{amount}}を承認済みです。",
+          "enabledAccountsAmount_other" : "{{number}}個のアカウントで{{amount}}を承認済みです。",
+          "enabledAccountsNoLimit_one" : "無制限の{{ currency }}が承認されたアカウントが{{number}}個あります。",
+          "enabledAccountsNoLimit_other" : "無制限の{{ currency }}が承認されたアカウントが{{number}}個あります。",
           "noEnabledAccounts" : "資産のレンディング（貸し出し）には、アカウントを承認する必要があります。"
         },
         "enable" : {
@@ -4287,8 +4317,8 @@
       }
     },
     "imported" : "資産が正常に追加されました",
-    "added" : "ポートフォリオにアカウントが追加されました",
-    "added_plural" : "{{count}}個のアカウントがポートフォリオに追加されました",
+    "added_one" : "ポートフォリオにアカウントが追加されました",
+    "added_other" : "{{count}}個のアカウントがポートフォリオに追加されました",
     "sections" : {
       "importable" : {
         "title" : "既存のアカウントを追加"
@@ -4354,8 +4384,8 @@
       "whichAddressType" : "アドレスの種類の選び方を確認",
       "sections" : {
         "importable" : {
-          "title" : "{{count}}個のアカウントが見つかりました",
-          "title_plural" : "{{count}}個のアカウントが見つかりました"
+          "title_one" : "{{count}}個のアカウントが見つかりました",
+          "title_other" : "{{count}}個のアカウントが見つかりました"
         },
         "creatable" : {
           "title" : "新しいアカウント"
@@ -4397,8 +4427,8 @@
     "outdated" : "アプリのバージョンが最新ではありません。",
     "outdatedDesc" : "デバイスの{{appName}}アプリに重要なアップデートがあります。My Ledgerに移動してアップデートしてください。",
     "quitApp" : "デバイスのアプリケーションを終了する",
-    "appNotInstalled" : "{{appName}}アプリをインストールしてください。",
-    "appNotInstalled_plural" : "{{appName}}アプリをインストールしてください。",
+    "appNotInstalled_one" : "{{appName}}アプリをインストールしてください。",
+    "appNotInstalled_other" : "{{appName}}アプリをインストールしてください",
     "useAnotherDevice" : "別のデバイスを使用",
     "deviceNotOnboarded" : {
       "title" : "お客様のLedgerはまだ使用する準備ができていません",
@@ -4553,8 +4583,8 @@
   },
   "RemoveDevice" : {
     "button" : {
-      "title" : "{{nbDevices}}台のデバイスを削除",
-      "title_plural" : "{{nbDevices}}台のデバイスを削除"
+      "title_one" : "{{nbDevices}}台のデバイスを削除",
+      "title_other" : "{{nbDevices}}台のデバイスを削除"
     }
   },
   "manager" : {
@@ -4623,16 +4653,16 @@
       "title" : "ストレージ",
       "used" : "使用中",
       "genuine" : "お使いのデバイスは正規品です。",
-      "appsInstalled" : "<0>{{number}}</0>個のアプリ",
-      "appsInstalled_plural" : "<0>{{number}}</0>個のアプリ",
+      "appsInstalled_one" : "<0>{{number}}</0>個のアプリ",
+      "appsInstalled_other" : "<0>{{number}}</0>個のアプリ",
       "storageAvailable" : "利用可能",
       "noFreeSpace" : "ストレージ容量に空きがありません。",
       "appsToUpdate" : "<0>{{number}}</0>アップデート",
-      "appsToUpdate_plural" : "<0>{{number}}</0>アップデート"
+      "appsToUpdate_other" : "<0>{{number}}</0>アップデート"
     },
     "installSuccess" : {
       "title" : "アプリが正常にインストールされました",
-      "title_plural" : "アプリが正常にインストールされました",
+      "title_other" : "アプリが正常にインストールされました",
       "notSupported" : "アプリが正常にインストールされました。インストールされたアプリの詳細については、Ledgerのウェブサイトをご覧ください。",
       "manageAccount" : "アカウントを追加",
       "learnMore" : "詳細はこちら",
@@ -4665,7 +4695,7 @@
         "desc" : "{{appName}}アプリのインストール完了まで、お待ちください。",
         "button" : "インストール中...",
         "queued" : "待機中",
-        "button_plural" : "インストール中... {{progressPercentage}}%"
+        "button_other" : "インストール中... {{progressPercentage}}%"
       },
       "done" : {
         "title" : "アプリは正常にインストールされました",
@@ -4680,8 +4710,8 @@
       "continueInstall" : "アプリをインストール"
     },
     "update" : {
-      "title" : "{{number}}件のアプリアップデート",
-      "title_plural" : "{{number}}件のアプリアップデート",
+      "title_one" : "{{number}}件のアプリアップデート",
+      "title_other" : "{{number}}件のアプリアップデート",
       "step" : "アップデートステップ{{step}}：",
       "updateWarn" : "アップデート中にMy Ledgerを終了しないでください。",
       "progress" : "全アプリをアップデート中…",
@@ -4701,7 +4731,7 @@
         "title" : "{{productName}}から{{appName}}を正常にアンインストールしました。"
       },
       "dependency" : {
-        "title" : "他のアプリには、{{app}}アプリが必要です",
+        "title_one" : "他のアプリには、{{app}}アプリが必要です",
         "showAll" : "アンインストールするアプリを表示",
         "description" : "{{app}}アプリを必要とする他のアプリも、同時にアンインストールされます。",
         "description_one" : "一部のアプリは、{{app}}アプリに属します。",
@@ -6455,6 +6485,7 @@
   },
   "sui" : {
     "info" : {
+      "estimatedReward" : "獲得した報酬",
       "available" : {
         "title" : "利用可能なSUI",
         "description" : "これは、利用可能額です。"
@@ -6716,11 +6747,11 @@
     "changeValidator" : "バリデータを変更",
     "endDelegation" : "デリゲート終了",
     "durationForDays0" : "たった今",
-    "durationForDays" : "1日間",
-    "durationForDays_plural" : "{{count}}日間",
+    "durationForDays_one" : "1日間",
+    "durationForDays_other" : "{{count}}日間",
     "durationDays0" : "たった今",
-    "durationDays" : "1日間",
-    "durationDays_plural" : "{{count}}日間",
+    "durationDays_one" : "1日間",
+    "durationDays_other" : "{{count}}日間",
     "selectValidatorTitle" : "バリデーターを選択",
     "started" : {
       "title" : "報酬を獲得する",
@@ -6924,20 +6955,20 @@
         "desc" : "何かありましたらお知らせします。"
       },
       "time" : {
-        "second" : "1秒前",
-        "second_plural" : "{{count}}秒前",
-        "minute" : "1分前",
-        "minute_plural" : "{{count}}分前",
-        "hour" : "1時間前",
-        "hour_plural" : "{{count}}時間前",
-        "day" : "1日前",
-        "day_plural" : "{{count}}日前",
-        "week" : "1週間前",
-        "week_plural" : "{{count}}週間前",
-        "month" : "1か月前",
-        "month_plural" : "{{count}}か月前",
-        "year" : "1年前",
-        "year_plural" : "{{count}}年前"
+        "second_one" : "1秒前",
+        "second_other" : "{{count}}秒前",
+        "minute_one" : "1分前",
+        "minute_other" : "{{count}}分前",
+        "hour_one" : "1時間前",
+        "hour_other" : "{{count}}時間前",
+        "day_one" : "1日前",
+        "day_other" : "{{count}}日前",
+        "week_one" : "1週間前",
+        "week_other" : "{{count}}週間前",
+        "month_one" : "1か月前",
+        "month_other" : "{{count}}か月前",
+        "year_one" : "1年前",
+        "year_other" : "{{count}}年前"
       }
     },
     "status" : {
@@ -7191,16 +7222,18 @@
   "asset" : {
     "title" : "あなたの{{assetName}}",
     "accountsSection" : {
-      "title" : "あなたの{{currencyName}}アカウント"
+      "title_one" : "あなたの{{currencyName}}アカウント",
+      "title_other" : "あなたの{{currencyName}}アカウント"
     }
   },
   "customImage" : {
     "title" : "画面写真をロック",
     "change" : "変更",
     "drawer" : {
+      "title" : "カスタムロック画面",
       "options" : {
-        "uploadFromPhone" : "画像ギャラリーから選択",
-        "remove" : "現在の画像を削除する"
+        "uploadFromPhone" : "画像を変更",
+        "remove" : "ロック画面を削除"
       }
     },
     "toastRemove" : "ロック画面の画像が削除されました",
@@ -7595,8 +7628,8 @@
       },
       "synchronizedInstances" : {
         "cta" : "管理",
-        "title" : "{{count}}個のLedger Liveアプリを同期済み",
-        "title_plural" : "{{count}}個のLedger Liveアプリを同期済み",
+        "title_one" : "{{count}}個のLedger Liveアプリを同期済み",
+        "title_other" : "{{count}}個のLedger Liveアプリを同期済み",
         "error" : "インスタンス",
         "unsecuredError" : {
           "title" : "Ledger Syncを有効にするのに使用したのと同じLedgerデバイスを接続します",
@@ -7767,8 +7800,8 @@
     },
     "selectNetwork" : {
       "title" : "暗号資産が属するブロックチェーンネットワークを選択",
-      "detectedAccounts" : "{{count}}個のアカウント（検出済み）",
-      "detectedAccounts_plural" : "{{count}}個のアカウント（検出済み）"
+      "detectedAccounts_one" : "{{count}}個のアカウント（検出済み）",
+      "detectedAccounts_other" : "{{count}}個のアカウント（検出済み）"
     }
   },
   "emptyList" : {
@@ -7800,18 +7833,18 @@
     "ath" : "最高値",
     "atl" : "最安値",
     "timeAgo" : {
-      "years" : "（{{count}}年前）",
-      "years_plural" : "（{{count}}年前）",
-      "months" : "（{{count}}か月前）",
-      "months_plural" : "（{{count}}か月前）",
-      "days" : "（{{count}}日前）",
-      "days_plural" : "（{{count}}日前）",
-      "hours" : "（{{count}}時間前）",
-      "hours_plural" : "（{{count}}時間前）",
-      "minutes" : "（{{count}}分前）",
-      "minutes_plural" : "（{{count}}分前）",
-      "seconds" : "（{{count}}秒前）",
-      "seconds_plural" : "（{{count}}秒前）"
+      "years_one" : "（{{count}}年前）",
+      "years_other" : "（{{count}}年前）",
+      "months_one" : "（{{count}}か月前）",
+      "months_other" : "（{{count}}か月前）",
+      "days_one" : "（{{count}}日前）",
+      "days_other" : "（{{count}}日前）",
+      "hours_one" : "（{{count}}時間前）",
+      "hours_other" : "（{{count}}時間前）",
+      "minutes_one" : "（{{count}}分前）",
+      "minutes_other" : "（{{count}}分前）",
+      "seconds_one" : "（{{count}}秒前）",
+      "seconds_other" : "（{{count}}秒前）"
     },
     "performance" : "パフォーマンス",
     "low" : "低速",
@@ -7846,8 +7879,8 @@
     "selectAccount" : "アカウントを選択",
     "searchPlaceholder" : "検索",
     "emptyAssetList" : "資産が見つかりません",
-    "accountCount" : "{{count}}アカウント",
-    "accountCount_plural" : "{{count}}アカウント",
+    "accountCount_one" : "{{count}}アカウント",
+    "accountCount_other" : "{{count}}アカウント",
     "errors" : {
       "title" : "接続に失敗しました。",
       "backend" : "システムでエラーが発生しました。後でもう一度お試しください。",
@@ -7935,6 +7968,15 @@
     "default" : {
       "title" : "問題が発生しました。",
       "description" : "再試行するか、ご不明な点がありましたら、Ledgerサポートにお問い合わせください。"
+    }
+  },
+  "canton" : {
+    "onboard" : {
+      "account" : "アカウント",
+      "authorize" : "許可する",
+      "preapprove" : "アカウントを追加しました",
+      "validator" : "Ledgerバリデーター",
+      "title" : "資金の自動受け取り"
     }
   }
 }
