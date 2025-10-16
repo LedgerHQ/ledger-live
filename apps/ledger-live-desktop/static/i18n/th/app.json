@@ -6691,6 +6691,10 @@
     "HederaAddAccountError" : {
       "title" : "ยังไม่ได้เพิ่มบัญชีของคุณ โปรดลองอีกครั้ง"
     },
+    "HederaRecipientInvalidChecksum" : {
+      "title" : "Address Checksum ไม่ถูกต้อง",
+      "description" : "Address ที่ให้มี Checksum ไม่ถูกต้อง"
+    },
     "HederaInsufficientFundsForAssociation" : {
       "title" : "ยอดคงเหลือในบัญชีไม่เพียงพอ",
       "description" : "ยอด HBAR ในบัญชีไม่พอสำหรับการดำเนินการเชื่อมโยงโทเคน ต้องมี HBAR มูลค่าอย่างน้อย ${{requiredWorthInUSD}}"
