@@ -3427,7 +3427,7 @@
     "receive" : {
       "title" : "Recibir",
       "description" : "Recibe criptomonedas de otra billetera.",
-      "description_v2" : "Receive stablecoin via bank transfer or deposit crypto from another wallet",
+      "description_v2" : "Recibe monedas estables mediante transferencia bancaria o deposita cripto desde otra wallet",
       "titleReadOnly" : "Dirección no verificada",
       "headerTitle" : "Activo cripto",
       "titleDevice" : "Conectar dispositivo",
@@ -3444,12 +3444,12 @@
       "connectToNoah" : "Conectándote a Noah",
       "menu" : {
         "crypto" : {
-          "title" : "Via crypto address",
-          "description" : "Deposit crypto from another wallet."
+          "title" : "Desde una dirección cripto",
+          "description" : "Deposita cripto de otra wallet."
         },
         "fiat" : {
-          "title" : "Via bank transfer",
-          "description" : "Receive stablecoin via Cash-to-Stablecoin account. Registration needed."
+          "title" : "Mediante transferencia bancaria",
+          "description" : "Recibe monedas estables mediante una cuenta Cash-to-Stablecoin. Es necesario registrarse."
         }
       },
       "memoTag" : {
@@ -4800,7 +4800,7 @@
     "updateCancelledDescription" : "Si se trata de un error, vuelve a iniciar la actualización.",
     "updateNotYetComplete" : "La actualización del SO está en curso",
     "updateNotYetCompleteDescription" : "Si cancelas la actualización ahora, tus ajustes y aplicaciones podrían no restaurarse correctamente.",
-    "restartUpdate" : "Reiniciar actualización de SO",
+    "restartUpdate" : "Reiniciar actualización",
     "quitUpdate" : "Cancelar actualización del SO",
     "continueUpdate" : "Continuar con actualización del SO",
     "unlockDeviceToComplete" : "Desbloquea {{deviceName}} con tu PIN para terminar la actualización.",
