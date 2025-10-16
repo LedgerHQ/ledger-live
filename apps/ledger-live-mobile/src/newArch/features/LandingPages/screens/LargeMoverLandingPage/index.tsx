@@ -10,7 +10,7 @@ import { StickyHeader } from "./components/StickyHeader";
 import { SafeAreaView } from "react-native";
 import { useTheme } from "styled-components/native";
 import { getCurrencyIdsFromTickers, rangeMap } from "./utils";
-import { SwiperComponent } from "~/newArch/components/Swiper/components/Swiper";
+import { SwiperComponent } from "LLM/components/Swiper/components/Swiper";
 import { NavigationProp, useNavigation } from "@react-navigation/native";
 import { WalletTabNavigatorStackParamList } from "~/components/RootNavigator/types/WalletTabNavigator";
 import { LoadingIndicator } from "./components/Loading";
