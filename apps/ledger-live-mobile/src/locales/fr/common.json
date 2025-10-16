@@ -3427,7 +3427,7 @@
     "receive" : {
       "title" : "Recevoir",
       "description" : "Recevez des cryptos d’un autre wallet",
-      "description_v2" : "Receive stablecoin via bank transfer or deposit crypto from another wallet",
+      "description_v2" : "Recevez des stablecoins grâce à un virement bancaire ou déposez des cryptos depuis un autre wallet.",
       "titleReadOnly" : "Adresse non vérifiée",
       "headerTitle" : "Crypto-actif",
       "titleDevice" : "Connecter votre appareil",
@@ -3444,12 +3444,12 @@
       "connectToNoah" : "Connexion à Noah",
       "menu" : {
         "crypto" : {
-          "title" : "Via crypto address",
-          "description" : "Deposit crypto from another wallet."
+          "title" : "Via une adresse crypto",
+          "description" : "Déposez des cryptos depuis un autre wallet."
         },
         "fiat" : {
-          "title" : "Via bank transfer",
-          "description" : "Receive stablecoin via Cash-to-Stablecoin account. Registration needed."
+          "title" : "Via un virement bancaire",
+          "description" : "Recevez des stablecoins grâce à un virement. Création de compte requise."
         }
       },
       "memoTag" : {
@@ -7567,7 +7567,7 @@
       }
     },
     "deviceSelection" : {
-      "title" : "Choisir un wallet Ledger"
+      "title" : "Choisir un appareil Ledger"
     },
     "deviceAction" : {
       "title" : "Continuez sur votre Ledger {{wording}}",

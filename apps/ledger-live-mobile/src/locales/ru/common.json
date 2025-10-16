@@ -3427,7 +3427,7 @@
     "receive" : {
       "title" : "Получить",
       "description" : "Получайте криптовалюту с других кошельков.",
-      "description_v2" : "Receive stablecoin via bank transfer or deposit crypto from another wallet",
+      "description_v2" : "Получайте стейблкойны посредством банковского перевода или перевода криптовалюты с другого кошелька",
       "titleReadOnly" : "Не утверждённый адрес",
       "headerTitle" : "Криптоактив",
       "titleDevice" : "Добавление устройства",
@@ -3444,12 +3444,12 @@
       "connectToNoah" : "Подключаемся к Noah",
       "menu" : {
         "crypto" : {
-          "title" : "Via crypto address",
-          "description" : "Deposit crypto from another wallet."
+          "title" : "С криптовалютного адреса",
+          "description" : "Переводите криптовалюту с других кошельков."
         },
         "fiat" : {
-          "title" : "Via bank transfer",
-          "description" : "Receive stablecoin via Cash-to-Stablecoin account. Registration needed."
+          "title" : "Банковским переводом",
+          "description" : "Получайте стейблкойны на счёт «Стейблкойны за фиат». Требуется регистрация."
         }
       },
       "memoTag" : {
@@ -7214,7 +7214,7 @@
   "asset" : {
     "title" : "Ваши {{assetName}}",
     "accountsSection" : {
-      "title_one" : "Your {{currencyName}} account",
+      "title_one" : "Ваш счёт {{currencyName}}",
       "title_other" : "Ваши счета {{currencyName}}"
     }
   },

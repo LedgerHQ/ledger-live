@@ -2254,12 +2254,12 @@
     "steps" : {
       "options" : {
         "fromBank" : {
-          "title" : "Via bank transfer",
-          "description" : "Receive stablecoin via Cash-to-Stablecoin account. Registration needed."
+          "title" : "銀行送金経由",
+          "description" : "Cash-to-Stablecoinアカウントでステーブルコインを受け取る。登録が必要です。"
         },
         "fromCrypto" : {
-          "title" : "Via crypto address",
-          "description" : "Receive crypto from another wallet."
+          "title" : "暗号資産アドレス経由",
+          "description" : "別のウォレットから暗号資産を受け取る。"
         }
       },
       "chooseAccount" : {

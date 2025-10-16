@@ -3427,7 +3427,7 @@
     "receive" : {
       "title" : "Al",
       "description" : "Başka bir cüzdandan kripto alın.",
-      "description_v2" : "Receive stablecoin via bank transfer or deposit crypto from another wallet",
+      "description_v2" : "Banka transferiyle stabil coin alın veya başka bir cüzdandan kripto yatırın",
       "titleReadOnly" : "Doğrulanmamış adres",
       "headerTitle" : "Kripto varlık",
       "titleDevice" : "Cihazı bağlayın",
@@ -3444,12 +3444,12 @@
       "connectToNoah" : "Noah’a bağlanıyorsunuz",
       "menu" : {
         "crypto" : {
-          "title" : "Via crypto address",
-          "description" : "Deposit crypto from another wallet."
+          "title" : "Kripto adresiyle",
+          "description" : "Başka bir cüzdandan kripto yatırın."
         },
         "fiat" : {
-          "title" : "Via bank transfer",
-          "description" : "Receive stablecoin via Cash-to-Stablecoin account. Registration needed."
+          "title" : "Banka transferiyle",
+          "description" : "Cash-to-Stablecoin hesabınız üzerinden stabil coin alın. Kaydolmayı gerektirir."
         }
       },
       "memoTag" : {
@@ -7214,7 +7214,7 @@
   "asset" : {
     "title" : "{{assetName}} varlığınız",
     "accountsSection" : {
-      "title_one" : "Your {{currencyName}} account",
+      "title_one" : "{{currencyName}} hesabınız",
       "title_other" : "{{currencyName}} hesaplarınız"
     }
   },

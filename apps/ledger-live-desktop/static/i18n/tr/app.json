@@ -2254,12 +2254,12 @@
     "steps" : {
       "options" : {
         "fromBank" : {
-          "title" : "Via bank transfer",
-          "description" : "Receive stablecoin via Cash-to-Stablecoin account. Registration needed."
+          "title" : "Banka transferiyle",
+          "description" : "Cash-to-Stablecoin hesabınız üzerinden stabil coin alın. Kaydolmayı gerektirir."
         },
         "fromCrypto" : {
-          "title" : "Via crypto address",
-          "description" : "Receive crypto from another wallet."
+          "title" : "Kripto adresiyle",
+          "description" : "Başka bir cüzdandan kripto alın."
         }
       },
       "chooseAccount" : {
