@@ -15,14 +15,18 @@ import { setDrawer } from "~/renderer/drawers/Provider";
 import { StepProps } from "../types";
 import { useTranslation } from "react-i18next";
 
-const Container = styled(Box).attrs(() => ({
-  alignItems: "center",
-  grow: true,
-  color: "palette.text.shade100",
-}))<{
-  shouldSpace?: boolean;
-}>`
-  justify-content: ${p => (p.shouldSpace ? "space-between" : "center")};
+interface StyledBoxProps {
+  "data-align"?: boolean | string;
+}
+
+const Container = styled(Box)<StyledBoxProps>`
+  align-items: center;
+  grow: true;
+  color: palette.text.shade100;
+  justify-content: center;
+  [data-align="true"] {
+    justify-content: space-between;
+  }
 `;
 
 function StepConfirmation({ optimisticOperation, error, signed, transaction, source }: StepProps) {
@@ -43,7 +47,7 @@ function StepConfirmation({ optimisticOperation, error, signed, transaction, sou
 
   if (optimisticOperation) {
     return (
-      <Container>
+      <Container data-align={signed}>
         <TrackPage
           category="Delegation Flow"
           name="Step Confirmed"
@@ -62,7 +66,7 @@ function StepConfirmation({ optimisticOperation, error, signed, transaction, sou
 
   if (error) {
     return (
-      <Container shouldSpace={signed}>
+      <Container data-align={signed}>
         <TrackPage
           category="Stake MINA"
           name="Step Confirmation Error"
@@ -70,7 +74,7 @@ function StepConfirmation({ optimisticOperation, error, signed, transaction, sou
           action="staking"
           currency="mina"
         />
-        {signed ? <BroadcastErrorDisclaimer title={t("mina.selectValidator.error.title")} /> : null}
+        {signed && <BroadcastErrorDisclaimer title={t("mina.selectValidator.error.title")} />}
         <ErrorDisplay error={error} withExportLogs />
       </Container>
     );

@@ -16,7 +16,7 @@ const getMainActions = ({
   parentAccount: Account;
 }): ActionButtonEvent[] => {
   const mainAccount = getMainAccount<MinaAccount>(account, parentAccount);
-  const hasDelegation = mainAccount.minaResources?.stakingActive;
+  const hasDelegation = mainAccount.resources?.stakingActive;
 
   const navigationParams: NavigationParamsType = [
     NavigatorName.MinaStakingFlow,
