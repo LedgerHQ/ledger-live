@@ -16,6 +16,7 @@ export const buildTransaction = async (
   const asset = toSuiAsset(subAccount?.token.contractAddress ?? DEFAULT_COIN_TYPE);
 
   return craftTransaction({
+    intentType: "transaction",
     amount: BigInt(amount.toString()),
     asset,
     recipient,

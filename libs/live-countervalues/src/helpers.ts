@@ -8,6 +8,8 @@ export const inferCurrencyAPIID = (currency: Currency): string => {
     }
     case "CryptoCurrency":
     case "TokenCurrency": {
+      // temporary solution to support assethub_polkadot
+      if (currency.id === "assethub_polkadot") return "polkadot";
       return currency.id;
     }
   }

@@ -115,6 +115,7 @@ export enum ScreenName {
   ReceiveSelectCrypto = "ReceiveSelectCrypto",
   DepositSelectNetwork = "DepositSelectNetwork",
   ReceiveVerifyAddress = "ReceiveVerifyAddress",
+  ReceiveProvider = "ReceiveProvider",
   Recover = "Recover",
   RegionSettings = "RegionSettings",
   Resources = "Resources",
@@ -135,7 +136,6 @@ export enum ScreenName {
   SignSelectDevice = "SignSelectDevice",
   SignSummary = "SignSummary",
   SignValidationError = "SignValidationError",
-  SignValidationSuccess = "SignValidationSuccess",
   Swap = "Swap",
   SwapCustomError = "SwapCustomError",
   SwapForm = "SwapForm",
@@ -332,6 +332,9 @@ export enum ScreenName {
   StellarAddAssetValidation = "StellarAddAssetValidation",
   StellarAddAssetValidationError = "StellarAddAssetValidationError",
   StellarAddAssetValidationSuccess = "StellarAddAssetValidationSuccess",
+  // Canton
+  CantonOnboardAccount = "CantonOnboardAccount",
+
   OnboardingWelcome = "OnboardingWelcome",
   OnboardingPostWelcomeSelection = "OnboardingPostWelcomeSelection",
   OnboardingWelcomeBack = "OnboardingWelcomeBack",
@@ -370,6 +373,9 @@ export enum ScreenName {
   SignTransactionSelectDevice = "SignTransactionSelectDevice",
   SignTransactionConnectDevice = "SignTransactionConnectDevice",
   SignTransactionValidationError = "SignTransactionValidationError",
+  SignRawTransactionSelectDevice = "SignRawTransactionSelectDevice",
+  SignRawTransactionConnectDevice = "SignRawTransactionConnectDevice",
+  SignRawTransactionValidationError = "SignRawTransactionValidationError",
   RequestAccountsSelectCrypto = "RequestAccountsSelectCrypto",
   RequestAccountsSelectAccount = "RequestAccountsSelectAccount",
   MarketList = "MarketList",
@@ -481,6 +487,7 @@ export enum ScreenName {
   CustomImageErrorScreen = "CustomImageErrorScreen",
   CustomImagePreviewPreEdit = "CustomImagePreviewPreEdit",
   CustomImagePreviewPostEdit = "CustomImagePreviewPostEdit",
+  CustomImageRemoval = "CustomImageRemoval",
 
   PostOnboardingHub = "PostOnboardingHub",
   PostOnboardingDebugScreen = "PostOnboardingDebugScreen",
@@ -561,6 +568,7 @@ export enum NavigatorName {
   PasswordModifyFlow = "PasswordModifyFlow",
   PlatformExchange = "PlatformExchange",
   ReceiveFunds = "ReceiveFunds",
+  ReceiveFundsOptions = "ReceiveFundsOptions",
   SendFunds = "SendFunds",
   Settings = "Settings",
   SignMessage = "SignMessage",
@@ -575,6 +583,7 @@ export enum NavigatorName {
   CustomError = "CustomError",
 
   SignTransaction = "SignTransaction",
+  SignRawTransaction = "SignRawTransaction",
   RequestAccount = "RequestAccount",
   RequestAccountsAddAccounts = "RequestAccountsAddAccounts",
 
@@ -615,6 +624,8 @@ export enum NavigatorName {
   // SUI
   SuiDelegateFlow = "SuiDelegationFlow",
   SuiUndelegateFlow = "SuiUndelegateFlow",
+
+  CantonOnboard = "CantonOnboard",
 
   // Tab
   Main = "Main",

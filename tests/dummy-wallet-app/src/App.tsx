@@ -16,6 +16,8 @@ export default function App() {
   const [recipient, setRecipient] = useState("");
   const [amount, setAmount] = useState("");
   const [data, setData] = useState("");
+  const [message, setMessage] = useState("");
+  const [deeplinkUrl, setDeeplinkUrl] = useState("");
 
   const params = useMemo(
     () => Array.from(new URLSearchParams(window.location.search).entries()),
@@ -24,7 +26,7 @@ export default function App() {
 
   const testLogger = async () => {
     try {
-      await client?.custom.log("test");
+      await client?.custom.logger.log("test");
     } catch (err) {
       setRes(err);
     }
@@ -161,6 +163,15 @@ export default function App() {
     }
   };
 
+  const handleTransactionSignRaw = async () => {
+    try {
+      const result = await client?.transaction.signRaw(accountId, data);
+      setRes(result || "no response");
+    } catch (err) {
+      setRes(err);
+    }
+  };
+
   const handleTransactionSignAndBroadcast = async () => {
     try {
       const transaction = {
@@ -171,6 +182,16 @@ export default function App() {
       };
       const result = await client?.transaction.signAndBroadcast(accountId, transaction);
       setRes(result);
+    } catch (err) {
+      setRes(err);
+    }
+  };
+
+  const handleMessageSign = async () => {
+    try {
+      const messageBuffer = Buffer.from(message, "utf8");
+      const result = await client?.message.sign(accountId, messageBuffer);
+      setRes(result?.toString() || "empty response");
     } catch (err) {
       setRes(err);
     }
@@ -203,6 +224,15 @@ export default function App() {
     }
   };
 
+  const handleDeeplinkOpen = async () => {
+    try {
+      const result = await client?.custom.deeplink.open(deeplinkUrl);
+      setRes(result);
+    } catch (err) {
+      setRes(err);
+    }
+  };
+
   const clearStates = () => {
     setRes(undefined);
     setCurrencyIds("");
@@ -210,6 +240,8 @@ export default function App() {
     setRecipient("");
     setAmount("");
     setData("");
+    setMessage("");
+    setDeeplinkUrl("");
   };
 
   return (
@@ -292,6 +324,30 @@ export default function App() {
           />
         </div>
         <div>
+          <label htmlFor="message-input">Message (for signing): </label>
+          <input
+            id="message-input"
+            data-testid="message-input"
+            type="text"
+            value={message}
+            onChange={e => setMessage(e.target.value)}
+            placeholder="e.g. Hello World"
+            className="message-input"
+          />
+        </div>
+        <div>
+          <label htmlFor="deeplink-url-input">Deeplink URL: </label>
+          <input
+            id="deeplink-url-input"
+            data-testid="deeplink-url-input"
+            type="text"
+            value={deeplinkUrl}
+            onChange={e => setDeeplinkUrl(e.target.value)}
+            placeholder="e.g. ledgerlive://account?currency=bitcoin"
+            className="deeplink-url-input"
+          />
+        </div>
+        <div>
           <button onClick={testLogger} data-testid="test-logger">
             Test logger
           </button>
@@ -325,6 +381,9 @@ export default function App() {
           >
             transaction.sign raw solana
           </button>
+          <button onClick={handleTransactionSignRaw} data-testid="transaction-sign-raw">
+            transaction.signRaw
+          </button>
           <button
             onClick={handleTransactionSignAndBroadcast}
             data-testid="transaction-signAndBroadcast"
@@ -339,6 +398,12 @@ export default function App() {
           </button>
           <button onClick={handleWalletInfo} data-testid="wallet-info">
             wallet.info
+          </button>
+          <button onClick={handleMessageSign} data-testid="message-sign">
+            message.sign
+          </button>
+          <button onClick={handleDeeplinkOpen} data-testid="deeplink-open">
+            custom.deeplink.open
           </button>
           <button onClick={clearStates} data-testid="clear-states">
             Clear States

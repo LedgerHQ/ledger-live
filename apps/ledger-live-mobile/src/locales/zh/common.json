@@ -55,10 +55,10 @@
     "bluetooth" : "蓝牙",
     "usb" : "USB",
     "add" : "添加",
-    "token" : "Token（代币）",
-    "token_plural" : "代币",
-    "subaccount" : "子账户",
-    "subaccount_plural" : "子账户",
+    "token_one" : "代币",
+    "token_other" : "代币",
+    "subaccount_one" : "子账户",
+    "subaccount_other" : "子账户",
     "forgetDevice" : "移除设备",
     "help" : "帮助",
     "saveLogs" : "保存日志",
@@ -71,24 +71,24 @@
     "installed" : "已安装",
     "uninstall" : "卸载",
     "fromNow" : {
-      "seconds" : "在 1 秒内",
-      "seconds_plural" : "在 {{time}} 秒内",
-      "minutes" : "在 1 分钟内",
-      "minutes_plural" : "在 {{time}} 分钟内",
-      "hours" : "一小时内",
-      "hours_plural" : "在 {{time}} 小时内",
-      "days" : "在 1 天内",
-      "days_plural" : "在 {{time}} 天内"
+      "seconds_one" : "在 1 秒内",
+      "seconds_other" : "在 {{time}} 秒内",
+      "minutes_one" : "在 1 分钟内",
+      "minutes_other" : "在 {{time}} 分钟内",
+      "hours_one" : "一小时内",
+      "hours_other" : "在 {{time}} 小时内",
+      "days_one" : "在 1 天内",
+      "days_other" : "在 {{time}} 天内"
     },
     "timeAgo" : {
-      "seconds" : "1 秒前",
-      "seconds_plural" : "{{time}} 秒前",
-      "minutes" : "1 分钟前",
-      "minutes_plural" : "{{time}} 分钟前",
-      "hours" : "1 小时前",
-      "hours_plural" : "{{time}} 小时前",
-      "days" : "昨天",
-      "days_plural" : "{{time}} 天前"
+      "seconds_one" : "1 秒前",
+      "seconds_other" : "{{time}} 秒前",
+      "minutes_one" : "1 分钟前",
+      "minutes_other" : "{{time}} 分钟前",
+      "hours_one" : "1 小时前",
+      "hours_other" : "{{time}} 小时前",
+      "days_one" : "昨天",
+      "days_other" : "{{time}} 天前"
     },
     "seeMore" : "查看更多",
     "moreInfo" : "更多信息",
@@ -1632,7 +1632,13 @@
       "terms" : "继续即表示您同意 Ledger 的",
       "termsLink" : "条款和条件",
       "privacyLink" : "隐私政策",
-      "and" : "和"
+      "and" : "和",
+      "videoTitles" : {
+        "0" : "利用这款钱包保护加密资产，让一切尽在您的掌控",
+        "1" : "发送、接收、互换和质押数千种加密货币",
+        "2" : "安心无忧地验证您的所有交易"
+      },
+      "disclaimer" : "继续操作即表示您同意 Ledger 的<TermsAndConditions>条款与条件</TermsAndConditions>和<PrivacyPolicy>隐私政策</PrivacyPolicy>。Ledger 不提供任何财务建议。互换和质押服务由第三方提供。"
     },
     "postWelcomeStep" : {
       "title" : "开始操作",
@@ -2713,6 +2719,7 @@
       "LEGACYUNFREEZE" : "已解冻",
       "REWARD" : "已申领的奖励",
       "FEES" : "费用",
+      "PRE_APPROVAL" : "预先批准",
       "OPT_IN" : "选择加入",
       "OPT_OUT" : "选择退出",
       "CLOSE_ACCOUNT" : "关闭账户",
@@ -2813,10 +2820,10 @@
   "selectableAccountsList" : {
     "deselectAll" : "取消全选",
     "selectAll" : "全选",
-    "tokenCount" : "+1 枚代币",
-    "tokenCount_plural" : "+{{count}} 枚代币",
-    "subaccountCount" : "+1 个子账户",
-    "subaccountCount_plural" : "+{{count}} 个子账户"
+    "tokenCount_one" : "+1 枚代币",
+    "tokenCount_other" : "+{{count}} 枚代币",
+    "subaccountCount_one" : "+1 个子账户",
+    "subaccountCount_other" : "+{{count}} 个子账户"
   },
   "account" : {
     "subHeader" : {
@@ -3015,25 +3022,25 @@
       "upToDate" : "已同步",
       "error" : "错误",
       "queued" : "等待",
-      "showTokens" : "显示 {{length}} 一种代币",
-      "showTokens_plural" : "显示 {{length}} 多种代币",
-      "showSubAccounts" : "显示 {{length}} 一个子账户",
-      "showSubAccounts_plural" : "显示 {{length}} 多个子账户",
-      "hideTokens" : "隐藏代币",
-      "hideTokens_plural" : "隐藏多种代币",
-      "hideSubAccounts" : "隐藏一个子账户",
-      "hideSubAccounts_plural" : "隐藏多个子账户",
+      "showTokens_one" : "显示 {{length}} 一种代币",
+      "showTokens_other" : "显示 {{length}} 多种代币",
+      "showSubAccounts_one" : "显示 {{length}} 一个子账户",
+      "showSubAccounts_other" : "显示 {{length}} 多个子账户",
+      "hideTokens_one" : "隐藏代币",
+      "hideTokens_other" : "隐藏多种代币",
+      "hideSubAccounts_one" : "隐藏一个子账户",
+      "hideSubAccounts_other" : "隐藏多个子账户",
       "algorand" : {
-        "showTokens" : "显示 {{length}} ASA",
-        "showTokens_plural" : "显示 {{length}} ASA",
-        "hideTokens" : "隐藏 ASA",
-        "hideTokens_plural" : "隐藏 ASA"
+        "showTokens_one" : "显示 {{length}} ASA",
+        "showTokens_other" : "显示 {{length}} ASA",
+        "hideTokens_one" : "隐藏 ASA",
+        "hideTokens_other" : "隐藏 ASA"
       },
       "stellar" : {
-        "showTokens" : "显示 {{length}} 种资产",
-        "showTokens_plural" : "显示 {{length}} 种资产",
-        "hideTokens" : "隐藏资产",
-        "hideTokens_plural" : "隐藏资产"
+        "showTokens_one" : "显示 {{length}} 种资产",
+        "showTokens_other" : "显示 {{length}} 种资产",
+        "hideTokens_one" : "隐藏资产",
+        "hideTokens_other" : "隐藏资产"
       }
     },
     "noResultsFound" : "未找到资产。",
@@ -3048,8 +3055,8 @@
   "distribution" : {
     "header" : "资产配置",
     "list" : "资产配置 ({{count}})",
-    "assets" : "资产",
-    "assets_plural" : "多种资产",
+    "assets_one" : "资产",
+    "assets_other" : "多种资产",
     "total" : "总余额：",
     "listAccount" : "资产配置 ({{count}})",
     "title" : "多种资产",
@@ -3420,6 +3427,7 @@
     "receive" : {
       "title" : "接收",
       "description" : "从另一个钱包接收加密货币。",
+      "description_v2" : "通过银行转账接收稳定币或从另一个钱包存入加密货币",
       "titleReadOnly" : "未经验证的地址",
       "headerTitle" : "加密资产",
       "titleDevice" : "连接设备",
@@ -3433,6 +3441,17 @@
       "shareAddress" : "分享地址",
       "addressCopied" : "地址已复制到剪贴板",
       "taprootWarning" : "确保发送方支持 taproot",
+      "connectToNoah" : "正在连接到 Noah",
+      "menu" : {
+        "crypto" : {
+          "title" : "通过加密货币地址",
+          "description" : "从另一个钱包存入加密货币。"
+        },
+        "fiat" : {
+          "title" : "通过银行转账",
+          "description" : "通过现金转稳定币账户接收稳定币需要注册"
+        }
+      },
       "memoTag" : {
         "link" : "需要标签/备忘标签？",
         "title" : "需要标签/备忘标签？",
@@ -3445,8 +3464,8 @@
       },
       "selectNetwork" : {
         "title" : "选择所选加密货币的网络",
-        "account" : "{{count}} 账户",
-        "account_plural" : "{{count}} 个账户",
+        "account_one" : "{{count}} 个账户",
+        "account_other" : "{{count}} 个账户",
         "subtitle" : "这必须与在转移加密货币的钱包或交易所上选择的网络一致。",
         "bannerTitle" : "请务必选择正确的网络。了解如何操作。",
         "depositFromCexBannerTitle" : "从您的比特币基地（Coinbase）账户存入加密货币"
@@ -3463,8 +3482,8 @@
       "addAccount" : {
         "title" : "正在检查账户……",
         "subtitle" : "检查您在区块链上是否已经有 {{currencyName}} 账户。",
-        "foundAccount" : "已找到 {{count}} 个账户",
-        "foundAccount_plural" : "已找到 {{count}} 个账户",
+        "foundAccount_one" : "已找到 {{count}} 个账户",
+        "foundAccount_other" : "已找到 {{count}} 个账户",
         "stopSynchronization" : "停止同步",
         "addingAccount" : "未找到账户。正在创建新的 {{currencyName}} 账户……"
       },
@@ -3766,12 +3785,16 @@
         "apt_description" : "要互换 Aptos，请使用其他兼容的 Ledger 设备，例如 Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™ 或 Ledger Stax™。",
         "cosmos_title" : "Ledger Nano S™ 不支持互换 Cosmos",
         "cosmos_description" : "要互换 Cosmos，请使用其他兼容的 Ledger 设备，例如 Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™ 或 Ledger Stax™。",
+        "hedera_title" : "Ledger Nano S™ 不支持互换 Hedera",
+        "hedera_description" : "要互换 Hedera，请使用其他兼容的 Ledger 设备，例如 Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™ 或 Ledger Stax™。",
         "osmo_title" : "Ledger Nano S™ 不支持互换 Osmosis",
         "osmo_description" : "要互换 Osmosis，请使用其他兼容的 Ledger 设备，例如 Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™ 或 Ledger Stax™。",
         "dydx_title" : "Ledger Nano S™ 不支持互换 dYdX",
         "dydx_description" : "要互换 dYdX，请使用其他兼容的 Ledger 设备，例如 Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™ 或 Ledger Stax™。",
         "sui_title" : "Ledger Nano S™ 不支持互换 Sui",
-        "sui_description" : "要互换 Sui，请使用任何其他兼容的 Ledger 设备，例如 Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™ 或 Ledger Stax™。"
+        "sui_description" : "要互换 Sui，请使用任何其他兼容的 Ledger 设备，例如 Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™ 或 Ledger Stax™。",
+        "kaspa_title" : "Ledger Nano S™ 不支持互换 Kaspa",
+        "kaspa_description" : "要互换 Kaspa，请使用其他兼容的 Ledger 设备，例如 Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™ 或 Ledger Stax™。"
       }
     },
     "lending" : {
@@ -3893,10 +3916,10 @@
           "stepRange" : "步骤 {{currentStep}} 之 {{totalSteps}}"
         },
         "selectAccount" : {
-          "enabledAccountsAmount" : "您有 {{number}} 个账户已批准 {{amount}}",
-          "enabledAccountsAmount_plural" : "您有 {{number}} 个账户已批准 {{amount}}",
-          "enabledAccountsNoLimit" : "您有 {{number}} 个账户已批准了不限额的 {{ currency }}",
-          "enabledAccountsNoLimit_plural" : "您有 {{number}} 个账户已批准了不限额的 {{ currency }}",
+          "enabledAccountsAmount_one" : "您有 {{number}} 个账户已批准 {{amount}}",
+          "enabledAccountsAmount_other" : "您有 {{number}} 个账户已批准 {{amount}}",
+          "enabledAccountsNoLimit_one" : "您有 {{number}} 个账户已批准了不限额的 {{ currency }}",
+          "enabledAccountsNoLimit_other" : "您有 {{number}} 个账户已批准了不限额的 {{ currency }}",
           "noEnabledAccounts" : "账户获得您的批准后才能贷出资产。"
         },
         "enable" : {
@@ -4287,8 +4310,8 @@
       }
     },
     "imported" : "资产添加成功",
-    "added" : "账户已添加到您的资产组合",
-    "added_plural" : "{{count}} 个账户已添加到您的资产组合",
+    "added_one" : "账户已添加到您的资产组合",
+    "added_other" : "{{count}} 个账户已添加到您的资产组合",
     "sections" : {
       "importable" : {
         "title" : "添加现有账户"
@@ -4354,8 +4377,8 @@
       "whichAddressType" : "了解如何选择地址类型",
       "sections" : {
         "importable" : {
-          "title" : "我们找到了 {{count}} 个账户",
-          "title_plural" : "我们找到了 {{count}} 个账户"
+          "title_one" : "我们找到了 {{count}} 个账户",
+          "title_other" : "我们找到了 {{count}} 个账户"
         },
         "creatable" : {
           "title" : "新账户"
@@ -4397,8 +4420,8 @@
     "outdated" : "应用程序版本过期",
     "outdatedDesc" : "您设备上的 {{appName}} 应用程序有重要更新。请前往 My Ledger（我的 Ledger）更新。",
     "quitApp" : "在您的设备上退出该应用程序",
-    "appNotInstalled" : "请安装 {{appName}} 应用程序",
-    "appNotInstalled_plural" : "请安装 {{appName}} 应用程序",
+    "appNotInstalled_one" : "请安装 {{appName}} 应用程序",
+    "appNotInstalled_other" : "请安装 {{appName}} 应用程序",
     "useAnotherDevice" : "使用其他设备",
     "deviceNotOnboarded" : {
       "title" : "您的 Ledger 设备尚未准备就绪",
@@ -4553,8 +4576,8 @@
   },
   "RemoveDevice" : {
     "button" : {
-      "title" : "删除 {{nbDevices}} 设备",
-      "title_plural" : "删除 {{nbDevices}} 设备"
+      "title_one" : "删除 {{nbDevices}} 设备",
+      "title_other" : "删除 {{nbDevices}} 设备"
     }
   },
   "manager" : {
@@ -4623,16 +4646,16 @@
       "title" : "存储",
       "used" : "已用",
       "genuine" : "您的设备是正版的",
-      "appsInstalled" : "<0>{{number}}</0> 个应用程序",
-      "appsInstalled_plural" : "<0>{{number}}</0> 个应用程序",
+      "appsInstalled_one" : "<0>{{number}}</0> 个应用程序",
+      "appsInstalled_other" : "<0>{{number}}</0> 个应用程序",
       "storageAvailable" : "可用",
       "noFreeSpace" : "存储空间不足",
       "appsToUpdate" : "<0>{{number}}</0> 个更新",
-      "appsToUpdate_plural" : "<0>{{number}} </0>个更新"
+      "appsToUpdate_other" : "<0>{{number}} </0>个更新"
     },
     "installSuccess" : {
       "title" : "应用已成功安装",
-      "title_plural" : "已成功安装的应用程序",
+      "title_other" : "已成功安装的应用程序",
       "notSupported" : "应用程序已成功安装，访问我们的网站来了解关于这些已安装应用的更多信息。",
       "manageAccount" : "添加账户",
       "learnMore" : "了解更多",
@@ -4665,7 +4688,7 @@
         "desc" : "请等待 {{appName}} 应用程序完成安装",
         "button" : "正在安装……",
         "queued" : "排队",
-        "button_plural" : "正在安装…… {{progressPercentage}}%"
+        "button_other" : "正在安装…… {{progressPercentage}}%"
       },
       "done" : {
         "title" : "应用已成功安装",
@@ -4680,8 +4703,8 @@
       "continueInstall" : "安装应用程序"
     },
     "update" : {
-      "title" : "{{number}} 个应用程序更新",
-      "title_plural" : "{{number}} 个应用程序更新",
+      "title_one" : "{{number}} 个应用程序更新",
+      "title_other" : "{{number}} 个应用程序更新",
       "step" : "更新步骤 {{step}}：",
       "updateWarn" : "更新期间请勿退出“我的 Ledger”。",
       "progress" : "正在更新全部……",
@@ -4701,7 +4724,7 @@
         "title" : "已成功将 {{appName}} 从您的 {{productName}} 上卸载"
       },
       "dependency" : {
-        "title" : "其他应用需要用到 {{app}} 应用程序",
+        "title_one" : "其他应用需要用到 {{app}} 应用程序",
         "showAll" : "显示待卸载的应用程序",
         "description" : "您设备上需要用到 {{app}} 的应用程序也将被卸载。",
         "description_one" : "一些应用依赖于 {{app}} 应用程序。",
@@ -6716,11 +6739,11 @@
     "changeValidator" : "更换验证者",
     "endDelegation" : "结束委托",
     "durationForDays0" : "就是现在",
-    "durationForDays" : "一天",
-    "durationForDays_plural" : "{{count}} 天",
+    "durationForDays_one" : "一天",
+    "durationForDays_other" : "{{count}} 天",
     "durationDays0" : "就是现在",
-    "durationDays" : "1 天",
-    "durationDays_plural" : "{{count}} 天",
+    "durationDays_one" : "1 天",
+    "durationDays_other" : "{{count}} 天",
     "selectValidatorTitle" : "选择验证者",
     "started" : {
       "title" : "赚取奖励",
@@ -6924,20 +6947,20 @@
         "desc" : "如有任何情况，我们会通知您。"
       },
       "time" : {
-        "second" : "1 秒前",
-        "second_plural" : "{{count}} 秒前",
-        "minute" : "1 分钟前",
-        "minute_plural" : "{{count}} 分钟前",
-        "hour" : "1 小时前",
-        "hour_plural" : "{{count}} 小时前",
-        "day" : "1 天前",
-        "day_plural" : "{{count}} 天前",
-        "week" : "1 周前",
-        "week_plural" : "{{count}} 周前",
-        "month" : "1 个月前",
-        "month_plural" : "{{count}} 个月前",
-        "year" : "1 年前",
-        "year_plural" : "{{count}} 年前"
+        "second_one" : "1 秒前",
+        "second_other" : "{{count}} 秒前",
+        "minute_one" : "1 分钟前",
+        "minute_other" : "{{count}} 分钟前",
+        "hour_one" : "1 小时前",
+        "hour_other" : "{{count}} 小时前",
+        "day_one" : "1 天前",
+        "day_other" : "{{count}} 天前",
+        "week_one" : "1 周前",
+        "week_other" : "{{count}} 周前",
+        "month_one" : "1 个月前",
+        "month_other" : "{{count}} 个月前",
+        "year_one" : "1 年前",
+        "year_other" : "{{count}} 年前"
       }
     },
     "status" : {
@@ -7191,16 +7214,18 @@
   "asset" : {
     "title" : "您的 {{assetName}}",
     "accountsSection" : {
-      "title" : "您的 {{currencyName}} 账户"
+      "title_one" : "您的 {{currencyName}} 账户",
+      "title_other" : "您的 {{currencyName}} 账户"
     }
   },
   "customImage" : {
     "title" : "锁屏图片",
     "change" : "更改",
     "drawer" : {
+      "title" : "自定义锁屏界面",
       "options" : {
-        "uploadFromPhone" : "从我的图片库中选择",
-        "remove" : "移除当前图片"
+        "uploadFromPhone" : "更换图片",
+        "remove" : "删除锁屏界面"
       }
     },
     "toastRemove" : "锁屏图片已移除",
@@ -7595,8 +7620,8 @@
       },
       "synchronizedInstances" : {
         "cta" : "管理",
-        "title" : "{{count}} 个 Ledger Live 应用程序已同步",
-        "title_plural" : "{{count}} 个 Ledger Live 应用程序已同步",
+        "title_one" : "{{count}} 个 Ledger Live 应用程序已同步",
+        "title_other" : "{{count}} 个 Ledger Live 应用程序已同步",
         "error" : "实例",
         "unsecuredError" : {
           "title" : "连接您用来启用 Ledger Sync 的 Ledger 设备",
@@ -7767,8 +7792,8 @@
     },
     "selectNetwork" : {
       "title" : "选择该资产所属的区块链网络",
-      "detectedAccounts" : "{{count}} 个账户（已检测到）",
-      "detectedAccounts_plural" : "{{count}} 个账户（已检测到）"
+      "detectedAccounts_one" : "{{count}} 个账户（已检测到）",
+      "detectedAccounts_other" : "{{count}} 个账户（已检测到）"
     }
   },
   "emptyList" : {
@@ -7800,18 +7825,18 @@
     "ath" : "历史最高",
     "atl" : "历史最低",
     "timeAgo" : {
-      "years" : "（{{count}} 年前）",
-      "years_plural" : "（{{count}} 年前）",
-      "months" : "（{{count}} 个月前）",
-      "months_plural" : "（{{count}} 个月前）",
-      "days" : "（{{count}} 天前）",
-      "days_plural" : "（{{count}} 天前）",
-      "hours" : "（{{count}} 小时前）",
-      "hours_plural" : "（{{count}} 小时前）",
-      "minutes" : "（{{count}} 分钟前）",
-      "minutes_plural" : "（{{count}} 分钟前）",
-      "seconds" : "（{{count}} 秒前）",
-      "seconds_plural" : "（{{count}} 秒前）"
+      "years_one" : "（{{count}} 年前）",
+      "years_other" : "（{{count}} 年前）",
+      "months_one" : "（{{count}} 个月前）",
+      "months_other" : "（{{count}} 个月前）",
+      "days_one" : "（{{count}} 天前）",
+      "days_other" : "（{{count}} 天前）",
+      "hours_one" : "（{{count}} 小时前）",
+      "hours_other" : "（{{count}} 小时前）",
+      "minutes_one" : "（{{count}} 分钟前）",
+      "minutes_other" : "（{{count}} 分钟前）",
+      "seconds_one" : "（{{count}} 秒前）",
+      "seconds_other" : "（{{count}} 秒前）"
     },
     "performance" : "表现",
     "low" : "低",
@@ -7846,8 +7871,8 @@
     "selectAccount" : "选择账户",
     "searchPlaceholder" : "搜索",
     "emptyAssetList" : "未找到资产",
-    "accountCount" : "{{count}} 个账户",
-    "accountCount_plural" : "{{count}} 个账户",
+    "accountCount_one" : "{{count}} 个账户",
+    "accountCount_other" : "{{count}} 个账户",
     "errors" : {
       "title" : "连接失败",
       "backend" : "我们这边出错了。请稍后重试",
@@ -7935,6 +7960,15 @@
     "default" : {
       "title" : "出错了",
       "description" : "请重试，如有疑问，请联系 Ledger 客服。"
+    }
+  },
+  "canton" : {
+    "onboard" : {
+      "account" : "账户",
+      "authorize" : "授权",
+      "preapprove" : "账户添加成功",
+      "validator" : "Ledger 验证者",
+      "title" : "自动接收汇入资金"
     }
   }
 }

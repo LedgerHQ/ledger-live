@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/hw-app-vet",
-  "version": "0.6.1",
+  "version": "0.6.2",
   "description": "Ledger Hardware Wallet VeChain Application API",
   "keywords": [
     "Ledger",
@@ -28,7 +28,7 @@
   "dependencies": {
     "@ledgerhq/cryptoassets": "workspace:^",
     "@ledgerhq/errors": "workspace:^",
-    "@ledgerhq/hw-transport": "workspace:^",
+    "@ledgerhq/hw-transport": "workspace:*",
     "@ledgerhq/hw-transport-mocker": "workspace:^",
     "@ledgerhq/logs": "workspace:^",
     "@vechain/sdk-core": "2.0.0"

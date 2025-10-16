@@ -1,10 +1,25 @@
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { legacyCryptoAssetsStore } from "@ledgerhq/cryptoassets/tokens";
+import { setCryptoAssetsStoreGetter } from "../cryptoAssetsStore";
 import { getAssetFromToken, getTokenFromAsset } from "./getTokenFromAsset";
 
 describe("getTokenFromAsset", () => {
-  it("computes the token of the USDC asset", () => {
+  beforeAll(() => {
+    setCryptoAssetsStoreGetter(() => legacyCryptoAssetsStore);
+  });
+
+  afterEach(() => {
+    jest.resetAllMocks();
+  });
+
+  it("computes the token of the USDC asset, trusting the CAL", async () => {
+    const findTokenByAddressInCurrency = jest.spyOn(
+      legacyCryptoAssetsStore,
+      "findTokenByAddressInCurrency",
+    );
+
     expect(
-      getTokenFromAsset({ id: "ethereum" } as CryptoCurrency, {
+      await getTokenFromAsset({ id: "ethereum" } as CryptoCurrency, {
         type: "erc20",
         assetReference: "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
       }),
@@ -13,8 +28,12 @@ describe("getTokenFromAsset", () => {
       contractAddress: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
       name: "USD Coin",
     });
+    expect(findTokenByAddressInCurrency).toHaveBeenCalledWith(
+      "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+      "ethereum",
+    );
     expect(
-      getTokenFromAsset({ id: "sonic" } as CryptoCurrency, {
+      await getTokenFromAsset({ id: "sonic" } as CryptoCurrency, {
         type: "erc20",
         assetReference: "0x29219dd400f2bf60e5a23d13be72b486d4038894",
       }),
@@ -23,6 +42,25 @@ describe("getTokenFromAsset", () => {
       contractAddress: "0x29219dd400f2Bf60E5a23d13Be72B486D4038894",
       name: "Bridged USDC (Sonic Labs)",
     });
+    expect(findTokenByAddressInCurrency).toHaveBeenCalledWith(
+      "0x29219dd400f2bf60e5a23d13be72b486d4038894",
+      "sonic",
+    );
+  });
+
+  it("does not compute the token of an unknown asset, trusting the CAL", async () => {
+    const findTokenByAddressInCurrency = jest.spyOn(
+      legacyCryptoAssetsStore,
+      "findTokenByAddressInCurrency",
+    );
+
+    expect(
+      await getTokenFromAsset({ id: "ethereum" } as CryptoCurrency, {
+        type: "token",
+        assetReference: "unknown-reference",
+      }),
+    ).toBeUndefined();
+    expect(findTokenByAddressInCurrency).toHaveBeenCalledWith("unknown-reference", "ethereum");
   });
 });
 

@@ -44,11 +44,11 @@ export type NodeApi = {
   ) => Promise<{ hash: string; height: number; timestamp: number }>;
   getOptimismAdditionalFees: (
     currency: CryptoCurrency,
-    transaction: EvmTransaction,
+    transaction: EvmTransaction | string,
   ) => Promise<BigNumber>;
   getScrollAdditionalFees: (
     currency: CryptoCurrency,
-    transaction: EvmTransaction,
+    transaction: EvmTransaction | string,
   ) => Promise<BigNumber>;
 };
 

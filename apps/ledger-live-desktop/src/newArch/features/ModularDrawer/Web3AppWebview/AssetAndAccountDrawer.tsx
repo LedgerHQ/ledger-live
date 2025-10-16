@@ -6,9 +6,8 @@ import type {
   EnhancedModularDrawerConfiguration,
 } from "@ledgerhq/live-common/wallet-api/ModularDrawer/types";
 import { createModularDrawerConfiguration } from "@ledgerhq/live-common/wallet-api/ModularDrawer/utils";
-import { type CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
+
 import { setDrawer } from "~/renderer/drawers/Provider";
-import { listAndFilterCurrencies } from "@ledgerhq/live-common/platform/helpers";
 import { type WalletAPIAccount } from "@ledgerhq/live-common/wallet-api/types";
 import ModularDrawerFlowManager from "../ModularDrawerFlowManager";
 import { useSelector } from "react-redux";
@@ -23,10 +22,8 @@ type Result = {
 };
 
 type DrawerParams = {
-  assetIds?: string[];
-  currencies?: CryptoOrTokenCurrency[];
+  currencies?: string[];
   accounts$?: Observable<WalletAPIAccount[]>;
-  includeTokens?: boolean;
   drawerConfiguration?: ModularDrawerConfiguration | EnhancedModularDrawerConfiguration;
   useCase?: string;
   areCurrenciesFiltered?: boolean;
@@ -36,10 +33,8 @@ type DrawerParams = {
 
 function openAssetAndAccountDrawer(params: DrawerParams): void {
   const {
-    assetIds,
     currencies,
     accounts$,
-    includeTokens,
     drawerConfiguration,
     useCase,
     areCurrenciesFiltered,
@@ -59,13 +54,10 @@ function openAssetAndAccountDrawer(params: DrawerParams): void {
     onCancel?.();
   };
 
-  const filteredCurrencies =
-    currencies ?? listAndFilterCurrencies({ currencies: assetIds, includeTokens });
-
   return setDrawer(
     ModularDrawerFlowManager,
     {
-      currencies: filteredCurrencies,
+      currencies: currencies ?? [],
       accounts$,
       onAccountSelected: (account, parentAccount) => {
         handleSuccess({ account, parentAccount });

@@ -3,7 +3,7 @@ import merge from "lodash/merge";
 import { CONFIG_PARAMS } from "./constants";
 
 /** Singleton instance of MMKV storage */
-const mmkv = new MMKV({
+export const mmkv = new MMKV({
   id: CONFIG_PARAMS.ID,
 });
 

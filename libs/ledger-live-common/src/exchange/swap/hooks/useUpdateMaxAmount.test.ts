@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 import "../../../__tests__/test-helpers/dom-polyfill";
-import { getCryptoCurrencyById, getTokenById } from "@ledgerhq/cryptoassets";
+import { getCryptoCurrencyById, findTokenById } from "@ledgerhq/cryptoassets";
 import { act, renderHook } from "@testing-library/react";
 import BigNumber from "bignumber.js";
 import { checkAccountSupported } from "../../../account/index";
@@ -19,7 +19,9 @@ jest.mock("../../../families/evm/bridge/mock");
 const mockedEstimateMaxSpendable = jest.mocked(ethBridge.accountBridge.estimateMaxSpendable);
 
 const ETH = getCryptoCurrencyById("ethereum");
-const USDT = getTokenById("ethereum/erc20/usd_tether__erc20_");
+const usdtToken = findTokenById("ethereum/erc20/usd_tether__erc20_");
+if (!usdtToken) throw new Error("USDT token not found");
+const USDT = usdtToken;
 
 const parentAccount = genAccount("parent-account", {
   currency: ETH,

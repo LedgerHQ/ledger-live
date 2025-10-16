@@ -3,11 +3,12 @@ import path from "path";
 import { fetchTokensFromCALService } from "../../fetch";
 
 type SuiToken = [
-  string, // CAL id
+  string, // id
   string, // name
   string, // ticker
   string, // address
   number, // decimals
+  string, // live_signature
 ];
 
 export const importSuiTokens = async (outputDir: string) => {
@@ -20,6 +21,7 @@ export const importSuiTokens = async (outputDir: string) => {
       "ticker",
       "contract_address",
       "decimals",
+      "live_signature",
     ]);
 
     const suiTokens: SuiToken[] = tokens.map(token => [
@@ -28,15 +30,17 @@ export const importSuiTokens = async (outputDir: string) => {
       token.ticker,
       token.contract_address,
       token.decimals,
+      token.live_signature,
     ]);
 
     const filePath = path.join(outputDir, "sui");
     const suiTypeStringified = `export type SuiToken = [
-  string, // CAL id
+  string, // id
   string, // name
   string, // ticker
   string, // address
   number, // decimals
+  string, // live_signature
 ];`;
 
     fs.writeFileSync(`${filePath}.json`, JSON.stringify(suiTokens));

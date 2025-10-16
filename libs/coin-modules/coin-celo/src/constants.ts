@@ -11,5 +11,4 @@ export const CELO_STABLE_TOKENS = Object.keys(CELO_STAKE_TOKENS_PAIR);
 export const getStableTokenEnum = (tokenTicker: string): StableToken =>
   CELO_STAKE_TOKENS_PAIR[tokenTicker];
 
-export const MAX_PRIORITY_FEE_PER_GAS = 1_000_000_000n;
 export const MAX_FEES_THRESHOLD_MULTIPLIER = 4;

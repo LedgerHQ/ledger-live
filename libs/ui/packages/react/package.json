@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/react-ui",
-  "version": "0.39.0",
+  "version": "0.40.0",
   "description": "Ledger Live - Desktop UI",
   "author": "Ledger Live Team <team-live@ledger.fr>",
   "repository": {
@@ -71,6 +71,8 @@
     "lint:css": "stylelint './src/**/*.{js,jsx,ts,tsx}' --fix",
     "typecheck": "tsc --p . --noEmit",
     "test": "pnpm -w -F ui build-and-test",
+    "test:jest": "jest --maxWorkers=50%",
+    "test:jest:coverage": "pnpm test:jest --ci --coverage",
     "unimported": "unimported"
   },
   "dependencies": {
@@ -121,6 +123,7 @@
     "@testing-library/react": "16.3.0",
     "@testing-library/user-event": "14.5.2",
     "@types/color": "^3.0.2",
+    "@types/jest": "^29.5.12",
     "@types/hoist-non-react-statics": "^3.3.1",
     "@types/lodash": "4",
     "@types/react": "~18.2.21",
@@ -139,9 +142,10 @@
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-storybook": "^0.12.0",
     "fs-extra": "^10.0.1",
+    "jest": "29.7.0",
     "os-browserify": "0.3.0",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
+    "react": "catalog:",
+    "react-dom": "catalog:",
     "rimraf": "^4.4.1",
     "storybook": "^8.6.12",
     "styled-components": "^5.3.3",

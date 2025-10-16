@@ -46,6 +46,9 @@ export const buildSignOperation =
           value: isTokenTransaction ? 0 : unsignedTransaction.value!,
         };
 
+        const { address } = await signerContext(deviceId, signer => {
+          return signer.getAddress(account.freshAddressPath);
+        });
         await determineFees(finalTransaction);
 
         const rlpEncodedTransaction = await signerContext(deviceId, signer => {
@@ -60,9 +63,6 @@ export const buildSignOperation =
           );
         })) as EvmSignature;
 
-        const { address } = await signerContext(deviceId, signer => {
-          return signer.getAddress(account.freshAddressPath);
-        });
         const convertedResponse = { ...response, v: response.v.toString() };
         if (cancelled) return;
 

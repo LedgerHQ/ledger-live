@@ -12,6 +12,14 @@ import { NavigationProp } from "@react-navigation/native";
 import { AssetData } from "@ledgerhq/live-common/modularDrawer/utils/type";
 import { State } from "~/reducers/types";
 
+jest.mock("@ledgerhq/live-common/modularDrawer/hooks/useCurrenciesUnderFeatureFlag", () => ({
+  useCurrenciesUnderFeatureFlag: () => mockUseCurrenciesUnderFeatureFlag(),
+}));
+
+const mockUseCurrenciesUnderFeatureFlag = jest.fn(() => ({
+  deactivatedCurrencyIds: new Set(),
+}));
+
 const assetsSorted: AssetData[] = [
   {
     asset: {
@@ -73,7 +81,6 @@ describe("useModularDrawerState", () => {
         assetsSorted: [],
       }),
     );
-    expect(result.current.asset).toBeUndefined();
     expect(result.current.network).toBeUndefined();
     expect(result.current.availableNetworks).toEqual([]);
   });
@@ -90,7 +97,6 @@ describe("useModularDrawerState", () => {
       result.current.handleAsset(mockEthCryptoCurrency);
     });
 
-    expect(result.current.asset).toEqual(mockEthCryptoCurrency);
     expect(result.current.availableNetworks.length).toBeGreaterThan(1);
   });
 
@@ -104,11 +110,9 @@ describe("useModularDrawerState", () => {
     act(() => {
       result.current.handleAsset(mockEthCryptoCurrency);
     });
-    expect(result.current.asset).toEqual(mockEthCryptoCurrency);
     act(() => {
       result.current.handleCloseButton();
     });
-    expect(result.current.asset).toBeUndefined();
     expect(result.current.network).toBeUndefined();
     expect(result.current.availableNetworks).toEqual([]);
   });

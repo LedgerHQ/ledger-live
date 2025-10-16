@@ -65,6 +65,9 @@ function buildAccountBridge(
     sync,
     receive,
     signOperation,
+    signRawOperation: () => {
+      throw new Error("signRawOperation is not supported");
+    },
     assignFromAccountRaw,
     assignToAccountRaw,
     broadcast: async ({ account, signedOperation }) => {

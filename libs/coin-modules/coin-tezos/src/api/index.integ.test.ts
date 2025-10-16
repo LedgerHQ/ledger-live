@@ -1,6 +1,7 @@
 import { localForger } from "@taquito/local-forging";
 import { createApi } from ".";
 import type { TezosApi } from "./types";
+import { SendTransactionIntent } from "@ledgerhq/coin-framework/api/types";
 
 /**
  * https://teztnets.com/ghostnet-about
@@ -39,6 +40,7 @@ describe("Tezos Api", () => {
 
       // When
       const result = await module.estimateFees({
+        intentType: "transaction",
         asset: { type: "native" },
         type: "send",
         sender: address,
@@ -73,13 +75,14 @@ describe("Tezos Api", () => {
   ])("does not fail when providing a %s address with pub key", async (_, sender, pubKey) => {
     // When
     const result = await module.estimateFees({
+      intentType: "transaction",
       asset: { type: "native" },
       type: "send",
       sender: "tz3DvEBHrtFkq9pTXqt6yavnf4sPe2jut2XH",
       senderPublicKey: pubKey,
       recipient: sender,
       amount: BigInt(100),
-    });
+    } as SendTransactionIntent);
 
     // Then
     expect(result.value).toBeGreaterThanOrEqual(BigInt(0));
@@ -91,6 +94,7 @@ describe("Tezos Api", () => {
   it("fails when using an unsupported address type", async () => {
     await expect(
       module.estimateFees({
+        intentType: "transaction",
         asset: { type: "native" },
         type: "send",
         sender: address,
@@ -172,6 +176,7 @@ describe("Tezos Api", () => {
       const amount = BigInt(10);
       // When
       const { transaction: encodedTransaction } = await module.craftTransaction({
+        intentType: "transaction",
         asset: { type: "native" },
         type,
         sender: address,
@@ -196,6 +201,7 @@ describe("Tezos Api", () => {
 
     it("should use estimated fees when user does not provide them for crafting a transaction", async () => {
       const { transaction: encodedTransaction } = await module.craftTransaction({
+        intentType: "transaction",
         asset: { type: "native" },
         type: "send",
         sender: address,
@@ -213,6 +219,7 @@ describe("Tezos Api", () => {
       async (customFees: bigint) => {
         const { transaction: encodedTransaction } = await module.craftTransaction(
           {
+            intentType: "transaction",
             asset: { type: "native" },
             type: "send",
             sender: address,

@@ -3,7 +3,7 @@ import { Flex, Text } from "@ledgerhq/native-ui";
 import { StyleSheet } from "react-native";
 import Delta from "~/components/Delta";
 import { counterValueFormatter } from "LLM/features/Market/utils";
-import { TFunction } from "react-i18next";
+import { TFunction } from "i18next";
 import { ValueChange } from "@ledgerhq/types-live";
 import { getTimeAgoCode } from "../../utils";
 import type { Currency } from "@ledgerhq/types-cryptoassets";

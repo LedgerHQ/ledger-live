@@ -227,11 +227,15 @@ const coinConfig: PolkadotCoinConfig = {
   node: {
     url: LOCAL_TESTNODE_WS_URL,
   },
+  indexer: {
+    url: "https://polkadot.coin.ledger.com",
+  },
   sidecar: {
     url: SIDECAR_BASE_URL,
   },
   metadataShortener: {
     url: "https://polkadot-metadata-shortener.api.live.ledger.com/transaction/metadata",
+    id: "dot",
   },
   metadataHash: {
     url: "https://polkadot-metadata-shortener.api.live.ledger.com/node/metadata/hash",
@@ -242,12 +246,13 @@ const subscriptions: any[] = [];
 
 export const PolkadotScenario: Scenario<PolkadotTransaction, PolkadotAccount> = {
   name: "Polkadot Ledger Live transactions",
+
   setup: async () => {
     const [{ transport, getOnSpeculosConfirmation }] = await Promise.all([
       spawnSpeculos(
         `/${defaultNanoApp.firmware}/PolkadotMigration/app_${defaultNanoApp.version}.elf`,
       ),
-      spawnChopsticksAndSidecar(),
+      spawnChopsticksAndSidecar("coin-tester-chopsticks/polkadot.yml"),
     ]);
 
     const onSignerConfirmation = getOnSpeculosConfirmation("APPROVE");

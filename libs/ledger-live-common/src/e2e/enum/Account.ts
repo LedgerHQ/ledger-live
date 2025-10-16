@@ -110,6 +110,12 @@ export class Account {
     "0xa1baa625c5E6A9304cB7AcD86d2fee6B710eC3eB",
     1,
   );
+  static readonly BSC_POL = new Account(
+    Currency.BSC_POL,
+    "BNB Chain 1",
+    "0x4BE2E2B8872AA298D6d123b9211B53E41f611566",
+    0,
+  );
   static readonly BSC_SHIBA = new Account(
     Currency.BSC_SHIBA,
     "BNB Chain 1",
@@ -242,6 +248,8 @@ export class Account {
     undefined,
     [Nft.ANTITUS, Nft.PODIUM, Nft.NY_LA_MUSE],
   );
+  // don't use this account as a recipient, it's balance
+  // should stay close to null to allow for error message testing
   static readonly ETH_2 = new Account(
     Currency.ETH,
     "Ethereum 2",
@@ -275,6 +283,8 @@ export class Account {
     "0x04DBA1194ee10112fE6C3207C0687DEf0e78baCf",
     0,
   );
+
+  static readonly HEDERA_1 = new Account(Currency.HBAR, "Hedera 1", "0.0.9374930", 0);
 
   static readonly INJ_1 = new Account(
     Currency.INJ,
@@ -516,6 +526,19 @@ export class Account {
     1,
   );
 
+  static readonly SUI_1 = new Account(
+    Currency.SUI,
+    "Sui 1",
+    "0xc6169bcce8718609e43d179b087e6c1e2ac28e5325660af34d22fb5ce284031e",
+    0,
+  );
+  static readonly SUI_2 = new Account(
+    Currency.SUI,
+    "Sui 2",
+    "0x6644c1ce77c5e5ef8d8bd3ae2a4e18239e5d418a5e0800ed5037818399e3a7f6",
+    1,
+  );
+
   static readonly EMPTY = new Account(Currency.BTC, "Empty", "", 0);
 }
 
@@ -629,6 +652,24 @@ export class TokenAccount extends Account {
     0,
     TokenType.TRC20,
     Account.TRX_1,
+  );
+
+  static readonly SUI_USDC_1 = new TokenAccount(
+    Currency.SUI_USDC,
+    "SUI USDC 1",
+    Account.SUI_1.address,
+    0,
+    TokenType.ERC20,
+    Account.SUI_1,
+  );
+
+  static readonly SUI_USDC_2 = new TokenAccount(
+    Currency.SUI_USDC,
+    "SUI USDC 2",
+    Account.SUI_2.address,
+    1,
+    TokenType.ERC20,
+    Account.SUI_2,
   );
 }
 

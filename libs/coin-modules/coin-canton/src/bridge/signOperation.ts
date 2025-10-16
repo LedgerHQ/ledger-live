@@ -4,6 +4,7 @@ import { FeeNotLoaded } from "@ledgerhq/errors";
 import { AccountBridge, Operation } from "@ledgerhq/types-live";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
+import { decodeAccountId } from "@ledgerhq/coin-framework/account";
 import { combine, craftTransaction } from "../common-logic";
 import { Transaction, CantonSigner } from "../types";
 
@@ -22,10 +23,8 @@ export const buildSignOperation =
           });
 
           const signature = await signerContext(deviceId, async signer => {
-            const { freshAddressPath: derivationPath } = account;
-            const partyId = (account as unknown as { cantonResources: { partyId: string } })
-              .cantonResources.partyId;
-
+            const { id, freshAddressPath: derivationPath, xpub } = account;
+            const address = xpub ?? decodeAccountId(id).xpubOrAddress;
             const params: {
               recipient?: string;
               amount: BigNumber;
@@ -45,13 +44,13 @@ export const buildSignOperation =
             const { hash, serializedTransaction } = await craftTransaction(
               account.currency,
               {
-                address: partyId,
+                address,
               },
               params,
             );
             const transactionSignature = await signer.signTransaction(derivationPath, hash);
 
-            return combine(serializedTransaction, `${transactionSignature}__PARTY__${partyId}`);
+            return combine(serializedTransaction, `${transactionSignature}__PARTY__${address}`);
           });
 
           o.next({

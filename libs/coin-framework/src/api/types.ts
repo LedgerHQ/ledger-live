@@ -319,22 +319,44 @@ type MaybeTxData<TxDataType extends TxData> = TxDataType extends TxDataNotSuppor
     {}
   : { data: TxDataType };
 
-export type FeesStrategy = "slow" | "medium" | "fast";
+export type FeesStrategy = "slow" | "medium" | "fast" | "custom";
+
+export type StakingOperation = "delegate" | "undelegate" | "redelegate";
 
 export type TransactionIntent<
   MemoType extends Memo = MemoNotSupported,
   TxDataType extends TxData = TxDataNotSupported,
 > = {
+  intentType: "transaction" | "staking";
   type: string;
   sender: string;
-  senderPublicKey?: string;
-  expiration?: number;
   recipient: string;
   amount: bigint;
-  useAllAmount?: boolean;
   asset: AssetInfo;
-  sequence?: number;
+  useAllAmount?: boolean;
   feesStrategy?: FeesStrategy;
+  senderPublicKey?: string;
+  sequence?: number;
+  expiration?: number;
+} & MaybeMemo<MemoType> &
+  MaybeTxData<TxDataType>;
+
+export type StakingTransactionIntent<
+  MemoType extends Memo = MemoNotSupported,
+  TxDataType extends TxData = TxDataNotSupported,
+> = TransactionIntent & {
+  intentType: "staking";
+  mode: StakingOperation;
+  valAddress: string;
+  dstValAddress?: string;
+} & MaybeMemo<MemoType> &
+  MaybeTxData<TxDataType>;
+
+export type SendTransactionIntent<
+  MemoType extends Memo = MemoNotSupported,
+  TxDataType extends TxData = TxDataNotSupported,
+> = TransactionIntent & {
+  intentType: "transaction";
 } & MaybeMemo<MemoType> &
   MaybeTxData<TxDataType>;
 
@@ -342,6 +364,7 @@ export type TransactionValidation = {
   errors: Record<string, Error>;
   warnings: Record<string, Error>;
   estimatedFees: bigint;
+  totalFees?: bigint;
   amount: bigint;
   totalSpent: bigint;
 };
@@ -399,10 +422,17 @@ export type AlpacaApi<
   combine: (tx: string, signature: string, pubkey?: string) => string | Promise<string>;
   estimateFees: (
     transactionIntent: TransactionIntent<MemoType, TxDataType>,
+    customFeesParameters?: FeeEstimation["parameters"],
   ) => Promise<FeeEstimation>;
   craftTransaction: (
     transactionIntent: TransactionIntent<MemoType, TxDataType>,
     customFees?: FeeEstimation,
+  ) => Promise<CraftedTransaction>;
+  craftRawTransaction: (
+    transaction: string,
+    sender: string,
+    publicKey: string,
+    sequence: number,
   ) => Promise<CraftedTransaction>;
   getBalance: (address: string) => Promise<Balance[]>;
   lastBlock: () => Promise<BlockInfo>;
@@ -470,7 +500,7 @@ export type BridgeApi<
   ) => Promise<TransactionValidation>;
   getSequence: (address: string) => Promise<number>;
   getChainSpecificRules?: () => ChainSpecificRules;
-  getTokenFromAsset?: (asset: AssetInfo) => TokenCurrency | undefined;
+  getTokenFromAsset?: (asset: AssetInfo) => Promise<TokenCurrency | undefined>;
   getAssetFromToken?: (token: TokenCurrency, owner: string) => AssetInfo;
   computeIntentType?: (transaction: Record<string, unknown>) => string;
 };

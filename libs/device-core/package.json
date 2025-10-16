@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/device-core",
-  "version": "0.6.5",
+  "version": "0.6.6",
   "description": "Ledger Live device core module",
   "license": "Apache-2.0",
   "keywords": [
@@ -20,12 +20,12 @@
   "dependencies": {
     "@ledgerhq/devices": "workspace:*",
     "@ledgerhq/errors": "workspace:^",
-    "@ledgerhq/hw-transport": "workspace:^",
+    "@ledgerhq/hw-transport": "workspace:*",
     "@ledgerhq/live-network": "workspace:^",
     "@ledgerhq/logs": "workspace:^",
     "@ledgerhq/types-live": "workspace:^",
-    "semver": "^7.3.5",
-    "@noble/hashes": "1.8.0"
+    "@noble/hashes": "1.8.0",
+    "semver": "^7.3.5"
   },
   "devDependencies": {
     "@testing-library/react": "14",

@@ -49,7 +49,7 @@ describe("useLocalizedUrl", () => {
     expect(localizedUrl).toEqual("https://www.ledger.com/zh-hans/staking");
 
     setLocaleMockWithURL("th", urls.ledgerValidator);
-    expect(localizedUrl).toEqual("https://www.ledger.com/staking");
+    expect(localizedUrl).toEqual("https://www.ledger.com/th/staking");
 
     setLocaleMockWithURL("en", urls.ledgerValidator);
     expect(localizedUrl).toEqual("https://www.ledger.com/staking");
@@ -77,7 +77,7 @@ describe("useLocalizedUrl", () => {
     expect(localizedUrl).toEqual("https://support.ledger.com/zh-cn/article/115005165269-zd");
 
     setLocaleMockWithURL("th", urls.troubleshootingUSB);
-    expect(localizedUrl).toEqual("https://support.ledger.com/article/115005165269-zd");
+    expect(localizedUrl).toEqual("https://support.ledger.com/th/article/115005165269-zd");
   });
 
   test("SHOP", () => {
@@ -98,7 +98,7 @@ describe("useLocalizedUrl", () => {
 
     setLocaleMockWithURL("th", urls.banners.blackfriday);
     expect(localizedUrl).toEqual(
-      "https://shop.ledger.com/pages/black-friday?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=banner_carousel",
+      "https://shop.ledger.com/th/pages/black-friday?utm_source=ledger_live_desktop&utm_medium=self_referral&utm_content=banner_carousel",
     );
 
     setLocaleMockWithURL("en", urls.banners.blackfriday);

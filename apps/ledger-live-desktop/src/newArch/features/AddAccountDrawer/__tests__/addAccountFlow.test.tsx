@@ -3,7 +3,6 @@ import BigNumber from "bignumber.js";
 import React from "react";
 import { act } from "react-dom/test-utils";
 import { render, screen, userEvent } from "tests/testSetup";
-import { formatAddress } from "~/newArch/utils/formatAddress";
 import { openModal } from "~/renderer/actions/modals";
 import { track, trackPage } from "~/renderer/analytics/segment";
 import { State } from "~/renderer/reducers";
@@ -277,10 +276,10 @@ describe("ModularDrawerAddAccountFlowManager", () => {
     expect(screen.getByText(/2 accounts added to your portfolio/i)).toBeInTheDocument();
 
     await userEvent.click(screen.getByRole("button", { name: "Add funds to my account" }));
-    expect(screen.getByText(formatAddress(ARB_ACCOUNT.freshAddress))).toBeInTheDocument();
-    expect(screen.getByText(formatAddress(NEW_ARB_ACCOUNT.freshAddress))).toBeInTheDocument();
+    expect(screen.getByText(/0x10D...868BD/i)).toBeInTheDocument();
+    expect(screen.getByText(/0xf97...93921/i)).toBeInTheDocument();
 
-    await userEvent.click(screen.getByText(formatAddress(ARB_ACCOUNT.freshAddress)));
+    await userEvent.click(screen.getByText(/0xf97...93921/i));
     expect(screen.getByText(/buy crypto securely with cash/i)).toBeInTheDocument();
   });
 

@@ -1,6 +1,6 @@
 import type { AccountBannerState } from "@ledgerhq/live-common/families/cosmos/banner";
 import { Account } from "@ledgerhq/types-live";
-import { TFunction } from "react-i18next";
+import type { TFunction } from "i18next";
 
 const getAccountBannerProps = (
   state: AccountBannerState,

@@ -14,6 +14,8 @@ import prepareSignTransaction from "../Web3AppWebview/liveSDKLogic";
 import { useDispatch } from "react-redux";
 import { addOneAccount } from "~/actions/accounts";
 import { setAccountName } from "@ledgerhq/live-wallet/lib/store";
+import { handlers as deeplinkHandlers } from "@ledgerhq/live-common/wallet-api/CustomDeeplink/server";
+import { Linking } from "react-native";
 
 export function useACRECustomHandlers(manifest: WebviewProps["manifest"], accounts: AccountLike[]) {
   const navigation = useNavigation<StackNavigatorNavigation<BaseNavigatorStackParamList>>();
@@ -111,4 +113,20 @@ export function useACRECustomHandlers(manifest: WebviewProps["manifest"], accoun
       }),
     };
   }, [accounts, tracking, manifest, dispatch, navigation]);
+}
+
+export function useDeeplinkCustomHandlers() {
+  return useMemo<WalletAPICustomHandlers>(() => {
+    return {
+      ...deeplinkHandlers({
+        uiHooks: {
+          "custom.deeplink.open": params => {
+            if (params) {
+              Linking.openURL(params.url);
+            }
+          },
+        },
+      }),
+    };
+  }, []);
 }

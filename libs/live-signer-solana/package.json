@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/live-signer-solana",
-  "version": "0.5.7",
+  "version": "0.5.8",
   "private": true,
   "description": "Ledger Hardware Wallet Solana Application API",
   "keywords": [
@@ -28,11 +28,11 @@
   "license": "Apache-2.0",
   "dependencies": {
     "@ledgerhq/coin-solana": "workspace:^",
-    "@ledgerhq/devices": "workspace:^",
+    "@ledgerhq/devices": "workspace:*",
     "@ledgerhq/errors": "workspace:^",
     "@ledgerhq/hw-app-solana": "workspace:^",
     "@ledgerhq/hw-bolos": "workspace:^",
-    "@ledgerhq/hw-transport": "workspace:^",
+    "@ledgerhq/hw-transport": "workspace:*",
     "@ledgerhq/ledger-cal-service": "workspace:^",
     "@ledgerhq/ledger-trust-service": "workspace:^",
     "semver": "^7"

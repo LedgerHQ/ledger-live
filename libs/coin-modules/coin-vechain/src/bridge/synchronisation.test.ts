@@ -1,7 +1,7 @@
 import { faker } from "@faker-js/faker";
 import { createEmptyHistoryCache } from "@ledgerhq/coin-framework/account";
 import { makeScanAccounts } from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import { getCryptoCurrencyById, getTokenById } from "@ledgerhq/cryptoassets";
+import { getCryptoCurrencyById, findTokenById } from "@ledgerhq/cryptoassets";
 import BigNumber from "bignumber.js";
 import { setupServer } from "msw/node";
 import { firstValueFrom } from "rxjs";
@@ -102,13 +102,13 @@ describe("scanAccounts", () => {
         swapHistory: [],
         type: "Account",
         used: false,
-        feesCurrency: getTokenById("vechain/vip180/vtho"),
+        feesCurrency: findTokenById("vechain/vip180/vtho"),
         subAccounts: [
           {
             type: "TokenAccount",
             id: "js:2:vechain:0x5066118c66793ED86bd379b50b20E32B0FC1aBf5:vechain+vechain%2Fvip180%2Fvtho",
             parentId: "js:2:vechain:0x5066118c66793ED86bd379b50b20E32B0FC1aBf5:vechain",
-            token: getTokenById("vechain/vip180/vtho"),
+            token: findTokenById("vechain/vip180/vtho"),
             balance: new BigNumber("0"),
             spendableBalance: new BigNumber("0"),
             creationDate: expect.any(Date),

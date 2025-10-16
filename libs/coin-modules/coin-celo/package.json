@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-celo",
-  "version": "1.5.0",
+  "version": "1.6.0",
   "description": "celo coin integration",
   "keywords": [
     "Ledger",
@@ -112,7 +112,7 @@
     "@ledgerhq/coin-evm": "workspace:^",
     "@ledgerhq/coin-framework": "workspace:^",
     "@ledgerhq/cryptoassets": "workspace:^",
-    "@ledgerhq/devices": "workspace:^",
+    "@ledgerhq/devices": "workspace:*",
     "@ledgerhq/errors": "workspace:^",
     "@ledgerhq/hw-app-eth": "workspace:^",
     "@ledgerhq/live-config": "workspace:^",
@@ -127,12 +127,12 @@
     "rxjs": "^7.8.1"
   },
   "devDependencies": {
+    "@faker-js/faker": "^9.9.0",
     "@ledgerhq/disable-network-setup": "workspace:^",
     "@ledgerhq/types-cryptoassets": "workspace:^",
     "@types/invariant": "^2.2.37",
     "@types/jest": "^29.5.12",
     "@types/lodash": "^4.14.179",
-    "@faker-js/faker": "^9.9.0",
     "dotenv": "^16.4.5",
     "expect": "^27.4.6",
     "jest": "^29.7.0",

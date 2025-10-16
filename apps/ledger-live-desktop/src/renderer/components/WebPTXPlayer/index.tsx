@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useMemo, useRef, useState } from "react";
 import styled from "styled-components";
 import { useSelector } from "react-redux";
 import { flattenAccountsSelector } from "~/renderer/reducers/accounts";
@@ -9,6 +9,8 @@ import { WebviewAPI, WebviewProps, WebviewState } from "../Web3AppWebview/types"
 import { initialWebviewState } from "../Web3AppWebview/helpers";
 import { usePTXCustomHandlers } from "./CustomHandlers";
 import { useMobileView, WebViewWrapperProps } from "~/renderer/hooks/useMobileView";
+import { useDeeplinkCustomHandlers } from "../WebPlatformPlayer/CustomHandlers";
+import { WalletAPICustomHandlers } from "@ledgerhq/live-common/wallet-api/types";
 
 export const Container = styled.div`
   display: flex;
@@ -37,7 +39,15 @@ export default function WebPTXPlayer({ manifest, inputs, Loader }: WebviewProps)
   const { mobileView, setMobileView } = useMobileView();
 
   const accounts = useSelector(flattenAccountsSelector);
-  const customHandlers = usePTXCustomHandlers(manifest, accounts);
+  const customPTXHandlers = usePTXCustomHandlers(manifest, accounts);
+  const customDeeplinkHandlers = useDeeplinkCustomHandlers();
+
+  const customHandlers = useMemo<WalletAPICustomHandlers>(() => {
+    return {
+      ...customPTXHandlers,
+      ...customDeeplinkHandlers,
+    };
+  }, [customDeeplinkHandlers, customPTXHandlers]);
 
   return (
     <Container>

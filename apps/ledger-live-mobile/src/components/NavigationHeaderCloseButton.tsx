@@ -11,9 +11,6 @@ import { usePostOnboardingHubState } from "@ledgerhq/live-common/postOnboarding/
 import { useNavigateToPostOnboardingHubCallback } from "~/logic/postOnboarding/useNavigateToPostOnboardingHubCallback";
 import { StyleProp, ViewStyle } from "react-native";
 
-// eslint-disable-next-line @typescript-eslint/no-empty-function
-const emptyFunction = () => {};
-
 type Props = {
   /**
    * Function called when user presses on the close button.
@@ -110,7 +107,7 @@ export const NavigationHeaderCloseButtonAdvanced: React.FC<AdvancedProps> = Reac
     withConfirmation,
     confirmationTitle,
     confirmationDesc,
-    onClose = emptyFunction,
+    onClose,
     rounded = false,
     showButton = false,
     buttonText,
@@ -161,7 +158,7 @@ export const NavigationHeaderCloseButtonAdvanced: React.FC<AdvancedProps> = Reac
       if (navigation.canGoBack()) {
         navigation.goBack();
       }
-      onClose();
+      onClose?.();
     }, [
       navigateToPostOnboardingHub,
       navigation,

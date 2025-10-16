@@ -22,7 +22,7 @@ export type CryptoCurrencyId =
   | "callisto"
   | "canton_network"
   | "canton_network_devnet"
-  | "canton_network_localnet"
+  | "canton_network_testnet"
   | "cardano"
   | "cardano_testnet"
   | "celo"
@@ -185,6 +185,9 @@ export type CryptoCurrencyId =
   | "zenrock"
   | "sonic"
   | "sonic_blaze"
+  | "westend"
+  | "assethub_westend"
+  | "assethub_polkadot"
   | "mina";
 
 export type LedgerExplorerId =

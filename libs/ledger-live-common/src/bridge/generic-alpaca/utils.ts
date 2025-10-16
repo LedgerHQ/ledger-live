@@ -1,5 +1,5 @@
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
-import { Account, Operation, OperationType, TransactionCommon } from "@ledgerhq/types-live";
+import { Account, Operation, OperationType } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { fromBigNumberToBigInt } from "@ledgerhq/coin-framework/utils";
 import {
@@ -61,7 +61,7 @@ export function adaptCoreOperationToLiveOperation(accountId: string, op: CoreOpe
     accountId,
     type: opType,
     value:
-      op.asset.type === "native" && ["OUT", "FEES"].includes(opType)
+      op.asset.type === "native" && ["OUT", "FEES", "DELEGATE", "UNDELEGATE"].includes(opType)
         ? new BigNumber(op.value.toString()).plus(bnFees)
         : new BigNumber(op.value.toString()),
     fee: bnFees,
@@ -128,17 +128,20 @@ export function transactionToIntent(
   data?: { type: string; value?: unknown };
 } {
   const intentType = (computeIntentType ?? defaultComputeIntentType)(transaction);
+  const isStaking = ["stake", "unstake"].includes(intentType);
+  const amount = isStaking ? 0n : fromBigNumberToBigInt(transaction.amount, 0n);
+  const useAllAmount = isStaking || !!transaction.useAllAmount;
   const res: TransactionIntent & { memo?: { type: string; value?: string } } & {
     data?: { type: string; value?: unknown };
   } = {
+    intentType: isStaking ? "staking" : "transaction",
     type: intentType,
     sender: account.freshAddress,
     recipient: transaction.recipient,
-    amount: fromBigNumberToBigInt(transaction.amount, BigInt(0)),
+    amount,
     asset: { type: "native", name: account.currency.name, unit: account.currency.units[0] },
-    useAllAmount: !!transaction.useAllAmount,
-    feesStrategy:
-      transaction.feesStrategy === "custom" ? undefined : transaction.feesStrategy ?? undefined,
+    useAllAmount,
+    feesStrategy: transaction.feesStrategy ?? undefined,
     data: Buffer.isBuffer(transaction.data)
       ? { type: "buffer", value: transaction.data }
       : { type: "none" },
@@ -171,11 +174,27 @@ export function transactionToIntent(
 
 export const buildOptimisticOperation = (
   account: Account,
-  transaction: TransactionCommon,
+  transaction: GenericTransaction,
   sequenceNumber?: number,
 ): Operation => {
-  const type = transaction["mode"] === "changeTrust" ? "OPT_IN" : "OUT";
-  const fees = BigInt(transaction["fees"]?.toString() || "0");
+  let type: OperationType;
+  switch (transaction.mode) {
+    case "changeTrust":
+      type = "OPT_IN";
+      break;
+    case "delegate":
+    case "stake":
+      type = "DELEGATE";
+      break;
+    case "undelegate":
+    case "unstake":
+      type = "UNDELEGATE";
+      break;
+    default:
+      type = "OUT";
+      break;
+  }
+  const fees = BigInt(transaction.fees?.toString() || "0");
   const { subAccountId } = transaction;
   const { subAccounts } = account;
 

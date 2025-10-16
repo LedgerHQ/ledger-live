@@ -67,6 +67,10 @@ import { SettingsState } from "~/reducers/types";
 import { Theme } from "~/colors";
 import { useTrackTransactionChecksFlow } from "~/analytics/hooks/useTrackTransactionChecksFlow";
 import { useTrackDmkErrorsEvents } from "~/analytics/hooks/useTrackDmkErrorsEvents";
+import { UnsupportedFirmwareDAError } from "@ledgerhq/device-management-kit";
+
+const isFirmwareUnsupportedError = (error: unknown): boolean =>
+  error instanceof LatestFirmwareVersionRequired || error instanceof UnsupportedFirmwareDAError;
 
 type Status = PartialNullable<{
   appAndVersion: AppAndVersion;
@@ -522,7 +526,7 @@ export function DeviceActionDefaultRendering<R, H extends Status, P>({
       return renderDeviceNotOnboarded({ t, device, navigation });
     }
 
-    if (error instanceof LatestFirmwareVersionRequired) {
+    if (isFirmwareUnsupportedError(error)) {
       return <RequiredFirmwareUpdate t={t} navigation={navigation} device={selectedDevice} />;
     }
 

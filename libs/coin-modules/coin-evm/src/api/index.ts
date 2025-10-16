@@ -51,9 +51,18 @@ export function createApi(
       transactionIntent: TransactionIntent<MemoNotSupported, BufferTxData>,
       customFees?: FeeEstimation,
     ): Promise<CraftedTransaction> => craftTransaction(currency, { transactionIntent, customFees }),
+    craftRawTransaction: (
+      _transaction: string,
+      _sender: string,
+      _publicKey: string,
+      _sequence: number,
+    ): Promise<CraftedTransaction> => {
+      throw new Error("craftRawTransaction is not supported");
+    },
     estimateFees: (
       transactionIntent: TransactionIntent<MemoNotSupported, BufferTxData>,
-    ): Promise<FeeEstimation> => estimateFees(currency, transactionIntent),
+      customFeesParameters?: FeeEstimation["parameters"],
+    ): Promise<FeeEstimation> => estimateFees(currency, transactionIntent, customFeesParameters),
     getBalance: (address: string): Promise<Balance[]> => getBalance(currency, address),
     lastBlock: (): Promise<BlockInfo> => lastBlock(currency),
     listOperations: (
@@ -76,8 +85,9 @@ export function createApi(
     getSequence: (address: string): Promise<number> => getSequence(currency, address),
     validateIntent: (
       intent: TransactionIntent<MemoNotSupported, BufferTxData>,
-    ): Promise<TransactionValidation> => validateIntent(currency, intent),
-    getTokenFromAsset: (asset: AssetInfo): TokenCurrency | undefined =>
+      customFees?: FeeEstimation,
+    ): Promise<TransactionValidation> => validateIntent(currency, intent, customFees),
+    getTokenFromAsset: (asset: AssetInfo): Promise<TokenCurrency | undefined> =>
       getTokenFromAsset(currency, asset),
     getAssetFromToken: (token: TokenCurrency, owner: string): AssetInfo =>
       getAssetFromToken(currency, token, owner),

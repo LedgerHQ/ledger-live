@@ -10,7 +10,7 @@ describe("craftTransaction", () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    mockCreateTransaction.mockResolvedValue(mockUnsignedTx);
+    mockCreateTransaction.mockResolvedValue({ unsigned: mockUnsignedTx });
   });
 
   it("should create a transaction with correct parameters", async () => {
@@ -18,8 +18,10 @@ describe("craftTransaction", () => {
     const amount = BigInt("1000000000");
     const recipient = "0x456";
     const type = "send";
+    const intentType = "transaction";
 
     const result = await craftTransaction({
+      intentType,
       sender,
       amount,
       recipient,
@@ -27,12 +29,17 @@ describe("craftTransaction", () => {
       asset: { type: "native" },
     });
 
-    expect(mockCreateTransaction).toHaveBeenCalledWith(sender, {
-      amount: new BigNumber(amount.toString()),
-      recipient,
-      mode: type,
-      coinType: "0x2::sui::SUI",
-    });
+    expect(mockCreateTransaction).toHaveBeenCalledWith(
+      sender,
+      {
+        intentType,
+        amount: new BigNumber(amount.toString()),
+        recipient,
+        mode: type,
+        coinType: "0x2::sui::SUI",
+      },
+      false,
+    );
     expect(result).toEqual({ unsigned: mockUnsignedTx });
   });
 
@@ -41,8 +48,10 @@ describe("craftTransaction", () => {
     const amount = BigInt("500000000");
     const recipient = "0x456";
     const type = "send";
+    const intentType = "transaction";
 
     const result = await craftTransaction({
+      intentType,
       sender,
       amount,
       recipient,
@@ -50,12 +59,17 @@ describe("craftTransaction", () => {
       asset: { type: "native" },
     });
 
-    expect(mockCreateTransaction).toHaveBeenCalledWith(sender, {
-      amount: new BigNumber(amount.toString()),
-      recipient,
-      mode: type,
-      coinType: "0x2::sui::SUI",
-    });
+    expect(mockCreateTransaction).toHaveBeenCalledWith(
+      sender,
+      {
+        intentType,
+        amount: new BigNumber(amount.toString()),
+        recipient,
+        mode: type,
+        coinType: "0x2::sui::SUI",
+      },
+      false,
+    );
     expect(result).toEqual({ unsigned: mockUnsignedTx });
   });
 
@@ -64,8 +78,10 @@ describe("craftTransaction", () => {
     const amount = BigInt("0");
     const recipient = "0x456";
     const type = "send";
+    const intentType = "transaction";
 
     const result = await craftTransaction({
+      intentType,
       sender,
       amount,
       recipient,
@@ -73,12 +89,17 @@ describe("craftTransaction", () => {
       asset: { type: "native" },
     });
 
-    expect(mockCreateTransaction).toHaveBeenCalledWith(sender, {
-      amount: new BigNumber(amount.toString()),
-      recipient,
-      mode: type,
-      coinType: "0x2::sui::SUI",
-    });
+    expect(mockCreateTransaction).toHaveBeenCalledWith(
+      sender,
+      {
+        intentType,
+        amount: new BigNumber(amount.toString()),
+        recipient,
+        mode: type,
+        coinType: "0x2::sui::SUI",
+      },
+      false,
+    );
     expect(result).toEqual({ unsigned: mockUnsignedTx });
   });
 
@@ -87,8 +108,10 @@ describe("craftTransaction", () => {
     const amount = BigInt("1000000000000000000"); // 1 SUI (assuming 9 decimals)
     const recipient = "0x456";
     const type = "send";
+    const intentType = "transaction";
 
     const result = await craftTransaction({
+      intentType,
       sender,
       amount,
       recipient,
@@ -96,12 +119,17 @@ describe("craftTransaction", () => {
       asset: { type: "native" },
     });
 
-    expect(mockCreateTransaction).toHaveBeenCalledWith(sender, {
-      amount: new BigNumber(amount.toString()),
-      recipient,
-      mode: type,
-      coinType: "0x2::sui::SUI",
-    });
+    expect(mockCreateTransaction).toHaveBeenCalledWith(
+      sender,
+      {
+        intentType,
+        amount: new BigNumber(amount.toString()),
+        recipient,
+        mode: type,
+        coinType: "0x2::sui::SUI",
+      },
+      false,
+    );
     expect(result).toEqual({ unsigned: mockUnsignedTx });
   });
 
@@ -113,9 +141,11 @@ describe("craftTransaction", () => {
     const amount = BigInt("1000000000");
     const recipient = "0x456";
     const type = "send";
+    const intentType = "transaction";
 
     await expect(
       craftTransaction({
+        intentType,
         sender,
         amount,
         recipient,

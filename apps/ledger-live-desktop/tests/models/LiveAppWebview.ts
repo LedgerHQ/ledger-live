@@ -148,7 +148,14 @@ export class LiveAppWebview {
 
   async setCurrencyIds(currencies: string[]) {
     const webview = await this.getWebView();
-    return webview.getByTestId("currency-ids-input").fill(currencies.join(","));
+
+    // Wait for the input to be ready
+    const input = webview.getByTestId("currency-ids-input");
+    await input.waitFor({ state: "visible", timeout: 10000 });
+
+    // Set currency IDs using click + keyboard (more reliable than fill())
+    await input.click();
+    await webview.keyboard.type(currencies.join(","));
   }
 
   async setAccountId(accountId: string) {
@@ -169,6 +176,11 @@ export class LiveAppWebview {
   async setData(data: string) {
     const webview = await this.getWebView();
     return webview.getByTestId("data-input").fill(data);
+  }
+
+  async setDeeplinkUrl(url: string) {
+    const webview = await this.getWebView();
+    return webview.getByTestId("deeplink-url-input").fill(url);
   }
 
   async accountRequest() {
@@ -207,6 +219,10 @@ export class LiveAppWebview {
     return this.clickByTestId("transaction-sign-raw-solana");
   }
 
+  async transactionSignRaw() {
+    return this.clickByTestId("transaction-sign-raw");
+  }
+
   async transactionSignAndBroadcast() {
     return this.clickByTestId("transaction-signAndBroadcast");
   }
@@ -221,6 +237,11 @@ export class LiveAppWebview {
 
   async walletInfo() {
     return this.clickByTestId("wallet-info");
+  }
+
+  async customDeeplinkOpen(url: string) {
+    await this.setDeeplinkUrl(url);
+    return this.clickByTestId("deeplink-open");
   }
 
   async clearStates() {

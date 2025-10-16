@@ -1,10 +1,12 @@
 import { AssertionError, fail } from "assert";
 import BigNumber from "bignumber.js";
 import { getEnv } from "@ledgerhq/live-env";
-import { TokenAccount } from "@ledgerhq/types-live";
+import { Operation, TokenAccount } from "@ledgerhq/types-live";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { decodeAccountId } from "@ledgerhq/coin-framework/account/accountId";
+import { decodeAccountId, encodeTokenAccountId } from "@ledgerhq/coin-framework/account/accountId";
 import { AccountShapeInfo } from "@ledgerhq/coin-framework/bridge/jsHelpers";
+import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
+import { legacyCryptoAssetsStore } from "@ledgerhq/cryptoassets/tokens";
 import { makeTokenAccount } from "../fixtures/common.fixtures";
 import * as etherscanAPI from "../../network/explorer/etherscan";
 import { UnknownExplorer, UnknownNode } from "../../errors";
@@ -28,6 +30,9 @@ import {
 } from "../fixtures/synchronization.fixtures";
 import { getCoinConfig } from "../../config";
 import * as logic from "../../logic";
+import usdtTokenData from "../../__fixtures__/ethereum-erc20-usd_tether__erc20_.json";
+import usdcTokenData from "../../__fixtures__/ethereum-erc20-usd__coin.json";
+import { getCryptoAssetsStore, setCryptoAssetsStoreGetter } from "../../cryptoAssetsStore";
 
 jest.mock("../../network/node/rpc.common");
 jest.useFakeTimers().setSystemTime(new Date("2014-04-21"));
@@ -44,6 +49,10 @@ const getAccountShapeParameters: AccountShapeInfo = {
 };
 
 describe("EVM Family", () => {
+  beforeAll(() => {
+    setCryptoAssetsStoreGetter(() => legacyCryptoAssetsStore);
+  });
+
   beforeEach(() => {
     mockGetConfig.mockImplementation((): any => {
       return {
@@ -673,7 +682,11 @@ describe("EVM Family", () => {
         jest.restoreAllMocks();
       });
 
-      it("should return the right subAccounts", async () => {
+      it("should return the right subAccounts, excluding tokens unknown by the CAL and recomputing operations `id` and `accountId`", async () => {
+        const findTokenByAddressInCurrency = jest.spyOn(
+          legacyCryptoAssetsStore,
+          "findTokenByAddressInCurrency",
+        );
         const swapHistoryMap = createSwapHistoryMap(account);
         const tokenAccounts = await synchronization.getSubAccounts(
           {
@@ -681,32 +694,79 @@ describe("EVM Family", () => {
             initialAccount: account,
           },
           account.id,
-          [tokenOperations[0], tokenOperations[1], tokenOperations[3]],
+          [
+            tokenOperations[0],
+            tokenOperations[1],
+            { contract: "unknown-contract" } as Operation, // Won't be used to build sub accounts
+            tokenOperations[3],
+          ],
           undefined,
           swapHistoryMap,
+          async (contractAddress: string) =>
+            getCryptoAssetsStore().findTokenByAddressInCurrency(contractAddress, "ethereum"),
         );
 
+        const usdcAccountId = encodeTokenAccountId(account.id, usdcTokenData as TokenCurrency);
         const expectedUsdcAccount = {
           ...tokenAccount,
           balance: new BigNumber(1),
           spendableBalance: new BigNumber(1),
-          operations: [tokenOperations[0], tokenOperations[1]],
+          operations: [
+            {
+              ...tokenOperations[0],
+              id: encodeOperationId(
+                usdcAccountId,
+                tokenOperations[0].hash,
+                tokenOperations[0].type,
+              ),
+              accountId: usdcAccountId,
+            },
+            {
+              ...tokenOperations[1],
+              id: encodeOperationId(
+                usdcAccountId,
+                tokenOperations[1].hash,
+                tokenOperations[1].type,
+              ),
+              accountId: usdcAccountId,
+            },
+          ],
           operationsCount: 2,
           swapHistory,
         };
+        const usdtAccountId = encodeTokenAccountId(account.id, usdtTokenData as TokenCurrency);
         const expectedUsdtAccount = {
           ...makeTokenAccount(account.freshAddress, tokenCurrencies[1]),
           balance: new BigNumber(2),
           spendableBalance: new BigNumber(2),
-          operations: [tokenOperations[3]],
+          operations: [
+            {
+              ...tokenOperations[3],
+              id: encodeOperationId(
+                usdtAccountId,
+                tokenOperations[3].hash,
+                tokenOperations[3].type,
+              ),
+              accountId: usdtAccountId,
+            },
+          ],
           operationsCount: 1,
           swapHistory: [],
         };
 
+        expect(findTokenByAddressInCurrency).toHaveBeenCalledWith(
+          "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+          "ethereum",
+        );
+        expect(findTokenByAddressInCurrency).toHaveBeenCalledWith(
+          "0xdac17f958d2ee523a2206206994597c13d831ec7",
+          "ethereum",
+        );
+        expect(findTokenByAddressInCurrency).toHaveBeenCalledWith("unknown-contract", "ethereum");
         expect(tokenAccounts).toEqual([expectedUsdcAccount, expectedUsdtAccount]);
       });
 
-      it("should return filtered subAccounts from blacklistedTokenIds", async () => {
+      it("should return filtered subAccounts from blacklistedTokenIds, recomputing operations `id` and `accountId`", async () => {
         const swapHistoryMap = new Map<TokenCurrency, TokenAccount["swapHistory"]>();
         const tokenAccounts = await synchronization.getSubAccounts(
           {
@@ -717,13 +777,26 @@ describe("EVM Family", () => {
           [tokenOperations[0], tokenOperations[1], tokenOperations[3]],
           [tokenCurrencies[0].id],
           swapHistoryMap,
+          async (contractAddress: string) =>
+            getCryptoAssetsStore().findTokenByAddressInCurrency(contractAddress, "ethereum"),
         );
 
+        const usdtAccountId = encodeTokenAccountId(account.id, usdtTokenData as TokenCurrency);
         const expectedUsdtAccount = {
           ...makeTokenAccount(account.freshAddress, tokenCurrencies[1]),
           balance: new BigNumber(2),
           spendableBalance: new BigNumber(2),
-          operations: [tokenOperations[3]],
+          operations: [
+            {
+              ...tokenOperations[3],
+              id: encodeOperationId(
+                usdtAccountId,
+                tokenOperations[3].hash,
+                tokenOperations[3].type,
+              ),
+              accountId: usdtAccountId,
+            },
+          ],
           operationsCount: 1,
           swapHistory: [],
         };

@@ -58,19 +58,6 @@ export default function StepOptions(props: Readonly<StepProps>) {
   return (
     <Box>
       <TrackPage category={`Receive Flow${eventType ? ` (${eventType})` : ""}`} name="Step 1" />
-      <Option onClick={() => transitionTo("account")}>
-        <IconWrapper>
-          <Icons.CoinsCrypto size={"M"} />
-        </IconWrapper>
-        <Content>
-          <Text color="palette.text.shade100" ff="Inter|SemiBold" fontSize={4}>
-            <Trans i18nKey="receive.steps.options.fromCrypto.title" />
-          </Text>
-          <Text color="palette.text.shade60" ff="Inter|Regular" fontSize={3}>
-            <Trans i18nKey="receive.steps.options.fromCrypto.description" />
-          </Text>
-        </Content>
-      </Option>
       <Option onClick={handleGoToReceiveProvider}>
         <IconWrapper>
           <Icons.Bank size={"M"} />
@@ -81,6 +68,19 @@ export default function StepOptions(props: Readonly<StepProps>) {
           </Text>
           <Text color="palette.text.shade60" ff="Inter|Regular" fontSize={3}>
             <Trans i18nKey="receive.steps.options.fromBank.description" />
+          </Text>
+        </Content>
+      </Option>
+      <Option onClick={() => transitionTo("account")}>
+        <IconWrapper>
+          <Icons.CoinsCrypto size={"M"} />
+        </IconWrapper>
+        <Content>
+          <Text color="palette.text.shade100" ff="Inter|SemiBold" fontSize={4}>
+            <Trans i18nKey="receive.steps.options.fromCrypto.title" />
+          </Text>
+          <Text color="palette.text.shade60" ff="Inter|Regular" fontSize={3}>
+            <Trans i18nKey="receive.steps.options.fromCrypto.description" />
           </Text>
         </Content>
       </Option>

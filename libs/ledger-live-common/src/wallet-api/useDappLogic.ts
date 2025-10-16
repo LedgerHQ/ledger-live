@@ -8,7 +8,7 @@ import { getAccountBridge } from "../bridge";
 import { getEnv } from "@ledgerhq/live-env";
 import network from "@ledgerhq/live-network/network";
 import { getWalletAPITransactionSignFlowInfos } from "./converters";
-import { findTokenByAddress, getCryptoCurrencyById } from "@ledgerhq/cryptoassets/index";
+import { findTokenByAddressInCurrency, getCryptoCurrencyById } from "@ledgerhq/cryptoassets/index";
 import { prepareMessageToSign } from "../hw/signMessage/index";
 import { CurrentAccountHistDB, UiHook, usePermission } from "./react";
 import BigNumber from "bignumber.js";
@@ -482,8 +482,6 @@ export function useDappLogic({
 
               const transactionType = getTxType(signFlowInfos.liveTx as EvmTransaction);
 
-              const token = findTokenByAddress(tx.recipient);
-
               const accountCurrencyName =
                 currentAccount.type === "TokenAccount"
                   ? currentAccount.token.name
@@ -493,6 +491,8 @@ export function useDappLogic({
                 currentAccount.type === "TokenAccount"
                   ? currentAccount.token.parentCurrency.id
                   : currentAccount.currency.id;
+
+              const token = findTokenByAddressInCurrency(tx.recipient, accountNetwork);
 
               trackingData = {
                 type: transactionType,

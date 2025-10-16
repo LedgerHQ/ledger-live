@@ -93,6 +93,9 @@ const dummyContext: WalletSyncDataManagerResolutionContext = {
     signOperation: () => {
       throw new Error("not implemented");
     },
+    signRawOperation: () => {
+      throw new Error("not implemented");
+    },
     broadcast: () => {
       throw new Error("not implemented");
     },

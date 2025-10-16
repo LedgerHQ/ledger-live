@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/web-tools",
-  "version": "0.23.1",
+  "version": "0.24.0",
   "private": true,
   "browser": {
     "fs": false,
@@ -23,7 +23,7 @@
     "@ledgerhq/errors": "workspace:^",
     "@ledgerhq/hw-app-eth": "workspace:^",
     "@ledgerhq/hw-ledger-key-ring-protocol": "workspace:^",
-    "@ledgerhq/hw-transport": "workspace:^",
+    "@ledgerhq/hw-transport": "workspace:*",
     "@ledgerhq/hw-transport-http": "workspace:^",
     "@ledgerhq/hw-transport-web-ble": "workspace:^",
     "@ledgerhq/hw-transport-webhid": "workspace:^",
@@ -47,8 +47,8 @@
     "prop-types": "^15.8.1",
     "qrcode": "^1.4.4",
     "re-resizable": "^6.9.11",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
+    "react": "catalog:",
+    "react-dom": "catalog:",
     "react-dropzone": "14",
     "react-inspector": "^4.0.1",
     "react-select": "^5.7.4",

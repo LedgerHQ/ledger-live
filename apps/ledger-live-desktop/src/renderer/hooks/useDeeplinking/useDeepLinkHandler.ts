@@ -297,7 +297,7 @@ export function useDeepLinkHandler() {
 
           if (!currency || !foundCurrency) {
             // we fallback to default add account flow with asset selection
-            openAssetFlow(true);
+            openAssetFlow();
             return;
           }
           const found = getAccountsOrSubAccountsByCurrency(foundCurrency, accounts || []);

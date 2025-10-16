@@ -48,6 +48,7 @@ export default function TransferDrawer({ onClose }: Omit<ModalProps, "isRequesti
   const stakeLabel = getStakeLabelLocaleBased();
   const { t } = useTranslation();
   const { pushToast, dismissToast } = useToastsActions();
+  const noah = useFeature("noah");
 
   const { page } = useAnalytics();
 
@@ -100,7 +101,9 @@ export default function TransferDrawer({ onClose }: Omit<ModalProps, "isRequesti
         drawer: "trade",
       },
       title: t("transfer.receive.title"),
-      description: t("transfer.receive.description"),
+      description: noah?.enabled
+        ? t("transfer.receive.description_v2")
+        : t("transfer.receive.description"),
       onPress: () => onNavigate(RECEIVE.route),
       Icon: RECEIVE.icon,
       disabled: RECEIVE.disabled,

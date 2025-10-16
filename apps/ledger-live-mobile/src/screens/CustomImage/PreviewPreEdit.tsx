@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import React, { useCallback, useMemo, useRef, useState } from "react";
 import styled from "styled-components/native";
 import { Flex, InfiniteLoader, Text } from "@ledgerhq/native-ui";
 import { ImagePreviewError } from "@ledgerhq/live-common/customImage/errors";
@@ -26,10 +26,7 @@ import {
 import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { CustomImageNavigatorParamList } from "~/components/RootNavigator/types/CustomImageNavigator";
 import { NavigatorName, ScreenName } from "~/const";
-import {
-  downloadImageToFile,
-  importImageFromPhoneGallery,
-} from "~/components/CustomImage/imageUtils";
+import { importImageFromPhoneGallery } from "~/components/CustomImage/imageUtils";
 import { ImageFileUri } from "~/components/CustomImage/types";
 import FramedPicture from "~/components/CustomImage/FramedPicture";
 import ImageProcessor, {
@@ -102,9 +99,12 @@ function Tab({
 
 const PreviewPreEdit = ({ navigation, route }: NavigationProps) => {
   const { t } = useTranslation();
-  const [loadedImage, setLoadedImage] = useState<ImageFileUri | null>(null);
   const { params } = route;
-  const { isPictureFromGallery, device, isStaxEnabled } = params;
+
+  const [loadedImage, setLoadedImage] = useState<ImageFileUri | null>({
+    imageFileUri: params.imageFileUri,
+  });
+  const { device } = params;
   const [deviceModelId, setSelectedDeviceModelId] = useState<CLSSupportedDeviceModelId>(
     params.deviceModelId ?? DeviceModelId.stax,
   );
@@ -113,9 +113,6 @@ const PreviewPreEdit = ({ navigation, route }: NavigationProps) => {
     () => getScreenVisibleAreaDimensions(deviceModelId),
     [deviceModelId],
   );
-
-  const isImageUrl = "imageUrl" in params;
-  const isImageFileUri = "imageFileUri" in params;
 
   const forceDefaultNavigationBehaviour = useRef(false);
   const navigateToErrorScreen = useCallback(
@@ -134,37 +131,7 @@ const PreviewPreEdit = ({ navigation, route }: NavigationProps) => {
     [navigateToErrorScreen, device],
   );
 
-  const isStaxEnabledImage = !!isStaxEnabled;
-  const imageType = isStaxEnabledImage ? "staxEnabledImage" : "customImage";
-
-  const imageFileUri = isImageFileUri ? params.imageFileUri : undefined;
-  const imageUrl = isImageUrl ? params.imageUrl : undefined;
-
-  /** LOAD SOURCE IMAGE FROM PARAMS */
-  useEffect(() => {
-    let dead = false;
-    if (imageFileUri) {
-      setLoadedImage({
-        imageFileUri,
-      });
-    } else if (imageUrl) {
-      const { resultPromise, cancel } = downloadImageToFile({ imageUrl });
-      resultPromise
-        .then(res => {
-          if (!dead) setLoadedImage(res);
-        })
-        .catch(e => {
-          if (!dead) handleError(e);
-        });
-      return () => {
-        dead = true;
-        cancel();
-      };
-    }
-    return () => {
-      dead = true;
-    };
-  }, [handleError, imageFileUri, imageUrl]);
+  const imageType = "customImage";
 
   /** IMAGE RESIZING */
 
@@ -186,7 +153,7 @@ const PreviewPreEdit = ({ navigation, route }: NavigationProps) => {
 
   useCenteredImage({
     targetDimensions: targetDisplayDimensions,
-    imageUri: imageUrl || loadedImage?.imageFileUri,
+    imageUri: loadedImage?.imageFileUri,
     onError: handleResizeError,
     onResult: handleResizeResult,
   });
@@ -266,7 +233,7 @@ const PreviewPreEdit = ({ navigation, route }: NavigationProps) => {
         StackNavigationEventMap & EventMapCore<StackNavigationState<CustomImageNavigatorParamList>>,
         "beforeRemove"
       > = e => {
-        if (forceDefaultNavigationBehaviour.current || !isPictureFromGallery) {
+        if (forceDefaultNavigationBehaviour.current) {
           navigation.dispatch(e.data.action);
           return;
         }
@@ -294,7 +261,7 @@ const PreviewPreEdit = ({ navigation, route }: NavigationProps) => {
         dead = true;
         removeListener();
       };
-    }, [navigation, handleError, isPictureFromGallery]),
+    }, [navigation, handleError]),
   );
 
   const handleEditPicture = useCallback(() => {
@@ -407,7 +374,7 @@ const PreviewPreEdit = ({ navigation, route }: NavigationProps) => {
             <Link
               size="large"
               onPress={handleEditPicture}
-              disabled={!loadedImage || previewLoading || isStaxEnabledImage}
+              disabled={!loadedImage || previewLoading}
               event="button_clicked"
               eventProperties={analyticsEditEventProps}
             >
