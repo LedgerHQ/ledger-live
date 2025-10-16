@@ -2254,12 +2254,12 @@
     "steps" : {
       "options" : {
         "fromBank" : {
-          "title" : "Via bank transfer",
-          "description" : "Receive stablecoin via Cash-to-Stablecoin account. Registration needed."
+          "title" : "Банковским переводом",
+          "description" : "Получайте стейблкойны на счёт «Стейблкойны за фиат». Требуется регистрация."
         },
         "fromCrypto" : {
-          "title" : "Via crypto address",
-          "description" : "Receive crypto from another wallet."
+          "title" : "С криптовалютного адреса",
+          "description" : "Получайте криптовалюту с других кошельков."
         }
       },
       "chooseAccount" : {
@@ -7417,7 +7417,7 @@
       "receive" : "Получить",
       "receiveDescription" : "Получайте криптовалюту с другого кошелька",
       "buy" : "Купить",
-      "buyDescription" : "Безопасно покупайте криптовалюту за фиат"
+      "buyDescription" : "Безопасно покупайте криптовалюту за фиат."
     },
     "scanAccounts" : {
       "cta" : {
