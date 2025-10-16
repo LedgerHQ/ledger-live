@@ -156,6 +156,7 @@ const useStakeFlow = () => {
           useCase: "earn",
           onSuccess,
           onCancel: handleRequestClose,
+          areCurrenciesFiltered: cryptoCurrencies.length > 0,
         });
       } else {
         setDrawer(
