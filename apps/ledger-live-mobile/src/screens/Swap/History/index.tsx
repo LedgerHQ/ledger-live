@@ -67,13 +67,18 @@ const History = () => {
   const syncAccounts = useSyncAllAccounts();
 
   // fix token account parent
-  const sections = useMemo(() => {
-    const history = getCompleteSwapHistory(accounts);
+  const [sections, setSections] = useState<SwapHistorySection[]>([]);
 
-    return history.map(section => ({
-      ...section,
-      data: section.data.map(item => ensureParentAccount(item, accounts)),
-    }));
+  useEffect(() => {
+    async function loadHistory() {
+      const history = await getCompleteSwapHistory(accounts);
+      const processedSections = history.map(section => ({
+        ...section,
+        data: section.data.map(item => ensureParentAccount(item, accounts)),
+      }));
+      setSections(processedSections);
+    }
+    loadHistory();
   }, [accounts]);
 
   const refreshSwapHistory = useCallback(() => {
