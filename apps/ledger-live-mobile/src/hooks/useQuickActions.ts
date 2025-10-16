@@ -87,6 +87,7 @@ function useQuickActions({ currency, accounts }: QuickActionProps = {}) {
       currency,
       sourceScreenName: route.name,
     });
+  const noah = useFeature("noah");
 
   const quickActionsList = useMemo(() => {
     const list: Partial<Record<Actions, QuickAction>> = {
@@ -116,7 +117,12 @@ function useQuickActions({ currency, accounts }: QuickActionProps = {}) {
                 },
               },
         ],
-        customHandler: isModularDrawerEnabledReceive ? handleOpenReceiveDrawer : undefined,
+        // We have two features getting enabled at the same time that change the entry point of receive funds
+        // if noah is active that takes precedence ReceiveFundsNavigator is where that gets used -> ReceiveFundsOptions is therefore where the MAD draw will be opened if active
+        // if modular drawer is enabled but noah is not then go there
+        // if neither is enabled we'll go through the old flow
+        customHandler:
+          isModularDrawerEnabledReceive && !noah?.enabled ? handleOpenReceiveDrawer : undefined,
         icon: IconsLegacy.ArrowBottomMedium,
       },
       SWAP: {
@@ -217,22 +223,23 @@ function useQuickActions({ currency, accounts }: QuickActionProps = {}) {
 
     return list;
   }, [
+    readOnlyModeEnabled,
+    hasCurrency,
     currency,
     hasCurrencyAccounts,
-    hasCurrency,
-    hasFunds,
+    isModularDrawerEnabledReceive,
+    handleOpenReceiveDrawer,
     isPtxServiceCtaExchangeDrawerDisabled,
-    readOnlyModeEnabled,
-    route,
+    hasFunds,
     canBeBought,
     canBeSold,
     partnerStakeRoute,
     canStakeCurrencyUsingLedgerLive,
     canBeRecovered,
+    route,
     isModularDrawerEnabledStake,
-    isModularDrawerEnabledReceive,
     handleOpenStakeDrawer,
-    handleOpenReceiveDrawer,
+    noah,
   ]);
 
   return { quickActionsList };
