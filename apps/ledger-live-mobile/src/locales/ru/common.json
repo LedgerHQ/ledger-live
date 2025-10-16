@@ -1073,6 +1073,10 @@
     "HederaAddAccountError" : {
       "title" : "Не удалось добавить счёт. Пожалуйста, попробуйте ещё раз."
     },
+    "HederaRecipientInvalidChecksum" : {
+      "title" : "Неправильный адрес контрольной суммы",
+      "description" : "У указанного адреса неправильная контрольная сумма."
+    },
     "HederaInsufficientFundsForAssociation" : {
       "title" : "Недостаточный баланс",
       "description" : "Недостаточно HBAR для оплаты привязки токена. Требуется не меньше {{requiredWorthInUSD}}$ в HBAR."
@@ -3767,6 +3771,10 @@
       },
       "history" : {
         "title" : "История обменов"
+      },
+      "wrongDevice" : {
+        "title" : "Ledger Nano S™ не поддерживает {{provider}}.",
+        "description" : "Ledger Nano S™ не поддерживает {{provider}}. Для кроссчейн-обменов через {{provider}} внутри Ledger Live используйте Ledger Nano S Plus™, Ledger Nano X™, Ledger Stax™ или Ledger Flex™."
       },
       "incompatibility" : {
         "explore_compatible_devices" : "Совместимые устройства",
