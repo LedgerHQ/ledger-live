@@ -6691,6 +6691,10 @@
     "HederaAddAccountError" : {
       "title" : "Tu cuenta no ha sido agregada. Inténtalo de nuevo."
     },
+    "HederaRecipientInvalidChecksum" : {
+      "title" : "Suma de verificación de la dirección no válida",
+      "description" : "La dirección facilitada tiene una suma de verificación no válida."
+    },
     "HederaInsufficientFundsForAssociation" : {
       "title" : "Saldo insuficiente",
       "description" : "No tienes HBAR suficiente para pagar la asociación del token. Se necesita un mínimo de ${{requiredWorthInUSD}} USD en HBAR."
