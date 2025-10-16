@@ -1,9 +1,9 @@
 import BigNumber from "bignumber.js";
-import { cardanoRawAccount1 } from "./datasets/rawAccount.1";
-import { cardanoScanAccounts } from "./datasets/scanAccounts";
-import { CardanoInvalidPoolId, CardanoMinAmountError } from "./errors";
-import { fromTransactionRaw } from "./transaction";
-import type { Transaction } from "./types";
+import { cardanoRawAccount1 } from "../datasets/rawAccount.1";
+import { cardanoScanAccounts } from "../datasets/scanAccounts";
+import { CardanoInvalidPoolId, CardanoMinAmountError } from "../errors";
+import { fromTransactionRaw } from "../transaction";
+import type { Transaction } from "../types";
 import type { DatasetTest } from "@ledgerhq/types-live";
 import { Buffer as OriginalBuffer } from "buffer";
 

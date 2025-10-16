@@ -1,6 +1,6 @@
 import BigNumber from "bignumber.js";
-import { SolanaTokenAccountRaw, Transaction, TransactionModel } from "./types";
-import scanAccounts1 from "./datasets/solana.scanAccounts.1";
+import { SolanaTokenAccountRaw, Transaction, TransactionModel } from "../types";
+import scanAccounts1 from "../datasets/solana.scanAccounts.1";
 import {
   AmountRequired,
   InvalidAddress,
@@ -20,15 +20,15 @@ import {
   SolanaStakeAccountRequired,
   SolanaTokenAccountHoldsAnotherToken,
   SolanaValidatorRequired,
-} from "./errors";
-import { encodeAccountIdWithTokenAccountAddress, MAX_MEMO_LENGTH } from "./logic";
-import createTransaction from "./createTransaction";
+} from "../errors";
+import { encodeAccountIdWithTokenAccountAddress, MAX_MEMO_LENGTH } from "../logic";
+import createTransaction from "../createTransaction";
 import { compact } from "lodash/fp";
-import { assertUnreachable } from "./utils";
+import { assertUnreachable } from "../utils";
 import { getEnv } from "@ledgerhq/live-env";
 import { encodeAccountId } from "@ledgerhq/coin-framework/lib/account/accountId";
-import { testOnChainData } from "./tests/test-onchain-data.fixture";
-import { getCryptoAssetsStore } from "./cryptoAssetsStore";
+import { testOnChainData } from "../tests/test-onchain-data.fixture";
+import { getCryptoAssetsStore } from "../cryptoAssetsStore";
 
 const mainAccId = encodeAccountId({
   type: "js",

@@ -5,9 +5,9 @@
 import { NotEnoughBalance } from "@ledgerhq/errors";
 import type { AccountRaw, DatasetTest, TransactionStatusCommon } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
-import { ethereum1 } from "../../datasets/ethereum1";
-import { fromTransactionRaw } from "../../transaction";
-import type { Transaction } from "../../types";
+import { ethereum1 } from "../datasets/ethereum1";
+import { fromTransactionRaw } from "../transaction";
+import type { Transaction } from "../types";
 
 export const dataset: DatasetTest<Transaction> = {
   implementations: ["mock", "js"],
