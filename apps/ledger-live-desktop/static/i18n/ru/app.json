@@ -464,12 +464,16 @@
       "apt_description" : "Для обмена Aptos используйте любое другое устройство Ledger. Это может быть Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ или Ledger Stax™.",
       "cosmos_title" : "Ledger Nano S™ не поддерживает обмен Cosmos",
       "cosmos_description" : "Для обмена Cosmos используйте любое другое устройство Ledger. Это может быть Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ или Ledger Stax™.",
+      "hedera_title" : "Ledger Nano S™ не поддерживает обмен Hedera",
+      "hedera_description" : "Используйте другие совместимые устройства Ledger для обмена Hedera. Это Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ и Ledger Stax™.",
       "osmo_title" : "Ledger Nano S™ не поддерживает обмен Osmosis",
       "osmo_description" : "Для обмена Osmosis используйте любое другое устройство Ledger. Это может быть Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ или Ledger Stax™.",
       "dydx_title" : "Ledger Nano S™ не поддерживает обмен dYdX",
       "dydx_description" : "Используйте другие совместимые устройства Ledger для обмена dYdX. Это Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ и Ledger Stax™.",
       "sui_title" : "Ledger Nano S™ не поддерживает обмен Sui",
-      "sui_description" : "Используйте другие совместимые устройства Ledger для обмена Sui. Это Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ и Ledger Stax™."
+      "sui_description" : "Используйте другие совместимые устройства Ledger для обмена Sui. Это Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ и Ledger Stax™.",
+      "kaspa_title" : "Ledger Nano S™ не поддерживает обмен Kaspa",
+      "kaspa_description" : "Для обмена Kaspa используйте совместимые устройства Ledger. Это Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ и Ledger Stax™."
     },
     "providers" : {
       "title" : "Выберите поставщика услуг по обмену криптовалюты",
@@ -2052,7 +2056,7 @@
     "modal" : {
       "title" : "Обновление ОС {{productName}}",
       "steps" : {
-        "preparingUpdate" : "Сохраняем настройки\nи приложения",
+        "preparingUpdate" : "Сохраняем настройки\nи приложения...",
         "transferringUpdate" : "Перенос обновления на {{productName}}",
         "prepare" : "Подготовка обновления",
         "prepareDone" : "Обновление готово\nк установке",
@@ -2246,6 +2250,7 @@
   "receive" : {
     "title" : "Получить",
     "successTitle" : "Адрес безопасен",
+    "connectToNoah" : "Подключаемся к Noah",
     "steps" : {
       "options" : {
         "fromBank" : {
@@ -4262,6 +4267,8 @@
         "header" : "Позиции в стейкинге",
         "stake" : "Дополнить",
         "staked" : "Делегировано",
+        "estimatedReward" : "Начисленное вознаграждение",
+        "rewardTooltip" : "Вознаграждения в SUI распределяются каждую эпоху, то есть 24 часа. Они автоматически капитализируются и добавляются к вашему делегированному стейку.",
         "pending" : "Ожидает вывода",
         "available" : "Доступно для вывода"
       },
@@ -5023,6 +5030,12 @@
     },
     "screens" : {
       "welcome" : {
+        "videos" : {
+          "buySell" : "Кошелёк защищает вас и позволяет контролировать происходящее",
+          "thousandsCrypto" : "Отправляйте, получайте, обменивайте и стейкайте тысячи криптовалют",
+          "secureWallet" : "Подписывайте транзакции, сохраняя спокойствие"
+        },
+        "notice" : "Продолжение означает ваше согласие с <Link1>Условиями использования</Link1> и <Link2>Политикой конфиденциальности</Link2> Ledger. Ledger не даёт никаких финансовых советов.\nУслуги по обмену и стейкингу оказываются сторонними операторами.",
         "title" : "Самый безопасный кошелёк для криптовалют и NFT",
         "description" : "Безопасно управляйте, покупайте и приумножайте криптовалюты и NFT прямо в Ledger Live.",
         "nextButton" : "Приступить",
@@ -5710,7 +5723,34 @@
     },
     "canton" : {
       "commentPlaceholder" : "Опционально",
-      "comment" : "Комментарий"
+      "comment" : "Комментарий",
+      "addAccount" : {
+        "title" : "Добавление счёта Canton",
+        "onboard" : {
+          "title" : "Настройка",
+          "newAccount" : "Новый счёт",
+          "init" : "Настройте новый счёт Canton, нажав «Продолжить»",
+          "onboarded" : "Настроенные счета",
+          "success" : "Ваш новый счёт Canton создан и настроен.",
+          "error" : "Не удалось настроить новый счёт. Попробуйте снова.",
+          "status" : {
+            "prepare" : "Готовим настройку счёта...",
+            "submit" : "Настраиваем счёт...",
+            "default" : "Обрабатываем..."
+          }
+        },
+        "auth" : {
+          "title" : "Подтверждение",
+          "validator" : "Разрешить",
+          "hint" : "Автоматически принимать активы на этот счёт.",
+          "error" : "Сбой авторизации. Попробуйте снова.",
+          "validatorLabel" : "Валидатор Ledger",
+          "validatorDescription" : "Автоматическое получение активов"
+        },
+        "finish" : {
+          "title" : "Подтверждение"
+        }
+      }
     },
     "stellar" : {
       "memo" : "Memo",
@@ -6653,6 +6693,10 @@
     "HederaAddAccountError" : {
       "title" : "Не удалось добавить счёт. Пожалуйста, попробуйте ещё раз."
     },
+    "HederaRecipientInvalidChecksum" : {
+      "title" : "Неправильный адрес контрольной суммы",
+      "description" : "У указанного адреса неправильная контрольная сумма."
+    },
     "HederaInsufficientFundsForAssociation" : {
       "title" : "Недостаточный баланс",
       "description" : "Недостаточно HBAR для оплаты привязки токена. Требуется не меньше {{requiredWorthInUSD}}$ в HBAR."
@@ -7141,7 +7185,7 @@
         "title" : "Персонализация",
         "description" : "Чтобы получать актуальные советы и контент на основе ваших предпочтений, а также помогать в нашей оценке эффективности проведения различных маркетинговых кампаний, мы делимся данными об использовании приложения, включая нажатия, посещения страниц и информацию о конверсии."
       },
-      "share" : "Поделиться"
+      "validate" : "Подтвердить"
     },
     "variantB" : {
       "accept" : "Принять",
@@ -7379,7 +7423,7 @@
       "receive" : "Получить",
       "receiveDescription" : "Получайте криптовалюту с другого кошелька",
       "buy" : "Купить",
-      "buyDescription" : "Безопасно покупайте криптовалюту за фиат"
+      "buyDescription" : "Безопасно покупайте криптовалюту за фиат."
     },
     "scanAccounts" : {
       "cta" : {
@@ -7398,7 +7442,7 @@
       },
       "status" : {
         "foundAccounts_zero" : "Тут пока ничего нет.",
-        "foundAccounts" : "Мы нашли {{count}} счёт",
+        "foundAccounts" : "Нашли счета ({{count}})",
         "foundAccounts_other" : "Найдено счетов: {{count}}",
         "scanning" : "Сканируем счета..."
       },
@@ -7415,7 +7459,7 @@
     "accountCount_one" : "Счёт: {{count}}",
     "accountCount_other" : "Счета: {{count}}",
     "accountsAdded" : {
-      "title" : "Счёт добавлен в Портфель",
+      "title" : "Добавили в Портфель!",
       "title_other" : "Добавлено счетов в Портфель: {{count}}",
       "cta" : {
         "addFunds" : "Добавить монеты на счёт",
