@@ -35,13 +35,7 @@ export function isAvailableOnBuy(
   ) => boolean,
 ) {
   if (!currency) return false;
-  return (
-    (!!currency.internalCurrency &&
-      !!currency.internalCurrency?.id &&
-      isCurrencyAvailable(currency.internalCurrency.id, "onRamp")) ||
-    currency?.ledgerIds.some(lrId => isCurrencyAvailable(lrId, "onRamp")) ||
-    false
-  );
+  return currency?.ledgerIds.some(lrId => isCurrencyAvailable(lrId, "onRamp")) || false;
 }
 
 export function isAvailableOnSwap(
@@ -49,9 +43,5 @@ export function isAvailableOnSwap(
   currenciesForSwapAllSet: Set<string>,
 ) {
   if (!currency) return false;
-  return (
-    (!!currency.internalCurrency && currenciesForSwapAllSet.has(currency.internalCurrency.id)) ||
-    currency?.ledgerIds.some(lrId => currenciesForSwapAllSet.has(lrId)) ||
-    false
-  );
+  return currency?.ledgerIds.some(lrId => currenciesForSwapAllSet.has(lrId)) || false;
 }

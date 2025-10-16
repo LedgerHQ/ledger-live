@@ -79,8 +79,7 @@ export const MarketRow = memo<Props>(function MarketRowItem({
     [toggleStar],
   );
 
-  const hasActions =
-    currency?.internalCurrency && (availableOnBuy || availableOnSwap || availableOnStake);
+  const hasActions = availableOnBuy || availableOnSwap || availableOnStake;
 
   // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
   const currentPriceChangePercentage = currency?.priceChangePercentage[range as KeysPriceChange];

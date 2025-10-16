@@ -1,6 +1,7 @@
 import { useSelector, useDispatch } from "react-redux";
 import { useTheme } from "styled-components";
 import { getCurrencyColor } from "~/renderer/getCurrencyColor";
+import { getTokenOrCryptoCurrencyById } from "@ledgerhq/live-common/deposit/helper";
 import {
   useCurrencyChartData,
   useCurrencyData,
@@ -38,7 +39,7 @@ export const useMarketCoin = () => {
     id: currencyId,
   });
 
-  const { id, internalCurrency } = currency || {};
+  const { id } = currency || {};
 
   const { onBuy, onStake, onSwap, availableOnBuy, availableOnStake, availableOnSwap } =
     useMarketActions({
@@ -46,8 +47,14 @@ export const useMarketCoin = () => {
       page: Page.MarketCoin,
     });
 
-  const color = internalCurrency
-    ? getCurrencyColor(internalCurrency, colors.background.main)
+  // Get the first ledger ID to determine the color
+  const primaryCurrencyId = currency?.ledgerIds?.[0];
+  const cryptoOrTokenCurrency = primaryCurrencyId
+    ? getTokenOrCryptoCurrencyById(primaryCurrencyId)
+    : null;
+
+  const color = cryptoOrTokenCurrency
+    ? getCurrencyColor(cryptoOrTokenCurrency, colors.background.main)
     : colors.primary.c80;
 
   const toggleStar = useCallback(() => {
