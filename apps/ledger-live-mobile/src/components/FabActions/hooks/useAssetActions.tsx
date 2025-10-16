@@ -289,8 +289,8 @@ export default function useAssetActions({ currency, accounts }: useAssetActionsP
     isModularDrawerEnabledStake,
     handleOpenStakeDrawer,
     isModularDrawerEnabledReceive,
-    noah?.enabled,
     handleOpenReceiveDrawer,
+    noah,
   ]);
 
   return {

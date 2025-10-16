@@ -228,7 +228,6 @@ function useQuickActions({ currency, accounts }: QuickActionProps = {}) {
     currency,
     hasCurrencyAccounts,
     isModularDrawerEnabledReceive,
-    noah?.enabled,
     handleOpenReceiveDrawer,
     isPtxServiceCtaExchangeDrawerDisabled,
     hasFunds,
@@ -240,6 +239,7 @@ function useQuickActions({ currency, accounts }: QuickActionProps = {}) {
     route,
     isModularDrawerEnabledStake,
     handleOpenStakeDrawer,
+    noah,
   ]);
 
   return { quickActionsList };
