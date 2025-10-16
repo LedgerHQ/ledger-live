@@ -1,8 +1,8 @@
 import styled from "styled-components";
 
 const CardContainer = styled.div`
-  height: 64px;
-  padding: 0px 16px 0px 16px;
+  min-height: 64px;
+  padding: 16px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -17,7 +17,6 @@ const Header = styled.img`
 `;
 
 const Body = styled.div`
-  height: 40px;
   flex-grow: 1;
   flex-basis: 0;
 `;
@@ -35,10 +34,6 @@ const Title = styled.div`
 const Description = styled.div`
   font-weight: 500;
   font-size: 13px;
-
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
 `;
 
 const Actions = styled.div`
