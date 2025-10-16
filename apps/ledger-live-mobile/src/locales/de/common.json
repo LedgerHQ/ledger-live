@@ -1073,6 +1073,10 @@
     "HederaAddAccountError" : {
       "title" : "Dein Konto wurde nicht hinzugefügt. Bitte versuche es noch einmal."
     },
+    "HederaRecipientInvalidChecksum" : {
+      "title" : "Ungültige Adressprüfsumme",
+      "description" : "Die angegebene Adresse weist eine ungültige Prüfsumme auf."
+    },
     "HederaInsufficientFundsForAssociation" : {
       "title" : "Unzureichendes Guthaben",
       "description" : "Nicht ausreichend HBAR, um die Tokenzuordnung zu bezahlen. Es werden HBAR im Wert von mindestens {{requiredWorthInUSD}} benötigt."
@@ -3767,6 +3771,10 @@
       },
       "history" : {
         "title" : "Swap-Verlauf"
+      },
+      "wrongDevice" : {
+        "title" : "Ledger Nano S™ ist nicht mit {{provider}} kompatibel",
+        "description" : "Ledger Nano S™ ist nicht mit {{provider}} kompatibel. Du kannst Ledger Nano S Plus™, Ledger Nano X™, Ledger Stax™ oder Ledger Flex™ verwenden, um blockchainübergreifende Swaps bei {{provider}} über Ledger Live durchzuführen."
       },
       "incompatibility" : {
         "explore_compatible_devices" : "Kompatible Geräte entdecken",
