@@ -2,6 +2,7 @@ import React, { memo } from "react";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
 import { OnboardStatus } from "@ledgerhq/coin-canton/types";
+import { UserRefusedOnDevice, LockedDeviceError } from "@ledgerhq/errors";
 import { getDefaultAccountNameForCurrencyIndex } from "@ledgerhq/live-wallet/accountName";
 import AccountRow from "~/renderer/components/AccountsList/AccountRow";
 import Alert from "~/renderer/components/Alert";
@@ -98,10 +99,7 @@ const getStatusMessage = (status?: OnboardStatus): string => {
 };
 
 const getErrorMessage = (error: Error | null) => {
-  if (error?.name === "DeviceLockedError") {
-    return <Trans i18nKey={error.message} />;
-  }
-  if (error?.name === "UserRefusedOnDevice") {
+  if (error instanceof UserRefusedOnDevice || error instanceof LockedDeviceError) {
     return <Trans i18nKey={error.message} />;
   }
   return <Trans i18nKey="families.canton.addAccount.onboard.error" />;

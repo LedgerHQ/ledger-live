@@ -3,7 +3,7 @@ import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import type { Account } from "@ledgerhq/types-live";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { log } from "@ledgerhq/logs";
-import { TransportStatusError } from "@ledgerhq/errors";
+import { TransportStatusError, UserRefusedOnDevice, LockedDeviceError } from "@ledgerhq/errors";
 import { encodeAccountId } from "@ledgerhq/coin-framework/account/accountId";
 
 import {
@@ -169,13 +169,11 @@ export const buildAuthorizePreapproval =
 const handleDeviceErrors = (error: Error): Error | null => {
   if (error instanceof TransportStatusError) {
     if (error.statusCode === 0x6985) {
-      const userRefusedError = new Error("errors.UserRefusedOnDevice.description");
-      userRefusedError.name = "UserRefusedOnDevice";
+      const userRefusedError = new UserRefusedOnDevice("errors.UserRefusedOnDevice.description");
       return userRefusedError;
     }
     if (error.statusCode === 0x5515) {
-      const lockedDeviceError = new Error("errors.DeviceLockedError.description");
-      lockedDeviceError.name = "DeviceLockedError";
+      const lockedDeviceError = new LockedDeviceError("errors.LockedDeviceError.description");
       return lockedDeviceError;
     }
   }
