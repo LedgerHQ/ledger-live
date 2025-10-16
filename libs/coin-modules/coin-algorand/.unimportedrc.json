@@ -14,5 +14,7 @@
     "src/transaction.ts",
     "src/tokens.ts"
   ],
-  "ignoreUnimported": []
+  "ignoreUnimported": [
+    "src/test/bridge.dataset.ts"
+  ]
 }
