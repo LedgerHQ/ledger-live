@@ -6691,6 +6691,10 @@
     "HederaAddAccountError" : {
       "title" : "アカウントが追加されていません。もう一度お試しください。"
     },
+    "HederaRecipientInvalidChecksum" : {
+      "title" : "アドレスのチェックサムが無効です",
+      "description" : "入力されたアドレスのチェックサムが無効です"
+    },
     "HederaInsufficientFundsForAssociation" : {
       "title" : "残高不足",
       "description" : "トークンの関連付けに必要なHBARが不足しています。少なくとも${{requiredWorthInUSD}}相当のHBARが必要です。"
