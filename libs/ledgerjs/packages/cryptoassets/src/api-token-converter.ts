@@ -22,12 +22,12 @@ import {
   TRC10Token,
   TRC20Token,
 } from "./types";
-import { AptosToken } from "./data/apt_coin";
+import type { AptosToken } from "./data/apt_coin";
 import type { AptosToken as AptosFAToken } from "./data/apt_fungible_asset";
-import { SuiToken } from "./data/sui";
-import { Vip180Token } from "./data/vip180";
-import { TonJettonToken } from "./data/ton-jetton";
-import { SPLToken } from "./data/spl";
+import type { SuiToken } from "./data/sui";
+import type { Vip180Token } from "./data/vip180";
+import type { TonJettonToken } from "./data/ton-jetton";
+import type { SPLToken } from "./data/spl";
 
 export interface ApiTokenData {
   id: string;

@@ -1,4 +1,3 @@
-import { useFetchCurrencyFrom } from "@ledgerhq/live-common/exchange/swap/hooks/index";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { MarketListRequestParams, Order } from "@ledgerhq/live-common/market/utils/types";
 import { rangeDataTable } from "@ledgerhq/live-common/market/utils/rangeDataTable";
@@ -14,7 +13,6 @@ import { useInitSupportedCounterValues } from "~/renderer/hooks/useInitSupported
 import { marketCurrentPageSelector, marketParamsSelector } from "~/renderer/reducers/market";
 import { localeSelector, starredMarketCoinsSelector } from "~/renderer/reducers/settings";
 import { BASIC_REFETCH, REFETCH_TIME_ONE_MINUTE, getCurrentPage, isDataStale } from "../utils";
-import { useFetchCurrencyAll } from "@ledgerhq/live-common/exchange/swap/hooks/index";
 import { addStarredMarketCoins, removeStarredMarketCoins } from "~/renderer/actions/settings";
 
 export function useMarket() {
@@ -26,8 +24,6 @@ export function useMarket() {
   const starredMarketCoins: string[] = useSelector(starredMarketCoinsSelector);
   const locale = useSelector(localeSelector);
 
-  const { data: currenciesAll } = useFetchCurrencyAll();
-
   const REFRESH_RATE =
     Number(lldRefreshMarketDataFeature?.params?.refreshTime) > 0
       ? REFETCH_TIME_ONE_MINUTE * Number(lldRefreshMarketDataFeature?.params?.refreshTime)
@@ -38,8 +34,6 @@ export function useMarket() {
   const starFilterOn = starred.length > 0;
 
   useInitSupportedCounterValues();
-
-  const { data: fromCurrencies } = useFetchCurrencyFrom();
 
   const { liveCoinsList, supportedCounterCurrencies } = useMarketDataProvider();
 
@@ -209,10 +203,8 @@ export function useMarket() {
     timeRangeValue,
     itemCount,
     locale,
-    fromCurrencies,
     loading,
     currenciesLength,
     refreshRate: REFRESH_RATE,
-    currenciesAll,
   };
 }

@@ -18,6 +18,7 @@ import { getEnv } from "@ledgerhq/live-env";
 import countervalues, { CountervaluesState } from "./countervalues";
 import { assetsDataApi } from "@ledgerhq/live-common/dada-client/state-manager/api";
 import modularDrawer, { ModularDrawerState } from "./modularDrawer";
+import onboarding, { OnboardingState } from "./onboarding";
 
 export type State = {
   accounts: AccountsState;
@@ -29,6 +30,7 @@ export type State = {
   market: MarketState;
   modals: ModalsState;
   modularDrawer: ModularDrawerState;
+  onboarding: OnboardingState;
   postOnboarding: PostOnboardingState;
   settings: SettingsState;
   trustchain: TrustchainStore;
@@ -48,6 +50,7 @@ export default combineReducers({
   modularDrawer,
   settings,
   UI,
+  onboarding,
   postOnboarding,
   market,
   wallet,

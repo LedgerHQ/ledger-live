@@ -4,7 +4,7 @@ import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { Handlers } from "./types";
 import { SettingsState } from "./settings";
-import { getSpeculosModel } from "@ledgerhq/live-common/e2e/speculos";
+import { getSpeculosModel } from "@ledgerhq/live-common/e2e/speculosAppVersion";
 
 export type DevicesState = {
   /**

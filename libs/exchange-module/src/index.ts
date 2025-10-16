@@ -151,6 +151,7 @@ export class ExchangeModule extends CustomModule {
     toNewTokenId,
     feeStrategy,
     swapAppVersion,
+    sponsored,
   }: ExchangeSwapParams) {
     const { operationHash, swapId } = await this.request<ExchangeSwapParams, SwapResult>(
       "custom.exchange.swap",
@@ -166,6 +167,7 @@ export class ExchangeModule extends CustomModule {
         toNewTokenId,
         feeStrategy,
         swapAppVersion,
+        sponsored,
       },
     );
 

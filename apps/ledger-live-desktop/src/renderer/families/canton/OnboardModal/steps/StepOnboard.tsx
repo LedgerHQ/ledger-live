@@ -198,7 +198,7 @@ export const StepOnboardFooter = ({
   isProcessing,
   onboardingStatus,
   onOnboardAccount,
-  onRetry,
+  onRetryOnboardAccount,
   transitionTo,
 }: StepProps) => {
   if (onboardingStatus === OnboardStatus.SIGN) {
@@ -215,13 +215,18 @@ export const StepOnboardFooter = ({
         );
       case OnboardStatus.ERROR:
         return (
-          <Button primary disabled={isProcessing} onClick={onRetry}>
+          <Button primary disabled={isProcessing} onClick={onRetryOnboardAccount}>
             <Trans i18nKey="common.tryAgain" />
           </Button>
         );
       default:
         return (
           <Button primary disabled={isProcessing} onClick={onOnboardAccount}>
+            {isProcessing && (
+              <Box mr={2}>
+                <Spinner size={20} />
+              </Box>
+            )}
             <Trans i18nKey="common.continue" />
           </Button>
         );

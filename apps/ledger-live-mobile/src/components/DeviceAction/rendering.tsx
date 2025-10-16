@@ -1044,11 +1044,13 @@ export const HardwareUpdate = ({
   device,
   i18nKeyTitle,
   i18nKeyDescription,
+  i18nKeyValues,
 }: {
   t: RawProps["t"];
   device: Device;
   i18nKeyTitle: string;
   i18nKeyDescription: string;
+  i18nKeyValues?: { [key: string]: string | number };
 }) => {
   const openUrl = (url: string) => Linking.openURL(url);
 
@@ -1062,10 +1064,10 @@ export const HardwareUpdate = ({
         />
       </AnimationContainer>
       <Text variant="h4" fontWeight="semiBold">
-        {t(i18nKeyTitle)}
+        {t(i18nKeyTitle, i18nKeyValues)}
       </Text>
       <Text pt={4} color="neutral.c70" variant={"body"} lineHeight={"150%"} fontWeight={"medium"}>
-        {t(i18nKeyDescription)}
+        {t(i18nKeyDescription, i18nKeyValues)}
       </Text>
       <Button
         type="main"

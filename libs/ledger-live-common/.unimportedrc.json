@@ -57,6 +57,7 @@
     "src/domain/getTokensWithFunds.ts",
     "src/e2e/index.ts",
     "src/e2e/speculos.ts",
+    "src/e2e/speculosAppVersion.ts",
     "src/e2e/swap.ts",
     "src/errors.ts",
     "src/errors/transactionBroadcastErrors.ts",
@@ -419,7 +420,7 @@
     "src/modularDrawer/hooks/modules/useLeftApyModule.tsx",
     "src/modularDrawer/hooks/modules/useLeftMarketTrendModule.tsx",
     "src/modularDrawer/hooks/modules/useRightMarketTrendModule.tsx",
-    "src/modularDrawer/hooks/useAssetAccountCounts.tsx",
+    "src/modularDrawer/hooks/useNetworkAccountCounts.tsx",
     "src/modularDrawer/hooks/useAssetsData.ts",
     "src/modularDrawer/hooks/useCurrenciesUnderFeatureFlag.ts",
     "src/modularDrawer/hooks/useInterestRatesByCurrencies.ts",
@@ -454,7 +455,6 @@
     "src/walletSync/getEnvironmentParams.ts"
   ],
   "ignoreUnused": [
-    "@dfinity/agent",
     "@ledgerhq/hw-app-eth",
     "@ledgerhq/hw-transport-mocker",
     "@reduxjs/toolkit",

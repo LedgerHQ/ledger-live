@@ -9,7 +9,11 @@ export async function estimateFees({
   sender,
   asset,
   type,
-}: TransactionIntent): Promise<bigint> {
+  ...extra
+}: TransactionIntent & {
+  useAllAmount?: boolean;
+  stakedSuiId?: string;
+}): Promise<bigint> {
   let coinType = DEFAULT_COIN_TYPE;
   if (asset.type === "token" && asset.assetReference) {
     coinType = asset.assetReference;
@@ -35,6 +39,7 @@ export async function estimateFees({
     amount: BigNumber(amount.toString()),
     errors: {},
     coinType,
+    ...extra,
   });
   return BigInt(gasBudget);
 }

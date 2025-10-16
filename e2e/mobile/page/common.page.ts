@@ -117,4 +117,8 @@ export default class CommonPage {
   async disableSynchronizationForiOS() {
     if (isIos()) await device.disableSynchronization();
   }
+
+  async enableSynchronization() {
+    await device.enableSynchronization();
+  }
 }

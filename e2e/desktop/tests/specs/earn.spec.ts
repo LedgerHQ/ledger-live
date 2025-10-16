@@ -30,12 +30,11 @@ const ethEarn = [
     provider: Provider.STADER_LABS,
     xrayTicket: "B2CQA-3677",
   },
-  //ToDo: enable when Kiln is back
-  // {
-  //   account: Account.ETH_1,
-  //   provider: Provider.KILN,
-  //   xrayTicket: "B2CQA-3678",
-  // },
+  {
+    account: Account.ETH_1,
+    provider: Provider.KILN,
+    xrayTicket: "B2CQA-3678",
+  },
 ];
 
 for (const { account, provider, xrayTicket } of ethEarn) {
@@ -124,12 +123,11 @@ test.describe("Inline Add Account", () => {
 });
 
 const earnDashboardCurrencies = [
-  //ToDo: enable when Kiln is back
-  // {
-  //   account: Account.ETH_1,
-  //   xrayTicket: "B2CQA-3679",
-  //   staking: false,
-  // },
+  {
+    account: Account.ETH_1,
+    xrayTicket: "B2CQA-3679",
+    staking: false,
+  },
   {
     account: Account.SOL_4,
     xrayTicket: "B2CQA-3680",
@@ -145,22 +143,21 @@ const earnDashboardCurrencies = [
     xrayTicket: "B2CQA-3682",
     staking: false,
   },
-  //ToDo: enable when Kiln is back
-  // {
-  //   account: Account.NEAR_1,
-  //   xrayTicket: "B2CQA-3683",
-  //   staking: true,
-  // },
-  // {
-  //   account: Account.SOL_2,
-  //   xrayTicket: "B2CQA-3684",
-  //   staking: true,
-  // },
-  // {
-  //   account: Account.ATOM_1,
-  //   xrayTicket: "B2CQA-3685",
-  //   staking: true,
-  // },
+  {
+    account: Account.NEAR_1,
+    xrayTicket: "B2CQA-3683",
+    staking: true,
+  },
+  {
+    account: Account.SOL_2,
+    xrayTicket: "B2CQA-3684",
+    staking: true,
+  },
+  {
+    account: Account.ATOM_1,
+    xrayTicket: "B2CQA-3685",
+    staking: true,
+  },
 ];
 
 for (const { account, xrayTicket, staking } of earnDashboardCurrencies) {

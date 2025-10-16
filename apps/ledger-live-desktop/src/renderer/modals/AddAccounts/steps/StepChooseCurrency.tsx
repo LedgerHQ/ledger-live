@@ -27,25 +27,21 @@ import { NetworkDown } from "@ledgerhq/errors";
 import ErrorBanner from "~/renderer/components/ErrorBanner";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 
-import { useCurrenciesUnderFeatureFlag } from "@ledgerhq/live-common/modularDrawer/hooks/useCurrenciesUnderFeatureFlag";
+import { useAcceptedCurrency } from "@ledgerhq/live-common/modularDrawer/hooks/useAcceptedCurrency";
 
 const listSupportedTokens = () =>
   listTokens().filter(token => isCurrencySupported(token.parentCurrency));
 
 const StepChooseCurrency = ({ currency, setCurrency }: StepProps) => {
-  const { deactivatedCurrencyIds } = useCurrenciesUnderFeatureFlag();
+  const isAcceptedCurrency = useAcceptedCurrency();
 
   const currencies = useMemo(() => {
     const supportedCurrenciesAndTokens =
       // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
       (listSupportedCurrencies() as CryptoOrTokenCurrency[]).concat(listSupportedTokens());
 
-    return supportedCurrenciesAndTokens.filter(
-      c =>
-        (c.type === "CryptoCurrency" && !deactivatedCurrencyIds.has(c.id)) ||
-        (c.type === "TokenCurrency" && !deactivatedCurrencyIds.has(c.parentCurrency.id)),
-    );
-  }, [deactivatedCurrencyIds]);
+    return supportedCurrenciesAndTokens.filter(isAcceptedCurrency);
+  }, [isAcceptedCurrency]);
 
   const url =
     currency && currency.type === "TokenCurrency"

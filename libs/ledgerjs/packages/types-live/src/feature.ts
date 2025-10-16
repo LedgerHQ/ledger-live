@@ -266,6 +266,7 @@ export type Features = CurrencyFeatures & {
   llmHomescreen: DefaultFeature;
   supportDeviceApex: DefaultFeature;
   llmSyncOnboardingIncr1: DefaultFeature;
+  lldSyncOnboardingIncr1: DefaultFeature;
   noah: DefaultFeature;
 };
 

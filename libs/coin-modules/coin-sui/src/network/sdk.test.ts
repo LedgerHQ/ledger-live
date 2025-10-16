@@ -3,8 +3,12 @@ import coinConfig from "../config";
 
 import { BigNumber } from "bignumber.js";
 import { SuiClient } from "@mysten/sui/client";
-import type { TransactionBlockData, SuiTransactionBlockResponse } from "@mysten/sui/client";
-import assert from "assert";
+import type {
+  TransactionBlockData,
+  SuiTransactionBlockResponse,
+  SuiTransactionBlockKind,
+} from "@mysten/sui/client";
+import assert, { fail } from "assert";
 
 // Mock SUI client for tests
 jest.mock("@mysten/sui/client", () => {
@@ -609,16 +613,47 @@ describe("SDK Functions", () => {
 
 describe("Staking Operations", () => {
   describe("Operation Type Detection", () => {
+    const address = "0x65449f57946938c84c512732f1d69405d1fce417d9c9894696ddf4522f479e24";
     test("getOperationType should return DELEGATE for staking transaction", () => {
-      const address = "0x65449f57946938c84c512732f1d69405d1fce417d9c9894696ddf4522f479e24";
       expect(sdk.getOperationType(address, mockStakingTx(address, "-1000000000"))).toBe("DELEGATE");
     });
 
     test("getOperationType should return UNDELEGATE for unstaking transaction", () => {
-      const address = "0x65449f57946938c84c512732f1d69405d1fce417d9c9894696ddf4522f479e24";
       expect(sdk.getOperationType(address, mockUnstakingTx(address, "1000000000"))).toBe(
         "UNDELEGATE",
       );
+    });
+
+    function prependOtherMoveCall(block: SuiTransactionBlockKind) {
+      if (block?.kind === "ProgrammableTransaction") {
+        block.transactions.unshift({
+          MoveCall: {
+            function: "other_function",
+            module: "module",
+            package: "package",
+          },
+        });
+      }
+    }
+
+    test("getOperationType should return UNDELEGATE when it's not the first MoveCall ", () => {
+      const tx = mockUnstakingTx(address, "1000");
+      if (tx.transaction) {
+        prependOtherMoveCall(tx.transaction.data.transaction);
+        expect(sdk.getOperationType(address, tx)).toBe("UNDELEGATE");
+      } else {
+        fail("can't prepare fixture");
+      }
+    });
+
+    test("getOperationType should return DELEGATE when it's not the first MoveCall ", () => {
+      const tx = mockStakingTx(address, "-1000");
+      if (tx.transaction) {
+        prependOtherMoveCall(tx.transaction.data.transaction);
+        expect(sdk.getOperationType(address, tx)).toBe("DELEGATE");
+      } else {
+        fail("can't prepare fixture");
+      }
     });
   });
 
@@ -1748,6 +1783,7 @@ describe("filterOperations", () => {
         {
           type: "transfer",
           address: "0x65449f57946938c84c5127",
+          peer: "0x65449f57946938c84c512732f1d69405d1fce417d9c9894696ddf4522f479e24",
           amount: -10000000000n,
           asset: { type: "native" },
         },
@@ -1818,6 +1854,7 @@ describe("filterOperations", () => {
         {
           type: "transfer",
           address: "0x65449f57946938c84c5127",
+          peer: "0x65449f57946938c84c512732f1d69405d1fce417d9c9894696ddf4522f479e24",
           amount: 8824n,
           asset: {
             type: "token",
@@ -1909,18 +1946,21 @@ describe("filterOperations", () => {
         operations: [
           {
             address: "0x65449f57946938c84c512732f1d69405d1fce417d9c9894696ddf4522f479e24",
+            peer: "0x6e143fe0a8ca010a86580dafac44298e5b1b7d73efc345356a59a15f0d7824f0",
             amount: -10000000000n,
             asset: { type: "native" },
             type: "transfer",
           },
           {
             address: "0x6e143fe0a8ca010a86580dafac44298e5b1b7d73efc345356a59a15f0d7824f0",
+            peer: "0x65449f57946938c84c512732f1d69405d1fce417d9c9894696ddf4522f479e24",
             amount: 9998990120n,
             asset: { type: "native" },
             type: "transfer",
           },
           {
             address: "0x6e143fe0a8ca010a86580dafac44298e5b1b7d73efc345356a59a15f0d7824f0",
+            peer: "0x65449f57946938c84c512732f1d69405d1fce417d9c9894696ddf4522f479e24",
             amount: 500000n,
             asset: { type: "token", assetReference: "0x123::test::TOKEN" },
             type: "transfer",
