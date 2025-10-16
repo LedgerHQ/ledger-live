@@ -37,6 +37,7 @@ export default function ReceiveFundsOptions(props: EntryScreenProps) {
 
   function handleGoToCrypto() {
     if (isModularDrawerEnabled) {
+      handleClose();
       handleOpenReceiveDrawer();
       return;
     }
