@@ -2,6 +2,7 @@ import { BigNumber } from "bignumber.js";
 import { CantonSigner, CantonPreparedTransaction } from "../types";
 import { Transaction } from "../types";
 import { craftTransaction } from "../common-logic";
+import prepareTransferMock from "../test/prepare-transfer.json";
 import { buildSignOperation } from "./signOperation";
 
 jest.mock("../common-logic", () => {
@@ -77,47 +78,8 @@ describe("buildSignOperation", () => {
     mockCraftTransaction.mockResolvedValue({
       nativeTransaction: {
         // @ts-expect-error fix types
-        transaction: {
-          version: "2.1",
-          roots: ["0"],
-          nodes: [
-            {
-              nodeId: "0",
-              v1: {
-                create: {
-                  lfVersion: "2.1",
-                  contractId: "test-contract-id",
-                  packageName: "test-package",
-                  templateId: {
-                    packageId: "test-package-id",
-                    moduleName: "TestModule",
-                    entityName: "TestEntity",
-                  },
-                  argument: {
-                    record: {
-                      recordId: {
-                        packageId: "test-package-id",
-                        moduleName: "TestModule",
-                        entityName: "TestEntity",
-                      },
-                      fields: [],
-                    },
-                  },
-                },
-              },
-            },
-          ],
-        },
-        metadata: {
-          submitterInfo: {
-            actAs: ["test::party"],
-            commandId: "test-command-id",
-          },
-          synchronizerId: "test-synchronizer-id",
-          transactionUuid: "test-transaction-uuid",
-          submissionTime: "1234567890",
-          inputContracts: [],
-        },
+        transaction: prepareTransferMock.transaction,
+        metadata: prepareTransferMock.metadata,
       },
       serializedTransaction: "serialized-transaction",
       hash: "mock-hash",
