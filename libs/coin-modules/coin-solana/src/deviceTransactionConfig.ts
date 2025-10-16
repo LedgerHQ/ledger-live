@@ -24,14 +24,14 @@ type DeviceTransactionField = CommonDeviceTransactionField | SolanaExtraDeviceTr
 
 export type SolanaExtraDeviceFields = SolanaExtraDeviceTransactionField["type"];
 
-function getDeviceTransactionConfig({
+async function getDeviceTransactionConfig({
   account,
   transaction,
 }: {
   account: AccountLike;
   parentAccount: Account | null | undefined;
   transaction: Transaction;
-}): Array<DeviceTransactionField> {
+}): Promise<Array<DeviceTransactionField>> {
   const { commandDescriptor } = transaction.model;
 
   return commandDescriptor ? fieldsForCommand(commandDescriptor, account) : [];
@@ -39,10 +39,10 @@ function getDeviceTransactionConfig({
 
 export default getDeviceTransactionConfig;
 
-function fieldsForCommand(
+async function fieldsForCommand(
   commandDescriptor: CommandDescriptor,
   account: AccountLike,
-): DeviceTransactionField[] {
+): Promise<DeviceTransactionField[]> {
   const { command } = commandDescriptor;
   switch (command.kind) {
     case "transfer":
@@ -70,7 +70,7 @@ function fieldsForCommand(
   }
 }
 
-function fieldsForTransfer(_command: TransferCommand): DeviceTransactionField[] {
+async function fieldsForTransfer(_command: TransferCommand): Promise<DeviceTransactionField[]> {
   const fields: Array<DeviceTransactionField> = [];
 
   fields.push({
@@ -81,7 +81,9 @@ function fieldsForTransfer(_command: TransferCommand): DeviceTransactionField[] 
   return fields;
 }
 
-function fieldsForTokenTransfer(command: TokenTransferCommand): DeviceTransactionField[] {
+async function fieldsForTokenTransfer(
+  command: TokenTransferCommand,
+): Promise<DeviceTransactionField[]> {
   const fields: Array<DeviceTransactionField> = [];
 
   fields.push({
@@ -110,7 +112,9 @@ function fieldsForTokenTransfer(command: TokenTransferCommand): DeviceTransactio
   return fields;
 }
 
-function fieldsForCreateATA(command: TokenCreateATACommand): DeviceTransactionField[] {
+async function fieldsForCreateATA(
+  command: TokenCreateATACommand,
+): Promise<DeviceTransactionField[]> {
   const fields: Array<DeviceTransactionField> = [];
 
   fields.push({
@@ -146,7 +150,9 @@ function fieldsForCreateATA(command: TokenCreateATACommand): DeviceTransactionFi
   return fields;
 }
 
-function fieldsForCreateApprove(command: TokenCreateApproveCommand): DeviceTransactionField[] {
+async function fieldsForCreateApprove(
+  command: TokenCreateApproveCommand,
+): Promise<DeviceTransactionField[]> {
   const fields: Array<DeviceTransactionField> = [];
 
   fields.push({
@@ -175,7 +181,9 @@ function fieldsForCreateApprove(command: TokenCreateApproveCommand): DeviceTrans
   return fields;
 }
 
-function fieldsForCreateRevoke(command: TokenCreateRevokeCommand): DeviceTransactionField[] {
+async function fieldsForCreateRevoke(
+  command: TokenCreateRevokeCommand,
+): Promise<DeviceTransactionField[]> {
   const fields: Array<DeviceTransactionField> = [];
 
   fields.push({
@@ -193,10 +201,10 @@ function fieldsForCreateRevoke(command: TokenCreateRevokeCommand): DeviceTransac
   return fields;
 }
 
-function fieldsForStakeCreateAccount(
+async function fieldsForStakeCreateAccount(
   command: StakeCreateAccountCommand,
   account: AccountLike,
-): DeviceTransactionField[] {
+): Promise<DeviceTransactionField[]> {
   if (account.type !== "Account") {
     throw new Error("unsupported account type");
   }
@@ -241,7 +249,9 @@ function fieldsForStakeCreateAccount(
   return fields;
 }
 
-function fieldsForStakeDelegate(command: StakeDelegateCommand): DeviceTransactionField[] {
+async function fieldsForStakeDelegate(
+  command: StakeDelegateCommand,
+): Promise<DeviceTransactionField[]> {
   const fields: Array<DeviceTransactionField> = [];
 
   fields.push({
@@ -259,7 +269,9 @@ function fieldsForStakeDelegate(command: StakeDelegateCommand): DeviceTransactio
   return fields;
 }
 
-function fieldsForStakeUndelegate(command: StakeUndelegateCommand): DeviceTransactionField[] {
+async function fieldsForStakeUndelegate(
+  command: StakeUndelegateCommand,
+): Promise<DeviceTransactionField[]> {
   const fields: Array<DeviceTransactionField> = [];
 
   fields.push({
@@ -271,7 +283,9 @@ function fieldsForStakeUndelegate(command: StakeUndelegateCommand): DeviceTransa
   return fields;
 }
 
-function fieldsForStakeWithdraw(command: StakeWithdrawCommand): DeviceTransactionField[] {
+async function fieldsForStakeWithdraw(
+  command: StakeWithdrawCommand,
+): Promise<DeviceTransactionField[]> {
   const fields: Array<DeviceTransactionField> = [];
 
   fields.push({
@@ -288,7 +302,7 @@ function fieldsForStakeWithdraw(command: StakeWithdrawCommand): DeviceTransactio
   return fields;
 }
 
-function fieldsForStakeSplit(command: StakeSplitCommand): DeviceTransactionField[] {
+async function fieldsForStakeSplit(command: StakeSplitCommand): Promise<DeviceTransactionField[]> {
   const fields: Array<DeviceTransactionField> = [];
 
   fields.push({
