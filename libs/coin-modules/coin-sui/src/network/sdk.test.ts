@@ -236,7 +236,6 @@ function mockStakingTx(address: string, amount: string) {
 
 // amount must be a positive number
 function mockUnstakingTx(address: string, amount: string) {
-  assert(new BigNumber(amount).gte(0), "amount must be a positive number");
   return {
     digest: "undelegate_tx_digest_456",
     transaction: {
@@ -696,17 +695,18 @@ describe("Staking Operations", () => {
     }
 
     test("alpaca getOperationAmount should calculate staking amount", () =>
-      expect(alpacaOperationAmount(mockStakingTx(address, "-1000000000"))).toEqual(
+      expect(alpacaOperationAmount(mockStakingTx(address, "-1001050000"))).toEqual(
         new BigNumber("1000000000"),
       ));
 
+    // 1000 unstaked & 1050000 gas fees = -1049000 balance change
     test("alpaca getOperationAmount should calculate unstaking amount of 1000", () =>
-      expect(alpacaOperationAmount(mockUnstakingTx(address, "1000"))).toEqual(
+      expect(alpacaOperationAmount(mockUnstakingTx(address, "-1049000"))).toEqual(
         new BigNumber("1000"),
       ));
 
     test("alpaca getOperationAmount should calculate unstaking amount of 0", () =>
-      expect(alpacaOperationAmount(mockUnstakingTx(address, "0"))).toEqual(new BigNumber("0")));
+      expect(alpacaOperationAmount(mockUnstakingTx(address, "-1050000"))).toEqual(new BigNumber("0")));
 
     test("alpaca getOperationAmount should calculate amount correctly for SUI", () =>
       expect(alpacaOperationAmount(mockTransaction)).toEqual(new BigNumber("9998990120")));
@@ -859,7 +859,7 @@ describe("Staking Operations", () => {
     test("transactionToOp should map staking transaction correctly", () => {
       const address = "0x65449f57946938c84c512732f1d69405d1fce417d9c9894696ddf4522f479e24";
 
-      const operation = sdk.alpacaTransactionToOp(address, mockStakingTx(address, "-1000000000"));
+      const operation = sdk.alpacaTransactionToOp(address, mockStakingTx(address, "-1001050000"));
 
       expect(operation.id).toEqual("delegate_tx_digest_123");
       expect(operation.type).toEqual("DELEGATE");
@@ -873,7 +873,7 @@ describe("Staking Operations", () => {
     test("transactionToOp should map unstaking transaction correctly", () => {
       const address = "0x65449f57946938c84c512732f1d69405d1fce417d9c9894696ddf4522f479e24";
 
-      const operation = sdk.alpacaTransactionToOp(address, mockUnstakingTx(address, "1000000000"));
+      const operation = sdk.alpacaTransactionToOp(address, mockUnstakingTx(address, "998950000"));
 
       expect(operation.id).toEqual("undelegate_tx_digest_456");
       expect(operation.type).toEqual("UNDELEGATE");
@@ -1778,7 +1778,7 @@ describe("filterOperations", () => {
           },
           coinType: sdk.DEFAULT_COIN_TYPE,
           amount: "-10000000000",
-        }),
+        }, BigNumber(0)),
       ).toEqual([
         {
           type: "transfer",
@@ -1800,7 +1800,7 @@ describe("filterOperations", () => {
           },
           coinType: sdk.DEFAULT_COIN_TYPE,
           amount: "-10000000000",
-        }),
+        }, BigNumber(0)),
       ).toEqual([]);
     });
 
@@ -1812,7 +1812,7 @@ describe("filterOperations", () => {
           },
           coinType: sdk.DEFAULT_COIN_TYPE,
           amount: "-10000000000",
-        }),
+        }, BigNumber(0)),
       ).toEqual([]);
     });
 
@@ -1822,7 +1822,7 @@ describe("filterOperations", () => {
           owner: "Immutable",
           coinType: sdk.DEFAULT_COIN_TYPE,
           amount: "-10000000000",
-        }),
+        }, BigNumber(0)),
       ).toEqual([]);
     });
 
@@ -1837,7 +1837,7 @@ describe("filterOperations", () => {
           },
           coinType: sdk.DEFAULT_COIN_TYPE,
           amount: "-10000000000",
-        }),
+        }, BigNumber(0)),
       ).toEqual([]);
     });
 
@@ -1849,7 +1849,7 @@ describe("filterOperations", () => {
           },
           coinType: "0x168da5bf1f48dafc111b0a488fa454aca95e0b5e::usdc::USDC",
           amount: "8824",
-        }),
+        }, BigNumber(0)),
       ).toEqual([
         {
           type: "transfer",
@@ -1871,14 +1871,14 @@ describe("filterOperations", () => {
           owner: { AddressOwner: address },
           coinType: sdk.DEFAULT_COIN_TYPE,
           amount: "-10000000000",
-        }),
+        }, BigNumber(0)),
       ).toEqual([
         {
           type: "other",
           operationType: "DELEGATE",
           address: address,
           asset: { type: "native" },
-          amount: 10000000000n,
+          amount: -10000000000n,
         },
       ]);
     });
@@ -1890,7 +1890,7 @@ describe("filterOperations", () => {
           owner: { AddressOwner: address },
           coinType: sdk.DEFAULT_COIN_TYPE,
           amount: "10000000000",
-        }),
+        }, BigNumber(0)),
       ).toEqual([
         {
           type: "other",
@@ -1947,7 +1947,7 @@ describe("filterOperations", () => {
           {
             address: "0x65449f57946938c84c512732f1d69405d1fce417d9c9894696ddf4522f479e24",
             peer: "0x6e143fe0a8ca010a86580dafac44298e5b1b7d73efc345356a59a15f0d7824f0",
-            amount: -10000000000n,
+            amount: -9998990120n,
             asset: { type: "native" },
             type: "transfer",
           },

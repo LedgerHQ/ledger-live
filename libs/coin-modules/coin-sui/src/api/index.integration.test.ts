@@ -218,7 +218,7 @@ describe("Sui Api", () => {
       expect(senderOp.peer).toEqual(
         "0xb37b298c9164c28c8aaf989a49416e3c323b67bc2b96a54501b524419ebb4ead",
       );
-      expect(senderOp.amount).toEqual(BigInt(-1492885));
+      expect(senderOp.amount).toEqual(BigInt(-5));
       expect(receipientOp.address).toEqual(
         "0xb37b298c9164c28c8aaf989a49416e3c323b67bc2b96a54501b524419ebb4ead",
       );
