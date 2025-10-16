@@ -241,6 +241,50 @@ export type TonPayloadTokenBridgePaySwapRaw = {
   swapId: string;
 };
 
+export type TonPayloadTonWhalesPoolDeposit = {
+  type: "tonwhales-pool-deposit";
+  queryId: bigint;
+  gasLimit: bigint;
+};
+
+export type TonPayloadTonWhalesPoolDepositRaw = {
+  type: "tonwhales-pool-deposit";
+  queryId: string;
+  gasLimit: string;
+};
+
+export type TonPayloadTonWhalesPoolWithdraw = {
+  type: "tonwhales-pool-withdraw";
+  queryId: bigint;
+  gasLimit: bigint;
+  amount: bigint;
+};
+
+export type TonPayloadTonWhalesPoolWithdrawRaw = {
+  type: "tonwhales-pool-withdraw";
+  queryId: string;
+  gasLimit: string;
+  amount: string;
+};
+
+export type TonPayloadVestingSendMsgComment = {
+  type: "vesting-send-msg-comment";
+  queryId: bigint | null;
+  sendMode: number;
+  value: bigint;
+  destination: Address;
+  text: string;
+};
+
+export type TonPayloadVestingSendMsgCommentRaw = {
+  type: "vesting-send-msg-comment";
+  queryId: string | null;
+  sendMode: number;
+  value: string;
+  destination: string;
+  text: string;
+};
+
 export type TonPayloadFormat =
   | TonPayloadComment
   | TonPayloadJettonTransfer
@@ -253,7 +297,10 @@ export type TonPayloadFormat =
   | TonPayloadTonStakersDeposit
   | TonPayloadVoteForProposal
   | TonPayloadChangeDnsRecord
-  | TonPayloadTokenBridgePaySwap;
+  | TonPayloadTokenBridgePaySwap
+  | TonPayloadTonWhalesPoolDeposit
+  | TonPayloadTonWhalesPoolWithdraw
+  | TonPayloadVestingSendMsgComment;
 
 export type TonPayloadFormatRaw =
   | TonPayloadCommentRaw
@@ -267,7 +314,10 @@ export type TonPayloadFormatRaw =
   | TonPayloadTonStakersDepositRaw
   | TonPayloadVoteForProposalRaw
   | TonPayloadChangeDnsRecordRaw
-  | TonPayloadTokenBridgePaySwapRaw;
+  | TonPayloadTokenBridgePaySwapRaw
+  | TonPayloadTonWhalesPoolDepositRaw
+  | TonPayloadTonWhalesPoolWithdrawRaw
+  | TonPayloadVestingSendMsgCommentRaw;
 
 export interface TonTransaction {
   to: Address;

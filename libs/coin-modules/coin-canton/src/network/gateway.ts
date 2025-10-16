@@ -75,9 +75,17 @@ type TransactionSubmitRequest = {
 
 type TransactionSubmitResponse = { update_id: string };
 
+export type GetBalanceResponse =
+  | {
+      at_round: number;
+      balances: InstrumentBalance[];
+    }
+  // temporary backwards compatibility
+  | InstrumentBalance[];
+
 export type InstrumentBalance = {
   instrument_id: string;
-  amount: number;
+  amount: string;
   locked: boolean;
 };
 
@@ -366,11 +374,11 @@ export async function submit(
 }
 
 export async function getBalance(currency: CryptoCurrency, partyId: string) {
-  const { data } = await gatewayNetwork<InstrumentBalance[]>({
+  const { data } = await gatewayNetwork<GetBalanceResponse>({
     method: "GET",
     url: `${getGatewayUrl(currency)}/v1/node/${getNodeId(currency)}/party/${partyId}/balance`,
   });
-  return data;
+  return Array.isArray(data) ? data : data.balances;
 }
 
 export async function getPartyById(currency: CryptoCurrency, partyId: string): Promise<PartyInfo> {
@@ -540,4 +548,21 @@ export async function submitPreApprovalTransaction(
     submissionId: data.submission_id,
     updateId: data.update_id,
   } satisfies PreApprovalResult;
+}
+
+type GetTransferPreApprovalResponse = {
+  contract_id: string;
+  receiver: string;
+  provider: string;
+  valid_from: string; // ISO 8601 date string
+  last_renewed_at: string; // ISO 8601 date
+  expires_at: string; // ISO 8601 date string
+};
+
+export async function getTransferPreApproval(currency: CryptoCurrency, partyId: string) {
+  const { data } = await gatewayNetwork<GetTransferPreApprovalResponse>({
+    method: "GET",
+    url: `${getGatewayUrl(currency)}/v1/node/${getNodeId(currency)}/party/${partyId}/transfer-preapproval`,
+  });
+  return data;
 }

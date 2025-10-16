@@ -42,10 +42,10 @@ describe("Coin Modules Monitoring", () => {
         }),
       } as AccountBridge<TransactionCommon>);
 
-      const logs = await run(["solana"]);
+      const logs = await run(["solana"], ["pristine", "average", "big"]);
 
       expect(logs).toEqual({
-        entries: [
+        entries: expect.arrayContaining([
           {
             duration: expect.any(Number),
             currencyName: "solana",
@@ -162,7 +162,7 @@ describe("Coin Modules Monitoring", () => {
             totalNetworkCalls: 0, // no network call on unit tests
             networkCallsByDomain: {},
           },
-        ],
+        ]),
         failed: true,
       });
     });

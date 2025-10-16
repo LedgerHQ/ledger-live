@@ -1,16 +1,16 @@
-import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
-import React, { useCallback, useEffect, useRef } from "react";
+import { useTranslation } from "react-i18next";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { StyleSheet, SafeAreaView, BackHandler, Platform } from "react-native";
 import { ScopeProvider } from "jotai-scope";
-
 import { useNavigation } from "@react-navigation/native";
 import { currentAccountAtom } from "@ledgerhq/live-common/wallet-api/useDappLogic";
-import { WebviewAPI } from "../Web3AppWebview/types";
-
+import { LiveAppManifest } from "@ledgerhq/live-common/platform/types";
 import { Web3AppWebview } from "../Web3AppWebview";
+import { WebviewAPI, WebviewState } from "../Web3AppWebview/types";
+import { initialWebviewState } from "../Web3AppWebview/helpers";
 import { RootNavigationComposite, StackNavigatorNavigation } from "../RootNavigator/types/helpers";
 import { BaseNavigatorStackParamList } from "../RootNavigator/types/BaseNavigator";
-
+import { ProviderInterstitial } from "LLM/components/ProviderInterstitial";
 import { NavigatorName } from "~/const";
 
 type Props = {
@@ -20,6 +20,8 @@ type Props = {
 
 const WebReceivePlayer = ({ manifest, inputs }: Props) => {
   const webviewAPIRef = useRef<WebviewAPI>(null);
+  const [webviewState, setWebviewState] = useState<WebviewState>(initialWebviewState);
+  const { t } = useTranslation();
 
   const navigation =
     useNavigation<RootNavigationComposite<StackNavigatorNavigation<BaseNavigatorStackParamList>>>();
@@ -63,6 +65,12 @@ const WebReceivePlayer = ({ manifest, inputs }: Props) => {
               });
             },
           }}
+          onStateChange={setWebviewState}
+        />
+        <ProviderInterstitial
+          manifest={manifest}
+          isLoading={webviewState.loading}
+          description={t("transfer.receive.connectToNoah")}
         />
       </SafeAreaView>
     </ScopeProvider>

@@ -146,6 +146,14 @@ export const mockedAccountList = [
     balance: "10010000",
     spendableBalance: "10010000",
   },
+  {
+    id: "426a054c-7938-52bb-830a-4e620782038f",
+    name: "XRP 1",
+    address: "rN7n7otQDd6FczFgLdSqtcsAUxDkw6fzRH",
+    currency: "ripple",
+    balance: "25000000",
+    spendableBalance: "25000000",
+  },
 ];
 
 export const expectedCurrencyList = [
@@ -283,6 +291,33 @@ export const expectedCurrencyList = [
     family: "polkadot",
     color: "#E6007A",
     decimals: 10,
+  },
+  {
+    type: "CryptoCurrency",
+    id: "westend",
+    ticker: "WND",
+    name: "Westend",
+    family: "polkadot",
+    color: "#00ff00",
+    decimals: 12,
+  },
+  {
+    color: "#00ff00",
+    decimals: 12,
+    family: "polkadot",
+    id: "assethub_westend",
+    name: "Assethub Westend",
+    ticker: "WND",
+    type: "CryptoCurrency",
+  },
+  {
+    color: "#E6007A",
+    decimals: 10,
+    family: "polkadot",
+    id: "assethub_polkadot",
+    name: "Polkadot",
+    ticker: "DOT",
+    type: "CryptoCurrency",
   },
   {
     type: "CryptoCurrency",

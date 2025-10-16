@@ -144,7 +144,7 @@ export class LegacySignerSolana implements SolanaSigner {
       }
     }
 
-    return this.signer.signTransaction(path, tx);
+    return this.signer.signTransaction(path, tx, resolution?.userInputType);
   }
 
   signMessage(path: string, messageHex: string): Promise<SolanaSignature> {

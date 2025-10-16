@@ -9,3 +9,13 @@ export const ICP_FEES = 1e4;
 
 // Max Memo value on ICP network
 export const MAX_MEMO_VALUE = Number.MAX_SAFE_INTEGER;
+
+// API limits
+export const FETCH_TXNS_LIMIT = 100;
+
+export {
+  MAINNET_GOVERNANCE_CANISTER_ID,
+  MAINNET_LEDGER_CANISTER_ID,
+  MAINNET_INDEX_CANISTER_ID,
+  ICP_NETWORK_URL,
+} from "@zondax/ledger-live-icp/neurons";

@@ -28,6 +28,7 @@ export function buildCurrencyBridge(signerContext: SignerContext<CardanoSigner>)
   const scanAccounts = makeScanAccounts({
     getAccountShape: makeGetAccountShape(signerContext),
     getAddressFn: getAddressWrapper(getAddress),
+    postSync: postSyncPatch,
   });
 
   return {
@@ -58,6 +59,9 @@ export function buildAccountBridge(
     sync,
     receive,
     signOperation: buildSignOperation(signerContext),
+    signRawOperation: () => {
+      throw new Error("signRawOperation is not supported");
+    },
     broadcast,
     assignToAccountRaw,
     assignFromAccountRaw,

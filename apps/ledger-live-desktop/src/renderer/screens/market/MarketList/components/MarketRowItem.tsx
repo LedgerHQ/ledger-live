@@ -1,11 +1,10 @@
 import React, { useCallback, memo } from "react";
 import { useHistory } from "react-router-dom";
 import styled from "styled-components";
-import { Flex, Text, Icon } from "@ledgerhq/react-ui";
+import { Flex, Text, Icon, Tooltip, Box } from "@ledgerhq/react-ui";
 import FormattedVal from "~/renderer/components/FormattedVal";
 import { setTrackingSource } from "~/renderer/analytics/TrackPage";
 import counterValueFormatter from "@ledgerhq/live-common/market/utils/countervalueFormatter";
-import CryptoCurrencyIcon from "~/renderer/components/CryptoCurrencyIcon";
 import { SmallMarketItemChart } from "./MarketItemChart";
 import { CurrencyData, KeysPriceChange } from "@ledgerhq/live-common/market/utils/types";
 import { Button } from "../..";
@@ -42,7 +41,6 @@ type Props = {
   isStarred: boolean;
   toggleStar: () => void;
   range?: string;
-  currenciesAll?: string[];
 };
 
 export const MarketRow = memo<Props>(function MarketRowItem({
@@ -54,13 +52,12 @@ export const MarketRow = memo<Props>(function MarketRowItem({
   isStarred,
   toggleStar,
   range,
-  currenciesAll,
 }: Props) {
   const history = useHistory();
   const { t } = useTranslation();
 
   const { onBuy, onStake, onSwap, availableOnBuy, availableOnSwap, availableOnStake } =
-    useMarketActions({ currency, page: Page.Market, currenciesAll });
+    useMarketActions({ currency, page: Page.Market });
   const earnStakeLabelCoin = useGetStakeLabelLocaleBased();
 
   const onCurrencyClick = useCallback(() => {
@@ -109,32 +106,28 @@ export const MarketRow = memo<Props>(function MarketRowItem({
           <TableCell>{currency?.marketcapRank ?? "-"}</TableCell>
           <TableCell mr={3}>
             <CryptoCurrencyIconWrapper>
-              {currency.internalCurrency ? (
-                <CryptoCurrencyIcon
-                  currency={currency.internalCurrency}
-                  size={32}
-                  circle
-                  fallback={
-                    <img width="32px" height="32px" src={currency.image} alt={"currency logo"} />
-                  }
-                />
-              ) : (
-                <img width="32px" height="32px" src={currency.image} alt={"currency logo"} />
-              )}
+              <img width="32px" height="32px" src={currency.image} alt={"currency logo"} />
             </CryptoCurrencyIconWrapper>
-            <Flex
-              pl={3}
-              {...(hasActions ? { width: 86 } : {})}
-              overflow="hidden"
-              flexDirection="column"
-              alignItems="left"
-              pr={2}
+            <Tooltip
+              content={<TooltipContainer>{currency.name}</TooltipContainer>}
+              placement="top"
+              arrow={false}
             >
-              <EllipsisText variant="body">{currency.name}</EllipsisText>
-              <EllipsisText variant="small" color="neutral.c60">
-                {currency.ticker.toUpperCase()}
-              </EllipsisText>
-            </Flex>
+              <Flex
+                alignItems="left"
+                justifyContent="center"
+                flexDirection="column"
+                mr={2}
+                pl={3}
+                {...(hasActions ? { width: 86 } : {})}
+                overflow="hidden"
+              >
+                <EllipsisText variant="body">{currency.name}</EllipsisText>
+                <EllipsisText variant="small" color="neutral.c60">
+                  {currency.ticker.toUpperCase()}
+                </EllipsisText>
+              </Flex>
+            </Tooltip>
             {hasActions ? (
               <Flex flex={1}>
                 {availableOnBuy && (
@@ -225,10 +218,8 @@ type CurrencyRowProps = {
   toggleStar: (id: string, isStarred: boolean) => void;
   starredMarketCoins: string[];
   locale: string;
-  swapAvailableIds: string[];
   range?: string;
   style: React.CSSProperties;
-  currenciesAll: string[];
 };
 
 export const CurrencyRow = memo(function CurrencyRowItem({
@@ -241,7 +232,6 @@ export const CurrencyRow = memo(function CurrencyRowItem({
   locale,
   style,
   range,
-  currenciesAll,
 }: CurrencyRowProps) {
   const currency = data ? data[index] : null;
   const isStarred = currency && starredMarketCoins.includes(currency.id);
@@ -257,7 +247,14 @@ export const CurrencyRow = memo(function CurrencyRowItem({
       locale={locale}
       style={{ ...style }}
       range={range}
-      currenciesAll={currenciesAll}
     />
   );
 });
+
+const TooltipContainer = styled(Box)`
+  background-color: ${({ theme }) => theme.colors.palette.neutral.c100};
+  padding: 10px;
+  border-radius: 4px;
+  display: flex;
+  gap: 8px;
+`;

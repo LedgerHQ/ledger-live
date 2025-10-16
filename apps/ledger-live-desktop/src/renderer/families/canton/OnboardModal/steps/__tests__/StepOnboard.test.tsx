@@ -59,11 +59,11 @@ describe("StepOnboard", () => {
       const { container } = render(<StepOnboard {...props} />);
 
       if (expectImportable) {
-        expect(screen.getByText("canton.addAccount.onboard.onboarded")).toBeInTheDocument();
+        expect(screen.getByText("Onboarded accounts")).toBeInTheDocument();
       } else {
-        expect(screen.queryByText("canton.addAccount.onboard.onboarded")).not.toBeInTheDocument();
+        expect(screen.queryByText("Onboarded accounts")).not.toBeInTheDocument();
       }
-      expect(screen.getByText("canton.addAccount.onboard.newAccount")).toBeInTheDocument();
+      expect(screen.getByText("New Account")).toBeInTheDocument();
       container.remove();
     });
   });
@@ -134,7 +134,7 @@ describe("StepOnboard", () => {
     const { container: container2 } = render(
       <StepOnboardFooter
         {...defaultProps}
-        onRetry={onRetry}
+        onRetryOnboardAccount={onRetry}
         onboardingStatus={OnboardStatus.ERROR}
       />,
     );

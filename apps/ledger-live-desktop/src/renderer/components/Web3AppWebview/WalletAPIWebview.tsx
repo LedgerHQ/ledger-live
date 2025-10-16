@@ -91,10 +91,14 @@ function useUiHook(manifest: AppManifest, tracking: TrackingAPI): UiHook {
           dispatch(setFlowValue(flow));
           dispatch(setSourceValue(source));
 
+          // We agree that for useCase, we should send max 25 currencies if provided else use only useCase (e.g. buy)
+          const shouldUseCurrencies = (useCase && currencies.length <= 25) || !useCase;
+
           openAssetAndAccountDrawer({
             accounts$,
             drawerConfiguration,
-            currencies: areCurrenciesFiltered && !useCase ? currencies.map(c => c.id) : undefined,
+            currencies:
+              areCurrenciesFiltered && shouldUseCurrencies ? currencies.map(c => c.id) : undefined,
             areCurrenciesFiltered,
             useCase,
             onSuccess,
@@ -186,6 +190,30 @@ function useUiHook(manifest: AppManifest, tracking: TrackingAPI): UiHook {
             manifestId: manifest.id,
             manifestName: manifest.name,
             location: HOOKS_TRACKING_LOCATIONS.genericDAppTransactionSend,
+          }),
+        );
+      },
+      "transaction.signRaw": ({
+        account,
+        parentAccount,
+        transaction,
+        options,
+        onSuccess,
+        onError,
+      }) => {
+        ipcRenderer.send("show-app", {});
+        dispatch(
+          openModal("MODAL_SIGN_RAW_TRANSACTION", {
+            transaction,
+            useApp: options?.hwAppId,
+            dependencies: options?.dependencies,
+            account,
+            parentAccount,
+            onResult: onSuccess,
+            onCancel: onError,
+            manifestId: manifest.id,
+            manifestName: manifest.name,
+            location: HOOKS_TRACKING_LOCATIONS.wapiRawTransactionSend,
           }),
         );
       },

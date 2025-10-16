@@ -28,6 +28,7 @@ function buildCurrencyBridge(signerContext: SignerContext) {
   const scanAccounts = makeScanAccounts<BitcoinAccount>({
     getAccountShape: makeGetAccountShape(signerContext),
     getAddressFn: getAddressWrapper(getAddress),
+    postSync,
   });
 
   return {
@@ -76,6 +77,9 @@ function buildAccountBridge(signerContext: SignerContext) {
     receive,
     sync,
     signOperation: buildSignOperation(signerContext),
+    signRawOperation: () => {
+      throw new Error("signRawOperation is not supported");
+    },
     broadcast: wrappedBroadcast,
     assignFromAccountRaw,
     assignToAccountRaw,

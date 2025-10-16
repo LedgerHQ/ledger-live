@@ -1,6 +1,6 @@
 import React, { useCallback } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { shareAnalyticsSelector } from "~/renderer/reducers/settings";
+import { trackingEnabledSelector } from "~/renderer/reducers/settings";
 import {
   setShareAnalytics,
   setSharePersonalizedRecommendations,
@@ -8,7 +8,7 @@ import {
 import Track from "~/renderer/analytics/Track";
 import Switch from "~/renderer/components/Switch";
 const ShareAnalyticsButton = () => {
-  const shareAnalytics = useSelector(shareAnalyticsSelector);
+  const shareAnalytics = useSelector(trackingEnabledSelector);
   const dispatch = useDispatch();
   const onChangeShareAnalytics = useCallback(
     (value: boolean) => {

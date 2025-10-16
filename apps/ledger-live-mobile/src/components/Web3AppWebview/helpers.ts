@@ -416,6 +416,9 @@ function useUiHook({ isModularDrawerVisible, openModularDrawer, manifest }: Prop
         drawerConfiguration,
       }) => {
         if (isModularDrawerVisible) {
+          // We agree that for useCase, we should send max 25 currencies if provided else use only useCase (e.g. buy)
+          const shouldUseCurrencies = (useCase && currencies.length <= 25) || !useCase;
+
           openModularDrawer?.({
             source: source,
             flow: flow,
@@ -423,7 +426,8 @@ function useUiHook({ isModularDrawerVisible, openModularDrawer, manifest }: Prop
             onAccountSelected: (account: AccountLike, parentAccount?: Account | undefined) =>
               onSuccess(account, parentAccount),
             accounts$,
-            currencies: areCurrenciesFiltered && !useCase ? currencies.map(c => c.id) : undefined,
+            currencies:
+              areCurrenciesFiltered && shouldUseCurrencies ? currencies.map(c => c.id) : undefined,
             areCurrenciesFiltered,
             useCase,
             ...drawerConfiguration,
@@ -508,6 +512,28 @@ function useUiHook({ isModularDrawerVisible, openModularDrawer, manifest }: Prop
             currentNavigation: ScreenName.SignTransactionSummary,
             nextNavigation: ScreenName.SignTransactionSelectDevice,
             transaction: tx,
+            accountId: account.id,
+            parentId: parentAccount ? parentAccount.id : undefined,
+            appName: options?.hwAppId,
+            dependencies: options?.dependencies,
+            onSuccess,
+            onError,
+          },
+          onError,
+        });
+      },
+      "transaction.signRaw": ({
+        account,
+        parentAccount,
+        transaction,
+        options,
+        onSuccess,
+        onError,
+      }) => {
+        navigation.navigate(NavigatorName.SignRawTransaction, {
+          screen: ScreenName.SignRawTransactionSelectDevice,
+          params: {
+            transaction,
             accountId: account.id,
             parentId: parentAccount ? parentAccount.id : undefined,
             appName: options?.hwAppId,

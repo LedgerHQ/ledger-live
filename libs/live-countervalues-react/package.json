@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/live-countervalues-react",
-  "version": "0.6.1",
+  "version": "0.6.2",
   "description": "Ledger Live countervalues React module",
   "keywords": [
     "Ledger"
@@ -36,8 +36,8 @@
   "devDependencies": {
     "@types/jest": "^29.5.10",
     "@testing-library/react": "14",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
+    "react": "catalog:",
+    "react-dom": "catalog:",
     "jest": "^29.7.0",
     "jest-environment-jsdom": "^29.7.0",
     "ts-jest": "^29.1.1"

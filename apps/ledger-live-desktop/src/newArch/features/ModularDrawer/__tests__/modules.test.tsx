@@ -7,7 +7,6 @@ import {
   ETH_ACCOUNT_2,
   SCROLL_ACCOUNT,
 } from "@ledgerhq/live-common/modularDrawer/__mocks__/accounts.mock";
-import { useGroupedCurrenciesByProvider } from "@ledgerhq/live-common/modularDrawer/__mocks__/useGroupedCurrenciesByProvider.mock";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import BigNumber from "bignumber.js";
 import React from "react";
@@ -23,16 +22,11 @@ import {
 import { mockDomMeasurements, mockOnAssetSelected } from "../../__tests__/shared";
 import ModularDrawerFlowManager from "../ModularDrawerFlowManager";
 
-jest.mock("@ledgerhq/live-common/deposit/useGroupedCurrenciesByProvider.hook", () => ({
-  useGroupedCurrenciesByProvider: () => useGroupedCurrenciesByProvider(),
-}));
-jest.mock("@ledgerhq/live-common/modularDrawer/hooks/useCurrenciesUnderFeatureFlag", () => ({
-  useCurrenciesUnderFeatureFlag: () => mockUseCurrenciesUnderFeatureFlag(),
+jest.mock("@ledgerhq/live-common/modularDrawer/hooks/useAcceptedCurrency", () => ({
+  useAcceptedCurrency: () => mockUseAcceptedCurrency(),
 }));
 
-const mockUseCurrenciesUnderFeatureFlag = jest.fn(() => ({
-  deactivatedCurrencyIds: new Set(),
-}));
+const mockUseAcceptedCurrency = jest.fn(() => () => true);
 
 beforeEach(async () => {
   mockDomMeasurements();
@@ -106,7 +100,7 @@ describe("ModularDrawerFlowManager - Modules configuration", () => {
     );
 
     await waitFor(() => expect(screen.getByText(/ethereum/i)).toBeVisible());
-    const ethereumBalance = screen.getByText(/34,478.4 eth/i);
+    const ethereumBalance = screen.getByText(/34,478.4 ETH/i);
     expect(ethereumBalance).toBeVisible();
     const usdBalance = screen.getByText(/\$95,622,923.34/i);
     expect(usdBalance).toBeVisible();
@@ -206,9 +200,9 @@ describe("ModularDrawerFlowManager - Modules configuration", () => {
     );
 
     await waitFor(() => expect(screen.getByText(/ethereum/i)).toBeVisible());
-    const ethereumBalance = screen.queryByText(/34,478.4 eth/i);
+    const ethereumBalance = screen.queryByText(/23.4663 eth/i);
     expect(ethereumBalance).toBeNull();
-    const usdBalance = screen.queryByText(/\$95,622,923.34/i);
+    const usdBalance = screen.queryByText(/\$65,081.79/i);
     expect(usdBalance).toBeNull();
   });
 

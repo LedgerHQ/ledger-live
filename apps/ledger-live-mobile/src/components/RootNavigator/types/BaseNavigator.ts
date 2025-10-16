@@ -44,6 +44,7 @@ import type { StellarAddAssetFlowParamList } from "../../../families/stellar/Add
 import type { TezosDelegationFlowParamList } from "../../../families/tezos/DelegationFlow/types";
 import type { TronVoteFlowParamList } from "../../../families/tron/VoteFlow/types";
 import type { HederaAssociateTokenFlowParamList } from "../../../families/hedera/AssociateTokenFlow/types";
+import type { CantonOnboardAccountParamList } from "../../../families/canton/Onboard/types";
 import type { AccountSettingsNavigatorParamList } from "./AccountSettingsNavigator";
 import type { AccountsNavigatorParamList } from "./AccountsNavigator";
 import type { AddAccountsNavigatorParamList } from "./AddAccountsNavigator";
@@ -78,6 +79,7 @@ import type { WalletConnectLiveAppNavigatorParamList } from "./WalletConnectLive
 import type { ModularDrawerNavigatorStackParamList } from "./ModularDrawerNavigator";
 import type { WalletSyncNavigatorStackParamList } from "./WalletSyncNavigator";
 import type { WalletTabNavigatorStackParamList } from "./WalletTabNavigator";
+import { SignRawTransactionNavigatorParamList } from "./SignRawTransactionNavigator";
 
 export type CommonAddAccountNavigatorParamsList = {
   currency?: CryptoCurrency | TokenCurrency | null;
@@ -211,6 +213,9 @@ export type BaseNavigatorStackParamList = {
   [NavigatorName.SignTransaction]: NavigatorScreenParams<SignTransactionNavigatorParamList> & {
     onError: (err: Error) => void;
   };
+  [NavigatorName.SignRawTransaction]: NavigatorScreenParams<SignRawTransactionNavigatorParamList> & {
+    onError: (err: Error) => void;
+  };
   [NavigatorName.Swap]?: NavigatorScreenParams<SwapNavigatorParamList>;
   [NavigatorName.Earn]?: NavigatorScreenParams<EarnLiveAppNavigatorParamList>;
   [NavigatorName.Freeze]: NavigatorScreenParams<FreezeNavigatorParamList>;
@@ -288,6 +293,9 @@ export type BaseNavigatorStackParamList = {
 
   // Hedera
   [NavigatorName.HederaAssociateTokenFlow]: NavigatorScreenParams<HederaAssociateTokenFlowParamList>;
+
+  // Canton
+  [NavigatorName.CantonOnboard]: NavigatorScreenParams<CantonOnboardAccountParamList>;
 
   [ScreenName.DeviceConnect]: {
     appName?: string;

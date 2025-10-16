@@ -23,7 +23,7 @@ type Props = {
    */
   deviceToRestore?: DeviceModelInfo | null | undefined;
   setHeaderLoader: (hasLoader: boolean) => void;
-  onComplete: () => void;
+  onComplete: (completedInstall?: boolean) => void;
   onError?: (error: Error) => void;
 };
 
@@ -53,7 +53,7 @@ const OnboardingAppInstallStep = ({
     : deviceToRestore?.modelId;
 
   useEffect(() => {
-    if (deviceToRestore?.apps) {
+    if (deviceToRestore?.apps && deviceToRestore?.apps.length !== 0) {
       setDependencies(deviceToRestore.apps.map(app => app.name));
     } else if (deviceInitialApps?.params?.apps) {
       setDependencies(deviceInitialApps.params.apps);
@@ -92,7 +92,7 @@ const OnboardingAppInstallStep = ({
 
   const handlePressSkip = useCallback(() => {
     track("button_clicked2", { button: "maybe later", flow: analyticsFlowName });
-    onComplete();
+    onComplete(false);
   }, [onComplete]);
 
   const handlePressInstall = useCallback(() => {
@@ -116,7 +116,7 @@ const OnboardingAppInstallStep = ({
       button: "I'll do this later",
       flow: analyticsFlowName,
     });
-    onComplete();
+    onComplete(false);
   }, [onComplete]);
 
   const handleInstallComplete = useCallback(() => {
@@ -127,7 +127,7 @@ const OnboardingAppInstallStep = ({
       true,
       true,
     );
-    onComplete();
+    onComplete(true);
   }, [onComplete, productName]);
 
   return (

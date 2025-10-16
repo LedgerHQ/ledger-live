@@ -9,13 +9,11 @@ import {
 import { INITIAL_STATE } from "~/reducers/settings";
 import { State } from "~/reducers/types";
 
-jest.mock("@ledgerhq/live-common/modularDrawer/hooks/useCurrenciesUnderFeatureFlag", () => ({
-  useCurrenciesUnderFeatureFlag: () => mockUseCurrenciesUnderFeatureFlag(),
+jest.mock("@ledgerhq/live-common/modularDrawer/hooks/useAcceptedCurrency", () => ({
+  useAcceptedCurrency: () => mockUseAcceptedCurrency(),
 }));
 
-const mockUseCurrenciesUnderFeatureFlag = jest.fn(() => ({
-  deactivatedCurrencyIds: new Set(),
-}));
+const mockUseAcceptedCurrency = jest.fn(() => () => true);
 
 const advanceTimers = () => {
   act(() => {
@@ -231,6 +229,6 @@ describe("ModularDrawer modules integration", () => {
     const ethereumElements = getAllByText(/ethereum/i);
     await user.press(ethereumElements[0]);
     advanceTimers();
-    expect(getByText(/23.4663 eth/i)).toBeVisible();
+    expect(getByText(/23.4663 ETH/i)).toBeVisible();
   });
 });

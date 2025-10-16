@@ -3,6 +3,8 @@ import { getBrazeCampaignCutoff } from "@ledgerhq/live-common/braze/anonymousUse
 import {
   getCryptoCurrencyById,
   getFiatCurrencyByTicker,
+  findFiatCurrencyByTicker,
+  findCryptoCurrencyByTicker,
   listSupportedFiats,
   OFAC_CURRENCIES,
 } from "@ledgerhq/live-common/currencies/index";
@@ -39,7 +41,6 @@ import {
 } from "../actions/constants";
 import { OnboardingUseCase } from "../components/Onboarding/OnboardingUseCase";
 import { Handlers } from "./types";
-import { findCurrencyByTicker } from "@ledgerhq/live-countervalues/findCurrencyByTicker";
 
 /* Initial state */
 
@@ -577,7 +578,11 @@ export const counterValueCurrencyLocalSelector = (state: SettingsState): Currenc
   if (OFAC_CURRENCIES.includes(state.counterValue)) {
     return getFiatCurrencyByTicker("USD");
   }
-  return findCurrencyByTicker(state.counterValue) || getFiatCurrencyByTicker("USD");
+  return (
+    findFiatCurrencyByTicker(state.counterValue) ||
+    findCryptoCurrencyByTicker(state.counterValue) ||
+    getFiatCurrencyByTicker("USD")
+  );
 };
 
 export const counterValueCurrencySelector = createSelector(
@@ -598,7 +603,6 @@ export const userThemeSelector = (state: State): "dark" | "light" | undefined | 
 
 type LanguageAndUseSystemLanguage = {
   language: Language;
-  useSystemLanguage: boolean;
 };
 
 const languageAndUseSystemLangSelector = (state: State): LanguageAndUseSystemLanguage => {
@@ -606,22 +610,17 @@ const languageAndUseSystemLangSelector = (state: State): LanguageAndUseSystemLan
   if (language && LanguageIds.includes(language)) {
     return {
       language,
-      useSystemLanguage: false,
     };
   } else {
     return {
       language: getInitialLanguageAndLocale().language,
-      useSystemLanguage: true,
     };
   }
 };
 
 /** Use this for translations */
 export const languageSelector = createSelector(languageAndUseSystemLangSelector, o => o.language);
-export const useSystemLanguageSelector = createSelector(
-  languageAndUseSystemLangSelector,
-  o => o.useSystemLanguage,
-);
+
 const isValidRegionLocale = (locale: string) => {
   return regionsByKey.hasOwnProperty(locale);
 };

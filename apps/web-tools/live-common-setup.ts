@@ -76,4 +76,7 @@ setSupportedCurrencies([
   "mina",
   "babylon",
   "kaspa",
+  "westend",
+  "assethub_westend",
+  "assethub_polkadot",
 ]);

@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/swift-bridge-hw-transport-ble",
-  "version": "1.2.11",
+  "version": "1.2.12",
   "description": "Package to expose the Swift BLE transport to JS",
   "keywords": [
     "Ledger",
@@ -28,7 +28,7 @@
   "types": "lib/TransportBLESwift.d.ts",
   "license": "Apache-2.0",
   "dependencies": {
-    "@ledgerhq/hw-transport": "workspace:^"
+    "@ledgerhq/hw-transport": "workspace:*"
   },
   "scripts": {
     "clean": "rimraf lib lib-es",

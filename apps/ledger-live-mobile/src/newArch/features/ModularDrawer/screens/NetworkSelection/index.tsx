@@ -22,6 +22,7 @@ import { useAccountData } from "../../hooks/useAccountData";
 import { useBalanceDeps } from "../../hooks/useBalanceDeps";
 import { useSelector } from "react-redux";
 import { modularDrawerFlowSelector, modularDrawerSourceSelector } from "~/reducers/modularDrawer";
+import { withDiscreetMode } from "~/context/DiscreetModeContext";
 
 export type NetworkSelectionStepProps = {
   availableNetworks: CryptoOrTokenCurrency[];
@@ -40,11 +41,11 @@ const NetworkSelection = ({
   const source = useSelector(modularDrawerSourceSelector);
   const { trackModularDrawerEvent } = useModularDrawerAnalytics();
 
-  const networks = availableNetworks.map(n => (n.type === "CryptoCurrency" ? n : n.parentCurrency));
-
   const handleNetworkClick = useCallback(
     (networkId: string) => {
-      const originalNetwork = networks.find(n => n.id === networkId);
+      const originalNetwork = availableNetworks.find(n =>
+        n.type === "CryptoCurrency" ? n.id === networkId : n.parentCurrency.id === networkId,
+      );
       if (originalNetwork) {
         trackModularDrawerEvent(
           EVENTS_NAME.NETWORK_CLICKED,
@@ -63,7 +64,14 @@ const NetworkSelection = ({
         onNetworkSelected(originalNetwork);
       }
     },
-    [networks, trackModularDrawerEvent, flow, source, networksConfiguration, onNetworkSelected],
+    [
+      availableNetworks,
+      trackModularDrawerEvent,
+      flow,
+      source,
+      networksConfiguration,
+      onNetworkSelected,
+    ],
   );
 
   const networkConfigurationDeps = {
@@ -81,7 +89,7 @@ const NetworkSelection = ({
     accounts$: undefined,
   });
 
-  const formattedNetworks = transformNetworks(networks, availableNetworks);
+  const formattedNetworks = transformNetworks(availableNetworks);
 
   const keyExtractor = useCallback((item: AssetType, index: number) => `${item.id}-${index}`, []);
 
@@ -110,4 +118,4 @@ const NetworkSelection = ({
   );
 };
 
-export default React.memo(NetworkSelection);
+export default withDiscreetMode(React.memo(NetworkSelection));

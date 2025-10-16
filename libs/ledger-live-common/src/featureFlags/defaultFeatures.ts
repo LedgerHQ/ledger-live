@@ -99,6 +99,9 @@ export const CURRENCY_DEFAULT_FEATURES = {
   currencyKaspa: DEFAULT_FEATURE,
   currencyEthereumHoodi: DEFAULT_FEATURE,
   currencyCore: DEFAULT_FEATURE,
+  currencyWestend: DEFAULT_FEATURE,
+  currencyAssetHubPolkadot: DEFAULT_FEATURE,
+  currencyAssetHubWestend: DEFAULT_FEATURE,
 };
 
 /**
@@ -106,6 +109,7 @@ export const CURRENCY_DEFAULT_FEATURES = {
  */
 export const DEFAULT_FEATURES: Features = {
   ...CURRENCY_DEFAULT_FEATURES,
+  welcomeScreenVideoCarousel: DEFAULT_FEATURE,
   portfolioExchangeBanner: DEFAULT_FEATURE,
   postOnboardingAssetsTransfer: DEFAULT_FEATURE,
   counterValue: DEFAULT_FEATURE,
@@ -113,7 +117,6 @@ export const DEFAULT_FEATURES: Features = {
   ptxServiceCtaExchangeDrawer: DEFAULT_FEATURE,
   ptxServiceCtaScreens: DEFAULT_FEATURE,
   ptxSwapReceiveTRC20WithoutTrx: DEFAULT_FEATURE,
-  ptxSwapDetailedView: DEFAULT_FEATURE,
   disableNftLedgerMarket: DEFAULT_FEATURE,
   disableNftRaribleOpensea: DEFAULT_FEATURE,
   disableNftSend: DEFAULT_FEATURE,
@@ -127,6 +130,12 @@ export const DEFAULT_FEATURES: Features = {
   brazePushNotifications: initFeature(),
   stakeAccountBanner: initFeature(),
 
+  ptxSwapDetailedView: initFeature({
+    enabled: false,
+    params: {
+      variant: ABTestingVariants.variantA,
+    },
+  }),
   buyDeviceFromLive: {
     enabled: false,
     params: { debug: false, url: null },
@@ -430,6 +439,11 @@ export const DEFAULT_FEATURES: Features = {
     },
   },
 
+  ptxEarnDrawerApy: {
+    enabled: false,
+    params: {},
+  },
+
   ptxSwapLiveAppMobile: {
     enabled: false,
     params: {
@@ -670,8 +684,10 @@ export const DEFAULT_FEATURES: Features = {
     ...DEFAULT_FEATURE,
     params: {},
   },
+  llmHomescreen: DEFAULT_FEATURE,
   supportDeviceApex: DEFAULT_FEATURE,
   llmSyncOnboardingIncr1: DEFAULT_FEATURE,
+  lldSyncOnboardingIncr1: DEFAULT_FEATURE,
   noah: DEFAULT_FEATURE,
 };
 

@@ -3,7 +3,7 @@ import { MappedAsset, CurrenciesByProviderId, GroupedCurrencies } from "./type";
 import {
   currenciesByMarketcap,
   getCryptoCurrencyById,
-  getTokenById,
+  findTokenById,
   hasCryptoCurrencyId,
 } from "../currencies";
 import { getMappedAssets } from "./api";
@@ -88,5 +88,9 @@ export const getTokenOrCryptoCurrencyById = (id: string): CryptoOrTokenCurrency 
   if (hasCryptoCurrencyId(id)) {
     return getCryptoCurrencyById(id);
   }
-  return getTokenById(id);
+  const token = findTokenById(id);
+  if (!token) {
+    throw new Error(`token with id "${id}" not found`);
+  }
+  return token;
 };

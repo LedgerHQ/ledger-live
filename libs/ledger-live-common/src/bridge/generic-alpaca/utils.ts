@@ -134,14 +134,14 @@ export function transactionToIntent(
   const res: TransactionIntent & { memo?: { type: string; value?: string } } & {
     data?: { type: string; value?: unknown };
   } = {
+    intentType: isStaking ? "staking" : "transaction",
     type: intentType,
     sender: account.freshAddress,
     recipient: transaction.recipient,
     amount,
     asset: { type: "native", name: account.currency.name, unit: account.currency.units[0] },
     useAllAmount,
-    feesStrategy:
-      transaction.feesStrategy === "custom" ? undefined : transaction.feesStrategy ?? undefined,
+    feesStrategy: transaction.feesStrategy ?? undefined,
     data: Buffer.isBuffer(transaction.data)
       ? { type: "buffer", value: transaction.data }
       : { type: "none" },

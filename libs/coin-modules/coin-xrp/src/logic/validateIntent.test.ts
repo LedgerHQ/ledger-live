@@ -50,6 +50,7 @@ describe("validateIntent", () => {
     const result = await validateIntent(
       // account as any,
       {
+        intentType: "transaction",
         sender: SENDER,
         amount: 20_000_000n,
         recipient: RECIPIENT,
@@ -84,6 +85,7 @@ describe("validateIntent", () => {
     const result = await validateIntent(
       // account as any,
       {
+        intentType: "transaction",
         sender: SENDER,
         amount: 1_000_000n,
         recipient: RECIPIENT,
@@ -117,6 +119,7 @@ describe("validateIntent", () => {
     const result = await validateIntent(
       // account as any,
       {
+        intentType: "transaction",
         sender: SENDER,
         amount: 10_000_000n,
         recipient: RECIPIENT,
@@ -146,6 +149,7 @@ describe("validateIntent", () => {
     const result = await validateIntent(
       // account as any,
       {
+        intentType: "transaction",
         sender: SENDER,
         amount: 10_000_000n,
         recipient: SENDER,
@@ -176,6 +180,7 @@ describe("validateIntent", () => {
     const result = await validateIntent(
       // account as any,
       {
+        intentType: "transaction",
         sender: SENDER,
         amount: 5_000_000n,
         recipient: RECIPIENT_NEW,
@@ -206,6 +211,7 @@ describe("validateIntent", () => {
     const result = await validateIntent(
       // account as any,
       {
+        intentType: "transaction",
         sender: SENDER,
         amount: 0n,
         recipient: RECIPIENT,
@@ -236,6 +242,7 @@ describe("validateIntent", () => {
     const result = await validateIntent(
       // account as any,
       {
+        intentType: "transaction",
         sender: SENDER,
         asset: { unit: { code: "XRP", magnitude: 6 } },
         amount: 1_000_000n,
@@ -266,6 +273,7 @@ describe("validateIntent", () => {
     const result = await validateIntent(
       // account as any,
       {
+        intentType: "transaction",
         sender: SENDER,
         asset: { unit: { code: "XRP", magnitude: 6 } },
         amount: 1_000_000n,

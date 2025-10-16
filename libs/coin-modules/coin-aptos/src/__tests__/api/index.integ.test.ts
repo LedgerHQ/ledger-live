@@ -55,6 +55,7 @@ describe("createApi", () => {
       const amount = BigInt(100);
 
       const fees = await api.estimateFees({
+        intentType: "transaction",
         asset: {
           type: "native",
         },
@@ -72,6 +73,7 @@ describe("createApi", () => {
       const amount = BigInt(100);
 
       const fees = await api.estimateFees({
+        intentType: "transaction",
         asset: {
           type: "coin",
           assetReference:
@@ -91,6 +93,7 @@ describe("createApi", () => {
       const amount = BigInt(100);
 
       const fees = await api.estimateFees({
+        intentType: "transaction",
         asset: {
           type: "fungible_asset",
           assetReference: "0x357b0b74bc833e95a115ad22604854d6b0fca151cecd94111770e5d6ffc9dc2b",
@@ -110,6 +113,7 @@ describe("createApi", () => {
     it("returns a native coin RawTransaction serialized into an hexadecimal string", async () => {
       const { transaction: hex } = await api.craftTransaction(
         {
+          intentType: "transaction",
           amount: 1n,
           sender: sender.freshAddress,
           senderPublicKey: sender.xpub,
@@ -132,6 +136,7 @@ describe("createApi", () => {
     it("returns a coin token RawTransaction serialized into an hexadecimal string", async () => {
       const { transaction: hex } = await api.craftTransaction(
         {
+          intentType: "transaction",
           amount: 1n,
           sender: sender.freshAddress,
           senderPublicKey: sender.xpub,
@@ -158,6 +163,7 @@ describe("createApi", () => {
     it("returns a use-all-amount coin token RawTransaction serialized into an hexadecimal string", async () => {
       const { transaction: hex } = await api.craftTransaction(
         {
+          intentType: "transaction",
           amount: 0n,
           sender: sender.freshAddress,
           senderPublicKey: sender.xpub,
@@ -186,6 +192,7 @@ describe("createApi", () => {
       const s = recipient; // recipient contains fungible_assets balances
       const { transaction: hex } = await api.craftTransaction(
         {
+          intentType: "transaction",
           amount: 0n,
           sender: s.freshAddress,
           senderPublicKey: s.xpub,

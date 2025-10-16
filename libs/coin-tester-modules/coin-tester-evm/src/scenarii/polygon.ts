@@ -1,23 +1,25 @@
 import { BigNumber } from "bignumber.js";
 import { ethers } from "ethers";
 import { Account } from "@ledgerhq/types-live";
-import { getTokenById } from "@ledgerhq/cryptoassets/tokens";
+import { findTokenById } from "@ledgerhq/cryptoassets/tokens";
 import { Scenario, ScenarioTransaction } from "@ledgerhq/coin-tester/main";
 import { encodeTokenAccountId } from "@ledgerhq/coin-framework/account/index";
 import { killSpeculos, spawnSpeculos } from "@ledgerhq/coin-tester/signers/speculos";
 import { resetIndexer, initMswHandlers, setBlock, indexBlocks } from "../indexer";
 import { Transaction as EvmTransaction } from "@ledgerhq/coin-evm/types/transaction";
 import { getCoinConfig, setCoinConfig } from "@ledgerhq/coin-evm/config";
-import { makeAccount } from "@ledgerhq/coin-evm/__tests__/fixtures/common.fixtures";
+import { makeAccount } from "../fixtures";
 import { callMyDealer, getBridges, polygon, VITALIK } from "../helpers";
-import { defaultNanoApp } from "../scenarii.test";
+import { defaultNanoApp } from "../constants";
 import { killAnvil, spawnAnvil } from "../anvil";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { BridgeStrategy } from "@ledgerhq/coin-tester/types";
 
 type PolygonScenarioTransaction = ScenarioTransaction<EvmTransaction, Account>;
 
-const USDC_ON_POLYGON = getTokenById("polygon/erc20/usd_coin_(pos)");
+const usdcOnPolygon = findTokenById("polygon/erc20/usd_coin_(pos)");
+if (!usdcOnPolygon) throw new Error("USDC on Polygon token not found");
+const USDC_ON_POLYGON = usdcOnPolygon;
 const yootContract = "0x670fd103b1a08628e9557cD66B87DeD841115190";
 const yootTokenId = "1988";
 const emberContract = "0xa5511E9941E303101b50675926Fd4d9c1A8a8805";

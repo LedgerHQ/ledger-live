@@ -44,7 +44,7 @@ exports[`internet_computer currency bridge scanAccounts internet_computer seed 1
   [
     {
       "accountId": "js:2:internet_computer:046f08828871028b6e3cb5c13b2e2a8fa6e93f0b3ca7379171f6b7b45877955a2430925f76ec69ccb3cd8738859a8e29dcd0f9a357f1d009d2b497c6c8f63aa7cf:internet_computer",
-      "blockHash": null,
+      "blockHash": "",
       "blockHeight": 25132406,
       "extra": {
         "memo": "0",
@@ -63,10 +63,10 @@ exports[`internet_computer currency bridge scanAccounts internet_computer seed 1
     },
     {
       "accountId": "js:2:internet_computer:046f08828871028b6e3cb5c13b2e2a8fa6e93f0b3ca7379171f6b7b45877955a2430925f76ec69ccb3cd8738859a8e29dcd0f9a357f1d009d2b497c6c8f63aa7cf:internet_computer",
-      "blockHash": null,
+      "blockHash": "",
       "blockHeight": 25132352,
       "extra": {
-        "memo": "3544580464453892600",
+        "memo": "3544580464453892767",
       },
       "fee": "10000",
       "hash": "8ee53474525de27a357f728d1486c7cc6cead11bb4025b62f2154b4d7652789b",
@@ -82,7 +82,7 @@ exports[`internet_computer currency bridge scanAccounts internet_computer seed 1
     },
     {
       "accountId": "js:2:internet_computer:046f08828871028b6e3cb5c13b2e2a8fa6e93f0b3ca7379171f6b7b45877955a2430925f76ec69ccb3cd8738859a8e29dcd0f9a357f1d009d2b497c6c8f63aa7cf:internet_computer",
-      "blockHash": null,
+      "blockHash": "",
       "blockHeight": 25132338,
       "extra": {
         "memo": "0",
@@ -101,7 +101,7 @@ exports[`internet_computer currency bridge scanAccounts internet_computer seed 1
     },
     {
       "accountId": "js:2:internet_computer:046f08828871028b6e3cb5c13b2e2a8fa6e93f0b3ca7379171f6b7b45877955a2430925f76ec69ccb3cd8738859a8e29dcd0f9a357f1d009d2b497c6c8f63aa7cf:internet_computer",
-      "blockHash": null,
+      "blockHash": "",
       "blockHeight": 5432782,
       "extra": {
         "memo": "0",

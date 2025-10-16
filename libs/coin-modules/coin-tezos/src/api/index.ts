@@ -24,6 +24,7 @@ import {
   validateIntent,
   getStakes,
 } from "../logic";
+import { getTezosToolkit } from "../logic/tezosToolkit";
 import api from "../network/tzkt";
 import type { TezosApi, TezosFeeEstimation } from "./types";
 import type { FeeEstimation, TransactionIntent } from "@ledgerhq/coin-framework/api/types";
@@ -32,6 +33,7 @@ import { validatePublicKey, ValidationResult, getPkhfromPk } from "@taquito/util
 import { getRevealFee } from "@taquito/taquito";
 import {
   DUST_MARGIN_MUTEZ,
+  hasEmptyBalance,
   mapIntentTypeToTezosMode,
   normalizePublicKeyForAddress,
 } from "../utils";
@@ -43,6 +45,14 @@ export function createApi(config: TezosConfig): TezosApi {
     broadcast,
     combine,
     craftTransaction: craft,
+    craftRawTransaction: (
+      _transaction: string,
+      _sender: string,
+      _publicKey: string,
+      _sequence: number,
+    ): Promise<CraftedTransaction> => {
+      throw new Error("craftRawTransaction is not supported");
+    },
     estimateFees: estimate,
     getBalance: balance,
     lastBlock,
@@ -151,11 +161,14 @@ async function craft(
 
   let txFee: number;
   if (customFees) {
-    txFee = totalFee;
+    txFee = needsReveal ? Math.max(totalFee - getRevealFee(transactionIntent.sender), 0) : totalFee;
   } else if (estimation.parameters?.txFee !== undefined) {
     txFee = Number(estimation.parameters.txFee);
   } else {
-    txFee = needsReveal ? Math.max(totalFee - getRevealFee(transactionIntent.sender), 0) : totalFee;
+    const calculatedTxFee = needsReveal
+      ? Math.max(totalFee - getRevealFee(transactionIntent.sender), 0)
+      : totalFee;
+    txFee = calculatedTxFee;
   }
 
   const txForCraft = {
@@ -198,6 +211,7 @@ async function craft(
 
 async function estimate(transactionIntent: TransactionIntent): Promise<TezosFeeEstimation> {
   // avoid taquito error when estimating a 0-amount transfer during input
+  const config = coinConfig.getCoinConfig();
   if (
     transactionIntent.type === "send" &&
     transactionIntent.amount === 0n &&
@@ -267,13 +281,43 @@ async function estimate(transactionIntent: TransactionIntent): Promise<TezosFeeE
   } catch (error: any) {
     // Handle PublicKeyNotFoundError
     if (error?.message?.includes("Public key not found")) {
+      const apiAccount = await api.getAccountByAddress(transactionIntent.recipient);
+      const storageLimit =
+        !hasEmptyBalance(apiAccount) || transactionIntent.type === "stake" ? 0n : 277n;
+
+      // Check if account needs reveal for proper fee calculation
+      const senderApiAcc = await api.getAccountByAddress(transactionIntent.sender);
+      const needsReveal = senderApiAcc.type === "user" && !senderApiAcc.revealed;
+
+      // Production-calibrated fallback fee when Taquito estimation fails (~388 mutez observed)
+      const DEFAULT_TX_FEE_FALLBACK = 388;
+      let baseTxFee: bigint;
+
+      try {
+        const toolkit = getTezosToolkit();
+        const simpleEstimate = await toolkit.estimate.transfer({
+          to: transactionIntent.recipient,
+          amount: Number(transactionIntent.amount),
+          mutez: true,
+          source: transactionIntent.sender,
+        });
+        // Use Taquito estimation, respecting minFees from config
+        baseTxFee = BigInt(Math.max(config.fees.minFees, simpleEstimate.suggestedFeeMutez));
+      } catch {
+        // Fallback to production-calibrated default if estimation fails
+        baseTxFee = BigInt(Math.max(DEFAULT_TX_FEE_FALLBACK, config.fees.minFees));
+      }
+
+      const revealFee = needsReveal ? BigInt(getRevealFee(transactionIntent.sender)) : 0n;
+      const totalFee = baseTxFee + revealFee;
+
       return {
-        value: 1000n, // Safe default with reveal fees (500 + 374 reveal + buffer)
+        value: totalFee,
         parameters: {
           gasLimit: 10000n,
-          storageLimit: 300n,
+          storageLimit,
           amount: 0n,
-          txFee: 1000n,
+          txFee: baseTxFee,
         },
       };
     } else {

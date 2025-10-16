@@ -1,7 +1,6 @@
 import { Provider } from "@ledgerhq/live-common/e2e/enum/Provider";
 import { getMinimumSwapAmount } from "@ledgerhq/live-common/e2e/swap";
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
-import { addDelayBeforeInteractingWithDevice } from "../../helpers/commonHelpers";
 
 export default class SwapLiveAppPage {
   fromSelector = "from-account-coin-selector";
@@ -139,7 +138,6 @@ export default class SwapLiveAppPage {
 
   @Step("Check error message: $0")
   async checkErrorMessage(errorMessage: string) {
-    await addDelayBeforeInteractingWithDevice();
     const error = await getTextOfElement(this.deviceActionErrorDescriptionId);
     jestExpect(error).toContain(errorMessage);
   }

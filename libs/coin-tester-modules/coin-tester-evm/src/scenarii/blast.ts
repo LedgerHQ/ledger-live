@@ -2,7 +2,7 @@ import { LegacySignerEth } from "@ledgerhq/live-signer-evm";
 import { BigNumber } from "bignumber.js";
 import { ethers } from "ethers";
 import { Account } from "@ledgerhq/types-live";
-import { getTokenById } from "@ledgerhq/cryptoassets/tokens";
+import { findTokenById } from "@ledgerhq/cryptoassets/tokens";
 import { Scenario, ScenarioTransaction } from "@ledgerhq/coin-tester/main";
 import { encodeTokenAccountId } from "@ledgerhq/coin-framework/account/index";
 import { killSpeculos, spawnSpeculos } from "@ledgerhq/coin-tester/signers/speculos";
@@ -10,9 +10,9 @@ import { resetIndexer, setBlock, indexBlocks, initMswHandlers } from "../indexer
 import { buildAccountBridge, buildCurrencyBridge } from "@ledgerhq/coin-evm/bridge/js";
 import { getCoinConfig, setCoinConfig } from "@ledgerhq/coin-evm/config";
 import { Transaction as EvmTransaction } from "@ledgerhq/coin-evm/types/transaction";
-import { makeAccount } from "@ledgerhq/coin-evm/__tests__/fixtures/common.fixtures";
+import { makeAccount } from "../fixtures";
 import { blast, callMyDealer, VITALIK } from "../helpers";
-import { defaultNanoApp } from "../scenarii.test";
+import { defaultNanoApp } from "../constants";
 import { killAnvil, spawnAnvil } from "../anvil";
 import resolver from "@ledgerhq/coin-evm/hw-getAddress";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
@@ -39,7 +39,8 @@ const makeScenarioTransactions = ({ address }: { address: string }): BlastScenar
     },
   };
 
-  const MIM_ON_BLAST = getTokenById(TOKEN_ID);
+  const MIM_ON_BLAST = findTokenById(TOKEN_ID);
+  if (!MIM_ON_BLAST) throw new Error("MIM on Blast token not found");
   const scenarioSendMIMTransaction: BlastScenarioTransaction = {
     name: "Send 80 MIM",
     amount: new BigNumber(ethers.parseUnits("80", MIM_ON_BLAST.units[0].magnitude).toString()),
@@ -109,7 +110,8 @@ export const scenarioBlast: Scenario<EvmTransaction, Account> = {
 
     const scenarioAccount = makeAccount(address, blast);
 
-    const MIM_ON_BLAST = getTokenById(TOKEN_ID);
+    const MIM_ON_BLAST = findTokenById(TOKEN_ID);
+    if (!MIM_ON_BLAST) throw new Error("MIM on Blast token not found");
     await callMyDealer({
       provider,
       drug: MIM_ON_BLAST,
@@ -130,7 +132,8 @@ export const scenarioBlast: Scenario<EvmTransaction, Account> = {
     await indexBlocks();
   },
   beforeAll: account => {
-    const MIM_ON_BLAST = getTokenById(TOKEN_ID);
+    const MIM_ON_BLAST = findTokenById(TOKEN_ID);
+    if (!MIM_ON_BLAST) throw new Error("MIM on Blast token not found");
     expect(account.balance.toFixed()).toBe(ethers.parseEther("10000").toString());
     expect(account.subAccounts?.[0]?.type).toBe("TokenAccount");
     expect(account.subAccounts?.[0]?.balance?.toFixed()).toBe(
@@ -138,7 +141,8 @@ export const scenarioBlast: Scenario<EvmTransaction, Account> = {
     );
   },
   afterAll: account => {
-    const MIM_ON_BLAST = getTokenById(TOKEN_ID);
+    const MIM_ON_BLAST = findTokenById(TOKEN_ID);
+    if (!MIM_ON_BLAST) throw new Error("MIM on Blast token not found");
     expect(account.subAccounts?.length).toBe(1);
     expect(account.subAccounts?.[0].balance.toFixed()).toBe(
       ethers.parseUnits("20", MIM_ON_BLAST.units[0].magnitude).toString(),

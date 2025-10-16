@@ -1,5 +1,4 @@
 import { Box, Flex, Text } from "@ledgerhq/react-ui";
-import { AccountItem } from "@ledgerhq/react-ui/pre-ldls/components/AccountItem/AccountItem";
 import { Account } from "@ledgerhq/types-live";
 import { LoadingOverlay } from "LLD/components/LoadingOverlay";
 import { default as React, useCallback } from "react";
@@ -11,6 +10,7 @@ import { userThemeSelector } from "~/renderer/reducers/settings";
 import { ADD_ACCOUNT_FLOW_NAME, ADD_ACCOUNT_PAGE_NAME } from "../../analytics/addAccount.types";
 import { TrackAddAccountScreen } from "../../analytics/TrackAddAccountScreen";
 import { ScrollContainer } from "../../components/ScrollContainer";
+import { FormattedAccountItem } from "../../components/FormattedAccountItem";
 import { CreatableAccountsList } from "./components/CreatableAccountsList";
 import { Footer } from "./components/Footer";
 import { ImportableAccountsList } from "./components/ImportableAccountsList";
@@ -63,7 +63,7 @@ const ScanAccounts = ({
       const accountFormatted = formatAccount(account);
       return (
         <Box mb={16} key={account.id}>
-          <AccountItem
+          <FormattedAccountItem
             account={accountFormatted}
             backgroundColor={colors.opacityDefault.c05}
             rightElement={{

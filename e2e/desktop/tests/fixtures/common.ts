@@ -56,7 +56,7 @@ export const test = base.extend<TestFixtures>({
   lang: "en-US",
   theme: "dark",
   userdata: undefined,
-  settings: { shareAnalytics: true, hasSeenAnalyticsOptInPrompt: true },
+  settings: { shareAnalytics: false, hasSeenAnalyticsOptInPrompt: true },
   featureFlags: undefined,
   simulateCamera: undefined,
   speculosApp: undefined,
@@ -110,6 +110,7 @@ export const test = base.extend<TestFixtures>({
 
     try {
       setEnv("PLAYWRIGHT_RUN", true);
+      setEnv("E2E_NANO_APP_VERSION_PATH", "tests/artifacts/appVersion/nano-app-catalog.json");
       if (IS_NOT_MOCK && speculosApp) {
         setEnv("MOCK", "");
         process.env.MOCK = "";

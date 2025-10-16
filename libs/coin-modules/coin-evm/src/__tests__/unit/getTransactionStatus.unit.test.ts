@@ -455,6 +455,58 @@ describe("EVM Family", () => {
         });
       });
 
+      describe("Sponsored", () => {
+        it("should suppress NotEnoughGas for token tx when sponsored and parent balance is 0", async () => {
+          const parentWithZeroNative = {
+            ...account,
+            balance: new BigNumber(0),
+            subAccounts: [{ ...tokenAccount, balance: new BigNumber(1000) }],
+          };
+
+          const tx: Transaction = {
+            ...erc20Transaction,
+            sponsored: true,
+            amount: new BigNumber(100),
+          };
+
+          const res = await getTransactionStatus(parentWithZeroNative, tx);
+
+          expect(res.errors).not.toEqual(
+            expect.objectContaining({
+              gasPrice: new NotEnoughGas(),
+            }),
+          );
+
+          expect(res.errors).not.toEqual(
+            expect.objectContaining({
+              amount: new NotEnoughBalance(),
+            }),
+          );
+        });
+
+        it("should detect NotEnoughGas for token tx when NOT sponsored and parent balance is 0", async () => {
+          const parentWithZeroNative = {
+            ...account,
+            balance: new BigNumber(0),
+            subAccounts: [{ ...tokenAccount, balance: new BigNumber(1000) }],
+          };
+
+          const tx: Transaction = {
+            ...erc20Transaction,
+            sponsored: false,
+            amount: new BigNumber(100),
+          };
+
+          const res = await getTransactionStatus(parentWithZeroNative, tx);
+
+          expect(res.errors).toEqual(
+            expect.objectContaining({
+              gasPrice: new NotEnoughGas(),
+            }),
+          );
+        });
+      });
+
       describe("Nft", () => {
         describe("ERC721", () => {
           it("should detect a transaction for an ERC721 nft not owned by the account and have an error", async () => {

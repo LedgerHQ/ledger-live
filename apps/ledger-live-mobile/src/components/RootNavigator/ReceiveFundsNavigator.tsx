@@ -228,7 +228,6 @@ export default function ReceiveFundsNavigator() {
             </Flex>
           ),
         })}
-        {...receiveNoahEntry}
       />
     </Stack.Navigator>
   );

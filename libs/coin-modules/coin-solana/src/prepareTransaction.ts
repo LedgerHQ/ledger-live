@@ -194,6 +194,7 @@ const deriveTokenTransferCommandDescriptor = async (
     shouldCreateAsAssociatedTokenAccount: false,
     tokenAccAddress: "",
     walletAddress: "",
+    userInputType: "sol",
   };
 
   const tokenRecipientOrError = errors.recipient
@@ -345,6 +346,7 @@ async function getTokenRecipient(
         walletAddress: recipientAddress,
         shouldCreateAsAssociatedTokenAccount,
         tokenAccAddress: recipientAssociatedTokenAccountAddress,
+        userInputType: "sol",
       },
       recipientAccInfo: associatedTokenAccount,
     };
@@ -361,6 +363,7 @@ async function getTokenRecipient(
       walletAddress: recipientTokenAccount.owner.toBase58(),
       shouldCreateAsAssociatedTokenAccount: false,
       tokenAccAddress: recipientAddress,
+      userInputType: "ata",
     },
     recipientAccInfo: recipientTokenAccount,
   };
@@ -374,7 +377,10 @@ async function deriveCreateAssociatedTokenAccountCommandDescriptor(
 ): Promise<CommandDescriptor> {
   const errors: Record<string, Error> = {};
 
-  const token = getCryptoAssetsStore().getTokenById(model.uiState.tokenId);
+  const token = getCryptoAssetsStore().findTokenById(model.uiState.tokenId);
+  if (!token) {
+    throw new Error(`token with id "${model.uiState.tokenId}" not found`);
+  }
   const mint = token.contractAddress;
   const tokenProgram = await getMaybeTokenMintProgram(mint, api);
 
@@ -502,6 +508,7 @@ async function deriveCreateApproveCommandDescriptor(
     shouldCreateAsAssociatedTokenAccount: false,
     tokenAccAddress: "",
     walletAddress: "",
+    userInputType: "sol",
   };
 
   const tokenRecipientOrError = errors.recipient

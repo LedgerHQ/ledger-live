@@ -246,12 +246,33 @@ function computeAmount(
   return isNative(intent.asset) ? balance.value - estimatedFees.value : balance.value;
 }
 
+function refreshEstimationValue(
+  intent: TransactionIntent,
+  parameters: Record<string, unknown>,
+): bigint {
+  const gasLimit = typeof parameters.gasLimit === "bigint" ? parameters.gasLimit : 0n;
+  const transactionType = getTransactionType(intent.type);
+  let gasPrice = 0n;
+
+  if (transactionType === TransactionTypes.legacy && typeof parameters.gasPrice === "bigint") {
+    gasPrice = parameters.gasPrice;
+  }
+
+  if (transactionType === TransactionTypes.eip1559 && typeof parameters.maxFeePerGas === "bigint") {
+    gasPrice = parameters.maxFeePerGas;
+  }
+
+  return gasPrice * gasLimit;
+}
+
 export async function validateIntent(
   currency: CryptoCurrency,
   intent: TransactionIntent<MemoNotSupported, BufferTxData>,
   customFees?: FeeEstimation,
 ): Promise<TransactionValidation> {
-  const estimatedFees = customFees ?? (await estimateFees(currency, intent));
+  const estimatedFees = customFees?.parameters
+    ? { ...customFees, value: refreshEstimationValue(intent, customFees.parameters) }
+    : await estimateFees(currency, intent);
   const balances = await getBalance(currency, intent.sender);
   const balance = findBalance(intent.asset, balances);
   const amount = computeAmount(intent, estimatedFees, balance);
@@ -288,9 +309,15 @@ export async function validateIntent(
     ...feeRatioWarn,
   };
 
+  const additionalFees =
+    typeof estimatedFees.parameters?.additionalFees === "bigint"
+      ? estimatedFees.parameters.additionalFees
+      : 0n;
+
   return {
     errors,
     warnings,
+    totalFees: estimatedFees.value + additionalFees,
     estimatedFees: estimatedFees.value,
     totalSpent,
     amount,

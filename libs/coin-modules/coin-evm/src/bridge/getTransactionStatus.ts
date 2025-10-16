@@ -163,7 +163,8 @@ const validateGas = (
     )
   ) {
     errors.gasPrice = new FeeNotLoaded(); // "Could not load fee rates. Please set manual fees"
-  } else if (tx.recipient && estimatedFees.gt(account.balance)) {
+  } else if (tx.recipient && estimatedFees.gt(account.balance) && !tx.sponsored) {
+    // Only create NotEnoughGas error for non-sponsored transactions
     const query = new URLSearchParams({
       ...(account?.id ? { account: account.id } : {}),
     });
@@ -259,12 +260,15 @@ export const getTransactionStatus: AccountBridge<
   Account,
   TransactionStatus
 >["getTransactionStatus"] = async (account, tx) => {
+  const isSponsored = tx.sponsored ?? false;
+
   const subAccount = findSubAccountById(account, tx.subAccountId || "");
   const isTokenTransaction = subAccount?.type === "TokenAccount";
   const { gasLimit, customGasLimit, additionalFees, amount } = tx;
   const estimatedFees = getEstimatedFees(tx);
   const totalFees = estimatedFees.plus(additionalFees || 0);
-  const totalSpent = isTokenTransaction ? tx.amount : tx.amount.plus(totalFees);
+  // Ignore fees if the transaction is sponsored or token transaction
+  const totalSpent = isTokenTransaction || isSponsored ? tx.amount : tx.amount.plus(totalFees);
 
   // Recipient related errors and warnings
   const [recipientErr, recipientWarn] = validateRecipient(account, tx);

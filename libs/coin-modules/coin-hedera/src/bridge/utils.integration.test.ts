@@ -1,4 +1,5 @@
 import BigNumber from "bignumber.js";
+import { InvalidAddress } from "@ledgerhq/errors";
 import cvsApi from "@ledgerhq/live-countervalues/api/index";
 import { encodeTokenAccountId } from "@ledgerhq/coin-framework/account";
 import { getMockedAccount, getMockedTokenAccount } from "../test/fixtures/account.fixture";
@@ -12,6 +13,7 @@ import {
   getSubAccounts,
   getSyncHash,
   mergeSubAccounts,
+  safeParseAccountId,
   patchOperationWithExtra,
   prepareOperations,
 } from "./utils";
@@ -23,6 +25,7 @@ import {
 import { getMockedOperation } from "../test/fixtures/operation.fixture";
 import { HederaOperationExtra } from "../types";
 import { getAccount } from "../api/mirror";
+import { HederaRecipientInvalidChecksum } from "../errors";
 import { isValidExtra } from "../logic";
 import { getMockedMirrorToken } from "../test/fixtures/mirror.fixture";
 import { HEDERA_OPERATION_TYPES, HEDERA_TRANSACTION_KINDS } from "../constants";
@@ -538,6 +541,55 @@ describe("utils", () => {
 
       const result = await checkAccountTokenAssociationStatus(accountId, tokenId);
       expect(result).toBe(false);
+    });
+
+    test("supports addresses with checksum", async () => {
+      const addressWithChecksum = "0.0.9124531-xrxlv";
+
+      mockedGetAccount.mockResolvedValueOnce({
+        account: accountId,
+        max_automatic_token_associations: 0,
+        balance: {
+          balance: 1,
+          timestamp: "",
+          tokens: [{ token_id: "0.0.9999", balance: 1 }],
+        },
+      });
+
+      await checkAccountTokenAssociationStatus(addressWithChecksum, tokenId);
+      expect(mockedGetAccount).toHaveBeenCalledWith("0.0.9124531");
+    });
+  });
+
+  describe("safeParseAccountId", () => {
+    test("returns account id and no checksum for valid address without checksum", () => {
+      const [error, result] = safeParseAccountId("0.0.9124531");
+
+      expect(error).toBeNull();
+      expect(result?.accountId).toBe("0.0.9124531");
+      expect(result?.checksum).toBeNull();
+    });
+
+    test("returns account id and checksum for valid address with correct checksum", () => {
+      const [error, result] = safeParseAccountId("0.0.9124531-xrxlv");
+
+      expect(error).toBeNull();
+      expect(result?.accountId).toBe("0.0.9124531");
+      expect(result?.checksum).toBe("xrxlv");
+    });
+
+    test("returns error for valid address with incorrect checksum", () => {
+      const [error, accountId] = safeParseAccountId("0.0.9124531-invld");
+
+      expect(error).toBeInstanceOf(HederaRecipientInvalidChecksum);
+      expect(accountId).toBeNull();
+    });
+
+    test("returns error for invalid address format", () => {
+      const [error, accountId] = safeParseAccountId("not-a-valid-address");
+
+      expect(error).toBeInstanceOf(InvalidAddress);
+      expect(accountId).toBeNull();
     });
   });
 });

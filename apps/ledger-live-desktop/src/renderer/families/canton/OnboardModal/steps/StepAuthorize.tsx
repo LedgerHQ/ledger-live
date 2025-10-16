@@ -53,7 +53,7 @@ const StepAuthorize = ({ accountName, authorizeStatus, device, onboardingResult 
                 textTransform="uppercase"
                 mb={3}
               >
-                <Trans i18nKey="canton.addAccount.auth.validator" />
+                <Trans i18nKey="families.canton.addAccount.auth.validator" />
               </Box>
 
               <ValidatorRow isSelected={true} disabled={false} />
@@ -61,11 +61,11 @@ const StepAuthorize = ({ accountName, authorizeStatus, device, onboardingResult 
 
             {status === AuthorizeStatus.ERROR ? (
               <Alert type="error">
-                <Trans i18nKey="canton.addAccount.auth.error" />
+                <Trans i18nKey="families.canton.addAccount.auth.error" />
               </Alert>
             ) : (
               <Alert>
-                <Trans i18nKey="canton.addAccount.auth.hint" />
+                <Trans i18nKey="families.canton.addAccount.auth.hint" />
                 <br />
                 <Link href="https://ledger.com" type="external">
                   <Trans i18nKey="common.learnMore" />
@@ -84,7 +84,7 @@ export const StepAuthorizeFooter = ({
   authorizeStatus,
   isProcessing,
   onAuthorizePreapproval,
-  onRetry,
+  onRetryPreapproval,
 }: StepProps) => {
   if (authorizeStatus === AuthorizeStatus.SIGN) {
     return <></>;
@@ -94,7 +94,7 @@ export const StepAuthorizeFooter = ({
     switch (authorizeStatus) {
       case AuthorizeStatus.ERROR:
         return (
-          <Button primary onClick={onRetry}>
+          <Button primary onClick={onRetryPreapproval}>
             <Trans i18nKey="common.tryAgain" />
           </Button>
         );
@@ -110,6 +110,11 @@ export const StepAuthorizeFooter = ({
       default:
         return (
           <Button primary onClick={onAuthorizePreapproval} disabled={isProcessing}>
+            {isProcessing && (
+              <Box mr={2}>
+                <Spinner size={20} />
+              </Box>
+            )}
             <Trans i18nKey="common.confirm" />
           </Button>
         );

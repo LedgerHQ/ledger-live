@@ -51,6 +51,42 @@ on:
           - nanoSP
           - nanoX
         default: nanoSP
+      firmware_version:
+        description: "Firmware version to use for selected device"
+        required: false
+        type: string
+        default: "1.4.1"
+
+  workflow_call:
+    inputs:
+      test_filter:
+        description: Filter test pattern to execute only tests suites named according to pattern(s) separated by '|' (e.g. to execute accounts and settings describe blocks "Accounts @smoke" or "Accounts @smoke|Settings")
+        required: false
+        type: string
+      invert_filter:
+        description: Ignore test having name pattern (entered in the previous field)
+        type: boolean
+        default: false
+      slack_notif:
+        description: "Send notification to Slack?"
+        required: false
+        type: boolean
+        default: false
+      enable_broadcast:
+        description: "Enable transaction broadcast"
+        required: false
+        type: boolean
+        default: false
+      build_type:
+        description: "Firebase env to target (pick js for release testing)"
+        required: false
+        type: string
+        default: testing
+      speculos_device:
+        description: "Device to be used"
+        required: false
+        type: string
+        default: nanoSP
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref_name != 'develop' && github.ref || github.run_id }}
@@ -71,6 +107,7 @@ jobs:
       PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
       SPECULOS_IMAGE_TAG: ghcr.io/ledgerhq/speculos:${{ inputs.speculos_device == 'nanoS' && '1be65b91a8e0691866f880fd437ac05fce78af9d' || 'master' }}
       SPECULOS_DEVICE: ${{ inputs.speculos_device }}
+      SPECULOS_FIRMWARE_VERSION: ${{ inputs.firmware_version || '1.4.1' }}
     runs-on: [ledger-live-4xlarge-e2e]
     strategy:
       fail-fast: false
@@ -135,6 +172,7 @@ jobs:
           TEST_EXECUTION: ${{ inputs.test_execution }}
           PROJECT_KEY: B2CQA
           SWAP_API_BASE: ${{ env.SWAP_API_BASE }}
+          SPECULOS_FIRMWARE_VERSION: ${{ inputs.firmware_version || '1.4.1' }}
 
       - name: Upload Allure Results
         if: ${{ !cancelled() }}

@@ -176,6 +176,9 @@ export function makeBridges({
     prepareTransaction: makePrepare(getQueuedAndCachedAPI),
     broadcast: makeBroadcast(getAPI),
     signOperation: makeSign(getAPI, signerContext),
+    signRawOperation: () => {
+      throw new Error("signRawOperation is not supported");
+    },
     assignFromAccountRaw,
     assignToAccountRaw,
     toOperationExtraRaw,

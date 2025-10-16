@@ -13,7 +13,7 @@ type Props = {
   screenName?: string;
   params?: object | undefined;
   navigation?: NavigationProp<{ [key: string]: object | undefined }>;
-  seeMoreText?: React.ReactElement;
+  seeMoreText?: React.ReactNode;
   containerProps?: FlexBoxProps;
   testID?: string;
 };

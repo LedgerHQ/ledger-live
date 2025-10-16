@@ -21,12 +21,10 @@ export const ValidatorRow: React.FC<ValidatorRowProps> = ({ isSelected, disabled
 
       <Box ml={3} flex={1}>
         <Text fontSize={4} fontWeight="600" color="palette.text.shade100">
-          <Trans i18nKey="canton.addAccount.authorization.ledgerValidator">Ledger Validator</Trans>
+          <Trans i18nKey="families.canton.addAccount.auth.validatorLabel" />
         </Text>
         <Text fontSize={3} color="palette.text.shade60">
-          <Trans i18nKey="canton.addAccount.authorization.validatorDescription">
-            Automated fund acceptance
-          </Trans>
+          <Trans i18nKey="families.canton.addAccount.auth.validatorDescription" />
         </Text>
       </Box>
 

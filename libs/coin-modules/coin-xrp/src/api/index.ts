@@ -12,12 +12,14 @@ import {
   TransactionIntent,
   CraftedTransaction,
 } from "@ledgerhq/coin-framework/api/index";
+import { isSendTransactionIntent } from "@ledgerhq/coin-framework/utils";
 import { log } from "@ledgerhq/logs";
 import coinConfig, { type XrpConfig } from "../config";
 import {
   broadcast,
   combine,
   craftTransaction,
+  craftRawTransaction,
   estimateFees,
   getBalance,
   getAccountInfo,
@@ -36,6 +38,7 @@ export function createApi(config: XrpConfig): Api<XrpMapMemo> {
     broadcast,
     combine,
     craftTransaction: craft,
+    craftRawTransaction,
     estimateFees: estimate,
     getBalance,
     lastBlock,
@@ -64,6 +67,9 @@ async function craft(
   transactionIntent: TransactionIntent<XrpMapMemo>,
   customFees?: FeeEstimation,
 ): Promise<CraftedTransaction> {
+  if (isSendTransactionIntent(transactionIntent) === false) {
+    throw new Error("Only transaction intentType is supported");
+  }
   const nextSequenceNumber = await getNextValidSequence(transactionIntent.sender);
   const estimatedFees = customFees?.value ?? (await estimateFees()).fees;
 

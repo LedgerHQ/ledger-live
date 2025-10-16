@@ -200,13 +200,14 @@ type SwapStateRequest = {
   hardwareWalletType: DeviceModelId;
   swapType: TradeMethod;
   swapAppVersion?: string;
-  fromAccountId?: string;
-  toAccountId?: string;
-  amount?: string;
+  fromAccountAddress?: string;
+  toAccountAddress?: string;
+  fromAmount?: string;
   seedIdFrom?: string;
   seedIdTo?: string;
   refundAddress?: string;
   payoutAddress?: string;
+  sponsored?: boolean;
 }>;
 
 export type SwapStateAcceptedRequest = SwapStateRequest & {

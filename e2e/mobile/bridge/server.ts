@@ -96,7 +96,7 @@ export async function loadConfig(fileName: string, agreed: true = true): Promise
 
   const { data } = JSON.parse(f.toString());
 
-  const defaultSettings = { shareAnalytics: true, hasSeenAnalyticsOptInPrompt: true };
+  const defaultSettings = { shareAnalytics: false, hasSeenAnalyticsOptInPrompt: true };
   const settings = merge(defaultSettings, data.settings || {});
   postMessage({ type: "importSettings", id: uniqueId(), payload: settings });
 

@@ -70,6 +70,21 @@ export default function trackingWrapper(trackCall: TrackWalletAPI) {
       track("WalletAPI SignTransaction Success", getEventData(manifest));
     },
 
+    // Sign Raw transaction modal open
+    signRawTransactionRequested: (manifest: AppManifest) => {
+      track("WalletAPI SignRawTransaction", getEventData(manifest));
+    },
+
+    // Failed to sign raw transaction (cancel or error)
+    signRawTransactionFail: (manifest: AppManifest) => {
+      track("WalletAPI SignRawTransaction Fail", getEventData(manifest));
+    },
+
+    // Successfully signed raw transaction
+    signRawTransactionSuccess: (manifest: AppManifest) => {
+      track("WalletAPI SignRawTransaction Success", getEventData(manifest));
+    },
+
     // Select account modal open
     requestAccountRequested: (manifest: AppManifest) => {
       track("WalletAPI RequestAccount", getEventData(manifest));

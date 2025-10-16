@@ -140,7 +140,8 @@ export const createMockStepProps = (overrides: Record<string, unknown> = {}) => 
     onAddMore: jest.fn(),
     onAuthorizePreapproval: jest.fn(),
     onOnboardAccount: jest.fn(),
-    onRetry: jest.fn(),
+    onRetryOnboardAccount: jest.fn(),
+    onRetryPreapproval: jest.fn(),
     transitionTo: jest.fn(),
     ...overrides,
   };

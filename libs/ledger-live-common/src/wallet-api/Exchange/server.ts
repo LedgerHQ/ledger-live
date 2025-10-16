@@ -80,6 +80,7 @@ export type CompleteExchangeUiRequest = {
   magnitudeAwareRate?: BigNumber;
   refundAddress?: string;
   payoutAddress?: string;
+  sponsored?: boolean;
 };
 type FundStartParamsUiRequest = {
   exchangeType: "FUND";
@@ -386,6 +387,7 @@ export const handlers = ({
         toNewTokenId,
         customFeeConfig,
         swapAppVersion,
+        sponsored,
       } = params;
 
       const trackingParams = {
@@ -478,11 +480,14 @@ export const handlers = ({
         customFeeConfig: customFeeConfig ?? {},
         payinExtraId,
         extraTransactionParameters,
+        sponsored,
       };
 
-      const transaction = await getStrategy(strategyData, "swap").catch(async error => {
-        throw error;
-      });
+      const transaction: Transaction = await getStrategy(strategyData, "swap").catch(
+        async error => {
+          throw error;
+        },
+      );
 
       const mainFromAccount = getMainAccount(fromAccount, fromParentAccount);
 
@@ -553,6 +558,7 @@ export const handlers = ({
             magnitudeAwareRate,
             refundAddress,
             payoutAddress,
+            sponsored,
           },
           onSuccess: ({ operationHash, swapId }: { operationHash: string; swapId: string }) => {
             tracking.completeExchangeSuccess({
@@ -567,9 +573,9 @@ export const handlers = ({
               targetCurrencyId: toCurrency?.id,
               hardwareWalletType: deviceInfo?.modelId as DeviceModelId,
               swapAppVersion,
-              fromAccountId: fromAccount.id,
-              toAccountId: toAccount?.id,
-              amount: amountExpectedTo.toString(),
+              fromAccountAddress,
+              toAccountAddress,
+              fromAmount,
             });
 
             resolve({ operationHash, swapId });
@@ -586,11 +592,11 @@ export const handlers = ({
               hardwareWalletType: deviceInfo?.modelId as DeviceModelId,
               swapType: quoteId ? "fixed" : "float",
               swapAppVersion,
-              fromAccountId: fromAccount.id,
-              toAccountId: toAccount?.id,
+              fromAccountAddress,
+              toAccountAddress,
               refundAddress,
               payoutAddress,
-              amount: amountExpectedTo.toString(),
+              fromAmount,
               seedIdFrom: mainFromAccount.seedIdentifier,
               seedIdTo: toParentAccount?.seedIdentifier || (toAccount as Account)?.seedIdentifier,
             });
@@ -775,6 +781,7 @@ interface StrategyParams {
   customFeeConfig?: Record<string, unknown>;
   payinExtraId?: string;
   extraTransactionParameters?: string;
+  sponsored?: boolean;
 }
 
 async function getStrategy(
@@ -785,6 +792,7 @@ async function getStrategy(
     customFeeConfig,
     payinExtraId,
     extraTransactionParameters,
+    sponsored,
   }: StrategyParams,
   customErrorType?: any,
 ): Promise<Transaction> {
@@ -823,6 +831,7 @@ async function getStrategy(
       payinExtraId,
       extraTransactionParameters,
       customErrorType,
+      sponsored,
     });
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error);

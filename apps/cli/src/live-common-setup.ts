@@ -17,8 +17,7 @@ import { liveConfig } from "@ledgerhq/live-common/config/sharedConfig";
 import SpeculosHttpTransport, {
   SpeculosHttpTransportOpts,
 } from "@ledgerhq/hw-transport-node-speculos-http";
-import * as legacy from "@ledgerhq/cryptoassets/tokens";
-import type { CryptoAssetsStore } from "@ledgerhq/types-live";
+import { legacyCryptoAssetsStore } from "@ledgerhq/cryptoassets/tokens";
 import { setCryptoAssetsStore } from "@ledgerhq/coin-framework/crypto-assets/index";
 
 let idCounter = 0;
@@ -153,12 +152,4 @@ export function closeAllDevices() {
 }
 
 //TODO update when CAL is avalaible
-const legacyStore: CryptoAssetsStore = {
-  findTokenByAddress: legacy.findTokenByAddress,
-  getTokenById: legacy.getTokenById,
-  findTokenById: legacy.findTokenById,
-  findTokenByAddressInCurrency: legacy.findTokenByAddressInCurrency,
-  findTokenByTicker: legacy.findTokenByTicker,
-};
-
-setCryptoAssetsStore(legacyStore);
+setCryptoAssetsStore(legacyCryptoAssetsStore);

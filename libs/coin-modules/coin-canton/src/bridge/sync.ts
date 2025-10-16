@@ -8,7 +8,7 @@ import { getBalance, getLedgerEnd, getOperations, type OperationInfo } from "../
 import coinConfig from "../config";
 import resolver from "../signer";
 import { CantonAccount, CantonSigner } from "../types";
-import { isAccountOnboarded, isAccountAuthorized } from "./onboard";
+import { isAccountOnboarded, isCantonCoinPreapproved } from "./onboard";
 
 const txInfoToOperationAdapter =
   (accountId: string, partyId: string) =>
@@ -33,7 +33,13 @@ const txInfoToOperationAdapter =
     } else if (txInfo.type === "Initialize") {
       type = "PRE_APPROVAL";
     }
-    const value = new BigNumber(transferValue);
+    let value = new BigNumber(transferValue);
+
+    if (type === "OUT" || type === "FEES") {
+      // We add fees when it's an outgoing transaction or a fees-only transaction
+      value = value.plus(fee);
+    }
+
     const feeValue = new BigNumber(fee);
     const memo = details.metadata.reason;
 
@@ -100,17 +106,20 @@ export function makeGetAccountShape(
 
     const { nativeInstrumentId } = coinConfig.getCoinConfig(currency);
     const balances = xpubOrAddress ? await getBalance(currency, xpubOrAddress) : [];
-    const balanceData = balances.find(balance =>
-      balance.instrument_id.includes(nativeInstrumentId),
-    ) || {
-      instrument_id: nativeInstrumentId,
-      amount: 0,
-      locked: false,
-    };
-    const balance = new BigNumber(balanceData.amount);
+
+    const balancesData = (balances || []).reduce(
+      (acc, { amount, instrument_id, locked }) => {
+        acc[instrument_id] = { amount, locked };
+        return acc;
+      },
+      {} as Record<string, { amount: string; locked: boolean }>,
+    );
+
+    const unlockedAmount = new BigNumber(balancesData[nativeInstrumentId]?.amount || "0");
+    const lockedAmount = new BigNumber(balancesData[`Locked${nativeInstrumentId}`]?.amount || "0");
+    const totalBalance = unlockedAmount.plus(lockedAmount);
     const reserveMin = new BigNumber(coinConfig.getCoinConfig(currency).minReserve || 0);
-    const lockedAmount = balanceData.locked ? balance : new BigNumber(0);
-    const spendableBalance = BigNumber.max(0, balance.minus(lockedAmount).minus(reserveMin));
+    const spendableBalance = BigNumber.max(0, unlockedAmount.minus(reserveMin));
 
     let operations: Operation[] = [];
     if (xpubOrAddress) {
@@ -124,8 +133,10 @@ export function makeGetAccountShape(
       operations = mergeOps(oldOperations, newOperations);
     }
 
-    const isAuthorized = await isAccountAuthorized(operations, xpubOrAddress);
-    const used = isAuthorized && balance.gt(0);
+    const isPreapproved = xpubOrAddress
+      ? await isCantonCoinPreapproved(currency, xpubOrAddress)
+      : false;
+    const used = isPreapproved && totalBalance.gt(0);
 
     const blockHeight = await getLedgerEnd(currency);
 
@@ -137,7 +148,7 @@ export function makeGetAccountShape(
     const shape = {
       id: accountId,
       type: "Account" as const,
-      balance,
+      balance: totalBalance,
       blockHeight,
       creationDate,
       lastSyncDate: new Date(),

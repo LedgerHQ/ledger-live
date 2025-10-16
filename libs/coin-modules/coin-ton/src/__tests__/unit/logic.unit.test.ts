@@ -1,4 +1,4 @@
-import { getCryptoCurrencyById, getTokenById } from "@ledgerhq/cryptoassets";
+import { getCryptoCurrencyById, findTokenById } from "@ledgerhq/cryptoassets";
 import { getSyncHash } from "../../logic";
 
 describe("getSyncHash", () => {
@@ -10,7 +10,8 @@ describe("getSyncHash", () => {
   });
 
   it("should provide a new hash if a token is added to the blacklistedTokenIds", () => {
-    const token = getTokenById("ton/jetton/eqcxe6mutqjkfngfarotkot1lzbdiix1kcixrv7nw2id_sds");
+    const token = findTokenById("ton/jetton/eqcxe6mutqjkfngfarotkot1lzbdiix1kcixrv7nw2id_sds");
+    if (!token) throw new Error("TON jetton token not found");
     expect(getSyncHash(currency, [])).not.toEqual(getSyncHash(currency, [token.id]));
   });
 });

@@ -1,7 +1,6 @@
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
-
-export { getBalanceAndFiatValue } from "./getBalanceAndFiatValue";
 export { groupCurrenciesByProvider } from "./groupCurrenciesByProvider";
+export { sortAccountsByFiatValue } from "./sortAccountsByFiatValue";
 
 function isCorrespondingCurrency(
   elem: CryptoOrTokenCurrency,

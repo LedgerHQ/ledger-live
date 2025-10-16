@@ -27,6 +27,7 @@ describe("Sui Api", () => {
 
       // When
       const result: FeeEstimation = await module.estimateFees({
+        intentType: "transaction",
         asset: { type: "native" },
         type: "send",
         sender: SENDER,
@@ -89,6 +90,24 @@ describe("Sui Api", () => {
       expect(operations.length).toBeGreaterThan(0);
 
       expect(cursor).toBe("");
+    });
+  });
+
+  describe("listOperations (staking)", () => {
+    let txs: Operation[];
+
+    beforeAll(async () => {
+      [txs] = await module.listOperations(
+        "0x13d73cab19d2cf14e39289b122ed93fb0f9edd00e4c829e0cefb1f0611c54a8f",
+        { minHeight: 0, order: "asc" },
+      );
+    });
+
+    it("should map undelegate operations when it's not the first move call", async () => {
+      const tx1 = txs.find(t => t.id === "4UtCqCH3oNEdaprZR9UjaMGg6HgLn3V3q3FEcvs5vieM");
+      expect(tx1?.type).toBe("UNDELEGATE");
+      const tx2 = txs.find(t => t.id === "JEGnHCx2mtpDin216kbUBXm7V5rdMSPSUmgYbP3yxTEf");
+      expect(tx2?.type).toBe("UNDELEGATE");
     });
   });
 
@@ -181,13 +200,32 @@ describe("Sui Api", () => {
 
   describe("getBlock", () => {
     test("getBlock should get block by id or sequence number", async () => {
-      const block = await module.getBlock(164167623);
-      expect(block.info.height).toEqual(164167623);
-      expect(block.info.hash).toEqual("3Q4zW4ieWnNgKLEq6kvVfP35PX2tBDUJERTWYyyz4eyS");
-      expect(block.info.time).toEqual(new Date(1751696298663));
-      expect(block.info.parent?.height).toEqual(164167622);
-      expect(block.info.parent?.hash).toEqual("6VKtVnpxstb968SzSrgYJ7zy5LXgFB6PnNHSJsT8Wr4E");
-      expect(block.transactions.length).toEqual(19);
+      const block = await module.getBlock(195177985);
+      expect(block.info.height).toEqual(195177985);
+      expect(block.info.hash).toEqual("AzoHwjcCXkeiWoBVyWwZcE171zjxochFmcr9eQoNQyYn");
+      expect(block.info.time).toEqual(new Date(1759138080141));
+      expect(block.info.parent?.height).toEqual(195177984);
+      expect(block.info.parent?.hash).toEqual("A15NYkPDyKLZS4Swik7AY2mnLxwFET4kyNV6ChZ8tVJP");
+      expect(block.transactions.length).toEqual(12);
+      const tx = block.transactions[9];
+      const senderOp = tx.operations[0];
+      const receipientOp = tx.operations[1];
+      expect(tx.hash).toEqual("J3ddkv4TRqr4LviCbA3JyJCji5Kg5BcaBTkd6nMY5WXN");
+      expect(tx.operations.length).toEqual(2);
+      expect(senderOp.address).toEqual(
+        "0x2c814ceb68d1cb7168207b16754b1cf57e735685c4e5d87c4f50906edcc57c1c",
+      );
+      expect(senderOp.peer).toEqual(
+        "0xb37b298c9164c28c8aaf989a49416e3c323b67bc2b96a54501b524419ebb4ead",
+      );
+      expect(senderOp.amount).toEqual(BigInt(-1492885));
+      expect(receipientOp.address).toEqual(
+        "0xb37b298c9164c28c8aaf989a49416e3c323b67bc2b96a54501b524419ebb4ead",
+      );
+      expect(receipientOp.peer).toEqual(
+        "0x2c814ceb68d1cb7168207b16754b1cf57e735685c4e5d87c4f50906edcc57c1c",
+      );
+      expect(receipientOp.amount).toEqual(BigInt(5));
     });
   });
 

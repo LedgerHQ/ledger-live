@@ -1,6 +1,5 @@
 import { log } from "@ledgerhq/logs";
 import { getBufferFromString } from "./common-logic/utils";
-import { ICP_SEND_TXN_TYPE } from "./consts";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import { ICPSigner } from "./types";
 import { Account, AnyMessage } from "@ledgerhq/types-live";
@@ -19,11 +18,7 @@ export const signMessage =
     if (typeof message !== "string") throw new Error("Message must be a string");
 
     const { r } = await signerContext(deviceId, async signer => {
-      const r = await signer.sign(
-        account.freshAddressPath,
-        getBufferFromString(message),
-        ICP_SEND_TXN_TYPE,
-      );
+      const r = await signer.sign(account.freshAddressPath, getBufferFromString(message));
       return { r };
     });
 

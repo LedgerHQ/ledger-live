@@ -52,7 +52,7 @@ describe("StepAuthorize", () => {
       { status: AuthorizeStatus.SUCCESS, expectedText: "Account" },
       {
         status: AuthorizeStatus.ERROR,
-        expectedText: "canton.addAccount.auth.error",
+        expectedText: "Authorization failed. Please try again.",
       },
     ];
 
@@ -73,7 +73,7 @@ describe("StepAuthorize", () => {
     render(<StepAuthorize {...defaultProps} />);
 
     expect(screen.getByText("Account")).toBeInTheDocument();
-    expect(screen.getByText("canton.addAccount.auth.validator")).toBeInTheDocument();
+    expect(screen.getByText("Authorize")).toBeInTheDocument();
     expect(screen.getByTestId("validator-row")).toBeInTheDocument();
   });
 
@@ -81,11 +81,11 @@ describe("StepAuthorize", () => {
     const testCases = [
       {
         status: AuthorizeStatus.INIT,
-        expectedAlert: "canton.addAccount.auth.hint",
+        expectedAlert: "Automaticaly accept incoming funds to this account.",
       },
       {
         status: AuthorizeStatus.ERROR,
-        expectedAlert: "canton.addAccount.auth.error",
+        expectedAlert: "Authorization failed. Please try again.",
       },
     ];
 
@@ -188,7 +188,7 @@ describe("StepAuthorize", () => {
     const { container: container2 } = render(
       <StepAuthorizeFooter
         {...defaultProps}
-        onRetry={onRetry}
+        onRetryPreapproval={onRetry}
         authorizeStatus={AuthorizeStatus.ERROR}
       />,
     );

@@ -6,7 +6,7 @@ import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { decodeAccountId, encodeTokenAccountId } from "@ledgerhq/coin-framework/account/accountId";
 import { AccountShapeInfo } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
-import * as legacy from "@ledgerhq/cryptoassets/tokens";
+import { legacyCryptoAssetsStore } from "@ledgerhq/cryptoassets/tokens";
 import { makeTokenAccount } from "../fixtures/common.fixtures";
 import * as etherscanAPI from "../../network/explorer/etherscan";
 import { UnknownExplorer, UnknownNode } from "../../errors";
@@ -50,7 +50,7 @@ const getAccountShapeParameters: AccountShapeInfo = {
 
 describe("EVM Family", () => {
   beforeAll(() => {
-    setCryptoAssetsStoreGetter(() => legacy);
+    setCryptoAssetsStoreGetter(() => legacyCryptoAssetsStore);
   });
 
   beforeEach(() => {
@@ -683,7 +683,10 @@ describe("EVM Family", () => {
       });
 
       it("should return the right subAccounts, excluding tokens unknown by the CAL and recomputing operations `id` and `accountId`", async () => {
-        const findTokenByAddressInCurrency = jest.spyOn(legacy, "findTokenByAddressInCurrency");
+        const findTokenByAddressInCurrency = jest.spyOn(
+          legacyCryptoAssetsStore,
+          "findTokenByAddressInCurrency",
+        );
         const swapHistoryMap = createSwapHistoryMap(account);
         const tokenAccounts = await synchronization.getSubAccounts(
           {
@@ -879,6 +882,7 @@ describe("EVM Family", () => {
           gasPrice: "0",
           gasUsed: "0",
           value: "0",
+          status: 1,
         }));
 
         const expectedAddition = {
@@ -919,6 +923,7 @@ describe("EVM Family", () => {
           gasPrice: "0",
           gasUsed: "0",
           value: "0",
+          status: 1,
         }));
         jest
           .spyOn(nodeApi, "getBlockByHeight")

@@ -108,7 +108,11 @@ export default function StepAccount(props: Readonly<StepProps>) {
 
   return (
     <Box flow={1}>
-      <TrackPage category={`Receive Flow${eventType ? ` (${eventType})` : ""}`} name="Step 1" />
+      <TrackPage
+        category={`Receive Flow${eventType ? ` (${eventType})` : ""}`}
+        name="Step 1"
+        isTokenAdd={receiveTokenMode || account?.type === "TokenAccount"}
+      />
       {mainAccount ? <CurrencyDownStatusAlert currencies={[mainAccount.currency]} /> : null}
       {accountError ? <ErrorBanner error={accountError} /> : null}
 

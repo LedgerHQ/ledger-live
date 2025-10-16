@@ -1,4 +1,4 @@
-import { makeAccount } from "@ledgerhq/coin-evm/__tests__/fixtures/common.fixtures";
+import { makeAccount } from "../fixtures";
 import { buildAccountBridge, buildCurrencyBridge } from "@ledgerhq/coin-evm/bridge/js";
 import { getCoinConfig, setCoinConfig } from "@ledgerhq/coin-evm/config";
 import resolver from "@ledgerhq/coin-evm/hw-getAddress";
@@ -8,7 +8,7 @@ import { encodeTokenAccountId } from "@ledgerhq/coin-framework/account/index";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import { Scenario, ScenarioTransaction } from "@ledgerhq/coin-tester/main";
 import { killSpeculos, spawnSpeculos } from "@ledgerhq/coin-tester/signers/speculos";
-import { getTokenById } from "@ledgerhq/cryptoassets/tokens";
+import { findTokenById } from "@ledgerhq/cryptoassets/tokens";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { LegacySignerEth } from "@ledgerhq/live-signer-evm";
 import { Account } from "@ledgerhq/types-live";
@@ -17,13 +17,15 @@ import { ethers } from "ethers";
 import { killAnvil, spawnAnvil } from "../anvil";
 import { VITALIK, core } from "../helpers";
 import { indexBlocks, initMswHandlers, resetIndexer, setBlock } from "../indexer";
-import { defaultNanoApp } from "../scenarii.test";
+import { defaultNanoApp } from "../constants";
 
 type CoreScenarioTransaction = ScenarioTransaction<EvmTransaction, Account>;
 
-const STCORE_ON_CORE = getTokenById(
+const stcoreOnCore = findTokenById(
   "core/erc20/liquid_staked_core_0xb3a8f0f0da9ffc65318aa39e55079796093029ad",
 );
+if (!stcoreOnCore) throw new Error("stCORE on Core token not found");
+const STCORE_ON_CORE = stcoreOnCore;
 
 const makeScenarioTransactions = ({ address }: { address: string }): CoreScenarioTransaction[] => {
   const scenarioSendSTransaction: CoreScenarioTransaction = {

@@ -29,7 +29,7 @@ describe("convertApiAsset", () => {
       expect(result?.ticker).toBe("BTC");
     });
 
-    it("should return undefined for unknown crypto currency", () => {
+    it("should create dynamic crypto currency for unknown crypto currency", () => {
       const apiCrypto: ApiCryptoCurrency = {
         type: "crypto_currency",
         id: "nonexistent_coin",
@@ -40,7 +40,20 @@ describe("convertApiAsset", () => {
 
       const result = convertApiAsset(apiCrypto);
 
-      expect(result).toBeUndefined();
+      expect(result).toBeDefined();
+      expect(result?.type).toBe("CryptoCurrency");
+      expect(result?.id).toBe("nonexistent_coin");
+      expect(result?.name).toBe("Nonexistent Coin");
+      expect(result?.ticker).toBe("NONE");
+      // Check default/placeholder values
+      if (result?.type === "CryptoCurrency") {
+        expect(result.managerAppName).toBe("Nonexistent Coin");
+        expect(result.coinType).toBe(0);
+        expect(result.scheme).toBe("nonexistent_coin");
+        expect(result.color).toBe("#999999");
+        expect(result.family).toBe("nonexistent_coin");
+        expect(result.explorerViews).toEqual([]);
+      }
     });
 
     it("should handle crypto currency with all optional fields", () => {
@@ -193,7 +206,7 @@ describe("convertApiAssets", () => {
     expect(result.eth?.id).toBe("ethereum");
   });
 
-  it("should skip assets that fail conversion", () => {
+  it("should convert known crypto and create dynamic crypto, but skip unsupported tokens", () => {
     const apiAssets: Record<string, ApiAsset> = {
       valid: {
         type: "crypto_currency",
@@ -222,9 +235,13 @@ describe("convertApiAssets", () => {
 
     const result = convertApiAssets(apiAssets);
 
-    expect(Object.keys(result)).toHaveLength(1);
+    // Now converts both known and unknown cryptocurrencies, but skips unsupported tokens
+    expect(Object.keys(result)).toHaveLength(2);
     expect(result.valid).toBeDefined();
-    expect(result.invalid_crypto).toBeUndefined();
+    expect(result.valid?.id).toBe("bitcoin");
+    expect(result.invalid_crypto).toBeDefined();
+    expect(result.invalid_crypto?.type).toBe("CryptoCurrency");
+    expect(result.invalid_crypto?.id).toBe("nonexistent");
     expect(result.invalid_token).toBeUndefined();
   });
 

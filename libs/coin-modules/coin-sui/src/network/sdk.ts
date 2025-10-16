@@ -115,24 +115,26 @@ type ProgrammableTransaction = {
   transactions: SuiTransaction[];
 };
 
-function isMoveCallWithFunction(
+function hasMoveCallWithFunction(
   functionName: string,
   block?: SuiTransactionBlockKind,
 ): block is ProgrammableTransaction {
   if (block?.kind === "ProgrammableTransaction") {
-    const move = block.transactions.find(item => "MoveCall" in item) as any;
-    return move?.MoveCall.function === functionName;
+    const move = block.transactions.find(
+      item => "MoveCall" in item && item["MoveCall"].function === functionName,
+    ) as any;
+    return Boolean(move);
   } else {
     return false;
   }
 }
 
 function isStaking(block?: SuiTransactionBlockKind): block is ProgrammableTransaction {
-  return isMoveCallWithFunction("request_add_stake", block);
+  return hasMoveCallWithFunction("request_add_stake", block);
 }
 
 function isUnstaking(block?: SuiTransactionBlockKind): block is ProgrammableTransaction {
-  return isMoveCallWithFunction("request_withdraw_stake", block);
+  return hasMoveCallWithFunction("request_withdraw_stake", block);
 }
 
 /**
@@ -341,6 +343,10 @@ export function transactionToOperation(
   };
 }
 
+function absoluteAmount(balanceChange: BalanceChange | undefined): BigNumber {
+  return new BigNumber(balanceChange?.amount || 0).abs();
+}
+
 // This function is only used by alpaca code path
 // Logic is similar to getOperationAmount, but we guarantee to return a positive amount in any case
 // If there is need to display negative amount for staking or unstaking, the view can handle it based on the type of the operation
@@ -349,9 +355,6 @@ export const alpacaGetOperationAmount = (
   transaction: SuiTransactionBlockResponse,
   coinType: string,
 ): BigNumber => {
-  const absoluteAmount = (balanceChange: BalanceChange | undefined) =>
-    new BigNumber(balanceChange?.amount || 0).abs();
-
   const zero = BigNumber(0);
 
   const tx = transaction.transaction?.data.transaction;
@@ -443,7 +446,8 @@ export function toBlockTransaction(transaction: SuiTransactionBlockResponse): Bl
   return {
     hash: transaction.digest,
     failed: transaction.effects?.status.status !== "success",
-    operations: transaction.balanceChanges?.flatMap(toBlockOperation) || [],
+    operations:
+      transaction.balanceChanges?.flatMap(change => toBlockOperation(transaction, change)) || [],
     fees: BigInt(getOperationFee(transaction).toString()),
     feesPayer: transaction.transaction?.data.sender || "",
   };
@@ -454,16 +458,44 @@ export function toBlockTransaction(transaction: SuiTransactionBlockResponse): Bl
  *
  * @param change balance change
  */
-export function toBlockOperation(change: BalanceChange): BlockOperation[] {
+export function toBlockOperation(
+  transaction: SuiTransactionBlockResponse,
+  change: BalanceChange,
+): BlockOperation[] {
   if (typeof change.owner === "string" || !("AddressOwner" in change.owner)) return [];
-  return [
-    {
+  const address = change.owner.AddressOwner;
+  const operationType = getOperationType(address, transaction);
+
+  function transferOp(peer: string | undefined): BlockOperation {
+    const op: BlockOperation = {
       type: "transfer",
-      address: change.owner.AddressOwner,
+      address: address,
       asset: toSuiAsset(change.coinType),
       amount: BigInt(change.amount),
-    },
-  ];
+    };
+    if (peer) op.peer = peer;
+    return op;
+  }
+
+  switch (operationType) {
+    case "IN":
+      return [transferOp(getOperationSenders(transaction.transaction?.data).at(0))];
+    case "OUT":
+      return [transferOp(getOperationRecipients(transaction.transaction?.data).at(0))];
+    case "DELEGATE":
+    case "UNDELEGATE":
+      return [
+        {
+          type: "other",
+          operationType: operationType,
+          address: change.owner.AddressOwner,
+          asset: toSuiAsset(change.coinType),
+          amount: BigInt(absoluteAmount(change).toString()),
+        },
+      ];
+    default:
+      return [];
+  }
 }
 
 /**

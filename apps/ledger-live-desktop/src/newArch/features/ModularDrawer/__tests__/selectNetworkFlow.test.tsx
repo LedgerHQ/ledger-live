@@ -1,4 +1,3 @@
-import { useGroupedCurrenciesByProvider } from "@ledgerhq/live-common/modularDrawer/__mocks__/useGroupedCurrenciesByProvider.mock";
 import React from "react";
 import { render, screen, waitFor } from "tests/testSetup";
 import {
@@ -11,17 +10,11 @@ import {
 import { currencies, mockDomMeasurements, mockOnAssetSelected } from "../../__tests__/shared";
 import ModularDrawerFlowManager from "../ModularDrawerFlowManager";
 
-jest.mock("@ledgerhq/live-common/deposit/useGroupedCurrenciesByProvider.hook", () => ({
-  useGroupedCurrenciesByProvider: () => useGroupedCurrenciesByProvider(),
+jest.mock("@ledgerhq/live-common/modularDrawer/hooks/useAcceptedCurrency", () => ({
+  useAcceptedCurrency: () => mockUseAcceptedCurrency(),
 }));
 
-jest.mock("@ledgerhq/live-common/modularDrawer/hooks/useCurrenciesUnderFeatureFlag", () => ({
-  useCurrenciesUnderFeatureFlag: () => mockUseCurrenciesUnderFeatureFlag(),
-}));
-
-const mockUseCurrenciesUnderFeatureFlag = jest.fn(() => ({
-  deactivatedCurrencyIds: new Set(),
-}));
+const mockUseAcceptedCurrency = jest.fn(() => () => true);
 
 beforeEach(() => {
   mockDomMeasurements();
@@ -141,14 +134,16 @@ describe("ModularDrawerFlowManager - Select Network Flow", () => {
     await waitFor(() => expect(screen.getByText(/ethereum/i)).toBeVisible());
     expect(screen.queryByText(/scroll/i)).toBeNull();
     expect(screen.getByText(/bitcoin/i)).toBeVisible();
-    expect(screen.getByText(/ethereum/i)).toBeVisible();
 
     const input = screen.getByRole("textbox");
     await user.type(input, "ethereum");
 
-    await waitFor(() => {
-      expect(screen.queryByText(/bitcoin/i)).not.toBeInTheDocument();
-    });
+    await waitFor(
+      () => {
+        expect(screen.queryByText(/bitcoin/i)).not.toBeInTheDocument();
+      },
+      { timeout: 2000 },
+    );
     await waitFor(() => expect(screen.getByText(/ethereum/i)).toBeVisible());
 
     await user.clear(screen.getByRole("textbox"));
