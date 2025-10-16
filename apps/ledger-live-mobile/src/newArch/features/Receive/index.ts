@@ -54,7 +54,10 @@ export function useOpenReceiveDrawer({
       } else {
         defaultNavigation.navigate(NavigatorName.ReceiveFunds, {
           screen: ScreenName.ReceiveConfirmation,
-          params: confirmationParams,
+          params: {
+            ...confirmationParams,
+            hideBackButton: true,
+          },
         });
       }
     },

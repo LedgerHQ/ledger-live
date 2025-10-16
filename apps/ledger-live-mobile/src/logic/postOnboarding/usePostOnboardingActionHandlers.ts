@@ -18,8 +18,5 @@ export function usePostOnboardingActionHandlers(): PostOnboardingActionHandlers 
           handleOpenReceiveDrawer();
         }
       : undefined,
-    // Add other custom handlers here as needed
-    // [PostOnboardingActionId.buyCrypto]: () => { ... },
-    // [PostOnboardingActionId.customImage]: () => { ... },
   };
 }
