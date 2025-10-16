@@ -86,19 +86,21 @@ beforeEach(() => {
   jest.clearAllMocks();
 
   // Default mock implementations
-  mockFindTokenById.mockImplementation((id: string) => {
+  mockFindTokenById.mockImplementation(async (id: string) => {
     if (id === "ethereum/erc20/usd_coin") {
       return mockToken;
     }
     return undefined;
   });
 
-  mockFindTokenByAddressInCurrency.mockImplementation((address: string, currencyId: string) => {
-    if (address === "0xA0b86a33E6441b8c4C8C0e4b8b8c4C8C0e4b8b8c4" && currencyId === "ethereum") {
-      return mockToken;
-    }
-    return undefined;
-  });
+  mockFindTokenByAddressInCurrency.mockImplementation(
+    async (address: string, currencyId: string) => {
+      if (address === "0xA0b86a33E6441b8c4C8C0e4b8b8c4C8C0e4b8b8c4" && currencyId === "ethereum") {
+        return mockToken;
+      }
+      return undefined;
+    },
+  );
 
   mockFindCryptoCurrencyById.mockImplementation((id: string) => {
     if (id === "bitcoin") {

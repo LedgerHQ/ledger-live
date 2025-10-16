@@ -8,10 +8,15 @@ import { encodeTokenAccountId } from "@ledgerhq/coin-framework/account/index";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import { Scenario, ScenarioTransaction } from "@ledgerhq/coin-tester/main";
 import { killSpeculos, spawnSpeculos } from "@ledgerhq/coin-tester/signers/speculos";
-import { findTokenById } from "@ledgerhq/cryptoassets/tokens";
+import {
+  getCryptoAssetsStore,
+  setCryptoAssetsStoreGetter,
+} from "@ledgerhq/coin-evm/cryptoAssetsStore";
+import { legacyCryptoAssetsStore } from "@ledgerhq/cryptoassets/legacy/legacy-store";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { LegacySignerEth } from "@ledgerhq/live-signer-evm";
 import { Account } from "@ledgerhq/types-live";
+import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { BigNumber } from "bignumber.js";
 import { ethers } from "ethers";
 import { killAnvil, spawnAnvil } from "../anvil";
@@ -21,11 +26,20 @@ import { defaultNanoApp } from "../constants";
 
 type CoreScenarioTransaction = ScenarioTransaction<EvmTransaction, Account>;
 
-const stcoreOnCore = findTokenById(
-  "core/erc20/liquid_staked_core_0xb3a8f0f0da9ffc65318aa39e55079796093029ad",
-);
-if (!stcoreOnCore) throw new Error("stCORE on Core token not found");
-const STCORE_ON_CORE = stcoreOnCore;
+// Token will be loaded during setup and stored here
+let STCORE_ON_CORE_TOKEN: TokenCurrency | null = null;
+
+// Token will be fetched asynchronously when needed
+const getSTCOREToken = async () => {
+  const cryptoAssetsStore = getCryptoAssetsStore();
+  const token = await cryptoAssetsStore.findTokenById(
+    "core/erc20/liquid_staked_core_0xb3a8f0f0da9ffc65318aa39e55079796093029ad",
+  );
+  if (!token) {
+    throw new Error("STCORE_ON_CORE token not found");
+  }
+  return token;
+};
 
 const makeScenarioTransactions = ({ address }: { address: string }): CoreScenarioTransaction[] => {
   const scenarioSendSTransaction: CoreScenarioTransaction = {
@@ -46,9 +60,13 @@ const makeScenarioTransactions = ({ address }: { address: string }): CoreScenari
   // TODO: export when explorer is ready because last token operations come from explorer
   const _scenarioSendSTCORETransaction: CoreScenarioTransaction = {
     name: "Send STCORE",
-    amount: new BigNumber(ethers.parseUnits("80", STCORE_ON_CORE.units[0].magnitude).toString()),
+    amount: STCORE_ON_CORE_TOKEN
+      ? new BigNumber(ethers.parseUnits("80", STCORE_ON_CORE_TOKEN.units[0].magnitude).toString())
+      : new BigNumber(0),
     recipient: VITALIK,
-    subAccountId: encodeTokenAccountId(`js:2:core:${address}:`, STCORE_ON_CORE),
+    subAccountId: STCORE_ON_CORE_TOKEN
+      ? encodeTokenAccountId(`js:2:core:${address}:`, STCORE_ON_CORE_TOKEN)
+      : "",
     expect: (previousAccount, currentAccount) => {
       const [latestOperation] = currentAccount.operations;
       expect(currentAccount.operations.length - previousAccount.operations.length).toBe(1);
@@ -56,10 +74,14 @@ const makeScenarioTransactions = ({ address }: { address: string }): CoreScenari
       expect(latestOperation.value.toFixed()).toBe(latestOperation.fee.toFixed());
       expect(latestOperation.subOperations?.[0].type).toBe("OUT");
       expect(latestOperation.subOperations?.[0].value.toFixed()).toBe(
-        ethers.parseUnits("80", STCORE_ON_CORE.units[0].magnitude).toString(),
+        STCORE_ON_CORE_TOKEN
+          ? ethers.parseUnits("80", STCORE_ON_CORE_TOKEN.units[0].magnitude).toString()
+          : "0",
       );
       expect(currentAccount.subAccounts?.[0].balance.toFixed()).toBe(
-        ethers.parseUnits("20", STCORE_ON_CORE.units[0].magnitude).toString(),
+        STCORE_ON_CORE_TOKEN
+          ? ethers.parseUnits("20", STCORE_ON_CORE_TOKEN.units[0].magnitude).toString()
+          : "0",
       );
     },
   };
@@ -113,6 +135,16 @@ export const scenarioCore: Scenario<EvmTransaction, Account> = {
 
     initMswHandlers(getCoinConfig(core).info);
 
+    // Initialize CryptoAssetsStore (same as in scenarii.test.ts)
+    setCryptoAssetsStoreGetter(() => legacyCryptoAssetsStore);
+
+    // Pre-load STCORE token for later use
+    try {
+      STCORE_ON_CORE_TOKEN = await getSTCOREToken();
+    } catch (error) {
+      console.warn("STCORE token not found, STCORE transactions will be disabled:", error);
+    }
+
     const onSignerConfirmation = getOnSpeculosConfirmation();
     const currencyBridge = buildCurrencyBridge(signerContext);
     await currencyBridge.preload(core);
@@ -132,12 +164,14 @@ export const scenarioCore: Scenario<EvmTransaction, Account> = {
 
     // Get STCORE
     // TODO: uncomment when explorer is ready
-    // await callMyDealer({
-    //   provider,
-    //   drug: STCORE_ON_CORE,
-    //   junkie: address,
-    //   dose: ethers.parseUnits("100", STCORE_ON_CORE.units[0].magnitude),
-    // });
+    // if (STCORE_ON_CORE_TOKEN) {
+    //   await callMyDealer({
+    //     provider,
+    //     drug: STCORE_ON_CORE_TOKEN,
+    //     junkie: address,
+    //     dose: ethers.parseUnits("100", STCORE_ON_CORE_TOKEN.units[0].magnitude),
+    //   });
+    // }
 
     return {
       currencyBridge,
@@ -149,10 +183,12 @@ export const scenarioCore: Scenario<EvmTransaction, Account> = {
   beforeAll: account => {
     expect(account.balance.toFixed()).toBe(ethers.parseEther("10000").toString());
     // TODO: uncomment when explorer is ready
-    // expect(account.subAccounts?.[0]?.type).toBe("TokenAccount");
-    // expect(account.subAccounts?.[0]?.balance?.toFixed()).toBe(
-    //   ethers.parseUnits("100", STCORE_ON_CORE.units[0].magnitude).toString(),
-    // );
+    // if (STCORE_ON_CORE_TOKEN) {
+    //   expect(account.subAccounts?.[0]?.type).toBe("TokenAccount");
+    //   expect(account.subAccounts?.[0]?.balance?.toFixed()).toBe(
+    //     ethers.parseUnits("100", STCORE_ON_CORE_TOKEN.units[0].magnitude).toString(),
+    //   );
+    // }
   },
   getTransactions: address => makeScenarioTransactions({ address }),
   beforeSync: async () => {
@@ -160,10 +196,12 @@ export const scenarioCore: Scenario<EvmTransaction, Account> = {
   },
   afterAll: _account => {
     // TODO: uncomment when explorer is ready
-    // expect(account.subAccounts?.length).toBe(1);
-    // expect(account.subAccounts?.[0].balance.toFixed()).toBe(
-    //   ethers.parseUnits("20", STCORE_ON_CORE.units[0].magnitude).toString(),
-    // );
+    // if (STCORE_ON_CORE_TOKEN) {
+    //   expect(account.subAccounts?.length).toBe(1);
+    //   expect(account.subAccounts?.[0].balance.toFixed()).toBe(
+    //     ethers.parseUnits("20", STCORE_ON_CORE_TOKEN.units[0].magnitude).toString(),
+    //   );
+    // }
   },
   teardown: async () => {
     resetIndexer();

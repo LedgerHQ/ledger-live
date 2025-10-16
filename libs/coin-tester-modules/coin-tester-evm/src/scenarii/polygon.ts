@@ -1,7 +1,7 @@
 import { BigNumber } from "bignumber.js";
 import { ethers } from "ethers";
 import { Account } from "@ledgerhq/types-live";
-import { findTokenById } from "@ledgerhq/cryptoassets/tokens";
+import { getCryptoAssetsStore } from "@ledgerhq/coin-evm/cryptoAssetsStore";
 import { Scenario, ScenarioTransaction } from "@ledgerhq/coin-tester/main";
 import { encodeTokenAccountId } from "@ledgerhq/coin-framework/account/index";
 import { killSpeculos, spawnSpeculos } from "@ledgerhq/coin-tester/signers/speculos";
@@ -17,21 +17,26 @@ import { BridgeStrategy } from "@ledgerhq/coin-tester/types";
 
 type PolygonScenarioTransaction = ScenarioTransaction<EvmTransaction, Account>;
 
-const usdcOnPolygon = findTokenById("polygon/erc20/usd_coin_(pos)");
-if (!usdcOnPolygon) throw new Error("USDC on Polygon token not found");
-const USDC_ON_POLYGON = usdcOnPolygon;
+const getUSDCOnPolygonToken = async () => {
+  const cryptoAssetsStore = getCryptoAssetsStore();
+  const token = await cryptoAssetsStore.findTokenById("polygon/erc20/usd_coin_(pos)");
+  if (!token) throw new Error("USDC on Polygon token not found");
+  return token;
+};
 const yootContract = "0x670fd103b1a08628e9557cD66B87DeD841115190";
 const yootTokenId = "1988";
 const emberContract = "0xa5511E9941E303101b50675926Fd4d9c1A8a8805";
 const platinumTokenId = "4";
 
-const makeScenarioTransactions = ({
+const makeScenarioTransactions = async ({
   address,
   strategy,
 }: {
   address: string;
   strategy: BridgeStrategy;
-}) => {
+}): Promise<PolygonScenarioTransaction[]> => {
+  const USDC_ON_POLYGON = await getUSDCOnPolygonToken();
+
   const send1MaticTransaction: PolygonScenarioTransaction = {
     name: "Send 1 POL",
     amount: new BigNumber(ethers.parseEther("1").toString()),
@@ -199,6 +204,7 @@ export const scenarioPolygon: Scenario<EvmTransaction, Account> = {
     setBlock(lastBlockNumber + 1);
 
     // Send 100 USDC to the scenario account
+    const USDC_ON_POLYGON = await getUSDCOnPolygonToken();
     await callMyDealer({
       provider,
       drug: USDC_ON_POLYGON,
@@ -237,7 +243,8 @@ export const scenarioPolygon: Scenario<EvmTransaction, Account> = {
   beforeSync: async () => {
     await indexBlocks();
   },
-  beforeAll: (account, strategy) => {
+  beforeAll: async (account, strategy) => {
+    const USDC_ON_POLYGON = await getUSDCOnPolygonToken();
     expect(account.balance.toFixed()).toBe(ethers.parseEther("10000").toString());
     expect(account.subAccounts?.[0].type).toBe("TokenAccount");
     expect(account.subAccounts?.[0].balance.toFixed()).toBe(
@@ -245,7 +252,8 @@ export const scenarioPolygon: Scenario<EvmTransaction, Account> = {
     );
     expect(account.nfts?.length).toBe(strategy === "legacy" ? 2 : 0);
   },
-  afterAll: (account, strategy) => {
+  afterAll: async (account, strategy) => {
+    const USDC_ON_POLYGON = await getUSDCOnPolygonToken();
     expect(account.subAccounts?.length).toBe(1);
     expect(account.subAccounts?.[0].balance.toFixed()).toBe(
       ethers.parseUnits("20", USDC_ON_POLYGON.units[0].magnitude).toString(),

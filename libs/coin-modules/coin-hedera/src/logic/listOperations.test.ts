@@ -1,4 +1,3 @@
-import { findTokenByAddressInCurrency } from "@ledgerhq/cryptoassets/tokens";
 import { encodeTokenAccountId } from "@ledgerhq/coin-framework/account/accountId";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import type { Pagination } from "@ledgerhq/coin-framework/api/types";
@@ -6,8 +5,9 @@ import { listOperations } from "./listOperations";
 import { apiClient } from "../network/api";
 import { getMockedCurrency } from "../test/fixtures/currency.fixture";
 import * as utils from "./utils";
+import * as cryptoAssets from "@ledgerhq/coin-framework/crypto-assets/index";
 
-jest.mock("@ledgerhq/cryptoassets/tokens");
+jest.mock("@ledgerhq/coin-framework/crypto-assets/index");
 jest.mock("@ledgerhq/coin-framework/account/accountId");
 jest.mock("@ledgerhq/coin-framework/operation");
 jest.mock("../network/api");
@@ -163,7 +163,9 @@ describe("listOperations", () => {
       transactions: mockTransactions,
       nextCursor: null,
     });
-    (findTokenByAddressInCurrency as jest.Mock).mockReturnValue(mockToken);
+    (cryptoAssets.getCryptoAssetsStore as jest.Mock).mockReturnValue({
+      findTokenByAddressInCurrency: jest.fn().mockReturnValue(mockToken),
+    });
 
     const result = await listOperations({
       currency: mockCurrency,
@@ -288,7 +290,9 @@ describe("listOperations", () => {
       transactions: mockTransactions,
       nextCursor: null,
     });
-    (findTokenByAddressInCurrency as jest.Mock).mockReturnValue(null);
+    (cryptoAssets.getCryptoAssetsStore as jest.Mock).mockReturnValue({
+      findTokenByAddressInCurrency: jest.fn().mockReturnValue(null),
+    });
 
     const result = await listOperations({
       currency: mockCurrency,

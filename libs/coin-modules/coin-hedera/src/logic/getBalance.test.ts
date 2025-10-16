@@ -1,10 +1,10 @@
-import { findTokenByAddressInCurrency } from "@ledgerhq/cryptoassets/tokens";
 import { getBalance } from "./getBalance";
 import { apiClient } from "../network/api";
 import { getMockedCurrency } from "../test/fixtures/currency.fixture";
+import * as cryptoAssets from "@ledgerhq/coin-framework/crypto-assets/index";
 
 jest.mock("../network/api");
-jest.mock("@ledgerhq/cryptoassets/tokens");
+jest.mock("@ledgerhq/coin-framework/crypto-assets/index");
 
 describe("getBalance", () => {
   beforeEach(() => {
@@ -73,10 +73,12 @@ describe("getBalance", () => {
 
     (apiClient.getAccount as jest.Mock).mockResolvedValue(mockMirrorAccount);
     (apiClient.getAccountTokens as jest.Mock).mockResolvedValue(mockMirrorTokens);
-    (findTokenByAddressInCurrency as jest.Mock).mockImplementation(tokenId => {
-      if (tokenId === "0.0.7890") return mockToken1;
-      if (tokenId === "0.0.9876") return mockToken2;
-      return null;
+    (cryptoAssets.getCryptoAssetsStore as jest.Mock).mockReturnValue({
+      findTokenByAddressInCurrency: jest.fn().mockImplementation(tokenId => {
+        if (tokenId === "0.0.7890") return mockToken1;
+        if (tokenId === "0.0.9876") return mockToken2;
+        return null;
+      }),
     });
 
     const result = await getBalance(mockCurrency, address);
@@ -85,9 +87,10 @@ describe("getBalance", () => {
     expect(apiClient.getAccount).toHaveBeenCalledWith(address);
     expect(apiClient.getAccountTokens).toHaveBeenCalledTimes(1);
     expect(apiClient.getAccountTokens).toHaveBeenCalledWith(address);
-    expect(findTokenByAddressInCurrency).toHaveBeenCalledTimes(2);
-    expect(findTokenByAddressInCurrency).toHaveBeenCalledWith("0.0.7890", "hedera");
-    expect(findTokenByAddressInCurrency).toHaveBeenCalledWith("0.0.9876", "hedera");
+    const store = (cryptoAssets.getCryptoAssetsStore as jest.Mock)();
+    expect(store.findTokenByAddressInCurrency).toHaveBeenCalledTimes(2);
+    expect(store.findTokenByAddressInCurrency).toHaveBeenCalledWith("0.0.7890", "hedera");
+    expect(store.findTokenByAddressInCurrency).toHaveBeenCalledWith("0.0.9876", "hedera");
     expect(result).toHaveLength(3);
     expect(result).toEqual(
       expect.arrayContaining([
@@ -147,9 +150,11 @@ describe("getBalance", () => {
 
     (apiClient.getAccount as jest.Mock).mockResolvedValue(mockMirrorAccount);
     (apiClient.getAccountTokens as jest.Mock).mockResolvedValue(mockMirrorTokens);
-    (findTokenByAddressInCurrency as jest.Mock).mockImplementation(tokenId => {
-      if (tokenId === "0.0.7890") return mockToken1;
-      return null;
+    (cryptoAssets.getCryptoAssetsStore as jest.Mock).mockReturnValue({
+      findTokenByAddressInCurrency: jest.fn().mockImplementation(tokenId => {
+        if (tokenId === "0.0.7890") return mockToken1;
+        return null;
+      }),
     });
 
     const result = await getBalance(mockCurrency, address);

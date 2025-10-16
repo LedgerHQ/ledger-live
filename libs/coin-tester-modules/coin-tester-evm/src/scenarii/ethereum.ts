@@ -1,7 +1,7 @@
 import { encodeTokenAccountId } from "@ledgerhq/coin-framework/account/index";
 import { Scenario, ScenarioTransaction } from "@ledgerhq/coin-tester/main";
 import { killSpeculos, spawnSpeculos } from "@ledgerhq/coin-tester/signers/speculos";
-import { findTokenById } from "@ledgerhq/cryptoassets/tokens";
+import { getCryptoAssetsStore } from "@ledgerhq/coin-evm/cryptoAssetsStore";
 import { Account } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import { ethers } from "ethers";
@@ -20,21 +20,27 @@ import { BridgeStrategy } from "@ledgerhq/coin-tester/types";
 
 type EthereumScenarioTransaction = ScenarioTransaction<EvmTransaction, Account>;
 
-const usdcOnEthereum = findTokenById("ethereum/erc20/usd__coin");
-if (!usdcOnEthereum) throw new Error("USDC on Ethereum token not found");
-const USDC_ON_ETHEREUM = usdcOnEthereum;
+const getUSDCToken = async () => {
+  const cryptoAssetsStore = getCryptoAssetsStore();
+  const token = await cryptoAssetsStore.findTokenById("ethereum/erc20/usd__coin");
+  if (!token) throw new Error("USDC on Ethereum token not found");
+  return token;
+};
+
 const boredApeContract = "0xBC4CA0EdA7647A8aB7C2061c2E118A18a936f13D";
 const boredApeTokenId = "3368";
 const cloneXContract = "0x348FC118bcC65a92dC033A951aF153d14D945312";
 const cloneXTokenId = "951";
 
-const makeScenarioTransactions = ({
+const makeScenarioTransactions = async ({
   address,
   strategy,
 }: {
   address: string;
   strategy: BridgeStrategy;
-}): EthereumScenarioTransaction[] => {
+}): Promise<EthereumScenarioTransaction[]> => {
+  const USDC_ON_ETHEREUM = await getUSDCToken();
+
   const scenarioSendEthTransaction: EthereumScenarioTransaction = {
     name: "Send 1 ETH",
     amount: new BigNumber(1e18),
@@ -207,6 +213,9 @@ export const scenarioEthereum: Scenario<EvmTransaction, Account> = {
     // start indexing at next block
     setBlock(lastBlockNumber + 1);
 
+    // Get token
+    const USDC_ON_ETHEREUM = await getUSDCToken();
+
     // Get USDC
     await callMyDealer({
       provider,
@@ -248,7 +257,8 @@ export const scenarioEthereum: Scenario<EvmTransaction, Account> = {
       onSignerConfirmation,
     };
   },
-  beforeAll: (account, strategy) => {
+  beforeAll: async (account, strategy) => {
+    const USDC_ON_ETHEREUM = await getUSDCToken();
     expect(account.balance.toFixed()).toBe(ethers.parseEther("10000").toString());
     expect(account.subAccounts?.[0].type).toBe("TokenAccount");
     expect(account.subAccounts?.[0].balance.toFixed()).toBe(
@@ -260,7 +270,8 @@ export const scenarioEthereum: Scenario<EvmTransaction, Account> = {
   beforeSync: async () => {
     await indexBlocks();
   },
-  afterAll: (account, strategy) => {
+  afterAll: async (account, strategy) => {
+    const USDC_ON_ETHEREUM = await getUSDCToken();
     expect(account.subAccounts?.length).toBe(1);
     expect(account.subAccounts?.[0].balance.toFixed()).toBe(
       ethers.parseUnits("20", USDC_ON_ETHEREUM.units[0].magnitude).toString(),

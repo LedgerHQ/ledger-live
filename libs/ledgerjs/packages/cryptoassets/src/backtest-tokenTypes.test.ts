@@ -1,5 +1,7 @@
 import { listCryptoCurrencies } from "./currencies";
 import { listTokenTypesForCryptoCurrency, listTokensForCryptoCurrency } from "./tokens";
+import { initializeLegacyTokens } from "./legacy/legacy-data";
+import { addTokens } from "./legacy/legacy-utils";
 
 /*
  * Backward compatibility test for tokenTypes feature.
@@ -9,6 +11,9 @@ import { listTokenTypesForCryptoCurrency, listTokensForCryptoCurrency } from "./
  * When the legacy implementation is removed, this test will be removed.
  */
 describe("backward compatibility for tokenTypes", () => {
+  beforeAll(() => {
+    initializeLegacyTokens(addTokens);
+  });
   function oldListTokenTypesForCryptoCurrency(currency) {
     return listTokensForCryptoCurrency(currency).reduce<string[]>((acc, cur) => {
       const tokenType = cur.tokenType.replace("_", " ");

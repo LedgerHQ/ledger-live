@@ -39,7 +39,10 @@ export type Scenario<T extends TransactionCommon, A extends Account> = {
     retryLimit?: number;
     onSignerConfirmation?: (e?: SignOperationEvent) => Promise<void>;
   }>;
-  getTransactions: (address: string, strategy: BridgeStrategy) => ScenarioTransaction<T, A>[];
+  getTransactions: (
+    address: string,
+    strategy: BridgeStrategy,
+  ) => ScenarioTransaction<T, A>[] | Promise<ScenarioTransaction<T, A>[]>;
   beforeSync?: () => Promise<void> | void;
   mockIndexer?: (account: Account, optimistic: Operation) => Promise<void>;
   beforeAll?: (account: Account, strategy: BridgeStrategy) => Promise<void> | void;
@@ -101,7 +104,7 @@ export async function executeScenario<T extends TransactionCommon, A extends Acc
       chalk.bold.cyan(" Starting  ◌"),
     );
 
-    const scenarioTransactions = scenario.getTransactions(account.freshAddress, strategy);
+    const scenarioTransactions = await scenario.getTransactions(account.freshAddress, strategy);
 
     for (const testTransaction of scenarioTransactions) {
       console.log("\n");

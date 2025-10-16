@@ -2,7 +2,7 @@ import { LegacySignerEth } from "@ledgerhq/live-signer-evm";
 import { BigNumber } from "bignumber.js";
 import { ethers } from "ethers";
 import { Account } from "@ledgerhq/types-live";
-import { findTokenById } from "@ledgerhq/cryptoassets/tokens";
+import { getCryptoAssetsStore } from "@ledgerhq/coin-evm/cryptoAssetsStore";
 import { Scenario, ScenarioTransaction } from "@ledgerhq/coin-tester/main";
 import { encodeTokenAccountId } from "@ledgerhq/coin-framework/account/index";
 import { killSpeculos, spawnSpeculos } from "@ledgerhq/coin-tester/signers/speculos";
@@ -20,14 +20,18 @@ import { EvmSigner } from "@ledgerhq/coin-evm/types/signer";
 
 type ScrollScenarioTransaction = ScenarioTransaction<EvmTransaction, Account>;
 
-// getTokenById will only work after the currency has been preloaded
-const TOKEN_ID = "scroll/erc20/usd_coin";
+const getUSDCOnScrollToken = async () => {
+  const cryptoAssetsStore = getCryptoAssetsStore();
+  const token = await cryptoAssetsStore.findTokenById("scroll/erc20/usd_coin");
+  if (!token) throw new Error("USDC on Scroll token not found");
+  return token;
+};
 
-const makeScenarioTransactions = ({
+const makeScenarioTransactions = async ({
   address,
 }: {
   address: string;
-}): ScrollScenarioTransaction[] => {
+}): Promise<ScrollScenarioTransaction[]> => {
   const scenarioSendEthTransaction: ScrollScenarioTransaction = {
     name: "Send 1 ETH",
     amount: new BigNumber(1e18),
@@ -43,8 +47,7 @@ const makeScenarioTransactions = ({
     },
   };
 
-  const USDC_ON_SCROLL = findTokenById("scroll/erc20/usd_coin");
-  if (!USDC_ON_SCROLL) throw new Error("USDC on Scroll token not found");
+  const USDC_ON_SCROLL = await getUSDCOnScrollToken();
   const scenarioSendUSDCTransaction: ScrollScenarioTransaction = {
     name: "Send USDC",
     amount: new BigNumber(ethers.parseUnits("80", USDC_ON_SCROLL.units[0].magnitude).toString()),
@@ -114,8 +117,7 @@ export const scenarioScroll: Scenario<EvmTransaction, Account> = {
 
     const scenarioAccount = makeAccount(address, scroll);
 
-    const USDC_ON_SCROLL = findTokenById(TOKEN_ID);
-    if (!USDC_ON_SCROLL) throw new Error("USDC on Scroll token not found");
+    const USDC_ON_SCROLL = await getUSDCOnScrollToken();
     await callMyDealer({
       provider,
       drug: USDC_ON_SCROLL,
@@ -135,18 +137,16 @@ export const scenarioScroll: Scenario<EvmTransaction, Account> = {
   beforeSync: async () => {
     await indexBlocks();
   },
-  beforeAll: account => {
-    const USDC_ON_SCROLL = findTokenById(TOKEN_ID);
-    if (!USDC_ON_SCROLL) throw new Error("USDC on Scroll token not found");
+  beforeAll: async account => {
+    const USDC_ON_SCROLL = await getUSDCOnScrollToken();
     expect(account.balance.toFixed()).toBe(ethers.parseEther("10000").toString());
     expect(account.subAccounts?.[0]?.type).toBe("TokenAccount");
     expect(account.subAccounts?.[0]?.balance?.toFixed()).toBe(
       ethers.parseUnits("100", USDC_ON_SCROLL.units[0].magnitude).toString(),
     );
   },
-  afterAll: account => {
-    const USDC_ON_SCROLL = findTokenById(TOKEN_ID);
-    if (!USDC_ON_SCROLL) throw new Error("USDC on Scroll token not found");
+  afterAll: async account => {
+    const USDC_ON_SCROLL = await getUSDCOnScrollToken();
     expect(account.subAccounts?.length).toBe(1);
     expect(account.subAccounts?.[0].balance.toFixed()).toBe(
       ethers.parseUnits("20", USDC_ON_SCROLL.units[0].magnitude).toString(),

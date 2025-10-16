@@ -1,7 +1,7 @@
 import BigNumber from "bignumber.js";
 import type { CoinType, CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import type { TokenAccount, Account } from "@ledgerhq/types-live";
-import { cryptocurrenciesById, findTokenById } from "@ledgerhq/cryptoassets";
+import { cryptocurrenciesById } from "@ledgerhq/cryptoassets";
 import { CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 
 export function createFixtureCryptoCurrency(family: string): CryptoCurrency {
@@ -38,7 +38,16 @@ export function createFixtureCryptoCurrency(family: string): CryptoCurrency {
 }
 
 const defaultEthCryptoFamily = cryptocurrenciesById["ethereum"];
-const defaultERC20USDTToken = findTokenById("ethereum/erc20/usd_tether__erc20_")!;
+const defaultERC20USDTToken: TokenCurrency = {
+  type: "TokenCurrency",
+  id: "ethereum/erc20/usd_tether__erc20_",
+  name: "Tether USD (ERC-20)",
+  ticker: "USDT",
+  units: [{ name: "Tether USD", code: "USDT", magnitude: 6 }],
+  contractAddress: "0xdac17f958d2ee523a2206206994597c13d831ec7",
+  parentCurrency: defaultEthCryptoFamily,
+  tokenType: "erc20",
+};
 
 export function createFixtureTokenAccount(
   id = "00",

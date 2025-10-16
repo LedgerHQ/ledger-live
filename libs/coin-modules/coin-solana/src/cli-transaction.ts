@@ -38,7 +38,7 @@ function inferTransactions(
     transaction: Transaction;
   }>,
   opts: Partial<Record<string, string>>,
-): Transaction[] {
+): Promise<Transaction[]> {
   const mode = inferMode(opts.mode);
 
   // reusing ethereum token option, comes as array
@@ -50,130 +50,132 @@ function inferTransactions(
 
   const token = tokens?.[0];
 
-  return transactions.map(({ account, transaction }) => {
-    if (transaction.family !== "solana") {
-      throw new Error(`Solana family transaction expected, got <${transaction.family}>`);
-    }
-    switch (mode) {
-      case "send":
-        if (account.type === "Account") {
-          const solanaTx: Transaction = {
-            ...transaction,
-            model: {
-              kind: "transfer",
-              uiState: {
-                memo: opts.memo,
+  return Promise.all(
+    transactions.map(async ({ account, transaction }) => {
+      if (transaction.family !== "solana") {
+        throw new Error(`Solana family transaction expected, got <${transaction.family}>`);
+      }
+      switch (mode) {
+        case "send":
+          if (account.type === "Account") {
+            const solanaTx: Transaction = {
+              ...transaction,
+              model: {
+                kind: "transfer",
+                uiState: {
+                  memo: opts.memo,
+                },
               },
-            },
-          };
-          return solanaTx;
-        } else {
-          if (account.type !== "TokenAccount") {
-            throw new Error("expected token account");
+            };
+            return solanaTx;
+          } else {
+            if (account.type !== "TokenAccount") {
+              throw new Error("expected token account");
+            }
+            const subAccountId = account.id;
+            const solanaTx: Transaction = {
+              ...transaction,
+              subAccountId,
+              model: {
+                kind: "token.transfer",
+                uiState: {
+                  memo: opts.memo,
+                  subAccountId,
+                },
+              },
+            };
+            return solanaTx;
           }
-          const subAccountId = account.id;
+        case "optIn": {
+          if (token === undefined) {
+            throw new Error("token required");
+          }
+
+          if (account.type !== "Account") {
+            throw new Error("expected main account");
+          }
+
+          const tokenCurrency = await getCryptoAssetsStore().findTokenById(token);
+
+          if (!tokenCurrency) {
+            throw new Error(`token <${token}> not found`);
+          }
+
           const solanaTx: Transaction = {
             ...transaction,
-            subAccountId,
             model: {
-              kind: "token.transfer",
+              kind: "token.createATA",
               uiState: {
-                memo: opts.memo,
-                subAccountId,
+                tokenId: tokenCurrency.id,
               },
             },
           };
           return solanaTx;
         }
-      case "optIn": {
-        if (token === undefined) {
-          throw new Error("token required");
-        }
-
-        if (account.type !== "Account") {
-          throw new Error("expected main account");
-        }
-
-        const tokenCurrency = getCryptoAssetsStore().findTokenById(token);
-
-        if (!tokenCurrency) {
-          throw new Error(`token <${token}> not found`);
-        }
-
-        const solanaTx: Transaction = {
-          ...transaction,
-          model: {
-            kind: "token.createATA",
-            uiState: {
-              tokenId: tokenCurrency.id,
-            },
-          },
-        };
-        return solanaTx;
-      }
-      case "stake.createAccount": {
-        const validator = opts.solanaValidator;
-        return {
-          ...transaction,
-          model: {
-            kind: "stake.createAccount",
-            uiState: {
-              delegate: {
-                voteAccAddress: validator ?? "",
+        case "stake.createAccount": {
+          const validator = opts.solanaValidator;
+          return {
+            ...transaction,
+            model: {
+              kind: "stake.createAccount",
+              uiState: {
+                delegate: {
+                  voteAccAddress: validator ?? "",
+                },
               },
             },
-          },
-        };
-      }
-      case "stake.delegate":
-        return {
-          ...transaction,
-          model: {
-            kind: "stake.delegate",
-            uiState: {
-              stakeAccAddr: opts.solanaStakeAccount ?? "",
-              voteAccAddr: opts.solanaValidator ?? "",
-            },
-          },
-        };
-      case "stake.undelegate":
-        return {
-          ...transaction,
-          model: {
-            kind: "stake.undelegate",
-            uiState: {
-              stakeAccAddr: opts.solanaStakeAccount ?? "",
-            },
-          },
-        };
-      case "stake.withdraw":
-        return {
-          ...transaction,
-          model: {
-            kind: "stake.withdraw",
-            uiState: {
-              stakeAccAddr: opts.solanaStakeAccount ?? "",
-            },
-          },
-        };
-      case "stake.split":
-        if (opts.solanaStakeAccount === undefined) {
-          throw new Error("stake account is required");
+          };
         }
-
-        return {
-          ...transaction,
-          model: {
-            kind: "stake.split",
-            uiState: {
-              stakeAccAddr: opts.solanaStakeAccount,
+        case "stake.delegate":
+          return {
+            ...transaction,
+            model: {
+              kind: "stake.delegate",
+              uiState: {
+                stakeAccAddr: opts.solanaStakeAccount ?? "",
+                voteAccAddr: opts.solanaValidator ?? "",
+              },
             },
-          },
-        };
-      default:
-        return assertUnreachable(mode);
-    }
-  });
+          };
+        case "stake.undelegate":
+          return {
+            ...transaction,
+            model: {
+              kind: "stake.undelegate",
+              uiState: {
+                stakeAccAddr: opts.solanaStakeAccount ?? "",
+              },
+            },
+          };
+        case "stake.withdraw":
+          return {
+            ...transaction,
+            model: {
+              kind: "stake.withdraw",
+              uiState: {
+                stakeAccAddr: opts.solanaStakeAccount ?? "",
+              },
+            },
+          };
+        case "stake.split":
+          if (opts.solanaStakeAccount === undefined) {
+            throw new Error("stake account is required");
+          }
+
+          return {
+            ...transaction,
+            model: {
+              kind: "stake.split",
+              uiState: {
+                stakeAccAddr: opts.solanaStakeAccount,
+              },
+            },
+          };
+        default:
+          return assertUnreachable(mode);
+      }
+    }),
+  );
 }
 
 function inferAccounts(mainAccount: Account, opts: Record<string, string>): AccountLikeArray {

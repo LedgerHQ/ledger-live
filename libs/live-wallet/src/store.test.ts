@@ -20,6 +20,11 @@ import {
 import { genAccount } from "@ledgerhq/coin-framework/mocks/account";
 import type { Account } from "@ledgerhq/types-live";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
+import { initializeLegacyTokens } from "@ledgerhq/cryptoassets/legacy/legacy-data";
+import { addTokens } from "@ledgerhq/cryptoassets/legacy/legacy-utils";
+
+// Initialize legacy tokens for tests
+initializeLegacyTokens(addTokens);
 
 const ETHEREUM_ACCOUNT = "js:2:ethereum:0x23304541225D9b0BA2368B55ERTYF:";
 const POLKADOT_ACCOUNT =

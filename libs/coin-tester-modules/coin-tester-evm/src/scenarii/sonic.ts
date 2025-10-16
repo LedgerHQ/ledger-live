@@ -1,7 +1,7 @@
 import { BigNumber } from "bignumber.js";
 import { ethers } from "ethers";
 import { Account } from "@ledgerhq/types-live";
-import { findTokenById } from "@ledgerhq/cryptoassets/tokens";
+import { getCryptoAssetsStore } from "@ledgerhq/coin-evm/cryptoAssetsStore";
 import { encodeTokenAccountId } from "@ledgerhq/coin-framework/account/index";
 import { Scenario, ScenarioTransaction } from "@ledgerhq/coin-tester/main";
 import { killSpeculos, spawnSpeculos } from "@ledgerhq/coin-tester/signers/speculos";
@@ -16,13 +16,21 @@ import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 
 type SonicScenarioTransaction = ScenarioTransaction<EvmTransaction, Account>;
 
-const usdcOnSonic = findTokenById(
-  "sonic/erc20/bridged_usdc_sonic_labs_0x29219dd400f2bf60e5a23d13be72b486d4038894",
-);
-if (!usdcOnSonic) throw new Error("USDC on Sonic token not found");
-const USDC_ON_SONIC = usdcOnSonic;
+const getUSDCOnSonicToken = async () => {
+  const cryptoAssetsStore = getCryptoAssetsStore();
+  const token = await cryptoAssetsStore.findTokenById(
+    "sonic/erc20/bridged_usdc_sonic_labs_0x29219dd400f2bf60e5a23d13be72b486d4038894",
+  );
+  if (!token) throw new Error("USDC on Sonic token not found");
+  return token;
+};
 
-const makeScenarioTransactions = ({ address }: { address: string }): SonicScenarioTransaction[] => {
+const makeScenarioTransactions = async ({
+  address,
+}: {
+  address: string;
+}): Promise<SonicScenarioTransaction[]> => {
+  const USDC_ON_SONIC = await getUSDCOnSonicToken();
   const scenarioSendSTransaction: SonicScenarioTransaction = {
     name: "Send 1 S",
     amount: new BigNumber(1e18),
@@ -131,6 +139,7 @@ export const scenarioSonic: Scenario<EvmTransaction, Account> = {
     setBlock(lastBlockNumber + 1);
 
     // Get USDC
+    const USDC_ON_SONIC = await getUSDCOnSonicToken();
     await callMyDealer({
       provider,
       drug: USDC_ON_SONIC,
@@ -145,7 +154,8 @@ export const scenarioSonic: Scenario<EvmTransaction, Account> = {
       onSignerConfirmation,
     };
   },
-  beforeAll: account => {
+  beforeAll: async account => {
+    const USDC_ON_SONIC = await getUSDCOnSonicToken();
     expect(account.balance.toFixed()).toBe(ethers.parseEther("10000").toString());
     expect(account.subAccounts?.[0].type).toBe("TokenAccount");
     expect(account.subAccounts?.[0].balance.toFixed()).toBe(
@@ -156,7 +166,8 @@ export const scenarioSonic: Scenario<EvmTransaction, Account> = {
   beforeSync: async () => {
     await indexBlocks();
   },
-  afterAll: account => {
+  afterAll: async account => {
+    const USDC_ON_SONIC = await getUSDCOnSonicToken();
     expect(account.subAccounts?.length).toBe(1);
     expect(account.subAccounts?.[0].balance.toFixed()).toBe(
       ethers.parseUnits("20", USDC_ON_SONIC.units[0].magnitude).toString(),

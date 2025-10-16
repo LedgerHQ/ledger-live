@@ -4,9 +4,9 @@ import BigNumber from "bignumber.js";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { encodeSubOperationId } from "@ledgerhq/coin-framework/operation";
+import { tokensById } from "@ledgerhq/cryptoassets/legacy/legacy-state";
 import * as logic from "../../logic";
 import { getCoinConfig } from "../../config";
-import { getCryptoAssetsStore } from "../../cryptoAssetsStore";
 import {
   makeAccount,
   makeNft,
@@ -56,9 +56,9 @@ export const swapHistory = [
 
 export const tokenCurrencies = [
   // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-  getCryptoAssetsStore().findTokenById("ethereum/erc20/usd__coin") as TokenCurrency,
+  tokensById["ethereum/erc20/usd__coin"] as TokenCurrency,
   // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-  getCryptoAssetsStore().findTokenById("ethereum/erc20/usd_tether__erc20_") as TokenCurrency,
+  tokensById["ethereum/erc20/usd_tether__erc20_"] as TokenCurrency,
 ];
 
 export const tokenAccount = {

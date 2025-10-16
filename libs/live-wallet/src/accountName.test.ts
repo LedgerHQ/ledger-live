@@ -1,6 +1,11 @@
 import { genAccount } from "@ledgerhq/coin-framework/mocks/account";
 import { getDefaultAccountName } from "./accountName";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
+import { initializeLegacyTokens } from "@ledgerhq/cryptoassets/legacy/legacy-data";
+import { addTokens } from "@ledgerhq/cryptoassets/legacy/legacy-utils";
+
+// Initialize legacy tokens for tests
+initializeLegacyTokens(addTokens);
 
 const mockAccount = genAccount("mockAccount", {
   currency: getCryptoCurrencyById("ethereum"),

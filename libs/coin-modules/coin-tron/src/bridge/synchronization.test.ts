@@ -1,5 +1,5 @@
 import { makeScanAccounts } from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/index";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import { Account, AccountBridge, SyncConfig, TransactionCommon } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { firstValueFrom, reduce } from "rxjs";
@@ -12,6 +12,9 @@ import { createBridges } from "./index";
 import { getAccountShape } from "./synchronization";
 import { setupServer } from "msw/node";
 import { AccountTronAPI } from "../network/types";
+import { getCryptoAssetsStore } from "@ledgerhq/coin-framework/crypto-assets/index";
+
+jest.mock("@ledgerhq/coin-framework/crypto-assets/index");
 
 const currency = getCryptoCurrencyById("tron");
 const defaultSyncConfig = {
@@ -115,6 +118,88 @@ describe("sync", () => {
   let bridge: ReturnType<typeof createBridges>;
 
   beforeAll(() => {
+    // Mock the crypto assets store with the expected tokens
+    const parentCurrency = {
+      type: "CryptoCurrency",
+      id: "tron",
+      coinType: 195,
+      name: "Tron",
+      managerAppName: "Tron",
+      ticker: "TRX",
+      scheme: "tron",
+      color: "#D9012C",
+      family: "tron",
+      blockAvgTime: 9,
+      units: [{ name: "TRX", code: "TRX", magnitude: 6 }],
+      explorerViews: [
+        {
+          tx: "https://tronscan.org/#/transaction/$hash",
+          address: "https://tronscan.org/#/address/$address",
+        },
+      ],
+      keywords: ["trx", "tron"],
+    };
+
+    const mockTokens = {
+      "tron/trc10/1002000": {
+        type: "TokenCurrency",
+        id: "tron/trc10/1002000",
+        contractAddress: "TF5Bn4cJCT6GVeUgyCN4rBhDg42KBrpAjg",
+        parentCurrency,
+        tokenType: "trc10",
+        name: "BitTorrent Old",
+        ticker: "BTTOLD",
+        delisted: true,
+        disableCountervalue: false,
+        ledgerSignature:
+          "0a0a426974546f7272656e7410061a46304402202e2502f36b00e57be785fc79ec4043abcdd4fdd1b58d737ce123599dffad2cb602201702c307f009d014a553503b499591558b3634ceee4c054c61cedd8aca94c02b",
+        units: [{ name: "BitTorrent Old", code: "BTTOLD", magnitude: 6 }],
+      },
+      "tron/trc20/tla2f6vpqdgre67v1736s7bj8ray5wyju7": {
+        type: "TokenCurrency",
+        id: "tron/trc20/tla2f6vpqdgre67v1736s7bj8ray5wyju7",
+        contractAddress: "TLa2f6VPqDgRE67v1736s7bJ8Ray5wYjU7",
+        parentCurrency,
+        tokenType: "trc20",
+        name: "WINK",
+        ticker: "WIN",
+        delisted: false,
+        disableCountervalue: false,
+        ledgerSignature: null,
+        units: [{ name: "WINK", code: "WIN", magnitude: 6 }],
+      },
+      "tron/trc20/tcfll5dx5zjdknwuesxxi1vpwjlvmwzzy9": {
+        type: "TokenCurrency",
+        id: "tron/trc20/tcfll5dx5zjdknwuesxxi1vpwjlvmwzzy9",
+        contractAddress: "TCFLL5dx5ZJdKnWuesXxi1VPwjLVmWZZy9",
+        parentCurrency,
+        tokenType: "trc20",
+        name: "JUST GOV",
+        ticker: "JST",
+        delisted: false,
+        disableCountervalue: false,
+        ledgerSignature: null,
+        units: [{ name: "JUST GOV", code: "JST", magnitude: 18 }],
+      },
+    };
+
+    (getCryptoAssetsStore as jest.Mock).mockReturnValue({
+      findTokenById: jest.fn().mockImplementation((id: string) => {
+        return Promise.resolve(mockTokens[id as keyof typeof mockTokens] || null);
+      }),
+      findTokenByAddressInCurrency: jest
+        .fn()
+        .mockImplementation((address: string, currencyId: string) => {
+          if (currencyId === "tron") {
+            const token = Object.values(mockTokens).find(
+              token => token.contractAddress.toLowerCase() === address.toLowerCase(),
+            );
+            return Promise.resolve(token || null);
+          }
+          return Promise.resolve(null);
+        }),
+    });
+
     const signer = jest.fn();
     const coinConfig = (): TronCoinConfig => ({
       status: {
@@ -162,6 +247,12 @@ describe("scanAccounts", () => {
 
   beforeAll(() => {
     spyGetTronAccountNetwork = jest.spyOn(tronNetwork, "getTronAccountNetwork");
+
+    // Mock the crypto assets store for scanAccounts tests - same as sync tests
+    (getCryptoAssetsStore as jest.Mock).mockReturnValue({
+      findTokenById: jest.fn().mockResolvedValue(null),
+      findTokenByAddressInCurrency: jest.fn().mockResolvedValue(null),
+    });
 
     coinConfig.setCoinConfig(() => ({
       status: {

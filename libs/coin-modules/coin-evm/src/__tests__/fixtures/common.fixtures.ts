@@ -4,7 +4,7 @@ import BigNumber from "bignumber.js";
 import { getDerivationScheme, runDerivationScheme } from "@ledgerhq/coin-framework/derivation";
 import {
   decodeAccountId,
-  decodeTokenAccountId,
+  decodeTokenAccountIdSync,
   encodeTokenAccountId,
 } from "@ledgerhq/coin-framework/account/index";
 import {
@@ -114,7 +114,7 @@ export const makeTokenAccount = (address: string, tokenCurrency: TokenCurrency):
 export const makeOperation = (partialOp?: Partial<Operation>): Operation => {
   const accountId = partialOp?.accountId ?? "js:2:ethereum:0xkvn:";
   const { xpubOrAddress } = decodeAccountId(
-    accountId.includes("+") ? decodeTokenAccountId(accountId).accountId : accountId,
+    accountId.includes("+") ? decodeTokenAccountIdSync(accountId).accountId : accountId,
   );
   const hash = partialOp?.hash ?? "0xhash";
   const type = partialOp?.type ?? "OUT";
@@ -146,7 +146,7 @@ export const makeNftOperation = (
 ): Operation => {
   const accountId = partialOp?.accountId ?? "js:2:ethereum:0xkvn:";
   const { xpubOrAddress, currencyId } = decodeAccountId(
-    accountId.includes("+") ? decodeTokenAccountId(accountId).accountId : accountId,
+    accountId.includes("+") ? decodeTokenAccountIdSync(accountId).accountId : accountId,
   );
   const hash = partialOp?.hash ?? "0xhash";
   const type = partialOp?.type ?? "NFT_OUT";

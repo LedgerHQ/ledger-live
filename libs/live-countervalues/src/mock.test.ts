@@ -2,20 +2,31 @@ import "@ledgerhq/coin-framework/test-helpers/staticTime";
 import { initialState, loadCountervalues, calculate } from "./logic";
 import CountervaluesAPI from "./api";
 import { setEnv } from "@ledgerhq/live-env";
-import {
-  getFiatCurrencyByTicker,
-  findTokenById,
-  getCryptoCurrencyById,
-} from "@ledgerhq/cryptoassets";
+import { getFiatCurrencyByTicker, getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
+import { tokensById } from "@ledgerhq/cryptoassets/legacy/legacy-state";
 import { formatCounterValueDay, formatCounterValueHour, parseFormattedDate } from "./helpers";
 import api from "./api";
-import { legacyCryptoAssetsStore } from "@ledgerhq/cryptoassets/tokens";
-import { setCryptoAssetsStore } from "@ledgerhq/coin-framework/crypto-assets/index";
-
-setCryptoAssetsStore(legacyCryptoAssetsStore);
+import * as cryptoAssets from "@ledgerhq/coin-framework/crypto-assets/index";
+import type { CryptoAssetsStore } from "@ledgerhq/types-live";
+import { legacyCryptoAssetsStore } from "@ledgerhq/cryptoassets/legacy/legacy-store";
+import { initializeLegacyTokens } from "@ledgerhq/cryptoassets/legacy/legacy-data";
+import { addTokens as addTokensLegacy } from "@ledgerhq/cryptoassets/legacy/legacy-utils";
 
 setEnv("MOCK", "1");
 setEnv("MOCK_COUNTERVALUES", "1");
+
+// Initialize tokens for tests that need real token data
+beforeAll(() => {
+  initializeLegacyTokens(addTokensLegacy);
+  cryptoAssets.setCryptoAssetsStore(legacyCryptoAssetsStore);
+});
+
+beforeEach(() => {
+  // Restore mocks between tests to prevent interference
+  jest.restoreAllMocks();
+  // Ensure the real store is available for tests that need it
+  cryptoAssets.setCryptoAssetsStore(legacyCryptoAssetsStore);
+});
 
 const DAY = 24 * 60 * 60 * 1000;
 
@@ -42,6 +53,12 @@ test("mock load with nothing to track", async () => {
   ).toBeUndefined();
 });
 test("mock fetchIdsSortedByMarketcap", async () => {
+  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+  jest.spyOn(cryptoAssets, "getCryptoAssetsStore").mockReturnValue({
+    findTokenById: (_: string) => Promise.resolve(undefined),
+    findTokenByAddressInCurrency: (_: string, __: string) => Promise.resolve(undefined),
+  } as CryptoAssetsStore);
+
   expect(await CountervaluesAPI.fetchIdsSortedByMarketcap()).toBeDefined();
 });
 test("mock load with btc-usd to track", async () => {
@@ -140,12 +157,12 @@ test("mock load with btc-eth to track", async () => {
   ).toBe(1.4890024626718706e21);
 });
 test("DAI EUR latest price", async () => {
-  const dai = findTokenById("ethereum/erc20/dai_stablecoin_v2_0");
+  const dai = tokensById["ethereum/erc20/dai_stablecoin_v2_0"];
   if (!dai) throw new Error("DAI token not found");
   const state = await loadCountervalues(initialState, {
     trackingPairs: [
       {
-        from: dai,
+        from: tokensById["ethereum/erc20/dai_stablecoin_v2_0"]!,
         to: getFiatCurrencyByTicker("EUR"),
         startDate: new Date(),
       },
@@ -158,18 +175,18 @@ test("DAI EUR latest price", async () => {
   expect(
     calculate(state, {
       value: 100000000,
-      from: dai,
+      from: (await tokensById["ethereum/erc20/dai_stablecoin_v2_0"])!,
       to: getFiatCurrencyByTicker("EUR"),
     }),
   ).toBeUndefined();
 });
 test("calculate(now()) is calculate(null)", async () => {
-  const dai = findTokenById("ethereum/erc20/dai_stablecoin_v2_0");
+  const dai = tokensById["ethereum/erc20/dai_stablecoin_v2_0"];
   if (!dai) throw new Error("DAI token not found");
   const state = await loadCountervalues(initialState, {
     trackingPairs: [
       {
-        from: dai,
+        from: tokensById["ethereum/erc20/dai_stablecoin_v2_0"]!,
         to: getFiatCurrencyByTicker("EUR"),
         startDate: new Date(),
       },
@@ -182,13 +199,13 @@ test("calculate(now()) is calculate(null)", async () => {
   expect(
     calculate(state, {
       value: 100000000,
-      from: dai,
+      from: (await tokensById["ethereum/erc20/dai_stablecoin_v2_0"])!,
       to: getFiatCurrencyByTicker("EUR"),
     }),
   ).toEqual(
     calculate(state, {
       value: 100000000,
-      from: dai,
+      from: (await tokensById["ethereum/erc20/dai_stablecoin_v2_0"])!,
       to: getFiatCurrencyByTicker("EUR"),
       date: new Date(),
     }),
@@ -250,6 +267,12 @@ test("missing rate in mock is filled by autofillGaps", async () => {
 });
 
 test("fetchIdsSortedByMarketcap", async () => {
+  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+  jest.spyOn(cryptoAssets, "getCryptoAssetsStore").mockReturnValue({
+    findTokenById: (_: string) => Promise.resolve(undefined),
+    findTokenByAddressInCurrency: (_: string, __: string) => Promise.resolve(undefined),
+  } as CryptoAssetsStore);
+
   const ids = await api.fetchIdsSortedByMarketcap();
   expect(ids).toContain("bitcoin");
 });

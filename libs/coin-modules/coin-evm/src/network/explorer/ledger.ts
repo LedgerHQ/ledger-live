@@ -103,7 +103,7 @@ export const getLastOperations: ExplorerApi["getLastOperations"] = async (
   const lastNftOperations: Operation[] = [];
   const lastInternalOperations: Operation[] = [];
 
-  ledgerExplorerOps.forEach(ledgerOp => {
+  for (const ledgerOp of ledgerExplorerOps) {
     const coinOps = ledgerOperationToOperations(accountId, ledgerOp);
     const erc20Ops = ledgerOp.transfer_events.flatMap((event, index) =>
       ledgerERC20EventToOperations(coinOps[0], event, index),
@@ -129,7 +129,7 @@ export const getLastOperations: ExplorerApi["getLastOperations"] = async (
     lastNftOperations.push(...erc721Ops);
     lastNftOperations.push(...erc1155Ops);
     lastInternalOperations.push(...internalOps);
-  });
+  }
 
   return {
     lastCoinOperations,
