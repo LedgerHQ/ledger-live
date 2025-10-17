@@ -5,7 +5,7 @@ import { Block, ChainAccount, Transfer } from "../../api/types";
 import { Transaction } from "../../types";
 
 // Define the mock base URL for the Kadena API
-export const API_KADENA_ENDPOINT = "https://api.mainnet.kadindexer.io/v0";
+export const API_KADENA_ENDPOINT = "https://api.mainnet.kadindexer.io/v1";
 export const API_KADENA_PACT_ENDPOINT = "https://api.chainweb.com";
 
 export const ADDRESS_1 = "k:77b021744ab3c003e8e4d0f38a598f0e39fe9a7fe61360754dc7321b112ab375";
