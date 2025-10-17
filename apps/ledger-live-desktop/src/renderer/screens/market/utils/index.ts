@@ -45,3 +45,11 @@ export function isAvailableOnSwap(
   if (!currency) return false;
   return currency?.ledgerIds.some(lrId => currenciesForSwapAllSet.has(lrId)) || false;
 }
+
+export function isAvailableOnStake(
+  currency: CurrencyData | null | undefined,
+  getCanStakeCurrency: (currencyId: string) => boolean,
+) {
+  if (!currency) return false;
+  return currency?.ledgerIds?.some(lrId => getCanStakeCurrency(lrId)) || false;
+}

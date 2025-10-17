@@ -11,11 +11,15 @@ import { accountsSelector } from "~/renderer/reducers/accounts";
 import { flattenAccounts } from "@ledgerhq/live-common/account/index";
 import { getAvailableAccountsById } from "@ledgerhq/live-common/exchange/swap/utils/index";
 import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/useRampCatalog";
-import { isAvailableOnBuy, isAvailableOnSwap } from "../utils";
+import { isAvailableOnBuy, isAvailableOnSwap, isAvailableOnStake } from "../utils";
 import { useStake } from "LLD/hooks/useStake";
-import { ModularDrawerLocation } from "LLD/features/ModularDrawer";
+import {
+  ModularDrawerLocation,
+  openAssetAndAccountDrawer,
+  useModularDrawerVisibility,
+} from "LLD/features/ModularDrawer";
 import { useOpenAssetFlow } from "LLD/features/ModularDrawer/hooks/useOpenAssetFlow";
-import { Account } from "@ledgerhq/types-live";
+import { Account, AccountLike } from "@ledgerhq/types-live";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import { useFetchCurrencyAll } from "@ledgerhq/live-common/exchange/swap/hooks/index";
 import { getTokenOrCryptoCurrencyById } from "@ledgerhq/live-common/deposit/helper";
@@ -34,6 +38,7 @@ export const useMarketActions = ({ currency, page }: MarketActionsProps) => {
   const history = useHistory();
   const { data: currenciesAll } = useFetchCurrencyAll();
   const startStakeFlow = useStakeFlow();
+  const { getCanStakeCurrency } = useStake();
 
   const swapDefaultTrack = useGetSwapTrackingProperties();
 
@@ -46,14 +51,49 @@ export const useMarketActions = ({ currency, page }: MarketActionsProps) => {
 
   const primaryCurrencyId = currency?.ledgerIds?.[0];
 
+  const { isModularDrawerVisible } = useModularDrawerVisibility({
+    modularDrawerFeatureFlagKey: "lldModularDrawer",
+  });
+
+  const modularDrawerVisible = isModularDrawerVisible({
+    location: ModularDrawerLocation.ADD_ACCOUNT,
+  });
+
   const onAccountSelected = useCallback(
-    (account: Account) => {
+    (account: Account, parentAccount?: Account) => {
       setDrawer();
+
       history.push({
         pathname: "/swap",
         state: {
           defaultAccount: account,
+          defaultAmountFrom: "0",
+          from: history.location.pathname,
+          defaultParentAccount: parentAccount,
         },
+      });
+    },
+    [history],
+  );
+
+  const onAccountSelectedBuy = useCallback(
+    (account: Account) => {
+      setDrawer();
+
+      history.push({
+        pathname: "/exchange",
+        state: account.currency.id
+          ? {
+              currency: account.currency.id,
+              mode: "buy", // buy or sell
+            }
+          : {
+              mode: "onRamp",
+              defaultTicker:
+                account && account.currency.ticker
+                  ? account.currency.ticker.toUpperCase()
+                  : undefined,
+            },
       });
     },
     [history],
@@ -65,15 +105,48 @@ export const useMarketActions = ({ currency, page }: MarketActionsProps) => {
   );
 
   const openAddAccounts = useCallback(() => {
-    if (primaryCurrencyId) {
-      const cryptoOrTokenCurrency = getTokenOrCryptoCurrencyById(primaryCurrencyId);
-
-      console.log("cryptoOrTokenCurrency", cryptoOrTokenCurrency);
-      if (cryptoOrTokenCurrency) {
-        openAddAccountFlow(cryptoOrTokenCurrency, true, onAccountSelected);
+    if (modularDrawerVisible) {
+      openAssetAndAccountDrawer({
+        currencies: currency?.ledgerIds ?? [],
+        onSuccess: (account: AccountLike, parentAccount?: Account) =>
+          onAccountSelected(account as Account, parentAccount),
+        areCurrenciesFiltered: currency?.ledgerIds && currency?.ledgerIds?.length > 0,
+      });
+    } else {
+      const currencyToUse = getTokenOrCryptoCurrencyById(primaryCurrencyId ?? "");
+      if (currencyToUse) {
+        openAddAccountFlow(currencyToUse, true, onAccountSelected);
       }
     }
-  }, [primaryCurrencyId, onAccountSelected, openAddAccountFlow]);
+  }, [
+    onAccountSelected,
+    currency?.ledgerIds,
+    modularDrawerVisible,
+    openAddAccountFlow,
+    primaryCurrencyId,
+  ]);
+
+  const openAddAccountsBuy = useCallback(() => {
+    if (modularDrawerVisible) {
+      openAssetAndAccountDrawer({
+        currencies: currency?.ledgerIds ?? [],
+        onSuccess: (account: AccountLike) => onAccountSelectedBuy(account as Account),
+        areCurrenciesFiltered: currency?.ledgerIds && currency?.ledgerIds?.length > 0,
+      });
+    } else {
+      const currencyToUse = getTokenOrCryptoCurrencyById(primaryCurrencyId ?? "");
+      if (currencyToUse) {
+        openAddAccountFlow(currencyToUse, true, onAccountSelected);
+      }
+    }
+  }, [
+    modularDrawerVisible,
+    currency?.ledgerIds,
+    onAccountSelectedBuy,
+    primaryCurrencyId,
+    openAddAccountFlow,
+    onAccountSelected,
+  ]);
 
   const onBuy = useCallback(
     (e: React.SyntheticEvent<HTMLButtonElement>) => {
@@ -82,23 +155,12 @@ export const useMarketActions = ({ currency, page }: MarketActionsProps) => {
       setTrackingSource(page);
       // PTX smart routing redirect to live app or to native implementation
 
-      history.push({
-        pathname: "/exchange",
-        state: primaryCurrencyId
-          ? {
-              currency: primaryCurrencyId,
-              mode: "buy", // buy or sell
-            }
-          : {
-              mode: "onRamp",
-              defaultTicker:
-                currency && currency.ticker ? currency.ticker.toUpperCase() : undefined,
-            },
-      });
+      openAddAccountsBuy();
     },
-    [currency, history, primaryCurrencyId, page],
+    [page, openAddAccountsBuy],
   );
 
+  /// most likely working (littlle issue with parent account on some coins TBD)
   const onSwap = useCallback(
     (e: React.SyntheticEvent<HTMLButtonElement>) => {
       if (primaryCurrencyId) {
@@ -119,37 +181,13 @@ export const useMarketActions = ({ currency, page }: MarketActionsProps) => {
         console.log("defaultAccount", defaultAccount);
         console.log("currency", currency);
         console.log("primaryCurrencyId", primaryCurrencyId);
-        if (!defaultAccount) return openAddAccounts();
-
-        // Find the currency object for the swap
-        const cryptoOrTokenCurrency = getTokenOrCryptoCurrencyById(primaryCurrencyId);
-
-        history.push({
-          pathname: "/swap",
-          state: {
-            defaultCurrency: cryptoOrTokenCurrency,
-            defaultAccount,
-            defaultAmountFrom: "0",
-            defaultParentAccount:
-              "parentId" in defaultAccount && defaultAccount.parentId
-                ? flattenedAccounts.find(a => a.id === defaultAccount.parentId)
-                : null,
-            from: history.location.pathname,
-          },
-        });
+        return openAddAccounts();
       }
     },
-    [
-      primaryCurrencyId,
-      currency,
-      page,
-      swapDefaultTrack,
-      flattenedAccounts,
-      openAddAccounts,
-      history,
-    ],
+    [primaryCurrencyId, currency, page, swapDefaultTrack, flattenedAccounts, openAddAccounts],
   );
 
+  //OK
   const onStake = useCallback(
     (e: React.SyntheticEvent<HTMLButtonElement>) => {
       e.preventDefault();
@@ -163,12 +201,12 @@ export const useMarketActions = ({ currency, page }: MarketActionsProps) => {
       });
       setTrackingSource(page);
       startStakeFlow({
-        currencies: primaryCurrencyId ? [primaryCurrencyId] : undefined,
+        currencies: currency?.ledgerIds ?? [],
         source: page,
         returnTo: history.location.pathname,
       });
     },
-    [primaryCurrencyId, currency?.ticker, page, startStakeFlow, history.location.pathname],
+    [currency?.ledgerIds, currency?.ticker, page, startStakeFlow, history.location.pathname],
   );
 
   const availableOnBuy = useMemo(
@@ -180,11 +218,9 @@ export const useMarketActions = ({ currency, page }: MarketActionsProps) => {
     [currency, currenciesForSwapAllSet],
   );
 
-  const { getCanStakeCurrency } = useStake();
-
   const availableOnStake = useMemo(
-    () => !!primaryCurrencyId && getCanStakeCurrency(primaryCurrencyId),
-    [primaryCurrencyId, getCanStakeCurrency],
+    () => isAvailableOnStake(currency, getCanStakeCurrency),
+    [currency, getCanStakeCurrency],
   );
 
   return {
