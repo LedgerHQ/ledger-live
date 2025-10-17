@@ -197,18 +197,21 @@ describe("Alpaca utils", () => {
       });
     });
 
-    it("handles FEES operation where value = value + fees", () => {
-      const op = {
-        ...baseOp,
-        type: "FEES",
-        value: BigInt(5),
-        tx: { ...baseOp.tx, fees: BigInt(2) },
-      };
+    it.each([["FEES"], ["DELEGATE"], ["UNDELEGATE"]])(
+      "handles %s operation where value = value + fees",
+      operationType => {
+        const op = {
+          ...baseOp,
+          type: operationType,
+          value: BigInt(5),
+          tx: { ...baseOp.tx, fees: BigInt(2) },
+        };
 
-      const result = adaptCoreOperationToLiveOperation(accountId, op);
+        const result = adaptCoreOperationToLiveOperation(accountId, op);
 
-      expect(result.value.toString()).toEqual("7");
-    });
+        expect(result.value.toString()).toEqual("7");
+      },
+    );
 
     it("handles non-FEES/OUT operation where value = value only", () => {
       const op = {

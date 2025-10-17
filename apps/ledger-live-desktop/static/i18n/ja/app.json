@@ -464,12 +464,16 @@
       "apt_description" : "Aptosをスワップするには、Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™、Ledger Stax™など、対応する他のLedgerデバイスをご使用ください。",
       "cosmos_title" : "Ledger Nano S™はCosmosのスワップに対応していません",
       "cosmos_description" : "Cosmosをスワップするには、Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™、Ledger Stax™など、対応する他のLedgerデバイスをご使用ください。",
+      "hedera_title" : "Ledger Nano S™は、Hederaのスワップに対応していません",
+      "hedera_description" : "Hederaをスワップするには、Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™、Ledger Stax™など、対応する他のLedgerデバイスをご使用ください。",
       "osmo_title" : "Ledger Nano S™は、Osmosisのスワップに対応していません",
       "osmo_description" : "Osmosisをスワップするには、Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™、Ledger Stax™など、対応する他のLedgerデバイスをご使用ください。",
       "dydx_title" : "Ledger Nano S™は、dYdXのスワップに対応していません",
       "dydx_description" : "dYdXをスワップするには、Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™、Ledger Stax™など、対応する他のLedgerデバイスをご使用ください。",
       "sui_title" : "Ledger Nano S™は、Suiのスワップに対応していません",
-      "sui_description" : "Suiをスワップするには、Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™、またはLedger Stax™など、他の対応するLedgerデバイスをご使用ください。"
+      "sui_description" : "Suiをスワップするには、Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™、またはLedger Stax™など、他の対応するLedgerデバイスをご使用ください。",
+      "kaspa_title" : "Ledger Nano S™はKaspaのスワップに対応していません",
+      "kaspa_description" : "Kaspaをスワップするには、Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™、Ledger Stax™など、対応する他のLedgerデバイスをご使用ください。"
     },
     "providers" : {
       "title" : "暗号資産のスワップに利用するプロバイダーを選択",
@@ -2246,15 +2250,16 @@
   "receive" : {
     "title" : "受け取る",
     "successTitle" : "安全に共有されたアドレス",
+    "connectToNoah" : "Noahに接続中",
     "steps" : {
       "options" : {
         "fromBank" : {
-          "title" : "銀行口座から",
-          "description" : "USDまたはEURを入金"
+          "title" : "銀行送金経由",
+          "description" : "Cash-to-Stablecoinアカウントでステーブルコインを受け取る。登録が必要です。"
         },
         "fromCrypto" : {
-          "title" : "暗号資産アドレスから",
-          "description" : "暗号資産を受け取る"
+          "title" : "暗号資産アドレス経由",
+          "description" : "別のウォレットから暗号資産を受け取る。"
         }
       },
       "chooseAccount" : {
@@ -5023,6 +5028,12 @@
     },
     "screens" : {
       "welcome" : {
+        "videos" : {
+          "buySell" : "資産を守り、コントロールするためのウォレット",
+          "thousandsCrypto" : "何千種類もの暗号資産を送付・受け取り・スワップ・ステーキング",
+          "secureWallet" : "安心してすべての取引を確認"
+        },
+        "notice" : "続行すると、Ledgerの<Link1>利用規約</Link1>および<Link2>プライバシーポリシー</Link2>に同意したものとみなされます。Ledgerは投資や財務に関する助言を行いません。\nスワップおよびステーキングサービスはサードパーティによって提供されます。",
         "title" : "暗号資産とNFTの最も安全なウォレット",
         "description" : "Ledger Liveで、暗号資産とNFTを安全に管理・購入・運用しましょう。",
         "nextButton" : "はじめる",
@@ -5710,7 +5721,34 @@
     },
     "canton" : {
       "commentPlaceholder" : "任意",
-      "comment" : "コメント"
+      "comment" : "コメント",
+      "addAccount" : {
+        "title" : "Cantonアカウントを追加",
+        "onboard" : {
+          "title" : "初期設定",
+          "newAccount" : "新しいアカウント",
+          "init" : "「続行」をクリックして新しいCantonアカウントを設定してください",
+          "onboarded" : "設定済みアカウント",
+          "success" : "新しいCantonアカウントが作成され、初期設定が完了しました。",
+          "error" : "新しいアカウントの初期設定に失敗しました。もう一度お試しください。",
+          "status" : {
+            "prepare" : "アカウントの初期設定を準備中...",
+            "submit" : "アカウントを設定中…",
+            "default" : "処理中..."
+          }
+        },
+        "auth" : {
+          "title" : "アクセス許可",
+          "validator" : "許可する",
+          "hint" : "このアカウントへの入金は自動的に受け入れます。",
+          "error" : "認証に失敗しました。もう一度お試しください。",
+          "validatorLabel" : "Ledgerバリデーター",
+          "validatorDescription" : "資金の自動受領"
+        },
+        "finish" : {
+          "title" : "確認"
+        }
+      }
     },
     "stellar" : {
       "memo" : "メモ",
@@ -7141,7 +7179,7 @@
         "title" : "パーソナライゼーション",
         "description" : "好みに合った、パーソナライズされた推奨事項やコンテンツを受け取り、マーケティングキャンペーンのパフォーマンスの測定に役立てるため、クリック数、ページ訪問数、コンバージョンデータなどのアプリ使用状況データを共有します。"
       },
-      "share" : "共有する"
+      "validate" : "検証"
     },
     "variantB" : {
       "accept" : "同意する",
