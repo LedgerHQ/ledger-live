@@ -1845,7 +1845,9 @@
       "transferAmount" : "Betrag transferieren",
       "validatorsCount" : "Validatoren ({{number}})",
       "version" : "Version",
-      "accountCreationFee" : "Kontoerstellungsgebühr"
+      "accountCreationFee" : "Kontoerstellungsgebühr",
+      "senderChainId" : "Chain-ID des Absenders",
+      "receiverChainId" : "Chain-ID des Empfängers"
     }
   },
   "operationList" : {
@@ -2388,8 +2390,12 @@
         "nextBlock" : "Nächster Block",
         "suggested" : "Empfohlen",
         "unitVByte" : "{{unit}}/vByte",
+        "nft" : "NFT",
+        "nftQuantity" : "Menge",
         "unitPerByte" : "{{unit}}/Byte",
-        "splExtensionsWarning" : "Du interagierst mit einem Token, das Teil des Token-2022-Programms ist (auch bekannt unter der Bezeichnung „Token Extensions“). Dieses Token birgt gewisse Risiken. <0>Klicke hier</0>, um mehr zu erfahren."
+        "splExtensionsWarning" : "Du interagierst mit einem Token, das Teil des Token-2022-Programms ist (auch bekannt unter der Bezeichnung „Token Extensions“). Dieses Token birgt gewisse Risiken. <0>Klicke hier</0>, um mehr zu erfahren.",
+        "senderChainId" : "Chain-ID des Absenders",
+        "receiverChainId" : "Chain-ID des Empfängers"
       },
       "verification" : {
         "streaming" : {
@@ -6691,6 +6697,10 @@
     "HederaAddAccountError" : {
       "title" : "Ihr Konto wurde nicht hinzugefügt. Bitte versuchen Sie es erneut."
     },
+    "HederaRecipientInvalidChecksum" : {
+      "title" : "Ungültige Adressprüfsumme",
+      "description" : "Die angegebene Adresse weist eine ungültige Prüfsumme auf."
+    },
     "HederaInsufficientFundsForAssociation" : {
       "title" : "Unzureichendes Guthaben",
       "description" : "Nicht ausreichend HBAR, um die Tokenzuordnung zu bezahlen. Es werden HBAR im Wert von mindestens {{requiredWorthInUSD}} benötigt."
@@ -6980,6 +6990,12 @@
     "UnknownDeviceExchangeError" : {
       "title" : "Kommunikationsfehler",
       "description" : "Beim Datenaustausch mit deinem Gerät ist ein Problem aufgetreten. Bitte versuche es noch einmal oder wende dich an den Ledger-Kundenservice, falls das Problem weiterhin besteht."
+    },
+    "RecipientAddressSanctionedError" : {
+      "title" : "Diese Transaktion bezieht sich auf eine gesperrte Wallet-Adresse und kann nicht verarbeitet werden."
+    },
+    "KadenaCrossChainTransfer" : {
+      "title" : "Da dies eine blockchainübergreifende Übertragung ist, kann die Transaktion mehrere Minuten dauern."
     }
   },
   "cryptoOrg" : {
