@@ -1073,6 +1073,10 @@
     "HederaAddAccountError" : {
       "title" : "您的账户尚未添加。请再次尝试。"
     },
+    "HederaRecipientInvalidChecksum" : {
+      "title" : "地址校验和无效",
+      "description" : "提供的地址存在无效的校验和。"
+    },
     "HederaInsufficientFundsForAssociation" : {
       "title" : "余额不足",
       "description" : "HBAR 数额不足以支付代币关联费用。至少需要价值 {{requiredWorthInUSD}} 美元的 HBAR。"
@@ -1220,6 +1224,9 @@
     "AddressesSanctionedError" : {
       "title" : "保障您的安全",
       "description" : "此交易涉及受制裁的钱包地址，无法处理。\n——{{addresses}}"
+    },
+    "KadenaCrossChainTransfer" : {
+      "title" : "这是跨链转移，可能需要几分钟才能完成交易。"
     }
   },
   "crash" : {
@@ -2809,7 +2816,9 @@
       "id" : "Id",
       "autoClaimedRewards" : "自动领取的奖励",
       "stakedAmount" : "权益质押数额",
-      "accountCreationFee" : "账户创建费"
+      "accountCreationFee" : "账户创建费",
+      "senderChainId" : "发送者链 ID",
+      "receiverChainId" : "接收者链 ID"
     },
     "multipleAddresses" : "为什么有多个地址？"
   },
@@ -3768,6 +3777,10 @@
       "history" : {
         "title" : "互换历史记录"
       },
+      "wrongDevice" : {
+        "title" : "Ledger Nano S™ 与 {{provider}} 不兼容",
+        "description" : "Ledger Nano S™ 与 {{provider}} 不兼容。您可以使用 Ledger Nano S Plus™、Ledger Nano X™、Ledger Stax™ 或 Ledger Flex™ 通过 Ledger Live 体验 {{provider}} 的跨链互换"
+      },
       "incompatibility" : {
         "explore_compatible_devices" : "浏览兼容设备",
         "contact_support" : "联系客服",
@@ -4103,6 +4116,7 @@
       "validateMemo" : "验证 Memo",
       "comment" : "备注",
       "validateComment" : "验证备注",
+      "validateChainId" : "验证链 ID",
       "quantity" : "数量"
     },
     "validation" : {
