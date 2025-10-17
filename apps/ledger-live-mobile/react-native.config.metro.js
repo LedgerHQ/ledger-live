@@ -1,8 +1,4 @@
 module.exports = {
-  // Register Re.Pack commands
-  commands: require('@callstack/repack/commands/rspack'),
-  
-  // Maintain existing asset configuration
   assets: [
     "./assets/fonts/",
     "./assets/videos/",
