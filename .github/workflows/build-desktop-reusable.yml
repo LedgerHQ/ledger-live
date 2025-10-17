@@ -87,6 +87,12 @@ jobs:
           registry: jfrog.ledgerlabs.net/artifactory/api/npm/ledger-live-npm-virtual-green
           ignore-scripts: "true"
 
+      - name: Debug excludeLinks
+        run: |
+          cat <<EOF | tee -a .npmrc
+          exclude-links-from-lockfile=false
+          EOF
+
       - name: Build desktop
         id: build-desktop
         uses: LedgerHQ/ledger-live/tools/actions/composites/setup-build-desktop@develop
