@@ -1845,7 +1845,9 @@
       "transferAmount" : "送付額",
       "validatorsCount" : "バリデータ（{{number}}）",
       "version" : "バージョン",
-      "accountCreationFee" : "アカウント作成手数料"
+      "accountCreationFee" : "アカウント作成手数料",
+      "senderChainId" : "送信元チェーンID",
+      "receiverChainId" : "受信先チェーンID"
     }
   },
   "operationList" : {
@@ -2388,8 +2390,12 @@
         "nextBlock" : "次のブロック",
         "suggested" : "提案済み",
         "unitVByte" : "{{unit}}/vbyte",
+        "nft" : "NFT",
+        "nftQuantity" : "数量",
         "unitPerByte" : "{{unit}}/バイト",
-        "splExtensionsWarning" : "お客様は、トークン拡張としても知られる、Token-2022プログラムの一部であるトークンを扱おうとしています。このトークンには特定のリスクが伴います。詳しくは<0>こちら</0>。"
+        "splExtensionsWarning" : "お客様は、トークン拡張としても知られる、Token-2022プログラムの一部であるトークンを扱おうとしています。このトークンには特定のリスクが伴います。詳しくは<0>こちら</0>。",
+        "senderChainId" : "送信元チェーンID",
+        "receiverChainId" : "受信先チェーンID"
       },
       "verification" : {
         "streaming" : {
@@ -6691,6 +6697,10 @@
     "HederaAddAccountError" : {
       "title" : "アカウントが追加されていません。もう一度お試しください。"
     },
+    "HederaRecipientInvalidChecksum" : {
+      "title" : "アドレスのチェックサムが無効です",
+      "description" : "入力されたアドレスのチェックサムが無効です"
+    },
     "HederaInsufficientFundsForAssociation" : {
       "title" : "残高不足",
       "description" : "トークンの関連付けに必要なHBARが不足しています。少なくとも${{requiredWorthInUSD}}相当のHBARが必要です。"
@@ -6980,6 +6990,12 @@
     "UnknownDeviceExchangeError" : {
       "title" : "通信エラー",
       "description" : "デバイスとの情報交換中に問題が発生しました。問題が解決しない場合は、再度お試しいただくか、Ledgerサポートにご連絡ください。"
+    },
+    "RecipientAddressSanctionedError" : {
+      "title" : "このトランザクションには制裁ウォレットアドレスが関係しており、処理できません。"
+    },
+    "KadenaCrossChainTransfer" : {
+      "title" : "この取引はクロスチェーン転送のため、完了に数分かかることがあります。"
     }
   },
   "cryptoOrg" : {
