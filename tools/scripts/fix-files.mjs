@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 import { exec } from "child_process";
-import { resolve, relative } from "path";
+import { resolve } from "path";
 import { promisify } from "util";
 
 const execAsync = promisify(exec);
@@ -57,42 +57,23 @@ if (eslintArgs) {
   }
 }
 
-// Step 3: TypeCheck
+// Step 3: TypeCheck (file-level, fast)
 const tsFiles = absoluteFiles.filter(f => /\.(ts|tsx)$/.test(f));
 
 if (tsFiles.length === 0) {
   console.log("\nNo TypeScript files to typecheck");
 } else {
   console.log("\nRunning TypeCheck...");
-
-  // Get unique package paths
-  const packagePaths = new Set(
-    tsFiles
-      .map(f => {
-        const rel = relative(WORKSPACE_ROOT, f);
-        const parts = rel.split("/");
-        // Match patterns like libs/package-name, apps/package-name, tools/package-name, etc.
-        if (parts.length >= 2) {
-          return `${parts[0]}/${parts[1]}`;
-        }
-        return null;
-      })
-      .filter(Boolean),
-  );
-
-  if (packagePaths.size === 0) {
-    console.log("No packages to typecheck");
-  } else {
-    const filters = Array.from(packagePaths)
-      .map(path => `--filter=./${path}`)
-      .join(" ");
-
-    try {
-      await execAsync(`pnpm turbo typecheck ${filters}`, { cwd: WORKSPACE_ROOT });
-    } catch (error) {
-      console.error("TypeCheck failed");
-      hasErrors = true;
-    }
+  const tsArgs = tsFiles.map(f => `"${f}"`).join(" ");
+  
+  try {
+    // TypeCheck just the specific files (tsc finds tsconfig automatically)
+    await execAsync(`pnpm tsc --noEmit --skipLibCheck ${tsArgs}`, {
+      cwd: WORKSPACE_ROOT,
+    });
+  } catch (error) {
+    console.error("TypeCheck failed");
+    hasErrors = true;
   }
 }
 
