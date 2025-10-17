@@ -1073,6 +1073,10 @@
     "HederaAddAccountError" : {
       "title" : "Sua conta não foi adicionada. Tente Novamente."
     },
+    "HederaRecipientInvalidChecksum" : {
+      "title" : "Soma de verificação de endereço inválida",
+      "description" : "O endereço fornecido tem uma soma de verificação inválida."
+    },
     "HederaInsufficientFundsForAssociation" : {
       "title" : "Saldo insuficiente",
       "description" : "Não há HBAR suficiente para pagar pela associação do token. É necessário um mínimo de US${{requiredWorthInUSD}} em HBAR."
@@ -1220,6 +1224,9 @@
     "AddressesSanctionedError" : {
       "title" : "Mantendo você em segurança",
       "description" : "Esta transação envolve um endereço de carteira sancionado e não pode ser processada.\n-- {{addresses}}"
+    },
+    "KadenaCrossChainTransfer" : {
+      "title" : "Como se trata de uma transferência cross-chain, a transação pode demorar vários minutos para ser concluída."
     }
   },
   "crash" : {
@@ -2809,7 +2816,9 @@
       "id" : "Id",
       "autoClaimedRewards" : "Recompensas automaticamente resgatadas",
       "stakedAmount" : "Quantia aplicada",
-      "accountCreationFee" : "Taxa de Criação de Conta"
+      "accountCreationFee" : "Taxa de Criação de Conta",
+      "senderChainId" : "ID da cadeia do remetente",
+      "receiverChainId" : "ID da cadeia do destinatário"
     },
     "multipleAddresses" : "Por que múltiplos endereços?"
   },
@@ -3768,6 +3777,10 @@
       "history" : {
         "title" : "Histórico de trocas"
       },
+      "wrongDevice" : {
+        "title" : "A Ledger Nano S™ não é compatível com {{provider}}",
+        "description" : "A Ledger Nano S™ não é compatível com {{provider}}. Você pode usar a Ledger Nano S Plus™, a Ledger Nano X™, Ledger Stax™ ou a Ledger Flex™ para realizar trocas cross-chain via {{provider}} através do Ledger Live"
+      },
       "incompatibility" : {
         "explore_compatible_devices" : "Conheça os dispositivos compatíveis",
         "contact_support" : "Entre em contato com o suporte",
@@ -4103,6 +4116,7 @@
       "validateMemo" : "Validar Memo",
       "comment" : "Comentários",
       "validateComment" : "Validar comentários",
+      "validateChainId" : "Validar ID da cadeia",
       "quantity" : "Quantidade"
     },
     "validation" : {
