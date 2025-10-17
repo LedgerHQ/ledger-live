@@ -30,11 +30,8 @@ import EarnDashboardPage from "./trade/earnDasboard.page";
 
 import path from "path";
 import fs from "fs";
-import { setupEnvironment } from "../helpers/commonHelpers";
 import { InitializationManager, InitOptions } from "../utils/initUtil";
 import { randomUUID } from "crypto";
-
-setupEnvironment();
 
 export type ApplicationOptions = InitOptions;
 

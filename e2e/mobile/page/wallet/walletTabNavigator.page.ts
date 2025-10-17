@@ -1,14 +1,11 @@
-import { ScreenName, NavigatorName } from "~/const";
+import {
+  ScreenName,
+  NavigatorName,
+} from "../../../../apps/ledger-live-mobile/src/const/navigation";
 
 export default class WalletTabNavigatorPage {
-  nftGalleryTab = async () => getElementById(`wallet-tab-${ScreenName.WalletNftGallery}`);
   portfolioTab = async () => getElementById(`wallet-tab-${ScreenName.Portfolio}`);
   marketTab = async () => getElementById(`wallet-tab-${NavigatorName.Market}`);
-
-  @Step("Click on NFT Gallery tab")
-  async navigateToNftGallery() {
-    await tapByElement(await this.nftGalleryTab());
-  }
 
   @Step("Click on Portfolio tab")
   async navigateToPortfolio() {

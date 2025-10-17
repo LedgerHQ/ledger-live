@@ -1,6 +1,6 @@
 import * as path from "path";
 import { FileUtils } from "../../utils/fileUtils";
-import { urls } from "~/utils/urls";
+import { urls } from "../../../../apps/ledger-live-mobile/src/utils/urls";
 
 export default class SettingsHelpPage {
   exportLogsRowId = "export-logs-row";
