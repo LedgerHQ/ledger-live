@@ -45,7 +45,7 @@ jobs:
               image: "win-x64.exe",
               output-name: "win",
             },
-            { name: "macOS", os: "macos-14", image: "mac.dmg", output-name: "mac" },
+            { name: "macOS", os: "pa6-r102-srv-macrunner10", image: "mac.dmg", output-name: "mac" },
           ]
     name: "${{ matrix.config.name }} Build"
     runs-on: ${{ matrix.config.os }}
@@ -86,10 +86,6 @@ jobs:
           token: ${{ steps.jfrog-login.outputs.oidc-token }}
           registry: jfrog.ledgerlabs.net/artifactory/api/npm/ledger-live-npm-virtual-green
           ignore-scripts: "true"
-
-      - name: Debug npmrc
-        shell: bash
-        run: cat .npmrc
 
       - name: Build desktop
         id: build-desktop
