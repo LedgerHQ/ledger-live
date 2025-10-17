@@ -4,7 +4,7 @@ import { Provider } from "@ledgerhq/live-common/e2e/enum/Provider";
 import { normalizeText } from "../../helpers/commonHelpers";
 import fs from "fs/promises";
 import * as path from "path";
-import { FileUtils } from "utils/fileUtils";
+import { FileUtils } from "../../utils/fileUtils";
 
 export default class SwapPage {
   baseLink = "swap";

@@ -1,7 +1,7 @@
 import { Provider } from "@ledgerhq/live-common/e2e/enum/Provider";
 import { getMinimumSwapAmount } from "@ledgerhq/live-common/e2e/swap";
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
-import { retryUntilTimeout } from "utils/retry";
+import { retryUntilTimeout } from "../../utils/retry";
 
 export default class SwapLiveAppPage {
   fromSelector = "from-account-coin-selector";
