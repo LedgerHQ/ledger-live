@@ -21,6 +21,17 @@ describe("DeepLinks Tests", () => {
           });
         },
       ],
+      featureFlags: {
+        ptxSwapLiveAppMobile: {
+          enabled: true,
+          params: {
+            manifest_id:
+              process.env.PRODUCTION === "true"
+                ? "swap-live-app-demo-3"
+                : "swap-live-app-demo-3-stg",
+          },
+        },
+      },
     });
     await app.portfolio.waitForPortfolioPageToLoad();
   });
