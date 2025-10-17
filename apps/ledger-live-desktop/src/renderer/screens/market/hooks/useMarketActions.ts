@@ -8,7 +8,7 @@ import { stakeDefaultTrack } from "../../stake/constants";
 import useStakeFlow from "../../stake";
 import { useGetSwapTrackingProperties } from "../../exchange/Swap2/utils";
 import { accountsSelector } from "~/renderer/reducers/accounts";
-import { flattenAccounts } from "@ledgerhq/live-common/account/index";
+import { flattenAccounts, getAccountCurrency } from "@ledgerhq/live-common/account/index";
 import { getAvailableAccountsById } from "@ledgerhq/live-common/exchange/swap/utils/index";
 import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/useRampCatalog";
 import { isAvailableOnBuy, isAvailableOnSwap, isAvailableOnStake } from "../utils";
@@ -60,8 +60,11 @@ export const useMarketActions = ({ currency, page }: MarketActionsProps) => {
   });
 
   const onAccountSelected = useCallback(
-    (account: Account, parentAccount?: Account) => {
+    (account: AccountLike, parentAccount?: Account) => {
       setDrawer();
+
+      console.log("account in onAccountSelected", account);
+      console.log("parentAccount in onAccountSelected", parentAccount);
 
       history.push({
         pathname: "/swap",
@@ -77,22 +80,22 @@ export const useMarketActions = ({ currency, page }: MarketActionsProps) => {
   );
 
   const onAccountSelectedBuy = useCallback(
-    (account: Account) => {
+    (account: AccountLike) => {
       setDrawer();
 
+      const currency = getAccountCurrency(account);
+      console.log("currency in onAccountSelectedBuy", currency);
       history.push({
         pathname: "/exchange",
-        state: account.currency.id
+        state: currency.id
           ? {
-              currency: account.currency.id,
+              currency: currency.id,
               mode: "buy", // buy or sell
             }
           : {
               mode: "onRamp",
               defaultTicker:
-                account && account.currency.ticker
-                  ? account.currency.ticker.toUpperCase()
-                  : undefined,
+                currency && currency.ticker ? currency.ticker.toUpperCase() : undefined,
             },
       });
     },
@@ -109,29 +112,31 @@ export const useMarketActions = ({ currency, page }: MarketActionsProps) => {
       openAssetAndAccountDrawer({
         currencies: currency?.ledgerIds ?? [],
         onSuccess: (account: AccountLike, parentAccount?: Account) =>
-          onAccountSelected(account as Account, parentAccount),
+          onAccountSelected(account, parentAccount),
         areCurrenciesFiltered: currency?.ledgerIds && currency?.ledgerIds?.length > 0,
+        useCase: "swap",
       });
     } else {
-      const currencyToUse = getTokenOrCryptoCurrencyById(primaryCurrencyId ?? "");
+      const currencyToUse = getTokenOrCryptoCurrencyById(currency?.id ?? "");
       if (currencyToUse) {
         openAddAccountFlow(currencyToUse, true, onAccountSelected);
       }
     }
   }, [
-    onAccountSelected,
-    currency?.ledgerIds,
     modularDrawerVisible,
+    currency?.ledgerIds,
+    currency?.id,
+    onAccountSelected,
     openAddAccountFlow,
-    primaryCurrencyId,
   ]);
 
   const openAddAccountsBuy = useCallback(() => {
     if (modularDrawerVisible) {
       openAssetAndAccountDrawer({
         currencies: currency?.ledgerIds ?? [],
-        onSuccess: (account: AccountLike) => onAccountSelectedBuy(account as Account),
+        onSuccess: (account: AccountLike) => onAccountSelectedBuy(account),
         areCurrenciesFiltered: currency?.ledgerIds && currency?.ledgerIds?.length > 0,
+        useCase: "buy",
       });
     } else {
       const currencyToUse = getTokenOrCryptoCurrencyById(primaryCurrencyId ?? "");
