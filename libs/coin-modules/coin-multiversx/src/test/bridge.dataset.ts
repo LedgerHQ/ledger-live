@@ -2,8 +2,8 @@ import { InvalidAddressBecauseDestinationIsAlsoSource, NotEnoughBalance } from "
 import type { CurrenciesData, DatasetTest } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 
-import { fromTransactionRaw } from "./transaction";
-import type { Transaction } from "./types";
+import { fromTransactionRaw } from "../transaction";
+import type { Transaction } from "../types";
 
 const TEST_ADDRESS = "erd1vgfp3g7azqjx4wsmtt7067m0l62v3psmqzr24j6xvywj2tlz0gesvyzsq2";
 

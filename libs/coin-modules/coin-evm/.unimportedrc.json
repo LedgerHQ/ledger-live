@@ -21,7 +21,8 @@
     "**/*.test.*",
     "**/*.spec.*",
     "src/datasets/ethereum1.ts",
-    "src/abis/index.ts"
+    "src/abis/index.ts",
+    "src/test/bridge.dataset.ts"
   ],
   "ignoreUnresolved": [
     "@ethersproject/bytes",
