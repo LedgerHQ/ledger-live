@@ -95,13 +95,6 @@ function useUiHook(manifest: AppManifest, tracking: TrackingAPI): UiHook {
 
           // We agree that for useCase, we should send max 25 currencies if provided else use only useCase (e.g. buy)
           const shouldUseCurrencies = (useCase && currencies.length <= 25) || !useCase;
-          const earnAppDrawerConfig: {
-            assets?: Record<string, unknown>;
-            networks?: Record<string, unknown>;
-          } =
-            earnDrawerConfigurationFlag?.enabled && earnDrawerConfigurationFlag.params
-              ? earnDrawerConfigurationFlag.params
-              : {};
 
           const finalDrawerConfiguration = createDrawerConfiguration(drawerConfiguration, useCase);
 

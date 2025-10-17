@@ -49,12 +49,12 @@ export function useDrawerConfiguration() {
 
       return {
         assets: {
-          ...(useCaseConfig?.assets || {}),
-          ...(config?.assets || {}),
+          ...useCaseConfig?.assets,
+          ...config?.assets,
         },
         networks: {
-          ...(useCaseConfig?.networks || {}),
-          ...(config?.networks || {}),
+          ...useCaseConfig?.networks,
+          ...config?.networks,
         },
       };
     },
