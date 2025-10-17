@@ -1845,7 +1845,9 @@
       "transferAmount" : "จำนวนที่โอน",
       "validatorsCount" : "({{number}}) ผู้ตรวจสอบ ",
       "version" : "เวอร์ชัน",
-      "accountCreationFee" : "Account Creation Fee"
+      "accountCreationFee" : "Account Creation Fee",
+      "senderChainId" : "Chain ID ของผู้ส่ง",
+      "receiverChainId" : "Chain ID ของผู้รับ"
     }
   },
   "operationList" : {
@@ -2388,8 +2390,12 @@
         "nextBlock" : "บล็อกถัดไป",
         "suggested" : "แนะนำ",
         "unitVByte" : "{{unit}}/vbyte",
+        "nft" : "NFT",
+        "nftQuantity" : "ปริมาณ",
         "unitPerByte" : "{{unit}}/ไบต์",
-        "splExtensionsWarning" : "คุณกำลังโต้ตอบกับโทเคนที่เป็นส่วนหนึ่งของโปรแกรม Token-2022 หรือที่เรียกว่า Token Extensions โทเคนนี้มาพร้อมกับความเสี่ยง <0>คลิกที่นี่</0>เพื่อเรียนรู้เพิ่มเติม"
+        "splExtensionsWarning" : "คุณกำลังโต้ตอบกับโทเคนที่เป็นส่วนหนึ่งของโปรแกรม Token-2022 หรือที่เรียกว่า Token Extensions โทเคนนี้มาพร้อมกับความเสี่ยง <0>คลิกที่นี่</0>เพื่อเรียนรู้เพิ่มเติม",
+        "senderChainId" : "Chain ID ของผู้ส่ง",
+        "receiverChainId" : "Chain ID ของผู้รับ"
       },
       "verification" : {
         "streaming" : {
@@ -6691,6 +6697,10 @@
     "HederaAddAccountError" : {
       "title" : "ยังไม่ได้เพิ่มบัญชีของคุณ โปรดลองอีกครั้ง"
     },
+    "HederaRecipientInvalidChecksum" : {
+      "title" : "Address Checksum ไม่ถูกต้อง",
+      "description" : "Address ที่ให้มี Checksum ไม่ถูกต้อง"
+    },
     "HederaInsufficientFundsForAssociation" : {
       "title" : "ยอดคงเหลือในบัญชีไม่เพียงพอ",
       "description" : "ยอด HBAR ในบัญชีไม่พอสำหรับการดำเนินการเชื่อมโยงโทเคน ต้องมี HBAR มูลค่าอย่างน้อย ${{requiredWorthInUSD}}"
@@ -6980,6 +6990,12 @@
     "UnknownDeviceExchangeError" : {
       "title" : "เกิดข้อผิดพลาดในการสื่อสาร",
       "description" : "มีข้อผิดพลาดในการส่งข้อมูลไปยังอุปกรณ์ของคุณ โปรดลองอีกครั้ง หรือติดต่อ Ledger Support หากยังคงพบปัญหาอยู่"
+    },
+    "RecipientAddressSanctionedError" : {
+      "title" : "ธุรกรรมนี้เกี่ยวข้องกับ Address ของวอลเล็ตที่ถูกคว่ำบาตร และไม่สามารถดำเนินการได้<br/>"
+    },
+    "KadenaCrossChainTransfer" : {
+      "title" : "การโอนข้ามเชนอาจใช้เวลาหลายนาที โปรดรอสักครู่"
     }
   },
   "cryptoOrg" : {
