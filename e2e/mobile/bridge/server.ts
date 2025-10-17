@@ -4,9 +4,9 @@ import fs from "fs";
 import net from "net";
 import merge from "lodash/merge";
 
-import { NavigatorName } from "~/const";
+import { NavigatorName } from "../../../apps/ledger-live-mobile/src/const";
 import { MessageData, ServerData } from "../../../apps/ledger-live-mobile/e2e/bridge/types";
-import { SettingsSetOverriddenFeatureFlagsPlayload } from "~/actions/types";
+import { SettingsSetOverriddenFeatureFlagsPlayload } from "../../../apps/ledger-live-mobile/src/actions/types";
 import { log as detoxLog } from "detox";
 
 let clientResponse: (data: string) => void;

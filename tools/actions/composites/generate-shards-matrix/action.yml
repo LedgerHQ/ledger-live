@@ -29,6 +29,8 @@ runs:
       shell: bash
       run: |
         TEST_COUNT=$(echo "${{ steps.test-files.outputs.test_files_for_sharding }}" | wc -w)
+        echo "TEST_COUNT=$TEST_COUNT" >> "$GITHUB_ENV"
+
         if [ "${{ github.event_name }}" = "schedule" ]; then
           SHARD_COUNT=12
         elif [[ "${{ github.ref }}" == *"release"* ]]; then
@@ -39,6 +41,52 @@ runs:
         fi
         echo "SHARD_COUNT=$SHARD_COUNT" >> "$GITHUB_ENV"
         echo "Calculated SHARD_COUNT=$SHARD_COUNT for event ${{ github.event_name }} on ref ${{ github.ref }} with $TEST_COUNT tests"
+
+    - name: Calculate intelligent timeouts
+      id: calc-timeouts
+      shell: bash
+      run: |
+        TEST_COUNT=${{ env.TEST_COUNT }}
+        SHARD_COUNT=${{ env.SHARD_COUNT }}
+
+        # Calculate tests per shard for intelligent timeout (simplified distribution)
+        TESTS_PER_SHARD=$(( (TEST_COUNT + SHARD_COUNT - 1) / SHARD_COUNT ))
+
+        echo "Total tests: $TEST_COUNT, Shards: $SHARD_COUNT, Tests per shard: ~$TESTS_PER_SHARD"
+
+        # Calculate timeout for the specific shard count we have
+        case "$SHARD_COUNT" in
+          1|2)
+            IOS_TIMEOUT=60
+            ANDROID_TIMEOUT=45
+            ;;
+          3)
+            # For 3-shards, tests number per shard is variable (min 15 tests per shard)
+            # iOS: 4 minutes per test / 1.5 (2 workers) + 15 min overhead, max 240
+            IOS_TIMEOUT=$(( TESTS_PER_SHARD * 4 * 2 / 3 + 15 ))
+            IOS_TIMEOUT=$(( IOS_TIMEOUT > 240 ? 240 : IOS_TIMEOUT ))
+            
+            # Android 3 minutes per test / 1.5 (2 workers) + 15 min overhead max 180 (Android)
+            ANDROID_TIMEOUT=$(( TESTS_PER_SHARD * 3 * 2 / 3 + 15 ))
+            ANDROID_TIMEOUT=$(( ANDROID_TIMEOUT > 180 ? 180 : ANDROID_TIMEOUT ))
+            
+            echo "Using intelligent timeouts for 3-shard scenario:"
+            echo "  iOS: ${IOS_TIMEOUT} minutes (${TESTS_PER_SHARD} tests per shard)"
+            echo "  Android: ${ANDROID_TIMEOUT} minutes (${TESTS_PER_SHARD} tests per shard)"
+            ;;
+          12)
+            IOS_TIMEOUT=120
+            ANDROID_TIMEOUT=120
+            ;;
+          6|*)
+            IOS_TIMEOUT=180
+            ANDROID_TIMEOUT=180
+            ;;
+        esac
+
+        # Set calculated timeouts in environment
+        echo "ios_timeout=$IOS_TIMEOUT" >> "$GITHUB_OUTPUT"
+        echo "android_timeout=$ANDROID_TIMEOUT" >> "$GITHUB_OUTPUT"
 
     - name: Generate shards matrix JSON
       id: set-matrix
@@ -55,3 +103,9 @@ outputs:
   test_files_for_sharding:
     description: "All test files for sharding (multi-line, both platforms)"
     value: ${{ steps.test-files.outputs.test_files_for_sharding }}
+  ios_timeout:
+    description: "iOS timeout in minutes"
+    value: ${{ steps.calc-timeouts.outputs.ios_timeout }}
+  android_timeout:
+    description: "Android timeout in minutes"
+    value: ${{ steps.calc-timeouts.outputs.android_timeout }}
