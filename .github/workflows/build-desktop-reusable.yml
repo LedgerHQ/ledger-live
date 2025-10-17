@@ -45,7 +45,7 @@ jobs:
               image: "win-x64.exe",
               output-name: "win",
             },
-            { name: "macOS", os: "pa6-r102-srv-macrunner10", image: "mac.dmg", output-name: "mac" },
+            { name: "macOS", os: "pa6-r102-srv-macrunner08", image: "mac.dmg", output-name: "mac" },
           ]
     name: "${{ matrix.config.name }} Build"
     runs-on: ${{ matrix.config.os }}
