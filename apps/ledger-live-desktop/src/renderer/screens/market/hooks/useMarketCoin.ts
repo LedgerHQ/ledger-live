@@ -1,7 +1,6 @@
 import { useSelector, useDispatch } from "react-redux";
 import { useTheme } from "styled-components";
 import { getCurrencyColor } from "~/renderer/getCurrencyColor";
-import { getTokenOrCryptoCurrencyById } from "@ledgerhq/live-common/deposit/helper";
 import {
   useCurrencyChartData,
   useCurrencyData,
@@ -14,6 +13,7 @@ import { setMarketOptions } from "~/renderer/actions/market";
 import { marketParamsSelector } from "~/renderer/reducers/market";
 import { localeSelector, starredMarketCoinsSelector } from "~/renderer/reducers/settings";
 import { removeStarredMarketCoins, addStarredMarketCoins } from "~/renderer/actions/settings";
+import { findCryptoCurrencyByKeyword } from "@ledgerhq/cryptoassets";
 
 export const useMarketCoin = () => {
   const marketParams = useSelector(marketParamsSelector);
@@ -47,11 +47,7 @@ export const useMarketCoin = () => {
       page: Page.MarketCoin,
     });
 
-  // Get the first ledger ID to determine the color
-  const primaryCurrencyId = currency?.ledgerIds?.[0];
-  const cryptoOrTokenCurrency = primaryCurrencyId
-    ? getTokenOrCryptoCurrencyById(primaryCurrencyId)
-    : null;
+  const cryptoOrTokenCurrency = currency ? findCryptoCurrencyByKeyword(currency.name) : null;
 
   const color = cryptoOrTokenCurrency
     ? getCurrencyColor(cryptoOrTokenCurrency, colors.background.main)

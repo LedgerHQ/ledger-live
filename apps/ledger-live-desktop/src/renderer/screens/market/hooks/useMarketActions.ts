@@ -13,16 +13,10 @@ import { getAvailableAccountsById } from "@ledgerhq/live-common/exchange/swap/ut
 import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/useRampCatalog";
 import { isAvailableOnBuy, isAvailableOnSwap, isAvailableOnStake } from "../utils";
 import { useStake } from "LLD/hooks/useStake";
-import {
-  ModularDrawerLocation,
-  openAssetAndAccountDrawer,
-  useModularDrawerVisibility,
-} from "LLD/features/ModularDrawer";
-import { useOpenAssetFlow } from "LLD/features/ModularDrawer/hooks/useOpenAssetFlow";
-import { Account, AccountLike } from "@ledgerhq/types-live";
+import { openAssetAndAccountDrawer } from "LLD/features/ModularDrawer";
+import { AccountLike } from "@ledgerhq/types-live";
 import { setDrawer } from "~/renderer/drawers/Provider";
 import { useFetchCurrencyAll } from "@ledgerhq/live-common/exchange/swap/hooks/index";
-import { getTokenOrCryptoCurrencyById } from "@ledgerhq/live-common/deposit/helper";
 
 export enum Page {
   Market = "Page Market",
@@ -49,34 +43,43 @@ export const useMarketActions = ({ currency, page }: MarketActionsProps) => {
 
   const currenciesForSwapAllSet = useMemo(() => new Set(currenciesAll), [currenciesAll]);
 
-  const primaryCurrencyId = currency?.ledgerIds?.[0];
+  const availableOnBuy = useMemo(
+    () => isAvailableOnBuy(currency, isCurrencyAvailable),
+    [currency, isCurrencyAvailable],
+  );
+  const availableOnSwap = useMemo(
+    () => isAvailableOnSwap(currency, currenciesForSwapAllSet),
+    [currency, currenciesForSwapAllSet],
+  );
 
-  const { isModularDrawerVisible } = useModularDrawerVisibility({
-    modularDrawerFeatureFlagKey: "lldModularDrawer",
-  });
-
-  const modularDrawerVisible = isModularDrawerVisible({
-    location: ModularDrawerLocation.ADD_ACCOUNT,
-  });
+  const availableOnStake = useMemo(
+    () => isAvailableOnStake(currency, getCanStakeCurrency),
+    [currency, getCanStakeCurrency],
+  );
 
   const onAccountSelected = useCallback(
-    (account: AccountLike, parentAccount?: Account) => {
+    (account: AccountLike) => {
       setDrawer();
 
-      console.log("account in onAccountSelected", account);
-      console.log("parentAccount in onAccountSelected", parentAccount);
+      const defaultAccount = getAvailableAccountsById(
+        getAccountCurrency(account)?.id ?? "",
+        flattenedAccounts,
+      ).find(Boolean);
 
       history.push({
         pathname: "/swap",
         state: {
-          defaultAccount: account,
+          defaultAccount: defaultAccount,
           defaultAmountFrom: "0",
           from: history.location.pathname,
-          defaultParentAccount: parentAccount,
+          defaultParentAccount:
+            defaultAccount && "parentId" in defaultAccount && defaultAccount.parentId
+              ? flattenedAccounts.find(a => a.id === defaultAccount.parentId)
+              : null,
         },
       });
     },
-    [history],
+    [history, flattenedAccounts],
   );
 
   const onAccountSelectedBuy = useCallback(
@@ -84,7 +87,6 @@ export const useMarketActions = ({ currency, page }: MarketActionsProps) => {
       setDrawer();
 
       const currency = getAccountCurrency(account);
-      console.log("currency in onAccountSelectedBuy", currency);
       history.push({
         pathname: "/exchange",
         state: currency.id
@@ -102,73 +104,38 @@ export const useMarketActions = ({ currency, page }: MarketActionsProps) => {
     [history],
   );
 
-  const { openAddAccountFlow } = useOpenAssetFlow(
-    { location: ModularDrawerLocation.ADD_ACCOUNT },
-    "market",
-  );
+  const openAddAccountsForSwap = useCallback(() => {
+    openAssetAndAccountDrawer({
+      currencies: currency?.ledgerIds ?? [],
+      onSuccess: onAccountSelected,
+      areCurrenciesFiltered: currency?.ledgerIds && currency?.ledgerIds?.length > 0,
+      useCase: "swap",
+    });
+  }, [currency?.ledgerIds, onAccountSelected]);
 
-  const openAddAccounts = useCallback(() => {
-    if (modularDrawerVisible) {
-      openAssetAndAccountDrawer({
-        currencies: currency?.ledgerIds ?? [],
-        onSuccess: (account: AccountLike, parentAccount?: Account) =>
-          onAccountSelected(account, parentAccount),
-        areCurrenciesFiltered: currency?.ledgerIds && currency?.ledgerIds?.length > 0,
-        useCase: "swap",
-      });
-    } else {
-      const currencyToUse = getTokenOrCryptoCurrencyById(currency?.id ?? "");
-      if (currencyToUse) {
-        openAddAccountFlow(currencyToUse, true, onAccountSelected);
-      }
-    }
-  }, [
-    modularDrawerVisible,
-    currency?.ledgerIds,
-    currency?.id,
-    onAccountSelected,
-    openAddAccountFlow,
-  ]);
-
-  const openAddAccountsBuy = useCallback(() => {
-    if (modularDrawerVisible) {
-      openAssetAndAccountDrawer({
-        currencies: currency?.ledgerIds ?? [],
-        onSuccess: (account: AccountLike) => onAccountSelectedBuy(account),
-        areCurrenciesFiltered: currency?.ledgerIds && currency?.ledgerIds?.length > 0,
-        useCase: "buy",
-      });
-    } else {
-      const currencyToUse = getTokenOrCryptoCurrencyById(primaryCurrencyId ?? "");
-      if (currencyToUse) {
-        openAddAccountFlow(currencyToUse, true, onAccountSelected);
-      }
-    }
-  }, [
-    modularDrawerVisible,
-    currency?.ledgerIds,
-    onAccountSelectedBuy,
-    primaryCurrencyId,
-    openAddAccountFlow,
-    onAccountSelected,
-  ]);
+  const openAddAccountsForBuy = useCallback(() => {
+    openAssetAndAccountDrawer({
+      currencies: currency?.ledgerIds ?? [],
+      onSuccess: (account: AccountLike) => onAccountSelectedBuy(account),
+      areCurrenciesFiltered: currency?.ledgerIds && currency?.ledgerIds?.length > 0,
+      useCase: "buy",
+    });
+  }, [currency?.ledgerIds, onAccountSelectedBuy]);
 
   const onBuy = useCallback(
     (e: React.SyntheticEvent<HTMLButtonElement>) => {
       e.preventDefault();
       e.stopPropagation();
       setTrackingSource(page);
-      // PTX smart routing redirect to live app or to native implementation
 
-      openAddAccountsBuy();
+      openAddAccountsForBuy();
     },
-    [page, openAddAccountsBuy],
+    [page, openAddAccountsForBuy],
   );
 
-  /// most likely working (littlle issue with parent account on some coins TBD)
   const onSwap = useCallback(
     (e: React.SyntheticEvent<HTMLButtonElement>) => {
-      if (primaryCurrencyId) {
+      if (availableOnSwap) {
         e.preventDefault();
         e.stopPropagation();
         track("button_clicked2", {
@@ -179,20 +146,12 @@ export const useMarketActions = ({ currency, page }: MarketActionsProps) => {
         });
         setTrackingSource(page);
 
-        const defaultAccount = getAvailableAccountsById(primaryCurrencyId, flattenedAccounts).find(
-          Boolean,
-        );
-
-        console.log("defaultAccount", defaultAccount);
-        console.log("currency", currency);
-        console.log("primaryCurrencyId", primaryCurrencyId);
-        return openAddAccounts();
+        return openAddAccountsForSwap();
       }
     },
-    [primaryCurrencyId, currency, page, swapDefaultTrack, flattenedAccounts, openAddAccounts],
+    [availableOnSwap, currency, page, swapDefaultTrack, openAddAccountsForSwap],
   );
 
-  //OK
   const onStake = useCallback(
     (e: React.SyntheticEvent<HTMLButtonElement>) => {
       e.preventDefault();
@@ -212,20 +171,6 @@ export const useMarketActions = ({ currency, page }: MarketActionsProps) => {
       });
     },
     [currency?.ledgerIds, currency?.ticker, page, startStakeFlow, history.location.pathname],
-  );
-
-  const availableOnBuy = useMemo(
-    () => isAvailableOnBuy(currency, isCurrencyAvailable),
-    [currency, isCurrencyAvailable],
-  );
-  const availableOnSwap = useMemo(
-    () => isAvailableOnSwap(currency, currenciesForSwapAllSet),
-    [currency, currenciesForSwapAllSet],
-  );
-
-  const availableOnStake = useMemo(
-    () => isAvailableOnStake(currency, getCanStakeCurrency),
-    [currency, getCanStakeCurrency],
   );
 
   return {
