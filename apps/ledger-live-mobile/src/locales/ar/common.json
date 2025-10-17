@@ -1073,6 +1073,10 @@
     "HederaAddAccountError" : {
       "title" : "لم تتم إضافة حسابك. يرجى إعادة المحاولة."
     },
+    "HederaRecipientInvalidChecksum" : {
+      "title" : "مجموع اختباري غير صالح للعنوان",
+      "description" : "العنوان المقدم لديه مجموع اختباري غير صالح."
+    },
     "HederaInsufficientFundsForAssociation" : {
       "title" : "رصيد غير كافٍ",
       "description" : "لا يوجد HBAR كافٍ للدفع مقابل ربط رمز التوكن. مطلوب على الأقل ما يساوي {{requiredWorthInUSD}}$ من HBAR."
@@ -1220,6 +1224,9 @@
     "AddressesSanctionedError" : {
       "title" : "إبقاؤك آمناً",
       "description" : "هذه المعاملة تتضمن عنوان محفظة خاضع لعقوبات ولا يمكن معالجتها.\n-- {{addresses}}"
+    },
+    "KadenaCrossChainTransfer" : {
+      "title" : "حيث إن هذه عملية تحويل عبر سلاسل الكتل المختلفة، فقد تستغرق المعاملة عدة دقائق حتى تتم."
     }
   },
   "crash" : {
@@ -2809,7 +2816,9 @@
       "id" : "المُعرّف",
       "autoClaimedRewards" : "المكافآت المطالب بها تلقائياً",
       "stakedAmount" : "المبلغ المُكدَّس",
-      "accountCreationFee" : "رسوم إنشاء الحساب"
+      "accountCreationFee" : "رسوم إنشاء الحساب",
+      "senderChainId" : "مُعرّف سلسلة المُرسل",
+      "receiverChainId" : "مُعرّف سلسلة المُتلقي"
     },
     "multipleAddresses" : "لماذا عناوين متعددة؟"
   },
@@ -3768,6 +3777,10 @@
       "history" : {
         "title" : "سجلّ المبادلة"
       },
+      "wrongDevice" : {
+        "title" : "™Ledger Nano S ليست متوافقة مع {{provider}}",
+        "description" : "™Ledger Nano S ليست متوافقة مع {{provider}}. يمكنك استخدام ™Ledger Nano S Plus أو ™Ledger Nano X أو ™Ledger Stax أو ™Ledger Flex لتجربة المبادلات عبر سلاسل الكتل المختلفة على {{provider}} عبر Ledger Live"
+      },
       "incompatibility" : {
         "explore_compatible_devices" : "استكشف الأجهزة المتوافقة",
         "contact_support" : "تواصل مع دعم العملاء",
@@ -4103,6 +4116,7 @@
       "validateMemo" : "تحقق من صحة الملاحظة",
       "comment" : "التعليق",
       "validateComment" : "تأكيد التعليق",
+      "validateChainId" : "تأكيد صحة مُعرّف السلسلة",
       "quantity" : "الكمية"
     },
     "validation" : {
