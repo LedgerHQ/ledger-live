@@ -15,7 +15,6 @@ import {
   DelegatedStake,
   StakeObject,
   TransactionBlockData,
-  CoinBalance,
 } from "@mysten/sui/client";
 import { Transaction } from "@mysten/sui/transactions";
 import { BigNumber } from "bignumber.js";
