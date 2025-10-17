@@ -1845,7 +1845,9 @@
       "transferAmount" : "مبلغ التحويل",
       "validatorsCount" : "({{number}}) مدقق",
       "version" : "الإصدار",
-      "accountCreationFee" : "رسوم إنشاء الحساب"
+      "accountCreationFee" : "رسوم إنشاء الحساب",
+      "senderChainId" : "مُعرّف سلسلة المُرسل",
+      "receiverChainId" : "مُعرّف سلسلة المُتلقي"
     }
   },
   "operationList" : {
@@ -2388,8 +2390,12 @@
         "nextBlock" : "الكتلة التالية",
         "suggested" : "مُقترح",
         "unitVByte" : "{{unit}}/بايت افتراضي (vbyte)",
+        "nft" : "NFT",
+        "nftQuantity" : "الكمية",
         "unitPerByte" : "{{unit}}/بايت",
-        "splExtensionsWarning" : "أنت تتفاعل مع رمز توكن يشكل جزءاً من برنامج Token-2022، المعروف أيضاً باسم Token Extensions (ملحقات رموز التوكن). رمز التوكن هذا يأتي مع مخاطر محددة. <0>انقر هنا</0> لمعرفة المزيد."
+        "splExtensionsWarning" : "أنت تتفاعل مع رمز توكن يشكل جزءاً من برنامج Token-2022، المعروف أيضاً باسم Token Extensions (ملحقات رموز التوكن). رمز التوكن هذا يأتي مع مخاطر محددة. <0>انقر هنا</0> لمعرفة المزيد.",
+        "senderChainId" : "مُعرّف سلسلة المُرسل",
+        "receiverChainId" : "مُعرّف سلسلة المُتلقي"
       },
       "verification" : {
         "streaming" : {
@@ -6691,6 +6697,10 @@
     "HederaAddAccountError" : {
       "title" : "لم تتم إضافة حسابك. يرجى إعادة المحاولة."
     },
+    "HederaRecipientInvalidChecksum" : {
+      "title" : "مجموع اختباري غير صالح للعنوان",
+      "description" : "العنوان المقدم لديه مجموع اختباري غير صالح."
+    },
     "HederaInsufficientFundsForAssociation" : {
       "title" : "رصيد غير كافٍ",
       "description" : "لا يوجد HBAR كافٍ للدفع مقابل ربط رمز التوكن. مطلوب على الأقل ما يساوي {{requiredWorthInUSD}}$ من HBAR."
@@ -6980,6 +6990,12 @@
     "UnknownDeviceExchangeError" : {
       "title" : "خطأ في الاتصال",
       "description" : "هناك مشكلة في تبادل المعلومات مع جهازك. يُرجى المحاولة مرةً أخرى أو التواصل مع دعم Ledger إذا استمرت المشكلة."
+    },
+    "RecipientAddressSanctionedError" : {
+      "title" : "هذه المعاملة تتضمن عنوان محفظة خاضع لعقوبات ولا يمكن معالجتها."
+    },
+    "KadenaCrossChainTransfer" : {
+      "title" : "حيث إن هذه عملية تحويل عبر سلاسل الكتل المختلفة، فقد تستغرق المعاملة عدة دقائق حتى تتم."
     }
   },
   "cryptoOrg" : {
