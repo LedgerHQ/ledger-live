@@ -37,6 +37,8 @@ try {
   });
 } catch (error) {
   console.error("Prettier failed");
+  if (error.stdout) console.log(error.stdout);
+  if (error.stderr) console.error(error.stderr);
   hasErrors = true;
 }
 
@@ -49,11 +51,15 @@ const eslintArgs = absoluteFiles
 if (eslintArgs) {
   console.log("\nRunning ESLint...");
   try {
-    await execAsync(`pnpm eslint --fix --cache --no-error-on-unmatched-pattern ${eslintArgs}`, {
-      cwd: WORKSPACE_ROOT,
-    });
+    const { stdout } = await execAsync(
+      `pnpm eslint --fix --cache --no-error-on-unmatched-pattern ${eslintArgs}`,
+      { cwd: WORKSPACE_ROOT },
+    );
+    if (stdout) console.log(stdout);
   } catch (error) {
-    // Warnings are OK
+    // Show warnings/errors but don't fail
+    if (error.stdout) console.log(error.stdout);
+    if (error.stderr) console.error(error.stderr);
   }
 }
 
@@ -65,14 +71,16 @@ if (tsFiles.length === 0) {
 } else {
   console.log("\nRunning TypeCheck...");
   const tsArgs = tsFiles.map(f => `"${f}"`).join(" ");
-  
+
   try {
-    // TypeCheck just the specific files (tsc finds tsconfig automatically)
-    await execAsync(`pnpm tsc --noEmit --skipLibCheck ${tsArgs}`, {
+    const { stdout } = await execAsync(`pnpm tsc --noEmit --skipLibCheck ${tsArgs}`, {
       cwd: WORKSPACE_ROOT,
     });
+    if (stdout) console.log(stdout);
   } catch (error) {
-    console.error("TypeCheck failed");
+    console.error("\nTypeCheck failed:");
+    if (error.stdout) console.log(error.stdout);
+    if (error.stderr) console.error(error.stderr);
     hasErrors = true;
   }
 }
