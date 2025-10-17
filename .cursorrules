@@ -1,0 +1,11 @@
+# Ledger Live Development Rules
+
+## Code Quality Workflow
+
+### After making any code changes, use the fix-files script:
+
+```bash
+pnpm fix-files path/to/file1.ts path/to/file2.tsx
+```
+
+**Important**: Always run `pnpm fix-files` on touched files before considering work complete. This prevents AI/human iteration cycles chasing linter errors.

@@ -72,6 +72,7 @@
     "typecheck": "pnpm turbo typecheck",
     "knip-check": "pnpm turbo knip-check",
     "unimported": "pnpm turbo unimported",
+    "fix-files": "node tools/scripts/fix-files.mjs",
     "desktop": "pnpm --filter ledger-live-desktop",
     "e2e:desktop": "pnpm --filter ledger-live-desktop-e2e-tests",
     "cli": "pnpm --filter live-cli",
