@@ -1845,7 +1845,9 @@
       "transferAmount" : "Сумма",
       "validatorsCount" : "Валидаторов: {{number}}",
       "version" : "Версия приложения",
-      "accountCreationFee" : "Комиссия за создание счёта"
+      "accountCreationFee" : "Комиссия за создание счёта",
+      "senderChainId" : "ID цепочки отправителя",
+      "receiverChainId" : "ID цепочки получателя"
     }
   },
   "operationList" : {
@@ -2388,8 +2390,12 @@
         "nextBlock" : "Следующий блок",
         "suggested" : "Рекомендовано",
         "unitVByte" : "{{unit}}/вБайт",
+        "nft" : "NFT",
+        "nftQuantity" : "Количество",
         "unitPerByte" : "{{unit}}/байт",
-        "splExtensionsWarning" : "Вы взаимодействуете с токеном, который является составляющей программы Token-2022 или «Расширения токенов». Это несёт определённые риски. <0>Нажмите здесь</0> для подробностей."
+        "splExtensionsWarning" : "Вы взаимодействуете с токеном, который является составляющей программы Token-2022 или «Расширения токенов». Это несёт определённые риски. <0>Нажмите здесь</0> для подробностей.",
+        "senderChainId" : "ID цепочки отправителя",
+        "receiverChainId" : "ID цепочки получателя"
       },
       "verification" : {
         "streaming" : {
@@ -6691,6 +6697,10 @@
     "HederaAddAccountError" : {
       "title" : "Не удалось добавить счёт. Пожалуйста, попробуйте ещё раз."
     },
+    "HederaRecipientInvalidChecksum" : {
+      "title" : "Неправильный адрес контрольной суммы",
+      "description" : "У указанного адреса неправильная контрольная сумма."
+    },
     "HederaInsufficientFundsForAssociation" : {
       "title" : "Недостаточный баланс",
       "description" : "Недостаточно HBAR для оплаты привязки токена. Требуется не меньше {{requiredWorthInUSD}}$ в HBAR."
@@ -6980,6 +6990,12 @@
     "UnknownDeviceExchangeError" : {
       "title" : "Ошибка связи",
       "description" : "Возникла ошибка при обмене данными с вашим устройством. Повторите попытку или обратитесь в Поддержку Ledger, если проблема не уходит."
+    },
+    "RecipientAddressSanctionedError" : {
+      "title" : "Эта транзакция использует адрес кошелька из санкционных списков и не может быть проведена."
+    },
+    "KadenaCrossChainTransfer" : {
+      "title" : "На проведение транзакции может уйти несколько минут, поскольку это кроссчейн-операция."
     }
   },
   "cryptoOrg" : {
