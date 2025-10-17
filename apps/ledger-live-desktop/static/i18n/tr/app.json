@@ -1845,7 +1845,9 @@
       "transferAmount" : "Transfer Tutarı",
       "validatorsCount" : "Doğrulayıcılar ({{number}})",
       "version" : "Sürüm",
-      "accountCreationFee" : "Hesap Oluşturma Ücreti"
+      "accountCreationFee" : "Hesap Oluşturma Ücreti",
+      "senderChainId" : "Gönderen Zincir Kimliği",
+      "receiverChainId" : "Alıcı Zincir Kimliği"
     }
   },
   "operationList" : {
@@ -2388,8 +2390,12 @@
         "nextBlock" : "Sonraki blok",
         "suggested" : "Önerilen",
         "unitVByte" : "{{unit}}/vbyte",
+        "nft" : "NFT",
+        "nftQuantity" : "Miktar",
         "unitPerByte" : "{{unit}}/bayt",
-        "splExtensionsWarning" : "Token Uzantıları (Token Extensions) olarak da bilinen Token-2022 programı kapsamındaki bir token’la etkileşime geçiyorsunuz. Bu token’ın belirli riskleri bulunmaktadır. Daha fazla bilgi edinmek için <0>buraya tıklayın</0>."
+        "splExtensionsWarning" : "Token Uzantıları (Token Extensions) olarak da bilinen Token-2022 programı kapsamındaki bir token’la etkileşime geçiyorsunuz. Bu token’ın belirli riskleri bulunmaktadır. Daha fazla bilgi edinmek için <0>buraya tıklayın</0>.",
+        "senderChainId" : "Gönderen Zincir Kimliği",
+        "receiverChainId" : "Alıcı Zincir Kimliği"
       },
       "verification" : {
         "streaming" : {
@@ -5029,7 +5035,7 @@
     "screens" : {
       "welcome" : {
         "videos" : {
-          "buySell" : "Koruyan ve kontrolün sizde olmasını sağlayan bir cüzdan",
+          "buySell" : "Varlıklarınızı koruyan ve kontrolü size veren bir cüzdan",
           "thousandsCrypto" : "Binlerce kriptoyu gönderin, alın, takas ve stake edin",
           "secureWallet" : "Tüm işlemlerinizi gönül rahatlığıyla doğrulayın"
         },
@@ -6691,6 +6697,10 @@
     "HederaAddAccountError" : {
       "title" : "Hesabınız eklenemedi. Lütfen tekrar deneyin."
     },
+    "HederaRecipientInvalidChecksum" : {
+      "title" : "Geçersiz adres checksum’ı",
+      "description" : "Sağlanan adresin checksum’ı (sağlama toplamı) geçersiz."
+    },
     "HederaInsufficientFundsForAssociation" : {
       "title" : "Yetersiz bakiye",
       "description" : "Token ilişkilendirme ücreti için yeterli HBAR yok. En az ${{requiredWorthInUSD}} değerinde HBAR gerekir."
@@ -6980,6 +6990,12 @@
     "UnknownDeviceExchangeError" : {
       "title" : "İletişim hatası",
       "description" : "Cihazınızla bilgi alışverişi yapılırken bir sorun oluştu. Lütfen tekrar deneyin veya sorun sürerse Ledger Destek ile iletişime geçin."
+    },
+    "RecipientAddressSanctionedError" : {
+      "title" : "Bu işlem, yaptırım uygulanan bir cüzdan adresi içerdiğinden işleme koyulamıyor."
+    },
+    "KadenaCrossChainTransfer" : {
+      "title" : "Bu, zincirler arası bir transfer olduğundan işlemin tamamlanması birkaç dakika sürebilir."
     }
   },
   "cryptoOrg" : {
