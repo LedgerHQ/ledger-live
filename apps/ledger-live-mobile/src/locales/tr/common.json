@@ -1073,6 +1073,10 @@
     "HederaAddAccountError" : {
       "title" : "Hesabınız eklenemedi. Lütfen tekrar deneyin."
     },
+    "HederaRecipientInvalidChecksum" : {
+      "title" : "Geçersiz adres checksum’ı",
+      "description" : "Sağlanan adresin checksum’ı geçersiz."
+    },
     "HederaInsufficientFundsForAssociation" : {
       "title" : "Yetersiz bakiye",
       "description" : "Token ilişkilendirme ücreti için yeterli HBAR yok. En az ${{requiredWorthInUSD}} değerinde HBAR gerekir."
@@ -1220,6 +1224,9 @@
     "AddressesSanctionedError" : {
       "title" : "Sizi güvende tutuyoruz",
       "description" : "Bu işlem, yaptırım uygulanan bir cüzdan adresi içerdiğinden işleme koyulamıyor.\n-- {{addresses}}"
+    },
+    "KadenaCrossChainTransfer" : {
+      "title" : "Bu, zincirler arası bir transfer olduğundan işlemin tamamlanması birkaç dakika sürebilir."
     }
   },
   "crash" : {
@@ -1634,7 +1641,7 @@
       "privacyLink" : "Gizlilik Politikası",
       "and" : "ve",
       "videoTitles" : {
-        "0" : "Koruyan ve kontrolün sizde olmasını sağlayan bir cüzdan",
+        "0" : "Varlıklarınızı koruyan ve kontrolü size veren bir cüzdan",
         "1" : "Binlerce kriptoyu gönderin, alın, takas ve stake edin",
         "2" : "Tüm işlemlerinizi gönül rahatlığıyla doğrulayın"
       },
@@ -2809,7 +2816,9 @@
       "id" : "Kimlik (ID)",
       "autoClaimedRewards" : "Otomatik Alınan Ödüller",
       "stakedAmount" : "Stake edilen miktar",
-      "accountCreationFee" : "Hesap Oluşturma Ücreti"
+      "accountCreationFee" : "Hesap Oluşturma Ücreti",
+      "senderChainId" : "Gönderen Zincir Kimliği",
+      "receiverChainId" : "Alıcı Zincir Kimliği"
     },
     "multipleAddresses" : "Neden birden fazla adres var?"
   },
@@ -3768,6 +3777,10 @@
       "history" : {
         "title" : "Takas geçmişi"
       },
+      "wrongDevice" : {
+        "title" : "Ledger Nano S™, {{provider}} ile uyumlu değildir",
+        "description" : "Ledger Nano S™, {{provider}} ile uyumlu değildir. Ledger Live üzerinden {{provider}} aracılığıyla zincirler arası takas işlemleri yapmak için Ledger Nano S Plus™, Ledger Nano X™, Ledger Stax™ veya Ledger Flex™ cihazlarını kullanabilirsiniz"
+      },
       "incompatibility" : {
         "explore_compatible_devices" : "Uyumlu cihazları keşfedin",
         "contact_support" : "Müşteri destek ekibiyle iletişime geç",
@@ -4103,6 +4116,7 @@
       "validateMemo" : "Memo'yu onayla",
       "comment" : "Yorum",
       "validateComment" : "Yorumu onayla",
+      "validateChainId" : "Zincir kimliğini doğrulayın",
       "quantity" : "Miktar"
     },
     "validation" : {
