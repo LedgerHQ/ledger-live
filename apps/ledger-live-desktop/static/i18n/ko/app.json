@@ -1845,7 +1845,9 @@
       "transferAmount" : "이전 금액",
       "validatorsCount" : "검증인 ({{number}})",
       "version" : "버전",
-      "accountCreationFee" : "계정 생성 수수료"
+      "accountCreationFee" : "계정 생성 수수료",
+      "senderChainId" : "송신 체인 ID",
+      "receiverChainId" : "수신 체인 ID"
     }
   },
   "operationList" : {
@@ -2388,8 +2390,12 @@
         "nextBlock" : "다음 블록",
         "suggested" : "추천",
         "unitVByte" : "{{unit}}/vbyte",
+        "nft" : "NFT",
+        "nftQuantity" : "수량",
         "unitPerByte" : "{{unit}}/바이트",
-        "splExtensionsWarning" : "현재 사용 중인 토큰은 토큰 확장 프로그램(Token Extensions)으로도 알려진 토큰-2022 프로그램의 일부입니다. 이 토큰은 몇 가지 리스크가 수반됩니다. <0>여기</0>를 클릭하여 자세히 알아보세요."
+        "splExtensionsWarning" : "현재 사용 중인 토큰은 토큰 확장 프로그램(Token Extensions)으로도 알려진 토큰-2022 프로그램의 일부입니다. 이 토큰은 몇 가지 리스크가 수반됩니다. <0>여기</0>를 클릭하여 자세히 알아보세요.",
+        "senderChainId" : "송신 체인 ID",
+        "receiverChainId" : "수신 체인 ID"
       },
       "verification" : {
         "streaming" : {
@@ -6691,6 +6697,10 @@
     "HederaAddAccountError" : {
       "title" : "귀하의 계정이 추가되지 않았습니다. 다시 시도해 주세요."
     },
+    "HederaRecipientInvalidChecksum" : {
+      "title" : "유효하지 않은 주소 검사합",
+      "description" : "입력한 주소의 검사합이 유효하지 않습니다."
+    },
     "HederaInsufficientFundsForAssociation" : {
       "title" : "보유 수량 부족",
       "description" : "토큰 연동에 필요한 HBAR가 충분하지 않습니다. 최소 ${{requiredWorthInUSD}} 상당의 HBAR가 필요합니다."
@@ -6980,6 +6990,12 @@
     "UnknownDeviceExchangeError" : {
       "title" : "통신 오류",
       "description" : "장치와 데이터 통신 중 문제가 발생했습니다. 다시 시도해 주세요. 문제가 계속되면 Ledger 지원팀에 문의하세요."
+    },
+    "RecipientAddressSanctionedError" : {
+      "title" : "이 트랜잭션에는 규제 대상인 지갑 주소가 포함되어 있어 처리가 불가능합니다."
+    },
+    "KadenaCrossChainTransfer" : {
+      "title" : "크로스체인 전송이므로 트랜잭션 완료까지 몇 분 정도 소요될 수 있습니다."
     }
   },
   "cryptoOrg" : {
