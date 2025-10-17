@@ -122,6 +122,7 @@ jobs:
         with:
           app_id: ${{ secrets.GH_BOT_APP_ID }}
           private_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
+
       - uses: actions/checkout@v4
         with:
           token: ${{ steps.generate-token.outputs.token }}
@@ -141,13 +142,6 @@ jobs:
         with:
           build_type: ${{ inputs.build_type || 'testing' }}
           turborepo-server-port: ${{ steps.caches.outputs.port }}
-
-      - name: Generate token
-        id: generate-token
-        uses: tibdex/github-app-token@v1
-        with:
-          app_id: ${{ secrets.GH_BOT_APP_ID }}
-          private_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
 
       - name: Retrieving coin apps
         uses: actions/checkout@v4
