@@ -1845,7 +1845,9 @@
       "transferAmount" : "Transferir importe",
       "validatorsCount" : "Validadores ({{number}})",
       "version" : "Versión",
-      "accountCreationFee" : "Tarifa de creación de cuenta"
+      "accountCreationFee" : "Tarifa de creación de cuenta",
+      "senderChainId" : "ID de cadena del remitente",
+      "receiverChainId" : "ID de cadena del receptor"
     }
   },
   "operationList" : {
@@ -2388,8 +2390,12 @@
         "nextBlock" : "Siguiente bloque",
         "suggested" : "Sugerida",
         "unitVByte" : "{{unit}}/vbyte",
+        "nft" : "NFT",
+        "nftQuantity" : "Cantidad",
         "unitPerByte" : "{{unit}}/byte",
-        "splExtensionsWarning" : "Estás interactuando con un token incluido en el programa Token-2022, también conocido como Token Extensions. Este token conlleva riesgos concretos. <0>Haz clic aquí</0> para obtener más información."
+        "splExtensionsWarning" : "Estás interactuando con un token incluido en el programa Token-2022, también conocido como Token Extensions. Este token conlleva riesgos concretos. <0>Haz clic aquí</0> para obtener más información.",
+        "senderChainId" : "ID de cadena del remitente",
+        "receiverChainId" : "ID de cadena del receptor"
       },
       "verification" : {
         "streaming" : {
@@ -6691,6 +6697,10 @@
     "HederaAddAccountError" : {
       "title" : "Tu cuenta no ha sido agregada. Inténtalo de nuevo."
     },
+    "HederaRecipientInvalidChecksum" : {
+      "title" : "Suma de verificación de la dirección no válida",
+      "description" : "La dirección facilitada tiene una suma de verificación no válida."
+    },
     "HederaInsufficientFundsForAssociation" : {
       "title" : "Saldo insuficiente",
       "description" : "No tienes HBAR suficiente para pagar la asociación del token. Se necesita un mínimo de ${{requiredWorthInUSD}} USD en HBAR."
@@ -6980,6 +6990,12 @@
     "UnknownDeviceExchangeError" : {
       "title" : "Error de comunicación",
       "description" : "Se produjo un problema al intercambiar información con tu dispositivo. Inténtalo de nuevo o contacta con el Soporte de Ledger si persiste el problema."
+    },
+    "RecipientAddressSanctionedError" : {
+      "title" : "Esta transacción incluye una dirección de billetera sancionada y no se puede procesar."
+    },
+    "KadenaCrossChainTransfer" : {
+      "title" : "Como esta transferencia es intercadena, la transacción puede tardar varios minutos en completarse."
     }
   },
   "cryptoOrg" : {
