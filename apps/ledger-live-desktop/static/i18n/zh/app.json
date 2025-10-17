@@ -1845,7 +1845,9 @@
       "transferAmount" : "转移数额",
       "validatorsCount" : "验证者 ({{number}})",
       "version" : "版本",
-      "accountCreationFee" : "账户创建费"
+      "accountCreationFee" : "账户创建费",
+      "senderChainId" : "发送者链 ID",
+      "receiverChainId" : "接收者链 ID"
     }
   },
   "operationList" : {
@@ -2388,8 +2390,12 @@
         "nextBlock" : "下一个区块",
         "suggested" : "建议",
         "unitVByte" : "{{unit}}/vbyte",
+        "nft" : "NFT",
+        "nftQuantity" : "数量",
         "unitPerByte" : "{{unit}}/字节",
-        "splExtensionsWarning" : "您正在交互的代币属于 Token-2022 程序（亦称代币扩展程序）。该代币具有特定风险。<0>点击此处</0>了解详情。"
+        "splExtensionsWarning" : "您正在交互的代币属于 Token-2022 程序（亦称代币扩展程序）。该代币具有特定风险。<0>点击此处</0>了解详情。",
+        "senderChainId" : "发送者链 ID",
+        "receiverChainId" : "接收者链 ID"
       },
       "verification" : {
         "streaming" : {
@@ -6691,6 +6697,10 @@
     "HederaAddAccountError" : {
       "title" : "您的账户尚未添加。请再次尝试。"
     },
+    "HederaRecipientInvalidChecksum" : {
+      "title" : "地址校验和无效",
+      "description" : "提供的地址存在无效的校验和。"
+    },
     "HederaInsufficientFundsForAssociation" : {
       "title" : "余额不足",
       "description" : "HBAR 数额不足以支付代币关联费用。至少需要价值 {{requiredWorthInUSD}} 美元的 HBAR。"
@@ -6980,6 +6990,12 @@
     "UnknownDeviceExchangeError" : {
       "title" : "通信错误",
       "description" : "与您的设备交换信息时出现问题。请重试，如果问题仍然存在，请联系 Ledger 客服。"
+    },
+    "RecipientAddressSanctionedError" : {
+      "title" : "此交易涉及受制裁的钱包地址，无法处理。"
+    },
+    "KadenaCrossChainTransfer" : {
+      "title" : "这是跨链转移，可能需要几分钟才能完成交易。"
     }
   },
   "cryptoOrg" : {
