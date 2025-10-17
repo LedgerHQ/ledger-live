@@ -1073,6 +1073,10 @@
     "HederaAddAccountError" : {
       "title" : "Votre compte n’a pas été ajouté. Veuillez réessayer."
     },
+    "HederaRecipientInvalidChecksum" : {
+      "title" : "Checksum de l’adresse non valide",
+      "description" : "Le checksum de l’adresse saisie n’est pas valide."
+    },
     "HederaInsufficientFundsForAssociation" : {
       "title" : "Solde insuffisant",
       "description" : "Solde de HBAR insuffisant pour payer l’association du token. Vous devez disposez d’au moins {{requiredWorthInUSD}} USD en HBAR."
@@ -1220,6 +1224,9 @@
     "AddressesSanctionedError" : {
       "title" : "Restez en sécurité",
       "description" : "Cette transaction implique une adresse de wallet faisant l’objet de sanctions et ne peut pas être traitée.\n-- {{addresses}}"
+    },
+    "KadenaCrossChainTransfer" : {
+      "title" : "Comme il s’agit d’un transfert inter-chaînes, la transaction peut prendre plusieurs minutes."
     }
   },
   "crash" : {
@@ -2809,7 +2816,9 @@
       "id" : "Identifiant (ID)",
       "autoClaimedRewards" : "Récompenses automatiques",
       "stakedAmount" : "Montant staké",
-      "accountCreationFee" : "Frais de création de compte"
+      "accountCreationFee" : "Frais de création de compte",
+      "senderChainId" : "Identifiant de chaîne émetteur",
+      "receiverChainId" : "Identifiant de chaîne bénéficiaire"
     },
     "multipleAddresses" : "Pourquoi plusieurs adresses ?"
   },
@@ -3768,6 +3777,10 @@
       "history" : {
         "title" : "Historique des échanges"
       },
+      "wrongDevice" : {
+        "title" : "Le Ledger Nano S™ n’est pas compatible avec {{provider}}",
+        "description" : "Le Ledger Nano S™ n’est pas compatible avec {{provider}}. Vous pouvez utiliser le Ledger Nano S Plus™, Ledger Nano X™, Ledger Stax™ ou Ledger Flex™ pour vos échanges inter-chaînes sur {{provider}} via Ledger Live."
+      },
       "incompatibility" : {
         "explore_compatible_devices" : "Voir les appareils compatibles",
         "contact_support" : "Contacter l’Assistance",
@@ -4103,6 +4116,7 @@
       "validateMemo" : "Valider le mémo",
       "comment" : "Commentaire",
       "validateComment" : "Valider le commentaire",
+      "validateChainId" : "Validation identifiant de chaîne",
       "quantity" : "Montant"
     },
     "validation" : {
