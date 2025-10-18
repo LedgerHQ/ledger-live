@@ -4267,6 +4267,8 @@
         "header" : "Position(en) gestaked",
         "stake" : "Hinzufügen",
         "staked" : "Delegiert",
+        "estimatedReward" : "Verdiente Rewards",
+        "rewardTooltip" : "Die Verteilung von Sui-Rewards erfolgt in jeder 24-Stunden-Epoche. Die Rewards werden automatisch verzinst und deinem delegierten Stake hinzugefügt.",
         "pending" : "Freigabe ausstehend",
         "available" : "Auszahlbar"
       },
@@ -6690,6 +6692,10 @@
     },
     "HederaAddAccountError" : {
       "title" : "Ihr Konto wurde nicht hinzugefügt. Bitte versuchen Sie es erneut."
+    },
+    "HederaRecipientInvalidChecksum" : {
+      "title" : "Ungültige Adressprüfsumme",
+      "description" : "Die angegebene Adresse weist eine ungültige Prüfsumme auf."
     },
     "HederaInsufficientFundsForAssociation" : {
       "title" : "Unzureichendes Guthaben",
