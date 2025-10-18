@@ -4267,6 +4267,8 @@
         "header" : "스테이킹 포지션",
         "stake" : "추가",
         "staked" : "위임됨",
+        "estimatedReward" : "받은 보상",
+        "rewardTooltip" : "Sui 보상은 에포크(24시간) 주기로 배분되며, 자동으로 복리가 적용되어 위임된 지분에 추가됩니다.",
         "pending" : "보류 중인 릴리스",
         "available" : "출금 가능"
       },
@@ -6690,6 +6692,10 @@
     },
     "HederaAddAccountError" : {
       "title" : "귀하의 계정이 추가되지 않았습니다. 다시 시도해 주세요."
+    },
+    "HederaRecipientInvalidChecksum" : {
+      "title" : "유효하지 않은 주소 검사합",
+      "description" : "입력한 주소의 검사합이 유효하지 않습니다."
     },
     "HederaInsufficientFundsForAssociation" : {
       "title" : "보유 수량 부족",
