@@ -196,7 +196,18 @@ export const getOperationRecipients = (transaction?: TransactionBlockData): stri
         recipients.push(String(input.value));
       }
     });
-    if (isUnstaking(transaction.transaction) || isStaking(transaction.transaction)) return [];
+    if (isStaking(transaction.transaction)) {
+      const address = transaction.transaction.inputs.find(
+        (input: SuiCallArg) => "valueType" in input && input.valueType === "address",
+      );
+      if (address && address.type === "pure" && address.valueType === "address") {
+        // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+        recipients.push(address.value as string);
+      }
+    }
+    if (isUnstaking(transaction.transaction)) {
+      return [];
+    }
     return recipients;
   }
   return [];
