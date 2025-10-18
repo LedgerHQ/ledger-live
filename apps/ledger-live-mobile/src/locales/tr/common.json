@@ -1073,6 +1073,10 @@
     "HederaAddAccountError" : {
       "title" : "Hesabınız eklenemedi. Lütfen tekrar deneyin."
     },
+    "HederaRecipientInvalidChecksum" : {
+      "title" : "Geçersiz adres checksum’ı",
+      "description" : "Sağlanan adresin checksum’ı geçersiz."
+    },
     "HederaInsufficientFundsForAssociation" : {
       "title" : "Yetersiz bakiye",
       "description" : "Token ilişkilendirme ücreti için yeterli HBAR yok. En az ${{requiredWorthInUSD}} değerinde HBAR gerekir."
@@ -1634,7 +1638,7 @@
       "privacyLink" : "Gizlilik Politikası",
       "and" : "ve",
       "videoTitles" : {
-        "0" : "Koruyan ve kontrolün sizde olmasını sağlayan bir cüzdan",
+        "0" : "Varlıklarınızı koruyan ve kontrolü size veren bir cüzdan",
         "1" : "Binlerce kriptoyu gönderin, alın, takas ve stake edin",
         "2" : "Tüm işlemlerinizi gönül rahatlığıyla doğrulayın"
       },
@@ -3767,6 +3771,10 @@
       },
       "history" : {
         "title" : "Takas geçmişi"
+      },
+      "wrongDevice" : {
+        "title" : "Ledger Nano S™, {{provider}} ile uyumlu değildir",
+        "description" : "Ledger Nano S™, {{provider}} ile uyumlu değildir. Ledger Live üzerinden {{provider}} aracılığıyla zincirler arası takas işlemleri yapmak için Ledger Nano S Plus™, Ledger Nano X™, Ledger Stax™ veya Ledger Flex™ cihazlarını kullanabilirsiniz"
       },
       "incompatibility" : {
         "explore_compatible_devices" : "Uyumlu cihazları keşfedin",
@@ -6478,6 +6486,7 @@
   },
   "sui" : {
     "info" : {
+      "estimatedReward" : "Kazanılan ödüller",
       "available" : {
         "title" : "SUI Ledger Live™’da",
         "description" : "Bu tutar, kullanabileceğiniz fondur."
