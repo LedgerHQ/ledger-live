@@ -4,6 +4,7 @@ const { ExpoModulesPlugin } = require("@callstack/repack-plugin-expo-modules");
 const { ReanimatedPlugin } = require("@callstack/repack-plugin-reanimated");
 const path = require("path");
 const TerserPlugin = require("terser-webpack-plugin");
+const webpack = require("webpack");
 const tsconfig = require("./tsconfig.json");
 
 const appDir = __dirname;
@@ -19,6 +20,16 @@ const forcedDependencies = [
   "@tanstack/react-query",
   "react-native-linear-gradient",
 ];
+
+// Helper function to safely resolve dependencies
+const safeResolve = (dep, paths = nodeModulesPaths) => {
+  try {
+    return require.resolve(dep, { paths });
+  } catch (e) {
+    console.warn(`Could not resolve dependency: ${dep}`);
+    return false;
+  }
+};
 
 const nodeModulesPaths = [
   path.resolve(appDir, "node_modules"),
@@ -45,6 +56,8 @@ const config = {
   resolve: {
     ...getResolveOptions(),
     symlinks: true,
+    fullySpecified: false, // Allow imports without extensions
+    preferRelative: false, // Prefer absolute imports over relative
 
     modules: nodeModulesPaths,
     extensions: [".js", ".jsx", ".ts", ".tsx", ".json"],
@@ -56,33 +69,41 @@ const config = {
     alias: {
       ...buildTsAlias(tsconfig.compilerOptions.paths),
       ...forcedDependencies.reduce((acc, dep) => {
-        try {
-          acc[dep] = require.resolve(dep, { paths: nodeModulesPaths });
-        } catch (e) {
-          console.warn(`Could not resolve forced dependency: ${dep}`);
+        const resolved = safeResolve(dep);
+        if (resolved) {
+          acc[dep] = resolved;
         }
         return acc;
       }, {}),
-      fs: require.resolve("react-native-level-fs"),
-      net: require.resolve("react-native-tcp-socket"),
+      fs: safeResolve("react-native-level-fs") || false,
+      net: safeResolve("react-native-tcp-socket") || false,
       tls: false,
       http2: false,
       dns: false,
     },
 
     fallback: {
-      fs: require.resolve("react-native-level-fs"),
-      net: require.resolve("react-native-tcp-socket"),
+      fs: safeResolve("react-native-level-fs") || false,
+      net: safeResolve("react-native-tcp-socket") || false,
       tls: false,
       http2: false,
       dns: false,
       child_process: false,
-      crypto: require.resolve("react-native-fast-crypto"),
-      buffer: require.resolve("buffer"),
-      util: require.resolve("util"),
-      assert: require.resolve("assert"),
-      url: require.resolve("url"),
-      events: require.resolve("events"),
+      crypto: safeResolve("react-native-fast-crypto") || false,
+      buffer: safeResolve("buffer") || false,
+      util: safeResolve("util") || false,
+      assert: safeResolve("assert") || false,
+      url: safeResolve("url") || false,
+      events: safeResolve("events") || false,
+      // Add missing dependencies with safe resolution
+      shallowequal: safeResolve("shallowequal") || false,
+      tapable: safeResolve("tapable") || false,
+      "@tanstack/query-core": safeResolve("@tanstack/query-core") || false,
+      // React Native internal modules
+      "react-native/Libraries/Image/AssetRegistry": false,
+      "react-native/Libraries/Image/AssetSourceResolver": false,
+      "react-native/Libraries/NativeModules/specs/NativeRedBox": false,
+      "react-native/Libraries/Utilities/DevLoadingView": false,
     },
   },
 
@@ -144,6 +165,10 @@ const config = {
   },
 
   plugins: [
+    new webpack.DefinePlugin({
+      __DEV__: JSON.stringify(!IS_PROD),
+    }),
+
     new RepackPlugin({
       context: appDir,
       mode: IS_PROD ? "production" : "development",
@@ -186,6 +211,17 @@ const config = {
   // choisir ce qu'on veut (source-map sûr pour la prod)
   // https://webpack.js.org/configuration/devtool/
   devtool: IS_PROD ? "source-map" : "source-map",
+
+  // Handle pnpm symlink issues
+  watchOptions: {
+    ignored: /node_modules\/\.pnpm/,
+    followSymlinks: false,
+  },
+
+  // Add resolveLoader configuration
+  resolveLoader: {
+    modules: nodeModulesPaths,
+  },
 };
 
 module.exports = config;

@@ -1,38 +1,55 @@
 import path from "node:path";
+import { fileURLToPath } from "node:url";
+// import { readFileSync } from "node:fs";
+import { createRequire } from "node:module";
 import * as Repack from "@callstack/repack";
 import { ExpoModulesPlugin } from "@callstack/repack-plugin-expo-modules";
 import { ReanimatedPlugin } from "@callstack/repack-plugin-reanimated";
-import fs from "fs";
-import { createRequire } from "module";
+import { DefinePlugin } from "@rspack/core";
+// import { cluster } from "node-libs-react-native";
 
+const require = createRequire(import.meta.url);
+const PnpmWorkspaceResolverPlugin = require("./plugins/PnpmWorkspaceResolverPlugin.js");
+
+const __filename = fileURLToPath(import.meta.url);
 const __dirname = Repack.getDirname(import.meta.url);
 const projectRootDir = path.join(__dirname, "..", "..");
+// const symLinksDir = path.join(projectRootDir, "node_modules", ".pnpm");
 
-// Create require function for ES module context
-const require = createRequire(import.meta.url);
+// Read tsconfig for path mappings
+// const tsconfig = JSON.parse(readFileSync(path.join(__dirname, "./tsconfig.json"), "utf8"));
 
-// For sourcemap, devtools etc.
-const _isProduction = process.env.NODE_ENV === "production";
+// const reactNativePath = new URL("./node_modules/react-native", import.meta.url).pathname;
+
+// const forcedDependencies = [
+//   "react-redux",
+//   "react-native",
+//   "react-native-svg",
+//   "styled-components",
+//   "react-native-reanimated",
+//   "@tanstack/react-query",
+//   "react-native-linear-gradient",
+// ];
 
 const nodeModulesPaths = [
   path.resolve(__dirname, "node_modules"),
   path.resolve(projectRootDir, "node_modules"),
-  path.resolve(projectRootDir, "node_modules", ".pnpm"),
 ];
 
-// Add all pnpm package directories to resolve paths
-const pnpmPackagesPath = path.resolve(projectRootDir, "node_modules", ".pnpm");
-const additionalResolvePaths = [];
+// const buildTsAlias = conf =>
+//   Object.keys(conf).reduce(
+//     (acc, moduleName) => ({
+//       ...acc,
+//       [moduleName.replace("/*", "")]: path.resolve(
+//         __dirname,
+//         conf[moduleName][0].replace("/*", ""),
+//       ),
+//     }),
+//     {},
+//   );
 
-if (fs.existsSync(pnpmPackagesPath)) {
-  const pnpmDirs = fs
-    .readdirSync(pnpmPackagesPath, { withFileTypes: true })
-    .filter(dirent => dirent.isDirectory())
-    .map(dirent => path.resolve(pnpmPackagesPath, dirent.name, "node_modules"));
-
-  additionalResolvePaths.push(...pnpmDirs);
-}
-
+const isProduction = process.env.NODE_ENV === "production";
+// console.log(isProduction);
 /**
  * Rspack configuration enhanced with Re.Pack defaults for React Native.
  *
@@ -40,76 +57,106 @@ if (fs.existsSync(pnpmPackagesPath)) {
  * Learn about Re.Pack configuration: https://re-pack.dev/docs/guides/configuration
  */
 
-export default Repack.defineRspackConfig(env => {
-  const { mode, context = __dirname, platform } = env;
-  const { getResolveOptions, getJsTransformRules, getAssetTransformRules, RepackPlugin } = Repack;
-
-  return {
-    context,
-    mode,
-    entry: "./index.js",
-    resolve: {
-      ...getResolveOptions({ enablePackageExports: true }),
-      extensions: [".js", ".jsx", ".ts", ".tsx", ".json", ".mjs"],
-      alias: {
-        "@": path.join(context, "./src"),
-        LLM: path.join(context, "./src/newArch"),
-        "@tests": path.join(context, "./__tests__"),
-        "@mocks": path.join(context, "./__mocks__"),
-      },
-      preferRelative: true,
-      mainFields: ["react-native", "browser", "main"],
-      modules: [...nodeModulesPaths, ...additionalResolvePaths],
-      symlinks: false,
-      conditionNames: ["react-native", "browser", "import", "require"],
+export default Repack.defineRspackConfig({
+  context: __dirname,
+  entry: "./index.js",
+  mode: isProduction ? "production" : "development",
+  devServer: {
+    enabled: !isProduction,
+    port: 8081,
+    host: "localhost",
+  },
+  resolve: {
+    ...Repack.getResolveOptions({ enablePackageExports: true }),
+    modules: nodeModulesPaths,
+    extensions: [".js", ".jsx", ".ts", ".tsx", ".json"],
+    mainFields: ["react-native", "browser", "main"],
+    conditionNames: ["require", "react-native", "browser"],
+    symlinks: true,
+    fullySpecified: false, // Allow imports without extensions
+    fallback: {
+      ...require("node-libs-react-native"),
+      fs: require.resolve("react-native-level-fs"),
+      net: require.resolve("react-native-tcp-socket"),
+      tls: require.resolve("tls"),
+      "@ledgerhq/ui-shared": "caca",
+      child_process: false,
+      cluster: false,
+      dgram: false,
+      dns: false,
+      readline: false,
+      module: false,
+      repl: false,
+      vm: false,
     },
-    resolveLoader: {
-      symlinks: false,
-      modules: [...nodeModulesPaths, ...additionalResolvePaths],
-      extensions: [".js", ".jsx", ".ts", ".tsx", ".json", ".mjs", ".h"],
-    },
-
-    module: {
-      rules: [
-        ...getJsTransformRules(),
-        ...getAssetTransformRules(),
-        // {
-        //   test: /\.[cm]?[jt]sx?$/,
-        //   exclude: [/node_modules/],
-        //   use: {
-        //     loader: "babel-loader",
-        //     parallel: true,
-        //     options: {
-        //       configFile: path.join(context, "babel.config.js"),
-        //     },
-        //   },
-        //   //type: "javascript/auto",
-        // },
-        {
-          test: Repack.getAssetExtensionsRegExp(
-            Repack.ASSET_EXTENSIONS.filter(ext => ext !== "svg"),
-          ),
-          include: [path.join(context, "./assets/fonts")],
-          use: "@callstack/repack/assets-loader",
+  },
+  module: {
+    rules: [
+      {
+        test: /\.[cm]?[jt]sx?$/,
+        use: {
+          loader: "@callstack/repack/babel-swc-loader",
+          parallel: true,
+          options: {
+            babelrc: true,
+            configFile: true,
+            cacheDirectory: false,
+          },
         },
-        // {
-        //   test: Repack.getAssetExtensionsRegExp(
-        //     Repack.ASSET_EXTENSIONS.filter(ext => ext !== "svg"),
-        //   ),
-        //   include: [path.join(context, "assets/images")],
-        //   use: {
-        //     loader: "@callstack/repack/assets-loader",
-        //     options: { inline: true },
-        //   },
-        // },
-      ],
-    },
-    plugins: [
-      new RepackPlugin(),
-      new ExpoModulesPlugin(),
-      new ReanimatedPlugin({
-        unstable_disableTransform: true,
-      }),
+        type: "javascript/auto",
+      },
+      {
+        test: /\.(png|jpe?g|gif|svg|webp)$/i,
+        type: "asset/resource",
+        generator: {
+          filename: "assets/images/[name].[hash][ext]",
+        },
+      },
+      {
+        test: /\.(woff|woff2|eot|ttf|otf)$/i,
+        type: "asset/resource",
+        generator: {
+          filename: "assets/fonts/[name].[hash][ext]",
+        },
+      },
+      {
+        test: /\.(mp4|webm|ogg|mp3|wav|flac|aac)$/i,
+        type: "asset/resource",
+        generator: {
+          filename: "assets/videos/[name].[hash][ext]",
+        },
+      },
+      {
+        test: /\.json$/,
+        type: "json",
+      },
     ],
-  };
+  },
+  plugins: [
+    new PnpmWorkspaceResolverPlugin({
+      workspaceRoot: projectRootDir,
+      verbose: !isProduction, // Enable verbose logging in development
+    }),
+    new DefinePlugin({
+      __DEV__: JSON.stringify(!isProduction),
+    }),
+    new Repack.RepackPlugin({
+      context: __dirname,
+      mode: isProduction ? "production" : "development",
+      devServer: {
+        enabled: !isProduction,
+        port: 8081,
+        host: "localhost",
+      },
+      assets: [
+        "./assets/fonts/",
+        "./assets/videos/",
+        "node_modules/@ledgerhq/native-ui/lib/assets/fonts/alpha",
+        "node_modules/@ledgerhq/native-ui/lib/assets/fonts/inter",
+      ],
+    }),
+    new ExpoModulesPlugin(),
+    // new ReanimatedPlugin(),
+  ],
+  devtool: isProduction ? "source-map" : "source-map",
 });
