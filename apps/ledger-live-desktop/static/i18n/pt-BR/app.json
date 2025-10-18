@@ -4267,6 +4267,8 @@
         "header" : "Posições de Staking",
         "stake" : "Adicionar",
         "staked" : "Delegado",
+        "estimatedReward" : "Recompensas Recebidas",
+        "rewardTooltip" : "As recompensas Sui são distribuídas a cada época (24h). Elas são automaticamente compostas e adicionadas à seu staking delegado.",
         "pending" : "Liberação Pendente",
         "available" : "Disponíveis para saque"
       },
@@ -6690,6 +6692,10 @@
     },
     "HederaAddAccountError" : {
       "title" : "Sua conta não foi adicionada. Tente Novamente."
+    },
+    "HederaRecipientInvalidChecksum" : {
+      "title" : "Soma de verificação de endereço inválida",
+      "description" : "O endereço fornecido tem uma soma de verificação inválida."
     },
     "HederaInsufficientFundsForAssociation" : {
       "title" : "Saldo insuficiente",
