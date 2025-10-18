@@ -4267,6 +4267,8 @@
         "header" : "ステーキングポジション",
         "stake" : "追加",
         "staked" : "デリゲート",
+        "estimatedReward" : "獲得した報酬",
+        "rewardTooltip" : "Suiの報酬は24時間ごと（エポック）に配布されます。報酬は自動的に再投資（複利運用）され、デリゲートしたステーキングに追加されます。",
         "pending" : "リリース保留中",
         "available" : "引き出し可能"
       },
@@ -6690,6 +6692,10 @@
     },
     "HederaAddAccountError" : {
       "title" : "アカウントが追加されていません。もう一度お試しください。"
+    },
+    "HederaRecipientInvalidChecksum" : {
+      "title" : "アドレスのチェックサムが無効です",
+      "description" : "入力されたアドレスのチェックサムが無効です"
     },
     "HederaInsufficientFundsForAssociation" : {
       "title" : "残高不足",
