@@ -53,24 +53,27 @@ export const useBleDevicesScanning = (enabled: boolean): BleScanningState => {
           if (dead) return;
           setScanningBleError(error);
           log("useBleDevicesScanning", " error", `${error.type}: ${error.message}`);
-          log("useBleDevicesScanning", " error -> calling subscription.unsubscribe()");
+          log("useBleDevicesScanning", " error -> unsubscribing and stopping discovery");
           subscription.unsubscribe();
+          dmk.stopDiscovering();
           setIsScanning(false);
           setScannedDevices([]);
         },
         complete: () => {
           if (dead) return;
-          log("useBleDevicesScanning", " complete -> calling subscription.unsubscribe()");
+          log("useBleDevicesScanning", " complete -> unsubscribing and stopping discovery");
           subscription.unsubscribe();
+          dmk.stopDiscovering();
           setIsScanning(false);
           setScannedDevices([]);
         },
       });
     return () => {
+      log("useBleDevicesScanning", " useEffect cleanup -> unsubscribing and stopping discovery");
       if (!subscription.closed) {
-        log("useBleDevicesScanning", " useEffect cleanup -> calling subscription.unsubscribe()");
         subscription.unsubscribe();
       }
+      dmk.stopDiscovering();
       setIsScanning(false);
       setScannedDevices([]);
       dead = true;
