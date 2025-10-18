@@ -4267,6 +4267,8 @@
         "header" : "质押持仓",
         "stake" : "添加",
         "staked" : "已委托",
+        "estimatedReward" : "已赚取的奖励",
+        "rewardTooltip" : "Sui 奖励每个周期（24 小时）发放一次。这些奖励会自动复利，并添加到您委托的质押本金中。",
         "pending" : "等待解除",
         "available" : "可提取"
       },
@@ -6690,6 +6692,10 @@
     },
     "HederaAddAccountError" : {
       "title" : "您的账户尚未添加。请再次尝试。"
+    },
+    "HederaRecipientInvalidChecksum" : {
+      "title" : "地址校验和无效",
+      "description" : "提供的地址存在无效的校验和。"
     },
     "HederaInsufficientFundsForAssociation" : {
       "title" : "余额不足",
