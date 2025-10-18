@@ -4267,6 +4267,8 @@
         "header" : "مركز (أو مراكز) التكديس",
         "stake" : "إضافة",
         "staked" : "تم التفويض",
+        "estimatedReward" : "المكافآت المكتسبة",
+        "rewardTooltip" : "مكافآت سوي (Sui) يتم توزيعها كل عصر مدته 24 ساعة. إنها تُجمّع تلقائياً وتضاف إلى حصتك المفوضة.",
         "pending" : "بانتظار الإتاحة",
         "available" : "قابل للسحب"
       },
@@ -6690,6 +6692,10 @@
     },
     "HederaAddAccountError" : {
       "title" : "لم تتم إضافة حسابك. يرجى إعادة المحاولة."
+    },
+    "HederaRecipientInvalidChecksum" : {
+      "title" : "مجموع اختباري غير صالح للعنوان",
+      "description" : "العنوان المقدم لديه مجموع اختباري غير صالح."
     },
     "HederaInsufficientFundsForAssociation" : {
       "title" : "رصيد غير كافٍ",
