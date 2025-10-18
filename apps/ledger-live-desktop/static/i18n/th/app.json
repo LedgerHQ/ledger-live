@@ -4267,6 +4267,8 @@
         "header" : "Staking Position",
         "stake" : "เพิ่ม",
         "staked" : "Delegate เรียบร้อยแล้ว",
+        "estimatedReward" : "Reward ที่ได้รับ",
+        "rewardTooltip" : "ระบบจะแจกจ่ายรางวัล Sui ทุก ๆ 24 ชั่วโมงตามรอบ Epoch โดย Reward ดังกล่าวจะถูกนำไปทบต้น และเพิ่มเข้าไปในสเตค (Stake) ที่คุณ Delegate โดยอัตโนมัติ",
         "pending" : "รอการเผยแพร่",
         "available" : "สามารถถอนได้"
       },
@@ -6690,6 +6692,10 @@
     },
     "HederaAddAccountError" : {
       "title" : "ยังไม่ได้เพิ่มบัญชีของคุณ โปรดลองอีกครั้ง"
+    },
+    "HederaRecipientInvalidChecksum" : {
+      "title" : "Address Checksum ไม่ถูกต้อง",
+      "description" : "Address ที่ให้มี Checksum ไม่ถูกต้อง"
     },
     "HederaInsufficientFundsForAssociation" : {
       "title" : "ยอดคงเหลือในบัญชีไม่เพียงพอ",
