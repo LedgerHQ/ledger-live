@@ -1073,6 +1073,10 @@
     "HederaAddAccountError" : {
       "title" : "アカウントが追加されていません。もう一度お試しください。"
     },
+    "HederaRecipientInvalidChecksum" : {
+      "title" : "アドレスのチェックサムが無効です",
+      "description" : "入力されたアドレスのチェックサムが無効です。"
+    },
     "HederaInsufficientFundsForAssociation" : {
       "title" : "残高不足",
       "description" : "トークンの関連付けに必要なHBARが不足しています。少なくとも${{requiredWorthInUSD}}相当のHBARが必要です。"
@@ -3767,6 +3771,10 @@
       },
       "history" : {
         "title" : "スワップ履歴"
+      },
+      "wrongDevice" : {
+        "title" : "Ledger Nano S™は、{{provider}}に対応していません",
+        "description" : "Ledger Nano S™は、{{provider}}に対応していません。Ledger Nano S Plus™、Ledger Nano X™、Ledger Stax™、またはLedger Flex™を使用して、Ledger Liveから{{provider}}でのクロスチェーンスワップが可能です"
       },
       "incompatibility" : {
         "explore_compatible_devices" : "対応デバイスを探す",
@@ -6478,6 +6486,7 @@
   },
   "sui" : {
     "info" : {
+      "estimatedReward" : "獲得した報酬",
       "available" : {
         "title" : "利用可能なSUI",
         "description" : "これは、利用可能額です。"
