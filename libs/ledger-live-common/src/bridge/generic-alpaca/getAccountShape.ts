@@ -91,7 +91,14 @@ export function genericGetAccountShape(network: string, kind: string): GetAccoun
         subOperations,
       });
     });
-    const operations = mergeOps(oldOps, newOpsWithSubs) as OperationCommon[];
+    const confirmedOperations =
+      alpacaApi.refreshOperations && initialAccount?.pendingOperations.length
+        ? await alpacaApi.refreshOperations(initialAccount.pendingOperations)
+        : [];
+    const operations = mergeOps(oldOps, [
+      ...confirmedOperations,
+      ...newOpsWithSubs,
+    ]) as OperationCommon[];
 
     const res = {
       id: accountId,

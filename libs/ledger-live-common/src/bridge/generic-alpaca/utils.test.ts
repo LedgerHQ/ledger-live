@@ -1,5 +1,6 @@
 import {
   adaptCoreOperationToLiveOperation,
+  buildOptimisticOperation,
   cleanedOperation,
   extractBalance,
   findCryptoCurrencyByNetwork,
@@ -11,6 +12,170 @@ import { Account } from "@ledgerhq/types-live";
 import { GenericTransaction, OperationCommon } from "./types";
 
 describe("Alpaca utils", () => {
+  describe("buildOptimisticOperation", () => {
+    it.each([
+      [
+        "coin",
+        "changeTrust",
+        {},
+        {
+          parentType: "OPT_IN",
+          subType: undefined,
+          parentValue: new BigNumber(50),
+        },
+      ],
+      [
+        "coin",
+        "delegate",
+        {},
+        {
+          parentType: "DELEGATE",
+          subType: undefined,
+          parentValue: new BigNumber(50),
+        },
+      ],
+      [
+        "coin",
+        "stake",
+        {},
+        {
+          parentType: "DELEGATE",
+          subType: undefined,
+          parentValue: new BigNumber(50),
+        },
+      ],
+      [
+        "coin",
+        "undelegate",
+        {},
+        {
+          parentType: "UNDELEGATE",
+          subType: undefined,
+          parentValue: new BigNumber(50),
+        },
+      ],
+      [
+        "coin",
+        "unstake",
+        {},
+        {
+          parentType: "UNDELEGATE",
+          subType: undefined,
+          parentValue: new BigNumber(50),
+        },
+      ],
+      [
+        "coin",
+        "send",
+        {},
+        {
+          parentType: "OUT",
+          subType: undefined,
+          parentValue: new BigNumber(50),
+        },
+      ],
+      [
+        "token",
+        "changeTrust",
+        { subAccountId: "sub-account-id" },
+        {
+          parentType: "FEES",
+          subType: "OPT_IN",
+          parentValue: new BigNumber(12),
+        },
+      ],
+      [
+        "token",
+        "delegate",
+        { subAccountId: "sub-account-id" },
+        {
+          parentType: "FEES",
+          subType: "DELEGATE",
+          parentValue: new BigNumber(12),
+        },
+      ],
+      [
+        "token",
+        "stake",
+        { subAccountId: "sub-account-id" },
+        {
+          parentType: "FEES",
+          subType: "DELEGATE",
+          parentValue: new BigNumber(12),
+        },
+      ],
+      [
+        "token",
+        "undelegate",
+        { subAccountId: "sub-account-id" },
+        {
+          parentType: "FEES",
+          subType: "UNDELEGATE",
+          parentValue: new BigNumber(12),
+        },
+      ],
+      [
+        "token",
+        "unstake",
+        { subAccountId: "sub-account-id" },
+        {
+          parentType: "FEES",
+          subType: "UNDELEGATE",
+          parentValue: new BigNumber(12),
+        },
+      ],
+      [
+        "token",
+        "send",
+        { subAccountId: "sub-account-id" },
+        { parentType: "FEES", subType: "OUT", parentValue: new BigNumber(12) },
+      ],
+    ])("builds an optimistic %s operation with %s mode ", (_s, mode, params, expected) => {
+      const operation = buildOptimisticOperation(
+        {
+          id: "parent-account-id",
+          freshAddress: "account-address",
+          subAccounts: [{ id: "sub-account-id" }],
+        } as Account,
+        {
+          mode,
+          amount: new BigNumber(50),
+          fees: new BigNumber(12),
+          recipient: "recipient-address",
+          ...params,
+        } as GenericTransaction,
+      );
+
+      expect(operation).toMatchObject({
+        id: `parent-account-id--${expected.parentType}`,
+        type: expected.parentType,
+        value: expected.parentValue,
+        accountId: "parent-account-id",
+        senders: ["account-address"],
+        recipients: ["recipient-address"],
+        fee: new BigNumber(12),
+        blockHash: null,
+        blockHeight: null,
+        ...(expected.subType
+          ? {
+              subOperations: [
+                {
+                  id: `sub-account-id--${expected.subType}`,
+                  accountId: "sub-account-id",
+                  type: expected.subType,
+                  senders: ["account-address"],
+                  recipients: ["recipient-address"],
+                  value: new BigNumber(50),
+                  blockHash: null,
+                  blockHeight: null,
+                },
+              ],
+            }
+          : {}),
+      });
+    });
+  });
+
   describe("cleanedOperation", () => {
     it("creates a cleaned version of an operation without mutating it", () => {
       const dirty = {
