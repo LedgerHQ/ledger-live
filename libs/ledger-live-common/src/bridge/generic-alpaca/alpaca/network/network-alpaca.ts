@@ -14,6 +14,7 @@ import type {
   Stake,
   Reward,
   CraftedTransaction,
+  Validator,
 } from "@ledgerhq/coin-framework/api/index";
 import network from "@ledgerhq/live-network";
 

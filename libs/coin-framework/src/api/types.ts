@@ -510,8 +510,11 @@ export type AlpacaApi<
   getRewards: (address: string, cursor?: Cursor) => Promise<Page<Reward>>;
   /**
    * Get the list of validators available on the network.
-   * The concrete implementation may return all validators in a single page when
-   * the underlying SDK does not provide cursor-based pagination.
+   * @param cursor a pagination cursor to resume listing (the implementation must guarantee the cursor is not volatile,
+   *         i.e. it can be used long after the last request and still provide consistent results - for instance,
+   *         a date or transaction hash).
+   *         The concrete implementation may return all validators in a single page when the underlying SDK
+   *         does not provide cursor-based pagination.
    */
   getValidators: (cursor?: Cursor) => Promise<Page<Validator>>;
 };
