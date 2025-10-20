@@ -426,7 +426,7 @@ export type Validator = {
   /** Amount of native asset in the pool (in base unit of chain native currency). */
   balance?: bigint | undefined;
 
-  /** Validator commission (floating point number between 0 and 1). */
+  /** Validator commission (a bigint serialized as a string). */
   commissionRate?: string | undefined;
 
   /** Validator Annual Percentage Yield (floating point number between 0 and 1). */
