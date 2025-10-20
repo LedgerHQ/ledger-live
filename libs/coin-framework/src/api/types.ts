@@ -406,6 +406,33 @@ export type Page<T> = {
   next?: Cursor | undefined;
 };
 
+/** A network validator */
+export type Validator = {
+  /** Address of the validator. */
+  address: string;
+
+  /** Human-readable name of the validator. */
+  name: string;
+
+  /** Human-readable description of the validator. */
+  description?: string | undefined;
+
+  /** URL of the entity running the validator. */
+  url?: string | undefined;
+
+  /** URL of the logo for the validator. */
+  logo?: string | undefined;
+
+  /** Amount of native asset in the pool (in base unit of chain native currency). */
+  balance?: bigint | undefined;
+
+  /** Validator commission (floating point number between 0 and 1). */
+  commissionRate?: string | undefined;
+
+  /** Validator Annual Percentage Yield (floating point number between 0 and 1). */
+  apy?: number | undefined;
+};
+
 export type AccountInfo = {
   isNewAccount: boolean;
   balance: string;
@@ -481,6 +508,12 @@ export type AlpacaApi<
    * @see getStakes
    */
   getRewards: (address: string, cursor?: Cursor) => Promise<Page<Reward>>;
+  /**
+   * Get the list of validators available on the network.
+   * The concrete implementation may return all validators in a single page when
+   * the underlying SDK does not provide cursor-based pagination.
+   */
+  getValidators: (cursor?: Cursor) => Promise<Page<Validator>>;
 };
 
 export type ChainSpecificRules = {

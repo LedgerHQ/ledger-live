@@ -10,6 +10,7 @@ import {
   TransactionIntent,
   Cursor,
   Page,
+  Validator,
   Stake,
   Reward,
   TransactionValidation,
@@ -81,6 +82,9 @@ export function createApi(
     },
     getRewards(_address: string, _cursor?: Cursor): Promise<Page<Reward>> {
       throw new Error("getRewards is not supported");
+    },
+    getValidators(_cursor?: Cursor): Promise<Page<Validator>> {
+      throw new Error("getValidators is not supported");
     },
     getSequence: (address: string): Promise<number> => getSequence(currency, address),
     validateIntent: (
