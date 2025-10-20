@@ -4,7 +4,7 @@ const CardContainer = styled.div`
   min-height: 64px;
   padding: 16px;
   display: flex;
-  align-items: center;
+  align-items: start;
   justify-content: space-between;
   gap: 16px;
   width: 100%;
@@ -25,10 +25,6 @@ const Title = styled.div`
   color: ${p => p.theme.colors.neutral.c100};
   font-weight: 600;
   font-size: 14px;
-
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
 `;
 
 const Description = styled.div`
