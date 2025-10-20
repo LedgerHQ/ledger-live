@@ -11,14 +11,12 @@ import {
   craftTransaction,
   getStakes,
   getRewards,
+  getValidators as logicGetValidators,
 } from "../logic";
 import {
   AlpacaApi,
   CraftedTransaction,
   FeeEstimation,
-  Cursor,
-  Page,
-  Validator,
   TransactionIntent,
 } from "@ledgerhq/coin-framework/api/index";
 
@@ -45,9 +43,7 @@ export function createApi(config: SuiConfig): AlpacaApi {
     listOperations: logicListOperations,
     getStakes,
     getRewards,
-    getValidators(_cursor?: Cursor): Promise<Page<Validator>> {
-      throw new Error("getValidators is not supported");
-    },
+    getValidators: logicGetValidators,
   };
 }
 
