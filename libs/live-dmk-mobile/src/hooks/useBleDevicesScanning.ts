@@ -29,7 +29,6 @@ export const useBleDevicesScanning = (enabled: boolean): BleScanningState => {
   const scanningEnabled = dmk !== null && enabled && BleStatesToAllowScanning.includes(bleState);
 
   useEffect(() => {
-    let dead = false;
     if (!scanningEnabled) return;
     setIsScanning(true);
     log("useBleDevicesScanning", " useEffect -> calling dmk.listenToAvailableDevices()");
@@ -39,7 +38,6 @@ export const useBleDevicesScanning = (enabled: boolean): BleScanningState => {
       })
       .subscribe({
         next: devices => {
-          if (dead) return;
           const newDeviceByIds: Record<string, ScannedDevice> = {};
           //Map in record by ID
           devices.forEach(device => {
@@ -50,7 +48,6 @@ export const useBleDevicesScanning = (enabled: boolean): BleScanningState => {
           setScannedDevices(Object.values(newDeviceByIds));
         },
         error: error => {
-          if (dead) return;
           setScanningBleError(error);
           log("useBleDevicesScanning", " error", `${error.type}: ${error.message}`);
           log("useBleDevicesScanning", " error -> unsubscribing and stopping discovery");
@@ -60,7 +57,6 @@ export const useBleDevicesScanning = (enabled: boolean): BleScanningState => {
           setScannedDevices([]);
         },
         complete: () => {
-          if (dead) return;
           log("useBleDevicesScanning", " complete -> unsubscribing and stopping discovery");
           subscription.unsubscribe();
           dmk.stopDiscovering();
@@ -70,13 +66,10 @@ export const useBleDevicesScanning = (enabled: boolean): BleScanningState => {
       });
     return () => {
       log("useBleDevicesScanning", " useEffect cleanup -> unsubscribing and stopping discovery");
-      if (!subscription.closed) {
-        subscription.unsubscribe();
-      }
+      subscription.unsubscribe();
       dmk.stopDiscovering();
       setIsScanning(false);
       setScannedDevices([]);
-      dead = true;
     };
   }, [scanningEnabled]);
 
