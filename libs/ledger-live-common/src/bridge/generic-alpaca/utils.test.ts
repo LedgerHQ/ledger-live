@@ -1,5 +1,6 @@
 import {
   adaptCoreOperationToLiveOperation,
+  cleanedOperation,
   extractBalance,
   findCryptoCurrencyByNetwork,
   transactionToIntent,
@@ -7,9 +8,38 @@ import {
 import BigNumber from "bignumber.js";
 import { Operation as CoreOperation } from "@ledgerhq/coin-framework/api/types";
 import { Account } from "@ledgerhq/types-live";
-import { GenericTransaction } from "./types";
+import { GenericTransaction, OperationCommon } from "./types";
 
 describe("Alpaca utils", () => {
+  describe("cleanedOperation", () => {
+    it("creates a cleaned version of an operation without mutating it", () => {
+      const dirty = {
+        id: "id",
+        hash: "hash",
+        senders: ["sender"],
+        recipients: ["recipient"],
+        extra: { assetAmount: 5, assetReference: "USDC", paginationToken: "pagination" },
+      } as unknown as OperationCommon;
+
+      const clean = cleanedOperation(dirty);
+
+      expect(clean).toEqual({
+        id: "id",
+        hash: "hash",
+        senders: ["sender"],
+        recipients: ["recipient"],
+        extra: { paginationToken: "pagination" },
+      });
+      expect(dirty).toEqual({
+        id: "id",
+        hash: "hash",
+        senders: ["sender"],
+        recipients: ["recipient"],
+        extra: { assetAmount: 5, assetReference: "USDC", paginationToken: "pagination" },
+      });
+    });
+  });
+
   describe("transactionToIntent", () => {
     describe("type", () => {
       it("fallbacks to 'Payment' without a transaction mode", () => {
