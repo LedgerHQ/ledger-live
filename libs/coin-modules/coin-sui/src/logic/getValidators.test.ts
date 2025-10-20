@@ -47,7 +47,9 @@ describe("logic/getValidators", () => {
       },
     ];
 
-    mockedGetValidators.mockResolvedValueOnce(networkValidators as unknown as ReturnType<typeof network.getValidators>);
+    mockedGetValidators.mockResolvedValueOnce(
+      networkValidators as unknown as ReturnType<typeof network.getValidators>,
+    );
 
     const page = await getValidators();
 
@@ -79,12 +81,12 @@ describe("logic/getValidators", () => {
   });
 
   it("handles empty network response", async () => {
-    mockedGetValidators.mockResolvedValueOnce([] as unknown as ReturnType<typeof network.getValidators>);
+    mockedGetValidators.mockResolvedValueOnce(
+      [] as unknown as ReturnType<typeof network.getValidators>,
+    );
 
     const page = await getValidators();
     expect(page.items).toEqual([]);
     expect(page.next).toBeUndefined();
   });
 });
-
-
