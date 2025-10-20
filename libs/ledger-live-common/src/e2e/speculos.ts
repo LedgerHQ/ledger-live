@@ -723,26 +723,23 @@ export function getDeviceLabels(appInfo: AppInfos): DeviceLabelsReturn {
 export async function expectValidAddressDevice(account: Account, addressDisplayed: string) {
   if (account.currency === Currency.SUI_USDC) {
     providePublicKey();
+  }
+  const { receiveVerifyLabel, receiveConfirmLabel } = getDeviceLabels(account.currency.speculosApp);
+  await waitFor(receiveVerifyLabel);
+  if (isTouchDevice()) {
+    const events = await pressUntilTextFound(receiveConfirmLabel);
+    const isAddressCorrect = containsSubstringInEvent(addressDisplayed, events);
+    expect(isAddressCorrect).toBeTruthy();
+    await pressAndRelease(DeviceLabels.CONFIRM);
   } else {
     const { receiveVerifyLabel, receiveConfirmLabel } = getDeviceLabels(
       account.currency.speculosApp,
     );
     await waitFor(receiveVerifyLabel);
-    if (isTouchDevice()) {
-      const events = await pressUntilTextFound(receiveConfirmLabel);
-      const isAddressCorrect = containsSubstringInEvent(addressDisplayed, events);
-      expect(isAddressCorrect).toBeTruthy();
-      await pressAndRelease(DeviceLabels.CONFIRM);
-    } else {
-      const { receiveVerifyLabel, receiveConfirmLabel } = getDeviceLabels(
-        account.currency.speculosApp,
-      );
-      await waitFor(receiveVerifyLabel);
-      const events = await pressUntilTextFound(receiveConfirmLabel);
-      const isAddressCorrect = containsSubstringInEvent(addressDisplayed, events);
-      expect(isAddressCorrect).toBeTruthy();
-      await pressBoth();
-    }
+    const events = await pressUntilTextFound(receiveConfirmLabel);
+    const isAddressCorrect = containsSubstringInEvent(addressDisplayed, events);
+    expect(isAddressCorrect).toBeTruthy();
+    await pressBoth();
   }
 }
 
