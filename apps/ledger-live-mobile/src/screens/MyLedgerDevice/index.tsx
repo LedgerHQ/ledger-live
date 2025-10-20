@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { firstValueFrom, from } from "rxjs";
 import { predictOptimisticState } from "@ledgerhq/live-common/apps/index";
 import { SyncSkipUnderPriority } from "@ledgerhq/live-common/bridge/react/index";
-import { CommonActions } from "@react-navigation/native";
+import { CommonActions, useNavigation } from "@react-navigation/native";
 import getDeviceInfo from "@ledgerhq/live-common/hw/getDeviceInfo";
 import { withDevice } from "@ledgerhq/live-common/hw/deviceAccess";
 import isFirmwareUpdateVersionSupported from "@ledgerhq/live-common/hw/isFirmwareUpdateVersionSupported";
@@ -21,7 +21,11 @@ import { setHasInstalledAnyApp, setLastSeenDeviceInfo } from "~/actions/settings
 import { NavigatorName, ScreenName } from "~/const";
 import FirmwareUpdateScreen from "~/components/FirmwareUpdate";
 import { MyLedgerNavigatorStackParamList } from "~/components/RootNavigator/types/MyLedgerNavigator";
-import { BaseComposite, StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
+import {
+  BaseComposite,
+  BaseNavigation,
+  StackNavigatorProps,
+} from "~/components/RootNavigator/types/helpers";
 import { lastConnectedDeviceSelector } from "~/reducers/settings";
 import { UpdateStep } from "../FirmwareUpdate";
 import {
@@ -50,6 +54,7 @@ const Manager = ({ navigation, route }: NavigationProps) => {
   const { deviceName } = result;
   const [state, dispatch] = useApps(result, device, appsToRestore);
   const reduxDispatch = useDispatch();
+  const baseNavigation = useNavigation<BaseNavigation>();
 
   const lastConnectedDevice = useSelector(lastConnectedDeviceSelector);
   useEffect(() => {
@@ -175,30 +180,21 @@ const Manager = ({ navigation, route }: NavigationProps) => {
 
   const onBackFromNewUpdateUx = useCallback(
     (updateState: UpdateStep) => {
-      navigation.reset({
+      baseNavigation.reset({
         index: 0,
         routes: [
           {
-            name: NavigatorName.Base,
+            name: NavigatorName.Main,
             state: {
               routes: [
                 {
-                  name: NavigatorName.Main,
+                  name: NavigatorName.MyLedger,
                   state: {
                     routes: [
                       {
-                        name: NavigatorName.MyLedger,
-                        state: {
-                          routes: [
-                            {
-                              name: ScreenName.MyLedgerChooseDevice,
-                              params: {
-                                device: ["start", "completed"].includes(updateState)
-                                  ? device
-                                  : undefined,
-                              },
-                            },
-                          ],
+                        name: ScreenName.MyLedgerChooseDevice,
+                        params: {
+                          device: ["start", "completed"].includes(updateState) ? device : undefined,
                         },
                       },
                     ],
@@ -210,7 +206,7 @@ const Manager = ({ navigation, route }: NavigationProps) => {
         ],
       });
     },
-    [device, navigation],
+    [device, baseNavigation],
   );
 
   const appsInstallUninstallWithDependenciesContextValue = useMemo(
