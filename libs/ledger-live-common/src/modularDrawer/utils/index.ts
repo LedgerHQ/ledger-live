@@ -2,17 +2,13 @@ import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 export { groupCurrenciesByProvider } from "./groupCurrenciesByProvider";
 export { sortAccountsByFiatValue } from "./sortAccountsByFiatValue";
 
-function isCorrespondingCurrency(
+const getBaseId = (currency: CryptoOrTokenCurrency) =>
+  currency.type === "CryptoCurrency" ? currency.id : currency.parentCurrency.id;
+
+function belongsToSameNetwork(
   elem: CryptoOrTokenCurrency,
   network: CryptoOrTokenCurrency,
 ): boolean {
-  if (elem.type === "TokenCurrency") {
-    return elem.parentCurrency?.id === network.id || elem.id === network.id;
-  }
-  if (elem.type === "CryptoCurrency") {
-    return elem.id === network.id;
-  }
-  return false;
+  return getBaseId(elem) === getBaseId(network);
 }
-
-export { isCorrespondingCurrency };
+export { getBaseId, belongsToSameNetwork };
