@@ -178,11 +178,11 @@ export function createMockSigner(keyPair: CantonTestKeyPair) {
 
     signTransaction: async (
       _derivationPath: string,
-      data: CantonPreparedTransaction | CantonUntypedVersionedMessage,
+      data: CantonPreparedTransaction | CantonUntypedVersionedMessage | string,
     ) => {
       let hashToSign: string;
 
-      if ("transactions" in data) {
+      if (typeof data === "object" && "transactions" in data) {
         // CantonUntypedVersionedMessage - process multiple topology transactions
         const hashes = data.transactions.map(tx => {
           const txBytes = typeof tx === "string" ? Buffer.from(tx, "hex") : Buffer.from(tx);
@@ -216,10 +216,13 @@ export function createMockSigner(keyPair: CantonTestKeyPair) {
           concatBuffer,
         );
         hashToSign = finalHash.toString("hex");
-      } else {
+      } else if (typeof data === "object") {
         const canonicalHash = computeCanonicalHash(data);
         hashToSign = canonicalHash.toString("hex");
+      } else {
+        hashToSign = data;
       }
+
       const cleanHash = hashToSign.startsWith("0x") ? hashToSign.slice(2) : hashToSign;
       const signature = keyPair.sign(cleanHash);
       return signature;

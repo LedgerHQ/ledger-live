@@ -7,9 +7,12 @@ import { TransportStatusError, UserRefusedOnDevice, LockedDeviceError } from "@l
 import { encodeAccountId } from "@ledgerhq/coin-framework/account/accountId";
 
 import {
+  getNetworkType,
   prepareOnboarding,
   submitOnboarding,
   getPartyByPubKey,
+  prepareTapRequest,
+  submitTapRequest,
   preparePreApprovalTransaction,
   submitPreApprovalTransaction,
   getTransferPreApproval,
@@ -150,6 +153,33 @@ export const buildAuthorizePreapproval =
         }
 
         o.next({ isApproved: true }); // success
+
+        if (getNetworkType(currency) !== "mainnet") {
+          const handleTapRequest = async () => {
+            try {
+              const { serialized, hash } = await prepareTapRequest(currency, { partyId });
+
+              if (serialized && hash) {
+                o.next({ status: AuthorizeStatus.SIGN });
+
+                const signature = await signerContext(deviceId, signer =>
+                  signer.signTransaction(account.freshAddressPath, hash),
+                );
+
+                o.next({ status: AuthorizeStatus.SUBMIT });
+
+                await submitTapRequest(currency, {
+                  partyId,
+                  serialized,
+                  signature,
+                });
+              }
+            } catch (err) {
+              // Tap request failure should not break the pre-approval flow
+            }
+          };
+          await handleTapRequest();
+        }
       }
 
       main().then(

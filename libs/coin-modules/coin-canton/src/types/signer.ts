@@ -21,6 +21,6 @@ export interface CantonSigner {
   getAddress(path: string, display?: boolean): Promise<CantonAddress>;
   signTransaction(
     path: string,
-    data: CantonPreparedTransaction | CantonUntypedVersionedMessage,
+    data: CantonPreparedTransaction | CantonUntypedVersionedMessage | string,
   ): Promise<CantonSignature>;
 }

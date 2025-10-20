@@ -283,7 +283,8 @@ export type OperationInfo =
 const getGatewayUrl = (currency: CryptoCurrency) => coinConfig.getCoinConfig(currency).gatewayUrl;
 const getNodeId = (currency: CryptoCurrency) =>
   coinConfig.getCoinConfig(currency).nodeId || "ledger-live-devnet";
-const getNetworkType = (currency: CryptoCurrency) => coinConfig.getCoinConfig(currency).networkType;
+export const getNetworkType = (currency: CryptoCurrency) =>
+  coinConfig.getCoinConfig(currency).networkType;
 
 const gatewayNetwork = <T, U = unknown>(req: LiveNetworkRequest<U>) => {
   const API_KEY = getEnv("CANTON_API_KEY");
@@ -428,8 +429,64 @@ export async function getOperations(
   return data;
 }
 
+type PrepareTapRequest = {
+  partyId: string;
+  amount?: number;
+};
+
+type PrepareTapResponse = {
+  serialized: string;
+  json: null;
+  hash: string;
+};
+
 enum TransactionType {
+  TAP_REQUEST = "tap-request",
   TRANSFER_PRE_APPROVAL_PROPOSAL = "transfer-pre-approval-proposal",
+}
+
+export async function prepareTapRequest(
+  currency: CryptoCurrency,
+  { partyId, amount = 1000000 }: PrepareTapRequest,
+) {
+  const { data } = await gatewayNetwork<PrepareTapResponse, { amount: string; type: string }>({
+    method: "POST",
+    url: `${getGatewayUrl(currency)}/v1/node/${getNodeId(currency)}/party/${partyId}/transaction/prepare`,
+    data: {
+      amount: amount.toString(),
+      type: TransactionType.TAP_REQUEST,
+    },
+  });
+  return data;
+}
+
+type SubmitTapRequestRequest = {
+  partyId: string;
+  serialized: string;
+  signature: string;
+};
+
+type SubmitTapRequestResponse = {
+  submission_id: string;
+  update_id: string;
+};
+
+export async function submitTapRequest(
+  currency: CryptoCurrency,
+  { partyId, serialized, signature }: SubmitTapRequestRequest,
+) {
+  const { data } = await gatewayNetwork<
+    SubmitTapRequestResponse,
+    Omit<SubmitTapRequestRequest, "partyId">
+  >({
+    method: "POST",
+    url: `${getGatewayUrl(currency)}/v1/node/${getNodeId(currency)}/party/${partyId}/transaction/submit`,
+    data: {
+      serialized,
+      signature,
+    },
+  });
+  return data;
 }
 
 export async function prepareTransferRequest(

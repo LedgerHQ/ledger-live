@@ -6,50 +6,81 @@ This repository contains the Coin Canton module for Ledger Live.
 
 The Coin Canton module provides support for the Canton blockchain within the Ledger Live application
 
-## Protobuf Generation
+## Test setup
 
-The Canton module uses Protocol Buffers (protobuf) for communication with the Ledger device. The protobuf definitions are automatically generated from external repositories.
+Create .env.integ.test file based on .env.integ.test.example
 
-### When to use
+## Protobuf Integration
 
-When new portobuf applied to [gateway](https://github.com/LedgerHQ/canton-protos-scala) and [app-canton](https://github.com/LedgerHQ/app-canton) use the `generate-proto` script to update TypeScript bindings.
+The Canton module uses a binary protocol for all communication between Ledger Live and Ledger hardware devices.
+It leverages Protocol Buffers (protobuf) to split complex DAML data structures into a compact binary format that the device can process efficiently.
+Compared to JSON, this binary format significantly reduces data transfer size and processing time while preserving type safety and data integrity.
+Get more info: [APDU](https://github.com/LedgerHQ/app-canton/blob/develop/doc/APDU.md), [SPLIT_TRANSACTION](https://github.com/LedgerHQ/app-canton/blob/develop/doc/SPLIT_TRANSACTION.md)
 
-### How to use
+### When to Use
+
+After updating protobuf definitions in:
+
+- [gateway](https://github.com/LedgerHQ/canton-protos-scala)
+- [app-canton](https://github.com/LedgerHQ/app-canton)
+
+you must regenerate the TypeScript bindings.
 
 ```bash
-# Navigate to the coin-canton directory
 cd libs/coin-modules/coin-canton
-
-# Run the protobuf generation script
 pnpm generate-proto
 ```
 
-### Description
+### Protobuf Generation Process
 
-The script performs the following operations:
+The generate-proto script temporary downloads `.proto` files and processes them, fix reserved words and naming conflicts, and then generates TypeScript bindings using protobufjs.
 
-1. **Downloads proto files** from external repositories:
+The compiled definitions are saved to `src/types/transaction-proto.json` in ES6 format.
 
-   - `LedgerHQ/app-canton` (develop branch) - Contains device-specific protobuf definitions
-   - `digital-asset/daml` (main branch) - Contains DAML ledger API definitions
+### Key Protobuf Files
 
-2. **Processes proto files** by:
+#### Core Device Communication
 
-   - Replacing reserved words to ensure C-compatible field names
-   - Handling naming conflicts (e.g., `bool bool` → `bool bool_`)
+- **`device.proto`** - Primary device communication protocol
+  - Defines the main interface for Ledger device communication
+  - Contains message types for transaction signing and address derivation
+  - Handles device-specific operations and responses
 
-3. **Generates TypeScript bindings** using `protobufjs`:
+#### DAML Value System
 
-   - Creates `src/types/transaction-proto.json` with compiled protobuf definitions
-   - Uses ES6 modules format for modern JavaScript compatibility
+- **`value.proto`** - DAML value types and structures
 
-4. **Cleans up** temporary files after generation
+  - Defines all DAML data types (Unit, Bool, Int64, Date, Timestamp, Numeric, Party, Text, ContractId, Optional, List, TextMap, GenMap, Record, Variant, Enum)
+  - Handles DAML's type system for smart contract data
+
+- **`value_cb.proto`** - Canton Bridge value types
+  - Canton-specific extensions to DAML value types
+  - Additional types for Canton's privacy-preserving features
+  - Bridge-specific data structures and metadata
+
+#### Interactive Transaction Submission
+
+- **`interactive_submission_common_data.proto`** - Common submission data structures and metadata
+- **`interactive_submission_data.proto`** - Transaction submission structure with versioning
+- **`interactive_submission_data_cb.proto`** - Canton Bridge extensions for consensus mechanism
+
+#### Google Protobuf Standard Types
+
+Standard Google protobuf files providing basic types for message containers, time handling, error reporting, and gRPC status codes used throughout the Canton module.
 
 ### Testing
 
-To test the newly generated bindings, use the `src/common-logic/transaction/split.test.ts` test.
+To verify the protobuf bindings, run the transaction splitting tests:
 
-After updating the bindings, don’t forget to also update:
+```bash
+pnpm test src/common-logic/transaction/split.test.ts
+```
 
-- `/src/test/prepare-transfer.json` — with the updated `token-transfer` request from the [gateway](https://canton-gateway.api.live.ledger-test.com/docs/openapi/redoc/index.html#operation/postV1NodeNode_preset_idPartyParty_idTransactionPrepare)
-- `/src/test/prepare-transfer-serialized.json` — with the serialized version generated using [split_tx_util.py](https://github.com/LedgerHQ/app-canton/blob/develop/scripts/split_tx_util.py)
+These tests validate protobuf serialization, and the logic that splits DAML transactions into device-compatible components.
+
+Test data is stored in two files:
+
+- `src/test/prepare-transfer.json` — a sample transaction request (`token-transfer-request`) from the [Gateway API](https://canton-gateway.api.live.ledger-test.com/docs/openapi/redoc/index.html#operation/postV1NodeNode_preset_idPartyParty_idTransactionPrepare)
+- `src/test/prepare-transfer-serialized.json` — the expected serialized output, generated using [split_tx_util.py](https://github.com/LedgerHQ/app-canton/blob/develop/scripts/split_tx_util.py)
+
+After updating protobuf bindings, make sure both files are refreshed with the latest Gateway data and serialized output.

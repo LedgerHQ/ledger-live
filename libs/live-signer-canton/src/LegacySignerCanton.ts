@@ -48,7 +48,7 @@ export class LegacySignerCanton implements CantonSigner {
 
   async signTransaction(
     path: string,
-    data: CantonPreparedTransaction | CantonUntypedVersionedMessage,
+    data: CantonPreparedTransaction | CantonUntypedVersionedMessage | string,
   ): Promise<CantonSignature> {
     await this.checkAppVersion();
     return this.signer.signTransaction(path, data);

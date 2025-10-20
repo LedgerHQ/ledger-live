@@ -8,6 +8,8 @@ import {
   getPartyById,
   getPartyByPubKey,
   submitOnboarding,
+  prepareTapRequest,
+  submitTapRequest,
   preparePreApprovalTransaction,
   submitPreApprovalTransaction,
   type OnboardingPrepareResponse,
@@ -176,6 +178,48 @@ describe("gateway (devnet)", () => {
         {},
       );
       expect(operations.length).toBeGreaterThanOrEqual(0);
+    });
+  });
+
+  describe("prepareTapRequest", () => {
+    it.skip("should prepare tap request for onboarded party", async () => {
+      // GIVEN
+      const { partyId } = getOnboardedAccount();
+      const amount = 1000;
+
+      // WHEN
+      const response = await prepareTapRequest(mockCurrency, { partyId, amount });
+
+      // THEN
+      expect(response).toHaveProperty("serialized");
+      expect(response).toHaveProperty("hash");
+      expect(typeof response.serialized).toBe("string");
+      expect(typeof response.hash).toBe("string");
+    });
+  });
+
+  describe("submitTapRequest", () => {
+    it.skip("should submit tap request with proper signature", async () => {
+      // GIVEN
+      const { keyPair, partyId } = getOnboardedAccount();
+      const tapPrepareResponse = await prepareTapRequest(mockCurrency, {
+        partyId,
+        amount: 1000,
+      });
+      const tapSignature = keyPair.sign(tapPrepareResponse.hash);
+
+      // WHEN
+      const response = await submitTapRequest(mockCurrency, {
+        partyId,
+        serialized: tapPrepareResponse.serialized,
+        signature: tapSignature,
+      });
+
+      // THEN
+      expect(response).toHaveProperty("submission_id");
+      expect(response).toHaveProperty("update_id");
+      expect(typeof response.submission_id).toBe("string");
+      expect(typeof response.update_id).toBe("string");
     });
   });
 

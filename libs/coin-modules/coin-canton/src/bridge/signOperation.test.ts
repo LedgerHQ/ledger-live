@@ -105,7 +105,10 @@ describe("buildSignOperation", () => {
 
     // THEN
     expect(mockCraftTransaction).toHaveBeenCalled();
-    expect(result).toBeDefined();
-    expect((result as any).signedOperation.signature).toContain("prepared-transaction-signature-");
+    expect(result).toMatchObject({
+      signedOperation: {
+        signature: expect.stringContaining("prepared-transaction-signature-"),
+      },
+    });
   });
 });
