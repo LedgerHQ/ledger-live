@@ -2347,7 +2347,7 @@
       "refused": {
         "title": "Ledger Genuine Check declined",
         "description": "Ledger Genuine Check is mandatory to continue setting up your {{productName}} using the Ledger Wallet app.",
-        "cta": "Resume Check"
+        "cta": "Resume Ledger Genuine Check"
       },
       "error": {
         "title": "Ledger Genuine Check",
