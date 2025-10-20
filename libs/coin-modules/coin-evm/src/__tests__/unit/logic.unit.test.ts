@@ -658,6 +658,7 @@ describe("EVM Family", () => {
                   return { id: "ethereum/erc20/usd__coin" };
                 return undefined;
               },
+              getTokensSyncHash: (_: string) => Promise.resolve("0"),
             }) as CryptoAssetsStore,
         );
         const coinOperation = makeOperation({

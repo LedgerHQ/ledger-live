@@ -31,6 +31,7 @@ setCryptoAssetsStoreGetter(
       findTokenByAddressInCurrency: (_address: string, _currencyId: string) => {
         return undefined;
       },
+      getTokensSyncHash: (_: string) => Promise.resolve("0"),
     }) as CryptoAssetsStore,
 );
 
