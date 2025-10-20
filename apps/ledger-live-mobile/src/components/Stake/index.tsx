@@ -16,7 +16,9 @@ import {
   useModularDrawerController,
   useModularDrawerVisibility,
 } from "LLM/features/ModularDrawer";
-import { useDrawerConfiguration } from "@ledgerhq/live-common/dada-client/hooks/useDrawerConfiguration";
+// TEMPORARY: Commented out due to TypeScript build errors in live-common
+// TODO: Uncomment after fixing TS errors in @ledgerhq/live-common/dada-client/hooks/useDrawerConfiguration
+// import { useDrawerConfiguration } from "@ledgerhq/live-common/dada-client/hooks/useDrawerConfiguration";
 
 const StakeFlow = ({ route }: Props) => {
   const { enabledCurrencies, partnerSupportedAssets } = useStake();
@@ -33,7 +35,9 @@ const StakeFlow = ({ route }: Props) => {
     liveAppId: "earn",
   });
   const { openDrawer } = useModularDrawerController();
-  const { createDrawerConfiguration } = useDrawerConfiguration();
+  // TEMPORARY: Mocked due to TypeScript errors in live-common
+  // const { createDrawerConfiguration } = useDrawerConfiguration();
+  const createDrawerConfiguration = (_a: unknown, _b: string) => ({ drawer: null });
 
   const cryptoCurrencies = useMemo(() => {
     return filterCurrencies(listCurrencies(true), {

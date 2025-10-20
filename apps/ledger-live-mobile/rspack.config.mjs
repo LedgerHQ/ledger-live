@@ -6,7 +6,7 @@ import TerserPlugin from "terser-webpack-plugin";
 import * as Repack from "@callstack/repack";
 import rspack from "@rspack/core";
 import { ExpoModulesPlugin } from "@callstack/repack-plugin-expo-modules";
-import { ReanimatedPlugin } from "@callstack/repack-plugin-reanimated";
+// import { ReanimatedPlugin } from "@callstack/repack-plugin-reanimated";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -71,6 +71,10 @@ const nodePolyfills = {
   module: false,
   readline: false,
   repl: false,
+  async_hooks: false,
+
+  // React Native specific
+  "react-dom": require.resolve("react-native"),
 };
 
 // Forced dependencies for monorepo consistency (reserved for future use)
@@ -111,7 +115,7 @@ export default env => {
 
   return {
     mode,
-    devtool: isDev ? "cheap-module-source-map" : "source-map",
+    devtool: false, // Disable source maps initially for testing
     context,
     entry,
     resolve: {
@@ -121,25 +125,29 @@ export default env => {
       // TypeScript path aliases + custom aliases
       alias: {
         ...buildTsAlias(tsconfig.compilerOptions.paths),
-        // Additional aliases if needed
       },
 
       // Node.js polyfills
       fallback: nodePolyfills,
 
       // Module resolution order
-      mainFields: ["react-native", "browser", "main"],
+      // Use 'main' first to get compiled versions, especially for React Native
+      // which has Flow types in source files
+      // Exception: For some packages we need 'react-native' field
+      mainFields: ["react-native", "main", "browser"],
 
       // Supported extensions
+      // Prefer .js/.jsx to use compiled versions from node_modules
+      // Platform-specific files still checked first
       extensions: [
-        `.${platform}.tsx`,
-        `.${platform}.ts`,
-        `.${platform}.jsx`,
         `.${platform}.js`,
-        ".tsx",
-        ".ts",
-        ".jsx",
+        `.${platform}.jsx`,
+        `.${platform}.ts`,
+        `.${platform}.tsx`,
         ".js",
+        ".jsx",
+        ".ts",
+        ".tsx",
         ".json",
       ],
 
@@ -159,80 +167,83 @@ export default env => {
       path: path.join(__dirname, "build", platform),
       filename: "index.bundle",
       chunkFilename: "[name].chunk.bundle",
+      publicPath: "",
+      library: {
+        type: "commonjs2",
+      },
+      strictModuleErrorHandling: false,
       uniqueName: "ledger-live-mobile",
     },
     optimization: {
       minimize,
+      moduleIds: 'deterministic',
+      runtimeChunk: false,
+      splitChunks: false,
+      usedExports: false,
+      innerGraph: false,
+      sideEffects: false,
       minimizer: [
         new TerserPlugin({
           test: /\.(jsx?|tsx?)$/,
           extractComments: false,
           terserOptions: {
+            parse: {
+              ecma: 2015,
+            },
             compress: {
               drop_console: isProd,
-              passes: 3,
+              passes: 1, // Reduced from 3 for stability
+              ecma: 5, // Target ES5 for JSC compatibility
+              keep_fnames: true, // Preserve function names
+              keep_classnames: true, // Preserve class names
+            },
+            mangle: {
+              safari10: true, // Safari 10 compatibility
+              keep_fnames: true, // Preserve function names
             },
             format: {
               comments: false,
+              ecma: 5, // Output ES5
+              safari10: true, // Safari 10 compatibility
+              ascii_only: true, // Ensure ASCII-only output
             },
+            ecma: 5, // Ensure ES5 output
           },
         }),
       ],
-      // Enable code splitting (optional - can be enabled later)
-      // chunkIds: "named",
-      // splitChunks: {
-      //   chunks: "all",
-      //   cacheGroups: {
-      //     vendor: {
-      //       test: /[\\/]node_modules[\\/]/,
-      //       name: "vendor",
-      //       priority: -10,
-      //     },
-      //     families: {
-      //       test: /[\\/]src[\\/]families[\\/]/,
-      //       name(module) {
-      //         const match = module.context.match(/families[\\/]([^[\\/]]+)/);
-      //         return match ? `family-${match[1]}` : "families";
-      //       },
-      //       priority: -5,
-      //     },
-      //   },
-      // },
     },
     module: {
       rules: [
         // React Native and TypeScript
         {
           test: /\.[jt]sx?$/,
-          exclude: /node_modules(?!\/(@react-native|@react-navigation|react-native|@ledgerhq))/,
+          // Include:
+          // - All app source code (src + services)
+          // - @ledgerhq workspace packages
+          // - react-native packages (most ship with JSX/Flow source expecting Metro)
+          // - @react-navigation packages
+          // - expo packages (have TypeScript source)
+          // - react-native-share (compiled files have incorrect codegenSpec paths)
+          // - rn-fetch-blob (has Flow types)
+          // - @callstack (Re.Pack itself has ESM modules)
+          include: [
+            path.resolve(__dirname, "src"),
+            path.resolve(__dirname, "services"),
+            path.resolve(__dirname, "e2e"),
+            /node_modules[\\/ ].*@ledgerhq/,
+            /node_modules[\\/ ].*@callstack/,
+            /node_modules[\\/ ].*react-native-share/,
+            /node_modules[\\/ ].*react-native/,
+            /node_modules[\\/ ].*@react-native/,
+            /node_modules[\\/ ].*@react-navigation/,
+            /node_modules[\\/ ].*expo/,
+            /node_modules[\\/ ].*rn-fetch-blob/,
+          ],
           use: {
-            loader: "builtin:swc-loader",
+            loader: "babel-loader",
             options: {
-              jsc: {
-                parser: {
-                  syntax: "typescript",
-                  tsx: true,
-                  decorators: true,
-                  dynamicImport: true,
-                },
-                externalHelpers: true,
-                transform: {
-                  react: {
-                    runtime: "automatic",
-                    development: isDev,
-                    refresh: isDev,
-                  },
-                },
-                target: "es2015",
-              },
-              env: {
-                targets: {
-                  ios: "13",
-                  android: "5",
-                },
-                mode: "usage",
-                coreJs: "3.30",
-              },
+              cacheDirectory: true,
+              configFile: path.resolve(__dirname, ".babelrc.webpack.js"),
             },
           },
         },
@@ -249,6 +260,11 @@ export default env => {
               scalableAssetExtensions: Repack.SCALABLE_ASSETS,
             },
           },
+        },
+        // PNG support
+        {
+          test: /\.png$/,
+          type: "asset",
         },
         // SVG support
         {
@@ -281,8 +297,9 @@ export default env => {
       // Expo modules plugin
       new ExpoModulesPlugin(),
 
-      // Reanimated plugin
-      new ReanimatedPlugin(),
+      // Reanimated plugin (temporarily disabled to fix bundle issues)
+      // TODO: Re-enable with proper configuration to exclude @callstack/repack
+      // new ReanimatedPlugin(),
 
       // Module Federation plugin (disabled for initial migration)
       // TODO: Enable after basic Re.Pack migration is stable

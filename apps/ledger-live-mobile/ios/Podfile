@@ -39,7 +39,9 @@ target 'ledgerlivemobile' do
   use_react_native!(
     :path => config[:reactNativePath],
     # An absolute path to your application root.
-    :app_path => "#{Pod::Config.instance.installation_root}/.."
+    :app_path => "#{Pod::Config.instance.installation_root}/..",
+    # Enable Hermes for better JavaScript performance and modern JS support
+    :hermes_enabled => true
   )
 
   post_install do |installer|

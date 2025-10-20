@@ -50,6 +50,10 @@
       "require": "./lib/currencies/*.js",
       "default": "./lib-es/currencies/*.js"
     },
+    "./dada-client/*": {
+      "require": "./lib/dada-client/*.js",
+      "default": "./lib-es/dada-client/*.js"
+    },
     "./e2e": {
       "require": "./lib/e2e/index.js",
       "default": "./lib-es/e2e/index.js"

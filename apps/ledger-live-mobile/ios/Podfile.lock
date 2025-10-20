@@ -31,6 +31,29 @@ PODS:
     - BrazeKit (= 11.2.0)
   - BVLinearGradient (2.8.3):
     - React-Core
+  - callstack-repack (5.2.1):
+    - DoubleConversion
+    - glog
+    - hermes-engine
+    - JWTDecode (~> 3.0.0)
+    - RCT-Folly (= 2024.11.18.00)
+    - RCTRequired
+    - RCTTypeSafety
+    - React-Core
+    - React-debug
+    - React-Fabric
+    - React-featureflags
+    - React-graphics
+    - React-ImageManager
+    - React-NativeModulesApple
+    - React-RCTFabric
+    - React-rendererdebug
+    - React-utils
+    - ReactCodegen
+    - ReactCommon/turbomodule/bridging
+    - ReactCommon/turbomodule/core
+    - SwiftyRSA (~> 1.7)
+    - Yoga
   - CocoaAsyncSocket (7.6.5)
   - DatadogCore (2.27.0):
     - DatadogInternal (= 2.27.0)
@@ -181,6 +204,7 @@ PODS:
   - hermes-engine (0.77.3):
     - hermes-engine/Pre-built (= 0.77.3)
   - hermes-engine/Pre-built (0.77.3)
+  - JWTDecode (3.0.1)
   - libwebp (1.5.0):
     - libwebp/demux (= 1.5.0)
     - libwebp/mux (= 1.5.0)
@@ -216,9 +240,9 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
-  - MMKV (2.2.2):
-    - MMKVCore (~> 2.2.2)
-  - MMKVCore (2.2.2)
+  - MMKV (2.2.4):
+    - MMKVCore (~> 2.2.4)
+  - MMKVCore (2.2.4)
   - MultiplatformBleAdapter (0.2.0)
   - nanopb (3.30910.0):
     - nanopb/decode (= 3.30910.0)
@@ -2198,6 +2222,9 @@ PODS:
   - storyly-react-native (4.11.0):
     - React
     - Storyly (= 4.11.0)
+  - SwiftyRSA (1.7.0):
+    - SwiftyRSA/ObjC (= 1.7.0)
+  - SwiftyRSA/ObjC (1.7.0)
   - TOCropViewController (2.5.3)
   - Yoga (0.0.0)
   - ZXingObjC/Core (3.6.9)
@@ -2210,6 +2237,7 @@ DEPENDENCIES:
   - "boost (from `../../../node_modules/.pnpm/react-native@0.77.3_@babel+core@7.27.1_@babel+preset-env@7.27.1_@babel+core@7.27.1__@react-na_iudnv3opqrvtatz53lek2dkvwu/node_modules/react-native/third-party-podspecs/boost.podspec`)"
   - "braze-react-native-sdk (from `../node_modules/@braze/react-native-sdk`)"
   - BVLinearGradient (from `../node_modules/react-native-linear-gradient`)
+  - "callstack-repack (from `../node_modules/@callstack/repack`)"
   - "DatadogSDKReactNative (from `../node_modules/@datadog/mobile-react-native`)"
   - "DoubleConversion (from `../../../node_modules/.pnpm/react-native@0.77.3_@babel+core@7.27.1_@babel+preset-env@7.27.1_@babel+core@7.27.1__@react-na_iudnv3opqrvtatz53lek2dkvwu/node_modules/react-native/third-party-podspecs/DoubleConversion.podspec`)"
   - "EXConstants (from `../../../node_modules/.pnpm/expo-constants@17.0.8_expo-modules-core@2.2.3_react-native@0.77.3_@babel+core@7.27.1_@babel+p_koxfjbuiwtxy2nujflefybotsi/node_modules/expo-constants/ios`)"
@@ -2364,6 +2392,7 @@ SPEC REPOS:
     - FirebaseSharedSwift
     - GoogleDataTransport
     - GoogleUtilities
+    - JWTDecode
     - libwebp
     - lottie-ios
     - MMKV
@@ -2378,6 +2407,7 @@ SPEC REPOS:
     - Sentry
     - SocketRocket
     - Storyly
+    - SwiftyRSA
     - TOCropViewController
     - ZXingObjC
 
@@ -2388,6 +2418,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/@braze/react-native-sdk"
   BVLinearGradient:
     :path: "../node_modules/react-native-linear-gradient"
+  callstack-repack:
+    :path: "../node_modules/@callstack/repack"
   DatadogSDKReactNative:
     :path: "../node_modules/@datadog/mobile-react-native"
   DoubleConversion:
@@ -2649,6 +2681,7 @@ SPEC CHECKSUMS:
   BrazeLocation: f574503d26e00658c7a6ddfa1efec68ddaa12e4d
   BrazeUI: 1500cfce86252db6ce280815c94e0eed03e42691
   BVLinearGradient: cb006ba232a1f3e4f341bb62c42d1098c284da70
+  callstack-repack: cc8814e4b54208160394772d726a0d1a76f3ef32
   CocoaAsyncSocket: 065fd1e645c7abab64f7a6a2007a48038fdc6a99
   DatadogCore: 68aee4ffcc3ea17a3b0aa527907757883fc72c84
   DatadogCrashReporting: e6a83b143394e28c9c1cb48c5cfb18eff507b3be
@@ -2687,11 +2720,12 @@ SPEC CHECKSUMS:
   GoogleDataTransport: aae35b7ea0c09004c3797d53c8c41f66f219d6a7
   GoogleUtilities: 00c88b9a86066ef77f0da2fab05f65d7768ed8e1
   hermes-engine: b2187dbe13edb0db8fcb2a93a69c1987a30d98a4
+  JWTDecode: 2eed97c2fa46ccaf3049a787004eedf0be474a87
   libwebp: 02b23773aedb6ff1fd38cec7a77b81414c6842a8
   lottie-ios: a881093fab623c467d3bce374367755c272bdd59
   lottie-react-native: d2c78420027e5871859804025f95c30e14a68c2d
-  MMKV: b4802ebd5a7c68fc0c4a5ccb4926fbdfb62d68e0
-  MMKVCore: a255341a3746955f50da2ad9121b18cb2b346e61
+  MMKV: 1a8e7dbce7f9cad02c52e1b1091d07bd843aefaf
+  MMKVCore: f2dd4c9befea04277a55e84e7812f930537993df
   MultiplatformBleAdapter: b1fddd0d499b96b607e00f0faa8e60648343dc1d
   nanopb: fad817b59e0457d11a5dfbde799381cd727c1275
   OpenTelemetrySwiftApi: aaee576ed961e0c348af78df58b61300e95bd104
@@ -2808,10 +2842,11 @@ SPEC CHECKSUMS:
   sovran-react-native: a3ad3f8ff90c2002b2aa9790001a78b0b0a38594
   Storyly: 197f09ba5a5e09dbacd970226554def3fa341c6a
   storyly-react-native: bdeafa2edb5fcb88c44d21f19df3b7e0dd518214
+  SwiftyRSA: 8c6dd1ea7db1b8dc4fb517a202f88bb1354bc2c6
   TOCropViewController: 20a14b6a7a098308bf369e7c8d700dc983a974e6
   Yoga: 2b02f3f767761bb4ffd25b1bb56fd264be57bd6b
   ZXingObjC: 8898711ab495761b2dbbdec76d90164a6d7e14c5
 
-PODFILE CHECKSUM: be0292fa15cd337eb429bc6a1a6251b194d9fd85
+PODFILE CHECKSUM: 9660c4aeb9c168234d54fc398b9e39a669cf2d8e
 
 COCOAPODS: 1.14.3
