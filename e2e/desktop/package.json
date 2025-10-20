@@ -29,6 +29,6 @@
     "@types/invariant": "2.2.37",
     "@types/lodash": "4.17.16",
     "electron": "38.0.0",
-    "playwright": "1.51.1"
+    "playwright": "1.55.1"
   }
 }
