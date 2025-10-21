@@ -1351,7 +1351,7 @@
             "active": "This makes sure your {{modelName}} is an official Ledger.",
             "cancelled": "This Check is mandatory to continue setting up your {{modelName}} using the Ledger Wallet app."
           },
-          "resumeCTA": "Resume Genuine Gheck"
+          "resumeCTA": "Resume Ledger Genuine Check"
         },
         "firmwareUpdate": {
           "title": {
