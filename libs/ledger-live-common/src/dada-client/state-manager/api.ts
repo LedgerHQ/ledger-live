@@ -45,6 +45,9 @@ export const assetsDataApi = createApi({
           ...(queryArg?.search && { search: queryArg.search }),
           product: queryArg.product,
           minVersion: queryArg.version,
+          ...(queryArg?.includeTestNetworks && {
+            includeTestNetworks: queryArg.includeTestNetworks,
+          }),
           additionalData: queryArg.additionalData || [
             AssetsAdditionalData.Apy,
             AssetsAdditionalData.MarketTrend,
