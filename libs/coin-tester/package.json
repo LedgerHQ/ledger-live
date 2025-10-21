@@ -15,7 +15,7 @@
   "dependencies": {
     "@ledgerhq/hw-transport-node-speculos-http": "workspace:^",
     "@ledgerhq/types-devices": "workspace:^",
-    "axios": "1.11.0",
+    "axios": "catalog:",
     "chalk": "^4.1.2",
     "docker-compose": "^1.1.0",
     "lodash": "^4.17.21",

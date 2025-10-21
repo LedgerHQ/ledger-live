@@ -69,7 +69,7 @@
     "@ledgerhq/errors": "workspace:^",
     "@ledgerhq/logs": "workspace:^",
     "@ledgerhq/types-live": "workspace:^",
-    "axios": "1.11.0",
+    "axios": "catalog:",
     "eip55": "^2.1.1",
     "react": "catalog:",
     "react-dom": "catalog:"

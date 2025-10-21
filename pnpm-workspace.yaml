@@ -19,6 +19,7 @@ catalog:
   react-test-renderer: 18.3.1
   react-i18next: 13.5.0
   i18next: 23.10.1
+  axios: 1.12.2
 
 overrides:
   node-abi: ^4.9.0
