@@ -333,6 +333,19 @@ jobs:
           echo "${{ steps.timing-shards.outputs.shard_test_files }}" >> $GITHUB_ENV
           echo "EOF" >> $GITHUB_ENV
 
+      - name: Create iOS simulator 2
+        id: simulator2
+        run: |
+          echo "🔧 Creating iOS Simulator 2"            
+          UDID=$(xcrun simctl create "iOS Simulator 2" "iPhone 15")
+          echo "🔧 iOS Simulator 2 created with UDID: $UDID"
+          xcrun simctl boot "$UDID" || true
+          xcrun simctl bootstatus "$UDID"
+          echo "✅ iOS Simulator 2 is now fully booted"
+
+          # Export UDID to GitHub Actions outputs
+          echo "udid=$UDID" >> $GITHUB_OUTPUT
+
       - name: Boot iOS Simulator in Background
         run: |
           (
@@ -495,6 +508,13 @@ jobs:
         if: ${{ !cancelled() }}
         run: |
           echo "status_${{ matrix.shard }}=${{ steps.run-ios.outcome }}" >> $GITHUB_OUTPUT
+
+      - name: Delete iOS Simulator 2
+        if: always()
+        run: |
+          xcrun simctl delete "${{ steps.simulator2.outputs.udid }}"
+          echo "🧹 Deleted iOS Simulator 2"
+          xcrun simctl list devices | grep 'iOS Simulator' | awk -F '[()]' '{print $2}' | xargs -I {} sh -c 'echo "Deleting simulator: {}"; xcrun simctl delete {} || echo "Failed to delete: {}"'
 
   detox-tests-android:
     name: Android E2E Tests
