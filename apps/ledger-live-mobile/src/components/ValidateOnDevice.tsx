@@ -7,10 +7,8 @@ import { Transaction, TransactionStatus } from "@ledgerhq/live-common/generated/
 import { getMainAccount, getFeesCurrency, getFeesUnit } from "@ledgerhq/live-common/account/index";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 
-import {
-  getDeviceTransactionConfig,
-  DeviceTransactionField,
-} from "@ledgerhq/live-common/transaction/index";
+import { DeviceTransactionField } from "@ledgerhq/live-common/transaction/index";
+import { useDeviceTransactionConfig } from "@ledgerhq/live-common/hooks/useDeviceTransactionConfig";
 import { getDeviceModel } from "@ledgerhq/devices";
 
 import { useTheme } from "@react-navigation/native";
@@ -150,7 +148,7 @@ export default function ValidateOnDevice({
       }
     ).footer;
 
-  const fields = getDeviceTransactionConfig({
+  const { fields, loading } = useDeviceTransactionConfig({
     account,
     parentAccount,
     transaction,
@@ -204,27 +202,29 @@ export default function ValidateOnDevice({
           )}
 
           <DataRowsContainer>
-            {fields.map((field, i) => {
-              const MaybeComponent = fieldComponents[field.type as keyof typeof fieldComponents] as
-                | React.ComponentType<FieldComponentProps>
-                | undefined;
-              if (!MaybeComponent) {
-                console.warn(
-                  `TransactionConfirm field ${field.type} is not implemented! add a generic implementation in components/TransactionConfirm.js or inside families/*/TransactionConfirmFields.js`,
-                );
-                return null;
-              }
-              return (
-                <MaybeComponent
-                  key={i}
-                  field={field}
-                  account={account}
-                  parentAccount={parentAccount}
-                  transaction={transaction}
-                  status={status}
-                />
-              );
-            })}
+            {loading
+              ? null
+              : fields.map((field, i) => {
+                  const MaybeComponent = fieldComponents[
+                    field.type as keyof typeof fieldComponents
+                  ] as React.ComponentType<FieldComponentProps> | undefined;
+                  if (!MaybeComponent) {
+                    console.warn(
+                      `TransactionConfirm field ${field.type} is not implemented! add a generic implementation in components/TransactionConfirm.js or inside families/*/TransactionConfirmFields.js`,
+                    );
+                    return null;
+                  }
+                  return (
+                    <MaybeComponent
+                      key={i}
+                      field={field}
+                      account={account}
+                      parentAccount={parentAccount}
+                      transaction={transaction}
+                      status={status}
+                    />
+                  );
+                })}
 
             {Warning ? (
               <Warning

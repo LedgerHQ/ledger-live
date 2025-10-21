@@ -14,14 +14,14 @@ export type ExtraDeviceTransactionField = {
 
 type DeviceTransactionField = CommonDeviceTransactionField | ExtraDeviceTransactionField;
 
-function getDeviceTransactionConfig({
+async function getDeviceTransactionConfig({
   transaction,
 }: {
   account: AccountLike;
   parentAccount: Account | null | undefined;
   transaction: Transaction;
   status: TransactionStatus;
-}): Array<DeviceTransactionField> {
+}): Promise<Array<DeviceTransactionField>> {
   const fields: Array<DeviceTransactionField> = [];
   fields.push({
     type: "text",
