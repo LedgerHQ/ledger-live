@@ -172,6 +172,7 @@ export type Features = CurrencyFeatures & {
   receiveStakingFlowConfigDesktop: Feature_ReceiveStakingFlowConfigDesktop;
   ethStakingModalWithFilters: DefaultFeature;
   ethStakingProviders: Feature_EthStakingProviders;
+  mixpanelAnalytics: DefaultFeature;
   storyly: Feature_Storyly;
   postOnboardingAssetsTransfer: Feature_PostOnboardingAssetsTransfer;
   firebaseEnvironmentReadOnly: Feature_FirebaseEnvironmentReadOnly;
@@ -237,6 +238,7 @@ export type Features = CurrencyFeatures & {
   lldNetworkBasedAddAccount: DefaultFeature;
   llmOfacGeoBlocking: DefaultFeature;
   lldOfacGeoBlocking: DefaultFeature;
+  lldSessionReplay: Feature_LldSessionReplay;
   llmDatadog: {
     enabled: boolean;
     params: Partial<{
@@ -735,3 +737,7 @@ export type Feature_OnboardingIgnoredOSUpdates = Feature<{
 export type FeatureMap<T = Feature> = { [key in FeatureId]: T };
 export type OptionalFeatureMap<T = Feature> = { [key in FeatureId]?: T };
 export type FeatureParam<T extends FeatureId> = Features[T]["params"];
+
+export type Feature_LldSessionReplay = Feature<{
+  sampling: number;
+}>;

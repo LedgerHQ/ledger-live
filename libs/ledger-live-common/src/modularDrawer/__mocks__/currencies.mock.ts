@@ -7,6 +7,7 @@ export const mockArbitrumCryptoCurrency = getCryptoCurrencyById("arbitrum");
 export const mockBaseCryptoCurrency = getCryptoCurrencyById("base");
 export const mockScrollCryptoCurrency = getCryptoCurrencyById("scroll");
 export const mockInjectiveCryptoCurrency = getCryptoCurrencyById("injective");
+export const mockBscCryptoCurrency = getCryptoCurrencyById("bsc");
 
 export const arbitrumToken: TokenCurrency = {
   type: "TokenCurrency",
@@ -41,6 +42,45 @@ export const usdcToken: TokenCurrency = {
   ],
 };
 
+export const maticEth: TokenCurrency = {
+  type: "TokenCurrency" as const,
+  id: "ethereum/erc20/matic",
+  ledgerSignature: "",
+  contractAddress: "0x7D1AfA7B718fb893dB30A3aBc0Cfc608AaCfeBB0",
+  parentCurrency: mockEthCryptoCurrency,
+  tokenType: "erc20" as const,
+  name: "Matic",
+  ticker: "MATIC",
+  delisted: false,
+  disableCountervalue: false,
+  units: [
+    {
+      name: "Matic",
+      code: "MATIC",
+      magnitude: 18,
+    },
+  ],
+};
+
+export const maticBsc: TokenCurrency = {
+  type: "TokenCurrency" as const,
+  id: "bsc/bep20/matic_token",
+  ledgerSignature: "",
+  contractAddress: "0xCC42724C6683B7E57334c4E856f4c9965ED682bD",
+  parentCurrency: mockBscCryptoCurrency,
+  tokenType: "bep20" as const,
+  name: "Matic Token",
+  ticker: "MATIC",
+  delisted: false,
+  disableCountervalue: false,
+  units: [
+    {
+      name: "Matic Token",
+      code: "MATIC",
+      magnitude: 18,
+    },
+  ],
+};
 export const findCryptoCurrencyById = (id: string) =>
   [mockBtcCryptoCurrency, mockEthCryptoCurrency, mockArbitrumCryptoCurrency].find(a => a.id === id);
 export const getTokenOrCryptoCurrencyById = (id: string) =>

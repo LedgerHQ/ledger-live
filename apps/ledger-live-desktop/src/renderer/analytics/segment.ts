@@ -33,6 +33,7 @@ import {
 import { analyticsDrawerContext } from "../drawers/Provider";
 import { accountsSelector } from "../reducers/accounts";
 import { currentRouteNameRef, previousRouteNameRef } from "./screenRefs";
+import mixpanel from "mixpanel-browser";
 
 type ReduxStore = Redux.MiddlewareAPI<Redux.Dispatch<Redux.AnyAction>, State>;
 
@@ -234,6 +235,7 @@ const extraProperties = (store: ReduxStore) => {
       ]
     : [];
   const tokenWithFunds = getTokensWithFunds(accounts);
+  const sessionReplayProperties = mixpanel.get_session_recording_properties?.();
 
   return {
     ...mandatoryProperties,
@@ -261,6 +263,7 @@ const extraProperties = (store: ReduxStore) => {
     madAttributes,
     isLDMKTransportEnabled: ldmkTransport?.enabled,
     isLDMKConnectAppEnabled: ldmkConnectApp?.enabled,
+    ...sessionReplayProperties,
   };
 };
 
