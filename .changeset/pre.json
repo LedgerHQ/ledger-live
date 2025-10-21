@@ -153,5 +153,7 @@
     "@ledgerhq/live-github-bot": "1.1.0",
     "@ledgerhq/pnpm-utils": "1.0.1"
   },
-  "changesets": []
+  "changesets": [
+    "eighty-shirts-trade"
+  ]
 }
