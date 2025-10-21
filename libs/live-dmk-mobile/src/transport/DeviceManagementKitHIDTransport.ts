@@ -101,6 +101,9 @@ export class DeviceManagementKitHIDTransport extends Transport {
     let transport: DeviceManagementKitHIDTransport | undefined = undefined;
     try {
       if (activeDeviceSession) {
+        tracer.trace("[DMKTransportHID] [open] checking existing session", {
+          sessionId: activeDeviceSession.sessionId,
+        });
         const deviceSessionState = await firstValueFrom(
           activeDeviceSession.transport.dmk.getDeviceSessionState({
             sessionId: activeDeviceSession.sessionId,
@@ -115,22 +118,37 @@ export class DeviceManagementKitHIDTransport extends Transport {
           connectedDevice.type === "USB" &&
           deviceSessionState.deviceStatus !== DeviceStatus.NOT_CONNECTED
         ) {
+          tracer.trace("[DMKTransportHID] [open] reusing existing session", {
+            sessionId: activeDeviceSession.sessionId,
+          });
           transport = activeDeviceSession.transport;
         } else {
+          tracer.trace("[DMKTransportHID] [open] session not reusable, connecting to new device", {
+            deviceId,
+          });
           const sessionId = await activeDeviceSession.transport.dmk.connect({
             device: { id: deviceId, transport: rnHidTransportIdentifier } as DiscoveredDevice,
             sessionRefresherOptions: { isRefresherDisabled: true },
+          });
+          tracer.trace("[DMKTransportHID] [open] new device connected", {
+            sessionId,
           });
           transport = new DeviceManagementKitHIDTransport(dmk, sessionId);
           activeDeviceSessionSubject.next({ transport, sessionId });
         }
       } else {
+        tracer.trace("[DMKTransportHID] [open] no existing session, connecting to new device", {
+          deviceId,
+        });
         const sessionId = await dmk.connect({
           device: {
             id: deviceId,
             transport: rnHidTransportIdentifier,
           } as DiscoveredDevice,
           sessionRefresherOptions: { isRefresherDisabled: true },
+        });
+        tracer.trace("[DMKTransportHID] [open] new device connected", {
+          sessionId,
         });
         transport = new DeviceManagementKitHIDTransport(dmk, sessionId);
         activeDeviceSessionSubject.next({
