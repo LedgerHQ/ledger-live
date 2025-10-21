@@ -40,7 +40,10 @@ export type CantonAddress = {
   path: string;
 };
 
-export type CantonSignature = string;
+export type CantonSignature = {
+  signature: string;
+  applicationSignature?: string;
+};
 
 export type CantonPreparedTransaction = {
   damlTransaction: Uint8Array;
@@ -51,6 +54,7 @@ export type CantonPreparedTransaction = {
 
 export type CantonUntypedVersionedMessage = {
   transactions: string[];
+  challenge?: string;
 };
 
 /**
@@ -152,7 +156,7 @@ export default class Canton {
 
     this.checkTransportResponse(response);
     const responseData = this.extractResponseData(response);
-    return this.cleanSignatureFormat(responseData);
+    return this.parseSignatureResponse(responseData);
   }
 
   /**
@@ -232,7 +236,7 @@ export default class Canton {
       throw new Error("No response data received from device");
     }
 
-    return this.cleanSignatureFormat(responseData);
+    return this.parseSignatureResponse(responseData);
   }
 
   /**
@@ -243,22 +247,28 @@ export default class Canton {
     path: string,
     data: CantonUntypedVersionedMessage,
   ): Promise<CantonSignature> {
-    const { transactions } = data;
+    const { transactions, challenge } = data;
 
     if (!transactions || transactions.length === 0) {
       throw new TypeError("At least one transaction is required");
     }
 
-    // 1. Send the derivation path
+    // 1. Send the derivation path with optional challenge
     const bipPath = BIPPath.fromString(path).toPathArray();
     const serializedPath = this.serializePath(bipPath);
+
+    let pathData = serializedPath;
+    if (challenge) {
+      const challengeBuffer = Buffer.from(challenge, "hex");
+      pathData = Buffer.concat([serializedPath, challengeBuffer]);
+    }
 
     const pathResponse = await this.transport.send(
       CLA,
       INS.SIGN,
       P1_SIGN_UNTYPED_VERSIONED_MESSAGE,
       P2_FIRST | P2_MORE,
-      serializedPath,
+      pathData,
     );
 
     this.checkTransportResponse(pathResponse);
@@ -287,7 +297,7 @@ export default class Canton {
         if (isLastTransaction) {
           this.checkTransportResponse(response);
           const responseData = this.extractResponseData(response);
-          return this.cleanSignatureFormat(responseData);
+          return this.parseSignatureResponse(responseData, challenge);
         } else {
           this.checkTransportResponse(response);
         }
@@ -301,7 +311,7 @@ export default class Canton {
         });
 
         if (isLastTransaction && responseData) {
-          return this.cleanSignatureFormat(responseData);
+          return this.parseSignatureResponse(responseData, challenge);
         }
       }
     }
@@ -335,7 +345,7 @@ export default class Canton {
    * Validate Uint8Array with descriptive error message
    * @private
    */
-  private validateUint8Array(value: any, context: string): void {
+  private validateUint8Array(value: unknown, context: string): void {
     if (!value) {
       throw new TypeError(`${context} is undefined or null`);
     }
@@ -406,23 +416,42 @@ export default class Canton {
   }
 
   /**
-   * Converts 65-byte Canton format to 64-byte Ed25519:
-   * [40][64_bytes_signature][00] (132 hex chars)
+   * Parse signature response - handles both TLV format (onboarding) and single signatures
    * @private
    */
-  private cleanSignatureFormat(signature: Buffer): CantonSignature {
-    const signatureHex = signature.toString("hex");
 
-    if (signatureHex.length === ED25519_SIGNATURE_HEX_LENGTH) {
-      return signatureHex;
+  private parseSignatureResponse(response: Buffer, challenge?: string): CantonSignature {
+    // Handle TLV (Type-Length-Value) format: [40][64B main][00][40][64B challenge] = 262 hex chars (131 bytes)
+    if (
+      response.length === 131 &&
+      response.readUInt8(0) === 0x40 &&
+      response.readUInt8(65) === 0x00 &&
+      response.readUInt8(66) === 0x40
+    ) {
+      const signature = response.slice(1, 65).toString("hex");
+      const applicationSignature = response.slice(67, 131).toString("hex");
+
+      return {
+        signature,
+        ...(challenge && { applicationSignature }),
+      };
     }
 
-    if (signatureHex.length === CANTON_SIGNATURE_HEX_LENGTH) {
-      const cleanedSignature = signatureHex.slice(2, -2);
-      return cleanedSignature;
+    // Handle single signature formats
+    const signature = response.toString("hex");
+
+    // Pure 64-byte Ed25519 signature = 128 hex chars (64 bytes)
+    if (signature.length === ED25519_SIGNATURE_HEX_LENGTH) {
+      return { signature };
     }
 
-    return signatureHex;
+    // Canton-framed signature: [40][64B Ed25519 sig][00] = 132 hex chars (65 bytes)
+    if (signature.length === CANTON_SIGNATURE_HEX_LENGTH) {
+      const cleanedSignature = signature.slice(2, -2);
+      return { signature: cleanedSignature };
+    }
+
+    return { signature };
   }
 
   /**

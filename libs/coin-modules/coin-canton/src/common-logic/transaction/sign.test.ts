@@ -1,5 +1,10 @@
 import { OnboardingPrepareResponse, PrepareTransferResponse } from "../../network/gateway";
-import { CantonPreparedTransaction, CantonSigner } from "../../types/signer";
+import {
+  CantonPreparedTransaction,
+  CantonSigner,
+  CantonSignature,
+  CantonUntypedVersionedMessage,
+} from "../../types/signer";
 import { signTransaction } from "./sign";
 
 class MockCantonSigner implements CantonSigner {
@@ -13,12 +18,22 @@ class MockCantonSigner implements CantonSigner {
 
   async signTransaction(
     path: string,
-    data: CantonPreparedTransaction | { transactions: string[] },
-  ) {
-    if ("transactions" in data) {
-      return `untyped-signature-${data.transactions.length}`;
+    data: CantonPreparedTransaction | CantonUntypedVersionedMessage | string,
+  ): Promise<CantonSignature> {
+    if (typeof data === "string") {
+      return { signature: `txhash-signature-${data}` };
+    } else if ("transactions" in data) {
+      const result: CantonSignature = {
+        signature: `untyped-signature-${data.transactions.length}`,
+      };
+      if (data.challenge) {
+        result.applicationSignature = `challenge-signature-${data.challenge}`;
+      }
+      return result;
     } else {
-      return `prepared-transaction-signature-${data.damlTransaction.length}-${data.nodes.length}`;
+      return {
+        signature: `prepared-transaction-signature-${data.damlTransaction.length}-${data.nodes.length}`,
+      };
     }
   }
 }
@@ -85,7 +100,7 @@ describe("signTransaction", () => {
     );
 
     // THEN
-    expect(result).toBe("prepared-transaction-signature-10-1");
+    expect(result).toEqual({ signature: "prepared-transaction-signature-10-1" });
   });
 
   it("should sign untyped versioned message", async () => {
@@ -122,7 +137,7 @@ describe("signTransaction", () => {
     );
 
     // THEN
-    expect(result).toBe("untyped-signature-3");
+    expect(result).toEqual({ signature: "untyped-signature-3" });
   });
 
   it("should handle empty signature from signer", async () => {
@@ -201,7 +216,7 @@ describe("signTransaction", () => {
 
   it("should call signer with correct parameters for prepared transaction", async () => {
     // GIVEN
-    const mockSignerSpy = jest.fn().mockResolvedValue("test-signature");
+    const mockSignerSpy = jest.fn().mockResolvedValue({ signature: "test-signature" });
     const mockSignerWithSpy = {
       ...mockSigner,
       signTransaction: mockSignerSpy,
@@ -270,9 +285,9 @@ describe("signTransaction", () => {
     );
   });
 
-  it("should call signer with correct parameters for untyped versioned message", async () => {
+  it("should call signer with correct parameters for untyped versioned message without challenge", async () => {
     // GIVEN
-    const mockSignerSpy = jest.fn().mockResolvedValue("test-signature");
+    const mockSignerSpy = jest.fn().mockResolvedValue({ signature: "test-signature" });
     const mockSignerWithSpy = {
       ...mockSigner,
       signTransaction: mockSignerSpy,
@@ -312,6 +327,63 @@ describe("signTransaction", () => {
         "party-to-key-transaction-data",
         "party-to-participant-transaction-data",
       ],
+    });
+  });
+
+  it("should call signer with correct parameters for untyped versioned message with challenge", async () => {
+    const mockSignerSpy = jest.fn().mockResolvedValue({
+      signature: "main-signature",
+      applicationSignature: "challenge-signature",
+    });
+    const mockSignerWithSpy = {
+      ...mockSigner,
+      signTransaction: mockSignerSpy,
+    } as unknown as CantonSigner;
+
+    const mockOnboardingPrepareResponse: OnboardingPrepareResponse = {
+      party_id: "test-party-id",
+      party_name: "test-party-name",
+      public_key_fingerprint: "test-fingerprint",
+      challenge_nonce: "1234567890abcdef",
+      challenge_deadline: 1735689599,
+      transactions: {
+        namespace_transaction: {
+          serialized: "namespace-transaction-data",
+          json: {},
+          hash: "namespace-hash",
+        },
+        party_to_key_transaction: {
+          serialized: "party-to-key-transaction-data",
+          json: {},
+          hash: "party-to-key-hash",
+        },
+        party_to_participant_transaction: {
+          serialized: "party-to-participant-transaction-data",
+          json: {},
+          hash: "party-to-participant-hash",
+        },
+        combined_hash: "combined-hash",
+      },
+    };
+
+    const result = await signTransaction(
+      mockSignerWithSpy,
+      mockDerivationPath,
+      mockOnboardingPrepareResponse,
+    );
+
+    expect(result).toEqual({
+      signature: "main-signature",
+      applicationSignature: "challenge-signature",
+    });
+
+    expect(mockSignerSpy).toHaveBeenCalledWith(mockDerivationPath, {
+      transactions: [
+        "namespace-transaction-data",
+        "party-to-key-transaction-data",
+        "party-to-participant-transaction-data",
+      ],
+      challenge: "181234567890abcdef000000006774857f",
     });
   });
 });

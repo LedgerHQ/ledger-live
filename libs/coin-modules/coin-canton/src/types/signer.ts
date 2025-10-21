@@ -4,7 +4,10 @@ export type CantonAddress = {
   path: string;
 };
 
-export type CantonSignature = string;
+export type CantonSignature = {
+  signature: string;
+  applicationSignature?: string;
+};
 
 export interface CantonPreparedTransaction {
   damlTransaction: Uint8Array;
@@ -15,6 +18,7 @@ export interface CantonPreparedTransaction {
 
 export interface CantonUntypedVersionedMessage {
   transactions: string[];
+  challenge?: string;
 }
 
 export interface CantonSigner {

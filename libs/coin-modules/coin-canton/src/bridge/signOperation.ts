@@ -50,13 +50,13 @@ export const buildSignOperation =
               params,
             );
 
-            const transactionSignature = await signTransaction(signer, derivationPath, {
+            const { signature } = await signTransaction(signer, derivationPath, {
               json: nativeTransaction,
               serialized: serializedTransaction,
               hash: hash,
             });
 
-            return combine(serializedTransaction, `${transactionSignature}__PARTY__${address}`);
+            return combine(serializedTransaction, `${signature}__PARTY__${address}`);
           });
 
           o.next({
