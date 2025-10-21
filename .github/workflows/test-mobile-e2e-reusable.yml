@@ -147,7 +147,7 @@ jobs:
 
       - name: Generate shards matrix and test files
         id: generate-shards
-        uses: LedgerHQ/ledger-live/tools/actions/composites/generate-shards-matrix@develop
+        uses: LedgerHQ/ledger-live/tools/actions/composites/generate-shards-matrix@support/qaa_850_e2e_tests_parallel
         with:
           test_directory: e2e/mobile
           test_filter: ${{ inputs.test_filter || '' }}
