@@ -340,13 +340,22 @@ jobs:
 
       - name: Boot iOS Simulator in Background
         run: |
+          LOG_FILE="e2e/mobile/artifacts/simulator-boot.log"
           (
-            UDID=$(xcrun simctl list devices available | grep -B1 "iOS Simulator" | head -n1 | awk -F '[()]' '{print $2}')
-            echo "🛫 Booting simulator with UDID: $UDID"
-            xcrun simctl boot "$UDID" || true
-            xcrun simctl bootstatus "$UDID"
-            echo "✅ Simulator $UDID is now fully booted"
+            {
+              echo "🔧 Creating iOS Simulator 2"            
+              xcrun simctl create "iOS Simulator 2" "iPhone 15"
+              echo "🛫 Booting simulator..."
+              xcrun simctl boot "iOS Simulator" || true
+              xcrun simctl bootstatus "iOS Simulator"
+              echo "✅ Simulator is now fully booted"
+              xcrun simctl boot "iOS Simulator 2" || true
+              xcrun simctl bootstatus "iOS Simulator 2"
+              echo "✅ Simulator 2 is now fully booted" 
+            } &> "$LOG_FILE"
           ) &
+
+          echo "ℹ️ Simulator boot started in background."
         shell: bash
 
       - name: setup caches
@@ -497,6 +506,13 @@ jobs:
         if: ${{ !cancelled() }}
         run: |
           echo "status_${{ matrix.shard }}=${{ steps.run-ios.outcome }}" >> $GITHUB_OUTPUT
+
+      - name: Delete iOS Simulator 2
+        if: always()
+        run: |
+          xcrun simctl delete "iOS Simulator 2"
+          echo "🧹 Deleted iOS Simulator 2"
+          xcrun simctl list devices | grep 'iOS Simulator' | awk -F '[()]' '{print $2}' | xargs -I {} sh -c 'echo "Deleting simulator: {}"; xcrun simctl delete {} || echo "Failed to delete: {}"'
 
   detox-tests-android:
     name: Android E2E Tests
