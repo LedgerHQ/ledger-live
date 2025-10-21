@@ -33,7 +33,7 @@ export function EvmStakingDrawer() {
     if (isStakingProvidersEnabled || (providers ?? []).length > 0) {
       openDrawer();
     }
-  }, [drawer.id, drawer, isStakingProvidersEnabled, openDrawer, providers]);
+  }, [drawer, isStakingProvidersEnabled, openDrawer, providers]);
 
   return !ethStakingProviders || drawer.id !== "EvmStakingDrawer" || !drawer.props ? null : (
     <Content
