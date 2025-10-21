@@ -4267,6 +4267,8 @@
         "header" : "Position(s) de staking",
         "stake" : "Ajouter",
         "staked" : "Délégué",
+        "estimatedReward" : "Récompenses gagnées",
+        "rewardTooltip" : "Les récompenses en Sui sont distribuées à chaque epoch (24h). Elles sont automatiquement capitalisées et ajoutées au montant staké.",
         "pending" : "En attente de libération",
         "available" : "Disponible au retrait"
       },
@@ -6690,6 +6692,10 @@
     },
     "HederaAddAccountError" : {
       "title" : "Votre compte n’a pas été ajouté. Veuillez réessayer."
+    },
+    "HederaRecipientInvalidChecksum" : {
+      "title" : "Checksum de l’adresse non valide",
+      "description" : "Le checksum de l’adresse saisie n’est pas valide."
     },
     "HederaInsufficientFundsForAssociation" : {
       "title" : "Solde insuffisant",
