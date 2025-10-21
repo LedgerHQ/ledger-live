@@ -4267,6 +4267,8 @@
         "header" : "Posiciones en participación",
         "stake" : "Agregar",
         "staked" : "Delegado",
+        "estimatedReward" : "Recompensas recibidas",
+        "rewardTooltip" : "Las recompensas de Sui se distribuyen en cada época de 24 hs. Generan interés compuesto automáticamente y se agregan a tu participación delegada.",
         "pending" : "Pendiente de liberación",
         "available" : "Puede retirarse"
       },
@@ -6690,6 +6692,10 @@
     },
     "HederaAddAccountError" : {
       "title" : "Tu cuenta no ha sido agregada. Inténtalo de nuevo."
+    },
+    "HederaRecipientInvalidChecksum" : {
+      "title" : "Suma de verificación de la dirección no válida",
+      "description" : "La dirección facilitada tiene una suma de verificación no válida."
     },
     "HederaInsufficientFundsForAssociation" : {
       "title" : "Saldo insuficiente",
