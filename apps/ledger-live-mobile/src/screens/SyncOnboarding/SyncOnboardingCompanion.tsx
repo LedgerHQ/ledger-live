@@ -649,7 +649,7 @@ export const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = (
                     <Text variant="h5" fontWeight="semiBold" mb={6}>
                       {t("syncOnboarding.seedStep.newSeedTitle")}
                     </Text>
-                    <BodyText mb={8} textAlign="center">
+                    <BodyText mb={2} textAlign="center">
                       {t("syncOnboarding.seedStep.newSeedDescription")}
                     </BodyText>
                   </Flex>
