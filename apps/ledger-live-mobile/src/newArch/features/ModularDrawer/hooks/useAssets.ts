@@ -6,6 +6,7 @@ import VersionNumber from "react-native-version-number";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { AssetData } from "@ledgerhq/live-common/modularDrawer/utils/type";
 import { useAcceptedCurrency } from "@ledgerhq/live-common/modularDrawer/hooks/useAcceptedCurrency";
+import useEnv from "@ledgerhq/live-common/hooks/useEnv";
 
 interface AssetsProps {
   currencyIds?: string[];
@@ -22,6 +23,7 @@ export function useAssets({
 }: AssetsProps) {
   const isAcceptedCurrency = useAcceptedCurrency();
   const modularDrawerFeature = useFeature("llmModularDrawer");
+  const devMode = useEnv("MANAGER_DEV_MODE");
 
   const isStaging = useMemo(
     () => modularDrawerFeature?.params?.backendEnvironment === "STAGING",
@@ -36,6 +38,7 @@ export function useAssets({
     useCase,
     areCurrenciesFiltered,
     isStaging,
+    includeTestNetworks: devMode,
   });
 
   const assetsSorted: AssetData[] | undefined = useMemo(() => {
