@@ -6,7 +6,46 @@ Migrate from `listTokens()` and `listTokensForCryptoCurrency()` to the DaDa Clie
 
 > **Remove CAL Initiative ([LIVE-21487](https://ledgerhq.atlassian.net/browse/LIVE-21487))**: Replace static token lists with dynamic, server-managed asset data. Beware there are many usages of listTokens that actually are going to get dropped or moved to simpler solution than even using DaDa. This guide is for the usecases we still need to list tokens.
 
-## Migration Scenarios
+### useAssetsData
+
+```typescript
+const { data, isLoading, isSuccess, isError, loadNext, error, refetch } = useAssetsData({
+  product: "lld" | "llm", // app identifier
+  version: string, // app version
+  search?: string, // server-side search query
+  currencyIds?: string[], // filter by parent currencies
+  areCurrenciesFiltered?: boolean, // required when using currencyIds
+  useCase?: string, // optimize server response
+  isStaging?: boolean, // use staging API
+});
+```
+
+## Integration on LLD
+
+**Configuration:**
+
+```typescript
+product: "lld";
+version: __APP_VERSION__;
+```
+
+**Pagination:** Use `react-window`'s `InfiniteLoader` + `FixedSizeList` with `loadMoreItems` callback, or implement scroll detection to call `loadNext`
+
+## Integration on LLM
+
+**Configuration:**
+
+```typescript
+import { VersionNumber } from "react-native-version-number";
+
+product: "llm";
+version: VersionNumber.appVersion;
+```
+
+**Pagination:** Use `BottomSheetVirtualizedList` or `FlatList` with `onEndReached={loadNext}`
+
+
+## Migration Examples
 
 ### 1. Basic Token Lists
 
@@ -42,7 +81,7 @@ function TokenList() {
     .filter(currency => currency.type === "TokenCurrency");
 
   return (
-    <InfiniteScrollList
+    <SomethingThatManagesInfiniteScrollList
       data={tokens}
       renderItem={(token, index) => (
         <div key={token.id}>{token.name}</div>
@@ -138,78 +177,11 @@ function SearchableTokens({ searchQuery }) {
     .filter(currency => currency.type === "TokenCurrency");
 
   return (
-    <InfiniteScrollList
+    <SomethingThatManagesInfiniteScrollList
       data={tokens}
       renderItem={(token) => <div key={token.id}>{token.name}</div>}
       onScrollEnd={loadNext}
     />
   );
 }
-```
-
-## Setup
-
-Add DaDa Client to your Redux store:
-
-```typescript
-import { configureStore } from "@reduxjs/toolkit";
-import { assetsDataApi } from "@ledgerhq/live-common/dada-client/state-manager/api";
-
-const store = configureStore({
-  reducer: {
-    [assetsDataApi.reducerPath]: assetsDataApi.reducer,
-  },
-  middleware: getDefaultMiddleware => getDefaultMiddleware().concat(assetsDataApi.middleware),
-});
-```
-
-## Configuration
-
-**Desktop (LLD):**
-
-```typescript
-product: "lld";
-version: __APP_VERSION__;
-```
-
-**Mobile (LLM):**
-
-```typescript
-import { VersionNumber } from "react-native-version-number";
-
-product: "llm";
-version: VersionNumber.appVersion;
-```
-
-## Pagination Components
-
-**Desktop (LLD):** Use `InfiniteScrollList` with `onScrollEnd={loadNext}`
-
-**Mobile (LLM):** Use `BottomSheetVirtualizedList` or `FlatList` with `onEndReached={loadNext}`
-
-## API Reference
-
-### useAssetsData (Paginated)
-
-```typescript
-const { data, isLoading, loadNext, error, refetch } = useAssetsData({
-  product: "lld" | "llm", // app identifier
-  version: string, // app version
-  search?: string, // server-side search query
-  currencyIds?: string[], // filter by parent currencies
-  areCurrenciesFiltered?: boolean, // required when using currencyIds
-  useCase?: string, // optimize server response
-  isStaging?: boolean, // use staging API
-});
-```
-
-### useAssetData (Single Page)
-
-```typescript
-const { data, isLoading, error, refetch } = useAssetData({
-  product: "lld" | "llm", // app identifier
-  version: string, // app version
-  currencyIds?: string[], // filter by parent currencies
-  isStaging?: boolean, // use staging API
-});
 ```

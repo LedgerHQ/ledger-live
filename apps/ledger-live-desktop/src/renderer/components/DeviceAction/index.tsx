@@ -25,6 +25,7 @@ import {
 import { DeviceModelId } from "@ledgerhq/devices";
 import AutoRepair from "~/renderer/components/AutoRepair";
 import TransactionConfirm from "~/renderer/components/TransactionConfirm";
+import TransactionRawConfirm from "~/renderer/components/TransactionRawConfirm";
 import SignMessageConfirm from "~/renderer/components/SignMessageConfirm";
 import useTheme from "~/renderer/hooks/useTheme";
 import {
@@ -658,6 +659,18 @@ export const DeviceActionDefaultRendering = <R, H extends States, P>({
           parentAccount={parentAccount}
           transaction={transaction}
           status={status}
+          manifestId={manifestId}
+          manifestName={manifestName}
+        />
+      );
+    } else if (account && typeof transaction === "string") {
+      // sign raw transaction case
+      return (
+        <TransactionRawConfirm
+          device={device}
+          account={account}
+          parentAccount={parentAccount}
+          transaction={transaction}
           manifestId={manifestId}
           manifestName={manifestName}
         />

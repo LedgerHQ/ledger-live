@@ -45,6 +45,7 @@ export type PreloadStrategy = Partial<{
 
 export type BroadcastConfig = {
   mevProtected: boolean;
+  sponsored?: boolean;
 };
 
 /**

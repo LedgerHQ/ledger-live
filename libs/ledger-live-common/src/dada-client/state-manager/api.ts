@@ -41,18 +41,23 @@ export const assetsDataApi = createApi({
           ...(pageParam?.cursor && { cursor: pageParam.cursor }),
           ...(queryArg?.useCase && { transaction: queryArg.useCase }),
           ...(queryArg?.currencyIds &&
-            queryArg?.currencyIds.length > 0 &&
-            !queryArg?.useCase && { currencyIds: queryArg.currencyIds }),
+            queryArg?.currencyIds.length > 0 && { currencyIds: queryArg.currencyIds }),
           ...(queryArg?.search && { search: queryArg.search }),
           product: queryArg.product,
           minVersion: queryArg.version,
-          additionalData: [AssetsAdditionalData.Apy, AssetsAdditionalData.MarketTrend],
+          ...(queryArg?.includeTestNetworks && {
+            includeTestNetworks: queryArg.includeTestNetworks,
+          }),
+          additionalData: queryArg.additionalData || [
+            AssetsAdditionalData.Apy,
+            AssetsAdditionalData.MarketTrend,
+          ],
         };
 
         const baseUrl = queryArg.isStaging ? getEnv("DADA_API_STAGING") : getEnv("DADA_API_PROD");
 
         return {
-          url: `${baseUrl}assets`,
+          url: `${baseUrl}/assets`,
           params,
         };
       },
@@ -81,7 +86,10 @@ export const assetsDataApi = createApi({
             queryArg?.currencyIds.length > 0 && { currencyIds: queryArg.currencyIds }),
           product: queryArg.product,
           minVersion: queryArg.version,
-          additionalData: [AssetsAdditionalData.Apy, AssetsAdditionalData.MarketTrend],
+          additionalData: queryArg.additionalData || [
+            AssetsAdditionalData.Apy,
+            AssetsAdditionalData.MarketTrend,
+          ],
         };
 
         const baseUrl = queryArg.isStaging ? getEnv("DADA_API_STAGING") : getEnv("DADA_API_PROD");

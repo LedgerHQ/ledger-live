@@ -25,7 +25,8 @@
     "src/postSyncPatch.ts",
     "src/serialization.ts",
     "src/signer.ts",
-    "src/synchronisation.unit.test.ts"
+    "src/synchronisation.unit.test.ts",
+    "src/test/bridge.dataset.ts"
   ],
   "ignoreUnresolved": [],
   "ignoreUnused": []

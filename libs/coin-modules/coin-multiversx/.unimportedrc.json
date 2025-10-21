@@ -17,7 +17,8 @@
     "src/helpers/randomizeProviders.ts",
     "src/specs.ts",
     "src/speculos-deviceActions.ts",
-    "src/transaction.ts"
+    "src/transaction.ts",
+    "src/test/bridge.dataset.ts"
   ],
   "ignoreUnused": [
     "@ledgerhq/devices",

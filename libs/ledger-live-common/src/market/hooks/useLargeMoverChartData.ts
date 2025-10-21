@@ -2,7 +2,6 @@ import { useQueries } from "@tanstack/react-query";
 import { fetchCurrencyChartData } from "../api";
 import { QUERY_KEY } from "../utils/queryKeys";
 import { REFETCH_TIME_ONE_MINUTE, BASIC_REFETCH } from "../utils/timers";
-import { MarketCoinDataChart } from "../utils/types";
 
 type UseLargeMoverChartDataParams = {
   ids: string[];
@@ -29,7 +28,7 @@ export const useLargeMoverChartData = ({
 
   const chartDataArray = ids.map((id, index) => ({
     idChartData: id,
-    chartData: chartQueries[index]?.data as MarketCoinDataChart | undefined,
+    chartData: chartQueries[index]?.data,
     isLoading: chartQueries[index]?.isLoading || false,
     isError: chartQueries[index]?.isError || false,
   }));

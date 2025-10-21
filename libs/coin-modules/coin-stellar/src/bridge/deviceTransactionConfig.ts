@@ -20,7 +20,7 @@ export type ExtraDeviceTransactionField =
       label: string;
     };
 
-function getDeviceTransactionConfig({
+async function getDeviceTransactionConfig({
   status: { amount, estimatedFees },
   transaction,
 }: {
@@ -28,7 +28,7 @@ function getDeviceTransactionConfig({
   parentAccount: Account | null | undefined;
   transaction: Transaction;
   status: TransactionStatus;
-}): Array<DeviceTransactionField | ExtraDeviceTransactionField> {
+}): Promise<Array<DeviceTransactionField | ExtraDeviceTransactionField>> {
   const { assetReference, assetOwner } = transaction;
 
   const fields: Array<DeviceTransactionField | ExtraDeviceTransactionField> = [

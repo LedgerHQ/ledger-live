@@ -9,7 +9,11 @@ import type { CryptoAssetsStore } from "@ledgerhq/types-live";
 import { setCryptoAssetsStore } from "@ledgerhq/coin-framework/crypto-assets/index";
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-setCryptoAssetsStore({} as CryptoAssetsStore);
+setCryptoAssetsStore({
+  findTokenById: () => undefined,
+  findTokenByAddressInCurrency: () => undefined,
+  getTokensSyncHash: () => Promise.resolve("0"),
+} as CryptoAssetsStore);
 
 setSupportedCurrencies(["bitcoin"]);
 describe("inferDescriptorFromAccount", () => {

@@ -6,7 +6,7 @@ import { decodeTokenAccountId, getAccountCurrency } from "@ledgerhq/coin-framewo
 import { Account } from "@ledgerhq/types-live";
 import { isAmountSpentFromBalance } from "./logic";
 
-function getDeviceTransactionConfig({
+async function getDeviceTransactionConfig({
   account,
   transaction,
   status: { estimatedFees },
@@ -14,7 +14,7 @@ function getDeviceTransactionConfig({
   account: Account;
   transaction: Transaction;
   status: TransactionStatus;
-}): Array<DeviceTransactionField> {
+}): Promise<Array<DeviceTransactionField>> {
   const fields: Array<DeviceTransactionField> = [];
 
   const { subAccountId } = transaction;

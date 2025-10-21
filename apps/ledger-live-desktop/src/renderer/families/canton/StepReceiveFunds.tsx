@@ -35,6 +35,8 @@ import { UTXOAddressAlert } from "~/renderer/components/UTXOAddressAlert";
 import { isUTXOCompliant } from "@ledgerhq/live-common/currencies/helpers";
 import MemoTagInfo from "LLD/features/MemoTag/components/MemoTagInfo";
 import { MEMO_TAG_COINS } from "LLD/features/MemoTag/constants";
+import { useSelector } from "react-redux";
+import { onboardingReceiveFlowSelector } from "~/renderer/reducers/onboarding";
 
 const Separator = styled.div`
   border-top: 1px solid #99999933;
@@ -174,6 +176,7 @@ const StepReceiveFunds = ({
   invariant(account && mainAccount?.xpub, "No account given");
   const name = useAccountName(account);
   const initialDevice = useRef(device);
+  const isOnboardingReceiveFlow = useSelector(onboardingReceiveFlowSelector);
   const address = mainAccount.xpub;
   const [modalVisible, setModalVisible] = useState(false);
   const hideQRCodeModal = useCallback(() => setModalVisible(false), [setModalVisible]);
@@ -196,14 +199,17 @@ const StepReceiveFunds = ({
     receiveStakingFlowConfig?.enabled &&
     receiveStakingFlowConfig?.params?.[receivedCurrencyId]?.enabled;
   const onFinishReceiveFlow = useCallback(() => {
-    completeAction(PostOnboardingActionId.assetsTransfer);
+    if (!isOnboardingReceiveFlow) {
+      completeAction(PostOnboardingActionId.assetsTransfer);
+    }
     const dismissModal =
       global.localStorage.getItem(`${LOCAL_STORAGE_KEY_PREFIX}${receivedCurrencyId}`) === "true";
     if (
       !dismissModal &&
       !receiveTokenMode &&
       isStakingEnabledForAccount &&
-      !isFromPostOnboardingEntryPoint
+      !isFromPostOnboardingEntryPoint &&
+      !isOnboardingReceiveFlow
     ) {
       track("button_clicked2", {
         button: "continue",
@@ -230,6 +236,7 @@ const StepReceiveFunds = ({
     onClose,
     transitionTo,
     completeAction,
+    isOnboardingReceiveFlow,
   ]);
   return (
     <>

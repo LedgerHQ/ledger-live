@@ -1,6 +1,6 @@
 import invariant from "invariant";
 import React, { useMemo } from "react";
-import { getDeviceTransactionConfig } from "@ledgerhq/live-common/transaction/index";
+import { useDeviceTransactionConfig } from "@ledgerhq/live-common/hooks/useDeviceTransactionConfig";
 import Alert from "~/renderer/components/Alert";
 import { Trans } from "react-i18next";
 import ConfirmTitle from "~/renderer/components/TransactionConfirm/ConfirmTitle";
@@ -22,7 +22,7 @@ const Title: TitleComponent = props => {
   const { transaction, account, parentAccount, status, device } = props;
   const transferTokenHelpUrl = useLocalizedUrl(urls.solana.splTokenInfo);
 
-  const fields = getDeviceTransactionConfig({
+  const { fields } = useDeviceTransactionConfig({
     account,
     parentAccount,
     transaction,

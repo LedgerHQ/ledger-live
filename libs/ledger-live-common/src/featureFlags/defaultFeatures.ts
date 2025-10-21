@@ -440,7 +440,7 @@ export const DEFAULT_FEATURES: Features = {
     },
   },
 
-  ptxEarnDrawerApy: {
+  ptxEarnDrawerConfiguration: {
     enabled: false,
     params: {},
   },
@@ -688,6 +688,7 @@ export const DEFAULT_FEATURES: Features = {
   llmHomescreen: DEFAULT_FEATURE,
   supportDeviceApex: DEFAULT_FEATURE,
   llmSyncOnboardingIncr1: DEFAULT_FEATURE,
+  lldSyncOnboardingIncr1: DEFAULT_FEATURE,
   noah: DEFAULT_FEATURE,
 };
 

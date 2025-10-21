@@ -130,6 +130,7 @@ export function evmTransaction({
   recipient,
   customFeeConfig,
   extraTransactionParameters,
+  sponsored,
 }: TransactionWithCustomFee): Partial<Extract<Transaction, { family: "evm" }>> {
   if (customFeeConfig?.gasLimit) {
     delete customFeeConfig.gasLimit;
@@ -142,6 +143,7 @@ export function evmTransaction({
       recipient,
       ...customFeeConfig,
       data: Buffer.from(extraTransactionParameters, "hex"),
+      sponsored,
     };
   }
   return {
@@ -149,6 +151,7 @@ export function evmTransaction({
     amount,
     recipient,
     ...customFeeConfig,
+    sponsored,
   };
 }
 
@@ -242,6 +245,7 @@ export type TransactionWithCustomFee = TransactionCommon & {
   customErrorType?: "swap";
   extraTransactionParameters?: string;
   family: string;
+  sponsored?: boolean;
 };
 
 // Define a specific type for the strategy functions, assuming they might need parameters

@@ -7,5 +7,10 @@
     "forceConsistentCasingInFileNames": true,
     "moduleResolution": "bundler",
     "module": "esnext"
-  }
+  },
+  "exclude": [
+    "node_modules",
+    "./scripts",
+    "./lib"
+  ]
 }

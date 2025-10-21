@@ -54,11 +54,11 @@ export function currencyFormatter(
 
 export const format = (
   currency: MarketItemResponse,
-  cryptoCurrenciesList: (CryptoCurrency | TokenCurrency)[],
+  cryptoCurrenciesList?: (CryptoCurrency | TokenCurrency)[],
 ): CurrencyData => {
   const ledgerIdsSet = new Set(currency.ledgerIds.map(id => id.toLowerCase()));
 
-  const internalCurrency = cryptoCurrenciesList.find(({ id }) =>
+  const internalCurrency = cryptoCurrenciesList?.find(({ id }) =>
     ledgerIdsSet.has(id.toLowerCase()),
   );
 

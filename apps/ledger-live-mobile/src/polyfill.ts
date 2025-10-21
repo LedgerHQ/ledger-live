@@ -2,29 +2,18 @@
 
 // Intl polyfill for Hermes. Could be useless in future react-native versions. See https://hermesengine.dev/docs/intl/
 
-import "@formatjs/intl-locale/polyfill";
+import "@formatjs/intl-locale/polyfill-force";
 
-import "@formatjs/intl-pluralrules/polyfill";
-import "@formatjs/intl-pluralrules/locale-data/en";
-import "@formatjs/intl-pluralrules/locale-data/fr";
-import "@formatjs/intl-pluralrules/locale-data/es";
-import "@formatjs/intl-pluralrules/locale-data/ru";
-import "@formatjs/intl-pluralrules/locale-data/zh";
-import "@formatjs/intl-pluralrules/locale-data/de";
-import "@formatjs/intl-pluralrules/locale-data/tr";
-import "@formatjs/intl-pluralrules/locale-data/ja";
-import "@formatjs/intl-pluralrules/locale-data/ko";
+import "@formatjs/intl-pluralrules/polyfill-force";
+import "@formatjs/intl-relativetimeformat/polyfill-force";
 
-import "@formatjs/intl-relativetimeformat/polyfill";
-import "@formatjs/intl-relativetimeformat/locale-data/en";
-import "@formatjs/intl-relativetimeformat/locale-data/fr";
-import "@formatjs/intl-relativetimeformat/locale-data/es";
-import "@formatjs/intl-relativetimeformat/locale-data/ru";
-import "@formatjs/intl-relativetimeformat/locale-data/zh";
-import "@formatjs/intl-relativetimeformat/locale-data/de";
-import "@formatjs/intl-relativetimeformat/locale-data/tr";
-import "@formatjs/intl-relativetimeformat/locale-data/ja";
-import "@formatjs/intl-relativetimeformat/locale-data/ko";
+// Dynamic language loading - only load the required language data
+import { getDefaultLanguageLocale } from "./languages";
+import { loadLocaleData } from "./utils/localeLoader";
+
+// Load the default language locale data
+const defaultLanguage = getDefaultLanguageLocale();
+loadLocaleData(defaultLanguage);
 
 // Fix error when adding Solana account
 import "@azure/core-asynciterator-polyfill";

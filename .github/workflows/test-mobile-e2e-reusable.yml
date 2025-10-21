@@ -55,6 +55,12 @@ on:
         description: "Xray execution key for iOS (optional)"
         required: false
         type: string
+      firmware_version:
+        description: "Firmware version to use for selected device"
+        required: false
+        type: string
+        default: "2.5.1"
+
   workflow_call:
     inputs:
       ref:
@@ -100,6 +106,7 @@ env:
   SPECULOS_IMAGE_TAG: ghcr.io/ledgerhq/speculos:${{ inputs.speculos_device == 'nanoS' && '1be65b91a8e0691866f880fd437ac05fce78af9d' || 'master' }}
   COINAPPS: ${{ github.workspace }}/coin-apps
   SPECULOS_DEVICE: ${{ inputs.speculos_device || 'nanoX' }}
+  SPECULOS_FIRMWARE_VERSION: ${{ inputs.firmware_version || '2.5.1' }}
 
 jobs:
   determine-builds:
@@ -119,6 +126,12 @@ jobs:
       android_timing_cache_key: ${{ steps.cache-keys.outputs.android_timing_cache_key }}
       ios_timing_cache_key: ${{ steps.cache-keys.outputs.ios_timing_cache_key }}
     steps:
+      - name: generate token
+        id: generate-token
+        uses: tibdex/github-app-token@v1
+        with:
+          app_id: ${{ secrets.GH_BOT_APP_ID }}
+          private_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
       - uses: actions/checkout@v4
         with:
           ref: ${{ inputs.ref || github.sha }}
@@ -127,6 +140,7 @@ jobs:
           sparse-checkout: |
             apps/ledger-live-mobile
             e2e/mobile
+          token: ${{ steps.generate-token.outputs.token }}
 
       - name: Generate shards matrix and test files
         id: generate-shards

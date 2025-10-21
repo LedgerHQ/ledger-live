@@ -3,6 +3,7 @@ import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import type { Account } from "@ledgerhq/types-live";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { log } from "@ledgerhq/logs";
+import { encodeAccountId } from "@ledgerhq/coin-framework/account/accountId";
 import {
   prepareOnboarding,
   submitOnboarding,
@@ -38,14 +39,30 @@ export const isAccountOnboarded = async (currency: CryptoCurrency, publicKey: st
   }
 };
 
-export const isAccountAuthorized = async (currency: CryptoCurrency, partyId: string) => {
+export const isCantonCoinPreapproved = async (currency: CryptoCurrency, partyId: string) => {
   const { expires_at, receiver } = await getTransferPreApproval(currency, partyId);
   const isReceiver = receiver === partyId;
   const isExpired = new Date(expires_at) < new Date();
 
-  const isAuthorized = !isExpired && isReceiver;
-  return isAuthorized;
+  const isPreapproved = !isExpired && isReceiver;
+  return isPreapproved;
 };
+
+const createOnboardedAccount = (
+  account: Account,
+  partyId: string,
+  currency: CryptoCurrency,
+): Account => ({
+  ...account,
+  xpub: partyId,
+  id: encodeAccountId({
+    type: "js",
+    version: "2",
+    currencyId: currency.id,
+    xpubOrAddress: partyId,
+    derivationMode: account.derivationMode,
+  }),
+});
 
 export const buildOnboardAccount =
   (signerContext: SignerContext<CantonSigner>) =>
@@ -69,7 +86,8 @@ export const buildOnboardAccount =
 
         let { partyId } = await isAccountOnboarded(currency, publicKey);
         if (partyId) {
-          o.next({ partyId, account }); // success
+          const onboardedAccount = createOnboardedAccount(account, partyId, currency);
+          o.next({ partyId, account: onboardedAccount }); // success
           return;
         }
 
@@ -89,7 +107,8 @@ export const buildOnboardAccount =
 
         await submitOnboarding(currency, publicKey, preparedTransaction, signature);
 
-        o.next({ partyId, account }); // success
+        const onboardedAccount = createOnboardedAccount(account, partyId, currency);
+        o.next({ partyId, account: onboardedAccount }); // success
       }
 
       main().then(
@@ -113,9 +132,9 @@ export const buildAuthorizePreapproval =
       async function main() {
         o.next({ status: AuthorizeStatus.INIT });
 
-        const isAuthorized = await isAccountAuthorized(currency, partyId);
+        const isPreapproved = await isCantonCoinPreapproved(currency, partyId);
 
-        if (!isAuthorized) {
+        if (!isPreapproved) {
           o.next({ status: AuthorizeStatus.PREPARE });
 
           const preparedTransaction = await preparePreApprovalTransaction(currency, partyId);

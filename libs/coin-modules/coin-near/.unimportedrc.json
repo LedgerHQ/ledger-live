@@ -10,5 +10,8 @@
     "src/specs.ts",
     "src/transaction.ts"
   ],
-  "ignoreUnimported": [ "src/api/node.mock.ts" ]
+  "ignoreUnimported": [
+    "src/api/node.mock.ts",
+    "src/test/bridge.dataset.ts"
+  ]
 }
