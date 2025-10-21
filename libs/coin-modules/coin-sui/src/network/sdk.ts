@@ -343,10 +343,6 @@ export function transactionToOperation(
   };
 }
 
-function absoluteAmount(balanceChange: BalanceChange | undefined): BigNumber {
-  return new BigNumber(balanceChange?.amount || 0).abs();
-}
-
 // This function is only used by alpaca code path
 // Logic is similar to getOperationAmount, but we guarantee to return a positive amount in any case
 // If there is need to display negative amount for staking or unstaking, the view can handle it based on the type of the operation
@@ -358,9 +354,11 @@ export const alpacaGetOperationAmount = (
   const zero = BigNumber(0);
 
   const tx = transaction.transaction?.data.transaction;
-
-  if (isStaking(tx) || isUnstaking(tx)) return absoluteAmount(transaction.balanceChanges?.[0]);
-  else {
+  const change = transaction.balanceChanges;
+  if (isStaking(tx) || isUnstaking(tx)) {
+    if (change) return removeFeesFromAmountForNative(change[0], getOperationFee(transaction)).abs();
+    return BigNumber(0);
+  } else {
     return (
       transaction.balanceChanges
         ?.filter(
@@ -370,7 +368,11 @@ export const alpacaGetOperationAmount = (
             balanceChange.owner.AddressOwner === address &&
             balanceChange.coinType === coinType,
         )
-        .map(absoluteAmount)
+        .map(change => {
+          if (isSender(address, transaction.transaction?.data))
+            return removeFeesFromAmountForNative(change, getOperationFee(transaction)).abs();
+          else return BigNumber(change.amount).abs();
+        })
         .reduce((acc, curr) => acc.plus(curr), zero) || zero
     );
   }
@@ -443,35 +445,46 @@ export function toBlockInfo(checkpoint: Checkpoint): BlockInfo {
  * @param transaction SUI RPC transaction block response
  */
 export function toBlockTransaction(transaction: SuiTransactionBlockResponse): BlockTransaction {
+  const operationFee = getOperationFee(transaction);
   return {
     hash: transaction.digest,
     failed: transaction.effects?.status.status !== "success",
     operations:
-      transaction.balanceChanges?.flatMap(change => toBlockOperation(transaction, change)) || [],
-    fees: BigInt(getOperationFee(transaction).toString()),
+      transaction.balanceChanges?.flatMap(change =>
+        toBlockOperation(transaction, change, operationFee),
+      ) || [],
+    fees: BigInt(operationFee.toString()),
     feesPayer: transaction.transaction?.data.sender || "",
   };
+}
+
+export function removeFeesFromAmountForNative(change: BalanceChange, fees: BigNumber): BigNumber {
+  if (change.coinType === DEFAULT_COIN_TYPE) return BigNumber(change.amount).plus(fees);
+  return BigNumber(change.amount);
 }
 
 /**
  * Convert a SUI RPC transaction balance change to a {@link BlockOperation}.
  *
+ * @param transaction
  * @param change balance change
+ * @param fees transaction fees to be deducted from the amount if applicable
  */
 export function toBlockOperation(
   transaction: SuiTransactionBlockResponse,
   change: BalanceChange,
+  fees: BigNumber,
 ): BlockOperation[] {
   if (typeof change.owner === "string" || !("AddressOwner" in change.owner)) return [];
   const address = change.owner.AddressOwner;
   const operationType = getOperationType(address, transaction);
 
-  function transferOp(peer: string | undefined): BlockOperation {
+  function transferOp(peer: string | undefined, amount: bigint): BlockOperation {
     const op: BlockOperation = {
       type: "transfer",
       address: address,
       asset: toSuiAsset(change.coinType),
-      amount: BigInt(change.amount),
+      amount: amount,
     };
     if (peer) op.peer = peer;
     return op;
@@ -479,9 +492,16 @@ export function toBlockOperation(
 
   switch (operationType) {
     case "IN":
-      return [transferOp(getOperationSenders(transaction.transaction?.data).at(0))];
+      return [
+        transferOp(getOperationSenders(transaction.transaction?.data).at(0), BigInt(change.amount)),
+      ];
     case "OUT":
-      return [transferOp(getOperationRecipients(transaction.transaction?.data).at(0))];
+      return [
+        transferOp(
+          getOperationRecipients(transaction.transaction?.data).at(0),
+          BigInt(removeFeesFromAmountForNative(change, fees).toString()),
+        ),
+      ];
     case "DELEGATE":
     case "UNDELEGATE":
       return [
@@ -490,11 +510,18 @@ export function toBlockOperation(
           operationType: operationType,
           address: change.owner.AddressOwner,
           asset: toSuiAsset(change.coinType),
-          amount: BigInt(absoluteAmount(change).toString()),
+          amount: BigInt(removeFeesFromAmountForNative(change, fees).toString()),
         },
       ];
     default:
-      return [];
+      return [
+        {
+          type: "transfer",
+          address: address,
+          asset: toSuiAsset(change.coinType),
+          amount: BigInt(change.amount),
+        },
+      ];
   }
 }
 
