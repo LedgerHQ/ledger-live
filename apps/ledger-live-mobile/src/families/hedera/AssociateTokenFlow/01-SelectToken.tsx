@@ -5,7 +5,7 @@ import { Trans, useTranslation } from "react-i18next";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import type { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { getEnv } from "@ledgerhq/live-env";
-import { listTokens } from "@ledgerhq/live-common/currencies/index";
+import { useTokensData } from "@ledgerhq/cryptoassets/cal-client/hooks/useTokensData";
 import { getMainAccount } from "@ledgerhq/coin-framework/account/helpers";
 import invariant from "invariant";
 
@@ -37,7 +37,15 @@ const renderEmptyList = () => (
 export default function SelectToken({ navigation, route }: Props) {
   const { t } = useTranslation();
   const { account, parentAccount } = useSelector(accountScreenSelector(route));
-  const list = useMemo(() => listTokens().filter(t => t.parentCurrency.id === "hedera"), []);
+
+  const { data, loadNext } = useTokensData({
+    networkFamily: "hedera",
+    pageSize: 100,
+  });
+
+  const list = useMemo(() => {
+    return data?.tokens || [];
+  }, [data?.tokens]);
 
   const mainAccount = account ? getMainAccount(account, parentAccount) : null;
 
@@ -85,9 +93,11 @@ export default function SelectToken({ navigation, route }: Props) {
         keyExtractor={keyExtractor}
         showsVerticalScrollIndicator={false}
         keyboardDismissMode="on-drag"
+        onEndReached={loadNext}
+        onEndReachedThreshold={0.5}
       />
     ),
-    [onPressItem],
+    [onPressItem, loadNext],
   );
 
   return (
