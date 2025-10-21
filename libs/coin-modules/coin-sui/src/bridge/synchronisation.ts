@@ -60,7 +60,7 @@ export const getAccountShape: GetAccountShape<SuiAccount> = async (info, syncCon
   for (const accountBalance of accountBalances) {
     const token = await getCryptoAssetsStore().findTokenByAddressInCurrency(
       accountBalance.coinType,
-      "sui",
+      currency.id,
     );
     if (token) {
       subAccountsBalances.push(accountBalance);
@@ -70,10 +70,11 @@ export const getAccountShape: GetAccountShape<SuiAccount> = async (info, syncCon
   const subAccounts =
     (await buildSubAccounts({
       accountId,
-      initialAccount,
       operations,
       subAccountsBalances,
       syncConfig,
+      currencyId: currency.id,
+      subAccounts: initialAccount?.subAccounts ?? [],
     })) || [];
 
   return {
@@ -101,16 +102,18 @@ export const sync = makeSync({ getAccountShape, shouldMergeOps: false });
 
 async function buildSubAccounts({
   accountId,
-  initialAccount,
   operations,
   subAccountsBalances,
   syncConfig,
+  currencyId,
+  subAccounts,
 }: {
   accountId: string;
-  initialAccount?: SuiAccount | null | undefined;
   operations: Operation[];
   subAccountsBalances: { coinType: string; blockHeight: number; balance: BigNumber }[];
   syncConfig: SyncConfig;
+  currencyId: string;
+  subAccounts: TokenAccount[];
 }) {
   if (subAccountsBalances.length === 0) return undefined;
   const { blacklistedTokenIds = [] } = syncConfig;
@@ -118,14 +121,12 @@ async function buildSubAccounts({
   const existingAccountByTicker: { [ticker: string]: TokenAccount } = {}; // used for fast lookup
   const existingAccountTickers: string[] = []; // used to keep track of ordering
 
-  if (initialAccount?.subAccounts) {
-    for (const existingSubAccount of initialAccount.subAccounts) {
-      if (existingSubAccount.type === "TokenAccount") {
-        const { ticker, id } = existingSubAccount.token;
-        if (!blacklistedTokenIds.includes(id)) {
-          existingAccountTickers.push(ticker);
-          existingAccountByTicker[ticker] = existingSubAccount;
-        }
+  for (const existingSubAccount of subAccounts) {
+    if (existingSubAccount.type === "TokenAccount") {
+      const { ticker, id } = existingSubAccount.token;
+      if (!blacklistedTokenIds.includes(id)) {
+        existingAccountTickers.push(ticker);
+        existingAccountByTicker[ticker] = existingSubAccount;
       }
     }
   }
@@ -133,8 +134,9 @@ async function buildSubAccounts({
   await promiseAllBatched(3, subAccountsBalances, async accountBalance => {
     const token = await getCryptoAssetsStore().findTokenByAddressInCurrency(
       accountBalance.coinType,
-      "sui",
+      currencyId,
     );
+
     if (token && !blacklistedTokenIds.includes(token.id)) {
       const initialTokenAccount = existingAccountByTicker[token.ticker];
       const tokenAccount = await buildSubAccount({
