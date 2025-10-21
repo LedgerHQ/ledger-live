@@ -6,7 +6,7 @@ import { useModularDrawerAnalytics } from "../analytics/useModularDrawerAnalytic
 import { MODULAR_DRAWER_PAGE_NAME } from "../analytics/modularDrawer.types";
 import uniqWith from "lodash/uniqWith";
 
-import { isCorrespondingCurrency } from "@ledgerhq/live-common/modularDrawer/utils/index";
+import { belongsToSameNetwork } from "@ledgerhq/live-common/modularDrawer/utils/index";
 import { useSelector } from "react-redux";
 import { modularDrawerSearchedSelector } from "~/renderer/reducers/modularDrawer";
 import { AssetData } from "@ledgerhq/live-common/modularDrawer/utils/type";
@@ -77,7 +77,7 @@ export function useModularDrawerFlowState({
     (network: CryptoOrTokenCurrency) => {
       if (!providers) return;
       const correspondingCurrency =
-        providers.networks.find(elem => isCorrespondingCurrency(elem, network)) ?? network;
+        providers.networks.find(elem => belongsToSameNetwork(elem, network)) ?? network;
 
       if (!isSelectAccountFlow) {
         onAssetSelected?.(correspondingCurrency);

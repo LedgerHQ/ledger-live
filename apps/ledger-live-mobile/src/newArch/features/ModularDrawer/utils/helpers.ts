@@ -1,5 +1,6 @@
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { AssetData } from "@ledgerhq/live-common/modularDrawer/utils/type";
+import { belongsToSameNetwork } from "@ledgerhq/live-common/modularDrawer/utils/index";
 
 function getNetworksForAsset(
   assetsSorted: AssetData[] | undefined,
@@ -21,10 +22,9 @@ function resolveCurrency(
   if (!selectedNetwork) return selectedAsset;
 
   const networksForAsset = getNetworksForAsset(assetsSorted, selectedAsset.id, isAcceptedCurrency);
-  const correspondingCurrency = networksForAsset.find(n =>
-    n.type === "CryptoCurrency"
-      ? n.id === selectedNetwork.id
-      : n.parentCurrency.id === selectedNetwork.id,
+
+  const correspondingCurrency = networksForAsset.find(network =>
+    belongsToSameNetwork(network, selectedNetwork),
   );
 
   return correspondingCurrency ?? selectedAsset;
