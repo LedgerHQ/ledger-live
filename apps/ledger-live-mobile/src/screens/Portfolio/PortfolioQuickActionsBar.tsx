@@ -77,8 +77,8 @@ function PortfolioQuickActionsBar() {
         STAKE.route
           ? onNavigate(STAKE.route, "quick_action_stake")
           : STAKE.action
-          ? onAction(STAKE.action, "quick_action_stake")
-          : undefined,
+            ? onAction(STAKE.action, "quick_action_stake")
+            : undefined,
       disabled: STAKE.disabled,
     },
   ].filter(<T extends QuickActionButtonProps>(v: T | undefined): v is T => !!v);
