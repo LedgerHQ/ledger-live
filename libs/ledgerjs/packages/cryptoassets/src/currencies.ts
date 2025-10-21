@@ -3494,7 +3494,7 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
     name: "Bitcoin Regtest",
     managerAppName: "Bitcoin Test",
     ticker: "BTC",
-    scheme: "testnet",
+    scheme: "regtest",
     color: "#00ff00",
     symbol: "Ƀ",
     units: bitcoinUnits.map(makeTestnetUnit),
