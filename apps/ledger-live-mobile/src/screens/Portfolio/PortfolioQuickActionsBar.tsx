@@ -74,10 +74,10 @@ function PortfolioQuickActionsBar() {
       Icon: STAKE.icon,
       children: t(stakeLabel),
       onPress: () =>
-        STAKE.route
-          ? onNavigate(STAKE.route, "quick_action_stake")
-          : STAKE.action
-            ? onAction(STAKE.action, "quick_action_stake")
+        STAKE.customHandler
+          ? onAction(STAKE.customHandler, "quick_action_stake")
+          : STAKE.route
+            ? onNavigate(STAKE.route, "quick_action_stake")
             : undefined,
       disabled: STAKE.disabled,
     },

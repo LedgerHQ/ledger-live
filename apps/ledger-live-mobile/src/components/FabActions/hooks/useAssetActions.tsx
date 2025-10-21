@@ -1,9 +1,7 @@
-import { useMemo, useCallback } from "react";
+import { useMemo } from "react";
 import { AccountLikeArray } from "@ledgerhq/types-live";
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
-import { useNavigation } from "@react-navigation/native";
-import { StackNavigationProp } from "@react-navigation/stack";
 import { IconsLegacy } from "@ledgerhq/native-ui";
 import {
   getAccountCurrency,
@@ -24,14 +22,7 @@ import { PtxToast } from "../../Toast/PtxToast";
 import { getStakeLabelLocaleBased } from "~/helpers/getStakeLabelLocaleBased";
 import { useStake } from "LLM/hooks/useStake/useStake";
 import { flattenAccountsSelector } from "~/reducers/accounts";
-import {
-  ModularDrawerLocation,
-  useModularDrawerController,
-  useModularDrawerVisibility,
-} from "LLM/features/ModularDrawer";
-import { useDrawerConfiguration } from "@ledgerhq/live-common/dada-client/hooks/useDrawerConfiguration";
-import { useStakingDrawer } from "~/components/Stake/useStakingDrawer";
-import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
+import { useOpenStakeDrawer } from "LLM/features/Stake";
 
 type useAssetActionsProps = {
   currency?: CryptoCurrency | TokenCurrency;
@@ -50,28 +41,9 @@ export default function useAssetActions({ currency, accounts }: useAssetActionsP
   mainActions: ActionButtonEvent[];
 } {
   const route = useRoute();
-  const navigation = useNavigation<StackNavigationProp<BaseNavigatorStackParamList>>();
   const { data: currenciesAll } = useFetchCurrencyAll();
 
   const ptxServiceCtaScreens = useFeature("ptxServiceCtaScreens");
-
-  // Modular drawer hooks
-  const { isModularDrawerVisible } = useModularDrawerVisibility({
-    modularDrawerFeatureFlagKey: "llmModularDrawer",
-  });
-  const modularDrawerVisible = isModularDrawerVisible({
-    location: ModularDrawerLocation.LIVE_APP,
-    liveAppId: "earn",
-  });
-  const { openDrawer } = useModularDrawerController();
-  const { createDrawerConfiguration } = useDrawerConfiguration();
-
-  // Staking drawer handler for modular drawer callback
-  const goToAccountStakeFlow = useStakingDrawer({
-    navigation,
-    parentRoute: route,
-    alwaysShowNoFunds: false,
-  });
 
   const { t } = useTranslation();
   const stakeLabel = getStakeLabelLocaleBased();
@@ -104,27 +76,10 @@ export default function useAssetActions({ currency, accounts }: useAssetActionsP
   const assetId = !currency ? accountCurrency?.id : currency.id;
   const canStakeCurrency = !assetId ? false : getCanStakeCurrency(assetId);
 
-  // Custom stake action that handles modular drawer
-  const handleStakeAction = useCallback(() => {
-    if (modularDrawerVisible && assetId) {
-      const finalDrawerConfiguration = createDrawerConfiguration(undefined, "earn");
-      openDrawer({
-        currencies: [assetId],
-        flow: "stake",
-        source: "asset_action",
-        enableAccountSelection: true,
-        onAccountSelected: goToAccountStakeFlow,
-        useCase: "earn",
-        areCurrenciesFiltered: true,
-        ...(finalDrawerConfiguration.assets && {
-          assetsConfiguration: finalDrawerConfiguration.assets,
-        }),
-        ...(finalDrawerConfiguration.networks && {
-          networksConfiguration: finalDrawerConfiguration.networks,
-        }),
-      });
-    }
-  }, [modularDrawerVisible, assetId, createDrawerConfiguration, openDrawer, goToAccountStakeFlow]);
+  const { handleOpenStakeDrawer, isModularDrawerEnabled } = useOpenStakeDrawer({
+    sourceScreenName: "asset_action",
+    currency,
+  });
 
   const actions = useMemo<ActionButtonEvent[]>(() => {
     const isPtxServiceCtaScreensDisabled = !(ptxServiceCtaScreens?.enabled ?? true);
@@ -221,22 +176,17 @@ export default function useAssetActions({ currency, accounts }: useAssetActionsP
                         currency?.ticker ?? accountCurrency?.ticker ?? assetId.toUpperCase(),
                       flow: "stake",
                     },
-                    ...(modularDrawerVisible
-                      ? {
-                          onPress: handleStakeAction,
-                        }
-                      : {
-                          navigationParams: [
-                            NavigatorName.StakeFlow,
-                            {
-                              screen: ScreenName.Stake,
-                              params: {
-                                currencies: [assetId],
-                                parentRoute: route,
-                              },
-                            },
-                          ] as const,
-                        }),
+                    navigationParams: [
+                      NavigatorName.StakeFlow,
+                      {
+                        screen: ScreenName.Stake,
+                        params: {
+                          currencies: [assetId],
+                          parentRoute: route,
+                        },
+                      },
+                    ] as const,
+                    customHandler: isModularDrawerEnabled ? handleOpenStakeDrawer : undefined,
                   },
                 ]
               : []),
@@ -320,8 +270,8 @@ export default function useAssetActions({ currency, accounts }: useAssetActionsP
     stakeLabel,
     accountCurrency?.ticker,
     route,
-    modularDrawerVisible,
-    handleStakeAction,
+    isModularDrawerEnabled,
+    handleOpenStakeDrawer,
   ]);
 
   return {

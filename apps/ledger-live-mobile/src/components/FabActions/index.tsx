@@ -32,7 +32,6 @@ export type NavigationParamsType = readonly [name: string, options: object];
 export type ActionButtonEventProps = {
   navigationParams?: NavigationParamsType;
   linkUrl?: string;
-  onPress?: () => void;
   confirmModalProps?: {
     withCancel?: boolean;
     id?: string;
@@ -47,7 +46,7 @@ export type ActionButtonEventProps = {
     component: React.ComponentType<ModalOnDisabledClickComponentProps>;
   };
   Component?: ComponentType;
-  enableActions?: string;
+  customHandler?: () => void;
 };
 
 export type ActionButtonEvent = ActionButtonEventProps & {
@@ -144,10 +143,10 @@ export const FabButtonBarProvider = ({
         navigationParams,
         confirmModalProps,
         linkUrl,
-        onPress: customOnPress,
         event,
         eventProperties,
         id,
+        customHandler,
       } = data;
 
       if (readOnlyModeEnabled && !hasOrderedNano) {
@@ -170,8 +169,8 @@ export const FabButtonBarProvider = ({
         setInfoModalProps(undefined);
         if (linkUrl) {
           Linking.openURL(linkUrl);
-        } else if (customOnPress) {
-          customOnPress();
+        } else if (customHandler) {
+          customHandler();
         } else if (navigationParams) {
           onNavigate(...navigationParams);
         }

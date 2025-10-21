@@ -1,14 +1,12 @@
-import { useMemo, useCallback } from "react";
-import { useRoute, useNavigation } from "@react-navigation/native";
+import { useMemo } from "react";
+import { useRoute } from "@react-navigation/native";
 import { useSelector } from "react-redux";
-import { StackNavigationProp } from "@react-navigation/stack";
 import { IconsLegacy } from "@ledgerhq/native-ui";
 import { IconType } from "@ledgerhq/native-ui/components/Icon/type";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import { useRampCatalog } from "@ledgerhq/live-common/platform/providers/RampCatalogProvider/useRampCatalog";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { AccountLike } from "@ledgerhq/types-live";
-import { listCurrencies, filterCurrencies } from "@ledgerhq/live-common/currencies/helpers";
 import { NavigatorName, ScreenName } from "~/const";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import { EntryOf } from "~/types/helpers";
@@ -18,18 +16,12 @@ import { useStake } from "LLM/hooks/useStake/useStake";
 import { walletSelector } from "~/reducers/wallet";
 import { getAccountCurrency, getParentAccount } from "@ledgerhq/coin-framework/lib/account/helpers";
 import { shallowAccountsSelector } from "~/reducers/accounts";
-import {
-  ModularDrawerLocation,
-  useModularDrawerController,
-  useModularDrawerVisibility,
-} from "LLM/features/ModularDrawer";
-import { useDrawerConfiguration } from "@ledgerhq/live-common/dada-client/hooks/useDrawerConfiguration";
-import { useStakingDrawer } from "~/components/Stake/useStakingDrawer";
+import { useOpenStakeDrawer } from "LLM/features/Stake";
 
 export type QuickAction = {
   disabled: boolean;
-  route?: EntryOf<BaseNavigatorStackParamList>;
-  action?: () => void;
+  route: EntryOf<BaseNavigatorStackParamList>;
+  customHandler?: () => void;
   icon: IconType;
 };
 
@@ -47,25 +39,8 @@ export type QuickActionProps = { currency?: CryptoOrTokenCurrency; accounts?: Ac
 
 function useQuickActions({ currency, accounts }: QuickActionProps = {}) {
   const route = useRoute();
-  const navigation = useNavigation<StackNavigationProp<BaseNavigatorStackParamList>>();
 
   const { isCurrencyAvailable } = useRampCatalog();
-
-  const { isModularDrawerVisible } = useModularDrawerVisibility({
-    modularDrawerFeatureFlagKey: "llmModularDrawer",
-  });
-  const modularDrawerVisible = isModularDrawerVisible({
-    location: ModularDrawerLocation.LIVE_APP,
-    liveAppId: "earn",
-  });
-  const { openDrawer } = useModularDrawerController();
-  const { createDrawerConfiguration } = useDrawerConfiguration();
-
-  const goToAccountStakeFlow = useStakingDrawer({
-    navigation,
-    parentRoute: route,
-    alwaysShowNoFunds: false,
-  });
 
   const readOnlyModeEnabled = useSelector(readOnlyModeEnabledSelector);
   const hasAnyAccounts = useSelector(accountsCountSelector) > 0;
@@ -105,52 +80,12 @@ function useQuickActions({ currency, accounts }: QuickActionProps = {}) {
 
   const canBeRecovered = recoverEntryPoint?.enabled;
 
-  // Custom stake action that handles modular drawer
-  const handleStakeAction = useCallback(() => {
-    if (modularDrawerVisible) {
-      const currencies = currency
-        ? [currency.id]
-        : enabledCurrencies.concat(partnerSupportedAssets);
-      const cryptoCurrencies = filterCurrencies(listCurrencies(true), {
-        currencies: currencies || [],
-      });
-
-      const finalDrawerConfiguration = createDrawerConfiguration(undefined, "earn");
-      openDrawer({
-        currencies: cryptoCurrencies.map(c => c.id),
-        flow: "stake",
-        source: "quick_action_stake",
-        enableAccountSelection: true,
-        onAccountSelected: goToAccountStakeFlow,
-        useCase: "earn",
-        ...(finalDrawerConfiguration.assets && {
-          assetsConfiguration: finalDrawerConfiguration.assets,
-        }),
-        ...(finalDrawerConfiguration.networks && {
-          networksConfiguration: finalDrawerConfiguration.networks,
-        }),
-      });
-    } else {
-      // Fallback to traditional navigation
-      navigation.navigate(NavigatorName.StakeFlow, {
-        screen: ScreenName.Stake,
-        params: {
-          currencies: currency ? [currency.id] : undefined,
-          parentRoute: route,
-        },
-      });
-    }
-  }, [
-    modularDrawerVisible,
+  const { handleOpenStakeDrawer, isModularDrawerEnabled } = useOpenStakeDrawer({
     currency,
+    sourceScreenName: "quick_action_stake",
     enabledCurrencies,
     partnerSupportedAssets,
-    createDrawerConfiguration,
-    openDrawer,
-    goToAccountStakeFlow,
-    navigation,
-    route,
-  ]);
+  });
 
   const quickActionsList = useMemo(() => {
     const list: Partial<Record<Actions, QuickAction>> = {
@@ -223,18 +158,31 @@ function useQuickActions({ currency, accounts }: QuickActionProps = {}) {
       };
     }
 
-    if (canStakeCurrencyUsingLedgerLive || !currency) {
-      list.STAKE = {
-        disabled: readOnlyModeEnabled,
-        action: handleStakeAction,
-        icon: IconsLegacy.CoinsMedium,
-      };
-    } else if (partnerStakeRoute) {
-      // Partner stake route is only available if an eligible account is present
+    // Partner stake route is only available if an eligible account is present. If not, the user will be redirected to the stake flow to select an account.
+    if (partnerStakeRoute) {
       const { screen, params } = partnerStakeRoute;
       list.STAKE = {
         disabled: readOnlyModeEnabled,
+        // @ts-expect-error - cannot infer screen & params type correctly. But this will go away if we do not return the NoFundsFlow when account is empty, or narrow the conditions of the return type.
         route: [screen, params],
+        icon: IconsLegacy.CoinsMedium,
+      };
+    }
+
+    if (canStakeCurrencyUsingLedgerLive || !currency) {
+      list.STAKE = {
+        disabled: readOnlyModeEnabled,
+        route: [
+          NavigatorName.StakeFlow,
+          {
+            screen: ScreenName.Stake,
+            params: {
+              currencies: currency ? [currency.id] : undefined,
+              parentRoute: route,
+            },
+          },
+        ],
+        customHandler: isModularDrawerEnabled ? handleOpenStakeDrawer : undefined,
         icon: IconsLegacy.CoinsMedium,
       };
     }
@@ -273,12 +221,14 @@ function useQuickActions({ currency, accounts }: QuickActionProps = {}) {
     hasFunds,
     isPtxServiceCtaExchangeDrawerDisabled,
     readOnlyModeEnabled,
+    route,
     canBeBought,
     canBeSold,
     partnerStakeRoute,
     canStakeCurrencyUsingLedgerLive,
     canBeRecovered,
-    handleStakeAction,
+    isModularDrawerEnabled,
+    handleOpenStakeDrawer,
   ]);
 
   return { quickActionsList };
