@@ -16,6 +16,15 @@ import { Subject } from "rxjs";
 import expect from "expect";
 import detox from "detox/internals";
 
+import { launchApp } from "./helpers/commonHelpers";
+import { close as closeBridge, getEnvs, getFlags, loadConfig } from "./bridge/server";
+import { promises as fs } from "fs";
+import path from "path";
+import { formatEnvData, formatFlagsData } from "@ledgerhq/live-common/e2e";
+import { log } from "detox";
+
+const ARTIFACT_ENV_PATH = path.resolve("artifacts/environment.properties");
+
 setupEnvironment();
 
 Object.assign(globalThis, {
@@ -142,5 +151,24 @@ export default class TestEnvironment extends DetoxEnvironment {
     if (event.name === "run_start") {
       await logMemoryUsage();
     }
+  }
+  async teardown() {
+    const { CI, SHARD_INDEX, JEST_WORKER_ID } = process.env;
+    if (CI && SHARD_INDEX === "1" && JEST_WORKER_ID === "1") {
+      try {
+        await launchApp();
+        await loadConfig("1AccountBTC1AccountETHReadOnlyFalse", true);
+        await waitForElementById("settings-icon", 120_000);
+
+        const flagsData = formatFlagsData(JSON.parse(await getFlags()));
+        const envsData = formatEnvData(JSON.parse(await getEnvs()));
+        await fs.appendFile(ARTIFACT_ENV_PATH, flagsData + envsData);
+
+        closeBridge();
+      } catch (err) {
+        log.error("Error during CI environment teardown:", err);
+      }
+    }
+    await super.teardown();
   }
 }
