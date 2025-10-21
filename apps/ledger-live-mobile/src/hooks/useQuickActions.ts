@@ -273,7 +273,6 @@ function useQuickActions({ currency, accounts }: QuickActionProps = {}) {
     hasFunds,
     isPtxServiceCtaExchangeDrawerDisabled,
     readOnlyModeEnabled,
-    route,
     canBeBought,
     canBeSold,
     partnerStakeRoute,

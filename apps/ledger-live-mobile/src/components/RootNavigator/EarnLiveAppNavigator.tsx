@@ -179,7 +179,20 @@ const Earn = (props: NavigationProps) => {
     deeplinkRouting();
 
     return () => clearDeepLink();
-  }, [paramAction, props.route.params, accounts, navigation, route, openStakingDrawer, dispatch]);
+  }, [
+    paramAction,
+    props.route.params,
+    accounts,
+    navigation,
+    route,
+    openStakingDrawer,
+    dispatch,
+    createDrawerConfiguration,
+    enabledCurrencies,
+    modularDrawerVisible,
+    openDrawer,
+    partnerSupportedAssets,
+  ]);
 
   return (
     <>
