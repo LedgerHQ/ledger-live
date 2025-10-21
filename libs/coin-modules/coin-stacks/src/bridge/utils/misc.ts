@@ -364,6 +364,16 @@ export function reconciliatePublicKey(
   throw new Error("publicKey wasn't properly restored");
 }
 
+export const sip010OpToParentOp = (tokenOps: Operation[], parentAccountId: string): Operation[] => {
+  return tokenOps.map(op => ({
+    ...op,
+    accountId: parentAccountId,
+    value: BigNumber(0),
+    subOperations: [op],
+    id: encodeOperationId(parentAccountId, op.hash, op.type),
+  }));
+};
+
 export const findNextNonce = async (
   senderAddress: string,
   pendingOps: Operation[],
