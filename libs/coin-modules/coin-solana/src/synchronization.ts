@@ -334,7 +334,7 @@ export const getAccountShapeWithAPI = async (
 
   const newMainAccTxs = await getTransactions(mainAccAddress, mainAccountLastTxSignature, api);
 
-  const lastOpSeqNumber = mainInitialAcc?.operations?.[0]?.transactionSequenceNumber ?? 0;
+  const lastOpSeqNumber = Number(mainInitialAcc?.operations?.[0]?.transactionSequenceNumber ?? 0);
   const newOpsCount = newMainAccTxs.length;
 
   const newMainAccOps = newMainAccTxs
@@ -627,7 +627,7 @@ function txToMainAccOperation(
     date: txDate,
     value: opValue,
     fee: opFee,
-    transactionSequenceNumber: txSeqNumber,
+    transactionSequenceNumber: new BigNumber(txSeqNumber),
   };
 }
 

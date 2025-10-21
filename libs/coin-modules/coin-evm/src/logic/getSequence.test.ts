@@ -12,6 +12,6 @@ describe("getSequence", () => {
     setCoinConfig(() => ({ info: { node: { type } } }) as unknown as EvmCoinConfig);
     jest.spyOn(node, "getTransactionCount").mockResolvedValue(42);
 
-    expect(await getSequence({} as CryptoCurrency, "")).toEqual(42);
+    expect(await getSequence({} as CryptoCurrency, "")).toEqual(42n);
   });
 });

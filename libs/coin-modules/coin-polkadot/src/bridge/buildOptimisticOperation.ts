@@ -97,7 +97,7 @@ export const buildOptimisticOperation = (
     senders: [account.freshAddress],
     recipients: [transaction.recipient].filter(Boolean),
     accountId: account.id,
-    transactionSequenceNumber: getNonce(account),
+    transactionSequenceNumber: new BigNumber(getNonce(account)),
     date: new Date(),
     extra,
   };

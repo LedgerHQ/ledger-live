@@ -225,7 +225,10 @@ function transactionToEGLDOperation(
     senders: (type === "OUT" || type === "IN") && transaction.sender ? [transaction.sender] : [],
     recipients:
       (type === "OUT" || type === "IN") && transaction.receiver ? [transaction.receiver] : [],
-    transactionSequenceNumber: isSender(transaction, addr) ? transaction.nonce : undefined,
+    transactionSequenceNumber:
+      isSender(transaction, addr) && transaction.nonce !== undefined
+        ? new BigNumber(transaction.nonce.toString())
+        : undefined,
     hasFailed,
   };
 

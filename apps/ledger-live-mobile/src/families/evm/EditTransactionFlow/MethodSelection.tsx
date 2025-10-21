@@ -26,6 +26,7 @@ import LText from "~/components/LText";
 import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { ScreenName } from "~/const";
 import { EditTransactionParamList } from "./EditTransactionParamList";
+import BigNumber from "bignumber.js";
 
 const getSpeedUpDescriptionKey = (
   haveFundToSpeedup: boolean,
@@ -92,7 +93,10 @@ function MethodSelectionComponent({ navigation, route }: Props) {
   const [selectedMethod, setSelectedMethod] = useState<EditType | null>();
 
   // if we are at this step (i.e: in this screen) it means the transaction is editable
-  const isOldestEditableOperation = isOldestPendingOperation(mainAccount, transactionToEdit.nonce);
+  const isOldestEditableOperation = isOldestPendingOperation(
+    mainAccount,
+    new BigNumber(transactionToEdit.nonce),
+  );
   const bridge: AccountBridge<EvmTransaction> = getAccountBridge(account, parentAccount as Account);
 
   const onSelect = useCallback(

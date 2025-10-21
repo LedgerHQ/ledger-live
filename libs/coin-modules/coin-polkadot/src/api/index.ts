@@ -40,7 +40,7 @@ export function createApi(config: PolkadotConfig): AlpacaApi {
       _transaction: string,
       _sender: string,
       _publicKey: string,
-      _sequence: number,
+      _sequence: bigint,
     ): Promise<CraftedTransaction> => {
       throw new Error("craftRawTransaction is not supported");
     },

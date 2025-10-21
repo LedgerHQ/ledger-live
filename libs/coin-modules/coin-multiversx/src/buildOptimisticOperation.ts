@@ -82,7 +82,7 @@ export const buildOptimisticOperation = (
     senders,
     recipients,
     accountId: account.id,
-    transactionSequenceNumber: unsignedTx.nonce,
+    transactionSequenceNumber: new BigNumber(unsignedTx.nonce),
     date: new Date(),
     extra: {
       amount: delegationAmount,

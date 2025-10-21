@@ -47,7 +47,7 @@ export async function craftRawTransaction(
   transaction: string,
   sender: string,
   publicKey: string,
-  sequence: number,
+  sequence: bigint,
 ): Promise<CraftedTransaction> {
   const xrplTransaction: JsonObject = decode(transaction);
 
@@ -74,7 +74,7 @@ export async function craftRawTransaction(
   if (xrplTransaction.TicketSequence) {
     xrplTransaction.Sequence = 0;
   } else if (!xrplTransaction.Sequence) {
-    xrplTransaction.Sequence = sequence;
+    xrplTransaction.Sequence = Number(sequence);
   }
 
   if (!xrplTransaction.LastLedgerSequence) {

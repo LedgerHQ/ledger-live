@@ -37,6 +37,7 @@ import StepFees, { StepFeesFooter } from "./steps/StepFees";
 import StepMethod, { StepMethodFooter } from "./steps/StepMethod";
 import { StepSummaryFooter } from "./steps/StepSummaryFooter";
 import { St, StepId, StepProps } from "./types";
+import BigNumber from "bignumber.js";
 
 type Params = {
   account: AccountLike | undefined | null;
@@ -243,7 +244,7 @@ const Body = ({
   // if we are at this step (i.e: in this screen) it means the transaction is editable
   const isOldestEditableOperation = isOldestPendingOperation(
     mainAccount,
-    transactionToUpdate.nonce,
+    new BigNumber(transactionToUpdate.nonce),
   );
 
   const [editType, setEditType] = useState<StepProps["editType"]>(

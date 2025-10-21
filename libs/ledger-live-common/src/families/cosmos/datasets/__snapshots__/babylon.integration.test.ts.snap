@@ -55,7 +55,7 @@ exports[`babylon currency bridge scanAccounts babylon seed 1 2`] = `
       "senders": [
         "bbn1g84934jpu3v5de5yqukkkhxmcvsw3u2a9casjx",
       ],
-      "transactionSequenceNumber": 3,
+      "transactionSequenceNumber": "3",
       "type": "IN",
       "value": "1000000",
     },

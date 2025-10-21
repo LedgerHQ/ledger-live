@@ -1,3 +1,4 @@
+import BigNumber from "bignumber.js";
 import { mapTxToOperations, inferTransactionSequenceNumberFromInputs } from "./logic";
 import { TX } from "./wallet-btc";
 
@@ -77,7 +78,7 @@ describe("mapTxToOperations", () => {
     );
 
     expect(ops.length).toBe(1);
-    expect(ops[0]?.transactionSequenceNumber).toBe(4294967293);
+    expect(ops[0]?.transactionSequenceNumber).toEqual(new BigNumber(4294967293));
   });
 
   it("should retain transactionSequenceNumber = 0 when explicitly set", () => {
@@ -102,7 +103,7 @@ describe("mapTxToOperations", () => {
     );
 
     expect(ops.length).toBe(1);
-    expect(ops[0]?.transactionSequenceNumber).toBe(0); // important: not undefined
+    expect(ops[0]?.transactionSequenceNumber).toEqual(new BigNumber(0)); // important: not undefined
   });
 
   it("should set transactionSequenceNumber to undefined when sequence is missing", () => {
@@ -128,7 +129,7 @@ describe("mapTxToOperations", () => {
 
     expect(ops.length).toBe(1);
     // missing sequence implies 0xfffffffe (default)"
-    expect(ops[0]?.transactionSequenceNumber).toBe(0xfffffffe);
+    expect(ops[0]?.transactionSequenceNumber).toEqual(new BigNumber(0xfffffffe));
   });
 });
 

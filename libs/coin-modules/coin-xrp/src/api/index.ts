@@ -53,7 +53,7 @@ export function createApi(config: XrpConfig): Api<XrpMapMemo> {
     },
     getSequence: async (address: string) => {
       const accountInfo = await getAccountInfo(address);
-      return accountInfo.sequence;
+      return BigInt(accountInfo.sequence);
     },
     getStakes(_address: string, _cursor?: Cursor): Promise<Page<Stake>> {
       throw new Error("getStakes is not supported");

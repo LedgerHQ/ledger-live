@@ -66,7 +66,7 @@ describe("craftRawTransaction", () => {
     mockGetLedgerIndex.mockResolvedValue(1000);
 
     // When
-    const result = await craftRawTransaction(serialized, sender, publicKey, 10);
+    const result = await craftRawTransaction(serialized, sender, publicKey, 10n);
 
     // Then
     const decoded = decode(result.transaction);
@@ -99,7 +99,7 @@ describe("craftRawTransaction", () => {
     mockGetLedgerIndex.mockResolvedValue(2000);
 
     // When: pass a different sequence param to ensure existing Sequence is not overwritten
-    const result = await craftRawTransaction(serialized, sender, publicKey, 999);
+    const result = await craftRawTransaction(serialized, sender, publicKey, 999n);
 
     // Then
     const decoded = decode(result.transaction);
@@ -130,7 +130,7 @@ describe("craftRawTransaction", () => {
     mockGetLedgerIndex.mockResolvedValue(1);
 
     // When
-    const result = await craftRawTransaction(serialized, sender, publicKey, 999);
+    const result = await craftRawTransaction(serialized, sender, publicKey, 999n);
 
     // Then
     const decoded = decode(result.transaction);
@@ -158,7 +158,7 @@ describe("craftRawTransaction", () => {
     mockGetLedgerIndex.mockResolvedValue(10);
 
     // When
-    const result = await craftRawTransaction(serialized, sender, publicKey, 77);
+    const result = await craftRawTransaction(serialized, sender, publicKey, 77n);
 
     // Then
     const decoded = decode(result.transaction);
@@ -183,7 +183,7 @@ describe("craftRawTransaction", () => {
     mockGetLedgerIndex.mockResolvedValue(111);
 
     // When
-    const result = await craftRawTransaction(serialized, sender, publicKey, 9999);
+    const result = await craftRawTransaction(serialized, sender, publicKey, 9999n);
 
     // Then
     const decoded = decode(result.transaction);
@@ -203,7 +203,7 @@ describe("craftRawTransaction", () => {
     const serialized = encode(baseTx);
 
     // When & Then
-    await expect(craftRawTransaction(serialized, "rOTHERADDRESS", publicKey, 1)).rejects.toThrow(
+    await expect(craftRawTransaction(serialized, "rOTHERADDRESS", publicKey, 1n)).rejects.toThrow(
       "Sender address does not match the transaction account",
     );
   });
@@ -223,7 +223,7 @@ describe("craftRawTransaction", () => {
       const serialized = encode(multi);
 
       // When
-      const result = await craftRawTransaction(serialized, sender, publicKey, 9);
+      const result = await craftRawTransaction(serialized, sender, publicKey, 9n);
 
       // Then
       const decoded = decode(result.transaction);
@@ -252,7 +252,7 @@ describe("craftRawTransaction", () => {
       mockGetLedgerIndex.mockResolvedValue(500); // should NOT be used
 
       // When
-      const result = await craftRawTransaction(serialized, sender, publicKey, 2);
+      const result = await craftRawTransaction(serialized, sender, publicKey, 2n);
 
       // Then
       const decoded = decode(result.transaction);
@@ -310,7 +310,7 @@ describe("craftRawTransaction", () => {
         serialized,
         "r94uo44ukDHWVjYDJLZJYwDdZjo1F2QYgq",
         publicKey,
-        3,
+        3n,
       );
 
       // Then
@@ -339,7 +339,7 @@ describe("craftRawTransaction", () => {
         Sequence: 1,
       } as const;
       const serialized = encode(multi);
-      await expect(craftRawTransaction(serialized, sender, publicKey, 1)).rejects.toThrow(
+      await expect(craftRawTransaction(serialized, sender, publicKey, 1n)).rejects.toThrow(
         "Fee is required for multi sign transactions",
       );
     });
@@ -354,7 +354,7 @@ describe("craftRawTransaction", () => {
         Fee: "1",
       } as const;
       const serialized = encode(multi);
-      await expect(craftRawTransaction(serialized, sender, publicKey, 1)).rejects.toThrow(
+      await expect(craftRawTransaction(serialized, sender, publicKey, 1n)).rejects.toThrow(
         "Sequence is required for multi sign transactions",
       );
     });

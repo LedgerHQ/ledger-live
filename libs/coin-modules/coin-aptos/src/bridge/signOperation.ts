@@ -76,7 +76,7 @@ const buildSignOperation =
           recipients,
           accountId,
           date: new Date(),
-          transactionSequenceNumber: Number(rawTx.sequence_number),
+          transactionSequenceNumber: new BigNumber(rawTx.sequence_number.toString()),
           subOperations: subAccount
             ? [
                 {

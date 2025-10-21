@@ -56,8 +56,8 @@ export const getNonce = (account: IconAccount): number => {
 
   const nonce = Math.max(
     account.iconResources?.nonce || 0,
-    lastPendingOp && typeof lastPendingOp.transactionSequenceNumber === "number"
-      ? lastPendingOp.transactionSequenceNumber + 1
+    lastPendingOp && BigNumber.isBigNumber(lastPendingOp.transactionSequenceNumber)
+      ? lastPendingOp.transactionSequenceNumber.plus(1).toNumber()
       : 0,
   );
 

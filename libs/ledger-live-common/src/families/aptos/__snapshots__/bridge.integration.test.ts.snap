@@ -97,7 +97,7 @@ exports[`aptos currency bridge scanAccounts aptos seed 1 2`] = `
       "senders": [
         "0xa0d8abc262e3321f87d745bd5d687e8f3fb14c87d48f840b6b56867df0026ec8",
       ],
-      "transactionSequenceNumber": 10,
+      "transactionSequenceNumber": "10",
       "type": "IN",
       "value": "100000",
     },
@@ -118,7 +118,7 @@ exports[`aptos currency bridge scanAccounts aptos seed 1 2`] = `
       "senders": [
         "0xa0d8abc262e3321f87d745bd5d687e8f3fb14c87d48f840b6b56867df0026ec8",
       ],
-      "transactionSequenceNumber": 9,
+      "transactionSequenceNumber": "9",
       "type": "IN",
       "value": "20000",
     },
@@ -139,7 +139,7 @@ exports[`aptos currency bridge scanAccounts aptos seed 1 2`] = `
       "senders": [
         "0xa0d8abc262e3321f87d745bd5d687e8f3fb14c87d48f840b6b56867df0026ec8",
       ],
-      "transactionSequenceNumber": 7,
+      "transactionSequenceNumber": "7",
       "type": "IN",
       "value": "20000",
     },
@@ -160,7 +160,7 @@ exports[`aptos currency bridge scanAccounts aptos seed 1 2`] = `
       "senders": [
         "0x445fa0013887abd1a0c14acdec6e48090e0ad3fed3e08202aac15ca14f3be26b",
       ],
-      "transactionSequenceNumber": 1,
+      "transactionSequenceNumber": "1",
       "type": "OUT",
       "value": "30100",
     },
@@ -181,7 +181,7 @@ exports[`aptos currency bridge scanAccounts aptos seed 1 2`] = `
       "senders": [
         "0xa0d8abc262e3321f87d745bd5d687e8f3fb14c87d48f840b6b56867df0026ec8",
       ],
-      "transactionSequenceNumber": 8,
+      "transactionSequenceNumber": "8",
       "type": "IN",
       "value": "10000",
     },
@@ -202,7 +202,7 @@ exports[`aptos currency bridge scanAccounts aptos seed 1 2`] = `
       "senders": [
         "0xa0d8abc262e3321f87d745bd5d687e8f3fb14c87d48f840b6b56867df0026ec8",
       ],
-      "transactionSequenceNumber": 86,
+      "transactionSequenceNumber": "86",
       "type": "IN",
       "value": "20000000",
     },
@@ -223,7 +223,7 @@ exports[`aptos currency bridge scanAccounts aptos seed 1 2`] = `
       "senders": [
         "0x445fa0013887abd1a0c14acdec6e48090e0ad3fed3e08202aac15ca14f3be26b",
       ],
-      "transactionSequenceNumber": 0,
+      "transactionSequenceNumber": "0",
       "type": "OUT",
       "value": "119900",
     },
@@ -246,7 +246,7 @@ exports[`aptos currency bridge scanAccounts aptos seed 1 2`] = `
       "senders": [
         "0xb69a68cc64f7aa193705193f4dd598320a0a74baf7e4b50c9980c5bd60a82390",
       ],
-      "transactionSequenceNumber": 179,
+      "transactionSequenceNumber": "179",
       "type": "IN",
       "value": "10000",
     },
@@ -267,7 +267,7 @@ exports[`aptos currency bridge scanAccounts aptos seed 1 2`] = `
       "senders": [
         "0xa0d8abc262e3321f87d745bd5d687e8f3fb14c87d48f840b6b56867df0026ec8",
       ],
-      "transactionSequenceNumber": 87,
+      "transactionSequenceNumber": "87",
       "type": "IN",
       "value": "20000000",
     },
@@ -288,7 +288,7 @@ exports[`aptos currency bridge scanAccounts aptos seed 1 2`] = `
       "senders": [
         "0xb69a68cc64f7aa193705193f4dd598320a0a74baf7e4b50c9980c5bd60a82390",
       ],
-      "transactionSequenceNumber": 182,
+      "transactionSequenceNumber": "182",
       "type": "IN",
       "value": "10000",
     },
@@ -309,7 +309,7 @@ exports[`aptos currency bridge scanAccounts aptos seed 1 2`] = `
       "senders": [
         "0xb69a68cc64f7aa193705193f4dd598320a0a74baf7e4b50c9980c5bd60a82390",
       ],
-      "transactionSequenceNumber": 181,
+      "transactionSequenceNumber": "181",
       "type": "IN",
       "value": "10000",
     },
@@ -330,7 +330,7 @@ exports[`aptos currency bridge scanAccounts aptos seed 1 2`] = `
       "senders": [
         "0x445fa0013887abd1a0c14acdec6e48090e0ad3fed3e08202aac15ca14f3be26b",
       ],
-      "transactionSequenceNumber": 0,
+      "transactionSequenceNumber": "0",
       "type": "IN",
       "value": "20000",
     },

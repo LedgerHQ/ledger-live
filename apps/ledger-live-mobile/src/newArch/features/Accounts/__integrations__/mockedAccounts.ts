@@ -569,7 +569,7 @@ export const MockedAccounts: AccountsState = {
               date: new Date("2024-10-16T10:24:05.000Z"),
               value: BigNumber(1308587),
               fee: BigNumber(0),
-              transactionSequenceNumber: 9,
+              transactionSequenceNumber: new BigNumber(9),
               contract: "0xfde4C96c8593536E31F229EA8f37b2ADa2699bb2",
             },
           ],

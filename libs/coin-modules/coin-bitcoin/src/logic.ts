@@ -229,7 +229,9 @@ export const mapTxToOperations = (
     }
   }
 
-  const transactionSequenceNumber = inferTransactionSequenceNumberFromInputs(accountInputs);
+  const transactionSequenceNumber = new BigNumber(
+    inferTransactionSequenceNumberFromInputs(accountInputs) || 0,
+  );
 
   const hasSpentNothing = value.eq(0);
 

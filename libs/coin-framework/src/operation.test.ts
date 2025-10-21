@@ -85,26 +85,26 @@ describe("Operation.ts", () => {
       blockHeight: null,
       value: new BigNumber(0),
       date: new Date(1986, 0, 1),
-      transactionSequenceNumber: 0,
+      transactionSequenceNumber: new BigNumber(0),
     };
     const pendingCoinOperation1: Operation = {
       ...pendingCoinOperation0,
-      transactionSequenceNumber: 1,
+      transactionSequenceNumber: new BigNumber(1),
     };
     const pendingCoinOperation2: Operation = {
       ...pendingCoinOperation1,
-      transactionSequenceNumber: 2,
+      transactionSequenceNumber: new BigNumber(2),
     };
     it("should return true if there are no pending operations", () => {
       const testAccount = { ...account, pendingOperations: [] };
 
-      expect(isOldestPendingOperation(testAccount, 0)).toBe(true);
+      expect(isOldestPendingOperation(testAccount, new BigNumber(0))).toBe(true);
     });
 
     it("should return true if the given nonce is the same as the transactionSequenceNumber of the only pending operation", () => {
       const testAccount = { ...account, pendingOperations: [pendingCoinOperation0] };
 
-      expect(isOldestPendingOperation(testAccount, 0)).toBe(true);
+      expect(isOldestPendingOperation(testAccount, new BigNumber(0))).toBe(true);
     });
 
     it("should return true if the given nonce is less than the transactionSequenceNumber of any pending operation", () => {
@@ -113,7 +113,7 @@ describe("Operation.ts", () => {
         pendingOperations: [pendingCoinOperation1, pendingCoinOperation2],
       };
 
-      expect(isOldestPendingOperation(testAccount, 0)).toBe(true);
+      expect(isOldestPendingOperation(testAccount, new BigNumber(0))).toBe(true);
     });
 
     it("should return false if the given nonce is greater than the transactionSequenceNumber of all pending operations", () => {
@@ -122,7 +122,7 @@ describe("Operation.ts", () => {
         pendingOperations: [pendingCoinOperation0, pendingCoinOperation1],
       };
 
-      expect(isOldestPendingOperation(testAccount, 2)).toBe(false);
+      expect(isOldestPendingOperation(testAccount, new BigNumber(2))).toBe(false);
     });
 
     it("should return false if there is a pending operation with a lower transactionSequenceNumber than the given nonce", () => {
@@ -131,7 +131,7 @@ describe("Operation.ts", () => {
         pendingOperations: [pendingCoinOperation0, pendingCoinOperation1],
       };
 
-      expect(isOldestPendingOperation(testAccount, 1)).toBe(false);
+      expect(isOldestPendingOperation(testAccount, new BigNumber(1))).toBe(false);
     });
 
     it("should throw if a pending operation is missing transactionSequenceNumber", () => {
@@ -145,7 +145,7 @@ describe("Operation.ts", () => {
         pendingOperations: [malformedOp],
       };
 
-      expect(() => isOldestPendingOperation(testAccount, 0)).toThrow(
+      expect(() => isOldestPendingOperation(testAccount, new BigNumber(0))).toThrow(
         "transactionSequenceNumber required",
       );
     });
@@ -156,7 +156,7 @@ describe("Operation.ts", () => {
         pendingOperations: [pendingCoinOperation2, pendingCoinOperation0],
       };
 
-      expect(isOldestPendingOperation(testAccount, 0)).toBe(true);
+      expect(isOldestPendingOperation(testAccount, new BigNumber(0))).toBe(true);
     });
   });
 });

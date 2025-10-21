@@ -129,7 +129,9 @@ async function formatOperation(
     date: new Date(rawOperation.created_at),
     senders: [rawOperation.source_account],
     recipients,
-    transactionSequenceNumber: Number(transaction.source_account_sequence) || undefined,
+    transactionSequenceNumber: new BigNumber(transaction.source_account_sequence).isNaN()
+      ? undefined
+      : new BigNumber(transaction.source_account_sequence),
     hasFailed: !rawOperation.transaction_successful,
     blockHash: blockHash,
     extra: {

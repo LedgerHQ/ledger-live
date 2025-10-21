@@ -113,7 +113,7 @@ describe("Aptos logic ", () => {
         accountId: id,
         date: new Date(1000),
         extra: { version: "1" },
-        transactionSequenceNumber: 1,
+        transactionSequenceNumber: new BigNumber(1),
         hasFailed: false,
       });
     });
@@ -141,7 +141,7 @@ describe("Aptos logic ", () => {
         accountId: id,
         date: new Date(1000),
         extra: { version: undefined },
-        transactionSequenceNumber: 1,
+        transactionSequenceNumber: new BigNumber(1),
         hasFailed: false,
       });
     });
@@ -236,7 +236,7 @@ describe("Aptos sync logic ", () => {
         accountId: id,
         date: new Date(1000),
         extra: { version: undefined },
-        transactionSequenceNumber: 1,
+        transactionSequenceNumber: new BigNumber(1),
         hasFailed: false,
       });
     });
@@ -435,7 +435,7 @@ describe("Aptos sync logic ", () => {
         accountId: id,
         date: new Date(1000),
         extra: { version: undefined },
-        transactionSequenceNumber: 1,
+        transactionSequenceNumber: new BigNumber(1),
         hasFailed: true,
       });
     });
@@ -718,7 +718,7 @@ describe("Aptos sync logic ", () => {
         accountId: "token_account_id",
         date: new Date(1000),
         extra: { version: undefined },
-        transactionSequenceNumber: 1,
+        transactionSequenceNumber: new BigNumber(1),
         hasFailed: false,
       });
 
@@ -736,7 +736,7 @@ describe("Aptos sync logic ", () => {
         recipients: ["0x00000000000000000000000000000000000000000000000000000000000004e5"],
         date: new Date(1000),
         extra: { version: undefined },
-        transactionSequenceNumber: 1,
+        transactionSequenceNumber: new BigNumber(1),
         hasFailed: false,
       });
     });
@@ -1034,7 +1034,7 @@ describe("Aptos sync logic ", () => {
         recipients: ["0x0000000000000000000000000000000000000000000000000000000000006b8c"],
         date: new Date(1000),
         extra: { version: undefined },
-        transactionSequenceNumber: 1,
+        transactionSequenceNumber: new BigNumber(1),
         hasFailed: false,
       });
     });
