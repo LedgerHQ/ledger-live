@@ -130,10 +130,7 @@ export const DEFAULT_FEATURES: Features = {
   receiveStakingFlowConfigDesktop: initFeature(),
   brazePushNotifications: initFeature(),
   stakeAccountBanner: initFeature(),
-  mixpanelAnalytics: initFeature({
-    enabled: false,
-    params: { record_sessions_percent: 100 },
-  }),
+
   ptxSwapDetailedView: initFeature({
     enabled: false,
     params: {
@@ -693,12 +690,6 @@ export const DEFAULT_FEATURES: Features = {
   llmSyncOnboardingIncr1: DEFAULT_FEATURE,
   lldSyncOnboardingIncr1: DEFAULT_FEATURE,
   noah: DEFAULT_FEATURE,
-  lldSessionReplay: {
-    ...DEFAULT_FEATURE,
-    params: {
-      sampling: 100,
-    },
-  },
 };
 
 // Firebase SDK treat JSON values as strings
