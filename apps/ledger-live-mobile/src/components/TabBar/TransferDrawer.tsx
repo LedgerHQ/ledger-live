@@ -73,6 +73,14 @@ export default function TransferDrawer({ onClose }: Omit<ModalProps, "isRequesti
     },
     [navigation, onClose],
   );
+
+  const onAction = useCallback(
+    (action: () => void) => {
+      action();
+      onClose?.();
+    },
+    [onClose],
+  );
   const onNavigateRecover = useCallback(() => {
     if (quickAccessURI) {
       Linking.canOpenURL(quickAccessURI).then(() => Linking.openURL(quickAccessURI));
@@ -89,7 +97,7 @@ export default function TransferDrawer({ onClose }: Omit<ModalProps, "isRequesti
       },
       title: t("transfer.send.title"),
       description: t("transfer.send.description"),
-      onPress: () => onNavigate(SEND.route),
+      onPress: () => SEND.route && onNavigate(SEND.route),
       Icon: SEND.icon,
       disabled: SEND.disabled,
       testID: "transfer-send-button",
@@ -104,7 +112,7 @@ export default function TransferDrawer({ onClose }: Omit<ModalProps, "isRequesti
       description: noah?.enabled
         ? t("transfer.receive.description_v2")
         : t("transfer.receive.description"),
-      onPress: () => onNavigate(RECEIVE.route),
+      onPress: () => RECEIVE.route && onNavigate(RECEIVE.route),
       Icon: RECEIVE.icon,
       disabled: RECEIVE.disabled,
       testID: "transfer-receive-button",
@@ -118,7 +126,7 @@ export default function TransferDrawer({ onClose }: Omit<ModalProps, "isRequesti
       title: t("transfer.buy.title"),
       description: t("transfer.buy.description"),
       Icon: BUY.icon,
-      onPress: () => onNavigate(BUY.route),
+      onPress: () => BUY.route && onNavigate(BUY.route),
       onDisabledPress: () => {
         if (isPtxServiceCtaExchangeDrawerDisabled) {
           onClose?.();
@@ -143,7 +151,7 @@ export default function TransferDrawer({ onClose }: Omit<ModalProps, "isRequesti
       title: t("transfer.sell.title"),
       description: t("transfer.sell.description"),
       Icon: SELL.icon,
-      onPress: () => onNavigate(SELL.route),
+      onPress: () => SELL.route && onNavigate(SELL.route),
       onDisabledPress: () => {
         if (isPtxServiceCtaExchangeDrawerDisabled) {
           onClose?.();
@@ -168,7 +176,7 @@ export default function TransferDrawer({ onClose }: Omit<ModalProps, "isRequesti
       title: t(stakeLabel),
       description: t("transfer.stake.description"),
       Icon: STAKE.icon,
-      onPress: () => onNavigate(STAKE.route),
+      onPress: () => STAKE.route ? onNavigate(STAKE.route) : STAKE.action ? onAction(STAKE.action) : undefined,
       disabled: STAKE.disabled,
       testID: "transfer-stake-button",
     },
@@ -181,7 +189,7 @@ export default function TransferDrawer({ onClose }: Omit<ModalProps, "isRequesti
       title: t("transfer.swap.title"),
       description: t("transfer.swap.description"),
       Icon: SWAP.icon,
-      onPress: () => onNavigate(SWAP.route),
+      onPress: () => SWAP.route && onNavigate(SWAP.route),
       onDisabledPress: () => {
         if (isPtxServiceCtaExchangeDrawerDisabled) {
           onClose?.();

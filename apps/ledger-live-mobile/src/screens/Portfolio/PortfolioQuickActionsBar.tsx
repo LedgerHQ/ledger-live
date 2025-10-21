@@ -32,40 +32,53 @@ function PortfolioQuickActionsBar() {
     [navigation, router.name],
   );
 
+  const onAction = useCallback(
+    (action: () => void, eventButton: string) => {
+      track("button_clicked", { button: eventButton, page: router.name });
+      action();
+    },
+    [router.name],
+  );
+
   const quickActionsData: QuickActionButtonProps[] = [
     BUY && {
       ...SHARED_CONFIG,
       Icon: BUY.icon,
       children: t("portfolio.quickActions.buy"),
-      onPress: () => onNavigate(BUY.route, "quick_action_buy"),
+      onPress: () => BUY.route && onNavigate(BUY.route, "quick_action_buy"),
       disabled: BUY.disabled,
     },
     SWAP && {
       ...SHARED_CONFIG,
       Icon: SWAP.icon,
       children: t("portfolio.quickActions.swap"),
-      onPress: () => onNavigate(SWAP.route, "quick_action_swap"),
+      onPress: () => SWAP.route && onNavigate(SWAP.route, "quick_action_swap"),
       disabled: SWAP.disabled,
     },
     SEND && {
       ...SHARED_CONFIG,
       Icon: SEND.icon,
       children: t("portfolio.quickActions.send"),
-      onPress: () => onNavigate(SEND.route, "quick_action_send"),
+      onPress: () => SEND.route && onNavigate(SEND.route, "quick_action_send"),
       disabled: SEND.disabled,
     },
     RECEIVE && {
       ...SHARED_CONFIG,
       Icon: RECEIVE.icon,
       children: t("portfolio.quickActions.deposit"),
-      onPress: () => onNavigate(RECEIVE.route, "quick_action_receive"),
+      onPress: () => RECEIVE.route && onNavigate(RECEIVE.route, "quick_action_receive"),
       disabled: RECEIVE.disabled,
     },
     STAKE && {
       ...SHARED_CONFIG,
       Icon: STAKE.icon,
       children: t(stakeLabel),
-      onPress: () => onNavigate(STAKE.route, "quick_action_stake"),
+      onPress: () =>
+        STAKE.route
+          ? onNavigate(STAKE.route, "quick_action_stake")
+          : STAKE.action
+          ? onAction(STAKE.action, "quick_action_stake")
+          : undefined,
       disabled: STAKE.disabled,
     },
   ].filter(<T extends QuickActionButtonProps>(v: T | undefined): v is T => !!v);

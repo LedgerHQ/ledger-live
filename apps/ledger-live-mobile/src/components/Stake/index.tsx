@@ -67,6 +67,7 @@ const StakeFlow = ({ route }: Props) => {
           networksConfiguration: finalDrawerConfiguration.networks,
         }),
       });
+      return;
     } else {
       // Fallback to traditional navigation
       if (cryptoCurrencies.length === 1) {

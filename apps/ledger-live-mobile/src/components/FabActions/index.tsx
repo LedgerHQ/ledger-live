@@ -32,6 +32,7 @@ export type NavigationParamsType = readonly [name: string, options: object];
 export type ActionButtonEventProps = {
   navigationParams?: NavigationParamsType;
   linkUrl?: string;
+  onPress?: () => void;
   confirmModalProps?: {
     withCancel?: boolean;
     id?: string;
@@ -139,7 +140,15 @@ export const FabButtonBarProvider = ({
 
   const onPress = useCallback(
     (data: Omit<ActionButtonEvent, "label" | "Icon">) => {
-      const { navigationParams, confirmModalProps, linkUrl, event, eventProperties, id } = data;
+      const {
+        navigationParams,
+        confirmModalProps,
+        linkUrl,
+        onPress: customOnPress,
+        event,
+        eventProperties,
+        id,
+      } = data;
 
       if (readOnlyModeEnabled && !hasOrderedNano) {
         navigateToRebornFlow();
@@ -161,6 +170,8 @@ export const FabButtonBarProvider = ({
         setInfoModalProps(undefined);
         if (linkUrl) {
           Linking.openURL(linkUrl);
+        } else if (customOnPress) {
+          customOnPress();
         } else if (navigationParams) {
           onNavigate(...navigationParams);
         }
