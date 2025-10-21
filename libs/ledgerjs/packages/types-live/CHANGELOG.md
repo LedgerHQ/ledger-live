@@ -1,5 +1,63 @@
 # @ledgerhq/types-live
 
+## 6.87.0
+
+### Minor Changes
+
+- [#12213](https://github.com/LedgerHQ/ledger-live/pull/12213) [`b88faa1`](https://github.com/LedgerHQ/ledger-live/commit/b88faa18e2f5cd309b54fc3157a44db606846cc5) Thanks [@Canestin](https://github.com/Canestin)! - feat: Asset Hub auto migration logic
+
+- [#12143](https://github.com/LedgerHQ/ledger-live/pull/12143) [`cfe65ca`](https://github.com/LedgerHQ/ledger-live/commit/cfe65cafa268be4e53197ee163ce78f28ed72592) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Deprecate cryptoassets function to anticipate Removal CAL initiative.
+
+- [#12186](https://github.com/LedgerHQ/ledger-live/pull/12186) [`a9aacdb`](https://github.com/LedgerHQ/ledger-live/commit/a9aacdb330700f0a294833f7d77de17f179229b2) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Remove deprecated `findTokenByTicker` function and related internal state. This function was ambiguous when multiple tokens shared the same ticker across different blockchains. Use `findTokenById` or `findTokenByAddressInCurrency` instead for more precise token lookup.
+
+- [#12185](https://github.com/LedgerHQ/ledger-live/pull/12185) [`89ac0ed`](https://github.com/LedgerHQ/ledger-live/commit/89ac0eddc145dcf5c7cf240aa8be4301372c8f33) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Remove deprecated findTokenByAddress in favor of findTokenByAddressInCurrency
+
+  Removed the deprecated `findTokenByAddress` function which had ambiguous behavior when multiple tokens shared the same contract address across different blockchains. The function has been fully replaced with `findTokenByAddressInCurrency` which requires both the token address and parent currency ID, providing more precise token lookup.
+
+  This includes:
+
+  - Removal of `findTokenByAddress` function from cryptoassets package
+  - Removal of `tokensByAddress` state dictionary
+  - Update all usages to `findTokenByAddressInCurrency` across the codebase
+  - Update CryptoAssetsStore interface to remove the deprecated method
+
+- [#12207](https://github.com/LedgerHQ/ledger-live/pull/12207) [`8645f01`](https://github.com/LedgerHQ/ledger-live/commit/8645f016191d29a55f6b0ca6e4b1d1909fd35445) Thanks [@jiyuzhuang](https://github.com/jiyuzhuang)! - Add new feature flagged welcome screen for LLM
+
+- [#12147](https://github.com/LedgerHQ/ledger-live/pull/12147) [`db25e21`](https://github.com/LedgerHQ/ledger-live/commit/db25e212b87dea426b153c6f1d988cead63c8c46) Thanks [@sergiubreban](https://github.com/sergiubreban)! - add new feature flag(to display apy in the drawer) to the earn app
+
+- [#11660](https://github.com/LedgerHQ/ledger-live/pull/11660) [`cab7d97`](https://github.com/LedgerHQ/ledger-live/commit/cab7d9794e7babb8220c6d339fb08e618e3d4202) Thanks [@Antoine-bls83](https://github.com/Antoine-bls83)! - Support Westend on LL
+
+## 6.87.0-next.1
+
+### Minor Changes
+
+- [#12213](https://github.com/LedgerHQ/ledger-live/pull/12213) [`b88faa1`](https://github.com/LedgerHQ/ledger-live/commit/b88faa18e2f5cd309b54fc3157a44db606846cc5) Thanks [@Canestin](https://github.com/Canestin)! - feat: Asset Hub auto migration logic
+
+## 6.87.0-next.0
+
+### Minor Changes
+
+- [#12143](https://github.com/LedgerHQ/ledger-live/pull/12143) [`cfe65ca`](https://github.com/LedgerHQ/ledger-live/commit/cfe65cafa268be4e53197ee163ce78f28ed72592) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Deprecate cryptoassets function to anticipate Removal CAL initiative.
+
+- [#12186](https://github.com/LedgerHQ/ledger-live/pull/12186) [`a9aacdb`](https://github.com/LedgerHQ/ledger-live/commit/a9aacdb330700f0a294833f7d77de17f179229b2) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Remove deprecated `findTokenByTicker` function and related internal state. This function was ambiguous when multiple tokens shared the same ticker across different blockchains. Use `findTokenById` or `findTokenByAddressInCurrency` instead for more precise token lookup.
+
+- [#12185](https://github.com/LedgerHQ/ledger-live/pull/12185) [`89ac0ed`](https://github.com/LedgerHQ/ledger-live/commit/89ac0eddc145dcf5c7cf240aa8be4301372c8f33) Thanks [@gre-ledger](https://github.com/gre-ledger)! - Remove deprecated findTokenByAddress in favor of findTokenByAddressInCurrency
+
+  Removed the deprecated `findTokenByAddress` function which had ambiguous behavior when multiple tokens shared the same contract address across different blockchains. The function has been fully replaced with `findTokenByAddressInCurrency` which requires both the token address and parent currency ID, providing more precise token lookup.
+
+  This includes:
+
+  - Removal of `findTokenByAddress` function from cryptoassets package
+  - Removal of `tokensByAddress` state dictionary
+  - Update all usages to `findTokenByAddressInCurrency` across the codebase
+  - Update CryptoAssetsStore interface to remove the deprecated method
+
+- [#12207](https://github.com/LedgerHQ/ledger-live/pull/12207) [`8645f01`](https://github.com/LedgerHQ/ledger-live/commit/8645f016191d29a55f6b0ca6e4b1d1909fd35445) Thanks [@jiyuzhuang](https://github.com/jiyuzhuang)! - Add new feature flagged welcome screen for LLM
+
+- [#12147](https://github.com/LedgerHQ/ledger-live/pull/12147) [`db25e21`](https://github.com/LedgerHQ/ledger-live/commit/db25e212b87dea426b153c6f1d988cead63c8c46) Thanks [@sergiubreban](https://github.com/sergiubreban)! - add new feature flag(to display apy in the drawer) to the earn app
+
+- [#11660](https://github.com/LedgerHQ/ledger-live/pull/11660) [`cab7d97`](https://github.com/LedgerHQ/ledger-live/commit/cab7d9794e7babb8220c6d339fb08e618e3d4202) Thanks [@Antoine-bls83](https://github.com/Antoine-bls83)! - Support Westend on LL
+
 ## 6.86.0
 
 ### Minor Changes

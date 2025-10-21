@@ -2,7 +2,8 @@
   "$schema": "https://turborepo.org/schema.json",
   "daemon": false,
   "globalDependencies": [
-    "turbo.json"
+    "turbo.json",
+    "tsconfig.base.json"
   ],
   "globalEnv": [
     "ANDROID_HOME",

@@ -1,6 +1,6 @@
 {
   "name": "@ledgerhq/coin-sui",
-  "version": "0.15.0",
+  "version": "0.16.0",
   "description": "Ledger Sui Coin integration",
   "keywords": [
     "Ledger",
@@ -53,10 +53,6 @@
     "./api": {
       "require": "./lib/api/index.js",
       "default": "./lib-es/api/index.js"
-    },
-    "./bridge/bridge.integration.test": {
-      "require": "./lib/bridge/bridge.integration.test.js",
-      "default": "./lib-es/bridge/bridge.integration.test.js"
     },
     "./formatters": {
       "require": "./lib/bridge/formatters.js",

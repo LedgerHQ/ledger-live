@@ -50,6 +50,7 @@ on:
           - nanoS
           - nanoSP
           - nanoX
+          - stax
         default: nanoSP
       firmware_version:
         description: "Firmware version to use for selected device"
@@ -115,7 +116,18 @@ jobs:
         shardIndex: [1, 2, 3, 4]
         shardTotal: [4]
     steps:
+      - name: generate token
+        id: generate-token
+        uses: tibdex/github-app-token@v1
+        with:
+          app_id: ${{ secrets.GH_BOT_APP_ID }}
+          private_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
+
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.ref || github.sha }}
+          repository: LedgerHQ/ledger-live
+          token: ${{ steps.generate-token.outputs.token }}
 
       - name: Setup caches
         id: caches
@@ -132,13 +144,6 @@ jobs:
         with:
           build_type: ${{ inputs.build_type || 'testing' }}
           turborepo-server-port: ${{ steps.caches.outputs.port }}
-
-      - name: Generate token
-        id: generate-token
-        uses: tibdex/github-app-token@v1
-        with:
-          app_id: ${{ secrets.GH_BOT_APP_ID }}
-          private_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
 
       - name: Retrieving coin apps
         uses: actions/checkout@v4

@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { legacyCryptoAssetsStore } from "./legacy/legacy-store";
-import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import type { TokenCurrency, CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import { findCryptoCurrencyById } from "./currencies";
 
 /**
  * CryptoAssetsHooks is the hooks interface version of the CryptoAssetsStore
@@ -19,6 +20,7 @@ export function createCryptoAssetsHooks(
     return {
       useTokenById: useLegacyTokenById,
       useTokenByAddressInCurrency: useLegacyTokenByAddressInCurrency,
+      useCurrencyById: useLegacyCurrencyById,
     };
   }
 }
@@ -29,9 +31,16 @@ type TokenResult = {
   error: unknown;
 };
 
+type CurrencyResult = {
+  currency: CryptoCurrency | TokenCurrency | undefined;
+  loading: boolean;
+  error: unknown;
+};
+
 type Hooks = {
   useTokenById: (id: string) => TokenResult;
   useTokenByAddressInCurrency: (address: string, currencyId: string) => TokenResult;
+  useCurrencyById: (id: string) => CurrencyResult;
 };
 
 /////////// Legacy hooks using legacyCryptoAssetsStore ///////////
@@ -101,4 +110,38 @@ function useLegacyTokenByAddressInCurrency(address: string, currencyId: string) 
   }, [address, currencyId]);
 
   return { token, loading, error };
+}
+
+function useLegacyCurrencyById(id: string) {
+  const [currency, setCurrency] = useState<CryptoCurrency | TokenCurrency | undefined>(undefined);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<unknown>(undefined);
+
+  useEffect(() => {
+    if (!id) {
+      setCurrency(undefined);
+      setLoading(false);
+      return;
+    }
+
+    const fetchCurrency = async () => {
+      try {
+        setLoading(true);
+        setError(undefined);
+        // First try to find as a crypto currency
+        const cryptoCurrency = await Promise.resolve(findCryptoCurrencyById(id));
+        const result = cryptoCurrency || (await legacyCryptoAssetsStore.findTokenById(id));
+        setCurrency(result);
+      } catch (err) {
+        setError(err);
+        setCurrency(undefined);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCurrency();
+  }, [id]);
+
+  return { currency, loading, error };
 }

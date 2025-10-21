@@ -20406,7 +20406,56 @@
             "DAY": { "balances": [0, 70803512], "latestDate": 1752184800000 },
             "WEEK": { "balances": [0], "latestDate": 1751752800000 }
           },
-          "subAccounts": [],
+          "subAccounts": [
+              {
+                  "type": "TokenAccountRaw",
+                  "id": "js:2:tron:TWVRVSRbt5UxeoL3Jb51bxCFPTYmRUVE8g:+tron%2Ftrc20%2Ftr7nhqjekqxgtci8q8zy4pl8otszgjlj6t",
+                  "parentId": "js:2:tron:TWVRVSRbt5UxeoL3Jb51bxCFPTYmRUVE8g:",
+                  "tokenId": "tron/trc20/tr7nhqjekqxgtci8q8zy4pl8otszgjlj6t",
+                  "balance": "28291933",
+                  "spendableBalance": "28291933",
+                  "balanceHistoryCache": {
+                      "HOUR": {
+                          "latestDate": null,
+                          "balances": []
+                      },
+                      "DAY": {
+                          "latestDate": null,
+                          "balances": []
+                      },
+                      "WEEK": {
+                          "latestDate": null,
+                          "balances": []
+                      }
+                  },
+                  "creationDate": "2025-07-11T13:50:06.000Z",
+                  "operationsCount": 1,
+                  "operations": [
+                      {
+                          "id": "js:2:tron:TWVRVSRbt5UxeoL3Jb51bxCFPTYmRUVE8g:+tron%2Ftrc20%2Ftr7nhqjekqxgtci8q8zy4pl8otszgjlj6t-f6786a0512e228feb1cca1b657cdb036df0b82dd10ff85b75bd935b45322f418-IN",
+                          "hash": "f6786a0512e228feb1cca1b657cdb036df0b82dd10ff85b75bd935b45322f418",
+                          "type": "IN",
+                          "senders": [
+                              "TJtEySoVuAkk3xwXghLgrUFVKSMq9JkE18"
+                          ],
+                          "recipients": [
+                              "TWVRVSRbt5UxeoL3Jb51bxCFPTYmRUVE8g"
+                          ],
+                          "accountId": "js:2:tron:TWVRVSRbt5UxeoL3Jb51bxCFPTYmRUVE8g:+tron%2Ftrc20%2Ftr7nhqjekqxgtci8q8zy4pl8otszgjlj6t",
+                          "blockHash": null,
+                          "blockHeight": 73861186,
+                          "extra": {},
+                          "date": "2025-07-11T13:50:06.000Z",
+                          "value": "28291933",
+                          "fee": "0",
+                          "hasFailed": false
+                      }
+                  ],
+                  "pendingOperations": [],
+                  "swapHistory": [],
+                  "starred": false
+              }
+          ],
           "tronResources": {
             "frozen": {},
             "delegatedFrozen": {},

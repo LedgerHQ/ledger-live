@@ -126,6 +126,12 @@ jobs:
       android_timing_cache_key: ${{ steps.cache-keys.outputs.android_timing_cache_key }}
       ios_timing_cache_key: ${{ steps.cache-keys.outputs.ios_timing_cache_key }}
     steps:
+      - name: generate token
+        id: generate-token
+        uses: tibdex/github-app-token@v1
+        with:
+          app_id: ${{ secrets.GH_BOT_APP_ID }}
+          private_key: ${{ secrets.GH_BOT_PRIVATE_KEY }}
       - uses: actions/checkout@v4
         with:
           ref: ${{ inputs.ref || github.sha }}
@@ -134,6 +140,7 @@ jobs:
           sparse-checkout: |
             apps/ledger-live-mobile
             e2e/mobile
+          token: ${{ steps.generate-token.outputs.token }}
 
       - name: Generate shards matrix and test files
         id: generate-shards

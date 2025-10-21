@@ -7,4 +7,5 @@ export class Device {
   static readonly LNS = new Device("nanoS", 823132164);
   static readonly LNX = new Device("nanoX", 855638020);
   static readonly LNSP = new Device("nanoSP", 856686596);
+  static readonly STAX = new Device("stax", 857735172);
 }

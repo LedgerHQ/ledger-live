@@ -592,8 +592,8 @@ export const getStakingProgress = async (
     activeEra,
     electionClosed: optimisticElectionClosed,
     maxNominatorRewardedPerValidator:
-      Number(consts.staking.maxNominatorRewardedPerValidator) || 128,
-    bondingDuration: Number(consts.staking.bondingDuration) || 28,
+      Number(consts.staking?.maxNominatorRewardedPerValidator) || 128,
+    bondingDuration: Number(consts.staking?.bondingDuration) || 28,
   };
 };
 
@@ -643,7 +643,7 @@ const getConstants = makeLRUCache(
   async (currency: CryptoCurrency | undefined): Promise<Record<string, any>> => {
     return fetchConstants(currency);
   },
-  () => "polkadot",
+  currency => currency?.id || "polkadot",
   // Store only one constants object since we only have polkadot.
   hours(1, 1),
 );

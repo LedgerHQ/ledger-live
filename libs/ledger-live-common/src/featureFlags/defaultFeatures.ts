@@ -33,6 +33,7 @@ export const initFeature = <T>(opts?: Feature<T>) => {
  * Currency Features.
  */
 export const CURRENCY_DEFAULT_FEATURES = {
+  currencyPolkadot: { enabled: true },
   currencyArbitrum: DEFAULT_FEATURE,
   currencyArbitrumSepolia: DEFAULT_FEATURE,
   currencyAstar: DEFAULT_FEATURE,
@@ -439,7 +440,7 @@ export const DEFAULT_FEATURES: Features = {
     },
   },
 
-  ptxEarnDrawerApy: {
+  ptxEarnDrawerConfiguration: {
     enabled: false,
     params: {},
   },

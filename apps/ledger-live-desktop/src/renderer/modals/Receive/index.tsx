@@ -16,6 +16,7 @@ import { ModularDrawerLocation } from "LLD/features/ModularDrawer";
 import { useOpenAssetFlow } from "LLD/features/ModularDrawer/hooks/useOpenAssetFlow";
 import { GlobalModalData } from "../types";
 import { getLLDCoinFamily } from "~/renderer/families";
+import { onboardingReceiveFlowSelector } from "~/renderer/reducers/onboarding";
 
 type State = {
   stepId: StepId;
@@ -27,6 +28,7 @@ function getInitialState(
   isNoahActive: boolean,
   account: AccountLike | null | undefined,
   parentAccount: Account | null | undefined,
+  isOnboardingFlow?: boolean,
 ): State {
   const mainAccount = account ? getMainAccount(account, parentAccount) : null;
   const accountCurrency = account ? getAccountCurrency(account) : null;
@@ -34,9 +36,8 @@ function getInitialState(
     mainAccount && getLLDCoinFamily(mainAccount.currency.family)?.shouldUseReceiveOptions;
   const isValidAccount = module ? module(accountCurrency?.id) : false;
   const shouldUseReceiveOptions = isNoahActive && (!account || isValidAccount);
-
   return {
-    stepId: shouldUseReceiveOptions ? "receiveOptions" : "account",
+    stepId: !isOnboardingFlow && shouldUseReceiveOptions ? "receiveOptions" : "account",
     isAddressVerified: null,
     verifyAddressError: null,
   };
@@ -44,7 +45,13 @@ function getInitialState(
 
 const ReceiveModal = (props: GlobalModalData["MODAL_RECEIVE"]) => {
   const { enabled } = useFeature("noah") || {};
-  const initialState = getInitialState(enabled === true, props?.account, props?.parentAccount);
+  const isOnboardingReceiveFlow = useSelector(onboardingReceiveFlowSelector);
+  const initialState = getInitialState(
+    enabled === true,
+    props?.account,
+    props?.parentAccount,
+    isOnboardingReceiveFlow,
+  );
   const [state, setState] = useState<State>(() => initialState);
 
   const { stepId, isAddressVerified, verifyAddressError } = state;

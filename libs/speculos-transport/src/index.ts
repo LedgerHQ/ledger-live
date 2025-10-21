@@ -43,6 +43,7 @@ export function getMemorySpeculosDeviceInternal(id: string): SpeculosDeviceInter
 }
 
 export const modelMap: Record<string, DeviceModelId> = {
+  stax: DeviceModelId.stax,
   nanos: DeviceModelId.nanoS,
   "nanos+": DeviceModelId.nanoSP,
   nanox: DeviceModelId.nanoX,

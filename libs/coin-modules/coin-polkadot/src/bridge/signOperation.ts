@@ -38,7 +38,7 @@ export const buildSignOperation =
             transaction,
           }),
         };
-        const { unsigned, registry } = await buildTransaction(account, transactionToSign, true);
+        const { unsigned, registry } = await buildTransaction(account, transactionToSign);
         const payload = registry
           .createType("ExtrinsicPayload", unsigned, {
             version: unsigned.version,

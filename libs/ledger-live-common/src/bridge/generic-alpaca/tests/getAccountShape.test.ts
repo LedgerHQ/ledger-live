@@ -29,9 +29,11 @@ jest.mock("../alpaca", () => ({
 
 const adaptCoreOperationToLiveOperationMock = jest.fn();
 const extractBalanceMock = jest.fn();
+const cleanedOperationMock = jest.fn();
 jest.mock("../utils", () => ({
   adaptCoreOperationToLiveOperation: (...a: any[]) => adaptCoreOperationToLiveOperationMock(...a),
   extractBalance: (...a: any[]) => extractBalanceMock(...a),
+  cleanedOperation: (...a: any[]) => cleanedOperationMock(...a),
 }));
 
 const inferSubOperationsMock = jest.fn();
@@ -40,8 +42,10 @@ jest.mock("@ledgerhq/coin-framework/serialization", () => ({
 }));
 
 const buildSubAccountsMock = jest.fn();
+const mergeSubAccountsMock = jest.fn();
 jest.mock("../buildSubAccounts", () => ({
   buildSubAccounts: (...a: any[]) => buildSubAccountsMock(...a),
+  mergeSubAccounts: (...a: any[]) => mergeSubAccountsMock(...a),
 }));
 
 // Test matrix for Stellar & XRP
@@ -51,7 +55,7 @@ const chains = [
   { currency: { id: "tezos", name: "Tezos" }, network: "mainnet" },
 ];
 
-describe("genericGetAccountShape (stellar & xrp)", () => {
+describe("genericGetAccountShape", () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
@@ -88,6 +92,11 @@ describe("genericGetAccountShape (stellar & xrp)", () => {
       }));
 
       mergeOpsMock.mockImplementation((oldOps, newOps) => [...newOps, ...oldOps]);
+      cleanedOperationMock.mockImplementation(operation => operation);
+      mergeSubAccountsMock.mockImplementation((oldSubAccounts, newSubAccounts) => [
+        ...newSubAccounts,
+        ...oldSubAccounts,
+      ]);
 
       buildSubAccountsMock.mockReturnValue([
         { id: `${currency.id}_subAcc1`, type: "TokenAccount" },
