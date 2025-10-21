@@ -4,6 +4,16 @@ import {
   extractSendManyTransactions,
   extractContractTransactions,
 } from "./transformers";
+import * as api from "./api";
+
+// Mock the API module to prevent actual network calls
+jest.mock("./api", () => {
+  const originalModule = jest.requireActual("./api");
+  return {
+    ...originalModule,
+    fetchFungibleTokenMetadataCached: jest.fn(),
+  };
+});
 
 describe("Stacks API Transformers", () => {
   const mockTransactions: TransactionResponse[] = [
@@ -150,6 +160,17 @@ describe("Stacks API Transformers", () => {
   });
 
   describe("extractContractTransactions", () => {
+    beforeEach(() => {
+      // Reset all mocks before each test
+      jest.clearAllMocks();
+
+      // Mock fetchFungibleTokenMetadataCached to return empty results by default
+      // This prevents actual network calls and simulates tokens not found in metadata
+      (api.fetchFungibleTokenMetadataCached as unknown as jest.Mock).mockResolvedValue({
+        results: [],
+      });
+    });
+
     it("should extract and group transfer transactions by token ID", async () => {
       const result = await extractContractTransactions(mockTransactions);
 
