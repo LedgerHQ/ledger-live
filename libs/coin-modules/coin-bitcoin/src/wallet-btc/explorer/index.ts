@@ -24,7 +24,7 @@ class BitcoinLikeExplorer implements IExplorer {
   }) {
     this.baseUrl = forcedExplorerURI ? forcedExplorerURI : blockchainBaseURL(cryptoCurrency);
     // NOTE: Only for CoinTester Bitcoin
-    if (cryptoCurrency.id === "bitcoin_testnet" && process.env.COIN_TESTER_ENV) {
+    if (cryptoCurrency.id === "bitcoin_regtest") {
       this.baseUrl = COIN_TESTER_BASE_URL;
     } else {
       this.baseUrl =

@@ -28,4 +28,5 @@ export type Currency =
   | "komodo"
   | "zencash"
   | "decred"
-  | "bitcoin_testnet";
+  | "bitcoin_testnet"
+  | "bitcoin_regtest";

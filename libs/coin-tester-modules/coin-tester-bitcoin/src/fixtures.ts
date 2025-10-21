@@ -13,7 +13,7 @@ export const makeAccount = (
   currency: CryptoCurrency,
   derivationMode: DerivationMode,
 ): BitcoinAccount => {
-  const id = `js:2:${currency.id}:${xpub}:${derivationMode}`;
+  const id = `js:2:bitcoin_testnet:${xpub}:${derivationMode}`;
   const scheme = getDerivationScheme({
     derivationMode: derivationMode as DerivationMode,
     currency,

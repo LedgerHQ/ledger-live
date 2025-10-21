@@ -233,7 +233,7 @@ export const scenarioBitcoin: Scenario<BtcTransaction, BitcoinAccount> = {
     };
     setCoinConfig(() => ({ ...coinConfig }));
     LiveConfig.setConfig({
-      config_currency_bitcoin_testnet: {
+      config_currency_bitcoin_regtest: {
         type: "object",
         default: {
           status: {
@@ -246,7 +246,7 @@ export const scenarioBitcoin: Scenario<BtcTransaction, BitcoinAccount> = {
     const onSignerConfirmation = getOnSpeculosConfirmation("Sign transaction");
     const { accountBridge, currencyBridge } = createBridges(signerContext, () => coinConfig);
     await currencyBridge.preload();
-    const BITCOIN = getCryptoCurrencyById("bitcoin_testnet");
+    const BITCOIN = getCryptoCurrencyById("bitcoin_regtest");
     const getAddress = resolver(signerContext);
     // Can also test LEGACY here
     const { address, publicKey } = await getAddress("", {

@@ -17,18 +17,17 @@ const findCurrencyExplorer = (currency: CryptoCurrency): LedgerExplorer | null |
     };
   }
 
-  if (currency.id === "bitcoin_testnet" && process.env.COIN_TESTER_ENV) {
-    return {
-      endpoint: getEnv("EXPLORER_COIN_TESTER"),
-      id: "btc_regtest",
-      version: "v4",
-    };
-  }
-
   if (!currency.explorerId) {
     console.warn("no explorerId for", currency.id);
   }
 
+  if (currency.id === "bitcoin_regtest") {
+    return {
+      endpoint: getEnv("EXPLORER_REGTEST"),
+      id: "btc_regtest",
+      version: "v4",
+    };
+  }
   return {
     endpoint: getEnv("EXPLORER"),
     id: currency.explorerId ?? currency.id,
@@ -37,7 +36,6 @@ const findCurrencyExplorer = (currency: CryptoCurrency): LedgerExplorer | null |
 };
 
 export const getCurrencyExplorer = (currency: CryptoCurrency): LedgerExplorer => {
-  // NOTE: Only for CoinTester Bitcoin
   const res = findCurrencyExplorer(currency);
   invariant(res, `no Ledger explorer for ${currency.id}`);
   return res;
