@@ -84,6 +84,7 @@
   },
   "license": "Apache-2.0",
   "dependencies": {
+    "@dfinity/principal": "^2.4.1",
     "@ledgerhq/coin-framework": "workspace:^",
     "@ledgerhq/cryptoassets": "workspace:^",
     "@ledgerhq/devices": "workspace:*",
@@ -98,6 +99,7 @@
     "rxjs": "^7.8.1"
   },
   "devDependencies": {
+    "@dfinity/ledger-icp": "^2.6.13",
     "@types/invariant": "^2.2.2",
     "@types/jest": "^29.5.10",
     "@types/lodash": "^4.14.191",

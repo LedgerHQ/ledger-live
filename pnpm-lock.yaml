@@ -3281,6 +3281,9 @@ importers:
 
   libs/coin-modules/coin-internet_computer:
     dependencies:
+      '@dfinity/principal':
+        specifier: ^2.4.1
+        version: 2.4.1
       '@ledgerhq/coin-framework':
         specifier: workspace:^
         version: link:../../coin-framework
@@ -3318,6 +3321,9 @@ importers:
         specifier: ^7.8.1
         version: 7.8.1
     devDependencies:
+      '@dfinity/ledger-icp':
+        specifier: ^2.6.13
+        version: 2.6.13(@dfinity/principal@2.4.1)
       '@types/invariant':
         specifier: ^2.2.2
         version: 2.2.37
@@ -41347,6 +41353,10 @@ snapshots:
       '@dfinity/candid': 2.4.1(@dfinity/principal@2.4.1)
       '@dfinity/principal': 2.4.1
       '@dfinity/utils': 2.14.0(@dfinity/agent@2.4.1(@dfinity/candid@2.4.1(@dfinity/principal@2.4.1))(@dfinity/principal@2.4.1))(@dfinity/candid@2.4.1(@dfinity/principal@2.4.1))(@dfinity/principal@2.4.1)
+
+  '@dfinity/ledger-icp@2.6.13(@dfinity/principal@2.4.1)':
+    dependencies:
+      '@dfinity/principal': 2.4.1
 
   '@dfinity/nns@8.5.0(@dfinity/agent@2.4.1(@dfinity/candid@2.4.1(@dfinity/principal@2.4.1))(@dfinity/principal@2.4.1))(@dfinity/candid@2.4.1(@dfinity/principal@2.4.1))(@dfinity/ledger-icp@2.6.13(@dfinity/agent@2.4.1(@dfinity/candid@2.4.1(@dfinity/principal@2.4.1))(@dfinity/principal@2.4.1))(@dfinity/candid@2.4.1(@dfinity/principal@2.4.1))(@dfinity/principal@2.4.1)(@dfinity/utils@2.14.0(@dfinity/agent@2.4.1(@dfinity/candid@2.4.1(@dfinity/principal@2.4.1))(@dfinity/principal@2.4.1))(@dfinity/candid@2.4.1(@dfinity/principal@2.4.1))(@dfinity/principal@2.4.1)))(@dfinity/principal@2.4.1)(@dfinity/utils@2.14.0(@dfinity/agent@2.4.1(@dfinity/candid@2.4.1(@dfinity/principal@2.4.1))(@dfinity/principal@2.4.1))(@dfinity/candid@2.4.1(@dfinity/principal@2.4.1))(@dfinity/principal@2.4.1))':
     dependencies:

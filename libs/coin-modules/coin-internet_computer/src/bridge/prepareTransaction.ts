@@ -1,7 +1,7 @@
 import { AccountBridge } from "@ledgerhq/types-live";
 import { Transaction } from "../types";
 import { getAddress } from "./bridgeHelpers/addresses";
-import { validateAddress } from "@zondax/ledger-live-icp";
+import { validateAddress } from "@zondax/ledger-live-icp/utils";
 
 export const prepareTransaction: AccountBridge<Transaction>["prepareTransaction"] = async (
   account,

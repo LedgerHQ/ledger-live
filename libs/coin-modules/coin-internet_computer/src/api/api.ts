@@ -10,16 +10,18 @@ import {
   ledgerIdlFactory,
   indexIdlFactory,
   getCanisterIdlFunc,
-  Principal,
   encodeCanisterIdlFunc,
   decodeCanisterIdlFunc,
-  GetAccountIdentifierTransactionsResponse,
-  TransactionWithId,
-} from "@zondax/ledger-live-icp";
+} from "@zondax/ledger-live-icp/canisterIDL";
 import BigNumber from "bignumber.js";
 import { fromNullable } from "@zondax/ledger-live-icp/utils";
 import { getAgent } from "@zondax/ledger-live-icp/agent";
+import { Principal } from "@dfinity/principal";
 import invariant from "invariant";
+import type {
+  GetAccountIdentifierTransactionsResponse,
+  TransactionWithId,
+} from "@dfinity/ledger-icp";
 
 export const fetchBlockHeight = async (): Promise<BigNumber> => {
   const canisterId = Principal.fromText(MAINNET_LEDGER_CANISTER_ID);

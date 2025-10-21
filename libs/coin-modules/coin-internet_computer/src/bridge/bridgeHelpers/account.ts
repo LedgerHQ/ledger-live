@@ -9,11 +9,8 @@ import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { normalizeEpochTimestamp } from "../../common-logic/utils";
 import { InternetComputerOperation } from "../../types";
 import invariant from "invariant";
-import {
-  deriveAddressFromPubkey,
-  hashTransaction,
-  TransactionWithId,
-} from "@zondax/ledger-live-icp";
+import { deriveAddressFromPubkey, hashTransaction } from "@zondax/ledger-live-icp/utils";
+import type { TransactionWithId } from "@dfinity/ledger-icp";
 
 export const getAccountShape: GetAccountShape = async info => {
   const { currency, derivationMode, rest = {}, initialAccount } = info;
