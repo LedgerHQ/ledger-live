@@ -55,12 +55,13 @@ Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/
 
 #### signTransaction
 
-Sign a Canton transaction.
+Sign a Canton transaction
+using the appropriate signing method based on transaction type.
 
 ##### Parameters
 
 *   `path` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** a path in BIP-32 format
-*   `txHash` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** the transaction hash to sign
+*   `data` **(CantonPreparedTransaction | CantonUntypedVersionedMessage | [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String))** either prepared transaction components, untyped versioned message, or txHash string (backwards compatibility)
 
 Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)\<CantonSignature>** the signature
 

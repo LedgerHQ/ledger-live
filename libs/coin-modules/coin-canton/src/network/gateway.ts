@@ -283,7 +283,8 @@ export type OperationInfo =
 const getGatewayUrl = (currency: CryptoCurrency) => coinConfig.getCoinConfig(currency).gatewayUrl;
 const getNodeId = (currency: CryptoCurrency) =>
   coinConfig.getCoinConfig(currency).nodeId || "ledger-live-devnet";
-const getNetworkType = (currency: CryptoCurrency) => coinConfig.getCoinConfig(currency).networkType;
+export const getNetworkType = (currency: CryptoCurrency) =>
+  coinConfig.getCoinConfig(currency).networkType;
 
 const gatewayNetwork = <T, U = unknown>(req: LiveNetworkRequest<U>) => {
   const API_KEY = getEnv("CANTON_API_KEY");
@@ -448,13 +449,6 @@ export async function prepareTapRequest(
   currency: CryptoCurrency,
   { partyId, amount = 1000000 }: PrepareTapRequest,
 ) {
-  if (getNetworkType(currency) === "mainnet") {
-    return {
-      serialized: "",
-      json: null,
-      hash: "",
-    };
-  }
   const { data } = await gatewayNetwork<PrepareTapResponse, { amount: string; type: string }>({
     method: "POST",
     url: `${getGatewayUrl(currency)}/v1/node/${getNodeId(currency)}/party/${partyId}/transaction/prepare`,
@@ -505,6 +499,7 @@ export async function prepareTransferRequest(
     url: `${getGatewayUrl(currency)}/v1/node/${getNodeId(currency)}/party/${partyId}/transaction/prepare`,
     data: params,
   });
+
   return data;
 }
 

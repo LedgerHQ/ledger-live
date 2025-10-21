@@ -2,6 +2,7 @@ import React, { memo } from "react";
 import { Trans } from "react-i18next";
 import styled from "styled-components";
 import { OnboardStatus } from "@ledgerhq/coin-canton/types";
+import { UserRefusedOnDevice, LockedDeviceError } from "@ledgerhq/errors";
 import { getDefaultAccountNameForCurrencyIndex } from "@ledgerhq/live-wallet/accountName";
 import AccountRow from "~/renderer/components/AccountsList/AccountRow";
 import Alert from "~/renderer/components/Alert";
@@ -97,6 +98,13 @@ const getStatusMessage = (status?: OnboardStatus): string => {
   }
 };
 
+const getErrorMessage = (error: Error | null) => {
+  if (error instanceof UserRefusedOnDevice || error instanceof LockedDeviceError) {
+    return <Trans i18nKey={error.message} />;
+  }
+  return <Trans i18nKey="families.canton.addAccount.onboard.error" />;
+};
+
 export default function StepOnboard({
   device,
   currency,
@@ -105,6 +113,7 @@ export default function StepOnboard({
   creatableAccount,
   importableAccounts,
   onboardingStatus,
+  error,
 }: StepProps) {
   const renderContent = (onboardingStatus?: OnboardStatus) => {
     switch (onboardingStatus) {
@@ -161,9 +170,7 @@ export default function StepOnboard({
             />
 
             <Box>
-              <Alert type="error">
-                <Trans i18nKey="families.canton.addAccount.onboard.error" />
-              </Alert>
+              <Alert type="error">{getErrorMessage(error)}</Alert>
             </Box>
           </Box>
         );

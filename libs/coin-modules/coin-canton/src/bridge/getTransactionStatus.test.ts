@@ -56,7 +56,7 @@ describe("getTransactionStatus", () => {
     currency: mockCurrency,
     balance: new BigNumber(1000), // 1000 units
     spendableBalance: new BigNumber(1000),
-    freshAddress: "test::123",
+    freshAddress: "test::33333333333333333333333333333333333333333333333333333333333333333333",
     freshAddressPath: "44'/60'/0'/0/0",
     index: 0,
     derivationMode: "canton",
@@ -93,7 +93,7 @@ describe("getTransactionStatus", () => {
       const transaction: Transaction = {
         family: "canton",
         amount: new BigNumber(100),
-        recipient: "valid::123",
+        recipient: "valid::11111111111111111111111111111111111111111111111111111111111111111111",
         fee: null,
         tokenId: "",
       };
@@ -108,7 +108,7 @@ describe("getTransactionStatus", () => {
       const transaction: Transaction = {
         family: "canton",
         amount: new BigNumber(100),
-        recipient: "valid::123",
+        recipient: "valid::11111111111111111111111111111111111111111111111111111111111111111111",
         fee: new BigNumber(0),
         tokenId: "",
       };
@@ -123,7 +123,7 @@ describe("getTransactionStatus", () => {
       const transaction: Transaction = {
         family: "canton",
         amount: new BigNumber(100), // Use larger amount to avoid balance issues
-        recipient: "valid::123",
+        recipient: "valid::11111111111111111111111111111111111111111111111111111111111111111111",
         fee: new BigNumber(1500), // 15x the amount
         tokenId: "",
       };
@@ -138,7 +138,7 @@ describe("getTransactionStatus", () => {
       const transaction: Transaction = {
         family: "canton",
         amount: new BigNumber(100),
-        recipient: "valid::123",
+        recipient: "valid::11111111111111111111111111111111111111111111111111111111111111111111",
         fee: new BigNumber(10), // 0.1x the amount
         tokenId: "",
       };
@@ -155,7 +155,7 @@ describe("getTransactionStatus", () => {
       const transaction: Transaction = {
         family: "canton",
         amount: new BigNumber(950), // 950 + 10 fee = 960, but balance is 1000 and reserve is 100
-        recipient: "valid::123",
+        recipient: "valid::11111111111111111111111111111111111111111111111111111111111111111111",
         fee: new BigNumber(10),
         tokenId: "",
       };
@@ -169,7 +169,7 @@ describe("getTransactionStatus", () => {
       const transaction: Transaction = {
         family: "canton",
         amount: new BigNumber(50), // Below reserve amount of 100
-        recipient: "valid::123",
+        recipient: "valid::11111111111111111111111111111111111111111111111111111111111111111111",
         fee: new BigNumber(10),
         tokenId: "",
       };
@@ -183,7 +183,7 @@ describe("getTransactionStatus", () => {
       const transaction: Transaction = {
         family: "canton",
         amount: new BigNumber(800), // 800 + 10 fee = 810, balance is 1000, reserve is 100, so 900 available
-        recipient: "valid::123",
+        recipient: "valid::11111111111111111111111111111111111111111111111111111111111111111111",
         fee: new BigNumber(10),
         tokenId: "",
       };
@@ -213,7 +213,7 @@ describe("getTransactionStatus", () => {
       const transaction: Transaction = {
         family: "canton",
         amount: new BigNumber(100),
-        recipient: "test::123", // Same as account.freshAddress
+        recipient: "test::33333333333333333333333333333333333333333333333333333333333333333333", // Same as account.freshAddress
         fee: new BigNumber(10),
         tokenId: "",
       };
@@ -241,7 +241,7 @@ describe("getTransactionStatus", () => {
       const transaction: Transaction = {
         family: "canton",
         amount: new BigNumber(100),
-        recipient: "valid::456",
+        recipient: "valid::22222222222222222222222222222222222222222222222222222222222222222222",
         fee: new BigNumber(10),
         tokenId: "",
       };
@@ -272,7 +272,7 @@ describe("getTransactionStatus", () => {
       const transaction: Transaction = {
         family: "canton",
         amount: new BigNumber(0),
-        recipient: "valid::123",
+        recipient: "valid::11111111111111111111111111111111111111111111111111111111111111111111",
         fee: new BigNumber(10),
         tokenId: "",
       };
@@ -286,7 +286,7 @@ describe("getTransactionStatus", () => {
       const transaction: Transaction = {
         family: "canton",
         amount: new BigNumber(100),
-        recipient: "valid::123",
+        recipient: "valid::11111111111111111111111111111111111111111111111111111111111111111111",
         fee: new BigNumber(10),
         tokenId: "",
       };
@@ -302,7 +302,7 @@ describe("getTransactionStatus", () => {
       const transaction: Transaction = {
         family: "canton",
         amount: new BigNumber(100),
-        recipient: "valid::123",
+        recipient: "valid::11111111111111111111111111111111111111111111111111111111111111111111",
         fee: new BigNumber(10),
         tokenId: "",
       };
@@ -318,7 +318,7 @@ describe("getTransactionStatus", () => {
       const transaction: Transaction = {
         family: "canton",
         amount: new BigNumber(100),
-        recipient: "valid::123",
+        recipient: "valid::11111111111111111111111111111111111111111111111111111111111111111111",
         fee: new BigNumber(10),
         tokenId: "",
       };
@@ -340,7 +340,7 @@ describe("getTransactionStatus", () => {
       const transaction: Transaction = {
         family: "canton",
         amount: new BigNumber(50),
-        recipient: "valid::123",
+        recipient: "valid::11111111111111111111111111111111111111111111111111111111111111111111",
         fee: new BigNumber(10),
         tokenId: "",
       };
@@ -359,7 +359,7 @@ describe("getTransactionStatus", () => {
       const transaction: Transaction = {
         family: "canton",
         amount: new BigNumber(50),
-        recipient: "valid::123",
+        recipient: "valid::11111111111111111111111111111111111111111111111111111111111111111111",
         fee: new BigNumber(10),
         tokenId: "",
       };
@@ -380,7 +380,7 @@ describe("getTransactionStatus", () => {
       const transaction: Transaction = {
         family: "canton",
         amount: new BigNumber(50),
-        recipient: "valid::123",
+        recipient: "valid::11111111111111111111111111111111111111111111111111111111111111111111",
         fee: new BigNumber(10),
         tokenId: "",
       };
@@ -400,7 +400,7 @@ describe("getTransactionStatus", () => {
       const transaction: Transaction = {
         family: "canton",
         amount: new BigNumber(50),
-        recipient: "valid::123",
+        recipient: "valid::11111111111111111111111111111111111111111111111111111111111111111111",
         fee: new BigNumber(10),
         tokenId: "",
       };
@@ -432,7 +432,7 @@ describe("getTransactionStatus", () => {
       const transaction: Transaction = {
         family: "canton",
         amount: new BigNumber(5), // Small amount
-        recipient: "valid::123",
+        recipient: "valid::11111111111111111111111111111111111111111111111111111111111111111111",
         fee: new BigNumber(100), // High fee relative to amount
         tokenId: "",
       };

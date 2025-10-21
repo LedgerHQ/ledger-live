@@ -311,6 +311,7 @@ class OnboardModal extends PureComponent<Props, State> {
       onboardingResult,
       onboardingStatus,
       authorizeStatus,
+      error: this.state.error,
       onAddAccounts: this.handleAddAccounts,
       onAddMore: this.handleAddMore,
       onAuthorizePreapproval: this.handleAuthorizePreapproval,
