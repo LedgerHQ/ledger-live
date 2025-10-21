@@ -20,6 +20,7 @@ import {
   mapTxToOps,
   reconciliatePublicKey,
   sip010TxnToOperation,
+  sip010OpToParentOp,
 } from "./utils/misc";
 import { log } from "@ledgerhq/logs";
 import { findTokenById } from "@ledgerhq/cryptoassets/tokens";
@@ -218,9 +219,10 @@ export const getAccountShape: GetAccountShape = async info => {
     balance,
     spendableBalance,
     // merge operations from both token and account
-    operations: [...operations, ...tokenAccounts.flatMap(t => t.operations)].sort(
-      (a, b) => b.date.getTime() - a.date.getTime(),
-    ),
+    operations: [
+      ...operations,
+      ...tokenAccounts.flatMap(t => sip010OpToParentOp(t.operations, accountId)),
+    ].sort((a, b) => b.date.getTime() - a.date.getTime()),
     blockHeight: blockHeight.chain_tip.block_height,
   };
 
