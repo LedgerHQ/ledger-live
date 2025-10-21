@@ -9,6 +9,7 @@ import {
   createTransaction,
   executeTransactionBlock,
   getStakes,
+  getValidators,
 } from "./sdk";
 
 export {
@@ -22,6 +23,7 @@ export {
   createTransaction,
   executeTransactionBlock,
   getStakes,
+  getValidators,
 };
 
 export default {
@@ -35,4 +37,5 @@ export default {
   createTransaction,
   executeTransactionBlock,
   getStakes,
+  getValidators,
 };
