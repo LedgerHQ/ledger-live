@@ -39,17 +39,14 @@ describe("Receive Flow", () => {
   $TmsLink("B2CQA-650");
   it("Should access to receive after importing a cryptocurrency on a selected network", async () => {
     await openReceive();
-    await app.common.performSearch(Account.BSC_POL.currency.name);
-    await app.receive.selectCurrency(Account.BSC_POL.currency.id);
-    await app.receive.selectNetwork(Currency.BSC.id);
-    await app.addAccount.addAccountAtIndex(Account.BSC_POL.accountName, Currency.BSC.id, 0);
+    await app.common.performSearch(Account.POL_1.currency.name);
+    await app.receive.selectCurrency(Account.POL_1.currency.id);
+    await app.receive.selectNetwork(Currency.POL.networks[0].toLowerCase());
+    await app.addAccount.addAccountAtIndex(Account.POL_1.accountName, Currency.POL.id, 0);
     await app.addAccount.tapAddFunds();
     await app.addAccount.tapReceiveActionDrawer();
     await app.receive.doNotVerifyAddress();
-    await app.receive.expectReceivePageIsDisplayed(
-      Currency.BSC.ticker,
-      Account.BSC_POL.accountName,
-    );
+    await app.receive.expectReceivePageIsDisplayed(Currency.POL.ticker, Account.POL_1.accountName);
   });
 
   $TmsLink("B2CQA-1859");
