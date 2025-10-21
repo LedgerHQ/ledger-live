@@ -56,7 +56,6 @@ export async function runInlineAddAccountTest(
 
 export async function runStartETHStakingFromEarnDashboardTest(
   account: Account,
-  earnButtonId: string,
   provider: Provider,
   tmsLinks: string[],
   tags: string[],
