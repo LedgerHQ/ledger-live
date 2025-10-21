@@ -127,7 +127,7 @@ export const extractContractTransactions = async (
       if (!contractId) continue;
 
       // Skip transactions without post_conditions
-      const assetName = tx.tx.post_conditions.find(p => p.type === "fungible")?.asset.asset_name;
+      const assetName = tx.tx.post_conditions?.find(p => p.type === "fungible")?.asset.asset_name;
 
       let tokenId: string;
       if (assetName) {
