@@ -5,7 +5,7 @@ const testConfig = {
   account: Account.ETH_1,
   withAccount: false,
   tmsLinks: ["B2CQA-1855"],
-  tags: ["@NanoSP", "@LNS", "@NanoX"],
+  tags: ["@NanoSP", "@LNS", "@NanoX", "@Stax"],
 };
 
 runSelectCryptoNetworkTest(

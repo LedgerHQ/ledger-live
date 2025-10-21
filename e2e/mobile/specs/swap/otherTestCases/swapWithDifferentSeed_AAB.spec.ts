@@ -6,7 +6,7 @@ const swapTestConfig = {
   userData: "speculos-x-other-account",
   errorMessage:
     "This sending account does not belong to the connected device. Please change and retry.",
-  tags: ["@NanoSP", "@LNS", "@NanoX"],
+  tags: ["@NanoSP", "@LNS", "@NanoX", "@Stax"],
 };
 
 runSwapWithDifferentSeedTest(
