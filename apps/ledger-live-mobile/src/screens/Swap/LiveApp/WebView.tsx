@@ -97,7 +97,7 @@ export const WebView = forwardRef<WebviewAPI, Props>(
               platform: "LLM", // need consistent format with LLD, Platform doesn't work
               shareAnalytics,
               hasSeenAnalyticsOptInPrompt,
-              isModularDrawer: isLlmModularDrawer ? "true" : "false",
+              isModularDrawer: isLlmModularDrawer,
               ...swapParams,
             }}
           />
