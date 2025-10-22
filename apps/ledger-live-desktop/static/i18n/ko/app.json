@@ -1279,7 +1279,7 @@
         "selectionContinueOnDevice" : "{{productName}}에서 관련 옵션을 선택하세요",
         "selectionNewSeedTitle" : "비밀 복구 문구",
         "selectionNewSeedSubtitle" : "안전하고 아무도 모르게 관리하세요.",
-        "selectionNewSeedDescription" : "비밀 복구 문구는 모든 보유 자산을 제어하며 대체가 불가능합니다. 이 문구를 손에 넣은 사람이면 누구나 여러분의 자산을 제어하거나 훔칠 수 있습니다. 이 문구를 분실하는 경우 Ledger가 대신 복구해드립니다.",
+        "selectionNewSeedDescription" : "비밀 복구 문구는 모든 보유 자산을 제어하며 대체가 불가능합니다. 이 문구를 손에 넣은 사람이면 누구나 여러분의 자산을 제어하거나 훔칠 수 있습니다. 분실 시 Ledger에서도 이를 복구해 드릴 수 없습니다.",
         "selectionNewSeedContinueOnDevice" : "{{productName}}에 표시되는 안내를 따라주세요.",
         "restoreDescription" : "복구에 사용할 백업 수단을 선택하세요.",
         "restoreChoiceContinueOnDevice" : "{{productName}}에서 관련 옵션을 선택하세요",
@@ -4267,6 +4267,8 @@
         "header" : "스테이킹 포지션",
         "stake" : "추가",
         "staked" : "위임됨",
+        "estimatedReward" : "받은 보상",
+        "rewardTooltip" : "Sui 보상은 에포크(24시간) 주기로 배분되며, 자동으로 복리가 적용되어 위임된 지분에 추가됩니다.",
         "pending" : "보류 중인 릴리스",
         "available" : "출금 가능"
       },
@@ -5029,7 +5031,7 @@
     "screens" : {
       "welcome" : {
         "videos" : {
-          "buySell" : "사용자에게 온전한 통제권을 돌려주는 안전한 암호화폐 지갑",
+          "buySell" : "온전한 통제권을 돌려주는 안전한 암호화폐 지갑",
           "thousandsCrypto" : "보내기, 받기, 스왑, 스테이킹까지, 수천 가지의 암호화폐를 자유롭게 거래하세요",
           "secureWallet" : "안심하고 모든 트랜잭션을 직접 확인하세요"
         },
@@ -6690,6 +6692,10 @@
     },
     "HederaAddAccountError" : {
       "title" : "귀하의 계정이 추가되지 않았습니다. 다시 시도해 주세요."
+    },
+    "HederaRecipientInvalidChecksum" : {
+      "title" : "유효하지 않은 주소 검사합",
+      "description" : "입력한 주소의 검사합이 유효하지 않습니다."
     },
     "HederaInsufficientFundsForAssociation" : {
       "title" : "보유 수량 부족",
