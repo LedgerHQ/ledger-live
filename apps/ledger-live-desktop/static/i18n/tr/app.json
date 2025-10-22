@@ -4267,6 +4267,8 @@
         "header" : "Staking Pozisyonları",
         "stake" : "Ekle",
         "staked" : "Yetki devredildi",
+        "estimatedReward" : "Kazanılan ödüller",
+        "rewardTooltip" : "Sui ödülleri her 24 saatlik epoch’ta (devirde) bir dağıtılır. Otomatik olarak bileştirilir ve yetki devrinde kullandığınız stake'e eklenir.",
         "pending" : "Bırakılmayı bekleyen",
         "available" : "Çekilebilir bakiye"
       },
@@ -5029,7 +5031,7 @@
     "screens" : {
       "welcome" : {
         "videos" : {
-          "buySell" : "Koruyan ve kontrolün sizde olmasını sağlayan bir cüzdan",
+          "buySell" : "Varlıklarınızı koruyan ve kontrolü size veren bir cüzdan",
           "thousandsCrypto" : "Binlerce kriptoyu gönderin, alın, takas ve stake edin",
           "secureWallet" : "Tüm işlemlerinizi gönül rahatlığıyla doğrulayın"
         },
@@ -6690,6 +6692,10 @@
     },
     "HederaAddAccountError" : {
       "title" : "Hesabınız eklenemedi. Lütfen tekrar deneyin."
+    },
+    "HederaRecipientInvalidChecksum" : {
+      "title" : "Geçersiz adres checksum’ı",
+      "description" : "Sağlanan adresin checksum’ı (sağlama toplamı) geçersiz."
     },
     "HederaInsufficientFundsForAssociation" : {
       "title" : "Yetersiz bakiye",
