@@ -237,6 +237,21 @@ export function cosmosTransaction({
   };
 }
 
+export function hederaTransaction({
+  amount,
+  recipient,
+  customFeeConfig,
+  payinExtraId,
+}: TransactionWithCustomFee): Partial<Extract<Transaction, { family: "hedera" }>> {
+  return {
+    family: "hedera",
+    amount,
+    recipient,
+    ...customFeeConfig,
+    memo: payinExtraId ?? undefined,
+  };
+}
+
 export type TransactionWithCustomFee = TransactionCommon & {
   customFeeConfig: {
     [key: string]: BigNumber;
@@ -266,7 +281,7 @@ export const transactionStrategy: {
   cosmos: cosmosTransaction,
   evm: evmTransaction,
   filecoin: defaultTransaction,
-  hedera: defaultTransaction,
+  hedera: hederaTransaction,
   icon: defaultTransaction,
   internet_computer: defaultTransaction,
   mina: defaultTransaction,
