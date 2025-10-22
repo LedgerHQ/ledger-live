@@ -39,6 +39,7 @@ runs:
           SHARD_COUNT=$(( (TEST_COUNT + 14) / 15 ))
           SHARD_COUNT=$(( SHARD_COUNT > 3 ? 3 : SHARD_COUNT ))
         fi
+        SHARD_COUNT=6
         echo "SHARD_COUNT=$SHARD_COUNT" >> "$GITHUB_ENV"
         echo "Calculated SHARD_COUNT=$SHARD_COUNT for event ${{ github.event_name }} on ref ${{ github.ref }} with $TEST_COUNT tests"
 
