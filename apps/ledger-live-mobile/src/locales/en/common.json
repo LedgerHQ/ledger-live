@@ -1154,6 +1154,11 @@
       "title": "Invalid Provider",
       "description": "You have to change \"My Ledger provider\" setting. To change it, open Ledger Wallet \"Settings\", select \"Experimental features\", and then select a different provider."
     },
+    "InvalidGetFirmwareMetadataResponseError": {
+      "title": "Invalid Provider",
+      "description": "You have to change \"My Ledger provider\" setting. To change it, open Ledger Live \"Settings\", select \"Experimental features\", and then select a different provider.",
+      "openSettings": "Go to settings"
+    },
     "GasLessThanEstimate": {
       "title": "This may be too low. Please increase"
     },
