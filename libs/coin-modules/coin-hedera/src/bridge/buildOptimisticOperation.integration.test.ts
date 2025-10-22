@@ -1,10 +1,10 @@
 import BigNumber from "bignumber.js";
+import { buildOptimisticOperation } from "./buildOptimisticOperation";
+import { HEDERA_OPERATION_TYPES, HEDERA_TRANSACTION_MODES } from "../constants";
+import { estimateFees } from "../logic/estimateFees";
 import { getMockedAccount, getMockedTokenAccount } from "../test/fixtures/account.fixture";
 import { getMockedTokenCurrency } from "../test/fixtures/currency.fixture";
 import { getMockedTransaction } from "../test/fixtures/transaction.fixture";
-import { buildOptimisticOperation } from "./buildOptimisticOperation";
-import { getEstimatedFees } from "./utils";
-import { HEDERA_OPERATION_TYPES, HEDERA_TRANSACTION_KINDS } from "../constants";
 
 describe("buildOptimisticOperation", () => {
   let estimatedFees: Record<"crypto" | "associate", BigNumber>;
@@ -12,8 +12,8 @@ describe("buildOptimisticOperation", () => {
   beforeAll(async () => {
     const mockedAccount = getMockedAccount();
     const [crypto, associate] = await Promise.all([
-      getEstimatedFees(mockedAccount, HEDERA_OPERATION_TYPES.CryptoTransfer),
-      getEstimatedFees(mockedAccount, HEDERA_OPERATION_TYPES.TokenAssociate),
+      estimateFees(mockedAccount.currency, HEDERA_OPERATION_TYPES.CryptoTransfer),
+      estimateFees(mockedAccount.currency, HEDERA_OPERATION_TYPES.TokenAssociate),
     ]);
 
     estimatedFees = { crypto, associate };
@@ -23,10 +23,10 @@ describe("buildOptimisticOperation", () => {
     const mockedAccount = getMockedAccount();
     const mockedToken = getMockedTokenCurrency();
     const mockedTransaction = getMockedTransaction({
+      mode: HEDERA_TRANSACTION_MODES.TokenAssociate,
       amount: new BigNumber(0),
       recipient: "0.0.1234",
       properties: {
-        name: HEDERA_TRANSACTION_KINDS.TokenAssociate.name,
         token: mockedToken,
       },
     });
@@ -39,7 +39,7 @@ describe("buildOptimisticOperation", () => {
     expect(op.type).toBe("ASSOCIATE_TOKEN");
     expect(op.extra).toEqual({ associatedTokenId: mockedToken.contractAddress });
     expect(op.fee).toEqual(estimatedFees.associate);
-    expect(op.senders).toContain(mockedAccount.freshAddress.toString());
+    expect(op.senders).toContain(mockedAccount.freshAddress);
     expect(op.recipients).toContain("0.0.1234");
   });
 
@@ -58,7 +58,7 @@ describe("buildOptimisticOperation", () => {
     expect(op.type).toBe("OUT");
     expect(op.fee).toEqual(estimatedFees.crypto);
     expect(op.value).toEqual(new BigNumber(123));
-    expect(op.senders).toContain(mockedAccount.freshAddress.toString());
+    expect(op.senders).toContain(mockedAccount.freshAddress);
     expect(op.recipients).toContain("0.0.5678");
   });
 
