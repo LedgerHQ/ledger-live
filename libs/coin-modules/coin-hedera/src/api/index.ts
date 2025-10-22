@@ -3,11 +3,13 @@ import type {
   Block,
   BlockInfo,
   CraftedTransaction,
+  Cursor,
   Operation,
   Page,
   Reward,
   Stake,
   TransactionValidation,
+  Validator,
 } from "@ledgerhq/coin-framework/api/index";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import coinConfig from "../config";
@@ -139,6 +141,9 @@ export function createApi(config: Record<string, never>): Api<HederaMemo> {
     },
     getRewards: async (_address, _cursor): Promise<Page<Reward>> => {
       throw new Error("getRewards is not supported");
+    },
+    getValidators(_cursor?: Cursor): Promise<Page<Validator>> {
+      throw new Error("getValidators is not supported");
     },
   };
 }
