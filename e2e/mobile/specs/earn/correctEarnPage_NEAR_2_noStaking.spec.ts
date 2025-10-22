@@ -3,7 +3,6 @@ import { runCorrectEarnPageIsLoadedDependingOnUserStakingSituationTest } from ".
 
 const testConfig = {
   account: Account.NEAR_2,
-  earnButtonId: "4969e17f-213a-5180-809b-ee16abe3f400",
   staking: false,
   tmsLinks: ["B2CQA-3682"],
   tags: ["@NanoSP", "@LNS", "@NanoX", "@Stax"],
@@ -14,5 +13,4 @@ runCorrectEarnPageIsLoadedDependingOnUserStakingSituationTest(
   testConfig.staking,
   testConfig.tmsLinks,
   testConfig.tags,
-  testConfig.earnButtonId,
 );
