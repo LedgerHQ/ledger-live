@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useFeature } from "../featureFlags";
 import { useQuery } from "@tanstack/react-query";
 import { getEnv } from "@ledgerhq/live-env";
@@ -8,16 +8,19 @@ const baseURL = () => getEnv("LEDGER_COUNTERVALUES_API");
 export const useOFACGeoBlockCheck = ({
   onFinish,
   geoBlockingFeatureFlagKey,
+  enabled,
 }: {
   onFinish?: () => void;
   geoBlockingFeatureFlagKey: "llmOfacGeoBlocking" | "lldOfacGeoBlocking";
+  enabled?: boolean;
 }) => {
   const [blocked, setBlocked] = useState<boolean>(false);
 
   const platformOfacGeoBlocking = useFeature(geoBlockingFeatureFlagKey);
 
-  const { data, isLoading } = useQuery({
+  const { data, isSuccess } = useQuery({
     queryKey: ["ofac-geo-block", geoBlockingFeatureFlagKey],
+    enabled,
     queryFn: async () => {
       if (!platformOfacGeoBlocking?.enabled) return false;
       const res = await fetch(`${baseURL()}/v3/markets`);
@@ -26,12 +29,12 @@ export const useOFACGeoBlockCheck = ({
   });
 
   useEffect(() => {
-    if (!platformOfacGeoBlocking?.enabled) return;
+    if (!platformOfacGeoBlocking?.enabled || !isSuccess) return;
     setBlocked(data ?? false);
     if (typeof onFinish === "function") {
       onFinish();
     }
-  }, [data, onFinish, platformOfacGeoBlocking]);
+  }, [data, isSuccess, onFinish, platformOfacGeoBlocking]);
 
-  return { blocked, isLoading };
+  return useMemo(() => ({ blocked, isLoading: !isSuccess }), [blocked, isSuccess]);
 };

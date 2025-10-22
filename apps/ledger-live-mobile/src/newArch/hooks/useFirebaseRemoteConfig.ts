@@ -1,16 +1,13 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { getRemoteConfig } from "@react-native-firebase/remote-config";
+import { useQuery } from "@tanstack/react-query";
 import { DEFAULT_FEATURES, formatDefaultFeatures } from "@ledgerhq/live-common/featureFlags/index";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
-import { FirebaseRemoteConfigProvider as FirebaseProvider } from "@ledgerhq/live-config/providers/index";
+import { FirebaseRemoteConfigProvider } from "@ledgerhq/live-config/providers/index";
 
 const FETCH_INTERVAL = 5 * 60 * 1000; // 5 minutes
 
-export const FirebaseRemoteConfigProvider = ({
-  children,
-}: {
-  children: React.ReactElement;
-}): JSX.Element | null => {
+export function useFirebaseRemoteConfig() {
   const [loaded, setLoaded] = useState<boolean>(false);
 
   useEffect(() => {
@@ -19,15 +16,17 @@ export const FirebaseRemoteConfigProvider = ({
     const rc = getRemoteConfig();
 
     LiveConfig.setProvider(
-      new FirebaseProvider({
+      new FirebaseRemoteConfigProvider({
         getValue: (key: string) => rc.getValue(key),
       }),
     );
 
     const fetchConfig = async () => {
       try {
-        await rc.setConfigSettings({ minimumFetchIntervalMillis: 0 });
-        await rc.setDefaults(formatDefaultFeatures(DEFAULT_FEATURES));
+        await Promise.all([
+          rc.setConfigSettings({ minimumFetchIntervalMillis: 0 }),
+          rc.setDefaults(formatDefaultFeatures(DEFAULT_FEATURES)),
+        ]);
         await rc.fetchAndActivate();
       } catch (error) {
         if (!unmounted) {
@@ -50,9 +49,5 @@ export const FirebaseRemoteConfigProvider = ({
     };
   }, []);
 
-  if (!loaded) {
-    return null;
-  }
-
-  return <>{children}</>;
-};
+  return loaded;
+}
