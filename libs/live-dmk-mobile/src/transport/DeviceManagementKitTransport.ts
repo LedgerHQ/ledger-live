@@ -148,7 +148,6 @@ export class DeviceManagementKitTransport extends Transport {
         tracer.trace(
           "[DMKTransport] [open] reusing existing session and instantiating a new DmkTransport",
         );
-
         return activeDeviceSessionSubject.value.transport;
       }
     }
@@ -230,6 +229,7 @@ export class DeviceManagementKitTransport extends Transport {
         sessionRefresherOptions: { isRefresherDisabled: true },
       });
       const transport = new DeviceManagementKitTransport(getDeviceManagementKit(), sessionId);
+
       activeDeviceSessionSubject.next({ sessionId, transport });
 
       return transport;

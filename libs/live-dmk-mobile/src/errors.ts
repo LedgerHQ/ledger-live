@@ -1,6 +1,7 @@
 import {
   DeviceBusyError,
   DmkError,
+  InvalidGetFirmwareMetadataResponseError,
   OpeningConnectionError,
   SendApduTimeoutError,
 } from "@ledgerhq/device-management-kit";
@@ -38,6 +39,13 @@ export const isAllowedOnboardingStatePollingErrorDmk = (error: unknown): boolean
       error instanceof DeviceBusyError ||
       error._tag === "DeviceSessionNotFound"
     );
+  }
+  return false;
+};
+
+export const isInvalidGetFirmwareMetadataResponseError = (error: unknown): boolean => {
+  if (error) {
+    return error instanceof InvalidGetFirmwareMetadataResponseError;
   }
   return false;
 };

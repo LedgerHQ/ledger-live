@@ -43,6 +43,7 @@ export const useBleDevicePairing = ({
         sessionRefresherOptions: { isRefresherDisabled: true },
       });
       const transport = new DeviceManagementKitTransport(dmk, sessionId);
+
       activeDeviceSessionSubject.next({ sessionId, transport });
       setIsPaired(true);
     } catch (error) {
