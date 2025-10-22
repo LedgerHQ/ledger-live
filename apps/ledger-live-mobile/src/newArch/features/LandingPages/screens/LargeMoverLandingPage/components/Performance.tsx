@@ -30,7 +30,7 @@ export const Performance: React.FC<PerformanceProps> = ({ low, high, price }) =>
           <Text fontSize={14} fontWeight="bold">
             {counterValueFormatter({
               currency: counterValueCurrency.ticker,
-              value: low || 0,
+              value: low,
               locale,
               t,
             })}
@@ -43,7 +43,7 @@ export const Performance: React.FC<PerformanceProps> = ({ low, high, price }) =>
           <Text fontSize={14} fontWeight="bold">
             {counterValueFormatter({
               currency: counterValueCurrency.ticker,
-              value: high || 0,
+              value: high,
               locale,
               t,
             })}

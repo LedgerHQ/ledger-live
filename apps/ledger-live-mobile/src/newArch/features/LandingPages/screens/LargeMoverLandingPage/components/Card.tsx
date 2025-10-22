@@ -9,20 +9,21 @@ import { Performance } from "./Performance";
 import { PriceAndVariation } from "./PriceAndVariation";
 import { Footer } from "./Footer";
 import {
-  CurrencyData,
   KeysPriceChange,
   MarketCoinDataChart,
+  PartialMarketItemResponse,
 } from "@ledgerhq/live-common/market/utils/types";
+import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import getWindowDimensions from "~/logic/getWindowDimensions";
 import { Informations } from "./Information";
 import { useTheme } from "styled-components/native";
-import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 import { track } from "~/analytics";
 import { PAGE_NAME } from "../const";
 import { ScrollView } from "react-native-gesture-handler";
 
 type CardProps = {
-  data: CurrencyData;
+  data: PartialMarketItemResponse;
+  currency: CryptoOrTokenCurrency;
   chartData?: MarketCoinDataChart;
   height: number;
   loading: boolean;
@@ -35,6 +36,7 @@ const { width } = getWindowDimensions();
 
 export const Card: React.FC<CardProps> = ({
   data,
+  currency,
   loading,
   range,
   setRange,
@@ -42,30 +44,10 @@ export const Card: React.FC<CardProps> = ({
   chartData,
   currentIndex,
 }) => {
-  const {
-    id,
-    price,
-    priceChangePercentage,
-    low24h,
-    high24h,
-    ticker,
-    marketcap,
-    totalVolume,
-    marketCapChangePercentage24h,
-    maxSupply,
-    circulatingSupply,
-    totalSupply,
-    ath,
-    atl,
-    athDate,
-    atlDate,
-  } = data;
-
   const graphWidth = width * 0.86;
   const timeframehWidth = width * 0.96;
   const { colors } = useTheme();
   const middleColor = colors.neutral.c20;
-  const currency = getCryptoCurrencyById(id);
 
   const handleScroll = () => {
     track("button_clicked", {
@@ -99,7 +81,7 @@ export const Card: React.FC<CardProps> = ({
         <Rect x="0" y="0" width={width} height={100} fill="url(#midGlowTop)" />
       </Svg>
       <Flex alignItems="center" zIndex={10} top={4}>
-        <Ticker currencyId={id} width={width} />
+        <Ticker currency={currency} width={width} />
       </Flex>
       <ScrollView
         showsVerticalScrollIndicator={false}
@@ -108,8 +90,14 @@ export const Card: React.FC<CardProps> = ({
       >
         <Flex padding={4} paddingTop={12}>
           <PriceAndVariation
-            price={price}
-            priceChangePercentage={priceChangePercentage}
+            price={data.price || 0}
+            priceChangePercentage={{
+              [KeysPriceChange.hour]: data.priceChangePercentage1h || 0,
+              [KeysPriceChange.day]: data.priceChangePercentage24h || 0,
+              [KeysPriceChange.week]: data.priceChangePercentage7d || 0,
+              [KeysPriceChange.month]: data.priceChangePercentage30d || 0,
+              [KeysPriceChange.year]: data.priceChangePercentage1y || 0,
+            }}
             range={range}
             chartData={chartData}
           />
@@ -117,7 +105,7 @@ export const Card: React.FC<CardProps> = ({
             <LargeMoverGraph
               chartData={chartData}
               range={range}
-              currencyId={id}
+              currency={currency}
               width={graphWidth}
               loading={loading}
             />
@@ -127,22 +115,9 @@ export const Card: React.FC<CardProps> = ({
               width={timeframehWidth}
               coin={currency.name}
             />
-            <Performance low={low24h} high={high24h} price={price} />
+            <Performance low={data.low24h || 0} high={data.high24h || 0} price={data.price || 0} />
             <Flex pt={8} width="100%" pb={80}>
-              <Informations
-                price={price}
-                ticker={ticker}
-                marketCap={marketcap}
-                volume={totalVolume}
-                marketCapPercent={marketCapChangePercentage24h}
-                fdv={maxSupply}
-                circulatingSupply={circulatingSupply}
-                totalSupply={totalSupply}
-                allTimeHigh={ath}
-                allTimeHighDate={athDate}
-                allTimeLow={atl}
-                allTimeLowDate={atlDate}
-              />
+              <Informations {...data} ticker={currency.ticker} />
             </Flex>
           </Flex>
         </Flex>
