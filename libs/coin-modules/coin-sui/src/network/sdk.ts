@@ -137,10 +137,16 @@ function isUnstaking(block?: SuiTransactionBlockKind): block is ProgrammableTran
   return hasMoveCallWithFunction("request_withdraw_stake", block);
 }
 
+export type AccountBalance = {
+  coinType: string;
+  blockHeight: number;
+  balance: BigNumber;
+};
+
 /**
  * Get account balance (native and tokens)
  */
-export const getAccountBalances = async (addr: string) => {
+export const getAccountBalances = async (addr: string): Promise<AccountBalance[]> => {
   const balances = await getAllBalancesCached(addr);
   return balances.map(({ coinType, totalBalance }) => ({
     coinType,
