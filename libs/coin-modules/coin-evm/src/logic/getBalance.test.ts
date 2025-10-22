@@ -93,6 +93,44 @@ describe("getBalance", () => {
     expect(await getBalance({} as CryptoCurrency, "address")).toEqual(expected);
   });
 
+  it("is resilient when failing to fetch token balances", async () => {
+    jest.spyOn(nodeModule, "getNodeApi").mockReturnValue({
+      getCoinBalance: () => new BigNumber(10),
+      getTokenBalance: (_currency: string, _address: string, contract: string) => {
+        if (contract === "contract2") {
+          throw new Error("Scam token");
+        }
+        return new BigNumber(2);
+      },
+    } as any);
+    jest.spyOn(explorerModule, "getExplorerApi").mockReturnValue({
+      getLastOperations: () => ({
+        lastTokenOperations: [
+          { contract: "contract1" },
+          { contract: "contract1" },
+          { contract: "contract2" },
+        ],
+      }),
+    } as any);
+    jest.spyOn(getStakesModule, "getStakes").mockResolvedValue({
+      items: [],
+    });
+
+    const result = await getBalance({} as CryptoCurrency, "address");
+
+    expect(result).toEqual([
+      { asset: { type: "native" }, value: 10n },
+      {
+        asset: {
+          type: "erc20",
+          assetReference: "contract1",
+          assetOwner: "address",
+        },
+        value: 2n,
+      },
+    ]);
+  });
+
   it("returns empty stake when balance is zero", async () => {
     jest.spyOn(nodeModule, "getNodeApi").mockReturnValue({
       getCoinBalance: jest.fn().mockResolvedValue(new BigNumber("0")),
