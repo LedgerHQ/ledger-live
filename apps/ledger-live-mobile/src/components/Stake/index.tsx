@@ -36,7 +36,7 @@ const StakeFlow = ({ route }: Props) => {
 
   const currency = cryptoCurrencies.length === 1 ? cryptoCurrencies[0] : undefined;
   const enabledCurrenciesForDrawer = cryptoCurrencies.map(c => c.id);
-  
+
   const { handleOpenStakeDrawer, isModularDrawerEnabled } = useOpenStakeDrawer({
     currency,
     sourceScreenName: "stake_flow",
