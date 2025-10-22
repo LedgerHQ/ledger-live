@@ -1,6 +1,6 @@
 {
   "name": "live-mobile",
-  "version": "3.95.0",
+  "version": "3.96.1",
   "private": true,
   "scripts": {
     "postinstall": "zx ./scripts/post.mjs",
@@ -89,6 +89,7 @@
     "@ledgerhq/coin-framework": "workspace:^",
     "@ledgerhq/coin-multiversx": "workspace:^",
     "@ledgerhq/coin-stacks": "workspace:^",
+    "@ledgerhq/cryptoassets": "workspace:^",
     "@ledgerhq/device-management-kit": "0.9.1",
     "@ledgerhq/devices": "workspace:*",
     "@ledgerhq/domain-service": "workspace:^",

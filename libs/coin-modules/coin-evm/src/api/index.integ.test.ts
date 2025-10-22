@@ -20,6 +20,7 @@ describe.each([
         type: "etherscan",
         uri: "https://proxyetherscan.api.live.ledger.com/v2/api/1",
       },
+      showNfts: true,
     },
   ],
   [
@@ -30,6 +31,7 @@ describe.each([
         type: "ledger",
         explorerId: "eth",
       },
+      showNfts: true,
     },
   ],
 ])("EVM Api (%s)", (_, config) => {
@@ -172,7 +174,17 @@ describe.each([
       });
       expect(result.length).toBeGreaterThanOrEqual(52);
       result.forEach(op => {
-        expect(["NONE", "FEES", "IN", "OUT"]).toContainEqual(op.type);
+        expect([
+          "NONE",
+          "FEES",
+          "IN",
+          "OUT",
+          "DELEGATE",
+          "UNDELEGATE",
+          "REDELEGATE",
+          "NFT_IN",
+          "NFT_OUT",
+        ]).toContainEqual(op.type);
         expect(op.senders.concat(op.recipients)).toContain(
           "0xB69B37A4Fb4A18b3258f974ff6e9f529AD2647b1",
         );

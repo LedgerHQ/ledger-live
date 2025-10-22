@@ -12,13 +12,11 @@ import { NavigationProp } from "@react-navigation/native";
 import { AssetData } from "@ledgerhq/live-common/modularDrawer/utils/type";
 import { State } from "~/reducers/types";
 
-jest.mock("@ledgerhq/live-common/modularDrawer/hooks/useCurrenciesUnderFeatureFlag", () => ({
-  useCurrenciesUnderFeatureFlag: () => mockUseCurrenciesUnderFeatureFlag(),
+jest.mock("@ledgerhq/live-common/modularDrawer/hooks/useAcceptedCurrency", () => ({
+  useAcceptedCurrency: () => mockUseAcceptedCurrency(),
 }));
 
-const mockUseCurrenciesUnderFeatureFlag = jest.fn(() => ({
-  deactivatedCurrencyIds: new Set(),
-}));
+const mockUseAcceptedCurrency = jest.fn(() => () => true);
 
 const assetsSorted: AssetData[] = [
   {

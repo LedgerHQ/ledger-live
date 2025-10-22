@@ -5,7 +5,7 @@ import { findTokenById } from "@ledgerhq/cryptoassets/tokens";
 import { Account } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import { ethers } from "ethers";
-import { makeAccount } from "@ledgerhq/coin-evm/__tests__/fixtures/common.fixtures";
+import { makeAccount } from "../fixtures";
 import { getCoinConfig, setCoinConfig } from "@ledgerhq/coin-evm/config";
 import {
   EvmNftTransaction,
@@ -14,7 +14,7 @@ import {
 import { killAnvil, spawnAnvil } from "../anvil";
 import { callMyDealer, ethereum, VITALIK, getBridges } from "../helpers";
 import { indexBlocks, initMswHandlers, resetIndexer, setBlock } from "../indexer";
-import { defaultNanoApp } from "../scenarii.test";
+import { defaultNanoApp } from "../constants";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { BridgeStrategy } from "@ledgerhq/coin-tester/types";
 

@@ -21,10 +21,8 @@ import logger from "~/renderer/logger";
 import Text from "~/renderer/components/Text";
 import { TransactionStatus } from "@ledgerhq/live-common/generated/types";
 import { ModalData } from "../types";
-import {
-  DeviceTransactionField,
-  getDeviceTransactionConfig,
-} from "@ledgerhq/live-common/transaction/index";
+import { DeviceTransactionField } from "@ledgerhq/live-common/transaction/index";
+import { useDeviceTransactionConfig } from "@ledgerhq/live-common/hooks/useDeviceTransactionConfig";
 import { HOOKS_TRACKING_LOCATIONS } from "~/renderer/analytics/hooks/variables";
 
 export type Params = {
@@ -190,7 +188,7 @@ export default function Body({ onChangeStepId, onClose, setError, stepId, params
   );
   const errorSteps = [];
 
-  const fields = getDeviceTransactionConfig({
+  const { fields } = useDeviceTransactionConfig({
     account: params.account,
     parentAccount,
     transaction,

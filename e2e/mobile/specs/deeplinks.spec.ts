@@ -1,5 +1,5 @@
 $TmsLink("B2CQA-1837");
-const tags: string[] = ["@NanoSP", "@LNS", "@NanoX"];
+const tags: string[] = ["@NanoSP", "@LNS", "@NanoX", "@Stax"];
 tags.forEach(tag => $Tag(tag));
 describe("DeepLinks Tests", () => {
   const nanoApp = AppInfos.ETHEREUM;
@@ -21,6 +21,17 @@ describe("DeepLinks Tests", () => {
           });
         },
       ],
+      featureFlags: {
+        ptxSwapLiveAppMobile: {
+          enabled: true,
+          params: {
+            manifest_id:
+              process.env.PRODUCTION === "true"
+                ? "swap-live-app-demo-3"
+                : "swap-live-app-demo-3-stg",
+          },
+        },
+      },
     });
     await app.portfolio.waitForPortfolioPageToLoad();
   });

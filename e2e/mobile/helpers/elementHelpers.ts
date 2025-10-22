@@ -174,6 +174,13 @@ export const WebElementHelpers = {
     return index > 0 ? base.atIndex(index) : base;
   },
 
+  getWebElementByCssSelector(selector: string, index = 0): WebElement {
+    const base = web.element(
+      by.web.cssSelector(selector),
+    )
+    return index > 0 ? base.atIndex(index) : base;
+  },
+
   async getWebElementText(id: string, index = 0) {
     const elem = WebElementHelpers.getWebElementByTestId(id, index);
     await detoxExpect(elem).toExist();
@@ -221,14 +228,14 @@ export const WebElementHelpers = {
     return index > 0 ? base.atIndex(index) : base;
   },
 
-  async getWebElementsText(id: string): Promise<string[]> {
+  async getWebElementsText(cssSelector: string): Promise<string[]> {
     const texts: string[] = [];
     let i = 0;
 
     // eslint-disable-next-line no-constant-condition
     while (true) {
       try {
-        const element = WebElementHelpers.getWebElementByTestId(id, i);
+        const element = getWebElementByCssSelector(cssSelector, i);
         const text = await element.runScript(el => (el.innerText || el.textContent || "").trim());
         texts.push(text);
         i++;

@@ -1,27 +1,29 @@
 import BigNumber from "bignumber.js";
-import { AccountId } from "@hashgraph/sdk";
 import {
   AmountRequired,
   NotEnoughBalance,
-  InvalidAddress,
   InvalidAddressBecauseDestinationIsAlsoSource,
   RecipientRequired,
-  HederaInsufficientFundsForAssociation,
-  HederaRecipientTokenAssociationRequired,
-  HederaRecipientTokenAssociationUnverified,
 } from "@ledgerhq/errors";
 import type { Account, AccountBridge, TokenAccount } from "@ledgerhq/types-live";
 import { findSubAccountById, isTokenAccount } from "@ledgerhq/coin-framework/account";
 import { getEnv } from "@ledgerhq/live-env";
-import { isTokenAssociateTransaction, isTokenAssociationRequired } from "../logic";
-import type { TokenAssociateProperties, Transaction, TransactionStatus } from "../types";
-import {
-  calculateAmount,
-  checkAccountTokenAssociationStatus,
-  getCurrencyToUSDRate,
-  getEstimatedFees,
-} from "./utils";
 import { HEDERA_OPERATION_TYPES } from "../constants";
+import {
+  HederaInsufficientFundsForAssociation,
+  HederaRecipientTokenAssociationRequired,
+  HederaRecipientTokenAssociationUnverified,
+} from "../errors";
+import { estimateFees } from "../logic/estimateFees";
+import {
+  isTokenAssociateTransaction,
+  isTokenAssociationRequired,
+  getCurrencyToUSDRate,
+  checkAccountTokenAssociationStatus,
+  safeParseAccountId,
+} from "../logic/utils";
+import type { Transaction, TransactionStatus, TransactionTokenAssociate } from "../types";
+import { calculateAmount } from "./utils";
 
 type Errors = Record<string, Error>;
 type Warnings = Record<string, Error>;
@@ -31,16 +33,16 @@ function validateRecipient(account: Account, recipient: string): Error | null {
     return new RecipientRequired();
   }
 
-  if (account.freshAddress === recipient) {
-    return new InvalidAddressBecauseDestinationIsAlsoSource();
+  const [parsingError, parsingResult] = safeParseAccountId(recipient);
+
+  if (parsingError) {
+    return parsingError;
   }
 
-  try {
-    AccountId.fromString(recipient);
-  } catch (err) {
-    return new InvalidAddress("", {
-      currencyName: account.currency.name,
-    });
+  const recipientWithoutChecksum = parsingResult.accountId;
+
+  if (account.freshAddress === recipientWithoutChecksum) {
+    return new InvalidAddressBecauseDestinationIsAlsoSource();
   }
 
   return null;
@@ -48,14 +50,14 @@ function validateRecipient(account: Account, recipient: string): Error | null {
 
 async function handleTokenAssociateTransaction(
   account: Account,
-  transaction: Extract<Required<Transaction>, { properties: TokenAssociateProperties }>,
+  transaction: TransactionTokenAssociate,
 ): Promise<TransactionStatus> {
   const errors: Errors = {};
   const warnings: Warnings = {};
 
   const [usdRate, estimatedFees] = await Promise.all([
     getCurrencyToUSDRate(account.currency),
-    getEstimatedFees(account, HEDERA_OPERATION_TYPES.TokenAssociate),
+    estimateFees(account.currency, HEDERA_OPERATION_TYPES.TokenAssociate),
   ]);
 
   const amount = BigNumber(0);
@@ -92,7 +94,7 @@ async function handleTokenTransaction(
   const warnings: Warnings = {};
   const [calculatedAmount, estimatedFees] = await Promise.all([
     calculateAmount({ transaction, account }),
-    getEstimatedFees(account, HEDERA_OPERATION_TYPES.TokenTransfer),
+    estimateFees(account.currency, HEDERA_OPERATION_TYPES.TokenTransfer),
   ]);
 
   const recipientError = validateRecipient(account, transaction.recipient);
@@ -145,7 +147,7 @@ async function handleCoinTransaction(
   const warnings: Warnings = {};
   const [calculatedAmount, estimatedFees] = await Promise.all([
     calculateAmount({ transaction, account }),
-    getEstimatedFees(account, HEDERA_OPERATION_TYPES.CryptoTransfer),
+    estimateFees(account.currency, HEDERA_OPERATION_TYPES.CryptoTransfer),
   ]);
 
   const recipientError = validateRecipient(account, transaction.recipient);

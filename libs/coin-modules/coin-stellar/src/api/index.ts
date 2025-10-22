@@ -4,6 +4,7 @@ import {
   BlockInfo,
   Cursor,
   Page,
+  Validator,
   FeeEstimation,
   Operation,
   Pagination,
@@ -83,6 +84,9 @@ export function createApi(config: StellarConfig): Api<StellarMemo> {
         throwIfPendingOperation: true,
       },
     }),
+    getValidators(_cursor?: Cursor): Promise<Page<Validator>> {
+      throw new Error("getValidators is not supported");
+    },
   };
 }
 

@@ -8,9 +8,9 @@ import { killSpeculos, spawnSpeculos } from "@ledgerhq/coin-tester/signers/specu
 import { resetIndexer, initMswHandlers, setBlock, indexBlocks } from "../indexer";
 import { Transaction as EvmTransaction } from "@ledgerhq/coin-evm/types/transaction";
 import { getCoinConfig, setCoinConfig } from "@ledgerhq/coin-evm/config";
-import { makeAccount } from "@ledgerhq/coin-evm/__tests__/fixtures/common.fixtures";
+import { makeAccount } from "../fixtures";
 import { callMyDealer, getBridges, polygon, VITALIK } from "../helpers";
-import { defaultNanoApp } from "../scenarii.test";
+import { defaultNanoApp } from "../constants";
 import { killAnvil, spawnAnvil } from "../anvil";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { BridgeStrategy } from "@ledgerhq/coin-tester/types";

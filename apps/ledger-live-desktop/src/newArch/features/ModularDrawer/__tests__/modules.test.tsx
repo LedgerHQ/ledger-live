@@ -7,7 +7,6 @@ import {
   ETH_ACCOUNT_2,
   SCROLL_ACCOUNT,
 } from "@ledgerhq/live-common/modularDrawer/__mocks__/accounts.mock";
-import { useGroupedCurrenciesByProvider } from "@ledgerhq/live-common/modularDrawer/__mocks__/useGroupedCurrenciesByProvider.mock";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import BigNumber from "bignumber.js";
 import React from "react";
@@ -23,16 +22,11 @@ import {
 import { mockDomMeasurements, mockOnAssetSelected } from "../../__tests__/shared";
 import ModularDrawerFlowManager from "../ModularDrawerFlowManager";
 
-jest.mock("@ledgerhq/live-common/deposit/useGroupedCurrenciesByProvider.hook", () => ({
-  useGroupedCurrenciesByProvider: () => useGroupedCurrenciesByProvider(),
-}));
-jest.mock("@ledgerhq/live-common/modularDrawer/hooks/useCurrenciesUnderFeatureFlag", () => ({
-  useCurrenciesUnderFeatureFlag: () => mockUseCurrenciesUnderFeatureFlag(),
+jest.mock("@ledgerhq/live-common/modularDrawer/hooks/useAcceptedCurrency", () => ({
+  useAcceptedCurrency: () => mockUseAcceptedCurrency(),
 }));
 
-const mockUseCurrenciesUnderFeatureFlag = jest.fn(() => ({
-  deactivatedCurrencyIds: new Set(),
-}));
+const mockUseAcceptedCurrency = jest.fn(() => () => true);
 
 beforeEach(async () => {
   mockDomMeasurements();

@@ -2,7 +2,7 @@
 import BigNumber from "bignumber.js";
 import { Address, Cell } from "@ton/core";
 import type { Account } from "@ledgerhq/types-live";
-import type { TonPayloadFormat, TonPayloadFormatRaw, Transaction, TransactionRaw } from "./types";
+import type { Transaction, TransactionRaw } from "./types";
 import { formatTransaction, fromTransactionRaw, toTransactionRaw } from "./transaction";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { genAccount } from "@ledgerhq/coin-framework/mocks/account";
@@ -516,20 +516,83 @@ const cases: Array<{
     },
   },
   {
-    name: "tx with payload we don't support",
+    name: "tx with payload for tonwhales-pool-deposit",
     tx: {
       ...baseTx,
       payload: {
-        type: "fake-type",
-        as: "is",
-      } as unknown as TonPayloadFormat,
+        type: "tonwhales-pool-deposit",
+        queryId: BigInt(1),
+        gasLimit: BigInt(1000),
+      },
     },
     rawTx: {
       ...baseRawTx,
       payload: {
-        type: "fake-type",
-        as: "is",
-      } as unknown as TonPayloadFormatRaw,
+        type: "tonwhales-pool-deposit",
+        queryId: "1",
+        gasLimit: "1000",
+      },
+    },
+  },
+  {
+    name: "tx with payload for tonwhales-pool-withdraw",
+    tx: {
+      ...baseTx,
+      payload: {
+        type: "tonwhales-pool-withdraw",
+        queryId: BigInt(2),
+        gasLimit: BigInt(2000),
+        amount: BigInt(3000),
+      },
+    },
+    rawTx: {
+      ...baseRawTx,
+      payload: {
+        type: "tonwhales-pool-withdraw",
+        queryId: "2",
+        gasLimit: "2000",
+        amount: "3000",
+      },
+    },
+  },
+  {
+    name: "tx with payload for vesting-send-msg-comment",
+    tx: {
+      ...baseTx,
+      payload: {
+        type: "vesting-send-msg-comment",
+        queryId: BigInt(3),
+        sendMode: 0,
+        value: BigInt(4000),
+        destination: randomAddress,
+        text: "vesting comment",
+      },
+    },
+    rawTx: {
+      ...baseRawTx,
+      payload: {
+        type: "vesting-send-msg-comment",
+        queryId: "3",
+        sendMode: 0,
+        value: "4000",
+        destination: rawRandomAddress,
+        text: "vesting comment",
+      },
+    },
+  },
+  // Intentionally testing an unsupported payload type.
+  {
+    name: "tx with payload we don't support",
+    // Cast via unknown to avoid direct any assertions
+    tx: {
+      ...baseTx,
+      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+      payload: { type: "fake-type", as: "is" } as unknown as Transaction["payload"],
+    },
+    rawTx: {
+      ...baseRawTx,
+      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+      payload: { type: "fake-type", as: "is" } as unknown as TransactionRaw["payload"],
     },
   },
 ];

@@ -19,6 +19,14 @@ type LabelConfig = {
     [key: string]: string;
     default: string;
   };
+  sendVerify: {
+    [key: string]: string;
+    default: string;
+  };
+  sendConfirm: {
+    [key: string]: string;
+    default: string;
+  };
 };
 
 type DeviceLabelsConfig = {
@@ -57,8 +65,21 @@ export const DEVICE_LABELS_CONFIG: DeviceLabelsConfig = {
       [AppInfos.TEZOS.name]: DeviceLabels.ACCEPT_RISK,
       default: DeviceLabels.CAPS_APPROVE,
     },
+    sendVerify: {
+      default: DeviceLabels.REVIEW_OPERATION,
+    },
+    sendConfirm: {
+      [AppInfos.SOLANA.name]: DeviceLabels.SIGN_TRANSACTION,
+      [AppInfos.TRON.name]: DeviceLabels.SIGN,
+      [AppInfos.STELLAR.name]: DeviceLabels.SIGN,
+      [AppInfos.RIPPLE.name]: DeviceLabels.SIGN,
+      [AppInfos.APTOS.name]: DeviceLabels.APPROVE,
+      [AppInfos.SUI.name]: DeviceLabels.ACCEPT,
+      [AppInfos.BITCOIN.name]: DeviceLabels.CONTINUE,
+      default: DeviceLabels.CAPS_APPROVE,
+    },
   },
-  default: {
+  [DeviceModelId.stax]: {
     receiveVerify: {
       [AppInfos.BNB_CHAIN.name]: DeviceLabels.VERIFY_BSC,
       [AppInfos.COSMOS.name]: DeviceLabels.PLEASE_REVIEW,
@@ -69,20 +90,47 @@ export const DEVICE_LABELS_CONFIG: DeviceLabelsConfig = {
       default: DeviceLabels.ADDRESS,
     },
     receiveConfirm: {
+      default: DeviceLabels.CONFIRM,
+    },
+    delegateVerify: {
+      [AppInfos.NEAR.name]: DeviceLabels.VIEW_HEADER,
+      default: DeviceLabels.REVIEW_OPERATION,
+    },
+    delegateConfirm: {
+      [AppInfos.NEAR.name]: DeviceLabels.CONTINUE_TO_ACTION,
+      default: DeviceLabels.HOLD_TO_SIGN,
+    },
+    sendVerify: {
+      default: DeviceLabels.REVIEW_OPERATION,
+    },
+    sendConfirm: {
+      default: DeviceLabels.HOLD_TO_SIGN,
+    },
+  },
+  default: {
+    receiveVerify: {
+      [AppInfos.BNB_CHAIN.name]: DeviceLabels.VERIFY_BSC,
+      [AppInfos.COSMOS.name]: DeviceLabels.PLEASE_REVIEW,
+      [AppInfos.ETHEREUM.name]: DeviceLabels.VERIFY_ETHEREUM,
+      [AppInfos.POLKADOT.name]: DeviceLabels.PLEASE_REVIEW,
+      [AppInfos.POLYGON.name]: DeviceLabels.VERIFY_POLYGON,
+      [AppInfos.SOLANA.name]: DeviceLabels.PUBKEY,
+      default: DeviceLabels.ADDRESS,
+    },
+    receiveConfirm: {
       [AppInfos.BITCOIN.name]: DeviceLabels.CONFIRM,
       [AppInfos.BNB_CHAIN.name]: DeviceLabels.CONFIRM,
       [AppInfos.COSMOS.name]: DeviceLabels.CAPS_APPROVE,
       [AppInfos.ETHEREUM.name]: DeviceLabels.CONFIRM,
       [AppInfos.POLKADOT.name]: DeviceLabels.CAPS_APPROVE,
       [AppInfos.POLYGON.name]: DeviceLabels.CONFIRM,
-      [AppInfos.SOLANA.name]: DeviceLabels.CONFIRM,
       default: DeviceLabels.APPROVE,
     },
     delegateVerify: {
       [AppInfos.COSMOS.name]: DeviceLabels.PLEASE_REVIEW,
       [AppInfos.MULTIVERS_X.name]: DeviceLabels.RECEIVER,
       [AppInfos.NEAR.name]: DeviceLabels.VIEW_HEADER,
-      [AppInfos.SOLANA.name]: DeviceLabels.REVIEW_TRANSACTION,
+      [AppInfos.SOLANA.name]: DeviceLabels.DELEGATE_FROM,
       default: DeviceLabels.REVIEW_OPERATION,
     },
     delegateConfirm: {
@@ -92,9 +140,26 @@ export const DEVICE_LABELS_CONFIG: DeviceLabelsConfig = {
       [AppInfos.INJECTIVE.name]: DeviceLabels.CAPS_APPROVE,
       [AppInfos.MULTIVERS_X.name]: DeviceLabels.SIGN,
       [AppInfos.NEAR.name]: DeviceLabels.CONTINUE_TO_ACTION,
-      [AppInfos.SOLANA.name]: DeviceLabels.SIGN_TRANSACTION,
       [AppInfos.OSMOSIS.name]: DeviceLabels.CAPS_APPROVE,
       default: DeviceLabels.APPROVE,
+    },
+    sendVerify: {
+      [AppInfos.SOLANA.name]: DeviceLabels.TRANSFER,
+      [AppInfos.RIPPLE.name]: DeviceLabels.TRANSACTION_TYPE,
+      default: DeviceLabels.REVIEW_OPERATION,
+    },
+    sendConfirm: {
+      [AppInfos.SOLANA.name]: DeviceLabels.APPROVE,
+      [AppInfos.TRON.name]: DeviceLabels.SIGN,
+      [AppInfos.STELLAR.name]: DeviceLabels.SIGN,
+      [AppInfos.RIPPLE.name]: DeviceLabels.SIGN,
+      [AppInfos.APTOS.name]: DeviceLabels.APPROVE,
+      [AppInfos.SUI.name]: DeviceLabels.ACCEPT,
+      [AppInfos.BITCOIN.name]: DeviceLabels.SIGN_TRANSACTION,
+      [AppInfos.KASPA.name]: DeviceLabels.APPROVE,
+      [AppInfos.DOGECOIN.name]: DeviceLabels.ACCEPT,
+      [AppInfos.BITCOIN_CASH.name]: DeviceLabels.ACCEPT,
+      default: DeviceLabels.CAPS_APPROVE,
     },
   },
 };

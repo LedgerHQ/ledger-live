@@ -28,6 +28,7 @@ export function buildCurrencyBridge(signerContext: SignerContext<CardanoSigner>)
   const scanAccounts = makeScanAccounts({
     getAccountShape: makeGetAccountShape(signerContext),
     getAddressFn: getAddressWrapper(getAddress),
+    postSync: postSyncPatch,
   });
 
   return {

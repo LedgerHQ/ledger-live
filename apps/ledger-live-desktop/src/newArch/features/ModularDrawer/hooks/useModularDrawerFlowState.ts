@@ -6,11 +6,11 @@ import { useModularDrawerAnalytics } from "../analytics/useModularDrawerAnalytic
 import { MODULAR_DRAWER_PAGE_NAME } from "../analytics/modularDrawer.types";
 import uniqWith from "lodash/uniqWith";
 
-import { isCorrespondingCurrency } from "@ledgerhq/live-common/modularDrawer/utils/index";
+import { belongsToSameNetwork } from "@ledgerhq/live-common/modularDrawer/utils/index";
 import { useSelector } from "react-redux";
 import { modularDrawerSearchedSelector } from "~/renderer/reducers/modularDrawer";
 import { AssetData } from "@ledgerhq/live-common/modularDrawer/utils/type";
-import { useCurrenciesUnderFeatureFlag } from "@ledgerhq/live-common/modularDrawer/hooks/useCurrenciesUnderFeatureFlag";
+import { useAcceptedCurrency } from "@ledgerhq/live-common/modularDrawer/hooks/useAcceptedCurrency";
 
 type Props = {
   assets: AssetData[] | undefined;
@@ -31,7 +31,7 @@ export function useModularDrawerFlowState({
   isSelectAccountFlow,
   onAssetSelected,
 }: Props) {
-  const { deactivatedCurrencyIds } = useCurrenciesUnderFeatureFlag();
+  const isAcceptedCurrency = useAcceptedCurrency();
   const { trackModularDrawerEvent } = useModularDrawerAnalytics();
   const searchedValue = useSelector(modularDrawerSearchedSelector);
 
@@ -77,7 +77,7 @@ export function useModularDrawerFlowState({
     (network: CryptoOrTokenCurrency) => {
       if (!providers) return;
       const correspondingCurrency =
-        providers.networks.find(elem => isCorrespondingCurrency(elem, network)) ?? network;
+        providers.networks.find(elem => belongsToSameNetwork(elem, network)) ?? network;
 
       if (!isSelectAccountFlow) {
         onAssetSelected?.(correspondingCurrency);
@@ -91,15 +91,12 @@ export function useModularDrawerFlowState({
   const getNetworksFromProvider = useCallback(
     (provider: AssetData) => {
       return provider.networks.filter(elem => {
-        const currencyId = elem.type === "CryptoCurrency" ? elem.id : elem.parentCurrency.id;
-
-        const isDeactivated = deactivatedCurrencyIds.has(currencyId);
         const isAllowedByFilter = currencyIds.length === 0 || currencyIds.includes(elem.id);
 
-        return !isDeactivated && isAllowedByFilter;
+        return isAcceptedCurrency(elem) && isAllowedByFilter;
       });
     },
-    [deactivatedCurrencyIds, currencyIds],
+    [isAcceptedCurrency, currencyIds],
   );
 
   const handleNoProvider = useCallback(

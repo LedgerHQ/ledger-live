@@ -1,10 +1,9 @@
-import React, { useCallback, useMemo, useContext } from "react";
+import React, { useCallback, useContext } from "react";
 import { FlatList, ListRenderItemInfo } from "react-native";
 import { useSelector } from "react-redux";
 import { Trans, useTranslation } from "react-i18next";
 import { Box, Flex, Text } from "@ledgerhq/native-ui";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { getCryptoCurrencyById, findTokenById } from "@ledgerhq/live-common/currencies/index";
 import { Currency } from "@ledgerhq/types-cryptoassets";
 import { useFocusEffect } from "@react-navigation/native";
 import ReadOnlyGraphCard from "~/components/ReadOnlyGraphCard";
@@ -23,23 +22,14 @@ import { AnalyticsContext } from "~/analytics/AnalyticsContext";
 import type { AccountsNavigatorParamList } from "~/components/RootNavigator/types/AccountsNavigator";
 import type { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { ScreenName } from "~/const";
+import { cryptoAssetsHooks } from "~/config/bridge-setup";
 
 type Props = StackNavigatorProps<AccountsNavigatorParamList, ScreenName.Account>;
 
 function ReadOnlyAccount({ route }: Props) {
-  const { currencyId, currencyType } = route.params;
+  const { currencyId } = route.params;
 
-  const currency: Currency | null = useMemo(() => {
-    if (!currencyId) return null;
-    if (currencyType === "CryptoCurrency") {
-      return getCryptoCurrencyById(currencyId);
-    }
-    const token = findTokenById(currencyId);
-    if (!token) {
-      throw new Error(`token with id "${currencyId}" not found`);
-    }
-    return token;
-  }, [currencyType, currencyId]);
+  const { currency } = cryptoAssetsHooks.useCurrencyById(currencyId || "");
   const { t } = useTranslation();
 
   const counterValueCurrency: Currency = useSelector(counterValueCurrencySelector);

@@ -17,6 +17,7 @@ import {
   useModularDrawerVisibility,
 } from "LLD/features/ModularDrawer";
 import { setFlowValue, setSourceValue } from "~/renderer/reducers/modularDrawer";
+import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 
 const DRAWER_FLOW = "stake";
 
@@ -36,6 +37,7 @@ const useStakeFlow = () => {
   const walletState = useSelector(walletSelector);
   const { enabledCurrencies, partnerSupportedAssets, getRouteToPlatformApp } = useStake();
   const list = enabledCurrencies.concat(partnerSupportedAssets);
+  const earnDrawerConfigurationFlag = useFeature("ptxEarnDrawerConfiguration");
 
   const { isModularDrawerVisible } = useModularDrawerVisibility({
     modularDrawerFeatureFlagKey: "lldModularDrawer",
@@ -151,11 +153,17 @@ const useStakeFlow = () => {
       };
 
       if (modularDrawerVisible) {
+        // Add APY configuration for earn/stake functionality
+        const earnDrawerConfiguration = earnDrawerConfigurationFlag?.enabled
+          ? earnDrawerConfigurationFlag.params
+          : {};
         openAssetAndAccountDrawer({
           currencies: cryptoCurrencies.map(c => c.id),
           useCase: "earn",
           onSuccess,
           onCancel: handleRequestClose,
+          areCurrenciesFiltered: cryptoCurrencies.length > 0,
+          drawerConfiguration: earnDrawerConfiguration,
         });
       } else {
         setDrawer(
@@ -183,6 +191,7 @@ const useStakeFlow = () => {
     },
     [
       dispatch,
+      earnDrawerConfigurationFlag,
       handleAccountSelected,
       handleRequestClose,
       history.location.pathname,

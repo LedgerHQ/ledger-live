@@ -3,7 +3,7 @@ import { Application } from "../page";
 import { ElectronApplication } from "@playwright/test";
 import { Swap } from "@ledgerhq/live-common/e2e/models/Swap";
 import { Currency } from "@ledgerhq/live-common/e2e/enum/Currency";
-import { getSpeculosModel } from "@ledgerhq/live-common/e2e/speculos";
+import { getSpeculosModel } from "@ledgerhq/live-common/e2e/speculosAppVersion";
 import { DeviceModelId } from "@ledgerhq/types-devices";
 
 export function setupEnv(disableBroadcast?: boolean) {

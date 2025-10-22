@@ -4,6 +4,7 @@ import {
   BlockInfo,
   Cursor,
   Page,
+  Validator,
   IncorrectTypeError,
   type Operation,
   type Pagination,
@@ -72,6 +73,9 @@ export function createApi(config: TezosConfig): TezosApi {
     },
     getRewards(_address: string, _cursor?: Cursor): Promise<Page<Reward>> {
       throw new Error("getRewards is not supported");
+    },
+    getValidators(_cursor?: Cursor): Promise<Page<Validator>> {
+      throw new Error("getValidators is not supported");
     },
   };
 }

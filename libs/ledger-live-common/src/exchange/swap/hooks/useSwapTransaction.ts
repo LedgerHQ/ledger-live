@@ -36,6 +36,7 @@ export const useFromAmountStatusMessage = (
   { account, parentAccount, status, transaction }: Result<Transaction>,
   // The order of errors/warnings here will determine the precedence
   statusTypeToInclude: string[],
+  sponsored?: boolean,
 ): Error | undefined => {
   const statusEntries = useMemo(
     () => statusTypeToInclude.map(statusType => (status.errors || status.warnings)?.[statusType]),
@@ -65,7 +66,9 @@ export const useFromAmountStatusMessage = (
       .filter(errorOrWarning => !(errorOrWarning instanceof AmountRequired));
     const isRelevantStatus = (relevantStatus as Error) instanceof NotEnoughGas;
 
-    if (isRelevantStatus && currency && estimatedFees) {
+    // Skip gas validation for sponsored transactions since gas fees are covered by sponsor
+
+    if (isRelevantStatus && currency && estimatedFees && !sponsored) {
       const query = new URLSearchParams({
         // get account id first and set it equal to account.
         // if parent account exists then overwrite the former.
@@ -86,7 +89,15 @@ export const useFromAmountStatusMessage = (
     }
 
     return relevantStatus;
-  }, [statusEntries, currency, estimatedFees, transaction?.amount, account?.id, parentAccount?.id]);
+  }, [
+    statusEntries,
+    currency,
+    estimatedFees,
+    transaction?.amount,
+    account?.id,
+    parentAccount?.id,
+    sponsored,
+  ]);
 };
 
 type UseSwapTransactionProps = {
@@ -100,6 +111,7 @@ type UseSwapTransactionProps = {
   refreshRate?: number;
   allowRefresh?: boolean;
   isEnabled?: boolean;
+  sponsored?: boolean;
 };
 
 export const useSwapTransaction = ({
@@ -113,6 +125,7 @@ export const useSwapTransaction = ({
   refreshRate,
   allowRefresh,
   isEnabled,
+  sponsored,
 }: UseSwapTransactionProps): SwapTransactionType => {
   const bridgeTransaction = useBridgeTransaction(() => ({
     account: defaultAccount,
@@ -140,11 +153,11 @@ export const useSwapTransaction = ({
 
   const { account: toAccount } = toState;
 
-  const fromAmountError = useFromAmountStatusMessage(bridgeTransaction, [
-    "gasPrice",
-    "amount",
-    "gasLimit",
-  ]);
+  const fromAmountError = useFromAmountStatusMessage(
+    bridgeTransaction,
+    ["gasPrice", "amount", "gasLimit"],
+    sponsored,
+  );
 
   const { isSwapReversable, reverseSwap } = useReverseAccounts({
     accounts,

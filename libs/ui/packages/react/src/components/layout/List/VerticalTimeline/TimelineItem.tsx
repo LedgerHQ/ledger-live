@@ -16,13 +16,15 @@ export type Props = {
   isFirstItem?: boolean;
   isLastItem?: boolean;
   onClick?: () => void;
+  activeBackground?: string;
+  isNeutral?: boolean;
 };
 
-const getContainerBackground = (theme: Theme, status: ItemStatus) => {
+const getContainerBackground = (theme: Theme, status: ItemStatus, activeBackground?: string) => {
   if (status === "completed") {
     return "transparent";
   } else if (status === "active") {
-    return theme.colors.neutral.c20;
+    return activeBackground || theme.colors.neutral.c20;
   }
   return "transparent";
 };
@@ -38,11 +40,15 @@ const getContainerBorder = (theme: Theme, status: ItemStatus, isLastItem?: boole
   return "transparent";
 };
 
-const Container = styled(Flex)<{ status: ItemStatus; isLastItem?: boolean }>`
+const Container = styled(Flex)<{
+  status: ItemStatus;
+  isLastItem?: boolean;
+  activeBackground?: string;
+}>`
   position: relative;
   flex: 1;
   border-radius: ${p => p.theme.radii[2]}px;
-  background: ${p => getContainerBackground(p.theme, p.status)};
+  background: ${p => getContainerBackground(p.theme, p.status, p.activeBackground)};
   border: 1px solid ${p => getContainerBorder(p.theme, p.status, p.isLastItem)};
 `;
 
@@ -56,7 +62,7 @@ const TimelineIndicatorContentHeader = styled(Flex)`
   align-items: center;
 `;
 
-function TimelineItem({ item, isFirstItem, isLastItem, onClick }: Props) {
+function TimelineItem({ item, isFirstItem, isLastItem, onClick, isNeutral }: Props) {
   const { colors } = useTheme();
 
   return (
@@ -66,8 +72,14 @@ function TimelineItem({ item, isFirstItem, isLastItem, onClick }: Props) {
         isFirstItem={isFirstItem}
         isLastItem={isLastItem}
         mr={4}
+        isNeutral={isNeutral}
       />
-      <Container status={item.status} isLastItem={isLastItem} overflow="hidden">
+      <Container
+        status={item.status}
+        isLastItem={isLastItem && !isNeutral}
+        overflow="hidden"
+        activeBackground={item.activeBackground}
+      >
         {item.status === "active" ? item.background : null}
 
         <TextContainer mb={4} flexDirection="column" zIndex={1}>
@@ -76,7 +88,7 @@ function TimelineItem({ item, isFirstItem, isLastItem, onClick }: Props) {
               variant="body"
               fontWeight={item.status === "active" ? "semiBold" : "medium"}
               color={
-                item.status !== "inactive" && isLastItem
+                item.status !== "inactive" && isLastItem && !isNeutral
                   ? "success.c70"
                   : item.status === "active"
                     ? "primary.c80"

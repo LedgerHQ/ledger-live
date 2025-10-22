@@ -1,5 +1,5 @@
 import invariant from "invariant";
-import React, { useEffect, useRef, useCallback, useState } from "react";
+import React, { useEffect, useCallback, useState } from "react";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import { getMainAccount } from "@ledgerhq/live-common/account/index";
 import TrackPage from "~/renderer/analytics/TrackPage";
@@ -31,7 +31,7 @@ import { getEnv } from "@ledgerhq/live-env";
 import AccountTagDerivationMode from "~/renderer/components/AccountTagDerivationMode";
 import { FeatureToggle, useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { LOCAL_STORAGE_KEY_PREFIX } from "./StepReceiveStakingFlow";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { openModal } from "~/renderer/actions/modals";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { getLLDCoinFamily } from "~/renderer/families";
@@ -43,6 +43,7 @@ import { UTXOAddressAlert } from "~/renderer/components/UTXOAddressAlert";
 import { isUTXOCompliant } from "@ledgerhq/live-common/currencies/helpers";
 import MemoTagInfo from "LLD/features/MemoTag/components/MemoTagInfo";
 import { MEMO_TAG_COINS } from "LLD/features/MemoTag/constants";
+import { onboardingReceiveFlowSelector } from "~/renderer/reducers/onboarding";
 
 const Separator = styled.div`
   border-top: 1px solid #99999933;
@@ -181,6 +182,7 @@ const StepReceiveFunds = (props: StepProps) => {
   } = props;
   const dispatch = useDispatch();
   const completeAction = useCompleteActionCallback();
+  const isOnboardingReceiveFlow = useSelector(onboardingReceiveFlowSelector);
 
   const receiveStakingFlowConfig = useFeature("receiveStakingFlowConfigDesktop");
   const receivedCurrencyId: string | undefined =
@@ -198,7 +200,6 @@ const StepReceiveFunds = (props: StepProps) => {
   invariant(account && mainAccount, "No account given");
   const maybeAccountName = useMaybeAccountName(account);
   const name = token ? token.name : maybeAccountName || getDefaultAccountName(account);
-  const initialDevice = useRef(device);
   const address = mainAccount.freshAddress;
   const [modalVisible, setModalVisible] = useState(false);
   const hideQRCodeModal = useCallback(() => setModalVisible(false), [setModalVisible]);
@@ -231,16 +232,16 @@ const StepReceiveFunds = (props: StepProps) => {
   }, [device, mainAccount, transitionTo, onChangeAddressVerified, hideQRCodeModal]);
 
   const onVerify = useCallback(() => {
-    // if device has changed since the beginning, we need to re-entry device
-    if (device !== initialDevice.current || !isAddressVerified) {
-      transitionTo("device");
-    }
     onChangeAddressVerified(null);
     onResetSkip();
-  }, [device, onChangeAddressVerified, onResetSkip, transitionTo, isAddressVerified]);
+    transitionTo("device");
+  }, [onChangeAddressVerified, onResetSkip, transitionTo]);
 
   const onFinishReceiveFlow = useCallback(() => {
-    completeAction(PostOnboardingActionId.assetsTransfer);
+    if (!isOnboardingReceiveFlow) {
+      completeAction(PostOnboardingActionId.assetsTransfer);
+    }
+
     const dismissModal =
       global.localStorage.getItem(`${LOCAL_STORAGE_KEY_PREFIX}${receivedCurrencyId}`) === "true";
     if (
@@ -248,7 +249,8 @@ const StepReceiveFunds = (props: StepProps) => {
       !receiveTokenMode &&
       isStakingEnabledForAccount &&
       !isFromPostOnboardingEntryPoint &&
-      !isSPLToken
+      !isSPLToken &&
+      !isOnboardingReceiveFlow
     ) {
       track("button_clicked2", {
         button: "continue",
@@ -291,6 +293,7 @@ const StepReceiveFunds = (props: StepProps) => {
     transitionTo,
     completeAction,
     isSPLToken,
+    isOnboardingReceiveFlow,
   ]);
 
   // when address need verification we trigger it on device

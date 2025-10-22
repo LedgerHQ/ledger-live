@@ -17,12 +17,12 @@ export type ExtraDeviceTransactionField =
 
 export type DeviceTransactionField = CommonDeviceTransactionField | ExtraDeviceTransactionField;
 
-function getDeviceTransactionConfig(input: {
+async function getDeviceTransactionConfig(input: {
   account: AccountLike;
   parentAccount: Account | null | undefined;
   transaction: Transaction;
   status: TransactionStatus;
-}): Array<DeviceTransactionField> {
+}): Promise<Array<DeviceTransactionField>> {
   const fields: Array<DeviceTransactionField> = [];
 
   fields.push({

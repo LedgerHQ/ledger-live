@@ -111,7 +111,7 @@ const AppsList = ({
     if (q) setQuery(q);
     if (inputRef.current && inputRef.current && inputRef.current.focus) inputRef.current.focus();
   }, [search]);
-  const { installed: installedApps, uninstallQueue, apps } = state;
+  const { installed: installedApps, uninstallQueue } = state;
   const addAccount = useCallback(
     (currency: CryptoOrTokenCurrency) => {
       push("/accounts");
@@ -229,13 +229,7 @@ const AppsList = ({
             {displayedAppList.length ? (
               displayedAppList.map((app: App) => mapApp(app, !isDeviceTab))
             ) : (
-              <Placeholder
-                query={query}
-                addAccount={addAccount}
-                dispatch={dispatch}
-                installed={installedApps}
-                apps={apps}
-              />
+              <Placeholder />
             )}
           </>
         )}

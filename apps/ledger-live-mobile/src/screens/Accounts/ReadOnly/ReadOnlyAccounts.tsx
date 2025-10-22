@@ -4,12 +4,7 @@ import { Flex, Text } from "@ledgerhq/native-ui";
 import { useFocusEffect } from "@react-navigation/native";
 
 import { useTranslation } from "react-i18next";
-import {
-  isCurrencySupported,
-  listSupportedCurrencies,
-  listTokens,
-} from "@ledgerhq/live-common/currencies/index";
-import { useCurrenciesByMarketcap } from "@ledgerhq/live-common/currencies/hooks";
+
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import TrackScreen from "~/analytics/TrackScreen";
 
@@ -23,28 +18,18 @@ import { AnalyticsContext } from "~/analytics/AnalyticsContext";
 import { StackNavigatorProps } from "~/components/RootNavigator/types/helpers";
 import { AccountsNavigatorParamList } from "~/components/RootNavigator/types/AccountsNavigator";
 import { ScreenName } from "~/const";
+import { useReadOnlyCoins } from "~/hooks/useReadOnlyCoins";
 
 type NavigationProps = StackNavigatorProps<AccountsNavigatorParamList, ScreenName.Accounts>;
 
 const maxReadOnlyCryptoCurrencies = 10;
 
 function ReadOnlyAccounts({ navigation, route }: NavigationProps) {
-  const listSupportedTokens = useCallback(
-    () => listTokens().filter(t => isCurrencySupported(t.parentCurrency)),
-    [],
-  );
-  const cryptoCurrencies = useMemo(
-    () =>
-      (listSupportedCurrencies() as (TokenCurrency | CryptoCurrency)[]).concat(
-        listSupportedTokens(),
-      ),
-    [listSupportedTokens],
-  );
-  const sortedCryptoCurrencies = useCurrenciesByMarketcap(cryptoCurrencies);
-  const currencies = useMemo(
-    () => sortedCryptoCurrencies.slice(0, maxReadOnlyCryptoCurrencies),
-    [sortedCryptoCurrencies],
-  );
+  const { sortedCryptoCurrencies } = useReadOnlyCoins({
+    maxDisplayed: maxReadOnlyCryptoCurrencies,
+  });
+
+  const currencies = useMemo(() => sortedCryptoCurrencies, [sortedCryptoCurrencies]);
 
   const { t } = useTranslation();
 

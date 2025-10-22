@@ -99,7 +99,7 @@ async function getTokenBalances(
   const contractsArray = Array.from(contracts);
   for (let i = 0; i < contractsArray.length; i += TOKEN_BALANCE_BATCH_SIZE) {
     const chunk = contractsArray.slice(i, i + TOKEN_BALANCE_BATCH_SIZE);
-    const chunkBalances = await Promise.all(
+    const chunkBalancesPromises = await Promise.allSettled(
       chunk.map(async contract => {
         const asset = assets.get(contract);
         if (asset === undefined) throw new Error(`No asset defined for contract ${contract}`);
@@ -107,6 +107,9 @@ async function getTokenBalances(
         return { asset, value: BigInt(balance.toFixed(0)) };
       }),
     );
+    const chunkBalances = chunkBalancesPromises
+      .filter((p): p is PromiseFulfilledResult<Balance> => p.status === "fulfilled")
+      .map(balance => balance.value);
     balances.push(...chunkBalances);
   }
 
