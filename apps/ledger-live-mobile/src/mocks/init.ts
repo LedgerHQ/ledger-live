@@ -1,5 +1,5 @@
 async function enableMocking() {
-  const mswEnabled = process.env.MSW_ENABLED === "true";
+  const mswEnabled = process.env.MSW_ENABLED === "true" || process.env.E2E_MSW_ENABLED === "true";
 
   if (!mswEnabled) {
     return;

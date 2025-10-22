@@ -32,6 +32,8 @@ export const requestInterceptor = (
 
 type ExtendedAxiosResponse = AxiosResponse & { config: { metadata?: Metadata } };
 
+const axiosWithFetch = axios.create({ adapter: "fetch" }); // to allow MSW to intercept requests on React Native
+
 export const responseInterceptor = (response: ExtendedAxiosResponse): ExtendedAxiosResponse => {
   if (!getEnv("ENABLE_NETWORK_LOGS")) {
     return response;
@@ -199,7 +201,7 @@ export const newImplementation = async <T = unknown, U = unknown>(
       request.timeout = getEnv("GET_CALLS_TIMEOUT");
     }
 
-    response = await retry(() => axios(request), {
+    response = await retry(() => axiosWithFetch(request), {
       maxRetry: getEnv("GET_CALLS_RETRY"),
       retryCondition: error => {
         if (error && error.status) {
@@ -210,7 +212,7 @@ export const newImplementation = async <T = unknown, U = unknown>(
       },
     });
   } else {
-    response = await axios(request);
+    response = await axiosWithFetch(request);
   }
 
   const { data, status } = response;
@@ -231,7 +233,7 @@ const implementation = <T = any>(arg: AxiosRequestConfig): AxiosPromise<T> => {
       arg.timeout = getEnv("GET_CALLS_TIMEOUT");
     }
 
-    promise = retry(() => axios(arg), {
+    promise = retry(() => axiosWithFetch(arg), {
       maxRetry: getEnv("GET_CALLS_RETRY"),
       retryCondition: error => {
         if (error && error.status) {
@@ -243,7 +245,7 @@ const implementation = <T = any>(arg: AxiosRequestConfig): AxiosPromise<T> => {
       },
     });
   } else {
-    promise = axios(arg);
+    promise = axiosWithFetch(arg);
   }
 
   return promise;

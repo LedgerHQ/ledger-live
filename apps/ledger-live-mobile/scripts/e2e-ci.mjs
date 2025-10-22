@@ -31,11 +31,11 @@ const build_ios = async () => {
 };
 
 const bundle_ios = async () => {
-  await $`pnpm mobile bundle:ios --dev false --minify true`;
+  await $`E2E_MSW_ENABLED=true pnpm mobile bundle:ios --dev false --minify true`;
 };
 
 const bundle_android = async () => {
-  await $`pnpm mobile bundle:android --dev false --minify true`;
+  await $`E2E_MSW_ENABLED=true pnpm mobile bundle:android --dev false --minify true`;
 };
 
 const bundle_ios_with_cache = async () => {

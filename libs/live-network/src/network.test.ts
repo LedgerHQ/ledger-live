@@ -1,11 +1,18 @@
-import axios, { AxiosHeaders } from "axios";
+import { AxiosHeaders } from "axios";
 import { getEnv, setEnv } from "@ledgerhq/live-env";
-import network, { requestInterceptor, responseInterceptor } from "./network";
 import * as logs from "@ledgerhq/logs";
 
-jest.mock("axios");
+const mockAxiosWithFetch = jest.fn();
 
-const mockedAxios = jest.mocked(axios);
+jest.mock("axios", () => {
+  const actual = jest.requireActual("axios");
+  return {
+    ...actual,
+    create: jest.fn(() => mockAxiosWithFetch),
+  };
+});
+
+import network, { requestInterceptor, responseInterceptor } from "./network";
 
 describe("network", () => {
   const DEFAULT_ENABLE_NETWORK_LOGS = getEnv("ENABLE_NETWORK_LOGS");
@@ -15,6 +22,7 @@ describe("network", () => {
     // restore the spy created with spyOn
     jest.restoreAllMocks();
     jest.clearAllMocks();
+    mockAxiosWithFetch.mockReset();
 
     // Restore DEFAULT_ENABLE_NETWORK_LOGS
     setEnv("ENABLE_NETWORK_LOGS", DEFAULT_ENABLE_NETWORK_LOGS);
@@ -138,15 +146,17 @@ describe("network", () => {
         headers: new AxiosHeaders(),
       };
 
+      mockAxiosWithFetch.mockRejectedValue(response);
+
       try {
-        mockedAxios.mockImplementation(() => Promise.reject(response));
         await network({
           method: "GET",
           url: "https://google.com",
         });
         // eslint-disable-next-line no-empty
       } catch {}
-      expect(mockedAxios).toHaveBeenCalledTimes(DEFAULT_GET_CALLS_RETRY + 1);
+
+      expect(mockAxiosWithFetch).toHaveBeenCalledTimes(DEFAULT_GET_CALLS_RETRY + 1);
     });
 
     test("should not retry request when response status is 422", async () => {
@@ -161,7 +171,8 @@ describe("network", () => {
         statusText: "Error",
         headers: {},
       };
-      mockedAxios.mockImplementation(() => Promise.reject(response));
+
+      mockAxiosWithFetch.mockRejectedValue(response);
 
       try {
         await network({
@@ -170,7 +181,8 @@ describe("network", () => {
         });
         // eslint-disable-next-line no-empty
       } catch {}
-      expect(mockedAxios).toHaveBeenCalledTimes(1);
+
+      expect(mockAxiosWithFetch).toHaveBeenCalledTimes(1);
     });
   });
 });
