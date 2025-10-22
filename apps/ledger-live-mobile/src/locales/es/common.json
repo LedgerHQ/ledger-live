@@ -1073,6 +1073,10 @@
     "HederaAddAccountError" : {
       "title" : "Tu cuenta no ha sido agregada. Inténtalo de nuevo."
     },
+    "HederaRecipientInvalidChecksum" : {
+      "title" : "Suma de verificación de la dirección no válida",
+      "description" : "La dirección facilitada tiene una suma de verificación no válida."
+    },
     "HederaInsufficientFundsForAssociation" : {
       "title" : "Saldo insuficiente",
       "description" : "No tienes HBAR suficiente para pagar la asociación del token. Se necesita un mínimo de ${{requiredWorthInUSD}} USD en HBAR."
@@ -2504,7 +2508,7 @@
       },
       "selectionContinueOnDevice" : "Elige la opción que prefieras en tu {{productName}}.",
       "newSeedTitle" : "Frase de Recuperación Secreta",
-      "newSeedDescription" : "Mira estos videos para obtener más información sobre la Frase de Recuperación Secreta:",
+      "newSeedDescription" : "Tu Frase de Recuperación Secreta controla tus activos y es irreemplazable. Quien tenga tu Frase puede apoderarse de tus activos. Si la pierdes, Ledger no podrá ayudarte a recuperarla.",
       "newSeedContinueOnDevice" : "Sigue las instrucciones que se muestran en tu {{productName}}",
       "recovery" : "Para que tus activos estén lo más seguros posible, utiliza una Frase de Recuperación Secreta generada por un dispositivo Ledger. \n\n¿No tienes una? Usa tu {{productName}} para generar una Frase nueva."
     },
@@ -3767,6 +3771,10 @@
       },
       "history" : {
         "title" : "Historial de permutas"
+      },
+      "wrongDevice" : {
+        "title" : "El Ledger Nano S™ no es compatible con {{provider}}",
+        "description" : "El Ledger Nano S™ no es compatible con {{provider}}. Puedes usar el Ledger Nano S Plus™, el Ledger Nano X™, el Ledger Stax™ o el Ledger Flex™ para permutas intercadena en {{provider}} desde Ledger Live."
       },
       "incompatibility" : {
         "explore_compatible_devices" : "Explorar dispositivos compatibles",
@@ -6478,6 +6486,7 @@
   },
   "sui" : {
     "info" : {
+      "estimatedReward" : "Recompensas recibidas",
       "available" : {
         "title" : "SUI disponibles",
         "description" : "Este importe está disponible."
