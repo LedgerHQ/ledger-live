@@ -35,7 +35,6 @@ import { store } from "~/context/store";
 import LoadingApp from "~/components/LoadingApp";
 import StyledStatusBar from "~/components/StyledStatusBar";
 import AnalyticsConsole from "~/components/AnalyticsConsole";
-import RtkQueryDevPanel from "~/screens/Settings/Debug/Debugging/RTK";
 import DebugTheme from "~/components/DebugTheme";
 import SyncNewAccounts from "~/bridge/SyncNewAccounts";
 import SegmentSetup from "~/analytics/SegmentSetup";
@@ -237,7 +236,6 @@ function App() {
       )}
 
       <AnalyticsConsole />
-      <RtkQueryDevPanel />
 
       <DebugTheme />
       <Modals />

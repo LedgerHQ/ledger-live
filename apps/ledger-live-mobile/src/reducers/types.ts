@@ -33,7 +33,6 @@ import { type TabListType as TabPortfolioAssetsType } from "~/screens/Portfolio/
 import { CountervaluesState } from "./countervalues";
 import { ToastState } from "./toast";
 import { ModularDrawerState } from "./modularDrawer";
-import { ToolsState } from "./tools";
 import { assetsDataApi } from "@ledgerhq/live-common/dada-client/state-manager/api";
 
 // === ACCOUNT STATE ===
@@ -390,7 +389,6 @@ export type State = {
   largeMover: LargeMoverState;
   market: MarketState;
   modularDrawer: ModularDrawerState;
-  tools: ToolsState;
   notifications: NotificationsState;
   postOnboarding: PostOnboardingState;
   protect: ProtectState;
