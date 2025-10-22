@@ -1073,6 +1073,10 @@
     "HederaAddAccountError" : {
       "title" : "Votre compte n’a pas été ajouté. Veuillez réessayer."
     },
+    "HederaRecipientInvalidChecksum" : {
+      "title" : "Checksum de l’adresse non valide",
+      "description" : "Le checksum de l’adresse saisie n’est pas valide."
+    },
     "HederaInsufficientFundsForAssociation" : {
       "title" : "Solde insuffisant",
       "description" : "Solde de HBAR insuffisant pour payer l’association du token. Vous devez disposez d’au moins {{requiredWorthInUSD}} USD en HBAR."
@@ -2504,7 +2508,7 @@
       },
       "selectionContinueOnDevice" : "Choisissez l’option qui vous convient sur votre {{productName}}.",
       "newSeedTitle" : "Phrase de récupération secrète",
-      "newSeedDescription" : "Regardez ces vidéos pour en savoir plus sur la phrase de récupération secrète :",
+      "newSeedDescription" : "Votre phrase de récupération secrète contrôle vos actifs et est irremplaçable. Toute personne en ayant connaissance peut voler tous vos actifs. Si vous la perdez, Ledger ne peut pas vous aider.",
       "newSeedContinueOnDevice" : "Suivez les instructions sur votre {{productName}}",
       "recovery" : "Pour une sécurité optimale de vos actifs, utilisez une phrase de récupération secrète générée par un appareil Ledger.\n\nVous n’en avez pas déjà une ? Générez une nouvelle phrase avec votre {{productName}}."
     },
@@ -3561,7 +3565,7 @@
     },
     "stake" : {
       "title" : "Staker",
-      "description" : "Obtenez des récompenses sur vos cryptos."
+      "description" : "Obtenez des récompenses sur vos cryptos"
     },
     "swap" : {
       "title" : "Swap",
@@ -3767,6 +3771,10 @@
       },
       "history" : {
         "title" : "Historique des échanges"
+      },
+      "wrongDevice" : {
+        "title" : "Le Ledger Nano S™ n’est pas compatible avec {{provider}}",
+        "description" : "Le Ledger Nano S™ n’est pas compatible avec {{provider}}. Vous pouvez utiliser le Ledger Nano S Plus™, Ledger Nano X™, Ledger Stax™ ou Ledger Flex™ pour vos échanges inter-chaînes sur {{provider}} via Ledger Live."
       },
       "incompatibility" : {
         "explore_compatible_devices" : "Voir les appareils compatibles",
@@ -6478,6 +6486,7 @@
   },
   "sui" : {
     "info" : {
+      "estimatedReward" : "Récompenses gagnées",
       "available" : {
         "title" : "SUI disponibles",
         "description" : "Ce montant est disponible."
