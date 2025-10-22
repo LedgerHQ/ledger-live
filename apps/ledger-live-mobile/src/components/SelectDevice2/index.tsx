@@ -218,7 +218,7 @@ export default function SelectDevice({
   }, []);
 
   const deviceList = useMemo(() => {
-    const devices: Device[] = knownDevices
+    let devices: Device[] = knownDevices
       .map(device => {
         const equivalentScannedDevice = filteredScannedDevices.find(
           ({ deviceId }) => device.id === deviceId,
@@ -235,10 +235,10 @@ export default function SelectDevice({
       .sort((a, b) => Number(b.available) - Number(a.available));
 
     if (USBDevice) {
-      devices.push(USBDevice);
+      devices = [USBDevice, ...devices];
     }
     if (ProxyDevice) {
-      devices.push(ProxyDevice);
+      devices = [ProxyDevice, ...devices];
     }
 
     return filterByDeviceModelId
