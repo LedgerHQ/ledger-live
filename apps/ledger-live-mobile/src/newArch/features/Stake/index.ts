@@ -5,7 +5,6 @@ import { useModularDrawerController, useModularDrawerVisibility } from "../Modul
 import { ModularDrawerLocation } from "@ledgerhq/live-common/modularDrawer/enums";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { NavigatorName, ScreenName } from "~/const";
-import { listCurrencies, filterCurrencies } from "@ledgerhq/live-common/currencies/helpers";
 import { useDrawerConfiguration } from "@ledgerhq/live-common/dada-client/hooks/useDrawerConfiguration";
 import { useStakingDrawer } from "~/components/Stake/useStakingDrawer";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
@@ -14,15 +13,9 @@ type Props = {
   currency?: CryptoOrTokenCurrency;
   sourceScreenName: string;
   enabledCurrencies?: string[];
-  partnerSupportedAssets?: string[];
 };
 
-export function useOpenStakeDrawer({
-  currency,
-  sourceScreenName,
-  enabledCurrencies = [],
-  partnerSupportedAssets = [],
-}: Props) {
+export function useOpenStakeDrawer({ currency, sourceScreenName, enabledCurrencies = [] }: Props) {
   const route = useRoute();
   const navigation = useNavigation<StackNavigationProp<BaseNavigatorStackParamList>>();
   const { openDrawer } = useModularDrawerController();
@@ -45,22 +38,16 @@ export function useOpenStakeDrawer({
 
   const handleOpenStakeDrawer = useCallback(() => {
     if (isModularDrawerEnabled) {
-      const currencies = currency
-        ? [currency.id]
-        : enabledCurrencies.concat(partnerSupportedAssets);
-      const cryptoCurrencies = filterCurrencies(listCurrencies(true), {
-        currencies: currencies || [],
-      });
-
       const finalDrawerConfiguration = createDrawerConfiguration(undefined, "earn");
+      const currencies = currency ? [currency.id] : enabledCurrencies;
       return openDrawer({
-        currencies: cryptoCurrencies.map(c => c.id),
+        ...(currencies.length > 0 && { currencies }),
+        ...(currency && { areCurrenciesFiltered: true }), // display only accounts for the selected currency
         flow: "stake",
         source: sourceScreenName,
         enableAccountSelection: true,
         onAccountSelected: goToAccountStakeFlow,
         useCase: "earn",
-        ...(currency && { areCurrenciesFiltered: true }),
         ...(finalDrawerConfiguration.assets && {
           assetsConfiguration: finalDrawerConfiguration.assets,
         }),
@@ -82,7 +69,6 @@ export function useOpenStakeDrawer({
     isModularDrawerEnabled,
     currency,
     enabledCurrencies,
-    partnerSupportedAssets,
     createDrawerConfiguration,
     openDrawer,
     sourceScreenName,

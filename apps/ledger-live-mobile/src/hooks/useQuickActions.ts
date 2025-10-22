@@ -56,13 +56,8 @@ function useQuickActions({ currency, accounts }: QuickActionProps = {}) {
   const canBeBought = !currency || isCurrencyAvailable(currency.id, "onRamp");
   const canBeSold = !currency || currency.id === "bitcoin";
 
-  const {
-    getCanStakeUsingLedgerLive,
-    getCanStakeUsingPlatformApp,
-    getRouteParamsForPlatformApp,
-    enabledCurrencies,
-    partnerSupportedAssets,
-  } = useStake();
+  const { getCanStakeUsingLedgerLive, getCanStakeUsingPlatformApp, getRouteParamsForPlatformApp } =
+    useStake();
   const canStakeCurrencyUsingLedgerLive = !currency
     ? false
     : getCanStakeUsingLedgerLive(currency?.id);
@@ -83,8 +78,6 @@ function useQuickActions({ currency, accounts }: QuickActionProps = {}) {
   const { handleOpenStakeDrawer, isModularDrawerEnabled } = useOpenStakeDrawer({
     currency,
     sourceScreenName: "quick_action_stake",
-    enabledCurrencies,
-    partnerSupportedAssets,
   });
 
   const quickActionsList = useMemo(() => {

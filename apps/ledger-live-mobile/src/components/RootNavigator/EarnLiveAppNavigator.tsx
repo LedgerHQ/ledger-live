@@ -14,13 +14,7 @@ import { EarnInfoDrawer } from "~/screens/PTX/Earn/EarnInfoDrawer";
 import { EarnMenuDrawer } from "~/screens/PTX/Earn/EarnMenuDrawer";
 import { EarnProtocolInfoDrawer } from "~/screens/PTX/Earn/EarnProtocolInfoDrawer";
 import { useStakingDrawer } from "../Stake/useStakingDrawer";
-import {
-  ModularDrawerLocation,
-  useModularDrawerController,
-  useModularDrawerVisibility,
-} from "LLM/features/ModularDrawer";
-import { useDrawerConfiguration } from "@ledgerhq/live-common/dada-client/hooks/useDrawerConfiguration";
-import { useStake } from "LLM/hooks/useStake/useStake";
+import { useOpenStakeDrawer } from "~/newArch/features/Stake";
 import type { EarnLiveAppNavigatorParamList } from "./types/EarnLiveAppNavigator";
 import type { BaseComposite, StackNavigatorProps } from "./types/helpers";
 
@@ -43,17 +37,9 @@ const Earn = (props: NavigationProps) => {
     alwaysShowNoFunds: false,
   });
 
-  // Modular drawer hooks
-  const { isModularDrawerVisible } = useModularDrawerVisibility({
-    modularDrawerFeatureFlagKey: "llmModularDrawer",
+  const { handleOpenStakeDrawer } = useOpenStakeDrawer({
+    sourceScreenName: "earn_app_cta",
   });
-  const modularDrawerVisible = isModularDrawerVisible({
-    location: ModularDrawerLocation.LIVE_APP,
-    liveAppId: "earn",
-  });
-  const { openDrawer } = useModularDrawerController();
-  const { createDrawerConfiguration } = useDrawerConfiguration();
-  const { enabledCurrencies, partnerSupportedAssets } = useStake();
 
   useEffect(() => {
     if (!paramAction) {
@@ -85,35 +71,7 @@ const Earn = (props: NavigationProps) => {
           break;
         }
         case "stake":
-          if (modularDrawerVisible) {
-            const currencies = enabledCurrencies.concat(partnerSupportedAssets);
-            const cryptoCurrencies = filterCurrencies(listCurrencies(true), {
-              currencies: currencies || [],
-            });
-
-            const finalDrawerConfiguration = createDrawerConfiguration(undefined, "earn");
-            openDrawer({
-              currencies: cryptoCurrencies.map(c => c.id),
-              flow: "stake",
-              source: "earn_app_cta",
-              enableAccountSelection: true,
-              onAccountSelected: openStakingDrawer,
-              useCase: "earn",
-              ...(finalDrawerConfiguration.assets && {
-                assetsConfiguration: finalDrawerConfiguration.assets,
-              }),
-              ...(finalDrawerConfiguration.networks && {
-                networksConfiguration: finalDrawerConfiguration.networks,
-              }),
-            });
-          } else {
-            navigation.navigate(NavigatorName.StakeFlow, {
-              screen: ScreenName.Stake,
-              params: {
-                parentRoute: route,
-              },
-            });
-          }
+          handleOpenStakeDrawer();
           break;
         case "stake-account": {
           const walletId = props.route.params?.accountId;
@@ -187,11 +145,7 @@ const Earn = (props: NavigationProps) => {
     route,
     openStakingDrawer,
     dispatch,
-    createDrawerConfiguration,
-    enabledCurrencies,
-    modularDrawerVisible,
-    openDrawer,
-    partnerSupportedAssets,
+    handleOpenStakeDrawer,
   ]);
 
   return (
