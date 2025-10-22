@@ -10,6 +10,7 @@ import {
   PreApprovalResult,
 } from "../types/onboard";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
+import type { CantonSignature } from "../types/signer";
 
 export type OnboardingPrepareResponse = {
   party_id: string;
@@ -33,6 +34,8 @@ export type OnboardingPrepareResponse = {
     };
     combined_hash: string;
   };
+  challenge_nonce?: string;
+  challenge_deadline?: number;
 };
 
 type OnboardingPrepareRequest = {
@@ -59,6 +62,7 @@ type OnboardingSubmitRequest = {
   prepare_request: OnboardingPrepareRequest;
   prepare_response: OnboardingPrepareResponse;
   signature: string;
+  application_signature?: string;
 };
 
 type OnboardingSubmitResponse = {
@@ -325,7 +329,7 @@ export async function submitOnboarding(
   currency: CryptoCurrency,
   publicKey: string,
   prepareResponse: OnboardingPrepareResponse,
-  signature: string,
+  { signature, applicationSignature }: CantonSignature,
 ) {
   try {
     const { data } = await gatewayNetwork<OnboardingSubmitResponse, OnboardingSubmitRequest>({
@@ -338,6 +342,7 @@ export async function submitOnboarding(
         },
         prepare_response: prepareResponse,
         signature,
+        ...(applicationSignature ? { application_signature: applicationSignature } : {}),
       },
     });
     return data;
@@ -449,11 +454,13 @@ export async function prepareTapRequest(
   currency: CryptoCurrency,
   { partyId, amount = 1000000 }: PrepareTapRequest,
 ) {
+  const fixedPointAmount = BigInt(amount) * BigInt(10) ** BigInt(38);
+
   const { data } = await gatewayNetwork<PrepareTapResponse, { amount: string; type: string }>({
     method: "POST",
     url: `${getGatewayUrl(currency)}/v1/node/${getNodeId(currency)}/party/${partyId}/transaction/prepare`,
     data: {
-      amount: amount.toString(),
+      amount: fixedPointAmount.toString(),
       type: TransactionType.TAP_REQUEST,
     },
   });

@@ -83,12 +83,9 @@ describe("gateway (devnet)", () => {
       const signature = keyPair.sign(prepareResponse.transactions.combined_hash);
 
       // WHEN
-      const response = await submitOnboarding(
-        mockCurrency,
-        keyPair.publicKeyHex,
-        prepareResponse,
+      const response = await submitOnboarding(mockCurrency, keyPair.publicKeyHex, prepareResponse, {
         signature,
-      );
+      });
 
       // Save onboarded account for next tests that need a valid party ID
       onboardedAccount = {
@@ -118,7 +115,7 @@ describe("gateway (devnet)", () => {
           mockCurrency,
           keyPair.publicKeyHex,
           prepareResponse!,
-          signature,
+          { signature },
         );
 
         // THEN

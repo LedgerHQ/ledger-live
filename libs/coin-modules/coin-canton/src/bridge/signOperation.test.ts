@@ -1,5 +1,10 @@
 import { BigNumber } from "bignumber.js";
-import { CantonSigner, CantonPreparedTransaction } from "../types";
+import {
+  CantonSigner,
+  CantonPreparedTransaction,
+  CantonSignature,
+  CantonUntypedVersionedMessage,
+} from "../types";
 import { Transaction } from "../types";
 import { craftTransaction } from "../common-logic";
 import prepareTransferMock from "../test/prepare-transfer.json";
@@ -26,12 +31,22 @@ class MockCantonSigner implements CantonSigner {
 
   async signTransaction(
     path: string,
-    data: CantonPreparedTransaction | { transactions: string[] },
-  ) {
-    if ("transactions" in data) {
-      return `untyped-signature-${data.transactions.length}`;
+    data: CantonPreparedTransaction | CantonUntypedVersionedMessage | string,
+  ): Promise<CantonSignature> {
+    if (typeof data === "string") {
+      return { signature: `txhash-signature-${data}` };
+    } else if ("transactions" in data) {
+      const result: CantonSignature = {
+        signature: `untyped-signature-${data.transactions.length}`,
+      };
+      if (data.challenge) {
+        result.applicationSignature = `challenge-signature-${data.challenge}`;
+      }
+      return result;
     } else {
-      return `prepared-transaction-signature-${data.damlTransaction.length}-${data.nodes.length}`;
+      return {
+        signature: `prepared-transaction-signature-${data.damlTransaction.length}-${data.nodes.length}`,
+      };
     }
   }
 }

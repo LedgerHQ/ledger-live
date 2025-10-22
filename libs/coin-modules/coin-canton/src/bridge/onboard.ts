@@ -89,6 +89,7 @@ export const buildOnboardAccount =
         o.next({ status: OnboardStatus.PREPARE });
 
         let { partyId } = await isAccountOnboarded(currency, publicKey);
+
         if (partyId) {
           const onboardedAccount = createOnboardedAccount(account, partyId, currency);
           o.next({ partyId, account: onboardedAccount }); // success
@@ -144,7 +145,7 @@ export const buildAuthorizePreapproval =
 
           o.next({ status: AuthorizeStatus.SIGN });
 
-          const signature = await signerContext(deviceId, async signer => {
+          const { signature } = await signerContext(deviceId, async signer => {
             return await signTransaction(signer, account.freshAddressPath, preparedTransaction);
           });
           o.next({ status: AuthorizeStatus.SUBMIT });
@@ -162,7 +163,7 @@ export const buildAuthorizePreapproval =
               if (serialized && hash) {
                 o.next({ status: AuthorizeStatus.SIGN });
 
-                const signature = await signerContext(deviceId, signer =>
+                const { signature } = await signerContext(deviceId, signer =>
                   signer.signTransaction(account.freshAddressPath, hash),
                 );
 

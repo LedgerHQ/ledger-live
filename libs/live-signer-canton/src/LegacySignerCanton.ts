@@ -15,7 +15,7 @@ import Canton from "@ledgerhq/hw-app-canton";
  * App Canton only supports Nano X, Nano S+, Stax, and Flex devices.
  * NanoS (original) is not supported.
  */
-const MIN_VERSION = "2.5.0";
+const MIN_VERSION = "2.9.1";
 const MANAGER_APP_NAME = "Canton";
 
 export class LegacySignerCanton implements CantonSigner {
