@@ -14,4 +14,3 @@ runs:
         SEED: ${{ env.SEED }}
         SPECULOS_IMAGE: ${{ env.SPECULOS_IMAGE }}
         SPECULOS_API_PORT: ${{ env.SPECULOS_API_PORT }}
-        COIN_TESTER_ENV: "on"
