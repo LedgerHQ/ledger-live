@@ -925,6 +925,23 @@ const evmConfig: CurrencyLiveConfigDefinition = {
       showNfts: false,
     },
   },
+  config_currency_monad: {
+    type: "object",
+    default: {
+      status: {
+        type: "active",
+      },
+      node: {
+        type: "external",
+        uri: "https://mainnet-rpc.monad.xyz",
+      },
+      explorer: {
+        type: "etherscan",
+        uri: "https://proxyetherscan.api.live.ledger.com/v2/api/143",
+      },
+      showNfts: false,
+    },
+  },
 };
 
 export { evmConfig };

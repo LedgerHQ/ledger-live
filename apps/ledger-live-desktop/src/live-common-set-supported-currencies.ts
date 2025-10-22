@@ -119,4 +119,5 @@ setSupportedCurrencies([
   "mina",
   "babylon",
   "kaspa",
+  "monad",
 ]);

@@ -4788,6 +4788,27 @@ export const cryptocurrenciesById: Record<CryptoCurrencyId, CryptoCurrency> = {
       },
     ],
   },
+  monad: {
+    type: "CryptoCurrency",
+    id: "monad",
+    coinType: CoinType.ETH,
+    name: "Monad",
+    managerAppName: "Ethereum",
+    ticker: "MON",
+    scheme: "monad",
+    color: "#836EF9",
+    family: "evm",
+    units: ethereumUnits("MON", "MON"),
+    ethereumLikeInfo: {
+      chainId: 143,
+    },
+    explorerViews: [
+      {
+        tx: "https://monadexplorer.com/tx/$hash",
+        address: "https://monadexplorer.com/address/$address",
+      },
+    ],
+  },
 };
 
 const cryptocurrenciesByScheme: Record<string, CryptoCurrency> = {};
