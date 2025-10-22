@@ -31,8 +31,8 @@
     "test:coverage": "vitest run --coverage"
   },
   "dependencies": {
-    "@ledgerhq/device-management-kit": "0.9.1",
-    "@ledgerhq/device-transport-kit-react-native-ble": "1.2.0",
+    "@ledgerhq/device-management-kit": "0.0.0-rn-hid-issues-20251023081020",
+    "@ledgerhq/device-transport-kit-react-native-ble": "0.0.0-rn-hid-issues-20251023081020",
     "@ledgerhq/devices": "workspace:*",
     "@ledgerhq/errors": "workspace:^",
     "@ledgerhq/hw-transport": "workspace:*",
@@ -41,7 +41,7 @@
     "@ledgerhq/types-devices": "workspace:^"
   },
   "devDependencies": {
-    "@ledgerhq/device-transport-kit-react-native-hid": "1.0.0",
+    "@ledgerhq/device-transport-kit-react-native-hid": "0.0.0-rn-hid-issues-20251023081020",
     "@testing-library/dom": "^9.3.4",
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.1.0",
@@ -63,6 +63,6 @@
     "react-native": ">0.70",
     "react-native-ble-plx": ">3.4.0",
     "rxjs": "^7.8.1",
-    "@ledgerhq/device-transport-kit-react-native-hid": "1.0.0"
+    "@ledgerhq/device-transport-kit-react-native-hid": "0.0.0-rn-hid-issues-20251023081020"
   }
 }
