@@ -1073,6 +1073,10 @@
     "HederaAddAccountError" : {
       "title" : "Dein Konto wurde nicht hinzugefügt. Bitte versuche es noch einmal."
     },
+    "HederaRecipientInvalidChecksum" : {
+      "title" : "Ungültige Adressprüfsumme",
+      "description" : "Die angegebene Adresse weist eine ungültige Prüfsumme auf."
+    },
     "HederaInsufficientFundsForAssociation" : {
       "title" : "Unzureichendes Guthaben",
       "description" : "Nicht ausreichend HBAR, um die Tokenzuordnung zu bezahlen. Es werden HBAR im Wert von mindestens {{requiredWorthInUSD}} benötigt."
@@ -2504,7 +2508,7 @@
       },
       "selectionContinueOnDevice" : "Wähle die entsprechende Option auf deinem {{productName}}-Gerät aus.",
       "newSeedTitle" : "Geheime Wiederherstellungsphrase",
-      "newSeedDescription" : "Sieh dir diese Videos an, um mehr über die geheime Wiederherstellungsphrase zu erfahren:",
+      "newSeedDescription" : "Deine geheime Wiederherstellungsphrase ermöglicht den Zugriff auf deine Assets und ist unersetzlich. Wer auch immer in Besitz dieser Phrase ist, kann dein gesamtes Guthaben stehlen. Und wenn du sie verlierst, kann auch Ledger sie nicht mehr für dich abrufen.",
       "newSeedContinueOnDevice" : "Befolge die Anweisungen auf deiner {{productName}}",
       "recovery" : "Schütze deine Vermögenswerte optimal mithilfe einer von einem Ledger-Gerät generierten geheimen Wiederherstellungsphrase. \n\nDu hast keine solche Phrase? Dann kannst du mit deinem {{productName}}-Gerät eine neue Phrase generieren."
     },
@@ -3767,6 +3771,10 @@
       },
       "history" : {
         "title" : "Swap-Verlauf"
+      },
+      "wrongDevice" : {
+        "title" : "Ledger Nano S™ ist nicht mit {{provider}} kompatibel",
+        "description" : "Ledger Nano S™ ist nicht mit {{provider}} kompatibel. Du kannst Ledger Nano S Plus™, Ledger Nano X™, Ledger Stax™ oder Ledger Flex™ verwenden, um blockchainübergreifende Swaps bei {{provider}} über Ledger Live durchzuführen."
       },
       "incompatibility" : {
         "explore_compatible_devices" : "Kompatible Geräte entdecken",
@@ -6478,6 +6486,7 @@
   },
   "sui" : {
     "info" : {
+      "estimatedReward" : "Verdiente Rewards",
       "available" : {
         "title" : "SUI erhältlich",
         "description" : "Dieser Betrag ist verfügbar."
