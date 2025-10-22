@@ -1,3 +1,5 @@
+import { waitSwapReady } from "../bridge/server";
+
 $TmsLink("B2CQA-1837");
 const tags: string[] = ["@NanoSP", "@LNS", "@NanoX", "@Stax"];
 tags.forEach(tag => $Tag(tag));
@@ -80,6 +82,7 @@ describe("DeepLinks Tests", () => {
 
   it("should open Swap Form page", async () => {
     await app.swap.openViaDeeplink();
+    await waitSwapReady();
     await app.swap.expectSwapPage();
   });
 

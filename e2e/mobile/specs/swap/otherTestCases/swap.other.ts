@@ -429,7 +429,7 @@ export function runSwapSwitchSendAndReceiveCurrenciesTest(
       );
       await app.swapLiveApp.switchYouSendAndYouReceive();
       await app.swapLiveApp.checkAssetFrom(swap.accountToCredit.currency.ticker, "");
-      await app.swapLiveApp.checkAssetTo(swap.accountToDebit.currency.ticker, "");
+      await app.swapLiveApp.checkAssetTo(swap.accountToDebit.currency.ticker, "-");
     });
   });
 }
