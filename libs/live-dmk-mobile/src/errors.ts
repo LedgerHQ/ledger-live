@@ -1,5 +1,6 @@
 import {
   DeviceBusyError,
+  DeviceDisconnectedWhileSendingError,
   DmkError,
   OpeningConnectionError,
   SendApduTimeoutError,
@@ -35,6 +36,8 @@ export const isAllowedOnboardingStatePollingErrorDmk = (error: unknown): boolean
     return (
       error instanceof SendApduTimeoutError ||
       error instanceof DeviceBusyError ||
+      error instanceof DeviceDisconnectedWhileSendingError ||
+      // FIXME: use instanceof SendApduEmptyResponseError and DeviceSessionNotFoundError, and test it
       (typeof error === "object" &&
         "_tag" in error &&
         error._tag === "SendApduEmptyResponseError") ||
