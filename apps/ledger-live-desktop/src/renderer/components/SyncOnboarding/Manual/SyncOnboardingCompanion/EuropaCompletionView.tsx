@@ -4,7 +4,7 @@ import React from "react";
 import { useTheme } from "styled-components";
 import { Flex } from "@ledgerhq/react-ui";
 import { DeviceModelId } from "@ledgerhq/types-devices";
-import Europa from "./assets/europa-success.png";
+import Europa from "../assets/europa-success.png";
 
 export default function EuropaCompletionView() {
   const { colors } = useTheme();

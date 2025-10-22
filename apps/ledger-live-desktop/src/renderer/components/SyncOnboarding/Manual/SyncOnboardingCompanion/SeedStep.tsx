@@ -1,8 +1,8 @@
 import React, { useCallback, useEffect } from "react";
 import { Flex, VerticalTimeline, Link, Icons, ContinueOnDevice } from "@ledgerhq/react-ui";
 import { useTranslation } from "react-i18next";
-import { StepText } from "./shared";
-import SecretRecoveryPhrasePng from "./assets/secret-recovery-phrase.png";
+import { StepText } from "../shared";
+import SecretRecoveryPhrasePng from "../assets/secret-recovery-phrase.png";
 import { trackPage, useTrack } from "~/renderer/analytics/segment";
 import { CharonStatus } from "@ledgerhq/live-common/hw/extractOnboardingState";
 import { openURL } from "~/renderer/linking";
