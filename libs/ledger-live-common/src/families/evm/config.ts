@@ -704,7 +704,7 @@ const evmConfig: CurrencyLiveConfigDefinition = {
       },
       node: {
         type: "external",
-        uri: "https://developer-access-mainnet.base.org",
+        uri: "https://base-rpc.publicnode.com",
       },
       explorer: {
         type: "etherscan",
