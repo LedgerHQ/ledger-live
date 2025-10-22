@@ -7,6 +7,7 @@ import Button from "~/renderer/components/Button";
 import CurrencyDownStatusAlert from "~/renderer/components/CurrencyDownStatusAlert";
 import ErrorBanner from "~/renderer/components/ErrorBanner";
 import SpendableBanner from "~/renderer/components/SpendableBanner";
+import Alert from "~/renderer/components/Alert";
 import AccountFooter from "~/renderer/modals/Send/AccountFooter";
 import AmountField from "~/renderer/modals/Send/fields/AmountField";
 import { StepProps } from "../types";
@@ -51,6 +52,9 @@ const StepAmount = ({
             bridgePending={bridgePending}
             t={t}
           />
+          <Alert type="primary" mt={4}>
+            Stake at least 100$ to be eligible for the APY boost
+          </Alert>
         </Fragment>
       )}
     </Box>

@@ -10,6 +10,7 @@ import { AccountBridge } from "@ledgerhq/types-live";
 import ValidatorField from "../fields/ValidatorField";
 import LedgerByFigmentTCLink from "../components/LedgerByFigmentTCLink";
 import ErrorBanner from "~/renderer/components/ErrorBanner";
+import Alert from "~/renderer/components/Alert";
 import { Transaction } from "@ledgerhq/live-common/families/sui/types";
 
 export default function StepStake({
@@ -46,6 +47,9 @@ export default function StepStake({
         onChangeValidator={updateValidator}
         chosenVoteAccAddr={chosenVoteAccAddr}
       />
+      <Alert type="primary" mt={4}>
+        Stake on Ledger by P2P validator to enjoy a 60% APR boost until December 20th
+      </Alert>
     </Box>
   );
 }

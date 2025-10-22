@@ -15,6 +15,7 @@ import {
   DelegatedStake,
   StakeObject,
   TransactionBlockData,
+  getFullnodeUrl,
 } from "@mysten/sui/client";
 import { Transaction } from "@mysten/sui/transactions";
 import { BigNumber } from "bignumber.js";
@@ -87,7 +88,7 @@ const fetcher = (url: Inputs[0], options: Inputs[1], retry = 3): Promise<Respons
 export async function withApi<T>(execute: AsyncApiFunction<T>) {
   const url = coinConfig.getCoinConfig().node.url;
   const transport = new SuiHTTPTransport({
-    url,
+    url: getFullnodeUrl("testnet"),
     fetch: fetcher,
   });
 
