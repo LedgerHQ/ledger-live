@@ -28,6 +28,7 @@ import BrazeTools from "./BrazeTools";
 import { RecoverUpsellRow } from "./RecoverUpsellRow";
 import CustomCALRefInput from "./CustomCALRefInput";
 import ModularDrawerDevTool from "./ModularDrawer";
+import CryptoAssetsListDevTool from "./CryptoAssetsList";
 import { MockAccountGeneratorSection } from "./GenerateMockAccounts";
 import CustomLockScreenTester from "./CustomLockScreenTester";
 
@@ -126,6 +127,7 @@ const Default = () => {
         </Row>
       )}
       <ModularDrawerDevTool />
+      <CryptoAssetsListDevTool />
       <MockAccountGeneratorSection />
     </Body>
   );

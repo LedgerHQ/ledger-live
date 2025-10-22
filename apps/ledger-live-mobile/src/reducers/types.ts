@@ -34,6 +34,7 @@ import { CountervaluesState } from "./countervalues";
 import { ToastState } from "./toast";
 import { ModularDrawerState } from "./modularDrawer";
 import { assetsDataApi } from "@ledgerhq/live-common/dada-client/state-manager/api";
+import { cryptoAssetsApi } from "@ledgerhq/cryptoassets/cal-client/state-manager/api";
 
 // === ACCOUNT STATE ===
 
@@ -380,6 +381,7 @@ export type State = {
   accounts: AccountsState;
   appstate: AppState;
   assetsDataApi: ReturnType<typeof assetsDataApi.reducer>;
+  cryptoAssetsApi: ReturnType<typeof cryptoAssetsApi.reducer>;
   auth: AuthState;
   ble: BleState;
   countervalues: CountervaluesState;

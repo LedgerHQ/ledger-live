@@ -205,7 +205,7 @@
     "@ledgerhq/wallet-api-server": "^1.13.3",
     "@noble/curves": "^1.9.7",
     "@noble/hashes": "1.8.0",
-    "@reduxjs/toolkit": "2.8.2",
+    "@reduxjs/toolkit": "catalog:",
     "@stellar/stellar-sdk": "^14.0.0",
     "@stricahq/typhonjs": "^3.0.0",
     "@taquito/ledger-signer": "^23.0.0-RC.0",
@@ -257,7 +257,8 @@
     "winston": "^3.4.0",
     "xstate": "^5.19.2",
     "yargs": "^17.0.0",
-    "zod": "^3.22.4"
+    "zod": "^3.22.4",
+    "react-redux": "^7.2.9"
   },
   "devDependencies": {
     "@ledgerhq/device-react": "workspace:^",
@@ -277,6 +278,7 @@
     "@types/lodash": "^4.14.179",
     "@types/node": "^22.10.10",
     "@types/react": "^18.2.21",
+    "@types/react-redux": "^7.1.33",
     "@types/uuid": "^8.3.4",
     "benchmark": "^2.1.4",
     "buffer": "6.0.3",
@@ -299,7 +301,6 @@
     "react-dom": "catalog:",
     "react-native": "0.77.2",
     "react-native-svg": "15.11.2",
-    "react-redux": "^7.2.9",
     "react-test-renderer": "catalog:",
     "redux-actions": "2.6.5",
     "timemachine": "^0.3.2",

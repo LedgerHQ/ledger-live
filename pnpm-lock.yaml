@@ -6,6 +6,9 @@ settings:
 
 catalogs:
   default:
+    '@reduxjs/toolkit':
+      specifier: 2.8.2
+      version: 2.8.2
     axios:
       specifier: 1.12.2
       version: 1.12.2
@@ -482,7 +485,7 @@ importers:
         specifier: 1.9.7
         version: 1.9.7
       '@reduxjs/toolkit':
-        specifier: 2.8.2
+        specifier: 'catalog:'
         version: 2.8.2(react-redux@7.2.9(@types/react@18.2.73)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react@18.3.1)
       '@sentry/electron':
         specifier: 5.2.0
@@ -1110,7 +1113,7 @@ importers:
         specifier: 7.4.4
         version: 7.4.4(lbwogby7gejg4afnz5dcrfv3re)
       '@reduxjs/toolkit':
-        specifier: 2.8.2
+        specifier: 'catalog:'
         version: 2.8.2(react-redux@7.2.9(@types/react@18.2.73)(react@18.3.1))(react@18.3.1)
       '@segment/analytics-react-native':
         specifier: 2.20.5
@@ -5472,7 +5475,7 @@ importers:
         specifier: 1.8.0
         version: 1.8.0
       '@reduxjs/toolkit':
-        specifier: 2.8.2
+        specifier: 'catalog:'
         version: 2.8.2(react-redux@7.2.9(@types/react@18.2.73)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react@18.3.1)
       '@stellar/stellar-sdk':
         specifier: ^14.0.0
@@ -5594,6 +5597,9 @@ importers:
       qs:
         specifier: ^6.10.1
         version: 6.13.0
+      react-redux:
+        specifier: ^7.2.9
+        version: 7.2.9(@types/react@18.2.73)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       reselect:
         specifier: ^4.1.5
         version: 4.1.8
@@ -5682,6 +5688,9 @@ importers:
       '@types/react':
         specifier: ^18.2.21
         version: 18.2.73
+      '@types/react-redux':
+        specifier: ^7.1.33
+        version: 7.1.33(@types/react@18.2.73)
       '@types/uuid':
         specifier: ^8.3.4
         version: 8.3.4
@@ -5748,9 +5757,6 @@ importers:
       react-native-svg:
         specifier: 15.11.2
         version: 15.11.2(react-native@0.77.2(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1))(react@18.3.1)
-      react-redux:
-        specifier: ^7.2.9
-        version: 7.2.9(@types/react@18.2.73)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       react-test-renderer:
         specifier: 'catalog:'
         version: 18.3.1(react@18.3.1)
@@ -5883,6 +5889,9 @@ importers:
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../types-live
+      '@reduxjs/toolkit':
+        specifier: 'catalog:'
+        version: 2.8.2(react-redux@9.2.0(@types/react@18.2.73)(react@18.3.1))(react@18.3.1)
       axios:
         specifier: 'catalog:'
         version: 1.12.2
@@ -5892,6 +5901,9 @@ importers:
       invariant:
         specifier: '2'
         version: 2.2.4
+      zod:
+        specifier: ^3.22.4
+        version: 3.25.76
     devDependencies:
       '@ledgerhq/types-cryptoassets':
         specifier: workspace:^
@@ -5923,6 +5935,9 @@ importers:
       react-dom:
         specifier: ^18.0.0
         version: 18.3.1(react@18.3.1)
+      react-redux:
+        specifier: ^9.1.2
+        version: 9.2.0(@types/react@18.2.73)(react@18.3.1)
       rimraf:
         specifier: ^4.4.1
         version: 4.4.1
@@ -36664,9 +36679,6 @@ packages:
   zod@3.23.8:
     resolution: {integrity: sha512-XBx9AXhXktjUqnepgTiE5flcKIYWi/rme0Eaj+5Y0lftuGBq+jyRu/md4WnuxqgP1ubdpNCsYEYPxrzVHD8d6g==}
 
-  zod@3.24.2:
-    resolution: {integrity: sha512-lY7CDW43ECgW9u1TcT3IoXHflywfVqDYze4waEz812jR/bZ8FHDsl7pFQoSZTz5N+2NqRXs8GBwnAwo3ZNxqhQ==}
-
   zod@3.25.76:
     resolution: {integrity: sha512-gzUt/qt81nXsFGKIFcC3YnfEAx5NkunCfnDlvuBSSFS02bcXu4Lmea0AFIUwbLWxWPx3d9p8S5QoaujKcNQxcQ==}
 
@@ -48275,6 +48287,18 @@ snapshots:
     optionalDependencies:
       react: 18.3.1
       react-redux: 7.2.9(@types/react@18.2.73)(react@18.3.1)
+
+  '@reduxjs/toolkit@2.8.2(react-redux@9.2.0(@types/react@18.2.73)(react@18.3.1))(react@18.3.1)':
+    dependencies:
+      '@standard-schema/spec': 1.0.0
+      '@standard-schema/utils': 0.3.0
+      immer: 10.0.3
+      redux: 5.0.1
+      redux-thunk: 3.1.0(redux@5.0.1)
+      reselect: 5.1.1
+    optionalDependencies:
+      react: 18.3.1
+      react-redux: 9.2.0(@types/react@18.2.73)(react@18.3.1)
 
   '@reduxjs/toolkit@2.9.0(react-redux@7.2.9(@types/react@18.2.73)(react@18.3.1))(react@19.2.0)':
     dependencies:
@@ -66569,8 +66593,8 @@ snapshots:
       strip-json-comments: 5.0.1
       summary: 2.1.0
       typescript: 5.4.3
-      zod: 3.24.2
-      zod-validation-error: 3.4.0(zod@3.24.2)
+      zod: 3.25.76
+      zod-validation-error: 3.4.0(zod@3.25.76)
 
   known-css-properties@0.26.0: {}
 
@@ -71917,6 +71941,14 @@ snapshots:
       react-is: 17.0.2
     transitivePeerDependencies:
       - '@types/react'
+
+  react-redux@9.2.0(@types/react@18.2.73)(react@18.3.1):
+    dependencies:
+      '@types/use-sync-external-store': 0.0.6
+      react: 18.3.1
+      use-sync-external-store: 1.5.0(react@18.3.1)
+    optionalDependencies:
+      '@types/react': 18.2.73
 
   react-redux@9.2.0(@types/react@18.2.73)(react@19.2.0)(redux@5.0.1):
     dependencies:
@@ -78157,13 +78189,11 @@ snapshots:
       compress-commons: 5.0.3
       readable-stream: 3.6.2
 
-  zod-validation-error@3.4.0(zod@3.24.2):
+  zod-validation-error@3.4.0(zod@3.25.76):
     dependencies:
-      zod: 3.24.2
+      zod: 3.25.76
 
   zod@3.23.8: {}
-
-  zod@3.24.2: {}
 
   zod@3.25.76: {}
 
