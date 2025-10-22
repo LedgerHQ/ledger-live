@@ -1073,6 +1073,10 @@
     "HederaAddAccountError" : {
       "title" : "アカウントが追加されていません。もう一度お試しください。"
     },
+    "HederaRecipientInvalidChecksum" : {
+      "title" : "アドレスのチェックサムが無効です",
+      "description" : "入力されたアドレスのチェックサムが無効です。"
+    },
     "HederaInsufficientFundsForAssociation" : {
       "title" : "残高不足",
       "description" : "トークンの関連付けに必要なHBARが不足しています。少なくとも${{requiredWorthInUSD}}相当のHBARが必要です。"
@@ -2504,7 +2508,7 @@
       },
       "selectionContinueOnDevice" : "{{productName}}で関連するオプションを選択します。",
       "newSeedTitle" : "シークレットリカバリーフレーズ",
-      "newSeedDescription" : "シークレットリカバリーフレーズについて詳しくは、次の動画をご覧ください。",
+      "newSeedDescription" : "シークレットリカバリーフレーズは、お客様の資産を管理するものであり、代替不可能です。お客様のフレーズを知っている人は誰でも、お客様の資産をすべて盗むことができます。紛失された場合、Ledgerでさえも、取り戻すことはできません。",
       "newSeedContinueOnDevice" : "{{productName}}の指示に従う",
       "recovery" : "資産のセキュリティを最大限に高めるために、Ledgerデバイスによって生成されたシークレットリカバリーフレーズを必ず使用してください。 \n\nリカバリーフレーズをお持ちではありませんか？{{productName}}を使用して、新しいフレーズを生成してください。"
     },
@@ -3767,6 +3771,10 @@
       },
       "history" : {
         "title" : "スワップ履歴"
+      },
+      "wrongDevice" : {
+        "title" : "Ledger Nano S™は、{{provider}}に対応していません",
+        "description" : "Ledger Nano S™は、{{provider}}に対応していません。Ledger Nano S Plus™、Ledger Nano X™、Ledger Stax™、またはLedger Flex™を使用して、Ledger Liveから{{provider}}でのクロスチェーンスワップが可能です"
       },
       "incompatibility" : {
         "explore_compatible_devices" : "対応デバイスを探す",
@@ -6478,6 +6486,7 @@
   },
   "sui" : {
     "info" : {
+      "estimatedReward" : "獲得した報酬",
       "available" : {
         "title" : "利用可能なSUI",
         "description" : "これは、利用可能額です。"
