@@ -16,6 +16,7 @@ export function getSpeculosModel(): DeviceModelId {
     case CryptoWallet.STAX.name:
       return DeviceModelId.stax;
     case CryptoWallet.FLEX.name:
+    case DeviceModelId.europa:
       return DeviceModelId.europa;
     case CryptoWallet.LNSP.name:
     default:

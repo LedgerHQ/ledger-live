@@ -32,6 +32,7 @@ on:
           - nanoSP
           - nanoX
           - stax
+          - flex
         default: nanoX
       production_firebase:
         description: "Target Firebase Production env"

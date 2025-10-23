@@ -5,7 +5,7 @@ const testConfig = {
   account: Account.ETH_1,
   provider: Provider.KILN,
   tmsLinks: ["B2CQA-3678"],
-  tags: ["@NanoSP", "@LNS", "@NanoX", "@Stax"],
+  tags: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex"],
 };
 
 runStartETHStakingFromEarnDashboardTest(
