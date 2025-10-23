@@ -242,6 +242,9 @@ export const urls = {
     tokenAssociation:
       "https://support.ledger.com/article/How-to-manage-Hedera-tokens-with-Ledger-Live",
   },
+  canton: {
+    learnMore: "https://support.ledger.com/article/Canton-Network",
+  },
   fwUpdateReleaseNotes: {
     nanoS: "https://support.ledger.com/article/360010446000-zd",
     nanoSP: "https://support.ledger.com/article/4494540771997-zd",

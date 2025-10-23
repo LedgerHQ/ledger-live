@@ -5819,6 +5819,7 @@
           "onboarded": "Onboarded accounts",
           "success": "Your new Canton account has been created and onboarded.",
           "error": "Failed to onboard new account. Please try again.",
+          "error429": "Canton Network currently supports a limited number of account creations per day. Please try again later.",
           "status": {
             "prepare": "Preparing account onboarding...",
             "submit": "Onboarding account...",
