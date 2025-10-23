@@ -7485,7 +7485,7 @@
       "title": "Checking the blockchain..."
     },
     "connectYourDevice": { "title": "Connect and unlock your device" },
-    "searchPlaceholder": "Search",
+    "searchPlaceholder": "Search by name or address",
     "emptyAssetList": "No assets found",
     "selectAsset": "Select asset",
     "selectNetwork": "Select network",
