@@ -45,6 +45,7 @@ module.exports = {
     cleanup: {
       shutdownDevice: !!process.env.CI,
     },
+    extends: "detox-allure2-adapter/preset-detox",
   },
   apps: {
     "ios.debug": {

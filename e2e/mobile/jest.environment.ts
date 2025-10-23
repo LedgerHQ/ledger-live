@@ -1,6 +1,6 @@
 import { takeSpeculosScreenshot } from "./utils/speculosUtils";
 import { Circus } from "@jest/types";
-import { logMemoryUsage, setupEnvironment } from "./helpers/commonHelpers";
+import { logMemoryUsage, setupEnvironment, takeAppScreenshot } from "./helpers/commonHelpers";
 
 import { Currency } from "@ledgerhq/live-common/e2e/enum/Currency";
 import { Delegate } from "@ledgerhq/live-common/e2e/models/Delegate";
@@ -177,6 +177,7 @@ export default class TestEnvironment extends DetoxEnvironment {
 
     if (this.global.IS_FAILED && ["test_fn_start", "test_fn_failure"].includes(event.name)) {
       await takeSpeculosScreenshot();
+      await takeAppScreenshot("Test Failure");
     }
 
     if (event.name === "run_start") {
