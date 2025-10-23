@@ -6,7 +6,7 @@ import { usePostOnboardingEntryPointVisibleOnWallet } from "./usePostOnboardingE
 
 const millisecondsInADay = 1000 * 60 * 60 * 24;
 
-const isMoreThanSevenDaysAgo = (date: Date) => {
+const isMoreThanSevenDaysAgo = (date: Date | null) => {
   if (!date) return false;
 
   const datePlusSevenDays = new Date(date).getTime() + 7 * millisecondsInADay;
