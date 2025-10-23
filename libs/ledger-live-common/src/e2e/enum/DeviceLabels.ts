@@ -39,6 +39,7 @@ export enum DeviceLabels {
   REVIEW_OPERATION = "Review",
   REMOVE_PHONE_OR_COMPUTER = "Remove phone or computer",
   REVIEW_TRANSACTION = "Review transaction",
+  REVIEW_TRANSACTION_TO = "Review transaction to",
   SEND = "Send",
   SEND_TO_ADDRESS = "Send to address",
   SEND_TO_ADDRESS_2 = "Send to address (2/2)",
