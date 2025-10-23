@@ -15,7 +15,7 @@ type Props = {
  * Displayed when a PeerRemovedPairing error happens during a BLE pairing.
  * Proposes to retry or open help center.
  */
-export function BleDevicePeerRemoved({ pairingError, onOpenHelp, onRetry }: Props) {
+export function BleDevicePeerRemoved({ pairingError, onOpenHelp, onRetry }: Readonly<Props>) {
   const { t } = useTranslation();
   return (
     <Flex flex={1} justifyContent="space-between">

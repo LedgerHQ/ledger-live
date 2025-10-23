@@ -15,7 +15,7 @@ type Props = {
  * Displayed when a generic error happens during a BLE pairing.
  * Proposes to retry or open help center.
  */
-export function BleFailedPairing({ productName, onRetry, onOpenHelp }: Props) {
+export function BleFailedPairing({ productName, onRetry, onOpenHelp }: Readonly<Props>) {
   const { t } = useTranslation();
   return (
     <Flex flex={1} mb={6}>
