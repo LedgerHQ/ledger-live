@@ -165,6 +165,17 @@ const History = () => {
     <>
       <TrackPage category="Swap" name="Device History" />
       <Box p={20}>
+        <button
+          onClick={() => {
+            const { ipcRenderer } = require("electron");
+            ipcRenderer.send(
+              "deep-linking",
+              "ledgerlive://swap?affiliate=lol&amountFrom=123&toToken=sui", //amountfrom for test
+            );
+          }}
+        >
+          Test Deeplink
+        </button>
         <Box horizontal flow={2} alignItems="center" justifyContent="flex-end">
           <ExportOperationsWrapper horizontal>
             <IconDownloadCloud size={16} />

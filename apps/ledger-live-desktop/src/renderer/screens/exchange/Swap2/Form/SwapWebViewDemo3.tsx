@@ -146,6 +146,7 @@ const SwapWebView = ({ manifest }: SwapWebProps) => {
     defaultAmountFrom?: string;
     from?: string;
     defaultToken?: TokenParams;
+    affiliate?: string;
   }>();
   const { networkStatus } = useNetworkStatus();
   const isOffline = networkStatus === NetworkStatus.OFFLINE;
@@ -459,6 +460,7 @@ const SwapWebView = ({ manifest }: SwapWebProps) => {
               fromTokenId: state.defaultToken.fromTokenId,
               toTokenId: state.defaultToken.toTokenId,
               amountFrom: state?.defaultAmountFrom || "",
+              affiliate: state?.affiliate || "",
             }
           : {}),
       }).toString(),
