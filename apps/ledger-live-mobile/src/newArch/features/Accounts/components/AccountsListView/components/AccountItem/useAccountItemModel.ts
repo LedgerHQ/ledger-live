@@ -11,6 +11,7 @@ import { useMaybeAccountUnit } from "~/hooks";
 import { formatAddress } from "LLM/features/Accounts/utils/formatAddress";
 import { accountsSelector } from "~/reducers/accounts";
 import { useMaybeAccountName } from "~/reducers/wallet";
+import { getFreshAccountAddress } from "~/utils/address";
 
 export interface AccountItemProps {
   account: Account | TokenAccount;
@@ -35,7 +36,9 @@ const useAccountItemModel = ({
 
   const parentAccount = getParentAccount(account, allAccount);
   const formattedAddress = formatAddress(
-    isTokenAccount ? parentAccount.freshAddress : account.freshAddress,
+    isTokenAccount
+      ? getFreshAccountAddress(parentAccount)
+      : getFreshAccountAddress(account as Account),
   );
   const tag =
     account.type === "Account" &&

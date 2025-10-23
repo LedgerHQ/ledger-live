@@ -11,7 +11,7 @@ export const prepareTransaction: AccountBridge<Transaction>["prepareTransaction"
 ) => {
   const amount = transaction.amount || BigNumber(0);
   const fee = BigNumber(
-    (await estimateFees(account.currency, BigInt(amount.toString()))).toString(),
+    (await estimateFees(account.currency, BigInt(amount.toFixed()))).toString(),
   );
 
   if (!transaction.tokenId) {
