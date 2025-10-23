@@ -6,7 +6,7 @@ const swapHistoryTestConfig = {
   provider: Provider.EXODUS,
   swapId: "wQ90NrWdvJz5dA4",
   tmsLinks: ["B2CQA-602"],
-  tags: ["@NanoSP", "@LNS", "@NanoX", "@Stax"],
+  tags: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex"],
 };
 
 runSwapHistoryOperationsTest(

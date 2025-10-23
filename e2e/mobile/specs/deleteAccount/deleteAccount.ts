@@ -3,7 +3,7 @@ import { AccountType } from "@ledgerhq/live-common/e2e/enum/Account";
 export function runDeleteAccountTest(
   account: AccountType,
   tmsLinks: string[],
-  tags: string[] = ["@NanoSP", "@LNS", "@NanoX", "@Stax"],
+  tags: string[] = ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex"],
 ) {
   describe("Delete account", () => {
     beforeAll(async () => {
