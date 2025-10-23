@@ -360,7 +360,7 @@ export default function SendSelectRecipient({ route }: Props) {
 
             {CustomRecipientAlert && (
               <View style={styles.customRecipientAlertContainer}>
-                <CustomRecipientAlert status={status} />
+                <CustomRecipientAlert status={status} account={mainAccount} />
               </View>
             )}
 
