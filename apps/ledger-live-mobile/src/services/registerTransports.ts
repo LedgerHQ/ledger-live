@@ -23,10 +23,10 @@ export const registerTransports = (isLDMKEnabled: boolean) => {
   registerTransportModule({
     id: "hid",
     // eslint-disable-next-line consistent-return
-    open: id => {
+    open: (id, ...args) => {
       if (id.startsWith("usb|")) {
         const devicePath = JSON.parse(id.slice(4));
-        return hidTransport.open(devicePath);
+        return hidTransport.open(devicePath, ...args);
       }
       return null;
     },
