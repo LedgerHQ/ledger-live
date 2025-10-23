@@ -6488,6 +6488,7 @@
   },
   "sui": {
     "info": {
+      "estimatedReward": "Earned rewards",
       "available": {
         "title": "SUI available",
         "description": "This amount is disposable."
