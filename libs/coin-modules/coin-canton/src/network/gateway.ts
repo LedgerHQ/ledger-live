@@ -91,6 +91,7 @@ export type InstrumentBalance = {
   instrument_id: string;
   amount: string;
   locked: boolean;
+  utxo_count: number;
 };
 
 type PartyInfo = {

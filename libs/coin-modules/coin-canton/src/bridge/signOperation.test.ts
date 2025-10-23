@@ -9,6 +9,7 @@ import { Transaction } from "../types";
 import { craftTransaction } from "../common-logic";
 import prepareTransferMock from "../test/prepare-transfer.json";
 import { buildSignOperation } from "./signOperation";
+import { createMockAccount } from "../test/fixtures";
 
 jest.mock("../common-logic", () => {
   const actual = jest.requireActual("../common-logic");
@@ -54,25 +55,18 @@ class MockCantonSigner implements CantonSigner {
 describe("buildSignOperation", () => {
   const mockDeviceId = "test-device-id";
   const mockDerivationPath = "44'/6767'/0'/0'/0'";
-  const mockPartyId = "alice::1220d466a5d96a3509736c821e25fe81fc8a73f226d92e57e94a65170e58b07fc08e";
 
   beforeEach(() => {
     jest.clearAllMocks();
     mockCraftTransaction.mockReset();
   });
 
-  const mockAccount = {
+  const mockAccount = createMockAccount({
     id: "js:2:canton_network:test-party-id:",
     freshAddress: "test-address",
     freshAddressPath: mockDerivationPath,
     xpub: "test-party-id",
-    currency: {
-      id: "canton_network",
-    },
-    cantonResources: {
-      partyId: mockPartyId,
-    },
-  } as any;
+  });
 
   const mockTransaction: Transaction = {
     family: "canton",

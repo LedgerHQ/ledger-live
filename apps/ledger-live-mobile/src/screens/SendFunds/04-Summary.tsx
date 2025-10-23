@@ -129,9 +129,10 @@ function SendSummary({ navigation, route }: Props) {
     setHighFeesOpen(false);
     setContinuing(false);
   }, [setHighFeesOpen]);
-  const { amount, totalSpent, errors } = status;
+  const { amount, totalSpent, errors, warnings } = status;
   const { transaction: transactionError } = errors;
   const error = errors[Object.keys(errors)[0]];
+  const { tooManyUtxos } = warnings || {};
   const mainAccount = getMainAccount(account, parentAccount);
   const currencyOrToken = getAccountCurrency(account);
   const hasNonEmptySubAccounts =
@@ -288,6 +289,21 @@ function SendSummary({ navigation, route }: Props) {
 
               <Text paddingTop={2}>
                 <Trans i18nKey="send.summary.solanaRawTransaction.description" />
+              </Text>
+            </Flex>
+          </NativeUiAlert>
+        ) : null}
+
+        {tooManyUtxos ? (
+          <NativeUiAlert type="warning">
+            <Flex>
+              <Text
+                color="neutral.c100"
+                flexShrink={1}
+                variant="bodyLineHeight"
+                fontWeight="semiBold"
+              >
+                <Trans i18nKey={tooManyUtxos.message} />
               </Text>
             </Flex>
           </NativeUiAlert>
