@@ -14,6 +14,8 @@ import Spinner from "~/renderer/components/Spinner";
 import { TransactionConfirm } from "../components/TransactionConfirm";
 import { ValidatorRow } from "../components/ValidatorRow";
 import { StepProps } from "../types";
+import { urls } from "~/config/urls";
+import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
 
 const StepAuthorize = ({
   accountName,
@@ -23,6 +25,7 @@ const StepAuthorize = ({
   error,
 }: StepProps) => {
   invariant(onboardingResult?.completedAccount, "canton: completed account is required");
+  const link = useLocalizedUrl(urls.canton.learnMore);
 
   const getErrorMessage = (error: Error | null) => {
     if (error instanceof UserRefusedOnDevice || error instanceof LockedDeviceError) {
@@ -79,7 +82,7 @@ const StepAuthorize = ({
               <Alert>
                 <Trans i18nKey="families.canton.addAccount.auth.hint" />
                 <br />
-                <Link href="https://ledger.com" type="external">
+                <Link href={link} type="external">
                   <Trans i18nKey="common.learnMore" />
                 </Link>
               </Alert>

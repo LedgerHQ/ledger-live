@@ -214,6 +214,9 @@ export const urls = {
   sanctionCompliance: {
     learnMore: "https://support.ledger.com/article/Why-Ledger-Complies-with-Sanctions",
   },
+  canton: {
+    learnMore: "https://support.ledger.com/article/Canton-Network",
+  },
 };
 
 export const vaultSigner = {

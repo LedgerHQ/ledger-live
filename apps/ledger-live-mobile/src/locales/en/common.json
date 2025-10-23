@@ -7982,7 +7982,8 @@
       "authorize": "Authorize",
       "preapprove": "Successfully added account",
       "validator": "Ledger Validator",
-      "title": "Automatically accept incoming funds"
+      "title": "Automatically accept incoming funds",
+      "error429": "Canton Network currently supports a limited number of account creations per day. Please try again later."
     }
   }
 }
