@@ -18,7 +18,7 @@ import { useRedirectToPostOnboardingCallback } from "~/renderer/hooks/useAutoRed
 
 const COMPLETION_SCREEN_TIMEOUT = 6000;
 
-function OnboardingSuccessView({ deviceModelId }: { deviceModelId: DeviceModelId }) {
+function OnboardingSuccessView({ deviceModelId }: Readonly<{ deviceModelId: DeviceModelId }>) {
   switch (deviceModelId) {
     case DeviceModelId.stax:
       return <StaxCompletionView />;

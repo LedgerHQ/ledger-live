@@ -1,5 +1,5 @@
 import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { BroadcastConfig } from "@ledgerhq/types-live";
+import { BroadcastConfig, Operation as LiveOperation } from "@ledgerhq/types-live";
 
 export type BlockInfo = {
   height: number;
@@ -539,6 +539,7 @@ export type BridgeApi<
   getTokenFromAsset?: (asset: AssetInfo) => Promise<TokenCurrency | undefined>;
   getAssetFromToken?: (token: TokenCurrency, owner: string) => AssetInfo;
   computeIntentType?: (transaction: Record<string, unknown>) => string;
+  refreshOperations?: (operations: LiveOperation[]) => Promise<LiveOperation[]>;
 };
 
 export type Api<

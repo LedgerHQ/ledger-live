@@ -1,49 +1,35 @@
-import React, {
-  ReactNode,
-  useCallback,
-  useEffect,
-  useLayoutEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useHistory } from "react-router-dom";
-import { Box, ContinueOnDevice, Flex, Text, VerticalTimeline } from "@ledgerhq/react-ui";
+import { Box, Flex, Text, VerticalTimeline } from "@ledgerhq/react-ui";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { useOnboardingStatePolling } from "@ledgerhq/live-common/onboarding/hooks/useOnboardingStatePolling";
-import { DeviceModelId, getDeviceModel } from "@ledgerhq/devices";
-import { DeviceModelInfo, SeedOriginType, SeedPhraseType } from "@ledgerhq/types-live";
+import { getDeviceModel } from "@ledgerhq/devices";
+import { SeedOriginType, SeedPhraseType } from "@ledgerhq/types-live";
 import {
   OnboardingStep as DeviceOnboardingStep,
   fromSeedPhraseTypeToNbOfSeedWords,
 } from "@ledgerhq/live-common/hw/extractOnboardingState";
 import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { useCustomPath } from "@ledgerhq/live-common/hooks/recoverFeatureFlag";
-import { lastSeenDeviceSelector, trackingEnabledSelector } from "~/renderer/reducers/settings";
+import { trackingEnabledSelector } from "~/renderer/reducers/settings";
 import { DesyncOverlay } from "./DesyncOverlay";
-import SeedStep, { SeedPathStatus } from "./SeedStep";
-import { analyticsFlowName, StepText } from "./shared";
-import OnboardingAppInstallStep from "../../OnboardingAppInstall";
+import { SeedPathStatus } from "./SeedStep";
+import { analyticsFlowName } from "../shared";
 import { getOnboardingStatePolling } from "@ledgerhq/live-common/hw/getOnboardingStatePolling";
 import { isAllowedOnboardingStatePollingErrorDmk } from "@ledgerhq/live-dmk-desktop";
 import { RecoverState } from "~/renderer/screens/recover/Player";
-import TrackPage from "~/renderer/analytics/TrackPage";
 import { trackPage } from "~/renderer/analytics/segment";
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { setDrawer } from "~/renderer/drawers/Provider";
-import LockedDeviceDrawer from "./LockedDeviceDrawer";
+import LockedDeviceDrawer from "../LockedDeviceDrawer";
 import { LockedDeviceError } from "@ledgerhq/errors";
 import { useRecoverRestoreOnboarding } from "~/renderer/hooks/useRecoverRestoreOnboarding";
 import { useTrackOnboardingFlow } from "~/renderer/analytics/hooks/useTrackOnboardingFlow";
 import { HOOKS_TRACKING_LOCATIONS } from "~/renderer/analytics/hooks/variables";
-import BackupBackground from "./assets/BackupBackground";
-import SetupBackground from "./assets/SetupBackground";
-import ContinueOnStax from "./assets/ContinueOnStax";
-import ContinueOnEuropa from "./assets/ContinueOnEuropa";
-import ContinueOnApex from "./assets/ContinueOnApex";
+import useCompanionSteps, { READY_REDIRECT_DELAY_MS, Step, StepKey } from "./useCompanionSteps";
+import TwoStepCompanion from "./TwoStepCompanion";
 
-const READY_REDIRECT_DELAY_MS = 2000;
 const POLLING_PERIOD_MS = 1000;
 
 const DESYNC_TIMEOUT_MS = 60000;
@@ -52,41 +38,11 @@ const LONG_DESYNC_TIMEOUT_MS = 120000;
 const DESYNC_OVERLAY_DELAY_MS = 1000;
 const LONG_DESYNC_OVERLAY_DELAY_MS = 60000;
 
-enum StepKey {
-  Paired = 0,
-  Pin,
-  Seed,
-  Backup,
-  Apps,
-  Ready,
-  Exit,
-}
-
 const fromSeedPhraseTypeToAnalyticsPropertyString = new Map<SeedPhraseType, string>([
   [SeedPhraseType.TwentyFour, "TwentyFour"],
   [SeedPhraseType.Eighteen, "Eighteen"],
   [SeedPhraseType.Twelve, "Twelve"],
 ]);
-
-type StepStatus = "completed" | "active" | "inactive";
-
-type Step = {
-  key: StepKey;
-  status: StepStatus;
-  title: string;
-  titleCompleted?: string;
-  hasLoader?: boolean;
-  estimatedTime?: number;
-  renderBody?: () => ReactNode;
-  background?: ReactNode;
-};
-
-function nextStepKey(step: StepKey): StepKey {
-  if (step === StepKey.Exit) {
-    return StepKey.Exit;
-  }
-  return step + 1;
-}
 
 export type SyncOnboardingCompanionProps = {
   /**
@@ -103,6 +59,16 @@ export type SyncOnboardingCompanionProps = {
    * Called when the companion component thinks the device is not in a correct state anymore
    */
   notifySyncOnboardingShouldReset: () => void;
+
+  /**
+   * The ref of parent container so we can scroll components into view
+   */
+  parentRef: React.MutableRefObject<HTMLDivElement | null>;
+
+  /**
+   * Set state to control header
+   */
+  setCompanionStep: (currentStep: "first-step" | "second-step") => void;
 };
 
 /**
@@ -112,16 +78,21 @@ const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = ({
   device,
   onLostDevice,
   notifySyncOnboardingShouldReset,
+  parentRef,
+  setCompanionStep,
 }) => {
   const { t } = useTranslation();
   const history = useHistory<RecoverState>();
   const dispatch = useDispatch();
+  const isSyncIncr1Enabled = useFeature("lldSyncOnboardingIncr1")?.enabled || false;
+  const servicesConfig = useFeature("protectServicesDesktop");
+  const recoverRestoreStaxPath = useCustomPath(servicesConfig, "restore", "lld-onboarding-24");
+
   const [stepKey, setStepKey] = useState<StepKey>(StepKey.Paired);
-  const [hasAppLoader, setHasAppLoader] = useState<boolean>(false);
   const [shouldRestoreApps, setShouldRestoreApps] = useState<boolean>(false);
-  const deviceToRestore = useSelector(lastSeenDeviceSelector) as DeviceModelInfo | null | undefined;
   const lastCompanionStepKey = useRef<StepKey>();
   const [seedPathStatus, setSeedPathStatus] = useState<SeedPathStatus>("choice_new_or_restore");
+  const [isNewSeed, setIsNewSeed] = useState<boolean>(false);
 
   useTrackOnboardingFlow({
     location: HOOKS_TRACKING_LOCATIONS.onboardingFlow,
@@ -130,18 +101,10 @@ const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = ({
     seedPathStatus: seedPathStatus,
   });
 
-  const servicesConfig = useFeature("protectServicesDesktop");
-
-  const recoverRestoreStaxPath = useCustomPath(servicesConfig, "restore", "lld-onboarding-24");
-
   const productName = device
     ? getDeviceModel(device.modelId).productName || device.modelId
     : "Ledger Device";
   const deviceName = device?.deviceName || productName;
-
-  const handleInstallRecommendedApplicationComplete = useCallback(() => {
-    setTimeout(() => setStepKey(nextStepKey(StepKey.Apps)), READY_REDIRECT_DELAY_MS);
-  }, []);
 
   const [isPollingOn, setIsPollingOn] = useState<boolean>(true);
 
@@ -162,137 +125,19 @@ const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = ({
     allowedErrorChecks: [isAllowedOnboardingStatePollingErrorDmk],
   });
 
-  const DeviceIcon = useMemo(() => {
-    switch (device.modelId) {
-      case DeviceModelId.stax:
-        return ContinueOnStax;
-      case DeviceModelId.europa:
-        return ContinueOnEuropa;
-      case DeviceModelId.apex:
-        return ContinueOnApex; // Use the same icon as Europa for now
-      default:
-        return ContinueOnEuropa; // Fallback to Europa icon
-    }
-  }, [device.modelId]);
+  const companionSteps = useCompanionSteps({
+    device,
+    setStepKey,
+    shouldRestoreApps,
+    deviceName,
+    seedPathStatus,
+    productName,
+    charonStatus: deviceOnboardingState?.charonStatus,
+    charonSupported: deviceOnboardingState?.charonSupported,
+    isTwoStep: isSyncIncr1Enabled,
+  });
 
-  const defaultSteps: Step[] = useMemo(
-    () => [
-      {
-        key: StepKey.Paired,
-        status: "active",
-        title: t("syncOnboarding.manual.pairedContent.title", {
-          deviceName,
-        }),
-        renderBody: () => (
-          <Flex flexDirection="column">
-            <TrackPage
-              category={`Set up ${productName}: Step 1 device paired`}
-              flow={analyticsFlowName}
-            />
-            {/* @ts-expect-error weird props issue with React 18 */}
-            <StepText>
-              {t("syncOnboarding.manual.pairedContent.description", {
-                productName,
-              })}
-            </StepText>
-            <ContinueOnDevice
-              Icon={DeviceIcon}
-              text={t("syncOnboarding.manual.pairedContent.continueOnDevice", { productName })}
-            />
-          </Flex>
-        ),
-      },
-      {
-        key: StepKey.Pin,
-        status: "inactive",
-        title: t("syncOnboarding.manual.pinContent.title"),
-        titleCompleted: t("syncOnboarding.manual.pinContent.titleCompleted"),
-        renderBody: () => (
-          <Flex flexDirection="column">
-            <TrackPage category={`Set up ${productName}: Step 2 PIN`} flow={analyticsFlowName} />
-            {/* @ts-expect-error weird props issue with React 18 */}
-            <StepText>
-              {t("syncOnboarding.manual.pinContent.description", { productName })}
-            </StepText>
-            <ContinueOnDevice
-              Icon={DeviceIcon}
-              text={t("syncOnboarding.manual.pinContent.continueOnDevice", { productName })}
-            />
-          </Flex>
-        ),
-      },
-      {
-        key: StepKey.Seed,
-        status: "inactive",
-        title: t("syncOnboarding.manual.seedContent.title"),
-        titleCompleted: t("syncOnboarding.manual.seedContent.titleCompleted"),
-        background:
-          seedPathStatus === "new_seed" ? (
-            // Secret Phrase screen
-            <SetupBackground />
-          ) : seedPathStatus === "backup_charon" ? (
-            // Recovery Key screen
-            <BackupBackground />
-          ) : null,
-        renderBody: () => (
-          <>
-            <TrackPage
-              category={`Set up ${productName}: Step 3 Seed Intro`}
-              flow={analyticsFlowName}
-            />
-            <SeedStep
-              seedPathStatus={seedPathStatus}
-              deviceName={productName}
-              deviceIcon={DeviceIcon}
-              charonSupported={Boolean(deviceOnboardingState?.charonSupported)}
-              charonStatus={deviceOnboardingState?.charonStatus ?? null}
-            />
-          </>
-        ),
-      },
-      {
-        key: StepKey.Apps,
-        status: "inactive",
-        hasLoader: hasAppLoader,
-        title: t("syncOnboarding.manual.installApplications.title", { productName }),
-        titleCompleted: t("syncOnboarding.manual.installApplications.titleCompleted", {
-          productName,
-        }),
-        renderBody: () => (
-          <OnboardingAppInstallStep
-            device={device}
-            deviceToRestore={shouldRestoreApps && deviceToRestore ? deviceToRestore : undefined}
-            setHeaderLoader={(hasLoader: boolean) => setHasAppLoader(hasLoader)}
-            onComplete={handleInstallRecommendedApplicationComplete}
-          />
-        ),
-      },
-      {
-        key: StepKey.Ready,
-        status: "inactive",
-        title: t("syncOnboarding.manual.endOfSetup.title"),
-        titleCompleted: t("syncOnboarding.manual.endOfSetup.titleCompleted", {
-          deviceName: productName,
-        }),
-      },
-    ],
-    [
-      t,
-      deviceName,
-      seedPathStatus,
-      hasAppLoader,
-      productName,
-      DeviceIcon,
-      deviceOnboardingState?.charonSupported,
-      deviceOnboardingState?.charonStatus,
-      device,
-      shouldRestoreApps,
-      deviceToRestore,
-      handleInstallRecommendedApplicationComplete,
-    ],
-  );
-
-  const [steps, setSteps] = useState<Step[]>(defaultSteps);
+  const [steps, setSteps] = useState<Step[]>(companionSteps.defaultSteps);
 
   const handleDeviceReady = useCallback(() => {
     history.push("/onboarding/sync/completion");
@@ -318,6 +163,14 @@ const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = ({
    * onboarding flags can only be trusted for a non-onboarded device.
    */
   const analyticsSeedPhraseType = useRef<SeedPhraseType>();
+
+  useEffect(() => {
+    if (stepKey > StepKey.Seed) {
+      setCompanionStep("second-step");
+    } else {
+      setCompanionStep("first-step");
+    }
+  }, [stepKey, setCompanionStep]);
 
   useEffect(() => {
     if (!deviceOnboardingState) return;
@@ -404,7 +257,7 @@ const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = ({
         deviceOnboardingState.currentOnboardingStep,
       )
     ) {
-      setStepKey(StepKey.Apps);
+      setStepKey(isSyncIncr1Enabled ? StepKey.Success : StepKey.Apps);
       seededDeviceHandled.current = true;
       return;
     }
@@ -433,6 +286,7 @@ const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = ({
         setShouldRestoreApps(false);
         setStepKey(StepKey.Seed);
         setSeedPathStatus("new_seed");
+        setIsNewSeed(true);
         analyticsSeedConfiguration.current = "new_seed";
         break;
       case DeviceOnboardingStep.SetupChoiceRestore:
@@ -443,12 +297,14 @@ const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = ({
         setShouldRestoreApps(true);
         setStepKey(StepKey.Seed);
         setSeedPathStatus("restore_seed");
+        setIsNewSeed(false);
         analyticsSeedConfiguration.current = "restore_seed";
         break;
       case DeviceOnboardingStep.RecoverRestore:
         setShouldRestoreApps(true);
         setStepKey(StepKey.Seed);
         setSeedPathStatus("recover_seed");
+        setIsNewSeed(false);
         analyticsSeedConfiguration.current = "recover_seed";
         break;
       case DeviceOnboardingStep.BackupCharon:
@@ -458,6 +314,7 @@ const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = ({
       case DeviceOnboardingStep.RestoreCharon:
         setStepKey(StepKey.Seed);
         setSeedPathStatus("restore_charon");
+        setIsNewSeed(false);
         analyticsSeedConfiguration.current = "restore_charon";
         break;
       case DeviceOnboardingStep.Pin:
@@ -466,7 +323,7 @@ const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = ({
       default:
         break;
     }
-  }, [deviceOnboardingState, notifySyncOnboardingShouldReset]);
+  }, [deviceOnboardingState, notifySyncOnboardingShouldReset, isSyncIncr1Enabled]);
 
   // When the user gets close to the seed generation step, sets the lost synchronization delay
   // and timers to a higher value. It avoids having a warning message while the connection is lost
@@ -490,12 +347,17 @@ const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = ({
   }, [deviceOnboardingState]);
 
   useEffect(() => {
-    if (stepKey >= StepKey.Apps) {
+    if (stepKey >= StepKey.Success) {
       setIsPollingOn(false);
     }
 
     if (stepKey === StepKey.Ready) {
-      setStepKey(StepKey.Exit);
+      // Only app install route will go to this step
+      if (isSyncIncr1Enabled) {
+        setTimeout(() => setStepKey(StepKey.Exit), READY_REDIRECT_DELAY_MS);
+      } else {
+        setStepKey(StepKey.Exit);
+      }
     }
 
     if (stepKey === StepKey.Exit) {
@@ -506,11 +368,15 @@ const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = ({
         true,
         true,
       );
-      setTimeout(handleDeviceReady, READY_REDIRECT_DELAY_MS);
+      if (isSyncIncr1Enabled) {
+        handleDeviceReady();
+      } else {
+        setTimeout(handleDeviceReady, READY_REDIRECT_DELAY_MS);
+      }
     }
 
     setSteps(
-      defaultSteps.map(step => {
+      companionSteps.defaultSteps.map(step => {
         const stepStatus =
           step.key > stepKey ? "inactive" : step.key < stepKey ? "completed" : "active";
         const title = (stepStatus === "completed" && step.titleCompleted) || step.title;
@@ -522,7 +388,7 @@ const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = ({
         };
       }),
     );
-  }, [stepKey, defaultSteps, handleDeviceReady, productName]);
+  }, [stepKey, companionSteps.defaultSteps, handleDeviceReady, productName, isSyncIncr1Enabled]);
 
   // Fatal error from the polling is not recoverable automatically
   useEffect(() => {
@@ -565,6 +431,28 @@ const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = ({
     }
   }, [dispatch, history, recoverRestoreStaxPath, seedPathStatus]);
 
+  useEffect(() => {
+    if (stepKey === StepKey.Success) {
+      parentRef.current?.scrollTo({ top: 0, behavior: "smooth" });
+    } else if (stepKey === StepKey.Seed) {
+      parentRef.current?.scrollTo({ top: 700, behavior: "smooth" });
+    }
+  }, [seedPathStatus, stepKey, parentRef]);
+
+  useEffect(() => {
+    if (stepKey === StepKey.Success) {
+      const timer = setTimeout(() => {
+        setStepKey(StepKey.Apps);
+      }, 2000);
+
+      return () => {
+        if (timer) {
+          clearTimeout(timer);
+        }
+      };
+    }
+  }, [stepKey]);
+
   return (
     <Flex width="100%" height="100%" flexDirection="column" justifyContent="flex-start">
       <DesyncOverlay
@@ -582,10 +470,23 @@ const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = ({
         flexShrink={1}
       >
         <Text variant="h3Inter" fontSize="8" fontWeight="semiBold" mb="8">
-          {t("syncOnboarding.manual.title", { deviceName })}
+          {isSyncIncr1Enabled
+            ? t("syncOnboarding.manual.titleTwoStep")
+            : t("syncOnboarding.manual.title", { deviceName })}
         </Text>
         <Box>
-          <VerticalTimeline steps={steps} />
+          {isSyncIncr1Enabled ? (
+            <TwoStepCompanion
+              deviceName={deviceName}
+              steps={steps}
+              activeStepKey={stepKey}
+              installStep={companionSteps.installStep}
+              isNewSeed={isNewSeed}
+              handleComplete={companionSteps.handleAppStepComplete}
+            />
+          ) : (
+            <VerticalTimeline steps={steps} />
+          )}
         </Box>
       </Flex>
     </Flex>

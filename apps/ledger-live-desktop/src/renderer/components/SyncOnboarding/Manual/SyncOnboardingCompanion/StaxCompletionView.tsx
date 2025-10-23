@@ -1,10 +1,10 @@
 import React from "react";
 import { Flex } from "@ledgerhq/react-ui";
 import { useTheme } from "styled-components";
-import onboardingSuccessDark from "./assets/apex/onboardingSuccessDark.mp4";
-import onboardingSuccessLight from "./assets/apex/onboardingSuccessLight.mp4";
+import onboardingSuccessDark from "../assets/stax/onboardingSuccessDark.mp4";
+import onboardingSuccessLight from "../assets/stax/onboardingSuccessLight.mp4";
 
-export default function ApexCompletionView() {
+export default function StaxCompletionView() {
   const {
     colors: {
       palette: { type: theme },

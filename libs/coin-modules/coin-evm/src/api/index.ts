@@ -20,7 +20,7 @@ import {
 } from "@ledgerhq/coin-framework/api/index";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { BroadcastConfig } from "@ledgerhq/types-live";
+import { BroadcastConfig, Operation as LiveOperation } from "@ledgerhq/types-live";
 import { setCoinConfig, type EvmConfig } from "../config";
 import {
   broadcast,
@@ -35,6 +35,7 @@ import {
   getTokenFromAsset,
   getAssetFromToken,
   computeIntentType,
+  refreshOperations,
 } from "../logic/index";
 
 export function createApi(
@@ -96,5 +97,7 @@ export function createApi(
     getAssetFromToken: (token: TokenCurrency, owner: string): AssetInfo =>
       getAssetFromToken(currency, token, owner),
     computeIntentType,
+    refreshOperations: (operations: LiveOperation[]): Promise<LiveOperation[]> =>
+      refreshOperations(currency, operations),
   };
 }

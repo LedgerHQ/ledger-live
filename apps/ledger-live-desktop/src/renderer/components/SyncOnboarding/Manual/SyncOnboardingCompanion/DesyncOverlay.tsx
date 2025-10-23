@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Flex, InfiniteLoader, Alert } from "@ledgerhq/react-ui";
 import TrackPage from "~/renderer/analytics/TrackPage";
-import { analyticsFlowName } from "./shared";
+import { analyticsFlowName } from "../shared";
 
 type Props = {
   isOpen: boolean;

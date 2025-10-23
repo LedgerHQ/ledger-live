@@ -1250,6 +1250,11 @@
     },
     "manual": {
       "title": "Get your {{deviceName}} ready",
+      "titleTwoStep": "Let’s get started",
+      "titleFirstStepDone": "Your {{deviceName}} is ready",
+      "successStepTitle": "Your {{deviceName}} is now ready to secure your crypto",
+      "secureCryptoTitle": "Secure your crypto",
+      "secureCryptoDoneTitle": "Your blockchain apps are installed.",
       "continueOnDevice": "Perform this action on your {{productName}}",
       "pairedContent": {
         "title": "{{deviceName}} is genuine",
@@ -1294,6 +1299,11 @@
         "backupCharonDescription": "Create a new backup on a PIN-protected card with a built-in Secure Element chip — so you can restore access to your assets in just a few taps.",
         "backupCharonCta": "Learn more or buy",
         "backupCharonContinueOnDevice": "Follow the instructions on your {{productName}}"
+      },
+      "secureCrypto": {
+        "description": "Move your first crypto from an exchange or wallet to your Ledger for maximum security.",
+        "depositButton": "Deposit my crypto",
+        "skipButton": "Not now"
       },
       "backup": {
         "title": "Backup for your Secret Recovery Phrase",
