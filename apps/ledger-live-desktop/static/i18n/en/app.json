@@ -4301,6 +4301,8 @@
         "header": "Staking Position(s)",
         "stake": "Add",
         "staked": "Delegated",
+        "estimatedReward": "Earned rewards",
+        "rewardTooltip": "Sui rewards are distributed every epoch of 24h. They are automatically compounded and added to your delegated stake.",
         "pending": "Pending Release",
         "available": "Withdrawable"
       },
