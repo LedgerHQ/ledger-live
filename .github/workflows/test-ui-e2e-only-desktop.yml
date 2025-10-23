@@ -89,9 +89,12 @@ on:
         default: testing
       speculos_device:
         description: "Device to be used"
-        required: false
+        required: true
         type: string
-        default: nanoSP
+      firmware_version:
+        description: "Firmware version to use for selected device"
+        required: true
+        type: string
 
 permissions:
   id-token: write
