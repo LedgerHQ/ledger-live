@@ -4,7 +4,6 @@ import {
   FeeRequired,
   FeeTooHigh,
   InvalidAddress,
-  InvalidAddressBecauseDestinationIsAlsoSource,
   NotEnoughBalanceBecauseDestinationNotCreated,
   NotEnoughSpendableBalance,
   RecipientRequired,
@@ -85,11 +84,27 @@ export const getTransactionStatus: AccountBridge<
     errors.amount = new AmountRequired();
   }
 
-  // UTXO count validation - only validate if recipient is valid and not equal to sender
-  // Skip validation for abandon seed addresses
+  validateUtxoCount(account, transaction, warnings);
+
+  return {
+    errors,
+    warnings,
+    estimatedFees,
+    amount,
+    totalSpent,
+  };
+};
+
+function validateUtxoCount(
+  account: CantonAccount,
+  transaction: Transaction,
+  warnings: Record<string, Error>,
+): void {
   const abandonSeedAddress = getAbandonSeedAddress(account.currency.id);
   const isAbandonSeedAddress = transaction.recipient?.includes(abandonSeedAddress);
 
+  // UTXO count validation - only validate if recipient is valid and not equal to sender
+  // Skip validation for abandon seed addresses
   if (
     account?.cantonResources?.instrumentUtxoCounts &&
     transaction.recipient &&
@@ -105,12 +120,4 @@ export const getTransactionStatus: AccountBridge<
       warnings.tooManyUtxos = new TooManyUtxosWarning("families.canton.tooManyUtxos.warning");
     }
   }
-
-  return {
-    errors,
-    warnings,
-    estimatedFees,
-    amount,
-    totalSpent,
-  };
-};
+}

@@ -15,9 +15,9 @@ import Error from "~/renderer/icons/Error";
 import { openURL } from "~/renderer/linking";
 import { useLocalizedUrl } from "~/renderer/hooks/useLocalizedUrls";
 
-type Props = {
+type Props = Readonly<{
   account: Account;
-};
+}>;
 
 const CANTON_REASONABLE_CONSOLIDATE_MULTIPLIER = 0.4;
 

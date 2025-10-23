@@ -22,9 +22,8 @@ function toResourcesRaw(r: CantonResources): CantonResourcesRaw {
 }
 
 function fromResourcesRaw(r: CantonResourcesRaw): CantonResources {
-  const { instrumentUtxoCounts } = r;
   return {
-    instrumentUtxoCounts,
+    instrumentUtxoCounts: r.instrumentUtxoCounts,
   };
 }
 

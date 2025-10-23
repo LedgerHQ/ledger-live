@@ -11,7 +11,7 @@ export const estimateMaxSpendable: AccountBridge<
   Transaction,
   CantonAccount
 >["estimateMaxSpendable"] = async ({ account, parentAccount, transaction }) => {
-  const mainAccount = getMainAccount(account, parentAccount) as CantonAccount;
+  const mainAccount = getMainAccount(account, parentAccount);
   const newTransaction = await prepareTransaction(mainAccount, {
     ...createTransaction(account),
     ...transaction,

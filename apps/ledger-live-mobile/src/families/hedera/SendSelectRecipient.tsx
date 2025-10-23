@@ -1,7 +1,6 @@
 import React from "react";
 import { sendRecipientCanNext } from "@ledgerhq/live-common/families/hedera/utils";
 import type { TransactionStatus } from "@ledgerhq/live-common/generated/types";
-import type { Account } from "@ledgerhq/types-live";
 import { urls } from "~/utils/urls";
 import Alert from "~/components/Alert";
 import TranslatedError from "~/components/TranslatedError";
@@ -36,7 +35,6 @@ const UnverifiedAssociationAlert = ({ error }: AlertProps) => {
 
 interface Props {
   status: TransactionStatus;
-  account?: Account; // Optional for backward compatibility
 }
 
 const StepRecipientCustomAlert = ({ status }: Props) => {

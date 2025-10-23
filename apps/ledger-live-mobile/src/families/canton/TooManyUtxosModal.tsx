@@ -1,8 +1,7 @@
 import React, { useCallback } from "react";
 import { View, StyleSheet, Linking } from "react-native";
 import { Trans } from "react-i18next";
-import { useTheme } from "@react-navigation/native";
-import { useNavigation } from "@react-navigation/native";
+import { useTheme, useNavigation } from "@react-navigation/native";
 import { CantonAccount } from "@ledgerhq/live-common/families/canton/types";
 import { getAccountBridge } from "@ledgerhq/live-common/bridge/index";
 import QueuedDrawer from "~/components/QueuedDrawer";
@@ -14,11 +13,11 @@ import { useLocalizedUrl } from "LLM/hooks/useLocalizedUrls";
 import { urls } from "~/utils/urls";
 import { ScreenName, NavigatorName } from "~/const";
 
-type Props = {
+type Props = Readonly<{
   isOpened: boolean;
   onClose: () => void;
   account: CantonAccount;
-};
+}>;
 
 const CANTON_REASONABLE_CONSOLIDATE_MULTIPLIER = 0.4;
 

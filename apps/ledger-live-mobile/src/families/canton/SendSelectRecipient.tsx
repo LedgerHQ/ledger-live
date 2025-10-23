@@ -11,10 +11,10 @@ import { component as TooManyUtxosModal } from "./TooManyUtxosModal";
 function StepRecipientCustomAlert({
   status,
   account,
-}: {
+}: Readonly<{
   status: TransactionStatus;
   account?: Account;
-}) {
+}>) {
   const cantonAccount = account as CantonAccount;
   const [showTooManyUtxosModal, setShowTooManyUtxosModal] = useState(false);
 
