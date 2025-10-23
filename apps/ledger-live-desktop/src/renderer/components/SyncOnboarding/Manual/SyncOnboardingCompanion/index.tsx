@@ -112,6 +112,23 @@ const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = ({
   const [isDesyncOverlayOpen, setIsDesyncOverlayOpen] = useState<boolean>(false);
   const [desyncTimeout, setDesyncTimeout] = useState<number>(DESYNC_TIMEOUT_MS);
 
+  /**
+   * True if the device was initially onboarded/seeded when this component got
+   * mounted. False otherwise.
+   * Value is undefined until the onboarding state polling returns a first
+   * result.
+   * */
+  const deviceInitiallyOnboarded = useRef<boolean>();
+  /**
+   * Variable holding the seed phrase type (number of words) until we are
+   * ready to track the event (when the seeding step finishes).
+   * Should only be maintained if the device is not onboarded/not seeded as the
+   * onboarding flags can only be trusted for a non-onboarded device.
+   */
+  const analyticsSeedPhraseType = useRef<SeedPhraseType>();
+
+  const analyticsSeedConfiguration = useRef<SeedOriginType>();
+
   const {
     onboardingState: deviceOnboardingState,
     allowedError,
@@ -135,12 +152,18 @@ const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = ({
     charonStatus: deviceOnboardingState?.charonStatus,
     charonSupported: deviceOnboardingState?.charonSupported,
     isTwoStep: isSyncIncr1Enabled,
+    seedConfiguration: analyticsSeedConfiguration.current,
   });
 
   const [steps, setSteps] = useState<Step[]>(companionSteps.defaultSteps);
 
   const handleDeviceReady = useCallback(() => {
-    history.push("/onboarding/sync/completion");
+    history.push({
+      pathname: "/onboarding/sync/completion",
+      state: {
+        seedConfiguration: analyticsSeedConfiguration.current,
+      },
+    });
   }, [history]);
 
   const handleDesyncTimerRunsOut = useCallback(() => {
@@ -148,21 +171,6 @@ const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = ({
     onLostDevice();
     setIsPollingOn(false);
   }, [onLostDevice]);
-
-  /**
-   * True if the device was initially onboarded/seeded when this component got
-   * mounted. False otherwise.
-   * Value is undefined until the onboarding state polling returns a first
-   * result.
-   * */
-  const deviceInitiallyOnboarded = useRef<boolean>();
-  /**
-   * Variable holding the seed phrase type (number of words) until we are
-   * ready to track the event (when the seeding step finishes).
-   * Should only be maintained if the device is not onboarded/not seeded as the
-   * onboarding flags can only be trusted for a non-onboarded device.
-   */
-  const analyticsSeedPhraseType = useRef<SeedPhraseType>();
 
   useEffect(() => {
     if (stepKey > StepKey.Seed) {
@@ -182,8 +190,6 @@ const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = ({
     )
       analyticsSeedPhraseType.current = deviceOnboardingState.seedPhraseType;
   }, [deviceOnboardingState]);
-
-  const analyticsSeedConfiguration = useRef<SeedOriginType>();
 
   const analyticsSeedingTracked = useRef(false);
   /**
@@ -347,6 +353,25 @@ const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = ({
   }, [deviceOnboardingState]);
 
   useEffect(() => {
+    const properties = {
+      flow: analyticsFlowName,
+      seedConfiguration: analyticsSeedConfiguration.current,
+    };
+
+    if (isSyncIncr1Enabled ? stepKey === StepKey.Success : stepKey === StepKey.Exit) {
+      trackPage(
+        `Set up ${productName}: Final Step ${productName} is ready`,
+        undefined,
+        properties,
+        true,
+        true,
+      );
+    } else if (isSyncIncr1Enabled && stepKey === StepKey.Apps) {
+      trackPage(`Set up ${productName}: Secure your crypto`, undefined, properties, true, true);
+    }
+  }, [stepKey, productName, isSyncIncr1Enabled]);
+
+  useEffect(() => {
     if (stepKey >= StepKey.Success) {
       setIsPollingOn(false);
     }
@@ -361,13 +386,6 @@ const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = ({
     }
 
     if (stepKey === StepKey.Exit) {
-      trackPage(
-        `Set up ${productName}: Final Step ${productName} is ready`,
-        undefined,
-        { flow: analyticsFlowName },
-        true,
-        true,
-      );
       if (isSyncIncr1Enabled) {
         handleDeviceReady();
       } else {
@@ -483,6 +501,7 @@ const SyncOnboardingCompanion: React.FC<SyncOnboardingCompanionProps> = ({
               installStep={companionSteps.installStep}
               isNewSeed={isNewSeed}
               handleComplete={companionSteps.handleAppStepComplete}
+              seedConfiguration={analyticsSeedConfiguration.current}
             />
           ) : (
             <VerticalTimeline steps={steps} />

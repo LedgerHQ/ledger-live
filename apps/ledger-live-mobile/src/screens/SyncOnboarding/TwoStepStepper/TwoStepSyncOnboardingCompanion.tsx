@@ -135,7 +135,10 @@ export const TwoStepSyncOnboardingCompanion: React.FC<TwoStepSyncOnboardingCompa
    */
   const handleOnboardingDone = useCallback(() => {
     handleOnboardingDoneState();
-    navigation.navigate(ScreenName.SyncOnboardingCompletion, { device });
+    navigation.navigate(ScreenName.SyncOnboardingCompletion, {
+      device,
+      seedConfiguration: analyticsSeedConfiguration.current,
+    });
   }, [device, navigation, handleOnboardingDoneState]);
 
   const handleSecondStepFinish = useCallback(

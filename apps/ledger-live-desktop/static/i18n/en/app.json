@@ -1301,7 +1301,7 @@
         "backupCharonContinueOnDevice": "Follow the instructions on your {{productName}}"
       },
       "secureCrypto": {
-        "description": "Move your first crypto from an exchange or wallet to your Ledger for maximum security.",
+        "description": "You can transfer crypto from any exchange or wallet to your Ledger Wallet for maximum security.",
         "depositButton": "Deposit my crypto",
         "skipButton": "Not now"
       },
