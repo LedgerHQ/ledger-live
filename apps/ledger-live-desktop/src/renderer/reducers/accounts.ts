@@ -74,14 +74,11 @@ const accountHash = (a: AccountLike) => {
   // the selector returns stale data because the hash doesn't change, causing components to miss
   // important Canton-specific data like UTXO counts needed for transaction validation
   // See: libs/coin-modules/coin-canton/src/bridge/sync.ts
-  const cantonHash =
-    a.type === "Account" &&
-    a.currency.family === "canton" &&
-    "cantonResources" in a &&
-    a.cantonResources
-      ? `-cantonResources(${JSON.stringify(a.cantonResources)})`
-      : "";
-  return baseHash + cantonHash;
+  if (a.type === "Account" && a.currency.family === "canton" && "cantonResources" in a) {
+    const cantonHash = `-cantonResources(${JSON.stringify(a.cantonResources)})`;
+    return baseHash + cantonHash;
+  }
+  return baseHash;
 };
 const shallowAccountsSelectorCreator = createSelectorCreator(defaultMemoize, (a, b) =>
   isEqual(flattenAccounts(a).map(accountHash), flattenAccounts(b).map(accountHash)),
