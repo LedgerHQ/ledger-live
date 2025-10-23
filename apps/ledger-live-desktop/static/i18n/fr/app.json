@@ -4267,6 +4267,8 @@
         "header" : "Position(s) de staking",
         "stake" : "Ajouter",
         "staked" : "Délégué",
+        "estimatedReward" : "Récompenses gagnées",
+        "rewardTooltip" : "Les récompenses en Sui sont distribuées à chaque epoch (24h). Elles sont automatiquement capitalisées et ajoutées au montant staké.",
         "pending" : "En attente de libération",
         "available" : "Disponible au retrait"
       },
@@ -4675,7 +4677,7 @@
       "analyticsDesc" : "Autoriser les statistiques pour aider Ledger à améliorer l’expérience utilisateur. Ces statistiques comprennent les clics, les visites de pages, les redirections, les actions (envoyer, recevoir, verrouiller, etc.), les défilements en bas de page, les installations, désinstallations et mises à jour des apps, les versions des apps, le nombre de comptes, de crypto-actifs et d’opérations, la durée des sessions, le type d’appareil Ledger et de micrologiciel.",
       "reportErrors" : "Rapports de bugs",
       "reportErrorsDesc" : "Envoyer automatiquement des rapports pour aider Ledger à améliorer ses produits.",
-      "launchOnboarding" : "Configurer un wallet Ledger",
+      "launchOnboarding" : "Configurer un appareil Ledger",
       "launchOnboardingDesc" : "Configurez un nouvel appareil ou restaurez un appareil existant. Vos comptes et paramètres sont conservés."
     },
     "help" : {
@@ -6690,6 +6692,10 @@
     },
     "HederaAddAccountError" : {
       "title" : "Votre compte n’a pas été ajouté. Veuillez réessayer."
+    },
+    "HederaRecipientInvalidChecksum" : {
+      "title" : "Checksum de l’adresse non valide",
+      "description" : "Le checksum de l’adresse saisie n’est pas valide."
     },
     "HederaInsufficientFundsForAssociation" : {
       "title" : "Solde insuffisant",
