@@ -2,7 +2,6 @@ import Config from "react-native-config";
 import { Observable, timer } from "rxjs";
 import { map, debounce } from "rxjs/operators";
 import withStaticURLs from "@ledgerhq/hw-transport-http";
-import { retry } from "@ledgerhq/live-common/promise";
 import { registerTransportModule, type TransportModule } from "@ledgerhq/live-common/hw/index";
 import { getDeviceModel } from "@ledgerhq/devices";
 import { DescriptorEvent } from "@ledgerhq/hw-transport";
@@ -21,14 +20,13 @@ export const registerTransports = (isLDMKEnabled: boolean) => {
   }
   const hidTransport = getHIDTransport({ isLDMKEnabled });
 
-  // Add support of HID (experimental until we stabilize it)
   registerTransportModule({
     id: "hid",
     // eslint-disable-next-line consistent-return
     open: id => {
       if (id.startsWith("usb|")) {
         const devicePath = JSON.parse(id.slice(4));
-        return retry(() => hidTransport.open(devicePath), { maxRetry: 2 });
+        return hidTransport.open(devicePath);
       }
       return null;
     },
