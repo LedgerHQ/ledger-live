@@ -2,7 +2,6 @@ import { Button, Flex, Text } from "@ledgerhq/react-ui/index";
 import React, { useCallback, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
-import { openModal } from "~/renderer/actions/modals";
 import NewSeedIllustration from "./NewSeedIllustration";
 import {
   onboardingReceiveFlowSelector,
@@ -12,6 +11,8 @@ import {
 import { track } from "~/renderer/analytics/segment";
 import { analyticsFlowName } from "../../shared";
 import { SeedOriginType } from "@ledgerhq/types-live";
+import { useOpenAssetFlow } from "~/newArch/features/ModularDrawer/hooks/useOpenAssetFlow";
+import { ModularDrawerLocation } from "~/newArch/features/ModularDrawer";
 
 const NewSeedPanel = ({
   handleComplete,
@@ -24,7 +25,11 @@ const NewSeedPanel = ({
   const dispatch = useDispatch();
   const isOnboardingReceiveFlow = useSelector(onboardingReceiveFlowSelector);
   const isOnboardingReceiveSuccess = useSelector(onboardingReceiveSuccessSelector);
-
+  const { openAssetFlow } = useOpenAssetFlow(
+    { location: ModularDrawerLocation.ADD_ACCOUNT },
+    "receive",
+    "MODAL_RECEIVE",
+  );
   const handlePressFund = useCallback(() => {
     track("button_clicked", {
       button: "Secure my crypto",
@@ -37,8 +42,8 @@ const NewSeedPanel = ({
         isSuccess: false,
       }),
     );
-    dispatch(openModal("MODAL_RECEIVE", {}));
-  }, [dispatch, seedConfiguration]);
+    openAssetFlow();
+  }, [dispatch, seedConfiguration, openAssetFlow]);
 
   const handleSkip = useCallback(() => {
     track("button_clicked", { button: "Maybe later", flow: analyticsFlowName, seedConfiguration });
