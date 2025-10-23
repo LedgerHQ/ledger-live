@@ -8,40 +8,6 @@ import { exec } from "child_process";
 import { releaseSpeculosDeviceCI } from "@ledgerhq/live-common/lib/e2e/speculosCI";
 import { isSpeculosRemote } from "./helpers/commonHelpers";
 import { SPECULOS_TRACKING_FILE } from "./utils/speculosUtils";
-import { Subscriber } from "rxjs";
-import { allure } from "jest-allure2-reporter/api";
-
-process.on("unhandledRejection", reason => {
-  const err = reason instanceof Error ? reason : new Error(String(reason));
-  logSilentError(err);
-});
-
-process.on("uncaughtException", err => {
-  logSilentError(err);
-});
-
-Subscriber.prototype.error = function (err: Error) {
-  logSilentError(err);
-};
-
-function logSilentError(err: Error) {
-  const errorMessage = `❌ Exception occurred during test → ${err.message}`;
-  log.error(errorMessage);
-  try {
-    allure.description(errorMessage);
-    allure.step(err.message, () => {
-      allure.status("failed", { message: err.message, trace: err.stack });
-    });
-  } catch (reportErr) {
-    log.error(
-      "Failed to report silent error to Allure. ",
-      "Original error:",
-      err,
-      "Reporting error:",
-      reportErr,
-    );
-  }
-}
 
 export default async function setup(): Promise<void> {
   // Validate .env.mock file
