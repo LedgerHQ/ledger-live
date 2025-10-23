@@ -888,6 +888,11 @@ const envDefinitions = {
     parser: stringParser,
     desc: "Cryptoassets list service url",
   },
+  CAL_SERVICE_URL_STAGING: {
+    def: "https://crypto-assets-service.api.ledger-test.com",
+    parser: stringParser,
+    desc: "Cryptoassets list service url (staging)",
+  },
   FEATURE_FLAGS: {
     def: "{}",
     parser: jsonParser,
