@@ -81,7 +81,6 @@ on:
         description: "Speculos device to use"
         required: true
         type: string
-        default: nanoX
       production_firebase:
         description: "Target Firebase Production env"
         required: false
@@ -92,6 +91,10 @@ on:
         required: false
         type: boolean
         default: false
+      firmware_version:
+        description: "Firmware version to use for selected device"
+        required: true
+        type: string
 
 permissions:
   id-token: write
