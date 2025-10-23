@@ -30,7 +30,7 @@ export default async () => {
       await launchApp();
       await loadConfig("1AccountBTC1AccountETHReadOnlyFalse", true);
       await NativeElementHelpers.waitForElementById("settings-icon", 120_000);
-  
+
       const flagsData = formatFlagsData(JSON.parse(await getFlags()));
       const envsData = formatEnvData(JSON.parse(await getEnvs()));
       await fs.appendFile(ARTIFACT_ENV_PATH, flagsData + envsData);
@@ -44,13 +44,22 @@ export default async () => {
         log.warn("Error during cleanup:", cleanupErr);
       }
     }
-      
+  }
+
   // default Detox teardown
   await globalTeardown();
 
-  // parallel file cleanups
-  await Promise.all([cleanupUserdata()]);
+  // parallel file cleanups and force close any lingering connections
+  await Promise.all([cleanupUserdata(), forceGarbageCollection()]);
 };
+
+async function forceGarbageCollection() {
+  try {
+    global.gc?.();
+  } catch {
+    // Silent cleanup
+  }
+}
 
 async function initDetox() {
   if (detox.session.unsafe_earlyTeardown) {
