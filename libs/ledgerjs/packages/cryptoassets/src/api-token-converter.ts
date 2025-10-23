@@ -12,6 +12,7 @@ import {
   convertSuiTokens,
   convertAptCoinTokens,
   convertAptFaTokens,
+  convertHederaTokens,
 } from "./legacy/legacy-utils";
 import {
   AlgorandASAToken,
@@ -28,6 +29,7 @@ import type { SuiToken } from "./data/sui";
 import type { Vip180Token } from "./data/vip180";
 import type { TonJettonToken } from "./data/ton-jetton";
 import type { SPLToken } from "./data/spl";
+import type { HederaToken } from "./data/hedera";
 
 export interface ApiTokenData {
   id: string;
@@ -133,25 +135,35 @@ export function convertApiToken(apiToken: ApiTokenData): TokenCurrency | undefin
       ];
       return convertCardanoNativeTokens(cardanoData);
     }
-    case "stellar": {
-      const parts = contractAddress.split(":");
-      const assetCode = parts[0] || ticker;
-      const assetIssuer = parts[1] || contractAddress;
+    case "asset": {
+      // Stellar tokens use "asset" as standard
+      const assetCode = ticker;
+      const assetIssuer = contractAddress;
 
       const stellarData: StellarToken = [assetCode, assetIssuer, "stellar", name, magnitude];
       return convertStellarTokens(stellarData);
     }
     case "coin": {
-      const aptCoinData: AptosToken = [id, ticker, name, contractAddress, magnitude, delisted];
-      return convertAptCoinTokens(aptCoinData);
+      // "coin" standard is used by both Sui and Aptos tokens
+      const parentCurrencyId = id.split("/")[0];
+
+      if (parentCurrencyId === "sui") {
+        const suiData: SuiToken = [id, name, ticker, contractAddress, magnitude, ""];
+        return convertSuiTokens(suiData);
+      } else {
+        // Aptos coin tokens
+        const aptCoinData: AptosToken = [id, ticker, name, contractAddress, magnitude, delisted];
+        return convertAptCoinTokens(aptCoinData);
+      }
     }
     case "fungible_asset": {
+      // Aptos fungible asset tokens
       const aptFaData: AptosFAToken = [id, ticker, name, contractAddress, magnitude, delisted];
       return convertAptFaTokens(aptFaData);
     }
-    case "sui": {
-      const suiData: SuiToken = [id, name, ticker, contractAddress, magnitude, ""];
-      return convertSuiTokens(suiData);
+    case "hts": {
+      const htsData: HederaToken = [id, contractAddress, name, ticker, "hedera", magnitude, false];
+      return convertHederaTokens(htsData);
     }
     default:
       return undefined;

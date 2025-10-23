@@ -14,14 +14,15 @@ describe("convertApiToken", () => {
 
       const result = convertApiToken(apiToken);
 
-      expect(result).toBeDefined();
-      expect(result?.type).toBe("TokenCurrency");
-      expect(result?.id).toBe("ethereum/erc20/usdc");
-      expect(result?.contractAddress).toBe("0xA0b86a33E6441E6e96481a83b9ceaaA8d547B8cf");
-      expect(result?.ticker).toBe("USDC");
-      expect(result?.name).toBe("USD Coin");
-      expect(result?.parentCurrency?.id).toBe("ethereum");
-      expect(result?.tokenType).toBe("erc20");
+      expect(result).toMatchObject({
+        type: "TokenCurrency",
+        id: "ethereum/erc20/usdc",
+        contractAddress: "0xA0b86a33E6441E6e96481a83b9ceaaA8d547B8cf",
+        ticker: "USDC",
+        name: "USD Coin",
+        parentCurrency: expect.objectContaining({ id: "ethereum" }),
+        tokenType: "erc20",
+      });
     });
 
     it("should convert BEP20 token correctly", () => {
@@ -36,10 +37,11 @@ describe("convertApiToken", () => {
 
       const result = convertApiToken(apiToken);
 
-      expect(result).toBeDefined();
-      expect(result?.type).toBe("TokenCurrency");
-      expect(result?.parentCurrency?.id).toBe("bsc");
-      expect(result?.tokenType).toBe("bep20");
+      expect(result).toMatchObject({
+        type: "TokenCurrency",
+        parentCurrency: expect.objectContaining({ id: "bsc" }),
+        tokenType: "bep20",
+      });
     });
   });
 
@@ -56,10 +58,11 @@ describe("convertApiToken", () => {
 
       const result = convertApiToken(apiToken);
 
-      expect(result).toBeDefined();
-      expect(result?.type).toBe("TokenCurrency");
-      expect(result?.parentCurrency?.id).toBe("solana");
-      expect(result?.tokenType).toBe("spl");
+      expect(result).toMatchObject({
+        type: "TokenCurrency",
+        parentCurrency: expect.objectContaining({ id: "solana" }),
+        tokenType: "spl",
+      });
     });
   });
 
@@ -76,10 +79,11 @@ describe("convertApiToken", () => {
 
       const result = convertApiToken(apiToken);
 
-      expect(result).toBeDefined();
-      expect(result?.type).toBe("TokenCurrency");
-      expect(result?.parentCurrency?.id).toBe("ton");
-      expect(result?.tokenType).toBe("jetton");
+      expect(result).toMatchObject({
+        type: "TokenCurrency",
+        parentCurrency: expect.objectContaining({ id: "ton" }),
+        tokenType: "jetton",
+      });
     });
   });
 
@@ -96,11 +100,12 @@ describe("convertApiToken", () => {
 
       const result = convertApiToken(apiToken);
 
-      expect(result).toBeDefined();
-      expect(result?.type).toBe("TokenCurrency");
-      expect(result?.id).toBe("algorand/asa/31566704");
-      expect(result?.parentCurrency?.id).toBe("algorand");
-      expect(result?.tokenType).toBe("asa");
+      expect(result).toMatchObject({
+        type: "TokenCurrency",
+        id: "algorand/asa/31566704",
+        parentCurrency: expect.objectContaining({ id: "algorand" }),
+        tokenType: "asa",
+      });
     });
   });
 
@@ -117,11 +122,12 @@ describe("convertApiToken", () => {
 
       const result = convertApiToken(apiToken);
 
-      expect(result).toBeDefined();
-      expect(result?.type).toBe("TokenCurrency");
-      expect(result?.id).toBe("multiversx/esdt/USDC-c76f1f");
-      expect(result?.parentCurrency?.id).toBe("elrond");
-      expect(result?.tokenType).toBe("esdt");
+      expect(result).toMatchObject({
+        type: "TokenCurrency",
+        id: "multiversx/esdt/USDC-c76f1f",
+        parentCurrency: expect.objectContaining({ id: "elrond" }),
+        tokenType: "esdt",
+      });
     });
   });
 
@@ -138,11 +144,12 @@ describe("convertApiToken", () => {
 
       const result = convertApiToken(apiToken);
 
-      expect(result).toBeDefined();
-      expect(result?.type).toBe("TokenCurrency");
-      expect(result?.id).toBe("tron/trc20/usdt");
-      expect(result?.parentCurrency?.id).toBe("tron");
-      expect(result?.tokenType).toBe("trc20");
+      expect(result).toMatchObject({
+        type: "TokenCurrency",
+        id: "tron/trc20/usdt",
+        parentCurrency: expect.objectContaining({ id: "tron" }),
+        tokenType: "trc20",
+      });
     });
 
     it("should convert TRC10 token correctly", () => {
@@ -157,11 +164,12 @@ describe("convertApiToken", () => {
 
       const result = convertApiToken(apiToken);
 
-      expect(result).toBeDefined();
-      expect(result?.type).toBe("TokenCurrency");
-      expect(result?.id).toBe("tron/trc10/1002000");
-      expect(result?.parentCurrency?.id).toBe("tron");
-      expect(result?.tokenType).toBe("trc10");
+      expect(result).toMatchObject({
+        type: "TokenCurrency",
+        id: "tron/trc10/1002000",
+        parentCurrency: expect.objectContaining({ id: "tron" }),
+        tokenType: "trc10",
+      });
     });
   });
 
@@ -178,11 +186,12 @@ describe("convertApiToken", () => {
 
       const result = convertApiToken(apiToken);
 
-      expect(result).toBeDefined();
-      expect(result?.type).toBe("TokenCurrency");
-      expect(result?.id).toBe("vechain/vip180/vtho");
-      expect(result?.parentCurrency?.id).toBe("vechain");
-      expect(result?.tokenType).toBe("vip180");
+      expect(result).toMatchObject({
+        type: "TokenCurrency",
+        id: "vechain/vip180/vtho",
+        parentCurrency: expect.objectContaining({ id: "vechain" }),
+        tokenType: "vip180",
+      });
     });
   });
 
@@ -199,13 +208,12 @@ describe("convertApiToken", () => {
 
       const result = convertApiToken(apiToken);
 
-      expect(result).toBeDefined();
-      expect(result?.type).toBe("TokenCurrency");
-      expect(result?.id).toBe(
-        "cardano/native/f43a62fdc3965df486de8a0d32fe800963589c41b38946602a0dc53541474958",
-      );
-      expect(result?.parentCurrency?.id).toBe("cardano");
-      expect(result?.tokenType).toBe("native");
+      expect(result).toMatchObject({
+        type: "TokenCurrency",
+        id: "cardano/native/f43a62fdc3965df486de8a0d32fe800963589c41b38946602a0dc53541474958",
+        parentCurrency: expect.objectContaining({ id: "cardano" }),
+        tokenType: "native",
+      });
     });
 
     it("should return undefined for non-cardano native tokens", () => {
@@ -228,22 +236,21 @@ describe("convertApiToken", () => {
     it("should convert Stellar token correctly", () => {
       const apiToken: ApiTokenData = {
         id: "stellar/asset/USDC:GA5ZSEJYB37JRC5AVCIA5MOP4RHTM335X2KGX3IHOJAPP5RE34K4KZVN",
-        contractAddress: "USDC:GA5ZSEJYB37JRC5AVCIA5MOP4RHTM335X2KGX3IHOJAPP5RE34K4KZVN",
+        contractAddress: "GA5ZSEJYB37JRC5AVCIA5MOP4RHTM335X2KGX3IHOJAPP5RE34K4KZVN",
         name: "USD Coin",
         ticker: "USDC",
         units: [{ code: "USDC", name: "USD Coin", magnitude: 7 }],
-        standard: "stellar",
+        standard: "asset",
       };
 
       const result = convertApiToken(apiToken);
 
-      expect(result).toBeDefined();
-      expect(result?.type).toBe("TokenCurrency");
-      expect(result?.id).toBe(
-        "stellar/asset/USDC:GA5ZSEJYB37JRC5AVCIA5MOP4RHTM335X2KGX3IHOJAPP5RE34K4KZVN",
-      );
-      expect(result?.parentCurrency?.id).toBe("stellar");
-      expect(result?.tokenType).toBe("stellar");
+      expect(result).toMatchObject({
+        type: "TokenCurrency",
+        id: "stellar/asset/USDC:GA5ZSEJYB37JRC5AVCIA5MOP4RHTM335X2KGX3IHOJAPP5RE34K4KZVN",
+        parentCurrency: expect.objectContaining({ id: "stellar" }),
+        tokenType: "stellar",
+      });
     });
   });
 
@@ -260,10 +267,11 @@ describe("convertApiToken", () => {
 
       const result = convertApiToken(apiToken);
 
-      expect(result).toBeDefined();
-      expect(result?.type).toBe("TokenCurrency");
-      expect(result?.parentCurrency?.id).toBe("aptos");
-      expect(result?.tokenType).toBe("coin");
+      expect(result).toMatchObject({
+        type: "TokenCurrency",
+        parentCurrency: expect.objectContaining({ id: "aptos" }),
+        tokenType: "coin",
+      });
     });
 
     it("should convert Aptos fungible asset correctly", () => {
@@ -279,30 +287,53 @@ describe("convertApiToken", () => {
 
       const result = convertApiToken(apiToken);
 
-      expect(result).toBeDefined();
-      expect(result?.type).toBe("TokenCurrency");
-      expect(result?.parentCurrency?.id).toBe("aptos");
-      expect(result?.tokenType).toBe("fungible_asset");
+      expect(result).toMatchObject({
+        type: "TokenCurrency",
+        parentCurrency: expect.objectContaining({ id: "aptos" }),
+        tokenType: "fungible_asset",
+      });
     });
   });
 
   describe("Sui tokens", () => {
     it("should convert Sui token correctly", () => {
       const apiToken: ApiTokenData = {
-        id: "sui/sui/0x2::sui::SUI",
+        id: "sui/coin/0x2::sui::SUI",
         contractAddress: "0x2::sui::SUI",
         name: "Sui",
         ticker: "SUI",
         units: [{ code: "SUI", name: "Sui", magnitude: 9 }],
-        standard: "sui",
+        standard: "coin",
       };
 
       const result = convertApiToken(apiToken);
 
-      expect(result).toBeDefined();
-      expect(result?.type).toBe("TokenCurrency");
-      expect(result?.parentCurrency?.id).toBe("sui");
-      expect(result?.tokenType).toBe("sui");
+      expect(result).toMatchObject({
+        type: "TokenCurrency",
+        parentCurrency: expect.objectContaining({ id: "sui" }),
+        tokenType: "sui",
+      });
+    });
+  });
+
+  describe("Hedera tokens", () => {
+    it("should convert Hedera token correctly", () => {
+      const apiToken: ApiTokenData = {
+        id: "hedera/hts/0.0.123",
+        contractAddress: "0.0.123",
+        name: "Test Token",
+        ticker: "TEST",
+        units: [{ code: "TEST", name: "Test Token", magnitude: 8 }],
+        standard: "hts",
+      };
+
+      const result = convertApiToken(apiToken);
+
+      expect(result).toMatchObject({
+        type: "TokenCurrency",
+        parentCurrency: expect.objectContaining({ id: "hedera" }),
+        tokenType: "hts",
+      });
     });
   });
 
@@ -337,8 +368,9 @@ describe("convertApiToken", () => {
 
       const result = convertApiToken(apiToken);
 
-      expect(result).toBeDefined();
-      expect(result?.delisted).toBe(true);
+      expect(result).toMatchObject({
+        delisted: true,
+      });
     });
 
     it("should handle missing units gracefully", () => {
@@ -368,8 +400,9 @@ describe("convertApiToken", () => {
 
       const result = convertApiToken(apiToken);
 
-      expect(result).toBeDefined();
-      expect(result?.id).toBe("cardano/native/policy123asset456");
+      expect(result).toMatchObject({
+        id: "cardano/native/policy123asset456",
+      });
     });
   });
 });
