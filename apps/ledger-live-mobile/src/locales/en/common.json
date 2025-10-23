@@ -7884,7 +7884,7 @@
     "selectAsset": "Select asset",
     "selectNetwork": "Select network",
     "selectAccount": "Select account",
-    "searchPlaceholder": "Search",
+    "searchPlaceholder": "Search by name or address",
     "emptyAssetList": "No assets found",
     "accountCount_one": "{{count}} account",
     "accountCount_other": "{{count}} accounts",
