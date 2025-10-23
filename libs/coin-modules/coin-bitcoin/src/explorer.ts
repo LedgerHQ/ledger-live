@@ -21,6 +21,13 @@ const findCurrencyExplorer = (currency: CryptoCurrency): LedgerExplorer | null |
     console.warn("no explorerId for", currency.id);
   }
 
+  if (currency.id === "bitcoin_regtest") {
+    return {
+      endpoint: getEnv("EXPLORER_REGTEST"),
+      id: "btc_regtest",
+      version: "v4",
+    };
+  }
   return {
     endpoint: getEnv("EXPLORER"),
     id: currency.explorerId ?? currency.id,

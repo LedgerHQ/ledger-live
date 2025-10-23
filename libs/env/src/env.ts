@@ -467,6 +467,11 @@ const envDefinitions = {
     parser: stringParser,
     desc: "Ledger generic explorer API",
   },
+  EXPLORER_REGTEST: {
+    def: "http://localhost:9876",
+    parser: stringParser,
+    desc: "Ledger regtest Bitcoin explorer API",
+  },
   EXPLORER_SATSTACK: {
     def: "http://localhost:20000",
     parser: stringParser,
