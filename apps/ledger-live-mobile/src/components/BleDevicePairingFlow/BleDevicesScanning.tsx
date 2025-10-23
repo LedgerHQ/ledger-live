@@ -102,7 +102,12 @@ export const BleDevicesScanning: React.FC<BleDevicesScanningProps> = ({
                 })
               : t("blePairingFlow.scanning.withoutProductName.title")}
           </Text>
-          <Text color="neutral.c70" textAlign="center" variant="body" fontWeight="medium">
+          <Text
+            color="neutral.c70"
+            variant="body"
+            fontWeight="medium"
+            style={{ marginHorizontal: 24, textAlign: "center" }}
+          >
             {t("blePairingFlow.scanning.description")}
           </Text>
         </Flex>
