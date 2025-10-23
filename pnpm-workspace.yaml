@@ -20,6 +20,7 @@ catalog:
   react-i18next: 13.5.0
   i18next: 23.10.1
   axios: 1.12.2
+  ethers: 6.15.0
   "@reduxjs/toolkit": 2.8.2
   # Singers, Transports and DMK
   "@ledgerhq/context-module": 1.9.0
