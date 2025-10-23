@@ -21,7 +21,7 @@ type DMKTransport = Transport & {
   disconnect: (id?: string) => Promise<void> | void;
 };
 
-export const activeDeviceSessionSubject = new BehaviorSubject<{
+const activeDeviceSessionSubject = new BehaviorSubject<{
   sessionId: string;
   transport: DMKTransport;
 } | null>(null);
@@ -61,7 +61,6 @@ export class DeviceManagementKitHIDTransport extends Transport {
           sessionId: activeDeviceSession.sessionId,
         });
         if (
-          [`usb_${deviceId}`, deviceId].includes(connectedDevice.id) &&
           connectedDevice.type === "USB" &&
           deviceSessionState.deviceStatus !== DeviceStatus.NOT_CONNECTED
         ) {
