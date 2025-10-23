@@ -68,6 +68,7 @@ on:
         description: "The branch which triggered this workflow"
         required: false
         type: string
+        default: develop
       test_filter:
         description: "Filter to execute only test suite spec files according to pattern(s)"
         required: false
