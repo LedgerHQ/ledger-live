@@ -18,7 +18,7 @@
     "@aws-sdk/lib-storage": "3.651.1",
     "@types/express": "4.17.21",
     "@types/fs-extra": "9.0.13",
-    "express": "4.19.2",
+    "express": "4.20.0",
     "fs-extra": "10.1.0",
     "tsup": "7.3.0"
   }
