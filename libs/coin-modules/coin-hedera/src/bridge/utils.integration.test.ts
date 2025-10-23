@@ -1,5 +1,7 @@
 import BigNumber from "bignumber.js";
 import { encodeTokenAccountId } from "@ledgerhq/coin-framework/account";
+import { setCryptoAssetsStore } from "@ledgerhq/coin-framework/crypto-assets/index";
+import { legacyCryptoAssetsStore } from "@ledgerhq/cryptoassets/tokens";
 import { HEDERA_OPERATION_TYPES, HEDERA_TRANSACTION_MODES } from "../constants";
 import { estimateFees } from "../logic/estimateFees";
 import { getMockedAccount, getMockedTokenAccount } from "../test/fixtures/account.fixture";
@@ -23,6 +25,10 @@ import {
 } from "./utils";
 
 describe("utils", () => {
+  beforeAll(() => {
+    setCryptoAssetsStore(legacyCryptoAssetsStore);
+  });
+
   describe("calculateAmount", () => {
     let estimatedFees: Record<"crypto" | "associate", BigNumber>;
 
