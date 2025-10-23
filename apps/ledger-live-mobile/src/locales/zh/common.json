@@ -1073,6 +1073,10 @@
     "HederaAddAccountError" : {
       "title" : "您的账户尚未添加。请再次尝试。"
     },
+    "HederaRecipientInvalidChecksum" : {
+      "title" : "地址校验和无效",
+      "description" : "提供的地址存在无效的校验和。"
+    },
     "HederaInsufficientFundsForAssociation" : {
       "title" : "余额不足",
       "description" : "HBAR 数额不足以支付代币关联费用。至少需要价值 {{requiredWorthInUSD}} 美元的 HBAR。"
@@ -2504,7 +2508,7 @@
       },
       "selectionContinueOnDevice" : "在 {{productName}} 上选择相应选项。",
       "newSeedTitle" : "秘密恢复短语",
-      "newSeedDescription" : "观看这些视频，详细了解秘密恢复短语：",
+      "newSeedDescription" : "您的秘密恢复短语（助记词）无可替代，它掌控着您的所有资产。任何人只要掌握您的助记词，就可以窃取您的资产。如果您丢失了助记词，Ledger 也无能为力。",
       "newSeedContinueOnDevice" : "按照 {{productName}} 上的说明进行操作",
       "recovery" : "务必使用 Ledger 设备生成的秘密恢复短语，最大限度提高资产的安全性。\n\n还没有秘密恢复短语？请使用您的 {{productName}} 生成新的短语。"
     },
@@ -3767,6 +3771,10 @@
       },
       "history" : {
         "title" : "互换历史记录"
+      },
+      "wrongDevice" : {
+        "title" : "Ledger Nano S™ 与 {{provider}} 不兼容",
+        "description" : "Ledger Nano S™ 与 {{provider}} 不兼容。您可以使用 Ledger Nano S Plus™、Ledger Nano X™、Ledger Stax™ 或 Ledger Flex™ 通过 Ledger Live 体验 {{provider}} 的跨链互换"
       },
       "incompatibility" : {
         "explore_compatible_devices" : "浏览兼容设备",
@@ -6478,6 +6486,7 @@
   },
   "sui" : {
     "info" : {
+      "estimatedReward" : "已赚取的奖励",
       "available" : {
         "title" : "可用 SUI",
         "description" : "该数额可自由支配。"
