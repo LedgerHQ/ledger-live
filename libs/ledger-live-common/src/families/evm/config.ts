@@ -933,7 +933,7 @@ const evmConfig: CurrencyLiveConfigDefinition = {
       },
       node: {
         type: "external",
-        uri: "https://mainnet-rpc.monad.xyz",
+        uri: "https://rpc.monad.xyz",
       },
       explorer: {
         type: "etherscan",
