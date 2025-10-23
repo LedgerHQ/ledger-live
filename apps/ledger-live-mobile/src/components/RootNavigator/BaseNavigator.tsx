@@ -1,100 +1,42 @@
-import React, { useMemo } from "react";
-import {
-  createStackNavigator,
-  CardStyleInterpolators,
-  TransitionPresets,
-  StackNavigationOptions,
-} from "@react-navigation/stack";
-import { useTranslation } from "react-i18next";
-import { RouteProp, useRoute } from "@react-navigation/native";
-import { useTheme } from "styled-components/native";
-import { useSelector } from "react-redux";
+import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { Button, IconsLegacy } from "@ledgerhq/native-ui";
-import { ScreenName, NavigatorName } from "~/const";
-import * as families from "~/families";
-import OperationDetails from "~/screens/OperationDetails";
-import PairDevices from "~/screens/PairDevices";
-import EditDeviceName from "~/screens/EditDeviceName";
-import ScanRecipient from "~/screens/SendFunds/ScanRecipient";
-import Main from "./MainNavigator";
-import { ErrorHeaderInfo } from "./BaseOnboardingNavigator";
-import SettingsNavigator from "./SettingsNavigator";
-import BuyDeviceNavigator from "./BuyDeviceNavigator";
-import ReceiveFundsNavigator from "./ReceiveFundsNavigator";
-import SendFundsNavigator from "./SendFundsNavigator";
-import SignMessageNavigator from "./SignMessageNavigator";
-import SignTransactionNavigator from "./SignTransactionNavigator";
-import FreezeNavigator from "./FreezeNavigator";
-import UnfreezeNavigator from "./UnfreezeNavigator";
-import ClaimRewardsNavigator from "./ClaimRewardsNavigator";
-import ExchangeLiveAppNavigator from "./ExchangeLiveAppNavigator";
-import CardLiveAppNavigator from "./CardLiveAppNavigator";
-import EarnLiveAppNavigator from "./EarnLiveAppNavigator";
-import PlatformExchangeNavigator from "./PlatformExchangeNavigator";
-import AccountSettingsNavigator from "./AccountSettingsNavigator";
-import PasswordAddFlowNavigator from "./PasswordAddFlowNavigator";
-import PasswordModifyFlowNavigator from "./PasswordModifyFlowNavigator";
-import SwapNavigator from "./SwapNavigator";
-import NotificationCenterNavigator from "./NotificationCenterNavigator";
-import AnalyticsAllocation from "~/screens/Analytics/Allocation";
-import AnalyticsOperations from "~/screens/Analytics/Operations";
-import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
-import Account from "~/screens/Account";
-import ReadOnlyAccount from "~/screens/Account/ReadOnly/ReadOnlyAccount";
-import TransparentHeaderNavigationOptions from "~/navigation/TransparentHeaderNavigationOptions";
-import styles from "~/navigation/styles";
-import StepHeader from "../StepHeader";
-import PortfolioHistory from "~/screens/Portfolio/PortfolioHistory";
-import RequestAccountNavigator from "./RequestAccountNavigator";
-import VerifyAccount from "~/screens/VerifyAccount";
-import { LiveApp } from "~/screens/Platform";
-import AccountsNavigator from "./AccountsNavigator";
-import MarketNavigator from "LLM/features/Market/Navigator";
+import { RouteProp, useRoute } from "@react-navigation/native";
 import {
-  BleDevicePairingFlow,
-  bleDevicePairingFlowHeaderOptions,
-} from "~/screens/BleDevicePairingFlow";
-import PostBuyDeviceScreen from "LLM/features/Reborn/screens/PostBuySuccess";
-import { useNoNanoBuyNanoWallScreenOptions } from "~/context/NoNanoBuyNanoWall";
-import PostBuyDeviceSetupNanoWallScreen from "~/screens/PostBuyDeviceSetupNanoWallScreen";
-import CurrencySettings from "~/screens/Settings/CryptoAssets/Currencies/CurrencySettings";
-import WalletConnectLiveAppNavigator from "./WalletConnectLiveAppNavigator";
-import CustomImageNavigator from "./CustomImageNavigator";
-import PostOnboardingNavigator from "./PostOnboardingNavigator";
-import { readOnlyModeEnabledSelector } from "~/reducers/settings";
-import { hasNoAccountsSelector } from "~/reducers/accounts";
-import { BaseNavigatorStackParamList } from "./types/BaseNavigator";
-import DeviceConnect, { deviceConnectHeaderOptions } from "~/screens/DeviceConnect";
-import NoFundsFlowNavigator from "./NoFundsFlowNavigator";
-import StakeFlowNavigator from "./StakeFlowNavigator";
-import { RecoverPlayer } from "~/screens/Protect/Player";
-import { RedirectToOnboardingRecoverFlowScreen } from "~/screens/Protect/RedirectToOnboardingRecoverFlow";
+  CardStyleInterpolators,
+  createStackNavigator,
+  StackNavigationOptions,
+  TransitionPresets,
+} from "@react-navigation/stack";
+import MarketNavigator from "LLM/features/Market/Navigator";
+import React, { useMemo } from "react";
+import { useTranslation } from "react-i18next";
+import { register } from "react-native-bundle-splitter";
+import { useSelector } from "react-redux";
+import { useTheme } from "styled-components/native";
 import { NavigationHeaderBackButton } from "~/components/NavigationHeaderBackButton";
+import { NavigatorName, ScreenName } from "~/const";
+import { useNoNanoBuyNanoWallScreenOptions } from "~/context/NoNanoBuyNanoWall";
+import * as families from "~/families";
+import { getStakeLabelLocaleBased } from "~/helpers/getStakeLabelLocaleBased";
+import { getReceiveStackOptions } from "~/logic/getReceiveStackOptions";
+import TransparentHeaderNavigationOptions from "~/navigation/TransparentHeaderNavigationOptions";
+import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
+import styles from "~/navigation/styles";
+import { hasNoAccountsSelector } from "~/reducers/accounts";
+import { readOnlyModeEnabledSelector } from "~/reducers/settings";
+import { bleDevicePairingFlowHeaderOptions } from "~/screens/BleDevicePairingFlow";
+import { deviceConnectHeaderOptions } from "~/screens/DeviceConnect";
 import {
   NavigationHeaderCloseButton,
   NavigationHeaderCloseButtonAdvanced,
 } from "../NavigationHeaderCloseButton";
 import { RootDrawer } from "../RootDrawer/RootDrawer";
-import EditTransactionNavigator from "~/families/evm/EditTransactionFlow/EditTransactionNavigator";
 import { DrawerProps } from "../RootDrawer/types";
-import AnalyticsOptInPromptNavigator from "./AnalyticsOptInPromptNavigator";
-import LandingPagesNavigator from "./LandingPagesNavigator";
-import FirmwareUpdateScreen from "~/screens/FirmwareUpdate";
-import EditCurrencyUnits from "~/screens/Settings/CryptoAssets/Currencies/EditCurrencyUnits";
-import CustomErrorNavigator from "./CustomErrorNavigator";
-import WalletSyncNavigator from "LLM/features/WalletSync/WalletSyncNavigator";
-import ModularDrawerNavigator from "LLM/features/ModularDrawer/ModularDrawerNavigator";
-import { LedgerSyncDeepLinkHandler } from "LLM/features/WalletSync/LedgerSyncDeepLinkHandler";
-import Web3HubNavigator from "LLM/features/Web3Hub/Navigator";
-import { useFeature } from "@ledgerhq/live-common/featureFlags/index";
-import AddAccountsV2Navigator from "LLM/features/Accounts/Navigator";
-import DeviceSelectionNavigator from "LLM/features/DeviceSelection/Navigator";
-import AssetSelectionNavigator from "LLM/features/AssetSelection/Navigator";
-import AssetsListNavigator from "LLM/features/Assets/Navigator";
-import FeesNavigator from "./FeesNavigator";
-import { getStakeLabelLocaleBased } from "~/helpers/getStakeLabelLocaleBased";
-import { getReceiveStackOptions } from "~/logic/getReceiveStackOptions";
-import SignRawTransactionNavigator from "./SignRawTransactionNavigator";
+import StepHeader from "../StepHeader";
+import { ErrorHeaderInfo } from "./BaseOnboardingNavigator";
+import Main from "./MainNavigator";
+import { BaseNavigatorStackParamList } from "./types/BaseNavigator";
+import ReadOnlyAccount from "~/screens/Account/ReadOnly/ReadOnlyAccount";
 
 const Stack = createStackNavigator<BaseNavigatorStackParamList>();
 
@@ -128,7 +70,7 @@ export default function BaseNavigator() {
         <Stack.Screen name={NavigatorName.Main} component={Main} options={{ headerShown: false }} />
         <Stack.Screen
           name={NavigatorName.BuyDevice}
-          component={BuyDeviceNavigator}
+          component={register({ loader: () => import("./BuyDeviceNavigator") })}
           options={{
             headerShown: false,
             cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS,
@@ -136,12 +78,16 @@ export default function BaseNavigator() {
         />
         <Stack.Screen
           name={ScreenName.NoDeviceWallScreen}
-          component={PostBuyDeviceSetupNanoWallScreen}
+          component={register({
+            loader: () => import("~/screens/PostBuyDeviceSetupNanoWallScreen"),
+          })}
           {...noNanoBuyNanoWallScreenOptions}
         />
         <Stack.Screen
           name={ScreenName.PostBuyDeviceSetupNanoWallScreen}
-          component={PostBuyDeviceSetupNanoWallScreen}
+          component={register({
+            loader: () => import("~/screens/PostBuyDeviceSetupNanoWallScreen"),
+          })}
           options={{
             headerShown: false,
             presentation: "transparentModal",
@@ -157,7 +103,9 @@ export default function BaseNavigator() {
         />
         <Stack.Screen
           name={ScreenName.PostBuyDeviceScreen}
-          component={PostBuyDeviceScreen}
+          component={register({
+            loader: () => import("LLM/features/Reborn/screens/PostBuySuccess"),
+          })}
           options={{
             title: t("postBuyDevice.headerTitle"),
             headerLeft: () => null,
@@ -165,12 +113,14 @@ export default function BaseNavigator() {
         />
         <Stack.Screen
           name={NavigatorName.Settings}
-          component={SettingsNavigator}
+          component={register({ loader: () => import("./SettingsNavigator") })}
           options={{ headerShown: false }}
         />
         <Stack.Screen
           name={ScreenName.CurrencySettings}
-          component={CurrencySettings}
+          component={register({
+            loader: () => import("~/screens/Settings/CryptoAssets/Currencies/CurrencySettings"),
+          })}
           options={({ route }) => ({
             title: route.params.headerTitle,
             headerRight: () => null,
@@ -179,14 +129,16 @@ export default function BaseNavigator() {
         />
         <Stack.Screen
           name={ScreenName.EditCurrencyUnits}
-          component={EditCurrencyUnits}
+          component={register({
+            loader: () => import("~/screens/Settings/CryptoAssets/Currencies/EditCurrencyUnits"),
+          })}
           options={{
             title: t("account.settings.accountUnits.title"),
           }}
         />
         <Stack.Screen
           name={NavigatorName.ReceiveFunds}
-          component={ReceiveFundsNavigator}
+          component={register({ loader: () => import("./ReceiveFundsNavigator") })}
           options={({ route }) =>
             getReceiveStackOptions({
               route,
@@ -197,26 +149,26 @@ export default function BaseNavigator() {
         />
         <Stack.Screen
           name={NavigatorName.SendFunds}
-          component={SendFundsNavigator}
+          component={register({ loader: () => import("./SendFundsNavigator") })}
           options={{ headerShown: false }}
         />
         {web3hub?.enabled ? (
           <Stack.Screen
             name={NavigatorName.Web3Hub}
-            component={Web3HubNavigator}
+            component={register({ loader: () => import("LLM/features/Web3Hub/Navigator") })}
             options={{ headerShown: false }}
           />
         ) : null}
         <Stack.Screen
           name={ScreenName.PlatformApp}
-          component={LiveApp}
+          component={register({ loader: () => import("~/screens/Platform/LiveApp") })}
           options={{
             headerStyle: styles.headerNoShadow,
           }}
         />
         <Stack.Screen
           name={ScreenName.Recover}
-          component={RecoverPlayer}
+          component={register({ loader: () => import("~/screens/Protect/Player") })}
           options={{
             headerStyle: styles.headerNoShadow,
           }}
@@ -224,7 +176,7 @@ export default function BaseNavigator() {
         />
         <Stack.Screen
           name={NavigatorName.SignMessage}
-          component={SignMessageNavigator}
+          component={register({ loader: () => import("./SignMessageNavigator") })}
           options={{ headerShown: false }}
           listeners={({ route }) => ({
             beforeRemove: () => {
@@ -237,7 +189,7 @@ export default function BaseNavigator() {
         />
         <Stack.Screen
           name={NavigatorName.SignTransaction}
-          component={SignTransactionNavigator}
+          component={register({ loader: () => import("./SignTransactionNavigator") })}
           options={{ headerShown: false }}
           listeners={({ route }) => ({
             beforeRemove: () => {
@@ -247,7 +199,7 @@ export default function BaseNavigator() {
         />
         <Stack.Screen
           name={NavigatorName.SignRawTransaction}
-          component={SignRawTransactionNavigator}
+          component={register({ loader: () => import("./SignRawTransactionNavigator") })}
           options={{ headerShown: false }}
           listeners={({ route }) => ({
             beforeRemove: () => {
@@ -257,32 +209,32 @@ export default function BaseNavigator() {
         />
         <Stack.Screen
           name={NavigatorName.Swap}
-          component={SwapNavigator}
+          component={register({ loader: () => import("./SwapNavigator") })}
           options={{ headerShown: false }}
         />
         <Stack.Screen
           name={NavigatorName.Freeze}
-          component={FreezeNavigator}
+          component={register({ loader: () => import("./FreezeNavigator") })}
           options={{ headerShown: false }}
         />
         <Stack.Screen
           name={NavigatorName.Unfreeze}
-          component={UnfreezeNavigator}
+          component={register({ loader: () => import("./UnfreezeNavigator") })}
           options={{ headerShown: false }}
         />
         <Stack.Screen
           name={NavigatorName.ClaimRewards}
-          component={ClaimRewardsNavigator}
+          component={register({ loader: () => import("./ClaimRewardsNavigator") })}
           options={{ headerShown: false }}
         />
         <Stack.Screen
           name={NavigatorName.Fees}
-          component={FeesNavigator}
+          component={register({ loader: () => import("./FeesNavigator") })}
           options={{ headerShown: false }}
         />
         <Stack.Screen
           name={NavigatorName.RequestAccount}
-          component={RequestAccountNavigator}
+          component={register({ loader: () => import("./RequestAccountNavigator") })}
           options={{
             headerShown: false,
           }}
@@ -292,7 +244,7 @@ export default function BaseNavigator() {
         />
         <Stack.Screen
           name={ScreenName.VerifyAccount}
-          component={VerifyAccount}
+          component={register({ loader: () => import("~/screens/VerifyAccount") })}
           options={{
             headerLeft: () => null,
             title: t("transfer.receive.headerTitle"),
@@ -303,31 +255,31 @@ export default function BaseNavigator() {
         />
         <Stack.Screen
           name={NavigatorName.Card}
-          component={CardLiveAppNavigator}
+          component={register({ loader: () => import("./CardLiveAppNavigator") })}
           options={{ headerShown: false }}
           {...noNanoBuyNanoWallScreenOptions}
         />
         <Stack.Screen
           name={NavigatorName.Exchange}
-          component={ExchangeLiveAppNavigator}
+          component={register({ loader: () => import("./ExchangeLiveAppNavigator") })}
           options={{ headerShown: false }}
           {...noNanoBuyNanoWallScreenOptions}
         />
         <Stack.Screen
           name={NavigatorName.PlatformExchange}
-          component={PlatformExchangeNavigator}
+          component={register({ loader: () => import("./PlatformExchangeNavigator") })}
           options={{ headerShown: false }}
           {...noNanoBuyNanoWallScreenOptions}
         />
         <Stack.Screen
           name={NavigatorName.CustomError}
-          component={CustomErrorNavigator}
+          component={register({ loader: () => import("./CustomErrorNavigator") })}
           options={{ title: "" }}
           {...noNanoBuyNanoWallScreenOptions}
         />
         <Stack.Screen
           name={ScreenName.OperationDetails}
-          component={OperationDetails}
+          component={register({ loader: () => import("~/screens/OperationDetails") })}
           options={({ route }) => {
             if (route.params?.isSubOperation) {
               return {
@@ -368,12 +320,12 @@ export default function BaseNavigator() {
         />
         <Stack.Screen
           name={NavigatorName.AccountSettings}
-          component={AccountSettingsNavigator}
+          component={register({ loader: () => import("~/screens/AccountSettings") })}
           options={{ headerShown: false }}
         />
         <Stack.Screen
           name={ScreenName.PairDevices}
-          component={PairDevices}
+          component={register({ loader: () => import("~/screens/PairDevices") })}
           options={({ navigation, route }) => ({
             title: "",
             headerRight: () => {
@@ -386,7 +338,7 @@ export default function BaseNavigator() {
         />
         <Stack.Screen
           name={ScreenName.EditDeviceName}
-          component={EditDeviceName}
+          component={register({ loader: () => import("~/screens/EditDeviceName") })}
           options={{
             title: t("EditDeviceName.title"),
             headerLeft: () => null,
@@ -395,17 +347,17 @@ export default function BaseNavigator() {
         />
         <Stack.Screen
           name={NavigatorName.PasswordAddFlow}
-          component={PasswordAddFlowNavigator}
+          component={register({ loader: () => import("./PasswordAddFlowNavigator") })}
           options={{ headerShown: false }}
         />
         <Stack.Screen
           name={NavigatorName.PasswordModifyFlow}
-          component={PasswordModifyFlowNavigator}
+          component={register({ loader: () => import("./PasswordModifyFlowNavigator") })}
           options={{ headerShown: false }}
         />
         <Stack.Screen
           name={ScreenName.AnalyticsAllocation}
-          component={AnalyticsAllocation}
+          component={register({ loader: () => import("~/screens/Analytics/Allocation") })}
           options={{
             title: t("analytics.allocation.title"),
             headerRight: () => null,
@@ -414,7 +366,7 @@ export default function BaseNavigator() {
         />
         <Stack.Screen
           name={ScreenName.AnalyticsOperations}
-          component={AnalyticsOperations}
+          component={register({ loader: () => import("~/screens/Analytics/Operations") })}
           options={{
             title: t("analytics.operations.title"),
             headerRight: () => null,
@@ -422,23 +374,29 @@ export default function BaseNavigator() {
         />
         <Stack.Screen
           name={NavigatorName.WalletSync}
-          component={WalletSyncNavigator}
+          component={register({
+            loader: () => import("LLM/features/WalletSync/WalletSyncNavigator"),
+          })}
           options={{ headerShown: false }}
         />
         <Stack.Screen
           name={ScreenName.LedgerSyncDeepLinkHandler}
-          component={LedgerSyncDeepLinkHandler}
+          component={register({
+            loader: () => import("LLM/features/WalletSync/LedgerSyncDeepLinkHandler"),
+          })}
           options={{ headerShown: false }}
         />
         <Stack.Screen
           name={NavigatorName.ModularDrawer}
-          component={ModularDrawerNavigator}
+          component={register({
+            loader: () => import("LLM/features/ModularDrawer/ModularDrawerNavigator"),
+          })}
           options={{ headerShown: false }}
         />
         {MarketNavigator({ Stack })}
         <Stack.Screen
           name={ScreenName.PortfolioOperationHistory}
-          component={PortfolioHistory}
+          component={register({ loader: () => import("~/screens/Portfolio/PortfolioHistory") })}
           options={{
             headerTitle: t("analytics.operations.title"),
             headerRight: () => null,
@@ -451,7 +409,7 @@ export default function BaseNavigator() {
         />
         <Stack.Screen
           name={ScreenName.ScanRecipient}
-          component={ScanRecipient}
+          component={register({ loader: () => import("~/screens/SendFunds/ScanRecipient") })}
           options={{
             ...TransparentHeaderNavigationOptions,
             title: t("send.scan.title"),
@@ -467,7 +425,7 @@ export default function BaseNavigator() {
         />
         <Stack.Screen
           name={NavigatorName.WalletConnect}
-          component={WalletConnectLiveAppNavigator}
+          component={register({ loader: () => import("./WalletConnectLiveAppNavigator") })}
           options={{
             headerShown: false,
           }}
@@ -475,17 +433,17 @@ export default function BaseNavigator() {
         />
         <Stack.Screen
           name={NavigatorName.NotificationCenter}
-          component={NotificationCenterNavigator}
+          component={register({ loader: () => import("./NotificationCenterNavigator") })}
           options={{ headerShown: false }}
         />
         <Stack.Screen
           name={NavigatorName.Accounts}
-          component={AccountsNavigator}
+          component={register({ loader: () => import("./AccountsNavigator") })}
           options={{ headerShown: false }}
         />
         <Stack.Screen
           name={NavigatorName.CustomImage}
-          component={CustomImageNavigator}
+          component={register({ loader: () => import("./CustomImageNavigator") })}
           options={{ headerShown: false }}
         />
         {/* This is a freaking hack… */}
@@ -508,17 +466,17 @@ export default function BaseNavigator() {
         })}
         <Stack.Screen
           name={ScreenName.BleDevicePairingFlow}
-          component={BleDevicePairingFlow}
+          component={register({ loader: () => import("~/screens/BleDevicePairingFlow") })}
           options={bleDevicePairingFlowHeaderOptions}
         />
         <Stack.Screen
           name={NavigatorName.PostOnboarding}
           options={{ headerShown: false }}
-          component={PostOnboardingNavigator}
+          component={register({ loader: () => import("./PostOnboardingNavigator") })}
         />
         <Stack.Screen
           name={ScreenName.DeviceConnect}
-          component={DeviceConnect}
+          component={register({ loader: () => import("~/screens/DeviceConnect") })}
           options={useMemo(() => deviceConnectHeaderOptions(t), [t])}
           listeners={({ route }) => ({
             beforeRemove: () => handleOnClose(route),
@@ -527,11 +485,13 @@ export default function BaseNavigator() {
         <Stack.Screen
           name={ScreenName.RedirectToOnboardingRecoverFlow}
           options={{ ...TransparentHeaderNavigationOptions, title: "" }}
-          component={RedirectToOnboardingRecoverFlowScreen}
+          component={register({
+            loader: () => import("~/screens/Protect/RedirectToOnboardingRecoverFlow"),
+          })}
         />
         <Stack.Screen
           name={NavigatorName.Earn}
-          component={EarnLiveAppNavigator}
+          component={register({ loader: () => import("./EarnLiveAppNavigator") })}
           options={props => {
             const stakeLabel = getStakeLabelLocaleBased();
             const intent = props.route?.params?.params?.intent;
@@ -548,7 +508,7 @@ export default function BaseNavigator() {
         />
         <Stack.Screen
           name={NavigatorName.NoFundsFlow}
-          component={NoFundsFlowNavigator}
+          component={register({ loader: () => import("./NoFundsFlowNavigator") })}
           options={{
             ...TransparentHeaderNavigationOptions,
             headerRight: () => <NavigationHeaderCloseButtonAdvanced preferDismiss={false} />,
@@ -557,7 +517,7 @@ export default function BaseNavigator() {
         />
         <Stack.Screen
           name={NavigatorName.StakeFlow}
-          component={StakeFlowNavigator}
+          component={register({ loader: () => import("./StakeFlowNavigator") })}
           options={{
             ...TransparentHeaderNavigationOptions,
             headerRight: () => <NavigationHeaderCloseButtonAdvanced preferDismiss={false} />,
@@ -567,21 +527,23 @@ export default function BaseNavigator() {
         <Stack.Screen
           name={NavigatorName.EvmEditTransaction}
           options={{ headerShown: false }}
-          component={EditTransactionNavigator}
+          component={register({
+            loader: () => import("~/families/evm/EditTransactionFlow/EditTransactionNavigator"),
+          })}
         />
         <Stack.Screen
           name={NavigatorName.AnalyticsOptInPrompt}
           options={{ headerShown: false }}
-          component={AnalyticsOptInPromptNavigator}
+          component={register({ loader: () => import("./AnalyticsOptInPromptNavigator") })}
         />
         <Stack.Screen
           name={NavigatorName.LandingPages}
           options={{ headerShown: false }}
-          component={LandingPagesNavigator}
+          component={register({ loader: () => import("./LandingPagesNavigator") })}
         />
         <Stack.Screen
           name={ScreenName.FirmwareUpdate}
-          component={FirmwareUpdateScreen}
+          component={register({ loader: () => import("~/screens/FirmwareUpdate") })}
           options={{
             gestureEnabled: false,
             headerTitle: () => null,
@@ -591,26 +553,26 @@ export default function BaseNavigator() {
         />
         <Stack.Screen
           name={NavigatorName.AddAccounts}
-          component={AddAccountsV2Navigator}
+          component={register({ loader: () => import("LLM/features/Accounts/Navigator") })}
           options={{ headerShown: false }}
         />
 
         <Stack.Screen
           name={NavigatorName.DeviceSelection}
-          component={DeviceSelectionNavigator}
+          component={register({ loader: () => import("LLM/features/DeviceSelection/Navigator") })}
           options={{ headerShown: false }}
         />
 
         <Stack.Screen
           name={NavigatorName.AssetSelection}
-          component={AssetSelectionNavigator}
+          component={register({ loader: () => import("LLM/features/AssetSelection/Navigator") })}
           options={{ headerShown: false }}
         />
 
         {llmAccountListUI?.enabled && (
           <Stack.Screen
             name={NavigatorName.Assets}
-            component={AssetsListNavigator}
+            component={register({ loader: () => import("LLM/features/Assets/Navigator") })}
             options={{ headerShown: false }}
           />
         )}

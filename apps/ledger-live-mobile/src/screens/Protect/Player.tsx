@@ -105,3 +105,5 @@ export function RecoverPlayer({ navigation, route }: Props) {
     </Flex>
   );
 }
+
+export default RecoverPlayer;
