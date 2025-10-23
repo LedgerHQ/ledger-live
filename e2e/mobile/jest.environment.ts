@@ -132,6 +132,42 @@ export default class TestEnvironment extends DetoxEnvironment {
     Object.assign(detox.config, { device: targetDevice });
   }
 
+  async teardown() {
+    try {
+      // Clean up WebSocket connections
+      if (this.global.webSocket?.wss) {
+        this.global.webSocket.wss.close();
+        this.global.webSocket.wss = undefined;
+      }
+      if (this.global.webSocket?.ws && this.global.webSocket.ws.readyState !== 3) {
+        this.global.webSocket.ws.close();
+        this.global.webSocket.ws = undefined;
+      }
+
+      // Complete RxJS subjects
+      if (this.global.webSocket?.e2eBridgeServer && !this.global.webSocket.e2eBridgeServer.closed) {
+        this.global.webSocket.e2eBridgeServer.complete();
+      }
+
+      // Clean up proxy subscriptions
+      if (this.global.proxySubscriptions) {
+        for (const [_, { subscription }] of this.global.proxySubscriptions) {
+          if (subscription?.unsubscribe && !subscription.closed) {
+            subscription.unsubscribe();
+          }
+        }
+        this.global.proxySubscriptions.clear();
+      }
+
+      // Force garbage collection
+      global.gc?.();
+    } catch (error) {
+      log.info("Error during environment teardown :", error);
+    }
+
+    await super.teardown();
+  }
+
   async handleTestEvent(event: Circus.Event, state: Circus.State) {
     await super.handleTestEvent(event, state);
 
