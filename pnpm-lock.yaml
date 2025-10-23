@@ -87,9 +87,9 @@ patchedDependencies:
   buffer@6.0.3:
     hash: 2xnca52oxhztvr7iaoovwclcze
     path: patches/buffer@6.0.3.patch
-  detox@20.41.2:
+  detox@20.44.0:
     hash: ts4oyvdbjwm6lbbrchqcrro4ge
-    path: patches/detox@20.41.2.patch
+    path: patches/detox@20.44.0.patch
   react-native-bundle-visualizer@3.1.3:
     hash: fgdd2c4kpymhnfnsaf5bc33xwi
     path: patches/react-native-bundle-visualizer@3.1.3.patch
@@ -1600,11 +1600,11 @@ importers:
         specifier: 2.8.5
         version: 2.8.5
       detox:
-        specifier: 20.41.2
-        version: 20.41.2(patch_hash=ts4oyvdbjwm6lbbrchqcrro4ge)(jest@29.7.0(ts-node@10.9.2(@swc/core@1.4.11)(typescript@5.4.3)))
+        specifier: 20.44.0
+        version: 20.44.0(patch_hash=ts4oyvdbjwm6lbbrchqcrro4ge)(jest@29.7.0(ts-node@10.9.2(@swc/core@1.4.11)(typescript@5.4.3)))
       detox-allure2-adapter:
         specifier: 1.0.0-alpha.18
-        version: 1.0.0-alpha.18(detox@20.41.2(patch_hash=ts4oyvdbjwm6lbbrchqcrro4ge)(jest@29.7.0(ts-node@10.9.2(@swc/core@1.4.11)(typescript@5.4.3))))(jest-allure2-reporter@2.0.0(@jest/reporters@29.7.0)(jest-docblock@29.7.0)(jest-environment-node@29.7.0)(jest@29.7.0(ts-node@10.9.2(@swc/core@1.4.11)(typescript@5.4.3))))
+        version: 1.0.0-alpha.18(detox@20.44.0(patch_hash=ts4oyvdbjwm6lbbrchqcrro4ge)(jest@29.7.0(ts-node@10.9.2(@swc/core@1.4.11)(typescript@5.4.3))))(jest-allure2-reporter@2.0.0(@jest/reporters@29.7.0)(jest-docblock@29.7.0)(jest-environment-node@29.7.0)(jest@29.7.0(ts-node@10.9.2(@swc/core@1.4.11)(typescript@5.4.3))))
       eslint-import-resolver-typescript:
         specifier: 3.6.1
         version: 3.6.1(@typescript-eslint/parser@6.21.0(eslint@8.57.0)(typescript@5.4.3))(eslint-plugin-import@2.29.1)(eslint@8.57.0)
@@ -2020,11 +2020,11 @@ importers:
         specifier: 2.8.5
         version: 2.8.5
       detox:
-        specifier: 20.41.2
-        version: 20.41.2(patch_hash=ts4oyvdbjwm6lbbrchqcrro4ge)(@jest/types@29.6.3)(jest@29.7.0(ts-node@10.9.2(typescript@5.4.3)))
+        specifier: 20.44.0
+        version: 20.44.0(patch_hash=ts4oyvdbjwm6lbbrchqcrro4ge)(@jest/types@29.6.3)(jest@29.7.0(ts-node@10.9.2(typescript@5.4.3)))
       detox-allure2-adapter:
-        specifier: 1.0.0-alpha.12
-        version: 1.0.0-alpha.12(detox@20.41.2(patch_hash=ts4oyvdbjwm6lbbrchqcrro4ge)(@jest/types@29.6.3)(jest@29.7.0(ts-node@10.9.2(typescript@5.4.3))))(jest-allure2-reporter@2.0.0(@jest/reporters@29.7.0)(@jest/types@29.6.3)(jest-docblock@29.7.0)(jest-environment-node@29.7.0)(jest@29.7.0(ts-node@10.9.2(typescript@5.4.3))))
+        specifier: 1.0.0-alpha.35
+        version: 1.0.0-alpha.35(detox@20.44.0(patch_hash=ts4oyvdbjwm6lbbrchqcrro4ge)(@jest/types@29.6.3)(jest@29.7.0(ts-node@10.9.2(typescript@5.4.3))))(jest-allure2-reporter@2.2.8(@jest/reporters@29.7.0)(@jest/types@29.6.3)(jest-docblock@29.7.0)(jest-environment-node@29.7.0)(jest@29.7.0(ts-node@10.9.2(typescript@5.4.3))))
       eslint:
         specifier: 8.57.0
         version: 8.57.0
@@ -2050,8 +2050,8 @@ importers:
         specifier: 29.7.0
         version: 29.7.0(ts-node@10.9.2(typescript@5.4.3))
       jest-allure2-reporter:
-        specifier: 2.0.0
-        version: 2.0.0(@jest/reporters@29.7.0)(@jest/types@29.6.3)(jest-docblock@29.7.0)(jest-environment-node@29.7.0)(jest@29.7.0(ts-node@10.9.2(typescript@5.4.3)))
+        specifier: 2.2.8
+        version: 2.2.8(@jest/reporters@29.7.0)(@jest/types@29.6.3)(jest-docblock@29.7.0)(jest-environment-node@29.7.0)(jest@29.7.0(ts-node@10.9.2(typescript@5.4.3)))
       jest-docblock:
         specifier: 29.7.0
         version: 29.7.0
@@ -2059,8 +2059,8 @@ importers:
         specifier: 29.7.0
         version: 29.7.0
       jest-metadata:
-        specifier: 1.5.3
-        version: 1.5.3(@jest/reporters@29.7.0)(@jest/types@29.6.3)(jest-environment-node@29.7.0)(jest@29.7.0(ts-node@10.9.2(typescript@5.4.3)))
+        specifier: 1.6.0
+        version: 1.6.0(@jest/reporters@29.7.0)(@jest/types@29.6.3)(jest-environment-node@29.7.0)(jest@29.7.0(ts-node@10.9.2(typescript@5.4.3)))
       lodash:
         specifier: 4.17.21
         version: 4.17.21
@@ -21401,6 +21401,10 @@ packages:
     peerDependencies:
       '@playwright/test': '>=1.36.0'
 
+  allure-store@1.1.2:
+    resolution: {integrity: sha512-8C4Hh3twQx39Poj4URHwaiHVPk9e8cQEQil9/9GWmYlzaq/QPeF/tOWNzpGGROufCXHKDyLMafLF0hZmA46Lqg==}
+    engines: {node: '>=16.14.0'}
+
   anser@1.4.10:
     resolution: {integrity: sha512-hCv9AqTQ8ycjpSd3upOJd7vFwW1JaoYQ7tpham03GJ1ca8/65rqn0RpaWpItOAd6ylW9wAw6luXYPJIyPFVOww==}
 
@@ -24277,13 +24281,6 @@ packages:
     resolution: {integrity: sha512-aBzdj76lueB6uUst5iAs7+0H/oOjqI5D16XUWxlWMIMROhcM0rfsNVk93zTngq1dDNpoXRr++Sus7ETAExppAQ==}
     hasBin: true
 
-  detox-allure2-adapter@1.0.0-alpha.12:
-    resolution: {integrity: sha512-rmPZ+Xcw/0bAI/g2qHTYPVclun2xcgf0/yr0ShEY6miTINsirG2jhVkvJ/kFD2KxukJZK+9qvETjyRABzzi9BQ==}
-    engines: {node: '>=16.14.0'}
-    peerDependencies:
-      detox: 20.14.2-smoke.0 || >20.14.5
-      jest-allure2-reporter: ^2.0.0-beta.15
-
   detox-allure2-adapter@1.0.0-alpha.18:
     resolution: {integrity: sha512-dg8gwloFkkRvZUeaG1IBmye5cZNb2iaeM8a/wlue6J50I8nnCmg6Ly/d8CChBhCRC/0kDtxO1s7qE9pH0iKxXQ==}
     engines: {node: '>=16.14.0'}
@@ -24291,8 +24288,15 @@ packages:
       detox: 20.14.2-smoke.0 || >20.14.5
       jest-allure2-reporter: ^2.0.0-beta.15
 
-  detox@20.41.2:
-    resolution: {integrity: sha512-3sXHGCeKP4LUrHsuHD/dJqP0JfLLIam5MbSAVlFm2oKSa1NZsGKs/VjDMJ1+N6YEPJGNOdCrtkh/SIfke6TgGg==}
+  detox-allure2-adapter@1.0.0-alpha.35:
+    resolution: {integrity: sha512-khVLCjlaogEmozBh2fqWlGAowYlei7KElqRw4bAaacq3xCTdiohaW5bBwAvZ1Zrpe/xPf9kp0/AGLthVwPz/dg==}
+    engines: {node: '>=16.14.0'}
+    peerDependencies:
+      detox: '>=20.41.0'
+      jest-allure2-reporter: ^2.2.7
+
+  detox@20.44.0:
+    resolution: {integrity: sha512-d7WbZUbFqTMjtr8eOF1Vz8zhjIIrD/MAScwB3wNfF/5BAiBEyOXwbtURq5HfJzscbNRQimkPPojGPZu3eY6R8g==}
     engines: {node: '>=14'}
     hasBin: true
     peerDependencies:
@@ -27656,6 +27660,18 @@ packages:
       jest-docblock:
         optional: true
 
+  jest-allure2-reporter@2.2.8:
+    resolution: {integrity: sha512-q4oMDGGs0RrY13r2InYCiM8i/GLuHDEdaGO6u+5vX4jOWw9BstTRyiKKmCK8hZUVXnb+QbYmBdxm3LfGJMLjag==}
+    engines: {node: '>=16.20.0'}
+    peerDependencies:
+      jest: '>=27.2.5'
+      jest-docblock: '>=27.2.5'
+    peerDependenciesMeta:
+      jest:
+        optional: true
+      jest-docblock:
+        optional: true
+
   jest-canvas-mock@2.5.2:
     resolution: {integrity: sha512-vgnpPupjOL6+L5oJXzxTxFrlGEIbHdZqFU+LFNdtLxZ3lRDCl17FlTMM7IatoRQkrcyOTMlDinjUguqmQ6bR2A==}
 
@@ -27929,6 +27945,30 @@ packages:
 
   jest-metadata@1.5.3:
     resolution: {integrity: sha512-tFNJqxeI6k2RvwRXqK0RxFb62DRkmQrCntVJ5zhyGvQdOPBHufgPd/cpYgHKbyL3pkBT32ut91Nk2BqpaK7YeA==}
+    engines: {node: '>=16.14.0'}
+    peerDependencies:
+      '@jest/environment': '>=27.2.5'
+      '@jest/reporters': '>=27.2.5'
+      '@jest/types': '>=27.2.5'
+      jest: '>=27.2.5'
+      jest-environment-jsdom: '>=27.2.5'
+      jest-environment-node: '>=27.2.5'
+    peerDependenciesMeta:
+      '@jest/environment':
+        optional: true
+      '@jest/reporters':
+        optional: true
+      '@jest/types':
+        optional: true
+      jest:
+        optional: true
+      jest-environment-jsdom:
+        optional: true
+      jest-environment-node:
+        optional: true
+
+  jest-metadata@1.6.0:
+    resolution: {integrity: sha512-penaOkD6tN0Vpqd+9xnbS+iYSLqaZpsx08gz44mOBvyNGBHPglnNKOsBMr3cbIe0bFYGlnouDy4N5SfLtNgVBQ==}
     engines: {node: '>=16.14.0'}
     peerDependencies:
       '@jest/environment': '>=27.2.5'
@@ -29050,6 +29090,9 @@ packages:
   logform@2.7.0:
     resolution: {integrity: sha512-TFYA4jnP7PVbmlBIfhlSe+WKxs9dklXMTEGcBCIvLhE/Tn3H6Gk1norupVW7m5Cnd4bLcr08AytbyV/xj7f/kQ==}
     engines: {node: '>= 12.0.0'}
+
+  logkitten@1.3.3:
+    resolution: {integrity: sha512-6oHaRYZonwU2MV0uJ6m27ur73lX18jqOoNmDPvcrt7Uh/vy+XZoIMi/u+k4hj06Nuv8VVVfyUj68SALqSxzIaA==}
 
   logkitty@0.7.1:
     resolution: {integrity: sha512-/3ER20CTTbahrCrpYfPn7Xavv9diBROZpoXGVZDWMw4b/X4uuUwAC0ki85tgsdMRONURyIJbcOvS94QsUBYPbQ==}
@@ -33273,6 +33316,10 @@ packages:
     resolution: {integrity: sha512-L0jRsrPpjdckP3oPug3/VxNKt2trR8TcabrM6FOAAlvC/9Phcmm+cuAgTlxBqdBR1WJx7Naj9WHw+aOmheSVbw==}
     engines: {node: '>= 12.13.0'}
 
+  screenkitten@1.0.0:
+    resolution: {integrity: sha512-VoCP8VPx2h9zURzUbG5KpPIHkgVXGCt264HWhyK9AHDzmUwFh31Tcfz4VKyuEinDDyjwCZFv94RL4iBeKvaCOQ==}
+    engines: {node: '>=16.14.0'}
+
   scrypt-js@2.0.4:
     resolution: {integrity: sha512-4KsaGcPnuhtCZQCxFxN3GVYIhKFPTdLd8PLC552XwbMndtD0cjRFAhDuuydXQ0h08ZfPgzqe6EKHozpuH74iDw==}
 
@@ -35700,6 +35747,10 @@ packages:
 
   vfile@5.3.7:
     resolution: {integrity: sha512-r7qlzkgErKjobAmyNIkkSpizsFPYiUPuJb5pNW1RB4JcYVZhs4lIbVqk8XPk033CV/1z8ss5pkax8SuhGpcG8g==}
+
+  videokitten@1.0.1:
+    resolution: {integrity: sha512-YXgnWFg5ylBTP687k6LMHGnYPNPZpzsyHuJwv6Q+DbKrAXz/zk9pZOnlc63ROp7LUGVPZvBT867F2YRTdey89A==}
+    engines: {node: '>=16.14.0'}
 
   viem@2.37.4:
     resolution: {integrity: sha512-1ig5O6l1wJmaw3yrSrUimjRLQEZon2ymTqSDjdntu6Bry1/tLC2GClXeS3SiCzrifpLxzfCLQWDITYVTBA10KA==}
@@ -38964,7 +39015,7 @@ snapshots:
       '@babel/core': 7.27.1
       '@babel/helper-compilation-targets': 7.27.2
       '@babel/helper-plugin-utils': 7.27.1
-      debug: 4.3.4
+      debug: 4.4.1
       lodash.debounce: 4.0.8
       resolve: 1.22.8
     transitivePeerDependencies:
@@ -40311,7 +40362,7 @@ snapshots:
       '@babel/parser': 7.28.4
       '@babel/template': 7.27.2
       '@babel/types': 7.28.4
-      debug: 4.3.4
+      debug: 4.4.1
     transitivePeerDependencies:
       - supports-color
 
@@ -40323,7 +40374,7 @@ snapshots:
       '@babel/parser': 7.28.4
       '@babel/template': 7.27.2
       '@babel/types': 7.28.4
-      debug: 4.3.4
+      debug: 4.4.1
     transitivePeerDependencies:
       - supports-color
 
@@ -41530,7 +41581,7 @@ snapshots:
 
   '@electron/get@2.0.3':
     dependencies:
-      debug: 4.3.4
+      debug: 4.4.1
       env-paths: 2.2.1
       fs-extra: 8.1.0
       got: 11.8.5
@@ -42928,7 +42979,7 @@ snapshots:
       '@expo/image-utils': 0.6.5
       '@expo/json-file': 9.1.4
       '@react-native/normalize-colors': 0.76.9
-      debug: 4.3.4
+      debug: 4.4.1
       fs-extra: 9.1.0
       resolve-from: 5.0.0
       semver: 7.7.1
@@ -42968,7 +43019,7 @@ snapshots:
   '@expo/server@0.5.3':
     dependencies:
       abort-controller: 3.0.0
-      debug: 4.3.4
+      debug: 4.4.1
       source-map-support: 0.5.21
       undici: 6.19.2
     transitivePeerDependencies:
@@ -45168,7 +45219,7 @@ snapshots:
 
   '@kwsites/file-exists@1.1.1':
     dependencies:
-      debug: 4.3.4
+      debug: 4.4.1
     transitivePeerDependencies:
       - supports-color
 
@@ -52071,7 +52122,7 @@ snapshots:
 
   '@storybook/react-docgen-typescript-plugin@1.0.6--canary.9.0c3f3b7.0(typescript@5.4.3)(webpack@5.94.0(metro@0.81.5))':
     dependencies:
-      debug: 4.3.4
+      debug: 4.4.1
       endent: 2.1.0
       find-cache-dir: 3.3.2
       flat-cache: 3.2.0
@@ -53878,7 +53929,7 @@ snapshots:
       '@typescript-eslint/scope-manager': 5.62.0
       '@typescript-eslint/type-utils': 5.62.0(eslint@8.57.0)(typescript@5.4.3)
       '@typescript-eslint/utils': 5.62.0(eslint@8.57.0)(typescript@5.4.3)
-      debug: 4.3.4
+      debug: 4.4.1
       eslint: 8.57.0
       graphemer: 1.4.0
       ignore: 5.3.1
@@ -53943,7 +53994,7 @@ snapshots:
       '@typescript-eslint/scope-manager': 5.62.0
       '@typescript-eslint/types': 5.62.0
       '@typescript-eslint/typescript-estree': 5.62.0(typescript@4.9.5)
-      debug: 4.3.4
+      debug: 4.4.1
       eslint: 8.57.0
     optionalDependencies:
       typescript: 4.9.5
@@ -53955,7 +54006,7 @@ snapshots:
       '@typescript-eslint/scope-manager': 5.62.0
       '@typescript-eslint/types': 5.62.0
       '@typescript-eslint/typescript-estree': 5.62.0(typescript@5.4.3)
-      debug: 4.3.4
+      debug: 4.4.1
       eslint: 8.57.0
     optionalDependencies:
       typescript: 5.4.3
@@ -54020,7 +54071,7 @@ snapshots:
     dependencies:
       '@typescript-eslint/typescript-estree': 5.62.0(typescript@5.4.3)
       '@typescript-eslint/utils': 5.62.0(eslint@8.57.0)(typescript@5.4.3)
-      debug: 4.3.4
+      debug: 4.4.1
       eslint: 8.57.0
       tsutils: 3.21.0(typescript@5.4.3)
     optionalDependencies:
@@ -54032,7 +54083,7 @@ snapshots:
     dependencies:
       '@typescript-eslint/typescript-estree': 6.21.0(typescript@5.4.3)
       '@typescript-eslint/utils': 6.21.0(eslint@8.57.0)(typescript@5.4.3)
-      debug: 4.3.4
+      debug: 4.4.1
       eslint: 8.57.0
       ts-api-utils: 1.3.0(typescript@5.4.3)
     optionalDependencies:
@@ -54044,7 +54095,7 @@ snapshots:
     dependencies:
       '@typescript-eslint/typescript-estree': 6.21.0(typescript@5.6.3)
       '@typescript-eslint/utils': 6.21.0(eslint@8.57.0)(typescript@5.6.3)
-      debug: 4.3.4
+      debug: 4.4.1
       eslint: 8.57.0
       ts-api-utils: 1.3.0(typescript@5.6.3)
     optionalDependencies:
@@ -54062,7 +54113,7 @@ snapshots:
     dependencies:
       '@typescript-eslint/types': 5.62.0
       '@typescript-eslint/visitor-keys': 5.62.0
-      debug: 4.3.4
+      debug: 4.4.1
       globby: 11.1.0
       is-glob: 4.0.3
       semver: 7.7.1
@@ -54076,7 +54127,7 @@ snapshots:
     dependencies:
       '@typescript-eslint/types': 5.62.0
       '@typescript-eslint/visitor-keys': 5.62.0
-      debug: 4.3.4
+      debug: 4.4.1
       globby: 11.1.0
       is-glob: 4.0.3
       semver: 7.7.1
@@ -54090,7 +54141,7 @@ snapshots:
     dependencies:
       '@typescript-eslint/types': 5.62.0
       '@typescript-eslint/visitor-keys': 5.62.0
-      debug: 4.3.4
+      debug: 4.4.1
       globby: 11.1.0
       is-glob: 4.0.3
       semver: 7.7.1
@@ -54119,7 +54170,7 @@ snapshots:
     dependencies:
       '@typescript-eslint/types': 6.21.0
       '@typescript-eslint/visitor-keys': 6.21.0
-      debug: 4.3.4
+      debug: 4.4.1
       globby: 11.1.0
       is-glob: 4.0.3
       minimatch: 9.0.3
@@ -54134,7 +54185,7 @@ snapshots:
     dependencies:
       '@typescript-eslint/types': 6.21.0
       '@typescript-eslint/visitor-keys': 6.21.0
-      debug: 4.3.4
+      debug: 4.4.1
       globby: 11.1.0
       is-glob: 4.0.3
       minimatch: 9.0.3
@@ -54149,7 +54200,7 @@ snapshots:
     dependencies:
       '@typescript-eslint/types': 8.30.1
       '@typescript-eslint/visitor-keys': 8.30.1
-      debug: 4.3.4
+      debug: 4.4.1
       fast-glob: 3.3.2
       is-glob: 4.0.3
       minimatch: 9.0.5
@@ -54915,16 +54966,16 @@ snapshots:
     optionalDependencies:
       expect: 27.5.1
 
-  '@wix-pilot/detox@1.0.13(@wix-pilot/core@3.4.2(expect@27.5.1))(detox@20.41.2(patch_hash=ts4oyvdbjwm6lbbrchqcrro4ge)(@jest/types@29.6.3)(jest@29.7.0(ts-node@10.9.2(typescript@5.4.3))))(expect@27.5.1)':
+  '@wix-pilot/detox@1.0.13(@wix-pilot/core@3.4.2(expect@27.5.1))(detox@20.44.0(patch_hash=ts4oyvdbjwm6lbbrchqcrro4ge)(@jest/types@29.6.3)(jest@29.7.0(ts-node@10.9.2(typescript@5.4.3))))(expect@27.5.1)':
     dependencies:
       '@wix-pilot/core': 3.4.2(expect@27.5.1)
-      detox: 20.41.2(patch_hash=ts4oyvdbjwm6lbbrchqcrro4ge)(@jest/types@29.6.3)(jest@29.7.0(ts-node@10.9.2(typescript@5.4.3)))
+      detox: 20.44.0(patch_hash=ts4oyvdbjwm6lbbrchqcrro4ge)(@jest/types@29.6.3)(jest@29.7.0(ts-node@10.9.2(typescript@5.4.3)))
       expect: 27.5.1
 
-  '@wix-pilot/detox@1.0.13(@wix-pilot/core@3.4.2(expect@27.5.1))(detox@20.41.2(patch_hash=ts4oyvdbjwm6lbbrchqcrro4ge)(jest@29.7.0(ts-node@10.9.2(@swc/core@1.4.11)(typescript@5.4.3))))(expect@27.5.1)':
+  '@wix-pilot/detox@1.0.13(@wix-pilot/core@3.4.2(expect@27.5.1))(detox@20.44.0(patch_hash=ts4oyvdbjwm6lbbrchqcrro4ge)(jest@29.7.0(ts-node@10.9.2(@swc/core@1.4.11)(typescript@5.4.3))))(expect@27.5.1)':
     dependencies:
       '@wix-pilot/core': 3.4.2(expect@27.5.1)
-      detox: 20.41.2(patch_hash=ts4oyvdbjwm6lbbrchqcrro4ge)(jest@29.7.0(ts-node@10.9.2(@swc/core@1.4.11)(typescript@5.4.3)))
+      detox: 20.44.0(patch_hash=ts4oyvdbjwm6lbbrchqcrro4ge)(jest@29.7.0(ts-node@10.9.2(@swc/core@1.4.11)(typescript@5.4.3)))
       expect: 27.5.1
 
   '@wry/caches@1.0.1':
@@ -55267,7 +55318,7 @@ snapshots:
 
   agent-base@6.0.2:
     dependencies:
-      debug: 4.3.4
+      debug: 4.4.1
     transitivePeerDependencies:
       - supports-color
 
@@ -55360,6 +55411,10 @@ snapshots:
     dependencies:
       '@playwright/test': 1.51.1
       allure-js-commons: 3.2.1(allure-playwright@3.2.1(@playwright/test@1.51.1))
+
+  allure-store@1.1.2:
+    dependencies:
+      properties: 1.2.1
 
   anser@1.4.10: {}
 
@@ -55935,7 +55990,7 @@ snapshots:
       loader-utils: 2.0.4
       make-dir: 3.1.0
       schema-utils: 2.7.1
-      webpack: 5.94.0(webpack-cli@4.10.0)
+      webpack: 5.94.0
 
   babel-loader@9.2.1(@babel/core@7.27.1)(webpack@5.94.0(esbuild@0.19.12)):
     dependencies:
@@ -59010,29 +59065,32 @@ snapshots:
   detect-port@1.5.1:
     dependencies:
       address: 1.2.2
-      debug: 4.3.4
+      debug: 4.4.1
     transitivePeerDependencies:
       - supports-color
 
-  detox-allure2-adapter@1.0.0-alpha.12(detox@20.41.2(patch_hash=ts4oyvdbjwm6lbbrchqcrro4ge)(@jest/types@29.6.3)(jest@29.7.0(ts-node@10.9.2(typescript@5.4.3))))(jest-allure2-reporter@2.0.0(@jest/reporters@29.7.0)(@jest/types@29.6.3)(jest-docblock@29.7.0)(jest-environment-node@29.7.0)(jest@29.7.0(ts-node@10.9.2(typescript@5.4.3)))):
+  detox-allure2-adapter@1.0.0-alpha.18(detox@20.44.0(patch_hash=ts4oyvdbjwm6lbbrchqcrro4ge)(jest@29.7.0(ts-node@10.9.2(@swc/core@1.4.11)(typescript@5.4.3))))(jest-allure2-reporter@2.0.0(@jest/reporters@29.7.0)(jest-docblock@29.7.0)(jest-environment-node@29.7.0)(jest@29.7.0(ts-node@10.9.2(@swc/core@1.4.11)(typescript@5.4.3)))):
     dependencies:
       archiver: 6.0.2
-      detox: 20.41.2(patch_hash=ts4oyvdbjwm6lbbrchqcrro4ge)(@jest/types@29.6.3)(jest@29.7.0(ts-node@10.9.2(typescript@5.4.3)))
-      jest-allure2-reporter: 2.0.0(@jest/reporters@29.7.0)(@jest/types@29.6.3)(jest-docblock@29.7.0)(jest-environment-node@29.7.0)(jest@29.7.0(ts-node@10.9.2(typescript@5.4.3)))
-      tslib: 2.6.2
-
-  detox-allure2-adapter@1.0.0-alpha.18(detox@20.41.2(patch_hash=ts4oyvdbjwm6lbbrchqcrro4ge)(jest@29.7.0(ts-node@10.9.2(@swc/core@1.4.11)(typescript@5.4.3))))(jest-allure2-reporter@2.0.0(@jest/reporters@29.7.0)(jest-docblock@29.7.0)(jest-environment-node@29.7.0)(jest@29.7.0(ts-node@10.9.2(@swc/core@1.4.11)(typescript@5.4.3)))):
-    dependencies:
-      archiver: 6.0.2
-      detox: 20.41.2(patch_hash=ts4oyvdbjwm6lbbrchqcrro4ge)(jest@29.7.0(ts-node@10.9.2(@swc/core@1.4.11)(typescript@5.4.3)))
+      detox: 20.44.0(patch_hash=ts4oyvdbjwm6lbbrchqcrro4ge)(jest@29.7.0(ts-node@10.9.2(@swc/core@1.4.11)(typescript@5.4.3)))
       jest-allure2-reporter: 2.0.0(@jest/reporters@29.7.0)(jest-docblock@29.7.0)(jest-environment-node@29.7.0)(jest@29.7.0(ts-node@10.9.2(@swc/core@1.4.11)(typescript@5.4.3)))
       tslib: 2.6.2
 
-  detox@20.41.2(patch_hash=ts4oyvdbjwm6lbbrchqcrro4ge)(@jest/types@29.6.3)(jest@29.7.0(ts-node@10.9.2(typescript@5.4.3))):
+  detox-allure2-adapter@1.0.0-alpha.35(detox@20.44.0(patch_hash=ts4oyvdbjwm6lbbrchqcrro4ge)(@jest/types@29.6.3)(jest@29.7.0(ts-node@10.9.2(typescript@5.4.3))))(jest-allure2-reporter@2.2.8(@jest/reporters@29.7.0)(@jest/types@29.6.3)(jest-docblock@29.7.0)(jest-environment-node@29.7.0)(jest@29.7.0(ts-node@10.9.2(typescript@5.4.3)))):
+    dependencies:
+      archiver: 6.0.2
+      detox: 20.44.0(patch_hash=ts4oyvdbjwm6lbbrchqcrro4ge)(@jest/types@29.6.3)(jest@29.7.0(ts-node@10.9.2(typescript@5.4.3)))
+      jest-allure2-reporter: 2.2.8(@jest/reporters@29.7.0)(@jest/types@29.6.3)(jest-docblock@29.7.0)(jest-environment-node@29.7.0)(jest@29.7.0(ts-node@10.9.2(typescript@5.4.3)))
+      logkitten: 1.3.3
+      screenkitten: 1.0.0
+      tslib: 2.6.2
+      videokitten: 1.0.1
+
+  detox@20.44.0(patch_hash=ts4oyvdbjwm6lbbrchqcrro4ge)(@jest/types@29.6.3)(jest@29.7.0(ts-node@10.9.2(typescript@5.4.3))):
     dependencies:
       '@jest/reporters': 29.7.0
       '@wix-pilot/core': 3.4.2(expect@27.5.1)
-      '@wix-pilot/detox': 1.0.13(@wix-pilot/core@3.4.2(expect@27.5.1))(detox@20.41.2(patch_hash=ts4oyvdbjwm6lbbrchqcrro4ge)(@jest/types@29.6.3)(jest@29.7.0(ts-node@10.9.2(typescript@5.4.3))))(expect@27.5.1)
+      '@wix-pilot/detox': 1.0.13(@wix-pilot/core@3.4.2(expect@27.5.1))(detox@20.44.0(patch_hash=ts4oyvdbjwm6lbbrchqcrro4ge)(@jest/types@29.6.3)(jest@29.7.0(ts-node@10.9.2(typescript@5.4.3))))(expect@27.5.1)
       ajv: 8.17.1
       bunyan: 1.8.15
       bunyan-debug-stream: 3.1.0(bunyan@1.8.15)
@@ -59085,11 +59143,11 @@ snapshots:
       - supports-color
       - utf-8-validate
 
-  detox@20.41.2(patch_hash=ts4oyvdbjwm6lbbrchqcrro4ge)(jest@29.7.0(ts-node@10.9.2(@swc/core@1.4.11)(typescript@5.4.3))):
+  detox@20.44.0(patch_hash=ts4oyvdbjwm6lbbrchqcrro4ge)(jest@29.7.0(ts-node@10.9.2(@swc/core@1.4.11)(typescript@5.4.3))):
     dependencies:
       '@jest/reporters': 29.7.0
       '@wix-pilot/core': 3.4.2(expect@27.5.1)
-      '@wix-pilot/detox': 1.0.13(@wix-pilot/core@3.4.2(expect@27.5.1))(detox@20.41.2(patch_hash=ts4oyvdbjwm6lbbrchqcrro4ge)(jest@29.7.0(ts-node@10.9.2(@swc/core@1.4.11)(typescript@5.4.3))))(expect@27.5.1)
+      '@wix-pilot/detox': 1.0.13(@wix-pilot/core@3.4.2(expect@27.5.1))(detox@20.44.0(patch_hash=ts4oyvdbjwm6lbbrchqcrro4ge)(jest@29.7.0(ts-node@10.9.2(@swc/core@1.4.11)(typescript@5.4.3))))(expect@27.5.1)
       ajv: 8.17.1
       bunyan: 1.8.15
       bunyan-debug-stream: 3.1.0(bunyan@1.8.15)
@@ -59853,7 +59911,7 @@ snapshots:
 
   esbuild-register@3.5.0(esbuild@0.18.20):
     dependencies:
-      debug: 4.3.4
+      debug: 4.4.1
       esbuild: 0.18.20
     transitivePeerDependencies:
       - supports-color
@@ -61368,7 +61426,7 @@ snapshots:
 
   extract-zip@2.0.1:
     dependencies:
-      debug: 4.3.4
+      debug: 4.4.1
       get-stream: 5.2.0
       yauzl: 2.10.0
     optionalDependencies:
@@ -61518,7 +61576,7 @@ snapshots:
     dependencies:
       loader-utils: 2.0.4
       schema-utils: 3.3.0
-      webpack: 5.94.0(webpack-cli@4.10.0)
+      webpack: 5.94.0
 
   file-selector@0.6.0:
     dependencies:
@@ -62155,7 +62213,7 @@ snapshots:
     dependencies:
       basic-ftp: 5.0.5
       data-uri-to-buffer: 6.0.2
-      debug: 4.3.4
+      debug: 4.4.1
     transitivePeerDependencies:
       - supports-color
 
@@ -62793,7 +62851,7 @@ snapshots:
       pretty-error: 4.0.0
       tapable: 2.2.1
     optionalDependencies:
-      webpack: 5.94.0(webpack-cli@4.10.0)
+      webpack: 5.94.0
 
   htmlparser2@6.1.0:
     dependencies:
@@ -62859,7 +62917,7 @@ snapshots:
     dependencies:
       '@tootallnate/once': 1.1.2
       agent-base: 6.0.2
-      debug: 4.3.4
+      debug: 4.4.1
     transitivePeerDependencies:
       - supports-color
 
@@ -62867,7 +62925,7 @@ snapshots:
     dependencies:
       '@tootallnate/once': 2.0.0
       agent-base: 6.0.2
-      debug: 4.3.4
+      debug: 4.4.1
     transitivePeerDependencies:
       - supports-color
 
@@ -62933,7 +62991,7 @@ snapshots:
   https-proxy-agent@4.0.0:
     dependencies:
       agent-base: 5.1.1
-      debug: 4.3.4
+      debug: 4.4.1
     transitivePeerDependencies:
       - supports-color
 
@@ -63706,34 +63764,6 @@ snapshots:
       - bufferutil
       - utf-8-validate
 
-  jest-allure2-reporter@2.0.0(@jest/reporters@29.7.0)(@jest/types@29.6.3)(jest-docblock@29.7.0)(jest-environment-node@29.7.0)(jest@29.7.0(ts-node@10.9.2(typescript@5.4.3))):
-    dependencies:
-      bunyamin: 1.6.3
-      ci-info: 3.9.0
-      handlebars: 4.7.8
-      import-from: 4.0.0
-      jest-metadata: 1.5.3(@jest/reporters@29.7.0)(@jest/types@29.6.3)(jest-environment-node@29.7.0)(jest@29.7.0(ts-node@10.9.2(typescript@5.4.3)))
-      lodash: 4.17.21
-      node-fetch: 2.7.0
-      pkg-up: 3.1.0
-      properties: 1.2.1
-      stacktrace-js: 2.0.2
-      strip-ansi: 6.0.1
-      tslib: 2.6.2
-      uuid: 8.3.2
-    optionalDependencies:
-      jest: 29.7.0(ts-node@10.9.2(typescript@5.4.3))
-      jest-docblock: 29.7.0
-    transitivePeerDependencies:
-      - '@jest/environment'
-      - '@jest/reporters'
-      - '@jest/types'
-      - '@types/bunyan'
-      - bunyan
-      - encoding
-      - jest-environment-jsdom
-      - jest-environment-node
-
   jest-allure2-reporter@2.0.0(@jest/reporters@29.7.0)(jest-docblock@29.7.0)(jest-environment-node@29.7.0)(jest@29.7.0(ts-node@10.9.2(@swc/core@1.4.11)(typescript@5.4.3))):
     dependencies:
       bunyamin: 1.6.3
@@ -63751,6 +63781,34 @@ snapshots:
       uuid: 8.3.2
     optionalDependencies:
       jest: 29.7.0(ts-node@10.9.2(@swc/core@1.4.11)(typescript@5.4.3))
+      jest-docblock: 29.7.0
+    transitivePeerDependencies:
+      - '@jest/environment'
+      - '@jest/reporters'
+      - '@jest/types'
+      - '@types/bunyan'
+      - bunyan
+      - encoding
+      - jest-environment-jsdom
+      - jest-environment-node
+
+  jest-allure2-reporter@2.2.8(@jest/reporters@29.7.0)(@jest/types@29.6.3)(jest-docblock@29.7.0)(jest-environment-node@29.7.0)(jest@29.7.0(ts-node@10.9.2(typescript@5.4.3))):
+    dependencies:
+      allure-store: 1.1.2
+      bunyamin: 1.6.3
+      handlebars: 4.7.8
+      import-from: 4.0.0
+      jest-metadata: 1.6.0(@jest/reporters@29.7.0)(@jest/types@29.6.3)(jest-environment-node@29.7.0)(jest@29.7.0(ts-node@10.9.2(typescript@5.4.3)))
+      lodash: 4.17.21
+      node-fetch: 2.7.0
+      pkg-up: 3.1.0
+      properties: 1.2.1
+      stacktrace-js: 2.0.2
+      strip-ansi: 6.0.1
+      tslib: 2.6.2
+      uuid: 8.3.2
+    optionalDependencies:
+      jest: 29.7.0(ts-node@10.9.2(typescript@5.4.3))
       jest-docblock: 29.7.0
     transitivePeerDependencies:
       - '@jest/environment'
@@ -65046,23 +65104,6 @@ snapshots:
       jest-util: 29.7.0
       pretty-format: 29.7.0
 
-  jest-environment-emit@1.0.8(@jest/types@29.6.3)(jest-environment-node@29.7.0)(jest@29.7.0(ts-node@10.9.2(typescript@5.4.3))):
-    dependencies:
-      bunyamin: 1.6.3(bunyan@2.0.5)
-      bunyan: 2.0.5
-      bunyan-debug-stream: 3.1.0(bunyan@2.0.5)
-      funpermaproxy: 1.1.0
-      lodash.merge: 4.6.2
-      node-ipc: 9.2.1
-      strip-ansi: 6.0.1
-      tslib: 2.6.2
-    optionalDependencies:
-      '@jest/types': 29.6.3
-      jest: 29.7.0(ts-node@10.9.2(typescript@5.4.3))
-      jest-environment-node: 29.7.0
-    transitivePeerDependencies:
-      - '@types/bunyan'
-
   jest-environment-emit@1.0.8(jest-environment-node@29.7.0)(jest@29.7.0(ts-node@10.9.2(@swc/core@1.4.11)(typescript@5.4.3))):
     dependencies:
       bunyamin: 1.6.3(bunyan@2.0.5)
@@ -65354,25 +65395,6 @@ snapshots:
       slash: 3.0.0
       stack-utils: 2.0.6
 
-  jest-metadata@1.5.3(@jest/reporters@29.7.0)(@jest/types@29.6.3)(jest-environment-node@29.7.0)(jest@29.7.0(ts-node@10.9.2(typescript@5.4.3))):
-    dependencies:
-      bunyamin: 1.6.3
-      funpermaproxy: 1.1.0
-      jest-environment-emit: 1.0.8(@jest/types@29.6.3)(jest-environment-node@29.7.0)(jest@29.7.0(ts-node@10.9.2(typescript@5.4.3)))
-      lodash.merge: 4.6.2
-      lodash.snakecase: 4.1.1
-      node-ipc: 9.2.1
-      strip-ansi: 6.0.1
-      tslib: 2.6.2
-    optionalDependencies:
-      '@jest/reporters': 29.7.0
-      '@jest/types': 29.6.3
-      jest: 29.7.0(ts-node@10.9.2(typescript@5.4.3))
-      jest-environment-node: 29.7.0
-    transitivePeerDependencies:
-      - '@types/bunyan'
-      - bunyan
-
   jest-metadata@1.5.3(@jest/reporters@29.7.0)(jest-environment-node@29.7.0)(jest@29.7.0(ts-node@10.9.2(@swc/core@1.4.11)(typescript@5.4.3))):
     dependencies:
       bunyamin: 1.6.3
@@ -65386,6 +65408,25 @@ snapshots:
     optionalDependencies:
       '@jest/reporters': 29.7.0
       jest: 29.7.0(ts-node@10.9.2(@swc/core@1.4.11)(typescript@5.4.3))
+      jest-environment-node: 29.7.0
+    transitivePeerDependencies:
+      - '@types/bunyan'
+      - bunyan
+
+  jest-metadata@1.6.0(@jest/reporters@29.7.0)(@jest/types@29.6.3)(jest-environment-node@29.7.0)(jest@29.7.0(ts-node@10.9.2(typescript@5.4.3))):
+    dependencies:
+      bunyamin: 1.6.3
+      funpermaproxy: 1.1.0
+      jest-environment-emit: 1.2.0(@jest/types@29.6.3)(jest-environment-node@29.7.0)(jest@29.7.0(ts-node@10.9.2(typescript@5.4.3)))
+      lodash.merge: 4.6.2
+      lodash.snakecase: 4.1.1
+      node-ipc: 9.2.1
+      strip-ansi: 6.0.1
+      tslib: 2.6.2
+    optionalDependencies:
+      '@jest/reporters': 29.7.0
+      '@jest/types': 29.6.3
+      jest: 29.7.0(ts-node@10.9.2(typescript@5.4.3))
       jest-environment-node: 29.7.0
     transitivePeerDependencies:
       - '@types/bunyan'
@@ -66740,7 +66781,7 @@ snapshots:
 
   koa-route@3.2.0:
     dependencies:
-      debug: 4.3.4
+      debug: 4.4.1
       methods: 1.1.2
       path-to-regexp: 1.8.0
     transitivePeerDependencies:
@@ -66748,7 +66789,7 @@ snapshots:
 
   koa-send@5.0.1:
     dependencies:
-      debug: 4.3.4
+      debug: 4.4.1
       http-errors: 1.8.1
       resolve-path: 1.4.0
     transitivePeerDependencies:
@@ -66768,7 +66809,7 @@ snapshots:
       content-disposition: 0.5.4
       content-type: 1.0.5
       cookies: 0.9.1
-      debug: 4.3.4
+      debug: 4.4.1
       delegates: 1.0.0
       depd: 2.0.0
       destroy: 1.2.0
@@ -67253,6 +67294,8 @@ snapshots:
       ms: 2.1.3
       safe-stable-stringify: 2.4.3
       triple-beam: 1.4.1
+
+  logkitten@1.3.3: {}
 
   logkitty@0.7.1:
     dependencies:
@@ -68314,7 +68357,7 @@ snapshots:
   micromark@3.2.0:
     dependencies:
       '@types/debug': 4.1.12
-      debug: 4.3.4
+      debug: 4.4.1
       decode-named-character-reference: 1.0.2
       micromark-core-commonmark: 1.1.0
       micromark-factory-space: 1.1.0
@@ -69589,7 +69632,7 @@ snapshots:
     dependencies:
       '@tootallnate/quickjs-emscripten': 0.23.0
       agent-base: 7.1.3
-      debug: 4.3.4
+      debug: 4.4.1
       get-uri: 6.0.4
       http-proxy-agent: 7.0.2
       https-proxy-agent: 7.0.6
@@ -71000,7 +71043,7 @@ snapshots:
   proxy-agent@6.5.0:
     dependencies:
       agent-base: 7.1.3
-      debug: 4.3.4
+      debug: 4.4.1
       http-proxy-agent: 7.0.2
       https-proxy-agent: 7.0.6
       lru-cache: 7.18.3
@@ -71068,7 +71111,7 @@ snapshots:
   puppeteer-core@2.1.1:
     dependencies:
       '@types/mime-types': 2.1.4
-      debug: 4.3.4
+      debug: 4.4.1
       extract-zip: 1.7.0
       https-proxy-agent: 4.0.0
       mime: 2.6.0
@@ -71278,7 +71321,7 @@ snapshots:
     dependencies:
       '@babel/core': 7.27.1
       '@babel/traverse': 7.27.0
-      '@babel/types': 7.28.2
+      '@babel/types': 7.28.4
       '@types/babel__core': 7.20.5
       '@types/babel__traverse': 7.20.5
       '@types/doctrine': 0.0.9
@@ -73187,6 +73230,10 @@ snapshots:
       ajv-formats: 2.1.1
       ajv-keywords: 5.1.0(ajv@8.17.1)
 
+  screenkitten@1.0.0:
+    dependencies:
+      execa: 5.1.1
+
   scrypt-js@2.0.4: {}
 
   scrypt-js@3.0.1: {}
@@ -73551,7 +73598,7 @@ snapshots:
     dependencies:
       '@kwsites/file-exists': 1.1.1
       '@kwsites/promise-deferred': 1.1.1
-      debug: 4.3.4
+      debug: 4.4.1
     transitivePeerDependencies:
       - supports-color
 
@@ -73559,7 +73606,7 @@ snapshots:
     dependencies:
       '@kwsites/file-exists': 1.1.1
       '@kwsites/promise-deferred': 1.1.1
-      debug: 4.3.4
+      debug: 4.4.1
     transitivePeerDependencies:
       - supports-color
 
@@ -73690,7 +73737,7 @@ snapshots:
   socks-proxy-agent@6.2.1:
     dependencies:
       agent-base: 6.0.2
-      debug: 4.3.4
+      debug: 4.4.1
       socks: 2.8.7
     transitivePeerDependencies:
       - supports-color
@@ -73707,7 +73754,7 @@ snapshots:
   socks-proxy-agent@8.0.5:
     dependencies:
       agent-base: 7.1.3
-      debug: 4.3.4
+      debug: 4.4.1
       socks: 2.8.7
     transitivePeerDependencies:
       - supports-color
@@ -73824,7 +73871,7 @@ snapshots:
 
   spdy-transport@3.0.0:
     dependencies:
-      debug: 4.3.4
+      debug: 4.4.1
       detect-node: 2.1.0
       hpack.js: 2.1.6
       obuf: 1.1.2
@@ -74494,7 +74541,7 @@ snapshots:
 
   sumchecker@3.0.1:
     dependencies:
-      debug: 4.3.4
+      debug: 4.4.1
     transitivePeerDependencies:
       - supports-color
 
@@ -74863,7 +74910,7 @@ snapshots:
       schema-utils: 3.3.0
       serialize-javascript: 6.0.2
       terser: 5.36.0
-      webpack: 5.94.0(webpack-cli@4.10.0)
+      webpack: 5.94.0
     transitivePeerDependencies:
       - metro
 
@@ -76694,6 +76741,10 @@ snapshots:
       unist-util-stringify-position: 3.0.3
       vfile-message: 3.1.4
 
+  videokitten@1.0.1:
+    dependencies:
+      execa: 5.1.1
+
   viem@2.37.4(typescript@5.4.3):
     dependencies:
       '@noble/curves': 1.9.1
@@ -77277,7 +77328,7 @@ snapshots:
       mime-types: 2.1.35
       range-parser: 1.2.1
       schema-utils: 4.2.0
-      webpack: 5.94.0(webpack-cli@4.10.0)
+      webpack: 5.94.0
 
   webpack-dev-middleware@6.1.2(webpack@5.94.0(esbuild@0.19.12)):
     dependencies:
