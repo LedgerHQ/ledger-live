@@ -338,6 +338,8 @@ jobs:
           nohup bash -c '
             echo "🔧 Creating iOS Simulator 2"
             xcrun simctl create "iOS Simulator 2" "iPhone 15"
+            echo "🔧 Creating iOS Simulator 3"
+            xcrun simctl create "iOS Simulator 3" "iPhone 15"
             echo "🛫 Booting simulator..."
             xcrun simctl boot "iOS Simulator" || true
             xcrun simctl bootstatus "iOS Simulator"
@@ -345,6 +347,9 @@ jobs:
             xcrun simctl boot "iOS Simulator 2" || true
             xcrun simctl bootstatus "iOS Simulator 2"
             echo "✅ Simulator 2 is now fully booted"
+            xcrun simctl boot "iOS Simulator 3" || true
+            xcrun simctl bootstatus "iOS Simulator 3"
+            echo "✅ Simulator 3 is now fully booted"
           ' > "$LOG_FILE" 2>&1 &
           echo "ℹ️ Simulator boot started in background."
         shell: bash
@@ -470,11 +475,11 @@ jobs:
         run: |
           echo "status_${{ matrix.shard }}=${{ steps.run-ios.outcome }}" >> $GITHUB_OUTPUT
 
-      - name: Delete iOS Simulator 2
+      - name: Delete iOS Simulators
         if: always()
         run: |
           xcrun simctl delete "iOS Simulator 2"
-          echo "🧹 Deleted iOS Simulator 2"
+          xcrun simctl delete "iOS Simulator 3"
           xcrun simctl list devices | grep 'iOS Simulator' | awk -F '[()]' '{print $2}' | xargs -I {} sh -c 'echo "Deleting simulator: {}"; xcrun simctl delete {} || echo "Failed to delete: {}"'
 
   detox-tests-android:
@@ -493,8 +498,9 @@ jobs:
       AVD_TARGET: google_apis
       AVD_NAME: "Android_Emulator"
       AVD_NAME_2: "Android_Emulator_2"
-      AVD_CORES: 4
-      AVD_RAM_SIZE: 4096M
+      AVD_NAME_3: "Android_Emulator_3"
+      AVD_CORES: 2
+      AVD_RAM_SIZE: 5120M
       AVD_OPTIONS: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
     outputs:
       status: ${{ steps.run-android.outcome }}
@@ -640,7 +646,7 @@ jobs:
         uses: LedgerHQ/ledger-live/tools/actions/composites/cache/download@develop
         id: detox-avd
         with:
-          key: ${{ runner.os }}-detox-avd-${{ env.AVD_NAME_2 }}-${{ env.AVD_PROFILE }}-${{ env.AVD_TARGET }}-${{ env.AVD_API }}-${{ env.AVD_ARCH }}-r2-v8
+          key: ${{ runner.os }}-detox-avd-${{ env.AVD_NAME_3 }}-${{ env.AVD_PROFILE }}-${{ env.AVD_TARGET }}-${{ env.AVD_API }}-${{ env.AVD_ARCH }}-${{ env.AVD_CORES }}-${{ env.AVD_RAM_SIZE }}-r2-v8
           accessKey: "${{ secrets.R2_ACCESS_KEY_ID }}"
           secretKey: "${{ secrets.R2_SECRET_ACCESS_KEY }}"
           bucket: ledger-live-cache
@@ -682,6 +688,23 @@ jobs:
           emulator-options: ${{ env.AVD_OPTIONS }}
           script: ./tools/scripts/wait_emulator_idle.sh
 
+      - name: create third AVD and generate snapshot for caching
+        if: steps.detox-avd.outputs.cache-hit != 'true'
+        uses: reactivecircus/android-emulator-runner@v2
+        id: create-avd-3
+        with:
+          api-level: ${{ env.AVD_API }}
+          arch: ${{ env.AVD_ARCH }}
+          profile: ${{ env.AVD_PROFILE }}
+          target: ${{ env.AVD_TARGET }}
+          avd-name: ${{ env.AVD_NAME_3 }}
+          force-avd-creation: true
+          cores: ${{ env.AVD_CORES }}
+          ram-size: ${{ env.AVD_RAM_SIZE }}
+          disable-linux-hw-accel: false
+          emulator-options: ${{ env.AVD_OPTIONS }}
+          script: ./tools/scripts/wait_emulator_idle.sh
+
       - name: Cache android emulator
         uses: LedgerHQ/ledger-live/tools/actions/composites/cache/upload@develop
         if: steps.detox-avd.outputs.cache-hit != 'true'
@@ -690,7 +713,7 @@ jobs:
             /home/runner/.android/
             /usr/local/lib/android/sdk/emulator/
             /usr/local/lib/android/sdk/system-images/android-${{ env.AVD_API }}/${{ env.AVD_TARGET }}/${{ env.AVD_ARCH }}/
-          key: ${{ runner.os }}-detox-avd-${{ env.AVD_NAME_2 }}-${{ env.AVD_PROFILE }}-${{ env.AVD_TARGET }}-${{ env.AVD_API }}-${{ env.AVD_ARCH }}-r2-v8
+          key: ${{ runner.os }}-detox-avd-${{ env.AVD_NAME_3 }}-${{ env.AVD_PROFILE }}-${{ env.AVD_TARGET }}-${{ env.AVD_API }}-${{ env.AVD_ARCH }}-${{ env.AVD_CORES }}-${{ env.AVD_RAM_SIZE }}-r2-v8
           accessKey: "${{ secrets.R2_ACCESS_KEY_ID }}"
           secretKey: "${{ secrets.R2_SECRET_ACCESS_KEY }}"
           bucket: ledger-live-cache
