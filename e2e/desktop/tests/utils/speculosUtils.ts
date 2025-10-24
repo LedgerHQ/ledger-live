@@ -1,12 +1,18 @@
 import { setEnv } from "@ledgerhq/live-env";
-import { startSpeculos, specs, stopSpeculos } from "@ledgerhq/live-common/e2e/speculos";
+import {
+  startSpeculos,
+  specs,
+  stopSpeculos,
+  type SpeculosDevice,
+} from "@ledgerhq/live-common/e2e/speculos";
 import invariant from "invariant";
+import * as allure from "allure-js-commons";
 
 const BASE_PORT = 30000;
 const MAX_PORT = 65535;
 let portCounter = BASE_PORT;
 
-export async function launchSpeculos(appName: string, testTitle?: string) {
+export async function launchSpeculos(appName: string, testTitle?: string): Promise<SpeculosDevice> {
   if (portCounter > MAX_PORT) {
     portCounter = BASE_PORT;
   }
@@ -30,6 +36,11 @@ export async function launchSpeculos(appName: string, testTitle?: string) {
   invariant(device, "[E2E Setup] Speculos not started");
   setEnv("SPECULOS_API_PORT", device.port);
   process.env.SPECULOS_API_PORT = device.port.toString();
+
+  if (device.appVersion) {
+    allure.parameter("App name:", device.appName || "");
+    allure.parameter("App version:", device.appVersion || "");
+  }
 
   console.warn(`Speculos ${device.id} started on ${device.port}`);
   return device;

@@ -19,6 +19,7 @@ declare module "jest-allure2-reporter/api" {
   export const allure: {
     description(description: string): void;
     attachment(name: string, content: string, type: string): Promise<void>;
+    parameter(name: string, value: string): void;
   };
 }
 

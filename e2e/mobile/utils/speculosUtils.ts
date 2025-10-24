@@ -41,6 +41,12 @@ export async function launchSpeculos(appName: string) {
     port: device.port,
     deviceId: device.id,
   });
+
+  if (device.appVersion) {
+    allure.parameter("App name:", device.appName || "");
+    allure.parameter("App version:", device.appVersion || "");
+  }
+
   return device;
 }
 

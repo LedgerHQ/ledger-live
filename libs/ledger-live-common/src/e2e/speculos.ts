@@ -69,6 +69,8 @@ export type Dependency = { name: string; appVersion?: string };
 export type SpeculosDevice = {
   id: string;
   port: number;
+  appName?: string;
+  appVersion?: string;
 };
 
 export function setExchangeDependencies(dependencies: Dependency[]) {
@@ -418,7 +420,12 @@ export async function startSpeculos(
       ? await createSpeculosDeviceCI(deviceParams)
       : await createSpeculosDevice(deviceParams).then(device => {
           invariant(device.ports.apiPort, "[E2E] Speculos apiPort is not defined");
-          return { id: device.id, port: device.ports.apiPort };
+          return {
+            id: device.id,
+            port: device.ports.apiPort,
+            appName: appCandidate.appName,
+            appVersion: appCandidate.appVersion,
+          };
         });
   } catch (e: unknown) {
     console.error(e);
