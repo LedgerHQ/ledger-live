@@ -5,12 +5,7 @@ import liveNetwork from "@ledgerhq/live-network";
 import { NearTransaction } from "./sdk.types";
 import { getCoinConfig } from "../config";
 
-const DEFAULT_TRANSACTIONS_LIMIT = 100;
-
-const fetchTransactions = async (
-  address: string,
-  limit: number = DEFAULT_TRANSACTIONS_LIMIT,
-): Promise<NearTransaction[]> => {
+const fetchTransactions = async (address: string): Promise<NearTransaction[]> => {
   const currencyConfig = getCoinConfig();
 
   const response = await liveNetwork<{ txns: NearTransaction[] }>({
@@ -21,11 +16,11 @@ const fetchTransactions = async (
 };
 
 function isSender(transaction: NearTransaction, address: string): boolean {
-  return transaction.sender === address;
+  return transaction.signer_account_id === address;
 }
 
 function getOperationType(transaction: NearTransaction, address: string): OperationType {
-  switch (transaction.actions[0]?.data?.method_name) {
+  switch (transaction.actions[0]?.method) {
     case "deposit_and_stake":
       return "STAKE";
     case "unstake":
@@ -40,10 +35,10 @@ function getOperationType(transaction: NearTransaction, address: string): Operat
 }
 
 function getOperationValue(transaction: NearTransaction, type: OperationType): BigNumber {
-  const amount = transaction.actions[0]?.data?.deposit || 0;
+  const amount = transaction.actions[0]?.deposit || 0;
 
   if (type === "OUT") {
-    return new BigNumber(amount).plus(transaction.fee);
+    return new BigNumber(amount).plus(transaction.outcomes_agg.transaction_fee);
   }
 
   return new BigNumber(amount);
@@ -57,19 +52,19 @@ async function transactionToOperation(
   const type = getOperationType(transaction, address);
 
   return {
-    id: encodeOperationId(accountId, transaction.hash, type),
+    id: encodeOperationId(accountId, transaction.transaction_hash, type),
     accountId,
-    fee: new BigNumber(transaction.fee || 0),
+    fee: new BigNumber(transaction.outcomes_agg.transaction_fee || 0),
     value: getOperationValue(transaction, type),
     type,
-    hash: transaction.hash,
-    blockHash: transaction.block_hash,
-    blockHeight: transaction.height,
-    date: new Date(transaction.time),
+    hash: transaction.transaction_hash,
+    blockHash: transaction.included_in_block_hash,
+    blockHeight: transaction.block.block_height,
+    date: new Date(parseFloat(transaction.block_timestamp) / 1000000),
     extra: {},
-    senders: transaction.sender ? [transaction.sender] : [],
-    recipients: transaction.receiver ? [transaction.receiver] : [],
-    hasFailed: !transaction.success,
+    senders: transaction.signer_account_id ? [transaction.signer_account_id] : [],
+    recipients: transaction.receiver_account_id ? [transaction.receiver_account_id] : [],
+    hasFailed: !transaction.outcomes.status,
   };
 }
 

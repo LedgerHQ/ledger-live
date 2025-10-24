@@ -8,7 +8,7 @@ const nearConfig: CurrencyLiveConfigDefinition = {
       infra: {
         API_NEAR_PRIVATE_NODE: "https://near.coin.ledger.com/node",
         API_NEAR_PUBLIC_NODE: "https://rpc.mainnet.near.org",
-        API_NEAR_INDEXER: "https://api.nearblocks.io",
+        API_NEAR_INDEXER: "https://near-indexer.coin.ledger.com",
       },
     },
   },
