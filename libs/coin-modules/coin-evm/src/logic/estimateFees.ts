@@ -107,7 +107,8 @@ export async function estimateFees(
     transactionIntent,
   );
 
-  const nonce = await getSequence(currency, transactionIntent.sender);
+  const nonce =
+    transactionIntent.sequence ?? (await getSequence(currency, transactionIntent.sender));
   const chainId = currency.ethereumLikeInfo?.chainId ?? 0;
 
   const { finalFeeData, finalGasOptions } = await (async (): Promise<{
