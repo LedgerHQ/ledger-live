@@ -25,7 +25,11 @@ export const acceptTransaction: DeviceAction<Transaction, any> = deviceActionFlo
 
         // if there's already one "Address" step done it means we are on the OP_RETURN step
         if (prevSteps.find(step => step.title === "Address")) {
-          if (account.currency.id === "bitcoin" || account.currency.id === "bitcoin_testnet") {
+          if (
+            account.currency.id === "bitcoin" ||
+            account.currency.id === "bitcoin_testnet" ||
+            account.currency.id === "bitcoin_regtest"
+          ) {
             return `OP_RETURN 0x${transaction.opReturnData?.toString("hex")}`;
           } else if (transaction?.opReturnData && transaction.opReturnData.length > 0) {
             return transaction.recipient;

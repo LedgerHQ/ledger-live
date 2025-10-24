@@ -6,6 +6,9 @@ settings:
 
 catalogs:
   default:
+    '@reduxjs/toolkit':
+      specifier: 2.8.2
+      version: 2.8.2
     axios:
       specifier: 1.12.2
       version: 1.12.2
@@ -46,7 +49,7 @@ pnpmfileChecksum: zwmwtmjd66yqvssrjrebeenwyu
 
 patchedDependencies:
   '@changesets/get-github-info@0.6.0':
-    hash: ihbfttx3a3q6odiznwmem6m4ay
+    hash: 3je6vc5oigzdzi6dv4a6zsaahi
     path: patches/@changesets__get-github-info@0.6.0.patch
   '@datadog/datadog-ci@3.11.0':
     hash: hshtsvjisk4nrwuydtrlg3tpk4
@@ -482,7 +485,7 @@ importers:
         specifier: 1.9.7
         version: 1.9.7
       '@reduxjs/toolkit':
-        specifier: 2.8.2
+        specifier: 'catalog:'
         version: 2.8.2(react-redux@7.2.9(@types/react@18.2.73)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react@18.3.1)
       '@sentry/electron':
         specifier: 5.2.0
@@ -1110,7 +1113,7 @@ importers:
         specifier: 7.4.4
         version: 7.4.4(lbwogby7gejg4afnz5dcrfv3re)
       '@reduxjs/toolkit':
-        specifier: 2.8.2
+        specifier: 'catalog:'
         version: 2.8.2(react-redux@7.2.9(@types/react@18.2.73)(react@18.3.1))(react@18.3.1)
       '@segment/analytics-react-native':
         specifier: 2.20.5
@@ -4628,6 +4631,67 @@ importers:
         specifier: ^5.1.3
         version: 5.6.3
 
+  libs/coin-tester-modules/coin-tester-bitcoin:
+    dependencies:
+      '@ledgerhq/coin-bitcoin':
+        specifier: workspace:^
+        version: link:../../coin-modules/coin-bitcoin
+      '@ledgerhq/coin-framework':
+        specifier: workspace:^
+        version: link:../../coin-framework
+      '@ledgerhq/coin-tester':
+        specifier: workspace:^
+        version: link:../../coin-tester
+      '@ledgerhq/cryptoassets':
+        specifier: workspace:^
+        version: link:../../ledgerjs/packages/cryptoassets
+      '@ledgerhq/hw-app-btc':
+        specifier: workspace:^
+        version: link:../../ledgerjs/packages/hw-app-btc
+      '@ledgerhq/live-config':
+        specifier: workspace:^
+        version: link:../../live-config
+      '@ledgerhq/live-network':
+        specifier: workspace:^
+        version: link:../../live-network
+      '@ledgerhq/types-cryptoassets':
+        specifier: workspace:^
+        version: link:../../ledgerjs/packages/types-cryptoassets
+      '@ledgerhq/types-live':
+        specifier: workspace:^
+        version: link:../../ledgerjs/packages/types-live
+      bignumber.js:
+        specifier: ^9.1.2
+        version: 9.1.2
+      bitcoin-core:
+        specifier: ^5.0.0
+        version: 5.0.0
+      docker-compose:
+        specifier: ^1.1.0
+        version: 1.1.0
+    devDependencies:
+      '@types/jest':
+        specifier: ^29.5.10
+        version: 29.5.14
+      dotenv:
+        specifier: ^16.4.5
+        version: 16.4.7
+      jest:
+        specifier: ^29.7.0
+        version: 29.7.0(ts-node@10.9.2(typescript@5.8.3))
+      ts-jest:
+        specifier: ^29.1.2
+        version: 29.3.2(jest@29.7.0(ts-node@10.9.2(typescript@5.8.3)))(typescript@5.8.3)
+      ts-node:
+        specifier: ^10.9.2
+        version: 10.9.2(typescript@5.8.3)
+      tsx:
+        specifier: ^4.19.3
+        version: 4.20.6
+      typescript:
+        specifier: ^5.4.5
+        version: 5.8.3
+
   libs/coin-tester-modules/coin-tester-evm:
     dependencies:
       '@ledgerhq/coin-evm':
@@ -5472,7 +5536,7 @@ importers:
         specifier: 1.8.0
         version: 1.8.0
       '@reduxjs/toolkit':
-        specifier: 2.8.2
+        specifier: 'catalog:'
         version: 2.8.2(react-redux@7.2.9(@types/react@18.2.73)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react@18.3.1)
       '@stellar/stellar-sdk':
         specifier: ^14.0.0
@@ -5594,6 +5658,9 @@ importers:
       qs:
         specifier: ^6.10.1
         version: 6.13.0
+      react-redux:
+        specifier: ^7.2.9
+        version: 7.2.9(@types/react@18.2.73)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       reselect:
         specifier: ^4.1.5
         version: 4.1.8
@@ -5682,6 +5749,9 @@ importers:
       '@types/react':
         specifier: ^18.2.21
         version: 18.2.73
+      '@types/react-redux':
+        specifier: ^7.1.33
+        version: 7.1.33(@types/react@18.2.73)
       '@types/uuid':
         specifier: ^8.3.4
         version: 8.3.4
@@ -5748,9 +5818,6 @@ importers:
       react-native-svg:
         specifier: 15.11.2
         version: 15.11.2(react-native@0.77.2(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1))(react@18.3.1)
-      react-redux:
-        specifier: ^7.2.9
-        version: 7.2.9(@types/react@18.2.73)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       react-test-renderer:
         specifier: 'catalog:'
         version: 18.3.1(react@18.3.1)
@@ -5883,6 +5950,9 @@ importers:
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../types-live
+      '@reduxjs/toolkit':
+        specifier: 'catalog:'
+        version: 2.8.2(react-redux@9.2.0(@types/react@18.2.73)(react@18.3.1))(react@18.3.1)
       axios:
         specifier: 'catalog:'
         version: 1.12.2
@@ -5892,6 +5962,9 @@ importers:
       invariant:
         specifier: '2'
         version: 2.2.4
+      zod:
+        specifier: ^3.22.4
+        version: 3.25.76
     devDependencies:
       '@ledgerhq/types-cryptoassets':
         specifier: workspace:^
@@ -5923,6 +5996,9 @@ importers:
       react-dom:
         specifier: ^18.0.0
         version: 18.3.1(react@18.3.1)
+      react-redux:
+        specifier: ^9.1.2
+        version: 9.2.0(@types/react@18.2.73)(react@18.3.1)
       rimraf:
         specifier: ^4.4.1
         version: 4.4.1
@@ -8125,8 +8201,8 @@ importers:
         specifier: 0.9.1
         version: 0.9.1(rxjs@7.8.1)
       '@ledgerhq/device-transport-kit-react-native-ble':
-        specifier: 1.1.1
-        version: 1.1.1(@ledgerhq/device-management-kit@0.9.1(rxjs@7.8.1))(react-native-ble-plx@3.4.0(react-native@0.77.2(@react-native-community/cli@15.1.0(typescript@5.4.3))(react@18.3.1))(react@18.3.1))(react-native@0.77.2(@react-native-community/cli@15.1.0(typescript@5.4.3))(react@18.3.1))(rxjs@7.8.1)
+        specifier: 1.2.0
+        version: 1.2.0(@ledgerhq/device-management-kit@0.9.1(rxjs@7.8.1))(react-native-ble-plx@3.4.0(react-native@0.77.2(@react-native-community/cli@15.1.0(typescript@5.4.3))(react@18.3.1))(react@18.3.1))(react-native@0.77.2(@react-native-community/cli@15.1.0(typescript@5.4.3))(react@18.3.1))(rxjs@7.8.1)
       '@ledgerhq/devices':
         specifier: workspace:*
         version: link:../ledgerjs/packages/devices
@@ -14751,10 +14827,10 @@ packages:
       '@ledgerhq/context-module': 1.8.0
       '@ledgerhq/device-management-kit': ^0.9.0
 
-  '@ledgerhq/device-transport-kit-react-native-ble@1.1.1':
-    resolution: {integrity: sha512-6ImCuEU61Q0TChaOqNT7i0CbFekx4hJEOHh4+OJBLCtBFBd0yVqQbOURhpOzAyye6NNWx7iv9k0DjRg95mkFxg==}
+  '@ledgerhq/device-transport-kit-react-native-ble@1.2.0':
+    resolution: {integrity: sha512-ZdKehzzaLSeoDFM6kKupdoOMSEnjzQA5PU5Uy4e8/bCfLJCS30diw45qwosiaRxkFP0NpzHmcT4wB+UVrmWcng==}
     peerDependencies:
-      '@ledgerhq/device-management-kit': ^0.9.0
+      '@ledgerhq/device-management-kit': 0.9.2
       react-native: '>0.74.1'
       react-native-ble-plx: 3.4.0
       rxjs: 7.8.2
@@ -20722,6 +20798,12 @@ packages:
   '@ungap/structured-clone@1.2.0':
     resolution: {integrity: sha512-zuVdFrMJiuCDQUMCzQaD6KL28MjnqqN8XnAqiEq9PNm/hCPTSGfrXCOfwj1ow4LFb/tNymJPwsNbVePc1xFqrQ==}
 
+  '@uphold/request-logger@2.0.0':
+    resolution: {integrity: sha512-UvGS+v87C7VTtQDcFHDLfvfl1zaZaLSwSmAnV35Ne7CzAVvotmZqt9lAIoNpMpaoRpdjVIcnUDwPSeIeA//EoQ==}
+    engines: {node: '>=4'}
+    peerDependencies:
+      request: '>=2.27.0'
+
   '@urql/core@5.0.8':
     resolution: {integrity: sha512-1GOnUw7/a9bzkcM0+U8U5MmxW2A7FE5YquuEmcJzTtW5tIs2EoS4F2ITpuKBjRBbyRjZgO860nWFPo1m4JImGA==}
 
@@ -22053,6 +22135,10 @@ packages:
 
   bip66@1.1.5:
     resolution: {integrity: sha512-nemMHz95EmS38a26XbbdxIYj5csHd3RMP3H5bwQknX0WYHF01qhpufP42mLOwVICuH2JmhIhXiWs89MfUGL7Xw==}
+
+  bitcoin-core@5.0.0:
+    resolution: {integrity: sha512-XqHsD5LjtshN8yWzRrq2kof57e1eXCGDx3i5+sFKBRi9MktSlXOR4SRLyXLkfzfBmPEs5q/76RotQJuaWg75DQ==}
+    engines: {node: '>=7'}
 
   bitcoin-ops@1.4.1:
     resolution: {integrity: sha512-pef6gxZFztEhaE9RY9HmWVmiIHqCb2OyS4HPKkpc6CIiiOa3Qmuoylxc5P2EkU3w+5eTSifI9SEZC88idAIGow==}
@@ -23945,14 +24031,9 @@ packages:
       supports-color:
         optional: true
 
-  debug@4.4.3:
-    resolution: {integrity: sha512-RGwwWnwQvkVfavKVt22FGLw+xYSdzARwm0ru6DhTVA3umU5hZc28V3kO4stgYryrTlLpuvgI9GiijltAjNbcqA==}
-    engines: {node: '>=6.0'}
-    peerDependencies:
-      supports-color: '*'
-    peerDependenciesMeta:
-      supports-color:
-        optional: true
+  debugnyan@1.0.0:
+    resolution: {integrity: sha512-dTvKxcLZCammDLFYi31NRVr5g6vjJ33uf1wcdbIPPxPxxnJ9/xj00Mh/YQkhFMw/VGavaG5KpjSC+4o9r/JjRg==}
+    engines: {node: '>=4'}
 
   decamelize-keys@1.1.1:
     resolution: {integrity: sha512-WiPxgEirIV0/eIOMcnFBA3/IJZAZqKnwAwWyvvdi4lsr1WCN22nhdf/3db3DoZcUjTV2SqfzIwNyp6y2xs3nmg==}
@@ -25916,9 +25997,6 @@ packages:
 
   fontfaceobserver@2.3.0:
     resolution: {integrity: sha512-6FPvD/IVyT4ZlNe7Wcn5Fb/4ChigpucKYSvD6a+0iMoLn2inpo711eyIcKjmDtE5XNcgAkSH9uN/nfAeZzHEfg==}
-
-  for-each@0.3.3:
-    resolution: {integrity: sha512-jqYfLp7mo9vIyQf8ykW2v7A+2N4QjeCeI5+Dz9XraiO1ign81wjiH7Fb9vSOWvQfNtmSa4H2RoQTrrXivdUZmw==}
 
   for-each@0.3.5:
     resolution: {integrity: sha512-dKx12eRCVIzqCxFGplyFKJMPvLEWgmNtUrpTiJIR5u97zEhRG8ySrtboPHZXx7daLxQVrl643cTzbab2tkQjxg==}
@@ -29702,6 +29780,10 @@ packages:
 
   minimatch@9.0.4:
     resolution: {integrity: sha512-KqWh+VchfxcMNRAJjj2tnsSJdNbHsVgnkBhTNrW7AjVo6OvLtxw8zfT9oLw1JSohlFzJ8jCoTgaoXvJ+kHt6fw==}
+    engines: {node: '>=16 || 14 >=14.17'}
+
+  minimatch@9.0.5:
+    resolution: {integrity: sha512-G6T0ZX48xgozx7587koeX9Ys2NYy6Gmv//P89sEte9V9whIapMNF4idKxnW2QtCcLiTWlb/wfCabAtAFWhhBow==}
     engines: {node: '>=16 || 14 >=14.17'}
 
   minimist-options@4.1.0:
@@ -33726,6 +33808,9 @@ packages:
   standard-as-callback@2.1.0:
     resolution: {integrity: sha512-qoRRSyROncaz1z0mvYqIE4lCd9p2R90i6GxW3uZv5ucSu8tU7B5HXUP1gG8pVZsYNVaXjk8ClXHPttLyxAL48A==}
 
+  standard-error@1.1.0:
+    resolution: {integrity: sha512-4v7qzU7oLJfMI5EltUSHCaaOd65J6S4BqKRWgzMi4EYaE5fvNabPxmAPGdxpGXqrcWjhDGI/H09CIdEuUOUeXg==}
+
   stat-mode@1.0.0:
     resolution: {integrity: sha512-jH9EhtKIjuXZ2cWxmXS8ZP80XyC3iasQxMDV8jzhNJpfDb7VbQLVW4Wvsxz9QZvzV+G4YoSfBUVKDOyxLzi/sg==}
     engines: {node: '>= 6'}
@@ -34848,6 +34933,11 @@ packages:
     engines: {node: '>=18.0.0'}
     hasBin: true
 
+  tsx@4.20.6:
+    resolution: {integrity: sha512-ytQKuwgmrrkDTFP4LjR0ToE2nqgy886GpvRSpU0JAnrdBYppuY5rLkRUYPU1yCryb24SsKBTL/hlDQAEFVwtZg==}
+    engines: {node: '>=18.0.0'}
+    hasBin: true
+
   tty-browserify@0.0.0:
     resolution: {integrity: sha512-JVa5ijo+j/sOoHGjw0sxw734b1LhBkQ3bvUGNdxnVXDCX81Yx7TFgnZygxrIIWn23hbfTaMYLwRmAxFyDuFmIw==}
 
@@ -34985,10 +35075,6 @@ packages:
 
   type@2.7.2:
     resolution: {integrity: sha512-dzlvlNlt6AXU7EBSfpAscydQ7gXB+pPGsPnfJnZpiNJBDj7IaJzQlBZYGdEi4R9HmPdBv2XmWJ6YUtoTa7lmCw==}
-
-  typed-array-buffer@1.0.2:
-    resolution: {integrity: sha512-gEymJYKZtKXzzBzM4jqa9w6Q1Jjm7x2d+sh19AdsD4wqnMPDYyvwpsIc2Q/835kHuo3BEQ7CjelGhfTsoBb2MQ==}
-    engines: {node: '>= 0.4'}
 
   typed-array-buffer@1.0.3:
     resolution: {integrity: sha512-nAYYwfY3qnzX30IkA6AQZjVbtK6duGontcQm1WSG1MD94YLqK0515GNApXkoxKOWMusVssAHWLh9SeaoefYFGw==}
@@ -36663,9 +36749,6 @@ packages:
 
   zod@3.23.8:
     resolution: {integrity: sha512-XBx9AXhXktjUqnepgTiE5flcKIYWi/rme0Eaj+5Y0lftuGBq+jyRu/md4WnuxqgP1ubdpNCsYEYPxrzVHD8d6g==}
-
-  zod@3.24.2:
-    resolution: {integrity: sha512-lY7CDW43ECgW9u1TcT3IoXHflywfVqDYze4waEz812jR/bZ8FHDsl7pFQoSZTz5N+2NqRXs8GBwnAwo3ZNxqhQ==}
 
   zod@3.25.76:
     resolution: {integrity: sha512-gzUt/qt81nXsFGKIFcC3YnfEAx5NkunCfnDlvuBSSFS02bcXu4Lmea0AFIUwbLWxWPx3d9p8S5QoaujKcNQxcQ==}
@@ -40161,7 +40244,7 @@ snapshots:
       '@babel/helper-split-export-declaration': 7.22.6
       '@babel/parser': 7.27.0
       '@babel/types': 7.27.0
-      debug: 4.4.1
+      debug: 4.3.4
       globals: 11.12.0
     transitivePeerDependencies:
       - supports-color
@@ -40176,7 +40259,7 @@ snapshots:
       '@babel/helper-split-export-declaration': 7.22.6
       '@babel/parser': 7.27.0
       '@babel/types': 7.27.0
-      debug: 4.4.1(supports-color@5.5.0)
+      debug: 4.3.4(supports-color@5.5.0)
       globals: 11.12.0
     transitivePeerDependencies:
       - supports-color
@@ -40500,7 +40583,7 @@ snapshots:
 
   '@changesets/changelog-github@0.5.0':
     dependencies:
-      '@changesets/get-github-info': 0.6.0(patch_hash=ihbfttx3a3q6odiznwmem6m4ay)
+      '@changesets/get-github-info': 0.6.0(patch_hash=3je6vc5oigzdzi6dv4a6zsaahi)
       '@changesets/types': 6.0.0
       dotenv: 8.6.0
     transitivePeerDependencies:
@@ -40563,7 +40646,7 @@ snapshots:
       fs-extra: 7.0.1
       semver: 7.7.1
 
-  '@changesets/get-github-info@0.6.0(patch_hash=ihbfttx3a3q6odiznwmem6m4ay)':
+  '@changesets/get-github-info@0.6.0(patch_hash=3je6vc5oigzdzi6dv4a6zsaahi)':
     dependencies:
       dataloader: 1.4.0
       node-fetch: 2.7.0
@@ -41513,7 +41596,7 @@ snapshots:
       debug: 4.3.4
       dir-compare: 4.2.0
       fs-extra: 11.2.0
-      minimatch: 9.0.4
+      minimatch: 9.0.5
       plist: 3.1.0
     transitivePeerDependencies:
       - supports-color
@@ -42529,7 +42612,7 @@ snapshots:
       '@expo/plist': 0.3.4
       '@expo/sdk-runtime-versions': 1.0.0
       chalk: 4.1.2
-      debug: 4.4.3
+      debug: 4.4.1
       getenv: 1.0.0
       glob: 10.4.5
       resolve-from: 5.0.0
@@ -42548,7 +42631,7 @@ snapshots:
       '@expo/plist': 0.2.2
       '@expo/sdk-runtime-versions': 1.0.0
       chalk: 4.1.2
-      debug: 4.4.3
+      debug: 4.4.1
       getenv: 1.0.0
       glob: 10.4.5
       resolve-from: 5.0.0
@@ -42567,7 +42650,7 @@ snapshots:
       '@expo/plist': 0.2.2
       '@expo/sdk-runtime-versions': 1.0.0
       chalk: 4.1.2
-      debug: 4.4.3
+      debug: 4.4.1
       getenv: 1.0.0
       glob: 10.4.5
       resolve-from: 5.0.0
@@ -42790,7 +42873,7 @@ snapshots:
       glob: 10.4.5
       jsc-safe-url: 0.2.4
       lightningcss: 1.27.0
-      minimatch: 9.0.4
+      minimatch: 9.0.5
       postcss: 8.4.38
       resolve-from: 5.0.0
     transitivePeerDependencies:
@@ -43836,7 +43919,7 @@ snapshots:
       elliptic: 6.6.1
       expo-crypto: 10.2.0
       expo-random: 12.3.0
-      js-base64: 3.7.7
+      js-base64: 3.7.8
       tweetnacl: 1.0.3
       utf8: 3.0.0
     transitivePeerDependencies:
@@ -44600,7 +44683,7 @@ snapshots:
     dependencies:
       '@jest/fake-timers': 29.7.0
       '@jest/types': 29.6.3
-      '@types/node': 22.10.10
+      '@types/node': 20.12.12
       jest-mock: 29.7.0
 
   '@jest/expect-utils@28.1.3':
@@ -44649,7 +44732,7 @@ snapshots:
     dependencies:
       '@jest/types': 29.6.3
       '@sinonjs/fake-timers': 10.3.0
-      '@types/node': 22.10.10
+      '@types/node': 20.12.12
       jest-message-util: 29.7.0
       jest-mock: 29.7.0
       jest-util: 29.7.0
@@ -45043,7 +45126,7 @@ snapshots:
       buffer: 6.0.3(patch_hash=2xnca52oxhztvr7iaoovwclcze)
       crypto-js: 4.2.0
       elliptic: 6.6.1
-      sha.js: 2.4.11
+      sha.js: 2.4.12
 
   '@keplr-wallet/proto-types@0.12.89':
     dependencies:
@@ -45172,7 +45255,7 @@ snapshots:
       - bufferutil
       - utf-8-validate
 
-  '@ledgerhq/device-transport-kit-react-native-ble@1.1.1(@ledgerhq/device-management-kit@0.9.1(rxjs@7.8.1))(react-native-ble-plx@3.4.0(react-native@0.77.2(@react-native-community/cli@15.1.0(typescript@5.4.3))(react@18.3.1))(react@18.3.1))(react-native@0.77.2(@react-native-community/cli@15.1.0(typescript@5.4.3))(react@18.3.1))(rxjs@7.8.1)':
+  '@ledgerhq/device-transport-kit-react-native-ble@1.2.0(@ledgerhq/device-management-kit@0.9.1(rxjs@7.8.1))(react-native-ble-plx@3.4.0(react-native@0.77.2(@react-native-community/cli@15.1.0(typescript@5.4.3))(react@18.3.1))(react@18.3.1))(react-native@0.77.2(@react-native-community/cli@15.1.0(typescript@5.4.3))(react@18.3.1))(rxjs@7.8.1)':
     dependencies:
       '@ledgerhq/device-management-kit': 0.9.1(rxjs@7.8.1)
       '@sentry/minimal': 6.19.7
@@ -48276,6 +48359,18 @@ snapshots:
       react: 18.3.1
       react-redux: 7.2.9(@types/react@18.2.73)(react@18.3.1)
 
+  '@reduxjs/toolkit@2.8.2(react-redux@9.2.0(@types/react@18.2.73)(react@18.3.1))(react@18.3.1)':
+    dependencies:
+      '@standard-schema/spec': 1.0.0
+      '@standard-schema/utils': 0.3.0
+      immer: 10.0.3
+      redux: 5.0.1
+      redux-thunk: 3.1.0(redux@5.0.1)
+      reselect: 5.1.1
+    optionalDependencies:
+      react: 18.3.1
+      react-redux: 9.2.0(@types/react@18.2.73)(react@18.3.1)
+
   '@reduxjs/toolkit@2.9.0(react-redux@7.2.9(@types/react@18.2.73)(react@18.3.1))(react@19.2.0)':
     dependencies:
       '@standard-schema/spec': 1.0.0
@@ -50103,13 +50198,13 @@ snapshots:
 
   '@solana/errors@2.0.0-rc.1(typescript@5.4.3)':
     dependencies:
-      chalk: 5.4.1
+      chalk: 5.6.2
       commander: 12.1.0
       typescript: 5.4.3
 
   '@solana/errors@2.0.0-rc.1(typescript@5.8.3)':
     dependencies:
-      chalk: 5.4.1
+      chalk: 5.6.2
       commander: 12.1.0
       typescript: 5.8.3
 
@@ -50288,7 +50383,7 @@ snapshots:
       c32check: 1.1.3
       lodash.clonedeep: 4.5.0
       ripemd160-min: 0.0.6
-      sha.js: 2.4.11
+      sha.js: 2.4.12
       smart-buffer: 4.2.0
     transitivePeerDependencies:
       - encoding
@@ -54042,7 +54137,7 @@ snapshots:
       debug: 4.3.4
       fast-glob: 3.3.2
       is-glob: 4.0.3
-      minimatch: 9.0.4
+      minimatch: 9.0.5
       semver: 7.7.1
       ts-api-utils: 2.1.0(typescript@5.4.3)
       typescript: 5.4.3
@@ -54164,6 +54259,11 @@ snapshots:
       react-dom: 18.3.1(react@18.3.1)
 
   '@ungap/structured-clone@1.2.0': {}
+
+  '@uphold/request-logger@2.0.0(request@2.88.2)':
+    dependencies:
+      request: 2.88.2
+      uuid: 3.4.0
 
   '@urql/core@5.0.8':
     dependencies:
@@ -55433,7 +55533,7 @@ snapshots:
 
   array-buffer-byte-length@1.0.1:
     dependencies:
-      call-bind: 1.0.7
+      call-bind: 1.0.8
       is-array-buffer: 3.0.4
 
   array-flatten@1.1.1: {}
@@ -55493,7 +55593,7 @@ snapshots:
 
   array.prototype.reduce@1.0.7:
     dependencies:
-      call-bind: 1.0.7
+      call-bind: 1.0.8
       define-properties: 1.2.1
       es-abstract: 1.23.2
       es-array-method-boxes-properly: 1.0.0
@@ -55519,7 +55619,7 @@ snapshots:
   arraybuffer.prototype.slice@1.0.3:
     dependencies:
       array-buffer-byte-length: 1.0.1
-      call-bind: 1.0.7
+      call-bind: 1.0.8
       define-properties: 1.2.1
       es-abstract: 1.23.2
       es-errors: 1.3.0
@@ -56325,6 +56425,18 @@ snapshots:
     dependencies:
       safe-buffer: 5.2.1
 
+  bitcoin-core@5.0.0:
+    dependencies:
+      '@uphold/request-logger': 2.0.0(request@2.88.2)
+      debugnyan: 1.0.0
+      json-bigint: 1.0.0
+      lodash: 4.17.21
+      request: 2.88.2
+      semver: 5.7.2
+      standard-error: 1.1.0
+    transitivePeerDependencies:
+      - supports-color
+
   bitcoin-ops@1.4.1: {}
 
   bitcoinjs-lib@5.2.0:
@@ -56425,7 +56537,7 @@ snapshots:
     dependencies:
       bytes: 3.1.2
       content-type: 1.0.5
-      debug: 4.4.3
+      debug: 4.4.1
       http-errors: 2.0.0
       iconv-lite: 0.6.3
       on-finished: 2.4.1
@@ -57785,7 +57897,7 @@ snapshots:
       inherits: 2.0.4
       md5.js: 1.3.5
       ripemd160: 2.0.2
-      sha.js: 2.4.11
+      sha.js: 2.4.12
 
   create-hmac@1.1.7:
     dependencies:
@@ -58581,19 +58693,19 @@ snapshots:
 
   data-view-buffer@1.0.1:
     dependencies:
-      call-bind: 1.0.7
+      call-bind: 1.0.8
       es-errors: 1.3.0
       is-data-view: 1.0.1
 
   data-view-byte-length@1.0.1:
     dependencies:
-      call-bind: 1.0.7
+      call-bind: 1.0.8
       es-errors: 1.3.0
       is-data-view: 1.0.1
 
   data-view-byte-offset@1.0.0:
     dependencies:
-      call-bind: 1.0.7
+      call-bind: 1.0.8
       es-errors: 1.3.0
       is-data-view: 1.0.1
 
@@ -58662,15 +58774,12 @@ snapshots:
     dependencies:
       ms: 2.1.3
 
-  debug@4.4.1(supports-color@5.5.0):
+  debugnyan@1.0.0:
     dependencies:
-      ms: 2.1.3
-    optionalDependencies:
-      supports-color: 5.5.0
-
-  debug@4.4.3:
-    dependencies:
-      ms: 2.1.3
+      bunyan: 1.8.15
+      debug: 2.6.9
+    transitivePeerDependencies:
+      - supports-color
 
   decamelize-keys@1.1.1:
     dependencies:
@@ -58721,7 +58830,7 @@ snapshots:
   deep-equal@2.2.3:
     dependencies:
       array-buffer-byte-length: 1.0.1
-      call-bind: 1.0.7
+      call-bind: 1.0.8
       es-get-iterator: 1.1.3
       get-intrinsic: 1.3.0
       is-arguments: 1.1.1
@@ -58737,7 +58846,7 @@ snapshots:
       side-channel: 1.1.0
       which-boxed-primitive: 1.0.2
       which-collection: 1.0.2
-      which-typed-array: 1.1.15
+      which-typed-array: 1.1.19
 
   deep-extend@0.6.0: {}
 
@@ -59556,7 +59665,7 @@ snapshots:
       array-buffer-byte-length: 1.0.1
       arraybuffer.prototype.slice: 1.0.3
       available-typed-arrays: 1.0.7
-      call-bind: 1.0.7
+      call-bind: 1.0.8
       data-view-buffer: 1.0.1
       data-view-byte-length: 1.0.1
       data-view-byte-offset: 1.0.0
@@ -59582,7 +59691,7 @@ snapshots:
       is-regex: 1.1.4
       is-shared-array-buffer: 1.0.3
       is-string: 1.0.7
-      is-typed-array: 1.1.13
+      is-typed-array: 1.1.15
       is-weakref: 1.0.2
       object-inspect: 1.13.4
       object-keys: 1.1.1
@@ -59593,12 +59702,12 @@ snapshots:
       string.prototype.trim: 1.2.9
       string.prototype.trimend: 1.0.8
       string.prototype.trimstart: 1.0.8
-      typed-array-buffer: 1.0.2
+      typed-array-buffer: 1.0.3
       typed-array-byte-length: 1.0.1
       typed-array-byte-offset: 1.0.2
       typed-array-length: 1.0.6
       unbox-primitive: 1.0.2
-      which-typed-array: 1.1.15
+      which-typed-array: 1.1.19
 
   es-array-method-boxes-properly@1.0.0: {}
 
@@ -59608,7 +59717,7 @@ snapshots:
 
   es-get-iterator@1.1.3:
     dependencies:
-      call-bind: 1.0.7
+      call-bind: 1.0.8
       get-intrinsic: 1.3.0
       has-symbols: 1.1.0
       is-arguments: 1.1.1
@@ -61182,7 +61291,7 @@ snapshots:
       content-type: 1.0.5
       cookie: 0.7.2
       cookie-signature: 1.2.2
-      debug: 4.4.3
+      debug: 4.4.1
       encodeurl: 2.0.0
       escape-html: 1.0.3
       etag: 1.8.1
@@ -61465,7 +61574,7 @@ snapshots:
 
   finalhandler@2.1.0:
     dependencies:
-      debug: 4.4.3
+      debug: 4.4.1
       encodeurl: 2.0.0
       escape-html: 1.0.3
       on-finished: 2.4.1
@@ -61638,10 +61747,6 @@ snapshots:
   follow-redirects@1.15.11: {}
 
   fontfaceobserver@2.3.0: {}
-
-  for-each@0.3.3:
-    dependencies:
-      is-callable: 1.2.7
 
   for-each@0.3.5:
     dependencies:
@@ -61905,7 +62010,7 @@ snapshots:
 
   function.prototype.name@1.1.6:
     dependencies:
-      call-bind: 1.0.7
+      call-bind: 1.0.8
       define-properties: 1.2.1
       es-abstract: 1.23.2
       functions-have-names: 1.2.3
@@ -62023,7 +62128,7 @@ snapshots:
 
   get-symbol-description@1.0.2:
     dependencies:
-      call-bind: 1.0.7
+      call-bind: 1.0.8
       es-errors: 1.3.0
       get-intrinsic: 1.3.0
 
@@ -62103,7 +62208,7 @@ snapshots:
     dependencies:
       foreground-child: 3.1.1
       jackspeak: 3.4.3
-      minimatch: 9.0.4
+      minimatch: 9.0.5
       minipass: 7.1.2
       package-json-from-dist: 1.0.1
       path-scurry: 1.11.1
@@ -63109,12 +63214,12 @@ snapshots:
 
   is-arguments@1.1.1:
     dependencies:
-      call-bind: 1.0.7
+      call-bind: 1.0.8
       has-tostringtag: 1.0.2
 
   is-array-buffer@3.0.4:
     dependencies:
-      call-bind: 1.0.7
+      call-bind: 1.0.8
       get-intrinsic: 1.3.0
 
   is-arrayish@0.2.1: {}
@@ -63135,7 +63240,7 @@ snapshots:
 
   is-boolean-object@1.1.2:
     dependencies:
-      call-bind: 1.0.7
+      call-bind: 1.0.8
       has-tostringtag: 1.0.2
 
   is-buffer@1.1.6: {}
@@ -63189,7 +63294,7 @@ snapshots:
 
   is-finalizationregistry@1.0.2:
     dependencies:
-      call-bind: 1.0.7
+      call-bind: 1.0.8
 
   is-fullwidth-code-point@1.0.0:
     dependencies:
@@ -63233,7 +63338,7 @@ snapshots:
 
   is-nan@1.3.2:
     dependencies:
-      call-bind: 1.0.7
+      call-bind: 1.0.8
       define-properties: 1.2.1
 
   is-negative-zero@2.0.3: {}
@@ -63300,7 +63405,7 @@ snapshots:
 
   is-regex@1.1.4:
     dependencies:
-      call-bind: 1.0.7
+      call-bind: 1.0.8
       has-tostringtag: 1.0.2
 
   is-regexp@1.0.0: {}
@@ -63317,7 +63422,7 @@ snapshots:
 
   is-shared-array-buffer@1.0.3:
     dependencies:
-      call-bind: 1.0.7
+      call-bind: 1.0.8
 
   is-ssh@1.4.0:
     dependencies:
@@ -63349,7 +63454,7 @@ snapshots:
 
   is-typed-array@1.1.13:
     dependencies:
-      which-typed-array: 1.1.15
+      which-typed-array: 1.1.19
 
   is-typed-array@1.1.15:
     dependencies:
@@ -63367,11 +63472,11 @@ snapshots:
 
   is-weakref@1.0.2:
     dependencies:
-      call-bind: 1.0.7
+      call-bind: 1.0.8
 
   is-weakset@2.0.3:
     dependencies:
-      call-bind: 1.0.7
+      call-bind: 1.0.8
       get-intrinsic: 1.3.0
 
   is-whitespace-character@1.0.4: {}
@@ -65284,7 +65389,7 @@ snapshots:
   jest-mock@29.7.0:
     dependencies:
       '@jest/types': 29.6.3
-      '@types/node': 22.10.10
+      '@types/node': 20.12.12
       jest-util: 29.7.0
 
   jest-pnp-resolver@1.2.3(jest-resolve@27.5.1):
@@ -65655,7 +65760,7 @@ snapshots:
   jest-util@29.7.0:
     dependencies:
       '@jest/types': 29.6.3
-      '@types/node': 22.10.10
+      '@types/node': 20.12.12
       chalk: 4.1.2
       ci-info: 3.9.0
       graceful-fs: 4.2.11
@@ -66569,8 +66674,8 @@ snapshots:
       strip-json-comments: 5.0.1
       summary: 2.1.0
       typescript: 5.4.3
-      zod: 3.24.2
-      zod-validation-error: 3.4.0(zod@3.24.2)
+      zod: 3.25.76
+      zod-validation-error: 3.4.0(zod@3.25.76)
 
   known-css-properties@0.26.0: {}
 
@@ -68338,6 +68443,10 @@ snapshots:
     dependencies:
       brace-expansion: 2.0.1
 
+  minimatch@9.0.5:
+    dependencies:
+      brace-expansion: 2.0.1
+
   minimist-options@4.1.0:
     dependencies:
       arrify: 1.0.1
@@ -69168,7 +69277,7 @@ snapshots:
 
   object-is@1.1.6:
     dependencies:
-      call-bind: 1.0.7
+      call-bind: 1.0.8
       define-properties: 1.2.1
 
   object-keys@0.2.0:
@@ -69183,7 +69292,7 @@ snapshots:
 
   object.assign@4.1.5:
     dependencies:
-      call-bind: 1.0.7
+      call-bind: 1.0.8
       define-properties: 1.2.1
       has-symbols: 1.1.0
       object-keys: 1.1.1
@@ -69204,7 +69313,7 @@ snapshots:
   object.getownpropertydescriptors@2.1.8:
     dependencies:
       array.prototype.reduce: 1.0.7
-      call-bind: 1.0.7
+      call-bind: 1.0.8
       define-properties: 1.2.1
       es-abstract: 1.23.2
       es-object-atoms: 1.1.1
@@ -69664,7 +69773,7 @@ snapshots:
       create-hmac: 1.1.7
       ripemd160: 2.0.2
       safe-buffer: 5.2.1
-      sha.js: 2.4.11
+      sha.js: 2.4.12
 
   pe-library@0.4.1: {}
 
@@ -71918,6 +72027,14 @@ snapshots:
     transitivePeerDependencies:
       - '@types/react'
 
+  react-redux@9.2.0(@types/react@18.2.73)(react@18.3.1):
+    dependencies:
+      '@types/use-sync-external-store': 0.0.6
+      react: 18.3.1
+      use-sync-external-store: 1.5.0(react@18.3.1)
+    optionalDependencies:
+      '@types/react': 18.2.73
+
   react-redux@9.2.0(@types/react@18.2.73)(react@19.2.0)(redux@5.0.1):
     dependencies:
       '@types/use-sync-external-store': 0.0.6
@@ -72413,7 +72530,7 @@ snapshots:
 
   reflect.getprototypeof@1.0.6:
     dependencies:
-      call-bind: 1.0.7
+      call-bind: 1.0.8
       define-properties: 1.2.1
       es-abstract: 1.23.2
       es-errors: 1.3.0
@@ -72437,7 +72554,7 @@ snapshots:
 
   regexp.prototype.flags@1.5.2:
     dependencies:
-      call-bind: 1.0.7
+      call-bind: 1.0.8
       define-properties: 1.2.1
       es-errors: 1.3.0
       set-function-name: 2.0.2
@@ -72916,7 +73033,7 @@ snapshots:
 
   router@2.2.0:
     dependencies:
-      debug: 4.4.3
+      debug: 4.4.1
       depd: 2.0.0
       is-promise: 4.0.0
       parseurl: 1.3.3
@@ -72969,7 +73086,7 @@ snapshots:
 
   safe-array-concat@1.1.2:
     dependencies:
-      call-bind: 1.0.7
+      call-bind: 1.0.8
       get-intrinsic: 1.3.0
       has-symbols: 1.1.0
       isarray: 2.0.5
@@ -72983,7 +73100,7 @@ snapshots:
 
   safe-regex-test@1.0.3:
     dependencies:
-      call-bind: 1.0.7
+      call-bind: 1.0.8
       es-errors: 1.3.0
       is-regex: 1.1.4
 
@@ -73175,7 +73292,7 @@ snapshots:
 
   send@1.2.0:
     dependencies:
-      debug: 4.4.3
+      debug: 4.4.1
       encodeurl: 2.0.0
       escape-html: 1.0.3
       etag: 1.8.1
@@ -73376,7 +73493,7 @@ snapshots:
 
   side-channel@1.0.6:
     dependencies:
-      call-bind: 1.0.7
+      call-bind: 1.0.8
       es-errors: 1.3.0
       get-intrinsic: 1.3.0
       object-inspect: 1.13.4
@@ -73821,6 +73938,8 @@ snapshots:
 
   standard-as-callback@2.1.0: {}
 
+  standard-error@1.1.0: {}
+
   stat-mode@1.0.0: {}
 
   state-toggle@1.0.3: {}
@@ -74032,20 +74151,20 @@ snapshots:
 
   string.prototype.trim@1.2.9:
     dependencies:
-      call-bind: 1.0.7
+      call-bind: 1.0.8
       define-properties: 1.2.1
       es-abstract: 1.23.2
       es-object-atoms: 1.1.1
 
   string.prototype.trimend@1.0.8:
     dependencies:
-      call-bind: 1.0.7
+      call-bind: 1.0.8
       define-properties: 1.2.1
       es-object-atoms: 1.1.1
 
   string.prototype.trimstart@1.0.8:
     dependencies:
-      call-bind: 1.0.7
+      call-bind: 1.0.8
       define-properties: 1.2.1
       es-object-atoms: 1.1.1
 
@@ -74752,7 +74871,7 @@ snapshots:
     dependencies:
       '@istanbuljs/schema': 0.1.3
       glob: 10.4.5
-      minimatch: 9.0.4
+      minimatch: 9.0.5
 
   text-decoder@1.1.0:
     dependencies:
@@ -75823,6 +75942,13 @@ snapshots:
     optionalDependencies:
       fsevents: 2.3.3
 
+  tsx@4.20.6:
+    dependencies:
+      esbuild: 0.25.5
+      get-tsconfig: 4.7.5
+    optionalDependencies:
+      fsevents: 2.3.3
+
   tty-browserify@0.0.0: {}
 
   tty-browserify@0.0.1: {}
@@ -75920,12 +76046,6 @@ snapshots:
 
   type@2.7.2: {}
 
-  typed-array-buffer@1.0.2:
-    dependencies:
-      call-bind: 1.0.7
-      es-errors: 1.3.0
-      is-typed-array: 1.1.15
-
   typed-array-buffer@1.0.3:
     dependencies:
       call-bound: 1.0.4
@@ -75934,8 +76054,8 @@ snapshots:
 
   typed-array-byte-length@1.0.1:
     dependencies:
-      call-bind: 1.0.7
-      for-each: 0.3.3
+      call-bind: 1.0.8
+      for-each: 0.3.5
       gopd: 1.2.0
       has-proto: 1.0.3
       is-typed-array: 1.1.15
@@ -75943,16 +76063,16 @@ snapshots:
   typed-array-byte-offset@1.0.2:
     dependencies:
       available-typed-arrays: 1.0.7
-      call-bind: 1.0.7
-      for-each: 0.3.3
+      call-bind: 1.0.8
+      for-each: 0.3.5
       gopd: 1.2.0
       has-proto: 1.0.3
       is-typed-array: 1.1.15
 
   typed-array-length@1.0.6:
     dependencies:
-      call-bind: 1.0.7
-      for-each: 0.3.3
+      call-bind: 1.0.8
+      for-each: 0.3.5
       gopd: 1.2.0
       has-proto: 1.0.3
       is-typed-array: 1.1.15
@@ -76017,7 +76137,7 @@ snapshots:
 
   unbox-primitive@1.0.2:
     dependencies:
-      call-bind: 1.0.7
+      call-bind: 1.0.8
       has-bigints: 1.0.2
       has-symbols: 1.1.0
       which-boxed-primitive: 1.0.2
@@ -76584,7 +76704,7 @@ snapshots:
   vite-node@2.1.9(@types/node@22.10.10):
     dependencies:
       cac: 6.7.14
-      debug: 4.4.3
+      debug: 4.4.1
       es-module-lexer: 1.5.4
       pathe: 1.1.2
       vite: 5.4.14(@types/node@22.10.10)
@@ -77651,7 +77771,7 @@ snapshots:
       isarray: 2.0.5
       which-boxed-primitive: 1.0.2
       which-collection: 1.0.2
-      which-typed-array: 1.1.15
+      which-typed-array: 1.1.19
 
   which-collection@1.0.2:
     dependencies:
@@ -77670,8 +77790,8 @@ snapshots:
   which-typed-array@1.1.15:
     dependencies:
       available-typed-arrays: 1.0.7
-      call-bind: 1.0.7
-      for-each: 0.3.3
+      call-bind: 1.0.8
+      for-each: 0.3.5
       gopd: 1.2.0
       has-tostringtag: 1.0.2
 
@@ -78157,13 +78277,11 @@ snapshots:
       compress-commons: 5.0.3
       readable-stream: 3.6.2
 
-  zod-validation-error@3.4.0(zod@3.24.2):
+  zod-validation-error@3.4.0(zod@3.25.76):
     dependencies:
-      zod: 3.24.2
+      zod: 3.25.76
 
   zod@3.23.8: {}
-
-  zod@3.24.2: {}
 
   zod@3.25.76: {}
 

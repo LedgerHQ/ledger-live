@@ -16,10 +16,12 @@ import { useStake } from "LLM/hooks/useStake/useStake";
 import { walletSelector } from "~/reducers/wallet";
 import { getAccountCurrency, getParentAccount } from "@ledgerhq/coin-framework/lib/account/helpers";
 import { shallowAccountsSelector } from "~/reducers/accounts";
+import { useOpenStakeDrawer } from "LLM/features/Stake";
 
 export type QuickAction = {
   disabled: boolean;
   route: EntryOf<BaseNavigatorStackParamList>;
+  customHandler?: () => void;
   icon: IconType;
 };
 
@@ -72,6 +74,11 @@ function useQuickActions({ currency, accounts }: QuickActionProps = {}) {
       : getRouteParamsForPlatformApp(stakeAccount, walletState, parentAccount);
 
   const canBeRecovered = recoverEntryPoint?.enabled;
+
+  const { handleOpenStakeDrawer, isModularDrawerEnabled } = useOpenStakeDrawer({
+    currency,
+    sourceScreenName: "quick_action_stake",
+  });
 
   const quickActionsList = useMemo(() => {
     const list: Partial<Record<Actions, QuickAction>> = {
@@ -168,6 +175,7 @@ function useQuickActions({ currency, accounts }: QuickActionProps = {}) {
             },
           },
         ],
+        customHandler: isModularDrawerEnabled ? handleOpenStakeDrawer : undefined,
         icon: IconsLegacy.CoinsMedium,
       };
     }
@@ -212,6 +220,8 @@ function useQuickActions({ currency, accounts }: QuickActionProps = {}) {
     partnerStakeRoute,
     canStakeCurrencyUsingLedgerLive,
     canBeRecovered,
+    isModularDrawerEnabled,
+    handleOpenStakeDrawer,
   ]);
 
   return { quickActionsList };

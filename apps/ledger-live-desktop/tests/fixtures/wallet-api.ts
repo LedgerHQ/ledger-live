@@ -1138,4 +1138,13 @@ export const expectedCurrencyList = [
     color: "#70C7BA",
     decimals: 8,
   },
+  {
+    type: "CryptoCurrency",
+    id: "monad",
+    ticker: "MON",
+    name: "Monad",
+    family: "ethereum",
+    color: "#836EF9",
+    decimals: 18,
+  },
 ];

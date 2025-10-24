@@ -6,6 +6,7 @@ import CollapsibleStep from "./CollapsibleStep";
 import SuccessStep from "./SuccessStep";
 import SuccessBackground from "../assets/SuccessBackground";
 import NewSeedPanel from "./NewSeedPanel";
+import { SeedOriginType } from "@ledgerhq/types-live";
 
 interface TwoStepCompanionProps {
   steps: Step[];
@@ -14,6 +15,7 @@ interface TwoStepCompanionProps {
   installStep: React.JSX.Element;
   deviceName: string;
   handleComplete: () => void;
+  seedConfiguration?: SeedOriginType;
 }
 
 const TwoStepCompanion = ({
@@ -23,6 +25,7 @@ const TwoStepCompanion = ({
   installStep,
   deviceName,
   handleComplete,
+  seedConfiguration,
 }: TwoStepCompanionProps) => {
   const { t } = useTranslation();
 
@@ -56,7 +59,11 @@ const TwoStepCompanion = ({
         doneTitle={isReady ? t("syncOnboarding.manual.secureCryptoDoneTitle") : undefined}
         isComplete={hasFinishedSecondStep}
       >
-        {isNewSeed ? <NewSeedPanel handleComplete={handleComplete} /> : installStep}
+        {isNewSeed ? (
+          <NewSeedPanel handleComplete={handleComplete} seedConfiguration={seedConfiguration} />
+        ) : (
+          installStep
+        )}
       </CollapsibleStep>
     </Flex>
   );

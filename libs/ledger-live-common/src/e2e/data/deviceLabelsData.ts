@@ -66,10 +66,11 @@ export const DEVICE_LABELS_CONFIG: DeviceLabelsConfig = {
       default: DeviceLabels.CAPS_APPROVE,
     },
     sendVerify: {
+      [AppInfos.SOLANA.name]: DeviceLabels.TRANSFER,
       default: DeviceLabels.REVIEW_OPERATION,
     },
     sendConfirm: {
-      [AppInfos.SOLANA.name]: DeviceLabels.SIGN_TRANSACTION,
+      [AppInfos.SOLANA.name]: DeviceLabels.APPROVE,
       [AppInfos.TRON.name]: DeviceLabels.SIGN,
       [AppInfos.STELLAR.name]: DeviceLabels.SIGN,
       [AppInfos.RIPPLE.name]: DeviceLabels.SIGN,
@@ -114,7 +115,7 @@ export const DEVICE_LABELS_CONFIG: DeviceLabelsConfig = {
       [AppInfos.ETHEREUM.name]: DeviceLabels.VERIFY_ETHEREUM,
       [AppInfos.POLKADOT.name]: DeviceLabels.PLEASE_REVIEW,
       [AppInfos.POLYGON.name]: DeviceLabels.VERIFY_POLYGON,
-      [AppInfos.SOLANA.name]: DeviceLabels.PUBKEY,
+      [AppInfos.SOLANA.name]: DeviceLabels.VERIFY_SOLANA_ADDRESS,
       default: DeviceLabels.ADDRESS,
     },
     receiveConfirm: {
@@ -124,13 +125,14 @@ export const DEVICE_LABELS_CONFIG: DeviceLabelsConfig = {
       [AppInfos.ETHEREUM.name]: DeviceLabels.CONFIRM,
       [AppInfos.POLKADOT.name]: DeviceLabels.CAPS_APPROVE,
       [AppInfos.POLYGON.name]: DeviceLabels.CONFIRM,
+      [AppInfos.SOLANA.name]: DeviceLabels.CONFIRM,
       default: DeviceLabels.APPROVE,
     },
     delegateVerify: {
       [AppInfos.COSMOS.name]: DeviceLabels.PLEASE_REVIEW,
       [AppInfos.MULTIVERS_X.name]: DeviceLabels.RECEIVER,
       [AppInfos.NEAR.name]: DeviceLabels.VIEW_HEADER,
-      [AppInfos.SOLANA.name]: DeviceLabels.DELEGATE_FROM,
+      [AppInfos.SOLANA.name]: DeviceLabels.REVIEW_TRANSACTION_TO,
       default: DeviceLabels.REVIEW_OPERATION,
     },
     delegateConfirm: {
@@ -141,15 +143,16 @@ export const DEVICE_LABELS_CONFIG: DeviceLabelsConfig = {
       [AppInfos.MULTIVERS_X.name]: DeviceLabels.SIGN,
       [AppInfos.NEAR.name]: DeviceLabels.CONTINUE_TO_ACTION,
       [AppInfos.OSMOSIS.name]: DeviceLabels.CAPS_APPROVE,
+      [AppInfos.SOLANA.name]: DeviceLabels.SIGN,
       default: DeviceLabels.APPROVE,
     },
     sendVerify: {
-      [AppInfos.SOLANA.name]: DeviceLabels.TRANSFER,
+      [AppInfos.SOLANA.name]: DeviceLabels.REVIEW_TRANSACTION_TO,
       [AppInfos.RIPPLE.name]: DeviceLabels.TRANSACTION_TYPE,
       default: DeviceLabels.REVIEW_OPERATION,
     },
     sendConfirm: {
-      [AppInfos.SOLANA.name]: DeviceLabels.APPROVE,
+      [AppInfos.SOLANA.name]: DeviceLabels.SIGN_TRANSACTION,
       [AppInfos.TRON.name]: DeviceLabels.SIGN,
       [AppInfos.STELLAR.name]: DeviceLabels.SIGN,
       [AppInfos.RIPPLE.name]: DeviceLabels.SIGN,

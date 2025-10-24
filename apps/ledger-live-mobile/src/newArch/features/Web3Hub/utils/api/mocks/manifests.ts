@@ -96,6 +96,7 @@ export const mocks: AppManifest[] = [
       "peercoin",
       "viacoin",
       "bitcoin_testnet",
+      "bitcoin_regtest",
       "ethereum_ropsten/**",
       "ethereum_goerli/**",
       "ethereum_sepolia/**",
@@ -142,6 +143,7 @@ export const mocks: AppManifest[] = [
       "lukso",
       "linea",
       "linea_goerli",
+      "monad",
     ],
     content: {
       shortDescription: {

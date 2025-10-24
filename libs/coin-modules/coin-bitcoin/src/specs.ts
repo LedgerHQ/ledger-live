@@ -354,6 +354,19 @@ const bitcoinTestnet: AppSpec<Transaction> = {
   mutations: bitcoinLikeMutations({ targetAccountSize: 8 }),
   minViableAmount: genericMinimalAmount,
 };
+const bitcoinRegtest: AppSpec<Transaction> = {
+  name: "Bitcoin Regtest",
+  currency: getCryptoCurrencyById("bitcoin_regtest"),
+  appQuery: {
+    model: DeviceModelId.nanoS,
+    appName: "Bitcoin Test",
+    appVersion: "2.1.1",
+  },
+  genericDeviceAction: acceptTransaction,
+  test: genericTest,
+  mutations: bitcoinLikeMutations({ targetAccountSize: 8 }),
+  minViableAmount: genericMinimalAmount,
+};
 const bitcoinGold: AppSpec<Transaction> = {
   name: "Bitcoin Gold",
   currency: getCryptoCurrencyById("bitcoin_gold"),
@@ -557,6 +570,7 @@ const litecoin: AppSpec<Transaction> = {
 export default {
   bitcoin,
   bitcoinTestnet,
+  bitcoinRegtest,
   bitcoinCash,
   bitcoinGold,
   dash,

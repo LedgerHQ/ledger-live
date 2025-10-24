@@ -2548,7 +2548,7 @@
       "title": "Your {{productName}} is ready to secure your digital assets"
     },
     "newSeed": {
-      "subtitle": "You can transfer crypto from any exchange or wallet to your Ledger Live for maximum security.",
+      "subtitle": "You can transfer crypto from any exchange or wallet to your Ledger Wallet for maximum security.",
       "installCTA": "Secure my crypto",
       "skipCTA": "Maybe later"
     }
@@ -6488,6 +6488,7 @@
   },
   "sui": {
     "info": {
+      "estimatedReward": "Earned rewards",
       "available": {
         "title": "SUI available",
         "description": "This amount is disposable."
@@ -7883,7 +7884,7 @@
     "selectAsset": "Select asset",
     "selectNetwork": "Select network",
     "selectAccount": "Select account",
-    "searchPlaceholder": "Search",
+    "searchPlaceholder": "Search by name or address",
     "emptyAssetList": "No assets found",
     "accountCount_one": "{{count}} account",
     "accountCount_other": "{{count}} accounts",
@@ -7982,7 +7983,15 @@
       "authorize": "Authorize",
       "preapprove": "Successfully added account",
       "validator": "Ledger Validator",
-      "title": "Automatically accept incoming funds"
+      "title": "Automatically accept incoming funds",
+      "error429": "Canton Network currently supports a limited number of account creations per day. Please try again later."
+    },
+    "tooManyUtxos": {
+      "title": "Action Needed: Too Many UTXOs",
+      "description": "Your account has too many small UTXOs to process this transfer. Merge them now to avoid expiration due to accumulated holding fees and enable transfers.",
+      "quickFix": "Quick Fix: Send some funds to yourself to consolidate.",
+      "warning": "Your account has too many small UTXOs. Send some funds to yourself to consolidate.",
+      "consolidate": "Consolidate"
     }
   }
 }

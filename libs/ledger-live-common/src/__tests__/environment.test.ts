@@ -4,9 +4,12 @@ import "./test-helpers/setup";
 import { getAbandonSeedAddress, listSupportedCurrencies } from "../currencies";
 
 describe("supported currencies are ready to work", () => {
-  listSupportedCurrencies().forEach(c =>
-    test("getAbandonSeedAddress works for currency " + c.id, () =>
-      expect(getAbandonSeedAddress(c.id)).toBeTruthy(),
-    ),
-  );
+  // Skip bitcoin_regtest this one because it's only for cointester bitcoin
+  listSupportedCurrencies()
+    .filter(c => c.id !== "bitcoin_regtest")
+    .forEach(c =>
+      test("getAbandonSeedAddress works for currency " + c.id, () =>
+        expect(getAbandonSeedAddress(c.id)).toBeTruthy(),
+      ),
+    );
 });

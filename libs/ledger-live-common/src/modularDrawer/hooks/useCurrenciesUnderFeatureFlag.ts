@@ -77,6 +77,7 @@ export function useCurrenciesUnderFeatureFlag() {
   const assetHubWestend = useFeature("currencyAssetHubWestend");
   const assetHubPolkadot = useFeature("currencyAssetHubPolkadot");
   const polkadot = useFeature("currencyPolkadot");
+  const monad = useFeature("currencyMonad");
 
   const featureFlaggedCurrencies = useMemo(
     (): Partial<Record<CryptoCurrencyId, Feature<unknown> | null>> => ({
@@ -150,6 +151,7 @@ export function useCurrenciesUnderFeatureFlag() {
       assethub_westend: assetHubWestend,
       assethub_polkadot: assetHubPolkadot,
       polkadot,
+      monad,
     }),
     [
       aptos,
@@ -222,6 +224,7 @@ export function useCurrenciesUnderFeatureFlag() {
       assetHubWestend,
       assetHubPolkadot,
       polkadot,
+      monad,
     ],
   );
 

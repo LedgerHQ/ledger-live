@@ -19,7 +19,10 @@ type Props = {
 const AccountHeaderActions = ({ account, parentAccount }: Props) => {
   const history = useHistory();
   const { getCanStakeCurrency, getRouteToPlatformApp } = useStake();
-  const availableOnStake = getCanStakeCurrency("bitcoin") || getCanStakeCurrency("bitcoin_testnet");
+  const availableOnStake =
+    getCanStakeCurrency("bitcoin") ||
+    getCanStakeCurrency("bitcoin_testnet") ||
+    getCanStakeCurrency("bitcoin_regtest");
   const walletState = useSelector(walletSelector);
   const label = useGetStakeLabelLocaleBased();
   const mainAccount = getMainAccount(account, parentAccount);
@@ -30,7 +33,9 @@ const AccountHeaderActions = ({ account, parentAccount }: Props) => {
   if (
     !bitcoinResources ||
     parentAccount ||
-    (currencyId !== "bitcoin" && currencyId !== "bitcoin_testnet")
+    (currencyId !== "bitcoin" &&
+      currencyId !== "bitcoin_testnet" &&
+      currencyId !== "bitcoin_regtest")
   )
     return null;
 
