@@ -1,17 +1,28 @@
 import { getTokenFromAsset } from "./getTokenFromAsset";
-import { getMockedCurrency } from "../test/fixtures/currency.fixture";
+import { getMockedCurrency, getMockedTokenCurrency } from "../test/fixtures/currency.fixture";
+import * as cryptoAssets from "@ledgerhq/coin-framework/crypto-assets/index";
+
+jest.mock("@ledgerhq/coin-framework/crypto-assets/index");
 
 describe("getTokenFromAsset", () => {
   const mockCurrency = getMockedCurrency();
+  const mockToken = getMockedTokenCurrency();
 
-  it("returns token from USDC asset", async () => {
-    const asset1 = { type: "hts", assetReference: "0.0.5022567" };
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
 
-    expect(await getTokenFromAsset(mockCurrency, asset1)).toMatchObject({
-      id: "hedera/hts/hbark_0.0.5022567",
-      contractAddress: "0.0.5022567",
-      name: "hBARK",
+  it("returns token from token asset", async () => {
+    const asset1 = { type: "hts", assetReference: mockToken.contractAddress };
+
+    (cryptoAssets.getCryptoAssetsStore as jest.Mock).mockReturnValue({
+      findTokenByAddressInCurrency: jest.fn().mockReturnValue(mockToken),
     });
+
+    const result = await getTokenFromAsset(mockCurrency, asset1);
+    expect(result).toEqual(mockToken);
+    expect(result?.id).toBe(mockToken.id);
+    expect(result?.contractAddress).toBe(mockToken.contractAddress);
   });
 
   it("returns undefined for native asset", async () => {

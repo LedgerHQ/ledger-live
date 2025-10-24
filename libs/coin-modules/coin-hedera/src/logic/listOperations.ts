@@ -2,7 +2,7 @@ import BigNumber from "bignumber.js";
 import type { Operation } from "@ledgerhq/types-live";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import type { Pagination } from "@ledgerhq/coin-framework/api/types";
-import { findTokenByAddressInCurrency } from "@ledgerhq/cryptoassets/tokens";
+import { getCryptoAssetsStore } from "@ledgerhq/coin-framework/crypto-assets/index";
 import { encodeAccountId, encodeTokenAccountId } from "@ledgerhq/coin-framework/account/accountId";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { apiClient } from "../network/api";
@@ -40,7 +40,7 @@ function getCommonOperationData(
   };
 }
 
-function processTokenTransfers({
+async function processTokenTransfers({
   rawTx,
   address,
   currency,
@@ -54,15 +54,15 @@ function processTokenTransfers({
   ledgerAccountId: string;
   commonData: ReturnType<typeof getCommonOperationData>;
   skipFeesForTokenOperations: boolean;
-}): {
+}): Promise<{
   coinOperation: Operation<HederaOperationExtra> | undefined;
   tokenOperation: Operation<HederaOperationExtra>;
-} | null {
+} | null> {
   const tokenTransfers = rawTx.token_transfers ?? [];
   if (tokenTransfers.length === 0) return null;
 
   const tokenId = tokenTransfers[0].token_id;
-  const token = findTokenByAddressInCurrency(tokenId, currency.id);
+  const token = await getCryptoAssetsStore().findTokenByAddressInCurrency(tokenId, currency.id);
   if (!token) return null;
 
   const encodedTokenId = encodeTokenAccountId(ledgerAccountId, token);
@@ -213,7 +213,7 @@ export async function listOperations({
     const commonData = getCommonOperationData(rawTx, useEncodedHash, useSyntheticBlocks);
 
     // process token transfers
-    const tokenResult = processTokenTransfers({
+    const tokenResult = await processTokenTransfers({
       rawTx,
       address,
       currency,
