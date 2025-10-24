@@ -41,6 +41,7 @@ import {
   EarnDeeplinkAction,
   validateEarnDepositScreen,
 } from "./deeplinks/validation";
+import { getDrawerFlowConfigs } from "./deeplinks/modularDrawerFlowConfigs";
 import { viewNamePredicate } from "~/datadog";
 import { AppLoadingManager } from "LLM/features/LaunchScreen";
 
@@ -188,15 +189,6 @@ const linkingOptions = () => ({
                *
                */
               [ScreenName.PostOnboardingDeeplinkHandler]: "post-onboarding",
-            },
-          },
-          [NavigatorName.ReceiveFunds]: {
-            screens: {
-              /**
-               * @params ?currency: string
-               * ie: "ledgerlive://receive?currency=bitcoin" will open the prefilled search account in the receive flow
-               */
-              [ScreenName.ReceiveSelectCrypto]: "receive",
             },
           },
           /**
@@ -350,18 +342,21 @@ export const DeeplinksProvider = ({
   const buySellUiFlag = useFeature("buySellUi");
   const llmAccountListUI = useFeature("llmAccountListUI");
   const modularDrawer = useFeature("llmModularDrawer");
+
   const buySellUiManifestId = buySellUiFlag?.params?.manifestId;
-  const AddAccountNavigatorEntryPoint = NavigatorName.AssetSelection;
+
   // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
   const theme = themes[resolvedTheme] as ReactNavigation.Theme;
   const AccountsListScreenName = llmAccountListUI?.enabled
     ? ScreenName.AccountsList
     : ScreenName.Accounts;
 
-  const linking = useMemo<LinkingOptions<ReactNavigation.RootParamList>>(
-    () =>
+  const modularDrawerFlowConfigs = getDrawerFlowConfigs(modularDrawer);
+
+  const linking = useMemo<LinkingOptions<ReactNavigation.RootParamList>>(() => {
+    return (
       // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-      ({
+      {
         ...(hasCompletedOnboarding
           ? {
               ...linkingOptions(),
@@ -374,29 +369,13 @@ export const DeeplinksProvider = ({
                     screens: {
                       ...linkingOptions().config.screens[NavigatorName.Base].screens,
 
-                      ...(modularDrawer?.enabled
-                        ? {
-                            [NavigatorName.ModularDrawer]: {
-                              screens: {
-                                [ScreenName.ModularDrawerDeepLinkHandler]: "add-account",
-                              },
-                            },
-                          }
-                        : {
-                            // Add account entry point navigator differ from the legacy to the new flow, when the deeplink is hit and the FF is enabled we should pass by the AssetSelection Feature
-                            [AddAccountNavigatorEntryPoint]: {
-                              screens: {
-                                /**
-                                 * ie: "ledgerlive://add-account" will open the add account flow
-                                 *
-                                 * @params ?currency: string
-                                 * ie: "ledgerlive://add-account?currency=bitcoin" will open the add account flow with "bitcoin" prefilled in the search input
-                                 *
-                                 */
-                                [ScreenName.AddAccountsSelectCrypto]: "add-account",
-                              },
-                            },
-                          }),
+                      /**
+                       * Modular drawer flows (add-account & receive)
+                       * or classic flows when modular drawer is disabled
+                       */
+                      ...modularDrawerFlowConfigs.modularDrawer,
+                      ...modularDrawerFlowConfigs.classicAddAccount,
+                      ...modularDrawerFlowConfigs.classicReceive,
 
                       /** "ledgerlive://assets will open assets screen. */
                       ...(llmAccountListUI?.enabled && {
@@ -711,21 +690,20 @@ export const DeeplinksProvider = ({
 
           return getStateFromPath(path, config);
         },
-      }) as LinkingOptions<ReactNavigation.RootParamList>,
-    [
-      hasCompletedOnboarding,
-      modularDrawer?.enabled,
-      AddAccountNavigatorEntryPoint,
-      llmAccountListUI?.enabled,
-      AccountsListScreenName,
-      userAcceptedTerms,
-      buySellUiManifestId,
-      dispatch,
-      storylyContext,
-      liveAppProviderInitialized,
-      manifests,
-    ],
-  );
+      } as LinkingOptions<ReactNavigation.RootParamList>
+    );
+  }, [
+    hasCompletedOnboarding,
+    modularDrawerFlowConfigs,
+    llmAccountListUI?.enabled,
+    AccountsListScreenName,
+    userAcceptedTerms,
+    buySellUiManifestId,
+    dispatch,
+    storylyContext,
+    liveAppProviderInitialized,
+    manifests,
+  ]);
   const [isReady, setIsReady] = React.useState(false);
 
   useEffect(() => {
