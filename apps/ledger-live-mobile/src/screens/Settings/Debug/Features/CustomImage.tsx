@@ -54,7 +54,7 @@ export default function CustomImage() {
       <SettingsRow
         title="Custom lockscreen Apex"
         desc="Convenient access to the flow"
-        iconLeft={<Icons.Flex size="M" color="black" />}
+        iconLeft={<Icons.Apex size="M" color="black" />}
         onPress={handlePressApex}
       />
     </>
