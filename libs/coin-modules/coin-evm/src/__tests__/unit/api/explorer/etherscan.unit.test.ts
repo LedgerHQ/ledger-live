@@ -28,6 +28,7 @@ setCryptoAssetsStoreGetter(
   () =>
     // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
     ({
+      findTokenById: (_id: string) => undefined,
       findTokenByAddressInCurrency: (_address: string, _currencyId: string) => {
         return undefined;
       },
