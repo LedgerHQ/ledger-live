@@ -27,7 +27,7 @@ function PortfolioQuickActionsBar() {
       track("button_clicked", { button: eventButton, page: router.name });
       if (action.customHandler) {
         action.customHandler();
-      } else {
+      } else if (action.route) {
         navigation.navigate<keyof BaseNavigatorStackParamList>(...action.route);
       }
     },
