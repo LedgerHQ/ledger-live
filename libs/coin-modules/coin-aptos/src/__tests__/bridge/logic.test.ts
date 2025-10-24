@@ -5,10 +5,7 @@ import { getMaxSendBalance, getBlankOperation, txsToOps } from "../../bridge/log
 import type { AptosTransaction, TransactionOptions } from "../../types";
 import { createFixtureAccount, createFixtureTransaction } from "../../bridge/bridge.fixture";
 import { getCryptoAssetsStore } from "@ledgerhq/coin-framework/crypto-assets/index";
-import {
-  decodeTokenAccountId,
-  encodeTokenAccountId,
-} from "@ledgerhq/coin-framework/account/index";
+import { decodeTokenAccountId, encodeTokenAccountId } from "@ledgerhq/coin-framework/account/index";
 import { normalizeTransactionOptions } from "../../logic/normalizeTransactionOptions";
 
 jest.mock("@ledgerhq/cryptoassets");
