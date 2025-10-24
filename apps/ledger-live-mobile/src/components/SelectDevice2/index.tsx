@@ -105,7 +105,7 @@ export default function SelectDevice({
   const [pairingFlowStep, setPairingFlowStep] = useState<PairingFlowStep | null>(null);
 
   const bleScanningState = useBleDevicesScanning(
-    isFocused && !stopBleScanning && pairingFlowStep !== "pairing",
+    isLDMKEnabled && isFocused && !stopBleScanning && pairingFlowStep !== "pairing",
   );
   const scannedDevices = isLDMKEnabled ? bleScanningState.scannedDevices : legacyScannedDevices;
 

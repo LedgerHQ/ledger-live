@@ -32,7 +32,7 @@
   },
   "dependencies": {
     "@ledgerhq/device-management-kit": "0.9.1",
-    "@ledgerhq/device-transport-kit-react-native-ble": "1.1.1",
+    "@ledgerhq/device-transport-kit-react-native-ble": "1.2.0",
     "@ledgerhq/devices": "workspace:*",
     "@ledgerhq/errors": "workspace:^",
     "@ledgerhq/hw-transport": "workspace:*",
