@@ -45,7 +45,7 @@ export const ApiTokenResponseSchema = z.object({
   /** Chain ID */
   chain_id: z.string(),
   /** Token identifier */
-  token_identifier: z.string(),
+  token_identifier: z.string().optional(),
   /** Network type */
   network_type: z.string(),
   /** Meta currency ID */
@@ -53,7 +53,7 @@ export const ApiTokenResponseSchema = z.object({
   /** Blockchain name */
   blockchain_name: z.string(),
   /** Live signature */
-  live_signature: z.string(),
+  live_signature: z.string().optional(),
 });
 
 export type ApiTokenResponse = z.infer<typeof ApiTokenResponseSchema>;

@@ -4,7 +4,7 @@ import { getEnv } from "@ledgerhq/live-env";
 import { GetTokensDataParams, PageParam, TokensDataTags, TokensDataWithPagination } from "./types";
 import { TOKEN_OUTPUT_FIELDS } from "./fields";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { findCryptoCurrencyById } from "../../currencies";
+import { convertApiToken } from "../../api-token-converter";
 
 function transformTokensResponse(
   response: ApiTokenResponse[],
@@ -24,28 +24,28 @@ function transformTokensResponse(
 }
 
 function transformApiTokenToTokenCurrency(token: ApiTokenResponse): TokenCurrency | undefined {
-  const parentCurrency = findCryptoCurrencyById(token.network);
-  if (!parentCurrency) {
-    return undefined;
-  }
-
-  return {
-    type: "TokenCurrency",
+  // convertApiToken handles all format reconciliation internally
+  const result = convertApiToken({
     id: token.id,
-    ledgerSignature: token.live_signature,
     contractAddress: token.contract_address,
-    parentCurrency,
-    tokenType: token.standard,
     name: token.name,
     ticker: token.ticker,
-    units: token.units.map(unit => ({
-      code: unit.code,
-      name: unit.name,
-      magnitude: unit.magnitude,
-    })),
+    units: token.units,
+    standard: token.standard,
+    tokenIdentifier: token.token_identifier,
     delisted: token.delisted,
-    symbol: token.symbol,
-  };
+    ledgerSignature: token.live_signature,
+  });
+
+  // Add symbol if result exists
+  if (result && token.symbol) {
+    return {
+      ...result,
+      symbol: token.symbol,
+    };
+  }
+
+  return result;
 }
 
 export const cryptoAssetsApi = createApi({
