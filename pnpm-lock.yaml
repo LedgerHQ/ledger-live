@@ -49,7 +49,7 @@ pnpmfileChecksum: zwmwtmjd66yqvssrjrebeenwyu
 
 patchedDependencies:
   '@changesets/get-github-info@0.6.0':
-    hash: ihbfttx3a3q6odiznwmem6m4ay
+    hash: 3je6vc5oigzdzi6dv4a6zsaahi
     path: patches/@changesets__get-github-info@0.6.0.patch
   '@datadog/datadog-ci@3.11.0':
     hash: hshtsvjisk4nrwuydtrlg3tpk4
@@ -40583,7 +40583,7 @@ snapshots:
 
   '@changesets/changelog-github@0.5.0':
     dependencies:
-      '@changesets/get-github-info': 0.6.0(patch_hash=ihbfttx3a3q6odiznwmem6m4ay)
+      '@changesets/get-github-info': 0.6.0(patch_hash=3je6vc5oigzdzi6dv4a6zsaahi)
       '@changesets/types': 6.0.0
       dotenv: 8.6.0
     transitivePeerDependencies:
@@ -40646,7 +40646,7 @@ snapshots:
       fs-extra: 7.0.1
       semver: 7.7.1
 
-  '@changesets/get-github-info@0.6.0(patch_hash=ihbfttx3a3q6odiznwmem6m4ay)':
+  '@changesets/get-github-info@0.6.0(patch_hash=3je6vc5oigzdzi6dv4a6zsaahi)':
     dependencies:
       dataloader: 1.4.0
       node-fetch: 2.7.0
