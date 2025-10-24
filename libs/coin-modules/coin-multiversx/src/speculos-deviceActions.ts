@@ -202,7 +202,6 @@ export const acceptEsdtTransferTransaction: DeviceAction<Transaction, any> = dev
         }
 
         const { token } = decodeTokenAccountId(tokenAccount.id);
-
         return token?.name ?? "";
       },
     },

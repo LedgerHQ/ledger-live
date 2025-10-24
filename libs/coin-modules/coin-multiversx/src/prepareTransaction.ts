@@ -26,7 +26,7 @@ export const prepareTransaction: AccountBridge<Transaction>["prepareTransaction"
     null;
 
   if (tokenAccount) {
-    preparedTx.data = MultiversXEncodeTransaction.ESDTTransfer(transaction, tokenAccount);
+    preparedTx.data = await MultiversXEncodeTransaction.ESDTTransfer(transaction, tokenAccount);
     preparedTx.gasLimit = GAS.ESDT_TRANSFER;
   } else {
     switch (transaction.mode) {
