@@ -90,7 +90,7 @@ const devices: { [key in DeviceModelId]: DeviceModel } = {
   },
   [DeviceModelId.apex]: {
     id: DeviceModelId.apex,
-    productName: "Ledger Apex",
+    productName: "Ledger Nano Gen5",
     productIdMM: 0x80,
     legacyUsbProductId: 0x0008,
     usbOnly: false,

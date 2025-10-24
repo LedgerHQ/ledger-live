@@ -73,7 +73,7 @@ export default function DebugCustomImageGraphics() {
       case DeviceModelId.europa:
         return <Icons.Flex size="S" color="inherit" />;
       case DeviceModelId.apex:
-        return <Icons.Flex size="S" color="inherit" />;
+        return <Icons.Apex size="S" color="inherit" />;
       default:
         return null;
     }

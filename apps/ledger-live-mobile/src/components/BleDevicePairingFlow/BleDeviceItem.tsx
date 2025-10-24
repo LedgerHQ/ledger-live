@@ -23,7 +23,7 @@ const DeviceIcon = ({ deviceModelId }: { deviceModelId: DeviceModelId }) => {
     case DeviceModelId.europa:
       return <Icons.Flex size="S" />;
     case DeviceModelId.apex:
-      return <Icons.Flex size="S" />;
+      return <Icons.Apex size="S" />;
     case DeviceModelId.nanoX:
     default:
       return <IconsLegacy.NanoXFoldedMedium size={20} />;
