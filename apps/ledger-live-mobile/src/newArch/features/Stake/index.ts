@@ -38,21 +38,21 @@ export function useOpenStakeDrawer({ currency, sourceScreenName, enabledCurrenci
 
   const handleOpenStakeDrawer = useCallback(() => {
     if (isModularDrawerEnabled) {
-      const finalDrawerConfiguration = createDrawerConfiguration(undefined, "earn");
+      const stakeDrawerConfiguration = createDrawerConfiguration(undefined, "earn");
       const currencies = currency ? [currency.id] : enabledCurrencies;
       return openDrawer({
-        ...(currencies.length > 0 && { currencies }),
-        ...(currency && { areCurrenciesFiltered: true }), // display only accounts for the selected currency
+        currencies,
+        areCurrenciesFiltered: currencies?.length > 0,
         flow: "stake",
         source: sourceScreenName,
         enableAccountSelection: true,
         onAccountSelected: goToAccountStakeFlow,
         useCase: "earn",
-        ...(finalDrawerConfiguration.assets && {
-          assetsConfiguration: finalDrawerConfiguration.assets,
+        ...(stakeDrawerConfiguration.assets && {
+          assetsConfiguration: stakeDrawerConfiguration.assets,
         }),
-        ...(finalDrawerConfiguration.networks && {
-          networksConfiguration: finalDrawerConfiguration.networks,
+        ...(stakeDrawerConfiguration.networks && {
+          networksConfiguration: stakeDrawerConfiguration.networks,
         }),
       });
     } else {

@@ -22,7 +22,7 @@ import { AddressesSanctionedError } from "@ledgerhq/coin-framework/lib/sanction/
 import { getParentAccount, isTokenAccount } from "@ledgerhq/coin-framework/account/helpers";
 import { getAccountIdFromWalletAccountId } from "@ledgerhq/live-common/wallet-api/converters";
 import { createCustomErrorClass } from "@ledgerhq/errors";
-import { useOpenStakeDrawer } from "~/newArch/features/Stake";
+import { useOpenStakeDrawer } from "LLM/features/Stake";
 import { useStakingDrawer } from "~/components/Stake/useStakingDrawer";
 
 const DrawerClosedError = createCustomErrorClass("DrawerClosedError");

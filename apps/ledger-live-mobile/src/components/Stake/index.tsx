@@ -9,7 +9,7 @@ import type { StakeNavigatorParamList } from "../RootNavigator/types/StakeNaviga
 
 import { useStakingDrawer } from "./useStakingDrawer";
 import { useStake } from "LLM/hooks/useStake/useStake";
-import { useOpenStakeDrawer } from "~/newArch/features/Stake";
+import { useOpenStakeDrawer } from "LLM/features/Stake";
 
 type Props = BaseComposite<StackNavigatorProps<StakeNavigatorParamList, ScreenName.Stake>>;
 
