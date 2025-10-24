@@ -52,17 +52,17 @@ export const europaFrameConfig: Omit<FramedPictureConfig, "backgroundSource"> = 
 };
 
 /* The dimensions of the assets */
-const APEX_FRAME_WIDTH = 354;
-const APEX_FRAME_HEIGHT = 392;
+const APEX_FRAME_WIDTH = 270;
+const APEX_FRAME_HEIGHT = 397;
 export const apexFrameConfig: Omit<FramedPictureConfig, "backgroundSource"> = {
   frameWidth: APEX_FRAME_WIDTH,
   frameHeight: APEX_FRAME_HEIGHT,
-  innerWidth: 224,
-  innerHeight: 282,
+  innerWidth: 210,
+  innerHeight: 281,
   innerRight: 0,
-  innerTop: 29,
-  innerLeft: 64,
-  innerBottomHeight: 81,
+  innerTop: 28,
+  innerLeft: 29,
+  innerBottomHeight: 88,
   borderLeftRadius: 4,
   borderRightRadius: 4,
 };
