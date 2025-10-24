@@ -1,14 +1,12 @@
 import { getCryptoCurrencyById } from "./currencies";
-import {
-  addTokens,
-  convertERC20,
-  listTokens,
-  __clearAllLists,
-  findTokenById,
-  listTokensForCryptoCurrency,
-} from "./tokens";
-import { createTokenHash } from "./legacy/legacy-utils";
+import { listTokens, listTokensForCryptoCurrency } from "./tokens";
+import { addTokens, __clearAllLists, createTokenHash, convertERC20 } from "./legacy/legacy-utils";
+import { initializeLegacyTokens } from "./legacy/legacy-data";
 import { ERC20Token } from "./types";
+import { legacyCryptoAssetsStore } from "./legacy/legacy-store";
+
+// Initialize legacy tokens for tests
+initializeLegacyTokens(addTokens);
 
 const initMainToken: ERC20Token[] = [
   [
@@ -119,7 +117,7 @@ describe("tokens", () => {
       ];
       addTokens(changeToken.map(convertERC20));
       expect(listTokens().length).toBe(1);
-      findTokenById("kiba_inu");
+      legacyCryptoAssetsStore.findTokenById("kiba_inu");
       expect(listTokens({ withDelisted: true }).length).toBe(4);
 
       expect(listTokensForCryptoCurrency(ethereumCurrency).length).toBe(1);
