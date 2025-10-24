@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Linking, FlatList } from "react-native";
 import { Flex, Text } from "@ledgerhq/native-ui";
 import { useTranslation } from "react-i18next";
@@ -68,24 +68,98 @@ export const BleDevicesScanning: React.FC<BleDevicesScanningProps> = ({
     Linking.openURL(urls.pairingIssues);
   }, []);
 
-  // If we want to filter on known devices:
+  const [listVersion, setListVersion] = useState(0);
+
   const knownDevices = useSelector(bleDevicesSelector);
-  // .map creates a new array at each render and it was being used as a dependency on a useEffect
-  // inside useBleDevicesScanning, so we need to memo it.
-  const knownDeviceIds = useMemo(() => knownDevices.map(device => device.id), [knownDevices]);
-  const displayedDevices = useMemo(
-    () =>
-      devices
-        .map(item => ({
-          ...item,
-          isAlreadyKnown:
-            !areKnownDevicesPairable &&
-            Boolean(knownDeviceIds.some(deviceId => deviceId === item.deviceId)),
-        }))
-        // unknown devices go first, already known devices go last
-        .sort((a, b) => (a.isAlreadyKnown === b.isAlreadyKnown ? 0 : a.isAlreadyKnown ? 1 : -1)),
-    [areKnownDevicesPairable, devices, knownDeviceIds],
-  );
+  const knownDeviceIds = useMemo(() => knownDevices.map(d => d.id), [knownDevices]);
+  const knownIdSet = useMemo(() => new Set(knownDeviceIds), [knownDeviceIds]);
+
+  type TrackedDeviceState = {
+    latestScannedSnapshot: ScannedDevice;
+    isCurrentlyVisibleInScan: boolean;
+    firstSeenSequenceNumber: number;
+  };
+
+  const trackedDeviceStateByIdRef = useRef<Map<string, TrackedDeviceState>>(new Map());
+  const nextFirstSeenSequenceNumberRef = useRef<number>(0);
+  const displayListVersion = listVersion;
+
+  useEffect(() => {
+    let didTrackedStateChange = false;
+
+    const deviceIdsVisibleInThisScan = new Set<string>(
+      devices.map(scannedDevice => scannedDevice.deviceId),
+    );
+
+    for (const scannedDevice of devices) {
+      const existingTrackedState = trackedDeviceStateByIdRef.current.get(scannedDevice.deviceId);
+
+      if (!existingTrackedState) {
+        trackedDeviceStateByIdRef.current.set(scannedDevice.deviceId, {
+          latestScannedSnapshot: scannedDevice,
+          isCurrentlyVisibleInScan: true,
+          firstSeenSequenceNumber: nextFirstSeenSequenceNumberRef.current++,
+        });
+        didTrackedStateChange = true;
+        continue;
+      }
+
+      const didSnapshotReferenceChange =
+        existingTrackedState.latestScannedSnapshot !== scannedDevice;
+
+      if (didSnapshotReferenceChange || existingTrackedState.isCurrentlyVisibleInScan !== true) {
+        trackedDeviceStateByIdRef.current.set(scannedDevice.deviceId, {
+          latestScannedSnapshot: scannedDevice,
+          isCurrentlyVisibleInScan: true,
+          firstSeenSequenceNumber: existingTrackedState.firstSeenSequenceNumber,
+        });
+        didTrackedStateChange = true;
+      }
+    }
+
+    for (const [deviceId, trackedState] of trackedDeviceStateByIdRef.current) {
+      if (!deviceIdsVisibleInThisScan.has(deviceId) && trackedState.isCurrentlyVisibleInScan) {
+        trackedDeviceStateByIdRef.current.set(deviceId, {
+          ...trackedState,
+          isCurrentlyVisibleInScan: false,
+        });
+        didTrackedStateChange = true;
+      }
+    }
+
+    if (didTrackedStateChange) setListVersion(v => v + 1);
+  }, [devices]);
+
+  const displayedDevices = useMemo(() => {
+    const enrichedDevices: Array<
+      ScannedDevice & {
+        isAlreadyKnown: boolean;
+        grayedOut: boolean;
+        discoveryStableOrder: number;
+      }
+    > = [];
+
+    for (const [deviceId, trackedState] of trackedDeviceStateByIdRef.current) {
+      const isAlreadyKnownForSorting = knownIdSet.has(deviceId) && !areKnownDevicesPairable;
+
+      enrichedDevices.push({
+        ...trackedState.latestScannedSnapshot,
+        isAlreadyKnown: isAlreadyKnownForSorting,
+        grayedOut: !trackedState.isCurrentlyVisibleInScan,
+        discoveryStableOrder: trackedState.firstSeenSequenceNumber,
+      });
+    }
+
+    enrichedDevices.sort((a, b) => {
+      const knownGroupOrder = Number(a.isAlreadyKnown) - Number(b.isAlreadyKnown);
+      if (knownGroupOrder !== 0) return knownGroupOrder;
+
+      return a.discoveryStableOrder - b.discoveryStableOrder;
+    });
+
+    return enrichedDevices;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [displayListVersion, areKnownDevicesPairable, knownIdSet]);
 
   return (
     <Flex flex={1}>
@@ -127,6 +201,7 @@ export const BleDevicesScanning: React.FC<BleDevicesScanningProps> = ({
                   wired: false,
                   modelId: item.modelId,
                   isAlreadyKnown: item.isAlreadyKnown,
+                  grayedOut: item.grayedOut,
                 }}
                 areKnownDevicesPairable={false}
               />
