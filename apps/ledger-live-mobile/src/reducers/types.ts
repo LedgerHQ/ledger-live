@@ -28,14 +28,12 @@ import { ProtectStateNumberEnum } from "../components/ServicesWidget/types";
 import { ImageType } from "../components/CustomImage/types";
 import { WalletState } from "@ledgerhq/live-wallet/store";
 import { TrustchainStore } from "@ledgerhq/ledger-key-ring-protocol/store";
-import { firebaseRemoteConfigApi } from "LLM/api/firebaseRemoteConfigApi";
 import { Steps } from "LLM/features/WalletSync/types/Activation";
 import { type TabListType as TabPortfolioAssetsType } from "~/screens/Portfolio/useListsAnimation";
 import { CountervaluesState } from "./countervalues";
 import { ToastState } from "./toast";
 import { ModularDrawerState } from "./modularDrawer";
-import { assetsDataApi } from "@ledgerhq/live-common/dada-client/state-manager/api";
-import { cryptoAssetsApi } from "@ledgerhq/cryptoassets/cal-client/state-manager/api";
+import { LLMRTKApiState } from "~/context/rtkApi";
 
 // === ACCOUNT STATE ===
 
@@ -378,17 +376,14 @@ export type LargeMoverState = {
 
 // === ROOT STATE ===
 
-export type State = {
+export type State = LLMRTKApiState & {
   accounts: AccountsState;
   appstate: AppState;
-  assetsDataApi: ReturnType<typeof assetsDataApi.reducer>;
-  cryptoAssetsApi: ReturnType<typeof cryptoAssetsApi.reducer>;
   auth: AuthState;
   ble: BleState;
   countervalues: CountervaluesState;
   dynamicContent: DynamicContentState;
   earn: EarnState;
-  firebaseRemoteConfigApi: ReturnType<typeof firebaseRemoteConfigApi.reducer>;
   inView: InViewState;
   largeMover: LargeMoverState;
   market: MarketState;
