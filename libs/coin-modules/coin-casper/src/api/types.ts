@@ -1,7 +1,7 @@
 export interface IndexerResponseRoot<T> {
   data: T[];
-  pageCount: number;
-  itemCount: number;
+  page_count: number;
+  item_count: number;
   pages: { number: number; url: string }[];
 }
 

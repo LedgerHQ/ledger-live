@@ -3,9 +3,9 @@ import { log } from "@ledgerhq/logs";
 import { IndexerResponseRoot, ITxnHistoryData, RpcError } from "./types";
 
 import network from "@ledgerhq/live-network";
+import BigNumber from "bignumber.js";
 import { AccountIdentifier, HttpHandler, PublicKey, RpcClient, Transaction } from "casper-js-sdk";
 import { getCoinConfig } from "../config";
-import BigNumber from "bignumber.js";
 import { NodeErrorCodeAccountNotFound, NodeErrorCodeQueryFailed } from "../consts";
 
 const getCasperIndexerURL = (path: string): string => {
@@ -115,7 +115,7 @@ export const fetchTxs = async (addr: string): Promise<ITxnHistoryData[]> => {
   );
   res = res.concat(response.data);
 
-  while (response.pageCount > page) {
+  while (response.page_count > page) {
     page++;
     response = await casperIndexerWrapper<ITxnHistoryData>(
       `accounts/${addr}/ledgerlive-deploys?limit=${limit}&page=${page}`,
