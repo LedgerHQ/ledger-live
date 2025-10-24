@@ -30,7 +30,7 @@ function View({ items, onSelectCurrency, counterCurrency }: ViewProps) {
   }, [ref]);
 
   return (
-    <SafeAreaView edges={["left", "right"]} isFlex style={styles.root}>
+    <SafeAreaView edges={["left", "right", "bottom"]} isFlex style={styles.root}>
       <SearchInput placeholder={t("common.search")} value={search} onChange={setSearch} ref={ref} />
       <Search
         fuseOptions={{

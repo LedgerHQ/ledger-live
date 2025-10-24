@@ -236,7 +236,7 @@ const EarlySecurityCheckBody: React.FC<Props> = ({
             />
           </Flex>
         </Flex>
-        <Flex rowGap={space[7]} mb={6}>
+        <Flex rowGap={space[7]}>
           {primaryBottomCta}
           {secondaryBottomCta}
         </Flex>

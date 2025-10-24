@@ -27,6 +27,7 @@ import useEnv from "@ledgerhq/live-common/hooks/useEnv";
 import { counterValueCurrencySelector, discreetModeSelector } from "~/reducers/settings";
 import { useSettings } from "~/hooks";
 import { ProviderInterstitial } from "LLM/components/ProviderInterstitial";
+import SafeAreaView from "~/components/SafeAreaView";
 
 export type Props = StackNavigatorProps<
   PtxNavigatorParamList,
@@ -114,7 +115,7 @@ export function PtxScreen({ route, config }: Props) {
   const { softExit, ...searchInput } = Object.fromEntries(searchParams.entries());
 
   return manifest ? (
-    <>
+    <SafeAreaView edges={["bottom"]} isFlex>
       <TrackScreen category="Platform" name="App" />
       <WebPTXPlayer
         manifest={manifest}
@@ -138,7 +139,7 @@ export function PtxScreen({ route, config }: Props) {
         softExit={softExit === "true"}
         Interstitial={providerInterstitialEnabled ? ProviderInterstitial : undefined}
       />
-    </>
+    </SafeAreaView>
   ) : (
     <Flex flex={1} p={10} justifyContent="center" alignItems="center">
       {remoteLiveAppState.isLoading ? (
