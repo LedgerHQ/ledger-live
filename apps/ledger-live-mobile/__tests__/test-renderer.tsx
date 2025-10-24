@@ -12,6 +12,7 @@ import {
   renderHook as rntlRenderHook,
   userEvent,
 } from "@testing-library/react-native";
+import { firebaseRemoteConfigApi } from "LLM/api/firebaseRemoteConfigApi";
 import QueuedDrawersContextProvider from "LLM/components/QueuedDrawer/QueuedDrawersContextProvider";
 import React, { useMemo } from "react";
 import { I18nextProvider } from "react-i18next";
@@ -72,6 +73,8 @@ const INITIAL_STATE: State = {
   auth: AUTH_INITIAL_STATE,
   assetsDataApi: assetsDataApi.reducer(undefined, { type: "INIT" }),
   cryptoAssetsApi: cryptoAssetsApi.reducer(undefined, { type: "INIT" }),
+  firebaseRemoteConfigApi: firebaseRemoteConfigApi.reducer(undefined, { type: "INIT" }),
+  tools: TOOLS_INITIAL_STATE,
 };
 
 type ExtraOptions = RenderOptions & {
@@ -91,6 +94,7 @@ function createStore({ overrideInitialState }: { overrideInitialState: (state: S
       getDefaultMiddleware({ serializableCheck: false, immutableCheck: false }).concat(
         assetsDataApi.middleware,
         cryptoAssetsApi.middleware,
+        firebaseRemoteConfigApi.middleware,
       ),
     preloadedState: overrideInitialState(INITIAL_STATE),
     devTools: false,

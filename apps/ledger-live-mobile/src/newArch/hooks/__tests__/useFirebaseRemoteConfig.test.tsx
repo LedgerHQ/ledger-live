@@ -1,14 +1,6 @@
-import React, { PropsWithChildren } from "react";
 import { getRemoteConfig } from "@react-native-firebase/remote-config";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { renderHook, waitFor } from "@testing-library/react-native";
-// import { renderHook } from "@tests/test-renderer";
+import { renderHook, waitFor } from "@tests/test-renderer";
 import { useFirebaseRemoteConfig } from "../useFirebaseRemoteConfig";
-
-const queryClient = new QueryClient();
-const wrapper = ({ children }: PropsWithChildren) => (
-  <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
-);
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
 const { setDefaults, setConfigSettings, fetchAndActivate } = getRemoteConfig() as jest.Mocked<
@@ -24,7 +16,7 @@ describe("useFirebaseRemoteConfig", () => {
   });
 
   it("returns true once setConfigSettings, setDefaults, and fetchAndActivate are resolved", async () => {
-    const { result } = renderHook(() => useFirebaseRemoteConfig(), { wrapper });
+    const { result } = renderHook(() => useFirebaseRemoteConfig());
     await waitFor(() => expect(result.current).toBe(true));
     expect(setConfigSettings).toHaveBeenCalledWith({ minimumFetchIntervalMillis: 0 });
     expect(setDefaults).toHaveBeenCalled();
@@ -33,7 +25,7 @@ describe("useFirebaseRemoteConfig", () => {
 
   it("still returns true if one of the firebase initialization calls fail", async () => {
     setConfigSettings.mockRejectedValue(new Error("Request failed"));
-    const { result } = renderHook(() => useFirebaseRemoteConfig(), { wrapper });
+    const { result } = renderHook(() => useFirebaseRemoteConfig());
     await waitFor(() => expect(result.current).toBe(true));
     expect(setConfigSettings).toHaveBeenCalledWith({ minimumFetchIntervalMillis: 0 });
     expect(setDefaults).toHaveBeenCalled();
@@ -42,7 +34,7 @@ describe("useFirebaseRemoteConfig", () => {
 
   it("still returns true if fetchAndActivate fails", async () => {
     fetchAndActivate.mockRejectedValue(new Error("Request failed"));
-    const { result } = renderHook(() => useFirebaseRemoteConfig(), { wrapper });
+    const { result } = renderHook(() => useFirebaseRemoteConfig());
     await waitFor(() => expect(result.current).toBe(true));
     expect(setConfigSettings).toHaveBeenCalledWith({ minimumFetchIntervalMillis: 0 });
     expect(setDefaults).toHaveBeenCalled();

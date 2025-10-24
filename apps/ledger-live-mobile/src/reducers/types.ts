@@ -28,6 +28,7 @@ import { ProtectStateNumberEnum } from "../components/ServicesWidget/types";
 import { ImageType } from "../components/CustomImage/types";
 import { WalletState } from "@ledgerhq/live-wallet/store";
 import { TrustchainStore } from "@ledgerhq/ledger-key-ring-protocol/store";
+import { firebaseRemoteConfigApi } from "LLM/api/firebaseRemoteConfigApi";
 import { Steps } from "LLM/features/WalletSync/types/Activation";
 import { type TabListType as TabPortfolioAssetsType } from "~/screens/Portfolio/useListsAnimation";
 import { CountervaluesState } from "./countervalues";
@@ -387,6 +388,7 @@ export type State = {
   countervalues: CountervaluesState;
   dynamicContent: DynamicContentState;
   earn: EarnState;
+  firebaseRemoteConfigApi: ReturnType<typeof firebaseRemoteConfigApi.reducer>;
   inView: InViewState;
   largeMover: LargeMoverState;
   market: MarketState;

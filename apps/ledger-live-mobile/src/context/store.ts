@@ -3,6 +3,7 @@ import { configureStore, StoreEnhancer } from "@reduxjs/toolkit";
 import reducers from "~/reducers";
 import { assetsDataApi } from "@ledgerhq/live-common/dada-client/state-manager/api";
 import { cryptoAssetsApi } from "@ledgerhq/cryptoassets/cal-client/state-manager/api";
+import { firebaseRemoteConfigApi } from "LLM/api/firebaseRemoteConfigApi";
 import { rebootMiddleware } from "~/middleware/rebootMiddleware";
 import { rozeniteDevToolsEnhancer } from "@rozenite/redux-devtools-plugin";
 
@@ -12,6 +13,7 @@ export const store = configureStore({
   devTools: !!Config.DEBUG_RNDEBUGGER,
   middleware: getDefaultMiddleware =>
     getDefaultMiddleware({ serializableCheck: false, immutableCheck: false })
+      .concat(firebaseRemoteConfigApi.middleware)
       .concat(assetsDataApi.middleware)
       .concat(cryptoAssetsApi.middleware)
       .concat(rebootMiddleware),

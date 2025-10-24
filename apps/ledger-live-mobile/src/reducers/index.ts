@@ -2,6 +2,7 @@ import postOnboarding from "@ledgerhq/live-common/postOnboarding/reducer";
 import { assetsDataApi } from "@ledgerhq/live-common/dada-client/state-manager/api";
 import { cryptoAssetsApi } from "@ledgerhq/cryptoassets/cal-client/state-manager/api";
 import { combineReducers, Store } from "redux";
+import { firebaseRemoteConfigApi } from "LLM/api/firebaseRemoteConfigApi";
 import { ActionsPayload } from "../actions/types";
 import accounts from "./accounts";
 import appstate from "./appstate";
@@ -38,6 +39,7 @@ const appReducer = combineReducers({
   countervalues,
   dynamicContent,
   earn,
+  firebaseRemoteConfigApi: firebaseRemoteConfigApi.reducer,
   inView,
   largeMover,
   market,
