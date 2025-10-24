@@ -46,7 +46,7 @@ export type ActionButtonEventProps = {
     component: React.ComponentType<ModalOnDisabledClickComponentProps>;
   };
   Component?: ComponentType;
-  enableActions?: string;
+  customHandler?: () => void;
 };
 
 export type ActionButtonEvent = ActionButtonEventProps & {
@@ -139,7 +139,15 @@ export const FabButtonBarProvider = ({
 
   const onPress = useCallback(
     (data: Omit<ActionButtonEvent, "label" | "Icon">) => {
-      const { navigationParams, confirmModalProps, linkUrl, event, eventProperties, id } = data;
+      const {
+        navigationParams,
+        confirmModalProps,
+        linkUrl,
+        event,
+        eventProperties,
+        id,
+        customHandler,
+      } = data;
 
       if (readOnlyModeEnabled && !hasOrderedNano) {
         navigateToRebornFlow();
@@ -161,6 +169,8 @@ export const FabButtonBarProvider = ({
         setInfoModalProps(undefined);
         if (linkUrl) {
           Linking.openURL(linkUrl);
+        } else if (customHandler) {
+          customHandler();
         } else if (navigationParams) {
           onNavigate(...navigationParams);
         }

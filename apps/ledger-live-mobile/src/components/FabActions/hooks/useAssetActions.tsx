@@ -22,6 +22,7 @@ import { PtxToast } from "../../Toast/PtxToast";
 import { getStakeLabelLocaleBased } from "~/helpers/getStakeLabelLocaleBased";
 import { useStake } from "LLM/hooks/useStake/useStake";
 import { flattenAccountsSelector } from "~/reducers/accounts";
+import { useOpenStakeDrawer } from "LLM/features/Stake";
 
 type useAssetActionsProps = {
   currency?: CryptoCurrency | TokenCurrency;
@@ -74,6 +75,11 @@ export default function useAssetActions({ currency, accounts }: useAssetActionsP
   const accountCurrency = !defaultAccount ? null : getAccountCurrency(defaultAccount);
   const assetId = !currency ? accountCurrency?.id : currency.id;
   const canStakeCurrency = !assetId ? false : getCanStakeCurrency(assetId);
+
+  const { handleOpenStakeDrawer, isModularDrawerEnabled } = useOpenStakeDrawer({
+    sourceScreenName: "asset_action",
+    currency,
+  });
 
   const actions = useMemo<ActionButtonEvent[]>(() => {
     const isPtxServiceCtaScreensDisabled = !(ptxServiceCtaScreens?.enabled ?? true);
@@ -180,6 +186,7 @@ export default function useAssetActions({ currency, accounts }: useAssetActionsP
                         },
                       },
                     ] as const,
+                    customHandler: isModularDrawerEnabled ? handleOpenStakeDrawer : undefined,
                   },
                 ]
               : []),
@@ -263,6 +270,8 @@ export default function useAssetActions({ currency, accounts }: useAssetActionsP
     stakeLabel,
     accountCurrency?.ticker,
     route,
+    isModularDrawerEnabled,
+    handleOpenStakeDrawer,
   ]);
 
   return {
