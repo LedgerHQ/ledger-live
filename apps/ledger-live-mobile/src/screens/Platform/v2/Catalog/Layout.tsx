@@ -93,7 +93,9 @@ export function Layout({
             {subBottomHeaderContent}
           </Flex>
         )}
-        <Flex style={[styles.marginHorizontal]}>{bodyContent}</Flex>
+        <Flex style={[styles.marginHorizontal]} paddingBottom={48}>
+          {bodyContent}
+        </Flex>
       </ScrollContainer>
     </>
   );
