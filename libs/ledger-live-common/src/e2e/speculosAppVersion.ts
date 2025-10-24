@@ -1,5 +1,5 @@
 import { HttpManagerApiRepository, ApplicationV2Entity } from "@ledgerhq/device-core";
-import { version } from "@ledgerhq/device-core/package.json";
+import { version } from "../../package.json";
 import { getEnv } from "@ledgerhq/live-env";
 import { DeviceModelId } from "@ledgerhq/devices";
 import { Device as CryptoWallet } from "./enum/Device";
