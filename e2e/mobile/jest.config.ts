@@ -4,6 +4,7 @@ import type { ReporterOptions } from "jest-allure2-reporter";
 import { compilerOptions } from "./tsconfig.json";
 
 const jestAllure2ReporterOptions: ReporterOptions = {
+  extends: "detox-allure2-adapter/preset-detox",
   resultsDir: "artifacts",
   testCase: {
     links: {
@@ -62,7 +63,16 @@ const config: Config = {
     eventListeners: [
       "jest-metadata/environment-listener",
       "jest-allure2-reporter/environment-listener",
-      "detox-allure2-adapter",
+      [
+        "detox-allure2-adapter",
+        {
+          userArtifacts: "copy",
+          deviceLogs: false,
+          deviceScreenshots: true,
+          deviceVideos: false,
+          deviceViewHierarchy: false,
+        },
+      ],
     ],
   },
   verbose: true,
