@@ -183,6 +183,44 @@ describe("craftTransaction", () => {
       }).unsignedSerialized,
     );
   });
+
+  it("preserves passed sequence", async () => {
+    setCoinConfig(() => ({ info: { node: { type: "external" } } }) as unknown as EvmCoinConfig);
+    jest.spyOn(externalNode, "getGasEstimation").mockResolvedValue(new BigNumber(2300));
+    jest.spyOn(externalNode, "getFeeData").mockResolvedValue({
+      gasPrice: new BigNumber(5),
+      maxFeePerGas: null,
+      maxPriorityFeePerGas: null,
+      nextBaseFee: null,
+    });
+
+    const { transaction } = await craftTransaction(
+      { ethereumLikeInfo: { chainId: 42 } } as CryptoCurrency,
+      {
+        transactionIntent: {
+          intentType: "transaction",
+          sequence: 15,
+          type: "send-legacy",
+          recipient: "0x7b2c7232f9e38f30e2868f0e5bf311cd83554b5a",
+          amount: 10n,
+          asset: { type: "native" },
+        } as TransactionIntent<MemoNotSupported, BufferTxData>,
+      },
+    );
+
+    expect(transaction).toEqual(
+      ethers.Transaction.from({
+        type: 0,
+        to: "0x7b2c7232f9e38f30e2868f0e5bf311cd83554b5a",
+        nonce: 15,
+        gasLimit: 2300,
+        value: 10,
+        chainId: 42,
+        gasPrice: 5,
+      }).unsignedSerialized,
+    );
+  });
+
   describe("staking transactions", () => {
     beforeEach(() => {
       jest.clearAllMocks();
