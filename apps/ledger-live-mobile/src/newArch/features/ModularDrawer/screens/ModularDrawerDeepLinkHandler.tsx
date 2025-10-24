@@ -32,10 +32,10 @@ function ModularDrawerDeepLinkHandlerCore({
   const navigation = useNavigation();
   const { openDrawer } = useModularDrawerController();
 
-  const currencyToAdd = currency ? findCryptoCurrencyByKeyword(currency) ?? undefined : undefined;
+  const currencyToAdd = currency ? findCryptoCurrencyByKeyword(currency) : undefined;
 
   const { handleOpenReceiveDrawer } = useOpenReceiveDrawer({
-    currency: currencyToAdd,
+    currency: currencyToAdd ?? undefined,
     sourceScreenName: "deeplink",
   });
 
