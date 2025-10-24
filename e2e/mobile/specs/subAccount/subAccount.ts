@@ -171,7 +171,7 @@ export function runAddSubAccountTest(
         async () => {
           if (withParentAccount) {
             await app.portfolio.tapTabSelector("Accounts");
-            await app.addAccount.tapAddNewOrExistingAccountButton();
+            await app.portfolio.tapAddNewOrExistingAccountButton();
           } else {
             await app.portfolio.addAccount();
           }

@@ -11,6 +11,7 @@ export default class OnboardingStepsPage {
   languageSelectButtonId = "language-select-button";
   languageSelectDrawerTitleId = "language-select-drawer-title";
   deviceCardBaseId = "onboarding-device-selection";
+  scrollListContainerId = "onboarding-view-scroll-list-container";
 
   languageSelectElementId = (language: string) => `language-select-${language}`;
   deviceCardId = (title: string) => `${this.deviceCardBaseId}-${title}`;
@@ -84,7 +85,7 @@ export default class OnboardingStepsPage {
     ];
     for (const device of devices) {
       if (device.id === "nanoS") {
-        await scrollToId(this.deviceCardId(device.id), undefined, 100, "down");
+        await scrollToId(this.deviceCardId(device.id), this.scrollListContainerId, 100, "down");
       }
       await detoxExpect(getElementById(this.deviceCardId(device.id))).toBeVisible();
       await detoxExpect(this.deviceCardHeader(device.id)).toHaveText("Ledger");

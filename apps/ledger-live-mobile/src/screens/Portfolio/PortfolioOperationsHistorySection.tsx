@@ -5,7 +5,7 @@ import OperationsHistory from "../WalletCentricSections/OperationsHistory";
 
 const PortfolioOperationHistorySection = () => {
   const accounts = useSelector(accountsSelector);
-  return <OperationsHistory accounts={accounts} />;
+  return <OperationsHistory accounts={accounts} testID="portfolio-operation-history-section" />;
 };
 
 export default React.memo(PortfolioOperationHistorySection);

@@ -7,6 +7,7 @@ export default class SettingsGeneralPage {
 
   countervalueSettingsRowId = "countervalue-settings-row";
   countervalueTickerSettingsRowId = "countervalue-ticker-settings-row";
+  counterValueSettingsFlatListId = "counter-value-settings-flat-list";
   compactSettingsRowId = (currencyTicker: string) => `compact-settings-row-${currencyTicker}`;
 
   @Step("Toggle password")
@@ -55,7 +56,7 @@ export default class SettingsGeneralPage {
   @Step("Change counter value to $0")
   async changeCounterValue(currency: string) {
     await this.clickOnCountervalueSettingsRow();
-    await scrollToId(this.compactSettingsRowId(currency));
+    await scrollToId(this.compactSettingsRowId(currency), this.counterValueSettingsFlatListId);
     await tapById(this.compactSettingsRowId(currency));
   }
 
