@@ -24,7 +24,7 @@ export default function WelcomePage() {
 
   return (
     <ForceTheme selectedPalette={"dark"}>
-      <SafeAreaView style={{ backgroundColor: colors.neutral.c60 }} isFlex>
+      <SafeAreaView isFlex style={{ backgroundColor: colors.neutral.c60 }}>
         {/* Force re-rendering of video backgrounds when re-focused */}
         {isFocused &&
           welcomeVideos.map(({ id, source }, index) => (

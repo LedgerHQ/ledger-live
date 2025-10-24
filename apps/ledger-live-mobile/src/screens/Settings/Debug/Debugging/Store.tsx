@@ -5,7 +5,7 @@ import get from "lodash/get";
 import set from "lodash/set";
 import cloneDeep from "lodash/cloneDeep";
 import { BigNumber } from "bignumber.js";
-import { StyleSheet, SafeAreaView, ScrollView } from "react-native";
+import { StyleSheet, ScrollView } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { Alert, Flex } from "@ledgerhq/native-ui";
 import { useTheme } from "@react-navigation/native";
@@ -18,6 +18,7 @@ import { SettingsActionTypes } from "~/actions/types";
 import { State } from "~/reducers/types";
 import QueuedDrawer from "~/components/QueuedDrawer";
 import TextInput from "~/components/FocusedTextInput";
+import SafeAreaView from "~/components/SafeAreaView";
 
 const Separator = styled(Flex).attrs({
   width: "100%",

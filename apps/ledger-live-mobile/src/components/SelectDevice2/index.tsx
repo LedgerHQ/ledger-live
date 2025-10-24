@@ -1,5 +1,5 @@
 import React, { useMemo, useCallback, useEffect, useState } from "react";
-import { Platform } from "react-native";
+import { Platform, View } from "react-native";
 import { Trans, useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { discoverDevices } from "@ledgerhq/live-common/hw/index";
@@ -8,7 +8,6 @@ import { Text, Flex, IconsLegacy, Box, ScrollContainer } from "@ledgerhq/native-
 import { Device } from "@ledgerhq/live-common/hw/actions/types";
 import { usePostOnboardingEntryPointVisibleOnWallet } from "@ledgerhq/live-common/postOnboarding/hooks/usePostOnboardingEntryPointVisibleOnWallet";
 import { DeviceModelId } from "@ledgerhq/types-devices";
-import SafeAreaView from "../SafeAreaView";
 import { TrackScreen, track } from "~/analytics";
 import { NavigatorName, ScreenName } from "~/const";
 import { bleDevicesSelector } from "~/reducers/ble";
@@ -37,6 +36,8 @@ import {
 } from "@ledgerhq/live-dmk-mobile";
 import getBLETransport from "../../react-native-hw-transport-ble";
 import { useBleDevicesScanning as useLegacyBleDevicesScanning } from "@ledgerhq/live-common/ble/hooks/useBleDevicesScanning";
+import styled from "styled-components/native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export type { SetHeaderOptionsRequest };
 
@@ -83,6 +84,7 @@ export default function SelectDevice({
 
   const dispatch = useDispatch();
   const isFocused = useIsFocused();
+  const { bottom } = useSafeAreaInsets();
 
   const [isAddNewDrawerOpen, setIsAddNewDrawerOpen] = useState<boolean>(false);
   const [isPairingDevices, setIsPairingDevices] = useState<boolean>(false);
@@ -334,7 +336,7 @@ export default function SelectDevice({
   );
 
   return (
-    <SafeAreaView edges={["left", "right"]} isFlex>
+    <StyledView>
       {withMyLedgerTracking ? <TrackScreen {...trackScreenProps} /> : null}
       <RequiresBluetoothDrawer
         isOpenedOnIssue={isBleRequired}
@@ -458,7 +460,7 @@ export default function SelectDevice({
                 {children}
               </Flex>
             </Flex>
-            <Flex alignItems="center" my={8}>
+            <Flex alignItems="center" my={8} mb={bottom}>
               <BuyDeviceCTA />
             </Flex>
           </ScrollContainer>
@@ -536,6 +538,10 @@ export default function SelectDevice({
           </QueuedDrawer>
         </Flex>
       )}
-    </SafeAreaView>
+    </StyledView>
   );
 }
+
+const StyledView = styled(View)`
+  flex: 1;
+`;
