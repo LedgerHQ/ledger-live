@@ -139,6 +139,8 @@ export type CurrencyFeatures = {
   currencyBerachain: DefaultFeature;
   currencyHyperevm: DefaultFeature;
   currencyCantonNetwork: DefaultFeature;
+  currencyCantonNetworkDevnet: DefaultFeature;
+  currencyCantonNetworkTestnet: DefaultFeature;
   currencyKaspa: DefaultFeature;
   currencyEthereumHoodi: DefaultFeature;
   currencyCore: DefaultFeature;
