@@ -37,7 +37,7 @@ function ValidateSuccess({
   onLearnMore,
 }: Props) {
   return (
-    <SafeAreaViewFixed isFlex edges={["bottom"]}>
+    <SafeAreaViewFixed isFlex edges={["bottom"]} testID="validate-success-screen">
       <Flex flex={1} flexDirection="column" justifyContent="center" alignItems="center">
         {icon ? (
           <IconBox Icon={icon} color={iconColor} boxSize={iconBoxSize} iconSize={iconSize} />

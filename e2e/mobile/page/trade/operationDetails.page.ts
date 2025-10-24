@@ -14,6 +14,7 @@ export default class OperationDetailsPage {
     LOCK: "Locked",
   };
   operationDetailsConfirmed = "operation-details-text-confirmed";
+  operationDetailsScrollViewId = "operation-details-scroll-view";
 
   title = () => getElementById(this.titleId);
   account = () => getElementById("operationDetails-account");
@@ -33,7 +34,7 @@ export default class OperationDetailsPage {
 
   @Step("Check recipient details")
   async checkRecipientAddress(recipient: Account) {
-    await scrollToId(this.recipientId);
+    await scrollToId(this.recipientId, this.operationDetailsScrollViewId);
     const recipientElement = getElementById(this.recipientId);
 
     let expected: string;
@@ -47,32 +48,32 @@ export default class OperationDetailsPage {
 
   @Step("Check recipient as provider")
   async checkRecipientAsProvider(recipientAddress: string) {
-    await scrollToId(this.recipientId);
+    await scrollToId(this.recipientId, this.operationDetailsScrollViewId);
     const recipientElement = getElementById(this.recipientId);
     await detoxExpect(recipientElement).toHaveText(recipientAddress);
   }
 
   @Step("Check delegated provider")
   async checkProvider(provider: string) {
-    await scrollToId(this.providerId);
+    await scrollToId(this.providerId, this.operationDetailsScrollViewId);
     await detoxExpect(getElementById(this.providerId)).toHaveText(provider);
   }
 
   @Step("Check delegated amount")
   async checkDelegatedAmount(amount: string) {
-    await scrollToId(this.delegatedAmountId);
+    await scrollToId(this.delegatedAmountId, this.operationDetailsScrollViewId);
     await detoxExpect(getElementById(this.delegatedAmountId)).toHaveText(amount);
   }
 
   @Step("Check sender")
   async checkSender(sender: string) {
-    await scrollToId(this.senderId);
+    await scrollToId(this.senderId, this.operationDetailsScrollViewId);
     await detoxExpect(getElementById(this.senderId)).toHaveText(sender);
   }
 
   @Step("Check Fees")
   async checkFees(fees: string) {
-    await scrollToId(this.feesId);
+    await scrollToId(this.feesId, this.operationDetailsScrollViewId);
     await detoxExpect(getElementById(this.feesId)).toHaveText(fees);
   }
 

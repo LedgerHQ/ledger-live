@@ -18,6 +18,7 @@ const Screen = makeGenericSelectScreen({
   itemEventProperties: item => ({ countervalue: item.value }),
   keyExtractor: item => item.value,
   formatItem: item => item.label,
+  flatListTestID: "counter-value-settings-flat-list",
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Screen);

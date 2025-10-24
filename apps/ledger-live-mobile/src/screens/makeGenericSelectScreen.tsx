@@ -19,6 +19,7 @@ type Opts<Item> = {
   formatItem?: (_: Item) => React.ReactNode;
   Entry?: EntryComponent<Item>;
   ListHeaderComponent?: React.ComponentType;
+  flatListTestID?: string;
   // TODO in future: searchable: boolean
 };
 
@@ -66,7 +67,7 @@ type GenericScreenProps<Item> = {
 export default function makeGenericSelectScreen<Item extends { value: string; label: string }>(
   opts: Opts<Item>,
 ) {
-  const { id, itemEventProperties, keyExtractor } = opts;
+  const { id, itemEventProperties, keyExtractor, flatListTestID } = opts;
   const Entry: EntryComponent<Item> = getEntryFromOptions(opts);
 
   return class GenericSelectScreen extends Component<GenericScreenProps<Item>> {
@@ -97,6 +98,7 @@ export default function makeGenericSelectScreen<Item extends { value: string; la
             keyExtractor={keyExtractor}
             contentContainerStyle={styles.root}
             scrollIndicatorInsets={{ right: 1 }}
+            testID={flatListTestID}
           />
         </Box>
       );

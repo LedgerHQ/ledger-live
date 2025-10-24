@@ -69,7 +69,7 @@ function OperationDetails({ route }: NavigatorProps) {
       useDetoxInsets={Config.DETOX === "1"}
     >
       <TrackScreen category="OperationDetails" />
-      <NavigationScrollView>
+      <NavigationScrollView testID="operation-details-scroll-view">
         <View style={styles.root}>
           <Content
             account={account}
