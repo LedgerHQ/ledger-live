@@ -70,6 +70,8 @@ export function useCurrenciesUnderFeatureFlag() {
   const berachain = useFeature("currencyBerachain");
   const hyperevm = useFeature("currencyHyperevm");
   const canton = useFeature("currencyCantonNetwork");
+  const cantonDevnet = useFeature("currencyCantonNetworkDevnet");
+  const cantonTestnet = useFeature("currencyCantonNetworkTestnet");
   const kaspa = useFeature("currencyKaspa");
   const core = useFeature("currencyCore");
   const ethereumHoodi = useFeature("currencyEthereumHoodi");
@@ -144,6 +146,8 @@ export function useCurrenciesUnderFeatureFlag() {
       mina,
       babylon,
       canton_network: canton,
+      canton_network_devnet: cantonDevnet,
+      canton_network_testnet: cantonTestnet,
       kaspa,
       core,
       ethereum_hoodi: ethereumHoodi,
