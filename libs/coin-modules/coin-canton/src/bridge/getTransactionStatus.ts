@@ -22,7 +22,7 @@ import { isRecipientValid } from "../common-logic/utils";
 import coinConfig from "../config";
 import { getAbandonSeedAddress } from "@ledgerhq/cryptoassets/abandonseed";
 
-export const TO_MANY_UTXOS_CRITICAL_COUNT = 100;
+export const TO_MANY_UTXOS_CRITICAL_COUNT = 24;
 export const TO_MANY_UTXOS_WARNING_COUNT = 10;
 
 export const getTransactionStatus: AccountBridge<
