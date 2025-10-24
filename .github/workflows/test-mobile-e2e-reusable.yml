@@ -341,20 +341,17 @@ jobs:
       - name: Boot iOS Simulator in Background
         run: |
           LOG_FILE="e2e/mobile/artifacts/simulator-boot.log"
-          (
-            {
-              echo "🔧 Creating iOS Simulator 2"            
-              xcrun simctl create "iOS Simulator 2" "iPhone 15"
-              echo "🛫 Booting simulator..."
-              xcrun simctl boot "iOS Simulator" || true
-              xcrun simctl bootstatus "iOS Simulator"
-              echo "✅ Simulator is now fully booted"
-              xcrun simctl boot "iOS Simulator 2" || true
-              xcrun simctl bootstatus "iOS Simulator 2"
-              echo "✅ Simulator 2 is now fully booted" 
-            } &> "$LOG_FILE"
-          ) &
-
+          nohup bash -c '
+            echo "🔧 Creating iOS Simulator 2"
+            xcrun simctl create "iOS Simulator 2" "iPhone 15"
+            echo "🛫 Booting simulator..."
+            xcrun simctl boot "iOS Simulator" || true
+            xcrun simctl bootstatus "iOS Simulator"
+            echo "✅ Simulator is now fully booted"
+            xcrun simctl boot "iOS Simulator 2" || true
+            xcrun simctl bootstatus "iOS Simulator 2"
+            echo "✅ Simulator 2 is now fully booted"
+          ' > "$LOG_FILE" 2>&1 &
           echo "ℹ️ Simulator boot started in background."
         shell: bash
 
