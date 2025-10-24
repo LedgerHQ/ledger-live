@@ -22,7 +22,7 @@ const SNAP_POINTS = ["70%", "92%"];
 /**
  * Props for the ModularDrawer component.
  */
-type ModularDrawerProps = {
+export type ModularDrawerProps = {
   // Core drawer state
   /** Whether the drawer is open */
   readonly isOpen: boolean;
@@ -39,7 +39,7 @@ type ModularDrawerProps = {
 
   // Account selection
   /** Callback fired when an account is selected */
-  readonly onAccountSelected?: (account: AccountLike, parentAccount?: AccountLike) => void;
+  readonly onAccountSelected: (account: AccountLike, parentAccount?: AccountLike) => void;
   /** Observable of accounts */
   readonly accounts$?: Observable<WalletAPIAccount[]>;
 

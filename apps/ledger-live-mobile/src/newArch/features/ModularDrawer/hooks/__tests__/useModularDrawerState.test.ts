@@ -18,6 +18,8 @@ jest.mock("@ledgerhq/live-common/modularDrawer/hooks/useAcceptedCurrency", () =>
 
 const mockUseAcceptedCurrency = jest.fn(() => () => true);
 
+const mockOnAccountSelected = jest.fn();
+
 const assetsSorted: AssetData[] = [
   {
     asset: {
@@ -77,6 +79,7 @@ describe("useModularDrawerState", () => {
       useModularDrawerState({
         currencyIds: mockCurrencyIds,
         assetsSorted: [],
+        onAccountSelected: mockOnAccountSelected,
       }),
     );
     expect(result.current.network).toBeUndefined();
@@ -88,6 +91,7 @@ describe("useModularDrawerState", () => {
       useModularDrawerState({
         currencyIds: ["ethereum", "bitcoin"],
         assetsSorted,
+        onAccountSelected: mockOnAccountSelected,
       }),
     );
 
@@ -103,6 +107,7 @@ describe("useModularDrawerState", () => {
       useModularDrawerState({
         currencyIds: mockCurrencyIds,
         assetsSorted,
+        onAccountSelected: mockOnAccountSelected,
       }),
     );
     act(() => {
@@ -120,6 +125,7 @@ describe("useModularDrawerState", () => {
       useModularDrawerState({
         currencyIds: mockCurrencyIds,
         assetsSorted,
+        onAccountSelected: mockOnAccountSelected,
       }),
     );
     expect(typeof result.current.handleBackButton).toBe("function");
@@ -131,6 +137,7 @@ describe("useModularDrawerState", () => {
       useModularDrawerState({
         currencyIds: ["bitcoin", "ethereum"],
         assetsSorted,
+        onAccountSelected: mockOnAccountSelected,
       }),
     );
     expect(result.current.hasOneCurrency).toBe(false);
@@ -141,6 +148,7 @@ describe("useModularDrawerState", () => {
       useModularDrawerState({
         currencyIds: ["bitcoin"],
         assetsSorted,
+        onAccountSelected: mockOnAccountSelected,
       }),
     );
     expect(result.current.hasOneCurrency).toBe(true);
@@ -167,6 +175,7 @@ describe("useModularDrawerState", () => {
           currencyIds: [mockEthCryptoCurrency.id],
           assetsSorted: singleAsset,
           isDrawerOpen: true,
+          onAccountSelected: mockOnAccountSelected,
         }),
       {
         overrideInitialState: (state: State) => ({
@@ -203,6 +212,7 @@ describe("useModularDrawerState", () => {
           currencyIds: [mockEthCryptoCurrency.id],
           assetsSorted: singleAsset,
           isDrawerOpen: true,
+          onAccountSelected: mockOnAccountSelected,
         }),
       {
         overrideInitialState: (state: State) => ({
@@ -223,6 +233,7 @@ describe("useModularDrawerState", () => {
       useModularDrawerState({
         currencyIds: ["bitcoin", "ethereum"],
         assetsSorted,
+        onAccountSelected: mockOnAccountSelected,
       }),
     );
     expect(result.current.hasOneCurrency).toBe(false);
