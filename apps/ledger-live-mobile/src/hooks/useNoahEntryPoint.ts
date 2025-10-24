@@ -33,6 +33,9 @@ export const useReceiveNoahEntry = ():
       headerRight: () => null,
       headerBackButtonDisplayMode: "minimal",
       title: undefined,
+      contentStyle: {
+        opacity: 0.5,
+      },
     },
   };
 };

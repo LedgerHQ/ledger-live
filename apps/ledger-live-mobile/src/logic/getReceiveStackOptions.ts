@@ -19,10 +19,14 @@ export const getReceiveStackOptions = ({
 
   return {
     headerShown: false,
+    presentation: "transparentModal",
     gestureEnabled: true,
     headerTitle: "",
     headerRight: () => null,
     headerBackButtonDisplayMode: "minimal",
     title: "",
+    contentStyle: {
+      opacity: 0.5,
+    },
   };
 };

@@ -69,7 +69,7 @@ function typesafeNavigation({ route, navigation }: EntryScreenProps) {
       if (!isReceiveSelectCryptoParams(route.params)) {
         return;
       }
-      navigation.navigate(ScreenName.ReceiveSelectCrypto, {
+      navigation.replace(ScreenName.ReceiveSelectCrypto, {
         ...route.params,
         fromMenu: true,
       });
@@ -80,7 +80,7 @@ function typesafeNavigation({ route, navigation }: EntryScreenProps) {
       if (!isReceiveSelectAccountParams(route.params)) {
         return;
       }
-      navigation.navigate(ScreenName.ReceiveSelectAccount, {
+      navigation.replace(ScreenName.ReceiveSelectAccount, {
         ...route.params,
         fromMenu: true,
       });
@@ -91,7 +91,7 @@ function typesafeNavigation({ route, navigation }: EntryScreenProps) {
       if (!isReceiveConfirmationParams(route.params)) {
         return;
       }
-      navigation.navigate(ScreenName.ReceiveConfirmation, {
+      navigation.replace(ScreenName.ReceiveConfirmation, {
         ...route.params,
         fromMenu: true,
       });
