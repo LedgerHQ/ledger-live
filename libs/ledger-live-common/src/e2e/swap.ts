@@ -5,7 +5,7 @@ export async function getMinimumSwapAmount(AccountFrom: Account, AccountTo: Acco
   try {
     const requestConfig = {
       method: "GET",
-      url: `https://swap-stg.ledger-test.com/v5/quote`,
+      url: "https://swap-stg.ledger-test.com/v5/quote",
       params: {
         from: AccountFrom.currency.id,
         to: AccountTo.currency.id,
@@ -21,9 +21,7 @@ export async function getMinimumSwapAmount(AccountFrom: Account, AccountTo: Acco
         tradeType: "INPUT",
         uniswapOrderType: "uniswapxv1",
       },
-      headers: {
-        accept: "application/json",
-      },
+      headers: { accept: "application/json" },
     };
 
     const { data } = await axios(requestConfig);
@@ -38,8 +36,23 @@ export async function getMinimumSwapAmount(AccountFrom: Account, AccountTo: Acco
     }
 
     return Math.max(...minimumAmounts);
-  } catch (error) {
-    console.error("Error fetching swap minimum amount:", error);
-    throw error;
+  } catch (error: any) {
+    let sanitizedError: Error;
+    if (axios.isAxiosError(error)) {
+      sanitizedError = new Error(error?.message || "Unknown getMinimumSwapAmount axios error");
+    } else {
+      sanitizedError = error;
+    }
+
+    console.error("Error fetching swap minimum amount:", {
+      message: error?.message,
+      code: error?.code,
+      url: error?.config?.url,
+      method: error?.config?.method,
+      status: error?.response?.status,
+    });
+
+    // throw the sanitized error, not the original circular Axios error
+    throw sanitizedError;
   }
 }
