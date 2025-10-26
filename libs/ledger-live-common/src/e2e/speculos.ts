@@ -49,6 +49,7 @@ import {
   swipeRight,
 } from "./deviceInteraction/TouchDeviceSimulator";
 import { withDeviceController } from "./deviceInteraction/DeviceController";
+import { sanitizeError } from ".";
 
 const isSpeculosRemote = process.env.REMOTE_SPECULOS === "true";
 
@@ -428,7 +429,7 @@ export async function startSpeculos(
           };
         });
   } catch (e: unknown) {
-    console.error(e);
+    console.error(sanitizeError(e));
     log("engine", `test ${testName} failed with ${String(e)}`);
   }
 }
@@ -610,7 +611,7 @@ export async function takeScreenshot(port?: number): Promise<Buffer | undefined>
     );
     return response.data;
   } catch (error) {
-    console.error("Error downloading speculos screenshot:", error);
+    console.error("Error downloading speculos screenshot:", sanitizeError(error));
   }
 }
 

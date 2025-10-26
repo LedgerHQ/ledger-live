@@ -162,7 +162,7 @@ export default class TestEnvironment extends DetoxEnvironment {
       // Force garbage collection
       global.gc?.();
     } catch (error) {
-      log.info("Error during environment teardown :", error);
+      console.info("Error during environment teardown :", error);
     }
 
     await super.teardown();
