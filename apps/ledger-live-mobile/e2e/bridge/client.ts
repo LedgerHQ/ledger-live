@@ -69,7 +69,7 @@ export function init() {
   ws.onmessage = onMessage;
 }
 
-function onMessage(event: WebSocketMessageEvent) {
+async function onMessage(event: WebSocketMessageEvent) {
   try {
     invariant(typeof event.data === "string", "[E2E Bridge Client]: Message data must be string");
     const msg: MessageData = JSON.parse(event.data);
@@ -90,7 +90,7 @@ function onMessage(event: WebSocketMessageEvent) {
         acceptGeneralTerms(store);
         break;
       case "importAccounts": {
-        store.dispatch(importAccountsRaw({ active: msg.payload }));
+        store.dispatch(await importAccountsRaw({ active: msg.payload }));
         break;
       }
       case "mockDeviceEvent": {

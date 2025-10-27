@@ -64,14 +64,15 @@ export async function fromAccountRaw(
   const store = getCryptoAssetsStore();
   const subAccounts = subAccountsRaw
     ? await Promise.all(
-        subAccountsRaw.map(async ta => {
-          if (ta.type === "TokenAccountRaw") {
-            const token = await store.findTokenById(ta.tokenId);
-            if (token) {
-              return await fromTokenAccountRaw(ta);
-            }
+      subAccountsRaw.map(async ta => {
+        if (ta.type === "TokenAccountRaw") {
+          // When we load AccountRaw from the DB, we don't want to fail in case bad things happen asynchronously. therefore, we will drop the TokenAccount temporarily to not drop the main account and it will be recovered later.
+          const token = await store.findTokenById(ta.tokenId).catch(() => undefined);
+          if (token) {
+            return await fromTokenAccountRaw(ta);
           }
-        }),
+        }
+      }),
       ).then(results => results.filter(Boolean))
     : undefined;
   const currency = getCryptoCurrencyById(currencyId);
