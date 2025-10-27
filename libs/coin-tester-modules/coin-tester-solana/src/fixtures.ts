@@ -5,16 +5,20 @@ import { TokenAccount } from "@ledgerhq/types-live";
 import BigNumber from "bignumber.js";
 import { SolanaAccount } from "@ledgerhq/coin-solana/types";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
-import { findTokenById } from "@ledgerhq/cryptoassets/tokens";
+import { tokensById } from "@ledgerhq/cryptoassets/legacy/legacy-state";
+import { initializeLegacyTokens } from "@ledgerhq/cryptoassets/legacy/legacy-data";
+import { addTokens } from "@ledgerhq/cryptoassets/legacy/legacy-utils";
 import { HttpResponse, http } from "msw";
 import { setupServer } from "msw/node";
 
+initializeLegacyTokens(addTokens);
+
 export const RECIPIENT = "Hj69wRzkrFuf1Nby4yzPEFHdsmQdMoVYjvDKZSLjZFEp";
 export const SOLANA = getCryptoCurrencyById("solana");
-const solanaUsdc = findTokenById("solana/spl/epjfwdd5aufqssqem2qn1xzybapc8g4weggkzwytdt1v");
+const solanaUsdc = tokensById["solana/spl/epjfwdd5aufqssqem2qn1xzybapc8g4weggkzwytdt1v"];
 if (!solanaUsdc) throw new Error("Solana USDC token not found");
 export const SOLANA_USDC = solanaUsdc;
-const solanaCwif = findTokenById("solana/spl/7atgf8kqo4wjrd5atgx7t1v2zvvykpjbffnevf1icfv1");
+const solanaCwif = tokensById["solana/spl/7atgf8kqo4wjrd5atgx7t1v2zvvykpjbffnevf1icfv1"];
 if (!solanaCwif) throw new Error("Solana CWIF token not found");
 export const SOLANA_CWIF = solanaCwif;
 export const SOLANA_VIRTUAL: TokenCurrency = {

@@ -1,11 +1,11 @@
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { initializeLegacyTokens } from "@ledgerhq/cryptoassets/legacy/legacy-data";
-import { addTokens } from "@ledgerhq/cryptoassets/legacy/legacy-utils";
+import { addTokens as addTokensLegacy } from "@ledgerhq/cryptoassets/legacy/legacy-utils";
 import { inferCryptoCurrencyIcon } from "./cryptoIcons";
-import { findTokenById } from "@ledgerhq/cryptoassets/tokens";
+import { getCryptoAssetsStore } from "../bridge/crypto-assets/index";
 
 beforeAll(() => {
-  initializeLegacyTokens(addTokens);
+  initializeLegacyTokens(addTokensLegacy);
 });
 
 describe("inferCryptoCurrencyIcon", () => {
@@ -28,9 +28,8 @@ describe("inferCryptoCurrencyIcon", () => {
     expect(inferCryptoCurrencyIcon(registryMock, getCryptoCurrencyById("arbitrum"))).toBe(3);
   });
 
-  test("USDT is inferred properly", () => {
-    const usdt = findTokenById("ethereum/erc20/usd_tether__erc20_");
-    if (!usdt) throw new Error("USDT token not found");
-    expect(inferCryptoCurrencyIcon(registryMock, usdt)).toBe(4);
+  test("USDT is inferred properly", async () => {
+    const token = await getCryptoAssetsStore().findTokenById("ethereum/erc20/usd_tether__erc20_");
+    expect(inferCryptoCurrencyIcon(registryMock, token!)).toBe(4);
   });
 });

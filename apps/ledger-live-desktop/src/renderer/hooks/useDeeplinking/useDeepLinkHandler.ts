@@ -273,55 +273,59 @@ export function useDeepLinkHandler() {
 
           if (url === "delegate" && currency !== "tezos") return;
 
-          let foundCurrency;
-          try {
-            foundCurrency = getTokenOrCryptoCurrencyById(
-              typeof currency === "string" ? currency : "",
-            );
-          } catch (error) {
-            foundCurrency = null;
-          }
+          async function handleSendDeepLink() {
+            let foundCurrency;
+            try {
+              foundCurrency = await getTokenOrCryptoCurrencyById(
+                typeof currency === "string" ? currency : "",
+              );
+            } catch (error) {
+              foundCurrency = null;
+            }
 
-          const openModalWithAccount = (
-            account: Account | TokenAccount,
-            parentAccount?: Account,
-          ) => {
-            setDrawer();
-            dispatch(
-              openModal(modal, {
-                recipient,
-                account,
-                parentAccount,
-                amount:
-                  amount && typeof amount === "string" && foundCurrency
-                    ? parseCurrencyUnit(foundCurrency.units[0], amount)
-                    : undefined,
-              }),
-            );
-          };
+            const openModalWithAccount = (
+              account: Account | TokenAccount,
+              parentAccount?: Account,
+            ) => {
+              setDrawer();
+              dispatch(
+                openModal(modal, {
+                  recipient,
+                  account,
+                  parentAccount,
+                  amount:
+                    amount && typeof amount === "string" && foundCurrency
+                      ? parseCurrencyUnit(foundCurrency.units[0], amount)
+                      : undefined,
+                }),
+              );
+            };
 
-          if (!currency || !foundCurrency) {
-            // we fallback to default add account flow with asset selection
-            openAssetFlow();
-            return;
-          }
-          const found = getAccountsOrSubAccountsByCurrency(foundCurrency, accounts || []);
+            if (!currency || !foundCurrency) {
+              // we fallback to default add account flow with asset selection
+              openAssetFlow(true);
+              return;
+            }
+            const found = getAccountsOrSubAccountsByCurrency(foundCurrency, accounts || []);
 
-          if (!found.length) {
-            openAddAccountFlow(foundCurrency, true, openModalWithAccount);
-            return;
-          }
+            if (!found.length) {
+              openAddAccountFlow(foundCurrency, true, openModalWithAccount);
+              return;
+            }
 
-          const [chosen] = found;
-          dispatch(closeAllModal());
-          if (chosen?.type === "Account") {
-            openModalWithAccount(chosen);
-          } else {
-            const parentAccount = accounts.find(acc => acc.id === chosen?.parentId);
-            if (parentAccount && chosen) {
-              openModalWithAccount(chosen, parentAccount);
+            const [chosen] = found;
+            dispatch(closeAllModal());
+            if (chosen?.type === "Account") {
+              openModalWithAccount(chosen);
+            } else {
+              const parentAccount = accounts.find(acc => acc.id === chosen?.parentId);
+              if (parentAccount && chosen) {
+                openModalWithAccount(chosen, parentAccount);
+              }
             }
           }
+
+          handleSendDeepLink();
           break;
         }
         case "settings": {

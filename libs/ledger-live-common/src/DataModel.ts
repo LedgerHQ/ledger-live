@@ -10,7 +10,7 @@ import { findCryptoCurrencyById } from "./currencies";
 export type DataModel<R, M> = {
   // R: Raw , M: Model
   // import a given version of rawData back into model
-  decode(rawModel: { data: R; version: number }): M;
+  decode(rawModel: { data: R; version: number }): Promise<M>;
   // export data into a serializable object (can be saved to a JSON file)
   encode(model: M): {
     data: R;
@@ -26,7 +26,7 @@ export type DataModel<R, M> = {
  */
 export type DataSchema<R, M> = {
   // write extra logic to transform raw data into your model
-  decode(raw: R): M;
+  decode(raw: R): Promise<M>;
   // reverse version of wrap, that will transform it back to a serializable object
   encode(data: M): R;
   // A map of migrations functions that are unrolled when an old version is imported
@@ -39,7 +39,7 @@ export type DataSchema<R, M> = {
 export function createDataModel<R, M>(schema: DataSchema<R, M>): DataModel<R, M> {
   const { migrations, encode, decode } = schema;
   const version = migrations.length;
-  function decodeModel(raw) {
+  async function decodeModel(raw) {
     let { data } = raw;
     const { currencyId, freshAddressPath } = data;
     const currency = findCryptoCurrencyById(currencyId);
@@ -76,7 +76,7 @@ export function createDataModel<R, M>(schema: DataSchema<R, M>): DataModel<R, M>
       data = migrations[i](data);
     }
 
-    data = decode(data);
+    data = await decode(data);
     return data;
   }
 

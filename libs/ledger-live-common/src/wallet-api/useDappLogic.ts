@@ -8,7 +8,8 @@ import { getAccountBridge } from "../bridge";
 import { getEnv } from "@ledgerhq/live-env";
 import network from "@ledgerhq/live-network/network";
 import { getWalletAPITransactionSignFlowInfos } from "./converters";
-import { findTokenByAddressInCurrency, getCryptoCurrencyById } from "@ledgerhq/cryptoassets/index";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/index";
+import { getCryptoAssetsStore } from "../bridge/crypto-assets/index";
 import { prepareMessageToSign } from "../hw/signMessage/index";
 import { CurrentAccountHistDB, UiHook, usePermission } from "./react";
 import BigNumber from "bignumber.js";
@@ -473,92 +474,108 @@ export function useDappLogic({
               : currentParentAccount.freshAddress;
 
           if (address.toLowerCase() === ethTX.from.toLowerCase()) {
-            let trackingData: DAppTrackingData | undefined;
-            try {
-              const signFlowInfos = getWalletAPITransactionSignFlowInfos({
-                walletApiTransaction: tx,
-                account: currentAccount,
-              });
-
-              const transactionType = getTxType(signFlowInfos.liveTx as EvmTransaction);
-
-              const accountCurrencyName =
-                currentAccount.type === "TokenAccount"
-                  ? currentAccount.token.name
-                  : currentAccount.currency.name;
-
-              const accountNetwork =
-                currentAccount.type === "TokenAccount"
-                  ? currentAccount.token.parentCurrency.id
-                  : currentAccount.currency.id;
-
-              const token = findTokenByAddressInCurrency(tx.recipient, accountNetwork);
-
-              trackingData = {
-                type: transactionType,
-                currency: token ? token.name : accountCurrencyName,
-                network: token ? token.parentCurrency.id : accountNetwork,
-              };
-
-              const options = nanoApp
-                ? { hwAppId: nanoApp, dependencies: dependencies }
-                : undefined;
-              tracking.dappSendTransactionRequested(manifest, trackingData);
-
-              const signedTransaction = await new Promise<SignedOperation>((resolve, reject) =>
-                uiHook["transaction.sign"]({
+            (async () => {
+              let trackingData: DAppTrackingData | undefined;
+              try {
+                const signFlowInfos = getWalletAPITransactionSignFlowInfos({
+                  walletApiTransaction: tx,
                   account: currentAccount,
-                  parentAccount: undefined,
-                  signFlowInfos,
-                  options,
-                  onSuccess: signedOperation => {
-                    resolve(signedOperation);
-                  },
-                  onError: error => {
-                    reject(error);
-                  },
-                }),
-              );
-
-              const bridge = getAccountBridge(currentAccount, undefined);
-              const mainAccount = getMainAccount(currentAccount, undefined);
-
-              let optimisticOperation: Operation = signedTransaction.operation;
-
-              if (!getEnv("DISABLE_TRANSACTION_BROADCAST")) {
-                optimisticOperation = await bridge.broadcast({
-                  account: mainAccount,
-                  signedOperation: signedTransaction,
-                  broadcastConfig: { mevProtected: !!mevProtected },
                 });
+
+                const transactionType = getTxType(signFlowInfos.liveTx as EvmTransaction);
+
+                const token = await getCryptoAssetsStore().findTokenByAddressInCurrency(
+                  tx.recipient,
+                  currentAccount.type === "TokenAccount"
+                    ? currentAccount.token.parentCurrency.id
+                    : currentAccount.currency.id,
+                );
+
+                const accountCurrencyName =
+                  currentAccount.type === "TokenAccount"
+                    ? currentAccount.token.name
+                    : currentAccount.currency.name;
+
+                const accountNetwork =
+                  currentAccount.type === "TokenAccount"
+                    ? currentAccount.token.parentCurrency.id
+                    : currentAccount.currency.id;
+
+                trackingData = {
+                  type: transactionType,
+                  currency: token ? token.name : accountCurrencyName,
+                  network: token ? token.parentCurrency.id : accountNetwork,
+                };
+
+                const options = nanoApp
+                  ? { hwAppId: nanoApp, dependencies: dependencies }
+                  : undefined;
+                tracking.dappSendTransactionRequested(manifest, trackingData);
+
+                const signedTransaction = await new Promise<SignedOperation>((resolve, reject) =>
+                  uiHook["transaction.sign"]({
+                    account: currentAccount,
+                    parentAccount: undefined,
+                    signFlowInfos,
+                    options,
+                    onSuccess: signedOperation => {
+                      resolve(signedOperation);
+                    },
+                    onError: error => {
+                      reject(error);
+                    },
+                  }),
+                );
+
+                const bridge = getAccountBridge(currentAccount, undefined);
+                const mainAccount = getMainAccount(currentAccount, undefined);
+
+                let optimisticOperation: Operation = signedTransaction.operation;
+
+                if (!getEnv("DISABLE_TRANSACTION_BROADCAST")) {
+                  optimisticOperation = await bridge.broadcast({
+                    account: mainAccount,
+                    signedOperation: signedTransaction,
+                    broadcastConfig: { mevProtected: !!mevProtected },
+                  });
+                }
+
+                uiHook["transaction.broadcast"](
+                  currentAccount,
+                  undefined,
+                  mainAccount,
+                  optimisticOperation,
+                );
+
+                tracking.dappSendTransactionSuccess(manifest, trackingData);
+
+                postMessage(
+                  JSON.stringify({
+                    id: data.id,
+                    jsonrpc: "2.0",
+                    result: optimisticOperation.hash,
+                  }),
+                );
+              } catch (error) {
+                tracking.dappSendTransactionFail(manifest, trackingData);
+                postMessage(
+                  JSON.stringify({
+                    id: data.id,
+                    jsonrpc: "2.0",
+                    error: rejectedError("Transaction declined"),
+                  }),
+                );
               }
-
-              uiHook["transaction.broadcast"](
-                currentAccount,
-                undefined,
-                mainAccount,
-                optimisticOperation,
-              );
-
-              tracking.dappSendTransactionSuccess(manifest, trackingData);
-
+            })().catch(error => {
+              console.error("Error in eth_sendTransaction handler:", error);
               postMessage(
                 JSON.stringify({
                   id: data.id,
                   jsonrpc: "2.0",
-                  result: optimisticOperation.hash,
+                  error: rejectedError("Transaction processing failed"),
                 }),
               );
-            } catch (error) {
-              tracking.dappSendTransactionFail(manifest, trackingData);
-              postMessage(
-                JSON.stringify({
-                  id: data.id,
-                  jsonrpc: "2.0",
-                  error: rejectedError("Transaction declined"),
-                }),
-              );
-            }
+            });
           }
           break;
         }
@@ -667,13 +684,17 @@ export function useDappLogic({
           if (ws.current) {
             ws.current.send(data);
           } else if (currentNetwork.nodeURL?.startsWith("https:")) {
-            void network({
+            network({
               method: "POST",
               url: currentNetwork.nodeURL,
               data,
-            }).then(res => {
-              postMessage(JSON.stringify(res.data));
-            });
+            })
+              .then(res => {
+                postMessage(JSON.stringify(res.data));
+              })
+              .catch(() => {
+                // Silently ignore network errors
+              });
           }
           break;
         }

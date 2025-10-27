@@ -1,14 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`accountWithMandatoryTokens ethereum 1`] = `
-[
-  "mock:1:ethereum::|0",
-  "mock:1:ethereum::|1",
-  "mock:1:ethereum::|2",
-  "mock:1:ethereum::|3",
-  "mock:1:ethereum::|4",
-]
-`;
+exports[`accountWithMandatoryTokens ethereum 1`] = `[]`;
 
 exports[`groupAccountOperationsByDay basic 1`] = `
 {

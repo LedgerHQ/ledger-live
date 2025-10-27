@@ -10,8 +10,8 @@ import { setCryptoAssetsStore } from "@ledgerhq/coin-framework/crypto-assets/ind
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
 setCryptoAssetsStore({
-  findTokenById: () => undefined,
-  findTokenByAddressInCurrency: () => undefined,
+  findTokenById: () => Promise.resolve(undefined),
+  findTokenByAddressInCurrency: () => Promise.resolve(undefined),
   getTokensSyncHash: () => Promise.resolve("0"),
 } as CryptoAssetsStore);
 
