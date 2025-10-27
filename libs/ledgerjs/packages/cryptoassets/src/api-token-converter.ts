@@ -1,12 +1,13 @@
 import type { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import { findCryptoCurrencyById } from "./currencies";
+import type { TokenUnit } from "./cal-client/entities";
 
 export interface ApiTokenData {
   id: string;
   contractAddress: string;
   name: string;
   ticker: string;
-  units: Array<{ code: string; name: string; magnitude: number }>;
+  units: TokenUnit[];
   standard: string;
   delisted?: boolean;
   disableCountervalue?: boolean;
