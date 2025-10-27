@@ -252,7 +252,8 @@
       "@ethersproject/providers>ws": "7.5.10",
       "elliptic": "6.6.1",
       "use-latest-callback": "0.1.9",
-      "@sentry/react-native>metro": "0.81.5"
+      "@sentry/react-native>metro": "0.81.5",
+      "ethers": "6.15.0"
     },
     "patchedDependencies": {
       "react-native-fast-crypto@2.2.0": "patches/react-native-fast-crypto@2.2.0.patch",
