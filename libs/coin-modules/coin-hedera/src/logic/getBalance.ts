@@ -1,6 +1,6 @@
 import type { Balance } from "@ledgerhq/coin-framework/api/types";
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
-import { findTokenByAddressInCurrency } from "@ledgerhq/cryptoassets/tokens";
+import { getCryptoAssetsStore } from "@ledgerhq/coin-framework/crypto-assets/index";
 import { apiClient } from "../network/api";
 
 export async function getBalance(currency: CryptoCurrency, address: string): Promise<Balance[]> {
@@ -17,7 +17,10 @@ export async function getBalance(currency: CryptoCurrency, address: string): Pro
   ];
 
   for (const mirrorToken of mirrorTokens) {
-    const calToken = findTokenByAddressInCurrency(mirrorToken.token_id, currency.id);
+    const calToken = await getCryptoAssetsStore().findTokenByAddressInCurrency(
+      mirrorToken.token_id,
+      currency.id,
+    );
 
     if (!calToken) {
       continue;
