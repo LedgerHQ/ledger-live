@@ -192,18 +192,21 @@ describe("parseSatStackConfig", () => {
   });
 });
 describe("stringifySatStackConfig", () => {
-  test("stringify config with accounts", () => {
+  test("stringify config with accounts", async () => {
+    const descriptors = await Promise.all(
+      (dataset.accounts || []).map(async a => {
+        const account = await fromAccountRaw(a.raw);
+        return inferDescriptorFromAccount(account);
+      }),
+    );
+
     expect(
       stringifySatStackConfig({
         node: mockConfig,
         extra: {
           foo: "bar",
         },
-        accounts: (
-          (dataset.accounts || [])
-            .map(a => inferDescriptorFromAccount(fromAccountRaw(a.raw)))
-            .filter(Boolean) as AccountDescriptor[]
-        ).map((descriptor, i) => ({
+        accounts: (descriptors.filter(Boolean) as AccountDescriptor[]).map((descriptor, i) => ({
           descriptor,
           extra: {
             i,
@@ -234,29 +237,38 @@ describe("stringifySatStackConfig", () => {
 describe("editSatStackConfig", () => {
   // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
   setCryptoAssetsStoreForCoinFramework({
-    findTokenById: (_: string) => undefined,
-    findTokenByAddressInCurrency: (_: string, __: string) => undefined,
+    findTokenById: async (_: string) => undefined,
+    findTokenByAddressInCurrency: async (_: string, __: string) => undefined,
     getTokensSyncHash: (_: string) => Promise.resolve("0"),
   } as CryptoAssetsStore);
-  const config = {
-    node: { ...mockConfig, tls: false },
-    extra: {
-      foo: "bar",
-    },
-    accounts: (dataset.accounts || [])
-      .map(a => inferDescriptorFromAccount(fromAccountRaw(a.raw)))
-      .filter(Boolean)
-      .map((descriptor, i) => ({
+
+  const createConfig = async () => {
+    const descriptors = await Promise.all(
+      (dataset.accounts || []).map(async a => {
+        const account = await fromAccountRaw(a.raw);
+        return inferDescriptorFromAccount(account);
+      }),
+    );
+
+    return {
+      node: { ...mockConfig, tls: false },
+      extra: {
+        foo: "bar",
+      },
+      accounts: (descriptors.filter(Boolean) as AccountDescriptor[]).map((descriptor, i) => ({
         descriptor,
         extra: {
           i,
         },
       })),
+    };
   };
-  test("restore identity", () => {
+  test("restore identity", async () => {
+    const config = await createConfig();
     expect(parseSatStackConfig(stringifySatStackConfig(config as SatStackConfig))).toEqual(config);
   });
-  test("update node config", () => {
+  test("update node config", async () => {
+    const config = await createConfig();
     expect(
       editSatStackConfig(
         {
@@ -273,14 +285,16 @@ describe("editSatStackConfig", () => {
       ),
     ).toEqual(config);
   });
-  test("append accounts", () => {
+  test("append accounts", async () => {
+    const config = await createConfig();
     expect(
       editSatStackConfig({ ...config, accounts: config.accounts.slice(0, 1) } as any, {
         accounts: config.accounts.slice(1) as any,
       }),
     ).toEqual(config);
   });
-  test("dedup accounts", () => {
+  test("dedup accounts", async () => {
+    const config = await createConfig();
     expect(
       editSatStackConfig(
         { ...config, accounts: config.accounts.slice(0, 1) } as any,

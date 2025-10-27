@@ -4,9 +4,10 @@ import { isTokenCurrency } from "../../currencies";
 import { CurrenciesByProviderId } from "../../deposit/type";
 
 export type ProviderCoverageMap = Map<string, Set<string>>;
-export const safeCurrencyLookup = (id: string): CryptoOrTokenCurrency | null => {
+
+export const safeCurrencyLookup = async (id: string): Promise<CryptoOrTokenCurrency | null> => {
   try {
-    return getTokenOrCryptoCurrencyById(id);
+    return await getTokenOrCryptoCurrencyById(id);
   } catch {
     return null;
   }
@@ -16,9 +17,9 @@ export const isProviderToken = (currency: CryptoOrTokenCurrency, providerId: str
   return isTokenCurrency(currency) && currency.id.toLowerCase().includes(providerId.toLowerCase());
 };
 
-export const getProviderCurrency = (
+export const getProviderCurrency = async (
   provider: CurrenciesByProviderId,
-): CryptoOrTokenCurrency | null => {
+): Promise<CryptoOrTokenCurrency | null> => {
   const providerToken = provider.currenciesByNetwork.find(currency => {
     return isProviderToken(currency, provider.providerId);
   });
@@ -27,7 +28,8 @@ export const getProviderCurrency = (
     return providerToken;
   }
 
-  return safeCurrencyLookup(provider.providerId) ?? provider.currenciesByNetwork[0];
+  const lookupResult = await safeCurrencyLookup(provider.providerId);
+  return lookupResult ?? provider.currenciesByNetwork[0];
 };
 
 export const buildProviderCoverageMap = (
@@ -85,10 +87,9 @@ export const filterProvidersByIds = (
   return filtered;
 };
 
-export const extractProviderCurrencies = (
+export const extractProviderCurrencies = async (
   providers: CurrenciesByProviderId[],
-): CryptoOrTokenCurrency[] => {
-  return providers
-    .map(provider => getProviderCurrency(provider))
-    .filter((currency): currency is CryptoOrTokenCurrency => currency !== null);
+): Promise<CryptoOrTokenCurrency[]> => {
+  const currencies = await Promise.all(providers.map(provider => getProviderCurrency(provider)));
+  return currencies.filter((currency): currency is CryptoOrTokenCurrency => currency !== null);
 };

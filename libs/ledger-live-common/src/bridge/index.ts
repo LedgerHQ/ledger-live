@@ -2,12 +2,12 @@ import type { ScanAccountEvent, ScanAccountEventRaw } from "@ledgerhq/types-live
 import { fromAccountRaw, toAccountRaw } from "../account";
 export { getCurrencyBridge, getAccountBridge } from "./impl";
 
-export function fromScanAccountEventRaw(raw: ScanAccountEventRaw): ScanAccountEvent {
+export async function fromScanAccountEventRaw(raw: ScanAccountEventRaw): Promise<ScanAccountEvent> {
   switch (raw.type) {
     case "discovered":
       return {
         type: raw.type,
-        account: fromAccountRaw(raw.account),
+        account: await fromAccountRaw(raw.account),
       };
 
     default:

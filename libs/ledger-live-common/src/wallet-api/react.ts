@@ -19,12 +19,8 @@ import { isWalletAPISupportedCurrency } from "./helpers";
 import { WalletAPICurrency, AppManifest, WalletAPIAccount, WalletAPICustomHandlers } from "./types";
 
 import { getMainAccount, getParentAccount } from "../account";
-import {
-  listCurrencies,
-  findCryptoCurrencyById,
-  findTokenById,
-  getCryptoCurrencyById,
-} from "../currencies";
+import { listCurrencies, findCryptoCurrencyById, getCryptoCurrencyById } from "../currencies";
+import { getCryptoAssetsStore } from "../bridge/crypto-assets/index";
 import { TrackingAPI } from "./tracking";
 import {
   bitcoinFamilyAccountGetXPubLogic,
@@ -376,35 +372,42 @@ export function useWalletAPIServer({
         const currencies = await firstValueFrom(currencies$);
 
         return new Promise((resolve, reject) => {
-          // handle no curencies selected case
-          const currencyList = currencies.reduce<CryptoOrTokenCurrency[]>((prev, { id }) => {
-            const currency = findCryptoCurrencyById(id) || findTokenById(id);
-            if (currency) {
-              prev.push(currency);
-            }
-            return prev;
-          }, []);
+          (async () => {
+            try {
+              // handle no curencies selected case
+              const currencyList: CryptoOrTokenCurrency[] = [];
+              for (const { id } of currencies) {
+                const currency =
+                  findCryptoCurrencyById(id) || (await getCryptoAssetsStore().findTokenById(id));
+                if (currency) {
+                  currencyList.push(currency);
+                }
+              }
 
-          let done = false;
-          uiAccountRequest({
-            accounts$,
-            currencies: currencyList,
-            drawerConfiguration,
-            areCurrenciesFiltered,
-            useCase,
-            onSuccess: (account: AccountLike, parentAccount: Account | undefined) => {
-              if (done) return;
-              done = true;
-              tracking.requestAccountSuccess(manifest);
-              resolve(accountToWalletAPIAccount(walletState, account, parentAccount));
-            },
-            onCancel: () => {
-              if (done) return;
-              done = true;
-              tracking.requestAccountFail(manifest);
-              reject(new Error("Canceled by user"));
-            },
-          });
+              let done = false;
+              uiAccountRequest({
+                accounts$,
+                currencies: currencyList,
+                drawerConfiguration,
+                areCurrenciesFiltered,
+                useCase,
+                onSuccess: (account: AccountLike, parentAccount: Account | undefined) => {
+                  if (done) return;
+                  done = true;
+                  tracking.requestAccountSuccess(manifest);
+                  resolve(accountToWalletAPIAccount(walletState, account, parentAccount));
+                },
+                onCancel: () => {
+                  if (done) return;
+                  done = true;
+                  tracking.requestAccountFail(manifest);
+                  reject(new Error("Canceled by user"));
+                },
+              });
+            } catch (error) {
+              reject(error);
+            }
+          })();
         });
       },
     );

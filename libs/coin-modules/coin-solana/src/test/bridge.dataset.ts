@@ -10,6 +10,7 @@ import {
 } from "@ledgerhq/errors";
 import { TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import type { AccountRaw, CurrenciesData, DatasetTest } from "@ledgerhq/types-live";
+import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import {
   SolanaAccountNotFunded,
   SolanaAddressOffEd25519,
@@ -28,7 +29,6 @@ import { assertUnreachable } from "../utils";
 import { getEnv } from "@ledgerhq/live-env";
 import { encodeAccountId } from "@ledgerhq/coin-framework/lib/account/accountId";
 import { testOnChainData } from "../tests/test-onchain-data.fixture";
-import { getCryptoAssetsStore } from "../cryptoAssetsStore";
 
 const mainAccId = encodeAccountId({
   type: "js",
@@ -43,10 +43,16 @@ const wSolSubAccId = encodeAccountIdWithTokenAccountAddress(
   testOnChainData.wSolSenderAssocTokenAccAddress,
 );
 
-const wSolToken = getCryptoAssetsStore().findTokenByAddressInCurrency(
-  "So11111111111111111111111111111111111111112",
-  "solana",
-) as TokenCurrency;
+// Create a mock token for testing
+const wSolToken: TokenCurrency = {
+  type: "TokenCurrency",
+  id: "So11111111111111111111111111111111111111112",
+  contractAddress: "So11111111111111111111111111111111111111112",
+  name: "Wrapped SOL",
+  ticker: "WSOL",
+  units: [{ name: "WSOL", code: "WSOL", magnitude: 9 }],
+  parentCurrency: getCryptoCurrencyById("solana"),
+} as TokenCurrency;
 
 const fees = (signatureCount: number) =>
   new BigNumber(signatureCount * testOnChainData.fees.lamportsPerSignature);

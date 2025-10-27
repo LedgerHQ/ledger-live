@@ -28,7 +28,10 @@ export type FromFamiliyRaw = {
   fromOperationExtraRaw?: AccountBridge<TransactionCommon>["fromOperationExtraRaw"];
 };
 
-export function fromAccountRaw(rawAccount: AccountRaw, fromRaw?: FromFamiliyRaw): Account {
+export async function fromAccountRaw(
+  rawAccount: AccountRaw,
+  fromRaw?: FromFamiliyRaw,
+): Promise<Account> {
   const {
     id,
     seedIdentifier,
@@ -59,20 +62,21 @@ export function fromAccountRaw(rawAccount: AccountRaw, fromRaw?: FromFamiliyRaw)
     fromOperationRaw(op, id, subAccounts as TokenAccount[], fromRaw?.fromOperationExtraRaw);
 
   const store = getCryptoAssetsStore();
-  const subAccounts =
-    subAccountsRaw &&
-    subAccountsRaw
-      .map(ta => {
-        if (ta.type === "TokenAccountRaw") {
-          if (store.findTokenById(ta.tokenId)) {
-            return fromTokenAccountRaw(ta);
+  const subAccounts = subAccountsRaw
+    ? await Promise.all(
+        subAccountsRaw.map(async ta => {
+          if (ta.type === "TokenAccountRaw") {
+            const token = await store.findTokenById(ta.tokenId);
+            if (token) {
+              return await fromTokenAccountRaw(ta);
+            }
           }
-        }
-      })
-      .filter(Boolean);
+        }),
+      ).then(results => results.filter(Boolean))
+    : undefined;
   const currency = getCryptoCurrencyById(currencyId);
   const feesCurrency = feesCurrencyId
-    ? findCryptoCurrencyById(feesCurrencyId) || store.findTokenById(feesCurrencyId)
+    ? findCryptoCurrencyById(feesCurrencyId) || (await store.findTokenById(feesCurrencyId))
     : undefined;
 
   const res: Account = {
@@ -238,10 +242,10 @@ export function toAccountRaw(account: Account, toFamilyRaw?: ToFamiliyRaw): Acco
 
 //-- TokenAccount
 
-function fromTokenAccountRaw(
+async function fromTokenAccountRaw(
   raw: TokenAccountRaw,
   fromOperationExtraRaw?: AccountBridge<TransactionCommon>["fromOperationExtraRaw"],
-): TokenAccount {
+): Promise<TokenAccount> {
   const {
     id,
     parentId,
@@ -255,7 +259,7 @@ function fromTokenAccountRaw(
     swapHistory,
   } = raw;
   const store = getCryptoAssetsStore();
-  const token = store.findTokenById(tokenId);
+  const token = await store.findTokenById(tokenId);
   invariant(token, `Token with id ${tokenId} not found`);
 
   const convertOperation = (op: OperationRaw) =>
