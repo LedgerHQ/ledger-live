@@ -98,8 +98,8 @@ export class SettingsPage extends AppPage {
   async clickExportLogs() {
     await this.exportLogsButton.click();
 
-    const originalFilePath = path.resolve("./ledgerlive-logs.txt");
-    const targetFilePath = path.resolve(__dirname, "../artifacts/ledgerlive-logs.txt");
+    const originalFilePath = path.resolve("./ledgerwallet-logs.txt");
+    const targetFilePath = path.resolve(__dirname, "../artifacts/ledgerwallet-logs.txt");
 
     const fileExists = await FileUtils.waitForFileToExist(originalFilePath, 5000);
     expect(fileExists).toBeTruthy();
