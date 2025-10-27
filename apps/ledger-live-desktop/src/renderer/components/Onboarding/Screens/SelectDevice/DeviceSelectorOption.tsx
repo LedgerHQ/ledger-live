@@ -92,7 +92,7 @@ export function DeviceSelectorOption({
     <Container data-testid={`v3-container-${id}`} {...{ id, isFirst, isLast }}>
       <ContentContainer>
         <DeviceIllustrationContainer>{illustration}</DeviceIllustrationContainer>
-        <DeviceName>{label}</DeviceName>
+        <DeviceName>{label.replace("\u00a0", " ")}</DeviceName>
         <SelectButton data-testid={`v3-${id}`} variant="main" onClick={onClick}>
           {t("onboarding.screens.selectDevice.selectLabel")}
         </SelectButton>

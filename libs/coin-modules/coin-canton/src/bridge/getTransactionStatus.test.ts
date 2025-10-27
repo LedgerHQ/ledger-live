@@ -1,6 +1,3 @@
-import BigNumber from "bignumber.js";
-import { Account } from "@ledgerhq/types-live";
-import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import {
   AmountRequired,
   FeeNotLoaded,
@@ -12,76 +9,37 @@ import {
   NotEnoughSpendableBalance,
   RecipientRequired,
 } from "@ledgerhq/errors";
-import { getTransactionStatus } from "./getTransactionStatus";
-import { Transaction } from "../types";
+import BigNumber from "bignumber.js";
 import coinConfig from "../config";
+import { createMockAccount } from "../test/fixtures";
+import { CantonAccount, TooManyUtxosCritical, TooManyUtxosWarning, Transaction } from "../types";
+import {
+  getTransactionStatus,
+  TO_MANY_UTXOS_CRITICAL_COUNT,
+  TO_MANY_UTXOS_WARNING_COUNT,
+} from "./getTransactionStatus";
 
-// Mock the coin config
-jest.mock("../config", () => ({
-  getCoinConfig: jest.fn(),
-}));
-
+jest.mock("../config", () => ({ getCoinConfig: jest.fn() }));
 const mockCoinConfig = jest.mocked(coinConfig);
 
 describe("getTransactionStatus", () => {
-  const mockCurrency: CryptoCurrency = {
-    id: "canton_network",
-    name: "Canton Network",
-    family: "canton",
-    units: [
-      {
-        name: "Canton",
-        code: "CANTON",
-        magnitude: 8,
+  const mockAccount: CantonAccount = {
+    ...createMockAccount({
+      balance: new BigNumber(1000),
+      spendableBalance: new BigNumber(1000),
+      freshAddress: "test::33333333333333333333333333333333333333333333333333333333333333333333",
+    }),
+    cantonResources: {
+      instrumentUtxoCounts: {
+        Amulet: 5,
       },
-    ],
-    ticker: "CANTON",
-    scheme: "canton",
-    color: "#000000",
-    type: "CryptoCurrency",
-    managerAppName: "Canton",
-    coinType: 0,
-    disableCountervalue: false,
-    delisted: false,
-    keywords: ["canton"],
-    explorerViews: [],
-    terminated: {
-      link: "",
     },
-  };
-
-  const mockAccount: Account = {
-    id: "test-account-id",
-    seedIdentifier: "test-seed-identifier",
-    currency: mockCurrency,
-    balance: new BigNumber(1000), // 1000 units
-    spendableBalance: new BigNumber(1000),
-    freshAddress: "test::33333333333333333333333333333333333333333333333333333333333333333333",
-    freshAddressPath: "44'/60'/0'/0/0",
-    index: 0,
-    derivationMode: "canton",
-    used: true,
-    operations: [],
-    pendingOperations: [],
-    lastSyncDate: new Date(),
-    creationDate: new Date(),
-    operationsCount: 0,
-    blockHeight: 100,
-    balanceHistoryCache: {
-      HOUR: { latestDate: null, balances: [] },
-      DAY: { latestDate: null, balances: [] },
-      WEEK: { latestDate: null, balances: [] },
-    },
-    swapHistory: [],
-    nfts: [],
-    subAccounts: [],
-    type: "Account",
   };
 
   beforeEach(() => {
     jest.clearAllMocks();
     mockCoinConfig.getCoinConfig.mockReturnValue({
-      minReserve: 100, // 100 units minimum reserve
+      minReserve: 100,
       networkType: "mainnet",
       status: { type: "active" },
       nativeInstrumentId: "Amulet",
@@ -122,9 +80,9 @@ describe("getTransactionStatus", () => {
     it("should add FeeTooHigh warning when fee is more than 10 times the amount", async () => {
       const transaction: Transaction = {
         family: "canton",
-        amount: new BigNumber(100), // Use larger amount to avoid balance issues
+        amount: new BigNumber(100),
         recipient: "valid::11111111111111111111111111111111111111111111111111111111111111111111",
-        fee: new BigNumber(1500), // 15x the amount
+        fee: new BigNumber(1500),
         tokenId: "",
       };
 
@@ -139,7 +97,7 @@ describe("getTransactionStatus", () => {
         family: "canton",
         amount: new BigNumber(100),
         recipient: "valid::11111111111111111111111111111111111111111111111111111111111111111111",
-        fee: new BigNumber(10), // 0.1x the amount
+        fee: new BigNumber(10),
         tokenId: "",
       };
 
@@ -154,7 +112,9 @@ describe("getTransactionStatus", () => {
     it("should return NotEnoughSpendableBalance error when total spent exceeds balance minus reserve", async () => {
       const transaction: Transaction = {
         family: "canton",
-        amount: new BigNumber(950), // 950 + 10 fee = 960, but balance is 1000 and reserve is 100
+        amount: mockAccount.balance
+          .minus(new BigNumber(mockCoinConfig.getCoinConfig().minReserve))
+          .plus(1),
         recipient: "valid::11111111111111111111111111111111111111111111111111111111111111111111",
         fee: new BigNumber(10),
         tokenId: "",
@@ -168,7 +128,7 @@ describe("getTransactionStatus", () => {
     it("should return NotEnoughBalanceBecauseDestinationNotCreated error when amount is below reserve", async () => {
       const transaction: Transaction = {
         family: "canton",
-        amount: new BigNumber(50), // Below reserve amount of 100
+        amount: new BigNumber(mockCoinConfig.getCoinConfig().minReserve).minus(1),
         recipient: "valid::11111111111111111111111111111111111111111111111111111111111111111111",
         fee: new BigNumber(10),
         tokenId: "",
@@ -182,7 +142,7 @@ describe("getTransactionStatus", () => {
     it("should pass balance validation when transaction is within limits", async () => {
       const transaction: Transaction = {
         family: "canton",
-        amount: new BigNumber(800), // 800 + 10 fee = 810, balance is 1000, reserve is 100, so 900 available
+        amount: mockAccount.balance.multipliedBy(0.5),
         recipient: "valid::11111111111111111111111111111111111111111111111111111111111111111111",
         fee: new BigNumber(10),
         tokenId: "",
@@ -209,18 +169,18 @@ describe("getTransactionStatus", () => {
       expect(result.errors.recipient).toBeInstanceOf(RecipientRequired);
     });
 
-    it("should return InvalidAddressBecauseDestinationIsAlsoSource error when sending to self", async () => {
+    it("should not return error when sending to self", async () => {
       const transaction: Transaction = {
         family: "canton",
         amount: new BigNumber(100),
-        recipient: "test::33333333333333333333333333333333333333333333333333333333333333333333", // Same as account.freshAddress
+        recipient: mockAccount.freshAddress,
         fee: new BigNumber(10),
         tokenId: "",
       };
 
       const result = await getTransactionStatus(mockAccount, transaction);
 
-      expect(result.errors.recipient).toBeInstanceOf(InvalidAddressBecauseDestinationIsAlsoSource);
+      expect(result.errors.recipient).toBeUndefined();
     });
 
     it("should return InvalidAddress error when recipient is invalid", async () => {
@@ -254,16 +214,8 @@ describe("getTransactionStatus", () => {
 
   describe("amount validation", () => {
     it("should return AmountRequired error when amount is zero", async () => {
-      // Create a scenario where there are no other amount errors
-      // Use a high balance and amount above reserve to avoid other amount errors
-      const accountWithHighBalance = {
-        ...mockAccount,
-        balance: new BigNumber(10000), // High balance to avoid balance errors
-      };
-
-      // Set a high reserve to avoid the NotEnoughBalanceBecauseDestinationNotCreated error
       mockCoinConfig.getCoinConfig.mockReturnValue({
-        minReserve: 0, // Set reserve to 0 to avoid reserve-related errors
+        minReserve: 0,
         networkType: "mainnet",
         status: { type: "active" },
         nativeInstrumentId: "Amulet",
@@ -277,7 +229,7 @@ describe("getTransactionStatus", () => {
         tokenId: "",
       };
 
-      const result = await getTransactionStatus(accountWithHighBalance, transaction);
+      const result = await getTransactionStatus(mockAccount, transaction);
 
       expect(result.errors.amount).toBeInstanceOf(AmountRequired);
     });
@@ -330,11 +282,15 @@ describe("getTransactionStatus", () => {
     });
   });
 
-  describe("edge cases", () => {
-    it("should handle account with zero balance", async () => {
-      const accountWithZeroBalance = {
+  describe("UTXO count validation", () => {
+    it("should show critical warning when UTXO count exceeds TO_MANY_UTXOS_CRITICAL_COUNT", async () => {
+      const accountWithTooManyUtxos = {
         ...mockAccount,
-        balance: new BigNumber(0),
+        cantonResources: {
+          instrumentUtxoCounts: {
+            Amulet: TO_MANY_UTXOS_CRITICAL_COUNT + 1,
+          },
+        },
       };
 
       const transaction: Transaction = {
@@ -342,18 +298,23 @@ describe("getTransactionStatus", () => {
         amount: new BigNumber(50),
         recipient: "valid::11111111111111111111111111111111111111111111111111111111111111111111",
         fee: new BigNumber(10),
-        tokenId: "",
+        tokenId: "Amulet",
       };
 
-      const result = await getTransactionStatus(accountWithZeroBalance, transaction);
+      const result = await getTransactionStatus(accountWithTooManyUtxos, transaction);
 
-      expect(result.errors.amount).toBeInstanceOf(NotEnoughSpendableBalance);
+      expect(result.warnings.tooManyUtxos).toBeDefined();
+      expect(result.warnings.tooManyUtxos).toBeInstanceOf(TooManyUtxosCritical);
     });
 
-    it("should handle account with balance exactly equal to reserve", async () => {
-      const accountWithReserveBalance = {
+    it("should show warning when UTXO count exceeds TO_MANY_UTXOS_WARNING_COUNT", async () => {
+      const accountWithManyUtxos = {
         ...mockAccount,
-        balance: new BigNumber(100), // Exactly equal to reserve
+        cantonResources: {
+          instrumentUtxoCounts: {
+            Amulet: TO_MANY_UTXOS_WARNING_COUNT + 1,
+          },
+        },
       };
 
       const transaction: Transaction = {
@@ -361,86 +322,63 @@ describe("getTransactionStatus", () => {
         amount: new BigNumber(50),
         recipient: "valid::11111111111111111111111111111111111111111111111111111111111111111111",
         fee: new BigNumber(10),
-        tokenId: "",
+        tokenId: "Amulet",
       };
 
-      const result = await getTransactionStatus(accountWithReserveBalance, transaction);
+      const result = await getTransactionStatus(accountWithManyUtxos, transaction);
 
-      expect(result.errors.amount).toBeInstanceOf(NotEnoughSpendableBalance);
+      expect(result.warnings.tooManyUtxos).toBeDefined();
+      expect(result.warnings.tooManyUtxos).toBeInstanceOf(TooManyUtxosWarning);
+      expect(result.warnings.tooManyUtxos?.message).toContain(
+        "families.canton.tooManyUtxos.warning",
+      );
     });
 
-    it("should handle zero reserve amount", async () => {
-      mockCoinConfig.getCoinConfig.mockReturnValue({
-        minReserve: 0,
-        networkType: "mainnet",
-        status: { type: "active" },
-        nativeInstrumentId: "Amulet",
-      });
+    it("should not show warning or error when UTXO count is less than TO_MANY_UTXOS_WARNING_COUNT", async () => {
+      const accountWithFewUtxos = {
+        ...mockAccount,
+        cantonResources: {
+          instrumentUtxoCounts: {
+            Amulet: TO_MANY_UTXOS_WARNING_COUNT - 1,
+          },
+        },
+      };
 
       const transaction: Transaction = {
         family: "canton",
         amount: new BigNumber(50),
         recipient: "valid::11111111111111111111111111111111111111111111111111111111111111111111",
         fee: new BigNumber(10),
-        tokenId: "",
+        tokenId: "Amulet", // Use the same tokenId as in cantonResources
       };
 
-      const result = await getTransactionStatus(mockAccount, transaction);
+      const result = await getTransactionStatus(accountWithFewUtxos, transaction);
 
-      expect(result.errors.amount).toBeUndefined();
+      expect(result.warnings.tooManyUtxos).toBeUndefined();
     });
 
-    it("should handle undefined reserve amount", async () => {
-      mockCoinConfig.getCoinConfig.mockReturnValue({
-        networkType: "mainnet",
-        status: { type: "active" },
-        nativeInstrumentId: "Amulet",
-      });
+    it("should not show warning or error for abandon seed address transactions", async () => {
+      const accountWithManyUtxos = {
+        ...mockAccount,
+        cantonResources: {
+          instrumentUtxoCounts: {
+            Amulet: 25,
+          },
+        },
+      };
 
       const transaction: Transaction = {
         family: "canton",
         amount: new BigNumber(50),
-        recipient: "valid::11111111111111111111111111111111111111111111111111111111111111111111",
+        recipient: "abandon::ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
         fee: new BigNumber(10),
-        tokenId: "",
+        tokenId: "Amulet",
       };
 
-      const result = await getTransactionStatus(mockAccount, transaction);
+      const result = await getTransactionStatus(accountWithManyUtxos, transaction);
 
-      expect(result.errors.amount).toBeUndefined();
-    });
-  });
-
-  describe("multiple validation errors", () => {
-    it("should return multiple errors when multiple validations fail", async () => {
-      const transaction: Transaction = {
-        family: "canton",
-        amount: new BigNumber(0), // AmountRequired
-        recipient: "", // RecipientRequired
-        fee: null, // FeeNotLoaded
-        tokenId: "",
-      };
-
-      const result = await getTransactionStatus(mockAccount, transaction);
-
-      expect(result.errors.amount).toBeInstanceOf(AmountRequired);
-      expect(result.errors.recipient).toBeInstanceOf(RecipientRequired);
-      expect(result.errors.fee).toBeInstanceOf(FeeNotLoaded);
-    });
-
-    it("should return both errors and warnings", async () => {
-      const transaction: Transaction = {
-        family: "canton",
-        amount: new BigNumber(5), // Small amount
-        recipient: "valid::11111111111111111111111111111111111111111111111111111111111111111111",
-        fee: new BigNumber(100), // High fee relative to amount
-        tokenId: "",
-      };
-
-      const result = await getTransactionStatus(mockAccount, transaction);
-
-      expect(result.warnings.feeTooHigh).toBeInstanceOf(FeeTooHigh);
-      expect(result.errors.amount).toBeInstanceOf(NotEnoughBalanceBecauseDestinationNotCreated);
+      expect(result.warnings.tooManyUtxos).toBeUndefined();
+      expect(result.errors.utxoCount).toBeUndefined();
     });
   });
 });

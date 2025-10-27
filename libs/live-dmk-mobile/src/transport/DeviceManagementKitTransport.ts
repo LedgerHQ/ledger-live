@@ -343,12 +343,9 @@ export class DeviceManagementKitTransport extends Transport {
       })
       .then((apduResponse: { data: Uint8Array; statusCode: Uint8Array }): Buffer => {
         const response = Buffer.from([...apduResponse.data, ...apduResponse.statusCode]);
-        tracer.trace(`[exchange] => ${apdu.toString("hex")}`);
-        tracer.trace(`[exchange] <= ${response.toString("hex")}`);
         return response;
       })
       .catch(error => {
-        tracer.trace("[Error][exchange] ", { error });
         throw error;
       });
   }

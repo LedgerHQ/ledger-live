@@ -77,6 +77,7 @@ const AccountList = ({ list, showAddAccount, onPress, onAddAccount }: Props): JS
       showsVerticalScrollIndicator={false}
       keyboardDismissMode="on-drag"
       ListFooterComponent={renderFooter}
+      testID="account-list"
     />
   );
 };

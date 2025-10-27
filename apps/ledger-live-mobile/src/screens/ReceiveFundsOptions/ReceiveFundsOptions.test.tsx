@@ -8,6 +8,11 @@ const mockNavigate = jest.fn();
 const mockGoBack = jest.fn();
 const mockReplace = jest.fn();
 
+// needed because the screen only uses the drawer that needs the safe area insets
+jest.mock("react-native-safe-area-context", () => ({
+  useSafeAreaInsets: jest.fn().mockReturnValue({}),
+}));
+
 function renderComponent(
   route: RouteProp<ParamListBase, ScreenName> = {
     key: "",

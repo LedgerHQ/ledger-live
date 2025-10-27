@@ -71,6 +71,7 @@ import { setLastConnectedDevice, setLastSeenDeviceInfo } from "~/actions/setting
 import { lastSeenDeviceSelector } from "~/reducers/settings";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import { useKeepScreenAwake } from "~/hooks/useKeepScreenAwake";
+import SafeAreaViewFixed from "~/components/SafeAreaView";
 
 const requiredBatteryStatuses = [
   BatteryStatusTypes.BATTERY_PERCENTAGE,
@@ -248,13 +249,18 @@ export const FirmwareUpdate = ({
 
   useEffect(() => {
     if (updateStep === "completed") {
-      const completeTimeout = setTimeout(() => setFullUpdateComplete(true), 3000);
+      let dead = false;
+      const completeTimeout = setTimeout(() => {
+        if (dead) return;
+        setFullUpdateComplete(true);
+      }, 3000);
 
-      return () => clearTimeout(completeTimeout);
+      return () => {
+        dead = true;
+        clearTimeout(completeTimeout);
+      };
     }
-
-    return undefined;
-  });
+  }, [updateStep]);
 
   const restoreSteps = useMemo(() => {
     const steps = [];
@@ -891,7 +897,7 @@ export default function FirmwareUpdateScreen({ route: { params } }: NavigationPr
     return null;
   }
   return (
-    <Flex flex={1}>
+    <SafeAreaViewFixed isFlex>
       <FirmwareUpdate
         deviceInfo={params.deviceInfo}
         device={params.device}
@@ -899,6 +905,6 @@ export default function FirmwareUpdateScreen({ route: { params } }: NavigationPr
         onBackFromUpdate={params.onBackFromUpdate}
         isBeforeOnboarding={params.isBeforeOnboarding}
       />
-    </Flex>
+    </SafeAreaViewFixed>
   );
 }

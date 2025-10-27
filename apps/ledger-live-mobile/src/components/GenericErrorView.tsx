@@ -47,7 +47,6 @@ const GenericErrorView = ({
   exportLogIconPosition = "left",
 }: Props) => {
   const { t } = useTranslation();
-
   const onExport = useExportLogs();
 
   const titleError = outerError || error;
@@ -64,13 +63,7 @@ const GenericErrorView = ({
   }
 
   return (
-    <Flex
-      flexDirection={"column"}
-      alignItems={"center"}
-      alignSelf="stretch"
-      mt={7}
-      testID="generic-error-modal"
-    >
+    <Flex alignItems={"center"} alignSelf="stretch" mt={7} testID="generic-error-modal">
       <GenericInformationBody
         Icon={Icon}
         iconColor={iconColor}

@@ -5,6 +5,7 @@ import { IconsLegacy, IconBox, Text, Flex, Log } from "@ledgerhq/native-ui";
 import { IconOrElementType } from "@ledgerhq/native-ui/components/Icon/type";
 import Alert from "./Alert";
 import Button from "./Button";
+import SafeAreaViewFixed from "./SafeAreaView";
 
 type Props = {
   onClose?: () => void;
@@ -36,7 +37,7 @@ function ValidateSuccess({
   onLearnMore,
 }: Props) {
   return (
-    <Flex flex={1} p={6}>
+    <SafeAreaViewFixed isFlex edges={["bottom"]}>
       <Flex flex={1} flexDirection="column" justifyContent="center" alignItems="center">
         {icon ? (
           <IconBox Icon={icon} color={iconColor} boxSize={iconBoxSize} iconSize={iconSize} />
@@ -60,7 +61,7 @@ function ValidateSuccess({
           </Alert>
         )}
       </Flex>
-      <Flex>
+      <Flex marginX={6}>
         {primaryButton ||
           (onViewDetails && (
             <Button
@@ -68,7 +69,7 @@ function ValidateSuccess({
               type="main"
               outline={false}
               onPress={onViewDetails}
-              mt={7}
+              mt={6}
               testID="success-view-details-button"
             >
               <Trans i18nKey="send.validation.button.details" />
@@ -82,13 +83,13 @@ function ValidateSuccess({
               type={undefined}
               outline={false}
               onPress={onClose}
-              mt={7}
+              mt={6}
             >
               <Trans i18nKey="common.close" />
             </Button>
           ))}
       </Flex>
-    </Flex>
+    </SafeAreaViewFixed>
   );
 }
 

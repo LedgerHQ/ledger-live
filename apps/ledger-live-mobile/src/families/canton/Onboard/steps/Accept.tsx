@@ -129,6 +129,11 @@ export default function Accept({ navigation, route }: Props) {
         take(1),
       )
       .subscribe(() => {
+        const newAccount = accs.find(a => a.freshAddressPath === result.account.freshAddressPath);
+        if (newAccount) {
+          newAccount.id = result.account.id;
+          newAccount.xpub = result.account.xpub;
+        }
         setError(null);
         dispatch(
           addAccountsAction({

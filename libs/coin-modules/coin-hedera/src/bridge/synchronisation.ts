@@ -78,7 +78,7 @@ export const getAccountShape: GetAccountShape<HederaAccount> = async (
     mirrorTokens,
   );
   const subAccounts = mergeSubAccounts(initialAccount, newSubAccounts);
-  const newOperations = prepareOperations(
+  const newOperations = await prepareOperations(
     latestAccountOperations.coinOperations,
     latestAccountOperations.tokenOperations,
   );

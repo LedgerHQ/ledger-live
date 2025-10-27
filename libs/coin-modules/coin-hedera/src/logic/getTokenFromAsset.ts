@@ -1,6 +1,6 @@
 import type { AssetInfo } from "@ledgerhq/coin-framework/api/types";
 import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { findTokenByAddressInCurrency } from "@ledgerhq/cryptoassets/tokens";
+import { getCryptoAssetsStore } from "@ledgerhq/coin-framework/crypto-assets/index";
 
 export async function getTokenFromAsset(
   currency: CryptoCurrency,
@@ -13,5 +13,5 @@ export async function getTokenFromAsset(
     return;
   }
 
-  return findTokenByAddressInCurrency(tokenId, currency.id);
+  return getCryptoAssetsStore().findTokenByAddressInCurrency(tokenId, currency.id);
 }

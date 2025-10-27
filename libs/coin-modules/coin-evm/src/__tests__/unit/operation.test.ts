@@ -255,6 +255,7 @@ describe("EVM Family", () => {
         it("should return pending transaction if the pending transaction is older than 5 minutes", () => {
           const account = genAccount("myAccount", { currency: ethereum });
           const tokenAccount = genTokenAccount(0, account, usdc);
+          account.subAccounts = [tokenAccount];
           const transactionRaw = {
             family: "evm",
             amount: "1",
@@ -281,6 +282,7 @@ describe("EVM Family", () => {
         it("should return the oldest pending transaction if there are multiple pending transactions. The transactions are sorted by transactionSequenceNumber", () => {
           const account = genAccount("myAccount", { currency: ethereum });
           const tokenAccount = genTokenAccount(0, account, usdc);
+          account.subAccounts = [tokenAccount];
           const transactionRaw = {
             family: "evm",
             amount: "1",

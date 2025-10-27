@@ -33,9 +33,9 @@ export function EvmStakingDrawer() {
     if (isStakingProvidersEnabled || (providers ?? []).length > 0) {
       openDrawer();
     }
-  }, [isStakingProvidersEnabled, openDrawer, providers]);
+  }, [drawer, isStakingProvidersEnabled, openDrawer, providers]);
 
-  return !ethStakingProviders || drawer.id !== "EvmStakingDrawer" ? null : (
+  return !ethStakingProviders || drawer.id !== "EvmStakingDrawer" || !drawer.props ? null : (
     <Content
       accountId={drawer.props.accountId}
       walletApiAccountId={drawer.props.walletApiAccountId}

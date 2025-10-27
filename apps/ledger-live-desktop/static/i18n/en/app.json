@@ -473,7 +473,9 @@
       "sui_title": "Ledger Nano S™ does not support swapping Sui",
       "sui_description": "To swap Sui, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™.",
       "kaspa_title": "Ledger Nano S™ does not support swapping Kaspa",
-      "kaspa_description": "To swap Kaspa, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™."
+      "kaspa_description": "To swap Kaspa, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™.",
+      "celo_title": "Ledger Nano S™ does not support swapping Celo",
+      "celo_description": "To swap Celo, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™."
     },
     "providers": {
       "title": "Choose a provider to swap crypto",
@@ -1302,8 +1304,8 @@
       },
       "secureCrypto": {
         "description": "You can transfer crypto from any exchange or wallet to your Ledger Wallet for maximum security.",
-        "depositButton": "Deposit my crypto",
-        "skipButton": "Not now"
+        "depositButton": "Secure my crypto",
+        "skipButton": "Maybe later"
       },
       "backup": {
         "title": "Backup for your Secret Recovery Phrase",
@@ -5342,7 +5344,7 @@
           },
           "existingRecoveryPhrase": {
             "title": "Enter your recovery phrase",
-            "paragraph1": "Your recovery phrase is the secret list of words that you backed up when you first set up your wallet.",
+            "paragraph1": "Your recovery phrase is the secret list of words that you backed up when you first set up your Ledger device.",
             "paragraph2": "Ledger does not keep a copy of your recovery phrase.",
             "disclaimer": "I understand that if I lose my recovery phrase, I will not be able to access my crypto in case I lose access to my Nano.",
             "buttons": {
@@ -5837,6 +5839,13 @@
         "finish": {
           "title": "Confirmation"
         }
+      },
+      "tooManyUtxos": {
+        "title": "Action Needed: Too Many UTXOs",
+        "description": "Your account has too many small UTXOs to process this transfer. Merge them now to avoid expiration due to accumulated holding fees and enable transfers.",
+        "quickFix": "Quick Fix: Send some funds to yourself to consolidate.",
+        "warning": "Your account has too many small UTXOs. Send some funds to yourself to consolidate.",
+        "consolidate": "Consolidate"
       }
     },
     "stellar": {

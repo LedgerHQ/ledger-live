@@ -171,6 +171,8 @@ export async function createSpeculosDeviceCI(
     return {
       id: runId,
       port: speculosPort,
+      appName: deviceParams.appName,
+      appVersion: deviceParams.appVersion,
     };
   } catch (e: unknown) {
     console.warn(
@@ -179,6 +181,8 @@ export async function createSpeculosDeviceCI(
     return {
       id: runId,
       port: 0,
+      appName: deviceParams.appName,
+      appVersion: deviceParams.appVersion,
     };
   }
 }

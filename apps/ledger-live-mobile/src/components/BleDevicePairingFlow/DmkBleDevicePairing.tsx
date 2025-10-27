@@ -1,45 +1,34 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useMemo } from "react";
+import { Flex } from "@ledgerhq/native-ui";
 import { useBleDevicePairing } from "@ledgerhq/live-dmk-mobile";
 import { Device } from "@ledgerhq/types-devices";
-import { BleDevicePairingProgress } from "./BleDevicePairingContent/BleDevicePairingProgress";
 import { getDeviceModel } from "@ledgerhq/devices";
-import { BleDevicePaired } from "./BleDevicePairingContent/BleDevicePaired";
 import { LockedDeviceError, PeerRemovedPairing } from "@ledgerhq/errors";
-import { BleDevicePeerRemoved } from "~/components/BleDevicePairingFlow/BleDevicePairingContent/BleDevicePeerRemoved";
 import { BleFailedPairing } from "~/components/BleDevicePairingFlow/BleDevicePairingContent/BleFailedPairing";
-import { Flex } from "@ledgerhq/native-ui";
+import { BleDevicePairingProgress } from "./BleDevicePairingContent/BleDevicePairingProgress";
+import { BleDevicePaired } from "./BleDevicePairingContent/BleDevicePaired";
+import { BleForgetDeviceDrawer } from "./BleDevicePairingContent/BleForgetDeviceDrawer";
+
+type DmkBleDevicePairingProps = {
+  device: Device;
+  onPaired: (device: Device) => void;
+  onRetry: () => void;
+  onOpenHelp: () => void;
+};
 
 export const DmkBleDevicePairing = ({
   device,
   onRetry,
   onPaired,
   onOpenHelp,
-}: {
-  device: Device;
-  onRetry: () => void;
-  onPaired: (device: Device) => void;
-  onOpenHelp: () => void;
-}) => {
+}: DmkBleDevicePairingProps) => {
   const { isPaired, pairingError } = useBleDevicePairing({ device });
   const productName = getDeviceModel(device.modelId).productName || device.modelId;
   let content;
 
-  if (isPaired) {
-    content = <BleDevicePaired device={device} productName={productName} />;
-  } else if (pairingError instanceof PeerRemovedPairing) {
-    content = (
-      // TODO: fix this
-      // @ts-expect-error DmkError is missing name and some other properties
-      <BleDevicePeerRemoved onRetry={onRetry} onOpenHelp={onOpenHelp} pairingError={pairingError} />
-    );
-  } else if (pairingError && !((pairingError as unknown) instanceof LockedDeviceError)) {
-    // TODO refactor this into the generic error rendering when possible.
-    content = (
-      <BleFailedPairing onRetry={onRetry} onOpenHelp={onOpenHelp} productName={productName} />
-    );
-  } else {
-    content = <BleDevicePairingProgress device={device} productName={productName} />;
-  }
+  const needsToForgetDevice = useMemo(() => {
+    return pairingError instanceof PeerRemovedPairing;
+  }, [pairingError]);
 
   useEffect(() => {
     if (isPaired) {
@@ -47,9 +36,23 @@ export const DmkBleDevicePairing = ({
     }
   }, [isPaired, device, onPaired]);
 
-  return (
-    <Flex flex={1} width="100%">
-      {content}
-    </Flex>
-  );
+  if (isPaired) {
+    content = <BleDevicePaired device={device} productName={productName} />;
+  } else if (pairingError instanceof PeerRemovedPairing) {
+    content = (
+      <BleForgetDeviceDrawer
+        isOpen={needsToForgetDevice}
+        productName={productName}
+        onRetry={onRetry}
+      />
+    );
+  } else if (pairingError && !(pairingError instanceof LockedDeviceError)) {
+    content = (
+      <BleFailedPairing productName={productName} onRetry={onRetry} onOpenHelp={onOpenHelp} />
+    );
+  } else {
+    content = <BleDevicePairingProgress device={device} productName={productName} />;
+  }
+
+  return <Flex flex={1}>{content}</Flex>;
 };

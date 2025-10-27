@@ -126,7 +126,7 @@ const mockCantonBridge = createMockCantonBridge();
 describe("OnboardModal", () => {
   const mockCurrency = createMockCantonCurrency();
   const mockDevice = createMockDevice();
-  const mockAccount = createMockAccount();
+  const mockAccount = createMockAccount({ used: false });
   const mockImportableAccount = createMockImportableAccount();
 
   const defaultProps = createMockUserProps({

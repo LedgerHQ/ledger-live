@@ -266,13 +266,11 @@ export default class Transport {
       );
     }
 
-    tracer.trace("Starting an exchange", { abortTimeoutMs });
     const response = await this.exchange(
       // The size of the data is added in 1 byte just before `data`
       Buffer.concat([Buffer.from([cla, ins, p1, p2]), Buffer.from([data.length]), data]),
       { abortTimeoutMs },
     );
-    tracer.trace("Received response from exchange");
     const sw = response.readUInt16BE(response.length - 2);
 
     if (!statusList.some(s => s === sw)) {

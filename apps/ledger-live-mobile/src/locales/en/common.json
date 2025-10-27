@@ -2296,7 +2296,13 @@
         },
         "retryCta": "Retry pairing",
         "openSettingsCta": "Go to Bluetooth settings",
-        "howToFixPairingIssue": "How to fix pairing issues"
+        "howToFixPairingIssue": "How to fix pairing issues",
+        "forgetDevice": {
+          "title": "Go to your phone's Bluetooth settings to unpair {{productName}}",
+          "description": "To fix the pairing issue, remove {{productName}} from your phone's Bluetooth list, then return to this app and try again.",
+          "learnHowToFixCta": "Learn how to fix",
+          "tryAgainCta": "I unpaired. Try again"
+        }
       }
     }
   },
@@ -3802,7 +3808,9 @@
         "sui_title": "Ledger Nano S™ does not support swapping Sui",
         "sui_description": "To swap Sui, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™.",
         "kaspa_title": "Ledger Nano S™ does not support swapping Kaspa",
-        "kaspa_description": "To swap Kaspa, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™."
+        "kaspa_description": "To swap Kaspa, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™.",
+        "celo_title": "Ledger Nano S™ does not support swapping Celo",
+        "celo_description": "To swap Celo, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™."
       }
     },
     "lending": {
@@ -4587,7 +4595,6 @@
     }
   },
   "manager": {
-    "tabTitle": "My Ledger",
     "title": "My Ledger",
     "selectDevice": {
       "title": "Devices",
@@ -7985,6 +7992,13 @@
       "validator": "Ledger Validator",
       "title": "Automatically accept incoming funds",
       "error429": "Canton Network currently supports a limited number of account creations per day. Please try again later."
+    },
+    "tooManyUtxos": {
+      "title": "Action Needed: Too Many UTXOs",
+      "description": "Your account has too many small UTXOs to process this transfer. Merge them now to avoid expiration due to accumulated holding fees and enable transfers.",
+      "quickFix": "Quick Fix: Send some funds to yourself to consolidate.",
+      "warning": "Your account has too many small UTXOs. Send some funds to yourself to consolidate.",
+      "consolidate": "Consolidate"
     }
   }
 }

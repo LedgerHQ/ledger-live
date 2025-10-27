@@ -82,7 +82,7 @@ export async function craftTransaction(
     xrplTransaction.Memos = transaction.memos.map(memoMapper);
   }
 
-  if (transaction.destinationTag) {
+  if (transaction.destinationTag !== null && transaction.destinationTag !== undefined) {
     invariant(
       validateTag(new BigNumber(transaction.destinationTag)),
       `tag is set but is not in a valid format, should be between [0 - ${UINT32_MAX.toString()}]`,

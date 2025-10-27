@@ -1,7 +1,7 @@
 import BigNumber from "bignumber.js";
 import { encodeTokenAccountId } from "@ledgerhq/coin-framework/account";
 import { setCryptoAssetsStore } from "@ledgerhq/coin-framework/crypto-assets/index";
-import { legacyCryptoAssetsStore } from "@ledgerhq/cryptoassets/tokens";
+import { legacyCryptoAssetsStore } from "@ledgerhq/cryptoassets/legacy/legacy-store";
 import { HEDERA_OPERATION_TYPES, HEDERA_TRANSACTION_MODES } from "../constants";
 import { estimateFees } from "../logic/estimateFees";
 import { getMockedAccount, getMockedTokenAccount } from "../test/fixtures/account.fixture";
@@ -229,7 +229,7 @@ describe("utils", () => {
   describe("prepareOperations", () => {
     const tokenCurrencyFromCAL = getTokenCurrencyFromCAL(0);
 
-    test("links token operation to existing coin operation with matching hash", () => {
+    test("links token operation to existing coin operation with matching hash", async () => {
       const mockedTokenAccount = getMockedTokenAccount(tokenCurrencyFromCAL);
       const mockedCoinOperation = getMockedOperation({ hash: "shared" });
       const mockedTokenOperation = getMockedOperation({
@@ -237,20 +237,20 @@ describe("utils", () => {
         accountId: encodeTokenAccountId(mockedTokenAccount.parentId, tokenCurrencyFromCAL),
       });
 
-      const result = prepareOperations([mockedCoinOperation], [mockedTokenOperation]);
+      const result = await prepareOperations([mockedCoinOperation], [mockedTokenOperation]);
 
       expect(result).toHaveLength(1);
       expect(result[0].subOperations).toEqual([mockedTokenOperation]);
     });
 
-    test("creates NONE coin operation as parent if no coin op with matching hash exists", () => {
+    test("creates NONE coin operation as parent if no coin op with matching hash exists", async () => {
       const mockedTokenAccount = getMockedTokenAccount(tokenCurrencyFromCAL);
       const mockedOrphanTokenOperation = getMockedOperation({
         hash: "unknown-hash",
         accountId: encodeTokenAccountId(mockedTokenAccount.parentId, tokenCurrencyFromCAL),
       });
 
-      const result = prepareOperations([], [mockedOrphanTokenOperation]);
+      const result = await prepareOperations([], [mockedOrphanTokenOperation]);
       const noneOp = result.find(op => op.type === "NONE");
 
       expect(typeof noneOp).toBe("object");

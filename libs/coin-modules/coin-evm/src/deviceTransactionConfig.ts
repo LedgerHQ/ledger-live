@@ -31,7 +31,7 @@ const inferDeviceTransactionConfigWalletApi = async (
     nft => nft.contract.toLowerCase() === transaction.recipient.toLowerCase(),
   );
 
-  const token = getCryptoAssetsStore().findTokenByAddressInCurrency(
+  const token = await getCryptoAssetsStore().findTokenByAddressInCurrency(
     transaction.recipient,
     mainAccount.currency.id,
   );
