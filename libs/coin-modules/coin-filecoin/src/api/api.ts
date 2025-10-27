@@ -117,7 +117,7 @@ export const fetchTxsWithPages = async (
 
   while (txsLen === txsPerPageLimit) {
     const { txs } = await fetchTxs(addr, lastHeight, offset, txsPerPageLimit);
-    result = [...result, ...txs];
+    result = result.concat(txs);
 
     txsLen = txs.length;
     offset += txsLen;
@@ -176,7 +176,7 @@ export const fetchERC20TransactionsWithPages = async (
 
   while (txsLen === txsPerPageLimit) {
     const { txs } = await fetchERC20Transactions(addr, lastHeight, offset, txsPerPageLimit);
-    result = [...result, ...txs];
+    result = result.concat(txs);
 
     txsLen = txs.length;
     offset += txsLen;
