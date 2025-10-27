@@ -37,7 +37,8 @@ const isDefaultAccountSwapParamsList = (
   typeof params === "object" &&
   (("defaultAccount" in params && params.defaultAccount !== undefined) ||
     ("defaultCurrency" in params && params.defaultCurrency !== undefined) ||
-    ("currency" in params && params.currency !== undefined));
+    ("currency" in params && params.currency !== undefined) ||
+    ("affiliate" in params && params.affiliate !== undefined));
 
 export function SwapLiveApp({
   route,
@@ -66,10 +67,11 @@ export function SwapLiveApp({
     () => (!localManifest ? remoteManifest : localManifest),
     [localManifest, remoteManifest],
   );
-  const defaultParams = useMemo(
-    () => (isDefaultAccountSwapParamsList(params) ? params : null),
-    [params],
-  );
+  const defaultParams = useMemo(() => {
+    const isValid = isDefaultAccountSwapParamsList(params);
+    const result = isValid ? params : null;
+    return result;
+  }, [params]);
 
   useSwapHeaderNavigation(webviewRef);
 

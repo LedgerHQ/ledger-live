@@ -198,8 +198,14 @@ const linkingOptions = () => ({
           },
           /**
            * ie: "ledgerlive://swap" -> will redirect to the main swap page
+           * @params ?affiliate: string, ?fromToken: string, ?toToken: string, ?amountFrom: string, ?amountTo: string
+           * ie: "ledgerlive://swap?refererId=lol&fromToken=bitcoin&toToken=ethereum&amountFrom=100&affiliate=partner123"
            */
-          [NavigatorName.Swap]: "swap",
+          [NavigatorName.Swap]: {
+            screens: {
+              [ScreenName.SwapTab]: "swap",
+            },
+          },
 
           [NavigatorName.SendFunds]: {
             screens: {
