@@ -1,19 +1,21 @@
+import React from "react";
+import { useTranslation } from "react-i18next";
 import { Button, Flex } from "@ledgerhq/native-ui";
 import { TrackScreen } from "~/analytics";
 import { GenericInformationBody } from "~/components/GenericInformationBody";
 import ExternalLink from "~/components/ExternalLink";
-import React from "react";
-import { useTranslation } from "react-i18next";
 
-export const BleFailedPairing = ({
-  onRetry,
-  onOpenHelp,
-  productName,
-}: {
+type Props = {
+  productName: string;
   onRetry: () => void;
   onOpenHelp: () => void;
-  productName: string;
-}) => {
+};
+
+/**
+ * Displayed when a generic error happens during a BLE pairing.
+ * Proposes to retry or open help center.
+ */
+export function BleFailedPairing({ productName, onRetry, onOpenHelp }: Readonly<Props>) {
   const { t } = useTranslation();
   return (
     <Flex flex={1} mb={6}>
@@ -26,7 +28,7 @@ export const BleFailedPairing = ({
           })}
         />
       </Flex>
-      <Button type="main" size="large" onPress={onRetry} mb={7}>
+      <Button type="main" size="large" mb={24} mx={16} onPress={onRetry}>
         {t("blePairingFlow.pairing.error.retryCta")}
       </Button>
       <ExternalLink
@@ -36,4 +38,4 @@ export const BleFailedPairing = ({
       />
     </Flex>
   );
-};
+}
