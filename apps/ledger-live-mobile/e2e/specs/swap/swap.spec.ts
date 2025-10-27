@@ -21,7 +21,6 @@ describe("Swap", () => {
     await app.swap.startExchange();
   });
 
-  $TmsLink("B2CQA-545");
   it("should show an error for not enough funds", async () => {
     await app.swap.enterSourceAmount("10");
     await app.swap.startExchange();

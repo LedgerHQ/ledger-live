@@ -63,7 +63,7 @@ export const ElementHelpers = {
   async getWebElementValue(id: string, index = 0) {
     const element = getWebElementByTestId(id).atIndex(index);
     await expect(element).toExist();
-    return await element.runScript(el => el.value);
+    return await element.runScript((el: HTMLInputElement) => el.value);
   },
 
   async waitWebElementByTestId(id: string, timeout = DEFAULT_TIMEOUT) {
@@ -87,7 +87,10 @@ export const ElementHelpers = {
 
   async typeTextByWebTestId(id: string, text: string) {
     await getWebElementByTestId(id).runScript(
-      (el, text) => {
+      (
+        el: HTMLInputElement & { _valueTracker?: { setValue: (value: string) => void } },
+        text: string,
+      ) => {
         const lastValue = el.value;
         const setValue = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, "value")?.set;
         if (setValue) {

@@ -13,6 +13,7 @@ module.exports = {
       setupTimeout: 500000,
     },
     retries: 0,
+    forwardEnv: true, // Used to forward DETOX_CONFIGURATION to Jest workers
   },
   logger: {
     level: process.env.DEBUG_DETOX ? "trace" : "info",
@@ -76,10 +77,24 @@ module.exports = {
         name: "iOS Simulator",
       },
     },
+    simulator2: {
+      type: "ios.simulator",
+      device: {
+        name: "iOS Simulator 2",
+      },
+    },
     emulator: {
       type: "android.emulator",
       device: {
         avdName: "Android_Emulator",
+      },
+      gpuMode: "swiftshader_indirect",
+      headless: process.env.CI ? true : false,
+    },
+    emulator2: {
+      type: "android.emulator",
+      device: {
+        avdName: "Android_Emulator_2",
       },
       gpuMode: "swiftshader_indirect",
       headless: process.env.CI ? true : false,

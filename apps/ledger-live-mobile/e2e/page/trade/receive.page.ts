@@ -66,7 +66,6 @@ export default class ReceivePage {
   /**
    * Select a currency by its ID (e.g., "bitcoin", "ethereum")
    */
-  @Step("Select currency in receive list")
   async selectCurrency(currencyId: string) {
     return this.selectAssetById(currencyId);
   }
@@ -98,7 +97,6 @@ export default class ReceivePage {
     await tapById(CurrencyRowId);
   }
 
-  @Step("Accept to verify address")
   async selectVerifyAddress() {
     await waitForElementById(this.buttonVerifyAddressId);
     await tapById(this.buttonVerifyAddressId);
@@ -148,7 +146,6 @@ export default class ReceivePage {
     return tapById(this.noVerifyValidateButton);
   }
 
-  @Step("Expect account receive page is displayed")
   async expectReceivePageIsDisplayed(tickerName: string, accountName: string) {
     const receiveTitleTickerId = this.titleReceiveConfirmationPageId(tickerName);
     const accountNameId = this.accountNameReceiveId(accountName);
@@ -158,7 +155,6 @@ export default class ReceivePage {
     await expect(getElementById(accountNameId)).toBeVisible();
   }
 
-  @Step("Refuse to verify address")
   async doNotVerifyAddress() {
     await this.selectDontVerifyAddress();
     await this.selectReconfirmDontVerify();

@@ -22,7 +22,6 @@ export default class CommonPage {
   pluggedDeviceRow = (nano: DeviceUSB) => `device-item-usb|${JSON.stringify(nano)}`;
   blePairingLoadingId = "ble-pairing-loading";
 
-  @Step("Perform search")
   async performSearch(text: string) {
     await waitForElementById(this.searchBarId);
     await typeTextByElement(this.searchBar(), text);

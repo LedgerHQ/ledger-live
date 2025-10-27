@@ -20,7 +20,6 @@ export default class PortfolioPage {
   assetItemId = (currencyName: string) => `assetItem-${currencyName}`;
   allocationSectionTitleId = "portfolio-allocation-section";
 
-  @Step("Navigate to Settings")
   async navigateToSettings() {
     await tapByElement(this.portfolioSettingsButton());
   }
@@ -42,7 +41,6 @@ export default class PortfolioPage {
       jestExpect(await getTextOfElement(this.assetBalanceId, index)).toBe(this.zeroBalance);
   }
 
-  @Step("Open Portfolio via deeplink")
   async openViaDeeplink() {
     await openDeeplink(this.baseLink);
   }
@@ -51,7 +49,6 @@ export default class PortfolioPage {
     await tapById(this.managerTabBarId);
   }
 
-  @Step("Click on Add account button in portfolio")
   async addAccount() {
     await scrollToId(this.addAccountCta, this.emptyPortfolioListId);
     await tapById(this.addAccountCta);
@@ -61,7 +58,6 @@ export default class PortfolioPage {
     await scrollToId(this.seeAllTransactionButton, this.accountsListView);
   }
 
-  @Step("Expect Portfolio with accounts")
   async expectPortfolioWithAccounts() {
     await expect(getElementById(this.accountsListView)).toBeVisible();
   }
@@ -74,7 +70,6 @@ export default class PortfolioPage {
     await tapByElement(this.lastTransactionAmount());
   }
 
-  @Step("Go to asset's accounts from portfolio")
   async goToAccounts(currencyName: string) {
     await scrollToId(this.allocationSectionTitleId, this.accountsListView);
     await tapById(this.assetItemId(currencyName));

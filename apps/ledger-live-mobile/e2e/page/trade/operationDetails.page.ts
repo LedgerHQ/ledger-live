@@ -10,7 +10,6 @@ export default class OperationDetailsPage {
     await expect(this.title()).toBeVisible();
   }
 
-  @Step("Check account details")
   async checkAccount(account: string) {
     await expect(this.account()).toHaveText(account);
   }

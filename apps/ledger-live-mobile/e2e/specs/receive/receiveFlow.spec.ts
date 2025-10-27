@@ -23,7 +23,6 @@ describe("Receive Flow", () => {
     await app.receive.openViaDeeplink();
   }
 
-  $TmsLink("B2CQA-1864");
   it("Should verify the address after importing an account working on a single network", async () => {
     await app.transferMenu.open();
     await app.transferMenu.navigateToReceive();
@@ -41,8 +40,6 @@ describe("Receive Flow", () => {
     await app.receive.expectAddressIsDisplayed(btcReceiveAddress);
   });
 
-  $TmsLink("B2CQA-1858");
-  $TmsLink("B2CQA-1860");
   it("Should display the number of account existing per networks", async () => {
     await openReceive();
     await app.receive.selectAssetById(Currency.ETH.id);
@@ -50,8 +47,6 @@ describe("Receive Flow", () => {
     await app.receive.expectNumberOfAccountInListIsDisplayed("optimism", 1);
   });
 
-  $TmsLink("B2CQA-1856");
-  $TmsLink("B2CQA-1862");
   it("Should create an account on a network", async () => {
     const currency = Currency.OP;
     await openReceive();
@@ -64,7 +59,6 @@ describe("Receive Flow", () => {
     await app.receive.expectAccountIsCreated("OP Mainnet 3");
   });
 
-  $TmsLink("B2CQA-650");
   it("Should access to receive after importing a cryptocurrency on a selected network", async () => {
     await openReceive();
     await app.common.performSearch("Ethereum");
@@ -79,7 +73,6 @@ describe("Receive Flow", () => {
     await app.receive.expectReceivePageIsDisplayed("ETH", "Arbitrum 1");
   });
 
-  $TmsLink("B2CQA-1859");
   it("Should access to receive after selecting an existing account", async () => {
     await openReceive();
     await app.receive.selectAssetById(Currency.XRP.id);

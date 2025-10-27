@@ -26,13 +26,11 @@ describe("Cosmos delegate flow", () => {
     await app.portfolio.waitForPortfolioPageToLoad();
   });
 
-  $TmsLink("B2CQA-384");
   it("open account stake flow", async () => {
     await app.transferMenu.open();
     await app.transferMenu.navigateToStake();
   });
 
-  $TmsLink("B2CQA-387");
   it("goes through the delegate flow", async () => {
     const testAccount = app.testAccounts[0];
     const delegatedPercent = 50;

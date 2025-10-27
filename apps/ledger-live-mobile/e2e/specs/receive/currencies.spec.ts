@@ -2,8 +2,6 @@ import DeviceAction from "../../models/DeviceAction";
 import { knownDevices } from "../../models/devices";
 import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
 
-$TmsLink("B2CQA-651");
-$TmsLink("B2CQA-1854");
 describe("Receive different currency", () => {
   let deviceAction: DeviceAction;
   let first = true;

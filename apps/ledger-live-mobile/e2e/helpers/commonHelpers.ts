@@ -2,7 +2,6 @@ import { findFreePort, close as closeBridge, init as initBridge } from "../bridg
 import { getEnv, setEnv } from "@ledgerhq/live-env";
 import { exec } from "child_process";
 import { device, log } from "detox";
-import { allure } from "jest-allure2-reporter/api";
 
 const BASE_DEEPLINK = "ledgerlive://";
 
@@ -69,7 +68,6 @@ export const logMemoryUsage = async () => {
         return;
       }
       const logMessage = `📦 Detox Memory Usage: ${stdout.trim()}`;
-      await allure.attachment("Memory Usage Details", logMessage, "text/plain");
       log.warn(logMessage);
     },
   );

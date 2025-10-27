@@ -36,7 +36,6 @@ export default class SendPage {
     await expect(this.getStep1HeaderTitle()).toBeVisible();
   }
 
-  @Step("Set recipient and memo tag")
   async setRecipient(address: string, memoTag?: string) {
     await typeTextById(this.recipientInputId, address);
     if (memoTag && memoTag !== "noTag") {
@@ -44,7 +43,6 @@ export default class SendPage {
     }
   }
 
-  @Step("Continue to next step and skip memo tag if needed")
   async recipientContinue(memoTag?: string) {
     await waitForElementById(this.recipientContinueButtonId); // To prevent flakiness
     await tapById(this.recipientContinueButtonId);
@@ -54,7 +52,6 @@ export default class SendPage {
     }
   }
 
-  @Step("Set the amount and return the value")
   async setAmount(amount: string) {
     if (amount === "max") await tapByElement(this.amountMaxSwitch());
     else {
@@ -73,52 +70,42 @@ export default class SendPage {
     await tapByElement(this.summaryContinueButton());
   }
 
-  @Step("Expect amount in summary")
   async expectSummaryAmount(amount: string) {
     await expect(getElementById(this.summaryAmountId)).toHaveText(amount);
   }
 
-  @Step("Select account")
   async selectAccount(account: string) {
     await TradePageUtil.selectAccount(account);
   }
 
-  @Step("Expect recipient to have error title")
   async expectSendRecipientTitleError(errorMessage: string) {
     await this.expectElementToHaveText(this.recipientErrorId, errorMessage);
   }
 
-  @Step("Expect recipient to have error description")
   async expectSendRecipientDescriptionError(errorMessage: string) {
     await this.expectElementToHaveText(this.recipientErrorDescriptionId, errorMessage);
   }
 
-  @Step("Expect Learn more link")
   async expectLearnMoreLink() {
     await expect(getElementById(this.learnMoreLinkId)).toBeVisible();
   }
 
-  @Step("Expect Continue button disabled")
   async expectContinueButtonDisabled() {
     await expect(getElementById(this.recipientContinueButtonId)).not.toBeVisible();
   }
 
-  @Step("Expect sender to have error title")
   async expectSendSenderTitleError(errorMessage: string) {
     await this.expectElementToHaveText(this.senderErrorTitleId, errorMessage);
   }
 
-  @Step("Expect sender to have error description")
   async expectSendSenderDescriptionError(errorMessage: string) {
     await this.expectElementToHaveText(this.senderErrorDescriptionId, errorMessage);
   }
 
-  @Step("Expect summary to have error title")
   async expectSendSummaryTitleError(errorMessage: string) {
     await this.expectElementToHaveText(this.summaryErrorTitleId, errorMessage);
   }
 
-  @Step("Expect summary to have error description")
   async expectSendSummaryDescriptionError(errorMessage: string) {
     await this.expectElementToHaveText(this.summaryErrorDescriptionId, errorMessage);
   }

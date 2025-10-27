@@ -15,7 +15,6 @@ describe("Test My Ledger", () => {
     await app.portfolio.waitForPortfolioPageToLoad();
   });
 
-  $TmsLink("B2CQA-657");
   it("open My Ledger and add a new device", async () => {
     await app.portfolio.openMyLedger();
     await app.manager.expectManagerPage();
@@ -25,7 +24,6 @@ describe("Test My Ledger", () => {
     await app.manager.waitForDeviceInfoToLoad();
   });
 
-  $TmsLink("B2CQA-657");
   it("open My Ledger", async () => {
     await app.portfolio.openMyLedger();
     await app.manager.expectManagerPage();
@@ -34,7 +32,6 @@ describe("Test My Ledger", () => {
     await app.manager.waitForDeviceInfoToLoad();
   });
 
-  $TmsLink("B2CQA-658");
   it("displays device informations", async () => {
     await app.manager.checkDeviceName(knownDevice.name);
     await app.manager.checkDeviceVersion(deviceInfo.version);

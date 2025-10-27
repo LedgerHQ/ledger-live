@@ -17,13 +17,11 @@ describe("Add account from modal", () => {
     await app.portfolio.waitForPortfolioPageToLoad();
   });
 
-  $TmsLink("B2CQA-786");
   it("open add accounts from modal", async () => {
     await app.portfolio.addAccount();
     await app.addAccount.importWithYourLedger();
   });
 
-  $TmsLink("B2CQA-101");
   it("add Bitcoin accounts", async () => {
     await app.receive.selectCurrencyByName(testedCurrency);
     await deviceAction.selectMockDevice();
@@ -34,7 +32,6 @@ describe("Add account from modal", () => {
     await app.addAccount.tapCloseAddAccountCta();
   });
 
-  $TmsLink("B2CQA-101");
   it("displays Bitcoin accounts page summary", async () => {
     await app.portfolio.goToAccounts(testedCurrency);
     await app.assetAccountsPage.waitForAccountPageToLoad(testedCurrency);

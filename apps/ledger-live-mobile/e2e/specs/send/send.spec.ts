@@ -7,7 +7,6 @@ describe("Send flow", () => {
     await app.portfolio.waitForPortfolioPageToLoad();
   });
 
-  $TmsLink("B2CQA-3537");
   it("[Blacklist] Blocking transactions to sanctioned recipient addresses in send flow", async () => {
     await app.portfolio.openViaDeeplink();
     await app.portfolio.waitForPortfolioPageToLoad();
@@ -22,7 +21,6 @@ describe("Send flow", () => {
     await app.send.expectContinueButtonDisabled();
   });
 
-  $TmsLink("B2CQA-3536");
   it("[Blacklist] Blocking transactions from sanctioned user addresses in send flow", async () => {
     await app.portfolio.openViaDeeplink();
     await app.portfolio.waitForPortfolioPageToLoad();
@@ -39,7 +37,6 @@ describe("Send flow", () => {
     await app.send.expectContinueButtonDisabled();
   });
 
-  $TmsLink("B2CQA-3692");
   it("[Blacklist] Blocking transactions from sanctioned user address to sanctioned user address in send flow", async () => {
     await app.portfolio.openViaDeeplink();
     await app.portfolio.waitForPortfolioPageToLoad();

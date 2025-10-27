@@ -12,28 +12,23 @@ export default class AddAccountDrawer extends CommonPage {
   addFundsButtonId = "button-add-funds";
   actionDrawerReceiveButtonId = "action-drawer-receive-button";
 
-  @Step("Open add account via deeplink")
   async openViaDeeplink() {
     await openDeeplink(this.baseLink);
   }
 
-  @Step("Click on 'Import with your Ledger' button")
   async importWithYourLedger() {
     await waitForElementById(this.modalButtonId);
     await tapById(this.modalButtonId);
   }
 
-  @Step("Wait for accounts discovery")
   async waitAccountsDiscovery() {
     await waitForElementById(this.continueButtonId, 240000);
   }
 
-  @Step("Finish account discovery")
   async finishAccountsDiscovery() {
     await tapById(this.continueButtonId);
   }
 
-  @Step("Expect account discovered")
   async expectAccountDiscovery(currencyName: string, currencyId: string, index = 0) {
     const accountName = `${currencyName} ${index + 1}`;
     await expect(this.accountItem(this.accountId(currencyId, index))).toBeVisible();
@@ -45,13 +40,11 @@ export default class AddAccountDrawer extends CommonPage {
     return accountId;
   }
 
-  @Step("Close add account success screen")
   async tapCloseAddAccountCta() {
     await waitForElementById(this.closeAddAccountButtonId);
     await tapById(this.closeAddAccountButtonId);
   }
 
-  @Step("Add only discovered account at index")
   async addAccountAtIndex(currencyName: string, currencyId: string, index: number) {
     await this.waitAccountsDiscovery();
     const accountId = await this.expectAccountDiscovery(currencyName, currencyId, index);
@@ -61,12 +54,10 @@ export default class AddAccountDrawer extends CommonPage {
     return accountId;
   }
 
-  @Step("Click on 'Add funds to my account' button")
   async tapAddFunds() {
     await tapById(this.addFundsButtonId);
   }
 
-  @Step("Click on 'Receive' in action drawer")
   async tapReceiveinActionDrawer() {
     await tapById(this.actionDrawerReceiveButtonId);
   }

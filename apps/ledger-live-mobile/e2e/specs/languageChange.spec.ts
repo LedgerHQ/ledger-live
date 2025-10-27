@@ -1,4 +1,3 @@
-$TmsLink("B2CQA-2344");
 describe("Change Language", () => {
   const langButtonText = [
     { lang: "Français", localization: "Général" },

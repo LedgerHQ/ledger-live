@@ -12,7 +12,6 @@ describe("Onboarding", () => {
     } else isFirstTest = false;
   });
 
-  $TmsLink("B2CQA-1803");
   it("does the Onboarding and choose to access wallet", async () => {
     await app.onboarding.startOnboarding();
     await app.onboarding.chooseToAccessYourWallet();
@@ -23,7 +22,6 @@ describe("Onboarding", () => {
     await app.portfolio.expectPortfolioEmpty();
   });
 
-  $TmsLink("B2CQA-1802");
   it("does the Onboarding and choose to restore a Nano X", async () => {
     await app.onboarding.startOnboarding();
     await app.onboarding.chooseSetupLedger();
@@ -35,8 +33,6 @@ describe("Onboarding", () => {
     await app.portfolio.expectPortfolioEmpty();
   });
 
-  $TmsLink("B2CQA-1800");
-  $TmsLink("B2CQA-1833");
   it("does the Onboarding and choose to restore a Nano SP", async () => {
     await app.onboarding.startOnboarding();
     await app.onboarding.chooseSetupLedger();
@@ -52,7 +48,6 @@ describe("Onboarding", () => {
     }
   });
 
-  $TmsLink("B2CQA-1799");
   it("does the Onboarding and choose to setup a new Nano X", async () => {
     await app.onboarding.startOnboarding();
     await app.onboarding.chooseSetupLedger();

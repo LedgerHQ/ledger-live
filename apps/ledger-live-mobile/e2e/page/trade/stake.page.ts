@@ -21,19 +21,16 @@ export default class StakePage {
     await tapById(id);
   }
 
-  @Step("Set delegated amount percent")
   async setAmountPercent(currencyId: string, delegatedPercent: 25 | 50 | 75 | 100) {
     await waitForElementById(this.delegationSummaryAmountId(currencyId));
     await tapById(this.delegationSummaryAmountId(currencyId));
     await tapById(this.delegatedRatioId(currencyId, delegatedPercent));
   }
 
-  @Step("Expect provider in summary")
   async expectProvider(currencyId: string, provider: string) {
     jestExpect(await this.delegationSummaryValidator(currencyId)).toEqual(provider);
   }
 
-  @Step("Expect assets remaining after delegation")
   async expectRemainingAmount(
     currencyId: string,
     delegatedPercent: 25 | 50 | 75 | 100,
@@ -47,7 +44,6 @@ export default class StakePage {
     jestExpect(assestsRemaining).toEqual(remainingAmountFormated);
   }
 
-  @Step("Validate the amount entered")
   async validateAmount(currencyId: string) {
     await tapById(this.delegationAmountContinueId(currencyId));
     if (currencyId !== Currency.CELO.id) {
@@ -55,13 +51,11 @@ export default class StakePage {
     }
   }
 
-  @Step("Expect delegated amount in summary")
   async expectDelegatedAmount(currencyId: string, delegatedAmountFormated: string) {
     const assetsDelagated = await this.delegationAmountValue(currencyId);
     jestExpect(assetsDelagated).toEqual(delegatedAmountFormated);
   }
 
-  @Step("Click on continue button in summary")
   async summaryContinue(currencyId: string) {
     const id = this.summaryContinueButtonId(currencyId);
     await waitForElementById(id);

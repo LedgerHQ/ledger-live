@@ -1,6 +1,5 @@
 import { knownDevices } from "../models/devices";
 
-$TmsLink("B2CQA-1837");
 describe("DeepLinks Tests", () => {
   const ethereumLong = "ethereum";
   const bitcoinLong = "bitcoin";

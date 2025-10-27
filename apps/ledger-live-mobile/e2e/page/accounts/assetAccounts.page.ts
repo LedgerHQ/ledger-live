@@ -7,7 +7,6 @@ export default class AssetAccountsPage {
   titleId = (assetName: string) => `accounts-title-${assetName}`;
   accountAssetId = (assetName: string) => `account-assets-${assetName}`;
 
-  @Step("Wait for asset page to load")
   async waitForAccountPageToLoad(assetName: string) {
     await waitForElementById(this.titleId(assetName.toLowerCase()));
   }

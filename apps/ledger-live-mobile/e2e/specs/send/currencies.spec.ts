@@ -2,8 +2,8 @@ import DeviceAction from "../../models/DeviceAction";
 import { knownDevices } from "../../models/devices";
 import { CryptoCurrencyId } from "@ledgerhq/types-cryptoassets";
 import { formattedAmount, getAccountName, getAccountUnit } from "../../models/currencies";
+import type { Account } from "@ledgerhq/types-live";
 
-$TmsLink("B2CQA-1823");
 describe("Send flow", () => {
   let deviceAction: DeviceAction;
   let first = true;
@@ -37,7 +37,7 @@ describe("Send flow", () => {
   it.each(testedCurrencies)(
     "%s: open send flow, sends half balance and displays the new operation",
     async currencyId => {
-      const account = app.testAccounts.find(a => a.currency.id === currencyId);
+      const account = app.testAccounts.find((a: Account) => a.currency.id === currencyId);
       if (!account) throw new Error(`Account not found for currency: ${currencyId}`);
 
       const halfBalance = account.balance.div(2);

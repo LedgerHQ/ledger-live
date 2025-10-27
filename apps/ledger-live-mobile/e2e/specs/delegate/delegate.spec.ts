@@ -17,7 +17,6 @@ describe("Delegate flow", () => {
    * We can not rely on third party provider for our test, any change from them will break the test and make it flaky
    * Since the staking flow ends on the Sign Transaction modal, it is equivalent to use the Wallet API to open the modal
    */
-  $TmsLink("B2CQA-3654");
   it("[Blacklist] Blocking staking transactions for sanctioned addresses", async () => {
     await app.dummyWalletApp.sendRequest();
     await app.cryptoDrawer.selectCurrencyFromDrawer("Ethereum");
