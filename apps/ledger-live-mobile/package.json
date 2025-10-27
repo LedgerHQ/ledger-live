@@ -5,7 +5,7 @@
   "scripts": {
     "postinstall": "zx ./scripts/post.mjs",
     "pod": "cd ios && bundle exec pod install --repo-update",
-    "start": "react-native start",
+    "start": "react-native webpack-start",
     "start:msw": "MSW_ENABLED=true react-native start",
     "conf": "react-native config",
     "doc": "react-native doctor",
@@ -259,6 +259,7 @@
     "@react-native/dev-middleware": "0.77.3",
     "@rspack/core": "1.5.8",
     "@sentry/cli": "2.42.2",
+    "@svgr/webpack": "^8.1.0",
     "@swc/core": "1.13.5",
     "@swc/helpers": "0.5.17",
     "@swc/jest": "0.2.36",

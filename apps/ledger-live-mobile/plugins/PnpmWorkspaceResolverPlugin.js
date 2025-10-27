@@ -44,11 +44,11 @@ class PnpmWorkspaceResolverPlugin {
       // Scan for workspace packages
       this.scanWorkspacePackages(workspacePaths);
 
-      if (this.options.verbose) {
+      /* if (this.options.verbose) {
         console.log(
           `[PnpmWorkspaceResolver] Found ${this.workspacePackages.size} workspace packages`,
         );
-      }
+      } */
     } catch (error) {
       console.warn(
         "[PnpmWorkspaceResolver] Failed to initialize workspace mapping:",
@@ -74,9 +74,9 @@ class PnpmWorkspaceResolverPlugin {
             const packageDir = path.dirname(packageFile);
             this.workspacePackages.set(packageJson.name, packageDir);
 
-            if (this.options.verbose) {
+            /* if (this.options.verbose) {
               console.log(`[PnpmWorkspaceResolver] Mapped ${packageJson.name} -> ${packageDir}`);
-            }
+            } */
           }
         } catch (error) {
           console.warn(`[PnpmWorkspaceResolver] Failed to read ${packageFile}:`, error.message);
@@ -119,8 +119,8 @@ class PnpmWorkspaceResolverPlugin {
     compiler.hooks.normalModuleFactory.tap("PLUGIN", normalModuleFactory => {
       normalModuleFactory.hooks.beforeResolve.tap("PLUGIN", data => {
         if (data.request.includes("@ledgerhq/ui-shared")) {
-          console.log("BEFORE RESOLVE");
-          console.log(data);
+          /* console.log("BEFORE RESOLVE");
+          console.log(data); */
           //data.context =
           //  "/Users/kevin.le-seigle/WS/ledger-live/node_modules/.pnpm/@ledgerhq/ui-shared";
         }
@@ -128,19 +128,19 @@ class PnpmWorkspaceResolverPlugin {
         return;
       });
       normalModuleFactory.hooks.resolve.tap("PLUGIN", data => {
-        if (data.request.includes("@ledgerhq/ui-shared")) {
+        /* if (data.request.includes("@ledgerhq/ui-shared")) {
           console.log("RESOLVE");
           console.log(data);
-        }
+        } */
 
         return;
       });
 
       normalModuleFactory.hooks.afterResolve.tap("PLUGIN", data => {
-        if (data.request.includes("@ledgerhq/ui-shared")) {
+        /* if (data.request.includes("@ledgerhq/ui-shared")) {
           console.log("AFTER RESOLVE");
           console.log(data);
-        }
+        } */
 
         return;
       });
