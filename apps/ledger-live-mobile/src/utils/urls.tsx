@@ -83,6 +83,8 @@ export const urls = {
     TronSendTrc20ToNewAccountForbidden: "https://support.ledger.com/article/6516823445533-zd",
     AddressesSanctionedError:
       "https://support.ledger.com/article/Why-Ledger-Complies-with-Sanctions",
+    BleForgetDevice:
+      "https://support.ledger.com/article/How-to-remove-a-Ledger-device-from-your-phone-s-Bluetooth-settings",
   },
   multipleAddresses: "https://support.ledger.com/article/360033802154-zd",
   delegation:

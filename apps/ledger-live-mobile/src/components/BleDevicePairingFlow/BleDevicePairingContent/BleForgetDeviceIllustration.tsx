@@ -2,7 +2,7 @@ import React from "react";
 import { Image, StyleSheet, View } from "react-native";
 import { useTranslation } from "react-i18next";
 import { Text, Button, Icons, Flex, Link } from "@ledgerhq/native-ui";
-import forgetDeviceIllustration from "../assets/forget-device-illustration.png";
+import forgetDeviceIllustration from "../assets/forget-device.webp";
 import { useTheme } from "styled-components/native";
 import { useForgetDeviceCta } from "./hooks/useForgetDeviceCta";
 import { TrackScreen } from "~/analytics";

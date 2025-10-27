@@ -384,7 +384,7 @@ export default function SelectDevice({
                   px={16}
                 >
                   <Text variant="h5" fontWeight="semiBold">
-                    {t(`manager.selectDevice.title`)}
+                    {t("manager.selectDevice.title")}
                   </Text>
                   {deviceList.length > 0 && (
                     <Touchable
