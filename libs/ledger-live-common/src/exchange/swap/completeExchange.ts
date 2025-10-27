@@ -137,7 +137,8 @@ const completeExchange = (
          * LiFi swap transactions are frequently failing on-chain.
          * The failures are due to "out of gas" errors. This indicates the gas limit estimated for the transaction is too low.
          * Manually resubmitting a failed transaction with a higher gasLimit allows it to succeed.
-         * The root cause is that the partner (LiFi) provides "don’t give accurate gasLimit" estimations.
+         * The root cause is that our explorers are somehow under-estimating the transaction,
+         * or the gasLimit changes and gets increased in the next few blocks.
          * Solution: Manually override the gas limit only for LiFi transactions and create a 30% safety buffer.
          */
         const transactionFixed =
