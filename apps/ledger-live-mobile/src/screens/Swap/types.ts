@@ -67,6 +67,7 @@ export interface DefaultAccountSwapParamList extends SwapLiveAppNavigationParams
   defaultAccount?: Account;
   defaultParentAccount?: Account;
   defaultCurrency?: CryptoCurrency | TokenCurrency;
+  affiliate?: string;
 }
 
 export type SwapFormNavParamList = {
