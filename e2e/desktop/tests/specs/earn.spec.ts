@@ -58,7 +58,7 @@ for (const { account, provider, xrayTicket } of ethEarn) {
     test(
       `ETH staking flow - Earn Dashboard - ${provider.name}`,
       {
-        tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax"],
+        tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex"],
         annotation: {
           type: "TMS",
           description: xrayTicket,
@@ -88,7 +88,7 @@ test.describe("Inline Add Account", () => {
   test(
     "Inline Add Account",
     {
-      tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax"],
+      tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex"],
       annotation: [
         {
           type: "TMS",
@@ -181,7 +181,7 @@ for (const { account, xrayTicket, staking } of earnDashboardCurrencies) {
     test(
       `Correct Earn page - ${account.currency.ticker} - staking situation: ${staking}`,
       {
-        tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax"],
+        tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex"],
         annotation: {
           type: "TMS",
           description: xrayTicket,

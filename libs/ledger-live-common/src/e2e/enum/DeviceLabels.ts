@@ -60,6 +60,7 @@ export enum DeviceLabels {
   VERIFY_BSC = "Verify BSC",
   VERIFY_ETHEREUM = "Verify Ethereum",
   VERIFY_POLYGON = "Verify Polygon",
+  VERIFY_COSMOS = "Verify Cosmos",
   VERIFY_SOLANA_ADDRESS = "Verify Solana address",
   VIEW_ACTION = "View action",
   VIEW_HEADER = "View Header",

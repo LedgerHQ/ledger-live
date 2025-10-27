@@ -10,6 +10,7 @@ import {
 } from "../deviceInteraction/TouchDeviceSimulator";
 import { DeviceLabels } from "../enum/DeviceLabels";
 import { DeviceModelId } from "@ledgerhq/types-devices";
+import { isTouchDevice } from "../speculosAppVersion";
 
 type ActionType = "both" | "right" | "tap" | "swipe" | "confirm" | "hold";
 
@@ -20,7 +21,7 @@ function validateTransactionData(tx: Transaction, events: string[]) {
   expect(isAmountCorrect).toBeTruthy();
 }
 
-async function sendCardanoStax(tx: Transaction) {
+async function sendCardanoTouchDevices(tx: Transaction) {
   await waitFor(DeviceLabels.REVIEW_TRANSACTION);
   const events = await pressUntilTextFound(DeviceLabels.TO);
   validateTransactionData(tx, events);
@@ -60,8 +61,8 @@ async function sendCardanoButtonDevice(tx: Transaction) {
 
 export async function sendCardano(tx: Transaction) {
   const speculosModel = getSpeculosModel();
-  if (speculosModel === DeviceModelId.stax) {
-    return sendCardanoStax(tx);
+  if (isTouchDevice()) {
+    return sendCardanoTouchDevices(tx);
   }
   if (speculosModel === DeviceModelId.nanoS) {
     return sendCardanoNanoS(tx);
@@ -70,7 +71,7 @@ export async function sendCardano(tx: Transaction) {
 }
 
 const DELEGATE_STEPS_CONFIG = {
-  [DeviceModelId.stax]: [
+  [DeviceModelId.stax || DeviceModelId.europa]: [
     [DeviceLabels.REVIEW_TRANSACTION, "swipe"],
     [DeviceLabels.TAP_TO_CONTINUE, "tap"],
     [DeviceLabels.REGISTER, "swipe"],
@@ -107,7 +108,7 @@ const DELEGATE_STEPS_CONFIG = {
   ] as const,
 };
 
-async function delegateStaxAction(label: DeviceLabels) {
+async function delegateTouchDevicesAction(label: DeviceLabels) {
   const CONFIRM_BUTTON_COORDS = { x: 139, y: 532 };
   await waitFor(label);
   switch (label) {
@@ -135,14 +136,10 @@ async function delegateNanoAction(label: DeviceLabels, action: ActionType) {
   }
 }
 
-async function executeDelegateStep(
-  label: DeviceLabels,
-  action: ActionType,
-  speculosModel: DeviceModelId,
-) {
+async function executeDelegateStep(label: DeviceLabels, action: ActionType) {
   try {
-    if (speculosModel === DeviceModelId.stax) {
-      await delegateStaxAction(label);
+    if (isTouchDevice()) {
+      await delegateTouchDevicesAction(label);
     } else {
       await delegateNanoAction(label, action);
     }
@@ -156,13 +153,13 @@ async function executeDelegateStep(
 export async function delegateCardano() {
   const speculosModel = getSpeculosModel();
   const steps =
-    speculosModel === DeviceModelId.stax
-      ? DELEGATE_STEPS_CONFIG[DeviceModelId.stax]
+    speculosModel === DeviceModelId.stax || speculosModel === DeviceModelId.europa
+      ? DELEGATE_STEPS_CONFIG[speculosModel]
       : speculosModel === DeviceModelId.nanoS
         ? DELEGATE_STEPS_CONFIG[DeviceModelId.nanoS]
         : DELEGATE_STEPS_CONFIG.default;
 
   for (const [label, action] of steps) {
-    await executeDelegateStep(label, action, speculosModel);
+    await executeDelegateStep(label, action);
   }
 }

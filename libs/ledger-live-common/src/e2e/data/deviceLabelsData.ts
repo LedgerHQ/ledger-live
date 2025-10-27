@@ -35,6 +35,35 @@ type DeviceLabelsConfig = {
   [key in DeviceModelId]?: LabelConfig;
 };
 
+const TOUCHSCREEN_DEVICE_CONFIG: LabelConfig = {
+  receiveVerify: {
+    [AppInfos.BNB_CHAIN.name]: DeviceLabels.VERIFY_BSC,
+    [AppInfos.COSMOS.name]: DeviceLabels.VERIFY_COSMOS,
+    [AppInfos.ETHEREUM.name]: DeviceLabels.VERIFY_ETHEREUM,
+    [AppInfos.POLKADOT.name]: DeviceLabels.PLEASE_REVIEW,
+    [AppInfos.POLYGON.name]: DeviceLabels.VERIFY_POLYGON,
+    [AppInfos.SOLANA.name]: DeviceLabels.VERIFY_SOLANA_ADDRESS,
+    default: DeviceLabels.ADDRESS,
+  },
+  receiveConfirm: {
+    default: DeviceLabels.CONFIRM,
+  },
+  delegateVerify: {
+    [AppInfos.NEAR.name]: DeviceLabels.VIEW_HEADER,
+    default: DeviceLabels.REVIEW_OPERATION,
+  },
+  delegateConfirm: {
+    [AppInfos.NEAR.name]: DeviceLabels.CONTINUE_TO_ACTION,
+    default: DeviceLabels.HOLD_TO_SIGN,
+  },
+  sendVerify: {
+    default: DeviceLabels.REVIEW_OPERATION,
+  },
+  sendConfirm: {
+    default: DeviceLabels.HOLD_TO_SIGN,
+  },
+};
+
 export const DEVICE_LABELS_CONFIG: DeviceLabelsConfig = {
   [DeviceModelId.nanoS]: {
     receiveVerify: {
@@ -80,34 +109,8 @@ export const DEVICE_LABELS_CONFIG: DeviceLabelsConfig = {
       default: DeviceLabels.CAPS_APPROVE,
     },
   },
-  [DeviceModelId.stax]: {
-    receiveVerify: {
-      [AppInfos.BNB_CHAIN.name]: DeviceLabels.VERIFY_BSC,
-      [AppInfos.COSMOS.name]: DeviceLabels.PLEASE_REVIEW,
-      [AppInfos.ETHEREUM.name]: DeviceLabels.VERIFY_ETHEREUM,
-      [AppInfos.POLKADOT.name]: DeviceLabels.PLEASE_REVIEW,
-      [AppInfos.POLYGON.name]: DeviceLabels.VERIFY_POLYGON,
-      [AppInfos.SOLANA.name]: DeviceLabels.VERIFY_SOLANA_ADDRESS,
-      default: DeviceLabels.ADDRESS,
-    },
-    receiveConfirm: {
-      default: DeviceLabels.CONFIRM,
-    },
-    delegateVerify: {
-      [AppInfos.NEAR.name]: DeviceLabels.VIEW_HEADER,
-      default: DeviceLabels.REVIEW_OPERATION,
-    },
-    delegateConfirm: {
-      [AppInfos.NEAR.name]: DeviceLabels.CONTINUE_TO_ACTION,
-      default: DeviceLabels.HOLD_TO_SIGN,
-    },
-    sendVerify: {
-      default: DeviceLabels.REVIEW_OPERATION,
-    },
-    sendConfirm: {
-      default: DeviceLabels.HOLD_TO_SIGN,
-    },
-  },
+  [DeviceModelId.stax]: TOUCHSCREEN_DEVICE_CONFIG,
+  [DeviceModelId.europa]: TOUCHSCREEN_DEVICE_CONFIG,
   default: {
     receiveVerify: {
       [AppInfos.BNB_CHAIN.name]: DeviceLabels.VERIFY_BSC,
