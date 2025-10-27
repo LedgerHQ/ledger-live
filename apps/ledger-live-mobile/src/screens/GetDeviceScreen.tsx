@@ -9,7 +9,7 @@ import {
 } from "@ledgerhq/native-ui";
 import Video from "react-native-video";
 import styled, { useTheme } from "styled-components/native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import SafeAreaViewFixed from "~/components/SafeAreaView";
 import { useNavigation } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
 import { Linking, TouchableOpacity } from "react-native";
@@ -41,7 +41,7 @@ const hitSlop = {
   top: 10,
 };
 
-const StyledSafeAreaView = styled(SafeAreaView)`
+const StyledSafeAreaView = styled(SafeAreaViewFixed)`
   flex: 1;
   background-color: ${p => p.theme.colors.background.main};
 `;
@@ -106,13 +106,25 @@ export default function GetDeviceScreen() {
   }, [readOnlyModeEnabled, navigation]);
 
   const setupDevice = useCallback(() => {
-    if (isInOnboarding) dispatch(setOnboardingHasDevice(true));
-    navigation.navigate(NavigatorName.BaseOnboarding, {
-      screen: NavigatorName.Onboarding,
-      params: {
-        screen: ScreenName.OnboardingDeviceSelection,
-      },
-    });
+    if (isInOnboarding) {
+      dispatch(setOnboardingHasDevice(true));
+      // @ts-expect-error - OnboardingDeviceSelection is available when in onboarding context
+      navigation.navigate(ScreenName.OnboardingDeviceSelection);
+    } else {
+      const baseNavigation = navigation.getParent();
+      if (baseNavigation) {
+        baseNavigation.goBack();
+      }
+
+      requestAnimationFrame(() => {
+        navigation.navigate(NavigatorName.BaseOnboarding, {
+          screen: NavigatorName.Onboarding,
+          params: {
+            screen: ScreenName.OnboardingDeviceSelection,
+          },
+        });
+      });
+    }
     if (readOnlyModeEnabled) {
       track("message_clicked", {
         message: "I already have a device, set it up now",
