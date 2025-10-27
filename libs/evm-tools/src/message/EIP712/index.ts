@@ -1,11 +1,9 @@
 import axios from "axios";
-import SHA224 from "crypto-js/sha224";
+import { SHA224 } from "crypto-js";
 import { getEnv } from "@ledgerhq/live-env";
 import { EIP712Message } from "@ledgerhq/types-live";
 import { AddressZero } from "@ethersproject/constants";
 import { _TypedDataEncoder as TypedDataEncoder } from "@ethersproject/hash";
-import EIP712CAL from "@ledgerhq/cryptoassets-evm-signatures/data/eip712";
-import EIP712CALV2 from "@ledgerhq/cryptoassets-evm-signatures/data/eip712_v2";
 import { CALServiceEIP712Response, MessageFilters } from "./types";
 
 // As defined in [spec](https://eips.ethereum.org/EIPS/eip-712), the properties below are all required.
@@ -60,40 +58,31 @@ export const getFiltersForMessage = async (
   const schemaHash = getSchemaHashForMessage(message);
 
   const verifyingContract = message.domain?.verifyingContract?.toLowerCase() || AddressZero;
+
+  if (!calServiceURL) {
+    // No service URL configured, cannot fetch filters
+    return undefined;
+  }
+
   try {
-    if (calServiceURL) {
-      const { data } = await axios.get<CALServiceEIP712Response>(`${calServiceURL}/v1/dapps`, {
-        params: {
-          output: "eip712_signatures",
-          eip712_signatures_version: shouldUseV1Filters ? "v1" : "v2",
-          chain_id: message.domain?.chainId,
-          contracts: verifyingContract,
-        },
-      });
+    const { data } = await axios.get<CALServiceEIP712Response>(`${calServiceURL}/v1/dapps`, {
+      params: {
+        output: "eip712_signatures",
+        eip712_signatures_version: shouldUseV1Filters ? "v1" : "v2",
+        chain_id: message.domain?.chainId,
+        contracts: verifyingContract,
+      },
+    });
 
-      // Rather than relying on array indices, find the right object wherever it may be, if it exists
-      const targetObject = data.find(
-        item => item?.eip712_signatures?.[verifyingContract]?.[schemaHash],
-      );
+    // Rather than relying on array indices, find the right object wherever it may be, if it exists
+    const targetObject = data.find(
+      item => item?.eip712_signatures?.[verifyingContract]?.[schemaHash],
+    );
 
-      const filters = targetObject?.eip712_signatures?.[verifyingContract]?.[schemaHash];
-
-      if (!filters) {
-        // Fallback to catch
-        throw new Error("Fallback to static file");
-      }
-
-      return filters;
-    }
-    // Fallback to catch
-    throw new Error("Fallback to static file");
+    return targetObject?.eip712_signatures?.[verifyingContract]?.[schemaHash];
   } catch (e) {
-    const messageId = `${message.domain?.chainId ?? 0}:${verifyingContract}:${schemaHash}`;
-
-    if (shouldUseV1Filters) {
-      return EIP712CAL[messageId as keyof typeof EIP712CAL];
-    }
-    return EIP712CALV2[messageId as keyof typeof EIP712CALV2] as MessageFilters;
+    // No static fallback, return undefined if API fails
+    return undefined;
   }
 };
 

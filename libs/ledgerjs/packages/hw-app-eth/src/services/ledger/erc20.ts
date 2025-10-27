@@ -1,6 +1,5 @@
 import axios from "axios";
 import { log } from "@ledgerhq/logs";
-import { signatures as signaturesByChainId } from "@ledgerhq/cryptoassets-evm-signatures/data/evm/index";
 import { getLoadConfig } from "./loadConfig";
 import { LoadConfig } from "../types";
 
@@ -41,17 +40,18 @@ export const byContractAddressAndChainId = (
   chainId: number,
   erc20SignaturesBlob?: string | null,
 ): ReturnType<API["byContractAndChainId"]> => {
-  // If we are able to fetch data from s3 bucket that contains dynamic CAL
+  // Only use dynamically fetched data, no static fallback
   if (erc20SignaturesBlob) {
     try {
       return parse(erc20SignaturesBlob).byContractAndChainId(asContractAddress(contract), chainId);
     } catch (e) {
-      return get(chainId)?.byContractAndChainId(asContractAddress(contract), chainId);
+      log("error", "Failed to parse ERC20 signatures blob: " + String(e));
+      return null;
     }
   }
 
-  // the static fallback when dynamic cal is not provided
-  return get(chainId)?.byContractAndChainId(asContractAddress(contract), chainId);
+  // No data available
+  return null;
 };
 
 export type TokenInfo = {
@@ -108,18 +108,3 @@ const parse = (erc20SignaturesBlob: string): API => {
       map[String(chainId) + ":" + contractAddress],
   };
 };
-
-// this internal get() will lazy load and cache the data from the erc20 data blob
-const get: (chainId: number) => API | null = (() => {
-  const cache: Record<number, API> = {};
-  return chainId => {
-    if (cache[chainId]) return cache[chainId];
-
-    const signatureBlob: string | undefined = signaturesByChainId[chainId];
-    if (!signatureBlob) return null;
-
-    const api = parse(signatureBlob);
-    cache[chainId] = api;
-    return api;
-  };
-})();

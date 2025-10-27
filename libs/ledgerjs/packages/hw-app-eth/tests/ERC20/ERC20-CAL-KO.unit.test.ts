@@ -2,11 +2,9 @@ import path from "path";
 import axios from "axios";
 import fs from "fs/promises";
 import { BigNumber } from "@ethersproject/bignumber";
-import evms from "@ledgerhq/cryptoassets-evm-signatures/lib/data/evm/index";
 import { openTransportReplayer, RecordStore } from "@ledgerhq/hw-transport-mocker";
 import { serialize as serializeTransaction, type Transaction } from "@ethersproject/transactions";
 import { EthAppPleaseEnableContractData } from "../../src/errors";
-import SignatureCALEth from "../fixtures/SignatureCALEth";
 import ledgerService from "../../src/services/ledger";
 import Eth from "../../src/Eth";
 
@@ -21,25 +19,14 @@ const transaction: Transaction = {
 };
 const txHex = serializeTransaction(transaction).slice(2);
 
-jest.mock("@ledgerhq/cryptoassets-evm-signatures/data/evm/index", () => ({
-  get signatures() {
-    return {
-      1: SignatureCALEth,
-    };
-  },
-}));
-
 describe("ERC20 dynamic cal", () => {
   beforeEach(() => {
     jest.resetModules();
   });
 
-  describe("ERC20 is not in local CAL", () => {
+  describe("ERC20 without dynamic CAL", () => {
     it("shouldn't break if the dynamic CAL is malformed", async () => {
-      jest.spyOn(evms, "signatures", "get").mockReturnValueOnce({
-        1: "",
-      } as any);
-      jest.spyOn(axios, "get").mockImplementationOnce(async () => ({ data: { 123: "ok" } })); // malformed response. Should be a string but here returning an object imcompatible w/ buffer.from
+      jest.spyOn(axios, "get").mockImplementationOnce(async () => ({ data: { 123: "ok" } })); // malformed response. Should be a string but here returning an object incompatible w/ buffer.from
       const apdusBuffer = await fs.readFile(
         path.resolve("./tests/fixtures/apdus/ERC20-KO.apdus"),
         "utf-8",
@@ -66,11 +53,7 @@ describe("ERC20 dynamic cal", () => {
       }
     });
 
-    it("should ask for blind sign if not in dynamic & local CAL", async () => {
-      jest.spyOn(evms, "signatures", "get").mockReturnValueOnce({
-        1: "",
-      } as any);
-
+    it("should ask for blind sign if not in dynamic CAL", async () => {
       const apdusBuffer = await fs.readFile(
         path.resolve("./tests/fixtures/apdus/ERC20-KO.apdus"),
         "utf-8",

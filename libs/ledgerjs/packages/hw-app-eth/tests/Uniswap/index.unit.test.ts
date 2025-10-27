@@ -2,7 +2,6 @@ import nock from "nock";
 import { BigNumber } from "@ethersproject/bignumber";
 import { AddressZero } from "@ethersproject/constants";
 import { type Transaction } from "@ethersproject/transactions";
-import SignatureCALEth from "../fixtures/SignatureCALEth";
 import {
   UNISWAP_EXECUTE_SELECTOR,
   UNISWAP_UNIVERSAL_ROUTER_ADDRESS,
@@ -14,13 +13,6 @@ import {
 } from "../../src/modules/Uniswap";
 
 nock.disableNetConnect();
-jest.mock("@ledgerhq/cryptoassets-evm-signatures/data/evm/index", () => ({
-  get signatures() {
-    return {
-      1: SignatureCALEth,
-    };
-  },
-}));
 
 describe("Uniswap", () => {
   describe("index", () => {
