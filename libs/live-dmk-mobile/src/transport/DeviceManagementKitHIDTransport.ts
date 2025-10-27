@@ -1,11 +1,17 @@
 import {
+  DeviceDisconnectedWhileSendingError,
+  DeviceDisconnectedBeforeSendingApdu,
   DeviceManagementKit,
   DeviceStatus,
   DiscoveredDevice,
+  SendApduEmptyResponseError,
 } from "@ledgerhq/device-management-kit";
-import { rnHidTransportIdentifier } from "@ledgerhq/device-transport-kit-react-native-hid";
+import {
+  rnHidTransportIdentifier,
+  HidTransportSendApduUnknownError,
+} from "@ledgerhq/device-transport-kit-react-native-hid";
 import { getDeviceModel } from "@ledgerhq/devices";
-import { HwTransportError } from "@ledgerhq/errors";
+import { DisconnectedDevice, HwTransportError } from "@ledgerhq/errors";
 import Transport, { type Observer as TransportObserver } from "@ledgerhq/hw-transport";
 import { dmkToLedgerDeviceIdMap } from "@ledgerhq/live-dmk-shared";
 import { LocalTracer } from "@ledgerhq/logs";
@@ -157,7 +163,7 @@ export class DeviceManagementKitHIDTransport extends Transport {
   async exchange(apdu: Buffer, { abortTimeoutMs }: { abortTimeoutMs?: number } = {}) {
     const activeSessionId = activeDeviceSessionSubject.value?.sessionId;
     if (!activeSessionId) {
-      throw new Error("No active session found");
+      throw new DisconnectedDevice();
     }
 
     return await this.dmk
@@ -172,6 +178,12 @@ export class DeviceManagementKitHIDTransport extends Transport {
       })
       .catch(error => {
         tracer.trace("[DMKTransportHID] [exchange] error", { error });
+        if (
+          error instanceof SendApduEmptyResponseError ||
+          error instanceof DeviceDisconnectedWhileSendingError ||
+          error instanceof DeviceDisconnectedBeforeSendingApdu
+        )
+          throw new DisconnectedDevice();
         throw error;
       });
   }

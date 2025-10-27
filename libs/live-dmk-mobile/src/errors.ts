@@ -2,6 +2,7 @@ import {
   DeviceBusyError,
   DeviceDisconnectedWhileSendingError,
   DmkError,
+  SendApduEmptyResponseError,
   OpeningConnectionError,
   SendApduTimeoutError,
 } from "@ledgerhq/device-management-kit";
@@ -37,10 +38,7 @@ export const isAllowedOnboardingStatePollingErrorDmk = (error: unknown): boolean
       error instanceof SendApduTimeoutError ||
       error instanceof DeviceBusyError ||
       error instanceof DeviceDisconnectedWhileSendingError ||
-      // FIXME: use instanceof SendApduEmptyResponseError and DeviceSessionNotFoundError, and test it
-      (typeof error === "object" &&
-        "_tag" in error &&
-        error._tag === "SendApduEmptyResponseError") ||
+      error instanceof SendApduEmptyResponseError ||
       (typeof error === "object" && "_tag" in error && error._tag === "DeviceSessionNotFound")
     );
   }
