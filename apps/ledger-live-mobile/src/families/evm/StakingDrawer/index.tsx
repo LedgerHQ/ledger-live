@@ -28,7 +28,10 @@ export function EvmStakingDrawer() {
   const { openDrawer, drawer } = useRootDrawerContext();
   const ethStakingProviders = useFeature("ethStakingProviders");
   const isStakingProvidersEnabled = ethStakingProviders?.enabled;
-  const providers: ListProvider[] | undefined = ethStakingProviders?.params?.listProvider ?? [];
+  const providers = useMemo(
+    () => ethStakingProviders?.params?.listProvider ?? [],
+    [ethStakingProviders?.params?.listProvider],
+  );
 
   useEffect(() => {
     if (isStakingProvidersEnabled || providers.length > 0) {
@@ -41,7 +44,7 @@ export function EvmStakingDrawer() {
       accountId={drawer.props.accountId}
       walletApiAccountId={drawer.props.walletApiAccountId}
       has32Eth={drawer.props.has32Eth ?? false}
-      providers={ethStakingProviders?.params?.listProvider ?? []}
+      providers={providers}
       singleProviderRedirectMode={drawer.props.singleProviderRedirectMode ?? true}
     />
   );
