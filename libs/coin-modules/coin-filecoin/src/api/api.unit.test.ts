@@ -1,4 +1,3 @@
-import { log } from "@ledgerhq/logs";
 import network from "@ledgerhq/live-network/network";
 import { getEnv } from "@ledgerhq/live-env";
 import {
@@ -9,7 +8,6 @@ import {
   fetchTxsWithPages,
   broadcastTx,
   fetchERC20TokenBalance,
-  fetchERC20Transactions,
   fetchERC20TransactionsWithPages,
 } from "./api";
 import {
@@ -21,7 +19,6 @@ import {
   TEST_TRANSACTION_HASHES,
   TEST_BLOCK_HEIGHTS,
 } from "../test/fixtures";
-import { FilecoinFeeEstimationFailed } from "../errors";
 
 // Mock dependencies
 jest.mock("@ledgerhq/logs");

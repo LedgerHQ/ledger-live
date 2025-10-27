@@ -1,5 +1,5 @@
-import { erc20TxnToOperation, buildTokenAccounts, generateTokenTxnParams } from "./tokenAccounts";
-import { createMockERC20Transfer, createMockAccount, TEST_ADDRESSES } from "../test/fixtures";
+import { erc20TxnToOperation } from "./tokenAccounts";
+import { createMockERC20Transfer, TEST_ADDRESSES } from "../test/fixtures";
 import BigNumber from "bignumber.js";
 import { TxStatus } from "../types";
 
