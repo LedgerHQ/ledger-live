@@ -7,7 +7,6 @@ import {
 } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { utils as TyphonUtils } from "@stricahq/typhonjs";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
-import { listTokensForCryptoCurrency } from "@ledgerhq/cryptoassets";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { encodeAccountId } from "@ledgerhq/coin-framework/account/index";
 import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
@@ -40,6 +39,7 @@ import {
   mergeTokens,
 } from "./logic";
 import { CARDANO_MAX_SUPPLY } from "./constants";
+import { getCryptoAssetsStore } from "@ledgerhq/coin-framework/crypto-assets/index";
 
 export const makeGetAccountShape =
   (signerContext: SignerContext<CardanoSigner>): GetAccountShape<CardanoAccount> =>
@@ -79,12 +79,8 @@ export const makeGetAccountShape =
     });
 
     // when new tokens are added / blacklist changes, we need to sync again because we need to go through all operations again
-    const syncHash =
-      JSON.stringify(blacklistedTokenIds || []) +
-      "_" +
-      listTokensForCryptoCurrency(currency, {
-        withDelisted: true,
-      }).length;
+    const syncHash = await getCryptoAssetsStore().getTokensSyncHash(currency.id);
+
     const outdatedSyncHash = initialAccount?.syncHash !== syncHash;
 
     const requiredConfirmations = 90;
