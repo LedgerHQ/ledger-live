@@ -7,6 +7,7 @@ import type {
   TransactionBlockData,
   SuiTransactionBlockResponse,
   SuiTransactionBlockKind,
+  PaginatedTransactionResponse,
 } from "@mysten/sui/client";
 import assert, { fail } from "assert";
 
@@ -2118,6 +2119,27 @@ describe("getCoinsForAmount", () => {
 
       expect(result).toHaveLength(0);
       expect(result).toEqual([]);
+    });
+  });
+
+  describe.only("dedup", () => {
+    const outs: PaginatedTransactionResponse = {
+      data: [],
+      hasNextPage: false,
+    };
+    const ins: PaginatedTransactionResponse = {
+      data: [],
+      hasNextPage: true,
+    };
+
+    test("handles no data in asc mode", async () => {
+      const r = sdk.dedupOperations(outs, ins, "asc");
+      expect(r.operations.length).toBe(0);
+    });
+
+    test("handles no data in desc mode", async () => {
+      const r = sdk.dedupOperations(outs, ins, "desc");
+      expect(r.operations.length).toBe(0);
     });
   });
 

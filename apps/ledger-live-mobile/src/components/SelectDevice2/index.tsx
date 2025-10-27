@@ -1,6 +1,6 @@
 import React, { useMemo, useCallback, useEffect, useState } from "react";
 import { Platform, View } from "react-native";
-import { Trans, useTranslation } from "react-i18next";
+import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { discoverDevices } from "@ledgerhq/live-common/hw/index";
 import { CompositeScreenProps, useNavigation, useIsFocused } from "@react-navigation/native";
@@ -79,6 +79,7 @@ export default function SelectDevice({
   children,
   stopBleScanning,
 }: Props) {
+  const { t } = useTranslation();
   const [USBDevice, setUSBDevice] = useState<Device | undefined>();
   const [ProxyDevice, setProxyDevice] = useState<Device | undefined>();
 
@@ -91,7 +92,6 @@ export default function SelectDevice({
 
   const postOnboardingVisible = usePostOnboardingEntryPointVisibleOnWallet();
   const isPostOnboardingVisible = hasPostOnboardingEntryPointCard && postOnboardingVisible;
-  const { t } = useTranslation();
 
   const knownDevices = useSelector(bleDevicesSelector);
   const navigation = useNavigation<Navigation["navigation"]>();
@@ -384,7 +384,7 @@ export default function SelectDevice({
                   px={16}
                 >
                   <Text variant="h5" fontWeight="semiBold">
-                    <Trans i18nKey="manager.selectDevice.title" />
+                    {t("manager.selectDevice.title")}
                   </Text>
                   {deviceList.length > 0 && (
                     <Touchable
@@ -395,11 +395,11 @@ export default function SelectDevice({
                     >
                       <Flex flexDirection="row" alignItems="center">
                         <Text color="primary.c90" mr={3} fontWeight="semiBold">
-                          <Trans
-                            i18nKey={`manager.selectDevice.${
+                          {t(
+                            `manager.selectDevice.${
                               Platform.OS === "android" ? "addWithBluetooth" : "addNewCTA"
-                            }`}
-                          />
+                            }`,
+                          )}
                         </Text>
                         <IconsLegacy.PlusMedium color="primary.c90" size={15} />
                       </Flex>
@@ -453,7 +453,7 @@ export default function SelectDevice({
                         mt={3}
                         mb={3}
                       >
-                        <Trans i18nKey="manager.selectDevice.otgBanner" />
+                        {t("manager.selectDevice.otgBanner")}
                       </Text>
                     )}
                 </Flex>

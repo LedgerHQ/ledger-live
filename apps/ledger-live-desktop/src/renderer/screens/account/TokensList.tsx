@@ -49,7 +49,6 @@ function TokensList({ account }: Props) {
     dispatch(
       openModal("MODAL_RECEIVE", {
         account,
-        receiveTokenMode: true,
       }),
     );
   }, [dispatch, account]);
@@ -69,7 +68,7 @@ function TokensList({ account }: Props) {
   const shouldSliceList = subAccounts.length >= 5;
   if (!isTokenAccount && isEmpty) return null;
   const url =
-    currency && currency.type && tokenTypes && tokenTypes.length > 0
+    currency?.type && tokenTypes?.length > 0
       ? // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
         supportLinkByTokenType[tokenTypes[0] as keyof typeof supportLinkByTokenType]
       : null;

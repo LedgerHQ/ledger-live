@@ -1,19 +1,14 @@
-import React, { useCallback, useMemo } from "react";
+import React from "react";
 import { Trans } from "react-i18next";
 import { Account, AccountLike } from "@ledgerhq/types-live";
-import { TokenCurrency, CryptoCurrency, CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
-import { getAccountCurrency, getMainAccount } from "@ledgerhq/live-common/account/index";
-import {
-  listTokensForCryptoCurrency,
-  listTokenTypesForCryptoCurrency,
-} from "@ledgerhq/live-common/currencies/index";
+import { getMainAccount } from "@ledgerhq/live-common/account/index";
+import { listTokenTypesForCryptoCurrency } from "@ledgerhq/live-common/currencies/index";
 import { supportLinkByTokenType } from "~/config/urls";
 import TrackPage from "~/renderer/analytics/TrackPage";
 import Box from "~/renderer/components/Box";
 import Label from "~/renderer/components/Label";
 import Button from "~/renderer/components/Button";
 import SelectAccount from "~/renderer/components/SelectAccount";
-import SelectCurrency from "~/renderer/components/SelectCurrency";
 import CurrencyDownStatusAlert from "~/renderer/components/CurrencyDownStatusAlert";
 import ErrorBanner from "~/renderer/components/ErrorBanner";
 import Alert from "~/renderer/components/Alert";
@@ -35,65 +30,8 @@ const AccountSelection = ({
     <SelectAccount autoFocus withSubAccounts onChange={onChangeAccount} value={account} />
   </>
 );
-const TokenParentSelection = ({
-  onChangeAccount,
-  mainAccount,
-}: {
-  onChangeAccount: OnChangeAccount;
-  mainAccount: Account;
-}) => {
-  const filterAccountSelect = useCallback(
-    (a: AccountLike) => getAccountCurrency(a) === mainAccount.currency,
-    [mainAccount],
-  );
-  return (
-    <>
-      <Label>
-        <Trans
-          i18nKey="receive.steps.chooseAccount.parentAccount"
-          values={{
-            currencyName: mainAccount.currency.name,
-          }}
-        />
-      </Label>
-      <SelectAccount filter={filterAccountSelect} onChange={onChangeAccount} value={mainAccount} />
-    </>
-  );
-};
-const TokenSelection = ({
-  currency,
-  token,
-  onChangeToken,
-}: {
-  currency: CryptoCurrency;
-  token: TokenCurrency | undefined | null;
-  onChangeToken: (token?: TokenCurrency | null) => void;
-}) => {
-  const tokens = useMemo(() => listTokensForCryptoCurrency(currency), [currency]);
-  return (
-    <>
-      <Label mt={30}>
-        <Trans i18nKey="receive.steps.chooseAccount.token" />
-      </Label>
-      <SelectCurrency
-        onChange={onChangeToken as (token?: CryptoOrTokenCurrency | null) => void}
-        currencies={tokens}
-        value={token}
-      />
-    </>
-  );
-};
 export default function StepAccount(props: Readonly<StepProps>) {
-  const {
-    token,
-    account,
-    parentAccount,
-    receiveTokenMode,
-    onChangeAccount,
-    onChangeToken,
-    eventType,
-    accountError,
-  } = props;
+  const { account, parentAccount, onChangeAccount, eventType, accountError } = props;
   const mainAccount = account ? getMainAccount(account, parentAccount) : null;
   const tokenTypes = mainAccount ? listTokenTypesForCryptoCurrency(mainAccount.currency) : [];
 
@@ -111,25 +49,14 @@ export default function StepAccount(props: Readonly<StepProps>) {
       <TrackPage
         category={`Receive Flow${eventType ? ` (${eventType})` : ""}`}
         name="Step 1"
-        isTokenAdd={receiveTokenMode || account?.type === "TokenAccount"}
+        isTokenAdd={account?.type === "TokenAccount"}
       />
       {mainAccount ? <CurrencyDownStatusAlert currencies={[mainAccount.currency]} /> : null}
       {accountError ? <ErrorBanner error={accountError} /> : null}
 
-      {receiveTokenMode && mainAccount ? (
-        <TokenParentSelection mainAccount={mainAccount} onChangeAccount={onChangeAccount} />
-      ) : (
-        <AccountSelection account={account} onChangeAccount={onChangeAccount} />
-      )}
-      {receiveTokenMode && mainAccount ? (
-        <TokenSelection
-          currency={mainAccount.currency}
-          token={token}
-          onChangeToken={onChangeToken}
-        />
-      ) : null}
+      <AccountSelection account={account} onChangeAccount={onChangeAccount} />
 
-      {account && !receiveTokenMode && tokenTypes.length ? (
+      {account && tokenTypes.length ? (
         <div>
           <Alert type="warning" learnMoreUrl={url} mt={3}>
             <Trans
@@ -161,17 +88,11 @@ export default function StepAccount(props: Readonly<StepProps>) {
     </Box>
   );
 }
-export function StepAccountFooter({
-  transitionTo,
-  receiveTokenMode,
-  token,
-  account,
-  accountError,
-}: StepProps) {
+export function StepAccountFooter({ transitionTo, account, accountError }: Readonly<StepProps>) {
   return (
     <Button
       data-testid="modal-continue-button"
-      disabled={!account || (receiveTokenMode && !token) || accountError}
+      disabled={!account || accountError}
       primary
       onClick={() => transitionTo("device")}
     >

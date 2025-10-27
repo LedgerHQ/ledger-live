@@ -697,8 +697,8 @@ export const getListOperations = async (
   });
 
 const oldestOpTime = (ops: PaginatedTransactionResponse) =>
-  Number(ops.data[ops.data.length - 1].timestampMs ?? 0);
-const newestOpTime = (ops: PaginatedTransactionResponse) => Number(ops.data[0].timestampMs ?? 0);
+  Number(ops.data[ops.data.length - 1]?.timestampMs ?? 0);
+const newestOpTime = (ops: PaginatedTransactionResponse) => Number(ops.data[0]?.timestampMs ?? 0);
 
 /**
  * Some IN operations are also OUT operations because the sender receive a new version of the coin objects,

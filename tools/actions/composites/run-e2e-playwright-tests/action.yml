@@ -2,7 +2,7 @@ name: "Run Playwright Tests"
 description: "Run Playwright tests with xvfb-run and custom filters"
 inputs:
   speculos_device:
-    description: "Device to be used (nanoS, nanoSP, nanoX, stax)"
+    description: "Device to be used (nanoS, nanoSP, nanoX, stax, flex)"
     required: true
   test_filter:
     description: "Filter test pattern to execute specific test suites"
@@ -31,6 +31,7 @@ runs:
           nanoSP)   device_tag='@NanoSP' ;;
           nanoX)    device_tag='@NanoX' ;;
           stax)     device_tag='@Stax' ;;
+          flex)     device_tag='@Flex' ;;
           *)        echo "Unknown SPECULOS_DEVICE: ${{ inputs.speculos_device }}"; exit 1 ;;
         esac
 

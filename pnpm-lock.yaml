@@ -276,8 +276,8 @@ importers:
         specifier: workspace:^
         version: link:../../libs/ledgerjs/packages/types-devices
       '@zondax/ledger-live-icp':
-        specifier: 1.3.2
-        version: 1.3.2
+        specifier: 1.4.0
+        version: 1.4.0
       asciichart:
         specifier: 1.5.25
         version: 1.5.25
@@ -3324,8 +3324,8 @@ importers:
         specifier: workspace:^
         version: link:../../ledgerjs/packages/types-live
       '@zondax/ledger-live-icp':
-        specifier: 1.3.2
-        version: 1.3.2
+        specifier: 1.4.0
+        version: 1.4.0
       bignumber.js:
         specifier: ^9.1.2
         version: 9.1.2
@@ -21179,8 +21179,8 @@ packages:
   '@zondax/ledger-js@1.2.0':
     resolution: {integrity: sha512-HGvDU0s4zg0scu8ebGenFHFB6g5SLDqmrctncZUY9ie5pGibOU8C0VdjZSHbttSOCyh+IloLi/a4jyMPOEQGuQ==}
 
-  '@zondax/ledger-live-icp@1.3.2':
-    resolution: {integrity: sha512-/1rsiztHIKKrHkpbS4SMEc2jtbUAT4jYyBUVGDuunahOKW7w2rw2MX2U1v+oQVKkkys8PtaOG7U9GfcPcXCQ8Q==}
+  '@zondax/ledger-live-icp@1.4.0':
+    resolution: {integrity: sha512-X9AJ0ZuP5x0zpAH4SqMNB4SZ7bia0EPgzg3TDNFPUjIh0r1DVQOcB1MOWuyym0nMXMhhsGC0ziq4rei/SybEZw==}
 
   '@zondax/ledger-mina-js@0.0.2':
     resolution: {integrity: sha512-6tB4voId5NOfn1XzYivyQnjq8A7eoz/2D+Ay0IDCimkF4wX2dWC0KKzatRnJmC80z8b37Hsi5/roSvkZUQ/bgw==}
@@ -55114,7 +55114,7 @@ snapshots:
     dependencies:
       '@ledgerhq/hw-transport': link:libs/ledgerjs/packages/hw-transport
 
-  '@zondax/ledger-live-icp@1.3.2':
+  '@zondax/ledger-live-icp@1.4.0':
     dependencies:
       '@dfinity/agent': 2.4.1(@dfinity/candid@2.4.1(@dfinity/principal@2.4.1))(@dfinity/principal@2.4.1)
       '@dfinity/candid': 2.4.1(@dfinity/principal@2.4.1)

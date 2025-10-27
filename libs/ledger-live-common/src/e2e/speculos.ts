@@ -675,7 +675,12 @@ export async function activateContractData() {
 
 export async function goToSettings() {
   if (isTouchDevice()) {
-    await pressAndRelease(DeviceLabels.SETTINGS);
+    const SettingsCogwheelCoordinates = { x: 400, y: 75 };
+    await pressAndRelease(
+      DeviceLabels.SETTINGS,
+      SettingsCogwheelCoordinates.x,
+      SettingsCogwheelCoordinates.y,
+    );
   } else {
     await pressUntilTextFound(DeviceLabels.SETTINGS);
     await pressBoth();

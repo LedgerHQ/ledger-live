@@ -82,7 +82,7 @@ for (const { fromAccount, toAccount, xrayTicket, provider } of checkProviders) {
     test(
       `Swap test provider redirection (${provider.uiName})`,
       {
-        tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax"],
+        tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex"],
         annotation: {
           type: "TMS",
           description: xrayTicket,
@@ -139,7 +139,7 @@ test.describe("Swap - Check Best Offer", () => {
   test(
     `Swap ${fromAccount.currency.name} to ${toAccount.currency.name} - Check "Best Offer"`,
     {
-      tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax"],
+      tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex"],
       annotation: { type: "TMS", description: "B2CQA-2327" },
     },
     async ({ app, electronApp }) => {
@@ -189,7 +189,7 @@ test.describe("Swap - Default currency when landing on swap", () => {
   test(
     `Swap ${fromAccount.currency.name} to ${toAccount.currency.name} - Default currency`,
     {
-      tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax"],
+      tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex"],
       annotation: { type: "TMS", description: "B2CQA-3079" },
     },
     async ({ app, electronApp }) => {
@@ -204,7 +204,7 @@ test.describe("Swap - Default currency when landing on swap", () => {
   test(
     `Swap ${fromAccount.currency.name} to ${toAccount.currency.name} - Previous set up`,
     {
-      tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax"],
+      tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex"],
       annotation: { type: "TMS", description: "B2CQA-3080" },
     },
     async ({ app, electronApp }) => {
@@ -257,7 +257,7 @@ test.describe("Swap - Rejected on device", () => {
   test(
     `Swap ${fromAccount.currency.name} to ${toAccount.currency.name}`,
     {
-      tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax"],
+      tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex"],
       annotation: { type: "TMS", description: "B2CQA-2212" },
     },
     async ({ app, electronApp }) => {
@@ -311,7 +311,7 @@ test.describe("Swap - Landing page", () => {
   test(
     `Swap landing page`,
     {
-      tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax"],
+      tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex"],
       annotation: { type: "TMS", description: "B2CQA-2918" },
     },
     async ({ app, electronApp }) => {
@@ -393,7 +393,7 @@ for (const { swap, xrayTicket, errorMessage, expectedErrorPerDevice } of swapWit
     test(
       `Swap using a different seed - ${swap.accountToDebit.currency.name} → ${swap.accountToCredit.currency.name}`,
       {
-        tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax"],
+        tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex"],
         annotation: { type: "TMS", description: xrayTicket },
       },
       async ({ app, electronApp }) => {
@@ -456,7 +456,7 @@ for (const { account1, account2, xrayTicket, testTitle } of swapWithoutAccount) 
     test(
       `${testTitle}`,
       {
-        tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax"],
+        tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex"],
         annotation: { type: "TMS", description: xrayTicket },
       },
       async ({ app, electronApp, speculosApp }) => {
@@ -513,7 +513,7 @@ test.describe("Swap a coin for which you have no account yet", () => {
   test(
     "from Account not present to Account not present",
     {
-      tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax"],
+      tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex"],
       annotation: { type: "TMS", description: xrayTicket },
     },
     async ({ app, electronApp }) => {
@@ -635,7 +635,7 @@ for (const swap of tooLowAmountForQuoteSwaps) {
     test(
       `Swap too low quote amounts from ${swap.swap.accountToDebit.currency.name} to ${swap.swap.accountToCredit.currency.name} - ${swap.errorMessage}`,
       {
-        tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax"],
+        tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex"],
         annotation: {
           type: "TMS",
           description: swap.xrayTicket,
@@ -712,7 +712,7 @@ test.describe(`Swap - Error message when network fees are above account balance 
   test(
     `Swap - Network fees above account balance`,
     {
-      tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax"],
+      tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex"],
       annotation: {
         type: "TMS",
         description: swapNetworkFeesAboveAccountBalanceTestConfig.xrayTicket,
@@ -762,7 +762,7 @@ test.describe("Swap - Switch You send and You receive currency", () => {
   test(
     "Switch You send and You receive currency",
     {
-      tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax"],
+      tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex"],
       annotation: {
         type: "TMS",
         description: "B2CQA-2136",
@@ -810,7 +810,7 @@ test.describe("Swap flow from different entry point", () => {
   test(
     "Entry Point - Portfolio page",
     {
-      tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax"],
+      tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex"],
       annotation: {
         type: "TMS",
         description: "B2CQA-2985",
@@ -827,7 +827,7 @@ test.describe("Swap flow from different entry point", () => {
   test(
     "Entry Point - Asset Allocation",
     {
-      tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax"],
+      tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex"],
       annotation: {
         type: "TMS",
         description: "B2CQA-2986",
@@ -849,7 +849,7 @@ test.describe("Swap flow from different entry point", () => {
   test(
     "Entry Point - Market page - Click on swap for any coin",
     {
-      tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax"],
+      tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex"],
       annotation: {
         type: "TMS",
         description: "B2CQA-2987",
@@ -876,7 +876,7 @@ test.describe("Swap flow from different entry point", () => {
   test(
     "Entry Point - Market page - More than one account for an asset",
     {
-      tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax"],
+      tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex"],
       annotation: {
         type: "TMS",
         description: "B2CQA-2988",
@@ -897,7 +897,7 @@ test.describe("Swap flow from different entry point", () => {
   test(
     "Entry Point - Account page",
     {
-      tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax"],
+      tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex"],
       annotation: {
         type: "TMS",
         description: "B2CQA-2989",
@@ -924,7 +924,7 @@ test.describe("Swap flow from different entry point", () => {
   test(
     "Entry Point - left menu",
     {
-      tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax"],
+      tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex"],
       annotation: {
         type: "TMS",
         description: "B2CQA-2990, B2CQA-523",
@@ -990,7 +990,7 @@ for (const { fromAccount, toAccount, xrayTicket } of swapMax) {
     test(
       `Swap max amount from ${fromAccount.currency.name} to ${toAccount.currency.name}`,
       {
-        tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax"],
+        tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex"],
         annotation: {
           type: "TMS",
           description: xrayTicket,
@@ -1060,7 +1060,7 @@ test.describe("Swap history", () => {
   test(
     `User can export all history operations`,
     {
-      tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax"],
+      tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex"],
       annotation: { type: "TMS", description: "B2CQA-604" },
     },
     async ({ app }) => {
@@ -1081,7 +1081,7 @@ test.describe("Swap history", () => {
   test(
     `User should be able to see their swap history from the swap history page`,
     {
-      tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax"],
+      tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex"],
       annotation: { type: "TMS", description: "B2CQA-602" },
     },
     async ({ app }) => {
@@ -1134,7 +1134,7 @@ test.describe("Swap - Block blacklisted addresses", () => {
   test(
     `Swap ${fromAccount.currency.name} to ${toAccount.currency.name}`,
     {
-      tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax"],
+      tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex"],
       annotation: {
         type: "TMS",
         description: "B2CQA-3539",
