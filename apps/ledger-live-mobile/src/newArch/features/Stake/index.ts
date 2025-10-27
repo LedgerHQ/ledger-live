@@ -1,6 +1,6 @@
 import { useCallback } from "react";
 import { useRoute, useNavigation } from "@react-navigation/native";
-import { StackNavigationProp } from "@react-navigation/stack";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useModularDrawerController, useModularDrawerVisibility } from "../ModularDrawer";
 import { ModularDrawerLocation } from "@ledgerhq/live-common/modularDrawer/enums";
 import { CryptoOrTokenCurrency } from "@ledgerhq/types-cryptoassets";
@@ -17,7 +17,7 @@ type Props = {
 
 export function useOpenStakeDrawer({ currency, sourceScreenName, enabledCurrencies = [] }: Props) {
   const route = useRoute();
-  const navigation = useNavigation<StackNavigationProp<BaseNavigatorStackParamList>>();
+  const navigation = useNavigation<NativeStackNavigationProp<BaseNavigatorStackParamList>>();
   const { openDrawer } = useModularDrawerController();
   const { createDrawerConfiguration } = useDrawerConfiguration();
 
