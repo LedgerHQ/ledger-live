@@ -1,15 +1,14 @@
 import React, { useContext } from "react";
-import merge from "lodash/merge";
 import { HttpResponse, http } from "msw";
 import { setupServer } from "msw/native";
 import { waitFor } from "@testing-library/react-native";
 import { render } from "@tests/test-renderer";
-import { InitialQueriesContext, QueryProviders } from "../QueryProviders";
+import { InitialQueriesContext, InitialQueriesProvider } from "../InitialQueriesContext";
 
 const contextSpy = jest.fn();
 const ofacResponse = jest.fn();
 
-describe("QueryProviders", () => {
+describe("InitialQueriesContext", () => {
   const server = setupServer(
     http.get("https://countervalues.live.ledger.com/v3/markets", ofacResponse),
     http.all("*", () => HttpResponse.json({})),
@@ -49,17 +48,9 @@ describe("QueryProviders", () => {
 
   function renderApp() {
     return render(
-      <QueryProviders>
+      <InitialQueriesProvider>
         <ContextSpy />
-      </QueryProviders>,
-      {
-        overrideInitialState: state =>
-          merge({}, state, {
-            settings: {
-              overriddenFeatureFlags: { llmOfacGeoBlocking: { enabled: true } },
-            },
-          }),
-      },
+      </InitialQueriesProvider>,
     );
   }
 });

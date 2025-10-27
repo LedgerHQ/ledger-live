@@ -4,7 +4,7 @@ import { Store } from "redux";
 import { importPostOnboardingState } from "@ledgerhq/live-common/postOnboarding/actions";
 import { CounterValuesStateRaw } from "@ledgerhq/live-countervalues/types";
 import { findCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
-import { QueryProviders } from "LLM/contexts/QueryProviders";
+import { InitialQueriesProvider } from "LLM/contexts/InitialQueriesContext";
 import {
   getAccounts,
   getCountervalues,
@@ -173,7 +173,7 @@ const LedgerStoreProvider: React.FC<Props> = ({ onInitFinished, children, store 
 
   return (
     <Provider store={store}>
-      <QueryProviders>{children(ready, initialCountervalues)}</QueryProviders>
+      <InitialQueriesProvider>{children(ready, initialCountervalues)}</InitialQueriesProvider>
     </Provider>
   );
 };

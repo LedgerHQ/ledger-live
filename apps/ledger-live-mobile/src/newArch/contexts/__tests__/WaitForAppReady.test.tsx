@@ -1,7 +1,7 @@
 import React from "react";
 import { Text } from "react-native";
 import { render, screen } from "@testing-library/react-native";
-import { InitialQueriesContext } from "../QueryProviders";
+import { InitialQueriesContext } from "../InitialQueriesContext";
 import { WaitForAppReady } from "../WaitForAppReady";
 
 type InitialQueriesValue = Parameters<typeof InitialQueriesContext.Provider>[0]["value"];

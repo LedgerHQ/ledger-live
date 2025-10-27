@@ -5,7 +5,7 @@ import { useTheme } from "styled-components/native";
 import { Linking } from "react-native";
 import { urls } from "~/utils/urls";
 import { useLocalizedUrl } from "LLM/hooks/useLocalizedUrls";
-import { InitialQueriesContext } from "LLM/contexts/QueryProviders";
+import { InitialQueriesContext } from "LLM/contexts/InitialQueriesContext";
 import AppBlocker from "../AppBlocker";
 import { Button } from "@ledgerhq/native-ui";
 

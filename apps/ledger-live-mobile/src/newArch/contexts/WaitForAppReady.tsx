@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import { InitialQueriesContext } from "./QueryProviders";
+import { InitialQueriesContext } from "./InitialQueriesContext";
 import LoadingApp from "~/components/LoadingApp";
 
 export function WaitForAppReady({ children }: React.PropsWithChildren) {

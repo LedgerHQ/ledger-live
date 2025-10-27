@@ -1,7 +1,7 @@
 import React from "react";
 import { render, screen } from "@testing-library/react-native";
 
-import { InitialQueriesContext } from "LLM/contexts/QueryProviders";
+import { InitialQueriesContext } from "LLM/contexts/InitialQueriesContext";
 import AppGeoBlocker from "../index";
 
 jest.mock("LLM/hooks/useLocalizedUrls", () => ({

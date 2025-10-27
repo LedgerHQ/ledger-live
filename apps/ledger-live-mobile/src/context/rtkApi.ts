@@ -1,4 +1,5 @@
 import { Middleware, Tuple } from "@reduxjs/toolkit";
+import { ofacGeoBlockApi } from "@ledgerhq/live-common/api/ofacGeoBlockApi";
 import { assetsDataApi } from "@ledgerhq/live-common/dada-client/state-manager/api";
 import { cryptoAssetsApi } from "@ledgerhq/cryptoassets/cal-client/state-manager/api";
 import { firebaseRemoteConfigApi } from "LLM/api/firebaseRemoteConfigApi";
@@ -7,6 +8,7 @@ const APIs = {
   [assetsDataApi.reducerPath]: assetsDataApi,
   [cryptoAssetsApi.reducerPath]: cryptoAssetsApi,
   [firebaseRemoteConfigApi.reducerPath]: firebaseRemoteConfigApi,
+  [ofacGeoBlockApi.reducerPath]: ofacGeoBlockApi,
 };
 
 export type LLMRTKApiState = ExtractAPIState<typeof APIs>;

@@ -45,6 +45,7 @@ import SetEnvsFromSettings from "~/components/SetEnvsFromSettings";
 import ExperimentalHeader from "~/screens/Settings/Experimental/ExperimentalHeader";
 import Modals from "~/screens/Modals";
 import NavBarColorHandler from "~/components/NavBarColorHandler";
+import { FirebaseFeatureFlagsProvider } from "~/components/FirebaseFeatureFlags";
 import { TermsAndConditionMigrateLegacyData } from "~/logic/terms";
 import HookDynamicContentCards from "~/dynamicContent/useContentCards";
 import PlatformAppProviderWrapper from "./PlatformAppProviderWrapper";
@@ -66,7 +67,7 @@ import {
 } from "@ledgerhq/live-common/exchange/swap/hooks/index";
 import useAccountsWithFundsListener from "@ledgerhq/live-common/hooks/useAccountsWithFundsListener";
 import { updateIdentify } from "./analytics";
-import { FeatureToggle, useFeature } from "@ledgerhq/live-common/featureFlags/index";
+import { FeatureToggle, getFeature, useFeature } from "@ledgerhq/live-common/featureFlags/index";
 import { StorylyProvider } from "./components/StorylyStories/StorylyProvider";
 import { useSettings } from "~/hooks";
 import AppProviders from "./AppProviders";
@@ -311,33 +312,35 @@ export default class Root extends Component {
               <HookDevTools />
               <TermsAndConditionMigrateLegacyData />
               <QueuedDrawersContextProvider>
-                <I18nextProvider i18n={i18n}>
-                  <LocaleProvider>
-                    <PlatformAppProviderWrapper>
-                      <SafeAreaProvider>
-                        <StorylyProvider>
-                          <StylesProvider>
-                            <StyledStatusBar />
-                            <NavBarColorHandler />
-                            <AuthPass>
-                              <GestureHandlerRootView style={styles.root}>
-                                <AppProviders initialCountervalues={initialCountervalues}>
-                                  <AppGeoBlocker>
-                                    <AppVersionBlocker>
-                                      <WaitForAppReady>
-                                        <App />
-                                      </WaitForAppReady>
-                                    </AppVersionBlocker>
-                                  </AppGeoBlocker>
-                                </AppProviders>
-                              </GestureHandlerRootView>
-                            </AuthPass>
-                          </StylesProvider>
-                        </StorylyProvider>
-                      </SafeAreaProvider>
-                    </PlatformAppProviderWrapper>
-                  </LocaleProvider>
-                </I18nextProvider>
+                <FirebaseFeatureFlagsProvider getFeature={getFeature}>
+                  <I18nextProvider i18n={i18n}>
+                    <LocaleProvider>
+                      <PlatformAppProviderWrapper>
+                        <SafeAreaProvider>
+                          <StorylyProvider>
+                            <StylesProvider>
+                              <StyledStatusBar />
+                              <NavBarColorHandler />
+                              <AuthPass>
+                                <GestureHandlerRootView style={styles.root}>
+                                  <AppProviders initialCountervalues={initialCountervalues}>
+                                    <AppGeoBlocker>
+                                      <AppVersionBlocker>
+                                        <WaitForAppReady>
+                                          <App />
+                                        </WaitForAppReady>
+                                      </AppVersionBlocker>
+                                    </AppGeoBlocker>
+                                  </AppProviders>
+                                </GestureHandlerRootView>
+                              </AuthPass>
+                            </StylesProvider>
+                          </StorylyProvider>
+                        </SafeAreaProvider>
+                      </PlatformAppProviderWrapper>
+                    </LocaleProvider>
+                  </I18nextProvider>
+                </FirebaseFeatureFlagsProvider>
               </QueuedDrawersContextProvider>
             </RebootProvider>
           ) : (

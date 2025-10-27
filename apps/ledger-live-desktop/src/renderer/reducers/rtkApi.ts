@@ -1,13 +1,11 @@
+import { ofacGeoBlockApi } from "@ledgerhq/live-common/api/ofacGeoBlockApi";
 import { assetsDataApi } from "@ledgerhq/live-common/dada-client/state-manager/api";
 import { cryptoAssetsApi } from "@ledgerhq/cryptoassets/cal-client/state-manager/api";
-
-// There is a typescript error without this import
-import type {} from "@reduxjs/toolkit";
-import type {} from "@reduxjs/toolkit/query/react";
 
 const APIs = {
   [assetsDataApi.reducerPath]: assetsDataApi,
   [cryptoAssetsApi.reducerPath]: cryptoAssetsApi,
+  [ofacGeoBlockApi.reducerPath]: ofacGeoBlockApi,
 };
 
 export type LLDRTKApiState = ExtractAPIState<typeof APIs>;
@@ -18,8 +16,7 @@ export const lldRTKApiReducers = Object.fromEntries(
   lldRTKApis.map(api => [api.reducerPath, api.reducer]),
 ) as ExtractAPIReducers<typeof APIs>;
 
-// eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-export const lldRTKApiMiddlewares = lldRTKApis.map(api => [api.reducerPath, api.reducer]);
+export const lldRTKApiMiddlewares = lldRTKApis.map(api => api.middleware);
 
 type ExtractAPIState<APIs> = {
   [K in keyof APIs]: APIs[K] extends {
