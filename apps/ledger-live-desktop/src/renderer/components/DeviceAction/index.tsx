@@ -1,7 +1,7 @@
 import React, { Component, useEffect } from "react";
 import BigNumber from "bignumber.js";
 import { Trans, useTranslation } from "react-i18next";
-import { shallowEqual, useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Action } from "@ledgerhq/live-common/hw/actions/types";
 import {
   EConnResetError,
@@ -740,7 +740,7 @@ export default function DeviceAction<R, H extends States, P>({
   action: Action<R, H, P>;
   request: R;
 }): JSX.Element {
-  const device = useSelector(getCurrentDevice, shallowEqual);
+  const device = useSelector(getCurrentDevice);
   const hookState = action.useHook(device, request);
   const payload = action.mapResult(hookState);
   useKeepScreenAwake(true);

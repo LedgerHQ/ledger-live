@@ -5,6 +5,7 @@ import { DeviceModelId } from "@ledgerhq/devices";
 import { Handlers } from "./types";
 import { SettingsState } from "./settings";
 import { getSpeculosModel } from "@ledgerhq/live-common/e2e/speculosAppVersion";
+import { createSelector } from "@reduxjs/toolkit";
 
 export type DevicesState = {
   /**
@@ -52,41 +53,47 @@ function setCurrentDevice(state: DevicesState) {
     currentDevice,
   };
 }
-export function getCurrentDevice(state: { devices: DevicesState; settings: SettingsState }) {
-  const isVaultSigner = state.settings.vaultSigner.enabled;
 
-  if (isVaultSigner) {
-    const transportParams = new URLSearchParams();
-    transportParams.append("host", state.settings.vaultSigner.host);
-    transportParams.append("token", state.settings.vaultSigner.token);
-    transportParams.append("workspace", state.settings.vaultSigner.workspace);
+export const getCurrentDevice = createSelector(
+  [
+    (state: { devices: DevicesState }) => state.devices.currentDevice,
+    (state: { settings: SettingsState }) => state.settings.vaultSigner,
+  ],
+  (currentDevice, vaultSigner) => {
+    if (vaultSigner.enabled) {
+      const transportParams = new URLSearchParams();
+      transportParams.append("host", vaultSigner.host);
+      transportParams.append("token", vaultSigner.token);
+      transportParams.append("workspace", vaultSigner.workspace);
 
-    const deviceId = `vault-transport:${transportParams.toString()}`;
+      const deviceId = `vault-transport:${transportParams.toString()}`;
 
-    return {
-      deviceId,
-      wired: true,
-      modelId: DeviceModelId.nanoS,
-    };
-  }
-
-  const envConditions = [
-    { condition: getEnv("DEVICE_PROXY_URL"), modelId: DeviceModelId.nanoS },
-    { condition: getEnv("MOCK") && !getEnv("MOCK_NO_BYPASS"), modelId: DeviceModelId.nanoS },
-    { condition: getEnv("SPECULOS_API_PORT"), modelId: getSpeculosModel() },
-  ];
-
-  for (const { condition, modelId } of envConditions) {
-    if (condition) {
       return {
-        deviceId: "",
+        deviceId,
         wired: true,
-        modelId,
+        modelId: DeviceModelId.nanoS,
       };
     }
-  }
-  return state.devices.currentDevice;
-}
+
+    const envConditions = [
+      { condition: getEnv("DEVICE_PROXY_URL"), modelId: DeviceModelId.nanoS },
+      { condition: getEnv("MOCK") && !getEnv("MOCK_NO_BYPASS"), modelId: DeviceModelId.nanoS },
+      { condition: getEnv("SPECULOS_API_PORT"), modelId: getSpeculosModel() },
+    ];
+
+    for (const { condition, modelId } of envConditions) {
+      if (condition) {
+        return {
+          deviceId: "",
+          wired: true,
+          modelId,
+        };
+      }
+    }
+
+    return currentDevice;
+  },
+);
 
 export default handleActions<DevicesState, HandlersPayloads[keyof HandlersPayloads]>(
   handlers as unknown as DevicesHandlers<false>,
