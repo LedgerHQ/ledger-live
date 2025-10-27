@@ -216,7 +216,6 @@ const styles = StyleSheet.create({
   root: {
     flex: 1,
     backgroundColor: "transparent",
-    marginTop: 50,
   },
   headerTitle: {
     marginTop: 50,
