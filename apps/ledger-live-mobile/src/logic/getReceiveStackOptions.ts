@@ -19,7 +19,7 @@ export const getReceiveStackOptions = ({
 
   return {
     headerShown: false,
-    presentation: "transparentModal",
+    presentation: "containedTransparentModal",
     gestureEnabled: true,
     headerTitle: "",
     headerRight: () => null,
