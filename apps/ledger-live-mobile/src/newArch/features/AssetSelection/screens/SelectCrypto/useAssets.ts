@@ -24,7 +24,7 @@ export function useAssets(
 
   const [availableAssets, setAvailableAssets] = useState<CryptoOrTokenCurrency[] | null>(null);
 
-  const computedAssets = useMemo(() => {
+  const computedAssets: CryptoOrTokenCurrency[] = useMemo((): CryptoOrTokenCurrency[] => {
     if (currencyIdsSet.size === 0) {
       return filteredSortedCryptoCurrencies;
     }
@@ -36,7 +36,8 @@ export function useAssets(
       providerCoverageMap,
     );
 
-    return extractProviderCurrencies(filtered);
+    const result = extractProviderCurrencies(filtered) as unknown as CryptoOrTokenCurrency[];
+    return result;
   }, [currenciesByProvider, currencyIdsSet, filteredSortedCryptoCurrencies]);
 
   useEffect(() => {

@@ -5,6 +5,7 @@ import { assetsDataApi } from "@ledgerhq/live-common/dada-client/state-manager/a
 import { cryptoAssetsApi } from "@ledgerhq/cryptoassets/cal-client/state-manager/api";
 import { rebootMiddleware } from "~/middleware/rebootMiddleware";
 import { rozeniteDevToolsEnhancer } from "@rozenite/redux-devtools-plugin";
+import { setupCryptoAssetsStore } from "~/config/bridge-setup";
 
 // === STORE CONFIGURATION ===
 export const store = configureStore({
@@ -25,3 +26,5 @@ export const store = configureStore({
 });
 
 export type StoreType = typeof store;
+
+setupCryptoAssetsStore();

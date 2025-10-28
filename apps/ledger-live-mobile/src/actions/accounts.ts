@@ -14,17 +14,21 @@ import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
 
 const version = 0; // FIXME this needs to come from user data
 
-export const importStore = (rawAccounts: { active: { data: AccountRaw }[] }) => {
-  const tuples: Array<[Account, AccountUserData]> = [];
+export const importStore = async (rawAccounts: { active: { data: AccountRaw }[] }) => {
+  const decodePromises: Array<Promise<[Account, AccountUserData] | null>> = [];
   if (rawAccounts && Array.isArray(rawAccounts.active)) {
     for (const { data } of rawAccounts.active) {
-      try {
-        tuples.push(accountModel.decode({ data, version }));
-      } catch (e) {
-        if (e instanceof Error) logger.critical(e);
-      }
+      decodePromises.push(
+        accountModel.decode({ data, version }).catch(e => {
+          if (e instanceof Error) logger.critical(e);
+          return null;
+        }),
+      );
     }
   }
+  const tuples = (await Promise.all(decodePromises)).filter(
+    (t): t is [Account, AccountUserData] => t !== null,
+  );
   const accounts = tuples.map(([account]) => account);
   const accountsUserData = tuples
     .filter(([account, userData]) => userData.name !== getDefaultAccountName(account))

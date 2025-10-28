@@ -90,7 +90,7 @@ function onMessage(event: WebSocketMessageEvent) {
         acceptGeneralTerms(store);
         break;
       case "importAccounts": {
-        store.dispatch(importAccountsRaw({ active: msg.payload }));
+        importAccountsRaw({ active: msg.payload }).then(action => store.dispatch(action));
         break;
       }
       case "mockDeviceEvent": {
