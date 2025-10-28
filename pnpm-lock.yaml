@@ -3005,6 +3005,9 @@ importers:
       expect:
         specifier: ^27.4.6
         version: 27.5.1
+      imurmurhash:
+        specifier: ^0.1.4
+        version: 0.1.4
       invariant:
         specifier: ^2.2.2
         version: 2.2.4
@@ -3033,6 +3036,9 @@ importers:
       '@types/bluebird':
         specifier: ^3.5.42
         version: 3.5.42
+      '@types/imurmurhash':
+        specifier: ^0.1.4
+        version: 0.1.4
       '@types/invariant':
         specifier: ^2.2.2
         version: 2.2.37
@@ -20046,6 +20052,9 @@ packages:
 
   '@types/http-proxy@1.17.14':
     resolution: {integrity: sha512-SSrD0c1OQzlFX7pGu1eXxSEjemej64aaNPRhhVYUGqXh0BtldAAx37MG8btcumvpgKyZp1F5Gn3JkktdxiFv6w==}
+
+  '@types/imurmurhash@0.1.4':
+    resolution: {integrity: sha512-Zo/QlTiAvOP3pd9nuPOw33k0l/QssLOBrriShWzUE4qhIZByIF3rCoyF8ZTxdyFTUM2mYljYLqMUeLvA3NJUmQ==}
 
   '@types/invariant@2.2.37':
     resolution: {integrity: sha512-IwpIMieE55oGWiXkQPSBY1nw1nFs6bsKXTFskNY8sdS17K24vyEBRQZEwlRS7ZmXCWnJcQtbxWzly+cODWGs2A==}
@@ -53286,6 +53295,8 @@ snapshots:
   '@types/http-proxy@1.17.14':
     dependencies:
       '@types/node': 20.12.12
+
+  '@types/imurmurhash@0.1.4': {}
 
   '@types/invariant@2.2.37': {}
 

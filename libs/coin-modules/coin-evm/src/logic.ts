@@ -7,18 +7,22 @@ import {
   TokenAccount,
 } from "@ledgerhq/types-live";
 import { TokenCurrency, CryptoCurrency, Unit } from "@ledgerhq/types-cryptoassets";
+import murmurhash from "imurmurhash";
 import { getEnv } from "@ledgerhq/live-env";
+import { isNFTActive } from "@ledgerhq/coin-framework/nft/support";
 import { mergeOps } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { decodeTokenAccountId, encodeTokenAccountId } from "@ledgerhq/coin-framework/account/index";
 import { getEIP712FieldsDisplayedOnNano } from "@ledgerhq/evm-tools/message/EIP712/index";
 import { getNodeApi } from "./network/node/index";
+import { getCoinConfig } from "./config";
 import {
   EvmNftTransaction,
   Transaction as EvmTransaction,
   EvmTransactionEIP1559,
   EvmTransactionLegacy,
 } from "./types";
+import { getCryptoAssetsStore } from "./cryptoAssetsStore";
 
 /**
  * Helper to check if a legacy transaction has the right fee property
@@ -163,6 +167,38 @@ export const setCALHash = (currency: CryptoCurrency, hash: string): string => {
 
 export const __resetCALHash = (): void => {
   CALHashByChainIdMap.clear();
+};
+
+/**
+ * Method creating a hash that will help triggering or not a full synchronization on an account.
+ * As of now, it's checking if a token has been added, removed of changed regarding important properties
+ * and if the NFTs are activated/supported on this chain
+ *
+ * The hashing algorithm selected to create this hash is murmurhash.
+ * It's a fast non cryptographic algorithm with low collisions.
+ * A collision here would only prevent a potential full sync
+ * which would mean not seeing some potential new tokens.
+ * This can be fixed by simply removing the account
+ * and adding it again, now syncing from block 0.
+ */
+export const getSyncHash = async (
+  currency: CryptoCurrency,
+  blacklistedTokenIds: string[] = [],
+): Promise<string> => {
+  const tokensHash = await getCryptoAssetsStore().getTokensSyncHash(currency.id);
+  const isNftSupported = isNFTActive(currency);
+
+  const config = getCoinConfig(currency).info;
+  const { node = {}, explorer = {} } = config;
+
+  const stringToHash =
+    tokensHash +
+    blacklistedTokenIds.join("") +
+    isNftSupported +
+    JSON.stringify(node) +
+    JSON.stringify(explorer);
+
+  return `0x${murmurhash(stringToHash).result().toString(16)}`;
 };
 
 /**
