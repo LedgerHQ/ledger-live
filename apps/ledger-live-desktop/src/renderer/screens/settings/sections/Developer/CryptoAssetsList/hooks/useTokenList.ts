@@ -24,7 +24,7 @@ export const useTokenList = (initialFamily: string = "ethereum") => {
   const limitNumber = limit && !isNaN(Number(limit)) ? Number(limit) : undefined;
 
   const { data, isLoading, error, loadNext, refetch } = useTokensData({
-    networkFamily: [selectedFamily],
+    networkFamily: selectedFamily,
     isStaging,
     pageSize,
     output: selectedOutputFields.length > 0 ? selectedOutputFields : undefined,
