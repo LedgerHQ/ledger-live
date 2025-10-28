@@ -111,25 +111,20 @@ export default function DelegationSelectorField({
 
   const subAccounts = account.subAccounts;
 
-  const { data, isLoading, loadNext } = useTokensData({
+  const { data, loadNext } = useTokensData({
     networkFamily: [account.currency.id],
     pageSize: 100,
   });
 
-  const options = useMemo(() => {
-    if (!isLoading) {
-      return data?.tokens;
-    }
-    return [];
-  }, [data?.tokens, isLoading]);
+  const options = useMemo(() => data?.tokens || [], [data?.tokens]);
 
   const value = useMemo(
     () =>
-      data?.tokens.find(({ id }) => {
+      options.find(({ id }) => {
         const { assetCode, assetIssuer } = getAssetObject(id);
         return assetCode === transaction.assetReference && assetIssuer === transaction.assetOwner;
       }),
-    [data?.tokens, transaction.assetOwner, transaction.assetReference],
+    [options, transaction.assetOwner, transaction.assetReference],
   );
 
   const onScrollEnd = useCallback(() => {

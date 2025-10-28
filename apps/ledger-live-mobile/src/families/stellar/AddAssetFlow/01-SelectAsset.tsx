@@ -122,18 +122,12 @@ export default function DelegationStarted({ navigation, route }: Props) {
     [bridge, transaction, navigation, route.params, status],
   );
 
-  const { data, isLoading, loadNext } = useTokensData({
+  const { data, loadNext } = useTokensData({
     networkFamily: [mainAccount.currency.id],
     pageSize: 100,
   });
 
-  const options = useMemo(() => {
-    if (!isLoading) {
-      return data?.tokens ?? [];
-    }
-
-    return [];
-  }, [data?.tokens, isLoading]);
+  const options = useMemo(() => data?.tokens || [], [data?.tokens]);
 
   const [infoModalOpen, setInfoModalOpen] = useState(false);
   // @ts-expect-error this does not make any type of sense... we get a string yet we pass it to a function expecting a boolean
