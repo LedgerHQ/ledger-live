@@ -513,6 +513,8 @@ export enum ScreenName {
   WalletSyncManageInstancesSuccess = "WalletSyncManageInstancesSuccess",
   LedgerSyncDeepLinkHandler = "LedgerSyncDeepLinkHandler",
   ModularDrawerDeepLinkHandler = "ModularDrawerDeepLinkHandler",
+  ReceiveDeepLinkHandler = "ReceiveDeepLinkHandler",
+  AddAccountDeepLinkHandler = "AddAccountDeepLinkHandler",
 
   MockedAddAssetButton = "MockedAddAssetButton",
   MockedModularDrawer = "MockedModularDrawer",
