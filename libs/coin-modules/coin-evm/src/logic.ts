@@ -12,7 +12,11 @@ import { getEnv } from "@ledgerhq/live-env";
 import { isNFTActive } from "@ledgerhq/coin-framework/nft/support";
 import { mergeOps } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
-import { decodeTokenAccountId, encodeTokenAccountId } from "@ledgerhq/coin-framework/account/index";
+import {
+  decodeTokenAccountId,
+  encodeTokenAccountId,
+  getSyncHash as baseGetSyncHash,
+} from "@ledgerhq/coin-framework/account/index";
 import { getEIP712FieldsDisplayedOnNano } from "@ledgerhq/evm-tools/message/EIP712/index";
 import { getNodeApi } from "./network/node/index";
 import { getCoinConfig } from "./config";
@@ -22,7 +26,6 @@ import {
   EvmTransactionEIP1559,
   EvmTransactionLegacy,
 } from "./types";
-import { getCryptoAssetsStore } from "./cryptoAssetsStore";
 
 /**
  * Helper to check if a legacy transaction has the right fee property
@@ -185,19 +188,13 @@ export const getSyncHash = async (
   currency: CryptoCurrency,
   blacklistedTokenIds: string[] = [],
 ): Promise<string> => {
-  const tokensHash = await getCryptoAssetsStore().getTokensSyncHash(currency.id);
+  const syncHash = await baseGetSyncHash(currency.id, blacklistedTokenIds);
   const isNftSupported = isNFTActive(currency);
 
   const config = getCoinConfig(currency).info;
   const { node = {}, explorer = {} } = config;
 
-  const stringToHash =
-    tokensHash +
-    blacklistedTokenIds.join("") +
-    isNftSupported +
-    JSON.stringify(node) +
-    JSON.stringify(explorer);
-
+  const stringToHash = syncHash + isNftSupported + JSON.stringify(node) + JSON.stringify(explorer);
   return `0x${murmurhash(stringToHash).result().toString(16)}`;
 };
 

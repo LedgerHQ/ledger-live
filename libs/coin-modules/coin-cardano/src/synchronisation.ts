@@ -39,7 +39,7 @@ import {
   mergeTokens,
 } from "./logic";
 import { CARDANO_MAX_SUPPLY } from "./constants";
-import { getCryptoAssetsStore } from "@ledgerhq/coin-framework/crypto-assets/index";
+import { getSyncHash } from "@ledgerhq/coin-framework/account/index";
 
 export const makeGetAccountShape =
   (signerContext: SignerContext<CardanoSigner>): GetAccountShape<CardanoAccount> =>
@@ -79,8 +79,7 @@ export const makeGetAccountShape =
     });
 
     // when new tokens are added / blacklist changes, we need to sync again because we need to go through all operations again
-    const syncHash = await getCryptoAssetsStore().getTokensSyncHash(currency.id);
-
+    const syncHash = await getSyncHash(currency.id, blacklistedTokenIds);
     const outdatedSyncHash = initialAccount?.syncHash !== syncHash;
 
     const requiredConfirmations = 90;

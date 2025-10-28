@@ -31,7 +31,7 @@ import {
 } from "./bridge/bridgeHelpers/txn";
 import { TonAccount, TonOperation, TonSubAccount } from "./types";
 import { WalletContractV4 } from "@ton/ton";
-import { getCryptoAssetsStore } from "@ledgerhq/coin-framework/crypto-assets/index";
+import { getSyncHash } from "@ledgerhq/coin-framework/account/index";
 
 const jettonTxMessageHashesMap = new Map<string, string>();
 
@@ -64,7 +64,7 @@ export const getAccountShape: GetAccountShape<TonAccount> = async (
   });
 
   log("debug", `Generation account shape for ${address}`);
-  const syncHash = await getCryptoAssetsStore().getTokensSyncHash(currency.id);
+  const syncHash = await getSyncHash(currency.id, blacklistedTokenIds);
   const shouldSyncFromScratch = syncHash !== initialAccount?.syncHash;
 
   const newTxs: TonTransactionsList = { transactions: [], address_book: {} };

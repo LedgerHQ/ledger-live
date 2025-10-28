@@ -12,10 +12,11 @@ import { listOperations } from "../logic/listOperations";
 import { apiClient } from "../network/api";
 import type { HederaAccount } from "../types";
 import { getSubAccounts, prepareOperations, applyPendingExtras, mergeSubAccounts } from "./utils";
-import { getCryptoAssetsStore } from "@ledgerhq/coin-framework/crypto-assets/index";
+import { getSyncHash } from "@ledgerhq/coin-framework/account/index";
 
 export const getAccountShape: GetAccountShape<HederaAccount> = async (
   info,
+  { blacklistedTokenIds },
 ): Promise<Partial<HederaAccount>> => {
   const { currency, derivationMode, address, initialAccount } = info;
 
@@ -41,7 +42,7 @@ export const getAccountShape: GetAccountShape<HederaAccount> = async (
 
   // we should sync again when new tokens are added or blacklist changes
 
-  const syncHash = await getCryptoAssetsStore().getTokensSyncHash(currency.id);
+  const syncHash = await getSyncHash(currency.id, blacklistedTokenIds);
   const shouldSyncFromScratch = !initialAccount || syncHash !== initialAccount?.syncHash;
 
   const oldOperations = initialAccount?.operations ?? [];
