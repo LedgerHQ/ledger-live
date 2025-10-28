@@ -13,11 +13,11 @@ export function usePostOnboardingActionHandlers(): PostOnboardingActionHandlers 
   });
 
   return {
-    [PostOnboardingActionId.assetsTransfer]: () => {
-      if (isModularDrawerEnabled) {
-        handleOpenReceiveDrawer();
-      }
-    },
+    [PostOnboardingActionId.assetsTransfer]: isModularDrawerEnabled
+      ? () => {
+          handleOpenReceiveDrawer();
+        }
+      : undefined,
     // Add other custom handlers here as needed
     // [PostOnboardingActionId.buyCrypto]: () => { ... },
     // [PostOnboardingActionId.customImage]: () => { ... },

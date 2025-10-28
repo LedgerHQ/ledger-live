@@ -7,9 +7,7 @@ jest.mock("LLM/features/Receive", () => ({
   useOpenReceiveDrawer: jest.fn(),
 }));
 
-const mockUseOpenReceiveDrawer = useOpenReceiveDrawer as jest.MockedFunction<
-  typeof useOpenReceiveDrawer
->;
+const mockUseOpenReceiveDrawer = jest.mocked(useOpenReceiveDrawer);
 
 describe("usePostOnboardingActionHandlers", () => {
   const mockHandleOpenReceiveDrawer = jest.fn();
@@ -18,51 +16,60 @@ describe("usePostOnboardingActionHandlers", () => {
     jest.clearAllMocks();
   });
 
-  it("should return assetsTransfer handler when modular drawer is enabled", () => {
-    mockUseOpenReceiveDrawer.mockReturnValue({
-      handleOpenReceiveDrawer: mockHandleOpenReceiveDrawer,
-      isModularDrawerEnabled: true,
+  describe("when modular drawer is enabled", () => {
+    beforeEach(() => {
+      mockUseOpenReceiveDrawer.mockReturnValue({
+        handleOpenReceiveDrawer: mockHandleOpenReceiveDrawer,
+        isModularDrawerEnabled: true,
+      });
     });
 
-    const { result } = renderHook(() => usePostOnboardingActionHandlers());
+    it("should provide an assetsTransfer handler", () => {
+      const { result } = renderHook(() => usePostOnboardingActionHandlers());
 
-    expect(result.current).toHaveProperty(PostOnboardingActionId.assetsTransfer);
-    expect(typeof result.current[PostOnboardingActionId.assetsTransfer]).toBe("function");
+      expect(result.current).toHaveProperty(PostOnboardingActionId.assetsTransfer);
+      expect(typeof result.current[PostOnboardingActionId.assetsTransfer]).toBe("function");
+    });
+
+    it("should open the receive drawer when the assetsTransfer handler is invoked", () => {
+      const { result } = renderHook(() => usePostOnboardingActionHandlers());
+
+      act(() => {
+        const assetsTransferHandler = result.current[PostOnboardingActionId.assetsTransfer];
+        assetsTransferHandler?.();
+      });
+
+      expect(mockHandleOpenReceiveDrawer).toHaveBeenCalledTimes(1);
+    });
   });
 
-  it("should open receive drawer when assetsTransfer action is triggered with modular drawer enabled", () => {
-    mockUseOpenReceiveDrawer.mockReturnValue({
-      handleOpenReceiveDrawer: mockHandleOpenReceiveDrawer,
-      isModularDrawerEnabled: true,
+  describe("when modular drawer is disabled", () => {
+    beforeEach(() => {
+      mockUseOpenReceiveDrawer.mockReturnValue({
+        handleOpenReceiveDrawer: mockHandleOpenReceiveDrawer,
+        isModularDrawerEnabled: false,
+      });
     });
 
-    const { result } = renderHook(() => usePostOnboardingActionHandlers());
+    it("should not provide an assetsTransfer handler", () => {
+      const { result } = renderHook(() => usePostOnboardingActionHandlers());
 
-    act(() => {
-      const assetsTransferHandler = result.current[PostOnboardingActionId.assetsTransfer];
-      assetsTransferHandler?.();
+      expect(result.current[PostOnboardingActionId.assetsTransfer]).toBeUndefined();
     });
 
-    expect(mockHandleOpenReceiveDrawer).toHaveBeenCalledTimes(1);
+    it("should not invoke handleOpenReceiveDrawer when attempting to call undefined handler", () => {
+      const { result } = renderHook(() => usePostOnboardingActionHandlers());
+
+      act(() => {
+        const assetsTransferHandler = result.current[PostOnboardingActionId.assetsTransfer];
+        assetsTransferHandler?.();
+      });
+
+      expect(mockHandleOpenReceiveDrawer).not.toHaveBeenCalled();
+    });
   });
 
-  it("should not open receive drawer when assetsTransfer action is triggered with modular drawer disabled", () => {
-    mockUseOpenReceiveDrawer.mockReturnValue({
-      handleOpenReceiveDrawer: mockHandleOpenReceiveDrawer,
-      isModularDrawerEnabled: false,
-    });
-
-    const { result } = renderHook(() => usePostOnboardingActionHandlers());
-
-    act(() => {
-      const assetsTransferHandler = result.current[PostOnboardingActionId.assetsTransfer];
-      assetsTransferHandler?.();
-    });
-
-    expect(mockHandleOpenReceiveDrawer).not.toHaveBeenCalled();
-  });
-
-  it("should initialize useOpenReceiveDrawer with post-onboarding source screen", () => {
+  it("should initialize useOpenReceiveDrawer with the correct source screen name", () => {
     mockUseOpenReceiveDrawer.mockReturnValue({
       handleOpenReceiveDrawer: mockHandleOpenReceiveDrawer,
       isModularDrawerEnabled: true,
@@ -75,7 +82,7 @@ describe("usePostOnboardingActionHandlers", () => {
     });
   });
 
-  it("should not return handlers for unsupported PostOnboardingActionId values", () => {
+  it("should not provide handlers for unimplemented action IDs", () => {
     mockUseOpenReceiveDrawer.mockReturnValue({
       handleOpenReceiveDrawer: mockHandleOpenReceiveDrawer,
       isModularDrawerEnabled: true,
