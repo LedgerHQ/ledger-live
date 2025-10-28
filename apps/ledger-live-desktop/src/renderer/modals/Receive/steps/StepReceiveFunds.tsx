@@ -173,9 +173,11 @@ const StepReceiveFunds = (props: StepProps) => {
     transitionTo,
     onResetSkip,
     verifyAddressError,
+    token,
     onClose,
     eventType,
     currencyName,
+    receiveTokenMode,
     isFromPostOnboardingEntryPoint,
   } = props;
   const dispatch = useDispatch();
@@ -197,7 +199,7 @@ const StepReceiveFunds = (props: StepProps) => {
   const mainAccount = account ? getMainAccount(account, parentAccount) : null;
   invariant(account && mainAccount, "No account given");
   const maybeAccountName = useMaybeAccountName(account);
-  const name = maybeAccountName || getDefaultAccountName(account);
+  const name = token ? token.name : maybeAccountName || getDefaultAccountName(account);
   const address = mainAccount.freshAddress;
   const [modalVisible, setModalVisible] = useState(false);
   const hideQRCodeModal = useCallback(() => setModalVisible(false), [setModalVisible]);
@@ -244,6 +246,7 @@ const StepReceiveFunds = (props: StepProps) => {
       global.localStorage.getItem(`${LOCAL_STORAGE_KEY_PREFIX}${receivedCurrencyId}`) === "true";
     if (
       !dismissModal &&
+      !receiveTokenMode &&
       isStakingEnabledForAccount &&
       !isFromPostOnboardingEntryPoint &&
       !isSPLToken &&
@@ -279,6 +282,7 @@ const StepReceiveFunds = (props: StepProps) => {
   }, [
     receivedCurrencyId,
     isFromPostOnboardingEntryPoint,
+    receiveTokenMode,
     isStakingEnabledForAccount,
     isDirectStakingEnabledForAccount,
     currencyName,
