@@ -40,7 +40,7 @@ describe("useAssetsData", () => {
 
     const { result } = renderHook(() =>
       useTokensData({
-        networkFamily: ["ethereum"],
+        networkFamily: "ethereum",
         pageSize: 100,
         output: ["id", "name", "ticker", "contract_address"],
       }),
@@ -92,7 +92,7 @@ describe("useAssetsData", () => {
 
     const { result } = renderHook(() =>
       useTokensData({
-        networkFamily: ["ethereum"],
+        networkFamily: "ethereum",
         pageSize: 100,
         output: ["id", "name", "ticker", "contract_address"],
       }),
@@ -140,7 +140,7 @@ describe("useAssetsData", () => {
 
     const { result } = renderHook(() =>
       useTokensData({
-        networkFamily: ["ethereum"],
+        networkFamily: "ethereum",
         pageSize: 100,
         output: ["id", "name", "ticker", "contract_address"],
       }),
@@ -167,7 +167,7 @@ describe("useAssetsData", () => {
 
     const { result } = renderHook(() =>
       useTokensData({
-        networkFamily: ["ethereum"],
+        networkFamily: "ethereum",
         pageSize: 100,
         output: ["id", "name", "ticker", "contract_address"],
       }),
@@ -194,7 +194,7 @@ describe("useAssetsData", () => {
 
     const { result } = renderHook(() =>
       useTokensData({
-        networkFamily: ["ethereum"],
+        networkFamily: "ethereum",
         pageSize: 100,
         output: ["id", "name", "ticker", "contract_address"],
       }),
@@ -210,7 +210,7 @@ describe("useAssetsData", () => {
 
     const { result } = renderHook(() =>
       useTokensData({
-        networkFamily: ["ethereum"],
+        networkFamily: "ethereum",
         pageSize: 100,
         output: ["id", "name", "ticker", "contract_address"],
       }),

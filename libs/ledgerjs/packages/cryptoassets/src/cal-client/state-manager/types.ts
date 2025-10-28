@@ -7,7 +7,7 @@ export enum TokensDataTags {
 /**
  * Parameters for the getTokensData query
  *
- * @param networkFamily - Filter by network families (e.g., ["ethereum", "polygon"])
+ * @param networkFamily - Filter by network families (e.g., "ethereum", "polygon")
  * @param isStaging - Use staging or production environment
  * @param pageSize - Number of items per page (default: 100, options: 10, 100, 1000)
  * @param output - Specify output fields (default: all fields, values: id, name, ticker, units, delisted)
@@ -19,7 +19,7 @@ export enum TokensDataTags {
  *   - CAL reference to use
  */
 export interface GetTokensDataParams {
-  networkFamily?: string[];
+  networkFamily?: string;
   output?: string[];
   limit?: number;
   pageSize?: number;
