@@ -359,6 +359,7 @@
     "src/device/use-cases/isEditDeviceNameSupported.ts",
     "src/device/use-cases/isSyncOnboardingSupported.ts",
     "src/device/use-cases/shouldForceFirmwareUpdate.ts",
+    "src/device/use-cases/getDeviceHasBattery.ts",
     "src/deviceSDK/commands/genuineCheck.ts",
     "src/deviceSDK/commands/getAppAndVersion.ts",
     "src/deviceSDK/tasks/genuineCheck.ts",
