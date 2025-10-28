@@ -118,6 +118,7 @@ export const TwoStepSyncOnboardingCompanion: React.FC<TwoStepSyncOnboardingCompa
 
   const { handleOpenReceiveDrawer, isModularDrawerEnabled } = useOpenReceiveDrawer({
     sourceScreenName: "sync-onboarding-companion",
+    navigationOverride: baseNavigation,
   });
 
   const twoStepDesync = useTwoStepDesync({
@@ -155,6 +156,35 @@ export const TwoStepSyncOnboardingCompanion: React.FC<TwoStepSyncOnboardingCompa
         dispatchRedux(setIsOnboardingFlow(true));
 
         if (isModularDrawerEnabled) {
+          // Navigate to completion screen first with tracking params
+          // No genericity or extraction because we will remove the other code block once we fully migrate to the modular drawer.
+          baseNavigation.reset({
+            index: 0,
+            routes: [
+              {
+                name: NavigatorName.BaseOnboarding,
+                state: {
+                  routes: [
+                    {
+                      name: NavigatorName.SyncOnboarding,
+                      state: {
+                        routes: [
+                          {
+                            name: ScreenName.SyncOnboardingCompletion,
+                            params: {
+                              device,
+                              seedConfiguration: analyticsSeedConfiguration.current,
+                            },
+                          },
+                        ],
+                      },
+                    },
+                  ],
+                },
+              },
+            ],
+          });
+          // Then open the receive drawer on top
           handleOpenReceiveDrawer();
         } else {
           baseNavigation.reset({
