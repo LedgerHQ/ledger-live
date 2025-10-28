@@ -1,12 +1,17 @@
 import React from "react";
 import { renderWithReactQuery } from "@tests/test-renderer";
 import { MarketQuickActions } from "./";
-import { getCryptoCurrencyById, findTokenById } from "@ledgerhq/live-common/currencies/index";
+import { getCryptoCurrencyById } from "@ledgerhq/live-common/currencies/index";
+import { findTokenById } from "@ledgerhq/cryptoassets";
 import { ScreenName } from "~/const";
 import { createStackNavigator } from "@react-navigation/stack";
 import { genAccount } from "@ledgerhq/coin-framework/mocks/account";
 import { State } from "~/reducers/types";
 import { isCurrencySupported } from "@ledgerhq/coin-framework/currencies/support";
+import { initializeLegacyTokens } from "@ledgerhq/cryptoassets/legacy/legacy-data";
+import { addTokens } from "@ledgerhq/cryptoassets/legacy/legacy-utils";
+
+initializeLegacyTokens(addTokens);
 
 const Stack = createStackNavigator();
 

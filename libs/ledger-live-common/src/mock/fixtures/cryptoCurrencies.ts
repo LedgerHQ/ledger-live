@@ -38,17 +38,14 @@ export function createFixtureCryptoCurrency(family: string): CryptoCurrency {
 }
 
 const defaultEthCryptoFamily = cryptocurrenciesById["ethereum"];
-const defaultERC20USDTToken = findTokenById("ethereum/erc20/usd_tether__erc20_")!;
 
-export function createFixtureTokenAccount(
-  id = "00",
-  token: TokenCurrency = defaultERC20USDTToken,
-): TokenAccount {
+export function createFixtureTokenAccount(id = "00", token?: TokenCurrency): TokenAccount {
+  const defaultToken = token || findTokenById("ethereum/erc20/usd_tether__erc20_")!;
   return {
     type: "TokenAccount",
     id: `js:2:ethereum:0x${id}:+ethereum%2Ferc20%2Fusd_tether__erc20_`,
     parentId: `js:2:ethereum:0x0${id}:`,
-    token,
+    token: defaultToken,
     balance: new BigNumber("51281813126095913"),
     spendableBalance: new BigNumber("51281813126095913"),
     creationDate: new Date(),

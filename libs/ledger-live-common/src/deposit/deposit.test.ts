@@ -12,9 +12,15 @@ import {
   findTokenById,
   setSupportedCurrencies,
   sortCurrenciesByIds,
+  isCurrencySupported,
+  listSupportedCurrencies,
+  listTokens,
 } from "../currencies/index";
-import { isCurrencySupported, listSupportedCurrencies, listTokens } from "../currencies";
 import { CryptoOrTokenCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
+import { initializeLegacyTokens } from "@ledgerhq/cryptoassets/legacy/legacy-data";
+import { addTokens } from "@ledgerhq/cryptoassets/legacy/legacy-utils";
+
+initializeLegacyTokens(addTokens);
 
 const TOKEN_ONLY_ASSETS = MOCK_TOKENS_ONLY as MappedAsset[];
 
