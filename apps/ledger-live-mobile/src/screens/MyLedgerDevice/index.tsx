@@ -38,7 +38,7 @@ type NavigationProps = BaseComposite<
   StackNavigatorProps<MyLedgerNavigatorStackParamList, ScreenName.MyLedgerDevice>
 >;
 
-const Manager = ({ navigation, route }: NavigationProps) => {
+const MyLedgerDevice = ({ navigation, route }: NavigationProps) => {
   const {
     device,
     deviceInfo,
@@ -300,4 +300,4 @@ const Manager = ({ navigation, route }: NavigationProps) => {
   );
 };
 
-export default memo<NavigationProps>(Manager);
+export default memo<NavigationProps>(MyLedgerDevice);
