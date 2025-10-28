@@ -8,7 +8,7 @@ export default class MarketPage {
   marketRowTitle = (ticker: string) => getElementById(`${this.marketRowTitleBaseId}${ticker}`);
 
   starMarketListButton = () => getElementById("toggle-starred-currencies");
-  buyAssetButton = () => getElementById("market-buy-btn");
+  buyAssetButton = () => getElementById("market-quick-action-button-buy");
 
   async searchAsset(asset: string) {
     await typeTextByElement(this.searchBar(), asset);

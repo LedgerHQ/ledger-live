@@ -216,7 +216,6 @@ export type Features = CurrencyFeatures & {
   llmWalletSync: Feature_LlmWalletSync;
   enableAppsBackup: Feature_EnableAppsBackup;
   web3hub: Feature_web3hub;
-  llmMarketQuickActions: DefaultFeature;
   llmMemoTag: Feature_MemoTag;
   lldMemoTag: Feature_MemoTag;
   ldmkTransport: Feature_LdmkTransport;
@@ -655,7 +654,7 @@ export type Feature_LlmMmkvMigration = Feature<{
   shouldRollback: boolean | null;
 }>;
 
-type Feature_ModularDrawer = Feature<{
+export type Feature_ModularDrawer = Feature<{
   add_account: boolean;
   live_app: boolean;
   live_apps_allowlist: string[];
