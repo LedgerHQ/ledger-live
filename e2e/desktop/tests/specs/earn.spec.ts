@@ -70,8 +70,12 @@ for (const { account, provider, xrayTicket } of ethEarn) {
         await app.earnDashboard.goAndWaitForEarnToBeReady(() => app.layout.goToEarn());
         await app.earnDashboard.goToEarnMoreTab();
         await app.earnDashboard.clickStakeCurrencyButton(account.accountName);
+        const verifyProviderUrlPromise = app.earnDashboard.verifyProviderURL(
+          provider.uiName,
+          account,
+        );
         await app.delegate.goToProviderLiveApp(provider.uiName);
-        await app.earnDashboard.verifyProviderURL(provider.uiName, account);
+        await verifyProviderUrlPromise;
       },
     );
   });
