@@ -88,16 +88,14 @@ export const buildOnboardAccount =
 
         o.next({ status: OnboardStatus.PREPARE });
 
-        let { partyId } = await isAccountOnboarded(currency, publicKey);
+        const preparedTransaction = await prepareOnboarding(currency, publicKey);
+        const partyId = preparedTransaction.party_id;
 
         if (partyId) {
           const onboardedAccount = createOnboardedAccount(account, partyId, currency);
           o.next({ partyId, account: onboardedAccount }); // success
           return;
         }
-
-        const preparedTransaction = await prepareOnboarding(currency, publicKey);
-        partyId = preparedTransaction.party_id;
 
         o.next({ status: OnboardStatus.SIGN });
 
