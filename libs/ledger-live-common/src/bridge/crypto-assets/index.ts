@@ -1,6 +1,6 @@
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
-import { legacyCryptoAssetsStore } from "@ledgerhq/cryptoassets/legacy/legacy-store";
 import type { CryptoAssetsStore } from "@ledgerhq/types-live";
+import { legacyCryptoAssetsStore } from "@ledgerhq/cryptoassets/legacy/legacy-store";
 
 let cryptoAssetsStore: CryptoAssetsStore | undefined = undefined;
 
