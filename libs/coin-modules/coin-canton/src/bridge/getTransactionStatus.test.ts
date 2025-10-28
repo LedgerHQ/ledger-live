@@ -47,7 +47,7 @@ describe("getTransactionStatus", () => {
   });
 
   describe("fee validation", () => {
-    it("should return FeeNotLoaded error when fee is not provided", async () => {
+    it("should return FeeNotLoaded error when fee is null", async () => {
       const transaction: Transaction = {
         family: "canton",
         amount: new BigNumber(100),
@@ -62,18 +62,18 @@ describe("getTransactionStatus", () => {
       expect(result.warnings).toEqual({});
     });
 
-    it("should return FeeRequired error when fee is zero", async () => {
+    it("should return FeeNotLoaded error when fee is undefined", async () => {
       const transaction: Transaction = {
         family: "canton",
         amount: new BigNumber(100),
         recipient: "valid::11111111111111111111111111111111111111111111111111111111111111111111",
-        fee: new BigNumber(0),
+        fee: undefined,
         tokenId: "",
       };
 
       const result = await getTransactionStatus(mockAccount, transaction);
 
-      expect(result.errors.fee).toBeInstanceOf(FeeRequired);
+      expect(result.errors.fee).toBeInstanceOf(FeeNotLoaded);
       expect(result.warnings).toEqual({});
     });
 
