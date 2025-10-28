@@ -16,7 +16,7 @@ export const opRetentionStategy =
 
 const opRetentionFilter = opRetentionStategy(366, 500);
 
-const accountModel: DataModel<AccountRaw, [Account, AccountUserData]> = createDataModel({
+const accountModel = createDataModel({
   migrations: [
     // 2018-10-10: change of the account id format to include the derivationMode and seedIdentifier in Account
     raw => {
@@ -79,7 +79,7 @@ const accountModel: DataModel<AccountRaw, [Account, AccountUserData]> = createDa
     // ^- Each time a modification is brought to the model, add here a migration function here
   ],
 
-  decode: (raw: AccountRaw) => [fromAccountRaw(raw), accountRawToAccountUserData(raw)],
+  decode: async (raw: AccountRaw) => [await fromAccountRaw(raw), accountRawToAccountUserData(raw)],
   encode: ([account, userData]: [Account, AccountUserData]): AccountRaw =>
     toAccountRaw(
       {
