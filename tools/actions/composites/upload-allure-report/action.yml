@@ -16,7 +16,7 @@ inputs:
 outputs:
   report-url:
     description: "Allure report URL"
-    value: ${{ steps.publish-report.outputs.report-url }}
+    value: ${{ steps.publish-report.outputs.url }}
 
 runs:
   using: composite
@@ -26,9 +26,9 @@ runs:
       uses: tj-actions/branch-names@v6
     - name: Publish report on Allure Server
       id: publish-report
-      uses: LedgerHQ/send-to-allure-server-action@2.1.2
+      uses: LedgerHQ/allure/upload@main
       with:
-        allure-server-url: "https://ledger-live.allure.green.ledgerlabs.net"
+        url: "https://ledger-live.allure.green.ledgerlabs.net"
         build-name: ${{ github.workflow }}-${{ inputs.platform }}
         build-url: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
         username: ${{ inputs.login }}
