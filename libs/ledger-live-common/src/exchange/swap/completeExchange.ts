@@ -141,19 +141,15 @@ const completeExchange = (
          * or the gasLimit changes and gets increased in the next few blocks.
          * Solution: Manually override the gas limit only for LiFi transactions and create a 30% safety buffer.
          */
-        const transactionFixed =
-          isLifi && "gasLimit" in transaction && transaction.gasLimit != null
-            ? {
-                ...transaction,
-                customGasLimit: BigNumber(transaction.gasLimit).times(
-                  LIFI_GAS_LIMIT_BUFFER_MULTIPLIER,
-                ),
-              }
-            : transaction;
+        if (isLifi && transaction.family === "evm") {
+          transaction.gasLimit = BigNumber(transaction.gasLimit).times(
+            LIFI_GAS_LIMIT_BUFFER_MULTIPLIER,
+          );
+        }
 
         const { errors, estimatedFees } = await accountBridge.getTransactionStatus(
           refundAccount,
-          transactionFixed,
+          transaction,
         );
         if (unsubscribed) return;
 
