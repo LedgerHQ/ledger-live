@@ -17,8 +17,11 @@ import Prando from "prando";
 import api from "./api";
 import { setEnv } from "@ledgerhq/live-env";
 import { pairId } from "./helpers";
-import { legacyCryptoAssetsStore } from "@ledgerhq/cryptoassets/tokens";
+import { legacyCryptoAssetsStore } from "@ledgerhq/cryptoassets/legacy/legacy-store";
+import { initializeLegacyTokens } from "@ledgerhq/cryptoassets/legacy/legacy-data";
+import { addTokens } from "@ledgerhq/cryptoassets/legacy/legacy-utils";
 
+initializeLegacyTokens(addTokens);
 setCryptoAssetsStore(legacyCryptoAssetsStore);
 
 const value = "ll-ci/0.0.0";

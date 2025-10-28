@@ -26,6 +26,10 @@ import { TrackingAPI } from "./tracking";
 import { cryptocurrenciesById } from "@ledgerhq/cryptoassets/currencies";
 import { setSupportedCurrencies } from "../currencies";
 import { initialState as walletState } from "@ledgerhq/live-wallet/store";
+import { initializeLegacyTokens } from "@ledgerhq/cryptoassets/legacy/legacy-data";
+import { addTokens } from "@ledgerhq/cryptoassets/legacy/legacy-utils";
+
+initializeLegacyTokens(addTokens);
 
 describe("receiveOnAccountLogic", () => {
   // Given

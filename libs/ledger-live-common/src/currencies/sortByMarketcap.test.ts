@@ -4,9 +4,12 @@ import { getBTCValues } from "@ledgerhq/live-countervalues/mock";
 import { CURRENCIES_LIST, IDS } from "./mock";
 import { findCryptoCurrencyByTicker, findFiatCurrencyByTicker } from "@ledgerhq/cryptoassets/index";
 import { getCryptoAssetsStore } from "@ledgerhq/coin-framework/crypto-assets/index";
-import { legacyCryptoAssetsStore } from "@ledgerhq/cryptoassets/tokens";
+import { legacyCryptoAssetsStore } from "@ledgerhq/cryptoassets/legacy/legacy-store";
+import { initializeLegacyTokens } from "@ledgerhq/cryptoassets/legacy/legacy-data";
+import { addTokens } from "@ledgerhq/cryptoassets/legacy/legacy-utils";
 import { setup } from "../bridge/impl";
 
+initializeLegacyTokens(addTokens);
 setup(legacyCryptoAssetsStore);
 
 test("sortCurrenciesByIds snapshot", async () => {

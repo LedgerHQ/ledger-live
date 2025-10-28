@@ -1,7 +1,11 @@
 import { setCryptoAssetsStore as setCryptoAssetsStoreForCoinFramework } from "@ledgerhq/coin-framework/crypto-assets/index";
 import type { CryptoAssetsStore } from "@ledgerhq/types-live";
+import { initializeLegacyTokens } from "@ledgerhq/cryptoassets/legacy/legacy-data";
+import { addTokens } from "@ledgerhq/cryptoassets/legacy/legacy-utils";
 import "./environment";
 import BigNumber from "bignumber.js";
+
+initializeLegacyTokens(addTokens);
 
 jest.setTimeout(360000);
 

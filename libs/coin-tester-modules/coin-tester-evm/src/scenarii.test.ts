@@ -8,12 +8,14 @@ import { scenarioBlast } from "./scenarii/blast";
 import { scenarioSonic } from "./scenarii/sonic";
 import { scenarioCore } from "./scenarii/core";
 import { setCryptoAssetsStore as setCryptoAssetsStoreForCoinFramework } from "@ledgerhq/coin-framework/crypto-assets/index";
-import { legacyCryptoAssetsStore } from "@ledgerhq/cryptoassets/tokens";
+import { legacyCryptoAssetsStore } from "@ledgerhq/cryptoassets/legacy/legacy-store";
+import { initializeLegacyTokens } from "@ledgerhq/cryptoassets/legacy/legacy-data";
+import { addTokens } from "@ledgerhq/cryptoassets/legacy/legacy-utils";
 
 global.console = require("console");
 jest.setTimeout(100_000);
 
-//TODO mock call to CAL when available
+initializeLegacyTokens(addTokens);
 setCryptoAssetsStoreForCoinFramework(legacyCryptoAssetsStore);
 
 // Note this config runs with NanoX

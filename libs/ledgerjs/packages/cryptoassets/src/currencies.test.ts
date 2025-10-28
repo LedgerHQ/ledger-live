@@ -13,6 +13,10 @@ import {
   registerCryptoCurrency,
   cryptocurrenciesById,
 } from "./currencies";
+import { initializeLegacyTokens } from "./legacy/legacy-data";
+import { addTokens } from "./legacy/legacy-utils";
+
+initializeLegacyTokens(addTokens);
 
 test("can get currency by coin type", () => {
   expect(getCryptoCurrencyById("bitcoin")).toMatchObject({
