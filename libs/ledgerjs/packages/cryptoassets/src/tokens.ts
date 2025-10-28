@@ -24,7 +24,6 @@ import {
   convertHederaTokens,
 } from "./legacy/legacy-utils";
 import { tokensByCurrencyAddress, tokensById } from "./legacy/legacy-state";
-import { initializeLegacyTokens } from "./legacy/legacy-data";
 import { legacyCryptoAssetsStore } from "./legacy/legacy-store";
 
 export {
@@ -45,8 +44,6 @@ export {
   __clearAllLists,
   legacyCryptoAssetsStore,
 };
-
-initializeLegacyTokens(addTokens);
 
 /**
  * @deprecated Please do `await getCryptoAssetsStore().findTokenById(id)` instead to anticipate https://github.com/LedgerHQ/ledger-live/pull/11905
