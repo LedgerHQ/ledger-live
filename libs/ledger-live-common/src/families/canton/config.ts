@@ -9,7 +9,7 @@ export const cantonConfig: Record<string, ConfigInfo> = {
       },
       nodeUrl: "https://canton-gateway-aws.api.live.ledger.com/v1/node/ledger-live-mainnet",
       nodeId: "ledger-live-mainnet",
-      gatewayUrl: "https://canton-gateway.api.live.ledger.com",
+      gatewayUrl: "https://canton-gateway-aws.api.live.ledger.com",
       minReserve: 0,
       useGateway: true,
       networkType: "mainnet",
