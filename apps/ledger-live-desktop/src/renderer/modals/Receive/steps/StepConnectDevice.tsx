@@ -1,5 +1,5 @@
 import React, { useMemo } from "react";
-import { getMainAccount, isTokenAccount } from "@ledgerhq/live-common/account/helpers";
+import { getMainAccount } from "@ledgerhq/live-common/account/helpers";
 import Box from "~/renderer/components/Box";
 import Button from "~/renderer/components/Button";
 import DeviceAction from "~/renderer/components/DeviceAction";
@@ -9,9 +9,14 @@ import { StepProps } from "../Body";
 import { HOOKS_TRACKING_LOCATIONS } from "~/renderer/analytics/hooks/variables";
 import useConnectAppAction from "~/renderer/hooks/useConnectAppAction";
 
-export default function StepConnectDevice({ account, parentAccount, transitionTo }: StepProps) {
+export default function StepConnectDevice({
+  account,
+  parentAccount,
+  token,
+  transitionTo,
+}: StepProps) {
   const mainAccount = account ? getMainAccount(account, parentAccount) : null;
-  const tokenCurrency = account && isTokenAccount(account) && account.token;
+  const tokenCurrency = (account && account.type === "TokenAccount" && account.token) || token;
   const action = useConnectAppAction();
 
   const request = useMemo(

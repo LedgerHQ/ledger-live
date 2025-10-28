@@ -68,15 +68,15 @@ export type StepProps = {
   account: AccountLike | undefined | null;
   eventType?: string;
   parentAccount: Account | undefined | null;
-  token?: TokenCurrency | null;
-  receiveTokenMode?: boolean;
+  token: TokenCurrency | undefined | null;
+  receiveTokenMode: boolean;
   closeModal: () => void;
   isAddressVerified: boolean | undefined | null;
   verifyAddressError: Error | undefined | null;
   onRetry: () => void;
   onSkipConfirm: () => void;
   onResetSkip: () => void;
-  onChangeToken?: (token?: TokenCurrency | null) => void;
+  onChangeToken: (token?: TokenCurrency | null) => void;
   onChangeAccount: (account?: AccountLike | null, tokenAccount?: Account | null) => void;
   onChangeAddressVerified: (b?: boolean | null, a?: Error | null) => void;
   onClose: () => void;
@@ -145,7 +145,7 @@ const Body = ({
   const [account, setAccount] = useState(() => (params && params.account) || accounts[0]);
   const [parentAccount, setParentAccount] = useState(() => params && params.parentAccount);
   const [disabledSteps, setDisabledSteps] = useState<number[]>([]);
-  const [token, setToken] = useState<TokenCurrency | null>(null);
+  const [token, setToken] = useState(null);
   const [hideBreadcrumb, setHideBreadcrumb] = useState<boolean | undefined>(false);
   const [title, setTitle] = useState("");
   const [accountError, setAccountError] = useState<Error | undefined>(undefined);
