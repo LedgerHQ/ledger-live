@@ -32,6 +32,10 @@ import type {
 import type { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { firstValueFrom } from "rxjs";
 import { getDefaultAccountName } from "@ledgerhq/live-wallet/accountName";
+import { initializeLegacyTokens } from "@ledgerhq/cryptoassets/legacy/legacy-data";
+import { addTokens } from "@ledgerhq/cryptoassets/legacy/legacy-utils";
+
+initializeLegacyTokens(addTokens);
 
 const warnDev = process.env.CI ? (..._args) => {} : (...msg) => console.warn(...msg);
 // FIXME move out into DatasetTest to be defined in
