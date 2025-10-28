@@ -72,7 +72,7 @@ export default function useExportLogs() {
 
       if (getEnv("DETOX")) {
         const fileContent = await RNFetchBlob.fs.readFile(filePath, "base64");
-        sendFile({ fileName: "ledgerlive-logs.txt", fileContent });
+        sendFile({ fileName: "ledgerwallet-logs.txt", fileContent });
       } else {
         await Share.open(options);
       }
