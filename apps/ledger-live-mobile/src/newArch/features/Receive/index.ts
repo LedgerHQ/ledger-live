@@ -6,14 +6,21 @@ import { NavigatorName, ScreenName } from "~/const";
 import { useNavigation } from "@react-navigation/native";
 import { AccountLike, Account } from "@ledgerhq/types-live";
 import { getAccountCurrency } from "@ledgerhq/live-common/account/index";
+import { RootNavigation } from "~/components/RootNavigator/types/helpers";
 
 type Props = {
   onClick?: () => void;
   currency?: CryptoOrTokenCurrency;
   sourceScreenName: string;
+  navigationOverride?: RootNavigation;
 };
-export function useOpenReceiveDrawer({ currency, sourceScreenName, onClick }: Props) {
-  const navigation = useNavigation();
+export function useOpenReceiveDrawer({
+  currency,
+  sourceScreenName,
+  onClick,
+  navigationOverride,
+}: Props) {
+  const defaultNavigation = useNavigation();
   const { openDrawer } = useModularDrawerController();
   const { isModularDrawerVisible } = useModularDrawerVisibility({
     modularDrawerFeatureFlagKey: "llmModularDrawer",
@@ -27,16 +34,31 @@ export function useOpenReceiveDrawer({ currency, sourceScreenName, onClick }: Pr
     (account: AccountLike, parentAccount?: Account) => {
       const accountCurrency = getAccountCurrency(account);
 
-      navigation.navigate(NavigatorName.ReceiveFunds, {
-        screen: ScreenName.ReceiveConfirmation,
-        params: {
-          parentId: parentAccount?.id,
-          currency: accountCurrency,
-          accountId: (account.type !== "Account" && account?.parentId) || account.id,
-        },
-      });
+      const confirmationParams = {
+        parentId: parentAccount?.id,
+        currency: accountCurrency,
+        accountId: (account.type !== "Account" && account?.parentId) || account.id,
+      };
+
+      // Navigate to ReceiveFunds > ReceiveConfirmation
+      // If navigationOverride is provided (e.g., from onboarding), it can navigate to BaseOnboarding > ReceiveFunds
+      // Otherwise, use the default navigation context
+      if (navigationOverride) {
+        navigationOverride.navigate(NavigatorName.BaseOnboarding, {
+          screen: NavigatorName.ReceiveFunds,
+          params: {
+            screen: ScreenName.ReceiveConfirmation,
+            params: confirmationParams,
+          },
+        });
+      } else {
+        defaultNavigation.navigate(NavigatorName.ReceiveFunds, {
+          screen: ScreenName.ReceiveConfirmation,
+          params: confirmationParams,
+        });
+      }
     },
-    [navigation],
+    [defaultNavigation, navigationOverride],
   );
 
   const handleOnclick = useCallback(() => {
