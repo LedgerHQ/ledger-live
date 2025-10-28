@@ -1,7 +1,7 @@
 import { formatFlagsData, formatEnvData } from "@ledgerhq/live-common/e2e/index";
-import fs from "fs";
+import { writeFileSync } from "fs";
 import { ElectronApplication } from "@playwright/test";
-import { OnboardingPage } from "../page/onboarding.page";
+import { OnboardingPage } from "tests/page/onboarding.page";
 import { launchApp } from "./electronUtils";
 
 const environmentFilePath = "allure-results/environment.properties";
@@ -32,6 +32,6 @@ export default async function globalTeardown() {
       return window.getAllEnvs();
     });
 
-    fs.writeFileSync(environmentFilePath, formatFlagsData(featureFlags) + formatEnvData(appEnvs));
+    writeFileSync(environmentFilePath, formatFlagsData(featureFlags) + formatEnvData(appEnvs));
   }
 }

@@ -1,5 +1,5 @@
 import { expect } from "@playwright/test";
-import { step } from "../misc/reporters/step";
+import { step } from "tests/misc/reporters/step";
 import { AppPage } from "./abstractClasses";
 import { AccountType, getParentAccountName } from "@ledgerhq/live-common/e2e/enum/Account";
 

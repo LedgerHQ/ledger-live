@@ -1,5 +1,5 @@
-import { step } from "../../misc/reporters/step";
-import { Modal } from "../../component/modal.component";
+import { step } from "tests/misc/reporters/step";
+import { Modal } from "tests/component/modal.component";
 
 export class PasswordlockModal extends Modal {
   private readonly switchButton = this.page.getByTestId("settings-password-lock-switch");

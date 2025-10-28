@@ -1,7 +1,7 @@
-import { test } from "../fixtures/common";
-import { addTmsLink } from "../utils/allureUtils";
-import { getDescription } from "../utils/customJsonReporter";
-import { CLI } from "../utils/cliUtils";
+import { test } from "tests/fixtures/common";
+import { addTmsLink } from "tests/utils/allureUtils";
+import { getDescription } from "tests/utils/customJsonReporter";
+import { CLI } from "tests/utils/cliUtils";
 import {
   Account,
   TokenAccount,

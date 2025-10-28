@@ -1,3 +1,3 @@
-import path from "path";
+import { join } from "path";
 
-export const responseLogfilePath = path.join(__dirname, "../artifacts/networkResponses.log");
+export const responseLogfilePath = join(__dirname, "../artifacts/networkResponses.log");

@@ -1,9 +1,9 @@
-import { test } from "../fixtures/common";
-import { addTmsLink } from "../utils/allureUtils";
-import { getDescription } from "../utils/customJsonReporter";
+import { test } from "tests/fixtures/common";
+import { addTmsLink } from "tests/utils/allureUtils";
+import { getDescription } from "tests/utils/customJsonReporter";
 import { Account, TokenAccount } from "@ledgerhq/live-common/e2e/enum/Account";
-import { CLI } from "../utils/cliUtils";
-import { FileUtils } from "../utils/fileUtils";
+import { CLI } from "tests/utils/cliUtils";
+import { FileUtils } from "tests/utils/fileUtils";
 
 test.describe("Settings", () => {
   test.use({

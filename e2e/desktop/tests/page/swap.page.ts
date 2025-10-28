@@ -1,14 +1,14 @@
 import { AppPage } from "./abstractClasses";
-import { step } from "../misc/reporters/step";
+import { step } from "tests/misc/reporters/step";
 import { ElectronApplication, expect } from "@playwright/test";
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
 import { ChooseAssetDrawer } from "./drawer/choose.asset.drawer";
 import { Provider } from "@ledgerhq/live-common/e2e/enum/Provider";
 import { Device } from "@ledgerhq/live-common/e2e/enum/Device";
 import { Swap } from "@ledgerhq/live-common/e2e/models/Swap";
-import fs from "fs/promises";
+import { mkdir, readFile, rename } from "fs/promises";
 import * as path from "path";
-import { FileUtils } from "../utils/fileUtils";
+import { FileUtils } from "tests/utils/fileUtils";
 import { getMinimumSwapAmount } from "@ledgerhq/live-common/e2e/swap";
 
 export class SwapPage extends AppPage {
@@ -499,14 +499,14 @@ export class SwapPage extends AppPage {
     const fileExists = await FileUtils.waitForFileToExist(originalFilePath, 5000);
     expect(fileExists).toBeTruthy();
     const targetDir = path.dirname(targetFilePath);
-    await fs.mkdir(targetDir, { recursive: true });
-    await fs.rename(originalFilePath, targetFilePath);
+    await mkdir(targetDir, { recursive: true });
+    await rename(originalFilePath, targetFilePath);
   }
 
   @step("Check contents of exported operations file")
   async checkExportedFileContents(swap: Swap, provider: Provider, id: string) {
     const targetFilePath = path.resolve(__dirname, "../artifacts/ledgerwallet-swap-history.csv");
-    const fileContents = await fs.readFile(targetFilePath, "utf-8");
+    const fileContents = await readFile(targetFilePath, "utf-8");
 
     expect(fileContents).toContain(provider.name);
     expect(fileContents).toContain(id);

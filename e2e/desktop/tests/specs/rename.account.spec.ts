@@ -1,10 +1,10 @@
-import { test } from "../fixtures/common";
+import { test } from "tests/fixtures/common";
 import { expect } from "@playwright/test";
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
-import { addTmsLink } from "../utils/allureUtils";
-import { getDescription } from "../utils/customJsonReporter";
-import { CLI } from "../utils/cliUtils";
-import { getUserdata } from "../utils/userdata";
+import { addTmsLink } from "tests/utils/allureUtils";
+import { getDescription } from "tests/utils/customJsonReporter";
+import { CLI } from "tests/utils/cliUtils";
+import { getUserdata } from "tests/utils/userdata";
 
 const accounts = [{ account: Account.ATOM_1, xrayTicket: "B2CQA-2996" }];
 

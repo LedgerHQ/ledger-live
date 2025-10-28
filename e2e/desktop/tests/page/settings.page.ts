@@ -4,7 +4,7 @@ import { expect } from "@playwright/test";
 import axios from "axios";
 import * as path from "path";
 import { FileUtils } from "../utils/fileUtils";
-import fs from "fs/promises";
+import { mkdir, rename } from "fs/promises";
 
 export class SettingsPage extends AppPage {
   private manageLedgerSyncButton = this.page.getByRole("button", { name: "Manage" });
@@ -105,7 +105,7 @@ export class SettingsPage extends AppPage {
     expect(fileExists).toBeTruthy();
 
     const targetDir = path.dirname(targetFilePath);
-    await fs.mkdir(targetDir, { recursive: true });
-    await fs.rename(originalFilePath, targetFilePath);
+    await mkdir(targetDir, { recursive: true });
+    await rename(originalFilePath, targetFilePath);
   }
 }

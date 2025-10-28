@@ -1,5 +1,5 @@
 import { Account } from "@ledgerhq/live-common/e2e/enum/Account";
-import { step } from "../misc/reporters/step";
+import { step } from "tests/misc/reporters/step";
 import { WebViewAppPage } from "./webViewApp.page";
 import { expect } from "@playwright/test";
 import { ChooseAssetDrawer } from "./drawer/choose.asset.drawer";

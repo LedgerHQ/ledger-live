@@ -1,6 +1,6 @@
 import { expect } from "@playwright/test";
-import { Modal } from "../../component/modal.component";
-import { step } from "../../misc/reporters/step";
+import { Modal } from "tests/component/modal.component";
+import { step } from "tests/misc/reporters/step";
 
 export class SettingsModal extends Modal {
   readonly warningMessage = this.page.getByTestId("warning-message");
