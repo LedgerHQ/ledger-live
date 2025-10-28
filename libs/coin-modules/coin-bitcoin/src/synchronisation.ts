@@ -1,7 +1,6 @@
 import type { Currency, Output as WalletOutput } from "./wallet-btc";
 import { DerivationModes as WalletDerivationModes } from "./wallet-btc";
 import { BigNumber } from "bignumber.js";
-import { log } from "@ledgerhq/logs";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets";
 import type { GetAccountShape } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { mergeOps } from "@ledgerhq/coin-framework/bridge/jsHelpers";
@@ -288,7 +287,6 @@ async function generateXpubIfNeeded(
 }
 
 export const postSync = (initial: BitcoinAccount, synced: BitcoinAccount) => {
-  log("bitcoin/postSync", "bitcoinResources");
   const perCoin = perCoinLogic[synced.currency.id];
   const syncedBtc = synced;
   if (perCoin) {
@@ -310,6 +308,5 @@ export const postSync = (initial: BitcoinAccount, synced: BitcoinAccount) => {
     }
   }
 
-  log("bitcoin/postSync", "bitcoinResources DONE");
   return syncedBtc;
 };

@@ -1,6 +1,6 @@
-import { Address, Block, TX } from "../storage/types";
+import { Address, Block, Output, TX } from "../storage/types";
 import network from "@ledgerhq/live-network/network";
-import { IExplorer, NetworkInfoResponse } from "./types";
+import { AtlasUtxo, IExplorer, NetworkInfoResponse } from "./types";
 import { CryptoCurrency } from "@ledgerhq/types-cryptoassets";
 import { blockchainBaseURL } from "../../explorer";
 
@@ -223,6 +223,24 @@ class BitcoinLikeExplorer implements IExplorer {
     });
 
     return { txs: hydratedTxs, nextPageToken };
+  }
+
+  async getUnspentUtxos(address: Address): Promise<Array<Output>> {
+    const { data } = await network({
+      method: "GET",
+      url: `${this.baseUrl}/address/${address.address}/utxos`,
+    });
+    return data.data.map(
+      (utxo: AtlasUtxo) =>
+        ({
+          value: utxo.value,
+          address: address.address,
+          output_hash: utxo.txId,
+          output_index: utxo.outputIndex,
+          block_height: utxo.height,
+          rbf: false,
+        }) satisfies Output,
+    );
   }
 }
 

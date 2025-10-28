@@ -1,4 +1,4 @@
-import { TX, Address, Block } from "../storage/types";
+import { TX, Address, Block, Output } from "../storage/types";
 
 export type NetworkInfoResponse = {
   relay_fee: string; // BTC per kB, e.g. "0.00001000"
@@ -6,6 +6,18 @@ export type NetworkInfoResponse = {
   version: string; // e.g. "290000"
   subversion: string; // e.g. "/Satoshi:29.0.0/"
 };
+
+export type AtlasUtxo = {
+  height: number;
+  txIndex: number;
+  outputIndex: number;
+  txId: string;
+  value: string;
+  hex: string;
+  type: string;
+  owner: string;
+};
+
 // abstract explorer api used, abstract batching logic, pagination, and retries
 export interface IExplorer {
   baseUrl: string;
@@ -16,6 +28,7 @@ export interface IExplorer {
   getCurrentBlock(): Promise<Block | null>;
   getBlockByHeight(height: number): Promise<Block | null>;
   getPendings(address: Address, nbMax?: number): Promise<TX[]>;
+  getUnspentUtxos(address: Address): Promise<Output[]>;
   getTxsSinceBlockheight(
     batchSize: number,
     address: Address,

@@ -94,7 +94,8 @@ class BitcoinLikeWallet {
     const addresses = await account.xpub.getXpubAddresses();
     return flatten(
       await Promise.all(
-        addresses.map(address => account.xpub.storage.getAddressUnspentUtxos(address)),
+        // addresses.map(address => account.xpub.storage.getAddressUnspentUtxos(address)),
+        addresses.map(address => account.xpub.explorer.getUnspentUtxos(address)),
       ),
     );
   }
