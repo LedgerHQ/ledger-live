@@ -122,7 +122,7 @@ export function makeGetAccountShape(
     );
     const totalBalance = unlockedAmount.plus(lockedAmount);
     const reserveMin = new BigNumber(coinConfig.getCoinConfig(currency).minReserve || 0);
-    const spendableBalance = BigNumber.max(0, unlockedAmount.minus(reserveMin));
+    const spendableBalance = BigNumber.max(0, totalBalance.minus(reserveMin));
 
     const instrumentUtxoCounts: Record<string, number> = {};
     for (const [instrumentId, balance] of Object.entries(balancesData)) {

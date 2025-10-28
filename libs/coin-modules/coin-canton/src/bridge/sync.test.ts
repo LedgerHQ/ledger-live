@@ -132,7 +132,7 @@ describe("makeGetAccountShape", () => {
 
     expect(shape).toBeDefined();
     expect(shape.balance).toEqual(BigNumber(1010));
-    expect(shape.spendableBalance).toEqual(BigNumber(10));
+    expect(shape.spendableBalance).toEqual(BigNumber(1010));
   });
 
   it("should handle empty balances correctly", async () => {
