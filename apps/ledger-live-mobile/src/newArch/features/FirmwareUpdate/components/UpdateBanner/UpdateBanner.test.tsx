@@ -208,7 +208,7 @@ describe("<UpdateBanner />", () => {
     expect(await screen.findByText("Firmware Update")).toBeOnTheScreen();
     expect(
       await screen.findByText(
-        "Update your Ledger Nano firmware by connecting it to the Ledger Live application on desktop",
+        "Update your Ledger Nano firmware by connecting it to the Ledger Wallet application on desktop",
       ),
     ).toBeOnTheScreen();
 
@@ -284,7 +284,7 @@ describe("<UpdateBanner />", () => {
     expect(await screen.findByText("Firmware Update")).toBeOnTheScreen();
     expect(
       await screen.findByText(
-        "Update your Ledger Nano firmware by connecting it to the Ledger Live application on desktop",
+        "Update your Ledger Nano firmware by connecting it to the Ledger Wallet application on desktop",
       ),
     ).toBeOnTheScreen();
 
@@ -368,7 +368,7 @@ describe("<UpdateBanner />", () => {
       expect(await screen.findByText("Firmware Update")).toBeOnTheScreen();
       expect(
         await screen.findByText(
-          "Update your Ledger Nano firmware by connecting it to the Ledger Live application on desktop",
+          "Update your Ledger Nano firmware by connecting it to the Ledger Wallet application on desktop",
         ),
       ).toBeOnTheScreen();
 

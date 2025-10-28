@@ -474,8 +474,8 @@ export class SwapPage extends AppPage {
   async clickExportOperations() {
     await this.exportOperationsButton.click();
 
-    const originalFilePath = path.resolve("./ledgerlive-swap-history.csv");
-    const targetFilePath = path.resolve(__dirname, "../artifacts/ledgerlive-swap-history.csv");
+    const originalFilePath = path.resolve("./ledgerwallet-swap-history.csv");
+    const targetFilePath = path.resolve(__dirname, "../artifacts/ledgerwallet-swap-history.csv");
 
     const fileExists = await FileUtils.waitForFileToExist(originalFilePath, 5000);
     expect(fileExists).toBeTruthy();
@@ -486,7 +486,7 @@ export class SwapPage extends AppPage {
 
   @step("Check contents of exported operations file")
   async checkExportedFileContents(swap: Swap, provider: Provider, id: string) {
-    const targetFilePath = path.resolve(__dirname, "../artifacts/ledgerlive-swap-history.csv");
+    const targetFilePath = path.resolve(__dirname, "../artifacts/ledgerwallet-swap-history.csv");
     const fileContents = await fs.readFile(targetFilePath, "utf-8");
 
     expect(fileContents).toContain(provider.name);

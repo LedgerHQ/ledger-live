@@ -97,14 +97,14 @@ describe("UpdaterTopBanner", () => {
     );
 
     expect(
-      screen.getByText(`Update to Ledger Live version ${context.version} is available`),
+      screen.getByText(`Update to Ledger Wallet version ${context.version} is available`),
     ).toBeInTheDocument();
     await act(async () => {
       await i18n.changeLanguage("fr");
     });
 
     expect(
-      screen.getByText(`Mise à jour disponible vers la version Ledger Live ${context.version}`),
+      screen.getByText(`Mise à jour disponible vers la version Ledger Wallet ${context.version}`),
     ).toBeInTheDocument();
   });
 });

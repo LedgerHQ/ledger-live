@@ -42,6 +42,7 @@ import {
   validateEarnDepositScreen,
 } from "./deeplinks/validation";
 import { viewNamePredicate } from "~/datadog";
+import { AppLoadingManager } from "LLM/features/LaunchScreen";
 
 const themes: {
   [key: string]: Theme;
@@ -57,13 +58,14 @@ function isWalletConnectUrl(url: string) {
 function isWalletConnectLink(url: string) {
   return (
     isWalletConnectUrl(url) ||
+    url.startsWith("ledgerwallet://wc") ||
     url.startsWith("ledgerlive://wc") ||
     url.startsWith("https://ledger.com/wc")
   );
 }
 
 function isStorylyLink(url: string) {
-  return url.startsWith("ledgerlive://storyly?");
+  return url.startsWith("ledgerlive://storyly?") || url.startsWith("ledgerwallet://storyly?");
 }
 
 function getProxyURL(url: string, customBuySellUiAppId?: string) {
@@ -109,6 +111,7 @@ const linkingOptions = () => ({
   },
 
   prefixes: [
+    "ledgerwallet://",
     "ledgerlive://",
     "https://ledger.com",
     // FIXME: We will be fixing the universal links in this epic : https://ledgerhq.atlassian.net/browse/LIVE-14732
@@ -744,18 +747,24 @@ export const DeeplinksProvider = ({
   }
 
   return (
-    <NavigationContainer
-      theme={theme}
-      linking={linking}
-      ref={navigationRef}
-      onReady={() => {
-        isReadyRef.current = true;
-        setTimeout(() => SplashScreen.hide(), 300);
+    <AppLoadingManager
+      isNavigationReady={isReady}
+      onAppReady={() => {
         navigationIntegration.registerNavigationContainer(navigationRef);
         DdRumReactNavigationTracking.startTrackingViews(navigationRef.current, viewNamePredicate);
       }}
     >
-      {children}
-    </NavigationContainer>
+      <NavigationContainer
+        theme={theme}
+        linking={linking}
+        ref={navigationRef}
+        onReady={() => {
+          isReadyRef.current = true;
+          setTimeout(() => SplashScreen.hide(), 300);
+        }}
+      >
+        {children}
+      </NavigationContainer>
+    </AppLoadingManager>
   );
 };

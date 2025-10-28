@@ -131,7 +131,7 @@ const FlowStepper: React.FC<FlowStepperProps> = ({
         backgroundColor="palette.constant.purple"
         header={
           <Flex justifyContent="center">
-            <Logos.LedgerLiveRegular />
+            <Logos.LedgerLiveRegular width={155} height={32} />
           </Flex>
         }
         footer={Footer}

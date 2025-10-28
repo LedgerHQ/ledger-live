@@ -1,12 +1,8 @@
 import React from "react";
-import styled from "styled-components";
-import { Box, Button, Header, IconsLegacy } from "@ledgerhq/react-ui";
+import styled, { useTheme } from "styled-components";
+import { Button, Header, IconsLegacy, Logos } from "@ledgerhq/react-ui";
 import LangSwitcher from "./LangSwitcher";
-import ledgerLogo from "./assets/ledgerLogo.svg";
-import { registerAssets } from "~/renderer/components/Onboarding/preloadAssets";
 import { useTranslation } from "react-i18next";
-
-registerAssets([ledgerLogo]);
 
 const OnboardingContainer = styled(Header)`
   position: absolute;
@@ -17,22 +13,12 @@ const OnboardingContainer = styled(Header)`
   align-items: center;
 `;
 
-const Logo = styled(Box).attrs({
-  backgroundColor: "neutral.c100",
-  height: "25px",
-  width: "75px",
-})`
-  // prettier-ignore
-  -webkit-mask-image: url('${ledgerLogo}');
-  // prettier-ignore
-  mask-image: url('${ledgerLogo}');
-`;
-
 interface Props {
   onClickPrevious: (event?: React.SyntheticEvent<HTMLButtonElement, Event>) => void;
 }
 
 export default function OnboardingNavHeader({ onClickPrevious }: Props) {
+  const { colors } = useTheme();
   const { t } = useTranslation();
   const left = (
     <Button iconPosition="left" Icon={IconsLegacy.ArrowLeftMedium} onClick={onClickPrevious}>
@@ -42,7 +28,7 @@ export default function OnboardingNavHeader({ onClickPrevious }: Props) {
   const right = <LangSwitcher />;
   return (
     <OnboardingContainer {...{ left, right }}>
-      <Logo />
+      <Logos.LedgerLiveRegular color={colors.neutral.c100} height={24} />
     </OnboardingContainer>
   );
 }

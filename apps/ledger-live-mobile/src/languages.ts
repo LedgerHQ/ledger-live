@@ -67,7 +67,7 @@ export const localeIdToDeviceLanguage: { [key in Locale]?: Language } = {
  * AND supported in terms of external resources (i.e. customer support, articles etc.)
  * These languages will be used by default for new users if it's their system language
  * or in the case of existing users, they will be prompted once to change their
- * Ledger Live language.
+ * Ledger Wallet language.
  */
 
 export const fullySupportedLocales: Locale[] = [

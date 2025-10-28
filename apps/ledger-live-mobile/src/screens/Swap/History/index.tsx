@@ -164,7 +164,7 @@ const History = () => {
       }
     } else {
       try {
-        sendFile({ fileName: "ledgerlive-swap-history.csv", fileContent: mapped });
+        sendFile({ fileName: "ledgerwallet-swap-history.csv", fileContent: mapped });
       } catch (err) {
         logger.critical(err as Error);
       }

@@ -38,7 +38,7 @@ export default function WelcomePage() {
             />
           ))}
         <LogoView testID="welcome-logo" onTouchStart={onLogoTouchStart} onTouchEnd={onLogoTouchEnd}>
-          <Logos.LedgerLiveRegular color={colors.constant.white} width={113} />
+          <Logos.LedgerLiveRegular color={colors.constant.white} width={110} height={32} />
         </LogoView>
         <StoryProgressView>
           {/* Sync the progress bar with the video duration manually */}
