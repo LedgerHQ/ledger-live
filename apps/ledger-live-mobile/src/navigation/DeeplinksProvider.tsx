@@ -175,6 +175,10 @@ const linkingOptions = () => ({
             },
           },
           [ScreenName.Recover]: "recover/:platform",
+          /**
+           * ie: "ledgerlive://market/:currencyId" will open the market detail page for the given currency
+           */
+          [ScreenName.MarketDetail]: "market/:currencyId",
           [NavigatorName.PostOnboarding]: {
             screens: {
               /**
