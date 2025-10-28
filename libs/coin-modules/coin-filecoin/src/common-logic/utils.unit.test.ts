@@ -206,9 +206,7 @@ describe("common-logic/utils", () => {
     const mockedFetchBlockHeight = api.fetchBlockHeight as jest.MockedFunction<
       typeof api.fetchBlockHeight
     >;
-    const mockedFetchBalances = api.fetchBalances as jest.MockedFunction<
-      typeof api.fetchBalances
-    >;
+    const mockedFetchBalances = api.fetchBalances as jest.MockedFunction<typeof api.fetchBalances>;
     const mockedFetchTxsWithPages = api.fetchTxsWithPages as jest.MockedFunction<
       typeof api.fetchTxsWithPages
     >;

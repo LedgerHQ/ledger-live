@@ -1,7 +1,6 @@
 import { log } from "@ledgerhq/logs";
-import { AxiosRequestConfig, AxiosResponse } from "axios";
 
-import network from "@ledgerhq/live-network/network";
+import network from "@ledgerhq/live-network";
 import { makeLRUCache } from "@ledgerhq/live-network/cache";
 import { getEnv } from "@ledgerhq/live-env";
 
@@ -19,6 +18,7 @@ import {
   ERC20BalanceResponse,
 } from "../types";
 import { FilecoinFeeEstimationFailed } from "../errors";
+import { LiveNetworkRequest } from "@ledgerhq/live-network/network";
 
 const txsPerPageLimit = 1000;
 const currentVersion = "/v2";
@@ -35,34 +35,35 @@ const fetch = async <T>(version: string, path: string) => {
   const url = getFilecoinURL(version, path);
 
   // We force data to this way as network func is not using the correct param type. Changing that func will generate errors in other implementations
-  const opts: AxiosRequestConfig = {
+  const opts: LiveNetworkRequest<undefined> = {
     method: "GET",
     url,
   };
 
-  const rawResponse = await network(opts);
+  const rawResponse = await network<T>(opts);
 
   // We force data to this way as network func is not using the correct param type. Changing that func will generate errors in other implementations
-  const { data } = rawResponse as AxiosResponse<T>;
+  const { data } = rawResponse;
 
   log("http", url);
   return data;
 };
 
-const send = async <T>(version: string, path: string, data: Record<string, any>) => {
+type sendDataType = EstimatedFeesRequest | BroadcastTransactionRequest;
+const send = async <T>(version: string, path: string, data: sendDataType) => {
   const url = getFilecoinURL(version, path);
 
-  const opts: AxiosRequestConfig = {
+  const opts: LiveNetworkRequest<string> = {
     method: "POST",
     url,
     data: JSON.stringify(data),
     headers: { "Content-Type": "application/json" },
   };
 
-  const rawResponse = await network(opts);
+  const rawResponse = await network<T>(opts);
 
   // We force data to this way as network func is not using generics. Changing that func will generate errors in other implementations
-  const { data: responseData } = rawResponse as AxiosResponse<T>;
+  const { data: responseData } = rawResponse;
 
   log("http", url);
   return responseData;
@@ -78,7 +79,7 @@ export const fetchEstimatedFees = makeLRUCache(
     try {
       const data = await send<EstimatedFeesResponse>(currentVersion, `/fees/estimate`, request);
       return data; // TODO Validate if the response fits this interface
-    } catch (e: any) {
+    } catch (e) {
       log("error", "filecoin fetchEstimatedFees", e);
       throw new FilecoinFeeEstimationFailed();
     }
@@ -91,7 +92,7 @@ export const fetchEstimatedFees = makeLRUCache(
 
 export const fetchBlockHeight = async (): Promise<NetworkStatusResponse> => {
   const data = await fetch<NetworkStatusResponse>(currentVersion, "/network/status");
-  return data as NetworkStatusResponse; // TODO Validate if the response fits this interface
+  return data; // TODO Validate if the response fits this interface
 };
 
 export const fetchTxs = async (

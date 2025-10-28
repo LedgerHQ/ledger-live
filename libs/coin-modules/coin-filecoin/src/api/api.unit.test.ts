@@ -1,4 +1,5 @@
-import network from "@ledgerhq/live-network/network";
+/* eslint-disable @typescript-eslint/consistent-type-assertions */
+import network from "@ledgerhq/live-network";
 import { getEnv } from "@ledgerhq/live-env";
 import {
   fetchBalances,
@@ -44,7 +45,7 @@ describe("Filecoin API", () => {
         locked_balance: "100000000000000000",
       });
 
-      mockedNetwork.mockResolvedValueOnce({ data: mockBalance } as any);
+      mockedNetwork.mockResolvedValueOnce({ data: mockBalance, status: 200 });
 
       const result = await fetchBalances(TEST_ADDRESSES.F1_ADDRESS);
 
@@ -66,7 +67,7 @@ describe("Filecoin API", () => {
         to: TEST_ADDRESSES.RECIPIENT_F1,
       };
 
-      mockedNetwork.mockResolvedValueOnce({ data: mockFees } as any);
+      mockedNetwork.mockResolvedValueOnce({ data: mockFees, status: 200 });
 
       const result = await fetchEstimatedFees(request);
 
@@ -88,7 +89,7 @@ describe("Filecoin API", () => {
         current_block_timestamp: Date.now(),
       };
 
-      mockedNetwork.mockResolvedValueOnce({ data: mockNetworkStatus } as any);
+      mockedNetwork.mockResolvedValueOnce({ data: mockNetworkStatus, status: 200 });
 
       const result = await fetchBlockHeight();
 
@@ -103,7 +104,7 @@ describe("Filecoin API", () => {
         metadata: { limit: 50, offset: 10 },
       };
 
-      mockedNetwork.mockResolvedValueOnce({ data: mockResponse } as any);
+      mockedNetwork.mockResolvedValueOnce({ data: mockResponse, status: 200 });
 
       await fetchTxs(TEST_ADDRESSES.F1_ADDRESS, 2500000, 10, 50);
 
@@ -124,8 +125,8 @@ describe("Filecoin API", () => {
       );
 
       mockedNetwork
-        .mockResolvedValueOnce({ data: { txs: firstPageTxs, metadata: {} } } as any)
-        .mockResolvedValueOnce({ data: { txs: secondPageTxs, metadata: {} } } as any);
+        .mockResolvedValueOnce({ data: { txs: firstPageTxs, metadata: {} }, status: 200 })
+        .mockResolvedValueOnce({ data: { txs: secondPageTxs, metadata: {} }, status: 200 });
 
       const result = await fetchTxsWithPages(TEST_ADDRESSES.F1_ADDRESS, 0);
 
@@ -159,7 +160,7 @@ describe("Filecoin API", () => {
         hash: TEST_TRANSACTION_HASHES.VALID,
       };
 
-      mockedNetwork.mockResolvedValueOnce({ data: mockResponse } as any);
+      mockedNetwork.mockResolvedValueOnce({ data: mockResponse, status: 200 });
 
       const result = await broadcastTx(mockRequest);
 
@@ -173,7 +174,7 @@ describe("Filecoin API", () => {
         data: [],
       };
 
-      mockedNetwork.mockResolvedValueOnce({ data: mockResponse } as any);
+      mockedNetwork.mockResolvedValueOnce({ data: mockResponse, status: 200 });
 
       const result = await fetchERC20TokenBalance(
         TEST_ADDRESSES.F4_ADDRESS,
@@ -203,8 +204,8 @@ describe("Filecoin API", () => {
       );
 
       mockedNetwork
-        .mockResolvedValueOnce({ data: { txs: firstPageTxs } } as any)
-        .mockResolvedValueOnce({ data: { txs: secondPageTxs } } as any);
+        .mockResolvedValueOnce({ data: { txs: firstPageTxs }, status: 200 })
+        .mockResolvedValueOnce({ data: { txs: secondPageTxs }, status: 200 });
 
       const result = await fetchERC20TransactionsWithPages(TEST_ADDRESSES.F4_ADDRESS, 100);
 

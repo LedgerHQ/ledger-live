@@ -247,7 +247,6 @@ export const createMockTokenAccount = (
   return { ...tokenAccount, ...options };
 };
 
-
 /**
  * Create mock API response for balance
  *
@@ -341,4 +340,3 @@ export const createMockERC20Transfer = (options?: Partial<ERC20Transfer>): ERC20
 
   return transfer;
 };
-
