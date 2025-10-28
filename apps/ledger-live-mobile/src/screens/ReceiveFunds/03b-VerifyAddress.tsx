@@ -31,6 +31,7 @@ import { useTrackReceiveFlow } from "~/analytics/hooks/useTrackReceiveFlow";
 import { HOOKS_TRACKING_LOCATIONS } from "~/analytics/hooks/variables";
 import { lastConnectedDeviceSelector } from "~/reducers/settings";
 import SafeAreaViewFixed from "~/components/SafeAreaView";
+import { getFreshAccountAddress } from "~/utils/address";
 
 const illustrations = {
   dark: require("~/images/illustration/Dark/_080.webp"),
@@ -198,7 +199,7 @@ export default function ReceiveVerifyAddress({ navigation, route }: Props) {
           </LText>
           <Flex mt={10} bg={"neutral.c30"} borderRadius={8} p={6} mx={6}>
             <LText semiBold textAlign="center" testID={"receive-verifyAddress-freshAdress"}>
-              {mainAccount.freshAddress}
+              {getFreshAccountAddress(mainAccount)}
             </LText>
           </Flex>
           <AnimationContainer>
