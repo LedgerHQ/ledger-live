@@ -21,7 +21,7 @@ const feeValue = (currency: CryptoCurrency) => coinConfig.getCoinConfig(currency
 
 export async function estimateFees(currency: CryptoCurrency, amount: bigint): Promise<bigint> {
   const forcedValue = feeValue(currency);
-  if (forcedValue) {
+  if (forcedValue !== undefined) {
     return Promise.resolve(BigInt(forcedValue) * magnitude);
   } else {
     return Promise.resolve(
