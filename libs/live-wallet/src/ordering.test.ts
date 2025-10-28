@@ -93,8 +93,8 @@ setCryptoAssetsStore({
   findTokenByAddressInCurrency: () => undefined,
   getTokensSyncHash: () => Promise.resolve("0"),
 } as CryptoAssetsStore);
-const accounts = raws.map(a => fromAccountRaw(a));
 
+let accounts: Awaited<ReturnType<typeof fromAccountRaw>>[];
 const walletState: WalletState = {
   accountNames: new Map(),
   starredAccountIds: new Set(),
@@ -105,13 +105,17 @@ const walletState: WalletState = {
   nonImportedAccountInfos: [],
 };
 
-for (const raw of raws) {
-  const r = accountRawToAccountUserData(raw);
-  walletState.accountNames.set(r.id, r.name);
-  for (const id of r.starredIds) {
-    walletState.starredAccountIds.add(id);
+beforeAll(async () => {
+  accounts = await Promise.all(raws.map(a => fromAccountRaw(a)));
+
+  for (const raw of raws) {
+    const r = accountRawToAccountUserData(raw);
+    walletState.accountNames.set(r.id, r.name);
+    for (const id of r.starredIds) {
+      walletState.starredAccountIds.add(id);
+    }
   }
-}
+});
 
 const mockedCalculateCountervalue = <T>(_: unknown, balance: T): T => balance;
 

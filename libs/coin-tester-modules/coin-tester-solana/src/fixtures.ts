@@ -6,8 +6,12 @@ import BigNumber from "bignumber.js";
 import { SolanaAccount } from "@ledgerhq/coin-solana/types";
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
 import { findTokenById } from "@ledgerhq/cryptoassets/tokens";
+import { initializeLegacyTokens } from "@ledgerhq/cryptoassets/legacy/legacy-data";
+import { addTokens } from "@ledgerhq/cryptoassets/legacy/legacy-utils";
 import { HttpResponse, http } from "msw";
 import { setupServer } from "msw/node";
+
+initializeLegacyTokens(addTokens);
 
 export const RECIPIENT = "Hj69wRzkrFuf1Nby4yzPEFHdsmQdMoVYjvDKZSLjZFEp";
 export const SOLANA = getCryptoCurrencyById("solana");

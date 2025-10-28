@@ -3,6 +3,10 @@ import { genAccount } from "../../mock/account";
 import type { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import type { Account, TokenAccount } from "@ledgerhq/types-live";
 import { getAccountTuplesForCurrency } from "../getAccountTuplesForCurrency";
+import { initializeLegacyTokens } from "@ledgerhq/cryptoassets/legacy/legacy-data";
+import { addTokens } from "@ledgerhq/cryptoassets/legacy/legacy-utils";
+
+initializeLegacyTokens(addTokens);
 
 function* accountGenerator(currency: CryptoCurrency): Generator<Account> {
   let id = 0;

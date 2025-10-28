@@ -2,6 +2,8 @@ import { encodeTokenAccountId } from "@ledgerhq/coin-framework/account/index";
 import { Scenario, ScenarioTransaction } from "@ledgerhq/coin-tester/main";
 import { killSpeculos, spawnSpeculos } from "@ledgerhq/coin-tester/signers/speculos";
 import { findTokenById } from "@ledgerhq/cryptoassets/tokens";
+import { initializeLegacyTokens } from "@ledgerhq/cryptoassets/legacy/legacy-data";
+import { addTokens } from "@ledgerhq/cryptoassets/legacy/legacy-utils";
 import { Account } from "@ledgerhq/types-live";
 import { BigNumber } from "bignumber.js";
 import { ethers } from "ethers";
@@ -17,6 +19,8 @@ import { indexBlocks, initMswHandlers, resetIndexer, setBlock } from "../indexer
 import { defaultNanoApp } from "../constants";
 import { LiveConfig } from "@ledgerhq/live-config/LiveConfig";
 import { BridgeStrategy } from "@ledgerhq/coin-tester/types";
+
+initializeLegacyTokens(addTokens);
 
 type EthereumScenarioTransaction = ScenarioTransaction<EvmTransaction, Account>;
 

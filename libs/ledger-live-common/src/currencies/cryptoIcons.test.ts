@@ -1,6 +1,12 @@
 import { getCryptoCurrencyById } from "@ledgerhq/cryptoassets/currencies";
+import { initializeLegacyTokens } from "@ledgerhq/cryptoassets/legacy/legacy-data";
+import { addTokens } from "@ledgerhq/cryptoassets/legacy/legacy-utils";
 import { inferCryptoCurrencyIcon } from "./cryptoIcons";
 import { findTokenById } from "@ledgerhq/cryptoassets/tokens";
+
+beforeAll(() => {
+  initializeLegacyTokens(addTokens);
+});
 
 describe("inferCryptoCurrencyIcon", () => {
   const registryMock = {

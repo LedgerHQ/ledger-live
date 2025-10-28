@@ -1,5 +1,9 @@
 import { listCryptoCurrencies } from "./currencies";
 import { listTokenTypesForCryptoCurrency, listTokensForCryptoCurrency } from "./tokens";
+import { initializeLegacyTokens } from "./legacy/legacy-data";
+import { addTokens } from "./legacy/legacy-utils";
+
+initializeLegacyTokens(addTokens);
 
 /*
  * Backward compatibility test for tokenTypes feature.

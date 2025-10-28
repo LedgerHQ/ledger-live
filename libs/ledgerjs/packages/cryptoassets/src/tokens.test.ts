@@ -9,6 +9,9 @@ import {
 } from "./tokens";
 import { createTokenHash } from "./legacy/legacy-utils";
 import { ERC20Token } from "./types";
+import { initializeLegacyTokens } from "./legacy/legacy-data";
+
+initializeLegacyTokens(addTokens);
 
 const initMainToken: ERC20Token[] = [
   [
