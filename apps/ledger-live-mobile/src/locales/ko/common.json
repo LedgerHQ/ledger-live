@@ -1073,6 +1073,10 @@
     "HederaAddAccountError" : {
       "title" : "귀하의 계정이 추가되지 않았습니다. 다시 시도해 주세요."
     },
+    "HederaRecipientInvalidChecksum" : {
+      "title" : "유효하지 않은 주소 검사합",
+      "description" : "입력한 주소의 검사합이 유효하지 않습니다."
+    },
     "HederaInsufficientFundsForAssociation" : {
       "title" : "보유 수량 부족",
       "description" : "토큰 연동에 필요한 HBAR가 충분하지 않습니다. 최소 ${{requiredWorthInUSD}} 상당의 HBAR가 필요합니다."
@@ -2292,7 +2296,13 @@
         },
         "retryCta" : "페어링 재시도",
         "openSettingsCta" : "블루투스 설정으로 이동하세요",
-        "howToFixPairingIssue" : "페어링 문제 수정 방법"
+        "howToFixPairingIssue" : "페어링 문제 수정 방법",
+        "forgetDevice" : {
+          "title" : "Go to your phone's Bluetooth settings to unpair {{productName}}",
+          "description" : "To fix the pairing issue, remove {{productName}} from your phone's Bluetooth list, then return to this app and try again.",
+          "learnHowToFixCta" : "Learn how to fix",
+          "tryAgainCta" : "I unpaired. Try again"
+        }
       }
     }
   },
@@ -2504,7 +2514,7 @@
       },
       "selectionContinueOnDevice" : "{{productName}}에서 관련 옵션을 선택하세요.",
       "newSeedTitle" : "비밀 복구 문구",
-      "newSeedDescription" : "준비된 영상으로 비밀 복구 문구에 대해 더 자세히 알아보세요.",
+      "newSeedDescription" : "비밀 복구 문구는 보유한 모든 자산을 제어할 수 있는 대체 불가능한 열쇠이며, 이 문구를 손에 넣은 사람은 누구든 사용자의 자산을 탈취할 수 있습니다. 분실 시 Ledger에서도 이를 복구해 드릴 수 없습니다.",
       "newSeedContinueOnDevice" : "{{productName}}에 표시되는 안내를 따라주세요.",
       "recovery" : "Ledger 장치에서 생성된 비밀 복구 문구를 사용해 자산에 대한 보안을 극대화하세요.\n\n복구 문구가 없으신가요? {{productName}}을 사용해 새로운 복구 문구를 생성하세요."
     },
@@ -2544,7 +2554,7 @@
       "title" : "{{productName}} 장치에서 디지털 자산을 안전하게 보호하세요"
     },
     "newSeed" : {
-      "subtitle" : "이제 Ledger Live로 모든 거래소와 지갑에서 암호화폐를 안전하게 전송하고 최고 수준의 보안을 누려보세요.",
+      "subtitle" : "모든 거래소와 지갑에서 Ledger Wallet으로 암호화폐를 안전하게 옮기고 최고 수준의 보안을 누려보세요.",
       "installCTA" : "자산 보호 시작하기",
       "skipCTA" : "다음에 결정하기"
     }
@@ -3768,6 +3778,10 @@
       "history" : {
         "title" : "스왑 내역"
       },
+      "wrongDevice" : {
+        "title" : "Ledger Nano S™는 {{provider}}와(과) 호환되지 않습니다",
+        "description" : "Ledger Nano S™는 {{provider}}와(과) 호환되지 않습니다 Ledger Nano S Plus™, Ledger Nano X™, Ledger Stax™, Ledger Flex™에서는 Ledger Live를 통해 {{provider}}의 크로스체인 스왑을 경험할 수 있습니다"
+      },
       "incompatibility" : {
         "explore_compatible_devices" : "호환 가능한 장치 탐색",
         "contact_support" : "고객 지원 문의",
@@ -3794,7 +3808,9 @@
         "sui_title" : "Ledger Nano S™는 Sui 스왑을 지원하지 않습니다",
         "sui_description" : "Sui 스왑 거래를 수행하려면 Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ 또는 Ledger Stax™와 같은 다른 호환 Ledger 장치를 사용하세요.",
         "kaspa_title" : "Ledger Nano S™는 카스파 스왑을 지원하지 않습니다.",
-        "kaspa_description" : "카스파를 스왑하려면 Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ 또는 Ledger Stax™와 같은 호환 가능한 다른 Ledger 장치를 사용하세요."
+        "kaspa_description" : "카스파를 스왑하려면 Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ 또는 Ledger Stax™와 같은 호환 가능한 다른 Ledger 장치를 사용하세요.",
+        "celo_title" : "Ledger Nano S™는 셀로 스왑을 지원하지 않습니다.",
+        "celo_description" : "셀로를 스왑하려면 Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ 또는 Ledger Stax™와 같은 다른 호환 Ledger 장치를 사용하세요."
       }
     },
     "lending" : {
@@ -4070,6 +4086,10 @@
       "solanaRawTransaction" : {
         "title" : "블라인드 서명 필요",
         "description" : "Ledger 장치에서 트랜잭션 세부 정보를 확인할 수 없습니다. 서명할 경우, 모든 자산을 잃을 수 있습니다. 이 웹사이트를 신뢰할 수 있는 경우에만 서명하세요."
+      },
+      "bitcoinPsbtTransaction" : {
+        "title" : "장치에서 확인",
+        "description" : "다음 단계로 진행하면 장치에서 트랜잭션 수량과 수령인을 확인할 수 있습니다."
       },
       "subaccountsWarning" : "이 계정의 토큰을 송신하려면 계정에 {{ currency }}(을)를 다시 채워야 합니다.",
       "tag" : "태그(옵션)",
@@ -4581,7 +4601,6 @@
     }
   },
   "manager" : {
-    "tabTitle" : "내 Ledger",
     "title" : "내 Ledger",
     "selectDevice" : {
       "title" : "장치",
@@ -6478,6 +6497,7 @@
   },
   "sui" : {
     "info" : {
+      "estimatedReward" : "받은 보상",
       "available" : {
         "title" : "SUI 이용 가능",
         "description" : "자유롭게 사용할 수 있는 수량입니다."
@@ -7869,7 +7889,7 @@
     "selectAsset" : "자산 선택",
     "selectNetwork" : "네트워크 선택",
     "selectAccount" : "계정 선택",
-    "searchPlaceholder" : "검색",
+    "searchPlaceholder" : "Search by name or address",
     "emptyAssetList" : "자산을 찾을 수 없습니다",
     "accountCount_one" : "{{count}}개 계정",
     "accountCount_other" : "{{count}}개 계정",
@@ -7968,7 +7988,15 @@
       "authorize" : "승인",
       "preapprove" : "성공적으로 추가된 계정",
       "validator" : "Ledger 검증인",
-      "title" : "받은 자금을 자동으로 승인합니다"
+      "title" : "받은 자금을 자동으로 승인합니다",
+      "error429" : "현재 캔톤(Canton) 네트워크에서는 하루에 생성할 수 있는 계정 수가 제한됩니다. 나중에 다시 시도해 주세요."
+    },
+    "tooManyUtxos" : {
+      "title" : "Action Needed: Too Many UTXOs",
+      "description" : "Your account has too many small UTXOs to process this transfer. Merge them now to avoid expiration due to accumulated holding fees and enable transfers.",
+      "quickFix" : "Quick Fix: Send some funds to yourself to consolidate.",
+      "warning" : "Your account has too many small UTXOs. Send some funds to yourself to consolidate.",
+      "consolidate" : "Consolidate"
     }
   }
 }
