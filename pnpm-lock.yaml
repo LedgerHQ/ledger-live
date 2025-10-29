@@ -6,6 +6,27 @@ settings:
 
 catalogs:
   default:
+    '@ledgerhq/context-module':
+      specifier: 1.9.0
+      version: 1.9.0
+    '@ledgerhq/device-management-kit':
+      specifier: 0.9.2
+      version: 0.9.2
+    '@ledgerhq/device-signer-kit-ethereum':
+      specifier: 1.9.0
+      version: 1.9.0
+    '@ledgerhq/device-transport-kit-react-native-ble':
+      specifier: 1.2.0
+      version: 1.2.0
+    '@ledgerhq/device-transport-kit-web-hid':
+      specifier: 1.2.1
+      version: 1.2.1
+    '@reduxjs/toolkit':
+      specifier: 2.8.2
+      version: 2.8.2
+    axios:
+      specifier: 1.12.2
+      version: 1.12.2
     i18next:
       specifier: 23.10.1
       version: 23.10.1
@@ -36,6 +57,7 @@ overrides:
   elliptic: 6.6.1
   use-latest-callback: 0.1.9
   '@sentry/react-native>metro': 0.81.5
+  ethers: 6.15.0
 
 packageExtensionsChecksum: 505470d279d34dbf557b1005424e3d1d
 
@@ -43,7 +65,7 @@ pnpmfileChecksum: zwmwtmjd66yqvssrjrebeenwyu
 
 patchedDependencies:
   '@changesets/get-github-info@0.6.0':
-    hash: ihbfttx3a3q6odiznwmem6m4ay
+    hash: 3je6vc5oigzdzi6dv4a6zsaahi
     path: patches/@changesets__get-github-info@0.6.0.patch
   '@datadog/datadog-ci@3.11.0':
     hash: hshtsvjisk4nrwuydtrlg3tpk4
@@ -255,8 +277,8 @@ importers:
         specifier: workspace:^
         version: link:../../libs/ledgerjs/packages/types-devices
       '@zondax/ledger-live-icp':
-        specifier: 1.3.2
-        version: 1.3.2
+        specifier: 1.4.0
+        version: 1.4.0
       asciichart:
         specifier: 1.5.25
         version: 1.5.25
@@ -479,7 +501,7 @@ importers:
         specifier: 1.9.7
         version: 1.9.7
       '@reduxjs/toolkit':
-        specifier: 2.8.2
+        specifier: 'catalog:'
         version: 2.8.2(react-redux@7.2.9(@types/react@18.2.73)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react@18.3.1)
       '@sentry/electron':
         specifier: 5.2.0
@@ -828,8 +850,8 @@ importers:
         specifier: 2.15.1
         version: 2.15.1
       axios:
-        specifier: 1.11.0
-        version: 1.11.0
+        specifier: 'catalog:'
+        version: 1.12.2
       buffer:
         specifier: 6.0.3
         version: 6.0.3(patch_hash=2xnca52oxhztvr7iaoovwclcze)
@@ -978,8 +1000,8 @@ importers:
         specifier: workspace:^
         version: link:../../libs/ledgerjs/packages/cryptoassets
       '@ledgerhq/device-management-kit':
-        specifier: 0.9.1
-        version: 0.9.1(rxjs@7.8.1)
+        specifier: 'catalog:'
+        version: 0.9.2(rxjs@7.8.1)
       '@ledgerhq/devices':
         specifier: workspace:*
         version: link:../../libs/ledgerjs/packages/devices
@@ -1107,7 +1129,7 @@ importers:
         specifier: 7.4.4
         version: 7.4.4(lbwogby7gejg4afnz5dcrfv3re)
       '@reduxjs/toolkit':
-        specifier: 2.8.2
+        specifier: 'catalog:'
         version: 2.8.2(react-redux@7.2.9(@types/react@18.2.73)(react@18.3.1))(react@18.3.1)
       '@segment/analytics-react-native':
         specifier: 2.20.5
@@ -1874,8 +1896,8 @@ importers:
         specifier: ^3.2.1
         version: 3.2.1(@playwright/test@1.51.1)
       axios:
-        specifier: 1.11.0
-        version: 1.11.0
+        specifier: 'catalog:'
+        version: 1.12.2
       dotenv:
         specifier: ^16.4.7
         version: 16.4.7
@@ -2086,8 +2108,8 @@ importers:
         specifier: workspace:^
         version: link:../ledgerjs/packages/types-live
       axios:
-        specifier: 1.11.0
-        version: 1.11.0
+        specifier: 'catalog:'
+        version: 1.12.2
       bignumber.js:
         specifier: ^9.1.2
         version: 9.1.2
@@ -2366,8 +2388,8 @@ importers:
         specifier: ^7.5.8
         version: 7.5.8
       axios:
-        specifier: 1.11.0
-        version: 1.11.0
+        specifier: 'catalog:'
+        version: 1.12.2
       jest:
         specifier: ^29.7.0
         version: 29.7.0
@@ -2499,8 +2521,8 @@ importers:
         specifier: ^2.4.4
         version: 2.4.4
       axios:
-        specifier: 1.11.0
-        version: 1.11.0
+        specifier: 'catalog:'
+        version: 1.12.2
       bip32:
         specifier: ^2.0.6
         version: 2.0.6
@@ -2552,6 +2574,9 @@ importers:
       invariant:
         specifier: ^2.2.4
         version: 2.2.4
+      protobufjs:
+        specifier: 7.5.4
+        version: 7.5.4
       rxjs:
         specifier: ^7.8.1
         version: 7.8.1
@@ -2577,6 +2602,9 @@ importers:
       jest:
         specifier: ^29.7.0
         version: 29.7.0
+      protobufjs-cli:
+        specifier: 1.1.2
+        version: 1.1.2(protobufjs@7.5.4)
       ts-jest:
         specifier: ^29.1.1
         version: 29.3.2(jest@29.7.0)(typescript@5.8.3)
@@ -2715,8 +2743,8 @@ importers:
         specifier: ^7.5.8
         version: 7.5.8
       axios:
-        specifier: 1.11.0
-        version: 1.11.0
+        specifier: 'catalog:'
+        version: 1.12.2
       expect:
         specifier: ^27.4.6
         version: 27.5.1
@@ -2875,8 +2903,8 @@ importers:
         specifier: workspace:^
         version: link:../../ledgerjs/packages/types-live
       axios:
-        specifier: 1.11.0
-        version: 1.11.0
+        specifier: 'catalog:'
+        version: 1.12.2
       bech32:
         specifier: ^1.1.3
         version: 1.1.4
@@ -2963,8 +2991,8 @@ importers:
         specifier: workspace:^
         version: link:../../ledgerjs/packages/logs
       axios:
-        specifier: 1.11.0
-        version: 1.11.0
+        specifier: 'catalog:'
+        version: 1.12.2
       bignumber.js:
         specifier: ^9.1.2
         version: 9.1.2
@@ -3115,8 +3143,8 @@ importers:
         specifier: ^7.5.8
         version: 7.5.8
       axios:
-        specifier: 1.11.0
-        version: 1.11.0
+        specifier: 'catalog:'
+        version: 1.12.2
       jest:
         specifier: ^29.7.0
         version: 29.7.0
@@ -3297,8 +3325,8 @@ importers:
         specifier: workspace:^
         version: link:../../ledgerjs/packages/types-live
       '@zondax/ledger-live-icp':
-        specifier: 1.3.2
-        version: 1.3.2
+        specifier: 1.4.0
+        version: 1.4.0
       bignumber.js:
         specifier: ^9.1.2
         version: 9.1.2
@@ -3328,8 +3356,8 @@ importers:
         specifier: ^7.5.8
         version: 7.5.8
       axios:
-        specifier: 1.11.0
-        version: 1.11.0
+        specifier: 'catalog:'
+        version: 1.12.2
       jest:
         specifier: ^29.7.0
         version: 29.7.0
@@ -3604,8 +3632,8 @@ importers:
         specifier: ^13.7.0
         version: 13.17.1(bignumber.js@9.1.2)(protobufjs@7.3.2)
       axios:
-        specifier: 1.11.0
-        version: 1.11.0
+        specifier: 'catalog:'
+        version: 1.12.2
       bech32:
         specifier: ^1.1.3
         version: 1.1.4
@@ -3917,8 +3945,8 @@ importers:
         specifier: 7.7.0
         version: 7.7.0
       axios:
-        specifier: 1.11.0
-        version: 1.11.0
+        specifier: 'catalog:'
+        version: 1.12.2
       eslint-plugin-jest:
         specifier: ^27.4.2
         version: 27.9.0(@typescript-eslint/eslint-plugin@6.21.0(@typescript-eslint/parser@6.21.0(eslint@8.57.0)(typescript@5.4.3))(eslint@8.57.0)(typescript@5.4.3))(eslint@8.57.0)(jest@29.7.0)(typescript@5.4.3)
@@ -3974,8 +4002,8 @@ importers:
         specifier: ^1.0.2
         version: 1.0.4
       axios:
-        specifier: 1.11.0
-        version: 1.11.0
+        specifier: 'catalog:'
+        version: 1.12.2
       bignumber.js:
         specifier: ^9.1.2
         version: 9.1.2
@@ -4147,8 +4175,8 @@ importers:
         specifier: 1.38.0
         version: 1.38.0(typescript@5.4.3)
       axios:
-        specifier: 1.11.0
-        version: 1.11.0
+        specifier: 'catalog:'
+        version: 1.12.2
       bignumber.js:
         specifier: ^9.1.2
         version: 9.1.2
@@ -4585,8 +4613,8 @@ importers:
         specifier: workspace:^
         version: link:../ledgerjs/packages/types-devices
       axios:
-        specifier: 1.11.0
-        version: 1.11.0
+        specifier: 'catalog:'
+        version: 1.12.2
       chalk:
         specifier: ^4.1.2
         version: 4.1.2
@@ -4621,6 +4649,67 @@ importers:
       typescript:
         specifier: ^5.1.3
         version: 5.6.3
+
+  libs/coin-tester-modules/coin-tester-bitcoin:
+    dependencies:
+      '@ledgerhq/coin-bitcoin':
+        specifier: workspace:^
+        version: link:../../coin-modules/coin-bitcoin
+      '@ledgerhq/coin-framework':
+        specifier: workspace:^
+        version: link:../../coin-framework
+      '@ledgerhq/coin-tester':
+        specifier: workspace:^
+        version: link:../../coin-tester
+      '@ledgerhq/cryptoassets':
+        specifier: workspace:^
+        version: link:../../ledgerjs/packages/cryptoassets
+      '@ledgerhq/hw-app-btc':
+        specifier: workspace:^
+        version: link:../../ledgerjs/packages/hw-app-btc
+      '@ledgerhq/live-config':
+        specifier: workspace:^
+        version: link:../../live-config
+      '@ledgerhq/live-network':
+        specifier: workspace:^
+        version: link:../../live-network
+      '@ledgerhq/types-cryptoassets':
+        specifier: workspace:^
+        version: link:../../ledgerjs/packages/types-cryptoassets
+      '@ledgerhq/types-live':
+        specifier: workspace:^
+        version: link:../../ledgerjs/packages/types-live
+      bignumber.js:
+        specifier: ^9.1.2
+        version: 9.1.2
+      bitcoin-core:
+        specifier: ^5.0.0
+        version: 5.0.0
+      docker-compose:
+        specifier: ^1.1.0
+        version: 1.1.0
+    devDependencies:
+      '@types/jest':
+        specifier: ^29.5.10
+        version: 29.5.14
+      dotenv:
+        specifier: ^16.4.5
+        version: 16.4.7
+      jest:
+        specifier: ^29.7.0
+        version: 29.7.0(ts-node@10.9.2(typescript@5.8.3))
+      ts-jest:
+        specifier: ^29.1.2
+        version: 29.3.2(jest@29.7.0(ts-node@10.9.2(typescript@5.8.3)))(typescript@5.8.3)
+      ts-node:
+        specifier: ^10.9.2
+        version: 10.9.2(typescript@5.8.3)
+      tsx:
+        specifier: ^4.19.3
+        version: 4.20.6
+      typescript:
+        specifier: ^5.4.5
+        version: 5.8.3
 
   libs/coin-tester-modules/coin-tester-evm:
     dependencies:
@@ -4934,8 +5023,8 @@ importers:
         specifier: 29.5.14
         version: 29.5.14
       axios:
-        specifier: 1.11.0
-        version: 1.11.0
+        specifier: 'catalog:'
+        version: 1.12.2
       jest:
         specifier: ^29.7.0
         version: 29.7.0(ts-node@10.9.2(typescript@5.8.3))
@@ -4964,8 +5053,8 @@ importers:
         specifier: workspace:^
         version: link:../ledgerjs/packages/types-live
       axios:
-        specifier: 1.11.0
-        version: 1.11.0
+        specifier: 'catalog:'
+        version: 1.12.2
       eip55:
         specifier: ^2.1.1
         version: 2.1.1
@@ -5075,8 +5164,8 @@ importers:
         specifier: workspace:^
         version: link:../env
       axios:
-        specifier: 1.11.0
-        version: 1.11.0
+        specifier: 'catalog:'
+        version: 1.12.2
       crypto-js:
         specifier: 4.2.0
         version: 4.2.0
@@ -5319,8 +5408,8 @@ importers:
         specifier: workspace:^
         version: link:../device-core
       '@ledgerhq/device-management-kit':
-        specifier: 0.9.1
-        version: 0.9.1(rxjs@7.8.1)
+        specifier: 'catalog:'
+        version: 0.9.2(rxjs@7.8.1)
       '@ledgerhq/devices':
         specifier: workspace:*
         version: link:../ledgerjs/packages/devices
@@ -5466,7 +5555,7 @@ importers:
         specifier: 1.8.0
         version: 1.8.0
       '@reduxjs/toolkit':
-        specifier: 2.8.2
+        specifier: 'catalog:'
         version: 2.8.2(react-redux@7.2.9(@types/react@18.2.73)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react@18.3.1)
       '@stellar/stellar-sdk':
         specifier: ^14.0.0
@@ -5523,8 +5612,8 @@ importers:
         specifier: ^3.2.3
         version: 3.2.5
       axios:
-        specifier: 1.11.0
-        version: 1.11.0
+        specifier: 'catalog:'
+        version: 1.12.2
       bech32:
         specifier: ^1.1.3
         version: 1.1.4
@@ -5588,6 +5677,9 @@ importers:
       qs:
         specifier: ^6.10.1
         version: 6.13.0
+      react-redux:
+        specifier: ^7.2.9
+        version: 7.2.9(@types/react@18.2.73)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       reselect:
         specifier: ^4.1.5
         version: 4.1.8
@@ -5676,6 +5768,9 @@ importers:
       '@types/react':
         specifier: ^18.2.21
         version: 18.2.73
+      '@types/react-redux':
+        specifier: ^7.1.33
+        version: 7.1.33(@types/react@18.2.73)
       '@types/uuid':
         specifier: ^8.3.4
         version: 8.3.4
@@ -5742,9 +5837,6 @@ importers:
       react-native-svg:
         specifier: 15.11.2
         version: 15.11.2(react-native@0.77.2(@react-native-community/cli@15.1.0(typescript@5.4.3))(@types/react@18.2.73)(react@18.3.1))(react@18.3.1)
-      react-redux:
-        specifier: ^7.2.9
-        version: 7.2.9(@types/react@18.2.73)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       react-test-renderer:
         specifier: 'catalog:'
         version: 18.3.1(react@18.3.1)
@@ -5844,8 +5936,8 @@ importers:
   libs/ledgerjs:
     dependencies:
       axios:
-        specifier: 1.11.0
-        version: 1.11.0
+        specifier: 'catalog:'
+        version: 1.12.2
       invariant:
         specifier: ^2.2.4
         version: 2.2.4
@@ -5877,15 +5969,21 @@ importers:
       '@ledgerhq/types-live':
         specifier: workspace:^
         version: link:../types-live
+      '@reduxjs/toolkit':
+        specifier: 'catalog:'
+        version: 2.8.2(react-redux@9.2.0(@types/react@18.2.73)(react@18.3.1))(react@18.3.1)
       axios:
-        specifier: 1.11.0
-        version: 1.11.0
+        specifier: 'catalog:'
+        version: 1.12.2
       bs58check:
         specifier: ^2.1.2
         version: 2.1.2
       invariant:
         specifier: '2'
         version: 2.2.4
+      zod:
+        specifier: ^3.22.4
+        version: 3.25.76
     devDependencies:
       '@ledgerhq/types-cryptoassets':
         specifier: workspace:^
@@ -5917,6 +6015,9 @@ importers:
       react-dom:
         specifier: ^18.0.0
         version: 18.3.1(react@18.3.1)
+      react-redux:
+        specifier: ^9.1.2
+        version: 9.2.0(@types/react@18.2.73)(react@18.3.1)
       rimraf:
         specifier: ^4.4.1
         version: 4.4.1
@@ -5936,8 +6037,8 @@ importers:
         specifier: workspace:^
         version: link:../../../env
       axios:
-        specifier: 1.11.0
-        version: 1.11.0
+        specifier: 'catalog:'
+        version: 1.12.2
     devDependencies:
       '@ledgerhq/types-cryptoassets':
         specifier: workspace:^
@@ -6178,8 +6279,8 @@ importers:
         specifier: ^22.10.10
         version: 22.10.10
       axios:
-        specifier: 1.11.0
-        version: 1.11.0
+        specifier: 'catalog:'
+        version: 1.12.2
       documentation:
         specifier: 14.0.2
         version: 14.0.2
@@ -6382,8 +6483,8 @@ importers:
         specifier: workspace:^
         version: link:../types-live
       axios:
-        specifier: 1.11.0
-        version: 1.11.0
+        specifier: 'catalog:'
+        version: 1.12.2
       bignumber.js:
         specifier: ^9.1.2
         version: 9.1.2
@@ -6431,8 +6532,8 @@ importers:
   libs/ledgerjs/packages/hw-app-exchange:
     dependencies:
       '@ledgerhq/device-management-kit':
-        specifier: 0.9.1
-        version: 0.9.1
+        specifier: 'catalog:'
+        version: 0.9.2
       '@ledgerhq/errors':
         specifier: workspace:^
         version: link:../errors
@@ -6563,8 +6664,8 @@ importers:
         specifier: ^22.10.10
         version: 22.10.10
       axios:
-        specifier: 1.11.0
-        version: 1.11.0
+        specifier: 'catalog:'
+        version: 1.12.2
       documentation:
         specifier: 14.0.2
         version: 14.0.2
@@ -6673,8 +6774,8 @@ importers:
         specifier: ^13.7.0
         version: 13.17.1(bignumber.js@9.1.2)(protobufjs@7.3.2)
       axios:
-        specifier: 1.11.0
-        version: 1.11.0
+        specifier: 'catalog:'
+        version: 1.12.2
       bignumber.js:
         specifier: ^9.0.1
         version: 9.1.2
@@ -7150,8 +7251,8 @@ importers:
         specifier: workspace:^
         version: link:../logs
       axios:
-        specifier: 1.11.0
-        version: 1.11.0
+        specifier: 'catalog:'
+        version: 1.12.2
       ws:
         specifier: ^7.5.2
         version: 7.5.10
@@ -7417,8 +7518,8 @@ importers:
         specifier: workspace:^
         version: link:../logs
       axios:
-        specifier: 1.11.0
-        version: 1.11.0
+        specifier: 'catalog:'
+        version: 1.12.2
       rxjs:
         specifier: ^7.8.1
         version: 7.8.1
@@ -8052,11 +8153,11 @@ importers:
   libs/live-dmk-desktop:
     dependencies:
       '@ledgerhq/device-management-kit':
-        specifier: 0.9.1
-        version: 0.9.1(rxjs@7.8.1)
+        specifier: 'catalog:'
+        version: 0.9.2(rxjs@7.8.1)
       '@ledgerhq/device-transport-kit-web-hid':
-        specifier: 1.2.0
-        version: 1.2.0(@ledgerhq/device-management-kit@0.9.1(rxjs@7.8.1))(rxjs@7.8.1)
+        specifier: 'catalog:'
+        version: 1.2.1(@ledgerhq/device-management-kit@0.9.2(rxjs@7.8.1))(rxjs@7.8.1)
       '@ledgerhq/hw-transport':
         specifier: workspace:*
         version: link:../ledgerjs/packages/hw-transport
@@ -8116,11 +8217,11 @@ importers:
   libs/live-dmk-mobile:
     dependencies:
       '@ledgerhq/device-management-kit':
-        specifier: 0.9.1
-        version: 0.9.1(rxjs@7.8.1)
+        specifier: 'catalog:'
+        version: 0.9.2(rxjs@7.8.1)
       '@ledgerhq/device-transport-kit-react-native-ble':
-        specifier: 1.1.1
-        version: 1.1.1(@ledgerhq/device-management-kit@0.9.1(rxjs@7.8.1))(react-native-ble-plx@3.4.0(react-native@0.77.2(@react-native-community/cli@15.1.0(typescript@5.4.3))(react@18.3.1))(react@18.3.1))(react-native@0.77.2(@react-native-community/cli@15.1.0(typescript@5.4.3))(react@18.3.1))(rxjs@7.8.1)
+        specifier: 'catalog:'
+        version: 1.2.0(@ledgerhq/device-management-kit@0.9.2(rxjs@7.8.1))(react-native-ble-plx@3.4.0(react-native@0.77.2(@react-native-community/cli@15.1.0(typescript@5.4.3))(react@18.3.1))(react@18.3.1))(react-native@0.77.2(@react-native-community/cli@15.1.0(typescript@5.4.3))(react@18.3.1))(rxjs@7.8.1)
       '@ledgerhq/devices':
         specifier: workspace:*
         version: link:../ledgerjs/packages/devices
@@ -8211,8 +8312,8 @@ importers:
         version: 5.19.2
     devDependencies:
       '@ledgerhq/device-management-kit':
-        specifier: 0.9.1
-        version: 0.9.1(rxjs@7.8.1)
+        specifier: 'catalog:'
+        version: 0.9.2(rxjs@7.8.1)
       '@testing-library/dom':
         specifier: ^9.3.4
         version: 9.3.4
@@ -8292,8 +8393,8 @@ importers:
         specifier: workspace:^
         version: link:../ledgerjs/packages/logs
       axios:
-        specifier: 1.11.0
-        version: 1.11.0
+        specifier: 'catalog:'
+        version: 1.12.2
       lru-cache:
         specifier: ^7.14.1
         version: 7.18.3
@@ -8369,14 +8470,14 @@ importers:
         specifier: workspace:^
         version: link:../coin-modules/coin-evm
       '@ledgerhq/context-module':
-        specifier: 1.8.0
-        version: 1.8.0(@ledgerhq/device-management-kit@0.9.1(rxjs@7.8.1))
+        specifier: 'catalog:'
+        version: 1.9.0(@ledgerhq/device-management-kit@0.9.2(rxjs@7.8.1))
       '@ledgerhq/device-management-kit':
-        specifier: 0.9.1
-        version: 0.9.1(rxjs@7.8.1)
+        specifier: 'catalog:'
+        version: 0.9.2(rxjs@7.8.1)
       '@ledgerhq/device-signer-kit-ethereum':
-        specifier: 1.8.0
-        version: 1.8.0(@ledgerhq/context-module@1.8.0(@ledgerhq/device-management-kit@0.9.1(rxjs@7.8.1)))(@ledgerhq/device-management-kit@0.9.1(rxjs@7.8.1))
+        specifier: 'catalog:'
+        version: 1.9.0(@ledgerhq/context-module@1.9.0(@ledgerhq/device-management-kit@0.9.2(rxjs@7.8.1)))(@ledgerhq/device-management-kit@0.9.2(rxjs@7.8.1))
       '@ledgerhq/errors':
         specifier: workspace:^
         version: link:../ledgerjs/packages/errors
@@ -14689,10 +14790,10 @@ packages:
   '@kwsites/promise-deferred@1.1.1':
     resolution: {integrity: sha512-GaHYm+c0O9MjZRu0ongGBRbinu8gVAMd2UZjji6jVmqKtZluZnptXGWhz1E8j8D2HJ3f/yMxKAUC0b+57wncIw==}
 
-  '@ledgerhq/context-module@1.8.0':
-    resolution: {integrity: sha512-lsKjhGbSQbyRGhGpoj9QrBM9WEzbFhuMvZirEIBqHBpAfv7GXUECfOsVgaPPnrUa/cDJhvudmCHQlHWId7unMw==}
+  '@ledgerhq/context-module@1.9.0':
+    resolution: {integrity: sha512-LoBEsK9Puu/dC0OqP9CTsIaTCpdQ6MKpvDcZYTbkNHwCuL5AfJMv781+ypK9RCerWd4PDoZMcDiOIaELLbjtug==}
     peerDependencies:
-      '@ledgerhq/device-management-kit': ^0.9.0
+      '@ledgerhq/device-management-kit': 0.9.2
 
   '@ledgerhq/crypto-icons-ui@file:libs/ui/packages/crypto-icons':
     resolution: {directory: libs/ui/packages/crypto-icons, type: directory}
@@ -14734,30 +14835,30 @@ packages:
   '@ledgerhq/cryptoassets@6.37.0':
     resolution: {integrity: sha512-xwrDKTS9koQBNNzc7CqgV6zfGHvNFWJjlIL0Kc4O4DVWYR2vUdztUHcvwHD1KPjxNYhVnsgIopmtq47fHt3nMg==}
 
-  '@ledgerhq/device-management-kit@0.9.1':
-    resolution: {integrity: sha512-CI4c9Q/EWMGOzUnhpHUyo1DX+WLTD6AJWC8wKfbTbb6TZCaOtD0xN4qsNwZb4GG+CNC4IDlEfOw+EX8584hemg==}
+  '@ledgerhq/device-management-kit@0.9.2':
+    resolution: {integrity: sha512-EDKvxi3VFckmweaLdpzC00Y61sjdosCBCTL27XTr2JdHZUsQfKZBwLBEcL+LINKLqZqVXvsjcrf9NkXhFubuSw==}
     peerDependencies:
       rxjs: 7.8.2
 
-  '@ledgerhq/device-signer-kit-ethereum@1.8.0':
-    resolution: {integrity: sha512-rhnjD3R0lhW/ksNcnoFbJStaMVgNkkuoBRzgG2addVab9CxsUE+F/OEZjLc65wt9x5VLyVEMPW/EqXJ5Xglp6Q==}
+  '@ledgerhq/device-signer-kit-ethereum@1.9.0':
+    resolution: {integrity: sha512-Z/4YCGaBijz+iM811jHiuOWkNXbpC7YHEg7ENCPpRTKsElP64BuXE692XFTuVE+5IEDAYawgnzC4lIgo7ULfYg==}
     peerDependencies:
-      '@ledgerhq/context-module': 1.8.0
-      '@ledgerhq/device-management-kit': ^0.9.0
+      '@ledgerhq/context-module': 1.9.0
+      '@ledgerhq/device-management-kit': 0.9.2
 
-  '@ledgerhq/device-transport-kit-react-native-ble@1.1.1':
-    resolution: {integrity: sha512-6ImCuEU61Q0TChaOqNT7i0CbFekx4hJEOHh4+OJBLCtBFBd0yVqQbOURhpOzAyye6NNWx7iv9k0DjRg95mkFxg==}
+  '@ledgerhq/device-transport-kit-react-native-ble@1.2.0':
+    resolution: {integrity: sha512-ZdKehzzaLSeoDFM6kKupdoOMSEnjzQA5PU5Uy4e8/bCfLJCS30diw45qwosiaRxkFP0NpzHmcT4wB+UVrmWcng==}
     peerDependencies:
-      '@ledgerhq/device-management-kit': ^0.9.0
+      '@ledgerhq/device-management-kit': 0.9.2
       react-native: '>0.74.1'
       react-native-ble-plx: 3.4.0
       rxjs: 7.8.2
 
-  '@ledgerhq/device-transport-kit-web-hid@1.2.0':
-    resolution: {integrity: sha512-51kLHqrn1dP+0ZQLRyUBHIPSBNvx74hiIAMHrBkiCAedpmND/W522nslpX42bVf3tU3+I0Y51qn3WFvd8ZtIow==}
+  '@ledgerhq/device-transport-kit-web-hid@1.2.1':
+    resolution: {integrity: sha512-goq1uTsz93uxj5pe1kzz/baca7hQ2O4ZPplypC97rN68TRtDTOhpAvPazOoFsDgOnbJcdKF4/CU2ZAurzxI1fg==}
     peerDependencies:
-      '@ledgerhq/device-management-kit': 0.8.0
-      rxjs: ^7.8.2
+      '@ledgerhq/device-management-kit': 0.9.2
+      rxjs: 7.8.2
 
   '@ledgerhq/domain-service@1.2.12':
     resolution: {integrity: sha512-w33g7EqBtquzNPnvD2tmQq049eL4d8qYZH5vCwJ9Rfe6Vc/bYQvwlHFZ4N/cQPLmWQdsIMWDu+4fYo61p+Ub5A==}
@@ -20716,6 +20817,12 @@ packages:
   '@ungap/structured-clone@1.2.0':
     resolution: {integrity: sha512-zuVdFrMJiuCDQUMCzQaD6KL28MjnqqN8XnAqiEq9PNm/hCPTSGfrXCOfwj1ow4LFb/tNymJPwsNbVePc1xFqrQ==}
 
+  '@uphold/request-logger@2.0.0':
+    resolution: {integrity: sha512-UvGS+v87C7VTtQDcFHDLfvfl1zaZaLSwSmAnV35Ne7CzAVvotmZqt9lAIoNpMpaoRpdjVIcnUDwPSeIeA//EoQ==}
+    engines: {node: '>=4'}
+    peerDependencies:
+      request: '>=2.27.0'
+
   '@urql/core@5.0.8':
     resolution: {integrity: sha512-1GOnUw7/a9bzkcM0+U8U5MmxW2A7FE5YquuEmcJzTtW5tIs2EoS4F2ITpuKBjRBbyRjZgO860nWFPo1m4JImGA==}
 
@@ -21076,8 +21183,8 @@ packages:
   '@zondax/ledger-js@1.2.0':
     resolution: {integrity: sha512-HGvDU0s4zg0scu8ebGenFHFB6g5SLDqmrctncZUY9ie5pGibOU8C0VdjZSHbttSOCyh+IloLi/a4jyMPOEQGuQ==}
 
-  '@zondax/ledger-live-icp@1.3.2':
-    resolution: {integrity: sha512-/1rsiztHIKKrHkpbS4SMEc2jtbUAT4jYyBUVGDuunahOKW7w2rw2MX2U1v+oQVKkkys8PtaOG7U9GfcPcXCQ8Q==}
+  '@zondax/ledger-live-icp@1.4.0':
+    resolution: {integrity: sha512-X9AJ0ZuP5x0zpAH4SqMNB4SZ7bia0EPgzg3TDNFPUjIh0r1DVQOcB1MOWuyym0nMXMhhsGC0ziq4rei/SybEZw==}
 
   '@zondax/ledger-mina-js@0.0.2':
     resolution: {integrity: sha512-6tB4voId5NOfn1XzYivyQnjq8A7eoz/2D+Ay0IDCimkF4wX2dWC0KKzatRnJmC80z8b37Hsi5/roSvkZUQ/bgw==}
@@ -21696,8 +21803,8 @@ packages:
   axios@1.10.0:
     resolution: {integrity: sha512-/1xYAC4MP/HEG+3duIhFr4ZQXR4sQXOIe+o6sdqzeykGLx6Upp/1p8MHqhINOvGeP7xyNHe7tsiJByc4SSVUxw==}
 
-  axios@1.11.0:
-    resolution: {integrity: sha512-1Lx3WLFQWm3ooKDYZD1eXmoGO9fxYQjrycfHFC8P0sCfQVXyROp0p9PFWBehewBOdCwHc+f/b8I0fMto5eSfwA==}
+  axios@1.12.2:
+    resolution: {integrity: sha512-vMJzPewAlRyOgxV2dU0Cuz2O8zzzx9VYtbJOaBgXFeLc4IV/Eg50n4LowmehOOR61S8ZMpc2K5Sa7g6A4jfkUw==}
 
   axios@1.7.7:
     resolution: {integrity: sha512-S4kL7XrjgBmvdGut0sN3yJxqYzrDOnivkBiN0OFs6hLiUam3UPvswUo0kqGyhqUZGEOytHyumEdXsAkgCOUf3Q==}
@@ -22050,6 +22157,10 @@ packages:
 
   bip66@1.1.5:
     resolution: {integrity: sha512-nemMHz95EmS38a26XbbdxIYj5csHd3RMP3H5bwQknX0WYHF01qhpufP42mLOwVICuH2JmhIhXiWs89MfUGL7Xw==}
+
+  bitcoin-core@5.0.0:
+    resolution: {integrity: sha512-XqHsD5LjtshN8yWzRrq2kof57e1eXCGDx3i5+sFKBRi9MktSlXOR4SRLyXLkfzfBmPEs5q/76RotQJuaWg75DQ==}
+    engines: {node: '>=7'}
 
   bitcoin-ops@1.4.1:
     resolution: {integrity: sha512-pef6gxZFztEhaE9RY9HmWVmiIHqCb2OyS4HPKkpc6CIiiOa3Qmuoylxc5P2EkU3w+5eTSifI9SEZC88idAIGow==}
@@ -23951,6 +24062,10 @@ packages:
       supports-color:
         optional: true
 
+  debugnyan@1.0.0:
+    resolution: {integrity: sha512-dTvKxcLZCammDLFYi31NRVr5g6vjJ33uf1wcdbIPPxPxxnJ9/xj00Mh/YQkhFMw/VGavaG5KpjSC+4o9r/JjRg==}
+    engines: {node: '>=4'}
+
   decamelize-keys@1.1.1:
     resolution: {integrity: sha512-WiPxgEirIV0/eIOMcnFBA3/IJZAZqKnwAwWyvvdi4lsr1WCN22nhdf/3db3DoZcUjTV2SqfzIwNyp6y2xs3nmg==}
     engines: {node: '>=0.10.0'}
@@ -25095,14 +25210,6 @@ packages:
   ethereumjs-util@7.1.5:
     resolution: {integrity: sha512-SDl5kKrQAudFBUe5OJM9Ac6WmMyYmXX/6sTmLZ3ffG2eY6ZIGBes3pEDxNN6V72WyOw4CPD5RomKdsa8DAAwLg==}
     engines: {node: '>=10.0.0'}
-
-  ethers@6.13.4:
-    resolution: {integrity: sha512-21YtnZVg4/zKkCQPjrDj38B1r4nQvTZLopUGMLQ1ePU2zV/joCfDC3t3iKQjWRzjjjbzR+mdAIoikeBRNkdllA==}
-    engines: {node: '>=14.0.0'}
-
-  ethers@6.14.1:
-    resolution: {integrity: sha512-JnFiPFi3sK2Z6y7jZ3qrafDMwiXmU+6cNZ0M+kPq+mTy9skqEzwqAdFW3nb/em2xjlIVXX6Lz8ID6i3LmS4+fQ==}
-    engines: {node: '>=14.0.0'}
 
   ethers@6.15.0:
     resolution: {integrity: sha512-Kf/3ZW54L4UT0pZtsY/rf+EkBU7Qi5nnhonjUb8yTXcxH3cdcWrV2cRyk0Xk/4jK6OoHhxxZHriyhje20If2hQ==}
@@ -31631,6 +31738,10 @@ packages:
     resolution: {integrity: sha512-RXyHaACeqXeqAKGLDl68rQKbmObRsTIn4TYVUUug1KfS47YWCo5MacGITEryugIgZqORCvJWEk4l449POg5Txg==}
     engines: {node: '>=12.0.0'}
 
+  protobufjs@7.5.4:
+    resolution: {integrity: sha512-CvexbZtbov6jW2eXAvLukXjXUW1TzFaivC46BpWc/3BpcCysb5Vffu+B3XHMm8lVEuy2Mm4XGex8hBSg1yapPg==}
+    engines: {node: '>=12.0.0'}
+
   protocols@2.0.1:
     resolution: {integrity: sha512-/XJ368cyBJ7fzLMwLKv1e4vLxOju2MNAIokcr7meSaNcVbWz/CPcW22cP04mwxOErdA5mwjA8Q6w/cdAQxVn7Q==}
 
@@ -33716,6 +33827,9 @@ packages:
   standard-as-callback@2.1.0:
     resolution: {integrity: sha512-qoRRSyROncaz1z0mvYqIE4lCd9p2R90i6GxW3uZv5ucSu8tU7B5HXUP1gG8pVZsYNVaXjk8ClXHPttLyxAL48A==}
 
+  standard-error@1.1.0:
+    resolution: {integrity: sha512-4v7qzU7oLJfMI5EltUSHCaaOd65J6S4BqKRWgzMi4EYaE5fvNabPxmAPGdxpGXqrcWjhDGI/H09CIdEuUOUeXg==}
+
   stat-mode@1.0.0:
     resolution: {integrity: sha512-jH9EhtKIjuXZ2cWxmXS8ZP80XyC3iasQxMDV8jzhNJpfDb7VbQLVW4Wvsxz9QZvzV+G4YoSfBUVKDOyxLzi/sg==}
     engines: {node: '>= 6'}
@@ -34835,6 +34949,11 @@ packages:
 
   tsx@4.10.3:
     resolution: {integrity: sha512-f0g60aFSVRVkzcQkEflh8fPLRfmt+HJHgWi/plG5UgvVaV+9TcpOwJ0sZJSACXmwmjMPg9yQR0BhTLbhkfV2uA==}
+    engines: {node: '>=18.0.0'}
+    hasBin: true
+
+  tsx@4.20.6:
+    resolution: {integrity: sha512-ytQKuwgmrrkDTFP4LjR0ToE2nqgy886GpvRSpU0JAnrdBYppuY5rLkRUYPU1yCryb24SsKBTL/hlDQAEFVwtZg==}
     engines: {node: '>=18.0.0'}
     hasBin: true
 
@@ -36653,9 +36772,6 @@ packages:
 
   zod@3.23.8:
     resolution: {integrity: sha512-XBx9AXhXktjUqnepgTiE5flcKIYWi/rme0Eaj+5Y0lftuGBq+jyRu/md4WnuxqgP1ubdpNCsYEYPxrzVHD8d6g==}
-
-  zod@3.24.2:
-    resolution: {integrity: sha512-lY7CDW43ECgW9u1TcT3IoXHflywfVqDYze4waEz812jR/bZ8FHDsl7pFQoSZTz5N+2NqRXs8GBwnAwo3ZNxqhQ==}
 
   zod@3.25.76:
     resolution: {integrity: sha512-gzUt/qt81nXsFGKIFcC3YnfEAx5NkunCfnDlvuBSSFS02bcXu4Lmea0AFIUwbLWxWPx3d9p8S5QoaujKcNQxcQ==}
@@ -40490,7 +40606,7 @@ snapshots:
 
   '@changesets/changelog-github@0.5.0':
     dependencies:
-      '@changesets/get-github-info': 0.6.0(patch_hash=ihbfttx3a3q6odiznwmem6m4ay)
+      '@changesets/get-github-info': 0.6.0(patch_hash=3je6vc5oigzdzi6dv4a6zsaahi)
       '@changesets/types': 6.0.0
       dotenv: 8.6.0
     transitivePeerDependencies:
@@ -40553,7 +40669,7 @@ snapshots:
       fs-extra: 7.0.1
       semver: 7.7.1
 
-  '@changesets/get-github-info@0.6.0(patch_hash=ihbfttx3a3q6odiznwmem6m4ay)':
+  '@changesets/get-github-info@0.6.0(patch_hash=3je6vc5oigzdzi6dv4a6zsaahi)':
     dependencies:
       dataloader: 1.4.0
       node-fetch: 2.7.0
@@ -41254,7 +41370,7 @@ snapshots:
       ajv: 8.17.1
       ajv-formats: 2.1.1
       async-retry: 1.3.1
-      axios: 1.11.0
+      axios: 1.10.0
       chalk: 3.0.0
       clipanion: 3.2.1
       datadog-metrics: 0.9.3
@@ -43799,14 +43915,14 @@ snapshots:
     dependencies:
       lodash.camelcase: 4.3.0
       long: 5.2.3
-      protobufjs: 7.3.2
+      protobufjs: 7.5.4
       yargs: 17.7.2
 
   '@grpc/proto-loader@0.7.15':
     dependencies:
       lodash.camelcase: 4.3.0
       long: 5.2.3
-      protobufjs: 7.3.2
+      protobufjs: 7.5.4
       yargs: 17.7.2
 
   '@gwhitney/detect-indent@7.0.1': {}
@@ -43826,7 +43942,7 @@ snapshots:
       elliptic: 6.6.1
       expo-crypto: 10.2.0
       expo-random: 12.3.0
-      js-base64: 3.7.7
+      js-base64: 3.7.8
       tweetnacl: 1.0.3
       utf8: 3.0.0
     transitivePeerDependencies:
@@ -45066,12 +45182,12 @@ snapshots:
 
   '@kwsites/promise-deferred@1.1.1': {}
 
-  '@ledgerhq/context-module@1.8.0(@ledgerhq/device-management-kit@0.9.1(rxjs@7.8.1))':
+  '@ledgerhq/context-module@1.9.0(@ledgerhq/device-management-kit@0.9.2(rxjs@7.8.1))':
     dependencies:
-      '@ledgerhq/device-management-kit': 0.9.1(rxjs@7.8.1)
+      '@ledgerhq/device-management-kit': 0.9.2(rxjs@7.8.1)
       axios: 1.8.2
       crypto-js: 4.2.0
-      ethers: 6.14.1
+      ethers: 6.15.0
       inversify: 7.5.1(reflect-metadata@0.2.2)
       purify-ts: 2.1.0
       reflect-metadata: 0.2.2
@@ -45112,7 +45228,7 @@ snapshots:
     dependencies:
       invariant: 2.2.4
 
-  '@ledgerhq/device-management-kit@0.9.1':
+  '@ledgerhq/device-management-kit@0.9.2':
     dependencies:
       '@sentry/minimal': 6.19.7
       axios: 1.8.2
@@ -45129,7 +45245,7 @@ snapshots:
       - bufferutil
       - utf-8-validate
 
-  '@ledgerhq/device-management-kit@0.9.1(rxjs@7.8.1)':
+  '@ledgerhq/device-management-kit@0.9.2(rxjs@7.8.1)':
     dependencies:
       '@sentry/minimal': 6.19.7
       axios: 1.8.2
@@ -45147,12 +45263,12 @@ snapshots:
       - bufferutil
       - utf-8-validate
 
-  '@ledgerhq/device-signer-kit-ethereum@1.8.0(@ledgerhq/context-module@1.8.0(@ledgerhq/device-management-kit@0.9.1(rxjs@7.8.1)))(@ledgerhq/device-management-kit@0.9.1(rxjs@7.8.1))':
+  '@ledgerhq/device-signer-kit-ethereum@1.9.0(@ledgerhq/context-module@1.9.0(@ledgerhq/device-management-kit@0.9.2(rxjs@7.8.1)))(@ledgerhq/device-management-kit@0.9.2(rxjs@7.8.1))':
     dependencies:
-      '@ledgerhq/context-module': 1.8.0(@ledgerhq/device-management-kit@0.9.1(rxjs@7.8.1))
-      '@ledgerhq/device-management-kit': 0.9.1(rxjs@7.8.1)
-      '@ledgerhq/signer-utils': 1.1.0(@ledgerhq/device-management-kit@0.9.1(rxjs@7.8.1))
-      ethers: 6.14.1
+      '@ledgerhq/context-module': 1.9.0(@ledgerhq/device-management-kit@0.9.2(rxjs@7.8.1))
+      '@ledgerhq/device-management-kit': 0.9.2(rxjs@7.8.1)
+      '@ledgerhq/signer-utils': 1.1.0(@ledgerhq/device-management-kit@0.9.2(rxjs@7.8.1))
+      ethers: 6.15.0
       inversify: 7.5.1(reflect-metadata@0.2.2)
       purify-ts: 2.1.0
       reflect-metadata: 0.2.2
@@ -45162,9 +45278,9 @@ snapshots:
       - bufferutil
       - utf-8-validate
 
-  '@ledgerhq/device-transport-kit-react-native-ble@1.1.1(@ledgerhq/device-management-kit@0.9.1(rxjs@7.8.1))(react-native-ble-plx@3.4.0(react-native@0.77.2(@react-native-community/cli@15.1.0(typescript@5.4.3))(react@18.3.1))(react@18.3.1))(react-native@0.77.2(@react-native-community/cli@15.1.0(typescript@5.4.3))(react@18.3.1))(rxjs@7.8.1)':
+  '@ledgerhq/device-transport-kit-react-native-ble@1.2.0(@ledgerhq/device-management-kit@0.9.2(rxjs@7.8.1))(react-native-ble-plx@3.4.0(react-native@0.77.2(@react-native-community/cli@15.1.0(typescript@5.4.3))(react@18.3.1))(react@18.3.1))(react-native@0.77.2(@react-native-community/cli@15.1.0(typescript@5.4.3))(react@18.3.1))(rxjs@7.8.1)':
     dependencies:
-      '@ledgerhq/device-management-kit': 0.9.1(rxjs@7.8.1)
+      '@ledgerhq/device-management-kit': 0.9.2(rxjs@7.8.1)
       '@sentry/minimal': 6.19.7
       js-base64: 3.7.8
       purify-ts: 2.1.0
@@ -45173,9 +45289,9 @@ snapshots:
       rxjs: 7.8.1
       uuid: 11.0.3
 
-  '@ledgerhq/device-transport-kit-web-hid@1.2.0(@ledgerhq/device-management-kit@0.9.1(rxjs@7.8.1))(rxjs@7.8.1)':
+  '@ledgerhq/device-transport-kit-web-hid@1.2.1(@ledgerhq/device-management-kit@0.9.2(rxjs@7.8.1))(rxjs@7.8.1)':
     dependencies:
-      '@ledgerhq/device-management-kit': 0.9.1(rxjs@7.8.1)
+      '@ledgerhq/device-management-kit': 0.9.2(rxjs@7.8.1)
       '@sentry/minimal': 6.19.7
       purify-ts: 2.1.0
       rxjs: 7.8.1
@@ -45253,9 +45369,9 @@ snapshots:
 
   '@ledgerhq/logs@6.12.0': {}
 
-  '@ledgerhq/signer-utils@1.1.0(@ledgerhq/device-management-kit@0.9.1(rxjs@7.8.1))':
+  '@ledgerhq/signer-utils@1.1.0(@ledgerhq/device-management-kit@0.9.2(rxjs@7.8.1))':
     dependencies:
-      '@ledgerhq/device-management-kit': 0.9.1(rxjs@7.8.1)
+      '@ledgerhq/device-management-kit': 0.9.2(rxjs@7.8.1)
 
   '@ledgerhq/types-devices@6.27.0': {}
 
@@ -45453,7 +45569,7 @@ snapshots:
       uuid: 8.3.2
     optionalDependencies:
       '@multiversx/sdk-bls-wasm': 0.3.5
-      axios: 1.11.0
+      axios: 1.12.2
       bip39: 3.1.0
 
   '@multiversx/sdk-transaction-decoder@1.0.2':
@@ -48266,6 +48382,18 @@ snapshots:
       react: 18.3.1
       react-redux: 7.2.9(@types/react@18.2.73)(react@18.3.1)
 
+  '@reduxjs/toolkit@2.8.2(react-redux@9.2.0(@types/react@18.2.73)(react@18.3.1))(react@18.3.1)':
+    dependencies:
+      '@standard-schema/spec': 1.0.0
+      '@standard-schema/utils': 0.3.0
+      immer: 10.0.3
+      redux: 5.0.1
+      redux-thunk: 3.1.0(redux@5.0.1)
+      reselect: 5.1.1
+    optionalDependencies:
+      react: 18.3.1
+      react-redux: 9.2.0(@types/react@18.2.73)(react@18.3.1)
+
   '@reduxjs/toolkit@2.9.0(react-redux@7.2.9(@types/react@18.2.73)(react@18.3.1))(react@19.2.0)':
     dependencies:
       '@standard-schema/spec': 1.0.0
@@ -50093,13 +50221,13 @@ snapshots:
 
   '@solana/errors@2.0.0-rc.1(typescript@5.4.3)':
     dependencies:
-      chalk: 5.4.1
+      chalk: 5.6.2
       commander: 12.1.0
       typescript: 5.4.3
 
   '@solana/errors@2.0.0-rc.1(typescript@5.8.3)':
     dependencies:
-      chalk: 5.4.1
+      chalk: 5.6.2
       commander: 12.1.0
       typescript: 5.8.3
 
@@ -50941,7 +51069,7 @@ snapshots:
   '@stellar/stellar-sdk@14.0.0':
     dependencies:
       '@stellar/stellar-base': 14.0.0
-      axios: 1.11.0
+      axios: 1.10.0
       bignumber.js: 9.3.1
       eventsource: 2.0.2
       feaxios: 0.0.23
@@ -52801,7 +52929,7 @@ snapshots:
     dependencies:
       '@ton/core': 0.62.0(patch_hash=lboaji3braahojqczblp7nlo7m)(@ton/crypto@3.3.0)
       '@ton/crypto': 3.3.0
-      axios: 1.11.0
+      axios: 1.10.0
       dataloader: 2.2.2
       symbol.inspect: 1.0.1
       teslabot: 1.5.0
@@ -54155,6 +54283,11 @@ snapshots:
 
   '@ungap/structured-clone@1.2.0': {}
 
+  '@uphold/request-logger@2.0.0(request@2.88.2)':
+    dependencies:
+      request: 2.88.2
+      uuid: 3.4.0
+
   '@urql/core@5.0.8':
     dependencies:
       '@0no-co/graphql.web': 1.0.11
@@ -54201,7 +54334,7 @@ snapshots:
       '@vechain/sdk-errors': 2.0.0
       '@vechain/sdk-logging': 2.0.0
       abitype: 1.1.0(typescript@5.4.3)
-      ethers: 6.13.4
+      ethers: 6.15.0
       fast-json-stable-stringify: 2.1.0
       viem: 2.37.4(typescript@5.4.3)
     transitivePeerDependencies:
@@ -54223,7 +54356,7 @@ snapshots:
       '@vechain/sdk-errors': 2.0.0
       '@vechain/sdk-logging': 2.0.0
       abitype: 1.0.8(typescript@5.4.3)
-      ethers: 6.13.4
+      ethers: 6.15.0
       viem: 2.37.4(typescript@5.4.3)
     transitivePeerDependencies:
       - bufferutil
@@ -54989,7 +55122,7 @@ snapshots:
     dependencies:
       '@ledgerhq/hw-transport': link:libs/ledgerjs/packages/hw-transport
 
-  '@zondax/ledger-live-icp@1.3.2':
+  '@zondax/ledger-live-icp@1.4.0':
     dependencies:
       '@dfinity/agent': 2.4.1(@dfinity/candid@2.4.1(@dfinity/principal@2.4.1))(@dfinity/principal@2.4.1)
       '@dfinity/candid': 2.4.1(@dfinity/principal@2.4.1)
@@ -55024,7 +55157,7 @@ snapshots:
     dependencies:
       '@ledgerhq/hw-transport': link:libs/ledgerjs/packages/hw-transport
       '@zondax/ledger-js': 0.8.2
-      axios: 1.11.0
+      axios: 1.10.0
 
   JSONStream@1.3.5:
     dependencies:
@@ -55094,9 +55227,9 @@ snapshots:
     dependencies:
       acorn: 7.4.1
 
-  acorn-jsx@5.3.2(acorn@8.13.0):
+  acorn-jsx@5.3.2(acorn@8.15.0):
     dependencies:
-      acorn: 8.13.0
+      acorn: 8.15.0
 
   acorn-walk@7.2.0: {}
 
@@ -55682,7 +55815,7 @@ snapshots:
       form-data: 4.0.4
       proxy-from-env: 1.1.0
 
-  axios@1.11.0:
+  axios@1.12.2:
     dependencies:
       follow-redirects: 1.15.11
       form-data: 4.0.4
@@ -56324,6 +56457,18 @@ snapshots:
   bip66@1.1.5:
     dependencies:
       safe-buffer: 5.2.1
+
+  bitcoin-core@5.0.0:
+    dependencies:
+      '@uphold/request-logger': 2.0.0(request@2.88.2)
+      debugnyan: 1.0.0
+      json-bigint: 1.0.0
+      lodash: 4.17.21
+      request: 2.88.2
+      semver: 5.7.2
+      standard-error: 1.1.0
+    transitivePeerDependencies:
+      - supports-color
 
   bitcoin-ops@1.4.1: {}
 
@@ -56972,7 +57117,7 @@ snapshots:
       '@scure/bip39': 1.3.0
       '@types/ws': 8.5.10
       asn1.js: 5.4.1
-      axios: 1.11.0
+      axios: 1.12.2
       bn.js: 5.2.1
       elliptic: 6.6.1
       eventsource: 2.0.2
@@ -58672,6 +58817,13 @@ snapshots:
     dependencies:
       ms: 2.1.3
 
+  debugnyan@1.0.0:
+    dependencies:
+      bunyan: 1.8.15
+      debug: 2.6.9
+    transitivePeerDependencies:
+      - supports-color
+
   decamelize-keys@1.1.1:
     dependencies:
       decamelize: 1.2.0
@@ -59095,7 +59247,7 @@ snapshots:
 
   docker-compose@1.1.0:
     dependencies:
-      yaml: 2.4.1
+      yaml: 2.8.1
 
   doctrine-temporary-fork@2.1.0:
     dependencies:
@@ -60472,8 +60624,8 @@ snapshots:
 
   espree@9.6.1:
     dependencies:
-      acorn: 8.13.0
-      acorn-jsx: 5.3.2(acorn@8.13.0)
+      acorn: 8.15.0
+      acorn-jsx: 5.3.2(acorn@8.15.0)
       eslint-visitor-keys: 3.4.3
 
   esprima@1.2.2: {}
@@ -60571,32 +60723,6 @@ snapshots:
       create-hash: 1.2.0
       ethereum-cryptography: 0.1.3
       rlp: 2.2.7
-
-  ethers@6.13.4:
-    dependencies:
-      '@adraffy/ens-normalize': 1.10.1
-      '@noble/curves': 1.2.0
-      '@noble/hashes': 1.3.2
-      '@types/node': 22.7.5
-      aes-js: 4.0.0-beta.5
-      tslib: 2.6.2
-      ws: 8.17.1
-    transitivePeerDependencies:
-      - bufferutil
-      - utf-8-validate
-
-  ethers@6.14.1:
-    dependencies:
-      '@adraffy/ens-normalize': 1.10.1
-      '@noble/curves': 1.2.0
-      '@noble/hashes': 1.3.2
-      '@types/node': 22.7.5
-      aes-js: 4.0.0-beta.5
-      tslib: 2.6.2
-      ws: 8.17.1
-    transitivePeerDependencies:
-      - bufferutil
-      - utf-8-validate
 
   ethers@6.15.0:
     dependencies:
@@ -62265,7 +62391,7 @@ snapshots:
       node-fetch: 2.7.0
       object-hash: 3.0.0
       proto3-json-serializer: 2.0.2
-      protobufjs: 7.3.2
+      protobufjs: 7.5.4
       retry-request: 7.0.2
       uuid: 9.0.1
     transitivePeerDependencies:
@@ -66180,7 +66306,7 @@ snapshots:
 
   jsdoc@4.0.3:
     dependencies:
-      '@babel/parser': 7.28.3
+      '@babel/parser': 7.28.4
       '@jsdoc/salty': 0.2.8
       '@types/markdown-it': 14.1.1
       bluebird: 3.7.2
@@ -66569,8 +66695,8 @@ snapshots:
       strip-json-comments: 5.0.1
       summary: 2.1.0
       typescript: 5.4.3
-      zod: 3.24.2
-      zod-validation-error: 3.4.0(zod@3.24.2)
+      zod: 3.25.76
+      zod-validation-error: 3.4.0(zod@3.25.76)
 
   known-css-properties@0.26.0: {}
 
@@ -70741,7 +70867,7 @@ snapshots:
 
   proto3-json-serializer@2.0.2:
     dependencies:
-      protobufjs: 7.3.2
+      protobufjs: 7.5.4
 
   protobufjs-cli@1.1.2(protobufjs@7.2.5):
     dependencies:
@@ -70753,7 +70879,21 @@ snapshots:
       jsdoc: 4.0.3
       minimist: 1.2.8
       protobufjs: 7.2.5
-      semver: 7.5.4
+      semver: 7.7.1
+      tmp: 0.2.3
+      uglify-js: 3.19.3
+
+  protobufjs-cli@1.1.2(protobufjs@7.5.4):
+    dependencies:
+      chalk: 4.1.2
+      escodegen: 1.14.3
+      espree: 9.6.1
+      estraverse: 5.3.0
+      glob: 8.1.0
+      jsdoc: 4.0.3
+      minimist: 1.2.8
+      protobufjs: 7.5.4
+      semver: 7.7.1
       tmp: 0.2.3
       uglify-js: 3.19.3
 
@@ -70833,6 +70973,21 @@ snapshots:
       '@protobufjs/pool': 1.1.0
       '@protobufjs/utf8': 1.1.0
       '@types/node': 22.10.10
+      long: 5.2.3
+
+  protobufjs@7.5.4:
+    dependencies:
+      '@protobufjs/aspromise': 1.1.2
+      '@protobufjs/base64': 1.1.2
+      '@protobufjs/codegen': 2.0.4
+      '@protobufjs/eventemitter': 1.1.0
+      '@protobufjs/fetch': 1.1.0
+      '@protobufjs/float': 1.0.2
+      '@protobufjs/inquire': 1.1.0
+      '@protobufjs/path': 1.1.2
+      '@protobufjs/pool': 1.1.0
+      '@protobufjs/utf8': 1.1.0
+      '@types/node': 20.12.12
       long: 5.2.3
 
   protocols@2.0.1: {}
@@ -71886,6 +72041,14 @@ snapshots:
       react-is: 17.0.2
     transitivePeerDependencies:
       - '@types/react'
+
+  react-redux@9.2.0(@types/react@18.2.73)(react@18.3.1):
+    dependencies:
+      '@types/use-sync-external-store': 0.0.6
+      react: 18.3.1
+      use-sync-external-store: 1.5.0(react@18.3.1)
+    optionalDependencies:
+      '@types/react': 18.2.73
 
   react-redux@9.2.0(@types/react@18.2.73)(react@19.2.0)(redux@5.0.1):
     dependencies:
@@ -73790,6 +73953,8 @@ snapshots:
 
   standard-as-callback@2.1.0: {}
 
+  standard-error@1.1.0: {}
+
   stat-mode@1.0.0: {}
 
   state-toggle@1.0.3: {}
@@ -74975,7 +75140,7 @@ snapshots:
       '@noble/secp256k1': 1.7.1
       '@tronweb3/google-protobuf': 3.21.2
       aes-js: 3.1.2
-      axios: 1.11.0
+      axios: 1.10.0
       bignumber.js: 9.1.2
       ethereum-cryptography: 2.1.3
       ethers: 6.15.0
@@ -75788,6 +75953,13 @@ snapshots:
   tsx@4.10.3:
     dependencies:
       esbuild: 0.20.2
+      get-tsconfig: 4.7.5
+    optionalDependencies:
+      fsevents: 2.3.3
+
+  tsx@4.20.6:
+    dependencies:
+      esbuild: 0.25.5
       get-tsconfig: 4.7.5
     optionalDependencies:
       fsevents: 2.3.3
@@ -78126,13 +78298,11 @@ snapshots:
       compress-commons: 5.0.3
       readable-stream: 3.6.2
 
-  zod-validation-error@3.4.0(zod@3.24.2):
+  zod-validation-error@3.4.0(zod@3.25.76):
     dependencies:
-      zod: 3.24.2
+      zod: 3.25.76
 
   zod@3.23.8: {}
-
-  zod@3.24.2: {}
 
   zod@3.25.76: {}
 
