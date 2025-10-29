@@ -1,5 +1,5 @@
 ---
-"@ledgerhq/coin-sui": patch
+"@ledgerhq/coin-sui": minor
 ---
 
 fix pages without operations

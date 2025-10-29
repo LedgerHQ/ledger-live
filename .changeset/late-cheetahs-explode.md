@@ -1,5 +1,5 @@
 ---
-"@ledgerhq/coin-canton": patch
+"@ledgerhq/coin-canton": minor
 "live-mobile": minor
 ---
 
