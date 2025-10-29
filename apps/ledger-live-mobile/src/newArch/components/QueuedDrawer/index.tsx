@@ -213,6 +213,7 @@ const QueuedDrawerNative = ({
             containerAnimatedStyle,
             {
               width: "100%",
+              maxHeight: "90%",
               backgroundColor: colors.background.drawer,
               borderTopLeftRadius: 24,
               borderTopRightRadius: 24,

@@ -99,7 +99,7 @@ function Content({ accountId, has32Eth, providers, walletApiAccountId }: Props) 
       rowGap: 24,
       display: "flex",
       paddingTop: insets.top,
-      paddingBottom: insets.bottom,
+      paddingBottom: insets.bottom + 24,
     }),
     [sharedHeight, insets.top, insets.bottom],
   );
