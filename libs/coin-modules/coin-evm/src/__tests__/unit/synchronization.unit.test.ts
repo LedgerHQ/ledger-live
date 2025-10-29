@@ -7,7 +7,7 @@ import { decodeAccountId, encodeTokenAccountId } from "@ledgerhq/coin-framework/
 import { AccountShapeInfo } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
 import { legacyCryptoAssetsStore } from "@ledgerhq/cryptoassets/legacy/legacy-store";
-import { makeTokenAccount } from "../fixtures/common.fixtures";
+import { makeAccount, makeTokenAccount } from "../fixtures/common.fixtures";
 import * as etherscanAPI from "../../network/explorer/etherscan";
 import { UnknownExplorer, UnknownNode } from "../../errors";
 import * as synchronization from "../../bridge/synchronization";
@@ -259,11 +259,16 @@ describe("EVM Family", () => {
         it("should keep the operations from a sync to another", async () => {
           const operations = [coinOperations[0]];
           const tokenOps = [tokenOperations[0]];
+          const syncHash = await logic.getSyncHash(currency);
+          const initialAccount = {
+            ...makeAccount("0xkvn", currency, [tokenAccount]),
+            syncHash,
+          };
           const accountWithSubAccount = await synchronization.getAccountShape(
             {
               ...getAccountShapeParameters,
               initialAccount: {
-                ...account,
+                ...initialAccount,
                 operations,
                 subAccounts: [{ ...tokenAccount, operations: tokenOps }],
               },
@@ -275,7 +280,7 @@ describe("EVM Family", () => {
         });
 
         it("should do a full sync when syncHash changes", async () => {
-          jest.spyOn(logic, "getSyncHash").mockImplementationOnce(() => "0xNope");
+          jest.spyOn(logic, "getSyncHash").mockResolvedValueOnce("0xNope");
 
           await synchronization.getAccountShape(
             {
@@ -299,11 +304,16 @@ describe("EVM Family", () => {
         });
 
         it("should do an incremental sync when syncHash is identical", async () => {
+          const syncHash = await logic.getSyncHash(currency);
+          const initialAccount = {
+            ...makeAccount("0xkvn", currency, [tokenAccount]),
+            syncHash,
+          };
           await synchronization.getAccountShape(
             {
               ...getAccountShapeParameters,
               initialAccount: {
-                ...account,
+                ...initialAccount,
                 blockHeight: 123,
                 operations: [coinOperations[2]],
                 subAccounts: [{ ...tokenAccount, operations: [tokenOperations[0]] }],
@@ -371,10 +381,15 @@ describe("EVM Family", () => {
         });
 
         it("should add the fetched transactions to the operations", async () => {
+          const syncHash = await logic.getSyncHash(currency);
+          const initialAccount = {
+            ...makeAccount("0xkvn", currency, [tokenAccount]),
+            syncHash,
+          };
           const accountShape = await synchronization.getAccountShape(
             {
               ...getAccountShapeParameters,
-              initialAccount: account,
+              initialAccount,
             },
             {} as any,
           );
@@ -460,11 +475,18 @@ describe("EVM Family", () => {
               nftOperations: [erc721Operations[0], erc1155Operations[0]],
             },
           ];
+
+          const syncHash = await logic.getSyncHash(currency);
+          const initialAccount = {
+            ...makeAccount("0xkvn", currency, [tokenAccount]),
+            syncHash,
+          };
+
           const accountShape = await synchronization.getAccountShape(
             {
               ...getAccountShapeParameters,
               initialAccount: {
-                ...account,
+                ...initialAccount,
                 operations,
               },
             },
@@ -473,7 +495,7 @@ describe("EVM Family", () => {
 
           expect(accountShape).toEqual({
             type: "Account",
-            id: account.id,
+            id: initialAccount.id,
             syncHash: expect.stringMatching(/^0x[A-Fa-f0-9]{7,8}$/), // matching a 32 bits hex string (MurmurHash result)
             balance: new BigNumber(100),
             spendableBalance: new BigNumber(100),
@@ -481,7 +503,7 @@ describe("EVM Family", () => {
             blockHeight: 6969,
             operations: [coinOperations[2], ...operations],
             operationsCount: 3,
-            subAccounts: account.subAccounts,
+            subAccounts: initialAccount.subAccounts,
             lastSyncDate: new Date("2014-04-21"),
           });
         });
@@ -495,10 +517,11 @@ describe("EVM Family", () => {
             { blacklistedTokenIds: [tokenCurrencies[0].id] } as any,
           );
 
+          const syncHash = await logic.getSyncHash(account.currency, [tokenCurrencies[0].id]);
           expect(accountShape).toEqual({
             type: "Account",
             id: account.id,
-            syncHash: logic.getSyncHash(account.currency, [tokenCurrencies[0].id]),
+            syncHash,
             balance: new BigNumber(100),
             spendableBalance: new BigNumber(100),
             nfts: [nfts[0], nfts[1]],
