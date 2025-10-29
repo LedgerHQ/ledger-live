@@ -33,7 +33,6 @@ import { AddressesSanctionedError } from "@ledgerhq/coin-framework/sanction/erro
 import { getCryptoCurrencyById } from "../../currencies";
 
 const COMPLETE_EXCHANGE_LOG = "SWAP-CompleteExchange";
-const LIFI_GAS_LIMIT_BUFFER_MULTIPLIER = 1.3;
 
 const completeExchange = (
   input: CompleteExchangeInputSwap,
@@ -79,8 +78,6 @@ const completeExchange = (
         const payoutCurrency = getAccountCurrency(toAccount);
         const refundCurrency = getAccountCurrency(fromAccount);
         const mainRefundCurrency = getAccountCurrency(refundAccount);
-
-        const isLifi = provider.toLocaleLowerCase() === "lifi";
 
         const sanctionedAddresses: string[] = [];
         for (const acc of [refundAccount, payoutAccount]) {
@@ -132,20 +129,6 @@ const completeExchange = (
         }
 
         if (unsubscribed) return;
-
-        /**
-         * LiFi swap transactions are frequently failing on-chain.
-         * The failures are due to "out of gas" errors. This indicates the gas limit estimated for the transaction is too low.
-         * Manually resubmitting a failed transaction with a higher gasLimit allows it to succeed.
-         * The root cause is that our explorers are somehow under-estimating the transaction,
-         * or the gasLimit changes and gets increased in the next few blocks.
-         * Solution: Manually override the gas limit only for LiFi transactions and create a 30% safety buffer.
-         */
-        if (isLifi && transaction.family === "evm") {
-          transaction.gasLimit = BigNumber(transaction.gasLimit).times(
-            LIFI_GAS_LIMIT_BUFFER_MULTIPLIER,
-          );
-        }
 
         const { errors, estimatedFees } = await accountBridge.getTransactionStatus(
           refundAccount,
