@@ -473,7 +473,9 @@
       "sui_title" : "Ledger Nano S™ 不支持互换 Sui",
       "sui_description" : "要互换 Sui，请使用任何其他兼容的 Ledger 设备，例如 Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™ 或 Ledger Stax™。",
       "kaspa_title" : "Ledger Nano S™ 不支持互换 Kaspa",
-      "kaspa_description" : "要互换 Kaspa，请使用其他兼容的 Ledger 设备，例如 Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™ 或 Ledger Stax™。"
+      "kaspa_description" : "要互换 Kaspa，请使用其他兼容的 Ledger 设备，例如 Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™ 或 Ledger Stax™。",
+      "celo_title" : "Ledger Nano S™ 不支持互换 Celo",
+      "celo_description" : "要互换 Celo，请使用任何其他兼容的 Ledger 设备，例如 Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™ 或 Ledger Stax™。"
     },
     "providers" : {
       "title" : "选择一个供应方来互换加密货币",
@@ -1250,6 +1252,11 @@
     },
     "manual" : {
       "title" : "准备好您的 {{deviceName}}",
+      "titleTwoStep" : "开始操作",
+      "titleFirstStepDone" : "您的 {{deviceName}} 已经就绪",
+      "successStepTitle" : "您的 {{deviceName}} 现已做好准备，时刻保护您的加密货币",
+      "secureCryptoTitle" : "保护您的加密货币",
+      "secureCryptoDoneTitle" : "您的区块链应用程序已安装完毕。",
       "continueOnDevice" : "在您的 {{productName}} 上执行此操作",
       "pairedContent" : {
         "title" : "{{deviceName}} 为正品",
@@ -1294,6 +1301,11 @@
         "backupCharonDescription" : "在内置安全元件芯片且受 PIN 识别码保护的卡上创建新备份，轻按几下即可恢复对您资产的访问权限。",
         "backupCharonCta" : "了解详情或购买",
         "backupCharonContinueOnDevice" : "按照 {{productName}} 上的说明进行操作"
+      },
+      "secureCrypto" : {
+        "description" : "您可将加密货币从任一交易所或钱包转到您的 Ledger Wallet，以确保最大程度的安全性。",
+        "depositButton" : "保护我的加密货币",
+        "skipButton" : "以后再说"
       },
       "backup" : {
         "title" : "秘密恢复短语备份",
@@ -2365,6 +2377,10 @@
         "solanaRawTransaction" : {
           "title" : "需要盲签名",
           "description" : "您无法在 Ledger 设备上验证交易详情。如果您签署此交易，可能会丢失所有资产。仅在您信任此网站的情况下才可签署。"
+        },
+        "bitcoinPsbtTransaction" : {
+          "title" : "在设备上验证",
+          "description" : "在下一步中，您可以在设备上核对交易数额和接收方。"
         },
         "utxoLag" : "由于该账户持有大量硬币，本次交易可能需要花费较长时间来验证和签署。",
         "subaccountsWarning" : "您需要向此账户充值 {{ currency }} 才能发送此账户的代币",
@@ -4267,6 +4283,8 @@
         "header" : "质押持仓",
         "stake" : "添加",
         "staked" : "已委托",
+        "estimatedReward" : "已赚取的奖励",
+        "rewardTooltip" : "Sui 奖励每个周期（24 小时）发放一次。这些奖励会自动复利，并添加到您委托的质押本金中。",
         "pending" : "等待解除",
         "available" : "可提取"
       },
@@ -4597,6 +4615,54 @@
       "modularDrawerDevTool" : {
         "title" : "模块化抽屉开发工具",
         "description" : "助您轻松测试模块化抽屉"
+      },
+      "cryptoAssetsList" : {
+        "title" : "Crypto Assets List",
+        "description" : "Browse and manage crypto assets from the Crypto Assets List (CAL) service.",
+        "openTokenList" : "Open Token List",
+        "drawer" : {
+          "title" : "Token List Configuration",
+          "description" : "Configure and browse tokens from the Crypto Assets List service. Select a blockchain family to view available tokens.",
+          "options" : "选项",
+          "blockchainFamily" : "Blockchain Family",
+          "selectFamily" : "Select a blockchain family",
+          "pageSize" : "Page Size",
+          "useStaging" : "Use Staging Environment",
+          "useStagingDesc" : "Use staging environment instead of production",
+          "outputFields" : "Output Fields",
+          "refresh" : "刷新",
+          "loading" : "正在加载……",
+          "close" : "关闭",
+          "availableTokens" : "Available Tokens ({{count}})",
+          "noTokens" : "No tokens found for {{family}}",
+          "error" : "Failed to load tokens",
+          "tokenId" : "ID",
+          "contractAddress" : "合约地址",
+          "tokenType" : "Token Type",
+          "parentCurrency" : "Parent Currency",
+          "ledgerSignature" : "Ledger Signature",
+          "units" : "Units",
+          "delisted" : "Delisted",
+          "copy" : "Copy ID",
+          "loadMore" : "加载更多",
+          "searchAndFilters" : "Search & Filters",
+          "maxResults" : "Max Results",
+          "maxResultsPlaceholder" : "无限额",
+          "pagination" : "Pagination",
+          "advanced" : "高级",
+          "calReference" : "CAL Reference",
+          "calReferencePlaceholder" : "e.g. branch:main, tag:tokens-1.11.12, commit:48188c6...",
+          "calReferenceDefault" : "Default: branch:main",
+          "selectAll" : "全部",
+          "selectNone" : "无",
+          "reset" : "重置",
+          "tokens" : "代币",
+          "resultsCount" : "{{count}} results",
+          "collapseAll" : "Collapse All",
+          "noTokensFound" : "No tokens found",
+          "hide" : "隐藏",
+          "show" : "显示"
+        }
       },
       "experimentalApps" : "允许实验性应用程序",
       "experimentalAppsDesc" : "显示并允许打开实验性标记的平台应用程序。",
@@ -5257,7 +5323,7 @@
           },
           "existingRecoveryPhrase" : {
             "title" : "输入您的恢复短语",
-            "paragraph1" : "您的恢复短语是您在首次设置钱包时备份下来的那份秘密单词列表。",
+            "paragraph1" : "Your recovery phrase is the secret list of words that you backed up when you first set up your Ledger device.",
             "paragraph2" : "Ledger 不会保存您恢复短语的副本。",
             "disclaimer" : "我明白：如果我丢失了自己的恢复短语，那么一旦我的 Nano 无法使用，也就意味着我将无法访问自己的加密资产。",
             "buttons" : {
@@ -5731,6 +5797,7 @@
           "onboarded" : "账户已完成新手引导",
           "success" : "您的新 Canton 账户已创建并完成新手引导。",
           "error" : "新账户新手引导失败。请重试。",
+          "error429" : "Canton Network 目前每天支持的账户创建数量有限。请稍后重试。",
           "status" : {
             "prepare" : "正在准备账户新手引导...",
             "submit" : "账户正在进行新手引导...",
@@ -5748,6 +5815,13 @@
         "finish" : {
           "title" : "确认"
         }
+      },
+      "tooManyUtxos" : {
+        "title" : "需要操作：UTXO 数量过多",
+        "description" : "您的账户中有过多小额 UTXO，无法处理此次转账。请立即合并，以免因持有费用累积导致过期，并启用转账功能。",
+        "quickFix" : "快速解决方案：向自己发送一些资金进行合并。",
+        "warning" : "您的账户中有过多小额 UTXO。向自己发送一些资金进行合并。",
+        "consolidate" : "合并"
       }
     },
     "stellar" : {
@@ -6691,6 +6765,10 @@
     "HederaAddAccountError" : {
       "title" : "您的账户尚未添加。请再次尝试。"
     },
+    "HederaRecipientInvalidChecksum" : {
+      "title" : "地址校验和无效",
+      "description" : "提供的地址存在无效的校验和。"
+    },
     "HederaInsufficientFundsForAssociation" : {
       "title" : "余额不足",
       "description" : "HBAR 数额不足以支付代币关联费用。至少需要价值 {{requiredWorthInUSD}} 美元的 HBAR。"
@@ -7445,7 +7523,7 @@
     "connectYourDevice" : {
       "title" : "连接并解锁您的设备"
     },
-    "searchPlaceholder" : "搜索",
+    "searchPlaceholder" : "按名称或地址搜索",
     "emptyAssetList" : "未找到资产",
     "selectAsset" : "选择资产",
     "selectNetwork" : "选择网络",
