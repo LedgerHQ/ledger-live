@@ -2,6 +2,7 @@ import React from "react";
 import styled from "styled-components";
 import { GradientHover } from "~/renderer/drawers/OperationDetails/styledComponents";
 import CopyWithFeedback from "~/renderer/components/CopyWithFeedback";
+
 const CopiableFieldContainer = styled.div`
   display: inline-flex;
   position: relative;
@@ -19,10 +20,12 @@ const CopiableFieldContainer = styled.div`
     }
   }
 `;
+
 type CopiableFieldProps = {
   value: string;
   children?: React.ReactNode;
 };
+
 export function CopiableField({ value, children }: CopiableFieldProps) {
   return (
     <CopiableFieldContainer>

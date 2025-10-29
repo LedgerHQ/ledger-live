@@ -1,4 +1,4 @@
-import React, { PureComponent } from "react";
+import React, { useState } from "react";
 import Modal from "~/renderer/components/Modal";
 import Body from "./Body";
 import { StepId } from "./types";
@@ -16,40 +16,32 @@ export type Props = {
   account: Account;
 };
 
-class StakingModal extends PureComponent<Props, State> {
-  state: State = INITIAL_STATE;
+const StakingModal: React.FC<Props> = ({ account }) => {
+  const [stepId, setStepId] = useState<StepId>(INITIAL_STATE.stepId);
 
-  handleReset = () => this.setState({ ...INITIAL_STATE });
+  const handleReset = () => setStepId(INITIAL_STATE.stepId);
 
-  handleStepChange = (stepId: StepId) =>
-    this.setState({
-      stepId,
-    });
+  const handleStepChange = (stepId: StepId) => setStepId(stepId);
 
-  render() {
-    const { stepId } = this.state;
-    const { account } = this.props;
+  const isModalLocked = ["connectDevice", "confirmation"].includes(stepId);
 
-    const isModalLocked = ["connectDevice", "confirmation"].includes(stepId);
-
-    return (
-      <Modal
-        name="MODAL_MINA_STAKE"
-        centered
-        onHide={this.handleReset}
-        preventBackdropClick={isModalLocked}
-        width={stepId !== "confirmation" ? 600 : 500}
-        render={({ onClose }) => (
-          <Body
-            stepId={stepId}
-            onClose={onClose}
-            onChangeStepId={this.handleStepChange}
-            params={{ account }}
-          />
-        )}
-      />
-    );
-  }
-}
+  return (
+    <Modal
+      name="MODAL_MINA_STAKE"
+      centered
+      onHide={handleReset}
+      preventBackdropClick={isModalLocked}
+      width={stepId !== "confirmation" ? 600 : 500}
+      render={({ onClose }) => (
+        <Body
+          stepId={stepId}
+          onClose={onClose}
+          onChangeStepId={handleStepChange}
+          params={{ account }}
+        />
+      )}
+    />
+  );
+};
 
 export default StakingModal;
