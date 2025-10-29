@@ -58,7 +58,7 @@ export async function listAppCandidates(cwd: string): Promise<AppCandidate[]> {
     const model = modelMap[modelName.toLowerCase()];
     const p1 = path.join(cwd, modelName);
 
-    // ⬇️ Filter out dotfiles and entries that can't be coerced to a SemVer
+    // filter out dotfiles and entries that can't be coerced to a SemVer
     const firmwares = (await fsp.readdir(p1))
       .filter(name => !name.startsWith("."))
       .filter(name => !!semver.coerce(hackBadSemver(name)));
