@@ -10,7 +10,7 @@
     "Bitcoin",
     "Testing"
   ],
-   "repository": {
+  "repository": {
     "type": "git",
     "url": "https://github.com/LedgerHQ/ledger-live.git"
   },
