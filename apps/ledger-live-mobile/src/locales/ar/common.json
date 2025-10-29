@@ -1073,6 +1073,10 @@
     "HederaAddAccountError" : {
       "title" : "لم تتم إضافة حسابك. يرجى إعادة المحاولة."
     },
+    "HederaRecipientInvalidChecksum" : {
+      "title" : "مجموع اختباري غير صالح للعنوان",
+      "description" : "العنوان المقدم لديه مجموع اختباري غير صالح."
+    },
     "HederaInsufficientFundsForAssociation" : {
       "title" : "رصيد غير كافٍ",
       "description" : "لا يوجد HBAR كافٍ للدفع مقابل ربط رمز التوكن. مطلوب على الأقل ما يساوي {{requiredWorthInUSD}}$ من HBAR."
@@ -2292,7 +2296,13 @@
         },
         "retryCta" : "إعادة محاولة الإقران",
         "openSettingsCta" : "انتقل إلى إعدادات البلوتوث",
-        "howToFixPairingIssue" : "كيفية إصلاح مشكلات الإقران"
+        "howToFixPairingIssue" : "كيفية إصلاح مشكلات الإقران",
+        "forgetDevice" : {
+          "title" : "انتقل إلى إعدادات البلوتوث في هاتفك لإلغاء إقران {{productName}}",
+          "description" : "لإصلاح مشكلة الإقران، قم بإزالة {{productName}} من قائمة البلوتوث في هاتفك، ثم عُد لهذا التطبيق وأعد المحاولة.",
+          "learnHowToFixCta" : "تعلم كيفية إصلاح",
+          "tryAgainCta" : "قمتُ بإلغاء الإقران. إعادة المحاولة"
+        }
       }
     }
   },
@@ -2504,7 +2514,7 @@
       },
       "selectionContinueOnDevice" : "اختر الخيار ذي الصلة على جهازك {{productName}}.",
       "newSeedTitle" : "عبارة الاسترداد السرية",
-      "newSeedDescription" : "شاهد مقاطع الفيديو هذه لمعرفة المزيد عن عبارة الاسترداد السرية:",
+      "newSeedDescription" : "عبارة الاسترداد السرية الخاصة بك تتحكم في أصولك وهي غير قابلة للاستبدال. أي شخص لديه عبارتك يمكنه سرقة كل أصولك. إذا فقدتها، Ledger لا يمكنها استرجاعها من أجلك.",
       "newSeedContinueOnDevice" : "اتبع التعليمات على جهازك {{productName}}",
       "recovery" : "تأكد من استخدام عبارة استرداد سرية تم إنشاؤها عن طريق جهاز Ledger لأقصى درجات الأمان لأصولك. \n\nليس لديك عبارة استرداد؟ استخدم جهازك {{productName}} لإنشاء واحدة جديدة."
     },
@@ -2544,7 +2554,7 @@
       "title" : "جهازك {{productName}} جاهز لتأمين أصولك الرقمية"
     },
     "newSeed" : {
-      "subtitle" : "يمكنك تحويل الأصول المشفرة من أي منصة تداول أو محفظة إلى Ledger Live خاصتك من أجل أقصى درجات الأمان.",
+      "subtitle" : "يمكنك تحويل الأصول المشفرة من أي منصة تداول أو محفظة إلى Ledger Wallet خاصتك من أجل أقصى درجات الأمان.",
       "installCTA" : "تأمين أصولي المشفرة",
       "skipCTA" : "ربّما في وقت لاحق"
     }
@@ -3768,6 +3778,10 @@
       "history" : {
         "title" : "سجلّ المبادلة"
       },
+      "wrongDevice" : {
+        "title" : "™Ledger Nano S ليست متوافقة مع {{provider}}",
+        "description" : "™Ledger Nano S ليست متوافقة مع {{provider}}. يمكنك استخدام ™Ledger Nano S Plus أو ™Ledger Nano X أو ™Ledger Stax أو ™Ledger Flex لتجربة المبادلات عبر سلاسل الكتل المختلفة على {{provider}} عبر Ledger Live"
+      },
       "incompatibility" : {
         "explore_compatible_devices" : "استكشف الأجهزة المتوافقة",
         "contact_support" : "تواصل مع دعم العملاء",
@@ -3794,7 +3808,9 @@
         "sui_title" : "™Ledger Nano S لا تدعم مبادلة Sui",
         "sui_description" : "لمبادلة Sui، استخدِم أي جهاز Ledger آخر متوافق مثل ™Ledger Nano S Plus أو ™Ledger Nano X أو ™Ledger Flex أو ™Ledger Stax.",
         "kaspa_title" : "™Ledger Nano S لا تدعم مبادلة Kaspa",
-        "kaspa_description" : "لمبادلة Kaspa، استخدِم أي جهاز Ledger متوافق آخر مثل ™Ledger Nano S Plus أو ™Ledger Nano X أو ™Ledger Flex أو ™Ledger Stax."
+        "kaspa_description" : "لمبادلة Kaspa، استخدِم أي جهاز Ledger متوافق آخر مثل ™Ledger Nano S Plus أو ™Ledger Nano X أو ™Ledger Flex أو ™Ledger Stax.",
+        "celo_title" : "™Ledger Nano S لا تدعم مبادلة Celo",
+        "celo_description" : "لمبادلة Celo، استخدم أي جهاز Ledger متوافق آخر مثل ™Ledger Nano S Plus أو ™Ledger Nano X أو ™Ledger Flex أو ™Ledger Stax."
       }
     },
     "lending" : {
@@ -4070,6 +4086,10 @@
       "solanaRawTransaction" : {
         "title" : "التوقيع بدون اطلاع مطلوب",
         "description" : "لا يمكنك تأكيد صحة تفاصيل المعاملة على جهازك Ledger. إذا قمت بتوقيعها، فقد تخسر كل أصولك. قم بالتوقيع فقط إذا كنت تثق في هذا الموقع الإلكتروني."
+      },
+      "bitcoinPsbtTransaction" : {
+        "title" : "التحقق على الجهاز",
+        "description" : "يمكك التحقق من مبلغ المعاملة والمستلم على الجهاز في الخطوة التالية."
       },
       "subaccountsWarning" : "ستحتاج إلى إعادة شحن هذا الحساب بعملة {{ currency }} لتستطيع إرسال رموز التوكن من هذا الحساب",
       "tag" : "علامة (اختيارية)",
@@ -4581,7 +4601,6 @@
     }
   },
   "manager" : {
-    "tabTitle" : "جهازي Ledger",
     "title" : "جهازي Ledger",
     "selectDevice" : {
       "title" : "الأجهزة",
@@ -6478,6 +6497,7 @@
   },
   "sui" : {
     "info" : {
+      "estimatedReward" : "المكافآت المكتسبة",
       "available" : {
         "title" : "SUI متاحة",
         "description" : "هذا المبلغ قابل للتصرف."
@@ -7869,7 +7889,7 @@
     "selectAsset" : "اختر أصل",
     "selectNetwork" : "اختر شبكة",
     "selectAccount" : "اختر حساب",
-    "searchPlaceholder" : "بحث",
+    "searchPlaceholder" : "ابحث عن طريق الاسم أو العنوان",
     "emptyAssetList" : "لم يتم العثور على أصول",
     "accountCount_one" : "{{count}} حساب",
     "accountCount_other" : "{{count}} حساب",
@@ -7968,7 +7988,15 @@
       "authorize" : "تصريح",
       "preapprove" : "تمت إضافة الحساب بنجاح",
       "validator" : "مُدقِّق Ledger",
-      "title" : "اقبل تلقائياً الأموال الواردة"
+      "title" : "اقبل تلقائياً الأموال الواردة",
+      "error429" : "شبكة Canton تدعم حالياً عدداً محدوداً من عمليات إنشاء الحساب في اليوم. يُرجى إعادة المحاولة لاحقاً."
+    },
+    "tooManyUtxos" : {
+      "title" : "مطلوب إجراء: مخرجات معاملات غير منفقة (UTXO) كثيرة للغاية",
+      "description" : "يحتوي حسابك على الكثير من مخرجات المعاملات غير المنفقة (UTXO) الصغيرة لمعالجة هذا التحويل. قم بدمجها الآن لتجنب انتهاء الصلاحية نتيجةً لرسوم الاحتفاظ المتراكمة وقم بتمكين التحويلات.",
+      "quickFix" : "حل سريع: أرسل بعض الأموال لنفسك لتجميعها.",
+      "warning" : "يحتوي حسابك على الكثير من مخرجات المعاملات غير المنفقة (UTXO) الصغيرة. أرسل بعض الأموال لنفسك لتجميعها.",
+      "consolidate" : "تجميع"
     }
   }
 }
