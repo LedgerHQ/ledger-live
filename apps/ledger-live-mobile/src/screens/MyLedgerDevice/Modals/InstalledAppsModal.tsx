@@ -106,7 +106,7 @@ const InstalledAppsModal = ({
   }, [appList, onClose]);
 
   return (
-    <QueuedDrawer isRequestingToBeOpened={isOpen} onClose={onClose} propagateSwipe={true}>
+    <QueuedDrawer isRequestingToBeOpened={isOpen} onClose={onClose}>
       <Header illustration={illustration} />
       <FlatList
         data={appList}
@@ -114,6 +114,7 @@ const InstalledAppsModal = ({
         keyExtractor={item => "" + item.id}
         overScrollMode="never"
         showsVerticalScrollIndicator={false}
+        style={{ maxHeight: 325 }}
       />
       <Button mt={6} size="large" type="error" onPress={onUninstallAll}>
         <Trans i18nKey={"manager.uninstall.uninstallAll"} />
