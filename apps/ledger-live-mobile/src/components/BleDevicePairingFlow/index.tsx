@@ -30,6 +30,7 @@ export type SetHeaderOptionsRequest =
       options: {
         headerLeft: () => React.ReactElement | null;
         headerRight: () => React.ReactElement | null;
+        headerBackVisible?: boolean;
       };
     }
   | {
@@ -214,6 +215,7 @@ const BleDevicePairingFlow: React.FC<BleDevicePairingFlowProps> = ({
           type: "set",
           options: {
             headerLeft: () => null,
+            headerBackVisible: false,
             headerRight: () => <NavigationHeaderCloseButton onPress={onRetryPairingFlow} />,
           },
         });
@@ -224,6 +226,7 @@ const BleDevicePairingFlow: React.FC<BleDevicePairingFlowProps> = ({
           type: "set",
           options: {
             headerLeft: () => null,
+            headerBackVisible: false,
             headerRight: () => null,
           },
         });
