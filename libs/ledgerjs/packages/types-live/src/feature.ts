@@ -271,6 +271,7 @@ export type Features = CurrencyFeatures & {
   llmSyncOnboardingIncr1: DefaultFeature;
   lldSyncOnboardingIncr1: DefaultFeature;
   noah: DefaultFeature;
+  newSendFlow: DefaultFeature;
 };
 
 /**

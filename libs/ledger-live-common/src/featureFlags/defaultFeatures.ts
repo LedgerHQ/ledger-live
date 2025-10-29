@@ -693,6 +693,7 @@ export const DEFAULT_FEATURES: Features = {
   llmSyncOnboardingIncr1: DEFAULT_FEATURE,
   lldSyncOnboardingIncr1: DEFAULT_FEATURE,
   noah: DEFAULT_FEATURE,
+  newSendFlow: DEFAULT_FEATURE,
 };
 
 // Firebase SDK treat JSON values as strings
