@@ -5,11 +5,13 @@ import { createRequire } from "node:module";
 import * as Repack from "@callstack/repack";
 import { ExpoModulesPlugin } from "@callstack/repack-plugin-expo-modules";
 import { ReanimatedPlugin } from "@callstack/repack-plugin-reanimated";
-import { DefinePlugin } from "@rspack/core";
+import { DefinePlugin, NormalModuleReplacementPlugin } from "@rspack/core";
 // import { cluster } from "node-libs-react-native";
 
 const require = createRequire(import.meta.url);
 const PnpmWorkspaceResolverPlugin = require("./plugins/PnpmWorkspaceResolverPlugin.js");
+const NodeProtocolPlugin = require("./plugins/NodeProtocolPlugin.js");
+const EthereumCryptographyResolverPlugin = require("./plugins/EthereumCryptographyResolverPlugin.js");
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = Repack.getDirname(import.meta.url);
@@ -69,6 +71,13 @@ export default Repack.defineRspackConfig({
     port: 8081,
     host: "localhost",
   },
+  externals: {
+    // Prevent build tools from being bundled
+    'tapable': 'commonjs tapable',
+    'webpack': 'commonjs webpack',
+    '@rspack/core': 'commonjs @rspack/core',
+    '@babel/core': 'commonjs @babel/core',
+  },
   resolve: {
     ...Repack.getResolveOptions({ enablePackageExports: true }),
     modules: nodeModulesPaths,
@@ -85,10 +94,21 @@ export default Repack.defineRspackConfig({
       "react-native-reanimated": require.resolve("react-native-reanimated"),
       "styled-components": require.resolve("styled-components"),
       "react-redux": require.resolve("react-redux"),
+      "reselect": require.resolve("reselect"), // Singleton: ensure only the app's version (v4) is used
+      "asn1.js": require.resolve("asn1.js"), // Singleton: prevent multiple versions from conflicting
+      "bn.js": require.resolve("bn.js"), // Singleton: BigNumber library used by ethereumjs
+      "long": require.resolve("long"), // Singleton: 64-bit integer library used by @hashgraph/sdk
+      "bip32": require.resolve("bip32"), // Singleton: Bitcoin BIP32 library - must NOT be transpiled to preserve getters
+      "@ethereumjs/util": require.resolve("@ethereumjs/util"), // Singleton: force one version
+      // ethereum-cryptography and @noble/* packages handled by EthereumCryptographyResolverPlugin
+      // @chainsafe/as-sha256 uses WebAssembly which is not supported in Hermes, use js-sha256 instead
+      "@chainsafe/as-sha256": require.resolve("js-sha256"),
       // Workspace package aliases for compiled code
       "@ledgerhq/crypto-icons": path.resolve(projectRootDir, "libs/ui/packages/crypto-icons"),
       "@ledgerhq/crypto-icons-ui": path.resolve(projectRootDir, "libs/ui/packages/crypto-icons"),
       "@ledgerhq/ui-shared": path.resolve(projectRootDir, "libs/ui/packages/shared"),
+      // Force coin-kaspa to use TypeScript source to avoid module interop issues
+      "@ledgerhq/coin-kaspa": path.resolve(projectRootDir, "libs/coin-modules/coin-kaspa/src/index.ts"),
       // Fix @ledgerhq/live-common subpath imports that aren't in package exports
       "@ledgerhq/live-common/modularDrawer/hooks/useAcceptedCurrency": path.resolve(
         projectRootDir,
@@ -105,8 +125,23 @@ export default Repack.defineRspackConfig({
       "@mocks": path.resolve(__dirname, "__mocks__"),
       // React Native internal modules - map to absolute paths to fix relative import issues
       "react-native/Libraries": path.join(require.resolve("react-native/package.json"), "../Libraries"),
+      // CRITICAL: Replace tapable package with our polyfill
+      // This must be an absolute path to bypass all module resolution
+      "tapable": path.resolve(__dirname, "polyfills/tapable.js"),
+      "tapable/lib/Hook": path.resolve(__dirname, "polyfills/tapable.js"),
+      "tapable/lib/SyncHook": path.resolve(__dirname, "polyfills/tapable.js"),
+      "tapable/lib/AsyncSeriesBailHook": path.resolve(__dirname, "polyfills/tapable.js"),
+      "tapable/lib/AsyncSeriesWaterfallHook": path.resolve(__dirname, "polyfills/tapable.js"),
+      // CRITICAL: Prevent build tools from being bundled (they should never be in runtime)
+      "webpack": false,
+      "@rspack/core": false,
+      "@babel/core": false,
+      "terser-webpack-plugin": false,
+      "html-webpack-plugin": false,
     },
     fallback: {
+      // tapable is used by Re.Pack's ScriptManager - provide React Native compatible polyfill
+      "tapable": path.resolve(__dirname, "polyfills/tapable.js"),
       ...require("node-libs-react-native"),
       fs: require.resolve("react-native-level-fs"),
       net: require.resolve("react-native-tcp-socket"),
@@ -120,6 +155,14 @@ export default Repack.defineRspackConfig({
       module: false,
       repl: false,
       vm: false,
+      // readable-stream is used by some legacy packages but not needed in React Native
+      // These subpath exports don't exist in newer versions, so we disable them
+      "readable-stream": false,
+      "readable-stream/duplex": false,
+      "readable-stream/passthrough": false,
+      "readable-stream/readable": false,
+      "readable-stream/transform": false,
+      "readable-stream/writable": false,
       // Flipper/Rozenite plugins are dev-only, make them optional
       "@rozenite/mmkv-plugin": false,
       "@rozenite/network-activity-plugin": false,
@@ -129,6 +172,9 @@ export default Repack.defineRspackConfig({
       // Package export issues - these are dependencies of @aptos-labs and @solana
       "@aptos-labs/aptos-client": false,
       "rpc-websockets": false,
+      // Old stream libraries that aren't needed
+      "fwd-stream": false,
+      "level-blobs": false,
     },
   },
   module: {
@@ -141,6 +187,7 @@ export default Repack.defineRspackConfig({
           path.resolve(__dirname, "src"),
           path.resolve(__dirname, "e2e"),
           path.resolve(__dirname, "services"),
+          path.resolve(__dirname, "polyfills"),
           path.resolve(__dirname, "index.js"),
           path.resolve(projectRootDir, "libs"),
           // Re.Pack runtime modules (need transpilation)
@@ -149,60 +196,12 @@ export default Repack.defineRspackConfig({
           /node_modules\/react-native\//,
           /node_modules\/@react-native\//,
         ],
-        use: {
-          loader: "@callstack/repack/babel-swc-loader",
-          options: {
-            babelrc: true,
-            configFile: true,
-            cacheDirectory: false,
-            unstable_disableTransform: ["react-native-reanimated"],
-            parallel: true,
-          },
-        },
-        type: "javascript/auto",
-      },
-      // Transpile specific node_modules that need it (ESM, TS enums, etc.)
-      {
-        test: /\.[cm]?[jt]sx?$/,
-        include: [
-          /node_modules\/@ledgerhq\//,
-          /node_modules\/react-native-/,
-          /node_modules\/@react-native-community\//,
-          /node_modules\/@react-native-async-storage\//,
-          /node_modules\/@react-native-masked-view\//,
-          /node_modules\/@react-navigation\//,
-          /node_modules\/@reduxjs\//,
-          /node_modules\/@tanstack\//,
-          /node_modules\/d3-/,
-          /node_modules\/lodash-es\//,
-          /node_modules\/@sentry\//,
-          /node_modules\/@gorhom\//,
-          /node_modules\/@braze\//,
-          /node_modules\/@datadog\//,
-          /node_modules\/@formatjs\//,
-          /node_modules\/@segment\//,
-          /node_modules\/@shopify\//,
-          /node_modules\/expo(-|@|\/)/,
-          /node_modules\/fuse\.js\//,
-          /node_modules\/hoist-non-react-statics\//,
-          /node_modules\/invariant\//,
-          /node_modules\/jotai\//,
-          /node_modules\/json-rpc-2\.0\//,
-          /node_modules\/lottie-react-native\//,
-          /node_modules\/prop-types\//,
-          /node_modules\/react-is\//,
-          /node_modules\/reselect\//,
-          /node_modules\/redux-actions\//,
-          /node_modules\/rxjs\//,
-          /node_modules\/styled-components\//,
-          /node_modules\/styled-system\//,
-          /node_modules\/uuid\//,
-          /node_modules\/react-freeze\//,
-          /node_modules\/rn-range-slider\//,
-          /node_modules\/rn-fetch-blob\//,
-          /node_modules\/storyly-react-native\//,
-          /node_modules\/@aptos-labs\//,
-          /node_modules\/@solana\//,
+        exclude: [
+          // Exclude UI packages source files - use compiled lib/ instead
+          /libs\/ui\/packages\/icons\/src\//,
+          /libs\/ui\/packages\/native\/src\//,
+          /libs\/ui\/packages\/crypto-icons\/src\//,
+          /libs\/ui\/packages\/shared\/src\//,
         ],
         use: {
           loader: "@callstack/repack/babel-swc-loader",
@@ -212,6 +211,69 @@ export default Repack.defineRspackConfig({
             cacheDirectory: false,
             unstable_disableTransform: ["react-native-reanimated"],
             parallel: true,
+            // Use SWC mode (default) - Polkadot static blocks are already patched
+            // SWC with hermes-parser is faster and more compatible with React Native
+            hideParallelModeWarning: true,
+          },
+        },
+        type: "javascript/auto",
+      },
+      // Transpile ALL node_modules (Metro-like behavior)
+      // This ensures compatibility with Hermes by transforming all modern ES features
+      {
+        test: /\.[cm]?[jt]sx?$/,
+        include: [/node_modules/],
+        exclude: [
+          // Exclude known safe/pre-compiled packages for performance
+          // These are packages that are already ES5 or don't use problematic features
+          
+          // Core React (already compatible)
+          /node_modules\/react\/cjs\//,
+          /node_modules\/react-dom\/cjs\//,
+          /node_modules\/scheduler\/cjs\//,
+          
+          // Build tools (should NEVER be in bundle - these are bundler dependencies)
+          /node_modules\/@babel\//,
+          /node_modules\/@rspack\//,
+          /node_modules\/@swc\//,
+          /node_modules\/webpack/,
+          /node_modules\/tapable/,
+          /node_modules\/metro/,
+          /node_modules\/typescript/,
+          /node_modules\/eslint/,
+          /node_modules\/jest/,
+          /node_modules\/detox/,
+          /node_modules\/@testing-library/,
+          /node_modules\/terser/,
+          /node_modules\/esbuild/,
+          /node_modules\/html-webpack-plugin/,
+          /node_modules\/@pmmmwh/,  // react-refresh-webpack-plugin
+          
+          // Dev-only tools (not in production bundle)
+          /node_modules\/@storybook/,
+          /node_modules\/prettier/,
+          /node_modules\/rollup/,
+          /node_modules\/vite/,
+          /node_modules\/vitest/,
+          /node_modules\/playwright/,
+          
+          // Large polyfill libraries that are already compatible
+          /node_modules\/core-js\//,
+          /node_modules\/regenerator-runtime\//,
+          
+          // TypeScript definition files
+          /\.d\.ts$/,
+        ],
+        use: {
+          loader: "@callstack/repack/babel-swc-loader",
+          options: {
+            babelrc: true,
+            configFile: true,
+            cacheDirectory: false,
+            unstable_disableTransform: ["react-native-reanimated"],
+            parallel: true,
+            // Use SWC mode (default) - Polkadot static blocks are already patched
+            hideParallelModeWarning: true,
           },
         },
         type: "javascript/auto",
@@ -256,6 +318,31 @@ export default Repack.defineRspackConfig({
     ],
   },
   plugins: [
+    // CRITICAL: Replace tapable with our React Native polyfill FIRST
+    // Re.Pack's ScriptManager uses tapable, but tapable is a Node.js library
+    new NormalModuleReplacementPlugin(
+      /tapable/,
+      (resource) => {
+        // Don't replace our own polyfill files
+        if (resource.request.includes('polyfills/tapable') || 
+            resource.request.includes('polyfills/setup-tapable')) {
+          return;
+        }
+        // Log for debugging
+        if (!isProduction) {
+          console.log('[NormalModuleReplacementPlugin] Replacing tapable:', resource.request);
+        }
+        resource.request = path.resolve(__dirname, "polyfills/tapable.js");
+      }
+    ),
+    // NodeProtocolPlugin MUST come first to intercept node: protocol before any resolution
+    new NodeProtocolPlugin({
+      verbose: !isProduction, // Enable verbose logging in development
+    }),
+    // EthereumCryptographyResolverPlugin forces ethereum-cryptography@1.2.0 for @ethereumjs/util compatibility
+    new EthereumCryptographyResolverPlugin({
+      verbose: !isProduction, // Enable verbose logging in development
+    }),
     new PnpmWorkspaceResolverPlugin({
       workspaceRoot: projectRootDir,
       verbose: !isProduction, // Enable verbose logging in development

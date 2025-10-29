@@ -199,8 +199,10 @@ apply from: "../../node_modules/@sentry/react-native/sentry.gradle"
 
 
 sentry {
-    autoUploadProguardMapping = shouldSentryAutoUpload()
-    uploadNativeSymbols = shouldSentryAutoUpload()
+    // Disable Sentry uploads for debug builds to speed up development
+    // Re-enable for release builds by setting these to true
+    autoUploadProguardMapping = false
+    uploadNativeSymbols = false
 }
 
 

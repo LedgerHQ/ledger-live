@@ -489,23 +489,6 @@ export default function BaseNavigator() {
           options={{ headerShown: false }}
         />
         {/* This is a freaking hack… */}
-        {Object.keys(families).map(name => {
-          /* eslint-disable @typescript-eslint/consistent-type-assertions */
-          const { component, options } = families[name as keyof typeof families];
-          const screenName = name as keyof BaseNavigatorStackParamList;
-          const screenComponent = component as React.ComponentType;
-          const screenOptions = options as StackNavigationOptions;
-          /* eslint-enable @typescript-eslint/consistent-type-assertions */
-
-          return (
-            <Stack.Screen
-              key={name}
-              name={screenName}
-              component={screenComponent}
-              options={screenOptions}
-            />
-          );
-        })}
         <Stack.Screen
           name={ScreenName.BleDevicePairingFlow}
           component={BleDevicePairingFlow}
@@ -589,11 +572,11 @@ export default function BaseNavigator() {
             headerRight: () => <Button Icon={IconsLegacy.CloseMedium} />,
           }}
         />
-        <Stack.Screen
+       {/*  <Stack.Screen
           name={NavigatorName.AddAccounts}
           component={AddAccountsV2Navigator}
           options={{ headerShown: false }}
-        />
+        /> */}
 
         <Stack.Screen
           name={NavigatorName.DeviceSelection}
@@ -601,11 +584,11 @@ export default function BaseNavigator() {
           options={{ headerShown: false }}
         />
 
-        <Stack.Screen
+        {/* <Stack.Screen
           name={NavigatorName.AssetSelection}
           component={AssetSelectionNavigator}
           options={{ headerShown: false }}
-        />
+        /> */}
 
         {llmAccountListUI?.enabled && (
           <Stack.Screen

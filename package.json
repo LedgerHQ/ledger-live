@@ -270,7 +270,9 @@
       "detox@20.41.2": "patches/detox@20.41.2.patch",
       "@datadog/datadog-ci@3.11.0": "patches/@datadog__datadog-ci@3.11.0.patch",
       "@exodus/patch-broken-hermes-typed-arrays": "patches/@exodus__patch-broken-hermes-typed-arrays.patch",
-      "@taquito/http-utils": "patches/@taquito__http-utils.patch"
+      "@taquito/http-utils": "patches/@taquito__http-utils.patch",
+      "tapable@2.2.1": "patches/tapable@2.2.1.patch",
+      "bip32@4.0.0": "patches/bip32@4.0.0.patch"
     },
     "packageExtensions": {
       "eslint-config-next@*": {

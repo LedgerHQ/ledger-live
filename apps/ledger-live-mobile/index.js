@@ -1,3 +1,8 @@
+// CRITICAL: Install tapable polyfill FIRST before any other imports
+// Re.Pack's ScriptManager requires tapable, but tapable is a Node.js library
+// Also installs TextEncoder/TextDecoder polyfills
+import "./polyfills/setup-tapable.js";
+
 import "react-native-get-random-values";
 // Injects node.js shims.
 // https://github.com/parshap/node-libs-react-native

@@ -1,0 +1,934 @@
+diff --git a/lib/AsyncParallelBailHook.js b/lib/AsyncParallelBailHook.js
+index 45eca33c89037c77e575f27eaf15086c83dab6e6..6f398e7db897d046c76bdf0d31d10f268ad1868a 100644
+--- a/lib/AsyncParallelBailHook.js
++++ b/lib/AsyncParallelBailHook.js
+@@ -1,85 +1,3 @@
+-/*
+-	MIT License http://www.opensource.org/licenses/mit-license.php
+-	Author Tobias Koppers @sokra
+-*/
+-"use strict";
+-
+-const Hook = require("./Hook");
+-const HookCodeFactory = require("./HookCodeFactory");
+-
+-class AsyncParallelBailHookCodeFactory extends HookCodeFactory {
+-	content({ onError, onResult, onDone }) {
+-		let code = "";
+-		code += `var _results = new Array(${this.options.taps.length});\n`;
+-		code += "var _checkDone = function() {\n";
+-		code += "for(var i = 0; i < _results.length; i++) {\n";
+-		code += "var item = _results[i];\n";
+-		code += "if(item === undefined) return false;\n";
+-		code += "if(item.result !== undefined) {\n";
+-		code += onResult("item.result");
+-		code += "return true;\n";
+-		code += "}\n";
+-		code += "if(item.error) {\n";
+-		code += onError("item.error");
+-		code += "return true;\n";
+-		code += "}\n";
+-		code += "}\n";
+-		code += "return false;\n";
+-		code += "}\n";
+-		code += this.callTapsParallel({
+-			onError: (i, err, done, doneBreak) => {
+-				let code = "";
+-				code += `if(${i} < _results.length && ((_results.length = ${i +
+-					1}), (_results[${i}] = { error: ${err} }), _checkDone())) {\n`;
+-				code += doneBreak(true);
+-				code += "} else {\n";
+-				code += done();
+-				code += "}\n";
+-				return code;
+-			},
+-			onResult: (i, result, done, doneBreak) => {
+-				let code = "";
+-				code += `if(${i} < _results.length && (${result} !== undefined && (_results.length = ${i +
+-					1}), (_results[${i}] = { result: ${result} }), _checkDone())) {\n`;
+-				code += doneBreak(true);
+-				code += "} else {\n";
+-				code += done();
+-				code += "}\n";
+-				return code;
+-			},
+-			onTap: (i, run, done, doneBreak) => {
+-				let code = "";
+-				if (i > 0) {
+-					code += `if(${i} >= _results.length) {\n`;
+-					code += done();
+-					code += "} else {\n";
+-				}
+-				code += run();
+-				if (i > 0) code += "}\n";
+-				return code;
+-			},
+-			onDone
+-		});
+-		return code;
+-	}
+-}
+-
+-const factory = new AsyncParallelBailHookCodeFactory();
+-
+-const COMPILE = function(options) {
+-	factory.setup(this, options);
+-	return factory.create(options);
+-};
+-
+-function AsyncParallelBailHook(args = [], name = undefined) {
+-	const hook = new Hook(args, name);
+-	hook.constructor = AsyncParallelBailHook;
+-	hook.compile = COMPILE;
+-	hook._call = undefined;
+-	hook.call = undefined;
+-	return hook;
+-}
+-
+-AsyncParallelBailHook.prototype = null;
+-
+-module.exports = AsyncParallelBailHook;
++import * as polyfill from './polyfill-setup.js';
++export default polyfill.AsyncParallelBailHook;
++export const AsyncParallelBailHook = polyfill.AsyncParallelBailHook;
+diff --git a/lib/AsyncParallelHook.js b/lib/AsyncParallelHook.js
+index b7a36314dcedfc1013ccf284d7d2aa024092e658..4c4c564acf64d0d023ff84dc4053cf9935d7e4df 100644
+--- a/lib/AsyncParallelHook.js
++++ b/lib/AsyncParallelHook.js
+@@ -1,37 +1,3 @@
+-/*
+-	MIT License http://www.opensource.org/licenses/mit-license.php
+-	Author Tobias Koppers @sokra
+-*/
+-"use strict";
+-
+-const Hook = require("./Hook");
+-const HookCodeFactory = require("./HookCodeFactory");
+-
+-class AsyncParallelHookCodeFactory extends HookCodeFactory {
+-	content({ onError, onDone }) {
+-		return this.callTapsParallel({
+-			onError: (i, err, done, doneBreak) => onError(err) + doneBreak(true),
+-			onDone
+-		});
+-	}
+-}
+-
+-const factory = new AsyncParallelHookCodeFactory();
+-
+-const COMPILE = function(options) {
+-	factory.setup(this, options);
+-	return factory.create(options);
+-};
+-
+-function AsyncParallelHook(args = [], name = undefined) {
+-	const hook = new Hook(args, name);
+-	hook.constructor = AsyncParallelHook;
+-	hook.compile = COMPILE;
+-	hook._call = undefined;
+-	hook.call = undefined;
+-	return hook;
+-}
+-
+-AsyncParallelHook.prototype = null;
+-
+-module.exports = AsyncParallelHook;
++import * as polyfill from './polyfill-setup.js';
++export default polyfill.AsyncParallelHook;
++export const AsyncParallelHook = polyfill.AsyncParallelHook;
+diff --git a/lib/AsyncSeriesBailHook.js b/lib/AsyncSeriesBailHook.js
+index 5df66dfb78b163220ed2cf21d206d2b07d817519..9aea7f635782dcef23750e94b6e6c6caa971eaf2 100644
+--- a/lib/AsyncSeriesBailHook.js
++++ b/lib/AsyncSeriesBailHook.js
+@@ -1,42 +1,3 @@
+-/*
+-	MIT License http://www.opensource.org/licenses/mit-license.php
+-	Author Tobias Koppers @sokra
+-*/
+-"use strict";
+-
+-const Hook = require("./Hook");
+-const HookCodeFactory = require("./HookCodeFactory");
+-
+-class AsyncSeriesBailHookCodeFactory extends HookCodeFactory {
+-	content({ onError, onResult, resultReturns, onDone }) {
+-		return this.callTapsSeries({
+-			onError: (i, err, next, doneBreak) => onError(err) + doneBreak(true),
+-			onResult: (i, result, next) =>
+-				`if(${result} !== undefined) {\n${onResult(
+-					result
+-				)}\n} else {\n${next()}}\n`,
+-			resultReturns,
+-			onDone
+-		});
+-	}
+-}
+-
+-const factory = new AsyncSeriesBailHookCodeFactory();
+-
+-const COMPILE = function(options) {
+-	factory.setup(this, options);
+-	return factory.create(options);
+-};
+-
+-function AsyncSeriesBailHook(args = [], name = undefined) {
+-	const hook = new Hook(args, name);
+-	hook.constructor = AsyncSeriesBailHook;
+-	hook.compile = COMPILE;
+-	hook._call = undefined;
+-	hook.call = undefined;
+-	return hook;
+-}
+-
+-AsyncSeriesBailHook.prototype = null;
+-
+-module.exports = AsyncSeriesBailHook;
++import * as polyfill from './polyfill-setup.js';
++export default polyfill.AsyncSeriesBailHook;
++export const AsyncSeriesBailHook = polyfill.AsyncSeriesBailHook;
+diff --git a/lib/AsyncSeriesHook.js b/lib/AsyncSeriesHook.js
+index 3edad005173f74c70cd4677ccc85b198580c483e..e2d7b34ee72d7a9787c44da70eea4656b77b4b43 100644
+--- a/lib/AsyncSeriesHook.js
++++ b/lib/AsyncSeriesHook.js
+@@ -1,37 +1,3 @@
+-/*
+-	MIT License http://www.opensource.org/licenses/mit-license.php
+-	Author Tobias Koppers @sokra
+-*/
+-"use strict";
+-
+-const Hook = require("./Hook");
+-const HookCodeFactory = require("./HookCodeFactory");
+-
+-class AsyncSeriesHookCodeFactory extends HookCodeFactory {
+-	content({ onError, onDone }) {
+-		return this.callTapsSeries({
+-			onError: (i, err, next, doneBreak) => onError(err) + doneBreak(true),
+-			onDone
+-		});
+-	}
+-}
+-
+-const factory = new AsyncSeriesHookCodeFactory();
+-
+-const COMPILE = function(options) {
+-	factory.setup(this, options);
+-	return factory.create(options);
+-};
+-
+-function AsyncSeriesHook(args = [], name = undefined) {
+-	const hook = new Hook(args, name);
+-	hook.constructor = AsyncSeriesHook;
+-	hook.compile = COMPILE;
+-	hook._call = undefined;
+-	hook.call = undefined;
+-	return hook;
+-}
+-
+-AsyncSeriesHook.prototype = null;
+-
+-module.exports = AsyncSeriesHook;
++import * as polyfill from './polyfill-setup.js';
++export default polyfill.AsyncSeriesHook;
++export const AsyncSeriesHook = polyfill.AsyncSeriesHook;
+diff --git a/lib/AsyncSeriesWaterfallHook.js b/lib/AsyncSeriesWaterfallHook.js
+index 910b536f741693fe3ea4fd56e155fe787d905dee..1de9412b119f67ddb9f5af24c11cbe57dc39dc88 100644
+--- a/lib/AsyncSeriesWaterfallHook.js
++++ b/lib/AsyncSeriesWaterfallHook.js
+@@ -1,47 +1,3 @@
+-/*
+-	MIT License http://www.opensource.org/licenses/mit-license.php
+-	Author Tobias Koppers @sokra
+-*/
+-"use strict";
+-
+-const Hook = require("./Hook");
+-const HookCodeFactory = require("./HookCodeFactory");
+-
+-class AsyncSeriesWaterfallHookCodeFactory extends HookCodeFactory {
+-	content({ onError, onResult, onDone }) {
+-		return this.callTapsSeries({
+-			onError: (i, err, next, doneBreak) => onError(err) + doneBreak(true),
+-			onResult: (i, result, next) => {
+-				let code = "";
+-				code += `if(${result} !== undefined) {\n`;
+-				code += `${this._args[0]} = ${result};\n`;
+-				code += `}\n`;
+-				code += next();
+-				return code;
+-			},
+-			onDone: () => onResult(this._args[0])
+-		});
+-	}
+-}
+-
+-const factory = new AsyncSeriesWaterfallHookCodeFactory();
+-
+-const COMPILE = function(options) {
+-	factory.setup(this, options);
+-	return factory.create(options);
+-};
+-
+-function AsyncSeriesWaterfallHook(args = [], name = undefined) {
+-	if (args.length < 1)
+-		throw new Error("Waterfall hooks must have at least one argument");
+-	const hook = new Hook(args, name);
+-	hook.constructor = AsyncSeriesWaterfallHook;
+-	hook.compile = COMPILE;
+-	hook._call = undefined;
+-	hook.call = undefined;
+-	return hook;
+-}
+-
+-AsyncSeriesWaterfallHook.prototype = null;
+-
+-module.exports = AsyncSeriesWaterfallHook;
++import * as polyfill from './polyfill-setup.js';
++export default polyfill.AsyncSeriesWaterfallHook;
++export const AsyncSeriesWaterfallHook = polyfill.AsyncSeriesWaterfallHook;
+diff --git a/lib/Hook.js b/lib/Hook.js
+index db04426f05e6144c6df7af2f7a7402e57ba9b95a..b311c09e2c5ae557efb13d1ed1c240cf8d4a8f4f 100644
+--- a/lib/Hook.js
++++ b/lib/Hook.js
+@@ -1,175 +1,3 @@
+-/*
+-	MIT License http://www.opensource.org/licenses/mit-license.php
+-	Author Tobias Koppers @sokra
+-*/
+-"use strict";
+-
+-const util = require("util");
+-
+-const deprecateContext = util.deprecate(() => {},
+-"Hook.context is deprecated and will be removed");
+-
+-const CALL_DELEGATE = function(...args) {
+-	this.call = this._createCall("sync");
+-	return this.call(...args);
+-};
+-const CALL_ASYNC_DELEGATE = function(...args) {
+-	this.callAsync = this._createCall("async");
+-	return this.callAsync(...args);
+-};
+-const PROMISE_DELEGATE = function(...args) {
+-	this.promise = this._createCall("promise");
+-	return this.promise(...args);
+-};
+-
+-class Hook {
+-	constructor(args = [], name = undefined) {
+-		this._args = args;
+-		this.name = name;
+-		this.taps = [];
+-		this.interceptors = [];
+-		this._call = CALL_DELEGATE;
+-		this.call = CALL_DELEGATE;
+-		this._callAsync = CALL_ASYNC_DELEGATE;
+-		this.callAsync = CALL_ASYNC_DELEGATE;
+-		this._promise = PROMISE_DELEGATE;
+-		this.promise = PROMISE_DELEGATE;
+-		this._x = undefined;
+-
+-		this.compile = this.compile;
+-		this.tap = this.tap;
+-		this.tapAsync = this.tapAsync;
+-		this.tapPromise = this.tapPromise;
+-	}
+-
+-	compile(options) {
+-		throw new Error("Abstract: should be overridden");
+-	}
+-
+-	_createCall(type) {
+-		return this.compile({
+-			taps: this.taps,
+-			interceptors: this.interceptors,
+-			args: this._args,
+-			type: type
+-		});
+-	}
+-
+-	_tap(type, options, fn) {
+-		if (typeof options === "string") {
+-			options = {
+-				name: options.trim()
+-			};
+-		} else if (typeof options !== "object" || options === null) {
+-			throw new Error("Invalid tap options");
+-		}
+-		if (typeof options.name !== "string" || options.name === "") {
+-			throw new Error("Missing name for tap");
+-		}
+-		if (typeof options.context !== "undefined") {
+-			deprecateContext();
+-		}
+-		options = Object.assign({ type, fn }, options);
+-		options = this._runRegisterInterceptors(options);
+-		this._insert(options);
+-	}
+-
+-	tap(options, fn) {
+-		this._tap("sync", options, fn);
+-	}
+-
+-	tapAsync(options, fn) {
+-		this._tap("async", options, fn);
+-	}
+-
+-	tapPromise(options, fn) {
+-		this._tap("promise", options, fn);
+-	}
+-
+-	_runRegisterInterceptors(options) {
+-		for (const interceptor of this.interceptors) {
+-			if (interceptor.register) {
+-				const newOptions = interceptor.register(options);
+-				if (newOptions !== undefined) {
+-					options = newOptions;
+-				}
+-			}
+-		}
+-		return options;
+-	}
+-
+-	withOptions(options) {
+-		const mergeOptions = opt =>
+-			Object.assign({}, options, typeof opt === "string" ? { name: opt } : opt);
+-
+-		return {
+-			name: this.name,
+-			tap: (opt, fn) => this.tap(mergeOptions(opt), fn),
+-			tapAsync: (opt, fn) => this.tapAsync(mergeOptions(opt), fn),
+-			tapPromise: (opt, fn) => this.tapPromise(mergeOptions(opt), fn),
+-			intercept: interceptor => this.intercept(interceptor),
+-			isUsed: () => this.isUsed(),
+-			withOptions: opt => this.withOptions(mergeOptions(opt))
+-		};
+-	}
+-
+-	isUsed() {
+-		return this.taps.length > 0 || this.interceptors.length > 0;
+-	}
+-
+-	intercept(interceptor) {
+-		this._resetCompilation();
+-		this.interceptors.push(Object.assign({}, interceptor));
+-		if (interceptor.register) {
+-			for (let i = 0; i < this.taps.length; i++) {
+-				this.taps[i] = interceptor.register(this.taps[i]);
+-			}
+-		}
+-	}
+-
+-	_resetCompilation() {
+-		this.call = this._call;
+-		this.callAsync = this._callAsync;
+-		this.promise = this._promise;
+-	}
+-
+-	_insert(item) {
+-		this._resetCompilation();
+-		let before;
+-		if (typeof item.before === "string") {
+-			before = new Set([item.before]);
+-		} else if (Array.isArray(item.before)) {
+-			before = new Set(item.before);
+-		}
+-		let stage = 0;
+-		if (typeof item.stage === "number") {
+-			stage = item.stage;
+-		}
+-		let i = this.taps.length;
+-		while (i > 0) {
+-			i--;
+-			const x = this.taps[i];
+-			this.taps[i + 1] = x;
+-			const xStage = x.stage || 0;
+-			if (before) {
+-				if (before.has(x.name)) {
+-					before.delete(x.name);
+-					continue;
+-				}
+-				if (before.size > 0) {
+-					continue;
+-				}
+-			}
+-			if (xStage > stage) {
+-				continue;
+-			}
+-			i++;
+-			break;
+-		}
+-		this.taps[i] = item;
+-	}
+-}
+-
+-Object.setPrototypeOf(Hook.prototype, null);
+-
+-module.exports = Hook;
++import * as polyfill from './polyfill-setup.js';
++export default polyfill.Hook;
++export const Hook = polyfill.Hook;
+diff --git a/lib/SyncBailHook.js b/lib/SyncBailHook.js
+index bdd5b45301231fc4a0a4475bb57dc383860c293e..9e1438e96fe40d5bd2841f2ff2d473c4668121bd 100644
+--- a/lib/SyncBailHook.js
++++ b/lib/SyncBailHook.js
+@@ -1,51 +1,3 @@
+-/*
+-	MIT License http://www.opensource.org/licenses/mit-license.php
+-	Author Tobias Koppers @sokra
+-*/
+-"use strict";
+-
+-const Hook = require("./Hook");
+-const HookCodeFactory = require("./HookCodeFactory");
+-
+-class SyncBailHookCodeFactory extends HookCodeFactory {
+-	content({ onError, onResult, resultReturns, onDone, rethrowIfPossible }) {
+-		return this.callTapsSeries({
+-			onError: (i, err) => onError(err),
+-			onResult: (i, result, next) =>
+-				`if(${result} !== undefined) {\n${onResult(
+-					result
+-				)};\n} else {\n${next()}}\n`,
+-			resultReturns,
+-			onDone,
+-			rethrowIfPossible
+-		});
+-	}
+-}
+-
+-const factory = new SyncBailHookCodeFactory();
+-
+-const TAP_ASYNC = () => {
+-	throw new Error("tapAsync is not supported on a SyncBailHook");
+-};
+-
+-const TAP_PROMISE = () => {
+-	throw new Error("tapPromise is not supported on a SyncBailHook");
+-};
+-
+-const COMPILE = function(options) {
+-	factory.setup(this, options);
+-	return factory.create(options);
+-};
+-
+-function SyncBailHook(args = [], name = undefined) {
+-	const hook = new Hook(args, name);
+-	hook.constructor = SyncBailHook;
+-	hook.tapAsync = TAP_ASYNC;
+-	hook.tapPromise = TAP_PROMISE;
+-	hook.compile = COMPILE;
+-	return hook;
+-}
+-
+-SyncBailHook.prototype = null;
+-
+-module.exports = SyncBailHook;
++import * as polyfill from './polyfill-setup.js';
++export default polyfill.SyncBailHook;
++export const SyncBailHook = polyfill.SyncBailHook;
+diff --git a/lib/SyncHook.js b/lib/SyncHook.js
+index e2512be1416fff4a2480ac6fd07fcf15a24ae4b7..5eaf91ea9ed836f80a17770b0370a8dc537d05a3 100644
+--- a/lib/SyncHook.js
++++ b/lib/SyncHook.js
+@@ -1,46 +1,3 @@
+-/*
+-	MIT License http://www.opensource.org/licenses/mit-license.php
+-	Author Tobias Koppers @sokra
+-*/
+-"use strict";
+-
+-const Hook = require("./Hook");
+-const HookCodeFactory = require("./HookCodeFactory");
+-
+-class SyncHookCodeFactory extends HookCodeFactory {
+-	content({ onError, onDone, rethrowIfPossible }) {
+-		return this.callTapsSeries({
+-			onError: (i, err) => onError(err),
+-			onDone,
+-			rethrowIfPossible
+-		});
+-	}
+-}
+-
+-const factory = new SyncHookCodeFactory();
+-
+-const TAP_ASYNC = () => {
+-	throw new Error("tapAsync is not supported on a SyncHook");
+-};
+-
+-const TAP_PROMISE = () => {
+-	throw new Error("tapPromise is not supported on a SyncHook");
+-};
+-
+-const COMPILE = function(options) {
+-	factory.setup(this, options);
+-	return factory.create(options);
+-};
+-
+-function SyncHook(args = [], name = undefined) {
+-	const hook = new Hook(args, name);
+-	hook.constructor = SyncHook;
+-	hook.tapAsync = TAP_ASYNC;
+-	hook.tapPromise = TAP_PROMISE;
+-	hook.compile = COMPILE;
+-	return hook;
+-}
+-
+-SyncHook.prototype = null;
+-
+-module.exports = SyncHook;
++import * as polyfill from './polyfill-setup.js';
++export default polyfill.SyncHook;
++export const SyncHook = polyfill.SyncHook;
+diff --git a/lib/SyncWaterfallHook.js b/lib/SyncWaterfallHook.js
+index c878b7fef631c3d056901904ddbe1a11ae98f187..557bdd25155c55f26f29089fa625f7b86e3a24f0 100644
+--- a/lib/SyncWaterfallHook.js
++++ b/lib/SyncWaterfallHook.js
+@@ -1,57 +1,3 @@
+-/*
+-	MIT License http://www.opensource.org/licenses/mit-license.php
+-	Author Tobias Koppers @sokra
+-*/
+-"use strict";
+-
+-const Hook = require("./Hook");
+-const HookCodeFactory = require("./HookCodeFactory");
+-
+-class SyncWaterfallHookCodeFactory extends HookCodeFactory {
+-	content({ onError, onResult, resultReturns, rethrowIfPossible }) {
+-		return this.callTapsSeries({
+-			onError: (i, err) => onError(err),
+-			onResult: (i, result, next) => {
+-				let code = "";
+-				code += `if(${result} !== undefined) {\n`;
+-				code += `${this._args[0]} = ${result};\n`;
+-				code += `}\n`;
+-				code += next();
+-				return code;
+-			},
+-			onDone: () => onResult(this._args[0]),
+-			doneReturns: resultReturns,
+-			rethrowIfPossible
+-		});
+-	}
+-}
+-
+-const factory = new SyncWaterfallHookCodeFactory();
+-
+-const TAP_ASYNC = () => {
+-	throw new Error("tapAsync is not supported on a SyncWaterfallHook");
+-};
+-
+-const TAP_PROMISE = () => {
+-	throw new Error("tapPromise is not supported on a SyncWaterfallHook");
+-};
+-
+-const COMPILE = function(options) {
+-	factory.setup(this, options);
+-	return factory.create(options);
+-};
+-
+-function SyncWaterfallHook(args = [], name = undefined) {
+-	if (args.length < 1)
+-		throw new Error("Waterfall hooks must have at least one argument");
+-	const hook = new Hook(args, name);
+-	hook.constructor = SyncWaterfallHook;
+-	hook.tapAsync = TAP_ASYNC;
+-	hook.tapPromise = TAP_PROMISE;
+-	hook.compile = COMPILE;
+-	return hook;
+-}
+-
+-SyncWaterfallHook.prototype = null;
+-
+-module.exports = SyncWaterfallHook;
++import * as polyfill from './polyfill-setup.js';
++export default polyfill.SyncWaterfallHook;
++export const SyncWaterfallHook = polyfill.SyncWaterfallHook;
+diff --git a/lib/polyfill-setup.js b/lib/polyfill-setup.js
+new file mode 100644
+index 0000000000000000000000000000000000000000..a63634fffa3a1866201d8d1cb3a794c94378de22
+--- /dev/null
++++ b/lib/polyfill-setup.js
+@@ -0,0 +1,279 @@
++/**
++ * Setup tapable polyfill globally
++ * This must be imported before any Re.Pack code runs
++ */
++
++// Define a minimal Hook base class
++class Hook {
++  constructor(args = []) {
++    this._args = args;
++    this._taps = [];
++    this.interceptors = [];
++  }
++
++  tap(options, fn) {
++    const tapInfo = this._parseTapOptions(options, fn);
++    this._insert(tapInfo);
++  }
++
++  tapAsync(options, fn) {
++    const tapInfo = this._parseTapOptions(options, fn);
++    tapInfo.type = 'async';
++    this._insert(tapInfo);
++  }
++
++  tapPromise(options, fn) {
++    const tapInfo = this._parseTapOptions(options, fn);
++    tapInfo.type = 'promise';
++    this._insert(tapInfo);
++  }
++
++  _parseTapOptions(options, fn) {
++    if (typeof options === 'string') {
++      return { name: options, fn, type: 'sync' };
++    }
++    return { ...options, fn, type: options.type || 'sync' };
++  }
++
++  _insert(tapInfo) {
++    this._taps.push(tapInfo);
++  }
++
++  isUsed() {
++    return this._taps.length > 0;
++  }
++
++  intercept(interceptor) {
++    this.interceptors.push(interceptor);
++  }
++
++  _callInterceptor(method, ...args) {
++    for (const interceptor of this.interceptors) {
++      if (interceptor[method]) {
++        interceptor[method](...args);
++      }
++    }
++  }
++}
++
++class SyncHook extends Hook {
++  call(...args) {
++    this._callInterceptor('call', ...args);
++    for (const tap of this._taps) {
++      tap.fn(...args);
++    }
++  }
++}
++
++class SyncBailHook extends Hook {
++  call(...args) {
++    this._callInterceptor('call', ...args);
++    for (const tap of this._taps) {
++      const result = tap.fn(...args);
++      if (result !== undefined) {
++        return result;
++      }
++    }
++  }
++}
++
++class SyncWaterfallHook extends Hook {
++  call(...args) {
++    this._callInterceptor('call', ...args);
++    let current = args[0];
++    for (const tap of this._taps) {
++      current = tap.fn(current, ...args.slice(1));
++    }
++    return current;
++  }
++}
++
++class AsyncSeriesHook extends Hook {
++  async promise(...args) {
++    this._callInterceptor('call', ...args);
++    for (const tap of this._taps) {
++      if (tap.type === 'promise') {
++        await tap.fn(...args);
++      } else if (tap.type === 'async') {
++        await new Promise((resolve, reject) => {
++          tap.fn(...args, (err) => (err ? reject(err) : resolve()));
++        });
++      } else {
++        tap.fn(...args);
++      }
++    }
++  }
++
++  tapPromise(options, fn) {
++    super.tapPromise(options, fn);
++    return () => {
++      const tapInfo = this._taps.find(
++        t => t.name === (typeof options === 'string' ? options : options.name)
++      );
++      if (tapInfo) {
++        this._taps = this._taps.filter(t => t !== tapInfo);
++      }
++    };
++  }
++}
++
++class AsyncSeriesBailHook extends Hook {
++  async promise(...args) {
++    this._callInterceptor('call', ...args);
++    for (const tap of this._taps) {
++      let result;
++      if (tap.type === 'promise') {
++        result = await tap.fn(...args);
++      } else if (tap.type === 'async') {
++        result = await new Promise((resolve, reject) => {
++          tap.fn(...args, (err, res) => (err ? reject(err) : resolve(res)));
++        });
++      } else {
++        result = tap.fn(...args);
++      }
++      if (result !== undefined) {
++        return result;
++      }
++    }
++  }
++
++  tapPromise(options, fn) {
++    super.tapPromise(options, fn);
++    return () => {
++      const tapInfo = this._taps.find(
++        t => t.name === (typeof options === 'string' ? options : options.name)
++      );
++      if (tapInfo) {
++        this._taps = this._taps.filter(t => t !== tapInfo);
++      }
++    };
++  }
++}
++
++class AsyncSeriesWaterfallHook extends Hook {
++  async promise(...args) {
++    this._callInterceptor('call', ...args);
++    let current = args[0];
++    for (const tap of this._taps) {
++      if (tap.type === 'promise') {
++        current = await tap.fn(current, ...args.slice(1));
++      } else if (tap.type === 'async') {
++        current = await new Promise((resolve, reject) => {
++          tap.fn(current, ...args.slice(1), (err, res) =>
++            err ? reject(err) : resolve(res)
++          );
++        });
++      } else {
++        current = tap.fn(current, ...args.slice(1));
++      }
++    }
++    return current;
++  }
++
++  tapPromise(options, fn) {
++    super.tapPromise(options, fn);
++    return () => {
++      const tapInfo = this._taps.find(
++        t => t.name === (typeof options === 'string' ? options : options.name)
++      );
++      if (tapInfo) {
++        this._taps = this._taps.filter(t => t !== tapInfo);
++      }
++    };
++  }
++}
++
++class AsyncParallelHook extends Hook {
++  async promise(...args) {
++    this._callInterceptor('call', ...args);
++    const promises = this._taps.map(tap => {
++      if (tap.type === 'promise') {
++        return tap.fn(...args);
++      } else if (tap.type === 'async') {
++        return new Promise((resolve, reject) => {
++          tap.fn(...args, err => (err ? reject(err) : resolve()));
++        });
++      } else {
++        return Promise.resolve(tap.fn(...args));
++      }
++    });
++    await Promise.all(promises);
++  }
++
++  tapPromise(options, fn) {
++    super.tapPromise(options, fn);
++    return () => {
++      const tapInfo = this._taps.find(
++        t => t.name === (typeof options === 'string' ? options : options.name)
++      );
++      if (tapInfo) {
++        this._taps = this._taps.filter(t => t !== tapInfo);
++      }
++    };
++  }
++}
++
++class AsyncParallelBailHook extends Hook {
++  async promise(...args) {
++    this._callInterceptor('call', ...args);
++    const promises = this._taps.map(tap => {
++      if (tap.type === 'promise') {
++        return tap.fn(...args);
++      } else if (tap.type === 'async') {
++        return new Promise((resolve, reject) => {
++          tap.fn(...args, (err, res) => (err ? reject(err) : resolve(res)));
++        });
++      } else {
++        return Promise.resolve(tap.fn(...args));
++      }
++    });
++    const results = await Promise.all(promises);
++    for (const result of results) {
++      if (result !== undefined) {
++        return result;
++      }
++    }
++  }
++
++  tapPromise(options, fn) {
++    super.tapPromise(options, fn);
++    return () => {
++      const tapInfo = this._taps.find(
++        t => t.name === (typeof options === 'string' ? options : options.name)
++      );
++      if (tapInfo) {
++        this._taps = this._taps.filter(t => t !== tapInfo);
++      }
++    };
++  }
++}
++
++// Install the polyfill globally
++if (typeof global !== 'undefined') {
++  global.TapablePolyfill = {
++    Hook,
++    SyncHook,
++    SyncBailHook,
++    SyncWaterfallHook,
++    AsyncSeriesHook,
++    AsyncSeriesBailHook,
++    AsyncSeriesWaterfallHook,
++    AsyncParallelHook,
++    AsyncParallelBailHook,
++  };
++  
++  console.log('[Tapable Polyfill] Installed tapable polyfill for React Native');
++}
++
++// Also export for CommonJS compatibility
++module.exports = {
++  Hook,
++  SyncHook,
++  SyncBailHook,
++  SyncWaterfallHook,
++  AsyncSeriesHook,
++  AsyncSeriesBailHook,
++  AsyncSeriesWaterfallHook,
++  AsyncParallelHook,
++  AsyncParallelBailHook,
++};

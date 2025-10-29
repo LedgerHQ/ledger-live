@@ -1,0 +1,17 @@
+diff --git a/src/index.js b/src/index.js
+index 5d0b706971d145248f768e54d28a3683c2be9f90..8662c07c00338048d4670c455d3bb64a0393293d 100644
+--- a/src/index.js
++++ b/src/index.js
+@@ -1,6 +1,9 @@
+ "use strict";
+ Object.defineProperty(exports, "__esModule", { value: true });
+-exports.BIP32Factory = exports.default = void 0;
++// PATCHED for React Native/Re.Pack compatibility:
++// Getter-based exports don't work reliably through bundling/transpilation.
++// Use direct property assignment instead.
+ var bip32_1 = require("./bip32");
+-Object.defineProperty(exports, "default", { enumerable: true, get: function () { return bip32_1.BIP32Factory; } });
+-Object.defineProperty(exports, "BIP32Factory", { enumerable: true, get: function () { return bip32_1.BIP32Factory; } });
++var BIP32Factory = bip32_1.BIP32Factory;
++exports.default = BIP32Factory;
++exports.BIP32Factory = BIP32Factory;
