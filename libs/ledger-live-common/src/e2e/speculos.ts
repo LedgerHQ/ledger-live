@@ -393,8 +393,8 @@ export async function startSpeculos(
   });
   if (!appCandidate) {
     console.warn("no app found for " + testName);
-    console.warn(appQuery);
-    console.warn(JSON.stringify(appCandidates, undefined, 2));
+    // console.warn(appQuery);
+    // console.warn(JSON.stringify(appCandidates, undefined, 2));
   }
   invariant(
     appCandidate,

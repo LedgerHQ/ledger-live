@@ -18,6 +18,8 @@ export function getSpeculosModel(): DeviceModelId {
     case CryptoWallet.FLEX.name:
     case DeviceModelId.europa:
       return DeviceModelId.europa;
+    case CryptoWallet.NANO_GEN_5.name:
+      return DeviceModelId.apex;
     case CryptoWallet.LNSP.name:
     default:
       return DeviceModelId.nanoSP;
@@ -26,7 +28,9 @@ export function getSpeculosModel(): DeviceModelId {
 
 export function isTouchDevice(): boolean {
   const model = getSpeculosModel();
-  return model === DeviceModelId.stax || model === DeviceModelId.europa;
+  return (
+    model === DeviceModelId.stax || model === DeviceModelId.europa || model === DeviceModelId.apex
+  );
 }
 
 function getDeviceTargetId(device: DeviceModelId): number {
@@ -36,6 +40,7 @@ function getDeviceTargetId(device: DeviceModelId): number {
     [DeviceModelId.nanoSP]: CryptoWallet.LNSP.targetId,
     [DeviceModelId.stax]: CryptoWallet.STAX.targetId,
     [DeviceModelId.europa]: CryptoWallet.FLEX.targetId,
+    [DeviceModelId.apex]: CryptoWallet.NANO_GEN_5.targetId,
   };
   return modelToTargetIdMap[device];
 }

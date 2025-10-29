@@ -44,6 +44,7 @@ for (const account of accounts) {
           "@NanoX",
           "@Stax",
           "@Flex",
+          "@NanoGen5",
           ...(account.account === Account.SOL_1 ? ["@smoke"] : []),
         ],
         annotation: {
@@ -101,7 +102,7 @@ test.describe("Receive", () => {
   test(
     `${account.currency.ticker} empty balance Receive displays address activation warning message`,
     {
-      tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex"],
+      tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
       annotation: {
         type: "TMS",
         description: "B2CQA-1551",

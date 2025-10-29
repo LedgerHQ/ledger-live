@@ -52,6 +52,7 @@ on:
           - nanoX
           - stax
           - flex
+          - nanoGen5
         default: nanoSP
       firmware_version:
         description: "Firmware version to use for selected device"
@@ -192,7 +193,8 @@ jobs:
         shell: bash
 
       - name: Run Playwright Tests
-        uses: LedgerHQ/ledger-live/tools/actions/composites/run-e2e-playwright-tests@develop
+        # Remplacer par develop avant de merger
+        uses: LedgerHQ/ledger-live/tools/actions/composites/run-e2e-playwright-tests@support/qaa-865
         with:
           speculos_device: ${{ inputs.speculos_device || 'nanoSP' }}
           test_filter: ${{ steps.test-filter.outputs.filter }}

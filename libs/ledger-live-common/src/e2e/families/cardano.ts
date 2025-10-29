@@ -78,7 +78,7 @@ export async function sendCardano(tx: Transaction) {
 }
 
 const DELEGATE_STEPS_CONFIG = {
-  [DeviceModelId.stax || DeviceModelId.europa]: [
+  [DeviceModelId.stax || DeviceModelId.europa || DeviceModelId.apex]: [
     [DeviceLabels.REVIEW_TRANSACTION, "swipe"],
     [DeviceLabels.TAP_TO_CONTINUE, "tap"],
     [DeviceLabels.REGISTER, "swipe"],
@@ -163,12 +163,11 @@ async function executeDelegateStep(label: DeviceLabels, action: ActionType) {
 
 export async function delegateCardano() {
   const speculosModel = getSpeculosModel();
-  const steps =
-    speculosModel === DeviceModelId.stax || speculosModel === DeviceModelId.europa
-      ? DELEGATE_STEPS_CONFIG[speculosModel]
-      : speculosModel === DeviceModelId.nanoS
-        ? DELEGATE_STEPS_CONFIG[DeviceModelId.nanoS]
-        : DELEGATE_STEPS_CONFIG.default;
+  const steps = isTouchDevice()
+    ? DELEGATE_STEPS_CONFIG[speculosModel]
+    : speculosModel === DeviceModelId.nanoS
+      ? DELEGATE_STEPS_CONFIG[DeviceModelId.nanoS]
+      : DELEGATE_STEPS_CONFIG.default;
 
   for (const [label, action] of steps) {
     await executeDelegateStep(label, action);

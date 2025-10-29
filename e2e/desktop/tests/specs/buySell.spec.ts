@@ -71,7 +71,7 @@ for (const asset of assets) {
     test(
       `Entry Point - Asset Allocation page with [${crypto.currency.name}] asset`,
       {
-        tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex"],
+        tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
         annotation: {
           type: "TMS",
           description: asset.xrayTicket,
@@ -92,7 +92,7 @@ for (const asset of assets) {
     test(
       `Entry Point - Market page with [${crypto.currency.name}] asset`,
       {
-        tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex"],
+        tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
         annotation: {
           type: "TMS",
           description: asset.xrayTicket,
@@ -113,7 +113,7 @@ for (const asset of assets) {
     test(
       `Entry Point - Account page with [${crypto.currency.name}] asset`,
       {
-        tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex"],
+        tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
         annotation: {
           type: "TMS",
           description: asset.xrayTicket,
@@ -151,6 +151,7 @@ for (const asset of assets) {
           "@NanoX",
           "@Stax",
           "@Flex",
+          "@NanoGen5",
           ...(crypto === Account.ETH_1 ? ["@smoke"] : []),
         ],
         annotation: {
@@ -217,7 +218,7 @@ test.describe("Sell flow - ", () => {
   test(
     `Sell [${crypto.currency.name}] asset`,
     {
-      tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex"],
+      tag: ["@NanoSP", "@LNS", "@NanoX", "@Stax", "@Flex", "@NanoGen5"],
       annotation: {
         type: "TMS",
         description: sellAsset.xrayTicket,
