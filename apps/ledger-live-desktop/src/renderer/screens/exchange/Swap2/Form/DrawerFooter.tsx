@@ -40,7 +40,7 @@ export function DrawerFooter({ provider }: { provider: string }) {
       let acceptTermsKey = "DeviceAction.swap.acceptTerms";
       if (providerName === "Exodus") {
         acceptTermsKey = "DeviceAction.swap.exodusAcceptTerms";
-      } else if (providerName === "Near Intents") {
+      } else if (providerName === "NEAR Intents") {
         acceptTermsKey = "DeviceAction.swap.nearIntentsAcceptTerms";
       }
       return {
@@ -72,7 +72,7 @@ export function DrawerFooter({ provider }: { provider: string }) {
           acceptTerms: "DeviceAction.swap.cicAcceptTerms",
           urls: providerData?.usefulUrls,
         };
-      case "Near Intents":
+      case "NEAR Intents":
         return {
           acceptTerms: "DeviceAction.swap.nearIntentsAcceptTerms",
           urls: [url],
