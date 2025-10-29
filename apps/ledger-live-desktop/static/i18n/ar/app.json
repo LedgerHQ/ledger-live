@@ -473,7 +473,9 @@
       "sui_title" : "™Ledger Nano S لا تدعم مبادلة Sui",
       "sui_description" : "لمبادلة Sui، استخدم أي جهاز Ledger آخر متوافق مثل ™Ledger Nano S Plus أو ™Ledger Nano X أو ™Ledger Flex أو ™Ledger Stax.",
       "kaspa_title" : "™Ledger Nano S لا تدعم مبادلة Kaspa",
-      "kaspa_description" : "لمبادلة Kaspa، استخدِم أي جهاز Ledger متوافق آخر مثل ™Ledger Nano S Plus أو ™Ledger Nano X أو ™Ledger Flex أو ™Ledger Stax."
+      "kaspa_description" : "لمبادلة Kaspa، استخدِم أي جهاز Ledger متوافق آخر مثل ™Ledger Nano S Plus أو ™Ledger Nano X أو ™Ledger Flex أو ™Ledger Stax.",
+      "celo_title" : "™Ledger Nano S لا تدعم مبادلة Celo",
+      "celo_description" : "لمبادلة Celo، استخدم أي جهاز Ledger متوافق آخر مثل ™Ledger Nano S Plus أو ™Ledger Nano X أو ™Ledger Flex أو ™Ledger Stax."
     },
     "providers" : {
       "title" : "اختر أحد المزودين لمبادلة الأصول المشفرة",
@@ -1250,6 +1252,11 @@
     },
     "manual" : {
       "title" : "جهّز {{deviceName}} الخاص بك",
+      "titleTwoStep" : "لنبدأ",
+      "titleFirstStepDone" : "جهازك {{deviceName}} مُستعد",
+      "successStepTitle" : "جهازك {{deviceName}} مُستعِّد الآن لتأمين أصولك المشفرة",
+      "secureCryptoTitle" : "تأمين أصولك المشفرة",
+      "secureCryptoDoneTitle" : "تطبيقات سلسلة الكتل (بلوكتشين) الخاصة بك تم تثبيتها.",
       "continueOnDevice" : "قم بهذا الإجراء على جهازك {{productName}}",
       "pairedContent" : {
         "title" : "{{deviceName}} أصلي",
@@ -1294,6 +1301,11 @@
         "backupCharonDescription" : "قم بإنشاء نسخ احتياطي جديد على بطاقة محمية بكود PIN مع شريحة عنصر آمن مدمجة — حتى تتمكن من استعادة الوصول إلى أصولك ببضع نقرات فقط.",
         "backupCharonCta" : "معرفة المزيد أو الشراء",
         "backupCharonContinueOnDevice" : "اتبع التعليمات على جهازك {{productName}}"
+      },
+      "secureCrypto" : {
+        "description" : "يمكنك تحويل الأصول المشفرة من أي منصة تداول أو محفظة إلى Ledger Wallet خاصتك من أجل أقصى درجات الأمان.",
+        "depositButton" : "تأمين أصولي المشفرة",
+        "skipButton" : "ربّما لاحقاً"
       },
       "backup" : {
         "title" : "نسخة احتياطية لعبارة الاسترداد السرية الخاصة بك",
@@ -2365,6 +2377,10 @@
         "solanaRawTransaction" : {
           "title" : "التوقيع بدون اطلاع مطلوب",
           "description" : "لا يمكنك تأكيد صحة تفاصيل المعاملة على جهازك Ledger. إذا قمت بتوقيعها، فقد تخسر كل أصولك. قم بالتوقيع فقط إذا كنت تثق في هذا الموقع الإلكتروني."
+        },
+        "bitcoinPsbtTransaction" : {
+          "title" : "التحقق على الجهاز",
+          "description" : "يمكك التحقق من مبلغ المعاملة والمستلم على الجهاز في الخطوة التالية."
         },
         "utxoLag" : "قد يستغرق التحقق من هذه المعاملة وتوقيعها وقتاً طويلاً لأن الحساب يحتوي على عدد كبير من العملات.",
         "subaccountsWarning" : "ستحتاج إلى إعادة شحن هذا الحساب بعملة {{ currency }} لتستطيع إرسال رموز التوكن لهذا الحساب",
@@ -4267,6 +4283,8 @@
         "header" : "مركز (أو مراكز) التكديس",
         "stake" : "إضافة",
         "staked" : "تم التفويض",
+        "estimatedReward" : "المكافآت المكتسبة",
+        "rewardTooltip" : "مكافآت سوي (Sui) يتم توزيعها كل عصر مدته 24 ساعة. إنها تُجمّع تلقائياً وتضاف إلى حصتك المفوضة.",
         "pending" : "بانتظار الإتاحة",
         "available" : "قابل للسحب"
       },
@@ -4597,6 +4615,54 @@
       "modularDrawerDevTool" : {
         "title" : "أداة تطوير الشريط النموذجي",
         "description" : "تسمح لك باختبار الشريط النموذجي بسهولة"
+      },
+      "cryptoAssetsList" : {
+        "title" : "قائمة الأصول المشفرة",
+        "description" : "قم بتصفح وإدارة الأصول المشفرة من خدمة قائمة الأصول المشفرة (CAL).",
+        "openTokenList" : "فتح قائمة رموز التوكن",
+        "drawer" : {
+          "title" : "تكوين قائمة رموز التوكن",
+          "description" : "قم بتكوين وتصفح رموز التوكن من خدمة قائمة الأصول المشفرة. اختر عائلة سلسلة كتل (بلوكتشين) لعرض رموز التوكن المتاحة.",
+          "options" : "الخيارات",
+          "blockchainFamily" : "عائلة سلسلة الكتل (بلوكتشين)",
+          "selectFamily" : "اختر عائلة سلسلة كتل (بلوكتشين)",
+          "pageSize" : "حجم الصفحة",
+          "useStaging" : "استخدم بيئة التجهيز",
+          "useStagingDesc" : "استخدم بيئة التجهيز بدلاً من الإنتاج",
+          "outputFields" : "حقول المخرجات",
+          "refresh" : "تحديث",
+          "loading" : "جاري التحميل...",
+          "close" : "إغلاق",
+          "availableTokens" : "رموز التوكن المتاحة ({{count}})",
+          "noTokens" : "لم يتم العثور على رموز توكن من {{family}}",
+          "error" : "فشل تحميل رموز التوكن",
+          "tokenId" : "المُعرّف",
+          "contractAddress" : "عنوان العَقد",
+          "tokenType" : "نوع رمز التوكن",
+          "parentCurrency" : "العملة الأم",
+          "ledgerSignature" : "توقيع Ledger",
+          "units" : "الوحدات",
+          "delisted" : "مشطوب من اللائحة",
+          "copy" : "نسخ المُعرّف",
+          "loadMore" : "تحميل المزيد",
+          "searchAndFilters" : "البحث والتصفيات",
+          "maxResults" : "الحد الأقصى للنتائج",
+          "maxResultsPlaceholder" : "بدون حد",
+          "pagination" : "الترقيم",
+          "advanced" : "متقدم",
+          "calReference" : "مرجع قائمة الأصول المشفرة (CAL)",
+          "calReferencePlaceholder" : "على سبيل المثال branch:main, tag:tokens-1.11.12, commit:48188c6...",
+          "calReferenceDefault" : "افتراضي: branch:main",
+          "selectAll" : "الكل",
+          "selectNone" : "لا شيء",
+          "reset" : "إعادة تعيين",
+          "tokens" : "رموز التوكن",
+          "resultsCount" : "{{count}} نتيجة",
+          "collapseAll" : "طي الكل",
+          "noTokensFound" : "لم يتم العثور على رموز توكن",
+          "hide" : "إخفاء",
+          "show" : "عرض"
+        }
       },
       "experimentalApps" : "السماح بالتطبيقات التجريبية",
       "experimentalAppsDesc" : "عرض تطبيقات المنصة التجريبية والسماح بفتحها.",
@@ -5257,7 +5323,7 @@
           },
           "existingRecoveryPhrase" : {
             "title" : "أدخل عبارة الاسترداد الخاصة بك",
-            "paragraph1" : "عبارة الاسترداد الخاصة بك هي القائمة السرية من الكلمات التي قمت بنسخها احتياطياً عندما قمت بإعداد محفظتك لأول مرة.",
+            "paragraph1" : "Your recovery phrase is the secret list of words that you backed up when you first set up your Ledger device.",
             "paragraph2" : "Ledger لا تحتفظ بنسخة من عبارة الاسترداد الخاصة بك.",
             "disclaimer" : "أفهم أنني إذا فقدت عبارة الاسترداد الخاصة بي فلن أتمكن من الوصول إلى أصولي المشفرة في حالة أن فقدت الوصول إلى Nano الخاصة بي.",
             "buttons" : {
@@ -5731,6 +5797,7 @@
           "onboarded" : "حسابات مُهيّأة",
           "success" : "تم إنشاء وتهيئة حساب Canton الجديد الخاص بك.",
           "error" : "فشلت تهيئة الحساب الجديد. يُرجى إعادة المحاولة.",
+          "error429" : "شبكة Canton تدعم حالياً عدداً محدوداً من عمليات إنشاء الحساب في اليوم. يُرجى إعادة المحاولة لاحقاً.",
           "status" : {
             "prepare" : "جارٍ إعداد تهيئة الحساب...",
             "submit" : "جارٍ تهيئة الحساب...",
@@ -5748,6 +5815,13 @@
         "finish" : {
           "title" : "تأكيد"
         }
+      },
+      "tooManyUtxos" : {
+        "title" : "مطلوب إجراء: مخرجات معاملات غير منفقة (UTXO) كثيرة للغاية",
+        "description" : "يحتوي حسابك على الكثير من مخرجات المعاملات غير المنفقة (UTXO) الصغيرة لمعالجة هذا التحويل. قم بدمجها الآن لتجنب انتهاء الصلاحية نتيجةً لرسوم الاحتفاظ المتراكمة وقم بتمكين التحويلات.",
+        "quickFix" : "حل سريع: أرسل بعض الأموال لنفسك لتجميعها.",
+        "warning" : "يحتوي حسابك على الكثير من مخرجات المعاملات غير المنفقة (UTXO) الصغيرة. أرسل بعض الأموال لنفسك لتجميعها.",
+        "consolidate" : "تجميع"
       }
     },
     "stellar" : {
@@ -6691,6 +6765,10 @@
     "HederaAddAccountError" : {
       "title" : "لم تتم إضافة حسابك. يرجى إعادة المحاولة."
     },
+    "HederaRecipientInvalidChecksum" : {
+      "title" : "مجموع اختباري غير صالح للعنوان",
+      "description" : "العنوان المقدم لديه مجموع اختباري غير صالح."
+    },
     "HederaInsufficientFundsForAssociation" : {
       "title" : "رصيد غير كافٍ",
       "description" : "لا يوجد HBAR كافٍ للدفع مقابل ربط رمز التوكن. مطلوب على الأقل ما يساوي {{requiredWorthInUSD}}$ من HBAR."
@@ -7445,7 +7523,7 @@
     "connectYourDevice" : {
       "title" : "قم بتوصيل جهازك وإلغاء قفله"
     },
-    "searchPlaceholder" : "بحث",
+    "searchPlaceholder" : "ابحث عن طريق الاسم أو العنوان",
     "emptyAssetList" : "لم يتم العثور على أصول",
     "selectAsset" : "اختر أصل",
     "selectNetwork" : "اختر الشبكة",
