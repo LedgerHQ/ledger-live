@@ -4,8 +4,8 @@ import { Delegate } from "@ledgerhq/live-common/e2e/models/Delegate";
 import { CLI } from "../utils/cliUtils";
 import { Currency } from "@ledgerhq/live-common/e2e/enum/Currency";
 import { getEnv } from "@ledgerhq/live-env";
-import { addBugLink, addTmsLink } from "tests/utils/allureUtils";
-import { getDescription } from "tests/utils/customJsonReporter";
+import { addBugLink, addTmsLink } from "../utils/allureUtils";
+import { getDescription } from "../utils/customJsonReporter";
 
 function setupEnv(disableBroadcast?: boolean) {
   const originalBroadcastValue = process.env.DISABLE_TRANSACTION_BROADCAST;
