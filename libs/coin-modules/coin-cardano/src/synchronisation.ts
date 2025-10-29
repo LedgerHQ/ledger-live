@@ -8,7 +8,7 @@ import {
 import { utils as TyphonUtils } from "@stricahq/typhonjs";
 import { SignerContext } from "@ledgerhq/coin-framework/signer";
 import { encodeOperationId } from "@ledgerhq/coin-framework/operation";
-import { encodeAccountId } from "@ledgerhq/coin-framework/account/index";
+import { encodeAccountId, getSyncHash } from "@ledgerhq/coin-framework/account/index";
 import { formatCurrencyUnit } from "@ledgerhq/coin-framework/currencies/index";
 import { inferSubOperations } from "@ledgerhq/coin-framework/serialization/index";
 import type { Operation, OperationType, TokenAccount } from "@ledgerhq/types-live";
@@ -39,7 +39,6 @@ import {
   mergeTokens,
 } from "./logic";
 import { CARDANO_MAX_SUPPLY } from "./constants";
-import { getSyncHash } from "@ledgerhq/coin-framework/account/index";
 
 export const makeGetAccountShape =
   (signerContext: SignerContext<CardanoSigner>): GetAccountShape<CardanoAccount> =>

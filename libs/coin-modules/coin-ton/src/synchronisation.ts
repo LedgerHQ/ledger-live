@@ -4,6 +4,7 @@ import {
   emptyHistoryCache,
   encodeAccountId,
   encodeTokenAccountId,
+  getSyncHash,
 } from "@ledgerhq/coin-framework/account/index";
 import {
   AccountShapeInfo,
@@ -31,7 +32,6 @@ import {
 } from "./bridge/bridgeHelpers/txn";
 import { TonAccount, TonOperation, TonSubAccount } from "./types";
 import { WalletContractV4 } from "@ton/ton";
-import { getSyncHash } from "@ledgerhq/coin-framework/account/index";
 
 const jettonTxMessageHashesMap = new Map<string, string>();
 

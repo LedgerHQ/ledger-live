@@ -7,12 +7,11 @@ import type {
   IterateResultBuilder,
 } from "@ledgerhq/coin-framework/bridge/jsHelpers";
 import { mergeOps } from "@ledgerhq/coin-framework/bridge/jsHelpers";
-import { encodeAccountId } from "@ledgerhq/coin-framework/account";
+import { encodeAccountId, getSyncHash } from "@ledgerhq/coin-framework/account";
 import { listOperations } from "../logic/listOperations";
 import { apiClient } from "../network/api";
 import type { HederaAccount } from "../types";
 import { getSubAccounts, prepareOperations, applyPendingExtras, mergeSubAccounts } from "./utils";
-import { getSyncHash } from "@ledgerhq/coin-framework/account/index";
 
 export const getAccountShape: GetAccountShape<HederaAccount> = async (
   info,
