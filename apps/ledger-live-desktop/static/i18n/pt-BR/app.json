@@ -473,7 +473,9 @@
       "sui_title" : "A Ledger Nano S™ não é compatível com a troca de Sui",
       "sui_description" : "Para trocar Sui, use qualquer outro dispositivo Ledger compatível, como a Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™.",
       "kaspa_title" : "A Ledger Nano S™ não é compatível com a troca de Kaspa",
-      "kaspa_description" : "Para trocar Kaspa, use qualquer outro dispositivo Ledger compatível, como a Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™."
+      "kaspa_description" : "Para trocar Kaspa, use qualquer outro dispositivo Ledger compatível, como a Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™.",
+      "celo_title" : "Ledger Nano S™ does not support swapping Celo",
+      "celo_description" : "To swap Celo, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™."
     },
     "providers" : {
       "title" : "Escolha um provedor para trocar cripto",
@@ -1250,6 +1252,11 @@
     },
     "manual" : {
       "title" : "Deixe sua {{deviceName}} pronta",
+      "titleTwoStep" : "Vamos começar",
+      "titleFirstStepDone" : "Sua {{deviceName}} está pronta",
+      "successStepTitle" : "Sua {{deviceName}} está pronta para proteger sua cripto",
+      "secureCryptoTitle" : "Proteja sua cripto",
+      "secureCryptoDoneTitle" : "Seus aplicativos blockchain foram instalados.",
       "continueOnDevice" : "Execute essa ação em sua {{productName}}",
       "pairedContent" : {
         "title" : "A {{deviceName}} é autêntica",
@@ -1294,6 +1301,11 @@
         "backupCharonDescription" : "Crie um novo backup em um cartão protegido por PIN com um chip Elemento Seguro — assim você consegue restaurar o acesso aos seus ativos com apenas alguns toques.",
         "backupCharonCta" : "Saiba mais ou compre",
         "backupCharonContinueOnDevice" : "Siga as instruções em sua {{productName}}"
+      },
+      "secureCrypto" : {
+        "description" : "Você pode transferir cripto de qualquer corretora ou carteira à sua Ledger Wallet para ter segurança máxima.",
+        "depositButton" : "Secure my crypto",
+        "skipButton" : "Maybe later"
       },
       "backup" : {
         "title" : "Backup para sua Frase de Recuperação Secreta",
@@ -2365,6 +2377,10 @@
         "solanaRawTransaction" : {
           "title" : "Assinatura cega necessária",
           "description" : "Não é possível verificar os detalhes da transação em seu dispositivo Ledger. Se você assiná-la, poderá perder todos os ativos. Assine somente se você confiar neste site."
+        },
+        "bitcoinPsbtTransaction" : {
+          "title" : "Verificar no dispositivo",
+          "description" : "Você pode verificar a quantia da transação e o destinatário no dispositivo na próxima etapa."
         },
         "utxoLag" : "Esta transação pode demorar muito para ser verificada e assinada porque a conta tem um número significativo de moedas.",
         "subaccountsWarning" : "Você precisará recarregar esta conta com {{ currency }} para enviar os tokens desta conta",
@@ -4267,6 +4283,8 @@
         "header" : "Posições de Staking",
         "stake" : "Adicionar",
         "staked" : "Delegado",
+        "estimatedReward" : "Recompensas Recebidas",
+        "rewardTooltip" : "As recompensas Sui são distribuídas a cada época (24h). Elas são automaticamente compostas e adicionadas à seu staking delegado.",
         "pending" : "Liberação Pendente",
         "available" : "Disponíveis para saque"
       },
@@ -4597,6 +4615,54 @@
       "modularDrawerDevTool" : {
         "title" : "Ferramenta de Desenvolvedor do Menu Modular",
         "description" : "Permite que você teste o menu modular facilmente"
+      },
+      "cryptoAssetsList" : {
+        "title" : "Crypto Assets List",
+        "description" : "Browse and manage crypto assets from the Crypto Assets List (CAL) service.",
+        "openTokenList" : "Open Token List",
+        "drawer" : {
+          "title" : "Token List Configuration",
+          "description" : "Configure and browse tokens from the Crypto Assets List service. Select a blockchain family to view available tokens.",
+          "options" : "Options",
+          "blockchainFamily" : "Blockchain Family",
+          "selectFamily" : "Select a blockchain family",
+          "pageSize" : "Page Size",
+          "useStaging" : "Use Staging Environment",
+          "useStagingDesc" : "Use staging environment instead of production",
+          "outputFields" : "Output Fields",
+          "refresh" : "Refresh",
+          "loading" : "Loading...",
+          "close" : "Close",
+          "availableTokens" : "Available Tokens ({{count}})",
+          "noTokens" : "No tokens found for {{family}}",
+          "error" : "Failed to load tokens",
+          "tokenId" : "ID",
+          "contractAddress" : "Contract Address",
+          "tokenType" : "Token Type",
+          "parentCurrency" : "Parent Currency",
+          "ledgerSignature" : "Ledger Signature",
+          "units" : "Units",
+          "delisted" : "Delisted",
+          "copy" : "Copy ID",
+          "loadMore" : "Load More",
+          "searchAndFilters" : "Search & Filters",
+          "maxResults" : "Max Results",
+          "maxResultsPlaceholder" : "No limit",
+          "pagination" : "Pagination",
+          "advanced" : "Advanced",
+          "calReference" : "CAL Reference",
+          "calReferencePlaceholder" : "e.g. branch:main, tag:tokens-1.11.12, commit:48188c6...",
+          "calReferenceDefault" : "Default: branch:main",
+          "selectAll" : "All",
+          "selectNone" : "None",
+          "reset" : "Reset",
+          "tokens" : "Tokens",
+          "resultsCount" : "{{count}} results",
+          "collapseAll" : "Collapse All",
+          "noTokensFound" : "No tokens found",
+          "hide" : "Hide",
+          "show" : "Show"
+        }
       },
       "experimentalApps" : "Permitir aplicativos experimentais",
       "experimentalAppsDesc" : "Exibe e permite abrir aplicativos da plataforma marcados como 'experimentais'.",
@@ -5257,7 +5323,7 @@
           },
           "existingRecoveryPhrase" : {
             "title" : "Insira sua frase de recuperação",
-            "paragraph1" : "Sua frase de recuperação é a lista secreta de palavras que você guardou ao configurar sua carteira pela primeira vez.",
+            "paragraph1" : "Your recovery phrase is the secret list of words that you backed up when you first set up your Ledger device.",
             "paragraph2" : "A Ledger não armazena cópias da sua frase de recuperação.",
             "disclaimer" : "Entendo que, se perder esta frase de recuperação, não poderei acessar meus ativos se perder acesso à minha Nano.",
             "buttons" : {
@@ -5731,6 +5797,7 @@
           "onboarded" : "Contas integradas",
           "success" : "Sua nova conta Canton foi criada e integrada.",
           "error" : "Falha ao integrar a nova conta. Tente novamente.",
+          "error429" : "Canton Network currently supports a limited number of account creations per day. Please try again later.",
           "status" : {
             "prepare" : "Preparando a integração da conta…",
             "submit" : "Integrando conta...",
@@ -5748,6 +5815,13 @@
         "finish" : {
           "title" : "Confirmação"
         }
+      },
+      "tooManyUtxos" : {
+        "title" : "Action Needed: Too Many UTXOs",
+        "description" : "Your account has too many small UTXOs to process this transfer. Merge them now to avoid expiration due to accumulated holding fees and enable transfers.",
+        "quickFix" : "Quick Fix: Send some funds to yourself to consolidate.",
+        "warning" : "Your account has too many small UTXOs. Send some funds to yourself to consolidate.",
+        "consolidate" : "Consolidate"
       }
     },
     "stellar" : {
@@ -6691,6 +6765,10 @@
     "HederaAddAccountError" : {
       "title" : "Sua conta não foi adicionada. Tente Novamente."
     },
+    "HederaRecipientInvalidChecksum" : {
+      "title" : "Soma de verificação de endereço inválida",
+      "description" : "O endereço fornecido tem uma soma de verificação inválida."
+    },
     "HederaInsufficientFundsForAssociation" : {
       "title" : "Saldo insuficiente",
       "description" : "Não há HBAR suficiente para pagar pela associação do token. É necessário um mínimo de US${{requiredWorthInUSD}} em HBAR."
@@ -7445,7 +7523,7 @@
     "connectYourDevice" : {
       "title" : "Conecte e desbloqueie seu dispositivo"
     },
-    "searchPlaceholder" : "Buscar",
+    "searchPlaceholder" : "Search by name or address",
     "emptyAssetList" : "Nenhum ativo encontrado",
     "selectAsset" : "Selecionar ativo",
     "selectNetwork" : "Selecione a rede",
