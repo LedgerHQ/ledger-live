@@ -473,7 +473,9 @@
       "sui_title" : "Ledger Nano S™, Sui takasını desteklemez",
       "sui_description" : "Sui takas etmek için Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ veya Ledger Stax™ gibi diğer herhangi bir uyumlu Ledger cihazını kullanın.",
       "kaspa_title" : "Ledger Nano S™, Kaspa takasını desteklemez",
-      "kaspa_description" : "Kaspa takas etmek için Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ veya Ledger Stax™ gibi başka bir uyumlu Ledger cihazını kullanın."
+      "kaspa_description" : "Kaspa takas etmek için Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ veya Ledger Stax™ gibi başka bir uyumlu Ledger cihazını kullanın.",
+      "celo_title" : "Ledger Nano S™, Celo takasını desteklemez",
+      "celo_description" : "Celo takas etmek için Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ veya Ledger Stax™ gibi diğer herhangi bir uyumlu Ledger cihazını kullanın."
     },
     "providers" : {
       "title" : "Kripto takası işlemleri için bir sağlayıcı seçin",
@@ -1250,6 +1252,11 @@
     },
     "manual" : {
       "title" : "{{deviceName}} cihazınızı hazırlayın",
+      "titleTwoStep" : "Hadi başlayalım",
+      "titleFirstStepDone" : "{{deviceName}} cihazınız hazır",
+      "successStepTitle" : "{{deviceName}} cihazınız kriptolarınızı güvenceye almaya artık hazır",
+      "secureCryptoTitle" : "Kriptolarınızı güvende tutun",
+      "secureCryptoDoneTitle" : "Blok zinciri uygulamalarınız yüklendi.",
       "continueOnDevice" : "Bu eylemi {{productName}} cihazında yapın",
       "pairedContent" : {
         "title" : "{{deviceName}} orijinal",
@@ -1294,6 +1301,11 @@
         "backupCharonDescription" : "Dâhilî Secure Element (Güvenli Öge) çipi bulunan ve PIN kodu ile korunan bir kartta yeni bir yedekleme oluşturun. Böylece varlıklarınıza sadece birkaç dokunuşla yeniden erişebilirsiniz. ",
         "backupCharonCta" : "Daha fazla bilgi edinin veya satın alın",
         "backupCharonContinueOnDevice" : "{{productName}} cihazınızdaki yönergeleri izleyin"
+      },
+      "secureCrypto" : {
+        "description" : "Maksimum güvenlik için kriptolarınızı herhangi bir borsadan veya cüzdandan Ledger Wallet’ınıza aktarabilirsiniz.",
+        "depositButton" : "Kriptolarınızı güvende tutun",
+        "skipButton" : "Belki sonra"
       },
       "backup" : {
         "title" : "Gizli Kurtarma İfadenizin yedeklemesi",
@@ -2365,6 +2377,10 @@
         "solanaRawTransaction" : {
           "title" : "Kör imzalama gerekir",
           "description" : "İşlem ayrıntılarını Ledger cihazınızda doğrulayamazsınız. İşlemi imzalarsanız tüm varlıklarınızı kaybedebilirsiniz. Ancak ve ancak web sitesine güveniyorsanız imzalayın."
+        },
+        "bitcoinPsbtTransaction" : {
+          "title" : "Cihazda doğrulayın",
+          "description" : "Bir sonraki adımda işlem tutarını ve alıcıyı cihaz üzerinde doğrulayabilirsiniz."
         },
         "utxoLag" : "Hesapta yüksek miktarda coin bulunduğu için bu işlemin doğrulanması ve imzalanması uzun sürebilir.",
         "subaccountsWarning" : "Bu hesabın token'larını göndermek için bu hesabı {{ currency }} ile doldurmanız gerekir",
@@ -4267,6 +4283,8 @@
         "header" : "Staking Pozisyonları",
         "stake" : "Ekle",
         "staked" : "Yetki devredildi",
+        "estimatedReward" : "Kazanılan ödüller",
+        "rewardTooltip" : "Sui ödülleri her 24 saatlik epoch’ta (devirde) bir dağıtılır. Otomatik olarak bileştirilir ve yetki devrinde kullandığınız stake'e eklenir.",
         "pending" : "Bırakılmayı bekleyen",
         "available" : "Çekilebilir bakiye"
       },
@@ -4597,6 +4615,54 @@
       "modularDrawerDevTool" : {
         "title" : "Modular Drawer Geliştirici Aracı",
         "description" : "Modular Drawer’ı kolayca test etmenize olanak tanır"
+      },
+      "cryptoAssetsList" : {
+        "title" : "Kripto Varlık Listesi",
+        "description" : "Kripto Varlık Listesi (CAL) hizmetindeki kripto varlıklara göz atın ve bu varlıkları yönetin.",
+        "openTokenList" : "Token Listesini Aç",
+        "drawer" : {
+          "title" : "Token Listesi Yapılandırması",
+          "description" : "Kripto Varlık Listesi hizmetindeki token’ları yapılandırın ve bu token'lara göz atın. Mevcut token’ları görüntülemek için bir blok zinciri ailesi seçin.",
+          "options" : "Seçenekler",
+          "blockchainFamily" : "Blok Zinciri Ailesi",
+          "selectFamily" : "Bir blok zinciri ailesi seçin",
+          "pageSize" : "Sayfa Boyutu",
+          "useStaging" : "Test Ortamını Kullan",
+          "useStagingDesc" : "Üretim yerine test ortamını kullanın",
+          "outputFields" : "Çıktı Alanları",
+          "refresh" : "Yenile",
+          "loading" : "Yükleniyor...",
+          "close" : "Kapat",
+          "availableTokens" : "Mevcut Token’lar ({{count}})",
+          "noTokens" : "{{family}} için hiçbir token bulunamadı",
+          "error" : "Token’lar yüklenemedi",
+          "tokenId" : "Kimlik (ID)",
+          "contractAddress" : "Sözleşme Adresi",
+          "tokenType" : "Token Türü",
+          "parentCurrency" : "Üst Para Birimi",
+          "ledgerSignature" : "Ledger İmzası",
+          "units" : "Birimler",
+          "delisted" : "Liste Dışı Bırakılanlar",
+          "copy" : "Kimliği Kopyala",
+          "loadMore" : "Daha fazlasını yükle",
+          "searchAndFilters" : "Arama ve Filtreler",
+          "maxResults" : "Maks. Sonuçlar",
+          "maxResultsPlaceholder" : "Limitsiz",
+          "pagination" : "Sayfalandırma",
+          "advanced" : "Gelişmiş",
+          "calReference" : "CAL Referansı",
+          "calReferencePlaceholder" : "ör. branch:main, tag:tokens-1.11.12, commit:48188c6...",
+          "calReferenceDefault" : "Varsayılan: branch:main",
+          "selectAll" : "Tümü",
+          "selectNone" : "Yok",
+          "reset" : "Sıfırla",
+          "tokens" : "Token'lar",
+          "resultsCount" : "{{count}} sonuç",
+          "collapseAll" : "Tümünü Daralt",
+          "noTokensFound" : "Hiçbir token bulunamadı",
+          "hide" : "Gizle",
+          "show" : "Göster"
+        }
       },
       "experimentalApps" : "Deneysel uygulamalara izin ver",
       "experimentalAppsDesc" : "Deneysel etiketli platform uygulamalarını görüntüleme ve açmaya izin verin.",
@@ -5029,7 +5095,7 @@
     "screens" : {
       "welcome" : {
         "videos" : {
-          "buySell" : "Koruyan ve kontrolün sizde olmasını sağlayan bir cüzdan",
+          "buySell" : "Varlıklarınızı koruyan ve kontrolü size veren bir cüzdan",
           "thousandsCrypto" : "Binlerce kriptoyu gönderin, alın, takas ve stake edin",
           "secureWallet" : "Tüm işlemlerinizi gönül rahatlığıyla doğrulayın"
         },
@@ -5257,7 +5323,7 @@
           },
           "existingRecoveryPhrase" : {
             "title" : "Kurtarma ifadenizi girin",
-            "paragraph1" : "Kurtarma ifadeniz, cüzdanınızı ilk kez kurduğunuzda yedeklemeniz için görüntülenen gizli sözcük listesidir.",
+            "paragraph1" : "Kurtarma ifadeniz, Ledger cihazınızı ilk kez kurduğunuzda yedeklemeniz için görüntülenen gizli kelime listesidir.",
             "paragraph2" : "Ledger kurtarma ifadenizin bir kopyasını tutmaz.",
             "disclaimer" : "Kurtarma ifademi kaybedersem, Nano'ya erişimi kaybetmem durumunda kriptolarıma erişemeyeceğimi anlıyorum.",
             "buttons" : {
@@ -5731,6 +5797,7 @@
           "onboarded" : "Kurulumu yapılmış hesaplar",
           "success" : "Yeni Canton hesabınız oluşturuldu ve kurulumu yapıldı.",
           "error" : "Yeni hesabın kurulumu yapılamadı. Lütfen tekrar deneyin.",
+          "error429" : "An itibarıyla Canton Network'te bir gün içinde sınırlı sayıda hesap oluşturulabilir. Lütfen daha sonra tekrar deneyin.",
           "status" : {
             "prepare" : "Hesap kurulumuna hazırlanılıyor...",
             "submit" : "Hesabın kurulumu yapılıyor...",
@@ -5748,6 +5815,13 @@
         "finish" : {
           "title" : "Onaylayın"
         }
+      },
+      "tooManyUtxos" : {
+        "title" : "Eylem Alınması Gerekiyor: Çok Fazla UTXO",
+        "description" : "Hesabınızda çok sayıda küçük UTXO olduğundan bu transfer işlenemiyor. Biriken tutma ücretleri nedeniyle sürelerinin dolmasından kaçınmak ve transfer işlemlerinin yapılabilmesini sağlamak için bu UTXO'ları hemen birleştirin.",
+        "quickFix" : "Hızlı Düzeltme: Birleştirmek için kendinize biraz fon gönderin.",
+        "warning" : "Hesabınızda çok sayıda küçük UTXO var. Birleştirmek için kendinize biraz fon gönderin.",
+        "consolidate" : "Birleştir"
       }
     },
     "stellar" : {
@@ -6691,6 +6765,10 @@
     "HederaAddAccountError" : {
       "title" : "Hesabınız eklenemedi. Lütfen tekrar deneyin."
     },
+    "HederaRecipientInvalidChecksum" : {
+      "title" : "Geçersiz adres checksum’ı",
+      "description" : "Sağlanan adresin checksum’ı (sağlama toplamı) geçersiz."
+    },
     "HederaInsufficientFundsForAssociation" : {
       "title" : "Yetersiz bakiye",
       "description" : "Token ilişkilendirme ücreti için yeterli HBAR yok. En az ${{requiredWorthInUSD}} değerinde HBAR gerekir."
@@ -7445,7 +7523,7 @@
     "connectYourDevice" : {
       "title" : "Cihazınızı bağlayın ve kilidini açın"
     },
-    "searchPlaceholder" : "Ara",
+    "searchPlaceholder" : "İsim veya adrese göre ara",
     "emptyAssetList" : "Hiçbir varlık bulunamadı",
     "selectAsset" : "Varlık seçin",
     "selectNetwork" : "Ağ seçin",
