@@ -1,5 +1,11 @@
 # @ledgerhq/live-common
 
+## 34.52.0-next.1
+
+### Minor Changes
+
+- [#12549](https://github.com/LedgerHQ/ledger-live/pull/12549) [`5b8a62e`](https://github.com/LedgerHQ/ledger-live/commit/5b8a62e244a13a384ae3e1c76bb5a5947eac614f) Thanks [@CremaFR](https://github.com/CremaFR)! - revert: lifi gas limit fix
+
 ## 34.52.0-next.0
 
 ### Minor Changes
