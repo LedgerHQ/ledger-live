@@ -473,7 +473,9 @@
       "sui_title" : "Ledger Nano S™は、Suiのスワップに対応していません",
       "sui_description" : "Suiをスワップするには、Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™、またはLedger Stax™など、他の対応するLedgerデバイスをご使用ください。",
       "kaspa_title" : "Ledger Nano S™はKaspaのスワップに対応していません",
-      "kaspa_description" : "Kaspaをスワップするには、Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™、Ledger Stax™など、対応する他のLedgerデバイスをご使用ください。"
+      "kaspa_description" : "Kaspaをスワップするには、Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™、Ledger Stax™など、対応する他のLedgerデバイスをご使用ください。",
+      "celo_title" : "Ledger Nano S™は、Celoのスワップに対応していません",
+      "celo_description" : "Celoをスワップするには、Ledger Nano S Plus™、Ledger Nano X™、Ledger Flex™、またはLedger Stax™など、他の対応するLedgerデバイスをご使用ください。"
     },
     "providers" : {
       "title" : "暗号資産のスワップに利用するプロバイダーを選択",
@@ -1250,6 +1252,11 @@
     },
     "manual" : {
       "title" : "{{deviceName}}を準備",
+      "titleTwoStep" : "セットアップ",
+      "titleFirstStepDone" : "{{deviceName}}、準備完了",
+      "successStepTitle" : "{{deviceName}}で、暗号資産を保護する準備が整いました",
+      "secureCryptoTitle" : "暗号資産を保護",
+      "secureCryptoDoneTitle" : "ブロックチェーンアプリのインストールが完了しました。",
       "continueOnDevice" : "{{productName}}でこのアクションを実行する",
       "pairedContent" : {
         "title" : "{{deviceName}}は正規品です",
@@ -1294,6 +1301,11 @@
         "backupCharonDescription" : "セキュアエレメントチップを内蔵した、PINコードで保護されたカードに新しいバックアップを作成すると、数回タップするだけで資産へのアクセスを復元できます。",
         "backupCharonCta" : "詳細の確認または購入",
         "backupCharonContinueOnDevice" : "{{productName}}の指示に従う"
+      },
+      "secureCrypto" : {
+        "description" : "取引所やウォレットから暗号資産をLedgerウォレットへ移すことで、最高水準のセキュリティで保管することができます。",
+        "depositButton" : "Secure my crypto",
+        "skipButton" : "Maybe later"
       },
       "backup" : {
         "title" : "シークレットリカバリーフレーズのバックアップ",
@@ -2365,6 +2377,10 @@
         "solanaRawTransaction" : {
           "title" : "ブラインド署名が必要です",
           "description" : "お使いのLedgerデバイスでトランザクションの詳細を認証することはできません。署名すると、すべての資産を失う可能性があります。このウェブサイトを信頼する場合のみ署名してください。"
+        },
+        "bitcoinPsbtTransaction" : {
+          "title" : "デバイス上で確認",
+          "description" : "次のステップで、デバイス上で取引数量と受取人をご確認いただけます。"
         },
         "utxoLag" : "アカウントに大量のコインがあるため、このトランザクションの承認と署名には時間がかかる場合があります。",
         "subaccountsWarning" : "このアカウントのトークンを送金するには、このアカウントに{{ currency }}を補充する必要があります",
@@ -4267,6 +4283,8 @@
         "header" : "ステーキングポジション",
         "stake" : "追加",
         "staked" : "デリゲート",
+        "estimatedReward" : "獲得した報酬",
+        "rewardTooltip" : "Suiの報酬は24時間ごと（エポック）に配布されます。報酬は自動的に再投資（複利運用）され、デリゲートしたステーキングに追加されます。",
         "pending" : "リリース保留中",
         "available" : "引き出し可能"
       },
@@ -4597,6 +4615,54 @@
       "modularDrawerDevTool" : {
         "title" : "モジュラードロワー開発ツール",
         "description" : "モジュラードロワーを簡単にテストできます"
+      },
+      "cryptoAssetsList" : {
+        "title" : "暗号資産リスト",
+        "description" : "暗号資産リスト（Crypto Assets List (CAL)） サービスを利用して、暗号資産の閲覧および管理を行います。",
+        "openTokenList" : "トークンリストを開く",
+        "drawer" : {
+          "title" : "トークンリストの設定",
+          "description" : "暗号資産リストサービスから、トークンの設定および閲覧を行います。利用可能なトークンを表示するには、ブロックチェーンファミリーを選択してください。",
+          "options" : "オプション",
+          "blockchainFamily" : "ブロックチェーンファミリー",
+          "selectFamily" : "ブロックチェーンファミリーを選択",
+          "pageSize" : "ページサイズ",
+          "useStaging" : "ステージング環境を使用",
+          "useStagingDesc" : "本番環境の代わりにステージング環境を使用",
+          "outputFields" : "出力フィールド",
+          "refresh" : "更新",
+          "loading" : "読み込み中...",
+          "close" : "閉じる",
+          "availableTokens" : "利用可能なトークン ({{count}})",
+          "noTokens" : "{{family}}に一致するトークンが見つかりません",
+          "error" : "トークンの読み込みに失敗しました",
+          "tokenId" : "ID",
+          "contractAddress" : "コントラクトアドレス",
+          "tokenType" : "トークンタイプ",
+          "parentCurrency" : "親通貨",
+          "ledgerSignature" : "Ledger署名",
+          "units" : "単位",
+          "delisted" : "サポート対象外",
+          "copy" : "IDをコピー",
+          "loadMore" : "さらに読み込む",
+          "searchAndFilters" : "検索とフィルター",
+          "maxResults" : "最大結果数",
+          "maxResultsPlaceholder" : "制限なし",
+          "pagination" : "ページネーション",
+          "advanced" : "アドバンス",
+          "calReference" : "CAL参照",
+          "calReferencePlaceholder" : "例：branch:main, tag:tokens-1.11.12, commit:48188c6...",
+          "calReferenceDefault" : "デフォルト: branch:main",
+          "selectAll" : "全て",
+          "selectNone" : "なし",
+          "reset" : "リセット",
+          "tokens" : "トークン",
+          "resultsCount" : "{{count}}件の結果",
+          "collapseAll" : "すべて折りたたむ",
+          "noTokensFound" : "トークンが見つかりません",
+          "hide" : "隠す",
+          "show" : "表示"
+        }
       },
       "experimentalApps" : "試験的なアプリを許可する",
       "experimentalAppsDesc" : "試験的とタグ付けされたプラットフォームアプリの表示と実行を許可する",
@@ -5257,7 +5323,7 @@
           },
           "existingRecoveryPhrase" : {
             "title" : "リカバリーフレーズを入力",
-            "paragraph1" : "リカバリーフレーズは、ウォレットの初回セットアップ時にあなたがバックアップした秘密の単語の組み合わせです。",
+            "paragraph1" : "Your recovery phrase is the secret list of words that you backed up when you first set up your Ledger device.",
             "paragraph2" : "Ledgerデバイスにはリカバリーフレーズは保管されません。",
             "disclaimer" : "リカバリーフレーズを紛失すると、Nanoにアクセスできなくなった場合に、ウォレット内の暗号資産が永久に失われることを理解しました。",
             "buttons" : {
@@ -5731,6 +5797,7 @@
           "onboarded" : "設定済みアカウント",
           "success" : "新しいCantonアカウントが作成され、初期設定が完了しました。",
           "error" : "新しいアカウントの初期設定に失敗しました。もう一度お試しください。",
+          "error429" : "現在、Cantonネットワークの1日のアカウント作成上限に達しています。しばらくしてから、もう一度お試しください。",
           "status" : {
             "prepare" : "アカウントの初期設定を準備中...",
             "submit" : "アカウントを設定中…",
@@ -5748,6 +5815,13 @@
         "finish" : {
           "title" : "確認"
         }
+      },
+      "tooManyUtxos" : {
+        "title" : "対応が必要です：UTXOが多すぎます",
+        "description" : "この送金を処理するには、アカウント内に少額のUTXOが多すぎます。累積保有手数料によるUTXOの失効を避け、送金を可能にするため、今すぐ統合してください。",
+        "quickFix" : "簡単な解決策：ご自身に送金してUTXOを統合する。",
+        "warning" : "アカウントに少額のUTXOが多すぎます。ご自身に送金してUTXOを統合してください。",
+        "consolidate" : "統合する"
       }
     },
     "stellar" : {
@@ -6691,6 +6765,10 @@
     "HederaAddAccountError" : {
       "title" : "アカウントが追加されていません。もう一度お試しください。"
     },
+    "HederaRecipientInvalidChecksum" : {
+      "title" : "アドレスのチェックサムが無効です",
+      "description" : "入力されたアドレスのチェックサムが無効です"
+    },
     "HederaInsufficientFundsForAssociation" : {
       "title" : "残高不足",
       "description" : "トークンの関連付けに必要なHBARが不足しています。少なくとも${{requiredWorthInUSD}}相当のHBARが必要です。"
@@ -7445,7 +7523,7 @@
     "connectYourDevice" : {
       "title" : "デバイスを接続してロックを解除する"
     },
-    "searchPlaceholder" : "検索",
+    "searchPlaceholder" : "名前またはアドレスで検索",
     "emptyAssetList" : "資産が見つかりません",
     "selectAsset" : "暗号資産を選択",
     "selectNetwork" : "ネットワークを選択",
