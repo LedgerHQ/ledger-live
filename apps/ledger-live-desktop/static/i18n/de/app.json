@@ -473,7 +473,9 @@
       "sui_title" : "Die Ledger Nano S™ unterstützt das Swappen von Sui nicht",
       "sui_description" : "Zum Swappen von Sui kannst du jedes sonstige kompatible Ledger-Gerät nutzen, z. B. eine Ledger Nano S Plus™, eine Ledger Nano X™, eine Ledger Flex™ oder eine Ledger Stax™.",
       "kaspa_title" : "Ledger Nano S™ unterstützt das Swappen von Kaspa nicht",
-      "kaspa_description" : "Zum Swappen von Kaspa musst du ein anderes kompatibles Ledger-Gerät verwenden, z. B. eine Ledger Nano S Plus™, eine Ledger Nano X™, eine Ledger Flex™ oder eine Ledger Stax™."
+      "kaspa_description" : "Zum Swappen von Kaspa musst du ein anderes kompatibles Ledger-Gerät verwenden, z. B. eine Ledger Nano S Plus™, eine Ledger Nano X™, eine Ledger Flex™ oder eine Ledger Stax™.",
+      "celo_title" : "Ledger Nano S™ unterstützt das Swappen von Celo nicht",
+      "celo_description" : "Zum Swappen von Celo kannst du jedes sonstige kompatible Ledger-Gerät nutzen, z. B. Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ oder Ledger Stax™."
     },
     "providers" : {
       "title" : "Wähle einen Anbieter für das Swappen von Kryptowährungen",
@@ -1250,6 +1252,11 @@
     },
     "manual" : {
       "title" : "{{deviceName}} bereithalten",
+      "titleTwoStep" : "Los geht's!",
+      "titleFirstStepDone" : "{{deviceName}} ist bereit",
+      "successStepTitle" : "Dein {{deviceName}} ist nun einsatzbereit und kann dein Krypto schützen",
+      "secureCryptoTitle" : "Deine Kryptos schützen",
+      "secureCryptoDoneTitle" : "Deine Blockchain-Apps sind installiert.",
       "continueOnDevice" : "Diese Aktion für {{productName}} durchführen",
       "pairedContent" : {
         "title" : "{{deviceName}} ist echt",
@@ -1294,6 +1301,11 @@
         "backupCharonDescription" : "Erstelle eine neue Sicherung auf einer PIN-geschützten Karte mit integriertem Secure Element-Chip. So gelangst du mit nur wenigen Klicks ggf. wieder an dein Guthaben.",
         "backupCharonCta" : "Mehr erfahren oder kaufen",
         "backupCharonContinueOnDevice" : "Befolge die Anweisungen auf deiner {{productName}}"
+      },
+      "secureCrypto" : {
+        "description" : "Du kannst Kryptos von jeder Börse oder Wallet nach Ledger Wallet übertragen, um maximale Sicherheit zu garantieren.",
+        "depositButton" : "Secure my crypto",
+        "skipButton" : "Maybe later"
       },
       "backup" : {
         "title" : "Sicherheitskopie für deine geheime Wiederherstellungsphrase",
@@ -2365,6 +2377,10 @@
         "solanaRawTransaction" : {
           "title" : "Blindsignatur erforderlich",
           "description" : "Du kannst die Transaktionsdetails nicht auf deinem Ledger-Gerät bestätigen. Wenn du sie signierst, könntest du alle deine Assets verlieren. Signiere nur, wenn du dieser Website wirklich vertraust."
+        },
+        "bitcoinPsbtTransaction" : {
+          "title" : "Auf Gerät bestätigen",
+          "description" : "Im nächsten Schritt kannst du den Transaktionsbetrag und den Empfänger auf dem Gerät bestätigen."
         },
         "utxoLag" : "Die Verifizierung und Unterzeichnung dieser Transaktion kann lange dauern, da das Konto eine beträchtliche Anzahl von Coins enthält.",
         "subaccountsWarning" : "Du musst dieses Konto mit {{ currency }} auffüllen, um die Token dieses Kontos zu versenden",
@@ -4267,6 +4283,8 @@
         "header" : "Position(en) gestaked",
         "stake" : "Hinzufügen",
         "staked" : "Delegiert",
+        "estimatedReward" : "Verdiente Rewards",
+        "rewardTooltip" : "Die Verteilung von Sui-Rewards erfolgt in jeder 24-Stunden-Epoche. Die Rewards werden automatisch verzinst und deinem delegierten Stake hinzugefügt.",
         "pending" : "Freigabe ausstehend",
         "available" : "Auszahlbar"
       },
@@ -4597,6 +4615,54 @@
       "modularDrawerDevTool" : {
         "title" : "Modular Drawer-Entwicklungstool",
         "description" : "Damit kannst du Modular Drawer ganz einfach testen"
+      },
+      "cryptoAssetsList" : {
+        "title" : "Crypto Assets List (CAL)",
+        "description" : "Hier kannst du Krypto-Assets über den CAL-Service (Crypto Assets List) anzeigen und verwalten.",
+        "openTokenList" : "Tokenliste öffnen",
+        "drawer" : {
+          "title" : "Konfiguration der Tokenliste",
+          "description" : "Hier kannst du die Token im CAL-Service (Crypto Assets List) konfigurieren und durchsuchen. Wähle eine Blockchain-Familie aus, um die verfügbaren Token anzuzeigen.",
+          "options" : "Optionen",
+          "blockchainFamily" : "Blockchain-Familie",
+          "selectFamily" : "Hier wählst du eine Blockchain-Familie aus.",
+          "pageSize" : "Seitengröße",
+          "useStaging" : "Staging-Umgebung verwenden",
+          "useStagingDesc" : "Staging-Umgebung anstelle der Produktionsumgebung verwenden",
+          "outputFields" : "Ausgabefelder",
+          "refresh" : "Neu laden",
+          "loading" : "Lade Daten...",
+          "close" : "Schließen",
+          "availableTokens" : "Verfügbare Token ({{count}})",
+          "noTokens" : "Keine Token für {{family}} gefunden",
+          "error" : "Token konnte nicht geladen werden",
+          "tokenId" : "ID",
+          "contractAddress" : "Vertragsadresse",
+          "tokenType" : "Tokenart",
+          "parentCurrency" : "Übergeordnete Währung",
+          "ledgerSignature" : "Ledger-Signatur",
+          "units" : "Einheiten",
+          "delisted" : "Ausgelistet",
+          "copy" : "ID kopieren",
+          "loadMore" : "Mehr laden",
+          "searchAndFilters" : "Suche und Filter",
+          "maxResults" : "Ergebnisse (max.)",
+          "maxResultsPlaceholder" : "Keine Beschränkungen",
+          "pagination" : "Seitenumbruch",
+          "advanced" : "Advanced",
+          "calReference" : "CAL-Referenz",
+          "calReferencePlaceholder" : "(z. B. „branch:main“, „tag:tokens-1.11.12“, „commit:48188c6“ usw.)",
+          "calReferenceDefault" : "Standard: „branch:main“",
+          "selectAll" : "Alle",
+          "selectNone" : "Kein",
+          "reset" : "Zurücksetzen",
+          "tokens" : "Token",
+          "resultsCount" : "{{count}} Ergebnisse",
+          "collapseAll" : "Alle ausblenden",
+          "noTokensFound" : "Keine Token gefunden",
+          "hide" : "Ausblenden",
+          "show" : "Anzeigen"
+        }
       },
       "experimentalApps" : "Experimentelle Apps erlauben",
       "experimentalAppsDesc" : "Anzeigen und Öffnen von Debug-getaggten Plattform-Apps erlauben.",
@@ -5257,7 +5323,7 @@
           },
           "existingRecoveryPhrase" : {
             "title" : "Wiederherstellungsphrase eingeben",
-            "paragraph1" : "Ihr Wiederherstellungsphrase ist die geheime Liste von Wörtern, die Sie beim ersten Einrichten Ihrer Wallet gewählt haben.",
+            "paragraph1" : "Your recovery phrase is the secret list of words that you backed up when you first set up your Ledger device.",
             "paragraph2" : "Ledger bewahrt keine Kopie Ihrer Wiederherstellungsphrase auf.",
             "disclaimer" : "Ich verstehe, dass ich bei Verlust der Wiederherstellungsphrase nicht mehr auf meine Kryptos zugreifen kann, falls ich den Zugang zu meinem Nano verliere.",
             "buttons" : {
@@ -5731,6 +5797,7 @@
           "onboarded" : "Eingerichtete Konten",
           "success" : "Dein neues Canton-Konto wurde erstellt und eingerichtet.",
           "error" : "Das Einrichten des neuen Kontos ist fehlgeschlagen. Bitte versuche es noch einmal.",
+          "error429" : "Canton Network lässt momentan nur eine begrenzte Anzahl von Kontoerstellungen pro Tag zu. Versuche es bitte später noch einmal.",
           "status" : {
             "prepare" : "Die Kontoeinrichtung wird vorbereitet …",
             "submit" : "Konto wird eingerichtet …",
@@ -5748,6 +5815,13 @@
         "finish" : {
           "title" : "Bestätigung"
         }
+      },
+      "tooManyUtxos" : {
+        "title" : "Action Needed: Too Many UTXOs",
+        "description" : "Your account has too many small UTXOs to process this transfer. Merge them now to avoid expiration due to accumulated holding fees and enable transfers.",
+        "quickFix" : "Quick Fix: Send some funds to yourself to consolidate.",
+        "warning" : "Your account has too many small UTXOs. Send some funds to yourself to consolidate.",
+        "consolidate" : "Consolidate"
       }
     },
     "stellar" : {
@@ -6691,6 +6765,10 @@
     "HederaAddAccountError" : {
       "title" : "Ihr Konto wurde nicht hinzugefügt. Bitte versuchen Sie es erneut."
     },
+    "HederaRecipientInvalidChecksum" : {
+      "title" : "Ungültige Adressprüfsumme",
+      "description" : "Die angegebene Adresse weist eine ungültige Prüfsumme auf."
+    },
     "HederaInsufficientFundsForAssociation" : {
       "title" : "Unzureichendes Guthaben",
       "description" : "Nicht ausreichend HBAR, um die Tokenzuordnung zu bezahlen. Es werden HBAR im Wert von mindestens {{requiredWorthInUSD}} benötigt."
@@ -7445,7 +7523,7 @@
     "connectYourDevice" : {
       "title" : "Verbinde und entsperre dein Gerät"
     },
-    "searchPlaceholder" : "Suche",
+    "searchPlaceholder" : "Nach Name oder Adresse suchen",
     "emptyAssetList" : "Keine Assets gefunden",
     "selectAsset" : "Vermögenswert auswählen",
     "selectNetwork" : "Netzwerk auswählen",
