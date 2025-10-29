@@ -123,7 +123,7 @@ export default function DelegationStarted({ navigation, route }: Props) {
   );
 
   const { data, loadNext } = useTokensData({
-    networkFamily: [mainAccount.currency.id],
+    networkFamily: mainAccount.currency.id,
     pageSize: 100,
   });
 

@@ -112,7 +112,7 @@ export default function DelegationSelectorField({
   const subAccounts = account.subAccounts;
 
   const { data, loadNext } = useTokensData({
-    networkFamily: [account.currency.id],
+    networkFamily: account.currency.id,
     pageSize: 100,
   });
 
