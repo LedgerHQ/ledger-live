@@ -21,7 +21,8 @@ export type AccountsNavigatorParamList = {
   };
   [ScreenName.Assets]: undefined;
   [ScreenName.Asset]: {
-    currency: CryptoOrTokenCurrency;
+    currency?: CryptoOrTokenCurrency;
+    currencyId?: string;
   };
   [ScreenName.AccountsList]: {
     sourceScreenName: ScreenName;

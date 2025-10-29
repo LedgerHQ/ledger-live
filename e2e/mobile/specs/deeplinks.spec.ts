@@ -109,4 +109,14 @@ describe("DeepLinks Tests", () => {
     await app.receive.receiveViaDeeplink(ethereumLong);
     await app.receive.expectSecondStepNetworks([ethereumLong, zksyncName, scrollName]);
   });
+
+  it("should open Asset page for Bitcoin", async () => {
+    await app.assetAccountsPage.openAssetPageViaDeeplink(bitcoinLong);
+    await app.assetAccountsPage.expectAssetPage(bitcoinLong);
+  });
+
+  it("should open Asset page for Ethereum", async () => {
+    await app.assetAccountsPage.openAssetPageViaDeeplink(ethereumLong);
+    await app.assetAccountsPage.expectAssetPage(ethereumLong);
+  });
 });
