@@ -14,7 +14,7 @@ import {
   HttpSpeculosDatasource,
 } from "@ledgerhq/device-transport-kit-speculos";
 import { getEnv } from "@ledgerhq/live-env";
-import { deviceControllerFactory } from "@ledgerhq/speculos-device-controller";
+import { deviceControllerClientFactory } from "@ledgerhq/speculos-device-controller";
 
 export type SpeculosHttpTransportOpts = {
   apiPort?: string;
@@ -28,42 +28,46 @@ export enum SpeculosButton {
   BOTH = "LRlr",
 }
 
-function resolveBaseFromEnv(opts: SpeculosHttpTransportOpts): string {
-  const rawHost =
-    opts.baseURL ??
+/**
+ * Resolve the Speculos base URL from provided options and environment variables
+ */
+function resolveBaseFromEnv(options: SpeculosHttpTransportOpts): string {
+  const configuredHostOrDefault =
+    options.baseURL ??
     (typeof process !== "undefined" ? process.env?.SPECULOS_ADDRESS : undefined) ??
     (typeof process !== "undefined" ? process.env?.LLD_SPECULOS_BASE_URL : undefined) ??
     (typeof process !== "undefined" ? process.env?.SPECULOS_BASE_URL : undefined) ??
     "http://127.0.0.1";
 
-  const host = rawHost.replace(/\/+$/, "");
+  const normalizedHost = configuredHostOrDefault.replace(/\/+$/, "");
 
-  if (/:\\d+$/.test(host) || /:\d+$/.test(host)) {
-    const base = host;
-    log("speculos-transport", `using explicit base=${base}`);
-    return base;
+  // if an explicit port is already present, use it as-is.
+  if (/:\\d+$/.test(normalizedHost) || /:\d+$/.test(normalizedHost)) {
+    const baseUrlWithExplicitPort = normalizedHost;
+    log("speculos-transport", `using explicit base=${baseUrlWithExplicitPort}`);
+    return baseUrlWithExplicitPort;
   }
 
-  const safeGetEnv = (k: string): string | undefined => {
+  const getEnvIfDefinedAndNonEmpty = (key: string): string | undefined => {
     try {
-      const v = getEnv(k as any);
-      return v != null && String(v).trim() !== "" ? String(v) : undefined;
+      const value = getEnv(key as any);
+      return value != null && String(value).trim() !== "" ? String(value) : undefined;
     } catch {
       return undefined;
     }
   };
 
-  const port =
-    opts.apiPort ??
-    safeGetEnv("SPECULOS_API_PORT") ??
+  const resolvedApiPort =
+    options.apiPort ??
+    getEnvIfDefinedAndNonEmpty("SPECULOS_API_PORT") ??
     (typeof process !== "undefined" ? process.env?.SPECULOS_API_PORT : undefined) ??
     (typeof process !== "undefined" ? process.env?.LLD_SPECULOS_HTTP_PORT : undefined) ??
     (typeof process !== "undefined" ? process.env?.SPECULOS_HTTP_PORT : undefined) ??
     "5000";
 
-  const base = `${host}:${port}`;
-  log("speculos-transport", `using base=${base}`);
-  return base;
+  const resolvedBaseUrl = `${normalizedHost}:${resolvedApiPort}`;
+  log("speculos-transport", `using base=${resolvedBaseUrl}`);
+  return resolvedBaseUrl;
 }
 
 type DmkEntry = {
@@ -77,163 +81,199 @@ type DmkEntry = {
 type AnyReadableStream = ReadableStream<Uint8Array> | NodeJS.ReadableStream;
 
 export default class SpeculosHttpTransport extends Transport {
+  // cache entries keyed by base URL, used to serialize APDU exchanges per Speculos instance.
   private static byBase = new Map<string, DmkEntry>();
+  private readonly options: SpeculosHttpTransportOpts;
+  private readonly baseUrl: string;
+  private readonly httpEventDatasource: HttpSpeculosDatasource;
+  private eventStream: AnyReadableStream | null = null;
 
-  private static ensureEntry(base: string, timeout: number): DmkEntry {
-    let entry = this.byBase.get(base);
-    if (!entry) {
-      const dmk = new DeviceManagementKitBuilder()
-        .addTransport(speculosTransportFactory(base, true))
-        .addLogger(new ConsoleLogger())
-        .build();
-      entry = { dmk, sendChain: Promise.resolve(), timeout };
-      this.byBase.set(base, entry);
-    } else {
-      entry.timeout = timeout;
-    }
-    return entry;
+  // emits events coming from Speculos automation SSE stream.
+  automationEvents: Subject<Record<string, unknown>> = new Subject();
+
+  constructor(options: SpeculosHttpTransportOpts) {
+    super();
+    this.options = options;
+    this.baseUrl = resolveBaseFromEnv(options);
+    this.httpEventDatasource = new HttpSpeculosDatasource(
+      this.baseUrl,
+      true,
+      "ldmk-transport-speculos",
+    );
   }
 
-  private static async ensureSession(entry: DmkEntry) {
-    if (entry.sessionId) return;
-    if (entry.connectPromise) return entry.connectPromise;
+  private static ensureEntry(baseUrl: string, connectionTimeoutMs: number): DmkEntry {
+    let deviceManagementEntry = this.byBase.get(baseUrl);
+    if (!deviceManagementEntry) {
+      const deviceManagementKit = new DeviceManagementKitBuilder()
+        .addTransport(speculosTransportFactory(baseUrl, true))
+        .addLogger(new ConsoleLogger())
+        .build();
 
-    entry.connectPromise = (async () => {
-      const devices = await firstValueFrom<DiscoveredDevice[]>(
-        entry.dmk.listenToAvailableDevices({}).pipe(
-          filter(list => list.length > 0),
-          rxTimeout(entry.timeout),
+      deviceManagementEntry = {
+        dmk: deviceManagementKit,
+        sendChain: Promise.resolve(),
+        timeout: connectionTimeoutMs,
+      };
+
+      this.byBase.set(baseUrl, deviceManagementEntry);
+    } else {
+      deviceManagementEntry.timeout = connectionTimeoutMs;
+    }
+    return deviceManagementEntry;
+  }
+
+  private static async ensureSession(deviceManagementEntry: DmkEntry) {
+    if (deviceManagementEntry.sessionId) return;
+    if (deviceManagementEntry.connectPromise) return deviceManagementEntry.connectPromise;
+
+    deviceManagementEntry.connectPromise = (async () => {
+      const discoveredDevices = await firstValueFrom<DiscoveredDevice[]>(
+        deviceManagementEntry.dmk.listenToAvailableDevices({}).pipe(
+          filter(deviceList => deviceList.length > 0),
+          rxTimeout(deviceManagementEntry.timeout),
         ),
       );
-      entry.sessionId = await entry.dmk.connect({
-        device: devices[0],
+
+      deviceManagementEntry.sessionId = await deviceManagementEntry.dmk.connect({
+        device: discoveredDevices[0],
         sessionRefresherOptions: { isRefresherDisabled: true },
       });
     })();
 
     try {
-      await entry.connectPromise;
+      await deviceManagementEntry.connectPromise;
     } finally {
-      entry.connectPromise = undefined;
+      deviceManagementEntry.connectPromise = undefined;
     }
-  }
-
-  private readonly opts: SpeculosHttpTransportOpts;
-  private readonly base: string;
-  private readonly ds: HttpSpeculosDatasource;
-
-  private sseStream: AnyReadableStream | null = null;
-  automationEvents: Subject<Record<string, unknown>> = new Subject();
-
-  private constructor(opts: SpeculosHttpTransportOpts) {
-    super();
-    this.opts = opts;
-    this.base = resolveBaseFromEnv(opts);
-    this.ds = new HttpSpeculosDatasource(this.base, true, "ldmk-transport-speculos");
   }
 
   static isSupported = async () => true;
   static list = async () => [];
   static listen = (_observer: any) => ({ unsubscribe: () => {} });
 
-  private readonly buttonTable = {
+  private readonly buttonEnumToControllerInput: {
+    [SpeculosButton.BOTH]: "both";
+    [SpeculosButton.RIGHT]: "right";
+    [SpeculosButton.LEFT]: "left";
+  } = {
     [SpeculosButton.BOTH]: "both",
     [SpeculosButton.RIGHT]: "right",
     [SpeculosButton.LEFT]: "left",
   } as const;
 
-  static open = async (opts: SpeculosHttpTransportOpts = {}): Promise<SpeculosHttpTransport> => {
-    const t = new SpeculosHttpTransport(opts);
-    const base = t.base;
-    const connectTimeout = opts.timeout ?? 10_000;
+  static open = async (options: SpeculosHttpTransportOpts = {}): Promise<SpeculosHttpTransport> => {
+    const transportInstance = new SpeculosHttpTransport(options);
+    const baseUrl = transportInstance.baseUrl;
+    const connectTimeoutMs = options.timeout ?? 10_000;
 
-    this.ensureEntry(base, connectTimeout);
+    this.ensureEntry(baseUrl, connectTimeoutMs);
 
-    // Guard process access for browser builds
-    const sseEnvEnabled =
+    const isSseEnabledByEnv =
       typeof process !== "undefined" && process.env?.SPECULOS_TRANSPORT_SSE === "true";
 
-    if (sseEnvEnabled) {
-      t.sseStream = await t.ds.openEventStream(
-        evt => {
-          log("speculos-event", JSON.stringify(evt));
-          t.automationEvents.next(evt);
+    if (isSseEnabledByEnv) {
+      transportInstance.eventStream = await transportInstance.httpEventDatasource.openEventStream(
+        eventPayload => {
+          log("speculos-event", JSON.stringify(eventPayload));
+          transportInstance.automationEvents.next(eventPayload);
         },
         () => {
           log("speculos-event", "close");
-          t.emit("disconnect", new DisconnectedDevice("Speculos exited!"));
+          transportInstance.emit("disconnect", new DisconnectedDevice("Speculos exited!"));
         },
       );
     }
 
-    return t;
+    return transportInstance;
   };
 
-  button = (but: string): Promise<void> => {
-    const deviceController = deviceControllerFactory(this.base);
-    const input =
-      (this.buttonTable as any)[but] ??
-      (but === "Ll" ? "left" : but === "Rr" ? "right" : but === "LRlr" ? "both" : but);
-    log("speculos-button", "press-and-release", input);
-    return deviceController.button.press(input);
+  button = (buttonInput: string): Promise<void> => {
+    const deviceControllerClient = deviceControllerClientFactory(this.baseUrl);
+
+    const buttonInputForController =
+      (this.buttonEnumToControllerInput as any)[buttonInput] ??
+      (buttonInput === "Ll"
+        ? "left"
+        : buttonInput === "Rr"
+          ? "right"
+          : buttonInput === "LRlr"
+            ? "both"
+            : buttonInput);
+
+    log("speculos-button", "press-and-release", buttonInputForController);
+    return deviceControllerClient.buttonFactory().press(buttonInputForController);
   };
 
-  async exchange(apdu: Buffer): Promise<Buffer> {
-    const entry = SpeculosHttpTransport.ensureEntry(this.base, this.opts.timeout ?? 10_000);
+  async exchange(apduCommand: Buffer): Promise<Buffer> {
+    const deviceManagementEntry = SpeculosHttpTransport.ensureEntry(
+      this.baseUrl,
+      this.options.timeout ?? 10_000,
+    );
 
-    const run = async (): Promise<Buffer> => {
-      await SpeculosHttpTransport.ensureSession(entry);
-      const hex = apdu.toString("hex");
-      log("apdu", "=> " + hex);
+    const performApduExchange = async (): Promise<Buffer> => {
+      await SpeculosHttpTransport.ensureSession(deviceManagementEntry);
+      const apduHex = apduCommand.toString("hex");
+      log("apdu", "=> " + apduHex);
 
       try {
-        const { data, statusCode } = await entry.dmk.sendApdu({
-          sessionId: entry.sessionId!,
-          apdu: new Uint8Array(apdu.buffer, apdu.byteOffset, apdu.byteLength),
+        const { data, statusCode } = await deviceManagementEntry.dmk.sendApdu({
+          sessionId: deviceManagementEntry.sessionId!,
+          apdu: new Uint8Array(apduCommand.buffer, apduCommand.byteOffset, apduCommand.byteLength),
         });
-        const resp = Buffer.from([...data, ...statusCode]);
-        log("apdu", "<= " + resp.toString("hex"));
-        return resp;
+        const responseBuffer = Buffer.from([...data, ...statusCode]);
+        log("apdu", "<= " + responseBuffer.toString("hex"));
+        return responseBuffer;
       } catch {
-        entry.sessionId = undefined;
-        await SpeculosHttpTransport.ensureSession(entry);
-        const { data, statusCode } = await entry.dmk.sendApdu({
-          sessionId: entry.sessionId!,
-          apdu: new Uint8Array(apdu.buffer, apdu.byteOffset, apdu.byteLength),
+        // reset session and retry once
+        deviceManagementEntry.sessionId = undefined;
+        await SpeculosHttpTransport.ensureSession(deviceManagementEntry);
+
+        const { data, statusCode } = await deviceManagementEntry.dmk.sendApdu({
+          sessionId: deviceManagementEntry.sessionId!,
+          apdu: new Uint8Array(apduCommand.buffer, apduCommand.byteOffset, apduCommand.byteLength),
         });
-        const resp = Buffer.from([...data, ...statusCode]);
-        log("apdu", "<= " + resp.toString("hex"));
-        return resp;
+        const responseBuffer = Buffer.from([...data, ...statusCode]);
+        log("apdu", "<= " + responseBuffer.toString("hex"));
+        return responseBuffer;
       }
     };
 
-    const p = entry.sendChain.then(run, run);
-    entry.sendChain = p.then(
+    const chainedExchangePromise = deviceManagementEntry.sendChain.then(
+      performApduExchange,
+      performApduExchange,
+    );
+
+    deviceManagementEntry.sendChain = chainedExchangePromise.then(
       () => {},
       () => {},
     );
-    return p;
+
+    return chainedExchangePromise;
   }
 
   async close() {
     try {
-      const s = this.sseStream;
-      if (!s) return;
+      const currentEventStream = this.eventStream;
+      if (!currentEventStream) return;
 
-      // Prefer WHATWG stream cancel (browser/Node fetch)
-      if ("cancel" in s && typeof (s as ReadableStream<Uint8Array>).cancel === "function") {
-        await (s as ReadableStream<Uint8Array>).cancel();
+      // prefer stream cancel
+      if (
+        "cancel" in currentEventStream &&
+        typeof (currentEventStream as ReadableStream<Uint8Array>).cancel === "function"
+      ) {
+        await (currentEventStream as ReadableStream<Uint8Array>).cancel();
       } else {
-        // Fallback to Node stream destroy
-        const nodeStream = s as NodeJS.ReadableStream;
-        if ("destroy" in nodeStream && typeof nodeStream.destroy === "function") {
-          nodeStream.destroy();
+        // fallback
+        const nodeReadableStream = currentEventStream as NodeJS.ReadableStream;
+        if ("destroy" in nodeReadableStream && typeof nodeReadableStream.destroy === "function") {
+          nodeReadableStream.destroy();
         }
       }
     } catch {
-      // ignore
+      // ignore cleanup errors
     } finally {
-      this.sseStream = null;
+      this.eventStream = null;
     }
   }
 }
