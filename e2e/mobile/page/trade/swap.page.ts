@@ -50,6 +50,7 @@ export default class SwapPage {
   @Step("Open swap via deeplink")
   async openViaDeeplink() {
     await openDeeplink(this.baseLink);
+    await waitForElementById(app.common.walletApiWebview);
   }
 
   @Step("Expect swap page")
