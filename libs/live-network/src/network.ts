@@ -200,6 +200,44 @@ export const newImplementation = async <T = unknown, U = unknown>(
     }
 
     // use fetch to allow MSW to intercept requests on React Native
+    response = await retry(() => axios(request), {
+      maxRetry: getEnv("GET_CALLS_RETRY"),
+      retryCondition: error => {
+        if (error && error.status) {
+          // not all status codes are retryable
+          return retryableHttpStatusCodes.includes(error.status);
+        }
+        return true;
+      },
+    });
+  } else {
+    response = await axios(request);
+  }
+
+  const { data, status } = response;
+  return { data, status };
+};
+
+/**
+ * Network call
+ * @param request
+ * @returns
+ */
+export const newImplementationWithFetch = async <T = unknown, U = unknown>(
+  request: LiveNetworkRequest<U>,
+): Promise<LiveNetworkResponse<T>> => {
+  let response: AxiosResponse<T>;
+
+  if (!("method" in request)) {
+    request.method = "GET";
+  }
+
+  if (request.method === "GET") {
+    if (!("timeout" in request)) {
+      request.timeout = getEnv("GET_CALLS_TIMEOUT");
+    }
+
+    // use fetch to allow MSW to intercept requests on React Native
     response = await retry(() => axios({ ...request, adapter: "fetch" }), {
       maxRetry: getEnv("GET_CALLS_RETRY"),
       retryCondition: error => {
@@ -232,7 +270,7 @@ const implementation = <T = any>(arg: AxiosRequestConfig): AxiosPromise<T> => {
       arg.timeout = getEnv("GET_CALLS_TIMEOUT");
     }
 
-    promise = retry(() => axios({ ...arg, adapter: "fetch" }), {
+    promise = retry(() => axios(arg), {
       maxRetry: getEnv("GET_CALLS_RETRY"),
       retryCondition: error => {
         if (error && error.status) {
@@ -244,7 +282,7 @@ const implementation = <T = any>(arg: AxiosRequestConfig): AxiosPromise<T> => {
       },
     });
   } else {
-    promise = axios({ ...arg, adapter: "fetch" });
+    promise = axios(arg);
   }
 
   return promise;
