@@ -473,7 +473,9 @@
       "sui_title" : "Ledger Nano S™ ไม่รองรับการ Swap Sui",
       "sui_description" : "ในการ Swap Sui ให้ทำธุรกรรมผ่านอุปกรณ์ Ledger รุ่นอื่นที่ใช้ได้ เช่น Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ หรือ Ledger Stax™",
       "kaspa_title" : "Ledger Nano S™ ไม่รองรับการสวอป Kaspa",
-      "kaspa_description" : "เพื่อสวอป Kaspa ให้ทำธุรกรรมผ่านอุปกรณ์ Ledger รุ่นอื่น ๆ ที่ใช้ได้ เช่น Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ หรือ Ledger Stax™"
+      "kaspa_description" : "เพื่อสวอป Kaspa ให้ทำธุรกรรมผ่านอุปกรณ์ Ledger รุ่นอื่น ๆ ที่ใช้ได้ เช่น Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ หรือ Ledger Stax™",
+      "celo_title" : "Ledger Nano S™ does not support swapping Celo",
+      "celo_description" : "To swap Celo, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™."
     },
     "providers" : {
       "title" : "เลือกผู้ให้บริการเพื่อ Swap คริปโต",
@@ -1250,6 +1252,11 @@
     },
     "manual" : {
       "title" : "เตรียม {{deviceName}} ของคุณให้พร้อม",
+      "titleTwoStep" : "Let’s get started",
+      "titleFirstStepDone" : "Your {{deviceName}} is ready",
+      "successStepTitle" : "Your {{deviceName}} is now ready to secure your crypto",
+      "secureCryptoTitle" : "Secure your crypto",
+      "secureCryptoDoneTitle" : "Your blockchain apps are installed.",
       "continueOnDevice" : "ดำเนินการนี้บน {{productName}} ของคุณ",
       "pairedContent" : {
         "title" : "{{deviceName}} เป็นอุปกรณ์ของแท้",
@@ -1294,6 +1301,11 @@
         "backupCharonDescription" : "สร้างข้อมูลสำรองใหม่บนการ์ดที่ปกป้องด้วย PIN และมีชิป Secure Element ในตัว — เพื่อให้คุณสามารถกู้คืนการเข้าถึงสินทรัพย์ในไม่กี่ขั้นตอน",
         "backupCharonCta" : "ดูข้อมูลหรือซื้อเลย",
         "backupCharonContinueOnDevice" : "ทำตามคำแนะนำบน {{productName}} ของคุณ"
+      },
+      "secureCrypto" : {
+        "description" : "You can transfer crypto from any exchange or wallet to your Ledger Wallet for maximum security.",
+        "depositButton" : "Secure my crypto",
+        "skipButton" : "Maybe later"
       },
       "backup" : {
         "title" : "การสำรองข้อมูล Secret Recovery Phrase ของคุณ",
@@ -2365,6 +2377,10 @@
         "solanaRawTransaction" : {
           "title" : "จำเป็นต้องมีการ Blind Signing",
           "description" : "คุณไม่สามารถตรวจสอบรายละเอียดธุรกรรมบนอุปกรณ์ Ledger ของคุณได้ หากคุณเซ็น คุณอาจสูญเสียสินทรัพย์ของคุณทั้งหมด เซ็นก็ต่อเมื่อคุณไว้ใจเว็บไซต์นี้เท่านั้น"
+        },
+        "bitcoinPsbtTransaction" : {
+          "title" : "ตรวจสอบบนอุปกรณ์",
+          "description" : "ตรวจสอบจำนวนและผู้รับธุรกรรมได้บนอุปกรณ์ในขั้นตอนถัดไป"
         },
         "utxoLag" : "ธุรกรรมนี้อาจใช้เวลานานในการตรวจสอบและลงนามเนื่องจากบัญชีมีเหรียญจำนวนมาก",
         "subaccountsWarning" : "คุณจะต้องเติมสกุลเงิน {{ currency }} ในบัญชีนี้เพื่อส่งโทเคนของบัญชีนี้",
@@ -4267,6 +4283,8 @@
         "header" : "Staking Position",
         "stake" : "เพิ่ม",
         "staked" : "Delegate เรียบร้อยแล้ว",
+        "estimatedReward" : "Reward ที่ได้รับ",
+        "rewardTooltip" : "ระบบจะแจกจ่ายรางวัล Sui ทุก ๆ 24 ชั่วโมงตามรอบ Epoch โดย Reward ดังกล่าวจะถูกนำไปทบต้น และเพิ่มเข้าไปในสเตค (Stake) ที่คุณ Delegate โดยอัตโนมัติ",
         "pending" : "รอการเผยแพร่",
         "available" : "สามารถถอนได้"
       },
@@ -4597,6 +4615,54 @@
       "modularDrawerDevTool" : {
         "title" : "Modular Drawer Dev Tool",
         "description" : "ช่วยให้คุณสามารถทดสอบ Modular Drawer ได้ง่ายขึ้น"
+      },
+      "cryptoAssetsList" : {
+        "title" : "Crypto Assets List",
+        "description" : "Browse and manage crypto assets from the Crypto Assets List (CAL) service.",
+        "openTokenList" : "Open Token List",
+        "drawer" : {
+          "title" : "Token List Configuration",
+          "description" : "Configure and browse tokens from the Crypto Assets List service. Select a blockchain family to view available tokens.",
+          "options" : "Options",
+          "blockchainFamily" : "Blockchain Family",
+          "selectFamily" : "Select a blockchain family",
+          "pageSize" : "Page Size",
+          "useStaging" : "Use Staging Environment",
+          "useStagingDesc" : "Use staging environment instead of production",
+          "outputFields" : "Output Fields",
+          "refresh" : "Refresh",
+          "loading" : "Loading...",
+          "close" : "Close",
+          "availableTokens" : "Available Tokens ({{count}})",
+          "noTokens" : "No tokens found for {{family}}",
+          "error" : "Failed to load tokens",
+          "tokenId" : "ID",
+          "contractAddress" : "Contract Address",
+          "tokenType" : "Token Type",
+          "parentCurrency" : "Parent Currency",
+          "ledgerSignature" : "Ledger Signature",
+          "units" : "Units",
+          "delisted" : "Delisted",
+          "copy" : "Copy ID",
+          "loadMore" : "Load More",
+          "searchAndFilters" : "Search & Filters",
+          "maxResults" : "Max Results",
+          "maxResultsPlaceholder" : "No limit",
+          "pagination" : "Pagination",
+          "advanced" : "Advanced",
+          "calReference" : "CAL Reference",
+          "calReferencePlaceholder" : "e.g. branch:main, tag:tokens-1.11.12, commit:48188c6...",
+          "calReferenceDefault" : "Default: branch:main",
+          "selectAll" : "All",
+          "selectNone" : "None",
+          "reset" : "Reset",
+          "tokens" : "Tokens",
+          "resultsCount" : "{{count}} results",
+          "collapseAll" : "Collapse All",
+          "noTokensFound" : "No tokens found",
+          "hide" : "Hide",
+          "show" : "Show"
+        }
       },
       "experimentalApps" : "อนุญาตแอป Experimental",
       "experimentalAppsDesc" : "แสดงและอนุญาตให้เปิดแอปแพลตฟอร์มที่ติดแท็ก Experimental",
@@ -5257,7 +5323,7 @@
           },
           "existingRecoveryPhrase" : {
             "title" : "ป้อน Recovery Phrase ของคุณ",
-            "paragraph1" : "Recovery Phrase คือรายชื่อคำที่คุณสำรองไว้เมื่อคุณตั้งค่า Wallet เป็นครั้งแรก ซึ่งเป็นความลับ",
+            "paragraph1" : "Your recovery phrase is the secret list of words that you backed up when you first set up your Ledger device.",
             "paragraph2" : "Ledger จะไม่เก็บสำเนา Recovery Phrase ของคุณ",
             "disclaimer" : "ฉันเข้าใจว่าหากฉันทำ Recovery Phrase หาย ฉันจะไม่สามารถเข้าถึงคริปโตของฉันได้ในกรณีที่ฉันไม่สามารถเข้าถึง Nano ของฉันได้",
             "buttons" : {
@@ -5731,6 +5797,7 @@
           "onboarded" : "บัญชีที่ออนบอร์ดแล้ว",
           "success" : "สร้างและออนบอร์ดบัญชี Canton ใหม่ของคุณแล้ว",
           "error" : "ไม่สามารถออนบอร์ดบัญชีใหม่ได้ โปรดลองอีกครั้ง",
+          "error429" : "Canton Network currently supports a limited number of account creations per day. Please try again later.",
           "status" : {
             "prepare" : "กำลังเตรียมออนบอร์ดบัญชี...",
             "submit" : "กำลังออนบอร์ดบัญชี...",
@@ -5748,6 +5815,13 @@
         "finish" : {
           "title" : "การยืนยัน"
         }
+      },
+      "tooManyUtxos" : {
+        "title" : "Action Needed: Too Many UTXOs",
+        "description" : "Your account has too many small UTXOs to process this transfer. Merge them now to avoid expiration due to accumulated holding fees and enable transfers.",
+        "quickFix" : "Quick Fix: Send some funds to yourself to consolidate.",
+        "warning" : "Your account has too many small UTXOs. Send some funds to yourself to consolidate.",
+        "consolidate" : "Consolidate"
       }
     },
     "stellar" : {
@@ -6691,6 +6765,10 @@
     "HederaAddAccountError" : {
       "title" : "ยังไม่ได้เพิ่มบัญชีของคุณ โปรดลองอีกครั้ง"
     },
+    "HederaRecipientInvalidChecksum" : {
+      "title" : "Address Checksum ไม่ถูกต้อง",
+      "description" : "Address ที่ให้มี Checksum ไม่ถูกต้อง"
+    },
     "HederaInsufficientFundsForAssociation" : {
       "title" : "ยอดคงเหลือในบัญชีไม่เพียงพอ",
       "description" : "ยอด HBAR ในบัญชีไม่พอสำหรับการดำเนินการเชื่อมโยงโทเคน ต้องมี HBAR มูลค่าอย่างน้อย ${{requiredWorthInUSD}}"
@@ -7445,7 +7523,7 @@
     "connectYourDevice" : {
       "title" : "เชื่อมต่อและปลดล็อกอุปกรณ์ของคุณ"
     },
-    "searchPlaceholder" : "ค้นหา",
+    "searchPlaceholder" : "Search by name or address",
     "emptyAssetList" : "ไม่พบสินทรัพย์",
     "selectAsset" : "เลือกสินทรัพย์",
     "selectNetwork" : "เลือกเครือข่าย",
