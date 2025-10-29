@@ -1073,6 +1073,10 @@
     "HederaAddAccountError" : {
       "title" : "Sua conta não foi adicionada. Tente Novamente."
     },
+    "HederaRecipientInvalidChecksum" : {
+      "title" : "Soma de verificação de endereço inválida",
+      "description" : "O endereço fornecido tem uma soma de verificação inválida."
+    },
     "HederaInsufficientFundsForAssociation" : {
       "title" : "Saldo insuficiente",
       "description" : "Não há HBAR suficiente para pagar pela associação do token. É necessário um mínimo de US${{requiredWorthInUSD}} em HBAR."
@@ -2292,7 +2296,13 @@
         },
         "retryCta" : "Tentar emparelhar novamente",
         "openSettingsCta" : "Vá para as configurações de Bluetooth",
-        "howToFixPairingIssue" : "Como resolver problemas de emparelhamento"
+        "howToFixPairingIssue" : "Como resolver problemas de emparelhamento",
+        "forgetDevice" : {
+          "title" : "Go to your phone's Bluetooth settings to unpair {{productName}}",
+          "description" : "To fix the pairing issue, remove {{productName}} from your phone's Bluetooth list, then return to this app and try again.",
+          "learnHowToFixCta" : "Learn how to fix",
+          "tryAgainCta" : "I unpaired. Try again"
+        }
       }
     }
   },
@@ -2504,7 +2514,7 @@
       },
       "selectionContinueOnDevice" : "Escolha a opção relevante em sua {{productName}}.",
       "newSeedTitle" : "Frase de Recuperação Secreta",
-      "newSeedDescription" : "Assista a estes vídeos para saber mais sobre a frase de recuperação secreta:",
+      "newSeedDescription" : "Sua frase de recuperação secreta controla seus ativos e é insubstituível. Qualquer pessoa com sua frase pode roubar todos os seus ativos. Se você a perder, a Ledger não poderá recuperá-la para você.",
       "newSeedContinueOnDevice" : "Siga as instruções em sua {{productName}}",
       "recovery" : "Certifique-se de usar uma Frase de Recuperação Secreta gerada por um dispositivo Ledger para guardar seus ativos com o máximo de segurança. \n\nNão tem uma? Use a sua {{productName}} para gerar uma nova Frase."
     },
@@ -2544,7 +2554,7 @@
       "title" : "Sua {{productName}} está pronta para proteger seus ativos digitais"
     },
     "newSeed" : {
-      "subtitle" : "Você pode transferir cripto de qualquer corretora ou carteira para o seu Ledger Live para ter segurança máxima.",
+      "subtitle" : "You can transfer crypto from any exchange or wallet to your Ledger Wallet for maximum security.",
       "installCTA" : "Proteger minha cripto",
       "skipCTA" : "Talvez mais tarde"
     }
@@ -3768,6 +3778,10 @@
       "history" : {
         "title" : "Histórico de trocas"
       },
+      "wrongDevice" : {
+        "title" : "A Ledger Nano S™ não é compatível com {{provider}}",
+        "description" : "A Ledger Nano S™ não é compatível com {{provider}}. Você pode usar a Ledger Nano S Plus™, a Ledger Nano X™, Ledger Stax™ ou a Ledger Flex™ para realizar trocas cross-chain via {{provider}} através do Ledger Live"
+      },
       "incompatibility" : {
         "explore_compatible_devices" : "Conheça os dispositivos compatíveis",
         "contact_support" : "Entre em contato com o suporte",
@@ -3794,7 +3808,9 @@
         "sui_title" : "A Ledger Nano S™ não é compatível com a troca de Sui",
         "sui_description" : "Para trocar Sui, use qualquer outro dispositivo Ledger compatível, como a Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™.",
         "kaspa_title" : "A Ledger Nano S™ não é compatível com a troca de Kaspa",
-        "kaspa_description" : "Para trocar Kaspa, use qualquer outro dispositivo Ledger compatível, como a Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™."
+        "kaspa_description" : "Para trocar Kaspa, use qualquer outro dispositivo Ledger compatível, como a Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ ou Ledger Stax™.",
+        "celo_title" : "Ledger Nano S™ does not support swapping Celo",
+        "celo_description" : "To swap Celo, use any other compatible Ledger device, such as the Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ or Ledger Stax™."
       }
     },
     "lending" : {
@@ -4070,6 +4086,10 @@
       "solanaRawTransaction" : {
         "title" : "Assinatura cega necessária",
         "description" : "Não é possível verificar os detalhes da transação em seu dispositivo Ledger. Se você assiná-la, poderá perder todos os ativos. Assine somente se você confiar neste site."
+      },
+      "bitcoinPsbtTransaction" : {
+        "title" : "Verificar no dispositivo",
+        "description" : "Você pode verificar a quantia da transação e o destinatário no dispositivo na próxima etapa."
       },
       "subaccountsWarning" : "Você precisará recarregar esta conta com {{ currency }} a fim de enviar os tokens desta conta",
       "tag" : "Tag (Opcional)",
@@ -4581,7 +4601,6 @@
     }
   },
   "manager" : {
-    "tabTitle" : "Minha Ledger",
     "title" : "Minha Ledger",
     "selectDevice" : {
       "title" : "Dispositivos",
@@ -6478,6 +6497,7 @@
   },
   "sui" : {
     "info" : {
+      "estimatedReward" : "Recompensas Recebidas",
       "available" : {
         "title" : "SUI disponível",
         "description" : "Esta é a quantia disponível."
@@ -7869,7 +7889,7 @@
     "selectAsset" : "Selecionar ativo",
     "selectNetwork" : "Selecionar rede",
     "selectAccount" : "Selecionar conta",
-    "searchPlaceholder" : "Buscar",
+    "searchPlaceholder" : "Search by name or address",
     "emptyAssetList" : "Nenhum ativo encontrado",
     "accountCount_one" : "{{count}} conta",
     "accountCount_other" : "{{count}} contas",
@@ -7968,7 +7988,15 @@
       "authorize" : "Autorizar",
       "preapprove" : "Conta adicionada com sucesso",
       "validator" : "Validador Ledger",
-      "title" : "Aceitar automaticamente fundos recebidos"
+      "title" : "Aceitar automaticamente fundos recebidos",
+      "error429" : "Canton Network currently supports a limited number of account creations per day. Please try again later."
+    },
+    "tooManyUtxos" : {
+      "title" : "Action Needed: Too Many UTXOs",
+      "description" : "Your account has too many small UTXOs to process this transfer. Merge them now to avoid expiration due to accumulated holding fees and enable transfers.",
+      "quickFix" : "Quick Fix: Send some funds to yourself to consolidate.",
+      "warning" : "Your account has too many small UTXOs. Send some funds to yourself to consolidate.",
+      "consolidate" : "Consolidate"
     }
   }
 }
