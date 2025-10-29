@@ -14,10 +14,7 @@
           "url": "https://trustchain-backend.api.aws.stg.ldg-tech.com/v1/challenge",
           "method": "GET",
           "headers": {
-            "accept": "application/json, text/plain, */*",
-            "host": "trustchain-backend.api.aws.stg.ldg-tech.com",
-            "user-agent": "axios/1.12.2",
-            "accept-encoding": "gzip, compress, deflate, br"
+            "accept": "application/json, text/plain, */*"
           }
         },
         "response": {
@@ -25,7 +22,6 @@
           "headers": {
             "cache-control": "no-store, no-cache, max-age=0",
             "connection": "keep-alive",
-            "content-length": "921",
             "content-type": "application/json",
             "date": "Mon, 02 Sep 2024 09:35:33 GMT",
             "expires": "Thu, 01 Jan 1970 00:00:00 GMT",
