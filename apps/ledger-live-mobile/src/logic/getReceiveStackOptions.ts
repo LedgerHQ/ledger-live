@@ -2,7 +2,7 @@ import { RouteProp } from "@react-navigation/core";
 import { NativeStackNavigationOptions } from "@react-navigation/native-stack";
 import { BaseNavigatorStackParamList } from "~/components/RootNavigator/types/BaseNavigator";
 import { NavigatorName } from "~/const";
-import { NoahRouteProp, shouldShowNoahMenu } from "~/logic/shouldShowNoahMenu";
+import { shouldShowNoahMenu } from "~/logic/shouldShowNoahMenu";
 
 export const getReceiveStackOptions = ({
   route,
@@ -11,12 +11,12 @@ export const getReceiveStackOptions = ({
   route: RouteProp<BaseNavigatorStackParamList, NavigatorName.ReceiveFunds>;
   noahEnabled: boolean | undefined;
 }): NativeStackNavigationOptions => {
-  const showMenu = shouldShowNoahMenu(route as unknown as NoahRouteProp, noahEnabled ?? false);
+  if (!noahEnabled) return { headerShown: false };
+  const showMenu = shouldShowNoahMenu(route, noahEnabled ?? false);
 
-  if (!showMenu) {
-    return { headerShown: false };
-  }
-
+  // NOTE: Always use modal presentation when Noah is enabled to prevent remounting.
+  // The actual menu display is controlled by `useReceiveNoahEntry` in individual
+  // screens
   return {
     headerShown: false,
     presentation: "containedTransparentModal",
@@ -26,7 +26,7 @@ export const getReceiveStackOptions = ({
     headerBackButtonDisplayMode: "minimal",
     title: "",
     contentStyle: {
-      opacity: 0.5,
+      opacity: showMenu ? 0.5 : 1,
     },
   };
 };

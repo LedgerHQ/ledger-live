@@ -1,15 +1,18 @@
-import { RouteProp } from "@react-navigation/core";
+import { NavigationRoute } from "@react-navigation/core";
 import { CryptoCurrency, TokenCurrency } from "@ledgerhq/types-cryptoassets";
 import perFamilyShouldUseReceiveOptions from "~/generated/ShouldUseReceiveOptions";
 
-export type NoahRouteProp = RouteProp<{
-  params: {
-    params?: {
-      fromMenu?: boolean;
-      currency?: string | CryptoCurrency | TokenCurrency;
+export type NoahRouteProp = NavigationRoute<
+  {
+    params: {
+      params?: {
+        fromMenu?: boolean;
+        currency?: string | CryptoCurrency | TokenCurrency;
+      };
     };
-  };
-}>;
+  },
+  "params"
+>;
 
 export function shouldShowNoahMenu(route: NoahRouteProp, noahFlagEnabled: boolean) {
   const { params } = route.params ?? {};
@@ -23,12 +26,14 @@ export function shouldShowNoahMenu(route: NoahRouteProp, noahFlagEnabled: boolea
     hasValidCurrency = decoraters?.(getCurrencyId(currency)) ?? false;
   }
 
-  // Show the original configuration in the stack
-  if (!noahFlagEnabled || !hasValidCurrency || fromMenu || !route.params) {
-    return false;
+  if (route.params) {
+    return noahFlagEnabled && hasValidCurrency && !fromMenu;
   }
 
-  return true;
+  // If route.params is undefined, check if we're in a nested navigation state. This
+  // happens when navigating from `ReceiveSelectCrypto` to `ReceiveProvider`. In this
+  // case, keep the modal presentation stable by checking the navigation state
+  return !!(route.state && noahFlagEnabled);
 }
 
 function getCurrencyId(currency: string | CryptoCurrency | TokenCurrency) {
