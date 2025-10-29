@@ -32,6 +32,7 @@ export const SyncOnboardingNavigator = () => {
           gestureEnabled: false,
           headerShown: true,
           headerTitle: () => null,
+          title: "",
           headerLeft: () => null,
           headerRight: () => <Button Icon={IconsLegacy.CloseMedium} />,
         }}

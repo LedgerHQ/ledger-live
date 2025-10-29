@@ -576,6 +576,7 @@ export default function BaseNavigator() {
           options={{
             gestureEnabled: false,
             headerTitle: () => null,
+            title: "",
             headerLeft: () => null,
             headerRight: () => <NavigationHeaderCloseButton />,
           }}

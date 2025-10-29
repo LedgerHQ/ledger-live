@@ -47,6 +47,7 @@ const WebReceivePlayer = ({ manifest, inputs }: Props) => {
     headerRight: () => null,
     headerLeft: () => null,
     headerTitle: () => null,
+    title: "",
     headerShown: true,
   });
 

@@ -20,6 +20,7 @@ const options = {
   ),
   headerStyle: styles.headerNoShadow,
   headerTitle: () => null,
+  title: "",
 };
 
 export default function WalletConnectLiveAppNavigator() {

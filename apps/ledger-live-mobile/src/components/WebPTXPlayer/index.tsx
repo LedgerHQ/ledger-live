@@ -257,6 +257,7 @@ export const WebPTXPlayer = ({
         headerRight: () => (isInternalApp ? null : <HeaderRight softExit={softExit} />),
         headerLeft: () => (isInternalApp ? null : <BackToInternalDomain config={config} />),
         headerTitle: () => null,
+        title: "",
         headerShown: !isInternalApp,
       });
     }

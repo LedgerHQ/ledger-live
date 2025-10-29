@@ -36,6 +36,7 @@ const PostOnboardingNavigator = () => {
           headerShown: true,
           headerLeft: () => null,
           headerTitle: () => null,
+          title: "",
           headerRight: () => <NavigationHeaderCloseButton onPress={closePostOnboarding} />,
         }}
       />
