@@ -16,7 +16,7 @@ import { languageSelector, shareAnalyticsSelector } from "~/renderer/reducers/se
 
 const PROVIDER_MANIFEST_ID = "noah";
 
-const Receive = () => {
+const Bank = () => {
   const location = useLocation();
   const locale = useSelector(languageSelector);
   const dispatch = useDispatch();
@@ -71,4 +71,4 @@ const CustomProviderInterstitial: WebviewLoader = props => {
   return <ProviderInterstitial {...props} description={t("receive.connectToNoah")} />;
 };
 
-export default Receive;
+export default Bank;
