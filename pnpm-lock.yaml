@@ -18,9 +18,15 @@ catalogs:
     '@ledgerhq/device-transport-kit-react-native-ble':
       specifier: 1.2.0
       version: 1.2.0
+    '@ledgerhq/device-transport-kit-speculos':
+      specifier: 1.1.0
+      version: 1.1.0
     '@ledgerhq/device-transport-kit-web-hid':
       specifier: 1.2.1
       version: 1.2.1
+    '@ledgerhq/speculos-device-controller':
+      specifier: 0.1.0
+      version: 0.1.0
     '@reduxjs/toolkit':
       specifier: 2.8.2
       version: 2.8.2
@@ -8354,11 +8360,11 @@ importers:
   libs/live-dmk-speculos:
     dependencies:
       '@ledgerhq/device-management-kit':
-        specifier: 0.9.1
-        version: 0.9.1(rxjs@7.8.1)
+        specifier: 'catalog:'
+        version: 0.9.2(rxjs@7.8.1)
       '@ledgerhq/device-transport-kit-speculos':
-        specifier: 0.0.0-speculos-transport-and-device-controller-20251016095459
-        version: 0.0.0-speculos-transport-and-device-controller-20251016095459(@ledgerhq/device-management-kit@0.9.1(rxjs@7.8.1))(rxjs@7.8.1)
+        specifier: 'catalog:'
+        version: 1.1.0(@ledgerhq/device-management-kit@0.9.2(rxjs@7.8.1))(rxjs@7.8.1)
       '@ledgerhq/errors':
         specifier: 6.22.0
         version: 6.22.0
@@ -8372,8 +8378,8 @@ importers:
         specifier: workspace:^
         version: link:../ledgerjs/packages/logs
       '@ledgerhq/speculos-device-controller':
-        specifier: 0.0.0-speculos-transport-and-device-controller-20251016095459
-        version: 0.0.0-speculos-transport-and-device-controller-20251016095459(@ledgerhq/device-management-kit@0.9.1(rxjs@7.8.1))(rxjs@7.8.1)
+        specifier: 'catalog:'
+        version: 0.1.0(@ledgerhq/device-management-kit@0.9.2(rxjs@7.8.1))
       axios:
         specifier: 1.10.0
         version: 1.10.0
@@ -14899,11 +14905,6 @@ packages:
   '@ledgerhq/cryptoassets@6.37.0':
     resolution: {integrity: sha512-xwrDKTS9koQBNNzc7CqgV6zfGHvNFWJjlIL0Kc4O4DVWYR2vUdztUHcvwHD1KPjxNYhVnsgIopmtq47fHt3nMg==}
 
-  '@ledgerhq/device-management-kit@0.9.1':
-    resolution: {integrity: sha512-CI4c9Q/EWMGOzUnhpHUyo1DX+WLTD6AJWC8wKfbTbb6TZCaOtD0xN4qsNwZb4GG+CNC4IDlEfOw+EX8584hemg==}
-    peerDependencies:
-      rxjs: 7.8.2
-
   '@ledgerhq/device-management-kit@0.9.2':
     resolution: {integrity: sha512-EDKvxi3VFckmweaLdpzC00Y61sjdosCBCTL27XTr2JdHZUsQfKZBwLBEcL+LINKLqZqVXvsjcrf9NkXhFubuSw==}
     peerDependencies:
@@ -14923,10 +14924,10 @@ packages:
       react-native-ble-plx: 3.4.0
       rxjs: 7.8.2
 
-  '@ledgerhq/device-transport-kit-speculos@0.0.0-speculos-transport-and-device-controller-20251016095459':
-    resolution: {integrity: sha512-Yuc0fIHE3VCOKcSwIiIEUkHobgNX8AfhLn3m6mOaYVkJYqGXzw5wV3OGCc+xRqBwzMPZ0TNm8ksDo1k27/n93g==}
+  '@ledgerhq/device-transport-kit-speculos@1.1.0':
+    resolution: {integrity: sha512-R1RY51UooxOAyV315PLn7nwTEL0B0sW5YqtrAzKp6/gg5OokL/ZtYluMndEOuXbOo+dNWLKGzvMgTA/fjxY3SA==}
     peerDependencies:
-      '@ledgerhq/device-management-kit': 0.9.1
+      '@ledgerhq/device-management-kit': 0.9.2
       rxjs: 7.8.2
 
   '@ledgerhq/device-transport-kit-web-hid@1.2.1':
@@ -14992,11 +14993,10 @@ packages:
     peerDependencies:
       '@ledgerhq/device-management-kit': 0.9.0
 
-  '@ledgerhq/speculos-device-controller@0.0.0-speculos-transport-and-device-controller-20251016095459':
-    resolution: {integrity: sha512-fH8vbEha00gnJ5lrjZxefh1+whOKTYWhluZ2y28HKGFax+F8QU/aN97b7wZhz+TzUo7l34Qm/ufgbztXhtnDnQ==}
+  '@ledgerhq/speculos-device-controller@0.1.0':
+    resolution: {integrity: sha512-XRtHAYrv5U8s8SXsFrozCl68zWdh41MJU2hI2z+NrfRZ8b/MoTFLU86/2dDyMO2R0rE/O316jMxzwsljM/RNjQ==}
     peerDependencies:
-      '@ledgerhq/device-management-kit': 0.9.1
-      rxjs: 7.8.2
+      '@ledgerhq/device-management-kit': 0.9.2
 
   '@ledgerhq/types-devices@6.27.0':
     resolution: {integrity: sha512-FQZdCoYxxMjY7PWFWM8gflSl4++T3Ems2koMiVZhbH4ji3PzafLvK+y422bRdt78zIP3UURbOhuzrpZ2ASv3gw==}
@@ -45296,24 +45296,6 @@ snapshots:
     dependencies:
       invariant: 2.2.4
 
-  '@ledgerhq/device-management-kit@0.9.1(rxjs@7.8.1)':
-    dependencies:
-      '@sentry/minimal': 6.19.7
-      axios: 1.8.2
-      inversify: 7.5.1(reflect-metadata@0.2.2)
-      isomorphic-ws: 5.0.0(ws@8.18.3)
-      purify-ts: 2.1.0
-      reflect-metadata: 0.2.2
-      rxjs: 7.8.1
-      semver: 7.7.2
-      url: 0.11.4
-      uuid: 11.0.3
-      ws: 8.18.3
-      xstate: 5.19.2
-    transitivePeerDependencies:
-      - bufferutil
-      - utf-8-validate
-
   '@ledgerhq/device-management-kit@0.9.2':
     dependencies:
       '@sentry/minimal': 6.19.7
@@ -45375,9 +45357,9 @@ snapshots:
       rxjs: 7.8.1
       uuid: 11.0.3
 
-  '@ledgerhq/device-transport-kit-speculos@0.0.0-speculos-transport-and-device-controller-20251016095459(@ledgerhq/device-management-kit@0.9.1(rxjs@7.8.1))(rxjs@7.8.1)':
+  '@ledgerhq/device-transport-kit-speculos@1.1.0(@ledgerhq/device-management-kit@0.9.2(rxjs@7.8.1))(rxjs@7.8.1)':
     dependencies:
-      '@ledgerhq/device-management-kit': 0.9.1(rxjs@7.8.1)
+      '@ledgerhq/device-management-kit': 0.9.2(rxjs@7.8.1)
       '@sentry/minimal': 6.19.7
       axios: 1.8.2
       purify-ts: 2.1.0
@@ -45469,15 +45451,11 @@ snapshots:
     dependencies:
       '@ledgerhq/device-management-kit': 0.9.2(rxjs@7.8.1)
 
-  '@ledgerhq/speculos-device-controller@0.0.0-speculos-transport-and-device-controller-20251016095459(@ledgerhq/device-management-kit@0.9.1(rxjs@7.8.1))(rxjs@7.8.1)':
+  '@ledgerhq/speculos-device-controller@0.1.0(@ledgerhq/device-management-kit@0.9.2(rxjs@7.8.1))':
     dependencies:
-      '@ledgerhq/device-management-kit': 0.9.1(rxjs@7.8.1)
+      '@ledgerhq/device-management-kit': 0.9.2(rxjs@7.8.1)
       '@sentry/minimal': 6.19.7
       axios: 1.8.2
-      inversify: 7.5.1(reflect-metadata@0.2.2)
-      purify-ts: 2.1.0
-      reflect-metadata: 0.2.2
-      rxjs: 7.8.1
 
   '@ledgerhq/types-devices@6.27.0': {}
 

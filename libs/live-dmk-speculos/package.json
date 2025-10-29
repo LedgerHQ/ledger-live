@@ -39,9 +39,9 @@
     "test:coverage": "vitest run --coverage"
   },
   "dependencies": {
-    "@ledgerhq/device-management-kit": "0.9.1",
-    "@ledgerhq/speculos-device-controller": "0.0.0-speculos-transport-and-device-controller-20251016095459",
-    "@ledgerhq/device-transport-kit-speculos": "0.0.0-speculos-transport-and-device-controller-20251016095459",
+    "@ledgerhq/device-management-kit": "catalog:",
+    "@ledgerhq/speculos-device-controller": "catalog:",
+    "@ledgerhq/device-transport-kit-speculos": "catalog:",
     "@ledgerhq/errors": "6.22.0",
     "@ledgerhq/hw-transport": "workspace:^",
     "@ledgerhq/logs": "workspace:^",
