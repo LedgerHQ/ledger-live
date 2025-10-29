@@ -31,11 +31,11 @@ function DeviceIcon({ deviceModelId }: { deviceModelId: DeviceModelId }) {
 }
 
 export default function DeviceItem({ device, onPress }: Props) {
-  const { wired, available } = device;
+  const { wired, available, needsMigration } = device;
   const [isRemoveDeviceMenuOpen, setIsRemoveDeviceMenuOpen] = useState<boolean>(false);
 
-  const wording = wired ? "usb" : available ? "available" : "unavailable";
-  const color = wording === "unavailable" ? "neutral.c60" : "primary.c80";
+  const wording = wired ? "usb" : available ? needsMigration ? "needsMigration" : "available" : "unavailable";
+  const color = wording === "unavailable" ? "neutral.c60" : needsMigration ? "warning.c80" : "primary.c80";
   const testID = `device-item-${device.deviceId}`;
 
   const onItemContextPress = useCallback(() => {

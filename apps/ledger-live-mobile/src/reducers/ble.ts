@@ -1,6 +1,6 @@
 import { handleActions } from "redux-actions";
 import type { Action, ReducerMap } from "redux-actions";
-import type { BleState, State } from "./types";
+import type { BleState, State, DeviceLike } from "./types";
 import type {
   BleAddKnownDevicePayload,
   BleImportBlePayload,
@@ -18,8 +18,31 @@ export const INITIAL_STATE = {
 const handlers: ReducerMap<BleState, BlePayload> = {
   [BleActionTypes.BLE_ADD_DEVICE]: (state, action) => {
     const device = (action as Action<BleAddKnownDevicePayload>).payload;
+    
+    // Helper function to get the last 6 bytes (12 hex characters) of a device ID
+    const getDeviceIdSuffix = (id: string): string => {
+      // Remove any non-hex characters and get last 12 characters
+      const cleanId = id.replace(/[^a-fA-F0-9]/g, '');
+      return cleanId.slice(-12).toLowerCase();
+    };
+    
+    const newDeviceSuffix = getDeviceIdSuffix(device.id);
+    
     return {
-      knownDevices: state.knownDevices.filter(d => d.id !== device.id).concat({ ...device }),
+      knownDevices: state.knownDevices
+        .filter((d: DeviceLike) => {
+          // Remove if exact ID match
+          if (d.id === device.id) return false;
+          
+          // Remove if last 6 bytes (12 hex chars) match
+          const existingDeviceSuffix = getDeviceIdSuffix(d.id);
+          if (existingDeviceSuffix === newDeviceSuffix && existingDeviceSuffix.length === 12) {
+            return false;
+          }
+          
+          return true;
+        })
+        .concat({ ...device }),
     };
   },
   [BleActionTypes.BLE_REMOVE_DEVICE]: (state, action) => ({

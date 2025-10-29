@@ -220,11 +220,22 @@ export default function SelectDevice({
   }, []);
 
   const deviceList = useMemo(() => {
+
+    // Helper function to get the last 6 bytes (12 hex characters) of a device ID
+    const getDeviceIdSuffix = (id: string): string => {
+      // Remove any non-hex characters and get last 12 characters
+      const cleanId = id.replace(/[^a-fA-F0-9]/g, '');
+      return cleanId.slice(-12).toLowerCase();
+    };
+
+
     const devices: Device[] = knownDevices
       .map(device => {
         const equivalentScannedDevice = filteredScannedDevices.find(
-          ({ deviceId }) => device.id === deviceId,
+          ({ deviceId }) => device.id === deviceId || getDeviceIdSuffix(device.deviceId) === getDeviceIdSuffix(device.id),
         );
+
+        const needsMigration = equivalentScannedDevice.id !== device.deviceId;
 
         return {
           ...device,
@@ -232,6 +243,7 @@ export default function SelectDevice({
           deviceId: device.id,
           deviceName: equivalentScannedDevice?.deviceName ?? device.name,
           available: Boolean(equivalentScannedDevice),
+          needsMigration
         };
       })
       .sort((a, b) => Number(b.available) - Number(a.available));
@@ -317,11 +329,11 @@ export default function SelectDevice({
     () =>
       withMyLedgerTracking
         ? {
-            event: "button_clicked",
-            eventProperties: {
-              button: "Add new device",
-            },
-          }
+          event: "button_clicked",
+          eventProperties: {
+            button: "Add new device",
+          },
+        }
         : {},
     [withMyLedgerTracking],
   );
@@ -396,8 +408,7 @@ export default function SelectDevice({
                       <Flex flexDirection="row" alignItems="center">
                         <Text color="primary.c90" mr={3} fontWeight="semiBold">
                           {t(
-                            `manager.selectDevice.${
-                              Platform.OS === "android" ? "addWithBluetooth" : "addNewCTA"
+                            `manager.selectDevice.${Platform.OS === "android" ? "addWithBluetooth" : "addNewCTA"
                             }`,
                           )}
                         </Text>
@@ -433,8 +444,7 @@ export default function SelectDevice({
                         <IconsLegacy.PlusMedium color="neutral.c90" size={20} />
                         <Text variant="large" fontWeight="semiBold" ml={5}>
                           {t(
-                            `manager.selectDevice.${
-                              Platform.OS === "android" ? "addWithBluetooth" : "addALedger"
+                            `manager.selectDevice.${Platform.OS === "android" ? "addWithBluetooth" : "addALedger"
                             }`,
                           )}
                         </Text>
@@ -477,12 +487,12 @@ export default function SelectDevice({
                 testID="manager_setup_new_device"
                 {...(withMyLedgerTracking
                   ? {
-                      event: "button_clicked",
-                      eventProperties: {
-                        button: "Set up a new Ledger",
-                        drawer: "Add a Ledger device",
-                      },
-                    }
+                    event: "button_clicked",
+                    eventProperties: {
+                      button: "Set up a new Ledger",
+                      drawer: "Add a Ledger device",
+                    },
+                  }
                   : {})}
               >
                 <Flex backgroundColor="neutral.c30" mb={4} px={6} py={7} borderRadius={8}>
@@ -508,12 +518,12 @@ export default function SelectDevice({
                 testID="manager_connect_device"
                 {...(withMyLedgerTracking
                   ? {
-                      event: "button_clicked",
-                      eventProperties: {
-                        button: "Connect with Bluetooth",
-                        drawer: "Add a Ledger device",
-                      },
-                    }
+                    event: "button_clicked",
+                    eventProperties: {
+                      button: "Connect with Bluetooth",
+                      drawer: "Add a Ledger device",
+                    },
+                  }
                   : {})}
               >
                 <Flex backgroundColor="neutral.c30" px={6} py={7} borderRadius={8}>

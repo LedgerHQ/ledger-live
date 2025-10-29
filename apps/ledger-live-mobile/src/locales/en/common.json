@@ -4612,7 +4612,8 @@
       "item": {
         "usb": "Connected with USB",
         "available": "Available. Tap to connect",
-        "unavailable": "Not connected"
+        "unavailable": "Not connected",
+        "needsMigration": "Migration needed"
       }
     },
     "connect": "Select your device",
