@@ -11,7 +11,7 @@ async function getDeviceTransactionConfig({
   parentAccount: Account | null | undefined;
   transaction: Transaction;
   status: TransactionStatus;
-}): Promise<Array<DeviceTransactionField>> {
+}): Array<DeviceTransactionField> {
   const fields: Array<DeviceTransactionField> = [];
 
   if (transaction.txType === "stake") {
