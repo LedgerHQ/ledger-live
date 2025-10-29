@@ -1073,6 +1073,10 @@
     "HederaAddAccountError" : {
       "title" : "Hesabınız eklenemedi. Lütfen tekrar deneyin."
     },
+    "HederaRecipientInvalidChecksum" : {
+      "title" : "Geçersiz adres checksum’ı",
+      "description" : "Sağlanan adresin checksum’ı geçersiz."
+    },
     "HederaInsufficientFundsForAssociation" : {
       "title" : "Yetersiz bakiye",
       "description" : "Token ilişkilendirme ücreti için yeterli HBAR yok. En az ${{requiredWorthInUSD}} değerinde HBAR gerekir."
@@ -1634,7 +1638,7 @@
       "privacyLink" : "Gizlilik Politikası",
       "and" : "ve",
       "videoTitles" : {
-        "0" : "Koruyan ve kontrolün sizde olmasını sağlayan bir cüzdan",
+        "0" : "Varlıklarınızı koruyan ve kontrolü size veren bir cüzdan",
         "1" : "Binlerce kriptoyu gönderin, alın, takas ve stake edin",
         "2" : "Tüm işlemlerinizi gönül rahatlığıyla doğrulayın"
       },
@@ -2292,7 +2296,13 @@
         },
         "retryCta" : "Eşlemeyi tekrar deneyin",
         "openSettingsCta" : "Bluetooth ayarlarına git",
-        "howToFixPairingIssue" : "Eşleme sorunlarını çözme"
+        "howToFixPairingIssue" : "Eşleme sorunlarını çözme",
+        "forgetDevice" : {
+          "title" : "{{productName}} cihazının eşlemesini kaldırmak için telefonunuzun Bluetooth ayarlarına gidin",
+          "description" : "Eşleme sorununu gidermek için telefonunuzun Bluetooth listesinden {{productName}} cihazını kaldırın ve bu uygulamaya geri dönüp tekrar deneyin.",
+          "learnHowToFixCta" : "Nasıl gidereceğinizi öğrenin",
+          "tryAgainCta" : "Eşleştirmeyi kaldırdım. Tekrar dene"
+        }
       }
     }
   },
@@ -2504,7 +2514,7 @@
       },
       "selectionContinueOnDevice" : "{{productName}} cihazınızda ilgili seçeneği belirleyin.",
       "newSeedTitle" : "Gizli Kurtarma İfadesi",
-      "newSeedDescription" : "Gizli Kurtarma İfadesi hakkında daha fazla bilgi edinmek için bu videoları izleyin:",
+      "newSeedDescription" : "Gizli Kurtarma İfadeniz, varlıklarınızı kontrol eder ve değiştirilemez. Gizli Kurtarma İfadenize sahip olan herkes varlıklarınızı çalabilir. Gizli Kurtarma İfadenizi kaybederseniz Ledger onu geri almanızı sağlayamaz.",
       "newSeedContinueOnDevice" : "{{productName}} cihazınızdaki yönergeleri izleyin",
       "recovery" : "Varlıklarınızın azami düzeyde güvenliği için Ledger cihazı tarafından oluşturulan bir Gizli Kurtarma İfadesi kullandığınızdan emin olun. \n\nGizli Kurtarma İfadeniz yok mu? Yeni bir İfade oluşturmak için {{productName}} cihazınızı kullanın."
     },
@@ -2544,7 +2554,7 @@
       "title" : "{{productName}} cihazınız dijital varlıklarınızı güvende tutmaya hazır"
     },
     "newSeed" : {
-      "subtitle" : "Maksimum güvenlik için kriptolarınızı herhangi bir borsadan veya cüzdandan Ledger Live uygulamanıza aktarabilirsiniz.",
+      "subtitle" : "Maksimum güvenlik için kriptolarınızı herhangi bir borsadan veya cüzdandan Ledger Wallet’ınıza aktarabilirsiniz.",
       "installCTA" : "Kriptolarınızı güvende tutun",
       "skipCTA" : "Belki sonra"
     }
@@ -3768,6 +3778,10 @@
       "history" : {
         "title" : "Takas geçmişi"
       },
+      "wrongDevice" : {
+        "title" : "Ledger Nano S™, {{provider}} ile uyumlu değildir",
+        "description" : "Ledger Nano S™, {{provider}} ile uyumlu değildir. Ledger Live üzerinden {{provider}} aracılığıyla zincirler arası takas işlemleri yapmak için Ledger Nano S Plus™, Ledger Nano X™, Ledger Stax™ veya Ledger Flex™ cihazlarını kullanabilirsiniz"
+      },
       "incompatibility" : {
         "explore_compatible_devices" : "Uyumlu cihazları keşfedin",
         "contact_support" : "Müşteri destek ekibiyle iletişime geç",
@@ -3794,7 +3808,9 @@
         "sui_title" : "Ledger Nano S™, Sui takasını desteklemez",
         "sui_description" : "Sui takas etmek için Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ veya Ledger Stax™ gibi diğer herhangi bir uyumlu Ledger cihazını kullanın.",
         "kaspa_title" : "Ledger Nano S™, Kaspa takasını desteklemez",
-        "kaspa_description" : "Kaspa takas etmek için Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ veya Ledger Stax™ gibi başka bir uyumlu Ledger cihazını kullanın."
+        "kaspa_description" : "Kaspa takas etmek için Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ veya Ledger Stax™ gibi başka bir uyumlu Ledger cihazını kullanın.",
+        "celo_title" : "Ledger Nano S™, Celo takasını desteklemez",
+        "celo_description" : "Celo takas etmek için Ledger Nano S Plus™, Ledger Nano X™, Ledger Flex™ veya Ledger Stax™ gibi diğer herhangi bir uyumlu Ledger cihazını kullanın."
       }
     },
     "lending" : {
@@ -4070,6 +4086,10 @@
       "solanaRawTransaction" : {
         "title" : "Kör imzalama gerekir",
         "description" : "İşlem ayrıntılarını Ledger cihazınızda doğrulayamazsınız. İşlemi imzalarsanız tüm varlıklarınızı kaybedebilirsiniz. Ancak ve ancak web sitesine güveniyorsanız imzalayın."
+      },
+      "bitcoinPsbtTransaction" : {
+        "title" : "Cihazda doğrulayın",
+        "description" : "Bir sonraki adımda işlem tutarını ve alıcıyı cihaz üzerinde doğrulayabilirsiniz."
       },
       "subaccountsWarning" : "Bu hesabın token'larını göndermek için bu hesabı {{ currency }} ile doldurmanız gerekir",
       "tag" : "Etiket (İsteğe Bağlı)",
@@ -4581,7 +4601,6 @@
     }
   },
   "manager" : {
-    "tabTitle" : "My Ledger",
     "title" : "My Ledger",
     "selectDevice" : {
       "title" : "Cihazlar",
@@ -6478,6 +6497,7 @@
   },
   "sui" : {
     "info" : {
+      "estimatedReward" : "Kazanılan ödüller",
       "available" : {
         "title" : "SUI Ledger Live™’da",
         "description" : "Bu tutar, kullanabileceğiniz fondur."
@@ -7869,7 +7889,7 @@
     "selectAsset" : "Varlık seçin",
     "selectNetwork" : "Ağ seçin",
     "selectAccount" : "Hesap seçin",
-    "searchPlaceholder" : "Ara",
+    "searchPlaceholder" : "İsim veya adrese göre ara",
     "emptyAssetList" : "Hiçbir varlık bulunamadı",
     "accountCount_one" : "{{count}} hesap",
     "accountCount_other" : "{{count}} hesap",
@@ -7968,7 +7988,15 @@
       "authorize" : "İzin ver",
       "preapprove" : "Hesap başarıyla eklendi",
       "validator" : "Ledger Doğrulayıcı",
-      "title" : "Gelen fonları otomatik olarak kabul edin"
+      "title" : "Gelen fonları otomatik olarak kabul edin",
+      "error429" : "An itibarıyla Canton Network'te bir gün içinde sınırlı sayıda hesap oluşturulabilir. Lütfen daha sonra tekrar deneyin."
+    },
+    "tooManyUtxos" : {
+      "title" : "Eylem Alınması Gerekiyor: Çok Fazla UTXO",
+      "description" : "Hesabınızda çok sayıda küçük UTXO olduğundan bu transfer işlenemiyor. Biriken tutma ücretleri nedeniyle sürelerinin dolmasından kaçınmak ve transfer işlemlerinin yapılabilmesini sağlamak için bu UTXO'ları hemen birleştirin.",
+      "quickFix" : "Hızlı Düzeltme: Birleştirmek için kendinize biraz fon gönderin.",
+      "warning" : "Hesabınızda çok sayıda küçük UTXO var. Birleştirmek için kendinize biraz fon gönderin.",
+      "consolidate" : "Birleştir"
     }
   }
 }
