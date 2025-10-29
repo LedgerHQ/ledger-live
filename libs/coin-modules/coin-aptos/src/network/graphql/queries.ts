@@ -1,11 +1,11 @@
 import { gql } from "@apollo/client";
 
 export const GetAccountTransactionsData = gql`
-  query GetAccountTransactionsData($address: String, $limit: Int) {
+  query GetAccountTransactionsData($address: String, $limit: Int, $offset: Int) {
     account_transactions(
       where: { account_address: { _eq: $address } }
-      order_by: { transaction_version: desc }
       limit: $limit
+      offset: $offset
     ) {
       transaction_version
       __typename
@@ -14,11 +14,11 @@ export const GetAccountTransactionsData = gql`
 `;
 
 export const GetAccountTransactionsDataGt = gql`
-  query GetAccountTransactionsDataGt($address: String, $limit: Int, $gt: bigint) {
+  query GetAccountTransactionsDataGt($address: String, $limit: Int, $gt: bigint, $offset: Int) {
     account_transactions(
       where: { account_address: { _eq: $address }, transaction_version: { _gt: $gt } }
-      order_by: { transaction_version: desc }
       limit: $limit
+      offset: $offset
     ) {
       transaction_version
       __typename

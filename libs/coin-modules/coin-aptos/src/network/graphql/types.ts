@@ -24,6 +24,7 @@ export type GetAccountTransactionsDataQuery = {
 export type GetAccountTransactionsDataGtQueryVariables = Exact<{
   address?: InputMaybe<Scalars["String"]>;
   limit?: InputMaybe<Scalars["Int"]>;
+  offset?: InputMaybe<Scalars["Int"]>;
   gt?: InputMaybe<Scalars["bigint"]>;
 }>;
 
@@ -82,3 +83,7 @@ export interface CurrentDelegatorBalance {
   current_pool_balance: CurrentPoolBalance;
   staking_pool_metadata: StakingPoolMetadata;
 }
+
+export type TransactionVersion = {
+  transaction_version: number;
+};
