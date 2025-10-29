@@ -267,8 +267,8 @@ describe("getAccountShape", () => {
       { paginationConfig: {} },
     );
 
-    expect(shape.id).toMatch(
-      /^js:2:assethub_polkadot:5D4yQHKfqCQYThhHmTfN1JEDi47uyDJc1xg9eZfAG1R7FC7J:polkadotbip44$/,
+    expect(shape.id).toEqual(
+      "js:2:assethub_polkadot:5D4yQHKfqCQYThhHmTfN1JEDi47uyDJc1xg9eZfAG1R7FC7J:polkadotbip44",
     );
   });
 
@@ -298,8 +298,8 @@ describe("getAccountShape", () => {
       { paginationConfig: {} },
     );
 
-    expect(shape.id).toMatch(
-      /^js:2:polkadot:5D4yQHKfqCQYThhHmTfN1JEDi47uyDJc1xg9eZfAG1R7FC7J:polkadotbip44$/,
+    expect(shape.id).toEqual(
+      "js:2:polkadot:5D4yQHKfqCQYThhHmTfN1JEDi47uyDJc1xg9eZfAG1R7FC7J:polkadotbip44",
     );
   });
 

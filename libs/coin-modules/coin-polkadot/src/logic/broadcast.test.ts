@@ -10,27 +10,24 @@ jest.mock("../network", () => {
   };
 });
 
-const CURRENCIES = ["polkadot", "assethub_polkadot", "westend", "assethub_westend"];
-
 describe("broadcast", () => {
   beforeEach(() => {
     submitExtrinsicMock.mockClear();
   });
 
-  CURRENCIES.forEach(currencyId => {
-    describe(`${currencyId} currency tests`, () => {
-      it(`should broadcast using ${currencyId} when provided`, async () => {
-        const signature = "some random signature";
-        await broadcast(signature, currencyId);
+  it.each(["polkadot", "assethub_polkadot", "westend", "assethub_westend"])(
+    "should broadcast using %s when provided",
+    async currencyId => {
+      const signature = "some random signature";
+      await broadcast(signature, currencyId);
 
-        expect(submitExtrinsicMock).toHaveBeenCalledTimes(1);
-        expect(submitExtrinsicMock.mock.lastCall[0]).toEqual(signature);
+      expect(submitExtrinsicMock).toHaveBeenCalledTimes(1);
+      expect(submitExtrinsicMock.mock.lastCall[0]).toEqual(signature);
 
-        const currency = getCryptoCurrencyById(currencyId);
-        expect(submitExtrinsicMock.mock.lastCall[1]).toEqual(currency);
-      });
-    });
-  });
+      const currency = getCryptoCurrencyById(currencyId);
+      expect(submitExtrinsicMock.mock.lastCall[1]).toEqual(currency);
+    },
+  );
 
   it("should broadcast using only signature when no currency provided", async () => {
     const signature = "some random signature";

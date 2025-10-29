@@ -51,7 +51,7 @@ const getSidecarUrl = (route: string, currency?: CryptoCurrency): string => {
     (route.startsWith("/pallets/staking") || route.startsWith("/transaction"))
   ) {
     // Fetch Staking Info from Westend AssetHub (remove /rc)
-    sidecarUrl = `${sidecarUrl.replace("/rc", "")}`;
+    sidecarUrl = sidecarUrl.replace("/rc", "");
   }
   return `${sidecarUrl}${route || ""}`;
 };
