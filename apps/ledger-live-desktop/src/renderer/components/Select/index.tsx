@@ -50,12 +50,18 @@ export type Props<
 const Row = styled.div`
   max-width: 100%;
 `;
+
 class MenuList<
   OptionType extends OptionTypeBase,
   IsMulti extends boolean,
   GroupType extends GroupTypeBase<OptionType> = GroupTypeBase<OptionType>,
 > extends PureComponent<
-  MenuListComponentProps<OptionType, IsMulti, GroupType> & Props<OptionType, IsMulti, GroupType>
+  MenuListComponentProps<OptionType, IsMulti, GroupType> &
+    Props<OptionType, IsMulti, GroupType> & {
+      lastItemIndex?: number;
+      keepLastScrollPosition?: boolean;
+      onScrollEnd?: () => void;
+    }
 > {
   state: {
     children: OptionType[] | null;
@@ -66,16 +72,30 @@ class MenuList<
   };
 
   static getDerivedStateFromProps(
-    { children }: { children: React.ReactNode },
+    {
+      children,
+      lastItemIndex,
+      keepLastScrollPosition,
+    }: {
+      children: React.ReactNode;
+      lastItemIndex: number;
+      keepLastScrollPosition: boolean;
+    },
     state: { children: React.ReactNode },
   ) {
     if (children !== state.children) {
-      const currentIndex = Array.isArray(children)
-        ? Math.max(
-            children.findIndex(({ props: { isFocused } }) => isFocused),
-            0,
-          )
-        : 0;
+      let currentIndex: number;
+      if (keepLastScrollPosition && lastItemIndex) {
+        currentIndex = lastItemIndex;
+      } else {
+        currentIndex = Array.isArray(children)
+          ? Math.max(
+              children.findIndex(({ props: { isFocused } }) => isFocused),
+              0,
+            )
+          : 0;
+      }
+
       return {
         children,
         currentIndex,
@@ -105,6 +125,7 @@ class MenuList<
       options,
       maxHeight,
       getValue,
+      onScrollEnd,
       selectProps: { noOptionsMessage, rowHeight },
     } = this.props;
     const { children } = this.state;
@@ -112,15 +133,36 @@ class MenuList<
     const [value] = getValue();
     const initialOffset = options.indexOf(value) * rowHeight;
     const minHeight = Math.min(...[maxHeight, rowHeight * children.length]);
+
     if (!children.length && noOptionsMessage) {
       return <components.NoOptionsMessage {...this.props} innerProps={{}} />;
     }
+
     children.length &&
       children.map(key => {
         delete key.props.innerProps.onMouseMove; // NB: Removes lag on hover, see https://github.com/JedWatson/react-select/issues/3128#issuecomment-433834170
         delete key.props.innerProps.onMouseOver;
         return null;
       });
+
+    const handleScroll = ({
+      scrollOffset,
+      scrollUpdateWasRequested,
+    }: {
+      scrollOffset: number;
+      scrollUpdateWasRequested: boolean;
+    }) => {
+      if (!scrollUpdateWasRequested && onScrollEnd) {
+        const totalHeight = children.length * rowHeight;
+        const visibleHeight = minHeight;
+        const lastScrollOffset = scrollOffset + visibleHeight;
+
+        if (lastScrollOffset >= totalHeight - 10 && onScrollEnd) {
+          onScrollEnd();
+        }
+      }
+    };
+
     return (
       <List
         className={"select-options-list"}
@@ -134,6 +176,7 @@ class MenuList<
         itemCount={children.length}
         itemSize={rowHeight}
         initialScrollOffset={initialOffset}
+        onScroll={handleScroll}
       >
         {({ index, style }) => (
           <Row className={"option"} style={style}>
@@ -149,7 +192,13 @@ class Select<
   OptionType extends OptionTypeBase = { label: string; value: string },
   IsMulti extends boolean = false,
   GroupType extends GroupTypeBase<OptionType> = GroupTypeBase<OptionType>,
-> extends PureComponent<Props<OptionType, IsMulti, GroupType>> {
+> extends PureComponent<
+  Props<OptionType, IsMulti, GroupType> & {
+    lastItemIndex?: number | undefined;
+    keepLastScrollPosition?: boolean;
+    onScrollEnd?: () => void;
+  }
+> {
   componentDidMount() {
     if (this.ref && this.props.autoFocus) {
       this.timeout = requestAnimationFrame(() => this.ref?.focus());
@@ -214,6 +263,9 @@ class Select<
       rowHeight = small ? 34 : 48,
       autoFocus,
       extraRenderers,
+      lastItemIndex,
+      keepLastScrollPosition,
+      onScrollEnd,
       ...props
     } = this.props;
     const Comp = (async ? AsyncReactSelect : ReactSelect) as typeof ReactSelect;
@@ -238,6 +290,7 @@ class Select<
 
     // @ts-expect-error This is complicated to get it right
     const styles = stylesMap ? stylesMap(baseStylesWithPlaceholder) : baseStylesWithPlaceholder;
+
     return (
       // @ts-expect-error This is complicated to get it right
       <Comp
@@ -253,7 +306,14 @@ class Select<
           virtual
             ? {
                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                MenuList: MenuList as any,
+                MenuList: (props: any) => (
+                  <MenuList
+                    {...props}
+                    lastItemIndex={lastItemIndex}
+                    keepLastScrollPosition={keepLastScrollPosition}
+                    onScrollEnd={onScrollEnd}
+                  />
+                ),
                 ...createRenderers({
                   renderOption,
                   renderValue,
