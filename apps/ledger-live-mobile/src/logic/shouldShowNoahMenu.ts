@@ -27,6 +27,11 @@ export function shouldShowNoahMenu(route: NoahRouteProp, noahFlagEnabled: boolea
   }
 
   if (route.params) {
+    // Don't show Noah menu if a specific currency is already selected. This happens when
+    // navigating to receive for a currency WITHOUT having accounts for it. In this case,
+    // user should go directly to the add account flow (not the Noah menu)
+    if (currency) return false;
+
     return noahFlagEnabled && hasValidCurrency && !fromMenu;
   }
 
