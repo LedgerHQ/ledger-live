@@ -4,20 +4,30 @@ import { useTranslation } from "react-i18next";
 import { useTheme } from "styled-components/native";
 import { DomainServiceProvider } from "@ledgerhq/domain-service/hooks/index";
 import { ScreenName } from "~/const";
-import SendCoin from "~/screens/SelectAccount";
-import SendSelectRecipient from "~/screens/SendFunds/02-SelectRecipient";
-import SendAmountCoin from "~/screens/SendFunds/03a-AmountCoin";
-import SendSummary from "~/screens/SendFunds/04-Summary";
-import SelectDevice from "~/screens/SelectDevice";
-import SendConnectDevice from "~/screens/ConnectDevice";
-import SendValidationSuccess from "~/screens/SendFunds/07-ValidationSuccess";
-import SendBroadcastError from "~/screens/SendFunds/07-SendBroadcastError";
-import SendValidationError from "~/screens/SendFunds/07-ValidationError";
 import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
 import StepHeader from "../StepHeader";
 import type { SendFundsNavigatorStackParamList } from "./types/SendFundsNavigator";
+import { register } from "react-native-bundle-splitter";
 import useFeature from "@ledgerhq/live-common/featureFlags/useFeature";
 import SendWorkflow from "LLM/features/Send";
+
+const SendCoin = register({ loader: () => import("~/screens/SelectAccount") });
+const SendSelectRecipient = register({
+  loader: () => import("~/screens/SendFunds/02-SelectRecipient"),
+});
+const SendAmountCoin = register({ loader: () => import("~/screens/SendFunds/03a-AmountCoin") });
+const SendSummary = register({ loader: () => import("~/screens/SendFunds/04-Summary") });
+const SelectDevice = register({ loader: () => import("~/screens/SelectDevice") });
+const SendConnectDevice = register({ loader: () => import("~/screens/ConnectDevice") });
+const SendValidationSuccess = register({
+  loader: () => import("~/screens/SendFunds/07-ValidationSuccess"),
+});
+const SendBroadcastError = register({
+  loader: () => import("~/screens/SendFunds/07-SendBroadcastError"),
+});
+const SendValidationError = register({
+  loader: () => import("~/screens/SendFunds/07-ValidationError"),
+});
 
 const totalSteps = "5";
 

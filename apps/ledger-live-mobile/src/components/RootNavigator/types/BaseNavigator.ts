@@ -296,6 +296,46 @@ export type BaseNavigatorStackParamList = {
 
   // Canton
   [NavigatorName.CantonOnboard]: NavigatorScreenParams<CantonOnboardAccountParamList>;
+  [ScreenName.CantonEditMemo]: undefined;
+
+  // Edit screens from families
+  [ScreenName.AlgorandEditMemo]: undefined;
+  [ScreenName.BitcoinEditCustomFees]: undefined;
+  [ScreenName.CardanoEditMemo]: undefined;
+  [ScreenName.CosmosFamilyEditMemo]: undefined;
+  [ScreenName.EvmEditGasLimit]: undefined;
+  [ScreenName.EvmCustomFees]: undefined;
+  [ScreenName.HederaEditMemo]: undefined;
+  [ScreenName.InternetComputerEditMemo]: undefined;
+  [ScreenName.KaspaEditCustomFees]: undefined;
+  [ScreenName.MinaEditMemo]: undefined;
+  [ScreenName.XrpEditTag]: undefined;
+  [ScreenName.SolanaEditMemo]: undefined;
+  [ScreenName.StacksEditMemo]: undefined;
+  [ScreenName.CasperEditTransferId]: undefined;
+  [ScreenName.StellarEditMemoValue]: undefined;
+  [ScreenName.StellarEditMemoType]: undefined;
+  [ScreenName.StellarEditCustomFees]: undefined;
+  [ScreenName.TonEditComment]: undefined;
+
+  // Near flows
+  [NavigatorName.NearStakingFlow]: undefined;
+  [NavigatorName.NearUnstakingFlow]: undefined;
+  [NavigatorName.NearWithdrawingFlow]: undefined;
+
+  // MultiversX flows
+  [NavigatorName.MultiversXClaimRewardsFlow]: undefined;
+  [NavigatorName.MultiversXDelegationFlow]: undefined;
+  [NavigatorName.MultiversXUndelegationFlow]: undefined;
+  [NavigatorName.MultiversXWithdrawFlow]: undefined;
+
+  // Cardano flows
+  [NavigatorName.CardanoDelegationFlow]: undefined;
+  [NavigatorName.CardanoUndelegationFlow]: undefined;
+
+  // Sui flows
+  [NavigatorName.SuiDelegateFlow]: undefined;
+  [NavigatorName.SuiUndelegateFlow]: undefined;
 
   [ScreenName.DeviceConnect]: {
     appName?: string;

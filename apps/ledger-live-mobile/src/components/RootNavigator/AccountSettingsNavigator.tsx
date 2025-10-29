@@ -3,16 +3,24 @@ import { createStackNavigator } from "@react-navigation/stack";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "styled-components/native";
 import { ScreenName } from "~/const";
-import Accounts from "~/screens/Accounts";
-import AccountSettingsMain from "~/screens/AccountSettings";
-import EditAccountName from "~/screens/AccountSettings/EditAccountName";
-import AdvancedLogs from "~/screens/AccountSettings/AdvancedLogs";
-import AccountOrder from "~/screens/Accounts/AccountOrder";
-import AddAccount from "~/screens/Accounts/AddAccount";
-import CurrencySettings from "~/screens/Settings/CryptoAssets/Currencies/CurrencySettings";
 import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
 import { AccountSettingsNavigatorParamList } from "./types/AccountSettingsNavigator";
-import EditCurrencyUnits from "~/screens/Settings/CryptoAssets/Currencies/EditCurrencyUnits";
+import { register } from "react-native-bundle-splitter";
+
+const AccountSettingsMain = register({ loader: () => import("~/screens/AccountSettings") });
+const EditAccountName = register({
+  loader: () => import("~/screens/AccountSettings/EditAccountName"),
+});
+const AdvancedLogs = register({ loader: () => import("~/screens/AccountSettings/AdvancedLogs") });
+const AccountOrder = register({ loader: () => import("~/screens/Accounts/AccountOrder") });
+const AddAccount = register({ loader: () => import("~/screens/Accounts/AddAccount") });
+const CurrencySettings = register({
+  loader: () => import("~/screens/Settings/CryptoAssets/Currencies/CurrencySettings"),
+});
+const EditCurrencyUnits = register({
+  loader: () => import("~/screens/Settings/CryptoAssets/Currencies/EditCurrencyUnits"),
+});
+const Accounts = register({ loader: () => import("~/screens/Accounts") });
 
 const Stack = createStackNavigator<AccountSettingsNavigatorParamList>();
 

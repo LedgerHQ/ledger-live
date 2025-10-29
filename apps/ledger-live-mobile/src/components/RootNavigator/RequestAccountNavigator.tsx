@@ -3,12 +3,18 @@ import { createStackNavigator } from "@react-navigation/stack";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "styled-components/native";
 import { NavigatorName, ScreenName } from "~/const";
-import RequestAccountSelectCrypto from "~/screens/RequestAccount/01-SelectCrypto";
-import RequestAccountSelectAccount from "~/screens/RequestAccount/02-SelectAccount";
 import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
 import AddAccountsNavigator from "LLM/features/Accounts/Navigator";
 import StepHeader from "../StepHeader";
 import type { RequestAccountNavigatorParamList } from "./types/RequestAccountNavigator";
+import { register } from "react-native-bundle-splitter";
+
+const RequestAccountSelectCrypto = register({
+  loader: () => import("~/screens/RequestAccount/01-SelectCrypto"),
+});
+const RequestAccountSelectAccount = register({
+  loader: () => import("~/screens/RequestAccount/02-SelectAccount"),
+});
 
 const totalSteps = "2";
 export default function RequestAccountNavigator() {

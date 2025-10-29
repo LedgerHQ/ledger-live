@@ -15,6 +15,7 @@ module.exports = {
     "@babel/plugin-transform-flow-strip-types",
     ["@babel/plugin-transform-private-methods", { loose: true }],
     "babel-plugin-transform-inline-environment-variables",
+    "./babel-plugin-transform-register-in-dev",
     "react-native-reanimated/plugin", // react-native-reanimated/plugin has to be listed last.
   ],
 };

@@ -4,11 +4,13 @@ import Config from "react-native-config";
 import { createStackNavigator } from "@react-navigation/stack";
 import { NavigatorName } from "~/const";
 import { hasCompletedOnboardingSelector } from "~/reducers/settings";
-import BaseNavigator from "./BaseNavigator";
-import BaseOnboardingNavigator from "./BaseOnboardingNavigator";
 import { RootStackParamList } from "./types/RootNavigator";
 import { AnalyticsContextProvider } from "~/analytics/AnalyticsContext";
 import { StartupTimeMarker } from "../../StartupTimeMarker";
+import { register } from "react-native-bundle-splitter";
+
+const BaseNavigator = register({ loader: () => import("./BaseNavigator") });
+const BaseOnboardingNavigator = register({ loader: () => import("./BaseOnboardingNavigator") });
 
 export default function RootNavigator() {
   const hasCompletedOnboarding = useSelector(hasCompletedOnboardingSelector);

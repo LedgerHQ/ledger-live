@@ -42,21 +42,6 @@ import DebugSwap from "~/screens/Settings/Debug/Features/Swap";
 import DebugVideos from "~/screens/Settings/Debug/Features/Videos";
 
 import Settings from "~/screens/Settings";
-import AccountsSettings from "~/screens/Settings/Accounts";
-import AboutSettings from "~/screens/Settings/About";
-import Resources from "~/screens/Settings/Resources";
-import GeneralSettings from "~/screens/Settings/General";
-import CountervalueSettings from "~/screens/Settings/General/CountervalueSettings";
-import NotificationsSettings from "~/screens/Settings/Notifications";
-import HelpSettings from "~/screens/Settings/Help";
-import RegionSettings from "~/screens/Settings/General/Region";
-import CurrenciesList from "~/screens/Settings/CryptoAssets/Currencies/CurrenciesList";
-import CurrencySettings from "~/screens/Settings/CryptoAssets/Currencies/CurrencySettings";
-import ExperimentalSettings from "~/screens/Settings/Experimental";
-import DeveloperSettings, {
-  DeveloperCustomManifest,
-  ExchangeDeveloperMode,
-} from "~/screens/Settings/Developer";
 import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
 import Button from "../Button";
 import HelpButton from "~/screens/Settings/HelpButton";
@@ -81,6 +66,34 @@ import { DebugStorageMigration } from "~/screens/Settings/Debug/Debugging/Storag
 import CustomCALRefInput from "~/screens/Settings/Developer/CustomCALRefInput";
 import ModularDrawerScreenDebug from "LLM/features/ModularDrawer/Debug";
 import { UnmountOnBlur } from "./utils/UnmountOnBlur";
+import { register } from "react-native-bundle-splitter";
+
+const CountervalueSettings = register({
+  loader: () => import("~/screens/Settings/General/CountervalueSettings"),
+});
+const RegionSettings = register({ loader: () => import("~/screens/Settings/General/Region") });
+const GeneralSettings = register({ loader: () => import("~/screens/Settings/General") });
+const AccountsSettings = register({ loader: () => import("~/screens/Settings/Accounts") });
+const AboutSettings = register({ loader: () => import("~/screens/Settings/About") });
+const NotificationsSettings = register({
+  loader: () => import("~/screens/Settings/Notifications"),
+});
+const HelpSettings = register({ loader: () => import("~/screens/Settings/Help") });
+const Resources = register({ loader: () => import("~/screens/Settings/Resources") });
+const CurrenciesList = register({
+  loader: () => import("~/screens/Settings/CryptoAssets/Currencies/CurrenciesList"),
+});
+const CurrencySettings = register({
+  loader: () => import("~/screens/Settings/CryptoAssets/Currencies/CurrencySettings"),
+});
+const ExperimentalSettings = register({ loader: () => import("~/screens/Settings/Experimental") });
+const DeveloperSettings = register({ loader: () => import("~/screens/Settings/Developer") });
+const DeveloperCustomManifest = register({
+  loader: () => import("~/screens/Settings/Developer/CustomManifest"),
+});
+const ExchangeDeveloperMode = register({
+  loader: () => import("~/screens/Settings/Developer/ExchangeDeveloperMode"),
+});
 
 const Stack = createStackNavigator<SettingsNavigatorStackParamList>();
 

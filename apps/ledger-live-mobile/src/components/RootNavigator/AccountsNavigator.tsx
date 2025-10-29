@@ -7,15 +7,6 @@ import { ScreenName } from "~/const";
 import Accounts from "~/screens/Accounts";
 import Account from "~/screens/Account";
 import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
-import ReadOnlyAccounts from "~/screens/Accounts/ReadOnly/ReadOnlyAccounts";
-import ReadOnlyAssets from "~/screens/Portfolio/ReadOnlyAssets";
-
-import Asset from "~/screens/WalletCentricAsset";
-import ReadOnlyAsset from "~/screens/WalletCentricAsset/ReadOnly";
-import Assets from "~/screens/Assets";
-
-import ReadOnlyAccount from "~/screens/Account/ReadOnly/ReadOnlyAccount";
-
 import type { AccountsNavigatorParamList } from "./types/AccountsNavigator";
 import { hasNoAccountsSelector } from "~/reducers/accounts";
 import AccountsList from "LLM/features/Accounts/screens/AccountsList";
@@ -26,6 +17,18 @@ import { NavigationProp, NavigationState, useNavigation, useRoute } from "@react
 import { TrackingEvent } from "LLM/features/Accounts/enums";
 import LedgerSyncEntryPoint from "LLM/features/LedgerSyncEntryPoint";
 import { EntryPoint } from "LLM/features/LedgerSyncEntryPoint/types";
+import { register } from "react-native-bundle-splitter";
+
+const ReadOnlyAccounts = register({
+  loader: () => import("~/screens/Accounts/ReadOnly/ReadOnlyAccounts"),
+});
+const ReadOnlyAssets = register({ loader: () => import("~/screens/Portfolio/ReadOnlyAssets") });
+const Asset = register({ loader: () => import("~/screens/WalletCentricAsset") });
+const ReadOnlyAsset = register({ loader: () => import("~/screens/WalletCentricAsset/ReadOnly") });
+const Assets = register({ loader: () => import("~/screens/Assets") });
+const ReadOnlyAccount = register({
+  loader: () => import("~/screens/Account/ReadOnly/ReadOnlyAccount"),
+});
 
 const Stack = createStackNavigator<AccountsNavigatorParamList>();
 

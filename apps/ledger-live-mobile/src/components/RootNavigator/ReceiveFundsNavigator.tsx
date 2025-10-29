@@ -5,19 +5,6 @@ import { useTheme } from "styled-components/native";
 import { useTranslation } from "react-i18next";
 import { NavigationProp, useRoute } from "@react-navigation/native";
 import { ScreenName } from "~/const";
-import ReceiveConfirmation from "~/screens/ReceiveFunds/03-Confirmation";
-import ReceiveConnectDevice, {
-  connectDeviceHeaderOptions,
-} from "~/screens/ReceiveFunds/03a-ConnectDevice";
-import ReceiveVerifyAddress from "~/screens/ReceiveFunds/03b-VerifyAddress";
-import ReceiveSelectCrypto from "~/screens/ReceiveFunds/01-SelectCrypto";
-import ReceiveSelectNetwork from "~/screens/ReceiveFunds/02-SelectNetwork";
-import ReceiveAddAccountSelectDevice, {
-  addAccountsSelectDeviceHeaderOptions,
-} from "~/screens/ReceiveFunds/02-AddAccountSelectDevice";
-import ReceiveSelectAccount from "~/screens/ReceiveFunds/02-SelectAccount";
-import ReceiveAddAccount from "~/screens/ReceiveFunds/02-AddAccount";
-
 import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
 import StepHeader from "../StepHeader";
 import { NavigationHeaderCloseButtonAdvanced } from "../NavigationHeaderCloseButton";
@@ -35,6 +22,34 @@ import {
 import { urls } from "~/utils/urls";
 import ReceiveProvider from "~/screens/ReceiveFunds/01b-ReceiveProvider.";
 import { useReceiveNoahEntry } from "~/hooks/useNoahEntryPoint";
+import { connectDeviceHeaderOptions } from "~/screens/ReceiveFunds/03a-ConnectDevice";
+import { addAccountsSelectDeviceHeaderOptions } from "~/screens/ReceiveFunds/02-AddAccountSelectDevice";
+import { register } from "react-native-bundle-splitter";
+
+const ReceiveConfirmation = register({
+  loader: () => import("~/screens/ReceiveFunds/03-Confirmation"),
+});
+const ReceiveConnectDevice = register({
+  loader: () => import("~/screens/ReceiveFunds/03a-ConnectDevice"),
+});
+const ReceiveVerifyAddress = register({
+  loader: () => import("~/screens/ReceiveFunds/03b-VerifyAddress"),
+});
+const ReceiveSelectCrypto = register({
+  loader: () => import("~/screens/ReceiveFunds/01-SelectCrypto"),
+});
+const ReceiveSelectNetwork = register({
+  loader: () => import("~/screens/ReceiveFunds/02-SelectNetwork"),
+});
+const ReceiveAddAccountSelectDevice = register({
+  loader: () => import("~/screens/ReceiveFunds/02-AddAccountSelectDevice"),
+});
+const ReceiveSelectAccount = register({
+  loader: () => import("~/screens/ReceiveFunds/02-SelectAccount"),
+});
+const ReceiveAddAccount = register({
+  loader: () => import("~/screens/ReceiveFunds/02-AddAccount"),
+});
 
 export default function ReceiveFundsNavigator() {
   const { colors } = useTheme();

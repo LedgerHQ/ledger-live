@@ -3,10 +3,14 @@ import { createStackNavigator } from "@react-navigation/stack";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "styled-components/native";
 import { ScreenName } from "~/const";
-import PasswordAdd from "~/screens/Settings/General/PasswordAdd";
-import ConfirmPassword from "~/screens/Settings/General/ConfirmPassword";
 import { getStackNavigatorConfig } from "~/navigation/navigatorConfig";
 import { PasswordAddFlowParamList } from "./types/PasswordAddFlowNavigator";
+import { register } from "react-native-bundle-splitter";
+
+const PasswordAdd = register({ loader: () => import("~/screens/Settings/General/PasswordAdd") });
+const ConfirmPassword = register({
+  loader: () => import("~/screens/Settings/General/ConfirmPassword"),
+});
 
 const Stack = createStackNavigator<PasswordAddFlowParamList>();
 
